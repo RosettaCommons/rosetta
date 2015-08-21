@@ -45,19 +45,19 @@ class CachingScoringMethod: public FragmentScoringMethod {
 public:
 
 	CachingScoringMethod(Size priority, Real lowest_acceptable_value,
-			bool use_lowest, std::string name) :
+		bool use_lowest, std::string name) :
 		FragmentScoringMethod(priority, lowest_acceptable_value, use_lowest, name) {
 	}
 
 	virtual void do_caching(VallChunkOP) = 0;
 	virtual void clean_up() = 0;
 	virtual bool cached_score(FragmentCandidateOP, FragmentScoreMapOP) {
-	  utility_exit_with_message( "ERROR: unimplemented cached_score() method. Your score function could not use cache\n" );
-	  return true;
+		utility_exit_with_message( "ERROR: unimplemented cached_score() method. Your score function could not use cache\n" );
+		return true;
 	}
 	virtual bool score(FragmentCandidateOP fragment,
-	                FragmentScoreMapOP scores) {
-			return score(fragment,scores); };
+		FragmentScoreMapOP scores) {
+		return score(fragment,scores); };
 };
 
 } // scores

@@ -43,7 +43,7 @@ namespace protocols {
 namespace jd2 {
 
 protocols::jd2::SilentFileJobInputter::SilentFileJobInputter()
-	//	silent_files_( option[ in::file::silent ]() ) {
+// silent_files_( option[ in::file::silent ]() ) {
 {
 	tr.Debug << "Instantiate SilentFileJobInputter" << std::endl;
 }
@@ -51,7 +51,7 @@ protocols::jd2::SilentFileJobInputter::SilentFileJobInputter()
 protocols::jd2::SilentFileJobInputter::~SilentFileJobInputter() {}
 
 
-	/// @brief this function returns the SilentStruct that belongs to the given job
+/// @brief this function returns the SilentStruct that belongs to the given job
 core::io::silent::SilentStruct const&
 protocols::jd2::SilentFileJobInputter::struct_from_job( JobOP job ) {
 	if ( !sfd_.has_tag( job->inner_job()->input_tag() ) ) {
@@ -73,39 +73,39 @@ void protocols::jd2::SilentFileJobInputter::pose_from_job(
 
 	if ( !job->inner_job()->get_pose() ) {
 		//core::import_pose::pose_from_pdb( pose, job->inner_job()->input_tag() );
-		//		core::io::silent::SilentStructOP ss = sfd_[ job->inner_job()->input_tag() ];
+		//  core::io::silent::SilentStructOP ss = sfd_[ job->inner_job()->input_tag() ];
 		tr.Debug << "filling pose from SilentFile (tag = " << job->inner_job()->input_tag()
 			<< ")" << std::endl;
 		pose.clear();
 
 		// kinda hacky fix for symmetry ... this should probably be added to Pose::clear()
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
-	 		core::pose::symmetry::make_asymmetric_pose( pose );
+			core::pose::symmetry::make_asymmetric_pose( pose );
 		}
 
 		struct_from_job( job ).fill_pose( pose );
 		tag_into_pose( pose, job->inner_job()->input_tag() );
-// 		if ( !sfd_.has_tag( job->inner_job()->input_tag() ) ) {
-// 			utility_exit_with_message(" job with input tag " + job->inner_job()->input_tag() +" can't find his input structure ");
-// 		}
-// 		sfd_.get_structure( job->inner_job()->input_tag() ).fill_pose( pose );
-		//	ss->fill_pose( pose );//, ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
-		//		load_pose_into_job( pose, job ); //this is a HUGE memory leak... not really useful
+		//   if ( !sfd_.has_tag( job->inner_job()->input_tag() ) ) {
+		//    utility_exit_with_message(" job with input tag " + job->inner_job()->input_tag() +" can't find his input structure ");
+		//   }
+		//   sfd_.get_structure( job->inner_job()->input_tag() ).fill_pose( pose );
+		// ss->fill_pose( pose );//, ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+		//  load_pose_into_job( pose, job ); //this is a HUGE memory leak... not really useful
 		//   making structure from silent-structs doesn't take that long...
 	} else {
 		pose.clear();
 
 		// kinda hacky fix for symmetry ... this should probably be added to Pose::clear()
 		// this will likely be overwritten in next assignment.... I move it further down OL 11/21/09
-		//		if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		//	 		core::conformation::symmetry::make_asymmetric_pose( pose );
-		//		}
+		//  if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		//    core::conformation::symmetry::make_asymmetric_pose( pose );
+		//  }
 
 		pose = *(job->inner_job()->get_pose());
 
 		/// should this really be here? If there is a pose in the job-object it should have the right properties already, no?
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
-	 		core::pose::symmetry::make_asymmetric_pose( pose );
+			core::pose::symmetry::make_asymmetric_pose( pose );
 		}
 
 		tr.Debug << "filling pose from saved copy (tag = " << job->input_tag()
@@ -130,7 +130,7 @@ void protocols::jd2::SilentFileJobInputter::fill_jobs( JobsContainer & jobs ){
 
 	for ( vector1< FileName >::const_iterator current_fn_ = silent_files.begin();
 			current_fn_ != silent_files.end(); ++current_fn_
-	) {
+			) {
 		tr.Debug << "reading " << *current_fn_ << std::endl;
 		if ( option[ in::file::tags ].user() ) {
 			utility::vector1< string > const& tags( option[ in::file::tags ]() );
@@ -140,7 +140,7 @@ void protocols::jd2::SilentFileJobInputter::fill_jobs( JobsContainer & jobs ){
 		}
 	}
 
-	core::Size const nstruct(	get_nstruct()	);
+	core::Size const nstruct( get_nstruct() );
 
 	using namespace core::io::silent;
 	utility::vector1< InnerJobOP > inner_jobs;
@@ -158,7 +158,7 @@ void protocols::jd2::SilentFileJobInputter::fill_jobs( JobsContainer & jobs ){
 	tr.Debug << "fill list with " << sfd_.size() << " InnerJob Objects" << std::endl;
 	for ( SilentFileData::iterator iter = sfd_.begin(), end = sfd_.end();
 			iter != end; ++iter
-	) {
+			) {
 		const std::string tag = iter->decoy_tag();
 
 		// Optionally ignore failed simulations. Supporting protocols are not consistent
@@ -167,7 +167,7 @@ void protocols::jd2::SilentFileJobInputter::fill_jobs( JobsContainer & jobs ){
 		// fullatom was requested. This can lead to issues during clustering, rescoring,
 		// etc.
 		bool failed_simulation = boost::starts_with(tag, "W_");
-		if (failed_simulation && option[OptionKeys::in::file::skip_failed_simulations]()) {
+		if ( failed_simulation && option[OptionKeys::in::file::skip_failed_simulations]() ) {
 			continue;
 		}
 
@@ -182,7 +182,7 @@ void protocols::jd2::SilentFileJobInputter::fill_jobs( JobsContainer & jobs ){
 	for ( core::Size index = 1; index <= nstruct; ++index ) {
 		for ( utility::vector1< InnerJobOP >::const_iterator ijob = inner_jobs.begin(), end = inner_jobs.end(); ijob != end; ++ijob ) {
 			jobs.push_back( JobOP( new Job( *ijob, index ) ) );
-			tr.Trace << "pushing " << (*ijob)->input_tag() << " nstruct index " << index	<< std::endl;
+			tr.Trace << "pushing " << (*ijob)->input_tag() << " nstruct index " << index << std::endl;
 		} // loop over nstruct
 	} // loop over inputs
 } // fill_jobs

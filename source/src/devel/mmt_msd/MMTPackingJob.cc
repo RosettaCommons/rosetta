@@ -148,7 +148,7 @@ void MMTPackingJob::compute_npd_properties()
 
 	// junk code temporarily needed to avoid any MPI_Receive calls from hanging!
 	for ( required_npds::const_iterator iter = npd_to_do_list_.begin(), iter_end = npd_to_do_list_.end();
-				iter != iter_end; ++iter ) {
+			iter != iter_end; ++iter ) {
 		computed_npd_properties_.push_back( std::make_pair( iter->first, -1234.5 ) );
 	}
 }

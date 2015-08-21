@@ -56,17 +56,17 @@ public:
 
 
 	//! construct Tensor from optional number of layers, optional number of rows, optional number of columns, and optional single element
-	MathTensor(	
+	MathTensor(
 		Size const layers = 0,
 		Size const rows = 0,
 		Size const cols = 0,
 		T    const & value = T()
 	) :
-	  nlayers_( layers ),
-	  nrows_( rows ),
-	  ncols_( cols ), 
-	  size_( nlayers_ * nrows_ * ncols_ ),
-	  data_( size_ != 0 ? new T[ size_ ] : 0 )
+		nlayers_( layers ),
+		nrows_( rows ),
+		ncols_( cols ),
+		size_( nlayers_ * nrows_ * ncols_ ),
+		data_( size_ != 0 ? new T[ size_ ] : 0 )
 	{
 		std::fill( data_, data_ + size_, value );
 	}
@@ -108,20 +108,20 @@ public:
 			&& ( row   < nrows_   )
 			&& ( column< ncols_   );
 	}
-	
 
-  // Raw pointer constructor.  Avoid this.
-  MathTensor(
+
+	// Raw pointer constructor.  Avoid this.
+	MathTensor(
 		Size const layers,
 		Size const rows,
 		Size const cols,
-		T const * data 
+		T const * data
 	) :
-	  nlayers_( layers ),
-	  nrows_( rows ),
-	  ncols_( cols ), 
-	  size_( layers * rows * cols ),
-	  data_( new T[ size_ ] )
+		nlayers_( layers ),
+		nrows_( rows ),
+		ncols_( cols ),
+		size_( layers * rows * cols ),
+		data_( new T[ size_ ] )
 	{
 		for ( Size ii = 0; ii < size_; ++ii ) { data_[ ii ] = data[ ii ]; }
 	}
@@ -159,14 +159,14 @@ public:
 			}
 		}
 
-    }
+	}
 
 	T &
 	operator() ( Size layer, Size row, Size col ) {
 		assert( is_valid_position( layer, row, col ) );
 		return data_[ col + ncols_*( row + nrows_* layer) ];
 	}
-	
+
 	T const &
 	operator() ( Size layer, Size row, Size col ) const {
 		assert( is_valid_position( layer, row, col ) );

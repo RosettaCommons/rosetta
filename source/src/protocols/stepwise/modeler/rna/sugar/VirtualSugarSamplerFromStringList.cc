@@ -37,181 +37,181 @@ namespace modeler {
 namespace rna {
 namespace sugar {
 
-	//Constructor
-	VirtualSugarSamplerFromStringList::VirtualSugarSamplerFromStringList( working_parameters::StepWiseWorkingParametersCOP & working_parameters,
-																																																utility::vector1< std::string > const sample_virtual_sugar_string_list):
-		working_parameters_( working_parameters ),
-		sample_virtual_sugar_string_list_( sample_virtual_sugar_string_list ),
-		silent_file_out_( "default.out" ),
-		use_phenix_geo_( false ),
-		legacy_mode_( false ),
-		choose_random_( false ),
-		integration_test_mode_( false ),
-		tag_( "" )
-	{
-	}
-
-	//Destructor
-	VirtualSugarSamplerFromStringList::~VirtualSugarSamplerFromStringList()
-	{}
-
-	/////////////////////
-	std::string
-	VirtualSugarSamplerFromStringList::get_name() const {
-		return "VirtualSugarSamplerFromStringList";
+//Constructor
+VirtualSugarSamplerFromStringList::VirtualSugarSamplerFromStringList( working_parameters::StepWiseWorkingParametersCOP & working_parameters,
+	utility::vector1< std::string > const sample_virtual_sugar_string_list):
+	working_parameters_( working_parameters ),
+	sample_virtual_sugar_string_list_( sample_virtual_sugar_string_list ),
+	silent_file_out_( "default.out" ),
+	use_phenix_geo_( false ),
+	legacy_mode_( false ),
+	choose_random_( false ),
+	integration_test_mode_( false ),
+	tag_( "" )
+{
 }
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	VirtualSugarSamplerFromStringList::apply( core::pose::Pose & pose ){
+//Destructor
+VirtualSugarSamplerFromStringList::~VirtualSugarSamplerFromStringList()
+{}
 
-		using namespace ObjexxFCL;
-		using namespace core::io::silent;
-		using namespace core::id;
-		using namespace core::scoring;
-		using namespace core::conformation;
+/////////////////////
+std::string
+VirtualSugarSamplerFromStringList::get_name() const {
+	return "VirtualSugarSamplerFromStringList";
+}
 
-		output_title_text( "Enter VirtualSugarSampler::sample_virtual_sugar", TR );
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+VirtualSugarSamplerFromStringList::apply( core::pose::Pose & pose ){
 
-		// why all this rigamarole? -- rhiju
-		ConformationOP copy_conformation = pose.conformation().clone();
-		pose::Pose new_pose;
-		new_pose.set_new_conformation( copy_conformation );
-		pose = new_pose;
-		tag_into_pose( pose, "" );
+	using namespace ObjexxFCL;
+	using namespace core::io::silent;
+	using namespace core::id;
+	using namespace core::scoring;
+	using namespace core::conformation;
 
-		///////////////////////////////////////////////////////////////
-		pose::Pose const pose_save = pose;
-		pose = pose_save; //this recopy is useful for triggering graphics.
+	output_title_text( "Enter VirtualSugarSampler::sample_virtual_sugar", TR );
 
-		utility::vector1< SugarModeling > sugar_modeling_list = setup_sugar_modeling_list( pose );
-		if ( empty_sugar_modeling_list( sugar_modeling_list ) ) return;
+	// why all this rigamarole? -- rhiju
+	ConformationOP copy_conformation = pose.conformation().clone();
+	pose::Pose new_pose;
+	new_pose.set_new_conformation( copy_conformation );
+	pose = new_pose;
+	tag_into_pose( pose, "" );
 
-		for ( Size n = 1; n <= sugar_modeling_list.size(); n++ ){
+	///////////////////////////////////////////////////////////////
+	pose::Pose const pose_save = pose;
+	pose = pose_save; //this recopy is useful for triggering graphics.
 
-			TR << TR.Blue << "Sampling sugar " << n <<  " out of " << sugar_modeling_list.size() << TR.Reset << std::endl;
-			SugarModeling & curr_modeling = sugar_modeling_list[n];
-			curr_modeling.set_base_and_pucker_state( pose, working_parameters_ );
+	utility::vector1< SugarModeling > sugar_modeling_list = setup_sugar_modeling_list( pose );
+	if ( empty_sugar_modeling_list( sugar_modeling_list ) ) return;
 
-			VirtualSugarSampler virtual_sugar_sampler( working_parameters_, curr_modeling );
-			virtual_sugar_sampler.set_tag( "VIRT_RIBOSE_NUM_" + string_of( n ) );
-			virtual_sugar_sampler.set_scorefxn( scorefxn_ );
-			virtual_sugar_sampler.set_integration_test_mode( integration_test_mode_ );
-			virtual_sugar_sampler.set_use_phenix_geo( use_phenix_geo_ );
-			virtual_sugar_sampler.set_legacy_mode( legacy_mode_ );
-			virtual_sugar_sampler.set_choose_random( choose_random_ );
-			virtual_sugar_sampler.set_virtual_sugar_is_from_prior_step( false );
+	for ( Size n = 1; n <= sugar_modeling_list.size(); n++ ) {
 
-			virtual_sugar_sampler.apply( pose );
+		TR << TR.Blue << "Sampling sugar " << n <<  " out of " << sugar_modeling_list.size() << TR.Reset << std::endl;
+		SugarModeling & curr_modeling = sugar_modeling_list[n];
+		curr_modeling.set_base_and_pucker_state( pose, working_parameters_ );
 
-			std::sort( curr_modeling.pose_list.begin(), curr_modeling.pose_list.end(), sort_pose_by_score );
-			if ( empty_pose_data_list( curr_modeling.pose_list, n, "curr_modeling" ) ) return;
-		}
+		VirtualSugarSampler virtual_sugar_sampler( working_parameters_, curr_modeling );
+		virtual_sugar_sampler.set_tag( "VIRT_RIBOSE_NUM_" + string_of( n ) );
+		virtual_sugar_sampler.set_scorefxn( scorefxn_ );
+		virtual_sugar_sampler.set_integration_test_mode( integration_test_mode_ );
+		virtual_sugar_sampler.set_use_phenix_geo( use_phenix_geo_ );
+		virtual_sugar_sampler.set_legacy_mode( legacy_mode_ );
+		virtual_sugar_sampler.set_choose_random( choose_random_ );
+		virtual_sugar_sampler.set_virtual_sugar_is_from_prior_step( false );
 
-		///////////////////////////////////////////////////////////////////////////////////
-		utility::vector1< PoseOP > pose_data_list;
-		modeler_starting_pose_data_list( pose_data_list, sugar_modeling_list, pose );
-		minimize_all_sampled_floating_bases( pose, sugar_modeling_list, pose_data_list, scorefxn_, working_parameters_, false /*virtualize_other_partition*/ );
+		virtual_sugar_sampler.apply( pose );
 
-		output_pose_data_list( pose_data_list );
-
+		std::sort( curr_modeling.pose_list.begin(), curr_modeling.pose_list.end(), sort_pose_by_score );
+		if ( empty_pose_data_list( curr_modeling.pose_list, n, "curr_modeling" ) ) return;
 	}
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	utility::vector1< SugarModeling >
-	VirtualSugarSamplerFromStringList::setup_sugar_modeling_list( pose::Pose const & pose ) const {
+	///////////////////////////////////////////////////////////////////////////////////
+	utility::vector1< PoseOP > pose_data_list;
+	modeler_starting_pose_data_list( pose_data_list, sugar_modeling_list, pose );
+	minimize_all_sampled_floating_bases( pose, sugar_modeling_list, pose_data_list, scorefxn_, working_parameters_, false /*virtualize_other_partition*/ );
 
-		using namespace ObjexxFCL;
+	output_pose_data_list( pose_data_list );
 
-		utility::vector1< SugarModeling > sugar_modeling_list;
+}
 
-		std::string const & working_sequence = working_parameters_->working_sequence();
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< SugarModeling >
+VirtualSugarSamplerFromStringList::setup_sugar_modeling_list( pose::Pose const & pose ) const {
 
-		for ( Size n = 1; n <= sample_virtual_sugar_string_list_.size(); n++ ){
+	using namespace ObjexxFCL;
 
-			utility::vector1< std::string > const tokenize_list = tokenize( sample_virtual_sugar_string_list_[n], "-" );
-			if ( tokenize_list.size() != 2 ) utility_exit_with_message( "tokenize_list != 2" );
+	utility::vector1< SugarModeling > sugar_modeling_list;
 
-			if ( tokenize_list[2] != "A" && tokenize_list[2] != "P" ){
-				utility_exit_with_message( "tokenize_list[2] != \"A\" && tokenize_list[2] != \"P\" ( " + tokenize_list[2] + " )" );
-			}
+	std::string const & working_sequence = working_parameters_->working_sequence();
 
-			bool const is_prepend = ( tokenize_list[2] == "P" );
-			Size const full_sugar_res = string_to_int( tokenize_list[1] );
-			Size const full_bulge_res = ( is_prepend ) ? full_sugar_res + 1 : full_sugar_res - 1;
-			Size const full_ref_res   = ( is_prepend ) ? full_sugar_res + 2 : full_sugar_res - 2;
+	for ( Size n = 1; n <= sample_virtual_sugar_string_list_.size(); n++ ) {
 
-			TR.Debug << "Case: " << sample_virtual_sugar_string_list_[n];
-			TR.Debug << " full_sugar_res = " << full_sugar_res << " full_bulge_res = " << full_bulge_res << " full_ref_res = " << full_ref_res;
-			output_boolean( " is_prepend = ", is_prepend, TR.Debug );
+		utility::vector1< std::string > const tokenize_list = tokenize( sample_virtual_sugar_string_list_[n], "-" );
+		if ( tokenize_list.size() != 2 ) utility_exit_with_message( "tokenize_list != 2" );
 
-			runtime_assert ( pose.total_residue() == working_sequence.size() );
+		if ( tokenize_list[2] != "A" && tokenize_list[2] != "P" ) {
+			utility_exit_with_message( "tokenize_list[2] != \"A\" && tokenize_list[2] != \"P\" ( " + tokenize_list[2] + " )" );
+		}
 
-			if ( check_is_working_res( full_sugar_res, working_parameters_ ) ){
+		bool const is_prepend = ( tokenize_list[2] == "P" );
+		Size const full_sugar_res = string_to_int( tokenize_list[1] );
+		Size const full_bulge_res = ( is_prepend ) ? full_sugar_res + 1 : full_sugar_res - 1;
+		Size const full_ref_res   = ( is_prepend ) ? full_sugar_res + 2 : full_sugar_res - 2;
 
-				Size const working_sugar_res = check_validity_and_get_working_res( full_sugar_res, working_parameters_ );
-				bool const sugar_is_virtual =
-						pose.residue( working_sugar_res ).has_variant_type( core::chemical::VIRTUAL_RIBOSE );
+		TR.Debug << "Case: " << sample_virtual_sugar_string_list_[n];
+		TR.Debug << " full_sugar_res = " << full_sugar_res << " full_bulge_res = " << full_bulge_res << " full_ref_res = " << full_ref_res;
+		output_boolean( " is_prepend = ", is_prepend, TR.Debug );
 
-				TR.Debug << " | working_sugar_res = " << working_sugar_res;
-				output_boolean( " sugar_is_virtual = ", sugar_is_virtual, TR.Debug );
+		runtime_assert ( pose.total_residue() == working_sequence.size() );
 
-				if ( sugar_is_virtual ){
+		if ( check_is_working_res( full_sugar_res, working_parameters_ ) ) {
 
-					Size const working_bulge_res = check_validity_and_get_working_res( full_bulge_res, working_parameters_ );
-					Size const working_ref_res   = check_validity_and_get_working_res( full_ref_res, working_parameters_ );
+			Size const working_sugar_res = check_validity_and_get_working_res( full_sugar_res, working_parameters_ );
+			bool const sugar_is_virtual =
+				pose.residue( working_sugar_res ).has_variant_type( core::chemical::VIRTUAL_RIBOSE );
 
-					TR.Debug << " | working_bulge_res = " << working_bulge_res << " working_ref_res = " << working_ref_res;
+			TR.Debug << " | working_sugar_res = " << working_sugar_res;
+			output_boolean( " sugar_is_virtual = ", sugar_is_virtual, TR.Debug );
 
-					if ( is_prepend ){
-						runtime_assert( working_sugar_res == ( working_bulge_res - 1 ) );
-						runtime_assert( working_sugar_res == ( working_ref_res - 2 ) );
-					} else{
-						runtime_assert( working_sugar_res == ( working_bulge_res + 1 ) );
-						runtime_assert( working_sugar_res == ( working_ref_res + 2 ) );
-					}
-					runtime_assert(
-							pose.residue( working_bulge_res ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) );
+			if ( sugar_is_virtual ) {
 
-					//SugarModeling curr_modeling = SugarModeling();
-					SugarModeling curr_modeling = SugarModeling( working_sugar_res, working_ref_res );
-					sugar_modeling_list.push_back( curr_modeling );
+				Size const working_bulge_res = check_validity_and_get_working_res( full_bulge_res, working_parameters_ );
+				Size const working_ref_res   = check_validity_and_get_working_res( full_ref_res, working_parameters_ );
+
+				TR.Debug << " | working_bulge_res = " << working_bulge_res << " working_ref_res = " << working_ref_res;
+
+				if ( is_prepend ) {
+					runtime_assert( working_sugar_res == ( working_bulge_res - 1 ) );
+					runtime_assert( working_sugar_res == ( working_ref_res - 2 ) );
+				} else {
+					runtime_assert( working_sugar_res == ( working_bulge_res + 1 ) );
+					runtime_assert( working_sugar_res == ( working_ref_res + 2 ) );
 				}
+				runtime_assert(
+					pose.residue( working_bulge_res ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) );
 
-			} else{
-				TR.Debug << " | full_sugar_res is not a working res! ";
+				//SugarModeling curr_modeling = SugarModeling();
+				SugarModeling curr_modeling = SugarModeling( working_sugar_res, working_ref_res );
+				sugar_modeling_list.push_back( curr_modeling );
 			}
-			TR.Debug << std::endl;
-		}
 
-		return sugar_modeling_list;
+		} else {
+			TR.Debug << " | full_sugar_res is not a working res! ";
+		}
+		TR.Debug << std::endl;
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////
-	bool
-	VirtualSugarSamplerFromStringList::empty_sugar_modeling_list( utility::vector1< SugarModeling > const &  sugar_modeling_list  ){
+	return sugar_modeling_list;
+}
 
-		TR.Debug << "num_virtual_sugar = " << sugar_modeling_list.size() << std::endl;
-		if ( sugar_modeling_list.size() == 0 ){
-			TR.Debug << "no_virtual_sugar ( sugar_modeling_list.size() == 0 ). EARLY RETURN/NO OUTPUT SILENT_FILE!" << std::endl;
+/////////////////////////////////////////////////////////////////////////////////////
+bool
+VirtualSugarSamplerFromStringList::empty_sugar_modeling_list( utility::vector1< SugarModeling > const &  sugar_modeling_list  ){
 
-			std::ofstream outfile;
-			outfile.open( silent_file_out_.c_str() ); //Opening the file with this command removes all prior content..
-			outfile << "no_virtual_sugar ( sugar_modeling_list.size() == 0 ).\n";
-			outfile.flush();
-			outfile.close();
+	TR.Debug << "num_virtual_sugar = " << sugar_modeling_list.size() << std::endl;
+	if ( sugar_modeling_list.size() == 0 ) {
+		TR.Debug << "no_virtual_sugar ( sugar_modeling_list.size() == 0 ). EARLY RETURN/NO OUTPUT SILENT_FILE!" << std::endl;
 
-			return true;
-		}
+		std::ofstream outfile;
+		outfile.open( silent_file_out_.c_str() ); //Opening the file with this command removes all prior content..
+		outfile << "no_virtual_sugar ( sugar_modeling_list.size() == 0 ).\n";
+		outfile.flush();
+		outfile.close();
 
-		return false;
+		return true;
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////
-	bool
-	VirtualSugarSamplerFromStringList::empty_pose_data_list( utility::vector1< pose::PoseOP > const & pose_list, Size const n, std::string tag ){
+	return false;
+}
 
-	if (  pose_list.size() == 0 ){
+/////////////////////////////////////////////////////////////////////////////////////
+bool
+VirtualSugarSamplerFromStringList::empty_pose_data_list( utility::vector1< pose::PoseOP > const & pose_list, Size const n, std::string tag ){
+
+	if (  pose_list.size() == 0 ) {
 		TR.Debug << "Case n = " << n << " is_sugar_virt == True but " << tag << ".pose_list.size() == 0. EARLY RETURN!" << std::endl;
 
 		std::ofstream outfile;
@@ -225,25 +225,25 @@ namespace sugar {
 	return false;
 }
 
-	/////////////////////////////////////////////////////////////////////////////////////
-	void
-	VirtualSugarSamplerFromStringList::output_pose_data_list( utility::vector1< pose::PoseOP > & pose_data_list ){
+/////////////////////////////////////////////////////////////////////////////////////
+void
+VirtualSugarSamplerFromStringList::output_pose_data_list( utility::vector1< pose::PoseOP > & pose_data_list ){
 
-		for ( Size n = 1; n <= pose_data_list.size(); n++ ){
-			Pose & pose = ( *pose_data_list[n] ); //set viewer_pose;
-			std::string pose_tag = tag_ + "_sample_sugar" + tag_from_pose( *pose_data_list[n]);
-			if ( working_parameters_->gap_size() == 0 ) utility_exit_with_message( "working_parameters_->gap_size() == 0" );
-			( *scorefxn_ )( pose );
+	for ( Size n = 1; n <= pose_data_list.size(); n++ ) {
+		Pose & pose = ( *pose_data_list[n] ); //set viewer_pose;
+		std::string pose_tag = tag_ + "_sample_sugar" + tag_from_pose( *pose_data_list[n]);
+		if ( working_parameters_->gap_size() == 0 ) utility_exit_with_message( "working_parameters_->gap_size() == 0" );
+		( *scorefxn_ )( pose );
 
-			output_data( silent_file_out_, pose_tag, false, pose, working_parameters_->working_native_pose(), working_parameters_ );
-		}
+		output_data( silent_file_out_, pose_tag, false, pose, working_parameters_->working_native_pose(), working_parameters_ );
 	}
+}
 
-	//////////////////////////////////////////////////////////////////////////
-	void
-	VirtualSugarSamplerFromStringList::set_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn ){
-		scorefxn_ = scorefxn;
-	}
+//////////////////////////////////////////////////////////////////////////
+void
+VirtualSugarSamplerFromStringList::set_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn ){
+	scorefxn_ = scorefxn;
+}
 
 } //sugar
 } //rna

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/magnesium/MgHydrater.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -20,12 +20,12 @@
 
 namespace protocols {
 namespace magnesium {
-	
-	class MgHydrater;
-	typedef utility::pointer::shared_ptr< MgHydrater > MgHydraterOP;
-	typedef utility::pointer::shared_ptr< MgHydrater const > MgHydraterCOP;
-	
-} //magnesium 
-} //protocols 
+
+class MgHydrater;
+typedef utility::pointer::shared_ptr< MgHydrater > MgHydraterOP;
+typedef utility::pointer::shared_ptr< MgHydrater const > MgHydraterCOP;
+
+} //magnesium
+} //protocols
 
 #endif

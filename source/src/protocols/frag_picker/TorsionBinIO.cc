@@ -53,7 +53,7 @@ void TorsionBinIO::read(
 
 	probs_.clear();
 	sequence_.clear();
-	while( getline( input, line ) ) {
+	while ( getline( input, line ) ) {
 		if ( line.substr(0,1) == "#" ) continue;
 		istringstream line_stream( line );
 		tracer.Debug << "line " << line << std::endl;
@@ -81,8 +81,8 @@ void TorsionBinIO::write( std::ostream & output ) {
 
 	output << "resi aa ";
 	for ( vector1< char >::const_iterator it = bin_names_.begin(),
-				end = bin_names_.end(); it != end; ++it
-	) {
+			end = bin_names_.end(); it != end; ++it
+			) {
 		output << *it;
 		if ( it + 1 != end ) output << ' ';
 	}
@@ -90,12 +90,12 @@ void TorsionBinIO::write( std::ostream & output ) {
 
 	Size seq_idx(1);
 	for ( vector1< vector1< Real > >::const_iterator row_it = probs_.begin(),
-	 			row_end = probs_.end(); row_it != row_end; ++row_it
-	) {
+			row_end = probs_.end(); row_it != row_end; ++row_it
+			) {
 		output << seq_idx << ' ' << sequence_[seq_idx-1] << ' ';
 		for ( vector1< Real >::const_iterator it = row_it->begin(),
-					end = row_it->end(); it != end; ++it
-		) {
+				end = row_it->end(); it != end; ++it
+				) {
 			output << *it;
 			if ( it + 1 != end ) output << ' ';
 		}

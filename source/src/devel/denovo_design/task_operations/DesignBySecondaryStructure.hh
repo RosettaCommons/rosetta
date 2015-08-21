@@ -36,26 +36,26 @@ namespace task_operations {
 
 class DesignBySecondaryStructureOperation : public HighestEnergyRegionOperation {
 public:
-  /// @brief default constructor
-  DesignBySecondaryStructureOperation();
+	/// @brief default constructor
+	DesignBySecondaryStructureOperation();
 
-  /// @brief value constructor
-  DesignBySecondaryStructureOperation( std::string const bp_file,
-																			 std::string const cmd,
-																			 bool const prevent_native,
-																			 bool const prevent_bad_point_mutations );
+	/// @brief value constructor
+	DesignBySecondaryStructureOperation( std::string const bp_file,
+		std::string const cmd,
+		bool const prevent_native,
+		bool const prevent_bad_point_mutations );
 
-  /// @brief copy constructor
-  DesignBySecondaryStructureOperation( DesignBySecondaryStructureOperation const & rval );
+	/// @brief copy constructor
+	DesignBySecondaryStructureOperation( DesignBySecondaryStructureOperation const & rval );
 
-  /// @brief destructor
-  virtual ~DesignBySecondaryStructureOperation();
+	/// @brief destructor
+	virtual ~DesignBySecondaryStructureOperation();
 
-  /// @brief make clone
-  virtual core::pack::task::operation::TaskOperationOP clone() const;
+	/// @brief make clone
+	virtual core::pack::task::operation::TaskOperationOP clone() const;
 
-  /// @brief apply
-  virtual void apply( Pose const & pose, core::pack::task::PackerTask & task ) const;
+	/// @brief apply
+	virtual void apply( Pose const & pose, core::pack::task::PackerTask & task ) const;
 
 	/// @brief Runs the calculation and caches residues to design
 	virtual utility::vector1< core::Size >
@@ -65,7 +65,7 @@ public:
 	virtual std::string get_name() const { return "SSPrediction"; }
 
 public:
-  void parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & );
+	void parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & );
 
 	/// @brief opens the passed blueprint file and determines the desired secondary structure
 	void initialize_blueprint_ss( std::string const blueprint_file );

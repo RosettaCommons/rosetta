@@ -7,19 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	    protocols/membrane/MembranePositionFromTopologyMover.hh
+/// @file     protocols/membrane/MembranePositionFromTopologyMover.hh
 ///
 /// @brief      Computes and sets the initial position of the membrane
-/// @details	Computes and sets the initial position of the membrane from
-///				sequence or structure (can be specified by the user at construction
-///				or as a setup cmd flag).
-///				CAUTION: ONLY FOR FLEXIBLE MEMBRANE AND FIXED PROTEIN!!!
+/// @details Computes and sets the initial position of the membrane from
+///    sequence or structure (can be specified by the user at construction
+///    or as a setup cmd flag).
+///    CAUTION: ONLY FOR FLEXIBLE MEMBRANE AND FIXED PROTEIN!!!
 ///
-///				NOTE: Requires a membrane pose!
-///				NOTE: sequence not yet implemented
-///				Last Modified: 6/21/14
+///    NOTE: Requires a membrane pose!
+///    NOTE: sequence not yet implemented
+///    Last Modified: 6/21/14
 ///
-/// @author		Rebecca Alford (rflaford12@gmail.com)
+/// @author  Rebecca Alford (rflaford12@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_MembranePositionFromTopologyMover_hh
 #define INCLUDED_protocols_membrane_MembranePositionFromTopologyMover_hh
@@ -81,12 +81,12 @@ public:
 
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void parse_my_tag(
-	  utility::tag::TagCOP tag,
-	  basic::datacache::DataMap &,
-	  protocols::filters::Filters_map const &,
-	  protocols::moves::Movers_map const &,
-	  core::pose::Pose const &
-	  );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
+	);
 
 	/////////////////////
 	/// Mover Methods ///

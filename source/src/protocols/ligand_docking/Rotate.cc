@@ -69,10 +69,10 @@ RotateCreator::mover_name()
 Ligand_info::Ligand_info():residues(), atr(0), rep(0), jump(){}
 
 Ligand_info::Ligand_info(core::conformation::ResidueCOPs const residues, int atr, int rep):
-		residues(residues), atr(atr), rep(rep), jump(){}
+	residues(residues), atr(atr), rep(rep), jump(){}
 
 Ligand_info::Ligand_info(core::conformation::ResidueCOPs const residues, std::pair<int,int> scores, core::kinematics::Jump jump):
-		residues(residues), atr(scores.first), rep(scores.second), jump(jump){}
+	residues(residues), atr(scores.first), rep(scores.second), jump(jump){}
 
 
 bool Ligand_info::operator<(Ligand_info const ligand_info) const{
@@ -94,9 +94,9 @@ Rotate::Rotate(Rotate_info rotate_info): Mover("Rotate"), rotate_info_(rotate_in
 {}
 
 Rotate::Rotate(Rotate const & that):
-		//utility::pointer::ReferenceCount(),
-		protocols::moves::Mover( that ),
-		rotate_info_(that.rotate_info_)
+	//utility::pointer::ReferenceCount(),
+	protocols::moves::Mover( that ),
+	rotate_info_(that.rotate_info_)
 {}
 
 Rotate::~Rotate() {}
@@ -116,14 +116,14 @@ std::string Rotate::get_name() const{
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 Rotate::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & /*data_map*/,
-		protocols::filters::Filters_map const & /*filters*/,
-		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & pose
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & /*data_map*/,
+	protocols::filters::Filters_map const & /*filters*/,
+	protocols::moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & pose
 )
 {
-	if ( tag->getName() != "Rotate" ){
+	if ( tag->getName() != "Rotate" ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
 	}
 	if ( ! tag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotate' mover requires 'chain' tag");
@@ -133,9 +133,9 @@ Rotate::parse_my_tag(
 
 	rotate_info_.chain = tag->getOption<std::string>("chain");
 	utility::vector1< core::Size > chain_ids( core::pose::get_chain_ids_from_chain(rotate_info_.chain, pose) );
-	if( chain_ids.size() == 0 ) {
+	if ( chain_ids.size() == 0 ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("'Rotate' mover: chain '"+rotate_info_.chain+"' does not exist.");
-	} else if( chain_ids.size() > 1 ) {
+	} else if ( chain_ids.size() > 1 ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("'Rotate' mover: chain letter '"+rotate_info_.chain+"' represents more than one chain. Consider using the 'Rotates' mover (with an 's') instead.");
 	}
 	rotate_info_.chain_id= chain_ids[1];
@@ -145,12 +145,12 @@ Rotate::parse_my_tag(
 	rotate_info_.degrees = tag->getOption<core::Size>("degrees");
 	rotate_info_.cycles = tag->getOption<core::Size>("cycles");
 
-	if ( tag->hasOption("tag_along_chains") ){
+	if ( tag->hasOption("tag_along_chains") ) {
 		std::string const tag_along_chains_str = tag->getOption<std::string>("tag_along_chains");
 		utility::vector1<std::string> tag_along_chain_strs= utility::string_split(tag_along_chains_str, ',');
-		BOOST_FOREACH(std::string tag_along_chain_str, tag_along_chain_strs){
+		BOOST_FOREACH ( std::string tag_along_chain_str, tag_along_chain_strs ) {
 			utility::vector1<core::Size> chain_ids= get_chain_ids_from_chain(tag_along_chain_str, pose);
-			BOOST_FOREACH( core::Size chain_id, chain_ids){
+			BOOST_FOREACH ( core::Size chain_id, chain_ids ) {
 				rotate_info_.tag_along_chains.push_back(chain_id);
 				rotate_info_.tag_along_jumps.push_back( core::pose::get_jump_id_from_chain_id(chain_id, pose) );
 				core::Size const chain_begin (pose.conformation().chain_begin(chain_id));
@@ -165,22 +165,20 @@ void Rotate::apply(core::pose::Pose & pose){
 	core::Vector const center = protocols::geometry::downstream_centroid_by_jump(pose, rotate_info_.jump_id);
 
 	qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
-	if(grid_manager->size() == 0)
-	{
+	if ( grid_manager->size() == 0 ) {
 		utility::vector1<core::Size> all_chain_ids = rotate_info_.tag_along_chains;
 		all_chain_ids.push_back(rotate_info_.chain_id);
 		utility::pointer::shared_ptr<core::grid::CartGrid<int> > const grid = make_atr_rep_grid_without_ligands(pose, center, all_chain_ids);
 		rotate_ligand(grid, pose);// move ligand to a random point in binding pocket
-	}else
-	{
+	} else {
 		// TODO refactor qsar map so it works properly
 		/*
 		if(grid_manager->is_qsar_map_attached())
 		{
-			//core::conformation::ResidueOP residue = new core::conformation::Residue(pose.residue(begin));
-			//qsar::qsarMapOP qsar_map(new qsar::qsarMap("default",residue));
-			//qsar_map->fill_with_value(1);
-			//grid_manager->set_qsar_map(qsar_map);
+		//core::conformation::ResidueOP residue = new core::conformation::Residue(pose.residue(begin));
+		//qsar::qsarMapOP qsar_map(new qsar::qsarMap("default",residue));
+		//qsar_map->fill_with_value(1);
+		//grid_manager->set_qsar_map(qsar_map);
 		}
 		*/
 		//grid_manager->initialize_all_grids(center);
@@ -190,16 +188,15 @@ void Rotate::apply(core::pose::Pose & pose){
 
 /// @brief for n random rotations, randomly pick one from among the best scoring set of diverse poses
 void Rotate::rotate_ligand(
-		utility::pointer::shared_ptr<core::grid::CartGrid<int> >  const & grid,
-		core::pose::Pose & pose
+	utility::pointer::shared_ptr<core::grid::CartGrid<int> >  const & grid,
+	core::pose::Pose & pose
 ) {
-	if(rotate_info_.degrees == 0) return;
+	if ( rotate_info_.degrees == 0 ) return;
 
 	protocols::rigid::RigidBodyMoverOP mover;
-	if(rotate_info_.distribution == Uniform){
+	if ( rotate_info_.distribution == Uniform ) {
 		mover = protocols::rigid::RigidBodyMoverOP( new protocols::rigid::RigidBodyRandomizeMover( pose, rotate_info_.jump_id, protocols::rigid::partner_downstream, rotate_info_.degrees, rotate_info_.degrees) );
-	}
-	else if(rotate_info_.distribution == Gaussian){
+	} else if ( rotate_info_.distribution == Gaussian ) {
 		mover = protocols::rigid::RigidBodyMoverOP( new protocols::rigid::RigidBodyPerturbMover ( rotate_info_.jump_id, rotate_info_.degrees, 0 /*translate*/) );
 	}
 
@@ -210,11 +207,11 @@ void Rotate::rotate_ligand(
 	{
 		pose.set_jump(rotate_info_.jump_id, ligands[jump_choice].jump);
 
-		BOOST_FOREACH(core::conformation::ResidueCOP residue, ligands[jump_choice].residues){
+		BOOST_FOREACH ( core::conformation::ResidueCOP residue, ligands[jump_choice].residues ) {
 			pose.replace_residue(chain_begin, *residue, false /*orient backbone*/);// assume rotamers are oriented?
 			++chain_begin;
 		}
-		for(core::Size i=1; i <= rotate_info_.tag_along_residues.size(); ++i){
+		for ( core::Size i=1; i <= rotate_info_.tag_along_residues.size(); ++i ) {
 			// I cannot figure out what this assert is testing for; it seems to be comparing a ResidueOP to a Size.
 			// In any case, it is causing a comparison warning, so I am commenting it out. ~Labonte
 			//assert(rotate_info_.tag_along_residues.size() == ligands[jump_choice].tag_along_residues[i]);
@@ -227,13 +224,12 @@ void Rotate::rotate_ligand(
 
 void Rotate::rotate_ligand(core::pose::Pose & pose)
 {
-	if(rotate_info_.degrees == 0) return;
+	if ( rotate_info_.degrees == 0 ) return;
 
 	protocols::rigid::RigidBodyMoverOP mover;
-	if(rotate_info_.distribution == Uniform){
+	if ( rotate_info_.distribution == Uniform ) {
 		mover = protocols::rigid::RigidBodyMoverOP( new protocols::rigid::RigidBodyRandomizeMover( pose, rotate_info_.jump_id, protocols::rigid::partner_downstream, rotate_info_.degrees, rotate_info_.degrees) );
-	}
-	else if(rotate_info_.distribution == Gaussian){
+	} else if ( rotate_info_.distribution == Gaussian ) {
 		mover = protocols::rigid::RigidBodyMoverOP( new protocols::rigid::RigidBodyPerturbMover ( rotate_info_.jump_id, rotate_info_.degrees, 0 /*translate*/) );
 	}
 	//core::Size chain_begin = pose.conformation().chain_begin(rotate_info_.chain_id);
@@ -242,10 +238,10 @@ void Rotate::rotate_ligand(core::pose::Pose & pose)
 
 utility::vector1< Ligand_info>
 Rotate::create_random_rotations(
-		utility::pointer::shared_ptr<core::grid::CartGrid<int> > const & grid,
-		protocols::rigid::RigidBodyMoverOP const mover,
-		core::pose::Pose & pose,
-		core::Size begin
+	utility::pointer::shared_ptr<core::grid::CartGrid<int> > const & grid,
+	protocols::rigid::RigidBodyMoverOP const mover,
+	core::pose::Pose & pose,
+	core::Size begin
 )const{
 	core::Size const end = pose.conformation().chain_end(rotate_info_.chain_id);
 	core::Size const heavy_atom_number= core::pose::num_heavy_atoms(begin, end, pose);
@@ -259,26 +255,26 @@ Rotate::create_random_rotations(
 
 	Ligand_info best=create_random_rotation(grid, mover, center, begin, end, local_pose);// first case;
 	add_ligand_conditionally(best, ligands, heavy_atom_number);
-	for(core::Size i=1; i<= rotate_info_.cycles && ligands.size() <= max_diversity ; ++i){
+	for ( core::Size i=1; i<= rotate_info_.cycles && ligands.size() <= max_diversity ; ++i ) {
 		Ligand_info current =create_random_rotation(grid, mover, center, begin, end, local_pose);
-		if (current < best){
+		if ( current < best ) {
 			best= current;
 		}
 		add_ligand_conditionally(current, ligands, heavy_atom_number);
 	}
-	if(ligands.empty()){
+	if ( ligands.empty() ) {
 		ligands.push_back(best);
 	}
 	return ligands;
 }
 
 Ligand_info Rotate::create_random_rotation(
-		utility::pointer::shared_ptr<core::grid::CartGrid<int> > const & grid,
-		protocols::rigid::RigidBodyMoverOP const mover,
-		core::Vector const center,
-		core::Size const begin,
-		core::Size const end,
-		core::pose::Pose & local_pose
+	utility::pointer::shared_ptr<core::grid::CartGrid<int> > const & grid,
+	protocols::rigid::RigidBodyMoverOP const mover,
+	core::Vector const center,
+	core::Size const begin,
+	core::Size const end,
+	core::pose::Pose & local_pose
 ) const{
 	apply_rotate(mover, local_pose, center, rotate_info_.jump_id, rotate_info_.tag_along_jumps);
 	rb_grid_rotamer_trials_atr_rep(*grid, local_pose, begin, end);
@@ -291,7 +287,7 @@ Ligand_info Rotate::create_random_rotation(
 
 	ligand_info.residues = core::pose::get_chain_residues(local_pose, rotate_info_.chain_id);
 
-	BOOST_FOREACH(core::Size chain_id, rotate_info_.tag_along_chains){
+	BOOST_FOREACH ( core::Size chain_id, rotate_info_.tag_along_chains ) {
 		core::conformation::ResidueCOPs tag_along_residues = core::pose::get_chain_residues(local_pose, chain_id);
 		assert(tag_along_residues.size() == 1);
 		ligand_info.tag_along_residues.push_back(tag_along_residues[1]);
@@ -300,24 +296,24 @@ Ligand_info Rotate::create_random_rotation(
 }
 
 void add_ligand_conditionally(
-		Ligand_info const & ligand_info,
-		utility::vector1< Ligand_info> & ligands,
-		core::Size const heavy_atom_number
+	Ligand_info const & ligand_info,
+	utility::vector1< Ligand_info> & ligands,
+	core::Size const heavy_atom_number
 ){
-	if(
+	if (
 			check_score(ligand_info, heavy_atom_number)
 			&& check_RMSD(ligand_info, heavy_atom_number, ligands)
-	){
+			) {
 		ligands.push_back(ligand_info);
 	}
 }
 
 void apply_rotate(
-		protocols::rigid::RigidBodyMoverOP mover,
-		core::pose::Pose & pose,
-		core::Vector const & center,
-		core::Size jump_id,
-		utility::vector1<core::Size> const tag_along_jumps
+	protocols::rigid::RigidBodyMoverOP mover,
+	core::pose::Pose & pose,
+	core::Vector const & center,
+	core::Size jump_id,
+	utility::vector1<core::Size> const tag_along_jumps
 ){
 	mover->rb_jump(jump_id);
 	mover->apply(pose);
@@ -326,7 +322,7 @@ void apply_rotate(
 
 	mover->freeze();
 
-	BOOST_FOREACH(core::Size jump_id, tag_along_jumps){
+	BOOST_FOREACH ( core::Size jump_id, tag_along_jumps ) {
 		mover->rb_jump(jump_id);
 		mover->apply(pose);
 	}
@@ -336,8 +332,8 @@ void apply_rotate(
 }
 
 bool check_score(
-		Ligand_info const ligand,
-		core::Size const heavy_atom_number
+	Ligand_info const ligand,
+	core::Size const heavy_atom_number
 ){
 	int const rep_threshold=0;
 	int const atr_threshold=-(int) (0.85 * heavy_atom_number);
@@ -345,9 +341,9 @@ bool check_score(
 }
 
 bool check_RMSD(
-		Ligand_info const ligand,
-		core::Size const heavy_atom_number,
-		utility::vector1< Ligand_info> const & ligands
+	Ligand_info const ligand,
+	core::Size const heavy_atom_number,
+	utility::vector1< Ligand_info> const & ligands
 ){
 	assert(heavy_atom_number > 0);
 
@@ -356,15 +352,15 @@ bool check_RMSD(
 
 	core::conformation::ResidueCOPs const & these_residues= ligand.get_residues();
 
-	BOOST_FOREACH(Ligand_info ligand_info, ligands){ // if ligands is empty we still return true so no need to check for this condition.
+	BOOST_FOREACH ( Ligand_info ligand_info, ligands ) { // if ligands is empty we still return true so no need to check for this condition.
 		core::conformation::ResidueCOPs const & compare_residues= ligand_info.get_residues();
 		runtime_assert(these_residues.size() == compare_residues.size());
 
 		core::Real const rms = (compare_residues.size() == 1) ///TODO write multi_residue automorphic fxn.
-				? core::scoring::automorphic_rmsd(*these_residues[1], *compare_residues[1], false)
-				:core::scoring::rmsd_no_super(these_residues, compare_residues, core::scoring::is_ligand_heavyatom_residues);
+			? core::scoring::automorphic_rmsd(*these_residues[1], *compare_residues[1], false)
+			:core::scoring::rmsd_no_super(these_residues, compare_residues, core::scoring::is_ligand_heavyatom_residues);
 
-		if (rms < diverse_rms) return false;
+		if ( rms < diverse_rms ) return false;
 	}
 	return true;
 }

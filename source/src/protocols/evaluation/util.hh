@@ -10,7 +10,7 @@
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange

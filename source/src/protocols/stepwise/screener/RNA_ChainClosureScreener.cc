@@ -31,50 +31,50 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-  RNA_ChainClosureScreener::RNA_ChainClosureScreener( modeler::rna::checker::RNA_ChainClosureCheckerOP chain_closure_checker ):
-		SampleApplier( chain_closure_checker->pose() ),
-		chain_closure_checker_( chain_closure_checker ),
-		screening_pose_( chain_closure_checker->pose() ),
-		just_do_closure_check_( false )
-	{}
+RNA_ChainClosureScreener::RNA_ChainClosureScreener( modeler::rna::checker::RNA_ChainClosureCheckerOP chain_closure_checker ):
+	SampleApplier( chain_closure_checker->pose() ),
+	chain_closure_checker_( chain_closure_checker ),
+	screening_pose_( chain_closure_checker->pose() ),
+	just_do_closure_check_( false )
+{}
 
-	//Constructor -- this one is useful if we don't want to close the chain but check if it is already closed.
-  RNA_ChainClosureScreener::RNA_ChainClosureScreener( modeler::rna::checker::RNA_ChainClosureCheckerOP chain_closure_checker,
-																							pose::Pose & screening_pose,
-																							bool const just_do_closure_check /*= false */ ):
-		SampleApplier( chain_closure_checker->pose() ),
-		chain_closure_checker_( chain_closure_checker ),
-		screening_pose_( screening_pose ),
-		just_do_closure_check_( just_do_closure_check )
-	{}
+//Constructor -- this one is useful if we don't want to close the chain but check if it is already closed.
+RNA_ChainClosureScreener::RNA_ChainClosureScreener( modeler::rna::checker::RNA_ChainClosureCheckerOP chain_closure_checker,
+	pose::Pose & screening_pose,
+	bool const just_do_closure_check /*= false */ ):
+	SampleApplier( chain_closure_checker->pose() ),
+	chain_closure_checker_( chain_closure_checker ),
+	screening_pose_( screening_pose ),
+	just_do_closure_check_( just_do_closure_check )
+{}
 
-	//Destructor
-	RNA_ChainClosureScreener::~RNA_ChainClosureScreener()
-	{}
+//Destructor
+RNA_ChainClosureScreener::~RNA_ChainClosureScreener()
+{}
 
-	/////////////////////////////////////////
-	bool
-	RNA_ChainClosureScreener::check_screen() {
-		if ( just_do_closure_check_ ) return chain_closure_checker_->check_loop_closed( screening_pose_ );
-		return chain_closure_checker_->check_screen( screening_pose_ );
-	}
+/////////////////////////////////////////
+bool
+RNA_ChainClosureScreener::check_screen() {
+	if ( just_do_closure_check_ ) return chain_closure_checker_->check_loop_closed( screening_pose_ );
+	return chain_closure_checker_->check_screen( screening_pose_ );
+}
 
-	/////////////////////////////////////////
-	void
-	RNA_ChainClosureScreener::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
-		update_mover->add_mover( chain_closure_checker_ );
-		restore_mover->add_mover( 0 );
-	}
+/////////////////////////////////////////
+void
+RNA_ChainClosureScreener::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
+	update_mover->add_mover( chain_closure_checker_ );
+	restore_mover->add_mover( 0 );
+}
 
-	////////////////////////////////////////////////////////////////////////////
-	// this is also used in StepWiseResiduePairScreener and in principle this class
-	//  could derive from that parent, but we also want SampleApplier functionality...
-	void
-	RNA_ChainClosureScreener::fast_forward( sampler::StepWiseSamplerBaseOP sampler ){
-		fast_forward_to_next_residue_pair( sampler,
-																			 chain_closure_checker_->five_prime_res(),
-																			 chain_closure_checker_->five_prime_res() + 1); // in screener util.
-	}
+////////////////////////////////////////////////////////////////////////////
+// this is also used in StepWiseResiduePairScreener and in principle this class
+//  could derive from that parent, but we also want SampleApplier functionality...
+void
+RNA_ChainClosureScreener::fast_forward( sampler::StepWiseSamplerBaseOP sampler ){
+	fast_forward_to_next_residue_pair( sampler,
+		chain_closure_checker_->five_prime_res(),
+		chain_closure_checker_->five_prime_res() + 1); // in screener util.
+}
 
 } //screener
 } //stepwise

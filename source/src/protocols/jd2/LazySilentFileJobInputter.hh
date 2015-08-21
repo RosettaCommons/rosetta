@@ -20,31 +20,31 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
+namespace protocols {
 namespace jd2 {
 
-  class LazySilentFileJobInputter : public protocols::jd2::JobInputter
-  {
-  public:
+class LazySilentFileJobInputter : public protocols::jd2::JobInputter
+{
+public:
 
-    LazySilentFileJobInputter();
+	LazySilentFileJobInputter();
 
-    virtual ~LazySilentFileJobInputter();
+	virtual ~LazySilentFileJobInputter();
 
-    virtual void pose_from_job( core::pose::Pose & pose, JobOP job );
+	virtual void pose_from_job( core::pose::Pose & pose, JobOP job );
 
-    virtual core::io::silent::SilentStruct const& struct_from_job( JobOP job );
+	virtual core::io::silent::SilentStruct const& struct_from_job( JobOP job );
 
-    virtual void fill_jobs( JobsContainer & jobs );
+	virtual void fill_jobs( JobsContainer & jobs );
 
-    virtual JobInputterInputSource::Enum input_source() const;
+	virtual JobInputterInputSource::Enum input_source() const;
 
-    core::io::silent::SilentFileData const& silent_file_data() const { return sfd_; };
+	core::io::silent::SilentFileData const& silent_file_data() const { return sfd_; };
 
 
-  private:
-    core::io::silent::SilentFileData sfd_;
-  };
+private:
+	core::io::silent::SilentFileData sfd_;
+};
 
 } //jd2
 } //protocols

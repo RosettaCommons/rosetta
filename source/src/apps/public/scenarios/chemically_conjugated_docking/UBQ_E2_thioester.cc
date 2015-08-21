@@ -149,7 +149,7 @@ public:
 		using namespace core::pose::metrics;
 		using namespace protocols::toolbox::pose_metric_calculators;
 		//magic number: chains 1 and 2; set up interface SASA calculator
-		if( !CalculatorFactory::Instance().check_calculator_exists( InterfaceSasaDefinition_ ) ){
+		if ( !CalculatorFactory::Instance().check_calculator_exists( InterfaceSasaDefinition_ ) ) {
 			CalculatorFactory::Instance().register_calculator( InterfaceSasaDefinition_, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator(core::Size(1), core::Size(2)) ));
 		}
 
@@ -182,8 +182,8 @@ public:
 		core::import_pose::pose_from_pdb( UBQ, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQpdb].value() );
 		core::Size const UBQlength = UBQ.total_residue();
 		core::pose::PoseOP UBQ_second;
-		if(two_ubiquitins_) UBQ_second = core::pose::PoseOP( new core::pose::Pose(UBQ) );
-		if(basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQ2_pdb].user()){
+		if ( two_ubiquitins_ ) UBQ_second = core::pose::PoseOP( new core::pose::Pose(UBQ) );
+		if ( basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQ2_pdb].user() ) {
 			core::import_pose::pose_from_pdb( *UBQ_second, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQ2_pdb].value() );
 		}
 
@@ -229,14 +229,14 @@ public:
 
 		//cross fingers - making the actual connection!
 		/*void
-			append_residue_by_bond(
-			conformation::Residue const & new_rsd,
-			bool const build_ideal_geometry = false,
-			int const connection = 0,
-			Size const anchor_residue = 0,
-			int const anchor_connection = 0,
-			bool const start_new_chain = false
-			)*/
+		append_residue_by_bond(
+		conformation::Residue const & new_rsd,
+		bool const build_ideal_geometry = false,
+		int const connection = 0,
+		Size const anchor_residue = 0,
+		int const anchor_connection = 0,
+		bool const start_new_chain = false
+		)*/
 		core::pose::Pose complex(E2);
 		complex.append_residue_by_bond( UBQ.residue( UBQ_term ), true, ubq_connid, E2_cys, cyx_connid );
 		//complex.dump_pdb("just1_complex.pdb");
@@ -261,7 +261,7 @@ public:
 		//complex.dump_pdb("just1_complex2.pdb");
 
 		//now add the rest of ubiquitin
-		for( core::Size i=UBQ_term-1; i>= 1; --i ) {
+		for ( core::Size i=UBQ_term-1; i>= 1; --i ) {
 			complex.prepend_polymer_residue_before_seqpos( UBQ.residue(i), E2length+1, false );
 		}
 
@@ -282,13 +282,13 @@ public:
 		atomIDs[7] = core::id::AtomID( ubq_rsd_type.atom_index("N" ), complexlength );
 		atomIDs[8] = core::id::AtomID( ubq_rsd_type.atom_index("C" ), complexlength-1 );
 
-		if(two_ubiquitins_) {
+		if ( two_ubiquitins_ ) {
 			//now add in the second ubiquitin - link to thioester C=O from UB_lys
 			core::Size const ub_lys_pos(basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQ2_lys].value());
 			complex.conformation().append_residue_by_jump(UBQ_second->residue(ub_lys_pos), complexlength, "C", "NZ", true);
 			//there is a bug lurking here somewhere for C-terminal lysines
-			for( core::Size i(ub_lys_pos+1); i <= UBQ_second->total_residue(); ++i) complex.conformation().append_polymer_residue_after_seqpos(UBQ_second->residue(i), complex.total_residue(), false);
-			for( core::Size i(ub_lys_pos-1); i >= 1; --i) complex.conformation().prepend_polymer_residue_before_seqpos(UBQ_second->residue(i), complexlength+1, false);
+			for ( core::Size i(ub_lys_pos+1); i <= UBQ_second->total_residue(); ++i ) complex.conformation().append_polymer_residue_after_seqpos(UBQ_second->residue(i), complex.total_residue(), false);
+			for ( core::Size i(ub_lys_pos-1); i >= 1; --i ) complex.conformation().prepend_polymer_residue_before_seqpos(UBQ_second->residue(i), complexlength+1, false);
 
 			//check it!
 			TR << complex.fold_tree() << std::endl;
@@ -320,14 +320,14 @@ public:
 
 			//force NZ (alone) to proper position - this breaks the lysine
 			complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("NZ"), ubq2_lys_pos_in_complex_), newpos);
-			//	complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("CE"), ubq2_lys_pos_in_complex_), newposC);
+			// complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("CE"), ubq2_lys_pos_in_complex_), newposC);
 
 			//get a copy of that jump
 			core::kinematics::Jump newjump(complex.atom_tree().jump(core::id::AtomID(lys_rsd_type.atom_index("NZ"), ubq2_lys_pos_in_complex_)));
 
 			//reset NZ position to fix the lysine
 			complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("NZ"), ubq2_lys_pos_in_complex_), oldpos);
-			//	complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("CE"), ubq2_lys_pos_in_complex_), oldposC);
+			// complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("CE"), ubq2_lys_pos_in_complex_), oldposC);
 
 			//reapply the properly-calculated jump
 			complex.conformation().set_jump(1, newjump);
@@ -339,7 +339,7 @@ public:
 		//occlude ras
 
 		//check if extra bodies exist
-		if (basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies].user() == true) {
+		if ( basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies].user() == true ) {
 			extra_bodies_chains_ = apps::public1::scenarios::chemically_conjugated_docking::add_extra_bodies(complex, TR);
 		}
 
@@ -356,9 +356,9 @@ public:
 		//small/shear behave improperly @ the last residue - psi is considered nonexistent and the wrong phis apply.
 		bool const dont_minimize_omega(basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::dont_minimize_omega].value());
 		thioester_mm_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
-		for( core::Size i(1), ntailres(basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::n_tail_res]); i<ntailres; ++i){ //slightly irregular < comparison because C-terminus is functionally zero-indexed
+		for ( core::Size i(1), ntailres(basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::n_tail_res]); i<ntailres; ++i ) { //slightly irregular < comparison because C-terminus is functionally zero-indexed
 			thioester_mm_->set_bb((complexlength-i), true);
-			if(dont_minimize_omega){
+			if ( dont_minimize_omega ) {
 				thioester_mm_->set( core::id::TorsionID(complexlength-i, core::id::BB, core::id::omega_torsion), false);
 
 			}
@@ -376,7 +376,7 @@ public:
 			loop_ = *( protocols::loops::Loops( true ).begin() );
 			TR << "loop " <<  loop_ << std::endl;
 			//set up interface-plus-neighbors-positions operation
-			for (core::Size j(loop_.start()), end(loop_.stop()); j <= end; ++j){
+			for ( core::Size j(loop_.start()), end(loop_.stop()); j <= end; ++j ) {
 				loop_posns.insert(j);
 			}//for each residue in loop
 		} //no else needed - default loop is safe enough
@@ -394,15 +394,15 @@ public:
 		//prevent repacking at linkage cysteine!
 		PreventRepackingOP prevent( new PreventRepacking );
 		prevent->include_residue(E2_cys);
-		if(two_ubiquitins_) {
+		if ( two_ubiquitins_ ) {
 			//prevent repacking at the lysine!
 			prevent->include_residue(ubq2_lys_pos_in_complex_);
- 		}
+		}
 		task_factory_->push_back(prevent);
 
 		//old way - this is not wrong, but it is inferior to the method below
 		using core::pose::metrics::PoseMetricCalculatorOP;
-		if(basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::publication].value()){
+		if ( basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::publication].value() ) {
 			using core::pose::metrics::PoseMetricCalculatorOP;
 			std::string const interface_calc("UBQE2_InterfaceNeighborDefinitionCalculator");
 			std::string const neighborhood_calc("UBQE2_NeighborhoodByDistanceCalculator");
@@ -429,7 +429,7 @@ public:
 			core::Size const E2_end(complex.conformation().chain_end(1));
 			regions.push_back(empty); //insert a new set to work with
 			core::Size const E2_index(1);
-			for(core::Size i(1); i<=E2_end; ++i) {
+			for ( core::Size i(1); i<=E2_end; ++i ) {
 				regions[E2_index].insert(i);
 			}
 
@@ -438,7 +438,7 @@ public:
 			core::Size const tail_begin(complexlength-basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::n_tail_res]+1); //odd construction accounts for functional zero-indexing of the tail
 			regions.push_back(empty); //insert a new set to work with
 			core::Size const tail_index(2);
-			for(core::Size i(complexlength); i>=tail_begin; --i) {
+			for ( core::Size i(complexlength); i>=tail_begin; --i ) {
 				regions[tail_index].insert(i);
 			}
 
@@ -446,29 +446,29 @@ public:
 			//including the tail in both groups ensures it will always repack
 			regions.push_back(empty); //insert a new set to work with
 			core::Size const ubq_index(3);
-			for(core::Size i(E2_end+1); i<=complexlength; ++i) {
+			for ( core::Size i(E2_end+1); i<=complexlength; ++i ) {
 				regions[ubq_index].insert(i);
 			}
 
-			if(two_ubiquitins_) {
+			if ( two_ubiquitins_ ) {
 				//second ubiquitin
 				TR << "Assuming second ubiquitin is the third chain" << std::endl;
 				runtime_assert(complex.conformation().num_chains() >= 3);
 				regions.push_back(empty); //insert a new set to work with
 				core::Size const ubq2_index(4);
 				core::Size const ubq2_end(complex.conformation().chain_end(3));
-				for(core::Size i(complexlength+1); i<=ubq2_end; ++i) {
+				for ( core::Size i(complexlength+1); i<=ubq2_end; ++i ) {
 					regions[ubq2_index].insert(i);
 				}
 			}
 
 			//this will double-count loop residues with E2 - but that's fine, it just ensures they pack no matter what
-			if( !loop_posns.empty() ){
+			if ( !loop_posns.empty() ) {
 				regions.push_back(loop_posns);
 			}
 
 			//if extra bodies exist, we are adding them to the first chain set
-			if (basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies].user() == true) {
+			if ( basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies].user() == true ) {
 				apps::public1::scenarios::chemically_conjugated_docking::pack_extra_bodies(extra_bodies_chains_, complex, regions[E2_index], TR);
 			}
 
@@ -476,15 +476,15 @@ public:
 			//if you have 1, 2, 3, 4; make 1-2, 1-3, 1-4, 2-3, 2-4, 3-4
 			core::Size const num_regions(regions.size());
 			utility::vector1< std::pair< std::set<core::Size>, std::set<core::Size> > > vector_of_pairs;
-			for(core::Size first_group(1); first_group < num_regions; ++first_group) {
-				for(core::Size second_group(first_group+1); second_group <= num_regions; ++second_group){
+			for ( core::Size first_group(1); first_group < num_regions; ++first_group ) {
+				for ( core::Size second_group(first_group+1); second_group <= num_regions; ++second_group ) {
 					vector_of_pairs.push_back(std::make_pair(regions[first_group], regions[second_group]));
 				}
 			}
 
 			//check contents of vector_of_pairs
 			core::Size const num_pairs(vector_of_pairs.size());
-			for(core::Size i(1); i<=num_pairs; ++i){
+			for ( core::Size i(1); i<=num_pairs; ++i ) {
 				core::Size const
 					onestart(*(vector_of_pairs[i].first.begin())),
 					onestop(*(vector_of_pairs[i].first.rbegin())),
@@ -494,29 +494,29 @@ public:
 				TR << "IGNC will compare group " << onestart << "-" << onestop << " with " << twostart << "-" << twostop << std::endl;
 
 				// if (basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies].user() == true) {
-				// 	TR.Error << "upcoming debug me non-contiguous set errors are not really errors if using extra bodies" << std::endl;
+				//  TR.Error << "upcoming debug me non-contiguous set errors are not really errors if using extra bodies" << std::endl;
 				// }
 
 				// core::Size guess(onestart);
 				// for(std::set<core::Size>::const_iterator iter(vector_of_pairs[i].first.begin()), end(vector_of_pairs[i].first.end()); iter != end; ++iter) {
-				// 	if(guess++ != *iter) TR.Error << "non-contiguous set, debug me!" << std::endl;
-				// 	TR << *iter << std::endl;
+				//  if(guess++ != *iter) TR.Error << "non-contiguous set, debug me!" << std::endl;
+				//  TR << *iter << std::endl;
 				// }
 				// guess = twostart;
 				// for(std::set<core::Size>::const_iterator iter(vector_of_pairs[i].second.begin()), end(vector_of_pairs[i].second.end()); iter != end; ++iter) {
-				// 	if(guess++ != *iter) TR.Error << "non-contiguous set, debug me!" << std::endl;
-				// 	TR << *iter << std::endl;
+				//  if(guess++ != *iter) TR.Error << "non-contiguous set, debug me!" << std::endl;
+				//  TR << *iter << std::endl;
 				// }
 
 			}
 
-			if (basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies].user() == true) {
+			if ( basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies].user() == true ) {
 				TR << "Those group labels do not take the piling of extra bodies into the first nonmoving group into account" << std::endl;
 			}
 
 			//check if calculator exists; create if not
 			std::string const calc("IGNC_UBQ_E2_thioester");
-			if(core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists(calc)){
+			if ( core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists(calc) ) {
 				core::pose::metrics::CalculatorFactory::Instance().remove_calculator(calc);
 				TR.Error << "removed a PoseMetricCalculator " << calc << ", track down why" << std::endl;
 			}
@@ -539,7 +539,7 @@ public:
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose( starting_pose_ );
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *fullatom_scorefunction_ );
 		core::scoring::constraints::ConstraintSetCOP cst_set(starting_pose_.constraint_set());
-		if(cst_set && false){
+		if ( cst_set && false ) {
 			cst_set->show_definition(TR, starting_pose_);
 		}
 	}
@@ -549,7 +549,7 @@ public:
 	virtual
 	void
 	apply( core::pose::Pose & pose ){
-		if( !init_for_input_yet_ ) init_on_new_input();
+		if ( !init_for_input_yet_ ) init_on_new_input();
 
 		pose = starting_pose_;
 
@@ -622,7 +622,7 @@ public:
 		backbone_mover->add_mover(DOF_mover_phi, 0.75);
 
 		///////////////////////////loop movement/////////////////////////////////////////////////////
-		if( loop_.stop() - loop_.start() >= 3 ) { //empty loop; skip it!
+		if ( loop_.stop() - loop_.start() >= 3 ) { //empty loop; skip it!
 			//make kinematic mover
 			using protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP;
 			using protocols::loops::loop_closure::kinematic_closure::KinematicMover;
@@ -640,7 +640,7 @@ public:
 
 		}
 
-		if(two_ubiquitins_){
+		if ( two_ubiquitins_ ) {
 			//////////////////////////////RotateJumpAxisMover for second ubiquitin//////////////////////
 			protocols::rigid::RotateJumpAxisMoverOP RJAmover( new protocols::rigid::RotateJumpAxisMover(1) );
 			backbone_mover->add_mover(RJAmover, 1);
@@ -656,7 +656,7 @@ public:
 			task->nonconst_residue_task(Kres).or_ex2_sample_level(core::pack::task::EX_SIX_QUARTER_STEP_STDDEVS);
 			task->nonconst_residue_task(Kres).or_ex3_sample_level(core::pack::task::EX_SIX_QUARTER_STEP_STDDEVS);
 			task->nonconst_residue_task(Kres).or_ex4_sample_level(core::pack::task::EX_SIX_QUARTER_STEP_STDDEVS);
-			//		TR << *task << std::endl;
+			//  TR << *task << std::endl;
 
 			protocols::simple_moves::sidechain_moves::SidechainMoverOP SCmover( new protocols::simple_moves::sidechain_moves::SidechainMover() );
 			SCmover->set_task(task);
@@ -680,20 +680,20 @@ public:
 		using protocols::simple_moves::MinMoverOP;
 		using protocols::simple_moves::MinMover;
 		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(
-																				thioester_mm_,
-																				fullatom_scorefunction_,
-																				basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
-																				0.01,
-																				true /*use_nblist*/ ) );
+			thioester_mm_,
+			fullatom_scorefunction_,
+			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
+			0.01,
+			true /*use_nblist*/ ) );
 
 		/////////////////////////////////rotamer trials mover///////////////////////////////////////////
 		using protocols::simple_moves::RotamerTrialsMoverOP;
 		using protocols::simple_moves::EnergyCutRotamerTrialsMover;
 		protocols::simple_moves::RotamerTrialsMoverOP rt_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover(
-																																	fullatom_scorefunction_,
-																																	task_factory_,
-																																	mc,
-																																	0.01 /*energycut*/ ) );
+			fullatom_scorefunction_,
+			task_factory_,
+			mc,
+			0.01 /*energycut*/ ) );
 
 		///////////////////////package RT/min for JumpOutMover////////////////////////////////////////
 		protocols::moves::SequenceMoverOP RT_min_seq( new protocols::moves::SequenceMover );
@@ -701,10 +701,10 @@ public:
 		RT_min_seq->add_mover(min_mover);
 
 		protocols::moves::JumpOutMoverOP bb_if_RT_min( new protocols::moves::JumpOutMover(
-																																											backbone_mover,
-																																											RT_min_seq,
-																																											fullatom_scorefunction_,
-																																											20.0) );
+			backbone_mover,
+			RT_min_seq,
+			fullatom_scorefunction_,
+			20.0) );
 
 		///////////////////////////////repack///////////////////////////////////////////////
 		protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
@@ -712,11 +712,11 @@ public:
 		pack_mover->score_function( fullatom_scorefunction_ );
 
 		protocols::simple_moves::MinMoverOP min_mover_pack( new protocols::simple_moves::MinMover(
-																						 thioester_mm_,
-																						 fullatom_scorefunction_,
-																						 basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
-																						 0.01,
-																						 true /*use_nblist*/ ) );
+			thioester_mm_,
+			fullatom_scorefunction_,
+			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
+			0.01,
+			true /*use_nblist*/ ) );
 
 		using protocols::simple_moves::TaskAwareMinMoverOP;
 		using protocols::simple_moves::TaskAwareMinMover;
@@ -730,7 +730,7 @@ public:
 		TR << "   Current     Low    total cycles =" << refine_applies << std::endl;
 		for ( core::Size i(1); i <= refine_applies; ++i ) {
 			//pdb_out1.apply(pose);
-			if( (i % repack_cycles == 0) || (i == refine_applies) ) { //full repack
+			if ( (i % repack_cycles == 0) || (i == refine_applies) ) { //full repack
 				pack_mover->apply(pose);
 				TAmin_mover->apply(pose);
 				//} else if ( i % min_cycles == 0 ) { //minimize
@@ -755,14 +755,14 @@ public:
 
 		//Filter on total score
 		core::Real const score((*fullatom_scorefunction_)(pose));
-		if( score > basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::scorefilter].value() ){
+		if ( score > basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::scorefilter].value() ) {
 			set_last_move_status(protocols::moves::FAIL_RETRY);
 			TR << "total score filter failed; score " << score << std::endl;
 			return;
 		}
 
 		//these interface analyses are less interpretable in the three-body case
-		if(!two_ubiquitins_ && !basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies].user()) {
+		if ( !two_ubiquitins_ && !basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies].user() ) {
 
 			//filter on interface SASA - requires some hacking to break up thioester
 			core::pose::Pose copy(pose);
@@ -781,7 +781,7 @@ public:
 			//Filter on SASA
 			basic::MetricValue< core::Real > mv_delta_sasa;
 			copy.metric(InterfaceSasaDefinition_, "delta_sasa", mv_delta_sasa);
-			if(mv_delta_sasa.value() < basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::SASAfilter].value()){
+			if ( mv_delta_sasa.value() < basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::SASAfilter].value() ) {
 				set_last_move_status(protocols::moves::FAIL_RETRY);
 				TR << "interface SASA filter failed; SASA " << mv_delta_sasa.value() << std::endl;
 				return;
@@ -801,7 +801,7 @@ public:
 		job_me->add_string_real_pair("Cterm_psi_SG-C-CA-N", degrees(pose.atom_tree().torsion_angle(atomIDs[4], atomIDs[5], atomIDs[6], atomIDs[7])));
 		job_me->add_string_real_pair("Cterm_phi_C-CA-N-C", degrees(pose.atom_tree().torsion_angle(atomIDs[5], atomIDs[6], atomIDs[7], atomIDs[8])));
 
-		if ( basic::options::option[ basic::options::OptionKeys::chemically_conjugated_docking::publication ].value()) {
+		if ( basic::options::option[ basic::options::OptionKeys::chemically_conjugated_docking::publication ].value() ) {
 			//I44 neighbors
 			basic::MetricValue< core::Size > I44numn;
 			pose.metric("I44neighbors", "num_neighbors", I44numn);
@@ -836,8 +836,8 @@ private:
 	core::scoring::ScoreFunctionOP fullatom_scorefunction_;
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::kinematics::MoveMapOP thioester_mm_;
-// 	core::kinematics::MoveMapOP loop_mm_;
-// 	core::kinematics::MoveMapOP all_mm_;
+	//  core::kinematics::MoveMapOP loop_mm_;
+	//  core::kinematics::MoveMapOP all_mm_;
 
 	protocols::loops::Loop loop_;
 
@@ -865,23 +865,24 @@ typedef utility::pointer::shared_ptr< UBQ_E2Mover > UBQ_E2MoverOP;
 
 int main( int argc, char* argv[] )
 {
-try {
-	//initialize options
-	devel::init(argc, argv);
-	basic::prof_reset();
+	try {
+		//initialize options
+		devel::init(argc, argv);
+		basic::prof_reset();
 
-	if(basic::options::option[ basic::options::OptionKeys::in::file::s ].user()
-		|| basic::options::option[ basic::options::OptionKeys::in::file::l ].user()
-		|| basic::options::option[ basic::options::OptionKeys::in::file::silent ].user())
-		utility_exit_with_message("do not use an input PDB with this protocol (program uses internally); use -UBQpdb and -E2pdb instead");
+		if ( basic::options::option[ basic::options::OptionKeys::in::file::s ].user()
+				|| basic::options::option[ basic::options::OptionKeys::in::file::l ].user()
+				|| basic::options::option[ basic::options::OptionKeys::in::file::silent ].user() ) {
+			utility_exit_with_message("do not use an input PDB with this protocol (program uses internally); use -UBQpdb and -E2pdb instead");
+		}
 
-	protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new UBQ_E2Mover ));
+		protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new UBQ_E2Mover ));
 
-	basic::prof_show();
-	TR << "************************d**o**n**e**************************************" << std::endl;
-} catch ( utility::excn::EXCN_Base const & e ) {
-	std::cout << "caught exception " << e.msg() << std::endl;
-	return -1;
-}
+		basic::prof_show();
+		TR << "************************d**o**n**e**************************************" << std::endl;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 	return 0;
 }

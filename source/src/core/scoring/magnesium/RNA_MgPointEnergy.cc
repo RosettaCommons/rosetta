@@ -124,7 +124,7 @@ RNA_MgPointEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const
 
 //////////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_MgPointEnergy::setup_for_packing( pose::Pose & pose,	utility::vector1< bool > const &, utility::vector1< bool > const &  ) const
+RNA_MgPointEnergy::setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const &  ) const
 {
 	pose.update_residue_neighbors();
 	rna_mg_knowledge_based_potential_->setup_info_for_mg_calculation( pose );
@@ -161,89 +161,89 @@ RNA_MgPointEnergy::residue_pair_energy(
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_MgPointEnergy::residue_pair_energy_one_way(
-					   conformation::Residue const & rsd1, // The RNA residue
-					   conformation::Residue const & rsd2, // The Mg(2+)
-					   pose::Pose const & pose,
-					   EnergyMap & emap
-					   ) const{
+	conformation::Residue const & rsd1, // The RNA residue
+	conformation::Residue const & rsd2, // The Mg(2+)
+	pose::Pose const & pose,
+	EnergyMap & emap
+) const{
 
-  rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
-  utility::vector1< bool > const & is_magnesium = rna_scoring_info.is_magnesium();
+	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
+	utility::vector1< bool > const & is_magnesium = rna_scoring_info.is_magnesium();
 
-  runtime_assert( rsd1.is_RNA() );
-  runtime_assert( is_magnesium[ rsd2.seqpos() ] );
+	runtime_assert( rsd1.is_RNA() );
+	runtime_assert( is_magnesium[ rsd2.seqpos() ] );
 
-  Real score( 0.0 ), score_indirect( 0.0 );
+	Real score( 0.0 ), score_indirect( 0.0 );
 
-  // get magnesium position
-  Size const j = 1;  //First atom of Mg2+ residue is assumed to be Mg2+ atom.
-  runtime_assert( rsd2.atom_name( j ) ==  "MG  " );
-  if ( rsd2.is_virtual( j ) ) return;
+	// get magnesium position
+	Size const j = 1;  //First atom of Mg2+ residue is assumed to be Mg2+ atom.
+	runtime_assert( rsd2.atom_name( j ) ==  "MG  " );
+	if ( rsd2.is_virtual( j ) ) return;
 
-  Vector const & j_xyz = rsd2.xyz( j );
+	Vector const & j_xyz = rsd2.xyz( j );
 
-  // Loop over potential ligand positions.
-  Size const pos1 = rsd1.seqpos();
+	// Loop over potential ligand positions.
+	Size const pos1 = rsd1.seqpos();
 
-  // These should be filled in during a pre-scoring step (setup_info_for_mg_calculation ).
-  utility::vector1< utility::vector1< Size > > const
-    atom_numbers_for_mg_calculation( rna_scoring_info.atom_numbers_for_mg_calculation() );
-  utility::vector1< Size > const & atom_numbers1   ( atom_numbers_for_mg_calculation[ pos1 ]  );
+	// These should be filled in during a pre-scoring step (setup_info_for_mg_calculation ).
+	utility::vector1< utility::vector1< Size > > const
+		atom_numbers_for_mg_calculation( rna_scoring_info.atom_numbers_for_mg_calculation() );
+	utility::vector1< Size > const & atom_numbers1   ( atom_numbers_for_mg_calculation[ pos1 ]  );
 
 
-  // apply angle cut.
-  bool const apply_angle_potential_( true );
+	// apply angle cut.
+	bool const apply_angle_potential_( true );
 
-  //Distance const direct_interaction_cutoff_( 4.0 ), indirect_interaction_cutoff_( 8.0 );
-  Distance const direct_interaction_cutoff_( 999.0 ), indirect_interaction_cutoff_( 999.0 );
+	//Distance const direct_interaction_cutoff_( 4.0 ), indirect_interaction_cutoff_( 8.0 );
+	Distance const direct_interaction_cutoff_( 999.0 ), indirect_interaction_cutoff_( 999.0 );
 
-  // direct interactions, including special non-pair-wise handling of phosphate oxygens
-  utility::vector1< Real > phosphate_scores;
-  bool is_phosphate_oxygen( false );
-  for ( Size m = 1; m <= atom_numbers1.size(); ++m ) {
+	// direct interactions, including special non-pair-wise handling of phosphate oxygens
+	utility::vector1< Real > phosphate_scores;
+	bool is_phosphate_oxygen( false );
+	for ( Size m = 1; m <= atom_numbers1.size(); ++m ) {
 
-    Size const i = atom_numbers1[ m ];
-    if ( rsd1.is_virtual( i ) ) continue;
-    Vector const & i_xyz( rsd1.xyz( i ) );
+		Size const i = atom_numbers1[ m ];
+		if ( rsd1.is_virtual( i ) ) continue;
+		Vector const & i_xyz( rsd1.xyz( i ) );
 
-    Distance d = ( i_xyz - j_xyz ).length();
+		Distance d = ( i_xyz - j_xyz ).length();
 
-    GaussianParameter const & mg_potential_gaussian_parameter = rna_mg_knowledge_based_potential_->get_mg_potential_gaussian_parameter( rsd1, i, is_phosphate_oxygen );
+		GaussianParameter const & mg_potential_gaussian_parameter = rna_mg_knowledge_based_potential_->get_mg_potential_gaussian_parameter( rsd1, i, is_phosphate_oxygen );
 
-    Real cos_theta( -999.0 );
-    bool get_angle_form_factor = false;
-    if ( apply_angle_potential_ && ( rsd1.heavyatom_is_an_acceptor( i ) || rsd1.atom_type( i ).name() == "Hpol" ) ) get_angle_form_factor = true;
+		Real cos_theta( -999.0 );
+		bool get_angle_form_factor = false;
+		if ( apply_angle_potential_ && ( rsd1.heavyatom_is_an_acceptor( i ) || rsd1.atom_type( i ).name() == "Hpol" ) ) get_angle_form_factor = true;
 
-    if ( d < direct_interaction_cutoff_  && mg_potential_gaussian_parameter.center > 0.0 ){
+		if ( d < direct_interaction_cutoff_  && mg_potential_gaussian_parameter.center > 0.0 ) {
 
-      Real binding_score = get_gaussian_potential_score( mg_potential_gaussian_parameter, i_xyz, j_xyz );
+			Real binding_score = get_gaussian_potential_score( mg_potential_gaussian_parameter, i_xyz, j_xyz );
 
-      if ( get_angle_form_factor ){
+			if ( get_angle_form_factor ) {
 				cos_theta = get_cos_theta( rsd1, i, j_xyz );
 				GaussianParameter const & mg_potential_costheta_gaussian_parameter = rna_mg_knowledge_based_potential_->get_mg_potential_costheta_gaussian_parameter( rsd1, i );
 				Real const angle_potential = get_gaussian_score( mg_potential_costheta_gaussian_parameter, cos_theta );
 				binding_score *= angle_potential;
-      }
+			}
 
-      if ( verbose_ && std::abs( binding_score ) >  0.1 ) tr <<  "Mg " << rsd2.seqpos() << "   direct to ligand " << pos1 << ' ' << rsd1.atom_name( i )  << "   cos_angle " << cos_theta << "  score: " <<  binding_score  << std::endl;
+			if ( verbose_ && std::abs( binding_score ) >  0.1 ) tr <<  "Mg " << rsd2.seqpos() << "   direct to ligand " << pos1 << ' ' << rsd1.atom_name( i )  << "   cos_angle " << cos_theta << "  score: " <<  binding_score  << std::endl;
 
-      if ( is_phosphate_oxygen ) {
-	phosphate_scores.push_back( binding_score ); // will get added in later
-      } else {
-	score += binding_score;
-      }
-    }
+			if ( is_phosphate_oxygen ) {
+				phosphate_scores.push_back( binding_score ); // will get added in later
+			} else {
+				score += binding_score;
+			}
+		}
 
 
-    // indirect interactions, simple pair-wise
-    GaussianParameter const & mg_potential_indirect_gaussian_parameter = rna_mg_knowledge_based_potential_->get_mg_potential_indirect_gaussian_parameter( rsd1, i );
+		// indirect interactions, simple pair-wise
+		GaussianParameter const & mg_potential_indirect_gaussian_parameter = rna_mg_knowledge_based_potential_->get_mg_potential_indirect_gaussian_parameter( rsd1, i );
 
-    if ( d < indirect_interaction_cutoff_ && mg_potential_indirect_gaussian_parameter.center > 0.0 ){
+		if ( d < indirect_interaction_cutoff_ && mg_potential_indirect_gaussian_parameter.center > 0.0 ) {
 
-      if ( mg_potential_indirect_gaussian_parameter.center > 0.0 ){
+			if ( mg_potential_indirect_gaussian_parameter.center > 0.0 ) {
 				Real binding_score_indirect = get_gaussian_potential_score( mg_potential_indirect_gaussian_parameter, i_xyz, j_xyz );
 
-				if ( get_angle_form_factor ){
+				if ( get_angle_form_factor ) {
 
 					if ( cos_theta < -1.0 ) cos_theta = get_cos_theta( rsd1, i, j_xyz );
 
@@ -256,23 +256,23 @@ RNA_MgPointEnergy::residue_pair_energy_one_way(
 
 				if ( verbose_ && std::abs( binding_score_indirect ) >  0.1 ) tr <<  "Mg " << rsd2.seqpos() << " indirect to ligand " << pos1 << ' ' << rsd1.atom_name( i ) << "  score: " <<  binding_score_indirect << std::endl;
 
-      }
-    }
+			}
+		}
 
 
-  }
+	}
 
-  // there appear to be very few (if any) metal ions that bind to both the OP2 and OP1 of a single phosphate -- so let's use the best of those scores.
-  if ( phosphate_scores.size() == 1 ) phosphate_scores.push_back( 0.0 );
+	// there appear to be very few (if any) metal ions that bind to both the OP2 and OP1 of a single phosphate -- so let's use the best of those scores.
+	if ( phosphate_scores.size() == 1 ) phosphate_scores.push_back( 0.0 );
 
-  if ( phosphate_scores.size() > 1 ){
-    runtime_assert( phosphate_scores.size() == 2 ); // OP2 and OP1
-    score += std::min( phosphate_scores[1], phosphate_scores[2] );
-  }
+	if ( phosphate_scores.size() > 1 ) {
+		runtime_assert( phosphate_scores.size() == 2 ); // OP2 and OP1
+		score += std::min( phosphate_scores[1], phosphate_scores[2] );
+	}
 
-  emap[ rna_mg_point ] += score;
+	emap[ rna_mg_point ] += score;
 
-  emap[ rna_mg_point_indirect ] += score_indirect;
+	emap[ rna_mg_point_indirect ] += score_indirect;
 
 
 }
@@ -287,7 +287,7 @@ RNA_MgPointEnergy::eval_atom_derivative(
 	EnergyMap const & /*weights*/,
 	Vector & /*F1*/,
 	Vector & /*F2*/
- 	) const
+) const
 {
 	// NEED TO FILL THIS IN LATER!!
 }

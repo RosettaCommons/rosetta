@@ -24,7 +24,7 @@
 #include <utility/io/izstream.hh>
 #include <sstream>
 
-namespace protocols{
+namespace protocols {
 namespace simple_filters {
 
 static thread_local basic::Tracer TR( "protocols.simple_filters.Sigmoid" );
@@ -37,14 +37,14 @@ SigmoidFilterCreator::keyname() const { return "Sigmoid"; }
 
 //default ctor
 Sigmoid::Sigmoid() :
-protocols::filters::Filter( "Sigmoid" ),
-filter_( /* NULL */ ),
-steepness_( 1.0 ),
-offset_( 0.0 ),
-baseline_( 0.0 ),
-negate_( false ),
-threshold_( 0 ),
-baseline_checkpointing_filename_( "" )
+	protocols::filters::Filter( "Sigmoid" ),
+	filter_( /* NULL */ ),
+	steepness_( 1.0 ),
+	offset_( 0.0 ),
+	baseline_( 0.0 ),
+	negate_( false ),
+	threshold_( 0 ),
+	baseline_checkpointing_filename_( "" )
 {
 }
 
@@ -57,29 +57,31 @@ Sigmoid::reset_baseline( core::pose::Pose const & pose, bool const attempt_read_
 	using namespace std;
 
 	//bool compute_new_baseline( false );
-	if( attempt_read_from_checkpoint )
+	if ( attempt_read_from_checkpoint ) {
 		TR<<"Reading baseline from checkpoint file, if one exists"<<std::endl;
-	else
+	} else {
 		TR<<"Not reading from checkpoint file"<<std::endl;
-	if( attempt_read_from_checkpoint && baseline_checkpointing_filename_ != "" ){
-	  ifstream f( baseline_checkpointing_filename_.c_str(), ios::in );
-	  bool compute_new_baseline( false );
-		if( !f.good() )
+	}
+	if ( attempt_read_from_checkpoint && baseline_checkpointing_filename_ != "" ) {
+		ifstream f( baseline_checkpointing_filename_.c_str(), ios::in );
+		bool compute_new_baseline( false );
+		if ( !f.good() ) {
 			compute_new_baseline = true;
-		else{
-		  core::Size const begin = f.tellg();
-		  f.seekg( 0, ios::end );
-		  core::Size const end = f.tellg();
+		} else {
+			core::Size const begin = f.tellg();
+			f.seekg( 0, ios::end );
+			core::Size const end = f.tellg();
 			f.seekg( 0, ios::beg );
-		  if( end - begin == 0 )//file size == 0
-		    compute_new_baseline = true;
+			if ( end - begin == 0 ) { //file size == 0
+				compute_new_baseline = true;
+			}
 		}
-		if( !compute_new_baseline ){
-		  std::string line;
-		  getline( f, line );
-		  std::istringstream line_stream( line );
-		  line_stream >> baseline_;
-		  TR<<"Loading Sigmoid baseline from checkpoint. Loaded baseline: "<<baseline_<<std::endl;
+		if ( !compute_new_baseline ) {
+			std::string line;
+			getline( f, line );
+			std::istringstream line_stream( line );
+			line_stream >> baseline_;
+			TR<<"Loading Sigmoid baseline from checkpoint. Loaded baseline: "<<baseline_<<std::endl;
 			f.close();
 			return;
 		}
@@ -88,11 +90,12 @@ Sigmoid::reset_baseline( core::pose::Pose const & pose, bool const attempt_read_
 
 	baseline_ = filter()->report_sm( pose );
 	TR<<"Computed new baseline and set to: "<<baseline_<<std::endl;
-	if( baseline_checkpointing_filename_ != "" ){
+	if ( baseline_checkpointing_filename_ != "" ) {
 		ofstream f;
 		f.open( baseline_checkpointing_filename_.c_str(), ios::out );
-		if( !f.good() )
+		if ( !f.good() ) {
 			utility_exit_with_message( "Unable to open Sigmoid checkpointing file: " + baseline_checkpointing_filename_ );
+		}
 		f << baseline_;
 		f.close();
 		TR<<"Wrote baseline "<<baseline_<<" to checkpointing file "<<baseline_checkpointing_filename_<<std::endl;
@@ -106,12 +109,12 @@ Sigmoid::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, fi
 	offset( tag->getOption< core::Real >( "offset", 0 ));
 	negate( tag->getOption< bool >( "negate", false ) );
 	threshold( tag->getOption< core::Real >( "threshold", 0 ) );
-	if( tag->hasOption( "filter" ) ){
+	if ( tag->hasOption( "filter" ) ) {
 		filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ),filters  ) );
 		TR<<" filter: "<<tag->getOption< std::string >( "filter" )<<std::endl;
-	}
-	else
+	} else {
 		TR<<"Filter not defined. I'm expecting another filter/mover to set my filter, else I will crash!!!"<<std::endl;
+	}
 	baseline_checkpointing_filename_ = tag->getOption< std::string >( "baseline_checkpoint", "" );
 	TR<<"Sigmoid with options: steepness "<<steepness()<<" offset "<<offset()<<" negate "<<negate()<<" threshold "<<threshold()<<" baseline checkpointing file: "<<baseline_checkpointing_filename_<<std::endl;
 }
@@ -138,12 +141,12 @@ Sigmoid::compute(
 	core::pose::Pose const & pose
 ) const {
 	runtime_assert( filter().get() ); /// if I'm null the filter has not been set
-  core::Real const val( filter()->report_sm( pose ) - baseline_ );
-  core::Real const transform( 1.0 / ( ( 1.0 + std::exp( ( val - offset_ ) * steepness_ ) ) ) );
+	core::Real const val( filter()->report_sm( pose ) - baseline_ );
+	core::Real const transform( 1.0 / ( ( 1.0 + std::exp( ( val - offset_ ) * steepness_ ) ) ) );
 	core::Real const complement( negate() ? 1.0 - transform : transform ); // negate means to take the complement of the transform
-  TR<<"filter val/transform: "<<val<<" "<<complement<<std::endl;
-  TR<<"returning: "<<complement<<std::endl;
-  return( complement );
+	TR<<"filter val/transform: "<<val<<" "<<complement<<std::endl;
+	TR<<"returning: "<<complement<<std::endl;
+	return( complement );
 }
 
 protocols::filters::FilterOP

@@ -30,7 +30,7 @@
 
 
 namespace protocols {
-namespace flxbb{
+namespace flxbb {
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -93,7 +93,7 @@ public:// accessors
 	inline String name() const { return name_; }
 
 	/// @brief
-	inline bool filter_on() const { return filter_on_;	}
+	inline bool filter_on() const { return filter_on_; }
 
 	/// @brief
 	inline Size current_trial() const { return current_trial_; }
@@ -119,10 +119,10 @@ protected://
 	void initialize( Pose const & pose );
 
 	/// @brief
-	void set_filter_off() {	filter_on_ = false;	}
+	void set_filter_off() { filter_on_ = false; }
 
 	/// @brief
-	void set_filter_on() { filter_on_ = true;	}
+	void set_filter_on() { filter_on_ = true; }
 
 	/// @brief
 	void count_ntrial();

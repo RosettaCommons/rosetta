@@ -50,8 +50,8 @@ public:
 		core::fragment::FragSetCOP fragset,
 		core::kinematics::MoveMapCOP movemap,
 		Size symmetric_residue
-	)	: ClassicFragmentMover( fragset, movemap, "SymmetricFragmentMover" ),
-			image_start_( symmetric_residue )
+	) : ClassicFragmentMover( fragset, movemap, "SymmetricFragmentMover" ),
+		image_start_( symmetric_residue )
 	{};
 
 	virtual
@@ -73,7 +73,7 @@ protected:
 		core::kinematics::MoveMapCOP movemap,
 		Size symmetric_residue,
 		std::string type
-	)	:
+	) :
 		ClassicFragmentMover( fragset, movemap, type ),
 		image_start_( symmetric_residue )
 	{}
@@ -92,7 +92,7 @@ public:
 		core::kinematics::MoveMapCOP movemap,
 		FragmentCostOP cost,
 		Size symmetric_residue
-	)	:
+	) :
 		ClassicFragmentMover( fragset, movemap, "SmoothSymmetricFragmentMover" ),
 		SymmetricFragmentMover( fragset, movemap, symmetric_residue, "SmoothSymmetricFragmentMover" ),
 		SmoothFragmentMover( fragset, movemap, cost, "SmoothSymmetricFragmentMover" )
@@ -108,7 +108,7 @@ protected:
 		FragmentCostOP cost,
 		std::string type,
 		Size symmetric_residue
-	)	:
+	) :
 		ClassicFragmentMover( fragset, movemap, type ), //virtual base class needs to be initialized explicitly
 		SymmetricFragmentMover( fragset, movemap, symmetric_residue, type ),
 		SmoothFragmentMover( fragset, movemap, cost, type )
@@ -121,7 +121,7 @@ protected:
 		core::pose::Pose const& p,
 		Size &frame_num,
 		Size &frag_num) const {
-			return SmoothFragmentMover::choose_fragment(fl, p, frame_num, frag_num);
+		return SmoothFragmentMover::choose_fragment(fl, p, frame_num, frag_num);
 	}
 
 

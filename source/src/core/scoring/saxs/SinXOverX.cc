@@ -49,13 +49,13 @@ SinXOverX::create_singleton_instance()
 }
 
 SinXOverX::SinXOverX() {
-    fill_sin_x_over_x_table();
+	fill_sin_x_over_x_table();
 }
 
 void SinXOverX::fill_sin_x_over_x_table() {
 
 	sin_x_over_x_.push_back(2.0);
-	for(Real x=0.001;x<=1000;x+=0.01) {
+	for ( Real x=0.001; x<=1000; x+=0.01 ) {
 		sin_x_over_x_.push_back( 2.0*sin(x)/x );
 	}
 }

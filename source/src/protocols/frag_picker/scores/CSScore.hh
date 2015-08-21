@@ -35,7 +35,7 @@ namespace scores {
 
 typedef utility::vector1<utility::vector1<Real> > Matrix;
 
-	//typedef utility::vector1<utility::vector1<std::pair<Real,Real> > > Score_Matrix;
+//typedef utility::vector1<utility::vector1<std::pair<Real,Real> > > Score_Matrix;
 class CSScore;
 typedef utility::pointer::shared_ptr< CSScore > CSScoreOP;
 typedef utility::pointer::shared_ptr< CSScore const > CSScoreCOP;

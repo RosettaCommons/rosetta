@@ -25,30 +25,30 @@ namespace wum2 {
 
 class WUQueue {
 	typedef std::pair< boost::uint64_t, WorkUnitSP > wu_mem_pair;
-  typedef std::deque< wu_mem_pair >::iterator iterator;
+	typedef std::deque< wu_mem_pair >::iterator iterator;
 
-  public:
-    WUQueue(): current_mem_(0){}
-    ~WUQueue(){}
+public:
+	WUQueue(): current_mem_(0){}
+	~WUQueue(){}
 
-    boost::uint64_t current_mem() { return current_mem_; }
+	boost::uint64_t current_mem() { return current_mem_; }
 
-    boost::uint64_t size_front() { return empty() ? 0 : deque_.front().first; }
+	boost::uint64_t size_front() { return empty() ? 0 : deque_.front().first; }
 
-    void push_front( WorkUnitSP wu );
-    void push_back( WorkUnitSP wu );
-    void push_back( std::vector<WorkUnitSP> wulist );
-    WorkUnitSP pop_front();
-		std::vector<WorkUnitSP> pop_all();
-    bool empty() { return deque_.empty(); }
-    void clear() { deque_.clear(); }
-    int size() { return deque_.size(); }
+	void push_front( WorkUnitSP wu );
+	void push_back( WorkUnitSP wu );
+	void push_back( std::vector<WorkUnitSP> wulist );
+	WorkUnitSP pop_front();
+	std::vector<WorkUnitSP> pop_all();
+	bool empty() { return deque_.empty(); }
+	void clear() { deque_.clear(); }
+	int size() { return deque_.size(); }
 
-  private:
-    boost::uint64_t serialized_size( WorkUnitSP wu );
+private:
+	boost::uint64_t serialized_size( WorkUnitSP wu );
 
-    boost::uint64_t current_mem_;
-    std::deque< wu_mem_pair > deque_;
+	boost::uint64_t current_mem_;
+	std::deque< wu_mem_pair > deque_;
 };
 
 }

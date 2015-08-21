@@ -84,7 +84,7 @@ TerminusDistanceFilter::apply( core::pose::Pose const & pose ) const {
 	core::Real const dist( compute( pose ) );
 	TR<<"near terminus: "<<dist<<". " ;
 	bool const status = (dist <= distance_) ? (false) : (true);
-	if( status ) TR << "passing." << std::endl;
+	if ( status ) TR << "passing." << std::endl;
 	else TR << "failing." << std::endl;
 	return status;
 }
@@ -113,17 +113,17 @@ TerminusDistanceFilter::compute( core::pose::Pose const & pose ) const {
 	protocols::scoring::Interface iface( jump_num_ );
 	iface.distance( 8 );
 	iface.calculate( copy_pose );
-  core::Real min_dist(1000);
+	core::Real min_dist(1000);
 
 	for ( core::Size i=1; i <= pose.total_residue(); ++i ) {
 		core::Real dist(1000);
-		if( !iface.is_interface( i ) ) continue; // keep going if we're not at the interface
+		if ( !iface.is_interface( i ) ) continue; // keep going if we're not at the interface
 
 		core::Size const chain = copy_pose.residue( i ).chain();
 		core::Size const N_dist = i - copy_pose.conformation().chain_begin( chain );
 		core::Size const C_dist = copy_pose.conformation().chain_end( chain ) - i;
 		dist = ( N_dist <= C_dist ) ? ( N_dist) : ( C_dist ) ;
-		if( ( N_dist < distance_ ) || ( C_dist < distance_ ) ) {
+		if ( ( N_dist < distance_ ) || ( C_dist < distance_ ) ) {
 			return dist;
 		}
 		min_dist = ( dist < min_dist ) ? (dist) : (min_dist);

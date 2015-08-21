@@ -45,46 +45,46 @@ public:
 
 	/// @brief picks and caches fragments for the listed components with size frag_size
 	core::fragment::ConstantLengthFragSetOP
-		fragments_for_permutation(
-				StructureData const & perm,
-				utility::vector1< std::string > const & comp_ids,
-				core::Size const frag_size );
+	fragments_for_permutation(
+		StructureData const & perm,
+		utility::vector1< std::string > const & comp_ids,
+		core::Size const frag_size );
 
 	/// @brief picks and caches fragments for the listed components with size frag_size
 	core::fragment::ConstantLengthFragSetOP
-		fragments_for_permutation_take_X_from_pose(
-				StructureData const & perm,
-				utility::vector1< std::string > const & comp_ids,
-				core::Size const frag_size );
+	fragments_for_permutation_take_X_from_pose(
+		StructureData const & perm,
+		utility::vector1< std::string > const & comp_ids,
+		core::Size const frag_size );
 
 	/// @brief pick and cache fragments without considering primary sequence
 	core::fragment::ConstantLengthFragSetOP
-		pick_and_cache_fragments(
-				std::string const & complete_ss,
-				utility::vector1< std::string > const & complete_abego,
-				core::Size const start_res,
-				core::Size const end_res,
-				core::Size const frag_length );
+	pick_and_cache_fragments(
+		std::string const & complete_ss,
+		utility::vector1< std::string > const & complete_abego,
+		core::Size const start_res,
+		core::Size const end_res,
+		core::Size const frag_length );
 
 	/// @brief pick and cache fragments with a primary sequence in mind
 	core::fragment::ConstantLengthFragSetOP
-		pick_and_cache_fragments(
-				std::string const & complete_aa,
-				std::string const & complete_ss,
-				utility::vector1< std::string > const & complete_abego,
-				core::Size const start_res,
-				core::Size const end_res,
-				core::Size const frag_length );
+	pick_and_cache_fragments(
+		std::string const & complete_aa,
+		std::string const & complete_ss,
+		utility::vector1< std::string > const & complete_abego,
+		core::Size const start_res,
+		core::Size const end_res,
+		core::Size const frag_length );
 
 protected:
 	/// @brief generates a key based on secondary structure to be used in fragcache
 	std::string ss_key(
-			std::string const & aa,
-			std::string const & ss,
-			utility::vector1< std::string > const & complete_abego,
-			core::Size const start,
-			core::Size const end,
-			core::Size const fragsize ) const;
+		std::string const & aa,
+		std::string const & ss,
+		utility::vector1< std::string > const & complete_abego,
+		core::Size const start,
+		core::Size const end,
+		core::Size const fragsize ) const;
 
 	/// @brief pick fragments of a given length, padding when necessary -- DOES NOT CACHE
 	/// @param[in] complete_aa The complete amino acid string, typically from a Pose;
@@ -96,13 +96,13 @@ protected:
 	/// @param[in] frag_length The desired length of the fragments
 	/// @param[in] n_frags The number of fragments to pick per position.
 	core::fragment::FrameList
-		get_framelist(
-				std::string const & complete_aa,
-				std::string const & complete_ss,
-				utility::vector1< std::string > const & complete_abego,
-				core::Size const start_res,
-				core::Size const end_res,
-				core::Size const frag_length );
+	get_framelist(
+		std::string const & complete_aa,
+		std::string const & complete_ss,
+		utility::vector1< std::string > const & complete_abego,
+		core::Size const start_res,
+		core::Size const end_res,
+		core::Size const frag_length );
 
 private:
 	/// @brief number of fragments to pick for each position (default = 200)

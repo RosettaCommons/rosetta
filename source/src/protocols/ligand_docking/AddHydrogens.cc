@@ -58,17 +58,17 @@ AddHydrogensCreator::mover_name()
 }
 
 AddHydrogens::AddHydrogens():
-		//utility::pointer::ReferenceCount(),
-		Mover("AddHydrogens"),
-		chain_("X")
+	//utility::pointer::ReferenceCount(),
+	Mover("AddHydrogens"),
+	chain_("X")
 {
 	Mover::type( "AddHydrogens" );
 }
 
 AddHydrogens::AddHydrogens(AddHydrogens const & that):
-		//utility::pointer::ReferenceCount(),
-		protocols::moves::Mover( that ),
-		chain_(that.chain_)
+	//utility::pointer::ReferenceCount(),
+	protocols::moves::Mover( that ),
+	chain_(that.chain_)
 {}
 
 AddHydrogens::~AddHydrogens() {}
@@ -88,11 +88,11 @@ std::string AddHydrogens::get_name() const{
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 AddHydrogens::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & /*datamap*/,
-		protocols::filters::Filters_map const & /*filters*/,
-		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & /*pose*/
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & /*datamap*/,
+	protocols::filters::Filters_map const & /*filters*/,
+	protocols::moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/
 )
 {
 	assert( tag->getName() != "AddHydrogens");
@@ -108,11 +108,11 @@ AddHydrogens::apply( core::pose::Pose & pose )
 	core::Size const chain_end= pose.conformation().chain_end(chain_id);
 	utility::vector1<core::Size> unconnected_ids= find_unconnected_residues(pose, chain_begin, chain_end);
 
-	BOOST_FOREACH(core::Size unconnected_id, unconnected_ids){
+	BOOST_FOREACH ( core::Size unconnected_id, unconnected_ids ) {
 		core::conformation::Residue const & res_to_fix= pose.residue(unconnected_id);
 		utility::vector1<core::Size> connect_ids= get_incomplete_connections(res_to_fix.get_self_ptr());
 
-		BOOST_FOREACH(core::Size connect_id, connect_ids){
+		BOOST_FOREACH ( core::Size connect_id, connect_ids ) {
 			AddHydrogen AH(unconnected_id, connect_id);
 			AH.apply(pose);
 		}

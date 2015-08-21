@@ -52,15 +52,15 @@ public:
 
 	/// @brief gives a fold tree based on the segments in the given permutation
 	core::kinematics::FoldTree
-		fold_tree( StructureData const & perm, utility::vector1< std::string > const & start_segment ) const;
+	fold_tree( StructureData const & perm, utility::vector1< std::string > const & start_segment ) const;
 
 	/// @brief given a segment name, returns the associated graph node index
 	core::Size
-		nodeidx( std::string const & segment ) const;
+	nodeidx( std::string const & segment ) const;
 
 	/// @brief given a node index, returns the associated segment
 	std::string const &
-		segment( core::Size const nodeidx ) const;
+	segment( core::Size const nodeidx ) const;
 
 	/// @brief adds an non-peptide edge to the foldgraph to indicate a non-covalent interaction
 	void add_edge( std::string const & seg1, std::string const & seg2 );
@@ -79,14 +79,14 @@ public:
 
 	/// @brief generates a loops object to be used in remodel, based on the foldgraph
 	protocols::loops::LoopsOP create_loops(
-			StructureData const & perm,
-			utility::vector1< std::string > const & staple_loops,
-			utility::vector1< std::string > const & cut_loops ) const;
+		StructureData const & perm,
+		utility::vector1< std::string > const & staple_loops,
+		utility::vector1< std::string > const & cut_loops ) const;
 
 	protocols::loops::LoopsOP create_loops(
-			StructureData const & perm,
-			Solution const & solution,
-			utility::vector1< std::string > const & cut_loops ) const;
+		StructureData const & perm,
+		Solution const & solution,
+		utility::vector1< std::string > const & cut_loops ) const;
 
 	/// @brief returns true if there is a peptide edge between the two given segments
 	bool has_peptide_edge( std::string const & seg1, std::string const & seg2 ) const;
@@ -98,21 +98,21 @@ private:
 	/// @brief recursive function to traverse graphs and build fold tree
 	/// @param[parent_direction] -1 if the previous edge is a peptide edge going backward, 1 if the previous edge is going forward, and 0 if the previous edge is a jump
 	void fold_tree_rec(
-			core::kinematics::FoldTree & ft,
-			NodeSet & visited,
-			std::stack< core::Size > & node_stack,
-			StructureData const & perm,
-			std::string const & segment_name,
-			int const parent_direction,
-			bool const polymer_only ) const;
+		core::kinematics::FoldTree & ft,
+		NodeSet & visited,
+		std::stack< core::Size > & node_stack,
+		StructureData const & perm,
+		std::string const & segment_name,
+		int const parent_direction,
+		bool const polymer_only ) const;
 
 	/// @brief recursive inner function that traverses the foldgraph to create loops objects
 	void create_loops_dfs(
-			Solution & solutions,
-			NodeSet & visited,
-			core::Size const current_node,
-			NodeSet const & cut_loop_nodes,
-			StructureData const & perm ) const;
+		Solution & solutions,
+		NodeSet & visited,
+		core::Size const current_node,
+		NodeSet const & cut_loop_nodes,
+		StructureData const & perm ) const;
 
 	/// @brief returns true if there is a peptide edge between the two given nodes
 	bool has_peptide_edge( core::Size const n1, core::Size const n2 ) const;

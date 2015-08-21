@@ -10,7 +10,7 @@
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -35,7 +35,7 @@
 //// C++ headers
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 namespace protocols {
@@ -43,21 +43,21 @@ namespace evaluation {
 
 
 TimeEvaluator::TimeEvaluator( std::string const& tag )
-  : evaluation::SingleValuePoseEvaluator< core::Real > ("time"+tag)
+: evaluation::SingleValuePoseEvaluator< core::Real > ("time"+tag)
 {
-  reset();
+	reset();
 }
 
 void
 TimeEvaluator::reset() {
-  start_time_ = time(NULL);
+	start_time_ = time(NULL);
 }
 
 
 core::Real
 TimeEvaluator::apply( core::pose::Pose& ) const
 {
-  return time(NULL) - start_time_;
+	return time(NULL) - start_time_;
 }
 
 }

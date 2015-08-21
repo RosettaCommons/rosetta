@@ -108,16 +108,16 @@ fill_hbond_bb_pair_score_dssp( pose::Pose const& pose, ObjexxFCL::FArray2D_float
 	hbond_bb_pair_score.dimension(total_residue, total_residue);
 	hbond_bb_pair_score = 0.0f;
 
-	//	FArray3D_float full_coord_backup( 3, param::MAX_ATOM(), total_residue );
-	//	copy_the_relevant_atoms( full_coord_backup, full_coord );
+	// FArray3D_float full_coord_backup( 3, param::MAX_ATOM(), total_residue );
+	// copy_the_relevant_atoms( full_coord_backup, full_coord );
 
-	//	copy_position_to_fullcoord(Eposition,full_coord,total_residue);
-	//	put_nh(full_coord, 1, total_residue, res, res_variant, is_N_terminus, is_C_terminus, 0.0f);
-	//	initialize_fullcoord_array(Eposition, full_coord, total_residue, res, res_variant);
+	// copy_position_to_fullcoord(Eposition,full_coord,total_residue);
+	// put_nh(full_coord, 1, total_residue, res, res_variant, is_N_terminus, is_C_terminus, 0.0f);
+	// initialize_fullcoord_array(Eposition, full_coord, total_residue, res, res_variant);
 
-	//	float C[3], O[3], N[3], H[3], rON, rCH, rOH, rCN, E, dist, total;
+	// float C[3], O[3], N[3], H[3], rON, rCH, rOH, rCN, E, dist, total;
 	for ( Size i = 1; i <= total_residue; ++i ) {
-		if (pose.residue(i).aa() == core::chemical::aa_vrt) continue;
+		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
 		for ( Size j = 1; j <= total_residue; ++j ) {
 			if ( !pose.residue(i).is_protein() ) continue;
 			if ( !pose.residue(j).is_protein() ) continue;
@@ -125,7 +125,7 @@ fill_hbond_bb_pair_score_dssp( pose::Pose const& pose, ObjexxFCL::FArray2D_float
 			//chu skip non-protein residues
 			if ( !(pose.residue(i).is_protein() && pose.residue(j).is_protein()) ) continue;
 
-			if (pose.residue(j).aa() == core::chemical::aa_vrt) continue;
+			if ( pose.residue(j).aa() == core::chemical::aa_vrt ) continue;
 
 			//ignore if CA-CA > 10A
 			id::NamedAtomID CA1("CA",i );
@@ -148,12 +148,12 @@ fill_hbond_bb_pair_score_dssp( pose::Pose const& pose, ObjexxFCL::FArray2D_float
 			rON = pO.distance(  pN );
 			rCN = pC.distance(  pN );
 
-			//			Size HN1_pos = HNpos( res(j), res_variant(j) );
+			//   Size HN1_pos = HNpos( res(j), res_variant(j) );
 
 			chemical::ResidueType const& rtj ( pose.residue_type ( j ) );
 			runtime_assert( rtj.has( "N" ) );
 			for ( Size hatom = rtj.attached_H_begin( rtj.atom_index( "N" ) ), ehatom = rtj.attached_H_end( rtj.atom_index( "N" ) );
-						hatom <= ehatom; ++hatom ) {
+					hatom <= ehatom; ++hatom ) {
 
 				Real rOH, rCH;
 				PointPosition pH;
@@ -175,18 +175,19 @@ fill_hbond_bb_pair_score_dssp( pose::Pose const& pose, ObjexxFCL::FArray2D_float
 
 void
 Dssp::dssp( FArray1_char &secstruct ) {
-  for( Size i = 1; i <= dssp_secstruct_.size(); i++)
+	for ( Size i = 1; i <= dssp_secstruct_.size(); i++ ) {
 		secstruct(i) = dssp_secstruct_(i);
+	}
 }
 
 void
 Dssp::dssp_featurizer( FArray1_char &secstruct ) {
-	for( Size i = 1; i <= dssp_secstruct_.size(); i++ ) {
-		if( dssp_secstruct_(i) == 'H' || dssp_secstruct_(i) == 'G' || dssp_secstruct_(i) == 'I' ) {
+	for ( Size i = 1; i <= dssp_secstruct_.size(); i++ ) {
+		if ( dssp_secstruct_(i) == 'H' || dssp_secstruct_(i) == 'G' || dssp_secstruct_(i) == 'I' ) {
 			secstruct(i) = 'H';
-    } else if(dssp_secstruct_(i) == 'B' || dssp_secstruct_(i) == 'E') {
+		} else if ( dssp_secstruct_(i) == 'B' || dssp_secstruct_(i) == 'E' ) {
 			// see if paired on one or both sides
-		 	secstruct(i) = pair_set_->featurizer_state(i);
+			secstruct(i) = pair_set_->featurizer_state(i);
 		} else secstruct(i) = 'L';
 	}
 }
@@ -217,39 +218,39 @@ Dssp::dssp_featurizer( FArray1_char &secstruct ) {
 //////////////////////////////////////////////////////////////////////////////
 void
 Dssp::dssp_reduced( FArray1_char &secstruct ) {
-	for( Size i = 1; i <= dssp_secstruct_.size(); i++ ) {
-		if( dssp_secstruct_(i) == 'H' || dssp_secstruct_(i) == 'G' || dssp_secstruct_(i) == 'I' ) {
+	for ( Size i = 1; i <= dssp_secstruct_.size(); i++ ) {
+		if ( dssp_secstruct_(i) == 'H' || dssp_secstruct_(i) == 'G' || dssp_secstruct_(i) == 'I' ) {
 			secstruct(i) = 'H';
-	    } else if(dssp_secstruct_(i) == 'B' || dssp_secstruct_(i) == 'E') {
-		 	secstruct(i) = 'E';
+		} else if ( dssp_secstruct_(i) == 'B' || dssp_secstruct_(i) == 'E' ) {
+			secstruct(i) = 'E';
 		} else secstruct(i) = 'L';
 	}
 }
 
 void
 Dssp::dssp_reduced_IG_as_L_if_adjcent_H( FArray1_char &secstruct ) {
-	for( Size i = 1; i <= dssp_secstruct_.size(); i++ ) {
-		if( dssp_secstruct_(i) == 'H' || dssp_secstruct_(i) == 'G' || dssp_secstruct_(i) == 'I' ) {
-			if( ( dssp_secstruct_(i)=='G'|| dssp_secstruct_(i)=='I' ) &&
-				( (i>1 && dssp_secstruct_(i-1)=='H') || (i<dssp_secstruct_.size() && dssp_secstruct_(i+1)=='H'))
-			){
+	for ( Size i = 1; i <= dssp_secstruct_.size(); i++ ) {
+		if ( dssp_secstruct_(i) == 'H' || dssp_secstruct_(i) == 'G' || dssp_secstruct_(i) == 'I' ) {
+			if ( ( dssp_secstruct_(i)=='G'|| dssp_secstruct_(i)=='I' ) &&
+					( (i>1 && dssp_secstruct_(i-1)=='H') || (i<dssp_secstruct_.size() && dssp_secstruct_(i+1)=='H'))
+					) {
 				secstruct(i) = 'L';
 			} else {
 				secstruct(i) = 'H';
 			}
-	    } else if(dssp_secstruct_(i) == 'B' || dssp_secstruct_(i) == 'E') {
-		 	secstruct(i) = 'E';
+		} else if ( dssp_secstruct_(i) == 'B' || dssp_secstruct_(i) == 'E' ) {
+			secstruct(i) = 'E';
 		} else secstruct(i) = 'L';
 	}
 }
 
 void
 Dssp::dssp_reduced_IG_as_L( FArray1_char &secstruct ) {
-	for( Size i = 1; i <= dssp_secstruct_.size(); i++ ) {
-		if( dssp_secstruct_(i) == 'H' ) {
+	for ( Size i = 1; i <= dssp_secstruct_.size(); i++ ) {
+		if ( dssp_secstruct_(i) == 'H' ) {
 			secstruct(i) = 'H';
-	    } else if(dssp_secstruct_(i) == 'B' || dssp_secstruct_(i) == 'E') {
-		 	secstruct(i) = 'E';
+		} else if ( dssp_secstruct_(i) == 'B' || dssp_secstruct_(i) == 'E' ) {
+			secstruct(i) = 'E';
 		} else secstruct(i) = 'L';
 	}
 }
@@ -303,7 +304,7 @@ Dssp::compute( pose::Pose const& pose ) {
 	core::Size total_residue( pose.total_residue() );
 	ObjexxFCL::FArray1D_bool invalid; //Should we omit this residue when doing DSSP?
 	dssp_secstruct_.dimension(total_residue);
-  invalid.dimension(total_residue);
+	invalid.dimension(total_residue);
 
 	fill_hbond_bb_pair_score_dssp( pose, hbond_bb_pair_score_ ); // fills hbond_bb_pair_score_ array
 
@@ -316,33 +317,35 @@ Dssp::compute( pose::Pose const& pose ) {
 	bool helix;
 
 	// Record all 5-turn helices (I)
-	if( total_residue > 5 ) {
+	if ( total_residue > 5 ) {
 		for ( Size i=1; i <= total_residue-5; i++ ) {
-			if( invalid(i) || invalid(i+1) || invalid(i+2) || invalid(i+3) || invalid(i+4) || invalid(i+5) ) continue;
+			if ( invalid(i) || invalid(i+1) || invalid(i+2) || invalid(i+3) || invalid(i+4) || invalid(i+5) ) continue;
 			if ( hbond_bb_pair_score_(i, i + 5) < dssp_hbond_threshold ) {
 				helix = i < total_residue - 5 &&
-	        hbond_bb_pair_score_(i + 1, i + 6) < dssp_hbond_threshold;
-				for ( Size j = 1; j < 6; j++) {
-					if ( helix )
-	          dssp_secstruct_(i + j) = 'I';
-					else if ( j < 5 && dssp_secstruct_(i + j) == ' ' )
-	          dssp_secstruct_(i + j) = 'T';
+					hbond_bb_pair_score_(i + 1, i + 6) < dssp_hbond_threshold;
+				for ( Size j = 1; j < 6; j++ ) {
+					if ( helix ) {
+						dssp_secstruct_(i + j) = 'I';
+					} else if ( j < 5 && dssp_secstruct_(i + j) == ' ' ) {
+						dssp_secstruct_(i + j) = 'T';
+					}
 				}
 			}
 		}
 	}
 	// Record all 3-turn helices (G)
-	if( total_residue > 3 ) {
+	if ( total_residue > 3 ) {
 		for ( Size i = 1; i <= total_residue - 3; i++ ) {
-			if( invalid(i) || invalid(i+1) || invalid(i+2) || invalid(i+3) ) continue;
+			if ( invalid(i) || invalid(i+1) || invalid(i+2) || invalid(i+3) ) continue;
 			if ( hbond_bb_pair_score_(i, i + 3) < dssp_hbond_threshold ) {
 				helix = i < total_residue - 3 &&
-	        hbond_bb_pair_score_(i + 1, i + 4) < dssp_hbond_threshold;
+					hbond_bb_pair_score_(i + 1, i + 4) < dssp_hbond_threshold;
 				for ( Size j = 1; j < 4; j++ ) {
-					if ( helix )
-	          dssp_secstruct_(i+j) = 'G';
-					else if ( j < 3 && dssp_secstruct_(i+j) == ' ' )
-	          dssp_secstruct_(i+j) = 'T';
+					if ( helix ) {
+						dssp_secstruct_(i+j) = 'G';
+					} else if ( j < 3 && dssp_secstruct_(i+j) == ' ' ) {
+						dssp_secstruct_(i+j) = 'T';
+					}
 				}
 			}
 		}
@@ -357,36 +360,38 @@ Dssp::compute( pose::Pose const& pose ) {
 	}
 
 	// Record all 4-turn helices (H)
-	if( total_residue > 4 ) {
+	if ( total_residue > 4 ) {
 		for ( Size i = 1; i <= total_residue - 4; i++ ) {
-			if( invalid(i) || invalid(i+1) || invalid(i+2) || invalid(i+3) || invalid(i+4) ) continue;
+			if ( invalid(i) || invalid(i+1) || invalid(i+2) || invalid(i+3) || invalid(i+4) ) continue;
 			if ( hbond_bb_pair_score_(i, i + 4) < dssp_hbond_threshold ) {
 				helix = i < total_residue - 4 &&
-	        hbond_bb_pair_score_(i + 1, i + 5) < dssp_hbond_threshold;
+					hbond_bb_pair_score_(i + 1, i + 5) < dssp_hbond_threshold;
 				for ( Size j = 1; j < 5; j++ ) {
-					if ( helix )
+					if ( helix ) {
 						/*
-							&& torsion_bin(phi(i+j), psi(i+j), omega(i+j)) != 'A')
-							// only allow helix chunks in which every residue has bin A
-							*/
+						&& torsion_bin(phi(i+j), psi(i+j), omega(i+j)) != 'A')
+						// only allow helix chunks in which every residue has bin A
+						*/
 						dssp_secstruct_(i + j) = 'H';
-					else if(j < 4 && dssp_secstruct_(i + j) == ' ')
+					} else if ( j < 4 && dssp_secstruct_(i + j) == ' ' ) {
 						dssp_secstruct_(i + j) = 'T';
+					}
 				}
 			}
 		}
 	}
 
 	// Record all tight turns (S), only if still a loop
-	if( total_residue > 2 ) {
+	if ( total_residue > 2 ) {
 		for ( Size i = 3; i <= total_residue - 2; i++ ) {
-			if( invalid(i-2) || invalid(i) || invalid(i+2) ) continue;
+			if ( invalid(i-2) || invalid(i) || invalid(i+2) ) continue;
 			if ( dssp_secstruct_(i) == ' ' ) {
 				Vector const v1 ( pose.xyz( id::NamedAtomID("CA",i ) ) - pose.xyz(  id::NamedAtomID("CA",i-2 ) ) );
 				Vector const v2 ( pose.xyz( id::NamedAtomID("CA",i+2 ) ) - pose.xyz(  id::NamedAtomID("CA",i ) ) );
 				Real dot = angle_of( v1, v2 );
-				if ( dot < .34202014 )
+				if ( dot < .34202014 ) {
 					dssp_secstruct_(i) = 'S';
+				}
 			}
 		}
 	}
@@ -400,7 +405,7 @@ Dssp::paired(Size res1, Size res2, bool antiparallel) {
 
 void
 Dssp::insert_ss_into_pose( core::pose::Pose & pose, bool recompute ) {
-	if( recompute ) compute( pose );
+	if ( recompute ) compute( pose );
 	dssp_reduced( dssp_secstruct_ );
 	for ( core::Size i = 1; i <= dssp_secstruct_.size(); ++i ) {
 		pose.set_secstruct( i, dssp_secstruct_(i) );
@@ -409,7 +414,7 @@ Dssp::insert_ss_into_pose( core::pose::Pose & pose, bool recompute ) {
 
 void
 Dssp::insert_ss_into_pose_no_IG_helix( core::pose::Pose & pose, bool recompute ) {
-	if( recompute ) compute( pose );
+	if ( recompute ) compute( pose );
 	dssp_reduced_IG_as_L( dssp_secstruct_ );
 	for ( core::Size i = 1; i <= dssp_secstruct_.size(); ++i ) {
 		pose.set_secstruct( i, dssp_secstruct_(i) );
@@ -418,20 +423,20 @@ Dssp::insert_ss_into_pose_no_IG_helix( core::pose::Pose & pose, bool recompute )
 
 void
 Dssp::insert_dssp_ss_into_pose( core::pose::Pose & pose, bool recompute ) {
-	if( recompute ) compute( pose );
+	if ( recompute ) compute( pose );
 	for ( core::Size i = 1; i <= dssp_secstruct_.size(); ++i ) {
 		char ss = dssp_secstruct_(i);
-		if(ss==' ') ss = '_';
+		if ( ss==' ' ) ss = '_';
 		pose.set_secstruct( i, ss );
 	}
 }
 void
 Dssp::insert_edge_ss_into_pose( core::pose::Pose & pose, bool recompute ) {
-	if( recompute ) compute( pose );
+	if ( recompute ) compute( pose );
 	for ( core::Size i = 1; i <= dssp_secstruct_.size(); ++i ) {
 		char ss = dssp_secstruct_(i);
-		if(ss==' ') ss = 'L';
-		if(ss=='E' && num_pairings(i)<2 ) ss = 'U';
+		if ( ss==' ' ) ss = 'L';
+		if ( ss=='E' && num_pairings(i)<2 ) ss = 'U';
 		pose.set_secstruct( i, ss );
 	}
 }
@@ -454,12 +459,12 @@ Dssp::get_dssp_secstruct() {
 
 std::string
 Dssp::get_dssp_reduced_IG_as_L_secstruct() {
-  dssp_reduced_IG_as_L( dssp_secstruct_ );
-  std::string sequence;
-  for ( core::Size i = 1; i <= dssp_secstruct_.size(); ++i ) {
-    sequence += dssp_secstruct_( i );
-  }
-  return sequence;
+	dssp_reduced_IG_as_L( dssp_secstruct_ );
+	std::string sequence;
+	for ( core::Size i = 1; i <= dssp_secstruct_.size(); ++i ) {
+		sequence += dssp_secstruct_( i );
+	}
+	return sequence;
 }
 
 float
@@ -471,15 +476,15 @@ Dssp::bb_pair_score( Size res1, Size res2 )
 Size
 Dssp::num_pairings(Size resi ) const {
 	Size npair = 0;
-	for(StrandPairingSet::const_iterator i = pair_set_->begin(); i != pair_set_->end(); ++i){
-		if(i->contains(resi)) ++npair;
+	for ( StrandPairingSet::const_iterator i = pair_set_->begin(); i != pair_set_->end(); ++i ) {
+		if ( i->contains(resi) ) ++npair;
 	}
 	return npair;
 }
 bool
 Dssp::in_paired_strands(Size res1, Size res2 ) const {
-	for(StrandPairingSet::const_iterator i = pair_set_->begin(); i != pair_set_->end(); ++i){
-		if( i->contains(res1) && i->contains(res2) ) return true;
+	for ( StrandPairingSet::const_iterator i = pair_set_->begin(); i != pair_set_->end(); ++i ) {
+		if ( i->contains(res1) && i->contains(res2) ) return true;
 	}
 	return false;
 }

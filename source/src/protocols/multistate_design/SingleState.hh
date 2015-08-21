@@ -26,7 +26,7 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-	#include <core/pose/Pose.hh>
+#include <core/pose/Pose.hh>
 #endif
 
 

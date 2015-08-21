@@ -35,7 +35,7 @@ PDB_DReaderOptions::~PDB_DReaderOptions() {}
 void PDB_DReaderOptions::parse_my_tag( utility::tag::TagCOP tag )
 {
 	FileDataOptions::parse_my_tag( tag );
-	
+
 	set_new_chain_order(  tag->getOption< bool >( "new_chain_order", 0 ) );
 	set_obey_ENDMDL(  tag->getOption< bool >( "obey_ENDMDL", 0 ) );
 	set_read_pdb_header( tag->getOption< bool >( "preserve_header", 0 ) );
@@ -63,7 +63,7 @@ void PDB_DReaderOptions::init_from_options()
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	
+
 	set_new_chain_order( option[ in::file::new_chain_order ]() );
 	set_obey_ENDMDL( option[ in::file::obey_ENDMDL ].value() );
 	set_read_pdb_header( option[ run::preserve_header ]() );

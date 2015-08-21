@@ -68,205 +68,205 @@ using namespace environment;
 // creator
 std::string
 FragmentCMCreator::keyname() const {
-  return FragmentCMCreator::mover_name();
+	return FragmentCMCreator::mover_name();
 }
 
 protocols::moves::MoverOP
 FragmentCMCreator::create_mover() const {
-  return protocols::moves::MoverOP( new FragmentCM );
+	return protocols::moves::MoverOP( new FragmentCM );
 }
 
 std::string
 FragmentCMCreator::mover_name() {
-  return "FragmentCM";
+	return "FragmentCM";
 }
 
 
 FragmentCM::FragmentCM():
-  ClientMover(),
-  mover_( /* NULL */ ),
-  selector_( /* NULL */ ),
-  bInitialize_( true ),
-  bYieldCutBias_( false )
+	ClientMover(),
+	mover_( /* NULL */ ),
+	selector_( /* NULL */ ),
+	bInitialize_( true ),
+	bYieldCutBias_( false )
 {}
 
 FragmentCM::FragmentCM( simple_moves::FragmentMoverOP mover,
-                        core::pack::task::residue_selector::ResidueSelectorCOP selector ):
-  ClientMover(),
-  selector_( selector ),
-  bInitialize_( true ),
-  bYieldCutBias_( false )
+	core::pack::task::residue_selector::ResidueSelectorCOP selector ):
+	ClientMover(),
+	selector_( selector ),
+	bInitialize_( true ),
+	bYieldCutBias_( false )
 {
-  set_mover( mover );
+	set_mover( mover );
 }
 
 FragmentCM::~FragmentCM() {}
 
 void FragmentCM::set_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector ) {
-  if( Parent::state_check( __FUNCTION__, ( selector.get() == selector_.get() ) ) ){
-    selector_ = selector;
-  }
+	if ( Parent::state_check( __FUNCTION__, ( selector.get() == selector_.get() ) ) ) {
+		selector_ = selector;
+	}
 }
 
 void FragmentCM::set_mover( simple_moves::FragmentMoverOP mover ){
 
-  // commented out because it doesn't play nice with subclasses making settings during
-  // claiming. It would be nice to think of a way to automatically check for accidental
-  // post-claming changes to the mover, but I'm not sure how to do that.
+	// commented out because it doesn't play nice with subclasses making settings during
+	// claiming. It would be nice to think of a way to automatically check for accidental
+	// post-claming changes to the mover, but I'm not sure how to do that.
 
- // if( Parent::state_check( __FUNCTION__, ( mover().get() == mover_.get() ) ) ){
-    mover_ = mover;
-    type( get_name() );
-  //}
+	// if( Parent::state_check( __FUNCTION__, ( mover().get() == mover_.get() ) ) ){
+	mover_ = mover;
+	type( get_name() );
+	//}
 }
 
 core::Size determine_frag_size( std::string const& file ) {
-  using namespace core::fragment;
-  using namespace basic::options;
+	using namespace core::fragment;
+	using namespace basic::options;
 
-  FragmentIO frag_io( option[ OptionKeys::abinitio::number_3mer_frags ](), 1,
-                      option[ OptionKeys::frags::annotate ]() );
+	FragmentIO frag_io( option[ OptionKeys::abinitio::number_3mer_frags ](), 1,
+		option[ OptionKeys::frags::annotate ]() );
 
-  FragSetOP fragset = frag_io.read_data( file );
+	FragSetOP fragset = frag_io.read_data( file );
 
-  // Assumes constant length fragments. I don't think anyone uses these (or even knows its possible)
-  // so this seems safe.
-  return fragset->max_frag_length();
+	// Assumes constant length fragments. I don't think anyone uses these (or even knows its possible)
+	// so this seems safe.
+	return fragset->max_frag_length();
 }
 
 void FragmentCM::parse_my_tag( utility::tag::TagCOP tag,
-                                  basic::datacache::DataMap& datamap,
-                                  protocols::filters::Filters_map const&,
-                                  protocols::moves::Movers_map const&,
-                                  core::pose::Pose const& ) {
-  using namespace core::fragment;
-  using namespace basic::options;
+	basic::datacache::DataMap& datamap,
+	protocols::filters::Filters_map const&,
+	protocols::moves::Movers_map const&,
+	core::pose::Pose const& ) {
+	using namespace core::fragment;
+	using namespace basic::options;
 
-  std::string frag_file_tag = "fragments";
+	std::string frag_file_tag = "fragments";
 
-  core::Size const frag_length = determine_frag_size( tag->getOption< std::string >( frag_file_tag ) );
+	core::Size const frag_length = determine_frag_size( tag->getOption< std::string >( frag_file_tag ) );
 
-  // The number of frags to be randomly selected out of the total fragments. I think.
-  core::Size n_frags;
-  if( frag_length == 3 ){
-    n_frags = tag->getOption< core::Size >( "nfrags", option[ OptionKeys::abinitio::number_3mer_frags ]() );
-  } else if ( frag_length == 9 ){
-    n_frags = tag->getOption< core::Size >( "nfrags", option[ OptionKeys::abinitio::number_9mer_frags ]() );
-  } else {
-    n_frags = tag->getOption< core::Size >( "nfrags" );
-  }
+	// The number of frags to be randomly selected out of the total fragments. I think.
+	core::Size n_frags;
+	if ( frag_length == 3 ) {
+		n_frags = tag->getOption< core::Size >( "nfrags", option[ OptionKeys::abinitio::number_3mer_frags ]() );
+	} else if ( frag_length == 9 ) {
+		n_frags = tag->getOption< core::Size >( "nfrags", option[ OptionKeys::abinitio::number_9mer_frags ]() );
+	} else {
+		n_frags = tag->getOption< core::Size >( "nfrags" );
+	}
 
-  FragmentIO frag_io( n_frags, 1, option[ OptionKeys::frags::annotate ]() );
+	FragmentIO frag_io( n_frags, 1, option[ OptionKeys::frags::annotate ]() );
 
-  std::string const& frag_type = tag->getOption< std::string >( "frag_type", "classic" );
-  if( frag_type == "classic" ){
-    set_mover( simple_moves::FragmentMoverOP( new simple_moves::ClassicFragmentMover( frag_io.read_data( tag->getOption< std::string >( frag_file_tag ) ) ) ) );
-  } else if( frag_type == "smooth" ){
-    set_mover( simple_moves::FragmentMoverOP( new simple_moves::SmoothFragmentMover( frag_io.read_data( tag->getOption< std::string >( frag_file_tag ) ), protocols::simple_moves::FragmentCostOP( new simple_moves::GunnCost() ) ) ) );
-  } else {
-    std::ostringstream ss;
-    ss << "The fragment type " << frag_type << " is not valid. The options "
-       << " are 'classic' and 'smooth'.";
-    throw utility::excn::EXCN_RosettaScriptsOption( ss.str() );
-  }
+	std::string const& frag_type = tag->getOption< std::string >( "frag_type", "classic" );
+	if ( frag_type == "classic" ) {
+		set_mover( simple_moves::FragmentMoverOP( new simple_moves::ClassicFragmentMover( frag_io.read_data( tag->getOption< std::string >( frag_file_tag ) ) ) ) );
+	} else if ( frag_type == "smooth" ) {
+		set_mover( simple_moves::FragmentMoverOP( new simple_moves::SmoothFragmentMover( frag_io.read_data( tag->getOption< std::string >( frag_file_tag ) ), protocols::simple_moves::FragmentCostOP( new simple_moves::GunnCost() ) ) ) );
+	} else {
+		std::ostringstream ss;
+		ss << "The fragment type " << frag_type << " is not valid. The options "
+			<< " are 'classic' and 'smooth'.";
+		throw utility::excn::EXCN_RosettaScriptsOption( ss.str() );
+	}
 
-  initialize( tag->getOption< bool >( "initialize", true ) );
+	initialize( tag->getOption< bool >( "initialize", true ) );
 
-  set_selector( datamap.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) ) );
+	set_selector( datamap.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) ) );
 }
 
 claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose const& pose,
-                                            basic::datacache::WriteableCacheableMapOP ){
-  using namespace claims;
-  claims::EnvClaims claim_list;
+	basic::datacache::WriteableCacheableMapOP ){
+	using namespace claims;
+	claims::EnvClaims claim_list;
 
-  if( yield_cut_bias() ){
-    core::fragment::SecondaryStructureOP ss( new core::fragment::SecondaryStructure( *( mover()->fragments() ) ) );
-    claim_list.push_back( protocols::environment::claims::EnvClaimOP( new environment::claims::CutBiasClaim(
-		utility::pointer::static_pointer_cast< ClientMover > ( get_self_ptr() ),
+	if ( yield_cut_bias() ) {
+		core::fragment::SecondaryStructureOP ss( new core::fragment::SecondaryStructure( *( mover()->fragments() ) ) );
+		claim_list.push_back( protocols::environment::claims::EnvClaimOP( new environment::claims::CutBiasClaim(
+			utility::pointer::static_pointer_cast< ClientMover > ( get_self_ptr() ),
+			"BASE",
+			*ss ) ) );
+	}
+
+	if ( selector() ) {
+		utility::vector1< bool > torsion_mask;
+		try {
+			torsion_mask = selector()->apply( pose );
+		} catch( utility::excn::EXCN_Msg_Exception& e ){
+			std::ostringstream ss;
+			ss << this->get_name() << " failed to apply its ResidueSelector in " << __FUNCTION__ << ".";
+			e.add_msg(ss.str());
+			throw;
+		}
+		int shift = torsion_mask.index( true )-1;
+
+		if ( shift == -1 ) { // verify that torsion_mask isn't all-false.
+			std::ostringstream ss;
+			ss << "Selector used address fragment insertions of '" << this->get_name() << "' was empty.";
+			throw utility::excn::EXCN_BadInput( ss.str() );
+		}
+
+		mover()->set_fragments( mover()->fragments()->clone_shifted( shift ) );
+	}
+
+	TorsionClaimOP new_claim( new TorsionClaim( utility::pointer::static_pointer_cast< ClientMover > ( get_self_ptr() ),
 		"BASE",
-		*ss ) ) );
-  }
+		std::make_pair( mover()->fragments()->min_pos(),
+		mover()->fragments()->max_pos() ) ) );
 
-  if( selector() ){
-    utility::vector1< bool > torsion_mask;
-    try {
-       torsion_mask = selector()->apply( pose );
-    } catch( utility::excn::EXCN_Msg_Exception& e ){
-      std::ostringstream ss;
-      ss << this->get_name() << " failed to apply its ResidueSelector in " << __FUNCTION__ << ".";
-      e.add_msg(ss.str());
-      throw;
-    }
-    int shift = torsion_mask.index( true )-1;
+	if ( initialize() ) {
+		new_claim->strength( CAN_CONTROL, CAN_CONTROL );
+	} else {
+		new_claim->strength( CAN_CONTROL, DOES_NOT_CONTROL );
+	}
+	claim_list.push_back( new_claim );
 
-    if( shift == -1 ) { // verify that torsion_mask isn't all-false.
-      std::ostringstream ss;
-      ss << "Selector used address fragment insertions of '" << this->get_name() << "' was empty.";
-      throw utility::excn::EXCN_BadInput( ss.str() );
-    }
-
-    mover()->set_fragments( mover()->fragments()->clone_shifted( shift ) );
-  }
-
-  TorsionClaimOP new_claim( new TorsionClaim( utility::pointer::static_pointer_cast< ClientMover > ( get_self_ptr() ),
-                                               "BASE",
-                                               std::make_pair( mover()->fragments()->min_pos(),
-                                                               mover()->fragments()->max_pos() ) ) );
-
-  if( initialize() ){
-    new_claim->strength( CAN_CONTROL, CAN_CONTROL );
-  } else {
-    new_claim->strength( CAN_CONTROL, DOES_NOT_CONTROL );
-  }
-  claim_list.push_back( new_claim );
-
-  return claim_list;
+	return claim_list;
 }
 
 void FragmentCM::initialize( Pose& pose ){
-  DofUnlock activation( pose.conformation(), passport() );
-  mover()->apply_at_all_positions( pose );
+	DofUnlock activation( pose.conformation(), passport() );
+	mover()->apply_at_all_positions( pose );
 }
 
 void FragmentCM::apply( Pose& pose ) {
-  if( pose.conformation().is_protected() ) {
-    DofUnlock activation( pose.conformation(), passport() );
-    mover()->apply( pose );
-  } else {
-    mover()->apply( pose );
-  }
+	if ( pose.conformation().is_protected() ) {
+		DofUnlock activation( pose.conformation(), passport() );
+		mover()->apply( pose );
+	} else {
+		mover()->apply( pose );
+	}
 }
 
 void FragmentCM::initialize( bool setting ) {
-  if( Parent::state_check( __FUNCTION__, bInitialize_ == setting ) ){
-    bInitialize_ = setting;
-  }
+	if ( Parent::state_check( __FUNCTION__, bInitialize_ == setting ) ) {
+		bInitialize_ = setting;
+	}
 }
 
 void FragmentCM::yield_cut_bias( bool setting ){
-  if( Parent::state_check( __FUNCTION__, bYieldCutBias_ == setting ) ){
-    bYieldCutBias_ = setting;
-  }
+	if ( Parent::state_check( __FUNCTION__, bYieldCutBias_ == setting ) ) {
+		bYieldCutBias_ = setting;
+	}
 }
 
 void FragmentCM::passport_updated() {
-  if(mover()==NULL){
-    tr.Warning << "[WARNING] error in " << get_name() << " mover is null or not cofigured " << std::endl;
-    return;
-  }
-  assert( mover() );
-  if( has_passport() ){
-    mover()->set_movemap( passport()->render_movemap() );
-  } else {
-    core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap() );
-    mm->set_bb( true );
-    mover()->set_movemap( mm );
-  }
+	if ( mover()==NULL ) {
+		tr.Warning << "[WARNING] error in " << get_name() << " mover is null or not cofigured " << std::endl;
+		return;
+	}
+	assert( mover() );
+	if ( has_passport() ) {
+		mover()->set_movemap( passport()->render_movemap() );
+	} else {
+		core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap() );
+		mm->set_bb( true );
+		mover()->set_movemap( mm );
+	}
 }
 
 std::string FragmentCM::get_name() const {
-  return "FragmentCM("+mover()->get_name()+")";
+	return "FragmentCM("+mover()->get_name()+")";
 }
 
 } // abscript

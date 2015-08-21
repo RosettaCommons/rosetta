@@ -63,27 +63,27 @@ PeptideBondEnergy::PeptideBondEnergy() : parent( methods::EnergyMethodCreatorOP(
 // EnergyMap & totals
 //) const
 //{
-//	using conformation::Residue;
+// using conformation::Residue;
 //
-//	Real const mean( 1.325883 );
-//	Real const sdev( 0.012547 );
-//	Real total_dev(0.0);
-//	core::scoring::constraints::GaussianFunc gfunc( mean, sdev );
+// Real const mean( 1.325883 );
+// Real const sdev( 0.012547 );
+// Real total_dev(0.0);
+// core::scoring::constraints::GaussianFunc gfunc( mean, sdev );
 //
-//	std::string const bbN_( "N" );
-//	std::string const bbC_( "C" );
+// std::string const bbN_( "N" );
+// std::string const bbC_( "C" );
 //
-//	typedef core::conformation::ResidueOPs ResidueOPs;
-//	for ( ResidueOPs::iterator this_res = pose.res_begin(),
-//				next_res = this_res + 1,
-//				end = pose.res_end();
-//				next_res != end; ++this_res, ++next_res
-//	) {
-//		total_dev += gfunc.func(
-//			(*this_res)->xyz( bbC_ ).distance( (*next_res)->xyz( bbN_ ) )
-//		);
-//	}
-//	totals[ peptide_bond ] = total_dev;
+// typedef core::conformation::ResidueOPs ResidueOPs;
+// for ( ResidueOPs::iterator this_res = pose.res_begin(),
+//    next_res = this_res + 1,
+//    end = pose.res_end();
+//    next_res != end; ++this_res, ++next_res
+// ) {
+//  total_dev += gfunc.func(
+//   (*this_res)->xyz( bbC_ ).distance( (*next_res)->xyz( bbN_ ) )
+//  );
+// }
+// totals[ peptide_bond ] = total_dev;
 //}
 
 void
@@ -105,11 +105,13 @@ PeptideBondEnergy::residue_pair_energy(
 	std::string const bbC_( "C" );
 
 	// make certain that both require atoms are present.
-	if ( !rsd1.type().has(bbN_) || !rsd2.type().has(bbC_) )
+	if ( !rsd1.type().has(bbN_) || !rsd2.type().has(bbC_) ) {
 		return;
+	}
 	// make sure we're bonded and in relatively the right sequence orientation
-	if ( !rsd1.is_bonded(rsd2) || ( rsd1.seqpos() > rsd2.seqpos() ) )
+	if ( !rsd1.is_bonded(rsd2) || ( rsd1.seqpos() > rsd2.seqpos() ) ) {
 		return;
+	}
 
 	total_dev += gfunc.func(
 		rsd1.xyz( bbC_ ).distance( rsd2.xyz( bbN_ ) )
@@ -117,11 +119,11 @@ PeptideBondEnergy::residue_pair_energy(
 	emap[ peptide_bond ] += total_dev;
 } // residue_pair_energy
 
-	/// called during gradient-based minimization inside dfunc
-	/**
-		 F1 and F2 are not zeroed -- contributions from this atom are
-		 just summed in
-	**/
+/// called during gradient-based minimization inside dfunc
+/**
+F1 and F2 are not zeroed -- contributions from this atom are
+just summed in
+**/
 
 void
 PeptideBondEnergy::eval_atom_derivative(

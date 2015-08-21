@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	 test/core/chemical/carbohydrates/CarbohydrateInfo.cxxtest.hh
+/// @file  test/core/chemical/carbohydrates/CarbohydrateInfo.cxxtest.hh
 /// @brief   Test suite for CarbohydrateInfo
 /// @author  Labonte <JWLabonte@jhu.edu>
 

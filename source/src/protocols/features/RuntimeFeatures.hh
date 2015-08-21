@@ -47,20 +47,20 @@ public:
 	/// @copydoc FeaturesReporter::get_name
 	std::string type_name() const { return "RuntimeFeatures"; }
 
-	/// @brief The runtime features links to a structure ID, so the 
+	/// @brief The runtime features links to a structure ID, so the
 	/// StructureFeatures reporter must also be present.
 	utility::vector1<std::string> features_reporter_dependencies() const;
-	
+
 	/// @copydoc FeaturesReporter::write_schema_to_db
 	void write_schema_to_db(
-			utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) const;
 
 	/// @brief Report runtime information for the current job.
 	core::Size report_features(
-			core::pose::Pose const & pose,
-			utility::vector1< bool > const & relevant_residues,
-			StructureID struct_id,
-			utility::sql_database::sessionOP db_session);
+		core::pose::Pose const & pose,
+		utility::vector1< bool > const & relevant_residues,
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session);
 
 };
 

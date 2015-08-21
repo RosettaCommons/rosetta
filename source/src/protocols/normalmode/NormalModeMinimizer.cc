@@ -120,15 +120,15 @@ NormalModeMinimizer::apply( pose::Pose & pose ) {
 	// setup the function that we will pass to the low-level minimizer
 	protocols::normalmode::NormalModeMultifunc
 		f( pose, min_map, *scorefxn_, normalmode,
-			 false, //omega
-			 options_->deriv_check(), options_->deriv_check_verbose() );
+		false, //omega
+		options_->deriv_check(), options_->deriv_check_verbose() );
 
 	// Reset modes to be minimized in MultiFunc when defined by user
-	if( modes_using_.size() > 0 ){
+	if ( modes_using_.size() > 0 ) {
 		f.set_modes( modes_using_ );
 	}
 
-	if( deriv_check_result_ ) deriv_check_local( pose, f );
+	if ( deriv_check_result_ ) deriv_check_local( pose, f );
 
 	// starting position -- "dofs" = Degrees Of Freedom
 	Multivec dofs( min_map.nangles() );
@@ -193,12 +193,12 @@ void NormalModeMinimizer::parse_my_tag(
 		utility::vector1<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
 
 		// string 'ALL' makes all jumps movable
-		if (jumps.size() == 1 && (jumps[1] == "ALL" || jumps[1] == "All" || jumps[1] == "all") ) {
+		if ( jumps.size() == 1 && (jumps[1] == "ALL" || jumps[1] == "All" || jumps[1] == "all") ) {
 			movemap_->set_jump( true );
-		} else if( tag->getOption< core::Size > ( "jump" ) == 0 ) {
+		} else if ( tag->getOption< core::Size > ( "jump" ) == 0 ) {
 			movemap_->set_jump( false );
 		} else {
-			BOOST_FOREACH(std::string jump, jumps){
+			BOOST_FOREACH ( std::string jump, jumps ) {
 				Size const value = std::atoi( jump.c_str() );
 				movemap_->set_jump( value, true );
 			}
@@ -225,7 +225,7 @@ NormalModeMinimizer::deriv_check_result() const {
 
 void
 NormalModeMinimizer::deriv_check_local( pose::Pose const &pose,
-																				protocols::normalmode::NormalModeMultifunc f ) const {
+	protocols::normalmode::NormalModeMultifunc f ) const {
 
 	pose::Pose pose_work( pose );
 	Real const dvar( 1.0e-2 );
@@ -239,17 +239,17 @@ NormalModeMinimizer::deriv_check_local( pose::Pose const &pose,
 	// Then enumerate over degree of freedom
 	Multivec vars;
 	nma_tr << LJ(3,"DOF") << " "
-			<< LJ(6,"dval") << " "
-			<< LJ(10,"g_ana") << " "
-			<< LJ(10,"g_num") << " "
-			<< LJ(10,"dg") << " "
-			<< LJ(10,"dg/g_num") << std::endl;
+		<< LJ(6,"dval") << " "
+		<< LJ(10,"g_ana") << " "
+		<< LJ(10,"g_num") << " "
+		<< LJ(10,"dg") << " "
+		<< LJ(10,"dg/g_num") << std::endl;
 
-	for( Size i_var = 1; i_var <= f.nvar(); ++i_var ){
+	for ( Size i_var = 1; i_var <= f.nvar(); ++i_var ) {
 
 		Real f1, f2;
 		// +dvar
-		vars = vars0;	vars[i_var] += dvar;
+		vars = vars0; vars[i_var] += dvar;
 		f1 = f( vars );
 
 		// -dvar

@@ -74,12 +74,12 @@ using utility::vector1;
 static Tracer TR("core.chemical.ResidueTypeTests.cxxtest");
 
 void add_atom(
-		ResidueType & rsd,
-		AtomTypeSetCOP & atom_types,
-		string const& name,
-		string const& type,
-		string const& mm_type,
-		core::Real const& charge
+	ResidueType & rsd,
+	AtomTypeSetCOP & atom_types,
+	string const& name,
+	string const& type,
+	string const& mm_type,
+	core::Real const& charge
 ){
 	core::Size natoms = rsd.natoms();
 	core::Size nheavyatoms = rsd.nheavyatoms();
@@ -94,17 +94,17 @@ void add_atom(
 	TS_ASSERT(atom_types->has_atom(type));
 	AtomType const& at = (*atom_types)[ atom_types->atom_type_index(type)];
 	++natoms;
-	if(at.is_heavyatom()) ++nheavyatoms;
-	if(at.is_acceptor()){
+	if ( at.is_heavyatom() ) ++nheavyatoms;
+	if ( at.is_acceptor() ) {
 		++nhbond_acceptors;
 		++accpt_pos;
 	}
-	if(at.is_donor()) ++nhbond_donors;
-	if(at.is_haro()) ++Haro_size;
-	if(at.is_polar_hydrogen()){
+	if ( at.is_donor() ) ++nhbond_donors;
+	if ( at.is_haro() ) ++Haro_size;
+	if ( at.is_polar_hydrogen() ) {
 		++Hpol_size;
-		if(std::abs(charge) > 1.0e-3) ++Hpos_polar;
-	}else if(std::abs(charge) > 1.0e-3) ++Hpos_apolar;
+		if ( std::abs(charge) > 1.0e-3 ) ++Hpos_polar;
+	} else if ( std::abs(charge) > 1.0e-3 ) ++Hpos_apolar;
 
 	rsd.add_atom( name, type, mm_type, charge);
 
@@ -313,7 +313,7 @@ public:
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::chemical::ResidueType rsd(pose.residue_type(1));
 
-		for( core::Size ii(1); ii <= rsd.natoms(); ++ii ) {
+		for ( core::Size ii(1); ii <= rsd.natoms(); ++ii ) {
 			core::chemical::VD vd( rsd.atom_vertex( ii ) );
 			TR << "Atom: " << rsd.atom_name(ii) << " VD: " << vd << std::endl;
 			TS_ASSERT( rsd.has( vd ) );
@@ -359,39 +359,39 @@ public:
 		utility::io::izstream paramslist("core/chemical/params/retype_list.txt");
 		std::string filename("params/type_test1.params");
 		paramslist >> filename;
-		while( paramslist ) {
+		while ( paramslist ) {
 			TR << "------- Redoing chis for " << filename << std::endl;
 			core::chemical::ResidueTypeOP rsd = read_topology_file("core/chemical/"+filename,
-					atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+				atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
 			rsd->finalize();
-			if( TR.Debug.visible() ) {
+			if ( TR.Debug.visible() ) {
 				print_chis(TR.Debug, *rsd);
 			}
 			core::chemical::ResidueTypeOP copy( new core::chemical::ResidueType( *rsd) );
 			core::chemical::find_bonds_in_rings( *copy ); //Ring bond annotations needed
 			copy->autodetermine_chi_bonds();
 			copy->finalize();
-			if( TR.Debug.visible() ) {
+			if ( TR.Debug.visible() ) {
 				TR.Debug << " Post chi redo: " << std::endl;
 				print_chis(TR.Debug, *copy);
 			}
 			TS_ASSERT_EQUALS(rsd->nchi(), copy->nchi());
 			// All the chis should be present, but they need not be in the same order.
-			for( core::Size ii(1); ii <= rsd->nchi(); ++ii ) {
+			for ( core::Size ii(1); ii <= rsd->nchi(); ++ii ) {
 				AtomIndices const & rsd_chi( rsd->chi_atoms(ii) );
 				bool chi_found=false;
-				for( core::Size jj(1); jj <= copy->nchi(); ++jj ) {
+				for ( core::Size jj(1); jj <= copy->nchi(); ++jj ) {
 					AtomIndices const & copy_chi( copy->chi_atoms(jj) );
 					// Atom indicies should match
-					if( rsd_chi[1] == copy_chi[1] && rsd_chi[2] == copy_chi[2] &&
-							rsd_chi[3] == copy_chi[3] && rsd_chi[4] == copy_chi[4]) {
+					if ( rsd_chi[1] == copy_chi[1] && rsd_chi[2] == copy_chi[2] &&
+							rsd_chi[3] == copy_chi[3] && rsd_chi[4] == copy_chi[4] ) {
 						TS_ASSERT_EQUALS(rsd->is_proton_chi(ii), copy->is_proton_chi(jj));
 						chi_found=true;
 						break;
 					}
 				}
 				TS_ASSERT(chi_found);
-				if( ! chi_found ) {
+				if ( ! chi_found ) {
 					TR << "---- Chis before" << std::endl;
 					print_chis(TR, *rsd);
 					TR << "---- Chis after" << std::endl;
@@ -421,10 +421,10 @@ public:
 		utility::io::izstream paramslist("core/chemical/params/retype_list.txt");
 		std::string filename;
 		paramslist >> filename;
-		while( paramslist ) {
+		while ( paramslist ) {
 			TR << "Rebuilding Icoord from xyz " << filename << std::endl;
 			core::chemical::ResidueTypeOP restype = read_topology_file("core/chemical/"+filename,
-					atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+				atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
 			core::chemical::ResidueTypeCOP restype_ref( core::chemical::ResidueTypeOP( new core::chemical::ResidueType(*restype) ) );
 			restype->name( restype_ref->name() + "_IcoorRedo"); // For debugging purposes.
 
@@ -444,16 +444,16 @@ public:
 			core::Size  src_nbr2 = restype_ref->atom_index( restype_ref->atom_name( nbr2 ));
 			using core::kinematics::Stub;
 			core::Vector const
-			rot_midpoint ( 0.5 * (     restype->atom(     nbr1 ).ideal_xyz() +     restype->atom(     nbr2 ).ideal_xyz() ) ),
-			src_midpoint ( 0.5 * ( restype_ref->atom( src_nbr1 ).ideal_xyz() + restype_ref->atom( src_nbr2 ).ideal_xyz() ) );
+				rot_midpoint ( 0.5 * (     restype->atom(     nbr1 ).ideal_xyz() +     restype->atom(     nbr2 ).ideal_xyz() ) ),
+				src_midpoint ( 0.5 * ( restype_ref->atom( src_nbr1 ).ideal_xyz() + restype_ref->atom( src_nbr2 ).ideal_xyz() ) );
 
 			core::kinematics::Stub rot_stub( restype->atom( center ).ideal_xyz(),
-					rot_midpoint,
-					restype->atom( nbr1 ).ideal_xyz() );
+				rot_midpoint,
+				restype->atom( nbr1 ).ideal_xyz() );
 
 			core::kinematics::Stub src_stub( restype_ref->atom( src_center ).ideal_xyz(),
-					src_midpoint,
-					restype_ref->atom( src_nbr1 ).ideal_xyz() );
+				src_midpoint,
+				restype_ref->atom( src_nbr1 ).ideal_xyz() );
 			bool mistake=false;
 			TS_ASSERT_EQUALS( restype_ref->natoms(), restype->natoms() );
 			for ( core::Size i=1; i<= restype->natoms(); ++i ) {
@@ -463,7 +463,7 @@ public:
 				core::Vector const new_xyz( src_stub.local2global( rot_stub.global2local( old_xyz ) ) );
 				core::Vector const original_xyz( restype_ref->atom(atom_name).ideal_xyz() );
 				TS_ASSERT_DELTA( original_xyz.distance_squared( new_xyz ), 0, delta2 );
-				if( original_xyz.distance_squared( new_xyz ) > delta2 ) {
+				if ( original_xyz.distance_squared( new_xyz ) > delta2 ) {
 					TR << "Atom " << atom_name << " inappropriately placed " << new_xyz << std::endl;
 					TR << "     " << "    "    << "              should be " << original_xyz << std::endl;
 					TR << "     " << "    "    << "  (without translation) " << old_xyz << std::endl;
@@ -472,7 +472,7 @@ public:
 				}
 				//restype2->atom(i).ideal_xyz( new_xyz );
 			}
-			if( mistake ) {
+			if ( mistake ) {
 				core::chemical::sdf::MolWriter writer;
 				writer.output_residue("core/chemical/"+ filename + "_orig.mol", core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue( *restype_ref, true) ) ) );
 				writer.output_residue("core/chemical/"+ filename + "_after.mol", restype );

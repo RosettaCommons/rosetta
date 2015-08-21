@@ -33,77 +33,77 @@ namespace legacy {
 namespace modeler {
 namespace rna {
 
-	extern protocols::stepwise::modeler::rna::StepWiseRNA_CountStruct local_count_data;
+extern protocols::stepwise::modeler::rna::StepWiseRNA_CountStruct local_count_data;
 
-	class StepWiseRNA_PoseSelection: public utility::pointer::ReferenceCount {
+class StepWiseRNA_PoseSelection: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//Constructor
-		StepWiseRNA_PoseSelection( protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP & working_parameters,
-															 core::scoring::ScoreFunctionCOP scorefxn,
-															 protocols::stepwise::modeler::rna::StepWiseRNA_CountStruct & count_data = local_count_data );
+	//Constructor
+	StepWiseRNA_PoseSelection( protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP & working_parameters,
+		core::scoring::ScoreFunctionCOP scorefxn,
+		protocols::stepwise::modeler::rna::StepWiseRNA_CountStruct & count_data = local_count_data );
 
-		//destructor
-		~StepWiseRNA_PoseSelection();
+	//destructor
+	~StepWiseRNA_PoseSelection();
 
-	public:
+public:
 
-		void
-		initialize_modeler_scorefxn( core::scoring::ScoreFunctionCOP & scorefxn );
+	void
+	initialize_modeler_scorefxn( core::scoring::ScoreFunctionCOP & scorefxn );
 
-		Real
-		pose_selection_by_full_score( pose::Pose & current_pose, std::string const & tag );
+	Real
+	pose_selection_by_full_score( pose::Pose & current_pose, std::string const & tag );
 
-		void
-		cluster_pose_list();
+	void
+	cluster_pose_list();
 
-		void set_num_pose_kept( core::Size const & num_pose_kept );
+	void set_num_pose_kept( core::Size const & num_pose_kept );
 
-		void
-		set_cluster_rmsd( core::Real const & setting );
+	void
+	set_cluster_rmsd( core::Real const & setting );
 
-		void
-		set_distinguish_pucker( bool const & setting ){ distinguish_pucker_ = setting ; }
+	void
+	set_distinguish_pucker( bool const & setting ){ distinguish_pucker_ = setting ; }
 
-		void
-		set_PBP_clustering_at_chain_closure( bool const & setting ){ PBP_clustering_at_chain_closure_ = setting; }
+	void
+	set_PBP_clustering_at_chain_closure( bool const & setting ){ PBP_clustering_at_chain_closure_ = setting; }
 
-		void
-		update_pose_list(
-													std::string const & tag,
-													pose::Pose const & current_pose,
-													Real const & current_score );
+	void
+	update_pose_list(
+		std::string const & tag,
+		pose::Pose const & current_pose,
+		Real const & current_score );
 
-		utility::vector1< pose::PoseOP > pose_list();
+	utility::vector1< pose::PoseOP > pose_list();
 
-		void set_pose_list( utility::vector1< pose::PoseOP > &	pose_list );
+	void set_pose_list( utility::vector1< pose::PoseOP > & pose_list );
 
-		void
-		finalize( bool const do_clustering = true );
+	void
+	finalize( bool const do_clustering = true );
 
-		void
-		set_count_data( protocols::stepwise::modeler::rna::StepWiseRNA_CountStruct & setting ){ count_data_ = setting; }
+	void
+	set_count_data( protocols::stepwise::modeler::rna::StepWiseRNA_CountStruct & setting ){ count_data_ = setting; }
 
-	private:
+private:
 
-		protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters_;
-		core::scoring::ScoreFunctionOP modeler_scorefxn_;
+	protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters_;
+	core::scoring::ScoreFunctionOP modeler_scorefxn_;
 
-		Size num_pose_kept_;
-		Size const multiplier_;
-		core::Real cluster_rmsd_;
-		bool PBP_clustering_at_chain_closure_;
-		bool distinguish_pucker_;
-		core::Real current_score_cutoff_;
+	Size num_pose_kept_;
+	Size const multiplier_;
+	core::Real cluster_rmsd_;
+	bool PBP_clustering_at_chain_closure_;
+	bool distinguish_pucker_;
+	core::Real current_score_cutoff_;
 
-		bool verbose_;
+	bool verbose_;
 
-		protocols::stepwise::modeler::rna::StepWiseRNA_CountStruct & count_data_;
+	protocols::stepwise::modeler::rna::StepWiseRNA_CountStruct & count_data_;
 
-		utility::vector1< pose::PoseOP > pose_list_;
+	utility::vector1< pose::PoseOP > pose_list_;
 
-	};
+};
 
 } //rna
 } //modeler

@@ -31,35 +31,35 @@
 
 namespace protocols {
 namespace abinitio {
-namespace abscript{
+namespace abscript {
 
 class JumpSampleData : public basic::datacache::WriteableCacheableData {
-  typedef basic::datacache::WriteableCacheableData Parent;
-  typedef basic::datacache::WriteableCacheableDataOP ParentOP;
+	typedef basic::datacache::WriteableCacheableData Parent;
+	typedef basic::datacache::WriteableCacheableDataOP ParentOP;
 
 public:
-  JumpSampleData( std::istream &in );
+	JumpSampleData( std::istream &in );
 
-  JumpSampleData( std::string const& moverkey,
-                  jumping::JumpSample const& );
+	JumpSampleData( std::string const& moverkey,
+		jumping::JumpSample const& );
 
-  void write( std::ostream &out ) const;
+	void write( std::ostream &out ) const;
 
-  basic::datacache::CacheableDataOP clone() const;
+	basic::datacache::CacheableDataOP clone() const;
 
-  std::string datatype() const;
+	std::string datatype() const;
 
-  jumping::JumpSample const& jump_sample() const{
-    return jump_sample_;
-  }
+	jumping::JumpSample const& jump_sample() const{
+		return jump_sample_;
+	}
 
-  std::string const& moverkey() const {
-    return moverkey_;
-  }
+	std::string const& moverkey() const {
+		return moverkey_;
+	}
 
 private:
-  jumping::JumpSample jump_sample_;
-  std::string moverkey_;
+	jumping::JumpSample jump_sample_;
+	std::string moverkey_;
 };
 
 } // abscript

@@ -51,7 +51,7 @@ ozstream::open_append_if_existed( std::string const& filename_a, std::stringstre
 
 	if ( !utility::file::file_exists( filename_a ) ) {
 		open( filename_a );
-		if ( good() ) (*this) << preprinted_header.str();
+		if ( good() ) ( *this) << preprinted_header.str();
 	} else {
 		open_append( filename_a );
 	}
@@ -60,36 +60,36 @@ ozstream::open_append_if_existed( std::string const& filename_a, std::stringstre
 /// @brief Open a file
 void
 ozstream::open(
-		std::string const & filename_a,
-		std::ios_base::openmode open_mode // Ignored for gzip files
-	)
-	{
-		using std::ios;
-		using std::ios_base;
-		using utility::file::file_extension;
-		using utility::file::trytry_ofstream_open;
-		using zlib_stream::zip_ostream;
+	std::string const & filename_a,
+	std::ios_base::openmode open_mode // Ignored for gzip files
+)
+{
+	using std::ios;
+	using std::ios_base;
+	using utility::file::file_extension;
+	using utility::file::trytry_ofstream_open;
+	using zlib_stream::zip_ostream;
 
 
-//	#if defined( USE_FILE_PROVIDER )
-//		utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
-//
-//		if(!provider->get_ostream( filename_a , &file_provider_stream )){
-//			 std::cerr << "Cannot find inline file: " << filename_a << std::endl;
-//			 file_provider_stream = &bad_stream;
-//			 file_provider_stream->setstate( ios_base::failbit | ios_base::badbit );
-//		}
-//		
-//    if (file_provider_stream->good() ){
-//      return;
-//    }
-//	#endif
+	// #if defined( USE_FILE_PROVIDER )
+	//  utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
+	//
+	//  if(!provider->get_ostream( filename_a , &file_provider_stream )){
+	//    std::cerr << "Cannot find inline file: " << filename_a << std::endl;
+	//    file_provider_stream = &bad_stream;
+	//    file_provider_stream->setstate( ios_base::failbit | ios_base::badbit );
+	//  }
+	//
+	//    if (file_provider_stream->good() ){
+	//      return;
+	//    }
+	// #endif
 
-		// Close the file if open and reset the state
-		close();
+	// Close the file if open and reset the state
+	close();
 
-		// Open the ofstream and set the compression state and file name
-		filename_ = filename_a;
+	// Open the ofstream and set the compression state and file name
+	filename_ = filename_a;
 
 #ifdef USEMPI
 		//		std::cout << "MPI_Reroute " << (bMPI_reroute_stream_ ? " active " : " not-active ") << std::endl;
@@ -104,73 +104,73 @@ ozstream::open(
 			return;
 		}
 #endif
-		if ( ( open_mode & ios::ate ) || ( open_mode & ios::app )
-		 || ( ( open_mode & ios::in ) && ( open_mode & ios::out ) ) ) {
+	if ( ( open_mode & ios::ate ) || ( open_mode & ios::app )
+			|| ( ( open_mode & ios::in ) && ( open_mode & ios::out ) ) ) {
 
-			// prepare new character buffer -- must do this before file is opened
-			allocate_assign_char_buffer();
+		// prepare new character buffer -- must do this before file is opened
+		allocate_assign_char_buffer();
 
-			// Unsupported for gzip files: Use ofstream
-			trytry_ofstream_open( of_stream_, filename_a, open_mode );
+		// Unsupported for gzip files: Use ofstream
+		trytry_ofstream_open( of_stream_, filename_a, open_mode );
 
+		compression_ = UNCOMPRESSED;
+
+	} else if ( file_extension( filename_a ) == "gz" ) { // gzip file
+
+		trytry_ofstream_open( of_stream_, filename_a, ios_base::out|ios_base::binary );
+		if ( of_stream_ ) { // Open succeeded
+			compression_ = GZIP;
+		} else { // Leave stream state so that failure can be detected
+			compression_ = NONE;
+		}
+
+	} else { // Uncompressed file
+
+		// prepare new character buffer -- must do this before file is opened
+		allocate_assign_char_buffer();
+
+		trytry_ofstream_open( of_stream_, filename_a, ios_base::out );
+		if ( of_stream_ ) { // Open succeeded
 			compression_ = UNCOMPRESSED;
-
-		} else if ( file_extension( filename_a ) == "gz" ) { // gzip file
-
-			trytry_ofstream_open( of_stream_, filename_a, ios_base::out|ios_base::binary );
-			if ( of_stream_ ) { // Open succeeded
-				compression_ = GZIP;
-			} else { // Leave stream state so that failure can be detected
-				compression_ = NONE;
-			}
-
-		} else { // Uncompressed file
-
-			// prepare new character buffer -- must do this before file is opened
-			allocate_assign_char_buffer();
-
-			trytry_ofstream_open( of_stream_, filename_a, ios_base::out );
-			if ( of_stream_ ) { // Open succeeded
-				compression_ = UNCOMPRESSED;
-			} else { // Leave stream state so that failure can be detected
-				compression_ = NONE;
-			}
-
+		} else { // Leave stream state so that failure can be detected
+			compression_ = NONE;
 		}
 
-		// Attach zip_ostream to ofstream if gzip file
-		if ( compression_ == GZIP ) {
-			// zip_stream_p_ deleted by close() above so don't have to here
-			zip_stream_p_ = new zip_ostream( of_stream_, true, static_cast< size_t >( Z_DEFAULT_COMPRESSION ), zlib_stream::DefaultStrategy, 15, 8, buffer_size_ );
-			if ( ( !zip_stream_p_ ) || ( !( *zip_stream_p_ ) ) ||
-			 ( !zip_stream_p_->is_gzip() ) ) { // zip_stream not in good state
-				if ( zip_stream_p_ ) delete zip_stream_p_;
-				zip_stream_p_ = 0;
-				of_stream_.close();
-				// Set failbit so failure can be detected
-				of_stream_.setstate( ios_base::failbit );
-			}
-		}
 	}
 
+	// Attach zip_ostream to ofstream if gzip file
+	if ( compression_ == GZIP ) {
+		// zip_stream_p_ deleted by close() above so don't have to here
+		zip_stream_p_ = new zip_ostream( of_stream_, true, static_cast< size_t >( Z_DEFAULT_COMPRESSION ), zlib_stream::DefaultStrategy, 15, 8, buffer_size_ );
+		if ( ( !zip_stream_p_ ) || ( !( *zip_stream_p_ ) ) ||
+				( !zip_stream_p_->is_gzip() ) ) { // zip_stream not in good state
+			if ( zip_stream_p_ ) delete zip_stream_p_;
+			zip_stream_p_ = 0;
+			of_stream_.close();
+			// Set failbit so failure can be detected
+			of_stream_.setstate( ios_base::failbit );
+		}
+	}
+}
 
-	/// @brief Open a text file or gzip'd file for appending
-	void
-	ozstream::open_append( std::string const & filename_a )
-	{
-		using std::cout;
-		using std::endl;
-		using std::exit;
-		using std::ios_base;
-		using utility::file::file_extension;
-		using utility::file::trytry_ofstream_open;
-		using zlib_stream::zip_ostream;
 
-		// Close the file if open and reset the state
-		close();
+/// @brief Open a text file or gzip'd file for appending
+void
+ozstream::open_append( std::string const & filename_a )
+{
+	using std::cout;
+	using std::endl;
+	using std::exit;
+	using std::ios_base;
+	using utility::file::file_extension;
+	using utility::file::trytry_ofstream_open;
+	using zlib_stream::zip_ostream;
 
-		// Open the ofstream and set the compression state and file name
-		filename_ = filename_a;
+	// Close the file if open and reset the state
+	close();
+
+	// Open the ofstream and set the compression state and file name
+	filename_ = filename_a;
 
 #ifdef USEMPI
 		//		std::cout << "MPI_Reroute " << (bMPI_reroute_stream_ ? " active " : " not-active ") << std::endl;
@@ -184,42 +184,42 @@ ozstream::open(
 		}
 #endif
 
-		if ( file_extension( filename_a ) == "gz" ) { // gzip file
+	if ( file_extension( filename_a ) == "gz" ) { // gzip file
 
-			trytry_ofstream_open( of_stream_, filename_a, ios_base::out|ios_base::binary|ios_base::app );
-			if ( of_stream_ ) { // Open succeeded
-				compression_ = GZIP;
-			} else { // Leave stream state so that failure can be detected
-				compression_ = NONE;
-			}
-
-		} else { // Uncompressed file
-
-			// prepare new character buffer -- must do this before file is opened
-			allocate_assign_char_buffer();
-
-			trytry_ofstream_open( of_stream_, filename_a, ios_base::out|ios_base::app );
-			if ( of_stream_ ) { // Open succeeded
-				compression_ = UNCOMPRESSED;
-			} else { // Leave stream state so that failure can be detected
-				compression_ = NONE;
-			}
-
+		trytry_ofstream_open( of_stream_, filename_a, ios_base::out|ios_base::binary|ios_base::app );
+		if ( of_stream_ ) { // Open succeeded
+			compression_ = GZIP;
+		} else { // Leave stream state so that failure can be detected
+			compression_ = NONE;
 		}
 
-		// Attach zip_ostream to ofstream if gzip file
-		if ( compression_ == GZIP ) {
-			// zip_stream_p_ deleted by close() above so don't have to here
-			zip_stream_p_ = new zip_ostream( of_stream_, true, static_cast< size_t >( Z_DEFAULT_COMPRESSION ), zlib_stream::DefaultStrategy, 15, 8, buffer_size_ );
-			if ( ( !zip_stream_p_ ) || ( !( *zip_stream_p_ ) ) ||
-			 ( !zip_stream_p_->is_gzip() ) ) { // zip_stream not in good state
-				delete zip_stream_p_; zip_stream_p_ = 0;
-				of_stream_.close();
-				// Set failbit so failure can be detected
-				of_stream_.setstate( ios_base::failbit );
-			}
+	} else { // Uncompressed file
+
+		// prepare new character buffer -- must do this before file is opened
+		allocate_assign_char_buffer();
+
+		trytry_ofstream_open( of_stream_, filename_a, ios_base::out|ios_base::app );
+		if ( of_stream_ ) { // Open succeeded
+			compression_ = UNCOMPRESSED;
+		} else { // Leave stream state so that failure can be detected
+			compression_ = NONE;
+		}
+
+	}
+
+	// Attach zip_ostream to ofstream if gzip file
+	if ( compression_ == GZIP ) {
+		// zip_stream_p_ deleted by close() above so don't have to here
+		zip_stream_p_ = new zip_ostream( of_stream_, true, static_cast< size_t >( Z_DEFAULT_COMPRESSION ), zlib_stream::DefaultStrategy, 15, 8, buffer_size_ );
+		if ( ( !zip_stream_p_ ) || ( !( *zip_stream_p_ ) ) ||
+				( !zip_stream_p_->is_gzip() ) ) { // zip_stream not in good state
+			delete zip_stream_p_; zip_stream_p_ = 0;
+			of_stream_.close();
+			// Set failbit so failure can be detected
+			of_stream_.setstate( ios_base::failbit );
 		}
 	}
+}
 
 #ifndef USEMPI
 void ozstream::enable_MPI_reroute( int, int ) {

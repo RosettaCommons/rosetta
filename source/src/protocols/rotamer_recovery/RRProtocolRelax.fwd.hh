@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/rotamer_recovery/RRProtocolRelax.fwd.hh
-/// @brief  Perform the rotamer recovery test using the FastRelax protocol 
+/// @brief  Perform the rotamer recovery test using the FastRelax protocol
 /// @author Patrick Conway (ptconway@gmail.com)
 
 #ifndef INCLUDED_protocols_rotamer_recovery_RRProtocolRelax_fwd_hh
@@ -17,8 +17,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace rotamer_recovery{
+namespace protocols {
+namespace rotamer_recovery {
 
 class RRProtocolRelax;
 typedef utility::pointer::shared_ptr< RRProtocolRelax > RRProtocolRelaxOP;

@@ -73,23 +73,23 @@ extern core::Real native_CA_gdtmm( const core::pose::Pose &native_pose ,  const 
 /// Reference:
 /// Keedy, DA. The other 90% of the protein. Proteins. 2009; 77 Suppl 9:29-49.
 core::Real gdtsc(const core::pose::Pose& ref,
-                 const core::pose::Pose& model,
-                 const std::map<core::Size, core::Size>& residues);
+	const core::pose::Pose& model,
+	const std::map<core::Size, core::Size>& residues);
 
 /// @brief Returns the average fraction of residues superimposable under a
 /// series of distance thresholds-- 0.5, 1.0, 2.0, and 4.0 Angstroms.
 core::Real gdtha(const core::pose::Pose& ref,
-                 const core::pose::Pose& model,
-                 const std::map<core::Size, core::Size>& residues);
+	const core::pose::Pose& model,
+	const std::map<core::Size, core::Size>& residues);
 
 /// @brief Computes the RMSD of the jump residues between <model> and <native>,
 /// storing the results in a map keyed by jump_id.
 void compute_jump_rmsd(const core::pose::Pose& reference,
-                       const core::pose::Pose& model,
-                       boost::unordered_map<core::Size, core::Real>* rmsds);
+	const core::pose::Pose& model,
+	boost::unordered_map<core::Size, core::Real>* rmsds);
 
 /// @brief RMSD between residues, accounting for automorphisms
-/// (symmetries).  For example if you have something like a tyrosine, 
+/// (symmetries).  For example if you have something like a tyrosine,
 /// you won't get a higher rmsd just because you flipped the ring 180 degrees (Rocco).
 /// Does NOT include H atoms -- they add lots of extra symmetries.
 core::Real
@@ -101,13 +101,13 @@ automorphic_rmsd(
 
 /// @brief  Compute the CA RMSD between two poses.
 core::Real CA_rmsd(const core::pose::Pose& pose1,
-									 const core::pose::Pose& pose2,
-									 const std::map<core::Size, core::Size>& residues);
+	const core::pose::Pose& pose2,
+	const std::map<core::Size, core::Size>& residues);
 
 /// @brief  Compute the CA RMSD between two poses.
 core::Real CA_gdtmm(const core::pose::Pose& pose1,
-										const core::pose::Pose& pose2,
-										const std::map<core::Size, core::Size>& residues);
+	const core::pose::Pose& pose2,
+	const std::map<core::Size, core::Size>& residues);
 
 //////////////////////////////////////////////////////////////////////////////
 // Predicate functions to use with rmsd_no_super() and rmsd_with_super()
@@ -170,17 +170,17 @@ is_ligand_heavyatom(
 
 bool
 is_ligand_heavyatom_residues(
-		core::conformation::Residue const & residue1,
-		core::conformation::Residue const &, // residue2
-		core::Size atomno
+	core::conformation::Residue const & residue1,
+	core::conformation::Residue const &, // residue2
+	core::Size atomno
 );
 
 /// @brief Return true if the pose residues and atoms specified are non-peptide heavy atoms.
 bool is_non_peptide_heavy_atom(
-		core::pose::Pose const & pose1,
-		core::pose::Pose const & /* pose2 */,
-		core::uint const resno,
-		core::uint const atomno );
+	core::pose::Pose const & pose1,
+	core::pose::Pose const & /* pose2 */,
+	core::uint const resno,
+	core::uint const atomno );
 
 bool
 is_heavyatom(
@@ -192,10 +192,10 @@ is_heavyatom(
 
 bool
 is_scatom(
-  core::pose::Pose const & pose1,
-  core::pose::Pose const & ,//pose2,
-  core::Size resno,
-  core::Size atomno
+	core::pose::Pose const & pose1,
+	core::pose::Pose const & ,//pose2,
+	core::Size resno,
+	core::Size atomno
 );
 
 bool
@@ -214,10 +214,10 @@ public:
 	Predicate() {};
 	virtual ~Predicate() {}
 	virtual bool operator()(
-			core::pose::Pose const & pose1,
-			core::pose::Pose const & pose2,
-			core::Size resno,
-			core::Size atomno) const = 0;
+		core::pose::Pose const & pose1,
+		core::pose::Pose const & pose2,
+		core::Size resno,
+		core::Size atomno) const = 0;
 };
 
 typedef utility::pointer::shared_ptr< Predicate > PredicateOP;
@@ -228,10 +228,10 @@ public:
 	IsProteinCAPredicate() {}
 	virtual ~IsProteinCAPredicate() {}
 	virtual bool operator()(
-			core::pose::Pose const & pose1,
-			core::pose::Pose const & pose2,
-			core::Size resno,
-			core::Size atomno) const { return is_protein_CA(pose1, pose2, resno, atomno); }
+		core::pose::Pose const & pose1,
+		core::pose::Pose const & pose2,
+		core::Size resno,
+		core::Size atomno) const { return is_protein_CA(pose1, pose2, resno, atomno); }
 };
 
 // (Fill in others as needed.)
@@ -244,10 +244,10 @@ public:
 	ResRangePredicate( core::Size start, core::Size end, PredicateCOP predicate ) : start_(start), end_(end), pred_(predicate) {}
 	virtual ~ResRangePredicate() {}
 	virtual bool operator()(
-			core::pose::Pose const & pose1,
-			core::pose::Pose const & pose2,
-			core::Size resno,
-			core::Size atomno) const;
+		core::pose::Pose const & pose1,
+		core::pose::Pose const & pose2,
+		core::Size resno,
+		core::Size atomno) const;
 private:
 	core::Size start_;
 	core::Size end_;
@@ -259,10 +259,10 @@ public:
 	SelectedResPredicate( std::list< core::Size > const & selected, PredicateCOP predicate ) : selected_(selected), pred_(predicate) {}
 	virtual ~SelectedResPredicate() {}
 	virtual bool operator()(
-			core::pose::Pose const & pose1,
-			core::pose::Pose const & pose2,
-			core::Size resno,
-			core::Size atomno) const;
+		core::pose::Pose const & pose1,
+		core::pose::Pose const & pose2,
+		core::Size resno,
+		core::Size atomno) const;
 private:
 	std::list< core::Size > selected_;
 	PredicateCOP pred_;
@@ -273,10 +273,10 @@ public:
 	ExcludedResPredicate( utility::vector1< Size > const & excluded, PredicateCOP predicate ) : excluded_(excluded), pred_(predicate) {}
 	virtual ~ExcludedResPredicate() {}
 	virtual bool operator()(
-			core::pose::Pose const & pose1,
-			core::pose::Pose const & pose2,
-			core::Size resno,
-			core::Size atomno) const;
+		core::pose::Pose const & pose1,
+		core::pose::Pose const & pose2,
+		core::Size resno,
+		core::Size atomno) const;
 private:
 	utility::vector1< Size > const & excluded_;
 	PredicateCOP pred_;
@@ -308,8 +308,8 @@ bb_rmsd(
 /// @brief Compute rmsd for only backbone residues (including carboxyl oxygen)
 core::Real
 bb_rmsd_including_O(
-        const core::pose::Pose & pose1,
-        const core::pose::Pose & pose2
+	const core::pose::Pose & pose1,
+	const core::pose::Pose & pose2
 );
 
 // compute rmsd for residues between start and end
@@ -338,14 +338,14 @@ all_atom_rmsd(
 
 core::Real
 all_scatom_rmsd_nosuper(
-  const core::pose::Pose & pose1,
-  const core::pose::Pose & pose2
+	const core::pose::Pose & pose1,
+	const core::pose::Pose & pose2
 );
 
 core::Real
 all_atom_rmsd_nosuper(
-  const core::pose::Pose & pose1,
-  const core::pose::Pose & pose2
+	const core::pose::Pose & pose1,
+	const core::pose::Pose & pose2
 );
 
 core::Real
@@ -364,12 +364,12 @@ nbr_atom_rmsd(
 /*
 void
 fill_rmsd_coordinates(
-	int & natoms,
-	ObjexxFCL::FArray2D< core::Real > & p1a,
-	ObjexxFCL::FArray2D< core::Real > & p2a,
-	const core::pose::Pose & pose1,
-	const core::pose::Pose & pose2,
-	std::string atom_name
+int & natoms,
+ObjexxFCL::FArray2D< core::Real > & p1a,
+ObjexxFCL::FArray2D< core::Real > & p2a,
+const core::pose::Pose & pose1,
+const core::pose::Pose & pose2,
+std::string atom_name
 ); */
 
 // other model-quality related functions
@@ -478,12 +478,12 @@ CA_gdttm(
 	std::list< Size > residue_selection //the std::list can be sorted! -- note std::sort can be applied to vectors
 );
 
-void 
+void
 CA_gdttm(const core::pose::Pose& pose1,
-				 const core::pose::Pose& pose2,
-				 core::Real &gdttm_score,
-				 core::Real &gdtha_score,
-				 const std::map<core::Size, core::Size>& residues);
+	const core::pose::Pose& pose2,
+	core::Real &gdttm_score,
+	core::Real &gdtha_score,
+	const std::map<core::Size, core::Size>& residues);
 
 void
 CA_gdttm(
@@ -529,8 +529,8 @@ calpha_superimpose_pose(
 
 core::Real
 CA_rmsd_symmetric(
-  const core::pose::Pose & pose1,
-  const core::pose::Pose & pose2
+	const core::pose::Pose & pose1,
+	const core::pose::Pose & pose2
 );
 
 core::Real
@@ -550,13 +550,13 @@ rms_at_corresponding_atoms(
 	pose::Pose const & mod_pose,
 	pose::Pose const & ref_pose,
 	std::map< core::id::AtomID, core::id::AtomID > const & atom_id_map
-													 );
+);
 
 Real
 rms_at_all_corresponding_atoms(
-        pose::Pose const & mod_pose,
-        pose::Pose const & ref_pose,
-        std::map< core::id::AtomID, core::id::AtomID > const & atom_id_map
+	pose::Pose const & mod_pose,
+	pose::Pose const & ref_pose,
+	std::map< core::id::AtomID, core::id::AtomID > const & atom_id_map
 );
 
 Real
@@ -565,7 +565,7 @@ rms_at_corresponding_atoms(
 	pose::Pose const & ref_pose,
 	std::map< core::id::AtomID, core::id::AtomID > const & atom_id_map,
 	utility::vector1< Size > const & calc_rms_res
-													 );
+);
 
 Real
 rms_at_corresponding_atoms_no_super(
@@ -579,10 +579,10 @@ rms_at_corresponding_atoms_no_super(
 	pose::Pose const & ref_pose,
 	std::map< core::id::AtomID, core::id::AtomID > const & atom_id_map,
 	utility::vector1< Size > const & calc_rms_res
-																		);
+);
 
 void
-setup_matching_heavy_atoms( core::pose::Pose const & pose1, core::pose::Pose const & pose2, 	std::map< core::id::AtomID, core::id::AtomID > & atom_id_map );
+setup_matching_heavy_atoms( core::pose::Pose const & pose1, core::pose::Pose const & pose2,  std::map< core::id::AtomID, core::id::AtomID > & atom_id_map );
 
 Real
 rms_at_corresponding_heavy_atoms(
@@ -597,16 +597,16 @@ residue_sc_rmsd_no_super(
 	bool const fxnal_group_only=false );
 
 void
-setup_matching_CA_atoms( core::pose::Pose const & pose1, core::pose::Pose const & pose2, 	std::map< core::id::AtomID, core::id::AtomID > & atom_id_map );
+setup_matching_CA_atoms( core::pose::Pose const & pose1, core::pose::Pose const & pose2,  std::map< core::id::AtomID, core::id::AtomID > & atom_id_map );
 
 void
 setup_matching_protein_backbone_heavy_atoms( core::pose::Pose const & pose1, core::pose::Pose const & pose2,
-																						 std::map< core::id::AtomID, core::id::AtomID > & atom_id_map );
+	std::map< core::id::AtomID, core::id::AtomID > & atom_id_map );
 
 void
 setup_matching_atoms_with_given_names( core::pose::Pose const & pose1, core::pose::Pose const & pose2,
-																			 utility::vector1< std::string > const & atom_names_to_find,
-																			 std::map< core::id::AtomID, core::id::AtomID > & atom_id_map );
+	utility::vector1< std::string > const & atom_names_to_find,
+	std::map< core::id::AtomID, core::id::AtomID > & atom_id_map );
 
 
 } // end namespace scoring

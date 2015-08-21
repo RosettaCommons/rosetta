@@ -190,18 +190,18 @@ public:
 	/*virtual
 	void
 	eval_atom_derivative_for_residue_pair(
-		Size const atom_index,
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		ResSingleMinimizationData const & minsingle_data1,
-		ResSingleMinimizationData const & minsingle_data2,
-		ResPairMinimizationData const & minpair_data,
-		pose::Pose const & pose, // provides context
-		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
-		Vector & F1,
-		Vector & F2
+	Size const atom_index,
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	ResSingleMinimizationData const & minsingle_data1,
+	ResSingleMinimizationData const & minsingle_data2,
+	ResPairMinimizationData const & minpair_data,
+	pose::Pose const & pose, // provides context
+	kinematics::DomainMap const & domain_map,
+	ScoreFunction const & sfxn,
+	EnergyMap const & weights,
+	Vector & F1,
+	Vector & F2
 	) const;*/
 
 	virtual
@@ -224,23 +224,23 @@ public:
 
 	// check compatibility with atomtypeset and store a constraint graph in
 	// the pose.energies object
- 	virtual
- 	void
- 	setup_for_scoring( pose::Pose &pose, ScoreFunction const &scfxn ) const;
+	virtual
+	void
+	setup_for_scoring( pose::Pose &pose, ScoreFunction const &scfxn ) const;
 
 	/// @brief Make sure that the ConstraintsEnergyContainer is ready for packing.
 	virtual
 	void
-	setup_for_packing( 
+	setup_for_packing(
 		pose::Pose & pose,
 		utility::vector1< bool > const & residues_repacking,
 		utility::vector1< bool > const & residues_designing
 	) const;
 
 	// call the cst setup_for_derivatives wrapper
- 	virtual
- 	void
- 	setup_for_derivatives( pose::Pose &pose, ScoreFunction const &scfxn ) const;
+	virtual
+	void
+	setup_for_derivatives( pose::Pose &pose, ScoreFunction const &scfxn ) const;
 
 	/// @brief Returns true if there are three-body or higher-body constraints that the user
 	/// has defined.  High-order terms will not be correctly evaluated in RTMin or other
@@ -353,8 +353,8 @@ public:
 
 	/// called during gradient-based minimization inside dfunc
 	/**
-		 F1 and F2 are not zeroed -- contributions from this atom are
-		 just summed in
+	F1 and F2 are not zeroed -- contributions from this atom are
+	just summed in
 	**/
 	virtual
 	void
@@ -382,8 +382,8 @@ public:
 
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

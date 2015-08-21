@@ -50,7 +50,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 static thread_local basic::Tracer trProfScore(
-		"protocols.frag_picker.scores.ScoreEValuator");
+	"protocols.frag_picker.scores.ScoreEValuator");
 
 void ScoreEValuator::do_caching(VallChunkOP chunk) {
 
@@ -70,22 +70,22 @@ bool ScoreEValuator::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) 
 
 	utility::vector1<Size> columnsQ;
 	utility::vector1<Size> columnsV;
-	for (Size i = 1; i <= f->get_length(); i++) {
+	for ( Size i = 1; i <= f->get_length(); i++ ) {
 		assert(f->get_first_index_in_query() + i - 1 <= scores_.size());
 		assert(f->get_first_index_in_vall()
-				+ i - 1<= scores_[1].size());
+			+ i - 1<= scores_[1].size());
 		totalScore
-				+= scores_[f->get_first_index_in_query() + i - 1][f->get_first_index_in_vall()
-						+ i - 1];
+			+= scores_[f->get_first_index_in_query() + i - 1][f->get_first_index_in_vall()
+			+ i - 1];
 		columnsQ.push_back(f->get_first_index_in_query() + i - 1);
 		columnsV.push_back(f->get_first_index_in_vall() + i - 1);
 	}
 
-	for (Size i_rand = 1; i_rand <= max_rand_; ++i_rand) {
+	for ( Size i_rand = 1; i_rand <= max_rand_; ++i_rand ) {
 		numeric::random::random_permutation(columnsQ.begin(), columnsQ.end(), numeric::random::rg());
 		numeric::random::random_permutation(columnsV.begin(), columnsV.end(), numeric::random::rg());
 		Real s = 0;
-		for (Size i = 1; i <= columnsQ.size(); i++) {
+		for ( Size i = 1; i <= columnsQ.size(); i++ ) {
 			s = scores_[columnsQ[i]][columnsV[i]];
 			mean += s;
 			stdev += s * s;
@@ -98,26 +98,27 @@ bool ScoreEValuator::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) 
 	totalScore = (totalScore - mean) / stdev;
 
 	empty_map->set_score_component(totalScore, id_);
-	if ((totalScore > lowest_acceptable_value_) && (use_lowest_ == true))
+	if ( (totalScore > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;
+	}
 	return true;
 }
 
 FragmentScoringMethodOP MakeScoreEValuator::make(Size priority,
-		Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker) {
+	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker) {
 
-	if (option[frags::scoring::profile_score].user()) {
+	if ( option[frags::scoring::profile_score].user() ) {
 		core::sequence::ScoringSchemeFactory ssf;
 		core::sequence::ScoringSchemeOP ss(ssf.get_scoring_scheme(
-				option[frags::scoring::profile_score]()));
+			option[frags::scoring::profile_score]()));
 		Size len = picker->get_vall()->get_largest_chunk_size();
 		trProfScore << "Profile scoring method is: "
-				<< option[frags::scoring::profile_score]() << std::endl;
+			<< option[frags::scoring::profile_score]() << std::endl;
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new ScoreEValuator(priority,
-				lowest_acceptable_value, use_lowest, picker->get_query_seq(), ss, len) );
+			lowest_acceptable_value, use_lowest, picker->get_query_seq(), ss, len) );
 	}
 	utility_exit_with_message(
-			"[ERROR] Undefined profile scoring method. Provide it with frags::scoring_scheme flag");
+		"[ERROR] Undefined profile scoring method. Provide it with frags::scoring_scheme flag");
 
 	return NULL;
 }

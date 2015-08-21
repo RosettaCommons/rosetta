@@ -242,7 +242,7 @@ public:
 		utility::vector1< Size > const & target_atids,
 		toolbox::match_enzdes_util::MatchConstraintFileInfoCOP mcfi,
 		std::string SecMatchStr,
- 		core::pose::Pose const & upstream_pose
+		core::pose::Pose const & upstream_pose
 	);
 
 	void add_secondary_downstream_match_geometry_for_constraint(
@@ -253,7 +253,7 @@ public:
 		utility::vector1< Size > const & target_atids,
 		toolbox::match_enzdes_util::MatchConstraintFileInfoCOP mcfi,
 		std::string SecMatchStr,
- 		core::pose::Pose const & upstream_pose,
+		core::pose::Pose const & upstream_pose,
 		bool catalytic_bond
 	);
 
@@ -333,7 +333,7 @@ public:
 	utility::vector1< upstream::ScaffoldBuildPointCOP > const &
 	per_constraint_build_points( Size cst_id ) const;
 
-/// Non-const access
+	/// Non-const access
 
 	upstream::ScaffoldBuildPointOP
 	build_point( Size index );

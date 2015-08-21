@@ -31,21 +31,21 @@ namespace ligand_docking {
 namespace ligand_options {
 
 bool check_all_ligand_atoms(
-		core::conformation::Residue const & ligand_interface_residue,
-		core::Vector const potential_interface_vector,
-		core::Real const cutoff
+	core::conformation::Residue const & ligand_interface_residue,
+	core::Vector const potential_interface_vector,
+	core::Real const cutoff
 );
 
 bool check_neighbor_ligand_atom(
-		core::conformation::Residue const & ligand_interface_residue,
-		core::Vector const potential_interface_vector,
-		core::Real const cutoff
+	core::conformation::Residue const & ligand_interface_residue,
+	core::Vector const potential_interface_vector,
+	core::Real const cutoff
 );
 
 bool is_interface_vector(
-		core::Vector const & questionable_vector,
-		core::Vector const & ligand_vector,
-		core::Real const cutoff_squared
+	core::Vector const & questionable_vector,
+	core::Vector const & ligand_vector,
+	core::Real const cutoff_squared
 );
 
 } //namespace ligand_options

@@ -104,49 +104,49 @@ static basic::Tracer TR("test_nu_angles" );
 int
 main( int argc, char* argv[] )
 {
-try {
+	try {
 
-	//utility::vector1< core::Size > empty_vector(0);
+		//utility::vector1< core::Size > empty_vector(0);
 
-	// init command line options
-	devel::init(argc, argv);
+		// init command line options
+		devel::init(argc, argv);
 
-	Pose pose;
-	ScoreFunctionOP score_fxn = get_score_function();
-	score_fxn->set_weight( ring_close, 1 );
-	ResidueTypeSetCOP rts( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) );
+		Pose pose;
+		ScoreFunctionOP score_fxn = get_score_function();
+		score_fxn->set_weight( ring_close, 1 );
+		ResidueTypeSetCOP rts( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) );
 
-	pose.append_residue_by_jump( *new Residue( rts->name_map("A04"), true ), 1 ); 
-	pose.append_residue_by_bond( *new Residue( rts->name_map("A98"), true ), true ); 
-	pose.append_residue_by_bond( *new Residue( rts->name_map("B02"), true ), true ); 
-	pose.append_residue_by_bond( *new Residue( rts->name_map("B06"), true ), true ); 
-	pose.append_residue_by_bond( *new Residue( rts->name_map("C01"), true ), true ); 
-	pose.append_residue_by_bond( *new Residue( rts->name_map("B19"), true ), true ); 
-	pose.append_residue_by_bond( *new Residue( rts->name_map("B95"), true ), true ); 
-	pose.append_residue_by_bond( *new Residue( rts->name_map("C00"), true ), true ); 
-	pose.append_residue_by_bond( *new Residue( rts->name_map("C12"), true ), true ); 
+		pose.append_residue_by_jump( *new Residue( rts->name_map("A04"), true ), 1 );
+		pose.append_residue_by_bond( *new Residue( rts->name_map("A98"), true ), true );
+		pose.append_residue_by_bond( *new Residue( rts->name_map("B02"), true ), true );
+		pose.append_residue_by_bond( *new Residue( rts->name_map("B06"), true ), true );
+		pose.append_residue_by_bond( *new Residue( rts->name_map("C01"), true ), true );
+		pose.append_residue_by_bond( *new Residue( rts->name_map("B19"), true ), true );
+		pose.append_residue_by_bond( *new Residue( rts->name_map("B95"), true ), true );
+		pose.append_residue_by_bond( *new Residue( rts->name_map("C00"), true ), true );
+		pose.append_residue_by_bond( *new Residue( rts->name_map("C12"), true ), true );
 
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-		pose.set_phi( i, -150 );
-		pose.set_psi( i,  150 );
-		pose.set_omega( i,  180 );
+		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+			pose.set_phi( i, -150 );
+			pose.set_psi( i,  150 );
+			pose.set_omega( i,  180 );
+		}
+		pose.dump_scored_pdb( "out.pdb", *score_fxn );
+
+		kinematics::MoveMapOP mm( new kinematics::MoveMap );
+		mm->set_bb( true );
+		mm->set_chi( true );
+		mm->set_nu( true );
+
+		MinMoverOP min( new MinMover( mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
+		min->apply( pose );
+
+		pose.dump_scored_pdb( "min.pdb", *score_fxn );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
-	pose.dump_scored_pdb( "out.pdb", *score_fxn );
-
-	kinematics::MoveMapOP mm( new kinematics::MoveMap );
-	mm->set_bb( true );
-	mm->set_chi( true );
-	mm->set_nu( true );
-
-	MinMoverOP min( new MinMover( mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
-	min->apply( pose );
-
-	pose.dump_scored_pdb( "min.pdb", *score_fxn );
-	
-} catch ( utility::excn::EXCN_Base const & e ) {
-	std::cerr << "caught exception " << e.msg() << std::endl;
-	return -1;
-}
 	return 0;
 }//main
 

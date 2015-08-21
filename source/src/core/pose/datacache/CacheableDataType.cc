@@ -100,11 +100,11 @@ CacheableDataType::initialize_name_map() {
 	name2enum_()["FLOATING_POINT_CLOUD_INFO"] = FLOATING_POINT_CLOUD_INFO;
 	name2enum_()["CDR_CLUSTER_INFO"] = CDR_CLUSTER_INFO;
 
-debug_assert( name2enum_().size() == CacheableDataType::num_cacheable_data_types );
+	debug_assert( name2enum_().size() == CacheableDataType::num_cacheable_data_types );
 
 	enum2name_().resize( CacheableDataType::num_cacheable_data_types );
 	for ( std::map< std::string, CacheableDataType::Enum >::const_iterator iter = name2enum_().begin(),
-					iter_end = name2enum_().end(); iter != iter_end; ++iter ) {
+			iter_end = name2enum_().end(); iter != iter_end; ++iter ) {
 		enum2name_()[ iter->second ] = iter->first;
 	}
 

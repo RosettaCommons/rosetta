@@ -44,7 +44,7 @@
 #include <sstream>
 
 #ifdef WIN32
-	#include <core/id/SequenceMapping.hh>
+#include <core/id/SequenceMapping.hh>
 #endif
 
 
@@ -143,7 +143,7 @@ public:
 	/// @brief initialize this Constraint from the given std::istream. It's amazing
 	/// that there are three functions for doing this inside of Constraint.hh.
 	/// SO WHAT IS THIS SUPPOSED TO DO ? not overloaded by e.g.,  AtomPairConstraint or CoordinateConstraint,
-  // -- use read_def() if in doubt.
+	// -- use read_def() if in doubt.
 	virtual void read_data( std::istream & ) {}
 
 	/// @brief apply a resid remapping to this constraint, returns the remapped
@@ -194,10 +194,10 @@ public:
 	}
 
 	// do some pre-scoring calculations -- does nothing by default
- 	virtual void setup_for_scoring( core::scoring::func::XYZ_Func const &, ScoreFunction const & ) const {}
+	virtual void setup_for_scoring( core::scoring::func::XYZ_Func const &, ScoreFunction const & ) const {}
 
 	// call the setup_for_derivatives for each constraint -- does nothing by default
- 	virtual void setup_for_derivatives( core::scoring::func::XYZ_Func const &, ScoreFunction const & ) const {}
+	virtual void setup_for_derivatives( core::scoring::func::XYZ_Func const &, ScoreFunction const & ) const {}
 
 	/// @brief Returns the score of this constraint computed over the given conformation.
 	/// Not necessarily implemented in all derived classes, as it's redundant with
@@ -205,7 +205,7 @@ public:
 	/// 0.0 if not implemented.
 	virtual
 	Real
-	score( conformation::Conformation const &	) const { return 0.0; }
+	score( conformation::Conformation const & ) const { return 0.0; }
 
 	/// @brief Fill the f1 and f2 vectors, necessary for considering the
 	/// derivative this constraint during minimization. (someone please reference
@@ -296,8 +296,8 @@ public:
 
 	virtual
 	core::Size choose_effective_sequence_separation(
-			core::kinematics::ShortestPathInFoldTree const& sp,
-			numeric::random::RandomGenerator&
+		core::kinematics::ShortestPathInFoldTree const& sp,
+		numeric::random::RandomGenerator&
 	) {
 		return effective_sequence_separation( sp );
 	}

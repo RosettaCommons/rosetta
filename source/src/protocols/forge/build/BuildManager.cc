@@ -173,8 +173,8 @@ void BuildManager::create_directed_dependency( BuildInstructionOP u, BuildInstru
 	// add to the edge list
 	instruction_dependencies_.push_back(
 		std::make_pair(
-				std::distance( instructions_.begin(), u_iter ) + 1,
-				std::distance( instructions_.begin(), v_iter ) + 1
+		std::distance( instructions_.begin(), u_iter ) + 1,
+		std::distance( instructions_.begin(), v_iter ) + 1
 		)
 	);
 }
@@ -205,60 +205,60 @@ BuildManager::Original2Modified BuildManager::modify( Pose & pose ) {
 	using namespace protocols::forge::build::BuildInstructionState;
 	using protocols::forge::methods::closed_range;
 
-//testing
-using core::chemical::ResidueTypeCOPs;
-using core::kinematics::Edge;
-using core::kinematics::FoldTree;
-using namespace core::conformation;
-using core::conformation::get_anchor_atomno;
+	//testing
+	using core::chemical::ResidueTypeCOPs;
+	using core::kinematics::Edge;
+	using core::kinematics::FoldTree;
+	using namespace core::conformation;
+	using core::conformation::get_anchor_atomno;
 
 	// sanity check
 	if ( !compatibility_check() ) {
 		// full stop
 		utility_exit_with_message( "ERROR: BuildManager::modify() : BuildInstructions incompatible!" );
 	}
- //special case for two chain build -- danger, primitive at the moment, only
-  //works with non-N,C term extension.  Try placing in SegRebuld
-  if (basic::options::option[basic::options::OptionKeys::remodel::two_chain_tree].user()){
-    Size second_start = basic::options::option[basic::options::OptionKeys::remodel::two_chain_tree];
-    Size nres( pose.total_residue());
+	//special case for two chain build -- danger, primitive at the moment, only
+	//works with non-N,C term extension.  Try placing in SegRebuld
+	if ( basic::options::option[basic::options::OptionKeys::remodel::two_chain_tree].user() ) {
+		Size second_start = basic::options::option[basic::options::OptionKeys::remodel::two_chain_tree];
+		Size nres( pose.total_residue());
 
-    //FoldTree f(pose.fold_tree());
-    FoldTree f;
-    //make cutpoint
-    f.add_edge(1, second_start-1, Edge::PEPTIDE);
-    f.add_edge(second_start, nres, Edge::PEPTIDE);
-    f.add_edge(second_start-1,second_start,1);//jump across the cut
+		//FoldTree f(pose.fold_tree());
+		FoldTree f;
+		//make cutpoint
+		f.add_edge(1, second_start-1, Edge::PEPTIDE);
+		f.add_edge(second_start, nres, Edge::PEPTIDE);
+		f.add_edge(second_start-1,second_start,1);//jump across the cut
 		//make cutpoint
 		//f.cut_edge(second_start-1);
-    f.reorder(nres);
-    pose.fold_tree(f);
+		f.reorder(nres);
+		pose.fold_tree(f);
 		//using add_variant_type_to_pose_residue;
-	core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_LOWER, second_start-1);
-	core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_UPPER, second_start);
+		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_LOWER, second_start-1);
+		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_UPPER, second_start);
 
 
-	protocols::loops::Loops chain_def_loops;
-    chain_def_loops.add_loop(protocols::loops::Loop(second_start-1,second_start, second_start-1));
-    //chain_def_loops.add_loop(protocols::loops::Loop(second_start,pose.total_residue()));
+		protocols::loops::Loops chain_def_loops;
+		chain_def_loops.add_loop(protocols::loops::Loop(second_start-1,second_start, second_start-1));
+		//chain_def_loops.add_loop(protocols::loops::Loop(second_start,pose.total_residue()));
 
-    //add virtual residue, as star foldtree requires it
-    if (pose.residue( pose.total_residue()).aa() != core::chemical::aa_vrt){
-      pose.append_residue_by_jump(*core::conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map("VRT")), second_start);
-    }
+		//add virtual residue, as star foldtree requires it
+		if ( pose.residue( pose.total_residue()).aa() != core::chemical::aa_vrt ) {
+			pose.append_residue_by_jump(*core::conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map("VRT")), second_start);
+		}
 
-    //update foldtree to new foldtree
-    f = pose.fold_tree();
-	TR << "before star" << f << std::endl;
+		//update foldtree to new foldtree
+		f = pose.fold_tree();
+		TR << "before star" << f << std::endl;
 
-    //update nres to include the new residue
-    nres =  pose.total_residue();
+		//update nres to include the new residue
+		nres =  pose.total_residue();
 
-    f.reorder(nres);
-    pose.fold_tree(f);
-    protocols::forge::methods::make_star_foldtree(pose, chain_def_loops);
-	TR << "after star" << pose.fold_tree() << std::endl;
-    }
+		f.reorder(nres);
+		pose.fold_tree(f);
+		protocols::forge::methods::make_star_foldtree(pose, chain_def_loops);
+		TR << "after star" << pose.fold_tree() << std::endl;
+	}
 
 
 	// each call to the Manager's modify() is for a fresh Pose, so reset
@@ -307,7 +307,7 @@ using core::conformation::get_anchor_atomno;
 		// if instruction has not run yet, call modify()
 		if ( !instruction.modify_was_successful() ) {
 			instruction.modify( pose );
-				TR << pose.fold_tree() << std::endl;
+			TR << pose.fold_tree() << std::endl;
 
 			// if modify finished successfully, decrement the counter
 			if ( instruction.modify_was_successful() ) {
@@ -356,7 +356,7 @@ using core::conformation::get_anchor_atomno;
 	// create old -> new map for unmodified regions
 	original2modified_.clear();
 	for ( Positions::const_iterator o = old_r.begin(), n = new_r.begin(), oe = old_r.end(), ne = new_r.end();
-	      o != oe && n != ne; ++o, ++n ) {
+			o != oe && n != ne; ++o, ++n ) {
 		original2modified_[ *o ] = *n;
 	}
 	runtime_assert( original2modified_.size() == old_r.size() && original2modified_.size() == new_r.size() ); // paranoia

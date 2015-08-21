@@ -20,7 +20,7 @@
 
 namespace devel {
 namespace loop_creation {
-	
+
 class LoopCreationMoverCreator : public protocols::moves::MoverCreator
 {
 public:

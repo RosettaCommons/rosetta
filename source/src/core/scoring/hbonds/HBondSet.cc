@@ -308,7 +308,7 @@ HBond::show(
 	std::ostream & out
 ) const {
 
-	if(print_header){
+	if ( print_header ) {
 		out
 			<< "#Dch Dn Dres Da  Ach An Ares Aa  length AHDang BAHang  BAtor weight energy"
 			<< std::endl;
@@ -386,12 +386,12 @@ operator==(HBond const & a, HBond const & b)
 		a.eval_tuple_                   == b.eval_tuple_                  &&
 		a.energy_                       == b.energy_                      &&
 		a.weight_                       == b.weight_                      ); /*&&
-		a.deriv_.first[0]               == b.deriv_.first[0]              &&
-		a.deriv_.first[1]               == b.deriv_.first[1]              &&
-		a.deriv_.first[2]               == b.deriv_.first[2]              &&
-		a.deriv_.second[0]              == b.deriv_.second[0]             &&
-		a.deriv_.second[1]              == b.deriv_.second[1]             &&
-		a.deriv_.second[2]              == b.deriv_.second[2]             );*/
+	a.deriv_.first[0]               == b.deriv_.first[0]              &&
+	a.deriv_.first[1]               == b.deriv_.first[1]              &&
+	a.deriv_.first[2]               == b.deriv_.first[2]              &&
+	a.deriv_.second[0]              == b.deriv_.second[0]             &&
+	a.deriv_.second[1]              == b.deriv_.second[1]             &&
+	a.deriv_.second[2]              == b.deriv_.second[2]             );*/
 }
 
 
@@ -485,11 +485,11 @@ HBondSet::HBondSet( HBondSet const & src, utility::vector1< core::Size > exclude
 		int const dres = hbond.don_res();
 		int const ares = hbond.acc_res();
 		bool exclude = false;
-		for ( Size k = 1; k <= exclude_list.size(); k ++ ){
-			if( exclude_list[k] == (core::Size)dres ){ exclude = true; break; };
-			if( exclude_list[k] == (core::Size)ares ){ exclude = true; break; };
+		for ( Size k = 1; k <= exclude_list.size(); k ++ ) {
+			if ( exclude_list[k] == (core::Size)dres ) { exclude = true; break; };
+			if ( exclude_list[k] == (core::Size)ares ) { exclude = true; break; };
 		}
-		if( exclude ) continue;
+		if ( exclude ) continue;
 
 		hbonds_.push_back( HBondOP( new HBond( *src.hbonds_[i] ) ) );
 	}
@@ -509,7 +509,7 @@ HBondSet::HBondSet( HBondSet const & src, utility::vector1< bool > residue_mask 
 	//bool exclude=false;
 	for ( Size i=1; i<= src.nhbonds(); ++i ) {
 		HBond const & hbond(src.hbond(i));
-		if(residue_mask[hbond.don_res()] & residue_mask[hbond.acc_res()]){
+		if ( residue_mask[hbond.don_res()] & residue_mask[hbond.acc_res()] ) {
 			hbonds_.push_back( HBondOP( new HBond( *src.hbonds_[i] ) ) );
 		}
 	}
@@ -531,7 +531,7 @@ HBondSet::HBondSet(
 {
 	for ( Size i=1; i<= src.nhbonds(); ++i ) {
 		HBond const & hbond(src.hbond(i));
-		if (hbond.don_res() == seqpos || hbond.acc_res() == seqpos ){
+		if ( hbond.don_res() == seqpos || hbond.acc_res() == seqpos ) {
 			hbonds_.push_back( HBondOP( new HBond( *src.hbonds_[i] ) ));
 		}
 	}
@@ -617,11 +617,11 @@ HBondSet::append_hbond(
 
 	// update hbcheck
 	// note: these dimension checks could be removed completely & replaced by pose-aware dimensioning
-	if ( options_->bb_donor_acceptor_check() /* actually we could save a LOT of computation if we implement the removal of bb_donor_acceptor_check correctly... */ ){
+	if ( options_->bb_donor_acceptor_check() /* actually we could save a LOT of computation if we implement the removal of bb_donor_acceptor_check correctly... */ ) {
 		if ( dhatm_is_protein_backbone || aatm_is_protein_backbone ) {
 			Size const max_pos( std::max( acc_pos, don_pos ) );
 			if ( max_pos > backbone_backbone_donor_.size() ||
-					 max_pos > backbone_backbone_acceptor_.size() ) {
+					max_pos > backbone_backbone_acceptor_.size() ) {
 				// this could be more efficient if we require specifying nres ahead of time
 				// Specify nres in setup_for_residue_pair_energy
 				resize_bb_donor_acceptor_arrays( max_pos );
@@ -647,12 +647,12 @@ HBondSet::allow_hbond( HBond const & hbond ) const
 	// donor is backbone atom already making bb-bb hbond
 	// acceptor is sidechain
 	if ( hbond.don_hatm_is_protein_backbone() &&
-		!hbond.acc_atm_is_protein_backbone() &&
-		backbone_backbone_donor_[ hbond.don_res() ] ) return false;
+			!hbond.acc_atm_is_protein_backbone() &&
+			backbone_backbone_donor_[ hbond.don_res() ] ) return false;
 
 	if ( hbond.acc_atm_is_protein_backbone() &&
-		!hbond.don_hatm_is_protein_backbone() &&
-		backbone_backbone_acceptor_[ hbond.acc_res() ] ) return false;
+			!hbond.don_hatm_is_protein_backbone() &&
+			backbone_backbone_acceptor_[ hbond.acc_res() ] ) return false;
 
 	return true;
 }
@@ -700,13 +700,12 @@ HBondSet::atom_hbonds( AtomID const & atom, bool include_only_allowed /* true */
 	utility::vector1< HBondCOP > result_bonds;
 	HBondAtomMap::const_iterator iter( atom_map_.find( atom ) );
 	if ( iter != atom_map_.end() ) {
-	    utility::vector1< HBondCOP > bonds = iter->second;
-	    for (Size i = 1; i <= bonds.size(); ++i){
-		if ((include_only_allowed && allow_hbond(*bonds[i])) || !include_only_allowed){
-		    result_bonds.push_back(bonds[i]);
+		utility::vector1< HBondCOP > bonds = iter->second;
+		for ( Size i = 1; i <= bonds.size(); ++i ) {
+			if ( (include_only_allowed && allow_hbond(*bonds[i])) || !include_only_allowed ) {
+				result_bonds.push_back(bonds[i]);
+			} else continue;
 		}
-		else continue;
-	    }
 	}
 
 	return result_bonds;
@@ -719,8 +718,8 @@ HBondSet::residue_hbonds(const Size seqpos, bool include_only_allowed /* true */
 
 	for ( Size i=1; i<= nhbonds(); ++i ) {
 		HBondCOP bond( hbond_cop(i) );
-		if ((bond->don_res() == seqpos || bond->acc_res() == seqpos)
-		&& ((include_only_allowed && allow_hbond(*bonds[i])) || !include_only_allowed) ){
+		if ( (bond->don_res() == seqpos || bond->acc_res() == seqpos)
+				&& ((include_only_allowed && allow_hbond(*bonds[i])) || !include_only_allowed) ) {
 			bonds.push_back( bond );
 		}
 	}
@@ -744,7 +743,7 @@ HBondSet::clear()
 void
 HBondSet::clear_hbonds()
 {
-	hbonds_.clear();
+hbonds_.clear();
 }
 */
 
@@ -830,9 +829,9 @@ HBondSet::setup_for_residue_pair_energies(
 		{ // hacky thing here until we update to current svn
 			nbrs_[i] = 1;
 			for ( graph::Graph::EdgeListConstIter
-				ir  = tenA_neighbor_graph.get_node( i )->const_edge_list_begin(),
-				ire = tenA_neighbor_graph.get_node( i )->const_edge_list_end();
-				ir != ire; ++ir ) {
+					ir  = tenA_neighbor_graph.get_node( i )->const_edge_list_begin(),
+					ire = tenA_neighbor_graph.get_node( i )->const_edge_list_end();
+					ir != ire; ++ir ) {
 				Size const neighbor_id( (*ir)->get_other_ind( i ) );
 				// Don't include VRTs in neighbor count
 				if ( pose.residue( neighbor_id ).aa() == core::chemical::aa_vrt ) continue;
@@ -840,8 +839,8 @@ HBondSet::setup_for_residue_pair_energies(
 				nbrs_[i] += 1;
 
 			}
-// 			std::cout << "nbrdiff: old= " << tenA_neighbor_graph.get_node(i)->num_neighbors_counting_self() << " new= " <<
-// 				nbrs_[i] << std::endl;
+			//    std::cout << "nbrdiff: old= " << tenA_neighbor_graph.get_node(i)->num_neighbors_counting_self() << " new= " <<
+			//     nbrs_[i] << std::endl;
 		}
 	}
 
@@ -878,7 +877,7 @@ void
 HBondSet::show(
 	std::ostream & out/*=std::cout*/
 ) const {
-	for ( core::Size i=1; i<=nhbonds(); ++i ){
+	for ( core::Size i=1; i<=nhbonds(); ++i ) {
 		out << hbond(i);
 	}
 }
@@ -887,29 +886,29 @@ HBondSet::show(
 bool
 operator==(HBondSet const & a, HBondSet const & b)
 {
-	if(a.options_ != b.options_) return false;
+	if ( a.options_ != b.options_ ) return false;
 
-	if(a.atom_map_ != b.atom_map_) return false;
-	if(a.atom_map_init_ != b.atom_map_init_) return false;
+	if ( a.atom_map_ != b.atom_map_ ) return false;
+	if ( a.atom_map_init_ != b.atom_map_init_ ) return false;
 
-	if(a.backbone_backbone_donor_.size() != b.backbone_backbone_donor_.size()) return false;
-	for(Size i=1; i<=a.backbone_backbone_donor_.size(); ++i){
-		if (a.backbone_backbone_donor_[i] != b.backbone_backbone_donor_[i]) return false;
+	if ( a.backbone_backbone_donor_.size() != b.backbone_backbone_donor_.size() ) return false;
+	for ( Size i=1; i<=a.backbone_backbone_donor_.size(); ++i ) {
+		if ( a.backbone_backbone_donor_[i] != b.backbone_backbone_donor_[i] ) return false;
 	}
 
-	if(a.backbone_backbone_acceptor_.size() != b.backbone_backbone_acceptor_.size()) return false;
-	for(Size i=1; i<=a.backbone_backbone_donor_.size(); ++i){
-		if (a.backbone_backbone_acceptor_[i] != b.backbone_backbone_acceptor_[i]) return false;
+	if ( a.backbone_backbone_acceptor_.size() != b.backbone_backbone_acceptor_.size() ) return false;
+	for ( Size i=1; i<=a.backbone_backbone_donor_.size(); ++i ) {
+		if ( a.backbone_backbone_acceptor_[i] != b.backbone_backbone_acceptor_[i] ) return false;
 	}
 
-	if(a.nhbonds() != b.nhbonds()) {
+	if ( a.nhbonds() != b.nhbonds() ) {
 		t << "HBondSets not equal!" << std::endl;
 		t << a << std::endl << b << std::endl;
 		return false;
 	}
 
-	for(Size i=1; i<=a.nhbonds(); ++i){
-		if (!(a.hbond(i) == b.hbond(i))) return false;
+	for ( Size i=1; i<=a.nhbonds(); ++i ) {
+		if ( !(a.hbond(i) == b.hbond(i)) ) return false;
 	}
 
 	return true;
@@ -923,7 +922,7 @@ HBondSet::show(
 	std::ostream & out/*=std::cout*/
 ) const {
 
-	for (Size i=1; i<= nhbonds(); ++i ) {
+	for ( Size i=1; i<= nhbonds(); ++i ) {
 		hbond(i).show(pose, i==1 && print_header, out);
 	}
 
@@ -942,9 +941,9 @@ HBondSet::show(
 ) const {
 
 	bool first_found(true);
-	for (Size i=1; i<=nhbonds(); ++i ) {
-		if((hbond(i).don_res() == residue_number)
-			|| (hbond(i).acc_res() == residue_number)){
+	for ( Size i=1; i<=nhbonds(); ++i ) {
+		if ( (hbond(i).don_res() == residue_number)
+				|| (hbond(i).acc_res() == residue_number) ) {
 
 			hbond(i).show(pose, print_header && first_found, out);
 			first_found = false;

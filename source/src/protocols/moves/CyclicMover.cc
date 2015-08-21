@@ -31,26 +31,26 @@ namespace moves {
 CyclicMover::CyclicMover() : iterations_(0) {}
 
 void CyclicMover::enqueue(MoverOP mover) {
-  assert(mover);
-  movers_.push_back(mover);
+	assert(mover);
+	movers_.push_back(mover);
 }
 
 void CyclicMover::apply(core::pose::Pose& pose) {
-  if (movers_.size() == 0) return;
-  MoverOP mover = movers_[iterations_++ % movers_.size()];
-  mover->apply(pose);
+	if ( movers_.size() == 0 ) return;
+	MoverOP mover = movers_[iterations_++ % movers_.size()];
+	mover->apply(pose);
 }
 
 MoverOP CyclicMover::clone() const {
-  return MoverOP( new CyclicMover(*this) );
+	return MoverOP( new CyclicMover(*this) );
 }
 
 MoverOP CyclicMover::fresh_instance() const {
-  return MoverOP( new CyclicMover() );
+	return MoverOP( new CyclicMover() );
 }
 
 std::string CyclicMover::get_name() const {
-  return "CyclicMover";
+	return "CyclicMover";
 }
 
 }  // namespace moves

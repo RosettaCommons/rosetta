@@ -22,14 +22,14 @@ namespace protocols {
 namespace fldsgn {
 namespace topology {
 
-	class HelixPairing;
-	class HelixPairingSet;
+class HelixPairing;
+class HelixPairingSet;
 
-	typedef utility::pointer::shared_ptr< HelixPairing > HelixPairingOP;
-	typedef utility::pointer::shared_ptr< HelixPairingSet > HelixPairingSetOP;
-	typedef utility::pointer::shared_ptr< HelixPairing const > HelixPairingCOP;
-	typedef utility::pointer::shared_ptr< HelixPairingSet const > HelixPairingSetCOP;
-	typedef utility::vector1< HelixPairingOP > HelixPairings;
+typedef utility::pointer::shared_ptr< HelixPairing > HelixPairingOP;
+typedef utility::pointer::shared_ptr< HelixPairingSet > HelixPairingSetOP;
+typedef utility::pointer::shared_ptr< HelixPairing const > HelixPairingCOP;
+typedef utility::pointer::shared_ptr< HelixPairingSet const > HelixPairingSetCOP;
+typedef utility::vector1< HelixPairingOP > HelixPairings;
 
 } // namespace topology
 } // namespace fldsgn

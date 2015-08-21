@@ -317,11 +317,11 @@ private:
 
 	void
 	init_rama_sampling_table(
-	   const conformation::ppo_torsion_bin torsion_bin,
-		 ObjexxFCL::FArray4D< Real > const & ram_probability,
-		 ObjexxFCL::FArray2D< utility::vector1< Real > > & cdf,
-		 ObjexxFCL::FArray3D< utility::vector1< Real > > & cdf_by_torsion_bin,
-		 ObjexxFCL::FArray3D< Size > & n_valid_pp_bins_by_ppo_torbin
+		const conformation::ppo_torsion_bin torsion_bin,
+		ObjexxFCL::FArray4D< Real > const & ram_probability,
+		ObjexxFCL::FArray2D< utility::vector1< Real > > & cdf,
+		ObjexxFCL::FArray3D< utility::vector1< Real > > & cdf_by_torsion_bin,
+		ObjexxFCL::FArray3D< Size > & n_valid_pp_bins_by_ppo_torbin
 	) const;
 
 	void
@@ -331,7 +331,7 @@ private:
 		Real & psi
 	) const;
 
-// Data
+	// Data
 private:
 
 	ObjexxFCL::FArray3D< Real > ram_energ_;

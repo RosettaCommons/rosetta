@@ -105,7 +105,7 @@ FeaturesReporterFactory::get_features_reporter(
 ) {
 	tr.Trace << "generate features reporter of type " << type_name << std::endl;
 	FeaturesReporterCreatorMap::const_iterator iter = types_.find( type_name );
-	if (iter != types_.end()) {
+	if ( iter != types_.end() ) {
 		return iter->second->create_features_reporter();
 	} else {
 		stringstream error_msg;
@@ -116,7 +116,7 @@ FeaturesReporterFactory::get_features_reporter(
 			<< "register a new FeaturesReporter in the FeaturesReporterFactory" << endl
 			<< "known FeaturesReporter types are:" << endl;
 
-		BOOST_FOREACH(const FeaturesReporterCreatorMap::value_type& type, types_){
+		BOOST_FOREACH ( const FeaturesReporterCreatorMap::value_type& type, types_ ) {
 			error_msg << "\t" << type.first << endl;
 		}
 		utility_exit_with_message(error_msg.str());
@@ -145,7 +145,7 @@ FeaturesReporterFactory::get_features_reporter(
 	assert(tag->getName() == "feature");
 
 	string type_name;
-	if(!tag->hasOption("name")){
+	if ( !tag->hasOption("name") ) {
 		utility_exit_with_message("'feature' tags require a name field");
 	} else {
 		type_name = tag->getOption<string>("name");

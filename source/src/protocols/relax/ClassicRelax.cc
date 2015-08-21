@@ -191,7 +191,7 @@ ClassicRelax::ClassicRelax( ClassicRelax const & other ) :
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-protocols::moves::MoverOP ClassicRelax::clone() const	{
+protocols::moves::MoverOP ClassicRelax::clone() const {
 	return protocols::moves::MoverOP( new ClassicRelax(*this) );
 }
 
@@ -239,7 +239,7 @@ void ClassicRelax::set_default( bool const use_default_movemap ){
 	TR <<  "Setting up default relax setting" << std::endl;
 	// minimization
 	//min_type = std::string("dfpmin_armijo_nonmonotone");
-	min_type = RelaxProtocolBase::min_type();																	// use the base class min_type value
+	min_type = RelaxProtocolBase::min_type();                 // use the base class min_type value
 	nb_list = true;
 
 
@@ -356,8 +356,8 @@ void ClassicRelax::set_default_moveset_phase2()
 	moveset_phase2_temp ->add_mover( shear_mover );
 
 	// setup the move object
-	if( basic::options::option[ basic::options::OptionKeys::relax::wobblemoves ].user() &&
-			basic::options::option[ basic::options::OptionKeys::in::file::frag3 ].user() ){
+	if ( basic::options::option[ basic::options::OptionKeys::relax::wobblemoves ].user() &&
+			basic::options::option[ basic::options::OptionKeys::in::file::frag3 ].user() ) {
 		std::string frag3_file  = basic::options::option[ basic::options::OptionKeys::in::file::frag3 ]();
 		core::fragment::ConstantLengthFragSetOP fragset3mer( new core::fragment::ConstantLengthFragSet( 3 ) );
 		fragset3mer->read_fragment_file( frag3_file );
@@ -398,7 +398,7 @@ void ClassicRelax::set_default_moveset_phase3()
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void ClassicRelax::check_default_mc( core::pose::Pose &pose) {
-	if( use_default_mc_ ){
+	if ( use_default_mc_ ) {
 		mc_ = moves::MonteCarloOP( new moves::MonteCarlo( pose , *get_scorefxn() , 0.8 ) );
 	}
 }
@@ -422,30 +422,28 @@ void ClassicRelax::check_default_full_repacker( core::pose::Pose & pose, core::k
 	using namespace basic::options::OptionKeys;
 	using namespace core::pack::task::operation;
 
-	if( use_default_pack_full_repack_ ){
+	if ( use_default_pack_full_repack_ ) {
 
 		// Add TF behavior Jadolfbr 5/2/2013
 
 		core::pack::task::TaskFactoryOP local_tf( new core::pack::task::TaskFactory() );
 
 		//If a user gives a TaskFactory, completely respect it.
-		if (get_task_factory()){
+		if ( get_task_factory() ) {
 			local_tf = get_task_factory()->clone();
-		}
-		else{
+		} else {
 			local_tf->push_back(TaskOperationCOP( new InitializeFromCommandline() ));
-			if (option[ OptionKeys::relax::respect_resfile]() && option[ OptionKeys::packing::resfile].user() ) {
+			if ( option[ OptionKeys::relax::respect_resfile]() && option[ OptionKeys::packing::resfile].user() ) {
 				local_tf->push_back(TaskOperationCOP( new ReadResfile() ));
 				TR << "Using Resfile for packing step. " <<std::endl;
-			}
-			else {
+			} else {
 				//Keep the same behavior as before if no resfile given for design.
 				//Though, as mentioned in the doc, movemap now overrides chi_move as it should.
 
 				local_tf->push_back(TaskOperationCOP( new RestrictToRepacking() ));
 				PreventRepackingOP turn_off_packing( new PreventRepacking() );
 				for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
-					if (! movemap.get_chi(pos) ){
+					if ( ! movemap.get_chi(pos) ) {
 						turn_off_packing->include_residue(pos);
 					}
 				}
@@ -455,7 +453,7 @@ void ClassicRelax::check_default_full_repacker( core::pose::Pose & pose, core::k
 		//Include current rotamer by default - as before.
 		local_tf->push_back(TaskOperationCOP( new IncludeCurrent() ));
 
-		if( limit_aroma_chi2() ) {
+		if ( limit_aroma_chi2() ) {
 			local_tf->push_back(TaskOperationCOP( new protocols::toolbox::task_operations::LimitAromaChi2Operation() ));
 		}
 
@@ -490,23 +488,21 @@ void ClassicRelax::check_default_rottrial( core::pose::Pose & pose, core::kinema
 		core::pack::task::TaskFactoryOP local_tf( new core::pack::task::TaskFactory() );
 
 		//If a user gives a TaskFactory, completely respect it.
-		if (get_task_factory()){
+		if ( get_task_factory() ) {
 			local_tf = get_task_factory()->clone();
-		}
-		else{
+		} else {
 			local_tf->push_back(TaskOperationCOP( new InitializeFromCommandline() ));
-			if (option[ OptionKeys::relax::respect_resfile]() && option[ OptionKeys::packing::resfile].user() ) {
+			if ( option[ OptionKeys::relax::respect_resfile]() && option[ OptionKeys::packing::resfile].user() ) {
 				local_tf->push_back(TaskOperationCOP( new ReadResfile() ));
 				TR << "Using Resfile for packing step. " <<std::endl;
-			}
-			else {
+			} else {
 				//Keep the same behavior as before if no resfile given for design.
 				//Though, as mentioned in the doc, movemap now overrides chi_move as it should.
 
 				local_tf->push_back(TaskOperationCOP( new RestrictToRepacking() ));
 				PreventRepackingOP turn_off_packing( new PreventRepacking() );
 				for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
-					if (! movemap.get_chi(pos) ){
+					if ( ! movemap.get_chi(pos) ) {
 						turn_off_packing->include_residue(pos);
 					}
 				}
@@ -516,14 +512,14 @@ void ClassicRelax::check_default_rottrial( core::pose::Pose & pose, core::kinema
 		//Include current rotamer by default - as before.
 		local_tf->push_back(TaskOperationCOP( new IncludeCurrent() ));
 
-		if( limit_aroma_chi2() ) {
+		if ( limit_aroma_chi2() ) {
 			local_tf->push_back(TaskOperationCOP( new protocols::toolbox::task_operations::LimitAromaChi2Operation() ));
 		}
 		(*get_scorefxn())( pose );
 		/// Now handled automatically.  scorefxn_->accumulate_residue_total_energies( pose ); // fix this
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 			pack_rottrial_ = protocols::simple_moves::RotamerTrialsMoverOP( new simple_moves::symmetry::SymEnergyCutRotamerTrialsMover( get_scorefxn(), local_tf, mc_, energycut ) );
-		 } else {
+		} else {
 			pack_rottrial_ = protocols::simple_moves::RotamerTrialsMoverOP( new protocols::simple_moves::EnergyCutRotamerTrialsMover( get_scorefxn(), local_tf, mc_, energycut ) );
 		}
 	}
@@ -560,9 +556,9 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 	initialize_movemap( pose, *local_movemap );
 
 	// Make sure we only allow symmetrical degrees of freedom to move
-//	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )  {
-//		core::pose::symmetry::make_symmetric_movemap( pose, *local_movemap );
-//	}
+	// if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )  {
+	//  core::pose::symmetry::make_symmetric_movemap( pose, *local_movemap );
+	// }
 
 	// remember the original pose before refinement kicks in, we'll need it later
 	core::pose::Pose prerefine_pose = pose;
@@ -576,7 +572,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 
 	// Make sure we only allow symmetrical degrees of freedom to move
 	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )  {
-			core::pose::symmetry::make_symmetric_movemap( pose, *local_movemap );
+		core::pose::symmetry::make_symmetric_movemap( pose, *local_movemap );
 	}
 
 	min_mover_->movemap(local_movemap);
@@ -585,7 +581,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 
 	apply_disulfides(pose);
 
-	if( ( lj_ramp_cycles > 0 ) &&  (!checkpoints_.recover_checkpoint( pose, "stage_1", get_current_tag(),  true, true  )) ) {
+	if ( ( lj_ramp_cycles > 0 ) &&  (!checkpoints_.recover_checkpoint( pose, "stage_1", get_current_tag(),  true, true  )) ) {
 
 		// part 1 ----------------------------------------
 		TR.Info  << std::endl << std::endl <<  "===================================================================" << std::endl;
@@ -596,8 +592,9 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 		// setup the repack cycle
 		moves::CycleMoverOP repack_cycle( new moves::CycleMover() );
 		repack_cycle->add_mover( pack_full_repack_ );
-		for ( int i=1; i<lj_ramp_inner_cycles; ++i )
+		for ( int i=1; i<lj_ramp_inner_cycles; ++i ) {
 			repack_cycle->add_mover( pack_rottrial_ );
+		}
 
 		moves::SequenceMoverOP phase1_cycle( new moves::SequenceMover() );
 		//phase1_cycle->add_mover( moveset_phase1_ );
@@ -647,8 +644,9 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 		// need to copy virtuals first
 		for ( Size ii = prerefine_pose.total_residue(); ii>=1; --ii ) {
-			if ( symm_info->fa_is_independent(ii) )
+			if ( symm_info->fa_is_independent(ii) ) {
 				prerefine_pose.replace_residue( ii, pose.residue( ii ), false);
+			}
 		}
 	} else {
 		for ( Size ii = 1; ii <= prerefine_pose.total_residue(); ++ii ) {
@@ -666,87 +664,88 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 	/// Stage 2 is
 	/// Stage 2 is mysterious, just like the comment above.
 	/// Stage 2 is <useless> ! Use fastrelax instead.
-	if( stage2_cycles < 0 ) {
+	if ( stage2_cycles < 0 ) {
 		stage2_cycles = pose.total_residue() * 4;
 	}
 
 
-	if( stage2_cycles > 0 )
-	if (!checkpoints_.recover_checkpoint( pose, "stage_2", get_current_tag(), true, true)) {
+	if ( stage2_cycles > 0 ) {
+		if ( !checkpoints_.recover_checkpoint( pose, "stage_2", get_current_tag(), true, true) ) {
 
-		core::Real temp_score  =  (*get_scorefxn())(pose);
-		get_scorefxn()->show( TR.Debug , pose );
-		score_stage2_beginning = temp_score;
-		score_stage2_quarter = temp_score;
-		score_stage2_half =  temp_score;
-		score_stage2_end = temp_score;
-		setPoseExtraScore( pose );
-		mc_->reset(pose);
-
-		if ( filter_stage2_beginning <  temp_score ) {
-			TR.Info << "Structure failed filter_stage2_beginning: " <<  temp_score << " > " << filter_stage2_beginning << std::endl;
-			return;
-		}
-
-		// part 2 ----------------------------------------
-		TR.Info  << std::endl << "===================================================================" << std::endl;
-		TR.Info  <<  "   Stage 2                                                         " << std::endl;
-		TR.Info  <<  "   Mainmintrial for " << stage2_cycles << " with a full repack every "
-			<< stage2_repack_period << " cycles" << std::endl;
-
-		// setup the repack cycle
-		moves::CycleMoverOP repack_cycle( new moves::CycleMover() );
-		for ( int i=1; i<stage2_repack_period; ++i ){
-			repack_cycle->add_mover( pack_rottrial_ );
-		}
-		repack_cycle->add_mover( pack_full_repack_ );
-
-		moves::SequenceMoverOP phase2_cycle( new moves::SequenceMover() );
-		phase2_cycle->add_mover( moveset_phase2_ );
-		phase2_cycle->add_mover( repack_cycle );
-
-		moves::JumpOutMoverOP phase2_min( new moves::JumpOutMover( phase2_cycle, min_mover_, get_scorefxn(), 25.0 ) );
-
-		moves::TrialMoverOP phase2_trial( new moves::TrialMover( phase2_min, mc_ ) );
-
-		moves::RepeatMoverOP full_cycle_phase2_;
-		full_cycle_phase2_ = moves::RepeatMoverOP( new moves::RepeatMover( phase2_trial, int( core::Real(stage2_cycles) * basic::options::option[ basic::options::OptionKeys::relax::cycle_ratio] / 4.0 ) ) );
-
-		full_cycle_phase2_->apply( pose );
-
-		score_stage2_quarter = mc_->lowest_score();
-		score_stage2_half = mc_->lowest_score();
-		score_stage2_end = mc_->lowest_score();
-		if ( filter_stage2_quarter <  mc_->lowest_score() ) {
-			TR.Info << "Structure failed filter_stage2_quarter: " <<  mc_->lowest_score() << " > " << filter_stage2_quarter << std::endl;
-			mc_->recover_low( pose );
+			core::Real temp_score  =  (*get_scorefxn())(pose);
+			get_scorefxn()->show( TR.Debug , pose );
+			score_stage2_beginning = temp_score;
+			score_stage2_quarter = temp_score;
+			score_stage2_half =  temp_score;
+			score_stage2_end = temp_score;
 			setPoseExtraScore( pose );
-			return;
+			mc_->reset(pose);
+
+			if ( filter_stage2_beginning <  temp_score ) {
+				TR.Info << "Structure failed filter_stage2_beginning: " <<  temp_score << " > " << filter_stage2_beginning << std::endl;
+				return;
+			}
+
+			// part 2 ----------------------------------------
+			TR.Info  << std::endl << "===================================================================" << std::endl;
+			TR.Info  <<  "   Stage 2                                                         " << std::endl;
+			TR.Info  <<  "   Mainmintrial for " << stage2_cycles << " with a full repack every "
+				<< stage2_repack_period << " cycles" << std::endl;
+
+			// setup the repack cycle
+			moves::CycleMoverOP repack_cycle( new moves::CycleMover() );
+			for ( int i=1; i<stage2_repack_period; ++i ) {
+				repack_cycle->add_mover( pack_rottrial_ );
+			}
+			repack_cycle->add_mover( pack_full_repack_ );
+
+			moves::SequenceMoverOP phase2_cycle( new moves::SequenceMover() );
+			phase2_cycle->add_mover( moveset_phase2_ );
+			phase2_cycle->add_mover( repack_cycle );
+
+			moves::JumpOutMoverOP phase2_min( new moves::JumpOutMover( phase2_cycle, min_mover_, get_scorefxn(), 25.0 ) );
+
+			moves::TrialMoverOP phase2_trial( new moves::TrialMover( phase2_min, mc_ ) );
+
+			moves::RepeatMoverOP full_cycle_phase2_;
+			full_cycle_phase2_ = moves::RepeatMoverOP( new moves::RepeatMover( phase2_trial, int( core::Real(stage2_cycles) * basic::options::option[ basic::options::OptionKeys::relax::cycle_ratio] / 4.0 ) ) );
+
+			full_cycle_phase2_->apply( pose );
+
+			score_stage2_quarter = mc_->lowest_score();
+			score_stage2_half = mc_->lowest_score();
+			score_stage2_end = mc_->lowest_score();
+			if ( filter_stage2_quarter <  mc_->lowest_score() ) {
+				TR.Info << "Structure failed filter_stage2_quarter: " <<  mc_->lowest_score() << " > " << filter_stage2_quarter << std::endl;
+				mc_->recover_low( pose );
+				setPoseExtraScore( pose );
+				return;
+			}
+
+			full_cycle_phase2_->apply( pose );
+
+			score_stage2_half = mc_->lowest_score();
+			score_stage2_end = mc_->lowest_score();
+			if ( filter_stage2_half <  mc_->lowest_score() ) {
+				TR.Info << "Structure failed filter_stage2_half: " <<  mc_->lowest_score() << " > " << filter_stage2_quarter << std::endl;
+				mc_->recover_low( pose );
+				setPoseExtraScore( pose );
+				return;
+			}
+
+			full_cycle_phase2_->apply( pose );
+			full_cycle_phase2_->apply( pose );
+
+			score_stage2_end = mc_->lowest_score();
+			if ( filter_stage2_end<  mc_->lowest_score() ) {
+				TR.Info << "Structure failed score_stage2_end: " <<  mc_->lowest_score() << " > " << filter_stage2_quarter << std::endl;
+				mc_->recover_low( pose );
+				setPoseExtraScore( pose );
+				return;
+			}
+
+			checkpoints_.checkpoint( pose, "stage_2", get_current_tag(), true);
 		}
-
-		full_cycle_phase2_->apply( pose );
-
-		score_stage2_half = mc_->lowest_score();
-		score_stage2_end = mc_->lowest_score();
-		if ( filter_stage2_half <  mc_->lowest_score() ) {
-			TR.Info << "Structure failed filter_stage2_half: " <<  mc_->lowest_score() << " > " << filter_stage2_quarter << std::endl;
-			mc_->recover_low( pose );
-			setPoseExtraScore( pose );
-			return;
-		}
-
-		full_cycle_phase2_->apply( pose );
-		full_cycle_phase2_->apply( pose );
-
-		score_stage2_end = mc_->lowest_score();
-		if ( filter_stage2_end<  mc_->lowest_score() ) {
-			TR.Info << "Structure failed score_stage2_end: " <<  mc_->lowest_score() << " > " << filter_stage2_quarter << std::endl;
-			mc_->recover_low( pose );
-			setPoseExtraScore( pose );
-			return;
-		}
-
-		checkpoints_.checkpoint( pose, "stage_2", get_current_tag(), true);
 	}
 
 	mc_->recover_low( pose );
@@ -755,36 +754,37 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 	setPoseExtraScore( pose );
 	mc_->reset(pose);
 
-	//	output_debug_structure( pose, "rl_stage2" );
+	// output_debug_structure( pose, "rl_stage2" );
 
-	if( stage3_cycles < 0 ){
+	if ( stage3_cycles < 0 ) {
 		stage3_cycles = pose.total_residue();
 	}
-	if( stage3_cycles > 0 )
-	if (!checkpoints_.recover_checkpoint( pose, "stage_3", get_current_tag(), true, true )) {
+	if ( stage3_cycles > 0 ) {
+		if ( !checkpoints_.recover_checkpoint( pose, "stage_3", get_current_tag(), true, true ) ) {
 
-		// part 3 ----------------------------------------
-		TR.Info  << std::endl << "===================================================================" << std::endl;
-		TR.Info  <<  "   Stage 3                                                         " << std::endl;
-		TR.Info  <<  "   Mainmintrial for " << stage3_cycles << std::endl;
-		moves::SequenceMoverOP phase3_cycle( new moves::SequenceMover() );
-		phase3_cycle->add_mover( moveset_phase3_ );
-		phase3_cycle->add_mover( pack_rottrial_ );
+			// part 3 ----------------------------------------
+			TR.Info  << std::endl << "===================================================================" << std::endl;
+			TR.Info  <<  "   Stage 3                                                         " << std::endl;
+			TR.Info  <<  "   Mainmintrial for " << stage3_cycles << std::endl;
+			moves::SequenceMoverOP phase3_cycle( new moves::SequenceMover() );
+			phase3_cycle->add_mover( moveset_phase3_ );
+			phase3_cycle->add_mover( pack_rottrial_ );
 
-		moves::JumpOutMoverOP phase3_min( new moves::JumpOutMover( phase3_cycle, min_mover_, get_scorefxn(), 15.0 ) );
+			moves::JumpOutMoverOP phase3_min( new moves::JumpOutMover( phase3_cycle, min_mover_, get_scorefxn(), 15.0 ) );
 
-		moves::TrialMoverOP phase3_trial( new moves::TrialMover( phase3_min, mc_ ) );
+			moves::TrialMoverOP phase3_trial( new moves::TrialMover( phase3_min, mc_ ) );
 
-		moves::RepeatMoverOP full_cycle_phase3_;
-		full_cycle_phase3_ = moves::RepeatMoverOP( new moves::RepeatMover( phase3_trial, int( core::Real(stage3_cycles) * basic::options::option[ basic::options::OptionKeys::relax::cycle_ratio])  ) );
+			moves::RepeatMoverOP full_cycle_phase3_;
+			full_cycle_phase3_ = moves::RepeatMoverOP( new moves::RepeatMover( phase3_trial, int( core::Real(stage3_cycles) * basic::options::option[ basic::options::OptionKeys::relax::cycle_ratio])  ) );
 
-		full_cycle_phase3_->apply( pose );
+			full_cycle_phase3_->apply( pose );
 
-		checkpoints_.checkpoint( pose, "stage_3", get_current_tag(), true );
+			checkpoints_.checkpoint( pose, "stage_3", get_current_tag(), true );
 
+		}
 	}
 
-	//	output_debug_structure( pose, "rl_stage3" );
+	// output_debug_structure( pose, "rl_stage3" );
 	mc_->recover_low( pose );
 
 	// add scores to map for output

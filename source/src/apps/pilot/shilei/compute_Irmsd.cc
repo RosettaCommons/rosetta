@@ -107,85 +107,87 @@ public:
 	compute_Irmsd(){}
 	void apply( pose::Pose & pose) {
 
-        core::pose::PoseOP native_pose( new core::pose::Pose() );
+		core::pose::PoseOP native_pose( new core::pose::Pose() );
 
-        //set native pose if asked for
-        if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-                core::import_pose::pose_from_pdb( *native_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ]() );
-                set_native_pose( native_pose );
-        } else {
-		throw( utility::excn::EXCN_BadInput("native expected for this app") );
-                set_native_pose(NULL);
-        }
+		//set native pose if asked for
+		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
+			core::import_pose::pose_from_pdb( *native_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ]() );
+			set_native_pose( native_pose );
+		} else {
+			throw( utility::excn::EXCN_BadInput("native expected for this app") );
+			set_native_pose(NULL);
+		}
 
-	//std::string partners_="_";
-        protocols::docking::DockJumps movable_jumps_;
-	movable_jumps_.push_back( 1 );
+		//std::string partners_="_";
+		protocols::docking::DockJumps movable_jumps_;
+		movable_jumps_.push_back( 1 );
 
-	//perform sequence alignment
-	core::sequence::SequenceOP seq1( new core::sequence::Sequence(*native_pose) );
-	core::sequence::SequenceOP seq2( new core::sequence::Sequence(pose) );
-	//std::cout<<"seq1: "<<*seq1<<std::endl;
-	//std::cout<<"seq2: "<<*seq2<<std::endl;
+		//perform sequence alignment
+		core::sequence::SequenceOP seq1( new core::sequence::Sequence(*native_pose) );
+		core::sequence::SequenceOP seq2( new core::sequence::Sequence(pose) );
+		//std::cout<<"seq1: "<<*seq1<<std::endl;
+		//std::cout<<"seq2: "<<*seq2<<std::endl;
 
-	//utility::io::izstream stream;
-	utility::file::FileName blosum62( basic::database::full_name("sequence/substitution_matrix/BLOSUM62"));
-	//utility::file::FileName blosum62( "/work/shilei/fresh/rosetta/rosetta_database/sequence/substitution_matrix/BLOSUM62" );
-	//basic::database::open( stream, "sequence/substitution_matrix/BLOSUM62" );
-	//core::sequence::MatrixScoringScheme matrix_blosum_score;
-	//matrix_blosum_score.read_data(stream);
-	//core::sequence::ScoringSchemeOP blosum_score( matrix_blosum_score );
-	core::sequence::ScoringSchemeOP blosum_score( new core::sequence::MatrixScoringScheme( -11, -1, blosum62 ) );
+		//utility::io::izstream stream;
+		utility::file::FileName blosum62( basic::database::full_name("sequence/substitution_matrix/BLOSUM62"));
+		//utility::file::FileName blosum62( "/work/shilei/fresh/rosetta/rosetta_database/sequence/substitution_matrix/BLOSUM62" );
+		//basic::database::open( stream, "sequence/substitution_matrix/BLOSUM62" );
+		//core::sequence::MatrixScoringScheme matrix_blosum_score;
+		//matrix_blosum_score.read_data(stream);
+		//core::sequence::ScoringSchemeOP blosum_score( matrix_blosum_score );
+		core::sequence::ScoringSchemeOP blosum_score( new core::sequence::MatrixScoringScheme( -11, -1, blosum62 ) );
 
-	core::sequence::NWAligner nw_aligner;
-    	core::sequence::SequenceAlignment global_align = nw_aligner.align( seq1, seq2, blosum_score ) ;
-    	std::cout << global_align;
-    	std::cout << std::endl;
+		core::sequence::NWAligner nw_aligner;
+		core::sequence::SequenceAlignment global_align = nw_aligner.align( seq1, seq2, blosum_score ) ;
+		std::cout << global_align;
+		std::cout << std::endl;
 
-	core::id::SequenceMapping mapping = global_align.sequence_mapping(1, 2);
-    	//std::cout << mapping;
-    	//std::cout << std::endl;
+		core::id::SequenceMapping mapping = global_align.sequence_mapping(1, 2);
+		//std::cout << mapping;
+		//std::cout << std::endl;
 
-	//correspondence map for rms analysis
-	std::map<core::Size, core::Size> correspondence;
-	std::map<core::Size, core::Size> correspondence_interface;
+		//correspondence map for rms analysis
+		std::map<core::Size, core::Size> correspondence;
+		std::map<core::Size, core::Size> correspondence_interface;
 
-	//Figure out the interface at the native structure
-        core::scoring::ScoreFunctionCOP scorefxn (core::scoring::get_score_function());
-	(*scorefxn)(*native_pose);
-	//Assume binary complex with jump at 1
-	protocols::scoring::Interface interface( 1 );
-	interface.distance( 8.0 );
-	interface.calculate( *native_pose );
-	ObjexxFCL::FArray1D_bool is_interface ( (*native_pose).total_residue(), false );
-    	for ( Size i=1; i<= (*native_pose).total_residue(); ++i ) {
-      		if (interface.is_interface(i))
-			is_interface(i) = true;
-    	}
+		//Figure out the interface at the native structure
+		core::scoring::ScoreFunctionCOP scorefxn (core::scoring::get_score_function());
+		(*scorefxn)(*native_pose);
+		//Assume binary complex with jump at 1
+		protocols::scoring::Interface interface( 1 );
+		interface.distance( 8.0 );
+		interface.calculate( *native_pose );
+		ObjexxFCL::FArray1D_bool is_interface ( (*native_pose).total_residue(), false );
+		for ( Size i=1; i<= (*native_pose).total_residue(); ++i ) {
+			if ( interface.is_interface(i) ) {
+				is_interface(i) = true;
+			}
+		}
 
-	//set up correspondence map for alignment
-	for (core::Size i = 1; i <= (*seq1).length(); ++i) {
-  		if (mapping[i]) {
-    			correspondence[i] = mapping[i];
-			if (is_interface(i))
-				correspondence_interface[i]=mapping[i];
-  		}
-	}
+		//set up correspondence map for alignment
+		for ( core::Size i = 1; i <= (*seq1).length(); ++i ) {
+			if ( mapping[i] ) {
+				correspondence[i] = mapping[i];
+				if ( is_interface(i) ) {
+					correspondence_interface[i]=mapping[i];
+				}
+			}
+		}
 
-      	std::cout << correspondence;
-    	std::cout << std::endl;
+		std::cout << correspondence;
+		std::cout << std::endl;
 
-    	std::cout << correspondence_interface;
-    	std::cout << std::endl;
+		std::cout << correspondence_interface;
+		std::cout << std::endl;
 
 
-	core::Real Isc=protocols::docking::calc_interaction_energy(pose,scorefxn,utility::tools::make_vector1<core::Size>(1));
+		core::Real Isc=protocols::docking::calc_interaction_energy(pose,scorefxn,utility::tools::make_vector1<core::Size>(1));
 
-	//std::cout << "CA_rms: " << core::scoring::CA_rmsd( *native_pose, pose, correspondence) << " Irms_CA: " << core::scoring::CA_rmsd( *native_pose, pose, correspondence_interface) << std::endl;
-   	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-   	job->add_string_real_pair("rms_CA", core::scoring::CA_rmsd( *native_pose, pose, correspondence));
-   	job->add_string_real_pair("Irms_CA", core::scoring::CA_rmsd( *native_pose, pose, correspondence_interface));
-   	job->add_string_real_pair("Isc", Isc);
+		//std::cout << "CA_rms: " << core::scoring::CA_rmsd( *native_pose, pose, correspondence) << " Irms_CA: " << core::scoring::CA_rmsd( *native_pose, pose, correspondence_interface) << std::endl;
+		protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
+		job->add_string_real_pair("rms_CA", core::scoring::CA_rmsd( *native_pose, pose, correspondence));
+		job->add_string_real_pair("Irms_CA", core::scoring::CA_rmsd( *native_pose, pose, correspondence_interface));
+		job->add_string_real_pair("Isc", Isc);
 
 	}//end of apply
 
@@ -219,14 +221,14 @@ int
 main( int argc, char * argv [] ) {
 
 	try{
-	// initialize option and random number system
-	devel::init( argc, argv );
+		// initialize option and random number system
+		devel::init( argc, argv );
 
-	protocols::viewer::viewer_main( my_main );
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-	return -1;
-    }
-    return 0;
+		protocols::viewer::viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 
 }

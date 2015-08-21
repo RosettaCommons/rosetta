@@ -43,7 +43,7 @@ DeltaFilter::DeltaFilter() :
 	jump_( 0 ),
 	reference_pose_(/* NULL */),
 	ref_baseline_( 1234567890.0 ), // unlikely "uninitialized" sentinel value
-  scorefxn_( /* NULL */ )
+	scorefxn_( /* NULL */ )
 {}
 
 bool
@@ -88,12 +88,12 @@ DeltaFilter::jump( core::Size const j ){
 
 core::Real
 DeltaFilter::baseline() const{
-	if( reference_pose_ ){
+	if ( reference_pose_ ) {
 		//Hack to avoid keep re-applying (potentially computationally expensive) filter to reference pose
 		//This should probably be replaced by some pose observer magic instead
 		if ( (ref_baseline_ == 1234567890.0) || (changing_baseline_) ) { // unlikely "uninitialized" sentinel value
 			core::pose::Pose p( *reference_pose_ );
-			if(p.total_residue() == 0) { // If reference pose wasn't properly initialized, fast fail with interpretable error message
+			if ( p.total_residue() == 0 ) { // If reference pose wasn't properly initialized, fast fail with interpretable error message
 				utility_exit_with_message("Reference pose used with DeltaFilter wasn't initialized properly!");
 			}
 			relax_mover()->apply( p );
@@ -161,19 +161,20 @@ bool
 DeltaFilter::apply(core::pose::Pose const & pose ) const
 {
 	core::Real const delta( compute( pose ) );
-	if( upper() && lower() )
+	if ( upper() && lower() ) {
 		return( delta <= range() && delta >= range() );
-	if( ( upper() && delta <= range() ) || ( lower() && delta >= range() ) ) return true;
+	}
+	if ( ( upper() && delta <= range() ) || ( lower() && delta >= range() ) ) return true;
 	return( false );
 }
 
 void
 DeltaFilter::unbind( core::pose::Pose & pose ) const{
-	if( !unbound() ) return;
+	if ( !unbound() ) return;
 	protocols::rigid::RigidBodyTransMover rbtm( pose, jump() );
 	rbtm.step_size( 10000.0 );
 	rbtm.apply( pose );
-	if( relax_unbound() ) relax_mover()->apply( pose );
+	if ( relax_unbound() ) relax_mover()->apply( pose );
 }
 
 core::Real
@@ -201,10 +202,10 @@ DeltaFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
 
 void
 DeltaFilter::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose )
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const & pose )
 {
 	TR << "DeltaFilter"<<std::endl;
 	range( tag->getOption< core::Real >( "range", 0.0 ) );
@@ -217,19 +218,18 @@ DeltaFilter::parse_my_tag( utility::tag::TagCOP tag,
 	relax_unbound( tag->getOption< bool >( "relax_unbound", false ) );
 	changing_baseline( tag->getOption< bool >( "changing_baseline", false ) );
 	scorefxn(protocols::rosetta_scripts::parse_score_function(tag, data));
-	if( unbound() )
+	if ( unbound() ) {
 		jump( tag->getOption< core::Size >( "jump", 1 ) );
+	}
 	// need to score the pose before packing...
-	if( tag->hasOption("reference_name") ){
+	if ( tag->hasOption("reference_name") ) {
 		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data );
 		TR << "baseline will be caculated once, when first needed..." << std::endl;
-	}
-	else if( tag->hasOption("reference_pdb") ){
+	} else if ( tag->hasOption("reference_pdb") ) {
 		std::string reference_pdb_filename( tag->getOption< std::string >( "reference_pdb", "" ) );
 		reference_pose_ = core::import_pose::pose_from_pdb( reference_pdb_filename );
 		TR << "baseline will be caculated once, when first needed..." << std::endl;
-	}
-	else if( tag->hasOption( "relax_mover" ) ){
+	} else if ( tag->hasOption( "relax_mover" ) ) {
 		core::pose::Pose p( pose );
 		(*scorefxn())(p);
 		relax_mover()->apply( p );
@@ -238,7 +238,7 @@ DeltaFilter::parse_my_tag( utility::tag::TagCOP tag,
 	}
 
 	TR<<"with options baseline: ";
-	if (reference_pose_) TR << "(deferred)";
+	if ( reference_pose_ ) TR << "(deferred)";
 	else TR << baseline(); // only called if reference_pose_ is NULL
 	TR <<" range: "<<range()<<" upper: "<<upper()<<" unbound: "<<unbound()<<" jump: "<<jump()<<" and lower: "<<lower()<<std::endl;
 }

@@ -32,18 +32,18 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-	class AACompositionEnergyCreator : public EnergyMethodCreator
-	{
-	public:
+class AACompositionEnergyCreator : public EnergyMethodCreator
+{
+public:
 
-		/// @brief Instantiate a new AACompositionEnergy.
-		///
-		virtual methods::EnergyMethodOP create_energy_method( methods::EnergyMethodOptions const & ) const;
+	/// @brief Instantiate a new AACompositionEnergy.
+	///
+	virtual methods::EnergyMethodOP create_energy_method( methods::EnergyMethodOptions const & ) const;
 
-		/// @brief Return the set of score types claimed by the EnergyMethod that
-		/// this EnergyMethodCreator creates in its create_energy_method() function.
-		virtual ScoreTypes score_types_for_method() const;
-	};
+	/// @brief Return the set of score types claimed by the EnergyMethod that
+	/// this EnergyMethodCreator creates in its create_energy_method() function.
+	virtual ScoreTypes score_types_for_method() const;
+};
 
 } // methods
 } // scoring

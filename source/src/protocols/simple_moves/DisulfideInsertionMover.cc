@@ -57,9 +57,9 @@ static thread_local basic::Tracer TR( "protocols.simple_moves.DisulfideInsertion
 
 /// @brief constructor with all parameters
 DisulfideInsertionMover::DisulfideInsertionMover(core::Size const peptide_chain,
-		core::scoring::ScoreFunctionOP scorefxn, core::kinematics::MoveMapOP mm,
-		bool const is_cyd_res_at_termini,
-		core::Size const n_cyd_seqpos, core::Size const c_cyd_seqpos) :
+	core::scoring::ScoreFunctionOP scorefxn, core::kinematics::MoveMapOP mm,
+	bool const is_cyd_res_at_termini,
+	core::Size const n_cyd_seqpos, core::Size const c_cyd_seqpos) :
 	protocols::moves::Mover("DisulfideInsertionMover"),
 	peptide_chain_num_( peptide_chain ),
 	scorefxn_( scorefxn ),
@@ -82,8 +82,7 @@ DisulfideInsertionMover::DisulfideInsertionMover(DisulfideInsertionMover const &
 	set_peptide_chain( other.get_peptide_chain() );
 	if ( other.get_is_cyd_res_at_termini() ) {
 		set_cyd_res_at_termini();
-	}
-	else {
+	} else {
 		set_cyd_seqpos( other.get_n_cyd_seqpos(), other.get_c_cyd_seqpos() );
 	}
 	// TODO : should we clone this? simply calling ->clone() didn't work for some reason (at least, get_name() on the new scorefxn returned an empty string)
@@ -109,42 +108,40 @@ protocols::moves::MoverOP DisulfideInsertionMover::clone() const {
 /// @param c_putative_cyd position in the partner pose where a putative cysteine immediatly after a derived peptide might exist
 DisulfideCyclizationViability
 DisulfideInsertionMover::determine_cyclization_viability(
-		core::pose::Pose const & partner_pose,
-		core::Size const n_putative_cyd, core::Size const c_putative_cyd) {
+	core::pose::Pose const & partner_pose,
+	core::Size const n_putative_cyd, core::Size const c_putative_cyd) {
 
 	//lower and upper boundries for atom distances that indicate closability by a disulfide
 	core::Length min_distance;
 	core::Length max_distance;
 
-	if (!partner_pose.residue(n_putative_cyd).is_protein() || !partner_pose.residue(c_putative_cyd).is_protein()) {
-			return DCV_NOT_CYCLIZABLE;
+	if ( !partner_pose.residue(n_putative_cyd).is_protein() || !partner_pose.residue(c_putative_cyd).is_protein() ) {
+		return DCV_NOT_CYCLIZABLE;
 	}
 
 	std::string atom_to_check;
-	if ((partner_pose.residue(n_putative_cyd).name1() == 'G' ) ||( partner_pose.residue( c_putative_cyd ).name1() == 'G' )) {
+	if ( (partner_pose.residue(n_putative_cyd).name1() == 'G' ) ||( partner_pose.residue( c_putative_cyd ).name1() == 'G' ) ) {
 		atom_to_check = "CA";
 		min_distance = 4.5;
 		max_distance = 6.5;
-	}
-	else {
+	} else {
 		atom_to_check = "CB";
 		min_distance = 3;
 		max_distance = 5;
 	}
-	core::Length distance =	partner_pose.residue( n_putative_cyd ).xyz( atom_to_check ).distance(partner_pose.residue( c_putative_cyd ).xyz( atom_to_check ));
+	core::Length distance = partner_pose.residue( n_putative_cyd ).xyz( atom_to_check ).distance(partner_pose.residue( c_putative_cyd ).xyz( atom_to_check ));
 	bool already_bonded_n_cys (partner_pose.conformation().residue(n_putative_cyd).has_variant_type( core::chemical::DISULFIDE ));
 	bool already_bonded_c_cys (partner_pose.conformation().residue(c_putative_cyd).has_variant_type( core::chemical::DISULFIDE ));
 	// both don't form disulfide bonds and so their potential can be estimated according to distance alone
-	if (!already_bonded_n_cys && !already_bonded_c_cys) {
-		if (distance <= max_distance && distance >= min_distance) {
+	if ( !already_bonded_n_cys && !already_bonded_c_cys ) {
+		if ( distance <= max_distance && distance >= min_distance ) {
 			return DCV_CYCLIZABLE;
 		}
-	}
-	else if (already_bonded_n_cys && already_bonded_c_cys) {
+	} else if ( already_bonded_n_cys && already_bonded_c_cys ) {
 		// both cysteins are bonded but not neccessarily to each other
 		core::Size lower_SG_id = partner_pose.residue(n_putative_cyd).atom_index( "SG" );
 		core::Size cys_SG_connect_id =  partner_pose.residue(n_putative_cyd).type().residue_connection_id_for_atom( lower_SG_id );
-		if (partner_pose.residue(n_putative_cyd).residue_connection_partner(cys_SG_connect_id) == c_putative_cyd) {
+		if ( partner_pose.residue(n_putative_cyd).residue_connection_partner(cys_SG_connect_id) == c_putative_cyd ) {
 			return DCV_ALREADY_CYCLIZED;
 		}
 	}
@@ -162,7 +159,7 @@ DisulfideInsertionMover::apply( core::pose::Pose & peptide_receptor_pose )
 
 	// eliminate cases where a disulfide should not be formed since the residues already form a disulfide (closability==2)
 	// in that case we will only want to optimize it using the rebuild_disulfide function
-	if (determine_cyclization_viability(peptide_receptor_pose, n_cyd_seqpos_, c_cyd_seqpos_) == DCV_CYCLIZABLE) {
+	if ( determine_cyclization_viability(peptide_receptor_pose, n_cyd_seqpos_, c_cyd_seqpos_) == DCV_CYCLIZABLE ) {
 
 		core::conformation::form_disulfide(peptide_receptor_pose.conformation(), n_cyd_seqpos_, c_cyd_seqpos_);
 	}
@@ -170,7 +167,7 @@ DisulfideInsertionMover::apply( core::pose::Pose & peptide_receptor_pose )
 	core::conformation::Residue lower_cys = peptide_receptor_pose.residue( n_cyd_seqpos_);
 	core::conformation::Residue upper_cys = peptide_receptor_pose.residue( c_cyd_seqpos_);
 
-	if ( constraint_weight_ > 0) { // save some code-running if no constraint it set
+	if ( constraint_weight_ > 0 ) { // save some code-running if no constraint it set
 		scorefxn_->set_weight( core::scoring::atom_pair_constraint, constraint_weight_ );
 		scorefxn_->set_weight( core::scoring::dihedral_constraint, constraint_weight_ );
 		scorefxn_->set_weight( core::scoring::angle_constraint, constraint_weight_ );
@@ -187,7 +184,7 @@ DisulfideInsertionMover::apply( core::pose::Pose & peptide_receptor_pose )
 		/*mm=*/movemap_,
 		/*minimizer_score=*/scorefxn_);
 
-	if ( constraint_weight_ > 0) { // save some code-running if no constraint it set
+	if ( constraint_weight_ > 0 ) { // save some code-running if no constraint it set
 		scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0 );
 		scorefxn_->set_weight( core::scoring::dihedral_constraint, 0 );
 		scorefxn_->set_weight( core::scoring::angle_constraint, 0 );
@@ -201,10 +198,10 @@ DisulfideInsertionMover::apply( core::pose::Pose & peptide_receptor_pose )
 ///        This is based on a function written by Nir London.
 void
 DisulfideInsertionMover::setup_constraints( core::pose::Pose & peptide_receptor_pose,
-											core::conformation::Residue lower_cys,
-											core::conformation::Residue upper_cys,
-											core::Size n_cyd_seqpos,
-											core::Size c_cyd_seqpos)
+	core::conformation::Residue lower_cys,
+	core::conformation::Residue upper_cys,
+	core::Size n_cyd_seqpos,
+	core::Size c_cyd_seqpos)
 {
 	core::scoring::constraints::ConstraintSetOP cys_cst_set( new core::scoring::constraints::ConstraintSet() );
 	core::id::AtomID n_ca_atom_id( lower_cys.atom_index("CA"),n_cyd_seqpos  );
@@ -215,46 +212,46 @@ DisulfideInsertionMover::setup_constraints( core::pose::Pose & peptide_receptor_
 	core::id::AtomID c_sg_atom_id( upper_cys.atom_index("SG"), c_cyd_seqpos );
 
 	cys_cst_set->add_constraint(
-				core::scoring::constraints::AtomPairConstraintCOP(new core::scoring::constraints::AtomPairConstraint(
-																  n_sg_atom_id,
-																  c_sg_atom_id,
-																  core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 2.02 /*anchor*/, 0.35 /*stdev*/)))));
+		core::scoring::constraints::AtomPairConstraintCOP(new core::scoring::constraints::AtomPairConstraint(
+		n_sg_atom_id,
+		c_sg_atom_id,
+		core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 2.02 /*anchor*/, 0.35 /*stdev*/)))));
 	cys_cst_set->add_constraint(
-				core::scoring::constraints::DihedralConstraintCOP(new core::scoring::constraints::DihedralConstraint(
-																  n_ca_atom_id,
-																  n_cb_atom_id,
-																  n_sg_atom_id,
-																  c_sg_atom_id,
-																  core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( -0.558 /*anchor*/, 0.1 /*stdev*/) ))));
+		core::scoring::constraints::DihedralConstraintCOP(new core::scoring::constraints::DihedralConstraint(
+		n_ca_atom_id,
+		n_cb_atom_id,
+		n_sg_atom_id,
+		c_sg_atom_id,
+		core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( -0.558 /*anchor*/, 0.1 /*stdev*/) ))));
 	cys_cst_set->add_constraint(
-				core::scoring::constraints::DihedralConstraintCOP(new core::scoring::constraints::DihedralConstraint(
-																  c_ca_atom_id,
-																  c_cb_atom_id,
-																  c_sg_atom_id,
-																  n_sg_atom_id,
-																  core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( -2 /*anchor*/, 0.1 /*stdev*/) ))));
+		core::scoring::constraints::DihedralConstraintCOP(new core::scoring::constraints::DihedralConstraint(
+		c_ca_atom_id,
+		c_cb_atom_id,
+		c_sg_atom_id,
+		n_sg_atom_id,
+		core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( -2 /*anchor*/, 0.1 /*stdev*/) ))));
 	cys_cst_set->add_constraint(
-			     core::scoring::constraints::AngleConstraintCOP(new core::scoring::constraints::AngleConstraint(
-		    		 	 	 	 	 	 	 	 	 	 		n_cb_atom_id,
-   																n_sg_atom_id,
-																c_sg_atom_id,
-																core::scoring::func::HarmonicFuncOP(new core::scoring::func::HarmonicFunc( 1.804 /*anchor*/, 0.08 /*stdev*/) )) ));
+		core::scoring::constraints::AngleConstraintCOP(new core::scoring::constraints::AngleConstraint(
+		n_cb_atom_id,
+		n_sg_atom_id,
+		c_sg_atom_id,
+		core::scoring::func::HarmonicFuncOP(new core::scoring::func::HarmonicFunc( 1.804 /*anchor*/, 0.08 /*stdev*/) )) ));
 	cys_cst_set->add_constraint(
-				core::scoring::constraints::AngleConstraintCOP(new core::scoring::constraints::AngleConstraint(
-															   c_cb_atom_id,
-															   c_sg_atom_id,
-															   n_sg_atom_id,
-															   core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.804 /*anchor*/, 0.08 /*stdev*/) )) ));
+		core::scoring::constraints::AngleConstraintCOP(new core::scoring::constraints::AngleConstraint(
+		c_cb_atom_id,
+		c_sg_atom_id,
+		n_sg_atom_id,
+		core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.804 /*anchor*/, 0.08 /*stdev*/) )) ));
 	peptide_receptor_pose.constraint_set( cys_cst_set );
 
 }
 
 // RosettaScripts implementation
 void DisulfideInsertionMover::parse_my_tag( utility::tag::TagCOP tag,
-			basic::datacache::DataMap & data,
-			protocols::filters::Filters_map const &,
-			protocols::moves::Movers_map const &,
-			core::pose::Pose const & pose ) {
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & pose ) {
 
 	if ( tag->hasOption("scorefxn") ) {
 		set_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, "scorefxn", data, "" ) );
@@ -273,11 +270,9 @@ void DisulfideInsertionMover::parse_my_tag( utility::tag::TagCOP tag,
 	bool const c_cyd_specified(tag->hasOption("c_cyd"));
 	if ( n_cyd_specified && c_cyd_specified ) {
 		set_cyd_seqpos(tag->getOption<core::Size>("n_cyd"), tag->getOption<core::Size>("c_cyd"));
-	}
- 	else if ( n_cyd_specified || c_cyd_specified ) {
+	} else if ( n_cyd_specified || c_cyd_specified ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("n_cyd and c_cyd must either both be specified or both not specified");
-	}
-	else {
+	} else {
 		set_cyd_res_at_termini();
 	}
 

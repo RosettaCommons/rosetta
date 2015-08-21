@@ -109,7 +109,7 @@ public:
 
 	//lin Symmetry
 	// @lin - move these to the .cc file so you can only include SymmetryInfo.fwd.hh!
-	bool is_symmetric() const { return symminfo_->get_use_symmetry();	}
+	bool is_symmetric() const { return symminfo_->get_use_symmetry(); }
 
 	void symmetry_info( core::conformation::symmetry::SymmetryInfo & s ) {
 		symminfo_ = core::conformation::symmetry::SymmetryInfoOP( new core::conformation::symmetry::SymmetryInfo( s ) );
@@ -154,7 +154,7 @@ protected:
 private: // private member functions
 
 public:
-	//	virtual core::Size mem_footprint() const;
+	// virtual core::Size mem_footprint() const;
 
 private:
 	utility::vector1< kinematics::RT > jumps_;

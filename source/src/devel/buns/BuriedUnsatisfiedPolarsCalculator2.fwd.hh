@@ -17,7 +17,7 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace devel{
+namespace devel {
 namespace buns {
 
 class BuriedUnsatisfiedPolarsCalculator2;

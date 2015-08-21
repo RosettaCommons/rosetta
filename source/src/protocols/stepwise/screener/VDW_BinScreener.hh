@@ -29,52 +29,52 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class VDW_BinScreener: public StepWiseScreener {
+class VDW_BinScreener: public StepWiseScreener {
 
-	public:
+public:
 
-		//constructor
-		// Undefined, commenting out to fix PyRosetta build  VDW_BinScreener();
+	//constructor
+	// Undefined, commenting out to fix PyRosetta build  VDW_BinScreener();
 
-		//constructor
-		VDW_BinScreener( modeler::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker,
-										 pose::Pose & screening_pose,
-										 Size const moving_res );
+	//constructor
+	VDW_BinScreener( modeler::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker,
+		pose::Pose & screening_pose,
+		Size const moving_res );
 
-		VDW_BinScreener( modeler::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker,
-										 pose::Pose & screening_pose,
-										 Size const moving_res,
-										 core::conformation::ResidueCOP screening_moving_rsd_at_origin,
-										 core::kinematics::Stub const & moving_res_base_stub );
+	VDW_BinScreener( modeler::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker,
+		pose::Pose & screening_pose,
+		Size const moving_res,
+		core::conformation::ResidueCOP screening_moving_rsd_at_origin,
+		core::kinematics::Stub const & moving_res_base_stub );
 
-		//destructor
-		~VDW_BinScreener();
+	//destructor
+	~VDW_BinScreener();
 
-	public:
+public:
 
-		bool
-		check_screen();
+	bool
+	check_screen();
 
-		std::string
-		name() const { return "VDW_BinScreener"; }
+	std::string
+	name() const { return "VDW_BinScreener"; }
 
-		StepWiseScreenerType
-		type() const { return VDW_BIN; }
+	StepWiseScreenerType
+	type() const { return VDW_BIN; }
 
-		void
-		fast_forward( sampler::StepWiseSamplerBaseOP sampler );
+	void
+	fast_forward( sampler::StepWiseSamplerBaseOP sampler );
 
-	private:
+private:
 
-		modeler::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker_;
-		pose::Pose & screening_pose_;
-		Size const moving_res_;
+	modeler::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker_;
+	pose::Pose & screening_pose_;
+	Size const moving_res_;
 
-		bool const using_stub_;
-		core::conformation::ResidueCOP screening_moving_rsd_at_origin_;
-		core::kinematics::Stub const & moving_res_base_stub_;
+	bool const using_stub_;
+	core::conformation::ResidueCOP screening_moving_rsd_at_origin_;
+	core::kinematics::Stub const & moving_res_base_stub_;
 
-	};
+};
 
 } //screener
 } //stepwise

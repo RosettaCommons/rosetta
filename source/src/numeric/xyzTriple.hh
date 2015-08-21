@@ -117,7 +117,7 @@ public: // Creation
 		Value const & x_a,
 		Value const & y_a,
 		Value const & z_a
-	 ) :
+	) :
 		x_( x_a ),
 		y_( y_a ),
 		z_( z_a )
@@ -629,9 +629,9 @@ public: // Methods
 	min( xyzTriple const & a, xyzTriple const & b )
 	{
 		return xyzTriple(
-		 ( a.x_ <= b.x_ ? a.x_ : b.x_ ),
-		 ( a.y_ <= b.y_ ? a.y_ : b.y_ ),
-		 ( a.z_ <= b.z_ ? a.z_ : b.z_ )
+			( a.x_ <= b.x_ ? a.x_ : b.x_ ),
+			( a.y_ <= b.y_ ? a.y_ : b.y_ ),
+			( a.z_ <= b.z_ ? a.z_ : b.z_ )
 		);
 	}
 
@@ -643,9 +643,9 @@ public: // Methods
 	max( xyzTriple const & a, xyzTriple const & b )
 	{
 		return xyzTriple(
-		 ( a.x_ >= b.x_ ? a.x_ : b.x_ ),
-		 ( a.y_ >= b.y_ ? a.y_ : b.y_ ),
-		 ( a.z_ >= b.z_ ? a.z_ : b.z_ )
+			( a.x_ >= b.x_ ? a.x_ : b.x_ ),
+			( a.y_ >= b.y_ ? a.y_ : b.y_ ),
+			( a.z_ >= b.z_ ? a.z_ : b.z_ )
 		);
 	}
 
@@ -1584,8 +1584,7 @@ public: // Indexers
 	Value const &
 	at(int const i) const
 	{
-		if(!((i >= 0) && (i < 3)))
-		{
+		if ( !((i >= 0) && (i < 3)) ) {
 			throw std::out_of_range("numeric::xyzTriple::at");
 		}
 
@@ -1597,8 +1596,7 @@ public: // Indexers
 	Value &
 	at(int const i)
 	{
-		if(!((i >= 0) && (i < 3)))
-		{
+		if ( !((i >= 0) && (i < 3)) ) {
 			throw std::out_of_range ("numeric::xyzTriple::at");
 		}
 
@@ -1675,11 +1673,11 @@ public: // Comparison
 	operator <( xyzTriple const & a, xyzTriple const & b )
 	{
 		return (
-		 ( a.x_ < b.x_ ? true :
-		 ( b.x_ < a.x_ ? false : // a.x_ == b.x_
-		 ( a.y_ < b.y_ ? true :
-		 ( b.y_ < a.y_ ? false : // a.y_ == b.y_
-		 ( a.z_ < b.z_ ) ) ) ) ) );
+			( a.x_ < b.x_ ? true :
+			( b.x_ < a.x_ ? false : // a.x_ == b.x_
+			( a.y_ < b.y_ ? true :
+			( b.y_ < a.y_ ? false : // a.y_ == b.y_
+			( a.z_ < b.z_ ) ) ) ) ) );
 	}
 
 
@@ -1690,11 +1688,11 @@ public: // Comparison
 	operator <=( xyzTriple const & a, xyzTriple const & b )
 	{
 		return (
-		 ( a.x_ < b.x_ ? true :
-		 ( b.x_ < a.x_ ? false : // a.x_ == b.x_
-		 ( a.y_ < b.y_ ? true :
-		 ( b.y_ < a.y_ ? false : // a.y_ == b.y_
-		 ( a.z_ <= b.z_ ) ) ) ) ) );
+			( a.x_ < b.x_ ? true :
+			( b.x_ < a.x_ ? false : // a.x_ == b.x_
+			( a.y_ < b.y_ ? true :
+			( b.y_ < a.y_ ? false : // a.y_ == b.y_
+			( a.z_ <= b.z_ ) ) ) ) ) );
 	}
 
 
@@ -1705,11 +1703,11 @@ public: // Comparison
 	operator >=( xyzTriple const & a, xyzTriple const & b )
 	{
 		return (
-		 ( a.x_ > b.x_ ? true :
-		 ( b.x_ > a.x_ ? false : // a.x_ == b.x_
-		 ( a.y_ > b.y_ ? true :
-		 ( b.y_ > a.y_ ? false : // a.y_ == b.y_
-		 ( a.z_ >= b.z_ ) ) ) ) ) );
+			( a.x_ > b.x_ ? true :
+			( b.x_ > a.x_ ? false : // a.x_ == b.x_
+			( a.y_ > b.y_ ? true :
+			( b.y_ > a.y_ ? false : // a.y_ == b.y_
+			( a.z_ >= b.z_ ) ) ) ) ) );
 	}
 
 
@@ -1720,11 +1718,11 @@ public: // Comparison
 	operator >( xyzTriple const & a, xyzTriple const & b )
 	{
 		return (
-		 ( a.x_ > b.x_ ? true :
-		 ( b.x_ > a.x_ ? false : // a.x_ == b.x_
-		 ( a.y_ > b.y_ ? true :
-		 ( b.y_ > a.y_ ? false : // a.y_ == b.y_
-		 ( a.z_ > b.z_ ) ) ) ) ) );
+			( a.x_ > b.x_ ? true :
+			( b.x_ > a.x_ ? false : // a.x_ == b.x_
+			( a.y_ > b.y_ ? true :
+			( b.y_ > a.y_ ? false : // a.y_ == b.y_
+			( a.z_ > b.z_ ) ) ) ) ) );
 	}
 
 

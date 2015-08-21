@@ -57,14 +57,14 @@ namespace full_model_info {
 // Following are utils and should not be in here...
 utility::vector1<Size>
 reorder_moving_res_list_after_delete( utility::vector1<Size> const & moving_res_list,
-																			Size const & res_to_delete ){
+	Size const & res_to_delete ){
 
 	utility::vector1< Size > moving_res_list_new;
 
-	for (Size i = 1; i <= moving_res_list.size(); i++ ){
+	for ( Size i = 1; i <= moving_res_list.size(); i++ ) {
 		Size const n = moving_res_list[ i ];
 		if ( n < res_to_delete ) moving_res_list_new.push_back( n );
-		else if (n > res_to_delete ) moving_res_list_new.push_back( n-1 );
+		else if ( n > res_to_delete ) moving_res_list_new.push_back( n-1 );
 	}
 
 	return moving_res_list_new;
@@ -74,11 +74,11 @@ reorder_moving_res_list_after_delete( utility::vector1<Size> const & moving_res_
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
 reorder_res_list_after_delete( utility::vector1< Size > const & res_list,
-																	Size const & res_to_delete ){
+	Size const & res_to_delete ){
 
 	utility::vector1< Size > res_list_new(  res_list.size() - 1, 0 );
 
-	for ( Size n = 1; n <= res_list.size(); n++ ){
+	for ( Size n = 1; n <= res_list.size(); n++ ) {
 		Size const m = res_list[ n ];
 		if ( n < res_to_delete ) res_list_new[ n ] = m;
 		else if ( n > res_to_delete ) res_list_new[ n-1 ] = m;
@@ -91,16 +91,16 @@ reorder_res_list_after_delete( utility::vector1< Size > const & res_list,
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1<Size>
 reorder_moving_res_list_after_insert( utility::vector1<Size> const & moving_res_list,
-											 Size const & res_to_add ){
+	Size const & res_to_add ){
 
 	utility::vector1< Size > moving_res_list_new;
 
-	for (Size i = 1; i <= moving_res_list.size(); i++ ){
+	for ( Size i = 1; i <= moving_res_list.size(); i++ ) {
 		Size const n = moving_res_list[ i ];
 		if ( n < res_to_add ) moving_res_list_new.push_back( n );
 	}
 	moving_res_list_new.push_back( res_to_add );
-	for (Size i = 1; i <= moving_res_list.size(); i++ ){
+	for ( Size i = 1; i <= moving_res_list.size(); i++ ) {
 		Size const n = moving_res_list[ i ];
 		if ( n >= res_to_add ) moving_res_list_new.push_back( n+1 );
 	}
@@ -113,12 +113,12 @@ reorder_moving_res_list_after_insert( utility::vector1<Size> const & moving_res_
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
 reorder_res_list_after_prepend( utility::vector1< Size > const & res_list,
-																Size const & res_to_add,
-																Size const offset = 1 ){
+	Size const & res_to_add,
+	Size const offset = 1 ){
 
 	utility::vector1< Size > res_list_new(  res_list.size() + 1, 0 );
 
-	for ( Size n = 1; n <= res_list.size(); n++ ){
+	for ( Size n = 1; n <= res_list.size(); n++ ) {
 		Size const m = res_list[ n ];
 		if ( n < res_to_add )  res_list_new[ n ] = m;
 		if ( n >= res_to_add ) res_list_new[ n+1 ] = m;
@@ -131,12 +131,12 @@ reorder_res_list_after_prepend( utility::vector1< Size > const & res_list,
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
 reorder_res_list_after_append( utility::vector1< Size > const & res_list,
-															 Size const & res_to_add,
-															 Size const offset = 1 ){
+	Size const & res_to_add,
+	Size const offset = 1 ){
 
 	utility::vector1< Size > res_list_new(  res_list.size() + 1, 0 );
 
-	for ( Size n = 1; n <= res_list.size(); n++ ){
+	for ( Size n = 1; n <= res_list.size(); n++ ) {
 		Size const m = res_list[ n ];
 		if ( n < res_to_add )  res_list_new[ n ] = m;
 		if ( n >= res_to_add ) res_list_new[ n+1 ] = m;
@@ -181,8 +181,8 @@ update_constraint_set_from_full_model_info( pose::Pose & pose ){
 
 		utility::vector1< Size > const & res_list = const_full_model_info( pose ).res_list();
 		id::SequenceMappingOP sequence_map( new SequenceMapping );
-		for ( Size n = 1; n <= full_model_pose.total_residue(); n++ ){
-			if ( res_list.has_value( n ) ){
+		for ( Size n = 1; n <= full_model_pose.total_residue(); n++ ) {
+			if ( res_list.has_value( n ) ) {
 				sequence_map->push_back( res_list.index( n ) );
 			} else {
 				sequence_map->push_back( 0 );
@@ -211,7 +211,7 @@ update_disulfides_from_full_model_info( pose::Pose & pose ){
 		if ( !res_list.has_value( res2_full ) ) continue;
 		std::pair< Size, Size > const disulfide_pair =
 			std::make_pair( full_model_info.full_to_sub( res1_full ),
-											full_model_info.full_to_sub( res2_full ) );
+			full_model_info.full_to_sub( res2_full ) );
 		working_disulf_bonds.push_back( disulfide_pair );
 		runtime_assert( pose.residue_type( disulfide_pair.first  ).is_sidechain_thiol() || pose.residue_type( disulfide_pair.first  ).is_disulfide_bonded() );
 		runtime_assert( pose.residue_type( disulfide_pair.second ).is_sidechain_thiol() || pose.residue_type( disulfide_pair.second ).is_disulfide_bonded() );
@@ -268,7 +268,7 @@ utility::vector1< char >
 figure_out_conventional_chains_from_full_model_info( pose::Pose const & pose ) {
 	utility::vector1< char > chains;
 	utility::vector1< char > const & conventional_chains = const_full_model_info( pose ).conventional_chains();
-	if ( conventional_chains.size() > 0 ){
+	if ( conventional_chains.size() > 0 ) {
 		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 		for ( Size n = 1; n <= pose.total_residue(); n++ ) chains.push_back( conventional_chains[ res_list[n] ] );
 	} else {
@@ -305,7 +305,7 @@ get_chains_from_cutpoint_open( utility::vector1< Size > const & cutpoint_open, S
 
 	Size start_res( 1 );
 	utility::vector1< Size > chains;
-	for ( Size i = 1; i <= cutpoint_open_including_terminus.size(); i++ ){
+	for ( Size i = 1; i <= cutpoint_open_including_terminus.size(); i++ ) {
 		Size const & end_res = cutpoint_open_including_terminus[ i ];
 		for ( Size n = start_res; n <= end_res; n++ ) chains.push_back( i );
 		start_res = end_res + 1;
@@ -327,7 +327,7 @@ figure_out_chain_numbers_from_full_model_info_const( pose::Pose const & pose ) {
 
 	// now figure out chains in working model
 	utility::vector1< Size > chains( pose.total_residue(), 1 );
-	for ( Size n = 1; n <= pose.total_residue(); n++ ){
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 		if ( n > res_list.size() ) continue;
 		runtime_assert( res_list[ n ] <= chains_full.size() );
 		chains[ n ]  = chains_full[ res_list[ n ] ];
@@ -392,7 +392,7 @@ check_full_model_info_OK( pose::Pose const & pose ){
 		return false;
 	}
 
-	for ( Size n = 1; n <= res_list.size(); n++ ){
+	for ( Size n = 1; n <= res_list.size(); n++ ) {
 
 		Size const & res_num = res_list[ n ];
 		char sequence_char = sequence[ res_num   - 1 ];
@@ -411,491 +411,491 @@ check_full_model_info_OK( pose::Pose const & pose ){
 
 }
 
-	///////////////////////////////////////////////////////////////////////////////////////
-	// mapping from working pose to full pose.
-	utility::vector1< Size > const &
-	get_res_list_from_full_model_info( pose::Pose & pose ) {
-		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
-		return full_model_info.res_list();
-	}
+///////////////////////////////////////////////////////////////////////////////////////
+// mapping from working pose to full pose.
+utility::vector1< Size > const &
+get_res_list_from_full_model_info( pose::Pose & pose ) {
+	FullModelInfo & full_model_info = nonconst_full_model_info( pose );
+	return full_model_info.res_list();
+}
 
-	///////////////////////////////////////////////////////////////////////////////////////
-	// mapping from working pose to full pose.
-	utility::vector1< Size > const &
-	get_res_list_from_full_model_info_const( pose::Pose const & pose ) {
-		runtime_assert( full_model_info_defined( pose ) );
-		FullModelInfo const & full_model_info = const_full_model_info( pose );
-		return full_model_info.res_list();
-	}
+///////////////////////////////////////////////////////////////////////////////////////
+// mapping from working pose to full pose.
+utility::vector1< Size > const &
+get_res_list_from_full_model_info_const( pose::Pose const & pose ) {
+	runtime_assert( full_model_info_defined( pose ) );
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	return full_model_info.res_list();
+}
 
-	// this function works even if full_model_info is not defined.
-	utility::vector1< Size >
-	get_res_list_const( pose::Pose const & pose ) {
-		if ( full_model_info_defined( pose ) ) return get_res_list_from_full_model_info_const( pose );
-		utility::vector1< Size > res_list;
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) res_list.push_back( n );
-		return res_list;
-	}
+// this function works even if full_model_info is not defined.
+utility::vector1< Size >
+get_res_list_const( pose::Pose const & pose ) {
+	if ( full_model_info_defined( pose ) ) return get_res_list_from_full_model_info_const( pose );
+	utility::vector1< Size > res_list;
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) res_list.push_back( n );
+	return res_list;
+}
 
-	///////////////////////////////////////////////////////////////////////////////////////
-	utility::vector1< utility::vector1< Size > >
-	get_move_elements_from_full_model_info( pose::Pose & pose ){
-		pose::full_model_info::make_sure_full_model_info_is_setup( pose );
-		return get_move_elements_from_full_model_info_const( pose );
-	}
+///////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< utility::vector1< Size > >
+get_move_elements_from_full_model_info( pose::Pose & pose ){
+	pose::full_model_info::make_sure_full_model_info_is_setup( pose );
+	return get_move_elements_from_full_model_info_const( pose );
+}
 
-	///////////////////////////////////////////////////////////////////////////////////////
-	utility::vector1< utility::vector1< Size > >
-	get_move_elements_from_full_model_info_const( pose::Pose const & pose ){
+///////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< utility::vector1< Size > >
+get_move_elements_from_full_model_info_const( pose::Pose const & pose ){
 
-		FullModelInfo full_model_info = const_full_model_info( pose );
-		utility::vector1< Size > const & input_domain_map =  full_model_info.input_domain_map();
-		utility::vector1< Size > const & res_list = full_model_info.res_list();
+	FullModelInfo full_model_info = const_full_model_info( pose );
+	utility::vector1< Size > const & input_domain_map =  full_model_info.input_domain_map();
+	utility::vector1< Size > const & res_list = full_model_info.res_list();
 
-		utility::vector1< utility::vector1< Size > > move_elements;
-		std::map< Size, utility::vector1< Size > > move_element_map;
+	utility::vector1< utility::vector1< Size > > move_elements;
+	std::map< Size, utility::vector1< Size > > move_element_map;
 
-		for ( Size i = 1; i <= res_list.size(); i++ ) {
-			Size const i_full = res_list[ i ];
-			Size const & domain = input_domain_map[ i_full ];
-			if ( domain == 0 ) {
-				// single residues
-				move_elements.push_back( utility::tools::make_vector1( i_full ) );
-			} else {
-				// domains
-				move_element_map[ domain ].push_back( i_full );
-			}
+	for ( Size i = 1; i <= res_list.size(); i++ ) {
+		Size const i_full = res_list[ i ];
+		Size const & domain = input_domain_map[ i_full ];
+		if ( domain == 0 ) {
+			// single residues
+			move_elements.push_back( utility::tools::make_vector1( i_full ) );
+		} else {
+			// domains
+			move_element_map[ domain ].push_back( i_full );
 		}
-
-		for( std::map< Size, utility::vector1< Size > >::const_iterator iter = move_element_map.begin(), end = move_element_map.end();
-				 iter != end; ++iter ){
-			move_elements.push_back( iter->second );
-		}
-
-		return move_elements;
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////////
-	utility::vector1< Size >
-	get_moving_res_from_full_model_info( pose::Pose & pose ){
-
-		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
-		utility::vector1< Size > const & fixed_domain_map =  full_model_info.fixed_domain_map();
-		utility::vector1< Size > const & res_list = full_model_info.res_list();
-
-		utility::vector1< Size > moving_res;
-		for ( Size i = 1; i <= res_list.size(); i++ ) {
-			if ( fixed_domain_map[ res_list[i] ] == 0 ) moving_res.push_back( i );
-		}
-
-		return moving_res;
+	for ( std::map< Size, utility::vector1< Size > >::const_iterator iter = move_element_map.begin(), end = move_element_map.end();
+			iter != end; ++iter ) {
+		move_elements.push_back( iter->second );
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////////
-	utility::vector1< Size >
-	get_fixed_domain_from_full_model_info_const( pose::Pose const & pose ) {
+	return move_elements;
+}
 
-		FullModelInfo const & full_model_info = const_full_model_info( pose );
-		utility::vector1< Size > const & fixed_domain_map =  full_model_info.fixed_domain_map();
-		utility::vector1< Size > const & res_list = full_model_info.res_list();
+///////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< Size >
+get_moving_res_from_full_model_info( pose::Pose & pose ){
 
-		utility::vector1< Size > fixed_domain_local;
-		for ( Size i = 1; i <= res_list.size(); i++ ) {
-			fixed_domain_local.push_back ( fixed_domain_map[ res_list[i] ] );
-		}
-		return fixed_domain_local;
+	FullModelInfo & full_model_info = nonconst_full_model_info( pose );
+	utility::vector1< Size > const & fixed_domain_map =  full_model_info.fixed_domain_map();
+	utility::vector1< Size > const & res_list = full_model_info.res_list();
 
-	}
-	///////////////////////////////////////////////////////////////////////////////////////
-	utility::vector1< Size >
-	get_input_domain_from_full_model_info_const( pose::Pose const & pose ) {
-
-		FullModelInfo const & full_model_info = const_full_model_info( pose );
-		utility::vector1< Size > const & input_domain_map =  full_model_info.input_domain_map();
-		utility::vector1< Size > const & res_list = full_model_info.res_list();
-
-		utility::vector1< Size > input_domain_local;
-		for ( Size i = 1; i <= res_list.size(); i++ ) {
-			input_domain_local.push_back ( input_domain_map[ res_list[i] ] );
-		}
-		return input_domain_local;
-
+	utility::vector1< Size > moving_res;
+	for ( Size i = 1; i <= res_list.size(); i++ ) {
+		if ( fixed_domain_map[ res_list[i] ] == 0 ) moving_res.push_back( i );
 	}
 
-	/////////////////////////////////////////////////////////
-	core::Size
-	sub_to_full( core::Size const i, core::pose::Pose const & pose ){
-		utility::vector1< Size > const & res_list = const_full_model_info( pose ).res_list();
-		runtime_assert( i >= 1 && i <= res_list.size() );
-		return res_list[ i ];
-	}
+	return moving_res;
+}
 
-	utility::vector1< Size >
-	sub_to_full( utility::vector1< Size > const & res_list, core::pose::Pose const & pose ){
-		FullModelInfo const & full_model_info = const_full_model_info( pose );
-		return full_model_info.sub_to_full( res_list );
-	}
+///////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< Size >
+get_fixed_domain_from_full_model_info_const( pose::Pose const & pose ) {
 
-	/////////////////////////////////////////////////////////
-	core::Size
-	full_to_sub( core::Size const i, core::pose::Pose const & pose ){
-		FullModelInfo const & full_model_info = const_full_model_info( pose );
-		return full_model_info.res_list().index( i );
-	}
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	utility::vector1< Size > const & fixed_domain_map =  full_model_info.fixed_domain_map();
+	utility::vector1< Size > const & res_list = full_model_info.res_list();
 
-	/////////////////////////////////////////////////////////
-	utility::vector1< Size >
-	full_to_sub( utility::vector1< Size > const & res_list, core::pose::Pose const & pose ){
-		FullModelInfo const & full_model_info = const_full_model_info( pose );
-		return full_model_info.full_to_sub( res_list );
+	utility::vector1< Size > fixed_domain_local;
+	for ( Size i = 1; i <= res_list.size(); i++ ) {
+		fixed_domain_local.push_back ( fixed_domain_map[ res_list[i] ] );
 	}
+	return fixed_domain_local;
 
-	/////////////////////////////////////////////////////////
-	Size
-	full_model_size( pose::Pose & pose ){
-		return nonconst_full_model_info( pose ).size();
+}
+///////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< Size >
+get_input_domain_from_full_model_info_const( pose::Pose const & pose ) {
+
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	utility::vector1< Size > const & input_domain_map =  full_model_info.input_domain_map();
+	utility::vector1< Size > const & res_list = full_model_info.res_list();
+
+	utility::vector1< Size > input_domain_local;
+	for ( Size i = 1; i <= res_list.size(); i++ ) {
+		input_domain_local.push_back ( input_domain_map[ res_list[i] ] );
 	}
+	return input_domain_local;
 
-	/////////////////////////////////////////////////////////
-	void
-	update_pose_domain_map_const( Pose const & pose,
-																Size & pose_domain_number,
-																utility::vector1< Size > & pose_domain_map ){
-		FullModelInfo const & full_model_info = const_full_model_info( pose );
-		utility::vector1< Size > const & res_list = full_model_info.res_list();
-		for ( Size k = 1; k <= res_list.size(); k++ ) {
-			pose_domain_map[ res_list[k] ] = pose_domain_number;
-		}
+}
+
+/////////////////////////////////////////////////////////
+core::Size
+sub_to_full( core::Size const i, core::pose::Pose const & pose ){
+	utility::vector1< Size > const & res_list = const_full_model_info( pose ).res_list();
+	runtime_assert( i >= 1 && i <= res_list.size() );
+	return res_list[ i ];
+}
+
+utility::vector1< Size >
+sub_to_full( utility::vector1< Size > const & res_list, core::pose::Pose const & pose ){
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	return full_model_info.sub_to_full( res_list );
+}
+
+/////////////////////////////////////////////////////////
+core::Size
+full_to_sub( core::Size const i, core::pose::Pose const & pose ){
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	return full_model_info.res_list().index( i );
+}
+
+/////////////////////////////////////////////////////////
+utility::vector1< Size >
+full_to_sub( utility::vector1< Size > const & res_list, core::pose::Pose const & pose ){
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	return full_model_info.full_to_sub( res_list );
+}
+
+/////////////////////////////////////////////////////////
+Size
+full_model_size( pose::Pose & pose ){
+	return nonconst_full_model_info( pose ).size();
+}
+
+/////////////////////////////////////////////////////////
+void
+update_pose_domain_map_const( Pose const & pose,
+	Size & pose_domain_number,
+	utility::vector1< Size > & pose_domain_map ){
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	utility::vector1< Size > const & res_list = full_model_info.res_list();
+	for ( Size k = 1; k <= res_list.size(); k++ ) {
+		pose_domain_map[ res_list[k] ] = pose_domain_number;
+	}
+	utility::vector1< PoseOP > const & other_pose_list = full_model_info.other_pose_list();
+	for ( Size n = 1; n <= other_pose_list.size(); n++ ) {
+		update_pose_domain_map_const( *(other_pose_list[ n ]), ++pose_domain_number, pose_domain_map );
+	}
+}
+
+/////////////////////////////////////////////////////////
+void
+update_pose_domain_map( Pose & pose,
+	Size & pose_domain_number,
+	utility::vector1< Size > & pose_domain_map ){
+	make_sure_full_model_info_is_setup( pose );
+	update_pose_domain_map_const( pose, pose_domain_number, pose_domain_map );
+}
+
+
+/////////////////////////////////////////////////////////
+utility::vector1< Size >
+figure_out_pose_domain_map( pose::Pose & pose ){
+	make_sure_full_model_info_is_setup( pose );
+	return figure_out_pose_domain_map_const( pose );
+}
+
+/////////////////////////////////////////////////////////
+utility::vector1< Size >
+figure_out_pose_domain_map_const( pose::Pose const & pose ){
+
+	utility::vector1< Size > pose_domain_map( const_full_model_info( pose ).size(), 0 );
+	Size pose_domain_number = 1;
+	update_pose_domain_map_const( pose, pose_domain_number, pose_domain_map );
+	return pose_domain_map;
+}
+
+
+/////////////////////////////////////////////////////////
+core::conformation::Residue const &
+get_residue( Size const seqpos_in_full_model,
+	pose::Pose const & pose,
+	bool & found_residue ){
+
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
+
+	found_residue = false;
+
+	utility::vector1< Size > const & res_list = full_model_info.res_list();
+	if ( res_list.has_value( seqpos_in_full_model ) ) {
+
+		found_residue = true;
+		return pose.residue( res_list.index( seqpos_in_full_model ) );
+
+	} else {
+
 		utility::vector1< PoseOP > const & other_pose_list = full_model_info.other_pose_list();
-		for ( Size n = 1; n <= other_pose_list.size(); n++ ){
-			update_pose_domain_map_const( *(other_pose_list[ n ]), ++pose_domain_number, pose_domain_map );
+		for ( Size n = 1; n <= other_pose_list.size(); n++ ) {
+			core::conformation::Residue const & rsd = get_residue( seqpos_in_full_model, *(other_pose_list[ n ]), found_residue );
+			if ( found_residue ) return rsd;
 		}
+
 	}
 
-	/////////////////////////////////////////////////////////
-	void
-	update_pose_domain_map( Pose & pose,
-													Size & pose_domain_number,
-													utility::vector1< Size > & pose_domain_map ){
-		make_sure_full_model_info_is_setup( pose );
-		update_pose_domain_map_const( pose, pose_domain_number, pose_domain_map );
+	return pose.residue( 1 ); // dummy return.
+}
+
+/////////////////////////////////////////////////////////
+core::conformation::Residue const &
+get_residue( Size const seqpos_in_full_model,
+	pose::Pose const & pose ){
+	bool found_residue( false );
+	core::conformation::Residue const & rsd = get_residue( seqpos_in_full_model, pose, found_residue );
+	runtime_assert( found_residue );
+	return rsd;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< int >
+get_res_num_from_pdb_info( pose::Pose const & pose ) {
+
+	utility::vector1< int > resnum;
+
+	PDBInfoCOP pdb_info = pose.pdb_info();
+
+	if ( ( pdb_info != 0 ) && !pdb_info->obsolete() ) {
+		for ( Size n = 1; n <= pose.total_residue(); n++ ) resnum.push_back( pdb_info->number( n ) );
+	} else {
+		for ( Size n = 1; n <= pose.total_residue(); n++ ) resnum.push_back( n );
 	}
+	return resnum;
+}
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< char >
+get_chains_from_pdb_info( pose::Pose const & pose ) {
 
-	/////////////////////////////////////////////////////////
-	utility::vector1< Size >
-	figure_out_pose_domain_map( pose::Pose & pose ){
-		make_sure_full_model_info_is_setup( pose );
-		return figure_out_pose_domain_map_const( pose );
+	utility::vector1< char > chains;
+
+	PDBInfoCOP pdb_info = pose.pdb_info();
+
+	if ( ( pdb_info != 0 ) && !pdb_info->obsolete() ) {
+		for ( Size n = 1; n <= pose.total_residue(); n++ ) chains.push_back( pdb_info->chain( n ) );
+	} else {
+		for ( Size n = 1; n <= pose.total_residue(); n++ ) chains.push_back( ' ' );
 	}
+	return chains;
+}
+//////////////////////////////////////////////////////////////////////////////////////////
+Size
+get_chain_for_full_model_resnum( Size const & resnum, pose::Pose const & pose ){
+	return get_chains_full( pose )[ resnum ];
+}
 
-	/////////////////////////////////////////////////////////
-	utility::vector1< Size >
-	figure_out_pose_domain_map_const( pose::Pose const & pose ){
+//////////////////////////////////////////////////////////////////////////////////////////
+Size
+get_chain_for_resnum( Size const & resnum, pose::Pose const & pose ){
+	return figure_out_chain_numbers_from_full_model_info_const( pose )[ resnum ];
+}
 
-		utility::vector1< Size > pose_domain_map( const_full_model_info( pose ).size(), 0 );
-		Size pose_domain_number = 1;
-		update_pose_domain_map_const( pose, pose_domain_number, pose_domain_map );
-		return pose_domain_map;
-	}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// deprecate soon in favor of direct loop-graph call
+//
+/// @brief Finds the number of missing residues in a pose.
+/// @details This function returns the number of missing residues in the pose.
+/// The pose is passed by nonconst reference, so that the full_model_info can be
+/// setup, if needed.
+Size
+get_number_missing_residues_and_connections( pose::Pose & pose ) {
+	make_sure_full_model_info_is_setup( pose );
+	utility::vector1< char > missing_residues;
+	utility::vector1< utility::vector1< Size > > loop_suite_lengths;
+	return get_number_missing_residues_and_connections( pose, missing_residues, loop_suite_lengths );
+}
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// deprecate soon in favor of direct loop-graph call
+//
+/// @brief Finds the number of missing residues in a pose.
+/// @details This function returns the number of missing residues in the pose.
+/// The missing_residues vector is passed by nonconst reference, so its values
+/// can be modified and accessed by this function and the calling method.
+Size
+get_number_missing_residues_and_connections( pose::Pose const & pose,
+	utility::vector1< char > & missing_residues ){
+	utility::vector1< utility::vector1< Size > > loop_suites;
+	return get_number_missing_residues_and_connections( pose, missing_residues, loop_suites );
+}
 
-	/////////////////////////////////////////////////////////
-	core::conformation::Residue const &
-	get_residue( Size const seqpos_in_full_model,
-							 pose::Pose const & pose,
-							 bool & found_residue ){
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// deprecate soon in favor of direct loop-graph call
+//
+/// @brief Finds the number of missing residues in a pose.
+/// @details This function returns the number of missing residues in the pose.
+/// The loop_suites vector is passed by nonconst reference, so its values
+/// can be modified and accessed by this function and the calling method.
+Size
+get_number_missing_residues_and_connections( pose::Pose const & pose,
+	utility::vector1< utility::vector1< Size > > & loop_suites ){
+	utility::vector1< char > missing_residues;
+	return get_number_missing_residues_and_connections( pose, missing_residues, loop_suites );
+}
 
-		FullModelInfo const & full_model_info = const_full_model_info( pose );
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// sort of a hodge-podge function -- might be better to unify with LoopGraph?
+//
+/// @brief Finds the number of missing residues in a pose.
+/// @details This function returns the number of missing residues in the pose.
+/// The missing_res and loop_suites vectors are passed by nonconst reference, so their
+/// values can be modified and accessed by this function and the calling method.
+Size
+get_number_missing_residues_and_connections( pose::Pose const & pose,
+	utility::vector1< char > & missing_residues,
+	utility::vector1< utility::vector1< Size > > & loop_suites ) {
 
-		found_residue = false;
+	////////////////////////////////////////////////////////
+	// following is old.
+	// probably should replace with LoopGraph -- see below.
+	// REMOVE in 2015.
+	////////////////////////////////////////////////////////
+	using namespace core::pose::full_model_info;
+	utility::vector1< Size > const pose_domain_map = figure_out_pose_domain_map_const( pose );
+	utility::vector1< Size > const & cutpoint_open = const_full_model_info( pose ).cutpoint_open_in_full_model();
+	utility::vector1< Size > const & input_domain_map = const_full_model_info( pose ).input_domain_map();
+	utility::vector1< Size > const & working_res = const_full_model_info( pose ).working_res();
+	std::string const & full_sequence = const_full_model_info( pose ).full_sequence();
+	missing_residues.clear();
 
-		utility::vector1< Size > const & res_list = full_model_info.res_list();
-		if ( res_list.has_value( seqpos_in_full_model ) ){
-
-			found_residue = true;
-			return pose.residue( res_list.index( seqpos_in_full_model ) );
-
-		} else {
-
-			utility::vector1< PoseOP > const & other_pose_list = full_model_info.other_pose_list();
-			for ( Size n = 1; n <= other_pose_list.size(); n++ ){
-				core::conformation::Residue const & rsd = get_residue( seqpos_in_full_model, *(other_pose_list[ n ]), found_residue );
-				if ( found_residue ) return rsd;
+	Size nmissing( 0 );
+	Size const nres = pose_domain_map.size();
+	for ( Size n = 1; n <= nres; n++ ) {
+		if ( input_domain_map[ n ] == 0 ) {
+			// missing residues.
+			if ( pose_domain_map[ n ] == 0 && working_res.has_value( n ) ) {
+				nmissing++;
+				missing_residues.push_back( full_sequence[ n - 1 ] );
 			}
-
+		} else if ( n < nres &&
+				!cutpoint_open.has_value( n ) &&
+				input_domain_map[ n   ] > 0 && /* put in later, during loop_graph checks --rd2014 */
+				input_domain_map[ n+1 ] > 0 &&
+				input_domain_map[ n+1 ] != input_domain_map[ n ] ) {
+			// missing suites between fixed domains (happens in, e.g., four-way junctions with no internal residues)
+			if ( pose_domain_map[ n ] == 0 || /* don't need this? check with assert below */
+					pose_domain_map[ n+1 ] == 0 || /* don't need this? check with assert below */
+					( pose_domain_map[ n ] != pose_domain_map[ n+1 ] ) ) {
+				runtime_assert( pose_domain_map[ n ] != 0 );
+				runtime_assert( pose_domain_map[ n+1 ] != 0 );
+				nmissing++;
+			}
 		}
-
-		return pose.residue( 1 ); // dummy return.
 	}
 
-	/////////////////////////////////////////////////////////
-	core::conformation::Residue const &
-	get_residue( Size const seqpos_in_full_model,
-							 pose::Pose const & pose ){
-		bool found_residue( false );
-		core::conformation::Residue const & rsd = get_residue( seqpos_in_full_model, pose, found_residue );
-		runtime_assert( found_residue );
-		return rsd;
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	utility::vector1< int >
-	get_res_num_from_pdb_info( pose::Pose const & pose ) {
-
-		utility::vector1< int > resnum;
-
-		PDBInfoCOP pdb_info = pose.pdb_info();
-
-		if ( ( pdb_info != 0 ) && !pdb_info->obsolete())	{
-			for ( Size n = 1; n <= pose.total_residue(); n++ ) resnum.push_back( pdb_info->number( n ) );
-		} else {
-			for ( Size n = 1; n <= pose.total_residue(); n++ ) resnum.push_back( n );
-		}
-		return resnum;
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	utility::vector1< char >
-	get_chains_from_pdb_info( pose::Pose const & pose ) {
-
-		utility::vector1< char > chains;
-
-		PDBInfoCOP pdb_info = pose.pdb_info();
-
-		if ( ( pdb_info != 0 ) && !pdb_info->obsolete())	{
-			for ( Size n = 1; n <= pose.total_residue(); n++ ) chains.push_back( pdb_info->chain( n ) );
-		} else {
-			for ( Size n = 1; n <= pose.total_residue(); n++ ) chains.push_back( ' ' );
-		}
-		return chains;
-	}
-	//////////////////////////////////////////////////////////////////////////////////////////
-	Size
-	get_chain_for_full_model_resnum( Size const & resnum, pose::Pose const & pose ){
-		return get_chains_full( pose )[ resnum ];
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////
-	Size
-	get_chain_for_resnum( Size const & resnum, pose::Pose const & pose ){
-		return figure_out_chain_numbers_from_full_model_info_const( pose )[ resnum ];
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// deprecate soon in favor of direct loop-graph call
+	//////////////////////////////////////////////////////////////////////////////
+	// Testing use of LoopGraph. -- rhiju, dec. 2014
 	//
-	/// @brief Finds the number of missing residues in a pose.
-	/// @details This function returns the number of missing residues in the pose.
-	/// The pose is passed by nonconst reference, so that the full_model_info can be
-	/// setup, if needed.
-	Size
-	get_number_missing_residues_and_connections( pose::Pose & pose ) {
-		make_sure_full_model_info_is_setup( pose );
-		utility::vector1< char > missing_residues;
-		utility::vector1< utility::vector1< Size > > loop_suite_lengths;
-		return get_number_missing_residues_and_connections( pose, missing_residues, loop_suite_lengths );
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// deprecate soon in favor of direct loop-graph call
+	//  if runtime_assert()'s are not triggered, then deprecate above... in fact
+	//   just carve out separate functions for get_number_missing_residues_and_connections,
+	//   which is kind of a silly mixed up function.
 	//
-	/// @brief Finds the number of missing residues in a pose.
-	/// @details This function returns the number of missing residues in the pose.
-	/// The missing_residues vector is passed by nonconst reference, so its values
-	/// can be modified and accessed by this function and the calling method.
-	Size
-	get_number_missing_residues_and_connections( pose::Pose const & pose,
-																							 utility::vector1< char > & missing_residues ){
-		utility::vector1< utility::vector1< Size > > loop_suites;
-		return get_number_missing_residues_and_connections( pose, missing_residues, loop_suites );
+	//////////////////////////////////////////////////////////////////////////////
+	core::scoring::loop_graph::LoopGraph loop_graph;
+	loop_graph.update_loops( pose );
+	runtime_assert( nmissing == loop_graph.nmissing( pose ) );
+	runtime_assert( missing_residues == loop_graph.missing_residues( pose ) );  // if OK, switch to this.
+	loop_suites = loop_graph.loop_suites( false /*include_free_loops*/ );
+
+	return nmissing;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+bool
+check_all_residues_sampled( pose::Pose const & pose ){
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	utility::vector1< Size > const & input_domain_map =  full_model_info.input_domain_map();
+	utility::vector1< Size > const & res_list = full_model_info.res_list();
+	for ( Size i = 1; i <= res_list.size(); i++ ) {
+		if ( input_domain_map[ res_list[i] ] != 0 ) return false;
 	}
+	return true;
+}
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// deprecate soon in favor of direct loop-graph call
-	//
-	/// @brief Finds the number of missing residues in a pose.
-	/// @details This function returns the number of missing residues in the pose.
-	/// The loop_suites vector is passed by nonconst reference, so its values
-	/// can be modified and accessed by this function and the calling method.
-	Size
-	get_number_missing_residues_and_connections( pose::Pose const & pose,
-																							 utility::vector1< utility::vector1< Size > > & loop_suites ){
-		utility::vector1< char > missing_residues;
-		return get_number_missing_residues_and_connections( pose, missing_residues, loop_suites );
+///////////////////////////////////////////////////////////////////////////////////////
+std::map< std::pair< Size, Size >, std::pair< Size, Size > >
+get_preferred_jump_pair_for_docking_domains( FullModelInfo const & full_model_info ) {
+
+	utility::vector1< Size > const dock_domain_map = full_model_info.dock_domain_map();
+
+	// look for user-defined jumps between dock domains.
+	// this does not actually have to be recalculated as its const for a full_model_parameters.
+	std::map< std::pair< Size, Size >, std::pair< Size, Size > > preferred_jump_pair;
+	utility::vector1< std::pair< Size, Size > > jump_pairs = full_model_info.full_model_parameters()->get_res_list_as_pairs( JUMP );
+	for ( Size n = 1; n <= jump_pairs.size(); n++ ) {
+		Size const i_full = jump_pairs[ n ].first;
+		Size const j_full = jump_pairs[ n ].second;
+		runtime_assert( i_full < j_full );
+		Size const dock_domain_i = dock_domain_map[ i_full ];
+		Size const dock_domain_j = dock_domain_map[ j_full ];
+		if ( dock_domain_i == dock_domain_j ) continue;
+
+		// only one jump_res allowed for each dock_domain.
+		runtime_assert( preferred_jump_pair.find( std::make_pair( dock_domain_i, dock_domain_j ) ) ==
+			preferred_jump_pair.end() );
+		preferred_jump_pair[ std::make_pair( dock_domain_i, dock_domain_j ) ] = std::make_pair( i_full, j_full );
+
+		runtime_assert( preferred_jump_pair.find( std::make_pair( dock_domain_j, dock_domain_i ) ) ==
+			preferred_jump_pair.end() );
+		preferred_jump_pair[ std::make_pair( dock_domain_j, dock_domain_i ) ] = std::make_pair( j_full, i_full );
 	}
+	return preferred_jump_pair;
+}
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// sort of a hodge-podge function -- might be better to unify with LoopGraph?
-	//
-	/// @brief Finds the number of missing residues in a pose.
-	/// @details This function returns the number of missing residues in the pose.
-	/// The missing_res and loop_suites vectors are passed by nonconst reference, so their
-	/// values can be modified and accessed by this function and the calling method.
-	Size
-	get_number_missing_residues_and_connections( pose::Pose const & pose,
-																							 utility::vector1< char > & missing_residues,
-																							 utility::vector1< utility::vector1< Size > > & loop_suites ) {
 
-		////////////////////////////////////////////////////////
-		// following is old.
-		// probably should replace with LoopGraph -- see below.
-		// REMOVE in 2015.
-		////////////////////////////////////////////////////////
-		using namespace core::pose::full_model_info;
-		utility::vector1< Size > const pose_domain_map = figure_out_pose_domain_map_const( pose );
-		utility::vector1< Size > const & cutpoint_open = const_full_model_info( pose ).cutpoint_open_in_full_model();
-		utility::vector1< Size > const & input_domain_map = const_full_model_info( pose ).input_domain_map();
-		utility::vector1< Size > const & working_res = const_full_model_info( pose ).working_res();
-		std::string const & full_sequence = const_full_model_info( pose ).full_sequence();
-		missing_residues.clear();
-
-		Size nmissing( 0 );
-		Size const nres = pose_domain_map.size();
-		for ( Size n = 1; n <= nres; n++ ){
-			if ( input_domain_map[ n ] == 0 ){
-				// missing residues.
-				if ( pose_domain_map[ n ] == 0 && working_res.has_value( n ) ) {
-					nmissing++;
-					missing_residues.push_back( full_sequence[ n - 1 ] );
-					}
-			} else if ( n < nres &&
-									!cutpoint_open.has_value( n ) &&
-									input_domain_map[ n   ] > 0 && /* put in later, during loop_graph checks --rd2014 */
-									input_domain_map[ n+1 ] > 0 &&
-									input_domain_map[ n+1 ] != input_domain_map[ n ] ) {
-				// missing suites between fixed domains (happens in, e.g., four-way junctions with no internal residues)
-				if ( pose_domain_map[ n ] == 0 || /* don't need this? check with assert below */
-						 pose_domain_map[ n+1 ] == 0 || /* don't need this? check with assert below */
-						 ( pose_domain_map[ n ] != pose_domain_map[ n+1 ] ) ) {
-					runtime_assert( pose_domain_map[ n ] != 0 );
-					runtime_assert( pose_domain_map[ n+1 ] != 0 );
-					nmissing++;
-				}
+////////////////////////////////////////////////////////////////////////
+// go through pose and other_poses and figure out which chains
+// are connected in those poses.
+utility::vector1< std::pair< Size, Size > >
+get_chain_connections( pose::Pose const & pose ) {
+	utility::vector1< Size > const chains_full = get_chains_full( pose );
+	utility::vector1< Size > const pose_domain_map = figure_out_pose_domain_map_const( pose );
+	utility::vector1< std::pair< Size, Size > > chain_connections;
+	for ( Size n = 1; n <= max( pose_domain_map ); n++ ) {
+		std::set< Size > chains_in_pose;
+		for ( Size k = 1; k <= pose_domain_map.size(); k++ ) {
+			if ( pose_domain_map[ k ] == n ) chains_in_pose.insert( chains_full[ k ] );
+		}
+		for ( std::set< Size >::const_iterator it1 = chains_in_pose.begin(), end = chains_in_pose.end(); it1 != end; ++it1 ) {
+			for ( std::set< Size >::const_iterator it2 = it1; it2 != end; ++it2 ) {
+				if ( it1 != it2 ) chain_connections.push_back( std::make_pair( *it1, *it2 ) );
 			}
 		}
+	}
+	return chain_connections;
+}
 
-		//////////////////////////////////////////////////////////////////////////////
-		// Testing use of LoopGraph. -- rhiju, dec. 2014
-		//
-		//  if runtime_assert()'s are not triggered, then deprecate above... in fact
-		//   just carve out separate functions for get_number_missing_residues_and_connections,
-		//   which is kind of a silly mixed up function.
-		//
-		//////////////////////////////////////////////////////////////////////////////
-		core::scoring::loop_graph::LoopGraph loop_graph;
-		loop_graph.update_loops( pose );
-		runtime_assert( nmissing == loop_graph.nmissing( pose ) );
-		runtime_assert( missing_residues == loop_graph.missing_residues( pose ) );  // if OK, switch to this.
-		loop_suites = loop_graph.loop_suites( false /*include_free_loops*/ );
-
-		return nmissing;
+/////////////////////////////////////////////////////////////////////////////////
+// take edges on graph and find connected clusters. I.e., the closure problem.
+// I think there's a faster way to do this, of course, and it probably exists elsewhere in the code,
+// but this doesn't need to be too fast.
+// yea, its in boost. if you're reading this, feel free to update.
+utility::vector1< Size >
+get_connection_domains( utility::vector1< std::pair< Size, Size > > const & chain_connections, Size const nchains ) {
+	utility::vector1< Size > connection_domains;
+	for ( Size k = 1; k <= nchains; k++ ) connection_domains.push_back( k );
+	for ( Size n = 1; n <= chain_connections.size(); n++ ) {
+		// coalesce domains that are connected by link.
+		Size domain_old = std::max( connection_domains[ chain_connections[n].first ],
+			connection_domains[ chain_connections[n].second ] );
+		Size domain_new = std::min( connection_domains[ chain_connections[n].first ],
+			connection_domains[ chain_connections[n].second ] );
+		for ( Size k = 1; k <= nchains; k++ ) {
+			if ( connection_domains[ k ]  == domain_old ) connection_domains[ k ] = domain_new;
+		}
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////////
-	bool
-	check_all_residues_sampled( pose::Pose const & pose ){
-		FullModelInfo const & full_model_info = const_full_model_info( pose );
-		utility::vector1< Size > const & input_domain_map =  full_model_info.input_domain_map();
-		utility::vector1< Size > const & res_list = full_model_info.res_list();
-		for ( Size i = 1; i <= res_list.size(); i++ ) {
-			if ( input_domain_map[ res_list[i] ] != 0 ) return false;
+	// need to relabel so that domains have numbers 1, 2, 3...
+	Size count( 0 );
+	std::set< Size > unique_domains( connection_domains.begin(), connection_domains.end() );
+	utility::vector1< Size > connection_domains_relabel = connection_domains;
+	for ( std::set< Size >::const_iterator it = unique_domains.begin(), end = unique_domains.end(); it != end; ++it ) {
+		count++;
+		Size const & domain_number( *it );
+		for ( Size k = 1; k <= nchains; k++ ) {
+			if ( connection_domains[ k ] == domain_number ) connection_domains_relabel[ k ] = count;
 		}
-		return true;
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////////
-	std::map< std::pair< Size, Size >, std::pair< Size, Size > >
-	get_preferred_jump_pair_for_docking_domains( FullModelInfo const & full_model_info ) {
-
-		utility::vector1< Size > const dock_domain_map = full_model_info.dock_domain_map();
-
-		// look for user-defined jumps between dock domains.
-		// this does not actually have to be recalculated as its const for a full_model_parameters.
-		std::map< std::pair< Size, Size >, std::pair< Size, Size > > preferred_jump_pair;
-		utility::vector1< std::pair< Size, Size > > jump_pairs = full_model_info.full_model_parameters()->get_res_list_as_pairs( JUMP );
-		for ( Size n = 1; n <= jump_pairs.size(); n++ ){
-			Size const i_full = jump_pairs[ n ].first;
-			Size const j_full = jump_pairs[ n ].second;
-			runtime_assert( i_full < j_full );
-			Size const dock_domain_i = dock_domain_map[ i_full ];
-			Size const dock_domain_j = dock_domain_map[ j_full ];
-			if ( dock_domain_i == dock_domain_j ) continue;
-
-			// only one jump_res allowed for each dock_domain.
-			runtime_assert( preferred_jump_pair.find( std::make_pair( dock_domain_i, dock_domain_j ) ) ==
-											preferred_jump_pair.end() );
-			preferred_jump_pair[ std::make_pair( dock_domain_i, dock_domain_j ) ] = std::make_pair( i_full, j_full );
-
-			runtime_assert( preferred_jump_pair.find( std::make_pair( dock_domain_j, dock_domain_i ) ) ==
-											preferred_jump_pair.end() );
-			preferred_jump_pair[ std::make_pair( dock_domain_j, dock_domain_i ) ] = std::make_pair( j_full, i_full );
-		}
-		return preferred_jump_pair;
-	}
-
-
-	////////////////////////////////////////////////////////////////////////
-	// go through pose and other_poses and figure out which chains
-	// are connected in those poses.
-	utility::vector1< std::pair< Size, Size > >
-	get_chain_connections( pose::Pose const & pose ) {
-		utility::vector1< Size > const chains_full = get_chains_full( pose );
-		utility::vector1< Size > const pose_domain_map = figure_out_pose_domain_map_const( pose );
-		utility::vector1< std::pair< Size, Size > > chain_connections;
-		for ( Size n = 1; n <= max( pose_domain_map ); n++ ) {
-			std::set< Size > chains_in_pose;
-			for ( Size k = 1; k <= pose_domain_map.size(); k++ ) {
-				if ( pose_domain_map[ k ] == n ) chains_in_pose.insert( chains_full[ k ] );
-			}
-			for ( std::set< Size >::const_iterator it1 = chains_in_pose.begin(), end = chains_in_pose.end(); it1 != end; ++it1 ) {
-				for ( std::set< Size >::const_iterator it2 = it1; it2 != end; ++it2 ) {
-					if ( it1 != it2 ) chain_connections.push_back( std::make_pair( *it1, *it2 ) );
-				}
-			}
-		}
-		return chain_connections;
-	}
-
-	/////////////////////////////////////////////////////////////////////////////////
-	// take edges on graph and find connected clusters. I.e., the closure problem.
-	// I think there's a faster way to do this, of course, and it probably exists elsewhere in the code,
-	// but this doesn't need to be too fast.
-	// yea, its in boost. if you're reading this, feel free to update.
-	utility::vector1< Size >
-	get_connection_domains( utility::vector1< std::pair< Size, Size > > const & chain_connections, Size const nchains ) {
-		utility::vector1< Size > connection_domains;
-		for ( Size k = 1; k <= nchains; k++ ) connection_domains.push_back( k );
-		for ( Size n = 1; n <= chain_connections.size(); n++ ) {
-			// coalesce domains that are connected by link.
-			Size domain_old = std::max( connection_domains[ chain_connections[n].first ],
-																	connection_domains[ chain_connections[n].second ] );
-			Size domain_new = std::min( connection_domains[ chain_connections[n].first ],
-																	connection_domains[ chain_connections[n].second ] );
-			for ( Size k = 1; k <= nchains; k++ ) {
-				if ( connection_domains[ k ]  == domain_old ) connection_domains[ k ] = domain_new;
-			}
-		}
-
-		// need to relabel so that domains have numbers 1, 2, 3...
-		Size count( 0 );
-		std::set< Size > unique_domains( connection_domains.begin(), connection_domains.end() );
-		utility::vector1< Size > connection_domains_relabel = connection_domains;
-		for ( std::set< Size >::const_iterator it = unique_domains.begin(), end = unique_domains.end(); it != end; ++it ) {
-			count++;
-			Size const & domain_number( *it );
-			for ( Size k = 1; k <= nchains; k++ ) {
-				if ( connection_domains[ k ] == domain_number ) connection_domains_relabel[ k ] = count;
-			}
-		}
-
-		return connection_domains_relabel;
-	}
+	return connection_domains_relabel;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 bool
 check_sample_sugar_in_full_model_info( pose::Pose const & pose,
-																			 Size const i ) {
+	Size const i ) {
 	if ( !full_model_info_defined( pose ) ) return false;
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
 	utility::vector1< Size > const & sample_sugar_res = full_model_info.rna_sample_sugar_res();

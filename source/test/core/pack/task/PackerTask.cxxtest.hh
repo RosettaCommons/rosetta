@@ -63,7 +63,7 @@ public:
 		task.reset();
 	}
 
-	
+
 	void test_packer_task_default_behavior_design_all_positions() {
 		TS_ASSERT( pose->total_residue() == task->total_residue() );
 		if ( pose->total_residue() != task->total_residue() ) return;
@@ -73,7 +73,7 @@ public:
 			TS_ASSERT( task->pack_residue( ii ) );
 			TS_ASSERT( task->being_packed( ii ) );
 			TS_ASSERT( task->design_residue( ii ) );
-			TS_ASSERT( task->being_designed( ii ) );			
+			TS_ASSERT( task->being_designed( ii ) );
 		}
 	}
 

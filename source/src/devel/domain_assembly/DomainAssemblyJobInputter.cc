@@ -58,7 +58,7 @@ devel::domain_assembly::DomainAssemblyJobInputter::~DomainAssemblyJobInputter(){
 void devel::domain_assembly::DomainAssemblyJobInputter::pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP job){
 	TR << "DomainAssemblyJobInputter::pose_from_job" << std::endl;
 
-	if( !job->inner_job()->get_pose() ){
+	if ( !job->inner_job()->get_pose() ) {
 
 		std::string option_filename( basic::options::option[ basic::options::OptionKeys::DomainAssembly::da_setup_option_file ]() );
 		utility::vector1< DomainInfo > domain_info;
@@ -71,12 +71,12 @@ void devel::domain_assembly::DomainAssemblyJobInputter::pose_from_job( core::pos
 
 		// go through domain_info and save domain and linker
 		// definitions in the pose before they're lost.
-		for( utility::vector1< DomainInfo >::const_iterator di_it = domain_info.begin();
-			di_it != domain_info.end();
-			++di_it ) {
+		for ( utility::vector1< DomainInfo >::const_iterator di_it = domain_info.begin();
+				di_it != domain_info.end();
+				++di_it ) {
 			TR << "domain info ("
-			<< (int)(di_it - domain_info.begin()) << "): "
-			<< di_it->get_domain_begin() << "-" << di_it->get_domain_end() << std::endl;
+				<< (int)(di_it - domain_info.begin()) << "): "
+				<< di_it->get_domain_begin() << "-" << di_it->get_domain_end() << std::endl;
 		}
 
 		TR << "filling pose with connected domains" << std::endl;
@@ -98,11 +98,11 @@ void devel::domain_assembly::DomainAssemblyJobInputter::fill_jobs( protocols::jd
 	std::string option_filename( basic::options::option[  basic::options::OptionKeys::DomainAssembly::da_setup_option_file ]() );
 	core::Size const nstruct( get_nstruct() );
 
-		protocols::jd2::InnerJobOP ijob( new protocols::jd2::InnerJob( option_filename, nstruct ) );
+	protocols::jd2::InnerJobOP ijob( new protocols::jd2::InnerJob( option_filename, nstruct ) );
 
-		for( core::Size index(1); index <= nstruct; ++index){
-			jobs.push_back( protocols::jd2::JobOP( new protocols::jd2::Job( ijob, index ) ) );
-		}
+	for ( core::Size index(1); index <= nstruct; ++index ) {
+		jobs.push_back( protocols::jd2::JobOP( new protocols::jd2::Job( ijob, index ) ) );
+	}
 
 }//fill_jobs
 

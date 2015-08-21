@@ -227,7 +227,7 @@ public:
 	DisulfideAtomIndices const &
 	other_neighbor_atom_indices( Size resid ) const;
 
-// Read and write access granted to Disulf Iterators. Other classes should not use these methods.
+	// Read and write access granted to Disulf Iterators. Other classes should not use these methods.
 public:
 
 	// Mutators

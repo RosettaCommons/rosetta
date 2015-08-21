@@ -105,8 +105,8 @@ LHRepulsiveRampLegacy::LHRepulsiveRampLegacy(AntibodyInfoOP antibody_in, bool ca
 
 
 LHRepulsiveRampLegacy::LHRepulsiveRampLegacy( loops::Loops loops_in,
-        core::scoring::ScoreFunctionCOP dock_scorefxn,
-        core::scoring::ScoreFunctionCOP pack_scorefxn ) : Mover() {
+	core::scoring::ScoreFunctionCOP dock_scorefxn,
+	core::scoring::ScoreFunctionCOP pack_scorefxn ) : Mover() {
 	user_defined_ = true;
 	dock_scorefxn_ = dock_scorefxn->clone();
 	pack_scorefxn_ = pack_scorefxn->clone();
@@ -115,8 +115,8 @@ LHRepulsiveRampLegacy::LHRepulsiveRampLegacy( loops::Loops loops_in,
 }
 
 LHRepulsiveRampLegacy::LHRepulsiveRampLegacy( AntibodyInfoOP antibody_in,
-        core::scoring::ScoreFunctionCOP dock_scorefxn,
-        core::scoring::ScoreFunctionCOP pack_scorefxn ) : Mover() {
+	core::scoring::ScoreFunctionCOP dock_scorefxn,
+	core::scoring::ScoreFunctionCOP pack_scorefxn ) : Mover() {
 	user_defined_ = true;
 	dock_scorefxn_ = dock_scorefxn->clone();
 	pack_scorefxn_ = pack_scorefxn->clone();
@@ -156,7 +156,7 @@ void LHRepulsiveRampLegacy::set_default() {
 	num_repeats_     = 4;
 	min_type_        = "dfpmin_armijo_nonmonotone";
 
-	if(!user_defined_) {
+	if ( !user_defined_ ) {
 		dock_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
 		dock_scorefxn_->set_weight( core::scoring::chainbreak, 1.0 );
 		dock_scorefxn_->set_weight( core::scoring::overlap_chainbreak, 10./3. );
@@ -192,8 +192,9 @@ void LHRepulsiveRampLegacy::finalize_setup(pose::Pose & pose ) {
 	select_loop_residues( pose, all_loops_, true/*include_neighbors*/, sc_is_flexible);
 	cdr_dock_map_->set_chi( sc_is_flexible );
 	cdr_dock_map_->set_jump( 1, true );
-	for( Size ii = 2; ii <= all_loops_.num_loop() + 1; ii++ )
+	for ( Size ii = 2; ii <= all_loops_.num_loop() + 1; ii++ ) {
 		cdr_dock_map_->set_jump( ii, false );
+	}
 
 
 	//set up sidechain movers for rigid body jump and loop & neighbors
@@ -203,7 +204,7 @@ void LHRepulsiveRampLegacy::finalize_setup(pose::Pose & pose ) {
 	using namespace core::pack::task::operation;
 	// selecting movable c-terminal residues
 	ObjexxFCL::FArray1D_bool loop_residues( pose.total_residue(), false );
-	for( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 		loop_residues(i) = sc_is_flexible[i];
 	} // check mapping
 
@@ -256,7 +257,7 @@ void LHRepulsiveRampLegacy::apply( pose::Pose & pose ) {
 	loops::remove_cutpoint_variants( pose, true );
 	using namespace core::chemical;
 	for ( loops::Loops::const_iterator it = all_loops_.begin(),
-	        it_end = all_loops_.end();	it != it_end; ++it ) {
+			it_end = all_loops_.end(); it != it_end; ++it ) {
 		core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, it->cut() );
 		core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER,it->cut()+1);
 	}
@@ -267,7 +268,7 @@ void LHRepulsiveRampLegacy::apply( pose::Pose & pose ) {
 	// dampen fa_rep weight
 	core::Real rep_weight_max = dock_scorefxn_->get_weight( core::scoring::fa_rep );
 
-	if( benchmark_ ) {
+	if ( benchmark_ ) {
 		rep_ramp_cycles_ = 1;
 		num_repeats_ = 1;
 		min_threshold_ = 150.0;
@@ -297,30 +298,30 @@ void LHRepulsiveRampLegacy::snugfit_MC_min(pose::Pose & pose, core::scoring::Sco
 	using namespace moves;
 
 	simple_moves::MinMoverOP
-	min_mover( new simple_moves::MinMover( cdr_dock_map_, temp_scorefxn,  min_type_, min_threshold_, true/*nb_list*/ ) );
+		min_mover( new simple_moves::MinMover( cdr_dock_map_, temp_scorefxn,  min_type_, min_threshold_, true/*nb_list*/ ) );
 
 	rigid::RigidBodyPerturbMoverOP
-	rb_perturb( new rigid::RigidBodyPerturbMover(pose, *cdr_dock_map_, rot_mag_, trans_mag_, rigid::partner_downstream, true ) );
+		rb_perturb( new rigid::RigidBodyPerturbMover(pose, *cdr_dock_map_, rot_mag_, trans_mag_, rigid::partner_downstream, true ) );
 
 	simple_moves::RotamerTrialsMoverOP
-	pack_rottrial( new simple_moves::RotamerTrialsMover( pack_scorefxn_, tf_ ) );
+		pack_rottrial( new simple_moves::RotamerTrialsMover( pack_scorefxn_, tf_ ) );
 
 	SequenceMoverOP rb_mover( new SequenceMover );
 	rb_mover->add_mover( rb_perturb );
 	rb_mover->add_mover( pack_rottrial );
 
 	JumpOutMoverOP
-	rb_mover_min( new JumpOutMover( rb_mover, min_mover, temp_scorefxn, min_threshold_ ) );
+		rb_mover_min( new JumpOutMover( rb_mover, min_mover, temp_scorefxn, min_threshold_ ) );
 
 
 	MonteCarloOP
-	mc( new MonteCarlo( pose, *temp_scorefxn, temperature_ ) );
+		mc( new MonteCarlo( pose, *temp_scorefxn, temperature_ ) );
 
 	TrialMoverOP
-	rb_mover_min_trial( new TrialMover( rb_mover_min, mc) );
+		rb_mover_min_trial( new TrialMover( rb_mover_min, mc) );
 
 	RepeatMoverOP
-	simple_mcm_repeat( new RepeatMover( rb_mover_min_trial, num_repeats_ ) );
+		simple_mcm_repeat( new RepeatMover( rb_mover_min_trial, num_repeats_ ) );
 
 
 	simple_mcm_repeat->apply( pose );

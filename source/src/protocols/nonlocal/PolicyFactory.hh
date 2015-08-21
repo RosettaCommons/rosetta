@@ -28,12 +28,12 @@ namespace protocols {
 namespace nonlocal {
 
 class PolicyFactory {
- public:
-  /// @brief If a valid policy name was provided, returns a Policy object of the
-  /// given type, exits otherwise. The resulting instance is constructed with a
-  /// copy of the given set of fragments, which may be optionally filtered by
-  /// rank (see num_fragments).
-  static PolicyOP get_policy(
+public:
+	/// @brief If a valid policy name was provided, returns a Policy object of the
+	/// given type, exits otherwise. The resulting instance is constructed with a
+	/// copy of the given set of fragments, which may be optionally filtered by
+	/// rank (see num_fragments).
+	static PolicyOP get_policy(
 		const std::string& policy_name,
 		core::fragment::FragSetCOP fragments,
 		core::Size num_fragments = std::numeric_limits<core::Size>::max()

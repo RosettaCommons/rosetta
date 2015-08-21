@@ -65,7 +65,7 @@ KDPoint::KDPoint( KDPoint const & src ) : ReferenceCount() {
 }
 
 /// @brief Returns a const reference to the location of this point in
-///	k-space.
+/// k-space.
 utility::vector1< numeric::Real > const & KDPoint::const_location() const {
 	return location_;
 }
@@ -130,9 +130,9 @@ std::string KDPoint::to_string() const {
 
 	retval += string_of( size() ) + " ";
 	for ( utility::vector1< Real >::const_iterator
-				it = location_.begin(), end = location_.end() - 1;
-				it != end; ++it
-	) {
+			it = location_.begin(), end = location_.end() - 1;
+			it != end; ++it
+			) {
 		retval += string_of( *it );
 		retval += " ";
 	}

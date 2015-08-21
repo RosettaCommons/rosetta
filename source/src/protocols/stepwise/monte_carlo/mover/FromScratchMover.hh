@@ -29,43 +29,43 @@ namespace stepwise {
 namespace monte_carlo {
 namespace mover {
 
-	class FromScratchMover: public protocols::moves::Mover {
+class FromScratchMover: public protocols::moves::Mover {
 
-	public:
+public:
 
-		//constructor
-		FromScratchMover();
+	//constructor
+	FromScratchMover();
 
-		//destructor
-		~FromScratchMover();
+	//destructor
+	~FromScratchMover();
 
-	public:
+public:
 
-		using moves::Mover::apply;
+	using moves::Mover::apply;
 
-		void
-		apply( core::pose::Pose & pose,
-					 utility::vector1<Size> const & residues_to_instantiate_in_full_model_numbering ) const;
+	void
+	apply( core::pose::Pose & pose,
+		utility::vector1<Size> const & residues_to_instantiate_in_full_model_numbering ) const;
 
-		/// @brief Apply the minimizer to one pose
-		virtual void apply( core::pose::Pose & pose_to_visualize );
-		virtual std::string get_name() const;
+	/// @brief Apply the minimizer to one pose
+	virtual void apply( core::pose::Pose & pose_to_visualize );
+	virtual std::string get_name() const;
 
-		void set_stepwise_modeler( protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler );
+	void set_stepwise_modeler( protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler );
 
-	private:
+private:
 
-		void
-		update_full_model_info_and_switch_focus_to_new_pose( pose::Pose & pose, pose::Pose & new_pose, utility::vector1< Size > const & resnum ) const;
+	void
+	update_full_model_info_and_switch_focus_to_new_pose( pose::Pose & pose, pose::Pose & new_pose, utility::vector1< Size > const & resnum ) const;
 
-		void
-		sample_by_swa( pose::Pose & pose, Size const sample_res ) const;
+	void
+	sample_by_swa( pose::Pose & pose, Size const sample_res ) const;
 
-	private:
+private:
 
-		protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler_;
+	protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler_;
 
-	};
+};
 
 } //mover
 } //monte_carlo

@@ -23,9 +23,9 @@
 //C++ Headers
 #include <string>
 
-namespace basic{
-namespace database{
-namespace schema_generator{
+namespace basic {
+namespace database {
+namespace schema_generator {
 
 class Index {
 public:
@@ -41,7 +41,7 @@ public:
 	Index(
 		Index const & src);
 
-  Columns
+	Columns
 	columns();
 
 	bool

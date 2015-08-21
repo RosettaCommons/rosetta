@@ -22,8 +22,8 @@
 
 
 // C++ Headers
-namespace protocols{
-namespace antibody{
+namespace protocols {
+namespace antibody {
 
 // Forward
 class AntibodyDatabaseManager;

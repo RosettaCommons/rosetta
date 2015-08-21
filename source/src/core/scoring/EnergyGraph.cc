@@ -115,7 +115,7 @@ void EnergyEdge::copy_from( parent const * source )
 {
 	EnergyEdge const * ee = static_cast< EnergyEdge const * > ( source );
 	// down_cast is *supposed* to assert the dynamic cast in debug builds; doesn't work for some reason
- 	//EnergyEdge const * ee = utility::down_cast< EnergyEdge const * > ( source );
+	//EnergyEdge const * ee = utility::down_cast< EnergyEdge const * > ( source );
 	energies_not_yet_computed_ = ee->energies_not_yet_computed_;
 	dsqr_ = ee->dsqr_;
 	array_.copy_array_contents( ee->array_ );
@@ -235,13 +235,13 @@ EnergyGraph::add_energy_edge(
 
 //void
 //EnergyGraph::add_energy_edge(
-//	Size index1,
-//	Size index2,
-//	EnergyMap const & emap
+// Size index1,
+// Size index2,
+// EnergyMap const & emap
 //)
 //{
-//	Edge * newedge = add_edge( index1, index2 );
-//	(static_cast< EnergyEdge * > ( newedge ))->store_active_energies( emap );
+// Edge * newedge = add_edge( index1, index2 );
+// (static_cast< EnergyEdge * > ( newedge ))->store_active_energies( emap );
 //}
 
 
@@ -265,7 +265,7 @@ bool
 EnergyGraph::active_score_types( ScoreTypes const & active )
 {
 	for ( Size ii = 1; ii < active.size(); ++ii ) {
-	debug_assert( active[ ii ] < active[ ii + 1 ] );
+		debug_assert( active[ ii ] < active[ ii + 1 ] );
 	}
 	bool clear_edges = false;
 	if ( active.size() != active_2b_score_types_.size() ) clear_edges = true;
@@ -304,7 +304,7 @@ EnergyGraph::active_score_types( ScoreTypes const & active )
 
 void EnergyGraph::delete_edge( graph::Edge * edge )
 {
-debug_assert( dynamic_cast< EnergyEdge* > (edge) );
+	debug_assert( dynamic_cast< EnergyEdge* > (edge) );
 	energy_edge_pool_->destroy( static_cast< EnergyEdge* > (edge) );
 }
 

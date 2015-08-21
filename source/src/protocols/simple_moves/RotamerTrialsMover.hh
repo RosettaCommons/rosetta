@@ -77,7 +77,7 @@ public:
 	virtual ~RotamerTrialsMover();
 
 	/// @brief clone this object
-	virtual	protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP clone() const;
 
 	/// @brief create this type of object
 	virtual protocols::moves::MoverOP fresh_instance() const;
@@ -96,11 +96,11 @@ public:
 public:
 
 	void parse_my_tag(
-  	TagCOP tag,
-  	basic::datacache::DataMap & data,
-	  Filters_map const &,
-	  protocols::moves::Movers_map const &,
-	  Pose const & );
+		TagCOP tag,
+		basic::datacache::DataMap & data,
+		Filters_map const &,
+		protocols::moves::Movers_map const &,
+		Pose const & );
 
 protected:
 

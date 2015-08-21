@@ -6,7 +6,7 @@
 // (C) 199x-2009 Rosetta Commons participating institutions and developers.
 // For more information, see http://www.rosettacommons.org/.
 
-/// @file  
+/// @file
 /// @brief
 /// @author TJ Brunette
 

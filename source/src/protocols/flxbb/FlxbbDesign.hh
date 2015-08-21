@@ -45,12 +45,12 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-	#include <core/pack/task/operation/TaskOperation.hh>
-	#include <protocols/flxbb/DesignTask.hh>
+#include <core/pack/task/operation/TaskOperation.hh>
+#include <protocols/flxbb/DesignTask.hh>
 #endif
 
 namespace protocols {
-namespace flxbb{
+namespace flxbb {
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -200,10 +200,10 @@ public:// mutators relevant to the DesignTaskSet
 public:// parser
 
 	virtual void parse_my_tag( TagCOP tag,
-														 basic::datacache::DataMap & data,
-														 Filters_map const &,
-														 Movers_map const &,
-														 Pose const & );
+		basic::datacache::DataMap & data,
+		Filters_map const &,
+		Movers_map const &,
+		Pose const & );
 
 
 private:// helper functions
@@ -255,7 +255,7 @@ private:
 
 	/// @brief weight of constraints_sheet which constrains between Ca atoms in beta-sheets
 	/// if this weight > 0.0, the constraints is applied ( default = -1.0 )
-  Real constraints_sheet_;
+	Real constraints_sheet_;
 
 	/// @brief weight of constraints_NtoC which constrains between Ca atoms of C- and N-terminal
 	/// if this weight > 0.0, the constraints is applied ( default = -1.0 )
@@ -298,7 +298,7 @@ public:
 	FlxbbDesignPack();
 
 	FlxbbDesignPack(
-  	ScoreFunctionCOP scorefxn,
+		ScoreFunctionCOP scorefxn,
 		PackerTaskCOP task,
 		FilterStructsOP filter=0 );
 

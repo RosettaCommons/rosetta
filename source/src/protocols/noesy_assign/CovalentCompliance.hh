@@ -42,8 +42,8 @@ public:
 	friend class utility::SingletonBase< CovalentCompliance >;
 
 private:
-  /// @brief Private constructor for singleton class
-  CovalentCompliance();
+	/// @brief Private constructor for singleton class
+	CovalentCompliance();
 
 	/// @brief private singleton creation function to be used with
 	/// utility::thread::threadsafe_singleton
@@ -52,12 +52,12 @@ private:
 public:
 
 	/// @brief This is clearly thread-unsafe.
-  void load_dist_table( std::string const& file );
-  bool is_compliant( core::id::NamedAtomID const& atom1, core::id::NamedAtomID const& atom2, core::Real cutoff = 5.0 ) const;
-  core::Real distance( core::id::NamedAtomID const& atom1, core::id::NamedAtomID const& atom2 ) const;
+	void load_dist_table( std::string const& file );
+	bool is_compliant( core::id::NamedAtomID const& atom1, core::id::NamedAtomID const& atom2, core::Real cutoff = 5.0 ) const;
+	core::Real distance( core::id::NamedAtomID const& atom1, core::id::NamedAtomID const& atom2 ) const;
 
 private:
-  FragsToAtomDistOP covalent_distances_;
+	FragsToAtomDistOP covalent_distances_;
 };
 
 }

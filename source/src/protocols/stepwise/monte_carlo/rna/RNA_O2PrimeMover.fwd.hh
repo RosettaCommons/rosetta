@@ -26,8 +26,8 @@ namespace stepwise {
 namespace monte_carlo {
 namespace rna {
 
-	class RNA_O2PrimeMover;
-	typedef utility::pointer::shared_ptr< RNA_O2PrimeMover > RNA_O2PrimeMoverOP;
+class RNA_O2PrimeMover;
+typedef utility::pointer::shared_ptr< RNA_O2PrimeMover > RNA_O2PrimeMoverOP;
 
 } //rna
 } //monte_carlo

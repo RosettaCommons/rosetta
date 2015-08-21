@@ -114,14 +114,14 @@ public:
 		ResidueAtomTreeCollection ratc( task->residue_task( 7 ), pose.conformation(), pose.residue( 7 ) );
 		ratc.set_active_restype_index( 20 );
 		{ // scope
-		kinematics::AtomTree const & tree( ratc.active_atom_tree() );
-		Residue const & res( ratc.active_residue() );
-		for ( Size ii = 1; ii <= res.nchi(); ++ii ) {
-			TS_ASSERT_DELTA(
-				numeric::principal_angle_radians( numeric::constants::d::deg2rad * res.chi( ii ) ),
-				numeric::principal_angle_radians( tree.dof( id::DOF_ID( id::AtomID( res.chi_atoms(ii)[4], 1 ), id::PHI ))),
-				1e-12 );
-		}
+			kinematics::AtomTree const & tree( ratc.active_atom_tree() );
+			Residue const & res( ratc.active_residue() );
+			for ( Size ii = 1; ii <= res.nchi(); ++ii ) {
+				TS_ASSERT_DELTA(
+					numeric::principal_angle_radians( numeric::constants::d::deg2rad * res.chi( ii ) ),
+					numeric::principal_angle_radians( tree.dof( id::DOF_ID( id::AtomID( res.chi_atoms(ii)[4], 1 ), id::PHI ))),
+					1e-12 );
+			}
 		}
 
 		// now, lets change shit up
@@ -129,27 +129,27 @@ public:
 		ratc.update_atom_tree();
 
 		{ // scope
-		kinematics::AtomTree const & tree( ratc.active_atom_tree() );
-		Residue const & res( ratc.active_residue() );
-		for ( Size ii = 1; ii <= res.nchi(); ++ii ) {
-			TS_ASSERT_DELTA(
-				numeric::principal_angle_radians( numeric::constants::d::deg2rad * res.chi( ii ) ),
-				numeric::principal_angle_radians( tree.dof( id::DOF_ID( id::AtomID( res.chi_atoms(ii)[4], 1 ), id::PHI ))),
-				1e-12 );
-		}
+			kinematics::AtomTree const & tree( ratc.active_atom_tree() );
+			Residue const & res( ratc.active_residue() );
+			for ( Size ii = 1; ii <= res.nchi(); ++ii ) {
+				TS_ASSERT_DELTA(
+					numeric::principal_angle_radians( numeric::constants::d::deg2rad * res.chi( ii ) ),
+					numeric::principal_angle_radians( tree.dof( id::DOF_ID( id::AtomID( res.chi_atoms(ii)[4], 1 ), id::PHI ))),
+					1e-12 );
+			}
 		}
 
 		ratc.set_chi( 2, 55.0 );
 		ratc.update_residue();
 		{ // scope
-		kinematics::AtomTree const & tree( ratc.active_atom_tree() );
-		Residue const & res( ratc.active_residue() );
-		for ( Size ii = 1; ii <= res.nchi(); ++ii ) {
-			TS_ASSERT_DELTA(
-				numeric::principal_angle_radians( numeric::constants::d::deg2rad * res.chi( ii ) ),
-				numeric::principal_angle_radians( tree.dof( id::DOF_ID( id::AtomID( res.chi_atoms(ii)[4], 1 ), id::PHI ))),
-				1e-12 );
-		}
+			kinematics::AtomTree const & tree( ratc.active_atom_tree() );
+			Residue const & res( ratc.active_residue() );
+			for ( Size ii = 1; ii <= res.nchi(); ++ii ) {
+				TS_ASSERT_DELTA(
+					numeric::principal_angle_radians( numeric::constants::d::deg2rad * res.chi( ii ) ),
+					numeric::principal_angle_radians( tree.dof( id::DOF_ID( id::AtomID( res.chi_atoms(ii)[4], 1 ), id::PHI ))),
+					1e-12 );
+			}
 		}
 	}
 

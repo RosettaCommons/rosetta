@@ -122,11 +122,11 @@ LoopMover_Perturb_KIC::LoopMover_Perturb_KIC(
 	core::scoring::ScoreFunctionOP  scorefxn
 ) : IndependentLoopMover( loops_in )
 {
-	if( scorefxn ){
+	if ( scorefxn ) {
 		set_scorefxn( scorefxn );
-	}else{
+	} else {
 		set_scorefxn( get_cen_scorefxn() );
- 		loop_mover::loops_set_chainbreak_weight( scorefxn, 1 );
+		loop_mover::loops_set_chainbreak_weight( scorefxn, 1 );
 	}
 	protocols::moves::Mover::type("LoopMover_Perturb_KIC");
 	set_default_settings();
@@ -144,8 +144,7 @@ void LoopMover_Perturb_KIC::set_default_settings()
 {
 	if ( basic::options::option[ basic::options::OptionKeys::loops::strict_loops ].user() ) {
 		set_strict_loops( basic::options::option[ basic::options::OptionKeys::loops::strict_loops ]() );
-	}
-	else set_strict_loops(true); // obey loop definitions in kinematic mode
+	} else set_strict_loops(true); // obey loop definitions in kinematic mode
 	max_seglen_ = basic::options::option[basic::options::OptionKeys::loops::kic_max_seglen];
 	recover_low_ = ( ! basic::options::option[basic::options::OptionKeys::loops::kic_recover_last] );
 	max_kic_build_attempts_ = basic::options::option[basic::options::OptionKeys::loops::max_kic_build_attempts];
@@ -153,9 +152,9 @@ void LoopMover_Perturb_KIC::set_default_settings()
 }
 
 void  LoopMover_Perturb_KIC::set_extended_torsions(
-												   core::pose::Pose & ,
-												   Loop const &
-												   )
+	core::pose::Pose & ,
+	Loop const &
+)
 {
 	// do nothing for now, overriding LoopMover::set_extended_torsions()
 }
@@ -168,12 +167,12 @@ void  LoopMover_Perturb_KIC::set_extended_torsions(
 /// representation. Applies to only one loop, given as an argument.
 loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	core::pose::Pose & pose,
-  protocols::loops::Loop const & loop
+	protocols::loops::Loop const & loop
 ){
 	// AMW: cppcheck flags this for scope reduction, but since it's static I'm leaving as is
 	static int cur_struct=0; // for movie output
 	// Dont allow loops < 3 residues.
-	if( (loop.stop() - loop.start() < 2 )){
+	if ( (loop.stop() - loop.start() < 2 ) ) {
 		tr().Error << "[WARNING] KinematicMover cannot handle loops smaller than 3 residues. Doing nothing. " << std::endl;
 		return loop_mover::CriticalFailure;
 	}
@@ -191,9 +190,9 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	bool const local_movie( false );
 
 	core::pose::Pose native_pose;
-	if( get_native_pose() ){
+	if ( get_native_pose() ) {
 		native_pose = *get_native_pose();
-	}else{
+	} else {
 		native_pose = pose;
 	}
 
@@ -208,7 +207,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, loop_cut );
 	core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, loop_cut+1 );
 
-	if (local_debug) {
+	if ( local_debug ) {
 		std::ofstream out("score.tmp_input_cen");
 		out << "scoring before cen_perturb: " << ( *scorefxn() )(pose) << std::endl;
 		/// Now handled automatically.  scorefxn_->accumulate_residue_total_energies(pose);
@@ -243,7 +242,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 
 	// Monte Carlo vars
 	float const init_temp( option[ OptionKeys::loops::remodel_init_temp ]() );
-	float const	final_temp( option[ OptionKeys::loops::remodel_final_temp ]() );
+	float const final_temp( option[ OptionKeys::loops::remodel_final_temp ]() );
 	float const gamma = std::pow( (final_temp/init_temp), (1.0f/(outer_cycles*inner_cycles)) );
 	float temperature = init_temp;
 	if ( local_debug ) { // hacking
@@ -259,9 +258,9 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	bool const use_nblist( false ), deriv_check( false ); // true ); // false );
 	MinimizerOptions options( "linmin", dummy_tol, use_nblist, deriv_check);
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		minimizer = new core::optimization::symmetry::SymAtomTreeMinimizer;
+	minimizer = new core::optimization::symmetry::SymAtomTreeMinimizer;
 	} else {
-		minimizer = new core::optimization::AtomTreeMinimizer;
+	minimizer = new core::optimization::AtomTreeMinimizer;
 	}
 	*/
 	// AS Feb 6 2013: rewriting the minimizer section to use the MinMover, which allows seamless integration of cartesian minimization
@@ -287,9 +286,10 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	min_mover->tolerance( dummy_tol );
 	min_mover->nb_list( use_nblist );
 	min_mover->deriv_check( deriv_check );
-	 */
-	if( option[ OptionKeys::loops::minimize_max_iter ].user() )
+	*/
+	if ( option[ OptionKeys::loops::minimize_max_iter ].user() ) {
 		min_mover->max_iter( option[ OptionKeys::loops::minimize_max_iter ]() );
+	}
 	min_mover->cartesian( use_cartmin );
 
 
@@ -302,7 +302,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	loop_closure::kinematic_closure::KinematicMoverOP myKinematicMover_op( new loop_closure::kinematic_closure::KinematicMover );
 	loop_closure::kinematic_closure::KinematicMoverCAP myKinematicMover_cap( myKinematicMover_op );
 	loop_closure::kinematic_closure::KinematicMover & myKinematicMover = *myKinematicMover_op;
-	
+
 	//tr() << "kinematic mover generated, now setting up perturber... " << std::endl;
 
 	// AS: select from different perturbers implemented for NGK
@@ -319,7 +319,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 				"into a valid torsion set of torsion bins.  Check your inputs\n" + e.msg() );
 		}
 
-		// derive torsion string from native/input pose, if requested -- warning: this overwrites the externally provided one
+// derive torsion string from native/input pose, if requested -- warning: this overwrites the externally provided one
 		if ( basic::options::option[ basic::options::OptionKeys::loops::derive_torsion_string_from_native_pose ]() ) {
 			torsion_bins = torsion_features_string( native_pose ); // does this work at this point in the code? The loop needs to be set up!
 		}
@@ -344,7 +344,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 		myKinematicMover.set_perturber( perturber );
 	} else if ( basic::options::option[ basic::options::OptionKeys::loops::kic_rama2b ]() && basic::options::option[ basic::options::OptionKeys::loops::taboo_sampling ]() ) {  // TabooSampling with rama2b (neighbor-dependent phi/psi lookup)
 		loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturberOP
-		perturber( new loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturber( myKinematicMover_cap ) );
+			perturber( new loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturber( myKinematicMover_cap ) );
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	} else if ( basic::options::option[ basic::options::OptionKeys::loops::taboo_sampling ] ) { // TabooSampling (std rama)
@@ -353,12 +353,12 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	} else if ( basic::options::option[ basic::options::OptionKeys::loops::kic_rama2b ]() ) { // rama2b
-		loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturberOP	perturber( new loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturber( myKinematicMover_cap ) );
+		loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturberOP perturber( new loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturber( myKinematicMover_cap ) );
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	} else { // default behavior [for now] -- std KIC
 		loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP
-		perturber( new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( myKinematicMover_cap ) );
+			perturber( new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( myKinematicMover_cap ) );
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	}
@@ -378,7 +378,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	// this setup would also allow us to combine taboo sampling with other types of sampling, e.g. to increase diversity after several rounds of standard/random KIC sampling
 	utility::vector1< core::chemical::AA > loop_sequence;
 	loop_sequence.resize(0); // make sure it is empty
-	for (core::Size cur_res = loop_begin; cur_res <= loop_end; cur_res++) {
+	for ( core::Size cur_res = loop_begin; cur_res <= loop_end; cur_res++ ) {
 		loop_sequence.push_back(pose.aa(cur_res));
 	}
 	myKinematicMover.update_sequence( loop_sequence ); // should only have an effect on the TabooSamplingKinematicPerturber
@@ -390,14 +390,14 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	Size middle_offset = (kic_end - kic_start) / 2; // need to ensure this isn't a proline
 	kic_middle = kic_start + middle_offset;
 	tr() << "kinematic initial perturb with start_res: "  << kic_start << "  middle res: " << kic_middle << "  end_res: "
-	<< kic_end << std::endl;
+		<< kic_end << std::endl;
 	myKinematicMover.set_pivots(kic_start, kic_middle, kic_end);
 	myKinematicMover.set_temperature(temperature);
 
 	core::conformation::torsion_bin_string torsion_features = torsion_features_string( pose );
 	tr() << "loop rmsd before initial kinematic perturbation:" << loop_rmsd( pose, native_pose, one_loop_loops ) /* << " -- torsion bins: " << torsion_features */ << std::endl;
 
-	if (loop.is_extended() ) {
+	if ( loop.is_extended() ) {
 		myKinematicMover.set_idealize_loop_first( true ); // start without any native angles or lengths
 		core::Size nits=0;
 
@@ -406,10 +406,10 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 			//RAP: temporarily lower the bump_overlap_factor to 0.4 to speed-up initial loop closure after centroid radii fix
 			myKinematicMover.set_bump_overlap_factor(0.4);//RAP
 		}
-		while (nits < max_kic_build_attempts_) {
+		while ( nits < max_kic_build_attempts_ ) {
 			tr() << "Attempting loop building: " << nits << " ... " << std::endl;
 			myKinematicMover.apply( pose );
-			if (myKinematicMover.last_move_succeeded()) {
+			if ( myKinematicMover.last_move_succeeded() ) {
 				set_last_move_status(protocols::moves::MS_SUCCESS);
 				tr() << "initial kinematic perturbation complete" << std::endl;
 				myKinematicMover.set_idealize_loop_first( false ); // now the loop is idealized
@@ -427,7 +427,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 			//RAP: restore bump_overlap_factor to original value
 			myKinematicMover.set_bump_overlap_factor(previous_bump_overlap_factor);//RAP
 		}
-		if (!myKinematicMover.last_move_succeeded()) {
+		if ( !myKinematicMover.last_move_succeeded() ) {
 			tr().Error << "[WARNING] Failed to build loop with kinematic Mover during initial kinematic perturbation after " << nits << " trials: " << loop << std::endl;
 			set_last_move_status(protocols::moves::FAIL_RETRY);
 			//pose.fold_tree( f_orig ); // DJM: doing above in LoopRelaxMover now
@@ -436,8 +436,9 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 		( *scorefxn() )(pose);
 		//minimizer->run( pose, mm_one_loop, *scorefxn(), options );
 
-		if ( local_debug ) // AS
+		if ( local_debug ) { // AS
 			tr() << " minimization next " << std::endl;
+		}
 
 		//min_mover->score_function( scorefxn() ); // at the moment this doesn't change, but if we ever implemented ramp it would
 		min_mover->apply( pose ); // the other options were already registered in setup
@@ -445,10 +446,9 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 
 		tr() << "loop rmsd after initial kinematic perturbation:" << loop_rmsd( pose, native_pose, one_loop_loops ) << std::endl;
 
-	}
-	else {
+	} else {
 		tr() << "not performing initial kinematic perturbation" << std::endl;
-		if (option[ OptionKeys::loops::vicinity_sampling ]()) {
+		if ( option[ OptionKeys::loops::vicinity_sampling ]() ) {
 			// AS Oct 3 2012: replace TorsionRestrictedKinematicPerturber by VicinitySamplingKinematicPerturber
 			loop_closure::kinematic_closure::VicinitySamplingKinematicPerturberOP v_perturber( new loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber( myKinematicMover_cap ) );
 			v_perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
@@ -458,7 +458,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 		}
 	}
 
-	if (local_movie) {
+	if ( local_movie ) {
 		std::string outname_base = option[ OptionKeys::loops::output_pdb ]().name();
 		std::string outname_prefix = option[ OptionKeys::out::prefix ];
 		std::string outname = outname_prefix + outname_base + "_centroid_movie_" +
@@ -466,7 +466,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 		loop_outfile.open(outname.c_str(), std::ios::out | std::ios::binary);
 		loop_outfile << "MODEL" << std::endl;
 		utility::vector1<Size> indices(loop_end - loop_begin + 3);
-		for (Size i=loop_begin-1, j=1; i<=loop_end+1; i++, j++) {
+		for ( Size i=loop_begin-1, j=1; i<=loop_end+1; i++, j++ ) {
 			indices[j]=i;
 		}
 		//pose.dump_pdb(loop_outfile, indices, "init_perturb");
@@ -477,8 +477,8 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	protocols::moves::MonteCarlo mc( pose, *scorefxn(), temperature);
 	mc.show_scores();
 
-	for( int i=1; i<=outer_cycles; ++i ) {
-		if ( local_debug) { // debug
+	for ( int i=1; i<=outer_cycles; ++i ) {
+		if ( local_debug ) { // debug
 			( *scorefxn() )( pose );
 			tr() << "befor rLOW: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) <<
 				" rmsd: " << F(9,3,loop_rmsd( pose, native_pose, one_loop_loops )) << std::endl;
@@ -489,20 +489,20 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 			mc.recover_low(pose);
 		}
 
-		if ( local_debug) { // debug
+		if ( local_debug ) { // debug
 			( *scorefxn() )( pose );
 			tr() << "after rLOW: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) <<
 				" rmsd: " << F(9,3,loop_rmsd( pose, native_pose, one_loop_loops )) << std::endl;
 		}
 
-		for( int j=1; j<=inner_cycles; ++j ) {
+		for ( int j=1; j<=inner_cycles; ++j ) {
 			// change temperature
 			temperature *= gamma;
 			mc.set_temperature( temperature );
 			core::Size nits=0;
-			while (nits < remodel_kic_attempts_) {
+			while ( nits < remodel_kic_attempts_ ) {
 				nits++;
-				if (option[ OptionKeys::loops::always_remodel_full_loop ]()) { // warning: for long loops this could be extremely inefficient
+				if ( option[ OptionKeys::loops::always_remodel_full_loop ]() ) { // warning: for long loops this could be extremely inefficient
 					kic_start = loop_begin;
 					kic_end = loop_end;
 					kic_middle = numeric::random::rg().random_range(kic_start+2, kic_end-2);
@@ -525,11 +525,11 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 				myKinematicMover.set_pivots(kic_start, kic_middle, kic_end);
 				myKinematicMover.set_temperature(temperature);
 				myKinematicMover.apply( pose );
-				if (myKinematicMover.last_move_succeeded()) {
+				if ( myKinematicMover.last_move_succeeded() ) {
 					break;
 				}
 			}
-			if (myKinematicMover.last_move_succeeded()) {
+			if ( myKinematicMover.last_move_succeeded() ) {
 				//fpd symmetrize 'mm_one_loop'
 				if ( core::pose::symmetry::is_symmetric( pose ) )  {
 					core::pose::symmetry::make_symmetric_movemap( pose, mm_one_loop );
@@ -537,8 +537,9 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 				( *scorefxn() )(pose);
 				//minimizer->run( pose, mm_one_loop, *scorefxn(), options );
 
-				if ( local_debug ) // AS
+				if ( local_debug ) { // AS
 					tr() << " minimization next " << std::endl;
+				}
 
 
 				//min_mover->score_function( scorefxn() );
@@ -546,12 +547,12 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 
 				std::string move_type = "kinematic_perturb";
 				bool accepted = mc.boltzmann( pose, move_type );
-				if (accepted) {
+				if ( accepted ) {
 					tr() << "new centroid perturb rmsd: " << loop_rmsd( pose, native_pose, one_loop_loops ) << std::endl;
-					if (local_movie) {
+					if ( local_movie ) {
 						loop_outfile << "MODEL" << std::endl;
 						utility::vector1<Size> indices(loop_end - loop_begin + 3);
-						for (Size i=loop_begin-1, j=1; i<=loop_end+1; i++, j++) {
+						for ( Size i=loop_begin-1, j=1; i<=loop_end+1; i++, j++ ) {
 							indices[j]=i;
 						}
 						pose.dump_pdb(loop_outfile, indices, "init_perturb");
@@ -560,7 +561,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 					//tr << "chainbreak score: " << pose.energies().total_energies()[ core::scoring::chainbreak ] << std::endl;
 				}
 				//mc.show_scores();
-			}else{
+			} else {
 				tr().Error << "[WARNING] Failed to build loop with kinematic Mover after " << nits << " trials: " << loop << std::endl;
 				// return to original fold tree
 				//pose.fold_tree( f_orig ); // DJM: doing above in LoopRelaxMover now
@@ -571,23 +572,22 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 
 	if ( recover_low_ ) {
 		pose = mc.lowest_score_pose();
-	}
-	else {
+	} else {
 		pose = mc.last_accepted_pose();
 	}
-	if (local_movie) {
+	if ( local_movie ) {
 		// this assumes there is only one loop.
 		Size begin_loop=loop.start();
 		Size end_loop=loop.stop();
 		loop_outfile << "MODEL" << std::endl;
 		utility::vector1<Size> indices(end_loop - begin_loop + 3);
-		for (Size i=begin_loop-1, j=1; i<=end_loop+1; i++, j++) {
+		for ( Size i=begin_loop-1, j=1; i<=end_loop+1; i++, j++ ) {
 			indices[j]=i;
 		}
 		pose.dump_pdb(loop_outfile, indices, "final_perturb");
 		loop_outfile << "ENDMDL" << std::endl;
 	}
-	if (local_debug) {
+	if ( local_debug ) {
 		std::ofstream out("score.tmp_perturb_cen");
 		out << "scoring after cen_perturb: " << ( *scorefxn() )(pose) << std::endl;
 		/// Now handled automatically.  scorefxn_->accumulate_residue_total_energies(pose);
@@ -611,9 +611,9 @@ LoopMover_Perturb_KIC::show(std::ostream & output) const
 {
 	Mover::show(output);
 	output <<   "Maximum KIC segment length:             " << max_seglen_ <<
-				"\nRecover the lowest energy conformation: " << (recover_low_ ? "True" : "False") <<
-				"\nMaximum KIC build attempts:             " << max_kic_build_attempts_ <<
-				"\nRemodel KIC attempts:                   " << remodel_kic_attempts_;
+		"\nRecover the lowest energy conformation: " << (recover_low_ ? "True" : "False") <<
+		"\nMaximum KIC build attempts:             " << max_kic_build_attempts_ <<
+		"\nRemodel KIC attempts:                   " << remodel_kic_attempts_;
 }
 
 std::ostream &operator<< ( std::ostream &os, LoopMover_Perturb_KIC const &mover )
@@ -624,17 +624,17 @@ std::ostream &operator<< ( std::ostream &os, LoopMover_Perturb_KIC const &mover 
 
 basic::Tracer & LoopMover_Perturb_KIC::tr() const
 {
-    return TR;
+	return TR;
 }
 
 LoopMover_Perturb_KICCreator::~LoopMover_Perturb_KICCreator() {}
 
 moves::MoverOP LoopMover_Perturb_KICCreator::create_mover() const {
-  return moves::MoverOP( new LoopMover_Perturb_KIC() );
+	return moves::MoverOP( new LoopMover_Perturb_KIC() );
 }
 
 std::string LoopMover_Perturb_KICCreator::keyname() const {
-  return "LoopMover_Perturb_KIC";
+	return "LoopMover_Perturb_KIC";
 }
 
 } // namespace perturb

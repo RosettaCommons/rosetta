@@ -18,8 +18,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class ResidueConformationFeatures;
 typedef utility::pointer::shared_ptr< ResidueConformationFeatures > ResidueConformationFeaturesOP;

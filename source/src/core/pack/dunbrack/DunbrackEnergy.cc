@@ -93,7 +93,7 @@ DunbrackEnergy::residue_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( core::chemical::REPLONLY )){
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) {
 		return;
 	}
 
@@ -134,7 +134,7 @@ DunbrackEnergy::eval_residue_dof_derivative(
 	Real deriv_rot( 0.0 );
 	Real deriv_semi( 0.0 );
 	if ( tor_id.valid() ) {
-	debug_assert( rsd.seqpos() == tor_id.rsd() );
+		debug_assert( rsd.seqpos() == tor_id.rsd() );
 
 		pack::rotamers::SingleResidueRotamerLibraryCOP rotlib =
 			rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( rsd.type() );
@@ -168,7 +168,7 @@ DunbrackEnergy::eval_dof_derivative(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( pose.residue( tor_id.rsd() ).has_variant_type( core::chemical::REPLONLY )){
+	if ( pose.residue( tor_id.rsd() ).has_variant_type( core::chemical::REPLONLY ) ) {
 		return 0.0;
 	}
 

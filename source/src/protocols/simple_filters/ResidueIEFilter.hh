@@ -34,9 +34,9 @@ public:
 	ResidueIEFilter() : filters::Filter( "ResidueIE" ) {}
 
 	ResidueIEFilter( utility::vector1<core::Size> const resnums, std::string const restype, core::scoring::ScoreFunctionCOP scorefxn,
-	   core::scoring::ScoreType const score_type, core::Real const threshold,
-	   bool const whole_pose = false, bool const whole_interface = false, core::Size const rb_jump = 1,
-	   core::Real const interface_distance_cutoff =  8.0 , core::Real max_penalty = 0.0, core::Real penalty_factor = 1.0 );
+		core::scoring::ScoreType const score_type, core::Real const threshold,
+		bool const whole_pose = false, bool const whole_interface = false, core::Size const rb_jump = 1,
+		core::Real const interface_distance_cutoff =  8.0 , core::Real max_penalty = 0.0, core::Real penalty_factor = 1.0 );
 
 	ResidueIEFilter( ResidueIEFilter const &init );
 	bool apply( core::pose::Pose const & pose ) const;

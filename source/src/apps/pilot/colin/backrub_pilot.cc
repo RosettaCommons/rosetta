@@ -74,7 +74,7 @@
 
 static thread_local basic::Tracer TR( "apps.backrub" );
 
-//JAB - This is a fork of Backrub, and looks like it acted as a test for the detailed balance paper and code. 
+//JAB - This is a fork of Backrub, and looks like it acted as a test for the detailed balance paper and code.
 // It should probably be deprecated.
 
 OPT_1GRP_KEY(Real, backrub, backrub_sc_prob)
@@ -82,7 +82,7 @@ OPT_1GRP_KEY(Real, backrub, sm_angle_max)
 OPT_1GRP_KEY(Boolean, backrub, detailed_balance)
 OPT_1GRP_KEY(Boolean, backrub, test_detailed_balance)
 
-				
+
 void *
 my_main( void* );
 
@@ -112,10 +112,10 @@ main( int argc, char * argv [] )
 
 	protocols::viewer::viewer_main( my_main );
 
-        } catch ( utility::excn::EXCN_Base const & e ) {
-                           std::cout << "caught exception " << e.msg() << std::endl;
-		return -1;
-                               }
+} catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+	return -1;
+}
 	return 0;
 }
 
@@ -127,24 +127,24 @@ read_fold_tree_from_file(
 {
 	std::ifstream filestream(filepath.c_str());
 
-	while (filestream.good()) {
+	while ( filestream.good() ) {
 
 		std::string line;
 		std::string key;
 
 		getline(filestream, line);
-		if (filestream.fail()) {
+		if ( filestream.fail() ) {
 			//TR << "getline() failed" << std::endl;
 			return false;
 		}
 
 		std::istringstream linestream(line);
 		linestream >> key;
-		if (key == "FOLD_TREE") {
+		if ( key == "FOLD_TREE" ) {
 			linestream.clear();
 			linestream.seekg(0, std::ios::beg);
 			linestream >> foldtree;
-			if (linestream.fail()) {
+			if ( linestream.fail() ) {
 				TR << "FoldTree parsing failed" << std::endl;
 				return false;
 			} else {
@@ -164,13 +164,13 @@ read_fold_tree_from_file(
 {
 	core::kinematics::FoldTree foldtree;
 
-	if (read_fold_tree_from_file(foldtree, filepath)) {
-		if (foldtree.nres() == pose.total_residue()) {
+	if ( read_fold_tree_from_file(foldtree, filepath) ) {
+		if ( foldtree.nres() == pose.total_residue() ) {
 			pose.fold_tree(foldtree);
 			return true;
 		} else {
 			TR << "Different number of residues in Pose (" << pose.total_residue() << ") and FoldTree (" << foldtree.nres()
-			   << ")" << std::endl;
+				<< ")" << std::endl;
 		}
 	}
 
@@ -184,7 +184,7 @@ append_fold_tree_to_file(
 )
 {
 	std::ofstream filestream(file_path.c_str(), std::ios::out|std::ios::app);
-	if (filestream.good()) {
+	if ( filestream.good() ) {
 		filestream << foldtree;
 		filestream.close();
 	} else {
@@ -203,23 +203,23 @@ positions_incompatible_with_task(
 	assert(pose.total_residue() == packertask.total_residue());
 
 	// iterate over all residues to see if they're compatible
-	for (core::Size i = 1; i <= pose.total_residue(); ++i) {
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 
 		// only check packable residues for compatibility
-		if (packertask.pack_residue(i)) {
+		if ( packertask.pack_residue(i) ) {
 
 			// assume residue is incompatible
 			bool incompatible(true);
 
 			// check to see if pose residue type is in list of allowed residue types
 			core::pack::task::ResidueLevelTask const & residueleveltask(packertask.residue_task(i));
-			for (core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter iter(residueleveltask.allowed_residue_types_begin());
-			     iter != residueleveltask.allowed_residue_types_end(); ++iter) {
+			for ( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter iter(residueleveltask.allowed_residue_types_begin());
+					iter != residueleveltask.allowed_residue_types_end(); ++iter ) {
 
-				if ((*iter)->name() == pose.residue_type(i).name()) incompatible = false;
+				if ( (*iter)->name() == pose.residue_type(i).name() ) incompatible = false;
 			}
 
-			if (incompatible) incompatible_positions.push_back(i);
+			if ( incompatible ) incompatible_positions.push_back(i);
 		}
 	}
 
@@ -259,14 +259,14 @@ my_main( void* )
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn);
 	}
 	// use an empty score function if testing detailed balance
-	if (option[ backrub::test_detailed_balance ]) score_fxn = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
+	if ( option[ backrub::test_detailed_balance ] ) score_fxn = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
 
 	// set up the BackrubMover
 	protocols::backrub::BackrubMover backrubmover;
 	// read known and unknown optimization parameters from the database
 	backrubmover.branchopt().read_database();
 	// tell the branch angle optimizer about the score function MMBondAngleResidueTypeParamSet, if any
-	if (energymethodoptions.bond_angle_residue_type_param_set()) {
+	if ( energymethodoptions.bond_angle_residue_type_param_set() ) {
 		backrubmover.branchopt().bond_angle_residue_type_param_set(energymethodoptions.bond_angle_residue_type_param_set());
 	}
 	backrubmover.set_preserve_detailed_balance(option[ backrub::detailed_balance ]);
@@ -276,7 +276,7 @@ my_main( void* )
 	smallmover.nmoves(1);
 	smallmover.set_preserve_detailed_balance(option[ backrub::detailed_balance ]);
 	if ( option[ backrub::sm_angle_max ].user() ) smallmover.angle_max(option[ backrub::sm_angle_max ]);
-	if (option[ backrub::sm_prob ] > 0) {
+	if ( option[ backrub::sm_prob ] > 0 ) {
 		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 		movemap->init_from_file(option[ in::file::movemap ]);
 		smallmover.movemap(movemap);
@@ -296,7 +296,7 @@ my_main( void* )
 
 	utility::vector1< protocols::jobdist::BasicJobOP > input_jobs = protocols::jobdist::load_s_and_l();
 
-	for (core::Size jobnum = 1; jobnum <= input_jobs.size(); ++jobnum) {
+	for ( core::Size jobnum = 1; jobnum <= input_jobs.size(); ++jobnum ) {
 
 		TR << "Processing " << input_jobs[jobnum]->input_tag() << "..." << std::endl;
 		bool custom_fold_tree(false);
@@ -328,7 +328,7 @@ my_main( void* )
 		sidechainmover.idealize_sidechains(*input_pose);
 		//input_pose->dump_pdb(input_jobs[jobnum]->output_tag(0) + "_postidealizesc.pdb");
 		core::Real sc_prob = option[ backrub::sc_prob ];
-		if (sc_prob && sidechainmover.packed_residues().size() == 0) {
+		if ( sc_prob && sidechainmover.packed_residues().size() == 0 ) {
 			sc_prob = 0;
 			TR << "Warning: No side chains to move. Not using SidechainMover." << std::endl;
 		}
@@ -341,13 +341,13 @@ my_main( void* )
 		bool initial_pack(option[ backrub::initial_pack ]);
 		core::pack::task::PackerTaskOP temp_task(main_task_factory->create_task_and_apply_taskoperations(*input_pose));
 		utility::vector1<core::Size> incompatible_positions(positions_incompatible_with_task(*input_pose, *temp_task));
-		if (incompatible_positions.size()) {
+		if ( incompatible_positions.size() ) {
 			TR << "Starting ResidueType not allowed in resfile at position(s):";
-			for (core::Size i = 1; i <= incompatible_positions.size(); i++) {
+			for ( core::Size i = 1; i <= incompatible_positions.size(); i++ ) {
 				TR << " " << incompatible_positions[i];
 			}
 			TR << std::endl;
-			if (!initial_pack) {
+			if ( !initial_pack ) {
 				initial_pack = true;
 				TR << "Forcing initial pack" << std::endl;
 			}
@@ -359,18 +359,17 @@ my_main( void* )
 		protocols::viewer::add_monte_carlo_viewer(mc, "Backrub", 600, 600);
 
 		// iterate to generate multiple structures
-		for (int structnum = 1; structnum <= input_jobs[jobnum]->nstruct(); ++structnum)
-		{
+		for ( int structnum = 1; structnum <= input_jobs[jobnum]->nstruct(); ++structnum ) {
 			// start with a fresh copy of the optimized pose
 			core::pose::PoseOP pose( new core::pose::Pose(*input_pose) );
 
 			// repack/redesign at the beginning if specified/necessary
-			if (initial_pack) {
+			if ( initial_pack ) {
 				packrotamersmover.apply(*pose);
 				//pose->dump_pdb(input_jobs[jobnum]->output_tag(structnum) + "_postpack.pdb");
 
 				// if a minimization movemap was specified, go through a series of minimizations
-				if (option[ backrub::minimize_movemap ].user()) {
+				if ( option[ backrub::minimize_movemap ].user() ) {
 
 					// setup the MoveMaps
 					core::kinematics::MoveMapOP minimize_movemap( new core::kinematics::MoveMap );
@@ -383,27 +382,27 @@ my_main( void* )
 					minmover.min_type("dfpmin");
 
 					// first minimize just the side chains
-					for (core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
-					     iter != minimize_movemap->movemap_torsion_id_end(); ++iter) {
-						if (iter->first.second == core::id::CHI) minimize_movemap_progressive->set(iter->first, iter->second);
+					for ( core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
+							iter != minimize_movemap->movemap_torsion_id_end(); ++iter ) {
+						if ( iter->first.second == core::id::CHI ) minimize_movemap_progressive->set(iter->first, iter->second);
 					}
 					minmover.movemap(minimize_movemap_progressive);
 					minmover.apply(*pose);
 					//pose->dump_pdb(input_jobs[jobnum]->output_tag(structnum) + "_postminchi.pdb");
 
 					// next minimize the side chains and backbone
-					for (core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
-					     iter != minimize_movemap->movemap_torsion_id_end(); ++iter) {
-						if (iter->first.second == core::id::BB) minimize_movemap_progressive->set(iter->first, iter->second);
+					for ( core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
+							iter != minimize_movemap->movemap_torsion_id_end(); ++iter ) {
+						if ( iter->first.second == core::id::BB ) minimize_movemap_progressive->set(iter->first, iter->second);
 					}
 					minmover.movemap(minimize_movemap_progressive);
 					minmover.apply(*pose);
 					//pose->dump_pdb(input_jobs[jobnum]->output_tag(structnum) + "_postminbb.pdb");
 
 					// finally minimize everything
-					for (core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
-					     iter != minimize_movemap->movemap_torsion_id_end(); ++iter) {
-						if (iter->first.second == core::id::JUMP) minimize_movemap_progressive->set(iter->first, iter->second);
+					for ( core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
+							iter != minimize_movemap->movemap_torsion_id_end(); ++iter ) {
+						if ( iter->first.second == core::id::JUMP ) minimize_movemap_progressive->set(iter->first, iter->second);
 					}
 					minmover.movemap(minimize_movemap_progressive);
 					minmover.apply(*pose);
@@ -417,7 +416,7 @@ my_main( void* )
 			mc.reset(*pose);
 
 			protocols::canonical_sampling::PDBTrajectoryRecorder trajectory;
-			if (option[ backrub::trajectory ]) {
+			if ( option[ backrub::trajectory ] ) {
 				trajectory.file_name(output_tag + "_traj.pdb" + (option[ backrub::trajectory_gz ] ? ".gz" : ""));
 				trajectory.stride(option[ backrub::trajectory_stride ]);
 				trajectory.reset(mc);
@@ -434,21 +433,21 @@ my_main( void* )
 
 			protocols::simple_moves::DOFHistogramRecorder dof_recorder;
 
-			if (option[ backrub::test_detailed_balance ]) {
+			if ( option[ backrub::test_detailed_balance ] ) {
 
 				std::set<core::id::DOF_ID_Range> range_set;
 
-				if (option[ backrub::sm_prob ] + option[ backrub::sc_prob ] < 1) {
+				if ( option[ backrub::sm_prob ] + option[ backrub::sc_prob ] < 1 ) {
 					utility::vector1<core::id::DOF_ID_Range> backrub_ranges(backrubmover.dof_id_ranges(*pose));
 					range_set.insert(backrub_ranges.begin(), backrub_ranges.end());
 				}
 
-				if (option[ backrub::sc_prob ]) {
+				if ( option[ backrub::sc_prob ] ) {
 					utility::vector1<core::id::DOF_ID_Range> sidechainmover_ranges(sidechainmover.dof_id_ranges(*pose));
 					range_set.insert(sidechainmover_ranges.begin(), sidechainmover_ranges.end());
 				}
 
-				if (option[ backrub::sm_prob ]) {
+				if ( option[ backrub::sm_prob ] ) {
 					utility::vector1<core::id::DOF_ID_Range> smallmover_ranges(smallmover.dof_id_ranges(*pose));
 					range_set.insert(smallmover_ranges.begin(), smallmover_ranges.end());
 				}
@@ -460,48 +459,48 @@ my_main( void* )
 
 				//TR << "DOFs to Be Modified" << std::endl;
 				//for (core::Size i = 1; i <= range_vector.size(); ++i) {
-				//	TR << range_vector[i] << std::endl;
+				// TR << range_vector[i] << std::endl;
 				//}
 			}
 
 			TR << "Running " << option[ backrub::ntrials ] << " trials..." << std::endl;
 
-			for (int i = 1; i <= option[ backrub::ntrials ]; ++i) {
+			for ( int i = 1; i <= option[ backrub::ntrials ]; ++i ) {
 
 				std::string move_type;
 				core::Real proposal_density_ratio(1);
 
 				// could use random mover for this...
 				core::Real move_prob = numeric::random::rg().uniform();
-				if (move_prob > option[ backrub::sm_prob ] + option[ backrub::sc_prob ]) {
+				if ( move_prob > option[ backrub::sm_prob ] + option[ backrub::sc_prob ] ) {
 					backrubmover.apply(*pose);
 					move_type = backrubmover.type();
 
 					protocols::backrub::BackrubSegment const & segment(backrubmover.segment(backrubmover.last_segment_id()));
-					if (option[ backrub::backrub_sc_prob ] && segment.size() == 7) {
+					if ( option[ backrub::backrub_sc_prob ] && segment.size() == 7 ) {
 						core::Size middle_resnum(static_cast<core::Size>((segment.start_atomid().rsd() + segment.end_atomid().rsd())*.5));
 						//TR << "Simultaneous move for segment: " << segment.start_atomid() << segment.end_atomid() << " middle: " << middle_resnum << std::endl;
-						if (sidechainmover.residue_packed()[middle_resnum]) {
-							if (numeric::random::rg().uniform() < option[ backrub::backrub_sc_prob ]) {
+						if ( sidechainmover.residue_packed()[middle_resnum] ) {
+							if ( numeric::random::rg().uniform() < option[ backrub::backrub_sc_prob ] ) {
 								sidechainmover.next_resnum(middle_resnum);
 								//TR << "next_resnum before: " << sidechainmover.next_resnum() << std::endl;
 								sidechainmover.apply(*pose);
 								//TR << "next_resnum after: " << sidechainmover.next_resnum() << std::endl;
 								move_type += "_" + sidechainmover.type();
-								if (option[ backrub::detailed_balance ]) {
+								if ( option[ backrub::detailed_balance ] ) {
 									proposal_density_ratio = sidechainmover.last_proposal_density_ratio();
 								}
 								//TR << "proposal density: " << proposal_density_ratio << std::endl;
 							}
 						}
 					}
-				} else if (move_prob > sc_prob) {
+				} else if ( move_prob > sc_prob ) {
 					smallmover.apply(*pose);
 					move_type = smallmover.type();
 				} else {
 					sidechainmover.apply(*pose);
 					move_type = sidechainmover.type();
-					if (option[ backrub::detailed_balance ]) {
+					if ( option[ backrub::detailed_balance ] ) {
 						proposal_density_ratio = sidechainmover.last_proposal_density_ratio();
 					}
 				}
@@ -512,8 +511,8 @@ my_main( void* )
 
 				//mdhist.record(pose->residue(1).chi());
 
-				if (option[ backrub::trajectory ]) trajectory.update_after_boltzmann(mc);
-				if (option[ backrub::test_detailed_balance ]) dof_recorder.update_after_boltzmann(*pose);
+				if ( option[ backrub::trajectory ] ) trajectory.update_after_boltzmann(mc);
+				if ( option[ backrub::test_detailed_balance ] ) dof_recorder.update_after_boltzmann(*pose);
 			}
 
 			mc.show_counters();
@@ -522,7 +521,7 @@ my_main( void* )
 			//histstream << mdhist << mdhist_proposed;
 			//histstream.close();
 
-			if (option[ backrub::test_detailed_balance ]) {
+			if ( option[ backrub::test_detailed_balance ] ) {
 				utility::io::ozstream histstream(output_tag + "_hist.txt");
 				histstream << dof_recorder;
 				histstream.close();
@@ -553,7 +552,7 @@ my_main( void* )
 			mc.last_accepted_pose().dump_pdb(output_tag + "_last.pdb");
 			mc.lowest_score_pose().dump_pdb(output_tag + "_low.pdb");
 
-			if (custom_fold_tree) {
+			if ( custom_fold_tree ) {
 				append_fold_tree_to_file(mc.last_accepted_pose().fold_tree(), output_tag + "_last.pdb");
 				append_fold_tree_to_file(mc.lowest_score_pose().fold_tree(), output_tag + "_low.pdb");
 			}

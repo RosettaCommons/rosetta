@@ -75,9 +75,9 @@ point_graph_dme( conformation::PointGraph const & pg, pose::Pose const & pose )
 	for ( Size i=1; i<= pose.total_residue(); ++i ) {
 		conformation::Residue const & i_rsd( pose.residue(i) );
 		for ( conformation::PointGraph::UpperEdgeListConstIter
-						i_iter     = pg.get_vertex( i ).const_upper_edge_list_begin(),
-						i_end_iter = pg.get_vertex( i ).const_upper_edge_list_end();
-					i_iter != i_end_iter; ++i_iter ) {
+				i_iter     = pg.get_vertex( i ).const_upper_edge_list_begin(),
+				i_end_iter = pg.get_vertex( i ).const_upper_edge_list_end();
+				i_iter != i_end_iter; ++i_iter ) {
 			Size const j = i_iter->upper_vertex();
 			Real const reference_distance( std::sqrt( i_iter->data().dsq() ) );
 			Real const pose_distance( i_rsd.nbr_atom_xyz().distance( pose.residue(j).nbr_atom_xyz() ) );

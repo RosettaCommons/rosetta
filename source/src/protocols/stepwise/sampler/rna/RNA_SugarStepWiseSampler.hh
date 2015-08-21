@@ -43,7 +43,7 @@ public:
 	void apply( core::pose::Pose & pose, core::Size const i );
 
 	/// @brief Get the total number of rotamers in sampler
-	 core::Size size() const {
+	core::Size size() const {
 		runtime_assert( is_init() );
 		return pucker_states_.size();
 	}

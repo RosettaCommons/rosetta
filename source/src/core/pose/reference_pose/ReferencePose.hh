@@ -45,111 +45,111 @@
 #include <map>
 
 namespace core {
-	namespace pose {
-		namespace reference_pose {
+namespace pose {
+namespace reference_pose {
 
-			/// @brief  ReferencePose class, used to store sets of ReferencePose data for tracking how a pose changes over the course of a protocol.
-			///
-			class ReferencePose : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< ReferencePose >
-			{
-				public:
+/// @brief  ReferencePose class, used to store sets of ReferencePose data for tracking how a pose changes over the course of a protocol.
+///
+class ReferencePose : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< ReferencePose >
+{
+public:
 
-					/// @brief Constructor
-					///
-					ReferencePose();
+	/// @brief Constructor
+	///
+	ReferencePose();
 
-					/// @brief Copy constructor
-					///
-					ReferencePose( ReferencePose const & src );
+	/// @brief Copy constructor
+	///
+	ReferencePose( ReferencePose const & src );
 
-					/// @brief Destructor
-					/// @details Note that Rosetta destructors are generally not called.
-					~ReferencePose();
+	/// @brief Destructor
+	/// @details Note that Rosetta destructors are generally not called.
+	~ReferencePose();
 
-					/// @brief Make a copy of this ReferencePose object (allocate actual memory for it)
-					/// and return an owning pointer to the copy.
-					virtual
-					ReferencePoseOP clone() const;
+	/// @brief Make a copy of this ReferencePose object (allocate actual memory for it)
+	/// and return an owning pointer to the copy.
+	virtual
+	ReferencePoseOP clone() const;
 
-					/// @brief Get const owning pointer (e.g. from a reference).
-					///
-					inline ReferencePoseCOP get_self_ptr() const { return shared_from_this(); }
+	/// @brief Get const owning pointer (e.g. from a reference).
+	///
+	inline ReferencePoseCOP get_self_ptr() const { return shared_from_this(); }
 
-					/// @brief Get owning pointer (e.g. from a reference).
-					///
-					inline ReferencePoseOP get_self_ptr() { return shared_from_this(); }
+	/// @brief Get owning pointer (e.g. from a reference).
+	///
+	inline ReferencePoseOP get_self_ptr() { return shared_from_this(); }
 
-					/// @brief Get const access (weak) pointer (e.g. from a reference).
-					///
-					inline ReferencePoseCAP get_self_weak_ptr() const { return ReferencePoseCAP( shared_from_this() ); }
+	/// @brief Get const access (weak) pointer (e.g. from a reference).
+	///
+	inline ReferencePoseCAP get_self_weak_ptr() const { return ReferencePoseCAP( shared_from_this() ); }
 
-					/// @brief Get access (weak) pointer (e.g. from a reference).
-					///
-					inline ReferencePoseAP get_self_weak_ptr() { return ReferencePoseAP( shared_from_this() ); }
+	/// @brief Get access (weak) pointer (e.g. from a reference).
+	///
+	inline ReferencePoseAP get_self_weak_ptr() { return ReferencePoseAP( shared_from_this() ); }
 
-				/********************************************************************************
-							GETTERS
-				*********************************************************************************/
+	/********************************************************************************
+	GETTERS
+	*********************************************************************************/
 
-				/// @brief Returns true if this ReferencePose object stores a map of
-				/// (old residue indices->new residue indices), false otherwise.
-				bool stores_residue_map() const { return stores_residue_map_; }
+	/// @brief Returns true if this ReferencePose object stores a map of
+	/// (old residue indices->new residue indices), false otherwise.
+	bool stores_residue_map() const { return stores_residue_map_; }
 
-				/********************************************************************************
-							SETTERS
-				*********************************************************************************/
+	/********************************************************************************
+	SETTERS
+	*********************************************************************************/
 
-				/// @brief Initializes the residue_map_ based on an input reference pose.
-				/// @details After this operation, the residue_map_ is a very uninteresting map
-				/// that maps every residue index in the pose onto itself.  This also sets the
-				/// stores_residue_map_ bit to true.
-				void initialize_residue_map_from_pose( core::pose::Pose const &pose );
+	/// @brief Initializes the residue_map_ based on an input reference pose.
+	/// @details After this operation, the residue_map_ is a very uninteresting map
+	/// that maps every residue index in the pose onto itself.  This also sets the
+	/// stores_residue_map_ bit to true.
+	void initialize_residue_map_from_pose( core::pose::Pose const &pose );
 
-				/// @brief Find all mappings to indices in the new pose after seqpos, and increment them by 1.
-				/// @details If there is no ReferencePose object, do nothing.
-				void increment_reference_pose_mapping_after_seqpos( core::Size const seqpos );
+	/// @brief Find all mappings to indices in the new pose after seqpos, and increment them by 1.
+	/// @details If there is no ReferencePose object, do nothing.
+	void increment_reference_pose_mapping_after_seqpos( core::Size const seqpos );
 
-				/// @brief Find all mappings to indices in the new pose after seqpos, and decrement them by 1.
-				/// @details If there is no ReferencePose object, do nothing.
-				void decrement_reference_pose_mapping_after_seqpos( core::Size const seqpos ); 
+	/// @brief Find all mappings to indices in the new pose after seqpos, and decrement them by 1.
+	/// @details If there is no ReferencePose object, do nothing.
+	void decrement_reference_pose_mapping_after_seqpos( core::Size const seqpos );
 
-				/// @brief Find all mappings to indices in the new pose to seqpos, and set them to point to residue 0 (deletion signal).
-				/// @details If there is no ReferencePose object, do nothing.
-				void zero_reference_pose_mapping_at_seqpos( core::Size const seqpos );
+	/// @brief Find all mappings to indices in the new pose to seqpos, and set them to point to residue 0 (deletion signal).
+	/// @details If there is no ReferencePose object, do nothing.
+	void zero_reference_pose_mapping_at_seqpos( core::Size const seqpos );
 
-				/********************************************************************************
-							GETTERS
-				*********************************************************************************/
-				
-				/// @brief Get the residue in the current pose corresponding to a particular residue in the
-				/// reference pose.
-				/// @details Should return 0 if there is no corresponding residue in the current pose (e.g. if the
-				/// residue was deleted.)  Throws an error if there was no residue with the given index in the
-				/// reference pose.
-				core::Size corresponding_residue_in_current( core::Size const res_in_ref ) const {
-					runtime_assert_string_msg( residue_map_.count(res_in_ref)!=0, "Error in core::pose::reference_pose::ReferencePose::corresponding_residue_in_current(): The given residue index did not exist in the reference pose." );
-					return residue_map_.at(res_in_ref);
-				}
+	/********************************************************************************
+	GETTERS
+	*********************************************************************************/
 
-				private:
+	/// @brief Get the residue in the current pose corresponding to a particular residue in the
+	/// reference pose.
+	/// @details Should return 0 if there is no corresponding residue in the current pose (e.g. if the
+	/// residue was deleted.)  Throws an error if there was no residue with the given index in the
+	/// reference pose.
+	core::Size corresponding_residue_in_current( core::Size const res_in_ref ) const {
+		runtime_assert_string_msg( residue_map_.count(res_in_ref)!=0, "Error in core::pose::reference_pose::ReferencePose::corresponding_residue_in_current(): The given residue index did not exist in the reference pose." );
+		return residue_map_.at(res_in_ref);
+	}
 
-				/********************************************************************************
-							PRIVATE DATA
-				*********************************************************************************/
+private:
 
-				/// @brief Does this ReferencePose store a residue map of (old residue indices -> new residue indices)?
-				/// @details Default false.
-				bool stores_residue_map_;
+	/********************************************************************************
+	PRIVATE DATA
+	*********************************************************************************/
 
-				/// @brief Mapping of reference pose residue indices (key) onto new pose
-				/// residue indices (mapped values).
-				std::map <core::Size, core::Size> residue_map_;
+	/// @brief Does this ReferencePose store a residue map of (old residue indices -> new residue indices)?
+	/// @details Default false.
+	bool stores_residue_map_;
+
+	/// @brief Mapping of reference pose residue indices (key) onto new pose
+	/// residue indices (mapped values).
+	std::map <core::Size, core::Size> residue_map_;
 
 
-			}; //class ReferencePose
+}; //class ReferencePose
 
-		} // namespace reference_pose
-	} // namespace pose
+} // namespace reference_pose
+} // namespace pose
 } // namespace core
 
 #endif

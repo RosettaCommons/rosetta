@@ -29,49 +29,49 @@ namespace stepwise {
 namespace legacy {
 namespace screener {
 
-	class SimpleRMSD_Screener: public stepwise::screener::StepWiseScreener {
+class SimpleRMSD_Screener: public stepwise::screener::StepWiseScreener {
 
-	public:
+public:
 
-		//constructor
-		SimpleRMSD_Screener( pose::Pose const & pose,
-												 utility::vector1< Size > const calc_rms_res,
-												 core::pose::PoseCOP native_pose,
-												 core::Real const rmsd_cutoff,
-												 bool const force_align = false );
+	//constructor
+	SimpleRMSD_Screener( pose::Pose const & pose,
+		utility::vector1< Size > const calc_rms_res,
+		core::pose::PoseCOP native_pose,
+		core::Real const rmsd_cutoff,
+		bool const force_align = false );
 
-		//destructor
-		~SimpleRMSD_Screener();
+	//destructor
+	~SimpleRMSD_Screener();
 
-	public:
+public:
 
-		std::string
-		name() const { return "SimpleRMSD_Screener"; }
+	std::string
+	name() const { return "SimpleRMSD_Screener"; }
 
-		stepwise::screener::StepWiseScreenerType
-		type() const { return stepwise::screener::SIMPLE_RMSD; }
+	stepwise::screener::StepWiseScreenerType
+	type() const { return stepwise::screener::SIMPLE_RMSD; }
 
-		bool
-		check_screen();
+	bool
+	check_screen();
 
-	private:
+private:
 
-		void
-		initialize_corresponding_atom_id_map( core::pose::Pose const & pose );
+	void
+	initialize_corresponding_atom_id_map( core::pose::Pose const & pose );
 
-	private:
+private:
 
-		pose::Pose const & pose_;
+	pose::Pose const & pose_;
 
-		utility::vector1< Size > calc_rms_res_;
-		core::pose::PoseCOP native_pose_;
-		core::Real const rmsd_cutoff_;
-		bool const force_align_;
-		bool const cluster_by_all_atom_rmsd_;
+	utility::vector1< Size > calc_rms_res_;
+	core::pose::PoseCOP native_pose_;
+	core::Real const rmsd_cutoff_;
+	bool const force_align_;
+	bool const cluster_by_all_atom_rmsd_;
 
-		std::map< core::id::AtomID, core::id::AtomID > corresponding_atom_id_map_;
+	std::map< core::id::AtomID, core::id::AtomID > corresponding_atom_id_map_;
 
-	};
+};
 
 } //screener
 } //legacy

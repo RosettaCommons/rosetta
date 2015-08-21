@@ -100,7 +100,7 @@ void generate_shannon_points(
 );
 
 void bessel_roots(
- 	core::Size const & lmax,
+	core::Size const & lmax,
 	core::Real const & c,
 	core::Real const & res_cutoff_high,
 	core::Real const & res_cutoff_low,
@@ -178,9 +178,9 @@ void sample_layer_lines_from_bins(
 
 void rootj(
 	int const & N,
-		core::Real const & CUTOFF,
-		utility::vector1< core::Real >  & zeroj,
-		core::Size & npoints
+	core::Real const & CUTOFF,
+	utility::vector1< core::Real >  & zeroj,
+	core::Size & npoints
 );
 
 void secant(
@@ -190,7 +190,7 @@ void secant(
 	core::Real *ZEROJ,
 	int *IER
 );
- 
+
 }
 }
 }

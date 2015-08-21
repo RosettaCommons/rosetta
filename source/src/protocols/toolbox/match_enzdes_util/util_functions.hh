@@ -28,7 +28,7 @@
 
 namespace protocols {
 namespace toolbox {
-namespace match_enzdes_util{
+namespace match_enzdes_util {
 
 void
 replace_residue_keeping_all_atom_positions(

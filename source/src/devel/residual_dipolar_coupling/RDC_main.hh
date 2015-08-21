@@ -10,7 +10,7 @@
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
 /// @details
-///	  Contains currently: LoopModeler
+///   Contains currently: LoopModeler
 ///
 ///
 /// @author Vatsan Raman
@@ -49,19 +49,19 @@ public:
 		core::Size res1,
 		core::Size res2,
 		core::Real Jdipolar
-		//		core::Real Reduced_Jdipolar
+		//  core::Real Reduced_Jdipolar
 	) :
 		type_( type ),
 		res1_( res1 ),
 		res2_( res2 ),
 		Jdipolar_( Jdipolar )
-		//		Reduced_Jdipolar_( Reduced_Jdipolar )
+		//  Reduced_Jdipolar_( Reduced_Jdipolar )
 	{}
 
- 	inline core::Size type() const
- 	{
- 		return type_;
- 	}
+	inline core::Size type() const
+	{
+		return type_;
+	}
 
 	inline core::Size res1() const
 	{
@@ -78,21 +78,22 @@ public:
 		return Jdipolar_;
 	}
 
-	/*	inline core::Real Reduced_Jdipolar() const
+	/* inline core::Real Reduced_Jdipolar() const
 	{
-		return Reduced_Jdipolar_;
+	return Reduced_Jdipolar_;
 	}
 	*/
 
 	inline core::Real fixed_dist() const
 	{
 		core::Real fixed_dist(0.0);
-		if ( type_ ==  1 )
+		if ( type_ ==  1 ) {
 			fixed_dist = 1.01;
-		else if ( type_ == 2 )
+		} else if ( type_ == 2 ) {
 			fixed_dist = 1.08;
-		else if ( type_ == 3 )
+		} else if ( type_ == 3 ) {
 			fixed_dist = 1.52325877;
+		}
 		//************* ADD MORE TYPES LATER !! ***************
 		return fixed_dist;
 
@@ -103,12 +104,13 @@ public:
 		using namespace numeric;
 
 		core::Real invDcnst(0.0);
-		if ( type_ == 1 )
+		if ( type_ == 1 ) {
 			invDcnst = 0.0000821215;
-		else if ( type_ == 2 )
+		} else if ( type_ == 2 ) {
 			invDcnst = -0.0000331025;
-		else if ( type_ == 3 )
+		} else if ( type_ == 3 ) {
 			invDcnst = 0.000326533;
+		}
 		return Jdipolar_*invDcnst*cube( fixed_dist() );
 
 	}
@@ -118,12 +120,13 @@ public:
 	{
 
 		core::Real invDcnst(0.0);
-		if ( type_ == 1 )
+		if ( type_ == 1 ) {
 			invDcnst = 0.0000821215;
-		else if ( type_ == 2 )
+		} else if ( type_ == 2 ) {
 			invDcnst = -0.0000331025;
-		else if ( type_ == 3 )
+		} else if ( type_ == 3 ) {
 			invDcnst = 0.000326533;
+		}
 		return invDcnst;
 	}
 
@@ -189,7 +192,7 @@ public:
 	{}
 
 
-inline void add_data_line(
+	inline void add_data_line(
 		core::Size type,
 		core::Size res1,
 		core::Size res2,

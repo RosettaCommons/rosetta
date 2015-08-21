@@ -47,11 +47,11 @@ class MMLJScore : public utility::pointer::ReferenceCount
 
 public:
 
-  /// @brief Default ctor
-  MMLJScore();
+	/// @brief Default ctor
+	MMLJScore();
 
-  /// @brief Alternate ctor that inintalizes class with given MMLJLibrary
-  MMLJScore( MMLJLibrary const & mmljl );
+	/// @brief Alternate ctor that inintalizes class with given MMLJLibrary
+	MMLJScore( MMLJLibrary const & mmljl );
 
 	virtual ~MMLJScore();
 
@@ -60,22 +60,22 @@ public:
 	mm_lj_library() const
 	{ return mm_lj_library_; }
 
-  /// @brief blah
-  Energy
+	/// @brief blah
+	Energy
 	score( Size atom1, Size atom2, Size path_distance, Real distance ) const;
 
-  /// @brief blah
+	/// @brief blah
 	Energy
 	deriv_score( Size atom1, Size atom2, Size path_distance, Real distance ) const;
 
-  /// @brief blah
+	/// @brief blah
 	Real
 	min_dist( Size atom1, Size atom2, Size path_distance ) const;
 
 private:
 
-  /// @brief Local MMLJLibrary for looking up lj parameters
-  MMLJLibrary const & mm_lj_library_;
+	/// @brief Local MMLJLibrary for looking up lj parameters
+	MMLJLibrary const & mm_lj_library_;
 };
 
 } // namespace mm

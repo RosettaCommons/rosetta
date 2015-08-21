@@ -26,38 +26,38 @@ namespace core {
 namespace conformation {
 namespace symmetry {
 
-	enum SlideType {
-		SEQUENTIAL = 1,
-		ORDERED_SEQUENTIAL,
-		RANDOM
-	};
+enum SlideType {
+	SEQUENTIAL = 1,
+	ORDERED_SEQUENTIAL,
+	RANDOM
+};
 
-	enum SlideCriteriaType {
-		CEN_DOCK_SCORE = 1,
-		FA_REP_SCORE,
-		CONTACTS,
-		TOTAL_NUM_CRITERIA
-	};
+enum SlideCriteriaType {
+	CEN_DOCK_SCORE = 1,
+	FA_REP_SCORE,
+	CONTACTS,
+	TOTAL_NUM_CRITERIA
+};
 
 class SymSlideInfo {
 
-	public:
+public:
 
 	/// @brief constructor
 	SymSlideInfo();
 
 	/* SymSlideInfo(
-		SlideType slide_type,
-		SlideCriteriaType score_criteria,
-		std::string SlideCriteriaVal = "AUTOMATIC",
-		std::vector<core::Size> slide_order = std::vector<core::Size>()
+	SlideType slide_type,
+	SlideCriteriaType score_criteria,
+	std::string SlideCriteriaVal = "AUTOMATIC",
+	std::vector<core::Size> slide_order = std::vector<core::Size>()
 	); */
 
 	/// @brief copy constructor
 	SymSlideInfo( SymSlideInfo const & src );
 
 	SymSlideInfo &
-  operator=( SymSlideInfo const & src );
+	operator=( SymSlideInfo const & src );
 
 	~SymSlideInfo();
 
@@ -82,12 +82,12 @@ class SymSlideInfo {
 	operator!=(SymSlideInfo const & a, SymSlideInfo const & b);
 
 
-	private:
+private:
 
-		SlideType slide_type_;
-		SlideCriteriaType score_criteria_;
-		std::string SlideCriteriaVal_;
-		std::vector<core::Size> slide_order_;
+	SlideType slide_type_;
+	SlideCriteriaType score_criteria_;
+	std::string SlideCriteriaVal_;
+	std::vector<core::Size> slide_order_;
 
 };
 

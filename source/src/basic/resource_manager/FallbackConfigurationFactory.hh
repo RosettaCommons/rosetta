@@ -65,7 +65,7 @@ private:
 public:
 
 	FallbackConfigurationOP
-	create_fallback_configuration( std::string const & resource_description	) const;
+	create_fallback_configuration( std::string const & resource_description ) const;
 
 	void
 	factory_register( FallbackConfigurationCreatorOP creator );

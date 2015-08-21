@@ -55,10 +55,10 @@ namespace abinitio {
 
 class AlternativePairings {
 public:
-	//	AlternativePairings();
+	// AlternativePairings();
 	bool compatible( core::scoring::dssp::StrandPairing const& pairing ) const;
 	bool antiparallel() const { return anti_; };
-	//	bool add_pairing( core::scoring::dssp::StrandPairing const&, std::string model = "NO_MODEL" );
+	// bool add_pairing( core::scoring::dssp::StrandPairing const&, std::string model = "NO_MODEL" );
 	bool add_pairing( PairingStatEntry const& );
 	void show( std::ostream& ) const;
 
@@ -82,7 +82,7 @@ public:
 	void add_pairing( core::scoring::dssp::StrandPairing const&, std::string model = "NO_MODEL" );
 	void add_pairing( PairingStatEntry const& );
 
- //const pose: no constraints are added
+	//const pose: no constraints are added
 	core::scoring::constraints::ConstraintCOPs build_constraints( core::pose::Pose const& pose ) const;
 
 	void show( std::ostream& ) const;

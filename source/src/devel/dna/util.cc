@@ -168,19 +168,19 @@ detect_allatom_interface_residues(
 ///////////////////////////////////////////////////////////////////////////////
 void
 calc_protein_DNA_rmsd(
-											pose::Pose const & pose,
-											pose::Pose const & reference_pose,
-											Real & ca_rmsd,
-											Real & interface_ca_rmsd,
-											Real & interface_allatom_rmsd
-											)
+	pose::Pose const & pose,
+	pose::Pose const & reference_pose,
+	Real & ca_rmsd,
+	Real & interface_ca_rmsd,
+	Real & interface_allatom_rmsd
+)
 {
 	Size const nres( pose.total_residue() );
 
 	utility::vector1< int > pos_list;
 	utility::vector1< bool > interface;
 	for ( Size i=1; i<= nres; ++i ) {
-		if ( pose.residue(i).is_DNA()) pos_list.push_back(i);
+		if ( pose.residue(i).is_DNA() ) pos_list.push_back(i);
 	}
 
 	detect_allatom_interface_residues( reference_pose, pos_list, 4.5, interface );
@@ -215,9 +215,9 @@ calc_protein_DNA_rmsd(
 
 void
 calc_DNA_bb_rmsd(
-	 pose::Pose const & pose,
-	 pose::Pose const & reference_pose,
-	 Real & dna_bb_rmsd
+	pose::Pose const & pose,
+	pose::Pose const & reference_pose,
+	Real & dna_bb_rmsd
 )
 {
 	Size const nres( pose.total_residue() );
@@ -259,7 +259,7 @@ analyze_interface_sasa(
 	pose::partition_pose_by_jump( complex_pose, split_jump, partner1, partner2 );
 
 	analyze_interface_sasa( complex_pose, partner1, partner2, bsasa14, bsasa5,
-													buried_unsatisfied_donors, buried_unsatisfied_acceptors );
+		buried_unsatisfied_donors, buried_unsatisfied_acceptors );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -340,11 +340,11 @@ analyze_interface_sasa(
 
 		// donors
 		for ( chemical::AtomIndices::const_iterator
-						hnum  = rsd.Hpos_polar().begin(),
-						hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
+				hnum  = rsd.Hpos_polar().begin(),
+				hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 			id::AtomID const hatm( *hnum, i );
 			if ( total_hbond_energy[ hatm ] >= hbond_energy_threshold &&
-					 atom_sasa_complex[ hatm ] <= burial_threshold ) {
+					atom_sasa_complex[ hatm ] <= burial_threshold ) {
 				TR << "UNSAT_DONOR " << I(4,i) << ' ' << rsd.name3() << ' ' << rsd.atom_name(*hnum) << std::endl;
 				buried_unsatisfied_donors.push_back( hatm );
 				//++buried_unsatisfied_donors;
@@ -353,11 +353,11 @@ analyze_interface_sasa(
 
 		// acceptors
 		for ( chemical::AtomIndices::const_iterator
-						anum  = rsd.accpt_pos().begin(),
-						anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
+				anum  = rsd.accpt_pos().begin(),
+				anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
 			id::AtomID const aatm( *anum, i );
 			if ( total_hbond_energy[ aatm ] >= hbond_energy_threshold &&
-					 atom_sasa_complex[ aatm ] <= burial_threshold ) {
+					atom_sasa_complex[ aatm ] <= burial_threshold ) {
 				TR << "UNSAT_ACCEPTOR " << I(4,i) << ' ' << rsd.name3() << ' ' << rsd.atom_name(*anum) << std::endl;
 				buried_unsatisfied_acceptors.push_back( aatm );
 				//++buried_unsatisfied_acceptors;
@@ -370,10 +370,10 @@ analyze_interface_sasa(
 //////////////////////////////////////////////////////////////////////////////////////////////
 void
 make_base_pair_mutation(
-												pose::Pose & pose,
-												Size const seqpos,
-												chemical::AA const & na
-												)
+	pose::Pose & pose,
+	Size const seqpos,
+	chemical::AA const & na
+)
 {
 	using namespace chemical;
 	using namespace conformation;
@@ -425,31 +425,31 @@ randomize_motif_sequence(
 
 void
 check_residue_proximity_to_dna(
-															 core::Size const ppos,
-															 Positions const & dna_design_positions,
-															 core::pose::Pose const & pose,
-															 bool & close,  // output
-															 bool & contact // output
-															 )
+	core::Size const ppos,
+	Positions const & dna_design_positions,
+	core::pose::Pose const & pose,
+	bool & close,  // output
+	bool & contact // output
+)
 {
 	Real const close_threshold2( 10 * 10 ), contact_threshold2( 3.4 * 3.4 ), z_cutoff( 3.0 ); // z_cutoff should be higher?
 
 	check_residue_proximity_to_dna( ppos, dna_design_positions, pose, close_threshold2, contact_threshold2, z_cutoff,
-																	close, contact );
+		close, contact );
 }
 
 
 void
 check_residue_proximity_to_dna(
-															 core::Size const ppos,
-															 Positions const & dna_design_positions,
-															 core::pose::Pose const & pose,
-															 core::Real const close_threshold2,    // A**2
-															 core::Real const contact_threshold2,  // A**2
-															 core::Real const z_cutoff,             // A
-															 bool & close,  // output
-															 bool & contact // output
-															 )
+	core::Size const ppos,
+	Positions const & dna_design_positions,
+	core::pose::Pose const & pose,
+	core::Real const close_threshold2,    // A**2
+	core::Real const contact_threshold2,  // A**2
+	core::Real const z_cutoff,             // A
+	bool & close,  // output
+	bool & contact // output
+)
 {
 	close = false;
 	contact = false;

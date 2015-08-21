@@ -18,24 +18,24 @@
 namespace protocols {
 namespace moves {
 
-	///////////////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////////
-	std::string
-	to_string( MCA const & mc_accepted ){
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+std::string
+to_string( MCA const & mc_accepted ){
 
-		static bool init( false );
-		static std::map< MCA, std::string> mc_accepted_name;
+	static bool init( false );
+	static std::map< MCA, std::string> mc_accepted_name;
 
-		if ( !init ){
-			mc_accepted_name[ MCA_accepted_score_beat_low ] = "accepted score beat low";
-			mc_accepted_name[ MCA_accepted_score_beat_last ] = "accepted score beat last";
-			mc_accepted_name[ MCA_accepted_thermally ] = "accepted thermally";
-			mc_accepted_name[ MCA_rejected ] = "rejected";
-			init = true;
-		}
-
-		return mc_accepted_name[ mc_accepted ];
+	if ( !init ) {
+		mc_accepted_name[ MCA_accepted_score_beat_low ] = "accepted score beat low";
+		mc_accepted_name[ MCA_accepted_score_beat_last ] = "accepted score beat last";
+		mc_accepted_name[ MCA_accepted_thermally ] = "accepted thermally";
+		mc_accepted_name[ MCA_rejected ] = "rejected";
+		init = true;
 	}
+
+	return mc_accepted_name[ mc_accepted ];
+}
 
 
 } // namespace moves

@@ -42,20 +42,20 @@ namespace topology_broker {
 /// claimers can be registered after the fact using the add_type() method.
 class TopologyClaimerFactory : boost::noncopyable {
 public:
-  /// @brief Returns an instance to the singleton
-  static TopologyClaimerFactory const& get_instance();
+	/// @brief Returns an instance to the singleton
+	static TopologyClaimerFactory const& get_instance();
 
-  /// @brief Returns a new instance of the TopologyClaimer identified by <name>
-  TopologyClaimerOP newTopologyClaimer(const std::string& name) const;
+	/// @brief Returns a new instance of the TopologyClaimer identified by <name>
+	TopologyClaimerOP newTopologyClaimer(const std::string& name) const;
 
-  /// @brief Registers the TopologyClaimer with name <name>. Instances of this
-  /// class can be retrieved by calling newTopologyClaimer(<name>).
-  void add_type(const std::string& name, TopologyClaimerOP claimer);
+	/// @brief Registers the TopologyClaimer with name <name>. Instances of this
+	/// class can be retrieved by calling newTopologyClaimer(<name>).
+	void add_type(const std::string& name, TopologyClaimerOP claimer);
 
-  /// @brief Registers the TopologyClaimer using the name returned by
-  /// claimer->type(). Instances of this class can be retrieved by calling
-  /// newTopologyClaimer(<name>).
-  void add_type(TopologyClaimerOP claimer);
+	/// @brief Registers the TopologyClaimer using the name returned by
+	/// claimer->type(). Instances of this class can be retrieved by calling
+	/// newTopologyClaimer(<name>).
+	void add_type(TopologyClaimerOP claimer);
 
 #ifdef MULTI_THREADED
 #ifdef CXX11
@@ -72,12 +72,12 @@ private:
 #endif
 
 private:
-  /// @brief Constructs a new instance and initializes the lookup table
-  /// <claimers_> with commonly used types
-  TopologyClaimerFactory();
+	/// @brief Constructs a new instance and initializes the lookup table
+	/// <claimers_> with commonly used types
+	TopologyClaimerFactory();
 
-  /// @brief Frees resources associated with this object
-  ~TopologyClaimerFactory();
+	/// @brief Frees resources associated with this object
+	~TopologyClaimerFactory();
 
 	/// @brief private singleton creation function to be used with
 	/// utility::thread::threadsafe_singleton
@@ -85,12 +85,12 @@ private:
 
 private:
 
-  /// @brief A map that associates claimer names with claimer types. Used by the
-  /// newTopologyClaimer() method to instantiate new claimers by name.
-  mutable std::map<std::string, TopologyClaimerOP> claimers_;
+	/// @brief A map that associates claimer names with claimer types. Used by the
+	/// newTopologyClaimer() method to instantiate new claimers by name.
+	mutable std::map<std::string, TopologyClaimerOP> claimers_;
 
-  /// @brief A pointer to the singleton instance of the factory object.
-  /// Resources associated with the object are released on destruction.
+	/// @brief A pointer to the singleton instance of the factory object.
+	/// Resources associated with the object are released on destruction.
 	/// APL Question: Should this be one-instance-per-program (singleton) or one-instance-per-job?
 #if defined MULTI_THREADED && defined CXX11
 	static std::atomic< TopologyClaimerFactory * > instance_;

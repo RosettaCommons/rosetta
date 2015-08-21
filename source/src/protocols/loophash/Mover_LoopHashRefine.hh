@@ -29,7 +29,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-		
+
 namespace protocols {
 namespace loophash {
 
@@ -40,17 +40,17 @@ typedef utility::pointer::shared_ptr< Mover_LoopHashRefine const > Mover_LoopHas
 class Mover_LoopHashRefine: public protocols::moves::Mover {
 public:
 
-  Mover_LoopHashRefine(
-    protocols::loophash::LoopHashLibraryOP library
-  ):
-   library_(library),
-	 checkpoints_("LoopHash")
-  {
-  }
+	Mover_LoopHashRefine(
+		protocols::loophash::LoopHashLibraryOP library
+	):
+		library_(library),
+		checkpoints_("LoopHash")
+	{
+	}
 
 	virtual void apply( core::pose::Pose& pose );
 
-  virtual protocols::moves::MoverOP clone() const {
+	virtual protocols::moves::MoverOP clone() const {
 		return protocols::moves::MoverOP( new Mover_LoopHashRefine( *this ) );
 	}
 
@@ -59,12 +59,12 @@ public:
 		return "Mover_LoopHashRefine";
 	}
 
-	virtual	protocols::moves::MoverOP	fresh_instance() const {
+	virtual protocols::moves::MoverOP fresh_instance() const {
 		return protocols::moves::MoverOP( new Mover_LoopHashRefine( library_ ) );
 	}
 
 private:
-  protocols::loophash::LoopHashLibraryOP library_;
+	protocols::loophash::LoopHashLibraryOP library_;
 	protocols::checkpoint::CheckPointer checkpoints_;
 
 };

@@ -10,7 +10,7 @@
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -137,7 +137,7 @@ public:
 	virtual core::Real apply ( core::pose::Pose& ) const;
 
 private:
-  core::pose::PoseCOP rmsd_pose_;
+	core::pose::PoseCOP rmsd_pose_;
 
 };
 
@@ -148,7 +148,7 @@ public:
 	virtual core::Real apply ( core::pose::Pose& ) const;
 
 private:
-  core::pose::PoseCOP rmsd_pose_;
+	core::pose::PoseCOP rmsd_pose_;
 	protocols::loops::Loops loops_;
 	protocols::loops::Loops core_;
 	bool CAonly_;

@@ -25,18 +25,18 @@ class CacheableObserverType
 {
 public:
 
-/// @brief enum indexing the data types stored in a Pose's internal DataCache
-enum Enum {
-	// Remember to set the first enum in the list to 1!
-	LENGTH_EVENT_COLLECTOR = 1,
-	SPECIAL_SEGMENTS_OBSERVER,
-	ENZDES_OBSERVER,
-	// *** IMPORTANT ***
-	// The 'num_cacheable_data_types' below must be the last enum, and must
-	// always be set equal to the (last-1) enum.  If you append a new enum
-	// to the list, remember to change the value below!
-	num_cacheable_data_types = ENZDES_OBSERVER
-};
+	/// @brief enum indexing the data types stored in a Pose's internal DataCache
+	enum Enum {
+		// Remember to set the first enum in the list to 1!
+		LENGTH_EVENT_COLLECTOR = 1,
+		SPECIAL_SEGMENTS_OBSERVER,
+		ENZDES_OBSERVER,
+		// *** IMPORTANT ***
+		// The 'num_cacheable_data_types' below must be the last enum, and must
+		// always be set equal to the (last-1) enum.  If you append a new enum
+		// to the list, remember to change the value below!
+		num_cacheable_data_types = ENZDES_OBSERVER
+	};
 
 }; // class CacheableObserverType
 

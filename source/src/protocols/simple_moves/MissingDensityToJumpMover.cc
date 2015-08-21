@@ -50,7 +50,7 @@ MissingDensityToJumpMover::MissingDensityToJumpMover(): protocols::moves::Mover(
 
 // Copy constructor
 MissingDensityToJumpMover::MissingDensityToJumpMover(MissingDensityToJumpMover const & object_to_copy) :
-		Mover(object_to_copy)
+	Mover(object_to_copy)
 {}
 
 MissingDensityToJumpMover::~MissingDensityToJumpMover() {}
@@ -66,19 +66,19 @@ MissingDensityToJumpMover::apply( core::pose::Pose & pose ) {
 			Residue const &current_rsd(pose.residue(i));
 			Residue const &next_rsd(pose.residue(i+1));
 			core::Real bondlength = ( current_rsd.atom( current_rsd.upper_connect_atom() ).xyz() - next_rsd.atom( next_rsd.lower_connect_atom() ).xyz() ).length();
-			if( bondlength > 2.5 ){
+			if ( bondlength > 2.5 ) {
 				TR << "[ WARNING ] missing density found at residue " << i << std::endl;
 				core::kinematics::FoldTree update_tree(pose.fold_tree());
 				update_tree.new_jump(i,i+1,i);
 				pose.fold_tree(update_tree);
 				core::pose::add_variant_type_to_pose_residue( pose, chemical::UPPER_TERMINUS_VARIANT, i);
 				core::pose::add_variant_type_to_pose_residue( pose, chemical::LOWER_TERMINUS_VARIANT, i+1 );
-      }
-    }
-  }
+			}
+		}
+	}
 }
 
-std::string	MissingDensityToJumpMover::get_name() const {
+std::string MissingDensityToJumpMover::get_name() const {
 	return "MissingDensityToJumpMover";
 }
 

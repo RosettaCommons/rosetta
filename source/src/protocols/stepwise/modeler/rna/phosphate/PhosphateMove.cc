@@ -26,40 +26,40 @@ namespace modeler {
 namespace rna {
 namespace phosphate {
 
-	//Destructor
-	PhosphateMove::~PhosphateMove()
-	{}
+//Destructor
+PhosphateMove::~PhosphateMove()
+{}
 
-	///////////////////////////////////////////////
-	std::string
-	to_string( PhosphateTerminus const & phosphate_terminus ){
+///////////////////////////////////////////////
+std::string
+to_string( PhosphateTerminus const & phosphate_terminus ){
 
-		static bool init( false );
-		static std::map< PhosphateTerminus, std::string> phosphate_terminus_name;
+	static bool init( false );
+	static std::map< PhosphateTerminus, std::string> phosphate_terminus_name;
 
-		if ( !init ){
-			phosphate_terminus_name[ NONE ] = "NONE";
-			phosphate_terminus_name[ FIVE_PRIME_PHOSPHATE ]  = "FIVE_PRIME_PHOSPHATE";
-			phosphate_terminus_name[ THREE_PRIME_PHOSPHATE ] = "THREE_PRIME_PHOSPHATE";
-			init = true;
-		}
-
-		return phosphate_terminus_name[ phosphate_terminus ];
+	if ( !init ) {
+		phosphate_terminus_name[ NONE ] = "NONE";
+		phosphate_terminus_name[ FIVE_PRIME_PHOSPHATE ]  = "FIVE_PRIME_PHOSPHATE";
+		phosphate_terminus_name[ THREE_PRIME_PHOSPHATE ] = "THREE_PRIME_PHOSPHATE";
+		init = true;
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////
-	bool
-	PhosphateMove::operator== ( PhosphateMove const & other) const{
-		return ( rsd_ == other.rsd() && terminus_ == other.terminus() );
-	}
+	return phosphate_terminus_name[ phosphate_terminus ];
+}
 
-	/////////////////////////////////////////////////////////////////////////////////////////
-	std::ostream &
-	operator <<( std::ostream & os, PhosphateMove const & phosphate_move )
-	{
-		os << " res " << phosphate_move.rsd() << " at terminus: " << to_string( phosphate_move.terminus() );
-		return os;
-	}
+/////////////////////////////////////////////////////////////////////////////////////////
+bool
+PhosphateMove::operator== ( PhosphateMove const & other) const{
+	return ( rsd_ == other.rsd() && terminus_ == other.terminus() );
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+std::ostream &
+operator <<( std::ostream & os, PhosphateMove const & phosphate_move )
+{
+	os << " res " << phosphate_move.rsd() << " at terminus: " << to_string( phosphate_move.terminus() );
+	return os;
+}
 
 } //phosphate
 } //rna

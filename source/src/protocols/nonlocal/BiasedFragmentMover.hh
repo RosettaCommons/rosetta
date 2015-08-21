@@ -44,63 +44,63 @@ namespace nonlocal {
 /// User-specified, per-residue sampling probabilities allow fine grained
 /// control over the simulation.
 class BiasedFragmentMover : public protocols::moves::Mover {
-  typedef boost::unordered_map<unsigned, core::fragment::Frame> FrameMap;
-  typedef core::fragment::FragSetCOP FragSetCOP;
-  typedef utility::vector1<double> Probabilities;
+	typedef boost::unordered_map<unsigned, core::fragment::Frame> FrameMap;
+	typedef core::fragment::FragSetCOP FragSetCOP;
+	typedef utility::vector1<double> Probabilities;
 
- public:
-  /// @brief Creates a new BiasedFragmentMover that selects uniformly from the
-  /// available fragments at the selected insertion position.
-  BiasedFragmentMover(const PolicyOP& policy, const Probabilities& probs);
+public:
+	/// @brief Creates a new BiasedFragmentMover that selects uniformly from the
+	/// available fragments at the selected insertion position.
+	BiasedFragmentMover(const PolicyOP& policy, const Probabilities& probs);
 
-  ~BiasedFragmentMover() {}
+	~BiasedFragmentMover() {}
 
-  /// @brief Inserts a single fragment into pose.
-  ///
-  /// Insertion position is chosen in a biased manner using the per-residue
-  /// probabilities provided in the constructor. The decision on which fragment
-  /// to insert from the fragment library is delegated to the policy specified
-  /// in the constructor.
-  ///
-  /// Respects the underlying kinematics of the system.
-  void apply(core::pose::Pose& pose);
+	/// @brief Inserts a single fragment into pose.
+	///
+	/// Insertion position is chosen in a biased manner using the per-residue
+	/// probabilities provided in the constructor. The decision on which fragment
+	/// to insert from the fragment library is delegated to the policy specified
+	/// in the constructor.
+	///
+	/// Respects the underlying kinematics of the system.
+	void apply(core::pose::Pose& pose);
 
-  /// @brief Returns the name of this mover
-  std::string get_name() const;
+	/// @brief Returns the name of this mover
+	std::string get_name() const;
 
- private:
-  /// @brief Creates a position-indexable list of Frames
-  void initialize_library();
+private:
+	/// @brief Creates a position-indexable list of Frames
+	void initialize_library();
 
-  /// @brief Generates cdf from pdf
-  void initialize_probabilities();
+	/// @brief Generates cdf from pdf
+	void initialize_probabilities();
 
-  /// @brief Verifies that the probability of selecting invalid positions is 0
-  void verify_probabilities_or_die(const core::kinematics::FoldTree& tree) const;
+	/// @brief Verifies that the probability of selecting invalid positions is 0
+	void verify_probabilities_or_die(const core::kinematics::FoldTree& tree) const;
 
-  /// @brief Returns a randomly chosen position according to the input probabilities
-  unsigned random_position() const;
+	/// @brief Returns a randomly chosen position according to the input probabilities
+	unsigned random_position() const;
 
 
-  // -- Members --
+	// -- Members --
 
-  /// @brief Avoid creating a useless MoveMap for each call to Frame::apply().
-  core::kinematics::MoveMap movable_;
+	/// @brief Avoid creating a useless MoveMap for each call to Frame::apply().
+	core::kinematics::MoveMap movable_;
 
-  /// @brief Fragment library
-  FragSetCOP fragments_;
+	/// @brief Fragment library
+	FragSetCOP fragments_;
 
-  /// @brief Position-indexable Frame lookup
-  FrameMap frames_;
+	/// @brief Position-indexable Frame lookup
+	FrameMap frames_;
 
-  /// @brief Guidance for selecting the fragment to be inserted at a given position
-  PolicyOP policy_;
+	/// @brief Guidance for selecting the fragment to be inserted at a given position
+	PolicyOP policy_;
 
-  /// @brief PDF of residue sampling probabilities. Must remain in sync with cdf_.
-  Probabilities pdf_;
+	/// @brief PDF of residue sampling probabilities. Must remain in sync with cdf_.
+	Probabilities pdf_;
 
-  /// @brief CDF of residue sampling probabilities. Must remain in sync with pdf_.
-  Probabilities cdf_;
+	/// @brief CDF of residue sampling probabilities. Must remain in sync with pdf_.
+	Probabilities cdf_;
 };
 
 }  // namespace nonlocal

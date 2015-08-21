@@ -40,7 +40,7 @@
 namespace numeric {
 namespace interpolation {
 namespace spline {
-    
+
 Real sqr( Real x);
 
 class TricubicSpline
@@ -57,7 +57,7 @@ public:
 	/// copy constructor
 	TricubicSpline* Clone() const
 	{
-	  return new TricubicSpline( *this);
+		return new TricubicSpline( *this);
 	}
 
 	/////////////////
@@ -68,37 +68,37 @@ public:
 	/// get the second order derivatives of the spline
 	MathTensor< Real> const & get_dsecox() const
 	{
-	  return dsecox_;
+		return dsecox_;
 	}
 
 	MathTensor< Real> const & get_dsecoy() const
 	{
-	  return dsecoy_;
+		return dsecoy_;
 	}
 
 	MathTensor< Real> const & get_dsecoz() const
 	{
-	  return dsecoz_;
+		return dsecoz_;
 	}
 
 	MathTensor< Real> const & get_dsecoxy() const
 	{
-	  return dsecoxy_;
+		return dsecoxy_;
 	}
 
 	MathTensor< Real> const & get_dsecoxz() const
 	{
-	  return dsecoxz_;
+		return dsecoxz_;
 	}
 
 	MathTensor< Real> const & get_dsecoyz() const
 	{
-	  return dsecoyz_;
+		return dsecoyz_;
 	}
 
 	MathTensor< Real> const & get_dsecoxyz() const
 	{
-	  return dsecoxyz_;
+		return dsecoxyz_;
 	}
 
 	////////////////

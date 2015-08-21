@@ -45,7 +45,7 @@ RT::fold_in_rb_deltas(
 {
 	using namespace numeric;
 
-debug_assert( Size(rb.size()) == 6 );
+	debug_assert( Size(rb.size()) == 6 );
 	// simple: rotation gets multiplied by Rzyx,
 	// translation (t) goes to center + Rzyx(t-center) + rb_trans
 
@@ -57,8 +57,8 @@ debug_assert( Size(rb.size()) == 6 );
 	// create a transformation matrix from the 3 rb angles
 	Matrix const Rzyx(
 		z_rotation_matrix_degrees( rb[6] ) * (
-			y_rotation_matrix_degrees( rb[5] ) *
-			x_rotation_matrix_degrees( rb[4] ) )
+		y_rotation_matrix_degrees( rb[5] ) *
+		x_rotation_matrix_degrees( rb[4] ) )
 	);
 
 	rotation.left_multiply_by( Rzyx );
@@ -72,27 +72,27 @@ debug_assert( Size(rb.size()) == 6 );
 ///////////////////////////////////////////////////////////////////////////////
 bool
 RT::ortho_check()
-	const
+const
 {
 	Real const tolerance( 1e-3 );
 	Matrix delta( rotation * rotation.transposed() - Matrix::identity() );
 	return ( ( delta.col_x().length() +
-						 delta.col_y().length() +
-						 delta.col_z().length() ) < tolerance );
+		delta.col_y().length() +
+		delta.col_z().length() ) < tolerance );
 }
-// 	// debug orthogonality
-// 	Real dev(0.0);
-// 	for ( int i=1; i<=3; ++i ) {
-// 		for ( int j=1; j<=3; ++j ) {
-// 			Real f =
-// 				rotation(1,i) * rotation(1,j) +
-// 				rotation(2,i) * rotation(2,j) +
-// 				rotation(3,i) * rotation(3,j);
-// 			if ( i==j ) dev += std::abs(1.0-f);
-// 			else dev += std::abs(f);
-// 		}
-// 	}
-// 	return ( dev < 0.01 );
+//  // debug orthogonality
+//  Real dev(0.0);
+//  for ( int i=1; i<=3; ++i ) {
+//   for ( int j=1; j<=3; ++j ) {
+//    Real f =
+//     rotation(1,i) * rotation(1,j) +
+//     rotation(2,i) * rotation(2,j) +
+//     rotation(3,i) * rotation(3,j);
+//    if ( i==j ) dev += std::abs(1.0-f);
+//    else dev += std::abs(f);
+//   }
+//  }
+//  return ( dev < 0.01 );
 // }
 
 
@@ -108,7 +108,7 @@ operator <<(
 	const RT & rt
 )
 {
-debug_assert( rt.ortho_check() );
+	debug_assert( rt.ortho_check() );
 	os << "RT "; // olange: removed whitespace before RT --> gives problem in silent files.
 	for ( int i = 1; i <= 3; ++i ) {
 		for ( int j = 1; j <= 3; ++j ) {

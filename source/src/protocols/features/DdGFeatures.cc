@@ -51,8 +51,8 @@
 #include <utility/excn/Exceptions.hh>
 #include <sstream>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::endl;
 using std::string;
@@ -157,7 +157,7 @@ DdGFeatures::parse_my_tag(
 	Movers_map const & /* movers */,
 	Pose const & /* pose */
 ) {
-	if( tag->hasOption("ddG_scan_mover") ){
+	if ( tag->hasOption("ddG_scan_mover") ) {
 		filters::FilterOP filter = protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "ddG_scan_mover" ), filters );
 		ddG_scan_mover_ = utility::pointer::dynamic_pointer_cast < protocols::simple_filters::DdGScan > (filter);
 	} else {
@@ -196,13 +196,13 @@ DdGFeatures::insert_ddG_rows(
 	string const stmt_string("INSERT INTO ddg ( struct_id, resNum, mutated_to_name3, ddG_value ) VALUES (?,?,?,?);");
 
 	statement stmt(
-	basic::database::safely_prepare_statement(stmt_string, db_session)
-		);
+		basic::database::safely_prepare_statement(stmt_string, db_session)
+	);
 
 	core::Size resNum; std::string resname; core::Real ddG_value;
-	for( utility::vector1<ddG_data_tuple>::const_iterator iter = ddG_data.begin(), iter_end = ddG_data.end() ; iter != iter_end ; ++iter ) {
+	for ( utility::vector1<ddG_data_tuple>::const_iterator iter = ddG_data.begin(), iter_end = ddG_data.end() ; iter != iter_end ; ++iter ) {
 		boost::tie(resNum, resname, ddG_value) = *iter;
-		if(!check_relevant_residues( relevant_residues, resNum )) continue;
+		if ( !check_relevant_residues( relevant_residues, resNum ) ) continue;
 
 		stmt.bind(1, struct_id);
 		stmt.bind(2, resNum);

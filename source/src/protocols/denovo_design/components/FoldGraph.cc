@@ -243,13 +243,13 @@ FoldGraph::fold_tree( StructureData const & perm, utility::vector1< std::string 
 /// @param[parent_direction] -1 if the previous edge is a peptide edge going backward, 1 if the previous edge is going forward, and 0 if the previous edge is a jump
 void
 FoldGraph::fold_tree_rec(
-		core::kinematics::FoldTree & ft,
-		NodeSet & visited,
-		std::stack< core::Size > & node_stack,
-		StructureData const & perm,
-		std::string const & segment_name,
-		int const parent_direction,
-		bool const polymer_only ) const
+	core::kinematics::FoldTree & ft,
+	NodeSet & visited,
+	std::stack< core::Size > & node_stack,
+	StructureData const & perm,
+	std::string const & segment_name,
+	int const parent_direction,
+	bool const polymer_only ) const
 {
 	core::Size const nodenum = nodeidx( segment_name );
 	if ( visited.find(nodenum) != visited.end() ) {
@@ -329,8 +329,8 @@ FoldGraph::fold_tree_rec(
 /// @brief checks a solution to ensure that covalently bound segments are not found both inside and outside of loops
 bool
 FoldGraph::check_solution(
-		StructureData const & perm,
-		Solution const & solution ) const
+	StructureData const & perm,
+	Solution const & solution ) const
 {
 	std::set< std::string > loop_segments;
 	for ( core::Size i=1, end=solution.size(); i<=end; ++i ) {
@@ -487,9 +487,9 @@ FoldGraph::named_solution( Solution const & solution ) const
 /// @brief generates a solution of movable segments to be used in remodel, based on the foldgraph
 Solution
 FoldGraph::compute_best_solution(
-		StructureData const & perm,
-		utility::vector1< std::string > const & staple_loops,
-		utility::vector1< std::string > const & cut_loops ) const
+	StructureData const & perm,
+	utility::vector1< std::string > const & staple_loops,
+	utility::vector1< std::string > const & cut_loops ) const
 {
 	TR.Debug << "staple loops= " << staple_loops << " cut_loops= " << cut_loops << std::endl;
 	std::set< core::Size > cut_loop_nodes;
@@ -618,9 +618,9 @@ FoldGraph::compute_best_solution(
 
 protocols::loops::LoopsOP
 FoldGraph::create_loops(
-		StructureData const & perm,
-		utility::vector1< std::string > const & staple_loops,
-		utility::vector1< std::string > const & bridge_loops ) const
+	StructureData const & perm,
+	utility::vector1< std::string > const & staple_loops,
+	utility::vector1< std::string > const & bridge_loops ) const
 {
 	Solution solution = compute_best_solution( perm, staple_loops, bridge_loops );
 	return create_loops( perm, solution, bridge_loops );
@@ -628,9 +628,9 @@ FoldGraph::create_loops(
 
 protocols::loops::LoopsOP
 FoldGraph::create_loops(
-		StructureData const & perm,
-		Solution const & solution,
-		utility::vector1< std::string > const & cut_loops ) const
+	StructureData const & perm,
+	Solution const & solution,
+	utility::vector1< std::string > const & cut_loops ) const
 {
 	if ( !solution.size() ) {
 		return protocols::loops::LoopsOP();
@@ -649,7 +649,7 @@ FoldGraph::create_loops(
 				min_res = start;
 			} else {
 				if ( start < min_res ) {
-					min_res	= start;
+					min_res = start;
 				}
 			}
 			if ( stop < min_res ) {
@@ -693,11 +693,11 @@ FoldGraph::create_loops(
 /// @brief recursive inner function that traverses the foldgraph to create loops objects
 void
 FoldGraph::create_loops_dfs(
-		Solution & solutions,
-		NodeSet & visited,
-		core::Size const current_node,
-		NodeSet const & cut_loop_nodes,
-		StructureData const & perm ) const
+	Solution & solutions,
+	NodeSet & visited,
+	core::Size const current_node,
+	NodeSet const & cut_loop_nodes,
+	StructureData const & perm ) const
 {
 	if ( visited.find(current_node) != visited.end() ) {
 		return;

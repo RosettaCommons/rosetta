@@ -180,30 +180,38 @@ DisulfidizeMover::set_cys_types( bool const lcys, bool const dcys ) {
 
 void
 DisulfidizeMover::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & ,
-		protocols::moves::Movers_map const & ,
-		core::pose::Pose const & )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & ,
+	protocols::moves::Movers_map const & ,
+	core::pose::Pose const & )
 {
-	if ( tag->hasOption( "match_rt_limit" ) )
+	if ( tag->hasOption( "match_rt_limit" ) ) {
 		set_match_rt_limit( tag->getOption< core::Real >( "match_rt_limit" ) );
-	if ( tag->hasOption( "min_disulfides" ) )
+	}
+	if ( tag->hasOption( "min_disulfides" ) ) {
 		min_disulfides_ = tag->getOption< core::Size >( "min_disulfides" );
-	if ( tag->hasOption( "max_disulfides" ) )
+	}
+	if ( tag->hasOption( "max_disulfides" ) ) {
 		max_disulfides_ = tag->getOption< core::Size >( "max_disulfides" );
-	if ( tag->hasOption( "keep_current_disulfides" ) )
+	}
+	if ( tag->hasOption( "keep_current_disulfides" ) ) {
 		keep_current_ds_ = tag->getOption< bool >( "keep_current_disulfides" );
-	if ( tag->hasOption( "include_current_disulfides" ) )
+	}
+	if ( tag->hasOption( "include_current_disulfides" ) ) {
 		include_current_ds_ = tag->getOption< bool >( "include_current_disulfides" );
-	if ( tag->hasOption( "min_loop" ) )
+	}
+	if ( tag->hasOption( "min_loop" ) ) {
 		set_min_loop( tag->getOption< core::Size >( "min_loop" ) );
-	if ( tag->hasOption( "max_disulf_score" ) )
+	}
+	if ( tag->hasOption( "max_disulf_score" ) ) {
 		set_max_disulf_score( tag->getOption< core::Real >( "max_disulf_score" ) );
+	}
 	// by default, a disulfide is valid if it passes score OR matchrt
 	// if this option is false, disulfides must pass score AND matchrt
-	if ( tag->hasOption( "score_or_matchrt" ) )
+	if ( tag->hasOption( "score_or_matchrt" ) ) {
 		score_or_matchrt_ = tag->getOption< bool >( "score_or_matchrt" );
+	}
 
 	if ( tag->hasOption( "set1" ) ) {
 		set_set1_selector( get_residue_selector( data, tag->getOption< std::string >( "set1" ) ) );
@@ -220,11 +228,11 @@ DisulfidizeMover::parse_my_tag(
 /// @brief does the work -- scans pose for disulfides, stores first result in pose, adds others to additional_poses
 bool
 DisulfidizeMover::process_pose(
-		core::pose::Pose & pose,
-		utility::vector1 < core::pose::PoseOP > & additional_poses )
+	core::pose::Pose & pose,
+	utility::vector1 < core::pose::PoseOP > & additional_poses )
 {
 	DisulfideList current_ds = find_current_disulfides( pose );
-	if(TR.visible()) TR << "Current disulfides are: " << current_ds << std::endl;
+	if ( TR.visible() ) TR << "Current disulfides are: " << current_ds << std::endl;
 
 	if ( !keep_current_ds_ ) {
 		mutate_disulfides_to_ala( pose, current_ds ); //Updated for D-cys, VKM 17 Aug 2015.
@@ -252,7 +260,7 @@ DisulfidizeMover::process_pose(
 		if ( min_disulfides_ == 0 ) {
 			return true;
 		}
-		if(TR.visible()) TR << "Failed to build any disulfides." << std::endl;
+		if ( TR.visible() ) TR << "Failed to build any disulfides." << std::endl;
 		return false;
 	}
 
@@ -261,7 +269,7 @@ DisulfidizeMover::process_pose(
 	utility::vector1< DisulfideList > disulfide_configurations =
 		recursive_multiple_disulfide_former( empty_disulfide_list, disulf_partners );
 
-	if(TR.visible()) TR << "disulfide_configurations=" << disulfide_configurations << std::endl;
+	if ( TR.visible() ) TR << "disulfide_configurations=" << disulfide_configurations << std::endl;
 	PoseList results;
 	if ( min_disulfides_ == 0 ) {
 		results.push_back( pose.clone() );
@@ -270,13 +278,13 @@ DisulfidizeMover::process_pose(
 	// iterate over disulfide configurations
 	for ( utility::vector1< DisulfideList >::const_iterator ds_config = disulfide_configurations.begin();
 			ds_config != disulfide_configurations.end();
-			++ds_config) {
+			++ds_config ) {
 		if ( (*ds_config).size() >= min_disulfides_ && (*ds_config).size() <= max_disulfides_ ) {
 
 			//form all the disulfides in the disulfide configuration
-			if(TR.visible()) {
+			if ( TR.visible() ) {
 				TR << "Building disulfide configuration ";
-				for ( DisulfideList::const_iterator my_ds = (*ds_config).begin(); my_ds != (*ds_config).end(); ++my_ds) {
+				for ( DisulfideList::const_iterator my_ds = (*ds_config).begin(); my_ds != (*ds_config).end(); ++my_ds ) {
 					TR << (*my_ds).first << "-" << (*my_ds).second << " ";
 				}
 				TR << std::endl;
@@ -289,7 +297,7 @@ DisulfidizeMover::process_pose(
 		}
 	}
 
-	if(TR.visible()) TR << "Found " << results.size() << " total results." << std::endl;
+	if ( TR.visible() ) TR << "Found " << results.size() << " total results." << std::endl;
 	if ( results.size() == 0 ) {
 		return false;
 	}
@@ -313,8 +321,9 @@ DisulfidizeMover::find_current_disulfides( core::pose::Pose const & pose ) const
 	DisulfideList retval;
 	std::set< core::Size > cyds;
 	for ( core::Size i=1, endi=pose.total_residue(); i<=endi; ++i ) {
-		if ( pose.residue(i).type().is_disulfide_bonded() )
+		if ( pose.residue(i).type().is_disulfide_bonded() ) {
 			cyds.insert( i );
+		}
 	}
 	for ( std::set< core::Size >::const_iterator cyd1=cyds.begin(), endcyds=cyds.end(); cyd1!=endcyds; ++cyd1 ) {
 		for ( std::set< core::Size >::const_iterator cyd2=cyd1; cyd2!=endcyds; ++cyd2 ) {
@@ -329,14 +338,14 @@ DisulfidizeMover::find_current_disulfides( core::pose::Pose const & pose ) const
 /// @brief mutates the given disulfides to ALA
 void
 DisulfidizeMover::mutate_disulfides_to_ala(
-		core::pose::Pose & pose,
-		DisulfideList const & current_ds ) const
+	core::pose::Pose & pose,
+	DisulfideList const & current_ds ) const
 {
-	if(TR.visible()) TR << "Mutating current disulfides to ALA" << std::endl;
+	if ( TR.visible() ) TR << "Mutating current disulfides to ALA" << std::endl;
 	// mutate current disulfides to alanine if we aren't keeping or including them
 	for ( DisulfideList::const_iterator ds=current_ds.begin(), endds=current_ds.end(); ds!=endds; ++ds ) {
 
-		if(!pose.residue(ds->first).type().is_d_aa()) {
+		if ( !pose.residue(ds->first).type().is_d_aa() ) {
 			protocols::simple_moves::MutateResidue mut( ds->first, "ALA" );
 			mut.apply( pose );
 		} else {
@@ -344,7 +353,7 @@ DisulfidizeMover::mutate_disulfides_to_ala(
 			mut.apply( pose );
 		}
 
-		if(!pose.residue(ds->second).type().is_d_aa()) {
+		if ( !pose.residue(ds->second).type().is_d_aa() ) {
 			protocols::simple_moves::MutateResidue mut2( ds->second, "ALA" );
 			mut2.apply( pose );
 		} else {
@@ -358,8 +367,8 @@ DisulfidizeMover::mutate_disulfides_to_ala(
 /// @brief Function for recursively creating multiple disulfides
 utility::vector1< DisulfidizeMover::DisulfideList >
 DisulfidizeMover::recursive_multiple_disulfide_former(
-		DisulfideList const & disulfides_formed,
-		DisulfideList const & disulfides_possible ) const
+	DisulfideList const & disulfides_formed,
+	DisulfideList const & disulfides_possible ) const
 {
 	utility::vector1< DisulfideList > final_configurations;
 
@@ -368,7 +377,7 @@ DisulfidizeMover::recursive_multiple_disulfide_former(
 		//select one primary new disulfide to be added
 		for ( DisulfideList::const_iterator new_disulfide = disulfides_possible.begin();
 				new_disulfide != disulfides_possible.end();
-				++new_disulfide) {
+				++new_disulfide ) {
 
 			//add the configuration with the new disulfide
 			DisulfideList new_disulfides_formed = disulfides_formed;
@@ -383,10 +392,10 @@ DisulfidizeMover::recursive_multiple_disulfide_former(
 			for ( ++potential_further_disulfide; potential_further_disulfide != end;
 					++potential_further_disulfide ) {
 
-				if ((*potential_further_disulfide).first != (*new_disulfide).first &&
+				if ( (*potential_further_disulfide).first != (*new_disulfide).first &&
 						(*potential_further_disulfide).second != (*new_disulfide).first &&
 						(*potential_further_disulfide).first != (*new_disulfide).second &&
-						(*potential_further_disulfide).second != (*new_disulfide).second) {
+						(*potential_further_disulfide).second != (*new_disulfide).second ) {
 
 					disulfides_to_be_added.push_back(*potential_further_disulfide);
 				}
@@ -400,7 +409,7 @@ DisulfidizeMover::recursive_multiple_disulfide_former(
 
 				for ( utility::vector1< DisulfideList >::const_iterator new_configuration = new_disulfide_configurations.begin();
 						new_configuration != new_disulfide_configurations.end();
-						++new_configuration) {
+						++new_configuration ) {
 					final_configurations.push_back(*new_configuration);
 				}
 			} //end adding new disulfides recursively AFTER the first selected new one
@@ -414,8 +423,8 @@ add_to_list( DisulfidizeMover::DisulfideList & disulf_partners, core::Size const
 {
 	std::pair< core::Size, core::Size > const temp_pair = std::make_pair( r1, r2 );
 	std::pair< core::Size, core::Size > const alt_pair = std::make_pair( r2, r1 );
-	if (std::find(disulf_partners.begin(), disulf_partners.end(), temp_pair) == disulf_partners.end() &&
-			std::find(disulf_partners.begin(), disulf_partners.end(), alt_pair) == disulf_partners.end()) {
+	if ( std::find(disulf_partners.begin(), disulf_partners.end(), temp_pair) == disulf_partners.end() &&
+			std::find(disulf_partners.begin(), disulf_partners.end(), alt_pair) == disulf_partners.end() ) {
 		disulf_partners.push_back( temp_pair );
 	}
 }
@@ -423,43 +432,43 @@ add_to_list( DisulfidizeMover::DisulfideList & disulf_partners, core::Size const
 /// @brief find disulfides in the given neighborhood between residues in set 1 and residues in set 2
 DisulfidizeMover::DisulfideList
 DisulfidizeMover::find_possible_disulfides(
-		core::pose::Pose const & pose,
-		core::pack::task::residue_selector::ResidueSubset const & residueset1,
-		core::pack::task::residue_selector::ResidueSubset const & residueset2 ) const
+	core::pose::Pose const & pose,
+	core::pack::task::residue_selector::ResidueSubset const & residueset1,
+	core::pack::task::residue_selector::ResidueSubset const & residueset2 ) const
 {
-	if(TR.visible()) TR << "FINDING DISULF" << std::endl;
+	if ( TR.visible() ) TR << "FINDING DISULF" << std::endl;
 
 	// figure out which positions are "central" positions - I presume these are positions from which DS bonds can emanate.
 	// then figure out which positions are not "central" but still "modeled". I assume these are the disulfide landing range
 	// positions.
 	std::set< core::Size > resid_set1;
 	std::set< core::Size > resid_set2;
-	if(TR.visible()) TR << "subset1: [ ";
+	if ( TR.visible() ) TR << "subset1: [ ";
 	for ( core::Size ii=1, endii=residueset1.size(); ii<=endii; ++ii ) {
 		if ( residueset1[ ii ] ) {
-			if(TR.visible()) TR << ii << " ";
+			if ( TR.visible() ) TR << ii << " ";
 			resid_set1.insert( ii );
 		}
 	}
-	if(TR.visible()) TR << "]" << std::endl;
+	if ( TR.visible() ) TR << "]" << std::endl;
 
-	if(TR.visible()) TR << "subset2: [ ";
+	if ( TR.visible() ) TR << "subset2: [ ";
 	for ( core::Size ii=1, endii=residueset2.size(); ii<=endii; ++ii ) {
 		if ( residueset2[ ii ] ) {
-			if(TR.visible()) TR << ii << " ";
+			if ( TR.visible() ) TR << ii << " ";
 			resid_set2.insert( ii );
 		}
 	}
-	if(TR.visible()) TR << "]" << std::endl;
+	if ( TR.visible() ) TR << "]" << std::endl;
 	return find_possible_disulfides( pose, resid_set1, resid_set2 );
 }
 
 /// @brief find disulfides in the given neighborhood between residues in set 1 and residues in set 2
 DisulfidizeMover::DisulfideList
 DisulfidizeMover::find_possible_disulfides(
-		core::pose::Pose const & pose,
-		std::set< core::Size > const & set1,
-		std::set< core::Size > const & set2 ) const
+	core::pose::Pose const & pose,
+	std::set< core::Size > const & set1,
+	std::set< core::Size > const & set2 ) const
 {
 	DisulfideList disulf_partners;
 
@@ -483,7 +492,7 @@ DisulfidizeMover::find_possible_disulfides(
 				continue;
 			}
 
-			if(TR.Debug.visible()) TR.Debug << "DISULF trying disulfide between " << *itr << " and " << *itr2 << std::endl;
+			if ( TR.Debug.visible() ) TR.Debug << "DISULF trying disulfide between " << *itr << " and " << *itr2 << std::endl;
 
 			// gly/non-protein check
 			if ( !check_residue_type( pose, *itr2 ) ) {
@@ -492,7 +501,7 @@ DisulfidizeMover::find_possible_disulfides(
 
 			// existing disulfides check
 			if ( keep_current_ds_ && ( pose.residue(*itr).type().is_disulfide_bonded() || pose.residue(*itr2).type().is_disulfide_bonded() ) ) {
-				if(TR.visible()) TR <<"DISULF \tkeep_current_ds set to True, keeping residues that are already in disulfides." << std::endl;
+				if ( TR.visible() ) TR <<"DISULF \tkeep_current_ds set to True, keeping residues that are already in disulfides." << std::endl;
 				continue;
 			}
 
@@ -517,10 +526,10 @@ DisulfidizeMover::find_possible_disulfides(
 			// disulfide potential scoring -- check_disulfide_match_rt can now score mirror-image pairs, too
 			bool good_match(false);
 			bool const mixed( mixed_disulfide( pose, *itr, *itr2) );
-			if( !mixed ) {
+			if ( !mixed ) {
 				bool good_match1(false), good_match_inv(false);
-				if(allow_l_cys_) good_match1=check_disulfide_match_rt( pose, *itr, *itr2, disulfPot, false );
-				if(allow_d_cys_) good_match_inv=check_disulfide_match_rt( pose, *itr, *itr2, disulfPot, true );
+				if ( allow_l_cys_ ) good_match1=check_disulfide_match_rt( pose, *itr, *itr2, disulfPot, false );
+				if ( allow_d_cys_ ) good_match_inv=check_disulfide_match_rt( pose, *itr, *itr2, disulfPot, true );
 				good_match = good_match1 || good_match_inv;
 			} else {
 				good_match=true; //Don't apply the match_rt test if this is a mixed disulfide
@@ -535,7 +544,7 @@ DisulfidizeMover::find_possible_disulfides(
 				}
 			}
 
-			if(TR.visible()) TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
+			if ( TR.visible() ) TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
 			add_to_list( disulf_partners, *itr, *itr2 );
 		}
 	}
@@ -545,9 +554,9 @@ DisulfidizeMover::find_possible_disulfides(
 /// @brief creates a residue tags on disulfides to inform users that this disulfide was created by disulfidize
 void
 DisulfidizeMover::tag_disulfide(
-		core::pose::Pose & pose,
-		core::Size const res1,
-		core::Size const res2 ) const
+	core::pose::Pose & pose,
+	core::Size const res1,
+	core::Size const res2 ) const
 {
 	if ( !pose.pdb_info() ) {
 		pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( pose ) ) );
@@ -560,10 +569,10 @@ DisulfidizeMover::tag_disulfide(
 /// @brief creates a residue tags on disulfides to inform users that this disulfide was created by disulfidize
 void
 DisulfidizeMover::tag_disulfides(
-		core::pose::Pose & pose,
-		DisulfidizeMover::DisulfideList const & disulf ) const
+	core::pose::Pose & pose,
+	DisulfidizeMover::DisulfideList const & disulf ) const
 {
-	for ( DisulfideList::const_iterator itr=disulf.begin(); itr != disulf.end(); ++itr) {
+	for ( DisulfideList::const_iterator itr=disulf.begin(); itr != disulf.end(); ++itr ) {
 		tag_disulfide( pose, (*itr).first, (*itr).second );
 	}
 }
@@ -571,12 +580,12 @@ DisulfidizeMover::tag_disulfides(
 /// @brief forms a disulfide between res1 and res2, optionally allowing backbone movement
 void
 DisulfidizeMover::make_disulfide(
-		core::pose::Pose & pose,
-		core::Size const res1,
-		core::Size const res2,
-		bool const relax_bb ) const
+	core::pose::Pose & pose,
+	core::Size const res1,
+	core::Size const res2,
+	bool const relax_bb ) const
 {
-	if(TR.Debug.visible()) TR.Debug << "build_disulf between " << res1 << " and " << res2 << std::endl;
+	if ( TR.Debug.visible() ) TR.Debug << "build_disulf between " << res1 << " and " << res2 << std::endl;
 	// create movemap which allows only chi to move
 	core::kinematics::MoveMapOP mm = core::kinematics::MoveMapOP( new core::kinematics::MoveMap());
 	mm->set_bb( res1, relax_bb );
@@ -586,21 +595,21 @@ DisulfidizeMover::make_disulfide(
 
 	core::conformation::form_disulfide( pose.conformation(), res1, res2, allow_d_cys_, !allow_l_cys_ ); //Updated for D-residues
 	core::util::rebuild_disulfide( pose, res1, res2,
-			NULL, //task
-			NULL, //sfxn
-			mm, // movemap
-			NULL // min sfxn
+		NULL, //task
+		NULL, //sfxn
+		mm, // movemap
+		NULL // min sfxn
 	); //Seems already to work with D-residues
 }
 
 /// @brief creates disulfides given the list of pairs given
 void
 DisulfidizeMover::make_disulfides(
-		core::pose::Pose & pose,
-		DisulfidizeMover::DisulfideList const & disulf,
-		bool const relax_bb ) const
+	core::pose::Pose & pose,
+	DisulfidizeMover::DisulfideList const & disulf,
+	bool const relax_bb ) const
 {
-	for ( DisulfideList::const_iterator itr=disulf.begin(); itr != disulf.end(); ++itr) {
+	for ( DisulfideList::const_iterator itr=disulf.begin(); itr != disulf.end(); ++itr ) {
 		make_disulfide( pose, (*itr).first, (*itr).second, relax_bb );
 	}
 }
@@ -608,11 +617,11 @@ DisulfidizeMover::make_disulfides(
 /// @brief temporarily tries building a disulfide between the given positions, scores, and restores the pose
 core::Real
 DisulfidizeMover::build_and_score_disulfide(
-		core::pose::Pose & blank_pose,
-		core::scoring::ScoreFunctionOP sfxn,
-		const bool relax_bb,
-		core::Size const res1,
-		core::Size const res2
+	core::pose::Pose & blank_pose,
+	core::scoring::ScoreFunctionOP sfxn,
+	const bool relax_bb,
+	core::Size const res1,
+	core::Size const res2
 ) const {
 	assert( sfxn );
 	assert( res1 );
@@ -621,7 +630,7 @@ DisulfidizeMover::build_and_score_disulfide(
 	assert( res2 <= blank_pose.total_residue() );
 	assert( res1 != res2 );
 
-	if(TR.visible()) TR << "building and scoring " << res1 << " to " << res2 << std::endl;
+	if ( TR.visible() ) TR << "building and scoring " << res1 << " to " << res2 << std::endl;
 	// save existing residues
 	core::conformation::Residue old_res1 = blank_pose.residue(res1);
 	core::conformation::Residue old_res2 = blank_pose.residue(res2);
@@ -644,7 +653,7 @@ DisulfidizeMover::check_residue_type( core::pose::Pose const & pose, core::Size 
 	bool const retval = ( pose.residue(res).is_protein() &&
 		( pose.residue(res).aa() != core::chemical::aa_gly ) );
 	if ( !retval && TR.Debug.visible() ) {
-			TR.Debug << "DISULF \tSkipping residue " << res << ". Residue of this type (" << pose.residue(res).name() << " ) cannot be mutated to CYD." << std::endl;
+		TR.Debug << "DISULF \tSkipping residue " << res << ". Residue of this type (" << pose.residue(res).name() << " ) cannot be mutated to CYD." << std::endl;
 	}
 	return retval;
 }
@@ -664,9 +673,9 @@ DisulfidizeMover::check_disulfide_seqpos( core::Size const res1, core::Size cons
 /// @brief checks disulfide CB-CB distance
 bool
 DisulfidizeMover::check_disulfide_cb_distance(
-		core::pose::Pose const & pose,
-		core::Size const res1,
-		core::Size const res2 ) const
+	core::pose::Pose const & pose,
+	core::Size const res1,
+	core::Size const res2 ) const
 {
 	core::Real const dist_squared = pose.residue(res1).nbr_atom_xyz().distance_squared(pose.residue(res2).nbr_atom_xyz());
 	bool const retval = ( dist_squared <= 25 );
@@ -679,16 +688,16 @@ DisulfidizeMover::check_disulfide_cb_distance(
 /// @brief checks disulfide rosetta score
 bool
 DisulfidizeMover::check_disulfide_score(
-		core::pose::Pose & pose,
-		core::Size const res1,
-		core::Size const res2,
-		core::scoring::ScoreFunctionOP sfxn ) const
+	core::pose::Pose & pose,
+	core::Size const res1,
+	core::Size const res2,
+	core::scoring::ScoreFunctionOP sfxn ) const
 {
 	core::Real const disulfide_fa_score =
 		build_and_score_disulfide( pose, sfxn,
-				false, // relax bb
-				res1, res2 );
-	if(TR.visible()) TR << "DISULF FA SCORE RES " << res1 << " " << res2 << " " << disulfide_fa_score << std::endl;
+		false, // relax bb
+		res1, res2 );
+	if ( TR.visible() ) TR << "DISULF FA SCORE RES " << res1 << " " << res2 << " " << disulfide_fa_score << std::endl;
 	bool const retval = ( disulfide_fa_score <= max_disulf_score_ );
 	if ( TR.visible() && !retval ) {
 		TR << "DISULF \tFailed disulf_fa_max check." << std::endl;
@@ -699,17 +708,17 @@ DisulfidizeMover::check_disulfide_score(
 /// @brief checks disulfide match rt
 bool
 DisulfidizeMover::check_disulfide_match_rt(
-			core::pose::Pose const & pose,
-			core::Size const res1,
-			core::Size const res2,
-			core::scoring::disulfides::DisulfideMatchingPotential const & disulfPot,
-			bool const mirror
+	core::pose::Pose const & pose,
+	core::Size const res1,
+	core::Size const res2,
+	core::scoring::disulfides::DisulfideMatchingPotential const & disulfPot,
+	bool const mirror
 ) const {
 	core::Energy match_t = 0.0;
 	core::Energy match_r = 0.0;
 	core::Energy match_rt = 0.0;
 	disulfPot.score_disulfide( pose.residue(res1), pose.residue(res2), match_t, match_r, match_rt, mirror );
-	if(TR.visible()) TR << "DISULF \tmatch_t: " << match_t << ", match_r: " << match_r << ", match_rt: " << match_rt << std::endl;
+	if ( TR.visible() ) TR << "DISULF \tmatch_t: " << match_t << ", match_r: " << match_r << ", match_rt: " << match_rt << std::endl;
 	bool const retval = ( match_rt <= match_rt_limit_  );
 	if ( !retval && TR.visible() ) {
 		TR << "DISULF \tFailed match_rt_limit check." << std::endl;
@@ -724,12 +733,12 @@ bool DisulfidizeMover::mixed_disulfide (
 	core::Size const res1,
 	core::Size const res2
 ) const {
-	if( allow_l_cys_ && !allow_d_cys_ ) return false;
-	if( allow_d_cys_ && !allow_l_cys_ ) return false;
-	
-	if(pose.residue(res1).type().is_d_aa() && !pose.residue(res2).type().is_d_aa()) return true;
-	if(!pose.residue(res1).type().is_d_aa() && pose.residue(res2).type().is_d_aa()) return true;
-	
+	if ( allow_l_cys_ && !allow_d_cys_ ) return false;
+	if ( allow_d_cys_ && !allow_l_cys_ ) return false;
+
+	if ( pose.residue(res1).type().is_d_aa() && !pose.residue(res2).type().is_d_aa() ) return true;
+	if ( !pose.residue(res1).type().is_d_aa() && pose.residue(res2).type().is_d_aa() ) return true;
+
 	return false;
 }
 

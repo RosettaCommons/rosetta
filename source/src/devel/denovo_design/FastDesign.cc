@@ -54,7 +54,7 @@
 #endif
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 #ifdef BOINC_GRAPHICS
@@ -79,18 +79,18 @@ using namespace ObjexxFCL;
 std::string
 FastDesignCreator::keyname() const
 {
-  return FastDesignCreator::mover_name();
+	return FastDesignCreator::mover_name();
 }
 
 protocols::moves::MoverOP
 FastDesignCreator::create_mover() const {
-  return protocols::moves::MoverOP( new FastDesign() );
+	return protocols::moves::MoverOP( new FastDesign() );
 }
 
 std::string
 FastDesignCreator::mover_name()
 {
-  return "FastDesign";
+	return "FastDesign";
 }
 
 ///  ---------------------------------------------------------------------------------
@@ -109,11 +109,11 @@ FastDesign::FastDesign() :
 	rank_scorefxn_( /* NULL */ ),
 	max_redesigns_( 5 ),
 	dump_counter_( 0 ),
-  //frag_qual_op_( NULL ),
+	//frag_qual_op_( NULL ),
 	regions_to_design_( 1 ),
 	run_count_( 0 ),
 	cached_sequence_( "" )
-  //worst_region_mover_( NULL )
+	//worst_region_mover_( NULL )
 {
 	filters_.clear();
 	allowed_aas_.clear();
@@ -146,20 +146,18 @@ FastDesign::parse_my_tag(
 	// make sure we create a task factory before parsing FastRelax::parse_my_tag
 	// otherwise no design will occur
 	core::pack::task::TaskFactoryOP local_tf( new core::pack::task::TaskFactory() );
-	if ( get_task_factory() ){
+	if ( get_task_factory() ) {
 		local_tf = get_task_factory()->clone();
-	}
-	else{
+	} else {
 		local_tf->push_back(TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline() ));
 		if ( basic::options::option[ basic::options::OptionKeys::relax::respect_resfile]() &&
-				 basic::options::option[ basic::options::OptionKeys::packing::resfile].user() ) {
+				basic::options::option[ basic::options::OptionKeys::packing::resfile].user() ) {
 			local_tf->push_back(TaskOperationCOP( new core::pack::task::operation::ReadResfile() ));
 			TR << "Using Resfile for packing step. " <<std::endl;
-		}
-		else {
+		} else {
 			core::pack::task::operation::PreventRepackingOP turn_off_packing( new core::pack::task::operation::PreventRepacking() );
 			for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
-				if (! get_movemap()->get_chi(pos) ){
+				if ( ! get_movemap()->get_chi(pos) ) {
 					turn_off_packing->include_residue(pos);
 				}
 			}
@@ -169,7 +167,7 @@ FastDesign::parse_my_tag(
 	//Include current rotamer by default - as before.
 	local_tf->push_back(TaskOperationCOP( new core::pack::task::operation::IncludeCurrent() ));
 
-	if( limit_aroma_chi2() ) {
+	if ( limit_aroma_chi2() ) {
 		local_tf->push_back(TaskOperationCOP( new protocols::toolbox::task_operations::LimitAromaChi2Operation() ));
 	}
 	set_task_factory( local_tf );
@@ -196,30 +194,30 @@ FastDesign::parse_my_tag(
 
 	utility::vector1< std::string > rcgs = utility::string_split( tag->getOption< std::string >( "rcgs", "" ), ',' );
 	for ( core::Size i=1, endi=rcgs.size(); i<=endi; ++i ) {
- 		if ( rcgs[i] == "" ) continue;
- 		protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( rcgs[i], movers );
+		if ( rcgs[i] == "" ) continue;
+		protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( rcgs[i], movers );
 		// check to make sure the mover provided is a RemodelConstraintGenerator and if so, add it to the list
 		assert( utility::pointer::dynamic_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover ) );
- 		protocols::forge::remodel::RemodelConstraintGeneratorOP newrcg =
+		protocols::forge::remodel::RemodelConstraintGeneratorOP newrcg =
 			utility::pointer::static_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover );
- 		rcgs_.push_back( newrcg );
+		rcgs_.push_back( newrcg );
 	}
 
 	/*std::string const filters_str( tag->getOption< std::string >( "filters", "," ) );
 	utility::vector1< std::string > const filter_list( utility::string_split( filters_str, ',' ) );
 	for ( core::Size i=1; i<= filter_list.size(); ++i ) {
-		if ( filter_list[i] != "" ) {
-			TR << "Setting up filter " << filter_list[i] << std::endl;
-			filters_.push_back( protocols::rosetta_scripts::parse_filter( filter_list[i], filters ) );
-		}
-		}*/
+	if ( filter_list[i] != "" ) {
+	TR << "Setting up filter " << filter_list[i] << std::endl;
+	filters_.push_back( protocols::rosetta_scripts::parse_filter( filter_list[i], filters ) );
+	}
+	}*/
 	/*
 	std::string const design_worst_mover_str( tag->getOption< std::string >( "restrict_worst_mover", "" ) );
 	if ( design_worst_mover_str != "" ) {
-		moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( design_worst_mover_str, movers );
-		assert( utility::pointer::dynamic_pointer_cast< RestrictWorstRegion >( mover ) );
-		worst_region_mover_ = utility::pointer::static_pointer_cast< RestrictWorstRegion >( mover );
-		}*/
+	moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( design_worst_mover_str, movers );
+	assert( utility::pointer::dynamic_pointer_cast< RestrictWorstRegion >( mover ) );
+	worst_region_mover_ = utility::pointer::static_pointer_cast< RestrictWorstRegion >( mover );
+	}*/
 
 	utility::vector1< utility::tag::TagCOP > const & filter_tags( tag->getTags() );
 	for ( core::Size i=1; i<=filter_tags.size(); ++i ) {
@@ -450,10 +448,10 @@ FastDesign::check_num_redesigns( core::pose::Pose const & pose, core::Size const
 /// @brief sets constraint weights -- used with constraint ramping
 void
 FastDesign::set_constraint_weight(
-		core::scoring::ScoreFunctionOP local_scorefxn,
-		core::scoring::EnergyMap const & full_weights,
-		core::Real const weight,
-		core::pose::Pose & pose ) const
+	core::scoring::ScoreFunctionOP local_scorefxn,
+	core::scoring::EnergyMap const & full_weights,
+	core::Real const weight,
+	core::pose::Pose & pose ) const
 {
 	runtime_assert( local_scorefxn != 0 );
 	if ( rcgs_.size() ) {

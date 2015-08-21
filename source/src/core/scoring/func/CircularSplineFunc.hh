@@ -78,8 +78,8 @@ private:
 
 }; // CircularSplineFunc class
 
-		} // constraints
-	} // scoring
+} // constraints
+} // scoring
 } // core
 
 #endif

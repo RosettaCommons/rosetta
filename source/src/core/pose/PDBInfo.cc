@@ -155,7 +155,7 @@ PDBInfo::operator =( PDBInfo const & info )
 		name_ = info.name_;
 		modeltag_ = info.modeltag_;
 		remarks_ = info.remarks_;
-		if(info.header_information_){
+		if ( info.header_information_ ) {
 			header_information_ = io::pdb::HeaderInformationOP( new io::pdb::HeaderInformation(*info.header_information_) );
 		}
 
@@ -220,15 +220,15 @@ PDBInfo::on_connection_change( core::conformation::signals::ConnectionEvent cons
 	using core::conformation::signals::ConnectionEvent;
 
 	switch ( event.tag ) {
-		case ConnectionEvent::DISCONNECT:
-			obsolete( true );
-			detach_from();
-			break;
-		case ConnectionEvent::TRANSFER:
-			// Disconnect -- PDBInfo does not honor TRANSFER tag.
-			break;
-		default: // do nothing
-			break;
+	case ConnectionEvent::DISCONNECT :
+		obsolete( true );
+		detach_from();
+		break;
+	case ConnectionEvent::TRANSFER :
+		// Disconnect -- PDBInfo does not honor TRANSFER tag.
+		break;
+	default : // do nothing
+		break;
 	}
 
 }
@@ -242,25 +242,25 @@ PDBInfo::on_identity_change( core::conformation::signals::IdentityEvent const & 
 	using core::conformation::signals::IdentityEvent;
 
 	switch( event.tag ) {
-		case IdentityEvent::INVALIDATE: {
-			obsolete( true );
-			// detach for now, in the future consider whether it's appropriate to
-			// rebuild all the data
-			detach_from();
-			break;
+	case IdentityEvent::INVALIDATE : {
+		obsolete( true );
+		// detach for now, in the future consider whether it's appropriate to
+		// rebuild all the data
+		detach_from();
+		break;
+	}
+	case IdentityEvent::RESIDUE : {
+		// replace and zero the records
+		if ( option[ in::preserve_crystinfo ]() ) {
+			replace_res_remap_bfactors( event.position, *event.residue ); //fpd  maintain reasonable bfactors
+		} else {
+			replace_res( event.position, event.residue->natoms() );
 		}
-		case IdentityEvent::RESIDUE: {
-			// replace and zero the records
-			if ( option[ in::preserve_crystinfo ]() ) {
-				replace_res_remap_bfactors( event.position, *event.residue ); //fpd  maintain reasonable bfactors
-			} else {
-				replace_res( event.position, event.residue->natoms() );
-			}
-		}
-		default: {
-			// do nothing, fall through
-			break;
-		}
+	}
+	default : {
+		// do nothing, fall through
+		break;
+	}
 	}
 }
 
@@ -279,31 +279,31 @@ PDBInfo::on_length_change( core::conformation::signals::LengthEvent const & even
 	using core::conformation::signals::LengthEvent;
 
 	switch( event.tag ) {
-		case LengthEvent::INVALIDATE: {
-			obsolete( true );
-			detach_from(); // if we don't detach, an array-out-of-bounds may occur on future signals
-			break;
-		}
-		case LengthEvent::RESIDUE_APPEND: {
-			append_res( event.position, event.residue->natoms(), std::abs( event.length_change ) );
-			obsolete( true );
-			break;
-		}
-		case LengthEvent::RESIDUE_PREPEND: {
-			prepend_res( event.position, event.residue->natoms(), std::abs( event.length_change ) );
-			obsolete( true );
-			break;
-		}
-		case LengthEvent::RESIDUE_DELETE: {
-			delete_res( event.position, std::abs( event.length_change ) );
-			//Shouldn't obsolete PDBInfo on delete - every residue that still exists has valid information
-			//obsolete( true );
-			break;
-		}
-		default: {
-			// do nothing, fall through
-			break;
-		}
+	case LengthEvent::INVALIDATE : {
+		obsolete( true );
+		detach_from(); // if we don't detach, an array-out-of-bounds may occur on future signals
+		break;
+	}
+	case LengthEvent::RESIDUE_APPEND : {
+		append_res( event.position, event.residue->natoms(), std::abs( event.length_change ) );
+		obsolete( true );
+		break;
+	}
+	case LengthEvent::RESIDUE_PREPEND : {
+		prepend_res( event.position, event.residue->natoms(), std::abs( event.length_change ) );
+		obsolete( true );
+		break;
+	}
+	case LengthEvent::RESIDUE_DELETE : {
+		delete_res( event.position, std::abs( event.length_change ) );
+		//Shouldn't obsolete PDBInfo on delete - every residue that still exists has valid information
+		//obsolete( true );
+		break;
+	}
+	default : {
+		// do nothing, fall through
+		break;
+	}
 	}
 }
 
@@ -374,7 +374,7 @@ PDBInfo::resize_atom_records( Pose const & pose )
 {
 	using core::conformation::Residue;
 
-debug_assert( residue_rec_.size() == pose.n_residue() );
+	debug_assert( residue_rec_.size() == pose.n_residue() );
 
 	for ( Size r = 1, re = pose.n_residue(); r <= re; ++r ) {
 		residue_rec_[ r ].atomRec.resize( pose.residue( r ).natoms() );
@@ -427,7 +427,7 @@ PDBInfo::get_reslabels( Size const res ) const
 {
 	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::get_label( Size const res ): res is not in this PDBInfo!" );
 	utility::vector1< std::string > pdb_label;
-	for (core::Size i=1; i<= residue_rec_[res].label.size(); ++i ){
+	for ( core::Size i=1; i<= residue_rec_[res].label.size(); ++i ) {
 		pdb_label.push_back(residue_rec_[res].label[i]);
 	}
 	return pdb_label;
@@ -502,19 +502,19 @@ PDBInfo::show(
 	// first line
 	out << "PDB file name: " << name() << std::endl;
 	out << " Pose Range  Chain    PDB Range  |   #Residues         #Atoms\n" << std::endl;
-	for (Size i=2 ; i <= nres() ; i++){
+	for ( Size i=2 ; i <= nres() ; i++ ) {
 		// loop through residue records
-		if ( icode(i)==' ' && icode(i-1)==' ' && (number(i)-number(i-1))==1 && chain(i)==chain(i-1) ){
+		if ( icode(i)==' ' && icode(i-1)==' ' && (number(i)-number(i-1))==1 && chain(i)==chain(i-1) ) {
 			// Same block - extend it
-		  current_res_tot += 1;
+			current_res_tot += 1;
 			current_atm_tot += natoms(i);
 			atm_tot += natoms(i);
 		} else {
 			// resi i is in new segment - print out old segment (to i-1)
 			out << I(4,4,current_start_pose) << " -- " << I(4,4,i-1) << A(5,chain(i-1)) <<
-					' ' << I(4,4,number(current_start_pose)) << icode(current_start_pose) <<
-					" -- " << I(4,4,number(i-1)) << icode(i-1) <<
-					" | " << I(6,4,current_res_tot) << " residues; " << I(8,5,current_atm_tot) << " atoms" << std::endl;
+				' ' << I(4,4,number(current_start_pose)) << icode(current_start_pose) <<
+				" -- " << I(4,4,number(i-1)) << icode(i-1) <<
+				" | " << I(6,4,current_res_tot) << " residues; " << I(8,5,current_atm_tot) << " atoms" << std::endl;
 			// Reset segment values
 			current_res_tot = 1;
 			current_atm_tot = natoms(i);
@@ -524,9 +524,9 @@ PDBInfo::show(
 	}
 	//Print out the last segment
 	out << I(4,4,current_start_pose) << " -- " << I(4,4,nres()) << A(5,chain(nres())) <<
-			' ' << I(4,4,number(current_start_pose)) << icode(current_start_pose) <<
-			" -- " << I(4,4,number(nres())) << icode(nres()) <<
-			" | " << I(6,4,current_res_tot) << " residues; " << I(8,5,current_atm_tot) << " atoms" << std::endl;
+		' ' << I(4,4,number(current_start_pose)) << icode(current_start_pose) <<
+		" -- " << I(4,4,number(nres())) << icode(nres()) <<
+		" | " << I(6,4,current_res_tot) << " residues; " << I(8,5,current_atm_tot) << " atoms" << std::endl;
 
 	// last line
 	out << "                           TOTAL | " << I(6,4,nres()) << " residues; " << I(8,5,atm_tot) << " atoms" << std::endl;
@@ -573,7 +573,7 @@ PDBInfo::add_reslabel(
 	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::icode( Size const res, ins_code ): res is not in this PDBInfo!" );
 	ResidueRecord & rr = residue_rec_[ res ];
 	//Avoid label duplication
-	if (!(std::find( residue_rec_[res].label.begin(), residue_rec_[res].label.end(), label ) != residue_rec_[res].label.end())){
+	if ( !(std::find( residue_rec_[res].label.begin(), residue_rec_[res].label.end(), label ) != residue_rec_[res].label.end()) ) {
 		rr.label.push_back(label);
 	}
 }
@@ -615,9 +615,9 @@ PDBInfo::copy(
 	Size const start_from
 )
 {
-debug_assert( copy_from <= input_info.residue_rec_.size() );
-debug_assert( copy_to <= input_info.residue_rec_.size() );
-debug_assert( start_from <= residue_rec_.size() );
+	debug_assert( copy_from <= input_info.residue_rec_.size() );
+	debug_assert( copy_to <= input_info.residue_rec_.size() );
+	debug_assert( start_from <= residue_rec_.size() );
 
 	// force erase data from map
 	Size idx = start_from;
@@ -719,43 +719,46 @@ PDBInfo::replace_res_remap_bfactors(
 	//    we'll have to make a reasonable guess at a mapping given the # atoms and the target residue
 	if ( residue_rec_[ res ].atomRec.size() == tgt.natoms() ) {
 		// #atoms doesn't change, assume repack and copy B factors
-		for (Size i=1; i<=tgt.natoms(); ++i) {
+		for ( Size i=1; i<=tgt.natoms(); ++i ) {
 			ar[i].temperature = residue_rec_[ res ].atomRec[i].temperature;
 		}
 	} else {
-		if (tgt.is_protein()) {
+		if ( tgt.is_protein() ) {
 			// redesign or cen <-> fa: copy backbone B's, average the rest
-			for (Size i=1; i<=tgt.last_backbone_atom(); ++i)
+			for ( Size i=1; i<=tgt.last_backbone_atom(); ++i ) {
 				ar[i].temperature = residue_rec_[ res ].atomRec[i].temperature;
+			}
 
 			// set sidechain B factors to the mean
 			Real Bsum = 0.0, Bcount = 0.0;
-			for (Size i=tgt.first_sidechain_atom(); i<=residue_rec_[ res ].atomRec.size(); ++i) {
+			for ( Size i=tgt.first_sidechain_atom(); i<=residue_rec_[ res ].atomRec.size(); ++i ) {
 				Bsum +=  residue_rec_[ res ].atomRec[i].temperature;
 				Bcount+=1.0;
 			}
-			if (Bcount>0) Bsum /= Bcount;
+			if ( Bcount>0 ) Bsum /= Bcount;
 			else Bsum = ar[2].temperature;
-			for (Size i=tgt.first_sidechain_atom(); i<=tgt.nheavyatoms(); ++i)
+			for ( Size i=tgt.first_sidechain_atom(); i<=tgt.nheavyatoms(); ++i ) {
 				ar[i].temperature = Bsum;
+			}
 		} else {
 			// ligand (or some other non-protein residue): average all B's
 			Real Bsum = 0.0, Bcount = 0.0;
-			for (Size i=1; i<=residue_rec_[ res ].atomRec.size(); ++i) {
+			for ( Size i=1; i<=residue_rec_[ res ].atomRec.size(); ++i ) {
 				Bsum +=  residue_rec_[ res ].atomRec[i].temperature;
 				Bcount+=1.0;
 			}
-			if (Bcount>0) Bsum /= Bcount;
+			if ( Bcount>0 ) Bsum /= Bcount;
 			else Bsum = 30.0;
-			for (Size i=tgt.first_sidechain_atom(); i<=tgt.nheavyatoms(); ++i)
+			for ( Size i=tgt.first_sidechain_atom(); i<=tgt.nheavyatoms(); ++i ) {
 				ar[i].temperature = Bsum;
+			}
 		}
 
 		// set H to 1.2 x attached heavy atom
-		for (Size i = 1; i <= tgt.nheavyatoms(); ++i) {
+		for ( Size i = 1; i <= tgt.nheavyatoms(); ++i ) {
 			Real hB = 1.2*ar[i].temperature;
-			for (Size hid = tgt.attached_H_begin(i), hid_end = tgt.attached_H_end(i);
-			          hid <= hid_end; ++hid) {
+			for ( Size hid = tgt.attached_H_begin(i), hid_end = tgt.attached_H_end(i);
+					hid <= hid_end; ++hid ) {
 				ar[hid].temperature = hB;
 			}
 		}
@@ -805,7 +808,7 @@ PDBInfo::add_unrecognized_atom(
 ) {
 	unrecognized_atoms_.push_back( UnrecognizedAtomRecord(resnum,resname,atomname,coords,temp) );
 	unrecognized_res_num2name_[resnum] = resname;
-	if( unrecognized_res_size_.find(resnum) == unrecognized_res_size_.end() ) {
+	if ( unrecognized_res_size_.find(resnum) == unrecognized_res_size_.end() ) {
 		unrecognized_res_size_[resnum] = 0;
 		num_unrecognized_res_++;
 	}
@@ -822,7 +825,7 @@ PDBInfo::check_residue_records_size( Size const size ) const
 {
 	if ( residue_rec_.size() != size ) {
 		basic::Error() << "PDBInfo::check_residue_records_size() failed.  An en masse action attempted to access or set more residues than exists in PDBInfo."
-		  << std::endl;
+			<< std::endl;
 		utility_exit();
 	}
 }
@@ -842,7 +845,7 @@ std::ostream & operator << (std::ostream & os, PDBInfo const & info)
 	info.show(os);
 	//os << "Number of Residues: " << info.nres() << std::endl;
 	// perhaps add per residue information: pose_num, pdb_num, chain, icode, occupancy, temperature, etc.
-    return os;
+	return os;
 }
 
 } // pose

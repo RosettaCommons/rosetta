@@ -64,38 +64,37 @@ dump_energy_method_energies(
 
 	Real total_energy(0);
 
-	if (os) *os << "Intraresidue Energies:" << "\n";
-	for ( Size i = 1; i <= pose.total_residue(); ++i )
-	{
+	if ( os ) *os << "Intraresidue Energies:" << "\n";
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 		emap.zero();
 		emethod.eval_intrares_energy( pose.residue(i), pose, sfxn, emap);
 		//std::cout <<   std::setprecision(4) << std::fixed << std::setw(8) << emap[ mm_bend ] << ",";
-		if (os) *os << i << "\t" << emap.dot(weightmap) << "\n";
+		if ( os ) *os << i << "\t" << emap.dot(weightmap) << "\n";
 		total_energy += emap.dot(weightmap);
 	}
 
-	if (os) *os << "Residue Pair Energies:" << "\n";
-	for ( Size i = 1; i <= pose.total_residue(); ++i )
-	{
-		if ((i+1) <= pose.total_residue()) {
+	if ( os ) *os << "Residue Pair Energies:" << "\n";
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( (i+1) <= pose.total_residue() ) {
 			twobodyemap.zero();
 			emethod.residue_pair_energy( pose.residue(i), pose.residue(i+1), pose, sfxn, twobodyemap);
 			//std::cout <<   std::setprecision(4) << std::fixed << std::setw(8) << emap[ mm_twist ] << ",";
-			if (os) *os << i << "-" << i+1 << "\t" << twobodyemap.dot(weightmap) << "\n";
+			if ( os ) *os << i << "-" << i+1 << "\t" << twobodyemap.dot(weightmap) << "\n";
 			total_energy += twobodyemap.dot(weightmap);
 		}
 	}
 
-	if (os) *os << "Atom Derivatives:" << "\n";
-	for ( Size i = 1; i <= pose.total_residue(); ++i )
-	{
+	if ( os ) *os << "Atom Derivatives:" << "\n";
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 		for ( Size j = 1; j <= pose.residue(i).natoms(); ++j ) {
 			F1.zero();
 			F2.zero();
 			emethod.eval_atom_derivative( core::id::AtomID(j, i), pose, domainmap, sfxn, weightmap, F1, F2 );
-			if (os) *os << i << "\t" << j
-				          << "\tF1: " << F1.x() << " " << F1.x() << " " << F1.z()
-									<< "\tF2: " << F2.x() << " " << F2.x() << " " << F2.z() << "\n";
+			if ( os ) {
+				*os << i << "\t" << j
+					<< "\tF1: " << F1.x() << " " << F1.x() << " " << F1.z()
+					<< "\tF2: " << F2.x() << " " << F2.x() << " " << F2.z() << "\n";
+			}
 		}
 	}
 
@@ -225,15 +224,15 @@ public:
 		dump_energy_method_energies(*pose, *mmbondangleenergy_n_ca, weightmap, &UT);
 	}
 
-  void test_mmbond_angle_energy_start_score_start_func_match_w_total_flexibility()
-  {
+	void test_mmbond_angle_energy_start_score_start_func_match_w_total_flexibility()
+	{
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
-    sfxn.set_weight( mm_bend, 0.5 );
+		sfxn.set_weight( mm_bend, 0.5 );
 		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
-    AtomDerivValidator adv( pose, sfxn, movemap );
-    adv.validate_start_func_matches_start_score( 42.85876726805235, false, 1e-6 );
-  }
+		AtomDerivValidator adv( pose, sfxn, movemap );
+		adv.validate_start_func_matches_start_score( 42.85876726805235, false, 1e-6 );
+	}
 
 
 };

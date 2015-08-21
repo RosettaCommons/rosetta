@@ -46,13 +46,13 @@ std::string BasicJob::output_tag(int struct_n) const
 
 	// Use at least 4 digits in number to match Rosetta++
 	int nstruct_width = 0;
-	for(int i = 1; i <= nstruct_ || nstruct_width < 4; i *= 10) nstruct_width += 1;
+	for ( int i = 1; i <= nstruct_ || nstruct_width < 4; i *= 10 ) nstruct_width += 1;
 	// Treat tags as file names so that we put the number before the extension.
 	// Everything will still work if they're not file names, though.
 	utility::vector1<std::string> temp_out_names= utility::split(input_id_);
 	utility::file::FileName out_name = utility::file::combine_names( temp_out_names);
-//jobs_tracer<< out_name.base()<< std::endl;
-	if( option[ run::shuffle ].user() ) out_name = "S_shuffle";
+	//jobs_tracer<< out_name.base()<< std::endl;
+	if ( option[ run::shuffle ].user() ) out_name = "S_shuffle";
 	std::ostringstream oss;
 
 	std::string user_tag("");
@@ -60,12 +60,12 @@ std::string BasicJob::output_tag(int struct_n) const
 		user_tag = "_" + basic::options::option[ basic::options::OptionKeys::out::user_tag ];
 	}
 
-	if( !preserve_whole_input_tag_ ){
+	if ( !preserve_whole_input_tag_ ) {
 		oss << option[ out::prefix ]() << out_name.base() << option[ out::suffix ]()
-				<< user_tag << '_' << std::setfill('0') << std::setw(nstruct_width) << (struct_n);
-	}else{
+			<< user_tag << '_' << std::setfill('0') << std::setw(nstruct_width) << (struct_n);
+	} else {
 		oss << option[ out::prefix ]() << out_name << option[ out::suffix ]()
-		    << user_tag << '_' << std::setfill('0') << std::setw(nstruct_width) << (struct_n);
+			<< user_tag << '_' << std::setfill('0') << std::setw(nstruct_width) << (struct_n);
 	}
 	out_name.base( oss.str() );
 	return out_name.base();

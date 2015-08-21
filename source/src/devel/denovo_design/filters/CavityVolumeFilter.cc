@@ -48,7 +48,7 @@
 #endif
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 #ifdef BOINC_GRAPHICS

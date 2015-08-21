@@ -58,8 +58,8 @@ public:
 		ScoreFunction const &,
 		EnergyMap & totals
 	) const;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 	void
 	indicate_required_context_graphs(
@@ -77,10 +77,10 @@ private:
 	utility::vector1< core::Size > group_;
 
 
-	//	utility::vector1< core::Real > data2_;
+	// utility::vector1< core::Real > data2_;
 	//utility::vector1< core::Real > position2_;
 	//utility::vector1< core::Size > group2_;
-	//	ObjexxFCL::FArray2D< core::Real > time_data_;
+	// ObjexxFCL::FArray2D< core::Real > time_data_;
 	utility::vector1< core::Real >  time_data_mean_;
 	utility::vector1< core::Real >  time_data_std_;
 	Real mean_;

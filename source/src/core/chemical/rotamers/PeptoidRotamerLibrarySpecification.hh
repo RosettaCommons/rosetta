@@ -46,9 +46,9 @@ public:
 	void
 	peptoid_rotlib_path( std::string const & path ) { peptoid_rotlib_path_ = path; }
 
-//	/// @brief Sets the number of rotatable bonds described by the Peptoid rotlib  (not nesesarily equal to nchi)
-//	void
-//	peptoid_rotlib_n_rotameric_bins( core::Size nbins ) { peptoid_rotlib_n_rots_ = nbins; }
+	// /// @brief Sets the number of rotatable bonds described by the Peptoid rotlib  (not nesesarily equal to nchi)
+	// void
+	// peptoid_rotlib_n_rotameric_bins( core::Size nbins ) { peptoid_rotlib_n_rots_ = nbins; }
 
 	/// @brief Sets the number of rotamers for each rotatable bond described by the Peptoid rotlib
 	void
@@ -82,8 +82,8 @@ private:
 
 	/// @brief path to the Peptoid rotlib
 	std::string peptoid_rotlib_path_;
-//	/// @brief the number of non-hydrogen chi angles in the Peptoid rotlib
-//	core::Size peptoid_rotlib_n_rots_;
+	// /// @brief the number of non-hydrogen chi angles in the Peptoid rotlib
+	// core::Size peptoid_rotlib_n_rots_;
 	/// @brief the number of rotamer bins for each chi angle in the Peptoid rotlib
 	utility::vector1< Size > peptoid_rotlib_n_bins_per_rot_;
 

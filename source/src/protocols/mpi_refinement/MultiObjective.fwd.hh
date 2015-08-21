@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/mpi_refinement/MultiObjective.fwd.hh
-/// @brief 
-/// @author 
+/// @brief
+/// @author
 
 #ifndef INCLUDED_protocols_mpi_refinement_MultiObjective_fwd_hh
 #define INCLUDED_protocols_mpi_refinement_MultiObjective_fwd_hh

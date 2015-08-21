@@ -72,7 +72,7 @@ std::string MoverContainer::get_mover( core::Size index ) const {
 
 // Sets the input pose for both the container and the contained movers
 // overriding this method fixes an annoying bug (barak)
-	// TODO: does it make sense to cal this also from add_mover? I think not (barak)
+// TODO: does it make sense to cal this also from add_mover? I think not (barak)
 void MoverContainer::set_input_pose( PoseCOP pose ){
 	this->Mover::set_input_pose( pose );
 	for ( Size i=0; i<movers_.size(); ++i ) {
@@ -92,10 +92,10 @@ void MoverContainer::set_native_pose( PoseCOP pose ){
 
 // Sets the current_tag_ for both the container and the contained movers
 void MoverContainer::set_current_tag( std::string const & new_tag ){
-  Mover::set_current_tag( new_tag );
-  for ( Size i=0; i<movers_.size(); ++i ) {
-    movers_[i]->set_current_tag( new_tag );
-  }
+	Mover::set_current_tag( new_tag );
+	for ( Size i=0; i<movers_.size(); ++i ) {
+		movers_[i]->set_current_tag( new_tag );
+	}
 
 }
 
@@ -123,29 +123,29 @@ void SequenceMover::apply( core::pose::Pose & pose )
 	using protocols::moves::FAIL_RETRY;
 
 	type("");
-	if( use_mover_status_ ){
+	if ( use_mover_status_ ) {
 
 		Size i = 0;
-		while( i < movers_.size() ){
+		while ( i < movers_.size() ) {
 
 			core::pose::Pose storepose( pose );
 			movers_[i]->apply( pose );
 
 			MoverStatus ms = movers_[i]->get_last_move_status();
 			set_last_move_status( ms );
-			if( ms == MS_SUCCESS ){
- 				type( type()+movers_[i]->type() );
+			if ( ms == MS_SUCCESS ) {
+				type( type()+movers_[i]->type() );
 				i++;
-			}else if( ms == FAIL_RETRY ){
+			} else if ( ms == FAIL_RETRY ) {
 				tr << "Mover failed. Same mover is performed again. " << std::endl;
 				pose = storepose;
-			}else if( ms == FAIL_DO_NOT_RETRY || ms == FAIL_BAD_INPUT ){
+			} else if ( ms == FAIL_DO_NOT_RETRY || ms == FAIL_BAD_INPUT ) {
 				tr << "Mover failed. Exit from SequenceMover." << std::endl;
 				break;
 			}
 		}
 
-	}else{
+	} else {
 		// set the mover status from the last mover applied, but do not act on the mover status
 		for ( Size i=0; i<movers_.size(); ++i ) {
 			movers_[i]->apply( pose );
@@ -165,15 +165,15 @@ SequenceMover::get_name() const {
 
 
 std::string RandomMoverCreator::mover_name() {
-  return "RandomMover";
+	return "RandomMover";
 }
 
 std::string RandomMoverCreator::keyname() const {
-  return mover_name();
+	return mover_name();
 }
 
 protocols::moves::MoverOP RandomMoverCreator::create_mover() const {
-  return protocols::moves::MoverOP( new RandomMover() );
+	return protocols::moves::MoverOP( new RandomMover() );
 }
 
 
@@ -181,21 +181,20 @@ void RandomMover::apply( core::pose::Pose & pose )
 {
 	Real weight_sum(0.0);
 	size_t m;
-	for(m=0;m< movers_.size(); m++){
+	for ( m=0; m< movers_.size(); m++ ) {
 		weight_sum += weight_[m];
 	}
 	type("");
-	for(Size i=0;i< nmoves_; i++)
-	{
+	for ( Size i=0; i< nmoves_; i++ ) {
 		// choose a move
 		Real movechoice = numeric::random::rg().uniform()*weight_sum;
 		Real sum=0.0;
-		for(m=0;m< movers_.size(); m++){
-			if(movechoice < sum) break;
+		for ( m=0; m< movers_.size(); m++ ) {
+			if ( movechoice < sum ) break;
 			sum += weight_[m];
 		}
 		m--;
-		//		tr.Trace << "choose move " << m+1 << " of " << nr_moves() << std::endl;
+		//  tr.Trace << "choose move " << m+1 << " of " << nr_moves() << std::endl;
 		// apply the chosen move
 		movers_[m]->apply( pose );
 		type( type() + movers_[m]->type());
@@ -233,23 +232,24 @@ RandomMover::get_name() const {
 
 void
 RandomMover::parse_my_tag( utility::tag::TagCOP tag,
-                           basic::datacache::DataMap &,
-                           protocols::filters::Filters_map const &,
-                           protocols::moves::Movers_map const &movers,
-                           core::pose::Pose const & ) {
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &movers,
+	core::pose::Pose const & ) {
 	using namespace protocols::filters;
 
 	utility::vector1<std::string> mover_names( utility::string_split( tag->getOption< std::string >("movers"), ',') );
 	utility::vector1<std::string> mover_weights;
-	if (tag->hasOption ("weights"))
+	if ( tag->hasOption ("weights") ) {
 		mover_weights = utility::string_split( tag->getOption< std::string >( "weights" ), ',');
+	}
 
 	// make sure # movers matches # weights
 	runtime_assert( mover_weights.size() == 0 || mover_weights.size() == mover_names.size() );
 
 	nmoves_ = tag->getOption< core::Size >( "repeats",1 );
 
-	for (core::Size i=1; i<=mover_names.size(); ++i) {
+	for ( core::Size i=1; i<=mover_names.size(); ++i ) {
 		protocols::moves::MoverOP mover = find_mover_or_die(mover_names[i], tag, movers);
 		core::Real weight = (mover_weights.size() == 0)? 1.0 : std::atof( mover_weights[i].c_str() );
 		add_mover( mover, weight );
@@ -259,7 +259,7 @@ RandomMover::parse_my_tag( utility::tag::TagCOP tag,
 
 //ek added this function must be called AFTER apply
 core::Real RandomMover::last_proposal_density_ratio(){
-		return last_proposal_density_ratio_;
+	return last_proposal_density_ratio_;
 }
 
 CycleMover::CycleMover( CycleMover const & source ) :

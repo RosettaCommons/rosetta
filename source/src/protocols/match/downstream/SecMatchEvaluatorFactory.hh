@@ -32,16 +32,16 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace match{
-namespace downstream{
+namespace protocols {
+namespace match {
+namespace downstream {
 
 /// @brief a collection of functions making a single score_function
 class SecMatchEvaluatorFactory
 {
 public:
-  typedef core::Size Size;
-  typedef core::Real Real;
+	typedef core::Size Size;
+	typedef core::Real Real;
 
 public:
 

@@ -64,7 +64,7 @@ trpcage_res2phe_kinemages();
 
 class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 
 	// --------------- Fixtures --------------- //
@@ -96,30 +96,30 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 		std::cout << leu_geom.natoms() << std::endl;
 		std::cout << leu_geom.nchi() << std::endl;
 		for ( Size ii = 1; ii <= leu_geom.natoms(); ++ii ) {
-			//std::cout << "Atom: " << ii << " " << trpcage.residue_type( 2 ).atom_name( ii );
-			//std::cout << " " << leu_geom.atom_controlled_by_any_chi( ii );
-			//std::cout << " " << leu_geom.atom_is_chitip( ii );
-			//std::cout << " " << leu_geom.controlling_chi_for_atom()[ ii ];
-			//std::cout << " " << leu_geom.which_point_for_atom()[ ii ] << std::endl;
-			std::cout << "TS_ASSERT( leu_geom.atom_controlled_by_any_chi( " << ii << " ) = " << leu_geom.atom_controlled_by_any_chi( ii ) << "); " << std::endl;
-			std::cout << "TS_ASSERT( leu_geom.atom_is_chitip( " << ii << " ) = " << leu_geom.atom_is_chitip( ii ) << "); " << std::endl;
-			std::cout << "TS_ASSERT( leu_geom.controlling_chi_for_atom()[ " << ii << " ] = " << leu_geom.controlling_chi_for_atom()[ ii ] << "); " << std::endl;
-			std::cout << "TS_ASSERT( leu_geom.which_point_for_atom()[ " << ii << " ] = " << leu_geom.which_point_for_atom()[ ii ] << "); " << std::endl;
+		//std::cout << "Atom: " << ii << " " << trpcage.residue_type( 2 ).atom_name( ii );
+		//std::cout << " " << leu_geom.atom_controlled_by_any_chi( ii );
+		//std::cout << " " << leu_geom.atom_is_chitip( ii );
+		//std::cout << " " << leu_geom.controlling_chi_for_atom()[ ii ];
+		//std::cout << " " << leu_geom.which_point_for_atom()[ ii ] << std::endl;
+		std::cout << "TS_ASSERT( leu_geom.atom_controlled_by_any_chi( " << ii << " ) = " << leu_geom.atom_controlled_by_any_chi( ii ) << "); " << std::endl;
+		std::cout << "TS_ASSERT( leu_geom.atom_is_chitip( " << ii << " ) = " << leu_geom.atom_is_chitip( ii ) << "); " << std::endl;
+		std::cout << "TS_ASSERT( leu_geom.controlling_chi_for_atom()[ " << ii << " ] = " << leu_geom.controlling_chi_for_atom()[ ii ] << "); " << std::endl;
+		std::cout << "TS_ASSERT( leu_geom.which_point_for_atom()[ " << ii << " ] = " << leu_geom.which_point_for_atom()[ ii ] << "); " << std::endl;
 
 		}
 
 		for ( Size ii = 1; ii <= leu_geom.nchi(); ++ii ) {
-			//std::cout << "Chi: " << ii;
-			//std::cout << " " << leu_geom.chitip_atoms()[ ii ];
-			//std::cout << " " << leu_geom.nonchitip_atoms()[ ii ].size() << std::endl;
-			//for ( Size jj = 1; jj <= leu_geom.nonchitip_atoms()[ ii ].size(); ++jj ) {
-			//	std::cout << "   " << jj << " " << leu_geom.nonchitip_atoms()[ ii ][ jj ] << std::endl;
-			//}
-			std::cout << "TS_ASSERT( leu_geom.chitip_atoms()[ " << ii << " ] = " << leu_geom.chitip_atoms()[ ii ] << "); " << std::endl;
-			std::cout << "TS_ASSERT( leu_geom.nonchitip_atoms()[ " << ii << " ].size() = " << leu_geom.nonchitip_atoms()[ ii ].size() << "); " << std::endl;
-			for ( Size jj = 1; jj <= leu_geom.nonchitip_atoms()[ ii ].size(); ++jj ) {
-				std::cout << "TS_ASSERT( leu_geom.nonchitip_atoms()[ " << ii << " ][ " << jj << "] = " << leu_geom.nonchitip_atoms()[ ii ][ jj ] << "); " << std::endl;
-			}
+		//std::cout << "Chi: " << ii;
+		//std::cout << " " << leu_geom.chitip_atoms()[ ii ];
+		//std::cout << " " << leu_geom.nonchitip_atoms()[ ii ].size() << std::endl;
+		//for ( Size jj = 1; jj <= leu_geom.nonchitip_atoms()[ ii ].size(); ++jj ) {
+		// std::cout << "   " << jj << " " << leu_geom.nonchitip_atoms()[ ii ][ jj ] << std::endl;
+		//}
+		std::cout << "TS_ASSERT( leu_geom.chitip_atoms()[ " << ii << " ] = " << leu_geom.chitip_atoms()[ ii ] << "); " << std::endl;
+		std::cout << "TS_ASSERT( leu_geom.nonchitip_atoms()[ " << ii << " ].size() = " << leu_geom.nonchitip_atoms()[ ii ].size() << "); " << std::endl;
+		for ( Size jj = 1; jj <= leu_geom.nonchitip_atoms()[ ii ].size(); ++jj ) {
+		std::cout << "TS_ASSERT( leu_geom.nonchitip_atoms()[ " << ii << " ][ " << jj << "] = " << leu_geom.nonchitip_atoms()[ ii ][ jj ] << "); " << std::endl;
+		}
 
 		}*/
 
@@ -232,7 +232,7 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 			//std::cout << " " << leu_geom.chitip_atoms()[ ii ];
 			//std::cout << " " << leu_geom.nonchitip_atoms()[ ii ].size() << std::endl;
 			//for ( Size jj = 1; jj <= leu_geom.nonchitip_atoms()[ ii ].size(); ++jj ) {
-			//	std::cout << "   " << jj << " " << leu_geom.nonchitip_atoms()[ ii ][ jj ] << std::endl;
+			// std::cout << "   " << jj << " " << leu_geom.nonchitip_atoms()[ ii ][ jj ] << std::endl;
 			//}
 			UpstreamResTypeGeometry::HTReal ht = leu_geom.ht_for_chitip_atoms()[ ii ];
 			//std::cout << "ht:" << ii << std::endl;
@@ -332,7 +332,7 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 		for ( ResidueTypeCOPs::const_iterator
 				aas_iter = aas.begin(),
 				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-			if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter )) {
+			if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter ) ) {
 				build_set.set_residue_type( *aas_iter );
 				break;
 			}
@@ -385,12 +385,12 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 
 		/*
 		for ( Size ii = 1; ii <= 2; ++ii ) {
-			//std::cout << "Chi " << ii << " with " << expanded_samples.n_samples_per_chi()[ ii ] << ":" << std::endl;
-			std::cout << "TS_ASSERT( expanded_samples.n_samples_per_chi()[ " << ii << " ] = " << expanded_samples.n_samples_per_chi()[ ii ] << " );" << std::endl;
-			for ( Size jj = 1; jj <= expanded_samples.n_samples_per_chi()[ ii ]; ++jj ) {
-				//std::cout << jj << ": " << expanded_samples.chi_sample( ii, jj ) << std::endl;
-				std::cout << "TS_ASSERT_DELTA( expanded_samples.chi_sample( " << ii << ", " << jj << " ), " << expanded_samples.chi_sample( ii, jj ) << ", 1e-3 );" << std::endl;
-			}
+		//std::cout << "Chi " << ii << " with " << expanded_samples.n_samples_per_chi()[ ii ] << ":" << std::endl;
+		std::cout << "TS_ASSERT( expanded_samples.n_samples_per_chi()[ " << ii << " ] = " << expanded_samples.n_samples_per_chi()[ ii ] << " );" << std::endl;
+		for ( Size jj = 1; jj <= expanded_samples.n_samples_per_chi()[ ii ]; ++jj ) {
+		//std::cout << jj << ": " << expanded_samples.chi_sample( ii, jj ) << std::endl;
+		std::cout << "TS_ASSERT_DELTA( expanded_samples.chi_sample( " << ii << ", " << jj << " ), " << expanded_samples.chi_sample( ii, jj ) << ", 1e-3 );" << std::endl;
+		}
 		}*/
 
 		TS_ASSERT( expanded_samples.n_samples_per_chi()[ 1 ] = 3 );
@@ -474,7 +474,7 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 		for ( ResidueTypeCOPs::const_iterator
 				aas_iter = aas.begin(),
 				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-			if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter )) {
+			if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter ) ) {
 				build_set.set_residue_type( *aas_iter );
 				break;
 			}
@@ -521,10 +521,10 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 				iter != iter_end; ++iter ) {
 			/*std::cout << "Hit " << ++counter << " ";
 			for ( Size ii = 1; ii <= 4; ++ii ) {
-				std::cout << iter->first()[ ii ] << " ";
+			std::cout << iter->first()[ ii ] << " ";
 			}
 			for ( Size ii = 1; ii <= 6; ++ii ) {
-				std::cout << iter->second()[ ii ]<< " ";
+			std::cout << iter->second()[ ii ]<< " ";
 			}
 			std::cout << std::endl;*/
 
@@ -561,7 +561,7 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 		for ( ResidueTypeCOPs::const_iterator
 				aas_iter = aas.begin(),
 				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-			if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter )) {
+			if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter ) ) {
 				build_set.set_residue_type( *aas_iter );
 				break;
 			}
@@ -645,7 +645,7 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 		for ( ResidueTypeCOPs::const_iterator
 				aas_iter = aas.begin(),
 				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-			if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter )) {
+			if ( variants_match( trpcage.residue( 2 ).type(), **aas_iter ) ) {
 				build_set.set_residue_type( *aas_iter );
 				break;
 			}
@@ -761,7 +761,7 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 
 		//ProteinSCSamplerOP sampler_ = new DunbrackSCSampler;
 		//ProteinSCSampler::DunbrackRotamerSampleDataVector
-		//	rotamer_samples = sampler_->samples( *res2bp, build_set.restype() );
+		// rotamer_samples = sampler_->samples( *res2bp, build_set.restype() );
 
 
 		SampleStrategyData strat1, strat2;

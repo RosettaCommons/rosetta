@@ -45,11 +45,9 @@ numeric::xyzVector<platform::Real> rgb_to_hsv(numeric::xyzVector<platform::Real>
 	platform::Real delta = rgb_max - rgb_min;
 
 	//Set the saturation
-	if(rgb_max != 0)
-	{
+	if ( rgb_max != 0 ) {
 		hsv_values.y(delta/rgb_max);
-	}else
-	{
+	} else {
 		//if rgb_max == 0, the object is black.  set saturation to 0
 		hsv_values.y(0.0);
 	}
@@ -58,24 +56,19 @@ numeric::xyzVector<platform::Real> rgb_to_hsv(numeric::xyzVector<platform::Real>
 	platform::Real hue = 0.0;
 	//if the object is black, set hue to zero
 	//if the object is grey, delta=0 and hue is undefined, so set it to 0
-	if(rgb_max == 0.0 || delta == 0.0)
-	{
+	if ( rgb_max == 0.0 || delta == 0.0 ) {
 		hue = 0.0;
-	}else if(red == rgb_max)
-	{
+	} else if ( red == rgb_max ) {
 		hue = (green - blue) / delta;
-	}else if(green == rgb_max)
-	{
+	} else if ( green == rgb_max ) {
 		hue = 2.0+(blue - red) / delta;
-	}else
-	{
+	} else {
 		hue = 4.0 + (red - green) / delta;
 	}
 
 	//convert hue to 0-360
 	hue *= 60;
-	if(hue < 0)
-	{
+	if ( hue < 0 ) {
 		hue += 360;
 	}
 
@@ -103,8 +96,7 @@ numeric::xyzVector<platform::Real> hsv_to_rgb(numeric::xyzVector<platform::Real>
 	//assert( hue < 0 || hue > 360 || saturation < 0 || saturation > 1 || value < 0 || value > 1 );
 
 	//special case for grey colors
-	if(saturation == 0.0)
-	{
+	if ( saturation == 0.0 ) {
 		rgb_values.x(value);
 		rgb_values.y(value);
 		rgb_values.z(value);
@@ -119,38 +111,38 @@ numeric::xyzVector<platform::Real> hsv_to_rgb(numeric::xyzVector<platform::Real>
 	platform::Real t = value * ( 1 - saturation * ( 1 - f ) );
 
 	switch(i)
-	{
-	case 0:
-		rgb_values.x(value);
-		rgb_values.y(t);
-		rgb_values.z(p);
-		break;
-	case 1:
-		rgb_values.x(q);
-		rgb_values.y(value);
-		rgb_values.z(p);
-		break;
-	case 2:
-		rgb_values.x(p);
-		rgb_values.y(value);
-		rgb_values.z(t);
-		break;
-	case 3:
-		rgb_values.x(p);
-		rgb_values.y(q);
-		rgb_values.z(value);
-		break;
-	case 4:
-		rgb_values.x(t);
-		rgb_values.y(p);
-		rgb_values.z(value);
-		break;
-	default:
-		rgb_values.x(value);
-		rgb_values.y(p);
-		rgb_values.z(q);
-		break;
-	}
+			{
+			case 0 :
+				rgb_values.x(value);
+				rgb_values.y(t);
+				rgb_values.z(p);
+				break;
+			case 1 :
+				rgb_values.x(q);
+				rgb_values.y(value);
+				rgb_values.z(p);
+				break;
+			case 2 :
+				rgb_values.x(p);
+				rgb_values.y(value);
+				rgb_values.z(t);
+				break;
+			case 3 :
+				rgb_values.x(p);
+				rgb_values.y(q);
+				rgb_values.z(value);
+				break;
+			case 4 :
+				rgb_values.x(t);
+				rgb_values.y(p);
+				rgb_values.z(value);
+				break;
+			default :
+				rgb_values.x(value);
+				rgb_values.y(p);
+				rgb_values.z(q);
+				break;
+			}
 
 	return rgb_values;
 

@@ -62,9 +62,9 @@ static thread_local basic::Tracer TR( "protocols.loops.loop_closure.ccd.ccd_clos
 /// @param <torsions>: an array of values for the main-chain torsion angles for every residue in the Pose
 void
 load_coords_and_torsions(
-		pose::Pose const & pose,
-		utility::vector1< utility::vector1< core::Vector > > & coords,
-		utility::vector1< utility::vector1< core::Angle > > & torsions )
+	pose::Pose const & pose,
+	utility::vector1< utility::vector1< core::Vector > > & coords,
+	utility::vector1< utility::vector1< core::Angle > > & torsions )
 {
 	// TODO: This is a useful utility function that should probably be moved to core
 	//
@@ -98,14 +98,14 @@ load_coords_and_torsions(
 // FIXME: This is duplicated code currently with that in the Mover.
 void
 get_overlap_pos(
-		utility::vector1< utility::vector1< core::Vector > > const & coords,
-		utility::vector1< utility::vector1< core::Angle > > const & torsions,
-		core::uint const cutpoint,
-		core::uint const direction,
-		core::Angle const bond_angle1,
-		core::Length const bond_length,
-		core::Angle const bond_angle2,
-		Matrix & M )
+	utility::vector1< utility::vector1< core::Vector > > const & coords,
+	utility::vector1< utility::vector1< core::Angle > > const & torsions,
+	core::uint const cutpoint,
+	core::uint const direction,
+	core::Angle const bond_angle1,
+	core::Length const bond_length,
+	core::Angle const bond_angle2,
+	Matrix & M )
 {
 	using numeric::conversions::radians;
 	using namespace utility;
@@ -169,18 +169,18 @@ get_overlap_pos(
 		using basic::subtract_radian_angles;
 		ASSERT_ONLY( Real const dihedral1
 			( dihedral_radians( atoms[1], atoms[2], atoms[3], M.col(1) ) );)
-		ASSERT_ONLY(Real const dihedral2
+			ASSERT_ONLY(Real const dihedral2
 			( dihedral_radians( atoms[2], atoms[3], M.col(1), M.col(2) ) );)
-		ASSERT_ONLY(Real const dihedral3
+			ASSERT_ONLY(Real const dihedral3
 			( dihedral_radians( atoms[3], M.col(1), M.col(2), M.col(3) ) );)
 
-		ASSERT_ONLY(Real const angle1( std::acos( dot( ( atoms[3] - atoms[2] ).normalized(),
-																									 ( M.col(1) - atoms[3] ).normalized() ) ) );)
-		ASSERT_ONLY(Real const angle2( std::acos( dot( ( M.col(2) - M.col(1) ).normalized(),
-																									 ( M.col(1) - atoms[3] ).normalized() ) ) );)
-		ASSERT_ONLY(Real const length( atoms[3].distance( M.col(1) ) );)
+			ASSERT_ONLY(Real const angle1( std::acos( dot( ( atoms[3] - atoms[2] ).normalized(),
+			( M.col(1) - atoms[3] ).normalized() ) ) );)
+			ASSERT_ONLY(Real const angle2( std::acos( dot( ( M.col(2) - M.col(1) ).normalized(),
+			( M.col(1) - atoms[3] ).normalized() ) ) );)
+			ASSERT_ONLY(Real const length( atoms[3].distance( M.col(1) ) );)
 
-		assert( std::abs( subtract_radian_angles( dihedral1, dihedrals[1] ) ) < 1e-3 );
+			assert( std::abs( subtract_radian_angles( dihedral1, dihedrals[1] ) ) < 1e-3 );
 		assert( std::abs( subtract_radian_angles( dihedral2, dihedrals[2] ) ) < 1e-3 );
 		assert( std::abs( subtract_radian_angles( dihedral3, dihedrals[3] ) ) < 1e-3 );
 		assert( std::abs( subtract_radian_angles( angle1, angles[1] ) ) < 1e-3 );

@@ -46,11 +46,11 @@ public :
 	// Constructors, destructor, virtual constructors
 	DdGScan();
 	DdGScan(
-			core::pack::task::TaskFactoryOP task_factory,
-			core::Size const repeats,
-			core::scoring::ScoreFunctionCOP scorefxn,
-			bool report_diffs,
-			bool write2pdb
+		core::pack::task::TaskFactoryOP task_factory,
+		core::Size const repeats,
+		core::scoring::ScoreFunctionCOP scorefxn,
+		bool report_diffs,
+		bool write2pdb
 	);
 	DdGScan( DdGScan const & rval );
 	virtual protocols::filters::FilterOP clone() const;
@@ -58,8 +58,8 @@ public :
 	virtual ~DdGScan();
 	void initialize();
 
-  // @brief get name of this filter
-  virtual std::string name() const { return "DdGScan"; }
+	// @brief get name of this filter
+	virtual std::string name() const { return "DdGScan"; }
 
 	// Setters
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );

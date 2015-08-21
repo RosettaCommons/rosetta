@@ -77,16 +77,16 @@ void RestrictToLoops::parse_tag( TagCOP tag, DataMap & ) {
 	// Parse the 'design' option.
 
 	set_design_loop(
-			tag->getOption<bool>( "design", design_loop() ));
+		tag->getOption<bool>( "design", design_loop() ));
 
 	set_restrict_only_design_to_loops(
-			tag->getOption<bool>( "restrict_only_design_to_loops", restrict_only_design_to_loops() ));
+		tag->getOption<bool>( "restrict_only_design_to_loops", restrict_only_design_to_loops() ));
 
 	// Parse the 'loops_file' option.
 
-	if (tag->hasOption( "loops_file" )) {
+	if ( tag->hasOption( "loops_file" ) ) {
 		set_loops_from_file(
-				tag->getOption<string>( "loops_file" ));
+			tag->getOption<string>( "loops_file" ));
 	}
 }
 
@@ -107,13 +107,13 @@ void RestrictToLoops::apply( Pose const & pose, PackerTask & task ) const {
 }
 
 void RestrictToLoops::apply_helper(
-		Pose const & pose,
-		PackerTask & task,
-		bool include_neighbors,
-		Real cutoff_distance,
-		bool design_neighbors ) const {
+	Pose const & pose,
+	PackerTask & task,
+	bool include_neighbors,
+	Real cutoff_distance,
+	bool design_neighbors ) const {
 
-	if (! loops()) { return; }
+	if ( ! loops() ) { return; }
 
 	core::pack::task::operation::PreventRepacking turn_off_packing;
 	core::pack::task::operation::RestrictResidueToRepacking turn_off_design;
@@ -126,30 +126,28 @@ void RestrictToLoops::apply_helper(
 
 	// Decide which residues should be designed.
 	utility::vector1<bool> is_designable;
-	if (design_neighbors){
+	if ( design_neighbors ) {
 		is_designable = is_packable;
-	}
-	else if ( restrict_only_design_ || design_loop() ) {
+	} else if ( restrict_only_design_ || design_loop() ) {
 		is_designable.resize( pose.total_residue(), false );
 		loops()->transfer_to_residue_vector( is_designable, true );
-	}
-	else {
+	} else {
 		is_designable.resize( pose.total_residue(), false );
 	}
 
 	// Update the packer task.
-	for (Size i = 1; i <= pose.total_residue(); ++i) {
-		if (! is_designable[ i ]) {
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( ! is_designable[ i ] ) {
 			turn_off_design.include_residue( i );
 		}
-		if (! is_packable[ i ]) {
+		if ( ! is_packable[ i ] ) {
 			turn_off_packing.include_residue( i );
 		}
 	}
 
 	turn_off_design.apply( pose, task );
 
-	if ( ! restrict_only_design_ ){
+	if ( ! restrict_only_design_ ) {
 		turn_off_packing.apply( pose, task );
 	}
 

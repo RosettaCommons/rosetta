@@ -62,7 +62,7 @@ public:
 		negative_better_(negative_better)
 	{
 		profile( prof );
-	debug_assert( profile().size() == length() );
+		debug_assert( profile().size() == length() );
 	}
 
 	/// @brief copy ctor
@@ -121,13 +121,13 @@ public:
 	void read_from_checkpoint( FileName const & fn, bool negative_better = true );
 
 	/// @brief Read profile matrix from the given filename in the legacy BLAST binary format
-        void read_from_binary_chk(FileName const & fn);
-	
+	void read_from_binary_chk(FileName const & fn);
+
 	/// @brief Returns the 2D vector1 of Real values representing this profile.
 	utility::vector1< utility::vector1< Real > > const & profile() const;
 
 	/// @brief Returns the 2D vector1 of Real values of the probabilties of each aa.
-		utility::vector1< utility::vector1< Real > > const & occurrence_data() const;
+	utility::vector1< utility::vector1< Real > > const & occurrence_data() const;
 
 	/// @brief Sets the 2D vector1 of Real values representing this profile.
 	void profile(
@@ -135,8 +135,8 @@ public:
 	);
 	/// @brief Sets the 2D vector1 of Real values of the probabilties of each aa.
 	void occurrence_data(
-			utility::vector1< utility::vector1< Real > >  const & new_occurrence_data
-		);
+		utility::vector1< utility::vector1< Real > >  const & new_occurrence_data
+	);
 
 	/// @brief Inserts a character at the given position.
 	virtual void insert_char( core::Size pos, char new_char );
@@ -163,14 +163,14 @@ public:
 
 	/// @brief Sets the 1D vector1 of Real values representing this profile at pos X.
 	void prof_row(
-		utility::vector1< Real > const & new_prof_row, core::Size pos 
+		utility::vector1< Real > const & new_prof_row, core::Size pos
 	);
 
 	void probabilty_row(
-			utility::vector1< Real > const & new_prob_row, core::Size pos
+		utility::vector1< Real > const & new_prob_row, core::Size pos
 	);
 
-	Size size() const { 
+	Size size() const {
 		return profile_.size();
 	}
 
@@ -221,7 +221,7 @@ private:
 	utility::vector1< std::string > alphabet_;
 	utility::vector1< utility::vector1< Real > > profile_;
 	utility::vector1< utility::vector1< Real > > occurrence_data_;//This matrix holds the the % of occurrences of an amino acid in the data base used to construct the pssm matrix.
-																// This data is genrated by psi-blast program as an additional matrix along side the pssm matrix
+	// This data is genrated by psi-blast program as an additional matrix along side the pssm matrix
 
 
 	/// @brief temp used to convert arbitrary scores to/from probabilities

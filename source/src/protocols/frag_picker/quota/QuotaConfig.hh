@@ -48,33 +48,35 @@ public:
 
 	/// @brief returns a fraction for a given pool
 	/// @details if the given string is not a valid name of a quota pool,
-	///	the method returns 0
+	/// the method returns 0
 	inline Real get_fraction(std::string pool_name) {
 
-	  for(Size i=1;i<=pool_names_.size(); ++i ) {
-	      if(pool_names_[i].compare(pool_name) == 0 )
-	      return pool_weights_[i];
-	  }
+		for ( Size i=1; i<=pool_names_.size(); ++i ) {
+			if ( pool_names_[i].compare(pool_name) == 0 ) {
+				return pool_weights_[i];
+			}
+		}
 
-	  return 0;
+		return 0;
 	}
 
 	/// @brief returns true if a config file defined a given pool name
 	bool is_valid_quota_pool_name(std::string & pool_name) {
 
-	  for(Size i=1;i<=pool_names_.size(); ++i ) {
-	      if(pool_names_[i].compare(pool_name) == 0 )
-	      return true;
-	  }
+		for ( Size i=1; i<=pool_names_.size(); ++i ) {
+			if ( pool_names_[i].compare(pool_name) == 0 ) {
+				return true;
+			}
+		}
 
-	  return false;
+		return false;
 	}
 
 	/// @brief return a string id (name) assigned to a given pool
 	inline std::string & get_pool_name(Size pool_id) { return pool_names_[pool_id]; }
 
 protected:
-        utility::vector1<Real> pool_weights_;
+	utility::vector1<Real> pool_weights_;
 	utility::vector1<std::string> pool_names_;
 };
 

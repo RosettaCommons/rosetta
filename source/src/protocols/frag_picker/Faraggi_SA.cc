@@ -85,8 +85,9 @@ core::Real
 sa_faraggi_max( char aa )
 {
 	std::map< char, core::Real >::const_iterator iter = sa_faraggi_max().find( aa );
-	if ( iter == sa_faraggi_max().end() )
+	if ( iter == sa_faraggi_max().end() ) {
 		utility_exit_with_message( "unrecognized sa_faraggi_max aa " + std::string(1, aa) );
+	}
 	return iter->second;
 }
 

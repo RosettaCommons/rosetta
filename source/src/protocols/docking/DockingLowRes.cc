@@ -135,10 +135,10 @@ void DockingLowRes::set_rot_magnitude( core::Real rot_magnitude) { rot_magnitude
 
 void DockingLowRes::set_default() {
 
-  core::Real trans_magnitude=basic::options::option[ basic::options::OptionKeys::docking::docklowres_trans_magnitude ]();
-  set_trans_magnitude(trans_magnitude);
-  core::Real rot_magnitude=basic::options::option[ basic::options::OptionKeys::docking::docklowres_rot_magnitude ]();
-  set_rot_magnitude(rot_magnitude);
+	core::Real trans_magnitude=basic::options::option[ basic::options::OptionKeys::docking::docklowres_trans_magnitude ]();
+	set_trans_magnitude(trans_magnitude);
+	core::Real rot_magnitude=basic::options::option[ basic::options::OptionKeys::docking::docklowres_rot_magnitude ]();
+	set_rot_magnitude(rot_magnitude);
 	//TR << " Lowres docking trans_magnitude_ " << trans_magnitude_ << std::endl;
 	//TR << " Lowres docking rot_magnitude_" << rot_magnitude_ << std::endl;
 
@@ -164,7 +164,7 @@ void DockingLowRes::sync_objects_with_flags()
 	movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap() );
 	movemap_->set_chi( chi_ ); // is this right?
 	movemap_->set_bb( bb_ ); // is this right?
-	for( DockJumps::const_iterator it = movable_jumps_.begin(); it != movable_jumps_.end(); ++it ) {
+	for ( DockJumps::const_iterator it = movable_jumps_.begin(); it != movable_jumps_.end(); ++it ) {
 		movemap_->set_jump( *it, true );
 	}
 
@@ -181,7 +181,7 @@ void DockingLowRes::set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn )
 	// mc object score function is out of sync and needs to be recreated
 	flags_and_objects_are_in_sync_ = false;
 }
-    
+
 void DockingLowRes::finalize_setup( core::pose::Pose & pose){
 	using namespace moves;
 
@@ -189,9 +189,9 @@ void DockingLowRes::finalize_setup( core::pose::Pose & pose){
 
 	docking_lowres_protocol_ = protocols::moves::SequenceMoverOP( new SequenceMover );
 	docking_lowres_protocol_->add_mover( rb_mover_ );
-	
+
 	//JAB - moved from setup_foldtree.  It should be here.
-	
+
 	//set up InterfaceInfo object in pose to specify which interface(s)
 	//to calculate docking centroid mode scoring components from
 	using namespace core::scoring;
@@ -214,7 +214,7 @@ void DockingLowRes::finalize_setup( core::pose::Pose & pose){
 ///       currently used only in the low-resolution step (centroid mode)
 ///
 /// @references pose_docking_centroid_rigid_body_adaptive from pose_docking.cc and
-///				rigid_body_MC_cycle_adaptive from dock_structure.cc
+///    rigid_body_MC_cycle_adaptive from dock_structure.cc
 ///
 /// @author Monica Berrondo October 22 2007
 ///
@@ -226,11 +226,11 @@ void DockingLowRes::apply( core::pose::Pose & pose )
 	//TR << "in " << name << "apply" << std::endl;
 	TR << "in DockingLowRes.apply" << std::endl;
 
-	if ( !flags_and_objects_are_in_sync_ ){
+	if ( !flags_and_objects_are_in_sync_ ) {
 		sync_objects_with_flags();
 	}
 
-	if ( first_apply_with_current_setup_ ){
+	if ( first_apply_with_current_setup_ ) {
 		finalize_setup( pose );
 		first_apply_with_current_setup_ = false;
 	}
@@ -244,7 +244,7 @@ void DockingLowRes::apply( core::pose::Pose & pose )
 
 	TR << "::::::::::::::::::Centroid Rigid Body Adaptive:::::::::::::::::::" << std::endl;
 
-	for ( core::Size i=1; i<=outer_cycles_; ++i) {
+	for ( core::Size i=1; i<=outer_cycles_; ++i ) {
 		rigid_body_trial( pose );
 		if ( accept_rate_ < 0.5 ) {
 			trans_magnitude_ *= 0.9;
@@ -253,11 +253,11 @@ void DockingLowRes::apply( core::pose::Pose & pose )
 			trans_magnitude_ *= 1.1;
 			rot_magnitude_ *= 1.1;
 		}
-//		pose.energies().show( std::cout );
+		//  pose.energies().show( std::cout );
 	}
 	mc_->recover_low( pose );
 	TR.flush();
-//	pose.energies().show( std::cout );
+	// pose.energies().show( std::cout );
 }
 
 std::string
@@ -279,7 +279,7 @@ DockingLowRes::get_name() const {
 ///       currently used only in the low-resolution step (centroid mode)
 ///
 /// @references pose_docking_rigid_body_trial from pose_docking.cc and
-///				rigid_body_MC_cycle from dock_structure.cc
+///    rigid_body_MC_cycle from dock_structure.cc
 ///
 /// @author Monica Berrondo October 22 2007
 ///
@@ -288,25 +288,25 @@ void DockingLowRes::rigid_body_trial( core::pose::Pose & pose )
 {
 	using namespace moves;
 
-	//	PDBDumpMoverOP dump = new PDBDumpMover("lowres_cycle_");
-    //	dump->apply( pose );
-    //	MCShowMoverOP mc_show = new MCShowMover( mc_ );
-    //	mc_show->apply( pose );
-    
+	// PDBDumpMoverOP dump = new PDBDumpMover("lowres_cycle_");
+	// dump->apply( pose );
+	// MCShowMoverOP mc_show = new MCShowMover( mc_ );
+	// mc_show->apply( pose );
+
 	rb_mover_->rot_magnitude( rot_magnitude_ );
 	rb_mover_->trans_magnitude( trans_magnitude_ );
 
 	TrialMoverOP rb_trial( new TrialMover( docking_lowres_protocol_, mc_ ) );
-//	rb_trial->keep_stats_type( moves::all_stats );
+	// rb_trial->keep_stats_type( moves::all_stats );
 	rb_trial->keep_stats_type( accept_reject );
-    
+
 	RepeatMoverOP rb_cycle( new RepeatMover( rb_trial, inner_cycles_ ) );
 	rb_cycle->apply( pose );
-    
-	pose = mc_->lowest_score_pose();
-    mc_->reset( pose );
 
-    accept_rate_ = rb_trial->acceptance_rate();
+	pose = mc_->lowest_score_pose();
+	mc_->reset( pose );
+
+	accept_rate_ = rb_trial->acceptance_rate();
 }
 
 moves::MonteCarloOP DockingLowRes::get_mc() { return mc_; }
@@ -315,27 +315,27 @@ moves::MonteCarloOP DockingLowRes::get_mc() { return mc_; }
 /// @details  Show the complete setup of the docking protocol
 void
 DockingLowRes::show( std::ostream & out ) const {
-    using namespace ObjexxFCL::format;
-    
+	using namespace ObjexxFCL::format;
+
 	// All output will be 80 characters - 80 is a nice number, don't you think?
 	std::string line_marker = "///";
 	out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
 	out << line_marker << A( 47, " Docking Low Res Protocol" ) << space( 27 ) << line_marker << std::endl;
 	out << line_marker << space( 74 ) << line_marker << std::endl;
-    
+
 	// Display the number of inner cycles during low res docking
 	out << line_marker << " Centroid Inner Cycles: " << inner_cycles_ ;
 	out << space( 48 ) << line_marker << std::endl;
-    
+
 	// Display the number of outer cycles during low res docking
 	out << line_marker << " Centroid Outer Cycles: " << outer_cycles_;
 	out << space( 48 ) << line_marker << std::endl;
-    
+
 	// Display the state of the filters (on or off)
 	out << line_marker << " Scorefunction: " << space( 58 ) << line_marker << std::endl;
 	scorefxn_->show(out);
 	out <<std::endl;
-    
+
 	// Close the box I have drawn
 	out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
 }
@@ -343,7 +343,7 @@ DockingLowRes::show( std::ostream & out ) const {
 std::ostream & operator<<(std::ostream& out, const DockingLowRes & dp)
 {
 	dp.show( out );
-    return out;
+	return out;
 }
 
 } // namespace docking

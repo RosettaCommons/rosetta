@@ -47,8 +47,8 @@ public:
 	RefineBetaBarrel(AntibodyInfoOP antibody_info);
 
 	RefineBetaBarrel(AntibodyInfoOP antibody_info,
-	                 core::scoring::ScoreFunctionCOP dock_scorefxn,
-	                 core::scoring::ScoreFunctionCOP pack_scorefxn);
+		core::scoring::ScoreFunctionCOP dock_scorefxn,
+		core::scoring::ScoreFunctionCOP pack_scorefxn);
 
 	virtual void apply( core::pose::Pose & pose_in );
 	virtual std::string get_name() const;

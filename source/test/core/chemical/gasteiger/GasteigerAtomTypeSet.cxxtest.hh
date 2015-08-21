@@ -33,7 +33,7 @@ using namespace core::chemical::gasteiger;
 
 class GasteigerAtomTypeSetTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	GasteigerAtomTypeSetCOP atom_type_set_;
 

@@ -95,9 +95,9 @@ HolesEnergy::HolesEnergy() : parent( methods::EnergyMethodCreatorOP( new HolesEn
 //////////////////////////////////////////////////////
 void
 HolesEnergy::finalize_total_energy(
-  pose::Pose & pose,
-  ScoreFunction const &,
-  EnergyMap & totals
+	pose::Pose & pose,
+	ScoreFunction const &,
+	EnergyMap & totals
 ) const
 {
 	PoseBalls pb(pose);
@@ -136,7 +136,7 @@ HolesEnergy::setup_for_derivatives(
 	using namespace numeric;
 	using basic::datacache::DataCache_CacheableData;
 
-	if( !pose.data().has( core::pose::datacache::CacheableDataType::HOLES_POSE_INFO ) ) {
+	if ( !pose.data().has( core::pose::datacache::CacheableDataType::HOLES_POSE_INFO ) ) {
 		pose.data().set( core::pose::datacache::CacheableDataType::HOLES_POSE_INFO, DataCache_CacheableData::DataOP( new CacheableAtomID_MapVector ) );
 	}
 	CacheableDataOP dat( pose.data().get_ptr( core::pose::datacache::CacheableDataType::HOLES_POSE_INFO ) );
@@ -144,10 +144,10 @@ HolesEnergy::setup_for_derivatives(
 	AtomID_Map<xyzVector<Real> > & derivs(cachemap->map());
 	core::pose::initialize_atomid_map_heavy_only(derivs,pose);
 
-   /*Real score = */compute_holes_deriv( pose, min_params_, derivs );//.score;
+	/*Real score = */compute_holes_deriv( pose, min_params_, derivs );//.score;
 
 	// if( !pose.data().has( HOLES_POSE_SCORE ) ) {
-	// 	pose.data().set( HOLES_POSE_SCORE, new CacheableAtomID_MapVector );
+	//  pose.data().set( HOLES_POSE_SCORE, new CacheableAtomID_MapVector );
 	// }
 	//    dat = pose.data().get_ptr( HOLES_POSE_SCORE );
 	// CacheableReal *cachereal = (CacheableReal*)dat();
@@ -175,11 +175,11 @@ HolesEnergy::eval_atom_derivative(
 	CacheableAtomID_MapVectorCOP cachemap = utility::pointer::dynamic_pointer_cast<CacheableAtomID_MapVector const>( dat );
 	AtomID_Map<xyzVector<Real> > const & derivs(cachemap->map());
 
-	if( aid.rsd() > derivs.n_residue() || aid.atomno() > derivs.n_atom(aid.rsd()) ) {
+	if ( aid.rsd() > derivs.n_residue() || aid.atomno() > derivs.n_atom(aid.rsd()) ) {
 		return;
 	}
 
-  	numeric::xyzVector<core::Real> atom_x = pose.xyz(aid);
+	numeric::xyzVector<core::Real> atom_x = pose.xyz(aid);
 	numeric::xyzVector<core::Real> const f2( derivs[aid] );
 	numeric::xyzVector<core::Real> const atom_y = atom_x - f2;   // a "fake" atom in the direcion of the gradient
 	numeric::xyzVector<core::Real> const f1( atom_x.cross( atom_y ) );

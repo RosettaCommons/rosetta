@@ -37,33 +37,33 @@
 static thread_local basic::Tracer TR( "core/scoring/APBSWrapper" );
 
 namespace core {
-namespace scoring{
+namespace scoring {
 std::string const PQR::chains( " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" );
 APBSWrapper::~APBSWrapper()
 {
 }
 
 APBSWrapper::APBSWrapper(core::pose::Pose const & pose,
-	      std::map<std::string, bool> const & charged_residues,
-	      int dbg,
-	      bool calcenergy)
+	std::map<std::string, bool> const & charged_residues,
+	int dbg,
+	bool calcenergy)
 {
 
-		int natoms = count_atoms(pose);
-		pqr = PQROP( new PQR(pose, natoms, charged_residues) );
-    TR << "PQR data is prepared." << std::endl;
-		config = APBSConfigOP( new APBSConfig(pose, natoms, dbg, calcenergy) );
-		TR << "APBS config is prepared." << std::endl;
-		result = APBSResultOP( new APBSResult(config->nsims, config->natoms, config->dime, 
-														config->i_param.calcforce,
-														config->i_param.calcenergy,
-														config->i_param.write_pot,
-														config->i_param.write_charge,
-														config->i_param.write_smol,
-														config->i_param.write_kappa,
-														config->i_param.write_diel,
-														config->i_param.write_atompot) );
-		TR << "APBS result data structure is prepared." << std::endl;
+	int natoms = count_atoms(pose);
+	pqr = PQROP( new PQR(pose, natoms, charged_residues) );
+	TR << "PQR data is prepared." << std::endl;
+	config = APBSConfigOP( new APBSConfig(pose, natoms, dbg, calcenergy) );
+	TR << "APBS config is prepared." << std::endl;
+	result = APBSResultOP( new APBSResult(config->nsims, config->natoms, config->dime,
+		config->i_param.calcforce,
+		config->i_param.calcenergy,
+		config->i_param.write_pot,
+		config->i_param.write_charge,
+		config->i_param.write_smol,
+		config->i_param.write_kappa,
+		config->i_param.write_diel,
+		config->i_param.write_atompot) );
+	TR << "APBS result data structure is prepared." << std::endl;
 }
 APBSResultCOP
 APBSWrapper::exec() {
@@ -120,13 +120,13 @@ APBSWrapper::exec() {
 									raw_grid_data.data() );
 #endif
 
-	if( ret != 0 ) {
+	if ( ret != 0 ) {
 		return NULL;
 	}
 	return result;
 }
 
-int APBSWrapper::count_atoms( core::pose::Pose const & pose ) const 
+int APBSWrapper::count_atoms( core::pose::Pose const & pose ) const
 {
 	int nres = pose.total_residue();
 	int cntAtoms=0;
@@ -140,26 +140,26 @@ int APBSWrapper::count_atoms( core::pose::Pose const & pose ) const
 	return cntAtoms;
 }
 
-PQR::PQR(core::pose::Pose const & pose, int natoms,  
-				 std::map<std::string, bool> const & charged_residues)
-	: natoms_(natoms)
+PQR::PQR(core::pose::Pose const & pose, int natoms,
+	std::map<std::string, bool> const & charged_residues)
+: natoms_(natoms)
 {
 	int nres = pose.total_residue();
 	int cntAtoms = 0;
- 
+
 	for ( int i=1; i<= nres; ++i ) {
 		conformation::Residue const & rsd = pose.residue(i);
 		bool residue_charged = const_cast<std::map<std::string,bool>&>(charged_residues)[rsd.type().name()];
 		for ( Size j=1; j<=rsd.natoms(); ++j ) {
 			conformation::Atom const & atom( rsd.atom(j) );
-			
+
 			//skip outputing virtual atom unless specified.
-			//fixed so that the last atom in atom type set can be 
+			//fixed so that the last atom in atom type set can be
 			//something other than a virtual atom --steven combs
 			if ( rsd.atom_type(j).is_virtual() ) continue;
-			
+
 			runtime_assert( rsd.chain() < chains.size() ); // silly restriction
-			
+
 			x.push_back(atom.xyz()(1));
 			y.push_back(atom.xyz()(2));
 			z.push_back(atom.xyz()(3));
@@ -172,39 +172,38 @@ PQR::PQR(core::pose::Pose const & pose, int natoms,
 PQR::~PQR(){}
 
 APBSResult::APBSResult(int nsims, int natoms, int grid_dimes[3],
-											 int calcforce, int calcenergy,
-											 int write_pot, int write_charge, int write_smol,
-											 int write_kappa, int write_diel, int write_atompot ) 
-	: esEnergy(nsims),
-		npEnergy(nsims)
+	int calcforce, int calcenergy,
+	int write_pot, int write_charge, int write_smol,
+	int write_kappa, int write_diel, int write_atompot )
+: esEnergy(nsims),
+	npEnergy(nsims)
 {
 	// allocate if force is to be calculated
-  if(calcforce) {
+	if ( calcforce ) {
 		// allocate memory for these natoms-dimensioned data
-		for( int i=0; i<natoms; i++ ) {
+		for ( int i=0; i<natoms; i++ ) {
 			dx.push_back(0);
 			dy.push_back(0);
 			dz.push_back(0);
-		  qfx.push_back(0);
-			qfy.push_back(0); 
+			qfx.push_back(0);
+			qfy.push_back(0);
 			qfz.push_back(0);
 			ibx.push_back(0);
 			npx.push_back(0);
 			dbx.push_back(0);
 		}
 	}
-	if(calcenergy) {
-	}
+	if ( calcenergy ) {}
 	nwrites = write_pot
-		+ write_charge 
+		+ write_charge
 		+ write_smol
 		+ write_kappa
-		+ write_diel*3 
+		+ write_diel*3
 		+ write_atompot;
 	grid_meta[0] = nwrites;
-	for(int i=1; i<13; i++) grid_meta[i] = 0.;
+	for ( int i=1; i<13; i++ ) grid_meta[i] = 0.;
 
-	for(int i=0; i<nwrites; i++) {
+	for ( int i=0; i<nwrites; i++ ) {
 		std::vector<double> i_data( grid_dimes[0] * grid_dimes[1] * grid_dimes[2], 0.);
 		grid_data.push_back( i_data );
 	}
@@ -224,7 +223,7 @@ APBSConfig::I_PARAM::I_PARAM() :
 	calcforce(0),
 	calcenergy(0),
 	write_pot(1),
-  write_charge(0),
+	write_charge(0),
 	write_smol(0),
 	write_kappa(0),
 	write_diel(0),
@@ -237,7 +236,7 @@ APBSConfig::I_PARAM::I_PARAM() :
 	use_charge(0),
 	use_kappa(0),
 	use_diel(0)
-{ 
+{
 }
 APBSConfig::I_PARAM::~I_PARAM() {}
 
@@ -297,8 +296,8 @@ double * APBSConfig::R_PARAM::raw_array()
 	return array;
 }
 
-APBSConfig::APBSConfig(core::pose::Pose const & pose, int natomsIn, int dbgIn, bool calcenergyIn) 
-	:
+APBSConfig::APBSConfig(core::pose::Pose const & pose, int natomsIn, int dbgIn, bool calcenergyIn)
+:
 	dbg(dbgIn),
 	nsims(1),
 	natoms(natomsIn),
@@ -314,27 +313,27 @@ APBSConfig::APBSConfig(core::pose::Pose const & pose, int natomsIn, int dbgIn, b
 	dime[0] = dime[1] = dime[2] = 1;
 
 	double min_r[] = {9999,9999,9999};
-  double max_r[] = {-9999,-9999,-9999};
-    // Find the min & max coords within the moleculer system to define the grid.
-	for (Size ires=1; ires<=pose.total_residue(); ++ires) {
-      for (Size iatom=1; iatom<=pose.residue(ires).natoms(); ++iatom) {
-				for (int i=0; i<3; ++i) {
-					min_r[i] = std::min(pose.residue(ires).xyz(iatom)[i], min_r[i]);
-					max_r[i] = std::max(pose.residue(ires).xyz(iatom)[i], max_r[i]);
-				}
-      }
-    }
-
-    double length[3];
-		for(int i=0; i<3; i++ ) {
-			length[i] = max_r[i]- min_r[i];       // grid widths
-			ccenter[i] = (min_r[i] + max_r[i])/2.;  // grid center coords
-			fcenter[i] = ccenter[i];
-			fglen[i] = length[i] + fadd;
-			cglen[i] = length[i] * cfac;
-			if (cglen[i] <= fglen[i]) cglen[i] = fglen[i] + 1;
-			dime[i] = static_cast<int>(fglen[i] / space + 1);
+	double max_r[] = {-9999,-9999,-9999};
+	// Find the min & max coords within the moleculer system to define the grid.
+	for ( Size ires=1; ires<=pose.total_residue(); ++ires ) {
+		for ( Size iatom=1; iatom<=pose.residue(ires).natoms(); ++iatom ) {
+			for ( int i=0; i<3; ++i ) {
+				min_r[i] = std::min(pose.residue(ires).xyz(iatom)[i], min_r[i]);
+				max_r[i] = std::max(pose.residue(ires).xyz(iatom)[i], max_r[i]);
+			}
 		}
+	}
+
+	double length[3];
+	for ( int i=0; i<3; i++ ) {
+		length[i] = max_r[i]- min_r[i];       // grid widths
+		ccenter[i] = (min_r[i] + max_r[i])/2.;  // grid center coords
+		fcenter[i] = ccenter[i];
+		fglen[i] = length[i] + fadd;
+		cglen[i] = length[i] * cfac;
+		if ( cglen[i] <= fglen[i] ) cglen[i] = fglen[i] + 1;
+		dime[i] = static_cast<int>(fglen[i] / space + 1);
+	}
 }
 APBSConfig::~APBSConfig()
 {}

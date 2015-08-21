@@ -61,8 +61,8 @@ LoopsDatabaseDefiner::LoopsDatabaseDefiner() :
 LoopsDatabaseDefiner::~LoopsDatabaseDefiner() {}
 
 LoopsDatabaseDefiner::LoopsDatabaseDefiner(LoopsDatabaseDefiner const & src) : LoopsDefiner(src),
-		db_session_(src.db_session_),
-		database_table_(src.database_table_)
+	db_session_(src.db_session_),
+	database_table_(src.database_table_)
 {}
 
 
@@ -89,7 +89,7 @@ LoopsDatabaseDefiner::parse_my_tag(
 
 	string const type(tag->getName());
 
-	if(!tag->hasOption("name")){
+	if ( !tag->hasOption("name") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption(
 			"Unable to create unnamed LoopsDefiner (type: " + type + ")" );
 	}
@@ -111,7 +111,7 @@ LoopsDatabaseDefiner::apply(
 	result res = (*db_session_) << sql_stmt.str();
 
 	SerializedLoopList loop_list;
-	while(res.next()){
+	while ( res.next() ) {
 		SerializedLoop loop;
 		int extended;
 		res >> loop.start >> loop.stop >> loop.cut >> loop.skip_rate >> extended;
@@ -120,7 +120,7 @@ LoopsDatabaseDefiner::apply(
 		loop_list.push_back(loop);
 	}
 
-	if(loop_list.size() == 0){
+	if ( loop_list.size() == 0 ) {
 		stringstream error_message;
 		error_message
 			<< "Unable to locate loops for job distributor input tag '"

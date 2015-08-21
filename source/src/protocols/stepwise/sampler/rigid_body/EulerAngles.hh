@@ -28,52 +28,52 @@ namespace stepwise {
 namespace sampler {
 namespace rigid_body {
 
-	class EulerAngles: public utility::pointer::ReferenceCount {
+class EulerAngles: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//Should make sure that alpha and gamma lies in the [-Pi:Pi] range.
-		//constructor
-		EulerAngles();
+	//Should make sure that alpha and gamma lies in the [-Pi:Pi] range.
+	//constructor
+	EulerAngles();
 
-		EulerAngles( numeric::xyzMatrix< core::Real > const & rotation_matrix );
+	EulerAngles( numeric::xyzMatrix< core::Real > const & rotation_matrix );
 
-		//destructor
-		~EulerAngles();
+	//destructor
+	~EulerAngles();
 
-	public:
+public:
 
-		void
-		initialize_from_rotation_matrix( numeric::xyzMatrix< core::Real > const & rotation_matrix );
+	void
+	initialize_from_rotation_matrix( numeric::xyzMatrix< core::Real > const & rotation_matrix );
 
-		void
-		convert_to_rotation_matrix( numeric::xyzMatrix< core::Real > & rotation_matrix );
+	void
+	convert_to_rotation_matrix( numeric::xyzMatrix< core::Real > & rotation_matrix );
 
-		void
-		set_alpha( Real const setting ){ alpha_ = setting; }
+	void
+	set_alpha( Real const setting ){ alpha_ = setting; }
 
-		void
-		set_beta( Real const setting );
+	void
+	set_beta( Real const setting );
 
-		void
-		set_z( Real const setting );
+	void
+	set_z( Real const setting );
 
-		void
-		set_gamma( Real const setting ){ gamma_ = setting; }
+	void
+	set_gamma( Real const setting ){ gamma_ = setting; }
 
-		Real const & alpha() const { return alpha_; }
-		Real const & beta() const { return beta_; }
-		Real const & gamma() const { return gamma_; }
-		Real const & z() const { return z_; }
+	Real const & alpha() const { return alpha_; }
+	Real const & beta() const { return beta_; }
+	Real const & gamma() const { return gamma_; }
+	Real const & z() const { return z_; }
 
-	private:
+private:
 
-		core::Real alpha_; //phi
-		core::Real beta_; //theta
-		core::Real gamma_; //psi
-		core::Real z_; //z=cos(beta)
+	core::Real alpha_; //phi
+	core::Real beta_; //theta
+	core::Real gamma_; //psi
+	core::Real z_; //z=cos(beta)
 
-	};
+};
 
 } //rigid_body
 } //sampler

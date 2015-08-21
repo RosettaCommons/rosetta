@@ -52,9 +52,9 @@ public:
 		core::Size start_depth
 	);
 
-  bool
-  successful_loop_closure(
-    core::pose::Pose & pose,
+	bool
+	successful_loop_closure(
+		core::pose::Pose & pose,
 		protocols::loops::LoopsOP flexible_regions,
 		std::map< core::Size, MotifCOP > & setpos,
 		std::map< core::Size, core::conformation::ResidueCOP > & setpos_ir,
@@ -63,7 +63,7 @@ public:
 		core::Size const this_pos,
 		MotifCOP this_motif,
 		bool const this_forward_info
-  );
+	);
 
 	std::string
 	make_motif_filename(

@@ -106,30 +106,30 @@ using utility::file::FileName;
 static thread_local basic::Tracer TR( "LD_CONVERTER" );
 
 // application specific options
-namespace ld_converter{
-	// pert options
-	IntegerVectorOptionKey const convert_L_positions( "ld_converter::convert_L_positions" );
-	IntegerVectorOptionKey const convert_D_positions( "ld_converter::convert_D_positions" );
-	StringVectorOptionKey const convert_L_pdb_positions( "ld_converter::convert_L_pdb_positions" );
-	StringVectorOptionKey const convert_D_pdb_positions( "ld_converter::convert_D_pdb_positions" );
-	BooleanOptionKey const final_repack( "ld_converter::final_repack" );
-	BooleanOptionKey const final_minimize( "ld_converter::final_minimize" );
-	BooleanOptionKey const fix_functional_group( "ld_converter::fix_functional_group" );
+namespace ld_converter {
+// pert options
+IntegerVectorOptionKey const convert_L_positions( "ld_converter::convert_L_positions" );
+IntegerVectorOptionKey const convert_D_positions( "ld_converter::convert_D_positions" );
+StringVectorOptionKey const convert_L_pdb_positions( "ld_converter::convert_L_pdb_positions" );
+StringVectorOptionKey const convert_D_pdb_positions( "ld_converter::convert_D_pdb_positions" );
+BooleanOptionKey const final_repack( "ld_converter::final_repack" );
+BooleanOptionKey const final_minimize( "ld_converter::final_minimize" );
+BooleanOptionKey const fix_functional_group( "ld_converter::fix_functional_group" );
 
 }
 
 class LDConverterMover : public Mover {
 
-	public:
+public:
 
-		//default ctor
-		LDConverterMover(): Mover("LDConverterMover"){}
+	//default ctor
+	LDConverterMover(): Mover("LDConverterMover"){}
 
-		//default dtor
-		virtual ~LDConverterMover(){}
+	//default dtor
+	virtual ~LDConverterMover(){}
 
-		virtual void apply( core::pose::Pose & pose );
-		virtual std::string get_name() const { return "LDConverterMover"; }
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const { return "LDConverterMover"; }
 
 };
 
@@ -140,36 +140,36 @@ typedef utility::pointer::shared_ptr< LDConverterMover const > LDConverterMoverC
 int
 main( int argc, char* argv[] )
 {
-    try {
-	utility::vector1< core::Size > empty_vector(0);
-	utility::vector1< std::string > empty_vector_string(0);
-	option.add( ld_converter::convert_L_positions, "The residue positions to convert to L configuration" ).def( empty_vector );
-	option.add( ld_converter::convert_D_positions, "The residue positions to convert to D configuration" ).def( empty_vector );
+	try {
+		utility::vector1< core::Size > empty_vector(0);
+		utility::vector1< std::string > empty_vector_string(0);
+		option.add( ld_converter::convert_L_positions, "The residue positions to convert to L configuration" ).def( empty_vector );
+		option.add( ld_converter::convert_D_positions, "The residue positions to convert to D configuration" ).def( empty_vector );
 
-	option.add( ld_converter::convert_D_pdb_positions, "The residue positions to convert to D configuration in pdb numbering (chain resnum)" ).def( empty_vector_string );
-	option.add( ld_converter::convert_L_pdb_positions, "The residue positions to convert to L configuration in pdb numbering (chain resnum)" ).def( empty_vector_string );
+		option.add( ld_converter::convert_D_pdb_positions, "The residue positions to convert to D configuration in pdb numbering (chain resnum)" ).def( empty_vector_string );
+		option.add( ld_converter::convert_L_pdb_positions, "The residue positions to convert to L configuration in pdb numbering (chain resnum)" ).def( empty_vector_string );
 
-	option.add( ld_converter::final_repack, "Do a final repack. Default false" ).def( false );
-	option.add( ld_converter::final_minimize, "Do a final minimization. Default false" ).def( false );
-	option.add( ld_converter::fix_functional_group, "Keep the side chain fixed rather than the backbone. Default false" ).def( false );
+		option.add( ld_converter::final_repack, "Do a final repack. Default false" ).def( false );
+		option.add( ld_converter::final_minimize, "Do a final minimization. Default false" ).def( false );
+		option.add( ld_converter::fix_functional_group, "Keep the side chain fixed rather than the backbone. Default false" ).def( false );
 
-	// init command line options
-	//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
-	devel::init(argc, argv);
+		// init command line options
+		//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
+		devel::init(argc, argv);
 
-	//basic::options::option[ basic::options::OptionKeys::chemical::include_patches](utility::tools::make_vector1( std::string("patches/oop_pre.txt"), std::string("patches/oop_post.txt") ) );
+		//basic::options::option[ basic::options::OptionKeys::chemical::include_patches](utility::tools::make_vector1( std::string("patches/oop_pre.txt"), std::string("patches/oop_post.txt") ) );
 
-	//create mover instance
-	LDConverterMoverOP LDC_mover( new LDConverterMover() );
+		//create mover instance
+		LDConverterMoverOP LDC_mover( new LDConverterMover() );
 
-	//call job distributor
-	protocols::jd2::JobDistributor::get_instance()->go( LDC_mover );
+		//call job distributor
+		protocols::jd2::JobDistributor::get_instance()->go( LDC_mover );
 
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-				return -1;
-    }
-    return 0;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }//main
 
 void
@@ -189,21 +189,18 @@ LDConverterMover::apply(
 	utility::vector1< std::string > const l_pdb_positions = option[ ld_converter::convert_L_pdb_positions].value();
 	core::pose::PDBPoseMap const & pose_map(pose.pdb_info()->pdb2pose());
 	//kdrew: chain and res numbers are a pair so increment by 2
-	for( Size i = 1; i <= l_pdb_positions.size(); i=i+2 )
-	{
+	for ( Size i = 1; i <= l_pdb_positions.size(); i=i+2 ) {
 		core::Size respos = pose_map.find( *l_pdb_positions[i].c_str(), atoi(l_pdb_positions[i+1].c_str()) );
-        l_positions.push_back(respos);
+		l_positions.push_back(respos);
 	}
 
-	for(Size i = 1; i <= l_positions.size(); ++i )
-	{
+	for ( Size i = 1; i <= l_positions.size(); ++i ) {
 		TR << "residue id: " << l_positions[i] << std::endl;
 		protocols::simple_moves::chiral::ChiralMoverOP cm( new protocols::simple_moves::chiral::ChiralMover( l_positions[i], chiral::L_CHIRALITY, option[ ld_converter::fix_functional_group].value() ) );
 		cm->apply( pose );
 
 		//kdrew: if an oop residue, update hydrogens
-		if ( pose.residue( l_positions[i] ).has_variant_type( core::chemical::OOP_PRE ) == 1 )
-		{
+		if ( pose.residue( l_positions[i] ).has_variant_type( core::chemical::OOP_PRE ) == 1 ) {
 			oop::OopMoverOP opm( new oop::OopMover( l_positions[i] ) );
 			opm->update_hydrogens( pose );
 		}
@@ -213,21 +210,18 @@ LDConverterMover::apply(
 	utility::vector1< std::string > const d_pdb_positions = option[ ld_converter::convert_D_pdb_positions].value();
 	//kdrew: parse pdb numbering in convert_pdb_position options
 	//kdrew: chain and res numbers are a pair so increment by 2
-	for( Size i = 1; i <= d_pdb_positions.size(); i=i+2 )
-	{
+	for ( Size i = 1; i <= d_pdb_positions.size(); i=i+2 ) {
 		core::Size respos = pose_map.find( *d_pdb_positions[i].c_str(), std::atoi(d_pdb_positions[i+1].c_str()) );
-        d_positions.push_back(respos);
+		d_positions.push_back(respos);
 
 	}
-	for(Size i = 1; i <= d_positions.size(); ++i )
-	{
+	for ( Size i = 1; i <= d_positions.size(); ++i ) {
 		TR << "residue id: " << d_positions[i] << std::endl;
 		protocols::simple_moves::chiral::ChiralMoverOP cm( new protocols::simple_moves::chiral::ChiralMover( d_positions[i], chiral::D_CHIRALITY , option[ ld_converter::fix_functional_group].value()) );
 		cm->apply( pose );
 
 		//kdrew: if an oop residue, update hydrogens
-		if ( pose.residue( d_positions[i] ).has_variant_type( core::chemical::OOP_PRE ) == 1 )
-		{
+		if ( pose.residue( d_positions[i] ).has_variant_type( core::chemical::OOP_PRE ) == 1 ) {
 			TR << "updating oop hydrogens" << std::endl;
 			oop::OopMoverOP opm( new oop::OopMover( d_positions[i] ) );
 			opm->update_hydrogens( pose );
@@ -235,18 +229,15 @@ LDConverterMover::apply(
 	}
 
 	//kdrew: if no positions were passed in, make all positions L configuration
-	if ( l_positions.size() == 0 && d_positions.size() == 0 )
-	{
+	if ( l_positions.size() == 0 && d_positions.size() == 0 ) {
 		TR << "making all positions L configuration" << std::endl;
-		for( Size i = 1; i <= pose.conformation().chain_end( 1 ); ++i )
-		{
+		for ( Size i = 1; i <= pose.conformation().chain_end( 1 ); ++i ) {
 			TR << "residue id: " << i << std::endl;
 			protocols::simple_moves::chiral::ChiralMoverOP cm( new protocols::simple_moves::chiral::ChiralMover( i, option[ ld_converter::fix_functional_group].value() ) );
 			cm->apply( pose );
 
 			//kdrew: if an oop residue, update hydrogens
-			if ( pose.residue( i ).has_variant_type( core::chemical::OOP_PRE ) == 1 )
-			{
+			if ( pose.residue( i ).has_variant_type( core::chemical::OOP_PRE ) == 1 ) {
 				oop::OopMoverOP opm( new oop::OopMover( i ) );
 				opm->update_hydrogens( pose );
 			}
@@ -255,8 +246,7 @@ LDConverterMover::apply(
 	}
 
 
-	if( option[ ld_converter::final_repack ].value() )
-	{
+	if ( option[ ld_converter::final_repack ].value() ) {
 
 		// create a task factory and task operations
 		using core::pack::task::operation::TaskOperationCOP;
@@ -264,14 +254,11 @@ LDConverterMover::apply(
 		tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 
 		using namespace basic::resource_manager;
-		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() )
-		{
+		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() ) {
 			operation::ReadResfileOP rrop( new operation::ReadResfile() );
 			rrop->default_filename();
 			tf->push_back( rrop );
-		}
-		else
-		{
+		} else {
 			//kdrew: do not do design, makes NATAA if res file is not specified
 			operation::RestrictToRepackingOP rtrp( new operation::RestrictToRepacking() );
 			tf->push_back( rtrp );
@@ -286,14 +273,12 @@ LDConverterMover::apply(
 		packer->apply(pose);
 	}
 
-	if( option[ ld_converter::final_minimize].value() )
-	{
+	if ( option[ ld_converter::final_minimize].value() ) {
 		using namespace core::id;
 		using namespace core::scoring;
 		using namespace core::scoring::constraints;
 
-		for( Size i = 1; i < pose.conformation().chain_end( 1 ); ++i )
-		{
+		for ( Size i = 1; i < pose.conformation().chain_end( 1 ); ++i ) {
 			id::AtomID id1,id2,id3,id4;
 			core::id::TorsionID torsion_id = TorsionID( i, id::BB, 3 );
 
@@ -308,9 +293,8 @@ LDConverterMover::apply(
 
 			pose.add_constraint( dihedral1 );
 		}
-		if( score_fxn->has_zero_weight( dihedral_constraint ) )
-		{
-        	score_fxn->set_weight( dihedral_constraint, 1.0 );
+		if ( score_fxn->has_zero_weight( dihedral_constraint ) ) {
+			score_fxn->set_weight( dihedral_constraint, 1.0 );
 		}
 
 
@@ -321,12 +305,12 @@ LDConverterMover::apply(
 		mm->set_jump( 1, true );
 
 		// create minimization mover
-		simple_moves::MinMoverOP minM( new protocols::simple_moves::MinMover( mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
+		simple_moves::MinMoverOP minM( new protocols::simple_moves::MinMover( mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 
-	//kdrew: only turn on pymol observer in debug mode
-	//#ifndef NDEBUG
-	//	protocols::moves::PyMolObserverOP pymover = protocols::moves::AddPyMolObserver(pose);
-	//#endif
+		//kdrew: only turn on pymol observer in debug mode
+		//#ifndef NDEBUG
+		// protocols::moves::PyMolObserverOP pymover = protocols::moves::AddPyMolObserver(pose);
+		//#endif
 
 		//kdrew: minimizer not working after appending/prepending residues, not sure why
 		// final min (okay to use ta min here)

@@ -62,25 +62,25 @@ public:
 	);
 
 private:
-  utility::vector1<core::kinematics::Stub> search_stubs_;
+	utility::vector1<core::kinematics::Stub> search_stubs_;
 
 };
 
 class AddSearchPatternRotSetOp : public core::pack::task::operation::TaskOperation
 {
-	public:
-		AddSearchPatternRotSetOp(core::Size target_residue, SearchPatternOP pattern);
-		~AddSearchPatternRotSetOp();
+public:
+	AddSearchPatternRotSetOp(core::Size target_residue, SearchPatternOP pattern);
+	~AddSearchPatternRotSetOp();
 
-		virtual core::pack::task::operation::TaskOperationOP clone() const;
+	virtual core::pack::task::operation::TaskOperationOP clone() const;
 
-		void parse_tag( TagCOP tag , DataMap & );
+	void parse_tag( TagCOP tag , DataMap & );
 
-		virtual void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
+	virtual void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
-	private:
-		core::Size target_residue_;
-		SearchPatternOP pattern_;
+private:
+	core::Size target_residue_;
+	SearchPatternOP pattern_;
 };
 
 }

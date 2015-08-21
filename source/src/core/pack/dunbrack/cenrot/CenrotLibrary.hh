@@ -28,7 +28,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 #ifdef WIN32 //VC++ needs full class declaration
-	#include <core/pack/dunbrack/cenrot/SingleResidueCenrotLibrary.hh>
+#include <core/pack/dunbrack/cenrot/SingleResidueCenrotLibrary.hh>
 #endif
 
 // Utility headers

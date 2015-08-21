@@ -33,20 +33,20 @@ namespace protocols {
 namespace simple_moves {
 
 DeleteChainsMover::DeleteChainsMover()
-	: moves::Mover("DeleteChainsMover")
+: moves::Mover("DeleteChainsMover")
 {
 	set_defaults();
 }
 
 DeleteChainsMover::DeleteChainsMover( std::string const chains, core::pose::Pose const & pose)
-	: moves::Mover("DeleteChainsMover")
+: moves::Mover("DeleteChainsMover")
 {
 	set_chains( chains, pose );
 	set_defaults();
 }
 
 DeleteChainsMover::DeleteChainsMover( utility::vector1< core::Size > const chains )
-	: moves::Mover("DeleteChainsMover")
+: moves::Mover("DeleteChainsMover")
 {
 	set_chains( chains );
 	set_defaults();
@@ -61,7 +61,7 @@ DeleteChainsMover::set_defaults(){
 void
 DeleteChainsMover::set_chains( std::string const chains, core::pose::Pose const & pose ){
 	chains_.clear();
-	for (core::Size i = 0; i < chains.length(); ++i ){
+	for ( core::Size i = 0; i < chains.length(); ++i ) {
 		char chain = chains[ i ];
 		core::Size chain_id = core::pose::get_chain_id_from_chain( chain, pose );
 		chains_.push_back(chain_id);
@@ -107,7 +107,7 @@ DeleteChainsMover::parse_my_tag(
 	core::pose::Pose const & pose )
 {
 	set_defaults();
-	if (! tag->hasOption( "chains") ){
+	if ( ! tag->hasOption( "chains") ) {
 		utility_exit_with_message("Must pass chains tag to DeleteChainsMover...");
 	}
 
@@ -124,7 +124,7 @@ DeleteChainsMover::apply( Pose & pose )
 		utility_exit_with_message("DeleteChainsMover requires chains to be set...");
 	}
 
-	for (core::Size i = 1; i <= chains_.size(); ++i ){
+	for ( core::Size i = 1; i <= chains_.size(); ++i ) {
 
 		pose.conformation().delete_residue_range_slow( pose.conformation().chain_begin( chains_ [ i ] ), pose.conformation().chain_end( chains_ [ i ] ) );
 	}

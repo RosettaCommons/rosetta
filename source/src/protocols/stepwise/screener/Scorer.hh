@@ -25,40 +25,40 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class Scorer: public StepWiseScreener {
+class Scorer: public StepWiseScreener {
 
-	public:
+public:
 
- 		//constructor
-		Scorer();
+	//constructor
+	Scorer();
 
- 		//constructor
-		Scorer( core::pose::Pose & pose,
-						core::scoring::ScoreFunctionCOP scorefxn );
+	//constructor
+	Scorer( core::pose::Pose & pose,
+		core::scoring::ScoreFunctionCOP scorefxn );
 
-		//destructor
-		~Scorer();
+	//destructor
+	~Scorer();
 
-	public:
+public:
 
-		virtual
-		bool
-		check_screen();
+	virtual
+	bool
+	check_screen();
 
-		virtual
-		std::string
-		name() const { return "Scorer"; }
+	virtual
+	std::string
+	name() const { return "Scorer"; }
 
-		virtual
-		StepWiseScreenerType
-		type() const { return SCORER; }
+	virtual
+	StepWiseScreenerType
+	type() const { return SCORER; }
 
-	private:
+private:
 
-		core::pose::Pose & pose_;
-		core::scoring::ScoreFunctionCOP scorefxn_;
+	core::pose::Pose & pose_;
+	core::scoring::ScoreFunctionCOP scorefxn_;
 
-	};
+};
 
 } //screener
 } //stepwise

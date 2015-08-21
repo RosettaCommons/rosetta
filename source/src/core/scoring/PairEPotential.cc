@@ -80,7 +80,7 @@ PairEPotential::PairEPotential() :
 		//iwd  It's also unrealistic, as the value is just due to statistics of small numbers.
 		//iwd  This (conservative) replacement is the minimum (non-zero) probability in the file.
 		TableProbability const min_prob = 0.05;
-		if( pair_probability < min_prob ) pair_probability = min_prob;
+		if ( pair_probability < min_prob ) pair_probability = min_prob;
 
 		if ( stream ) {
 			pair_corr_( aa1, aa2, e1, e2, r12_bin ) = pair_probability;
@@ -181,27 +181,25 @@ PairEPotential::pair_term_energy(
 	using numeric::abs_difference;
 	using numeric::interpolation::interpolated;
 
-debug_assert( res1.seqpos() != res2.seqpos() ); // Only call for distinct residues
-debug_assert( res1.is_polar() || res1.is_aromatic() );
-debug_assert( res2.is_polar() || res2.is_aromatic() ); // Only for polar amino acids: Caller does exclusion (prevents call overhead)
-//debug_assert( pair_corr_.I1() == pair_corr_.I2() ); // First 2 index ranges should match //this is a silly assert
+	debug_assert( res1.seqpos() != res2.seqpos() ); // Only call for distinct residues
+	debug_assert( res1.is_polar() || res1.is_aromatic() );
+	debug_assert( res2.is_polar() || res2.is_aromatic() ); // Only for polar amino acids: Caller does exclusion (prevents call overhead)
+	//debug_assert( pair_corr_.I1() == pair_corr_.I2() ); // First 2 index ranges should match //this is a silly assert
 
-//	if ( !is_protein(aa1)  ||  !is_protein(aa2) ) ) return; //dr okay for dupes but not other nnaa where we won't have this info     //! Change to an NCAA exclusion????
+	// if ( !is_protein(aa1)  ||  !is_protein(aa2) ) ) return; //dr okay for dupes but not other nnaa where we won't have this info     //! Change to an NCAA exclusion????
 
 	//jk option to suppress computing pair term for histidine (numbers are skewed due to metal-binding sites)
 	if ( ( option[ corrections::score::no_his_his_pairE ] ) &&
-		( ( res1.aa() == aa_his ) &&
-		( res2.aa() == aa_his ) ) )
-	{
+			( ( res1.aa() == aa_his ) &&
+			( res2.aa() == aa_his ) ) ) {
 		return Energy( 0.0 );
 	}
 
 	if ( ( option[ corrections::score::no_his_DE_pairE ] ) &&
-		((( res1.aa() == aa_his ) &&
-		( res2.aa() == aa_asp || res2.aa() == aa_glu ) ) ||
-		( ( res1.aa() == aa_asp || res1.aa() == aa_glu ) &&
-		( res2.aa() == aa_his ))) )
-	{
+			((( res1.aa() == aa_his ) &&
+			( res2.aa() == aa_asp || res2.aa() == aa_glu ) ) ||
+			( ( res1.aa() == aa_asp || res1.aa() == aa_glu ) &&
+			( res2.aa() == aa_his ))) ) {
 		return Energy( 0.0 );
 	}
 
@@ -227,7 +225,7 @@ debug_assert( res2.is_polar() || res2.is_aromatic() ); // Only for polar amino a
 	// (1) You're comparing a residue to itself -- don't.
 	// (2) The residues actcoords aren't being updated and are (0,0,0)
 	// -- see ResidueType.requires_actcoord() and the appropriate .params files.
-debug_assert( r12 > 0 );
+	debug_assert( r12 > 0 );
 
 	// 1. Get the lower of the two bin averages bracketing r12 and set r12_bin to this value.
 	//    Consider 'bin average' to exist halfway through bin's range.
@@ -237,21 +235,21 @@ debug_assert( r12 > 0 );
 	//int const max_bin( 3 ); //apl should this be hard coded here?
 
 	Distance const r12_bin_real( std::max(
-	 ( r12 / pair_score_bin_range_ ) + 1 - pair_score_bin_base_,
-	 Distance( 0.5 ) ) ); // First bin is [ 3 A, 4.5 A ] but we use it to represent r12 down to 0 A
+		( r12 / pair_score_bin_range_ ) + 1 - pair_score_bin_base_,
+		Distance( 0.5 ) ) ); // First bin is [ 3 A, 4.5 A ] but we use it to represent r12 down to 0 A
 	int const r12_bin( std::max( numeric::nint( r12_bin_real ), 1 ) );
 	if ( r12_bin > max_bin_ ) return Energy( 0.0 );
 	Distance const r12_alpha( r12_bin_real - ( r12_bin - Distance( 0.5 ) ) );
-debug_assert( ( r12_alpha >= Distance( 0.0 ) ) && ( r12_alpha <= Distance( 1.0 ) ) );
+	debug_assert( ( r12_alpha >= Distance( 0.0 ) ) && ( r12_alpha <= Distance( 1.0 ) ) );
 
 	// Set the low and high bin averages for interpolation
 
 	pair_lhood_ratio_low =
-	 ( pair_corr_(aa1n,aa2n,e1,e2,r12_bin) + pair_corr_(aa2n,aa1n,e2,e1,r12_bin) ) * Probability( 0.5 );
+		( pair_corr_(aa1n,aa2n,e1,e2,r12_bin) + pair_corr_(aa2n,aa1n,e2,e1,r12_bin) ) * Probability( 0.5 );
 
 	pair_lhood_ratio_high =  r12_bin == max_bin_ ? Probability( 1.0 ) :
-	 ( r12_bin_real == Distance( 0.5 ) ? pair_lhood_ratio_low :
-	 ( pair_corr_(aa1n,aa2n,e1,e2,r12_bin+1) + pair_corr_(aa2n,aa1n,e2,e1,r12_bin+1) ) * Probability( 0.5 ) );
+		( r12_bin_real == Distance( 0.5 ) ? pair_lhood_ratio_low :
+		( pair_corr_(aa1n,aa2n,e1,e2,r12_bin+1) + pair_corr_(aa2n,aa1n,e2,e1,r12_bin+1) ) * Probability( 0.5 ) );
 
 	//std::cout << "pairE potential: residues " << res1.seqpos() << " & " << res2.seqpos() << " with pairE = ";
 	//std::cout << -std::log( interpolated( r12_alpha, pair_lhood_ratio_low, pair_lhood_ratio_high ) ) << std::endl;
@@ -278,9 +276,9 @@ PairEPotential::pair_term_energy_and_deriv(
 		pair_lhood_ratio, pair_lhood_ratio_high, pair_lhood_ratio_low);
 
 	dpairE_dr = -(1/pair_lhood_ratio) *
-	 ( pair_lhood_ratio_high - pair_lhood_ratio_low ) / pair_score_bin_range_;
+		( pair_lhood_ratio_high - pair_lhood_ratio_low ) / pair_score_bin_range_;
 
-	 return pairE;
+	return pairE;
 
 }
 

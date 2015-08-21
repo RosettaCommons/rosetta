@@ -17,13 +17,13 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 namespace helixAssembly {
 
-	class ConcurrencyTest;
-	typedef utility::pointer::shared_ptr< ConcurrencyTest > ConcurrencyTestOP;
-	typedef utility::pointer::shared_ptr< ConcurrencyTest const > ConcurrencyTestCOP;
+class ConcurrencyTest;
+typedef utility::pointer::shared_ptr< ConcurrencyTest > ConcurrencyTestOP;
+typedef utility::pointer::shared_ptr< ConcurrencyTest const > ConcurrencyTestCOP;
 
 } //namespace helixAssembly
 }// namespace features

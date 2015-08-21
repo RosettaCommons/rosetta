@@ -32,27 +32,28 @@ namespace frag_picker {
 namespace quota {
 
 static thread_local basic::Tracer trSecondaryStructurePool(
-		"protocols.frag_picker.quota.SecondaryStructurePool");
+	"protocols.frag_picker.quota.SecondaryStructurePool");
 
 /// @brief Creates a pool of a given size and name
 /// @param total_size - how many fragments will be selected (in total in all pools)
 /// @param name - name assigned to this pool. This in general may be any string that
-///	later allows one control pool's behavior from a flag file
+/// later allows one control pool's behavior from a flag file
 /// @param ss_type - what is the type of secondary structur this pool is accepting
 /// @param fraction - fraction of the total number of fragments that goes into this pool
 SecondaryStructurePool::SecondaryStructurePool(Size total_size,std::string pool_name,char ss_type,
-    utility::vector1<Size> & which_components,utility::vector1<Real> & weights,
-    Real fraction,Size n_scores,Size buffer_factor = 5) : QuotaPool(pool_name,fraction) {
+	utility::vector1<Size> & which_components,utility::vector1<Real> & weights,
+	Real fraction,Size n_scores,Size buffer_factor = 5) : QuotaPool(pool_name,fraction) {
 
-debug_assert ( which_components.size() == weights.size() );
-	for(Size i=1;i<=which_components.size();i++) {
-	    components_.push_back( which_components[i] );
-	    weights_.push_back( weights[i] );
+	debug_assert ( which_components.size() == weights.size() );
+	for ( Size i=1; i<=which_components.size(); i++ ) {
+		components_.push_back( which_components[i] );
+		weights_.push_back( weights[i] );
 	}
 	total_size_ = total_size;
 	this_size_ = (Size)(fraction * total_size);
-	if(this_size_<20)
-	    this_size_ = 20;
+	if ( this_size_<20 ) {
+		this_size_ = 20;
+	}
 	buffer_factor_ = buffer_factor;
 	ss_type_ = ss_type;
 	CompareByScoreCombination ordering(components_, weights_);
@@ -60,13 +61,15 @@ debug_assert ( which_components.size() == weights.size() );
 	FragmentCandidateOP worst_f( new FragmentCandidate(1,1,0,1) );
 	scores::FragmentScoreMapOP worst_s( new scores::FragmentScoreMap(n_scores) );
 	storage_->set_worst(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP>(worst_f,worst_s));
-	for(Size i=1;i<=n_scores;i++)
-	    worst_s->set_score_component(99999.9999,i);
+	for ( Size i=1; i<=n_scores; i++ ) {
+		worst_s->set_score_component(99999.9999,i);
+	}
 
 	trSecondaryStructurePool.Debug<< "Creating a pool >"<<pool_name<<"< for "<<ss_type_<<" holding "<<this_size_<<" candidates, quota fraction is: "<<fraction<<std::endl;
 	trSecondaryStructurePool.Debug<< "Score IDs and weights to sort this pool:\n\t";
-	for(Size i=1;i<=components_.size();i++)
-	    trSecondaryStructurePool.Debug<< " "<<components_[i]<<":"<<weights_[i];
+	for ( Size i=1; i<=components_.size(); i++ ) {
+		trSecondaryStructurePool.Debug<< " "<<components_[i]<<":"<<weights_[i];
+	}
 	trSecondaryStructurePool.Debug<<std::endl;
 }
 
@@ -75,15 +78,15 @@ SecondaryStructurePool::~SecondaryStructurePool() {}
 
 bool SecondaryStructurePool::could_be_accepted(ScoredCandidate candidate) const
 {
-	if( candidate.first->get_middle_ss() == ss_type_ ) return true;
+	if ( candidate.first->get_middle_ss() == ss_type_ ) return true;
 	return false;
 }
 
 
 bool SecondaryStructurePool::add(ScoredCandidate candidate)
 {
-	if( candidate.first->get_middle_ss() == ss_type_ ) {
-	    return  storage_->push( candidate );
+	if ( candidate.first->get_middle_ss() == ss_type_ ) {
+		return  storage_->push( candidate );
 	}
 	return false;
 }

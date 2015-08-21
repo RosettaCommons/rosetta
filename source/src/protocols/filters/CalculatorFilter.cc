@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/filters/CalculatorFilter.cc
-/// @brief Combine several filters in a (semi) arbitrary calculation 
-/// @author Rocco Moretti (rmoretti@u.washington.edu) 
+/// @brief Combine several filters in a (semi) arbitrary calculation
+/// @author Rocco Moretti (rmoretti@u.washington.edu)
 
 #include <protocols/filters/CalculatorFilter.hh>
 #include <protocols/filters/CalculatorFilterCreator.hh>
@@ -80,7 +80,7 @@ CalculatorFilter::report( std::ostream & out, core::pose::Pose const & pose) con
 
 void
 CalculatorFilter::add_filter( std::string name, protocols::filters::FilterOP filter ) {
-	if( ! filter ) {
+	if ( ! filter ) {
 		utility_exit_with_message("Calculator filter can't use non-existant (null pointer) filter.");
 	}
 	filters_[name] = filter;
@@ -91,44 +91,44 @@ CalculatorFilter::add_constant( std::string name, core::Real value ) {
 	values_[name] = value;
 }
 
-core::Real 
+core::Real
 CalculatorFilter::compute(core::pose::Pose const & pose) const {
 	assert(calc_);
 	std::map< std::string, core::Real > vars(values_);
-	for( std::map<std::string, protocols::filters::FilterOP>::const_iterator iter(filters_.begin()); iter != filters_.end(); ++iter) {
+	for ( std::map<std::string, protocols::filters::FilterOP>::const_iterator iter(filters_.begin()); iter != filters_.end(); ++iter ) {
 		assert(iter->second);
 		vars[ iter->first ] = (iter->second)->report_sm( pose );
 	}
 	numeric::Real value(999999);
-	if( calc_->compute(vars, value) ) {
+	if ( calc_->compute(vars, value) ) {
 		TR.Error << "Problem calculating equation in CalculatorFilter - resultant value likely garbage." << std::endl;
-	} 
+	}
 	return value;
 }
 
 void
 CalculatorFilter::parse_my_tag( utility::tag::TagCOP tag_ptr,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const &)
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &)
 {
-  std::string equation = tag_ptr->getOption< std::string >( "equation" );
+	std::string equation = tag_ptr->getOption< std::string >( "equation" );
 	threshold_ = tag_ptr->getOption<core::Real>( "threshold", 0.0 );
 
-	BOOST_FOREACH(utility::tag::TagCOP sub_tag_ptr, tag_ptr->getTags() ){
+	BOOST_FOREACH ( utility::tag::TagCOP sub_tag_ptr, tag_ptr->getTags() ) {
 		std::string varname( sub_tag_ptr->getOption<std::string>( "name" ) );
 
-		if( sub_tag_ptr->hasOption("filter") || sub_tag_ptr->hasOption("filter_name") ) {
+		if ( sub_tag_ptr->hasOption("filter") || sub_tag_ptr->hasOption("filter_name") ) {
 			std::string filter_name;
-			if( sub_tag_ptr->hasOption("filter_name") ) {
-				 filter_name = sub_tag_ptr->getOption<std::string>( "filter_name" );
+			if ( sub_tag_ptr->hasOption("filter_name") ) {
+				filter_name = sub_tag_ptr->getOption<std::string>( "filter_name" );
 			} else {
-				 filter_name = sub_tag_ptr->getOption<std::string>( "filter" );
+				filter_name = sub_tag_ptr->getOption<std::string>( "filter" );
 			}
 			add_filter( varname, protocols::rosetta_scripts::parse_filter( filter_name , filters ) );
 		} else if ( sub_tag_ptr->hasOption("value") ) {
-			add_constant( varname, sub_tag_ptr->getOption<core::Real>( "value" ) ); 
+			add_constant( varname, sub_tag_ptr->getOption<core::Real>( "value" ) );
 		} else {
 			utility_exit_with_message("CalculatorFilter subtag must have either filter or value set.");
 		}
@@ -137,13 +137,13 @@ CalculatorFilter::parse_my_tag( utility::tag::TagCOP tag_ptr,
 	// Now do a quick sanity check for the equation parsing.
 	calc_ = numeric::CalculatorOP( new numeric::Calculator( equation ) );
 	std::map< std::string, core::Real > vars(values_);
-	for( std::map<std::string, protocols::filters::FilterOP>::iterator iter(filters_.begin()); iter != filters_.end(); ++iter) {
-		vars[ iter->first ] = 1.0 + 0.00001 * numeric::random::uniform(); // Additional random to avoid "1/(alpha - beta)" type situations. 
+	for ( std::map<std::string, protocols::filters::FilterOP>::iterator iter(filters_.begin()); iter != filters_.end(); ++iter ) {
+		vars[ iter->first ] = 1.0 + 0.00001 * numeric::random::uniform(); // Additional random to avoid "1/(alpha - beta)" type situations.
 	}
 	numeric::Real dummy;
-	if( calc_->compute(vars, dummy) ) {
+	if ( calc_->compute(vars, dummy) ) {
 		utility_exit_with_message("Bad equation in CalculatorFilter: " + equation);
-	} 
+	}
 }
 
 FilterOP

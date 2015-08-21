@@ -23,7 +23,7 @@ RigidBodyInfo::~RigidBodyInfo() {}
 
 void RigidBodyInfo::add_jump( core::Size jump_id )
 {
-  movable_jumps_.push_back( jump_id );
+	movable_jumps_.push_back( jump_id );
 }
 
 } // docking

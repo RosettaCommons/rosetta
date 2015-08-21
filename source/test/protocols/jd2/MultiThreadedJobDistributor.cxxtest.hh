@@ -89,13 +89,13 @@ public:
 	// This test is just for the sake of understanding how thread_local works
 	void test_tss_in_threads() {
 		TS_ASSERT( true );
-		#ifdef CXX11
-		#ifdef MULTITHREADED
+#ifdef CXX11
+#ifdef MULTITHREADED
 		ThreadRunner runner( 2 );
 		std::thread mythread( &ThreadRunner::go, runner );
 		mythread.join();
-		#endif
-		#endif
+#endif
+#endif
 	}
 
 };

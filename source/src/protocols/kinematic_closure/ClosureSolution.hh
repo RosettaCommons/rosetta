@@ -35,10 +35,10 @@ using core::pose::Pose;
 
 /// @brief Represent a single solution to a kinematic closure problem.
 ///
-/// @details The ClosureSolution class represents the solutions returned by 
-/// ClosureProblem.solve().  The most important methods of this class are 
-/// apply() and apply_if_reasonable().  The former unconditionally applies the 
-/// solution to the given pose, while the latter does so only if the solution 
+/// @details The ClosureSolution class represents the solutions returned by
+/// ClosureProblem.solve().  The most important methods of this class are
+/// apply() and apply_if_reasonable().  The former unconditionally applies the
+/// solution to the given pose, while the latter does so only if the solution
 /// passes a rama and bump check.
 
 class ClosureSolution : public ReferenceCount, private noncopyable {
@@ -46,61 +46,61 @@ class ClosureSolution : public ReferenceCount, private noncopyable {
 	friend class ClosureProblem;
 
 	// Constructors {{{1
-	private:
+private:
 
-		/// @brief Constructor used internally to build a solution from the 
-		/// internal degrees of freedom returned by the closure algorithm.
-		ClosureSolution(
-				ClosureProblem const * problem,
-				Size const solution_index,
-				ParameterList const & torsion_angles,
-				ParameterList const & bond_angles,
-				ParameterList const & bond_lengths);
+	/// @brief Constructor used internally to build a solution from the
+	/// internal degrees of freedom returned by the closure algorithm.
+	ClosureSolution(
+		ClosureProblem const * problem,
+		Size const solution_index,
+		ParameterList const & torsion_angles,
+		ParameterList const & bond_angles,
+		ParameterList const & bond_lengths);
 
 	// Interesting functions {{{1
-	public:
+public:
 
-		/// @brief Apply this solution to the given pose.
-		void apply(Pose & pose) const;
+	/// @brief Apply this solution to the given pose.
+	void apply(Pose & pose) const;
 
-		/// @brief If this solution passes rama and bump checks, apply it to the 
-		/// given pose.  Return whether or not the filters were passed.
-		bool apply_if_reasonable(
-				Pose & pose,
-				bool rama_on=true,
-				bool bump_on=true,
-				bool be_lenient=false) const;
+	/// @brief If this solution passes rama and bump checks, apply it to the
+	/// given pose.  Return whether or not the filters were passed.
+	bool apply_if_reasonable(
+		Pose & pose,
+		bool rama_on=true,
+		bool bump_on=true,
+		bool be_lenient=false) const;
 
-		/// @brief Return a unique number identifying this solution.
-		Size get_index() const;
+	/// @brief Return a unique number identifying this solution.
+	Size get_index() const;
 
-		/// @brief Return the Jacobian for this solution.
-		Real get_jacobian() const;
+	/// @brief Return the Jacobian for this solution.
+	Real get_jacobian() const;
 
-		/// @ brief Return a distance metric indicating how similar this solution 
-		/// is to the given problem.
-		Real get_distance(ClosureProblem const * problem) const;
+	/// @ brief Return a distance metric indicating how similar this solution
+	/// is to the given problem.
+	Real get_distance(ClosureProblem const * problem) const;
 
 	// Private Helpers {{{1
-	private:
+private:
 
-		/// @brief Check for unlikely pivot torsions in this solution.
-		bool check_rama(Pose const & pose, Real const temperature) const;
+	/// @brief Check for unlikely pivot torsions in this solution.
+	bool check_rama(Pose const & pose, Real const temperature) const;
 
-		/// @brief Check for overlapping backbone atoms in this solution.
-		bool check_overlap(Pose const & pose, Real const scale_factor) const;
+	/// @brief Check for overlapping backbone atoms in this solution.
+	bool check_overlap(Pose const & pose, Real const scale_factor) const;
 
 	// Data Members {{{1
-	private:
+private:
 
-		ClosureProblem const * problem_;
-		Size const index_;
+	ClosureProblem const * problem_;
+	Size const index_;
 
-		ParameterList const bond_lengths_;
-		ParameterList const bond_angles_;
-		ParameterList const torsion_angles_;
+	ParameterList const bond_lengths_;
+	ParameterList const bond_angles_;
+	ParameterList const torsion_angles_;
 
-		mutable Real jacobian_;
+	mutable Real jacobian_;
 
 	// }}}1
 

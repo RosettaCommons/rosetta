@@ -25,10 +25,10 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	void
-	fast_forward_to_next_residue_pair( sampler::StepWiseSamplerBaseOP sampler,
-																		 Size const res1,
-																		 Size const res2 );
+void
+fast_forward_to_next_residue_pair( sampler::StepWiseSamplerBaseOP sampler,
+	Size const res1,
+	Size const res2 );
 
 } //screener
 } //stepwise

@@ -36,32 +36,32 @@ namespace stepwise {
 namespace modeler {
 namespace protein {
 
-	MainChainTorsionSet::MainChainTorsionSet( core::Real const & phi, core::Real const & psi, core::Real const & omega ):
-		phi_( phi ),
-		psi_( psi ),
-		omega_( omega )
-	{}
+MainChainTorsionSet::MainChainTorsionSet( core::Real const & phi, core::Real const & psi, core::Real const & omega ):
+	phi_( phi ),
+	psi_( psi ),
+	omega_( omega )
+{}
 
-	MainChainTorsionSet::MainChainTorsionSet( core::Real const & phi, core::Real const & psi ):
-		phi_( phi ),
-		psi_( psi ),
-		omega_( 180.0 )
-	{}
+MainChainTorsionSet::MainChainTorsionSet( core::Real const & phi, core::Real const & psi ):
+	phi_( phi ),
+	psi_( psi ),
+	omega_( 180.0 )
+{}
 
-	MainChainTorsionSet::~MainChainTorsionSet(){}
+MainChainTorsionSet::~MainChainTorsionSet(){}
 
-	core::Real MainChainTorsionSet::phi() const{ return phi_; }
-	core::Real MainChainTorsionSet::psi() const{ return psi_; }
-	core::Real MainChainTorsionSet::omega() const{ return omega_; }
+core::Real MainChainTorsionSet::phi() const{ return phi_; }
+core::Real MainChainTorsionSet::psi() const{ return psi_; }
+core::Real MainChainTorsionSet::omega() const{ return omega_; }
 
-	MainChainTorsionSet
-	MainChainTorsionSet::operator=( MainChainTorsionSet const & src )
-	{
-		phi_ =  src.phi();
-		psi_ =  src.psi();
-		omega_ =  src.omega();
-		return (*this );
-	}
+MainChainTorsionSet
+MainChainTorsionSet::operator=( MainChainTorsionSet const & src )
+{
+	phi_ =  src.phi();
+	psi_ =  src.psi();
+	omega_ =  src.omega();
+	return (*this );
+}
 
 } //protein
 } //modeler

@@ -46,26 +46,26 @@ namespace {
 Tracer TR("core.kinematics.MoveMap.cxxtest");
 
 class MoveMapTest : public CxxTest::TestSuite {
- public:
-  Pose pose_;
+public:
+	Pose pose_;
 
-  void setUp() {
-    core_init();
-    core::import_pose::pose_from_pdb(pose_, "core/kinematics/test.pdb");
-  }
+	void setUp() {
+		core_init();
+		core::import_pose::pose_from_pdb(pose_, "core/kinematics/test.pdb");
+	}
 
-  void tearDown() {}
+	void tearDown() {}
 
-  // Ensure that backbone torsions that we wish to remain fixed are not
-  // altered through fragment insertion operations
-  void test_backbone_range_protection() {
+	// Ensure that backbone torsions that we wish to remain fixed are not
+	// altered through fragment insertion operations
+	void test_backbone_range_protection() {
 		using core::Real;
 		using core::Size;
 		using protocols::simple_moves::SmallMover;
 		using std::endl;
 
 		vector<Real> before;
-		for (Size i = 11; i <= 19; ++i) {
+		for ( Size i = 11; i <= 19; ++i ) {
 			before.push_back(pose_.phi(i));
 			before.push_back(pose_.psi(i));
 			before.push_back(pose_.omega(i));
@@ -89,7 +89,7 @@ class MoveMapTest : public CxxTest::TestSuite {
 		TS_ASSERT_DIFFERS(0, rmsd);
 
 		vector<Real> after;
-		for (Size i = 11; i <= 19; ++i) {
+		for ( Size i = 11; i <= 19; ++i ) {
 			after.push_back(modified_pose.phi(i));
 			after.push_back(modified_pose.psi(i));
 			after.push_back(modified_pose.omega(i));
@@ -97,10 +97,10 @@ class MoveMapTest : public CxxTest::TestSuite {
 
 		// ensure that the protected torsions have not been modified
 		TS_ASSERT_EQUALS(before.size(), after.size());
-		for (size_t i = 0; i < before.size(); ++i) {
+		for ( size_t i = 0; i < before.size(); ++i ) {
 			TR << before[i] << ", " << after[i] << endl;
 			TS_ASSERT_EQUALS(before[i], after[i]);
 		}
-  }
+	}
 };
 }  // anonymous namespace

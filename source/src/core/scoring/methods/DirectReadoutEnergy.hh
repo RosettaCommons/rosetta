@@ -95,8 +95,8 @@ public:
 private:
 
 	dna::DirectReadoutPotential const & potential_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

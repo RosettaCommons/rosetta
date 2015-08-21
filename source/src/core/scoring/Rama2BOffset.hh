@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/Rama2BOffset.hh
 /// @brief  Rama2BOffset potential class delcaration
-/// @author 
+/// @author
 
 #ifndef INCLUDED_core_scoring_Rama2BOffset_hh
 #define INCLUDED_core_scoring_Rama2BOffset_hh

@@ -47,764 +47,752 @@ using namespace std;
 
 namespace devel {
 
-  namespace inv_kin_lig_loop_design {
-
-    namespace {
-
-      // =================================================================
-      // ==================== collapse_random_options ====================
-      // =================================================================
-
-      void set_nres(TagCOP const& tag, string which ) {
-				using devel::inv_kin_lig_loop_design::Ints;
-
-				if( tag->hasOption(which) ) {
-					const Ints ints = tag->getOption<Ints>(which);
-					const int  nres = ints.getRandomInt();
-					cout << "InvKinLig:LoopDesign::set_nres - setting " << tag->getName() << "-" << tag->getOption<string>("name","<unnamed>") << " " << ints << " => " << nres << endl;
-					utility::pointer::const_pointer_cast< utility::tag::Tag >(tag)->setOption(which,nres);
-				}
-      }  // set_nres
+namespace inv_kin_lig_loop_design {
+
+namespace {
+
+// =================================================================
+// ==================== collapse_random_options ====================
+// =================================================================
+
+void set_nres(TagCOP const& tag, string which ) {
+	using devel::inv_kin_lig_loop_design::Ints;
+
+	if ( tag->hasOption(which) ) {
+		const Ints ints = tag->getOption<Ints>(which);
+		const int  nres = ints.getRandomInt();
+		cout << "InvKinLig:LoopDesign::set_nres - setting " << tag->getName() << "-" << tag->getOption<string>("name","<unnamed>") << " " << ints << " => " << nres << endl;
+		utility::pointer::const_pointer_cast< utility::tag::Tag >(tag)->setOption(which,nres);
+	}
+}  // set_nres
 
-      TagCOP collapse_random_options( TagCOP tag ) {
+TagCOP collapse_random_options( TagCOP tag ) {
 
-				TagCOP const rval = tag->clone();
+	TagCOP const rval = tag->clone();
 
-				FORTAGS(i,loop,rval) {
-					set_nres(*i,"nres_pre");
-					set_nres(*i,"nres_post");
-				} // i
+	FORTAGS ( i,loop,rval ) {
+		set_nres(*i,"nres_pre");
+		set_nres(*i,"nres_post");
+	} // i
 
-				FORTAGS(i,anchored_loop,rval) {
-					set_nres(*i,"nres_pre");
-					set_nres(*i,"nres_post");
-				} // i
-
-				FORTAGS(i,deletion,rval) {
-				} // i
+	FORTAGS ( i,anchored_loop,rval ) {
+		set_nres(*i,"nres_pre");
+		set_nres(*i,"nres_post");
+	} // i
 
-				utility::vector0<TagCOP> vVary;
-				/// apl -- replacing std::vector specific += operator from std_extra.hh with insert() calls.
-				utility::vector0<TagCOP> looptags = rval->getTags("loop");
-				vVary.insert(vVary.end(),looptags.begin(),looptags.end());
+	FORTAGS ( i,deletion,rval ) {}
+	// i
 
-				utility::vector0<TagCOP> anchortags = rval->getTags("anchored_loop");
-				vVary.insert(vVary.end(),anchortags.begin(),anchortags.end());
+	utility::vector0<TagCOP> vVary;
+	/// apl -- replacing std::vector specific += operator from std_extra.hh with insert() calls.
+	utility::vector0<TagCOP> looptags = rval->getTags("loop");
+	vVary.insert(vVary.end(),looptags.begin(),looptags.end());
 
-				utility::vector0<TagCOP> deletiontags = rval->getTags("deletion");
-				vVary.insert(vVary.end(),deletiontags.begin(),deletiontags.end());
+	utility::vector0<TagCOP> anchortags = rval->getTags("anchored_loop");
+	vVary.insert(vVary.end(),anchortags.begin(),anchortags.end());
 
-				FORVC(i,TagCOP,vVary) {
-					set_nres(*i,"vary_pre");
-					set_nres(*i,"vary_post");
-				} // i
+	utility::vector0<TagCOP> deletiontags = rval->getTags("deletion");
+	vVary.insert(vVary.end(),deletiontags.begin(),deletiontags.end());
 
-				return rval;
+	FORVC ( i,TagCOP,vVary ) {
+		set_nres(*i,"vary_pre");
+		set_nres(*i,"vary_post");
+	} // i
 
-      }
+	return rval;
 
-      // ====================================================
-      // ==================== get_indels ====================
-      // ====================================================
+}
 
-      segments_type get_indels(TagCOP const& tag0, resids_type const& resids ) {
+// ====================================================
+// ==================== get_indels ====================
+// ====================================================
 
-				//cout << "get_indels: " << endl;
+segments_type get_indels(TagCOP const& tag0, resids_type const& resids ) {
 
-				segments_type rval;
+	//cout << "get_indels: " << endl;
 
-				FORTAGS(i,loop,tag0) {
-					TagCOP tag = *i;
-					//      <loop nres_pre=3 nres_post=3 weight_cb=1 ss=EEEELL>
-					//           <begin res_id=A:178>
-					//           <end res_id=A:184>
-					//      </loop>
-					//cout << *tag << endl;
+	segments_type rval;
 
-					Segment indel;
-					indel.tag = tag;
-					indel.lo_res = find_or_throw( resids, tag->getTag("begin")->getOption<ResID>("res_id") );
-					indel.hi_res = find_or_throw( resids, tag->getTag("end")->getOption<ResID>("res_id") );
-					indel.type  = Segment::LOOP;
-					indel.nres_pre  = tag->getOption<int>("nres_pre");
-					indel.nres_post = tag->getOption<int>("nres_post");
-					indel.aas += vector<core::chemical::AA>( indel.nres_pre + indel.nres_post, core::chemical::aa_ala );
+	FORTAGS ( i,loop,tag0 ) {
+		TagCOP tag = *i;
+		//      <loop nres_pre=3 nres_post=3 weight_cb=1 ss=EEEELL>
+		//           <begin res_id=A:178>
+		//           <end res_id=A:184>
+		//      </loop>
+		//cout << *tag << endl;
 
-					rval.push_back(indel);
+		Segment indel;
+		indel.tag = tag;
+		indel.lo_res = find_or_throw( resids, tag->getTag("begin")->getOption<ResID>("res_id") );
+		indel.hi_res = find_or_throw( resids, tag->getTag("end")->getOption<ResID>("res_id") );
+		indel.type  = Segment::LOOP;
+		indel.nres_pre  = tag->getOption<int>("nres_pre");
+		indel.nres_post = tag->getOption<int>("nres_post");
+		indel.aas += vector<core::chemical::AA>( indel.nres_pre + indel.nres_post, core::chemical::aa_ala );
 
-				} // i
+		rval.push_back(indel);
 
-				FORTAGS(i,anchored_loop,tag0) {
-					TagCOP tag = *i;
-					//cout << *tag << endl;
-					//   <anchored_loop nres_pre=2 nres_post=5 ss=EEHLLLLH weight_cb_begin=2 weight_cb_end=1>
-					//           <begin res_id=A:150>
-					//           <end   res_id=A:157>
-					//           <from  res_id=L:1   type=ligand>
-					//           <to    res_id=A:153 type=amide res_type="GLN">
-					//           <template pdbfile=ctl.pdb mdlfile=ctl_lig.mdl mdl_chain_id=L mdl_res_type="CTL" from=L:1 to=A:153>
-					//      </anchored_loop>
+	} // i
 
-					Segment indel;
-					indel.tag = tag;
-					indel.lo_res = find_or_throw(resids, tag->getTag("begin")->getOption<ResID>("res_id" ) );
-					indel.hi_res = find_or_throw(resids, tag->getTag("end")->getOption<ResID>("res_id" ) );
-					indel.from_res = find_or_throw( resids, tag->getTag("from")->getOption<ResID>("res_id" ) );
-					indel.type  = Segment::ANCHORED_LOOP;
+	FORTAGS ( i,anchored_loop,tag0 ) {
+		TagCOP tag = *i;
+		//cout << *tag << endl;
+		//   <anchored_loop nres_pre=2 nres_post=5 ss=EEHLLLLH weight_cb_begin=2 weight_cb_end=1>
+		//           <begin res_id=A:150>
+		//           <end   res_id=A:157>
+		//           <from  res_id=L:1   type=ligand>
+		//           <to    res_id=A:153 type=amide res_type="GLN">
+		//           <template pdbfile=ctl.pdb mdlfile=ctl_lig.mdl mdl_chain_id=L mdl_res_type="CTL" from=L:1 to=A:153>
+		//      </anchored_loop>
 
-					indel.nres_pre  = tag->getOption<int>("nres_pre");
-					indel.nres_post = tag->getOption<int>("nres_post");
+		Segment indel;
+		indel.tag = tag;
+		indel.lo_res = find_or_throw(resids, tag->getTag("begin")->getOption<ResID>("res_id" ) );
+		indel.hi_res = find_or_throw(resids, tag->getTag("end")->getOption<ResID>("res_id" ) );
+		indel.from_res = find_or_throw( resids, tag->getTag("from")->getOption<ResID>("res_id" ) );
+		indel.type  = Segment::ANCHORED_LOOP;
 
-					indel.aas += vector<core::chemical::AA>( indel.nres_pre, core::chemical::aa_ala );
-					indel.aas.push_back( core::chemical::aa_from_name( tag->getTag("to")->getOption<string>("res_type") ) );
-					indel.aas += vector<core::chemical::AA>( indel.nres_post, core::chemical::aa_ala );
+		indel.nres_pre  = tag->getOption<int>("nres_pre");
+		indel.nres_post = tag->getOption<int>("nres_post");
 
-					rval.push_back(indel);
+		indel.aas += vector<core::chemical::AA>( indel.nres_pre, core::chemical::aa_ala );
+		indel.aas.push_back( core::chemical::aa_from_name( tag->getTag("to")->getOption<string>("res_type") ) );
+		indel.aas += vector<core::chemical::AA>( indel.nres_post, core::chemical::aa_ala );
 
-				} // i
+		rval.push_back(indel);
 
-				FORTAGS(i,deletion,tag0) {
-					TagCOP tag = *i;
-					//cout << *tag << endl;
+	} // i
 
-					Segment indel;
-					indel.lo_res = find_or_throw(resids, tag->getTag("begin")->getOption<ResID>("res_id") );
-					indel.type = Segment::DELETION;
-					indel.nres_pre  = 0;
-					indel.nres_post = 0;
+	FORTAGS ( i,deletion,tag0 ) {
+		TagCOP tag = *i;
+		//cout << *tag << endl;
 
-					if( tag->hasTag("end") ) {
-						indel.hi_res = find_or_throw( resids, tag->getTag("end")->getOption<ResID>("res_id") );
-					}
-					else {
-						indel.hi_res = indel.lo_res; // !!! 1 residue deletion
-					}
+		Segment indel;
+		indel.lo_res = find_or_throw(resids, tag->getTag("begin")->getOption<ResID>("res_id") );
+		indel.type = Segment::DELETION;
+		indel.nres_pre  = 0;
+		indel.nres_post = 0;
 
-					rval.push_back(indel);
+		if ( tag->hasTag("end") ) {
+			indel.hi_res = find_or_throw( resids, tag->getTag("end")->getOption<ResID>("res_id") );
+		} else {
+			indel.hi_res = indel.lo_res; // !!! 1 residue deletion
+		}
 
-				} // i
+		rval.push_back(indel);
 
-				//cout << "done with get_indels" << endl;
+	} // i
 
-				return rval;
+	//cout << "done with get_indels" << endl;
 
-      } // get_indels
+	return rval;
 
-    } // namespace
+} // get_indels
 
-    // ================================================
-    // ==================== Cloner ====================
-    // ================================================
+} // namespace
 
-    Cloner::Cloner( TagCOP const& tag0, core::pose::PoseOP pose0) : tag0( collapse_random_options(tag0) ), pose0(pose0) {
-      cout << "after random options collapsed: " << endl << tag0 << endl;
-    }
+// ================================================
+// ==================== Cloner ====================
+// ================================================
 
-    core::kinematics::FoldTree Cloner::getFoldTree() {
-			//     core::kinematics::FoldTree get_fold_tree(TagCOP tag0,
-			//					     core::pose::PoseOP pose0,
-			//					     core::pose::PoseOP pose1,
-			//					     resids_type& resids,
-			//					     clones_type& clones,
-			//					     segments_type& segments ) {
+Cloner::Cloner( TagCOP const& tag0, core::pose::PoseOP pose0) : tag0( collapse_random_options(tag0) ), pose0(pose0) {
+	cout << "after random options collapsed: " << endl << tag0 << endl;
+}
 
+core::kinematics::FoldTree Cloner::getFoldTree() {
+	//     core::kinematics::FoldTree get_fold_tree(TagCOP tag0,
+	//          core::pose::PoseOP pose0,
+	//          core::pose::PoseOP pose1,
+	//          resids_type& resids,
+	//          clones_type& clones,
+	//          segments_type& segments ) {
 
-      core::kinematics::FoldTree ft;
 
-      //       ft.defaultRoot(tube);
-      //       ft.defaultJumps(tube);
+	core::kinematics::FoldTree ft;
 
-      int n_jump = 1;
+	//       ft.defaultRoot(tube);
+	//       ft.defaultJumps(tube);
 
-      for( Size k = 0; k < segments.size(); ++k ) {
+	int n_jump = 1;
 
-				Residue* lo_res = segments[k].lo_res; // apl -- this has got to go
-				Residue* hi_res = segments[k].hi_res; // apl -- this has got to go
+	for ( Size k = 0; k < segments.size(); ++k ) {
 
-				if( segments[k].type == Segment::ORIGINAL ) {
-					ft.add_edge( find_or_throw(clones,lo_res)->seqpos(),
-											 find_or_throw(clones,hi_res)->seqpos(),
-											 core::kinematics::Edge::PEPTIDE );
-				}
-				else if( segments[k].type == Segment::LOOP ) {
+		Residue* lo_res = segments[k].lo_res; // apl -- this has got to go
+		Residue* hi_res = segments[k].hi_res; // apl -- this has got to go
 
-					int lo = find_or_throw(clones,lo_res)->seqpos();
-					int hi = find_or_throw(clones,hi_res)->seqpos();
+		if ( segments[k].type == Segment::ORIGINAL ) {
+			ft.add_edge( find_or_throw(clones,lo_res)->seqpos(),
+				find_or_throw(clones,hi_res)->seqpos(),
+				core::kinematics::Edge::PEPTIDE );
+		} else if ( segments[k].type == Segment::LOOP ) {
 
-					cout << "InvKinLigLoopDesign::Cloner::adding loop segment " << segments[k].nres_pre << " " << segments[k].nres_post << " " << lo << " " << hi << endl;
+			int lo = find_or_throw(clones,lo_res)->seqpos();
+			int hi = find_or_throw(clones,hi_res)->seqpos();
 
-					ft.add_edge( lo - 1, lo - 1 + segments[k].nres_pre,  core::kinematics::Edge::PEPTIDE );
-					ft.add_edge( hi + 1, hi + 1 - segments[k].nres_post, core::kinematics::Edge::PEPTIDE );
-					ft.add_edge( lo-1, hi+1, n_jump++ );
+			cout << "InvKinLigLoopDesign::Cloner::adding loop segment " << segments[k].nres_pre << " " << segments[k].nres_post << " " << lo << " " << hi << endl;
 
-					//	  ft.add_edge( lo_res->seqpos()-1, lo_res->seqpos() + segments[k].nres_pre, core::kinetic::Edge::PEPTIDE );
-					//	  ft.add_edge( hi_res->seqpos() - segments[k].nres_post, hi_res->seqpos()+1, core::kinetic::Edge::PEPTIDE );
+			ft.add_edge( lo - 1, lo - 1 + segments[k].nres_pre,  core::kinematics::Edge::PEPTIDE );
+			ft.add_edge( hi + 1, hi + 1 - segments[k].nres_post, core::kinematics::Edge::PEPTIDE );
+			ft.add_edge( lo-1, hi+1, n_jump++ );
 
-					//assert( lo_res->seqpos() + segments[k].nres_pre + 1 == hi_res->seqpos() - segments[k].nres_post );
+			//   ft.add_edge( lo_res->seqpos()-1, lo_res->seqpos() + segments[k].nres_pre, core::kinetic::Edge::PEPTIDE );
+			//   ft.add_edge( hi_res->seqpos() - segments[k].nres_post, hi_res->seqpos()+1, core::kinetic::Edge::PEPTIDE );
 
-					cout << "InvKinLigLoopDesign::Cloner::break is between: " << lo - 1 + segments[k].nres_pre << " " << hi + 1 - segments[k].nres_post << endl;
-					cout << "InvKinLigLoopDesign::Cloner::jump is between " << lo - 1 << " " << hi + 1 << endl;
+			//assert( lo_res->seqpos() + segments[k].nres_pre + 1 == hi_res->seqpos() - segments[k].nres_post );
 
-				}
-				else if ( segments[k].type == Segment::ANCHORED_LOOP ) {
-					//assert( false );
+			cout << "InvKinLigLoopDesign::Cloner::break is between: " << lo - 1 + segments[k].nres_pre << " " << hi + 1 - segments[k].nres_post << endl;
+			cout << "InvKinLigLoopDesign::Cloner::jump is between " << lo - 1 << " " << hi + 1 << endl;
 
-					// will want the atom info at this point....
+		} else if ( segments[k].type == Segment::ANCHORED_LOOP ) {
+			//assert( false );
 
-					int lo = find_or_throw(clones,lo_res)->seqpos();
-					int hi = find_or_throw(clones,hi_res)->seqpos();
+			// will want the atom info at this point....
 
-					int from = find_or_throw( clones, segments[k].from_res )->seqpos();
-					int to   = lo + segments[k].nres_pre;
+			int lo = find_or_throw(clones,lo_res)->seqpos();
+			int hi = find_or_throw(clones,hi_res)->seqpos();
 
-					segments[k].jumpno = n_jump;
+			int from = find_or_throw( clones, segments[k].from_res )->seqpos();
+			int to   = lo + segments[k].nres_pre;
 
-					//ft.add_edge( from, to, n_jump++ );
+			segments[k].jumpno = n_jump;
 
-					cout << "InvKinLigLoopDesign::Cloner::creating anchored loop jump edge" << endl;
+			//ft.add_edge( from, to, n_jump++ );
 
-					core::kinematics::Edge edge(from,to,n_jump++); // NB: we want this to behave as a jump but also have atom info, ie, not a chemical bond
-					//	  edge.start_atom() = get_edge_start_atom( pose1, from, segments[k].tag );
-					//	  edge.stop_atom() = get_edge_stop_atom( pose1, to, segments[k].tag );
+			cout << "InvKinLigLoopDesign::Cloner::creating anchored loop jump edge" << endl;
 
-					string const& tag_start_atom = segments[k].tag->getTag("from")->getOption<string>("atom");
-					string const& tag_stop_atom = segments[k].tag->getTag("to")->getOption<string>("atom");
+			core::kinematics::Edge edge(from,to,n_jump++); // NB: we want this to behave as a jump but also have atom info, ie, not a chemical bond
+			//   edge.start_atom() = get_edge_start_atom( pose1, from, segments[k].tag );
+			//   edge.stop_atom() = get_edge_stop_atom( pose1, to, segments[k].tag );
 
-					int tag_start_atom_index = pose1->residue(from).atom_index( tag_start_atom );
-					int tag_stop_atom_index  = pose1->residue(to).atom_index( tag_stop_atom );
+			string const& tag_start_atom = segments[k].tag->getTag("from")->getOption<string>("atom");
+			string const& tag_stop_atom = segments[k].tag->getTag("to")->getOption<string>("atom");
 
-					devel::inv_kin_lig_loop_design::JumpManager jm;
-					edge.start_atom() = jm.get_jump_atom_for_hbond( *pose1, from, tag_start_atom );
-					edge.stop_atom()  = jm.get_jump_atom_for_hbond( *pose1, to, tag_stop_atom );
+			int tag_start_atom_index = pose1->residue(from).atom_index( tag_start_atom );
+			int tag_stop_atom_index  = pose1->residue(to).atom_index( tag_stop_atom );
 
-					cout << "InvKinLigLoopDesign::Cloner::jump edge: " << tag_start_atom << "=" << tag_start_atom_index << "," << edge.start_atom() << " " << tag_stop_atom << "=" << tag_stop_atom_index << "," << edge.stop_atom() << endl;
-					cout << "InvKinLigLoopDesign::Cloner::edge.has_atom_info() " << edge.has_atom_info() << " start=" << edge.start_atom() << " stop=" << edge.stop_atom() << endl;
+			devel::inv_kin_lig_loop_design::JumpManager jm;
+			edge.start_atom() = jm.get_jump_atom_for_hbond( *pose1, from, tag_start_atom );
+			edge.stop_atom()  = jm.get_jump_atom_for_hbond( *pose1, to, tag_stop_atom );
 
-					ft.add_edge( edge );
+			cout << "InvKinLigLoopDesign::Cloner::jump edge: " << tag_start_atom << "=" << tag_start_atom_index << "," << edge.start_atom() << " " << tag_stop_atom << "=" << tag_stop_atom_index << "," << edge.stop_atom() << endl;
+			cout << "InvKinLigLoopDesign::Cloner::edge.has_atom_info() " << edge.has_atom_info() << " start=" << edge.start_atom() << " stop=" << edge.stop_atom() << endl;
 
-					ft.add_edge( to, lo, core::kinematics::Edge::PEPTIDE );
-					ft.add_edge( to, hi, core::kinematics::Edge::PEPTIDE );
-					ft.add_edge( lo-1, hi+1, n_jump++ );
+			ft.add_edge( edge );
 
-					//	  cout << "adding loop segment " << segments[k].nres_pre << " " << segments[k].nres_post << " " << lo << " " << hi << endl;
-					//	  ft.add_edge( lo - 1, lo - 1 + segments[k].nres_pre,  core::kinematics::Edge::PEPTIDE );
-					//	  ft.add_edge( hi + 1, hi + 1 - segments[k].nres_post, core::kinematics::Edge::PEPTIDE );
-					//	  ft.add_edge( lo-1, hi+1, n_jump++ );
-					//	  //	  ft.add_edge( lo_res->seqpos()-1, lo_res->seqpos() + segments[k].nres_pre, core::kinetic::Edge::PEPTIDE );
-					//	  //	  ft.add_edge( hi_res->seqpos() - segments[k].nres_post, hi_res->seqpos()+1, core::kinetic::Edge::PEPTIDE );
-					//	  //assert( lo_res->seqpos() + segments[k].nres_pre + 1 == hi_res->seqpos() - segments[k].nres_post );
+			ft.add_edge( to, lo, core::kinematics::Edge::PEPTIDE );
+			ft.add_edge( to, hi, core::kinematics::Edge::PEPTIDE );
+			ft.add_edge( lo-1, hi+1, n_jump++ );
 
-					cout << "InvKinLigLoopDesign::Cloner::jump between " << from << " " << to << endl;
-					cout << "InvKinLigLoopDesign::Cloner::edge between " << lo << " " << from << endl;
-					cout << "InvKinLigLoopDesign::Cloner::edge between " << from << " " << hi << endl;
-					cout << "InvKinLigLoopDesign::Cloner::jump between " << lo-1 << " " << hi + 1 << endl;
+			//   cout << "adding loop segment " << segments[k].nres_pre << " " << segments[k].nres_post << " " << lo << " " << hi << endl;
+			//   ft.add_edge( lo - 1, lo - 1 + segments[k].nres_pre,  core::kinematics::Edge::PEPTIDE );
+			//   ft.add_edge( hi + 1, hi + 1 - segments[k].nres_post, core::kinematics::Edge::PEPTIDE );
+			//   ft.add_edge( lo-1, hi+1, n_jump++ );
+			//   //   ft.add_edge( lo_res->seqpos()-1, lo_res->seqpos() + segments[k].nres_pre, core::kinetic::Edge::PEPTIDE );
+			//   //   ft.add_edge( hi_res->seqpos() - segments[k].nres_post, hi_res->seqpos()+1, core::kinetic::Edge::PEPTIDE );
+			//   //assert( lo_res->seqpos() + segments[k].nres_pre + 1 == hi_res->seqpos() - segments[k].nres_post );
 
-				}
-				else if ( segments[k].type == Segment::LIGAND ) {
-					assert( segments[k].lo_res == segments[k].hi_res );
-					ft.add_edge( 1, find_or_throw(clones,lo_res)->seqpos(), n_jump++ );
-				}
+			cout << "InvKinLigLoopDesign::Cloner::jump between " << from << " " << to << endl;
+			cout << "InvKinLigLoopDesign::Cloner::edge between " << lo << " " << from << endl;
+			cout << "InvKinLigLoopDesign::Cloner::edge between " << from << " " << hi << endl;
+			cout << "InvKinLigLoopDesign::Cloner::jump between " << lo-1 << " " << hi + 1 << endl;
 
-      }
+		} else if ( segments[k].type == Segment::LIGAND ) {
+			assert( segments[k].lo_res == segments[k].hi_res );
+			ft.add_edge( 1, find_or_throw(clones,lo_res)->seqpos(), n_jump++ );
+		}
 
+	}
 
-      cout << "InvKinLigLoopDesign::Cloner::before reorder: " << ft << endl;
-      cout << "InvKinLigLoopDesign::Cloner::reordering fold tree... " << endl;
-      ft.reorder(1);
-      cout << "InvKinLigLoopDesign::Cloner::after reorder: " << ft << endl;
 
-      return ft;
+	cout << "InvKinLigLoopDesign::Cloner::before reorder: " << ft << endl;
+	cout << "InvKinLigLoopDesign::Cloner::reordering fold tree... " << endl;
+	ft.reorder(1);
+	cout << "InvKinLigLoopDesign::Cloner::after reorder: " << ft << endl;
 
-    } // get_fold_tree
+	return ft;
 
-		//     core::kinematics::FoldTree Cloner::getFoldTree() {
-		//       //return core::kinematics::FoldTree();
-		//       return get_fold_tree(tag0,pose0,pose1,resids,clones,segments);
-		//     } // Cloner::getFoldTree
+} // get_fold_tree
 
-    void append_seq( core::pose::Pose& pose0, int sp_lo, int sp_hi, utility::vector1< core::chemical::ResidueTypeCOP >& seq ) {
+//     core::kinematics::FoldTree Cloner::getFoldTree() {
+//       //return core::kinematics::FoldTree();
+//       return get_fold_tree(tag0,pose0,pose1,resids,clones,segments);
+//     } // Cloner::getFoldTree
 
-      //seq.clear();
+void append_seq( core::pose::Pose& pose0, int sp_lo, int sp_hi, utility::vector1< core::chemical::ResidueTypeCOP >& seq ) {
 
-      string s;
+	//seq.clear();
 
-      for( int i = sp_lo; i <= sp_hi; ++i ) {
-				seq.push_back( pose0.residue_type(i).get_self_ptr() );
-				s.push_back( pose0.residue(i).name1() );
-      }
+	string s;
 
-      cout << "InvKinLigLoopDesign: creating a pose of sequence: " << s << endl;
+	for ( int i = sp_lo; i <= sp_hi; ++i ) {
+		seq.push_back( pose0.residue_type(i).get_self_ptr() );
+		s.push_back( pose0.residue(i).name1() );
+	}
 
-    }
+	cout << "InvKinLigLoopDesign: creating a pose of sequence: " << s << endl;
 
-    utility::vector1< core::chemical::ResidueTypeCOP > get_seq_from_aas( vector< core::chemical::AA > const& aas ) {
+}
 
-      core::chemical::ResidueTypeSetCOP residue_set
-				( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
+utility::vector1< core::chemical::ResidueTypeCOP > get_seq_from_aas( vector< core::chemical::AA > const& aas ) {
 
-      utility::vector1< core::chemical::ResidueTypeCOP > rval;
-      for( Size i = 0; i < aas.size(); ++i ) {
-				core::chemical::ResidueTypeCOP res_type = residue_set->get_representative_type_aa( aas[i] );
-				assert( res_type != 0 );
-				rval.push_back( res_type );
-      }
-      return rval;
-    }
+	core::chemical::ResidueTypeSetCOP residue_set
+		( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
 
-    namespace {
+	utility::vector1< core::chemical::ResidueTypeCOP > rval;
+	for ( Size i = 0; i < aas.size(); ++i ) {
+		core::chemical::ResidueTypeCOP res_type = residue_set->get_representative_type_aa( aas[i] );
+		assert( res_type != 0 );
+		rval.push_back( res_type );
+	}
+	return rval;
+}
 
-      void make_pose_from_sequence(core::pose::Pose & pose, utility::vector1< core::chemical::ResidueTypeCOP > const& sequence ) {
+namespace {
 
-				using namespace core::chemical;
-				// clear all of the old data in the pose
-				pose.clear();
+void make_pose_from_sequence(core::pose::Pose & pose, utility::vector1< core::chemical::ResidueTypeCOP > const& sequence ) {
 
-				// setup the pose by appending the appropriate residues residues
-				for ( Size seqpos = 1; seqpos <= sequence.size(); ++seqpos ) {
+	using namespace core::chemical;
+	// clear all of the old data in the pose
+	pose.clear();
 
-					bool const is_lower_terminus( seqpos == 1 );
-					//bool const is_upper_terminus( seqpos == sequence.size() );
-					//bool const is_terminus( is_lower_terminus || is_upper_terminus ); // redundant, but for convenience
+	// setup the pose by appending the appropriate residues residues
+	for ( Size seqpos = 1; seqpos <= sequence.size(); ++seqpos ) {
 
+		bool const is_lower_terminus( seqpos == 1 );
+		//bool const is_upper_terminus( seqpos == sequence.size() );
+		//bool const is_terminus( is_lower_terminus || is_upper_terminus ); // redundant, but for convenience
 
-					core::chemical::ResidueType const & rsd_type = *(sequence[seqpos]);
-					core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_type ) );
 
-					if ( is_lower_terminus || !new_rsd->is_polymer() ) {
-						pose.append_residue_by_jump( *new_rsd, 1 /*pose.total_residue()*/ );
-					} else {
-						pose.append_residue_by_bond( *new_rsd, true );
-					}
-				} // for seqpos
-				// pose.conformation().insert_chain_ending( pose.total_residue() - 1 );
-      } // make_pose_from_sequence
+		core::chemical::ResidueType const & rsd_type = *(sequence[seqpos]);
+		core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_type ) );
 
-    }
+		if ( is_lower_terminus || !new_rsd->is_polymer() ) {
+			pose.append_residue_by_jump( *new_rsd, 1 /*pose.total_residue()*/ );
+		} else {
+			pose.append_residue_by_bond( *new_rsd, true );
+		}
+	} // for seqpos
+	// pose.conformation().insert_chain_ending( pose.total_residue() - 1 );
+} // make_pose_from_sequence
 
-    Segment get_segment_from_indel( Segment const& indel ) {
-      Segment rval;
+}
 
-      assert( indel.aas.size() != 0 );
+Segment get_segment_from_indel( Segment const& indel ) {
+	Segment rval;
 
-      rval.pose = core::pose::PoseOP( new core::pose::Pose );
+	assert( indel.aas.size() != 0 );
 
-      make_pose_from_sequence( *rval.pose, get_seq_from_aas(indel.aas) );
+	rval.pose = core::pose::PoseOP( new core::pose::Pose );
 
-      rval.lo_res = const_cast< core::conformation::Residue * > ( & rval.pose->residue( 1 ) ); /// apl -- note -- you should never do this; I'm only doing it to keep legacy code compiling.
-      rval.hi_res = const_cast< core::conformation::Residue * > ( & rval.pose->residue( rval.pose->total_residue() ) ); /// apl -- note -- you should never do this; I'm only doing it to keep legacy code compiling.
-      //for( core::conformation::ResidueOPs::iterator iter = rval.pose->res_begin(); iter != rval.pose->res_end(); ++iter ) {
-		//		rval.hi_res = iter->get(); // rbegin()
-      //}
+	make_pose_from_sequence( *rval.pose, get_seq_from_aas(indel.aas) );
 
-      rval.type = indel.type;
-      rval.nres_pre  = indel.nres_pre;
-      rval.nres_post = indel.nres_post;
-      rval.from_res = indel.from_res;
-      rval.tag = indel.tag;
+	rval.lo_res = const_cast< core::conformation::Residue * > ( & rval.pose->residue( 1 ) ); /// apl -- note -- you should never do this; I'm only doing it to keep legacy code compiling.
+	rval.hi_res = const_cast< core::conformation::Residue * > ( & rval.pose->residue( rval.pose->total_residue() ) ); /// apl -- note -- you should never do this; I'm only doing it to keep legacy code compiling.
+	//for( core::conformation::ResidueOPs::iterator iter = rval.pose->res_begin(); iter != rval.pose->res_end(); ++iter ) {
+	//  rval.hi_res = iter->get(); // rbegin()
+	//}
 
-      return rval;
-    }
+	rval.type = indel.type;
+	rval.nres_pre  = indel.nres_pre;
+	rval.nres_post = indel.nres_post;
+	rval.from_res = indel.from_res;
+	rval.tag = indel.tag;
 
-    // ==============================================================
-    // ==================== get_pose_with_indels ====================
-    // ==============================================================
+	return rval;
+}
 
-    core::pose::PoseOP get_pose_with_indels( core::pose::PoseOP pose0, segments_type const& indels, segments_type& segments, clones_type& clones ) {
+// ==============================================================
+// ==================== get_pose_with_indels ====================
+// ==============================================================
 
-      //cout << "get_pose_with_indels" << endl;
+core::pose::PoseOP get_pose_with_indels( core::pose::PoseOP pose0, segments_type const& indels, segments_type& segments, clones_type& clones ) {
 
-      segments.clear();
+	//cout << "get_pose_with_indels" << endl;
 
-      //core::conformation::ResidueOPs::iterator iter = pose0->res_begin();
+	segments.clear();
 
-      Residue* r_prev = 0; // apl -- this has got to go
-      Residue* r = const_cast< core::conformation::Residue * > ( & pose0->residue( 1 ) );// apl -- this has got to go
+	//core::conformation::ResidueOPs::iterator iter = pose0->res_begin();
 
-      Segment segment;
+	Residue* r_prev = 0; // apl -- this has got to go
+	Residue* r = const_cast< core::conformation::Residue * > ( & pose0->residue( 1 ) );// apl -- this has got to go
 
-      segment.pose  = pose0;
-      segment.lo_res = r;
-      segment.type  = Segment::ORIGINAL;
+	Segment segment;
 
-		Size ii( 1 );
-		while( ii <= pose0->total_residue() ) {
-      ///while( iter != pose0->res_end() ) {
+	segment.pose  = pose0;
+	segment.lo_res = r;
+	segment.type  = Segment::ORIGINAL;
 
-				for( Size k = 0; k < indels.size(); ++k ) {
+	Size ii( 1 );
+	while ( ii <= pose0->total_residue() ) {
+		///while( iter != pose0->res_end() ) {
 
-					if( r == indels[k].lo_res ) {
+		for ( Size k = 0; k < indels.size(); ++k ) {
 
-						segment.hi_res = r_prev;
-						segments.push_back( segment );
+			if ( r == indels[k].lo_res ) {
 
-						do {
-							//cout << "skipping " << r->seqpos() << endl;
-							//++iter;
-							//assert( iter != pose0->res_end() );
-							++ii;
-							assert( ii <= pose0->total_residue() );
-
-							r_prev = r;
-							r = const_cast< core::conformation::Residue * > ( & pose0->residue( ii ) );//iter->get();
-
-						} while( r != indels[k].hi_res );
-
-						segment.lo_res = r;
-
-
-						// now need to instantiate a new pose for the segment
-						if( indels[k].aas.size() != 0 ) {
-							//cout << "creating new pose from indel" << endl;
-							Segment indel = get_segment_from_indel( indels[k] );
-							segments.push_back( indel );
-						}
-
-					}
-
-				}
-
-
-				if( !r->is_polymer() ) {
-					//cout << "found a ligand" << endl;
-
-					if( r_prev && r_prev->is_polymer() ) {
-						segment.hi_res = r_prev;
-						segments.push_back( segment );
-					}
-
-					Segment ligand;
-					ligand.lo_res  = r;
-					ligand.hi_res = r;
-					ligand.type = Segment::LIGAND;
-					ligand.pose = pose0;
-
-					segments.push_back(ligand);
-
-				}
-				else {
-					//cout << "including " << r->seqpos() << endl;
-				}
-
-				//++iter;
-				++ii;
-				r_prev = r;
-				//if( iter != pose0->res_end() ) {
-				if ( ii <= pose0->total_residue() ) {
-					r = const_cast< core::conformation::Residue * > ( & pose0->residue( ii ) );//iter->get();
-				}
-
-				if( r_prev && !r_prev->is_polymer() ) {
-					segment.lo_res = r;
-				}
-
-      }
-
-      if( r_prev && r_prev->is_polymer() ) {
 				segment.hi_res = r_prev;
 				segments.push_back( segment );
-      }
+
+				do {
+					//cout << "skipping " << r->seqpos() << endl;
+					//++iter;
+					//assert( iter != pose0->res_end() );
+					++ii;
+					assert( ii <= pose0->total_residue() );
+
+					r_prev = r;
+					r = const_cast< core::conformation::Residue * > ( & pose0->residue( ii ) );//iter->get();
+
+				} while( r != indels[k].hi_res );
+
+				segment.lo_res = r;
 
 
-      // Step 2 - determine the total size of the new pose
-
-
-      utility::vector1< core::chemical::ResidueTypeCOP > seq;
-
-      for( Size k = 0; k < segments.size(); ++k ) {
-				//int size = segments[k].hi_res->seqpos() - segments[k].lo_res->seqpos() + 1;
-				//cout << segments[k].lo_res->seqpos() << ":" << segments[k].hi_res->seqpos() << " " << size << endl;
-
-				append_seq(*segments[k].pose,segments[k].lo_res->seqpos(),segments[k].hi_res->seqpos(),seq);
-      }
-
-      //cout << "creating a pose" << endl;
-
-      core::pose::PoseOP rval( new core::pose::Pose );
-
-			//       cout << "getting a residue set" << endl;
-			//       core::chemical::ResidueTypeSetCAP residue_set
-			//	( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
-
-
-      //string seq(total_size,'A');
-      //cout << "creating a pose from sequence: " << endl; // << seq << endl;
-      make_pose_from_sequence( *rval, seq );
-
-      //resize( *rval, total_size );
-
-
-      clones.clear();
-
-      Size k, begin,size;
-      for( k = 0, begin = 1; k < segments.size(); ++k, begin += size ) {
-				size = segments[k].size();
-				//cout << "copying segment " << k << endl;
-				rval->copy_segment(size, *segments[k].pose, begin, segments[k].lo_res->seqpos() );
-      }
-
-
-      for( k = 0, begin = 1; k < segments.size(); ++k, begin += size ) {
-				size = segments[k].size();
-
-				if( segments[k].type == Segment::ANCHORED_LOOP ) {
-					int lo = begin;
-					int hi = begin + size - 1;
-					assert( lo != 1 && hi != static_cast<int>(rval->n_residue()) );
-
-					//cout << "set_cutpoints: Adding cutpoints between " << lo-1 << "," << lo << " and " << hi << "," << hi+1 << endl;
-
-					core::pose::add_variant_type_to_pose_residue( *rval, core::chemical::CUTPOINT_LOWER, lo - 1 );
-					core::pose::add_variant_type_to_pose_residue( *rval, core::chemical::CUTPOINT_UPPER, lo );
-					core::pose::add_variant_type_to_pose_residue( *rval, core::chemical::CUTPOINT_LOWER, hi );
-					core::pose::add_variant_type_to_pose_residue( *rval, core::chemical::CUTPOINT_UPPER, hi + 1 );
-
-				}
-				else if( segments[k].type == Segment::LOOP ) {
-					int lo = begin;
-					//int hi = begin + size - 1;
-					int mid = lo + segments[k].nres_pre;
-					//cout << "adding variant: " << lo << "," << mid << "," << mid+1 << endl;
-
-					core::pose::add_variant_type_to_pose_residue( *rval, core::chemical::CUTPOINT_LOWER, mid - 1);
-					core::pose::add_variant_type_to_pose_residue( *rval, core::chemical::CUTPOINT_UPPER, mid );
+				// now need to instantiate a new pose for the segment
+				if ( indels[k].aas.size() != 0 ) {
+					//cout << "creating new pose from indel" << endl;
+					Segment indel = get_segment_from_indel( indels[k] );
+					segments.push_back( indel );
 				}
 
-      }
+			}
 
-      for( k = 0, begin = 1; k < segments.size(); ++k, begin += size ) {
+		}
 
-				size = segments[k].size();
 
-				for( int i = 0; i < static_cast<int>(size); ++i ) {
+		if ( !r->is_polymer() ) {
+			//cout << "found a ligand" << endl;
 
-					Residue* r0 = const_cast<Residue*>(&(segments[k].pose->residue( segments[k].lo_res->seqpos() + i ) ) ); // this has got to go
-					Residue* r1 = const_cast<Residue*>(& (rval->residue(begin + i)) ); // this has got to go
-					//cout << "clones: " << r0 << "\t" << r1 << endl;
-					clones[ r0 ] = r1;
-				}
+			if ( r_prev && r_prev->is_polymer() ) {
+				segment.hi_res = r_prev;
+				segments.push_back( segment );
+			}
 
-      }
+			Segment ligand;
+			ligand.lo_res  = r;
+			ligand.hi_res = r;
+			ligand.type = Segment::LIGAND;
+			ligand.pose = pose0;
 
-      //cout << "done with cloning, clones.size() = " << clones.size() << endl;
+			segments.push_back(ligand);
 
-      return rval;
+		} else {
+			//cout << "including " << r->seqpos() << endl;
+		}
 
-    }
+		//++iter;
+		++ii;
+		r_prev = r;
+		//if( iter != pose0->res_end() ) {
+		if ( ii <= pose0->total_residue() ) {
+			r = const_cast< core::conformation::Residue * > ( & pose0->residue( ii ) );//iter->get();
+		}
 
-		//     Residue const* get_cloned_residue( Cloner::ResIDMap_type const& residss,
-		//				       Cloner::CloneMap_type const& clones,
-		//				       ResID const& res_id ) {
+		if ( r_prev && !r_prev->is_polymer() ) {
+			segment.lo_res = r;
+		}
 
-		//       return find_or_default( clones, find_or_throw( residss, res_id ), static_cast<Residue const*>(0) );
-		//     }
+	}
 
+	if ( r_prev && r_prev->is_polymer() ) {
+		segment.hi_res = r_prev;
+		segments.push_back( segment );
+	}
 
-    core::pose::PoseOP Cloner::clone() {
 
-      resids = ResID::get_resids( *pose0 );
+	// Step 2 - determine the total size of the new pose
 
-      //vector< Indel > vIndels = get_indels(tag0,resids);
-      indels = get_indels(tag0,resids);
 
-      cout << "InvKinLigLoopDesign::Cloner:: number of indels = " << indels.size() << endl;
+	utility::vector1< core::chemical::ResidueTypeCOP > seq;
 
-			//       for( Size k = 0; k < indels.size(); ++k ) {
-			//	cout << "hi " << k << endl;
-			//	cout << indels[k].begin << " " << indels[k].end << endl;
-			//	cout << "indel: " << k << ": " << flush << ResID(*indels[k].begin) << "-" << ResID(*indels[k].end)<< endl;
-			//       }
+	for ( Size k = 0; k < segments.size(); ++k ) {
+		//int size = segments[k].hi_res->seqpos() - segments[k].lo_res->seqpos() + 1;
+		//cout << segments[k].lo_res->seqpos() << ":" << segments[k].hi_res->seqpos() << " " << size << endl;
 
-      //cout << "calling get_pose_with_indels" << endl;
+		append_seq(*segments[k].pose,segments[k].lo_res->seqpos(),segments[k].hi_res->seqpos(),seq);
+	}
 
-      pose1 = get_pose_with_indels( pose0, indels, segments, clones );
+	//cout << "creating a pose" << endl;
 
-      //cout << "returning from clone" << endl;
+	core::pose::PoseOP rval( new core::pose::Pose );
 
-      return pose1;
-    }
+	//       cout << "getting a residue set" << endl;
+	//       core::chemical::ResidueTypeSetCAP residue_set
+	// ( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
 
-		//     core::kinematics::Stub get_stub(Residue const* r, string const& a, string const& b, string const& c ) {
-		//       return core::kinematics::Stub( r->atom( a ).xyz(),
-		//				     r->atom( b ).xyz(),
-		//				     r->atom( c ).xyz() );
-		//     }
 
-		//     core::kinematics::Stub get_stub(Residue const* r, TagCOP tag ) {
+	//string seq(total_size,'A');
+	//cout << "creating a pose from sequence: " << endl; // << seq << endl;
+	make_pose_from_sequence( *rval, seq );
 
-		// //       typedef numeric::xyzVector< Real > Vector;
-		// //       if( tag->hasOption("moiety") ) {
-		// //	string const moiety = tag->getOption<string>("moiety");
-		// //       }
-		// //       else if( ) {
-		// //       }
+	//resize( *rval, total_size );
 
-		//     }
 
-		//     void print_stubs( core::pose::PoseOP pose, core::kinematics::Atom const& atom ) {
+	clones.clear();
 
-		//       Residue const& r = pose->residue( atom.id().rsd() );
+	Size k, begin,size;
+	for ( k = 0, begin = 1; k < segments.size(); ++k, begin += size ) {
+		size = segments[k].size();
+		//cout << "copying segment " << k << endl;
+		rval->copy_segment(size, *segments[k].pose, begin, segments[k].lo_res->seqpos() );
+	}
 
-		//       cout << r.seqpos() << endl;
 
-		//        cout << "0: " << atom.id().rsd() << endl;
-		//        cout << "1: " << atom.stub_atom1_id().rsd() << endl;
-		//        cout << "2: " << atom.stub_atom2_id().rsd() << endl;
-		//        cout << "3: " << atom.stub_atom3_id().rsd() << endl;
+	for ( k = 0, begin = 1; k < segments.size(); ++k, begin += size ) {
+		size = segments[k].size();
 
-		//        cout << "0: " << r.atom_name( atom.id().atomno() ) << endl;
-		//        cout << "1: " << r.atom_name( atom.stub_atom1_id().atomno() ) << endl;
-		//        cout << "2: " << r.atom_name( atom.stub_atom2_id().atomno() ) << endl;
-		//        cout << "3: " << r.atom_name( atom.stub_atom3_id().atomno() ) << endl;
+		if ( segments[k].type == Segment::ANCHORED_LOOP ) {
+			int lo = begin;
+			int hi = begin + size - 1;
+			assert( lo != 1 && hi != static_cast<int>(rval->n_residue()) );
 
-		//        cout << "i1: " << atom.input_stub_atom1_id().rsd() << endl;
-		//        cout << "i2: " << atom.input_stub_atom2_id().rsd() << endl;
-		//        cout << "i3: " << atom.input_stub_atom3_id().rsd() << endl;
+			//cout << "set_cutpoints: Adding cutpoints between " << lo-1 << "," << lo << " and " << hi << "," << hi+1 << endl;
 
-		//        Residue const& r_in = pose->residue( atom.input_stub_atom1_id().rsd() );
+			core::pose::add_variant_type_to_pose_residue( *rval, core::chemical::CUTPOINT_LOWER, lo - 1 );
+			core::pose::add_variant_type_to_pose_residue( *rval, core::chemical::CUTPOINT_UPPER, lo );
+			core::pose::add_variant_type_to_pose_residue( *rval, core::chemical::CUTPOINT_LOWER, hi );
+			core::pose::add_variant_type_to_pose_residue( *rval, core::chemical::CUTPOINT_UPPER, hi + 1 );
 
-		//        cout << "i1: " << r_in.atom_name( atom.input_stub_atom1_id().atomno() ) << endl;
-		//        cout << "i2: " << r_in.atom_name( atom.input_stub_atom2_id().atomno() ) << endl;
-		//        cout << "i3: " << r_in.atom_name( atom.input_stub_atom3_id().atomno() ) << endl;
+		} else if ( segments[k].type == Segment::LOOP ) {
+			int lo = begin;
+			//int hi = begin + size - 1;
+			int mid = lo + segments[k].nres_pre;
+			//cout << "adding variant: " << lo << "," << mid << "," << mid+1 << endl;
 
-		//     }
+			core::pose::add_variant_type_to_pose_residue( *rval, core::chemical::CUTPOINT_LOWER, mid - 1);
+			core::pose::add_variant_type_to_pose_residue( *rval, core::chemical::CUTPOINT_UPPER, mid );
+		}
 
-    void set_secstruct( core::pose::Pose& pose, int const a, int const b, const string& ss ) {
+	}
 
-      cout << "InvKinLigLoopDesign::Cloner::setting secondary structure of " << a << "," << b << " to " << ss << endl;
+	for ( k = 0, begin = 1; k < segments.size(); ++k, begin += size ) {
 
-      const int n = ss.size();
+		size = segments[k].size();
 
-      const int diff = b-a+1;
+		for ( int i = 0; i < static_cast<int>(size); ++i ) {
 
-      if( n == diff ) {
-				for( int i = 0; i < n; ++i ) {
-					pose.set_secstruct(a+i,ss[i]);
-				}
-      }
-      else {
-				// handling the case where the secondary structure string doesn't exactly match up with the length of residues
+			Residue* r0 = const_cast<Residue*>(&(segments[k].pose->residue( segments[k].lo_res->seqpos() + i ) ) ); // this has got to go
+			Residue* r1 = const_cast<Residue*>(& (rval->residue(begin + i)) ); // this has got to go
+			//cout << "clones: " << r0 << "\t" << r1 << endl;
+			clones[ r0 ] = r1;
+		}
 
-				int n_pre = 0, n_post = 0;
-				if( n > diff ) {
-					n_pre  = diff / 2;
-					n_post = diff - n_pre;
-				}
-				else if( n < diff ) {
-					n_pre  = n / 2;
-					n_post = n - n_pre;
-				}
-				else {
-					assert( false );
-				}
+	}
 
-				//Residue* r;
-				int i;
+	//cout << "done with cloning, clones.size() = " << clones.size() << endl;
 
-				for( i = 0; i < n_pre; ++i ) {
-					pose.set_secstruct(a+i,ss[i]);
-				} // i
+	return rval;
 
-				for( i = 0; i < n_post; ++i ) {
-					pose.set_secstruct(b-i,ss[n - 1 - i]);
-				} // i
+}
 
-      }
+//     Residue const* get_cloned_residue( Cloner::ResIDMap_type const& residss,
+//           Cloner::CloneMap_type const& clones,
+//           ResID const& res_id ) {
 
-    } // State::set_secstruct
+//       return find_or_default( clones, find_or_throw( residss, res_id ), static_cast<Residue const*>(0) );
+//     }
 
 
-    void Cloner::setInitialConfig() {
+core::pose::PoseOP Cloner::clone() {
 
-      core::pose::set_ss_from_phipsi(*pose1);
+	resids = ResID::get_resids( *pose0 );
 
-      //cout << "indels.size() = " << indels.size() << endl;
-      //cout << "segments.size() = " << segments.size() << endl;
+	//vector< Indel > vIndels = get_indels(tag0,resids);
+	indels = get_indels(tag0,resids);
 
-      for( Size k = 0; k < segments.size(); ++k ) {
+	cout << "InvKinLigLoopDesign::Cloner:: number of indels = " << indels.size() << endl;
 
-				if( segments[k].type == Segment::LOOP ) {
-					int lo = find_or_throw( clones, segments[k].lo_res  )->seqpos();
-					int hi = find_or_throw( clones, segments[k].hi_res )->seqpos();
+	//       for( Size k = 0; k < indels.size(); ++k ) {
+	// cout << "hi " << k << endl;
+	// cout << indels[k].begin << " " << indels[k].end << endl;
+	// cout << "indel: " << k << ": " << flush << ResID(*indels[k].begin) << "-" << ResID(*indels[k].end)<< endl;
+	//       }
 
-					// repair icoor for lo
-					//	  repair_icoor(pose1,lo-1);
-					//	  repair_icoor(pose1,lo);
-					//	  repair_icoor(pose1,hi);
-					//	  repair_icoor(pose1,hi+1);
+	//cout << "calling get_pose_with_indels" << endl;
 
-					cout << "InvKinLigLoopDesign::Cloner::inserting ideal geometry at polymer bond " << lo-1 << "," << lo << endl;
+	pose1 = get_pose_with_indels( pose0, indels, segments, clones );
 
-					pose1->conformation().insert_ideal_geometry_at_polymer_bond( lo-1 );
+	//cout << "returning from clone" << endl;
 
-					cout << "InvKinLigLoopDesign::Cloner::inserting ideal geometry at polymer bond " << hi << "," << hi+1 << endl;
+	return pose1;
+}
 
-					pose1->conformation().insert_ideal_geometry_at_polymer_bond( hi );
+//     core::kinematics::Stub get_stub(Residue const* r, string const& a, string const& b, string const& c ) {
+//       return core::kinematics::Stub( r->atom( a ).xyz(),
+//         r->atom( b ).xyz(),
+//         r->atom( c ).xyz() );
+//     }
 
-					// NB: need to be a little more careful to preserve the right angles...
+//     core::kinematics::Stub get_stub(Residue const* r, TagCOP tag ) {
 
-				}
-				else if( segments[k].type == Segment::ANCHORED_LOOP ) {
+// //       typedef numeric::xyzVector< Real > Vector;
+// //       if( tag->hasOption("moiety") ) {
+// // string const moiety = tag->getOption<string>("moiety");
+// //       }
+// //       else if( ) {
+// //       }
 
-					// don't really need this
-					cout << "InvKinLigLoopDesign::Cloner::setting jumpno " << segments[k].jumpno << " to initial value" << endl;
+//     }
 
-					JumpManager jm;
-					if( segments[k].tag->hasTag("template") ) {
-						jm.set_template_jump( *pose1, Loop(segments[k], clones) );
-					}
-					else if( segments[k].tag->hasTag("hbond") ) {
-						jm.set_random_hbond_jump( *pose1, Loop(segments[k], clones) );
-					}
-					else {
-						assert( false );
-					}
+//     void print_stubs( core::pose::PoseOP pose, core::kinematics::Atom const& atom ) {
 
-				}
+//       Residue const& r = pose->residue( atom.id().rsd() );
 
-				if( segments[k].type == Segment::LOOP ||
-						segments[k].type == Segment::ANCHORED_LOOP ) {
+//       cout << r.seqpos() << endl;
 
-					int lo = find_or_throw( clones, segments[k].lo_res  )->seqpos();
-					int hi = find_or_throw( clones, segments[k].hi_res )->seqpos();
+//        cout << "0: " << atom.id().rsd() << endl;
+//        cout << "1: " << atom.stub_atom1_id().rsd() << endl;
+//        cout << "2: " << atom.stub_atom2_id().rsd() << endl;
+//        cout << "3: " << atom.stub_atom3_id().rsd() << endl;
 
-					for( int i = lo; i <= hi ; ++i ) {
-						pose1->set_phi( i, -135.0 );
-						pose1->set_psi( i,  135.0 );
-						pose1->set_omega( i, 180.0 );
-						pose1->set_secstruct(i,'L');
-					}
+//        cout << "0: " << r.atom_name( atom.id().atomno() ) << endl;
+//        cout << "1: " << r.atom_name( atom.stub_atom1_id().atomno() ) << endl;
+//        cout << "2: " << r.atom_name( atom.stub_atom2_id().atomno() ) << endl;
+//        cout << "3: " << r.atom_name( atom.stub_atom3_id().atomno() ) << endl;
 
-					if( segments[k].tag.get() && segments[k].tag->hasOption("ss") ) {
-						set_secstruct(*pose1,lo,hi,segments[k].tag->getOption<string>("ss") );
-					}
+//        cout << "i1: " << atom.input_stub_atom1_id().rsd() << endl;
+//        cout << "i2: " << atom.input_stub_atom2_id().rsd() << endl;
+//        cout << "i3: " << atom.input_stub_atom3_id().rsd() << endl;
 
-				}
+//        Residue const& r_in = pose->residue( atom.input_stub_atom1_id().rsd() );
 
-      }
+//        cout << "i1: " << r_in.atom_name( atom.input_stub_atom1_id().atomno() ) << endl;
+//        cout << "i2: " << r_in.atom_name( atom.input_stub_atom2_id().atomno() ) << endl;
+//        cout << "i3: " << r_in.atom_name( atom.input_stub_atom3_id().atomno() ) << endl;
 
-      cout << "InvKinLigLoopDesign::Cloner::secstruct= " << endl;
-      for( int i = 1; i <= static_cast<int>(pose1->n_residue()); ++i ) {
-				//cout << i << " " << pose1->secstruct(i);
-				cout << pose1->secstruct(i);
-      }
-      cout << endl;
+//     }
 
-    }
+void set_secstruct( core::pose::Pose& pose, int const a, int const b, const string& ss ) {
 
-    // ==========================================================
-    // ==================== Cloner::getLoops ====================
-    // ==========================================================
+	cout << "InvKinLigLoopDesign::Cloner::setting secondary structure of " << a << "," << b << " to " << ss << endl;
 
-    vector< Loop > Cloner::getLoops() {
-      vector< Loop > rval;
-      for( Size k = 0; k < segments.size(); ++k ) {
-				if( segments[k].type == Segment::LOOP ||
-						segments[k].type == Segment::ANCHORED_LOOP ) {
-					rval.push_back( Loop( segments[k], clones ) );
-				}
-      }
-      return rval;
-    }
+	const int n = ss.size();
 
-  } // namespace LoopDesign
+	const int diff = b-a+1;
+
+	if ( n == diff ) {
+		for ( int i = 0; i < n; ++i ) {
+			pose.set_secstruct(a+i,ss[i]);
+		}
+	} else {
+		// handling the case where the secondary structure string doesn't exactly match up with the length of residues
+
+		int n_pre = 0, n_post = 0;
+		if ( n > diff ) {
+			n_pre  = diff / 2;
+			n_post = diff - n_pre;
+		} else if ( n < diff ) {
+			n_pre  = n / 2;
+			n_post = n - n_pre;
+		} else {
+			assert( false );
+		}
+
+		//Residue* r;
+		int i;
+
+		for ( i = 0; i < n_pre; ++i ) {
+			pose.set_secstruct(a+i,ss[i]);
+		} // i
+
+		for ( i = 0; i < n_post; ++i ) {
+			pose.set_secstruct(b-i,ss[n - 1 - i]);
+		} // i
+
+	}
+
+} // State::set_secstruct
+
+
+void Cloner::setInitialConfig() {
+
+	core::pose::set_ss_from_phipsi(*pose1);
+
+	//cout << "indels.size() = " << indels.size() << endl;
+	//cout << "segments.size() = " << segments.size() << endl;
+
+	for ( Size k = 0; k < segments.size(); ++k ) {
+
+		if ( segments[k].type == Segment::LOOP ) {
+			int lo = find_or_throw( clones, segments[k].lo_res  )->seqpos();
+			int hi = find_or_throw( clones, segments[k].hi_res )->seqpos();
+
+			// repair icoor for lo
+			//   repair_icoor(pose1,lo-1);
+			//   repair_icoor(pose1,lo);
+			//   repair_icoor(pose1,hi);
+			//   repair_icoor(pose1,hi+1);
+
+			cout << "InvKinLigLoopDesign::Cloner::inserting ideal geometry at polymer bond " << lo-1 << "," << lo << endl;
+
+			pose1->conformation().insert_ideal_geometry_at_polymer_bond( lo-1 );
+
+			cout << "InvKinLigLoopDesign::Cloner::inserting ideal geometry at polymer bond " << hi << "," << hi+1 << endl;
+
+			pose1->conformation().insert_ideal_geometry_at_polymer_bond( hi );
+
+			// NB: need to be a little more careful to preserve the right angles...
+
+		} else if ( segments[k].type == Segment::ANCHORED_LOOP ) {
+
+			// don't really need this
+			cout << "InvKinLigLoopDesign::Cloner::setting jumpno " << segments[k].jumpno << " to initial value" << endl;
+
+			JumpManager jm;
+			if ( segments[k].tag->hasTag("template") ) {
+				jm.set_template_jump( *pose1, Loop(segments[k], clones) );
+			} else if ( segments[k].tag->hasTag("hbond") ) {
+				jm.set_random_hbond_jump( *pose1, Loop(segments[k], clones) );
+			} else {
+				assert( false );
+			}
+
+		}
+
+		if ( segments[k].type == Segment::LOOP ||
+				segments[k].type == Segment::ANCHORED_LOOP ) {
+
+			int lo = find_or_throw( clones, segments[k].lo_res  )->seqpos();
+			int hi = find_or_throw( clones, segments[k].hi_res )->seqpos();
+
+			for ( int i = lo; i <= hi ; ++i ) {
+				pose1->set_phi( i, -135.0 );
+				pose1->set_psi( i,  135.0 );
+				pose1->set_omega( i, 180.0 );
+				pose1->set_secstruct(i,'L');
+			}
+
+			if ( segments[k].tag.get() && segments[k].tag->hasOption("ss") ) {
+				set_secstruct(*pose1,lo,hi,segments[k].tag->getOption<string>("ss") );
+			}
+
+		}
+
+	}
+
+	cout << "InvKinLigLoopDesign::Cloner::secstruct= " << endl;
+	for ( int i = 1; i <= static_cast<int>(pose1->n_residue()); ++i ) {
+		//cout << i << " " << pose1->secstruct(i);
+		cout << pose1->secstruct(i);
+	}
+	cout << endl;
+
+}
+
+// ==========================================================
+// ==================== Cloner::getLoops ====================
+// ==========================================================
+
+vector< Loop > Cloner::getLoops() {
+	vector< Loop > rval;
+	for ( Size k = 0; k < segments.size(); ++k ) {
+		if ( segments[k].type == Segment::LOOP ||
+				segments[k].type == Segment::ANCHORED_LOOP ) {
+			rval.push_back( Loop( segments[k], clones ) );
+		}
+	}
+	return rval;
+}
+
+} // namespace LoopDesign
 } // namespace devel

@@ -42,129 +42,129 @@
 
 
 namespace core {
-	namespace pose {
-		namespace reference_pose {
+namespace pose {
+namespace reference_pose {
 
-			static thread_local basic::Tracer TR( "core.pose.reference_pose.ReferencePoseSet" );
+static thread_local basic::Tracer TR( "core.pose.reference_pose.ReferencePoseSet" );
 
-			/// @brief Constructor.
-			///
-			ReferencePoseSet::ReferencePoseSet() :
-				reference_pose_map_()
-			{
-			}
+/// @brief Constructor.
+///
+ReferencePoseSet::ReferencePoseSet() :
+	reference_pose_map_()
+{
+}
 
-			/// @brief Copy constructor.
-			///
-			ReferencePoseSet::ReferencePoseSet( ReferencePoseSet const & src ) :
-				utility::pointer::ReferenceCount(),
-				utility::pointer::enable_shared_from_this< ReferencePoseSet >(),
-				reference_pose_map_()
-			{
-				//Loop over and clone all elements in the map:
-				for(std::map<std::string,ReferencePoseOP>::const_iterator it=src.reference_pose_map_.begin(); it!=src.reference_pose_map_.end(); ++it) {
-					reference_pose_map_[it->first] = it->second->clone(); //Create a clone of each ReferencePose object.
-				}
-			}
+/// @brief Copy constructor.
+///
+ReferencePoseSet::ReferencePoseSet( ReferencePoseSet const & src ) :
+	utility::pointer::ReferenceCount(),
+	utility::pointer::enable_shared_from_this< ReferencePoseSet >(),
+	reference_pose_map_()
+{
+	//Loop over and clone all elements in the map:
+	for ( std::map<std::string,ReferencePoseOP>::const_iterator it=src.reference_pose_map_.begin(); it!=src.reference_pose_map_.end(); ++it ) {
+		reference_pose_map_[it->first] = it->second->clone(); //Create a clone of each ReferencePose object.
+	}
+}
 
-			/// @brief Destructor.
-			///
-			ReferencePoseSet::~ReferencePoseSet() {}
+/// @brief Destructor.
+///
+ReferencePoseSet::~ReferencePoseSet() {}
 
 
-			/// @brief Make a copy of this ReferencePoseSet object (allocate actual memory for it)
-			/// and return an owning pointer to the copy.
-			ReferencePoseSetOP
-			ReferencePoseSet::clone() const
-			{
-				return ReferencePoseSetOP( new ReferencePoseSet( *this ) );
-			}
-			
-			/// @brief Given a reference pose, create a new ReferencePose object and initialize it
-			/// based on the reference pose, then add it to the current map.
-			/// @details After this operation, the map holds a new ReferencePoseOP pointing to a
-			/// very uninteresting ReferencePose object that maps a list of residues onto themselves,
-			/// accessible by the key string.
-			void ReferencePoseSet::add_and_initialize_reference_pose(
-				std::string const &key_string,
-				core::pose::Pose const &pose
-			) {
-				runtime_assert_string_msg(
-					key_string != "",
-					"Error in core::pose::reference_pose::ReferencePoseSet::add_and_initialize_reference_pose():  The name provided for this reference pose must not be an empty string."
-				);
-				runtime_assert_string_msg(
-					reference_pose_map_.count(key_string)==0,
-					"Error in core::pose::reference_pose::ReferencePoseSet::add_and_initialize_reference_pose(): The name provided for this reference pose has already been assigned to another reference pose."
-				);
-				reference_pose_map_[key_string] = ReferencePoseOP( new ReferencePose() );
-				reference_pose_map_[key_string]->initialize_residue_map_from_pose( pose );
-				return;
-			}
-			
-			/// @brief Get the corresponding residue in the current pose to a residue in a reference pose.
-			/// @details Should return 0 if no corresponding residue exists in the current pose, and throw an
-			/// error if the residue index provided as a key did not exist in the reference pose.
-			core::Size ReferencePoseSet::corresponding_residue_in_current(
-				core::Size const res_index_in_ref,
-				std::string const &ref_pose_key_string
-			) const {
-				runtime_assert_string_msg(
-					reference_pose_map_.count(ref_pose_key_string)!=0,
-					"Error in core::pose::reference_pose::ReferencePoseSet::corresponding_residue_in_current(): A reference pose with the name " + ref_pose_key_string + " does not exist in the reference pose map."
-				);
-				return reference_pose_map_.at(ref_pose_key_string)->corresponding_residue_in_current( res_index_in_ref );
-			}
-			
-			/// @brief Get the number of ReferencePose objects in this ReferencePoseSet.
-			///					
-			core::Size ReferencePoseSet::n_reference_pose() const {
-				return reference_pose_map_.size();
-			}
-			
-			/// @brief Returns true if and only if there are no ReferencePose objects in this ReferencePoseSet.
-			///					
-			bool ReferencePoseSet::empty() const {
-				return reference_pose_map_.empty();
-			}
-			
-			/// @brief Find all mappings to indices in the new pose after seqpos in all ReferencePose objects, and increment them by 1.
-			/// @details If there is no ReferencePose object, do nothing.
-			void ReferencePoseSet::increment_reference_pose_mapping_after_seqpos( core::Size const seqpos ) {
-				if(empty()) return; //Do nothing if the map is empty.
-				//Iterate over all elements of the ReferencePose map:
-				for (std::map< std::string, ReferencePoseOP >::iterator it=reference_pose_map_.begin(); it!=reference_pose_map_.end(); ++it) {
-					debug_assert( it->second ); //The reference pose owning pointer should always point to something, but let's double-check that.
-					it->second->increment_reference_pose_mapping_after_seqpos( seqpos );
-				}
-				return;
-			}
+/// @brief Make a copy of this ReferencePoseSet object (allocate actual memory for it)
+/// and return an owning pointer to the copy.
+ReferencePoseSetOP
+ReferencePoseSet::clone() const
+{
+	return ReferencePoseSetOP( new ReferencePoseSet( *this ) );
+}
 
-			/// @brief Find all mappings to indices in the new pose after seqpos in all ReferencePose objects, and decrement them by 1.
-			/// @details If there is no ReferencePose object, do nothing.
-			void ReferencePoseSet::decrement_reference_pose_mapping_after_seqpos( core::Size const seqpos ) {
-				if(empty()) return; //Do nothing if the map is empty.
-				//Iterate over all elements of the ReferencePose map:
-				for (std::map< std::string, ReferencePoseOP >::iterator it=reference_pose_map_.begin(); it!=reference_pose_map_.end(); ++it) {
-					debug_assert( it->second ); //The reference pose owning pointer should always point to something, but let's double-check that.
-					it->second->decrement_reference_pose_mapping_after_seqpos( seqpos );
-				}
-				return;
-			} 
+/// @brief Given a reference pose, create a new ReferencePose object and initialize it
+/// based on the reference pose, then add it to the current map.
+/// @details After this operation, the map holds a new ReferencePoseOP pointing to a
+/// very uninteresting ReferencePose object that maps a list of residues onto themselves,
+/// accessible by the key string.
+void ReferencePoseSet::add_and_initialize_reference_pose(
+	std::string const &key_string,
+	core::pose::Pose const &pose
+) {
+	runtime_assert_string_msg(
+		key_string != "",
+		"Error in core::pose::reference_pose::ReferencePoseSet::add_and_initialize_reference_pose():  The name provided for this reference pose must not be an empty string."
+	);
+	runtime_assert_string_msg(
+		reference_pose_map_.count(key_string)==0,
+		"Error in core::pose::reference_pose::ReferencePoseSet::add_and_initialize_reference_pose(): The name provided for this reference pose has already been assigned to another reference pose."
+	);
+	reference_pose_map_[key_string] = ReferencePoseOP( new ReferencePose() );
+	reference_pose_map_[key_string]->initialize_residue_map_from_pose( pose );
+	return;
+}
 
-			/// @brief Find all mappings to indices in the new pose to seqpos in all ReferencePose objects, and set them to point to residue 0 (deletion signal).
-			/// @details If there is no ReferencePose object, do nothing.
-			void ReferencePoseSet::zero_reference_pose_mapping_at_seqpos( core::Size const seqpos ) {
-				if(empty()) return; //Do nothing if the map is empty.
-				//Iterate over all elements of the ReferencePose map:
-				for (std::map< std::string, ReferencePoseOP >::iterator it=reference_pose_map_.begin(); it!=reference_pose_map_.end(); ++it) {
-					debug_assert( it->second ); //The reference pose owning pointer should always point to something, but let's double-check that.
-					it->second->zero_reference_pose_mapping_at_seqpos( seqpos );
-				}
-				return;
-			}
+/// @brief Get the corresponding residue in the current pose to a residue in a reference pose.
+/// @details Should return 0 if no corresponding residue exists in the current pose, and throw an
+/// error if the residue index provided as a key did not exist in the reference pose.
+core::Size ReferencePoseSet::corresponding_residue_in_current(
+	core::Size const res_index_in_ref,
+	std::string const &ref_pose_key_string
+) const {
+	runtime_assert_string_msg(
+		reference_pose_map_.count(ref_pose_key_string)!=0,
+		"Error in core::pose::reference_pose::ReferencePoseSet::corresponding_residue_in_current(): A reference pose with the name " + ref_pose_key_string + " does not exist in the reference pose map."
+	);
+	return reference_pose_map_.at(ref_pose_key_string)->corresponding_residue_in_current( res_index_in_ref );
+}
 
-		} // namespace reference_pose
-	} // namespace pose
+/// @brief Get the number of ReferencePose objects in this ReferencePoseSet.
+///
+core::Size ReferencePoseSet::n_reference_pose() const {
+	return reference_pose_map_.size();
+}
+
+/// @brief Returns true if and only if there are no ReferencePose objects in this ReferencePoseSet.
+///
+bool ReferencePoseSet::empty() const {
+	return reference_pose_map_.empty();
+}
+
+/// @brief Find all mappings to indices in the new pose after seqpos in all ReferencePose objects, and increment them by 1.
+/// @details If there is no ReferencePose object, do nothing.
+void ReferencePoseSet::increment_reference_pose_mapping_after_seqpos( core::Size const seqpos ) {
+	if ( empty() ) return; //Do nothing if the map is empty.
+	//Iterate over all elements of the ReferencePose map:
+	for ( std::map< std::string, ReferencePoseOP >::iterator it=reference_pose_map_.begin(); it!=reference_pose_map_.end(); ++it ) {
+		debug_assert( it->second ); //The reference pose owning pointer should always point to something, but let's double-check that.
+		it->second->increment_reference_pose_mapping_after_seqpos( seqpos );
+	}
+	return;
+}
+
+/// @brief Find all mappings to indices in the new pose after seqpos in all ReferencePose objects, and decrement them by 1.
+/// @details If there is no ReferencePose object, do nothing.
+void ReferencePoseSet::decrement_reference_pose_mapping_after_seqpos( core::Size const seqpos ) {
+	if ( empty() ) return; //Do nothing if the map is empty.
+	//Iterate over all elements of the ReferencePose map:
+	for ( std::map< std::string, ReferencePoseOP >::iterator it=reference_pose_map_.begin(); it!=reference_pose_map_.end(); ++it ) {
+		debug_assert( it->second ); //The reference pose owning pointer should always point to something, but let's double-check that.
+		it->second->decrement_reference_pose_mapping_after_seqpos( seqpos );
+	}
+	return;
+}
+
+/// @brief Find all mappings to indices in the new pose to seqpos in all ReferencePose objects, and set them to point to residue 0 (deletion signal).
+/// @details If there is no ReferencePose object, do nothing.
+void ReferencePoseSet::zero_reference_pose_mapping_at_seqpos( core::Size const seqpos ) {
+	if ( empty() ) return; //Do nothing if the map is empty.
+	//Iterate over all elements of the ReferencePose map:
+	for ( std::map< std::string, ReferencePoseOP >::iterator it=reference_pose_map_.begin(); it!=reference_pose_map_.end(); ++it ) {
+		debug_assert( it->second ); //The reference pose owning pointer should always point to something, but let's double-check that.
+		it->second->zero_reference_pose_mapping_at_seqpos( seqpos );
+	}
+	return;
+}
+
+} // namespace reference_pose
+} // namespace pose
 } // namespace core
 

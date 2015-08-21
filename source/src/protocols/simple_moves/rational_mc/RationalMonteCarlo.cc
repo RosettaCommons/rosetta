@@ -49,113 +49,114 @@ using protocols::moves::MoverOP;
 static thread_local basic::Tracer TR( "protocols.simple_moves.RationalMonteCarlo" );
 
 RationalMonteCarlo::RationalMonteCarlo(MoverOP mover, ScoreFunctionOP score, Size num_trials, Real temperature, bool recover_low)
-    : Mover("RationalMonteCarlo"), mover_(mover), num_trials_(num_trials), recover_low_(recover_low), next_trigger_id_(0) {
-  mc_ = moves::MonteCarloOP( new protocols::moves::MonteCarlo(*score, temperature) );
-  protocols::viewer::add_monte_carlo_viewer(*mc_, "RationalMonteCarlo");
+: Mover("RationalMonteCarlo"), mover_(mover), num_trials_(num_trials), recover_low_(recover_low), next_trigger_id_(0) {
+	mc_ = moves::MonteCarloOP( new protocols::moves::MonteCarlo(*score, temperature) );
+	protocols::viewer::add_monte_carlo_viewer(*mc_, "RationalMonteCarlo");
 }
 
 void RationalMonteCarlo::apply(Pose& pose) {
-  mc_->reset(pose);
-  mc_->reset_counters();
+	mc_->reset(pose);
+	mc_->reset_counters();
 
-  for (Size i = 1; i <= num_trials(); ++i) {
-    Pose copy(pose);
-    mover_->apply(pose);
+	for ( Size i = 1; i <= num_trials(); ++i ) {
+		Pose copy(pose);
+		mover_->apply(pose);
 
-    if (mc_->boltzmann(pose)) {  // accept
-      fire_all_triggers(pose);
-    } else {                     // reject
-      pose = copy;
-    }
-  }
+		if ( mc_->boltzmann(pose) ) {  // accept
+			fire_all_triggers(pose);
+		} else {                     // reject
+			pose = copy;
+		}
+	}
 
-  if (recover_low())
-    mc_->recover_low(pose);
+	if ( recover_low() ) {
+		mc_->recover_low(pose);
+	}
 
-  // Show simulation statistics
-  mc_->show_counters();
-  mc_->score_function().show(TR, pose);
-  TR.flush();
+	// Show simulation statistics
+	mc_->show_counters();
+	mc_->score_function().show(TR, pose);
+	TR.flush();
 }
 
 std::string RationalMonteCarlo::get_name() const {
-  return "RationalMonteCarlo";
+	return "RationalMonteCarlo";
 }
 
 Size RationalMonteCarlo::add_trigger(const RationalMonteCarloTrigger& trigger) {
-  Size tid = ++next_trigger_id_;
-  triggers_[tid] = trigger;
-  return tid;
+	Size tid = ++next_trigger_id_;
+	triggers_[tid] = trigger;
+	return tid;
 }
 
 void RationalMonteCarlo::remove_trigger(Size trigger_id) {
-  Triggers::const_iterator i = triggers_.find(trigger_id);
-  if (i == triggers_.end()) {
-    TR.Warning << "Attempt to remove invalid trigger_id => " << trigger_id << std::endl;
-    return;
-  }
-  triggers_.erase(i);
+	Triggers::const_iterator i = triggers_.find(trigger_id);
+	if ( i == triggers_.end() ) {
+		TR.Warning << "Attempt to remove invalid trigger_id => " << trigger_id << std::endl;
+		return;
+	}
+	triggers_.erase(i);
 }
 
 void RationalMonteCarlo::fire_all_triggers(const Pose& pose) {
-  for (Triggers::iterator i = triggers_.begin(); i != triggers_.end(); ++i) {
-    RationalMonteCarloTrigger& t = i->second;
-    t(pose);
-  }
+	for ( Triggers::iterator i = triggers_.begin(); i != triggers_.end(); ++i ) {
+		RationalMonteCarloTrigger& t = i->second;
+		t(pose);
+	}
 }
 
 // -- Accessors -- //
 Size RationalMonteCarlo::num_trials() const {
-  return num_trials_;
+	return num_trials_;
 }
 
 bool RationalMonteCarlo::recover_low() const {
-  return recover_low_;
+	return recover_low_;
 }
 
 MoverOP RationalMonteCarlo::mover() const {
-  return mover_;
+	return mover_;
 }
 
 Real RationalMonteCarlo::temperature() const {
-  return mc_->temperature();
+	return mc_->temperature();
 }
 
 const ScoreFunction& RationalMonteCarlo::score_function() const {
-  return mc_->score_function();
+	return mc_->score_function();
 }
 
 const Pose& RationalMonteCarlo::lowest_score_pose() const {
-  return mc_->lowest_score_pose();
+	return mc_->lowest_score_pose();
 }
 
 const Pose& RationalMonteCarlo::last_accepted_pose() const {
-  return mc_->last_accepted_pose();
+	return mc_->last_accepted_pose();
 }
 
 // -- Mutators -- //
 void RationalMonteCarlo::set_num_trials(Size num_trials) {
-  num_trials_ = num_trials;
+	num_trials_ = num_trials;
 }
 
 void RationalMonteCarlo::set_recover_low(bool recover_low) {
-  recover_low_ = recover_low;
+	recover_low_ = recover_low;
 }
 
 void RationalMonteCarlo::set_mover(MoverOP mover) {
-  mover_ = mover;
+	mover_ = mover;
 }
 
 void RationalMonteCarlo::set_temperature(Real temperature) {
-  mc_->set_temperature(temperature);
+	mc_->set_temperature(temperature);
 }
 
 void RationalMonteCarlo::set_score_function(ScoreFunctionOP score) {
-  mc_->score_function(*score);
+	mc_->score_function(*score);
 }
 
 void RationalMonteCarlo::reset(const Pose& pose) {
-  mc_->reset(pose);
+	mc_->reset(pose);
 }
 
 void RationalMonteCarlo::enable_autotemp(core::Real quench) {

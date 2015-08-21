@@ -63,7 +63,7 @@ public:
 		pose::Pose & pose,
 		utility::vector1< bool > const & residues_repacking,
 		utility::vector1< bool > const &
-		) const;
+	) const;
 
 	virtual
 	void
@@ -78,7 +78,7 @@ public:
 	prepare_rotamers_for_packing(
 		pose::Pose const & pose,
 		conformation::RotamerSetBase & set
-		) const;
+	) const;
 
 	virtual
 	void
@@ -98,7 +98,7 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-		) const;
+	) const;
 
 
 	virtual
@@ -108,7 +108,7 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		utility::vector1< core::PackerEnergy > & energies
-		) const;
+	) const;
 
 
 	virtual
@@ -118,7 +118,7 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		utility::vector1< EnergyMap > & emaps
-		) const;
+	) const;
 
 
 	/// @brief Batch computation of rotamer pair energies.  Need not be overriden in
@@ -135,7 +135,7 @@ public:
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
-		) const;
+	) const;
 
 
 	/// @brief Batch computation of rotamer/background energies.  Need not be overriden
@@ -163,7 +163,7 @@ public:
 	/// looks at blocks of residue type pairs and only calls the residue_pair_energy method
 	/// if the rotamer pairs are within range
 
-  virtual
+	virtual
 	void
 	evaluate_rotamer_background_energy_maps(
 		conformation::RotamerSetBase const & set,
@@ -172,7 +172,7 @@ public:
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights,
 		utility::vector1< EnergyMap > & emaps
-		) const;
+	) const;
 
 
 	virtual
@@ -187,9 +187,9 @@ public:
 		Vector & F2
 	) const;
 
- 	virtual
- 	Distance
- 	atomic_interaction_cutoff() const;
+	virtual
+	Distance
+	atomic_interaction_cutoff() const;
 
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const {}
@@ -205,7 +205,7 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-		) const;
+	) const;
 
 	/// this is our own special function
 	Real

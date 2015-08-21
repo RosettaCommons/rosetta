@@ -107,109 +107,109 @@ private:
 class UpstreamResTypeGeometry : public utility::pointer::ReferenceCount
 {
 public:
-	typedef core::Size                            Size;
-	typedef core::Real                            Real;
-	typedef core::Vector                          Vector;
-	typedef numeric::HomogeneousTransform< Real > HTReal;
+typedef core::Size                            Size;
+typedef core::Real                            Real;
+typedef core::Vector                          Vector;
+typedef numeric::HomogeneousTransform< Real > HTReal;
 
 public:
-	UpstreamResTypeGeometry();
-	UpstreamResTypeGeometry( core::chemical::ResidueType const & );
+UpstreamResTypeGeometry();
+UpstreamResTypeGeometry( core::chemical::ResidueType const & );
 
-	void initialize_from_residue_type( core::chemical::ResidueType const & );
+void initialize_from_residue_type( core::chemical::ResidueType const & );
 
 public:
 
-	/// @brief the name of the residue type used to generate this geometry
-	std::string const & name() const {
-		return restype_name_;
-	}
+/// @brief the name of the residue type used to generate this geometry
+std::string const & name() const {
+return restype_name_;
+}
 
-	/// @brief the number of atoms in this residue type
-	Size natoms() const {
-		return controlling_chi_for_atom_.size();
-	}
+/// @brief the number of atoms in this residue type
+Size natoms() const {
+return controlling_chi_for_atom_.size();
+}
 
-	Size nchi() const {
-		return chitip_atoms_.size();
-	}
+Size nchi() const {
+return chitip_atoms_.size();
+}
 
-	bool atom_controlled_by_any_chi( Size atomno ) const {
-		return controlling_chi_for_atom_[ atomno ] != 0;
-	}
+bool atom_controlled_by_any_chi( Size atomno ) const {
+return controlling_chi_for_atom_[ atomno ] != 0;
+}
 
-	bool atom_is_chitip( Size atomno ) const {
-		return controlling_chi_for_atom_[ atomno ] != 0 && which_point_for_atom_[ atomno ] == 0;
-	}
+bool atom_is_chitip( Size atomno ) const {
+return controlling_chi_for_atom_[ atomno ] != 0 && which_point_for_atom_[ atomno ] == 0;
+}
 
-	utility::vector1< Size > const &
-	controlling_chi_for_atom() const { return controlling_chi_for_atom_; }
+utility::vector1< Size > const &
+controlling_chi_for_atom() const { return controlling_chi_for_atom_; }
 
-	utility::vector1< Size > const &
-	which_point_for_atom() const { return which_point_for_atom_; }
+utility::vector1< Size > const &
+which_point_for_atom() const { return which_point_for_atom_; }
 
-	utility::vector1< Size > const &
-	chitip_atoms() const { return chitip_atoms_; }
+utility::vector1< Size > const &
+chitip_atoms() const { return chitip_atoms_; }
 
-	Size
-	chitip_atom( Size chi ) const {
-		return chitip_atoms_[ chi ];
-	}
+Size
+chitip_atom( Size chi ) const {
+return chitip_atoms_[ chi ];
+}
 
-	utility::vector1< HTReal > const &
-	ht_for_chitip_atoms() const { return ht_for_chitip_atoms_; }
+utility::vector1< HTReal > const &
+ht_for_chitip_atoms() const { return ht_for_chitip_atoms_; }
 
-	HTReal const &
-	ht_for_chitip_atom( Size chi ) const {
-		return ht_for_chitip_atoms_[ chi ];
-	}
+HTReal const &
+ht_for_chitip_atom( Size chi ) const {
+return ht_for_chitip_atoms_[ chi ];
+}
 
-	Size
-	n_nonchitip_atoms_for_chi( Size chi ) const {
-		return nonchitip_atoms_[ chi ].size();
-	}
+Size
+n_nonchitip_atoms_for_chi( Size chi ) const {
+return nonchitip_atoms_[ chi ].size();
+}
 
-	utility::vector1< utility::vector1< Size > > const &
-	nonchitip_atoms() const { return nonchitip_atoms_; }
+utility::vector1< utility::vector1< Size > > const &
+nonchitip_atoms() const { return nonchitip_atoms_; }
 
-	Size
-	nonchitip_atom( Size chi, Size which_nonchitip_atom_for_chi ) const {
-		return nonchitip_atoms_[ chi ][ which_nonchitip_atom_for_chi ];
-	}
+Size
+nonchitip_atom( Size chi, Size which_nonchitip_atom_for_chi ) const {
+return nonchitip_atoms_[ chi ][ which_nonchitip_atom_for_chi ];
+}
 
-	utility::vector1< utility::vector1< Vector > > const &
-	points_for_nonchitip_atoms() const { return points_for_nonchitip_atoms_; }
+utility::vector1< utility::vector1< Vector > > const &
+points_for_nonchitip_atoms() const { return points_for_nonchitip_atoms_; }
 
-	utility::vector1< Vector > const &
-	points_for_nonchitip_atoms( Size chi ) const {
-		return points_for_nonchitip_atoms_[ chi ];
-	}
+utility::vector1< Vector > const &
+points_for_nonchitip_atoms( Size chi ) const {
+return points_for_nonchitip_atoms_[ chi ];
+}
 
-	/// @brief Convenience function: get the coordinate in the chitip frame
-	/// for a particular atom.  The atom must be a non-chitip atom that is
-	/// not part of the backbone (it must be controlled by a chi angle).
-	Vector const &
-	point_for_nonchitip_atom( Size atom ) {
-		assert( atom_controlled_by_any_chi( atom ) && !atom_is_chitip( atom ) );
-		return points_for_nonchitip_atoms_[ controlling_chi_for_atom_[ atom ] ]
-			[ which_point_for_atom_[ atom ] ];
-	}
+/// @brief Convenience function: get the coordinate in the chitip frame
+/// for a particular atom.  The atom must be a non-chitip atom that is
+/// not part of the backbone (it must be controlled by a chi angle).
+Vector const &
+point_for_nonchitip_atom( Size atom ) {
+assert( atom_controlled_by_any_chi( atom ) && !atom_is_chitip( atom ) );
+return points_for_nonchitip_atoms_[ controlling_chi_for_atom_[ atom ] ]
+[ which_point_for_atom_[ atom ] ];
+}
 
 
 private:
-	/// Data
+/// Data
 
-	std::string restype_name_;
+std::string restype_name_;
 
-	utility::vector1< Size >   controlling_chi_for_atom_;
-	utility::vector1< Size >   which_point_for_atom_;
+utility::vector1< Size >   controlling_chi_for_atom_;
+utility::vector1< Size >   which_point_for_atom_;
 
-	utility::vector1< Size >   chitip_atoms_;
-	utility::vector1< HTReal > ht_for_chitip_atoms_;
+utility::vector1< Size >   chitip_atoms_;
+utility::vector1< HTReal > ht_for_chitip_atoms_;
 
 
-	utility::vector1< utility::vector1< Size > >   nonchitip_atoms_;
-	utility::vector1< utility::vector1< Vector > > points_for_nonchitip_atoms_;
+utility::vector1< utility::vector1< Size > >   nonchitip_atoms_;
+utility::vector1< utility::vector1< Vector > > points_for_nonchitip_atoms_;
 
 };
 */

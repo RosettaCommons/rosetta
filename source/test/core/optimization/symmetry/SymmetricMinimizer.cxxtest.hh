@@ -392,7 +392,7 @@ public:
 		using id::THETA;
 		using id::D;
 
-	//	pose::Pose start_pose(create_test_in_pdb_pose());
+		// pose::Pose start_pose(create_test_in_pdb_pose());
 		pose::Pose start_pose;
 		core::import_pose::pose_from_pdb( start_pose, "core/scoring/symmetry/test_in.pdb" );
 		core::pose::symmetry::make_symmetric_pose( start_pose );
@@ -411,11 +411,11 @@ public:
 		SymAtomTreeMinimizer minimizer;
 		MinimizerOptionsOP min_options( new MinimizerOptions( "linmin", 10.0, true, true, false ) );
 
-	// non-core level code has no place in a "core" test!
-	// furthermore, core does not (and should not) link the protocols lib!
-	// move this test to protocols if you want to include/test code from protocols!!
-	//	protocols::simple_moves::MinMover min_mover( mm, scorefxn, "linmin", 10.0, true
-	//		/*use_nblist*/, true /*deriv_check*/, false /*no verbose-deriv-check, default*/ );
+		// non-core level code has no place in a "core" test!
+		// furthermore, core does not (and should not) link the protocols lib!
+		// move this test to protocols if you want to include/test code from protocols!!
+		// protocols::simple_moves::MinMover min_mover( mm, scorefxn, "linmin", 10.0, true
+		//  /*use_nblist*/, true /*deriv_check*/, false /*no verbose-deriv-check, default*/ );
 
 		{ // just fa_rama
 			scorefxn->set_weight( scoring::rama, 1.0 );

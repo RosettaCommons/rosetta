@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file core/scoring/loop_graph/LoopScoreInfo.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,13 +21,13 @@
 namespace core {
 namespace scoring {
 namespace loop_graph {
-	
-	class LoopScoreInfo;
-	typedef utility::pointer::shared_ptr< LoopScoreInfo > LoopScoreInfoOP;
-	typedef utility::pointer::shared_ptr< LoopScoreInfo const > LoopScoreInfoCOP;
-	
-} //loop_graph 
-} //scoring 
-} //core 
+
+class LoopScoreInfo;
+typedef utility::pointer::shared_ptr< LoopScoreInfo > LoopScoreInfoOP;
+typedef utility::pointer::shared_ptr< LoopScoreInfo const > LoopScoreInfoCOP;
+
+} //loop_graph
+} //scoring
+} //core
 
 #endif

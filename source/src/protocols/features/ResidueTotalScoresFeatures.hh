@@ -36,8 +36,8 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class ResidueTotalScoresFeatures : public protocols::features::FeaturesReporter {
 public:

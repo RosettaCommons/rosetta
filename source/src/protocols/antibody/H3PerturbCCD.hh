@@ -50,7 +50,7 @@ public:
 
 	/// @brief constructor with arguments
 	H3PerturbCCD(AntibodyInfoOP antibody_in,
-	             core::scoring::ScoreFunctionCOP highres_scorefxn);
+		core::scoring::ScoreFunctionCOP highres_scorefxn);
 
 	virtual protocols::moves::MoverOP clone() const;
 
@@ -100,8 +100,8 @@ private:
 	void build_centroid_loop( core::pose::Pose & pose );
 
 	void scored_frag_close(
-	    core::pose::Pose & pose_in,
-	    loops::Loop const trimmed_cdr_h3 );
+		core::pose::Pose & pose_in,
+		loops::Loop const trimmed_cdr_h3 );
 
 
 	/// @brief size of loop above which 9mer frags are used

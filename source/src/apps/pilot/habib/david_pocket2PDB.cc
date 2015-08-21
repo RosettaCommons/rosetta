@@ -84,35 +84,35 @@ static thread_local basic::Tracer TR( "apps.pilot.david_pocket_compare.main" );
 /// General testing code
 int main( int argc, char * argv [] ) {
 
-  try {
+	try {
 
-	//NEW_OPT( pocket1_fname, "pocket", "fname" );
-	NEW_OPT( minipocket, "Print smaller set of pocket points as carbons (for ROCS)", false );
+		//NEW_OPT( pocket1_fname, "pocket", "fname" );
+		NEW_OPT( minipocket, "Print smaller set of pocket points as carbons (for ROCS)", false );
 
-	//initializes Rosetta functions
-	devel::init(argc, argv);
+		//initializes Rosetta functions
+		devel::init(argc, argv);
 
-    for (core::Size f=1; f <= basic::options::start_files().size(); f++) {
-	std::string const fname1 = basic::options::start_files().at(f);
-        bool const minpock = option [ minipocket ];
+		for ( core::Size f=1; f <= basic::options::start_files().size(); f++ ) {
+			std::string const fname1 = basic::options::start_files().at(f);
+			bool const minpock = option [ minipocket ];
 
-	protocols::pockets::TargetPocketGrid pocket1( fname1 );
-	std::stringstream out_fname;
+			protocols::pockets::TargetPocketGrid pocket1( fname1 );
+			std::stringstream out_fname;
 
-        if (minpock){
-          out_fname << fname1 << ".min.pdb";
-        }else{
-	  out_fname << fname1 << ".pdb";
+			if ( minpock ) {
+				out_fname << fname1 << ".min.pdb";
+			} else {
+				out_fname << fname1 << ".pdb";
+			}
+			pocket1.dumpTargetPocketsToPDB ( out_fname.str(), minpock);
+		}
+
+		TR << "Done!" << std::endl;
 	}
-	pocket1.dumpTargetPocketsToPDB ( out_fname.str(), minpock);
-    }
-
-	TR << "Done!" << std::endl;
-	}
-	catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
-		return -1;
-  }
+catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+	return -1;
+}
 
 	return 0;
 }

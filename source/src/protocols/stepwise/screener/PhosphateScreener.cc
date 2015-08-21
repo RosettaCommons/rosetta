@@ -25,33 +25,33 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	//Constructor
-	PhosphateScreener::PhosphateScreener( modeler::rna::phosphate::MultiPhosphateSamplerOP phosphate_sampler ):
-		SampleApplier( phosphate_sampler->pose() ),
-		phosphate_sampler_( phosphate_sampler ),
-		phosphate_sampler_for_restoration_( phosphate_sampler->clone_sampler() ) // will not change, and will allow restoration of phosphate.
-	{}
+//Constructor
+PhosphateScreener::PhosphateScreener( modeler::rna::phosphate::MultiPhosphateSamplerOP phosphate_sampler ):
+	SampleApplier( phosphate_sampler->pose() ),
+	phosphate_sampler_( phosphate_sampler ),
+	phosphate_sampler_for_restoration_( phosphate_sampler->clone_sampler() ) // will not change, and will allow restoration of phosphate.
+{}
 
-	//Destructor
-	PhosphateScreener::~PhosphateScreener()
-	{}
+//Destructor
+PhosphateScreener::~PhosphateScreener()
+{}
 
-	/////////////////////////////////////////
-	bool
-	PhosphateScreener::check_screen(){
-		phosphate_sampler_->sample_phosphates();
-		return true;
-	}
+/////////////////////////////////////////
+bool
+PhosphateScreener::check_screen(){
+	phosphate_sampler_->sample_phosphates();
+	return true;
+}
 
-	/////////////////////////////////////////
-	void
-	PhosphateScreener::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
-		update_mover->add_mover( phosphate_sampler_ );
+/////////////////////////////////////////
+void
+PhosphateScreener::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
+	update_mover->add_mover( phosphate_sampler_ );
 
-		restore_mover->add_mover( 0 ); // choice in ClassicResidueSampler -- not sure if we should keep it though.
-		//		phosphate_sampler_for_restoration_->set_phosphate_move_list( phosphate_sampler_->phosphate_move_list() );
-		//		restore_mover->add_mover( phosphate_sampler_for_restoration_ );
-	}
+	restore_mover->add_mover( 0 ); // choice in ClassicResidueSampler -- not sure if we should keep it though.
+	//  phosphate_sampler_for_restoration_->set_phosphate_move_list( phosphate_sampler_->phosphate_move_list() );
+	//  restore_mover->add_mover( phosphate_sampler_for_restoration_ );
+}
 
 } //screener
 } //stepwise

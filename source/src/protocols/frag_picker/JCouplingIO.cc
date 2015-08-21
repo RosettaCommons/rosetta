@@ -45,9 +45,10 @@ void JCouplingIO::read(std::string const & file_name) {
 
 	utility::io::izstream data(file_name.c_str());
 	trJCouplingIO.Info << "read Jcoupling data from " << file_name << std::endl;
-	if (!data)
+	if ( !data ) {
 		utility_exit_with_message("[ERROR] Unable to open Jcoupling file: "
-				+ file_name);
+			+ file_name);
+	}
 
 	std::string line;
 	Size len;
@@ -60,17 +61,17 @@ void JCouplingIO::read(std::string const & file_name) {
 	utility::vector1< Real > tmpv(len);
 	utility::vector1< utility::vector1< Real > > temp_data( 1, tmpv );
 
-	while (!data.eof()) {
+	while ( !data.eof() ) {
 		getline(data, line);
 		std::istringstream line_stream(line);
 		Real val, dev;
 		Size res;
 		line_stream >> res >> val >> dev;
 
-		if (!(option[frags::filter_JC].user() && (val >4) && (val<6)  )) {
+		if ( !(option[frags::filter_JC].user() && (val >4) && (val<6)  ) ) {
 			temp_data[res].push_back(val);
 			temp_data[res].push_back(dev);
-//   std::cout << "DATA " << res << " " << val << " " << dev << std::endl;
+			//   std::cout << "DATA " << res << " " << val << " " << dev << std::endl;
 		}
 		//std::cout << "DATA " << res << " " << val << " " << dev << std::endl;
 
@@ -94,7 +95,7 @@ std::pair< Real, Real > JCouplingIO::get_data( Size const res_num, bool & has_da
 
 	//std::cout << "GETTING " << res_num << " " << data_[res_num].size() << std::endl;
 
-	if (data_[res_num].size() == 2) {
+	if ( data_[res_num].size() == 2 ) {
 		temp.first = data_[res_num][1];
 		temp.second = data_[res_num][2];
 		has_data = true;

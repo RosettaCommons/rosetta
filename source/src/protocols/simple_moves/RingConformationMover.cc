@@ -123,7 +123,7 @@ RingConformationMover::show(std::ostream & output) const
 
 	if ( locked_ ) {
 		output << "This Mover was locked from the command line with the -lock_rings flag " <<
-				"and will not do anything!" << endl;
+			"and will not do anything!" << endl;
 	} else {
 		output << "Current MoveMap:" << endl << *movemap_ << endl;
 		if ( sample_all_conformers_ ) {
@@ -156,11 +156,11 @@ RingConformationMover::fresh_instance() const
 
 void
 RingConformationMover::parse_my_tag(
-		TagCOP tag,
-		basic::datacache::DataMap & data,
-		Filters_map const & /*filters*/,
-		moves::Movers_map const & /*movers*/,
-		Pose const & pose )
+	TagCOP tag,
+	basic::datacache::DataMap & data,
+	Filters_map const & /*filters*/,
+	moves::Movers_map const & /*movers*/,
+	Pose const & pose )
 {
 	using namespace core::kinematics;
 
@@ -190,7 +190,7 @@ RingConformationMover::apply( Pose & input_pose )
 
 	if ( locked_ ) {
 		TR.Warning << "Rings were locked from the command line with the -lock_rings flag.  " <<
-				"Did you intend to call this Mover?" << endl;
+			"Did you intend to call this Mover?" << endl;
 		return;
 	}
 
@@ -272,8 +272,8 @@ RingConformationMover::init( core::kinematics::MoveMapOP movemap )
 // Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
 void
 RingConformationMover::copy_data(
-		RingConformationMover & object_to_copy_to,
-		RingConformationMover const & object_to_copy_from )
+	RingConformationMover & object_to_copy_to,
+	RingConformationMover const & object_to_copy_from )
 {
 	object_to_copy_to.movemap_ = object_to_copy_from.movemap_;
 	object_to_copy_to.residue_list_ = object_to_copy_from.residue_list_;

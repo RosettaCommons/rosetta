@@ -23,20 +23,20 @@
 // C++ headers
 
 namespace protocols {
-	namespace helical_bundle {
+namespace helical_bundle {
 
-		class BackboneGridSamplerHelper;
+class BackboneGridSamplerHelper;
 
-		typedef  utility::pointer::weak_ptr< BackboneGridSamplerHelper >  BackboneGridSamplerHelperAP;
-		typedef  utility::pointer::weak_ptr< BackboneGridSamplerHelper const >  BackboneGridSamplerHelperCAP;
-		typedef  utility::pointer::shared_ptr< BackboneGridSamplerHelper >  BackboneGridSamplerHelperOP;
-		typedef  utility::pointer::shared_ptr< BackboneGridSamplerHelper const >  BackboneGridSamplerHelperCOP;
+typedef  utility::pointer::weak_ptr< BackboneGridSamplerHelper >  BackboneGridSamplerHelperAP;
+typedef  utility::pointer::weak_ptr< BackboneGridSamplerHelper const >  BackboneGridSamplerHelperCAP;
+typedef  utility::pointer::shared_ptr< BackboneGridSamplerHelper >  BackboneGridSamplerHelperOP;
+typedef  utility::pointer::shared_ptr< BackboneGridSamplerHelper const >  BackboneGridSamplerHelperCOP;
 
-		typedef  utility::vector1< BackboneGridSamplerHelperOP >  BackboneGridSamplerHelperOPs;
-		typedef  utility::vector1< BackboneGridSamplerHelperCOP >  BackboneGridSamplerHelperCOPs;
-		typedef  utility::vector1< BackboneGridSamplerHelperCAP >  BackboneGridSamplerHelperCAPs;
+typedef  utility::vector1< BackboneGridSamplerHelperOP >  BackboneGridSamplerHelperOPs;
+typedef  utility::vector1< BackboneGridSamplerHelperCOP >  BackboneGridSamplerHelperCOPs;
+typedef  utility::vector1< BackboneGridSamplerHelperCAP >  BackboneGridSamplerHelperCAPs;
 
-	} // namespace helical_bundle
+} // namespace helical_bundle
 } // namespace protocols
 
 #endif // INCLUDED_protocols_helical_bundle_BackboneGridSamplerHelper_fwd_hh

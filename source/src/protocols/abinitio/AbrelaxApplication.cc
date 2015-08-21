@@ -62,7 +62,7 @@
 #include <protocols/loops/loops_main.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 // Package Headers
@@ -219,9 +219,9 @@ void protocols::abinitio::AbrelaxApplication::register_options() {
 	// here we should have
 	// ClassicRelax::register_options();
 	// FastRelax::register_options(); etc.
-	#ifdef BOINC
+#ifdef BOINC
 	std::cerr << "Registered extra options." << std::endl; std::cerr.flush();
-	#endif
+#endif
 }
 
 namespace protocols {
@@ -252,7 +252,7 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // evaluates the violations of atom-pairconstraints always with the full weight and full sequence separation
-	using namespace core::scoring::constraints; // has to be core, now that protocols::scoring is visible
+using namespace core::scoring::constraints; // has to be core, now that protocols::scoring is visible
 class ShowViolation : public PoseEvaluator {
 public:
 	ShowViolation( ) : constraints_( /* NULL */ ) {}
@@ -408,13 +408,13 @@ bool AbrelaxApplication::close_loops( pose::Pose &pose, core::scoring::ScoreFunc
 	bool success( false );
 
 	// Did we already close the loops successfully ?
-	if ( (success=abrelax_checkpoints_.recover_checkpoint( pose, tag, "close_loops", false /*fullatom*/, true /*foldtree*/)))  {
+	if ( (success=abrelax_checkpoints_.recover_checkpoint( pose, tag, "close_loops", false /*fullatom*/, true /*foldtree*/)) )  {
 		abrelax_checkpoints_.debug( tag, "close_loops", (*scorefxn)(pose), (core::Real) true );
 		return true;
 
-	} else	{
+	} else {
 		// No ? Have we already tried but failed ?
-		if ( abrelax_checkpoints_.recover_checkpoint( pose, tag, "close_loops_failure", false /*fullatom*/, true /*foldtree*/))  {
+		if ( abrelax_checkpoints_.recover_checkpoint( pose, tag, "close_loops_failure", false /*fullatom*/, true /*foldtree*/) )  {
 			abrelax_checkpoints_.debug( tag, "close_loops", (*scorefxn)(pose), (core::Real) false );
 			return false;
 		}
@@ -459,11 +459,11 @@ bool AbrelaxApplication::close_loops( pose::Pose &pose, core::scoring::ScoreFunc
 		}
 
 		if ( success && option[ OptionKeys::loops::idealize_after_loop_close ]() ) {
-				protocols::idealize::IdealizeMover idealizer;
-				idealizer.fast( false );
-				pose.constraint_set( NULL );
-				idealizer.apply( pose );
-				bIdeal = true;
+			protocols::idealize::IdealizeMover idealizer;
+			idealizer.fast( false );
+			pose.constraint_set( NULL );
+			idealizer.apply( pose );
+			bIdeal = true;
 		}
 
 		if ( !bIdeal ) option[ basic::options::OptionKeys::out::file::silent_struct_type ].def( "binary");
@@ -493,8 +493,8 @@ void AbrelaxApplication::process_decoy(
 	// StructureDumper
 	if ( option[ OptionKeys::abinitio::clear_pose_cache ]() ) {
 		tr.Debug << "\n******************************************************** \n"
-						<< "              CLEAR POSE CACHE                           \n"
-						<< "***********************************************************" << std::endl;
+			<< "              CLEAR POSE CACHE                           \n"
+			<< "***********************************************************" << std::endl;
 		pose.data().clear();
 	}
 
@@ -531,8 +531,8 @@ void AbrelaxApplication::add_constraints( pose::Pose & pose ) {
 	bool bFirst( !cstset_ );
 	if ( bFirst ) {
 		if ( option[ constraints::cst_file ].user() ) {
-				// reads and sets constraints
-				cstset_ = ConstraintIO::get_instance()->read_constraints(core::scoring::constraints::get_cst_file_option(),	ConstraintSetOP( new ConstraintSet ), pose	);
+			// reads and sets constraints
+			cstset_ = ConstraintIO::get_instance()->read_constraints(core::scoring::constraints::get_cst_file_option(), ConstraintSetOP( new ConstraintSet ), pose );
 		}
 	}
 
@@ -554,12 +554,12 @@ void AbrelaxApplication::add_constraints( pose::Pose & pose ) {
 					utility_exit_with_message(" did not find topology_file: " + std::string( option[ jumps::topology_file ]() ) );
 				}
 			} else {
-					utility_exit_with_message(" strand_constraint nees a topology info: either via templates or -topology_file ");
+				utility_exit_with_message(" strand_constraint nees a topology info: either via templates or -topology_file ");
 			}
 			cstset_->add_constraints( my_strand_cst );
 			add_evaluation( evaluation::PoseEvaluatorOP( new constraints_additional::ConstraintEvaluator( "strand", my_strand_cst ) ) );
 
-			if ( native_pose_ ) {//just a temporary hack to test the StrandConstraint
+			if ( native_pose_ ) { //just a temporary hack to test the StrandConstraint
 				pose::Pose test_pose = *native_pose_;
 				test_pose.add_constraints( my_strand_cst );
 
@@ -581,8 +581,8 @@ void AbrelaxApplication::add_constraints( pose::Pose & pose ) {
 
 	if ( option[ constraints::cull_with_native ].user() && native_pose_ ) {
 		tr.Warning << "************************************************************************************\n"
-						<< "*********************  CULL CONSTRAINTS WITH NATIVE STRUCTURE *********************\n"
-						<< "************************************************************************************\n" << std::endl;
+			<< "*********************  CULL CONSTRAINTS WITH NATIVE STRUCTURE *********************\n"
+			<< "************************************************************************************\n" << std::endl;
 		ConstraintCOPs filtered;
 		core::scoring::constraints::cull_violators( cstset_->get_all_constraints(),
 			filtered, *native_pose_, option[ constraints::cull_with_native ]() );
@@ -616,7 +616,7 @@ public:
 		core::kinematics::MoveMapCOP movemap
 	) : ClassicAbinitio( fragset_large, fragset_large, movemap ) {};
 
-	Stage1Sampler( protocols::simple_moves::FragmentMoverOP brute_move_large	)
+	Stage1Sampler( protocols::simple_moves::FragmentMoverOP brute_move_large )
 	: ClassicAbinitio( brute_move_large, brute_move_large, brute_move_large, 1 /*dummy*/ ) {};
 
 	virtual void apply( core::pose::Pose &pose );
@@ -661,7 +661,7 @@ void AbrelaxApplication::do_rerun() {
 
 	core::io::silent::SilentFileDataOP outsfd( NULL );
 	if ( option[ out::file::silent ].user() ) {
-		outsfd = core::io::silent::SilentFileDataOP( new	core::io::silent::SilentFileData() );
+		outsfd = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData() );
 	}
 
 	core::scoring::ScoreFunctionOP scorefxn( NULL );
@@ -677,18 +677,18 @@ void AbrelaxApplication::do_rerun() {
 			std::string tag = it->decoy_tag();
 			if ( option[ in::file::tags ].user() == 0 || std::find( option[ in::file::tags ]().begin(), option[ in::file::tags ]().end(), tag ) != option[ in::file::tags ]().end() ) {
 				if ( option[ in::file::fullatom ].user() ) {
-						it->fill_pose( pose,
-							option[ in::file::fullatom ] ?
-							*(chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD )) :
-							*(chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID ) ));
-				}	else {
+					it->fill_pose( pose,
+						option[ in::file::fullatom ] ?
+						*(chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD )) :
+						*(chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID ) ));
+				} else {
 					it->fill_pose( pose );
 				}
 
 				add_constraints( pose );
 				scorefxn = generate_scorefxn( pose.is_fullatom() );
 				//screen output
-				if ( sfd.size() < 10 || option[ constraints::viol ]() )	{
+				if ( sfd.size() < 10 || option[ constraints::viol ]() ) {
 					tr.Info << tag << " " << std::endl;
 				} else {
 					if ( (ct++ % 50) == 0 ) {
@@ -711,7 +711,7 @@ void AbrelaxApplication::do_rerun() {
 				tr.Info << "Total clashes " << mr.value() << std::endl;
 
 				bool passes_filters = check_filters( pose );
-				if( !passes_filters ) {
+				if ( !passes_filters ) {
 					tag = "F_"+tag.substr(2);
 				}
 
@@ -789,7 +789,7 @@ void AbrelaxApplication::do_distributed_rerun() {
 	typedef utility::vector1< std::string > TagList;
 	TagList input_tags;
 	//WRONG -- these tags are the ones in file --- while after "read_file" tags might be renamed use .tags() after reading
-	//	input_tags = sfd.read_tags_fast( *(option [ in::file::silent ]().begin())  );
+	// input_tags = sfd.read_tags_fast( *(option [ in::file::silent ]().begin())  );
 
 	// read silent data
 	sfd.read_file( *(option [ in::file::silent ]().begin()) );
@@ -831,12 +831,12 @@ void AbrelaxApplication::do_distributed_rerun() {
 
 		//mjo TODO: verify that the disulfides are correct coming out of fill_pose() and then delete this code
 		// Fix disulfides if a file is given
-     if ( basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].user() ) {
-			 utility::vector1< std::pair<Size, Size> > disulfides;
-			 core::io::raw_data::DisulfideFile ds_file( basic::options::option[ basic::options::OptionKeys::in::fix_disulf ]() );
-			 ds_file.disulfides( disulfides, pose);
-			 pose.conformation().fix_disulfides( disulfides );
-     }
+		if ( basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].user() ) {
+			utility::vector1< std::pair<Size, Size> > disulfides;
+			core::io::raw_data::DisulfideFile ds_file( basic::options::option[ basic::options::OptionKeys::in::fix_disulf ]() );
+			ds_file.disulfides( disulfides, pose);
+			pose.conformation().fix_disulfides( disulfides );
+		}
 
 		loops_in_.verify_against( pose );
 
@@ -846,7 +846,7 @@ void AbrelaxApplication::do_distributed_rerun() {
 		}
 
 		std::string tag = jobdist.get_current_output_tag();
-		if( option[ OptionKeys::loops::random_grow_loops_by ].user() ){
+		if ( option[ OptionKeys::loops::random_grow_loops_by ].user() ) {
 			loops_in_.grow_all_loops( pose, option[ OptionKeys::loops::random_grow_loops_by ]() );
 			tr.Info << "Enlarged loops: " << std::endl;
 			tr.Info << loops_in_ << std::endl;
@@ -906,8 +906,8 @@ void AbrelaxApplication::do_distributed_rerun() {
 			} else { //cannot relax
 				//need proper atom set to score with full-atom
 				(*fullatom_scorefxn)( pose );
-				if ( option[ basic::options::OptionKeys::abinitio::fastrelax ]() ) {
-				} else {
+				if ( option[ basic::options::OptionKeys::abinitio::fastrelax ]() ) {}
+				else {
 					relax::ClassicRelax().setPoseExtraScore( pose ); // ClassicRelax adds four columns
 				}
 			}
@@ -918,9 +918,9 @@ void AbrelaxApplication::do_distributed_rerun() {
 		std::string output_tag = jobdist.get_current_output_tag();
 		if ( !passes_filters  && loop_closure_failed ) {
 			output_tag = "X_"+output_tag.substr(2);
-		} else if( loop_closure_failed ) {
+		} else if ( loop_closure_failed ) {
 			output_tag = "C_"+output_tag.substr(2);
-		} else if( !passes_filters ) {
+		} else if ( !passes_filters ) {
 			output_tag = "F_"+output_tag.substr(2);
 		}
 
@@ -963,7 +963,7 @@ void AbrelaxApplication::copy_structure( core::pose::Pose & extended_pose, core:
 	// chu workaround when folding with ligand/metal
 	Size protein_len = 0;
 	for ( Size i = 1; i <= seg_len; ++i ) {
-		if( extended_pose.residue(i).is_protein() && desired_pose.residue(i).is_protein() ) {
+		if ( extended_pose.residue(i).is_protein() && desired_pose.residue(i).is_protein() ) {
 			protein_len ++;
 		}
 	}
@@ -990,7 +990,7 @@ void AbrelaxApplication::generate_extended_pose( core::pose::Pose &extended_pose
 		*( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID ))
 	);
 
-	//	Fix disulfides if a file is given
+	// Fix disulfides if a file is given
 	if ( basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].user() ) {
 		utility::vector1< std::pair<Size, Size> > disulfides;
 		core::io::raw_data::DisulfideFile ds_file( basic::options::option[ basic::options::OptionKeys::in::fix_disulf ]() );
@@ -1021,13 +1021,13 @@ void AbrelaxApplication::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& f
 	using namespace basic::options::OptionKeys;
 
 	std::string frag_large_file, frag_small_file;
-	if (option[ in::file::fragA ].user()) {
+	if ( option[ in::file::fragA ].user() ) {
 		frag_large_file  = option[ in::file::fragA ]();
 	} else {
 		frag_large_file  = option[ in::file::frag9 ]();
 	}
 
-	if (option[ in::file::fragB ].user()) {
+	if ( option[ in::file::fragB ].user() ) {
 		frag_small_file  = option[ in::file::fragB ]();
 	} else {
 		frag_small_file  = option[ in::file::frag3 ]();
@@ -1037,20 +1037,20 @@ void AbrelaxApplication::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& f
 		option[ OptionKeys::abinitio::number_9mer_frags ](),
 		option[ OptionKeys::frags::nr_large_copies ](),
 		option[ OptionKeys::frags::annotate ]()
-	).read_data( frag_large_file );
+		).read_data( frag_large_file );
 
-	if(option[OptionKeys::abinitio::membrane]) { //bw stupied way of get top25 frags for 3mer.
-	fragset_small_top25_ = FragmentIO(
-								option[ OptionKeys::abinitio::number_9mer_frags ],
-								1, //nr_copies
-								option[ OptionKeys::frags::annotate ]
-								).read_data( frag_small_file );
+	if ( option[OptionKeys::abinitio::membrane] ) { //bw stupied way of get top25 frags for 3mer.
+		fragset_small_top25_ = FragmentIO(
+			option[ OptionKeys::abinitio::number_9mer_frags ],
+			1, //nr_copies
+			option[ OptionKeys::frags::annotate ]
+			).read_data( frag_small_file );
 	}
 	fragset_small_ = FragmentIO(
 		option[ OptionKeys::abinitio::number_3mer_frags ],
 		1, //nr_copies
 		option[ OptionKeys::frags::annotate ]
-	).read_data( frag_small_file );
+		).read_data( frag_small_file );
 
 	if ( templates_ && !option[ templates::no_pick_fragments ]() ) {
 		if ( option[ templates::vary_frag_size ] ) {
@@ -1058,10 +1058,10 @@ void AbrelaxApplication::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& f
 			templates_->pick_large_frags( *fragset_templates_, core::fragment::SingleResidueFragDataOP( new BBTorsionSRFD ), option[ templates::nr_large_copies ] );
 			tr.Info << " merge template frags with standard library " << std::endl;
 			fragset_large_ = merge_frags(
-					*fragset_templates_,
-					*fragset_large_,
-					option[ templates::min_nr_large_frags ],
-					true /* random selection of fill frags */
+				*fragset_templates_,
+				*fragset_large_,
+				option[ templates::min_nr_large_frags ],
+				true /* random selection of fill frags */
 			);
 		} else { // use old-way of picking:
 			//pick torsion fragments fragset_large
@@ -1070,23 +1070,23 @@ void AbrelaxApplication::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& f
 				Size const min_nr_frags( option[ templates::min_nr_large_frags ] );
 				Size const nr_large_copies( option[ templates::nr_large_copies ] );
 				fragset_large_ = templates_->pick_frags(
-								fragset_large_,
-								core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large_->max_frag_length() ) ) ),
-								min_nr_frags,
-								nr_large_copies );
+					fragset_large_,
+					core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large_->max_frag_length() ) ) ),
+					min_nr_frags,
+					nr_large_copies );
 			} else {
 				Size nr = templates_->pick_frags( *fragset_large_, core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large_->max_frag_length() ) ) ) );
 				tr.Info << nr << " " << fragset_large_->max_frag_length() << "mer fragments picked from homolog structures" << std::endl;
 			}
 			if ( option[ templates::pick_multiple_sizes ] ) {
 				Size nr = templates_->pick_frags(
-								*fragset_large_,
-								core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), 18 ) ) )
+					*fragset_large_,
+					core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), 18 ) ) )
 				);
 				tr.Info << nr << " 18mer fragments picked from homolog structures" << std::endl;
 				nr = templates_->pick_frags(
-								*fragset_large_,
-								core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP(  new BBTorsionSRFD ), 24 ) ) )
+					*fragset_large_,
+					core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP(  new BBTorsionSRFD ), 24 ) ) )
 				);
 				tr.Info << nr << " 27mer fragments picked from homolog structures" << std::endl;
 			}
@@ -1096,10 +1096,10 @@ void AbrelaxApplication::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& f
 			Size const min_nr_frags( option[ templates::min_nr_small_frags ] );
 			Size const nr_small_copies( option[ templates::nr_small_copies ] );
 			fragset_small_ = templates_->pick_frags(
-								fragset_small_,
-								core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small_->max_frag_length() ) ) ),
-									min_nr_frags,
-								nr_small_copies );
+				fragset_small_,
+				core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small_->max_frag_length() ) ) ),
+				min_nr_frags,
+				nr_small_copies );
 		} else {
 			//pick torsion fragments fragset_small
 			Size nr2 = templates_->pick_frags( *fragset_small_, core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small_->max_frag_length() ) ) ) );
@@ -1107,12 +1107,16 @@ void AbrelaxApplication::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& f
 		}
 	} // templates && !templates:no_pick_fragments
 
-	if ( native_pose_ && ( option[ OptionKeys::abinitio::steal_3mers ]() || option[ OptionKeys::abinitio::steal_9mers ]() )) {
+	if ( native_pose_ && ( option[ OptionKeys::abinitio::steal_3mers ]() || option[ OptionKeys::abinitio::steal_9mers ]() ) ) {
 		tr.Info << " stealing fragments from native pose: ATTENTION: native pose has to be IDEALIZED!!! " << std::endl;
-		if ( option[ OptionKeys::abinitio::steal_9mers ]() ) steal_frag_set_from_pose( *native_pose_, *fragset_large_,
-			core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large_->max_frag_length() ) ) ) );
-		if ( option[ OptionKeys::abinitio::steal_3mers ]() ) steal_frag_set_from_pose( *native_pose_, *fragset_small_,
-			core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small_->max_frag_length() ) ) ) );
+		if ( option[ OptionKeys::abinitio::steal_9mers ]() ) {
+			steal_frag_set_from_pose( *native_pose_, *fragset_large_,
+				core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large_->max_frag_length() ) ) ) );
+		}
+		if ( option[ OptionKeys::abinitio::steal_3mers ]() ) {
+			steal_frag_set_from_pose( *native_pose_, *fragset_small_,
+				core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small_->max_frag_length() ) ) ) );
+		}
 	} else if ( ( option[ OptionKeys::abinitio::steal_3mers ]() || option[ OptionKeys::abinitio::steal_9mers ]() ) && !native_pose_ && !templates_ ) {
 		tr.Warning << "cannot steal fragments without native pose or homologue structures " << std::endl;
 	}
@@ -1137,8 +1141,9 @@ void AbrelaxApplication::setup_templates() {
 
 	bool const bTemplates( option[ templates::config ].user() );
 	if ( !bTemplates ) { // jump-out if not used
-		if ( option[ templates::pairings ].user() )
+		if ( option[ templates::pairings ].user() ) {
 			tr.Warning << "option templates:pairings ignored... specify templates:config!" << std::endl;
+		}
 		return;
 	}
 
@@ -1148,7 +1153,7 @@ void AbrelaxApplication::setup_templates() {
 	// want to pick fragments from templates... make sure they are not initialized yet
 	runtime_assert( !fragset_large_ );
 
-	if( !templates_->is_good() ){
+	if ( !templates_->is_good() ) {
 		utility_exit_with_message("ERRORS occured during template setup. check BAD_SEQUENCES file!");
 	}
 }
@@ -1156,7 +1161,7 @@ void AbrelaxApplication::setup_templates() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @detail called by setup_fold(). Read jump definitions / barcodes (not yet) etc.
 /// if jump_def_ points to an object we will use JumpFoldConstraint-protocol in fold()
-	void AbrelaxApplication::setup_jumps(	pose::Pose const& extended_pose ) {
+void AbrelaxApplication::setup_jumps( pose::Pose const& extended_pose ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -1201,8 +1206,9 @@ void AbrelaxApplication::setup_templates() {
 		ss_def_->show( tr.Trace );
 		// get pairings file
 		core::scoring::dssp::PairingsList pairings;
-		if ( option[ jumps::pairing_file ].user() )
+		if ( option[ jumps::pairing_file ].user() ) {
 			read_pairing_list( option[ jumps::pairing_file ](), pairings );
+		}
 
 		// get sheet-topology
 		jumping::SheetBuilder::SheetTopology sheets;
@@ -1261,7 +1267,7 @@ void AbrelaxApplication::setup_templates() {
 	}
 }
 
-void AbrelaxApplication::setup_membrane_topology(	pose::Pose & pose, std::string spanfile ) const {
+void AbrelaxApplication::setup_membrane_topology( pose::Pose & pose, std::string spanfile ) const {
 	//using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
 	core::scoring::MembraneTopologyOP topologyOP( new core::scoring::MembraneTopology );
 	pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, topologyOP );
@@ -1325,9 +1331,8 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 	// add constraints if available
 	add_constraints( extended_pose );
 
-	if( option[OptionKeys::abinitio::membrane].user() ) {
-		if(option[in::file::spanfile].user())
-		{
+	if ( option[OptionKeys::abinitio::membrane].user() ) {
+		if ( option[in::file::spanfile].user() ) {
 			std::string spanfile(option[OptionKeys::in::file::spanfile]());
 			std::cout << "Reading spanfile " << spanfile <<"\n";
 			setup_membrane_topology(extended_pose, spanfile);
@@ -1335,8 +1340,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 			membrane_jumps_ = jumping::MembraneJumpOP( new MembraneJump );
 			std::cout << "1.TEMPLATE SIZE: " << membrane_jumps_->template_size() << "\n";
 			std::cout << "1.PAIRING SIZE:  " << membrane_jumps_->pairings_size() << "\n";
-			if(option[ jumps::pairing_file ].user() && option[ jumps::jump_lib].user())
-			{
+			if ( option[ jumps::pairing_file ].user() && option[ jumps::jump_lib].user() ) {
 				membrane_jumps_->init(option[ jumps::jump_lib ], option[ jumps::pairing_file ]); //template_file,pairings_file)
 			}
 			std::cout << "2.TEMPLATE SIZE: " << membrane_jumps_->template_size() << "\n";
@@ -1349,7 +1353,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 	}
 
 	// make a MoveMap
-	kinematics::MoveMapOP movemap( new	kinematics::MoveMap );
+	kinematics::MoveMapOP movemap( new kinematics::MoveMap );
 	movemap->set_bb( true );
 
 	if ( option[ OptionKeys::abinitio::fix_residues_to_native ].user() ) {
@@ -1392,7 +1396,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 				if ( extended_pose.is_fullatom() ) utility_exit_with_message(" this centroid pose should not be a full-atom pose, no? ");
 			}
 			loops_in_.verify_against( extended_pose );
-			if( option[ OptionKeys::loops::random_grow_loops_by ].user() ){
+			if ( option[ OptionKeys::loops::random_grow_loops_by ].user() ) {
 				loops_in_.grow_all_loops( extended_pose, option[ OptionKeys::loops::random_grow_loops_by ]() );
 				tr.Info << "Enlarged loops: " << std::endl;
 				tr.Info << loops_in_ << std::endl;
@@ -1404,10 +1408,10 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 
 		KinematicAbinitioOP sampler( new KinematicAbinitio( fragset_small_, fragset_large_, movemap /*this movemap will be ignored*/ ) );
 		ResolutionSwitcher res_switch(
-																	extended_pose,
-																	extended_pose.is_fullatom(),
-																	sampler->start_from_centroid(),
-																	sampler->return_centroid()
+			extended_pose,
+			extended_pose.is_fullatom(),
+			sampler->start_from_centroid(),
+			sampler->return_centroid()
 		);
 		if ( native_pose_ ) sampler->set_native_pose( native_pose_ );
 		sampler->set_show_viol_level( option[ constraints::viol_level ] );
@@ -1447,7 +1451,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 		LoopJumpFoldCstOP controller;
 		if ( option[  OptionKeys::loops::extended_loop_file ].user() ) {
 			std::string filename( option[ OptionKeys::loops::extended_loop_file ]().name() );
-            loops::Loops extended_loops_in( filename ); // <== TODO: select these using density score
+			loops::Loops extended_loops_in( filename ); // <== TODO: select these using density score
 			extended_loops_in.verify_against( extended_pose );
 			KinematicAbinitioOP stage1_sampler( new KinematicAbinitio( *sampler ) );
 			sampler->bSkipStage1_ = true;
@@ -1458,24 +1462,24 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 			stage1_sampler->closure_protocol( NULL );
 			loops::Loops rigid_core( loops_in_.invert( extended_pose.total_residue() ) );
 			controller = LoopJumpFoldCstOP( new DoubleLayerKinematicAbinitio(
-					jump_def_,
-					extended_loops_in,
-					rigid_core,
-					sampler,
-					stage1_sampler,
-					ss_def_,
-					option[ loopfcst::coord_cst_weight ],
-					option[ loopfcst::coord_cst_all_atom ]
-					) );
+				jump_def_,
+				extended_loops_in,
+				rigid_core,
+				sampler,
+				stage1_sampler,
+				ss_def_,
+				option[ loopfcst::coord_cst_weight ],
+				option[ loopfcst::coord_cst_all_atom ]
+				) );
 		} else {
 			controller = LoopJumpFoldCstOP( new LoopJumpFoldCst(
-					jump_def_,
-					loops_in_,
-					sampler,
-					ss_def_,
-					option[ loopfcst::coord_cst_weight ],
-					option[ loopfcst::coord_cst_all_atom ]
-					) );
+				jump_def_,
+				loops_in_,
+				sampler,
+				ss_def_,
+				option[ loopfcst::coord_cst_weight ],
+				option[ loopfcst::coord_cst_all_atom ]
+				) );
 		}
 
 		controller->set_input_pose_is_fa( extended_pose.is_fullatom() );
@@ -1506,23 +1510,23 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 		} else {
 			if ( jump_def_ ) {
 				tr.Info << "run JumpingFoldConstraints....." << std::endl;
-			// it doesn't matter if we have no constraints the extra FoldConstraints part in the Jumping protocl
-			// won't do anything
-			JumpingFoldConstraintsWrapperOP pp;
-			pp = JumpingFoldConstraintsWrapperOP( new JumpingFoldConstraintsWrapper( fragset_small_, fragset_large_, movemap, jump_def_ ) );
-			if ( native_pose_ ) pp->set_native_pose( native_pose_ ); //to steal native jumps
-			pp->set_show_viol_level( option[ constraints::viol_level ] );
-			prot_ptr = pp;
-		}	else {
-			if ( extended_pose.constraint_set()->has_residue_pair_constraints() ) {
-				// We have constraints: run xxxFoldConstraints
-				tr.Info << "run FoldConstraints....." << std::endl;
-				FoldConstraintsOP pp;
-				pp = FoldConstraintsOP( new FoldConstraints( fragset_small_, fragset_large_, movemap ) );
+				// it doesn't matter if we have no constraints the extra FoldConstraints part in the Jumping protocl
+				// won't do anything
+				JumpingFoldConstraintsWrapperOP pp;
+				pp = JumpingFoldConstraintsWrapperOP( new JumpingFoldConstraintsWrapper( fragset_small_, fragset_large_, movemap, jump_def_ ) );
+				if ( native_pose_ ) pp->set_native_pose( native_pose_ ); //to steal native jumps
 				pp->set_show_viol_level( option[ constraints::viol_level ] );
 				prot_ptr = pp;
 			} else {
-				/// no constraints ---> ClassicAbinitio
+				if ( extended_pose.constraint_set()->has_residue_pair_constraints() ) {
+					// We have constraints: run xxxFoldConstraints
+					tr.Info << "run FoldConstraints....." << std::endl;
+					FoldConstraintsOP pp;
+					pp = FoldConstraintsOP( new FoldConstraints( fragset_small_, fragset_large_, movemap ) );
+					pp->set_show_viol_level( option[ constraints::viol_level ] );
+					prot_ptr = pp;
+				} else {
+					/// no constraints ---> ClassicAbinitio
 					tr.Info << "run ClassicAbinitio....." << std::endl;
 					prot_ptr = ProtocolOP( new ClassicAbinitio( fragset_small_, fragset_large_, movemap ) );
 				}
@@ -1558,22 +1562,22 @@ bool AbrelaxApplication::check_filters( core::pose::Pose & pose ) {
 	if ( !option[ basic::options::OptionKeys::filters::disable_co_filter ]() && !co_filter.apply( pose) ) return false;
 	if ( !option[ basic::options::OptionKeys::filters::disable_sheet_filter ]() && !sh_filter.apply( pose) ) return false;
 
-	if( ( option[basic::options::OptionKeys::filters::set_pddf_filter ].user() ) &&
-	    ( option[basic::options::OptionKeys::score::saxs::ref_pddf ].user() ) ) {
+	if ( ( option[basic::options::OptionKeys::filters::set_pddf_filter ].user() ) &&
+			( option[basic::options::OptionKeys::score::saxs::ref_pddf ].user() ) ) {
 
-	    protocols::simple_filters::PDDFScoreFilterOP pddf_filter( new protocols::simple_filters::PDDFScoreFilter() );
-	    bool flag = pddf_filter->apply(pose);
-	    core::pose::setPoseExtraScore( pose, "pddf_score", pddf_filter->recent_score());
-	    if( ! flag ) return false;	// We need this flag because filter's score must be set before this if statement
+		protocols::simple_filters::PDDFScoreFilterOP pddf_filter( new protocols::simple_filters::PDDFScoreFilter() );
+		bool flag = pddf_filter->apply(pose);
+		core::pose::setPoseExtraScore( pose, "pddf_score", pddf_filter->recent_score());
+		if ( ! flag ) return false; // We need this flag because filter's score must be set before this if statement
 	}
 
-	if( ( option[basic::options::OptionKeys::filters::set_saxs_filter ].user() ) &&
-	    ( option[basic::options::OptionKeys::score::saxs::ref_spectrum ].user() ) ) {
+	if ( ( option[basic::options::OptionKeys::filters::set_saxs_filter ].user() ) &&
+			( option[basic::options::OptionKeys::score::saxs::ref_spectrum ].user() ) ) {
 
-	    protocols::simple_filters::SAXSScoreFilterOP saxs_filter( new protocols::simple_filters::SAXSScoreFilter() );
-	    bool flag = saxs_filter->apply(pose);
-	    core::pose::setPoseExtraScore( pose, "saxs_score", saxs_filter->recent_score());
-	    if( ! flag ) return false;	// We need this flag because filter's score must be set before this if statement
+		protocols::simple_filters::SAXSScoreFilterOP saxs_filter( new protocols::simple_filters::SAXSScoreFilter() );
+		bool flag = saxs_filter->apply(pose);
+		core::pose::setPoseExtraScore( pose, "saxs_score", saxs_filter->recent_score());
+		if ( ! flag ) return false; // We need this flag because filter's score must be set before this if statement
 	}
 
 	tr.Info << " passed all filters " << std::endl;
@@ -1672,28 +1676,27 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 	// production loop
 	while ( jobdist.next_job(curr_job, curr_nstruct) && !bEndrun ) {
 		time_t pdb_start_time = time(NULL);
-		if ( run_time && !option[ OptionKeys::abinitio::no_write_failures ]() )	{	 //if we omit decoys we want to count from write-event to write-
+		if ( run_time && !option[ OptionKeys::abinitio::no_write_failures ]() ) {  //if we omit decoys we want to count from write-event to write-
 			run_time->reset(); //reset clock of TimeEvaluator
 		}
 
-	#ifdef BOINC
+#ifdef BOINC
 		std::cerr << "Starting work on structure: " << curr_job->output_tag(curr_nstruct) << std::endl;
-	#endif
+#endif
 
 		// retrieve starting pose
 		pose::Pose fold_pose ( init_pose );
-    // Can we add the PyMOL mover here?
-    if (option[OptionKeys::run::show_simulation_in_pymol].user()
-			&& option[OptionKeys::run::show_simulation_in_pymol].value() > 0.0)
-		{
+		// Can we add the PyMOL mover here?
+		if ( option[OptionKeys::run::show_simulation_in_pymol].user()
+				&& option[OptionKeys::run::show_simulation_in_pymol].value() > 0.0 ) {
 			protocols::moves::AddPyMolObserver(fold_pose,
-					option[OptionKeys::run::keep_pymol_simulation_history](),
-					option[OptionKeys::run::show_simulation_in_pymol].value());
+				option[OptionKeys::run::keep_pymol_simulation_history](),
+				option[OptionKeys::run::show_simulation_in_pymol].value());
 		}
 
 
-//membrane jumping set up the proper foldtree
-		if( membrane_jumps_ && membrane_jumps_->defined() ) {
+		//membrane jumping set up the proper foldtree
+		if ( membrane_jumps_ && membrane_jumps_->defined() ) {
 			Size njumps = option[jumps::njumps]();
 			membrane_jumps_->setup_fold_tree(fold_pose,njumps);
 		}
@@ -1708,17 +1711,17 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 			hairpins.setup_killhairpins();
 		}
 
-	#ifdef BOINC_GRAPHICS
+#ifdef BOINC_GRAPHICS
 		// attach boinc graphics pose observer
 		protocols::boinc::Boinc::attach_graphics_current_pose_observer( fold_pose );
-	#endif
+#endif
 
 		if ( bRelax_ ) {  //always add all f@@#$ columns so we never-ever have a column mismatch....
 			relax::ClassicRelax().setPoseExtraScore( fold_pose );
 		}
 
 		// need to save numeric::random::rg() states such that choices for constraints and fold-tree are the same.
-		if( ! abrelax_checkpoints_.recover_checkpoint( fold_pose, jobdist.get_current_output_tag(), "rg_state") ){
+		if ( ! abrelax_checkpoints_.recover_checkpoint( fold_pose, jobdist.get_current_output_tag(), "rg_state") ) {
 			abrelax_checkpoints_.checkpoint( fold_pose, jobdist.get_current_output_tag(), "rg_state");
 		}
 		abrelax_checkpoints_.debug( jobdist.get_current_output_tag(), "rg_state", numeric::random::rg().uniform() );
@@ -1748,9 +1751,8 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 		bool loop_closure_failed( false ); //!fold_pose.fold_tree().num_cutpoint() );
 
 		if ( option[ OptionKeys::abinitio::close_loops ]()
-			&& abinitio_protocol.get_last_move_status() == moves::MS_SUCCESS
-			&& !option[ OptionKeys::loopfcst::use_general_protocol ] )
-		{
+				&& abinitio_protocol.get_last_move_status() == moves::MS_SUCCESS
+				&& !option[ OptionKeys::loopfcst::use_general_protocol ] ) {
 			tr.Info << "OLD PATHWAY: close loops" << std::endl;
 			loop_closure_failed = !close_loops( fold_pose, centroid_scorefxn, jobdist.get_current_output_tag() );
 		}
@@ -1766,14 +1768,14 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 
 		// run relax if applicable. Use filters to decide which structures to relax and which not to relax!
 		bool passes_filters = check_filters( fold_pose );
-		if(option[OptionKeys::abinitio::membrane]){
+		if ( option[OptionKeys::abinitio::membrane] ) {
 			passes_filters=true;
 		}
 		bool bProcessDecoy( true );
-			// run relax if applicable
+		// run relax if applicable
 		// don't relax if we failed filters or loop_closing, or if option[ relax_with_jumps ] is true
 		bool bCanRelax = abinitio_protocol.get_last_move_status() == moves::MS_SUCCESS;
-		if( option[ basic::options::OptionKeys::abinitio::relax_failures ]() ) bCanRelax = true;
+		if ( option[ basic::options::OptionKeys::abinitio::relax_failures ]() ) bCanRelax = true;
 		bCanRelax = bCanRelax && passes_filters
 			&& ( !loop_closure_failed || option[ OptionKeys::abinitio::relax_with_jumps ]() );
 
@@ -1787,29 +1789,30 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 				pose::Pose const centroid_pose ( fold_pose );
 				ResolutionSwitcher res_switch( centroid_pose, false, true, true );
 
-				if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) 	 res_switch.set_map_cst_from_centroid_to_fa( false ); //will override any attempt to map centroid constraints to full-atom constraints -- use user-defined file instead!
+				if ( option[ OptionKeys::constraints::cst_fa_file ].user() )   res_switch.set_map_cst_from_centroid_to_fa( false ); //will override any attempt to map centroid constraints to full-atom constraints -- use user-defined file instead!
 
 				res_switch.apply( fold_pose );
 
-				if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) 	{
+				if ( option[ OptionKeys::constraints::cst_fa_file ].user() )  {
 					ConstraintSetOP cstset_ = ConstraintIO::get_instance()->read_constraints( get_cst_fa_file_option(), ConstraintSetOP( new ConstraintSet ), fold_pose );
 					fold_pose.constraint_set( cstset_ );
 				}
 			}
 
-			if( option[ basic::options::OptionKeys::abinitio::close_loops_by_idealizing ]() ){
+			if ( option[ basic::options::OptionKeys::abinitio::close_loops_by_idealizing ]() ) {
 				// record cutpoints
 				protocols::loops::LoopsOP cloops( new protocols::loops::Loops() );
 				for ( Size ncut = 1; ncut <= (Size) fold_pose.fold_tree().num_cutpoint(); ncut++ ) {
 					Size cutpoint = fold_pose.fold_tree().cutpoint( ncut );
 					protocols::loops::Loop newloop (
-						 std::max( (int) 1, int(cutpoint - 5) ),
-						 std::min( (int) fold_pose.total_residue(), int(cutpoint + 5) ),
-						 0
+						std::max( (int) 1, int(cutpoint - 5) ),
+						std::min( (int) fold_pose.total_residue(), int(cutpoint + 5) ),
+						0
 					);
 
-					if( cloops->size() >= 2 )
-					if( newloop.start() <= ( *cloops )[cloops->size()-1].stop() ) newloop.set_start( ( *cloops )[cloops->size()-1].stop() +2 );
+					if ( cloops->size() >= 2 ) {
+						if ( newloop.start() <= ( *cloops )[cloops->size()-1].stop() ) newloop.set_start( ( *cloops )[cloops->size()-1].stop() +2 );
+					}
 					newloop.choose_cutpoint( fold_pose );
 					cloops->add_loop( newloop );
 				}
@@ -1828,7 +1831,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 
 				relax( fold_pose, fullatom_scorefxn, jobdist.get_current_output_tag() );
 
-				if( option[ basic::options::OptionKeys::abinitio::optimize_cutpoints_using_kic ]() ){
+				if ( option[ basic::options::OptionKeys::abinitio::optimize_cutpoints_using_kic ]() ) {
 					protocols::loops::fold_tree_from_loops( fold_pose, *cloops, f_new, true /* include terminal cutpoints */);
 					fold_pose.fold_tree( f_new );
 					core::scoring::ScoreFunctionOP refine_scorefxn = fullatom_scorefxn->clone();
@@ -1851,8 +1854,8 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 				}
 			} else { //cannot relax
 				(*fullatom_scorefxn)( fold_pose );
-				if ( option[ basic::options::OptionKeys::abinitio::fastrelax ]() ) {
-				} else {
+				if ( option[ basic::options::OptionKeys::abinitio::fastrelax ]() ) {}
+				else {
 					relax::ClassicRelax().setPoseExtraScore( fold_pose ); // ClassicRelax adds four columns
 				}
 			}
@@ -1865,10 +1868,10 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 
 		// process decoy if this hasn't happened yet
 		if ( bProcessDecoy ) {
-			if( option[ run::checkpoint ]() ){
+			if ( option[ run::checkpoint ]() ) {
 				core::pose::setPoseExtraScore( fold_pose, "ichkpnt",
-						abinitio_protocol.get_checkpoints().get_checkpoint_recoveries() +
-						abrelax_checkpoints_.get_checkpoint_recoveries()     );
+					abinitio_protocol.get_checkpoints().get_checkpoint_recoveries() +
+					abrelax_checkpoints_.get_checkpoint_recoveries()     );
 			}
 
 			// analyze result
@@ -1880,31 +1883,29 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 			io::silent::SilentStructOP pss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
 
 			// abinitio produces n_stored structures -- the last one is the same as the final structure n_stored.
-			//			Size n_stored( abinitio_protocol.structure_store().size() );
+			//   Size n_stored( abinitio_protocol.structure_store().size() );
 			std::string new_output_tag ( output_tag );
 			if ( !passes_filters  && loop_closure_failed ) {
 				new_output_tag = "X_"+new_output_tag.substr(2);
-			} else if( loop_closure_failed ) {
+			} else if ( loop_closure_failed ) {
 				new_output_tag = "C_"+new_output_tag.substr(2);
-			} else if( !passes_filters ) {
+			} else if ( !passes_filters ) {
 				new_output_tag = "F_"+new_output_tag.substr(2);
 			} else if ( abinitio_protocol.get_last_move_status() != moves::MS_SUCCESS ) {
 				new_output_tag = "P_"+new_output_tag.substr(2);
 			}
 
 			if ( !option[ OptionKeys::abinitio::no_write_failures ]()
-				|| ( passes_filters && !loop_closure_failed && abinitio_protocol.get_last_move_status() == moves::MS_SUCCESS ) ) {
+					|| ( passes_filters && !loop_closure_failed && abinitio_protocol.get_last_move_status() == moves::MS_SUCCESS ) ) {
 				// write to silent file
 				//process_decoy( fold_pose, fold_pose.is_fullatom() ? *fullatom_scorefxn : *centroid_scorefxn, new_output_tag, *pss );
-				if (fold_pose.is_fullatom()) {
-						process_decoy( fold_pose,  *fullatom_scorefxn, new_output_tag, *pss );
-				}
-				else if (fold_pose.is_centroid()) {
-						process_decoy( fold_pose,  *centroid_scorefxn, new_output_tag, *pss );
-				}
-				else {
-						core::scoring::ScoreFunctionOP cenrot_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function("score4_cenrot_relax");
-						process_decoy( fold_pose, *cenrot_scorefxn, new_output_tag, *pss );
+				if ( fold_pose.is_fullatom() ) {
+					process_decoy( fold_pose,  *fullatom_scorefxn, new_output_tag, *pss );
+				} else if ( fold_pose.is_centroid() ) {
+					process_decoy( fold_pose,  *centroid_scorefxn, new_output_tag, *pss );
+				} else {
+					core::scoring::ScoreFunctionOP cenrot_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function("score4_cenrot_relax");
+					process_decoy( fold_pose, *cenrot_scorefxn, new_output_tag, *pss );
 				}
 
 				// write this to score-file if applicable
@@ -1913,7 +1914,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 				}
 				if ( option[ OptionKeys::out::pdb ] ) fold_pose.dump_pdb( std::string(option[ OptionKeys::out::path::path ]())  + "/" + new_output_tag + ".pdb");
 				outsfd.add_structure( pss );
-				if ( run_time && option[ OptionKeys::abinitio::no_write_failures ]() )	{	 //if we omit decoys we want to count from write-event to write-
+				if ( run_time && option[ OptionKeys::abinitio::no_write_failures ]() ) {  //if we omit decoys we want to count from write-event to write-
 					run_time->reset(); //reset clock of TimeEvaluator
 				}
 
@@ -1962,7 +1963,7 @@ void AbrelaxApplication::relax( pose::Pose& pose, core::scoring::ScoreFunctionOP
 
 	//bail out if no relax is done
 	if ( !option[ OptionKeys::abinitio::relax ]() &&
-		!option[ OptionKeys::abinitio::fastrelax ]() ) return;
+			!option[ OptionKeys::abinitio::fastrelax ]() ) return;
 
 	// run relax if applicable
 
@@ -1977,7 +1978,7 @@ void AbrelaxApplication::relax( pose::Pose& pose, core::scoring::ScoreFunctionOP
 
 	//fpd  move the detection to _before_ fullatom
 	//if ( option[ OptionKeys::abinitio::detect_disulfide_before_relax ] ) {
-	//	pose.conformation().detect_disulfides();
+	// pose.conformation().detect_disulfides();
 	//}
 
 	// Support deprecated option
@@ -1995,7 +1996,7 @@ void AbrelaxApplication::relax( pose::Pose& pose, core::scoring::ScoreFunctionOP
 	}
 
 	/// Do a final clean relax without the constraints ?
-	if( option[ OptionKeys::loops::final_clean_fastrelax ]() ){
+	if ( option[ OptionKeys::loops::final_clean_fastrelax ]() ) {
 		if ( !abrelax_checkpoints_.recover_checkpoint( pose,  tag, "final_fastrelax", true, true) ) {
 			pose.constraint_set( NULL );
 			relax::FastRelax fast_relax( scorefxn );

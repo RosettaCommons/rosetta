@@ -30,7 +30,7 @@ using namespace core;
 
 class ScTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	// --------------- Fixtures --------------- //
 
@@ -63,13 +63,12 @@ class ScTests : public CxxTest::TestSuite {
 			float area;
 			float distance;
 		} test_structures[] = {
-			{ "core/scoring/sc_NNQQNY.pdb", 271, 271, 0.714775, 0.720340, 950.14, 0.5008 }
-		};
+		{ "core/scoring/sc_NNQQNY.pdb", 271, 271, 0.714775, 0.720340, 950.14, 0.5008 }
+			};
 
-		for(unsigned int i = 0;
-			i < sizeof(test_structures)/sizeof(*test_structures);
-			++i)
-		{
+		for ( unsigned int i = 0;
+				i < sizeof(test_structures)/sizeof(*test_structures);
+				++i ) {
 			core::pose::Pose pose;
 			int r;
 
@@ -77,27 +76,27 @@ class ScTests : public CxxTest::TestSuite {
 
 			// Test standard mode
 			{
-			scc.Reset();
-			// scc.settings.density = 5; // Quick mode
+				scc.Reset();
+				// scc.settings.density = 5; // Quick mode
 
-			r = scc.Calc(pose, 1);
-			TS_ASSERT_EQUALS(r, 1);
+				r = scc.Calc(pose, 1);
+				TS_ASSERT_EQUALS(r, 1);
 
-			TS_ASSERT_EQUALS( scc.GetResults().surface[0].nAtoms, test_structures[i].atoms_0 );
-			TS_ASSERT_EQUALS( scc.GetResults().surface[1].nAtoms, test_structures[i].atoms_1 );
+				TS_ASSERT_EQUALS( scc.GetResults().surface[0].nAtoms, test_structures[i].atoms_0 );
+				TS_ASSERT_EQUALS( scc.GetResults().surface[1].nAtoms, test_structures[i].atoms_1 );
 
-			TS_ASSERT_DELTA( scc.GetResults().sc, test_structures[i].sc, 0.001 );
-			TS_ASSERT_DELTA( scc.GetResults().area, test_structures[i].area, 1 );
-			TS_ASSERT_DELTA( scc.GetResults().distance, test_structures[i].distance, 0.001 );
+				TS_ASSERT_DELTA( scc.GetResults().sc, test_structures[i].sc, 0.001 );
+				TS_ASSERT_DELTA( scc.GetResults().area, test_structures[i].area, 1 );
+				TS_ASSERT_DELTA( scc.GetResults().distance, test_structures[i].distance, 0.001 );
 			}
 
 			// Test simple calculation via static method
 			{
-			scc.Reset();
-			// scc.settings.density = 5; // Quick mode
+				scc.Reset();
+				// scc.settings.density = 5; // Quick mode
 
-			core::Real sc = core::scoring::sc::ShapeComplementarityCalculator::CalcSc(pose, 1, 1);
-			TS_ASSERT_DELTA( sc, test_structures[i].sc_quick, 0.001 );
+				core::Real sc = core::scoring::sc::ShapeComplementarityCalculator::CalcSc(pose, 1, 1);
+				TS_ASSERT_DELTA( sc, test_structures[i].sc_quick, 0.001 );
 			}
 		}
 	}

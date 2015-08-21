@@ -58,7 +58,7 @@ RamaScore::RamaScore(Size priority, Real lowest_acceptable_value, bool use_lowes
 
 
 RamaScore::RamaScore(Size priority, Real lowest_acceptable_value, bool use_lowest, std::string & fastaQuery, core::fragment::SecondaryStructureOP query_prediction, std::string prediction_name ) :
-		CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "RamaScore"), query_(fastaQuery), query_ss_(query_prediction), prediction_name_(prediction_name)
+	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "RamaScore"), query_(fastaQuery), query_ss_(query_prediction), prediction_name_(prediction_name)
 {
 	SetupRamaTables();
 }
@@ -68,11 +68,11 @@ RamaScore::SetupRamaTables()
 {
 
 	// skip if static data is already set up
-	if (sequence_rama_tables_.size() > 1) return;
+	if ( sequence_rama_tables_.size() > 1 ) return;
 
 	utility::vector1< utility::vector1< utility::vector1< float > > > temp( query_.size(), utility::vector1< utility::vector1< float > > ( 37, utility::vector1< float > ( 37, 0 ) ) );
 
-	for( Size i = 2; i <= query_.size() -1; ++i ) {
+	for ( Size i = 2; i <= query_.size() -1; ++i ) {
 		std::string curr_aa, next_aa, aa_type;//, ss_type;
 		utility::vector1< core::Real > ss_weight( 3, 0 );
 		utility::vector1< std::string > ss_types( 3, "" );
@@ -81,7 +81,7 @@ RamaScore::SetupRamaTables()
 		ss_weight[2] = query_ss_->strand_fraction(i);
 		ss_weight[3] = query_ss_->loop_fraction(i);
 
-		if ( ( ss_weight[1] + ss_weight[2] + ss_weight[3]) == 0) {
+		if ( ( ss_weight[1] + ss_weight[2] + ss_weight[3]) == 0 ) {
 			ss_weight[1] = 1.0;
 			ss_weight[2] = 1.0;
 			ss_weight[3] = 1.0;
@@ -114,7 +114,7 @@ RamaScore::SetupRamaTables()
 		//However secondary structure is at this point just a weighted probability, so first we have to combine the
 		//sequence specific H, E & L counts to create a secondary structure weighted ramachandran table.
 		//(note: the counts here were extracted from the vall and have been gaussian smoothed to blur out the noise)
-		for( Size s = 1; s <= 3; ++s ) {
+		for ( Size s = 1; s <= 3; ++s ) {
 			if ( ss_weight[s] > 0.0 ) {
 				//std::string db_location("/work/rvernon/fragpicking_tests/vall/final/"+ss_types[s]+"_"+aa_type+".counts");
 				std::string db_location("sampling/fragpicker_rama_tables/"+ss_types[s]+"_"+aa_type+".counts");
@@ -139,7 +139,7 @@ RamaScore::SetupRamaTables()
 		}
 
 		utility::io::ozstream outtable;
-		if (option[frags::write_rama_tables].user()) {
+		if ( option[frags::write_rama_tables].user() ) {
 			std::string res = ObjexxFCL::string_of( i );
 			outtable.open("res"+res+"_"+aa_type+".rama_table");
 		}
@@ -147,16 +147,16 @@ RamaScore::SetupRamaTables()
 		//Post-Normalization Multiplier (puts things back roughly into the magnitude of the raw counts
 		//If zero then don't bother normalizing, just use raw counts
 		float const A( option[frags::rama_norm] );
-		if (A > 0.0) {
+		if ( A > 0.0 ) {
 			Real total(0.0);
-			for( Size x = 1; x <= 37; ++x ) {
-				for( Size y = 1; y <= 37; ++y ) {
+			for ( Size x = 1; x <= 37; ++x ) {
+				for ( Size y = 1; y <= 37; ++y ) {
 					total += temp[i][x][y];
 				}
 			}
 			runtime_assert( total != 0.0 );
-			for( Size x = 1; x <= 37; ++x ) {
-				for( Size y = 1; y <= 37; ++y ) {
+			for ( Size x = 1; x <= 37; ++x ) {
+				for ( Size y = 1; y <= 37; ++y ) {
 					temp[i][x][y] = (temp[i][x][y] / total) * A;
 				}
 			}
@@ -167,20 +167,20 @@ RamaScore::SetupRamaTables()
 		//Now we convert the count tables into sigmoid function score tables. The score goes from 1 (no counts) to
 		//0 (many counts). Because this is a sigmoid there is a sharp transition between 1 and 0, this transition
 		//takes place at an arbitrary point defined by me. It can be changed by adding in a constant to the final exp.
-		for( Size x = 1; x <= 37; ++x ) {
-			for( Size y = 1; y <= 37; ++y ) {
+		for ( Size x = 1; x <= 37; ++x ) {
+			for ( Size y = 1; y <= 37; ++y ) {
 				temp[i][x][y] += 0.000000000000000000000000001;
 				temp[i][x][y] = std::log(temp[i][x][y]);
 				temp[i][x][y] = 1.0 / ( 1 + std::exp( C + B*temp[i][x][y] ) );
 
-				if (option[frags::write_rama_tables].user()) {
+				if ( option[frags::write_rama_tables].user() ) {
 					float xf( static_cast< float >( x ));
 					float yf( static_cast< float >( y ));
 					outtable << ((xf-1)*10)-175 << " " << ((yf-1)*10)-175 << " " << temp[i][x][y] << std::endl;
 				}
 			}
 			//This blank line is so I can plot the tables in gnuplot. Don't judge me! -rv
-			if (option[frags::write_rama_tables].user()) outtable << std::endl;
+			if ( option[frags::write_rama_tables].user() ) outtable << std::endl;
 		}
 	}
 
@@ -191,20 +191,21 @@ RamaScore::SetupRamaTables()
 void RamaScore::do_caching(VallChunkOP current_chunk) {
 
 	std::string & tmp = current_chunk->chunk_key();
-	if (tmp.compare(cached_scores_id_) == 0)
+	if ( tmp.compare(cached_scores_id_) == 0 ) {
 		return;
+	}
 	cached_scores_id_ = tmp;
 
 	Size query_sequence_length = query_.size();
 
 	utility::vector1< utility::vector1< Real > > temp( current_chunk->size(),
-	utility::vector1< Real > (query_sequence_length, 0 ) );
+		utility::vector1< Real > (query_sequence_length, 0 ) );
 
-  runtime_assert( query_sequence_length > 0 );
+	runtime_assert( query_sequence_length > 0 );
 
-	for (Size r = 2; r <= query_sequence_length - 1; ++r) {
+	for ( Size r = 2; r <= query_sequence_length - 1; ++r ) {
 
-		for (Size i = 1; i <= current_chunk->size(); ++i) {
+		for ( Size i = 1; i <= current_chunk->size(); ++i ) {
 			VallResidueOP res = current_chunk->at(i);
 
 			Real phi = res->phi();
@@ -213,8 +214,8 @@ void RamaScore::do_caching(VallChunkOP current_chunk) {
 			//Frigging vall...
 			if ( phi > 180 ) phi = -180 + (phi - 180);
 			if ( psi > 180 ) psi = -180 + (psi - 180);
-			if ( phi < -180 )	phi = 180 + (phi + 180);
-			if ( psi < -180 )	psi = 180 + (psi + 180);
+			if ( phi < -180 ) phi = 180 + (phi + 180);
+			if ( psi < -180 ) psi = 180 + (psi + 180);
 
 			Size i_phi = static_cast< Size > (((phi + 180)/10)+1);
 			Size i_psi = static_cast< Size > (((psi + 180)/10)+1);
@@ -237,22 +238,23 @@ bool RamaScore::score(FragmentCandidateOP fragment,FragmentScoreMapOP scores) {
 }
 
 bool RamaScore::cached_score(FragmentCandidateOP fragment,
-		FragmentScoreMapOP scores) {
+	FragmentScoreMapOP scores) {
 
 
 	std::string & tmp = fragment->get_chunk()->chunk_key();
-	if (tmp.compare(cached_scores_id_) != 0)
+	if ( tmp.compare(cached_scores_id_) != 0 ) {
 		do_caching(fragment->get_chunk());
+	}
 
 
 	Real totalScore = 0.0;
 
-	for (Size i = 1; i <= fragment->get_length(); i++) {
-//		runtime_assert(fragment->get_first_index_in_vall()	+ i - 1 <= scores_.size());
-//		runtime_assert(fragment->get_first_index_in_query() + i - 1 <= scores_[1].size());
+	for ( Size i = 1; i <= fragment->get_length(); i++ ) {
+		//  runtime_assert(fragment->get_first_index_in_vall() + i - 1 <= scores_.size());
+		//  runtime_assert(fragment->get_first_index_in_query() + i - 1 <= scores_[1].size());
 
 		Real tmp = scores_[fragment->get_first_index_in_vall() + i - 1]
-			                [fragment->get_first_index_in_query()	+ i - 1];
+			[fragment->get_first_index_in_query() + i - 1];
 		totalScore += tmp;
 	}
 
@@ -260,26 +262,27 @@ bool RamaScore::cached_score(FragmentCandidateOP fragment,
 	totalScore /= (Real) fragment->get_length();
 
 	scores->set_score_component(totalScore, id_);
-	if ((totalScore < lowest_acceptable_value_) && (use_lowest_ == true))
+	if ( (totalScore < lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;
+	}
 	return true;
 }
 
 bool RamaScore::describe_score(FragmentCandidateOP,
-															 FragmentScoreMapOP, std::ostream&)
+	FragmentScoreMapOP, std::ostream&)
 {
 	return true;
 }
-															 //
-															 //    return true;
-	//}
+//
+//    return true;
+//}
 
 
-	//bool RamaScore::describe_score(FragmentCandidateOP f,
-															 //		FragmentScoreMapOP empty_map, std::ostream& out) {
-															 //
-															 //    return true;
-	//}
+//bool RamaScore::describe_score(FragmentCandidateOP f,
+//  FragmentScoreMapOP empty_map, std::ostream& out) {
+//
+//    return true;
+//}
 
 
 utility::vector1< utility::vector1< utility::vector1< Real > > > RamaScore::sequence_rama_tables_;

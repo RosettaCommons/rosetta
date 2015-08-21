@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/scoring/membrane/MPTerminiPenaltyCreator.hh
+/// @file  core/scoring/membrane/MPTerminiPenaltyCreator.hh
 ///
-///	@brief		Membrane Protein Termini Penalty Creator Class
-///	@details	Whole structure energy - penalty for residues on the wrong side of the membrane?
-///				nd uses mpframework data
-///				Last Modified: 3/31/14
+/// @brief  Membrane Protein Termini Penalty Creator Class
+/// @details Whole structure energy - penalty for residues on the wrong side of the membrane?
+///    nd uses mpframework data
+///    Last Modified: 3/31/14
 ///
-///	@author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_scoring_membrane_MPTerminiPenaltyCreator_hh
 #define INCLUDED_core_scoring_membrane_MPTerminiPenaltyCreator_hh
@@ -30,7 +30,7 @@
 #include <utility/vector1.hh>
 
 // C++ Headers
-#include <cstdlib> 
+#include <cstdlib>
 
 using namespace core::scoring;
 using namespace core::scoring::methods;
@@ -43,22 +43,22 @@ namespace membrane {
 class MPTerminiPenaltyCreator : public methods::EnergyMethodCreator
 {
 public:
-	
+
 	/// @brief Instantiate a new MPTerminiPenalty
 	virtual
 	methods::EnergyMethodOP
 	create_energy_method(
-						 methods::EnergyMethodOptions const &
-						 ) const;
-	
+		methods::EnergyMethodOptions const &
+	) const;
+
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
 	virtual
 	ScoreTypes
 	score_types_for_method() const;
-	
+
 };
-	
+
 } // membrane
 } // scoring
 } // core

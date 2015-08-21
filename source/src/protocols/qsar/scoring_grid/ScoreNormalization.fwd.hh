@@ -17,8 +17,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace qsar{
+namespace protocols {
+namespace qsar {
 namespace scoring_grid {
 
 class ScoreNormalization;

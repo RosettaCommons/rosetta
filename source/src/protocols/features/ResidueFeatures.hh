@@ -28,8 +28,8 @@
 #include <string>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class ResidueFeatures : public protocols::features::FeaturesReporter {
 public:

@@ -87,7 +87,7 @@ public:
 	virtual
 	void
 	eval_intrares_energy(
-	  conformation::Residue const & rsd,
+		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap

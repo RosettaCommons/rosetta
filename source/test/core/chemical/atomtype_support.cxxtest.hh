@@ -78,18 +78,18 @@ public:
 		utility::io::izstream paramslist("core/chemical/params/retype_list.txt");
 		std::string filename;
 		paramslist >> filename;
-		while( paramslist ) {
+		while ( paramslist ) {
 			TR << "Retyping " << filename << std::endl;
 			core::chemical::ResidueTypeOP rsd = read_topology_file("core/chemical/"+filename,
-					atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+				atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
 			core::chemical::ResidueTypeOP ref( new core::chemical::ResidueType(*rsd) );
 
-			for( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
+			for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
 				rsd->atom(ii).atom_type_index(0);
 			}
 			core::chemical::rosetta_retype_fullatom(*rsd);
 
-			for( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
+			for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
 				TS_ASSERT( rsd->atom(ii).atom_type_index() != 0 );
 				TS_ASSERT_EQUALS( rsd->atom_type(ii).name(), ref->atom_type(ii).name() );
 			}

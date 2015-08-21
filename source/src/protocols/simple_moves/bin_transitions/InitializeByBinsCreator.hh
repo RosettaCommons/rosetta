@@ -17,18 +17,18 @@
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
-	namespace simple_moves {
-		namespace bin_transitions {
+namespace simple_moves {
+namespace bin_transitions {
 
-			class InitializeByBinsCreator : public protocols::moves::MoverCreator {
-			public:
-				virtual protocols::moves::MoverOP create_mover() const;
-				virtual std::string keyname() const;
-				static std::string mover_name();
-			};
+class InitializeByBinsCreator : public protocols::moves::MoverCreator {
+public:
+	virtual protocols::moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
+	static std::string mover_name();
+};
 
-		} //bin_transitions
-	} //simple_moves
+} //bin_transitions
+} //simple_moves
 } //protocols
 
 #endif //INCLUDED_protocols_simple_moves_bin_transitions_InitializeByBinsCreator_hh

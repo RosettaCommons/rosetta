@@ -65,7 +65,7 @@ public:
 	);
 
 	// This constructor takes a jump, used for ligand motifs
-  SingleMotif(
+	SingleMotif(
 		std::string const resname1,
 		std::string const res1_atom1,
 		std::string const res1_atom2,

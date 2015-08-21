@@ -44,7 +44,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 #ifdef WIN32
-  #include <basic/datacache/WriteableCacheableMap.hh>
+#include <basic/datacache/WriteableCacheableMap.hh>
 #endif
 
 //Utility Headers
@@ -81,281 +81,285 @@ using namespace protocols::environment;
 // creator
 std::string
 AbscriptLoopCloserCMCreator::keyname() const {
-  return AbscriptLoopCloserCMCreator::mover_name();
+	return AbscriptLoopCloserCMCreator::mover_name();
 }
 
 protocols::moves::MoverOP
 AbscriptLoopCloserCMCreator::create_mover() const {
-  return protocols::moves::MoverOP( new AbscriptLoopCloserCM );
+	return protocols::moves::MoverOP( new AbscriptLoopCloserCM );
 }
 
 std::string
 AbscriptLoopCloserCMCreator::mover_name() {
-  return "AbscriptLoopCloserCM";
+	return "AbscriptLoopCloserCM";
 }
 
 AbscriptLoopCloserCM::AbscriptLoopCloserCM():
-  Parent(),
-  fragset_(),
-  scorefxn_(),
-  selector_( new core::pack::task::residue_selector::TrueResidueSelector() )
+	Parent(),
+	fragset_(),
+	scorefxn_(),
+	selector_( new core::pack::task::residue_selector::TrueResidueSelector() )
 {}
 
 AbscriptLoopCloserCM::AbscriptLoopCloserCM( core::fragment::FragSetCOP fragset,
-                                            core::scoring::ScoreFunctionOP scorefxn ):
-  Parent(),
-  fragset_( fragset ),
-  scorefxn_( scorefxn ),
-  selector_( new core::pack::task::residue_selector::TrueResidueSelector() ),
-  bUpdateMM_( true )
+	core::scoring::ScoreFunctionOP scorefxn ):
+	Parent(),
+	fragset_( fragset ),
+	scorefxn_( scorefxn ),
+	selector_( new core::pack::task::residue_selector::TrueResidueSelector() ),
+	bUpdateMM_( true )
 {}
 
 claims::EnvClaims AbscriptLoopCloserCM::yield_claims( core::pose::Pose const&,
-                                                      basic::datacache::WriteableCacheableMapOP ){
-  claims::EnvClaims claims;
+	basic::datacache::WriteableCacheableMapOP ){
+	claims::EnvClaims claims;
 
-  // We want to control everything that will be relevant to the output pose (which should be the same as the input.
-  claims::TorsionClaimOP claim( new claims::TorsionClaim( utility::pointer::static_pointer_cast< ClientMover > ( get_self_ptr() ), selector() ) );
-  claim->strength( claims::CAN_CONTROL, claims::DOES_NOT_CONTROL );
+	// We want to control everything that will be relevant to the output pose (which should be the same as the input.
+	claims::TorsionClaimOP claim( new claims::TorsionClaim( utility::pointer::static_pointer_cast< ClientMover > ( get_self_ptr() ), selector() ) );
+	claim->strength( claims::CAN_CONTROL, claims::DOES_NOT_CONTROL );
 
-  claims.push_back( claim );
+	claims.push_back( claim );
 
-  return claims;
+	return claims;
 }
 
 core::Real angle_diff( core::Real const& a, core::Real const& b ){
-  //use arcsin to get back degrees, but need an f(0)=0, so sin not cos.
-  return std::asin( std::abs( std::cos( a ) - std::cos ( b ) ) );
+	//use arcsin to get back degrees, but need an f(0)=0, so sin not cos.
+	return std::asin( std::abs( std::cos( a ) - std::cos ( b ) ) );
 }
 
 bool angle_cpy( core::pose::Pose& target, core::pose::Pose const& source, core::id::TorsionID t_id ) {
-  // Empirically, a tolerance of 2 has worked for me. It's in degrees, so it's small, but not small enough
-  // for my taste. Ideally, I would run some kind of minimization procedure to try to pull target back to its
-  // original configuration, but I'm not sure how to do that. Typically, these structures will be all-atom
-  // relaxed after this anyway, so that helps.
-  core::Real const TOLERANCE = 2;
-  std::string angle;
-  if( t_id.torsion() == core::id::psi_torsion )
-    angle = "PSI";
-  else if( t_id.torsion() == core::id::phi_torsion )
-    angle = "PHI";
-  else if( t_id.torsion() == core::id::omega_torsion )
-    angle = "OMEGA";
-  else {
-    angle = "OTHER";
-  }
+	// Empirically, a tolerance of 2 has worked for me. It's in degrees, so it's small, but not small enough
+	// for my taste. Ideally, I would run some kind of minimization procedure to try to pull target back to its
+	// original configuration, but I'm not sure how to do that. Typically, these structures will be all-atom
+	// relaxed after this anyway, so that helps.
+	core::Real const TOLERANCE = 2;
+	std::string angle;
+	if ( t_id.torsion() == core::id::psi_torsion ) {
+		angle = "PSI";
+	} else if ( t_id.torsion() == core::id::phi_torsion ) {
+		angle = "PHI";
+	} else if ( t_id.torsion() == core::id::omega_torsion ) {
+		angle = "OMEGA";
+	} else {
+		angle = "OTHER";
+	}
 
-  if( angle_diff( target.torsion( t_id ), source.torsion( t_id ) ) > TOLERANCE ){
-    try {
-      target.set_torsion( t_id, source.torsion( t_id ) );
-    } catch ( EXCN_Env_Security_Exception& ){
-      std::ostringstream ss;
-      ss << "[ERROR] Loop closure tried to write to residue " << t_id.rsd() << " " << angle << " angle ("
-         << t_id << "). Target angle was " << target.torsion( t_id ) << " and source angle was "
-         << source.torsion( t_id ) << " (delta=" << angle_diff( target.torsion( t_id ), source.torsion( t_id ) )
-         << "; tolerance is " << TOLERANCE << ")." << std::endl;
-      throw protocols::loops::EXCN_Loop_not_closed( ss.str() );
-    }
-  } else {
-    tr.Debug << "  ignoring modified " << angle << " @ " << t_id.torsion() << " (input=" << source.torsion( t_id ) << ", output=" << target.torsion( t_id ) << std::endl;
-    return false;
-  }
+	if ( angle_diff( target.torsion( t_id ), source.torsion( t_id ) ) > TOLERANCE ) {
+		try {
+			target.set_torsion( t_id, source.torsion( t_id ) );
+		} catch ( EXCN_Env_Security_Exception& ){
+			std::ostringstream ss;
+			ss << "[ERROR] Loop closure tried to write to residue " << t_id.rsd() << " " << angle << " angle ("
+				<< t_id << "). Target angle was " << target.torsion( t_id ) << " and source angle was "
+				<< source.torsion( t_id ) << " (delta=" << angle_diff( target.torsion( t_id ), source.torsion( t_id ) )
+				<< "; tolerance is " << TOLERANCE << ")." << std::endl;
+			throw protocols::loops::EXCN_Loop_not_closed( ss.str() );
+		}
+	} else {
+		tr.Debug << "  ignoring modified " << angle << " @ " << t_id.torsion() << " (input=" << source.torsion( t_id ) << ", output=" << target.torsion( t_id ) << std::endl;
+		return false;
+	}
 
-  return true;
+	return true;
 }
 
 void AbscriptLoopCloserCM::apply( core::pose::Pose& in_pose ){
 
-  assert( passport() );
-  assert( final_ft_ );
+	assert( passport() );
+	assert( final_ft_ );
 
-  //Produce unprotected pose
-  core::pose::Pose pose( in_pose );
-  core::conformation::ConformationOP deprotected( new core::conformation::Conformation( in_pose.conformation() ) );
-  pose.set_new_conformation( deprotected );
+	//Produce unprotected pose
+	core::pose::Pose pose( in_pose );
+	core::conformation::ConformationOP deprotected( new core::conformation::Conformation( in_pose.conformation() ) );
+	pose.set_new_conformation( deprotected );
 
-  tr.Debug << "Closing loops with current fold tree: " << in_pose.fold_tree();
-  tr.Debug << "Using final fold tree: " << *final_ft_ << std::endl;
+	tr.Debug << "Closing loops with current fold tree: " << in_pose.fold_tree();
+	tr.Debug << "Using final fold tree: " << *final_ft_ << std::endl;
 
-  // Close Loops
-  bool success;
+	// Close Loops
+	bool success;
 
-  attempt_idealize( pose );
+	attempt_idealize( pose );
 
-  success = attempt_ccd( pose );
+	success = attempt_ccd( pose );
 
-  if( success ){
-    attempt_idealize( pose );
-  } else {
-    // We could implement "don't fail unclosed" here, but I don't think we need to?
-    return;
-  }
+	if ( success ) {
+		attempt_idealize( pose );
+	} else {
+		// We could implement "don't fail unclosed" here, but I don't think we need to?
+		return;
+	}
 
-  // Copy result into protected conformation in in_pose
-  DofUnlock unlock( in_pose.conformation(), passport() );
+	// Copy result into protected conformation in in_pose
+	DofUnlock unlock( in_pose.conformation(), passport() );
 
-  Size warn = 0;
+	Size warn = 0;
 
-  try {
-    for ( Size i = 1; i <= in_pose.total_residue(); ++i ) {
-      tr.Debug << "Movemap for " << in_pose.residue( i ).name3() << i
-               << ": bb(" << ( movemap_->get_bb( i ) ? "T" : "F" )
-               << ") chi(" << ( movemap_->get_chi( i ) ? "T" : "F" ) << ")" << std::endl;
+	try {
+		for ( Size i = 1; i <= in_pose.total_residue(); ++i ) {
+			tr.Debug << "Movemap for " << in_pose.residue( i ).name3() << i
+				<< ": bb(" << ( movemap_->get_bb( i ) ? "T" : "F" )
+				<< ") chi(" << ( movemap_->get_chi( i ) ? "T" : "F" ) << ")" << std::endl;
 
-      if( angle_cpy( in_pose, pose, core::id::TorsionID( i, core::id::BB, core::id::omega_torsion ) ) )
-        warn += 1;
-      if( angle_cpy( in_pose, pose, core::id::TorsionID( i, core::id::BB, core::id::phi_torsion ) ) )
-        warn += 1;
-      if( angle_cpy( in_pose, pose, core::id::TorsionID( i, core::id::BB, core::id::psi_torsion ) ) )
-        warn += 1;
-    }
-  } catch( utility::excn::EXCN_Msg_Exception& e ) {
-    tr.Warning << this->get_name() << " failed to close loops without violating the ClientMover contract. Report: "
-              << e.msg() << std::endl;
-    this->set_last_move_status( moves::FAIL_DO_NOT_RETRY );
-  }
-  if( warn ){
-    tr.Warning << "[WARNING] AbscriptLoopMoverCM ignoring " << warn
-    << " values that differ between idealized and unidealized poses. Use '-out:levels protocols.abinitio.abscript.AbscriptLoopCloserCM:debug' to see more info." << std::endl;
-  }
+			if ( angle_cpy( in_pose, pose, core::id::TorsionID( i, core::id::BB, core::id::omega_torsion ) ) ) {
+				warn += 1;
+			}
+			if ( angle_cpy( in_pose, pose, core::id::TorsionID( i, core::id::BB, core::id::phi_torsion ) ) ) {
+				warn += 1;
+			}
+			if ( angle_cpy( in_pose, pose, core::id::TorsionID( i, core::id::BB, core::id::psi_torsion ) ) ) {
+				warn += 1;
+			}
+		}
+	} catch( utility::excn::EXCN_Msg_Exception& e ) {
+		tr.Warning << this->get_name() << " failed to close loops without violating the ClientMover contract. Report: "
+			<< e.msg() << std::endl;
+		this->set_last_move_status( moves::FAIL_DO_NOT_RETRY );
+	}
+	if ( warn ) {
+		tr.Warning << "[WARNING] AbscriptLoopMoverCM ignoring " << warn
+			<< " values that differ between idealized and unidealized poses. Use '-out:levels protocols.abinitio.abscript.AbscriptLoopCloserCM:debug' to see more info." << std::endl;
+	}
 }
 
 bool AbscriptLoopCloserCM::attempt_ccd( core::pose::Pose& pose ){
-  using namespace loops::loop_closure::ccd;
+	using namespace loops::loop_closure::ccd;
 
-  try {
-    checkpoint::CheckPointer checkpointer( "AbscriptLoopCloserCM" );
-    SlidingWindowLoopClosureOP closing_protocol;
-    closing_protocol = SlidingWindowLoopClosureOP( new WidthFirstSlidingWindowLoopClosure( fragset_,
-                                                               scorefxn_,
-                                                               movemap_ ) );
+	try {
+		checkpoint::CheckPointer checkpointer( "AbscriptLoopCloserCM" );
+		SlidingWindowLoopClosureOP closing_protocol;
+		closing_protocol = SlidingWindowLoopClosureOP( new WidthFirstSlidingWindowLoopClosure( fragset_,
+			scorefxn_,
+			movemap_ ) );
 
-    jumping::close_chainbreaks( closing_protocol,
-                               pose,
-                               checkpointer,
-                               get_current_tag(),
-                               *final_ft_ );
-  } catch ( loops::EXCN_Loop_not_closed& excn ) {
-    tr.Warning << this->get_name() << " failed to close a loop. Report: " << excn << std::endl;
-    set_last_move_status( moves::FAIL_DO_NOT_RETRY );
-    set_current_tag( "C_"+get_current_tag().substr(std::min(2,(int)get_current_tag().size())) );
-    return false;
-  }
+		jumping::close_chainbreaks( closing_protocol,
+			pose,
+			checkpointer,
+			get_current_tag(),
+			*final_ft_ );
+	} catch ( loops::EXCN_Loop_not_closed& excn ) {
+		tr.Warning << this->get_name() << " failed to close a loop. Report: " << excn << std::endl;
+		set_last_move_status( moves::FAIL_DO_NOT_RETRY );
+		set_current_tag( "C_"+get_current_tag().substr(std::min(2,(int)get_current_tag().size())) );
+		return false;
+	}
 
-  return true;
+	return true;
 }
 
 void AbscriptLoopCloserCM::parse_my_tag( utility::tag::TagCOP tag,
-                                         basic::datacache::DataMap & datamap,
-                                         protocols::filters::Filters_map const&,
-                                         protocols::moves::Movers_map const&,
-                                         core::pose::Pose const& ) {
+	basic::datacache::DataMap & datamap,
+	protocols::filters::Filters_map const&,
+	protocols::moves::Movers_map const&,
+	core::pose::Pose const& ) {
 
-  using namespace basic::options::OptionKeys;
-  using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace basic::options;
 
-	if( tag->hasOption( "selector" ) ) {
+	if ( tag->hasOption( "selector" ) ) {
 		set_selector( datamap.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) ) );
 	} else {
 		set_selector( core::pack::task::residue_selector::ResidueSelectorCOP( new core::pack::task::residue_selector::TrueResidueSelector() ) );
 	}
 
-  std::string fragfile;
-  if(tag->hasOption("fragments"))
-    fragfile = tag->getOption<std::string>("fragments");
-  else if(!option[OptionKeys::in::file::frag3].user()){
-    tr.Error <<"enter frags with either fragments= or -in:file:frag3"  << std::endl;
-    throw utility::excn::EXCN_RosettaScriptsOption( "fragment file wrong type" );
-  }
-  else
-    fragfile = option[ OptionKeys::in::file::frag3 ]();
+	std::string fragfile;
+	if ( tag->hasOption("fragments") ) {
+		fragfile = tag->getOption<std::string>("fragments");
+	} else if ( !option[OptionKeys::in::file::frag3].user() ) {
+		tr.Error <<"enter frags with either fragments= or -in:file:frag3"  << std::endl;
+		throw utility::excn::EXCN_RosettaScriptsOption( "fragment file wrong type" );
+	} else {
+		fragfile = option[ OptionKeys::in::file::frag3 ]();
+	}
 
-  core::fragment::FragmentIO frag_io( option[ OptionKeys::abinitio::number_3mer_frags ](), 1,
-                                      option[ OptionKeys::frags::annotate ]() );
+	core::fragment::FragmentIO frag_io( option[ OptionKeys::abinitio::number_3mer_frags ](), 1,
+		option[ OptionKeys::frags::annotate ]() );
 
-  fragset_ = frag_io.read_data( fragfile );
+	fragset_ = frag_io.read_data( fragfile );
 
-  if( tag->hasOption( "scorefxn" ) ){
-    try {
-      scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, datamap );
-    } catch ( ... ) {
-      tr.Error << "AbscriptLoopCloserCM failed to find the score function '"
-               << tag->getOption< std::string >( "scorefxn" ) << std::endl;
-      throw;
-    }
-  } else {
-    tr.Warning << "Configuring AbscriptLoopCloserCM '" << tag->getName() << "' with default abinitio loop closure score function." << std::endl;
+	if ( tag->hasOption( "scorefxn" ) ) {
+		try {
+			scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, datamap );
+		} catch ( ... ) {
+			tr.Error << "AbscriptLoopCloserCM failed to find the score function '"
+				<< tag->getOption< std::string >( "scorefxn" ) << std::endl;
+			throw;
+		}
+	} else {
+		tr.Warning << "Configuring AbscriptLoopCloserCM '" << tag->getName() << "' with default abinitio loop closure score function." << std::endl;
 
-    option[ OptionKeys::abinitio::stage4_patch ].activate();
+		option[ OptionKeys::abinitio::stage4_patch ].activate();
 
-    scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "score3", option[ OptionKeys::abinitio::stage4_patch ]() );
-    scorefxn_->set_weight( core::scoring::linear_chainbreak, option[ jumps::chainbreak_weight_stage4 ]() );
-    scorefxn_->set_weight( core::scoring::atom_pair_constraint, option[ OptionKeys::constraints::cst_weight ] );
-  }
+		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "score3", option[ OptionKeys::abinitio::stage4_patch ]() );
+		scorefxn_->set_weight( core::scoring::linear_chainbreak, option[ jumps::chainbreak_weight_stage4 ]() );
+		scorefxn_->set_weight( core::scoring::atom_pair_constraint, option[ OptionKeys::constraints::cst_weight ] );
+	}
 }
 
 void AbscriptLoopCloserCM::attempt_idealize( core::pose::Pose& pose ) {
-  idealize::IdealizeMoverOP idealizer( new idealize::IdealizeMover );
-  idealizer->fast( false );
+	idealize::IdealizeMoverOP idealizer( new idealize::IdealizeMover );
+	idealizer->fast( false );
 
-  utility::vector1< core::Size > pos_list;
-  for( core::Size i = 1; i <= pose.total_residue(); ++i ){
-    if( movemap_->get_bb( i ) ){
-      pos_list.push_back( i );
-    }
-  }
+	utility::vector1< core::Size > pos_list;
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( movemap_->get_bb( i ) ) {
+			pos_list.push_back( i );
+		}
+	}
 
-  if( tr.Trace.visible() ){
-    for( core::Size i = 1; i <= pose.total_residue(); ++i ){
-      tr.Trace << ( movemap_->get_bb(i) ? "T" : "F" );
-    }
-    tr.Trace << std::endl;
-    tr.Trace << "movable positions: " << pos_list << std::endl;
-  }
+	if ( tr.Trace.visible() ) {
+		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+			tr.Trace << ( movemap_->get_bb(i) ? "T" : "F" );
+		}
+		tr.Trace << std::endl;
+		tr.Trace << "movable positions: " << pos_list << std::endl;
+	}
 
 
-  if( pos_list.size() == 0 &&
-      pose.fold_tree().num_cutpoint() - final_ft_->num_cutpoint() > 0 ){
-    std::ostringstream ss;
-    ss << this->get_name() << " tried to start closing the fold tree by idealization ("
-       << pose.fold_tree().num_cutpoint() - final_ft_->num_cutpoint()
-       << " cuts are to be closed) but was not given any movable positions." << std::endl;
-    throw utility::excn::EXCN_BadInput( ss.str() );
-  }
+	if ( pos_list.size() == 0 &&
+			pose.fold_tree().num_cutpoint() - final_ft_->num_cutpoint() > 0 ) {
+		std::ostringstream ss;
+		ss << this->get_name() << " tried to start closing the fold tree by idealization ("
+			<< pose.fold_tree().num_cutpoint() - final_ft_->num_cutpoint()
+			<< " cuts are to be closed) but was not given any movable positions." << std::endl;
+		throw utility::excn::EXCN_BadInput( ss.str() );
+	}
 
-  idealizer->set_pos_list( pos_list );
+	idealizer->set_pos_list( pos_list );
 
-  core::kinematics::FoldTree fold_tree( pose.fold_tree() );
-  pose.fold_tree( *final_ft_ );
-  if( pos_list.size() > 0 ) // req'd because an empty pos_list is treated as all
-    idealizer->apply( pose );
-  pose.fold_tree( fold_tree );
-  (*scorefxn_)( pose );
-  //jd2::output_intermediate_pose( pose, "loops_closed_preprocessed" );
+	core::kinematics::FoldTree fold_tree( pose.fold_tree() );
+	pose.fold_tree( *final_ft_ );
+	if ( pos_list.size() > 0 ) { // req'd because an empty pos_list is treated as all
+		idealizer->apply( pose );
+	}
+	pose.fold_tree( fold_tree );
+	(*scorefxn_)( pose );
+	//jd2::output_intermediate_pose( pose, "loops_closed_preprocessed" );
 }
 
 void AbscriptLoopCloserCM::passport_updated() {
-  if( has_passport() ){
-    movemap_ = passport()->render_movemap();
-  } else {
-    movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
-    movemap_->set_bb( true );
-  }
+	if ( has_passport() ) {
+		movemap_ = passport()->render_movemap();
+	} else {
+		movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
+		movemap_->set_bb( true );
+	}
 }
 
 
 void AbscriptLoopCloserCM::broking_finished( EnvClaimBroker::BrokerResult const& broker ) {
-  //set the target fold tree for the closer.
-  final_ft_ = broker.closer_ft;
-  assert( final_ft_ );
+	//set the target fold tree for the closer.
+	final_ft_ = broker.closer_ft;
+	assert( final_ft_ );
 }
 
 std::string AbscriptLoopCloserCM::get_name() const {
-  return "AbscriptLoopCloserCM";
+	return "AbscriptLoopCloserCM";
 }
 
 moves::MoverOP AbscriptLoopCloserCM::clone() const {
-  return moves::MoverOP( new AbscriptLoopCloserCM( *this ) );
+	return moves::MoverOP( new AbscriptLoopCloserCM( *this ) );
 }
 
 } // abscript

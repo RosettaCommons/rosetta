@@ -62,8 +62,8 @@ KDNodeOP construct_kd_tree(
 	//std::cout << "axis = " << axis << std::endl;
 	//std::cout << "constructing tree from points: " << std::endl;
 	//for ( Size ii = 1; ii <= points.size(); ++ii ) {
-	//	print_point( std::cout, points[ii]->location() );
-	//	std::cout << std::endl;
+	// print_point( std::cout, points[ii]->location() );
+	// std::cout << std::endl;
 	//}
 	//std::cout << std::endl << std::endl;
 

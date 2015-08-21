@@ -67,7 +67,7 @@ public:
 	void release_file( std::string filename );
 	void block_file( std::string const& filename );
 	bool close_file( std::string fname );
-  void run();
+	void run();
 	void stop();
 	void set_SlaveCanOpenFile( bool setting = true ) {
 		bSlaveCanOpenFile_ = setting ;
@@ -77,7 +77,7 @@ public:
 protected:
 	virtual SingleFileBufferOP generate_new_channel( std::string const& filename, core::Size channel, bool append, core::Size& status ) = 0;
 private:
-  core::Size buffer_rank_;
+	core::Size buffer_rank_;
 	core::Size my_rank_;
 	Filenames open_files_;
 	Buffers open_buffers_;
@@ -89,9 +89,9 @@ private:
 	bool bKeepFilesAlive_; //don't close files when no slaves want to write... probably speed up because not always reading from start
 	time_t seconds_to_keep_files_alive_;
 
-	#ifdef USEMPI
+#ifdef USEMPI
 	bool bStop_;
-	#endif
+#endif
 
 	GarbageList garbage_collector_;
 	time_t last_garbage_collection_;

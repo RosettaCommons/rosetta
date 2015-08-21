@@ -112,9 +112,9 @@ public:
 	BBDepCartBondedParameters( ) {}
 
 	BBDepCartBondedParameters(
-			ObjexxFCL::FArray2D< core::Real > const &mu,
-			ObjexxFCL::FArray2D< core::Real > const &Ks,
-			std::string tag_in="" ) {
+		ObjexxFCL::FArray2D< core::Real > const &mu,
+		ObjexxFCL::FArray2D< core::Real > const &Ks,
+		std::string tag_in="" ) {
 		init( mu, Ks );
 		tag_ = tag_in;
 	}
@@ -157,7 +157,7 @@ public:
 	Real K (Real phi, Real psi) const {
 		core::Real retval = Ks_spline_.F(phi,psi);
 		//if (retval<0) {
-		//	std::cerr << tag_ << "   K(" << phi << "," << psi << ") = " << Ks_spline_.F(phi,psi) << std::endl;
+		// std::cerr << tag_ << "   K(" << phi << "," << psi << ") = " << Ks_spline_.F(phi,psi) << std::endl;
 		//}
 		return retval;
 	}

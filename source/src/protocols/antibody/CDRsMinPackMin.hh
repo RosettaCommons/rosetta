@@ -44,10 +44,10 @@ public:
 	CDRsMinPackMin(AntibodyInfoOP antibody_info);
 
 	CDRsMinPackMin(
-	    AntibodyInfoOP antibody_info,
-	    core::scoring::ScoreFunctionOP scorefxn,
-	    core::pack::task::TaskFactoryOP tf,
-	    core::kinematics::MoveMapOP movemap
+		AntibodyInfoOP antibody_info,
+		core::scoring::ScoreFunctionOP scorefxn,
+		core::pack::task::TaskFactoryOP tf,
+		core::kinematics::MoveMapOP movemap
 	);
 
 	// default destructor

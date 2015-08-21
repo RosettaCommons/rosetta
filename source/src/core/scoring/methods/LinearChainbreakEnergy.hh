@@ -50,11 +50,11 @@ namespace methods {
 /// and determines the penalty between residues i and i+1 by how much their
 /// psueduo atoms do not align.
 ///
-/// @details Calculates both linear_chainbreak and overlap_chainbreak terms. 
+/// @details Calculates both linear_chainbreak and overlap_chainbreak terms.
 ///  linear_chainbreak measures 3 distances (cutpoint variants must be added to pose):
 ///   1) virt CA res1 -> CA      res2
 ///   2) virt C    res1 -> C        res2
-///   3)         N   res1 -> virt N res2 
+///   3)         N   res1 -> virt N res2
 ///    score = 1 + 2+ 3 /3
 ///
 ///  For ideal poses, this score should be very close to 0.  Real PDBs, however have bond length and angle
@@ -112,14 +112,14 @@ public:
 
 private:
 	core::Real do_score_dev(const core::conformation::Residue& lower_rsd,
-													const core::conformation::Residue& upper_rsd,
-													const core::Size nbb) const;
+		const core::conformation::Residue& upper_rsd,
+		const core::Size nbb) const;
 
 	core::Real do_score_ovp(const core::conformation::Residue& lower_rsd,
-													const core::conformation::Residue& upper_rsd,
-													const core::Size nbb,
-													const core::Size cutpoint,
-													const core::pose::Pose& pose) const;
+		const core::conformation::Residue& upper_rsd,
+		const core::Size nbb,
+		const core::Size cutpoint,
+		const core::pose::Pose& pose) const;
 
 	// Initialization routine common to both constructor
 	void initialize(Size allowable_sequence_sep);

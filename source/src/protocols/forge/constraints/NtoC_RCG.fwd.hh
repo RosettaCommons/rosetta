@@ -18,9 +18,9 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace forge{
-namespace constraints{
+namespace protocols {
+namespace forge {
+namespace constraints {
 
 class NtoC_RCG;
 typedef utility::pointer::shared_ptr< NtoC_RCG > NtoC_RCGOP;

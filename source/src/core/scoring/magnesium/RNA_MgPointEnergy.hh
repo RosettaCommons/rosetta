@@ -115,14 +115,14 @@ private:
 
 	Size
 	get_vdw_atom_number(
-		 utility::vector1< utility::vector1< Size > > const & atom_numbers_for_vdw_calculation,
-		 Size const & pos1,
-		 Size const & i ) const;
+		utility::vector1< utility::vector1< Size > > const & atom_numbers_for_vdw_calculation,
+		Size const & pos1,
+		Size const & i ) const;
 
 	Size
 	get_vdw_atom_number(
-											char const which_nucleotide,
-											Size const & i ) const;
+		char const which_nucleotide,
+		Size const & i ) const;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// data
@@ -136,18 +136,18 @@ private:
 
 	void
 	residue_pair_energy_one_way(
-															conformation::Residue const & rsd1, // The RNA residue
-															conformation::Residue const & rsd2, // The Mg(2+)
-															pose::Pose const & pose,
-															EnergyMap & emap
-															) const;
+		conformation::Residue const & rsd1, // The RNA residue
+		conformation::Residue const & rsd2, // The Mg(2+)
+		pose::Pose const & pose,
+		EnergyMap & emap
+	) const;
 
 	virtual
 	core::Size version() const;
 
 	MgKnowledgeBasedPotentialOP rna_mg_knowledge_based_potential_;
 
-  bool const verbose_;
+	bool const verbose_;
 
 };
 

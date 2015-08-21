@@ -31,37 +31,37 @@ using core::fragment::FragSetCOP;
 using core::pose::PoseCOP;
 
 void check_lengths(FragSetCOP fragments, PoseCOP pose) {
-  if (fragments->max_pos() != pose->total_residue()) {
-    std::cerr << "Residues in pose: " << pose->total_residue() << std::endl;
-    std::cerr << "Residues in fragments: " << fragments->max_pos() << std::endl;
-    std::cerr << "Error: different number of residues in pose and fragments" << std::endl;
-    exit(1);
-  }
+	if ( fragments->max_pos() != pose->total_residue() ) {
+		std::cerr << "Residues in pose: " << pose->total_residue() << std::endl;
+		std::cerr << "Residues in fragments: " << fragments->max_pos() << std::endl;
+		std::cerr << "Error: different number of residues in pose and fragments" << std::endl;
+		exit(1);
+	}
 }
 
 int main(int argc, char* argv[]) {
 	try {
 
-  using core::Size;
-  using core::fragment::FragmentIO;
-  using core::fragment::FragmentRmsd;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  devel::init(argc, argv);
+		using core::Size;
+		using core::fragment::FragmentIO;
+		using core::fragment::FragmentRmsd;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		devel::init(argc, argv);
 
-  FragSetCOP fragments = core::fragment::FragmentIO().read_data(option[in::file::frag3]());
-  PoseCOP pose = core::import_pose::pose_from_pdb(option[OptionKeys::in::file::s]()[1]);
-  check_lengths(fragments, pose);
+		FragSetCOP fragments = core::fragment::FragmentIO().read_data(option[in::file::frag3]());
+		PoseCOP pose = core::import_pose::pose_from_pdb(option[OptionKeys::in::file::s]()[1]);
+		check_lengths(fragments, pose);
 
-  const Size last = fragments->max_pos() - fragments->max_frag_length() + 1;
+		const Size last = fragments->max_pos() - fragments->max_frag_length() + 1;
 
-  std::cout << "position frag_idx rmsd" << std::endl;
-  FragmentRmsd calc(fragments);
-  for (Size pos = 1; pos <= last; ++pos) {
-    for (Size k = 1; k <= 200; ++k) {
-      std::cout << pos << " " << k << " " << calc.rmsd(pos, k, *pose) << std::endl;
-    }
-  }
+		std::cout << "position frag_idx rmsd" << std::endl;
+		FragmentRmsd calc(fragments);
+		for ( Size pos = 1; pos <= last; ++pos ) {
+			for ( Size k = 1; k <= 200; ++k ) {
+				std::cout << pos << " " << k << " " << calc.rmsd(pos, k, *pose) << std::endl;
+			}
+		}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

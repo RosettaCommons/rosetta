@@ -50,74 +50,74 @@ namespace environment {
 namespace claims {
 
 class XYZClaim : public EnvClaim {
-  typedef core::environment::FoldTreeSketch FoldTreeSketch;
-  typedef EnvClaim Parent;
-  typedef core::environment::LocalPosition LocalPosition;
-  typedef core::environment::LocalPositions LocalPositions;
-  typedef core::pack::task::residue_selector::ResidueSelectorOP ResidueSelectorOP;
-  typedef core::pack::task::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
+	typedef core::environment::FoldTreeSketch FoldTreeSketch;
+	typedef EnvClaim Parent;
+	typedef core::environment::LocalPosition LocalPosition;
+	typedef core::environment::LocalPositions LocalPositions;
+	typedef core::pack::task::residue_selector::ResidueSelectorOP ResidueSelectorOP;
+	typedef core::pack::task::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
 
 public:
 
-  XYZClaim( ClientMoverOP owner,
-            utility::tag::TagCOP tag,
-            basic::datacache::DataMap const& );
+	XYZClaim( ClientMoverOP owner,
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap const& );
 
-  // Initializer for a single backbone angle
-  XYZClaim( ClientMoverOP owner,
-            LocalPosition const& local_pos );
+	// Initializer for a single backbone angle
+	XYZClaim( ClientMoverOP owner,
+		LocalPosition const& local_pos );
 
-  // Initializer for a contiguous range of residues.
-  // TODO: replace this function in RigidChunkCM with the constructor using ResidueSelectorsand remove
-  XYZClaim( ClientMoverOP owner,
-            std::string const& label,
-            std::pair< core::Size, core::Size > const& range );
+	// Initializer for a contiguous range of residues.
+	// TODO: replace this function in RigidChunkCM with the constructor using ResidueSelectorsand remove
+	XYZClaim( ClientMoverOP owner,
+		std::string const& label,
+		std::pair< core::Size, core::Size > const& range );
 
-  XYZClaim( ClientMoverOP owner,
-            ResidueSelectorCOP selector );
+	XYZClaim( ClientMoverOP owner,
+		ResidueSelectorCOP selector );
 
-  virtual void yield_elements( core::pose::Pose const&,
-                               DOFElements& elements ) const;
+	virtual void yield_elements( core::pose::Pose const&,
+		DOFElements& elements ) const;
 
-  ControlStrength const& ctrl_strength() const;
+	ControlStrength const& ctrl_strength() const;
 
-  void strength( ControlStrength const& control, ControlStrength const& initialization );
+	void strength( ControlStrength const& control, ControlStrength const& initialization );
 
-  ControlStrength const& init_strength() const;
+	ControlStrength const& init_strength() const;
 
-  ResidueSelectorCOP selector() const { return selector_; }
+	ResidueSelectorCOP selector() const { return selector_; }
 
-  void set_relative( bool s ) { bRelative_ = s; }
+	void set_relative( bool s ) { bRelative_ = s; }
 
-  bool relative() const { return bRelative_; }
+	bool relative() const { return bRelative_; }
 
-  virtual EnvClaimOP clone() const;
+	virtual EnvClaimOP clone() const;
 
-  virtual std::string type() const;
+	virtual std::string type() const;
 
-  virtual void show( std::ostream& os ) const;
+	virtual void show( std::ostream& os ) const;
 
 protected:
-  virtual
-  DOFElement wrap_dof_id( core::id::DOF_ID const& id ) const;
+	virtual
+	DOFElement wrap_dof_id( core::id::DOF_ID const& id ) const;
 
-  void build_bond_length_elements( core::Size seqpos,
-                                   ProtectedConformationCOP const&,
-                                   DOFElements& elements ) const;
+	void build_bond_length_elements( core::Size seqpos,
+		ProtectedConformationCOP const&,
+		DOFElements& elements ) const;
 
-  void build_bond_angle_elements( core::Size seqpos,
-                                  ProtectedConformationCOP const&,
-                                  DOFElements& elements ) const;
+	void build_bond_angle_elements( core::Size seqpos,
+		ProtectedConformationCOP const&,
+		DOFElements& elements ) const;
 
-  void build_bond_torsion_elements( core::Size seqpos,
-                                    ProtectedConformationCOP const&,
-                                    DOFElements& elements ) const;
+	void build_bond_torsion_elements( core::Size seqpos,
+		ProtectedConformationCOP const&,
+		DOFElements& elements ) const;
 
 private:
-  ResidueSelectorCOP selector_;
-  ControlStrength c_str_;
-  ControlStrength i_str_;
-  bool bRelative_;
+	ResidueSelectorCOP selector_;
+	ControlStrength c_str_;
+	ControlStrength i_str_;
+	bool bRelative_;
 
 }; //class XYZClaim
 

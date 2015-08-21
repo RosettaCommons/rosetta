@@ -33,7 +33,7 @@ namespace chemical {
 
 /// @brief  Return a list of ring conformers, read from a database file.
 utility::vector1< RingConformer > read_conformers_from_database_file_for_ring_size( std::string const & filename,
-		core::Size ring_size );
+	core::Size ring_size );
 
 }  // namespace chemical
 }  // namespace core

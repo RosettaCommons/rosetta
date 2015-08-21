@@ -20,10 +20,10 @@
 namespace protocols {
 namespace farna {
 
-	class TorsionSet;
-	class FragmentLibrary;
+class TorsionSet;
+class FragmentLibrary;
 
-	typedef utility::pointer::shared_ptr< FragmentLibrary > FragmentLibraryOP;
+typedef utility::pointer::shared_ptr< FragmentLibrary > FragmentLibraryOP;
 
 } //farna
 } //protocols

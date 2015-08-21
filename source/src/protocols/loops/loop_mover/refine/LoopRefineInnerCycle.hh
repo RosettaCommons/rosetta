@@ -64,7 +64,7 @@ public: // boiler plate / virtuals
 		core::scoring::ScoreFunctionOP scorefxn,
 		core::pack::task::TaskFactoryOP tf
 	);
-	
+
 	virtual void apply( Pose & ) = 0;
 	virtual std::string get_name() const;
 
@@ -73,7 +73,7 @@ public: // boiler plate / virtuals
 
 	/// @brief Associates relevant options with the LoopRefineInnerCycle class
 	static void register_options();
-	
+
 	// NOTE: The clone() and fresh_instance() virtual methods are omitted because this class is abstract
 
 public: // printing methods

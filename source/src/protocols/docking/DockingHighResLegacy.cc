@@ -10,10 +10,10 @@
 /// @file DockingHighRes
 /// @brief protocols that are specific to high resolution docking
 /// @details
-///		This contains the functions that create initial positions for docking
-///		You can either randomize partner 1 or partner 2, spin partner 2, or
-///		perform a simple perturbation.
-/// 	Also contains docking mcm protocol
+///  This contains the functions that create initial positions for docking
+///  You can either randomize partner 1 or partner 2, spin partner 2, or
+///  perform a simple perturbation.
+///  Also contains docking mcm protocol
 /// @author Monica Berrondo
 /// @author Modified by Sergey Lyskov
 /// @author Modified by Sid Chaudhury
@@ -213,7 +213,7 @@ void DockingHighResLegacy::set_default( core::pose::Pose & pose ) {
 	movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap() );
 	movemap_->set_chi( chi_ );
 	movemap_->set_bb( bb_ );
-	for( DockJumps::const_iterator it = movable_jumps().begin(); it != movable_jumps().end(); ++it ) {
+	for ( DockJumps::const_iterator it = movable_jumps().begin(); it != movable_jumps().end(); ++it ) {
 		movemap_->set_jump( *it, true );
 	}
 
@@ -237,7 +237,7 @@ void DockingHighResLegacy::set_protocol( pose::Pose & pose )
 
 	if ( option[ OptionKeys::docking::dock_min ]() ) {
 		set_dock_min_protocol();
-	} else if ( option[ OptionKeys::docking::dock_ppk ]() ){
+	} else if ( option[ OptionKeys::docking::dock_ppk ]() ) {
 		//set_dock_ppk_protocol( pose );
 		utility::exit( "Danger Will Robinson! Prepacking is no longer performed within the DockingProtocol.  Use the docking_prepack_protocol executable first, then use the output as the starting structure in docking.", 1 );
 	} else {
@@ -249,7 +249,7 @@ void DockingHighResLegacy::define_loops( pose::Pose const & pose, loops::LoopsOP
 	//runtime_assert( movable_jumps_.size() == 1 ); // CURRENTLY ONLY SUPPORTED WITH SIMPLE DOCKING
 	//core::Size const rb_jump = movable_jumps_[1];
 
-    TR << "This method clears the loop set the is passed in.  Before using this, please investigate it thoroughly." << std::endl;
+	TR << "This method clears the loop set the is passed in.  Before using this, please investigate it thoroughly." << std::endl;
 
 	loop_set->clear();
 
@@ -343,7 +343,7 @@ void DockingHighResLegacy::define_loops( pose::Pose const & pose, loops::LoopsOP
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief
 /// @details
-///		decides what to call according to options
+///  decides what to call according to options
 void DockingHighResLegacy::apply( core::pose::Pose & pose )
 {
 	using namespace scoring;
@@ -354,15 +354,15 @@ void DockingHighResLegacy::apply( core::pose::Pose & pose )
 	// jec sanity check to avoid overwriting newly-set minimizers on every apply
 	// Need to call set_default to reset the cycle mover index in the case where a decoy fails the filters.
 	//if ( !mc_ ) {
-		set_default( pose );
+	set_default( pose );
 	//}
 
 	mc_->reset( pose );
 
 	docking_highres_protocol_mover_->apply( pose );
 
-//	pose.dump_pdb("test.pdb");  // JQX: for testing purpose
-//	exit(-1);   // JQX: testing
+	// pose.dump_pdb("test.pdb");  // JQX: for testing purpose
+	// exit(-1);   // JQX: testing
 
 	if ( !option[ OptionKeys::docking::dock_ppk ]() ) mc_->recover_low( pose );
 }
@@ -371,14 +371,14 @@ void DockingHighResLegacy::apply( core::pose::Pose & pose )
 ///
 /// @brief main entrance for normal rigid-body minimization
 /// @details
-///		retrieve the structure in the low array and do the normal minimization
-///		by calling using a min_mover to optimize the score accourding to the
-///		scorefunction that has been set
+///  retrieve the structure in the low array and do the normal minimization
+///  by calling using a min_mover to optimize the score accourding to the
+///  scorefunction that has been set
 ///
 /// @remarks
 ///
 /// @references docking_minimize_trial from docking_minimize.cc
-///				pose_docking_minimize_trial from pose_docking.cc
+///    pose_docking_minimize_trial from pose_docking.cc
 ///
 /// @author Monica Berrondo June 14 2007
 ///
@@ -398,15 +398,15 @@ void DockingHighResLegacy::set_dock_min_protocol() {
 ///
 /// @brief main entrance to do monte carlo minimization
 /// @details
-///			a total of 50 cycles of monte-carlo minimization will be
-///			carried out if the minimized structure can pass the filter
-///			after the first and fifth cycle.  Then it is rigid-body minimized
-///			to a stringent tolerance.
+///   a total of 50 cycles of monte-carlo minimization will be
+///   carried out if the minimized structure can pass the filter
+///   after the first and fifth cycle.  Then it is rigid-body minimized
+///   to a stringent tolerance.
 ///
 /// @remarks
 ///
 /// @references docking_mcm_protocol from docking_minimize.cc
-///				pose_docking_monte_carlo_minimize from pose_docking.cc
+///    pose_docking_monte_carlo_minimize from pose_docking.cc
 ///
 /// @author Sid Chaudhury May 28 2009
 ///
@@ -431,9 +431,9 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	set_task_factory( tf );
 	//RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover( scorefxn_pack(), task_factory() );
 
- 	//need to explicitly convert to COP from OP in order for SidechainMinMover to work
- 	//besides, need to use init_task_factory_, which is otherwise not used from task_factory()
- 	core::pack::task::TaskFactoryCOP ctf=init_task_factory_;
+	//need to explicitly convert to COP from OP in order for SidechainMinMover to work
+	//besides, need to use init_task_factory_, which is otherwise not used from task_factory()
+	core::pack::task::TaskFactoryCOP ctf=init_task_factory_;
 
 	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover( scorefxn_pack(), ctf ) );
 	SequenceMoverOP interface_repack_and_move_loops( new moves::SequenceMover );
@@ -530,7 +530,7 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	core::Real minimization_threshold = option[ OptionKeys::docking::minimization_threshold]();
 	//core::Real minimization_threshold = 15.0;
 
-  JumpOutMoverOP rb_mover_min;
+	JumpOutMoverOP rb_mover_min;
 	if ( option[ OptionKeys::docking::extra_rottrial] ) {
 		rb_mover_min = JumpOutMoverOP( new JumpOutMover( rb_mover, min_repack_mover, scorefxn(), minimization_threshold ) );
 	} else {
@@ -546,11 +546,11 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	SequenceMoverOP repack_step( new SequenceMover );
 	repack_step->add_mover(rb_mover_min_trial);
 
-	if ( repack_switch_ ){
+	if ( repack_switch_ ) {
 		repack_step->add_mover( pack_interface_and_move_loops_trial );
 		if ( rt_min() ) repack_step->add_mover(rtmin_trial);
 		if ( sc_min() ) repack_step->add_mover(scmin_trial);
-		}
+	}
 
 	CycleMoverOP rb_mover_min_trial_repack( new CycleMover );
 	for ( Size i=1; i<repack_period_; ++i ) rb_mover_min_trial_repack->add_mover( rb_mover_min_trial );
@@ -573,7 +573,7 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	TR << "::::::::::::::::::DOCK_MCM:::::::::::::::::::" << std::endl;
 
 	docking_highres_protocol_mover_ = moves::SequenceMoverOP( new SequenceMover );
-	if (repack_switch_) docking_highres_protocol_mover_->add_mover( initial_repack );
+	if ( repack_switch_ ) docking_highres_protocol_mover_->add_mover( initial_repack );
 	docking_highres_protocol_mover_->add_mover( minimize_trial );
 	docking_highres_protocol_mover_->add_mover( mcm_four_cycles );
 	docking_highres_protocol_mover_->add_mover( mcm_fortyfive_cycles );  // JQX: tempoary comment out, doing test on mcm_four_cycles
@@ -583,11 +583,11 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 ///
 /// @brief main entrance to prepacking for docking
 /// @details
-///			does a full repack of all sidechains for each partner after moving them
-///		  away by 500A, then it brings them back together
+///   does a full repack of all sidechains for each partner after moving them
+///    away by 500A, then it brings them back together
 /// @remarks
 ///
-/// @references 	pose_docking_prepack_protocol from pose_docking.cc
+/// @references  pose_docking_prepack_protocol from pose_docking.cc
 ///
 /// @author Sid Chaudhury October 3 2008
 ///
@@ -603,7 +603,7 @@ void DockingHighResLegacy::set_dock_ppk_protocol( core::pose::Pose & pose ) {
 	//set up translate-by-axis movers
 	Real trans_magnitude = 1000;
 	utility::vector1< rigid::RigidBodyTransMoverOP > trans_away_vec;
-	for( DockJumps::const_iterator it = movable_jumps().begin(); it != movable_jumps().end(); ++it ) {
+	for ( DockJumps::const_iterator it = movable_jumps().begin(); it != movable_jumps().end(); ++it ) {
 		core::Size const rb_jump = *it;
 		rigid::RigidBodyTransMoverOP translate_away( new rigid::RigidBodyTransMover( pose, rb_jump ) );
 		translate_away->step_size( trans_magnitude );
@@ -611,7 +611,7 @@ void DockingHighResLegacy::set_dock_ppk_protocol( core::pose::Pose & pose ) {
 	}
 
 	utility::vector1< rigid::RigidBodyTransMoverOP > trans_back_vec;
-	for( DockJumps::const_iterator it = movable_jumps().begin(); it != movable_jumps().end(); ++it ) {
+	for ( DockJumps::const_iterator it = movable_jumps().begin(); it != movable_jumps().end(); ++it ) {
 		core::Size const rb_jump = *it;
 		rigid::RigidBodyTransMoverOP translate_back( new rigid::RigidBodyTransMover( pose, rb_jump ) );
 		translate_back->step_size( trans_magnitude );
@@ -628,13 +628,13 @@ void DockingHighResLegacy::set_dock_ppk_protocol( core::pose::Pose & pose ) {
 	// set up protocol
 	docking_highres_protocol_mover_ = moves::SequenceMoverOP( new SequenceMover );
 	if ( sc_min() ) docking_highres_protocol_mover_->add_mover( scmin_mover );
-	for( utility::vector1< rigid::RigidBodyTransMoverOP >::iterator it = trans_away_vec.begin(); it != trans_away_vec.end(); ++it ) {
+	for ( utility::vector1< rigid::RigidBodyTransMoverOP >::iterator it = trans_away_vec.begin(); it != trans_away_vec.end(); ++it ) {
 		docking_highres_protocol_mover_->add_mover( *it );
 	}
 	docking_highres_protocol_mover_->add_mover( prepack_full_repack );
 	if ( rt_min() ) docking_highres_protocol_mover_->add_mover( rtmin_mover );
 	if ( sc_min() ) docking_highres_protocol_mover_->add_mover( scmin_mover );
-	for( utility::vector1< rigid::RigidBodyTransMoverOP >::iterator it = trans_back_vec.begin(); it != trans_back_vec.end(); ++it ) {
+	for ( utility::vector1< rigid::RigidBodyTransMoverOP >::iterator it = trans_back_vec.begin(); it != trans_back_vec.end(); ++it ) {
 		docking_highres_protocol_mover_->add_mover( *it );
 	}
 }
@@ -652,38 +652,37 @@ void DockingHighResLegacy::setup_packing( core::pose::Pose & pose ) {
 		local_tf = TaskFactoryOP( new TaskFactory( *init_task_factory_ ) );
 	}
 
-	if( design_ ) {
+	if ( design_ ) {
 		TR << "Designing during docking" << std::endl;
 		DockJumps repack_chains;
-		for( int i = 1; i <= int(pose.num_jump()); ++i ) {
-			if( find(movable_jumps().begin(), movable_jumps().end(), i ) == movable_jumps().end() ) { // jump is not movable
+		for ( int i = 1; i <= int(pose.num_jump()); ++i ) {
+			if ( find(movable_jumps().begin(), movable_jumps().end(), i ) == movable_jumps().end() ) { // jump is not movable
 				core::Size const cutpoint = pose.fold_tree().cutpoint_by_jump( i );
 				core::Size const chain = pose.residue( cutpoint ).chain();
 				repack_chains.push_back( chain );
 			}
 		}
-		if( repack_chains.size() > 0 ) {
-			for( DockJumps::const_iterator it = repack_chains.begin(); it != repack_chains.end(); ++it ) {
+		if ( repack_chains.size() > 0 ) {
+			for ( DockJumps::const_iterator it = repack_chains.begin(); it != repack_chains.end(); ++it ) {
 				TR << "Not designing chain " << *it << std::endl;
 				local_tf->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictChainToRepackingOperation( *it ) ) ); //
 			}
 		}
-	}
-	else { // default case -- restrict everything to repacking.
+	} else { // default case -- restrict everything to repacking.
 		local_tf->push_back( TaskOperationCOP( new RestrictToRepacking ) );
 	}
-//	tf_->push_back( new OperateOnCertainResidues( new PreventRepackingRLT, new ResidueLacksProperty("PROTEIN") ) );
+	// tf_->push_back( new OperateOnCertainResidues( new PreventRepackingRLT, new ResidueLacksProperty("PROTEIN") ) );
 	local_tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
 	local_tf->push_back( TaskOperationCOP( new IncludeCurrent ) );
 	local_tf->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
-	if( option[OptionKeys::packing::resfile].user() ) local_tf->push_back( TaskOperationCOP( new ReadResfile ) );
+	if ( option[OptionKeys::packing::resfile].user() ) local_tf->push_back( TaskOperationCOP( new ReadResfile ) );
 
 	// DockingNoRepack only works over the first rb_jump in movable_jumps
 	// In a 2-body case this separates 1 & 2 based on the only cutpoint
 	// In a multibody case, this separates 1 & 2 based on the first cutpoint
 	using namespace protocols::toolbox::task_operations;
-	if (option[ OptionKeys::docking::norepack1 ].user()) local_tf->push_back( TaskOperationCOP( new DockingNoRepack1( movable_jumps()[1] ) ) );
-	if (option[ OptionKeys::docking::norepack2 ].user()) local_tf->push_back( TaskOperationCOP( new DockingNoRepack2( movable_jumps()[1] ) ) );
+	if ( option[ OptionKeys::docking::norepack1 ].user() ) local_tf->push_back( TaskOperationCOP( new DockingNoRepack1( movable_jumps()[1] ) ) );
+	if ( option[ OptionKeys::docking::norepack2 ].user() ) local_tf->push_back( TaskOperationCOP( new DockingNoRepack2( movable_jumps()[1] ) ) );
 
 	// incorporating Ian's UnboundRotamer operation.
 	// note that nothing happens if unboundrot option is inactive!
@@ -695,8 +694,8 @@ void DockingHighResLegacy::setup_packing( core::pose::Pose & pose ) {
 
 	// note that RestrictToInterfaceOperation is added during set_dock_mcm_protocol
 
-    set_task_factory( local_tf );
-    //DockingHighRes::set_task_factory( local_tf );
+	set_task_factory( local_tf );
+	//DockingHighRes::set_task_factory( local_tf );
 }
 
 std::string

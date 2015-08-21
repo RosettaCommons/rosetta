@@ -67,8 +67,8 @@ static thread_local basic::Tracer TR( "protocols.simple_moves.CyclizationMover" 
 
 /// @brief Default constructor
 CyclizationMover::CyclizationMover( core::Size chain_to_cyclize, bool add_constraints = true, bool minimize = true, core::Size minimization_rebuild_rounds = 3 ) :
-  protocols::moves::Mover("CyclizationMover"),
-  chain_to_cyclize_( chain_to_cyclize ),
+	protocols::moves::Mover("CyclizationMover"),
+	chain_to_cyclize_( chain_to_cyclize ),
 	nterm_rsd_num_( 0 ),
 	cterm_rsd_num_( 0 ),
 	add_constraints_( add_constraints ),
@@ -80,15 +80,15 @@ CyclizationMover::CyclizationMover( core::Size chain_to_cyclize, bool add_constr
 {}
 
 CyclizationMover::CyclizationMover( core::Size chain_to_cyclize, bool add_constraints, bool minimize, core::Size minimization_rebuild_rounds, core::scoring::ScoreFunctionOP score_fxn, core::kinematics::MoveMapOP move_map ) :
-chain_to_cyclize_( chain_to_cyclize ),
+	chain_to_cyclize_( chain_to_cyclize ),
 	nterm_rsd_num_( 0 ),
 	cterm_rsd_num_( 0 ),
 	add_constraints_( add_constraints ),
 	minimize_( minimize ),
 	minimization_rebuild_rounds_( minimization_rebuild_rounds ),
 	score_fxn_( score_fxn ),
-  move_map_( move_map ),
-  mm_torsion_library_( core::scoring::ScoringManager::get_instance()->get_MMTorsionLibrary() )
+	move_map_( move_map ),
+	mm_torsion_library_( core::scoring::ScoringManager::get_instance()->get_MMTorsionLibrary() )
 {}
 
 /// @brief Sets up inter residue cyclic connections and potentially adds constraints, and minimizes the pose
@@ -108,7 +108,7 @@ CyclizationMover::apply( core::pose::Pose & pose )
 	setup_connections( pose );
 
 	// add constraints to maintain the cyclization to the pose
-	if( add_constraints_ ) {
+	if ( add_constraints_ ) {
 		setup_constraints ( pose );
 	}
 
@@ -130,7 +130,7 @@ CyclizationMover::setup_connections( core::pose::Pose & pose )
 	using namespace core;
 	using namespace chemical;
 
-  TR << "Setting up residue connections..." << std::endl;
+	TR << "Setting up residue connections..." << std::endl;
 
 	// make sure the seqence positions have been initialized to meaningful values
 	runtime_assert( nterm_rsd_num_ != 0 && cterm_rsd_num_ != 0 );
@@ -163,7 +163,7 @@ CyclizationMover::setup_connections( core::pose::Pose & pose )
 
 	// TODO: replace these calls with something more specfic
 	//pose.conformation().show_residue_connections();
-  //pose.fold_tree();
+	//pose.fold_tree();
 }
 
 /// @brief Creates constraints to maintain the proper conformation and adds it to the pose.
@@ -178,11 +178,11 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 	using namespace scoring::constraints;
 	using namespace scoring::func;
 
-  TR << "Setting up constraints to maintain cycle based on polymeric base types..." << std::endl;
+	TR << "Setting up constraints to maintain cycle based on polymeric base types..." << std::endl;
 
 	// get connect variants of ResidueTypes of N-terminus and C-terminus
-	ResidueType const & nterm_connect_type(	pose.residue( nterm_rsd_num_ ).type() );
-	ResidueType const & cterm_connect_type(	pose.residue( cterm_rsd_num_ ).type() );
+	ResidueType const & nterm_connect_type( pose.residue( nterm_rsd_num_ ).type() );
+	ResidueType const & cterm_connect_type( pose.residue( cterm_rsd_num_ ).type() );
 
 	// get base variants of ResidueTypes of N-terminus and C-terminus
 	ResidueTypeSetCOP rsd_type_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
@@ -190,7 +190,7 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 	std::string nterm_base_type_name( nterm_connect_type.name3() );
 	std::string cterm_base_type_name( cterm_connect_type.name3() );
 	nterm_base_type_name.erase( std::remove( nterm_base_type_name.begin(), nterm_base_type_name.end(), ' ' ), nterm_base_type_name.end() );
-  cterm_base_type_name.erase( std::remove( cterm_base_type_name.begin(), cterm_base_type_name.end(), ' ' ), cterm_base_type_name.end() );
+	cterm_base_type_name.erase( std::remove( cterm_base_type_name.begin(), cterm_base_type_name.end(), ' ' ), cterm_base_type_name.end() );
 
 	ResidueType const & nterm_base_type( rsd_type_set->name_map( nterm_base_type_name ) );
 	ResidueType const & cterm_base_type( rsd_type_set->name_map( cterm_base_type_name ) );
@@ -204,16 +204,16 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 	AtomICoor cterm_base_uc_icoor( cterm_base_type.upper_connect().icoor() );
 
 	TR << "DEBUG NTERM LOWER ICOOR:\t" << nterm_base_type.lower_connect_id() << "\t"
-	<< nterm_base_lc_icoor.d()     << "\t" << nterm_base_lc_icoor.stub_atom1().atomno()  << "\t"
-	<< nterm_base_lc_icoor.theta() << "\t" << nterm_base_lc_icoor.stub_atom2().atomno()  << "\t"
-	<< nterm_base_lc_icoor.phi()   << "\t" << nterm_base_lc_icoor.stub_atom3().atomno()  << "\t"
-	<< std::endl;
+		<< nterm_base_lc_icoor.d()     << "\t" << nterm_base_lc_icoor.stub_atom1().atomno()  << "\t"
+		<< nterm_base_lc_icoor.theta() << "\t" << nterm_base_lc_icoor.stub_atom2().atomno()  << "\t"
+		<< nterm_base_lc_icoor.phi()   << "\t" << nterm_base_lc_icoor.stub_atom3().atomno()  << "\t"
+		<< std::endl;
 
-	 TR << "DEBUG CTERM UPPER ICOOR:\t" << cterm_base_type.upper_connect_id() << "\t"
-	 << cterm_base_uc_icoor.d()     << "\t" << cterm_base_uc_icoor.stub_atom1().atomno()  << "\t"
-	 << cterm_base_uc_icoor.theta() << "\t" << cterm_base_uc_icoor.stub_atom2().atomno()  << "\t"
-	 << cterm_base_uc_icoor.phi()   << "\t" << cterm_base_uc_icoor.stub_atom3().atomno()  << "\t"
-	 << std::endl;
+	TR << "DEBUG CTERM UPPER ICOOR:\t" << cterm_base_type.upper_connect_id() << "\t"
+		<< cterm_base_uc_icoor.d()     << "\t" << cterm_base_uc_icoor.stub_atom1().atomno()  << "\t"
+		<< cterm_base_uc_icoor.theta() << "\t" << cterm_base_uc_icoor.stub_atom2().atomno()  << "\t"
+		<< cterm_base_uc_icoor.phi()   << "\t" << cterm_base_uc_icoor.stub_atom3().atomno()  << "\t"
+		<< std::endl;
 
 	// create AtomIDs for the two central atoms and the atoms one bond away from them
 	id::AtomID nterm_n(  nterm_base_lc_icoor.stub_atom1().atomno(), nterm_rsd_num_ );
@@ -242,20 +242,20 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 	TR << "Adding AngleConstraint of radian: " << a2_cst_radian << std::endl;
 	ConstraintOP a2( new AngleConstraint( nterm_n, cterm_c, cterm_ca, core::scoring::func::FuncOP( new CircularHarmonicFunc( a2_cst_radian, 0.1 ) ) ) );
 	pose.add_constraint( a2 );
-	
+
 	TR << "Nterm atom N with Cterm atom C and O makes an angle of ~123.4 degrees" << std::endl;
 	Real a3_cst_radian( numeric::constants::r::pi *123.4/180.0 );
 	TR << "Adding AngleConstraint of radian: " << a3_cst_radian << std::endl;
 	ConstraintOP a3( new AngleConstraint( nterm_n, cterm_c, cterm_o, core::scoring::func::FuncOP( new CircularHarmonicFunc( a3_cst_radian, 0.05 ) ) ) );
 	pose.add_constraint( a3 );
-	
+
 	// create improper torsion constraint for CO planarity
 	TR << "Nterm atom N with Cterm atom C and O and CA makes an improper torsion of ~180 degrees" << std::endl;
 	Real d4_cst_radian( numeric::constants::r::pi );
 	TR << "Adding AngleConstraint of radian: " << d4_cst_radian << std::endl;
 	ConstraintOP d4( new DihedralConstraint( nterm_n, cterm_ca, cterm_c, cterm_o, core::scoring::func::FuncOP( new CircularHarmonicFunc( d4_cst_radian, 0.05 ) ) ) );
 	pose.add_constraint( d4 );
-	
+
 
 	// create dihedral constraints based on MMTorsion term
 
@@ -278,7 +278,7 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 	chemical::ResidueType const & rsd1_type = pose.residue( nterm_rsd_num_ ).type();
 	chemical::ResidueType const & rsd2_type = pose.residue( cterm_rsd_num_ ).type();
 
-	TR << "residue_pair_energy: processing residues "	<< rsd1.seqpos() << "." << rsd1_type.name() << "-" << rsd2.seqpos() << "." << rsd2_type.name() << std::endl;
+	TR << "residue_pair_energy: processing residues " << rsd1.seqpos() << "." << rsd1_type.name() << "-" << rsd2.seqpos() << "." << rsd2_type.name() << std::endl;
 
 	utility::vector1< Size > const & r1_resconn_ids( rsd1.connections_to_residue( rsd2 ) );
 
@@ -322,16 +322,16 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 					Size const mmat4 = rsd2_type.atom( kk_term_atomno ).mm_atom_type_index();
 
 					//Real const angle = numeric::dihedral_radians(
-					//	rsd1.xyz( jj_term_atomno ),
-					//	rsd1.xyz( resconn_atomno1 ),
-					//	rsd2.xyz( resconn_atomno2 ),
-					//	rsd2.xyz( kk_term_atomno ) );
+					// rsd1.xyz( jj_term_atomno ),
+					// rsd1.xyz( resconn_atomno1 ),
+					// rsd2.xyz( resconn_atomno2 ),
+					// rsd2.xyz( kk_term_atomno ) );
 
 					TR << "Section 1:"
-					<< "r1 " << jj_term_atomno  << " " << rsd1.atom_name( jj_term_atomno )  << "(" << rsd1_type.atom( jj_term_atomno ).mm_name()  << ") - "
-					<< "r1 " << resconn_atomno1 << " " << rsd1.atom_name( resconn_atomno1 ) << "(" << rsd1_type.atom( resconn_atomno1 ).mm_name() << ") - "
-					<< "r2 " << resconn_atomno2 << " " << rsd2.atom_name( resconn_atomno2 ) << "(" << rsd2_type.atom( resconn_atomno2 ).mm_name() << ") - "
-					<< "r2 " << kk_term_atomno  << " " << rsd2.atom_name( kk_term_atomno )  << "(" << rsd2_type.atom( kk_term_atomno ).mm_name()  << ")" << std::endl;
+						<< "r1 " << jj_term_atomno  << " " << rsd1.atom_name( jj_term_atomno )  << "(" << rsd1_type.atom( jj_term_atomno ).mm_name()  << ") - "
+						<< "r1 " << resconn_atomno1 << " " << rsd1.atom_name( resconn_atomno1 ) << "(" << rsd1_type.atom( resconn_atomno1 ).mm_name() << ") - "
+						<< "r2 " << resconn_atomno2 << " " << rsd2.atom_name( resconn_atomno2 ) << "(" << rsd2_type.atom( resconn_atomno2 ).mm_name() << ") - "
+						<< "r2 " << kk_term_atomno  << " " << rsd2.atom_name( kk_term_atomno )  << "(" << rsd2_type.atom( kk_term_atomno ).mm_name()  << ")" << std::endl;
 
 					// get mm params and add constraints for each set of params
 					scoring::mm::mm_torsion_library_citer_pair pair = mm_torsion_library_.lookup( mmat1, mmat2, mmat3, mmat4 );
@@ -370,16 +370,16 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 				Size const mmat1 = rsd1_type.atom( jj_atom1 ).mm_atom_type_index();
 
 				//Real const angle = numeric::dihedral_radians(
-				//	rsd1.xyz( jj_atom1 ),
-				//	rsd1.xyz( jj_atom2 ),
-				//	rsd1.xyz( resconn_atomno1 ),
-				//	rsd2.xyz( resconn_atomno2 ) );
+				// rsd1.xyz( jj_atom1 ),
+				// rsd1.xyz( jj_atom2 ),
+				// rsd1.xyz( resconn_atomno1 ),
+				// rsd2.xyz( resconn_atomno2 ) );
 
 				TR << "Section 2: "
-				<< "r1 " << jj_atom1        << " " << rsd1.atom_name( jj_atom1 )        << "(" << rsd1_type.atom( jj_atom1 ).mm_name()  << ") - "
-				<< "r1 " << jj_atom2        << " " << rsd1.atom_name( jj_atom2 )        << "(" << rsd1_type.atom( jj_atom2 ).mm_name()  << ") - "
-				<< "r1 " << resconn_atomno1 << " " << rsd1.atom_name( resconn_atomno1 ) << "(" << rsd1_type.atom( resconn_atomno1 ).mm_name() << ") - "
-				<< "r2 " << resconn_atomno2 << " " << rsd2.atom_name( resconn_atomno2 ) << "(" << rsd2_type.atom( resconn_atomno2 ).mm_name() << ")" << std::endl;
+					<< "r1 " << jj_atom1        << " " << rsd1.atom_name( jj_atom1 )        << "(" << rsd1_type.atom( jj_atom1 ).mm_name()  << ") - "
+					<< "r1 " << jj_atom2        << " " << rsd1.atom_name( jj_atom2 )        << "(" << rsd1_type.atom( jj_atom2 ).mm_name()  << ") - "
+					<< "r1 " << resconn_atomno1 << " " << rsd1.atom_name( resconn_atomno1 ) << "(" << rsd1_type.atom( resconn_atomno1 ).mm_name() << ") - "
+					<< "r2 " << resconn_atomno2 << " " << rsd2.atom_name( resconn_atomno2 ) << "(" << rsd2_type.atom( resconn_atomno2 ).mm_name() << ")" << std::endl;
 
 				// get mm params and add constraints for each set of params
 				scoring::mm::mm_torsion_library_citer_pair pair = mm_torsion_library_.lookup( mmat1, mmat2, mmat3, mmat4 );
@@ -416,16 +416,16 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 				Size const mmat4 = rsd2_type.atom( jj_atom4 ).mm_atom_type_index();
 
 				//Real const angle = numeric::dihedral_radians(
-				//	rsd1.xyz( resconn_atomno1 ),
-				//	rsd2.xyz( resconn_atomno2 ),
-				//	rsd2.xyz( jj_atom3 ),
-				//	rsd2.xyz( jj_atom4 ) );
+				// rsd1.xyz( resconn_atomno1 ),
+				// rsd2.xyz( resconn_atomno2 ),
+				// rsd2.xyz( jj_atom3 ),
+				// rsd2.xyz( jj_atom4 ) );
 
 				TR << "Section 3: "
-				<< "r1 " << resconn_atomno1 << " " << rsd1.atom_name( resconn_atomno1 ) << "(" << rsd1_type.atom( resconn_atomno1 ).mm_name() << ") - "
-				<< "r2 " << resconn_atomno2 << " " << rsd2.atom_name( resconn_atomno2 ) << "(" << rsd2_type.atom( resconn_atomno2 ).mm_name() << ") - "
-				<< "r2 " << jj_atom3        << " " << rsd1.atom_name( jj_atom3 )        << "(" << rsd1_type.atom( jj_atom3 ).mm_name()  << ") - "
-				<< "r2 " << jj_atom4        << " " << rsd1.atom_name( jj_atom4 )        << "(" << rsd1_type.atom( jj_atom4 ).mm_name()  << ")" << std::endl;
+					<< "r1 " << resconn_atomno1 << " " << rsd1.atom_name( resconn_atomno1 ) << "(" << rsd1_type.atom( resconn_atomno1 ).mm_name() << ") - "
+					<< "r2 " << resconn_atomno2 << " " << rsd2.atom_name( resconn_atomno2 ) << "(" << rsd2_type.atom( resconn_atomno2 ).mm_name() << ") - "
+					<< "r2 " << jj_atom3        << " " << rsd1.atom_name( jj_atom3 )        << "(" << rsd1_type.atom( jj_atom3 ).mm_name()  << ") - "
+					<< "r2 " << jj_atom4        << " " << rsd1.atom_name( jj_atom4 )        << "(" << rsd1_type.atom( jj_atom4 ).mm_name()  << ")" << std::endl;
 
 				// get mm params and add constraints for each set of params
 				scoring::mm::mm_torsion_library_citer_pair pair = mm_torsion_library_.lookup( mmat1, mmat2, mmat3, mmat4 );
@@ -461,9 +461,9 @@ CyclizationMover::setup_scorefunction()
 	if ( score_fxn_ == 0 ) {
 		TR << "Creating score function and setting geometric constraint weights to 1" << std::endl;
 		score_fxn_ = get_score_function();
-		score_fxn_->set_weight(	atom_pair_constraint, 1 );
-		score_fxn_->set_weight(	angle_constraint, 1 );
-		score_fxn_->set_weight(	dihedral_constraint, 10 );
+		score_fxn_->set_weight( atom_pair_constraint, 1 );
+		score_fxn_->set_weight( angle_constraint, 1 );
+		score_fxn_->set_weight( dihedral_constraint, 10 );
 	} else if ( score_fxn_->get_weight( atom_pair_constraint ) == 0 ) {
 		TR << "WARNING: atom_pair_constraint weight set to zero. Cyclization constraints will not work properly." << std::endl;
 	} else if ( score_fxn_->get_weight( angle_constraint ) == 0 ) {

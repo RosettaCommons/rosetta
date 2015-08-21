@@ -78,14 +78,14 @@ Pairing::generate_reversed() const {
 }
 void read_pairing_list( std::string pairing_file, PairingsList& pairings)
 {
-  	utility::io::izstream pairing_stream( pairing_file );
-  if ( !pairing_stream ) {
-    tr.Fatal << "can't open pairings file!!!" << pairing_file << std::endl;
-    pairing_stream.close();
-    utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
-  }
+	utility::io::izstream pairing_stream( pairing_file );
+	if ( !pairing_stream ) {
+		tr.Fatal << "can't open pairings file!!!" << pairing_file << std::endl;
+		pairing_stream.close();
+		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
+	}
 	read_pairing_list( pairing_stream, pairings );
-  pairing_stream.close();
+	pairing_stream.close();
 }
 
 void read_pairing_list( std::istream& pairing_stream, PairingsList& pairings) {
@@ -103,7 +103,7 @@ void read_pairing_list( std::istream& pairing_stream, PairingsList& pairings) {
 
 		if ( o == "A" || o == "1" ) {
 			c = 1;
-		} else if ( o == "P" || o == "2") {
+		} else if ( o == "P" || o == "2" ) {
 			c = 2;
 		} else if ( o == "X" ) {
 			c = 0;
@@ -138,14 +138,14 @@ void read_pairing_list( std::istream& pairing_stream, PairingsList& pairings) {
 
 std::ostream& operator<< ( std::ostream& out, Pairing const& p) {
 	out << format::RJ(5, p.Pos1() ) << format::RJ(5, p.Pos2() ) << " "
-			<< ( p.Orientation() ? ( p.is_parallel() ? "P" : "A") : "X" ) << " "
-			<< ( p.Pleating() ? ( p.is_inwards() ? "I" : "O" ) : "X" );
+		<< ( p.Orientation() ? ( p.is_parallel() ? "P" : "A") : "X" ) << " "
+		<< ( p.Pleating() ? ( p.is_inwards() ? "I" : "O" ) : "X" );
 	return out;
 }
 
 std::ostream& operator<< ( std::ostream& out, PairingsList const& p) {
-	for (PairingsList::const_iterator it= p.begin(),
-				 eit = p.end(); it!=eit; ++it ) {
+	for ( PairingsList::const_iterator it= p.begin(),
+			eit = p.end(); it!=eit; ++it ) {
 		out << (*it) << "\n";
 	}
 	return out;
@@ -153,7 +153,7 @@ std::ostream& operator<< ( std::ostream& out, PairingsList const& p) {
 
 bool has_orientation_and_pleating( PairingsList const& pairings ) {
 	for ( PairingsList::const_iterator it = pairings.begin(), eit = pairings.end();
-				it != eit; ++it ) {
+			it != eit; ++it ) {
 		if ( it->Orientation() == 0 || it->Pleating() == 0 ) return false;
 	}
 	return true;

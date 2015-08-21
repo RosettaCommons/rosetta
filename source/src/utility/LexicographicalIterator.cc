@@ -34,7 +34,7 @@ LexicographicalIterator::LexicographicalIterator(
 	curr_pos_( dim_sizes.size(), 1)
 {
 	assert( dim_sizes.size() != 0 );
-	for( Size ii = 1; ii <= dim_sizes.size(); ++ii ) {
+	for ( Size ii = 1; ii <= dim_sizes.size(); ++ii ) {
 		assert ( dim_sizes[ ii ] > 0 );
 	}
 }
@@ -45,7 +45,7 @@ void LexicographicalIterator::set_dimension_sizes(
 {
 	dim_sizes_ = dim_sizes;
 	curr_pos_.resize( dim_sizes.size() );
-	for( Size ii = 1; ii <= dim_sizes.size(); ++ii ) {
+	for ( Size ii = 1; ii <= dim_sizes.size(); ++ii ) {
 		assert ( dim_sizes[ ii ] > 0 );
 	}
 	begin();
@@ -65,7 +65,7 @@ LexicographicalIterator::begin()
 bool LexicographicalIterator::at_end() const
 {
 	//for ( Size ii = 1; ii <= dim_sizes_.size(); ++ii ) {
-	//	if ( curr_pos_[ ii ] != dim_sizes_[ ii ] ) return false;
+	// if ( curr_pos_[ ii ] != dim_sizes_[ ii ] ) return false;
 	//}
 	//return true;
 	return curr_pos_[ 1 ] > dim_sizes_[ 1 ];

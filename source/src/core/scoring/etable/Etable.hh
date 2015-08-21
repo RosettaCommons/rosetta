@@ -448,13 +448,13 @@ public:
 	/// interactions with hydrogens (hydorgen/hydrogen and hydrogen heavyatom)
 	//void
 	//analytic_etable_evaluation_H(
-	//	conformation::Atom const & at1,
-	//	conformation::Atom const & at2,
-	//	EtableParamsOnePair const & p,
-	//	Real const dis2,
-	//	Real & lj_atrE,
-	//	Real & lj_repE,
-	//	Real & fa_solE
+	// conformation::Atom const & at1,
+	// conformation::Atom const & at2,
+	// EtableParamsOnePair const & p,
+	// Real const dis2,
+	// Real & lj_atrE,
+	// Real & lj_repE,
+	// Real & fa_solE
 	//) const;
 
 private:
@@ -847,9 +847,9 @@ Etable::analytic_etable_evaluation(
 	if ( dis2 > p.maxd2 ) return;
 
 	//if ( p.hydrogen_interaction ) {
-	//	analytic_etable_evaluation_H(
-	//		at1, at2, p, dis2, lj_atrE, lj_repE, fa_solE );
-	//	return;
+	// analytic_etable_evaluation_H(
+	//  at1, at2, p, dis2, lj_atrE, lj_repE, fa_solE );
+	// return;
 	//}
 
 	Real const dis = std::sqrt(dis2);
@@ -875,7 +875,7 @@ Etable::analytic_etable_evaluation(
 	if ( p.ljrep_from_negcrossing ) {
 		// only for the REPLS and HREPS atom types: start repelling when the lennard-jones term
 		// goes from being attractive to repulsive.
-		if (ljE < 0 ) atrE = ljE;
+		if ( ljE < 0 ) atrE = ljE;
 		else repE = ljE;
 	} else if ( dis < p.lj_minimum ) {
 		atrE = p.lj_val_at_minimum;
@@ -968,9 +968,9 @@ Etable::analytic_etable_derivatives(
 	if ( dis2 > p.maxd2 ) return;
 
 	//if ( p.hydrogen_interaction ) {
-	//	analytic_etable_evaluation_H(
-	//		at1, at2, p, dis2, lj_atrE, lj_repE, fa_solE );
-	//	return;
+	// analytic_etable_evaluation_H(
+	//  at1, at2, p, dis2, lj_atrE, lj_repE, fa_solE );
+	// return;
 	//}
 
 	Real const dis = std::sqrt(dis2);
@@ -1116,21 +1116,21 @@ Etable::analytic_lk_derivatives(
 
 //void
 //Etable::analytic_etable_evaluation_H(
-//	conformation::Atom const & at1,
-//	conformation::Atom const & at2,
-//	EtableParamsOnePair const & p,
-//	Real const dis2,
-//	Real & lj_atrE,
-//	Real & lj_repE,
-//	Real & fa_solE
+// conformation::Atom const & at1,
+// conformation::Atom const & at2,
+// EtableParamsOnePair const & p,
+// Real const dis2,
+// Real & lj_atrE,
+// Real & lj_repE,
+// Real & fa_solE
 //) const
 //{
 //debug_assert( dis2 <= p.maxd2 );
 //  if ( dis2  < p.ljrep_linear_ramp_d2_cutoff ) {
 //    //  ctsa - use linear ramp instead of lj when the dis/sigma
 //    //    ratio drops below theshold
-//		Real dis = std::sqrt( dis2 );
-//		lj_repE = analytic_ljrep_linearized( dis, p ) - p.lj_val_at_minimum;
+//  Real dis = std::sqrt( dis2 );
+//  lj_repE = analytic_ljrep_linearized( dis, p ) - p.lj_val_at_minimum;
 //  } else {
 //    lj_repE = analytic_lj_generic_form( 1/dis2, p ) - p.lj_val_at_minimum;
 //  }
@@ -1145,7 +1145,7 @@ Etable::analytic_ljrep_linearized(
 	EtableParamsOnePair const & p
 ) const
 {
-debug_assert( dis * dis < p.ljrep_linear_ramp_d2_cutoff );
+	debug_assert( dis * dis < p.ljrep_linear_ramp_d2_cutoff );
 	return  dis*p.lj_switch_slope + p.lj_switch_intercept;
 }
 
@@ -1160,8 +1160,8 @@ Etable::analytic_lj_generic_form(
 	EtableParamsOnePair const & p
 ) const
 {
-debug_assert( dis2 >= p.ljrep_linear_ramp_d2_cutoff );
-debug_assert( dis2 <= p.ljatr_cubic_poly_xhi * p.ljatr_cubic_poly_xhi );
+	debug_assert( dis2 >= p.ljrep_linear_ramp_d2_cutoff );
+	debug_assert( dis2 <= p.ljatr_cubic_poly_xhi * p.ljatr_cubic_poly_xhi );
 	Real const inv_dis6  = inv_dis2 * inv_dis2 * inv_dis2;
 	//Real const inv_dis12 = inv_dis6 * inv_dis6;
 
@@ -1199,8 +1199,8 @@ Etable::analytic_ljatr_cubic_poly_ramp_to_zero(
 	EtableParamsOnePair const & p
 ) const
 {
-debug_assert( dis >= p.ljatr_cubic_poly_xlo );
-debug_assert( dis <= p.ljatr_cubic_poly_xhi );
+	debug_assert( dis >= p.ljatr_cubic_poly_xlo );
+	debug_assert( dis <= p.ljatr_cubic_poly_xhi );
 	return eval_cubic_polynomial( dis, p.ljatr_cubic_poly_parameters );
 }
 
@@ -1215,8 +1215,8 @@ Etable::analytic_ljatr_cubic_poly_ramp_to_zero_deriv(
 	EtableParamsOnePair const & p
 ) const
 {
-debug_assert( dis >= p.ljatr_cubic_poly_xlo );
-debug_assert( dis <= p.ljatr_cubic_poly_xhi );
+	debug_assert( dis >= p.ljatr_cubic_poly_xlo );
+	debug_assert( dis <= p.ljatr_cubic_poly_xhi );
 	return cubic_polynomial_deriv( dis, p.ljatr_cubic_poly_parameters );
 }
 
@@ -1232,7 +1232,7 @@ Etable::analytic_lk_evaluation(
 	Real & fa_solE
 ) const
 {
-debug_assert( atype1 <= atype2 );
+	debug_assert( atype1 <= atype2 );
 
 	/// a) At distances below p.fasol_cubic_poly_close_start, the value of fasol is held constant.
 	/// b) Then there's a cubic_poly to smooth between this constant region and the exponential region.
@@ -1277,7 +1277,7 @@ Etable::analytic_lk_evaluation_individual(
 	Real & fa_solE2
 ) const
 {
-debug_assert( atype1 <= atype2 );
+	debug_assert( atype1 <= atype2 );
 
 	/// a) At distances below p.fasol_cubic_poly_close_start, the value of fasol is held constant.
 	/// b) Then there's a cubic_poly to smooth between this constant region and the exponential region.

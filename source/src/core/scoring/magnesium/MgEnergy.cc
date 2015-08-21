@@ -122,7 +122,7 @@ MgEnergyCreator::score_types_for_method() const {
 
 MgEnergy::MgEnergy() :
 	parent( methods::EnergyMethodCreatorOP( new MgEnergyCreator ) ),
-  // following are for mg_lig term.
+	// following are for mg_lig term.
 	mg_lig_knowledge_based_potential_( MgKnowledgeBasedPotentialOP( new MgKnowledgeBasedPotential ) ),
 	mg_lig_interaction_cutoff_( 4.0 ),
 	v_angle_width_( mg_lig_knowledge_based_potential_->v_angle_width() ),
@@ -140,7 +140,7 @@ MgEnergy::MgEnergy() :
 	inv_neg2_tms_pi_sqrt_pi( -0.089793561062583294 ),
 	mg_lk_coeff( inv_neg2_tms_pi_sqrt_pi * mg_lk_dgfree_ / mg_lk_lambda_ ),
 	compute_mg_sol_for_hydrogens_( option[ score::compute_mg_sol_for_hydrogens ]() ),
-  // fading solvation
+	// fading solvation
 	mg_sol_interaction_cutoff_( 6.0 ),
 	mg_sol_fade_zone_( 0.1 ), // turn off mg_sol smoothly between 5.9 and 6.0.
 	mg_sol_fade_func_( func::FuncOP( new func::FadeFunc( -10.0, mg_sol_interaction_cutoff_, mg_sol_fade_zone_, 1.0 ) ) )
@@ -185,18 +185,18 @@ MgEnergy::residue_pair_energy(
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 MgEnergy::residue_pair_energy_one_way(
-					   conformation::Residue const & rsd1, // The ligand residue
-					   conformation::Residue const & rsd2, // The Mg(2+)
-					   pose::Pose const & pose,
-					   EnergyMap & emap
-					   ) const{
+	conformation::Residue const & rsd1, // The ligand residue
+	conformation::Residue const & rsd2, // The Mg(2+)
+	pose::Pose const & pose,
+	EnergyMap & emap
+) const{
 
 	EnergyMap weights; // empty, would be used for derivs.
 	utility::vector1< DerivVectorPair > r1_atom_derivs, r2_atom_derivs; // empty, would be used for derivs.
 
-  // Loop over potential ligand positions.
+	// Loop over potential ligand positions.
 	// using same eval_mg_interaction() function as residue_pair_ext to avoid copying code.
-  for ( Size i = 1; i <= rsd1.natoms(); i++ ) {
+	for ( Size i = 1; i <= rsd1.natoms(); i++ ) {
 		eval_mg_interaction( rsd1, i, rsd2, pose, emap, weights, r1_atom_derivs, r2_atom_derivs );
 	}
 }
@@ -206,13 +206,13 @@ MgEnergy::residue_pair_energy_one_way(
 /////////////////////////////////
 void
 MgEnergy::residue_pair_energy_ext(
-											conformation::Residue const & ires,
-											conformation::Residue const & jres,
-											ResPairMinimizationData const & min_data,
-											pose::Pose const & pose,
-											ScoreFunction const &,
-											EnergyMap & emap
-											) const
+	conformation::Residue const & ires,
+	conformation::Residue const & jres,
+	ResPairMinimizationData const & min_data,
+	pose::Pose const & pose,
+	ScoreFunction const &,
+	EnergyMap & emap
+) const
 {
 	EnergyMap weights; // empty, would be used for derivs.
 	utility::vector1< DerivVectorPair > r1_atom_derivs, r2_atom_derivs; // empty, would be used for derivs.
@@ -222,11 +222,11 @@ MgEnergy::residue_pair_energy_ext(
 /////////////////////////////////
 void
 MgEnergy::eval_intrares_energy(
-															 conformation::Residue const & rsd,
-															 pose::Pose const &,
-															 ScoreFunction const &,
-															 EnergyMap & emap
-															 ) const {
+	conformation::Residue const & rsd,
+	pose::Pose const &,
+	ScoreFunction const &,
+	EnergyMap & emap
+) const {
 
 	if ( rsd.name3() == " MG" ) emap[ mg_ref  ] += mg_ref_score_;
 	if ( rsd.name3() == "HOH" ) emap[ hoh_ref ] += hoh_ref_score_;
@@ -236,15 +236,15 @@ MgEnergy::eval_intrares_energy(
 ////////////////////////////////////////////////////
 void
 MgEnergy::eval_residue_pair_derivatives(
- 	conformation::Residue const & ires,
- 	conformation::Residue const & jres,
- 	ResSingleMinimizationData const &,
- 	ResSingleMinimizationData const &,
- 	ResPairMinimizationData const & min_data,
- 	pose::Pose const & pose, // provides context
- 	EnergyMap const & weights,
- 	utility::vector1< DerivVectorPair > & r1_atom_derivs,
- 	utility::vector1< DerivVectorPair > & r2_atom_derivs) const
+	conformation::Residue const & ires,
+	conformation::Residue const & jres,
+	ResSingleMinimizationData const &,
+	ResSingleMinimizationData const &,
+	ResPairMinimizationData const & min_data,
+	pose::Pose const & pose, // provides context
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< DerivVectorPair > & r2_atom_derivs) const
 {
 	EnergyMap emap; // dummy -- will not be used.
 	eval_residue_pair( ires, jres, min_data, pose, emap, weights, r1_atom_derivs, r2_atom_derivs );
@@ -253,14 +253,14 @@ MgEnergy::eval_residue_pair_derivatives(
 ////////////////////////////////////////////////////
 void
 MgEnergy::eval_residue_pair(
- 	conformation::Residue const & ires,
- 	conformation::Residue const & jres,
- 	ResPairMinimizationData const & min_data,
- 	pose::Pose const & pose, // provides context
- 	EnergyMap & emap, // fill score values in here.
- 	EnergyMap const & weights, // for derivs.
- 	utility::vector1< DerivVectorPair > & r1_atom_derivs,
- 	utility::vector1< DerivVectorPair > & r2_atom_derivs) const
+	conformation::Residue const & ires,
+	conformation::Residue const & jres,
+	ResPairMinimizationData const & min_data,
+	pose::Pose const & pose, // provides context
+	EnergyMap & emap, // fill score values in here.
+	EnergyMap const & weights, // for derivs.
+	utility::vector1< DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< DerivVectorPair > & r2_atom_derivs) const
 {
 	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( mg_pair_nblist ) ) );
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
@@ -281,28 +281,28 @@ void
 MgEnergy::eval_mg_interaction(
 	conformation::Residue const & rsd1 /* other residue */,
 	Size const atomno1                 /* other atomno */,
- 	conformation::Residue const & rsd2 /* mg residue */,
- 	pose::Pose const &, // provides context
+	conformation::Residue const & rsd2 /* mg residue */,
+	pose::Pose const &, // provides context
 	EnergyMap & emap,
- 	EnergyMap const & weights,
- 	utility::vector1< DerivVectorPair > & r1_atom_derivs /* other residue */,
- 	utility::vector1< DerivVectorPair > & r2_atom_derivs /* mg residue */
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & r1_atom_derivs /* other residue */,
+	utility::vector1< DerivVectorPair > & r2_atom_derivs /* mg residue */
 ) const
 {
 
 	using namespace numeric::deriv;
 
-  // get magnesium position
+	// get magnesium position
 	Size const & i( atomno1 );
-  Size const j = 1;  //First atom of Mg2+ residue is assumed to be Mg2+ atom.
-  runtime_assert( rsd2.atom_name( j ) ==  "MG  " );
+	Size const j = 1;  //First atom of Mg2+ residue is assumed to be Mg2+ atom.
+	runtime_assert( rsd2.atom_name( j ) ==  "MG  " );
 
 	if ( rsd1.is_virtual( i ) ) return;
-  if ( rsd2.is_virtual( j ) ) return;
+	if ( rsd2.is_virtual( j ) ) return;
 	if ( !compute_mg_sol_for_hydrogens_ && i > rsd1.nheavyatoms() ) return;
 
 	Vector const & i_xyz( rsd1.xyz( i ) );
-  Vector const & j_xyz( rsd2.xyz( j ) );
+	Vector const & j_xyz( rsd2.xyz( j ) );
 
 	Distance d = ( i_xyz - j_xyz ).length();
 
@@ -524,14 +524,14 @@ MgEnergy::setup_for_minimizing_for_residue(
 // copied from GeometricSolEnergyEvaluator, which was itself copied from god knows where.
 void
 MgEnergy::setup_for_minimizing_for_residue_pair(
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		pose::Pose const &,
-		ScoreFunction const &,
-		kinematics::MinimizerMapBase const &,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData & pair_data
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	pose::Pose const &,
+	ScoreFunction const &,
+	kinematics::MinimizerMapBase const &,
+	ResSingleMinimizationData const &,
+	ResSingleMinimizationData const &,
+	ResPairMinimizationData & pair_data
 ) const
 {
 	using namespace etable::count_pair;

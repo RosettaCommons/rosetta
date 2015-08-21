@@ -48,10 +48,10 @@ write_schema_to_db(
 
 	vector1<string> features_reporter_names(
 		features_reporter_factory->get_all_features_names());
-	for(Size i=1; i <= features_reporter_names.size(); ++i){
+	for ( Size i=1; i <= features_reporter_names.size(); ++i ) {
 		FeaturesReporterOP features_reporter(
 			features_reporter_factory->get_features_reporter(
-				features_reporter_names[i]));
+			features_reporter_names[i]));
 
 		features_reporter->write_schema_to_db(db_session);
 	}
@@ -76,5 +76,5 @@ main( int argc, char* argv [] ) {
 		excn.show( std::cerr );
 		return -1;
 	}
-    return 0;
+	return 0;
 } // main

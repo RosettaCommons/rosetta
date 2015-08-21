@@ -47,7 +47,7 @@ class ScoreFunctionUtilityTest : public CxxTest::TestSuite {
 public:
 
 	void setUp() {
-	    core_init();
+		core_init();
 	}
 
 	void tearDown() {}
@@ -79,7 +79,7 @@ class ScoreFunctionTest : public CxxTest::TestSuite {
 public:
 
 	void setUp() {
-	    core_init();
+		core_init();
 	}
 
 	void tearDown() {}

@@ -24,8 +24,8 @@ static thread_local basic::Tracer TR("protocols.antibody.clusters.CDRClusterSet"
 namespace protocols {
 namespace antibody {
 namespace clusters {
-	using namespace protocols::antibody;
-	using namespace basic::datacache;
+using namespace protocols::antibody;
+using namespace basic::datacache;
 
 CDRClusterSet::CDRClusterSet(AntibodyInfo * ab_info){
 	ab_info_ = ab_info;
@@ -68,20 +68,18 @@ CDRClusterSet::set_cluster_data(CDRNameEnum cdr, CDRClusterCOP cluster) {
 
 CDRClusterEnum
 CDRClusterSet::get_cluster(CDRNameEnum cdr) const {
-	if (clusters_[cdr]){
+	if ( clusters_[cdr] ) {
 		return clusters_[cdr]->cluster();
-	}
-	else {
+	} else {
 		return NA;
 	}
 }
 
 bool
 CDRClusterSet::empty(CDRNameEnum cdr) const {
-	if (clusters_[cdr]){
+	if ( clusters_[cdr] ) {
 		return false;
-	}
-	else {
+	} else {
 		return true;
 	}
 }
@@ -89,9 +87,9 @@ CDRClusterSet::empty(CDRNameEnum cdr) const {
 bool
 CDRClusterSet::empty() const {
 
-	for (core::SSize i = 1; i <= 6; ++i){
+	for ( core::SSize i = 1; i <= 6; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
-		if (! empty(cdr)){
+		if ( ! empty(cdr) ) {
 			return false;
 		}
 	}
@@ -142,10 +140,9 @@ BasicCDRClusterSet::clone() const{
 
 void
 BasicCDRClusterSet::set_cluster( CDRNameEnum cdr, CDRClusterCOP cluster ){
-	if (cluster){
+	if ( cluster ) {
 		clusters_[ cdr ] = cluster->clone();
-	}
-	else {
+	} else {
 		clusters_[ cdr ] = NULL;
 	}
 }
@@ -155,7 +152,7 @@ BasicCDRClusterSet::set_clusters( utility::vector1<CDRClusterOP> const clusters 
 	assert( clusters.size() == 6 );
 	clusters_.clear();
 	clusters_.resize(6, NULL);
-	for (core::Size i = 1; i <= clusters.size(); ++i){
+	for ( core::Size i = 1; i <= clusters.size(); ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		set_cluster(cdr, clusters[ i ]);
 	}
@@ -167,7 +164,7 @@ BasicCDRClusterSet::get_cluster(CDRNameEnum cdr) const {
 }
 
 //BasicCDRClusterSet::get_clusters() const {
-//	return clusters_;
+// return clusters_;
 //}
 
 

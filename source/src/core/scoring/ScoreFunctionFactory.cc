@@ -63,7 +63,7 @@ ScoreFunctionFactory::create_score_function( std::string weights_tag, utility::v
 		scorefxn = ScoreFunctionOP( new MinScoreScoreFunction( basic::options::option[ basic::options::OptionKeys::score::min_score_score ]() ) );
 	} else if ( basic::options::option[ basic::options::OptionKeys::score::docking_interface_score ]() ) {
 		scorefxn = ScoreFunctionOP( new DockingScoreFunction );
-	} else if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )	{
+	} else if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() ) {
 		scorefxn = ScoreFunctionOP( new SymmetricScoreFunction );
 	} else {
 		scorefxn = ScoreFunctionOP( new ScoreFunction );
@@ -92,7 +92,7 @@ ScoreFunctionFactory::create_score_function( std::string weights_tag, utility::v
 	for ( utility::vector1< std::string >::const_iterator it = patch_tags.begin(); it != patch_tags.end(); ++it ) {
 		std::string const& patch_tag( *it );
 		if ( patch_tag.size() && patch_tag != "NOPATCH" ) {
-			//			tr.Debug << "SCOREFUNCTION: apply patch "  << patch_tag << std::endl;
+			//   tr.Debug << "SCOREFUNCTION: apply patch "  << patch_tag << std::endl;
 			scorefxn->apply_patch_from_file( patch_tag );
 		}
 	}
@@ -143,41 +143,41 @@ void ScoreFunctionFactory::apply_user_defined_reweighting_( core::scoring::Score
 		scorefxn->set_weight( rg, scorefxn->get_weight( rg ) * option[ abinitio::rg_reweight ]() );
 	}
 	// offset reference energies using user options, for example: -score:ref_offsets TRP 0.9 HIS 0.3
-	if ( option[ score::ref_offsets ].user() || option[ score::ref_offset ].user()) {
+	if ( option[ score::ref_offsets ].user() || option[ score::ref_offset ].user() ) {
 
 		// get the ref weights from the EnergyMethodOptions object
 		methods::EnergyMethodOptions energy_method_options(scorefxn->energy_method_options());
-		if (!energy_method_options.has_method_weights(ref)) {
-			//	utility_exit_with_message("option -score:ref_offsets requires preexisting reference energies");
+		if ( !energy_method_options.has_method_weights(ref) ) {
+			// utility_exit_with_message("option -score:ref_offsets requires preexisting reference energies");
 		} else {
 			utility::vector1<core::Real> ref_weights(energy_method_options.method_weights(ref));
 
 			if ( option[ score::ref_offset ].user() ) {
 				Real const offset = option[ score::ref_offset ]();
-				for (Size n = 1; n <= ref_weights.size(); n++ )	{
+				for ( Size n = 1; n <= ref_weights.size(); n++ ) {
 					ref_weights[ n ] += offset;
 				}
 			} else {
 				runtime_assert(  option[ score::ref_offsets ].user() );
 				// get the offsets vector and make sure it contains pairs
 				utility::vector1<std::string> const & ref_offsets( option[ score::ref_offsets ]() );
-				if (ref_offsets.size() % 2 != 0) {
+				if ( ref_offsets.size() % 2 != 0 ) {
 					utility_exit_with_message("option -score:ref_offsets requires pairs of 3 character residue types and offsets");
 				}
 
 				// iterate over all pairs
-				for (utility::vector1<std::string>::const_iterator iter(ref_offsets.begin()), iter_end(ref_offsets.end());
-						 iter != iter_end; ++iter) {
+				for ( utility::vector1<std::string>::const_iterator iter(ref_offsets.begin()), iter_end(ref_offsets.end());
+						iter != iter_end; ++iter ) {
 					// get the aa type from the pair
 					std::istringstream aa_iss(*iter);
 					core::chemical::AA aa;
-					if (!(aa_iss >> aa)) {
+					if ( !(aa_iss >> aa) ) {
 						utility_exit_with_message(aa_iss.str()+" is not a valid 3 character residue type for -score:ref_offsets");
 					}
 					// get the offset from the pair
 					std::istringstream offset_iss(*(++iter));
 					core::Real offset;
-					if (!(offset_iss >> offset)) {
+					if ( !(offset_iss >> offset) ) {
 						utility_exit_with_message(offset_iss.str()+" is not a valid offset for -score:ref_offsets");
 					}
 					// offset the weight
@@ -223,12 +223,12 @@ core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom /* def
 
 	//if( option[ score::empty ]() || option[ abinitio::membrane ]() /*fullatom not implemented for membrane yet */) return scorefxn;
 
-	if( option[ score::empty ]() ) return core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
+	if ( option[ score::empty ]() ) return core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
 
 	std::string weight_set = option[ score::weights ];
 	utility::vector1< std::string > patch_tags = option[ score::patch ]();
 
-	if ( !option[ score::weights ].user() && !is_fullatom ){
+	if ( !option[ score::weights ].user() && !is_fullatom ) {
 
 		// Defalt score of centroid is cen_wts when is_fullatom is false and user has not specified a score weights
 		weight_set = CENTROID_WTS;
@@ -248,16 +248,16 @@ core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom /* def
 		//tr << "option[ score::patch ].user() ? " << option[ score::patch ].user() << std::endl;
 
 		if ( ( weight_set == "pre_talaris_2013_standard.wts" && !option[ score::weights ].user() ) &&
-				 ( !option[ score::patch ].user() ) ) {
+				( !option[ score::patch ].user() ) ) {
 			patch_tags.push_back( "score12" );
 			//tr << "pushing back score12 patch" << std::endl;
-			if( basic::options::option[basic::options::OptionKeys::corrections::correct]) {
+			if ( basic::options::option[basic::options::OptionKeys::corrections::correct] ) {
 				//tr << "setting weight set to score12_w_corrections" << std::endl;
 				weight_set = "score12_w_corrections";
 				patch_tags.clear();
-			} else if ( basic::options::option[ basic::options::OptionKeys::corrections::hbond_sp2_correction ] ){
+			} else if ( basic::options::option[ basic::options::OptionKeys::corrections::hbond_sp2_correction ] ) {
 				patch_tags.clear();
-				if( basic::options::option[ basic::options::OptionKeys::corrections::score::dun10 ] ){
+				if ( basic::options::option[ basic::options::OptionKeys::corrections::score::dun10 ] ) {
 					weight_set = "sp2_correction";
 				} else {
 					weight_set = "sp2_correction_dun02";
@@ -294,14 +294,14 @@ core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom /* def
 	// for metalloproteins), and this is the best place to ensure that it happens consistently.
 
 	//Turn on constraints if the user has used the auto_setup_metals flag.  Constraints are added automatically on PDB import.
-	if( option[in::auto_setup_metals].user() ) {
-		if( (option[in::metals_distance_constraint_multiplier]() > 1.0e-10) && (scorefxn->get_weight(atom_pair_constraint) < 1.0e-10) ) {
+	if ( option[in::auto_setup_metals].user() ) {
+		if ( (option[in::metals_distance_constraint_multiplier]() > 1.0e-10) && (scorefxn->get_weight(atom_pair_constraint) < 1.0e-10) ) {
 			T("core.scoring.ScoreFunctionFactory") << "The -auto_setup_metals flag was used with no atom_pair_constraint weight set in the weights file.  Setting to 1.0." << std::endl ;
 			scorefxn->set_weight(atom_pair_constraint, 1.0); // Turn on the atom_pair_constraint weight if and only if it isn't already turned on.
 			// If it is already turned on, then the automatic constraint adder will adjust constraint strengths appropriately, which means that we
 			// don't need to set this to 1.0 -- any nonzero value is fine.
 		}
-		if( (option[in::metals_angle_constraint_multiplier]() > 1.0e-10) && (scorefxn->get_weight(angle_constraint) < 1.0e-10) ) {
+		if ( (option[in::metals_angle_constraint_multiplier]() > 1.0e-10) && (scorefxn->get_weight(angle_constraint) < 1.0e-10) ) {
 			T("core.scoring.ScoreFunctionFactory") << "The -auto_setup_metals flag was used with no angle_constraint weight set in the weights file.  Setting to 1.0." << std::endl ;
 			scorefxn->set_weight(angle_constraint, 1.0); // Turn on the angle_constraint weight if and only if it isn't already turned on.
 			// If it is already turned on, then the automatic constraint adder will adjust constraint strengths appropriately, which means that we
@@ -313,7 +313,7 @@ core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom /* def
 	if ( option[ in::include_sugars ].user() ) {
 		if ( tr.Info.visible() ) {
 			tr.Info << "The -include_sugars flag was used with no sugar_bb weight set in the weights file.  " <<
-					"Setting sugar_bb weight to 1.0 by default." << std::endl;
+				"Setting sugar_bb weight to 1.0 by default." << std::endl;
 		}
 		scorefxn->set_weight( sugar_bb, 1.0);
 	}
@@ -339,26 +339,26 @@ get_score_functionName(
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 
-	if( option[ score::empty ]() ) return "empty";
+	if ( option[ score::empty ]() ) return "empty";
 
 	std::string weight_set = option[ score::weights ];
 	utility::vector1< std::string > patch_tags = option[ score::patch ]();
 
 
-	if ( !option[ score::weights ].user() && !is_fullatom ){
+	if ( !option[ score::weights ].user() && !is_fullatom ) {
 
 		// Defalt score of centroid is cen_wts when is_fullatom is false and user has not specified a score weights
 		weight_set = CENTROID_WTS;
 
-	}else{
+	} else {
 
 		/// Default score is score12 if the user has not specified a score weights file or a patch file
 		/// on the command line.  If the user has specified that they would like the standard weight set,
 		/// and has not also asked for the score12 patch, then do not apply the score12 patch to it.
 		if ( ( weight_set == "pre_talaris_2013_standard" && !option[ score::weights ].user() ) &&
-				 ( !option[ score::patch ].user() ) ) {
+				( !option[ score::patch ].user() ) ) {
 			patch_tags.push_back( "score12" );
-			if( option[ corrections::correct ]) {
+			if ( option[ corrections::correct ] ) {
 				weight_set = "score12_w_corrections";
 				patch_tags.clear();
 			} else if ( option[ corrections::score::score12prime ] ) {
@@ -369,8 +369,8 @@ get_score_functionName(
 	}
 
 	if ( patch_tags.size() != 0 &&
-		weight_set == PRE_TALARIS_2013_STANDARD_WTS &&
-		option[ corrections::score::score12prime ] ) {
+			weight_set == PRE_TALARIS_2013_STANDARD_WTS &&
+			option[ corrections::score::score12prime ] ) {
 
 		bool sc12patch = false;
 		for ( Size ii = 1; ii <= patch_tags.size(); ++ii ) {
@@ -385,8 +385,8 @@ get_score_functionName(
 	}
 
 	std::stringstream patch_string;
-	for(Size ii=1; ii <= patch_tags.size(); ++ii){
-		if( patch_tags[ii] == "NOPATCH" ) continue;
+	for ( Size ii=1; ii <= patch_tags.size(); ++ii ) {
+		if ( patch_tags[ii] == "NOPATCH" ) continue;
 		patch_string << "_" << patch_tags[ii];
 	}
 

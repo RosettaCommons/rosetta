@@ -41,7 +41,7 @@ using ObjexxFCL::format::F;
 using ObjexxFCL::format::I;
 
 utility::vector1<FragmentCandidateOP> read_fragment_candidates(std::string,
-		VallProviderOP, Size max_nfrags_per_pos = 900000000);
+	VallProviderOP, Size max_nfrags_per_pos = 900000000);
 
 /// @brief Vector candidate says which X-mer from vall fits to a query sequence
 /// @details Scores for a given fragment are stored separately in a FragmentScoreMap object
@@ -51,7 +51,7 @@ class FragmentCandidate: public utility::pointer::ReferenceCount {
 public:
 
 	FragmentCandidate(Size queryPosition, Size inChunkPosition,
-			VallChunkOP chunk, Size fragmentLength) :
+		VallChunkOP chunk, Size fragmentLength) :
 		chunk_(chunk) {
 
 		assert(queryPosition>0);
@@ -137,15 +137,16 @@ public:
 	inline FragDataOP get_frag_data() {
 
 		AnnotatedFragDataOP fragdata( new AnnotatedFragData(get_pdb_id(),
-				queryResidueIndex_) );
+			queryResidueIndex_) );
 
-		for (Size i = 1; i <= fragmentLength_; ++i) {
+		for ( Size i = 1; i <= fragmentLength_; ++i ) {
 			fragdata->add_residue(
-					chunk_->at(i + vallResidueIndex_ - 1)->bbtorsion_srfd());
+				chunk_->at(i + vallResidueIndex_ - 1)->bbtorsion_srfd());
 		}
 
-		if (fragdata->size() > 0)
+		if ( fragdata->size() > 0 ) {
 			fragdata->set_valid();
+		}
 
 		return fragdata;
 	}
@@ -160,13 +161,13 @@ public:
 	void output_silent(core::io::silent::SilentFileData & sfd, const std::string sequence, const std::string silent_file_name, const std::string tag, scores::FragmentScoreMapOP sc, scores::FragmentScoreManagerOP ms);
 
 	inline void set_pool_name(std::string pool_name) {
-	    if(pool_name_!=NULL) delete pool_name_;
-	    pool_name_= new std::string(pool_name);
+		if ( pool_name_!=NULL ) delete pool_name_;
+		pool_name_= new std::string(pool_name);
 	}
 
 	inline std::string get_pool_name() {
-	    if(pool_name_==NULL) return unknown_pool_name_;
-	    else return *pool_name_;
+		if ( pool_name_==NULL ) return unknown_pool_name_;
+		else return *pool_name_;
 	}
 
 	bool same_chain( FragmentCandidateCOP fr );
@@ -183,19 +184,20 @@ private:
 
 inline std::ostream& operator<<(std::ostream& out, FragmentCandidate const& fr) {
 	out << fr.get_pdb_id() << " " << fr.get_first_index_in_vall() << " : "
-			<< fr.get_first_index_in_query() << " : ";
+		<< fr.get_first_index_in_query() << " : ";
 	return out;
 }
 
 inline std::ostream& operator<<(std::ostream& out, std::pair<
-		FragmentCandidateOP, scores::FragmentScoreMapOP> const& pair) {
+	FragmentCandidateOP, scores::FragmentScoreMapOP> const& pair) {
 
 	out << pair.first->get_pdb_id() << " "
-			<< pair.first->get_first_index_in_vall() << " : "
-			<< pair.first->get_first_index_in_query() << " :";
+		<< pair.first->get_first_index_in_vall() << " : "
+		<< pair.first->get_first_index_in_query() << " :";
 	utility::vector1<Real> c = pair.second->get_score_components();
-	for (Size i = 1; i <= c.size(); i++)
+	for ( Size i = 1; i <= c.size(); i++ ) {
 		out << " " << c.at(i);
+	}
 	return out;
 }
 

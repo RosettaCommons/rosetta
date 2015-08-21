@@ -42,8 +42,8 @@
 #include <string>
 
 #ifdef WIN32
-	#include <core/id/AtomID.hh>
-	#include <core/chemical/ResidueType.hh>
+#include <core/id/AtomID.hh>
+#include <core/chemical/ResidueType.hh>
 #endif
 
 
@@ -195,7 +195,7 @@ public:
 	atom_inds_for_restype(
 		core::Size template_atom,
 		core::chemical::ResidueTypeCOP restype
-  ) const;
+	) const;
 
 	/// @brief checks whether the distance
 	/// between any of the template res atoms

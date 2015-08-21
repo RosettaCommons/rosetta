@@ -44,7 +44,7 @@ public:
 	}
 
 	utility::vector1<utility::vector1<std::pair<core::Size, core::Real> > >
-			repack_to_matrix();
+	repack_to_matrix();
 
 	core::Size get_first_residue_id() const {
 		return first_residue_index_;
@@ -59,17 +59,18 @@ public:
 	}
 
 	bool has_entry(core::Size residue_id) {
-		if (resids_to_entries_map_.find(residue_id)
-				!= resids_to_entries_map_.end())
+		if ( resids_to_entries_map_.find(residue_id)
+				!= resids_to_entries_map_.end() ) {
 			return true;
+		}
 		return false;
 	}
 
 	void get_tuples(core::Size, utility::vector1<boost::tuple<core::Size, char,
-			std::string, core::Real> >);
+		std::string, core::Real> >);
 
 	void get_tuples(core::Size, utility::vector1<boost::tuple<core::Size, char,
-			std::string, core::Real> > &) const;
+		std::string, core::Real> > &) const;
 
 	utility::vector1<boost::tuple<core::Size, char, std::string, core::Real> > get_entries() {
 		return entries_;
@@ -90,7 +91,7 @@ private:
 	std::map<std::string, core::Size> order_of_atoms_;
 	void print_sequence(std::string const &, std::ostream &) const;
 	utility::vector1<boost::tuple<core::Size, char, std::string, core::Real> >
-			used_for_searching_;
+		used_for_searching_;
 	void set_up_atom_order();
 };
 

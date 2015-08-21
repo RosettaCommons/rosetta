@@ -72,7 +72,7 @@ FragQualCalculator::FragQualCalculator():
 
 /// @brief value constructor
 FragQualCalculator::FragQualCalculator(
-  FragSetOP const & frag,
+	FragSetOP const & frag,
 	Real const rmsd,
 	Real const ratio ):
 	rmsd_cutoff_goodfrag_( rmsd ),
@@ -137,15 +137,15 @@ FragQualCalculator::set_region( Size const val1, Size const val2 )
 /// @brief
 void
 FragQualCalculator::lookup(
-  String const & key,
-  MetricValueBase * valptr
+	String const & key,
+	MetricValueBase * valptr
 ) const
 {
 	using namespace core;
 	if ( key == "num_goodfrag" ) {
 		basic::check_cast( valptr, &total_goodfrags_, "number of fragments within rmsd cutoff " );
 		(static_cast<basic::MetricValue<Real> *>(valptr))->set( total_goodfrags_ );
-	} else if (key == "coverage" ) {
+	} else if ( key == "coverage" ) {
 		basic::check_cast( valptr, &coverage_, "ratio of the region where good fragments are included more than XXX% " );
 		(static_cast<basic::MetricValue<Real> *>(valptr))->set( coverage_ );
 	} else {
@@ -161,11 +161,11 @@ std::string
 FragQualCalculator::print( String const & key ) const
 {
 	String result;
-  if ( key == "num_goodfrag" ) {
-    result = utility::to_string( total_goodfrags_ );
-  } else if ( key == "coverage" ) {
-    result = utility::to_string( coverage_ );
-  } else {
+	if ( key == "num_goodfrag" ) {
+		result = utility::to_string( total_goodfrags_ );
+	} else if ( key == "coverage" ) {
+		result = utility::to_string( coverage_ );
+	} else {
 		basic::Error() << "FragQualCalculator cannot compute metric " << key << std::endl;
 	}
 	return result;
@@ -182,14 +182,14 @@ FragQualCalculator::recompute( Pose const & pose )
 	using core::fragment::ConstFrameIterator;
 
 	// initialization
-	if( begin_ == 0 ) begin_ = 1;
-	if( end_ == 0 ) end_ = pose.total_residue();
+	if ( begin_ == 0 ) begin_ = 1;
+	if ( end_ == 0 ) end_ = pose.total_residue();
 	total_goodfrags_ = 0;
 	coverage_ = 0;
 
 	goodfrags_.resize( pose.total_residue() );
-	for( Size i=1; i<=pose.total_residue(); i++ ) {
- 		goodfrags_[ i ] = 0;
+	for ( Size i=1; i<=pose.total_residue(); i++ ) {
+		goodfrags_[ i ] = 0;
 	}
 	utility::vector1< bool > frag_region( pose.total_residue(), false );
 	utility::vector1< bool > is_covered( pose.total_residue(), false );
@@ -203,7 +203,7 @@ FragQualCalculator::recompute( Pose const & pose )
 		Size const start ( frame->start() );
 		runtime_assert( start <= pose.total_residue() );
 
-		if( begin_ > start || end_ < start ) continue;
+		if ( begin_ > start || end_ < start ) continue;
 		frag_region[ start ] = true;
 
 		for ( Size i=1; i<=frame->nr_frags(); i++ ) {
@@ -211,26 +211,26 @@ FragQualCalculator::recompute( Pose const & pose )
 			frame->apply( i, test_pose );
 			// calc rmsd
 			Real rmsd = CA_rmsd( input_pose, test_pose, start, start + frame->length() - 1 );
-			if( rmsd <= rmsd_cutoff_goodfrag_ ) {
+			if ( rmsd <= rmsd_cutoff_goodfrag_ ) {
 				goodfrags_[ start ] += 1;
 			}
-			if( verbose_ ) {
+			if ( verbose_ ) {
 				TR << "FRAG_SCORE " << RJ( 6, frame->length() ) << RJ( 6, frame->start() ) << RJ( 6, i ) << F( 10, 4, rmsd ) << std::endl;
 			}
 		}
 
-		if( goodfrags_[ start ] >= frame->nr_frags()*ratio_cutoff_goodfrag_ ) {
+		if ( goodfrags_[ start ] >= frame->nr_frags()*ratio_cutoff_goodfrag_ ) {
 			is_covered[ start ] = true;
 		}
 	} // ConstFrameIterator
 
 	// calc coverage
 	Size count( 0 );
-	for( Size i=1; i<=pose.total_residue(); i++ ) {
+	for ( Size i=1; i<=pose.total_residue(); i++ ) {
 
-		if( frag_region[ i ] ) {
+		if ( frag_region[ i ] ) {
 			count ++;
-			if( is_covered[ i ] ) {
+			if ( is_covered[ i ] ) {
 				coverage_++;
 			}
 		}
@@ -251,7 +251,7 @@ FragQualCalculator::parse_my_tag(
 	Movers_map const &,
 	Pose const & pose )
 {
- 	rmsd_cutoff_goodfrag_ = tag->getOption<Real>( "rmsd_cutoff", 1.0 );
+	rmsd_cutoff_goodfrag_ = tag->getOption<Real>( "rmsd_cutoff", 1.0 );
 	ratio_cutoff_goodfrag_ = tag->getOption<Real>( "ratio_cutoff", 0.3 );
 
 	begin_ = tag->getOption<Size>( "begin", 1 );
@@ -265,7 +265,7 @@ FragQualCalculator::parse_my_tag(
 		throw utility::excn::EXCN_RosettaScriptsOption("fragsets " + fset_string + " not found in basic::datacache::DataMap.");
 	}
 
- 	verbose_ = tag->getOption<bool>( "verbose", 0 );
+	verbose_ = tag->getOption<bool>( "verbose", 0 );
 }
 
 

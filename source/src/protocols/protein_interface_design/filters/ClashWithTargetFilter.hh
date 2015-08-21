@@ -44,14 +44,14 @@ public:
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & , protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
 private:
-  std::string align_to_pdbname_;
-  std::string context_pdbname_;
+	std::string align_to_pdbname_;
+	std::string context_pdbname_;
 	core::Size clash_score_cutoff_;
-  std::string clash_residues_;
-  core::Size ref_start_;
-  core::Size ref_end_;
-  core::Size pose_start_;
-  core::Size pose_end_;
+	std::string clash_residues_;
+	core::Size ref_start_;
+	core::Size ref_end_;
+	core::Size pose_start_;
+	core::Size pose_end_;
 };
 
 } // filters

@@ -152,7 +152,7 @@ private: // data
 	Real sigma_;
 	Real dp_;
 	Size sign1_;
-  Size sign2_;
+	Size sign2_;
 	Real score_;
 	char orient_;
 	bool valid_;

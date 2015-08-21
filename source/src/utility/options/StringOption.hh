@@ -160,19 +160,19 @@ protected: // Methods
 
 
 /// @brief StringOption + StringOption
-#ifndef __clang__ 
+#ifndef __clang__
 std::string
 operator +( StringOption const & option1, StringOption const & option2 );
 #endif
 
 /// @brief StringOption + std::string
-#ifndef __clang__ 
+#ifndef __clang__
 std::string
 operator +( StringOption const & option, std::string const & s );
 #endif
 
 /// @brief std::string + StringOption
-#ifndef __clang__ 
+#ifndef __clang__
 std::string
 operator +( std::string const & s, StringOption const & option );
 #endif

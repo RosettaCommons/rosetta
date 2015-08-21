@@ -27,22 +27,22 @@ namespace kinematic_closure {
 namespace perturbers {
 
 WalkingBondAnglePerturber::WalkingBondAnglePerturber(Real magnitude)
-	: magnitude_ (magnitude) {}
+: magnitude_ (magnitude) {}
 
 void WalkingBondAnglePerturber::perturb_subset(Pose const &, IndexList const & residues, ClosureProblemOP problem) {
 	using numeric::random::gaussian;
 	using numeric::conversions::DEGREES;
 
-	BOOST_FOREACH(Size residue, residues) {
+	BOOST_FOREACH ( Size residue, residues ) {
 		Real angle = problem->n_ca_c(residue, DEGREES) + magnitude_ * gaussian();
 		problem->perturb_n_ca_c(residue, angle, DEGREES);
 	}
 }
 
 void WalkingBondAnglePerturber::perturb_subset_with_balance(
-		Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
+	Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
 
-	// Each move makes a gaussian step in a random direction.  Since the choice 
+	// Each move makes a gaussian step in a random direction.  Since the choice
 	// of direction is unbiased, the overall move satisfies detailed balance.
 
 	perturb_subset(pose, residues, problem);

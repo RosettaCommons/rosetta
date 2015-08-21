@@ -61,11 +61,11 @@ public:
 		Vector xyz(1,2,3);
 		Orbital orbital("test", 1, xyz);
 
- 		TS_ASSERT_EQUALS("test", orbital.name());
- 		TS_ASSERT_EQUALS(1, (int) orbital.orbital_type_index());
- 		TS_ASSERT_EQUALS(xyz, orbital.ideal_xyz());
- 	//	TS_ASSERT_EQUALS(0, orbital.icoor().phi() + orbital.icoor().theta() + orbital.icoor().distance() ); // icoor doesn't have an operator==
- 		//TS_ASSERT_EQUALS(0, orbital.new_icoor().phi() + orbital.new_icoor().theta() + orbital.new_icoor().distance() ); // icoor doesn't have an operator==
+		TS_ASSERT_EQUALS("test", orbital.name());
+		TS_ASSERT_EQUALS(1, (int) orbital.orbital_type_index());
+		TS_ASSERT_EQUALS(xyz, orbital.ideal_xyz());
+		// TS_ASSERT_EQUALS(0, orbital.icoor().phi() + orbital.icoor().theta() + orbital.icoor().distance() ); // icoor doesn't have an operator==
+		//TS_ASSERT_EQUALS(0, orbital.new_icoor().phi() + orbital.new_icoor().theta() + orbital.new_icoor().distance() ); // icoor doesn't have an operator==
 
 	}
 
@@ -75,13 +75,13 @@ public:
 		orbital.orbital_type_index(1);
 		orbital.ideal_xyz(Vector(1,2,3));
 		//orbital.icoor(ICoorOrbitalData(1,2,3,'a','b','c'));
-	//	orbital.new_icoor(ICoorOrbitalData(4,5,6,'d','e','f'));
+		// orbital.new_icoor(ICoorOrbitalData(4,5,6,'d','e','f'));
 
- 		TS_ASSERT_EQUALS("test", orbital.name());
- 		TS_ASSERT_EQUALS(1, (int) orbital.orbital_type_index());
- 		///TS_ASSERT_EQUALS(Vector(1,2,3), orbital.ideal_xyz());
- 		//TS_ASSERT_EQUALS(6, orbital.icoor().phi() + orbital.icoor().theta() + orbital.icoor().distance() ); // icoor doesn't have an operator==
- 		//TS_ASSERT_EQUALS(15, orbital.new_icoor().phi() + orbital.new_icoor().theta() + orbital.new_icoor().distance() ); // icoor doesn't have an operator==
+		TS_ASSERT_EQUALS("test", orbital.name());
+		TS_ASSERT_EQUALS(1, (int) orbital.orbital_type_index());
+		///TS_ASSERT_EQUALS(Vector(1,2,3), orbital.ideal_xyz());
+		//TS_ASSERT_EQUALS(6, orbital.icoor().phi() + orbital.icoor().theta() + orbital.icoor().distance() ); // icoor doesn't have an operator==
+		//TS_ASSERT_EQUALS(15, orbital.new_icoor().phi() + orbital.new_icoor().theta() + orbital.new_icoor().distance() ); // icoor doesn't have an operator==
 	}
 
 };

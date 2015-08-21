@@ -59,12 +59,12 @@ namespace noesy_assign {
 class StructureIndependentPeakCalibrator : public PeakCalibrator {
 public:
 
-  StructureIndependentPeakCalibrator() : PeakCalibrator( 1 /*normal sign*/ ) {};
-  virtual PeakCalibratorOP fresh_instance() {
-    return PeakCalibratorOP( new StructureIndependentPeakCalibrator() );
-  }
+	StructureIndependentPeakCalibrator() : PeakCalibrator( 1 /*normal sign*/ ) {};
+	virtual PeakCalibratorOP fresh_instance() {
+		return PeakCalibratorOP( new StructureIndependentPeakCalibrator() );
+	}
 
-  virtual void collect_upperbound_statistics( core::Size  /*peak*/, TypeCumulator const& /*types*/ );
+	virtual void collect_upperbound_statistics( core::Size  /*peak*/, TypeCumulator const& /*types*/ );
 private:
 };
 

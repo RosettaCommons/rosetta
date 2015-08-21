@@ -34,8 +34,8 @@ typedef utility::vector1<double> Probabilities;
 /// @brief Computes per-residue alignment probabilities. To minimize assumptions
 /// about the fold tree, the number of residues in the pose is an explicit input.
 void alignment_probabilities(const unsigned num_residues,
-                             const core::sequence::SequenceAlignment& alignment,
-                             Probabilities* p);
+	const core::sequence::SequenceAlignment& alignment,
+	Probabilities* p);
 
 /// @brief Computes per-residue chunk probabilities. A linear voting scheme is
 /// used to bias sampling toward larger chunks.
@@ -44,8 +44,8 @@ void chunk_probabilities(const protocols::loops::Loops& chunks, Probabilities* p
 /// @brief Computes per-residue cutpoint probabilities. Sampling is biased
 /// toward residues proximal to a cutpoint.
 void cutpoint_probabilities(const unsigned num_residues,
-                            const core::kinematics::FoldTree& tree,
-                            Probabilities* p);
+	const core::kinematics::FoldTree& tree,
+	Probabilities* p);
 
 /// @brief Biases sampling away from termini
 void end_bias_probabilities(const unsigned num_residues, Probabilities* p);
@@ -53,8 +53,8 @@ void end_bias_probabilities(const unsigned num_residues, Probabilities* p);
 /// @brief Zeroes out the probability of residues for which fragment insertion
 /// would cross cutpoint boundaries.
 void invalidate_residues_spanning_cuts(const core::kinematics::FoldTree& tree,
-                                       const core::Size fragment_len,
-                                       Probabilities* probs);
+	const core::Size fragment_len,
+	Probabilities* probs);
 
 /// @brief Populates a hash table with the residues contained in loops
 void as_set(protocols::loops::LoopsCOP loops, boost::unordered_set<core::Size>* s);

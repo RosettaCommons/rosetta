@@ -142,46 +142,46 @@ display_residues(
 
 //void
 //display_residues_wireframe(
-//	utility::vector1< core::conformation::ResidueCOP > const & residues,
-//	core::id::AtomID const & anchor_id
+// utility::vector1< core::conformation::ResidueCOP > const & residues,
+// core::id::AtomID const & anchor_id
 //);
 
 void
 display_residues_wireframe(
-													 GraphicsState & gs,
-													 utility::vector1< core::conformation::ResidueCOP > const & residues,
-													 core::Vector const & center
-													 );
+	GraphicsState & gs,
+	utility::vector1< core::conformation::ResidueCOP > const & residues,
+	core::Vector const & center
+);
 
 void set_bg_color( core::Vector new_bg_color );
 
 
 void draw_pose(const core::pose::Pose & pose,
-                GraphicsState & gs);
+	GraphicsState & gs);
 
 void draw_conformation( utility::vector1< core::conformation::ResidueCOP > const & residues,
-                        utility::vector1< char > const & ss,
-                        GraphicsState & gs, core::Vector const & center);
+	utility::vector1< char > const & ss,
+	GraphicsState & gs, core::Vector const & center);
 
 void
 render_density(
-			GraphicsState &gs,
-			utility::vector1< triangle > &triangles );
+	GraphicsState &gs,
+	utility::vector1< triangle > &triangles );
 
 void
 display_density(
-			GraphicsState &gs,
-			utility::vector1< triangle > &triangles ) ;
+	GraphicsState &gs,
+	utility::vector1< triangle > &triangles ) ;
 
 void
 draw_conformation_and_density(
-			utility::vector1< core::conformation::ResidueCOP > const & residues,
-			utility::vector1< char > const & ss,
-			utility::vector1< triangle > &triangles,
-			GraphicsState & gs,
-			core::Vector const & center);
+	utility::vector1< core::conformation::ResidueCOP > const & residues,
+	utility::vector1< char > const & ss,
+	utility::vector1< triangle > &triangles,
+	GraphicsState & gs,
+	core::Vector const & center);
 
-	core::Vector
+core::Vector
 get_center( utility::vector1< core::conformation::ResidueCOP > const & residues );
 
 #endif ////////////////////////////////////////////////////////////////

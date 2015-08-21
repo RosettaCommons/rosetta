@@ -79,21 +79,20 @@ std::map< core::Real,core::Size > simple_histogram ( utility::vector1< core::Rea
 	core::Real step( ( high-low )/bin_number );
 	std::map< core::Real,core::Size > hist;
 	if ( step !=0 ) {
-		for (core::Size i=0; i< bin_number; i++) {
+		for ( core::Size i=0; i< bin_number; i++ ) {
 			hist[ low+step*( i+0.5 ) ]=0;
 		}
-	}
-	else {
-		for (core::Size i=0; i< bin_number; i++) {
+	} else {
+		for ( core::Size i=0; i< bin_number; i++ ) {
 			hist[ low+1*( i ) ]=0;
 		}
 	}
 
 	for ( utility::vector1< core::Real >::const_iterator i=samples.begin(), end=samples.end(); i != end; ++i ) {
 		core::Real bin( ( floor( ( *i-low )/step )+0.5)*step+low );
-		if ( *i == high ) {	bin=low+(bin_number-0.5)*step; }
-		//		if ( bin >= high ) { bin=low+(bin_number-0.5)*step; }
-		//		if ( bin <= low ) { bin=low+0.5*step; }
+		if ( *i == high ) { bin=low+(bin_number-0.5)*step; }
+		//  if ( bin >= high ) { bin=low+(bin_number-0.5)*step; }
+		//  if ( bin <= low ) { bin=low+0.5*step; }
 		hist[ bin ]+=1;
 	}
 	return hist;
@@ -118,29 +117,29 @@ typedef std::map< core::id::AtomID, InnerMap > DistanceMap;
 
 
 // core::Real FragsToAtomDist::DistanceRecord::popular_bin() const {
-// 	core::Size max_bin(0);
-// 	core::Real pop_dist(-1.0);
-// 	std::map< core::Real, core::Size >::const_iterator it;
-// 	tr.Info << "size of hist_dist_  "<< hist_dist_.size() <<std::endl;
-// 	for ( it=hist_dist_.begin(); it !=hist_dist_.end(); it++ ) {
-// 		tr.Info << " it->second "<< it->second<<std::endl;
-// 		tr.Info << " max_bin "<< max_bin<<std::endl;
-// 		if ( it->second > max_bin ) {
-// 			tr.Info << " it->first "<< it->first<<std::endl;
-// 			max_bin=it->second;
-// 			pop_dist=it->first;
-// 		}
-// 	}
-// 	tr.Info << " pop_dist "<< pop_dist<<std::endl;
-// 	return pop_dist;
+//  core::Size max_bin(0);
+//  core::Real pop_dist(-1.0);
+//  std::map< core::Real, core::Size >::const_iterator it;
+//  tr.Info << "size of hist_dist_  "<< hist_dist_.size() <<std::endl;
+//  for ( it=hist_dist_.begin(); it !=hist_dist_.end(); it++ ) {
+//   tr.Info << " it->second "<< it->second<<std::endl;
+//   tr.Info << " max_bin "<< max_bin<<std::endl;
+//   if ( it->second > max_bin ) {
+//    tr.Info << " it->first "<< it->first<<std::endl;
+//    max_bin=it->second;
+//    pop_dist=it->first;
+//   }
+//  }
+//  tr.Info << " pop_dist "<< pop_dist<<std::endl;
+//  return pop_dist;
 // }
 FragsToAtomDist::DistanceRecord FragsToAtomDist::NO_CONTACT( 100.0, 100.0, 100.0, 1 );
 
 std::ostream& operator<< ( std::ostream& os, FragsToAtomDist::DistanceRecord const& dr ) {
 	return os << " " << setw(10) << setprecision(4) << dr.average_dist6()
-						<< " " << setw(10) << setprecision(4) << dr.average_dist()
-						<< " " << setw(10) << setprecision(4) << dr.min_dist();
-		//						<< " " << setw(10) << setprecision(4) << dr.popular_bin();
+		<< " " << setw(10) << setprecision(4) << dr.average_dist()
+		<< " " << setw(10) << setprecision(4) << dr.min_dist();
+	//      << " " << setw(10) << setprecision(4) << dr.popular_bin();
 }
 
 std::istream& operator>> ( std::istream& is, FragsToAtomDist::DistanceRecord& dr ) {
@@ -154,20 +153,20 @@ void FragsToAtomDist::DistanceRecord::record_inv6( core::Real inv6 ) {
 	core::Real const dist( std::pow( inv6, -1.0/6.0 ) );
 	cum_dist6_ += inv6;
 	cum_dist_ += dist;
- 	min_dist_ = std::min( min_dist_, dist );
+	min_dist_ = std::min( min_dist_, dist );
 	++count_;
 	dist_track_.push_back( dist );
 	//tr.Info << " dist " << dist << " half adjust " << half_adjust( dist ) <<std::endl;
-	//	hist_dist_[ half_adjust( dist ) ]=hist_dist_[ half_adjust( dist ) ]+1;
+	// hist_dist_[ half_adjust( dist ) ]=hist_dist_[ half_adjust( dist ) ]+1;
 	//tr.Info << " hist_dist_ " << hist_dist_[ half_adjust( dist ) ] <<std::endl;
-	//	hist_dist6_[ half_adjust( inv6 ) ]=hist_dist6_[ half_adjust( inv6 ) ]+1;
+	// hist_dist6_[ half_adjust( inv6 ) ]=hist_dist6_[ half_adjust( inv6 ) ]+1;
 }
 
 void FragsToAtomDist::DistanceRecord::record( core::Real dist ) {
 	core::Real const inv6( std::pow( dist, -6.0 ) );
 	cum_dist6_ += inv6;
 	cum_dist_ += dist;
- 	min_dist_ = std::min( min_dist_, dist );
+	min_dist_ = std::min( min_dist_, dist );
 	++count_;
 	dist_track_.push_back( dist );
 }
@@ -179,9 +178,9 @@ void initialize_group_list(
 )
 {
 	MethylNameLibrary const & methyl_lib( *MethylNameLibrary::get_instance() );
-	for ( core::Size pos =1; pos<=pose.total_residue(); pos++) {
+	for ( core::Size pos =1; pos<=pose.total_residue(); pos++ ) {
 		core::chemical::ResidueType const& rsd(pose.residue_type( pos ));
-		//		std::string name( utility::trim( pose.residue_type( pos ).atom_name( iatom1 ) ) );
+		//  std::string name( utility::trim( pose.residue_type( pos ).atom_name( iatom1 ) ) );
 		MethylNames const& methyls( methyl_lib[ rsd.aa() ] );
 		AtomGrps new_grps;
 		for ( MethylNames::const_iterator it = methyls.begin(); it != methyls.end(); ++it ) {
@@ -196,7 +195,7 @@ void initialize_group_list(
 				tr.Info << atom << " ";
 			}
 			new_grps.push_back( std::make_pair( it->first, indices ) );
-			//			tr.Info << "CONTROL: " << it->first << " " << new_grps.back().first << std::endl;
+			//   tr.Info << "CONTROL: " << it->first << " " << new_grps.back().first << std::endl;
 			tr.Info << std::endl;
 		}
 		tr.Info << "generated " << new_grps.size() << " proton-groups for position " << pos << " " << rsd.name3()<< std::endl;
@@ -205,9 +204,9 @@ void initialize_group_list(
 }
 
 bool FragsToAtomDist::check_sequence(std::string const& other_sequence) const {
-	if (sequence_.compare(other_sequence)==0) {
+	if ( sequence_.compare(other_sequence)==0 ) {
 		return true;
-	}	else {
+	} else {
 		return false;
 	}
 }
@@ -221,14 +220,14 @@ FragsToAtomDist::DistanceRecord const& FragsToAtomDist::distance_record( core::i
 			return it2->second;
 		}
 	}
-	//	tr << "my test on store with distance_record 1  "<<atom1 <<std::endl;
-	//	tr << "my test on store with distance_record 2  "<<atom2 <<std::endl;
+	// tr << "my test on store with distance_record 1  "<<atom1 <<std::endl;
+	// tr << "my test on store with distance_record 2  "<<atom2 <<std::endl;
 	return NO_CONTACT;
 }
 
 void FragsToAtomDist::write_to_stream(std::ostream& output) const {
 	Size count =1;
-	for (std::string::const_iterator i = sequence_.begin();i != sequence_.end();++i) {
+	for ( std::string::const_iterator i = sequence_.begin(); i != sequence_.end(); ++i ) {
 		if ( count%50 == 1 ) {
 			output << "DATA SEQUENCE ";
 		}
@@ -242,23 +241,23 @@ void FragsToAtomDist::write_to_stream(std::ostream& output) const {
 		count++;
 	}
 	output << endl << endl;
-	//	if ( FragsToAtomDist::r6_averaged_ ) {
-	//		output << "DATA R6_AVERAGED YES" << endl;
-	//	}
-	//	else {
-	//		output << "DATA R6_AVERAGED NO" << endl;
-	//	}
+	// if ( FragsToAtomDist::r6_averaged_ ) {
+	//  output << "DATA R6_AVERAGED YES" << endl;
+	// }
+	// else {
+	//  output << "DATA R6_AVERAGED NO" << endl;
+	// }
 	output << "VARS   RESID1 ATOMNAME1 RESID2 ATOMNAME2 DIST_R6_AVERAGED DIST_AVERAGED DIST_MIN" << endl << endl;
 	NamedDistanceMap::const_iterator iter1, end1;
 	NamedInnerMap::const_iterator iter2, end2;
-	for ( iter1 = named_distmap_.begin(), end1 = named_distmap_.end(); iter1 != end1; ++iter1 )	{
-		for (iter2 = iter1->second.begin(), end2 = iter1->second.end(); iter2 != end2; ++iter2 ) {
+	for ( iter1 = named_distmap_.begin(), end1 = named_distmap_.end(); iter1 != end1; ++iter1 ) {
+		for ( iter2 = iter1->second.begin(), end2 = iter1->second.end(); iter2 != end2; ++iter2 ) {
 			if ( iter2->second.is_valid() ) {
 				output << setw(5)<<iter1->first.rsd()
-							 << setw(5)<<iter1->first.atom()
-							 << setw(5)<<iter2->first.rsd()
-							 << setw(8)<<iter2->first.atom()
-							 << setw(8)<< iter2->second <<endl;
+					<< setw(5)<<iter1->first.atom()
+					<< setw(5)<<iter2->first.rsd()
+					<< setw(8)<<iter2->first.atom()
+					<< setw(8)<< iter2->second <<endl;
 			}
 		}
 	}
@@ -266,7 +265,7 @@ void FragsToAtomDist::write_to_stream(std::ostream& output) const {
 
 void FragsToAtomDist::write_hist_to_stream(std::ostream& output) const {
 	Size count =1;
-	for (std::string::const_iterator i = sequence_.begin();i != sequence_.end();++i) {
+	for ( std::string::const_iterator i = sequence_.begin(); i != sequence_.end(); ++i ) {
 		if ( count%50 == 1 ) {
 			output << "DATA SEQUENCE ";
 		}
@@ -284,23 +283,23 @@ void FragsToAtomDist::write_hist_to_stream(std::ostream& output) const {
 	NamedInnerMap::const_iterator iter2, end2;
 	std::map< core::Real, core::Size >::const_iterator iter3, end3;
 	output << "VARS   RESID1 ATOMNAME1 RESID2 ATOMNAME2 LOW HIGH" << endl << endl;
-	for ( iter1 = named_distmap_.begin(), end1 = named_distmap_.end(); iter1 != end1; ++iter1 )	{
-		for (iter2 = iter1->second.begin(), end2 = iter1->second.end(); iter2 != end2; ++iter2 ) {
+	for ( iter1 = named_distmap_.begin(), end1 = named_distmap_.end(); iter1 != end1; ++iter1 ) {
+		for ( iter2 = iter1->second.begin(), end2 = iter1->second.end(); iter2 != end2; ++iter2 ) {
 			output << setw(5)<<iter1->first.rsd()
-						 << setw(8)<<iter1->first.atom()
-						 << setw(5)<<iter2->first.rsd()
-						 << setw(8)<<iter2->first.atom();
+				<< setw(8)<<iter1->first.atom()
+				<< setw(5)<<iter2->first.rsd()
+				<< setw(8)<<iter2->first.atom();
 			utility::vector1< core::Real > dist_track_to_write ( iter2->second.dist_track() );
 			std::map< core::Real,core::Size > hist_dist_to_write( simple_histogram( dist_track_to_write ) );
 			core::Real low( *( dist_track_to_write.begin() ) );
 			core::Real high( *( dist_track_to_write.begin() ) );
-			for ( utility::vector1< core::Real >::const_iterator i=dist_track_to_write.begin(), end =dist_track_to_write.end();i != end; ++i ) {
+			for ( utility::vector1< core::Real >::const_iterator i=dist_track_to_write.begin(), end =dist_track_to_write.end(); i != end; ++i ) {
 				if ( *i < low ) { low= *i; }
 				if ( *i > high ) { high= *i; }
 			}
 			output << setw(10) << setprecision(4) << low
-						 << setw(10) << setprecision(4) << high;
-			for (iter3 = hist_dist_to_write.begin(), end3 = hist_dist_to_write.end(); iter3 != end3; ++iter3 ) {
+				<< setw(10) << setprecision(4) << high;
+			for ( iter3 = hist_dist_to_write.begin(), end3 = hist_dist_to_write.end(); iter3 != end3; ++iter3 ) {
 				output << setw(8) << setprecision(14)<< iter3->second;
 			}
 			output <<endl;
@@ -324,23 +323,22 @@ void FragsToAtomDist::read_from_stream(std::istream& input) {
 	while ( getline( input, line ) ) {
 		if ( line.size() == 0 ) continue;
 		std::istringstream tag_stream( line );
-		if (line.substr(0,4)=="DATA") {
-			if (line.substr(0,13)=="DATA SEQUENCE") {
+		if ( line.substr(0,4)=="DATA" ) {
+			if ( line.substr(0,13)=="DATA SEQUENCE" ) {
 				line.erase(0,14);
-				for (std::string::iterator i = line.begin();i != line.end();++i) {
+				for ( std::string::iterator i = line.begin(); i != line.end(); ++i ) {
 					if ( *i !=' ' ) {
 						sequence_+=*i;
 					}
 				}
 			}
-			//			if (line.substr(0,20)=="DATA R6_AVERAGED YES") {
+			//   if (line.substr(0,20)=="DATA R6_AVERAGED YES") {
 			//r6_averaged_=true;
 			//}
 			//else if (line.substr(0,19)=="DATA R6_AVERAGED NO") {
-			//	r6_averaged_=false;
+			// r6_averaged_=false;
 			//}
-		}
-    else if ( line.substr(0,4) !="VARS" && line.length()>10 ) {
+		} else if ( line.substr(0,4) !="VARS" && line.length()>10 ) {
 			int residue1,residue2;
 			std::string name1,name2;
 			DistanceRecord dist;
@@ -394,14 +392,14 @@ void FragsToAtomDist::swap_atoms( NamedAtomID& atom1, NamedAtomID& atom2 ) const
 
 //translate from AtomID into NamedAtomID --- store in named_distmap_
 void store_distmap_with_namedatoms(
-	 FragsToAtomDist::NamedDistanceMap &named_distmap,
-   DistanceMap const& distmap,
-	 GroupList const& proton_groups
+	FragsToAtomDist::NamedDistanceMap &named_distmap,
+	DistanceMap const& distmap,
+	GroupList const& proton_groups
 ) {
 	DistanceMap::const_iterator iter1, end1;
 	InnerMap::const_iterator iter2, end2;
-	for ( iter1 = distmap.begin(), end1 = distmap.end();iter1 != end1; ++iter1 )	{
-		for (iter2=iter1->second.begin(), end2 = iter1->second.end(); iter2 != end2; ++iter2 ) {
+	for ( iter1 = distmap.begin(), end1 = distmap.end(); iter1 != end1; ++iter1 ) {
+		for ( iter2=iter1->second.begin(), end2 = iter1->second.end(); iter2 != end2; ++iter2 ) {
 			core::id::AtomID const& grp_1(iter1->first);
 			core::id::AtomID const& grp_2(iter2->first);
 			std::string const& grp_name1( proton_groups[ grp_1.rsd() ][ grp_1.atomno() ].first );
@@ -414,18 +412,18 @@ void store_distmap_with_namedatoms(
 }
 
 void store_distance_snapshot(
-	 DistanceMap& distmap,
-	 //	 DistanceMap& countmap,
-	 core::pose::Pose const& short_pose,
-	 Size start,
-	 Size short_size,
-	 GroupList const& grps
-	 //	 bool r6_averaging
+	DistanceMap& distmap,
+	//  DistanceMap& countmap,
+	core::pose::Pose const& short_pose,
+	Size start,
+	Size short_size,
+	GroupList const& grps
+	//  bool r6_averaging
 ) {
-	for ( core::Size rsd1 =1; rsd1<=short_size; rsd1++) {
+	for ( core::Size rsd1 =1; rsd1<=short_size; rsd1++ ) {
 		AtomGrps const& group1( grps[ rsd1+start-1 ] );
 		for ( core::Size igrp1 =1; igrp1<=group1.size(); igrp1++ ) {
-			for ( core::Size rsd2 =rsd1; rsd2<=short_size; rsd2++) {
+			for ( core::Size rsd2 =rsd1; rsd2<=short_size; rsd2++ ) {
 				AtomGrps const& group2( grps[ rsd2+start-1 ] );
 				for ( core::Size igrp2 = ( rsd2==rsd1 ? igrp1+1 : 1 ); igrp2<=group2.size(); igrp2++ ) {
 					Real cumdist( 0 );
@@ -452,34 +450,34 @@ void store_distance_snapshot(
 void FragsToAtomDist::compute_average_distances(core::Size cycles,core::Size dump_freq ) {
 	using namespace protocols::simple_moves;
 
-	if (dump_freq>cycles) dump_freq=cycles;
+	if ( dump_freq>cycles ) dump_freq=cycles;
 
 	sidechain_moves::JumpRotamerSidechainMover jrmover;
 	core::scoring::ScoreFunctionOP scorefxn(  scoring::get_score_function() );
 	scorefxn->set_weight( core::scoring::fa_dun, 0 ); //since we use the JumpRotamer Mover the dunbrack energy is already in the sampling bias
 	core::pose::Pose pose;
-	core::pose::make_pose_from_sequence(	pose, sequence_, "fa_standard", true	);
+	core::pose::make_pose_from_sequence( pose, sequence_, "fa_standard", true );
 
 	//SizeList natoms( pose.total_residue(), 0);
-	//	initialize_natoms( natoms, pose );
+	// initialize_natoms( natoms, pose );
 
 	GroupList proton_groups;
 	initialize_group_list( proton_groups, pose );
 
-	//	DistanceMap countmap;
+	// DistanceMap countmap;
 	DistanceMap distmap;
 	//initialize_maps( distmap, countmap, proton_groups );
 
 	for ( FrameIterator frame = frags_->nonconst_begin(), eframe=frags_->nonconst_end();
-				frame != eframe; ++frame ) {
+			frame != eframe; ++frame ) {
 		core::pose::Pose short_pose;
 		core::pose::make_pose_from_sequence(
-												short_pose,
-												sequence_.substr( frame->start()-1, frame->length() ),
-												"fa_standard",
-												true
+			short_pose,
+			sequence_.substr( frame->start()-1, frame->length() ),
+			"fa_standard",
+			true
 		);
-		//		tr << " my test   " << short_pose.sequence() << "   "<<std::endl;
+		//  tr << " my test   " << short_pose.sequence() << "   "<<std::endl;
 		Size const short_size( frame->length() );
 		//std::string short_sequence = short_pose.sequence();
 		Size const short_start( frame->start() );
@@ -490,12 +488,12 @@ void FragsToAtomDist::compute_average_distances(core::Size cycles,core::Size dum
 		utility::vector1< core::Real > old_chi(4);
 		utility::vector1< core::Real > new_chi(4);
 		for ( Size ifrag=1; ifrag<=frame->nr_frags(); ifrag++ ) {
-			//	if ( ifrag % 10 == 0 ) tr.Info << "fragment (" << ifrag << "," << frame->nr_frags() << ")" << std::endl;
+			// if ( ifrag % 10 == 0 ) tr.Info << "fragment (" << ifrag << "," << frame->nr_frags() << ")" << std::endl;
 			frame->apply( ifrag, short_pose );
 			core::Real score_old(scorefxn->score(short_pose));
 
 			//start monte-carlo simulation
-			for ( core::Size cycle = 1; cycle<=cycles; cycle++ )	{
+			for ( core::Size cycle = 1; cycle<=cycles; cycle++ ) {
 				//better select rsd randomly
 				//for ( Size irsd = 1; irsd<=short_size; irsd++) {
 				Size const irsd( numeric::random::rg().random_range(1, short_size) );
@@ -509,7 +507,7 @@ void FragsToAtomDist::compute_average_distances(core::Size cycles,core::Size dum
 				}
 
 				//set new chi-angles in pose
-				for (core::Size ichi = 1; ichi<=n_chi_angles; ichi++) {
+				for ( core::Size ichi = 1; ichi<=n_chi_angles; ichi++ ) {
 					short_pose.set_chi(ichi,irsd,new_chi[ ichi ]);
 				}
 
@@ -518,8 +516,8 @@ void FragsToAtomDist::compute_average_distances(core::Size cycles,core::Size dum
 				if ( score_new > score_old ) {
 					core::Real Delta_score(score_new - score_old);
 					core::Real p( exp( -1*Delta_score ) );
-					if ( numeric::random::rg().uniform() > p) {
-						for (core::Size ichi = 1; ichi<=n_chi_angles; ichi++) {
+					if ( numeric::random::rg().uniform() > p ) {
+						for ( core::Size ichi = 1; ichi<=n_chi_angles; ichi++ ) {
 							short_pose.set_chi(ichi,irsd,old_chi[ ichi ]);
 						}
 					} else {
@@ -531,7 +529,7 @@ void FragsToAtomDist::compute_average_distances(core::Size cycles,core::Size dum
 					old_chi = new_chi;
 				}
 
-				if (cycle%dump_freq == 0 ) {
+				if ( cycle%dump_freq == 0 ) {
 					tr.Debug << "Store distances " << cycle << " " << dump_freq << std::endl;
 					store_distance_snapshot( distmap, short_pose, short_start, short_size, proton_groups );
 				}

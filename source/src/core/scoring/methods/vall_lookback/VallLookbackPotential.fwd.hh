@@ -10,8 +10,8 @@
 /// @file   core/scoring/methods/VallLookbackPotenial .fwd.hh
 /// @brief  threshold based distance metric that measures from any fragment to the structure in the vall
 /// @author TJ Brunette (tjbrunette@gmail.com)
-/// 
-/// 
+///
+///
 #ifndef INCLUDED_core_scoring_methods_VallLookbackPotential_fwd_hh
 #define INCLUDED_core_scoring_methods_VallLookbackPotential_fwd_hh
 

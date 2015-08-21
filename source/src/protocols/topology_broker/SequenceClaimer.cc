@@ -80,7 +80,7 @@ TopologyClaimerOP SequenceClaimer::clone() const
 
 void SequenceClaimer::make_sequence_claim() {
 	tr.Debug << "SequenceClaimer " << label() << " making pose from sequence '"
-            << input_sequence_ << "' to get annotated sequence." << std::endl;
+		<< input_sequence_ << "' to get annotated sequence." << std::endl;
 	pose::Pose my_pose;
 	core::pose::make_pose_from_sequence(
 		my_pose,
@@ -88,10 +88,10 @@ void SequenceClaimer::make_sequence_claim() {
 		*( chemical::ChemicalManager::get_instance()->residue_type_set( rsd_type_set_ ))
 	);
 	sequence_claim_ = claims::SequenceClaimOP( new claims::SequenceClaim(
-				get_self_weak_ptr(),
-				my_pose.annotated_sequence(),
-				label(),
-				priority_
+		get_self_weak_ptr(),
+		my_pose.annotated_sequence(),
+		label(),
+		priority_
 		) );
 	runtime_assert( my_pose.total_residue() == sequence_claim_->length() );
 }
@@ -111,8 +111,8 @@ void SequenceClaimer::read_fasta_file( std::string file ) {
 			"'\nTo resolve this, split fasta file into multiple files, and claim using multiple SequenceClaimers.");
 	}
 	input_sequence_ = sequences[1]->sequence();
-    tr.Debug << "SequenceClaimer read sequence " << input_sequence_
-            << " from fasta file '" << file << "'" << std::endl;
+	tr.Debug << "SequenceClaimer read sequence " << input_sequence_
+		<< " from fasta file '" << file << "'" << std::endl;
 }
 
 bool SequenceClaimer::read_tag( std::string tag, std::istream& is ) {
@@ -121,7 +121,7 @@ bool SequenceClaimer::read_tag( std::string tag, std::istream& is ) {
 		read_fasta_file(tag);
 	} else if ( tag == "PRIORITY" || tag == "Priority" || tag == "priority" ) {
 		is >> priority_;
-	}	else if ( tag == "DEF" ) {
+	} else if ( tag == "DEF" ) {
 		//Expects input of the form:
 		//DEF
 		//HHHHHHAG GMPADFADF ADFAKDFLAK ADKFJ
@@ -177,16 +177,16 @@ void SequenceClaimer::generate_claims( claims::DofClaims& new_claims ) {
 
 
 // void SequenceClaimer::initialize_residues( core::pose::Pose& pose, claims::SequenceClaimOP my_claim, claims::DofClaims& /*failed_to_init*/ ) {
-// 	//need to copy coords and jumps --- if chunks were idealized no problem .... but non-idealized stuff ?
-// 	//also take care of fullatom vs centroid...
+//  //need to copy coords and jumps --- if chunks were idealized no problem .... but non-idealized stuff ?
+//  //also take care of fullatom vs centroid...
 
-// 	//    core::sequence::SequenceOP seq = NULL;
-// 	//    for( Size i=1; i <= sequences_.size(); ++i){
-// 	//        if( sequences_.at(i)->id() == my_claim->label() ){
-// 	//            seq = sequences_.at(i);
-// 	//        }
-// 	//    }
-// 	//    runtime_assert(seq != NULL);
+//  //    core::sequence::SequenceOP seq = NULL;
+//  //    for( Size i=1; i <= sequences_.size(); ++i){
+//  //        if( sequences_.at(i)->id() == my_claim->label() ){
+//  //            seq = sequences_.at(i);
+//  //        }
+//  //    }
+//  //    runtime_assert(seq != NULL);
 
 // }
 
@@ -196,18 +196,18 @@ void SequenceClaimer::generate_claims( claims::DofClaims& new_claims ) {
 
 
 //bool SequenceClaimer::allow_claim( claims::DofClaim const& foreign_claim ) {
-// 	if ( foreign_claim.owner() == this ) return true; // always allow your own claims!
-// 	if ( foreign_claim.type() == claims::DofClaim::SEQUENCE ) {
-// 		if ( foreign_claim.pos( 1 ) == 1  && foreing_claim.right() == claims::DofClaim::EXCLUSIVE ) {
-// 			return false; // don't accept any other fixed positions right now --- maybe never ?!
-// 		}
-// 	}
-//	return true;
+//  if ( foreign_claim.owner() == this ) return true; // always allow your own claims!
+//  if ( foreign_claim.type() == claims::DofClaim::SEQUENCE ) {
+//   if ( foreign_claim.pos( 1 ) == 1  && foreing_claim.right() == claims::DofClaim::EXCLUSIVE ) {
+//    return false; // don't accept any other fixed positions right now --- maybe never ?!
+//   }
+//  }
+// return true;
 //} // SequenceClaimer::allow_claim()
 
-//void SequenceClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& init_claims,	claims::DofClaims& failed_to_init ) {
-	//special case the BBTorsion claim for position offset() is ours and is left unitialized...
-	//	for ( claims::DofClaims::const_iterator it = init_claims.begin(), eit = init_claims.end();
-	//		it != eit; ++it ) {
-		//		claims::BBClaimOP bb_ptr( dynamic_cast< claims::BBClaim* >( it->get() ) );
+//void SequenceClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init ) {
+//special case the BBTorsion claim for position offset() is ours and is left unitialized...
+// for ( claims::DofClaims::const_iterator it = init_claims.begin(), eit = init_claims.end();
+//  it != eit; ++it ) {
+//  claims::BBClaimOP bb_ptr( dynamic_cast< claims::BBClaim* >( it->get() ) );
 

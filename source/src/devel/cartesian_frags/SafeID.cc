@@ -104,8 +104,8 @@ stub_id_from_torsion_stub_id(
 			return StubID( AtomID( mainchain[1], seqpos ), AtomID( mainchain[2], seqpos ), AtomID( mainchain[3], seqpos ));
 		} else if ( torsion == nbb-1 && conf.fold_tree().is_cutpoint( seqpos ) && id.dir == Forward ) {
 			return StubID( AtomID( mainchain[nbb  ], seqpos ),
-										 AtomID( mainchain[nbb-1], seqpos ),
-										 AtomID( mainchain[nbb-2], seqpos ));
+				AtomID( mainchain[nbb-1], seqpos ),
+				AtomID( mainchain[nbb-2], seqpos ));
 		}
 	}
 
@@ -126,14 +126,14 @@ torsion_stub(
 }
 
 
-// 	// the coord sys you'd get by building atom1 then atom2 then atom3, BUT centered at atom2 not atom3
-// 	//  NO LONGER CENTERED AT ATOM2
-// 	// ie: origin at atom2 -- no changed to atom3
-// 	//     x-axis from atom2->atom3
-// 	//     y-axis in atom1,atom2,atom3 plane w/ pos dotprod with atom2->atom1 vector
-// 	//
-// 	return kinematics::Stub( conf.xyz( atom3 ), conf.xyz( atom2 ), conf.xyz( atom1 ) );
-// // 	return kinematics::Stub( conf.xyz( atom2 ), conf.xyz( atom3 ), conf.xyz( atom2 ), conf.xyz( atom1 ) );
+//  // the coord sys you'd get by building atom1 then atom2 then atom3, BUT centered at atom2 not atom3
+//  //  NO LONGER CENTERED AT ATOM2
+//  // ie: origin at atom2 -- no changed to atom3
+//  //     x-axis from atom2->atom3
+//  //     y-axis in atom1,atom2,atom3 plane w/ pos dotprod with atom2->atom1 vector
+//  //
+//  return kinematics::Stub( conf.xyz( atom3 ), conf.xyz( atom2 ), conf.xyz( atom1 ) );
+// //  return kinematics::Stub( conf.xyz( atom2 ), conf.xyz( atom3 ), conf.xyz( atom2 ), conf.xyz( atom1 ) );
 
 
 ///////////////////////////////////////////////////////////////////////////////

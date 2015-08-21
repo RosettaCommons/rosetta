@@ -164,7 +164,7 @@ void PackDaemon::setup()
 	//repacker_ = new DoubleDenseIGRepacker( pose_, task_, ig_, rot_sets_ );
 	//FASTER_IG_Repacker * temp;
 
-/*	temp = new FASTER_IG_Repacker( pose_, task_, ig_, rot_sets_ );
+	/* temp = new FASTER_IG_Repacker( pose_, task_, ig_, rot_sets_ );
 	temp->set_num_sa( 8 );
 	repacker2_ = temp;
 
@@ -1236,7 +1236,7 @@ DenseIGRepacker::repack( utility::vector0< int > const & rot_to_pack )
 
 	/*TR << "Assignment:";
 	for ( Size ii = 1; ii <= rot_sets()->nmoltenres(); ++ii ) {
-		TR << " " << rotamer_assignment( rot_sets()->moltenres_2_resid( ii ));
+	TR << " " << rotamer_assignment( rot_sets()->moltenres_2_resid( ii ));
 	}
 	TR << std::endl;*/
 	result.second = rotamer_energy;
@@ -1287,7 +1287,7 @@ DenseIGRepacker::create_dense_pdig_from_rot_to_pack(
 		for ( Size jj = ii+1; jj <= nmoltenres; ++jj ) {
 			if ( ig()->get_edge_exists( ii, jj ) ) {
 				if ( aaind_for_moltres[ ii ] > 0 && aaind_for_moltres[ jj ] > 0 ) {
-					if ( ! ig()->get_sparse_aa_info_for_edge( ii, jj,aaind_for_moltres[ ii ], aaind_for_moltres[ jj ] )) {
+					if ( ! ig()->get_sparse_aa_info_for_edge( ii, jj,aaind_for_moltres[ ii ], aaind_for_moltres[ jj ] ) ) {
 						/// NO non-zero energies for this edge
 						continue;
 					}
@@ -1386,7 +1386,7 @@ DoubleDenseIGRepacker::repack( utility::vector0< int > const & rot_to_pack )
 
 	/*TR << "Assignment:";
 	for ( Size ii = 1; ii <= rot_sets()->nmoltenres(); ++ii ) {
-		TR << " " << rotamer_assignment( rot_sets()->moltenres_2_resid( ii ));
+	TR << " " << rotamer_assignment( rot_sets()->moltenres_2_resid( ii ));
 	}
 	TR << std::endl;*/
 	result.second = rotamer_energy;
@@ -1513,7 +1513,7 @@ FASTER_IG_Repacker::repack( utility::vector0< int > const & rot_to_pack )
 
 	/*TR << "Assignment:";
 	for ( Size ii = 1; ii <= rot_sets()->nmoltenres(); ++ii ) {
-		TR << " " << rotamer_assignment( rot_sets()->moltenres_2_resid( ii ));
+	TR << " " << rotamer_assignment( rot_sets()->moltenres_2_resid( ii ));
 	}
 	TR << std::endl;*/
 	result.second = rotamer_energy;
@@ -1566,7 +1566,7 @@ FASTER_IG_Repacker::create_faster_ig_from_rot_to_pack(
 		for ( Size jj = ii+1; jj <= nmoltenres; ++jj ) {
 			if ( ig()->get_edge_exists( ii, jj ) ) {
 				if ( aaind_for_moltres[ ii ] > 0 && aaind_for_moltres[ jj ] > 0 ) {
-					if ( ! ig()->get_sparse_aa_info_for_edge( ii, jj, aaind_for_moltres[ ii ], aaind_for_moltres[ jj ] )) {
+					if ( ! ig()->get_sparse_aa_info_for_edge( ii, jj, aaind_for_moltres[ ii ], aaind_for_moltres[ jj ] ) ) {
 						/// NO non-zero energies for this edge
 						continue;
 					}

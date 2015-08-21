@@ -10,9 +10,9 @@
 /// @file docking_initialization_protocols
 /// @brief initialization protocols for docking
 /// @details
-///		This contains the functions that create initial positions for docking
-///		You can either randomize partner 1 or partner 2, spin partner 2, or
-///		perform a simple perturbation.
+///  This contains the functions that create initial positions for docking
+///  You can either randomize partner 1 or partner 2, spin partner 2, or
+///  perform a simple perturbation.
 /// @author Monica Berrondo
 /// @author Modified by Sergey Lyskov
 

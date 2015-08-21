@@ -14,8 +14,8 @@
 #ifndef INCLUDED_protocols_features_FeaturesReporterFactory_fwd_hh
 #define INCLUDED_protocols_features_FeaturesReporterFactory_fwd_hh
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class FeaturesReporterFactory;
 

@@ -59,7 +59,7 @@ static thread_local basic::Tracer tr( "protocols.simple_moves.ResTypeFragmentMov
 
 ResTypeFragmentMover::ResTypeFragmentMover(core::fragment::FragSetCOP fragset):ClassicFragmentMover(fragset, std::string("ResTypeFragmentMover") ){}
 
-ResTypeFragmentMover::ResTypeFragmentMover(core::fragment::FragSetCOP fragset,	core::kinematics::MoveMapCOP movemap):ClassicFragmentMover( fragset, movemap, "ResTypeFragmentMover"){}
+ResTypeFragmentMover::ResTypeFragmentMover(core::fragment::FragSetCOP fragset, core::kinematics::MoveMapCOP movemap):ClassicFragmentMover( fragset, movemap, "ResTypeFragmentMover"){}
 
 
 ResTypeFragmentMover::~ResTypeFragmentMover() {}
@@ -70,21 +70,23 @@ bool ResTypeFragmentMover::apply_frames( pose::Pose &pose, core::fragment::Frame
 	bool success( false );
 	if ( !choose_fragment( frames, pose, frame_num /*output*/, frag_num /*output*/ ) ) return false;
 
-	if ( tr.Trace.visible() )
+	if ( tr.Trace.visible() ) {
 		tr.Trace<< "frag (" << frames[ frame_num ]->start() << ","
-															<< frag_num << ","
-															<< frames[ frame_num ]->nr_res_affected( *movemap_ )
-															<< ")" << std::endl;
-	if (tr.Trace.visible() )
+			<< frag_num << ","
+			<< frames[ frame_num ]->nr_res_affected( *movemap_ )
+			<< ")" << std::endl;
+	}
+	if ( tr.Trace.visible() ) {
 		tr.Trace <<"seq " << frames[frame_num]->fragment(frag_num).sequence() << std::endl;
+	}
 
-	if ( !check_ss() ){
+	if ( !check_ss() ) {
 		std::string swap_sequence = frames[frame_num]->fragment(frag_num).sequence();
 		swap_residue_types(pose,swap_sequence,frames[ frame_num ]->start());
 		return apply_fragment( *frames[ frame_num ], frag_num, *movemap_, pose );
 	}
 	// now do the ss-check!
-	//	tr.Trace << "now do the ss-check!"<< std::endl;
+	// tr.Trace << "now do the ss-check!"<< std::endl;
 	// get actual ss from pose
 	std::string proposed_ss;
 	proposed_ss.reserve( pose.total_residue() );
@@ -98,24 +100,24 @@ bool ResTypeFragmentMover::apply_frames( pose::Pose &pose, core::fragment::Frame
 	// if old ss was fine ---> check fragments effect on ss
 	if ( !valid ) { // if old_ss was valid we check if proposed_ss is still valid.
 		frames[ frame_num ]->apply_ss( *movemap_, frag_num, proposed_ss );
-		//		tr.Trace << !valid << " old_ss: " << old_ss << std::endl;
+		//  tr.Trace << !valid << " old_ss: " << old_ss << std::endl;
 		valid = valid_ss( proposed_ss );
-		//		tr.Trace << valid << "new_ss: " << proposed_ss << std::endl;
+		//  tr.Trace << valid << "new_ss: " << proposed_ss << std::endl;
 	}
-	//	tr.Trace << "finished the ss-check! : " << valid << std::endl;
+	// tr.Trace << "finished the ss-check! : " << valid << std::endl;
 	if ( valid ) {
 		std::string swap_sequence = frames[frame_num]->fragment(frag_num).sequence();
 		swap_residue_types(pose,swap_sequence,frames[ frame_num ]->start());
 		success = apply_fragment( *frames[ frame_num ], frag_num, *movemap_, pose );
 	} else {
-		//		tr.Trace << "dissallow insertion due to short helix/strand " << std::endl;
+		//  tr.Trace << "dissallow insertion due to short helix/strand " << std::endl;
 	}
 	return success;
 }
 
 void ResTypeFragmentMover::swap_residue_types( pose::Pose &pose, std::string const sequence, Size const startSeqPos ) const {
 	using namespace chemical;
-	for(Size ii=0; ii<sequence.size(); ++ii){
+	for ( Size ii=0; ii<sequence.size(); ++ii ) {
 		char aa = sequence[ii];
 		AA my_aa = aa_from_oneletter_code( aa );
 		ResidueTypeSetCAP const &residue_set(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID ));

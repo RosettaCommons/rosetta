@@ -8,9 +8,9 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/filters/RangeFilter.cc
-/// @brief 
+/// @brief
 /// @details
-/// @author Javier Castellanos	(javiercv@uw.edu)
+/// @author Javier Castellanos (javiercv@uw.edu)
 
 // Unit Headers
 #include <protocols/simple_filters/RangeFilter.hh>
@@ -68,10 +68,10 @@ RangeFilter::report( std::ostream & out, Pose const & pose ) const
 bool RangeFilter::apply( Pose const & pose ) const
 {
 	Real value = filter_->report_sm( pose );
-	if( value > lower_bound_ && value < upper_bound_ ){
+	if ( value > lower_bound_ && value < upper_bound_ ) {
 		tr << "Successfully filtered: " << value << " in range " << lower_bound_ << " - " << upper_bound_ << std::endl;
 		return true;
-	}else{
+	} else {
 		tr << "Filter failed: value = " << value << " range = "<< lower_bound_ << " - " << upper_bound_ << std::endl;
 		return false;
 	}
@@ -88,12 +88,13 @@ RangeFilter::parse_my_tag(
 {
 	std::string const filter_name( tag->getOption< std::string >( "filter") );
 	filters::Filters_map::const_iterator filter_it( filters.find( filter_name ) );
-	if( filter_it == filters.end() )
+	if ( filter_it == filters.end() ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Filter "+filter_name+" not found" );
+	}
 	filter_ =  filter_it->second;
 
- 	lower_bound_ = tag->getOption<Real>( "lower_bound");
- 	upper_bound_ = tag->getOption<Real>( "upper_bound");
+	lower_bound_ = tag->getOption<Real>( "lower_bound");
+	upper_bound_ = tag->getOption<Real>( "upper_bound");
 	assert(lower_bound_ < upper_bound_);
 }
 

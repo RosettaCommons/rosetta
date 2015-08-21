@@ -161,7 +161,7 @@ public:
 
 	core::Real
 	compute_grid_constant(
-	  hbonds::HBEvalTuple const & hbond_eval_type
+		hbonds::HBEvalTuple const & hbond_eval_type
 	) const;
 
 	/// @brief computes the SHO energy of a donor atom
@@ -181,15 +181,15 @@ public:
 	core::Real compute_polar_group_sol_energy(
 		pose::Pose const & pose,
 		conformation::Residue const & polar_rsd,
-	  Size const polar_atom,
+		Size const polar_atom,
 		bool const restrict_to_single_occluding_residue = false,
 		Size const single_occluding_resinx = 0,
 		bool const restrict_to_single_occluding_atom = false,
 		Size const single_occluding_atominx = 0
-  ) const;
+	) const;
 
 	core::Real compute_polar_group_sol_energy(
-    pose::Pose const & pose,
+		pose::Pose const & pose,
 		conformation::Residue const & polar_rsd,
 		core::Size const polar_atomno,
 		GridInfo const & grid_info,

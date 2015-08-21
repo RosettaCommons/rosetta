@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	protocols/features/BetaTurnDetectionFeatures.cc
-/// @brief	report beta turns to a DB
+/// @file protocols/features/BetaTurnDetectionFeatures.cc
+/// @brief report beta turns to a DB
 /// @author Brian D. Weitzner (brian.weitzner@gmail.com)
 
 // Unit Headers
@@ -33,8 +33,8 @@
 // External Headers
 #include <cppdb/frontend.h>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::string;
 using basic::database::safely_write_to_database;
@@ -114,15 +114,14 @@ BetaTurnDetectionFeatures::report_features(
 	statement beta_turns_stmt(
 		safely_prepare_statement( beta_turns_stmt_string, db_session ) );
 
-	for( SSize begin = 1; begin <= SSize( pose.total_residue() - btd_->beta_turn_length() ); ++begin ) {
+	for ( SSize begin = 1; begin <= SSize( pose.total_residue() - btd_->beta_turn_length() ); ++begin ) {
 		Size end = begin + btd_->beta_turn_length();
 
 		if ( ! check_relevant_residues_range( relevant_residues, begin, end ) ||
-	! btd_->residue_range_is_protein( pose, begin, end ) ||
-	! btd_->all_turn_residues_are_on_the_same_chain( pose, begin ) ||
-	! btd_->beta_turn_present( pose, begin ) )
-		{
-				continue;
+				! btd_->residue_range_is_protein( pose, begin, end ) ||
+				! btd_->all_turn_residues_are_on_the_same_chain( pose, begin ) ||
+				! btd_->beta_turn_present( pose, begin ) ) {
+			continue;
 		}
 
 		// Add stuff to database

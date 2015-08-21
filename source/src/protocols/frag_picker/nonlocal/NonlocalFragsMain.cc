@@ -11,8 +11,8 @@
 /// @author David Kim
 
 /*
-  The purpose of this protocol is to get interacting fragment pairs non-local in sequence from
-	a given PDB. This protocol will be used to generate a VALL database of non-local fragment pairs.
+The purpose of this protocol is to get interacting fragment pairs non-local in sequence from
+a given PDB. This protocol will be used to generate a VALL database of non-local fragment pairs.
 */
 
 
@@ -56,14 +56,14 @@ void NonlocalFrags_main() {
 
 	NonlocalFragsOP mover;
 
-  mover = NonlocalFragsOP( new NonlocalFrags() );
+	mover = NonlocalFragsOP( new NonlocalFrags() );
 
-  try {
-    JobDistributor::get_instance()->go(mover);
-  } catch (EXCN_Base& e) {
-    cerr << "Exception: " << endl;
-    e.show(cerr);
-  }
+	try {
+		JobDistributor::get_instance()->go(mover);
+	} catch (EXCN_Base& e) {
+		cerr << "Exception: " << endl;
+		e.show(cerr);
+	}
 
 }
 

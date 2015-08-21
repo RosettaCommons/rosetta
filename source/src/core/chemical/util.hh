@@ -34,13 +34,13 @@ core::chemical::ResidueTypeSetCAP rsd_set_from_cmd_line();
 
 /// @brief  Add additional parameter files not present in <atom-set-name>/extras.txt.
 void add_atom_type_set_parameters_from_command_line(
-		std::string const & atom_type_set_tag,
-		AtomTypeSet & atom_type_set );
+	std::string const & atom_type_set_tag,
+	AtomTypeSet & atom_type_set );
 
 /// @brief  Modify atom_type properties from the command line.
 void modify_atom_properties_from_command_line(
-		std::string const & atom_type_set_tag,
-		AtomTypeSet & atom_type_set );
+	std::string const & atom_type_set_tag,
+	AtomTypeSet & atom_type_set );
 
 
 /// @brief Return a string representing the internal coordinates tree of this ResidueType.
@@ -56,9 +56,9 @@ std::string fixup_patches( std::string string_in );
 
 /// @brief  Are these two residues patched in exactly the same way, ignoring any VariantTypes in the list of exceptions?
 bool variants_match_with_exceptions(
-		ResidueType const & res1,
-		ResidueType const & res2,
-		utility::vector1< VariantType > list_of_variants_to_ignore );
+	ResidueType const & res1,
+	ResidueType const & res2,
+	utility::vector1< VariantType > list_of_variants_to_ignore );
 
 bool
 make_pH_mode_exceptions();
@@ -72,8 +72,8 @@ bool nonadduct_variants_match( ResidueType const & res1, ResidueType const & res
 /// @brief look for best match to atom_names
 ResidueTypeCOP
 find_best_match( ResidueTypeCOPs const & rsd_type_list,
-								 utility::vector1< std::string > const & atom_names,
-								 bool const ignore_atom_named_H = false );
+	utility::vector1< std::string > const & atom_names,
+	bool const ignore_atom_named_H = false );
 
 // @brief Fang-Chieh Chou 8/10/2012. Use larger LJ_WDEPTH for protons to avoid clashes in RNA
 void enlarge_h_lj_wdepth( utility::vector1< Real > & lj_wdepth, AtomTypeSet const & atom_type_set );

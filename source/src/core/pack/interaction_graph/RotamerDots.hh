@@ -247,7 +247,7 @@ private:
 
 	static void initialize_dot_coords( utility::vector1< core::Vector > & dot_coords );
 
-public:	/// TEMP!
+public: /// TEMP!
 
 	static ObjexxFCL::FArray2D_int const *   lg_angles_;
 	static ObjexxFCL::FArray2D_ubyte const * lg_masks_;

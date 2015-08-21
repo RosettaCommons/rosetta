@@ -28,9 +28,9 @@
 
 
 using namespace core;
-  using namespace conformation;
-  using namespace scoring;
-    using namespace hbonds;
+using namespace conformation;
+using namespace scoring;
+using namespace hbonds;
 
 using pose::Pose;
 
@@ -39,7 +39,7 @@ static basic::Tracer TR("core.scoring.hbonds.HBondsForDemos.cxxtest");
 class HBondsForDemos : public CxxTest::TestSuite {
 
 public:
-  void setUp() {
+	void setUp() {
 		core_init();
 	}
 
@@ -74,13 +74,13 @@ public:
 
 		/* Expected output last set of show statements
 
-    #Dch Dn Dres Da  Ach An Ares Aa  length AHDang BAHang  BAtor weight energy
-    #A    7  LEU  N  A    3  TYR  O    2.03  146.5  141.5 -122.2  1.000 -1.266
-    #A    8  LYS  N  A    4  ILE  O    2.07  156.6  148.9 -115.6  1.000 -1.442
-    #A    5  GLN  N  A    1  ASN  O    2.03  153.9  154.4 -143.8  1.000 -1.424
-    #A    6  TRP  N  A    2  LEU  O    2.19  142.9  142.5 -149.9  1.000 -0.980
-    #A    9  ASP  N  A    6  TRP  O    2.55  141.1   95.4 -106.5  1.000 -0.137
-    #A   11  GLY  N  A    6  TRP  O    2.37  144.0  141.8  162.9  1.000 -0.393
+		#Dch Dn Dres Da  Ach An Ares Aa  length AHDang BAHang  BAtor weight energy
+		#A    7  LEU  N  A    3  TYR  O    2.03  146.5  141.5 -122.2  1.000 -1.266
+		#A    8  LYS  N  A    4  ILE  O    2.07  156.6  148.9 -115.6  1.000 -1.442
+		#A    5  GLN  N  A    1  ASN  O    2.03  153.9  154.4 -143.8  1.000 -1.424
+		#A    6  TRP  N  A    2  LEU  O    2.19  142.9  142.5 -149.9  1.000 -0.980
+		#A    9  ASP  N  A    6  TRP  O    2.55  141.1   95.4 -106.5  1.000 -0.137
+		#A   11  GLY  N  A    6  TRP  O    2.37  144.0  141.8  162.9  1.000 -0.393
 
 		*/
 

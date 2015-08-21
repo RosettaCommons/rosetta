@@ -26,9 +26,9 @@
 #include <core/types.hh>
 
 #ifdef WIN32
-	#include <protocols/stepwise/modeler/rna/checker/RNA_AtrRepChecker.hh>
-	#include <protocols/stepwise/screener/AnchorSugarScreener.hh>
-	#include <protocols/stepwise/modeler/rna/sugar/SugarModeling.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_AtrRepChecker.hh>
+#include <protocols/stepwise/screener/AnchorSugarScreener.hh>
+#include <protocols/stepwise/modeler/rna/sugar/SugarModeling.hh>
 #endif
 
 /*
@@ -48,54 +48,54 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class AnchorSugarScreener: public StepWiseScreener {
+class AnchorSugarScreener: public StepWiseScreener {
 
-	public:
+public:
 
-		//constructor
-		AnchorSugarScreener(modeler::rna::sugar::SugarModeling const & anchor_sugar_modeling,
-							modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_to_anchor_checker,
-							core::pose::Pose & sugar_screening_pose,
-							bool const is_prepend,
-							modeler::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker_with_instantiated_sugar,
-							utility::vector1< modeler::rna::checker::RNA_AtrRepCheckerOP > atr_rep_checkers_for_anchor_sugar_models,
-							TagDefinitionOP tag_definition );
+	//constructor
+	AnchorSugarScreener(modeler::rna::sugar::SugarModeling const & anchor_sugar_modeling,
+		modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_to_anchor_checker,
+		core::pose::Pose & sugar_screening_pose,
+		bool const is_prepend,
+		modeler::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker_with_instantiated_sugar,
+		utility::vector1< modeler::rna::checker::RNA_AtrRepCheckerOP > atr_rep_checkers_for_anchor_sugar_models,
+		TagDefinitionOP tag_definition );
 
-		//destructor
-		~AnchorSugarScreener();
+	//destructor
+	~AnchorSugarScreener();
 
-	public:
+public:
 
-		bool
-		check_screen();
+	bool
+	check_screen();
 
-		std::string
-		name() const { return "AnchorSugarScreener"; }
+	std::string
+	name() const { return "AnchorSugarScreener"; }
 
-		StepWiseScreenerType
-		type() const { return ANCHOR_SUGAR; }
+	StepWiseScreenerType
+	type() const { return ANCHOR_SUGAR; }
 
-		void
-		add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
+	void
+	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
 
-		Size const &
-		anchor_sugar_solution_number() const { return anchor_sugar_solution_number_; }
+	Size const &
+	anchor_sugar_solution_number() const { return anchor_sugar_solution_number_; }
 
-	private:
+private:
 
-		modeler::rna::sugar::SugarModeling const & anchor_sugar_modeling_;
-		modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_to_anchor_checker_;
-		core::pose::Pose & sugar_screening_pose_;
-		modeler::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker_with_instantiated_sugar_;
-		utility::vector1< modeler::rna::checker::RNA_AtrRepCheckerOP > atr_rep_checkers_for_anchor_sugar_models_;
-		TagDefinitionOP tag_definition_;
+	modeler::rna::sugar::SugarModeling const & anchor_sugar_modeling_;
+	modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_to_anchor_checker_;
+	core::pose::Pose & sugar_screening_pose_;
+	modeler::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker_with_instantiated_sugar_;
+	utility::vector1< modeler::rna::checker::RNA_AtrRepCheckerOP > atr_rep_checkers_for_anchor_sugar_models_;
+	TagDefinitionOP tag_definition_;
 
-		bool const is_prepend_;
-		std::string const moving_atom_name_;
-		std::string const reference_atom_name_;
+	bool const is_prepend_;
+	std::string const moving_atom_name_;
+	std::string const reference_atom_name_;
 
-		Size anchor_sugar_solution_number_;
-	};
+	Size anchor_sugar_solution_number_;
+};
 
 } //screener
 } //stepwise

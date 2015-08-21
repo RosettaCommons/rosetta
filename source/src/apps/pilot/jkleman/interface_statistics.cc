@@ -66,25 +66,25 @@ using namespace protocols::scoring;
 using namespace protocols::toolbox::pose_metric_calculators;
 
 class MPInterfaceStatistics : public Mover {
-	
+
 public:
-	
+
 	////////////////////
 	/// Constructors ///
 	////////////////////
 
 	/// @brief Construct a Default Membrane Position Mover
 	MPInterfaceStatistics( Size jump );
-	
+
 	/// @brief Copy Constructor
 	/// @details Make a deep copy of this mover object
 	MPInterfaceStatistics( MPInterfaceStatistics const & src );
-	
+
 	/// @brief Assignment Operator
 	/// @details Make a deep copy of this mover object, overriding the assignment operator
 	MPInterfaceStatistics &
 	operator=( MPInterfaceStatistics const & src );
-	
+
 	/// @brief Destructor
 	~MPInterfaceStatistics();
 
@@ -102,21 +102,21 @@ public:
 	/// Rosetta Scripts Methods ///
 	///////////////////////////////
 
-//	/// @brief Create a Clone of this mover
-//	virtual protocols::moves::MoverOP clone() const;
-//
-//	/// @brief Create a Fresh Instance of this Mover
-//	virtual protocols::moves::MoverOP fresh_instance() const;
-//
-//	/// @brief Pase Rosetta Scripts Options for this Mover
-//	void parse_my_tag(
-//					  utility::tag::TagCOP tag,
-//					  basic::datacache::DataMap &,
-//					  protocols::filters::Filters_map const &,
-//					  protocols::moves::Movers_map const &,
-//					  core::pose::Pose const &
-//					  );
-	
+	// /// @brief Create a Clone of this mover
+	// virtual protocols::moves::MoverOP clone() const;
+	//
+	// /// @brief Create a Fresh Instance of this Mover
+	// virtual protocols::moves::MoverOP fresh_instance() const;
+	//
+	// /// @brief Pase Rosetta Scripts Options for this Mover
+	// void parse_my_tag(
+	//       utility::tag::TagCOP tag,
+	//       basic::datacache::DataMap &,
+	//       protocols::filters::Filters_map const &,
+	//       protocols::moves::Movers_map const &,
+	//       core::pose::Pose const &
+	//       );
+
 private: // methods
 
 	/// @brief Register Options with JD2
@@ -134,7 +134,7 @@ private: // methods
 	/// @brief Get charges for all states
 	utility::vector1< Real > get_avg_charge( Pose & pose );
 
-		/// @brief Get number of charged residues for all states
+	/// @brief Get number of charged residues for all states
 	utility::vector1< Size > get_number_charges( Pose & pose );
 
 	/// @brief Get number of charged residues for all states
@@ -171,25 +171,25 @@ private: // methods
 	void fill_vectors_with_data( Pose & pose );
 
 private: // data
-	
+
 	/// @brief jump
 	Size jump_;
-	
+
 	/// @brief Interface
 	Interface interface_;
-	
+
 	/// @brief Partners;
 	std::string partners_;
-	
+
 	/// @brief Are residues in the membrane?
 	utility::vector1< bool > in_mem_;
-	
-//	/// @brief What is the charge of the residues?
-//	utility::vector1< bool > charge_;
-	
+
+	// /// @brief What is the charge of the residues?
+	// utility::vector1< bool > charge_;
+
 	/// @brief Are the residues in the interface?
 	utility::vector1< bool > intf_;
-	
+
 	/// @brief Are the residues exposed?
 	utility::vector1< bool > exposed_;
 };
@@ -223,8 +223,8 @@ MPInterfaceStatistics &
 MPInterfaceStatistics::operator=( MPInterfaceStatistics const & src )
 {
 	// Abort self-assignment.
-	if (this == &src) {
-	return *this;
+	if ( this == &src ) {
+		return *this;
 	}
 
 	// Otherwise, create a new object
@@ -246,9 +246,9 @@ MPInterfaceStatistics::get_name() const {
 
 /// @brief Get Membrane protein interface statistics
 void MPInterfaceStatistics::apply( Pose & pose ) {
-	
+
 	using namespace protocols::membrane;
-	
+
 	TR << "Calling MPInterfaceStatistics" << std::endl;
 
 	register_options();
@@ -259,7 +259,7 @@ void MPInterfaceStatistics::apply( Pose & pose ) {
 	addmem->apply( pose );
 
 	// Check the pose is a membrane protein
-	if (! pose.conformation().is_membrane() ) {
+	if ( ! pose.conformation().is_membrane() ) {
 		utility_exit_with_message( "Cannot apply membrane move to a non-membrane pose!" );
 	}
 
@@ -270,7 +270,7 @@ void MPInterfaceStatistics::apply( Pose & pose ) {
 	// calculate interface
 	interface_ = Interface( jump_ );
 	interface_.calculate( pose );
-	
+
 	// fill vectors with data
 	fill_vectors_with_data( pose );
 
@@ -281,12 +281,12 @@ void MPInterfaceStatistics::apply( Pose & pose ) {
 	// Compute a ruggedness factor of the interface???
 	// Compute an average deviation from a plane along the interface
 	// Get contact preferences for AAs: Yan & Jernigan, 2008, ProteinJ
-	
+
 } // apply
 
 /// @brief Register Options with JD2
 void MPInterfaceStatistics::register_options() {
-	
+
 	using namespace basic::options;
 	option.add_relevant( OptionKeys::docking::partners );
 
@@ -294,11 +294,11 @@ void MPInterfaceStatistics::register_options() {
 
 /// @brief Initialize Mover options from the comandline
 void MPInterfaceStatistics::init_from_cmd() {
-	
+
 	using namespace basic::options;
-	
+
 	// docking partners
-	if( option[ OptionKeys::docking::partners ].user() ) {
+	if ( option[ OptionKeys::docking::partners ].user() ) {
 		partners_ = option[ OptionKeys::docking::partners ]();
 	}
 } // init from commandline
@@ -310,44 +310,44 @@ void MPInterfaceStatistics::init_from_cmd() {
 ///// @brief Create a Clone of this mover
 //protocols::moves::MoverOP
 //MPInterfaceStatistics::clone() const {
-//	return ( protocols::moves::MoverOP( new MPInterfaceStatistics( *this ) ) );
+// return ( protocols::moves::MoverOP( new MPInterfaceStatistics( *this ) ) );
 //}
 //
 ///// @brief Create a Fresh Instance of this Mover
 //protocols::moves::MoverOP
 //MPInterfaceStatistics::fresh_instance() const {
-//	return protocols::moves::MoverOP( new MPInterfaceStatistics() );
+// return protocols::moves::MoverOP( new MPInterfaceStatistics() );
 //}
 //
 ///// @brief Pase Rosetta Scripts Options for this Mover
 //void
 //MPInterfaceStatistics::parse_my_tag(
-//									   utility::tag::TagCOP tag,
-//									   basic::datacache::DataMap &,
-//									   protocols::filters::Filters_map const &,
-//									   protocols::moves::Movers_map const &,
-//									   core::pose::Pose const &
-//									   ) {
-//		// TODO
+//            utility::tag::TagCOP tag,
+//            basic::datacache::DataMap &,
+//            protocols::filters::Filters_map const &,
+//            protocols::moves::Movers_map const &,
+//            core::pose::Pose const &
+//            ) {
+//  // TODO
 //
 //}
 //
 ///// @brief Create a new copy of this mover
 //protocols::moves::MoverOP
 //MPInterfaceStatisticsCreator::create_mover() const {
-//	return protocols::moves::MoverOP( new MPInterfaceStatistics );
+// return protocols::moves::MoverOP( new MPInterfaceStatistics );
 //}
 //
 ///// @brief Return the Name of this mover (as seen by Rscripts)
 //std::string
 //MPInterfaceStatisticsCreator::keyname() const {
-//	return MPInterfaceStatisticsCreator::mover_name();
+// return MPInterfaceStatisticsCreator::mover_name();
 //}
 //
 ///// @brief Mover name for Rosetta Scripts
 //std::string
 //MPInterfaceStatisticsCreator::mover_name() {
-//	return "MPInterfaceStatistics";
+// return "MPInterfaceStatistics";
 //}
 
 //////////////////////////////////////////////////////////////////////
@@ -363,11 +363,11 @@ Real MPInterfaceStatistics::get_size( Pose & pose ) {
 	using namespace core::pose;
 	using namespace core::scoring::sasa;
 	using namespace protocols::scoring;
-	
+
 	// get per-residue SASA
 	SasaCalc calc = SasaCalc();
 	core::Real total_sasa( calc.calculate( pose ) );
-	
+
 	// partition pose by jump
 	Pose partner1, partner2;
 	partition_pose_by_jump( pose, jump_, partner1, partner2 );
@@ -375,7 +375,7 @@ Real MPInterfaceStatistics::get_size( Pose & pose ) {
 	// calculate SASAs of individual partners
 	core::Real p1_sasa( calc.calculate( partner1 ) );
 	core::Real p2_sasa( calc.calculate( partner2 ) );
-	
+
 	// calculate interface
 	core::Real intf_sasa = - ( total_sasa - p1_sasa - p2_sasa) / 2;
 
@@ -383,7 +383,7 @@ Real MPInterfaceStatistics::get_size( Pose & pose ) {
 
 }// get_size
 
-	//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 /// @brief Get charge of the interface
 utility::vector1< SSize > MPInterfaceStatistics::get_charge( Pose & pose ) {
@@ -397,9 +397,9 @@ utility::vector1< SSize > MPInterfaceStatistics::get_charge( Pose & pose ) {
 
 	// go through residues
 	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
-	
+
 		std::string res = pose.residue( i ).name3();
-		
+
 		// is residue positive?
 		bool pos( false );
 		if ( res == "ARG" || res == "LYS" ) {
@@ -415,51 +415,35 @@ utility::vector1< SSize > MPInterfaceStatistics::get_charge( Pose & pose ) {
 		// interface, membrane, positive / negative
 		if ( exposed_[i] && intf_[i] && in_mem_[i] && pos ) {
 			++tm_int;
-		}
-		else if ( exposed_[i] && intf_[i] && in_mem_[i] && neg ) {
+		} else if ( exposed_[i] && intf_[i] && in_mem_[i] && neg ) {
 			--tm_int;
-		}
-		
-		// interface, sol, positive / negative
-		else if ( exposed_[i] && intf_[i] && !in_mem_[i] && pos ) {
+		} else if ( exposed_[i] && intf_[i] && !in_mem_[i] && pos ) {
+			// interface, sol, positive / negative
 			++sol_int;
-		}
-		else if ( exposed_[i] && intf_[i] && !in_mem_[i] && neg ) {
+		} else if ( exposed_[i] && intf_[i] && !in_mem_[i] && neg ) {
 			--sol_int;
-		}
-
-		// not interface, membrane, positive / negative
-		else if ( exposed_[i] && !intf_[i] && in_mem_[i] && pos ) {
+		} else if ( exposed_[i] && !intf_[i] && in_mem_[i] && pos ) {
+			// not interface, membrane, positive / negative
 			++tm_nonint;
-		}
-		else if ( exposed_[i] && !intf_[i] && in_mem_[i] && neg ) {
+		} else if ( exposed_[i] && !intf_[i] && in_mem_[i] && neg ) {
 			--tm_nonint;
-		}
-
-		// not interface, sol, positive / negative
-		else if ( exposed_[i] && !intf_[i] && !in_mem_[i] && pos ) {
+		} else if ( exposed_[i] && !intf_[i] && !in_mem_[i] && pos ) {
+			// not interface, sol, positive / negative
 			++sol_nonint;
-		}
-		else if ( exposed_[i] && !intf_[i] && !in_mem_[i] && neg ) {
+		} else if ( exposed_[i] && !intf_[i] && !in_mem_[i] && neg ) {
 			--sol_nonint;
-		}
-		
-		// if core, membrane, positive / negative
-		else if ( !exposed_[i] && in_mem_[i] && pos ) {
+		} else if ( !exposed_[i] && in_mem_[i] && pos ) {
+			// if core, membrane, positive / negative
 			++tm_core;
-		}
-		else if ( !exposed_[i] && in_mem_[i] && neg ) {
+		} else if ( !exposed_[i] && in_mem_[i] && neg ) {
 			--tm_core;
-		}
-
-		// if core, solution, positive / negative
-		else if ( !exposed_[i] && !in_mem_[i] && pos ) {
+		} else if ( !exposed_[i] && !in_mem_[i] && pos ) {
+			// if core, solution, positive / negative
 			++sol_core;
-		}
-		else if ( !exposed_[i] && !in_mem_[i] && neg ) {
+		} else if ( !exposed_[i] && !in_mem_[i] && neg ) {
 			--sol_core;
 		}
-		
+
 	}
 
 	// write counts into vector
@@ -475,26 +459,26 @@ utility::vector1< SSize > MPInterfaceStatistics::get_charge( Pose & pose ) {
 
 } // get charge
 
-	//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 /// @brief Get average charge of the interface, meaning averaged over the
-///			number of residues
+///   number of residues
 utility::vector1< Real > MPInterfaceStatistics::get_avg_charge( Pose & pose ) {
 
 	utility::vector1< SSize > charge( get_charge( pose ) );
 	utility::vector1< Size > nres( get_number_of_residues( pose ) );
 	utility::vector1< Real > avg_charge;
-	
+
 	// get average
 	for ( Size i = 1; i <= nres.size(); ++i ) {
 		avg_charge.push_back( static_cast< Real >( charge[ i ] ) / static_cast< Real >( nres[ i ] ) );
 	}
-	
+
 	return avg_charge;
 
 } // get avg charge
 
-	//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 /// @brief Get number of charged residues in the interface
 utility::vector1< Size > MPInterfaceStatistics::get_number_charges( Pose & pose ) {
@@ -505,10 +489,10 @@ utility::vector1< Size > MPInterfaceStatistics::get_number_charges( Pose & pose 
 	Size sol_int( 0 );
 	Size sol_nonint( 0 );
 	Size sol_core( 0 );
-	
+
 	// go through residues
 	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
-		
+
 		std::string res = pose.residue( i ).name3();
 
 		// is residue charged?
@@ -516,39 +500,29 @@ utility::vector1< Size > MPInterfaceStatistics::get_number_charges( Pose & pose 
 		if ( res == "ARG" || res == "LYS" || res == "ASP" || res == "GLU" ) {
 			charged = true;
 		}
-		
+
 		// interface, membrane, charged
 		if ( exposed_[i] && intf_[i] && in_mem_[i] && charged ) {
 			++tm_int;
-		}
-		
-		// interface, sol, charged
-		else if ( exposed_[i] && intf_[i] && !in_mem_[i] && charged ) {
+		} else if ( exposed_[i] && intf_[i] && !in_mem_[i] && charged ) {
+			// interface, sol, charged
 			++sol_int;
-		}
-		
-		// not interface, membrane, charged
-		else if ( exposed_[i] && !intf_[i] && in_mem_[i] && charged ) {
+		} else if ( exposed_[i] && !intf_[i] && in_mem_[i] && charged ) {
+			// not interface, membrane, charged
 			++tm_nonint;
-		}
-	
-		// not interface, sol, charged
-		else if ( exposed_[i] && !intf_[i] && !in_mem_[i] && charged ) {
+		} else if ( exposed_[i] && !intf_[i] && !in_mem_[i] && charged ) {
+			// not interface, sol, charged
 			++sol_nonint;
-		}
-		
-		// core, membrane
-		else if ( !exposed_[i] && in_mem_[i] && charged ) {
+		} else if ( !exposed_[i] && in_mem_[i] && charged ) {
+			// core, membrane
 			++tm_core;
-		}
-		
-		// core, membrane
-		else if ( !exposed_[i] && !in_mem_[i] && charged ) {
+		} else if ( !exposed_[i] && !in_mem_[i] && charged ) {
+			// core, membrane
 			++sol_core;
 		}
-		
+
 	}
-	
+
 	// write counts into vector
 	utility::vector1< Size > ncharges;
 	ncharges.push_back( tm_int );
@@ -557,15 +531,15 @@ utility::vector1< Size > MPInterfaceStatistics::get_number_charges( Pose & pose 
 	ncharges.push_back( sol_int );
 	ncharges.push_back( sol_nonint );
 	ncharges.push_back( sol_core );
-	
+
 	return ncharges;
 
 } // get number of charges
 
-	//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 /// @brief Get average number of charges, meaning averaged over the
-///			number of residues
+///   number of residues
 utility::vector1< Real > MPInterfaceStatistics::get_avg_number_charges( Pose & pose ) {
 
 	utility::vector1< Size > ncharges( get_number_charges( pose ) );
@@ -581,27 +555,27 @@ utility::vector1< Real > MPInterfaceStatistics::get_avg_number_charges( Pose & p
 
 } // get avg charge
 
-	//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 /// @brief Get hydrophobicity of the interface (UHS, Koehler & Meiler, Proteins, 2008)
 utility::vector1< Real > MPInterfaceStatistics::get_hydrophobicity( Pose & pose ) {
 
 	// hydrophobicity scale
 	std::map< char, Real > hydro;
-	
+
 	// polar
 	hydro[ 'C' ] = 0.01;
 	hydro[ 'N' ] = 0.50;
 	hydro[ 'Q' ] = 0.46;
 	hydro[ 'S' ] = 0.06;
 	hydro[ 'T' ] = -0.01;
-	
+
 	// charged
 	hydro[ 'D' ] = 0.73;
 	hydro[ 'E' ] = 0.70;
 	hydro[ 'K' ] = 0.90;
 	hydro[ 'R' ] = 0.55;
-	
+
 	// hydrophobic
 	hydro[ 'A' ] = -0.16;
 	hydro[ 'G' ] = -0.20;
@@ -610,7 +584,7 @@ utility::vector1< Real > MPInterfaceStatistics::get_hydrophobicity( Pose & pose 
 	hydro[ 'M' ] = -0.20;
 	hydro[ 'P' ] = 0.50;
 	hydro[ 'V' ] = -0.25;
-	
+
 	// aromatic
 	hydro[ 'F' ] = -0.46;
 	hydro[ 'H' ] = 0.38;
@@ -623,37 +597,27 @@ utility::vector1< Real > MPInterfaceStatistics::get_hydrophobicity( Pose & pose 
 	Real sol_int( 0 );
 	Real sol_nonint( 0 );
 	Real sol_core( 0 );
-	
+
 	// go through residues
 	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
 
 		// interface, mem
 		if ( exposed_[i] && intf_[i] && in_mem_[i] ) {
 			tm_int += hydro[ pose.residue( i ).name1() ];
-		}
-
-		// interface, sol
-		else if ( exposed_[i] && intf_[i] && !in_mem_[i] ) {
+		} else if ( exposed_[i] && intf_[i] && !in_mem_[i] ) {
+			// interface, sol
 			sol_int += hydro[ pose.residue( i ).name1() ];
-		}
-
-		// not interface, mem
-		else if ( exposed_[i] && !intf_[i] && in_mem_[i] ) {
+		} else if ( exposed_[i] && !intf_[i] && in_mem_[i] ) {
+			// not interface, mem
 			tm_nonint += hydro[ pose.residue( i ).name1() ];
-		}
-
-		// not interface, sol
-		else if ( exposed_[i] && !intf_[i] && !in_mem_[i] ) {
+		} else if ( exposed_[i] && !intf_[i] && !in_mem_[i] ) {
+			// not interface, sol
 			sol_nonint += hydro[ pose.residue( i ).name1() ];
-		}
-		
-		// core, mem
-		else if ( !exposed_[i] && in_mem_[i] ) {
+		} else if ( !exposed_[i] && in_mem_[i] ) {
+			// core, mem
 			tm_core += hydro[ pose.residue( i ).name1() ];
-		}
-		
-		// core, sol
-		else if ( !exposed_[i] && !in_mem_[i] ) {
+		} else if ( !exposed_[i] && !in_mem_[i] ) {
+			// core, sol
 			sol_core += hydro[ pose.residue( i ).name1() ];
 		}
 	}
@@ -671,7 +635,7 @@ utility::vector1< Real > MPInterfaceStatistics::get_hydrophobicity( Pose & pose 
 
 } // get hydrophobicity
 
-	//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 /// @brief Get avg hydrophobicity for all states (UHS, Koehler & Meiler, Proteins, 2008)
 utility::vector1< Real > MPInterfaceStatistics::get_avg_hydrophobicity( Pose & pose ) {
@@ -679,18 +643,18 @@ utility::vector1< Real > MPInterfaceStatistics::get_avg_hydrophobicity( Pose & p
 	utility::vector1< Real > hydro( get_hydrophobicity( pose ) );
 	utility::vector1< Size > nres( get_number_of_residues( pose ) );
 	utility::vector1< Real > avg_hydro;
-	
+
 	// get average
 	for ( Size i = 1; i <= nres.size(); ++i ) {
 		avg_hydro.push_back( hydro[ i ] / nres[ i ] );
 	}
-	
+
 	return avg_hydro;
 
 } // average hydrophobicity
 
-	//////////////////////////////////////////////////////////////////////
-	
+//////////////////////////////////////////////////////////////////////
+
 
 /// @brief Get number of residues in each bin
 utility::vector1< Size > MPInterfaceStatistics::get_number_of_residues( Pose & pose ) {
@@ -701,41 +665,31 @@ utility::vector1< Size > MPInterfaceStatistics::get_number_of_residues( Pose & p
 	Size sol_int( 0 );
 	Size sol_nonint( 0 );
 	Size sol_core( 0 );
-	
+
 	// go through residues
 	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
-		
+
 		// interface, mem
 		if ( exposed_[i] && intf_[i] && in_mem_[i] ) {
 			++tm_int;
-		}
-
-		// interface, sol
-		else if ( exposed_[i] && intf_[i] && !in_mem_[i] ) {
+		} else if ( exposed_[i] && intf_[i] && !in_mem_[i] ) {
+			// interface, sol
 			++sol_int;
-		}
-
-		// non interface, mem
-		else if ( exposed_[i] && !intf_[i] && in_mem_[i] ) {
+		} else if ( exposed_[i] && !intf_[i] && in_mem_[i] ) {
+			// non interface, mem
 			++tm_nonint;
-		}
-		
-		// not interface, sol
-		else if ( exposed_[i] && !intf_[i] && !in_mem_[i] ) {
+		} else if ( exposed_[i] && !intf_[i] && !in_mem_[i] ) {
+			// not interface, sol
 			++sol_nonint;
-		}
-
-		// core, mem
-		else if ( !exposed_[i] && in_mem_[i] ) {
+		} else if ( !exposed_[i] && in_mem_[i] ) {
+			// core, mem
 			++tm_core;
-		}
-		
-		// core, sol
-		else if ( !exposed_[i] && !in_mem_[i] ) {
+		} else if ( !exposed_[i] && !in_mem_[i] ) {
+			// core, sol
 			++sol_core;
 		}
 	}
-	
+
 	// write counts into vector
 	utility::vector1< Size > nresidues;
 	nresidues.push_back( tm_int );
@@ -746,10 +700,10 @@ utility::vector1< Size > MPInterfaceStatistics::get_number_of_residues( Pose & p
 	nresidues.push_back( sol_core );
 
 	return nresidues;
-	
+
 } // get number of contacts in interface
 
-	//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 /// @brief Get surface complementarity
 Real MPInterfaceStatistics::get_surface_complementarity( Pose & pose ) {
@@ -757,12 +711,12 @@ Real MPInterfaceStatistics::get_surface_complementarity( Pose & pose ) {
 	using namespace core::scoring::sc;
 	ShapeComplementarityCalculator shape;
 	shape.Init();
-	
+
 	return shape.CalcSc( pose, jump_, 1 );
 
 } // get surface complementarity of interface
 
-	//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 /// @brief Get avg residue in the interface
 utility::vector1 < Real > MPInterfaceStatistics::get_residue_size( Pose & pose ) {
@@ -780,34 +734,24 @@ utility::vector1 < Real > MPInterfaceStatistics::get_residue_size( Pose & pose )
 		// interface, mem
 		if ( exposed_[i] && intf_[i] && in_mem_[i] ) {
 			tm_int += static_cast< Real >( pose.residue( i ).natoms() );
-		}
-		
-		// interface, sol
-		else if ( exposed_[i] && intf_[i] && !in_mem_[i] ) {
+		} else if ( exposed_[i] && intf_[i] && !in_mem_[i] ) {
+			// interface, sol
 			sol_int += static_cast< Real >( pose.residue( i ).natoms() );
-		}
-
-		// not interface, mem
-		else if ( exposed_[i] && !intf_[i] && in_mem_[i] ) {
+		} else if ( exposed_[i] && !intf_[i] && in_mem_[i] ) {
+			// not interface, mem
 			tm_nonint += static_cast< Real >( pose.residue( i ).natoms() );
-		}
-		
-		// not interface, sol
-		else if ( exposed_[i] && !intf_[i] && !in_mem_[i] ) {
+		} else if ( exposed_[i] && !intf_[i] && !in_mem_[i] ) {
+			// not interface, sol
 			sol_nonint += static_cast< Real >( pose.residue( i ).natoms() );
-		}
-
-		// core, mem
-		else if ( !exposed_[i] && in_mem_[i] ) {
+		} else if ( !exposed_[i] && in_mem_[i] ) {
+			// core, mem
 			tm_core += static_cast< Real >( pose.residue( i ).natoms() );
-		}
-		
-		// core, sol
-		else if ( !exposed_[i] && !in_mem_[i] ) {
+		} else if ( !exposed_[i] && !in_mem_[i] ) {
+			// core, sol
 			sol_core += static_cast< Real >( pose.residue( i ).natoms() );
 		}
 	}
-	
+
 	utility::vector1< Size > nres( get_number_of_residues( pose ) );
 
 	TR << "number of residues:" << std::endl;
@@ -817,7 +761,7 @@ utility::vector1 < Real > MPInterfaceStatistics::get_residue_size( Pose & pose )
 	TR << "sol int " << nres[4] << std::endl;
 	TR << "sol nonint " << nres[5] << std::endl;
 	TR << "sol core " << nres[6] << std::endl;
-	
+
 	TR << "residue size:" << std::endl;
 	TR << "tm int " << tm_int << std::endl;
 	TR << "tm nonint " << tm_nonint << std::endl;
@@ -842,12 +786,12 @@ utility::vector1 < Real > MPInterfaceStatistics::get_residue_size( Pose & pose )
 	avg_size.push_back( sol_int );
 	avg_size.push_back( sol_nonint );
 	avg_size.push_back( sol_core );
-	
+
 	return avg_size;
-	
+
 } // get residue size
 
-	//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 /// @brief Get number of Hbonds across interface
 Size MPInterfaceStatistics::get_number_hbonds( Pose & pose ) {
@@ -855,7 +799,7 @@ Size MPInterfaceStatistics::get_number_hbonds( Pose & pose ) {
 	using namespace core::pose;
 	using namespace core::scoring;
 	using namespace core::scoring::hbonds;
-	
+
 	// get the partners
 	utility::vector1< std::string > partners( utility::string_split( partners_, '_' ) );
 	utility::vector1< std::string > partner1( utility::split( partners[1] ) );
@@ -866,10 +810,10 @@ Size MPInterfaceStatistics::get_number_hbonds( Pose & pose ) {
 	hbonds::HBondSet hb_set;
 	pose.update_residue_neighbors();
 	hbonds::fill_hbond_set( pose, false, hb_set, false );
-//	hb_set.show(pose, true, std::cout);
-	
+	// hb_set.show(pose, true, std::cout);
+
 	Size nhbonds( 0 );
-	
+
 	// go through Hbonds
 	for ( Size i = 1; i <= hb_set.nhbonds(); ++i ) {
 
@@ -879,10 +823,10 @@ Size MPInterfaceStatistics::get_number_hbonds( Pose & pose ) {
 
 		// check whether donor/acc is in partner1
 		// doesn't check whether the residues are defined as interface (they should anyway because they are between the two partners)
-		
+
 		bool don_in_1( false );
 		bool acc_in_1( false );
-		
+
 		// donor in partner1?
 		for ( Size j = 1; j <= partner1.size(); ++j ) {
 			don_in_1 = res_in_chain( pose, don, partner1[ j ] );
@@ -892,25 +836,24 @@ Size MPInterfaceStatistics::get_number_hbonds( Pose & pose ) {
 		for ( Size j = 1; j <= partner1.size(); ++j ) {
 			acc_in_1 = res_in_chain( pose, acc, partner1[ j ] );
 		}
-		
-//		TR << "hbond: don " << don << ", acc " << acc;
-//		TR << ", don: " << don_in_1 << ", acc: " << acc_in_1 << std::endl;
+
+		//  TR << "hbond: don " << don << ", acc " << acc;
+		//  TR << ", don: " << don_in_1 << ", acc: " << acc_in_1 << std::endl;
 
 		// if donor in 1 and acceptor not, then we have Hbond across interface
 		if ( don_in_1 == true && acc_in_1 == false ) {
 			++nhbonds;
-		}
-		// similarly, if donor not in 1 but acc is, we also have Hbond across interface
-		else if ( don_in_1 == false && acc_in_1 == true ) {
+		} else if ( don_in_1 == false && acc_in_1 == true ) {
+			// similarly, if donor not in 1 but acc is, we also have Hbond across interface
 			++nhbonds;
 		}
 	} // go through Hbonds
-	
+
 
 	return nhbonds;
 } // number hbonds across interface
 
-	//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 /// @brief Get number of pi-stacking across interface
 Size MPInterfaceStatistics::get_number_pi_stacking( Pose & pose ) {
@@ -923,26 +866,26 @@ Size MPInterfaceStatistics::get_number_pi_stacking( Pose & pose ) {
 	return utility::string2Size( pose.print_metric( "pi_pi", "pi_pi" ) );
 }
 
-	//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 /// @brief Get in/out orientation
 Real MPInterfaceStatistics::get_inout_orientation( Pose & pose ) {
-	
-	if ( pose.residue( nres_protein( pose ) ).atom("CA").xyz().z() > 0.0 ){
+
+	if ( pose.residue( nres_protein( pose ) ).atom("CA").xyz().z() > 0.0 ) {
 		return 0.0;
 	}
 	return 1.0;
 
 }// get in/out orientation
 
-	//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 /// @brief Add output to scorefile
 void MPInterfaceStatistics::add_to_scorefile( Pose & pose ) {
-	
+
 	// get job
 	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-	
+
 	// get size of the interface
 	Real size = get_size( pose );
 	job->add_string_real_pair( "Isize", size );
@@ -957,17 +900,17 @@ void MPInterfaceStatistics::add_to_scorefile( Pose & pose ) {
 	Size nhbonds = get_number_hbonds( pose );
 	job->add_string_real_pair( "nhbonds", nhbonds );
 	TR << "nhbonds " << nhbonds << std::endl;
-	
+
 	// Get number of pi-stacking across interface
 	Size npi = get_number_pi_stacking( pose );
 	job->add_string_real_pair( "npi", npi );
 	TR << "pi stacking " << npi << std::endl;
-	
+
 	// Get in/out orientation
 	Real inout = get_inout_orientation( pose );
 	job->add_string_real_pair( "inout", inout );
 	TR << "inout " << inout << std::endl;
-	
+
 	// Get charge in the interface
 	utility::vector1< SSize > charge = get_charge( pose );
 	job->add_string_real_pair( "chrg_tm_int", charge[1] );
@@ -997,7 +940,7 @@ void MPInterfaceStatistics::add_to_scorefile( Pose & pose ) {
 	TR << "avg charge sol int " << avg_charge[4] << std::endl;
 	TR << "avg charge sol nonint " << avg_charge[5] << std::endl;
 	TR << "avg charge sol core " << avg_charge[6] << std::endl;
-	
+
 	// Get number of charged residues in the interface
 	utility::vector1< Size > ncharges = get_number_charges( pose );
 	job->add_string_real_pair( "nchrg_tm_int", ncharges[1] );
@@ -1027,7 +970,7 @@ void MPInterfaceStatistics::add_to_scorefile( Pose & pose ) {
 	TR << "avg ncharges sol int " << avg_ncharges[4] << std::endl;
 	TR << "avg ncharges sol nonint " << avg_ncharges[5] << std::endl;
 	TR << "avg ncharges sol core " << avg_ncharges[6] << std::endl;
-	
+
 	// Get hydrophobicity of the interface
 	utility::vector1< Real > hydro = get_hydrophobicity( pose );
 	job->add_string_real_pair( "hydro_tm_int", hydro[1] );
@@ -1057,7 +1000,7 @@ void MPInterfaceStatistics::add_to_scorefile( Pose & pose ) {
 	TR << "avg hydro sol int " << avg_hydro[4] << std::endl;
 	TR << "avg hydro sol nonint " << hydro[5] << std::endl;
 	TR << "avg hydro sol core " << avg_hydro[6] << std::endl;
-	
+
 	// Get number of contacts
 	utility::vector1< Size > nresidues = get_number_of_residues( pose );
 	job->add_string_real_pair( "nres_tm_int", nresidues[1] );
@@ -1072,7 +1015,7 @@ void MPInterfaceStatistics::add_to_scorefile( Pose & pose ) {
 	TR << "nresidues sol int " << nresidues[4] << std::endl;
 	TR << "nresidues sol nonint " << nresidues[5] << std::endl;
 	TR << "nresidues sol core " << nresidues[6] << std::endl;
-	
+
 	// Get size of residues in the interface
 	utility::vector1< Real > res_size = get_residue_size( pose );
 	job->add_string_real_pair( "ressize_tm_int", res_size[1] );
@@ -1087,7 +1030,7 @@ void MPInterfaceStatistics::add_to_scorefile( Pose & pose ) {
 	TR << "avg res size sol int " << res_size[4] << std::endl;
 	TR << "avg res size sol nonint " << res_size[5] << std::endl;
 	TR << "avg res size sol core " << res_size[6] << std::endl;
-	
+
 } // add_to_scorefile
 
 /// @brief Fill vectors with data
@@ -1100,7 +1043,7 @@ void MPInterfaceStatistics::fill_vectors_with_data( Pose & pose ) {
 
 	// go through residues
 	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
-		
+
 		// is residue in the membrane?
 		bool in_mem = pose.conformation().membrane_info()->in_membrane( i );
 		in_mem_.push_back( in_mem );
@@ -1116,7 +1059,7 @@ void MPInterfaceStatistics::fill_vectors_with_data( Pose & pose ) {
 		}
 		exposed_.push_back( exposed );
 	}
-		
+
 } // fill vectors with data
 
 ////////////////////////////// MAIN ////////////////////////////////////////////
@@ -1126,17 +1069,17 @@ main( int argc, char * argv [] )
 {
 	try {
 		using namespace protocols::jd2;
-		
+
 		// initialize options, RNG, and factory-registrators
 		devel::init(argc, argv);
-		
+
 		MPInterfaceStatisticsOP mpis( new MPInterfaceStatistics( 1 ) );
 		JobDistributor::get_instance()->go(mpis);
 	}
-	catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
-		return -1;
-	}
+catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+	return -1;
+}
 
 	return 0;
 }

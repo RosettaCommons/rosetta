@@ -33,17 +33,17 @@ validate_dunbrack_binaries() {
 
 	core::pack::dunbrack::RotamerLibrary* rotamer_library(  core::pack::dunbrack::RotamerLibrary::get_instance() );
 
-	if( ! rotamer_library->validate_dunbrack_binary() ) {
+	if ( ! rotamer_library->validate_dunbrack_binary() ) {
 		TR.Error << "Failure validating the Dunbrack binary" << std::endl;
 		TR.Error << "---------------------- Settings: --------------------------------" << std::endl;
 		TR.Error << "Database Directory(s): " << std::endl;
-		for( core::Size ii(1); ii <= option[ in::path::database ]().size(); ++ii ) {
-			 TR.Error << "\t\t" << option[ in::path::database ](ii).name() << std::endl;
+		for ( core::Size ii(1); ii <= option[ in::path::database ]().size(); ++ii ) {
+			TR.Error << "\t\t" << option[ in::path::database ](ii).name() << std::endl;
 		}
 		TR.Error << "No binary Dunlib : " << (option[ in::file::no_binary_dunlib ] ? " true " : " false " ) << std::endl;
 		TR.Error << "Dun10: " << (option[ corrections::score::dun10 ] ? " true " : " false " ) << std::endl;
 		TR.Error << "-correct " << (option[ corrections::correct ] ? " true " : " false " ) << std::endl;
-		if( option[ corrections::score::dun10 ] ) {
+		if ( option[ corrections::score::dun10 ] ) {
 			TR.Error << "Dunbrack 2010 directory: " << option[ corrections::score::dun10_dir ].value() << std::endl;
 		} else {
 			TR.Error << "Dunbrack 2002 file: " << option[ corrections::score::dun02_file ].value() << std::endl;
@@ -62,12 +62,12 @@ main( int argc, char * argv [] )
 
 	try {
 
-	// initialize core
-	devel::init(argc, argv);
+		// initialize core
+		devel::init(argc, argv);
 
-	if( ! validate_dunbrack_binaries() ) {
-		exitcode = -1;
-	}
+		if ( ! validate_dunbrack_binaries() ) {
+			exitcode = -1;
+		}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

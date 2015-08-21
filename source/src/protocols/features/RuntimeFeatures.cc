@@ -87,10 +87,10 @@ void RuntimeFeatures::write_schema_to_db(sessionOP db_session) const { // {{{1
 }
 
 Size RuntimeFeatures::report_features( // {{{1
-		Pose const & /*pose*/,
-		vector1 <bool> const & /*relevant_residues*/,
-		StructureID struct_id,
-		sessionOP db_session) {
+	Pose const & /*pose*/,
+	vector1 <bool> const & /*relevant_residues*/,
+	StructureID struct_id,
+	sessionOP db_session) {
 
 	using protocols::jd2::JobCOP;
 	using protocols::jd2::JobDistributor;
@@ -100,7 +100,7 @@ Size RuntimeFeatures::report_features( // {{{1
 	string statement_string =
 		"INSERT INTO runtimes (struct_id, timestamp, elapsed_time) VALUES (?,?,?);";
 	cppdb::statement statement = basic::database::safely_prepare_statement(
-			statement_string, db_session);
+		statement_string, db_session);
 
 	statement.bind(1, struct_id);
 	statement.bind(2, job->timestamp());

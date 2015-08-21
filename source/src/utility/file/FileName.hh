@@ -71,7 +71,7 @@ public: // Creation
 		std::vector<FileName>::const_iterator begin= file_names.begin();
 
 		erase();
-		if(begin == file_names.end()) return;
+		if ( begin == file_names.end() ) return;
 
 		vol_.assign(begin->vol_);
 		path_.assign(begin->path_);
@@ -79,7 +79,7 @@ public: // Creation
 		ext_.assign(begin->ext_);
 		base_.append(begin->base_);
 
-		for(++begin ; begin != file_names.end(); ++begin){
+		for ( ++begin ; begin != file_names.end(); ++begin ) {
 			base_.append("_");
 			base_.append(begin->base_);
 		}
@@ -267,11 +267,11 @@ public: // Properties
 	empty() const
 	{
 		return (
-		 ( vol_.empty() ) &&
-		 ( path_.empty() ) &&
-		 ( base_.empty() ) &&
-		 ( ext_.empty() ) &&
-		 ( ver_.empty() ) );
+			( vol_.empty() ) &&
+			( path_.empty() ) &&
+			( base_.empty() ) &&
+			( ext_.empty() ) &&
+			( ver_.empty() ) );
 	}
 
 
@@ -363,11 +363,11 @@ public: // Properties
 	name() const
 	{
 		return
-		 vol_ +
-		 path_ +
-		 base_ +
-		 extension() +
-		 version();
+			vol_ +
+			path_ +
+			base_ +
+			extension() +
+			version();
 	}
 
 
@@ -386,9 +386,9 @@ public: // Properties
 	local_name() const
 	{
 		return
-		 base_ +
-		 extension() +
-		 version();
+			base_ +
+			extension() +
+			version();
 	}
 
 
@@ -398,8 +398,8 @@ public: // Properties
 	bare_name() const
 	{
 		return
-		 base_ +
-		 extension();
+			base_ +
+			extension();
 	}
 
 
@@ -524,38 +524,38 @@ private: // Fields
 
 
 /// @brief FileName == FileName
-#ifndef __clang__ 
+#ifndef __clang__
 bool
 operator ==( FileName const & name1, FileName const & name2 );
 #endif
 
 /// @brief FileName != FileName
-#ifndef __clang__ 
+#ifndef __clang__
 bool
 operator !=( FileName const & name1, FileName const & name2 );
 #endif
 
 /// @brief FileName < FileName
-#ifndef __clang__ 
+#ifndef __clang__
 bool
 operator <( FileName const & name1, FileName const & name2 );
 #endif
 
 /// @brief FileName <= FileName
-#ifndef __clang__ 
+#ifndef __clang__
 bool
 operator <=( FileName const & name1, FileName const & name2 );
 #endif
 
 
 /// @brief FileName >= FileName
-#ifndef __clang__ 
+#ifndef __clang__
 bool
 operator >=( FileName const & name1, FileName const & name2 );
 #endif
 
 /// @brief FileName > FileName
-#ifndef __clang__ 
+#ifndef __clang__
 bool
 operator >( FileName const & name1, FileName const & name2 );
 #endif

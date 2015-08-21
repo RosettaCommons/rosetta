@@ -71,65 +71,65 @@ using namespace core;
 namespace protocols {
 namespace symmetric_docking {
 
-	// constructor with arguments
-	SymDockingLowRes::SymDockingLowRes(
-		core::scoring::ScoreFunctionCOP scorefxn_in
-	) : Mover(), scorefxn_(scorefxn_in)
-	{
-		moves::Mover::type( "SymDockingLowRes" );
+// constructor with arguments
+SymDockingLowRes::SymDockingLowRes(
+	core::scoring::ScoreFunctionCOP scorefxn_in
+) : Mover(), scorefxn_(scorefxn_in)
+{
+	moves::Mover::type( "SymDockingLowRes" );
+}
+
+SymDockingLowRes::~SymDockingLowRes(){}
+
+moves::MoverOP
+SymDockingLowRes::clone() const {
+	return moves::MoverOP( new SymDockingLowRes( *this ) );
+}
+
+void
+SymDockingLowRes::set_default( core::pose::Pose & pose ) {
+	using namespace basic::options;
+
+	// sets up the stuff in pose
+	(*scorefxn_)( pose );
+
+	// cycles
+	inner_cycles_ = option[ OptionKeys::docking::docking_centroid_inner_cycles ]();
+	outer_cycles_ = option[ OptionKeys::docking::docking_centroid_outer_cycles ]();
+
+	if ( option[ OptionKeys::docking::dock_mcm_trans_magnitude ].user() ) {
+		trans_magnitude_ = option[ OptionKeys::docking::dock_mcm_trans_magnitude ]();
+	} else {
+		trans_magnitude_ = 1.5;
 	}
 
-	SymDockingLowRes::~SymDockingLowRes(){}
-
-	moves::MoverOP
-	SymDockingLowRes::clone() const {
-		return moves::MoverOP( new SymDockingLowRes( *this ) );
+	if ( option[ OptionKeys::docking::dock_mcm_rot_magnitude ].user() ) {
+		rot_magnitude_ = option[ OptionKeys::docking::dock_mcm_rot_magnitude ]();
+	} else {
+		rot_magnitude_ = 4;
 	}
 
-	void
-	SymDockingLowRes::set_default( core::pose::Pose & pose ) {
-		using namespace basic::options;
+	chi_ = false;
+	bb_ = false;
 
-		// sets up the stuff in pose
-		(*scorefxn_)( pose );
+	temperature_ = 0.8;
 
-		// cycles
-		inner_cycles_ = option[ OptionKeys::docking::docking_centroid_inner_cycles ]();
-		outer_cycles_ = option[ OptionKeys::docking::docking_centroid_outer_cycles ]();
+	nb_list_ = true; /// not sure if this should be true or not
+	accept_rate_ = 0.0;
 
-		if ( option[ OptionKeys::docking::dock_mcm_trans_magnitude ].user() ) {
-			trans_magnitude_ = option[ OptionKeys::docking::dock_mcm_trans_magnitude ]();
-		} else {
-			trans_magnitude_ = 1.5;
-		}
+	set_default_mc( pose );
+	set_default_move_map( pose );
+	set_default_protocol( pose );
+}
 
-		if ( option[ OptionKeys::docking::dock_mcm_rot_magnitude ].user() ) {
-			rot_magnitude_ = option[ OptionKeys::docking::dock_mcm_rot_magnitude ]();
-		} else {
-			rot_magnitude_ = 4;
-		}
+moves::MonteCarloOP
+SymDockingLowRes::get_mc() { return mc_; }
 
-		chi_ = false;
-		bb_ = false;
-
-		temperature_ = 0.8;
-
-		nb_list_ = true; /// not sure if this should be true or not
-		accept_rate_ = 0.0;
-
-		set_default_mc( pose );
-		set_default_move_map( pose );
-		set_default_protocol( pose );
-	}
-
-	moves::MonteCarloOP
-	SymDockingLowRes::get_mc() { return mc_; }
-
-	void
-	SymDockingLowRes::set_default_mc( pose::Pose & pose ) {
-		// create the monte carlo object and movemap
-		mc_ = moves::MonteCarloOP( new moves::MonteCarlo( pose, *scorefxn_, temperature_ ) );
-	}
+void
+SymDockingLowRes::set_default_mc( pose::Pose & pose ) {
+	// create the monte carlo object and movemap
+	mc_ = moves::MonteCarloOP( new moves::MonteCarlo( pose, *scorefxn_, temperature_ ) );
+}
 
 void SymDockingLowRes::set_default_move_map( pose::Pose & pose ) {
 	using namespace core::conformation::symmetry;
@@ -147,7 +147,7 @@ void SymDockingLowRes::set_default_protocol( pose::Pose & pose ){
 
 	assert( core::pose::symmetry::is_symmetric( pose ));
 	SymmetricConformation & symm_conf (
-        dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
+		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
 	std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 
@@ -156,10 +156,10 @@ void SymDockingLowRes::set_default_protocol( pose::Pose & pose ){
 	docking_lowres_protocol_ = moves::SequenceMoverOP( new SequenceMover );
 	docking_lowres_protocol_->add_mover( rb_mover_ );
 
-	if( basic::options::option[basic::options::OptionKeys::docking::multibody].user() ){
+	if ( basic::options::option[basic::options::OptionKeys::docking::multibody].user() ) {
 		utility::vector1<int> mbjumps = basic::options::option[basic::options::OptionKeys::docking::multibody]();
-		for(Size ij = 1; ij <= symm_conf.Symmetry_Info()->get_njumps_subunit(); ++ij){
-			if( mbjumps.size()==0 || std::find(mbjumps.begin(),mbjumps.end(),(int)ij)!=mbjumps.end() ){
+		for ( Size ij = 1; ij <= symm_conf.Symmetry_Info()->get_njumps_subunit(); ++ij ) {
+			if ( mbjumps.size()==0 || std::find(mbjumps.begin(),mbjumps.end(),(int)ij)!=mbjumps.end() ) {
 				TR << "add subunit jump mover " << ij << std::endl;
 				docking_lowres_protocol_->add_mover( MoverOP( new rigid::RigidBodyPerturbMover(ij,rot_magnitude_,trans_magnitude_) ) );
 			}
@@ -177,7 +177,7 @@ void SymDockingLowRes::set_default_protocol( pose::Pose & pose ){
 ///       currently used only in the low-resolution step (centroid mode)
 ///
 /// @references pose_docking_centroid_rigid_body_adaptive from pose_docking.cc and
-///				rigid_body_MC_cycle_adaptive from dock_structure.cc
+///    rigid_body_MC_cycle_adaptive from dock_structure.cc
 ///
 /// @author Monica Berrondo October 22 2007
 ///
@@ -192,7 +192,7 @@ void SymDockingLowRes::apply( core::pose::Pose & pose )
 
 	TR << "::::::::::::::::::Centroid Rigid Body Adaptive:::::::::::::::::::\n";
 
-	for ( int i=1; i<=outer_cycles_; ++i) {
+	for ( int i=1; i<=outer_cycles_; ++i ) {
 		rigid_body_trial( pose );
 		if ( accept_rate_ < 0.5 ) {
 			trans_magnitude_ *= 0.9;
@@ -227,7 +227,7 @@ SymDockingLowRes::get_name() const {
 ///       currently used only in the low-resolution step (centroid mode)
 ///
 /// @references pose_docking_rigid_body_trial from pose_docking.cc and
-///				rigid_body_MC_cycle from dock_structure.cc
+///    rigid_body_MC_cycle from dock_structure.cc
 ///
 /// @author Monica Berrondo October 22 2007
 ///
@@ -237,9 +237,9 @@ void SymDockingLowRes::rigid_body_trial( core::pose::Pose & pose )
 	using namespace moves;
 
 	PDBDumpMoverOP dump( new PDBDumpMover("lowres_cycle_") );
-	//	dump->apply( pose );
+	// dump->apply( pose );
 	MCShowMoverOP mc_show( new MCShowMover( mc_ ) );
-	//	mc_show->apply( pose );
+	// mc_show->apply( pose );
 
 	rb_mover_->rot_magnitude( rot_magnitude_ );
 	rb_mover_->trans_magnitude( trans_magnitude_ );

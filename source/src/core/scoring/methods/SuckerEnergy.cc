@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	core/scoring/methods/SuckerEnergy.cc
+/// @file core/scoring/methods/SuckerEnergy.cc
 /// @brief  Statistically derived rotamer pair potential class implementation
 /// @author Phil Bradley
 /// @author Andrew Leaver-Fay
@@ -67,46 +67,46 @@ SuckerEnergy::SuckerEnergy() :
 
 	char s[999];
 	izin.getline(s,999); // read in and ignore header line
-	while( true ) {
+	while ( true ) {
 		izin.getline(s,999);
 		// std::cerr << "string: '" << s << "'" << std::endl;
 		std::istringstream iss(s);
 		core::Real tmp;
 		utility::vector1< Real > point;
-		if( !(iss >> tmp ) ) break; // if no line, done
+		if ( !(iss >> tmp ) ) break; // if no line, done
 		point.push_back(tmp);
 		iss >> tmp;
 		point.push_back(tmp);
-		if( iss >> tmp ) point.push_back(tmp);
+		if ( iss >> tmp ) point.push_back(tmp);
 		points.push_back(point);
 	}
 
-debug_assert( points.size() >= 2 );
+	debug_assert( points.size() >= 2 );
 
 	// std::cerr << "printing points" << std::endl;
 	// for( Size i = 1; i <= points.size(); ++i ) {
-	// 	std::cerr << "point: ";
-	// 	for( Size j = 1; j <= points[i].size(); ++j ) {
-	// 		std::cerr << points[i][j] << ",";
-	// 	}
-	// 	std::cerr << std::endl;
+	//  std::cerr << "point: ";
+	//  for( Size j = 1; j <= points[i].size(); ++j ) {
+	//   std::cerr << points[i][j] << ",";
+	//  }
+	//  std::cerr << std::endl;
 	// }
 
 	using namespace numeric::interpolation::spline;
 	SplineGenerator sg( points[      1      ][1], points[      1      ][2], points[      1      ][3],
-							  points[points.size()][1], points[points.size()][2], points[points.size()][3] );
+		points[points.size()][1], points[points.size()][2], points[points.size()][3] );
 
-	for( Size i = 2; i < points.size(); ++i ) {
-		if( points[i].size() == 2 ) sg.add_known_value( points[i][1], points[i][2] );
-		if( points[i].size() == 3 ) sg.add_known_value( points[i][1], points[i][2], points[i][3] );
+	for ( Size i = 2; i < points.size(); ++i ) {
+		if ( points[i].size() == 2 ) sg.add_known_value( points[i][1], points[i][2] );
+		if ( points[i].size() == 3 ) sg.add_known_value( points[i][1], points[i][2], points[i][3] );
 	}
 
 	interp_ = sg.get_interpolator();
 
 	// core::Real x,y,dy;
 	// for( x = 0; x <= 6.0; x += 0.01 ) {
-	// 	interp_->interpolate(x,y,dy);
-	// 	std::cerr << "SUCKERE " << x << " " << y << " " << dy << std::endl;
+	//  interp_->interpolate(x,y,dy);
+	//  std::cerr << "SUCKERE " << x << " " << y << " " << dy << std::endl;
 	// }
 
 }
@@ -123,8 +123,8 @@ SuckerEnergy::clone() const
 inline bool count_atom( int const & atype ) {
 	// return true;
 	return (  (  1 <= atype && atype <=  6 ) // just carbons for now...
-				 || ( 18 <= atype && atype <= 19 )
-				 );
+		|| ( 18 <= atype && atype <= 19 )
+	);
 }
 /////////////////////////////////////////////////////////////////////////////
 // scoring
@@ -148,19 +148,19 @@ SuckerEnergy::residue_pair_energy(
 	std::string name1 = rsd1.name();
 	std::string name2 = rsd2.name();
 
-	if( "SUCK" == name1 && "SUCK" == name2 ) return;
-	if( "SUCK" != name1 && "SUCK" != name2 ) return;
+	if ( "SUCK" == name1 && "SUCK" == name2 ) return;
+	if ( "SUCK" != name1 && "SUCK" != name2 ) return;
 
 	Residue const & rsd( ( "SUCK" != name1 ) ? rsd1 : rsd2 );
 	Residue const & sck( ( "SUCK" == name1 ) ? rsd1 : rsd2 );
 
 	numeric::xyzVector<Real> suck_xyz( sck.xyz(1) );
-	for( int i = 1; i <= (int)rsd.nheavyatoms(); ++i ) {
+	for ( int i = 1; i <= (int)rsd.nheavyatoms(); ++i ) {
 		conformation::Atom const & atom( rsd.atom(i) );
-		if( !count_atom( atom.type() ) ) continue;
+		if ( !count_atom( atom.type() ) ) continue;
 		numeric::xyzVector<Real> atom_xyz( rsd.xyz(i) );
 		Real const d = atom_xyz.distance( suck_xyz );
-		if( d <= DIST_TH ) {
+		if ( d <= DIST_TH ) {
 			Real f, df;
 			interp_->interpolate( d, f, df );
 			// std::cerr << rsd.seqpos() << " " << i << " " << d << " " << f << " " << df << " SUCKER" << std::endl;
@@ -187,30 +187,30 @@ SuckerEnergy::eval_atom_derivative(
 	using namespace numeric;
 
 	// id is a SUCK atom
-	if( "SUCK" == pose.residue(id.rsd()).name() ) { // loop over atom neighbors and suck
+	if ( "SUCK" == pose.residue(id.rsd()).name() ) { // loop over atom neighbors and suck
 		// conformation::Residue const & sck( pose.residue(id.rsd()) );
-	debug_assert( 1 <= id.atomno() && id.atomno() <= 3 );
-		if( id.atomno() > 1 ) return;
+		debug_assert( 1 <= id.atomno() && id.atomno() <= 3 );
+		if ( id.atomno() > 1 ) return;
 		numeric::xyzVector<Real> suck_xyz( pose.xyz(id) );
 
-		for( int ir = 1; ir <= (int)pose.total_residue(); ++ir ) {
+		for ( int ir = 1; ir <= (int)pose.total_residue(); ++ir ) {
 			conformation::Residue const & res( pose.residue(ir) );
-			if( "SUCK" == res.name() ) continue;
+			if ( "SUCK" == res.name() ) continue;
 
-			for( int ia = 1; ia <= (int)res.nheavyatoms(); ++ia ) {
+			for ( int ia = 1; ia <= (int)res.nheavyatoms(); ++ia ) {
 				conformation::Atom const & atom( res.atom( ia ) );
-				if( !count_atom( atom.type() ) ) continue;
+				if ( !count_atom( atom.type() ) ) continue;
 
 				xyzVector<Real> const & atom_xyz( atom.xyz() );
 
 				Real const d = suck_xyz.distance(atom_xyz);
-				if( d > DIST_TH ) continue;
+				if ( d > DIST_TH ) continue;
 
 				// std::cerr << "DERIVATOMS " << res.seqpos() << " " << ia << " " << sck.seqpos() << " " << 1 << " " << d << " LPA " << id.rsd() << " " << id.atomno() << std::endl;
 
 				// compute suck F1, F2
 				numeric::xyzVector<Real> const f1( suck_xyz.cross( atom_xyz ));
-				numeric::xyzVector<Real> const f2( suck_xyz	-	 atom_xyz );
+				numeric::xyzVector<Real> const f2( suck_xyz -  atom_xyz );
 				Real const dist( f2.length() );
 				Real deriv, dummy;
 				interp_->interpolate( dist, dummy, deriv );
@@ -228,38 +228,38 @@ SuckerEnergy::eval_atom_derivative(
 		// numeric::xyzVector<Real> const & orig_xyz = cxmap.map().find( id.rsd() )->second;
 		//
 		// numeric::xyzVector<Real> const f1( suck_xyz.cross( orig_xyz ));
-		// numeric::xyzVector<Real> const f2( suck_xyz	-	 orig_xyz  );
+		// numeric::xyzVector<Real> const f2( suck_xyz -  orig_xyz  );
 		// std::cerr << "intrares dE " << distance(suck_xyz,orig_xyz) << " " << 2*TETHER_WT*distance(suck_xyz,orig_xyz) << std::endl;
 		// std::cerr << "  SUCKER ORIG POS " << id.rsd() << " " << orig_xyz.x() << "," << orig_xyz.y() << "," << orig_xyz.z() << std::endl;
-		// std::cerr << "  SUCKER		POS " << id.rsd() << " " << suck_xyz.x() << "," << suck_xyz.y() << "," << suck_xyz.z() << std::endl;
+		// std::cerr << "  SUCKER  POS " << id.rsd() << " " << suck_xyz.x() << "," << suck_xyz.y() << "," << suck_xyz.z() << std::endl;
 		// Real dist  = distance( suck_xyz, orig_xyz );
 		// Real deriv = -dist * 2;
 		// F1 += ( deriv / dist ) * TETHER_WT * weights[ suck ] * f1;
 		// F2 += ( deriv / dist ) * TETHER_WT * weights[ suck ] * f2;
 
 
-	}	else { // loop over suck residues and suck
+	} else { // loop over suck residues and suck
 
 		// heavy atoms only
-		if( id.atomno() > pose.residue(id.rsd()).nheavyatoms() ) return;
+		if ( id.atomno() > pose.residue(id.rsd()).nheavyatoms() ) return;
 		conformation::Atom const & atom( pose.residue(id.rsd()).atom(id.atomno()) );
-		if( !count_atom( atom.type() ) ) return;
+		if ( !count_atom( atom.type() ) ) return;
 
 		numeric::xyzVector<Real> atom_xyz( atom.xyz() );
 		// while( "SUCK" == pose.residue(i).name() ) {
-		for( Size i = 1; i <= pose.total_residue(); ++i ) {
-			if( "SUCK" != pose.residue(i).name() ) continue;
+		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+			if ( "SUCK" != pose.residue(i).name() ) continue;
 
 			conformation::Residue const & sck( pose.residue(i) );
 			numeric::xyzVector<Real> suck_xyz( sck.xyz(1) );
 			Real const d = suck_xyz.distance(atom_xyz);
-			if( d <= DIST_TH ) {
+			if ( d <= DIST_TH ) {
 
 				// std::cerr << "DERIVATOMS " << id.rsd() << " " << id.atomno() << " " << sck.seqpos() << " " << 1 << " " << d << " LPB " << id.rsd() << " " << id.atomno() << std::endl;
 
 				// compute suck F1, F2
 				numeric::xyzVector<Real> const f1( atom_xyz.cross( suck_xyz ));
-				numeric::xyzVector<Real> const f2( atom_xyz	-	 suck_xyz );
+				numeric::xyzVector<Real> const f2( atom_xyz -  suck_xyz );
 				Real const dist( f2.length() );
 				Real deriv, dummy;
 				interp_->interpolate( dist, dummy, deriv );
@@ -285,15 +285,15 @@ SuckerEnergy::eval_intrares_energy(
 ) const {
 	// using namespace basic;
 	// if( "SUCK" == rsd.name() ) {
-	// 	CacheableData const & cd = pose.data().get(SUCKER_ORIG_POSITIONS);
-	// 	CacheableIntXyzVectorMap const & cxmap = dynamic_cast<CacheableIntXyzVectorMap const &>( cd );
-	// 	numeric::xyzVector<Real> const & orig_xyz = cxmap.map().find( rsd.seqpos() )->second;
-	// 	numeric::xyzVector<Real> const & curr_xyz( rsd.xyz(1) );
-	// 	Real const d2( distance_squared(orig_xyz,curr_xyz) );
-	// 	std::cerr << "intrareas E " << distance(curr_xyz,orig_xyz) << " " << TETHER_WT*d2 << std::endl;
-	// 	std::cerr << "  SUCKER ORIG POS " << rsd.seqpos() << " " << orig_xyz.x() << "," << orig_xyz.y() << "," << orig_xyz.z() << std::endl;
-	// 	std::cerr << "  SUCKER		POS " << rsd.seqpos() << " " << curr_xyz.x() << "," << curr_xyz.y() << "," << curr_xyz.z() << std::endl;
-	// 	emap[ suck ] += TETHER_WT*d2;
+	//  CacheableData const & cd = pose.data().get(SUCKER_ORIG_POSITIONS);
+	//  CacheableIntXyzVectorMap const & cxmap = dynamic_cast<CacheableIntXyzVectorMap const &>( cd );
+	//  numeric::xyzVector<Real> const & orig_xyz = cxmap.map().find( rsd.seqpos() )->second;
+	//  numeric::xyzVector<Real> const & curr_xyz( rsd.xyz(1) );
+	//  Real const d2( distance_squared(orig_xyz,curr_xyz) );
+	//  std::cerr << "intrareas E " << distance(curr_xyz,orig_xyz) << " " << TETHER_WT*d2 << std::endl;
+	//  std::cerr << "  SUCKER ORIG POS " << rsd.seqpos() << " " << orig_xyz.x() << "," << orig_xyz.y() << "," << orig_xyz.z() << std::endl;
+	//  std::cerr << "  SUCKER  POS " << rsd.seqpos() << " " << curr_xyz.x() << "," << curr_xyz.y() << "," << curr_xyz.z() << std::endl;
+	//  emap[ suck ] += TETHER_WT*d2;
 	// }
 }
 

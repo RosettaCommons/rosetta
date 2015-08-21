@@ -77,15 +77,15 @@ class MultiStatePacker : public MultiStateFitnessFunction {
 
 public:
 	MultiStatePacker()
-		: MultiStateFitnessFunction(),
-			num_packs_(1)
+	: MultiStateFitnessFunction(),
+		num_packs_(1)
 	{}
 
 	virtual ~MultiStatePacker(){}
 
 	MultiStatePacker( core::Size num_packs )
-		: MultiStateFitnessFunction(),
-			num_packs_(num_packs)
+	: MultiStateFitnessFunction(),
+		num_packs_(num_packs)
 	{}
 
 	virtual void single_state_design( bool restrict_to_canonical = true );

@@ -50,21 +50,21 @@ using basic::t_debug;
 using basic::t_trace;
 static thread_local basic::Tracer TR( "protocols.constraints_additional.SequenceCoupling1BDConstraint" );
 
-	SequenceCoupling1BDConstraint::SequenceCoupling1BDConstraint()
-	:core::scoring::constraints::SequenceProfileConstraint( )
+SequenceCoupling1BDConstraint::SequenceCoupling1BDConstraint()
+:core::scoring::constraints::SequenceProfileConstraint( )
 {}
 
-	SequenceCoupling1BDConstraint::SequenceCoupling1BDConstraint(
-		Pose const & pose,
-		core::Size numpos,
-		SequenceProfileCOP profile
-		):core::scoring::constraints::SequenceProfileConstraint(pose, numpos,profile)
+SequenceCoupling1BDConstraint::SequenceCoupling1BDConstraint(
+	Pose const & pose,
+	core::Size numpos,
+	SequenceProfileCOP profile
+):core::scoring::constraints::SequenceProfileConstraint(pose, numpos,profile)
 {}
 
-	SequenceCoupling1BDConstraint::SequenceCoupling1BDConstraint(
-		core::Size numpos,
-		SequenceProfileCOP profile
-		):core::scoring::constraints::SequenceProfileConstraint(numpos, profile)
+SequenceCoupling1BDConstraint::SequenceCoupling1BDConstraint(
+	core::Size numpos,
+	SequenceProfileCOP profile
+):core::scoring::constraints::SequenceProfileConstraint(numpos, profile)
 {}
 SequenceCoupling1BDConstraint::~SequenceCoupling1BDConstraint() {}
 
@@ -84,7 +84,7 @@ SequenceCoupling1BDConstraint::read_def(
 	Size residue_index(0);
 	std::string profile_filename;
 
-//	note: is >> "SequenceProfile" has already occured
+	// note: is >> "SequenceProfile" has already occured
 	is >> residue_index >> profile_filename;
 
 	TR(t_debug) << "reading: " << residue_index << " " << profile_filename << std::endl;
@@ -102,9 +102,9 @@ SequenceCoupling1BDConstraint::read_def(
 		if ( ! file_exists( profile_filename ) ) {
 			utility_exit_with_message( "no such file " + profile_filename );
 		}
-	// if filename not specified, load from commandline option -pssm only if sequence_profile_ is NULL
+		// if filename not specified, load from commandline option -pssm only if sequence_profile_ is NULL
 	} else {
-			utility_exit_with_message("\"none\" is not a valid value for -pssm in this context!");
+		utility_exit_with_message("\"none\" is not a valid value for -pssm in this context!");
 	}
 
 	// if filename is not "none" by this point, read it even if sequence_profile_ is not currently NULL

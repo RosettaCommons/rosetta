@@ -29,21 +29,21 @@ namespace constants {
 // float
 namespace f {
 
-	typedef  float  Type;
+typedef  float  Type;
 
-	extern Type const zero;
-	extern Type const one;
-	extern Type const two;
-	extern Type const pi;
-	extern Type const pi_2;              // 2 * pi
-	extern Type const pi_over_2;         // pi / 2
-	extern Type const pi_over_3;         // pi / 3
-	extern Type const pi_2_over_3;       // ( 2 * pi ) / 3
-	extern Type const pi_over_180;       // pi / 180
-	extern Type const degrees_to_radians;
-	extern Type const deg2rad;
-	extern Type const radians_to_degrees;
-	extern Type const rad2deg;
+extern Type const zero;
+extern Type const one;
+extern Type const two;
+extern Type const pi;
+extern Type const pi_2;              // 2 * pi
+extern Type const pi_over_2;         // pi / 2
+extern Type const pi_over_3;         // pi / 3
+extern Type const pi_2_over_3;       // ( 2 * pi ) / 3
+extern Type const pi_over_180;       // pi / 180
+extern Type const degrees_to_radians;
+extern Type const deg2rad;
+extern Type const radians_to_degrees;
+extern Type const rad2deg;
 
 } // namespace f
 
@@ -51,21 +51,21 @@ namespace f {
 // double
 namespace d {
 
-	typedef  double  Type;
+typedef  double  Type;
 
-	extern Type const zero;
-	extern Type const one;
-	extern Type const two;
-	extern Type const pi;
-	extern Type const pi_2;             // 2 * pi
-	extern Type const pi_over_2;        // pi / 2
-	extern Type const pi_over_3;        // pi / 3
-	extern Type const pi_2_over_3;      // ( 2 * pi ) / 3
-	extern Type const pi_over_180;      // pi / 180
-	extern Type const degrees_to_radians;
-	extern Type const deg2rad;
-	extern Type const radians_to_degrees;
-	extern Type const rad2deg;
+extern Type const zero;
+extern Type const one;
+extern Type const two;
+extern Type const pi;
+extern Type const pi_2;             // 2 * pi
+extern Type const pi_over_2;        // pi / 2
+extern Type const pi_over_3;        // pi / 3
+extern Type const pi_2_over_3;      // ( 2 * pi ) / 3
+extern Type const pi_over_180;      // pi / 180
+extern Type const degrees_to_radians;
+extern Type const deg2rad;
+extern Type const radians_to_degrees;
+extern Type const rad2deg;
 
 } // namespace d
 
@@ -73,21 +73,21 @@ namespace d {
 // long double
 namespace ld {
 
-	typedef  long double  Type;
+typedef  long double  Type;
 
-	extern Type const zero;
-	extern Type const one;
-	extern Type const two;
-	extern Type const pi;
-	extern Type const pi_2;             // 2 * pi
-	extern Type const pi_over_2;        // pi / 2
-	extern Type const pi_over_3;        // pi / 3
-	extern Type const pi_2_over_3;      // ( 2 * pi ) / 3
-	extern Type const pi_over_180;      // pi / 180
-	extern Type const degrees_to_radians;
-	extern Type const deg2rad;
-	extern Type const radians_to_degrees;
-	extern Type const rad2deg;
+extern Type const zero;
+extern Type const one;
+extern Type const two;
+extern Type const pi;
+extern Type const pi_2;             // 2 * pi
+extern Type const pi_over_2;        // pi / 2
+extern Type const pi_over_3;        // pi / 3
+extern Type const pi_2_over_3;      // ( 2 * pi ) / 3
+extern Type const pi_over_180;      // pi / 180
+extern Type const degrees_to_radians;
+extern Type const deg2rad;
+extern Type const radians_to_degrees;
+extern Type const rad2deg;
 
 } // namespace ld
 
@@ -95,21 +95,21 @@ namespace ld {
 // Real
 namespace r {
 
-	typedef  Real  Type;
+typedef  Real  Type;
 
-	extern Type const zero;
-	extern Type const one;
-	extern Type const two;
-	extern Type const pi;
-	extern Type const pi_2;             // 2 * pi
-	extern Type const pi_over_2;        // pi / 2
-	extern Type const pi_over_3;        // pi / 3
-	extern Type const pi_2_over_3;      // ( 2 * pi ) / 3
-	extern Type const pi_over_180;      // pi / 180
-	extern Type const degrees_to_radians;
-	extern Type const deg2rad;
-	extern Type const radians_to_degrees;
-	extern Type const rad2deg;
+extern Type const zero;
+extern Type const one;
+extern Type const two;
+extern Type const pi;
+extern Type const pi_2;             // 2 * pi
+extern Type const pi_over_2;        // pi / 2
+extern Type const pi_over_3;        // pi / 3
+extern Type const pi_2_over_3;      // ( 2 * pi ) / 3
+extern Type const pi_over_180;      // pi / 180
+extern Type const degrees_to_radians;
+extern Type const deg2rad;
+extern Type const radians_to_degrees;
+extern Type const rad2deg;
 
 } // namespace r
 

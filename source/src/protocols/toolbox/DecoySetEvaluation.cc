@@ -103,11 +103,11 @@ typedef core::Real rvec[3];
 
 
 DecoySetEvaluation::DecoySetEvaluation() :
-		COM( 3 ),
-		n_decoys_( 0 ),
-		n_atoms_( 0 ),
-		n_decoys_max_( 0 ),
-		store_energies_( false )
+	COM( 3 ),
+	n_decoys_( 0 ),
+	n_atoms_( 0 ),
+	n_decoys_max_( 0 ),
+	store_energies_( false )
 {}
 
 DecoySetEvaluation::~DecoySetEvaluation() {}
@@ -176,14 +176,14 @@ void DecoySetEvaluation::push_back_CA_xyz( ObjexxFCL::FArray2_double const& xyz,
 
 /*
 void DecoySetEvaluation::push_back_CA_xyz( ObjexxFCL::FArray2D< core::Real > const& xyz, core::Size nres ) {
-	prepare_push_back( nres );
+prepare_push_back( nres );
 
-	// fill coords
-	for ( core::Size i = 1; i <= n_atoms_; i++ ) {
-		for ( core::Size d = 1; d<=3; ++d ) {
-			coords_( d, i, n_decoys_ ) = xyz( d, i );
-		}
-	}
+// fill coords
+for ( core::Size i = 1; i <= n_atoms_; i++ ) {
+for ( core::Size d = 1; d<=3; ++d ) {
+coords_( d, i, n_decoys_ ) = xyz( d, i );
+}
+}
 }
 */
 
@@ -221,11 +221,11 @@ core::Real  DecoySetEvaluation::rmsd( FArray1_double const& weights, FArray2_dou
 	reset_x( n_atoms_, xx_ref, weights, transvec );
 	reset_x( n_atoms_, xx, weights, transvec );
 	Matrix R;
-	//	FArray2P_double xx_ref( coords_( 1, 1, n ), 3, n_atoms_ ); //proxy array provides view to coords_
+	// FArray2P_double xx_ref( coords_( 1, 1, n ), 3, n_atoms_ ); //proxy array provides view to coords_
 	fit_centered_coords( n_atoms_, weights, xx_ref, xx, R );
 	Real rmsd( 0.0 );
 	Real tot_weight( 0.0 );
-	for ( Size n = 1; n <= n_atoms(); n++) {
+	for ( Size n = 1; n <= n_atoms(); n++ ) {
 		tot_weight += weights_( n );
 		for ( Size d = 1; d<=3; ++d ) {
 			rmsd += ( xx( d, n ) -  xx_ref( d, n ) ) * ( xx( d, n ) - xx_ref( d, n ) ) * weights_( n );
@@ -246,15 +246,15 @@ void DecoySetEvaluation::superimpose( FArray1_double const& weights, Size icente
 			offset = n_decoys_;
 			n = 1;
 		}
- 		FArray2P_double xx( coords_( 1, 1, n ), 3, n_atoms_ ); //proxy array provides view to coords_
-// 		FArray1D_double transvec( 3 );
-// 		reset_x( n_atoms_, xx, weights, transvec );
+		FArray2P_double xx( coords_( 1, 1, n ), 3, n_atoms_ ); //proxy array provides view to coords_
+		//   FArray1D_double transvec( 3 );
+		//   reset_x( n_atoms_, xx, weights, transvec );
 		center_structure( n, weights );
 
 		//fit
 		if ( n != icenter ) {
 			Matrix R;
-			//	FArray2P_double xx2( coords_( 1, 1, n ), 3, n_atoms_ ); //proxy array provides view to coords_
+			// FArray2P_double xx2( coords_( 1, 1, n ), 3, n_atoms_ ); //proxy array provides view to coords_
 			fit_centered_coords( n_atoms_, weights, xx_ref, xx, R );
 		}
 	} // for ni
@@ -380,7 +380,7 @@ void DecoySetEvaluation::compute_distance_matrix( ObjexxFCL::FArray2D_double& di
 	Real invn( 1.0 / n_atoms() );
 
 	Real sum_w( 0.0 );
-	for ( Size n = 1; n <= n_atoms(); n++) {
+	for ( Size n = 1; n <= n_atoms(); n++ ) {
 		sum_w+=weights_( n );
 	}
 	invn = 1.0 / sum_w;
@@ -397,7 +397,7 @@ void DecoySetEvaluation::compute_distance_matrix( ObjexxFCL::FArray2D_double& di
 			FArray2P_double xx2( coords_( 1, 1, j ), 3, n_atoms_ ); //proxy array provides view to coords_
 			fit_centered_coords( n_atoms_, weights_, xx, xx2, R );
 			Real rmsd( 0.0 );
-			for ( Size n = 1; n <= n_atoms(); n++) {
+			for ( Size n = 1; n <= n_atoms(); n++ ) {
 				for ( Size d = 1; d<=3; ++d ) {
 					rmsd += ( xx( d, n ) -  xx2( d, n ) ) * ( xx( d, n ) - xx2( d, n ) ) * invn * weights_( n );
 				}
@@ -405,15 +405,15 @@ void DecoySetEvaluation::compute_distance_matrix( ObjexxFCL::FArray2D_double& di
 			rmsd = sqrt( rmsd );
 			dist( i, j ) = rmsd;
 			dist( j, i ) = rmsd;
-			//			tr.Trace << i << " " << j << " " << rmsd << " " << n_atoms_ << std::endl;
+			//   tr.Trace << i << " " << j << " " << rmsd << " " << n_atoms_ << std::endl;
 			// print some stats of progress
 			count ++;
 			if ( count % 50000 == 0 ) {
 				Real const percent_done ( 200.0 * static_cast< Real > ( count ) / ( (n_decoys() - 1) * n_decoys() ) );
 				tr.Info << count
-								<< "/" << ( n_decoys() - 1 )*( n_decoys() )/2
-								<< " ( " << ObjexxFCL::format::F(8,1,percent_done) << "% )"
-								<< std::endl;
+					<< "/" << ( n_decoys() - 1 )*( n_decoys() )/2
+					<< " ( " << ObjexxFCL::format::F(8,1,percent_done) << "% )"
+					<< std::endl;
 			}
 		}
 		dist ( i,i )=0.0;
@@ -422,19 +422,19 @@ void DecoySetEvaluation::compute_distance_matrix( ObjexxFCL::FArray2D_double& di
 
 
 void DecoySetEvaluation::create_dist_constraints(
-	 scoring::constraints::ConstraintSet& cst_set
+	scoring::constraints::ConstraintSet& cst_set
 ) const {
 
-using namespace basic::options;
-using namespace basic::options::OptionKeys;
- runtime_assert( options_registered_ );
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	runtime_assert( options_registered_ );
 
- if ( option[ dist_cst::median ]() ) {
-	 create_dist_constraints_median( cst_set );
-	 return;
- }
- ObjexxFCL::FArray2D_double ivm( n_atoms(), n_atoms(), 0.0 );
- Real const invn( 1.0/n_decoys() );
+	if ( option[ dist_cst::median ]() ) {
+		create_dist_constraints_median( cst_set );
+		return;
+	}
+	ObjexxFCL::FArray2D_double ivm( n_atoms(), n_atoms(), 0.0 );
+	Real const invn( 1.0/n_decoys() );
 
 	for ( Size i = 1; i <= n_atoms(); i++ ) {
 		for ( Size j = i+1; j<=n_atoms(); j++ ) {
@@ -451,16 +451,16 @@ using namespace basic::options::OptionKeys;
 			ivm( j, i ) = var - av*av;
 			ivm( i, j ) = ivm( j, i);
 			tr.Debug << i << " " << j << " " << ivm( i, j ) << "\n";
-			if ( av < option[ dist_cst::max_dist ] && ( (int) j - (int) i) >= option[ dist_cst::min_seq_sep ]) {
+			if ( av < option[ dist_cst::max_dist ] && ( (int) j - (int) i) >= option[ dist_cst::min_seq_sep ] ) {
 				using namespace scoring::constraints;
 				Real const lb( sqrt( ivm( i,j ) )*option[ dist_cst::lb_fact ] );
 				Real const ub( sqrt( ivm( i,j ) )*option[ dist_cst::ub_fact ] );
 				Real const sd( option[ dist_cst::sd ] );
 				core::scoring::func::FuncOP fx( new BoundFunc( av - lb, av + ub, sd, "CM_DECOYS" ) );
 				NamedAtomPairConstraint cst(
-						id::NamedAtomID( "CA", i ),
-						id::NamedAtomID( "CA", j ),
-						fx
+					id::NamedAtomID( "CA", i ),
+					id::NamedAtomID( "CA", j ),
+					fx
 				);
 				cst_set.add_constraint( cst.clone() );
 				pose::Pose dummy_pose;
@@ -475,8 +475,8 @@ using namespace basic::options::OptionKeys;
 void DecoySetEvaluation::create_dist_constraints_median(
 	scoring::constraints::ConstraintSet& cst_set
 ) const {
-using namespace basic::options;
-using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 
 	Real const invn( 1.0/n_decoys() );
@@ -488,7 +488,7 @@ using namespace basic::options::OptionKeys;
 	if ( option[ dist_cst::excl_rigid ].user() ) {
 		std::ifstream is( option[ dist_cst::excl_rigid ]().name().c_str() );
 
-		if (!is.good()) {
+		if ( !is.good() ) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ dist_cst::excl_rigid ]().name() + "'" );
 		}
 
@@ -498,23 +498,23 @@ using namespace basic::options::OptionKeys;
 			is, option[ dist_cst::excl_rigid ](), false );
 		rigid = loops::Loops( loops );
 	}
-	//	utility::vector1< core::Real > dist_sorted;
+	// utility::vector1< core::Real > dist_sorted;
 	for ( Size i = 1; i <= n_atoms(); i++ ) {
 		for ( Size j = i+1; j<=n_atoms(); j++ ) {
 			if ( rigid.size() && rigid.is_loop_residue( i ) && rigid.is_loop_residue( j ) ) continue;
 			Real av( 0.0 );
-			//	dist_sorted.clear();
-			//			dist_sorted.reserve(n_decoys());
+			// dist_sorted.clear();
+			//   dist_sorted.reserve(n_decoys());
 			Real* dist_sorted = new Real[ n_decoys() ];
 			for ( Size n = 1; n<=n_decoys(); n++ ) {
 				core::Vector xi( coords_( 1, i, n ), coords_( 2, i, n ), coords_( 3, i, n ));
 				core::Vector xj( coords_( 1, j, n ), coords_( 2, j, n ), coords_( 3, j, n ));
 				Real dist = xi.distance(xj);
 				av += dist * invn;
-				//				dist_sorted.push_back( dist );
+				//    dist_sorted.push_back( dist );
 				dist_sorted[ n - 1 ]=dist;
 			}
-			if ( av < option[ dist_cst::max_dist ] && ( (int) j - (int) i) >= option[ dist_cst::min_seq_sep ]) {
+			if ( av < option[ dist_cst::max_dist ] && ( (int) j - (int) i) >= option[ dist_cst::min_seq_sep ] ) {
 				std::sort( dist_sorted, dist_sorted + n_decoys() );
 				tr.Debug << "Nlb: " << Nlb << " "<< dist_sorted[ Nlb ] << " Nub: " << Nub << " " << dist_sorted[ n_decoys()-Nub ] << std::endl;
 				Real  lb( dist_sorted[ Nlb ] );
@@ -531,9 +531,9 @@ using namespace basic::options::OptionKeys;
 					using namespace scoring::constraints;
 					core::scoring::func::FuncOP fx( new BoundFunc( lb, ub, sd, "CM_DECOYS" ) );
 					NamedAtomPairConstraint cst(
-																			id::NamedAtomID( "CA", i ),
-																			id::NamedAtomID( "CA", j ),
-																			fx
+						id::NamedAtomID( "CA", i ),
+						id::NamedAtomID( "CA", j ),
+						fx
 					);
 					cst_set.add_constraint( cst.clone() );
 					pose::Pose dummy_pose;
@@ -548,12 +548,12 @@ using namespace basic::options::OptionKeys;
 
 
 void DecoySetEvaluation::create_xyz_constraints_median(
-	 scoring::constraints::ConstraintSet& cst_set,
-	 core::pose::Pose const& ref_pose,
-	 Size root
+	scoring::constraints::ConstraintSet& cst_set,
+	core::pose::Pose const& ref_pose,
+	Size root
 ) const {
-using namespace basic::options;
-using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	Real const invn( 1.0/n_decoys() );
 	//Size const Nlb( std::ceil( n_decoys()*option[ dist_cst::lb_fact ] ));
@@ -565,7 +565,7 @@ using namespace basic::options::OptionKeys;
 	Real const min_ub( option[ dist_cst::min_ub ] );
 	//Size const grow_fact_lb( option[ dist_cst::grow_fact_lb ] );
 
-	//	utility::vector1< core::Real > dist_sorted;
+	// utility::vector1< core::Real > dist_sorted;
 	for ( Size pos = 1; pos <= n_atoms(); pos++ ) {
 		core::Vector xyz_av( 0.0 );
 		//compute average position
@@ -622,10 +622,10 @@ using namespace basic::options::OptionKeys;
 		using namespace scoring::constraints;
 		core::scoring::func::FuncOP fx( new BoundFunc( lb, ub, 1.0, "CM_DECOYS" ) );
 		LocalCoordinateConstraint cst(
-				id::AtomID( ref_pose.residue(pos).atom_index("CA"), pos),
-					core::pose::named_stub_id_to_stub_id( id::NamedStubID( "N", "CA", "C", root ), ref_pose ),
-				xyz_av,
-				fx
+			id::AtomID( ref_pose.residue(pos).atom_index("CA"), pos),
+			core::pose::named_stub_id_to_stub_id( id::NamedStubID( "N", "CA", "C", root ), ref_pose ),
+			xyz_av,
+			fx
 		);
 		cst_set.add_constraint( cst.clone() );
 	}
@@ -634,19 +634,19 @@ using namespace basic::options::OptionKeys;
 
 // void DecoySetEvaluation::dump_coords( utility::io::ozstream& out) const {
 
-// 	// dump file with i, j dist1 dist2  ..... dist N
-// 	for ( Size i = 1; i <= n_atoms(); i++ ) {
-// 		for ( Size j = i+3; j<=n_atoms(); j++ ) {
-// 			out << i << " " << j << " ";
-// 			for ( Size n = 1; n<=n_decoys(); n++ ) {
-// 				core::Vector xi( coords_( 1, i, n ), coords_( 2, i, n ), coords_( 3, i, n ));
-// 				core::Vector xj( coords_( 1, j, n ), coords_( 2, j, n ), coords_( 3, j, n ));
-// 				Real dist = distance(xi, xj);
-// 				out << dist << " ";
-// 			}
-// 			out << std::endl;
-// 		}
-// 	}
+//  // dump file with i, j dist1 dist2  ..... dist N
+//  for ( Size i = 1; i <= n_atoms(); i++ ) {
+//   for ( Size j = i+3; j<=n_atoms(); j++ ) {
+//    out << i << " " << j << " ";
+//    for ( Size n = 1; n<=n_decoys(); n++ ) {
+//     core::Vector xi( coords_( 1, i, n ), coords_( 2, i, n ), coords_( 3, i, n ));
+//     core::Vector xj( coords_( 1, j, n ), coords_( 2, j, n ), coords_( 3, j, n ));
+//     Real dist = distance(xi, xj);
+//     out << dist << " ";
+//    }
+//    out << std::endl;
+//   }
+//  }
 // }
 
 

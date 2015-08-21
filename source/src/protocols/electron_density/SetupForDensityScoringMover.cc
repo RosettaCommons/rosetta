@@ -104,17 +104,19 @@ SetupForDensityScoringMover::get_name() const {
 
 void SetupForDensityScoringMover::mask( protocols::loops::Loops const & loops ) {
 	mask_reses_.clear();
-	for( protocols::loops::Loops::LoopList::const_iterator it=loops.loops().begin(), it_end=loops.loops().end(); it != it_end; ++it )
-		for (core::Size i=it->start(), i_end=it->stop(); i<i_end; ++i )
+	for ( protocols::loops::Loops::LoopList::const_iterator it=loops.loops().begin(), it_end=loops.loops().end(); it != it_end; ++it ) {
+		for ( core::Size i=it->start(), i_end=it->stop(); i<i_end; ++i ) {
 			mask_reses_.push_back(i);
+		}
+	}
 }
 
 void SetupForDensityScoringMover::parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap &,
-			filters::Filters_map const &,
-			moves::Movers_map const &,
-			core::pose::Pose const & ) {
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	filters::Filters_map const &,
+	moves::Movers_map const &,
+	core::pose::Pose const & ) {
 
 	TR << "Parsing SetupForDensityScoringMover----" << std::endl;
 	dock_into_dens_strategy_ = tag->getOption<std::string>( "realign", "no" );

@@ -68,9 +68,9 @@
 #include <utility/vector0.hh>
 
 
-namespace protocols{
-namespace toolbox{
-namespace pose_metric_calculators{
+namespace protocols {
+namespace toolbox {
+namespace pose_metric_calculators {
 
 static thread_local basic::Tracer TR( "seqrecovery" );
 
@@ -86,7 +86,7 @@ using namespace ObjexxFCL::format;
 core::pack::task::TaskFactoryOP SequenceComparison::setup_tf( core::pack::task::TaskFactoryOP task_factory_ ) {
 	using namespace core::pack::task::operation;
 
-		task_factory_->push_back( TaskOperationCOP( new pack::task::operation::InitializeFromCommandline ) );
+	task_factory_->push_back( TaskOperationCOP( new pack::task::operation::InitializeFromCommandline ) );
 
 
 	return task_factory_;
@@ -106,8 +106,9 @@ std::set< core::Size > SequenceComparison::fill_designable_set( core::pose::Pose
 
 	// iterate over all residues
 	for ( Size ii = 1; ii<= design_task->total_residue(); ++ii ) {
-		if( design_task->being_designed( ii ) )
+		if ( design_task->being_designed( ii ) ) {
 			designable_set.insert( ii );
+		}
 	}
 
 	return designable_set;
@@ -170,7 +171,7 @@ void SequenceComparison::measure_sequence_recovery( utility::vector1<core::pose:
 	utility::vector1< core::pose::Pose >::iterator native_itr( native_poses.begin() ), native_last( native_poses.end() );
 	utility::vector1< core::pose::Pose >::iterator redesign_itr( redesign_poses.begin() ), redesign_last( redesign_poses.end() );
 
-	while( ( native_itr != native_last ) && (redesign_itr != redesign_last ) ) {
+	while ( ( native_itr != native_last ) && (redesign_itr != redesign_last ) ) {
 
 		// get local copies of the poses
 		core::pose::Pose native_pose( *native_itr );
@@ -259,14 +260,14 @@ void SequenceComparison::measure_sequence_recovery( utility::vector1<core::pose:
 
 	// write header
 	outputFile << "Residue\tNo.correct core\tNo.native core\tNo.designed core\tNo.correct/ No.native core\tNo.correct/ No.designed core\t"
-				 << "No.correct\tNo.native\tNo.designed\tNo.correct/ No.native\tNo.correct/ No.designed\t"
-				 << "Residue\tNo.correct surface\tNo.native surface\tNo.designed surface\tNo.correct/ No.native\tNo.correct/ No.designed" << std::endl;
+		<< "No.correct\tNo.native\tNo.designed\tNo.correct/ No.native\tNo.correct/ No.designed\t"
+		<< "Residue\tNo.correct surface\tNo.native surface\tNo.designed surface\tNo.correct/ No.native\tNo.correct/ No.designed" << std::endl;
 
 	// write AA data
 	for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
 
 		outputFile << chemical::name_from_aa( chemical::AA(ii) ) << "\t"
-					<< n_correct_core[ ii ] << "\t" << n_native_core[ ii ] << "\t" << n_designed_core[ ii ] << "\t";
+			<< n_correct_core[ ii ] << "\t" << n_native_core[ ii ] << "\t" << n_designed_core[ ii ] << "\t";
 
 		if ( n_native_core[ii] != 0 ) outputFile << F(4,2, (float)n_correct_core[ii]/n_native_core[ii] ) << "\t";
 		else outputFile << "---\t";
@@ -288,7 +289,7 @@ void SequenceComparison::measure_sequence_recovery( utility::vector1<core::pose:
 		//if ( n_designed[ii] != 0 ) std::cout << F(4,2, (float)n_correct[ii]/n_designed[ii] ) << "\t";
 
 		outputFile << chemical::name_from_aa( chemical::AA(ii) ) << "\t"
-							 << n_correct_surface[ ii ] << "\t" << n_native_surface[ ii ] << "\t" << n_designed_surface[ ii ] << "\t";
+			<< n_correct_surface[ ii ] << "\t" << n_native_surface[ ii ] << "\t" << n_designed_surface[ ii ] << "\t";
 
 		if ( n_native_surface[ii] != 0 ) outputFile << F(4,2, (float)n_correct_surface[ii]/n_native_surface[ii] ) << "\t";
 		else outputFile << "---\t";
@@ -304,10 +305,10 @@ void SequenceComparison::measure_sequence_recovery( utility::vector1<core::pose:
 
 	// write totals
 	outputFile << "Total\t"
-				<< n_correct_total_core << "\t" << n_total_core << "\t\t" << F(5,3, (float)n_correct_total_core/n_total_core ) << "\t\t"
-				<< n_correct_total << "\t" << n_total << "\t\t" << F(5,3, (float)n_correct_total/n_total ) << "\t\tTotal\t"
-				<< n_correct_total_surface << "\t" << n_total_surface << "\t\t" << F(5,3, (float)n_correct_total_surface/n_total_surface )
-				<< std::endl;
+		<< n_correct_total_core << "\t" << n_total_core << "\t\t" << F(5,3, (float)n_correct_total_core/n_total_core ) << "\t\t"
+		<< n_correct_total << "\t" << n_total << "\t\t" << F(5,3, (float)n_correct_total/n_total ) << "\t\tTotal\t"
+		<< n_correct_total_surface << "\t" << n_total_surface << "\t\t" << F(5,3, (float)n_correct_total_surface/n_total_surface )
+		<< std::endl;
 
 
 	// output the sequence substitution file

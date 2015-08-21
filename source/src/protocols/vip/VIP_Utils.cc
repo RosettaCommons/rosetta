@@ -26,17 +26,18 @@ using core::Real;
 using namespace core::scoring::packstat;
 
 std::string base_name(const std::string& str) {
-  size_t begin = 0;
-  size_t end = str.length();
+	size_t begin = 0;
+	size_t end = str.length();
 
-  for (size_t i=0; i<str.length(); ++i) {
-    if (str[i] == '/') begin = i+1;}
-		return str.substr(begin,end);}
+	for ( size_t i=0; i<str.length(); ++i ) {
+		if ( str[i] == '/' ) begin = i+1;
+	}
+	return str.substr(begin,end);}
 
 std::string get_out_tag(std::string fname) {
 	std::string base = base_name(fname);
 	std::transform( base.begin(), base.end(), base.begin(), tolower );
-	if (system( ("mkdir -p out/" + base.substr(1,2)).c_str() ) == -1) {
+	if ( system( ("mkdir -p out/" + base.substr(1,2)).c_str() ) == -1 ) {
 		return "Error! Shell process failed!";
 	}
 	std::string OUT_TAG = "out/" + base.substr(1,2) + "/" + base;
@@ -47,14 +48,14 @@ core::Real output_packstat( core::pose::Pose & pose ) {
 
 	using core::Size;
 	using namespace core::scoring::packstat;
-  	using namespace std;
+	using namespace std;
 	using namespace basic;
 	using namespace options;
 	using namespace OptionKeys;
-//	using namespace ObjexxFCL::format;
+	// using namespace ObjexxFCL::format;
 	using namespace numeric;
 	using namespace utility;
-/*
+	/*
 	core::Size oversample = option[ OptionKeys::packstat::oversample ]();
 	bool include_water  = option[ OptionKeys::packstat::include_water ]();
 	bool residue_scores = option[ OptionKeys::packstat::residue_scores ]();
@@ -76,28 +77,28 @@ core::Real output_packstat( core::pose::Pose & pose ) {
 	core::Real packing_score = compute_packing_score( pd, oversample );
 
 	utility::vector1<core::Real> res_scores; // needed if output res scores or pdb
-	if( raw_stats ) {	// stupid duplicate code....
-		assert( pd.spheres.size() > 0 );
-		assert( pd.centers.size() > 0 );
+	if( raw_stats ) { // stupid duplicate code....
+	assert( pd.spheres.size() > 0 );
+	assert( pd.centers.size() > 0 );
 
-		SasaOptions opts;
-		opts.surrounding_sasa_smoothing_window = 1+2*oversample;
-		opts.num_surrounding_sasa_bins = 7;
-		for( core::Size ipr = 1; ipr <= 31; ++ipr ) {
-			PackstatReal pr = 3.0 - ((double)(ipr-1))/10.0;
-			PackstatReal ostep = 0.1 / (oversample*2.0+1.0);
-			for( core::Size i = 1; i <= oversample; ++i )	opts.probe_radii.push_back( pr + i*ostep );
-			opts.probe_radii.push_back( pr );
-			for( core::Size i = 1; i <= oversample; ++i )	opts.probe_radii.push_back( pr - i*ostep );}
-		SasaResultOP result = compute_sasa( pd.spheres, opts );
-		for( core::Size i = 1; i <= pd.centers.size(); ++i ) {
-			// std::cout << i << " ";
-			PackingScoreResDataCOP dat( compute_surrounding_sasa( pd.centers[i], pd.spheres, result, opts ) );
-			for( Size i =1; i <= dat->nrad(); ++i ) {
-				for( Size j =1; j <= dat->npr(); ++j ) {
-				}}
-			}}
-*/
+	SasaOptions opts;
+	opts.surrounding_sasa_smoothing_window = 1+2*oversample;
+	opts.num_surrounding_sasa_bins = 7;
+	for( core::Size ipr = 1; ipr <= 31; ++ipr ) {
+	PackstatReal pr = 3.0 - ((double)(ipr-1))/10.0;
+	PackstatReal ostep = 0.1 / (oversample*2.0+1.0);
+	for( core::Size i = 1; i <= oversample; ++i ) opts.probe_radii.push_back( pr + i*ostep );
+	opts.probe_radii.push_back( pr );
+	for( core::Size i = 1; i <= oversample; ++i ) opts.probe_radii.push_back( pr - i*ostep );}
+	SasaResultOP result = compute_sasa( pd.spheres, opts );
+	for( core::Size i = 1; i <= pd.centers.size(); ++i ) {
+	// std::cout << i << " ";
+	PackingScoreResDataCOP dat( compute_surrounding_sasa( pd.centers[i], pd.spheres, result, opts ) );
+	for( Size i =1; i <= dat->nrad(); ++i ) {
+	for( Size j =1; j <= dat->npr(); ++j ) {
+	}}
+	}}
+	*/
 
 	using namespace protocols;
 	using namespace simple_filters;
@@ -111,33 +112,33 @@ core::Real output_packstat( core::pose::Pose & pose ) {
 	return packing_score;}
 
 
-	void
-	set_local_movemap(
-		core::pose::Pose & pose,
-		core::Size position,
-		core::kinematics::MoveMapOP mmap ) {
+void
+set_local_movemap(
+	core::pose::Pose & pose,
+	core::Size position,
+	core::kinematics::MoveMapOP mmap ) {
 
-		// This helper function sets up a movemap to only allow freedom for
-		// a position and its neighbors
+	// This helper function sets up a movemap to only allow freedom for
+	// a position and its neighbors
 
-		core::scoring::EnergyGraph const & energy_graph( pose.energies().energy_graph() );
+	core::scoring::EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
-		// Defaulting to immobile
-		mmap->set_chi( false );
-		mmap->set_bb( false );
-		mmap->set_jump( false );
+	// Defaulting to immobile
+	mmap->set_chi( false );
+	mmap->set_bb( false );
+	mmap->set_jump( false );
 
-    for ( core::graph::Graph::EdgeListConstIter
-        iru = energy_graph.get_node( position )->const_upper_edge_list_begin(),
-        irue = energy_graph.get_node( position )->const_upper_edge_list_end();
-        iru != irue; ++iru ) {
-      int const nbr_position( (*iru)->get_second_node_ind() );
-			//std::cout << "Neighbors for " << position << " include " << nbr_position << std::endl;
+	for ( core::graph::Graph::EdgeListConstIter
+			iru = energy_graph.get_node( position )->const_upper_edge_list_begin(),
+			irue = energy_graph.get_node( position )->const_upper_edge_list_end();
+			iru != irue; ++iru ) {
+		int const nbr_position( (*iru)->get_second_node_ind() );
+		//std::cout << "Neighbors for " << position << " include " << nbr_position << std::endl;
 
-			mmap->set_chi( nbr_position, true );
-			mmap->set_bb( nbr_position, true );
-		}
+		mmap->set_chi( nbr_position, true );
+		mmap->set_bb( nbr_position, true );
 	}
+}
 
 
 }}

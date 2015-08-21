@@ -34,7 +34,7 @@
 
 #include <numeric/MathVector.hh>
 
-namespace numeric{
+namespace numeric {
 
 
 //////////////////////
@@ -109,7 +109,7 @@ inline MathVector< T > MakeVector( T const & X, T const & Y)
 
 /// @return construct MathVectors from three elements
 template< typename T >
-inline	MathVector< T > MakeVector( T const & X, T const & Y, T const & Z)
+inline MathVector< T > MakeVector( T const & X, T const & Y, T const & Z)
 {
 	MathVector< T > newvector( 3 );
 	newvector( 0 ) = X;
@@ -142,14 +142,14 @@ inline MathVector< T > operator + ( MathVector< T > const & VECTOR)
 template< typename T >
 inline bool operator ==( MathVector< T > const & VECTOR_A, MathVector< T > const & VECTOR_B)
 {
-	if( VECTOR_A.size() != VECTOR_B.size()) {
+	if ( VECTOR_A.size() != VECTOR_B.size() ) {
 		return false;
 	}
 	for ( const T
 			*ptr_a( VECTOR_A.begin()), *ptr_a_end( VECTOR_A.end()),
 			*ptr_b = VECTOR_B.begin(), *ptr_b_end( VECTOR_B.end());
 			ptr_a != ptr_a_end && ptr_b != ptr_b_end; ++ptr_a, ++ptr_b ) {
-		if( ( *ptr_a) != ( *ptr_b)) {
+		if ( ( *ptr_a) != ( *ptr_b) ) {
 			return false;
 		}
 	}
@@ -167,8 +167,8 @@ inline bool operator != ( MathVector< T > const & VECTOR_A, MathVector< T > cons
 template< typename T >
 inline bool operator ==( MathVector< T > const & VECTOR, T const & X)
 {
-	for( const T *ptr( VECTOR.begin()), *ptr_end( VECTOR.end()); ptr != ptr_end; ++ptr) {
-		if( ( *ptr) != X) return false;
+	for ( const T *ptr( VECTOR.begin()), *ptr_end( VECTOR.end()); ptr != ptr_end; ++ptr ) {
+		if ( ( *ptr) != X ) return false;
 	}
 	return true;
 }

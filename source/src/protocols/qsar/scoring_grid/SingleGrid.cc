@@ -55,9 +55,9 @@ void SingleGrid::initialize(core::Vector const & center, core::Real width,core::
 	//core::Real const resolution = 0.1;
 	core::Real const grid_halfwidth = width / 2.0;
 	grid_.setBase(
-			center.x() - grid_halfwidth,
-			center.y() - grid_halfwidth,
-			center.z() - grid_halfwidth
+		center.x() - grid_halfwidth,
+		center.y() - grid_halfwidth,
+		center.z() - grid_halfwidth
 	);
 	grid_.setDimensions(num_pts,num_pts,num_pts,resolution,resolution,resolution);
 	grid_.setupZones();
@@ -136,11 +136,9 @@ core::Real SingleGrid::get_min_value() const
 
 core::Real SingleGrid::get_point(core::Real x, core::Real y, core::Real z)
 {
-	if(grid_.is_in_grid(x,y,z))
-	{
+	if ( grid_.is_in_grid(x,y,z) ) {
 		return grid_.getValue(x,y,z);
-	}else
-	{
+	} else {
 		return 0.0;
 	}
 }
@@ -176,16 +174,14 @@ core::Real SingleGrid::score(core::conformation::UltraLightResidue const & resid
 {
 	core::Real score = 0.0;
 	//GridBaseTracer << "map size is: " << qsar_map->size() <<std::endl;
-	for(core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score;++atom_index)
-	{
+	for ( core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index ) {
 		//TODO qsar map is broken, comment it out until it works right
 		//qsarPointOP qsar_info(qsar_map->get_point(atom_index,type_));
 
 		//if(qsar_info != 0)
 		//{
 		core::Vector const & atom = residue[atom_index];
-		if(grid_.is_in_grid(atom.x(),atom.y(), atom.z()))
-		{
+		if ( grid_.is_in_grid(atom.x(),atom.y(), atom.z()) ) {
 
 			core::Real grid_score = grid_.getValue(atom.x(),atom.y(),atom.z());
 
@@ -200,13 +196,11 @@ core::Real SingleGrid::score(core::conformation::UltraLightResidue const & resid
 core::Real SingleGrid::atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP)
 {
 	core::Vector const & atom = residue[atomno];
-	if(grid_.is_in_grid(atom.x(),atom.y(), atom.z()))
-	{
+	if ( grid_.is_in_grid(atom.x(),atom.y(), atom.z()) ) {
 
 		core::Real grid_score = grid_.getValue(atom.x(),atom.y(),atom.z());
 		return grid_score;
-	}else
-	{
+	} else {
 		return 0;
 	}
 }
@@ -215,16 +209,14 @@ core::Real SingleGrid::score(core::conformation::Residue const & residue, core::
 {
 	core::Real score = 0.0;
 	//GridBaseTracer << "map size is: " << qsar_map->size() <<std::endl;
-	for(core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score;++atom_index)
-	{
+	for ( core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index ) {
 		//TODO qsar map is broken, comment it out until it works right
 		//qsarPointOP qsar_info(qsar_map->get_point(atom_index,type_));
 
 		//if(qsar_info != 0)
 		//{
 		core::Vector const & atom = residue.xyz(atom_index);
-		if(grid_.is_in_grid(atom.x(),atom.y(), atom.z()))
-		{
+		if ( grid_.is_in_grid(atom.x(),atom.y(), atom.z()) ) {
 
 			core::Real grid_score = grid_.getValue(atom.x(),atom.y(),atom.z());
 
@@ -239,13 +231,11 @@ core::Real SingleGrid::score(core::conformation::Residue const & residue, core::
 core::Real SingleGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP /*qsar_map*/)
 {
 	core::Vector const & atom = residue.xyz(atomno);
-	if(grid_.is_in_grid(atom.x(),atom.y(), atom.z()))
-	{
+	if ( grid_.is_in_grid(atom.x(),atom.y(), atom.z()) ) {
 
 		core::Real grid_score = grid_.getValue(atom.x(),atom.y(),atom.z());
 		return grid_score;
-	}else
-	{
+	} else {
 		return 0;
 	}
 
@@ -254,27 +244,23 @@ core::Real SingleGrid::atom_score(core::conformation::Residue const & residue, c
 
 std::list<std::pair<core::Vector, core::Real> >
 SingleGrid::get_point_value_list_within_range(
-		core::Real lower_bound,
-		core::Real upper_bound,
-		core::Size stride)
+	core::Real lower_bound,
+	core::Real upper_bound,
+	core::Size stride)
 {
 	std::list<std::pair<core::Vector, core::Real> > point_list;
 	int x_size(0);
 	int y_size(0);
 	int z_size(0);
 	grid_.getNumberOfPoints(x_size, y_size, z_size);
-	for(int x_index =0; x_index < x_size; x_index+= stride)
-	{
-		for(int y_index = 0; y_index < y_size; y_index += stride)
-		{
-			for(int z_index = 0; z_index < z_size; z_index+= stride)
-			{
+	for ( int x_index =0; x_index < x_size; x_index+= stride ) {
+		for ( int y_index = 0; y_index < y_size; y_index += stride ) {
+			for ( int z_index = 0; z_index < z_size; z_index+= stride ) {
 				core::grid::CartGrid<core::Real>::GridPt grid_point(x_index,y_index,z_index);
 				core::Vector pdb_coords(grid_.coords(grid_point));
 				core::Real value = grid_.getValue(grid_point);
 				//std::cout << value <<std::endl;
-				if(value >= lower_bound && value <= upper_bound)
-				{
+				if ( value >= lower_bound && value <= upper_bound ) {
 					std::pair<core::Vector,core::Real> data(pdb_coords,value);
 					point_list.push_back(data);
 				}
@@ -290,17 +276,13 @@ void SingleGrid::grid_to_kin(utility::io::ozstream & out, core::Real min_val, co
 	int y_size(0);
 	int z_size(0);
 	grid_.getNumberOfPoints(x_size, y_size, z_size);
-	for(int x_index =0; x_index < x_size;x_index +=stride)
-	{
-		for(int y_index = 0; y_index < y_size; y_index += stride)
-		{
-			for(int z_index = 0; z_index < z_size; z_index += stride)
-			{
+	for ( int x_index =0; x_index < x_size; x_index +=stride ) {
+		for ( int y_index = 0; y_index < y_size; y_index += stride ) {
+			for ( int z_index = 0; z_index < z_size; z_index += stride ) {
 				core::grid::CartGrid<core::Real>::GridPt grid_point(x_index,y_index,z_index);
 				core::Vector box_counter = grid_.coords(grid_point);
 				core::Real value = grid_.getValue(grid_point);
-				if(min_val <= value && value <= max_val)
-				{
+				if ( min_val <= value && value <= max_val ) {
 					out << '{' << x_index << ' ' << y_index << ' ' << z_index << "}U "
 						<< box_counter.x() << ' ' << box_counter.y() << ' ' << box_counter.z() << '\n';
 				}
@@ -308,32 +290,28 @@ void SingleGrid::grid_to_kin(utility::io::ozstream & out, core::Real min_val, co
 		}
 	}
 }
-    
+
 
 bool SingleGrid::is_in_grid(core::conformation::UltraLightResidue const & residue)
 {
-    for(core::Size atom_index = 1; atom_index <= residue.natoms();++atom_index)
-    {
-        core::Vector atom_coords = residue[atom_index];
-        if(!grid_.is_in_grid(atom_coords.x(), atom_coords.y(), atom_coords.z()))
-        {
-            return false;
-        }
-    }
-    return true;
+	for ( core::Size atom_index = 1; atom_index <= residue.natoms(); ++atom_index ) {
+		core::Vector atom_coords = residue[atom_index];
+		if ( !grid_.is_in_grid(atom_coords.x(), atom_coords.y(), atom_coords.z()) ) {
+			return false;
+		}
+	}
+	return true;
 }
 
 bool SingleGrid::is_in_grid(core::conformation::Residue const & residue)
 {
-    for(core::Size atom_index = 1; atom_index <= residue.natoms();++atom_index)
-    {
-        core::Vector atom_coords = residue.xyz(atom_index);
-        if(!grid_.is_in_grid(atom_coords.x(), atom_coords.y(), atom_coords.z()))
-        {
-            return false;
-        }
-    }
-    return true;
+	for ( core::Size atom_index = 1; atom_index <= residue.natoms(); ++atom_index ) {
+		core::Vector atom_coords = residue.xyz(atom_index);
+		if ( !grid_.is_in_grid(atom_coords.x(), atom_coords.y(), atom_coords.z()) ) {
+			return false;
+		}
+	}
+	return true;
 }
 
 
@@ -343,18 +321,18 @@ void SingleGrid::fill_with_value(core::Real value)
 }
 
 void SingleGrid::set_sphere(
-		core::Vector const & coords,
-		core::Real radius,
-		core::Real value
+	core::Vector const & coords,
+	core::Real radius,
+	core::Real value
 ){
 	set_ring(coords, 0, radius, value);
 }
 
 void SingleGrid::set_ring(
-		core::Vector const & coords,
-		core::Real inner_radius,
-		core::Real outer_radius,
-		core::Real value
+	core::Vector const & coords,
+	core::Real inner_radius,
+	core::Real outer_radius,
+	core::Real value
 ){
 	//TR <<"making sphere of radius " << radius << "and value " << value <<std::endl;
 	core::Real inner_radius2 = inner_radius*inner_radius;
@@ -369,19 +347,16 @@ void SingleGrid::set_ring(
 	//TR <<"min: " <<grid_min.x() << " "<<grid_min.y() << " " <<grid_min.z() <<std::endl;
 	//TR <<"max: "<<grid_max.x() << " "<<grid_max.y() << " " <<grid_max.z() <<std::endl;
 	//TR <<"counts: " << x_count <<" "<< y_count << " " << z_count <<std::endl;
-	for(int x_index = std::max(0,grid_min.x()); x_index <= std::min(x_count-1,grid_max.x());++x_index)
-	{
-		for(int y_index = std::max(0,grid_min.y());y_index <= std::min(y_count-1,grid_max.y());++y_index)
-		{
-			for(int z_index = std::max(0,grid_min.z()); z_index <= std::min(z_count-1,grid_max.z());++z_index)
-			{
+	for ( int x_index = std::max(0,grid_min.x()); x_index <= std::min(x_count-1,grid_max.x()); ++x_index ) {
+		for ( int y_index = std::max(0,grid_min.y()); y_index <= std::min(y_count-1,grid_max.y()); ++y_index ) {
+			for ( int z_index = std::max(0,grid_min.z()); z_index <= std::min(z_count-1,grid_max.z()); ++z_index ) {
 				core::grid::CartGrid<core::Real>::GridPt point(x_index, y_index, z_index);
 				core::Vector box_center = grid_.coords(point);
 				//TR <<x_index << " "<<y_index << " " <<z_index <<std::endl;
-				if(
+				if (
 						box_center.distance_squared(coords) >= inner_radius2
 						&& box_center.distance_squared(coords) <= outer_radius2
-				){
+						) {
 					grid_.setValue(point, value);
 				}
 			}
@@ -401,21 +376,16 @@ void SingleGrid::set_distance_sphere_for_atom(core::Real const & atom_shell,core
 	core::Vector vector_radius (cutoff);
 	core::grid::CartGrid<core::Real>::GridPt grid_min = grid_.gridpt(coords - cutoff);
 	core::grid::CartGrid<core::Real>::GridPt grid_max = grid_.gridpt(coords + cutoff);
-	for(int x_index = std::max(0,grid_min.x()); x_index <= std::min(x_count-1,grid_max.x());++x_index)
-	{
-		for(int y_index = std::max(0,grid_min.y());y_index <= std::min(y_count-1,grid_max.y());++y_index)
-		{
-			for(int z_index = std::max(0,grid_min.z()); z_index <= std::min(z_count-1,grid_max.z());++z_index)
-			{
+	for ( int x_index = std::max(0,grid_min.x()); x_index <= std::min(x_count-1,grid_max.x()); ++x_index ) {
+		for ( int y_index = std::max(0,grid_min.y()); y_index <= std::min(y_count-1,grid_max.y()); ++y_index ) {
+			for ( int z_index = std::max(0,grid_min.z()); z_index <= std::min(z_count-1,grid_max.z()); ++z_index ) {
 				core::grid::CartGrid<core::Real>::GridPt point(x_index, y_index, z_index);
 				core::Vector box_center(grid_.coords(point));
 				core::Real distance2 = box_center.distance_squared(coords);
-				if(distance2 <= cutoff2)
-				{
+				if ( distance2 <= cutoff2 ) {
 					core::Real distance = sqrt(distance2);
 					core::Real current_value = grid_.getValue(point);
-					if(distance - atom_shell <= current_value)
-					{
+					if ( distance - atom_shell <= current_value ) {
 						grid_.setValue(point,distance - atom_shell);
 					}
 				}
@@ -435,25 +405,20 @@ void SingleGrid::set_score_sphere_for_atom(numeric::interpolation::spline::Inter
 	core::Vector vector_radius (cutoff);
 	core::grid::CartGrid<core::Real>::GridPt grid_min = grid_.gridpt(coords - cutoff);
 	core::grid::CartGrid<core::Real>::GridPt grid_max = grid_.gridpt(coords + cutoff);
-	for(int x_index = std::max(0,grid_min.x()); x_index <= std::min(x_count-1,grid_max.x());++x_index)
-	{
-		for(int y_index = std::max(0,grid_min.y());y_index <= std::min(y_count-1,grid_max.y());++y_index)
-		{
-			for(int z_index = std::max(0,grid_min.z()); z_index <= std::min(z_count-1,grid_max.z());++z_index)
-			{
+	for ( int x_index = std::max(0,grid_min.x()); x_index <= std::min(x_count-1,grid_max.x()); ++x_index ) {
+		for ( int y_index = std::max(0,grid_min.y()); y_index <= std::min(y_count-1,grid_max.y()); ++y_index ) {
+			for ( int z_index = std::max(0,grid_min.z()); z_index <= std::min(z_count-1,grid_max.z()); ++z_index ) {
 				core::grid::CartGrid<core::Real>::GridPt point(x_index, y_index, z_index);
 				core::Vector box_center(grid_.coords(point));
 				core::Real distance2 = box_center.distance_squared(coords);
-				if(distance2 <= cutoff2)
-				{
+				if ( distance2 <= cutoff2 ) {
 					core::Real distance = sqrt(distance2);
 					core::Real current_value = grid_.getValue(point);
 					core::Real spline_score = 0.0;
 					core::Real spline_score_deriv = 0.0;
 
 					lj_spline->interpolate(distance,spline_score,spline_score_deriv);
-					if(spline_score <= current_value)
-					{
+					if ( spline_score <= current_value ) {
 						grid_.setValue(point,spline_score);
 					}
 
@@ -476,12 +441,9 @@ void SingleGrid::diffuse_ring(core::Vector const & coords, core::Real radius, co
 	core::Vector vector_radius (radius);
 	core::grid::CartGrid<core::Real>::GridPt grid_min = grid_.gridpt(coords - radius);
 	core::grid::CartGrid<core::Real>::GridPt grid_max = grid_.gridpt(coords + radius);
-	for(int x_index = std::max(0,grid_min.x()); x_index <= std::min(x_count-1,grid_max.x());++x_index)
-	{
-		for(int y_index = std::max(0,grid_min.y());y_index <= std::min(y_count-1,grid_max.y());++y_index)
-		{
-			for(int z_index = std::max(0,grid_min.z()); z_index <= std::min(z_count-1,grid_max.z());++z_index)
-			{
+	for ( int x_index = std::max(0,grid_min.x()); x_index <= std::min(x_count-1,grid_max.x()); ++x_index ) {
+		for ( int y_index = std::max(0,grid_min.y()); y_index <= std::min(y_count-1,grid_max.y()); ++y_index ) {
+			for ( int z_index = std::max(0,grid_min.z()); z_index <= std::min(z_count-1,grid_max.z()); ++z_index ) {
 				core::grid::CartGrid<core::Real>::GridPt point(x_index,y_index,z_index);
 				core::Vector origin = grid_.coords(point);
 				core::Real distance_squared = origin.distance_squared(coords);
@@ -489,30 +451,22 @@ void SingleGrid::diffuse_ring(core::Vector const & coords, core::Real radius, co
 
 				//if((distance_squared < radius2 + half_width) || (distance_squared > radius2-half_width))
 				//if(distance_squared <radius2)
-				if((distance_squared >radius_squared-half_width_squared && distance_squared < radius_squared)|| (distance_squared <radius_squared+half_width_squared && distance_squared > radius_squared))
-				{
+				if ( (distance_squared >radius_squared-half_width_squared && distance_squared < radius_squared)|| (distance_squared <radius_squared+half_width_squared && distance_squared > radius_squared) ) {
 					//TR << "inserting value " <<std::endl;
 					grid_.setValue(point,magnitude);
-				}else
-				{
+				} else {
 
 					//TR<<  "d^2 is " << distance_squared <<std::endl;
 					core::Real distance_from_ring = 0.0;
-					if(distance_squared < radius_squared)
-					{
+					if ( distance_squared < radius_squared ) {
 						distance_from_ring = (radius_squared-half_width_squared)-distance_squared;
-					}else
-					{
+					} else {
 						distance_from_ring = distance_squared-(radius_squared+half_width_squared);
 					}
 
-					if(distance_from_ring <= std::abs(magnitude))
-					{
+					if ( distance_from_ring <= std::abs(magnitude) ) {
 						grid_.setValue(point,magnitude+distance_from_ring);
-					}
-					else
-					{
-					}
+					} else { }
 
 				}
 

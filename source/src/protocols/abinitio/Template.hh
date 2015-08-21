@@ -107,7 +107,7 @@ public:
 	//@brief constraints for this tempalte are present
 	bool has_constraints() const {
 		return cstfile_.size();
-		//		return cstset_.size();
+		//  return cstset_.size();
 	}
 
 	core::scoring::dssp::StrandPairingSet const& strand_pairings() const {
@@ -120,11 +120,11 @@ public:
 		return cstset_;
 	}
 
-  //void map2template( FrameList const& target_frames, FrameList const&  template_frame ) const;
+	//void map2template( FrameList const& target_frames, FrameList const&  template_frame ) const;
 
-  std::string const& name() const {
-    return name_;
-  }
+	std::string const& name() const {
+		return name_;
+	}
 
 	core::Real external_score() const {
 		return score_;
@@ -142,7 +142,7 @@ public:
 		topol_score_ = setting;
 	}
 
-  bool is_good() const { return good_; }
+	bool is_good() const { return good_; }
 
 private:
 	bool map_pairing( core::scoring::dssp::Pairing const&, core::scoring::dssp::Pairing&, core::sequence::DerivedSequenceMapping const& map ) const;

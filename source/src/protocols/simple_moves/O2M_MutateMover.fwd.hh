@@ -17,8 +17,8 @@
 // Utility headers
 #include <boost/shared_ptr.hpp>
 
-namespace protocols{
-namespace simple_moves{
+namespace protocols {
+namespace simple_moves {
 
 class O2M_MutateMover;
 typedef boost::shared_ptr<O2M_MutateMover> O2M_MutateMoverSP;

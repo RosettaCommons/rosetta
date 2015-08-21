@@ -57,13 +57,13 @@ BuildSet b;
 
 
 /*enum ChiStrategy {
-	rotameric_chi_follow_EX_flags,
-	rotameric_chi_mimic_EX_flags,
-	rotameric_chi_step_by_value,
-	rotameric_chi_step_wi_sd_range,
-	rotameric_chi_partition_sd_range,
-	nonrotameric_chi_sample_wi_nrchi_bin,
-	nonrotameric_chi_sample_wi_nrchi_bin_to_lower_boundary
+rotameric_chi_follow_EX_flags,
+rotameric_chi_mimic_EX_flags,
+rotameric_chi_step_by_value,
+rotameric_chi_step_wi_sd_range,
+rotameric_chi_partition_sd_range,
+nonrotameric_chi_sample_wi_nrchi_bin,
+nonrotameric_chi_sample_wi_nrchi_bin_to_lower_boundary
 };*/
 
 SampleStrategyData::SampleStrategyData() :
@@ -191,83 +191,83 @@ SampleStrategyData::n_samples_per_side_of_nrchi_bin() const
 }
 
 /*UpstreamResTypeGeometry::UpstreamResTypeGeometry() :
-	restype_name_( "UNINITIALIZED" )
+restype_name_( "UNINITIALIZED" )
 {}
 
 UpstreamResTypeGeometry::UpstreamResTypeGeometry( core::chemical::ResidueType const & res ) :
-	restype_name_( res.name() )
+restype_name_( res.name() )
 {
-	initialize_from_residue_type( res );
+initialize_from_residue_type( res );
 }
 
 void
 UpstreamResTypeGeometry::initialize_from_residue_type(
-	core::chemical::ResidueType const & res
+core::chemical::ResidueType const & res
 )
 {
-	if ( restype_name_ != res.name() ) {
-		restype_name_ = res.name();
-	}
+if ( restype_name_ != res.name() ) {
+restype_name_ = res.name();
+}
 
-	/// 1. Resize arrays that depend on the number of atoms
-	Size const n_atoms = res.natoms();
+/// 1. Resize arrays that depend on the number of atoms
+Size const n_atoms = res.natoms();
 
-	controlling_chi_for_atom_ =  res.last_controlling_chi();
-	which_point_for_atom_.resize( n_atoms );
-	std::fill( which_point_for_atom_.begin(), which_point_for_atom_.end(), 0 );
+controlling_chi_for_atom_ =  res.last_controlling_chi();
+which_point_for_atom_.resize( n_atoms );
+std::fill( which_point_for_atom_.begin(), which_point_for_atom_.end(), 0 );
 
-	/// 2. Resize arrays that depend on the number of chi
-	Size const n_chi = res.nchi();
+/// 2. Resize arrays that depend on the number of chi
+Size const n_chi = res.nchi();
 
-	chitip_atoms_.resize( n_chi );
-	std::fill( chitip_atoms_.begin(), chitip_atoms_.end(), 0 );
+chitip_atoms_.resize( n_chi );
+std::fill( chitip_atoms_.begin(), chitip_atoms_.end(), 0 );
 
-	ht_for_chitip_atoms_.resize( n_chi );
-	for ( Size ii = 1; ii <= n_chi; ++ii ) ht_for_chitip_atoms_[ ii ].set_identity();
+ht_for_chitip_atoms_.resize( n_chi );
+for ( Size ii = 1; ii <= n_chi; ++ii ) ht_for_chitip_atoms_[ ii ].set_identity();
 
-	nonchitip_atoms_.resize( res.nchi() );
-	for ( Size ii = 1; ii <= n_chi; ++ii ) nonchitip_atoms_[ ii ].clear();
+nonchitip_atoms_.resize( res.nchi() );
+for ( Size ii = 1; ii <= n_chi; ++ii ) nonchitip_atoms_[ ii ].clear();
 
-	points_for_nonchitip_atoms_.resize( res.nchi() );
-	for ( Size ii = 1; ii <= n_chi; ++ii ) points_for_nonchitip_atoms_[ ii ].clear();
+points_for_nonchitip_atoms_.resize( res.nchi() );
+for ( Size ii = 1; ii <= n_chi; ++ii ) points_for_nonchitip_atoms_[ ii ].clear();
 
-	if ( nchi() == 0 ) return; // match from gly? can't see why you'd want to!
-
-
-	for ( Size ii = 1; ii <= n_chi; ++ii ) {
-		assert( res.chi_atoms( ii ).size() == 4 );
-
-		Size const
-			chiat2( res.chi_atoms( ii )[ 2 ] ),
-			chiat3( res.chi_atoms( ii )[ 3 ] ),
-			chiat4( res.chi_atoms( ii )[ 4 ] );
-
-		chitip_atoms_[ ii ] = chiat4;
+if ( nchi() == 0 ) return; // match from gly? can't see why you'd want to!
 
 
-		ht_for_chitip_atoms_[ ii ].set_xaxis_rotation_rad( -1 * res.icoor( chiat4 ).theta() );
-		ht_for_chitip_atoms_[ ii ].walk_along_z( res.icoor( chiat4 ).d() );
+for ( Size ii = 1; ii <= n_chi; ++ii ) {
+assert( res.chi_atoms( ii ).size() == 4 );
 
-		HTReal chi_tip_frame(
-			res.xyz( chiat2 ),
-			res.xyz( chiat3 ),
-			res.xyz( chiat4 ) );
+Size const
+chiat2( res.chi_atoms( ii )[ 2 ] ),
+chiat3( res.chi_atoms( ii )[ 3 ] ),
+chiat4( res.chi_atoms( ii )[ 4 ] );
 
-		Size const n_nontip_ats_for_chi = res.atoms_last_controlled_by_chi( ii ).size() - 1;
+chitip_atoms_[ ii ] = chiat4;
 
-		nonchitip_atoms_[ ii ].reserve( n_nontip_ats_for_chi );
-		points_for_nonchitip_atoms_[ ii ].reserve( n_nontip_ats_for_chi );
 
-		for ( Size jj = 1; jj <= res.atoms_last_controlled_by_chi( ii ).size(); ++jj ) {
-			Size const jjatom = res.atoms_last_controlled_by_chi( ii )[ jj ];
-			if ( jjatom == chiat4 ) continue;
+ht_for_chitip_atoms_[ ii ].set_xaxis_rotation_rad( -1 * res.icoor( chiat4 ).theta() );
+ht_for_chitip_atoms_[ ii ].walk_along_z( res.icoor( chiat4 ).d() );
 
-			Vector jjloc_in_chitip_frame = chi_tip_frame.to_local_coordinate( res.xyz( jjatom ) );
-			nonchitip_atoms_[ ii ].push_back( jjatom );
-			points_for_nonchitip_atoms_[ ii ].push_back( jjloc_in_chitip_frame );
-			which_point_for_atom_[ jjatom ] = points_for_nonchitip_atoms_[ ii ].size();
-		}
-	}
+HTReal chi_tip_frame(
+res.xyz( chiat2 ),
+res.xyz( chiat3 ),
+res.xyz( chiat4 ) );
+
+Size const n_nontip_ats_for_chi = res.atoms_last_controlled_by_chi( ii ).size() - 1;
+
+nonchitip_atoms_[ ii ].reserve( n_nontip_ats_for_chi );
+points_for_nonchitip_atoms_[ ii ].reserve( n_nontip_ats_for_chi );
+
+for ( Size jj = 1; jj <= res.atoms_last_controlled_by_chi( ii ).size(); ++jj ) {
+Size const jjatom = res.atoms_last_controlled_by_chi( ii )[ jj ];
+if ( jjatom == chiat4 ) continue;
+
+Vector jjloc_in_chitip_frame = chi_tip_frame.to_local_coordinate( res.xyz( jjatom ) );
+nonchitip_atoms_[ ii ].push_back( jjatom );
+points_for_nonchitip_atoms_[ ii ].push_back( jjloc_in_chitip_frame );
+which_point_for_atom_[ jjatom ] = points_for_nonchitip_atoms_[ ii ].size();
+}
+}
 }*/
 
 
@@ -325,7 +325,7 @@ void BuildSet::set_residue_type(
 	atom_radii_.resize( restype_->natoms() );
 
 	for ( Size ii = 1; ii <= nbonds_from_bb_atom_.size(); ++ii ) {
-		if ( restype_->atom_is_backbone( ii )) {
+		if ( restype_->atom_is_backbone( ii ) ) {
 			nbonds_from_bb_atom_[ ii ] = 0;
 		} else {
 			Size min_path_dist = 6; /// assume that we only care about bond distances less than 6; anything greater than 5 is "infinite"
@@ -364,7 +364,7 @@ BuildSet::set_fa_dun_cutoff(
 	core::Real cutoff )
 {
 	fa_dun_cutoff_ = cutoff;
-	if( cutoff == 0.0 ) check_fa_dun_ = false;
+	if ( cutoff == 0.0 ) check_fa_dun_ = false;
 	else check_fa_dun_ = true;
 }
 
@@ -395,40 +395,40 @@ FullChiSampleSet::FullChiSampleSet(
 			expand_non_dunbrack_chi( ii, build_set );
 		} else {
 			switch ( build_set.sample_strategy_for_chi( ii ).strategy() ) {
-				case no_samples:
-					if ( !dry_run ) {
-						n_samples_per_chi_[ ii ] = 1;
-						chi_samples_[ ii ].resize( 1 );
-						frames_[ ii ].resize( 1 );
-						chi_samples_[ ii ][ 1 ] = numeric::dihedral_degrees(
-							build_set.restype().atom( build_set.restype().chi_atoms( ii )[ 1 ] ).ideal_xyz(),
-							build_set.restype().atom( build_set.restype().chi_atoms( ii )[ 2 ] ).ideal_xyz(),
-							build_set.restype().atom( build_set.restype().chi_atoms( ii )[ 3 ] ).ideal_xyz(),
-							build_set.restype().atom( build_set.restype().chi_atoms( ii )[ 4 ] ).ideal_xyz() );
-					}
-					break;
-				case follow_EX_flags :
-					expand_samples_by_ex_behavior( ii, ex_level_from_flags( ii ), sample );
+			case no_samples :
+				if ( !dry_run ) {
+					n_samples_per_chi_[ ii ] = 1;
+					chi_samples_[ ii ].resize( 1 );
+					frames_[ ii ].resize( 1 );
+					chi_samples_[ ii ][ 1 ] = numeric::dihedral_degrees(
+						build_set.restype().atom( build_set.restype().chi_atoms( ii )[ 1 ] ).ideal_xyz(),
+						build_set.restype().atom( build_set.restype().chi_atoms( ii )[ 2 ] ).ideal_xyz(),
+						build_set.restype().atom( build_set.restype().chi_atoms( ii )[ 3 ] ).ideal_xyz(),
+						build_set.restype().atom( build_set.restype().chi_atoms( ii )[ 4 ] ).ideal_xyz() );
+				}
+				break;
+			case follow_EX_flags :
+				expand_samples_by_ex_behavior( ii, ex_level_from_flags( ii ), sample );
 				break;
 
-				case rotameric_chi_mimic_EX_flags :
-					expand_samples_by_ex_behavior( ii, build_set.sample_strategy_for_chi( ii ).sample_level(), sample );
+			case rotameric_chi_mimic_EX_flags :
+				expand_samples_by_ex_behavior( ii, build_set.sample_strategy_for_chi( ii ).sample_level(), sample );
 				break;
 
-				case rotameric_chi_step_wi_sd_range :
-					expand_samples_by_steps_wi_sdrange( ii, build_set.sample_strategy_for_chi( ii ), sample );
+			case rotameric_chi_step_wi_sd_range :
+				expand_samples_by_steps_wi_sdrange( ii, build_set.sample_strategy_for_chi( ii ), sample );
 				break;
 
 				/// distinction without a difference; when would you ever want to sample the boundary point twice!?
-				case nonrotameric_chi_sample_wi_nrchi_bin :
-				case nonrotameric_chi_sample_wi_nrchi_bin_to_lower_boundary :
-					expand_samples_for_nrchi_wi_nrchi_bin( ii, build_set.sample_strategy_for_chi( ii ), sample );
+			case nonrotameric_chi_sample_wi_nrchi_bin :
+			case nonrotameric_chi_sample_wi_nrchi_bin_to_lower_boundary :
+				expand_samples_for_nrchi_wi_nrchi_bin( ii, build_set.sample_strategy_for_chi( ii ), sample );
 				break;
 
 				/// UNIMPLEMENTED BELOW:
-				case rotameric_chi_step_by_value :
+			case rotameric_chi_step_by_value :
 				//break;
-				case rotameric_chi_partition_sd_range :
+			case rotameric_chi_partition_sd_range :
 				//break;
 				//break;
 				utility_exit_with_message( "unimplemented rotamer building strategy" );
@@ -525,108 +525,108 @@ FullChiSampleSet::expand_samples_by_ex_behavior(
 	} else { /// rotameric chi
 
 		switch ( behavior ) {
-			case NO_EXTRA_CHI_SAMPLES :
-				if ( ! dry_run_ ) {
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] );
-					n_samples_per_chi_[ chi ] = 1;
-				}
+		case NO_EXTRA_CHI_SAMPLES :
+			if ( ! dry_run_ ) {
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] );
+				n_samples_per_chi_[ chi ] = 1;
+			}
 			break;
-			case EX_ONE_STDDEV :
-				nsamps = 3;
-				if ( ! dry_run_ ) {
-					chi_samples_[ chi ].reserve( nsamps );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + sample.chi_sd()[ chi ] );
-					n_samples_per_chi_[ chi ] = nsamps;
-				}
+		case EX_ONE_STDDEV :
+			nsamps = 3;
+			if ( ! dry_run_ ) {
+				chi_samples_[ chi ].reserve( nsamps );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + sample.chi_sd()[ chi ] );
+				n_samples_per_chi_[ chi ] = nsamps;
+			}
 			break;
-			case EX_ONE_HALF_STEP_STDDEV :
-				nsamps = 3;
-				if ( ! dry_run_ ) {
-					chi_samples_[ chi ].reserve( nsamps );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 0.5 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 0.5 * sample.chi_sd()[ chi ] );
-					n_samples_per_chi_[ chi ] = nsamps;
-				}
+		case EX_ONE_HALF_STEP_STDDEV :
+			nsamps = 3;
+			if ( ! dry_run_ ) {
+				chi_samples_[ chi ].reserve( nsamps );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 0.5 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 0.5 * sample.chi_sd()[ chi ] );
+				n_samples_per_chi_[ chi ] = nsamps;
+			}
 			break;
-			case EX_TWO_FULL_STEP_STDDEVS :
-				nsamps = 5;
-				if ( ! dry_run_ ) {
-					chi_samples_[ chi ].reserve( nsamps );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 2 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 1 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 1 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 2 * sample.chi_sd()[ chi ] );
-					n_samples_per_chi_[ chi ] = nsamps;
-				}
+		case EX_TWO_FULL_STEP_STDDEVS :
+			nsamps = 5;
+			if ( ! dry_run_ ) {
+				chi_samples_[ chi ].reserve( nsamps );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 2 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 1 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 1 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 2 * sample.chi_sd()[ chi ] );
+				n_samples_per_chi_[ chi ] = nsamps;
+			}
 			break;
-			case EX_TWO_HALF_STEP_STDDEVS :
-				nsamps = 5;
-				if ( ! dry_run_ ) {
-					chi_samples_[ chi ].reserve( nsamps );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 1.0 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 0.5 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 0.5 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 1.0 * sample.chi_sd()[ chi ] );
-					n_samples_per_chi_[ chi ] = nsamps;
-				}
+		case EX_TWO_HALF_STEP_STDDEVS :
+			nsamps = 5;
+			if ( ! dry_run_ ) {
+				chi_samples_[ chi ].reserve( nsamps );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 1.0 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 0.5 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 0.5 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 1.0 * sample.chi_sd()[ chi ] );
+				n_samples_per_chi_[ chi ] = nsamps;
+			}
 			break;
-			case EX_FOUR_HALF_STEP_STDDEVS :
-				nsamps = 9;
-				if ( ! dry_run_ ) {
-					chi_samples_[ chi ].reserve( nsamps );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 2.0 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 1.5 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 1.0 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 0.5 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 0.5 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 1.0 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 1.5 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 2.0 * sample.chi_sd()[ chi ] );
-					n_samples_per_chi_[ chi ] = nsamps;
-				}
+		case EX_FOUR_HALF_STEP_STDDEVS :
+			nsamps = 9;
+			if ( ! dry_run_ ) {
+				chi_samples_[ chi ].reserve( nsamps );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 2.0 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 1.5 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 1.0 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 0.5 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 0.5 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 1.0 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 1.5 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 2.0 * sample.chi_sd()[ chi ] );
+				n_samples_per_chi_[ chi ] = nsamps;
+			}
 			break;
-			case EX_THREE_THIRD_STEP_STDDEVS :
-				nsamps = 7;
-				if ( ! dry_run_ ) {
-					chi_samples_[ chi ].reserve( nsamps );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 1.0 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 0.67 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 0.33 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 0.33 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 0.67 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 1.0 * sample.chi_sd()[ chi ] );
-					n_samples_per_chi_[ chi ] = nsamps;
-				}
+		case EX_THREE_THIRD_STEP_STDDEVS :
+			nsamps = 7;
+			if ( ! dry_run_ ) {
+				chi_samples_[ chi ].reserve( nsamps );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 1.0 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 0.67 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 0.33 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 0.33 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 0.67 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 1.0 * sample.chi_sd()[ chi ] );
+				n_samples_per_chi_[ chi ] = nsamps;
+			}
 			break;
-			case EX_SIX_QUARTER_STEP_STDDEVS :
-				nsamps = 13;
-				if ( ! dry_run_ ) {
-					chi_samples_[ chi ].reserve( nsamps );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 1.50 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 1.25 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 1.00 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 0.75 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 0.50 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 0.25 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 0.25 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 0.50 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 0.75 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 1.00 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 1.25 * sample.chi_sd()[ chi ] );
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 1.50 * sample.chi_sd()[ chi ] );
-					n_samples_per_chi_[ chi ] = nsamps;
-				}
+		case EX_SIX_QUARTER_STEP_STDDEVS :
+			nsamps = 13;
+			if ( ! dry_run_ ) {
+				chi_samples_[ chi ].reserve( nsamps );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 1.50 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 1.25 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 1.00 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 0.75 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 0.50 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - 0.25 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 0.25 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 0.50 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 0.75 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 1.00 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 1.25 * sample.chi_sd()[ chi ] );
+				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + 1.50 * sample.chi_sd()[ chi ] );
+				n_samples_per_chi_[ chi ] = nsamps;
+			}
 			break;
-			default :
-				utility_exit_with_message( "Requested ex sample level not yet supported" );
+		default :
+			utility_exit_with_message( "Requested ex sample level not yet supported" );
 			break;
 		}
 	}
@@ -680,19 +680,19 @@ FullChiSampleSet::expand_samples_for_nrchi_wi_nrchi_bin(
 				n_samples_per_chi_[ chi ] = nsamps;
 				chi_samples_[ chi ].reserve( nsamps );
 				{// lower
-				Real lower_edge = sample.nrchi_lower_boundary();
-				Real step = ( sample.chi_mean()[ chi ] - lower_edge ) / stratdat.n_samples_per_side_of_nrchi_bin();
-				for ( Size ii = 0; ii < stratdat.n_samples_per_side_of_nrchi_bin(); ++ii ) {
-					chi_samples_[ chi ].push_back( lower_edge + ii * step  );
-				}
+					Real lower_edge = sample.nrchi_lower_boundary();
+					Real step = ( sample.chi_mean()[ chi ] - lower_edge ) / stratdat.n_samples_per_side_of_nrchi_bin();
+					for ( Size ii = 0; ii < stratdat.n_samples_per_side_of_nrchi_bin(); ++ii ) {
+						chi_samples_[ chi ].push_back( lower_edge + ii * step  );
+					}
 				}
 				chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] );
 				{// upper
-				Real upper_edge = sample.nrchi_upper_boundary();
-				Real step = ( upper_edge - sample.chi_mean()[ chi ] ) / stratdat.n_samples_per_side_of_nrchi_bin();
-				for ( Size ii = 1; ii < stratdat.n_samples_per_side_of_nrchi_bin(); ++ii ) {
-					chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + ii * step  );
-				}
+					Real upper_edge = sample.nrchi_upper_boundary();
+					Real step = ( upper_edge - sample.chi_mean()[ chi ] ) / stratdat.n_samples_per_side_of_nrchi_bin();
+					for ( Size ii = 1; ii < stratdat.n_samples_per_side_of_nrchi_bin(); ++ii ) {
+						chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + ii * step  );
+					}
 				}
 			}
 
@@ -734,21 +734,21 @@ FullChiSampleSet::ex_level_from_flags( Size chi )
 	ExtraRotSample sample_level( NO_EXTRA_CHI_SAMPLES );
 
 	switch ( chi ) {
-		case 1:
-			if ( option[ ex1::ex1 ] ) sample_level = EX_ONE_STDDEV;
-			if ( option[ ex1::level ].user() && option[ ex1::level ] > sample_level ) sample_level = ExtraRotSample( option[ ex1::level ]() );
+	case 1 :
+		if ( option[ ex1::ex1 ] ) sample_level = EX_ONE_STDDEV;
+		if ( option[ ex1::level ].user() && option[ ex1::level ] > sample_level ) sample_level = ExtraRotSample( option[ ex1::level ]() );
 		break;
-		case 2 :
-			if ( option[ ex2::ex2 ] ) sample_level = EX_ONE_STDDEV;
-			if ( option[ ex2::level ].user() && option[ ex2::level ] > sample_level ) sample_level = ExtraRotSample( option[ ex2::level ]() );
+	case 2 :
+		if ( option[ ex2::ex2 ] ) sample_level = EX_ONE_STDDEV;
+		if ( option[ ex2::level ].user() && option[ ex2::level ] > sample_level ) sample_level = ExtraRotSample( option[ ex2::level ]() );
 		break;
-		case 3 :
-			if ( option[ ex3::ex3 ] ) sample_level = EX_ONE_STDDEV;
-			if ( option[ ex3::level ].user() && option[ ex3::level ] > sample_level ) sample_level = ExtraRotSample( option[ ex3::level ]() );
+	case 3 :
+		if ( option[ ex3::ex3 ] ) sample_level = EX_ONE_STDDEV;
+		if ( option[ ex3::level ].user() && option[ ex3::level ] > sample_level ) sample_level = ExtraRotSample( option[ ex3::level ]() );
 		break;
-		case 4 :
-			if ( option[ ex4::ex4 ] ) sample_level = EX_ONE_STDDEV;
-			if ( option[ ex4::level ].user() && option[ ex4::level ] > sample_level ) sample_level = ExtraRotSample( option[ ex4::level ]() );
+	case 4 :
+		if ( option[ ex4::ex4 ] ) sample_level = EX_ONE_STDDEV;
+		if ( option[ ex4::level ].user() && option[ ex4::level ] > sample_level ) sample_level = ExtraRotSample( option[ ex4::level ]() );
 		break;
 	}
 	return sample_level;
@@ -818,12 +818,12 @@ ProteinUpstreamBuilder::build(
 
 		bool check_fa_dun( build_sets_[ii].check_fa_dun() );
 		core::Real fa_dun_cutoff( build_sets_[ii].fa_dun_cutoff() );
-		if( check_fa_dun ){
-				ProteinBackboneBuildPoint const & bb(
-			static_cast< ProteinBackboneBuildPoint const & >
-			( build_point ));
-				rescoords.mainchain_torsions()[1] = bb.phi();
-				rescoords.mainchain_torsions()[2] = bb.psi();
+		if ( check_fa_dun ) {
+			ProteinBackboneBuildPoint const & bb(
+				static_cast< ProteinBackboneBuildPoint const & >
+				( build_point ));
+			rescoords.mainchain_torsions()[1] = bb.phi();
+			rescoords.mainchain_torsions()[2] = bb.psi();
 		}
 
 		Size const ii_nchi = build_sets_[ ii ].restype().nchi(); // may be different from the number of chi that the Dunbrack library defines
@@ -897,7 +897,7 @@ ProteinUpstreamBuilder::build(
 								Size const ll_atno = geom.nonchitip_atom( kk, ll );
 								// matrix * vector
 								rescoords.set_xyz( ll_atno, chitip_frames[ kk ] * geom.points_for_nonchitip_atoms( kk )[ ll ]);
-								if ( atom_coordinate_unacceptable( ii, rescoords, ll_atno )) {
+								if ( atom_coordinate_unacceptable( ii, rescoords, ll_atno ) ) {
 									rotamer_acceptable = false;
 									break;
 								}
@@ -910,10 +910,10 @@ ProteinUpstreamBuilder::build(
 						//this check can only be performed after we have specified all the chi angles, so it should only
 						//be performed in the very last iteration through this loop.
 						if ( kk == ii_nchi && rotamer_acceptable && check_fa_dun ) {
-							for ( core::Size res_chi(1); res_chi<= ii_nchi; ++res_chi) {
+							for ( core::Size res_chi(1); res_chi<= ii_nchi; ++res_chi ) {
 								rescoords.chi()[res_chi] = additional_chi_samples.chi_sample( res_chi, lex[ res_chi ] );
 							}
-							if( rotlib->rotamer_energy( rescoords, dunscratch ) >= fa_dun_cutoff ){
+							if ( rotlib->rotamer_energy( rescoords, dunscratch ) >= fa_dun_cutoff ) {
 								rotamer_acceptable = false;
 							}
 						}
@@ -971,7 +971,7 @@ ProteinUpstreamBuilder::build(
 		/// is of the appropriate type
 		/// Kui 110609 Native
 		/// avoid_building_any_rotamers_dueto_native_ specific usage of native residue only.
-		if ( use_input_sc_ || avoid_building_any_rotamers_dueto_native_) {
+		if ( use_input_sc_ || avoid_building_any_rotamers_dueto_native_ ) {
 
 			OriginalBackboneBuildPoint const * orig =
 				dynamic_cast< OriginalBackboneBuildPoint const * > ( & build_point );
@@ -986,7 +986,7 @@ ProteinUpstreamBuilder::build(
 				n_possible_hits += build_sets_[ ii ].algorithm().n_possible_hits_per_upstream_conformation();
 				//Kui 110609 Native debug
 				//TR << "use_input_sc_:" << use_input_sc_ << " avoid_building_any_rotamers_dueto_native_:"
-				//	<< avoid_building_any_rotamers_dueto_native_ << std::endl;
+				// << avoid_building_any_rotamers_dueto_native_ << std::endl;
 			}
 		}
 
@@ -1029,8 +1029,8 @@ ProteinUpstreamBuilder::recover_hits(
 	UpstreamResidueProcessor & processor
 ) const
 {
-//	assert( hit_iter == hits_end || hit_iter->scaffold_build_id() == build_point.id() );
-  assert( hit_iter == hits_end || hit_iter->scaffold_build_id() == build_point.index() );
+	// assert( hit_iter == hits_end || hit_iter->scaffold_build_id() == build_point.id() );
+	assert( hit_iter == hits_end || hit_iter->scaffold_build_id() == build_point.index() );
 	//Hit hit = *hit_iter;
 	//std::cout << "ProteinUpstreamBuilder::recover hit " << hit.first()[ 1 ] << " " << hit.first()[ 2 ] << std::endl;
 	/// 1. Figure out which amino acid it is that we're inserting.
@@ -1259,9 +1259,9 @@ ProteinUpstreamBuilder::initialize_rescoords(
 {
 	{ /// scope to test that we have a protein backbone residue
 
-	if ( ! dynamic_cast< ProteinBackboneBuildPoint const * > ( & build_point ) ) {
-		utility_exit_with_message( "Input to ProteinUpstreamBuilder not castable to ProteinBackboneBuildPoint *" );
-	}
+		if ( ! dynamic_cast< ProteinBackboneBuildPoint const * > ( & build_point ) ) {
+			utility_exit_with_message( "Input to ProteinUpstreamBuilder not castable to ProteinBackboneBuildPoint *" );
+		}
 
 	}
 

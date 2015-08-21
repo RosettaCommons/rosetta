@@ -9,16 +9,16 @@
 
 /// @file core/scoring/etable/EtableOptions.fwd.hh
 /// @brief forward header for EtableOptions class
-//  @author 
+//  @author
 
 #ifndef INCLUDED_core_scoring_etable_EtableOptions_fwd_hh
 #define INCLUDED_core_scoring_etable_EtableOptions_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace core{
-namespace scoring{
-namespace etable{
+namespace core {
+namespace scoring {
+namespace etable {
 
 class EtableOptions;
 

@@ -45,7 +45,7 @@ AtomCountFilter::apply( core::pose::Pose const & pose ) const {
 	core::Size const start = pose.conformation().chain_begin(chain_id);
 	core::Size const end = pose.conformation().chain_end(chain_id);
 
-	if(	core::pose::num_atoms(start,end,pose) > atom_limit_ ){
+	if ( core::pose::num_atoms(start,end,pose) > atom_limit_ ) {
 		atom_tracer<< "Reached atom limit"<< std::endl;
 		return false;
 	}
@@ -61,7 +61,7 @@ AtomCountFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 		assert(false);
 		return;
 	}
-	if ( ! (tag->hasOption("chain") && tag->hasOption("atom_limit") ) ){
+	if ( ! (tag->hasOption("chain") && tag->hasOption("atom_limit") ) ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("AtomCount filter needs a 'chain' and an 'atom_limit' option");
 	}
 	chain_ = tag->getOption<std::string>("chain");

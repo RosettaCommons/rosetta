@@ -101,7 +101,7 @@ public:
 
 	// --------------- Test Cases --------------- //
 
-		void test_lookup() {
+	void test_lookup() {
 
 		mm_bondangle_library_citer_pair mbalcp;
 		mm_bondangle_library_citer mbalc;

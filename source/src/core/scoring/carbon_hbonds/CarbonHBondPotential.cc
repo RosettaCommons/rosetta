@@ -62,8 +62,8 @@ Size
 get_position_in_vector( utility::vector1< std::string> & vec, std::string const & element )
 {
 	Size count( 1 );
-	for ( utility::vector1<std::string>::iterator iter = vec.begin(); iter < vec.end(); ++iter )	{
-		if (*iter == element) return count;
+	for ( utility::vector1<std::string>::iterator iter = vec.begin(); iter < vec.end(); ++iter ) {
+		if ( *iter == element ) return count;
 		count++;
 	}
 	vec.push_back( element );
@@ -91,7 +91,7 @@ CarbonHBondPotential::read_potential()
 	//This doesn't actually need to be hardwired -- if
 	// I wasn't so lazy, I'd make it figure out the
 	// dimensions based on the input file.
-	for (Size i = 1; i <= num_carbon_donor_atoms_; i++ ){
+	for ( Size i = 1; i <= num_carbon_donor_atoms_; i++ ) {
 		ObjexxFCL::FArray1D<Real> new_array; // =   new ObjexxFCL::FArray1D< Real> ;
 		carbon_hbond_parameter_.push_back( new_array );
 		carbon_hbond_parameter_[ i ].dimension( num_bins_ );
@@ -107,21 +107,21 @@ CarbonHBondPotential::read_potential()
 	while ( getline( stream, line ) ) {
 		std::istringstream l( line );
 		l >> atom_name >> bin_min >> bin_max >> value;
-		//		atom_name = line.substr(0,4);
+		//  atom_name = line.substr(0,4);
 
 		Size const pos = get_position_in_vector( carbon_donors_, atom_name );
 
 		if ( bin_width_ < 0.00001 ) bin_width_ = bin_max - bin_min;
-		if (bin_max > max_dist_ ) max_dist_ = bin_max;
+		if ( bin_max > max_dist_ ) max_dist_ = bin_max;
 
 		Size const bin = static_cast<Size>( bin_max/bin_width_ + 0.001 );
-		if (bin <= num_bins_ )		{
+		if ( bin <= num_bins_ )  {
 			carbon_hbond_parameter_[pos]( bin ) = value;
 		}
 	}
 
 	// Force potential to be zero at boundary?
-	//	for (Size i = 1; i <= num_carbon_donor_atoms_; i++ ) carbon_hbond_parameter_[i]( num_bins_ ) = 0.0;
+	// for (Size i = 1; i <= num_carbon_donor_atoms_; i++ ) carbon_hbond_parameter_[i]( num_bins_ ) = 0.0;
 
 	//Now read in atom type set, and lookup strings.
 	core::chemical::AtomTypeSetCOP atom_type_set_cop =
@@ -130,9 +130,9 @@ CarbonHBondPotential::read_potential()
 
 	standard_atomtype_to_carbon_donor_index_.dimension( atom_type_set.n_atomtypes() );
 	standard_atomtype_to_carbon_donor_index_ = 0;
-	for (Size i = 1; i <= num_carbon_donor_atoms_; i++ ){
+	for ( Size i = 1; i <= num_carbon_donor_atoms_; i++ ) {
 		Size const standard_atomtype_index = atom_type_set.atom_type_index( carbon_donors_[i] );
-		//		std::cout << "HEY! " << i << " " << carbon_donors_[i] << " " << standard_atomtype_index << std::endl;
+		//  std::cout << "HEY! " << i << " " << carbon_donors_[i] << " " << standard_atomtype_index << std::endl;
 		standard_atomtype_to_carbon_donor_index_( standard_atomtype_index ) = i;
 	}
 
@@ -142,8 +142,8 @@ CarbonHBondPotential::read_potential()
 	// It would perhaps make sense to only apply the fudge for nucleic acids, and maybe then only
 	// for appropriate positions.
 	//
-	Size const aro_index = standard_atomtype_to_carbon_donor_index_(	atom_type_set.atom_type_index( "aroC" ) );
-	for (Size j = 1; j <= num_bins_; j++ ) {
+	Size const aro_index = standard_atomtype_to_carbon_donor_index_( atom_type_set.atom_type_index( "aroC" ) );
+	for ( Size j = 1; j <= num_bins_; j++ ) {
 		carbon_hbond_parameter_[ aro_index ]( j )  *= aroC_scale_factor_;
 	}
 
@@ -151,13 +151,13 @@ CarbonHBondPotential::read_potential()
 	// Precalculate derivative. Would it make sense to do this and the interpolation via splines?
 	// And is the potential smooth enough?
 	//
-	//	carbon_hbond_deriv_.dimension( carbon_hbond_parameter_.size1(), carbon_hbond_parameter_.size2() );
-	//	carbon_hbond_deriv_ = 0.0;
-	//	for (Size i = 1; i <= carbon_hbond_parameter_.size1(); i++ ) {
-	//		for (Size j = 1; j < carbon_hbond_parameter_.size2(); j++ ) {
-	//			carbon_hbond_deriv_(i,j) = ( carbon_hbond_parameter_(i,j+1) - carbon_hbond_parameter_(i,j) )/bin_width_;
-	//		}
-	//	}
+	// carbon_hbond_deriv_.dimension( carbon_hbond_parameter_.size1(), carbon_hbond_parameter_.size2() );
+	// carbon_hbond_deriv_ = 0.0;
+	// for (Size i = 1; i <= carbon_hbond_parameter_.size1(); i++ ) {
+	//  for (Size j = 1; j < carbon_hbond_parameter_.size2(); j++ ) {
+	//   carbon_hbond_deriv_(i,j) = ( carbon_hbond_parameter_(i,j+1) - carbon_hbond_parameter_(i,j) )/bin_width_;
+	//  }
+	// }
 }
 
 
@@ -175,12 +175,12 @@ CarbonHBondPotential::get_potential_RNA(
 	Real const z = dot( z_i, r_vec );
 	Real const cos_kappa = z / r;
 
-  //Orientation dependence
+	//Orientation dependence
 	Real angle_fade_value( 1.0 ), angle_fade_deriv( 0.0 );
 	core::scoring::rna::get_fade_correction( cos_kappa, rna_cos_theta_cutoff_, 1.5, rna_cos_theta_fade_zone_, angle_fade_value, angle_fade_deriv );
-  Real score  = angle_fade_value;
+	Real score  = angle_fade_value;
 
-  //Distance dependence
+	//Distance dependence
 	Real const d_H_A = r_vec.length();
 
 	Real const scaled_dist_H_A = d_H_A/ rna_ch_o_bond_distance_ ;
@@ -209,7 +209,7 @@ CarbonHBondPotential::get_potential_RNA(
 
 	}
 
-  return score;
+	return score;
 
 }
 
@@ -288,13 +288,13 @@ CarbonHBondPotential::get_potential(
 	//∂g(theta)/∂theta = -sin(theta) * theta_fade_deriv
 	//theta_i = normalize(D_H_i X H_A_i) X H_A_i
 
-	//	Real comparison_energy( 0.0 );
-	//	Size const bin = static_cast<Size> ( dist_H_A / bin_width_ ) + 1;
-	//	if ( bin <= num_bins_ )	comparison_energy = carbon_hbond_parameter_[carbon_donor_index]( bin );
-	//	if ( value != 0.0 ){
-	//		std::cout << "COMPARE: " << value << " " << comparison_energy << std::endl;
-	//	}
-	//	value = comparison_energy;
+	// Real comparison_energy( 0.0 );
+	// Size const bin = static_cast<Size> ( dist_H_A / bin_width_ ) + 1;
+	// if ( bin <= num_bins_ ) comparison_energy = carbon_hbond_parameter_[carbon_donor_index]( bin );
+	// if ( value != 0.0 ){
+	//  std::cout << "COMPARE: " << value << " " << comparison_energy << std::endl;
+	// }
+	// value = comparison_energy;
 
 	return value;
 }

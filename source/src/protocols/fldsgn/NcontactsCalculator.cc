@@ -63,7 +63,7 @@ public:
 	bool is_hydrophobic( Size const index ){
 		return atom_hydrophobic_[ index ];
 	}
-	private:
+private:
 	utility::vector1< bool > atom_hydrophobic_;
 }; // MyAtom
 
@@ -106,8 +106,8 @@ NcontactsCalculator::~NcontactsCalculator(){}
 /// @brief
 void
 NcontactsCalculator::lookup(
-  String const & key,
-  MetricValueBase * valptr
+	String const & key,
+	MetricValueBase * valptr
 ) const
 {
 	using namespace core;
@@ -115,7 +115,7 @@ NcontactsCalculator::lookup(
 		basic::check_cast( valptr, &nc_allatm_, "total_nlcontacts expects to return a Real" );
 		(static_cast<basic::MetricValue<Real> *>(valptr))->set( nc_allatm_ );
 
-	} else if (key == "sidechain_heavy_apolar_atm" ) {
+	} else if ( key == "sidechain_heavy_apolar_atm" ) {
 		basic::check_cast( valptr, &nc_hpatm_, "special_region_nlcontacts expects to return a Real" );
 		(static_cast<basic::MetricValue<Real> *>(valptr))->set( nc_hpatm_ );
 
@@ -142,17 +142,17 @@ NcontactsCalculator::print( String const & key ) const
 	String result;
 
 	// #atom-contacts among all heavy atoms
-  if ( key == "all_heavy_atm" ) {
-    result = utility::to_string( nc_allatm_ );
-  // #atom-contacts among hydrophobic heavy atoms
-  } else if ( key == "sidechain_heavy_apolar_atm" ) {
-    result = utility::to_string( nc_hpatm_ );
-	//#atom-contacts among heavy atoms of sidechains of hydrophobic residues
-  } else if ( key == "sidechain_heavy_atm_apolar_aa" ) {
-    result = utility::to_string( nc_hpres_ );
-	}else if ( key == "ss_entrpy" ) {
-    result = utility::to_string( ss_entrpy_ );
-	}else{
+	if ( key == "all_heavy_atm" ) {
+		result = utility::to_string( nc_allatm_ );
+		// #atom-contacts among hydrophobic heavy atoms
+	} else if ( key == "sidechain_heavy_apolar_atm" ) {
+		result = utility::to_string( nc_hpatm_ );
+		//#atom-contacts among heavy atoms of sidechains of hydrophobic residues
+	} else if ( key == "sidechain_heavy_atm_apolar_aa" ) {
+		result = utility::to_string( nc_hpres_ );
+	} else if ( key == "ss_entrpy" ) {
+		result = utility::to_string( ss_entrpy_ );
+	} else {
 		basic::Error() << "NcontactsCalculator cannot compute metric " << key << std::endl;
 	}
 	return result;
@@ -181,30 +181,30 @@ NcontactsCalculator::recompute( Pose const & pose )
 	// std::cout << *sheet_set;
 
 	Size max_ssele = ssinfo->ss_element_id( nres );
- 	utility::vector1< utility::vector1< Size > > ncon_sselements( max_ssele, (utility::vector1< Size >(max_ssele, 1)));
- 	utility::vector1< utility::vector1< bool > > calc_sselements( max_ssele, (utility::vector1< bool >(max_ssele, false)));
+	utility::vector1< utility::vector1< Size > > ncon_sselements( max_ssele, (utility::vector1< Size >(max_ssele, 1)));
+	utility::vector1< utility::vector1< bool > > calc_sselements( max_ssele, (utility::vector1< bool >(max_ssele, false)));
 
 	// calc number of contacts
 	MyAtom myatom;
 	for ( Size iaa=1; iaa<=nres-isep_residue_; ++iaa ) {
 
 		// skip calc if ss element is loop
-		if( ignore_loops_ && ssinfo->secstruct( iaa ) == 'L' ) continue;
+		if ( ignore_loops_ && ssinfo->secstruct( iaa ) == 'L' ) continue;
 
 		Size iaa_ssele( ssinfo->ss_element_id( iaa ) );
 
 		for ( Size jaa=iaa+isep_residue_; jaa<=nres; ++jaa ) {
 
 			// skip calc if ss element is loop
-			if( ignore_loops_ && ssinfo->secstruct( jaa ) == 'L' ) continue;
+			if ( ignore_loops_ && ssinfo->secstruct( jaa ) == 'L' ) continue;
 
 			Size jaa_ssele( ssinfo->ss_element_id( jaa ) );
 
 			// skip calc pair if residues of pair belong to same ss elements
-			if( ignore_same_sselement_ && iaa_ssele == jaa_ssele ) continue;
+			if ( ignore_same_sselement_ && iaa_ssele == jaa_ssele ) continue;
 
 			// skip calc pair if residues of pair belong to same ss elements
-			if( ignore_same_sheet_ &&
+			if ( ignore_same_sheet_ &&
 					ssinfo->secstruct( iaa ) == 'E' && ssinfo->secstruct( jaa ) == 'E' &&
 					sheet_set->which_sheet( ssinfo->strand_id( iaa ) ) ==
 					sheet_set->which_sheet( ssinfo->strand_id( jaa ) ) ) continue;
@@ -212,45 +212,45 @@ NcontactsCalculator::recompute( Pose const & pose )
 			Residue const & ires( pose.residue( iaa ) );
 			for ( Size iatm=1, iatm_end=ires.natoms(); iatm<=iatm_end; ++iatm ) {
 
-				if( ires.atom_type( int(iatm) ).is_heavyatom() ){
+				if ( ires.atom_type( int(iatm) ).is_heavyatom() ) {
 					Residue const & jres( pose.residue( jaa ) );
 
 					for ( Size jatm=1, jatm_end=jres.natoms(); jatm<=jatm_end; ++jatm ) {
 
-						if( jres.atom_type(int(jatm)).is_heavyatom() ) {
+						if ( jres.atom_type(int(jatm)).is_heavyatom() ) {
 
 							Atom const & iatom( ires.atom( iatm ) );
 							Atom const & jatom( jres.atom( jatm ) );
 							Size const iadex ( ires.atom_type_index( int(iatm) ) );
 							Size const jadex ( jres.atom_type_index( int(jatm) ) );
 
-							if( (use_only_calpha_ &&
+							if ( (use_only_calpha_ &&
 									ires.atom_type( iatm ).name() != "CAbb") || jres.atom_type( jatm ).name() != "CAbb" ) continue;
 
 							calc_sselements[ iaa_ssele ][ jaa_ssele ] = true;
 
 							Real const dsq( iatom.xyz().distance_squared( jatom.xyz() ));
 
-							if( dsq <= condist2 ){
+							if ( dsq <= condist2 ) {
 								nc_allatm ++;
 
-								if( myatom.is_hydrophobic(iadex) && myatom.is_hydrophobic(jadex) ){
+								if ( myatom.is_hydrophobic(iadex) && myatom.is_hydrophobic(jadex) ) {
 									nc_hpatm ++;
 
 									ncon_sselements[iaa_ssele][jaa_ssele] ++ ;
 
-									if( !ires.atom_is_backbone( int(iatm) ) && !jres.atom_is_backbone( int(jatm) ) &&
-        		  			  !ires.type().is_polar() && !jres.type().is_polar() ) {
+									if ( !ires.atom_is_backbone( int(iatm) ) && !jres.atom_is_backbone( int(jatm) ) &&
+											!ires.type().is_polar() && !jres.type().is_polar() ) {
 										nc_hpres ++;
 									}
 
 									//std::cout << iaa  << " "  << jaa  << " " << iatm << " "  << jatm << " "
-									//				<< ires.name() << " "	<< jres.name() << " "
-									//				<< ssinfo->secstruct( iaa ) << " "	<< ssinfo->secstruct( jaa ) << " "
-									//				<< ires.atom_type( iatm ).name() << " "	<< jres.atom_type( jatm ).name() << " "
-									//				<< sheet_set->which_sheet( ssinfo->strand_id( iaa ) ) << " "
-									//				<< sheet_set->which_sheet( ssinfo->strand_id( jaa ) ) << " "
-									//				<< dsq << std::endl;
+									//    << ires.name() << " " << jres.name() << " "
+									//    << ssinfo->secstruct( iaa ) << " " << ssinfo->secstruct( jaa ) << " "
+									//    << ires.atom_type( iatm ).name() << " " << jres.atom_type( jatm ).name() << " "
+									//    << sheet_set->which_sheet( ssinfo->strand_id( iaa ) ) << " "
+									//    << sheet_set->which_sheet( ssinfo->strand_id( jaa ) ) << " "
+									//    << dsq << std::endl;
 
 								}
 							} // dsq
@@ -265,16 +265,16 @@ NcontactsCalculator::recompute( Pose const & pose )
 
 	// finalize
 	Size tot( 0 );
-	for ( Size i=1 ;i<=max_ssele; ++i ) {
-		for ( Size j=1 ;j<=max_ssele; ++j ) {
+	for ( Size i=1 ; i<=max_ssele; ++i ) {
+		for ( Size j=1 ; j<=max_ssele; ++j ) {
 			if ( calc_sselements[ i ][ j ] ) {
 				tot += ncon_sselements[i][j];
 			}
 		}
 	}
 	ss_entrpy_ = 0.0;
-	for ( Size i=1 ;i<=max_ssele; ++i ) {
-		for ( Size j=1 ;j<=max_ssele; ++j ) {
+	for ( Size i=1 ; i<=max_ssele; ++i ) {
+		for ( Size j=1 ; j<=max_ssele; ++j ) {
 			if ( calc_sselements[ i ][ j ] ) {
 				Real prob = Real(ncon_sselements[i][j])/Real(tot);
 				ss_entrpy_ += -prob*( std::log( prob )/std::log( 2.0 ) );

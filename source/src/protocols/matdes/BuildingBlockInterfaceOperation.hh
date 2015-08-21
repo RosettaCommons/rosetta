@@ -30,7 +30,7 @@
 
 // C++ Headers
 
-namespace protocols { 
+namespace protocols {
 namespace matdes {
 
 class BuildingBlockInterfaceOperation : public core::pack::task::operation::TaskOperation {
@@ -60,15 +60,15 @@ private:
 
 	core::Size nsub_bblock_;
 	std::string sym_dof_names_;
- 	core::Real contact_dist_; 
-	core::Real bblock_dist_; 
+	core::Real contact_dist_;
+	core::Real bblock_dist_;
 	core::Real fa_rep_cut_;
 	bool filter_intrabb_;
 	bool intrabb_only_;
 	bool multicomponent_;
 };
 
-} //namespace matdes 
+} //namespace matdes
 } //namespace protocols
 
-#endif 
+#endif

@@ -24,46 +24,46 @@
 namespace protocols {
 namespace magnesium {
 
-	class MgMinimizer: public protocols::moves::MoverForPoseList {
+class MgMinimizer: public protocols::moves::MoverForPoseList {
 
-	public:
+public:
 
-		//constructor
-		MgMinimizer();
+	//constructor
+	MgMinimizer();
 
-		//destructor
-		~MgMinimizer();
+	//destructor
+	~MgMinimizer();
 
-	public:
+public:
 
-		virtual void apply( core::pose::Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
-		using protocols::moves::MoverForPoseList::apply;
+	using protocols::moves::MoverForPoseList::apply;
 
-		virtual std::string get_name() const{ return "MgMinimizer"; }
+	virtual std::string get_name() const{ return "MgMinimizer"; }
 
-		void set_mg_res( utility::vector1<Size> const & setting ){ mg_res_ = setting; }
-		utility::vector1<Size> mg_res() const { return mg_res_; }
+	void set_mg_res( utility::vector1<Size> const & setting ){ mg_res_ = setting; }
+	utility::vector1<Size> mg_res() const { return mg_res_; }
 
-		void set_minimize_scorefxn( core::scoring::ScoreFunctionCOP const & setting ){ minimize_scorefxn_ = setting; }
-		core::scoring::ScoreFunctionCOP minimize_scorefxn() const { return minimize_scorefxn_; }
+	void set_minimize_scorefxn( core::scoring::ScoreFunctionCOP const & setting ){ minimize_scorefxn_ = setting; }
+	core::scoring::ScoreFunctionCOP minimize_scorefxn() const { return minimize_scorefxn_; }
 
-		void set_mg_coord_cst_dist( core::Distance const & setting ){ mg_coord_cst_dist_ = setting; }
-		core::Distance mg_coord_cst_dist() const { return mg_coord_cst_dist_; }
+	void set_mg_coord_cst_dist( core::Distance const & setting ){ mg_coord_cst_dist_ = setting; }
+	core::Distance mg_coord_cst_dist() const { return mg_coord_cst_dist_; }
 
-	private:
+private:
 
-		core::kinematics::MoveMap
-		get_mg_hoh_minimize_move_map( core::pose::Pose const & pose,
-																	utility::vector1< Size > const & mg_res ) const;
+	core::kinematics::MoveMap
+	get_mg_hoh_minimize_move_map( core::pose::Pose const & pose,
+		utility::vector1< Size > const & mg_res ) const;
 
-	private:
+private:
 
-		utility::vector1< Size > mg_res_; // use post numbering
-		core::scoring::ScoreFunctionCOP minimize_scorefxn_;
-		core::Distance mg_coord_cst_dist_;
+	utility::vector1< Size > mg_res_; // use post numbering
+	core::scoring::ScoreFunctionCOP minimize_scorefxn_;
+	core::Distance mg_coord_cst_dist_;
 
-	};
+};
 
 } //magnesium
 } //protocols

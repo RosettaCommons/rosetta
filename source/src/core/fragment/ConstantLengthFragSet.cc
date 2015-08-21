@@ -63,9 +63,9 @@ static thread_local basic::Tracer tr( "core.fragments.ConstantLengthFragSet" );
 ConstantLengthFragSet::~ConstantLengthFragSet() {}
 
 ConstantLengthFragSet::ConstantLengthFragSet( Size frag_length, std::string filename ) {
-		set_max_frag_length( frag_length );
-		read_fragment_file(filename);
-	}
+	set_max_frag_length( frag_length );
+	read_fragment_file(filename);
+}
 
 // if fragments are of differing length assertion in add will fail
 ConstantLengthFragSet::ConstantLengthFragSet( FragSet const& fragments ) {
@@ -98,33 +98,33 @@ Size ConstantLengthFragSet::region(
 /// @brief returns the number and list of all fragment alignment frames that somehow overlap with the given region
 ///(also allows those frames that start before the region and reach into it)
 Size ConstantLengthFragSet::overlapping_with_region(
-		kinematics::MoveMap const& mm,
-		core::Size start,
-		core::Size end,
-		core::Size min_overlap,
-		core::Size min_length,
-		FrameList &frames
+	kinematics::MoveMap const& mm,
+	core::Size start,
+	core::Size end,
+	core::Size min_overlap,
+	core::Size min_length,
+	FrameList &frames
 ) const {
-		Size count(0);
-		// Frames at the front may have been truncated to save space, but the last 
-		// frame should always be real.  That's why we use back() here.  Note that 
-		// all the non-truncated frames should have the same length.
-		const Size frame_length = frames_.back()->length();
-		//tr << "frame length: " << frame_length << endl;
-		if (frame_length < min_length) {
-			return count;
-		}
-		//check if requested min overlap is too large for this region
-		if (min_overlap>end-start+1) {
-			return count;
-		}
-		//determine min and max start positions of frames, considering the given min region overlap and any global offset
-		const Size min_start_pos = start - frame_length + min_overlap - global_offset();
-		const Size max_start_pos = end + 1 - min_overlap - global_offset();
-		//tr << "sampling frames from " << min_start_pos << " to " << max_start_pos << endl;
-		//collect all frames that start between min_start_pos and max_start_pos
-	for (Size pos=min_start_pos; pos<=frames_.size() && pos<=max_start_pos; pos++) {
-		if (frames_[pos] && frames_[pos]->is_valid() && frames_[pos]->is_applicable(mm)) {
+	Size count(0);
+	// Frames at the front may have been truncated to save space, but the last
+	// frame should always be real.  That's why we use back() here.  Note that
+	// all the non-truncated frames should have the same length.
+	const Size frame_length = frames_.back()->length();
+	//tr << "frame length: " << frame_length << endl;
+	if ( frame_length < min_length ) {
+		return count;
+	}
+	//check if requested min overlap is too large for this region
+	if ( min_overlap>end-start+1 ) {
+		return count;
+	}
+	//determine min and max start positions of frames, considering the given min region overlap and any global offset
+	const Size min_start_pos = start - frame_length + min_overlap - global_offset();
+	const Size max_start_pos = end + 1 - min_overlap - global_offset();
+	//tr << "sampling frames from " << min_start_pos << " to " << max_start_pos << endl;
+	//collect all frames that start between min_start_pos and max_start_pos
+	for ( Size pos=min_start_pos; pos<=frames_.size() && pos<=max_start_pos; pos++ ) {
+		if ( frames_[pos] && frames_[pos]->is_valid() && frames_[pos]->is_applicable(mm) ) {
 			frames.push_back(frames_[pos]);
 			count++;
 		}
@@ -200,9 +200,9 @@ void ConstantLengthFragSet::read_fragment_stream( utility::io::izstream & data, 
 			istringstream in( line );
 			string tag;
 			in >> tag;
-			if (!in.eof()) {
+			if ( !in.eof() ) {
 				in >> tag;
-				if (tag == "score" && !in.eof()) {
+				if ( tag == "score" && !in.eof() ) {
 					in >> score;
 				}
 			}
@@ -249,7 +249,7 @@ void ConstantLengthFragSet::read_fragment_stream( utility::io::izstream & data, 
 		res->set_torsion(3, omega);
 
 		// optionally read in and set cartesian coordinates for the residue's CA
-		if (line.length() > 45) {
+		if ( line.length() > 45 ) {
 			Real x = float_of(line.substr(45, 9));
 			Real y = float_of(line.substr(54, 9));
 			Real z = float_of(line.substr(64, 9));
@@ -263,8 +263,7 @@ void ConstantLengthFragSet::read_fragment_stream( utility::io::izstream & data, 
 		if ( !current_fragment ) {
 			if ( bAnnotation ) {
 				current_fragment = FragDataOP( new AnnotatedFragData( pdbid, aa_index, chain ) );
-			}
-			else {
+			} else {
 				current_fragment = FragDataOP( new FragData );
 			}
 		}
@@ -278,8 +277,8 @@ void ConstantLengthFragSet::read_fragment_stream( utility::io::izstream & data, 
 	}
 
 	tr.Info << "finished reading top " << n_frags << " "
-					<< max_frag_length() << "mer fragments from file " << data.filename()
-					<< endl;
+		<< max_frag_length() << "mer fragments from file " << data.filename()
+		<< endl;
 }
 
 ConstFrameIterator ConstantLengthFragSet::begin() const {

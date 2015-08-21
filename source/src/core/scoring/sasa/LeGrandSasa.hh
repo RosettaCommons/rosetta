@@ -218,4 +218,4 @@ private:
 }
 
 
-#endif	//#ifndef INCLUDED_protocols/antibody_design_LEGRANDSASA_HH
+#endif //#ifndef INCLUDED_protocols/antibody_design_LEGRANDSASA_HH

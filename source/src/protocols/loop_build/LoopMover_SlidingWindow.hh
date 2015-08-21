@@ -117,7 +117,7 @@ protected: // virtual loop operations
 		protocols::loops::Loop const & loop
 	);
 
-    virtual basic::Tracer & tr() const;
+	virtual basic::Tracer & tr() const;
 
 protected: // data
 
@@ -134,9 +134,9 @@ protected: // data
 
 /*  Undefined, commenting out to fix PyRosetta build
 void fast_ccd_close_loops(
-	core::pose::Pose & pose,
-	protocols::loops::Loop const & loop,
-	core::kinematics::MoveMap & mm
+core::pose::Pose & pose,
+protocols::loops::Loop const & loop,
+core::kinematics::MoveMap & mm
 ); */
 
 

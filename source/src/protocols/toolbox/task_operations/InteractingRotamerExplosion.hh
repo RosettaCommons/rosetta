@@ -44,20 +44,20 @@ class InteractingRotamerExplosion : public core::pack::task::operation::TaskOper
 {
 
 public:
-  typedef core::pack::task::operation::TaskOperation parent;
+	typedef core::pack::task::operation::TaskOperation parent;
 
-  InteractingRotamerExplosion();
-  virtual ~InteractingRotamerExplosion();
-  virtual core::pack::task::operation::TaskOperationOP clone() const;
-  virtual void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
-  virtual void parse_tag( TagCOP tag, DataMap & datamap );
+	InteractingRotamerExplosion();
+	virtual ~InteractingRotamerExplosion();
+	virtual core::pack::task::operation::TaskOperationOP clone() const;
+	virtual void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
+	virtual void parse_tag( TagCOP tag, DataMap & datamap );
 
 private:
-  std::string string_target_seqpos_; // this can only be parsed at apply time, when the pose is available;
-  core::Real score_cutoff_;
-  core::Size ex_level_;
-  bool debug_;
-  core::Real exclude_radius_;
+	std::string string_target_seqpos_; // this can only be parsed at apply time, when the pose is available;
+	core::Real score_cutoff_;
+	core::Size ex_level_;
+	bool debug_;
+	core::Real exclude_radius_;
 
 };
 

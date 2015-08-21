@@ -27,42 +27,42 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	//Constructor
-	AlignRMSD_Screener::AlignRMSD_Screener( pose::Pose const & align_pose,
-																						pose::Pose const & screening_pose,
-																						utility::vector1< core::Size > const & moving_res_list,
-																						core::Real const rmsd_cutoff,
-																						bool const do_screen /* = true */ ):
-		align_pose_( align_pose ),
-		screening_pose_( screening_pose ),
-		moving_res_list_( moving_res_list ),
-		rmsd_cutoff_( rmsd_cutoff ),
-		do_screen_( do_screen ),
-		pass_count_( 0 ) // only incremented if do_screen true, and screen passes.
-	{
-		runtime_assert( moving_res_list_.size() > 0 );
-		pose_aligner_ = modeler::align::StepWisePoseAlignerOP( new modeler::align::StepWisePoseAligner( align_pose_ ) );
-		pose_aligner_->set_user_defined_calc_rms_res( moving_res_list_ );
-		// this is extra -- I was originally doings checks of alignment based on RMSD screens.
-		//		pose_aligner_->set_root_partition_res( modeler::figure_out_root_partition_res( screening_pose_, moving_res_list ) );
-		pose_aligner_->initialize( screening_pose );
-	}
+//Constructor
+AlignRMSD_Screener::AlignRMSD_Screener( pose::Pose const & align_pose,
+	pose::Pose const & screening_pose,
+	utility::vector1< core::Size > const & moving_res_list,
+	core::Real const rmsd_cutoff,
+	bool const do_screen /* = true */ ):
+	align_pose_( align_pose ),
+	screening_pose_( screening_pose ),
+	moving_res_list_( moving_res_list ),
+	rmsd_cutoff_( rmsd_cutoff ),
+	do_screen_( do_screen ),
+	pass_count_( 0 ) // only incremented if do_screen true, and screen passes.
+{
+	runtime_assert( moving_res_list_.size() > 0 );
+	pose_aligner_ = modeler::align::StepWisePoseAlignerOP( new modeler::align::StepWisePoseAligner( align_pose_ ) );
+	pose_aligner_->set_user_defined_calc_rms_res( moving_res_list_ );
+	// this is extra -- I was originally doings checks of alignment based on RMSD screens.
+	//  pose_aligner_->set_root_partition_res( modeler::figure_out_root_partition_res( screening_pose_, moving_res_list ) );
+	pose_aligner_->initialize( screening_pose );
+}
 
-	//Destructor
-	AlignRMSD_Screener::~AlignRMSD_Screener()
-	{}
+//Destructor
+AlignRMSD_Screener::~AlignRMSD_Screener()
+{}
 
-	bool
-	AlignRMSD_Screener::check_screen(){
-		if ( !do_screen_ ) return true;
+bool
+AlignRMSD_Screener::check_screen(){
+	if ( !do_screen_ ) return true;
 
-		core::Real const rmsd = pose_aligner_->get_rmsd_no_superimpose( screening_pose_,
-																																		false /* check alignment */ );
-		if ( rmsd > rmsd_cutoff_ ) return false;
+	core::Real const rmsd = pose_aligner_->get_rmsd_no_superimpose( screening_pose_,
+		false /* check alignment */ );
+	if ( rmsd > rmsd_cutoff_ ) return false;
 
-		pass_count_++;
-		return true;
-	}
+	pass_count_++;
+	return true;
+}
 
 } //screener
 } //stepwise

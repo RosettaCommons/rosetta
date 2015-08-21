@@ -24,7 +24,7 @@ class SymPackRotamersMover;
 typedef utility::pointer::shared_ptr< SymPackRotamersMover > SymPackRotamersMoverOP;
 typedef utility::pointer::shared_ptr< SymPackRotamersMover const > SymPackRotamersMoverCOP;
 
-}	// symmetry
+} // symmetry
 } // moves
 } // protocols
 

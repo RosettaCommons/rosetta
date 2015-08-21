@@ -27,53 +27,53 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class SampleApplier: public StepWiseScreener {
+class SampleApplier: public StepWiseScreener {
 
-	public:
+public:
 
-		//constructor
-		SampleApplier();
+	//constructor
+	SampleApplier();
 
-		//constructor
-		SampleApplier( pose::Pose & pose,
-									 bool const apply_residue_alternative_sampler = true );
+	//constructor
+	SampleApplier( pose::Pose & pose,
+		bool const apply_residue_alternative_sampler = true );
 
-		//destructor
-		~SampleApplier();
+	//destructor
+	~SampleApplier();
 
-	public:
+public:
 
-		virtual
-		bool
-		check_screen(){ return true; }
+	virtual
+	bool
+	check_screen(){ return true; }
 
-		virtual
-		void
-		get_update( sampler::StepWiseSamplerBaseOP sampler );
+	virtual
+	void
+	get_update( sampler::StepWiseSamplerBaseOP sampler );
 
-		virtual
-		std::string
-		name() const { return "SampleApplier"; }
+	virtual
+	std::string
+	name() const { return "SampleApplier"; }
 
-		virtual
-		StepWiseScreenerType
-		type() const { return SAMPLE_APPLIER; }
+	virtual
+	StepWiseScreenerType
+	type() const { return SAMPLE_APPLIER; }
 
-		void
-		apply_mover( moves::CompositionMoverOP mover, Size const i, Size const j );
+	void
+	apply_mover( moves::CompositionMoverOP mover, Size const i, Size const j );
 
-		pose::Pose & pose(){ return pose_; }
+	pose::Pose & pose(){ return pose_; }
 
-		void set_apply_residue_alternative_sampler_( bool const setting ){ apply_residue_alternative_sampler_ = setting; }
+	void set_apply_residue_alternative_sampler_( bool const setting ){ apply_residue_alternative_sampler_ = setting; }
 
-	protected:
+protected:
 
-		pose::Pose & pose_;
+	pose::Pose & pose_;
 
-		core::conformation::ResidueOP moving_rsd_at_origin; // only in use for rigid-body modeler.
-		utility::vector1< core::conformation::ResidueOP > moving_rsd_at_origin_list; // only in use for rigid-body modeler.
-		bool apply_residue_alternative_sampler_;
-	};
+	core::conformation::ResidueOP moving_rsd_at_origin; // only in use for rigid-body modeler.
+	utility::vector1< core::conformation::ResidueOP > moving_rsd_at_origin_list; // only in use for rigid-body modeler.
+	bool apply_residue_alternative_sampler_;
+};
 
 } //screener
 } //stepwise

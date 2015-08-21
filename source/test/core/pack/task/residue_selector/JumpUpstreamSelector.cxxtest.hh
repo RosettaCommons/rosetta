@@ -69,7 +69,7 @@ public:
 		ResidueSubset subset = jump_u_rs->apply( trpcage );
 
 		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
-		for( core::Size ii = 1; ii <= subset.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= subset.size(); ++ii ) {
 			TS_ASSERT( !subset[ ii ] || ii < 6 );
 		}
 	}
@@ -87,7 +87,7 @@ public:
 			jump_u_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); //parsing should fail!
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-		//	std::cerr << "Exception (fail_no_resnums): " << e.msg();
+			// std::cerr << "Exception (fail_no_resnums): " << e.msg();
 			std::string expected_err = "Failed to access required option 'jump' from JumpUpstreamSelector::parse_my_tag.\nOption jump not found.\n";
 			TS_ASSERT( e.msg() == expected_err);
 		}

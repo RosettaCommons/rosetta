@@ -141,7 +141,7 @@ public:
 	// make sure we fail if no selection string is provided
 	void test_NeighbohoodResidueSelector_fail_no_resnums() {
 		std::stringstream ss;
-	 	ss << "<ResidueName name=I_should_fail />";
+		ss << "<ResidueName name=I_should_fail />";
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;

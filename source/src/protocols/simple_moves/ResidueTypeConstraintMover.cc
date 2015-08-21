@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	ResidueTypeConstraintMover.cc
+/// @file ResidueTypeConstraintMover.cc
 /// @brief Assigns a ResidueTypeConstraint to a pose.
-///	@author Doo Nam Kim (doonam.kim@gmail.com) (All I did is just making a simple mover using Sarel's ResidueTypeConstraint)
+/// @author Doo Nam Kim (doonam.kim@gmail.com) (All I did is just making a simple mover using Sarel's ResidueTypeConstraint)
 
 #include <protocols/simple_moves/ResidueTypeConstraintMover.hh>
 #include <protocols/simple_moves/ResidueTypeConstraintMoverCreator.hh>
@@ -34,9 +34,9 @@ namespace protocols {
 namespace simple_moves {
 
 using namespace core;
-	using namespace basic::options;
-	using namespace scoring;
-		using namespace constraints;
+using namespace basic::options;
+using namespace scoring;
+using namespace constraints;
 
 using namespace utility::tag;
 
@@ -59,12 +59,12 @@ ResidueTypeConstraintMoverCreator::mover_name()
 
 // constructors
 ResidueTypeConstraintMover::ResidueTypeConstraintMover()
-	: protocols::moves::Mover( ResidueTypeConstraintMoverCreator::mover_name() )
+: protocols::moves::Mover( ResidueTypeConstraintMoverCreator::mover_name() )
 {
 }
 
 ResidueTypeConstraintMover::ResidueTypeConstraintMover( std::string const & type )
-	: protocols::moves::Mover(type)
+: protocols::moves::Mover(type)
 {
 }
 
@@ -77,18 +77,16 @@ ResidueTypeConstraintMover::apply( Pose & pose )
 {
 	int AA_name3_length_1 = std::count(AA_name3_.begin(), AA_name3_.end(), ',');
 	std::string delimiter = ",";
-	for(Size resnum=1; resnum<=pose.total_residue(); ++resnum)
-	{
+	for ( Size resnum=1; resnum<=pose.total_residue(); ++resnum ) {
 		int substr_index = 0;
-		for (int i =0; i<=(AA_name3_length_1); i++)
-		{
-			size_t pos =	AA_name3_.find(delimiter);
+		for ( int i =0; i<=(AA_name3_length_1); i++ ) {
+			size_t pos = AA_name3_.find(delimiter);
 
-			std::string	favored_res = AA_name3_.substr(substr_index, pos);
-			substr_index	=	substr_index +	pos	+	1;
-				// essentially just same as "substr_index	=	substr_index +	4";
+			std::string favored_res = AA_name3_.substr(substr_index, pos);
+			substr_index = substr_index + pos + 1;
+			// essentially just same as "substr_index = substr_index + 4";
 
-			ResidueTypeConstraintOP res_favor( new core::scoring::constraints::ResidueTypeConstraint(pose, resnum,	favored_res, favor_bonus_) );
+			ResidueTypeConstraintOP res_favor( new core::scoring::constraints::ResidueTypeConstraint(pose, resnum, favored_res, favor_bonus_) );
 
 			pose.add_constraint(res_favor);
 		}
@@ -112,17 +110,14 @@ ResidueTypeConstraintMover::parse_my_tag(
 	Pose const &
 )
 {
-	if ( tag->hasOption("AA_name3"))
-	{
+	if ( tag->hasOption("AA_name3") ) {
 		AA_name3_ = tag->getOption<std::string>("AA_name3"); // for example: ASP,GLU
-	}
-	else
-	{
+	} else {
 		TR << "please specifiy AA_name3 like SER,THR" << std::endl;
 	}
-	favor_bonus_ = tag->getOption<Real>("favor_bonus",	0.5);
-		//	since this mover does not necessarily favor native sequence only, I named it "favor_bonus" instead of "native_bonus"	to make it more general
-		//	positively higher bonus gives more favorable selection to (a) specified residue(s)
+	favor_bonus_ = tag->getOption<Real>("favor_bonus", 0.5);
+	// since this mover does not necessarily favor native sequence only, I named it "favor_bonus" instead of "native_bonus" to make it more general
+	// positively higher bonus gives more favorable selection to (a) specified residue(s)
 
 }
 } // moves

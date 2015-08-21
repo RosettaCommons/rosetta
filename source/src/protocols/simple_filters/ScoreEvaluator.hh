@@ -10,7 +10,7 @@
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -52,9 +52,9 @@ public:
 	~ScoreEvaluator();
 	virtual core::Real
 	apply( core::pose::Pose& pose ) const;
-  virtual bool applicable( core::pose::Pose const&pose ) const;
+	virtual bool applicable( core::pose::Pose const&pose ) const;
 protected:
-  core::scoring::ScoreFunctionOP scorefxn_;
+	core::scoring::ScoreFunctionOP scorefxn_;
 
 };
 

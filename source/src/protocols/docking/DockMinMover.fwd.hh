@@ -19,10 +19,10 @@
 
 namespace protocols {
 namespace docking {
-	/// @brief this mover does the high resolution refinement stage of the RosettaDock algorithm
-	class DockMinMover;
-	typedef utility::pointer::shared_ptr< DockMinMover > DockMinMoverOP;
-	typedef utility::pointer::shared_ptr< DockMinMover const > DockMinMoverCOP;
+/// @brief this mover does the high resolution refinement stage of the RosettaDock algorithm
+class DockMinMover;
+typedef utility::pointer::shared_ptr< DockMinMover > DockMinMoverOP;
+typedef utility::pointer::shared_ptr< DockMinMover const > DockMinMoverCOP;
 
 } //docking
 } //protocols

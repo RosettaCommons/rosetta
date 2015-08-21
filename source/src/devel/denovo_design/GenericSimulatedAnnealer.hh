@@ -36,10 +36,10 @@ namespace devel {
 namespace denovo_design {
 
 enum TrialResult {
-		REJECTED,
-		ACCEPTED,
-		FAILED,
-		FINISHED
+	REJECTED,
+	ACCEPTED,
+	FAILED,
+	FINISHED
 };
 
 class GenericSimulatedAnnealer : public protocols::simple_moves::GenericMonteCarloMover {
@@ -102,7 +102,7 @@ public: // mutators
 	TrialResult boltzmann_result( core::pose::Pose & pose );
 	/// @brief given a modified pose, determines whether we should accept or not, and updates internal class data accordingly
 	TrialResult boltzmann_result( core::pose::Pose & pose,
-																utility::vector1< core::Real > const & random_nums );
+		utility::vector1< core::Real > const & random_nums );
 
 private: // private functions
 	/// @brief calls a round of monte carlo -- basically copied from GenericMonteCarloMover

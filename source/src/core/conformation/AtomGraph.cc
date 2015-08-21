@@ -35,18 +35,16 @@ atom_graph_from_conformation(
 {
 	//TODO: doing this because I don't want to pull in an entire pose :( gotta be a better way
 	platform::Size num_atoms = 0;
-	for (platform::Size resid = 1; resid <= conformation.size(); ++resid)
-	{
+	for ( platform::Size resid = 1; resid <= conformation.size(); ++resid ) {
 		num_atoms += conformation.residue_type(resid).natoms();
 	}
 	num_atoms++;
 	atom_graph->set_num_vertices(num_atoms);
 	platform::Size index_id = 1;
 
-	for ( platform::Size resid=1 ;resid <= conformation.size(); ++resid ) {
+	for ( platform::Size resid=1 ; resid <= conformation.size(); ++resid ) {
 		core::conformation::Residue current_res(conformation.residue(resid));
-		for(platform::Size atomno=1; atomno <= current_res.natoms(); ++atomno )
-		{
+		for ( platform::Size atomno=1; atomno <= current_res.natoms(); ++atomno ) {
 			AtomGraphVertexData current_vertex = atom_graph->get_vertex(index_id).data();
 			current_vertex.xyz() = current_res.xyz(atomno);
 			current_vertex.atom_name() = current_res.atom_name(atomno);
@@ -63,25 +61,23 @@ atom_graph_from_conformation(
 
 platform::Size
 annotated_atom_graph_from_conformation(
-		Conformation const & conformation,
-		AtomGraphOP atom_graph,
-		PointPosition const & additional_point
+	Conformation const & conformation,
+	AtomGraphOP atom_graph,
+	PointPosition const & additional_point
 
 )
 {
 	//TODO: doing this because I don't want to pull in an entire pose :( gotta be a better way
 	platform::Size num_atoms = 0;
-	for (platform::Size resid = 1; resid <= conformation.size(); ++resid)
-	{
+	for ( platform::Size resid = 1; resid <= conformation.size(); ++resid ) {
 		num_atoms += conformation.residue_type(resid).natoms();
 	}
 	num_atoms++;
 	atom_graph->set_num_vertices(num_atoms);
 	platform::Size index_id = 1;
-	for ( platform::Size resid=1 ;resid <= conformation.size(); ++resid ) {
+	for ( platform::Size resid=1 ; resid <= conformation.size(); ++resid ) {
 		core::conformation::Residue current_res(conformation.residue(resid));
-		for(platform::Size atomno=1; atomno <= current_res.natoms(); ++atomno )
-		{
+		for ( platform::Size atomno=1; atomno <= current_res.natoms(); ++atomno ) {
 			AtomGraphVertexData current_vertex = atom_graph->get_vertex(index_id).data();
 			current_vertex.xyz() = current_res.xyz(atomno);
 			current_vertex.atom_name() = current_res.atom_name(atomno);

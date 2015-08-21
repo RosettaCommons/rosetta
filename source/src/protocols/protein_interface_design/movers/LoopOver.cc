@@ -57,7 +57,7 @@ LoopOver::LoopOver():
 {}
 
 LoopOver::LoopOver(
-  core::Size max_iterations,
+	core::Size max_iterations,
 	protocols::moves::MoverCOP mover,
 	protocols::filters::FilterCOP condition,
 	protocols::moves::MoverStatus ms_whenfail
@@ -81,13 +81,15 @@ LoopOver::apply( core::pose::Pose & pose )
 	info().clear();
 
 	//fpd
-	if (mover_->get_additional_output())
-			utility_exit_with_message("Movers returning multiple poses are unsupported by LoopOver.");
+	if ( mover_->get_additional_output() ) {
+		utility_exit_with_message("Movers returning multiple poses are unsupported by LoopOver.");
+	}
 
 	bool filter_result( false );
-	while( !filter_result && count < max_iterations_ ){
-		if( !drift_ )
+	while ( !filter_result && count < max_iterations_ ) {
+		if ( !drift_ ) {
 			pose = saved_pose; // to prevent drift
+		}
 		TR<<"Loop iteration "<<count<<std::endl;
 		// clear out any existing info (from prior mover_->apply calls)
 		mover_->info().clear();
@@ -95,20 +97,20 @@ LoopOver::apply( core::pose::Pose & pose )
 		// inherit Mover info: jd2 JobDistributor passes this info to Job,
 		// and JobOutputters may then write this info to output files
 		info().insert( info().end(), mover_->info().begin(), mover_->info().end() );
-		
+
 		// condition is evaluated only when mover has the status, MS_SUCCESS
-		if( mover_->get_last_move_status() == protocols::moves::MS_SUCCESS ) {
+		if ( mover_->get_last_move_status() == protocols::moves::MS_SUCCESS ) {
 			filter_result = condition_->apply( pose );
 		}
 		++count;
 	}
-	if( !filter_result ){
+	if ( !filter_result ) {
 		set_last_move_status( ms_whenfail_ );
-		if( !drift_ ) pose = saved_pose;
+		if ( !drift_ ) pose = saved_pose;
 	} else {
-		set_last_move_status( protocols::moves::MS_SUCCESS );		
+		set_last_move_status( protocols::moves::MS_SUCCESS );
 	}
-} 
+}
 
 std::string
 LoopOver::get_name() const {
@@ -131,11 +133,11 @@ LoopOver::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols
 
 	Movers_map::const_iterator find_mover( movers.find( mover_name ) );
 	Filters_map::const_iterator find_filter( filters.find( filter_name ));
-	if( find_mover == movers.end() ) {
+	if ( find_mover == movers.end() ) {
 		TR<<"WARNING WARNING!!! mover not found in map. skipping:\n"<<tag<<std::endl;
 		runtime_assert( find_mover != movers.end() );
 	}
-	if( find_filter == filters.end() ) {
+	if ( find_filter == filters.end() ) {
 		TR<<"WARNING WARNING!!! filter not found in map. skipping:\n"<<tag<<std::endl;
 		runtime_assert( find_filter == filters.end() );
 	}

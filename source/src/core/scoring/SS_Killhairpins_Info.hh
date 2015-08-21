@@ -51,7 +51,7 @@ struct Hairpin {
 
 	~Hairpin();
 
- 	core::Size s1_start() const;
+	core::Size s1_start() const;
 
 	core::Size s1_end() const;
 

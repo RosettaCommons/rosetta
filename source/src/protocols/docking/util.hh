@@ -47,7 +47,7 @@ setup_foldtree(
 	utility::vector1< bool > const & partner1,
 	DockJumps & movable_jumps,
 	core::kinematics::FoldTree & ft);
-	
+
 } // docking
 } // protocols
 

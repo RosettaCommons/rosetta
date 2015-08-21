@@ -83,7 +83,7 @@ void HBEvalTuple::sequence_sep( HBSeqSep seqsep )
 
 void HBEvalTuple::update_hbevaltype()
 {
-		eval_type_ = HBEval_lookup(don_type_, acc_type_, seq_sep_ );
+	eval_type_ = HBEval_lookup(don_type_, acc_type_, seq_sep_ );
 }
 
 

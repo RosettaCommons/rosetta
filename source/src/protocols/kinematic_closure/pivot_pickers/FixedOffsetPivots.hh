@@ -18,7 +18,7 @@ namespace protocols {
 namespace kinematic_closure {
 namespace pivot_pickers {
 
-/// @brief Randomly pick pivots which are always offset by the same amount, but 
+/// @brief Randomly pick pivots which are always offset by the same amount, but
 /// which can appear anywhere in the loop.
 class FixedOffsetPivots : public PivotPicker {
 

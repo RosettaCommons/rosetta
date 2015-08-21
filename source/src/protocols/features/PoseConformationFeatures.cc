@@ -64,8 +64,8 @@
 #include <cmath>
 #include <sstream>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 static thread_local basic::Tracer TR( "protocols.features.PoseConformationFeatures" );
 
@@ -178,11 +178,11 @@ PoseConformationFeatures::report_features(
 	sessionOP db_session
 ){
 	vector1< Size > residue_indices;
-	for(Size i = 1; i <= relevant_residues.size(); ++i){
-		if(relevant_residues[i]) residue_indices.push_back(i);
+	for ( Size i = 1; i <= relevant_residues.size(); ++i ) {
+		if ( relevant_residues[i] ) residue_indices.push_back(i);
 	}
 
-	if (residue_indices.size() == pose_orig.n_residue()){
+	if ( residue_indices.size() == pose_orig.n_residue() ) {
 		return report_features_implementation(pose_orig, struct_id, db_session);
 	}
 	// else...
@@ -211,8 +211,8 @@ PoseConformationFeatures::report_features_implementation(
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
-	for (FoldTree::const_iterator
-			it = fold_tree.begin(), it_end = fold_tree.end(); it != it_end; ++it) {
+	for ( FoldTree::const_iterator
+			it = fold_tree.begin(), it_end = fold_tree.end(); it != it_end; ++it ) {
 
 		int start_res(it->start()), stop_res(it->stop()), label(it->label());
 		string start_atom(it->start_atom()), stop_atom(it->stop_atom());
@@ -248,8 +248,7 @@ PoseConformationFeatures::report_features_implementation(
 	jump_insert.add_column("y");
 	jump_insert.add_column("z");
 
-	for (Size nr = 1; nr <= fold_tree.num_jump(); nr++)
-	{
+	for ( Size nr = 1; nr <= fold_tree.num_jump(); nr++ ) {
 		Jump const & jump(pose.jump(nr));
 		xyzMatrix< Real > const & r(jump.get_rotation());
 		Real xx(r.xx()), xy(r.xy()), xz(r.xz());
@@ -279,8 +278,7 @@ PoseConformationFeatures::report_features_implementation(
 	InsertGenerator chain_ending_insert("chain_endings");
 	chain_ending_insert.add_column("struct_id");
 	chain_ending_insert.add_column("end_pos");
-	BOOST_FOREACH(Size end_pos, pose.conformation().chain_endings())
-	{
+	BOOST_FOREACH ( Size end_pos, pose.conformation().chain_endings() ) {
 		RowDataBaseOP end_pos_data( new RowData<Size>("end_pos",end_pos) );
 
 		chain_ending_insert.add_row(
@@ -312,17 +310,16 @@ PoseConformationFeatures::report_features_implementation(
 	//I currently have absolutely no idea why this is, but this fixes it.
 	//It is worth noting that the current implementation of Binary protein silent files does the same thing
 	bool ideal = true;
-	if(!basic::options::option[basic::options::OptionKeys::out::file::force_nonideal_structure]()) {
+	if ( !basic::options::option[basic::options::OptionKeys::out::file::force_nonideal_structure]() ) {
 		core::conformation::Conformation const & conformation(pose.conformation());
-		for(core::Size resn=1; resn <= pose.n_residue();++resn){
+		for ( core::Size resn=1; resn <= pose.n_residue(); ++resn ) {
 			bool residue_status = core::conformation::is_ideal_position(resn,conformation);
-			if(!residue_status){
+			if ( !residue_status ) {
 				ideal = false;
 				break;
 			}
 		}
-	}
-	else {
+	} else {
 		ideal = false;
 	}
 	RowDataBaseOP ideal_data( new RowData<bool>("ideal", ideal) );
@@ -376,7 +373,7 @@ PoseConformationFeatures::load_sequence(
 	Pose & pose
 ){
 
-	if(!basic::database::table_exists(db_session, "pose_conformations")){
+	if ( !basic::database::table_exists(db_session, "pose_conformations") ) {
 		TR << "WARNING: pose_conformations table does not exist and thus respective data will not be added to the pose!" << std::endl;
 		return true; // Assume structure is ideal
 	}
@@ -387,19 +384,19 @@ PoseConformationFeatures::load_sequence(
 	{
 		std::string statement_string =
 			"SELECT\n"
-			"	annotated_sequence,\n"
-			"	total_residue,\n"
-			"	fullatom,\n"
+			"\tannotated_sequence,\n"
+			"\ttotal_residue,\n"
+			"\tfullatom,\n"
 			" ideal\n"
 			"FROM\n"
-			"	pose_conformations\n"
+			"\tpose_conformations\n"
 			"WHERE\n"
-			"	pose_conformations.struct_id = ?;";
+			"\tpose_conformations.struct_id = ?;";
 		statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 		stmt.bind(1,struct_id);
 		result res(basic::database::safely_read_from_database(stmt));
 
-		if(!res.next()){
+		if ( !res.next() ) {
 			stringstream error_message;
 			error_message << "Unable to locate structure with struct_id '" << struct_id << "'";
 			utility_exit_with_message(error_message.str());
@@ -408,24 +405,24 @@ PoseConformationFeatures::load_sequence(
 	}
 	ResidueTypeSetCOP residue_set(
 		ChemicalManager::get_instance()->residue_type_set(
-			fullatom ? FA_STANDARD : CENTROID));
+		fullatom ? FA_STANDARD : CENTROID));
 
 
-	if(basic::database::table_exists(db_session, "residues")){
+	if ( basic::database::table_exists(db_session, "residues") ) {
 		std::string statement_string =
 			"SELECT\n"
-			"	res_type\n"
+			"\tres_type\n"
 			"FROM\n"
-			"	residues\n"
+			"\tresidues\n"
 			"WHERE\n"
-			"	struct_id = ?;";
+			"\tstruct_id = ?;";
 		statement stmt(
 			basic::database::safely_prepare_statement(statement_string,db_session));
 		stmt.bind(1,struct_id);
 		result res(basic::database::safely_read_from_database(stmt));
 
 		ResidueTypeCOPs requested_types;
-		while(res.next()){
+		while ( res.next() ) {
 			string res_type;
 			res >> res_type;
 			requested_types.push_back( residue_set->name_map( res_type ).get_self_ptr() );
@@ -449,33 +446,33 @@ PoseConformationFeatures::load_fold_tree(
 	Pose & pose
 ){
 
-	if(!basic::database::table_exists(db_session, "fold_trees")){
+	if ( !basic::database::table_exists(db_session, "fold_trees") ) {
 		TR << "WARNING: fold_trees table does not exist and thus respective data will not be added to the pose!" << std::endl;
 		return;
 	}
 
 	statement stmt = (*db_session) <<
-				"SELECT\n"
-				"	start_res,\n"
-				"	start_atom,\n"
-				"	stop_res,\n"
-				"	stop_atom,\n"
-				"	label,\n"
-				"	keep_stub_in_residue\n"
-				"FROM\n"
-				"	fold_trees\n"
-				"WHERE\n"
-				"	fold_trees.struct_id=?;" << struct_id;
+		"SELECT\n"
+		"\tstart_res,\n"
+		"\tstart_atom,\n"
+		"\tstop_res,\n"
+		"\tstop_atom,\n"
+		"\tlabel,\n"
+		"\tkeep_stub_in_residue\n"
+		"FROM\n"
+		"\tfold_trees\n"
+		"WHERE\n"
+		"\tfold_trees.struct_id=?;" << struct_id;
 
 	result res(basic::database::safely_read_from_database(stmt));
 
 	FoldTree t = FoldTree();
-	while(res.next()){
+	while ( res.next() ) {
 		int start_res, stop_res, label;
 		string start_atom, stop_atom;
 		int keep_stub_in_residue;
 		res >> start_res >> start_atom >> stop_res >> stop_atom >> label >> keep_stub_in_residue;
-		if(label == -2 || label > 0){ //CHEMICAL or JUMP
+		if ( label == -2 || label > 0 ) { //CHEMICAL or JUMP
 			t.add_edge(Edge(
 				start_res, stop_res, label, start_atom, stop_atom, keep_stub_in_residue));
 		} else {
@@ -494,7 +491,7 @@ PoseConformationFeatures::load_jumps(
 	StructureID struct_id,
 	Pose & pose
 ){
-	if(!basic::database::table_exists(db_session, "jumps")){
+	if ( !basic::database::table_exists(db_session, "jumps") ) {
 		TR << "WARNING: jumps table does not exist and thus respective data will not be added to the pose!" << std::endl;
 		return;
 	}
@@ -502,29 +499,29 @@ PoseConformationFeatures::load_jumps(
 	//note the Conformation object sorts the chain_endings after they are passed in.
 	std::string statement_string =
 		"SELECT\n"
-		"	jump_id,\n"
-		"	xx,\n"
-		"	xy,\n"
-		"	xz,\n"
-		"	yx,\n"
-		"	yy,\n"
-		"	yz,\n"
-		"	zx,\n"
-		"	zy,\n"
-		"	zz,\n"
-		"	x,\n"
-		"	y,\n"
-		"	z\n"
+		"\tjump_id,\n"
+		"\txx,\n"
+		"\txy,\n"
+		"\txz,\n"
+		"\tyx,\n"
+		"\tyy,\n"
+		"\tyz,\n"
+		"\tzx,\n"
+		"\tzy,\n"
+		"\tzz,\n"
+		"\tx,\n"
+		"\ty,\n"
+		"\tz\n"
 		"FROM\n"
-		"	jumps\n"
+		"\tjumps\n"
 		"WHERE\n"
-		"	jumps.struct_id=?;";
+		"\tjumps.struct_id=?;";
 	statement stmt(
 		basic::database::safely_prepare_statement(statement_string,db_session));
 
 	stmt.bind(1,struct_id);
 	result res(basic::database::safely_read_from_database(stmt));
-	while(res.next()){
+	while ( res.next() ) {
 		Size jump_id;
 		Real xx, xy, xz, yx, yy, yz, zx, zy, zz, x, y, z;
 		res >> jump_id;
@@ -545,7 +542,7 @@ PoseConformationFeatures::load_chain_endings(
 	Pose & pose
 ){
 
-	if(!basic::database::table_exists(db_session, "chain_endings")){
+	if ( !basic::database::table_exists(db_session, "chain_endings") ) {
 		TR << "WARNING: chain_endings table does not exist and thus respective data will not be added to the pose!" << std::endl;
 		return;
 	}
@@ -554,11 +551,11 @@ PoseConformationFeatures::load_chain_endings(
 
 	std::string statement_string =
 		"SELECT\n"
-		"	end_pos\n"
+		"\tend_pos\n"
 		"FROM\n"
-		"	chain_endings\n"
+		"\tchain_endings\n"
 		"WHERE\n"
-		"	chain_endings.struct_id=?;";
+		"\tchain_endings.struct_id=?;";
 
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,struct_id);
@@ -567,7 +564,7 @@ PoseConformationFeatures::load_chain_endings(
 	result res(basic::database::safely_read_from_database(stmt));
 
 	vector1< Size > chain_endings;
-	while(res.next()){
+	while ( res.next() ) {
 		Size end_pos;
 		res >> end_pos;
 		chain_endings.push_back(end_pos);

@@ -77,7 +77,7 @@ ResourceLoaderFactory::available_resource_loaders() const
 {
 	std::list< std::string > loader_types;
 	for ( std::map< std::string, ResourceLoaderCreatorOP >::const_iterator
-					iter = creator_map_.begin(), iter_end = creator_map_.end(); iter != iter_end; ++iter ) {
+			iter = creator_map_.begin(), iter_end = creator_map_.end(); iter != iter_end; ++iter ) {
 		loader_types.push_back( iter->first );
 	}
 	return loader_types;

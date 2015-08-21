@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -22,11 +22,11 @@ namespace protocols {
 namespace stepwise {
 namespace sampler {
 namespace rigid_body {
-	
-	class RigidBodyStepWiseSamplerWithResidueAlternatives;
-	typedef utility::pointer::shared_ptr< RigidBodyStepWiseSamplerWithResidueAlternatives > RigidBodyStepWiseSamplerWithResidueAlternativesOP;
-	typedef utility::pointer::shared_ptr< RigidBodyStepWiseSamplerWithResidueAlternatives const > RigidBodyStepWiseSamplerWithResidueAlternativesCOP;
-	
+
+class RigidBodyStepWiseSamplerWithResidueAlternatives;
+typedef utility::pointer::shared_ptr< RigidBodyStepWiseSamplerWithResidueAlternatives > RigidBodyStepWiseSamplerWithResidueAlternativesOP;
+typedef utility::pointer::shared_ptr< RigidBodyStepWiseSamplerWithResidueAlternatives const > RigidBodyStepWiseSamplerWithResidueAlternativesCOP;
+
 } //rigid_body
 } //sampler
 } //stepwise

@@ -48,7 +48,7 @@ CountPairGeneric::CountPairGeneric(
 {
 	using namespace conformation;
 
-debug_assert( res1.seqpos() != res2.seqpos() );
+	debug_assert( res1.seqpos() != res2.seqpos() );
 
 	if ( res1.is_bonded( res2 ) ) {
 		utility::vector1< Size > const & r1_connids( res1.connections_to_residue( res2 ) );
@@ -83,10 +83,10 @@ debug_assert( res1.seqpos() != res2.seqpos() );
 			pb_lengths_.push_back( pb_iter->nbonds() );
 		}
 	}
-debug_assert( n_connect_ == res1_conn_point_path_dists_.size() );
-debug_assert( n_connect_ == res2_conn_point_path_dists_.size() );
-debug_assert( n_pconnect_ == res1_pbconn_point_path_dists_.size() );
-debug_assert( n_pconnect_ == res2_pbconn_point_path_dists_.size() );
+	debug_assert( n_connect_ == res1_conn_point_path_dists_.size() );
+	debug_assert( n_connect_ == res2_conn_point_path_dists_.size() );
+	debug_assert( n_pconnect_ == res1_pbconn_point_path_dists_.size() );
+	debug_assert( n_pconnect_ == res2_pbconn_point_path_dists_.size() );
 }
 
 /// @brief Create a count pair object that pretends there exist
@@ -113,11 +113,11 @@ CountPairGeneric::CountPairGeneric(
 		//std::cout << " and " << restype2.name() << " " << restype2.atom_name( bond_pairs[ ii ].second ) << std::endl;
 		//std::cout << "path distances res1: " << std::endl;
 		//for ( Size jj = 1; jj <= restype1.natoms(); ++jj ) {
-		//	std::cout << "    " << restype1.atom_name( jj ) << " " << (*res1_conn_point_path_dists_[ ii ])[ jj ] << std::endl;
+		// std::cout << "    " << restype1.atom_name( jj ) << " " << (*res1_conn_point_path_dists_[ ii ])[ jj ] << std::endl;
 		//}
 		//std::cout << "path distances res2: " << std::endl;
 		//for ( Size jj = 1; jj <= restype2.natoms(); ++jj ) {
-		//	std::cout << "    " << restype2.atom_name( jj ) << " " << (*res2_conn_point_path_dists_[ ii ])[ jj ] << std::endl;
+		// std::cout << "    " << restype2.atom_name( jj ) << " " << (*res2_conn_point_path_dists_[ ii ])[ jj ] << std::endl;
 		//}
 	}
 }

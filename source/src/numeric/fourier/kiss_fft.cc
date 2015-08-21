@@ -52,7 +52,7 @@ kiss_fft_cpx* get_tmp_buff( size_t nbuf ) {
 		ntmpbuf = nbuf;
 	}
 	// free memory
-	if (nbuf == 0) {
+	if ( nbuf == 0 ) {
 		delete [] tmpbuf;
 		tmpbuf = NULL;
 		ntmpbuf = 0;
@@ -64,10 +64,10 @@ kiss_fft_cpx* get_tmp_buff( size_t nbuf ) {
 // 1d c->c fft
 ///////////////////////////////////////
 void kf_bfly2(
-		kiss_fft_cpx * Fout,
-		const size_t fstride,
-		const kiss_fft_cfg st,
-		int m ) {
+	kiss_fft_cpx * Fout,
+	const size_t fstride,
+	const kiss_fft_cfg st,
+	int m ) {
 	kiss_fft_cpx * Fout2;
 	kiss_fft_cpx * tw1 = st->twiddles();
 	kiss_fft_cpx t;
@@ -83,10 +83,10 @@ void kf_bfly2(
 }
 
 void kf_bfly4(
-		kiss_fft_cpx * Fout,
-		const size_t fstride,
-		const kiss_fft_cfg st,
-		const size_t m ) {
+	kiss_fft_cpx * Fout,
+	const size_t fstride,
+	const kiss_fft_cfg st,
+	const size_t m ) {
 	kiss_fft_cpx *tw1,*tw2,*tw3;
 	kiss_fft_cpx scratch[6];
 	size_t k=m;
@@ -110,10 +110,10 @@ void kf_bfly4(
 		tw3 += fstride*3;
 		*Fout += scratch[3];
 
-		if(st->inverse()) {
+		if ( st->inverse() ) {
 			Fout[m]  = kiss_fft_cpx( scratch[5].real() - scratch[4].imag() , scratch[5].imag() + scratch[4].real());
 			Fout[m3] = kiss_fft_cpx( scratch[5].real() + scratch[4].imag() , scratch[5].imag() - scratch[4].real());
-		}else{
+		} else {
 			Fout[m]  = kiss_fft_cpx( scratch[5].real() + scratch[4].imag() , scratch[5].imag() - scratch[4].real());
 			Fout[m3] = kiss_fft_cpx( scratch[5].real() - scratch[4].imag() , scratch[5].imag() + scratch[4].real());
 		}
@@ -122,21 +122,21 @@ void kf_bfly4(
 }
 
 void kf_bfly3(
-		 kiss_fft_cpx * Fout,
-		 const size_t fstride,
-		 const kiss_fft_cfg st,
-		 size_t m
-		 ) {
-	 size_t k=m;
-	 const size_t m2 = 2*m;
-	 kiss_fft_cpx *tw1,*tw2;
-	 kiss_fft_cpx scratch[5];
-	 kiss_fft_cpx epi3;
-	 epi3 = st->twiddles()[fstride*m];
+	kiss_fft_cpx * Fout,
+	const size_t fstride,
+	const kiss_fft_cfg st,
+	size_t m
+) {
+	size_t k=m;
+	const size_t m2 = 2*m;
+	kiss_fft_cpx *tw1,*tw2;
+	kiss_fft_cpx scratch[5];
+	kiss_fft_cpx epi3;
+	epi3 = st->twiddles()[fstride*m];
 
-	 tw1=tw2=st->twiddles();
+	tw1=tw2=st->twiddles();
 
-	 do{
+	do{
 		scratch[1] = Fout[m] * (*tw1);
 		scratch[2] = Fout[m2] * (*tw2);
 
@@ -153,14 +153,14 @@ void kf_bfly3(
 		Fout[m] = kiss_fft_cpx(  Fout[m].real() - scratch[0].imag() , Fout[m].imag() + scratch[0].real());
 
 		++Fout;
-	 }while(--k);
+	}while(--k);
 }
 
 void kf_bfly5(
-		kiss_fft_cpx * Fout,
-		const size_t fstride,
-		const kiss_fft_cfg st,
-		int m ) {
+	kiss_fft_cpx * Fout,
+	const size_t fstride,
+	const kiss_fft_cfg st,
+	int m ) {
 	kiss_fft_cpx *Fout0,*Fout1,*Fout2,*Fout3,*Fout4;
 	int u;
 	kiss_fft_cpx scratch[13];
@@ -191,21 +191,21 @@ void kf_bfly5(
 		scratch[9] = scratch[2]-scratch[3];
 
 		*Fout0 = kiss_fft_cpx( Fout0->real() + scratch[7].real() + scratch[8].real(),
-		                        Fout0->imag() + scratch[7].imag() + scratch[8].imag() );
+			Fout0->imag() + scratch[7].imag() + scratch[8].imag() );
 
 		scratch[5] = kiss_fft_cpx(  scratch[0].real() + scratch[7].real()*ya.real() + scratch[8].real()*yb.real() ,
-		                             scratch[0].imag() + scratch[7].imag()*ya.real() + scratch[8].imag()*yb.real() );
+			scratch[0].imag() + scratch[7].imag()*ya.real() + scratch[8].imag()*yb.real() );
 
 		scratch[6] = kiss_fft_cpx(   (scratch[10].imag()*ya.imag()) + (scratch[9].imag()*yb.imag()) ,
-		                             -(scratch[10].real()*ya.imag()) - (scratch[9].real()*yb.imag()));
+			-(scratch[10].real()*ya.imag()) - (scratch[9].real()*yb.imag()));
 
 		*Fout1 = scratch[5]-scratch[6];
 		*Fout4 = scratch[5]+scratch[6];
 
 		scratch[11] = kiss_fft_cpx( scratch[0].real() + (scratch[7].real()*yb.real()) + (scratch[8].real()*ya.real()),
-		                             scratch[0].imag() + (scratch[7].imag()*yb.real()) + (scratch[8].imag()*ya.real()));
+			scratch[0].imag() + (scratch[7].imag()*yb.real()) + (scratch[8].imag()*ya.real()));
 		scratch[12] = kiss_fft_cpx( -(scratch[10].imag()*yb.imag()) + (scratch[9].imag()*ya.imag()),
-		                              (scratch[10].real()*yb.imag()) - (scratch[9].real()*ya.imag()));
+			(scratch[10].real()*yb.imag()) - (scratch[9].real()*ya.imag()));
 
 		*Fout2 = scratch[11]+scratch[12];
 		*Fout3 = scratch[11]-scratch[12];
@@ -265,12 +265,12 @@ void kf_work(
 	const int m = *factors++; /* stage's fft length/p */
 	const kiss_fft_cpx * Fout_end = Fout + p*m;
 
-	if (m==1) {
+	if ( m==1 ) {
 		do{
 			*Fout = *f;
 			f += fstride*in_stride;
 		}while(++Fout != Fout_end );
-	}else{
+	} else {
 		do{
 			// recursive call:
 			// DFT of size m*p performed by doing
@@ -285,21 +285,21 @@ void kf_work(
 
 	// recombine the p smaller DFTs
 	switch (p) {
-		case 2: kf_bfly2(Fout,fstride,st,m); break;
-		case 3: kf_bfly3(Fout,fstride,st,m); break;
-		case 4: kf_bfly4(Fout,fstride,st,m); break;
-		case 5: kf_bfly5(Fout,fstride,st,m); break;
-		default: kf_bfly_generic(Fout,fstride,st,m,p); break;
+	case 2 : kf_bfly2(Fout,fstride,st,m); break;
+	case 3 : kf_bfly3(Fout,fstride,st,m); break;
+	case 4 : kf_bfly4(Fout,fstride,st,m); break;
+	case 5 : kf_bfly5(Fout,fstride,st,m); break;
+	default : kf_bfly_generic(Fout,fstride,st,m,p); break;
 	}
 }
 
 void kiss_fft_stride(kiss_fft_cfg st,const kiss_fft_cpx *fin,kiss_fft_cpx *fout,int in_stride) {
-	if (fin == fout) {
+	if ( fin == fout ) {
 		//CHECKBUF(tmpbuf,ntmpbuf,st->nfft);
 		kiss_fft_cpx *tmpbuf = get_tmp_buff(st->nfft());
 		kf_work(tmpbuf,fin,1,in_stride, st->factors(),st);
 		//memcpy(fout,tmpbuf,sizeof(kiss_fft_cpx)*st->nfft());
-		for (int i=0; i<st->nfft(); ++i) fout[i]=tmpbuf[i];
+		for ( int i=0; i<st->nfft(); ++i ) fout[i]=tmpbuf[i];
 	} else {
 		kf_work( fout, fin, 1,in_stride, st->factors(),st );
 	}
@@ -310,23 +310,23 @@ void kiss_fft(kiss_fft_cfg cfg,const kiss_fft_cpx *fin,kiss_fft_cpx *fout) {
 }
 
 void kiss_fft_split(
-     kiss_fftsplit_cfg st, 
-     const kiss_fft_scalar *rin,
-     const kiss_fft_scalar *iin,
-     kiss_fft_scalar *rout,
-     kiss_fft_scalar *iout,
-     int fin_stride,
-     int fout_stride) {
+	kiss_fftsplit_cfg st,
+	const kiss_fft_scalar *rin,
+	const kiss_fft_scalar *iin,
+	kiss_fft_scalar *rout,
+	kiss_fft_scalar *iout,
+	int fin_stride,
+	int fout_stride) {
 	// input buffer timedata is stored row-wise
 	int k, ncfft;
 	kiss_fft_cpx *tmpbuf = get_tmp_buff(st->nfft());
 
 	ncfft = st->substate()->nfft();
-	for (k = 0; k < ncfft; ++k) {
+	for ( k = 0; k < ncfft; ++k ) {
 		st->tmpbuf()[k] = kiss_fft_cpx( rin[k*fin_stride],iin[k*fin_stride] );
 	}
 	kiss_fft (st->substate(), st->tmpbuf(), tmpbuf);
-	for (k = 0; k < ncfft; ++k) {
+	for ( k = 0; k < ncfft; ++k ) {
 		rout[k*fout_stride] = tmpbuf[k].real();
 		iout[k*fout_stride] = tmpbuf[k].imag();
 	}
@@ -341,13 +341,14 @@ void kiss_fft_cleanup(void) {
 }
 
 int kiss_fft_next_fast_size(int n) {
-	while(1) {
+	while ( 1 ) {
 		int m=n;
 		while ( (m%2) == 0 ) m/=2;
 		while ( (m%3) == 0 ) m/=3;
 		while ( (m%5) == 0 ) m/=5;
-		if (m<=1)
+		if ( m<=1 ) {
 			break; // n is completely factorable by twos, threes, and fives
+		}
 		n++;
 	}
 	return n;
@@ -362,7 +363,7 @@ void kiss_fftr(kiss_fftr_cfg st, const kiss_fft_scalar *timedata, kiss_fft_cpx *
 	int k,ncfft;
 	kiss_fft_cpx fpnk,fpk,f1k,f2k,tw,tdc;
 
-	if ( st->substate()->inverse()) {
+	if ( st->substate()->inverse() ) {
 		std::cerr << "kiss fft usage error: improper alloc\n";
 		exit(1);
 	}
@@ -376,9 +377,9 @@ void kiss_fftr(kiss_fftr_cfg st, const kiss_fft_scalar *timedata, kiss_fft_cpx *
 	// The imag part is the sum of the odd-numbered elements
 	//
 	// The sum of tdc.r and tdc.i is the sum of the input time sequence.
-	//	  yielding DC of input time sequence
+	//   yielding DC of input time sequence
 	// The difference of tdc.r - tdc.i is the sum of the input (dot product) [1,-1,1,-1...
-	//	  yielding Nyquist bin of input time sequence
+	//   yielding Nyquist bin of input time sequence
 	tdc = kiss_fft_cpx( st->tmpbuf()[0].real() , st->tmpbuf()[0].imag() );
 	freqdata[0] = kiss_fft_cpx( tdc.real() + tdc.imag() , 0 );
 	freqdata[ncfft] = kiss_fft_cpx( tdc.real() - tdc.imag() , 0 );
@@ -386,8 +387,8 @@ void kiss_fftr(kiss_fftr_cfg st, const kiss_fft_scalar *timedata, kiss_fft_cpx *
 	//std::cout << ((kiss_fft_cpx*)timedata)[0] << "  " << ((kiss_fft_cpx*)timedata)[1] << std::endl;
 	//std::cout << st->tmpbuf()[0] << "  " << st->tmpbuf()[1] << std::endl;
 
-	for ( k=1;k <= ncfft/2 ; ++k ) {
-		fpk	= st->tmpbuf()[k];
+	for ( k=1; k <= ncfft/2 ; ++k ) {
+		fpk = st->tmpbuf()[k];
 		fpnk = kiss_fft_cpx( st->tmpbuf()[ncfft-k].real(), -st->tmpbuf()[ncfft-k].imag());
 
 		f1k = fpk + fpnk;
@@ -403,7 +404,7 @@ void kiss_fftri(kiss_fftr_cfg st, const kiss_fft_cpx *freqdata, kiss_fft_scalar 
 	// input buffer timedata is stored row-wise
 	int k, ncfft;
 
-	if (st->substate()->inverse() == 0) {
+	if ( st->substate()->inverse() == 0 ) {
 		std::cerr << "kiss fft usage error: improper alloc\n";
 		exit (1);
 	}
@@ -411,9 +412,9 @@ void kiss_fftri(kiss_fftr_cfg st, const kiss_fft_cpx *freqdata, kiss_fft_scalar 
 	ncfft = st->substate()->nfft();
 
 	st->tmpbuf()[0] = kiss_fft_cpx( freqdata[0].real() + freqdata[ncfft].real() ,
-	                                 freqdata[0].real() - freqdata[ncfft].real() );
+		freqdata[0].real() - freqdata[ncfft].real() );
 
-	for (k = 1; k <= ncfft / 2; ++k) {
+	for ( k = 1; k <= ncfft / 2; ++k ) {
 		kiss_fft_cpx fk, fnkc, fek, fok, tmp;
 		fk = freqdata[k];
 		fnkc = kiss_fft_cpx( freqdata[ncfft - k].real() , -freqdata[ncfft - k].imag() );
@@ -421,11 +422,11 @@ void kiss_fftri(kiss_fftr_cfg st, const kiss_fft_cpx *freqdata, kiss_fft_scalar 
 		fek = fk + fnkc;
 		tmp = fk - fnkc;
 		fok = tmp * st->super_twiddles()[k-1];
-		st->tmpbuf()[k] =	 fek + fok;
+		st->tmpbuf()[k] =  fek + fok;
 		st->tmpbuf()[ncfft - k] = fek - fok;
 
 		st->tmpbuf()[ncfft - k] = kiss_fft_cpx(  st->tmpbuf()[ncfft - k].real() ,
-		                                         -st->tmpbuf()[ncfft - k].imag() );
+			-st->tmpbuf()[ncfft - k].imag() );
 	}
 	kiss_fft (st->substate(), st->tmpbuf(), (kiss_fft_cpx *) timedata);
 }
@@ -438,7 +439,7 @@ void kiss_dct(kiss_dct_cfg st, const kiss_fft_scalar *timedata, kiss_fft_scalar 
 	int k,ncfft;
 	kiss_fft_cpx f1k,f2k;
 
-	if ( st->substate()->inverse()) {
+	if ( st->substate()->inverse() ) {
 		std::cerr << "kiss fft usage error: improper alloc\n";
 		exit(1);
 	}
@@ -449,10 +450,12 @@ void kiss_dct(kiss_dct_cfg st, const kiss_fft_scalar *timedata, kiss_fft_scalar 
 	//   ind = [(1:2:n) (n:-2:2)];
 	//   a = a(ind);
 	kiss_fft_cpx *tmpbuf = get_tmp_buff(ncfft);
-	for (k = 0; k < ncfft/2; ++k)
+	for ( k = 0; k < ncfft/2; ++k ) {
 		tmpbuf[k] = kiss_fft_cpx(timedata[2*k],0.0);
-	for (k = ncfft/2; k<ncfft; ++k)
+	}
+	for ( k = ncfft/2; k<ncfft; ++k ) {
 		tmpbuf[k] = kiss_fft_cpx(timedata[2*(ncfft-k)-1],0.0);
+	}
 
 	// fft
 	kiss_fft( st->substate() , tmpbuf, st->tmpbuf() );
@@ -474,7 +477,7 @@ void kiss_idct(kiss_dct_cfg st, const kiss_fft_scalar *freqdata, kiss_fft_scalar
 	kiss_fft_cpx f1k,f2k;
 	kiss_fft_scalar x0 = freqdata[0];
 
-	if ( !st->substate()->inverse()) {
+	if ( !st->substate()->inverse() ) {
 		std::cerr << "kiss fft usage error: improper alloc\n";
 		exit(1);
 	}
@@ -496,10 +499,12 @@ void kiss_idct(kiss_dct_cfg st, const kiss_fft_scalar *freqdata, kiss_fft_scalar
 	//  tmp(1:2:n)=(1:n/2);
 	//  tmp(2:2:n)=(n:-1:n/2+1);
 	//  ind=tmp
-	for (k = 0; k < ncfft/2; ++k)
+	for ( k = 0; k < ncfft/2; ++k ) {
 		timedata[2*k] = 2*st->tmpbuf()[k].real() - x0;
-	for (k = ncfft/2; k<ncfft; ++k)
+	}
+	for ( k = ncfft/2; k<ncfft; ++k ) {
 		timedata[2*(ncfft-k)-1] = 2*st->tmpbuf()[k].real() - x0;
+	}
 }
 
 
@@ -573,26 +578,28 @@ void kiss_fftnd(kiss_fftnd_cfg st,const kiss_fft_cpx *fin,kiss_fft_cpx *fout) {
 	// arrange it so the last bufout == fout
 	if ( st->ndims() & 1 ) {
 		bufout = fout;
-		if (fin==fout) {
+		if ( fin==fout ) {
 			//memcpy( st->tmpbuf(), fin, sizeof(kiss_fft_cpx) * st->dimprod() );
-			for (int i=0; i<st->dimprod(); ++i) st->tmpbuf()[i]=fin[i];
+			for ( int i=0; i<st->dimprod(); ++i ) st->tmpbuf()[i]=fin[i];
 			bufin = st->tmpbuf();
 		}
-	}else
+	} else {
 		bufout = st->tmpbuf();
+	}
 
-	for ( k=0; k < st->ndims(); ++k) {
+	for ( k=0; k < st->ndims(); ++k ) {
 		int curdim = st->dims()[k];
 		int stride = st->dimprod() / curdim;
 
-		for ( i=0 ; i<stride ; ++i )
+		for ( i=0 ; i<stride ; ++i ) {
 			kiss_fft_stride( st->states(k), bufin+i , bufout+i*curdim, stride );
+		}
 
 		// toggle back and forth between the two buffers
-		if (bufout == st->tmpbuf()){
+		if ( bufout == st->tmpbuf() ) {
 			bufout = fout;
 			bufin = st->tmpbuf();
-		}else{
+		} else {
 			bufout = st->tmpbuf();
 			bufin = fout;
 		}
@@ -614,16 +621,18 @@ void kiss_fftndr(kiss_fftndr_cfg st, const kiss_fft_scalar *timedata, kiss_fft_c
 
 	// timedata is N0 x N1 x ... x Nk real
 	// take a real chunk of data, fft it and place the output at correct intervals
-	for (k1=0;k1<dimOther;++k1) {
+	for ( k1=0; k1<dimOther; ++k1 ) {
 		kiss_fftr( st->cfg_r(), timedata + k1*dimReal , tmp1 ); // tmp1 now holds nrbins complex points
-		for (k2=0;k2<nrbins;++k2)
-		   tmp2[ k2*dimOther+k1 ] = tmp1[k2];
+		for ( k2=0; k2<nrbins; ++k2 ) {
+			tmp2[ k2*dimOther+k1 ] = tmp1[k2];
+		}
 	}
 
-	for (k2=0;k2<nrbins;++k2) {
+	for ( k2=0; k2<nrbins; ++k2 ) {
 		kiss_fftnd(st->cfg_nd(), tmp2+k2*dimOther, tmp1);  // tmp1 now holds dimOther complex points
-		for (k1=0;k1<dimOther;++k1)
+		for ( k1=0; k1<dimOther; ++k1 ) {
 			freqdata[ k1*(nrbins) + k2] = tmp1[k1];
+		}
 	}
 }
 
@@ -635,15 +644,17 @@ void kiss_fftndri(kiss_fftndr_cfg st, const kiss_fft_cpx *freqdata, kiss_fft_sca
 	kiss_fft_cpx * tmp1 = (kiss_fft_cpx*)st->tmpbuf();
 	kiss_fft_cpx * tmp2 = tmp1 + std::max(nrbins,dimOther);
 
-	for (k2=0;k2<nrbins;++k2) {
-		for (k1=0;k1<dimOther;++k1)
+	for ( k2=0; k2<nrbins; ++k2 ) {
+		for ( k1=0; k1<dimOther; ++k1 ) {
 			tmp1[k1] = freqdata[ k1*(nrbins) + k2 ];
+		}
 		kiss_fftnd(st->cfg_nd(), tmp1, tmp2+k2*dimOther);
 	}
 
-	for (k1=0;k1<dimOther;++k1) {
-		for (k2=0;k2<nrbins;++k2)
+	for ( k1=0; k1<dimOther; ++k1 ) {
+		for ( k2=0; k2<nrbins; ++k2 ) {
 			tmp1[k2] = tmp2[ k2*dimOther+k1 ];
+		}
 		kiss_fftri( st->cfg_r(),tmp1,timedata + k1*dimReal);
 	}
 }

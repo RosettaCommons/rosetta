@@ -29,17 +29,17 @@ namespace toolbox {
 namespace task_operations {
 
 class ProteinCore : public core::pack::task::operation::ResFilter {
-	public:
-	  ProteinCore();
-		virtual bool operator() ( Pose const &, Size ) const;
-		virtual core::pack::task::operation::ResFilterOP clone() const {return (core::pack::task::operation::ResFilterOP( new ProteinCore( *this) ));}
-		virtual void parse_tag( TagCOP );
-	private:
-  	core::Real distance_threshold_; // dflt 8.0A; sphere around the residue
-  	core::Size neighbor_cutoff_; // dflt 10; how many residues in the sequence around the target residue to ignore in computing neighbours
-  	bool bound_; // dflt false; treat the bound or unbound pose
-  	core::Size jump_; // dflt 1;
-		core::Size neighbor_count_cutoff_; //dflt 6
+public:
+	ProteinCore();
+	virtual bool operator() ( Pose const &, Size ) const;
+	virtual core::pack::task::operation::ResFilterOP clone() const {return (core::pack::task::operation::ResFilterOP( new ProteinCore( *this) ));}
+	virtual void parse_tag( TagCOP );
+private:
+	core::Real distance_threshold_; // dflt 8.0A; sphere around the residue
+	core::Size neighbor_cutoff_; // dflt 10; how many residues in the sequence around the target residue to ignore in computing neighbours
+	bool bound_; // dflt false; treat the bound or unbound pose
+	core::Size jump_; // dflt 1;
+	core::Size neighbor_count_cutoff_; //dflt 6
 };
 } //namespace protocols
 } //namespace toolbox

@@ -51,17 +51,17 @@ public:
 	operator = ( fixedsizearray1iterator< T, S > const & rhs ) {
 		array_ptr_ = rhs.array_ptr_;
 		position_ = rhs.position_;
-        return *this;
+		return *this;
 	}
 
 	T & operator * () {
-	debug_assert( valid() );
+		debug_assert( valid() );
 		return * position_;
 	}
 
 	fixedsizearray1iterator< T, S >
 	operator ++ () {
-	debug_assert( valid() );
+		debug_assert( valid() );
 		position_ += 1;
 		return *this;
 	}
@@ -69,14 +69,14 @@ public:
 	/// @brief random access iterator jump by d
 	fixedsizearray1iterator< T, S >
 	operator + ( distance d ) {
-	debug_assert( valid() );
+		debug_assert( valid() );
 		return fixedsizearray1iterator< T, S >( array_ptr_, position_ + d );
 	}
 
 	/// @brief random access iterator jump by -d
 	fixedsizearray1iterator< T, S >
 	operator - ( distance d ) {
-	debug_assert( valid() );
+		debug_assert( valid() );
 		return fixedsizearray1iterator< T, S >( array_ptr_, position_ - d );
 	}
 
@@ -90,7 +90,7 @@ public:
 	/// @brief random access increment
 	fixedsizearray1iterator< T, S > const &
 	operator += ( distance d ) {
-	debug_assert( valid() );
+		debug_assert( valid() );
 		position_ += d;
 		return this;
 	}
@@ -98,7 +98,7 @@ public:
 	/// @brief random access decrement
 	fixedsizearray1iterator< T, S > const &
 	operator -= ( distance d ) {
-	debug_assert( valid() );
+		debug_assert( valid() );
 		position_ -= d;
 		return this;
 	}
@@ -108,7 +108,7 @@ public:
 	inline
 	bool
 	operator <( fixedsizearray1iterator< T, S > const & a,
-	            fixedsizearray1iterator< T, S > const & b )
+		fixedsizearray1iterator< T, S > const & b )
 	{
 		return ( a.position_ < b.position_ );
 	}
@@ -195,13 +195,13 @@ public:
 	}
 
 	T const & operator * () {
-	debug_assert( valid() );
+		debug_assert( valid() );
 		return * position_;
 	}
 
 	fixedsizearray1const_iterator< T, S >
 	operator ++ () {
-	debug_assert( valid() );
+		debug_assert( valid() );
 		position_ += 1;
 		return *this;
 	}
@@ -209,21 +209,21 @@ public:
 	/// @brief random access iterator jump by d
 	fixedsizearray1const_iterator< T, S >
 	operator + ( distance d ) {
-	debug_assert( valid() );
+		debug_assert( valid() );
 		return fixedsizearray1iterator< T, S >( array_ptr_, position_ + d );
 	}
 
 	/// @brief random access iterator jump by -d
 	fixedsizearray1const_iterator< T, S >
 	operator - ( distance d ) {
-	debug_assert( valid() );
+		debug_assert( valid() );
 		return fixedsizearray1iterator< T, S >( array_ptr_, position_ - d );
 	}
 
 	friend
 	distance
 	operator - ( fixedsizearray1const_iterator< T, S > const & a,
-							fixedsizearray1const_iterator< T, S > const & b ) {
+		fixedsizearray1const_iterator< T, S > const & b ) {
 		return a.position_ - b.position_;
 	}
 
@@ -231,7 +231,7 @@ public:
 	inline
 	bool
 	operator <( fixedsizearray1const_iterator< T, S > const & a,
-	            fixedsizearray1const_iterator< T, S > const & b )
+		fixedsizearray1const_iterator< T, S > const & b )
 	{
 		return ( a.position_ < b.position_ );
 	}
@@ -245,7 +245,7 @@ public:
 	/// @brief random access increment
 	fixedsizearray1const_iterator< T, S > const &
 	operator += ( distance d ) {
-	debug_assert( valid() );
+		debug_assert( valid() );
 		position_ += d;
 		return this;
 	}
@@ -253,7 +253,7 @@ public:
 	/// @brief random access decrement
 	fixedsizearray1const_iterator< T, S > const &
 	operator -= ( distance d ) {
-	debug_assert( valid() );
+		debug_assert( valid() );
 		position_ -= d;
 		return this;
 	}
@@ -308,9 +308,9 @@ private:
 /*template < typename T, platform::Size S >
 typename fixedsizearray1iterator< T, S >::distance
 fixedsizearray1iterator< T, S >::operator - (
-	fixedsizearray1const_iterator< T, S > const & other
+fixedsizearray1const_iterator< T, S > const & other
 ) const {
-	return position_ - other.position_;
+return position_ - other.position_;
 }*/
 
 

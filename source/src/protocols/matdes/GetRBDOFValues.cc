@@ -101,12 +101,12 @@ GetRBDOFValues::~GetRBDOFValues() {}
 
 protocols::filters::FilterOP
 GetRBDOFValues::fresh_instance() const{
-  return protocols::filters::FilterOP( new GetRBDOFValues() );
+	return protocols::filters::FilterOP( new GetRBDOFValues() );
 }
 
 protocols::filters::FilterOP
 GetRBDOFValues::clone() const{
-  return protocols::filters::FilterOP( new GetRBDOFValues( *this ) );
+	return protocols::filters::FilterOP( new GetRBDOFValues( *this ) );
 }
 
 // @brief getters
@@ -133,15 +133,15 @@ void GetRBDOFValues::get_init_value( bool const get_init ) { get_init_value_ = g
 
 /// @brief
 core::Real GetRBDOFValues::compute(
-		Pose const & pose, bool const & verb,
-		std::string const & dof_name,
-		int const & jump,
-		char const & ax,
-		bool const & disp,
-		bool const & ang,
-		core::Real const & init_d,
-		core::Real const & init_a,
-		bool const & get_init ) const
+	Pose const & pose, bool const & verb,
+	std::string const & dof_name,
+	int const & jump,
+	char const & ax,
+	bool const & disp,
+	bool const & ang,
+	core::Real const & init_d,
+	core::Real const & init_a,
+	bool const & get_init ) const
 {
 	typedef numeric::xyzVector<Real> Vec;
 	typedef numeric::xyzMatrix<Real> Mat;
@@ -154,18 +154,18 @@ core::Real GetRBDOFValues::compute(
 		sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num(pose, jump);
 	}
 
-	std::string	design_id = protocols::jd2::JobDistributor::get_instance()->current_output_name();
+	std::string design_id = protocols::jd2::JobDistributor::get_instance()->current_output_name();
 	std::ostringstream val_string;
 	Real value;
 	std::string fn;
 
 	int index = -1;
 	utility::vector1<std::string> sym_dof_names;
-	if (get_init) {
+	if ( get_init ) {
 		if ( dof_name == "" ) utility_exit_with_message("A sym_dof_name must be specified in order to access the initial values from the SymDofSampler.");
 		/// WARNING WARNING WARNING THREAD UNSAFE!
 		sym_dof_names = SymDofMoverSampler::get_instance()->get_sym_dof_names();
-		for (Size i = 1; i <= sym_dof_names.size(); i++) {
+		for ( Size i = 1; i <= sym_dof_names.size(); i++ ) {
 			if ( dof_name == sym_dof_names[i] ) index = i;
 		}
 	}
@@ -182,8 +182,7 @@ core::Real GetRBDOFValues::compute(
 		else utility_exit_with_message("The axis specified for GetRBDOFValues does not match with x, y, or z.");
 		val_string << std::fixed << std::setprecision(1) << value;
 		fn = "SymDofName: " + dof_name + " radial_disp along axis " + ax + ": " + val_string.str();
-	}
-	else if ( ang && !disp ) {
+	} else if ( ang && !disp ) {
 		Real theta;
 		Mat const & R = pose.jump(sym_aware_jump_id).get_rotation();
 		Vec axis = numeric::rotation_axis(R, theta );
@@ -202,14 +201,13 @@ core::Real GetRBDOFValues::compute(
 		value = numeric::conversions::degrees(sign*theta) + init_a + starting_angle;
 		val_string << std::fixed << std::setprecision(1) << value;
 		fn = "SymDofName: " + dof_name + " angle of rotation: " + val_string.str();
-	}
-	else utility_exit_with_message("GetRBDOFValues works for either radial_displacement along a specified axis OR an angle about a specified jump.");
+	} else utility_exit_with_message("GetRBDOFValues works for either radial_displacement along a specified axis OR an angle about a specified jump.");
 
 	if ( verb ) {
 		TR << "Design: " << design_id << fn << std::endl;
 	}
 
-  return( value );
+	return( value );
 
 } // compute
 
@@ -219,7 +217,7 @@ bool GetRBDOFValues::apply( Pose const & pose ) const
 	//core::Real value( // Unused variable causes warning.
 	compute(pose, verbose(), sym_dof_name(), jump_id(), axis(), radial_disp(), angle(), init_disp(), init_angle(), get_init_value() );
 	// );
-  return( true );
+	return( true );
 }
 
 /// @brief parse xml
@@ -231,7 +229,7 @@ GetRBDOFValues::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
-  jump_id( tag->getOption< int >( "jump", 1 ) );
+	jump_id( tag->getOption< int >( "jump", 1 ) );
 	sym_dof_name( tag->getOption< std::string >( "sym_dof_name" , "" ) );
 	verbose( tag->getOption< bool >("verbose", 0) );
 	axis( tag->getOption< char >("axis", 'x') );
@@ -245,13 +243,13 @@ GetRBDOFValues::parse_my_tag(
 core::Real
 GetRBDOFValues::report_sm( Pose const & pose ) const
 {
-  return( compute( pose, false, sym_dof_name(), jump_id(), axis(), radial_disp(), angle(), init_disp(), init_angle(), get_init_value() ) );
+	return( compute( pose, false, sym_dof_name(), jump_id(), axis(), radial_disp(), angle(), init_disp(), init_angle(), get_init_value() ) );
 }
 
 void
 GetRBDOFValues::report( std::ostream & out, Pose const & pose ) const
 {
-  out << "GetRBDOFValues returns " << compute( pose, false, sym_dof_name(), jump_id(), axis(), radial_disp(), angle(), init_disp(), init_angle(), get_init_value() ) << std::endl;
+	out << "GetRBDOFValues returns " << compute( pose, false, sym_dof_name(), jump_id(), axis(), radial_disp(), angle(), init_disp(), init_angle(), get_init_value() ) << std::endl;
 }
 
 protocols::filters::FilterOP

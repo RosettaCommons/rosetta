@@ -74,7 +74,7 @@ DnaInterfaceFinder::determine_protein_interface(
 )
 {
 	for ( vector1< Size >::const_iterator p_index( protein_positions.begin() ),
-	      end( protein_positions.end() ); p_index != end; ++p_index ) {
+			end( protein_positions.end() ); p_index != end; ++p_index ) {
 		runtime_assert( pose.residue_type( *p_index ).is_protein() );
 
 		Residue const & pres( pose.residue( *p_index ) );
@@ -83,7 +83,7 @@ DnaInterfaceFinder::determine_protein_interface(
 
 		Real shortest_arg_dis2(10000);
 		for ( vector1< Size >::const_iterator dna_index( dna_positions.begin() ),
-		      end( dna_positions.end() ); dna_index != end && !neighbor.contact(); ++dna_index ) {
+				end( dna_positions.end() ); dna_index != end && !neighbor.contact(); ++dna_index ) {
 			runtime_assert( pose.residue_type( *dna_index ).is_DNA() );
 
 			Residue const & dres( pose.residue( *dna_index ) );
@@ -110,7 +110,7 @@ DnaInterfaceFinder::determine_dna_interface(
 )
 {
 	for ( vector1< Size >::const_iterator d_index( dna_positions.begin() ),
-	      end( dna_positions.end() ); d_index != end; ++d_index ) {
+			end( dna_positions.end() ); d_index != end; ++d_index ) {
 		runtime_assert( pose.residue_type( *d_index ).is_DNA() );
 
 		Residue const & dres( pose.residue( *d_index ) );
@@ -119,7 +119,7 @@ DnaInterfaceFinder::determine_dna_interface(
 
 		Real shortest_arg_dis2(10000);
 		for ( vector1< Size >::const_iterator p_index( protein_positions.begin() ),
-		      end( protein_positions.end() ); p_index != end && !neighbor.contact(); ++p_index ) {
+				end( protein_positions.end() ); p_index != end && !neighbor.contact(); ++p_index ) {
 			runtime_assert( pose.residue_type( *p_index ).is_protein() );
 
 			Residue const & pres( pose.residue( *p_index ) );

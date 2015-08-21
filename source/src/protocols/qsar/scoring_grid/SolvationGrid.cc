@@ -33,27 +33,27 @@ namespace scoring_grid {
 
 std::string SolvationGridCreator::keyname() const
 {
-    return SolvationGridCreator::grid_name();
+	return SolvationGridCreator::grid_name();
 }
 
 GridBaseOP SolvationGridCreator::create_grid(utility::tag::TagCOP tag) const
 {
-    GridBaseOP solvation_grid( new SolvationGrid() );
+	GridBaseOP solvation_grid( new SolvationGrid() );
 
-    solvation_grid->parse_my_tag(tag);
+	solvation_grid->parse_my_tag(tag);
 
-    return solvation_grid;
+	return solvation_grid;
 }
 
 GridBaseOP SolvationGridCreator::create_grid() const
 {
-    return GridBaseOP( new SolvationGrid() );
+	return GridBaseOP( new SolvationGrid() );
 }
 
 
 std::string SolvationGridCreator::grid_name()
 {
-    return "SolvationGrid";
+	return "SolvationGrid";
 }
 
 SolvationGrid::SolvationGrid() :SingleGrid("SolvationGrid")
@@ -77,58 +77,54 @@ void SolvationGrid::refresh(core::pose::Pose const & pose, core::Vector const & 
 	//put all the atoms in a list so we don't have to deal with extracting them all more than once
 
 	std::list<core::conformation::Atom> atom_list;
-	for(core::Size resnum = 1; resnum <=pose.total_residue();++resnum) {
+	for ( core::Size resnum = 1; resnum <=pose.total_residue(); ++resnum ) {
 		core::conformation::Residue current_residue = pose.residue(resnum);
 
-		for(core::Size atomnum = 1; atomnum <= current_residue.natoms();++atomnum) {
+		for ( core::Size atomnum = 1; atomnum <= current_residue.natoms(); ++atomnum ) {
 			atom_list.push_back(current_residue.atom(atomnum));
 		}
 	}
 
-    numeric::xyzVector<core::Size> dimensions = get_dimensions();
-	for(core::Size x_index =0; x_index < dimensions.x(); ++x_index)
-	{
-		for(core::Size y_index = 0; y_index < dimensions.y(); ++y_index)
-		{
-			for(core::Size z_index = 0; z_index < dimensions.z(); ++z_index)
-			{
-                core::Vector pdb_coords(get_pdb_coords(x_index,y_index,z_index));
-                core::conformation::Atom probe(pdb_coords,probe_atom_type_,1);
+	numeric::xyzVector<core::Size> dimensions = get_dimensions();
+	for ( core::Size x_index =0; x_index < dimensions.x(); ++x_index ) {
+		for ( core::Size y_index = 0; y_index < dimensions.y(); ++y_index ) {
+			for ( core::Size z_index = 0; z_index < dimensions.z(); ++z_index ) {
+				core::Vector pdb_coords(get_pdb_coords(x_index,y_index,z_index));
+				core::conformation::Atom probe(pdb_coords,probe_atom_type_,1);
 
-                core::Real total_solvation = 0.0;
+				core::Real total_solvation = 0.0;
 
 
-                for(std::list<core::conformation::Atom>::iterator it = atom_list.begin();it != atom_list.end();++it)
-                {
-                    //the interface for the etable evaluator gets atr,rep,distance and solvation at once
-                    //atr,rep and d2 are dummy variables
-                    core::Real atr = 0.0;
-                    core::Real rep = 0.0;
-                    core::Real sol = 0.0;
-                    core::Real d2 = 0.0;
+				for ( std::list<core::conformation::Atom>::iterator it = atom_list.begin(); it != atom_list.end(); ++it ) {
+					//the interface for the etable evaluator gets atr,rep,distance and solvation at once
+					//atr,rep and d2 are dummy variables
+					core::Real atr = 0.0;
+					core::Real rep = 0.0;
+					core::Real sol = 0.0;
+					core::Real d2 = 0.0;
 
-                    etable_evaluator.atom_pair_energy(probe, *it, 1.0, atr, rep, sol, d2);
-                    total_solvation += sol;
-                }
+					etable_evaluator.atom_pair_energy(probe, *it, 1.0, atr, rep, sol, d2);
+					total_solvation += sol;
+				}
 
-                set_point(pdb_coords,total_solvation);
+				set_point(pdb_coords,total_solvation);
 
-            }
-        }
-    }
+			}
+		}
+	}
 
 
 }
 
 void SolvationGrid::refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & )
 {
-    refresh(pose,center);
+	refresh(pose,center);
 }
 
 
 void SolvationGrid::refresh(core::pose::Pose const & pose, core::Vector const & center, utility::vector1<core::Size> )
 {
-    refresh(pose,center);
+	refresh(pose,center);
 }
 
 void SolvationGrid::parse_my_tag(utility::tag::TagCOP const /*tag*/)
@@ -145,9 +141,9 @@ utility::json_spirit::Value SolvationGrid::serialize()
 	Pair probe_type_data("probe_type",probe_atom_type_);
 	Pair base_data("base_data",SingleGrid::serialize());
 
-	#ifdef PYROSETTA
+#ifdef PYROSETTA
 		Value _;  return _;
-	#endif
+#endif
 
 	return Value(utility::tools::make_vector(probe_type_data,base_data));
 
@@ -155,13 +151,13 @@ utility::json_spirit::Value SolvationGrid::serialize()
 
 void SolvationGrid::deserialize(utility::json_spirit::mObject data )
 {
-    probe_atom_type_ = data["probe_type"].get_int();
-    SingleGrid::deserialize(data["base_data"].get_obj());
+	probe_atom_type_ = data["probe_type"].get_int();
+	SingleGrid::deserialize(data["base_data"].get_obj());
 }
 
 void SolvationGrid::set_probe_atom_type(core::ShortSize const & atom_type)
 {
-    probe_atom_type_ = atom_type;
+	probe_atom_type_ = atom_type;
 }
 
 

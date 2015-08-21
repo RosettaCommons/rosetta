@@ -17,7 +17,7 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
-namespace flxbb{
+namespace flxbb {
 
 class FilterStructs;
 class FilterStructs_Packstat;

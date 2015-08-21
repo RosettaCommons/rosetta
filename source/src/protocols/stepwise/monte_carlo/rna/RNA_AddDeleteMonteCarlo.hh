@@ -40,10 +40,10 @@ class RNA_AddDeleteMonteCarlo: public protocols::moves::Mover {
 public:
 
 
-RNA_AddDeleteMonteCarlo(  mover::AddOrDeleteMoverOP rna_add_or_delete_mover,
-													RNA_TorsionMoverOP     rna_torsion_mover,
-													RNA_O2PrimeMoverOP      rna_o2prime_mover,
-													core::scoring::ScoreFunctionOP scorefxn );
+	RNA_AddDeleteMonteCarlo(  mover::AddOrDeleteMoverOP rna_add_or_delete_mover,
+		RNA_TorsionMoverOP     rna_torsion_mover,
+		RNA_O2PrimeMoverOP      rna_o2prime_mover,
+		core::scoring::ScoreFunctionOP scorefxn );
 
 	//destructor -- necessary? -- YES destructors are necessary.
 	~RNA_AddDeleteMonteCarlo();

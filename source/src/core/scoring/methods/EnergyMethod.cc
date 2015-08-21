@@ -111,14 +111,14 @@ EnergyMethod::eval_atom_derivative(
 /// @details default behavior is to return 0
 Real
 EnergyMethod::eval_dof_derivative(
-	id::DOF_ID const &,
-	id::TorsionID const &,
-	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap const &
+id::DOF_ID const &,
+id::TorsionID const &,
+pose::Pose const &,
+ScoreFunction const &,
+EnergyMap const &
 ) const
 {
-	return 0.0;
+return 0.0;
 }*/
 
 /// called at the end of energy evaluation
@@ -140,19 +140,19 @@ EnergyMethod::finalize_total_energy(
 void
 EnergyMethod::add_score_type( ScoreType const & type )
 {
-	if ( type > n_score_types ) {
-		std::cerr << "Critical error in EnergyMethod::add_score_type().\nAn EnergyMethod class has been instantiated ";
-		std::cerr << "that will compute the inactive score type '" << type;
-		std::cerr << "' defined at position " << (int) type << " in the ScoreType enumeration.\n";
-		std::cerr << "This energy method would produce a segmentation fault down the road as it tried to write to ";
-		std::cerr << "a position in an EnergyMap object beyond the end of the array contained in that object.\n";
-		std::cerr << "Active score types must appear before the n_score_types element ";
-		std::cerr << "(at position " << (int) n_score_types << ") as this element marks the end of the active score types.\n";
-		std::cerr << "Rosetta must be recompiled after src/core/scoring/ScoreType.hh is modified to include " << type;
-		std::cerr << " as an active score type." << std::endl;
-		utility_exit_with_message( "ERROR: Attempted to use an inactive score type" );
-	}
-	score_types_.push_back( type );
+if ( type > n_score_types ) {
+std::cerr << "Critical error in EnergyMethod::add_score_type().\nAn EnergyMethod class has been instantiated ";
+std::cerr << "that will compute the inactive score type '" << type;
+std::cerr << "' defined at position " << (int) type << " in the ScoreType enumeration.\n";
+std::cerr << "This energy method would produce a segmentation fault down the road as it tried to write to ";
+std::cerr << "a position in an EnergyMap object beyond the end of the array contained in that object.\n";
+std::cerr << "Active score types must appear before the n_score_types element ";
+std::cerr << "(at position " << (int) n_score_types << ") as this element marks the end of the active score types.\n";
+std::cerr << "Rosetta must be recompiled after src/core/scoring/ScoreType.hh is modified to include " << type;
+std::cerr << " as an active score type." << std::endl;
+utility_exit_with_message( "ERROR: Attempted to use an inactive score type" );
+}
+score_types_.push_back( type );
 }
 */
 

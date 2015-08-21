@@ -31,60 +31,60 @@ namespace frag_picker {
 using namespace core;
 
 static thread_local basic::Tracer trDiversifyCrmsdSelector(
-                "protocols.frag_picker.DiversifyCrmsdSelector");
+	"protocols.frag_picker.DiversifyCrmsdSelector");
 
 void DiversifyCrmsdSelector::copy_coordinates(FragmentCandidateOP src, ObjexxFCL::FArray2D_double & dst) {
 
-    pose::PoseOP pose = src->get_chunk()->get_pose();
-    Size len = src->get_length();
-    Size offset = src->get_first_index_in_vall() - 1;
+	pose::PoseOP pose = src->get_chunk()->get_pose();
+	Size len = src->get_length();
+	Size offset = src->get_first_index_in_vall() - 1;
 
-    for (core::Size i = 1; i <= len; i++) {
-	id::NamedAtomID idCA("CA", i+offset);
-	PointPosition const& xyz = pose->xyz(idCA);
-	for (core::Size d = 1; d <= 3; ++d) {
-	    dst(d, i) = xyz[d - 1];
+	for ( core::Size i = 1; i <= len; i++ ) {
+		id::NamedAtomID idCA("CA", i+offset);
+		PointPosition const& xyz = pose->xyz(idCA);
+		for ( core::Size d = 1; d <= 3; ++d ) {
+			dst(d, i) = xyz[d - 1];
+		}
 	}
-    }
 }
 
 
 /// @brief  Selects desired number of fragments from a given set of candidates
 void DiversifyCrmsdSelector::select_fragments(
-   ScoredCandidatesVector1 const& in,
-	 ScoredCandidatesVector1& out )
+	ScoredCandidatesVector1 const& in,
+	ScoredCandidatesVector1& out )
 {
 
-	if(in.size()==0) return;
+	if ( in.size()==0 ) return;
 
 	Size len = in[1].first->get_length();
 
-	if ((Size) fi_.size2() < len) {
+	if ( (Size) fi_.size2() < len ) {
 		fj_.redimension(3, len, 0.0);
 		fi_.redimension(3, len, 0.0);
 	}
 
 	out.push_back( in[1] );
-	for(Size i=2;i<=in.size();i++) {
-		if(out.size() >= frags_per_pos() ) break;
+	for ( Size i=2; i<=in.size(); i++ ) {
+		if ( out.size() >= frags_per_pos() ) break;
 		bool is_ok = true;
 		copy_coordinates(in[i].first,fi_);
-		for(Size j=1;j<=out.size();j++) {
-		    copy_coordinates(out[j].first,fj_);
-		    Real rms = numeric::model_quality::rms_wrapper(len,fi_,fj_);
-		    if(rms<cutoff_) {
-			is_ok = false;
-			trDiversifyCrmsdSelector.Trace<<"Crmsd is "<<rms<<" fragment "<< *in[i].first<<" denied"<<std::endl;;
-			break;
-		    }
+		for ( Size j=1; j<=out.size(); j++ ) {
+			copy_coordinates(out[j].first,fj_);
+			Real rms = numeric::model_quality::rms_wrapper(len,fi_,fj_);
+			if ( rms<cutoff_ ) {
+				is_ok = false;
+				trDiversifyCrmsdSelector.Trace<<"Crmsd is "<<rms<<" fragment "<< *in[i].first<<" denied"<<std::endl;;
+				break;
+			}
 		}
-		if(is_ok) {
-		    out.push_back( in[i] );
-		    trDiversifyCrmsdSelector.Trace<<"Fragment "<< *in[i].first<<" passed"<<std::endl;;
+		if ( is_ok ) {
+			out.push_back( in[i] );
+			trDiversifyCrmsdSelector.Trace<<"Fragment "<< *in[i].first<<" passed"<<std::endl;;
 		}
 	}
 	trDiversifyCrmsdSelector<<out.size()<<" fragments passed through DiversifyCrmsdSelector at query position "
-	    << in[1].first->get_first_index_in_query()<<std::endl;
+		<< in[1].first->get_first_index_in_query()<<std::endl;
 }
 
 } // frag_picker

@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //
-/// @file 
+/// @file
 /// @brief
-/// @author Javier Castellanos	(javiercv@uw.edu)
+/// @author Javier Castellanos (javiercv@uw.edu)
 
 #ifndef INCLUDED_devel_constrained_sequence_Symmetrizer_fwd_HH
 #define INCLUDED_devel_constrained_sequence_Symmetrizer_fwd_HH

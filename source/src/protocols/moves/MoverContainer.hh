@@ -68,9 +68,9 @@ public:
 	// and the contained movers, for rmsd
 	virtual void set_native_pose( PoseCOP pose );
 
-  // @brief Sets the current tag for both the container
-  // and the contained movers
-  virtual void set_current_tag( std::string const & new_tag );
+	// @brief Sets the current tag for both the container
+	// and the contained movers
+	virtual void set_current_tag( std::string const & new_tag );
 
 	virtual void apply( core::pose::Pose & pose ) = 0;
 	Size nr_moves() { return movers_.size(); };

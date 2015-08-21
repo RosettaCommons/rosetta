@@ -70,7 +70,7 @@ public:
 
 		ab_info = AntibodyInfoOP( new AntibodyInfo(ab_pose, AHO_Scheme, North) );
 		ab_info->setup_CDR_clusters(ab_pose);
-		
+
 
 
 	}
@@ -98,7 +98,7 @@ public:
 
 	}
 	void test_cluster_identification(){
-		
+
 		using namespace core::pose::datacache;
 		TS_ASSERT(check_if_pose_renumbered_for_clusters(ab_pose));
 
@@ -121,18 +121,18 @@ public:
 		TS_ASSERT_EQUALS(l1, ab_info->get_cdr_enum_for_cluster(L1_11_1));
 		TS_ASSERT_EQUALS(11, ab_info->get_cluster_length(L1_11_1));
 		TS_ASSERT_EQUALS(L1_11_1, ab_info->get_cluster_enum("L1-11-1"));
-		
+
 		ab_info->get_CDR_cluster_set()->set_cacheable_cluster_data_to_pose(ab_pose);
 		TS_ASSERT(ab_pose.data().has(CacheableDataType::CDR_CLUSTER_INFO));
 		BasicCDRClusterSet const & cluster_cache = static_cast< BasicCDRClusterSet const & >(ab_pose.data().get(CacheableDataType::CDR_CLUSTER_INFO));
 		CDRClusterCOP l1_result = cluster_cache.get_cluster(l1);
 		CDRClusterCOP l2_result = cluster_cache.get_cluster(l2);
 		CDRClusterCOP l3_result = cluster_cache.get_cluster(l3);
-		
+
 		TS_ASSERT_EQUALS(L1_11_1, l1_result->cluster());
 		TS_ASSERT_EQUALS(L2_8_1, l2_result->cluster());
 		TS_ASSERT_EQUALS(L3_8_1, l3_result->cluster());
-		
+
 		//Test that we can clone the ClusterOP
 		CDRClusterCOP l1_cop = ab_info->get_CDR_cluster(l1);
 		TS_ASSERT_THROWS_NOTHING(l1_cop->clone());
@@ -140,20 +140,20 @@ public:
 		//Test manually updating the cluster
 		// make sure this is reflected in the datacache after update
 		CDRClusterOP new_l1_cluster( new CDRCluster(
-				ab_pose,
-				l1,
-				11,
-				L1_11_2,
-				ab_info->get_CDR_start(l1, ab_pose),
-				.2) );
-		
+			ab_pose,
+			l1,
+			11,
+			L1_11_2,
+			ab_info->get_CDR_start(l1, ab_pose),
+			.2) );
+
 		ab_info->set_CDR_cluster(l1, new_l1_cluster);
 		ab_info->get_CDR_cluster_set()->set_cacheable_cluster_data_to_pose(ab_pose);
 		TS_ASSERT(ab_pose.data().has(CacheableDataType::CDR_CLUSTER_INFO));
-		
+
 		BasicCDRClusterSet const & cluster_cache2 = static_cast< BasicCDRClusterSet const & >(ab_pose.data().get(CacheableDataType::CDR_CLUSTER_INFO));
 		CDRClusterCOP new_l1 = cluster_cache2.get_cluster(l1);
-		
+
 		TS_ASSERT_EQUALS(L1_11_2, new_l1->cluster());
 
 	}

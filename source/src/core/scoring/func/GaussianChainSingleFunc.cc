@@ -31,7 +31,7 @@ namespace scoring {
 namespace func {
 
 GaussianChainSingleFunc::GaussianChainSingleFunc( Real const gaussian_variance,
-																									Real const loop_fixed_cost ):
+	Real const loop_fixed_cost ):
 	gaussian_variance_( gaussian_variance ),
 	loop_fixed_cost_( loop_fixed_cost )
 {

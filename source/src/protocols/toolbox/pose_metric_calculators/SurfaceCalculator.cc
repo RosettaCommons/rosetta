@@ -40,7 +40,7 @@ namespace toolbox {
 namespace pose_metric_calculators {
 
 SurfaceCalculator::SurfaceCalculator( bool remove_nonprotein_res )
-	: total_surface_energy_(0.0), remove_nonprotein_res_(remove_nonprotein_res )
+: total_surface_energy_(0.0), remove_nonprotein_res_(remove_nonprotein_res )
 {}
 
 SurfaceCalculator::~SurfaceCalculator(){}
@@ -78,10 +78,11 @@ SurfaceCalculator::print( std::string const & key ) const {
 		ss << "[";
 		for ( Size ii=1; ii < residue_surface_energy_.size(); ++ii ) {
 			ss << ii << ":";
-			if ( residue_surface_energy_[ ii ] != 0.00 )
+			if ( residue_surface_energy_[ ii ] != 0.00 ) {
 				ss << ObjexxFCL::format::F(8,4, residue_surface_energy_[ ii ]);
-			else
+			} else {
 				ss << "---";
+			}
 			ss << ",  ";
 		}
 		ss << "] (UNWEIGHTED)";
@@ -104,7 +105,7 @@ SurfaceCalculator::recompute( pose::Pose const & this_pose ) {
 
 	} else {
 		bool has_nonprot_res(false);
-		for ( core::Size i = 1; i <= this_pose.total_residue(); ++i) {
+		for ( core::Size i = 1; i <= this_pose.total_residue(); ++i ) {
 			if ( ! this_pose.residue_type(i).is_protein() ) {
 				has_nonprot_res = true;
 				break;

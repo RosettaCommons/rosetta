@@ -6,21 +6,21 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
- //////////////////////////////////////////////
- /// @file PseudocontactShiftTensor.fwd.hh
- ///
- /// @authorv Christophe Schmitz , Kala Bharath Pilla
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+/// @file PseudocontactShiftTensor.fwd.hh
+///
+/// @authorv Christophe Schmitz , Kala Bharath Pilla
+///
+////////////////////////////////////////////////
 
 
 #ifndef INCLUDED_protocols_scoring_methods_pcsTs4_PseudocontactShiftTensor_fwd_hh
 #define INCLUDED_protocols_scoring_methods_pcsTs4_PseudocontactShiftTensor_fwd_hh
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcsTs4{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcsTs4 {
 
 class PCS_tensor_Ts4;
 

@@ -49,12 +49,12 @@ class ProtectedFoldabilityFilter : public devel::denovo_design::filters::Foldabi
 public:
 	/// @brief gets aa string, ss string, and abego vector for the area to rebuild
 	void Tget_aa_ss_abego(
-			std::string & aa,
-			std::string & ss,
-			utility::vector1< std::string > & abego,
-			core::Size const start,
-			core::Size & end,
-			core::pose::Pose const & pose ) const
+		std::string & aa,
+		std::string & ss,
+		utility::vector1< std::string > & abego,
+		core::Size const start,
+		core::Size & end,
+		core::pose::Pose const & pose ) const
 	{
 		get_aa_ss_abego( aa, ss, abego, start, end, pose );
 	}
@@ -66,19 +66,19 @@ public:
 
 	/// @brief deletes the segment from start to end (inclusive) from the pose
 	void Tprepare_pose(
-			core::pose::Pose & pose,
-			core::Size const start,
-			core::Size const end ) const
+		core::pose::Pose & pose,
+		core::Size const start,
+		core::Size const end ) const
 	{
 		prepare_pose( pose, start, end );
 	}
 
 	/// @brief abegod scores
 	core::Real Tabegodb_score(
-			core::pose::Pose const & pose,
-			utility::vector1< std::string > const & abego,
-			core::Size const start,
-			core::Size const stop ) const
+		core::pose::Pose const & pose,
+		utility::vector1< std::string > const & abego,
+		core::Size const start,
+		core::Size const stop ) const
 	{
 		return abegodb_score( pose, abego, start, stop );
 	}

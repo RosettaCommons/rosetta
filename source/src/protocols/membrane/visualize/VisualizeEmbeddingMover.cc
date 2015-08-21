@@ -6,13 +6,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	    protocols/membrane/VisualizeEmbeddingMoverCreator.hh
+/// @file     protocols/membrane/VisualizeEmbeddingMoverCreator.hh
 /// @brief      Visualize Embedding normal and center with Virtual Residues
 /// @details    Add a set of virtual residues as an additional chain to the
-///				membrane pose. This tool is strictly for visualization of
-///				the implicit membrane and should not be present in modeling.
-///				Last Modified: 11/20/14
-/// @author		JKLeman (julia.koehler1982@gmail.com)
+///    membrane pose. This tool is strictly for visualization of
+///    the implicit membrane and should not be present in modeling.
+///    Last Modified: 11/20/14
+/// @author  JKLeman (julia.koehler1982@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_visualize_VisualizeEmbeddingMover_cc
 #define INCLUDED_protocols_membrane_visualize_VisualizeEmbeddingMover_cc
@@ -26,7 +26,7 @@
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
-#include <core/conformation/Conformation.hh> 
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 
 #include <core/conformation/Residue.hh>
@@ -66,13 +66,13 @@ using namespace protocols::membrane::geometry;
 /// Constructors ///
 ////////////////////
 
-/// @brief	  Default Constructor
+/// @brief   Default Constructor
 /// @details  Gets the embeddings from the pose and topology
 VisualizeEmbeddingMover::VisualizeEmbeddingMover() : embeddings_() {
 	register_options();
 }
 
-/// @brief	  Constructor from embedding
+/// @brief   Constructor from embedding
 /// @details  Visualizes defined embedding
 VisualizeEmbeddingMover::VisualizeEmbeddingMover( EmbeddingOP embedding ) :
 	embeddings_( embedding ) {
@@ -90,15 +90,15 @@ VisualizeEmbeddingMover::VisualizeEmbeddingMover( VisualizeEmbeddingMover const 
 /// @details Overloads "=" assignemnt for deep copying
 VisualizeEmbeddingMover &
 VisualizeEmbeddingMover::operator=( VisualizeEmbeddingMover const & src ) {
-	
+
 	// Abort self-assignment.
-	if (this == &src) {
+	if ( this == &src ) {
 		return *this;
 	}
-	
+
 	// Otherwise, create a new object
 	return *( new VisualizeEmbeddingMover( *this ) );
-	
+
 }
 
 /// @brief Destructor
@@ -125,7 +125,7 @@ protocols::moves::MoverOP
 VisualizeEmbeddingMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new VisualizeEmbeddingMover() );
 }
-	
+
 /// @brief Return the Name of this mover (as seen by Rscripts)
 std::string
 VisualizeEmbeddingMoverCreator::keyname() const {
@@ -150,27 +150,27 @@ VisualizeEmbeddingMover::apply( Pose & pose ) {
 	using namespace basic::options::OptionKeys;
 
 	if ( option[ OptionKeys::mp::visualize::embedding ].user() ) {
-		
+
 		TR << "Adding virtual residues to the pose to visualize embeddings of TMspans" << std::endl;
 
 		// Check that I am a membrane pose
-		if (! pose.conformation().is_membrane() ) {
+		if ( ! pose.conformation().is_membrane() ) {
 			utility_exit_with_message("Cannot visualize a non-membrane pose!");
 		}
-		
+
 		// Determine if the pose is fullatom (needed for residue typesets)
 		bool fullatom = pose.is_fullatom();
-		
+
 		// get topology
 		SpanningTopology topo = *pose.conformation().membrane_info()->spanning_topology();
-		
+
 		// get embedding object from pose and topology if not set previously
 		if ( embeddings_->nspans() == 0 ) {
 			EmbeddingOP emb( new Embedding( topo, pose ) );
 			embeddings_ = emb;
 		}
 		embeddings_->show();
-		
+
 		// create empty object to push embedding residues back into
 		utility::vector1< ResidueOP > embedding_residues;
 
@@ -179,14 +179,14 @@ VisualizeEmbeddingMover::apply( Pose & pose ) {
 
 		// grab residues out of embedding object
 		for ( Size i = 1; i <= embeddings_->nspans(); ++i ) {
-			
+
 			// get center and normal POINTS
 			Vector center = embeddings_->embedding( i )->center();
 			Vector normal = center + embeddings_->embedding( i )->normal().normalize( thickness );
 
 			// Create a new residue, append to list
 			ResidueOP emb = create_embedding_virtual( center, normal, fullatom );
-			
+
 			// Append residue to list
 			embedding_residues.push_back( emb );
 		}
@@ -202,7 +202,7 @@ VisualizeEmbeddingMover::apply( Pose & pose ) {
 
 		// if first residue, create new chain
 		bool is_first( true );
-		
+
 		// Append Residues to the pose
 		for ( Size i = 1; i <= embedding_residues.size(); ++i ) {
 			if ( is_first ) {
@@ -227,32 +227,32 @@ VisualizeEmbeddingMover::get_name() const {
 /// @brief Register Options with JD2
 void
 VisualizeEmbeddingMover::register_options() {
-	
+
 	using namespace basic::options;
 	option.add_relevant( OptionKeys::mp::visualize::embedding );
-	
+
 }
 
 /// @brief create virtual residue for visualization in PDB file
 ResidueOP
 VisualizeEmbeddingMover::create_embedding_virtual( Vector center, Vector normal, bool fullatom ) {
-	
+
 	using namespace core::conformation;
 	using namespace core::chemical;
-	
+
 	// Grab the current residue typeset and create a new residue
 	ResidueTypeSetCOP const & residue_set(
 		core::chemical::ChemicalManager::get_instance()->residue_type_set( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
-		);
-	
+	);
+
 	// Create a new Residue from rsd typeset of type MEM
 	ResidueTypeCOP rsd_type( residue_set->get_representative_type_name3("EMB") );
 	ResidueType const & membrane( *rsd_type );
 	ResidueOP rsd( ResidueFactory::create_residue( membrane ) );
-	
+
 	// set something close to center for thickness, so it doesn't confuse the viewer
 	Vector bogus( center.x()+0.001, center.y()+0.001, center.z()+0.001 );
-	
+
 	// Fill the Residue with normal/center info: AtomID, position
 	rsd->set_xyz(1, center);
 	rsd->set_xyz(2, normal);

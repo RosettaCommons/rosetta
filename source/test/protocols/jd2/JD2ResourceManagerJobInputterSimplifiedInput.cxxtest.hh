@@ -168,7 +168,7 @@ public:
 			basic::resource_manager::ResourceManager::get_instance());
 		basic::resource_manager::LazyResourceManager * lazy_resource_manager(
 			dynamic_cast< basic::resource_manager::LazyResourceManager * > (
-				resource_manager ));
+			resource_manager ));
 
 		// Make absolutely sure we're starting with a clean resource manager
 		lazy_resource_manager->clear();
@@ -204,11 +204,11 @@ public:
 			return;
 		}
 
-		for(
-			Jobs::const_iterator
+		for (
+				Jobs::const_iterator
 				ja = a_jobvector.begin(), jae = a_jobvector.end(), jb = b_jobvector.begin();
-			ja != jae; ++ja, ++jb){
-			if(jb == b_jobvector.end()){
+				ja != jae; ++ja, ++jb ) {
+			if ( jb == b_jobvector.end() ) {
 				std::cerr << "The following resource manager XML definitions produced different jobs:" << std::endl;
 				std::cerr << "XML a:" << std::endl << a << std::endl;
 				std::cerr << "XML b:" << std::endl << b << std::endl;
@@ -219,7 +219,7 @@ public:
 				TS_ASSERT( false );
 				return;
 			}
-			if(**ja != **jb){
+			if ( **ja != **jb ) {
 				std::cerr << "The following resource manager XML definitions produced different jobs:" << std::endl;
 				std::cerr << "XML a:" << std::endl << a << std::endl;
 				std::cerr << "XML b:" << std::endl << b << std::endl;

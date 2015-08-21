@@ -13,7 +13,7 @@
 
 
 #ifndef INCLUDED_protocols_toolbox_task_operations_RestrictToMoveMapChiOperationCreator_hh
-#define	INCLUDED_protocols_toolbox_task_operations_RestrictToMoveMapChiOperationCreator_hh
+#define INCLUDED_protocols_toolbox_task_operations_RestrictToMoveMapChiOperationCreator_hh
 
 #include <core/pack/task/operation/TaskOperationCreator.hh>
 
@@ -27,13 +27,13 @@ namespace task_operations {
 /* Undefined, commenting out to fix PyRosetta build
 class RestrictToMoveMapChiOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
-	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "RestrictToMoveMapChiOperation"; }
+virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
+virtual std::string keyname() const { return "RestrictToMoveMapChiOperation"; }
 };
-	*/
+*/
 
 } //namespace protocols
 } //namespace toolbox
 } //namespace task_operations
 
-#endif	//INCLUDED_protocols_antibody_design_RestrictToMoveMapChiOperationCreator.hh
+#endif //INCLUDED_protocols_antibody_design_RestrictToMoveMapChiOperationCreator.hh

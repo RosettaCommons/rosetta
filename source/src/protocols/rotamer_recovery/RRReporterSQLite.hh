@@ -113,7 +113,7 @@ public:
 	void
 	set_output_level(OutputLevel output_level );
 
-	OutputLevel	get_output_level() const;
+	OutputLevel get_output_level() const;
 
 	void
 	set_struct_id1(

@@ -20,13 +20,13 @@
 
 
 namespace protocols {
-	namespace jd2 {
+namespace jd2 {
 
-		class JobsContainer;
-		typedef utility::pointer::shared_ptr< JobsContainer > JobsContainerOP;
-		typedef utility::pointer::shared_ptr< JobsContainer const > JobsContainerCOP;
+class JobsContainer;
+typedef utility::pointer::shared_ptr< JobsContainer > JobsContainerOP;
+typedef utility::pointer::shared_ptr< JobsContainer const > JobsContainerCOP;
 
-	}//jd2
+}//jd2
 }//protocols
 
 #endif //INCLUDED_protocols_jd2_JobsContainer_FWD_HH

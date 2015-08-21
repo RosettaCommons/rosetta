@@ -18,7 +18,7 @@
 /// First, create the calculator. To do this, see below:
 /// core::pose::metrics::PoseMetricCalculatorOP cat_pi_calculator = new protocols::toolbox::pose_metric_calculators::SaltBridgeCalculator();
 /// Then you must register this so that the pose understands it. See below:
-///	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "cat_pi_metric", cat_pi_calculator );
+/// core::pose::metrics::CalculatorFactory::Instance().register_calculator( "cat_pi_metric", cat_pi_calculator );
 /// To actually get the metric, you have to print it. For example:
 /// core::pose::Pose pose;
 /// pose.print_metric("cat_pi_metric", "cat_pi")
@@ -46,48 +46,48 @@
 
 static thread_local basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.CatPiCalculator" );
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 
 
-	/// @brief default constructor sets distance_cutoff to 5.0. This is what is usually defined as a Hbond between heavy atom (carbon) and Hydrogen
-	CatPiCalculator::CatPiCalculator() :
-		distance_cutoff_(5.0),
-		cat_pi_total_(0)
-	{
+/// @brief default constructor sets distance_cutoff to 5.0. This is what is usually defined as a Hbond between heavy atom (carbon) and Hydrogen
+CatPiCalculator::CatPiCalculator() :
+	distance_cutoff_(5.0),
+	cat_pi_total_(0)
+{
 
-	}
+}
 
 
-	/// @brief constructur where you define what the distance cutoff is for the pi pi
-	CatPiCalculator::CatPiCalculator(core::Real dist_cutoff) :
-		distance_cutoff_(dist_cutoff),
-		cat_pi_total_(0)
-	{
+/// @brief constructur where you define what the distance cutoff is for the pi pi
+CatPiCalculator::CatPiCalculator(core::Real dist_cutoff) :
+	distance_cutoff_(dist_cutoff),
+	cat_pi_total_(0)
+{
 
-	}
+}
 
 
 void CatPiCalculator::lookup( std::string const & key, basic::MetricValueBase * valptr ) const{
-	 if ( key == "cat_pi" ) {
-	     basic::check_cast( valptr, &cat_pi_total_, "cat_pi expects to return a Size" );
-	     (static_cast<basic::MetricValue<core::Size> *>(valptr))->set( cat_pi_total_ );
+	if ( key == "cat_pi" ) {
+		basic::check_cast( valptr, &cat_pi_total_, "cat_pi expects to return a Size" );
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( cat_pi_total_ );
 
-	   }else {
-		     basic::Error() << "CatPiCalculator cannot compute the requested metric " << key << std::endl;
-		     utility_exit();
-		   }
+	} else {
+		basic::Error() << "CatPiCalculator cannot compute the requested metric " << key << std::endl;
+		utility_exit();
+	}
 }
 
 
 std::string CatPiCalculator::print( std::string const & key ) const{
-	if(key == "cat_pi"){
+	if ( key == "cat_pi" ) {
 		return utility::to_string(cat_pi_total_);
 	}
 	basic::Error() << "CatPiCalculator cannot compute metric " << key << std::endl;
-	  utility_exit();
-	  return "";
+	utility_exit();
+	return "";
 
 }
 
@@ -96,16 +96,16 @@ std::string CatPiCalculator::print( std::string const & key ) const{
 void CatPiCalculator::recompute(core::pose::Pose const & pose){
 	cat_pi_total_ = 0;
 	//start iterating through the residues
-	for(core::Size res_num1=1; res_num1 <= pose.n_residue(); ++res_num1){
+	for ( core::Size res_num1=1; res_num1 <= pose.n_residue(); ++res_num1 ) {
 		//assign the number to a residue based on the seqpos
 		core::conformation::Residue acceptor(pose.residue(res_num1));
 		//continue only if the residue is either aspartic or glutamic acid
-		if(acceptor.name3() == "TYR" || acceptor.name3() =="PHE" || acceptor.name3() == "TRP"){
-			for(core::Size res_num2=1; res_num2 <= pose.n_residue(); ++res_num2){
-				if(res_num1 == res_num2) continue;//stop from counting same residues as a pair
+		if ( acceptor.name3() == "TYR" || acceptor.name3() =="PHE" || acceptor.name3() == "TRP" ) {
+			for ( core::Size res_num2=1; res_num2 <= pose.n_residue(); ++res_num2 ) {
+				if ( res_num1 == res_num2 ) continue;//stop from counting same residues as a pair
 				core::conformation::Residue donate(pose.residue(res_num2));
 				//only continue if this residue is a his, lys or arg
-				if(donate.name3() == "ARG" || donate.name3() == "LYS" ){
+				if ( donate.name3() == "ARG" || donate.name3() == "LYS" ) {
 					//set up a flag that will stop us from double counting salt bridges
 					bool get_out_of_loop=false;
 					//start iteration through acceptor heavy atoms.
@@ -113,23 +113,22 @@ void CatPiCalculator::recompute(core::pose::Pose const & pose){
 							core::Size acc_atm = acceptor.first_sidechain_atom();
 							acc_atm != acceptor.nheavyatoms();
 							++acc_atm
-						)
-					{
+							) {
 
-						if(acceptor.atom_name(acc_atm) == " CB ") continue; //not interested in the cb atom
+						if ( acceptor.atom_name(acc_atm) == " CB " ) continue; //not interested in the cb atom
 						for
-						(
-								core::chemical::AtomIndices::const_iterator
-								don_num = donate.Hpos_polar_sc().begin(),
-								don_nume = donate.Hpos_polar_sc().end();
-								don_num != don_nume; ++don_num
-						){
+							(
+									core::chemical::AtomIndices::const_iterator
+									don_num = donate.Hpos_polar_sc().begin(),
+									don_nume = donate.Hpos_polar_sc().end();
+									don_num != don_nume; ++don_num
+									) {
 							core::Size const don_atm(*don_num);
 
 							//get the distance between the donor residue and polar hydrogen sidechain
 							core::Real distance(acceptor.xyz(acc_atm).distance(donate.xyz(don_atm)) );
 
-							if(get_out_of_loop ==false && distance < distance_cutoff_){
+							if ( get_out_of_loop ==false && distance < distance_cutoff_ ) {
 								++cat_pi_total_;
 								get_out_of_loop=true;
 							}

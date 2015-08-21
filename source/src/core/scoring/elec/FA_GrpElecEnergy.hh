@@ -47,8 +47,8 @@ namespace elec {
 class FAElecContextData : public basic::datacache::CacheableData {
 
 public:
- 	FAElecContextData();
- 	~FAElecContextData();
+	FAElecContextData();
+	~FAElecContextData();
 
 	void initialize( Size const nres );
 
@@ -81,7 +81,7 @@ public:
 
 	FA_GrpElecEnergy( FA_GrpElecEnergy const & src );
 
-  /// @brief Initilize constants.
+	/// @brief Initilize constants.
 	void
 	initialize();
 
@@ -221,7 +221,7 @@ public:
 	finalize_total_energy(
 		pose::Pose & ,
 		ScoreFunction const &,
-		EnergyMap & 
+		EnergyMap &
 	) const;
 
 
@@ -232,7 +232,7 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-   ) const;
+	) const;
 
 	void
 	eval_intrares_derivatives(
@@ -304,7 +304,7 @@ public:
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
 
-/// Private methods
+	/// Private methods
 private:
 
 	void
@@ -314,22 +314,22 @@ private:
 
 	void
 	precalc_context( pose::Pose & pose,
-									 FAElecContextDataOP data
-									 ) const;
+		FAElecContextDataOP data
+	) const;
 
 
 	Real
 	eval_n( Real const cendist,
-					Real &dn_drij,
-					bool const eval_deriv ) const;
+		Real &dn_drij,
+		bool const eval_deriv ) const;
 
 	void
 	eval_context_derivatives(
-													 conformation::Residue const & rsd1,
-													 FAElecContextDataCOP data,
-													 EnergyMap const &,
-													 utility::vector1< DerivVectorPair > & r1_atom_derivs
-													 ) const;
+		conformation::Residue const & rsd1,
+		FAElecContextDataCOP data,
+		EnergyMap const &,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs
+	) const;
 
 	core::Real
 	burial_weight( core::Real const nb ) const;

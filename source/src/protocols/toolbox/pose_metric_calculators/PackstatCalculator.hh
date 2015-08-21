@@ -32,7 +32,7 @@
 #include <basic/options/keys/packstat.OptionKeys.gen.hh>
 
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 
@@ -40,39 +40,39 @@ class PackstatCalculator : public core::pose::metrics::StructureDependentCalcula
 
 public:
 
-  PackstatCalculator(
-    core::Size oversample = basic::options::option[basic::options::OptionKeys::packstat::oversample],
-    bool remove_nonprotein_res = false
-  );
+	PackstatCalculator(
+		core::Size oversample = basic::options::option[basic::options::OptionKeys::packstat::oversample],
+		bool remove_nonprotein_res = false
+	);
 
 
-  PackstatCalculator(
-    std::set< core::Size > const & special_region,
-    core::Size oversample = basic::options::option[basic::options::OptionKeys::packstat::oversample],
-    bool remove_nonprotein_res = false
-  );
+	PackstatCalculator(
+		std::set< core::Size > const & special_region,
+		core::Size oversample = basic::options::option[basic::options::OptionKeys::packstat::oversample],
+		bool remove_nonprotein_res = false
+	);
 
 
-  core::pose::metrics::PoseMetricCalculatorOP clone() const {
-    return core::pose::metrics::PoseMetricCalculatorOP( new PackstatCalculator( special_region_, oversample_) ); };
+	core::pose::metrics::PoseMetricCalculatorOP clone() const {
+		return core::pose::metrics::PoseMetricCalculatorOP( new PackstatCalculator( special_region_, oversample_) ); };
 
 protected:
 
-  virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-  virtual std::string print( std::string const & key ) const;
-  virtual void recompute( core::pose::Pose const & this_pose );
+	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
+	virtual std::string print( std::string const & key ) const;
+	virtual void recompute( core::pose::Pose const & this_pose );
 
 
 private:
 
-  core::Real total_packstat_;
-  core::Real special_region_packstat_;
-  utility::vector1< core::Real > residue_packstat_;
+	core::Real total_packstat_;
+	core::Real special_region_packstat_;
+	utility::vector1< core::Real > residue_packstat_;
 
-  core::Size oversample_;
-  bool remove_nonprotein_res_;
+	core::Size oversample_;
+	bool remove_nonprotein_res_;
 
-  std::set< core::Size > special_region_;
+	std::set< core::Size > special_region_;
 
 };
 

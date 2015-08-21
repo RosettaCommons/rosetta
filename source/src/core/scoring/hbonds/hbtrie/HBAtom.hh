@@ -101,9 +101,9 @@ public:
 			if ( hb_chem_type_ < other.hb_chem_type_ ) {
 				return true;
 			} else if ( hb_chem_type_ == other.hb_chem_type_ ) {
-				if (is_backbone_ < other.is_backbone_ ) {
+				if ( is_backbone_ < other.is_backbone_ ) {
 					return true;
-				}	else if (is_backbone_ == other.is_backbone_ ) {
+				} else if ( is_backbone_ == other.is_backbone_ ) {
 					if ( is_protein_ < other.is_protein_ ) {
 						return true;
 					} else if ( is_protein_ == other.is_protein_ ) {
@@ -111,7 +111,7 @@ public:
 							return true;
 						} else if ( is_dna_ == other.is_dna_ ) {
 							//if ( seqpos_ < other.seqpos_ ) {
-							//	return true;
+							// return true;
 							//} else if ( seqpos_ == other.seqpos_ ) {
 							// Quoting Jack Snoeyink: "Epsilons in code are evil."  But whatcha gonna do?
 							// Previously, computed xyz_.distance_squared( other.xyz_ ) and compared against an epsilon
@@ -145,12 +145,12 @@ public:
 	bool operator == ( HBAtom const & other ) const
 	{
 		if ( is_hydrogen_ == other.is_hydrogen_ &&
-				 hb_chem_type_ == other.hb_chem_type_ &&
-				 is_backbone_ == other.is_backbone_ &&
-				 is_protein_ == other.is_protein_ &&
-				 is_dna_ == other.is_dna_
+				hb_chem_type_ == other.hb_chem_type_ &&
+				is_backbone_ == other.is_backbone_ &&
+				is_protein_ == other.is_protein_ &&
+				is_dna_ == other.is_dna_
 				//&& seqpos_ == other.seqpos_
-			) {
+				) {
 			for ( int ii = 0; ii< 3; ++ii ) {
 				// Epsilons bad -- see above.
 				//Distance diff = std::abs( xyz_[ ii ] - other.xyz_[ ii ] );

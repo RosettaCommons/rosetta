@@ -58,59 +58,60 @@ core::pack::task::operation::TaskOperationOP LinkResidues::clone() const
 
 void LinkResidues::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {
-		using namespace std;
-		using namespace utility;
-		using namespace core;
-		core::pack::rotamer_set::RotamerLinksOP links( new core::pack::rotamer_set::RotamerLinks );
-		Size nres = pose.total_residue();
-		links->resize(nres);
-		utility::vector1< utility::vector1< Size > > equiv_pos;
-		//all positions are equivalent to themselves
-		for (Size ii = 1; ii<= nres ; ++ii){
-				utility::vector1<Size> list;
-				list.push_back(ii);
-				equiv_pos.push_back(list);
+	using namespace std;
+	using namespace utility;
+	using namespace core;
+	core::pack::rotamer_set::RotamerLinksOP links( new core::pack::rotamer_set::RotamerLinks );
+	Size nres = pose.total_residue();
+	links->resize(nres);
+	utility::vector1< utility::vector1< Size > > equiv_pos;
+	//all positions are equivalent to themselves
+	for ( Size ii = 1; ii<= nres ; ++ii ) {
+		utility::vector1<Size> list;
+		list.push_back(ii);
+		equiv_pos.push_back(list);
+	}
+	//add the groups in. Each group contains multiple sets of residues.
+	for ( Size ii=1; ii<=allGroups_.size(); ++ii ) {
+		vector1< string> const grp_s( utility::string_split( allGroups_[ii] , ',' ) );
+		vector1< vector1 <Size> > grp_i;
+		//get residues in number format into grp_res
+		for ( Size kk=1; kk<=grp_s.size(); ++kk ) {
+			vector1<Size> set_i = core::pose::get_resnum_list_ordered( grp_s[kk], pose );
+			grp_i.push_back(set_i);
 		}
-		//add the groups in. Each group contains multiple sets of residues.
-		for (Size ii=1; ii<=allGroups_.size(); ++ii) {
-				vector1< string> const grp_s( utility::string_split( allGroups_[ii] , ',' ) );
-				vector1< vector1 <Size> > grp_i;
-				//get residues in number format into grp_res
-				for(Size kk=1; kk<=grp_s.size(); ++kk){
-						vector1<Size> set_i = core::pose::get_resnum_list_ordered( grp_s[kk], pose );
-						grp_i.push_back(set_i);
-				}
-				//check that all sets in the group have the same number of residues
-				Size numResInSet = grp_i[1].size();
-				for(Size kk=2; kk<=grp_i.size(); ++kk){
-						runtime_assert(grp_i[kk].size() == numResInSet);
-				}
-				//go through the sets and set them to be equal
-				for(Size kk=1; kk<=grp_i.size(); ++kk){
-						for(Size ll=1; ll<=grp_i.size(); ++ll){
-								Size numResInSet = grp_i[kk].size();
-								for(Size mm=1; mm<=numResInSet; ++mm){
-										Size source = grp_i[kk][mm];
-										Size target = grp_i[ll][mm];
-										equiv_pos[source].push_back(target);
-								}
-						}
-				}
+		//check that all sets in the group have the same number of residues
+		Size numResInSet = grp_i[1].size();
+		for ( Size kk=2; kk<=grp_i.size(); ++kk ) {
+			runtime_assert(grp_i[kk].size() == numResInSet);
 		}
-		//print out equivalent residues
-		for(Size ii=1; ii<=equiv_pos.size(); ++ii){
-				TR.Debug << ii <<" ";
-				for(Size kk=1; kk<=equiv_pos[ii].size(); ++kk){
-						TR.Debug << equiv_pos[ii][kk] <<",";
+		//go through the sets and set them to be equal
+		for ( Size kk=1; kk<=grp_i.size(); ++kk ) {
+			for ( Size ll=1; ll<=grp_i.size(); ++ll ) {
+				Size numResInSet = grp_i[kk].size();
+				for ( Size mm=1; mm<=numResInSet; ++mm ) {
+					Size source = grp_i[kk][mm];
+					Size target = grp_i[ll][mm];
+					equiv_pos[source].push_back(target);
 				}
-				TR.Debug << std::endl;
+			}
 		}
-		//set up links
-		for(Size ii=1; ii<=equiv_pos.size(); ++ii){
-				if(equiv_pos[ii].size()!= 0)
-						links->set_equiv(ii,equiv_pos[ii]);
+	}
+	//print out equivalent residues
+	for ( Size ii=1; ii<=equiv_pos.size(); ++ii ) {
+		TR.Debug << ii <<" ";
+		for ( Size kk=1; kk<=equiv_pos[ii].size(); ++kk ) {
+			TR.Debug << equiv_pos[ii][kk] <<",";
 		}
-		task.rotamer_links( links );
+		TR.Debug << std::endl;
+	}
+	//set up links
+	for ( Size ii=1; ii<=equiv_pos.size(); ++ii ) {
+		if ( equiv_pos[ii].size()!= 0 ) {
+			links->set_equiv(ii,equiv_pos[ii]);
+		}
+	}
+	task.rotamer_links( links );
 }
 
 void
@@ -121,14 +122,14 @@ LinkResidues::add_group( std::string group  ){
 void
 LinkResidues::parse_tag( TagCOP tag , DataMap & )
 {
-  // now parse ncs groups <<< subtags
-  utility::vector1< TagCOP > const branch_tags( tag->getTags() );
+	// now parse ncs groups <<< subtags
+	utility::vector1< TagCOP > const branch_tags( tag->getTags() );
 	utility::vector1< TagCOP >::const_iterator tag_it;
-	for( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ){
-		if( (*tag_it)->getName() == "LinkGroup" || (*tag_it)->getName() == "linkgroup" ){
-				std::string grp_i = (*tag_it)->getOption<std::string>( "group" );
-				TR.Debug << "Adding grp " << grp_i << std::endl;
-				allGroups_.push_back( grp_i );
+	for ( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ) {
+		if ( (*tag_it)->getName() == "LinkGroup" || (*tag_it)->getName() == "linkgroup" ) {
+			std::string grp_i = (*tag_it)->getOption<std::string>( "group" );
+			TR.Debug << "Adding grp " << grp_i << std::endl;
+			allGroups_.push_back( grp_i );
 		}
 	}
 }

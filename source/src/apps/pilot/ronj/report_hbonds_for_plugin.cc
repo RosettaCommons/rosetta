@@ -77,11 +77,11 @@ OPT_1GRP_KEY( String, HBondReporter, relevant_chains )
 
 class HBondReporter : public protocols::moves::Mover {
 
-public:
+	public:
 
 
-HBondReporter() : allowNonProtein_( true ), relevant_chains_("*") {
-	scfxn = core::scoring::ScoreFunctionOP( new ScoreFunction );
+	HBondReporter() : allowNonProtein_( true ), relevant_chains_("*") {
+		scfxn = core::scoring::ScoreFunctionOP( new ScoreFunction );
 	scfxn->set_weight( core::scoring::hbond_lr_bb, 1.17 );
 	scfxn->set_weight( core::scoring::hbond_sr_bb, 0.585 );
 	scfxn->set_weight( core::scoring::hbond_bb_sc, 1.17 );
@@ -109,7 +109,7 @@ void load_job_data( Pose & pose ){
 	// the following is true if, say, the structure came from a silent file
 	if ( !pose.pdb_info() ) { return; }
 
-	if ( basic::options::option[ basic::options::OptionKeys::HBondReporter::relevant_chains ].user() ){
+	if ( basic::options::option[ basic::options::OptionKeys::HBondReporter::relevant_chains ].user() ) {
 
 		utility::io::izstream relevant_chains_file( basic::options::option[ basic::options::OptionKeys::HBondReporter::relevant_chains ]() );
 		if ( !relevant_chains_file ) {
@@ -165,26 +165,26 @@ std::string pose_name( pose::Pose& pose ) {
 /*
 void decoyify( pose::Pose& pose ) {
 
-	kinematics::MoveMapOP mm( new kinematics::MoveMap );
-	mm->clear();
+kinematics::MoveMapOP mm( new kinematics::MoveMap );
+mm->clear();
 
-	if ( relevant_chains_ == "*" || relevant_chains_.empty() ) {
-		TR << "Information about relevant chains not found for " << pose_name( pose ) << "!" << std::endl;
-		mm->set_bb( true );
-		mm->set_chi( true );
-	} else if ( !relevant_chains_.empty() ) {
-		for ( Size jj=1; jj <= pose.total_residue(); ++jj ) {
-			if ( relevant_chains_.find( pose.pdb_info()->chain( jj ), 0 ) != std::string::npos ) {
-				mm->set_bb( jj, true );
-				mm->set_chi( jj, true );
-			}
-		}
-	}
+if ( relevant_chains_ == "*" || relevant_chains_.empty() ) {
+TR << "Information about relevant chains not found for " << pose_name( pose ) << "!" << std::endl;
+mm->set_bb( true );
+mm->set_chi( true );
+} else if ( !relevant_chains_.empty() ) {
+for ( Size jj=1; jj <= pose.total_residue(); ++jj ) {
+if ( relevant_chains_.find( pose.pdb_info()->chain( jj ), 0 ) != std::string::npos ) {
+mm->set_bb( jj, true );
+mm->set_chi( jj, true );
+}
+}
+}
 
-	protocols::relax::FastRelax relax( scfxn );
-	TR << "Initial score: " << (*scfxn)(pose) << std::endl;
-	relax.apply(pose);
-	TR << "Decoy score: " << (*scfxn)(pose) << std::endl;
+protocols::relax::FastRelax relax( scfxn );
+TR << "Initial score: " << (*scfxn)(pose) << std::endl;
+relax.apply(pose);
+TR << "Decoy score: " << (*scfxn)(pose) << std::endl;
 }
 */
 
@@ -194,13 +194,14 @@ void decoyify( pose::Pose& pose ) {
 /// Why do we care about bfactors?
 ///
 Real bfactor( pose::Pose& pose, Size resNum, Size atm, bool is_backbone ) {
-	if ( !pose.pdb_info() ){ return 9999; }
-	if ( is_backbone )
+	if ( !pose.pdb_info() ) { return 9999; }
+	if ( is_backbone ) {
 		return pose.pdb_info()->temperature( resNum, atm );
-	else {
+	} else {
 		core::Real max_temp = -1000;
-		for ( Size ii=1; ii <= pose.residue( resNum ).natoms(); ii++)
+		for ( Size ii=1; ii <= pose.residue( resNum ).natoms(); ii++ ) {
 			max_temp = std::max( max_temp, pose.pdb_info()->temperature( resNum, ii ) );
+		}
 		return max_temp;
 	}
 }
@@ -278,8 +279,9 @@ apply( pose::Pose& pose ) {
 
 		bool isProtein = true;
 		if ( !donRes.is_protein() || !accRes.is_protein() ) { isProtein = false; }
-		if ( !( (set1.allow_hbond(i) && isProtein) || (set1.allow_hbond(i) && allowNonProtein_) ) )
+		if ( !( (set1.allow_hbond(i) && isProtein) || (set1.allow_hbond(i) && allowNonProtein_) ) ) {
 			continue;
+		}
 
 		//const std::string donElement = donAtomType.element();
 		//const std::string accElement = accAtomType.element();
@@ -304,8 +306,9 @@ apply( pose::Pose& pose ) {
 		}
 
 		if ( relevant_chains_ != "*" ) {
-			if ( ( relevant_chains_.find( don_chain, 0 ) == std::string::npos ) || (relevant_chains_.find( acc_chain, 0 ) == std::string::npos ) )
+			if ( ( relevant_chains_.find( don_chain, 0 ) == std::string::npos ) || (relevant_chains_.find( acc_chain, 0 ) == std::string::npos ) ) {
 				continue;
+			}
 		}
 
 		Size const donNbrs( set1.nbrs( don_resnum ) ); Size const accNbrs( set1.nbrs( acc_resnum ) );
@@ -378,9 +381,9 @@ apply( pose::Pose& pose ) {
 }
 
 private:
-	bool allowNonProtein_;
-	core::scoring::ScoreFunctionOP scfxn;
-	std::string relevant_chains_;
+bool allowNonProtein_;
+core::scoring::ScoreFunctionOP scfxn;
+std::string relevant_chains_;
 
 };
 
@@ -390,11 +393,11 @@ int main( int argc, char* argv[] ) {
 	try {
 
 
-	//NEW_OPT( HBondReporter::relax, "Perform relaxation before dumping hbonds", false );
-	NEW_OPT( HBondReporter::relevant_chains, "relevant_chains", "*" );
+		//NEW_OPT( HBondReporter::relax, "Perform relaxation before dumping hbonds", false );
+		NEW_OPT( HBondReporter::relevant_chains, "relevant_chains", "*" );
 
-	devel::init(argc, argv);
-	protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new HBondReporter ) );
+		devel::init(argc, argv);
+		protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new HBondReporter ) );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

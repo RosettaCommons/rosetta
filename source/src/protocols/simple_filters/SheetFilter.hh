@@ -150,11 +150,11 @@ private:
 
 	void
 	ingo_lnl(
-	 int hm,
-	 ObjexxFCL::FArray1A_int order,
-	 int & nloc,
-	 int & nnloc
- ) const;
+		int hm,
+		ObjexxFCL::FArray1A_int order,
+		int & nloc,
+		int & nnloc
+	) const;
 
 	void
 	ingo_locations(

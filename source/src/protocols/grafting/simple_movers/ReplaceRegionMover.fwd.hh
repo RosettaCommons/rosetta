@@ -20,7 +20,7 @@
 namespace protocols {
 namespace grafting {
 
-/// @brief  
+/// @brief
 class ReplaceRegionMover;
 
 typedef utility::pointer::shared_ptr<ReplaceRegionMover> ReplaceRegionMoverOP;

@@ -28,14 +28,14 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-	using namespace core::chemical;
-	using core::pack::task::PackerTask;
-	using core::pack::task::operation::TaskOperationOP;
-	using core::Size;
-	using core::Real;
-	using utility::vector1;
-	typedef std::map< core::chemical::AA, Real > AAProbabilities; //Map of an amino acid and it's probability.
-	typedef std::map< Size, AAProbabilities > PerResidueAAProbSet; //Amino acid probabilities for a particular residue number.
+using namespace core::chemical;
+using core::pack::task::PackerTask;
+using core::pack::task::operation::TaskOperationOP;
+using core::Size;
+using core::Real;
+using utility::vector1;
+typedef std::map< core::chemical::AA, Real > AAProbabilities; //Map of an amino acid and it's probability.
+typedef std::map< Size, AAProbabilities > PerResidueAAProbSet; //Amino acid probabilities for a particular residue number.
 
 ResidueProbDesignOperation::ResidueProbDesignOperation() : core::pack::task::operation::TaskOperation()
 {
@@ -51,8 +51,8 @@ ResidueProbDesignOperation::set_defaults() {
 }
 
 /*ResidueProbDesignOperation::ResidueProbDesignOperation(PerResidueAAProbSet aa_probs) {
-	ResidueProbDesignOperation();
-	prob_set_ = aa_probs;
+ResidueProbDesignOperation();
+prob_set_ = aa_probs;
 }*/
 
 ResidueProbDesignOperation::~ResidueProbDesignOperation(){}
@@ -70,10 +70,10 @@ ResidueProbDesignOperation::clone() const
 
 /*
 ResidueProbDesignOperation & ResidueProbDesignOperation::operator =(ResidueProbDesignOperation const & rhs){
-	if ( this == &rhs ) return *this;
-	core::pack::task::operation::TaskOperation::operator=( rhs );
-	init_for_equal_operator_and_copy_constructor( *this, rhs );
-	return *this;
+if ( this == &rhs ) return *this;
+core::pack::task::operation::TaskOperation::operator=( rhs );
+init_for_equal_operator_and_copy_constructor( *this, rhs );
+return *this;
 }
 */
 
@@ -184,9 +184,9 @@ ResidueProbDesignOperation::get_weights(AAProbabilities & aa_prob_set) const{
 	vector1<Real> aa_weights(20, zero_probs_overwrite_);
 
 	//Non-cannonicals will have to come later
-	for (core::Size i = 1; i <= 20; ++i){
+	for ( core::Size i = 1; i <= 20; ++i ) {
 		core::chemical::AA amino = static_cast< core::chemical::AA >(i);
-		if (! aa_exists(amino, aa_prob_set) || aa_prob_set[amino] == 0.0 ){ continue; }
+		if ( ! aa_exists(amino, aa_prob_set) || aa_prob_set[amino] == 0.0 ) { continue; }
 		aa_weights[i] = aa_prob_set[amino];
 	}
 
@@ -209,20 +209,20 @@ ResidueProbDesignOperation::apply(core::pose::Pose const & pose, core::pack::tas
 	numeric::random::WeightedSampler sampler;
 
 	//Setup the distribution once if we have a single distribution to choose aa from.
-	if (! overall_prob_set_.empty() ){
+	if ( ! overall_prob_set_.empty() ) {
 		TR << "Overall AA Probability set found.  Using." << std::endl;
 		vector1<Real> aa_weights = get_weights(overall_prob_set);
 		sampler.weights(aa_weights);
 	}
 
-	for (core::Size i = 1; i <=pose.total_residue(); ++i){
+	for ( core::Size i = 1; i <=pose.total_residue(); ++i ) {
 
 		//If Residue is not designable or ResidueProb not set + there is no overall probability set to use, keep going.
-		if (( ! design_positions[i] ) || ( ! resnum_exists_in_set(i) && overall_prob_set.empty() )) {
+		if ( ( ! design_positions[i] ) || ( ! resnum_exists_in_set(i) && overall_prob_set.empty() ) ) {
 			continue;
 		}
 
-		if (overall_prob_set.empty()){
+		if ( overall_prob_set.empty() ) {
 			vector1< Real > aa_weights = get_weights( prob_set[i] );
 			sampler.weights(aa_weights);
 		}
@@ -230,27 +230,26 @@ ResidueProbDesignOperation::apply(core::pose::Pose const & pose, core::pack::tas
 
 
 		//Get the Amino Acid from the sampler.  Add to task depending on options.
-		if (include_native_restype_){
+		if ( include_native_restype_ ) {
 			allowed_aminos[task.nonconst_residue_task(i).get_original_residue()] = true;
 		}
 
-		for (Size picks = 1; picks <= picking_rounds_; ++picks){
+		for ( Size picks = 1; picks <= picking_rounds_; ++picks ) {
 
 			core::Size aa_num = sampler.random_sample(numeric::random::rg());
 			allowed_aminos[aa_num] = true;
 		}
 
 		//Add to already allowed aminos
-		if (keep_task_allowed_aa_){
-			for (core::Size aa_num = 1; aa_num <= 20; ++aa_num){
+		if ( keep_task_allowed_aa_ ) {
+			for ( core::Size aa_num = 1; aa_num <= 20; ++aa_num ) {
 				core::chemical::AA amino = static_cast<core::chemical::AA>(aa_num);
-				if (allowed_aminos[aa_num]){
+				if ( allowed_aminos[aa_num] ) {
 					task.nonconst_residue_task(i).allow_aa(amino);
 				}
 			}
-		}
-		//Replace the current aminos
-		else{
+		} else {
+			//Replace the current aminos
 			task.nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aminos);
 		}
 	}

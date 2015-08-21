@@ -89,12 +89,12 @@ JumpRotamerSidechainMover::JumpRotamerSidechainMover() {
 
 JumpRotamerSidechainMover::JumpRotamerSidechainMover(
 	pack::dunbrack::RotamerLibrary const & rotamer_library
-) :	Parent( rotamer_library ) {
+) : Parent( rotamer_library ) {
 	set_defaults();
 }
 
 JumpRotamerSidechainMover::JumpRotamerSidechainMover(
-  JumpRotamerSidechainMover const & mover
+	JumpRotamerSidechainMover const & mover
 ) : Parent ( mover ) {
 	set_defaults();
 }
@@ -111,7 +111,7 @@ JumpRotamerSidechainMover::set_defaults() {
 
 void
 JumpRotamerSidechainMover::parse_my_tag(
-  utility::tag::TagCOP const /*tag*/,
+	utility::tag::TagCOP const /*tag*/,
 	basic::datacache::DataMap & /*data*/,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
@@ -145,7 +145,7 @@ JumpRotamerSidechainMover::make_chi_move(
 	}
 
 	/// select a random rotamer
- 	Size rotnum;
+	Size rotnum;
 	Real rand = numeric::random::rg().uniform();
 	//if ( rand <=0 ){
 	//tr.Debug << "RG.uniform is " << rand << std::endl;}
@@ -167,13 +167,13 @@ JumpRotamerSidechainMover::make_chi_move(
 		rotnum -= 1;
 	}
 	runtime_assert( rotnum >= 1 && rotnum <= rotamers.size() );
-  //rotamer_sample_data[rotnum].assign_random_chi(last_chi_angles_,numeric::random::rg());
-  rotamers[rotnum].assign_random_chi( new_chi, numeric::random::rg(), temperature() );
+	//rotamer_sample_data[rotnum].assign_random_chi(last_chi_angles_,numeric::random::rg());
+	rotamers[rotnum].assign_random_chi( new_chi, numeric::random::rg(), temperature() );
 }
 
 ///all angles in degree
 Real JumpRotamerSidechainMover::compute_proposal_density(
-  Residue const & new_residue,
+	Residue const & new_residue,
 	Size const,
 	chemical::ResidueType const &,
 	utility::vector1<Real> const &
@@ -229,7 +229,7 @@ JumpRotamerSidechainMover::compute_rotdensities(
 
 void
 JumpRotamerSidechainMover::compute_tempered_rotamer_probabilities(
-  RotamerList const& rotamers,
+	RotamerList const& rotamers,
 	core::Real,
 	utility::vector1< Real >& rot_probs,
 	core::Real& normalize

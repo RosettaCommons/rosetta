@@ -144,8 +144,8 @@ public:
 
 #ifdef BOINC_GRAPHICS
 
-/////////////////////////////////////////////////////////////////////////////
-// WORKER APP GRAPHICS FUNCTIONS
+	/////////////////////////////////////////////////////////////////////////////
+	// WORKER APP GRAPHICS FUNCTIONS
 
 	static void set_wu_desc( void );
 
@@ -167,10 +167,10 @@ public:
 	enum update_mode_enum { DEFAULT, PERSIST, RESET };
 	static void update_graphics_low_energy( core::pose::Pose & pose, core::Real low_energy, update_mode_enum update_mode = DEFAULT );
 
-  // Last accepted pose and energy - set by monte carlo object
+	// Last accepted pose and energy - set by monte carlo object
 	static void update_graphics_last_accepted( core::pose::Pose & pose, core::Real last_accepted_energy );
 
-/////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////
 
 
 	// shared memory

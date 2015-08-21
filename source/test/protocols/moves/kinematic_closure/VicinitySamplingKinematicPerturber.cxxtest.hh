@@ -62,10 +62,10 @@ public:
 		torsions.reserve(nres*3);
 
 		//extract original torsions
-		for(core::Size i(1); i<=nres; ++i){
+		for ( core::Size i(1); i<=nres; ++i ) {
 			torsions.push_back(pose.phi(i));
 			torsions.push_back(pose.psi(i));
- 			torsions.push_back(pose.omega(i));
+			torsions.push_back(pose.omega(i));
 		}
 
 		kin_mover = protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP( new protocols::loops::loop_closure::kinematic_closure::KinematicMover() );
@@ -93,7 +93,7 @@ public:
 	// ------------- Helper Functions ------------- //
 
 	void check_similar_parts (core::Size s, core::Size e, core::pose::Pose copy){
-		for(core::Size i(s); i<=e; ++i){
+		for ( core::Size i(s); i<=e; ++i ) {
 			//std::cout << i << std::endl;
 			TS_ASSERT_DELTA( torsions[(i*3)-2], copy.phi(i), 1e-9 );
 			TS_ASSERT_DELTA( torsions[(i*3)-1], copy.psi(i), 1e-9 );
@@ -126,19 +126,19 @@ public:
 		check_similar_parts(1, start-1, copy);
 
 		//This code will print the torsions for the loop
-// 		std::cout << std::setprecision(20) << std::fixed;
-// 		for(core::Size i(start); i<=end; ++i){
-// 			std::cout << "//" << i << std::endl;
-// 			std::cout << "TS_ASSERT_DELTA( " << copy.phi(i) << ", copy.phi(" << i << "), 1e-9 );\n";
-// 			std::cout << "TS_ASSERT_DELTA( " << copy.psi(i) << ", copy.psi(" << i << "), 1e-9 );\n";
-// 			std::cout << "TS_ASSERT_DELTA( " << copy.omega(i) << ", copy.omega(" << i << "), 1e-9 );\n";
-// 		}
+		//   std::cout << std::setprecision(20) << std::fixed;
+		//   for(core::Size i(start); i<=end; ++i){
+		//    std::cout << "//" << i << std::endl;
+		//    std::cout << "TS_ASSERT_DELTA( " << copy.phi(i) << ", copy.phi(" << i << "), 1e-9 );\n";
+		//    std::cout << "TS_ASSERT_DELTA( " << copy.psi(i) << ", copy.psi(" << i << "), 1e-9 );\n";
+		//    std::cout << "TS_ASSERT_DELTA( " << copy.omega(i) << ", copy.omega(" << i << "), 1e-9 );\n";
+		//   }
 
 		test::UTracer UT("protocols/moves/kinematic_closure/VicinitySamplingKinematicPerturber.u");
 		UT.abs_tolerance(1e-9);
 
 		UT << "\nRaw torsions:\n";
-		for(int i=7; i<12; i++) {
+		for ( int i=7; i<12; i++ ) {
 			UT << "  copy.phi(" << i << "):   " << copy.phi(i) << "\n";
 			UT << "  copy.psi(" << i << "):   " << copy.psi(i) << "\n";
 			UT << "  copy.omega(" << i << "): " << copy.omega(i)<< "\n";
@@ -171,8 +171,8 @@ public:
 		// With "local sampling", it should be within one degree of where it started, except
 		// that the perturbation is scaled by a Gaussian random number, so it could be +/-
 		// 180 degrees.  *sigh*
-		for(core::Size i(start+1); i<=end-1; ++i) {
-			if( i==middle) continue; //this is a pivot; not handled by TorsionSamplingKinematicPerturber
+		for ( core::Size i(start+1); i<=end-1; ++i ) {
+			if ( i==middle ) continue; //this is a pivot; not handled by TorsionSamplingKinematicPerturber
 			TS_ASSERT_DELTA( torsions[(i*3)-2], copy.phi(i), 2 ); //delta to two degrees!
 			TS_ASSERT_DELTA( torsions[(i*3)-1], copy.psi(i), 2 );
 			TS_ASSERT_DELTA( torsions[(i*3)-0], copy.omega(i), 2 );

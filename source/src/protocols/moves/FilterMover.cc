@@ -37,7 +37,7 @@ FilterMover::FilterMover():
 {}
 
 FilterMover::FilterMover(
-  MoverOP const & my_mover,
+	MoverOP const & my_mover,
 	FilterOP const & my_filter,
 	Size const max_tries,
 	MoverStatus const mover_status
@@ -80,21 +80,21 @@ void FilterMover::apply( Pose & pose )
 		my_mover_->apply( pose );
 
 		//pose.dump_pdb( "hoge.pdb" );
-		if( my_mover_->get_last_move_status() == MS_SUCCESS ){
+		if ( my_mover_->get_last_move_status() == MS_SUCCESS ) {
 
 			bool filter_status = my_filter_->apply( pose );
 
-			if( filter_status ){
+			if ( filter_status ) {
 				set_last_move_status( MS_SUCCESS );
 				break;
-			}else{
-				if( ntries >= max_tries_ ){
+			} else {
+				if ( ntries >= max_tries_ ) {
 					set_last_move_status( ms_whenfail_ );
 					break;
 				}
 			} // filter_status
 
-		}else{
+		} else {
 			set_last_move_status( my_mover_->get_last_move_status() );
 			break;
 		}// my_mover_->get_last_move_status() == MS_SUCCESS

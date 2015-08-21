@@ -173,12 +173,12 @@ public: // tests
 		key_exists = getPoseExtraScore( pose, key, val );
 		TS_ASSERT( key_exists == false );
 		TS_ASSERT( val == 0.0 )
-	} // test_pose_float_map
+			} // test_pose_float_map
 
 
-	/// @brief test renumber_pdbinfo_based_on_conf_chains()
-	void test_renumber_pdbinfo_based_on_conf_chains() {
-		using core::pose::renumber_pdbinfo_based_on_conf_chains;
+			/// @brief test renumber_pdbinfo_based_on_conf_chains()
+			void test_renumber_pdbinfo_based_on_conf_chains() {
+			using core::pose::renumber_pdbinfo_based_on_conf_chains;
 
 		PoseOP pose_one = one_chain_pose();
 		PoseOP pose_two = two_chain_pose();

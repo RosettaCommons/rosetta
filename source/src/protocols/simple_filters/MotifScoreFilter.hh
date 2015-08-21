@@ -31,44 +31,44 @@
 
 
 namespace protocols {
-    namespace simple_filters {
+namespace simple_filters {
 
-        class MotifScoreFilter : public protocols::filters::Filter {
-        public:
-            MotifScoreFilter();
+class MotifScoreFilter : public protocols::filters::Filter {
+public:
+	MotifScoreFilter();
 
-            virtual ~MotifScoreFilter() {}
+	virtual ~MotifScoreFilter() {}
 
-            filters::FilterOP clone() const {
-                return filters::FilterOP( new MotifScoreFilter( *this ) ); }
+	filters::FilterOP clone() const {
+		return filters::FilterOP( new MotifScoreFilter( *this ) ); }
 
-            filters::FilterOP fresh_instance() const{
-                return filters::FilterOP( new MotifScoreFilter() );
-            }
+	filters::FilterOP fresh_instance() const{
+		return filters::FilterOP( new MotifScoreFilter() );
+	}
 
-            virtual std::string name() const {
-                return "MotifScoreFilter";
-            }
+	virtual std::string name() const {
+		return "MotifScoreFilter";
+	}
 
-            /// @brief Returns true if the given pose passes the filter, false otherwise.
-            virtual
-            bool apply( core::pose::Pose const & pose ) const;
+	/// @brief Returns true if the given pose passes the filter, false otherwise.
+	virtual
+	bool apply( core::pose::Pose const & pose ) const;
 
-            void report( std::ostream & out, core::pose::Pose const & pose ) const;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const;
 
-            core::Real report_sm( core::pose::Pose const & pose ) const;
+	core::Real report_sm( core::pose::Pose const & pose ) const;
 
-            core::Real compute( core::pose::Pose const &pose ) const;
+	core::Real compute( core::pose::Pose const &pose ) const;
 
-            virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
 
-        private:
-            core::scoring::motif::MotifHashManager *mman_;
-            core::Real score_threshold_;
-        };
+private:
+	core::scoring::motif::MotifHashManager *mman_;
+	core::Real score_threshold_;
+};
 
-    } // filters
+} // filters
 } // protocols
 
 #endif

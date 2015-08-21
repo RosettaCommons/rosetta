@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/antibody/clusters/CDRClusterFeatures.cc
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
@@ -37,23 +37,23 @@
 namespace protocols {
 namespace antibody {
 namespace clusters {
-	using namespace protocols::features;
-	using namespace protocols::antibody;
+using namespace protocols::features;
+using namespace protocols::antibody;
 
 CDRClusterFeatures::CDRClusterFeatures():
 	FeaturesReporter(),
 	numbering_scheme_(AHO_Scheme)
 {
-	for (core::Size i = 1; i <= 6; ++i){
+	for ( core::Size i = 1; i <= 6; ++i ) {
 		CDRNameEnum cdr = static_cast< CDRNameEnum >(i);
 		cdrs_.push_back(cdr);
 	}
 }
 
 //CDRClusterFeatures::CDRClusterFeatures(CDRClusterFeatures const & src):
-	//FeaturesReporter(),
-	//numbering_scheme_(src.numbering_scheme_),
-	//cdrs_(src.cdrs_)
+//FeaturesReporter(),
+//numbering_scheme_(src.numbering_scheme_),
+//cdrs_(src.cdrs_)
 //{}
 
 CDRClusterFeatures::~CDRClusterFeatures(){}
@@ -66,7 +66,7 @@ CDRClusterFeatures::type_name() const {
 void
 CDRClusterFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const {
 	using namespace basic::database::schema_generator;
-	
+
 	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
 	Column chain("chain", DbDataTypeOP( new DbText() ));
 	Column CDR("CDR", DbDataTypeOP( new DbText() ));
@@ -78,20 +78,20 @@ CDRClusterFeatures::write_schema_to_db(utility::sql_database::sessionOP db_sessi
 	Column resnum_begin("resnum_begin", DbDataTypeOP( new DbInteger() ));
 	Column resnum_end("resnum_end", DbDataTypeOP( new DbInteger() ));
 	Column sequence("sequence", DbDataTypeOP( new DbText() ));
-	
-	
+
+
 	Columns primary_keys;
-	
+
 	primary_keys.push_back(struct_id);
 	primary_keys.push_back(resnum_begin);
 	primary_keys.push_back(resnum_end);
-	
+
 	PrimaryKey primary_key(primary_keys);
 	ForeignKey foreign_key(struct_id, "residues", "struct_id", true);
-	
+
 	Schema table("CDR_clusters", primary_key);
 	table.add_foreign_key(foreign_key);
-	
+
 	table.add_column(chain);
 	table.add_column(CDR);
 	table.add_column(length);
@@ -114,35 +114,33 @@ void
 CDRClusterFeatures::parse_my_tag(utility::tag::TagCOP tag, basic::datacache::DataMap&, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	
+
 	cdrs_.clear();
 	AntibodyEnumManagerCOP enum_manager( AntibodyEnumManagerOP( new AntibodyEnumManager() ) );
 	std::string cdrs = tag->getOption< std::string >("cdrs", "L1,L2,L3,H1,H2,H3");
 	std::string scheme;
-	
-	if (tag->hasOption("numbering_scheme")){
+
+	if ( tag->hasOption("numbering_scheme") ) {
 		scheme = tag->getOption< std::string >("numbering_scheme");
-	}
-	else{
+	} else {
 		scheme = option [OptionKeys::antibody::numbering_scheme]();
 	}
-	
-	if (! enum_manager->numbering_scheme_is_present(scheme)){
+
+	if ( ! enum_manager->numbering_scheme_is_present(scheme) ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Numbering scheme not recognized: "+ scheme);
 	}
-	
+
 	set_numbering_scheme( enum_manager->numbering_scheme_string_to_enum(scheme) );
-	
+
 	vector1< std::string > cdrsSP = utility::string_split(cdrs, ',');
-	for (core::Size i = 1; i <= cdrsSP.size(); ++i){
-		if (! enum_manager->cdr_name_is_present(cdrsSP[i])){
+	for ( core::Size i = 1; i <= cdrsSP.size(); ++i ) {
+		if ( ! enum_manager->cdr_name_is_present(cdrsSP[i]) ) {
 			throw utility::excn::EXCN_RosettaScriptsOption("CDR not recognized: " + cdrsSP[i]);
-		}
-		else {
+		} else {
 			cdrs_.push_back(enum_manager->cdr_name_string_to_enum(cdrsSP[i]));
 		}
 	}
-	
+
 }
 
 void
@@ -158,18 +156,18 @@ CDRClusterFeatures::set_cdrs_to_use(vector1<CDRNameEnum> cdrs) {
 core::Size
 CDRClusterFeatures::report_features(core::pose::Pose const & pose, utility::vector1< bool > const & , StructureID struct_id, utility::sql_database::sessionOP db_session) {
 	using cppdb::statement;
-	
+
 	AntibodyInfoOP ab_info( new AntibodyInfo(pose, numbering_scheme_, North) );
-		
+
 	std::string stmt_string = "INSERT INTO CDR_clusters( struct_id, resnum_begin, resnum_end, chain, CDR, length, fullcluster, dis, normDis, normDis_deg, sequence) VALUES (?,?,?,?,?,?,?,?,?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(stmt_string, db_session));
-	
-	for (core::Size i = 1; i <= core::Size(ab_info->get_total_num_CDRs()); ++i){
+
+	for ( core::Size i = 1; i <= core::Size(ab_info->get_total_num_CDRs()); ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		CDRClusterCOP cluster = ab_info->get_CDR_cluster(cdr);
-		
+
 		//Short-circuit evaluation here:
-		if (ab_info->has_cluster_for_cdr(cdr) && (std::find(cdrs_.begin(), cdrs_.end(), cluster->cdr()) != cdrs_.end())){
+		if ( ab_info->has_cluster_for_cdr(cdr) && (std::find(cdrs_.begin(), cdrs_.end(), cluster->cdr()) != cdrs_.end()) ) {
 			std::string sequence = ab_info->get_CDR_sequence_with_stem(cdr, pose, North, 0, 0);
 			std::stringstream str_chain;
 			str_chain << ab_info->get_CDR_chain(cdr);
@@ -190,10 +188,10 @@ CDRClusterFeatures::report_features(core::pose::Pose const & pose, utility::vect
 	return 0;
 }
 
-	
-	
 
-	
+
+
+
 } //clusters
 } //antibody
 } //protocols

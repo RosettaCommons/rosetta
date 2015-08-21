@@ -43,11 +43,11 @@ public:
 	virtual std::string get_name() const;
 
 	void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap &,
-			protocols::filters::Filters_map const &,
-			protocols::moves::Movers_map const &,
-			core::pose::Pose const & );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & );
 };
 
 } // symmetric_docking

@@ -10,7 +10,7 @@
 /// @file src/protocols/abinitio/ConstraintFragmentSampler.hh
 /// @brief header file for ConstraintFragmentSampler protocol
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -53,7 +53,7 @@ ConstraintFragmentSampler  abinitio;
 abinitio.init( pose );
 ...
 while(nstruct) {
-	 abinitio.apply( pose );
+abinitio.apply( pose );
 }
 
 call ConstraintFragmentSampler::register_options() before core::init::init to add relevant options to the applications help
@@ -84,22 +84,22 @@ mc().score_function() ...
 Behaviour can be changed in the following ways:
 
 use non-classic FragmentMover  --> eg. not uniformly sampled fragments, but using some weighting
-															 --> large and small moves doesn't have to be 3mers and 9mers... use other movers...
-															 ---> or other fragets for the "convenience constructor"
+--> large and small moves doesn't have to be 3mers and 9mers... use other movers...
+---> or other fragets for the "convenience constructor"
 use custom trial classes --> overload update_moves()
 
 change sampling behaviour:
-	 overload prepare_XXX() methods: these are called before the cycling for a certain stage begins
-	 overload do_stageX_cycles() : the actual loops over trial-moves ...
+overload prepare_XXX() methods: these are called before the cycling for a certain stage begins
+overload do_stageX_cycles() : the actual loops over trial-moves ...
 
 change scoring functions:
-	 overload set_default_scores()
-	 weight-changes effective for all stages: set_score_weight()
+overload set_default_scores()
+weight-changes effective for all stages: set_score_weight()
 */
 
 class ConstraintFragmentSampler : public FragmentSampler {
-typedef FragmentSampler Parent;
-typedef moves::Mover BaseClass; //happens to be same as Parent
+	typedef FragmentSampler Parent;
+	typedef moves::Mover BaseClass; //happens to be same as Parent
 
 public:
 	/// @brief This constructor does not work -- Fix it before using it.
@@ -118,11 +118,11 @@ public:
 	static void register_options();
 
 protected:
- /// @brief
-  void set_constraint_weight( core::Real setting ) {
-    constraint_weight_ = setting;
-    set_score_weight( core::scoring::atom_pair_constraint, constraint_weight_ );
-  };
+	/// @brief
+	void set_constraint_weight( core::Real setting ) {
+		constraint_weight_ = setting;
+		set_score_weight( core::scoring::atom_pair_constraint, constraint_weight_ );
+	};
 
 	//@brief read out cmd-line options
 	void set_defaults();
@@ -133,7 +133,7 @@ protected:
 	// anything you want to have done before the stages ?
 	//@brief prepare_stageX is called before do_stageX_cycles... overload to change status/scoring/conformation....
 	virtual void prepare_stage1( core::pose::Pose &pose );
- 	virtual void prepare_stage2( core::pose::Pose &pose );
+	virtual void prepare_stage2( core::pose::Pose &pose );
 
 	//@brief called in each iteration of inner loop in stage3 before stage3_cycles_ of trials commence
 	virtual void prepare_loop_in_stage3(
@@ -150,66 +150,66 @@ protected:
 	);
 
 	void set_show_viol_level( core::Size setting ) {
-    show_viol_level_ = setting;
-  }
+		show_viol_level_ = setting;
+	}
 
-  virtual void set_max_seq_sep( core::pose::Pose& pose, Size setting );
+	virtual void set_max_seq_sep( core::pose::Pose& pose, Size setting );
 
-  core::Real max_seq_sep_fudge() const {
-    return max_seq_sep_fudge_;
-  }
+	core::Real max_seq_sep_fudge() const {
+		return max_seq_sep_fudge_;
+	}
 
-  void max_seq_sep_fudge( core::Real setting ) {
-    max_seq_sep_fudge_ = setting;
-  }
+	void max_seq_sep_fudge( core::Real setting ) {
+		max_seq_sep_fudge_ = setting;
+	}
 
 	constraints_additional::MaxSeqSepConstraintSet const& constraints() {
-    return *constraints_;
-  }
+		return *constraints_;
+	}
 
-  Size total_res( core::pose::Pose const& pose ) const;
+	Size total_res( core::pose::Pose const& pose ) const;
 
-  void set_seq_sep_stage1 ( core::Real setting ) {
-    seq_sep_stage1_ = setting;
-  }
+	void set_seq_sep_stage1 ( core::Real setting ) {
+		seq_sep_stage1_ = setting;
+	}
 
-  void set_seq_sep_stage3 ( core::Real setting ) {
-    seq_sep_stage3_ = setting;
-  }
+	void set_seq_sep_stage3 ( core::Real setting ) {
+		seq_sep_stage3_ = setting;
+	}
 
 	virtual void replace_scorefxn( core::pose::Pose& pose, StageID stage, core::Real intra_stage_progress );
 
 private:
-  core::Real
-  evaluate_constraint_energy( core::pose::Pose& pose, core::scoring::ScoreFunction const& ) const;
+	core::Real
+	evaluate_constraint_energy( core::pose::Pose& pose, core::scoring::ScoreFunction const& ) const;
 
 	constraints_additional::MaxSeqSepConstraintSetOP constraints_;
-  core::Real constraint_weight_;
+	core::Real constraint_weight_;
 
-  bool bMinTrial_;
+	bool bMinTrial_;
 
-  core::Real max_seq_sep_fudge_;
-  core::Real seq_sep_stage1_;
-  core::Real seq_sep_stage3_;
-  core::Real seq_sep_stage4_;
+	core::Real max_seq_sep_fudge_;
+	core::Real seq_sep_stage1_;
+	core::Real seq_sep_stage3_;
+	core::Real seq_sep_stage4_;
 
 	//@brief skip cycles in stage1 if nothing is violted ( threshold = ? )
-  bool bSkipOnNoViolation_;
+	bool bSkipOnNoViolation_;
 
-  //@brief just for screen output: how verbose should it be
-  Size show_viol_level_;
+	//@brief just for screen output: how verbose should it be
+	Size show_viol_level_;
 
 	//@brief usually we do a recover_low before we increase the number of active constraints
 	bool bNoRecoverLowAtSwitch_;
 
-  //@brief chainbreak weight is ramped up during stage3 and stage4
-  bool bRampChainbreaks_;
+	//@brief chainbreak weight is ramped up during stage3 and stage4
+	bool bRampChainbreaks_;
 
-  //@brief chainbreak weight is ramped up during stage3 and stage4
-  bool bRampCoordConstraints_;
+	//@brief chainbreak weight is ramped up during stage3 and stage4
+	bool bRampCoordConstraints_;
 
-  //@brief overlap chainbreak will be ramped in in stage4
-  bool bOverlapChainbreaks_;
+	//@brief overlap chainbreak will be ramped in in stage4
+	bool bOverlapChainbreaks_;
 };
 
 } // abinitio

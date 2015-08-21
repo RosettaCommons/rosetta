@@ -29,38 +29,41 @@ namespace frag_picker {
 namespace scores {
 
 bool BFactor::score(FragmentCandidateOP f,
-		FragmentScoreMapOP empty_map) {
+	FragmentScoreMapOP empty_map) {
 
 	// describe_score(f, empty_map, std::cerr);
 
 	Real totalScore = 0;
-	for (Size i = 1; i <= f->get_length(); i++) {
+	for ( Size i = 1; i <= f->get_length(); i++ ) {
 		VallResidueOP r = f->get_residue(i);
 		totalScore += r->bF();
 	}
 	totalScore /= (Real) f->get_length();
 	empty_map->set_score_component(totalScore, id_);
-	if ((totalScore > lowest_acceptable_value_) && (use_lowest_ == true))
+	if ( (totalScore > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;
+	}
 	return true;
 }
 
 bool BFactor::describe_score(FragmentCandidateOP f,
-		FragmentScoreMapOP empty_map, std::ostream& out) {
+	FragmentScoreMapOP empty_map, std::ostream& out) {
 
 	Real totalScore = 0;
 
 	out << f->get_chunk()->get_pdb_id() << "  " << I(5,
-			f->get_first_index_in_vall()) << " ";
-	for (Size i = 1; i <= f->get_length(); i++)
+		f->get_first_index_in_vall()) << " ";
+	for ( Size i = 1; i <= f->get_length(); i++ ) {
 		out << f->get_residue(i)->bF();
+	}
 	out << std::endl;
 
 	//THIS FUNCTION IS POINTLESS!!!
 
 	empty_map->set_score_component(totalScore, id_);
-	if ((totalScore > lowest_acceptable_value_) && (use_lowest_ == true))
+	if ( (totalScore > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;
+	}
 	return true;
 }
 

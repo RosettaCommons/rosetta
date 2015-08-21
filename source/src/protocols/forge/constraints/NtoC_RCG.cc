@@ -37,9 +37,9 @@
 
 static thread_local basic::Tracer TR( "protocols.forge.constraints.NtoC_RCG" );
 
-namespace protocols{
-namespace forge{
-namespace constraints{
+namespace protocols {
+namespace forge {
+namespace constraints {
 
 std::string
 NtoCCstGeneratorCreator::keyname() const
@@ -66,9 +66,9 @@ NtoC_RCG::NtoC_RCG():
 {}
 
 NtoC_RCG::NtoC_RCG( NtoC_RCG const & rval )
-	: RemodelConstraintGenerator( rval ),
-		dist_( rval.dist_ ),
-		coef_( rval.coef_ )
+: RemodelConstraintGenerator( rval ),
+	dist_( rval.dist_ ),
+	coef_( rval.coef_ )
 {}
 
 /// @brief
@@ -83,10 +83,10 @@ NtoC_RCG::~NtoC_RCG() {}
 
 void
 NtoC_RCG::parse_my_tag( TagCOP const tag,
-												basic::datacache::DataMap & data,
-												protocols::filters::Filters_map const & filters,
-												protocols::moves::Movers_map const & movers,
-												core::pose::Pose const & pose )
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const & pose )
 {
 	RemodelConstraintGenerator::parse_my_tag( tag, data, filters, movers, pose );
 	set_weight( tag->getOption< core::Real >( "weight", coef_ ) );

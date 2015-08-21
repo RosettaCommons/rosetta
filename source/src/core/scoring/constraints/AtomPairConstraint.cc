@@ -62,11 +62,11 @@ AtomPairConstraint::score( func::XYZ_Func const & xyz, EnergyMap const &, Energy
 
 Real
 AtomPairConstraint::score(
-													Vector const & xyz1,
-													Vector const & xyz2
-													) const
+	Vector const & xyz1,
+	Vector const & xyz2
+) const
 {
-	//	std::cout << "score " <<  atom1_ << ' ' << atom2_ << ' ' << xyz1.distance( xyz2 ) << " --> " << func( xyz1.distance( xyz2 ) ) << std::endl;;
+	// std::cout << "score " <<  atom1_ << ' ' << atom2_ << ' ' << xyz1.distance( xyz2 ) << " --> " << func( xyz1.distance( xyz2 ) ) << std::endl;;
 	return func( xyz1.distance( xyz2 ) );
 }
 
@@ -98,22 +98,22 @@ ConstraintOP AtomPairConstraint::remapped_clone( pose::Pose const& src, pose::Po
 bool
 AtomPairConstraint::operator == ( Constraint const & other_cst ) const
 {
-	if( !dynamic_cast< AtomPairConstraint const * > ( &other_cst ) ) return false;
+	if ( !dynamic_cast< AtomPairConstraint const * > ( &other_cst ) ) return false;
 
 	AtomPairConstraint const & other( static_cast< AtomPairConstraint const & > (other_cst) );
 
-	if( atom1_ != other.atom1_ ) return false;
-	if( atom2_ != other.atom2_ ) return false;
-	if( func_ != other.func_ ) return false; //this still compares the pointers !!!
-	if( this->score_type() != other.score_type() ) return false;
+	if ( atom1_ != other.atom1_ ) return false;
+	if ( atom2_ != other.atom2_ ) return false;
+	if ( func_ != other.func_ ) return false; //this still compares the pointers !!!
+	if ( this->score_type() != other.score_type() ) return false;
 
 	return true;
 }
 
 void AtomPairConstraint::show( std::ostream& out ) const {
 	out << "AtomPairConstraint ("
-			<< atom1_.atomno() << "," << atom1_.rsd() << "-"
-			<< atom2_.atomno() << "," << atom2_.rsd() << ")" << std::endl;
+		<< atom1_.atomno() << "," << atom1_.rsd() << "-"
+		<< atom2_.atomno() << "," << atom2_.rsd() << ")" << std::endl;
 	func_->show( out );
 }
 
@@ -145,15 +145,15 @@ Real AtomPairConstraint::dist( conformation::Conformation  const& conformation )
 		fail = true;
 #endif
 	}
-debug_assert( conformation.atom_tree().has( atom1_ ) );
-debug_assert( conformation.atom_tree().has( atom2_ ) );
+	debug_assert( conformation.atom_tree().has( atom1_ ) );
+	debug_assert( conformation.atom_tree().has( atom2_ ) );
 	if ( !conformation.atom_tree().has( atom1_ ) ) {
 		std::cerr << "AtomPairConstraint: cannot find atom " << atom1_ << std::endl;
 	}
 	if ( !conformation.atom_tree().has( atom2_ ) ) {
 		std::cerr << "AtomPairConstraint: cannot find atom " << atom2_ << std::endl;
 	}
-debug_assert( !fail );
+	debug_assert( !fail );
 	Vector const & xyz1( conformation.xyz( atom1_ ) ), xyz2( conformation.xyz( atom2_ ) );
 	Vector const f2( xyz1 - xyz2 );
 	Real const dist( f2.length() );
@@ -161,8 +161,8 @@ debug_assert( !fail );
 }
 
 Real AtomPairConstraint::dist( func::XYZ_Func const & xyz ) const {
-debug_assert( atom1_.atomno() );
-debug_assert( atom2_.atomno() );
+	debug_assert( atom1_.atomno() );
+	debug_assert( atom2_.atomno() );
 	return xyz( atom1_ ).distance( xyz( atom2_ ) );
 }
 
@@ -218,8 +218,8 @@ AtomPairConstraint::fill_f1_f2(
 	Real const dist( f2.length() ), deriv( dfunc( dist ) );
 	if ( deriv != 0.0 && dist != 0.0 ) {
 	Vector const f1( xyz1.cross( xyz2 ) );
-		F1 += ( ( deriv / dist ) * f1 ) * weights[ this->score_type() ];
-		F2 += ( ( deriv / dist ) * f2 ) * weights[ this->score_type() ];
+	F1 += ( ( deriv / dist ) * f1 ) * weights[ this->score_type() ];
+	F2 += ( ( deriv / dist ) * f2 ) * weights[ this->score_type() ];
 	}*/
 
 	Real dist(0.0);
@@ -234,13 +234,13 @@ AtomPairConstraint::fill_f1_f2(
 ConstraintOP
 AtomPairConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const
 {
-  if ( seqmap[atom1_.rsd()] != 0 && seqmap[atom2_.rsd()] != 0 ) {
-    AtomID remap_a1( atom1_.atomno(), seqmap[atom1_.rsd()] ),
-      remap_a2( atom2_.atomno(), seqmap[atom2_.rsd()] );
-    return ConstraintOP( new AtomPairConstraint( remap_a1, remap_a2, this->func_ ) );
-  } else {
-    return NULL;
-  }
+	if ( seqmap[atom1_.rsd()] != 0 && seqmap[atom2_.rsd()] != 0 ) {
+		AtomID remap_a1( atom1_.atomno(), seqmap[atom1_.rsd()] ),
+			remap_a2( atom2_.atomno(), seqmap[atom2_.rsd()] );
+		return ConstraintOP( new AtomPairConstraint( remap_a1, remap_a2, this->func_ ) );
+	} else {
+		return NULL;
+	}
 }
 
 /// @details one line definition "AtomPairs atom1 res1 atom2 res2 function_type function_definition"
@@ -265,7 +265,7 @@ AtomPairConstraint::read_def(
 
 	tr.Debug << "read: " << name1 << " " << name2 << " " << res1 << " " << res2 << " func: " << func_type << std::endl;
 	if ( res1 > pose.total_residue() || res2 > pose.total_residue() ) {
-		tr.Warning 	<< "ignored constraint (requested residue numbers exceed numbers of residues in pose): " << "Total in Pose: " << pose.total_residue() << " "
+		tr.Warning  << "ignored constraint (requested residue numbers exceed numbers of residues in pose): " << "Total in Pose: " << pose.total_residue() << " "
 			<< name1 << " " << name2 << " " << res1 << " " << res2 << std::endl;
 		data.setstate( std::ios_base::failbit );
 		return;
@@ -281,17 +281,17 @@ AtomPairConstraint::read_def(
 		tr.Warning << "Error reading atoms: read in atom names("
 			<< name1 << "," << name2 << "), "
 			<< "and found AtomIDs (" << atom1_ << "," << atom2_ << ")" << std::endl;
-			data.setstate( std::ios_base::failbit );
-			runtime_assert( false );
-			return;
+		data.setstate( std::ios_base::failbit );
+		runtime_assert( false );
+		return;
 	}
 
 	func_ = func_factory.new_func( func_type );
 	func_->read_data( data );
 
 	if ( data.good() ) {
-	//chu skip the rest of line since this is a single line defintion.
-		while( data.good() && (data.get() != '\n') ) {}
+		//chu skip the rest of line since this is a single line defintion.
+		while ( data.good() && (data.get() != '\n') ) {}
 		if ( !data.good() ) data.setstate( std::ios_base::eofbit );
 	}
 

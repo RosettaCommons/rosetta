@@ -60,25 +60,25 @@ namespace core {
 namespace scoring {
 namespace hbonds {
 
-	using std::endl;
-	using std::map;
-	using std::pair;
-	using std::string;
-	using std::stringstream;
-	using cppdb::result;
-	using cppdb::statement;
-	using basic::database::open;
-	using basic::database::full_name;
-	using basic::Tracer;
-	using utility::file::file_exists;
-	using utility::io::izstream;
-	using utility::string_split;
-	using utility::vector1;
-	using utility::sql_database::sessionOP;
+using std::endl;
+using std::map;
+using std::pair;
+using std::string;
+using std::stringstream;
+using cppdb::result;
+using cppdb::statement;
+using basic::database::open;
+using basic::database::full_name;
+using basic::Tracer;
+using utility::file::file_exists;
+using utility::io::izstream;
+using utility::string_split;
+using utility::vector1;
+using utility::sql_database::sessionOP;
 
-	static Tracer tr("core.scoring.hbonds.HBondDatabase");
-	// Initialize private static data
-	map< const string, HBondDatabaseCOP > HBondDatabase::initialized_databases_;
+static Tracer tr("core.scoring.hbonds.HBondDatabase");
+// Initialize private static data
+map< const string, HBondDatabaseCOP > HBondDatabase::initialized_databases_;
 
 
 HBondDatabase::HBondDatabase():
@@ -168,7 +168,7 @@ HBondDatabase::get_database(){
 
 	map< string const, HBondDatabaseCOP >::const_iterator
 		param_db = initialized_databases_.find( hb_options.params_database_tag() );
-	if ( param_db == initialized_databases_.end() ){
+	if ( param_db == initialized_databases_.end() ) {
 		HBondDatabaseCOP newdb( HBondDatabaseOP( new HBondDatabase( hb_options.params_database_tag() ) ) );
 		initialized_databases_[ hb_options.params_database_tag() ] = newdb;
 		return newdb;
@@ -181,7 +181,7 @@ HBondDatabase::get_database( string const & tag ){
 
 	map< string const, HBondDatabaseCOP >::const_iterator
 		param_db = initialized_databases_.find(tag);
-	if ( param_db == initialized_databases_.end() ){
+	if ( param_db == initialized_databases_.end() ) {
 		HBondDatabaseCOP newdb( HBondDatabaseOP( new HBondDatabase( tag ) ) );
 		initialized_databases_[ tag ] = newdb;
 		return newdb;
@@ -197,7 +197,7 @@ HBondDatabase::~HBondDatabase(){}
 void
 HBondDatabase::initialize()
 {
-	if(initialized_){
+	if ( initialized_ ) {
 		tr << "Re-intializing HBond Database when it has already been initialized!";
 	}
 
@@ -228,7 +228,7 @@ HBondDatabase::initialize_HBFadeInterval()
 	string HBFadeInterval_fname = "scoring/score_functions/hbonds/" + params_database_tag_ + "/HBFadeIntervals.csv";
 
 	izstream s;
-	if (!open(s, HBFadeInterval_fname)){
+	if ( !open(s, HBFadeInterval_fname) ) {
 		stringstream message;
 		message << "Unable to open hbond parameter file HBFadeInterval:" << endl;
 		message << "'" << HBFadeInterval_fname << "'";
@@ -246,7 +246,7 @@ HBondDatabase::initialize_HBFadeInterval()
 		++line_no;
 		tokens = string_split( line, ',');
 		Size ntokens = 8;
-		if (tokens.size() != ntokens){
+		if ( tokens.size() != ntokens ) {
 			stringstream message;
 			message << "FadeInterval definition line does not have the expected number of fields " << endl;
 			message << "Expected '" << ntokens << "' tokens but found '" << tokens.size() << "' tokens. " << endl;
@@ -260,9 +260,9 @@ HBondDatabase::initialize_HBFadeInterval()
 		{
 			string junction_type;
 			stringstream buf; buf << tokens[i]; i++; buf >> junction_type;
-			if( junction_type == "smoothed" ){
+			if ( junction_type == "smoothed" ) {
 				smoothed = true;
-			} else if (junction_type == "piecewise_linear"){
+			} else if ( junction_type == "piecewise_linear" ) {
 				smoothed = false;
 			} else {
 				stringstream message;
@@ -280,7 +280,7 @@ HBondDatabase::initialize_HBFadeInterval()
 
 		FadeIntervalOP fade_interval( new FadeInterval(fade_interval_name, min0, fmin, fmax, max0, smoothed) );
 
-		if( HBFadeInterval_lookup_.size() + 1 != id ){
+		if ( HBFadeInterval_lookup_.size() + 1 != id ) {
 			stringstream message;
 			message << "The id fields in the HBFadeInterval file '" << HBFadeInterval_fname << "'" << endl;
 			message << "are out of order or missing: Expected id: " << HBFadeInterval_lookup_.size() + 1 << " but instead found id: " << id << endl;
@@ -292,10 +292,10 @@ HBondDatabase::initialize_HBFadeInterval()
 	}
 }
 
-	/// @details read one dimensional polynomial definition file
-	// File Format:
-	//    -fields are space delimited
-	//    -Columns are: polynomial_name, geometric_dimension, xmin, xmax, root1, root2, degree, c_a, c_b, ..., c_k
+/// @details read one dimensional polynomial definition file
+// File Format:
+//    -fields are space delimited
+//    -Columns are: polynomial_name, geometric_dimension, xmin, xmax, root1, root2, degree, c_a, c_b, ..., c_k
 void
 HBondDatabase::initialize_HBPoly1D()
 {
@@ -303,7 +303,7 @@ HBondDatabase::initialize_HBPoly1D()
 	string HBPoly1D_fname = "scoring/score_functions/hbonds/" + params_database_tag_ + "/HBPoly1D.csv";
 
 	izstream s;
-	if (!open(s, HBPoly1D_fname)){
+	if ( !open(s, HBPoly1D_fname) ) {
 		stringstream message;
 		message << "Unable to open hbond parameter file HBPoly1D:" << endl;
 		message << HBPoly1D_fname;
@@ -322,7 +322,7 @@ HBondDatabase::initialize_HBPoly1D()
 	while ( getline( s, line ) ) {
 		tokens = string_split( line, ',');
 		Size ntokens = 22;
-		if (tokens.size() != ntokens){
+		if ( tokens.size() != ntokens ) {
 			stringstream message;
 			message << "Polynomial definition line does not have enough fields" << endl;
 			message << "Expected " << ntokens << " tokens but found " << tokens.size() << " tokens. " << endl;
@@ -347,7 +347,7 @@ HBondDatabase::initialize_HBPoly1D()
 		vector1< Real > coefficients_;
 		Real c;
 
-		while( i <= tokens.size() && i <= 11 + degree ){
+		while ( i <= tokens.size() && i <= 11 + degree ) {
 			stringstream buf; buf << tokens[i]; i++; buf >> c;
 			coefficients_.push_back(c);
 		}
@@ -373,7 +373,7 @@ HBondDatabase::initialize_HBPoly1D()
 			throw( utility::excn::EXCN_Msg_Exception( msg.str() ) );
 		}
 
-		if( HBPoly1D_lookup_.size() + 1 != id ){
+		if ( HBPoly1D_lookup_.size() + 1 != id ) {
 			stringstream message;
 			message << "The id fields in the HBPoly1D file '" << HBPoly1D_fname << "'" << endl;
 			message << "are out of order or missing: Expected id: " << HBPoly1D_lookup_.size() + 1 << " but instead found id: " << id << endl;
@@ -386,10 +386,10 @@ HBondDatabase::initialize_HBPoly1D()
 	}
 }
 
-	/// @details read one dimensional polynomial definition file
-	// File Format:
-	//    -fields are space delimited
-	//    -Columns are: HBDonChemType, HBAccChemType, HBSeqSep, AHdist_short_fade_name, AHdist_long_fade_name, cosBAH_fade_name, cosAHD_fade_name, AHDist_poly_name, cosBAH_poly_name, cosAHD_poly_name,
+/// @details read one dimensional polynomial definition file
+// File Format:
+//    -fields are space delimited
+//    -Columns are: HBDonChemType, HBAccChemType, HBSeqSep, AHdist_short_fade_name, AHdist_long_fade_name, cosBAH_fade_name, cosAHD_fade_name, AHDist_poly_name, cosBAH_poly_name, cosAHD_poly_name,
 
 void
 HBondDatabase::initialize_HBEval()
@@ -417,10 +417,10 @@ HBondDatabase::initialize_HBEval()
 	string weight_type_name;
 	HBondWeightType weight_type;
 
-	while (getline(s, line)) {
+	while ( getline(s, line) ) {
 		++line_number;
 		tokens = string_split( line, ',');
-		if (tokens.size() != 15){
+		if ( tokens.size() != 15 ) {
 			stringstream message;
 			message << "HBond evaluation data line does not have enough fields" << endl;
 			message << "Expected '" << 15 << "' tokens but found '" << tokens.size() << "' tokens." << endl;
@@ -449,14 +449,14 @@ HBondDatabase::initialize_HBEval()
 		}
 
 		HBEvalType hbe_type = HBEval_lookup(don_chem_type, acc_chem_type, seq_sep_type);
-		if( initialized_hbe_types[hbe_type]){
+		if ( initialized_hbe_types[hbe_type] ) {
 			tr << "Duplicate parameter specification in HBEval.csv:" << endl;
 			tr << "  hbe_type: " << hbe_type << " line :" << line_number << endl;
 		} else {
 			initialized_hbe_types[hbe_type] = true;
 		}
 
-		if( hbe_type > static_cast<HBEvalType>(HB_EVAL_TYPE_COUNT) ){
+		if ( hbe_type > static_cast<HBEvalType>(HB_EVAL_TYPE_COUNT) ) {
 			stringstream message;
 			message << "hb_eval_type created from" << endl;
 			message << "\tdon_chem_type:'"<< don_chem_type_name <<"'" << endl;
@@ -481,8 +481,8 @@ HBondDatabase::initialize_HBEval()
 			buf << tokens[i]; i++;
 			buf >> AHdist_short_fade_name;
 			AHdist_short_fade = HBFadeInterval_from_name(AHdist_short_fade_name);
-			if(AHdist_short_fade_lookup_[hbe_type]){
-			debug_assert(AHdist_short_fade_lookup_[hbe_type] == AHdist_short_fade);
+			if ( AHdist_short_fade_lookup_[hbe_type] ) {
+				debug_assert(AHdist_short_fade_lookup_[hbe_type] == AHdist_short_fade);
 			} else {
 				AHdist_short_fade_lookup_[hbe_type] = AHdist_short_fade;
 			}
@@ -492,8 +492,8 @@ HBondDatabase::initialize_HBEval()
 			buf << tokens[i]; i++;
 			buf >> AHdist_long_fade_name;
 			AHdist_long_fade = HBFadeInterval_from_name(AHdist_long_fade_name);
-			if(AHdist_long_fade_lookup_[hbe_type]){
-			debug_assert(AHdist_long_fade_lookup_[hbe_type] == AHdist_long_fade);
+			if ( AHdist_long_fade_lookup_[hbe_type] ) {
+				debug_assert(AHdist_long_fade_lookup_[hbe_type] == AHdist_long_fade);
 			} else {
 				AHdist_long_fade_lookup_[hbe_type] = AHdist_long_fade;
 			}
@@ -503,8 +503,8 @@ HBondDatabase::initialize_HBEval()
 			buf << tokens[i]; i++;
 			buf >> cosBAH_fade_name;
 			cosBAH_fade = HBFadeInterval_from_name(cosBAH_fade_name);
-			if(cosBAH_fade_lookup_[hbe_type]){
-			debug_assert(cosBAH_fade_lookup_[hbe_type] == cosBAH_fade);
+			if ( cosBAH_fade_lookup_[hbe_type] ) {
+				debug_assert(cosBAH_fade_lookup_[hbe_type] == cosBAH_fade);
 			} else {
 				cosBAH_fade_lookup_[hbe_type] = cosBAH_fade;
 			}
@@ -514,8 +514,8 @@ HBondDatabase::initialize_HBEval()
 			buf << tokens[i]; i++;
 			buf >> cosAHD_fade_name;
 			cosAHD_fade = HBFadeInterval_from_name(cosAHD_fade_name);
-			if(cosAHD_fade_lookup_[hbe_type]){
-			debug_assert(cosAHD_fade_lookup_[hbe_type] == cosAHD_fade);
+			if ( cosAHD_fade_lookup_[hbe_type] ) {
+				debug_assert(cosAHD_fade_lookup_[hbe_type] == cosAHD_fade);
 			} else {
 				cosAHD_fade_lookup_[hbe_type] = cosAHD_fade;
 			}
@@ -530,8 +530,8 @@ HBondDatabase::initialize_HBEval()
 			if ( AHdist_poly->geometric_dimension() != hbgd_AHdist ) {
 				utility_exit_with_message("When reading HBEval.csv parameters for " + don_chem_type_name + " and " + acc_chem_type_name + ", expected to read a distance polynomial (i.e. geometric_dimension == hbgd_AHdist), but instead, found " + AHdist_poly_name + " of geometric dimension " + utility::to_string(AHdist_poly->geometric_dimension()) );
 			}
-			if(AHdist_poly_lookup_[hbe_type]){
-			debug_assert(AHdist_poly_lookup_[hbe_type] == AHdist_poly);
+			if ( AHdist_poly_lookup_[hbe_type] ) {
+				debug_assert(AHdist_poly_lookup_[hbe_type] == AHdist_poly);
 			} else {
 				AHdist_poly_lookup_[hbe_type] = AHdist_poly;
 			}
@@ -545,8 +545,8 @@ HBondDatabase::initialize_HBEval()
 			if ( cosBAH_short_poly->geometric_dimension() != hbgd_cosBAH ) {
 				utility_exit_with_message("When reading HBEval.csv parameters for " + don_chem_type_name + " and " + acc_chem_type_name + ", expected to read a short-range cosBAH polynomial (i.e. geometric_dimension == hbgd_cosBAH), but instead, found " + cosBAH_short_poly_name + " of geometric dimension " + utility::to_string(cosBAH_short_poly->geometric_dimension()) );
 			}
-			if(cosBAH_short_poly_lookup_[hbe_type]){
-			debug_assert(cosBAH_short_poly_lookup_[hbe_type] == cosBAH_short_poly);
+			if ( cosBAH_short_poly_lookup_[hbe_type] ) {
+				debug_assert(cosBAH_short_poly_lookup_[hbe_type] == cosBAH_short_poly);
 			} else {
 				cosBAH_short_poly_lookup_[hbe_type] = cosBAH_short_poly;
 			}
@@ -560,8 +560,8 @@ HBondDatabase::initialize_HBEval()
 			if ( cosBAH_long_poly->geometric_dimension() != hbgd_cosBAH ) {
 				utility_exit_with_message("When reading HBEval.csv parameters for " + don_chem_type_name + " and " + acc_chem_type_name + ", expected to read a long-range cosBAH polynomial (i.e. geometric_dimension == hbgd_cosBAH), but instead, found " + cosBAH_long_poly_name + " of geometric dimension " + utility::to_string(cosBAH_long_poly->geometric_dimension()) );
 			}
-			if(cosBAH_long_poly_lookup_[hbe_type]){
-			debug_assert(cosBAH_long_poly_lookup_[hbe_type] == cosBAH_long_poly);
+			if ( cosBAH_long_poly_lookup_[hbe_type] ) {
+				debug_assert(cosBAH_long_poly_lookup_[hbe_type] == cosBAH_long_poly);
 			} else {
 				cosBAH_long_poly_lookup_[hbe_type] = cosBAH_long_poly;
 			}
@@ -575,8 +575,8 @@ HBondDatabase::initialize_HBEval()
 			if ( cosAHD_short_poly->geometric_dimension() != hbgd_cosAHD && cosAHD_short_poly->geometric_dimension() != hbgd_AHD  ) {
 				utility_exit_with_message("When reading HBEval.csv parameters for " + don_chem_type_name + " and " + acc_chem_type_name + ", expected to read a short-range cosAHD or AHD polynomial (i.e. geometric_dimension == hbgd_cosAHD or hbgd_AHD), but instead, found " + cosAHD_short_poly_name + " of geometric dimension " + utility::to_string(cosAHD_short_poly->geometric_dimension()) );
 			}
-			if(cosAHD_short_poly_lookup_[hbe_type]){
-			debug_assert(cosAHD_short_poly_lookup_[hbe_type]);
+			if ( cosAHD_short_poly_lookup_[hbe_type] ) {
+				debug_assert(cosAHD_short_poly_lookup_[hbe_type]);
 			} else {
 				cosAHD_short_poly_lookup_[hbe_type] = cosAHD_short_poly;
 			}
@@ -594,38 +594,38 @@ HBondDatabase::initialize_HBEval()
 			if ( cosAHD_long_poly->geometric_dimension() != cosAHD_short_poly->geometric_dimension()  ) {
 				utility_exit_with_message("When reading HBEval.csv parameters for " + don_chem_type_name + " and " + acc_chem_type_name + ", found that the short- and long-range polynomials for the AHD angle are of different geometric types: one of hbgd_cosAHD and the other of hbgd_AHD.  These types cannot be mixed" );
 			}
-			if(cosAHD_long_poly_lookup_[hbe_type]){
-			debug_assert(cosAHD_long_poly_lookup_[hbe_type] == cosAHD_long_poly);
+			if ( cosAHD_long_poly_lookup_[hbe_type] ) {
+				debug_assert(cosAHD_long_poly_lookup_[hbe_type] == cosAHD_long_poly);
 			} else {
 				cosAHD_long_poly_lookup_[hbe_type] = cosAHD_long_poly;
 			}
 		}
-//if (tokens[i] != ""){  // chi dimension is not yet defined!
-//	stringstream buf;
-//	buf << tokens[i];
-//	buf >> chi_poly_name;
-//	chi_poly = HBPoly1D_from_name(chi_poly_name);
-//	if(chi_poly_lookup_[hbe_type]){
-//	debug_assert(chi_poly_lookup_[hbe_type] == chi_poly);
-//	} else {
-//		chi_poly_lookup_[hbe_type] = chi_poly;
-//	}
-//}
-//i++;
+		//if (tokens[i] != ""){  // chi dimension is not yet defined!
+		// stringstream buf;
+		// buf << tokens[i];
+		// buf >> chi_poly_name;
+		// chi_poly = HBPoly1D_from_name(chi_poly_name);
+		// if(chi_poly_lookup_[hbe_type]){
+		// debug_assert(chi_poly_lookup_[hbe_type] == chi_poly);
+		// } else {
+		//  chi_poly_lookup_[hbe_type] = chi_poly;
+		// }
+		//}
+		//i++;
 		{
 			stringstream buf;
 			buf << tokens[i]; i++;
 			buf >> weight_type_name;
 			weight_type = HBondWeightType(HBondTypeManager::weight_type_from_name(weight_type_name));
-			if(weight_type_lookup_[hbe_type] != hbw_NONE){
-			debug_assert(weight_type_lookup_[hbe_type] == weight_type);
+			if ( weight_type_lookup_[hbe_type] != hbw_NONE ) {
+				debug_assert(weight_type_lookup_[hbe_type] == weight_type);
 			} else {
 				weight_type_lookup_[hbe_type] = weight_type;
 			}
 		}
 	}
-	for(Size i=1; i <= hbe_MAX; ++i){
-		if(!initialized_hbe_types[i]){
+	for ( Size i=1; i <= hbe_MAX; ++i ) {
+		if ( !initialized_hbe_types[i] ) {
 			tr << "hbe_type: " << i << " is not initialized in HBEval.csv" << endl;
 		}
 	}
@@ -651,10 +651,10 @@ HBondDatabase::initialize_don_strength() {
 		string don_type_name;
 		Real site_strength;
 		HBDonChemType don_chem_type;
-		while(getline(s, line)){
+		while ( getline(s, line) ) {
 			++line_number;
 			tokens = string_split(line, ',');
-			if(tokens.size() != expected_n_tokens){
+			if ( tokens.size() != expected_n_tokens ) {
 				stringstream message;
 				message
 					<< "BondStrength.csv:" << line_number << " "
@@ -685,7 +685,7 @@ HBondDatabase::initialize_don_strength() {
 	if ( basic::options::option[ basic::options::OptionKeys::score::hb_don_strength ].user() ) {
 		utility::vector1< std::string > const hb_don_strength_tags
 			( basic::options::option[ basic::options::OptionKeys::score::hb_don_strength ] );
-		BOOST_FOREACH( std::string const & tag, hb_don_strength_tags ) {
+		BOOST_FOREACH ( std::string const & tag, hb_don_strength_tags ) {
 			utility::vector1< std::string > const tokens( string_split( tag, ':' ) );
 			runtime_assert( tokens.size() == 2 );
 			string don_type_name("tmp");
@@ -730,10 +730,10 @@ HBondDatabase::initialize_acc_strength() {
 		string acc_type_name;
 		Real site_strength;
 		HBAccChemType acc_chem_type;
-		while(getline(s, line)){
+		while ( getline(s, line) ) {
 			++line_number;
 			tokens = string_split(line, ',');
-			if(tokens.size() != expected_n_tokens){
+			if ( tokens.size() != expected_n_tokens ) {
 				stringstream message;
 				message
 					<< "BondStrength.csv:" << line_number << " "
@@ -765,7 +765,7 @@ HBondDatabase::initialize_acc_strength() {
 	if ( basic::options::option[ basic::options::OptionKeys::score::hb_acc_strength ].user() ) {
 		utility::vector1< std::string > const hb_acc_strength_tags
 			( basic::options::option[ basic::options::OptionKeys::score::hb_acc_strength ] );
-		BOOST_FOREACH( std::string const & tag, hb_acc_strength_tags ) {
+		BOOST_FOREACH ( std::string const & tag, hb_acc_strength_tags ) {
 			utility::vector1< std::string > const tokens( string_split( tag, ':' ) );
 			runtime_assert( tokens.size() == 2 );
 			string acc_type_name("tmp");
@@ -796,7 +796,7 @@ HBondDatabase::HBFadeInterval_from_name(
 	string const name
 ) const {
 	map< const string, FadeIntervalCOP >::const_iterator it(HBFadeInterval_lookup_by_name_.find(name));
-	if( it == HBFadeInterval_lookup_by_name_.end() ){
+	if ( it == HBFadeInterval_lookup_by_name_.end() ) {
 		stringstream message;
 		message << "Fade Interval '" << name << "' has not been defined.";
 		utility_exit_with_message(message.str());
@@ -813,7 +813,7 @@ FadeIntervalCOP
 HBondDatabase::AHdist_short_fade_lookup(
 	Size const hb_eval_type
 ) const {
-	if( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ){
+	if ( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ) {
 		stringstream message;
 		message << "HBond eval type '" << hb_eval_type <<
 			"' is out side of the valid range (1," << HB_EVAL_TYPE_COUNT << ")";
@@ -822,7 +822,7 @@ HBondDatabase::AHdist_short_fade_lookup(
 
 	FadeIntervalCOP p(AHdist_short_fade_lookup_[hb_eval_type]);
 
-	if(!p) {
+	if ( !p ) {
 		stringstream message;
 		message << "No short fade interval for AHdist has been defined for hb eval type '"
 			<< hb_eval_type << "'" <<endl;
@@ -837,7 +837,7 @@ FadeIntervalCOP
 HBondDatabase::AHdist_long_fade_lookup(
 	Size const hb_eval_type
 ) const {
-	if( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ){
+	if ( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ) {
 		stringstream message;
 		message << "HBond eval type '" << hb_eval_type
 			<< "' is out side of the valid range (1," << HB_EVAL_TYPE_COUNT << ")";
@@ -845,7 +845,7 @@ HBondDatabase::AHdist_long_fade_lookup(
 	}
 	FadeIntervalCOP p(AHdist_long_fade_lookup_[hb_eval_type]);
 
-	if(!p) {
+	if ( !p ) {
 		stringstream message;
 		message << "No long fade interval for AHdist has been defined for hb eval type '"
 			<< hb_eval_type << "'" <<endl;
@@ -860,7 +860,7 @@ FadeIntervalCOP
 HBondDatabase::cosBAH_fade_lookup(
 	Size const hb_eval_type
 ) const {
-	if( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ){
+	if ( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ) {
 		stringstream message;
 		message << "HBond eval type '" << hb_eval_type
 			<< "' is out side of the valid range (1," << HB_EVAL_TYPE_COUNT << ")";
@@ -868,7 +868,7 @@ HBondDatabase::cosBAH_fade_lookup(
 	}
 	FadeIntervalCOP p(cosBAH_fade_lookup_[hb_eval_type]);
 
-	if(!p) {
+	if ( !p ) {
 		stringstream message;
 		message << "No fade interval for cosBAH has been defined for hb eval type '"
 			<< hb_eval_type << "'" <<endl;
@@ -883,7 +883,7 @@ FadeIntervalCOP
 HBondDatabase::cosAHD_fade_lookup(
 	Size const hb_eval_type
 ) const {
-	if( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ){
+	if ( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ) {
 		stringstream message;
 		message << "HBond eval type '" << hb_eval_type
 			<< "' is out side of the valid range (1," << HB_EVAL_TYPE_COUNT << ")";
@@ -891,7 +891,7 @@ HBondDatabase::cosAHD_fade_lookup(
 	}
 	FadeIntervalCOP p(cosAHD_fade_lookup_[hb_eval_type]);
 
-	if(!p) {
+	if ( !p ) {
 		stringstream message;
 		message << "No fade interval for cosAHD has been defined for hb eval type '"
 			<< hb_eval_type << "'" <<endl;
@@ -905,7 +905,7 @@ HBondDatabase::HBPoly1D_from_name(
 	string const name
 ) const {
 	map< const string, Polynomial_1dCOP >::const_iterator it(HBPoly1D_lookup_by_name_.find(name));
-	if( it == HBPoly1D_lookup_by_name_.end() ){
+	if ( it == HBPoly1D_lookup_by_name_.end() ) {
 		stringstream message;
 		message << "1d Polynomial '" << name << "' has not been defined.";
 		utility_exit_with_message(message.str());
@@ -921,7 +921,7 @@ Polynomial_1dCOP
 HBondDatabase::AHdist_poly_lookup(
 	Size const hb_eval_type
 ) const {
-	if( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ){
+	if ( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ) {
 		stringstream message;
 		message << "HBond eval type '" << hb_eval_type
 			<< "' is out side of the valid range (1," << HB_EVAL_TYPE_COUNT << ")";
@@ -929,7 +929,7 @@ HBondDatabase::AHdist_poly_lookup(
 	}
 	Polynomial_1dCOP p(AHdist_poly_lookup_[hb_eval_type]);
 
-	if(!p) {
+	if ( !p ) {
 		stringstream message;
 		message << "No AHdist polynomial has been defined for hb eval type '"
 			<< hb_eval_type << "'" <<endl;
@@ -944,7 +944,7 @@ Polynomial_1dCOP
 HBondDatabase::cosBAH_short_poly_lookup(
 	Size const hb_eval_type
 ) const {
-	if( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ){
+	if ( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ) {
 		stringstream message;
 		message << "HBond eval type '" << hb_eval_type
 			<< "' is out side of the valid range (1," << HB_EVAL_TYPE_COUNT << ")";
@@ -952,7 +952,7 @@ HBondDatabase::cosBAH_short_poly_lookup(
 	}
 	Polynomial_1dCOP p(cosBAH_short_poly_lookup_[hb_eval_type]);
 
-	if(!p) {
+	if ( !p ) {
 		stringstream message;
 		message << "No cosBAH_short polynomial has been defined for hb eval type '"
 			<< hb_eval_type << "'" << endl;
@@ -968,7 +968,7 @@ Polynomial_1dCOP
 HBondDatabase::cosBAH_long_poly_lookup(
 	Size const hb_eval_type
 ) const {
-	if( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ){
+	if ( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ) {
 		stringstream message;
 		message << "HBond eval type '" << hb_eval_type
 			<< "' is out side of the valid range (1," << HB_EVAL_TYPE_COUNT << ")";
@@ -976,7 +976,7 @@ HBondDatabase::cosBAH_long_poly_lookup(
 	}
 	Polynomial_1dCOP p(cosBAH_long_poly_lookup_[hb_eval_type]);
 
-	if(!p) {
+	if ( !p ) {
 		stringstream message;
 		message << "No cosBAH_long polynomial has been defined for hb eval type '"
 			<< hb_eval_type << "'" << endl;
@@ -991,7 +991,7 @@ Polynomial_1dCOP
 HBondDatabase::cosAHD_short_poly_lookup(
 	Size const hb_eval_type
 ) const {
-	if( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ){
+	if ( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ) {
 		stringstream message;
 		message << "HBond eval type '" << hb_eval_type
 			<< "' is out side of the valid range (1," << HB_EVAL_TYPE_COUNT << ")";
@@ -999,7 +999,7 @@ HBondDatabase::cosAHD_short_poly_lookup(
 	}
 	Polynomial_1dCOP p(cosAHD_short_poly_lookup_[hb_eval_type]);
 
-	if(!p) {
+	if ( !p ) {
 		stringstream message;
 		message << "No cosAHD_short polynomial has been defined for hb eval type '"
 			<< hb_eval_type << "'" << endl;
@@ -1014,7 +1014,7 @@ Polynomial_1dCOP
 HBondDatabase::cosAHD_long_poly_lookup(
 	Size const hb_eval_type
 ) const {
-	if( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ){
+	if ( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ) {
 		stringstream message;
 		message << "HBond eval type '" << hb_eval_type
 			<< "' is out side of the valid range (1," << HB_EVAL_TYPE_COUNT << ")";
@@ -1022,7 +1022,7 @@ HBondDatabase::cosAHD_long_poly_lookup(
 	}
 	Polynomial_1dCOP p(cosAHD_long_poly_lookup_[hb_eval_type]);
 
-	if(!p) {
+	if ( !p ) {
 		stringstream message;
 		message << "No cosAHD_long polynomial has been defined for hb eval type '"
 			<< hb_eval_type << "'" << endl;
@@ -1036,7 +1036,7 @@ Polynomial_1dCOP
 HBondDatabase::chi_poly_lookup(
 	Size const hb_eval_type
 ) const {
-	if( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ){
+	if ( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ) {
 		stringstream message;
 		message << "HBond eval type '" << hb_eval_type
 			<< "' is out side of the valid range (1," << HB_EVAL_TYPE_COUNT << ")";
@@ -1044,7 +1044,7 @@ HBondDatabase::chi_poly_lookup(
 	}
 	Polynomial_1dCOP p(chi_poly_lookup_[hb_eval_type]);
 
-	if(!p) {
+	if ( !p ) {
 		stringstream message;
 		message << "No chi polynomial has been defined for hb eval type '"
 			<< hb_eval_type << "'" << endl;
@@ -1058,7 +1058,7 @@ Real
 HBondDatabase::don_strength(
 	HBDonChemType const don_chem_type
 ) const {
-debug_assert(don_chem_type >= 1 && don_chem_type <= hbdon_MAX );
+	debug_assert(don_chem_type >= 1 && don_chem_type <= hbdon_MAX );
 
 	return don_strength_lookup_[don_chem_type];
 }
@@ -1067,7 +1067,7 @@ Real
 HBondDatabase::acc_strength(
 	HBAccChemType const acc_chem_type
 ) const {
-debug_assert(acc_chem_type >= 1 && acc_chem_type <= hbacc_MAX );
+	debug_assert(acc_chem_type >= 1 && acc_chem_type <= hbacc_MAX );
 
 	return acc_strength_lookup_[acc_chem_type];
 }
@@ -1078,7 +1078,7 @@ HBondWeightType
 HBondDatabase::weight_type_lookup(
 	Size const hb_eval_type
 ) const {
-	if( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ){
+	if ( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ) {
 		stringstream message;
 		message << "HBond eval type '" << hb_eval_type
 			<< "' is out side of the valid range (1," << HB_EVAL_TYPE_COUNT << ")";
@@ -1086,7 +1086,7 @@ HBondDatabase::weight_type_lookup(
 	}
 	HBondWeightType p(weight_type_lookup_[hb_eval_type]);
 
-	if(p == hbw_NONE) {
+	if ( p == hbw_NONE ) {
 		stringstream message;
 		message << "No weight type has been defined for hb eval type '"
 			<< hb_eval_type << "'" << endl;
@@ -1363,13 +1363,13 @@ HBondDatabase::report_parameter_features(
 	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
 	select_statement.bind(1,database_tag);
 	result res(basic::database::safely_read_from_database(select_statement));
-	if(res.next()) return 0;
+	if ( res.next() ) return 0;
 
 
 	pair<string, FadeIntervalCOP> fade_name_interval;
 	std::string hbond_interval_string = "INSERT INTO hbond_fade_interval (database_tag, name, junction_type, min0, fmin, fmax, max0) VALUES (?,?,?,?,?,?,?);";
 	statement hbond_interval_statement(basic::database::safely_prepare_statement(hbond_interval_string,db_session));
-	BOOST_FOREACH(fade_name_interval, HBFadeInterval_lookup_by_name_){
+	BOOST_FOREACH ( fade_name_interval, HBFadeInterval_lookup_by_name_ ) {
 		hbond_interval_statement.bind(1,database_tag);
 		hbond_interval_statement.bind(2,fade_name_interval.first);
 		hbond_interval_statement.bind(3,(fade_name_interval.second->get_smooth() ? "smooth" : "piecewise_linear"));
@@ -1384,7 +1384,7 @@ HBondDatabase::report_parameter_features(
 	pair<string, Polynomial_1dCOP> poly_name_fn;
 	std::string hbond_polynomial_string = "INSERT INTO hbond_polynomial_1d (database_tag, name, dimension, xmin, xmax, min_val, max_val, root1, root2, degree, c_a, c_b, c_c, c_d, c_e, c_f, c_g, c_h, c_i, c_j, c_k) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement hbond_polynomial_statement(basic::database::safely_prepare_statement(hbond_polynomial_string,db_session));
-	BOOST_FOREACH(poly_name_fn, HBPoly1D_lookup_by_name_){
+	BOOST_FOREACH ( poly_name_fn, HBPoly1D_lookup_by_name_ ) {
 		hbond_polynomial_statement.bind(1,database_tag);
 		hbond_polynomial_statement.bind(2,poly_name_fn.first);
 		hbond_polynomial_statement.bind(3,HBondTypeManager::name_from_geo_dim_type(poly_name_fn.second->geometric_dimension()));
@@ -1396,11 +1396,11 @@ HBondDatabase::report_parameter_features(
 		hbond_polynomial_statement.bind(9,poly_name_fn.second->root2());
 		hbond_polynomial_statement.bind(10,poly_name_fn.second->degree());
 		Size index = 10;
-		for(Size i = 1; i <= poly_name_fn.second->degree(); ++i){
+		for ( Size i = 1; i <= poly_name_fn.second->degree(); ++i ) {
 			index++;
 			hbond_polynomial_statement.bind(index,poly_name_fn.second->coefficients()[i]);
 		}
-		for(Size i = 1; i <= 11-poly_name_fn.second->degree(); ++i){
+		for ( Size i = 1; i <= 11-poly_name_fn.second->degree(); ++i ) {
 			index++;
 			hbond_polynomial_statement.bind_null(index);
 		}
@@ -1409,15 +1409,15 @@ HBondDatabase::report_parameter_features(
 
 	std::string hbond_evaluation_string = "INSERT INTO hbond_evaluation_types (database_tag, don_chem_type, acc_chem_type, separation, AHdist_short_fade, AHdist_long_fade, cosBAH_fade, cosAHD_fade, AHdist, cosBAH_short, cosBAH_long, cosAHD_short, cosAHD_long, weight_type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement hbond_evaluation_statement(basic::database::safely_prepare_statement(hbond_evaluation_string,db_session));
-	for (Size hbdon=1; hbdon <= hbdon_MAX; ++hbdon){
+	for ( Size hbdon=1; hbdon <= hbdon_MAX; ++hbdon ) {
 		string const & don_chem_type(HBondTypeManager::name_from_don_chem_type(HBDonChemType(hbdon)));
-		for (Size hbacc=1; hbacc <= hbacc_MAX; ++hbacc){
+		for ( Size hbacc=1; hbacc <= hbacc_MAX; ++hbacc ) {
 			string const & acc_chem_type(HBondTypeManager::name_from_acc_chem_type(HBAccChemType(hbacc)));
-			for (Size hbseq_sep=1; hbseq_sep <= seq_sep_MAX; ++hbseq_sep){
+			for ( Size hbseq_sep=1; hbseq_sep <= seq_sep_MAX; ++hbseq_sep ) {
 				string const & separation(HBondTypeManager::name_from_seq_sep_type(HBSeqSep(hbseq_sep)));
 
 				HBEvalType const hbe(HBEval_lookup(hbdon, hbacc, hbseq_sep));
-				if(hbe == hbe_UNKNOWN) {
+				if ( hbe == hbe_UNKNOWN ) {
 					continue;
 				}
 

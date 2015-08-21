@@ -75,11 +75,12 @@ SetTemperatureFactor::apply( core::pose::Pose & pose )
 	ResId * resid = dynamic_cast< ResId *>( filter_.get() );
 	runtime_assert( resid );
 
-	for( core::Size resi = 1; resi <= pose.total_residue(); ++resi ){
+	for ( core::Size resi = 1; resi <= pose.total_residue(); ++resi ) {
 		resid->set_resid( resi );
 		core::Real const filter_value( filter_->report_sm( pose ) );
-		for( core::Size j = 1; j <= pose.residue( resi ).natoms(); ++j )
+		for ( core::Size j = 1; j <= pose.residue( resi ).natoms(); ++j ) {
 			pose.pdb_info()->temperature( resi, j, filter_value * scaling() );
+		}
 	}
 }
 
@@ -91,25 +92,26 @@ SetTemperatureFactor::get_name() const {
 void
 SetTemperatureFactor::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const & filters, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
-  std::string const filter_name( tag->getOption<std::string>( "filter" ) );
-  protocols::filters::Filters_map::const_iterator find_ap_filter( filters.find( filter_name));
-  bool const ap_filter_found( find_ap_filter != filters.end() );
-  runtime_assert( ap_filter_found );
-  filter( find_ap_filter->second->clone() );
+	std::string const filter_name( tag->getOption<std::string>( "filter" ) );
+	protocols::filters::Filters_map::const_iterator find_ap_filter( filters.find( filter_name));
+	bool const ap_filter_found( find_ap_filter != filters.end() );
+	runtime_assert( ap_filter_found );
+	filter( find_ap_filter->second->clone() );
 	scaling( tag->getOption< core::Real >( "scaling", 1.0 ) );
 }
 
 protocols::moves::MoverOP
 SetTemperatureFactor::clone() const {
-    return( protocols::moves::MoverOP( new SetTemperatureFactor( *this ) ));
+	return( protocols::moves::MoverOP( new SetTemperatureFactor( *this ) ));
 }
 
 void
 SetTemperatureFactor::filter( protocols::filters::FilterOP filter )
 {
 	ResId * resid = dynamic_cast< ResId *>( filter.get() );
-	if( !resid )
+	if ( !resid ) {
 		utility_exit_with_message( "filter must be derived from ResId class for this to work." );
+	}
 	filter_ = filter;
 }
 

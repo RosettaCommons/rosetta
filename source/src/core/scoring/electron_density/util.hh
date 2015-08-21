@@ -63,12 +63,12 @@ core::Real interp_linear(
 	grid[0] = data.u1(); grid[1] = data.u2(); grid[2] = data.u3();
 
 	// find bounding grid points
-	pt000[0] = (int)(floor(idxX[0])) % grid[0]; if (pt000[0] <= 0) pt000[0]+= grid[0];
-	pt000[1] = (int)(floor(idxX[1])) % grid[1]; if (pt000[1] <= 0) pt000[1]+= grid[1];
-	pt000[2] = (int)(floor(idxX[2])) % grid[2]; if (pt000[2] <= 0) pt000[2]+= grid[2];
-	pt111[0] = (pt000[0]+1); if (pt111[0]>grid[0]) pt111[0] = 1;
-	pt111[1] = (pt000[1]+1); if (pt111[1]>grid[1]) pt111[1] = 1;
-	pt111[2] = (pt000[2]+1); if (pt111[2]>grid[2]) pt111[2] = 1;
+	pt000[0] = (int)(floor(idxX[0])) % grid[0]; if ( pt000[0] <= 0 ) pt000[0]+= grid[0];
+	pt000[1] = (int)(floor(idxX[1])) % grid[1]; if ( pt000[1] <= 0 ) pt000[1]+= grid[1];
+	pt000[2] = (int)(floor(idxX[2])) % grid[2]; if ( pt000[2] <= 0 ) pt000[2]+= grid[2];
+	pt111[0] = (pt000[0]+1); if ( pt111[0]>grid[0] ) pt111[0] = 1;
+	pt111[1] = (pt000[1]+1); if ( pt111[1]>grid[1] ) pt111[1] = 1;
+	pt111[2] = (pt000[2]+1); if ( pt111[2]>grid[2] ) pt111[2] = 1;
 
 	// interpolation coeffs
 	fpart[0] = idxX[0]-floor(idxX[0]); neg_fpart[0] = 1-fpart[0];
@@ -91,11 +91,11 @@ core::Real interp_linear(
 /// @brief spline interpolation with periodic boundaries
 core::Real
 interp_spline( ObjexxFCL::FArray3D< double > & coeffs ,
-               numeric::xyzVector<core::Real> const & idxX );
+	numeric::xyzVector<core::Real> const & idxX );
 
 numeric::xyzVector<core::Real>
 interp_dspline( ObjexxFCL::FArray3D< double > & coeffs ,
-                numeric::xyzVector<core::Real> const & idxX );
+	numeric::xyzVector<core::Real> const & idxX );
 
 /// @brief precompute spline coefficients (float array => double coeffs)
 void spline_coeffs( ObjexxFCL::FArray3D< double > const &data, ObjexxFCL::FArray3D< double > & coeffs);
@@ -110,31 +110,31 @@ ObjexxFCL::FArray3D< double > convolute_maps( ObjexxFCL::FArray3D< double > cons
 
 /// 4d interpolants
 core::Real interp_spline(
-					 ObjexxFCL::FArray4D< double > & coeffs ,
-					 core::Real slab,
-					 numeric::xyzVector< core::Real > const & idxX );
+	ObjexxFCL::FArray4D< double > & coeffs ,
+	core::Real slab,
+	numeric::xyzVector< core::Real > const & idxX );
 
 void interp_dspline(
-					ObjexxFCL::FArray4D< double > & coeffs ,
-					numeric::xyzVector< core::Real > const & idxX ,
-					core::Real slab,
-					numeric::xyzVector< core::Real > & gradX,
-					core::Real & gradSlab );
+	ObjexxFCL::FArray4D< double > & coeffs ,
+	numeric::xyzVector< core::Real > const & idxX ,
+	core::Real slab,
+	numeric::xyzVector< core::Real > & gradX,
+	core::Real & gradSlab );
 void spline_coeffs(
-           ObjexxFCL::FArray4D< double > const & data ,
-           ObjexxFCL::FArray4D< double > & coeffs);
+	ObjexxFCL::FArray4D< double > const & data ,
+	ObjexxFCL::FArray4D< double > & coeffs);
 void spline_coeffs(
-           ObjexxFCL::FArray4D< float > const & data ,
-           ObjexxFCL::FArray4D< double > & coeffs);
+	ObjexxFCL::FArray4D< float > const & data ,
+	ObjexxFCL::FArray4D< double > & coeffs);
 
 
 /// @brief templated helper function to FFT resample a map
 template<class S, class T>
 void resample(
-      ObjexxFCL::FArray3D< S > const &density,
-      ObjexxFCL::FArray3D< T > &newDensity,
-      numeric::xyzVector< int > newDims ) {
-	if (density.u1() == newDims[0] && density.u2() == newDims[1] && density.u3() == newDims[2]) {
+	ObjexxFCL::FArray3D< S > const &density,
+	ObjexxFCL::FArray3D< T > &newDensity,
+	numeric::xyzVector< int > newDims ) {
+	if ( density.u1() == newDims[0] && density.u2() == newDims[1] && density.u3() == newDims[2] ) {
 		newDensity = density;
 		return;
 	}
@@ -148,51 +148,57 @@ void resample(
 	// fft
 	ObjexxFCL::FArray3D< std::complex<double> > cplx_density;
 	cplx_density.dimension( density.u1() , density.u2() , density.u3() );
-	for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i) cplx_density[i] = (double)density[i];
+	for ( int i=0; i<density.u1()*density.u2()*density.u3(); ++i ) cplx_density[i] = (double)density[i];
 	numeric::fourier::fft3(cplx_density, Foldmap);
 
 	// reshape (handles both shrinking and growing in each dimension)
-	for (int i=0; i<Fnewmap.u1()*Fnewmap.u2()*Fnewmap.u3(); ++i) Fnewmap[i] = std::complex<double>(0,0);
+	for ( int i=0; i<Fnewmap.u1()*Fnewmap.u2()*Fnewmap.u3(); ++i ) Fnewmap[i] = std::complex<double>(0,0);
 
 	numeric::xyzVector<int> nyq( std::min(Foldmap.u1(), Fnewmap.u1())/2,
-															 std::min(Foldmap.u2(), Fnewmap.u2())/2,
-															 std::min(Foldmap.u3(), Fnewmap.u3())/2 );
+		std::min(Foldmap.u2(), Fnewmap.u2())/2,
+		std::min(Foldmap.u3(), Fnewmap.u3())/2 );
 	numeric::xyzVector<int> nyqplus1_old( std::max(Foldmap.u1() - (std::min(Foldmap.u1(),Fnewmap.u1())-nyq[0]) + 1 , nyq[0]+1) ,
-																				std::max(Foldmap.u2() - (std::min(Foldmap.u2(),Fnewmap.u2())-nyq[1]) + 1 , nyq[1]+1) ,
-																				std::max(Foldmap.u3() - (std::min(Foldmap.u3(),Fnewmap.u3())-nyq[2]) + 1 , nyq[2]+1) );
+		std::max(Foldmap.u2() - (std::min(Foldmap.u2(),Fnewmap.u2())-nyq[1]) + 1 , nyq[1]+1) ,
+		std::max(Foldmap.u3() - (std::min(Foldmap.u3(),Fnewmap.u3())-nyq[2]) + 1 , nyq[2]+1) );
 	numeric::xyzVector<int> nyqplus1_new( std::max(Fnewmap.u1() - (std::min(Foldmap.u1(),Fnewmap.u1())-nyq[0]) + 1 , nyq[0]+1) ,
-																				std::max(Fnewmap.u2() - (std::min(Foldmap.u2(),Fnewmap.u2())-nyq[1]) + 1 , nyq[1]+1) ,
-																				std::max(Fnewmap.u3() - (std::min(Foldmap.u3(),Fnewmap.u3())-nyq[2]) + 1 , nyq[2]+1) );
-	for (int i=1; i<=Fnewmap.u1(); i++)
-	for (int j=1; j<=Fnewmap.u2(); j++)
-	for (int k=1; k<=Fnewmap.u3(); k++) {
-		if (i-1<=nyq[0]) {
-			if (j-1<=nyq[1]) {
-				if (k-1<=nyq[2])
-					Fnewmap(i,j,k) = Foldmap(i, j, k);
-				else if (k-1>=nyqplus1_new[2])
-					Fnewmap(i,j,k) = Foldmap(i, j, k-nyqplus1_new[2]+nyqplus1_old[2]);
+		std::max(Fnewmap.u2() - (std::min(Foldmap.u2(),Fnewmap.u2())-nyq[1]) + 1 , nyq[1]+1) ,
+		std::max(Fnewmap.u3() - (std::min(Foldmap.u3(),Fnewmap.u3())-nyq[2]) + 1 , nyq[2]+1) );
+	for ( int i=1; i<=Fnewmap.u1(); i++ ) {
+		for ( int j=1; j<=Fnewmap.u2(); j++ ) {
+			for ( int k=1; k<=Fnewmap.u3(); k++ ) {
+				if ( i-1<=nyq[0] ) {
+					if ( j-1<=nyq[1] ) {
+						if ( k-1<=nyq[2] ) {
+							Fnewmap(i,j,k) = Foldmap(i, j, k);
+						} else if ( k-1>=nyqplus1_new[2] ) {
+							Fnewmap(i,j,k) = Foldmap(i, j, k-nyqplus1_new[2]+nyqplus1_old[2]);
+						}
 
-			} else if (j-1>=nyqplus1_new[1]) {
-				if (k-1<=nyq[2])
-					Fnewmap(i,j,k) = Foldmap(i, j-nyqplus1_new[1]+nyqplus1_old[1], k);
-				else if (k-1>=nyqplus1_new[2])
-					Fnewmap(i,j,k) = Foldmap(i, j-nyqplus1_new[1]+nyqplus1_old[1], k-nyqplus1_new[2]+nyqplus1_old[2]);
-			}
-		} else if (i-1>=nyqplus1_new[0]) {
-			if (j-1<=nyq[1]) {
-				if (k-1<=nyq[2])
-					Fnewmap(i,j,k) = Foldmap(i-nyqplus1_new[0]+nyqplus1_old[0],j,k);
-				else if (k-1>=nyqplus1_new[2])
-					Fnewmap(i,j,k) = Foldmap(i-nyqplus1_new[0]+nyqplus1_old[0],j, k-nyqplus1_new[2]+nyqplus1_old[2]);
+					} else if ( j-1>=nyqplus1_new[1] ) {
+						if ( k-1<=nyq[2] ) {
+							Fnewmap(i,j,k) = Foldmap(i, j-nyqplus1_new[1]+nyqplus1_old[1], k);
+						} else if ( k-1>=nyqplus1_new[2] ) {
+							Fnewmap(i,j,k) = Foldmap(i, j-nyqplus1_new[1]+nyqplus1_old[1], k-nyqplus1_new[2]+nyqplus1_old[2]);
+						}
+					}
+				} else if ( i-1>=nyqplus1_new[0] ) {
+					if ( j-1<=nyq[1] ) {
+						if ( k-1<=nyq[2] ) {
+							Fnewmap(i,j,k) = Foldmap(i-nyqplus1_new[0]+nyqplus1_old[0],j,k);
+						} else if ( k-1>=nyqplus1_new[2] ) {
+							Fnewmap(i,j,k) = Foldmap(i-nyqplus1_new[0]+nyqplus1_old[0],j, k-nyqplus1_new[2]+nyqplus1_old[2]);
+						}
 
-			} else if (j-1>=nyqplus1_new[1]){
-				if (k-1<=nyq[2])
-					Fnewmap(i,j,k) = Foldmap(i-nyqplus1_new[0]+nyqplus1_old[0],j-nyqplus1_new[1]+nyqplus1_old[1],k);
-				else if (k-1>=nyqplus1_new[2])
-					Fnewmap(i,j,k) = Foldmap(i-nyqplus1_new[0]+nyqplus1_old[0],
-																	 j-nyqplus1_new[1]+nyqplus1_old[1],
-																	 k-nyqplus1_new[2]+nyqplus1_old[2]);
+					} else if ( j-1>=nyqplus1_new[1] ) {
+						if ( k-1<=nyq[2] ) {
+							Fnewmap(i,j,k) = Foldmap(i-nyqplus1_new[0]+nyqplus1_old[0],j-nyqplus1_new[1]+nyqplus1_old[1],k);
+						} else if ( k-1>=nyqplus1_new[2] ) {
+							Fnewmap(i,j,k) = Foldmap(i-nyqplus1_new[0]+nyqplus1_old[0],
+								j-nyqplus1_new[1]+nyqplus1_old[1],
+								k-nyqplus1_new[2]+nyqplus1_old[2]);
+						}
+					}
+				}
 			}
 		}
 	}

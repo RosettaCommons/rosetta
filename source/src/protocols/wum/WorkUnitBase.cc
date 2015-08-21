@@ -28,10 +28,10 @@
 
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
-	#ifndef WIN_PYROSETTA
-	    #include <windows.h>
-	#endif
+#include <ctime>
+#ifndef WIN_PYROSETTA
+#include <windows.h>
+#endif
 #endif
 
 namespace protocols {
@@ -59,19 +59,19 @@ WorkUnitBase::WorkUnitBase ( )
 }
 
 void WorkUnitBase::add_blacklist( int mpi_rank ) {
-		blacklist_.push_back( mpi_rank );
+	blacklist_.push_back( mpi_rank );
 }
 
 void WorkUnitBase::clear_blacklist() {
-		blacklist_.clear();
+	blacklist_.clear();
 }
 
 bool WorkUnitBase::in_blacklist( int mpi_rank ) {
-		if( blacklist_.size() == 0 ) return false;
-		std::vector< int >::iterator i;
-		i = find(blacklist_.begin(), blacklist_.end(), mpi_rank );
-		if( i != blacklist_.end() ) return true;
-		return false;
+	if ( blacklist_.size() == 0 ) return false;
+	std::vector< int >::iterator i;
+	i = find(blacklist_.begin(), blacklist_.end(), mpi_rank );
+	if ( i != blacklist_.end() ) return true;
+	return false;
 }
 
 void WorkUnitBase::raw_data_load( const unsigned char * raw_data_ptr, unsigned int size )
@@ -82,7 +82,7 @@ void WorkUnitBase::raw_data_load( const unsigned char * raw_data_ptr, unsigned i
 
 	TR.Debug << "Extracting data information " << std::endl;
 	// make sure the last byte of the data block is a 0 ( it should be a 0 terminated string)
-	if( raw_data_ptr[size-1] != 0){
+	if ( raw_data_ptr[size-1] != 0 ) {
 		TR.Error << "ERROR: cannot load data - terminal zero not found!" << std::endl;
 		serial_data() = "";
 		return;
@@ -99,8 +99,8 @@ void WorkUnitBase::run(){
 
 void
 WorkUnitBase::print( std::ostream & out, bool verbose ) const {
-	if( verbose ){
-		out << "WU.wu_type_:   "  << header.wu_type_  			<< std::endl;
+	if ( verbose ) {
+		out << "WU.wu_type_:   "  << header.wu_type_     << std::endl;
 		out << "WU_id:         " << header.id_    << std::endl;
 		out << "WU_time_create:" << header.unixtime_creation_<< std::endl;
 		out << "WU_time_start: " << header.unixtime_start_<< std::endl;
@@ -113,21 +113,21 @@ WorkUnitBase::print( std::ostream & out, bool verbose ) const {
 		out << "WU_serial:     " << serial_data().substr(0,40) << " [...] " << std::endl;
 	} else {
 		out << "WU: id: "<< header.id_ << " " << header.wu_type_
-		#ifndef __CYGWIN__ // Workaround for CygWin and GCC 4.5
+#ifndef __CYGWIN__ // Workaround for CygWin and GCC 4.5
 			<< " start: " << std::max( -1, (int)header.unixtime_start_ - (int)header.unixtime_creation_ )
 			<< " stop: "  << std::max( -1, (int)header.unixtime_stop_ -  (int)header.unixtime_stop_ )
-		#else
+#else
 			<< " start: " << max( -1, (int)header.unixtime_start_ - (int)header.unixtime_creation_ )
 			<< " stop: "  << max( -1, (int)header.unixtime_stop_ -  (int)header.unixtime_stop_ )
-		#endif
-		<< " dat: "
-		 << header.extra_data_1_<<" "
-		 << header.extra_data_2_<<" "
-		 << header.extra_data_3_<<" "
-		 << header.extra_data_4_<<" "
-		<< " opt: " << header.options_
-		<< " srl: <" << serial_data().substr(0,40)
-		<< ((serial_data().size() > 40) ? "[...]>" : ">") << std::endl;
+#endif
+			<< " dat: "
+			<< header.extra_data_1_<<" "
+			<< header.extra_data_2_<<" "
+			<< header.extra_data_3_<<" "
+			<< header.extra_data_4_<<" "
+			<< " opt: " << header.options_
+			<< " srl: <" << serial_data().substr(0,40)
+			<< ((serial_data().size() > 40) ? "[...]>" : ">") << std::endl;
 
 
 	}
@@ -163,12 +163,12 @@ WorkUnitBase::raw_data_dump( unsigned char ** raw_data_ptr ) const
 
 void
 WorkUnitBase::set_wu_type( const std::string &text ){
-	#ifndef __CYGWIN__ // Workaround for CygWin and GCC 4.5
-		unsigned int length = std::min( (int)text.length(), int(128) );
-	#else
+#ifndef __CYGWIN__ // Workaround for CygWin and GCC 4.5
+	unsigned int length = std::min( (int)text.length(), int(128) );
+#else
 		unsigned int length = min( (int)text.length(), int(128) );
-	#endif
-	if( length == 0 ) return;
+#endif
+	if ( length == 0 ) return;
 	strcpy( &header.wu_type_[0], text.c_str() );
 }
 
@@ -179,12 +179,12 @@ std::string WorkUnitBase::get_wu_type() const {
 
 void
 WorkUnitBase::set_options( const std::string &text ){
-	#ifndef __CYGWIN__ // Workaround for CygWin and GCC 4.5
-		unsigned int length = std::min( (int)text.length(), (int)128 );
-	#else
+#ifndef __CYGWIN__ // Workaround for CygWin and GCC 4.5
+	unsigned int length = std::min( (int)text.length(), (int)128 );
+#else
 		unsigned int length = min( (int)text.length(), (int)128 );
-	#endif
-	if( length == 0 ) return;
+#endif
+	if ( length == 0 ) return;
 	strcpy( &header.options_[0], text.c_str() );
 }
 
@@ -209,9 +209,9 @@ core::Size WorkUnitBase::get_run_time(){
 void WorkUnit_Wait::run(){
 	//TR << "Waiting for " << header.extra_data_1_ << std::endl;
 #ifdef _WIN32
-	#ifndef WIN_PYROSETTA
-		Sleep( header.extra_data_1_ * 1000 );
-	#endif
+#ifndef WIN_PYROSETTA
+	Sleep( header.extra_data_1_ * 1000 );
+#endif
 #else
 	sleep( header.extra_data_1_ );
 #endif
@@ -222,15 +222,15 @@ void WorkUnit_Wait::run(){
 void
 WorkUnit_SilentStructStore::serialize()
 {
-  decoys_.serialize( serial_data() );
+	decoys_.serialize( serial_data() );
 }
 
 // @brief Read decoys from serial data store. Overwrite what's in the SilentStruct store.
 void
 WorkUnit_SilentStructStore::deserialize()
 {
-  decoys_.clear();
-  decoys_.read_from_string( serial_data() );
+	decoys_.clear();
+	decoys_.read_from_string( serial_data() );
 }
 
 
@@ -249,16 +249,16 @@ WorkUnit_MoverWrapper::set_defaults()
 
 void
 WorkUnit_MoverWrapper::run(){
-  using namespace core::pose;
+	using namespace core::pose;
 	TR.Debug << "Executing mover wrapper..." << std::endl;
 
 	// first figure what mover we should be using
 	SilentStructStore result_store;
-	if( decoys().size() == 0 ){
+	if ( decoys().size() == 0 ) {
 		TR.Error << "ERROR: WU did not contain any decoys!" << std::endl;
-	}else{
+	} else {
 		TR.Debug << "Applying the mover .. " << std::endl;
-		for( SilentStructStore::const_iterator it = decoys().begin() ; it != decoys().end(); ++it ){
+		for ( SilentStructStore::const_iterator it = decoys().begin() ; it != decoys().end(); ++it ) {
 			Pose pose;
 			runtime_assert(*it != 0);
 			(*it)->fill_pose( pose );
@@ -266,8 +266,8 @@ WorkUnit_MoverWrapper::run(){
 			result_store.add( pose );
 		}
 	}
-  decoys().clear();
-  decoys().add( result_store );
+	decoys().clear();
+	decoys().add( result_store );
 }
 
 

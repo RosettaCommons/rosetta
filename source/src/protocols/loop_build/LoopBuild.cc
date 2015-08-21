@@ -61,7 +61,7 @@
 #include <numeric/random/random.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 using basic::T;
@@ -101,8 +101,8 @@ LoopBuild_main( bool  ) {
 
 	// fragment initialization
 	utility::vector1< core::fragment::FragSetOP > frag_libs;
-	if ( option[ OptionKeys::loops::frag_files ].user()) {
-        loops::read_loop_fragments( frag_libs );
+	if ( option[ OptionKeys::loops::frag_files ].user() ) {
+		loops::read_loop_fragments( frag_libs );
 	}
 
 	//setup of looprelax_mover

@@ -52,9 +52,9 @@ private:
 
 	//methods
 public:
-  FloatingResonance();
-  FloatingResonance( Resonance const& res, FloatList const&, ResonanceList* );
-  ~FloatingResonance();
+	FloatingResonance();
+	FloatingResonance( Resonance const& res, FloatList const&, ResonanceList* );
+	~FloatingResonance();
 
 	virtual ResonanceOP clone() {
 		return ResonanceOP( new FloatingResonance( *this ) );
@@ -68,16 +68,16 @@ public:
 	}
 	virtual core::Size float_label( core::Size ifloat ) const;
 
-  /// @brief match the proton and corresponding label atom at same time
-  virtual bool match2D(
-    core::Real proton_freq,
-    core::Real proton_error,
-    FoldResonance const& proton_folder,
-    core::Real label_freq,
-    core::Real label_error,
-    FoldResonance const& label_folder,
+	/// @brief match the proton and corresponding label atom at same time
+	virtual bool match2D(
+		core::Real proton_freq,
+		core::Real proton_error,
+		FoldResonance const& proton_folder,
+		core::Real label_freq,
+		core::Real label_error,
+		FoldResonance const& label_folder,
 		ResonancePairs& matches
-  ) const;
+	) const;
 
 private:
 	void _write_partner_ids( std::ostream& os ) const;

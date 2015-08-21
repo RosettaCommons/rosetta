@@ -65,34 +65,34 @@ void ScoreJumpFileSilentStruct::fill_struct(
 	if ( tag == "empty_tag" ) set_tag_from_pose( pose );
 	sequence( pose.sequence() );
 
-  fold_tree_ = pose.fold_tree();
-  jumps_.clear();
-  for ( Size nr = 1; nr <= fold_tree().num_jump(); nr++)  {
-    add_jump( pose.jump(nr) );
-  }
+	fold_tree_ = pose.fold_tree();
+	jumps_.clear();
+	for ( Size nr = 1; nr <= fold_tree().num_jump(); nr++ )  {
+		add_jump( pose.jump(nr) );
+	}
 
 }
 
 void
 ScoreJumpFileSilentStruct::print_header( std::ostream & out ) const {
-  SilentStruct::print_header( out );
+	SilentStruct::print_header( out );
 }
 
 void ScoreJumpFileSilentStruct::print_conformation( std::ostream & output  ) const {
-  output << "REMARK SOCREJUMP SILENTFILE\n";
-if ( fold_tree().size() > 1 || fold_tree().num_jump() > 0 ) {
-    output << "FOLD_TREE ";
-    for ( kinematics::FoldTree::const_iterator
-        it = fold_tree().begin(), it_end = fold_tree().end();
-        it != it_end; ++it
-    ) {
-      output << *it << std::endl;
-    }
-    output << ' ' << decoy_tag() << "\n";
-  }
-  for ( Size i = 1; i <= fold_tree().num_jump(); i++ ) {
-    output << jump( i ) << ' ' << decoy_tag() << "\n";
-  }
+	output << "REMARK SOCREJUMP SILENTFILE\n";
+	if ( fold_tree().size() > 1 || fold_tree().num_jump() > 0 ) {
+		output << "FOLD_TREE ";
+		for ( kinematics::FoldTree::const_iterator
+				it = fold_tree().begin(), it_end = fold_tree().end();
+				it != it_end; ++it
+				) {
+			output << *it << std::endl;
+		}
+		output << ' ' << decoy_tag() << "\n";
+	}
+	for ( Size i = 1; i <= fold_tree().num_jump(); i++ ) {
+		output << jump( i ) << ' ' << decoy_tag() << "\n";
+	}
 }
 
 
@@ -123,46 +123,46 @@ bool ScoreJumpFileSilentStruct::init_from_lines(
 		energy_names_ = enames->energy_names();
 	} // get header information
 
-  for ( utility::vector1< std::string >::const_iterator end = lines.end(); iter != end; ++iter ) {
-    std::istringstream line_stream( *iter );
+	for ( utility::vector1< std::string >::const_iterator end = lines.end(); iter != end; ++iter ) {
+		std::istringstream line_stream( *iter );
 
-	if ( iter->substr(0,6) == "REMARK" ) {
-      std::string tag;
-      std::string comment;
-      std::string value;
-      line_stream >> tag >> comment >> value;
-      add_comment( comment, value );
-      continue;  // skip comments
-    }
+		if ( iter->substr(0,6) == "REMARK" ) {
+			std::string tag;
+			std::string comment;
+			std::string value;
+			line_stream >> tag >> comment >> value;
+			add_comment( comment, value );
+			continue;  // skip comments
+		}
 
-	if ( iter->substr(0,7) == "SCORE: " ) {
-      std::string tag;
-      line_stream >> tag;
-      if ( line_stream.fail() || tag != "SCORE:" ) {
-        tr.Error << "bad format in first score line of silent file" << std::endl;
-        tr.Error << "line = " << *iter << std::endl;
-        tr.Error << "tag = " << tag << std::endl;
-      }
+		if ( iter->substr(0,7) == "SCORE: " ) {
+			std::string tag;
+			line_stream >> tag;
+			if ( line_stream.fail() || tag != "SCORE:" ) {
+				tr.Error << "bad format in first score line of silent file" << std::endl;
+				tr.Error << "line = " << *iter << std::endl;
+				tr.Error << "tag = " << tag << std::endl;
+			}
 
-      parse_energies( line_stream, energy_names_ );
+			parse_energies( line_stream, energy_names_ );
 
-    } else { // conformation lines
+		} else { // conformation lines
 
-		if ( iter->substr(0,10) == "FOLD_TREE " ) {
-        kinematics::FoldTree f;
-        line_stream >> f;
-        fold_tree( f ); // add fold-tree to this SilentStruct
-        tr.Debug << "read fold-tree " << f << std::endl;
-        tr.Debug << "reading " << f.num_jump() << " jumps " << std::endl;
-        continue;
-      } else if ( iter->substr(0,2) == "RT" ) {
-        kinematics::Jump jump;
-        line_stream >> jump;
-        tr.Debug << "read jump " << jump << std::endl;
-        add_jump( jump );
-        continue;
-      } else {
-        tr.Error << "bad format in score_jump silent format and contains " << *iter << std::endl;
+			if ( iter->substr(0,10) == "FOLD_TREE " ) {
+				kinematics::FoldTree f;
+				line_stream >> f;
+				fold_tree( f ); // add fold-tree to this SilentStruct
+				tr.Debug << "read fold-tree " << f << std::endl;
+				tr.Debug << "reading " << f.num_jump() << " jumps " << std::endl;
+				continue;
+			} else if ( iter->substr(0,2) == "RT" ) {
+				kinematics::Jump jump;
+				line_stream >> jump;
+				tr.Debug << "read jump " << jump << std::endl;
+				add_jump( jump );
+				continue;
+			} else {
+				tr.Error << "bad format in score_jump silent format and contains " << *iter << std::endl;
 			}
 		}//end of reading jump and RT
 	}
@@ -180,11 +180,11 @@ void ScoreJumpFileSilentStruct::fill_pose(
 	// put energies into pose!
 	energies_into_pose( pose );
 
-  tr.Debug << "FOLD TREE: " << fold_tree();
-  pose.fold_tree( fold_tree() );
+	tr.Debug << "FOLD TREE: " << fold_tree();
+	pose.fold_tree( fold_tree() );
 
-	for ( Size nr = 1; nr <= fold_tree().num_jump(); nr++)  {
-		      pose.set_jump( nr, jump( nr ) );
+	for ( Size nr = 1; nr <= fold_tree().num_jump(); nr++ )  {
+		pose.set_jump( nr, jump( nr ) );
 	}
 
 } // fill_pose

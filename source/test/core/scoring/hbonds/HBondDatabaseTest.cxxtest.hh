@@ -48,12 +48,12 @@ using utility::vector1;
 class HBondDatabaseTest : public CxxTest::TestSuite {
 
 public:
-  void setUp() {
-    core_init();
+	void setUp() {
+		core_init();
 
 	}
 
-  void tearDown(){}
+	void tearDown(){}
 
 	void test_validate_score12_hbond_database(){
 
@@ -66,7 +66,7 @@ public:
 		tags.push_back( "newCHI_params" );
 		tags.push_back( "sp2_params" );
 		tags.push_back( "sp2_elec_params" );
-		for( Size i = 1; i <= tags.size(); ++i ){
+		for ( Size i = 1; i <= tags.size(); ++i ) {
 			// Validate data integrity
 			HBondOptionsCOP hb_options( new HBondOptions( tags[i] ) );
 			string path("scoring/score_functions/hbonds/" + tags[i] );
@@ -81,20 +81,20 @@ public:
 
 	}
 
-  void validate_HBAccChemType(string const & path){
-    string fname( path + "/HBAccChemType.csv");
+	void validate_HBAccChemType(string const & path){
+		string fname( path + "/HBAccChemType.csv");
 		izstream s;
 		basic::database::open(s, fname);
 		string line;
 		utility::vector1< string > tokens;
 		Size line_number(1);
 
-		while( getline( s, line ) ) {
+		while ( getline( s, line ) ) {
 			tokens = utility::string_split( line, ',');
 			Size ntokens = 4;
 			Size id;
 			string name; // name_long, comment;
-			if (tokens.size() != ntokens){
+			if ( tokens.size() != ntokens ) {
 				stringstream message;
 				message << "HBond Acceptors definition file does not have correct number of fields" << endl;
 				message << "Expected " << ntokens << " tokens but found " << tokens.size() << " tokens. " << endl;
@@ -131,18 +131,18 @@ public:
 		}
 	}
 
-  void validate_HBAccHybridization(string const & path){
-    string fname( path + "/HBAccHybridization.csv");
+	void validate_HBAccHybridization(string const & path){
+		string fname( path + "/HBAccHybridization.csv");
 		izstream s;
 		basic::database::open(s, fname);
 		string line;
 		utility::vector1< string > tokens;
 
-		while( getline( s, line ) ) {
+		while ( getline( s, line ) ) {
 			tokens = utility::string_split( line, ',');
 			Size ntokens = 3;
 			string acc_chem_type_name, hybridization_type_name, comment;
-			if (tokens.size() != ntokens){
+			if ( tokens.size() != ntokens ) {
 				stringstream message;
 				message << "HBond Acceptors definition file does not have correct number of fields" << endl;
 				message << "Expected " << ntokens << " tokens but found " << tokens.size() << " tokens. " << endl;
@@ -176,20 +176,20 @@ public:
 		}
 	}
 
-  void validate_HBDonChemType(string const & path){
-    string fname( path + "/HBDonChemType.csv");
+	void validate_HBDonChemType(string const & path){
+		string fname( path + "/HBDonChemType.csv");
 		izstream s;
 		basic::database::open(s, fname);
 		string line;
 		Size line_number(1);
 		utility::vector1< string > tokens;
 
-		while( getline( s, line ) ) {
+		while ( getline( s, line ) ) {
 			tokens = utility::string_split( line, ',');
 			Size ntokens = 4;
 			Size id;
 			string name; // name_long, comment;
-			if (tokens.size() != ntokens){
+			if ( tokens.size() != ntokens ) {
 				stringstream message;
 				message << "HBond Donors definition file does not have correct number of fields" << endl;
 				message << "Expected " << ntokens << " tokens but found " << tokens.size() << " tokens. " << endl;
@@ -227,20 +227,20 @@ public:
 		}
 	}
 
-  void validate_HBondWeightType(string const & path){
-    string fname( path + "/HBondWeightType.csv");
+	void validate_HBondWeightType(string const & path){
+		string fname( path + "/HBondWeightType.csv");
 		izstream s;
 		basic::database::open(s, fname);
 		string line;
 		Size line_number(1);
 		utility::vector1< string > tokens;
 
-		while( getline( s, line ) ) {
+		while ( getline( s, line ) ) {
 			tokens = utility::string_split( line, ',');
 			Size ntokens = 3;
 			Size id;
 			string name; // name_long, comment;
-			if (tokens.size() != ntokens){
+			if ( tokens.size() != ntokens ) {
 				stringstream message;
 				message << "HBond Weight Type definition file does not have correct number of fields" << endl;
 				message << "Expected " << ntokens << " tokens but found " << tokens.size() << " tokens. " << endl;
@@ -273,14 +273,14 @@ public:
 		}
 	}
 
-  void validate_HBEval(HBondOptionsCOP const hb_options){
+	void validate_HBEval(HBondOptionsCOP const hb_options){
 		HBondDatabaseCOP hb_db( HBondDatabase::get_database( hb_options->params_database_tag()));
 
 		FadeIntervalCOP fi;
 		Polynomial_1dCOP p;
 		double x, value, deriv;
 		x=3;
-		for(Size hbe=1; hbe != hbe_MAX; ++hbe){
+		for ( Size hbe=1; hbe != hbe_MAX; ++hbe ) {
 			fi = hb_db->AHdist_short_fade_lookup(hbe);
 			fi->value_deriv(x, value, deriv);
 			fi = hb_db->AHdist_long_fade_lookup(hbe);
@@ -308,20 +308,20 @@ public:
 		}
 	}
 
-  void validate_HBSeqSep(string const & path){
-    string fname( path + "/HBSeqSep.csv");
+	void validate_HBSeqSep(string const & path){
+		string fname( path + "/HBSeqSep.csv");
 		izstream s;
 		basic::database::open(s, fname);
 		string line;
 		Size line_number(1);
 		utility::vector1< string > tokens;
 
-		while( getline( s, line ) ) {
+		while ( getline( s, line ) ) {
 			tokens = utility::string_split( line, ',');
 			Size ntokens = 3;
 			Size id;
 			string name; // name_long, comment;
-			if (tokens.size() != ntokens){
+			if ( tokens.size() != ntokens ) {
 				stringstream message;
 				message << "HBond Separation Type Type definition file does not have correct number of fields" << endl;
 				message << "Expected " << ntokens << " tokens but found " << tokens.size() << " tokens. " << endl;
@@ -354,20 +354,20 @@ public:
 		}
 	}
 
-  void validate_HybridizationType(string const & path){
-    string fname( path + "/HybridizationType.csv");
+	void validate_HybridizationType(string const & path){
+		string fname( path + "/HybridizationType.csv");
 		izstream s;
 		basic::database::open(s, fname);
 		string line;
 		Size line_number(1);
 		utility::vector1< string > tokens;
 
-		while( getline( s, line ) ) {
+		while ( getline( s, line ) ) {
 			tokens = utility::string_split( line, ',');
 			Size ntokens = 3;
 			Size id;
 			string name; // name_long, comment;
-			if (tokens.size() != ntokens){
+			if ( tokens.size() != ntokens ) {
 				stringstream message;
 				message << "HBond Separation Type Type definition file does not have correct number of fields" << endl;
 				message << "Expected " << ntokens << " tokens but found " << tokens.size() << " tokens. " << endl;

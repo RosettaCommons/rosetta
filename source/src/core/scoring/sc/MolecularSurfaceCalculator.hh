@@ -82,11 +82,11 @@ typedef struct _RESULTS {
 		core::Size nAccessibleDots;  // Number of accessible dots (on surface)
 		core::Real trimmedArea;      // Trimmed area in Angstrom^2
 	} surface[3];
-	struct {			// Surface dot counts by type (from Connolly algorithm)
+	struct {   // Surface dot counts by type (from Connolly algorithm)
 		core::Size convex;           // Number of convex surface dots
 		core::Size concave;          // Number of concace surface dots
 		core::Size toroidal;         // NUmber of toroidal surfac dots
-	} dots;				// True if computed results are valid
+	} dots;    // True if computed results are valid
 	int valid;
 } RESULTS;
 
@@ -216,16 +216,16 @@ public:
 #endif
 	core::Size AddResidue(int molecule, core::conformation::Residue const &residue);
 
-  /// @brief Generate molecular surfaces for the given pose.
-  ///// @details
+	/// @brief Generate molecular surfaces for the given pose.
+	///// @details
 	// This function initializes the calculator, adds all residues in the given pose, and generates molecular surfaces.
 	//
 	// The pose is partitioned into separate molecules across the given jump. If the given jump is 0, the entire pose is
 	// loaded as molecule 1.
 	virtual int Calc(core::pose::Pose const & pose, core::Size jump_id = 0);
 
-  /// @brief Generate molecular surfaces for loaded atoms.
-  ///// @details
+	/// @brief Generate molecular surfaces for loaded atoms.
+	///// @details
 	// This function generates molecular surfaces for atoms added via AddAtom and AddResidue.
 	//
 	// Init() must be called before this function.
@@ -236,11 +236,11 @@ public:
 	RESULTS const & GetResults() { return run_.results; }
 
 protected:
-  /// @brief Generate untrimmed surfaces for the defined molecules.
-  ///// @details
-  /// This function should be called within a try/catch block for ShapeComplementarityCalculatorException.
-  /// Raises exception on error.
-  void GenerateMolecularSurfaces();
+	/// @brief Generate untrimmed surfaces for the defined molecules.
+	///// @details
+	/// This function should be called within a try/catch block for ShapeComplementarityCalculatorException.
+	/// Raises exception on error.
+	void GenerateMolecularSurfaces();
 
 	// This is a constant list of atom radii; declared static to avoid re-loading
 	// between computations
@@ -262,7 +262,7 @@ protected:
 
 	} run_;
 
-  // Surface generation configuration
+	// Surface generation configuration
 	virtual int AssignAttentionNumbers(std::vector<Atom>& atom);
 
 #ifdef MULTI_THREADED
@@ -292,7 +292,7 @@ private:
 
 	// Elementary functions
 	ScValue DistancePointToLine(Vec3 const &cen, Vec3 const &axis, Vec3 const &pnt);
-	ScValue SubArc(Vec3 const &cen, ScValue const rad, Vec3 const &axis, ScValue const density,	Vec3 const &x, Vec3 const &v, std::vector<Vec3> &points);
+	ScValue SubArc(Vec3 const &cen, ScValue const rad, Vec3 const &axis, ScValue const density, Vec3 const &x, Vec3 const &v, std::vector<Vec3> &points);
 	ScValue SubDiv(Vec3 const &cen, ScValue const rad, Vec3 const &x, Vec3 const &y, ScValue angle, ScValue density, std::vector<Vec3> &points);
 	ScValue SubCir(Vec3 const &cen, ScValue const rad, Vec3 const &north, ScValue const density, std::vector<Vec3> &points);
 

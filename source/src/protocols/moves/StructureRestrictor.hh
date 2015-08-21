@@ -33,52 +33,52 @@
 using namespace core;
 using namespace pose;
 
-namespace protocols{
-namespace moves{
+namespace protocols {
+namespace moves {
 
 
 class StructureRestrictor : public protocols::moves::Mover {
 
 public:
-  StructureRestrictor();
+	StructureRestrictor();
 
-  StructureRestrictor( std::string const & name);
+	StructureRestrictor( std::string const & name);
 
-  StructureRestrictor(StructureRestrictor const & src);
+	StructureRestrictor(StructureRestrictor const & src);
 
-  virtual ~StructureRestrictor();
+	virtual ~StructureRestrictor();
 
-  virtual MoverOP fresh_instance() const;
+	virtual MoverOP fresh_instance() const;
 
-  virtual MoverOP clone() const;
+	virtual MoverOP clone() const;
 
 	virtual std::string get_name() const { return "StructureRestrictor"; }
 
 
-  // So this this can be called from RosettaScripts
-  void
-  parse_my_tag(
-	       TagCOP tag,
-	       basic::datacache::DataMap & /*data*/,
-	       Filters_map const & /*filters*/,
-	       protocols::moves::Movers_map const & /*movers*/,
-	       Pose const & /*pose*/ );
+	// So this this can be called from RosettaScripts
+	void
+	parse_my_tag(
+		TagCOP tag,
+		basic::datacache::DataMap & /*data*/,
+		Filters_map const & /*filters*/,
+		protocols::moves::Movers_map const & /*movers*/,
+		Pose const & /*pose*/ );
 
-  void
-  setup_relevant_chains(
-			std::string const & relevant_chains_fname,
-			std::map<std::string const, std::string const> & chain_map
-			);
+	void
+	setup_relevant_chains(
+		std::string const & relevant_chains_fname,
+		std::map<std::string const, std::string const> & chain_map
+	);
 
-  // this is a hack because poses do not have canonical names!
-  std::string pose_name(Pose const & pose);
+	// this is a hack because poses do not have canonical names!
+	std::string pose_name(Pose const & pose);
 
-  void apply( Pose& pose );
+	void apply( Pose& pose );
 
 private:
-  std::map<std::string const, std::string const> chain_map;
-  std::string relevant_chains_fname;
-  bool initialized;
+	std::map<std::string const, std::string const> chain_map;
+	std::string relevant_chains_fname;
+	bool initialized;
 };
 
 }//moves

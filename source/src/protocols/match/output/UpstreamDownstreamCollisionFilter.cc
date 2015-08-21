@@ -22,7 +22,7 @@
 
 // Project headers
 #include <core/conformation/Residue.hh>
-#include	<core/pose/Pose.hh>
+#include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 // Utility headers
@@ -111,7 +111,7 @@ UpstreamDownstreamCollisionFilter::passes_filter(
 {
 	for ( Size ii = 1; ii <= m.size(); ++ii ) {
 		if ( ! dsbuilders_[ ii ] ) continue;
-		if ( passes_filter( match_dspos1( m, ii ) ) )	return true;
+		if ( passes_filter( match_dspos1( m, ii ) ) ) return true;
 	}
 	return false;
 }
@@ -166,7 +166,7 @@ bool UpstreamDownstreamCollisionFilter::passes_etable_filter( match_dspos1 const
 			etable_energy()->residue_pair_energy(
 				*( cacher_->upstream_conformation_for_hit( ii, fake_hit( m.upstream_hits[ ii ] )) ),
 				downstream_pose_->residue( jj ),
-					*empty_pose(), *empty_sfxn(),
+				*empty_pose(), *empty_sfxn(),
 				emap );
 			Real energy = wfa_atr() * emap[ fa_atr ] + wfa_rep() * emap[ fa_rep ] + wfa_sol() * emap[ fa_sol ];
 			if ( energy > lj_cutoff() ) return false;
@@ -183,10 +183,10 @@ bool UpstreamDownstreamCollisionFilter::passes_hardsphere_filter( match_dspos1 c
 		full_hit( m ), downstream_atoms_, coords_ );
 
 	for ( Size ii = 1; ii <= m.upstream_hits.size(); ++ii ) {
-		if ( ii == m.originating_geom_cst_for_dspos )	continue;
+		if ( ii == m.originating_geom_cst_for_dspos ) continue;
 		if ( us_ds_chemical_bond_[ ii ] ) continue;
 
-		if( !passes_hardsphere_filter( ii, fake_hit( m.upstream_hits[ ii ] ), coords_ ) ) return false;
+		if ( !passes_hardsphere_filter( ii, fake_hit( m.upstream_hits[ ii ] ), coords_ ) ) return false;
 	} //loop over all upstream hits
 	return true;
 }

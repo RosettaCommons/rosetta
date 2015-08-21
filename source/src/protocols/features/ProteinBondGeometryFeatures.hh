@@ -32,8 +32,8 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class ProteinBondGeometryFeatures : public protocols::features::FeaturesReporter {
 public:
@@ -95,38 +95,38 @@ public:
 
 	void
 	report_intrares_angles(
-					core::pose::Pose const & pose,
-					utility::vector1< bool > const & relevant_residues,
-					StructureID struct_id,
-					utility::sql_database::sessionOP db_session);
+		core::pose::Pose const & pose,
+		utility::vector1< bool > const & relevant_residues,
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session);
 
 	void
 	report_interres_angles(
-							 core::pose::Pose const & pose,
-							 utility::vector1< bool > const & relevant_residues,
-							 StructureID struct_id,
-							 utility::sql_database::sessionOP db_session);
+		core::pose::Pose const & pose,
+		utility::vector1< bool > const & relevant_residues,
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session);
 
 	void
 	report_intrares_lengths(
-							 core::pose::Pose const & pose,
-							 utility::vector1< bool > const & relevant_residues,
-							 StructureID struct_id,
-							 utility::sql_database::sessionOP db_session);
+		core::pose::Pose const & pose,
+		utility::vector1< bool > const & relevant_residues,
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session);
 
 	void
 	report_interres_lengths(
-							core::pose::Pose const & pose,
-							utility::vector1< bool > const & relevant_residues,
-							StructureID struct_id,
-							utility::sql_database::sessionOP db_session);
+		core::pose::Pose const & pose,
+		utility::vector1< bool > const & relevant_residues,
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session);
 
 	void
 	report_intrares_torsions(
-							core::pose::Pose const & pose,
-							utility::vector1< bool > const & relevant_residues,
-							StructureID struct_id,
-							utility::sql_database::sessionOP db_session);
+		core::pose::Pose const & pose,
+		utility::vector1< bool > const & relevant_residues,
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session);
 
 private:
 	// the ideal parameter database

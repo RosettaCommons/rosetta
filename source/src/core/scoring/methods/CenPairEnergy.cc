@@ -106,18 +106,18 @@ CenPairEnergy::residue_pair_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ){
-			return;
+	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ) {
+		return;
 	}
-	if(rsd1.aa()==core::chemical::aa_unk) return;
-	if(rsd2.aa()==core::chemical::aa_unk) return;
+	if ( rsd1.aa()==core::chemical::aa_unk ) return;
+	if ( rsd2.aa()==core::chemical::aa_unk ) return;
 
 	/// assumes centroids are being used
 	conformation::Atom const & cen1 ( rsd1.atom( rsd1.nbr_atom() ) ), cen2 (rsd2.atom( rsd2.nbr_atom() ) );
 	Real const cendist = cen1.xyz().distance_squared( cen2.xyz() );
 
 	//fpd ignore cen-cen distances above 12.05A
-	if (cendist > 12.05*12.05) return;
+	if ( cendist > 12.05*12.05 ) return;
 
 	/// accumulate total energies
 	Real pair_score( 0.0 ), cenpack_score( 0.0 );
@@ -125,16 +125,16 @@ CenPairEnergy::residue_pair_energy(
 		pair_score, cenpack_score );
 
 	//if ( rsd1.aa() == chemical::aa_his && rsd2.aa() == chemical::aa_his && true /*replace with option[ no_his_his_pairE ]*/ ) {
-	//	pair_score = 0;
+	// pair_score = 0;
 	//}
 
 	pair_score *= 2.019f;
 	cenpack_score *= 2.0f;
 
 	//core::Real rsd_wt = 0.5 *
-	//	( get_residue_weight_by_ss( pose.conformation().secstruct( rsd1.seqpos() ) ) +
-	//	  get_residue_weight_by_ss( pose.conformation().secstruct( rsd2.seqpos() ) )
-	//	);
+	// ( get_residue_weight_by_ss( pose.conformation().secstruct( rsd1.seqpos() ) ) +
+	//   get_residue_weight_by_ss( pose.conformation().secstruct( rsd2.seqpos() ) )
+	// );
 
 	//Rosetta++ used the first residue's weight for both sides of the pair. I hate that. The above
 	//comment is an example of an alternative we should probably test in the distant future.
@@ -159,7 +159,7 @@ Distance
 CenPairEnergy::atomic_interaction_cutoff() const
 {
 	return 6.0; /// now subtracted off 6.0 from cutoffs in centroid params files
-// 	return 0.0; /// since all the cutoffs for centroid mode are rolled into the cendist check
+	//  return 0.0; /// since all the cutoffs for centroid mode are rolled into the cendist check
 }
 core::Size
 CenPairEnergy::version() const

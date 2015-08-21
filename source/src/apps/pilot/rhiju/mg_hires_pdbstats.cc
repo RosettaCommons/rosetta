@@ -76,8 +76,8 @@ OPT_KEY( Boolean, dump )
 ///////////////////////////////////////////////////////////////////////////////
 Size
 mg_hires_pdbstats_from_pose( utility::io::ozstream & out,
-														 pose::Pose & pose, Size const &,
-														 Size & total_residues, std::string const pdb_file)
+pose::Pose & pose, Size const &,
+Size & total_residues, std::string const pdb_file)
 {
 
 	using namespace core::conformation;
@@ -99,7 +99,7 @@ mg_hires_pdbstats_from_pose( utility::io::ozstream & out,
 	mg_orbital_frame_finder.apply( pose );
 
 	// find all the magnesiums in here.
-	for (Size i = 1; i <= nres; i++) {
+	for ( Size i = 1; i <= nres; i++ ) {
 
 		Residue const & rsd_i = pose.residue( i );
 		if ( rsd_i.name3() != " MG" ) continue;
@@ -115,7 +115,7 @@ mg_hires_pdbstats_from_pose( utility::io::ozstream & out,
 		// to determine orbital frame, should only use ligands that really are acceptors.
 		utility::vector1< AtomID > const acceptor_ligands = filter_acceptor_ligands( pose, ligands );
 
-		//		determine_mg_orbital_frame( pose, i, acceptor_ligands );
+		//  determine_mg_orbital_frame( pose, i, acceptor_ligands );
 
 		// output stats...
 		for ( Size k = 1; k <= ligands.size(); k++ ) {
@@ -127,7 +127,7 @@ mg_hires_pdbstats_from_pose( utility::io::ozstream & out,
 			// measure angle at closest ligand-field atom  (ligand -- VX -- Mg )
 			Vector const xyz_ligand = rsd_j.xyz( jj );
 			utility::vector1< std::pair< Distance, std::string > > V_distances;
-			for ( Size q = 1; q <= 6; q++ ){
+			for ( Size q = 1; q <= 6; q++ ) {
 				std::string const V_name = "V"+I(1,q);
 				V_distances.push_back( std::make_pair( ( xyz_ligand - rsd_i.xyz( V_name ) ).length(), V_name ) );
 			}
@@ -139,39 +139,39 @@ mg_hires_pdbstats_from_pose( utility::io::ozstream & out,
 
 			// measure angle to base atom of acceptor (should be 120 degrees for sp2)
 			Real theta_acceptor( 0.0 );
-			if ( rsd_j.heavyatom_is_an_acceptor( jj ) ){
+			if ( rsd_j.heavyatom_is_an_acceptor( jj ) ) {
 				Vector dummy, xyz_base;
 				chemical::Hybridization acc_hybrid( rsd_j.atom_type( jj ).hybridization());
 				make_hbBasetoAcc_unitvector(
-																		hbond_options,
-																		acc_hybrid,
-																		rsd_j.atom( jj ).xyz(),
-																		rsd_j.xyz( rsd_j.atom_base( jj ) ),
-																		rsd_j.xyz( rsd_j.abase2( jj ) ),
-																		xyz_base, dummy );
+					hbond_options,
+					acc_hybrid,
+					rsd_j.atom( jj ).xyz(),
+					rsd_j.xyz( rsd_j.atom_base( jj ) ),
+					rsd_j.xyz( rsd_j.abase2( jj ) ),
+					xyz_base, dummy );
 				theta_acceptor = numeric::conversions::degrees( angle_of( xyz_mg, xyz_ligand, xyz_base ) );
 			}
-			if ( theta_acceptor == 0.0) {
+			if ( theta_acceptor == 0.0 ) {
 				theta_acceptor = numeric::conversions::degrees( angle_of( xyz_mg, xyz_ligand, rsd_j.xyz( rsd_j.atom_base( jj ) ) ) );
 				//theta_acceptor = numeric::conversions::degrees( angle_of( xyz_mg, xyz_ligand, rsd_j.xyz( rsd_j.bonded_neighbor( jj )[ 1 ] ) ) );
 			}
 
 
 			out << I(4, res_count) << " "
-					<< I(4, pdb_info->number( i ) ) << " " << rsd_i.name3()
-					<< " " << I( 2, ligands.size() ) // coordination number
-					<< " " << I( 2, acceptor_ligands.size() ) // coordination number, filtered for acceptors
-					<< " " << I( 2, k )
-					<< " " << V_name
-					<< " " << I(4, pdb_info->number( j ) ) << " " <<  rsd_j.name3()
-					<< " " << A(4, rsd_j.atom_name( jj ) )
-					<< " " << A(4, rsd_j.atom_type( jj ).name() )
-					<< " " << I(4, atom_type_set.atom_type_index( rsd_j.atom_type( jj ).name() ) )
-					<< " " << F(8, 3, distance  )
-					<< " " << F(8, 3, theta )
-					<< " " << F(8, 3, theta_acceptor )
-					<< " " << pdb_file
-					<<  std::endl;
+				<< I(4, pdb_info->number( i ) ) << " " << rsd_i.name3()
+				<< " " << I( 2, ligands.size() ) // coordination number
+				<< " " << I( 2, acceptor_ligands.size() ) // coordination number, filtered for acceptors
+				<< " " << I( 2, k )
+				<< " " << V_name
+				<< " " << I(4, pdb_info->number( j ) ) << " " <<  rsd_j.name3()
+				<< " " << A(4, rsd_j.atom_name( jj ) )
+				<< " " << A(4, rsd_j.atom_type( jj ).name() )
+				<< " " << I(4, atom_type_set.atom_type_index( rsd_j.atom_type( jj ).name() ) )
+				<< " " << F(8, 3, distance  )
+				<< " " << F(8, 3, theta )
+				<< " " << F(8, 3, theta_acceptor )
+				<< " " << pdb_file
+				<<  std::endl;
 		}
 
 	} // i
@@ -201,7 +201,7 @@ mg_pdbstats_test()
 	std::string const pdb_list( option[ in::file::l ](1) );
 
 	utility::io::izstream instream( pdb_list );
-	if (!instream){
+	if ( !instream ) {
 		std::cerr  << "Can't find list file " << pdb_list << std::endl;
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 		return;
@@ -220,7 +220,7 @@ mg_pdbstats_test()
 	ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" ) );
 
 	std::string line;
-	while ( 	getline( instream, line )  ) {
+	while (  getline( instream, line )  ) {
 		std::istringstream line_stream( line );
 
 		line_stream >> pdb_file;
@@ -255,23 +255,23 @@ main( int argc, char * argv [] )
 	try {
 
 
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
 
-	NEW_OPT( dump, "dump", false );
+		NEW_OPT( dump, "dump", false );
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	//   -extra_res ~/rosetta_database/chemical/residue_type_sets/fa_standard/residue_types/water/TP3.params
+		//   -extra_res ~/rosetta_database/chemical/residue_type_sets/fa_standard/residue_types/water/TP3.params
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-	mg_pdbstats_test();
+		mg_pdbstats_test();
 
-	exit( 0 );
+		exit( 0 );
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

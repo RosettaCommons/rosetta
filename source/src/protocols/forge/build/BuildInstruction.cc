@@ -181,25 +181,25 @@ void BuildInstruction::detach_from() {
 /// @brief update any indexing wrt length change to Pose/Conformation being watched
 void BuildInstruction::on_length_change( LengthEvent const & event ) {
 	switch ( event.tag ) {
-		case ( LengthEvent::INVALIDATE ) : {
-			detach_from();
-			break;
-		}
-		case ( LengthEvent::RESIDUE_APPEND ) : {
-			on_residue_append( event );
-			break;
-		}
-		case ( LengthEvent::RESIDUE_PREPEND ) : {
-			on_residue_prepend( event );
-			break;
-		}
-		case ( LengthEvent::RESIDUE_DELETE ) : {
-			on_residue_delete( event );
-			break;
-		}
-		default : { // do nothing, fall through
-			break;
-		}
+	case ( LengthEvent::INVALIDATE ) : {
+		detach_from();
+		break;
+	}
+	case ( LengthEvent::RESIDUE_APPEND ) : {
+		on_residue_append( event );
+		break;
+	}
+	case ( LengthEvent::RESIDUE_PREPEND ) : {
+		on_residue_prepend( event );
+		break;
+	}
+	case ( LengthEvent::RESIDUE_DELETE ) : {
+		on_residue_delete( event );
+		break;
+	}
+	default : { // do nothing, fall through
+		break;
+	}
 	}
 }
 
@@ -245,9 +245,10 @@ void BuildInstruction::add_dependency_to( BuildInstructionCAP i ) {
 bool BuildInstruction::dependent_on( BuildInstructionCAP i ) const {
 	// Doesn't work with weak_ptr:
 	// return std::find( dependencies_.begin(), dependencies_.end(), i ) != dependencies_.end();
-	BOOST_FOREACH( BuildInstructionCAP d, dependencies_ ) {
-		if( utility::pointer::equal(d, i) )
+	BOOST_FOREACH ( BuildInstructionCAP d, dependencies_ ) {
+		if ( utility::pointer::equal(d, i) ) {
 			return true;
+		}
 	}
 	return false;
 }
@@ -268,8 +269,7 @@ bool BuildInstruction::compatible_with( BuildInstruction const & rval ) const {
 	// if ( rts_.lock()->name() != rval.rts_.lock()->name() )
 
 	// Compare pointers (faster):
-	if ( !utility::pointer::equal(rts_, rval.rts_ ) )
-	{
+	if ( !utility::pointer::equal(rts_, rval.rts_ ) ) {
 		TR.Error << "ResidueTypeSet incompatibility!" << std::endl;
 		return false;
 	}
@@ -284,7 +284,7 @@ bool BuildInstruction::compatible_with( BuildInstruction const & rval ) const {
 
 	// check mutable regions do not overlap
 	set_intersection( muta.begin(), muta.end(), rval_muta.begin(), rval_muta.end(),
-	                  inserter( iset, iset.begin() ) );
+		inserter( iset, iset.begin() ) );
 	if ( !iset.empty() ) {
 		TR.Error << "mutable regions intersect; incompatibility!" << std::endl;
 		return false;
@@ -293,7 +293,7 @@ bool BuildInstruction::compatible_with( BuildInstruction const & rval ) const {
 
 	// check fixed region and mutable region from right does not overlap
 	set_intersection( fixed.begin(), fixed.end(), rval_muta.begin(), rval_muta.end(),
-	                  inserter( iset, iset.begin() ) );
+		inserter( iset, iset.begin() ) );
 	if ( !iset.empty() ) {
 		TR.Error << "fixed and mutable regions intersect; incompatibility!" << std::endl;
 		return false;
@@ -302,7 +302,7 @@ bool BuildInstruction::compatible_with( BuildInstruction const & rval ) const {
 
 	// check fixed regions from right and mutable region does not overlap
 	set_intersection( rval_fixed.begin(), rval_fixed.end(), muta.begin(), muta.end(),
-	                  inserter( iset, iset.begin() ) );
+		inserter( iset, iset.begin() ) );
 	if ( !iset.empty() ) {
 		TR.Error << "mutable and fixed regions intersect; incompatibility!" << std::endl;
 		return false;

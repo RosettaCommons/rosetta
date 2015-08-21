@@ -301,8 +301,8 @@ private:
 
 	core::pack::task::PackerTaskOP
 	copy_native_packertask_logic(core::pose::Pose native_pose,
-															 core::pose::Pose context_pose,
-															 core::pack::task::TaskFactoryOP native_taskfactory);
+		core::pose::Pose context_pose,
+		core::pack::task::TaskFactoryOP native_taskfactory);
 
 #ifdef USEMPI
 public:

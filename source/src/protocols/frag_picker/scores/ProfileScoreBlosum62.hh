@@ -37,7 +37,7 @@ class ProfileScoreBlosum62: public CachingScoringMethod {
 public:
 
 	ProfileScoreBlosum62(Size priority, Real lowest_acceptable_value, bool use_lowest,
-											 sequence::SequenceProfileOP query_profile, Size longest_vall_chunk);
+		sequence::SequenceProfileOP query_profile, Size longest_vall_chunk);
 
 	~ProfileScoreBlosum62();
 

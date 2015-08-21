@@ -108,8 +108,8 @@ public:
 
 	/// called during gradient-based minimization inside dfunc
 	/**
-		 F1 and F2 are not zeroed -- contributions from this atom are
-		 just summed in
+	F1 and F2 are not zeroed -- contributions from this atom are
+	just summed in
 	**/
 	virtual
 	void

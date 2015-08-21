@@ -44,9 +44,9 @@ public:
 	~ThermodynamicObserver();
 
 	/// @brief Callback executed after each move is made.
-	/// @details Even though the argument is a reference to a non-const pose, 
-	/// this method should not make any changes to the pose.  Making changes to 
-	/// the pose is the role of the ThermodynamicMover class.  The role of this 
+	/// @details Even though the argument is a reference to a non-const pose,
+	/// this method should not make any changes to the pose.  Making changes to
+	/// the pose is the role of the ThermodynamicMover class.  The role of this
 	/// class is to simply observe the poses being generated.
 	virtual
 	void apply( core::pose::Pose& ) {};
@@ -75,22 +75,22 @@ public:
 		MetropolisHastingsMover const &
 	) {};
 
-	/// @brief Attempt to restart the last simulation that was recorded by this 
+	/// @brief Attempt to restart the last simulation that was recorded by this
 	/// observer.
 	///
-	/// @details For example, consider an observer that records trajectories.  
-	/// This method should open the file that was going to be written, read out 
-	/// the last pose in that trajectory, and assign it to the given pose 
-	/// reference so that the current trajectory can start from the same place.  
+	/// @details For example, consider an observer that records trajectories.
+	/// This method should open the file that was going to be written, read out
+	/// the last pose in that trajectory, and assign it to the given pose
+	/// reference so that the current trajectory can start from the same place.
 	/// Other observers may help setup other parts of the simulation.
 	///
-	/// This is not a particularly robust system, because it may require several 
-	/// unrelated observers working in concert to properly reconstitute the 
-	/// simulation.  In fact, the restart feature in MetropolisHastingsMover is 
-	/// currently commented out, so this method is never actually invoked.  I 
-	/// would advise reimplementing this method to utility_exit_with_message() in 
-	/// any subclasses you write, so that you don't waste time writing an unused 
-	/// method but so you don't confuse anyone if this feature gets revived in 
+	/// This is not a particularly robust system, because it may require several
+	/// unrelated observers working in concert to properly reconstitute the
+	/// simulation.  In fact, the restart feature in MetropolisHastingsMover is
+	/// currently commented out, so this method is never actually invoked.  I
+	/// would advise reimplementing this method to utility_exit_with_message() in
+	/// any subclasses you write, so that you don't waste time writing an unused
+	/// method but so you don't confuse anyone if this feature gets revived in
 	/// the future.
 	virtual
 	bool
@@ -99,10 +99,10 @@ public:
 		MetropolisHastingsMover&,
 		core::Size&,
 		core::Size&,
-		core::Real& 
+		core::Real&
 	) { return false; }
 
-	/// @brief Return false if this observer does not require a valid pose.  
+	/// @brief Return false if this observer does not require a valid pose.
 	/// TrialCounterObserver is an example of such an observer.
 	virtual
 	bool

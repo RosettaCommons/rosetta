@@ -21,12 +21,12 @@ namespace devel {
 namespace denovo_design {
 namespace task_operations {
 
-  // Forward declaration
-  class DesignBySecondaryStructureOperation;
+// Forward declaration
+class DesignBySecondaryStructureOperation;
 
-  // Types
-  typedef utility::pointer::shared_ptr< DesignBySecondaryStructureOperation > DesignBySecondaryStructureOperationOP;
-  typedef utility::pointer::shared_ptr< DesignBySecondaryStructureOperation const > DesignBySecondaryStructureOperationCOP;
+// Types
+typedef utility::pointer::shared_ptr< DesignBySecondaryStructureOperation > DesignBySecondaryStructureOperationOP;
+typedef utility::pointer::shared_ptr< DesignBySecondaryStructureOperation const > DesignBySecondaryStructureOperationCOP;
 
 }
 }

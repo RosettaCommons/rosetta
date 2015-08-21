@@ -95,21 +95,21 @@ EnsembleEnergy::finalize_total_energy(
 	Real unbound_score ( 0.0 );
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
 		basic::datacache::CacheableStringFloatMapOP data
-				= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringFloatMap >
-				( pose.data().get_ptr(core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
+			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringFloatMap >
+			( pose.data().get_ptr(core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
 		for ( std::map< std::string, float >::const_iterator iter = data->map().begin(),
-						end = data->map().end(); iter != end; ++iter
-				)	{
-					// skip score entry, as it gets confusing
-					if ( iter->first == "dock_ens_conf1" || iter->first == "dock_ens_conf2" ) {
-//						TR << iter->first << ' ' << iter->second << std::endl;
-						unbound_score += iter->second;
-					}
-				}
+				end = data->map().end(); iter != end; ++iter
+				) {
+			// skip score entry, as it gets confusing
+			if ( iter->first == "dock_ens_conf1" || iter->first == "dock_ens_conf2" ) {
+				//      TR << iter->first << ' ' << iter->second << std::endl;
+				unbound_score += iter->second;
+			}
+		}
 
 	}
 
-//	TR << "unbound score: " << unbound_score << std::endl;
+	// TR << "unbound score: " << unbound_score << std::endl;
 
 	emap[ dock_ens_conf ] = -unbound_score;
 }

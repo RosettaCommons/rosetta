@@ -23,7 +23,7 @@ SandwichFragment::SandwichFragment()
 
 // 1 parameter
 SandwichFragment::SandwichFragment(
-							   core::Size chain_B_resNum):
+	core::Size chain_B_resNum):
 	chain_B_resNum_(chain_B_resNum),
 	pdb_source_("")
 {}
@@ -31,19 +31,19 @@ SandwichFragment::SandwichFragment(
 
 // 2 parameters
 SandwichFragment::SandwichFragment(
-							   core::Size start,
-							   core::Size end):
+	core::Size start,
+	core::Size end):
 	start_(start),
 	end_(end),
 	pdb_source_("")
 {}
 
 // 3 parameters
-	// used in get_current_strands_in_sheet
+// used in get_current_strands_in_sheet
 SandwichFragment::SandwichFragment(
-							   core::Size sheet_id,
-							   core::Size start,
-							   core::Size end):
+	core::Size sheet_id,
+	core::Size start,
+	core::Size end):
 	sheet_id_(sheet_id),
 	start_(start),
 	end_(end),
@@ -52,10 +52,10 @@ SandwichFragment::SandwichFragment(
 
 // 4 parameters
 SandwichFragment::SandwichFragment(
-							   core::Size sheet_id,
-							   core::Size strand_id,
-							   core::Size start,
-							   core::Size end):
+	core::Size sheet_id,
+	core::Size strand_id,
+	core::Size start,
+	core::Size end):
 	sheet_id_(sheet_id),
 	strand_id_(strand_id),
 	start_(start),
@@ -65,11 +65,11 @@ SandwichFragment::SandwichFragment(
 
 // 5 parameters
 SandwichFragment::SandwichFragment(
-								   core::Size sw_can_by_sh_id,
-								   core::Size sheet_id,
-								   core::Size strand_id,
-								   core::Size start,
-								   core::Size end):
+	core::Size sw_can_by_sh_id,
+	core::Size sheet_id,
+	core::Size strand_id,
+	core::Size start,
+	core::Size end):
 	sw_can_by_sh_id_(sw_can_by_sh_id),
 	sheet_id_(sheet_id),
 	strand_id_(strand_id),
@@ -122,7 +122,7 @@ SandwichFragment::get_resNum() const
 core::Size
 SandwichFragment::get_size() const
 {
-	if(end_ == start_){return 0;}
+	if ( end_ == start_ ) { return 0;}
 	return end_-start_+1;
 }
 

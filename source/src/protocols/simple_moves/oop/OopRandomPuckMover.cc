@@ -63,13 +63,12 @@ namespace oop {
 
 /// @details
 void OopRandomPuckMover::apply( core::pose::Pose & pose ){
-	
+
 	TR<< "in OopRandomPuckMover::apply" << std::endl;
 	//kdrew: for all positions in oop_seq_positions_, input assertion check
-	for(Size i = 1; i <= oop_seq_positions_.size(); i++)
-	{
+	for ( Size i = 1; i <= oop_seq_positions_.size(); i++ ) {
 		Size oop_pre_pos = oop_seq_positions_[i];
-		Size oop_post_pos = oop_pre_pos+1;                   
+		Size oop_post_pos = oop_pre_pos+1;
 		TR<< "oop_pre_pos:" << oop_pre_pos << " oop_post_pos:" << oop_post_pos << std::endl;
 
 		runtime_assert ( pose.residue(oop_pre_pos).has_variant_type(chemical::OOP_PRE) == 1) ;
@@ -91,23 +90,22 @@ void OopRandomPuckMover::apply( core::pose::Pose & pose ){
 	runtime_assert ( random_pucker == "OOP_PUCK_PLUS" || random_pucker == "OOP_PUCK_MINUS" );
 	TR << random_pucker <<std::endl;
 
-	oop::OopMoverOP oop_mover; 
+	oop::OopMoverOP oop_mover;
 	ResidueType restype = pose.residue_type( random_pos );
 
 	//kdrew: determine which mover should be used, use D puck movers for chiral D oops
-	if ( random_pucker == "OOP_PUCK_PLUS" ) 
-	{
-		if ( restype.is_d_aa() )
+	if ( random_pucker == "OOP_PUCK_PLUS" ) {
+		if ( restype.is_d_aa() ) {
 			oop_mover = oop::OopMoverOP( new oop::OopDPuckPlusMover( random_pos ) );
-		else
+		} else {
 			oop_mover = oop::OopMoverOP( new oop::OopPuckPlusMover( random_pos ) );
-	}
-	else if (random_pucker == "OOP_PUCK_MINUS" )
-	{
-		if ( restype.is_d_aa() )
+		}
+	} else if ( random_pucker == "OOP_PUCK_MINUS" ) {
+		if ( restype.is_d_aa() ) {
 			oop_mover = oop::OopMoverOP( new oop::OopDPuckMinusMover( random_pos ) );
-		else
+		} else {
 			oop_mover = oop::OopMoverOP( new oop::OopPuckMinusMover( random_pos ) );
+		}
 	}
 
 	oop_mover->apply( pose );
@@ -127,14 +125,14 @@ OopRandomPuckMover::OopRandomPuckMover(
 	Mover::type( "OopRandomPuckMover" );
 }
 
-OopRandomPuckMover::OopRandomPuckMover( 
-		utility::vector1< core::Size > oop_seq_positions
-	): Mover(), oop_seq_positions_(oop_seq_positions)
+OopRandomPuckMover::OopRandomPuckMover(
+	utility::vector1< core::Size > oop_seq_positions
+): Mover(), oop_seq_positions_(oop_seq_positions)
 {
 	Mover::type( "OopRandomPuckMover" );
 
-	available_moves_.push_back("OOP_PUCK_PLUS");	
-	available_moves_.push_back("OOP_PUCK_MINUS");	
+	available_moves_.push_back("OOP_PUCK_PLUS");
+	available_moves_.push_back("OOP_PUCK_MINUS");
 }
 
 OopRandomPuckMover::~OopRandomPuckMover(){}

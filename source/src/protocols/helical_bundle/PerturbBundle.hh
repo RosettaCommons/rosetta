@@ -60,17 +60,17 @@ class PerturbBundle : public protocols::moves::Mover
 {
 public: //Typedefs
 
-		typedef core::conformation::parametric::Parameters Parameters;
-		typedef core::conformation::parametric::ParametersOP ParametersOP;
-		typedef core::conformation::parametric::ParametersSet ParametersSet;
-		typedef core::conformation::parametric::ParametersSetOP ParametersSetOP;
+	typedef core::conformation::parametric::Parameters Parameters;
+	typedef core::conformation::parametric::ParametersOP ParametersOP;
+	typedef core::conformation::parametric::ParametersSet ParametersSet;
+	typedef core::conformation::parametric::ParametersSetOP ParametersSetOP;
 
-		typedef protocols::helical_bundle::parameters::BundleParameters BundleParameters;
-		typedef protocols::helical_bundle::parameters::BundleParametersOP BundleParametersOP;
-		typedef protocols::helical_bundle::parameters::BundleParametersCOP BundleParametersCOP;
-		typedef protocols::helical_bundle::parameters::BundleParametersSet BundleParametersSet;
-		typedef protocols::helical_bundle::parameters::BundleParametersSetOP BundleParametersSetOP;
-		typedef protocols::helical_bundle::parameters::BundleParametersSetCOP BundleParametersSetCOP;
+	typedef protocols::helical_bundle::parameters::BundleParameters BundleParameters;
+	typedef protocols::helical_bundle::parameters::BundleParametersOP BundleParametersOP;
+	typedef protocols::helical_bundle::parameters::BundleParametersCOP BundleParametersCOP;
+	typedef protocols::helical_bundle::parameters::BundleParametersSet BundleParametersSet;
+	typedef protocols::helical_bundle::parameters::BundleParametersSetOP BundleParametersSetOP;
+	typedef protocols::helical_bundle::parameters::BundleParametersSetCOP BundleParametersSetCOP;
 
 public:
 	PerturbBundle();
@@ -95,14 +95,14 @@ public:
 	);
 
 public:
-////////////////////////////////////////////////////////////////////////////////
-//          PUBLIC FUNCTIONS                                                  //
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	//          PUBLIC FUNCTIONS                                                  //
+	////////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Ensure that an angle value is in radians.
 	/// @details  Checks the use_degrees_ boolean.  If true, converts degrees to radians; if false, returns input value.
 	core::Real convert_angle( core::Real const &val ) const {
-		if( use_degrees_ ) return (val / 180.0 * numeric::constants::d::pi);
+		if ( use_degrees_ ) return (val / 180.0 * numeric::constants::d::pi);
 		return val; //Default case -- don't alter the value.
 	}
 
@@ -183,7 +183,7 @@ public:
 		runtime_assert_string_msg(index>0 && index<=delta_t_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::delta_t() out of range.");
 		return delta_t_[index];
 	}
-	
+
 	/// @brief Access the z1_offset_ BundleOptions object, by index.
 	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
 	PerturbBundleOptionsOP z1_offset( core::Size const index ) {
@@ -197,7 +197,7 @@ public:
 		runtime_assert_string_msg(index>0 && index<=z1_offset_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::z1_offset() out of range.");
 		return z1_offset_[index];
 	}
-	
+
 	/// @brief Access the z0_offset_ BundleOptions object, by index.
 	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
 	PerturbBundleOptionsOP z0_offset( core::Size const index ) {
@@ -271,20 +271,20 @@ public:
 	/// @brief Add options for a new helix
 	/// @details Return value is the current total number of helices after the addition.
 	core::Size add_helix( core::Size const helix_index );
-	
+
 	/// @brief Set whether user input is in degrees (true) or radians (false).
 	///
 	void set_use_degrees( bool const val ) { use_degrees_=val; return; }
-	
+
 	/// @brief Get whether user input is in degrees (true) or radians (false).
 	///
 	bool use_degrees() const { return use_degrees_; }
 
 
 private:
-////////////////////////////////////////////////////////////////////////////////
-//          PRIVATE DATA                                                      //
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	//          PRIVATE DATA                                                      //
+	////////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Default options for perturbing r0.
 	/// @details May be overridden on a helix-by-helix basis.
@@ -325,11 +325,11 @@ private:
 	/// @brief Helix-by-helix options for perturbing delta_t.
 	///
 	PerturbBundleOptionsOPs delta_t_;
-	
+
 	/// @brief Default options for perturbing z1_offset.
 	/// @details May be overridden on a helix-by-helix basis.
 	PerturbBundleOptionsOP default_z1_offset_;
-	
+
 	/// @brief Helix-by-helix options for perturbing z1_offset.
 	///
 	PerturbBundleOptionsOPs z1_offset_;
@@ -345,15 +345,15 @@ private:
 	/// @brief Which set of bundle parameters (if there exists more than one) should the mover alter?
 	/// @details Defaults to 1.  Higher values indicate the nth set encountered in the ParametersSet list.
 	core::Size bundleparametersset_index_;
-	
+
 	/// @brief Should user input be interpreted as being in radians (false) or degrees (true)?
 	/// @details Default radians (false).
 	bool use_degrees_;
-	
+
 private:
-////////////////////////////////////////////////////////////////////////////////
-//          PRIVATE FUNCTIONS                                                 //
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	//          PRIVATE FUNCTIONS                                                 //
+	////////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Is a value in a list?
 	///

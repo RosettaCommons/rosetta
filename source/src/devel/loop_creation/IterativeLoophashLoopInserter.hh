@@ -29,27 +29,27 @@
 //namespace loophash {
 namespace devel {
 namespace loop_creation {
-	
+
 class IterativeLoophashLoopInserter : public devel::loop_creation::LoophashLoopInserter
 {
 public:
 
 	IterativeLoophashLoopInserter();
-	
+
 	protocols::moves::MoverOP
 	clone() const;
-	
+
 	protocols::moves::MoverOP
 	fresh_instance() const;
-		
+
 	std::string
 	get_name() const;
-	
+
 	void
 	apply(
 		core::pose::Pose & pose
 	);
-	
+
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -58,7 +58,7 @@ public:
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
 	);
-	
+
 private:
 	core::Real max_closure_deviation_;
 	core::Real max_insertions_;

@@ -33,7 +33,7 @@
 
 
 namespace protocols {
-namespace protein_interface_design{
+namespace protein_interface_design {
 namespace filters {
 
 static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.DesignableResiduesFilter" );
@@ -104,7 +104,7 @@ DesignableResiduesFilter::task_factory( core::pack::task::TaskFactoryOP task_fac
 bool
 DesignableResiduesFilter::apply(core::pose::Pose const & ) const
 {
-		return true;
+	return true;
 }
 
 core::Size
@@ -113,21 +113,22 @@ DesignableResiduesFilter::compute( core::pose::Pose const & pose ) const{
 	runtime_assert( packable() || designable() );
 	core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 	core::Size total_residue;
-	if(core::pose::symmetry::is_symmetric( pose )) {
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 		total_residue = symm_info->num_independent_residues();
 	} else {
 		total_residue = pose.total_residue();
 	}
 	core::Size design_pos = 0;
-	if( designable() ){
+	if ( designable() ) {
 		std::string select_design_pos("select design_positions, resi ");
 		TR<<"Designable residues:"<<std::endl;
 		bool first_pass( true );
-		for( core::Size resi=1; resi<=total_residue; ++resi ){
-			if( packer_task->being_designed( resi ) ) {
-				if( !first_pass )
+		for ( core::Size resi=1; resi<=total_residue; ++resi ) {
+			if ( packer_task->being_designed( resi ) ) {
+				if ( !first_pass ) {
 					select_design_pos.append( "+" );
+				}
 				TR<<pose.residue( resi ).name3()<<" "<< pose.pdb_info()->number( resi )<<pose.pdb_info()->chain( resi )<<std::endl;
 				design_pos++;
 				select_design_pos.append(ObjexxFCL::string_of(resi));
@@ -138,11 +139,11 @@ DesignableResiduesFilter::compute( core::pose::Pose const & pose ) const{
 		TR_pymol<<select_design_pos<<std::endl;
 	}
 	core::Size packable_pos = 0;
-	if( packable() ){
+	if ( packable() ) {
 		std::string select_packable_pos("select repackable_positions, resi ");
 		TR<<"Repackable residues:"<<std::endl;
-		for( core::Size resi=1; resi<=total_residue; ++resi ){
-			if( packer_task->being_packed( resi ) ) {
+		for ( core::Size resi=1; resi<=total_residue; ++resi ) {
+			if ( packer_task->being_packed( resi ) ) {
 				TR<<pose.residue( resi ).name3()<<" "<<pose.pdb_info()->number( resi )<<pose.pdb_info()->chain( resi )<<std::endl;
 				packable_pos++;
 				select_packable_pos.append(ObjexxFCL::string_of(resi) + "+");
@@ -151,7 +152,7 @@ DesignableResiduesFilter::compute( core::pose::Pose const & pose ) const{
 		TR<<"Number of repackable positions: "<<packable_pos<<std::endl;
 		TR<<select_packable_pos<<std::endl;
 	}
-	if( designable() && !packable()) {
+	if ( designable() && !packable() ) {
 		return( design_pos );
 	} else {
 		return( packable_pos);
@@ -172,10 +173,10 @@ DesignableResiduesFilter::report( std::ostream & , core::pose::Pose const & ) co
 
 void
 DesignableResiduesFilter::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & )
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & )
 {
 	TR << "DesignableResiduesFilter"<<std::endl;
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
@@ -187,8 +188,8 @@ DesignableResiduesFilter::parse_my_tag( utility::tag::TagCOP tag,
 	TR<<"with options designable: "<<designable()<<", repackable: "<<packable()<<", lower_cutoff: "<<lower_threshold()<<", and upper_cutoff: "<<upper_threshold()<<std::endl;
 }
 void DesignableResiduesFilter::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & ,
-				utility::lua::LuaObject const & tasks ) {
+	utility::lua::LuaObject const & ,
+	utility::lua::LuaObject const & tasks ) {
 	TR << "DesignableResiduesFilter"<<std::endl;
 	task_factory( protocols::elscripts::parse_taskdef( def["tasks"], tasks ));
 	lower_threshold( def["lower_cutoff"] ? def["lower_cutoff"].to<core::Size>() : 0 );

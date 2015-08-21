@@ -33,7 +33,7 @@
 
 
 namespace protocols {
-namespace design_opt{
+namespace design_opt {
 
 class PointMutationCalculator : public utility::pointer::ReferenceCount
 {
@@ -87,9 +87,9 @@ public:
 	);
 
 	void calc_point_mut_filters( Pose const & start_pose,
-			utility::vector1< std::pair< core::Size, utility::vector1< std::pair< core::chemical::AA, utility::vector1< core::Real > > > > > & seqpos_aa_vals_vec );
+		utility::vector1< std::pair< core::Size, utility::vector1< std::pair< core::chemical::AA, utility::vector1< core::Real > > > > > & seqpos_aa_vals_vec );
 	void calc_point_mut_filters( Pose const & start_pose,
-			utility::vector1< std::pair< core::Size, utility::vector1< std::pair< core::chemical::AA, core::Real > > > > & seqpos_aa_val_vec );
+		utility::vector1< std::pair< core::Size, utility::vector1< std::pair< core::chemical::AA, core::Real > > > > & seqpos_aa_val_vec );
 	protocols::design_opt::PointMutationCalculatorOP clone() const;
 
 	core::pack::task::TaskFactoryOP task_factory() const;

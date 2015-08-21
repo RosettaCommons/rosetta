@@ -32,11 +32,11 @@ namespace methods {
 
 SplitUnfoldedTwoBodyEnergy::SplitUnfoldedTwoBodyEnergy( std::string const & label_type, std::string const & value_type, std::string const & score_func_type ):
 	parent( methods::EnergyMethodCreatorOP( new SplitUnfoldedTwoBodyEnergyCreator ) ),
-    label_type_( label_type ),
-		value_type_( value_type ),
-		score_func_type_( score_func_type ),
-    sutbp_( ScoringManager::get_instance()->get_SplitUnfoldedTwoBodyPotential( label_type, value_type, score_func_type ) ),
-    score_type_weights_( sutbp_.get_weights() )
+	label_type_( label_type ),
+	value_type_( value_type ),
+	score_func_type_( score_func_type ),
+	sutbp_( ScoringManager::get_instance()->get_SplitUnfoldedTwoBodyPotential( label_type, value_type, score_func_type ) ),
+	score_type_weights_( sutbp_.get_weights() )
 {
 }
 
@@ -56,14 +56,14 @@ SplitUnfoldedTwoBodyEnergy::~SplitUnfoldedTwoBodyEnergy()
 
 EnergyMethodOP SplitUnfoldedTwoBodyEnergy::clone() const
 {
-    return SplitUnfoldedTwoBodyEnergyOP( new SplitUnfoldedTwoBodyEnergy( label_type_, value_type_, score_func_type_, score_type_weights_ ) );
+	return SplitUnfoldedTwoBodyEnergyOP( new SplitUnfoldedTwoBodyEnergy( label_type_, value_type_, score_func_type_, score_type_weights_ ) );
 }
 
 void SplitUnfoldedTwoBodyEnergy::residue_energy(conformation::Residue const & rsd,pose::Pose const &,EnergyMap & emap) const
 {
-    EnergyMap energies;
+	EnergyMap energies;
 
-    sutbp_.get_restype_emap(rsd.type(),energies);
+	sutbp_.get_restype_emap(rsd.type(),energies);
 
 	//Now each component has its own score term, which are loaded into the appropriate terms in the emap. While weights from the database file containing the two body values are still loaded, they are no longer applied in favor of weights defined in the global weights file(.wts).
 	emap[ fa_atr_ref ]    += energies[ fa_atr_ref ];

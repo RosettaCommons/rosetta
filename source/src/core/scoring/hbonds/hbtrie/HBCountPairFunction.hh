@@ -48,7 +48,7 @@ public:
 	/// @brief This is the main function for enforcing the sc/bb hbond exclusion rule.
 	/// It works like this: the templated trie-vs-trie function asks this class (via it's operator() method)
 	/// whether two atoms should have their interactions counted.  This is answered by the logic in here
-	/// that depends on two pieces of data.  1. whether an atom is a sidechain atom, and 2. whether 
+	/// that depends on two pieces of data.  1. whether an atom is a sidechain atom, and 2. whether
 	/// the other atom ought to avoid hbonds to sidechain atoms.  This second boolean is true iff
 	/// a. the other atom is a backbone atom, b. the other atom is already participating in a bb/bb hbond, and
 	/// c. the sc/bb-hydrogen-bond-exclusion rule is being enforced.

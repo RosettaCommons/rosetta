@@ -99,7 +99,7 @@ heap::heap_extract(
 	coheap_[0] = coheap_[ heap_size() ];
 
 	heap_down(1);
-//  we use a temporary copy so that this can be done in place if need be
+	//  we use a temporary copy so that this can be done in place if need be
 	val = temp_val;
 	coval = temp_coval;
 }
@@ -144,7 +144,7 @@ heap::heap_replace(
 	float coval
 )
 {
-// modifes heap
+	// modifes heap
 
 	//bool err;
 	//err = false;
@@ -244,7 +244,7 @@ heap::heap_down(
 		indx = child;
 	}
 
-/// WTF? L20:; // loop escape
+	/// WTF? L20:; // loop escape
 	heap_[indx] = iv;
 	coheap_[indx] = coiv;
 }
@@ -276,7 +276,7 @@ heap::heap_up(
 		indx = parent;
 	}
 
-// GHAA L20:; // loop escape
+	// GHAA L20:; // loop escape
 	coheap_[indx] = covalue;
 	heap_[indx] = value;
 }

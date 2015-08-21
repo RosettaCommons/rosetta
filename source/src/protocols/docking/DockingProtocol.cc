@@ -186,12 +186,12 @@ void DockingProtocol::init(
 		docking_scorefxn_output_ = docking_score_high;
 	}
 
-	if ( option[ score::weights ].user() ){
+	if ( option[ score::weights ].user() ) {
 		docking_scorefxn_high_ = core::scoring::get_score_function();
 		docking_scorefxn_output_ = docking_scorefxn_high_;
 	}
 
-	if ( option[ score::pack_weights ].user() ){
+	if ( option[ score::pack_weights ].user() ) {
 		docking_scorefxn_pack_ = core::scoring::ScoreFunctionFactory::create_score_function( option[ score::pack_weights ]() );
 	}
 
@@ -222,7 +222,7 @@ DockingProtocol::set_default()
 	use_legacy_protocol_ = false;
 	ignore_default_docking_task_ = false;
 	design_ = false;
-    if_ensemble_ = false;
+	if_ensemble_ = false;
 
 	lowres_inner_cycles_ = 50;
 	lowres_outer_cycles_ = 10;
@@ -257,7 +257,7 @@ void DockingProtocol::setup_objects()
 	// Residue movers
 	to_centroid_ = protocols::simple_moves::SwitchResidueTypeSetMoverOP( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
 
-	//generate to_all_atom mover: 	to_all_atom_ =
+	//generate to_all_atom mover:  to_all_atom_ =
 	using protocols::moves::MoverOP;
 	protocols::moves::SequenceMoverOP to_all_atom_and_repack( new protocols::moves::SequenceMover );
 	to_all_atom_and_repack->add_mover( MoverOP( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD ) ) );
@@ -270,22 +270,22 @@ void DockingProtocol::setup_objects()
 void DockingProtocol::sync_objects_with_flags()
 {
 	if ( !docking_local_refine_ ) {
-        if( ensemble2_filename_ != "" ){
-            if_ensemble_ = true;
-        }
+		if ( ensemble2_filename_ != "" ) {
+			if_ensemble_ = true;
+		}
 
-        if ( !perturber_ ){
+		if ( !perturber_ ) {
 			perturber_ = protocols::docking::DockingInitialPerturbationOP( new DockingInitialPerturbation( movable_jumps_, true /*slide into contact*/ ) );
-	}
+		}
 
-	if ( !docking_lowres_mover_ ){
-            // Modified by DK
-            if( if_ensemble_ ){
-                docking_lowres_mover_ = protocols::docking::DockingLowResOP( new DockingLowResEnsemble( docking_scorefxn_low_, movable_jumps_ ) );
-            } else {
-                docking_lowres_mover_ = protocols::docking::DockingLowResOP( new DockingLowRes( docking_scorefxn_low_, movable_jumps_ ) );
-            }
-	}
+		if ( !docking_lowres_mover_ ) {
+			// Modified by DK
+			if ( if_ensemble_ ) {
+				docking_lowres_mover_ = protocols::docking::DockingLowResOP( new DockingLowResEnsemble( docking_scorefxn_low_, movable_jumps_ ) );
+			} else {
+				docking_lowres_mover_ = protocols::docking::DockingLowResOP( new DockingLowRes( docking_scorefxn_low_, movable_jumps_ ) );
+			}
+		}
 		if ( !no_filters_ && !lowres_filter_ ) {
 			lowres_filter_ = protocols::docking::DockingLowResFilterOP( new protocols::docking::DockingLowResFilter() );
 		}
@@ -300,8 +300,7 @@ void DockingProtocol::sync_objects_with_flags()
 				if ( docking_highres_mover_->get_name() != "DockMinMover" ) docking_highres_mover_ = NULL;
 			}
 			if ( !docking_highres_mover_ ) docking_highres_mover_ = protocols::docking::DockingHighResOP( new DockMinMover( movable_jumps_, docking_scorefxn_high_ ) );
-		}
-		else if ( use_legacy_protocol_ ) {
+		} else if ( use_legacy_protocol_ ) {
 			if ( docking_highres_mover_ ) {
 				if ( docking_highres_mover_->get_name() != "DockingHighResLegacy" ) docking_highres_mover_ = NULL;
 			}
@@ -311,12 +310,11 @@ void DockingProtocol::sync_objects_with_flags()
 				docking_highres_mover_->set_sc_min( sc_min_ );
 				docking_highres_mover_->set_partners( partners_ );
 			}
-		}
-		else {
+		} else {
 			if ( docking_highres_mover_ ) {
 				if ( docking_highres_mover_->get_name() != "DockMCMProtocol" ) docking_highres_mover_ = NULL;
 			}
-			if ( !docking_highres_mover_ ){
+			if ( !docking_highres_mover_ ) {
 				// uses docking_scorefxn_output because three scorefunction still exist
 				// After move to new protocol is complete, docking_scorefxn_output will be the same as docking_scorefxn_high
 				// docking_highres_mover_ = new DockMCMProtocol( movable_jumps_, docking_scorefxn_output_, docking_scorefxn_pack_ ); //JQX commented this out, see the line below
@@ -332,7 +330,7 @@ void DockingProtocol::sync_objects_with_flags()
 	} else {
 		docking_highres_mover_ = NULL;
 	}
-	if ( no_filters_ ){
+	if ( no_filters_ ) {
 		highres_filter_ = NULL;
 		lowres_filter_ = NULL;
 	}
@@ -356,47 +354,47 @@ DockingProtocol::init_from_options()
 	using namespace basic::options;
 
 	// check for movable jumps option
-	if( option[ OptionKeys::docking::multibody ].user() ) {
+	if ( option[ OptionKeys::docking::multibody ].user() ) {
 		set_movable_jumps( option[ OptionKeys::docking::multibody ]() );
 	}
 
 	// These options default to false
-	if( option[ OptionKeys::docking::low_res_protocol_only ].user() ) {
+	if ( option[ OptionKeys::docking::low_res_protocol_only ].user() ) {
 		set_low_res_protocol_only(option[ OptionKeys::docking::low_res_protocol_only ]());
 	}
 
-	if( option[ OptionKeys::docking::docking_local_refine ].user() ) {
+	if ( option[ OptionKeys::docking::docking_local_refine ].user() ) {
 		set_docking_local_refine(option[ OptionKeys::docking::docking_local_refine ]());
 	}
 
-	if( option[ OptionKeys::docking::dock_min ].user() ) {
+	if ( option[ OptionKeys::docking::dock_min ].user() ) {
 		set_dock_min(option[ OptionKeys::docking::dock_min ]());
 	}
 
 	// Sets the member directly so sync_objects_with_flags won't be triggered prematurely.
 	// A public setter exists for this member.
-	if( option[ OptionKeys::docking::dock_rtmin ].user() ) {
+	if ( option[ OptionKeys::docking::dock_rtmin ].user() ) {
 		rt_min_ = option[ OptionKeys::docking::dock_rtmin ]();
 	}
 
 	// Sets the member directly so sync_objects_with_flags won't be triggered prematurely.
 	// A public setter exists for this member.
-	if( option[ OptionKeys::docking::sc_min ].user() ) {
+	if ( option[ OptionKeys::docking::sc_min ].user() ) {
 		sc_min_ = option[ OptionKeys::docking::sc_min ]();
 	}
 
 	// This defaults to "_"
-	if( option[ OptionKeys::docking::partners ].user() ) {
+	if ( option[ OptionKeys::docking::partners ].user() ) {
 		set_partners(option[ OptionKeys::docking::partners ]());
 	}
 
 	// Defaults to 0
-	if( option[ OptionKeys::constraints::cst_weight ].user() ) {
+	if ( option[ OptionKeys::constraints::cst_weight ].user() ) {
 		cst_weight_ = option[ OptionKeys::constraints::cst_weight ]();
 	}
 
 	// Defaults to 0
-	if( option[ OptionKeys::constraints::cst_fa_weight ].user() ) {
+	if ( option[ OptionKeys::constraints::cst_fa_weight ].user() ) {
 		cst_fa_weight_ = option[ OptionKeys::constraints::cst_fa_weight ]();
 	}
 
@@ -425,7 +423,7 @@ DockingProtocol::init_from_options()
 		set_use_legacy_protocol( option[ OptionKeys::docking::use_legacy_protocol ] );
 	}
 
-	if ( option[ OptionKeys::docking::ignore_default_docking_task].user() ){
+	if ( option[ OptionKeys::docking::ignore_default_docking_task].user() ) {
 		set_ignore_default_docking_task( option[ OptionKeys::docking::ignore_default_docking_task ]() );
 	}
 	// docking low res options
@@ -485,7 +483,7 @@ DockingProtocol::register_options()
 void
 DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring pose during apply
 {
-	if( autofoldtree_ ) {
+	if ( autofoldtree_ ) {
 		TR << "Setting docking foldtree" << std::endl;
 		TR << "old fold tree: " << pose.fold_tree() << std::endl;
 		setup_foldtree( pose, partners_, movable_jumps_ );
@@ -508,7 +506,7 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 		core::Size const rb_jump = movable_jumps_[1];
 		Size start_res(1), end_res(1), cutpoint(pose.fold_tree().cutpoint_by_jump( rb_jump ));
 
-		//lowres_inner_cycles_ = 25;	// Should be 50 (default value for traditional docking); modified by DK
+		//lowres_inner_cycles_ = 25; // Should be 50 (default value for traditional docking); modified by DK
 
 		TR << "Ensemble 1: " << ensemble1_filename_ << std::endl;
 		start_res = 1;
@@ -533,11 +531,11 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 		// pass the scorefunction to the low res mover
 		docking_lowres_mover_->set_scorefxn( docking_scorefxn_low_ );
 
-        //docking_highres_ens = new core::scoring::ScoreFunction( *docking_scorefxn_high_ );
-        //docking_highres_ens->set_weight( core::scoring::dock_ens_conf, 1.0 );
-        //set_highres_scorefxn( docking_highres_ens, docking_scorefxn_pack_ ); // sets csts for mc and minimization, but not packing
+		//docking_highres_ens = new core::scoring::ScoreFunction( *docking_scorefxn_high_ );
+		//docking_highres_ens->set_weight( core::scoring::dock_ens_conf, 1.0 );
+		//set_highres_scorefxn( docking_highres_ens, docking_scorefxn_pack_ ); // sets csts for mc and minimization, but not packing
 		// pass the score function to the high res mover
-        //docking_highres_mover_->set_scorefxn( docking_scorefxn_high_ );
+		//docking_highres_mover_->set_scorefxn( docking_scorefxn_high_ );
 	} else { //if ensemble docking
 		if ( recover_sidechains_filename_ != "" ) {
 			if ( !recover_sidechains_ ) {
@@ -554,17 +552,17 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 	} //if ensemble docking
 
 	if ( docking_lowres_mover_ ) {
-        // pass the ensemble movers to the lowres protocol
-        if( if_ensemble_ && docking_lowres_mover_->get_name() == "DockingLowResEnsemble" ){
-            DockingLowResEnsemble* ensemble_mover = dynamic_cast< DockingLowResEnsemble* >(docking_lowres_mover_.get());
+		// pass the ensemble movers to the lowres protocol
+		if ( if_ensemble_ && docking_lowres_mover_->get_name() == "DockingLowResEnsemble" ) {
+			DockingLowResEnsemble* ensemble_mover = dynamic_cast< DockingLowResEnsemble* >(docking_lowres_mover_.get());
 
-            ensemble_mover->set_ensemble1( ensemble1_ );
-            ensemble_mover->set_ensemble2( ensemble2_ );
-        }
+			ensemble_mover->set_ensemble1( ensemble1_ );
+			ensemble_mover->set_ensemble2( ensemble2_ );
+		}
 
-        docking_lowres_mover_->set_inner_cycles( lowres_inner_cycles_ );
-        docking_lowres_mover_->set_outer_cycles( lowres_outer_cycles_ );
-    }
+		docking_lowres_mover_->set_inner_cycles( lowres_inner_cycles_ );
+		docking_lowres_mover_->set_outer_cycles( lowres_outer_cycles_ );
+	}
 
 	// set relevant information to legacy high res mover
 	if ( docking_highres_mover_ ) {
@@ -573,7 +571,7 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 			legacy_mover->design( design_ );
 		}
 		// passes the task factory down the chain and allows setting of the default docking task
-		if ( init_task_factory_  ){
+		if ( init_task_factory_  ) {
 			docking_highres_mover_->set_task_factory( init_task_factory_ );
 		}
 		docking_highres_mover_->set_ignore_default_task( ignore_default_docking_task_ );
@@ -583,15 +581,15 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 	if ( highres_filter_ ) highres_filter_->set_score_cutoff( score_cutoff_ );
 
 	if ( docking_constraint_ ) {
-			TR << "setting up the constraint set mover" << std::endl;
-			docking_constraint_->apply( pose );
-			if ( cst_weight_ == 0.0 ) {
-				cst_weight_ = 1.0;
-			}
+		TR << "setting up the constraint set mover" << std::endl;
+		docking_constraint_->apply( pose );
+		if ( cst_weight_ == 0.0 ) {
+			cst_weight_ = 1.0;
+		}
 
-			if ( cst_fa_weight_ == 0.0 ) {
-				cst_fa_weight_ = 1.0;
-			}
+		if ( cst_fa_weight_ == 0.0 ) {
+			cst_fa_weight_ = 1.0;
+		}
 	}
 	// finish setting up constraints
 	setup_constraints( pose );
@@ -629,7 +627,7 @@ DockingProtocol::DockingProtocol( DockingProtocol const & rhs ) :
 /// @brief assignment operator
 DockingProtocol & DockingProtocol::operator=( DockingProtocol const & rhs ){
 	//abort self-assignment
-	if (this == &rhs) return *this;
+	if ( this == &rhs ) return *this;
 	Mover::operator=(rhs);
 	initForEqualOperatorAndCopyConstructor(*this, rhs);
 	return *this;
@@ -663,32 +661,35 @@ void DockingProtocol::initForEqualOperatorAndCopyConstructor(DockingProtocol & l
 	if ( rhs.docking_scorefxn_high_ ) lhs.docking_scorefxn_high_ = rhs.docking_scorefxn_high_->clone();
 	if ( rhs.docking_scorefxn_pack_ ) lhs.docking_scorefxn_pack_ = rhs.docking_scorefxn_pack_->clone();
 	if ( rhs.docking_scorefxn_output_ ) lhs.docking_scorefxn_output_ = rhs.docking_scorefxn_output_->clone();
-	if( rhs.mc_ ) //not used currently but might be needed later
+	if ( rhs.mc_ ) { //not used currently but might be needed later
 		lhs.mc_ = protocols::moves::MonteCarloOP( new moves::MonteCarlo( *(rhs.mc_) ) );
+	}
 	if ( rhs.lowres_filter_ ) lhs.lowres_filter_ = utility::pointer::static_pointer_cast< protocols::docking::DockingLowResFilter > ( rhs.lowres_filter_->clone() );
 	if ( rhs.highres_filter_ ) lhs.highres_filter_ = utility::pointer::static_pointer_cast< protocols::docking::DockingHighResFilter > ( rhs.highres_filter_->clone() );
-	if ( rhs.docking_lowres_mover_){
+	if ( rhs.docking_lowres_mover_ ) {
 		lhs.docking_lowres_mover_ = utility::pointer::static_pointer_cast< protocols::docking::DockingLowRes > ( rhs.docking_lowres_mover_->clone() );
 	}
-	if ( rhs.docking_highres_mover_){
+	if ( rhs.docking_highres_mover_ ) {
 		lhs.docking_highres_mover_ = utility::pointer::static_pointer_cast< protocols::docking::DockingHighRes > ( rhs.docking_highres_mover_->clone() );
 	}
 	if ( rhs.to_centroid_ ) lhs.to_centroid_ = utility::pointer::static_pointer_cast< protocols::simple_moves::SwitchResidueTypeSetMover > ( rhs.to_centroid_->clone() );
 	if ( rhs.to_all_atom_ ) lhs.to_all_atom_ = rhs.to_all_atom_->clone();
-	if( rhs.ensemble1_){
+	if ( rhs.ensemble1_ ) {
 		lhs.ensemble1_ = protocols::docking::DockingEnsembleOP( new protocols::docking::DockingEnsemble( *(rhs.ensemble1_) ) );
 		lhs.ensemble1_filename_ = rhs.ensemble1_filename_ ;
 	}
-	if( rhs.ensemble2_){
+	if ( rhs.ensemble2_ ) {
 		lhs.ensemble2_ = protocols::docking::DockingEnsembleOP( new protocols::docking::DockingEnsemble( *(rhs.ensemble2_) ) );
 		lhs.ensemble2_filename_ = rhs.ensemble2_filename_;
 	}
-	if( rhs.docking_constraint_ )
+	if ( rhs.docking_constraint_ ) {
 		lhs.docking_constraint_ = utility::pointer::static_pointer_cast< protocols::simple_moves::ConstraintSetMover > ( rhs.docking_constraint_->clone() );
-	if( rhs.recover_sidechains_ )
+	}
+	if ( rhs.recover_sidechains_ ) {
 		lhs.recover_sidechains_ = utility::pointer::static_pointer_cast< protocols::simple_moves::ReturnSidechainMover > ( rhs.recover_sidechains_->clone() );
-	if(	rhs.init_task_factory_ ){
-		lhs.init_task_factory_ = core::pack::task::TaskFactoryOP( new 	core::pack::task::TaskFactory( *(rhs.init_task_factory_) ) );
+	}
+	if ( rhs.init_task_factory_ ) {
+		lhs.init_task_factory_ = core::pack::task::TaskFactoryOP( new  core::pack::task::TaskFactory( *(rhs.init_task_factory_) ) );
 	}
 	lhs.design_ = rhs.design_;
 	lhs.ignore_default_docking_task_ = rhs.ignore_default_docking_task_;
@@ -742,13 +743,13 @@ void DockingProtocol::set_rt_min( bool rt_min )
 
 void DockingProtocol::set_dock_min( bool const dock_min )
 {
-//debug_assert ( !low_res_protocol_only_ ); // SJF this assert doesn't make sense b/c set_dock_min is called even if low_res_protocol_only_ is set through parse_my_tag
+	//debug_assert ( !low_res_protocol_only_ ); // SJF this assert doesn't make sense b/c set_dock_min is called even if low_res_protocol_only_ is set through parse_my_tag
 	dock_min_ = dock_min;
 }
 
 void DockingProtocol::set_no_filters( bool no_filters )
 {
-	if ( no_filters != no_filters_ ){
+	if ( no_filters != no_filters_ ) {
 		no_filters_ = no_filters;
 		flags_and_objects_are_in_sync_ = false;
 	}
@@ -756,7 +757,7 @@ void DockingProtocol::set_no_filters( bool no_filters )
 
 void DockingProtocol::set_low_res_protocol_only( bool const low_res_protocol_only )
 {
-	if ( low_res_protocol_only != low_res_protocol_only_ ){
+	if ( low_res_protocol_only != low_res_protocol_only_ ) {
 		low_res_protocol_only_ = low_res_protocol_only;
 		flags_and_objects_are_in_sync_ = false;
 	}
@@ -764,7 +765,7 @@ void DockingProtocol::set_low_res_protocol_only( bool const low_res_protocol_onl
 
 void DockingProtocol::set_docking_local_refine( bool const docking_local_refine )
 {
-	if ( docking_local_refine != docking_local_refine_ ){
+	if ( docking_local_refine != docking_local_refine_ ) {
 		docking_local_refine_ = docking_local_refine;
 		flags_and_objects_are_in_sync_ = false;
 	}
@@ -772,7 +773,7 @@ void DockingProtocol::set_docking_local_refine( bool const docking_local_refine 
 
 void DockingProtocol::set_use_legacy_protocol( bool const use_legacy_protocol )
 {
-	if ( use_legacy_protocol != use_legacy_protocol_ ){
+	if ( use_legacy_protocol != use_legacy_protocol_ ) {
 		use_legacy_protocol_ = use_legacy_protocol;
 		flags_and_objects_are_in_sync_ = false;
 	}
@@ -783,14 +784,14 @@ void DockingProtocol::set_use_legacy_protocol( bool const use_legacy_protocol )
 void DockingProtocol::set_cst_weight( core::Real const cst_weight )
 {
 	// Set the centroid constraint weight
-	if ( cst_weight != cst_weight_ ){
+	if ( cst_weight != cst_weight_ ) {
 		cst_weight_ = cst_weight;
 		runtime_assert( cst_weight_ != 0.0 );
 		flags_and_objects_are_in_sync_ = false;
 	}
 
 	// Set the full atom constraint weight
-	if ( cst_weight != cst_fa_weight_ ){
+	if ( cst_weight != cst_fa_weight_ ) {
 		cst_fa_weight_ = cst_weight;
 		runtime_assert( cst_fa_weight_ != 0.0 );
 		flags_and_objects_are_in_sync_ = false;
@@ -799,7 +800,7 @@ void DockingProtocol::set_cst_weight( core::Real const cst_weight )
 
 void DockingProtocol::set_use_constraints( bool const use_csts )
 {
-	if ( use_csts != use_csts_ ){
+	if ( use_csts != use_csts_ ) {
 		use_csts_ = use_csts;
 		flags_and_objects_are_in_sync_ = false;
 	}
@@ -807,35 +808,35 @@ void DockingProtocol::set_use_constraints( bool const use_csts )
 
 void DockingProtocol::set_interface_definition_task_operation( protocols::toolbox::task_operations::InterfaceTaskOperationOP interface_definition )
 {
-    check_high_res_protocol();
-    docking_highres_mover_->set_interface_definition_task_operation( interface_definition );
+	check_high_res_protocol();
+	docking_highres_mover_->set_interface_definition_task_operation( interface_definition );
 }
 
 void DockingProtocol::set_additional_task_operarations( utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations )
 {
-    check_high_res_protocol();
-    docking_highres_mover_->set_additional_task_operarations( additional_task_operations );
+	check_high_res_protocol();
+	docking_highres_mover_->set_additional_task_operarations( additional_task_operations );
 }
 
 void DockingProtocol::add_additional_task_operaration( core::pack::task::operation::TaskOperationOP task_operation )
 {
-    check_high_res_protocol();
-    docking_highres_mover_->add_additional_task_operaration( task_operation );
+	check_high_res_protocol();
+	docking_highres_mover_->add_additional_task_operaration( task_operation );
 }
 
 utility::vector1< core::pack::task::operation::TaskOperationOP > DockingProtocol::get_additional_task_operarations()
 {
-    check_high_res_protocol();
-    return docking_highres_mover_->get_additional_task_operarations();
+	check_high_res_protocol();
+	return docking_highres_mover_->get_additional_task_operarations();
 }
 
 
 void DockingProtocol::check_high_res_protocol()
 {
-   debug_assert ( !low_res_protocol_only_ );
-    if ( !docking_highres_mover_ ){
-        sync_objects_with_flags();
-    }
+	debug_assert ( !low_res_protocol_only_ );
+	if ( !docking_highres_mover_ ) {
+		sync_objects_with_flags();
+	}
 }
 
 /// @brief setup the constrainta for each application of the docking protocol
@@ -853,7 +854,7 @@ void DockingProtocol::setup_constraints( pose::Pose & pose )
 		}
 	}
 
-	if( lowres_filter_ ) { lowres_filter_->set_use_constraints( filter_use_csts ); }
+	if ( lowres_filter_ ) { lowres_filter_->set_use_constraints( filter_use_csts ); }
 
 	add_constraints_to_scorefunction();
 }
@@ -907,16 +908,16 @@ DockingProtocol::apply( pose::Pose & pose )
 		set_native_pose( native_pose );
 	}
 
-	if ( !flags_and_objects_are_in_sync_ ){
+	if ( !flags_and_objects_are_in_sync_ ) {
 		sync_objects_with_flags();
 	}
 
-	if ( previous_sequence_.compare( pose.sequence() ) != 0 ){
+	if ( previous_sequence_.compare( pose.sequence() ) != 0 ) {
 		first_apply_with_current_setup_ = true;
 		previous_sequence_ = pose.sequence();
 	}
 
-	if ( first_apply_with_current_setup_ ){
+	if ( first_apply_with_current_setup_ ) {
 		finalize_setup( pose );
 		first_apply_with_current_setup_ = false;
 	}
@@ -954,13 +955,12 @@ DockingProtocol::apply( pose::Pose & pose )
 		docking_lowres_mover_->apply( pose );
 
 		// Perform additional low resolution steps if they have been specified
-		if ( additional_low_resolution_steps_ )
-		{
+		if ( additional_low_resolution_steps_ ) {
 			additional_low_resolution_steps_->apply( pose );
 		}
 
 		// add scores to jd2 output
-		if( reporting_ ) {
+		if ( reporting_ ) {
 			if ( ensemble1_ ) job->add_string_real_pair("conf_num1", ensemble1_->get_current_confnum() );
 			if ( ensemble2_ ) job->add_string_real_pair("conf_num2", ensemble2_->get_current_confnum() );
 			if ( get_native_pose() ) {
@@ -1032,10 +1032,10 @@ DockingProtocol::apply( pose::Pose & pose )
 				job->add_string_real_pair("Fnat", calc_Fnat( pose, *get_native_pose(), docking_scorefxn_output_, movable_jumps_ ));
 			}
 
-			//	pose.energies().show_total_headers( std::cout );
-			//	pose.energies().show_totals( std::cout );
-			//	TR << pose.energies().total_energies()[ core::scoring::total_score ] << std::endl;
-			//	TR << pose.energies().total_energies()[ core::scoring::dock_ens_conf ] << std::endl;
+			// pose.energies().show_total_headers( std::cout );
+			// pose.energies().show_totals( std::cout );
+			// TR << pose.energies().total_energies()[ core::scoring::total_score ] << std::endl;
+			// TR << pose.energies().total_energies()[ core::scoring::dock_ens_conf ] << std::endl;
 
 			if ( ensemble1_ && ensemble2_ ) {
 				job->add_string_real_pair("conf_score",
@@ -1046,10 +1046,9 @@ DockingProtocol::apply( pose::Pose & pose )
 		}
 	}
 
-	if ( ! passed_lowres_filter || ! passed_highres_filter ){
+	if ( ! passed_lowres_filter || ! passed_highres_filter ) {
 		set_last_move_status( protocols::moves::FAIL_RETRY );
-	}
-	else{
+	} else {
 		set_last_move_status( protocols::moves::MS_SUCCESS );
 	}
 
@@ -1079,20 +1078,16 @@ void DockingProtocol::set_docking_highres_mover( protocols::docking::DockingHigh
 	docking_highres_mover_ = docking_highres_mover;
 
 	// If docking_highres_mover_ has been configured with custom scorefxns, we will tell DockingProtocol.
-	if ( docking_highres_mover_->scorefxn() && docking_highres_mover_->scorefxn_pack() )
-	{
+	if ( docking_highres_mover_->scorefxn() && docking_highres_mover_->scorefxn_pack() ) {
 		set_highres_scorefxn( docking_highres_mover_->scorefxn(), docking_highres_mover_->scorefxn_pack() );
-	}
-	else if ( docking_highres_mover_->scorefxn() && ! docking_highres_mover_->scorefxn_pack() )
-	{
+	} else if ( docking_highres_mover_->scorefxn() && ! docking_highres_mover_->scorefxn_pack() ) {
 		set_highres_scorefxn( docking_highres_mover_->scorefxn() );
 	}
 }
 
 void DockingProtocol::add_additional_low_resolution_step( protocols::moves::MoverOP additional_low_resolution_mover )
 {
-	if ( ! additional_low_resolution_steps_ )
-	{
+	if ( ! additional_low_resolution_steps_ ) {
 		additional_low_resolution_steps_ = protocols::moves::SequenceMoverOP( new moves::SequenceMover );
 	}
 	additional_low_resolution_steps_->add_mover( additional_low_resolution_mover );
@@ -1114,12 +1109,11 @@ DockingProtocol::show( std::ostream & out ) const {
 	int spaces_so_far = 23;
 
 	bool first = true;
-	for ( DockJumps::const_iterator it = movable_jumps_.begin() ; it != movable_jumps_.end() ; ++it ){
-		if (!first) {
+	for ( DockJumps::const_iterator it = movable_jumps_.begin() ; it != movable_jumps_.end() ; ++it ) {
+		if ( !first ) {
 			out << ", ";
 			spaces_so_far += 2;
-		}
-		else first = false;
+		} else first = false;
 
 		out << I( 1, *it );
 		spaces_so_far += 1;
@@ -1127,7 +1121,7 @@ DockingProtocol::show( std::ostream & out ) const {
 
 	int remaining_spaces = 80 - spaces_so_far;
 
-	if ( remaining_spaces > 0 )	out << space( 80 - spaces_so_far );
+	if ( remaining_spaces > 0 ) out << space( 80 - spaces_so_far );
 	out << line_marker << std::endl;
 
 	// Display the state of the low resolution docking protocol that will be used
@@ -1153,18 +1147,18 @@ DockingProtocol::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & dat
 {
 	using namespace core::scoring;
 
-	if( tag->hasOption("docking_score_low" ) ){
+	if ( tag->hasOption("docking_score_low" ) ) {
 		std::string const score_low( tag->getOption<std::string>( "docking_score_low" ) );
 		ScoreFunctionOP scorelo = data.get< ScoreFunction * >( "scorefxns", score_low )->clone();
 		set_lowres_scorefxn(scorelo);
 	}
-	if( tag->hasOption("docking_score_high" ) ){
+	if ( tag->hasOption("docking_score_high" ) ) {
 		std::string const score_high( tag->getOption<std::string>( "docking_score_high" ) );
 		ScoreFunctionOP scorehi = data.get< ScoreFunction * >( "scorefxns", score_high )->clone();
 		set_highres_scorefxn(scorehi);
 	}
 	//get through partners
-	if( tag->hasOption( "partners" ) ){
+	if ( tag->hasOption( "partners" ) ) {
 		std::string const partners( tag->getOption<std::string>( "partners") );
 		set_partners(partners);
 	}
@@ -1177,7 +1171,7 @@ DockingProtocol::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & dat
 	set_dock_min( tag->getOption<bool>( "dock_min", 0 ) );
 	//ignore the default docking task and define your own
 	set_ignore_default_docking_task( tag->getOption<bool>( "ignore_default_docking_task", 0 ) );
-	if( tag->hasOption( "task_operations" ) ){
+	if ( tag->hasOption( "task_operations" ) ) {
 		set_task_factory(protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	}
 
@@ -1187,18 +1181,18 @@ DockingProtocol::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & dat
 std::string
 DockingProtocolCreator::keyname() const
 {
-    return DockingProtocolCreator::mover_name();
+	return DockingProtocolCreator::mover_name();
 }
 
 protocols::moves::MoverOP
 DockingProtocolCreator::create_mover() const {
-    return protocols::moves::MoverOP( new DockingProtocol() );
+	return protocols::moves::MoverOP( new DockingProtocol() );
 }
 
 std::string
 DockingProtocolCreator::mover_name()
 {
-    return "DockingProtocol";
+	return "DockingProtocol";
 }
 
 std::ostream & operator<<(std::ostream& out, const DockingProtocol & dp )

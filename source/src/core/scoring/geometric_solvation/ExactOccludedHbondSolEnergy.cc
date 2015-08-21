@@ -161,9 +161,9 @@ GridInfo::GridInfo() {
 	ynum_points_ = 41;
 	znum_points_ = 31;
 	// Note: below gives 51 million points per grid
-		//	xnum_points_ = 401;
-		//	ynum_points_ = 401;
-		//	znum_points_ = 321;
+	// xnum_points_ = 401;
+	// ynum_points_ = 401;
+	// znum_points_ = 321;
 
 	xstep_ = water_grid_width / ( xnum_points_ - 1 );
 	ystep_ = water_grid_width / ( ynum_points_ - 1 );
@@ -183,8 +183,8 @@ WaterWeightGridSet::create_singleton_instance()
 
 // private constructor
 WaterWeightGridSet::WaterWeightGridSet() :
-  hbondoptions_( hbonds::HBondOptionsOP( new HBondOptions ) ),
-  hb_database_(HBondDatabase::get_database())
+	hbondoptions_( hbonds::HBondOptionsOP( new HBondOptions ) ),
+	hb_database_(HBondDatabase::get_database())
 {
 	using namespace hbonds;
 	hbondoptions_->use_sp2_chi_penalty(false); // override command line settings
@@ -194,13 +194,13 @@ WaterWeightGridSet::WaterWeightGridSet() :
 	// We'll store them as a map keyed on hbonds::HBEvalType, with each value a 3D vector of the weights
 
 	TR << "computing and storing water weight grids for acceptor types." << std::endl;
-	for(Size i = 1; i <= hbacc_MAX; i++){
+	for ( Size i = 1; i <= hbacc_MAX; i++ ) {
 		HBEvalTuple const hbe( hbdon_H2O, HBAccChemType(i), seq_sep_other );
 		sum_all_water_weights_[hbe.eval_type()] = fill_water_grid( all_water_weights_[hbe.eval_type()], hbe, *GridInfo::get_instance(), true /*water is donor*/);
 	}
 
 	TR << "computing and storing water weight grids for donor types." << std::endl;
-	for(Size i = 1; i <= hbdon_MAX; i++){
+	for ( Size i = 1; i <= hbdon_MAX; i++ ) {
 		HBEvalTuple const hbe( HBDonChemType(i), hbacc_H2O, seq_sep_other );
 		sum_all_water_weights_[hbe.eval_type()] = fill_water_grid( all_water_weights_[hbe.eval_type()], hbe, *GridInfo::get_instance(), false /*water is acceptor*/);
 	}
@@ -221,9 +221,9 @@ core::Real WaterWeightGridSet::fill_water_grid(
 	// Setup grid, initialize to zero
 	water_weights.clear();
 	water_weights.resize(grid_info.xnum_points());
-	for (core::Size tx=0;tx<grid_info.xnum_points();tx++){
+	for ( core::Size tx=0; tx<grid_info.xnum_points(); tx++ ) {
 		water_weights[tx].resize(grid_info.ynum_points());
-		for (core::Size ty=0;ty<grid_info.ynum_points();ty++){
+		for ( core::Size ty=0; ty<grid_info.ynum_points(); ty++ ) {
 			water_weights[tx][ty].resize(grid_info.znum_points(), 0.);
 		}
 	}
@@ -232,13 +232,13 @@ core::Real WaterWeightGridSet::fill_water_grid(
 	core::Real sum_grid_water_weight = 0.;
 	core::Vector water_position(grid_info.xorigin(),grid_info.yorigin(),grid_info.zorigin());
 
-	for (core::Size tx=0;tx<grid_info.xnum_points();tx++){
+	for ( core::Size tx=0; tx<grid_info.xnum_points(); tx++ ) {
 		water_position.x() += grid_info.xstep();
 		water_position.y() = grid_info.yorigin();
-		for (core::Size ty=0;ty<grid_info.ynum_points();ty++){
+		for ( core::Size ty=0; ty<grid_info.ynum_points(); ty++ ) {
 			water_position.y() += grid_info.ystep();
 			water_position.z() = grid_info.zorigin();
-			for (core::Size tz=0;tz<grid_info.znum_points();tz++){
+			for ( core::Size tz=0; tz<grid_info.znum_points(); tz++ ) {
 				water_position.z() += grid_info.zstep();
 
 				// Compute the current geometry
@@ -284,7 +284,7 @@ core::Real WaterWeightGridSet::fill_water_grid(
 				// Get the Hbond energy
 				core::Real curr_water_hbond;
 				core::Real dummy_chi( 0.0 );
-			debug_assert( ! hbondoptions_->use_sp2_chi_penalty() ); // APL avoid the new sp2 chi term.
+				debug_assert( ! hbondoptions_->use_sp2_chi_penalty() ); // APL avoid the new sp2 chi term.
 				hbond_compute_energy(*hb_database_, *hbondoptions_, hbond_eval_type,
 					AHdis, xD, xH, dummy_chi, curr_water_hbond );
 
@@ -310,7 +310,7 @@ WaterWeightGridSet::get_water_weight_grid( hbonds::HBEvalType const & hbond_eval
 	if ( curr_water_weights_iter == all_water_weights_.end( ) ) {
 		TR << "Could not look up map element" << std::endl;
 		TR << "get_water_weight_grid hbond_eval_type " << hbond_eval_type << std::endl;
-	debug_assert(false);
+		debug_assert(false);
 		exit(1);
 	}
 	return curr_water_weights_iter->second;
@@ -324,7 +324,7 @@ WaterWeightGridSet::get_sum_water_weight_grid( hbonds::HBEvalType const & hbond_
 	if ( curr_sum_water_weights_iter == sum_all_water_weights_.end( ) ) {
 		TR << "Could not look up map element" << std::endl;
 		TR << "get_sum_water_weight_grid hbond_eval_type " << hbond_eval_type << std::endl;
-	debug_assert(false);
+		debug_assert(false);
 		exit(1);
 	}
 	return curr_sum_water_weights_iter->second;
@@ -337,9 +337,9 @@ ExactOccludedHbondSolEnergy::~ExactOccludedHbondSolEnergy() {}
 void ExactOccludedHbondSolEnergy::allocate_grid_of_occluded_sites() {
 	occluded_sites_.clear();
 	occluded_sites_.resize(GridInfo::get_instance()->xnum_points());
-	for (core::Size tx=0;tx<GridInfo::get_instance()->xnum_points();tx++){
+	for ( core::Size tx=0; tx<GridInfo::get_instance()->xnum_points(); tx++ ) {
 		occluded_sites_[tx].resize(GridInfo::get_instance()->ynum_points());
-		for (core::Size ty=0;ty<GridInfo::get_instance()->ynum_points();ty++){
+		for ( core::Size ty=0; ty<GridInfo::get_instance()->ynum_points(); ty++ ) {
 			occluded_sites_[tx][ty].resize(GridInfo::get_instance()->znum_points());
 		}
 	}
@@ -393,7 +393,7 @@ ExactOccludedHbondSolEnergy::ExactOccludedHbondSolEnergy( ExactOccludedHbondSolE
 	exact_occ_self_res_occ_( src.exact_occ_self_res_occ_ ),
 	occ_radius_scaling_( src.occ_radius_scaling_ ),
 	hbondoptions_(src.hbondoptions_),
-  hb_database_(src.hb_database_),
+	hb_database_(src.hb_database_),
 	verbose_( src.verbose_ ),
 	atom_type_set_ptr_( src.atom_type_set_ptr_ )
 {
@@ -428,7 +428,7 @@ void
 ExactOccludedHbondSolEnergy::setup_for_derivatives( pose::Pose & , ScoreFunction const & ) const
 {
 	TR << "Error - cannot compute derivatives for ExactOccludedHbondSolEnergy (occ_sol_exact)" << std::endl;
-debug_assert(false);
+	debug_assert(false);
 	exit(1);
 }
 
@@ -436,7 +436,7 @@ void
 ExactOccludedHbondSolEnergy::setup_for_minimizing( pose::Pose & , ScoreFunction const & , kinematics::MinimizerMapBase const & ) const
 {
 	TR << "Error - cannot compute derivatives for ExactOccludedHbondSolEnergy (occ_sol_exact)" << std::endl;
-debug_assert(false);
+	debug_assert(false);
 	exit(1);
 }
 
@@ -453,8 +453,8 @@ void ExactOccludedHbondSolEnergy::residue_energy(
 
 	// loop over donors in polar_rsd
 	for ( chemical::AtomIndices::const_iterator
-		hnum  = polar_rsd.Hpos_polar().begin(),
-		hnume = polar_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
+			hnum  = polar_rsd.Hpos_polar().begin(),
+			hnume = polar_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 
 		Size const polar_atom( *hnum );
 		residue_geosol += compute_donor_atom_energy(polar_rsd, polar_resnum, polar_atom, pose);
@@ -462,8 +462,8 @@ void ExactOccludedHbondSolEnergy::residue_energy(
 
 	// loop over acceptors in polar_rsd
 	for ( chemical::AtomIndices::const_iterator
-		anum  = polar_rsd.accpt_pos().begin(),
-		anume = polar_rsd.accpt_pos().end(); anum != anume; ++anum ) {
+			anum  = polar_rsd.accpt_pos().begin(),
+			anume = polar_rsd.accpt_pos().end(); anum != anume; ++anum ) {
 
 		Size const polar_atom( *anum );
 		residue_geosol += compute_acceptor_atom_energy(polar_rsd, polar_resnum, polar_atom, pose);
@@ -514,7 +514,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_donor_atom_energy(
 	if ( base_atom_name == " NH2" ) max_possible_LK /= 2; // Arg
 	// Note: inner nitrogen of Arg (NE) is extra strong, since it's the same atom type as the other two but doesn't get
 	// cut in half because there's only one proton...
-	//			TR << "jk max LK for donor with base " << base_atom_name << " is  " << max_possible_LK << std::endl;
+	//   TR << "jk max LK for donor with base " << base_atom_name << " is  " << max_possible_LK << std::endl;
 
 	// jk INSTEAD OF USING LK dG FREE, SET THEM ALL TO -5.0. THIS IS ALMOST TRUE ANYWAY, AND THE ONES THAT AREN'T SHOULD PROBABLY BE...
 	max_possible_LK = -5.;
@@ -531,38 +531,36 @@ core::Real ExactOccludedHbondSolEnergy::compute_donor_atom_energy(
 	core::Real polar_group_energy = 0.;
 	if ( ! exact_occ_pairwise_ && ! exact_occ_pairwise_by_res_ ) {
 		polar_group_energy = compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
-				grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ) );
-	}
-	else {
+			grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ) );
+	} else {
 		// loop over all atoms of neighboring residues, INCLUDING SELF
 		core::scoring::TenANeighborGraph const & graph = pose.energies().tenA_neighbor_graph();
 		utility::vector1 <core::Size> neighborlist;
 		neighborlist.push_back( polar_resnum);
 		for ( core::graph::Graph::EdgeListConstIter
-			neighbor_iter = graph.get_node( polar_resnum )->const_edge_list_begin(),
-			neighbor_iter_end = graph.get_node( polar_resnum )->const_edge_list_end();
-			neighbor_iter != neighbor_iter_end; ++neighbor_iter ) {
-				neighborlist.push_back( (*neighbor_iter)->get_other_ind( polar_resnum ) );
+				neighbor_iter = graph.get_node( polar_resnum )->const_edge_list_begin(),
+				neighbor_iter_end = graph.get_node( polar_resnum )->const_edge_list_end();
+				neighbor_iter != neighbor_iter_end; ++neighbor_iter ) {
+			neighborlist.push_back( (*neighbor_iter)->get_other_ind( polar_resnum ) );
 		}
 		for ( Size occ_inx = 1; occ_inx <= neighborlist.size(); ++occ_inx ) {
 			core::Size const occ_resnum( neighborlist[occ_inx] );
 			conformation::Residue const occ_rsd = pose.residue(occ_resnum);
 			if ( exact_occ_pairwise_by_res_ ) {
 				polar_group_energy += compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
-						grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
-						true, occ_resnum );
-			}
-			else {
+					grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
+					true, occ_resnum );
+			} else {
 				for ( Size occ_atomno = 1; occ_atomno <= occ_rsd.natoms(); ++occ_atomno ) {
 					polar_group_energy += compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
-							grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
-							true, occ_resnum, true, occ_atomno );
+						grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
+						true, occ_resnum, true, occ_atomno );
 				}
 			}
 		}
 	}
 
-	//		std::cout << "jk EXACT Donor " << base_atom_name << "  " << pose.residue(polar_resnum).aa() << " " << polar_resnum << "  " << polar_group_energy << std::endl;
+	//  std::cout << "jk EXACT Donor " << base_atom_name << "  " << pose.residue(polar_resnum).aa() << " " << polar_resnum << "  " << polar_group_energy << std::endl;
 	return  polar_group_energy;
 }
 
@@ -590,7 +588,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_acceptor_atom_energy(
 	// Figure out max LK energy
 	//std::string const base_atom_name = polar_rsd.atom_name( base_atom );
 	//core::Real max_possible_LK = (*atom_type_set_ptr)[ polar_rsd.atom_type_index( polar_atom ) ].lk_dgfree();
-		//			TR << "jk max LK for acceptor " << polar_rsd.atom_name(polar_atom) << " is  " << max_possible_LK << std::endl;
+	//   TR << "jk max LK for acceptor " << polar_rsd.atom_name(polar_atom) << " is  " << max_possible_LK << std::endl;
 
 	// jk INSTEAD OF USING LK dG FREE, SET THEM ALL TO -5.0. THIS IS ALMOST TRUE ANYWAY, AND THE ONES THAT AREN'T SHOULD PROBABLY BE...
 	core::Real max_possible_LK = -5.;
@@ -606,17 +604,16 @@ core::Real ExactOccludedHbondSolEnergy::compute_acceptor_atom_energy(
 	core::Real polar_group_energy = 0.;
 	if ( ! exact_occ_pairwise_ && ! exact_occ_pairwise_by_res_ ) {
 		polar_group_energy = compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
-				grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ) );
-	}
-	else {
+			grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ) );
+	} else {
 		// loop over all atoms of neighboring residues, INCLUDING SELF
 		core::scoring::TenANeighborGraph const & graph = pose.energies().tenA_neighbor_graph();
 		utility::vector1 <core::Size> neighborlist;
 		neighborlist.push_back( polar_resnum);
 		for ( core::graph::Graph::EdgeListConstIter
-			neighbor_iter = graph.get_node( polar_resnum )->const_edge_list_begin(),
-			neighbor_iter_end = graph.get_node( polar_resnum )->const_edge_list_end();
-			neighbor_iter != neighbor_iter_end; ++neighbor_iter ) {
+				neighbor_iter = graph.get_node( polar_resnum )->const_edge_list_begin(),
+				neighbor_iter_end = graph.get_node( polar_resnum )->const_edge_list_end();
+				neighbor_iter != neighbor_iter_end; ++neighbor_iter ) {
 			neighborlist.push_back( (*neighbor_iter)->get_other_ind( polar_resnum ) );
 		}
 		for ( Size occ_inx = 1; occ_inx <= neighborlist.size(); ++occ_inx ) {
@@ -626,8 +623,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_acceptor_atom_energy(
 				polar_group_energy += compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
 					grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
 					true, occ_resnum );
-			}
-			else {
+			} else {
 				for ( Size occ_atomno = 1; occ_atomno <= occ_rsd.natoms(); ++occ_atomno ) {
 					polar_group_energy += compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
 						grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
@@ -637,7 +633,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_acceptor_atom_energy(
 		}
 	}
 
-	//		std::cout << "jk EXACT Acceptor " << base_atom_name << "  " << pose.residue(polar_resnum).aa() << " " << polar_resnum << "  " << polar_group_energy << std::endl;
+	//  std::cout << "jk EXACT Acceptor " << base_atom_name << "  " << pose.residue(polar_resnum).aa() << " " << polar_resnum << "  " << polar_group_energy << std::endl;
 	return polar_group_energy;
 }
 
@@ -645,7 +641,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_acceptor_atom_energy(
 Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 	pose::Pose const & pose,
 	conformation::Residue const & polar_rsd,
-  Size const polar_atom,
+	Size const polar_atom,
 	bool const restrict_to_single_occluding_residue, // = false
 	Size const single_occluding_resinx, // = 0
 	bool const restrict_to_single_occluding_atom, // = false
@@ -654,12 +650,12 @@ Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 	Size const base_atom( polar_rsd.atom_base( polar_atom ) );
 
 	HBEvalTuple curr_hbond_eval_type;
-	if ( polar_rsd.atom_type( base_atom ).is_donor()){
+	if ( polar_rsd.atom_type( base_atom ).is_donor() ) {
 		curr_hbond_eval_type = HBEvalTuple(get_hb_don_chem_type( base_atom, polar_rsd ), hbacc_H2O, seq_sep_other);
-	} else if( polar_rsd.atom_type( polar_atom).is_acceptor()){
+	} else if ( polar_rsd.atom_type( polar_atom).is_acceptor() ) {
 		curr_hbond_eval_type = HBEvalTuple( hbdon_H2O, get_hb_acc_chem_type( polar_atom, polar_rsd ), seq_sep_other);
 	} else {
-	debug_assert( false ); // Not a donor or an acceptor, don't know what to do.
+		debug_assert( false ); // Not a donor or an acceptor, don't know what to do.
 	}
 
 	Real const grid_constant = compute_grid_constant( curr_hbond_eval_type );
@@ -706,9 +702,9 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 	core::Real const water_radius = 1.4;
 
 	// Reset grid of occluded sites, by setting everything to false (for "not occluded")
-	for (core::Size tx=0;tx<grid_info.xnum_points();tx++){
-		for (core::Size ty=0;ty<grid_info.ynum_points();ty++){
-			for (core::Size tz=0;tz<grid_info.znum_points();tz++){
+	for ( core::Size tx=0; tx<grid_info.xnum_points(); tx++ ) {
+		for ( core::Size ty=0; ty<grid_info.ynum_points(); ty++ ) {
+			for ( core::Size tz=0; tz<grid_info.znum_points(); tz++ ) {
 				occluded_sites_[tx][ty][tz] = false;
 			}
 		}
@@ -769,23 +765,23 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 
 	// Double-check transformation matrix
 	core::Vector new_base_atom_location = transformation_matrix * translated_base_atom;
-debug_assert( std::abs(new_base_atom_location.normalized().x()) < 0.001 );
-debug_assert( std::abs(new_base_atom_location.normalized().y()) < 0.001 );
-debug_assert( std::abs(new_base_atom_location.normalized().z() + 1.) < 0.001 );
+	debug_assert( std::abs(new_base_atom_location.normalized().x()) < 0.001 );
+	debug_assert( std::abs(new_base_atom_location.normalized().y()) < 0.001 );
+	debug_assert( std::abs(new_base_atom_location.normalized().z() + 1.) < 0.001 );
 
 	utility::vector1 <core::Size> neighborlist;
 	if ( restrict_to_single_occluding_residue ) {
 		// consider only a single occluding residue (for pairwise additivity)
-	debug_assert ( single_occluding_resinx > 0 );
+		debug_assert ( single_occluding_resinx > 0 );
 		neighborlist.push_back( single_occluding_resinx );
 	} else {
 		// loop over all atoms of neighboring residues, INCLUDING SELF
 		core::scoring::TenANeighborGraph const & graph = pose.energies().tenA_neighbor_graph();
 		neighborlist.push_back( polar_resnum);
 		for ( core::graph::Graph::EdgeListConstIter
-						neighbor_iter = graph.get_node( polar_resnum )->const_edge_list_begin(),
-						neighbor_iter_end = graph.get_node( polar_resnum )->const_edge_list_end();
-					neighbor_iter != neighbor_iter_end; ++neighbor_iter ) {
+				neighbor_iter = graph.get_node( polar_resnum )->const_edge_list_begin(),
+				neighbor_iter_end = graph.get_node( polar_resnum )->const_edge_list_end();
+				neighbor_iter != neighbor_iter_end; ++neighbor_iter ) {
 			neighborlist.push_back( (*neighbor_iter)->get_other_ind( polar_resnum ) );
 		}
 	}
@@ -804,12 +800,12 @@ debug_assert( std::abs(new_base_atom_location.normalized().z() + 1.) < 0.001 );
 		Size atom_lastinx = occ_rsd.natoms();
 		if ( restrict_to_single_occluding_atom ) {
 			// consider only a single occluding atom (for pairwise additivity)
-		debug_assert ( single_occluding_atominx > 0 );
+			debug_assert ( single_occluding_atominx > 0 );
 			atom_startinx = single_occluding_atominx;
 			atom_lastinx = single_occluding_atominx;
 		}
 
-		//		TR << "computing occlusion of polar residue " << polar_resnum << " by residue " << occ_resnum << std::endl;
+		//  TR << "computing occlusion of polar residue " << polar_resnum << " by residue " << occ_resnum << std::endl;
 
 		for ( Size occ_atomno = atom_startinx; occ_atomno <= atom_lastinx; ++occ_atomno ) {
 
@@ -844,7 +840,7 @@ debug_assert( std::abs(new_base_atom_location.normalized().z() + 1.) < 0.001 );
 						// make sure the polar atom is an acceptor
 						for ( chemical::AtomIndices::const_iterator anum = polar_rsd.accpt_pos().begin(), anume = polar_rsd.accpt_pos().end(); anum != anume; ++anum ) {
 							Size const acc_atom( *anum );
-						 	if ( polar_atomno == acc_atom ) {
+							if ( polar_atomno == acc_atom ) {
 								// If so, check if we have an Hbond to the polar group of interest
 								HBDonChemType don_chem_type = get_hb_don_chem_type( occ_atomno, occ_rsd );
 								HBAccChemType acc_chem_type = get_hb_acc_chem_type( polar_atomno, polar_rsd );
@@ -859,14 +855,14 @@ debug_assert( std::abs(new_base_atom_location.normalized().z() + 1.) < 0.001 );
 
 								if ( hb_ener < 0. ) {
 									switch ( get_hbond_weight_type(hbe_type.eval_type()) ) {
-									case hbw_SC:
+									case hbw_SC :
 										hb_ener *= 1.1;
 										break;
 									case hbw_LR_BB:
-									case hbw_SR_BB:
+									case hbw_SR_BB :
 										hb_ener *= 1.17;
 										break;
-									default:
+									default :
 										break;
 									}
 									polar_group_hb_energy += hb_ener;
@@ -902,14 +898,14 @@ debug_assert( std::abs(new_base_atom_location.normalized().z() + 1.) < 0.001 );
 
 								if ( hb_ener < 0. ) {
 									switch ( get_hbond_weight_type(hbe_type.eval_type()) ) {
-									case hbw_SC:
+									case hbw_SC :
 										hb_ener *= 1.1;
 										break;
 									case hbw_LR_BB:
-									case hbw_SR_BB:
+									case hbw_SR_BB :
 										hb_ener *= 1.17;
 										break;
-									default:
+									default :
 										break;
 									}
 									polar_group_hb_energy += hb_ener;
@@ -931,22 +927,22 @@ debug_assert( std::abs(new_base_atom_location.normalized().z() + 1.) < 0.001 );
 			core::Vector const transformed_occ_atom_xyz = transformation_matrix * ( orig_occ_atom_xyz + translation_vector );
 
 			// Double-check transformations
-		debug_assert( std::abs(orig_polar_atom_xyz.distance( orig_occ_atom_xyz ) - transformed_occ_atom_xyz.magnitude()) < 0.001 );
-		debug_assert( std::abs(orig_base_atom_xyz.distance( orig_occ_atom_xyz ) - new_base_atom_location.distance( transformed_occ_atom_xyz )) < 0.001 );
+			debug_assert( std::abs(orig_polar_atom_xyz.distance( orig_occ_atom_xyz ) - transformed_occ_atom_xyz.magnitude()) < 0.001 );
+			debug_assert( std::abs(orig_base_atom_xyz.distance( orig_occ_atom_xyz ) - new_base_atom_location.distance( transformed_occ_atom_xyz )) < 0.001 );
 
 			// Loop over all water positions, mark those which are occluded by this atom
 			core::Vector water_position(grid_info.xorigin(),grid_info.yorigin(),grid_info.zorigin());
-			for (core::Size wx=0;wx<grid_info.xnum_points();wx++){
+			for ( core::Size wx=0; wx<grid_info.xnum_points(); wx++ ) {
 				water_position.x() += grid_info.xstep();
 				core::Real sq_xdist = ( water_position.x() - transformed_occ_atom_xyz.x() ) * ( water_position.x() - transformed_occ_atom_xyz.x() );
 				if ( sq_xdist > sq_dist_cut ) continue;
 				water_position.y() = grid_info.yorigin();
-				for (core::Size wy=0;wy<grid_info.ynum_points();wy++){
+				for ( core::Size wy=0; wy<grid_info.ynum_points(); wy++ ) {
 					water_position.y() += grid_info.ystep();
 					core::Real sq_ydist = ( water_position.y() - transformed_occ_atom_xyz.y() ) * ( water_position.y() - transformed_occ_atom_xyz.y() );
 					if ( sq_ydist > sq_dist_cut ) continue;
 					water_position.z() = grid_info.zorigin();
-					for (core::Size wz=0;wz<grid_info.znum_points();wz++){
+					for ( core::Size wz=0; wz<grid_info.znum_points(); wz++ ) {
 						water_position.z() += grid_info.zstep();
 						core::Real sq_zdist = ( water_position.z() - transformed_occ_atom_xyz.z() ) * ( water_position.z() - transformed_occ_atom_xyz.z() );
 						if ( sq_zdist > sq_dist_cut ) continue;
@@ -965,9 +961,9 @@ debug_assert( std::abs(new_base_atom_location.normalized().z() + 1.) < 0.001 );
 	// Compute and store the solvation energy for the grid occluded by all nearby atoms
 	// Compute the numerator (the sum of occluded weights)
 	core::Real sum_occluded_weights(0.);
-	for (core::Size tx=0;tx<grid_info.xnum_points();tx++){
-		for (core::Size ty=0;ty<grid_info.ynum_points();ty++){
-			for (core::Size tz=0;tz<grid_info.znum_points();tz++){
+	for ( core::Size tx=0; tx<grid_info.xnum_points(); tx++ ) {
+		for ( core::Size ty=0; ty<grid_info.ynum_points(); ty++ ) {
+			for ( core::Size tz=0; tz<grid_info.znum_points(); tz++ ) {
 				if ( occluded_sites_[tx][ty][tz] ) {
 					core::Real const curr_water_weight = water_weights[tx][ty][tz];
 					sum_occluded_weights += curr_water_weight;
@@ -984,96 +980,96 @@ debug_assert( std::abs(new_base_atom_location.normalized().z() + 1.) < 0.001 );
 
 		if ( exact_occ_self_res_occ_ ) {
 
-				if ( polar_group_is_acceptor ) {
+			if ( polar_group_is_acceptor ) {
 
-					HBAccChemType acc_chem_type = get_hb_acc_chem_type( polar_atomno, polar_rsd );
+				HBAccChemType acc_chem_type = get_hb_acc_chem_type( polar_atomno, polar_rsd );
 
-					switch( acc_chem_type) {
-					case hbacc_PBA:
-						geometric_solvation_energy -= 0.775088;
-						desired_hb_weight = geometric_solvation_energy *0.72908;
-						break;
-					case hbacc_CXA:
-						geometric_solvation_energy -= 0.775088;
-						desired_hb_weight = geometric_solvation_energy *0.94358;
-						break;
-					case hbacc_CXL:
-						geometric_solvation_energy -=0.32359;
-						desired_hb_weight = geometric_solvation_energy *0.83315;
-						break;
-					case hbacc_IMD:
-						geometric_solvation_energy -= 1.07342;
-						desired_hb_weight = geometric_solvation_energy *0.64448;
-						break;
-					case hbacc_IME:
-						geometric_solvation_energy -= 1.67093;
-						desired_hb_weight = geometric_solvation_energy *1.0758;
-						break;
-					case hbacc_AHX:
-						geometric_solvation_energy -= 0.681323;
-						desired_hb_weight = geometric_solvation_energy *0.97637;
-						break;
-					case hbacc_HXL:
-						geometric_solvation_energy -= 0.752036;
-						desired_hb_weight = geometric_solvation_energy *1.2094;
-						break;
-					default:
-						std::cout << "Chemical acceptor type not found: " << acc_chem_type << std::endl;
-						exit(1);
-						break;
-					}
+				switch( acc_chem_type) {
+				case hbacc_PBA :
+					geometric_solvation_energy -= 0.775088;
+					desired_hb_weight = geometric_solvation_energy *0.72908;
+					break;
+				case hbacc_CXA :
+					geometric_solvation_energy -= 0.775088;
+					desired_hb_weight = geometric_solvation_energy *0.94358;
+					break;
+				case hbacc_CXL :
+					geometric_solvation_energy -=0.32359;
+					desired_hb_weight = geometric_solvation_energy *0.83315;
+					break;
+				case hbacc_IMD :
+					geometric_solvation_energy -= 1.07342;
+					desired_hb_weight = geometric_solvation_energy *0.64448;
+					break;
+				case hbacc_IME :
+					geometric_solvation_energy -= 1.67093;
+					desired_hb_weight = geometric_solvation_energy *1.0758;
+					break;
+				case hbacc_AHX :
+					geometric_solvation_energy -= 0.681323;
+					desired_hb_weight = geometric_solvation_energy *0.97637;
+					break;
+				case hbacc_HXL :
+					geometric_solvation_energy -= 0.752036;
+					desired_hb_weight = geometric_solvation_energy *1.2094;
+					break;
+				default :
+					std::cout << "Chemical acceptor type not found: " << acc_chem_type << std::endl;
+					exit(1);
+					break;
 				}
-				if (polar_group_is_donor ) {
+			}
+			if ( polar_group_is_donor ) {
 
-					HBDonChemType don_chem_type = get_hb_don_chem_type( base_atom, polar_rsd );
+				HBDonChemType don_chem_type = get_hb_don_chem_type( base_atom, polar_rsd );
 
-					switch (don_chem_type ) {
-					case hbdon_PBA:
-						geometric_solvation_energy -= 1.56141;
-						desired_hb_weight = geometric_solvation_energy *0.59343;
-						break;
-					case hbdon_CXA:
-						geometric_solvation_energy -= 0.4999125;
-						desired_hb_weight = geometric_solvation_energy*.8906;
-						break;
-					case hbdon_IMD:
-						geometric_solvation_energy -=0.957797;
-						desired_hb_weight = geometric_solvation_energy *0.90386;
-						break;
-					case hbdon_IME:
-						geometric_solvation_energy -= 0.591156;
-						desired_hb_weight = geometric_solvation_energy *0.9971;
-						break;
-					case hbdon_IND:
-						geometric_solvation_energy -=0.854121;
-						desired_hb_weight = geometric_solvation_energy *0.97701;
-						break;
-					case hbdon_AMO:
-						geometric_solvation_energy -= 0.33501;
-						desired_hb_weight = geometric_solvation_energy*1.5641;
-						break;
-					case hbdon_GDE:
-						geometric_solvation_energy -= 0.981806;
-						desired_hb_weight = geometric_solvation_energy *0.8612;
-						break;
-					case hbdon_GDH:
-						geometric_solvation_energy -=0.538248;
-						desired_hb_weight = geometric_solvation_energy *1.142;
-						break;
-					case hbdon_AHX:
-						geometric_solvation_energy -= 0.681433;
-						desired_hb_weight = geometric_solvation_energy *1.1076;
-						break;
-					case hbdon_HXL:
-						geometric_solvation_energy -= 0.785331;
-						desired_hb_weight = geometric_solvation_energy *1.1066;
-						break;
-					default:
-						std::cout << "Chemical donor type not found: " << don_chem_type << std::endl;
-						exit(1);
-						break;
-					}
+				switch (don_chem_type ) {
+				case hbdon_PBA :
+					geometric_solvation_energy -= 1.56141;
+					desired_hb_weight = geometric_solvation_energy *0.59343;
+					break;
+				case hbdon_CXA :
+					geometric_solvation_energy -= 0.4999125;
+					desired_hb_weight = geometric_solvation_energy*.8906;
+					break;
+				case hbdon_IMD :
+					geometric_solvation_energy -=0.957797;
+					desired_hb_weight = geometric_solvation_energy *0.90386;
+					break;
+				case hbdon_IME :
+					geometric_solvation_energy -= 0.591156;
+					desired_hb_weight = geometric_solvation_energy *0.9971;
+					break;
+				case hbdon_IND :
+					geometric_solvation_energy -=0.854121;
+					desired_hb_weight = geometric_solvation_energy *0.97701;
+					break;
+				case hbdon_AMO :
+					geometric_solvation_energy -= 0.33501;
+					desired_hb_weight = geometric_solvation_energy*1.5641;
+					break;
+				case hbdon_GDE :
+					geometric_solvation_energy -= 0.981806;
+					desired_hb_weight = geometric_solvation_energy *0.8612;
+					break;
+				case hbdon_GDH :
+					geometric_solvation_energy -=0.538248;
+					desired_hb_weight = geometric_solvation_energy *1.142;
+					break;
+				case hbdon_AHX :
+					geometric_solvation_energy -= 0.681433;
+					desired_hb_weight = geometric_solvation_energy *1.1076;
+					break;
+				case hbdon_HXL :
+					geometric_solvation_energy -= 0.785331;
+					desired_hb_weight = geometric_solvation_energy *1.1066;
+					break;
+				default :
+					std::cout << "Chemical donor type not found: " << don_chem_type << std::endl;
+					exit(1);
+					break;
 				}
+			}
 
 		} else {
 
@@ -1084,86 +1080,86 @@ debug_assert( std::abs(new_base_atom_location.normalized().z() + 1.) < 0.001 );
 					HBAccChemType acc_chem_type = get_hb_acc_chem_type( polar_atomno, polar_rsd );
 
 					switch( acc_chem_type) {
-					case hbacc_PBA:
+					case hbacc_PBA :
 						geometric_solvation_energy -= 0.624376;
 						desired_hb_weight = geometric_solvation_energy *0.72832;
 						break;
-					case hbacc_CXA:
+					case hbacc_CXA :
 						geometric_solvation_energy -= 0.427747;
 						desired_hb_weight = geometric_solvation_energy *0.89874;
 						break;
-					case hbacc_CXL:
+					case hbacc_CXL :
 						geometric_solvation_energy -= 0.286873;
 						desired_hb_weight = geometric_solvation_energy *0.82413;
 						break;
-					case hbacc_IMD:
+					case hbacc_IMD :
 						geometric_solvation_energy -= 0.725837;
 						desired_hb_weight = geometric_solvation_energy *0.85228;
 						break;
-					case hbacc_IME:
+					case hbacc_IME :
 						geometric_solvation_energy -= 0.690253;
 						desired_hb_weight = geometric_solvation_energy *0.91419;
 						break;
-					case hbacc_AHX:
+					case hbacc_AHX :
 						geometric_solvation_energy -= 0.64312;
 						desired_hb_weight = geometric_solvation_energy *1.0239;
 						break;
-					case hbacc_HXL:
+					case hbacc_HXL :
 						geometric_solvation_energy -= 0.713553;
 						desired_hb_weight = geometric_solvation_energy *1.0076;
 						break;
-					default:
+					default :
 						std::cout << "Chemical acceptor type not found: " << acc_chem_type << std::endl;
 						exit(1);
 						break;
 					}
 				}
-				if (polar_group_is_donor ) {
+				if ( polar_group_is_donor ) {
 
 					HBDonChemType don_chem_type = get_hb_don_chem_type( base_atom, polar_rsd );
 
 					switch (don_chem_type ) {
-					case hbdon_PBA:
+					case hbdon_PBA :
 						geometric_solvation_energy -= 0.794341;
 						desired_hb_weight = geometric_solvation_energy *0.606;
 						break;
-					case hbdon_CXA:
+					case hbdon_CXA :
 						geometric_solvation_energy -= 0.294998;
 						desired_hb_weight = geometric_solvation_energy*1.0568;
 						break;
-					case hbdon_IMD:
+					case hbdon_IMD :
 						geometric_solvation_energy -= 0.426234;
 						desired_hb_weight = geometric_solvation_energy *0.82543;
 						break;
-					case hbdon_IME:
+					case hbdon_IME :
 						geometric_solvation_energy -= 0.297841;
 						desired_hb_weight = geometric_solvation_energy *1.1028;
 						break;
-					case hbdon_IND:
+					case hbdon_IND :
 						geometric_solvation_energy -= 0.5463725;
 						desired_hb_weight = geometric_solvation_energy *0.98083;
 						break;
-					case hbdon_AMO:
+					case hbdon_AMO :
 						geometric_solvation_energy -= 0.1029515;
 						desired_hb_weight = geometric_solvation_energy*1.727;
 						break;
-					case hbdon_GDE:
+					case hbdon_GDE :
 						geometric_solvation_energy -= 0.2953195;
 						desired_hb_weight = geometric_solvation_energy *0.83017;
 						break;
-					case hbdon_GDH:
+					case hbdon_GDH :
 						geometric_solvation_energy -= 0.22389;
 						desired_hb_weight = geometric_solvation_energy *1.5544;
 						break;
-					case hbdon_AHX:
+					case hbdon_AHX :
 						geometric_solvation_energy -= 0.494319;
 						desired_hb_weight = geometric_solvation_energy *0.98647;
 						break;
-					case hbdon_HXL:
+					case hbdon_HXL :
 						geometric_solvation_energy -= 0.451273;
 						desired_hb_weight = geometric_solvation_energy *1.1331;
 						break;
-					default:
+					default :
 						std::cout << "Chemical donor type not found: " << don_chem_type << std::endl;
 						exit(1);
 						break;
@@ -1183,29 +1179,29 @@ debug_assert( std::abs(new_base_atom_location.normalized().z() + 1.) < 0.001 );
 core::Real ExactOccludedHbondSolEnergy::compute_grid_constant( HBEvalTuple const & hbond_eval_type ) const
 {
 
-	//		// Figure out max LK energy for DONOR
-	//		std::string const base_atom_name = polar_rsd.atom_name( base_atom );
-	//		core::Real max_possible_LK = etable_ptr_->lk_dgfree( polar_rsd.atom_type_index( base_atom ) );
-	//		if ( ( base_atom_name == " N  " ) && polar_rsd.is_lower_terminus() ) max_possible_LK /= 3; // charged N-terminus
-	//		if ( base_atom_name == " NZ " ) max_possible_LK /= 3; // Lys
-	//		if ( base_atom_name == " ND2" ) max_possible_LK /= 2; // Asn
-	//		if ( base_atom_name == " NE2" ) max_possible_LK /= 2; // Gln
-	//		if ( base_atom_name == " NH1" ) max_possible_LK /= 2; // Arg
-	//		if ( base_atom_name == " NH2" ) max_possible_LK /= 2; // Arg
-	//		// Note: inner nitrogen of Arg (NE) is extra strong, since it's the same atom type as the other two but doesn't get
-	//		// cut in half because there's only one proton...
-	//		//			TR << "jk max LK for donor with base " << base_atom_name << " is  " << max_possible_LK << std::endl;
+	//  // Figure out max LK energy for DONOR
+	//  std::string const base_atom_name = polar_rsd.atom_name( base_atom );
+	//  core::Real max_possible_LK = etable_ptr_->lk_dgfree( polar_rsd.atom_type_index( base_atom ) );
+	//  if ( ( base_atom_name == " N  " ) && polar_rsd.is_lower_terminus() ) max_possible_LK /= 3; // charged N-terminus
+	//  if ( base_atom_name == " NZ " ) max_possible_LK /= 3; // Lys
+	//  if ( base_atom_name == " ND2" ) max_possible_LK /= 2; // Asn
+	//  if ( base_atom_name == " NE2" ) max_possible_LK /= 2; // Gln
+	//  if ( base_atom_name == " NH1" ) max_possible_LK /= 2; // Arg
+	//  if ( base_atom_name == " NH2" ) max_possible_LK /= 2; // Arg
+	//  // Note: inner nitrogen of Arg (NE) is extra strong, since it's the same atom type as the other two but doesn't get
+	//  // cut in half because there's only one proton...
+	//  //   TR << "jk max LK for donor with base " << base_atom_name << " is  " << max_possible_LK << std::endl;
 	//
 	//    // --OR--
 	//
-	//		// Figure out max LK energy for ACCEPTOR
-	//		std::string const base_atom_name = polar_rsd.atom_name( base_atom );
-	//		core::Real max_possible_LK = etable_ptr_->lk_dgfree( polar_rsd.atom_type_index( polar_atom ) );
-	//		//			TR << "jk max LK for acceptor " << polar_rsd.atom_name(polar_atom) << " is  " << max_possible_LK << std::endl;
+	//  // Figure out max LK energy for ACCEPTOR
+	//  std::string const base_atom_name = polar_rsd.atom_name( base_atom );
+	//  core::Real max_possible_LK = etable_ptr_->lk_dgfree( polar_rsd.atom_type_index( polar_atom ) );
+	//  //   TR << "jk max LK for acceptor " << polar_rsd.atom_name(polar_atom) << " is  " << max_possible_LK << std::endl;
 	//
 	//
-	//		// jk INSTEAD OF USING LK dG FREE, SET THEM ALL TO -5.0. THIS IS ALMOST TRUE ANYWAY, AND THE ONES THAT AREN'T SHOULD PROBABLY BE...
-	//		max_possible_LK = -5.;  // -> mjo moved magic number up to namespace level
+	//  // jk INSTEAD OF USING LK dG FREE, SET THEM ALL TO -5.0. THIS IS ALMOST TRUE ANYWAY, AND THE ONES THAT AREN'T SHOULD PROBABLY BE...
+	//  max_possible_LK = -5.;  // -> mjo moved magic number up to namespace level
 	//
 	//
 	//    jk LK dG FREE is the energy difference between a completely exposed
@@ -1215,12 +1211,12 @@ core::Real ExactOccludedHbondSolEnergy::compute_grid_constant( HBEvalTuple const
 	//    jk numbers themselves are in Table 1 though in Rosetta we use
 	//    jk slightly different numbers.
 	//
-	//	  jk I was originally using these numbers (since I too need to set
-	//	  jk the max possible solvation energy for a given functional group),
-	//	  jk but then realized that the LK numbers (or at least, their
-	//	  jk Rosetta incarnation) are all basically 5 divided by the number
-	//	  jk of protons / lone pairs (which I don't think L+K appreciated),
-	//	  jk so I just started using this instead of LK dG FREE.
+	//   jk I was originally using these numbers (since I too need to set
+	//   jk the max possible solvation energy for a given functional group),
+	//   jk but then realized that the LK numbers (or at least, their
+	//   jk Rosetta incarnation) are all basically 5 divided by the number
+	//   jk of protons / lone pairs (which I don't think L+K appreciated),
+	//   jk so I just started using this instead of LK dG FREE.
 
 
 	// Compute Ebulk (using the LK energy)
@@ -1246,13 +1242,13 @@ ExactOccludedHbondSolEnergyOP create_ExactSHOEnergy_from_cmdline() {
 
 	ExactOccludedHbondSolEnergyOP sho_op(
 		new ExactOccludedHbondSolEnergy(
-			basic::options::option[ basic::options::OptionKeys::score::exact_occ_skip_Hbonders ],
-			basic::options::option[ basic::options::OptionKeys::score::exact_occ_include_Hbond_contribution ],
-			basic::options::option[ basic::options::OptionKeys::score::exact_occ_pairwise ],
-			basic::options::option[ basic::options::OptionKeys::score::exact_occ_pairwise_by_res ],
-			basic::options::option[ basic::options::OptionKeys::score::exact_occ_split_between_res ],
-			! basic::options::option[ basic::options::OptionKeys::score::exact_occ_self_res_no_occ ],
-			basic::options::option[basic::options::OptionKeys::score::exact_occ_radius_scaling]
+		basic::options::option[ basic::options::OptionKeys::score::exact_occ_skip_Hbonders ],
+		basic::options::option[ basic::options::OptionKeys::score::exact_occ_include_Hbond_contribution ],
+		basic::options::option[ basic::options::OptionKeys::score::exact_occ_pairwise ],
+		basic::options::option[ basic::options::OptionKeys::score::exact_occ_pairwise_by_res ],
+		basic::options::option[ basic::options::OptionKeys::score::exact_occ_split_between_res ],
+		! basic::options::option[ basic::options::OptionKeys::score::exact_occ_self_res_no_occ ],
+		basic::options::option[basic::options::OptionKeys::score::exact_occ_radius_scaling]
 		)
 	);
 

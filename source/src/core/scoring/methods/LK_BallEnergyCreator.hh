@@ -29,7 +29,7 @@ public:
 	/// @brief Instantiate a new LK_BallEnergy
 	virtual
 	methods::EnergyMethodOP
-		create_energy_method(
+	create_energy_method(
 		methods::EnergyMethodOptions const &
 	) const;
 

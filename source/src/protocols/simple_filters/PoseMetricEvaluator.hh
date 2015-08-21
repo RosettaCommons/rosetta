@@ -46,25 +46,25 @@ namespace simple_filters {
 template <class T >
 class PoseMetricEvaluator : public evaluation::SingleValuePoseEvaluator< T > {
 public:
-  PoseMetricEvaluator( std::string const& metric, std::string const& tag ) :
-    evaluation::SingleValuePoseEvaluator< T >( metric+"_"+tag ),
-    metric_( metric ),
-    tag_( tag )
-  {};
-  virtual T apply( core::pose::Pose& pose  ) const;
+	PoseMetricEvaluator( std::string const& metric, std::string const& tag ) :
+		evaluation::SingleValuePoseEvaluator< T >( metric+"_"+tag ),
+		metric_( metric ),
+		tag_( tag )
+	{};
+	virtual T apply( core::pose::Pose& pose  ) const;
 private:
-  std::string metric_;
-  std::string tag_;
+	std::string metric_;
+	std::string tag_;
 };
 
 
 template < class T >
 T PoseMetricEvaluator<T >::apply(
- core::pose::Pose& pose
+	core::pose::Pose& pose
 ) const {
-  basic::MetricValue< T > mr;
-  pose.metric(metric_,tag_,mr);
-  return mr.value();
+	basic::MetricValue< T > mr;
+	pose.metric(metric_,tag_,mr);
+	return mr.value();
 }
 
 

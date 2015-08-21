@@ -87,34 +87,34 @@ namespace vardist_solaccess {
 ///
 /*
 VarSolDRotamerDots::VarSolDRotamerDots(
-	conformation::ResidueCOP rotamer,
-	bool all_atom,
-	Real probe_radius,
-	Real wobble
+conformation::ResidueCOP rotamer,
+bool all_atom,
+Real probe_radius,
+Real wobble
 ) :
-	rotamer_(rotamer),
-	probe_radius_(probe_radius),
-	wobble_(wobble),
-	lg_masks_( 0 )
+rotamer_(rotamer),
+probe_radius_(probe_radius),
+wobble_(wobble),
+lg_masks_( 0 )
 {
-	// this work now done in constructor, no need to check
-	//if ( ! sasa_arrays_initialized_ ) {
-	//	initialize_sasa_arrays();
-	//	//that function will set sasa_arrays_initialized_ to true;
-	//}
+// this work now done in constructor, no need to check
+//if ( ! sasa_arrays_initialized_ ) {
+// initialize_sasa_arrays();
+// //that function will set sasa_arrays_initialized_ to true;
+//}
 
-	if ( all_atom ) {
-		num_atoms_ = rotamer->natoms();
-	} else {
-		num_atoms_ = rotamer_->nheavyatoms();
-	}
-	atom_coverage_.resize( num_atoms_ );
-	for ( core::Size ii = 1; ii <= num_atoms_; ++ii ) {
-		atom_coverage_[ ii ].resize( radii_[ rotamer_->atom( ii ).type() ].size() );
-	}
+if ( all_atom ) {
+num_atoms_ = rotamer->natoms();
+} else {
+num_atoms_ = rotamer_->nheavyatoms();
+}
+atom_coverage_.resize( num_atoms_ );
+for ( core::Size ii = 1; ii <= num_atoms_; ++ii ) {
+atom_coverage_[ ii ].resize( radii_[ rotamer_->atom( ii ).type() ].size() );
+}
 
 }
- */
+*/
 
 VarSolDRotamerDots::VarSolDRotamerDots(
 	conformation::ResidueCOP rotamer,
@@ -200,7 +200,7 @@ bool VarSolDRotamerDots::overlaps( VarSolDRotamerDots const & other ) const {
 	for ( Size ii = 1; ii <= num_atoms_; ++ii ) {
 		for ( Size jj = 1; jj <= other.get_num_atoms(); ++jj ) {
 			Real const distance_squared = get_atom_coords_xyz( ii ).distance_squared( other.get_atom_coords_xyz( jj ) );
-			if ( distance_squared <= interaction_radii_squared( rotamer_->atom(ii).type(), other.rotamer_->atom(jj).type() )) return true;
+			if ( distance_squared <= interaction_radii_squared( rotamer_->atom(ii).type(), other.rotamer_->atom(jj).type() ) ) return true;
 		}
 	}
 	return false;
@@ -217,9 +217,9 @@ VarSolDRotamerDots::rotamer() const {
 /// Is the state of this RotamerDots object unassigned?
 ///
 //bool RotamerDots::state_unassigned() const {
-//	if ( rotamer_ == 0 )
-//		return true;
-//	return false;
+// if ( rotamer_ == 0 )
+//  return true;
+// return false;
 //}
 
 ///
@@ -236,8 +236,9 @@ Size VarSolDRotamerDots::get_num_atoms() const {
 ///
 core::Vector
 VarSolDRotamerDots::get_atom_coords_xyz( Size atom_index ) const {
-	if ( rotamer_ == 0 )
+	if ( rotamer_ == 0 ) {
 		return numeric::xyzVector< Real >(0,0,0);
+	}
 
 	return rotamer_->xyz( atom_index );
 }
@@ -367,46 +368,46 @@ void VarSolDistSasaCalculator::initialize_sasa_arrays() {
 		}
 
 		/*
-        if ( iiattype.element() == "O" ) {
-            steps = 5;
-            coll_radius = 2.413468;
-            int_radius = 3.078613;
-        } else if ( iiattype.element() == "N" ) {
-            steps = 5;
-            coll_radius = 2.572567;
-            int_radius = 3.265344;
-        } else if ( iiattype.element() == "C" ) {
-            steps = 1;
-            coll_radius = 2.983538;
-        } else if ( iiattype.element() == "S" ) {
-            steps = 1;
-            coll_radius = 2.767480;
-        } else if ( iiattype.element() == "P" ) {
-            steps = 1;
-            // not statistically derived
-            coll_radius = std::max(0., 1.9 + probe_radius_ - wobble_);
-        } else if ( iiattype.element() == "H" ) {
-            if ( iiattype.atom_type_name() == "Hpol" || iiattype.atom_type_name() == "HNbb" ) {
-                steps = 5;
-                coll_radius = 1.44593;
-                int_radius = 2.45833;
-            } else {
-                steps = 1;
-                coll_radius = 2.072345;
-            }
-        }
-		 */
+		if ( iiattype.element() == "O" ) {
+		steps = 5;
+		coll_radius = 2.413468;
+		int_radius = 3.078613;
+		} else if ( iiattype.element() == "N" ) {
+		steps = 5;
+		coll_radius = 2.572567;
+		int_radius = 3.265344;
+		} else if ( iiattype.element() == "C" ) {
+		steps = 1;
+		coll_radius = 2.983538;
+		} else if ( iiattype.element() == "S" ) {
+		steps = 1;
+		coll_radius = 2.767480;
+		} else if ( iiattype.element() == "P" ) {
+		steps = 1;
+		// not statistically derived
+		coll_radius = std::max(0., 1.9 + probe_radius_ - wobble_);
+		} else if ( iiattype.element() == "H" ) {
+		if ( iiattype.atom_type_name() == "Hpol" || iiattype.atom_type_name() == "HNbb" ) {
+		steps = 5;
+		coll_radius = 1.44593;
+		int_radius = 2.45833;
+		} else {
+		steps = 1;
+		coll_radius = 2.072345;
+		}
+		}
+		*/
 
 		// coll_radius is collision radius, int_radius is interaction radius
 		// create evenly spaced shells inbetween, number of shells total = steps
 		radii_[ ii ].resize( steps );
-		if (steps > 0) {
+		if ( steps > 0 ) {
 			radii_[ii][1] = std::max(0., coll_radius);
 		}
-		for (Size j=2; j<steps; j++) {
+		for ( Size j=2; j<steps; j++ ) {
 			radii_[ii][j] = coll_radius + ( (int_radius - coll_radius) * ((j-1) / static_cast<Real>(steps-1)) );
 		}
-		if (steps > 1) {
+		if ( steps > 1 ) {
 			radii_[ii][steps] = int_radius;
 		}
 		// else radii_[ ii ].size() == 0
@@ -420,7 +421,7 @@ void VarSolDistSasaCalculator::initialize_sasa_arrays() {
 	}
 	int_radii_sum_.resize(  atset->n_atomtypes() );
 	int_radii_sum2_.resize( atset->n_atomtypes() );
- 	for ( Size ii = 1; ii <= atset->n_atomtypes(); ++ii ) {
+	for ( Size ii = 1; ii <= atset->n_atomtypes(); ++ii ) {
 		int_radii_sum_[ ii ].resize( atset->n_atomtypes(), 0.0 );
 		int_radii_sum2_[ ii ].resize( atset->n_atomtypes(), 0.0 );
 		Real ii_col = coll_radii_[ ii ];
@@ -475,8 +476,8 @@ void VarSolDRotamerDots::increment_self_overlap() {
 
 	//TR_RD << "increment_self_overlap(): incrementing with counts: " << std::endl;
 	//for ( Size ii = 1; ii <= num_atoms_; ++ii ) {
-	//	RotamerDotsCache rdc;
-	//	rdc.print_bit_string( self_overlap[ ii ] );
+	// RotamerDotsCache rdc;
+	// rdc.print_bit_string( self_overlap[ ii ] );
 	//}
 
 	for ( Size ii = 1; ii <= num_atoms_; ++ii ) {
@@ -703,19 +704,19 @@ void VarSolDistSasaCalculator::set_atom_type_radii(std::string atype_name, Real 
 	AtomTypeSetCOP atset = ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
 	Size i = atset->atom_type_index(atype_name);
 	radii_[i].resize( nshells );
-	if (nshells > 0) {
+	if ( nshells > 0 ) {
 		radii_[i][1] = std::max(0., coll_radius);
 	}
-	for (Size j=2; j<nshells; j++) {
+	for ( Size j=2; j<nshells; j++ ) {
 		radii_[i][j] = coll_radius + ( (int_radius - coll_radius) * ((j-1) / static_cast<Real>(nshells-1)) );
 	}
-	if (nshells > 0) {
+	if ( nshells > 0 ) {
 		radii_[i][nshells] = int_radius;
 	}
 
 	coll_radii_[i] = coll_radius;
 	int_radii_[i] = int_radius;
-	for (Size j = 1; j <= atset->n_atomtypes(); j++) {
+	for ( Size j = 1; j <= atset->n_atomtypes(); j++ ) {
 		Real other_coll_radius = coll_radii_[j];
 		Real other_int_radius = int_radii_[j];
 		int_radii_sum_[i][j] = std::max(coll_radius + other_int_radius, int_radius + other_coll_radius);
@@ -731,7 +732,7 @@ void VarSolDistSasaCalculator::set_element_radii(std::string elem, Real coll_rad
 	using namespace core::chemical;
 	AtomTypeSetCOP atset = ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
 	// find index of atomtype
-	for (Size i=1; i <= atset->n_atomtypes(); i++) {
+	for ( Size i=1; i <= atset->n_atomtypes(); i++ ) {
 		if ( (*atset)[i].element() == elem ) {
 			set_atom_type_radii( (*atset)[i].atom_type_name(), coll_radius, int_radius, nshells);
 		}
@@ -810,7 +811,7 @@ VarSolDistSasaCalculator::recompute( core::pose::Pose const & this_pose )
 	total_sasa_ = 0.0;
 	for ( Size ii = 1; ii <= this_pose.total_residue(); ++ii ) {
 		residue_sasa_[ ii ] = 0.0;
-		for ( Size jj = 1; jj <= this_pose.residue(ii).natoms(); ++jj ){
+		for ( Size jj = 1; jj <= this_pose.residue(ii).natoms(); ++jj ) {
 			core::id::AtomID at( jj, ii );
 			residue_sasa_[ ii ] += atom_sasa_[ at ] = rotamer_dots_vec_[ ii ]->msas_for_atom( jj );
 		}

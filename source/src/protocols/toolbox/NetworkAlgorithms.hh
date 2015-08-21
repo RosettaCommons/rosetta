@@ -76,7 +76,7 @@ public:
 	// const accessor for nodes
 	std::list< NodeOP > const & nodes() const { return nodes_; }
 
-// other data
+	// other data
 private:
 	std::list< NodeOP > nodes_;
 };
@@ -114,9 +114,9 @@ class Node : public utility::pointer::ReferenceCount
 {
 public:
 	Node( std::string const id, core::Size const resi)
-		: resi(resi), id(id),
-			distanceFromStart(9999),
-			in_list( false )
+	: resi(resi), id(id),
+		distanceFromStart(9999),
+		in_list( false )
 	{
 		neighbors.clear();
 	}

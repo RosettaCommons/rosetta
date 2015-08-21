@@ -54,7 +54,7 @@ public:
 	RNA_LJ_BaseEnergy( RNA_LJ_BaseEnergy const & src );
 
 	virtual
- 	void
+	void
 	setup_for_derivatives(
 		pose::Pose & pose,
 		ScoreFunction const & scfxn
@@ -62,8 +62,8 @@ public:
 
 	/// called during gradient-based minimization inside dfunc
 	/**
-		 F1 and F2 are not zeroed -- contributions from this atom are
-		 just summed in
+	F1 and F2 are not zeroed -- contributions from this atom are
+	just summed in
 	**/
 	virtual
 	void
@@ -118,14 +118,14 @@ private:
 
 	void
 	eval_lj(
-	conformation::Atom const & atom1,
-	conformation::Atom const & atom2,
-	Real const & d2,
-	Real & fa_atr_score,
-	Real & fa_rep_score,
-	Real & deriv_atr,
-	Real & deriv_rep
-  ) const;
+		conformation::Atom const & atom1,
+		conformation::Atom const & atom2,
+		Real const & d2,
+		Real & fa_atr_score,
+		Real & fa_rep_score,
+		Real & deriv_atr,
+		Real & deriv_rep
+	) const;
 
 	virtual
 	void
@@ -135,9 +135,9 @@ private:
 		EnergyMap &// totals
 	) const;
 
-/////////////////////////////////////////////////////////////////////////////
-// data
-/////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////
+	// data
+	/////////////////////////////////////////////////////////////////////////////
 
 private:
 	etable::Etable const & etable_; // shouldn't this be a pointer? Reference count information is (dangerously) lost when
@@ -155,8 +155,8 @@ private:
 	Real const get_bins_per_A2_;
 
 	bool const verbose_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

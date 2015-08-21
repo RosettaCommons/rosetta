@@ -75,12 +75,13 @@ generate_relax_from_cmd( bool NULL_if_no_flag ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	core::scoring::ScoreFunctionOP scorefxn;	
+	core::scoring::ScoreFunctionOP scorefxn;
 	scorefxn = core::scoring::get_score_function();
-	if ( option[ in::file::fullatom ]() || option[ OptionKeys::constraints::cst_fa_file ].user())
+	if ( option[ in::file::fullatom ]() || option[ OptionKeys::constraints::cst_fa_file ].user() ) {
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *scorefxn );
-	else
+	} else {
 		core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn( *scorefxn );
+	}
 
 	// now add density scores
 	if ( option[ edensity::mapfile ].user() ) {
@@ -92,9 +93,9 @@ generate_relax_from_cmd( bool NULL_if_no_flag ) {
 		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, option[ OptionKeys::relax::sequence_file ]() ) );
 	} else if ( option[ OptionKeys::relax::script ].user() ) {
 		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, option[ OptionKeys::relax::script ]() ) );
-	} else if ( option[ OptionKeys::relax::quick ]() ){
+	} else if ( option[ OptionKeys::relax::quick ]() ) {
 		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, option[ OptionKeys::relax::default_repeats ]() /*default 5*/) );
-	} else if ( option[ OptionKeys::relax::thorough ]() ){
+	} else if ( option[ OptionKeys::relax::thorough ]() ) {
 		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, 15 ) );
 	} else if ( option[ OptionKeys::relax::fast ]() ) {
 		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, option[ OptionKeys::relax::default_repeats ]() /*default 5*/) );
@@ -102,11 +103,11 @@ generate_relax_from_cmd( bool NULL_if_no_flag ) {
 		protocol = RelaxProtocolBaseOP( new ClassicRelax ( scorefxn ) );
 	} else if ( option[ OptionKeys::relax::mini ]() ) {
 		protocol = RelaxProtocolBaseOP( new MiniRelax( scorefxn ) );
-	} else if ( option[ OptionKeys::relax::centroid_mode ]()) {
-                protocol = RelaxProtocolBaseOP( new CentroidRelax() );
+	} else if ( option[ OptionKeys::relax::centroid_mode ]() ) {
+		protocol = RelaxProtocolBaseOP( new CentroidRelax() );
 	} else {
 		// default relax should be a quick sequence relax
-		if ( NULL_if_no_flag ){
+		if ( NULL_if_no_flag ) {
 			TR.Debug << "no relax protocol specified at command line" << std::endl;
 			return NULL;
 		}
@@ -118,31 +119,31 @@ generate_relax_from_cmd( bool NULL_if_no_flag ) {
 
 // RosettaMembrane from 2006
 void setup_membrane_topology( pose::Pose & pose, std::string spanfile ) {
-  //using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
-  core::scoring::MembraneTopologyOP topologyOP( new core::scoring::MembraneTopology );
-  pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, topologyOP );
-  core::scoring::MembraneTopology & topology=*( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
-  topology.initialize(spanfile);
+	//using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
+	core::scoring::MembraneTopologyOP topologyOP( new core::scoring::MembraneTopology );
+	pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, topologyOP );
+	core::scoring::MembraneTopology & topology=*( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
+	topology.initialize(spanfile);
 }
 
 void make_dna_rigid( pose::Pose & pose, core::kinematics::MoveMap & mm){
 	using namespace core::conformation;
 	//if DNA present set so it doesn't move
 	for ( core::Size i=1; i<=pose.total_residue() ; ++i )      {
-	    if( pose.residue(i).is_DNA()){
-		TR << "turning off DNA bb and chi move" << std::endl;
-		mm.set_bb( i, false );
-		mm.set_chi( i, false );
-	    }
+		if ( pose.residue(i).is_DNA() ) {
+			TR << "turning off DNA bb and chi move" << std::endl;
+			mm.set_bb( i, false );
+			mm.set_chi( i, false );
+		}
 	}
 }
 
 void setup_for_dna( core::scoring::ScoreFunction & scorefxn) {
-	
+
 	scoring::methods::EnergyMethodOptions options( scorefxn.energy_method_options() );
 	options.exclude_DNA_DNA( false );
 	scorefxn.set_energy_method_options( options );
-	
+
 }
 
 void relax_pose( pose::Pose& pose, core::scoring::ScoreFunctionOP scorefxn, std::string const& tag ) {

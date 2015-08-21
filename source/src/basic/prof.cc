@@ -44,9 +44,9 @@ bool show_time_on_cerr( false );
 void show_time( basic::Tracer& tr, std::string const& msg ) {
 	using namespace std;
 	time_t rawtime;
-  struct tm * timeinfo;
-  time ( &rawtime );
-  timeinfo = localtime ( &rawtime );
+	struct tm * timeinfo;
+	time ( &rawtime );
+	timeinfo = localtime ( &rawtime );
 	std::string date( asctime( timeinfo ) );
 	boost::trim(date);
 	tr.Error << "TIME_STAMP: " << date << " " << msg << std::endl;
@@ -75,13 +75,13 @@ void setup_tag2string() {
 
 	tag2string[ SCORE ] = "SCORE";
 	tag2string[ SCORE_BEGIN_NOTIFY ] = "SCORE_BEGIN_NOTIFY";
-	tag2string[	SCORE_SETUP ] = "SCORE_SETUP";
-	tag2string[	SCORE_FINALIZE ] = "SCORE_FINALIZE";
-	tag2string[	SCORE_ONEBODY_ENERGIES ] = "SCORE_ONEBODY_ENERGIES";
+	tag2string[ SCORE_SETUP ] = "SCORE_SETUP";
+	tag2string[ SCORE_FINALIZE ] = "SCORE_FINALIZE";
+	tag2string[ SCORE_ONEBODY_ENERGIES ] = "SCORE_ONEBODY_ENERGIES";
 	tag2string[ SCORE_NEIGHBOR_ENERGIES ] = "SCORE_NEIGHBOR_ENERGIES";
 	tag2string[ SCORE_LONG_RANGE_ENERGIES ] = "SCORE_LONG_RANGE_ENERGIES";
-	tag2string[	SCORE_DOT ] = "SCORE_DOT";
-	tag2string[	SCORE_END_NOTIFY ] = "SCORE_END_NOTIFY";
+	tag2string[ SCORE_DOT ] = "SCORE_DOT";
+	tag2string[ SCORE_END_NOTIFY ] = "SCORE_END_NOTIFY";
 
 	tag2string[ VDW_ENERGY ] = "VDW_ENERGY";
 	tag2string[ ENERGY_ENVPAIR_POTENTIAL ] ="ENERGY_ENVPAIR_POTENTIAL";
@@ -146,7 +146,7 @@ void setup_tag2string() {
 	tag2string[ JD2_SILENT_OUTPUTTER ] = "JD2_SILENT_OUTPUTTER";
 	tag2string[ JD2_INIT_MOVER ] ="JD2_INIT_MOVER";
 	tag2string[ ARCHIVE_SYNC_BATCHES ] = "ARCHIVE_SYNC_BATCHES";
-	tag2string[	ARCHIVE_JOBSCOMPLETE ] = "ARCHIVE_JOBSCOMPLETE";
+	tag2string[ ARCHIVE_JOBSCOMPLETE ] = "ARCHIVE_JOBSCOMPLETE";
 	tag2string[ ARCHIVE_CRITICAL_JOBSCOMPLETE ] = "ARCHIVE_CRITICAL_JOBSCOMPLETE";
 	tag2string[ ARCHIVE_READ_DECOYS ] = "ARCHIVE_READ_DECOYS";
 	tag2string[ ARCHIVE_GEN_BATCH ] = "ARCHIVE_GEN_BATCH";
@@ -166,26 +166,26 @@ void setup_tag2string() {
 	tag2string[ MPI_NOTIFY_ARCHIVE ] = "MPI_NOTIFY_ARCHIVE";
 	tag2string[ SAXS ] = "SAXS";
 
-  // Fragmentpicker stuff
-  tag2string[ FRAGMENTPICKING_CS_SCORE ] = "FRAGMENTPICKING_CS_SCORE";
-  tag2string[ FRAGMENTPICKING_PROFILE_SCORE ] = "FRAGMENTPICKING_PROFILE_SCORE";
-  tag2string[ FRAGMENTPICKING_PROFILE_CAHING ] = "FRAGMENTPICKING_PROFILE_CAHING";
-  tag2string[ FRAGMENTPICKING_SECONDARY_SCORE ] = "FRAGMENTPICKING_SECONDARY_SCORE";
-  tag2string[ FRAGMENTPICKING_READ_VALL ] = "FRAGMENTPICKING_READ_VALL";
-  tag2string[ FRAGMENTPICKING ] = "FRAGMENTPICKING";
-  tag2string[ FRAGMENTPICKING_CANDIDATES_COLLECTING ] = "FRAGMENTPICKING_CANDIDATES_COLLECTING";
-  tag2string[ FRAGMENTPICKING_ATOMPAIR_SCORE ] = "FRAGMENTPICKING_ATOMPAIR_SCORE";
-  tag2string[ FRAGMENTPICKING_PHIPSI_SCORE ] = "FRAGMENTPICKING_PHIPSI_SCORE";
-  tag2string[ FRAGMENTPICKING_DIHEDRALCONSTR_SCORE ] = "FRAGMENTPICKING_DIHEDRALCONSTR_SCORE";
+	// Fragmentpicker stuff
+	tag2string[ FRAGMENTPICKING_CS_SCORE ] = "FRAGMENTPICKING_CS_SCORE";
+	tag2string[ FRAGMENTPICKING_PROFILE_SCORE ] = "FRAGMENTPICKING_PROFILE_SCORE";
+	tag2string[ FRAGMENTPICKING_PROFILE_CAHING ] = "FRAGMENTPICKING_PROFILE_CAHING";
+	tag2string[ FRAGMENTPICKING_SECONDARY_SCORE ] = "FRAGMENTPICKING_SECONDARY_SCORE";
+	tag2string[ FRAGMENTPICKING_READ_VALL ] = "FRAGMENTPICKING_READ_VALL";
+	tag2string[ FRAGMENTPICKING ] = "FRAGMENTPICKING";
+	tag2string[ FRAGMENTPICKING_CANDIDATES_COLLECTING ] = "FRAGMENTPICKING_CANDIDATES_COLLECTING";
+	tag2string[ FRAGMENTPICKING_ATOMPAIR_SCORE ] = "FRAGMENTPICKING_ATOMPAIR_SCORE";
+	tag2string[ FRAGMENTPICKING_PHIPSI_SCORE ] = "FRAGMENTPICKING_PHIPSI_SCORE";
+	tag2string[ FRAGMENTPICKING_DIHEDRALCONSTR_SCORE ] = "FRAGMENTPICKING_DIHEDRALCONSTR_SCORE";
 
 	tag2string[ MPICANONICALSAMPLING ] = "MPICANONICALSAMPLING";
 	tag2string[ MPIPOOLCOMMUNICATION ] = "MPIPOOLCOMMUNICATION";
-	tag2string[ MPICOMMCREATION ] = 	"MPICOMMCREATION";
-	tag2string[ MPIBARRIER ] = 	"MPIBARRIER";
+	tag2string[ MPICOMMCREATION ] =  "MPICOMMCREATION";
+	tag2string[ MPIBARRIER ] =  "MPIBARRIER";
 	tag2string[ MPIBARRIER_BEGIN ] = "MPIBARRIER_BEGIN";
 	tag2string[ MPIBARRIER_END ] = "MPIBARRIER_END";
 	tag2string[ MPI_GATHER_BARRIER ] = "MPI_GATHER_BARRIER";
-	tag2string[ FARRAY_MANIPULATION ] = 	"FARRAY_MANIPULATION";
+	tag2string[ FARRAY_MANIPULATION ] =  "FARRAY_MANIPULATION";
 
 	tag2string[ MPI_SLAVE_REPORT_NEW_COORDS ] = "MPI_SLAVE_REPORT_NEW_COORDS";
 	tag2string[ MPI_SLAVE_REPORT_SIZES ] = "MPI_SLAVE_REPORT_SIZES";
@@ -196,44 +196,44 @@ void setup_tag2string() {
 
 	tag2string[ POOL_RMSD_ADD_STRUCTURE ] = "POOL_RMSD_ADD_STRUCTURE";
 	tag2string[ POOL_RMSD_EVALUATE ] = "POOL_RMSD_EVALUATE";
-	tag2string[	POOL_RMSD_MASTER_EVALUATE ] = "POOL_RMSD_MASTER_EVALUATE";
-	tag2string[	MPI_MASTER_BCAST_COORDS ] = "MPI_MASTER_BCAST_COORDS";
-	tag2string[	MPI_MASTER_BCAST_WINNING_RANKS ] = "MPI_MASTER_BCAST_WINNING_RANKS";
-	tag2string[	MPI_MASTER_BCAST_WINNING_STRUCTURES ] = "MPI_MASTER_BCAST_WINNING_STRUCTURES";
-	tag2string[	MPI_MASTER_BCAST_NEW_COMM_SIZE ] = "MPI_MASTER_BCAST_NEW_COMM_SIZE";
-	tag2string[	MPI_MASTER_BCAST_NEW_POOL_RANKS ] = "MPI_MASTER_BCAST_NEW_POOL_RANKS";
-	tag2string[	MPI_MASTER_BCAST_NUM_STRUCTURES_TO_ADD ] = "MPI_MASTER_BCAST_NUM_STRUCTURES_TO_ADD";
+	tag2string[ POOL_RMSD_MASTER_EVALUATE ] = "POOL_RMSD_MASTER_EVALUATE";
+	tag2string[ MPI_MASTER_BCAST_COORDS ] = "MPI_MASTER_BCAST_COORDS";
+	tag2string[ MPI_MASTER_BCAST_WINNING_RANKS ] = "MPI_MASTER_BCAST_WINNING_RANKS";
+	tag2string[ MPI_MASTER_BCAST_WINNING_STRUCTURES ] = "MPI_MASTER_BCAST_WINNING_STRUCTURES";
+	tag2string[ MPI_MASTER_BCAST_NEW_COMM_SIZE ] = "MPI_MASTER_BCAST_NEW_COMM_SIZE";
+	tag2string[ MPI_MASTER_BCAST_NEW_POOL_RANKS ] = "MPI_MASTER_BCAST_NEW_POOL_RANKS";
+	tag2string[ MPI_MASTER_BCAST_NUM_STRUCTURES_TO_ADD ] = "MPI_MASTER_BCAST_NUM_STRUCTURES_TO_ADD";
 	tag2string[ MPI_POOL_MASTER_THINKS ] = "MPI_POOL_MASTER_THINKS";
 	tag2string[ MPI_POOL_SLAVE_THINKS ] = "MPI_POOL_SLAVE_THINKS";
-	tag2string[	SIDECHAINMCMOVER ] = "SIDECHAINMCMOVER";
-	tag2string[	SIMPLEINTGRAPH ] = "SIMPLEINTGRAPH";
-	tag2string[	SIDECHAINMOVER ] = "SIDECHAINMOVER";
-	tag2string[	INITIALIZE ] = "INITIALIZE";
-	tag2string[	COMM_REDUCE_SIZE ] = "COMM_REDUCE_SIZE";
+	tag2string[ SIDECHAINMCMOVER ] = "SIDECHAINMCMOVER";
+	tag2string[ SIMPLEINTGRAPH ] = "SIMPLEINTGRAPH";
+	tag2string[ SIDECHAINMOVER ] = "SIDECHAINMOVER";
+	tag2string[ INITIALIZE ] = "INITIALIZE";
+	tag2string[ COMM_REDUCE_SIZE ] = "COMM_REDUCE_SIZE";
 	tag2string[ CANONICALMOVER_WRITE_TO_FILE ] = "CANONICALMOVER_WRITE_TO_FILE";
-	tag2string[	WRITE_TO_FILE ] = "WRITE_TO_FILE";
-	tag2string[	CHECK_COMM_SIZE ] = "CHECK_COMM_SIZE";
-	tag2string[	APPLY_MOVE ] = "APPLY_MOVE";
-	tag2string[	DATA_STORAGE ] = "DATA_STORAGE";
-	tag2string[	MASTER_PROCESS_NEW_STRUCTURES ] = "MASTER_PROCESS_NEW_STRUCTURES";
-	tag2string[	COPY_COORDS ] = "COPY_COORDS";
+	tag2string[ WRITE_TO_FILE ] = "WRITE_TO_FILE";
+	tag2string[ CHECK_COMM_SIZE ] = "CHECK_COMM_SIZE";
+	tag2string[ APPLY_MOVE ] = "APPLY_MOVE";
+	tag2string[ DATA_STORAGE ] = "DATA_STORAGE";
+	tag2string[ MASTER_PROCESS_NEW_STRUCTURES ] = "MASTER_PROCESS_NEW_STRUCTURES";
+	tag2string[ COPY_COORDS ] = "COPY_COORDS";
 	tag2string[ APPLY_SC_MOVE ] = "APPLY_SC_MOVE";
 	tag2string[ APPLY_BB_MOVE ] = "APPLY_BB_MOVE";
 
-	tag2string[	HIERARCHICAL_EVALUATE ] = "HIERARCHICAL_EVALUATE";
-	tag2string[	HIERARCHICAL_ADD ] = "HIERARCHICAL_ADD";
-	tag2string[	LOAD_HIERARCHY ] = "LOAD_HIERARCHY";
-	tag2string[	HIERARCHY_SEND_COORDS ] = "HIERARCHY_SEND_COORDS";
-	tag2string[	HIERARCHY_RECV_COORDS ] = "HIERARCHY_RECV_COORDS";
+	tag2string[ HIERARCHICAL_EVALUATE ] = "HIERARCHICAL_EVALUATE";
+	tag2string[ HIERARCHICAL_ADD ] = "HIERARCHICAL_ADD";
+	tag2string[ LOAD_HIERARCHY ] = "LOAD_HIERARCHY";
+	tag2string[ HIERARCHY_SEND_COORDS ] = "HIERARCHY_SEND_COORDS";
+	tag2string[ HIERARCHY_RECV_COORDS ] = "HIERARCHY_RECV_COORDS";
 	tag2string[ INITIALIZE_HIERARCHY ] = "INITIALIZE_HIERARCHY";
-	tag2string[	WRITE_DECOYS_TO_HIERARCHY ] = "WRITE_DECOYS_TO_HIERARCHY";
-	tag2string[	HIERARCHY_GET_NEXT_CANDIDATE ] = "HIERARCHY_GET_NEXT_CANDIDATE";
-	tag2string[	HIERARCHY_FIND_ADDRESS ] = "HIERARCHY_FIND_ADDRESS";
-	tag2string[	MPIH_EVAL_CHECK_PROGRESS ] = "MPIH_EVAL_CHECK_PROGRESS";
-	tag2string[	MPIH_EVAL_COMMUNICATE_NEW ] = "MPIH_EVAL_COMMUNICATE_NEW";
-	tag2string[	MPIH_EVAL_AGAINST_NBR ] = "MPIH_EVAL_AGAINST_NBR";
-	tag2string[	MPIH_PREPARE_WRITE_STRUCTURES ] = "MPIH_PREPARE_WRITE_STRUCTURES";
-	tag2string[	MPIH_UPDATE_EVAL ] = "MPIH_UPDATE_EVAL";
+	tag2string[ WRITE_DECOYS_TO_HIERARCHY ] = "WRITE_DECOYS_TO_HIERARCHY";
+	tag2string[ HIERARCHY_GET_NEXT_CANDIDATE ] = "HIERARCHY_GET_NEXT_CANDIDATE";
+	tag2string[ HIERARCHY_FIND_ADDRESS ] = "HIERARCHY_FIND_ADDRESS";
+	tag2string[ MPIH_EVAL_CHECK_PROGRESS ] = "MPIH_EVAL_CHECK_PROGRESS";
+	tag2string[ MPIH_EVAL_COMMUNICATE_NEW ] = "MPIH_EVAL_COMMUNICATE_NEW";
+	tag2string[ MPIH_EVAL_AGAINST_NBR ] = "MPIH_EVAL_AGAINST_NBR";
+	tag2string[ MPIH_PREPARE_WRITE_STRUCTURES ] = "MPIH_PREPARE_WRITE_STRUCTURES";
+	tag2string[ MPIH_UPDATE_EVAL ] = "MPIH_UPDATE_EVAL";
 	tag2string[ MPIH_ADD_FIRST_STRUCTURE ] = "MPIH_ADD_FIRST_STRUCTURE";
 	tag2string[ MPIH_WRITE_STRUCT ] = "MPIH_WRITE_STRUCT";
 	tag2string[ HIERARCHY_SETUP_TO_RECV ] = "HIERARCHY_SETUP_TO_RECV";
@@ -295,11 +295,12 @@ std::map<std::string, int> dynamic_prof_calls;
 
 DynamicProfileThis::DynamicProfileThis( std::string const& tag ) {
 	using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options::OptionKeys;
 
 	// don't profile unless instructed to via the option -run:profile
-	if (!option[basic::options::OptionKeys::run::profile])
+	if ( !option[basic::options::OptionKeys::run::profile] ) {
 		return;
+	}
 
 	tag_ = tag;
 	start_clock_ = clock() / SHRINK_FACTOR;
@@ -308,9 +309,10 @@ DynamicProfileThis::DynamicProfileThis( std::string const& tag ) {
 DynamicProfileThis::~DynamicProfileThis() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-// don't profile unless instructed to via the option -run:profile
-	if (!option[basic::options::OptionKeys::run::profile])
+	// don't profile unless instructed to via the option -run:profile
+	if ( !option[basic::options::OptionKeys::run::profile] ) {
 		return;
+	}
 
 	clock_t const current( clock() / SHRINK_FACTOR );
 	clock_t const start( start_clock_ );
@@ -326,15 +328,16 @@ void prof_show() {
 	basic::Tracer tt( "core.util.prof", basic::t_info, true /*muted by default*/ );
 
 	// clocks are shown in the unit of 0.01 sec
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	// don't profile unless instructed to via the option -run:profile
-	if (!option[basic::options::OptionKeys::run::profile])
+	if ( !option[basic::options::OptionKeys::run::profile] ) {
 		return;
+	}
 
 	static bool init( false );
-	if( !init ) {
+	if ( !init ) {
 		init = true;
 		setup_tag2string();
 	}
@@ -354,16 +357,20 @@ void prof_show() {
 		int const ncalls( calls[tag] );
 		int const bcalls( bad_calls[tag] );
 		double const clocks_per_call( ncalls != 0 ? t/ncalls : 0.0 );
-		if ( ncalls ) tt << F(12,2,t) << ' ' << I(9,ncalls) << ' ' << I(9,bcalls)
-										 << ' ' << F(12,3, clocks_per_call ) << ' ' << tag2string[tag] << '\n';
+		if ( ncalls ) {
+			tt << F(12,2,t) << ' ' << I(9,ncalls) << ' ' << I(9,bcalls)
+				<< ' ' << F(12,3, clocks_per_call ) << ' ' << tag2string[tag] << '\n';
+		}
 	}
 	for ( std::map< std::string, double >::const_iterator it=dynamic_prof_total.begin(); it!=dynamic_prof_total.end(); ++it ) {
 		std::string const& tag( it->first );
 		double const t( it->second );
 		int const ncalls( dynamic_prof_calls[tag] );
 		double const clocks_per_call( ncalls != 0 ? t/ncalls : 0.0 );
-		if ( ncalls ) tt << F(12,2,t) << ' ' << I(9,ncalls) << ' ' << I(9,0)
-										 << ' ' << F(12,3, clocks_per_call ) << ' ' << tag << '\n';
+		if ( ncalls ) {
+			tt << F(12,2,t) << ' ' << I(9,ncalls) << ' ' << I(9,0)
+				<< ' ' << F(12,3, clocks_per_call ) << ' ' << tag << '\n';
+		}
 
 	}
 	tt << "========================================\n";
@@ -373,12 +380,13 @@ void prof_show() {
 }
 
 void prof_reset() {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	// don't profile unless instructed to via the option -run:profile
-	if (!option[basic::options::OptionKeys::run::profile])
+	if ( !option[basic::options::OptionKeys::run::profile] ) {
 		return;
+	}
 
 	start_clock.clear();
 	total_clock.clear();

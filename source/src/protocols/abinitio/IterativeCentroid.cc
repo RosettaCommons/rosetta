@@ -59,8 +59,8 @@ void IterativeCentroid::gen_diversity_pool( jd2::archive::Batch& batch, bool ful
 }
 
 void IterativeCentroid::update_noesy_filter_files(
-    std::string const& current,
-		 bool fullatom
+	std::string const& current,
+	bool fullatom
 ) {
 	fullatom_pool_ptr_->update_noesy_filter_files( current, fullatom );
 	Parent::update_noesy_filter_files( current, fullatom );
@@ -96,59 +96,59 @@ void IterativeCentroid::collect_alternative_decoys( SilentStructs /*primary_deco
 		output_decoys.push_back( new_decoy );
 	}
 
-// 	typedef std::map< std::string, utility::vector1< std::string > > SourceFiles;
-// 	typedef std::map< std::string, utility::vector1< core::io::silent::SilentStructOP > > AlternativeDecoys;
+	//  typedef std::map< std::string, utility::vector1< std::string > > SourceFiles;
+	//  typedef std::map< std::string, utility::vector1< core::io::silent::SilentStructOP > > AlternativeDecoys;
 
-// 	SourceFiles sources;
-// 	AlternativeDecoys alternative_decoys;
-// 	Size ct_in( 0 );
+	//  SourceFiles sources;
+	//  AlternativeDecoys alternative_decoys;
+	//  Size ct_in( 0 );
 
-// 	//to find the stage2 structures collect first all tags for a specific file
-// 	for ( const_decoy_iterator it = primary_decoys.begin(); it != primary_decoys.end(); ++it ) {
-// 		runtime_assert( (*it)->has_comment( TAG_IN_FILE ) );
-// 		std::string tag( (*it)->get_comment( TAG_IN_FILE ) );
-// 		utility::file::FileName file( (*it)->get_comment( SOURCE_FILE ) );
-// 		std::string stage2_file( file.path()+"/"+alternative_decoy_file );
+	//  //to find the stage2 structures collect first all tags for a specific file
+	//  for ( const_decoy_iterator it = primary_decoys.begin(); it != primary_decoys.end(); ++it ) {
+	//   runtime_assert( (*it)->has_comment( TAG_IN_FILE ) );
+	//   std::string tag( (*it)->get_comment( TAG_IN_FILE ) );
+	//   utility::file::FileName file( (*it)->get_comment( SOURCE_FILE ) );
+	//   std::string stage2_file( file.path()+"/"+alternative_decoy_file );
 
-// 		//creates map <filename> <list of tags>
-// 		sources[ stage2_file ].push_back( tag );
-// 		alternative_decoys[ stage2_file ].push_back( (*it) );
-// 		++ct_in;
-// 	}
+	//   //creates map <filename> <list of tags>
+	//   sources[ stage2_file ].push_back( tag );
+	//   alternative_decoys[ stage2_file ].push_back( (*it) );
+	//   ++ct_in;
+	//  }
 
-// 	//read selected structures from each file
-// 	Size ct_read( 0 );
-// 	for ( SourceFiles::const_iterator it = sources.begin(); it != sources.end(); ++it ) {
-// 		/// it->first is filename, it->second are all tags collected for this file
-// 		io::silent::SilentFileData sfd;
-// 		try { //read structures
-// 			sfd._read_file( it->first, it->second, true /*throw exceptions */ );
-// 			if ( sfd.size() > it->second.size() ) {
-// 				tr.Warning << "[WARNING] multiple decoys with same tag detected in file " << it->first << std::endl;
-// 			}
-// 			//copy( sfd.begin(), sfd.end(), std::back_inserter( output_decoys ) );
-// 			for ( core::io::silent::SilentFileData::iterator sit = sfd.begin(); sit != sfd.end(); ++sit ) {
-// 				std::string batch_prefix( it->first );
-// 			  batch_prefix='f'+batch_prefix.substr(9,3);
-// 				sit->set_decoy_tag( batch_prefix+"_"+sit->decoy_tag() );
-// 				output_decoys.push_back( *sit );
-// 			}
-// 			ct_read += sfd.size();
-// 		} catch ( utility::excn::EXCN_IO& excn ) { //ERROR
-// 			tr.Warning << "[WARNING] Problem reading silent-file " << it->first << " for " << it->second.size() << " structures " << std::endl;
-// 			excn.show( tr.Warning );
-// 			tr.Warning << std::endl;
-// 			tr.Warning << "use the respective structures in the pool as starting structure instead" << std::endl;
-// 			copy( alternative_decoys[ it->first ].begin(), alternative_decoys[ it->first ].end(), std::back_inserter( output_decoys ) );
-// 			ct_read += alternative_decoys[ it->first ].size();
-// 		}
-// 	}
+	//  //read selected structures from each file
+	//  Size ct_read( 0 );
+	//  for ( SourceFiles::const_iterator it = sources.begin(); it != sources.end(); ++it ) {
+	//   /// it->first is filename, it->second are all tags collected for this file
+	//   io::silent::SilentFileData sfd;
+	//   try { //read structures
+	//    sfd._read_file( it->first, it->second, true /*throw exceptions */ );
+	//    if ( sfd.size() > it->second.size() ) {
+	//     tr.Warning << "[WARNING] multiple decoys with same tag detected in file " << it->first << std::endl;
+	//    }
+	//    //copy( sfd.begin(), sfd.end(), std::back_inserter( output_decoys ) );
+	//    for ( core::io::silent::SilentFileData::iterator sit = sfd.begin(); sit != sfd.end(); ++sit ) {
+	//     std::string batch_prefix( it->first );
+	//      batch_prefix='f'+batch_prefix.substr(9,3);
+	//     sit->set_decoy_tag( batch_prefix+"_"+sit->decoy_tag() );
+	//     output_decoys.push_back( *sit );
+	//    }
+	//    ct_read += sfd.size();
+	//   } catch ( utility::excn::EXCN_IO& excn ) { //ERROR
+	//    tr.Warning << "[WARNING] Problem reading silent-file " << it->first << " for " << it->second.size() << " structures " << std::endl;
+	//    excn.show( tr.Warning );
+	//    tr.Warning << std::endl;
+	//    tr.Warning << "use the respective structures in the pool as starting structure instead" << std::endl;
+	//    copy( alternative_decoys[ it->first ].begin(), alternative_decoys[ it->first ].end(), std::back_inserter( output_decoys ) );
+	//    ct_read += alternative_decoys[ it->first ].size();
+	//   }
+	//  }
 
-// 	tr.Debug << "structures from pool" << ct_in << " structure retrieved from " << alternative_decoy_file << "-files "
-// 					 << ct_read << " start structs: " << output_decoys.size() << std::endl;
-// 	if ( output_decoys.size() != primary_decoys.size() ) {
-// 		tr.Warning << "[WARNING] why do we have a different number of decoys in pool and start_decoys ? " << std::endl;
-// 	}
+	//  tr.Debug << "structures from pool" << ct_in << " structure retrieved from " << alternative_decoy_file << "-files "
+	//       << ct_read << " start structs: " << output_decoys.size() << std::endl;
+	//  if ( output_decoys.size() != primary_decoys.size() ) {
+	//   tr.Warning << "[WARNING] why do we have a different number of decoys in pool and start_decoys ? " << std::endl;
+	//  }
 }
 
 void IterativeCentroid::save_to_file( std::string suffix ) {
@@ -172,11 +172,11 @@ bool IterativeCentroid::restore_from_file() {
 	return Parent::restore_from_file();
 }
 
-	/// @brief call to insert structure at position given by iterator
+/// @brief call to insert structure at position given by iterator
 void IterativeCentroid::add_structure_at_position (
-    SilentStructs::iterator iss,
-		core::io::silent::SilentStructOP new_decoy,
-		core::io::silent::SilentStructOP alternative_decoy
+	SilentStructs::iterator iss,
+	core::io::silent::SilentStructOP new_decoy,
+	core::io::silent::SilentStructOP alternative_decoy
 ) {
 
 	if ( alternative_decoy ) {
@@ -198,7 +198,7 @@ void IterativeCentroid::add_structure_at_position (
 			alt_iss = stage2_decoys_.end();
 		}
 		//if we are at the end this decoy has a worse score than all others
-		//		if ( alt_iss != stage2_decoys_.end() || stage2_decoys_.size() < nstruct() ) {
+		//  if ( alt_iss != stage2_decoys_.end() || stage2_decoys_.size() < nstruct() ) {
 		std::cerr << "equivalent decoy tag has been found in stage2_decoys, inserting now" << std::endl;
 		if ( alt_iss == stage2_decoys_.end() ) tr.Debug << "inserting at end..." << std::endl;
 		stage2_decoys_.insert( alt_iss, alternative_decoy );

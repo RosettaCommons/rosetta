@@ -52,22 +52,22 @@ char torsion2big_bin(
 	float const psi,
 	float const omega
 ) {
-   if ( std::abs( omega ) < 90 ) {
-      return 'O'; // cis-omega
-   } else if ( phi >= 0.0 ) {
-      if ( -100 < psi && psi <= 100 ) {
-         return 'G'; // alpha-L
-      } else {
-         return 'E'; // E
-      }
-   } else {
-      if ( -125 < psi && psi <= 50 ) {
-         return 'A'; // helical
-      } else {
-         return 'B'; // extended
-      }
-   }
-   return 'X';
+	if ( std::abs( omega ) < 90 ) {
+		return 'O'; // cis-omega
+	} else if ( phi >= 0.0 ) {
+		if ( -100 < psi && psi <= 100 ) {
+			return 'G'; // alpha-L
+		} else {
+			return 'E'; // E
+		}
+	} else {
+		if ( -125 < psi && psi <= 50 ) {
+			return 'A'; // helical
+		} else {
+			return 'B'; // extended
+		}
+	}
+	return 'X';
 }
 
 utility::vector1< int > calculate_burial(
@@ -110,72 +110,72 @@ utility::vector1< char > get_ss( core::pose::Pose & pose ) {
 int main( int argc, char* argv [] ) {
 	try {
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::scoring::constraints;
-	using namespace ObjexxFCL::format;
-	using namespace core::import_pose::pose_stream;
-	using namespace core::chemical;
-	using core::Size;
-	using core::Real;
-	using std::string;
-	using utility::vector1;
-	using utility::file_basename;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::scoring::constraints;
+		using namespace ObjexxFCL::format;
+		using namespace core::import_pose::pose_stream;
+		using namespace core::chemical;
+		using core::Size;
+		using core::Real;
+		using std::string;
+		using utility::vector1;
+		using utility::file_basename;
 
-	MetaPoseInputStream input = streams_from_cmd_line();
-	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
+		MetaPoseInputStream input = streams_from_cmd_line();
+		ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
 
-	std::ostream & output( std::cout );
-	while ( input.has_another_pose() ) {
-		core::pose::Pose pose;
-		input.fill_pose( pose, *rsd_set );
-		string const pose_tag( file_basename( core::pose::tag_from_pose( pose ) ) );
+		std::ostream & output( std::cout );
+		while ( input.has_another_pose() ) {
+			core::pose::Pose pose;
+			input.fill_pose( pose, *rsd_set );
+			string const pose_tag( file_basename( core::pose::tag_from_pose( pose ) ) );
 
-		output
-			<< A( 6,  "resi"	   )
-			<< A( 4,  "res"      )
-			<< A( 3,  "ss"       )
-			<< A( 9,  "phi"      )
-			<< A( 9,  "psi"      )
-			<< A( 9,  "omega"    )
-			<< A( 9,  "bb_bin"   )
-			<< A( 10,  "burial6"  )
-			<< A( 10,  "burial8"  )
-			<< A( 10,  "burial10" )
-			<< A( 14, "pose_tag" )
-			<< std::endl;
-
-		vector1< int >  burial6( calculate_burial(pose,6) );
-		vector1< int >  burial8( calculate_burial(pose,8) );
-		vector1< int >  burial10( calculate_burial(pose,10) );
-		vector1< char > pose_ss( get_ss( pose ) );
-
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-			core::conformation::Residue resi = pose.residue(i);
-			core::Real phi   = resi.mainchain_torsion(1);
-			core::Real psi   = resi.mainchain_torsion(2);
-			core::Real omega = resi.mainchain_torsion(3);
-
-			char bb_bin = torsion2big_bin( phi, psi, omega );
-			Size const pose_tag_width( std::max( pose_tag.length()+1, (Size)14 ) );
 			output
-				<< I(  6, i            )
-				<< A(  4, resi.name1() )
-				<< A(  3, pose_ss[i]   )
-				<< F(  9, 3, phi       )
-				<< F(  9, 3, psi	     )
-				<< F(  9, 3, omega	   )
-				<< A(  9, bb_bin       )
-				<< I( 10, burial6[i]   )
-				<< I( 10, burial8[i]   )
-				<< I( 10, burial10[i]  )
-				<< A( pose_tag_width, pose_tag )
+				<< A( 6,  "resi"    )
+				<< A( 4,  "res"      )
+				<< A( 3,  "ss"       )
+				<< A( 9,  "phi"      )
+				<< A( 9,  "psi"      )
+				<< A( 9,  "omega"    )
+				<< A( 9,  "bb_bin"   )
+				<< A( 10,  "burial6"  )
+				<< A( 10,  "burial8"  )
+				<< A( 10,  "burial10" )
+				<< A( 14, "pose_tag" )
 				<< std::endl;
-		}	// for ( unsigned int i = 1; i <= mypose->total_residue(); ++i )
-	} // while input.has_another_pose()
+
+			vector1< int >  burial6( calculate_burial(pose,6) );
+			vector1< int >  burial8( calculate_burial(pose,8) );
+			vector1< int >  burial10( calculate_burial(pose,10) );
+			vector1< char > pose_ss( get_ss( pose ) );
+
+			for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+				core::conformation::Residue resi = pose.residue(i);
+				core::Real phi   = resi.mainchain_torsion(1);
+				core::Real psi   = resi.mainchain_torsion(2);
+				core::Real omega = resi.mainchain_torsion(3);
+
+				char bb_bin = torsion2big_bin( phi, psi, omega );
+				Size const pose_tag_width( std::max( pose_tag.length()+1, (Size)14 ) );
+				output
+					<< I(  6, i            )
+					<< A(  4, resi.name1() )
+					<< A(  3, pose_ss[i]   )
+					<< F(  9, 3, phi       )
+					<< F(  9, 3, psi      )
+					<< F(  9, 3, omega    )
+					<< A(  9, bb_bin       )
+					<< I( 10, burial6[i]   )
+					<< I( 10, burial8[i]   )
+					<< I( 10, burial10[i]  )
+					<< A( pose_tag_width, pose_tag )
+					<< std::endl;
+			} // for ( unsigned int i = 1; i <= mypose->total_residue(); ++i )
+		} // while input.has_another_pose()
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

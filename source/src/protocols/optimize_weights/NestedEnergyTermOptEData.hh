@@ -64,10 +64,10 @@ public:
 	virtual void write_to_binary_file( std::ofstream & outfile ) const;
 	virtual void read_from_binary_file( std::ifstream & infile );
 
-	#ifdef USEMPI
+#ifdef USEMPI
 		virtual void send_to_node( int const destination_node, int const tag ) const;
 		virtual void receive_from_node( int const source_node, int const tag );
-	#endif
+#endif
 
 	void set_unfolded_energy_emap_vector( utility::vector1< EnergyMap > emap_vector ) { unfolded_energy_emap_vector_ = emap_vector; }
 	utility::vector1 < EnergyMap > & unfolded_energy_emap_vector() { return unfolded_energy_emap_vector_; }
@@ -100,9 +100,9 @@ protected:
 	/// @brief used by derived class as well -- finds the energies for the best rotamer for each amino acid
 	//void
 	//process_rotamers( Multivec const & vars, Size const num_energy_dofs, EnergyMap const & fixed_terms,
-	//	ScoreTypes const & score_list, ScoreTypes const & fixed_score_list, Size const aa_range,
-	//	utility::vector1< Real > const & dummy_set, utility::vector1< Real > & best_energy_by_aa,
-	//	utility::vector1< utility::vector1< Real > > & unweighted_E_dof, Multivec & ref_deriv_weight
+	// ScoreTypes const & score_list, ScoreTypes const & fixed_score_list, Size const aa_range,
+	// utility::vector1< Real > const & dummy_set, utility::vector1< Real > & best_energy_by_aa,
+	// utility::vector1< utility::vector1< Real > > & unweighted_E_dof, Multivec & ref_deriv_weight
 	//) const;
 
 private:

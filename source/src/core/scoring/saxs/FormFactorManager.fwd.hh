@@ -25,9 +25,9 @@ namespace saxs {
 class FormFactorManager;
 
 typedef utility::pointer::shared_ptr<FormFactorManager>
-		FormFactorManagerOP;
+	FormFactorManagerOP;
 typedef utility::pointer::shared_ptr<FormFactorManager const>
-		FormFactorManagerCOP;
+	FormFactorManagerCOP;
 
 } // saxs
 } // scoring

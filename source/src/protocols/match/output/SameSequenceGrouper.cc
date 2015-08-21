@@ -125,7 +125,7 @@ SameSequenceAndDSPositionGrouper::assign_group_for_match(
 	std::pair< Size, Size > seq_dspos_pair( sequence_group, ds_group );
 
 	std::map< std::pair< Size, Size >, Size >::iterator seqpos_it = sequence_pos_map_.find( seq_dspos_pair );
-	if( seqpos_it == sequence_pos_map_.end() ){
+	if ( seqpos_it == sequence_pos_map_.end() ) {
 		Size newgroup( sequence_pos_map_.size() + 1 );
 		sequence_pos_map_.insert( std::make_pair( seq_dspos_pair, newgroup ) );
 		return newgroup;
@@ -171,16 +171,16 @@ SameSequenceAndDSPositionGrouper::assign_downstream_position_group_for_match(
 	runtime_assert( dspos_coords.size() == relevant_atom_ids_.size() );
 	Real lowest_rms( 1000000.0 );
 
-	for( core::Size ii = 1; ii <= representative_dspos_.size(); ++ii ){
+	for ( core::Size ii = 1; ii <= representative_dspos_.size(); ++ii ) {
 		//calculate rms without superposition
 		Real cur_rms(0.0);
-		for( core::Size jj = 1; jj <= relevant_atom_ids_.size(); ++jj ){
+		for ( core::Size jj = 1; jj <= relevant_atom_ids_.size(); ++jj ) {
 			Vector diff = dspos_coords[jj] - representative_dspos_[ii][jj];
 			cur_rms += diff.length_squared();
 		}
 		Real rms = std::sqrt(cur_rms / relevant_atom_ids_.size() );
-		if( rms < lowest_rms ) lowest_rms = rms;
-		if( rms  <= rms_group_cutoff_ ) return ii;
+		if ( rms < lowest_rms ) lowest_rms = rms;
+		if ( rms  <= rms_group_cutoff_ ) return ii;
 	}
 	//if we've made it till here, that means this ds position is new
 	//std::cout << "found new group with lowest rms of " << lowest_rms << " to previous one." << std::endl;

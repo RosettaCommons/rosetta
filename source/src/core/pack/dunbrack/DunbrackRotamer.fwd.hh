@@ -42,7 +42,7 @@ Size const TWO = 2;
 Size const THREE = 3;
 Size const FOUR = 4;
 Size const FIVE = 5; // adding this for 5 backbones because we can't do "any four" yet
-					 // and if you want a beta peptoid dependent on eps and omg...
+// and if you want a beta peptoid dependent on eps and omg...
 
 /// @brief forward declaration; default precision is DunbrackReal
 template < Size S, Size N, class P = DunbrackReal >

@@ -23,10 +23,10 @@ namespace protocols {
 namespace nonlocal {
 
 class SingleFragmentMoverCreator : public protocols::moves::MoverCreator {
- public:
-  protocols::moves::MoverOP create_mover() const;
-  std::string keyname() const;
-  static std::string mover_name();
+public:
+	protocols::moves::MoverOP create_mover() const;
+	std::string keyname() const;
+	static std::string mover_name();
 };
 
 }  // namespace nonlocal

@@ -39,7 +39,7 @@
 static thread_local basic::Tracer TR( "protocols.flxbb.DesignTask" );
 
 namespace protocols {
-namespace flxbb{
+namespace flxbb {
 
 using namespace core;
 using namespace basic::options;
@@ -185,7 +185,7 @@ DesignTask::dump_packertask( std::ostream & os )
 void
 DesignTask::add_task_operations( utility::vector1< TaskOperationOP > const tops )
 {
-	for( utility::vector1< TaskOperationOP >::const_iterator it=tops.begin(); it!=tops.end(); ++it ) {
+	for ( utility::vector1< TaskOperationOP >::const_iterator it=tops.begin(); it!=tops.end(); ++it ) {
 		add_task_operation( *it );
 	}
 }
@@ -232,26 +232,26 @@ void DesignTask_Layer::setup( pose::Pose const & pose, pack::task::PackerTaskOP 
 	//DesignLayerOperationOP op = new DesignLayerOperation( dsgn_core_, dsgn_boundary_, dsgn_surface_ );
 	protocols::flxbb::LayerDesignOperationOP op( new protocols::flxbb::LayerDesignOperation( dsgn_core_, dsgn_boundary_, dsgn_surface_ ) );
 
-	if( resfile() != "" ){
+	if ( resfile() != "" ) {
 		TR << "Resfile is applied, except for the positions of AUTO " << std::endl;
 		operation::ReadResfileOP rrop( new operation::ReadResfile( resfile() ) );
 		rrop->apply( pose, *task );
 	}
 
 	TR << "Designed layer: core = " << dsgn_core_ << ", boundary = " << dsgn_boundary_
-		 << ", sufrace = " << dsgn_surface_ << std::endl;
+		<< ", sufrace = " << dsgn_surface_ << std::endl;
 
-	if( use_original_seq_ ){
+	if ( use_original_seq_ ) {
 		op->use_original_seq();
 		TR << "Original sequences are preserved for the layer you don't design."  << std::endl;
-	}else{
+	} else {
 		TR << "The region you don't design turned into Ala."  << std::endl;
 	}
 
 	op->apply( pose, *task );
 
 	// apply additional task_opertaions
-	for( utility::vector1< TaskOperationOP >::const_iterator it=task_operations_.begin(); it!=task_operations_.end(); ++it )	{
+	for ( utility::vector1< TaskOperationOP >::const_iterator it=task_operations_.begin(); it!=task_operations_.end(); ++it ) {
 		(*it)->apply( pose, *task );
 	}
 
@@ -282,7 +282,7 @@ void DesignTask_Normal::setup( pose::Pose const & pose, pack::task::PackerTaskOP
 	operation::InitializeFromCommandlineOP cmop( new operation::InitializeFromCommandline );
 
 	// set packertask based on resfile
-	if( resfile() != "" ){
+	if ( resfile() != "" ) {
 		TR << "Resfile " << resfile() << " is applied." << std::endl;
 		operation::ReadResfileOP rrop( new operation::ReadResfile( resfile() ) );
 		rrop->apply( pose, *task );
@@ -291,7 +291,7 @@ void DesignTask_Normal::setup( pose::Pose const & pose, pack::task::PackerTaskOP
 	cmop->apply( pose, *task );
 
 	// apply additonal taskoperations
-	for( utility::vector1< TaskOperationOP >::const_iterator it=task_operations_.begin(); it!=task_operations_.end(); ++it )	{
+	for ( utility::vector1< TaskOperationOP >::const_iterator it=task_operations_.begin(); it!=task_operations_.end(); ++it ) {
 		(*it)->apply( pose, *task );
 	}
 

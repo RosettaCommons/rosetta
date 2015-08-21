@@ -39,9 +39,9 @@
 #include <utility/vector1.hh>
 
 
-namespace core{
-namespace chemical{
-namespace orbitals{
+namespace core {
+namespace chemical {
+namespace orbitals {
 
 
 class OrbitalTypeSet : public utility::pointer::ReferenceCount {

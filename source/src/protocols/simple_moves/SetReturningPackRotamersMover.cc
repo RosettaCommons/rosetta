@@ -86,10 +86,8 @@ SetReturningPackRotamersMover::apply( pose::Pose & pose ) {
 	} else if ( this->task() == 0 ) {
 		TR << "undefined PackerTask -- creating a default one" << std::endl;
 		this->task( task::TaskFactory::create_packer_task( pose ) );
-	}
-
+	} else runtime_assert( task_is_valid( pose ) );
 	// in case PackerTask was not generated locally, verify compatibility with pose
-	else runtime_assert( task_is_valid( pose ) );
 
 	// get rotamers, energies
 	this->setup( pose );
@@ -113,8 +111,9 @@ SetReturningPackRotamersMover::apply( pose::Pose & pose ) {
 		repacked_poses_[ run ] = pose;
 
 	}
-	if ( ndruns_ > 1 )
+	if ( ndruns_ > 1 ) {
 		pose = best_pose;
+	}
 }
 
 std::string

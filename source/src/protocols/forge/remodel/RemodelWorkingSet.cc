@@ -31,7 +31,7 @@
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <core/kinematics/FoldTree.hh>
- // for switch typeset
+// for switch typeset
 
 // for resfile command map
 #include <core/pack/task/ResfileReader.hh>
@@ -53,16 +53,16 @@
 using namespace core;
 using namespace basic::options;
 
-namespace protocols{
-namespace forge{
-namespace remodel{
+namespace protocols {
+namespace forge {
+namespace remodel {
 
 static thread_local basic::Tracer TR( "protocols.forge.remodel.RemodelWorkingSet" );
 
 RemodelWorkingSet::RemodelWorkingSet()
 {
-		hasInsertion = false;
-		buildDisulfide = false;
+	hasInsertion = false;
+	buildDisulfide = false;
 }
 
 ///
@@ -90,7 +90,7 @@ RemodelWorkingSet::RemodelWorkingSet(RemodelWorkingSet const & rval):
 
 RemodelWorkingSet & RemodelWorkingSet::operator= ( RemodelWorkingSet const & rval ){
 
-	if (this != & rval) {
+	if ( this != & rval ) {
 		loops =  rval.loops ;
 		sequence = rval.sequence;
 		ss = rval.ss;
@@ -133,7 +133,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	this->abego = data.abego;
 
 	// this is purely experimental for matching fragment set
-	if (option[OptionKeys::remodel::repeat_structure].user() ) {
+	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 		ss.append( ss );
 		this->abego.append(this->abego);
 	} else {
@@ -153,7 +153,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	// find C term extension, if any
 	int last_ext;
 	last_ext = (int)data.sequence.find_last_of(Xs);
-	if (last_ext == static_cast<int>(model_length -1)) {
+	if ( last_ext == static_cast<int>(model_length -1) ) {
 		TR << "workingSetGen(): C-terminal is extended" << std::endl;
 		// if C-term extension, add extra degenerate ss type to get fragments past last res.
 		CtermExt = true;
@@ -167,7 +167,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 
 	//this is needed for manipulating denovo cases, as they are coded as Cterm
 	//extensions.  Affects SegmentRebuld selections.
-	if(option[OptionKeys::remodel::repeat_structure].user() && CtermExt){
+	if ( option[OptionKeys::remodel::repeat_structure].user() && CtermExt ) {
 		model_length = model_length * 2;
 	}
 
@@ -202,7 +202,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		keep[ temp_for_truncation[ ii ].original_index ] = true;
 		if ( temp_for_truncation[ ii ].original_index != 0 ) { // correct for the use of "0" in marking extensions, original index should start from 1
 			//TR << "temp_for_truncation[ ii ].original_index: " << temp_for_truncation[ ii ].original_index
-			//	<< ", translate_index[ " << temp_for_truncation[ ii ].original_index << " ] set to " << ii + 1 << std::endl;
+			// << ", translate_index[ " << temp_for_truncation[ ii ].original_index << " ] set to " << ii + 1 << std::endl;
 			translate_index[ temp_for_truncation[ ii ].original_index ] = ii + 1; // i is zero based, we want one based translation
 		}
 	}
@@ -219,7 +219,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	for ( int i = 0, ie = (int)data.blueprint.size(); i < ie; i++ ) {
 		if ( data.blueprint[i].sstype != "." ) { // first find the segments to be remodelled
 			temp.push_back( data.blueprint[i] );
-		} else if (data.blueprint[i].sstype == "."){ // parts to be copied
+		} else if ( data.blueprint[i].sstype == "." ) { // parts to be copied
 			temp_for_copy.push_back(data.blueprint[i]); // lines_residues_to_remodel
 		} else {
 			TR << "workingSetGen(): assignment error" << std::endl;
@@ -227,48 +227,44 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	}
 
 	// repeat structure loop over a second time; merge sections and update index
-	if(option[OptionKeys::remodel::repeat_structure].user()){
+	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 		//need to know the original index of the last element, for building
 		//extensions or deletions across jxn points
 		LineObject lastLO = data.blueprint.back();
 
 		bool denovo = true;
 		//have to loop to identify denovo case
-		for (int i = 0, ie = (int)data.blueprint.size(); i < ie; i++){
-			if (data.blueprint[i].sstype == "."){ //if anywhere hits this assignment, not de novo
+		for ( int i = 0, ie = (int)data.blueprint.size(); i < ie; i++ ) {
+			if ( data.blueprint[i].sstype == "." ) { //if anywhere hits this assignment, not de novo
 				denovo = false;
 			}
 		}
 
-		for (int i = 0, ie = (int)data.blueprint.size(); i < ie; i++){
-			if (data.blueprint[i].sstype != ".") { // first find the segments to be remodeled
+		for ( int i = 0, ie = (int)data.blueprint.size(); i < ie; i++ ) {
+			if ( data.blueprint[i].sstype != "." ) { // first find the segments to be remodeled
 				LineObject LO = data.blueprint[i];
 				//update indeces
 				LO.index = LO.index + (int)data.blueprint.size();
-				if (LO.original_index != 0){ //in de novo case, the extension uses 0, don't increment.
+				if ( LO.original_index != 0 ) { //in de novo case, the extension uses 0, don't increment.
 					LO.original_index = LO.original_index + (int)lastLO.original_index;
-				}
-				else if (LO.original_index == 0 && !denovo){
+				} else if ( LO.original_index == 0 && !denovo ) {
 					LO.original_index = LO.original_index + (int)data.blueprint.size();
-				}
-				else {
-				// de novo case don't increment
+				} else {
+					// de novo case don't increment
 				}
 
 				//TR << "LO object second time " << LO.index << " " << LO.original_index << std::endl;
 				temp.push_back(LO);
-			}
-			else if (data.blueprint[i].sstype == "."){ // parts to be copied
+			} else if ( data.blueprint[i].sstype == "." ) { // parts to be copied
 				//not needed here
-			}
-			else {
+			} else {
 				std::cout << "assignment error" << std::endl;
 			}
 		}
 	}
 
 	//save the first non-rebuilt position for potentially rooting a tree.
-	if ( !temp_for_copy.empty() ){ // lines_residues_to_remodel
+	if ( !temp_for_copy.empty() ) { // lines_residues_to_remodel
 		safe_root_ = temp_for_copy.front().index; // lines_residues_to_remodel
 	} else {
 		safe_root_ = 1;
@@ -276,7 +272,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 
 	TR << "temp_for_copy (lines_residues_to_remodel): [ ";
 	for ( Size ii=0; ii < temp_for_copy.size(); ++ii ) {
-			TR << temp_for_copy[ ii ].original_index << "-" << temp_for_copy[ ii ].index << ", ";
+		TR << temp_for_copy[ ii ].original_index << "-" << temp_for_copy[ ii ].index << ", ";
 	}
 	TR << "]" << std::endl;
 
@@ -355,7 +351,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	Size insertStartIndex = 0;
 	Size insertEndIndex = 0;
 	TR << "data.dssp_updated_ss: " << data.dssp_updated_ss << std::endl;
-	if (option[OptionKeys::remodel::domainFusion::insert_segment_from_pdb].user() ) {
+	if ( option[OptionKeys::remodel::domainFusion::insert_segment_from_pdb].user() ) {
 		TR << "Processing insertion SS info..." << std::endl;
 		insertStartIndex = data.dssp_updated_ss.find_first_of("I");
 		insertEndIndex = data.dssp_updated_ss.find_last_of("I");
@@ -369,22 +365,21 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 
 	runtime_assert (build_aa_type.size() == 1);
 
-	if(option[OptionKeys::remodel::use_blueprint_sequence].user()){
-		for (int i = 0; i < (int)data.blueprint.size(); i++){
-			if ( data.blueprint[i].resname.compare("x") == 0  || data.blueprint[i].resname.compare("X") == 0 ){
+	if ( option[OptionKeys::remodel::use_blueprint_sequence].user() ) {
+		for ( int i = 0; i < (int)data.blueprint.size(); i++ ) {
+			if ( data.blueprint[i].resname.compare("x") == 0  || data.blueprint[i].resname.compare("X") == 0 ) {
 				aa.append(build_aa_type);
-			}
-			else {
+			} else {
 				aa.append( data.blueprint[i].resname );
 			}
 		}
-	//		runtime_assert( aa.size() == data.dssp_updated_ss.size());
+		//  runtime_assert( aa.size() == data.dssp_updated_ss.size());
 
 	} else {
-		if ( build_aa_type.compare("A") != 0){
+		if ( build_aa_type.compare("A") != 0 ) {
 			//build the aa string to be the same length as dssp updated ss
 			//use that length because repeat structures are bigger than blueprint
-			for (int i = 1; i<= (int)data.dssp_updated_ss.size(); i++) {
+			for ( int i = 1; i<= (int)data.dssp_updated_ss.size(); i++ ) {
 				aa.append(build_aa_type);
 			}
 		}
@@ -412,30 +407,29 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		int head = -1, tail = -1, headNew = -1, tailNew = -1; //safety, init to negative values
 
 		//use temp_For_copy to identify if it's de novo build; not empty means it's a loop case.
-		if (option[OptionKeys::remodel::repeat_structure].user() && !temp_for_copy.empty()) {  // lines_residues_to_remodel
+		if ( option[OptionKeys::remodel::repeat_structure].user() && !temp_for_copy.empty() ) {  // lines_residues_to_remodel
 			//duplicate length of dssp and aastring
 			DSSP += DSSP;
 			aa += aa;
 
-			if (idFront > seg_size && idBack > seg_size){ //ignore this type of assigment in repeat structures
-			continue;
-			/*
+			if ( idFront > seg_size && idBack > seg_size ) { //ignore this type of assigment in repeat structures
+				continue;
+				/*
 				if (idBack == 2*seg_size){ // can't hit the final residue in repeat unit pose
-					idBack = idBack-1;
+				idBack = idBack-1;
 				}
 				head = data.blueprint[ idFront-seg_size-1 ].original_index + seg_size;
 				tail = data.blueprint[ idBack-seg_size-1 ].original_index + seg_size;
 				headNew = data.blueprint[ idFront-seg_size-1 ].index + seg_size;
 				tailNew = data.blueprint[ idBack-seg_size-1 ].index + seg_size;
 				*/
-			}
-			else if (idFront <= seg_size && idBack > seg_size){ //spanning across repeat, adjust the tail
-				if (idBack == 2*seg_size){ // can't hit the final residue in repeat unit pose
+			} else if ( idFront <= seg_size && idBack > seg_size ) { //spanning across repeat, adjust the tail
+				if ( idBack == 2*seg_size ) { // can't hit the final residue in repeat unit pose
 					idBack = idBack-1;
 				}
 				head = data.blueprint[ idFront-1 ].original_index;
 				tail = data.blueprint[ idBack-seg_size-1 ].original_index + data.blueprint.back().original_index;
-				if (data.blueprint.back().original_index == 0){ //an extension
+				if ( data.blueprint.back().original_index == 0 ) { //an extension
 					tail = data.blueprint[ idBack-seg_size-1 ].original_index + seg_size;
 				}
 				headNew = data.blueprint[ idFront-1 ].index;
@@ -446,10 +440,10 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 				headNew = data.blueprint[ idFront-1 ].index;
 				tailNew = data.blueprint[ idBack-1 ].index;
 			}
-		} else if (option[OptionKeys::remodel::repeat_structure].user() && temp_for_copy.empty()) { //de novo case
+		} else if ( option[OptionKeys::remodel::repeat_structure].user() && temp_for_copy.empty() ) { //de novo case
 			//std::cout << "idFront " << idFront << " idBack " << idBack << std::endl;
 			Size range_limit = data.blueprint.size();
-			if (idBack >= range_limit){ // can't assign beyond blueprint definition, as indices are missing as extensions
+			if ( idBack >= range_limit ) { // can't assign beyond blueprint definition, as indices are missing as extensions
 				idFront = 1;
 				idBack = range_limit;
 				head = data.blueprint[ idFront-1 ].original_index;
@@ -492,7 +486,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 			String blank;
 			/*
 			for (Size i=1; i<= data.insertionSS.size(); i++){
-				blank.append("^");
+			blank.append("^");
 			} // can't append extra ^ characters because insert_SS_string gets stored in SegmentInsert and used by the manager
 			*/
 			blank.append("^");
@@ -510,17 +504,14 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		if ( head == 0 && segmentStorageVector[i].residues.front() == 1 ) { // N-term extension
 			TR << "N-terminal extension found" << std::endl;
 			manager.add( BuildInstructionOP( new SegmentRebuild( Interval(1,tail),  data.dssp_updated_ss.substr( headNew-1, gap ), aa.substr( headNew-1,gap )) ) );
-		}
-		else if ( tail == 0 && segmentStorageVector[i].residues.back() == static_cast<int>(model_length) ) {
+		} else if ( tail == 0 && segmentStorageVector[i].residues.back() == static_cast<int>(model_length) ) {
 			TR << "C-terminal extension found" << std::endl;
 			gap = (int)data.blueprint.size()-segmentStorageVector[i].residues.front()+1;
 			manager.add( BuildInstructionOP( new SegmentRebuild( Interval(head,input_pose.total_residue()), DSSP.substr( segmentStorageVector[i].residues.front()-1, gap ), aa.substr( segmentStorageVector[i].residues.front()-1, gap )) ) );
-		}
-		else if (head != 0 && headNew == 1 && segmentStorageVector[i].residues.front() == 1 ){ // N-term deletion
-		  TR << "debug: N-term deletion" << std::endl;
+		} else if ( head != 0 && headNew == 1 && segmentStorageVector[i].residues.front() == 1 ) { // N-term deletion
+			TR << "debug: N-term deletion" << std::endl;
 			this->manager.add( BuildInstructionOP( new SegmentRebuild( Interval(1,tail),  DSSP.substr( headNew-1, gap ), aa.substr( headNew-1,gap )) ) );
-		}
-		else if (tail != static_cast<int>(input_pose.total_residue()) && tailNew == static_cast<int>(model_length) && headNew == 1 &&
+		} else if ( tail != static_cast<int>(input_pose.total_residue()) && tailNew == static_cast<int>(model_length) && headNew == 1 &&
 				segmentStorageVector[i].residues.back() == static_cast<int>(model_length) ) { // C-term deletion
 			gap = (int)data.blueprint.size()-segmentStorageVector[i].residues.front()+1;
 			TR << "debug: C-term deletion" << std::endl;

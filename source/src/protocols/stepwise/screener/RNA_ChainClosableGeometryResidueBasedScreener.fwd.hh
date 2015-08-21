@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/screener/RNA_ChainClosableGeometryResidueBasedScreener.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace stepwise {
 namespace screener {
-	
-	class RNA_ChainClosableGeometryResidueBasedScreener;
-	typedef utility::pointer::shared_ptr< RNA_ChainClosableGeometryResidueBasedScreener > RNA_ChainClosableGeometryResidueBasedScreenerOP;
-	typedef utility::pointer::shared_ptr< RNA_ChainClosableGeometryResidueBasedScreener const > RNA_ChainClosableGeometryResidueBasedScreenerCOP;
-	
+
+class RNA_ChainClosableGeometryResidueBasedScreener;
+typedef utility::pointer::shared_ptr< RNA_ChainClosableGeometryResidueBasedScreener > RNA_ChainClosableGeometryResidueBasedScreenerOP;
+typedef utility::pointer::shared_ptr< RNA_ChainClosableGeometryResidueBasedScreener const > RNA_ChainClosableGeometryResidueBasedScreenerCOP;
+
 } //screener
 } //stepwise
 } //protocols

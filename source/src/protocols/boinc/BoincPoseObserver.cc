@@ -64,17 +64,17 @@ BoincCurrentPoseObserver::on_conf_change(
 )
 {
 	static int count = 0;
-	if (count > 0) {
+	if ( count > 0 ) {
 		count--;
 		return;
 	}
 	count = SKIP_FOR_EFFICIENCY;
-	if (!shmem_) return;
-	if (!Boinc::trywait_semaphore()) {
+	if ( !shmem_ ) return;
+	if ( !Boinc::trywait_semaphore() ) {
 		boinc_begin_critical_section();
-		if (event.pose->total_residue() > 0) {
+		if ( event.pose->total_residue() > 0 ) {
 			core::io::serialization::BUFFER b((char*)(&shmem_->current_pose_buf ),POSE_BUFSIZE);
-			if (core::pose::symmetry::is_symmetric( *event.pose ) && event.pose->total_residue() > MAX_SYMM_POSE_RESIDUES) {
+			if ( core::pose::symmetry::is_symmetric( *event.pose ) && event.pose->total_residue() > MAX_SYMM_POSE_RESIDUES ) {
 				core::pose::Pose pose;
 				core::pose::symmetry::extract_asymmetric_unit(*event.pose, pose);
 				write_binary(pose,b);

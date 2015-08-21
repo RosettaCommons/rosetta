@@ -75,17 +75,18 @@ public:
 		core::import_pose::centroid_pose_from_pdb( pose,"core/scoring/test_in.pdb");
 
 		core::scoring::ScoreFunctionOP scorefxn
-		          = core::scoring::ScoreFunctionFactory::create_score_function( "cen_std" );
+			= core::scoring::ScoreFunctionFactory::create_score_function( "cen_std" );
 
 		// center pose at origin
 		numeric::xyzVector< core::Real > com(0.0,0.0,0.0);
-		for (int i=1; i<=(int)pose.total_residue(); ++i)
+		for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
 			com +=pose.residue(i).atom(2).xyz();
+		}
 		com /= pose.total_residue();
 
-		for (int i=1; i<=(int)pose.total_residue(); ++i) {
+		for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
 			core::conformation::Residue const &rsd ( pose.residue(i) );
-			for (int j=1; j<=(int)rsd.natoms(); j++) {
+			for ( int j=1; j<=(int)rsd.natoms(); j++ ) {
 				core::id::AtomID id( j, i );
 				pose.set_xyz( id, pose.xyz(id) - com );
 			}
@@ -97,10 +98,10 @@ public:
 		// add jump to vrt res
 		TS_ASSERT( pose.residue(1).residue_type_set().has_name("VRT") );
 
-		if (pose.residue(1).residue_type_set().has_name("VRT")) {
+		if ( pose.residue(1).residue_type_set().has_name("VRT") ) {
 			pose.append_residue_by_jump
-				 ( *core::conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map( "VRT" ) ),
-						pose.total_residue()/2 );
+				( *core::conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map( "VRT" ) ),
+				pose.total_residue()/2 );
 
 			// make the virt atom the root
 			kinematics::FoldTree newF(pose.fold_tree());
@@ -124,17 +125,18 @@ public:
 		//core::import_pose::pose_from_pdb( pose,"core/scoring/test_in.pdb");
 
 		core::scoring::ScoreFunctionOP scorefxn
-		          = core::scoring::ScoreFunctionFactory::create_score_function( "score13_env_hb" );
+			= core::scoring::ScoreFunctionFactory::create_score_function( "score13_env_hb" );
 
 		// center pose at origin
 		numeric::xyzVector< core::Real > com(0.0,0.0,0.0);
-		for (int i=1; i<=(int)pose.total_residue(); ++i)
+		for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
 			com +=pose.residue(i).atom(2).xyz();
+		}
 		com /= pose.total_residue();
 
-		for (int i=1; i<=(int)pose.total_residue(); ++i) {
+		for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
 			core::conformation::Residue const &rsd ( pose.residue(i) );
-			for (int j=1; j<=(int)rsd.natoms(); j++) {
+			for ( int j=1; j<=(int)rsd.natoms(); j++ ) {
 				core::id::AtomID id( j, i );
 				pose.set_xyz( id, pose.xyz(id) - com );
 			}
@@ -146,8 +148,8 @@ public:
 
 		// add jump to vrt res
 		pose.append_residue_by_jump
-		   ( *core::conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map( "VRT" ) ),
-		      pose.total_residue()/2 );
+			( *core::conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map( "VRT" ) ),
+			pose.total_residue()/2 );
 
 		// make the virt atom the root
 		kinematics::FoldTree newF(pose.fold_tree());

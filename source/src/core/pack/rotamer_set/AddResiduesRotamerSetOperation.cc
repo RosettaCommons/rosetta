@@ -22,8 +22,8 @@ namespace rotamer_set {
 AddResiduesRotamerSetOperation::AddResiduesRotamerSetOperation(
 	utility::vector1<core::conformation::ResidueOP> const & residues
 ):
-core::pack::rotamer_set::RotamerSetOperation(),
-residues_(residues)
+	core::pack::rotamer_set::RotamerSetOperation(),
+	residues_(residues)
 {}
 
 core::pack::rotamer_set::RotamerSetOperationOP
@@ -40,7 +40,7 @@ void AddResiduesRotamerSetOperation::alter_rotamer_set(
 	core::pack::rotamer_set::RotamerSet & rotamer_set
 ){
 	core::Size seqnum = (core::Size) rotamer_set.resid();
-	for(core::Size i=1; i<=this->residues_.size(); ++i){
+	for ( core::Size i=1; i<=this->residues_.size(); ++i ) {
 		core::conformation::ResidueOP cur_res = residues_[i]->clone();
 		core::conformation::Residue const & existing_residue=pose.residue(seqnum);
 		cur_res->place(existing_residue, pose.conformation());

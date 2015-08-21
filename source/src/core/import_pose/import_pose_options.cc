@@ -129,8 +129,8 @@ void ImportPoseOptions::init_from_options()
 
 	// sanity check
 	if ( centroid() &&
-		( option[ in::file::fullatom ]()
-			|| ( option[ in::file::residue_type_set ].user() && option[ in::file::residue_type_set ]() == "fa_standard" ))) {
+			( option[ in::file::fullatom ]()
+			|| ( option[ in::file::residue_type_set ].user() && option[ in::file::residue_type_set ]() == "fa_standard" )) ) {
 		tr.Warning << "conflicting command line flags for centroid/full-atom input. Choosing fullatom!" << std::endl;
 		set_centroid( false );
 	}

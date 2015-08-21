@@ -61,7 +61,7 @@ public:
 	void add_creator( ResFilterCreatorOP );
 	bool has_type( std::string const & ) const;
 
-/// @brief return new ResFilter by key lookup in filter_map_ (new ResFilter parses Tag if provided)
+	/// @brief return new ResFilter by key lookup in filter_map_ (new ResFilter parses Tag if provided)
 	ResFilterOP newResFilter( std::string const &, TagCOP = TagCOP( TagOP( new Tag() ) ) ) const;
 
 #ifdef MULTI_THREADED

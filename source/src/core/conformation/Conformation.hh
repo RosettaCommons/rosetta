@@ -293,13 +293,13 @@ public:  // Secondary Structure
 public: // membrane
 
 	///////////////////////////////////////////////////////////////////////////////
-	/// Rosetta Membrane Framework												///
-	/// Core data for interacting with membrane proteins in Rosetta			    ///
-	///																			///
-	/// Authors:																///
-	///  - Rebecca Alford (rfalford12@gmail.com)								///
-	///  - Julia Koehler Leman (julia.koehler1982@gmail.com)					///
-	///  - Jeff Gray (jgray@jhu.edu)										    ///
+	/// Rosetta Membrane Framework            ///
+	/// Core data for interacting with membrane proteins in Rosetta       ///
+	///                   ///
+	/// Authors:                ///
+	///  - Rebecca Alford (rfalford12@gmail.com)        ///
+	///  - Julia Koehler Leman (julia.koehler1982@gmail.com)     ///
+	///  - Jeff Gray (jgray@jhu.edu)              ///
 	///////////////////////////////////////////////////////////////////////////////
 
 
@@ -362,8 +362,8 @@ public:  // Residues
 	/// @brief Returns the AA enum for position  <seqpos>
 	chemical::AA const &
 	aa( Size seqpos ) const {
-	debug_assert( seqpos >= 1 );
-	debug_assert( seqpos <= size() );
+		debug_assert( seqpos >= 1 );
+		debug_assert( seqpos <= size() );
 		return residues_[seqpos]->aa();
 	}
 
@@ -412,8 +412,8 @@ public:  // Residues
 	chemical::ResidueType const &
 	residue_type( Size seqpos ) const
 	{
-	debug_assert( seqpos >=1 );
-	debug_assert( seqpos <= size() );
+		debug_assert( seqpos >=1 );
+		debug_assert( seqpos <= size() );
 		return residues_[seqpos]->type();
 	}
 
@@ -452,18 +452,18 @@ public:  // Residues
 		bool new_chain = false // insert this residue as a new chain, displacing all downstream chains
 	);
 
-    /// @brief Insert a new residue by jump.  If new_chain is "true", then seqpos must be the last
+	/// @brief Insert a new residue by jump.  If new_chain is "true", then seqpos must be the last
 	/// residue of one chain (i.e. residue(seqpos).chain() != residue(seqpos+1).chain() )
 	void
 	insert_residue_by_bond(
-                           Residue const & new_rsd_in,
-                           Size seqpos, // desired seqpos of new_rsd
-                           Size anchor_pos, // in the current sequence numbering, ie before insertion of seqpos
-                           bool build_ideal_geometry = false,
-                           std::string const& anchor_atom = "",
-                           std::string const& root_atom = "",
-                           bool new_chain = false, // insert this residue as a new chain, displacing all downstream chains
-                           bool lookup_bond_length = false
+		Residue const & new_rsd_in,
+		Size seqpos, // desired seqpos of new_rsd
+		Size anchor_pos, // in the current sequence numbering, ie before insertion of seqpos
+		bool build_ideal_geometry = false,
+		std::string const& anchor_atom = "",
+		std::string const& root_atom = "",
+		bool new_chain = false, // insert this residue as a new chain, displacing all downstream chains
+		bool lookup_bond_length = false
 	);
 
 	/// @brief Append a new residue by a bond.
@@ -650,7 +650,7 @@ public:  // Bonds, Connections, Atoms, & Stubs
 		Size lr_conn_id,
 		Size res_id_upper,
 		Size ur_conn_id
-  );
+	);
 
 
 	/// @brief Update the polymer connection status between lower_seqpos and lower_seqpos+1
@@ -740,13 +740,13 @@ public:  // Conformation Cutting/Pasting
 	virtual
 	void
 	insert_conformation_by_jump(
-			Conformation const & conf,             // the conformation to be inserted
-			Size insert_seqpos,              // rsd 1 in conf goes here
-			Size insert_jumppos,             // jump#1 in conf goes here, see insert_fold_tree_by_jump
-			Size anchor_pos,                 // in the current sequence numbering, ie before insertion of conf
-			Size anchor_jump_number = 0,     // the desired jump number of the anchoring jump, default=0
-			std::string const & anchor_atom = "",  // "" means take default anchor atom
-			std::string const & root_atom   = ""   // "" means take default root   atom
+		Conformation const & conf,             // the conformation to be inserted
+		Size insert_seqpos,              // rsd 1 in conf goes here
+		Size insert_jumppos,             // jump#1 in conf goes here, see insert_fold_tree_by_jump
+		Size anchor_pos,                 // in the current sequence numbering, ie before insertion of conf
+		Size anchor_jump_number = 0,     // the desired jump number of the anchoring jump, default=0
+		std::string const & anchor_atom = "",  // "" means take default anchor atom
+		std::string const & root_atom   = ""   // "" means take default root   atom
 	);
 
 	/// @brief copy a stretch of coordinates/torsions from another Conformation
@@ -1158,8 +1158,8 @@ private:
 	Residue const &
 	residue_( Size seqpos ) const
 	{
-	debug_assert( seqpos >=1 );
-	debug_assert( seqpos <= size() );
+		debug_assert( seqpos >=1 );
+		debug_assert( seqpos <= size() );
 		return *residues_[ seqpos ];
 	}
 
@@ -1216,7 +1216,7 @@ private:
 
 	void
 	residues_append( Residue const & new_rsd, bool start_new_chain, bool by_jump = false,
-        std::string const & root_atom = "", id::NamedAtomID anchor_id = id::BOGUS_NAMED_ATOM_ID);
+		std::string const & root_atom = "", id::NamedAtomID anchor_id = id::BOGUS_NAMED_ATOM_ID);
 
 
 	void
@@ -1246,11 +1246,11 @@ private:
 
 	/// @brief  Find the four atoms that define the torsion angle of this branch connection.
 	bool branch_connection_torsion_angle_atoms(
-			TorsionID const & torsion,
-			AtomID & id1,
-			AtomID & id2,
-			AtomID & id3,
-			AtomID & id4 ) const;
+		TorsionID const & torsion,
+		AtomID & id1,
+		AtomID & id2,
+		AtomID & id3,
+		AtomID & id4 ) const;
 
 
 	/// @brief Helper method to determine whether two atoms have a chemical bond linking them.
@@ -1276,8 +1276,9 @@ private:  // setting the moved data
 	set_xyz_moved( utility::vector1<AtomID> const & ids )
 	{
 		structure_moved_ = true;
-		for(core::Size i=1; i<=ids.size(); ++i)
+		for ( core::Size i=1; i<=ids.size(); ++i ) {
 			xyz_moved_[ ids[i] ] = true;
+		}
 		residue_torsions_need_updating_ = true;
 	}
 
@@ -1391,8 +1392,8 @@ private:
 
 	/// @brief chain number for each position
 	/**
-		 @details conformation is in charge of making sure that the Residue chain
-		 ID's and the chain_endings_ vector stay in sync.
+	@details conformation is in charge of making sure that the Residue chain
+	ID's and the chain_endings_ vector stay in sync.
 	**/
 	utility::vector1< Size > chain_endings_;
 
@@ -1427,15 +1428,15 @@ private:
 
 	/// @brief book-keeping array for energy evaluations
 	/**
-		 @details store which DOF's have changed since the last call to reset_move_data
-		 note that we are not currently differentiating dof's from the same atom
+	@details store which DOF's have changed since the last call to reset_move_data
+	note that we are not currently differentiating dof's from the same atom
 	**/
 	AtomID_Mask dof_moved_;
 
 
 	/// @brief book-keeping array for energy evaluations
 	/**
-		 @details store which xyz's have changed since the last call to reset_move_data
+	@details store which xyz's have changed since the last call to reset_move_data
 	**/
 	AtomID_Mask xyz_moved_;
 

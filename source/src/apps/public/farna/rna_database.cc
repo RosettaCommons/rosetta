@@ -110,19 +110,18 @@ create_rna_vall_torsions_test( ){
 
 	utility::io::ozstream torsions_out( outfile );
 
-	for (Size n = 1; n <= infiles.size(); n++ )
-  {
-	  pose::Pose pose;
+	for ( Size n = 1; n <= infiles.size(); n++ ) {
+		pose::Pose pose;
 		core::import_pose::pose_from_pdb( pose, *rsd_set, infiles[n] );
-	  /////////////////////////////////////////
-	  protocols::farna::make_phosphate_nomenclature_matches_mini( pose );
-	  /////////////////////////////////////////
+		/////////////////////////////////////////
+		protocols::farna::make_phosphate_nomenclature_matches_mini( pose );
+		/////////////////////////////////////////
 
 		protocols::farna::create_rna_vall_torsions( pose, torsions_out, exclude_res_list );
 
 		std::cout << "***********************************************************" << std::endl;
 		std::cout << "Put torsions from PDB file " <<  infiles[n] << " into " << outfile << std::endl;
-	  std::cout << "***********************************************************" << std::endl;
+		std::cout << "***********************************************************" << std::endl;
 
 	}
 
@@ -132,31 +131,31 @@ create_rna_vall_torsions_test( ){
 ////////////////////////////////////////////////////////////////////////////////////
 bool
 check_for_contacts( pose::Pose & pose, Size const i,
-										Vector const & atom_j, Vector const dir_vector,
-										char & edge_i, char & orientation )
+	Vector const & atom_j, Vector const dir_vector,
+	char & edge_i, char & orientation )
 {
 	static Real const CONTACT_CUTOFF2( 3.0 * 3.0 );
 
 	scoring::rna::RNA_ScoringInfo  & rna_scoring_info( scoring::rna::nonconst_rna_scoring_info_from_pose( pose ) );
 	scoring::rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
 	utility::vector1< Vector > const & base_centroids( rna_centroid_info.base_centroids() );
-  utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
+	utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
 
 	//Figure out jump.
 	conformation::Residue const & rsd_i( pose.residue( i ) );
 
 	bool found_contact( false );
-  for ( Size ii=rsd_i.first_sidechain_atom()+1 ; ii<= rsd_i.nheavyatoms(); ++ii ) {
-		//		if ( rsd_i.atom_name( ii ) == " O2'" ) continue;
+	for ( Size ii=rsd_i.first_sidechain_atom()+1 ; ii<= rsd_i.nheavyatoms(); ++ii ) {
+		//  if ( rsd_i.atom_name( ii ) == " O2'" ) continue;
 		Real const dist2( (rsd_i.xyz( ii ) - atom_j ).length_squared() ) ;
-    if ( dist2 < CONTACT_CUTOFF2 ) {
-			//			std::cout << dist2 << " " <<  i << " " << rsd_i.atom_name( ii ) << std::endl;
+		if ( dist2 < CONTACT_CUTOFF2 ) {
+			//   std::cout << dist2 << " " <<  i << " " << rsd_i.atom_name( ii ) << std::endl;
 			found_contact = true;
 			break;
 		}
-  }
+	}
 
-	if (!found_contact) return false;
+	if ( !found_contact ) return false;
 
 	Vector const & centroid_i( base_centroids[i] );
 	kinematics::Stub const & stub_i( base_stubs[i] );
@@ -168,11 +167,11 @@ check_for_contacts( pose::Pose & pose, Size const i,
 	Vector d_ij = atom_j - centroid_i;
 	Real const dist_x = dot_product( d_ij, x_i );
 	Real const dist_y = dot_product( d_ij, y_i );
-	//	Real const dist_z = dot_product( d_ij, z_i );
-	//	Real const rho2 = dist_x*dist_x + dist_y*dist_y;
+	// Real const dist_z = dot_product( d_ij, z_i );
+	// Real const rho2 = dist_x*dist_x + dist_y*dist_y;
 
 	Real const zeta = numeric::conversions::degrees( std::atan2( dist_y, dist_x) );
-	if (std::abs(zeta) < 60.0) edge_i = 'W';  //Watson-Crick edge
+	if ( std::abs(zeta) < 60.0 ) edge_i = 'W';  //Watson-Crick edge
 	else if ( zeta > +60.0 )   edge_i = 'H'; // Hoogsteen edge
 	else                       edge_i = 'S'; // Sugar edge
 
@@ -184,7 +183,7 @@ check_for_contacts( pose::Pose & pose, Size const i,
 /////////////////////////////////////////////////////////////////////////////////
 void
 check_for_contacts_and_output_jump_o2prime( pose::Pose & pose, Size const i, Size const j,
-																					 utility::io::ozstream & dataout ){
+	utility::io::ozstream & dataout ){
 
 	char edge_i, orientation;
 
@@ -199,12 +198,12 @@ check_for_contacts_and_output_jump_o2prime( pose::Pose & pose, Size const i, Siz
 	char const edge_j = '2';
 
 	kinematics::Stub const stub1( rsd_i.xyz( rsd_i.chi_atoms(1)[4] ),
-																rsd_i.xyz( rsd_i.chi_atoms(1)[3] ),
-																rsd_i.xyz( rsd_i.chi_atoms(1)[2] ) );
+		rsd_i.xyz( rsd_i.chi_atoms(1)[3] ),
+		rsd_i.xyz( rsd_i.chi_atoms(1)[2] ) );
 
 	kinematics::Stub const stub2( rsd_j.xyz( atom_name ),
-																rsd_j.xyz( " C2'" ),
-																rsd_j.xyz( " C3'" ) );
+		rsd_j.xyz( " C2'" ),
+		rsd_j.xyz( " C3'" ) );
 
 	dataout << "PAIR " <<
 		I(5, i) << ' ' << edge_i << ' ' <<
@@ -222,7 +221,7 @@ check_for_contacts_and_output_jump_o2prime( pose::Pose & pose, Size const i, Siz
 /////////////////////////////////////////////////////////////////////////////////
 void
 check_for_contacts_and_output_jump_phosphate( pose::Pose & pose, Size const i, Size const j,
-																							utility::io::ozstream & dataout ){
+	utility::io::ozstream & dataout ){
 
 	char edge_i, orientation;
 
@@ -232,30 +231,30 @@ check_for_contacts_and_output_jump_phosphate( pose::Pose & pose, Size const i, S
 
 
 	Vector dir_vector  = cross( rsd_j.xyz( " OP1" ) - rsd_j.xyz( " P  " ),
-															rsd_j.xyz( " OP2" ) - rsd_j.xyz( " P  " ) );
+		rsd_j.xyz( " OP2" ) - rsd_j.xyz( " P  " ) );
 
 	std::string atom_name = " OP2";
 	Vector atom_vector = rsd_j.xyz( atom_name );
 	if ( !check_for_contacts( pose, i, atom_vector, dir_vector, edge_i, orientation) ) {
 		atom_name = " OP1";
 		atom_vector = rsd_j.xyz( atom_name );
-		if (!check_for_contacts( pose, i, atom_vector, dir_vector, edge_i, orientation) ) return;
+		if ( !check_for_contacts( pose, i, atom_vector, dir_vector, edge_i, orientation) ) return;
 	}
 
 
 	char const edge_j = 'P';
 
 	kinematics::Stub const stub1( rsd_i.xyz( rsd_i.chi_atoms(1)[4] ),
-																rsd_i.xyz( rsd_i.chi_atoms(1)[3] ),
-																rsd_i.xyz( rsd_i.chi_atoms(1)[2] ) );
+		rsd_i.xyz( rsd_i.chi_atoms(1)[3] ),
+		rsd_i.xyz( rsd_i.chi_atoms(1)[2] ) );
 
 	kinematics::Stub const stub2_fwd( rsd_j.xyz( atom_name ),
-																		rsd_j.xyz( " P  " ),
-																		prev_rsd.xyz( " O3'" ) );
+		rsd_j.xyz( " P  " ),
+		prev_rsd.xyz( " O3'" ) );
 
 	kinematics::Stub const stub2_back( rsd_j.xyz( atom_name ),
-																		 rsd_j.xyz( " P  " ),
-																		 rsd_j.xyz( " O5'" ) );
+		rsd_j.xyz( " P  " ),
+		rsd_j.xyz( " O5'" ) );
 
 	dataout << "PAIR " <<
 		I(5, i) << ' ' << edge_i << ' ' <<
@@ -263,7 +262,7 @@ check_for_contacts_and_output_jump_phosphate( pose::Pose & pose, Size const i, S
 		orientation << "   " <<
 		pose.residue(i).name1() << ' ' << pose.residue(j).name1() << " " <<
 		rsd_i.atom_name( rsd_i.chi_atoms(1)[4] ) <<  " " <<
-	  atom_name <<  " " <<
+		atom_name <<  " " <<
 		kinematics::Jump( stub1, stub2_fwd ) <<
 		kinematics::Jump( stub1, stub2_back ) <<
 		std::endl;
@@ -294,7 +293,7 @@ create_bp_jump_database_test( ){
 	core::import_pose::pose_from_pdb( pose, *rsd_set, infile );
 	make_phosphate_nomenclature_matches_mini( pose );
 
-	//	core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
+	// core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 
 	// Fill base pairing information... these are
 	// all functions used in scoring... see RNA_BaseBaseEnergy.cc
@@ -309,7 +308,7 @@ create_bp_jump_database_test( ){
 	utility::io::ozstream dataout( outfile );
 
 	for ( EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
-				it != scored_base_pair_list.end(); ++it ){
+			it != scored_base_pair_list.end(); ++it ) {
 
 		BasePair const base_pair = it->second;
 
@@ -332,11 +331,11 @@ create_bp_jump_database_test( ){
 		conformation::Residue const & rsd_i( pose.residue( i ) );
 		conformation::Residue const & rsd_j( pose.residue( j ) );
 		kinematics::Stub const stub_i( rsd_i.xyz( rsd_i.chi_atoms(1)[4] ),
-																	 rsd_i.xyz( rsd_i.chi_atoms(1)[3] ),
-																	 rsd_i.xyz( rsd_i.chi_atoms(1)[2] ) );
+			rsd_i.xyz( rsd_i.chi_atoms(1)[3] ),
+			rsd_i.xyz( rsd_i.chi_atoms(1)[2] ) );
 		kinematics::Stub const stub_j( rsd_j.xyz( rsd_j.chi_atoms(1)[4] ),
-																	 rsd_j.xyz( rsd_j.chi_atoms(1)[3] ),
-																	 rsd_j.xyz( rsd_j.chi_atoms(1)[2] ) );
+			rsd_j.xyz( rsd_j.chi_atoms(1)[3] ),
+			rsd_j.xyz( rsd_j.chi_atoms(1)[2] ) );
 
 		dataout << "PAIR " <<
 			I(5, i) << ' ' << edge_i << ' ' <<
@@ -345,7 +344,7 @@ create_bp_jump_database_test( ){
 			pose.residue(i).name1() << ' ' << pose.residue(j).name1() << " " <<
 			rsd_i.atom_name( rsd_i.chi_atoms(1)[4] ) <<  " " <<
 			rsd_j.atom_name( rsd_j.chi_atoms(1)[4] ) <<  " " <<
-		  kinematics::Jump( stub_i, stub_j) <<
+			kinematics::Jump( stub_i, stub_j) <<
 			std::endl;
 
 	}
@@ -353,13 +352,13 @@ create_bp_jump_database_test( ){
 	//How about 2' and Phosphate jumps?
 	// Look at each base.
 	core::scoring::EnergyGraph const & energy_graph( pose.energies().energy_graph() );
-	for (Size i = 1; i <= pose.total_residue(); i++ ){
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 
 		// Neighboring residues making base-phosphate or base-2'OH contacts?
 		for ( graph::Graph::EdgeListConstIter
-						iru  = energy_graph.get_node(i)->const_edge_list_begin(),
-						irue = energy_graph.get_node(i)->const_edge_list_end();
-					iru != irue; ++iru ) {
+				iru  = energy_graph.get_node(i)->const_edge_list_begin(),
+				irue = energy_graph.get_node(i)->const_edge_list_end();
+				iru != irue; ++iru ) {
 			EnergyEdge const * edge( static_cast< EnergyEdge const *> ( *iru ) );
 			Size const j( edge->get_other_ind(i) );
 
@@ -367,11 +366,11 @@ create_bp_jump_database_test( ){
 				continue;
 			}
 
-			//			EnergyGraph const & energy_graph( pose.energies().energy_graph() );
+			//   EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
 			check_for_contacts_and_output_jump_o2prime( pose, i, j, dataout );
 
-			if ( j > 1  )	check_for_contacts_and_output_jump_phosphate( pose, i, j, dataout );
+			if ( j > 1  ) check_for_contacts_and_output_jump_phosphate( pose, i, j, dataout );
 
 		}
 	}
@@ -445,7 +444,7 @@ create_base_pair_step_database_test( ){
 
 	utility::vector1< std::string > const infiles  = option[ in::file::s ]();
 
-	for ( Size n = 1; n <= infiles.size(); n++ ){
+	for ( Size n = 1; n <= infiles.size(); n++ ) {
 		std::string const & infile = infiles[ n ];
 
 		std::string intag = infile;
@@ -462,12 +461,12 @@ create_base_pair_step_database_test( ){
 		figure_out_base_pair_partner( pose, partner, false );
 
 		for ( std::map< Size, Size >::const_iterator it = partner.begin();
-					it != partner.end(); ++it ){
+				it != partner.end(); ++it ) {
 			Size const i = it->first;
 			Size const j = it->second;
 			if ( i < pose.total_residue() &&
-					 partner.find( i+1 ) != partner.end() && j > 1 && partner[ i+1 ] == j-1 &&
-					 !pose.fold_tree().is_cutpoint(i) && !pose.fold_tree().is_cutpoint(j-1) ){
+					partner.find( i+1 ) != partner.end() && j > 1 && partner[ i+1 ] == j-1 &&
+					!pose.fold_tree().is_cutpoint(i) && !pose.fold_tree().is_cutpoint(j-1) ) {
 				utility::vector1< int > const base_pair_res = utility::tools::make_vector1( i, i+1, j-1, j);
 
 				pose::Pose bps_pose;
@@ -526,31 +525,31 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-	using namespace basic::options;
-	utility::vector1< Size > blank_size_vector;
+		using namespace basic::options;
+		utility::vector1< Size > blank_size_vector;
 
 
-	std::cout << std::endl << "Basic usage:  " << argv[0] << "  -s <pdb1> [... <more pdbs>] -vall_torsions [name of output torsions file to create] " << std::endl;
-	std::cout <<              "              " << argv[0] << "  -s <pdb1> [... <more pdbs>] -jump_database [name of rigid-body orientation database to create] " << std::endl;
-	std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
+		std::cout << std::endl << "Basic usage:  " << argv[0] << "  -s <pdb1> [... <more pdbs>] -vall_torsions [name of output torsions file to create] " << std::endl;
+		std::cout <<              "              " << argv[0] << "  -s <pdb1> [... <more pdbs>] -jump_database [name of rigid-body orientation database to create] " << std::endl;
+		std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
 
-	NEW_OPT( exclude_res, "Residues exlcuded for database creation (works for one file only)", blank_size_vector );
-	option.add_relevant( basic::options::OptionKeys::rna::vall_torsions );
-	option.add_relevant( basic::options::OptionKeys::rna::jump_database );
-	option.add_relevant( basic::options::OptionKeys::rna::bps_database );
-
-
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	core::init::init(argc, argv);
+		NEW_OPT( exclude_res, "Residues exlcuded for database creation (works for one file only)", blank_size_vector );
+		option.add_relevant( basic::options::OptionKeys::rna::vall_torsions );
+		option.add_relevant( basic::options::OptionKeys::rna::jump_database );
+		option.add_relevant( basic::options::OptionKeys::rna::bps_database );
 
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		core::init::init(argc, argv);
 
-	protocols::viewer::viewer_main( my_main );
+
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
+
+		protocols::viewer::viewer_main( my_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

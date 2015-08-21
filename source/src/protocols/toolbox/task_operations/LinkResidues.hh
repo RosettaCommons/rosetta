@@ -58,10 +58,10 @@ public:
 
 	virtual void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
-  virtual void parse_tag(TagCOP tag, DataMap & );
+	virtual void parse_tag(TagCOP tag, DataMap & );
 
 private:
-		utility::vector1< std::string > allGroups_;
+	utility::vector1< std::string > allGroups_;
 
 };
 

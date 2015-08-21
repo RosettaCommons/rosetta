@@ -23,8 +23,8 @@
 #ifdef __clang__
 #include <memory>
 namespace boost {
-	template<typename T>
-	inline T* get_pointer(const std::shared_ptr<T>& p) { return p.get(); }
+template<typename T>
+inline T* get_pointer(const std::shared_ptr<T>& p) { return p.get(); }
 }
 #endif
 #endif
@@ -68,12 +68,12 @@ namespace boost {
 
 
 /*#if  !defined(WINDOWS) && !defined(WIN32)
-	#include <sys/time.h>
+#include <sys/time.h>
 #endif
 */
 
 #ifndef _WIN32
-	#include "pthread.h"
+#include "pthread.h"
 #endif
 
 
@@ -90,7 +90,7 @@ getRG()
 {
 	static numeric::random::uniform_RG_OP RG = 0;
 
-	if( RG == 0 ) {
+	if ( RG == 0 ) {
 		//RG = new numeric::random::mt19937_RG;
 		RG = numeric::random::uniform_RG_OP( new numeric::random::standard_RG );
 		RG->setSeed( time(NULL) );
@@ -103,18 +103,18 @@ getRG()
 UDPSocketClient::UDPSocketClient() : sentCount_(0)
 {
 #ifndef  __native_client__
-    /*
-	#ifdef __APPLE__
-		max_packet_size_ = 8192-512-2;  // ← MacOS X kernel can send only small packets even locally.
-	#else
-		max_packet_size_ = 64512; // 1024*63
-	#endif */
+	/*
+#ifdef __APPLE__
+	max_packet_size_ = 8192-512-2;  // ← MacOS X kernel can send only small packets even locally.
+#else
+	max_packet_size_ = 64512; // 1024*63
+#endif */
 
 	max_packet_size_ = 8192-512-2;  // Choosing max pocket size seems to be less obvious when we have cross OS link, we have to pick less common denominator
 
 	//#ifndef WIN_PYROSETTA
 	// generating random uuid by hands
-	for(unsigned int i=0; i<sizeof(uuid_.shorts_)/sizeof(uuid_.shorts_[0]); i++) uuid_.shorts_[i] = (unsigned short) getRG()->getRandom()*65536;  //RG.random_range(0, 65536);
+	for ( unsigned int i=0; i<sizeof(uuid_.shorts_)/sizeof(uuid_.shorts_[0]); i++ ) uuid_.shorts_[i] = (unsigned short) getRG()->getRandom()*65536;  //RG.random_range(0, 65536);
 
 	memset(&socket_addr_, '\0', sizeof(sockaddr_in));
 
@@ -135,7 +135,7 @@ UDPSocketClient::UDPSocketClient( UDPSocketClient const & other ) :
 	socket_h_( other.socket_h_ )
 {
 #ifndef  __native_client__
-  // reinit connection using coppied info
+	// reinit connection using coppied info
 	socket_h_ = socket(AF_INET, SOCK_DGRAM, 0);
 #endif
 }
@@ -144,11 +144,11 @@ UDPSocketClient::~UDPSocketClient()
 {
 	//#ifndef WIN_PYROSETTA
 #ifndef  __native_client__
-  #ifdef WIN32
-	  closesocket(socket_h_);
-	#else
-		close(socket_h_);
-	#endif
+#ifdef WIN32
+	closesocket(socket_h_);
+#else
+	close(socket_h_);
+#endif
 	//#endif
 #endif
 }
@@ -157,19 +157,19 @@ void UDPSocketClient::sendMessage(std::string msg)
 {
 #ifndef  __native_client__
 	int count = 1;
-	if( msg.size() > max_packet_size_ )  { count = msg.size()/max_packet_size_ + 1; }
+	if ( msg.size() > max_packet_size_ )  { count = msg.size()/max_packet_size_ + 1; }
 
-	for(int i=0; i<count; i++) {
+	for ( int i=0; i<count; i++ ) {
 		unsigned int last = (i+1)*max_packet_size_;
-		if( last>msg.size() ) last = msg.size();
+		if ( last>msg.size() ) last = msg.size();
 		sendRAWMessage(sentCount_, i, count, &msg[i*max_packet_size_], &msg[last] );
-		if(count > 1) {
-			#ifdef _WIN32
-				Sleep(10); // Sleep function takes milliseconds.
-			#else
-				timespec ts;  ts.tv_sec=0;  ts.tv_nsec=1000000; //time to sleep in nanoseconds, we want to take a nap for ~0.001sec
-				nanosleep(&ts, NULL);
-			#endif
+		if ( count > 1 ) {
+#ifdef _WIN32
+			Sleep(10); // Sleep function takes milliseconds.
+#else
+			timespec ts;  ts.tv_sec=0;  ts.tv_nsec=1000000; //time to sleep in nanoseconds, we want to take a nap for ~0.001sec
+			nanosleep(&ts, NULL);
+#endif
 		}
 	}
 
@@ -179,19 +179,19 @@ void UDPSocketClient::sendMessage(std::string msg)
 
 void UDPSocketClient::sendRAWMessage(int globalPacketID, int packetI, int packetCount, char * msg_begin, char *msg_end)
 {
-	#ifndef  __native_client__
-		std::string buf(msg_end - msg_begin + sizeof(uuid_.bytes_) + sizeof(short)*3, 0);
-		int i = 0;
+#ifndef  __native_client__
+	std::string buf(msg_end - msg_begin + sizeof(uuid_.bytes_) + sizeof(short)*3, 0);
+	int i = 0;
 
-		memcpy(&buf[i], uuid_.bytes_, sizeof(uuid_.bytes_));  i+= sizeof(uuid_.bytes_);
-		memcpy(&buf[i], &globalPacketID, 2);  i+=2;
-		memcpy(&buf[i], &packetI, 2);  i+=2;
-		memcpy(&buf[i], &packetCount, 2);  i+=2;
-		memcpy(&buf[i], msg_begin, msg_end-msg_begin); // i+=msg_end-msg_begin; //THIS VALUE IS NEVER USED. if more after msg added, uncomment!
-		//#ifndef WIN_PYROSETTA
-		sendto(socket_h_, &buf[0], buf.size(), 0 , (struct sockaddr *)&socket_addr_, sizeof(struct sockaddr_in));
-		//#endif
-	#endif
+	memcpy(&buf[i], uuid_.bytes_, sizeof(uuid_.bytes_));  i+= sizeof(uuid_.bytes_);
+	memcpy(&buf[i], &globalPacketID, 2);  i+=2;
+	memcpy(&buf[i], &packetI, 2);  i+=2;
+	memcpy(&buf[i], &packetCount, 2);  i+=2;
+	memcpy(&buf[i], msg_begin, msg_end-msg_begin); // i+=msg_end-msg_begin; //THIS VALUE IS NEVER USED. if more after msg added, uncomment!
+	//#ifndef WIN_PYROSETTA
+	sendto(socket_h_, &buf[0], buf.size(), 0 , (struct sockaddr *)&socket_addr_, sizeof(struct sockaddr_in));
+	//#endif
+#endif
 }
 
 void
@@ -228,8 +228,8 @@ operator<<(std::ostream & output, UDPSocketClient const & client)
 }
 
 /* -------------------------------------------------------------------------------------------------
-         PyMolMover Class
-   ---------------------------------------------------------------------------------------------- */
+PyMolMover Class
+---------------------------------------------------------------------------------------------- */
 
 /// @brief ctor
 PyMolMover::PyMolMover() :
@@ -265,13 +265,13 @@ std::string PyMolMover::get_name() const
 
 std::string PyMolMover::get_PyMol_model_name(Pose const & pose) const
 {
-	if( pymol_name_.size() ) {
+	if ( pymol_name_.size() ) {
 		return pymol_name_;
 	} else {
 		core::pose::PDBInfoCOP info = pose.pdb_info();
-		if( info && info->name().size() ) {
+		if ( info && info->name().size() ) {
 			std::string n = info->name();
-			for(unsigned int i=0; i<n.size(); i++) if( n[i] == '/' ) n[i] = '_';
+			for ( unsigned int i=0; i<n.size(); i++ ) if ( n[i] == '/' ) n[i] = '_';
 			return n;
 		} else {
 			return "pose";
@@ -286,7 +286,7 @@ bool PyMolMover::is_it_time()
 	//double t = clock() / CLOCKS_PER_SEC;
 	double t = time(NULL);
 	//TR << "t=" << t << " cl="<< clock() << std::endl;
-	if( t - last_packet_sent_time_ < update_interval_ ) return false;
+	if ( t - last_packet_sent_time_ < update_interval_ ) return false;
 	last_packet_sent_time_ = t;
 	return true;
 }
@@ -296,7 +296,7 @@ void PyMolMover::apply( Pose const & pose)
 {
 	TR.Trace << "PyMolMover::apply( Pose const & pose)..." << std::endl;
 
-	if( !is_it_time() ) return;
+	if ( !is_it_time() ) return;
 	TR.Trace << "PyMOL_Mover::apply It is time!" << std::endl;
 
 	std::string name = get_PyMol_model_name(pose);
@@ -339,7 +339,7 @@ void PyMolMover::apply( Pose & pose)
 
 void PyMolMover::print(std::string const & message)
 {
-	if( !is_it_time() ) return;
+	if ( !is_it_time() ) return;
 
 	std::string msg =  std::string("Text    ") + char(keep_history_) + char(0) /* Place holder for name size = 0 */ + message;
 
@@ -349,22 +349,22 @@ void PyMolMover::print(std::string const & message)
 void PyMolMover::send_RAW_Energies(Pose const &pose, std::string energyType, utility::vector1<int> const & energies)
 {
 #ifndef  __native_client__
-	if( !is_it_time() ) return;
+	if ( !is_it_time() ) return;
 
 	std::string msg(8*energies.size(), ' ');
 	core::pose::PDBInfoCOP info = pose.pdb_info();
-	for(unsigned int i=1; i<=energies.size(); i++) {
+	for ( unsigned int i=1; i<=energies.size(); i++ ) {
 		char chain = ' ';
 		char icode = ' ';
 		int  res = i;
-		if(info) {
+		if ( info ) {
 			chain = info->chain(i);
 			icode = info->icode(i);
 			res = info->number(i);
 		}
 		char buf[256];
 		sprintf(buf, "%c%4d%c%02x", chain, res, icode, energies[i]);
-		for(int k=0; k<8; k++) msg[(i-1)*8+k] = buf[k];
+		for ( int k=0; k<8; k++ ) msg[(i-1)*8+k] = buf[k];
 	}
 	//TR << msg << std::endl;
 
@@ -378,8 +378,8 @@ void PyMolMover::send_RAW_Energies(Pose const &pose, std::string energyType, uti
 	std::string sname = energyType;
 
 	std::string message = std::string("Ene.gzip") + char(keep_history_) \
-						  + char(name.size()) + name \
-						  + char(sname.size()) + sname + zmsg.str();
+		+ char(name.size()) + name \
+		+ char(sname.size()) + sname + zmsg.str();
 
 	//TR << "Sending message: " << message << std::endl << "Size:" << message.size() << std::endl;
 	//TR << "Sending message, Size:" << message.size() << std::endl;
@@ -391,35 +391,35 @@ void PyMolMover::send_RAW_Energies(Pose const &pose, std::string energyType, uti
 void PyMolMover::send_energy(Pose const &pose, core::scoring::ScoreType score_type)
 {
 #ifndef  __native_client__
-	if( !is_it_time() ) return;
+	if ( !is_it_time() ) return;
 
-	if( pose.energies().energies_updated() ) {
+	if ( pose.energies().energies_updated() ) {
 
 		utility::vector1<core::Real> e(pose.total_residue());
 		core::Real min=1e100, max=1e-100;
-		for(unsigned int i=1; i<=e.size(); i++) {
-			if( score_type == core::scoring::total_score ) e[i] = pose.energies().residue_total_energy(i);
+		for ( unsigned int i=1; i<=e.size(); i++ ) {
+			if ( score_type == core::scoring::total_score ) e[i] = pose.energies().residue_total_energy(i);
 			else e[i] = pose.energies().residue_total_energies(i)[score_type];
 
-			if( min > e[i] ) min = e[i];
-			if( max < e[i] ) max = e[i];
+			if ( min > e[i] ) min = e[i];
+			if ( max < e[i] ) max = e[i];
 		}
 		// We not using send_RAW_Energies for efficiency reasons...
 		std::string msg(8*e.size(), ' ');
-        core::pose::PDBInfoCOP info = pose.pdb_info();
-		for(unsigned int i=1; i<=e.size(); i++) {
+		core::pose::PDBInfoCOP info = pose.pdb_info();
+		for ( unsigned int i=1; i<=e.size(); i++ ) {
 			char chain = ' ';
 			char icode = ' ';
 			int  res = i;
-            if(info) {
-                chain = info->chain(i);
-                icode = info->icode(i);
-                res = info->number(i);
-            }
+			if ( info ) {
+				chain = info->chain(i);
+				icode = info->icode(i);
+				res = info->number(i);
+			}
 			char buf[256];
 			e[i] = (e[i]-min)*255. / (max-min+1e-100);
 			sprintf(buf, "%c%4d%c%02x", chain, res, icode, int(e[i]));
-			for(int k=0; k<8; k++) msg[(i-1)*8+k] = buf[k];
+			for ( int k=0; k<8; k++ ) msg[(i-1)*8+k] = buf[k];
 		}
 
 		// Compressing message
@@ -432,8 +432,8 @@ void PyMolMover::send_energy(Pose const &pose, core::scoring::ScoreType score_ty
 		std::string sname = core::scoring::name_from_score_type(score_type);
 
 		std::string message =  std::string("Ene.gzip") + char(keep_history_) \
-		                      + char(name.size()) + name \
-							  + char(sname.size()) + sname + zmsg.str();
+			+ char(name.size()) + name \
+			+ char(sname.size()) + sname + zmsg.str();
 
 		//TR << "Sending message: " << message << std::endl << "Size:" << message.size() << std::endl;
 		//TR << "Sending message, Size:" << message.size() << std::endl;
@@ -450,7 +450,7 @@ void PyMolMover::send_energy(Pose const &pose, std::string const & stype)
 }
 
 /// @brief Send Membrane Planes to PyMol
-/// @details If pose is a membrane pose 
+/// @details If pose is a membrane pose
 /// pymol viewer will build CGO planes from points specified
 void PyMolMover::send_membrane_planes( Pose const & pose ) {
 
@@ -462,7 +462,7 @@ void PyMolMover::send_membrane_planes( Pose const & pose ) {
 
 	// Check the membrane planes can be visualized
 	if ( !pose.conformation().is_membrane() ) return;
-	
+
 	// Grab a list of relevant residues and go
 	// Compute radius of gyration of the pose
 	utility::vector1< bool > relevant_residues;
@@ -478,7 +478,7 @@ void PyMolMover::send_membrane_planes( Pose const & pose ) {
 	// Get the normal vector and center position
 	core::Vector normal( pose.conformation().membrane_info()->membrane_normal() );
 	core::Vector center( pose.conformation().membrane_info()->membrane_center() );
-	
+
 	// Get the plane thickness used by Rosetta
 	core::Real thickness( pose.conformation().membrane_info()->membrane_thickness() );
 
@@ -497,15 +497,15 @@ void PyMolMover::send_membrane_planes( Pose const & pose ) {
 	normal_msg += utility::to_string( normal.y() );
 	normal_msg += ",";
 	normal_msg += utility::to_string( normal.z() );
-	
+
 	// Encode the thickness
 	std::string thickness_msg = ",";
 	thickness_msg += utility::to_string( thickness );
-	
+
 	// Encode the radius of gyration
 	std::string rg_msg = ",";
 	rg_msg += utility::to_string( rg );
-	
+
 	// Construct full message
 	std::string msg = center_msg + normal_msg + thickness_msg + rg_msg;
 
@@ -519,9 +519,9 @@ void PyMolMover::send_membrane_planes( Pose const & pose ) {
 	std::string sname = "membrane_planes";
 
 	std::string message =  std::string("Mem.gzip") + char(keep_history_) \
-	+ char(name.size()) + name \
-	+ char(sname.size()) + sname + zmsg.str();
-	
+		+ char(name.size()) + name \
+		+ char(sname.size()) + sname + zmsg.str();
+
 	link_.sendMessage(message);
 
 #endif
@@ -532,13 +532,13 @@ void PyMolMover::send_membrane_planes( Pose const & pose ) {
 void PyMolMover::send_colors(Pose const &pose, std::map<int, int> const & colors, X11Colors default_color)
 {
 #ifndef  __native_client__
-utility::vector1<int> energies( pose.total_residue(), default_color);  // energies = [ X11Colors[default_color][0] ] * pose.total_residue()
+	utility::vector1<int> energies( pose.total_residue(), default_color);  // energies = [ X11Colors[default_color][0] ] * pose.total_residue()
 
-	for(std::map<int, int>:: const_iterator i = colors.begin(); i!=colors.end(); ++i) {
+	for ( std::map<int, int>:: const_iterator i = colors.begin(); i!=colors.end(); ++i ) {
 		PyAssert( (*i).first >=1 && (*i).first <= static_cast<int>(pose.total_residue()),
-				"PyMolMover::send_colors residue index is out of range!");
+			"PyMolMover::send_colors residue index is out of range!");
 		PyAssert( (*i).second >= XC_first_color && (*i).second <= XC_last_color,
-				"PyMolMover::send_colors color index is out of range!");
+			"PyMolMover::send_colors color index is out of range!");
 
 		energies[ (*i).first ] = (*i).second;  // for r in colors: energies[r-1] = X11Colors[ colors[r] ][0]
 	}
@@ -566,19 +566,19 @@ operator<<(std::ostream & output, PyMolMover const & mover)
 
 void PyMolObserver::attach(core::pose::Pose &p)
 {
-		p.attach_general_obs(&PyMolObserver::generalEvent, this);
+	p.attach_general_obs(&PyMolObserver::generalEvent, this);
 }
 
 void PyMolObserver::detach(core::pose::Pose &p)
 {
-		p.detach_general_obs(&PyMolObserver::generalEvent, this);
+	p.detach_general_obs(&PyMolObserver::generalEvent, this);
 }
 
 
 PyMolObserverOP AddPyMolObserver(core::pose::Pose &p, bool keep_history, core::Real update_interval)
 {
 	//Add options
-    PyMolObserverOP o( new PyMolObserver );
+	PyMolObserverOP o( new PyMolObserver );
 	o->pymol().keep_history(keep_history);
 	o->pymol().update_interval(update_interval);
 	p.attach_general_obs(&PyMolObserver::generalEvent, o);
@@ -587,7 +587,7 @@ PyMolObserverOP AddPyMolObserver(core::pose::Pose &p, bool keep_history, core::R
 
 PyMolObserverOP AddPyMolObserver_to_energies(core::pose::Pose &p, bool keep_history, core::Real update_interval)
 {
-    PyMolObserverOP o( new PyMolObserver );
+	PyMolObserverOP o( new PyMolObserver );
 	o->pymol().keep_history(keep_history);
 	o->pymol().update_interval(update_interval);
 	p.attach_energy_obs(&PyMolObserver::energyEvent, o);
@@ -596,7 +596,7 @@ PyMolObserverOP AddPyMolObserver_to_energies(core::pose::Pose &p, bool keep_hist
 
 PyMolObserverOP AddPyMolObserver_to_conformation(core::pose::Pose &p, bool keep_history, core::Real update_interval)
 {
-    PyMolObserverOP o( new PyMolObserver );
+	PyMolObserverOP o( new PyMolObserver );
 	o->pymol().keep_history(keep_history);
 	o->pymol().update_interval(update_interval);
 	p.attach_conformation_obs(&PyMolObserver::conformationEvent, o);
@@ -605,17 +605,17 @@ PyMolObserverOP AddPyMolObserver_to_conformation(core::pose::Pose &p, bool keep_
 
 /// @brief PyMolMoverCreator interface, name of the mover
 std::string PyMolMoverCreator::mover_name() {
-  return "PyMolMover";
+	return "PyMolMover";
 }
 
 /// @brief PyMolMoverCreator interface, returns a unique key name to be used in xml file
 std::string PyMolMoverCreator::keyname() const {
-  return PyMolMoverCreator::mover_name();
+	return PyMolMoverCreator::mover_name();
 }
 
 /// @brief PyMolMoverCreator interface, return a new instance
 protocols::moves::MoverOP PyMolMoverCreator::create_mover() const {
-  return protocols::moves::MoverOP( new PyMolMover() );
+	return protocols::moves::MoverOP( new PyMolMover() );
 }
 
 /// @brief allows for the setting of certain variabel from the rosetta scripts interface, only keep history

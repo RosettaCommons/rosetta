@@ -40,34 +40,34 @@ namespace protocols {
 namespace rosetta_scripts {
 
 class ParsedProtocol :
-		public protocols::moves::Mover,
-		public protocols::moves::ResId,
-		public protocols::jd2::JobOutputterObserver
+	public protocols::moves::Mover,
+	public protocols::moves::ResId,
+	public protocols::jd2::JobOutputterObserver
 {
 public:
 	typedef core::Real Real;
 	typedef core::pose::Pose Pose;
 
-  class MoverFilterPair {
-    // OFL want to have more state in the MoverFilterPair -- transform from std:pair into a class, but keep first and second members intact
-    // JRP it would sure be nice if this operated like a real class. Calls to first.first suck to read.
-  public:
-    MoverFilterPair( protocols::moves::MoverOP mover,
-                     std::string const& mover_name,
-                     protocols::filters::FilterOP filter,
-                     bool report_filter_at_end = false ) :
-    first( std::make_pair( mover, mover_name ) ),
-    second( filter ),
-    report_filter_at_end_( report_filter_at_end )
-    {}
-    protocols::filters::Filter const& filter() const { return *second; }
+	class MoverFilterPair {
+		// OFL want to have more state in the MoverFilterPair -- transform from std:pair into a class, but keep first and second members intact
+		// JRP it would sure be nice if this operated like a real class. Calls to first.first suck to read.
+	public:
+		MoverFilterPair( protocols::moves::MoverOP mover,
+			std::string const& mover_name,
+			protocols::filters::FilterOP filter,
+			bool report_filter_at_end = false ) :
+			first( std::make_pair( mover, mover_name ) ),
+			second( filter ),
+			report_filter_at_end_( report_filter_at_end )
+		{}
+		protocols::filters::Filter const& filter() const { return *second; }
 
-    std::pair< protocols::moves::MoverOP, std::string > first;
-    protocols::filters::FilterOP second;
-    bool report_filter_at_end_;
-  };
+		std::pair< protocols::moves::MoverOP, std::string > first;
+		protocols::filters::FilterOP second;
+		bool report_filter_at_end_;
+	};
 
-  typedef utility::vector1< MoverFilterPair > MoverFilterVector;
+	typedef utility::vector1< MoverFilterPair > MoverFilterVector;
 	typedef MoverFilterVector::iterator iterator;
 	typedef MoverFilterVector::const_iterator const_iterator;
 
@@ -88,7 +88,7 @@ public:
 	void add_values_to_job( Pose const & pose, protocols::jd2::Job & ) const;
 
 
-//	void report_all_sm( std::map< std::string, core::Real > & score_map, Pose const & pose ) const; // ditto, but outputs filter values into score_map object
+	// void report_all_sm( std::map< std::string, core::Real > & score_map, Pose const & pose ) const; // ditto, but outputs filter values into score_map object
 	protocols::moves::MoverCOP get_mover( core::Size const mover_number ) const {
 		runtime_assert( movers_.size() >= mover_number && mover_number > 0 );
 		return( movers_[ mover_number ].first.first );
@@ -117,13 +117,13 @@ public:
 	std::string call_order() const{ return call_order_; }
 private:
 	void finish_protocol(Pose & pose);
-  
-	/// @brief apply the mover of the pair
-  void apply_mover(Pose & pose, MoverFilterPair const & mover_pair);
 
-  /// @brief apply the filter of the pair
-  bool apply_filter(Pose & pose, MoverFilterPair const & mover_pair);
-  void sequence_protocol(Pose & pose, MoverFilterVector::const_iterator mover_it_in);
+	/// @brief apply the mover of the pair
+	void apply_mover(Pose & pose, MoverFilterPair const & mover_pair);
+
+	/// @brief apply the filter of the pair
+	bool apply_filter(Pose & pose, MoverFilterPair const & mover_pair);
+	void sequence_protocol(Pose & pose, MoverFilterVector::const_iterator mover_it_in);
 
 	void random_order_protocol(Pose & pose);
 	void random_single_protocol(Pose & pose);

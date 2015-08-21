@@ -58,8 +58,8 @@ class SCMinMinimizerMap : public kinematics::MinimizerMapBase
 public:
 	SCMinMinimizerMap() :
 		focused_residue_( 0 ),
-	  nactive_residues_( 0 ),
-	  nonideal_(false)
+		nactive_residues_( 0 ),
+		nonideal_(false)
 	{}
 
 	virtual

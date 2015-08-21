@@ -21,13 +21,13 @@ namespace core {
 namespace io {
 namespace silent {
 
-	// abstract base classes
-	class SilentStruct;
-	class SilentFileData;
+// abstract base classes
+class SilentStruct;
+class SilentFileData;
 
-	// owning pointers
-	typedef utility::pointer::shared_ptr< SilentStruct > SilentStructOP;
-	typedef utility::pointer::shared_ptr< SilentStruct const > SilentStructCOP;
+// owning pointers
+typedef utility::pointer::shared_ptr< SilentStruct > SilentStructOP;
+typedef utility::pointer::shared_ptr< SilentStruct const > SilentStructCOP;
 
 } // namespace silent
 } // namespace io

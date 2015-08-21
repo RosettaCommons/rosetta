@@ -102,13 +102,15 @@ core::Real ShapeComplementarityCalculator::CalcSc(core::pose::Pose const & pose,
 {
 	ShapeComplementarityCalculator sc;
 
-	if(quick)
+	if ( quick ) {
 		sc.settings.density = 5;
+	}
 
-	if(sc.Calc(pose, jump_id))
+	if ( sc.Calc(pose, jump_id) ) {
 		return sc.GetResults().sc;
-	else
+	} else {
 		return -1;
+	}
 }
 
 /// @brief Run the SC calculation on a Pose, partitionied by jump_id
@@ -125,7 +127,7 @@ core::Real ShapeComplementarityCalculator::CalcSc(core::pose::Pose const & pose,
 ///   sc = calc.GetResults().sc;
 int ShapeComplementarityCalculator::Calc(core::pose::Pose const & pose, core::Size jump_id)
 {
-	if( jump_id > pose.num_jump() || jump_id <= 0) {
+	if ( jump_id > pose.num_jump() || jump_id <= 0 ) {
 		TR.Error << "Jump ID out of bounds (pose has " << pose.num_jump() << " jumps)" << std::endl;
 		return 0;
 	}
@@ -147,74 +149,79 @@ int ShapeComplementarityCalculator::Calc()
 
 	try {
 
-	basic::gpu::Timer timer(TR.Debug);
+		basic::gpu::Timer timer(TR.Debug);
 
-	run_.results.valid = 0;
+		run_.results.valid = 0;
 
-	if(run_.atoms.empty())
-		throw ShapeComplementarityCalculatorException("No atoms defined");
-	if(!run_.results.surface[0].nAtoms)
-		throw ShapeComplementarityCalculatorException("No atoms defined for molecule 1");
-	if(!run_.results.surface[1].nAtoms)
-		throw ShapeComplementarityCalculatorException("No atoms defined for molecule 2");
+		if ( run_.atoms.empty() ) {
+			throw ShapeComplementarityCalculatorException("No atoms defined");
+		}
+		if ( !run_.results.surface[0].nAtoms ) {
+			throw ShapeComplementarityCalculatorException("No atoms defined for molecule 1");
+		}
+		if ( !run_.results.surface[1].nAtoms ) {
+			throw ShapeComplementarityCalculatorException("No atoms defined for molecule 2");
+		}
 
-	// Determine and assign the attention numbers for each atom
-	AssignAttentionNumbers(run_.atoms);
+		// Determine and assign the attention numbers for each atom
+		AssignAttentionNumbers(run_.atoms);
 
-	GenerateMolecularSurfaces();
+		GenerateMolecularSurfaces();
 
-	if(!run_.dots[0].size() || !run_.dots[1].size())
-		throw ShapeComplementarityCalculatorException("No molecular dots generated!");
+		if ( !run_.dots[0].size() || !run_.dots[1].size() ) {
+			throw ShapeComplementarityCalculatorException("No molecular dots generated!");
+		}
 
-	// Cut away the periphery of each surface
-	TR.Debug << "Trimming peripheral band, " << settings.band << "A range" << std::endl;
+		// Cut away the periphery of each surface
+		TR.Debug << "Trimming peripheral band, " << settings.band << "A range" << std::endl;
 
-	std::vector<DOT const *> trimmed_dots[2];
-	for(int i = 0; i < 2; ++i) {
-		run_.results.surface[i].trimmedArea = TrimPeripheralBand(run_.dots[i], trimmed_dots[i]);
-		if(!trimmed_dots[i].size())
-			//throw ShapeComplementarityCalculatorException("No molecular dots for surface %d", i); (JAB) This actually segfaults during the throw. Commenting out
+		std::vector<DOT const *> trimmed_dots[2];
+		for ( int i = 0; i < 2; ++i ) {
+			run_.results.surface[i].trimmedArea = TrimPeripheralBand(run_.dots[i], trimmed_dots[i]);
+			if ( !trimmed_dots[i].size() ) {
+				//throw ShapeComplementarityCalculatorException("No molecular dots for surface %d", i); (JAB) This actually segfaults during the throw. Commenting out
 
 
-			throw utility::excn::EXCN_Msg_Exception("No molecular dots for surface " + utility::to_string( i ));
+				throw utility::excn::EXCN_Msg_Exception("No molecular dots for surface " + utility::to_string( i ));
+			}
 
-		run_.results.surface[i].nTrimmedDots = trimmed_dots[i].size();
-		run_.results.surface[i].nAllDots = run_.dots[i].size();
-	}
+			run_.results.surface[i].nTrimmedDots = trimmed_dots[i].size();
+			run_.results.surface[i].nAllDots = run_.dots[i].size();
+		}
 
-	// Compute distance arrays and histograms for each surface
-	TR.Debug << "Computing surface separation and vectors" << std::endl;
+		// Compute distance arrays and histograms for each surface
+		TR.Debug << "Computing surface separation and vectors" << std::endl;
 
-	CalcNeighborDistance(0, trimmed_dots[0], trimmed_dots[1]);
-	CalcNeighborDistance(1, trimmed_dots[1], trimmed_dots[0]);
+		CalcNeighborDistance(0, trimmed_dots[0], trimmed_dots[1]);
+		CalcNeighborDistance(1, trimmed_dots[1], trimmed_dots[0]);
 
-	run_.results.surface[2].d_mean = (run_.results.surface[0].d_mean + run_.results.surface[1].d_mean) / 2;
-	run_.results.surface[2].d_median = (run_.results.surface[0].d_median + run_.results.surface[1].d_median) / 2;
-	run_.results.surface[2].s_mean = (run_.results.surface[0].s_mean + run_.results.surface[1].s_mean) / 2;
-	run_.results.surface[2].s_median = (run_.results.surface[0].s_median + run_.results.surface[1].s_median) / 2;
+		run_.results.surface[2].d_mean = (run_.results.surface[0].d_mean + run_.results.surface[1].d_mean) / 2;
+		run_.results.surface[2].d_median = (run_.results.surface[0].d_median + run_.results.surface[1].d_median) / 2;
+		run_.results.surface[2].s_mean = (run_.results.surface[0].s_mean + run_.results.surface[1].s_mean) / 2;
+		run_.results.surface[2].s_median = (run_.results.surface[0].s_median + run_.results.surface[1].s_median) / 2;
 
-	run_.results.surface[2].nAtoms = (run_.results.surface[0].nAtoms + run_.results.surface[1].nAtoms);
-	run_.results.surface[2].nBuriedAtoms = (run_.results.surface[0].nBuriedAtoms + run_.results.surface[1].nBlockedAtoms);
-	run_.results.surface[2].nBlockedAtoms = (run_.results.surface[0].nBuriedAtoms + run_.results.surface[1].nBuriedAtoms);
-	run_.results.surface[2].nAllDots = (run_.results.surface[0].nAllDots + run_.results.surface[1].nAllDots);
-	run_.results.surface[2].nTrimmedDots = (run_.results.surface[0].nTrimmedDots + run_.results.surface[1].nTrimmedDots);
-	//run_.results.surface[2].nBuriedDots = (run_.results.surface[0].nBuriedDots + run_.results.surface[1].nBuriedDots);
-	//run_.results.surface[2].nAccessibleDots = (run_.results.surface[0].nAccessibleDots + run_.results.surface[1].nAccessibleDots);
-	run_.results.surface[2].trimmedArea = (run_.results.surface[0].trimmedArea + run_.results.surface[1].trimmedArea);
+		run_.results.surface[2].nAtoms = (run_.results.surface[0].nAtoms + run_.results.surface[1].nAtoms);
+		run_.results.surface[2].nBuriedAtoms = (run_.results.surface[0].nBuriedAtoms + run_.results.surface[1].nBlockedAtoms);
+		run_.results.surface[2].nBlockedAtoms = (run_.results.surface[0].nBuriedAtoms + run_.results.surface[1].nBuriedAtoms);
+		run_.results.surface[2].nAllDots = (run_.results.surface[0].nAllDots + run_.results.surface[1].nAllDots);
+		run_.results.surface[2].nTrimmedDots = (run_.results.surface[0].nTrimmedDots + run_.results.surface[1].nTrimmedDots);
+		//run_.results.surface[2].nBuriedDots = (run_.results.surface[0].nBuriedDots + run_.results.surface[1].nBuriedDots);
+		//run_.results.surface[2].nAccessibleDots = (run_.results.surface[0].nAccessibleDots + run_.results.surface[1].nAccessibleDots);
+		run_.results.surface[2].trimmedArea = (run_.results.surface[0].trimmedArea + run_.results.surface[1].trimmedArea);
 
-	run_.results.sc = run_.results.surface[2].s_median;
-	run_.results.distance = run_.results.surface[2].d_median;
-	run_.results.area = run_.results.surface[2].trimmedArea;
-	run_.results.valid = 1;
+		run_.results.sc = run_.results.surface[2].s_median;
+		run_.results.distance = run_.results.surface[2].d_median;
+		run_.results.area = run_.results.surface[2].trimmedArea;
+		run_.results.valid = 1;
 
-	TR.Debug <<
-		"Done. Atoms: " << run_.results.surface[0].nAtoms << " + " << run_.results.surface[1].nAtoms <<
-		"; sc = " << run_.results.sc <<
-		", area = " << run_.results.area <<
-		", distance " << run_.results.distance <<
-		std::endl;
+		TR.Debug <<
+			"Done. Atoms: " << run_.results.surface[0].nAtoms << " + " << run_.results.surface[1].nAtoms <<
+			"; sc = " << run_.results.sc <<
+			", area = " << run_.results.area <<
+			", distance " << run_.results.distance <<
+			std::endl;
 
-	return 1;
+		return 1;
 
 	} catch(ShapeComplementarityCalculatorException & e) {
 		TR.Error << "Failed: " << e.error << std::endl;
@@ -232,27 +239,26 @@ int ShapeComplementarityCalculator::AssignAttentionNumbers(std::vector<Atom> & )
 {
 	std::vector<Atom>::iterator pAtom1, pAtom2;
 
-	for(pAtom1 = run_.atoms.begin(); pAtom1 < run_.atoms.end(); ++pAtom1) {
+	for ( pAtom1 = run_.atoms.begin(); pAtom1 < run_.atoms.end(); ++pAtom1 ) {
 		// find nearest neighbour in other molecule
 		ScValue dist_min = 99999.0, r;
-		for(pAtom2 = run_.atoms.begin(); pAtom2 < run_.atoms.end(); ++pAtom2) {
-			if(pAtom1->molecule == pAtom2->molecule)
+		for ( pAtom2 = run_.atoms.begin(); pAtom2 < run_.atoms.end(); ++pAtom2 ) {
+			if ( pAtom1->molecule == pAtom2->molecule ) {
 				continue;
+			}
 			r = pAtom1->distance(*pAtom2);
-			if(r < dist_min)
+			if ( r < dist_min ) {
 				dist_min = r;
+			}
 		}
 
 		// check if within separator distance
-		if(dist_min >= settings.sep)
-		{
+		if ( dist_min >= settings.sep ) {
 			// TR.Debug << "Atom ATTEN_BLOCKER: " << pAtom1->natom << std::endl;
 			// too _far_ away from other molecule, blocker atom only
 			pAtom1->atten = ATTEN_BLOCKER;
 			++run_.results.surface[pAtom1->molecule].nBlockedAtoms;
-		}
-		else
-		{
+		} else {
 			// potential interface or neighbouring atom
 			pAtom1->atten = ATTEN_BURIED_FLAGGED;
 			++run_.results.surface[pAtom1->molecule].nBuriedAtoms;
@@ -266,13 +272,14 @@ int ShapeComplementarityCalculator::AssignAttentionNumbers(std::vector<Atom> & )
 // Trim dots and retain only the peripheral band
 
 ShapeComplementarityCalculator::ScValue ShapeComplementarityCalculator::TrimPeripheralBand(
-		std::vector<DOT> const &sdots,
-		std::vector<DOT const *> &trimmed_dots)
+	std::vector<DOT> const &sdots,
+	std::vector<DOT const *> &trimmed_dots)
 {
 	ScValue area = 0;
 
-	if(sdots.empty())
+	if ( sdots.empty() ) {
 		return 0.0;
+	}
 
 #ifdef USEOPENCL
 	if(settings.gpu) {
@@ -283,10 +290,10 @@ ShapeComplementarityCalculator::ScValue ShapeComplementarityCalculator::TrimPeri
 	// Loop over one surface
 	// If a point is buried then see if there is an accessible point within distance band
 
-	for(std::vector<DOT>::const_iterator idot = sdots.begin(); idot < sdots.end(); ++idot) {
+	for ( std::vector<DOT>::const_iterator idot = sdots.begin(); idot < sdots.end(); ++idot ) {
 		DOT const &dot = *idot;
 		// Paralelleizable kernel function
-		if(dot.buried && TrimPeripheralBandCheckDot(dot, sdots)) {
+		if ( dot.buried && TrimPeripheralBandCheckDot(dot, sdots) ) {
 			area += dot.area;
 			trimmed_dots.push_back(&dot);
 		}
@@ -302,20 +309,23 @@ ShapeComplementarityCalculator::ScValue ShapeComplementarityCalculator::TrimPeri
 // Test a dot against a set of dots for collision
 // NOTE: ~75% of time is spent in this function
 int ShapeComplementarityCalculator::TrimPeripheralBandCheckDot(
-		DOT const &dot,
-		std::vector<DOT> const &sdots)
+	DOT const &dot,
+	std::vector<DOT> const &sdots)
 {
 	// Caching of r2 only brings 0.5% speed boost
 	ScValue r2 = pow(settings.band, 2);
 
-	for(std::vector<DOT>::const_iterator idot2 = sdots.begin(); idot2 < sdots.end(); ++idot2) {
+	for ( std::vector<DOT>::const_iterator idot2 = sdots.begin(); idot2 < sdots.end(); ++idot2 ) {
 		DOT const &dot2 = *idot2;
-		if(&dot == &dot2)
+		if ( &dot == &dot2 ) {
 			continue;
-		if(dot2.buried)
+		}
+		if ( dot2.buried ) {
 			continue;
-		if(dot.coor.distance_squared(dot2.coor) <= r2)
+		}
+		if ( dot.coor.distance_squared(dot2.coor) <= r2 ) {
 			return 0;
+		}
 	}
 	return 1;
 }
@@ -326,25 +336,26 @@ int ShapeComplementarityCalculator::TrimPeripheralBandCheckDot(
 ////////////////////////////////////////////////////////////////////////////
 
 int ShapeComplementarityCalculator::CalcNeighborDistance(
-		int const molecule,
-		std::vector<DOT const*> const &my_dots,
-		std::vector<DOT const*> const &their_dots)
+	int const molecule,
+	std::vector<DOT const*> const &my_dots,
+	std::vector<DOT const*> const &their_dots)
 {
-	std::map<int,int> dbins;	// Distance bins
-	std::map<int,int> sbins;	// Vector dot product bins (sc)
+	std::map<int,int> dbins; // Distance bins
+	std::map<int,int> sbins; // Vector dot product bins (sc)
 	ScValue norm_sum = 0.0, distmin_sum = 0.0;
 	int ibin;
 	ScValue total = 0.0;
 
-	if(my_dots.empty() || their_dots.empty())
+	if ( my_dots.empty() || their_dots.empty() ) {
 		return 0;
+	}
 
-	for(std::vector<DOT const*>::const_iterator idot = my_dots.begin();
-			idot < my_dots.end(); ++idot) {
+	for ( std::vector<DOT const*>::const_iterator idot = my_dots.begin();
+			idot < my_dots.end(); ++idot ) {
 		//if((*idot)->buried)
-		//	run_.results.surface[molecule].nBuriedDots++;
+		// run_.results.surface[molecule].nBuriedDots++;
 		//else
-		//	run_.results.surface[molecule].nAccessibleDots++;
+		// run_.results.surface[molecule].nAccessibleDots++;
 		total += (*idot)->area;
 	}
 
@@ -358,9 +369,8 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 	}
 #endif
 
-	for(std::vector<DOT const*>::const_iterator idot = my_dots.begin();
-			idot < my_dots.end(); ++idot)
-	{
+	for ( std::vector<DOT const*>::const_iterator idot = my_dots.begin();
+			idot < my_dots.end(); ++idot ) {
 		DOT const &dot1 = **idot;
 
 		ScValue distmin, r;
@@ -376,12 +386,13 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 			neighbor = CalcNeighborDistanceFindClosestNeighbor(dot1, their_dots);
 		}
 #else
-			neighbor = CalcNeighborDistanceFindClosestNeighbor(dot1, their_dots);
+		neighbor = CalcNeighborDistanceFindClosestNeighbor(dot1, their_dots);
 #endif
 
 
-		if(!neighbor)
+		if ( !neighbor ) {
 			continue;
+		}
 
 		// having looked at all possible neighbours now accumulate stats
 		distmin = neighbor->coor.distance(dot1.coor);
@@ -395,7 +406,7 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 
 		// weight dot product
 		// cpjx I think the weighting factor is the denominator 2 below?
-		// cpjx		  r = r * exp( - (distmin**2) / 2.)
+		// cpjx    r = r * exp( - (distmin**2) / 2.)
 		r = r * exp( - pow(distmin, 2) * settings.weight );
 		// rounding errors a problem, so ensure std::abs(r) <1
 		r = MIN(0.999, MAX(r, -0.999));
@@ -404,10 +415,11 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 		// left_trunc ScValue to int ibin
 		// otherwise: (int)-0.9 = 0.
 		r /= settings.binwidth_norm;
-		if(r >= 0)
+		if ( r >= 0 ) {
 			ibin = (int)r;
-		else
+		} else {
 			ibin = (int)r -1;
+		}
 		++sbins[ibin];
 	}
 
@@ -421,31 +433,31 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 	TR.Trace << "Distance between surfaces D(" << (molecule+1) << "->" << (molecule+1)%2+1 << "):" << std::endl;
 	TR.Trace << "From - To\tArea\tCum. Area\t%\tCum. %" << std::endl;
 
-	for(it = dbins.begin(); it != dbins.end(); ++it) {
+	for ( it = dbins.begin(); it != dbins.end(); ++it ) {
 		abin = total * (it->second) / my_dots.size();
 		cumarea += abin;
 		perc = abin * 100 / total;
 		c = cumperc + perc;
-		if(cumperc <= 50 && c >= 50) {
+		if ( cumperc <= 50 && c >= 50 ) {
 			rleft = (it->first) * settings.binwidth_dist;
 			rmedian = rleft + (50 - cumperc) * settings.binwidth_dist / ( c - cumperc );
 		}
 		cumperc = c;
 
-		#ifndef WIN32
-			if(TR.Trace.visible()) {
-				char buf[128];
+#ifndef WIN32
+		if ( TR.Trace.visible() ) {
+			char buf[128];
 
-				snprintf(buf, sizeof(buf),
-					"%.2f - %.2f\t%.1f\t%.1f\t%.1f\t%.1f",
-					(ScValue)it->first * settings.binwidth_dist,
-					(ScValue)it->first * settings.binwidth_dist + settings.binwidth_dist,
-					abin, cumarea,
-					perc, cumperc);
+			snprintf(buf, sizeof(buf),
+				"%.2f - %.2f\t%.1f\t%.1f\t%.1f\t%.1f",
+				(ScValue)it->first * settings.binwidth_dist,
+				(ScValue)it->first * settings.binwidth_dist + settings.binwidth_dist,
+				abin, cumarea,
+				perc, cumperc);
 
-				TR.Trace << buf << std::endl;
-			}
-		#endif
+			TR.Trace << buf << std::endl;
+		}
+#endif
 	}
 
 	run_.results.surface[molecule].d_mean = distmin_sum / my_dots.size();
@@ -456,26 +468,26 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 	TR.Trace << "From - To\tNumber\t%\tCumm. %" << std::endl;
 
 	cumperc = 0;
-	for(it = sbins.begin(); it != sbins.end(); ++it) {
+	for ( it = sbins.begin(); it != sbins.end(); ++it ) {
 		perc = (ScValue)(it->second) * 100 / my_dots.size();
 		c = cumperc + perc;
-		if(cumperc <= 50 && c >= 50) {
+		if ( cumperc <= 50 && c >= 50 ) {
 			rleft = (ScValue)(it->first) * settings.binwidth_norm;
 			rmedian = rleft + (50 - cumperc) * settings.binwidth_norm / ( c - cumperc );
 		}
 		cumperc = c;
 
-		#ifndef WIN32
-			if(TR.Trace.visible()) {
-				char buf[128];
-				snprintf(buf, sizeof(buf),
-					"%.2f - %.2f\t%d\t%.1f\t%.1f",
-					(ScValue)-it->first * settings.binwidth_norm - settings.binwidth_norm,
-					(ScValue)-it->first * settings.binwidth_norm,
-					it->second, perc, cumperc);
-				TR.Trace << buf << std::endl;
-			}
-		#endif
+#ifndef WIN32
+		if ( TR.Trace.visible() ) {
+			char buf[128];
+			snprintf(buf, sizeof(buf),
+				"%.2f - %.2f\t%d\t%.1f\t%.1f",
+				(ScValue)-it->first * settings.binwidth_norm - settings.binwidth_norm,
+				(ScValue)-it->first * settings.binwidth_norm,
+				it->second, perc, cumperc);
+			TR.Trace << buf << std::endl;
+		}
+#endif
 	}
 
 	run_.results.surface[molecule].s_mean= -norm_sum / my_dots.size();
@@ -487,8 +499,8 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 // Find closest neighbor dot for a given dot
 // NOTE: ~20% of time is spent in this function
 DOT const *ShapeComplementarityCalculator::CalcNeighborDistanceFindClosestNeighbor(
-		DOT const &dot1,
-		std::vector<DOT const*> const &their_dots)
+	DOT const &dot1,
+	std::vector<DOT const*> const &their_dots)
 {
 	ScValue distmin = 999999.0, d;
 	DOT const *neighbor = NULL;
@@ -496,13 +508,14 @@ DOT const *ShapeComplementarityCalculator::CalcNeighborDistanceFindClosestNeighb
 	// Loop over the entire surface: find and flag neighbour of each point
 	// that we're interested in and store nearest neighbour pointer
 
-	for(std::vector<DOT const*>::const_iterator idot2 = their_dots.begin();
-			idot2 < their_dots.end(); ++idot2) {
+	for ( std::vector<DOT const*>::const_iterator idot2 = their_dots.begin();
+			idot2 < their_dots.end(); ++idot2 ) {
 		DOT const &dot2 = **idot2;
-		if(!dot2.buried)
+		if ( !dot2.buried ) {
 			continue;
+		}
 		d = dot2.coor.distance_squared(dot1.coor);
-		if(d <= distmin) {
+		if ( d <= distmin ) {
 			distmin = d;
 			// AMW cppcheck can't assign neighbor &dot2 because it's stack?
 			neighbor = *idot2; //&dot2;

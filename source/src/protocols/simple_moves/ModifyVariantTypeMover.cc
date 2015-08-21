@@ -57,15 +57,15 @@ static thread_local basic::Tracer TR( "protocols.simple_moves.ModifyVariantTypeM
 
 // ModifyVariantTypeMover; based on the protocols::moves::Mover basis class
 ModifyVariantTypeMover::ModifyVariantTypeMover() :
-		protocols::moves::Mover("ModifyVariantType"),
-		task_factory_(/* NULL */),
-		add_target_types_(),
-		remove_target_types_()
+	protocols::moves::Mover("ModifyVariantType"),
+	task_factory_(/* NULL */),
+	add_target_types_(),
+	remove_target_types_()
 {}
 
 // @brief apply function here
 void
-ModifyVariantTypeMover::apply( core::pose::Pose & pose ) 
+ModifyVariantTypeMover::apply( core::pose::Pose & pose )
 {
 	// Create map of target residues using taskoperation
 	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
@@ -77,21 +77,19 @@ ModifyVariantTypeMover::apply( core::pose::Pose & pose )
 		TR.Debug << "No packer task specified, using default task." << std::endl;
 	}
 
-	for (core::Size resi = 1; resi <= pose.n_residue(); resi++)
-	{
-		if( task->pack_residue(resi) )
-		{
+	for ( core::Size resi = 1; resi <= pose.n_residue(); resi++ ) {
+		if ( task->pack_residue(resi) ) {
 			core::chemical::ResidueTypeSet const & rsd_set(pose.residue(resi).residue_type_set());
 			core::chemical::ResidueTypeCOP new_rsd_type = pose.residue(resi).type().get_self_ptr();
 
-			BOOST_FOREACH( std::string remove_type, remove_target_types_ ) {
+			BOOST_FOREACH ( std::string remove_type, remove_target_types_ ) {
 				new_rsd_type = rsd_set.get_residue_type_with_variant_removed( *new_rsd_type,
-						core::chemical::ResidueProperties::get_variant_from_string( remove_type ) ).get_self_ptr();
+					core::chemical::ResidueProperties::get_variant_from_string( remove_type ) ).get_self_ptr();
 			}
 
-			BOOST_FOREACH( std::string add_type, add_target_types_ ) {
+			BOOST_FOREACH ( std::string add_type, add_target_types_ ) {
 				new_rsd_type = rsd_set.get_residue_type_with_variant_added( *new_rsd_type,
-						core::chemical::ResidueProperties::get_variant_from_string( add_type ) ).get_self_ptr();
+					core::chemical::ResidueProperties::get_variant_from_string( add_type ) ).get_self_ptr();
 			}
 
 			core::pose::replace_pose_residue_copying_existing_coordinates( pose, resi, *new_rsd_type );
@@ -135,13 +133,12 @@ void ModifyVariantTypeMover::parse_my_tag(
 	//boost::split(remove_target_types_, remove_type_value, boost::is_any_of(","));
 	remove_target_types_ = utility::string_split<std::string>(remove_type_value,',',std::string());
 
-	if (add_target_types_.size() == 0 && remove_target_types_.size() == 0)
-	{
+	if ( add_target_types_.size() == 0 && remove_target_types_.size() == 0 ) {
 		TR.Error << "Must specify add_type and/or remove_type type in ModifyVariantTypeMover." << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption("Must specify add_type and/or remove_type type in ModifyVariantTypeMover.");
 	}
 
-  task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
+	task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
 }
 
 protocols::moves::MoverOP

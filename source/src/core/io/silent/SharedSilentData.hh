@@ -37,7 +37,7 @@ public:
 
 }; // class SharedSilentData
 
-class SimpleSequenceData : public	SharedSilentData {
+class SimpleSequenceData : public SharedSilentData {
 
 public:
 

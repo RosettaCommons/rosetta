@@ -98,18 +98,18 @@ figure_out_reasonable_rna_fold_tree( pose::Pose & pose )
 
 	Size m( 0 );
 
-	for (Size i = 1; i < nres; ++i) {
+	for ( Size i = 1; i < nres; ++i ) {
 		bool new_jump( false );
 		if ( (  pose.residue(i).is_RNA() != pose.residue(i+1).is_RNA() ) ||
-				 (  pose.residue(i).is_protein() != pose.residue(i+1).is_protein() ) ||
-				 (  pose.pdb_info() && ( pose.pdb_info()->chain( i ) != pose.pdb_info()->chain( i+1 ) ) ) ||
-				 (  pose.residue(i).has_variant_type( CUTPOINT_LOWER ) && pose.residue(i+1).has_variant_type( CUTPOINT_UPPER ) ) ){
+				(  pose.residue(i).is_protein() != pose.residue(i+1).is_protein() ) ||
+				(  pose.pdb_info() && ( pose.pdb_info()->chain( i ) != pose.pdb_info()->chain( i+1 ) ) ) ||
+				(  pose.residue(i).has_variant_type( CUTPOINT_LOWER ) && pose.residue(i+1).has_variant_type( CUTPOINT_UPPER ) ) ) {
 			new_jump = true;
 		}
 
 		if ( !new_jump &&
-				 pose.residue(i).is_RNA() && pose.residue(i+1).is_RNA() &&
-				 pose::rna::is_rna_chainbreak( pose, i ) ){
+				pose.residue(i).is_RNA() && pose.residue(i+1).is_RNA() &&
+				pose::rna::is_rna_chainbreak( pose, i ) ) {
 			new_jump = true;
 		}
 
@@ -122,8 +122,8 @@ figure_out_reasonable_rna_fold_tree( pose::Pose & pose )
 				Residue const & current_rsd( pose.residue( i   ) ) ;
 				Residue const &    next_rsd( pose.residue( i+1 ) ) ;
 				f.set_jump_atoms( m,
-													chemical::rna::chi1_torsion_atom( current_rsd ),
-													chemical::rna::chi1_torsion_atom( next_rsd )   );
+					chemical::rna::chi1_torsion_atom( current_rsd ),
+					chemical::rna::chi1_torsion_atom( next_rsd )   );
 			}
 		}
 
@@ -139,8 +139,8 @@ virtualize_5prime_phosphates( pose::Pose & pose ){
 	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 
 		if ( i==1 || ( pose.fold_tree().is_cutpoint( i-1 ) &&
-									 !pose.residue( i-1 ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
-									 !pose.residue( i   ).has_variant_type( chemical::CUTPOINT_UPPER ) ) ){
+				!pose.residue( i-1 ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
+				!pose.residue( i   ).has_variant_type( chemical::CUTPOINT_UPPER ) ) ) {
 			if ( pose.residue(i).is_RNA() ) {
 				pose::add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_PHOSPHATE, i );
 			}
@@ -162,7 +162,7 @@ is_cutpoint_open( Pose const & pose, Size const i ) {
 	if ( ! pose.fold_tree().is_cutpoint(i) ) return false;
 
 	if ( pose.residue_type( i   ).has_variant_type( chemical::CUTPOINT_LOWER ) ||
-			 pose.residue_type( i+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) return false;
+			pose.residue_type( i+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) return false;
 
 	return true;
 }
@@ -191,7 +191,7 @@ is_rna_chainbreak( Pose const & pose, Size const i ) {
 		return true;
 	}
 
-	if ( pose.pdb_info() ){
+	if ( pose.pdb_info() ) {
 		if ( pose.pdb_info()->number( i ) + 1 != pose.pdb_info()->number( i+1 ) ) return true;
 		if ( pose.pdb_info()->chain( i ) != pose.pdb_info()->chain( i+1 ) ) return true;
 	}
@@ -205,11 +205,11 @@ is_rna_chainbreak( Pose const & pose, Size const i ) {
 //  of a full pose -- a lot of time wasted on refolding everything.
 void
 fix_sugar_coords_WORKS_BUT_SLOW(
-								 utility::vector1< std::string> atoms_for_which_we_need_new_dofs,
-								 utility::vector1< utility::vector1< id::DOF_Type > > which_dofs,
-								 utility::vector1< Vector > const & non_main_chain_sugar_coords,
-								 Pose & pose,
-								 Size const i )
+	utility::vector1< std::string> atoms_for_which_we_need_new_dofs,
+	utility::vector1< utility::vector1< id::DOF_Type > > which_dofs,
+	utility::vector1< Vector > const & non_main_chain_sugar_coords,
+	Pose & pose,
+	Size const i )
 {
 
 	using namespace core::id;
@@ -222,7 +222,7 @@ fix_sugar_coords_WORKS_BUT_SLOW(
 	utility::vector1< Vector > start_vectors;
 	utility::vector1< utility::vector1< Real > > new_dof_sets;
 
-	for (Size n = 1; n <= non_main_chain_sugar_atoms.size(); n++  ) {
+	for ( Size n = 1; n <= non_main_chain_sugar_atoms.size(); n++  ) {
 		Size const j = rsd.atom_index( non_main_chain_sugar_atoms[ n ] );
 		//Save a copy of starting location
 		Vector v = rsd.xyz( non_main_chain_sugar_atoms[ n ]  );
@@ -233,10 +233,10 @@ fix_sugar_coords_WORKS_BUT_SLOW(
 		pose.set_xyz( id::AtomID( j,i ), v2 );
 	}
 
-	for (Size n = 1; n <= atoms_for_which_we_need_new_dofs.size(); n++  ) {
+	for ( Size n = 1; n <= atoms_for_which_we_need_new_dofs.size(); n++  ) {
 		utility::vector1< Real > dof_set;
 		Size const j = rsd.atom_index( atoms_for_which_we_need_new_dofs[ n ] );
-		for (Size m = 1; m <= which_dofs[n].size(); m++ ) {
+		for ( Size m = 1; m <= which_dofs[n].size(); m++ ) {
 			dof_set.push_back( pose.atom_tree().dof( DOF_ID( AtomID( j,i) , which_dofs[ n ][ m ] ) ) );
 		}
 		new_dof_sets.push_back( dof_set );
@@ -246,15 +246,15 @@ fix_sugar_coords_WORKS_BUT_SLOW(
 	// Now put the ring atoms in the desired spots, but by changing internal DOFS --
 	// rest of the atoms (e.g., in base and 2'-OH) will scoot around as well, preserving
 	// ideal bond lengths and angles.
-	for (Size n = 1; n <= non_main_chain_sugar_atoms.size(); n++  ) {
+	for ( Size n = 1; n <= non_main_chain_sugar_atoms.size(); n++  ) {
 		Size const j = rsd.atom_index( non_main_chain_sugar_atoms[ n ] );
 		pose.set_xyz( id::AtomID( j,i ), start_vectors[n] );
 	}
 
-	for (Size n = 1; n <= atoms_for_which_we_need_new_dofs.size(); n++  ) {
+	for ( Size n = 1; n <= atoms_for_which_we_need_new_dofs.size(); n++  ) {
 		Size const j = rsd.atom_index( atoms_for_which_we_need_new_dofs[ n ] );
 
-		for (Size m = 1; m <= which_dofs[n].size(); m++ ) {
+		for ( Size m = 1; m <= which_dofs[n].size(); m++ ) {
 			pose.set_dof(  DOF_ID( AtomID( j,i) , which_dofs[ n ][ m ] ), new_dof_sets[ n ][ m ] );
 		}
 
@@ -264,20 +264,20 @@ fix_sugar_coords_WORKS_BUT_SLOW(
 /////////////////////////////////////////////////////////
 void
 prepare_scratch_residue(
-		 core::conformation::ResidueOP & scratch_rsd,
-		 core::conformation::Residue const & start_rsd,
-		 utility::vector1< Vector > const & non_main_chain_sugar_coords,
-		 Pose const & pose)
+	core::conformation::ResidueOP & scratch_rsd,
+	core::conformation::Residue const & start_rsd,
+	utility::vector1< Vector > const & non_main_chain_sugar_coords,
+	Pose const & pose)
 {
 
-	for (Size j = 1; j < scratch_rsd->first_sidechain_atom(); j++ ){
+	for ( Size j = 1; j < scratch_rsd->first_sidechain_atom(); j++ ) {
 		scratch_rsd->set_xyz( j , start_rsd.xyz( j ) );
 	}
 
 	//Yup, hard-wired...
 	kinematics::Stub const input_stub( scratch_rsd->xyz( " C3'" ), scratch_rsd->xyz( " C3'" ), scratch_rsd->xyz( " C4'" ), scratch_rsd->xyz( " C5'" ) );
 
-	for (Size n = 1; n <= non_main_chain_sugar_atoms.size(); n++  ) {
+	for ( Size n = 1; n <= non_main_chain_sugar_atoms.size(); n++  ) {
 		//Desired location
 		Size const j = scratch_rsd->atom_index( non_main_chain_sugar_atoms[ n ] );
 		Vector v2 = input_stub.local2global( non_main_chain_sugar_coords[ n ] );
@@ -293,11 +293,11 @@ prepare_scratch_residue(
 /////////////////////////////////////////////////////////
 void
 fix_sugar_coords(
-								 utility::vector1< std::string> atoms_for_which_we_need_new_dofs,
-								 utility::vector1< Vector > const & non_main_chain_sugar_coords,
-								 Pose & pose,
-								 Pose const & reference_pose,
-								 Size const i )
+	utility::vector1< std::string> atoms_for_which_we_need_new_dofs,
+	utility::vector1< Vector > const & non_main_chain_sugar_coords,
+	Pose & pose,
+	Pose const & reference_pose,
+	Size const i )
 {
 
 	using namespace core::id;
@@ -309,7 +309,7 @@ fix_sugar_coords(
 
 	prepare_scratch_residue( scratch_rsd, start_rsd, non_main_chain_sugar_coords, pose );
 
-	for (Size n = 1; n <= atoms_for_which_we_need_new_dofs.size(); n++  ) {
+	for ( Size n = 1; n <= atoms_for_which_we_need_new_dofs.size(); n++  ) {
 		Size const j = scratch_rsd->atom_index( atoms_for_which_we_need_new_dofs[ n ] );
 
 		// "Don't do update" --> my hack to prevent lots of refolds. I just want information about whether the
@@ -317,18 +317,18 @@ fix_sugar_coords(
 		kinematics::tree::AtomCOP current_atom ( reference_pose.atom_tree().atom_dont_do_update( AtomID(j,i) ).get_self_ptr() );
 		kinematics::tree::AtomCOP input_stub_atom1( current_atom->input_stub_atom1() );
 
-		if ( !input_stub_atom1) continue;
+		if ( !input_stub_atom1 ) continue;
 		if ( (input_stub_atom1->id()).rsd() != (current_atom->id()).rsd() ) continue;
 		if ( (input_stub_atom1->id()).atomno() > scratch_rsd->first_sidechain_atom() ) continue;
 
- 		Real const d = ( scratch_rsd->xyz( (input_stub_atom1->id()).atomno() ) -
-										 scratch_rsd->xyz( (current_atom->id()).atomno() ) ).length();
+		Real const d = ( scratch_rsd->xyz( (input_stub_atom1->id()).atomno() ) -
+			scratch_rsd->xyz( (current_atom->id()).atomno() ) ).length();
 		pose.set_dof( DOF_ID( AtomID( j, i), D), d );
 
 		if ( input_stub_atom1->is_jump() ) continue;
 
 		kinematics::tree::AtomCOP input_stub_atom2( current_atom->input_stub_atom2() );
-		if ( !input_stub_atom2) continue;
+		if ( !input_stub_atom2 ) continue;
 		if ( (input_stub_atom2->id()).rsd() != (current_atom->id()).rsd() ) continue;
 		if ( (input_stub_atom2->id()).atomno() > scratch_rsd->first_sidechain_atom() ) continue;
 
@@ -345,7 +345,7 @@ fix_sugar_coords(
 
 		kinematics::tree::AtomCOP input_stub_atom3( current_atom->input_stub_atom3() );
 
-		if ( !input_stub_atom3) continue;
+		if ( !input_stub_atom3 ) continue;
 		if ( (input_stub_atom3->id()).rsd() != (current_atom->id()).rsd() ) continue;
 		if ( (input_stub_atom3->id()).atomno() > scratch_rsd->first_sidechain_atom() ) continue;
 
@@ -363,8 +363,8 @@ fix_sugar_coords(
 //////////////////////////////////////////////////////////////////////////////
 void
 initialize_atoms_for_which_we_need_new_dofs(
-					utility::vector1< std::string > & atoms_for_which_we_need_new_dofs,
-					Pose const & pose,  Size const i)
+	utility::vector1< std::string > & atoms_for_which_we_need_new_dofs,
+	Pose const & pose,  Size const i)
 {
 
 	using namespace id;
@@ -378,9 +378,9 @@ initialize_atoms_for_which_we_need_new_dofs(
 	//
 	conformation::Residue const & rsd( pose.residue( i ) );
 
- 	kinematics::tree::AtomCOP c1prime_atom ( pose.atom_tree().atom( AtomID( rsd.atom_index( " C1'" ), i ) ).get_self_ptr() );
- 	kinematics::tree::AtomCOP o2prime_atom ( pose.atom_tree().atom( AtomID( rsd.atom_index( " O2'" ), i ) ).get_self_ptr() );
- 	kinematics::tree::AtomCOP c2prime_atom ( pose.atom_tree().atom( AtomID( rsd.atom_index( " C2'" ), i ) ).get_self_ptr() );
+	kinematics::tree::AtomCOP c1prime_atom ( pose.atom_tree().atom( AtomID( rsd.atom_index( " C1'" ), i ) ).get_self_ptr() );
+	kinematics::tree::AtomCOP o2prime_atom ( pose.atom_tree().atom( AtomID( rsd.atom_index( " O2'" ), i ) ).get_self_ptr() );
+	kinematics::tree::AtomCOP c2prime_atom ( pose.atom_tree().atom( AtomID( rsd.atom_index( " C2'" ), i ) ).get_self_ptr() );
 
 	if ( (c1prime_atom->parent()->id()).atomno() == first_base_atom_index( rsd ) ) {
 		// There's a jump to this residue.
@@ -417,11 +417,11 @@ initialize_atoms_for_which_we_need_new_dofs(
 // computationally expensive refolds whenever we change a DOF in the pose.
 void
 apply_non_main_chain_sugar_coords(
-    utility::vector1< Vector > const & non_main_chain_sugar_coords,
-		Pose & pose,
-		Pose const & reference_pose,
-		Size const i
- )
+	utility::vector1< Vector > const & non_main_chain_sugar_coords,
+	Pose & pose,
+	Pose const & reference_pose,
+	Size const i
+)
 {
 
 	using namespace id;
@@ -429,9 +429,9 @@ apply_non_main_chain_sugar_coords(
 	/////////////////////////////////////////////
 	// Save desired torsion values.
 	utility::vector1< Real > start_torsions;
-	for (Size j = 1; j <= NUM_RNA_TORSIONS; j++) {
+	for ( Size j = 1; j <= NUM_RNA_TORSIONS; j++ ) {
 		id::TorsionID rna_torsion_id( i, id::BB, j );
-		if ( j > NUM_RNA_MAINCHAIN_TORSIONS) rna_torsion_id = id::TorsionID( i, id::CHI, j - NUM_RNA_MAINCHAIN_TORSIONS );
+		if ( j > NUM_RNA_MAINCHAIN_TORSIONS ) rna_torsion_id = id::TorsionID( i, id::CHI, j - NUM_RNA_MAINCHAIN_TORSIONS );
 		start_torsions.push_back( reference_pose.torsion( rna_torsion_id ) );
 	}
 
@@ -445,9 +445,9 @@ apply_non_main_chain_sugar_coords(
 
 	/////////////////////////////////////////////
 	// Reapply desired torsion values.
-	for (Size j = 1; j <= NUM_RNA_TORSIONS; j++) {
+	for ( Size j = 1; j <= NUM_RNA_TORSIONS; j++ ) {
 		id::TorsionID rna_torsion_id( i, id::BB, j );
-		if ( j > NUM_RNA_MAINCHAIN_TORSIONS) rna_torsion_id = id::TorsionID( i, id::CHI, j - NUM_RNA_MAINCHAIN_TORSIONS );
+		if ( j > NUM_RNA_MAINCHAIN_TORSIONS ) rna_torsion_id = id::TorsionID( i, id::CHI, j - NUM_RNA_MAINCHAIN_TORSIONS );
 		pose.set_torsion( rna_torsion_id, start_torsions[ j ] );
 	}
 
@@ -459,9 +459,9 @@ apply_non_main_chain_sugar_coords(
 //copy_dof_match_atom_name there?
 void
 apply_ideal_c2endo_sugar_coords(
-		Pose & pose,
-		Size const i
- )
+	Pose & pose,
+	Size const i
+)
 {
 
 	static bool const use_phenix_geo = basic::options::option[  basic::options::OptionKeys::rna::corrected_geo ]();
@@ -509,7 +509,7 @@ apply_pucker(
 	bool const skip_same_state,
 	bool const idealize_coord
 ) {
-debug_assert( pucker_state <= 2 );
+	debug_assert( pucker_state <= 2 );
 
 	static const RNA_IdealCoord ideal_coord;
 	Real delta, nu1, nu2;
@@ -522,7 +522,7 @@ debug_assert( pucker_state <= 2 );
 	if ( idealize_coord ) {
 		ideal_coord.apply_pucker(pose, i, pucker_state);
 	} else {
-		if (pucker_state == NORTH) {
+		if ( pucker_state == NORTH ) {
 			delta = torsion_info.delta_north();
 			nu2 = torsion_info.nu2_north();
 			nu1 = torsion_info.nu1_north();
@@ -539,413 +539,414 @@ debug_assert( pucker_state <= 2 );
 ////////////////////////////////////////////////////////////////////
 
 
-	//When a CUTPOINT_UPPER is added to 3' chain_break residue, the EXISTENCE of the CUTPOINT_UPPER atoms means that the alpha torsion which previously DOES NOT exist due to the chain_break now exist. The alpha value is automatically defined to the A-form value by Rosetta. However Rosetta does not automatically adjust the OP2 and OP1 atom position to account for this fact. So it is important that the OP2 and OP1 atoms position are correctly set to be consistent with A-form alpha torsion before the CUTPOINT_UPPER IS ADDED Parin Jan 2, 2009
-	void
-	correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose, Size const five_prime_chainbreak ){
+//When a CUTPOINT_UPPER is added to 3' chain_break residue, the EXISTENCE of the CUTPOINT_UPPER atoms means that the alpha torsion which previously DOES NOT exist due to the chain_break now exist. The alpha value is automatically defined to the A-form value by Rosetta. However Rosetta does not automatically adjust the OP2 and OP1 atom position to account for this fact. So it is important that the OP2 and OP1 atoms position are correctly set to be consistent with A-form alpha torsion before the CUTPOINT_UPPER IS ADDED Parin Jan 2, 2009
+void
+correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose, Size const five_prime_chainbreak ){
 
-		using namespace core::chemical;
-		using namespace core::conformation;
-		using namespace core::id;
-		using namespace core::io::pdb;
+	using namespace core::chemical;
+	using namespace core::conformation;
+	using namespace core::id;
+	using namespace core::io::pdb;
 
-		static const ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(	core::chemical::FA_RNA );
+	static const ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_RNA );
 
-		chemical::AA res_aa = aa_from_name( "RAD" );
-		ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *( rsd_set->get_representative_type_aa( res_aa ) ) );
+	chemical::AA res_aa = aa_from_name( "RAD" );
+	ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *( rsd_set->get_representative_type_aa( res_aa ) ) );
 
-		Size three_prime_chainbreak = five_prime_chainbreak + 1;
-		current_pose.prepend_polymer_residue_before_seqpos( *new_rsd, three_prime_chainbreak, true );
-		chemical::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
+	Size three_prime_chainbreak = five_prime_chainbreak + 1;
+	current_pose.prepend_polymer_residue_before_seqpos( *new_rsd, three_prime_chainbreak, true );
+	chemical::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 
-		//Actually just by prepending the residue causes the alpha torsion to automatically be set to -64.0274,
-		//so the manual setting below is actually not needed, May 24, 2010.. Parin S.
-		//These are the initial value of virtual upper and lower cutpoint atom.
-		//Actually only the alpha (id::BB, 1) is important here since it set the position of O3' (LOWER) atom which in turn determines  OP2 and OP1 atom
-		current_pose.set_torsion( TorsionID( three_prime_chainbreak + 1, id::BB, 1 ), -64.027359 );
+	//Actually just by prepending the residue causes the alpha torsion to automatically be set to -64.0274,
+	//so the manual setting below is actually not needed, May 24, 2010.. Parin S.
+	//These are the initial value of virtual upper and lower cutpoint atom.
+	//Actually only the alpha (id::BB, 1) is important here since it set the position of O3' (LOWER) atom which in turn determines  OP2 and OP1 atom
+	current_pose.set_torsion( TorsionID( three_prime_chainbreak + 1, id::BB, 1 ), -64.027359 );
 
-		/* BEFORE AUG 24, 2011
-		//Where the hell did I get these numbers from value...by appending with ideal geometry and look at the initalized value? Oct 13, 2009
-		current_pose.set_torsion( TorsionID( five_prime_chainbreak + 1, id::BB, 5 ), -151.943 ); //Not Important?
-		current_pose.set_torsion( TorsionID( five_prime_chainbreak + 1, id::BB, 6 ), -76.4185 ); //Not Important?
-		current_pose.set_torsion( TorsionID( three_prime_chainbreak + 1, id::BB, 1 ), -64.0274 );
-		*/
+	/* BEFORE AUG 24, 2011
+	//Where the hell did I get these numbers from value...by appending with ideal geometry and look at the initalized value? Oct 13, 2009
+	current_pose.set_torsion( TorsionID( five_prime_chainbreak + 1, id::BB, 5 ), -151.943 ); //Not Important?
+	current_pose.set_torsion( TorsionID( five_prime_chainbreak + 1, id::BB, 6 ), -76.4185 ); //Not Important?
+	current_pose.set_torsion( TorsionID( three_prime_chainbreak + 1, id::BB, 1 ), -64.0274 );
+	*/
 
-		//RAD.params
-		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
-		//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
-		//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
+	//RAD.params
+	//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
+	//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
+	//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
 
-		//RCY.params
-		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
-		//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
-		//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
+	//RCY.params
+	//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
+	//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
+	//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
 
-		//RGU.params
-		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
-		//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
-		//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
+	//RGU.params
+	//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
+	//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
+	//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
 
-		//URA.parms
-		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
-		//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
-		//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
+	//URA.parms
+	//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
+	//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
+	//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
 
-		current_pose.delete_polymer_residue( five_prime_chainbreak + 1 );
+	current_pose.delete_polymer_residue( five_prime_chainbreak + 1 );
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// try to unify all cutpoint addition into this function.
+void
+correctly_add_cutpoint_variants( core::pose::Pose & pose,
+	Size const res_to_add,
+	bool const check_fold_tree /* = true*/){
+
+	using namespace core::chemical;
+
+	runtime_assert( res_to_add < pose.total_residue() );
+	if ( check_fold_tree ) runtime_assert( pose.fold_tree().is_cutpoint( res_to_add ) );
+
+	remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS_VARIANT, res_to_add );
+	remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS_VARIANT, res_to_add + 1 );
+
+	remove_variant_type_from_pose_residue( pose, THREE_PRIME_PHOSPHATE, res_to_add );
+	remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, res_to_add + 1 );
+	remove_variant_type_from_pose_residue( pose, FIVE_PRIME_PHOSPHATE, res_to_add + 1 );
+
+	if ( pose.residue_type( res_to_add ).is_RNA() ) {
+		// could also keep track of alpha, beta, etc.
+		runtime_assert( pose.residue_type( res_to_add + 1 ).is_RNA() );
+		correctly_position_cutpoint_phosphate_torsions( pose, res_to_add );
+	}
+	add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, res_to_add   );
+	add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, res_to_add + 1 );
+}
+
+///////
+bool
+is_cutpoint_closed_by_atom_name(
+	conformation::Residue const & rsd_1,
+	conformation::Residue const & rsd_2,
+	conformation::Residue const & rsd_3,
+	conformation::Residue const & rsd_4,
+	id::AtomID const & id1,
+	id::AtomID const & id2,
+	id::AtomID const & id3,
+	id::AtomID const & id4 ){
+	return(
+		is_cutpoint_closed_atom( rsd_1, id1 ) ||
+		is_cutpoint_closed_atom( rsd_2, id2 ) ||
+		is_cutpoint_closed_atom( rsd_3, id3 ) ||
+		is_cutpoint_closed_atom( rsd_4, id4 ) );
+}
+
+// Useful functions to torsional potential
+bool
+is_torsion_valid(
+	pose::Pose const & pose,
+	id::TorsionID const & torsion_id,
+	bool verbose,
+	bool skip_chainbreak_torsions
+) {
+
+	id::AtomID id1, id2, id3, id4;
+
+	bool is_fail = pose.conformation().get_torsion_angle_atom_ids( torsion_id, id1, id2, id3, id4 );
+	if ( verbose ) TR << "torsion_id: " << torsion_id << std::endl;
+	if ( is_fail ) {
+		if ( verbose ) TR << "fail to get torsion!, perhap this torsion is located at a chain_break " << std::endl;
+		return false;
 	}
 
+	conformation::Residue const & rsd_1 = pose.residue( id1.rsd() );
+	conformation::Residue const & rsd_2 = pose.residue( id2.rsd() );
+	conformation::Residue const & rsd_3 = pose.residue( id3.rsd() );
+	conformation::Residue const & rsd_4 = pose.residue( id4.rsd() );
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// try to unify all cutpoint addition into this function.
-	void
-	correctly_add_cutpoint_variants( core::pose::Pose & pose,
-																	 Size const res_to_add,
-																	 bool const check_fold_tree /* = true*/){
+	if ( !rsd_1.is_RNA() || !rsd_2.is_RNA() ||
+			!rsd_3.is_RNA() || !rsd_4.is_RNA() ) return false;
 
-		using namespace core::chemical;
+	bool is_virtual_torsion = (
+		rsd_1.is_virtual( id1.atomno() ) ||
+		rsd_2.is_virtual( id2.atomno() ) ||
+		rsd_3.is_virtual( id3.atomno() ) ||
+		rsd_4.is_virtual( id4.atomno() ) );
 
-		runtime_assert( res_to_add < pose.total_residue() );
-		if ( check_fold_tree ) runtime_assert( pose.fold_tree().is_cutpoint( res_to_add ) );
-
-		remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS_VARIANT, res_to_add );
-		remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS_VARIANT, res_to_add + 1 );
-
-		remove_variant_type_from_pose_residue( pose, THREE_PRIME_PHOSPHATE, res_to_add );
-		remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, res_to_add + 1 );
-		remove_variant_type_from_pose_residue( pose, FIVE_PRIME_PHOSPHATE, res_to_add + 1 );
-
-		if ( pose.residue_type( res_to_add ).is_RNA() ){
-			// could also keep track of alpha, beta, etc.
-			runtime_assert( pose.residue_type( res_to_add + 1 ).is_RNA() );
-			correctly_position_cutpoint_phosphate_torsions( pose, res_to_add );
-		}
-		add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, res_to_add   );
-		add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, res_to_add + 1 );
+	if ( is_virtual_torsion && verbose ) {
+		print_torsion_info( pose, torsion_id );
 	}
 
-  ///////
-  bool
-	is_cutpoint_closed_by_atom_name(
-     conformation::Residue const & rsd_1,
-		 conformation::Residue const & rsd_2,
-		 conformation::Residue const & rsd_3,
-		 conformation::Residue const & rsd_4,
-		 id::AtomID const & id1,
-		 id::AtomID const & id2,
-		 id::AtomID const & id3,
-		 id::AtomID const & id4 ){
-		return(
-					 is_cutpoint_closed_atom( rsd_1, id1 ) ||
-					 is_cutpoint_closed_atom( rsd_2, id2 ) ||
-					 is_cutpoint_closed_atom( rsd_3, id3 ) ||
-					 is_cutpoint_closed_atom( rsd_4, id4 ) );
-	}
-
-	// Useful functions to torsional potential
-	bool
-	is_torsion_valid(
-		pose::Pose const & pose,
-		id::TorsionID const & torsion_id,
-		bool verbose,
-		bool skip_chainbreak_torsions
-	) {
-
-		id::AtomID id1, id2, id3, id4;
-
-		bool is_fail = pose.conformation().get_torsion_angle_atom_ids( torsion_id, id1, id2, id3, id4 );
-		if ( verbose ) TR << "torsion_id: " << torsion_id << std::endl;
-		if ( is_fail ) {
-			if ( verbose ) TR << "fail to get torsion!, perhap this torsion is located at a chain_break " << std::endl;
-			return false;
-		}
-
-		conformation::Residue const & rsd_1 = pose.residue( id1.rsd() );
-		conformation::Residue const & rsd_2 = pose.residue( id2.rsd() );
-		conformation::Residue const & rsd_3 = pose.residue( id3.rsd() );
-		conformation::Residue const & rsd_4 = pose.residue( id4.rsd() );
-
-		if ( !rsd_1.is_RNA() || !rsd_2.is_RNA() ||
-				 !rsd_3.is_RNA() || !rsd_4.is_RNA() ) return false;
-
-		bool is_virtual_torsion = (
-			rsd_1.is_virtual( id1.atomno() ) ||
-			rsd_2.is_virtual( id2.atomno() ) ||
-			rsd_3.is_virtual( id3.atomno() ) ||
-			rsd_4.is_virtual( id4.atomno() ) );
-
-		if ( is_virtual_torsion && verbose )
-				print_torsion_info( pose, torsion_id );
-
-		// Check for cutpoint_closed
-		// (Since these torsions will contain virtual atom(s),
-		// but want to score these torsions
-		bool const is_cutpoint_closed1 = is_cutpoint_closed_torsion( pose, torsion_id );
+	// Check for cutpoint_closed
+	// (Since these torsions will contain virtual atom(s),
+	// but want to score these torsions
+	bool const is_cutpoint_closed1 = is_cutpoint_closed_torsion( pose, torsion_id );
 	debug_assert( is_cutpoint_closed1 == is_cutpoint_closed_by_atom_name( rsd_1, rsd_2, rsd_3, rsd_4, id1, id2, id3, id4) ); // takes time
 
-		if ( is_cutpoint_closed1 && !is_virtual_torsion ){
-			print_torsion_info( pose, torsion_id );
-			utility_exit_with_message( "is_cutpoint_closed1 == true && is_virtual_torsion == false!!" );
-		}
-
-
-		runtime_assert( rsd_1.seqpos() <= rsd_2.seqpos() );
-		runtime_assert( rsd_2.seqpos() <= rsd_3.seqpos() );
-		runtime_assert( rsd_3.seqpos() <= rsd_4.seqpos() );
-		runtime_assert( ( rsd_1.seqpos() == rsd_4.seqpos() )
-										|| ( rsd_1.seqpos() == ( rsd_4.seqpos() - 1 ) ) );
-
-		bool const inter_residue_torsion = ( rsd_1.seqpos() != rsd_4.seqpos() );
-
-		bool is_chain_break_torsion( false );
-
-		if ( inter_residue_torsion ){
-			// Note that chain_break_torsion does not neccessarily have to be located
-			// at a cutpoint_open. For example, in RNA might contain multiple strands,
-			// but the user not have specified them as cutpoint_open
-			// This happen frequently, for example when modeling single-stranded RNA
-			// loop (PNAS December 20, 2011 vol. 108 no. 51 20573-20578).
-			// Actually if chain_break is cutpoint_open,
-			// pose.conformation().get_torsion_angle_atom_ids() should fail, which
-			// leads to the EARLY RETURN FALSE statement at the beginning of
-			// this function.
-			bool const violate_max_O3_prime_to_P_bond_dist =
-					pose::rna::is_rna_chainbreak( pose, rsd_1.seqpos() );
-
-			// Note that cutpoint_closed_torsions are NOT considered as
-			// chain_break_torsion since we want to score them EVEN when
-			// skip_chainbreak_torsions_=true!
-			// Necessary since for cutpoint_closed_torsions, the max
-			// O3_prime_to_P_bond_dist might be violated during stages of the
-			// Fragment Assembly and Stepwise Assembly where the chain is
-			// not yet closed.
-			is_chain_break_torsion = ( violate_max_O3_prime_to_P_bond_dist
-					&& !is_cutpoint_closed1 );
-		}
-
-		// Warning before Jan 20, 2012, this used to be
-		// "Size should_score_this_torsion= true;"
-		bool should_score_this_torsion = true;
-
-		if ( is_virtual_torsion && !is_cutpoint_closed1 ) should_score_this_torsion = false;
-
-		if ( skip_chainbreak_torsions && is_chain_break_torsion ) should_score_this_torsion = false;
-
-		if ( verbose ){
-			output_boolean( " should_score_torsion = ", should_score_this_torsion );
-			output_boolean( " | is_cutpoint_closed = ", is_cutpoint_closed1 );
-			output_boolean( " | is_virtual_torsion = ", is_virtual_torsion );
-			output_boolean( " | skip_chainbreak_torsions = ", skip_chainbreak_torsions );
-			output_boolean( " | is_chain_break_torsion   = ", is_chain_break_torsion ) ;
-			TR << std::endl;
-		}
-		return should_score_this_torsion;
+	if ( is_cutpoint_closed1 && !is_virtual_torsion ) {
+		print_torsion_info( pose, torsion_id );
+		utility_exit_with_message( "is_cutpoint_closed1 == true && is_virtual_torsion == false!!" );
 	}
 
-	void
-	print_torsion_info(
-		pose::Pose const & pose,
-		id::TorsionID const & torsion_id
-	) {
-		id::AtomID id1, id2, id3, id4;
-		pose.conformation().get_torsion_angle_atom_ids(
-				torsion_id, id1, id2, id3, id4 );
 
-		TR << "torsion_id: " << torsion_id << std::endl;
+	runtime_assert( rsd_1.seqpos() <= rsd_2.seqpos() );
+	runtime_assert( rsd_2.seqpos() <= rsd_3.seqpos() );
+	runtime_assert( rsd_3.seqpos() <= rsd_4.seqpos() );
+	runtime_assert( ( rsd_1.seqpos() == rsd_4.seqpos() )
+		|| ( rsd_1.seqpos() == ( rsd_4.seqpos() - 1 ) ) );
 
-		bool is_fail = pose.conformation().get_torsion_angle_atom_ids(
-				torsion_id, id1, id2, id3, id4 );
-		if ( is_fail ){
-			TR << "fail to get torsion!, perhap this torsion is located at a chain_break " << std::endl;
-			return;
-		}
+	bool const inter_residue_torsion = ( rsd_1.seqpos() != rsd_4.seqpos() );
 
-		conformation::Residue const & rsd_1 = pose.residue( id1.rsd() );
-		conformation::Residue const & rsd_2 = pose.residue( id2.rsd() );
-		conformation::Residue const & rsd_3 = pose.residue( id3.rsd() );
-		conformation::Residue const & rsd_4 = pose.residue( id4.rsd() );
+	bool is_chain_break_torsion( false );
 
-		TR << " Torsion containing one or more virtual atom( s )" << std::endl;
-		TR << "  torsion_id: " << torsion_id;
-		TR << "  atom_id: " << id1 << " " << id2 << " " << id3 << " " << id4 << std::endl;
-		TR << "  name: " << rsd_1.type().atom_name( id1.atomno() ) << " " <<
-			rsd_2.type().atom_name( id2.atomno() ) << " " <<
-			rsd_3.type().atom_name( id3.atomno() ) << " " <<
-			rsd_4.type().atom_name( id4.atomno() ) << std::endl;
-		TR << "  type: " << rsd_1.atom_type( id1.atomno() ).name() << " " <<
-			rsd_2.atom_type( id2.atomno() ).name() << " " <<
-			rsd_3.atom_type( id3.atomno() ).name() << " " <<
-			rsd_4.atom_type( id4.atomno() ).name() << std::endl;
-		TR << "		atom_type_index: " << rsd_1.atom_type_index( id1.atomno() ) <<
-			" " << rsd_2.atom_type_index( id2.atomno() ) << " " <<
-			rsd_3.atom_type_index( id3.atomno() )  << " " <<
-			rsd_4.atom_type_index( id4.atomno() ) << std::endl;
-		TR << "		atomic_charge: " << rsd_1.atomic_charge( id1.atomno() )	<<
-			" " << rsd_2.atomic_charge( id2.atomno() )	<< " " <<
-			rsd_3.atomic_charge( id3.atomno() )	<< " " <<
-			rsd_4.atomic_charge( id4.atomno() ) << std::endl;
+	if ( inter_residue_torsion ) {
+		// Note that chain_break_torsion does not neccessarily have to be located
+		// at a cutpoint_open. For example, in RNA might contain multiple strands,
+		// but the user not have specified them as cutpoint_open
+		// This happen frequently, for example when modeling single-stranded RNA
+		// loop (PNAS December 20, 2011 vol. 108 no. 51 20573-20578).
+		// Actually if chain_break is cutpoint_open,
+		// pose.conformation().get_torsion_angle_atom_ids() should fail, which
+		// leads to the EARLY RETURN FALSE statement at the beginning of
+		// this function.
+		bool const violate_max_O3_prime_to_P_bond_dist =
+			pose::rna::is_rna_chainbreak( pose, rsd_1.seqpos() );
+
+		// Note that cutpoint_closed_torsions are NOT considered as
+		// chain_break_torsion since we want to score them EVEN when
+		// skip_chainbreak_torsions_=true!
+		// Necessary since for cutpoint_closed_torsions, the max
+		// O3_prime_to_P_bond_dist might be violated during stages of the
+		// Fragment Assembly and Stepwise Assembly where the chain is
+		// not yet closed.
+		is_chain_break_torsion = ( violate_max_O3_prime_to_P_bond_dist
+			&& !is_cutpoint_closed1 );
 	}
 
-	void
-	output_boolean( std::string const & tag, bool boolean ) {
-		using namespace ObjexxFCL;
-		using namespace ObjexxFCL::format;
-		TR << tag;
-		if ( boolean ){
-			TR << A( 4, "T" );
-		} else {
-			TR << A( 4, "F" );
-		}
+	// Warning before Jan 20, 2012, this used to be
+	// "Size should_score_this_torsion= true;"
+	bool should_score_this_torsion = true;
+
+	if ( is_virtual_torsion && !is_cutpoint_closed1 ) should_score_this_torsion = false;
+
+	if ( skip_chainbreak_torsions && is_chain_break_torsion ) should_score_this_torsion = false;
+
+	if ( verbose ) {
+		output_boolean( " should_score_torsion = ", should_score_this_torsion );
+		output_boolean( " | is_cutpoint_closed = ", is_cutpoint_closed1 );
+		output_boolean( " | is_virtual_torsion = ", is_virtual_torsion );
+		output_boolean( " | skip_chainbreak_torsions = ", skip_chainbreak_torsions );
+		output_boolean( " | is_chain_break_torsion   = ", is_chain_break_torsion ) ;
+		TR << std::endl;
+	}
+	return should_score_this_torsion;
+}
+
+void
+print_torsion_info(
+	pose::Pose const & pose,
+	id::TorsionID const & torsion_id
+) {
+	id::AtomID id1, id2, id3, id4;
+	pose.conformation().get_torsion_angle_atom_ids(
+		torsion_id, id1, id2, id3, id4 );
+
+	TR << "torsion_id: " << torsion_id << std::endl;
+
+	bool is_fail = pose.conformation().get_torsion_angle_atom_ids(
+		torsion_id, id1, id2, id3, id4 );
+	if ( is_fail ) {
+		TR << "fail to get torsion!, perhap this torsion is located at a chain_break " << std::endl;
+		return;
 	}
 
-	bool
-	is_cutpoint_closed_atom(
-		core::conformation::Residue const & rsd,
-		id::AtomID const & id
-	) {
-		std::string const & atom_name = rsd.type().atom_name( id.atomno() );
-		if ( atom_name == "OVU1" || atom_name == "OVL1" || atom_name == "OVL2" ) {
-			return true;
-		} else{
-			return false;
-		}
+	conformation::Residue const & rsd_1 = pose.residue( id1.rsd() );
+	conformation::Residue const & rsd_2 = pose.residue( id2.rsd() );
+	conformation::Residue const & rsd_3 = pose.residue( id3.rsd() );
+	conformation::Residue const & rsd_4 = pose.residue( id4.rsd() );
+
+	TR << " Torsion containing one or more virtual atom( s )" << std::endl;
+	TR << "  torsion_id: " << torsion_id;
+	TR << "  atom_id: " << id1 << " " << id2 << " " << id3 << " " << id4 << std::endl;
+	TR << "  name: " << rsd_1.type().atom_name( id1.atomno() ) << " " <<
+		rsd_2.type().atom_name( id2.atomno() ) << " " <<
+		rsd_3.type().atom_name( id3.atomno() ) << " " <<
+		rsd_4.type().atom_name( id4.atomno() ) << std::endl;
+	TR << "  type: " << rsd_1.atom_type( id1.atomno() ).name() << " " <<
+		rsd_2.atom_type( id2.atomno() ).name() << " " <<
+		rsd_3.atom_type( id3.atomno() ).name() << " " <<
+		rsd_4.atom_type( id4.atomno() ).name() << std::endl;
+	TR << "\t\tatom_type_index: " << rsd_1.atom_type_index( id1.atomno() ) <<
+		" " << rsd_2.atom_type_index( id2.atomno() ) << " " <<
+		rsd_3.atom_type_index( id3.atomno() )  << " " <<
+		rsd_4.atom_type_index( id4.atomno() ) << std::endl;
+	TR << "\t\tatomic_charge: " << rsd_1.atomic_charge( id1.atomno() ) <<
+		" " << rsd_2.atomic_charge( id2.atomno() ) << " " <<
+		rsd_3.atomic_charge( id3.atomno() ) << " " <<
+		rsd_4.atomic_charge( id4.atomno() ) << std::endl;
+}
+
+void
+output_boolean( std::string const & tag, bool boolean ) {
+	using namespace ObjexxFCL;
+	using namespace ObjexxFCL::format;
+	TR << tag;
+	if ( boolean ) {
+		TR << A( 4, "T" );
+	} else {
+		TR << A( 4, "F" );
 	}
+}
 
-	bool
-	is_cutpoint_closed_torsion(
-		pose::Pose const & pose,
-		id::TorsionID const & torsion_id
-	) {
-		using namespace ObjexxFCL;
-		Size torsion_seq_num = torsion_id.rsd();
-		Size lower_seq_num = 0;
-		Size upper_seq_num = 0;
+bool
+is_cutpoint_closed_atom(
+	core::conformation::Residue const & rsd,
+	id::AtomID const & id
+) {
+	std::string const & atom_name = rsd.type().atom_name( id.atomno() );
+	if ( atom_name == "OVU1" || atom_name == "OVL1" || atom_name == "OVL2" ) {
+		return true;
+	} else {
+		return false;
+	}
+}
 
-		if ( torsion_id.type() != id::BB ) return false;
+bool
+is_cutpoint_closed_torsion(
+	pose::Pose const & pose,
+	id::TorsionID const & torsion_id
+) {
+	using namespace ObjexxFCL;
+	Size torsion_seq_num = torsion_id.rsd();
+	Size lower_seq_num = 0;
+	Size upper_seq_num = 0;
 
-		if ( torsion_id.torsion() == ALPHA ){ //COULD BE A UPPER RESIDUE OF A CHAIN_BREAK_CLOSE
+	if ( torsion_id.type() != id::BB ) return false;
 
-			lower_seq_num = torsion_seq_num - 1;
-			upper_seq_num = torsion_seq_num;
+	if ( torsion_id.torsion() == ALPHA ) { //COULD BE A UPPER RESIDUE OF A CHAIN_BREAK_CLOSE
 
-		} else if ( torsion_id.torsion() == EPSILON || torsion_id.torsion() == ZETA ){
-			lower_seq_num = torsion_seq_num;
-			upper_seq_num = torsion_seq_num + 1;
-		} else{
-			if ( torsion_id.torsion() != DELTA && torsion_id.torsion() != BETA && torsion_id.torsion() != GAMMA ){
-				utility_exit_with_message( "The torsion should be DELTA( lower ), BETA( upper ) or GAMMA( upper ) !!" );
-			}
-			return false;
-		}
+		lower_seq_num = torsion_seq_num - 1;
+		upper_seq_num = torsion_seq_num;
 
-		if ( upper_seq_num == 1 ) return false;
-
-		if ( lower_seq_num == pose.total_residue() ) return false;
-
-		if ( pose.residue( lower_seq_num ).has_variant_type( chemical::CUTPOINT_LOWER ) ){
-			if ( pose.residue( upper_seq_num ).has_variant_type( chemical::CUTPOINT_UPPER ) == false ){
-				utility_exit_with_message( "seq_num " + string_of( lower_seq_num ) + " is a CUTPOINT_LOWER but seq_num " + string_of( upper_seq_num ) + " is not a cutpoint CUTPOINT_UPPER??" );
-			}
-			return true;
+	} else if ( torsion_id.torsion() == EPSILON || torsion_id.torsion() == ZETA ) {
+		lower_seq_num = torsion_seq_num;
+		upper_seq_num = torsion_seq_num + 1;
+	} else {
+		if ( torsion_id.torsion() != DELTA && torsion_id.torsion() != BETA && torsion_id.torsion() != GAMMA ) {
+			utility_exit_with_message( "The torsion should be DELTA( lower ), BETA( upper ) or GAMMA( upper ) !!" );
 		}
 		return false;
 	}
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	apply_virtual_rna_residue_variant_type( core::pose::Pose & pose, core::Size const & seq_num, bool const apply_check ){
+	if ( upper_seq_num == 1 ) return false;
 
-		utility::vector1< Size > working_cutpoint_closed_list;
-		working_cutpoint_closed_list.clear(); //empty list
-		apply_virtual_rna_residue_variant_type( pose, seq_num, working_cutpoint_closed_list, apply_check );
-	}
+	if ( lower_seq_num == pose.total_residue() ) return false;
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	apply_virtual_rna_residue_variant_type( core::pose::Pose & pose, core::Size const & seq_num, utility::vector1< core::Size > const & working_cutpoint_closed_list, bool const apply_check ){
-
-		using namespace core::chemical;
-		using namespace ObjexxFCL;
-
-		runtime_assert( pose.total_residue() >= seq_num );
-		if ( pose.residue_type( seq_num ).has_variant_type( VIRTUAL_RNA_RESIDUE ) ) return;
-
-		//Basically the two variant type are not compatible, VIRTUAL_RNA_RESIDUE variant type currently does not virtualize the protonated H1 atom.
-		if ( pose.residue( seq_num ).has_variant_type( PROTONATED_H1_ADENOSINE ) ){
-			TR << "Removing PROTONATED_H1_ADENOSINE variant_type from seq_num = " << seq_num <<
-					" before adding VIRTUAL_RNA_RESIDUE variant_type since the two variant_types are not compatible!" <<
-					std::endl;
-			pose::remove_variant_type_from_pose_residue( pose, PROTONATED_H1_ADENOSINE, seq_num );
+	if ( pose.residue( lower_seq_num ).has_variant_type( chemical::CUTPOINT_LOWER ) ) {
+		if ( pose.residue( upper_seq_num ).has_variant_type( chemical::CUTPOINT_UPPER ) == false ) {
+			utility_exit_with_message( "seq_num " + string_of( lower_seq_num ) + " is a CUTPOINT_LOWER but seq_num " + string_of( upper_seq_num ) + " is not a cutpoint CUTPOINT_UPPER??" );
 		}
-
-		//OK PROTONATED_H1_ADENOSINE variant type should also be removed when adding VIRTUAL_RNA_RESIDUE_EXCLUDE_PHOSPHATE variant type or BULGE variant type.
-		//However these two variant type are not currently used in standard SWA run (May 04, 2011)
-		bool is_cutpoint_closed = false;
-		if ( pose.residue( seq_num ).has_variant_type( chemical::CUTPOINT_LOWER ) ){
-			runtime_assert( pose.residue( seq_num + 1 ).has_variant_type( chemical::CUTPOINT_UPPER ) );
-			is_cutpoint_closed = true;
-		}
-
-		//Ok another possibility is that the CUTPOINT_LOWER and CUTPOINT_UPPER variant type had not been applied yet..so check the working_cutpoint_closed_list
-		for ( Size n = 1; n <= working_cutpoint_closed_list.size(); n++ ){
-			if ( seq_num == working_cutpoint_closed_list[n] ) {
-				is_cutpoint_closed = true;
-				break;
-			}
-		}
-
-		bool const is_cutpoint_open = ( pose.fold_tree().is_cutpoint( seq_num ) && !is_cutpoint_closed );
-		if ( apply_check ){
-			if ( is_cutpoint_open ) {
-				std::cerr << pose.annotated_sequence() << std::endl;
-				std::cerr << pose.fold_tree();
-				utility_exit_with_message( "Cannot apply VIRTUAL_RNA_RESIDUE VARIANT TYPE to seq_num: " + string_of( seq_num ) + ". The residue is 5' of a OPEN cutpoint" );
-			}
-			if ( pose.total_residue() == seq_num ) {
-				utility_exit_with_message( "Cannot apply VIRTUAL_RNA_RESIDUE VARIANT TYPE to seq_num: " + string_of( seq_num ) + ". pose.total_residue() == seq_num" );
-			}
-		}
-
-		pose::add_variant_type_to_pose_residue( pose, VIRTUAL_RNA_RESIDUE, seq_num );
-
-		if ( ( pose.total_residue() != seq_num ) &&  ( !is_cutpoint_open ) ) { //April 6, 2011
-			pose::add_variant_type_to_pose_residue( pose, VIRTUAL_PHOSPHATE, seq_num + 1 );
-		}
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////
-	void
-	remove_virtual_rna_residue_variant_type( pose::Pose & pose, Size const & seq_num ){
-
-		using namespace core::chemical;
-		using namespace ObjexxFCL;
-
-		runtime_assert( seq_num < pose.total_residue() );
-		pose::remove_variant_type_from_pose_residue( pose, VIRTUAL_RNA_RESIDUE, seq_num );
-		pose::remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, seq_num + 1 );
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////
-	bool
-	has_virtual_rna_residue_variant_type( pose::Pose & pose, Size const & seq_num ){
-
-		using namespace ObjexxFCL;
-
-		if ( ! pose.residue( seq_num ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return false;
-
-		if ( ( seq_num + 1 ) > pose.total_residue() ){ //Check in range
-			TR << "( seq_num + 1 ) = " << ( seq_num + 1 )  << std::endl;
-			utility_exit_with_message( "( seq_num + 1 ) > pose.total_residue()!" );
-		}
-
-		if ( ! pose.residue( seq_num + 1 ).has_variant_type( chemical::VIRTUAL_PHOSPHATE ) ){
-			TR << "Problem seq_num = " << seq_num << std::endl;
-			utility_exit_with_message( "res ( " + string_of( seq_num ) +
-					" ) has_variant_type VIRTUAL_RNA_RESIDUE but res seq_num + 1 ( " + string_of( seq_num + 1 ) +
-					" )does not have variant_type VIRTUAL_PHOSPHATE" );
-		}
-
 		return true;
-
 	}
+	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+apply_virtual_rna_residue_variant_type( core::pose::Pose & pose, core::Size const & seq_num, bool const apply_check ){
+
+	utility::vector1< Size > working_cutpoint_closed_list;
+	working_cutpoint_closed_list.clear(); //empty list
+	apply_virtual_rna_residue_variant_type( pose, seq_num, working_cutpoint_closed_list, apply_check );
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+apply_virtual_rna_residue_variant_type( core::pose::Pose & pose, core::Size const & seq_num, utility::vector1< core::Size > const & working_cutpoint_closed_list, bool const apply_check ){
+
+	using namespace core::chemical;
+	using namespace ObjexxFCL;
+
+	runtime_assert( pose.total_residue() >= seq_num );
+	if ( pose.residue_type( seq_num ).has_variant_type( VIRTUAL_RNA_RESIDUE ) ) return;
+
+	//Basically the two variant type are not compatible, VIRTUAL_RNA_RESIDUE variant type currently does not virtualize the protonated H1 atom.
+	if ( pose.residue( seq_num ).has_variant_type( PROTONATED_H1_ADENOSINE ) ) {
+		TR << "Removing PROTONATED_H1_ADENOSINE variant_type from seq_num = " << seq_num <<
+			" before adding VIRTUAL_RNA_RESIDUE variant_type since the two variant_types are not compatible!" <<
+			std::endl;
+		pose::remove_variant_type_from_pose_residue( pose, PROTONATED_H1_ADENOSINE, seq_num );
+	}
+
+	//OK PROTONATED_H1_ADENOSINE variant type should also be removed when adding VIRTUAL_RNA_RESIDUE_EXCLUDE_PHOSPHATE variant type or BULGE variant type.
+	//However these two variant type are not currently used in standard SWA run (May 04, 2011)
+	bool is_cutpoint_closed = false;
+	if ( pose.residue( seq_num ).has_variant_type( chemical::CUTPOINT_LOWER ) ) {
+		runtime_assert( pose.residue( seq_num + 1 ).has_variant_type( chemical::CUTPOINT_UPPER ) );
+		is_cutpoint_closed = true;
+	}
+
+	//Ok another possibility is that the CUTPOINT_LOWER and CUTPOINT_UPPER variant type had not been applied yet..so check the working_cutpoint_closed_list
+	for ( Size n = 1; n <= working_cutpoint_closed_list.size(); n++ ) {
+		if ( seq_num == working_cutpoint_closed_list[n] ) {
+			is_cutpoint_closed = true;
+			break;
+		}
+	}
+
+	bool const is_cutpoint_open = ( pose.fold_tree().is_cutpoint( seq_num ) && !is_cutpoint_closed );
+	if ( apply_check ) {
+		if ( is_cutpoint_open ) {
+			std::cerr << pose.annotated_sequence() << std::endl;
+			std::cerr << pose.fold_tree();
+			utility_exit_with_message( "Cannot apply VIRTUAL_RNA_RESIDUE VARIANT TYPE to seq_num: " + string_of( seq_num ) + ". The residue is 5' of a OPEN cutpoint" );
+		}
+		if ( pose.total_residue() == seq_num ) {
+			utility_exit_with_message( "Cannot apply VIRTUAL_RNA_RESIDUE VARIANT TYPE to seq_num: " + string_of( seq_num ) + ". pose.total_residue() == seq_num" );
+		}
+	}
+
+	pose::add_variant_type_to_pose_residue( pose, VIRTUAL_RNA_RESIDUE, seq_num );
+
+	if ( ( pose.total_residue() != seq_num ) &&  ( !is_cutpoint_open ) ) { //April 6, 2011
+		pose::add_variant_type_to_pose_residue( pose, VIRTUAL_PHOSPHATE, seq_num + 1 );
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
+void
+remove_virtual_rna_residue_variant_type( pose::Pose & pose, Size const & seq_num ){
+
+	using namespace core::chemical;
+	using namespace ObjexxFCL;
+
+	runtime_assert( seq_num < pose.total_residue() );
+	pose::remove_variant_type_from_pose_residue( pose, VIRTUAL_RNA_RESIDUE, seq_num );
+	pose::remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, seq_num + 1 );
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
+bool
+has_virtual_rna_residue_variant_type( pose::Pose & pose, Size const & seq_num ){
+
+	using namespace ObjexxFCL;
+
+	if ( ! pose.residue( seq_num ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return false;
+
+	if ( ( seq_num + 1 ) > pose.total_residue() ) { //Check in range
+		TR << "( seq_num + 1 ) = " << ( seq_num + 1 )  << std::endl;
+		utility_exit_with_message( "( seq_num + 1 ) > pose.total_residue()!" );
+	}
+
+	if ( ! pose.residue( seq_num + 1 ).has_variant_type( chemical::VIRTUAL_PHOSPHATE ) ) {
+		TR << "Problem seq_num = " << seq_num << std::endl;
+		utility_exit_with_message( "res ( " + string_of( seq_num ) +
+			" ) has_variant_type VIRTUAL_RNA_RESIDUE but res seq_num + 1 ( " + string_of( seq_num + 1 ) +
+			" )does not have variant_type VIRTUAL_PHOSPHATE" );
+	}
+
+	return true;
+
+}
 
 //////////////////////////////////////////////////////////////////////////////////////
 void

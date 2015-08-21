@@ -36,10 +36,10 @@ static thread_local basic::Tracer TR( "core.chemical.sdf.CtabV2000Parser" );
 bool CtabV2000Parser::parse(std::istream & tablein, std::string const & headerline, MolFileIOMolecule & molecule) {
 
 	///////////////// HEADER/Counts line
-	//	aaabbblllfffcccsssxxxrrrpppiiimmmvvvvvv
-	//	0123456789012345678901234567890123456789
-	//	0         1         2         3
-	if( headerline.size() < 39 ) {
+	// aaabbblllfffcccsssxxxrrrpppiiimmmvvvvvv
+	// 0123456789012345678901234567890123456789
+	// 0         1         2         3
+	if ( headerline.size() < 39 ) {
 		TR.Error << "Counts line for Ctab in mol/sdf file too short." << std::endl;
 		return false;
 	}
@@ -53,9 +53,9 @@ bool CtabV2000Parser::parse(std::istream & tablein, std::string const & headerli
 	//std::string const version(line,33,6);
 
 	//Sometimes V2000 don't have appropriate version numbers.
-//debug_assert( std::string(line,33,6) == "V2000");
+	//debug_assert( std::string(line,33,6) == "V2000");
 
-	if( utility::is_undefined(natoms) || utility::is_undefined(nbonds) ) {
+	if ( utility::is_undefined(natoms) || utility::is_undefined(nbonds) ) {
 		TR.Error << "Could not read the number of atoms and bonds from header of mol/sdf Ctab." << std::endl;
 		return false;
 	}
@@ -63,28 +63,28 @@ bool CtabV2000Parser::parse(std::istream & tablein, std::string const & headerli
 	std::string line;
 
 	///////////////// ATOMS
-	for( core::Size aa(1); aa <= natoms; ++aa ) {
+	for ( core::Size aa(1); aa <= natoms; ++aa ) {
 		MolFileIOAtomOP atom( new MolFileIOAtom );
 		std::getline(tablein, line);
-		if( !parse_atom_line( line, *atom) ) { return false; }
+		if ( !parse_atom_line( line, *atom) ) { return false; }
 		atom->index(aa);
 		molecule.add_atom(atom);
 	}
 	///////////////// BONDS
-	for( core::Size bb(1); bb <= nbonds; ++bb) {
+	for ( core::Size bb(1); bb <= nbonds; ++bb ) {
 		MolFileIOBondOP bond( new MolFileIOBond );
 		std::getline(tablein, line);
-		if( !parse_bond_line( line, *bond) ) { return false; }
+		if ( !parse_bond_line( line, *bond) ) { return false; }
 		bond->index(bb);
 		molecule.add_bond(bond);
 	}
 	// ATOM LIST - We'd parse the atom list block here, if we had any use for it
 	// STEXT - We'd parse the stext block here, if we had any use for it.
 	//////////////// PROPERTIES
-	for(std::getline(tablein, line);
+	for ( std::getline(tablein, line);
 			tablein && ! utility::startswith( line, "M  END" );
 			std::getline(tablein, line) ) {
-		if( ! parse_property_line( line, molecule ) ) { return false; }
+		if ( ! parse_property_line( line, molecule ) ) { return false; }
 	}
 	/// The SDF file data block (with '>' headers) is handled in SDFParser,
 	/// as it is not V2000/V3000 specific.
@@ -93,10 +93,10 @@ bool CtabV2000Parser::parse(std::istream & tablein, std::string const & headerli
 
 bool CtabV2000Parser::parse_atom_line( std::string line, MolFileIOAtom & atom) {
 	///////////////// ATOM line
-	//	xxxxx.xxxxyyyyy.yyyyzzzzz.zzzz aaaddcccssshhhbbbvvvHHHrrriiimmmnnneee
-	//	0123456789012345678901234567890123456789012345678901234567890123456789
-	//	0         1         2         3         4         5         6
-	if( line.size() < 34 ) { // 34 as we're only currently interested in the coordinates and the symbol
+	// xxxxx.xxxxyyyyy.yyyyzzzzz.zzzz aaaddcccssshhhbbbvvvHHHrrriiimmmnnneee
+	// 0123456789012345678901234567890123456789012345678901234567890123456789
+	// 0         1         2         3         4         5         6
+	if ( line.size() < 34 ) { // 34 as we're only currently interested in the coordinates and the symbol
 		TR.Error << "Atom line in mol/sdf Ctab too short." << std::endl;
 		return false;
 	}
@@ -115,7 +115,7 @@ bool CtabV2000Parser::parse_atom_line( std::string line, MolFileIOAtom & atom) {
 	//std::string const inversion_flag(line,63,3);
 	//std::string const inversion_flag(line,66,3);
 
-	if( utility::is_undefined(x) || utility::is_undefined(y) || utility::is_undefined(z) ) {
+	if ( utility::is_undefined(x) || utility::is_undefined(y) || utility::is_undefined(z) ) {
 		TR.Error << "Cannot read coordinates for atom in mol/sdf Ctab" << std::endl;
 		return false;
 	}
@@ -126,10 +126,10 @@ bool CtabV2000Parser::parse_atom_line( std::string line, MolFileIOAtom & atom) {
 
 bool CtabV2000Parser::parse_bond_line( std::string line, MolFileIOBond & bond) {
 	///////////////// Bond line
-	//	111222tttsssxxxrrrccc
-	//	012345678901234567890
-	//	0         1         2
-	if( line.size() < 9 ) { // 34 as we're only currently interested in the atoms and type
+	// 111222tttsssxxxrrrccc
+	// 012345678901234567890
+	// 0         1         2
+	if ( line.size() < 9 ) { // 34 as we're only currently interested in the atoms and type
 		TR.Error << "Bond line in mol/sdf Ctab too short." << std::endl;
 		return false;
 	}
@@ -140,7 +140,7 @@ bool CtabV2000Parser::parse_bond_line( std::string line, MolFileIOBond & bond) {
 	//std::string const stereo(line,9,3);
 	//std::string const topology(line,15,3);
 	//std::string const reacting_center(line,18,3);
-	if( utility::is_undefined(a1) || utility::is_undefined(a2) || utility::is_undefined(type) ) {
+	if ( utility::is_undefined(a1) || utility::is_undefined(a2) || utility::is_undefined(type) ) {
 		TR.Error << "Cannot read bond in mol/sdf Ctab" << std::endl;
 		return false;
 	}
@@ -153,24 +153,24 @@ bool CtabV2000Parser::parse_bond_line( std::string line, MolFileIOBond & bond) {
 bool CtabV2000Parser::parse_property_line( std::string line, MolFileIOMolecule & mol) {
 	// Because we're ignoring other blocks, we should just silent ignore lines we don't understand,
 	// rather than choking on malformated ones.
-	if( utility::startswith(line,"M  CHG") ) {
+	if ( utility::startswith(line,"M  CHG") ) {
 		/// M  CHGnn8 aaa vvv aaa vvv aaa vvv
-		//	0123456789012345678901234567890123456789
-		//	0         1         2         3
+		// 0123456789012345678901234567890123456789
+		// 0         1         2         3
 		core::Size nrecords( utility::string2Size( line.substr(6,3) ) );
-		if( utility::is_undefined(nrecords) ) { // We could check if this is greater than 8, but we don't need to.
+		if ( utility::is_undefined(nrecords) ) { // We could check if this is greater than 8, but we don't need to.
 			TR.Error << "Malformed CHG record in mol/sdf file" << std::endl;
 			return false;
 		}
-		for( core::Size ii(1); ii <= nrecords; ++ii ) {
+		for ( core::Size ii(1); ii <= nrecords; ++ii ) {
 			core::Size const atomi( utility::string2Size( line.substr(8*ii+2,3) ) );
 			core::Real const charge( utility::string2Real( line.substr(8*ii+6,3) ) );
-			if( utility::is_undefined(atomi) || utility::is_undefined(charge) ) {
+			if ( utility::is_undefined(atomi) || utility::is_undefined(charge) ) {
 				TR.Error << "Malformed CHG record in mol/sdf file" << std::endl;
 				return false;
 			}
 			MolFileIOAtomOP atom( mol.atom_index(atomi) );
-			if( !atom ) {
+			if ( !atom ) {
 				TR.Error << "CHG record in mol/sdf file refers to non-existant atom." << std::endl;
 				return false;
 			} else {

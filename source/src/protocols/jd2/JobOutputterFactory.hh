@@ -69,7 +69,7 @@ public:
 private:
 	JobOutputterOP get_JobOutputter_from_string( std::string const & job_outputter_type );
 
-  JobOutputterFactory();
+	JobOutputterFactory();
 
 	// Unimplemented -- uncopyable
 	JobOutputterFactory( JobOutputterFactory const & );

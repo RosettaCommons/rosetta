@@ -30,9 +30,9 @@
 
 using namespace core::pack::task;
 
-namespace protocols{
-namespace toolbox{
-namespace task_operations{
+namespace protocols {
+namespace toolbox {
+namespace task_operations {
 
 class RestrictNativeResiduesOperation : public core::pack::task::operation::TaskOperation {
 public:
@@ -52,7 +52,7 @@ public:
 	RestrictNativeResiduesOperation();
 
 	/// @brief destructor
-	 ~RestrictNativeResiduesOperation();
+	~RestrictNativeResiduesOperation();
 
 	/// @brief make clone
 	virtual TaskOperationOP clone() const;
@@ -60,7 +60,7 @@ public:
 public:
 
 	void parse_tag( TagCOP tag , DataMap & );
-//	void parse_def( utility::lua::LuaObject const & def );
+	// void parse_def( utility::lua::LuaObject const & def );
 
 	/// @brief apply
 	virtual void apply( Pose const & pose, PackerTask & task ) const;

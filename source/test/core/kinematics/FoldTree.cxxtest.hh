@@ -46,7 +46,7 @@ public:
 		simple_ft_ = FoldTree( 40 );
 
 		std::istringstream two_chain_ft_is, ligand_ft_is, single_loop_ft_is, reverse_ft_is, branching_ft_is,
-				branching_ligand_ft_is;
+			branching_ligand_ft_is;
 		two_chain_ft_is.str( "FOLD_TREE  EDGE 1 20 -1  EDGE 1 21 1  EDGE 21 40 -1" );
 		ligand_ft_is.str( "FOLD_TREE  EDGE 1 40 -1  EDGE 1 41 1" );
 		single_loop_ft_is.str( "FOLD_TREE  EDGE 15 1 -1  EDGE 15 20 -1  EDGE 15 25 1  EDGE 25 21 -1  EDGE 25 40 -1" );
@@ -100,7 +100,7 @@ public:
 		output.str( "" );
 		output << single_loop_ft_;
 		TS_ASSERT_EQUALS( output.str(),
-				"FOLD_TREE  EDGE 15 1 -1  EDGE 15 20 -1  EDGE 15 25 1  EDGE 25 21 -1  EDGE 25 40 -1 " );
+			"FOLD_TREE  EDGE 15 1 -1  EDGE 15 20 -1  EDGE 15 25 1  EDGE 25 21 -1  EDGE 25 40 -1 " );
 
 		output.str( "" );
 		output << reverse_ft_;
@@ -401,7 +401,7 @@ public:
 		FoldTree const fifty_foldtree( 50 ), sixty_foldtree( 60 );
 		// should have one edge, 1-50
 		FoldTree fifty_foldtree_after(
-				core::kinematics::remodel_fold_tree_to_account_for_insertion( fifty_foldtree, 25, 10 ) );
+			core::kinematics::remodel_fold_tree_to_account_for_insertion( fifty_foldtree, 25, 10 ) );
 		// should have one edge, 1-60
 		TS_ASSERT_EQUALS( fifty_foldtree_after, sixty_foldtree );
 
@@ -431,7 +431,7 @@ public:
 		reusable_FT_istream >> add_before_jump;
 
 		TS_ASSERT_EQUALS(add_before_jump,
-				core::kinematics::remodel_fold_tree_to_account_for_insertion( twochain_tree, 20, 10 ) );
+			core::kinematics::remodel_fold_tree_to_account_for_insertion( twochain_tree, 20, 10 ) );
 
 		core::kinematics::FoldTree add_after_jump;
 		reusable_FT_istream.clear();
@@ -445,50 +445,50 @@ public:
 		// This next line tests that it crashes (as it should) if you try to insert on a jumping point using this
 		// simple algorithm
 		TS_ASSERT_THROWS_ANYTHING(
-				core::kinematics::remodel_fold_tree_to_account_for_insertion( twochain_tree, 25, 10 ) );
+			core::kinematics::remodel_fold_tree_to_account_for_insertion( twochain_tree, 25, 10 ) );
 
 
 		//Test complex case #1 (stolen from AnchoredDesign integration test)
 		core::kinematics::FoldTree anchored_design_fold_tree;
 		reusable_FT_istream.clear();
 		reusable_FT_istream.str(
-				"FOLD_TREE EDGE 1 59 -1  JEDGE 59 85 1 C N  INTRA_RES_STUB  EDGE 85 78 -1  EDGE 85 90 -1  "
-				"EDGE 90 132 -1  EDGE 132 133 -1  EDGE 90 76 2  EDGE 132 143 3  EDGE 76 60 -1  EDGE 76 77 -1  "
-				"EDGE 143 134 -1  EDGE 143 152 -1" );
+			"FOLD_TREE EDGE 1 59 -1  JEDGE 59 85 1 C N  INTRA_RES_STUB  EDGE 85 78 -1  EDGE 85 90 -1  "
+			"EDGE 90 132 -1  EDGE 132 133 -1  EDGE 90 76 2  EDGE 132 143 3  EDGE 76 60 -1  EDGE 76 77 -1  "
+			"EDGE 143 134 -1  EDGE 143 152 -1" );
 		reusable_FT_istream >> anchored_design_fold_tree;
 
 		core::kinematics::FoldTree anchored_design_fold_tree_10at80;
 		reusable_FT_istream.clear();
 		reusable_FT_istream.str(
-				"FOLD_TREE EDGE 1 59 -1  JEDGE 59 95 1 C N  INTRA_RES_STUB  EDGE 95 78 -1  EDGE 95 100 -1  "
-				"EDGE 100 142 -1  EDGE 142 143 -1  EDGE 100 76 2  EDGE 142 153 3  EDGE 76 60 -1  EDGE 76 77 -1  "
-				"EDGE 153 144 -1  EDGE 153 162 -1" );
+			"FOLD_TREE EDGE 1 59 -1  JEDGE 59 95 1 C N  INTRA_RES_STUB  EDGE 95 78 -1  EDGE 95 100 -1  "
+			"EDGE 100 142 -1  EDGE 142 143 -1  EDGE 100 76 2  EDGE 142 153 3  EDGE 76 60 -1  EDGE 76 77 -1  "
+			"EDGE 153 144 -1  EDGE 153 162 -1" );
 		reusable_FT_istream >> anchored_design_fold_tree_10at80;
 
 		TS_ASSERT_EQUALS( anchored_design_fold_tree_10at80,
-				core::kinematics::remodel_fold_tree_to_account_for_insertion( anchored_design_fold_tree, 80, 10 ) );
+			core::kinematics::remodel_fold_tree_to_account_for_insertion( anchored_design_fold_tree, 80, 10 ) );
 
 
 		//Test complex case #2 (stolen from UBQ_E2_thioester_extra_bodies integration test)
 		core::kinematics::FoldTree UBQ_E2_fold_tree;
 		reusable_FT_istream.clear();
 		reusable_FT_istream.str( "FOLD_TREE  EDGE 1 173 -1  EDGE 85 249 -2  SG   C    EDGE 249 174 -1  "
-				"JEDGE 249 297 1 C NZ  END  EDGE 297 325 -1  EDGE 297 250 -1  JEDGE 1 326 2  N    N    END  "
-				"EDGE 326 691 -1  JEDGE 1 692 3  N    N    END  EDGE 692 779 -1" );
+			"JEDGE 249 297 1 C NZ  END  EDGE 297 325 -1  EDGE 297 250 -1  JEDGE 1 326 2  N    N    END  "
+			"EDGE 326 691 -1  JEDGE 1 692 3  N    N    END  EDGE 692 779 -1" );
 		reusable_FT_istream >> UBQ_E2_fold_tree;
 
 		core::kinematics::FoldTree UBQ_E2_fold_tree_10at300;
 		reusable_FT_istream.clear();
 		reusable_FT_istream.str(
-				"FOLD_TREE  EDGE 1 173 -1  EDGE 85 249 -2  SG   C    EDGE 249 174 -1  JEDGE 249 297 1 C NZ  END  "
-				"EDGE 297 335 -1  EDGE 297 250 -1  JEDGE 1 336 2  N    N    END  EDGE 336 701 -1  "
-				"JEDGE 1 702 3  N    N    END  EDGE 702 789 -1" );
+			"FOLD_TREE  EDGE 1 173 -1  EDGE 85 249 -2  SG   C    EDGE 249 174 -1  JEDGE 249 297 1 C NZ  END  "
+			"EDGE 297 335 -1  EDGE 297 250 -1  JEDGE 1 336 2  N    N    END  EDGE 336 701 -1  "
+			"JEDGE 1 702 3  N    N    END  EDGE 702 789 -1" );
 		reusable_FT_istream >> UBQ_E2_fold_tree_10at300;
 
 		TS_ASSERT_EQUALS( UBQ_E2_fold_tree_10at300,
-				core::kinematics::remodel_fold_tree_to_account_for_insertion( UBQ_E2_fold_tree, 300, 10 ) );
+			core::kinematics::remodel_fold_tree_to_account_for_insertion( UBQ_E2_fold_tree, 300, 10 ) );
 	}
-	
+
 	void test_delete_jump() {
 		core::kinematics::FoldTree ft;
 		ft.add_edge( 37, 1, core::kinematics::Edge::PEPTIDE );
@@ -504,5 +504,5 @@ public:
 
 private:
 	FoldTree empty_ft_, single_residue_ft_, simple_ft_, two_chain_ft_, ligand_ft_, single_loop_ft_, reverse_ft_,
-			branching_ft_, branching_ligand_ft_;
+		branching_ft_, branching_ligand_ft_;
 };

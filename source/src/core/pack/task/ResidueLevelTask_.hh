@@ -196,7 +196,7 @@ public:
 
 	/// @brief disables designing to residues not in the passed list--and specifies the resfile command that made this list
 	virtual void restrict_absent_canonical_aas( utility::vector1< bool > const & allowed_aas,
-																							std::string const & mode );
+		std::string const & mode );
 
 	//@brief Same behavior restrict_absent_canonical_aas except that it always allows the native aa at a position even if it is not included in the allowed residues
 	virtual void restrict_nonnative_canonical_aas( utility::vector1< bool > const & allowed_aas);
@@ -233,7 +233,7 @@ public:
 	virtual void disallow_noncanonical_aas();
 
 	/// @brief explicitly allow a canonical AA
-	virtual	void allow_aa( chemical::AA const & aa );
+	virtual void allow_aa( chemical::AA const & aa );
 
 	virtual ResidueTypeCOPList const & allowed_residue_types() const;
 	/// @brief returns iterator to beginning of allowed residue types list (traversal only)
@@ -274,7 +274,7 @@ public:
 
 
 	/// @brief create a string the resfile format of all the commands applied to this residue level task
-	virtual	std::string	command_string( ) const;
+	virtual std::string command_string( ) const;
 
 
 	///////////////////////////// dangerous update functions
@@ -318,13 +318,13 @@ private: // private methods
 	/// @brief private: return the EX command for the packer task
 	std::string
 	get_ex_flags( Size chiid,
-								Size const exaro_sample_level,
-								Size const ex_sample_level) const;
+		Size const exaro_sample_level,
+		Size const ex_sample_level) const;
 
 	/// @brief private: return the task mode that can be used to recreate
 	///the task.  If the residue level task was made with POLAR it
 	///should return the string "POLAR".
-	std::string	task_mode() const;
+	std::string task_mode() const;
 
 	rna::RNA_ResidueLevelTask const & rna_task() const;
 

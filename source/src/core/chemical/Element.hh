@@ -91,15 +91,15 @@ public:
 	//! @param ELECTRON_CONFIGURATION  - the electron configuration
 	Element
 	(
-			const core::Size ATOMIC_NUMBER,
-			const core::Size PERIOD,
-			const core::Size MAIN_GROUP,
-			const std::string &CHEMICAL_SYMBOL,
-			const std::string &CHEMICAL_NAME,
-			const core::Real MASS,
-			const core::Real COVALENT_RADIUS,
-			const core::Real VDW_RADIUS,
-			const ElectronConfiguration &ELECTRON_CONFIGURATION
+		const core::Size ATOMIC_NUMBER,
+		const core::Size PERIOD,
+		const core::Size MAIN_GROUP,
+		const std::string &CHEMICAL_SYMBOL,
+		const std::string &CHEMICAL_NAME,
+		const core::Real MASS,
+		const core::Real COVALENT_RADIUS,
+		const core::Real VDW_RADIUS,
+		const ElectronConfiguration &ELECTRON_CONFIGURATION
 	);
 
 	//! @brief virtual copy constructor
@@ -202,18 +202,18 @@ public:
 
 private:
 
-//////////
-// data //
-//////////
+	//////////
+	// data //
+	//////////
 
-core::chemical::element::Elements element_;                       //!< Element enum
-core::Size             atomic_number_;                            //!< atomic number
-core::Size             period_;                                   //!< Period
-core::Size             main_group_;                               //!< Group # in the main group (1-8) such as transistion metals
-std::string            chemical_symbol_;                          //!< ChemicalSymbol
-std::string            chemical_name_;                            //!< ChemicalName
-ElectronConfiguration  electron_configuration_;                   //!< electron configuration
-utility::vector0< core::Real > properties_; //!< real-valued properties
+	core::chemical::element::Elements element_;                       //!< Element enum
+	core::Size             atomic_number_;                            //!< atomic number
+	core::Size             period_;                                   //!< Period
+	core::Size             main_group_;                               //!< Group # in the main group (1-8) such as transistion metals
+	std::string            chemical_symbol_;                          //!< ChemicalSymbol
+	std::string            chemical_name_;                            //!< ChemicalName
+	ElectronConfiguration  electron_configuration_;                   //!< electron configuration
+	utility::vector0< core::Real > properties_; //!< real-valued properties
 
 
 }; // class Element

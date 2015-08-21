@@ -43,10 +43,10 @@ namespace dna {
 
 using utility::vector1;
 using namespace core;
-	using namespace kinematics;
-	using namespace optimization;
-	using namespace basic::options;
-	using namespace scoring;
+using namespace kinematics;
+using namespace optimization;
+using namespace basic::options;
+using namespace scoring;
 using namespace moves;
 
 using basic::t_warning;
@@ -73,17 +73,17 @@ DnaInterfaceMinMoverCreator::mover_name()
 }
 
 DnaInterfaceMinMover::DnaInterfaceMinMover()
-	: protocols::simple_moves::MinMover("DnaInterfaceMinMover"),
-		interface_(/* 0 */),
-		chi_(true),
-		bb_(false)
+: protocols::simple_moves::MinMover("DnaInterfaceMinMover"),
+	interface_(/* 0 */),
+	chi_(true),
+	bb_(false)
 {
 	min_type( option[ OptionKeys::run::min_type ]() );
 	tolerance( option[ OptionKeys::run::min_tolerance ]() );
 }
 
-DnaInterfaceMinMover::DnaInterfaceMinMover( DnaInterfaceMinMover const & src ) : 
-	//utility::pointer::ReferenceCount(), 
+DnaInterfaceMinMover::DnaInterfaceMinMover( DnaInterfaceMinMover const & src ) :
+	//utility::pointer::ReferenceCount(),
 	protocols::simple_moves::MinMover( src )
 {
 	*this = src;
@@ -102,10 +102,10 @@ DnaInterfaceMinMover::operator = ( DnaInterfaceMinMover const & src )
 DnaInterfaceMinMover::~DnaInterfaceMinMover(){}
 
 DnaInterfaceMinMover::DnaInterfaceMinMover( DnaInterfaceFinderOP interface )
-	: protocols::simple_moves::MinMover("DnaInterfaceMinMover"),
-		interface_( interface ),
-		chi_(true),
-		bb_(false)
+: protocols::simple_moves::MinMover("DnaInterfaceMinMover"),
+	interface_( interface ),
+	chi_(true),
+	bb_(false)
 {
 	runtime_assert( interface != 0 );
 	reset_from_interface();
@@ -129,7 +129,7 @@ DnaInterfaceMinMover::reset_from_interface()
 	// sidechain minimization for all amino acids in the vicinity of nucleotide bases
 	// (according to 'interface', which need not represent the entire protein-DNA interface)
 	for ( DnaNeighbors::const_iterator itr( interface_->protein_neighbors().begin() ),
-      end( interface_->protein_neighbors().end() ); itr != end; ++itr ) {
+			end( interface_->protein_neighbors().end() ); itr != end; ++itr ) {
 		if ( itr->second.close() ) {
 			// avoid adding pointless 'false' values to std::map if chi_ or bb_ are false
 			if ( chi_ ) new_movemap->set_chi( itr->first, true );
@@ -153,7 +153,7 @@ DnaInterfaceMinMover::apply( pose::Pose & pose )
 	}
 
 	AtomTreeMinimizer minimizer;
-//	(*score_function())(pose_);
+	// (*score_function())(pose_);
 	minimizer.run( pose, *movemap(), *score_function(), *min_options() );
 }
 

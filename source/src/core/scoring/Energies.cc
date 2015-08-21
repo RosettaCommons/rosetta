@@ -194,7 +194,7 @@ Energies::~Energies()
 EnergiesOP
 Energies::clone() const
 {
-  return EnergiesOP( new Energies( *this ) );
+	return EnergiesOP( new Energies( *this ) );
 }
 
 
@@ -240,7 +240,7 @@ Energies::total_energies()
 Energies::EnergyGraph const &
 Energies::energy_graph() const
 {
-debug_assert( graph_state_ == GOOD );
+	debug_assert( graph_state_ == GOOD );
 	return *energy_graph_;
 }
 
@@ -248,7 +248,7 @@ debug_assert( graph_state_ == GOOD );
 Energies::EnergyGraph &
 Energies::energy_graph()
 {
-debug_assert( graph_state_ == GOOD );
+	debug_assert( graph_state_ == GOOD );
 	return *energy_graph_;
 }
 
@@ -269,13 +269,13 @@ Energies::tenA_neighbor_graph() const
 {
 	using namespace scoring;
 
-debug_assert( graph_state_ == GOOD );
+	debug_assert( graph_state_ == GOOD );
 
 	if ( ! context_graphs_[ ten_A_neighbor_graph ] ) {
 		require_context_graph_( ten_A_neighbor_graph, true );
 	}
 
-debug_assert( dynamic_cast< TenANeighborGraph const * > (context_graphs_[ ten_A_neighbor_graph ].get()) );
+	debug_assert( dynamic_cast< TenANeighborGraph const * > (context_graphs_[ ten_A_neighbor_graph ].get()) );
 
 	return static_cast< TenANeighborGraph const & > ( *context_graphs_[ ten_A_neighbor_graph ] );
 }
@@ -286,13 +286,13 @@ Energies::tenA_neighbor_graph()
 {
 	using namespace scoring;
 
-debug_assert( graph_state_ == GOOD );
+	debug_assert( graph_state_ == GOOD );
 
 	if ( ! context_graphs_[ ten_A_neighbor_graph ] ) {
 		require_context_graph_( ten_A_neighbor_graph, true );
 	}
 
-debug_assert( dynamic_cast< TenANeighborGraph const * > (context_graphs_[ ten_A_neighbor_graph ].get()) );
+	debug_assert( dynamic_cast< TenANeighborGraph const * > (context_graphs_[ ten_A_neighbor_graph ].get()) );
 
 	return static_cast< TenANeighborGraph & > ( *context_graphs_[ ten_A_neighbor_graph ] );
 }
@@ -305,13 +305,13 @@ scoring::TwelveANeighborGraph const &
 Energies::twelveA_neighbor_graph() const
 {
 	using namespace scoring;
-debug_assert( graph_state_ == GOOD );
+	debug_assert( graph_state_ == GOOD );
 
 	if ( ! context_graphs_[ twelve_A_neighbor_graph ] ) {
 		require_context_graph_( twelve_A_neighbor_graph, true );
 	}
 
-debug_assert( dynamic_cast< TwelveANeighborGraph const * > (context_graphs_[ twelve_A_neighbor_graph ].get()) );
+	debug_assert( dynamic_cast< TwelveANeighborGraph const * > (context_graphs_[ twelve_A_neighbor_graph ].get()) );
 
 	return static_cast< TwelveANeighborGraph const & > ( *context_graphs_[ twelve_A_neighbor_graph ] );
 }
@@ -323,13 +323,13 @@ Energies::twelveA_neighbor_graph()
 {
 	using namespace scoring;
 
-debug_assert( graph_state_ == GOOD );
+	debug_assert( graph_state_ == GOOD );
 
 	if ( ! context_graphs_[ twelve_A_neighbor_graph ] ) {
 		require_context_graph_( twelve_A_neighbor_graph, true );
 	}
 
-debug_assert( dynamic_cast< TwelveANeighborGraph const * > (context_graphs_[ twelve_A_neighbor_graph ].get()) );
+	debug_assert( dynamic_cast< TwelveANeighborGraph const * > (context_graphs_[ twelve_A_neighbor_graph ].get()) );
 
 	return static_cast< TwelveANeighborGraph & > ( *context_graphs_[ twelve_A_neighbor_graph ] );
 }
@@ -339,7 +339,7 @@ debug_assert( dynamic_cast< TwelveANeighborGraph const * > (context_graphs_[ twe
 scoring::ContextGraphOP
 Energies::context_graph( scoring::ContextGraphType type )
 {
-debug_assert( graph_state_ == GOOD );
+	debug_assert( graph_state_ == GOOD );
 	if ( context_graphs_[ type ] == 0 ) require_context_graph_( type, true );
 	return context_graphs_[ type ];
 }
@@ -348,7 +348,7 @@ debug_assert( graph_state_ == GOOD );
 scoring::ContextGraphCOP
 Energies::context_graph( scoring::ContextGraphType type ) const
 {
-debug_assert( graph_state_ == GOOD );
+	debug_assert( graph_state_ == GOOD );
 	if ( context_graphs_[ type ] == 0 ) require_context_graph_( type, true );
 	return context_graphs_[ type ];
 }
@@ -442,7 +442,7 @@ Energies::clear_energies()
 		residue_total_energy_.resize( size_ );
 		std::fill( residue_total_energy_.begin(), residue_total_energy_.end(), (Real) 0.0 );
 	}
- 	energy_graph_->drop_all_edges();
+	energy_graph_->drop_all_edges();
 	for ( uint ii = 1; ii <= context_graphs_.size(); ++ii ) {
 		if ( context_graphs_[ ii ] ) context_graphs_[ ii ]->drop_all_edges();
 	}
@@ -460,7 +460,7 @@ void
 Energies::prepare_neighbor_graphs()
 {
 	// The graph state should either be GOOD (no work requried) or MOD (correct, mod the domain map)
-debug_assert( graph_state_ != BAD );
+	debug_assert( graph_state_ != BAD );
 	delete_graph_edges_using_domain_map( *energy_graph_ );
 
 	// Later, the absence of edges from the energy_graph_ is taken as a signal
@@ -496,14 +496,12 @@ void Energies::delete_graph_edges_using_domain_map( Graph & g )
 {
 	using namespace graph;
 	for ( Graph::EdgeListIter iter = g.edge_list_begin(),
-		iter_end = g.edge_list_end(); iter != iter_end; /* no increment statement*/ )
-	{
+			iter_end = g.edge_list_end(); iter != iter_end; /* no increment statement*/ ) {
 		Graph::EdgeListIter iter_next = iter;
 		++iter_next;
 
 		int const n1( (*iter)->get_first_node_ind() ), n2( (*iter)->get_second_node_ind() );
-		if ( domain_map_( n1 ) == 0 || domain_map_( n2 ) == 0 || domain_map_( n1 ) != domain_map_( n2 ) )
-		{
+		if ( domain_map_( n1 ) == 0 || domain_map_( n2 ) == 0 || domain_map_( n1 ) != domain_map_( n2 ) ) {
 			g.delete_edge(*iter); //drop the edge from the graph.
 		}
 		iter = iter_next;
@@ -550,7 +548,7 @@ Energies::set_minimization_graph( MinimizationGraphOP mingraph )
 scoring::NeighborList const &
 Energies::nblist( EnergiesCacheableDataType::Enum const & type ) const
 {
-debug_assert( use_nblist_ && nblist_.find( type ) != nblist_.end() );
+	debug_assert( use_nblist_ && nblist_.find( type ) != nblist_.end() );
 	return *( nblist_.find( type )->second );
 }
 
@@ -561,7 +559,7 @@ Energies::set_nblist(
 	scoring::NeighborListOP nblist_in
 )
 {
-debug_assert( use_nblist_ && nblist_.find( type ) == nblist_.end() );
+	debug_assert( use_nblist_ && nblist_.find( type ) == nblist_.end() );
 	nblist_[ type ] = nblist_in;
 }
 
@@ -573,8 +571,8 @@ Energies::set_use_nblist(
 	bool const use_nblist_auto_update
 )
 {
-debug_assert( !use_nblist_ && !scoring_ );
-debug_assert( energy_state_ == GOOD ); // we should have just scored
+	debug_assert( !use_nblist_ && !scoring_ );
+	debug_assert( energy_state_ == GOOD ); // we should have just scored
 
 	use_nblist_ = true;
 	use_nblist_auto_update_ = use_nblist_auto_update;
@@ -607,14 +605,14 @@ debug_assert( energy_state_ == GOOD ); // we should have just scored
 void
 Energies::show( std::ostream & out ) const
 {
- debug_assert( energy_state_ == GOOD );
+	debug_assert( energy_state_ == GOOD );
 
 	if ( ! residue_total_energies_uptodate_ ) accumulate_residue_total_energies();
 
 	// show the header (names of scoretypes)
 	out << "E       "; // "E" plus spaces to account for "(i)" plus the four character alignment of the residue number
 	for ( EnergyMap::const_iterator it=total_energies_.begin(),
-					it_end = total_energies_.end(); it != it_end; ++it ) {
+			it_end = total_energies_.end(); it != it_end; ++it ) {
 		ScoreType const scoretype = ScoreType( it - total_energies_.begin() + 1 ); // hacky
 		if ( scorefxn_weights_[ scoretype ] != 0 ) {
 			out << A(14, name_from_score_type(scoretype));
@@ -622,9 +620,9 @@ Energies::show( std::ostream & out ) const
 	}
 	out << std::endl;
 
- 	// show the onebody energies
- 	for ( Size i=1; i<= size(); ++i ) {
- 		out << "E(i)" << I(4,i);
+	// show the onebody energies
+	for ( Size i=1; i<= size(); ++i ) {
+		out << "E(i)" << I(4,i);
 		EnergyMap const & emap( residue_total_energies_[i] );
 		for ( EnergyMap::const_iterator it = emap.begin(), it_end = emap.end(); it != it_end; ++it ) {
 			ScoreType const scoretype = ScoreType( it - emap.begin() + 1 ); // hacky
@@ -637,7 +635,7 @@ Energies::show( std::ostream & out ) const
 
 	// show the total energies
 	for ( EnergyMap::const_iterator it=total_energies_.begin(),
-					it_end = total_energies_.end(); it != it_end; ++it ) {
+			it_end = total_energies_.end(); it != it_end; ++it ) {
 		ScoreType const scoretype = ScoreType( it - total_energies_.begin() + 1 ); // hacky
 		if ( scorefxn_weights_[ scoretype ] != 0 ) {
 			//out << "total_energy " << scoretype << ' ' << F(12,3,*it) << std::endl;
@@ -651,13 +649,13 @@ Energies::show( std::ostream & out ) const
 void
 Energies::show( std::ostream & out, Size res ) const
 {
- debug_assert( energy_state_ == GOOD );
+	debug_assert( energy_state_ == GOOD );
 
 	if ( ! residue_total_energies_uptodate_ ) accumulate_residue_total_energies();
 	// show the header (names of scoretypes)
 	out << "E       "; // "E" plus spaces to account for "(i)" plus the four character alignment of the residue number
 	for ( EnergyMap::const_iterator it=total_energies_.begin(),
-					it_end = total_energies_.end(); it != it_end; ++it ) {
+			it_end = total_energies_.end(); it != it_end; ++it ) {
 		ScoreType const scoretype = ScoreType( it - total_energies_.begin() + 1 ); // hacky
 		if ( scorefxn_weights_[ scoretype ] != 0 ) {
 			out << A(14, name_from_score_type(scoretype));
@@ -678,10 +676,9 @@ Energies::show( std::ostream & out, Size res ) const
 
 std::ostream & operator<<(std::ostream & out, const Energies& e )
 {
-	if (e.size() == 0) {
+	if ( e.size() == 0 ) {
 		out << "The pose must be scored first to generate an energy table." << std::endl;
-	}
-	else {
+	} else {
 		// per-residue energies
 		out << A( 4, "res" );
 		//EnergyMap const & temp_emap( e.residue_total_energies( 1 ) );
@@ -699,7 +696,7 @@ std::ostream & operator<<(std::ostream & out, const Energies& e )
 			EnergyMap const & emap( e.residue_total_energies( i ) );
 			for ( EnergyMap::const_iterator it = emap.begin(),
 					it_end = emap.end(); it != it_end; ++it ) {
-				if (temp_emap[ ScoreType( it - emap.begin() + 1) ]) out << F( 15, 3, *it );
+				if ( temp_emap[ ScoreType( it - emap.begin() + 1) ] ) out << F( 15, 3, *it );
 			}
 			out << std::endl;
 		}
@@ -707,11 +704,12 @@ std::ostream & operator<<(std::ostream & out, const Energies& e )
 		// total energies
 		out << A( 4, "tot" );
 		for ( EnergyMap::const_iterator it = e.total_energies().begin(),
-			it_end = e.total_energies().end(); it != it_end; ++it ) {
-			if ( temp_emap[ ScoreType( it - e.total_energies().begin() + 1 ) ] )
-				 out << F(15,3,*it);
-				//out << "total_energy ";
-				//		<< ScoreType( it - e.total_energies().begin() + 1 ) << ' '
+				it_end = e.total_energies().end(); it != it_end; ++it ) {
+			if ( temp_emap[ ScoreType( it - e.total_energies().begin() + 1 ) ] ) {
+				out << F(15,3,*it);
+			}
+			//out << "total_energy ";
+			//  << ScoreType( it - e.total_energies().begin() + 1 ) << ' '
 		}
 		out << std::endl;
 	}
@@ -747,10 +745,11 @@ Energies::show_total_headers( std::ostream & out ) const
 	// total energies
 	EnergyMap const & temp_emap( get_scorefxn_info().scores_present() );
 	for ( EnergyMap::const_iterator it = total_energies().begin(),
-		it_end = total_energies().end(); it != it_end; ++it ) {
-		if ( temp_emap[ ScoreType( it - total_energies().begin() + 1 ) ] )
-			// out	<< A( 15, ScoreType( it - total_energies().begin() + 1 ) );
+			it_end = total_energies().end(); it != it_end; ++it ) {
+		if ( temp_emap[ ScoreType( it - total_energies().begin() + 1 ) ] ) {
+			// out << A( 15, ScoreType( it - total_energies().begin() + 1 ) );
 			out << ScoreType( it - total_energies().begin() + 1 ) << ' ';
+		}
 	}
 }
 
@@ -761,11 +760,12 @@ Energies::show_totals( std::ostream & out ) const
 
 	EnergyMap const & temp_emap( get_scorefxn_info().scores_present() );
 	for ( EnergyMap::const_iterator it = total_energies().begin(),
-		it_end = total_energies().end(); it != it_end; ++it ) {
-		if ( temp_emap[ ScoreType( it - total_energies().begin() + 1 ) ] )
-			// out	<< ScoreType( it - total_energies().begin() + 1 ) << ' '
-			//  		<< F(15,3,*it);
+			it_end = total_energies().end(); it != it_end; ++it ) {
+		if ( temp_emap[ ScoreType( it - total_energies().begin() + 1 ) ] ) {
+			// out << ScoreType( it - total_energies().begin() + 1 ) << ' '
+			//    << F(15,3,*it);
 			out << F( 15,3, *it );
+		}
 
 	}
 }
@@ -786,7 +786,7 @@ Energies::clear()
 void
 Energies::reset_nblist()
 {
-debug_assert( use_nblist_ && !scoring_ );
+	debug_assert( use_nblist_ && !scoring_ );
 	use_nblist_ = false;
 	nblist_.clear();
 
@@ -815,7 +815,7 @@ void
 Energies::set_size( Size const new_size )
 {
 	if ( size_ == new_size ) {
-	debug_assert( domain_map_.size() == size_ &&
+		debug_assert( domain_map_.size() == size_ &&
 			Size(energy_graph_->num_nodes()) == size_ );
 		return;
 	}
@@ -867,7 +867,7 @@ Energies::update_residue_neighbors(
 	// no updates to the neighbors during minimization
 	// the neighbors should have been calculated inside set_use_nblist
 	if ( use_nblist_ ) {
-	debug_assert( size_ == pose.total_residue() && graph_state_ != BAD );
+		debug_assert( size_ == pose.total_residue() && graph_state_ != BAD );
 		graph_state_ = GOOD;  // pretend
 		return;
 	}
@@ -913,7 +913,7 @@ Energies::internalize_new_domain_map()
 
 	for ( uint ii = 1, ii_end = size_; ii <= ii_end; ++ii ) {
 
-		if ( domain_map_(ii) == 0) {
+		if ( domain_map_(ii) == 0 ) {
 			//energy_graph_->get_energy_node( ii )->moved( true );
 			energy_graph_->get_energy_node( ii )->moved( true );
 
@@ -956,13 +956,13 @@ Energies::accumulate_residue_total_energies() const
 		/// of residue total energies.
 		/// uncomment the if block to instead accumulate only those residue energies with a non-zero weight.
 		//if ( scorefxn_weights_[ (ScoreType) ii ] != 0.0 ) {
-			if ( ii <= n_shortranged_2b_score_types ) twobody_score_types.push_back( (ScoreType) ii );
-			all_score_types.push_back( (ScoreType) ii );
+		if ( ii <= n_shortranged_2b_score_types ) twobody_score_types.push_back( (ScoreType) ii );
+		all_score_types.push_back( (ScoreType) ii );
 		//}
 	}
 
 	// debug
-debug_assert( !use_nblist() && energies_updated() );
+	debug_assert( !use_nblist() && energies_updated() );
 
 	// start with the one-body energies
 	for ( Size i=1, i_end = residue_total_energies_.size(); i<= i_end; ++i ) {
@@ -1088,7 +1088,7 @@ Energies::set_scorefxn_info( scoring::ScoreFunctionInfoOP info )
 		if ( scorefxn_info_->requires_context_graph( ContextGraphType( ii )) != required_context_graphs_[ ii ] ) {
 			if ( required_context_graphs_[ ii ] ) {
 				if ( ! externally_required_context_graphs_[ ii ] ) {
-				debug_assert( context_graphs_[ ii ] );
+					debug_assert( context_graphs_[ ii ] );
 					/// The new score function does not require that the context graph be maintained, nor
 					/// did any external (non-energy-method ) peice of code.  It is safe to delete this
 					/// graph and to stop maintaining it during score evaluations.
@@ -1099,8 +1099,8 @@ Energies::set_scorefxn_info( scoring::ScoreFunctionInfoOP info )
 			} else {
 				/// Required by the score function, but not externally required, nor required by the previous
 				/// score function.
-			debug_assert( context_graphs_[ ii ] == 0 );
-			debug_assert( externally_required_context_graphs_[ ii ] );
+				debug_assert( context_graphs_[ ii ] == 0 );
+				debug_assert( externally_required_context_graphs_[ ii ] );
 				require_context_graph_( ContextGraphType (ii), false );
 			}
 		}
@@ -1151,7 +1151,7 @@ Energies::update_neighbor_links(
 	runtime_assert( !core::pose::symmetry::is_symmetric( pose ) );
 
 	//std::cout << "update_neighbor_links: interaction dist: " << scorefxn_info_->max_atomic_interaction_distance() <<
-	//	std::endl;
+	// std::endl;
 
 	if ( point_graph_ == 0 ) {
 		point_graph_ = conformation::PointGraphOP( new core::conformation::PointGraph );
@@ -1189,8 +1189,8 @@ Energies::update_neighbor_links(
 
 				// How about we simply make sure the radii sum is positive instead of paying for a sqrt
 				// if ( std::sqrt( square_distance ) < ( ii_intxn_radius + jj_res.nbr_radius() ) ) {
- 				if ( ii_intxn_radius + jjradius > 0 ) {
-					if ( square_distance < (ii_intxn_radius + jjradius )*(ii_intxn_radius + jjradius )) {
+				if ( ii_intxn_radius + jjradius > 0 ) {
+					if ( square_distance < (ii_intxn_radius + jjradius )*(ii_intxn_radius + jjradius ) ) {
 						energy_graph_->add_energy_edge( ii, jj, square_distance );
 					}
 					for ( uint kk = 1; kk <= context_graphs_present.size(); ++kk ) {
@@ -1232,7 +1232,7 @@ void Energies::copy_nblists( Energies const & other )
 
 void Energies::copy_context_graphs( Energies const & other )
 {
-debug_assert( other.context_graphs_.size() == context_graphs_.size() );
+	debug_assert( other.context_graphs_.size() == context_graphs_.size() );
 	externally_required_context_graphs_ = other.externally_required_context_graphs_;
 	required_context_graphs_ = other.required_context_graphs_;
 	max_context_neighbor_cutoff_ = other.max_context_neighbor_cutoff_;
@@ -1262,7 +1262,7 @@ void Energies::copy_lr_energy_containers( Energies const & other )
 void
 Energies::require_context_graph_( scoring::ContextGraphType type, bool external ) const
 {
-debug_assert( context_graphs_[ type ] == 0 );
+	debug_assert( context_graphs_[ type ] == 0 );
 	required_context_graphs_[ type ] = true;
 	context_graphs_[ type ] = ContextGraphFactory::create_context_graph( type );
 	if ( context_graphs_[ type ] == 0 ) {
@@ -1340,16 +1340,16 @@ Energies::scoring_begin(
 	}
 
 	/*if ( ! scorefunction_changed ) {
-		/// Force a rescore if weights have changed.
-		for ( Size ii = 1; ii <= n_shortranged_2b_score_types; ++ii ) {
-			if ( scorefxn_weights_[ (ScoreType) ii ] != sfxn.weights()[ (ScoreType) ii ] ) {
-				energy_state_ = BAD;
-				graph_state_ = BAD;
-				scorefunction_changed = true;
-				break;
-			}
-		}
-		}*/
+	/// Force a rescore if weights have changed.
+	for ( Size ii = 1; ii <= n_shortranged_2b_score_types; ++ii ) {
+	if ( scorefxn_weights_[ (ScoreType) ii ] != sfxn.weights()[ (ScoreType) ii ] ) {
+	energy_state_ = BAD;
+	graph_state_ = BAD;
+	scorefunction_changed = true;
+	break;
+	}
+	}
+	}*/
 
 	// check size
 	if ( size_ != pose.total_residue() ) {
@@ -1393,8 +1393,8 @@ Energies::scoring_end( scoring::ScoreFunction const &  )
 bool
 Energies::res_moved( int const seqpos ) const
 {
-  require_scoring();
-  return energy_graph_->get_energy_node( seqpos )->moved();
+	require_scoring();
+	return energy_graph_->get_energy_node( seqpos )->moved();
 }
 
 
@@ -1407,84 +1407,84 @@ Energies::res_moved( int const seqpos ) const
 // //
 // void
 // Energies::scoring_begin(
-// 	DomainMap const & domain_map_in,
-// 	ScoreFunctionInfo const & info,
-// 	bool update_neighbors,
-// 	pose::Pose const & pose // for the neighbor calculation
+//  DomainMap const & domain_map_in,
+//  ScoreFunctionInfo const & info,
+//  bool update_neighbors,
+//  pose::Pose const & pose // for the neighbor calculation
 // )
 // {
 
-// 	// check size
-// 	if ( size_ != pose.total_residue() ) {
-// 		energy_state_ = BAD;
-// 		graph_state_ = BAD;
-// 		set_size( pose.total_residue() );
-// 	}
+//  // check size
+//  if ( size_ != pose.total_residue() ) {
+//   energy_state_ = BAD;
+//   graph_state_ = BAD;
+//   set_size( pose.total_residue() );
+//  }
 
-// 	// check for info mismatch
-// 	if ( info != scorefxn_info_ ) {
-// 		energy_state_ = BAD;
-// 		scorefxn_info_ = info;
-// 	}
+//  // check for info mismatch
+//  if ( info != scorefxn_info_ ) {
+//   energy_state_ = BAD;
+//   scorefxn_info_ = info;
+//  }
 
-// 	// set our scoring flag to true
-// 	scoring_ = true;
+//  // set our scoring flag to true
+//  scoring_ = true;
 
-// 	// update the domain_map
-// 	if ( ( update_neighbors && graph_state_ == BAD ) ||
-// 			 ( energy_state_ == BAD ) ) {
-// 		domain_map_ = 0;
-// 		energy_state_ = MOD;
-// 		graph_state_ = MOD;
-// 	} else {
-// 		domain_map_ = domain_map_in;
-// 	}
-
-
-// 	// reset energy/neighbor links
-// 	if ( !use_nblist_ ) {
-// 		// deletes the moving links
-// 		prepare_neighbor_graphs();
-// 	} else {
-// 		// pass -- preserve the nbr graphs during minimization
-// 	}
+//  // update the domain_map
+//  if ( ( update_neighbors && graph_state_ == BAD ) ||
+//     ( energy_state_ == BAD ) ) {
+//   domain_map_ = 0;
+//   energy_state_ = MOD;
+//   graph_state_ = MOD;
+//  } else {
+//   domain_map_ = domain_map_in;
+//  }
 
 
-// 	// total and twobody energies have to be reset if anything has changed
-// 	for ( Size i=1; i<= size_; ++i ) {
-// 		if ( domain_map_(i) == 0 || domain_map_(i) != domain_map_(1) ) {
-// 			total_energies_.clear();
-// 			break;
-// 		}
-// 	}
-
-// 	// onebody residue energies are still valid unless bb/chi changed
-// 	// for that sequence position
-// 	for ( Size i=1; i<= size_; ++i ) {
-// 		if ( res_moved(i) ) {
-// 			onebody_energies_[i].clear();
-// 		}
-// 	}
+//  // reset energy/neighbor links
+//  if ( !use_nblist_ ) {
+//   // deletes the moving links
+//   prepare_neighbor_graphs();
+//  } else {
+//   // pass -- preserve the nbr graphs during minimization
+//  }
 
 
-// 	////////////////////////////////////////////
-// 	// update the neighbor links if desired
-// 	if ( use_nblist_ ) {
-// 		// don't modify the graphs at all
-// 		// we pretend that the graph_state is good
-// 		if ( update_neighbors ) graph_state_ = GOOD;
-// 	} else if ( update_neighbors ) {
-// 		scoring::update_neighbor_energy_links
-// 			( pose, energy_graph_, tenA_neighbor_graph_, domain_map_ );
-// 		graph_state_ = GOOD;
-// 	} else {
-// 		//apl do we really want to do this?
-// 		//if graph state was good going into this, why would it no longer be good?
-// 		//  rotamer trials wants to use the neighbor graph that already exists
-// 		//  (and it has to call this function once for each residue it modifies)
-// 		//
-// 		//graph_state_ = BAD;
-// 	}
+//  // total and twobody energies have to be reset if anything has changed
+//  for ( Size i=1; i<= size_; ++i ) {
+//   if ( domain_map_(i) == 0 || domain_map_(i) != domain_map_(1) ) {
+//    total_energies_.clear();
+//    break;
+//   }
+//  }
+
+//  // onebody residue energies are still valid unless bb/chi changed
+//  // for that sequence position
+//  for ( Size i=1; i<= size_; ++i ) {
+//   if ( res_moved(i) ) {
+//    onebody_energies_[i].clear();
+//   }
+//  }
+
+
+//  ////////////////////////////////////////////
+//  // update the neighbor links if desired
+//  if ( use_nblist_ ) {
+//   // don't modify the graphs at all
+//   // we pretend that the graph_state is good
+//   if ( update_neighbors ) graph_state_ = GOOD;
+//  } else if ( update_neighbors ) {
+//   scoring::update_neighbor_energy_links
+//    ( pose, energy_graph_, tenA_neighbor_graph_, domain_map_ );
+//   graph_state_ = GOOD;
+//  } else {
+//   //apl do we really want to do this?
+//   //if graph state was good going into this, why would it no longer be good?
+//   //  rotamer trials wants to use the neighbor graph that already exists
+//   //  (and it has to call this function once for each residue it modifies)
+//   //
+//   //graph_state_ = BAD;
+//  }
 
 
 // }

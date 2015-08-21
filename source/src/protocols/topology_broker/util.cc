@@ -161,16 +161,16 @@ void add_claims_from_stream( TopologyBroker& broker, std::istream& is ,  CmdLine
 			while ( is >> tag && tag.substr(0,4) != "END_" ) {
 				if ( tag == "LARGE" ) {
 					FragmentIO frag_io(option[ OptionKeys::abinitio::number_9mer_frags ](),
-									   option[ OptionKeys::frags::nr_large_copies ](),
-									   option[ OptionKeys::frags::annotate ]() );
+						option[ OptionKeys::frags::nr_large_copies ](),
+						option[ OptionKeys::frags::annotate ]() );
 					frags_large = read_frags( is, frag_io );
 
 				} else if ( tag == "SMALL" ) {
 					FragmentIO frag_io(option[ OptionKeys::abinitio::number_3mer_frags ](),
-									   1,
-									   option[ OptionKeys::frags::annotate ]() );
+						1,
+						option[ OptionKeys::frags::annotate ]() );
 					frags_small = read_frags( is, frag_io );
-				} else if ( tag == "LABEL" ){
+				} else if ( tag == "LABEL" ) {
 					is >> frags_label;
 				} else if ( tag[0] == '#' ) {
 					getline( is, tag );
@@ -181,7 +181,7 @@ void add_claims_from_stream( TopologyBroker& broker, std::istream& is ,  CmdLine
 				tr.Trace << "SMALL Fragments read for label: " << frags_label << std::endl;// << *fragment.frags_small_ << std::endl;
 			}
 
-			if( !frags_large || !frags_small ){
+			if ( !frags_large || !frags_small ) {
 				throw utility::excn::EXCN_BadInput("ABINITIO_FRAGS macro used in topology broker setup without both 'LARGE' and 'SMALL' tags specifying 9-mer and 3-mer frags.");
 			}
 
@@ -206,7 +206,7 @@ void add_claims_from_file( TopologyBroker& broker, std::string const& file , Cmd
 	} catch ( EXCN_BadInput &excn ) {
 		throw EXCN_BadInput( excn.msg() + " occurred when reading file "+file ); //of course I loose the speciality of the EXCEPTION
 	}
-	//that might be just eof check for is.fail() ??? don't check...not my problem ?
+//that might be just eof check for is.fail() ??? don't check...not my problem ?
 }
 
 void add_cmdline_claims( TopologyBroker& broker, bool const do_I_need_frags ) {
@@ -232,7 +232,7 @@ void add_cmdline_claims( TopologyBroker& broker, bool const do_I_need_frags ) {
 	}
 
 	// If no fragments have been specified in the input file, read from command line.
-	if ( input_fragments.size() == 0 && do_I_need_frags ){
+	if ( input_fragments.size() == 0 && do_I_need_frags ) {
 		tr.Debug << "Reading FragmentFiles from cmd." << std::endl;
 
 		FragSetOP large;
@@ -242,17 +242,16 @@ void add_cmdline_claims( TopologyBroker& broker, bool const do_I_need_frags ) {
 		input_fragments.add_back( FragmentContainer( large, small, "DEFAULT" ) );
 	}
 	if ( input_fragments.size() == 0 ) {
-		if(do_I_need_frags){
+		if ( do_I_need_frags ) {
 			throw utility::excn::EXCN_BadInput( "expected LARGE and SMALL fragment sets in ABINITIO_FRAGS section or via command line ");
-		}
-		else{
+		} else {
 			return;
 		}
 	}
 
 
 	//Add 5 claimers for each FragmentContainer in <input_fragments>
-	for ( utility::vector1< FragmentContainer >::iterator i = input_fragments.begin(); i != input_fragments.end(); ++i ){
+	for ( utility::vector1< FragmentContainer >::iterator i = input_fragments.begin(); i != input_fragments.end(); ++i ) {
 
 		if ( i->label() == "" ) {
 			i->set_label( "DEFAULT" );
@@ -264,7 +263,7 @@ void add_cmdline_claims( TopologyBroker& broker, bool const do_I_need_frags ) {
 			bml( new ClassicFragmentMover(i->frags_small()) ),
 			bms( new ClassicFragmentMover(i->frags_small()) ),
 			sms( new SmoothFragmentMover (i->frags_small(), simple_moves::FragmentCostOP( new GunnCost ) ) );
-			
+
 		broker.add( TopologyClaimerOP( new FragmentClaimer( bml, "LargeFrags", weights::AbinitioMoverWeightOP( new LargeFragWeight ), i->label(), i->frags_large() ) ) );
 		broker.add( TopologyClaimerOP( new FragmentClaimer( bms, "SmallFrags", weights::AbinitioMoverWeightOP( new SmallFragWeight ), i->label(), i->frags_small() ) ) );
 		broker.add( TopologyClaimerOP( new FragmentClaimer( sms, "SmoothFrags", weights::AbinitioMoverWeightOP( new SmoothFragWeight ), i->label(), i->frags_small() ) ) );
@@ -283,16 +282,16 @@ void add_cmdline_claims( TopologyBroker& broker, bool const do_I_need_frags ) {
 		using namespace basic::options::OptionKeys;
 
 		//std::string label;
-        std::string sequence;
+		std::string sequence;
 		if ( option[ in::file::fasta ].user() ) {
-            std::string filename = option[ in::file::fasta ]()[1];
-            sequence = core::sequence::read_fasta_file( filename  )[1]->sequence();
-            // label = core::sequence::read_fasta_file( filename )[1]->id();
-            broker.add( TopologyClaimerOP( new SequenceClaimer ( sequence, "DEFAULT", core::chemical::CENTROID ) ) );
+			std::string filename = option[ in::file::fasta ]()[1];
+			sequence = core::sequence::read_fasta_file( filename  )[1]->sequence();
+			// label = core::sequence::read_fasta_file( filename )[1]->id();
+			broker.add( TopologyClaimerOP( new SequenceClaimer ( sequence, "DEFAULT", core::chemical::CENTROID ) ) );
 
-            tr.Debug << "Read command-line to instantiate a default SequenceClaimer. Read sequence is '"
-                    << sequence << "' from command-line (-in:file:fasta or similar) specified file "
-                    << filename << std::endl;
+			tr.Debug << "Read command-line to instantiate a default SequenceClaimer. Read sequence is '"
+				<< sequence << "' from command-line (-in:file:fasta or similar) specified file "
+				<< filename << std::endl;
 		} else if ( option[ in::file::native ].user() ) {
 			pose::PoseOP native_pose( new pose::Pose );
 			core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() );
@@ -305,7 +304,7 @@ void add_cmdline_claims( TopologyBroker& broker, bool const do_I_need_frags ) {
 			throw utility::excn::EXCN_BadInput("Error: can't read sequence! Use -in::file::fasta sequence.fasta or -in::file::native native.pdb!");
 		}
 
-        //broker.add( new SequenceClaimer ( sequence, core::chemical::CENTROID ) );
+		//broker.add( new SequenceClaimer ( sequence, core::chemical::CENTROID ) );
 	}
 
 	if ( !cmdline_data.b_has_constraint_claimer && basic::options::option[ constraints::cst_file ].user() ) {

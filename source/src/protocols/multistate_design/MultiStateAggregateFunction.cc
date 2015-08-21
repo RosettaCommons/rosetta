@@ -39,7 +39,7 @@ MultiStateAggregateFunction::evaluate(
 
 	core::Real aggregate_fitness = 0;
 
-	for (core::Size i = 1; i <= single_state_fitnesses.size(); ++i) {
+	for ( core::Size i = 1; i <= single_state_fitnesses.size(); ++i ) {
 		aggregate_fitness += (single_states[i]->is_positive_state() ? 1.0 : -1.0) * single_state_fitnesses[i];
 	}
 

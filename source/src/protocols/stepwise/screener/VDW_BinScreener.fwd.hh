@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/screener/VDW_BinScreener.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace stepwise {
 namespace screener {
-	
-	class VDW_BinScreener;
-	typedef utility::pointer::shared_ptr< VDW_BinScreener > VDW_BinScreenerOP;
-	typedef utility::pointer::shared_ptr< VDW_BinScreener const > VDW_BinScreenerCOP;
-	
+
+class VDW_BinScreener;
+typedef utility::pointer::shared_ptr< VDW_BinScreener > VDW_BinScreenerOP;
+typedef utility::pointer::shared_ptr< VDW_BinScreener const > VDW_BinScreenerCOP;
+
 } //screener
 } //stepwise
 } //protocols

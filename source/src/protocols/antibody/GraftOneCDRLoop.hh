@@ -35,8 +35,8 @@ public:
 
 	// constructor with arguments
 	GraftOneCDRLoop(CDRNameEnum const & cdr_name,
-	                AntibodyInfoOP antibody_info,
-	                Ab_TemplateInfoOP ab_t_info);
+		AntibodyInfoOP antibody_info,
+		Ab_TemplateInfoOP ab_t_info);
 
 
 	~GraftOneCDRLoop();

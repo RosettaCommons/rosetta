@@ -66,7 +66,7 @@ namespace abinitio {
 int run_boinc_debug() {
 	std::string sequence(
 		core::sequence::read_fasta_file(
-			option[ in::file::fasta ]()[1]
+		option[ in::file::fasta ]()[1]
 		)[1]->sequence()
 	);
 	core::pose::Pose fold_pose;
@@ -74,7 +74,7 @@ int run_boinc_debug() {
 		fold_pose,
 		sequence,
 		*( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID ) )
- 	);
+	);
 
 	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 
@@ -110,7 +110,7 @@ int run_boinc_debug() {
 			}
 
 			(*scorefxn)(fold_pose);
-			//			core::Real score = (*scorefxn)(fold_pose);
+			//   core::Real score = (*scorefxn)(fold_pose);
 			//mc.boltzmann( fold_pose );
 
 			log << "iteration " << i << std::endl;

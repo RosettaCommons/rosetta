@@ -68,22 +68,22 @@ KinematicTaskControl::~KinematicTaskControl() {}
 void KinematicTaskControl::apply( pose::Pose &pose ) {
 	core::kinematics::simple_visualize_fold_tree( pose.fold_tree(), tr.Debug );
 	tr.Debug << "KinematicTaskControl settings: "
-					 << " return_full_atom " <<( !return_centroid() ? "yes" : "no" )
-					 << " add side-chains " << ( sampling_protocol_->return_centroid() ? "yes" : "no" )
-					 << std::endl;
+		<< " return_full_atom " <<( !return_centroid() ? "yes" : "no" )
+		<< " add side-chains " << ( sampling_protocol_->return_centroid() ? "yes" : "no" )
+		<< std::endl;
 	//resoltuion switch: if pose is fullatom ---> make it centroid but keep full-atom copy for the retrieval of side-chains later on.
-	res_switch_ = ResolutionSwitcherOP( new	ResolutionSwitcher(
-			pose,
-			b_input_is_fullatom_,
-			sampling_protocol_->start_from_centroid(),
-			sampling_protocol_->return_centroid()
-	) );
+	res_switch_ = ResolutionSwitcherOP( new ResolutionSwitcher(
+		pose,
+		b_input_is_fullatom_,
+		sampling_protocol_->start_from_centroid(),
+		sampling_protocol_->return_centroid()
+		) );
 	//needs the full-atom scorefxn for repacking later
 	res_switch().set_scorefxn( fullatom_scorefxn() ); //needed for repacking
 
 	//-------------------------------------------------
 	// the actual work
-  bool success( true );
+	bool success( true );
 	// start pose ( centroid or fullatom based on the initialization of res_switch )
 	pose = res_switch().start_pose();
 	if ( tr.Debug.visible() ) output_debug_structure( pose, "start_pose" );
@@ -102,7 +102,7 @@ void KinematicTaskControl::apply( pose::Pose &pose ) {
 
 	if ( !return_centroid() ) res_switch().apply( pose );
 	tr.Debug << "return from KinematicTaskControl" << std::endl;
-	if (! (success && (res_switch().get_last_move_status() == moves::MS_SUCCESS) ) ) set_last_move_status( moves::FAIL_RETRY );
+	if ( ! (success && (res_switch().get_last_move_status() == moves::MS_SUCCESS) ) ) set_last_move_status( moves::FAIL_RETRY );
 }
 
 std::string
@@ -111,7 +111,7 @@ KinematicTaskControl::get_name() const {
 }
 
 //@brief sampling: simple version: get new kinematics (movemap+jumps) and call sampling protocol.
-	//overwrite this guy if you want to do more stuff ... i.e., extend loops if things didn't work out in the first place.
+//overwrite this guy if you want to do more stuff ... i.e., extend loops if things didn't work out in the first place.
 bool KinematicTaskControl::inner_loop( core::pose::Pose& pose ) {
 	bool success( false );
 
@@ -126,16 +126,16 @@ bool KinematicTaskControl::inner_loop( core::pose::Pose& pose ) {
 	if ( current_kinematics_ && tr.Info.visible() ) {
 		tr.Info << "kinematic choice:\n";
 		core::kinematics::simple_visualize_fold_tree_and_movemap(
-				current_kinematics_->sampling_fold_tree(),
-				current_kinematics_->movemap(),
-				tr.Info );
+			current_kinematics_->sampling_fold_tree(),
+			current_kinematics_->movemap(),
+			tr.Info );
 		tr.Info << "\n" << jumping::JumpSample( current_kinematics_->sampling_fold_tree() );
 		tr.Info << "\nfinal_fold-tree:\n";
 		core::kinematics::simple_visualize_fold_tree( current_kinematics_->final_fold_tree(), tr.Info );
 	}
 
 	// if setup valid...
-  if ( current_kinematics_ ) {
+	if ( current_kinematics_ ) {
 		// sample with this setup
 		sampling_protocol_->set_kinematics( current_kinematics() );
 		sampling_protocol_->apply( pose );
@@ -157,19 +157,19 @@ void KinematicTaskControl::set_extended_torsions_and_idealize_loops( core::pose:
 		for ( Size pos = std::max( 1, (int) it->start()); pos<=end_extended; pos++ ) {
 			core::conformation::idealize_position( pos, pose.conformation() );
 		}
- 		Real const init_phi  ( -150.0 );
+		Real const init_phi  ( -150.0 );
 		Real const init_psi  (  150.0 );
 		Real const init_omega(  180.0 );
 		//special thing for residue 1 since idealize has a bug for residue 1
-	// 	if ( it->start() == 1 ) {
-// 			core::conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( pose.residue_type( 1 ) ) );
-// 			pose.replace_residue( 1, *new_rsd , false /*orient backbone*/ );
-// 		}
+		//  if ( it->start() == 1 ) {
+		//    core::conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( pose.residue_type( 1 ) ) );
+		//    pose.replace_residue( 1, *new_rsd , false /*orient backbone*/ );
+		//   }
 
 		for ( Size pos = it->start(); pos <= end_extended; pos++ ) {
-			if( pos != it->start() )	pose.set_phi( pos,  init_phi );
-			if( pos != end_extended ) pose.set_psi( pos,  init_psi );
-			if( ( pos != it->start() ) && ( pos != end_extended ) ) pose.set_omega( pos,  init_omega );
+			if ( pos != it->start() ) pose.set_phi( pos,  init_phi );
+			if ( pos != end_extended ) pose.set_psi( pos,  init_psi );
+			if ( ( pos != it->start() ) && ( pos != end_extended ) ) pose.set_omega( pos,  init_omega );
 		}
 	}
 }

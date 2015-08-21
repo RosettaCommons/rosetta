@@ -41,16 +41,17 @@ public:
 
 	/// @brief  creates a predicted phi-based scoring function.
 	Phi(Size priority, Real lowest_acceptable_value, bool use_lowest,
-				std::string & fastaQuerySequence, utility::vector1<core::Real> & query_phi_prediction,
-				utility::vector1<core::Real> & query_phi_prediction_conf) :
-			CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
-				"Phi"),  query_(fastaQuerySequence) {
+		std::string & fastaQuerySequence, utility::vector1<core::Real> & query_phi_prediction,
+		utility::vector1<core::Real> & query_phi_prediction_conf) :
+		CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
+		"Phi"),  query_(fastaQuerySequence) {
 
-				if (query_.length() != query_phi_prediction.size())
-					utility_exit_with_message("Query length does not match predicted phi values");
+		if ( query_.length() != query_phi_prediction.size() ) {
+			utility_exit_with_message("Query length does not match predicted phi values");
+		}
 
-				query_phi_prediction_ = query_phi_prediction;
-				query_phi_prediction_conf_ = query_phi_prediction_conf;
+		query_phi_prediction_ = query_phi_prediction;
+		query_phi_prediction_conf_ = query_phi_prediction_conf;
 	}
 
 	~Phi() {};
@@ -63,8 +64,8 @@ public:
 private:
 	std::string cached_scores_id_;
 	std::string & query_;
-  utility::vector1<Real> query_phi_prediction_;
-  utility::vector1<Real> query_phi_prediction_conf_;
+	utility::vector1<Real> query_phi_prediction_;
+	utility::vector1<Real> query_phi_prediction_conf_;
 };
 
 /// @brief  Maker class that produces a new Phi object
@@ -76,11 +77,11 @@ public:
 	}
 
 	FragmentScoringMethodOP make(Size priority, Real lowest_acceptable_value, bool use_lowest,
-				FragmentPickerOP picker, std::string) {
+		FragmentPickerOP picker, std::string) {
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new Phi(priority,
-        lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), picker->get_query_phi_prediction(),
-				picker->get_query_phi_prediction_conf()) );
-  }
+			lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), picker->get_query_phi_prediction(),
+			picker->get_query_phi_prediction_conf()) );
+	}
 
 };
 

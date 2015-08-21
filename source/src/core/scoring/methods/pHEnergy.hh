@@ -65,7 +65,7 @@ public:
 	) const;
 
 
-        virtual
+	virtual
 	Real
 	eval_dof_derivative(
 		id::DOF_ID const & dof_id, id::TorsionID const & tor_id, pose::Pose const & pose,
@@ -76,14 +76,14 @@ public:
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
 
-        static void set_pH ( core::Real );
+	static void set_pH ( core::Real );
 
 
 private:
 
 	static core::Real pH_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 
 };

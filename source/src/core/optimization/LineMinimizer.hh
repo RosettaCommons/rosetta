@@ -53,21 +53,21 @@ public:
 		_search_direction( dir ),
 		_eval_point( dir.size(), 0.0 ),
 		_dE_dvars( dir.size(), 0.0 ),
-	 	_func( score_fxn ),
+		_func( score_fxn ),
 		_eval_count( 0 ),
 		_deriv_count( 0 )
 		// _search_direction_magnitude( 0.0 )
 	{
-	debug_assert( _starting_point.size() == _search_direction.size() );
+		debug_assert( _starting_point.size() == _search_direction.size() );
 		//for( uint i =  1 ; i <= _starting_point.size() ; ++i ) {
-		//	_search_direction_magnitude += _search_direction[i] * _search_direction[i];
+		// _search_direction_magnitude += _search_direction[i] * _search_direction[i];
 		//}
 		//_search_direction_magnitude = std::sqrt( _search_direction_magnitude );
 	};
 
 	Real operator() ( Real displacement ) {
 		_eval_count++;
-		for( uint i =  1 ; i <= _starting_point.size() ; ++i ) {
+		for ( uint i =  1 ; i <= _starting_point.size() ; ++i ) {
 			_eval_point[i] = _starting_point[i] +
 				( displacement * _search_direction[i] );
 		}
@@ -77,12 +77,12 @@ public:
 	Real dfunc( Real displacement ) {
 		_deriv_count++;
 		Real dot_product( 0.0 );
-		for( uint i =  1 ; i <= _starting_point.size() ; ++i ) {
+		for ( uint i =  1 ; i <= _starting_point.size() ; ++i ) {
 			_eval_point[i] = _starting_point[i] +
 				( displacement * _search_direction[i] );
 		}
 		_func.dfunc( _eval_point, _dE_dvars );
-		for( uint i =  1 ; i <= _starting_point.size() ; ++i ) {
+		for ( uint i =  1 ; i <= _starting_point.size() ; ++i ) {
 			dot_product += ( _dE_dvars[i] * _search_direction[i] );
 		}
 		return dot_product;
@@ -188,8 +188,8 @@ public:
 	virtual bool provide_stored_derivatives(){ return true; };
 	virtual Real operator()( Multivec & curr_pos, Multivec & curr_dir );
 	Real StrongWolfe( Real init_step, func_1d & func_eval );
-	Real	zoom( Real alpha_low, Real func_low, Real deriv_low, Real alpha_high, Real func_high, Real deriv_high,
-							Real func_zero, Real deriv_zero, Real & func_return, func_1d & func_eval );
+	Real zoom( Real alpha_low, Real func_low, Real deriv_low, Real alpha_high, Real func_high, Real deriv_high,
+		Real func_zero, Real deriv_zero, Real & func_return, func_1d & func_eval );
 	bool _nonmonotone;
 	int _num_calls;
 };

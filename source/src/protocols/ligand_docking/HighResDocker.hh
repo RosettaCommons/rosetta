@@ -58,12 +58,12 @@ public:
 	virtual ~HighResDocker();
 	HighResDocker(HighResDocker const & that);
 	HighResDocker(
-			Size num_cycles,
-			Size repack_every_Nth,
-			std::vector<std::string> chains,
-			core::scoring::ScoreFunctionOP score_fxn,
-			MoveMapBuilderOP movemap_builder,
-			std::string resfile=""
+		Size num_cycles,
+		Size repack_every_Nth,
+		std::vector<std::string> chains,
+		core::scoring::ScoreFunctionOP score_fxn,
+		MoveMapBuilderOP movemap_builder,
+		std::string resfile=""
 	);
 
 	virtual protocols::moves::MoverOP clone() const;
@@ -100,14 +100,14 @@ private:
 
 	core::pack::task::PackerTaskOP
 	make_packer_task(
-			core::pose::Pose const & pose,
-			bool all_residues= false
+		core::pose::Pose const & pose,
+		bool all_residues= false
 	) const;
 
 	core::pack::task::PackerTaskOP
 	make_packer_task_from_vector(
-			core::pose::Pose const & pose,
-			ligand_options::Interface const allow_repack
+		core::pose::Pose const & pose,
+		ligand_options::Interface const allow_repack
 	) const;
 
 	utility::vector1<protocols::moves::MoverOP>

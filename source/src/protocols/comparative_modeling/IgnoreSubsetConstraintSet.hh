@@ -32,11 +32,11 @@ namespace protocols {
 namespace comparative_modeling {
 
 class IgnoreSubsetConstraintSet : public core::scoring::constraints::ConstraintSet {
-  typedef core::scoring::constraints::ConstraintSetOP ConstraintSetOP;
+	typedef core::scoring::constraints::ConstraintSetOP ConstraintSetOP;
 public:
-  //IgnoreSubsetConstraintSet( ConstraintSet const & other );
+	//IgnoreSubsetConstraintSet( ConstraintSet const & other );
 
-  IgnoreSubsetConstraintSet( IgnoreSubsetConstraintSet const &other );
+	IgnoreSubsetConstraintSet( IgnoreSubsetConstraintSet const &other );
 
 	IgnoreSubsetConstraintSet(
 		std::set< int > residues_to_ignore,
@@ -44,18 +44,18 @@ public:
 	);
 
 
-  ConstraintSetOP clone() const {
-    return ConstraintSetOP( new IgnoreSubsetConstraintSet( *this ) );
-  }
+	ConstraintSetOP clone() const {
+		return ConstraintSetOP( new IgnoreSubsetConstraintSet( *this ) );
+	}
 
-  void
-  residue_pair_energy(
-     Residue const & rsd1,
-     Residue const & rsd2,
-     Pose const & pose,
-     core::scoring::ScoreFunction const & scorefxn,
-     core::scoring::EnergyMap & emap
-  ) const;
+	void
+	residue_pair_energy(
+		Residue const & rsd1,
+		Residue const & rsd2,
+		Pose const & pose,
+		core::scoring::ScoreFunction const & scorefxn,
+		core::scoring::EnergyMap & emap
+	) const;
 
 	/// @brief Allow the parent class implementation to add the residue constraints
 	/// for this residue to the res_data_cache if this residue is not being ignored.
@@ -87,34 +87,34 @@ public:
 
 	/// @brief Returns true if we're supposed to ignore this sequence position,
 	/// false otherwise.
-  bool ignore( int const pos ) const;
+	bool ignore( int const pos ) const;
 
 	void ignore_residue( int const pos );
 
 	std::set< int > ignore_list() const;
 
 
-  bool
-  residue_pair_constraint_exists( int const pos1, int const pos2 ) const
-  {
-    if ( ignore(pos1) || ignore(pos2) ) return false;
-    return ConstraintSet::residue_pair_constraint_exists( pos1, pos2 );
-  }
+	bool
+	residue_pair_constraint_exists( int const pos1, int const pos2 ) const
+	{
+		if ( ignore(pos1) || ignore(pos2) ) return false;
+		return ConstraintSet::residue_pair_constraint_exists( pos1, pos2 );
+	}
 
 protected:
 
-  /*void
-  eval_atom_derivative_for_residue_pairs(
-    core::id::AtomID const & atom_id,
-    core::pose::Pose const & pose,
-    core::scoring::ScoreFunction const &,
-    core::scoring::EnergyMap const & weights,
-    core::Vector & F1,
-    core::Vector & F2
-  ) const;*/
+	/*void
+	eval_atom_derivative_for_residue_pairs(
+	core::id::AtomID const & atom_id,
+	core::pose::Pose const & pose,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
+	core::Vector & F1,
+	core::Vector & F2
+	) const;*/
 
 private:
-  std::set< int > ignore_list_;
+	std::set< int > ignore_list_;
 }; // class IgnoreSubsetConstraintSet
 
 } // comparative_modeling

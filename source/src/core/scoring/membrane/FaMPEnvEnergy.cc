@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/scoring/membrane/FaMPEnvEnergy.hh
+/// @file  core/scoring/membrane/FaMPEnvEnergy.hh
 ///
-/// @brief		LK-Type Membrane Environment Energy
-/// @details	Last Modified: 5/13/14
+/// @brief  LK-Type Membrane Environment Energy
+/// @details Last Modified: 5/13/14
 ///
-/// @author		Patrick Barth (Original)
-/// @author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Patrick Barth (Original)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_scoring_membrane_FaMPEnvEnergy_cc
 #define INCLUDED_core_scoring_membrane_FaMPEnvEnergy_cc
@@ -56,12 +56,12 @@ namespace scoring {
 namespace membrane {
 
 using namespace core::scoring::methods;
-	
+
 /// @brief Return a fresh instance of the energy method
 methods::EnergyMethodOP
 FaMPEnvEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
-	) const {
+) const {
 	return methods::EnergyMethodOP( new FaMPEnvEnergy( ( ScoringManager::get_instance()->memb_etable( options.etable_type() ) ) ) );
 }
 
@@ -90,14 +90,14 @@ FaMPEnvEnergy::clone() const {
 /// @brief Compute Per-Residue Energies
 void
 FaMPEnvEnergy::residue_energy(
-   conformation::Residue const & rsd,
-   pose::Pose const &,
-   EnergyMap & emap
-  ) const {
+	conformation::Residue const & rsd,
+	pose::Pose const &,
+	EnergyMap & emap
+) const {
 
 	for ( Size i = 1, i_end = rsd.nheavyatoms(); i <= i_end; ++i ) {
 		emap[ FaMPEnv ] += eval_fa_mbenv( rsd.atom(i), fa_proj_[ rsd.seqpos() ][ i ] );
- 	}
+	}
 }
 
 /// @brief Fianlzie Total Per-Residue Energies
@@ -106,8 +106,8 @@ FaMPEnvEnergy::finalize_total_energy(
 	pose::Pose &,
 	ScoreFunction const &,
 	EnergyMap & emap
-	) const {
-	
+) const {
+
 	emap[ FaMPEnv ] += 0.0;
 }
 
@@ -116,10 +116,10 @@ void
 FaMPEnvEnergy::setup_for_derivatives(
 	pose::Pose & pose,
 	ScoreFunction const & scfxn
-	) const {
-	
+) const {
+
 	using namespace core::scoring::membrane;
-	
+
 	// Setup Projection and Derivatives
 	init( pose );
 
@@ -137,40 +137,40 @@ FaMPEnvEnergy::eval_atom_derivative(
 	EnergyMap const &,
 	Vector & F1,
 	Vector & F2
-	) const {
-	
+) const {
+
 	// Grab residue and atom numbers
 	Size const i( atom_id.rsd() );
 	Size const m( atom_id.atomno() );
-	
+
 	// Get the actual residue and atom
 	conformation::Residue const & rsd1( pose.residue( i ) );
 	if ( m > rsd1.nheavyatoms() ) return;
 	Vector const heavy_atom_i( rsd1.xyz( m ) );
-	
+
 	// Get Membrane Center from Pose
 	core::Vector center = pose.conformation().membrane_info()->membrane_center();
 	Real cp_weight = 1.0;
-	
+
 	// Initialize f1, f2
 	Vector f1( 0.0 ), f2( 0.0 );
-	
+
 	// Grab derivative of proj
 	core::Real fa_proj_deriv = fa_proj_deriv_[ rsd1.seqpos() ][ m ];
 	core::Vector fa_proj_coord = fa_proj_coord_[ rsd1.seqpos() ][ m ];
-	
+
 	Real const deriv = memb_lk_dgrefce_( rsd1.atom( m ).type() ) - lk_dgrefce_( rsd1.atom( m ).type() );
 	Real dE_dZ_over_r = fa_mbenv_weight_ * deriv * fa_proj_deriv;
-	
+
 	Vector const d_ij = fa_proj_coord - heavy_atom_i;
 	Real const d_ij_norm = d_ij.length();
 	if ( d_ij_norm == Real(0.0) ) return;
-	
+
 	Real const invd = 1.0 / d_ij_norm;
 	f2 = d_ij * invd;
 	f1 = fa_proj_coord.cross(heavy_atom_i);
 	f1 *= invd;
-	
+
 	if ( dE_dZ_over_r != 0.0 ) {
 		F1 += dE_dZ_over_r * cp_weight * f1;
 		F2 += dE_dZ_over_r * cp_weight * f2;
@@ -186,8 +186,8 @@ void
 FaMPEnvEnergy::setup_for_scoring(
 	pose::Pose & pose,
 	ScoreFunction const &
-	) const {
-	
+) const {
+
 	// Setup Projection and Derivatives
 	init( pose );
 
@@ -198,7 +198,7 @@ Real
 FaMPEnvEnergy::eval_fa_mbenv(
 	conformation::Atom const & atom1,
 	Real const & f1
-	) const {
+) const {
 
 	Real score( 0.0 );
 	score = ( 1 - f1 ) * ( memb_lk_dgrefce_( atom1.type() ) - lk_dgrefce_( atom1.type() ) );
@@ -216,46 +216,46 @@ FaMPEnvEnergy::init( pose::Pose & pose ) const {
 
 	// Alloc appropriate Farrays
 	setup_for_fullatom( pose );
-	
+
 	// Grab membrane center/normal from pose conf
 	core::Vector center = pose.conformation().membrane_info()->membrane_center();
 	core::Vector normal = pose.conformation().membrane_info()->membrane_normal();
-	
+
 	core::Real thickness = pose.conformation().membrane_info()->membrane_thickness();
 	core::Real steepness = pose.conformation().membrane_info()->membrane_steepness();
-	
+
 	// For convenience - grab nres
 	Real nres = pose.total_residue();
-	
+
 	for ( Size i = 1; i <= nres; ++i ) {
 		for ( Size j = 1, j_end = pose.residue( i ).nheavyatoms(); j <= j_end; ++j ) {
-			
+
 			Vector const xyz( pose.residue( i ).xyz( j ) );
-			
+
 			// Compute Standard Z Position
 			fa_z_position_[i][j] = pose.conformation().membrane_info()->atom_z_position( i, j );
-			
+
 			// Compute Fa Projection
 			fa_proj_[i][j] = compute_fa_proj( fa_z_position_[i][j], thickness, steepness );
-			
+
 			// Compute derivatives
 			fa_proj_deriv_[i][j] = compute_fa_deriv( fa_z_position_[i][j], thickness, steepness );
-			
+
 			// Compute Projected coordinate
 			fa_proj_coord_[i][j] = compute_fa_proj_coord( fa_z_position_[i][j], xyz, center, normal );
-			
+
 		}
 	}
 }
-		
+
 /// @brief Helper Method - Compute Fa Proj
 core::Real
 FaMPEnvEnergy::compute_fa_proj(
 	core::Real z_position,
 	core::Real thickness,
 	core::Real steepness
-	) const {
-	
+) const {
+
 	Real internal_product(0), z(0), zn(0);
 	internal_product = std::abs( z_position );
 	z = internal_product;
@@ -265,14 +265,14 @@ FaMPEnvEnergy::compute_fa_proj(
 
 	return result;
 }
-	
+
 /// @brief Helper Method - Compute Fa Derivatives
 core::Real
 FaMPEnvEnergy::compute_fa_deriv(
-   core::Real z_position,
-   core::Real thickness,
-   core::Real steepness
-   ) const {
+	core::Real z_position,
+	core::Real thickness,
+	core::Real steepness
+) const {
 
 	Real internal_product(0), z(0), zn(0), znm1(0);
 	internal_product = std::abs( z_position );
@@ -284,7 +284,7 @@ FaMPEnvEnergy::compute_fa_deriv(
 
 	return ( deriv /= thickness );
 }
-	
+
 /// @brief Helper Method - Compute Fa Proj coordinate
 core::Vector
 FaMPEnvEnergy::compute_fa_proj_coord(
@@ -292,12 +292,12 @@ FaMPEnvEnergy::compute_fa_proj_coord(
 	core::Vector xyz,
 	core::Vector center,
 	core::Vector normal
-	) const {
-	
+) const {
+
 	Vector proj_i = center + z_position * normal;
 	Vector i_ip = proj_i - xyz;
 	return ( center - i_ip );
-	
+
 }
 
 
@@ -306,30 +306,30 @@ void
 FaMPEnvEnergy::setup_for_fullatom( pose::Pose & pose ) const {
 
 	core::Real nres = pose.total_residue();
-	
+
 	fa_proj_.resize( (core::Size)nres );
 	fa_proj_coord_.resize( (core::Size)nres );
 	fa_proj_deriv_.resize( (core::Size)nres );
 	fa_z_position_.resize( (core::Size)nres );
-	
+
 	static Size const MAX_AMINOACID_SIZE = 15;
-	
+
 	for ( Size i = 1; i <= nres; ++i ) {
-		
+
 		Size const max_size = std::max( MAX_AMINOACID_SIZE, pose.residue( i ).nheavyatoms() );
-		
+
 		fa_proj_[i].resize( max_size );
 		fa_proj_coord_[i].resize( max_size );
 		fa_proj_deriv_[i].resize( max_size );
 		fa_z_position_[i].resize( max_size );
-		
+
 		for ( Size j = 1; j <= max_size; ++j ) {
-			
+
 			fa_proj_[i][j] = 0.0;
 			fa_proj_coord_[i][j].assign(0.0,0.0,0.0);
 			fa_proj_deriv_[i][j] = 0.0;
 			fa_z_position_[i][j] = 0.0;
-			
+
 		}
 	}
 }

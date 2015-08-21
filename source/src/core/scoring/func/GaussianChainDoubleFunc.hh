@@ -30,8 +30,8 @@ class GaussianChainDoubleFunc : public Func {
 public:
 
 	GaussianChainDoubleFunc( Real const gaussian_variance,
-													 Real const loop_fixed_cost,
-													 Real const D2 );
+		Real const loop_fixed_cost,
+		Real const D2 );
 
 	FuncOP
 	clone() const;

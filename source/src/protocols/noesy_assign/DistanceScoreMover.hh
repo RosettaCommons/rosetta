@@ -49,18 +49,18 @@ class DistanceScoreMover : public protocols::moves::Mover {
 public:
 	typedef utility::vector1< core::pose::PoseOP > PoseVector;
 
-  DistanceScoreMover( CrossPeakList&, core::pose::Pose const& pose, core::Real dcut );
+	DistanceScoreMover( CrossPeakList&, core::pose::Pose const& pose, core::Real dcut );
 
 	/// @brief set decoy_compatibility in PeakAssignments to zero
 	///
-  void prepare_scoring( bool use_for_calibration = false );
+	void prepare_scoring( bool use_for_calibration = false );
 
 	/// @brief sum up decoy_compatibility score in PeakAssignments
-  void apply( core::pose::Pose& pose );
+	void apply( core::pose::Pose& pose );
 
-	//	void find_violators_with_individual_dist_cutoff( PoseVector poses );
+	// void find_violators_with_individual_dist_cutoff( PoseVector poses );
 	/// @brief normalize decoy_compatibility of PeakAssignments by count_decoys_
-  void finalize_scoring() const;
+	void finalize_scoring() const;
 
 	//core::Real compute_violation_percentage() const;
 	//void eliminate_violated_constraints() const;
@@ -72,11 +72,11 @@ public:
 	}
 
 private:
-  CrossPeakList& cross_peaks_;
-  core::Size count_decoys_; //how many decoys for scoring
-  core::Size nr_assignments_;
-  typedef utility::vector1< core::scoring::constraints::ConstraintOP > SingleConstraints;
-  SingleConstraints constraints_;
+	CrossPeakList& cross_peaks_;
+	core::Size count_decoys_; //how many decoys for scoring
+	core::Size nr_assignments_;
+	typedef utility::vector1< core::scoring::constraints::ConstraintOP > SingleConstraints;
+	SingleConstraints constraints_;
 
 
 	//use this if we have a distance cutoff for each individual peak, based on the structural variation at that point.
@@ -85,8 +85,8 @@ private:
 	typedef utility::vector1< core::Real > DistanceBoundVector;
 	typedef utility::vector1< DistanceBoundVector > AllStructureDistanceBoundVector;
 	AllStructureDistanceBoundVector all_dist_buf_;
-	//	typedef utility::vector1< core::scoring::constraints::AmbiguousNMRConstraintOP > PeakConstraints;
-	//	PeakConstraints peak_constraints_;
+	// typedef utility::vector1< core::scoring::constraints::AmbiguousNMRConstraintOP > PeakConstraints;
+	// PeakConstraints peak_constraints_;
 
 
 	/// @brief count for each peak how many decoys have violated
@@ -96,13 +96,13 @@ private:
 	/// @brief cumulative sum of peak_violation_counts_;
 	core::Size total_violation_count_;
 
-	//	typedef utility::vector1< core::Real > VectorReal;
+	// typedef utility::vector1< core::Real > VectorReal;
 	core::Real total_assigned_distances_;
 
 
 	core::Size active_peaks_; //count nr peaks that have assignment with sufficient Vk
 
-  core::Real final_dist_power_; //eta in Cyana-paper
+	core::Real final_dist_power_; //eta in Cyana-paper
 
 	bool used_for_calibration_; //if used_for_calibration --> filter peaks and do not update decoy_compatibility score
 	core::Real dcut_;

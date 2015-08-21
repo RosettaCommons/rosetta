@@ -69,7 +69,7 @@ ShortRangeTwoBodyEnergy::evaluate_rotamer_pair_energies(
 			Vector const & jj_coord( jj_example_rotamer.atom( jj_example_rotamer.type().nbr_atom() ).xyz());
 			Real const jj_radius( jj_example_rotamer.type().nbr_radius() );
 
-			if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+atomic_interaction_cutoff(), 2 )) {
+			if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+atomic_interaction_cutoff(), 2 ) ) {
 				for ( Size kk = 1, kke = set1.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
 					Size const kk_rot_id = ii_offset + kk - 1;
 					for ( Size ll = 1, lle = set2.get_n_rotamers_for_residue_type( jj ); ll <= lle; ++ll ) {
@@ -110,7 +110,7 @@ ShortRangeTwoBodyEnergy::evaluate_rotamer_background_energy_maps(
 	conformation::Residue const & residue,
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn,
-	EnergyMap const & ,	// weights
+	EnergyMap const & , // weights
 	utility::vector1< EnergyMap > & emaps
 ) const
 {

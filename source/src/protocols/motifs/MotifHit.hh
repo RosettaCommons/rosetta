@@ -62,7 +62,7 @@ public:
 	void target_conformer(
 		core::conformation::Residue const & target_conformer
 	);
-	
+
 	void dump_motif_hit();
 
 	// Accessors

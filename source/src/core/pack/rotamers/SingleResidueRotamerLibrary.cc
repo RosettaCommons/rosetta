@@ -67,20 +67,20 @@ SingleResidueRotamerLibrary::bump_filter(
 		TR.Debug << " Bump energy: " << bumpenergy;
 		BumpSelectorDecision decision =  bump_selector.iterate_bump_selector( bumpenergy );
 		switch ( decision ) {
-			case KEEP_ROTAMER :
-				TR.Debug << " ... added" << std::endl;
-				passing.push_back( rot );
-				break;
-			case DELETE_PREVIOUS_ROTAMER :
-				TR.Debug << " ... replace previous" << std::endl;
-				if( passing.size() == 0 ) {
-					utility_exit_with_message("Internal consistency error: cannot replace non-existant previous residue.");
-				}
-				passing[ passing.size() ] = rot;
-				break;
-			case DELETE_ROTAMER : // Do nothing.
-				TR.Debug << " ... deleted" << std::endl;
-				break;
+		case KEEP_ROTAMER :
+			TR.Debug << " ... added" << std::endl;
+			passing.push_back( rot );
+			break;
+		case DELETE_PREVIOUS_ROTAMER :
+			TR.Debug << " ... replace previous" << std::endl;
+			if ( passing.size() == 0 ) {
+				utility_exit_with_message("Internal consistency error: cannot replace non-existant previous residue.");
+			}
+			passing[ passing.size() ] = rot;
+			break;
+		case DELETE_ROTAMER : // Do nothing.
+			TR.Debug << " ... deleted" << std::endl;
+			break;
 		}
 	}
 	// Swap the in/out value with the contents of the temporary vector to pass back the value
@@ -131,8 +131,8 @@ SingleResidueRotamerLibrary::current_rotamer(
 ) const
 {
 	if ( task.include_current( resid ) && existing_residue.name() == concrete_residue->name() ) {
-		 TR.Debug << " Including current rotamer: " <<
-				existing_residue.name() << ' ' << existing_residue.seqpos() << std::endl;
+		TR.Debug << " Including current rotamer: " <<
+			existing_residue.name() << ' ' << existing_residue.seqpos() << std::endl;
 		conformation::ResidueOP rot = existing_residue.create_rotamer();
 		rotamers.push_back( rot );
 		return rotamers.size();
@@ -170,12 +170,12 @@ SingleResidueRotamerLibrary::virtual_sidechain(
 	RotamerVector retval;
 	if ( task.residue_task( resid ).include_virtual_side_chain() ) {
 		if ( existing_residue.nchi() > 0 &&
-				 existing_residue.aa() != chemical::aa_pro &&
-				 existing_residue.n_non_polymeric_residue_connections() == 0 ) {
+				existing_residue.aa() != chemical::aa_pro &&
+				existing_residue.n_non_polymeric_residue_connections() == 0 ) {
 			dunbrack::RotamerLibraryScratchSpace scratch;
 			Size n_min( 0 );
 			Real fa_dun_min( 0.0 );
-			for ( Size n = 1; n <= rotamers.size(); n++ ){
+			for ( Size n = 1; n <= rotamers.size(); n++ ) {
 				Real const fa_dun = this->rotamer_energy( *rotamers[ n ], scratch );
 				if ( n_min == 0 || fa_dun < fa_dun_min ) {
 					n_min = n; fa_dun_min = fa_dun;

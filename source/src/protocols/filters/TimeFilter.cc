@@ -41,10 +41,9 @@ TimeFilter::~TimeFilter() {}
 core::Real
 TimeFilter::compute( core::pose::Pose const & ) const
 {
-	if( tic_ == 0 ){
+	if ( tic_ == 0 ) {
 		tic_ = time( NULL );
-	}
-	else{
+	} else {
 		toc_ = time( NULL );
 		return toc_ - tic_;
 	}
@@ -66,10 +65,10 @@ TimeFilter::report( std::ostream &out, core::pose::Pose const & ) const
 }
 
 void TimeFilter::parse_my_tag( utility::tag::TagCOP const,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const &)
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &)
 {
 }
 

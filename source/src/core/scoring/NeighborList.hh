@@ -43,51 +43,51 @@
 namespace core {
 namespace scoring {
 
-	/// an atom-atom neighborlist object
+/// an atom-atom neighborlist object
 
-	/**
-		 The neighborlist is used during minimization to speed atom-atom energy
-		 calculations. It stores a list of potentially interacting neighbor atoms
-		 for each atom in the system.
+/**
+The neighborlist is used during minimization to speed atom-atom energy
+calculations. It stores a list of potentially interacting neighbor atoms
+for each atom in the system.
 
-		 The logic for using the nblist is tricky.
+The logic for using the nblist is tricky.
 
-		 Tentative scheme:
-				turn on nblist scoring at start of minimization
+Tentative scheme:
+turn on nblist scoring at start of minimization
 
-				// at this point, want pose to be fully scored
-				// so perhaps a call to scorefxn(pose) ??
-				// Real const start_score( scorefxn( pose ) );
+// at this point, want pose to be fully scored
+// so perhaps a call to scorefxn(pose) ??
+// Real const start_score( scorefxn( pose ) );
 
-				pose.energies().setup_use_nblist( true );
+pose.energies().setup_use_nblist( true );
 
-				Real const start_func( func( vars ) ); // nblist setup inside this call
+Real const start_func( func( vars ) ); // nblist setup inside this call
 
-				now require that all energy evaluations have an identical set of moving
-				dofs (guaranteed if all energy calculations are inside function
-				evaluations). This is checked inside each scorecaln using the
-				nblist.
+now require that all energy evaluations have an identical set of moving
+dofs (guaranteed if all energy calculations are inside function
+evaluations). This is checked inside each scorecaln using the
+nblist.
 
-				when using the nblist, the rsd-rsd neighbor information is not
-				updated. This will probably be a good thing in that it will smooth
-				the energy landscape during minimization...
+when using the nblist, the rsd-rsd neighbor information is not
+updated. This will probably be a good thing in that it will smooth
+the energy landscape during minimization...
 
-				in a nblist score calculation, we do two things: recover cached
-				energies for non-pair-moved positions, and get atom-atom energies
-				for the pairs that are on the nblist. We don't cache 2d energies
-				for moving positions, since we are not looping over rsd nbr links
-				for that score calculation so the caching would be pretty time-
-				consuming I think.
+in a nblist score calculation, we do two things: recover cached
+energies for non-pair-moved positions, and get atom-atom energies
+for the pairs that are on the nblist. We don't cache 2d energies
+for moving positions, since we are not looping over rsd nbr links
+for that score calculation so the caching would be pretty time-
+consuming I think.
 
-				The nblist has the count_pair weights stored, so no calls to
-				count_pair !!
+The nblist has the count_pair weights stored, so no calls to
+count_pair !!
 
-				turn off nblist scoring at the end of minimization. Since we have not
-				been updating rsd-pair energies for moving pairs, and the rsd-rsd
-				nblist is potentially out of data, we reset the neighborgraph at this
-				point to ensure a complete score calculation next time.
+turn off nblist scoring at the end of minimization. Since we have not
+been updating rsd-pair energies for moving pairs, and the rsd-rsd
+nblist is potentially out of data, we reset the neighborgraph at this
+point to ensure a complete score calculation next time.
 
-	**/
+**/
 
 // move to separate file
 class AtomNeighbor

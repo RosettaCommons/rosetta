@@ -7,38 +7,38 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file basic/svd/SVD_Solver.cc
- ///
- /// @brief SVD solver class
- ///`
- /// @details Solve over-determined set of linear equation to minimize ||A x - b||^2, using Singular Value Decomposition (SVD) method.
- ///
- /// @param
- /// Specify the size of the problem in the constructor (M is the number of equations, N is the number of parameters to fit)
- /// M MUST be larger or equal than N.
- /// Use the set_* functions to set the data vector b and the matrix A.
- /// Use the run_* functions in the correct order to solve your system (run_decomp_svd, then run_solve_svd)
- /// You can score the result with run_score_svd_on_matrix
- /// You can retrieve your solution with get_svd_solution.
- ///
- /// @return
- /// The score of the fitting : sqrt( ||A x - b||^2 ) with run_score_svd_on_matrix();
- /// The fited vector x with get_svd_solution();
- ///
- /// @remarks
- /// Calls in a wrong order of the functions will abort the program (i.e. if you try to solve the problem before you set a matrix A)
- /// Once the matrix is decomposed, you can change the vector b and solve Ax=b with the new vector. (That's why those 2 functions are separated)
- /// The matrix A is necessary to calculate the score (argument of run_score_svd_on_matrix), but the matrix A is not stored within
- /// the SVD_solver object, so make sure you have it available when scoring (this is done on purpose for speed up)
- /// Is it possible to speed up calculations by using FArraynD.index() call? ObjexxFCL doc is not really clear.
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz & Srivatsan Raman
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file basic/svd/SVD_Solver.cc
+///
+/// @brief SVD solver class
+///`
+/// @details Solve over-determined set of linear equation to minimize ||A x - b||^2, using Singular Value Decomposition (SVD) method.
+///
+/// @param
+/// Specify the size of the problem in the constructor (M is the number of equations, N is the number of parameters to fit)
+/// M MUST be larger or equal than N.
+/// Use the set_* functions to set the data vector b and the matrix A.
+/// Use the run_* functions in the correct order to solve your system (run_decomp_svd, then run_solve_svd)
+/// You can score the result with run_score_svd_on_matrix
+/// You can retrieve your solution with get_svd_solution.
+///
+/// @return
+/// The score of the fitting : sqrt( ||A x - b||^2 ) with run_score_svd_on_matrix();
+/// The fited vector x with get_svd_solution();
+///
+/// @remarks
+/// Calls in a wrong order of the functions will abort the program (i.e. if you try to solve the problem before you set a matrix A)
+/// Once the matrix is decomposed, you can change the vector b and solve Ax=b with the new vector. (That's why those 2 functions are separated)
+/// The matrix A is necessary to calculate the score (argument of run_score_svd_on_matrix), but the matrix A is not stored within
+/// the SVD_solver object, so make sure you have it available when scoring (this is done on purpose for speed up)
+/// Is it possible to speed up calculations by using FArraynD.index() call? ObjexxFCL doc is not really clear.
+///
+/// @references
+///
+/// @authorv Christophe Schmitz & Srivatsan Raman
+///
+////////////////////////////////////////////////
 
 
 // Unit headers
@@ -110,8 +110,8 @@
 #include <string>
 #include <vector>
 
-namespace basic{
-namespace svd{
+namespace basic {
+namespace svd {
 
 SVD_Solver::~SVD_Solver(){
 }
@@ -121,47 +121,47 @@ SVD_Solver::operator=(SVD_Solver const & other){
 
 	/*
 	if ((M_ != other.M_) || (N_ != other.N_)){
-		//utility_exit_with_message( "You can't call the = operator on SVD_Solver object of different size" );
+	//utility_exit_with_message( "You can't call the = operator on SVD_Solver object of different size" );
 
-		M_ = other.M_;
-		N_ = other.N_;
+	M_ = other.M_;
+	N_ = other.N_;
 
-		if(N_ >= M_){
-			utility_exit_with_message("First parameter of SVD_Solver constructor MUST be larger than the second parameter");
-		}
+	if(N_ >= M_){
+	utility_exit_with_message("First parameter of SVD_Solver constructor MUST be larger than the second parameter");
+	}
 
-		cstyle_A_decomp_.resize(other.M_, other.N_);
-		cstyle_b_.resize(other.M_);
-		cstyle_v_.resize(other.N_, other.N_);
-		cstyle_x_.resize(other.N_);
-		cstyle_w_.resize(other.N_);
-		cstyle_tmp_.resize(other.N_);
+	cstyle_A_decomp_.resize(other.M_, other.N_);
+	cstyle_b_.resize(other.M_);
+	cstyle_v_.resize(other.N_, other.N_);
+	cstyle_x_.resize(other.N_);
+	cstyle_w_.resize(other.N_);
+	cstyle_tmp_.resize(other.N_);
 
-		cstyle_b_ = other.cstyle_b_;
-		cstyle_A_decomp_ = other.cstyle_A_decomp_;
-		cstyle_v_ = other.cstyle_v_;
-		cstyle_x_ = other.cstyle_x_;
-		cstyle_w_ = other.cstyle_w_;
-		cstyle_tmp_ = other.cstyle_tmp_;
+	cstyle_b_ = other.cstyle_b_;
+	cstyle_A_decomp_ = other.cstyle_A_decomp_;
+	cstyle_v_ = other.cstyle_v_;
+	cstyle_x_ = other.cstyle_x_;
+	cstyle_w_ = other.cstyle_w_;
+	cstyle_tmp_ = other.cstyle_tmp_;
 
-		b_is_set_ = other.b_is_set_;
-		A_is_set_ = other.A_is_set_;
-		A_is_decomp_ = other.A_is_decomp_;
-		x_is_solved_ = other.x_is_solved_;
+	b_is_set_ = other.b_is_set_;
+	A_is_set_ = other.A_is_set_;
+	A_is_decomp_ = other.A_is_decomp_;
+	x_is_solved_ = other.x_is_solved_;
 
 
 	} else if ( this != &other ) {
-		cstyle_b_ = other.cstyle_b_;
-		cstyle_A_decomp_ = other.cstyle_A_decomp_;
-		cstyle_v_ = other.cstyle_v_;
-		cstyle_x_ = other.cstyle_x_;
-		cstyle_w_ = other.cstyle_w_;
-		cstyle_tmp_ = other.cstyle_tmp_;
+	cstyle_b_ = other.cstyle_b_;
+	cstyle_A_decomp_ = other.cstyle_A_decomp_;
+	cstyle_v_ = other.cstyle_v_;
+	cstyle_x_ = other.cstyle_x_;
+	cstyle_w_ = other.cstyle_w_;
+	cstyle_tmp_ = other.cstyle_tmp_;
 
-		b_is_set_ = other.b_is_set_;
-		A_is_set_ = other.A_is_set_;
-		A_is_decomp_ = other.A_is_decomp_;
-		x_is_solved_ = other.x_is_solved_;
+	b_is_set_ = other.b_is_set_;
+	A_is_set_ = other.A_is_set_;
+	A_is_decomp_ = other.A_is_decomp_;
+	x_is_solved_ = other.x_is_solved_;
 	}
 	return *this;
 	*/
@@ -170,19 +170,19 @@ SVD_Solver::operator=(SVD_Solver const & other){
 		M_ = other.M_;
 		N_ = other.N_;
 
-		if(N_ >= M_){
+		if ( N_ >= M_ ) {
 			utility_exit_with_message("First parameter of SVD_Solver constructor MUST be larger than the second parameter");
 		}
 
 		platform::Size i;
 		cstyle_A_decomp_.resize(other.M_);
-		for (i = 1; i <= other.M_; ++i){
+		for ( i = 1; i <= other.M_; ++i ) {
 			cstyle_A_decomp_[i].resize(other.N_);
 		}
 		cstyle_b_.resize(other.M_);
 
 		cstyle_v_.resize(other.N_);
-		for (i = 1; i <= other.N_; ++i){
+		for ( i = 1; i <= other.N_; ++i ) {
 			cstyle_v_[i].resize(other.N_);
 		}
 		cstyle_x_.resize(other.N_);
@@ -206,18 +206,18 @@ SVD_Solver::operator=(SVD_Solver const & other){
 }
 
 SVD_Solver:: SVD_Solver(SVD_Solver const & other)//:
-	//	M_(other.M_), N_(other.N_)
+// M_(other.M_), N_(other.N_)
 {
 
 	M_ = other.M_;
 	N_ = other.N_;
 
-  cstyle_b_ = other.cstyle_b_;
-  cstyle_A_decomp_ = other.cstyle_A_decomp_;
-  cstyle_v_ = other.cstyle_v_;
-  cstyle_x_ = other.cstyle_x_;
-  cstyle_w_ = other.cstyle_w_;
-  cstyle_tmp_ = other.cstyle_tmp_;
+	cstyle_b_ = other.cstyle_b_;
+	cstyle_A_decomp_ = other.cstyle_A_decomp_;
+	cstyle_v_ = other.cstyle_v_;
+	cstyle_x_ = other.cstyle_x_;
+	cstyle_w_ = other.cstyle_w_;
+	cstyle_tmp_ = other.cstyle_tmp_;
 
 	b_is_set_ = other.b_is_set_;
 	A_is_set_ = other.A_is_set_;
@@ -226,7 +226,7 @@ SVD_Solver:: SVD_Solver(SVD_Solver const & other)//:
 }
 
 SVD_Solver::SVD_Solver()//:
-	//	M_(0), N_(0)
+// M_(0), N_(0)
 {
 	utility_exit_with_message( "You shouldn't call the empty constructor for SVD_Solver class" );
 }
@@ -235,26 +235,26 @@ SVD_Solver::SVD_Solver()//:
 /// @brief M is the size of vector b (experimental data); N is the size of the vector to optimize M >= N
 ///////////////////////////////////////////////
 SVD_Solver::SVD_Solver(platform::Size const M, platform::Size const N)//:
-//	M_(M), N_(N)
+// M_(M), N_(N)
 {
 
 	M_ = M;
 	N_ = N;
 
-	if(N_ >= M_){
+	if ( N_ >= M_ ) {
 		utility_exit_with_message("First parameter of SVD_Solver constructor MUST be larger than the second parameter");
 	}
 	platform::Size i;
 
 	cstyle_A_decomp_.resize(M);
-	for (i = 1; i <= M; ++i){
+	for ( i = 1; i <= M; ++i ) {
 		cstyle_A_decomp_[i].resize(N);
 	}
 
 	cstyle_b_.resize(M);
 
 	cstyle_v_.resize(N);
-	for (i = 1; i <= N; ++i){
+	for ( i = 1; i <= N; ++i ) {
 		cstyle_v_[i].resize(N);
 	}
 
@@ -274,11 +274,11 @@ SVD_Solver::SVD_Solver(platform::Size const M, platform::Size const N)//:
 void
 SVD_Solver::set_vector_b(utility::vector1<double>  const & b){
 	platform::Size i;
-	if (M_ != b.size()){
+	if ( M_ != b.size() ) {
 		utility_exit_with_message("Size dimension differs when trying to set vector b in SVD_solver class");
 	}
 
-	for (i = 1; i <= M_; ++i){
+	for ( i = 1; i <= M_; ++i ) {
 		cstyle_b_[i] = b[i];
 	}
 
@@ -292,11 +292,11 @@ SVD_Solver::set_vector_b(utility::vector1<double>  const & b){
 void
 SVD_Solver::set_vector_b(FArray1D< double > const & b){
 	platform::Size i;
-	if (M_ != b.size()){
+	if ( M_ != b.size() ) {
 		utility_exit_with_message("Size dimension differs when trying to set vector b in SVD_solver class");
 	}
 
-	for (i = 1; i <= M_; ++i){
+	for ( i = 1; i <= M_; ++i ) {
 		cstyle_b_[i] = b(i);
 	}
 
@@ -311,15 +311,15 @@ SVD_Solver::set_vector_b(FArray1D< double > const & b){
 void
 SVD_Solver::set_matrix_A(utility::vector1< utility::vector1<double> >  const & A){
 	platform::Size i, j;
-	if (M_ != A.size()){
+	if ( M_ != A.size() ) {
 		utility_exit_with_message("Size dimension differs when trying to set the matrix A in SVD_solver class");
 	}
 
-	for (i = 1; i <= M_; ++i){
-		if (N_ != A[i].size()){
+	for ( i = 1; i <= M_; ++i ) {
+		if ( N_ != A[i].size() ) {
 			utility_exit_with_message( "Size dimension differs when trying to set the matrix A in SVD_solver class");
 		}
-		for (j = 1; j <= N_; ++j){
+		for ( j = 1; j <= N_; ++j ) {
 			cstyle_A_decomp_[i][j] = A[i][j];
 		}
 	}
@@ -337,12 +337,12 @@ void
 SVD_Solver::set_matrix_A( FArray2D< double > const & A){
 	platform::Size i, j;
 
-	if (M_*N_ != A.size()){
+	if ( M_*N_ != A.size() ) {
 		utility_exit_with_message( "Size dimension differs when trying to set the matrix A in SVD_solver class");
 	}
 
-	for (i = 1; i <= M_; ++i){
-		for (j = 1; j <= N_; ++j){
+	for ( i = 1; i <= M_; ++i ) {
+		for ( j = 1; j <= N_; ++j ) {
 			cstyle_A_decomp_[i][j] = A(i, j);
 		}
 	}
@@ -358,7 +358,7 @@ SVD_Solver::set_matrix_A( FArray2D< double > const & A){
 ///////////////////////////////////////////////
 void
 SVD_Solver::run_decomp_svd(){
-	if(!A_is_set_){
+	if ( !A_is_set_ ) {
 		utility_exit_with_message("The matrix A is not ready to be decomposed in SVD_solver class");
 	}
 	svdcmp();
@@ -371,7 +371,7 @@ SVD_Solver::run_decomp_svd(){
 ///////////////////////////////////////////////
 void
 SVD_Solver::run_solve_svd(){
-	if((!A_is_decomp_) || (!b_is_set_)){
+	if ( (!A_is_decomp_) || (!b_is_set_) ) {
 		utility_exit_with_message("SVD_solver object is not in a state to solve Ax = b");
 	}
 	svbksb();
@@ -385,16 +385,16 @@ SVD_Solver::run_solve_svd(){
 /*
 FArray1D< double > const &
 SVD_Solver::get_svd_solution() const{
-	if(!x_is_solved_){
-		utility_exit_with_message("SVD_solver object has not yet solved Ax = b");
-	}
-	return(cstyle_x_);
+if(!x_is_solved_){
+utility_exit_with_message("SVD_solver object has not yet solved Ax = b");
+}
+return(cstyle_x_);
 }
 */
 
 utility::vector1< double > const &
 SVD_Solver::get_svd_solution() const{
-	if(!x_is_solved_){
+	if ( !x_is_solved_ ) {
 		utility_exit_with_message("SVD_solver object has not yet solved Ax = b");
 	}
 	return(cstyle_x_);
@@ -411,13 +411,13 @@ SVD_Solver::run_score_svd_on_matrix(utility::vector1< utility::vector1<double> >
 	platform::Size i, j;
 	double score;
 
-	if(!x_is_solved_){
+	if ( !x_is_solved_ ) {
 		utility_exit_with_message("SVD_solver object is not in a state to score ||Ax = b||^2");
 	}
 	score = 0;
-	for(i = 1; i <= M_; ++i){
+	for ( i = 1; i <= M_; ++i ) {
 		double temp = 0;
-		for(j = 1; j <= N_; ++j){
+		for ( j = 1; j <= N_; ++j ) {
 			temp += cppstyle_A[i][j] * cstyle_x_[j];
 		}
 		score += ( temp - cstyle_b_[i] ) * ( temp - cstyle_b_[i] ) ;
@@ -437,13 +437,13 @@ SVD_Solver::run_score_svd_on_matrix(FArray2D< double > const & A) const{
 	platform::Size i, j;
 	double score;
 
-	if(!x_is_solved_){
+	if ( !x_is_solved_ ) {
 		utility_exit_with_message("SVD_solver object is not in a state to score ||Ax = b||^2");
 	}
 	score = 0;
-	for(i = 1; i <= M_; ++i){
+	for ( i = 1; i <= M_; ++i ) {
 		double temp = 0;
-		for(j = 1; j <= N_; ++j){
+		for ( j = 1; j <= N_; ++j ) {
 			temp += A(i, j) * cstyle_x_[j];
 		}
 		score += ( temp - cstyle_b_[i] ) * ( temp - cstyle_b_[i] ) ;
@@ -461,26 +461,26 @@ double
 SVD_Solver::run_score_svd_without_solving(){
 
 	platform::Size i, j;
-	
-	if((!A_is_decomp_) || (!b_is_set_)){
+
+	if ( (!A_is_decomp_) || (!b_is_set_) ) {
 		utility_exit_with_message("SVD_Solver object not in state to call run_score_svd_without_solving");
 	}
 
-	for(i = 1; i <= N_; ++i){
+	for ( i = 1; i <= N_; ++i ) {
 		cstyle_tmp_[i] = 0;
-		for(j = 1; j <= M_; j++){
+		for ( j = 1; j <= M_; j++ ) {
 			cstyle_tmp_[i] += cstyle_A_decomp_[j][i] *  cstyle_b_[j];
 		}
 	}
 
 	double score = 0;
-	for(i = 1; i <= M_; ++i){
+	for ( i = 1; i <= M_; ++i ) {
 		double temp = 0;
-		for(j = 1; j <= N_; ++j){
+		for ( j = 1; j <= N_; ++j ) {
 			temp += cstyle_A_decomp_[i][j] * cstyle_tmp_[j];
 		}
 		temp -= cstyle_b_[i];
-		score += 	temp * temp;
+		score +=  temp * temp;
 	}
 
 	return(sqrt(score));
@@ -546,7 +546,7 @@ SVD_Solver::svbksb(){
 void
 SVD_Solver::svdcmp(){
 
-//U    USES pythag
+	//U    USES pythag
 	platform::Size i,its,j,jj,k,l,nm;
 	double anorm, c, f, g, h, s, scale, x, y, z;
 	g = 0.0;
@@ -703,7 +703,7 @@ SVD_Solver::svdcmp(){
 					cstyle_A_decomp_[j][i] = -(y*s)+(z*c);
 				}
 			}
-L2:
+			L2:
 			z = cstyle_w_[k];
 			if ( l == k ) {
 				if ( z < 0.0 ) {
@@ -714,7 +714,7 @@ L2:
 				}
 				break;
 			}
-			if ( its == 30) utility_exit_with_message("no convergence in svdcmp \n" );
+			if ( its == 30 ) utility_exit_with_message("no convergence in svdcmp \n" );
 			x = cstyle_w_[l];
 			nm = k-1;
 			y = cstyle_w_[nm];

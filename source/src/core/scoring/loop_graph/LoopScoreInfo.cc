@@ -25,29 +25,29 @@ namespace core {
 namespace scoring {
 namespace loop_graph {
 
-	//Constructor
-	LoopScoreInfo::LoopScoreInfo():
-		length_( 0 ),
-		takeoff_atom_( id::BOGUS_ATOM_ID ),
-		landing_atom_( id::BOGUS_ATOM_ID ),
-		current_distance_( 0.0 )
-	{}
+//Constructor
+LoopScoreInfo::LoopScoreInfo():
+	length_( 0 ),
+	takeoff_atom_( id::BOGUS_ATOM_ID ),
+	landing_atom_( id::BOGUS_ATOM_ID ),
+	current_distance_( 0.0 )
+{}
 
-	//Destructor
-	LoopScoreInfo::~LoopScoreInfo()
-	{}
+//Destructor
+LoopScoreInfo::~LoopScoreInfo()
+{}
 
-	//////////////////////////
-	void
-	LoopScoreInfo::set_func( FuncOP const & setting ){
-		func_ = setting;
-	}
+//////////////////////////
+void
+LoopScoreInfo::set_func( FuncOP const & setting ){
+	func_ = setting;
+}
 
-	//////////////////////////
-	FuncOP
-	LoopScoreInfo::func() const{
-		return func_;
-	}
+//////////////////////////
+FuncOP
+LoopScoreInfo::func() const{
+	return func_;
+}
 
 } //loop_graph
 } //scoring

@@ -29,49 +29,49 @@
 
 namespace devel {
 
-  namespace inv_kin_lig_loop_design {
+namespace inv_kin_lig_loop_design {
 
-    using namespace std;
-    using platform::Size;
+using namespace std;
+using platform::Size;
 
-    // ==================================================
-    // ==================== Protocol ====================
-    // ==================================================
+// ==================================================
+// ==================== Protocol ====================
+// ==================================================
 
-    struct Protocol {
-      Protocol() {}
+struct Protocol {
+	Protocol() {}
 
-      void setParams( TagCOP tag, vector<Loop> const& loops_ );
-      void apply(core::pose::PoseOP pose);
+	void setParams( TagCOP tag, vector<Loop> const& loops_ );
+	void apply(core::pose::PoseOP pose);
 
-    private:
+private:
 
-      int max_cycles;
-      int max_cycles_start;
-      int max_cycles_start_3mer;
-      int max_cycles_start_3mer_anchor;
-      int max_cycles_start_3mer_1mer;
-      int max_cycles_start_1mer;
-      int max_cycles_ramp;
-      int max_cycles_ramp_sm;
-      int max_cycles_ramp_sm_min;
-      int max_cycles_design;
-      int max_cycles_design_sm;
-      int max_cycles_design_sm_min;
+	int max_cycles;
+	int max_cycles_start;
+	int max_cycles_start_3mer;
+	int max_cycles_start_3mer_anchor;
+	int max_cycles_start_3mer_1mer;
+	int max_cycles_start_1mer;
+	int max_cycles_ramp;
+	int max_cycles_ramp_sm;
+	int max_cycles_ramp_sm_min;
+	int max_cycles_design;
+	int max_cycles_design_sm;
+	int max_cycles_design_sm_min;
 
-      core::pose::PoseOP pose;
-      core::kinematics::MoveMapOP move_map;
-      core::scoring::ScoreFunctionOP score_fxn_lores;
-      core::scoring::ScoreFunctionOP score_fxn_hires;
-      vector<Loop> loops;
+	core::pose::PoseOP pose;
+	core::kinematics::MoveMapOP move_map;
+	core::scoring::ScoreFunctionOP score_fxn_lores;
+	core::scoring::ScoreFunctionOP score_fxn_hires;
+	vector<Loop> loops;
 
-      void phase_lores();
-      void phase_hires();
+	void phase_lores();
+	void phase_hires();
 
-    };
+};
 
 
-  }
+}
 
 }
 

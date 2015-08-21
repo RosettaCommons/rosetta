@@ -23,11 +23,11 @@
 namespace protocols {
 namespace farna {
 
-	class ChunkSet;
-	class RNA_ChunkLibrary;
+class ChunkSet;
+class RNA_ChunkLibrary;
 
-	typedef utility::pointer::shared_ptr< RNA_ChunkLibrary > RNA_ChunkLibraryOP;
-	typedef utility::pointer::shared_ptr< ChunkSet > ChunkSetOP;
+typedef utility::pointer::shared_ptr< RNA_ChunkLibrary > RNA_ChunkLibraryOP;
+typedef utility::pointer::shared_ptr< ChunkSet > ChunkSetOP;
 
 } //farna
 } //protocols

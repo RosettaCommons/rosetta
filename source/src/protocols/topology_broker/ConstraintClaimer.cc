@@ -91,18 +91,18 @@ ConstraintClaimer::ConstraintClaimer( std::string filename, std::string tag ) :
 {}
 
 ConstraintClaimer::ConstraintClaimer( bool CmdFlag, bool centroid, bool fullatom )
-	:	filename_( "" ),
-		tag_( "" ),
-		constraints_( /* NULL */ ),
-		bCentroid_( centroid ),
-		bFullatom_( fullatom ),
-		bCmdFlag_( CmdFlag ),
-		combine_ratio_( 1 ),
-		drop_random_rate_( 0 ),
-		skip_redundant_( false ),
-		skip_redundant_width_( 1 ),
-		filter_weight_( 0.0 ),
-		filter_name_( "" )
+: filename_( "" ),
+	tag_( "" ),
+	constraints_( /* NULL */ ),
+	bCentroid_( centroid ),
+	bFullatom_( fullatom ),
+	bCmdFlag_( CmdFlag ),
+	combine_ratio_( 1 ),
+	drop_random_rate_( 0 ),
+	skip_redundant_( false ),
+	skip_redundant_width_( 1 ),
+	filter_weight_( 0.0 ),
+	filter_name_( "" )
 {
 	runtime_assert( CmdFlag );
 }
@@ -114,8 +114,8 @@ void ConstraintClaimer::new_decoy() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	tr.Debug << "ConstraintClaimer::new_decoy: cst-modus: " << ( bFullatom_ ? " fullatom " : "no fullatom" )
-					 <<  ( bCentroid_ ? " centroid " : " no centroid " )
-					 << std::endl;
+		<<  ( bCentroid_ ? " centroid " : " no centroid " )
+		<< std::endl;
 	if ( bCmdFlag_ && option[ constraints::combine ].user() ) {
 		combine_ratio_ = option[ constraints::combine ]();
 	}
@@ -148,14 +148,14 @@ void ConstraintClaimer::add_constraints( core::pose::Pose& pose ) const {
 	tr.Debug << "add constraints "<< tag_ << std::endl;
 	if ( constraints_ ) {
 		tr.Debug << " constraint set is currently for a " <<( constraint_ref_pose_.is_fullatom() ? "fullatom" : "centroid") << " pose "
-						 << "\n will now remap them to a " <<  (fullatom ? "fullatom" : "centroid") << " pose" << std::endl;
+			<< "\n will now remap them to a " <<  (fullatom ? "fullatom" : "centroid") << " pose" << std::endl;
 	}
 	std::string const new_sequence ( pose.annotated_sequence( true ) );
 	if ( bCmdFlag_ && option[ OptionKeys::constraints::combine_exclude_region ].user() && combine_exclude_res_.size() == 0 && sequence_ != new_sequence ) {
 		std::string const file( option[ OptionKeys::constraints::combine_exclude_region ]() );
 		std::ifstream is( file.c_str() );
 
-		if (!is.good()) {
+		if ( !is.good() ) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
 		}
 
@@ -177,7 +177,7 @@ void ConstraintClaimer::add_constraints( core::pose::Pose& pose ) const {
 			new_cst = constraints_->remapped_clone( constraint_ref_pose_, pose );
 		} catch( core::id::EXCN_AtomNotFound& excn ) {
 			tr.Error << "[ERROR] failed attempt to add constraints to the "
-							 << (fullatom ? "fullatom" : "centroid") << " pose" << std::endl;
+				<< (fullatom ? "fullatom" : "centroid") << " pose" << std::endl;
 			tr.Error << excn << std::endl;
 			if ( tr.Debug.visible() ) {
 				pose.dump_pdb("new_pose_failed_constraints.pdb");

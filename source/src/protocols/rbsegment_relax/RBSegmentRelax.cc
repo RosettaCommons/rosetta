@@ -124,12 +124,12 @@ void RBSegmentRelax::initialize( utility::vector1< core::fragment::FragSetOP > c
 	using namespace basic::options;
 
 	// set up default movesets ( start and end positions are set in apply() )
-	if (! option[ OptionKeys::RBSegmentRelax::skip_seqshift_moves ]() ) {
+	if ( ! option[ OptionKeys::RBSegmentRelax::skip_seqshift_moves ]() ) {
 		HelixMoveSet_.push_back( RBSegmentMoverOP( new SequenceShiftMover(  ) ) );
 		StrandMoveSet_.push_back( RBSegmentMoverOP( new SequenceShiftMover(  ) ) );
 	}
 
-	if (! option[ OptionKeys::RBSegmentRelax::skip_rb_moves ]() ) {
+	if ( ! option[ OptionKeys::RBSegmentRelax::skip_rb_moves ]() ) {
 		HelixMoveSet_.push_back( RBSegmentMoverOP( new HelicalGaussianMover( helical_sigR, helical_sigT, helical_sigOffAxisR, helical_sigOffAxisT ) ) );
 		StrandMoveSet_.push_back( RBSegmentMoverOP( new StrandTwistingMover( strand_sigR, strand_sigT, strand_sigOffAxisR, strand_sigOffAxisT ) ) );
 		GenericRBMoveSet_.push_back( RBSegmentMoverOP( new GaussianRBSegmentMover( genericRB_sigR , genericRB_sigT ) ) );
@@ -197,7 +197,7 @@ void RBSegmentRelax::apply( core::pose::Pose & pose ) {
 	setup_pose_from_rbsegs( rbsegs_input_ , pose , pose_noloops , resmap, mm, fix_ligands_ );
 	TS << "LOOPS-REMOVED fold tree " << pose_noloops.fold_tree() << std::endl;
 	TS << "LOOPS-REMOVED secstruct " << pose_noloops.secstruct() << std::endl;
-protocols::viewer::add_conformation_viewer( pose_noloops.conformation() );
+	protocols::viewer::add_conformation_viewer( pose_noloops.conformation() );
 
 	// remap rbsegs
 	remap_rb_segments( rbsegs_input_, rbsegs_remap_, resmap);
@@ -209,26 +209,27 @@ protocols::viewer::add_conformation_viewer( pose_noloops.conformation() );
 	bool doFragInserts=false;
 	FragInsertAndAlignMoverOP frag_ins;
 	if ( option[ OptionKeys::loops::vall_file ].user() && !option[ OptionKeys::RBSegmentRelax::skip_fragment_moves ]() ) {
-		frag_ins = FragInsertAndAlignMoverOP( new 
-FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ ) );
+		frag_ins = FragInsertAndAlignMoverOP( new
+			FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ ) );
 		doFragInserts = true;
 
-		if (bootstrap_) {
+		if ( bootstrap_ ) {
 			frag_ins->bootstrapCATrace( pose_noloops ); // Bootstrap a model from the Ca trace (idealizing in the process)
 
 			// if fullatom do a repack now
 			core::pack::task::PackerTaskOP task_fast = core::pack::task::TaskFactory::create_packer_task( pose_noloops );
 			task_fast->restrict_to_repacking(); task_fast->or_include_current(false);
 			protocols::simple_moves::PackRotamersMover pack_fast( scorefxn_, task_fast );
-			if (fullatom)
+			if ( fullatom ) {
 				pack_fast.apply( pose_noloops );
+			}
 		}
 	}
 
 	// loop over segments, add a mover for each
 	int nmovers=0;
 	for ( RBIt it_seg = rbsegs_remap_.begin(), it_seg_end = rbsegs_remap_.end();
-				it_seg != it_seg_end; ++it_seg	) {
+			it_seg != it_seg_end; ++it_seg ) {
 		// hardcoded since it needs a few extra things
 		// initialize the frag-insert mover
 		if ( doFragInserts ) {
@@ -239,19 +240,19 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ ) );
 		// add the whole structure movers
 		// add a copy for each RB segment
 		for ( std::vector< protocols::moves::MoverOP >::iterator it_mover = WholeStructureMoveSet_.begin(),
-		      it_mover_end = WholeStructureMoveSet_.end();
-		      it_mover != it_mover_end; ++it_mover ) {
+				it_mover_end = WholeStructureMoveSet_.end();
+				it_mover != it_mover_end; ++it_mover ) {
 			SegmentRandomizeMover->add_mover( *it_mover );
 			nmovers++;
 		}
 
 		//////////////////////
 		// HELIX SEGMENTS
-		if( it_seg->isHelix() ) {
+		if ( it_seg->isHelix() ) {
 			// add each mover from the helix moveset
 			// resids refer to those in the loop-removed pose
 			for ( std::vector< RBSegmentMoverOP >::iterator it_mover = HelixMoveSet_.begin(),
-							it_mover_end = HelixMoveSet_.end(); it_mover != it_mover_end; ++it_mover ) {
+					it_mover_end = HelixMoveSet_.end(); it_mover != it_mover_end; ++it_mover ) {
 				RBSegmentMoverOP moverToAdd = utility::pointer::dynamic_pointer_cast< RBSegmentMover >((*it_mover)->clone());  // make a deep copy of the mover
 				moverToAdd->setResidueRange( *it_seg );
 				if ( it_seg->initialized() ) moverToAdd->set_movement(*it_seg);  // override default movement params
@@ -259,13 +260,13 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ ) );
 				nmovers++;
 			}
 
-		//////////////////////
-		// SHEET SEGMENTS
+			//////////////////////
+			// SHEET SEGMENTS
 		} else if ( it_seg->isSheet() ) {
 			// add each mover from the strand moveset
 			// resids refer to those in the loop-removed pose
 			for ( std::vector< RBSegmentMoverOP >::iterator it_mover = StrandMoveSet_.begin(),
-							it_mover_end = StrandMoveSet_.end(); it_mover != it_mover_end; ++it_mover ) {
+					it_mover_end = StrandMoveSet_.end(); it_mover != it_mover_end; ++it_mover ) {
 				RBSegmentMoverOP moverToAdd = utility::pointer::dynamic_pointer_cast< RBSegmentMover >((*it_mover)->clone()); // make a deep copy of the mover
 				if ( it_seg->initialized() ) moverToAdd->set_movement(*it_seg);  // override default movement params
 				moverToAdd->setResidueRange( *it_seg );
@@ -273,14 +274,14 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ ) );
 				nmovers++;
 			}
 
-		//////////////////////
-		// GENERIC RB SEGMENTS
+			//////////////////////
+			// GENERIC RB SEGMENTS
 		} else if ( it_seg->isGenericRB() ) {
 			// Neither helix nor strand, we can include more logic here to be more specific
 			// add each genericRB mover
 			// resids refer to those in the loop-removed pose
 			for ( std::vector< RBSegmentMoverOP >::iterator it_mover = GenericRBMoveSet_.begin(),
-							it_mover_end = GenericRBMoveSet_.end(); it_mover != it_mover_end; ++it_mover ) {
+					it_mover_end = GenericRBMoveSet_.end(); it_mover != it_mover_end; ++it_mover ) {
 				RBSegmentMoverOP moverToAdd = utility::pointer::dynamic_pointer_cast< RBSegmentMover >((*it_mover)->clone());  // make a deep copy of the mover
 				moverToAdd->setResidueRange( *it_seg );
 				if ( it_seg->initialized() ) moverToAdd->set_movement(*it_seg);  // override default movement params
@@ -288,16 +289,16 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ ) );
 				nmovers++;
 			}
 
-		//////////////////////
-		// COMPOUND SEGMENTS
+			//////////////////////
+			// COMPOUND SEGMENTS
 		} else if ( it_seg->isCompound() ) {
-			if (! it_seg->initialized() ) {
-				it_seg->set_movement(	genericRB_sigT, genericRB_sigR );
+			if ( ! it_seg->initialized() ) {
+				it_seg->set_movement( genericRB_sigT, genericRB_sigR );
 			}
 			// add each genericRB mover
 			// resids refer to those in the loop-removed pose
 			for ( std::vector< RBSegmentMoverOP >::iterator it_mover = CompositeSegmentMoveSet_.begin(),
-							it_mover_end = CompositeSegmentMoveSet_.end(); it_mover != it_mover_end; ++it_mover ) {
+					it_mover_end = CompositeSegmentMoveSet_.end(); it_mover != it_mover_end; ++it_mover ) {
 				RBSegmentMoverOP moverToAdd = utility::pointer::dynamic_pointer_cast< RBSegmentMover >((*it_mover)->clone()); // make a deep copy of the mover
 				moverToAdd->setResidueRange( *it_seg );
 				if ( it_seg->initialized() ) moverToAdd->set_movement(*it_seg);  // override default movement params
@@ -305,15 +306,15 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ ) );
 				nmovers++;
 			}
 
-		/////////////////////
-		//  error?
+			/////////////////////
+			//  error?
 		} else {
 			TS << "[ ERROR ] Unknown segment type\n";
 			exit(1);
 		}
 	}
 
-	if (nmovers == 0) {
+	if ( nmovers == 0 ) {
 		TS << "[ ERROR ] RBSegmentRelax::apply() caled with no segments or movers defined!\n";
 		return;
 	}
@@ -327,8 +328,8 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ ) );
 	protocols::simple_moves::PackRotamersMover pack( scorefxn_, taskstd );
 
 	// rand
-	if (rand_>0) {
-		for (int i=1; i<=(int)rand_; ++i) {
+	if ( rand_>0 ) {
+		for ( int i=1; i<=(int)rand_; ++i ) {
 			SegmentRandomizeMover->apply( pose_noloops );
 		}
 
@@ -360,13 +361,13 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ ) );
 	core::optimization::MinimizerOptions options2( "dfpmin_armijo_nonmonotone", 1e-3, true, false );
 
 	// set movemaps
-	if (fullatom) {
+	if ( fullatom ) {
 		mm.set_bb( true );
 		mm.set_chi( true );
 
 		// fix ligands
 		if ( fix_ligands_ ) {
-			for (int i=1; i<=(int)pose.total_residue(); ++i) {
+			for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
 				if ( pose.residue(i).is_ligand() ) {
 					mm.set_bb( false );
 					mm.set_chi( false );
@@ -380,7 +381,7 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ ) );
 	}
 
 	scorefxn_->show( TS.Debug , pose_noloops );
-	for (int i=0; i<total_cycles; ++i) {
+	for ( int i=0; i<total_cycles; ++i ) {
 		temperature *= gamma;
 		mc_->set_temperature( temperature );
 
@@ -388,7 +389,7 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ ) );
 		SegmentRandomizeMover->apply( pose_noloops );
 
 		// 2: minimization
-		if (fullatom) {
+		if ( fullatom ) {
 			// if fullatom mode
 			//    repack + SC + RB minimize (as in docking)
 			// TO DO restrict packing to interface reses only
@@ -413,7 +414,7 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ ) );
 	mc_->recover_low( pose_noloops );
 	mc_->show_counters();
 
-	if (no_lr_ || loops_input_.size() == 0) {
+	if ( no_lr_ || loops_input_.size() == 0 ) {
 		pose = pose_noloops;
 		// rescore
 		(*scorefxn_)(pose);
@@ -425,10 +426,12 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ ) );
 		// dilate loops
 		protocols::loops::LoopsOP loops( new protocols::loops::Loops( loops_input_ ) );
 		for ( loops::Loops::iterator it = loops->v_begin(), it_end = loops->v_end(); it != it_end; ++it ) {
-			if (!pose.fold_tree().is_cutpoint( it->start() - 1 ) )
+			if ( !pose.fold_tree().is_cutpoint( it->start() - 1 ) ) {
 				it->set_start( it->start() - 1 );
-			if (!pose.fold_tree().is_cutpoint( it->stop() ) )
+			}
+			if ( !pose.fold_tree().is_cutpoint( it->stop() ) ) {
 				it->set_stop( it->stop() + 1 );
+			}
 		}
 
 		core::kinematics::FoldTree f, f_in = pose.fold_tree();
@@ -441,7 +444,7 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ ) );
 		for ( loops::Loops::const_iterator it = loops->begin(), it_end = loops->end(); it != it_end; ++it ) {
 			core::Size lstart = it->start(), lstop = it->stop();
 			idealize_loop( pose, *it );
-			for (core::Size k=lstart; k<lstop; ++k) {
+			for ( core::Size k=lstart; k<lstop; ++k ) {
 				pose.set_phi( k, pose_input.phi(k) );
 				pose.set_psi( k, pose_input.psi(k) );
 				pose.set_omega( k, pose_input.omega(k) );
@@ -459,14 +462,18 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ ) );
 		relax = "fastrelax";
 
 		// override defaults is specified on the command line
-		if ( option[ OptionKeys::loops::remodel ].user() )
+		if ( option[ OptionKeys::loops::remodel ].user() ) {
 			remodel = option[ OptionKeys::loops::remodel ]();
-		if ( option[ OptionKeys::loops::intermedrelax ].user() )
+		}
+		if ( option[ OptionKeys::loops::intermedrelax ].user() ) {
 			intermedrelax = option[ OptionKeys::loops::intermedrelax ]();
-		if ( option[ OptionKeys::loops::refine ].user() )
+		}
+		if ( option[ OptionKeys::loops::refine ].user() ) {
 			refine = option[ OptionKeys::loops::refine ]();
-		if ( option[ OptionKeys::loops::relax ].user() )
+		}
+		if ( option[ OptionKeys::loops::relax ].user() ) {
 			relax = option[ OptionKeys::loops::relax ]();
+		}
 
 		// set up LR constraints (if provided in input pose)
 		set_constraints( pose, pose_input, cst_width_, cst_stdev_, cst_seqwidth_ );
@@ -485,7 +492,7 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ ) );
 		mover.remodel( remodel );
 		mover.intermedrelax( intermedrelax );
 		mover.cmd_line_csts( false );   // csts come from this protocol, not the cmd line
-																		// however, use wts from cmd line
+		// however, use wts from cmd line
 		mover.apply( pose );
 		//TS << "FINAL fold tree " << pose.fold_tree() << std::endl;
 	}

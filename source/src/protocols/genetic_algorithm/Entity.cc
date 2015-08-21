@@ -220,8 +220,8 @@ void Entity::set_traits_size(
 	traits_.resize(size);
 	/*
 	for ( Size ii = 1; ii <= size; ++ii ) {
-		traits_[ ii ] = element->fresh_instance();
-		traits_[ ii ]->index( ii );
+	traits_[ ii ] = element->fresh_instance();
+	traits_[ ii ]->index( ii );
 	}*/
 	fitness_valid_ = false;
 }
@@ -343,13 +343,13 @@ Entity::read_checkpoint(
 )
 {
 	std::string word;
-	if (!(is >> word)) return false;
+	if ( !(is >> word) ) return false;
 	if ( word != "traits" ) return false;
 	while ( is >> word ) {
 		if ( word == "fitness" ) break;
 		traits_.push_back( EntityElementFactory::get_instance()->element_from_string( word ) );
 	}
-	if ( is >> fitness_) {
+	if ( is >> fitness_ ) {
 		fitness_valid_ = true;
 		return true;
 	}

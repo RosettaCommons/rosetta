@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/antibody_design/AntibodyNumberingParser.fwd.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
@@ -19,17 +19,17 @@
 
 namespace protocols {
 namespace antibody {
-	
-	class AntibodyNumberingParser;
-	typedef utility::pointer::shared_ptr< AntibodyNumberingParser > AntibodyNumberingParserOP;
-	typedef utility::pointer::shared_ptr< AntibodyNumberingParser const > AntibodyNumberingParserCOP;
-	
-	class PDBLandmark;
-	typedef utility::pointer::shared_ptr< PDBLandmark > PDBLandmarkOP;
-	typedef utility::pointer::shared_ptr< PDBLandmark const > PDBLandmarkCOP;
+
+class AntibodyNumberingParser;
+typedef utility::pointer::shared_ptr< AntibodyNumberingParser > AntibodyNumberingParserOP;
+typedef utility::pointer::shared_ptr< AntibodyNumberingParser const > AntibodyNumberingParserCOP;
+
+class PDBLandmark;
+typedef utility::pointer::shared_ptr< PDBLandmark > PDBLandmarkOP;
+typedef utility::pointer::shared_ptr< PDBLandmark const > PDBLandmarkCOP;
 }
 }
 
-#endif	//INCLUDED_protocols_antibody_design_AntibodyNumberingParser.fwd.hh
+#endif //INCLUDED_protocols_antibody_design_AntibodyNumberingParser.fwd.hh
 
 

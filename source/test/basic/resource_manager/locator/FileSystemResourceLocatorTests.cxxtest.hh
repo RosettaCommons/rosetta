@@ -44,12 +44,12 @@ public:
 
 		FileSystemResourceLocator file_locator;
 
-    ResourceStreamOP rstream = file_locator.locate_resource_stream( "FileSystemResourceLocator.txt" );
-    std::string test_contents;
-    std::getline( rstream->stream(), test_contents );
-    TS_ASSERT_EQUALS( test_contents, "FileSystemResourceLocator test" );
+		ResourceStreamOP rstream = file_locator.locate_resource_stream( "FileSystemResourceLocator.txt" );
+		std::string test_contents;
+		std::getline( rstream->stream(), test_contents );
+		TS_ASSERT_EQUALS( test_contents, "FileSystemResourceLocator test" );
 
-    TS_ASSERT( dynamic_cast< FileStream * > ( rstream.get() ) );
+		TS_ASSERT( dynamic_cast< FileStream * > ( rstream.get() ) );
 	}
 
 

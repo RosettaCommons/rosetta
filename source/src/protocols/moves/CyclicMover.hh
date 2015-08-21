@@ -34,29 +34,29 @@ namespace moves {
 
 /// @detail A simple class for cycling between movers in consecutive calls to apply()
 class CyclicMover : public Mover {
-  typedef std::vector<MoverOP> Movers;
+	typedef std::vector<MoverOP> Movers;
 
- public:
-  /// @brief Creates a new instance with no enqueued movers
-  CyclicMover();
+public:
+	/// @brief Creates a new instance with no enqueued movers
+	CyclicMover();
 
-  /// @brief Enqueue the specified mover for execution
-  void enqueue(MoverOP mover);
+	/// @brief Enqueue the specified mover for execution
+	void enqueue(MoverOP mover);
 
-  // -- mover -- //
-  std::string get_name() const;
-  void apply(core::pose::Pose& pose);
+	// -- mover -- //
+	std::string get_name() const;
+	void apply(core::pose::Pose& pose);
 
-  // -- jd2 -- //
-  MoverOP clone() const;
-  MoverOP fresh_instance() const;
+	// -- jd2 -- //
+	MoverOP clone() const;
+	MoverOP fresh_instance() const;
 
 private:
-  /// @brief Tracks the number of calls to apply()
-  long iterations_;
+	/// @brief Tracks the number of calls to apply()
+	long iterations_;
 
-  /// @brief List of movers, which are executed in order in consecutive calls to apply()
-  Movers movers_;
+	/// @brief List of movers, which are executed in order in consecutive calls to apply()
+	Movers movers_;
 };
 
 }  // namespace moves

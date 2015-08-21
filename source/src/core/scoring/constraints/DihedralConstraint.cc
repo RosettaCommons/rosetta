@@ -116,9 +116,9 @@ DihedralConstraint::p1_cosine_deriv(
 	// does not affect the torsion angle
 	// ==> rotation of p1 about an axis perpendicular to this plane
 	// also does not change the torsion angle, ie deriv should be 0
-debug_assert( std::abs( dot( F2, v1 ) ) < 1e-3 );
-debug_assert( std::abs( dot( F2, v2 ) ) < 1e-3 );
-debug_assert( std::abs( dot( F1, cross( v1, v2 ) ) ) < 1e-3 );
+	debug_assert( std::abs( dot( F2, v1 ) ) < 1e-3 );
+	debug_assert( std::abs( dot( F2, v2 ) ) < 1e-3 );
+	debug_assert( std::abs( dot( F1, cross( v1, v2 ) ) ) < 1e-3 );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -203,7 +203,7 @@ DihedralConstraint::p2_cosine_deriv(
 
 	// debugging
 	// translation of p2 along v2 does not change the torsion angle
-debug_assert( std::abs( dot( F2, v2 ) ) < 1e-3 );
+	debug_assert( std::abs( dot( F2, v2 ) ) < 1e-3 );
 
 }
 
@@ -214,7 +214,7 @@ DihedralConstraint::score(
 ) const
 {
 	return score(  conformation.xyz( atom1_ ),conformation.xyz( atom2_ ),
-								 conformation.xyz( atom3_ ),conformation.xyz( atom4_ ) );
+		conformation.xyz( atom3_ ),conformation.xyz( atom4_ ) );
 }
 
 
@@ -224,8 +224,8 @@ DihedralConstraint::fill_f1_f2(
 	AtomID const & atom,
 	func::XYZ_Func const & xyz,
 	Vector & F1,
- 	Vector & F2,
- 	EnergyMap const & weights
+	Vector & F2,
+	EnergyMap const & weights
 ) const
 {
 
@@ -249,27 +249,27 @@ DihedralConstraint::fill_f1_f2(
 
 	Real x(0.0); // cos theta
 	if ( atom == atom1_ ) {
-		p1_cosine_deriv( conformation.xyz( atom1_ ),conformation.xyz( atom2_ ),
-										 conformation.xyz( atom3_ ),conformation.xyz( atom4_ ), x, f1, f2 );
+	p1_cosine_deriv( conformation.xyz( atom1_ ),conformation.xyz( atom2_ ),
+	conformation.xyz( atom3_ ),conformation.xyz( atom4_ ), x, f1, f2 );
 	} else if ( atom == atom2_ ) {
-		p2_cosine_deriv( conformation.xyz( atom1_ ),conformation.xyz( atom2_ ),
-										 conformation.xyz( atom3_ ),conformation.xyz( atom4_ ), x, f1, f2 );
+	p2_cosine_deriv( conformation.xyz( atom1_ ),conformation.xyz( atom2_ ),
+	conformation.xyz( atom3_ ),conformation.xyz( atom4_ ), x, f1, f2 );
 	} else if ( atom == atom3_ ) {
-		p2_cosine_deriv( conformation.xyz( atom4_ ),conformation.xyz( atom3_ ),
-										 conformation.xyz( atom2_ ),conformation.xyz( atom1_ ), x, f1, f2 );
+	p2_cosine_deriv( conformation.xyz( atom4_ ),conformation.xyz( atom3_ ),
+	conformation.xyz( atom2_ ),conformation.xyz( atom1_ ), x, f1, f2 );
 	} else if ( atom == atom4_ ) {
-		p1_cosine_deriv( conformation.xyz( atom4_ ),conformation.xyz( atom3_ ),
-										 conformation.xyz( atom2_ ),conformation.xyz( atom1_ ), x, f1, f2 );
+	p1_cosine_deriv( conformation.xyz( atom4_ ),conformation.xyz( atom3_ ),
+	conformation.xyz( atom2_ ),conformation.xyz( atom1_ ), x, f1, f2 );
 	} else {
-		return;
+	return;
 	}
 
 	Real const thetaU( numeric::arccos( x )); // unsigned version of theta
 
 	Real const theta ( dihedral_radians( conformation.xyz( atom1_ ),conformation.xyz( atom2_ ),
-																			 conformation.xyz( atom3_ ),conformation.xyz( atom4_ ) ) );
+	conformation.xyz( atom3_ ),conformation.xyz( atom4_ ) ) );
 
-debug_assert( std::abs( std::abs( theta ) - thetaU ) < 1e-2 );
+	debug_assert( std::abs( std::abs( theta ) - thetaU ) < 1e-2 );
 
 	Real const dE_dtheta( dfunc( theta ) );
 
@@ -281,7 +281,7 @@ debug_assert( std::abs( std::abs( theta ) - thetaU ) < 1e-2 );
 
 	F2 += ( dE_dtheta * dtheta_dthetaU * dthetaU_dx * f2 ) * weights[ this->score_type() ];
 
-*//**/
+	*//**/
 
 	using namespace numeric::deriv;
 
@@ -304,22 +304,22 @@ debug_assert( std::abs( std::abs( theta ) - thetaU ) < 1e-2 );
 
 	F1 += dE_dtheta * weights[ this->score_type() ] * f1;
 	F2 += dE_dtheta * weights[ this->score_type() ] * f2;
-/**/
+	/**/
 }
 
 ConstraintOP
 DihedralConstraint::remap_resid(
 	core::id::SequenceMapping const & seqmap
 ) const {
-  if ( seqmap[atom1_.rsd()] != 0 && seqmap[atom2_.rsd()] != 0 && seqmap[atom3_.rsd()] != 0 && seqmap[atom4_.rsd()] != 0 ) {
-    AtomID remap_a1( atom1_.atomno(), seqmap[atom1_.rsd()] ),
-      remap_a2( atom2_.atomno(), seqmap[atom2_.rsd()] ),
+	if ( seqmap[atom1_.rsd()] != 0 && seqmap[atom2_.rsd()] != 0 && seqmap[atom3_.rsd()] != 0 && seqmap[atom4_.rsd()] != 0 ) {
+		AtomID remap_a1( atom1_.atomno(), seqmap[atom1_.rsd()] ),
+			remap_a2( atom2_.atomno(), seqmap[atom2_.rsd()] ),
 			remap_a3( atom3_.atomno(), seqmap[atom3_.rsd()] ),
 			remap_a4( atom4_.atomno(), seqmap[atom4_.rsd()] );
-    return ConstraintOP( new DihedralConstraint( remap_a1, remap_a2, remap_a3, remap_a4, this->func_ ) );
-  } else {
-    return NULL;
-  }
+		return ConstraintOP( new DihedralConstraint( remap_a1, remap_a2, remap_a3, remap_a4, this->func_ ) );
+	} else {
+		return NULL;
+	}
 }
 
 
@@ -328,43 +328,43 @@ DihedralConstraint::remap_resid(
 /// if a sequence_mapping is present it is used to map residue numbers .. NULL = identity mapping
 /// to the new object. Intended to be implemented by derived classes.
 ConstraintOP DihedralConstraint::remapped_clone( pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP smap ) const {
-  id::NamedAtomID atom1( core::pose::atom_id_to_named_atom_id(atom(1), src ) );
-  id::NamedAtomID atom2( core::pose::atom_id_to_named_atom_id(atom(2), src ) );
-  id::NamedAtomID atom3( core::pose::atom_id_to_named_atom_id(atom(3), src ) );
-  id::NamedAtomID atom4( core::pose::atom_id_to_named_atom_id(atom(4), src ) );
-//  std::cout << "making a clone";
-  if ( smap ) {
-    atom1.rsd() = (*smap)[ atom1_.rsd() ];
-    atom2.rsd() = (*smap)[ atom2_.rsd() ];
-    atom3.rsd() = (*smap)[ atom3_.rsd() ];
-    atom4.rsd() = (*smap)[ atom4_.rsd() ];
-  }
+	id::NamedAtomID atom1( core::pose::atom_id_to_named_atom_id(atom(1), src ) );
+	id::NamedAtomID atom2( core::pose::atom_id_to_named_atom_id(atom(2), src ) );
+	id::NamedAtomID atom3( core::pose::atom_id_to_named_atom_id(atom(3), src ) );
+	id::NamedAtomID atom4( core::pose::atom_id_to_named_atom_id(atom(4), src ) );
+	//  std::cout << "making a clone";
+	if ( smap ) {
+		atom1.rsd() = (*smap)[ atom1_.rsd() ];
+		atom2.rsd() = (*smap)[ atom2_.rsd() ];
+		atom3.rsd() = (*smap)[ atom3_.rsd() ];
+		atom4.rsd() = (*smap)[ atom4_.rsd() ];
+	}
 
-  //get AtomIDs for target pose
-  id::AtomID id1( core::pose::named_atom_id_to_atom_id(atom1, dest ));
-  id::AtomID id2( core::pose::named_atom_id_to_atom_id(atom2, dest ));
-  id::AtomID id3( core::pose::named_atom_id_to_atom_id(atom3, dest ));
-  id::AtomID id4( core::pose::named_atom_id_to_atom_id(atom4, dest ));
-  if ( id1.valid() && id2.valid() &&  id3.valid() && id4.valid()  ) {
-    return ConstraintOP( new DihedralConstraint( id1, id2, id3, id4, func_, score_type() ) );
-  } else {
-    return NULL;
-  }
+	//get AtomIDs for target pose
+	id::AtomID id1( core::pose::named_atom_id_to_atom_id(atom1, dest ));
+	id::AtomID id2( core::pose::named_atom_id_to_atom_id(atom2, dest ));
+	id::AtomID id3( core::pose::named_atom_id_to_atom_id(atom3, dest ));
+	id::AtomID id4( core::pose::named_atom_id_to_atom_id(atom4, dest ));
+	if ( id1.valid() && id2.valid() &&  id3.valid() && id4.valid()  ) {
+		return ConstraintOP( new DihedralConstraint( id1, id2, id3, id4, func_, score_type() ) );
+	} else {
+		return NULL;
+	}
 }
 
 
 id::AtomID const &
 DihedralConstraint::atom( Size const n ) const {
 	switch( n ) {
-	case 1:
+	case 1 :
 		return atom1_;
-	case 2:
+	case 2 :
 		return atom2_;
-	case 3:
+	case 3 :
 		return atom3_;
-	case 4:
+	case 4 :
 		return atom4_;
-	default:
+	default :
 		utility_exit_with_message( "DihedralConstraint::atom() bad argument" );
 	}
 	return atom1_;
@@ -396,14 +396,14 @@ DihedralConstraint::read_def(
 	ConstraintIO::parse_residue( pose, tempres3, res3 );
 	ConstraintIO::parse_residue( pose, tempres4, res4 );
 
-	TR.Debug 	<< "read: " << name1 << " " << name2 << " " << name3 << " " << name4 << " "
-						<< res1 << " " << res2 << " " << res3 << " " << res4 << " func: " << func_type
-						<< std::endl;
+	TR.Debug  << "read: " << name1 << " " << name2 << " " << name3 << " " << name4 << " "
+		<< res1 << " " << res2 << " " << res3 << " " << res4 << " func: " << func_type
+		<< std::endl;
 	if ( res1 > pose.total_residue() || res2 > pose.total_residue() || res3 > pose.total_residue() || res4 > pose.total_residue() ) {
-		TR.Warning 	<< "ignored constraint (no such atom in pose!)"
-								<< name1 << " " << name2 << " " << name3 << " " << name4 << " "
-													<< res1 << " " << res2 << " " << res3 << " " << res4 << " func: " << func_type
-													<< std::endl;
+		TR.Warning  << "ignored constraint (no such atom in pose!)"
+			<< name1 << " " << name2 << " " << name3 << " " << name4 << " "
+			<< res1 << " " << res2 << " " << res3 << " " << res4 << " func: " << func_type
+			<< std::endl;
 		in.setstate( std::ios_base::failbit );
 		return;
 	}
@@ -418,15 +418,15 @@ DihedralConstraint::read_def(
 			<< name1 << "," << name2 << "," << name3 << "," << name4 << "), "
 			<< "and found AtomIDs (" << atom1_ << "," << atom2_ << "," << atom3_ << "," << atom4_ << ")"
 			<< std::endl;
-			in.setstate( std::ios_base::failbit );
-			return;
+		in.setstate( std::ios_base::failbit );
+		return;
 	}
 
 	func_ = func_factory.new_func( func_type );
 	func_->read_data( in );
 
 	//chu skip the rest of line since this is a single line defintion.
-	while( in.good() && (in.get() != '\n') ) {}
+	while ( in.good() && (in.get() != '\n') ) {}
 
 	if ( TR.Debug.visible() ) {
 		func_->show_definition( std::cout );
@@ -451,16 +451,16 @@ DihedralConstraint::score(
 bool
 DihedralConstraint::operator == ( Constraint const & other_cst ) const
 {
-	if( !dynamic_cast< DihedralConstraint const * > ( &other_cst ) ) return false;
+	if ( !dynamic_cast< DihedralConstraint const * > ( &other_cst ) ) return false;
 
 	DihedralConstraint const & other( static_cast< DihedralConstraint const & > (other_cst) );
 
-	if( atom1_ != other.atom1_ ) return false;
-	if( atom2_ != other.atom2_ ) return false;
-	if( atom3_ != other.atom3_ ) return false;
-	if( atom4_ != other.atom4_ ) return false;
-	if( func_ != other.func_ ) return false;
-	if( this->score_type() != other.score_type() ) return false;
+	if ( atom1_ != other.atom1_ ) return false;
+	if ( atom2_ != other.atom2_ ) return false;
+	if ( atom3_ != other.atom3_ ) return false;
+	if ( atom4_ != other.atom4_ ) return false;
+	if ( func_ != other.func_ ) return false;
+	if ( this->score_type() != other.score_type() ) return false;
 
 	return true;
 }
@@ -498,27 +498,27 @@ void DihedralConstraint::show_def( std::ostream& out, pose::Pose const& pose ) c
 
 
 Size DihedralConstraint::show_violations(
-        std::ostream& out,
-        pose::Pose const& pose,
-        Size verbose_level,
-        Real threshold
+	std::ostream& out,
+	pose::Pose const& pose,
+	Size verbose_level,
+	Real threshold
 ) const {
 
-	     if ( verbose_level > 80 ) {
-                out << "Dihedral ("
-                        << pose.residue_type(atom1_.rsd() ).atom_name( atom1_.atomno() ) << ":"
-                        << atom1_.atomno() << "," << atom1_.rsd() << "-"
-                        << pose.residue_type(atom2_.rsd() ).atom_name( atom2_.atomno() ) << ":"
-                        << atom2_.atomno() << "," << atom2_.rsd() << ") ";
-        }
-        if ( verbose_level > 120 ) { //don't ask but I had a really weird bug to track down!
-                conformation::Conformation const & conformation( pose.conformation() );
-                Vector const & xyz1( conformation.xyz( atom1_ ) ), xyz2( conformation.xyz( atom2_ ) );
-                out << "\ncoords1: " << xyz1[ 1 ] << " " << xyz1[ 2 ] << " " << xyz1[ 3 ] << " --- ";
-                out << "coords1: " << xyz2[ 1 ] << " " << xyz2[ 2 ] << " " << xyz2[ 3 ] << "\n";
-        }
+	if ( verbose_level > 80 ) {
+		out << "Dihedral ("
+			<< pose.residue_type(atom1_.rsd() ).atom_name( atom1_.atomno() ) << ":"
+			<< atom1_.atomno() << "," << atom1_.rsd() << "-"
+			<< pose.residue_type(atom2_.rsd() ).atom_name( atom2_.atomno() ) << ":"
+			<< atom2_.atomno() << "," << atom2_.rsd() << ") ";
+	}
+	if ( verbose_level > 120 ) { //don't ask but I had a really weird bug to track down!
+		conformation::Conformation const & conformation( pose.conformation() );
+		Vector const & xyz1( conformation.xyz( atom1_ ) ), xyz2( conformation.xyz( atom2_ ) );
+		out << "\ncoords1: " << xyz1[ 1 ] << " " << xyz1[ 2 ] << " " << xyz1[ 3 ] << " --- ";
+		out << "coords1: " << xyz2[ 1 ] << " " << xyz2[ 2 ] << " " << xyz2[ 3 ] << "\n";
+	}
 
-        return func_->show_violations( out, 0.0, verbose_level, threshold );
+	return func_->show_violations( out, 0.0, verbose_level, threshold );
 }
 
 

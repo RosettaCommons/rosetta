@@ -45,12 +45,12 @@ PDBRotamerLibrarySpecification::PDBRotamerLibrarySpecification()
 {}
 
 PDBRotamerLibrarySpecification::PDBRotamerLibrarySpecification( std::string library_file ):
-		pdb_rotamers_file_(library_file)
+	pdb_rotamers_file_(library_file)
 {}
 
 PDBRotamerLibrarySpecification::PDBRotamerLibrarySpecification(std::istream & input) {
 	input >> pdb_rotamers_file_;
-	if( ! input ) {
+	if ( ! input ) {
 		utility_exit_with_message("Must provide a file name with PDB Rotamers input");
 	}
 }

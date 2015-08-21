@@ -55,8 +55,8 @@ static thread_local basic::Tracer TR( "core.mm.MMBondLengthLibrary" );
 
 /// @details Construct a MMBondLengthLibrary instant from a filename string and constant access pointer to an MMAtomTypeSet
 MMBondLengthLibrary::MMBondLengthLibrary(
-	 std::string filename,
-	 core::chemical::MMAtomTypeSetCOP mm_atom_set
+	std::string filename,
+	core::chemical::MMAtomTypeSetCOP mm_atom_set
 )
 {
 	mm_atom_set_ = core::chemical::MMAtomTypeSetCAP( mm_atom_set );
@@ -67,15 +67,15 @@ MMBondLengthLibrary::MMBondLengthLibrary(
 	std::ifstream data( filename.c_str() );
 
 	bool in_bonds_section = false;
-	while( getline( data, line ) ) {
-		if( line.size() < 1 || line[0] == '!' || line[0] == ' ' ) continue; // comment or blank lines
-		if (line == "ANGLES") in_bonds_section = false;
-		if (in_bonds_section) lines.push_back( line );
-		if (line == "BONDS") in_bonds_section = true;
+	while ( getline( data, line ) ) {
+		if ( line.size() < 1 || line[0] == '!' || line[0] == ' ' ) continue; // comment or blank lines
+		if ( line == "ANGLES" ) in_bonds_section = false;
+		if ( in_bonds_section ) lines.push_back( line );
+		if ( line == "BONDS" ) in_bonds_section = true;
 	}
 
 	// parse params
-	for( Size i = 1; i <= lines.size(); ++i ) {
+	for ( Size i = 1; i <= lines.size(); ++i ) {
 		std::istringstream l( lines[i] );
 
 		std::string atom_type_string_1, atom_type_string_2;
@@ -94,8 +94,8 @@ MMBondLengthLibrary::MMBondLengthLibrary(
 		l >> k_b >> b_0;
 
 		mm_bondlength_library_.insert( std::make_pair(
-				mm_bondlength_atom_pair( atom_type_int1, atom_type_int2 ),
-				mm_bondlength_param_set( k_b, b_0 )	)	);
+			mm_bondlength_atom_pair( atom_type_int1, atom_type_int2 ),
+			mm_bondlength_param_set( k_b, b_0 ) ) );
 	}
 
 	/// apl -- add "no-op" pair for virtual atoms
@@ -109,17 +109,17 @@ MMBondLengthLibrary::MMBondLengthLibrary(
 
 	// print number torsion params added
 	TR << "MM bond length sets added: " << mm_bondlength_library_.size()
-		 << " (+1 virtual)." << std::endl;
+		<< " (+1 virtual)." << std::endl;
 }
 
 mm_bondlength_library_citer_pair
 MMBondLengthLibrary::lookup( int atom1, int atom2 ) const {
 	static std::string const virt_string = "VIRT";
 
-	if( mm_bondlength_library_.count( mm_bondlength_atom_pair( atom1, atom2 ) ) ) {
+	if ( mm_bondlength_library_.count( mm_bondlength_atom_pair( atom1, atom2 ) ) ) {
 		// forward
 		return mm_bondlength_library_.equal_range( mm_bondlength_atom_pair( atom1, atom2 ) );
-	} else if( mm_bondlength_library_.count( mm_bondlength_atom_pair( atom2, atom1 ) ) ) {
+	} else if ( mm_bondlength_library_.count( mm_bondlength_atom_pair( atom2, atom1 ) ) ) {
 		// backward
 		return mm_bondlength_library_.equal_range( mm_bondlength_atom_pair( atom2, atom1 ) );
 	}
@@ -148,37 +148,37 @@ MMBondLengthLibrary::lookup ( std::string atom1, std::string atom2 ) const {
 void
 MMBondLengthLibrary::pretty_print() const {
 	// for each key print out its value
-	for( mm_bondlength_library_citer i = mm_bondlength_library_.begin(),
-				 e = mm_bondlength_library_.end(); i != e; ++i ) {
+	for ( mm_bondlength_library_citer i = mm_bondlength_library_.begin(),
+			e = mm_bondlength_library_.end(); i != e; ++i ) {
 		TR << (i->first).key1() << "\t"
-			 << (i->first).key2() << "\t"
-			 << (i->second).key1() << "\t"
-			 << (i->second).key2() << "\t"
-			 << std::endl;
+			<< (i->first).key2() << "\t"
+			<< (i->second).key1() << "\t"
+			<< (i->second).key2() << "\t"
+			<< std::endl;
 	}
 }
 
 void
 MMBondLengthLibrary::pretty_print( int atom1, int atom2 ) const {
 	mm_bondlength_library_citer_pair temppair = this->lookup(atom1, atom2);
-	for( mm_bondlength_library_citer i = temppair.first, e = temppair.second; i != e; ++i ) {
+	for ( mm_bondlength_library_citer i = temppair.first, e = temppair.second; i != e; ++i ) {
 		TR << (i->first).key1() << "\t"
-			 << (i->first).key2() << "\t"
-			 << (i->second).key1() << "\t"
-			 << (i->second).key2() << "\t"
-			 << std::endl;
+			<< (i->first).key2() << "\t"
+			<< (i->second).key1() << "\t"
+			<< (i->second).key2() << "\t"
+			<< std::endl;
 	}
 }
 
 void
 MMBondLengthLibrary::pretty_print( std::string atom1, std::string atom2 ) const {
 	mm_bondlength_library_citer_pair temppair = this->lookup(atom1, atom2);
-	for( mm_bondlength_library_citer i = temppair.first, e = temppair.second; i != e; ++i ) {
+	for ( mm_bondlength_library_citer i = temppair.first, e = temppair.second; i != e; ++i ) {
 		TR << (i->first).key1() << "\t"
-			 << (i->first).key2() << "\t"
-			 << (i->second).key1() << "\t"
-			 << (i->second).key2() << "\t"
-			 << std::endl;
+			<< (i->first).key2() << "\t"
+			<< (i->second).key1() << "\t"
+			<< (i->second).key2() << "\t"
+			<< std::endl;
 	}
 }
 

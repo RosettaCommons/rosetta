@@ -10,7 +10,7 @@
 /// @file RGFilter.cc
 /// @brief runs reject or accept filters on pose
 /// @details
-///	  Contains currently: RGFilter
+///   Contains currently: RGFilter
 ///
 ///
 /// @author Robert Vernon

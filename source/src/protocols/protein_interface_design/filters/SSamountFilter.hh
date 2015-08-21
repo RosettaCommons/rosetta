@@ -18,7 +18,7 @@
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
-//Include Rosetta protocols 
+//Include Rosetta protocols
 #include <protocols/filters/Filter.hh>
 
 //Include ObjexxFCL
@@ -39,13 +39,13 @@ class SSamountFilter : public protocols::filters::Filter
 {
 public:
 	SSamountFilter();
-	
+
 	SSamountFilter(
-					core::Real const upper_threshold,
-					core::Real const lower_threshold,
-					core::Size target_chain,
-					bool b_target_chain,
-					bool b_discard_lonely_SS);
+		core::Real const upper_threshold,
+		core::Real const lower_threshold,
+		core::Size target_chain,
+		bool b_target_chain,
+		bool b_discard_lonely_SS);
 	bool apply( core::pose::Pose const & pose ) const;
 	protocols::filters::FilterOP clone() const;
 	protocols::filters::FilterOP fresh_instance() const{
@@ -55,11 +55,11 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	virtual ~SSamountFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, 
-							basic::datacache::DataMap & data_map, 
-							protocols::filters::Filters_map const &, 
-							protocols::moves::Movers_map const &, 
-							core::pose::Pose const & reference_pose );
+	void parse_my_tag( utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data_map,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & reference_pose );
 private:
 	core::Real upper_threshold_;
 	core::Real lower_threshold_;

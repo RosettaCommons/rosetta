@@ -90,10 +90,12 @@ MolecularSurfaceCalculator::MolecularSurfaceCalculator()
 
 int MolecularSurfaceCalculator::Init()
 {
-	if(radii_.empty())
+	if ( radii_.empty() ) {
 		ReadScRadii();
-	if(radii_.empty())
+	}
+	if ( radii_.empty() ) {
 		return 0;
+	}
 
 	return 1;
 }
@@ -114,7 +116,7 @@ MolecularSurfaceCalculator::~MolecularSurfaceCalculator()
 void MolecularSurfaceCalculator::Reset()
 {
 	// Free data
-	for(std::vector<Atom>::iterator a = run_.atoms.begin(); a < run_.atoms.end(); ++a) {
+	for ( std::vector<Atom>::iterator a = run_.atoms.begin(); a < run_.atoms.end(); ++a ) {
 		a->neighbors.clear();
 		a->buried.clear();
 	}
@@ -123,7 +125,7 @@ void MolecularSurfaceCalculator::Reset()
 	run_.atoms.clear();
 	run_.probes.clear();
 	run_.dots[0].clear();
- 	run_.dots[1].clear();
+	run_.dots[1].clear();
 
 	memset(&run_.results, 0, sizeof(run_.results));
 	memset(&run_.prevp, 0, sizeof(run_.prevp));
@@ -145,11 +147,11 @@ void MolecularSurfaceCalculator::Reset()
 ///   ... = calc.GetResults();
 int MolecularSurfaceCalculator::Calc(core::pose::Pose const & pose, core::Size jump_id)
 {
-	if(!Init())
+	if ( !Init() ) {
 		return 0;
+	}
 
-	if( jump_id > pose.num_jump() )
-	{
+	if ( jump_id > pose.num_jump() ) {
 		TR.Error << "Jump ID out of bounds (pose has " << pose.num_jump() << " jumps)" << std::endl;
 		return 0;
 	}
@@ -157,18 +159,19 @@ int MolecularSurfaceCalculator::Calc(core::pose::Pose const & pose, core::Size j
 	// Partition pose by jump_id
 	ObjexxFCL::FArray1D_bool is_upstream ( pose.total_residue(), true );
 
-	if( jump_id > 0 )
-	{
+	if ( jump_id > 0 ) {
 		pose.fold_tree().partition_by_jump( jump_id, is_upstream );
 	}
 
-	for(Size i = 1; i <= pose.n_residue(); ++i) {
+	for ( Size i = 1; i <= pose.n_residue(); ++i ) {
 		core::conformation::Residue const & residue = pose.residue(i);
-		if(residue.type().name() == "VRT")
+		if ( residue.type().name() == "VRT" ) {
 			continue;
-		if(residue.type().is_metal()) continue;
-		if(!AddResidue(is_upstream(i) ? 0 : 1, residue))
+		}
+		if ( residue.type().is_metal() ) continue;
+		if ( !AddResidue(is_upstream(i) ? 0 : 1, residue) ) {
 			return 0;
+		}
 	}
 
 	return Calc();
@@ -183,13 +186,14 @@ int MolecularSurfaceCalculator::Calc(core::pose::Pose const & pose, core::Size j
 int MolecularSurfaceCalculator::Calc()
 {
 	try
-	{
+{
 		basic::gpu::Timer timer(TR.Debug);
 
 		run_.results.valid = 0;
 
-		if(run_.atoms.empty())
+		if ( run_.atoms.empty() ) {
 			throw ShapeComplementarityCalculatorException("No atoms defined");
+		}
 
 		// Determine assign the attention numbers for each atom
 		AssignAttentionNumbers(run_.atoms);
@@ -197,10 +201,10 @@ int MolecularSurfaceCalculator::Calc()
 		GenerateMolecularSurfaces();
 		return 1;
 	}
-	catch(ShapeComplementarityCalculatorException & e)
-	{
-		TR.Error << "Failed: " << e.error << std::endl;
-	}
+catch(ShapeComplementarityCalculatorException & e)
+{
+	TR.Error << "Failed: " << e.error << std::endl;
+}
 
 	return 0;
 }
@@ -212,17 +216,15 @@ int MolecularSurfaceCalculator::Calc()
 /// Raises exception on error.
 void MolecularSurfaceCalculator::GenerateMolecularSurfaces()
 {
-	if(run_.atoms.empty())
-  {
+	if ( run_.atoms.empty() ) {
 		throw ShapeComplementarityCalculatorException("No atoms defined");
-  }
+	}
 
 	// Now compute the surface for the atoms in the interface and its neighbours
 	TR.Debug << "Generating molecular surface, " << settings.density << " dots/A^2" << std::endl;
 	CalcDotsForAllAtoms(run_.atoms);
 
-	if(TR.Debug.visible())
-  {
+	if ( TR.Debug.visible() ) {
 		TR.Debug << "      Buried atoms (1): " << run_.results.surface[0].nBuriedAtoms << std::endl;
 		TR.Debug << "      Buried atoms (2): " << run_.results.surface[1].nBuriedAtoms << std::endl;
 		TR.Debug << "     Blocked atoms (1): " << run_.results.surface[0].nBuriedAtoms << std::endl;
@@ -252,17 +254,17 @@ int MolecularSurfaceCalculator::ReadScRadii()
 	ATOM_RADIUS radius;
 	utility::io::izstream in;
 
-	if(!basic::database::open(in, fn)) {
+	if ( !basic::database::open(in, fn) ) {
 		TR.Error << "Failed to read " << fn << std::endl;
 		return 0;
 	}
 
 	radii_.clear();
 
-	while( in.good() ) {
+	while ( in.good() ) {
 		memset(&radius, 0, sizeof(radius));
 		in >> radius.residue >> radius.atom >> radius.radius;
-		if(*radius.residue && *radius.atom && radius.radius > 0) {
+		if ( *radius.residue && *radius.atom && radius.radius > 0 ) {
 			TR.Trace << "Atom Radius: " << radius.residue << ":" << radius.atom << " = " << radius.radius << std::endl;
 			radii_.push_back(radius);
 		}
@@ -297,18 +299,20 @@ core::Size MolecularSurfaceCalculator::AddResidue(
 {
 	std::vector<Atom> scatoms;
 
-	if(!Init())
+	if ( !Init() ) {
 		return 0;
+	}
 
 	// Pass 1: Assign atom radii and check if we can add all atoms for this residue
 	// Only use heavy atoms for SC calculation
-	for(Size i = 1; i <= residue.nheavyatoms(); ++i) {
+	for ( Size i = 1; i <= residue.nheavyatoms(); ++i ) {
 		// Skip virtual atoms
-		if(residue.is_virtual(i))
+		if ( residue.is_virtual(i) ) {
 			continue;
+		}
 
 		// Skip metal atoms (for now -- add support later):
-		if( residue.type().is_metal() ) continue;
+		if ( residue.type().is_metal() ) continue;
 
 		Atom scatom;
 		numeric::xyzVector<Real> xyz = residue.xyz(i);
@@ -320,7 +324,7 @@ core::Size MolecularSurfaceCalculator::AddResidue(
 		strncpy(scatom.residue, residue.name3().c_str(), sizeof(scatom.residue)-1);
 		strncpy(scatom.atom, residue.atom_name(i).c_str()+1, sizeof(scatom.atom)-1);
 
-		if(!AssignAtomRadius(scatom)) {
+		if ( !AssignAtomRadius(scatom) ) {
 			TR.Error << "Failed to add residue " << residue.name3() << " to surface - cannot find radius for " << residue.atom_name(i) << std::endl;
 			return 0;
 		}
@@ -329,9 +333,9 @@ core::Size MolecularSurfaceCalculator::AddResidue(
 
 	// Pass 2: Add all atoms for the residue
 	int n =0;
-	for(std::vector<Atom>::iterator it = scatoms.begin(); it != scatoms.end(); ++it) {
+	for ( std::vector<Atom>::iterator it = scatoms.begin(); it != scatoms.end(); ++it ) {
 #if defined(WIN32) && !defined(WIN_PYROSETTA) // windows WINAPI has an AddAtom function
-		if(AddAtomWIN32(molecule, *it)) ++n;
+		if ( AddAtomWIN32(molecule, *it) ) ++n;
 #else
 		if(AddAtom(molecule, *it)) ++n;
 #endif
@@ -353,10 +357,11 @@ int MolecularSurfaceCalculator::AddAtomWIN32(int molecule, Atom &atom)
 int MolecularSurfaceCalculator::AddAtom(int molecule, Atom &atom)
 #endif
 {
-	if(atom.radius <= 0)
+	if ( atom.radius <= 0 ) {
 		AssignAtomRadius(atom);
+	}
 
-	if(atom.radius > 0) {
+	if ( atom.radius > 0 ) {
 		molecule = (molecule == 1);
 		atom.density = settings.density;
 		atom.molecule = molecule;
@@ -383,28 +388,28 @@ int MolecularSurfaceCalculator::AssignAtomRadius(Atom &atom)
 	std::vector<ATOM_RADIUS>::const_iterator radius;
 
 	// Assign radius with wildcard matching
-	for(radius = radii_.begin(); radius != radii_.end(); ++radius) {
-		if(WildcardMatch(atom.residue, radius->residue, sizeof(atom.residue)) &&
-			WildcardMatch(atom.atom, radius->atom, sizeof(atom.atom))) {
-				atom.radius = radius->radius;
-				if(TR.Trace.visible()) {
-					char buf[256];
+	for ( radius = radii_.begin(); radius != radii_.end(); ++radius ) {
+		if ( WildcardMatch(atom.residue, radius->residue, sizeof(atom.residue)) &&
+				WildcardMatch(atom.atom, radius->atom, sizeof(atom.atom)) ) {
+			atom.radius = radius->radius;
+			if ( TR.Trace.visible() ) {
+				char buf[256];
 #ifdef WIN32
-					_snprintf(buf, sizeof(buf),
+				_snprintf(buf, sizeof(buf),
 #else
-					snprintf(buf, sizeof(buf),
+				snprintf(buf, sizeof(buf),
 #endif
-						"Assigned atom radius to %s:%s at (%8.4f, %8.4f, %8.4f) = %.3f",
-						atom.residue,
-						atom.atom,
-						atom.x(),
-						atom.y(),
-						atom.z(),
-						atom.radius
-					);
-					TR.Trace << buf << std::endl;
-				}
-				return 1;
+					"Assigned atom radius to %s:%s at (%8.4f, %8.4f, %8.4f) = %.3f",
+					atom.residue,
+					atom.atom,
+					atom.x(),
+					atom.y(),
+					atom.z(),
+					atom.radius
+				);
+				TR.Trace << buf << std::endl;
+			}
+			return 1;
 		}
 	}
 
@@ -413,26 +418,30 @@ int MolecularSurfaceCalculator::AssignAtomRadius(Atom &atom)
 
 // Inline residue and atom name matching function
 int MolecularSurfaceCalculator::WildcardMatch(
-		char const *query,
-		char const *pattern,
-		int l)
+	char const *query,
+	char const *pattern,
+	int l)
 {
-	while(--l > 0) {
+	while ( --l > 0 ) {
 		bool match =
 			(*query == *pattern) ||
 			(*query && *pattern == '*') ||
 			(*query == ' ' && !*pattern);
-		if(!match)
+		if ( !match ) {
 			return 0;
+		}
 
 		// Allow anything following a * in pattern
-		if(*pattern == '*' && !pattern[1])
+		if ( *pattern == '*' && !pattern[1] ) {
 			return 1;
+		}
 
-		if(*query)
+		if ( *query ) {
 			++query;
-		if(*pattern)
+		}
+		if ( *pattern ) {
 			++pattern;
+		}
 	}
 	return 1;
 }
@@ -443,8 +452,7 @@ int MolecularSurfaceCalculator::AssignAttentionNumbers(std::vector<Atom> & atoms
 {
 	std::vector<Atom>::iterator pAtom;
 
-	for(pAtom = atoms.begin(); pAtom < atoms.end(); ++pAtom)
-	{
+	for ( pAtom = atoms.begin(); pAtom < atoms.end(); ++pAtom ) {
 		pAtom->atten = ATTEN_BURIED_FLAGGED;
 		++run_.results.surface[pAtom->molecule].nBuriedAtoms;
 	}
@@ -463,38 +471,34 @@ int MolecularSurfaceCalculator::CalcDotsForAllAtoms(std::vector<Atom> & )
 {
 	// Calc maximum radius for atoms list
 	run_.radmax = 0.0;
-	for(std::vector<Atom>::const_iterator pAtom1 = run_.atoms.begin(); pAtom1 < run_.atoms.end(); ++pAtom1) {
-		if(pAtom1->radius > run_.radmax)
+	for ( std::vector<Atom>::const_iterator pAtom1 = run_.atoms.begin(); pAtom1 < run_.atoms.end(); ++pAtom1 ) {
+		if ( pAtom1->radius > run_.radmax ) {
 			run_.radmax = pAtom1->radius;
+		}
 	}
 
 	// Add dots for each atom in the list
-	for(std::vector<Atom>::iterator pAtom1 = run_.atoms.begin(); pAtom1 < run_.atoms.end(); ++pAtom1) {
+	for ( std::vector<Atom>::iterator pAtom1 = run_.atoms.begin(); pAtom1 < run_.atoms.end(); ++pAtom1 ) {
 		Atom &atom1 = *pAtom1;
 
-		if(atom1.atten <= 0)
-		{
+		if ( atom1.atten <= 0 ) {
 			continue;
 		}
 
 		// Find neighbor
-		if(!FindNeighbordsAndBuriedAtoms(atom1))
-		{
+		if ( !FindNeighbordsAndBuriedAtoms(atom1) ) {
 			continue;
 		}
 
-		if(!atom1.access)
-		{
+		if ( !atom1.access ) {
 			continue;
 		}
 
-		if(atom1.atten <= ATTEN_BLOCKER)
-		{
+		if ( atom1.atten <= ATTEN_BLOCKER ) {
 			continue;
 		}
 
-		if(atom1.atten == ATTEN_6 && atom1.buried.empty())
-		{
+		if ( atom1.atten == ATTEN_6 && atom1.buried.empty() ) {
 			continue;
 		}
 
@@ -503,15 +507,16 @@ int MolecularSurfaceCalculator::CalcDotsForAllAtoms(std::vector<Atom> & )
 	}
 
 	// Concave surface generation
-	if(settings.rp > 0)
+	if ( settings.rp > 0 ) {
 		GenerateConcaveSurface();
+	}
 
 	return 1;
 }
 
 /// @brief A small struct to report which of two atoms is closer to a given atom:
 struct
-CloserToAtom {
+	CloserToAtom {
 	bool operator() ( Atom * a1, Atom * a2 ) {
 		MolecularSurfaceCalculator::ScValue d1 = ref_atom_->distance( * a1 );
 		MolecularSurfaceCalculator::ScValue d2 = ref_atom_->distance( * a2 );
@@ -528,16 +533,17 @@ private:
 // Atom *_atom_distance_ref = NULL;
 //int MolecularSurfaceCalculator::_atom_distance_cb(void *a1, void *a2)
 //{
-//	ScValue d1 = _atom_distance_ref->distance(*((Atom*)a1));
-//	ScValue d2 = _atom_distance_ref->distance(*((Atom*)a2));
-//	return d1 < d2 ? -1: (d2 > d1 ? 1 : 0);
+// ScValue d1 = _atom_distance_ref->distance(*((Atom*)a1));
+// ScValue d2 = _atom_distance_ref->distance(*((Atom*)a2));
+// return d1 < d2 ? -1: (d2 > d1 ? 1 : 0);
 //}
 
 // Calculate surface dots around a single atom (main loop in original code)
 int MolecularSurfaceCalculator::FindNeighbordsAndBuriedAtoms(Atom &atom1)
 {
-	if(!FindNeighborsForAtom(atom1))
+	if ( !FindNeighborsForAtom(atom1) ) {
 		return 0;
+	}
 
 	// sort neighbors by distance from atom1
 	//_atom_distance_ref = &atom1;
@@ -563,47 +569,54 @@ int MolecularSurfaceCalculator::FindNeighborsForAtom(Atom &atom1)
 	ScValue bb2 = pow(4 * run_.radmax + 4 * settings.rp, 2);
 	int nbb = 0;
 
-	for(iAtom2 = run_.atoms.begin(); iAtom2 < run_.atoms.end(); ++iAtom2) {
+	for ( iAtom2 = run_.atoms.begin(); iAtom2 < run_.atoms.end(); ++iAtom2 ) {
 		Atom &atom2 = *iAtom2;
-		if(atom1 == atom2 || atom2.atten <= 0)
+		if ( atom1 == atom2 || atom2.atten <= 0 ) {
 			continue;
+		}
 
-		if(atom1.molecule == atom2.molecule) {
+		if ( atom1.molecule == atom2.molecule ) {
 
 			d2 = atom1.distance_squared(atom2);
 
-			if(d2 <= 0.0001)
+			if ( d2 <= 0.0001 ) {
 				throw ShapeComplementarityCalculatorException("Coincident atoms: %d:%s:%s @ (%.3f, %.3f, %.3f) == %d:%s:%s @ (%.3f, %.3f, %.3f)",
 					atom1.natom, atom1.residue, atom1.atom, atom1.x(), atom1.y(), atom1.z(),
 					atom2.natom, atom2.residue, atom2.atom, atom2.x(), atom2.y(), atom2.z());
+			}
 
 			bridge = atom1.radius + atom2.radius + 2 * settings.rp;
-			if (d2 >= bridge * bridge)
+			if ( d2 >= bridge * bridge ) {
 				continue;
+			}
 
 			neighbors.push_back(&atom2);
 
 		} else {
 
-			if(atom2.atten < ATTEN_BURIED_FLAGGED)
+			if ( atom2.atten < ATTEN_BURIED_FLAGGED ) {
 				continue;
+			}
 
 			d2 = atom1.distance_squared(atom2);
-			if (d2 < bb2)
+			if ( d2 < bb2 ) {
 				++nbb;
+			}
 
 			bridge = atom1.radius + atom2.radius + 2 * settings.rp;
-			if (d2 >= bridge * bridge)
+			if ( d2 >= bridge * bridge ) {
 				continue;
+			}
 
 			atom1.buried.push_back(&atom2);
 		}
 	}
 
-	if(atom1.atten == ATTEN_6 && !nbb)
+	if ( atom1.atten == ATTEN_6 && !nbb ) {
 		return 0;
+	}
 
-	if(neighbors.empty()) {
+	if ( neighbors.empty() ) {
 		// no neighbors
 		atom1.access = 1;
 		// no convex surface generation
@@ -623,11 +636,12 @@ int MolecularSurfaceCalculator::SecondLoop(Atom &atom1)
 
 	eri = atom1.radius + settings.rp;
 
-	for(std::vector<Atom*>::iterator iAtom2 = neighbors.begin(); iAtom2 < neighbors.end(); ++iAtom2) {
+	for ( std::vector<Atom*>::iterator iAtom2 = neighbors.begin(); iAtom2 < neighbors.end(); ++iAtom2 ) {
 		Atom &atom2 = **iAtom2;
 
-		if(atom2 <= atom1)
+		if ( atom2 <= atom1 ) {
 			continue;
+		}
 
 		erj = atom2.radius + settings.rp;
 		//density = (atom1.density + atom2.density) / 2;  // set but never used ~Labonte
@@ -640,19 +654,21 @@ int MolecularSurfaceCalculator::SecondLoop(Atom &atom1)
 		tij = ((atom1 + atom2) * 0.5f) + (uij * (asymm * 0.5f));
 
 		_far_ = (eri + erj) * (eri + erj) - dij * dij;
-		if (_far_ <= 0.0)
+		if ( _far_ <= 0.0 ) {
 			continue;
+		}
 
 		_far_ = sqrt(_far_);
 
 		contain = dij * dij - ((atom1.radius - atom2.radius) * (atom1.radius - atom2.radius));
-		if (contain <= 0.0)
+		if ( contain <= 0.0 ) {
 			continue;
+		}
 
 		contain = sqrt(contain);
 		rij = 0.5 * _far_ * contain / dij;
 
-		if (neighbors.size() <= 1) {
+		if ( neighbors.size() <= 1 ) {
 			atom1.access = 1;
 			atom2.access = 1;
 			break;
@@ -660,8 +676,9 @@ int MolecularSurfaceCalculator::SecondLoop(Atom &atom1)
 
 		ThirdLoop(atom1, atom2, uij, tij, rij);
 
-		if(atom1.atten > ATTEN_BLOCKER || (atom2.atten > ATTEN_BLOCKER && settings.rp > 0.0))
+		if ( atom1.atten > ATTEN_BLOCKER || (atom2.atten > ATTEN_BLOCKER && settings.rp > 0.0) ) {
 			GenerateToroidalSurface(atom1, atom2, uij, tij, rij, between);
+		}
 	}
 
 	return 1;
@@ -669,11 +686,11 @@ int MolecularSurfaceCalculator::SecondLoop(Atom &atom1)
 
 // third loop (per original code)
 int MolecularSurfaceCalculator::ThirdLoop(
-		Atom& atom1,
-		Atom& atom2,
-		Vec3 const &uij,
-		Vec3 const &tij,
-		ScValue rij)
+	Atom& atom1,
+	Atom& atom2,
+	Vec3 const &uij,
+	Vec3 const &tij,
+	ScValue rij)
 {
 	std::vector<Atom*> &neighbors = atom1.neighbors;
 	ScValue eri, erj, erk, djk, dik;
@@ -684,36 +701,41 @@ int MolecularSurfaceCalculator::ThirdLoop(
 	eri = atom1.radius + settings.rp;
 	erj = atom2.radius + settings.rp;
 
-	for(std::vector<Atom*>::iterator iAtom3 = neighbors.begin();
-			iAtom3 < neighbors.end(); ++iAtom3) {
+	for ( std::vector<Atom*>::iterator iAtom3 = neighbors.begin();
+			iAtom3 < neighbors.end(); ++iAtom3 ) {
 		Atom &atom3 = **iAtom3;
-		if(atom3 <= atom2)
+		if ( atom3 <= atom2 ) {
 			continue;
+		}
 
 		erk = atom3.radius + settings.rp;
 		djk = atom2.distance(atom3);
-		if(djk >= erj+erk)
+		if ( djk >= erj+erk ) {
 			continue;
+		}
 
 		dik = atom1.distance(atom3);
-		if(dik >= eri+erk)
+		if ( dik >= eri+erk ) {
 			continue;
+		}
 
-		if(atom1.atten <= ATTEN_BLOCKER && atom2.atten <= ATTEN_BLOCKER && atom3.atten <= ATTEN_BLOCKER)
+		if ( atom1.atten <= ATTEN_BLOCKER && atom2.atten <= ATTEN_BLOCKER && atom3.atten <= ATTEN_BLOCKER ) {
 			continue;
+		}
 
 		uik = (atom3 - atom1) / dik;
 		dt = uij.dot(uik);
 		wijk = acosf(dt);
 		swijk = sinf(wijk);
 
-		if(dt >= 1.0 || dt <= -1.0 || wijk <= 0.0 || swijk <= 0.0) {
+		if ( dt >= 1.0 || dt <= -1.0 || wijk <= 0.0 || swijk <= 0.0 ) {
 			// collinear and other
 			dtijk2 = tij.distance(atom3);
 			rkp2 = erk * erk - rij * rij;
-			if(dtijk2 < rkp2)
+			if ( dtijk2 < rkp2 ) {
 				// 600
 				return 0;
+			}
 			continue;
 		}
 
@@ -731,22 +753,24 @@ int MolecularSurfaceCalculator::ThirdLoop(
 		dt = tv.x() + tv.y() + tv.z();
 		bijk = tij + utb * dt / swijk;
 		hijk = eri*eri - bijk.distance_squared(atom1);
-		if(hijk <= 0.0)
+		if ( hijk <= 0.0 ) {
 			// no height, skip
 			continue;
+		}
 
 		hijk = sqrt(hijk);
-		for(is0 = 1; is0 <= 2; ++is0) {
+		for ( is0 = 1; is0 <= 2; ++is0 ) {
 			isign = 3 - 2 * is0;
 			pijk = bijk + uijk * hijk * isign;
 
 			// check for collision
-			if(CheckAtomCollision2(pijk, atom2, atom3, neighbors))
+			if ( CheckAtomCollision2(pijk, atom2, atom3, neighbors) ) {
 				continue;
+			}
 
 			// new probe position
 			PROBE probe;
-			if(isign > 0) {
+			if ( isign > 0 ) {
 				probe.pAtoms[0] = &atom1;
 				probe.pAtoms[1] = &atom2;
 				probe.pAtoms[2] = &atom3;
@@ -771,19 +795,21 @@ int MolecularSurfaceCalculator::ThirdLoop(
 
 // Check two atoms against a list of neighbors for collision
 int MolecularSurfaceCalculator::CheckAtomCollision2(
-		Vec3 const &pijk,
-		Atom const &atom1,
-		Atom const &atom2,
-		std::vector<Atom*> const &atoms)
+	Vec3 const &pijk,
+	Atom const &atom1,
+	Atom const &atom2,
+	std::vector<Atom*> const &atoms)
 {
-	for(std::vector<Atom*>::const_iterator ineighbor = atoms.begin();
-			ineighbor < atoms.end(); ++ineighbor) {
+	for ( std::vector<Atom*>::const_iterator ineighbor = atoms.begin();
+			ineighbor < atoms.end(); ++ineighbor ) {
 		Atom const &neighbor = **ineighbor;
-		if(&atom1 == &neighbor || &atom2 == &neighbor)
+		if ( &atom1 == &neighbor || &atom2 == &neighbor ) {
 			continue;
-		if(pijk.distance_squared(neighbor) <= pow(neighbor.radius + settings.rp, 2))
+		}
+		if ( pijk.distance_squared(neighbor) <= pow(neighbor.radius + settings.rp, 2) ) {
 			// collision detected
 			return 1;
+		}
 	}
 	return 0;
 }
@@ -803,7 +829,7 @@ int MolecularSurfaceCalculator::GenerateConvexSurface(Atom const &atom1)
 	ri = atom1.radius;
 	eri = (atom1.radius + settings.rp);
 
-	if(!neighbors.empty()) {
+	if ( !neighbors.empty() ) {
 		// use first neighbor
 		neighbor = neighbors[0];
 
@@ -816,8 +842,9 @@ int MolecularSurfaceCalculator::GenerateConvexSurface(Atom const &atom1)
 		vtemp.normalize();
 
 		dt = vtemp.dot(north);
-		if(ABS(dt) > 0.99)
+		if ( ABS(dt) > 0.99 ) {
 			vtemp = Vec3(1, 0, 0);
+		}
 
 		eqvec = north.cross(vtemp);
 		eqvec.normalize();
@@ -831,20 +858,23 @@ int MolecularSurfaceCalculator::GenerateConvexSurface(Atom const &atom1)
 		asymm = (eri*eri - erj*erj) / dij;
 		tij = ((atom1 + *neighbor) * 0.5f) + (uij * (asymm * 0.5f));
 		_far_ = pow(eri + erj, 2) - dij*dij;
-		if(_far_ <= 0.0)
+		if ( _far_ <= 0.0 ) {
 			throw ShapeComplementarityCalculatorException("Imaginary _far_ for atom %d, neighbor atom %d", atom1.natom, neighbor->natom);
+		}
 		_far_ = sqrt(_far_);
 
 		contain = pow(dij, 2) - pow(ri - rj, 2);
-		if(contain <= 0.0)
+		if ( contain <= 0.0 ) {
 			throw ShapeComplementarityCalculatorException("Imaginary contain for atom %d, neighbor atom %d", atom1.natom, neighbor->natom);
+		}
 		contain = sqrt(contain);
 		rij = 0.5 * _far_ * contain / dij;
 		pij = tij + (vql * rij);
 		south = (pij - atom1) / eri;
 
-		if(north.cross(south).dot(eqvec) <= 0.0)
+		if ( north.cross(south).dot(eqvec) <= 0.0 ) {
 			throw ShapeComplementarityCalculatorException("Non-positive frame for atom %d, neighbor atom %d", atom1.natom, neighbor->natom);
+		}
 	}
 
 	// Generate subdivided arc
@@ -852,33 +882,37 @@ int MolecularSurfaceCalculator::GenerateConvexSurface(Atom const &atom1)
 	Vec3 o(0);
 	cs = SubArc(o, ri, eqvec, atom1.density, north, south, lats);
 
-	if(lats.empty())
+	if ( lats.empty() ) {
 		return 0;
+	}
 
 	// Project onto north vector
 	std::vector<Vec3> points;
-	for(std::vector<Vec3>::iterator ilat = lats.begin(); ilat < lats.end(); ++ilat) {
+	for ( std::vector<Vec3>::iterator ilat = lats.begin(); ilat < lats.end(); ++ilat ) {
 		dt = ilat->dot(north);
 		cen = atom1 + (north*dt);
 		rad = ri*ri - dt*dt;
-		if(rad <= 0.0)
+		if ( rad <= 0.0 ) {
 			continue;
+		}
 		rad = sqrt(rad);
 
 		points.clear();
 		ps = SubCir(cen, rad, north, atom1.density, points);
-		if(points.empty())
+		if ( points.empty() ) {
 			continue;
+		}
 		area = ps * cs;
 
-		for(std::vector<Vec3>::iterator point = points.begin();
-				point < points.end(); ++point) {
+		for ( std::vector<Vec3>::iterator point = points.begin();
+				point < points.end(); ++point ) {
 
 			pcen = atom1 + ((*point - atom1) * (eri/ri));
 
 			// Check for collision
-			if(CheckPointCollision(pcen, neighbors))
+			if ( CheckPointCollision(pcen, neighbors) ) {
 				continue;
+			}
 
 			// No collision, put point
 			++run_.results.dots.convex;
@@ -890,26 +924,27 @@ int MolecularSurfaceCalculator::GenerateConvexSurface(Atom const &atom1)
 
 // Check a point for collision against a list of atoms
 int MolecularSurfaceCalculator::CheckPointCollision(
-		Vec3 const &pcen,
-		std::vector<Atom*> const &atoms)
+	Vec3 const &pcen,
+	std::vector<Atom*> const &atoms)
 {
-	for(std::vector<Atom*>::const_iterator ineighbor = atoms.begin()+1;
-		ineighbor < atoms.end(); ++ineighbor) {
-		if(pcen.distance(**ineighbor) <= ((*ineighbor)->radius + settings.rp))
+	for ( std::vector<Atom*>::const_iterator ineighbor = atoms.begin()+1;
+			ineighbor < atoms.end(); ++ineighbor ) {
+		if ( pcen.distance(**ineighbor) <= ((*ineighbor)->radius + settings.rp) ) {
 			// collision detected
 			return 1;
+		}
 	}
 	return 0;
 }
 
 // Generate toroidal surface between two atoms
 int MolecularSurfaceCalculator::GenerateToroidalSurface(
-		Atom &atom1,
-		Atom &atom2,
-		Vec3 const uij,
-		Vec3 const tij,
-		ScValue rij,
-		int between)
+	Atom &atom1,
+	Atom &atom2,
+	Vec3 const uij,
+	Vec3 const tij,
+	ScValue rij,
+	int between)
 {
 	std::vector<Atom*> &neighbors = atom1.neighbors;
 	ScValue density, /*ri,*/ /*rj,*/ rb, rci, rcj, rs, e, edens, eri, erj, erl, dtq, pcusp, /*anglei,*/ /*anglej,*/ dt, ts, ps, area;
@@ -928,43 +963,48 @@ int MolecularSurfaceCalculator::GenerateToroidalSurface(
 	rcj = rij * atom2.radius / erj;
 	rb = rij - settings.rp;
 
-	if(rb <= 0.0)
+	if ( rb <= 0.0 ) {
 		rb = 0.0;
+	}
 
 	rs = (rci + 2 * rb + rcj) / 4;
 	e = rs / rij;
 	edens = e * e * density;
 
 	ts = SubCir(tij, rij, uij, edens, subs);
-	if(subs.empty())
+	if ( subs.empty() ) {
 		return 0;
+	}
 
-	for(std::vector<Vec3>::iterator isub = subs.begin(); isub < subs.end(); ++isub) {
+	for ( std::vector<Vec3>::iterator isub = subs.begin(); isub < subs.end(); ++isub ) {
 		Vec3 &sub = *isub;
 
 		// check for collision
 		int tooclose = 0;
 		ScValue d2 = 0;
-		for(std::vector<Atom*>::iterator ineighbor = neighbors.begin();
+		for ( std::vector<Atom*>::iterator ineighbor = neighbors.begin();
 				!tooclose && ineighbor < neighbors.end() && !tooclose;
-				++ineighbor) {
-			Atom const &neighbor = **ineighbor;	// for readability
-			if(atom2 == neighbor)
+				++ineighbor ) {
+			Atom const &neighbor = **ineighbor; // for readability
+			if ( atom2 == neighbor ) {
 				continue;
+			}
 			erl = neighbor.radius + settings.rp;
 			d2 = sub.distance_squared(neighbor);
 			tooclose = d2 < (erl * erl);
 		}
-		if(tooclose)
+		if ( tooclose ) {
 			continue;
+		}
 
 		// no collision, toroidal arc generation
 		Vec3 &pij = sub;
 		atom1.access = 1;
 		atom2.access = 1;
 
-		if(atom1.atten == ATTEN_6 && atom2.atten == ATTEN_6&& atom1.buried.empty())
+		if ( atom1.atten == ATTEN_6 && atom2.atten == ATTEN_6&& atom1.buried.empty() ) {
 			continue;
+		}
 
 		pi = (atom1 - pij) / eri;
 		pj = (atom2 - pij) / erj;
@@ -973,7 +1013,7 @@ int MolecularSurfaceCalculator::GenerateToroidalSurface(
 
 		dtq = pow(settings.rp, 2) - pow(rij, 2);
 		pcusp = dtq > 0 && between;
-		if(pcusp) {
+		if ( pcusp ) {
 			// point cusp -- two shortened arcs
 			dtq = sqrt(dtq);
 			qij = tij - uij * dtq;
@@ -989,30 +1029,32 @@ int MolecularSurfaceCalculator::GenerateToroidalSurface(
 		}
 
 		dt = pqi.dot(pi);
-		if(dt >= 1.0 || dt <= -1.0)
+		if ( dt >= 1.0 || dt <= -1.0 ) {
 			return 0;
+		}
 		//anglei = acosf(dt);  // set but never used ~Labonte
 
 		dt = pqj.dot(pj);
-		if(dt >= 1.0 || dt <= -1.0)
+		if ( dt >= 1.0 || dt <= -1.0 ) {
 			return 0;
+		}
 		//anglej = acosf(dt);  // set but never used ~Labonte
 
 		// convert two arcs to points
-		if(atom1.atten >= ATTEN_2) {
+		if ( atom1.atten >= ATTEN_2 ) {
 			std::vector<Vec3> points;
 			ps = SubArc(pij, settings.rp, axis, density, pi, pqi, points);
-			for(std::vector<Vec3>::iterator point = points.begin(); point < points.end(); ++point) {
+			for ( std::vector<Vec3>::iterator point = points.begin(); point < points.end(); ++point ) {
 				area = ps * ts * DistancePointToLine(tij, uij, *point) / rij;
 				++run_.results.dots.toroidal;
 				AddDot(atom1.molecule, 2, *point, area, pij, atom1);
 			}
 		}
 
-		if(atom2.atten >= ATTEN_2) {
+		if ( atom2.atten >= ATTEN_2 ) {
 			std::vector<Vec3> points;
 			ps = SubArc(pij, settings.rp, axis, density, pqj, pj, points);
-			for(std::vector<Vec3>::iterator point = points.begin(); point < points.end(); ++point) {
+			for ( std::vector<Vec3>::iterator point = points.begin(); point < points.end(); ++point ) {
 				area = ps * ts * DistancePointToLine(tij, uij, *point) / rij;
 				++run_.results.dots.toroidal;
 				AddDot(atom1.molecule, 2, *point, area, pij, atom2);
@@ -1028,45 +1070,48 @@ int MolecularSurfaceCalculator::GenerateConcaveSurface()
 	std::vector<PROBE const *> lowprobs, nears;
 
 	// collect low probes
-	for(std::vector<PROBE>::iterator probe = run_.probes.begin();
-			probe < run_.probes.end(); ++probe) {
-		if(probe->height < settings.rp)
+	for ( std::vector<PROBE>::iterator probe = run_.probes.begin();
+			probe < run_.probes.end(); ++probe ) {
+		if ( probe->height < settings.rp ) {
 			lowprobs.push_back(&(*probe));
+		}
 	}
 
-	for(std::vector<PROBE>::iterator probe = run_.probes.begin();
-			probe < run_.probes.end(); ++probe) {
+	for ( std::vector<PROBE>::iterator probe = run_.probes.begin();
+			probe < run_.probes.end(); ++probe ) {
 
-		if(	probe->pAtoms[0]->atten == ATTEN_6 &&
-			probe->pAtoms[1]->atten == ATTEN_6 &&
-			probe->pAtoms[2]->atten == ATTEN_6) {
+		if ( probe->pAtoms[0]->atten == ATTEN_6 &&
+				probe->pAtoms[1]->atten == ATTEN_6 &&
+				probe->pAtoms[2]->atten == ATTEN_6 ) {
 			continue;
 		}
 
 		Vec3 &pijk = probe->point, &uijk = probe->alt;
 		ScValue hijk = probe->height;
 		ScValue density = (
-				probe->pAtoms[0]->density +
-				probe->pAtoms[1]->density +
-				probe->pAtoms[2]->density ) / 3;
+			probe->pAtoms[0]->density +
+			probe->pAtoms[1]->density +
+			probe->pAtoms[2]->density ) / 3;
 
 		// gather nearby low probes
 		nears.clear();
-		for(std::vector<PROBE const *>::const_iterator lprobe = lowprobs.begin();
-				lprobe < lowprobs.end(); ++lprobe) {
-			if(&(*probe) == *lprobe)
+		for ( std::vector<PROBE const *>::const_iterator lprobe = lowprobs.begin();
+				lprobe < lowprobs.end(); ++lprobe ) {
+			if ( &(*probe) == *lprobe ) {
 				continue;
+			}
 
 			ScValue d2 = pijk.distance_squared((*lprobe)->point);
-			if(d2 > 4 * pow(settings.rp, 2))
+			if ( d2 > 4 * pow(settings.rp, 2) ) {
 				continue;
+			}
 
 			nears.push_back(*lprobe);
 		}
 
 		// set up vectors from probe center to three atoms
 		Vec3 vp[3], vectors[3];
-		for(int i = 0; i < 3; ++i) {
+		for ( int i = 0; i < 3; ++i ) {
 			vp[i] = *(probe->pAtoms[i]) - pijk;
 			vp[i].normalize();
 		}
@@ -1082,9 +1127,9 @@ int MolecularSurfaceCalculator::GenerateConcaveSurface()
 		// find latitude of highest vertex of triangle
 		ScValue dm = -1.0;
 		int mm = 0;
-		for(int i = 0; i < 3; ++i) {
+		for ( int i = 0; i < 3; ++i ) {
 			ScValue dt = uijk.dot(vp[i]);
-			if(dt > dm) {
+			if ( dt > dm ) {
 				dm = dt;
 				mm = i;
 			}
@@ -1100,56 +1145,61 @@ int MolecularSurfaceCalculator::GenerateConcaveSurface()
 		ScValue cs;
 
 		cs = SubArc(o, settings.rp, axis, density, vp[mm], south, lats);
-		if(lats.empty())
+		if ( lats.empty() ) {
 			continue;
+		}
 
 		std::vector<Vec3> points;
-		for(std::vector<Vec3>::iterator ilat = lats.begin();
-				ilat < lats.end(); ++ilat) {
+		for ( std::vector<Vec3>::iterator ilat = lats.begin();
+				ilat < lats.end(); ++ilat ) {
 			ScValue dt, area, rad, ps;
 			Vec3 cen;
 
 			dt = ilat->dot(south);
 			cen = south * dt;
 			rad = pow(settings.rp, 2) - pow(dt, 2);
-			if(rad <= 0.0)
+			if ( rad <= 0.0 ) {
 				continue;
+			}
 			rad = sqrtf(rad);
 
 			points.clear();
 			ps = SubCir(cen, rad, south, density, points);
-			if(points.empty())
+			if ( points.empty() ) {
 				continue;
+			}
 
 			area = ps * cs;
 
-			for(std::vector<Vec3>::iterator point = points.begin();
-					point < points.end(); ++point) {
+			for ( std::vector<Vec3>::iterator point = points.begin();
+					point < points.end(); ++point ) {
 				// check against 3 planes
 				int bail = 0;
-				for(int i = 0; i < 3; ++i) {
+				for ( int i = 0; i < 3; ++i ) {
 					ScValue dt = point->dot(vectors[i]);
-					if(dt >= 0.0) {
+					if ( dt >= 0.0 ) {
 						bail = 1;
 						break;
 					}
 				}
-				if(bail)
+				if ( bail ) {
 					continue;
+				}
 
 				*point += pijk;
 
-				if((hijk < settings.rp && !nears.empty()) &&
-					CheckProbeCollision(*point, nears, pow(settings.rp, 2)))
-						continue;
+				if ( (hijk < settings.rp && !nears.empty()) &&
+						CheckProbeCollision(*point, nears, pow(settings.rp, 2)) ) {
+					continue;
+				}
 
 				// determine which atom the surface point is closest to
 				int mc = 0;
 				ScValue dmin = 2 * settings.rp;
-				for(int i = 0; i < 3; ++i) {
+				for ( int i = 0; i < 3; ++i ) {
 					ScValue d = point->distance(*(probe->pAtoms[i])) -
-							probe->pAtoms[i]->radius;
-					if(d < dmin) {
+						probe->pAtoms[i]->radius;
+					if ( d < dmin ) {
 						dmin = d;
 						mc = i;
 					}
@@ -1166,53 +1216,55 @@ int MolecularSurfaceCalculator::GenerateConcaveSurface()
 
 // Check a point against a set of probes for collision within radius^2
 int MolecularSurfaceCalculator::CheckProbeCollision(
-		Vec3 const &point,
-		std::vector<PROBE const *> const nears,
-		ScValue const r2)
+	Vec3 const &point,
+	std::vector<PROBE const *> const nears,
+	ScValue const r2)
 {
-	for(std::vector<const PROBE*>::const_iterator _near_ = nears.begin();
-			_near_ < nears.end(); ++_near_) {
-		if(point.distance_squared((*_near_)->point) < r2)
+	for ( std::vector<const PROBE*>::const_iterator _near_ = nears.begin();
+			_near_ < nears.end(); ++_near_ ) {
+		if ( point.distance_squared((*_near_)->point) < r2 ) {
 			// Collision
 			return 1;
+		}
 	}
 	return 0;
 }
 
 // Add a molecular dot
 void MolecularSurfaceCalculator::AddDot(
-		int const molecule,
-		int const type,
-		Vec3 const coor,
-		ScValue const area,
-		Vec3 const pcen,
-		Atom const &atom)
+	int const molecule,
+	int const type,
+	Vec3 const coor,
+	ScValue const area,
+	Vec3 const pcen,
+	Atom const &atom)
 {
 	DOT dot = { coor, Vec3(), area, 0, type, &atom };
 	ScValue pradius = settings.rp, erl;
 
 	// calculate outward pointing unit normal vector
-	if(pradius <= 0)
+	if ( pradius <= 0 ) {
 		dot.outnml = coor - atom;
-	else
+	} else {
 		dot.outnml = (pcen - coor) / pradius;
+	}
 
 	// determine whether buried
 
 	// first check whether probe changed
-	if(pcen.distance_squared(run_.prevp) <= 0.0) {
+	if ( pcen.distance_squared(run_.prevp) <= 0.0 ) {
 		dot.buried = run_.prevburied;
 
 	} else {
 
 		// check for collision with neighbors in other molecules
 		dot.buried = 0;
-		for(std::vector<Atom*>::const_iterator iNeighbor = atom.buried.begin();
+		for ( std::vector<Atom*>::const_iterator iNeighbor = atom.buried.begin();
 				iNeighbor < atom.buried.end();
-				++iNeighbor) {
+				++iNeighbor ) {
 			erl = (*iNeighbor)->radius + pradius;
 			ScValue d = pcen.distance_squared(**iNeighbor);
-			if(d <= erl*erl) {
+			if ( d <= erl*erl ) {
 				dot.buried = 1;
 				break;
 			}
@@ -1229,9 +1281,9 @@ void MolecularSurfaceCalculator::AddDot(
 
 // Calculate distance from point to line
 MolecularSurfaceCalculator::ScValue MolecularSurfaceCalculator::DistancePointToLine(
-		Vec3 const &cen,
-		Vec3 const &axis,
-		Vec3 const &pnt)
+	Vec3 const &cen,
+	Vec3 const &axis,
+	Vec3 const &pnt)
 {
 	Vec3 vec = pnt - cen;
 	ScValue dt = vec.dot(axis);
@@ -1241,13 +1293,13 @@ MolecularSurfaceCalculator::ScValue MolecularSurfaceCalculator::DistancePointToL
 
 // Generate sub arc of molecular dots centered around a defined point
 MolecularSurfaceCalculator::ScValue MolecularSurfaceCalculator::SubArc(
-		Vec3 const &cen,
-		ScValue const rad,
-		Vec3 const &axis,
-		ScValue const density,
-		Vec3 const &x,
-		Vec3 const &v,
-		std::vector<Vec3> &points)
+	Vec3 const &cen,
+	ScValue const rad,
+	Vec3 const &axis,
+	ScValue const density,
+	Vec3 const &x,
+	Vec3 const &v,
+	std::vector<Vec3> &points)
 {
 	Vec3 y;
 	ScValue angle;
@@ -1258,21 +1310,22 @@ MolecularSurfaceCalculator::ScValue MolecularSurfaceCalculator::SubArc(
 	dt2 = v.dot(y);
 	angle = atan2(dt2, dt1);
 
-	if(angle < 0.0)
+	if ( angle < 0.0 ) {
 		angle = angle + 2*PI;
+	}
 
 	return SubDiv(cen, rad, x, y, angle, density, points);
 }
 
 // Subdivide defined arc and generate molecular dots
 MolecularSurfaceCalculator::ScValue MolecularSurfaceCalculator::SubDiv(
-		Vec3 const &cen,
-		ScValue const rad,
-		Vec3 const &x,
-		Vec3 const &y,
-		ScValue const angle,
-		ScValue const density,
-		std::vector<Vec3> &points)
+	Vec3 const &cen,
+	ScValue const rad,
+	Vec3 const &x,
+	Vec3 const &y,
+	ScValue const angle,
+	ScValue const density,
+	std::vector<Vec3> &points)
 {
 	ScValue delta, a, c, s, ps;
 	int i;
@@ -1280,34 +1333,37 @@ MolecularSurfaceCalculator::ScValue MolecularSurfaceCalculator::SubDiv(
 	delta = 1.0 / (sqrt(density) * rad);
 	a = - delta / 2;
 
-	for(i = 0; i < MAX_SUBDIV; ++i) {
+	for ( i = 0; i < MAX_SUBDIV; ++i ) {
 		a = a + delta;
-		if(a > angle)
+		if ( a > angle ) {
 			break;
+		}
 
 		c = rad * cosf(a);
 		s = rad * sinf(a);
 		points.push_back(Vec3(cen + x*c + y*s));
 	}
 
-	if (a + delta < angle)
+	if ( a + delta < angle ) {
 		throw ShapeComplementarityCalculatorException("Too many subdivisions");
+	}
 
-	if (!points.empty())
+	if ( !points.empty() ) {
 		ps = rad * angle / points.size();
-	else
+	} else {
 		ps = 0.0;
+	}
 
 	return ps;
 }
 
 // Generate an arbitrary unit vector perpendicular to axis
 MolecularSurfaceCalculator::ScValue MolecularSurfaceCalculator::SubCir(
-		Vec3 const &cen,
-		ScValue const rad,
-		Vec3 const &axis,
-		ScValue const density,
-		std::vector<Vec3> &points)
+	Vec3 const &cen,
+	ScValue const rad,
+	Vec3 const &axis,
+	ScValue const density,
+	std::vector<Vec3> &points)
 {
 	Vec3 v1, v2, x, y;
 	ScValue dt;
@@ -1318,7 +1374,7 @@ MolecularSurfaceCalculator::ScValue MolecularSurfaceCalculator::SubCir(
 	v1.normalize();
 	dt = v1.dot(axis);
 
-	if(ABS(dt) > 0.99) {
+	if ( ABS(dt) > 0.99 ) {
 		v1.x(1.0);
 		v1.y(0.0);
 		v1.z(0.0);

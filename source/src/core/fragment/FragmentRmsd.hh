@@ -33,33 +33,33 @@ namespace core {
 namespace fragment {
 
 class FragmentRmsd : public utility::pointer::ReferenceCount {
-  typedef boost::unordered_map<core::Size, FrameCOP > FrameMap;
+	typedef boost::unordered_map<core::Size, FrameCOP > FrameMap;
 
- public:
+public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~FragmentRmsd();
-  FragmentRmsd(FragSetCOP fragments);
+	FragmentRmsd(FragSetCOP fragments);
 
-  /// @brief Returns the kth fragment at the specified position
-  /// in the fragment library.
-  FragDataCOP fragment(core::Size position, core::Size k) const;
+	/// @brief Returns the kth fragment at the specified position
+	/// in the fragment library.
+	FragDataCOP fragment(core::Size position, core::Size k) const;
 
-  /// @brief Returns the RMSD of the kth fragment at the specified position
-  /// in the fragment library and pose.
-  core::Real rmsd(core::Size position, core::Size k, const core::pose::Pose& reference) const;
-
-
- protected:
-  /// @brief Returns the position'th frame in the fragment library
-  FrameCOP frame(core::Size position) const;
+	/// @brief Returns the RMSD of the kth fragment at the specified position
+	/// in the fragment library and pose.
+	core::Real rmsd(core::Size position, core::Size k, const core::pose::Pose& reference) const;
 
 
- private:
-  /// @brief Input fragment library
-  FragSetCOP fragments_;
+protected:
+	/// @brief Returns the position'th frame in the fragment library
+	FrameCOP frame(core::Size position) const;
 
-  /// @brief Position-indexable collection of fragments
-  mutable FrameMap frames_;
+
+private:
+	/// @brief Input fragment library
+	FragSetCOP fragments_;
+
+	/// @brief Position-indexable collection of fragments
+	mutable FrameMap frames_;
 };
 
 }  // namespace fragment

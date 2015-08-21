@@ -26,57 +26,57 @@ namespace protocols {
 namespace antibody {
 namespace clusters {
 
-	/// @brief Holds data for each cluster type
-	struct ClusterData{
-		CDRNameEnum cdr;
-		CDRClusterEnum cluster;
-		
-		core::Size length;
-		std::string cis_trans_conf;
-		
-		vector1< core::Real > phis;
-		vector1< core::Real > psis;
-	};
-	
-	
-/// @brief Simple class for identifying CDR clusters of an antibody or protein structure. 
+/// @brief Holds data for each cluster type
+struct ClusterData{
+	CDRNameEnum cdr;
+	CDRClusterEnum cluster;
+
+	core::Size length;
+	std::string cis_trans_conf;
+
+	vector1< core::Real > phis;
+	vector1< core::Real > psis;
+};
+
+
+/// @brief Simple class for identifying CDR clusters of an antibody or protein structure.
 /// @details Main interface is through CDRClusterSet/AntibodyInfo.  That is where AntibodyNumbering can be used to access specific CDRs and numbering scheme transformations.
 class CDRClusterMatcher: public utility::pointer::ReferenceCount {
 public:
 	CDRClusterMatcher();
-	
+
 	virtual ~CDRClusterMatcher();
-	
+
 	/// @brief Get the cluster of an antibody CDR region, defined between start and end of the pose.
 	/// Should it give out an OP or not?  It's a small class... I don't have any idea...
 	CDRClusterOP
 	get_cdr_cluster(core::pose::Pose const & pose, CDRNameEnum const cdr, core::Size start, const core::Size end) const;
-	
+
 	/// @brief Get the closest cluster of a region.  Used to detect CDR-like regions in normal proteins.
 	CDRClusterOP
 	get_closest_cluster(core::pose::Pose const & pose, core::Size const start, core::Size const end) const;
-	
+
 private:
-	
+
 	void
 	load_center_data();
-	
+
 	std::map< std::string, vector1< core::Real > >
 	get_pose_angles(core::pose::Pose const & pose, core::Size const start, core::Size const end) const;
-	
 
-	
+
+
 private:
-	
+
 	std::string center_cluster_db_path_;
 	vector1< ClusterData > cluster_data_;
-	
+
 };
-	
+
 }
 }
 }
 
 
-#endif	//#ifndef INCLUDED_protocols/antibody_design_CDRCLUSTERMATCHER_HH
+#endif //#ifndef INCLUDED_protocols/antibody_design_CDRCLUSTERMATCHER_HH
 

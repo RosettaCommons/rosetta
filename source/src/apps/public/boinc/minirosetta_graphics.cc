@@ -89,71 +89,71 @@
 #endif
 
 namespace graphics {
-	float window_size = { 28 };
-	float native_window_size = { 28 };
-	int default_aspect_width = 6;
-	int default_aspect_height = 4;
-	float aspect_width, aspect_height;
-	float aspect;
-	int small_box;
-	int mouse_x, mouse_y;
-	bool mouse_down;
-	int window_height;
-	std::string where_in_window;
-	GLfloat nativerotation[16], lowrotation[16], bestrotation[16], currentrotation[16];
-	bool const allow_rotation = true;
+float window_size = { 28 };
+float native_window_size = { 28 };
+int default_aspect_width = 6;
+int default_aspect_height = 4;
+float aspect_width, aspect_height;
+float aspect;
+int small_box;
+int mouse_x, mouse_y;
+bool mouse_down;
+int window_height;
+std::string where_in_window;
+GLfloat nativerotation[16], lowrotation[16], bestrotation[16], currentrotation[16];
+bool const allow_rotation = true;
 
-	float default_text_color[4] = {1., 1., 1., 1.};
-	float default_structure_text_color[4] = {.5f, .5f, .5f, 1.0f};
+float default_text_color[4] = {1., 1., 1., 1.};
+float default_structure_text_color[4] = {.5f, .5f, .5f, 1.0f};
 
-	float wu_text_box_height = 0.0;
-	std::vector<std::string> wu_desc_rows;
-	// tinker with these to modify how the text is displayed
-	float wu_desc_rows_per_small_box = 6.0;
+float wu_text_box_height = 0.0;
+std::vector<std::string> wu_desc_rows;
+// tinker with these to modify how the text is displayed
+float wu_desc_rows_per_small_box = 6.0;
 
-	// boinc data
-	APP_INIT_DATA app_init_data;
-	// shared memory
-	protocols::boinc::BoincSharedMemory* shmem = NULL;
+// boinc data
+APP_INIT_DATA app_init_data;
+// shared memory
+protocols::boinc::BoincSharedMemory* shmem = NULL;
 
-	double cpu_time=0;
+double cpu_time=0;
 
-	std::vector<float> low_rmsd_vector;
-	std::vector<float> low_energy_vector;
-	std::vector<float> last_accepted_rmsd_vector;
-	std::vector<float> last_accepted_energy_vector;
-	std::vector<float> model_rmsd_vector;
-	std::vector<float> model_energy_vector;
+std::vector<float> low_rmsd_vector;
+std::vector<float> low_energy_vector;
+std::vector<float> last_accepted_rmsd_vector;
+std::vector<float> last_accepted_energy_vector;
+std::vector<float> model_rmsd_vector;
+std::vector<float> model_energy_vector;
 
-	float last_accepted_rmsd;
-	float low_energy_rmsd;
-	unsigned int last_low_energy_update_cnt;
-	unsigned int last_model_cnt;
+float last_accepted_rmsd;
+float low_energy_rmsd;
+unsigned int last_low_energy_update_cnt;
+unsigned int last_model_cnt;
 
-	enum GraphicsPoseType {
-	  CURRENT,
-	  ACCEPTED,
-	  LOW,
-	  NATIVE
-	};
+enum GraphicsPoseType {
+	CURRENT,
+	ACCEPTED,
+	LOW,
+	NATIVE
+};
 
-	protocols::viewer::GraphicsState current_gs;
+protocols::viewer::GraphicsState current_gs;
 
-	static core::Size max_pose_nres = 0;
-	static core::Size current_pose_nres = 0;
-	static core::Size native_pose_nres = 0;
+static core::Size max_pose_nres = 0;
+static core::Size current_pose_nres = 0;
+static core::Size native_pose_nres = 0;
 
-	bool native_exists = false;
-	static core::pose::PoseOP nativeposeOP;
-	static core::pose::PoseOP currentposeOP;
-	static core::pose::PoseOP lastacceptedposeOP;
-	static core::pose::PoseOP	lowenergyposeOP;
+bool native_exists = false;
+static core::pose::PoseOP nativeposeOP;
+static core::pose::PoseOP currentposeOP;
+static core::pose::PoseOP lastacceptedposeOP;
+static core::pose::PoseOP lowenergyposeOP;
 
-	// should probably make these maps, indexes by "low", etc.
-	int low_viewport_x, low_viewport_y, low_viewport_width, low_viewport_height;
-	int native_viewport_x,  native_viewport_y,  native_viewport_width,  native_viewport_height;
-	int best_viewport_x,  best_viewport_y,  best_viewport_width,  best_viewport_height;
-	int current_viewport_x, current_viewport_y, current_viewport_width, current_viewport_height;
+// should probably make these maps, indexes by "low", etc.
+int low_viewport_x, low_viewport_y, low_viewport_width, low_viewport_height;
+int native_viewport_x,  native_viewport_y,  native_viewport_width,  native_viewport_height;
+int best_viewport_x,  best_viewport_y,  best_viewport_width,  best_viewport_height;
+int current_viewport_x, current_viewport_y, current_viewport_width, current_viewport_height;
 
 }
 
@@ -162,7 +162,7 @@ void scale(const int & iw, const int & ih) {
 	float aspect_ratio = (float)aspect_width/(float)aspect_height;
 	float w=(float)iw, h=(float)ih;
 	float xs, ys;
-	if (h*aspect_ratio > w) {
+	if ( h*aspect_ratio > w ) {
 		xs = 1.0f;
 		ys = (w/aspect_ratio)/h;
 	} else {
@@ -220,7 +220,7 @@ void get_bounds( std::vector< float > const & t, float & mn, float & mx ) {
 	mn-=0.00;
 	mx+=0.00;
 	return;
-/*
+	/*
 	//How about using some estimate of the variance. This
 	// will help us figure out if a big jump occurred recently.
 	int const NUM_LOOK_BACK = 10000;
@@ -230,8 +230,8 @@ void get_bounds( std::vector< float > const & t, float & mn, float & mx ) {
 
 	float x (0.0);
 	for ( int i=i_start+1; i<= i_end; ++i ) {
-		float const score_jump = std::abs(t[i+1] - t[i]);
-		if (score_jump < 10.0 ) x += score_jump;
+	float const score_jump = std::abs(t[i+1] - t[i]);
+	if (score_jump < 10.0 ) x += score_jump;
 	}
 	float const avg_jump  = x / numpoints; //This should be of order 1 (for energy).
 
@@ -241,10 +241,10 @@ void get_bounds( std::vector< float > const & t, float & mn, float & mx ) {
 	mx = mn;
 	int count(0);
 	for ( int i = i_end-1; i >= i_start; --i ) {
-		if (std::abs(t[i+1] - t[i]) > 50.0*avg_jump) break;
-		mn = std::min( mn, t[i]);
-		mx = std::max( mx, t[i]);
-		count++;
+	if (std::abs(t[i+1] - t[i]) > 50.0*avg_jump) break;
+	mn = std::min( mn, t[i]);
+	mx = std::max( mx, t[i]);
+	count++;
 	}
 
 	*/
@@ -263,7 +263,7 @@ plot_2D(
 	using namespace graphics;
 
 	unsigned int total_steps = xdata.size();
-	if (ydata.size() < total_steps) total_steps = ydata.size();
+	if ( ydata.size() < total_steps ) total_steps = ydata.size();
 
 	if ( total_steps > 0 ) {
 
@@ -283,33 +283,33 @@ plot_2D(
 		glPointSize( 2.0 );
 		glBegin( GL_POINTS );
 		glColor3f(.5,.5,.5);
-		for (unsigned int step = 0; step < total_steps; step++) {
+		for ( unsigned int step = 0; step < total_steps; step++ ) {
 			float x = xdata[step];
 			float y = ydata[step];
 			x -= xmin;
-			if( x > 0 ) x = log(1.0+x);
+			if ( x > 0 ) x = log(1.0+x);
 			else continue;
 			y -= ymin;
-			if( y > 0 ) y = log(1.0+y);
+			if ( y > 0 ) y = log(1.0+y);
 			else continue;
 			glVertex2f( x, y ) ;
 		}
 		glEnd();
 
 		int decoys = (native_exists) ? model_rmsd_vector.size() :  model_energy_vector.size();
-		if (decoys > 0) {
+		if ( decoys > 0 ) {
 			glPointSize( 4.0 );
 			glBegin( GL_POINTS );
 			glColor3f(0.8f,0.13f,0.0f); //rust
-			for (int step = 0; step < decoys; step++) {
+			for ( int step = 0; step < decoys; step++ ) {
 				float x = (native_exists) ? model_rmsd_vector[step] : model_energy_vector[step];
 				float y = model_energy_vector[step];
-				if (x && y){
+				if ( x && y ) {
 					x -= xmin;
-					if( x > 0 ) x = log(1.0+x);
+					if ( x > 0 ) x = log(1.0+x);
 					else continue;
 					y -= ymin;
-					if( y > 0 ) y = log(1.0+y);
+					if ( y > 0 ) y = log(1.0+y);
 					else continue;
 
 					glVertex2f( x, y );
@@ -317,7 +317,7 @@ plot_2D(
 			}
 			glEnd();
 		}
-/*
+		/*
 		// cross hairs
 		glColor3f(.5,.5,.5);
 		glBegin( GL_LINES );
@@ -326,7 +326,7 @@ plot_2D(
 		glVertex2f( xmin, ydata[total_steps-1] );
 		glVertex2f( xmax, ydata[total_steps-1] );
 		glEnd();
-*/
+		*/
 		glEnable( GL_DEPTH_TEST );
 		glLoadIdentity();
 	}
@@ -341,14 +341,14 @@ void end_rotate() {
 	glPopMatrix();
 }
 
-void do_the_rotation(	const int & x, const int & y, const int & left, const int & middle,
-											const int & right, GLfloat decoyrotation[16], const float & this_window_size ) {
+void do_the_rotation( const int & x, const int & y, const int & left, const int & middle,
+	const int & right, GLfloat decoyrotation[16], const float & this_window_size ) {
 	using namespace graphics;
 
 	double delta_y = y-mouse_y;
 	double delta_x = x-mouse_x;
 
-	if (left) {
+	if ( left ) {
 		double axis_x = delta_y;
 		double axis_y = delta_x;
 		double userangle = sqrt(delta_x*delta_x + delta_y*delta_y);
@@ -368,7 +368,7 @@ void do_the_rotation(	const int & x, const int & y, const int & left, const int 
 		glGetFloatv(GL_MODELVIEW_MATRIX, decoyrotation);  // Store current model view in decoyrotation
 		mouse_y = y;
 		mouse_x = x;
-	}  else if (right){ //Zoom
+	}  else if ( right ) { //Zoom
 		double s = exp( 1.0* (double) delta_y*0.01);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
@@ -377,8 +377,7 @@ void do_the_rotation(	const int & x, const int & y, const int & left, const int 
 		glGetFloatv(GL_MODELVIEW_MATRIX, decoyrotation); // Store current model view in decoyrotation
 		mouse_y = y;
 		mouse_x = x;
-	}
-	else if (middle) { //Translate
+	} else if ( middle ) { //Translate
 		GLint viewport[4];
 		glGetIntegerv(GL_VIEWPORT,viewport);
 		glMatrixMode(GL_MODELVIEW);
@@ -390,8 +389,7 @@ void do_the_rotation(	const int & x, const int & y, const int & left, const int 
 		glGetFloatv(GL_MODELVIEW_MATRIX, decoyrotation);
 		mouse_y = y;
 		mouse_x = x;
-	}
-	else {
+	} else {
 		mouse_down = false;
 	}
 }
@@ -406,51 +404,55 @@ void app_graphics_resize(int w, int h){
 void boinc_app_mouse_move(int x, int y, int left, int middle, int right) {
 	using namespace graphics;
 
-	if (!allow_rotation) return;
+	if ( !allow_rotation ) return;
 
 	//if (!native_centered) return; // just rotate native for now
 	// Where are we? In low, native, accepted, or current?
-	if ( where_in_window == "native" )
-	  do_the_rotation( x, y, left, middle, right, nativerotation, native_window_size);
-	if ( where_in_window == "low" )
-	  do_the_rotation( x, y, left, middle, right, lowrotation, window_size);
-	if ( where_in_window == "current" )
-	  do_the_rotation( x, y, left, middle, right, currentrotation, window_size);
-	if ( where_in_window == "best" )
-	  do_the_rotation( x, y, left, middle, right, bestrotation, window_size);
+	if ( where_in_window == "native" ) {
+		do_the_rotation( x, y, left, middle, right, nativerotation, native_window_size);
+	}
+	if ( where_in_window == "low" ) {
+		do_the_rotation( x, y, left, middle, right, lowrotation, window_size);
+	}
+	if ( where_in_window == "current" ) {
+		do_the_rotation( x, y, left, middle, right, currentrotation, window_size);
+	}
+	if ( where_in_window == "best" ) {
+		do_the_rotation( x, y, left, middle, right, bestrotation, window_size);
+	}
 }
 
 // BOINC GRAPHICS API
 void boinc_app_mouse_button(int x, int y, int, int is_down) {
 	using namespace graphics;
 
-	if (!allow_rotation) return;
+	if ( !allow_rotation ) return;
 
-	if (is_down) {
-	      mouse_down = true;
-	      mouse_x = x;
-	      mouse_y = y;
-	  } else {
-	      mouse_down = false;
-	  }
+	if ( is_down ) {
+		mouse_down = true;
+		mouse_x = x;
+		mouse_y = y;
+	} else {
+		mouse_down = false;
+	}
 
 	if ( mouse_x > native_viewport_x && mouse_x < native_viewport_x + native_viewport_width &&
-	     mouse_y > window_height -  native_viewport_y - native_viewport_height&& mouse_y < window_height - native_viewport_y ) {
-	  where_in_window = "native"; //native
+			mouse_y > window_height -  native_viewport_y - native_viewport_height&& mouse_y < window_height - native_viewport_y ) {
+		where_in_window = "native"; //native
 	} else if
-	    ( mouse_x > low_viewport_x && mouse_x < low_viewport_x + low_viewport_width &&
-	      mouse_y > window_height - low_viewport_y -low_viewport_height && mouse_y < window_height - low_viewport_y ) {
-	  where_in_window = "low";
+			( mouse_x > low_viewport_x && mouse_x < low_viewport_x + low_viewport_width &&
+					mouse_y > window_height - low_viewport_y -low_viewport_height && mouse_y < window_height - low_viewport_y ) {
+		where_in_window = "low";
 	} else if
-	    ( mouse_x > current_viewport_x && mouse_x < current_viewport_x + current_viewport_width &&
-	      mouse_y > window_height - current_viewport_y - current_viewport_height && mouse_y < window_height - current_viewport_y ) {
-	  where_in_window = "current";
+			( mouse_x > current_viewport_x && mouse_x < current_viewport_x + current_viewport_width &&
+					mouse_y > window_height - current_viewport_y - current_viewport_height && mouse_y < window_height - current_viewport_y ) {
+		where_in_window = "current";
 	} else if
-	    ( mouse_x > best_viewport_x && mouse_x < best_viewport_x + best_viewport_width &&
-	      mouse_y > window_height - best_viewport_y - best_viewport_height && mouse_y < window_height - best_viewport_y ) {
-	  where_in_window = "best";
+			( mouse_x > best_viewport_x && mouse_x < best_viewport_x + best_viewport_width &&
+					mouse_y > window_height - best_viewport_y - best_viewport_height && mouse_y < window_height - best_viewport_y ) {
+		where_in_window = "best";
 	} else {
-	  where_in_window = ""; //somewhere else
+		where_in_window = ""; //somewhere else
 	}
 }
 
@@ -459,15 +461,15 @@ void boinc_app_key_press(int key, int //lParam           // system-specific key 
 ){
 	using namespace graphics;
 	using namespace protocols::viewer;
-	if (key == 67 || key == 99) { //'c' control color
+	if ( key == 67 || key == 99 ) { //'c' control color
 		current_gs.Color_mode = ColorMode ( current_gs.Color_mode + 1 );
 		if ( current_gs.Color_mode > RESIDUE_CPK_COLOR ) current_gs.Color_mode = RAINBOW_COLOR;
 	}
-	if (key == 66 || key == 98) { //'b' control backbone display
+	if ( key == 66 || key == 98 ) { //'b' control backbone display
 		current_gs.BBdisplay_state = BBdisplayState ( current_gs.BBdisplay_state + 1 );
 		if ( current_gs.BBdisplay_state > SHOW_BACKBONE ) current_gs.BBdisplay_state = SHOW_NOBB;
 	}
-	if (key == 83 || key == 115) { //'s' control sidechain display
+	if ( key == 83 || key == 115 ) { //'s' control sidechain display
 		current_gs.SCdisplay_state = SCdisplayState ( current_gs.SCdisplay_state + 1 );
 		if ( current_gs.SCdisplay_state > SHOW_WIREFRAME ) current_gs.SCdisplay_state = SHOW_NOSC;
 	}
@@ -491,7 +493,7 @@ void app_graphics_init() {
 	// Put this in the main loop to allow retries if the
 	// worker application has not yet created shared memory
 	//
-	if (!option[ OptionKeys::boinc::noshmem ]()) {
+	if ( !option[ OptionKeys::boinc::noshmem ]() ) {
 		protocols::boinc::Boinc::attach_shared_memory();
 		shmem =  protocols::boinc::Boinc::get_shmem();
 	}
@@ -500,10 +502,10 @@ void app_graphics_init() {
 
 	// display work init name first
 	std::string wu_name = app_init_data.wu_name;
-	if (wu_name.length() > 0) wu_desc_rows.push_back( wu_name );
+	if ( wu_name.length() > 0 ) wu_desc_rows.push_back( wu_name );
 
-	if (shmem && shmem->wu_desc_exists) {
-		if(!protocols::boinc::Boinc::wait_semaphore()){
+	if ( shmem && shmem->wu_desc_exists ) {
+		if ( !protocols::boinc::Boinc::wait_semaphore() ) {
 			std::vector<std::string> tmp_wu_desc_rows;
 			core::io::serialization::BUFFER b((char*)(&shmem->wu_desc_buf ),protocols::boinc::WU_DESC_TEXT_BUFSIZE);
 			core::io::serialization::read_binary(tmp_wu_desc_rows, b);
@@ -514,7 +516,7 @@ void app_graphics_init() {
 
 	aspect_width = float(default_aspect_width);
 	aspect_height = float(default_aspect_height);
-	if (wu_desc_rows.size() > 0) {
+	if ( wu_desc_rows.size() > 0 ) {
 		//small box is 1 aspect_height unit
 		wu_text_box_height = float(wu_desc_rows.size())/wu_desc_rows_per_small_box;
 		aspect_height += wu_text_box_height;
@@ -530,10 +532,12 @@ void app_graphics_init() {
 	boinc_max_gfx_cpu_frac = protocols::boinc::Boinc::get_project_pref_max_gfx_cpu()/100.0;
 
 	// for testing
-	if (option[ OptionKeys::boinc::max_fps ].user())
+	if ( option[ OptionKeys::boinc::max_fps ].user() ) {
 		boinc_max_fps = option[ OptionKeys::boinc::max_fps ]();
-	if (option[ OptionKeys::boinc::max_cpu ].user())
-	    boinc_max_gfx_cpu_frac = (double)option[ OptionKeys::boinc::max_cpu ]()/100.0;
+	}
+	if ( option[ OptionKeys::boinc::max_cpu ].user() ) {
+		boinc_max_gfx_cpu_frac = (double)option[ OptionKeys::boinc::max_cpu ]()/100.0;
+	}
 
 	glClearColor (0.0, 0.0, 0.0, 0.0);
 	glMatrixMode(GL_PROJECTION);
@@ -576,18 +580,18 @@ void display_text() {
 
 	// STAGE TEXT
 	std::string mode_string = "Stage: unknown";
-	if (shmem) {
-		if (shmem->total_mc_trial_count == 0 && last_model_cnt == 0 ) {
+	if ( shmem ) {
+		if ( shmem->total_mc_trial_count == 0 && last_model_cnt == 0 ) {
 			// initializing?
 			// show it's doing something
 			static std::string initializing;
 			mode_string = " Initializing";
 			initializing = (initializing.length() >= 10) ? " ." : initializing + " .";
 			mode_string += initializing;
-		} else if (shmem->total_mc_trial_count > 0) {
+		} else if ( shmem->total_mc_trial_count > 0 ) {
 			// Stage: mover type info
 			std::string mover_type;
-			if(!protocols::boinc::Boinc::wait_semaphore()){
+			if ( !protocols::boinc::Boinc::wait_semaphore() ) {
 				core::io::serialization::BUFFER b((char*)(&shmem->mover_type_text ),protocols::boinc::TEXT_BUFSIZE);
 				core::io::serialization::read_binary(mover_type,b);
 				protocols::boinc::Boinc::unlock_semaphore();
@@ -597,13 +601,13 @@ void display_text() {
 		// update cpu run time
 		cpu_time = shmem->cpu_time;
 		float dt = dtime() - shmem->update_time;
-		if (dt > 10) {
+		if ( dt > 10 ) {
 			boinc_close_window_and_quit("shmem not updated");
-		} else if (dt > 5) {
+		} else if ( dt > 5 ) {
 			mode_string = "App not running - exiting in 5 seconds";
-		} else if (shmem->status.suspended) {
+		} else if ( shmem->status.suspended ) {
 			mode_string = "App suspended";
-    }
+		}
 	}
 	mode_ortho_start();
 	glTranslatef( .01, 0.55, 0.0f );
@@ -637,7 +641,7 @@ void display_text() {
 
 	// TEAM TEXT
 	std::string team_string = app_init_data.team_name;
-	if (team_string != "") {
+	if ( team_string != "" ) {
 		mode_ortho_start();
 		glTranslatef( .01, .25, 0.0f );
 		writeStrokeString( team_string, default_text_color, 0.0f, 0.0f);
@@ -659,7 +663,7 @@ void display_text() {
 
 	// RUN STATUS -  PERCENT COMPLETE TEXT
 	std::string run_status_str;
-	if (shmem) {
+	if ( shmem ) {
 		float boinc_pct_complete = 100.0 * shmem->fraction_done;
 		run_status_str = F( 7, 2, boinc_pct_complete ) + "% Complete";
 	} else {
@@ -672,7 +676,7 @@ void display_text() {
 	mode_ortho_done();
 
 	// MODEL AND STEP TEXT
-	if (shmem) {
+	if ( shmem ) {
 		std::string ntrials_string = "Model: " + string_of(shmem->model_count, 4) +
 			"  Step: " + string_of(shmem->total_mc_trial_count);
 		mode_ortho_start();
@@ -680,12 +684,12 @@ void display_text() {
 		writeStrokeString( ntrials_string, default_text_color, 0.0f, 0.0f );
 		mode_ortho_done();
 
-	  // LAST ACCEPTED ENERGY TEXT
-	  std::string score_string2 = "Accepted Energy: " + string_of(shmem->last_accepted_energy, 7);
-	  mode_ortho_start();
-	  glTranslatef( xshift, .35, 0.0f );
-	  writeStrokeString( score_string2, default_text_color, 0.0f, 0.0f );
-	  mode_ortho_done();
+		// LAST ACCEPTED ENERGY TEXT
+		std::string score_string2 = "Accepted Energy: " + string_of(shmem->last_accepted_energy, 7);
+		mode_ortho_start();
+		glTranslatef( xshift, .35, 0.0f );
+		writeStrokeString( score_string2, default_text_color, 0.0f, 0.0f );
+		mode_ortho_done();
 
 		double lowenergytextypos = 0.25;
 
@@ -721,7 +725,7 @@ void
 Structure_display ( const graphics::GraphicsPoseType & graphics_pose_type, const float & this_window_size )
 {
 	using namespace graphics;
-	if (!shmem || !current_pose_nres) return;
+	if ( !shmem || !current_pose_nres ) return;
 
 	float y_min_screen = - this_window_size;
 	float y_max_screen = + this_window_size;
@@ -729,39 +733,39 @@ Structure_display ( const graphics::GraphicsPoseType & graphics_pose_type, const
 	float x_max_screen = + this_window_size;
 	float zmax = 300.0;
 
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glOrtho(x_min_screen, x_max_screen, y_min_screen, y_max_screen, -zmax, zmax);
-  glMatrixMode(GL_MODELVIEW);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(x_min_screen, x_max_screen, y_min_screen, y_max_screen, -zmax, zmax);
+	glMatrixMode(GL_MODELVIEW);
 
 	switch( graphics_pose_type ){
-		case CURRENT:
-			start_rotate(currentrotation);
-			break;
-		case ACCEPTED:
-			start_rotate(bestrotation);
-			break;
-		case LOW:
-			start_rotate(lowrotation);
-			break;
-		case NATIVE:
-			start_rotate(nativerotation);
-			break;
+	case CURRENT :
+		start_rotate(currentrotation);
+		break;
+	case ACCEPTED :
+		start_rotate(bestrotation);
+		break;
+	case LOW :
+		start_rotate(lowrotation);
+		break;
+	case NATIVE :
+		start_rotate(nativerotation);
+		break;
 	}
 
 	switch( graphics_pose_type ){
-		case CURRENT:
-			protocols::viewer::draw_pose( *currentposeOP, current_gs );
-			break;
-		case ACCEPTED:
-			protocols::viewer::draw_pose( *lastacceptedposeOP, current_gs );
-			break;
-		case LOW:
-			protocols::viewer::draw_pose( *lowenergyposeOP, current_gs );
-			break;
-		case NATIVE:
-			protocols::viewer::draw_pose( *nativeposeOP, current_gs );
-			break;
+	case CURRENT :
+		protocols::viewer::draw_pose( *currentposeOP, current_gs );
+		break;
+	case ACCEPTED :
+		protocols::viewer::draw_pose( *lastacceptedposeOP, current_gs );
+		break;
+	case LOW :
+		protocols::viewer::draw_pose( *lowenergyposeOP, current_gs );
+		break;
+	case NATIVE :
+		protocols::viewer::draw_pose( *nativeposeOP, current_gs );
+		break;
 	}
 	glLoadIdentity();
 	end_rotate();
@@ -771,7 +775,7 @@ void
 display_wu_desc( const float & height ) {
 	using namespace graphics;
 	float rowheight = float(small_box)/wu_desc_rows_per_small_box;
-	for(unsigned int i=1;i <= wu_desc_rows.size(); i++) {
+	for ( unsigned int i=1; i <= wu_desc_rows.size(); i++ ) {
 		glViewport( 0, height - 3.0*small_box-rowheight*(float)i, small_box*aspect_width, rowheight);
 		mode_ortho_start();
 		writeStrokeString( wu_desc_rows.at(i-1), default_text_color, 0.01, 0.0, 55);
@@ -797,18 +801,18 @@ void plot_timeseries(
 	total_steps = std::max( (unsigned int) (50), (unsigned int)( pow(4, 1+floor(log( float(data.size()) )/log(4.0f)) ) ) );
 	int start_step = 0;
 	unsigned int LOOK_BACK =500;
-	if( total_steps > LOOK_BACK ){
+	if ( total_steps > LOOK_BACK ) {
 		total_steps = LOOK_BACK;
 		start_step = data.size() - total_steps;
 	}
 	start_step = data.size() - total_steps;
-	if( start_step < 0 ) start_step = 0;
+	if ( start_step < 0 ) start_step = 0;
 
-	if ( data.size() > 0) {
+	if ( data.size() > 0 ) {
 		float mindata,maxdata;
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		if (vertical) {
+		if ( vertical ) {
 			//gluOrtho2D( min, max, 0, total_steps-1  );
 			maxdata =log(1.0+max-min);
 			mindata =log(1.0);
@@ -823,8 +827,8 @@ void plot_timeseries(
 			gluOrtho2D( 0, total_steps-1, mindata, maxdata );
 		}
 		glMatrixMode(GL_MODELVIEW);
-	  //  glColor3f(0.1f,0.7f,0.7f); //light blue
-	  //  glColor3f(1.0f,0.0f,0.0f); // red
+		//  glColor3f(0.1f,0.7f,0.7f); //light blue
+		//  glColor3f(1.0f,0.0f,0.0f); // red
 		glDisable( GL_DEPTH_TEST );
 		glLoadIdentity();
 		glColor3f(.5,.5,.5);
@@ -833,22 +837,22 @@ void plot_timeseries(
 		float min_point = 1e12;
 		glLineWidth( 2.0 );
 		glBegin( GL_LINE_STRIP );
-		for (unsigned int step = start_step; step < data.size(); step++) {
+		for ( unsigned int step = start_step; step < data.size(); step++ ) {
 			float x, y;
 			float caged_data,point = data[step];
 			if ( point < min_point ) min_point = point;
-			if (vertical) {
+			if ( vertical ) {
 				x = point;
 				x -= min;
-				if( x > 0 ) x = log(1.0+x);
+				if ( x > 0 ) x = log(1.0+x);
 				y = (total_steps-1) - step+start_step;
 				caged_data = std::min(maxdata, std::max( (float)mindata, (float)x ) ) / (maxdata+0.001);
 				glColor3f(1.0-caged_data,1.0-caged_data,caged_data); // yellow
-		} else {
+			} else {
 				x = step-start_step;
 				y = point;
 				y -= min;
-				if( y > 0 ) y = log(1.0+y);
+				if ( y > 0 ) y = log(1.0+y);
 
 				caged_data = std::min(maxdata, std::max( (float)mindata, (float)y ) ) / (maxdata+0.001);
 				glColor3f(1.0-caged_data,1.0-caged_data,caged_data); // yellow
@@ -880,13 +884,13 @@ void clear_trajectory() {
 
 void get_shmem_structures() {
 	using namespace graphics;
-	if (!shmem) return;
+	if ( !shmem ) return;
 
 	// need to make sure we are in sync with the worker app
-	if(!protocols::boinc::Boinc::wait_semaphore()){
+	if ( !protocols::boinc::Boinc::wait_semaphore() ) {
 
 		// get native pose
-		if (shmem->native_pose_exists) {
+		if ( shmem->native_pose_exists ) {
 			// get native
 			core::io::serialization::BUFFER bn((char*)(&shmem->native_pose_buf ),protocols::boinc::POSE_BUFSIZE);
 			core::io::serialization::read_binary(*nativeposeOP,bn);
@@ -895,41 +899,44 @@ void get_shmem_structures() {
 		}
 
 		// get current pose
-		if (shmem->current_pose_exists) {
+		if ( shmem->current_pose_exists ) {
 			core::io::serialization::BUFFER bc((char*)(&shmem->current_pose_buf ),protocols::boinc::POSE_BUFSIZE);
 			core::io::serialization::read_binary(*currentposeOP,bc);
 			current_pose_nres =  (*currentposeOP).total_residue();
 		}
 
 		// get last accepted pose and calculate rmsd
-		if (shmem->last_accepted_pose_exists) {
+		if ( shmem->last_accepted_pose_exists ) {
 			core::io::serialization::BUFFER bla((char*)(&shmem->last_accepted_pose_buf ),protocols::boinc::POSE_BUFSIZE);
 			core::io::serialization::read_binary(*lastacceptedposeOP,bla);
-			if (native_exists && (*lastacceptedposeOP).total_residue() > 0)
+			if ( native_exists && (*lastacceptedposeOP).total_residue() > 0 ) {
 				last_accepted_rmsd = core::scoring::native_CA_rmsd( *nativeposeOP, *lastacceptedposeOP);
+			}
 		}
 
 		// get low energy pose and calculate rmsd
-		if (shmem->low_energy_pose_exists) {
+		if ( shmem->low_energy_pose_exists ) {
 			core::io::serialization::BUFFER ble((char*)(&shmem->low_energy_pose_buf ),protocols::boinc::POSE_BUFSIZE);
 			core::io::serialization::read_binary(*lowenergyposeOP,ble);
 			last_low_energy_update_cnt = shmem->low_energy_update_cnt;
-			if (native_exists && (*lowenergyposeOP).total_residue() > 0)
+			if ( native_exists && (*lowenergyposeOP).total_residue() > 0 ) {
 				low_energy_rmsd = core::scoring::native_CA_rmsd( *nativeposeOP, *lowenergyposeOP);
+			}
 		}
 
 		// next model? clear trajectory
-		if (shmem->model_count != last_model_cnt) {
+		if ( shmem->model_count != last_model_cnt ) {
 			// get low energy model rmsd and energy
 			model_energy_vector.push_back( shmem->model_low_energy );
-			if (native_exists)
+			if ( native_exists ) {
 				model_rmsd_vector.push_back( shmem->model_low_energy_rmsd );
+			}
 			clear_trajectory();
 			last_model_cnt = shmem->model_count;
 		}
 
 		// get monte carlo trial info (resolved to graphics frame rate)
-		if (shmem->total_mc_trial_count > 0) {
+		if ( shmem->total_mc_trial_count > 0 ) {
 			low_energy_vector.push_back( shmem->low_energy );
 			low_rmsd_vector.push_back( low_energy_rmsd );
 			last_accepted_energy_vector.push_back( shmem->last_accepted_energy );
@@ -956,7 +963,7 @@ void draw_rosetta_screensaver( int & width, int & height )
 	get_shmem_structures(); // !!
 
 	// users complaining that they can't see the whole protein...
-	if (max_pose_nres > 0) {
+	if ( max_pose_nres > 0 ) {
 		window_size = (current_pose_nres > 100) ? 0.7*(28 + ( current_pose_nres - 100)*0.15) : 28;
 		native_window_size = (native_pose_nres > 100) ? 0.7*(28 + ( native_pose_nres - 100)*0.15) : 28;
 	}
@@ -969,12 +976,12 @@ void draw_rosetta_screensaver( int & width, int & height )
 	glMatrixMode(GL_MODELVIEW);
 	glEnable( GL_DEPTH_TEST );
 
-	if (aspect >= aspect_width / aspect_height) {
-	  // add space to right side (wider than tall)
-	  small_box = int(height/aspect_height);
+	if ( aspect >= aspect_width / aspect_height ) {
+		// add space to right side (wider than tall)
+		small_box = int(height/aspect_height);
 	} else {
-	  // add space to bottom (taller than wide)
-	  small_box = int(width/aspect_width);
+		// add space to bottom (taller than wide)
+		small_box = int(width/aspect_width);
 	}
 	int dim_main = 2*small_box;
 
@@ -1029,26 +1036,26 @@ void draw_rosetta_screensaver( int & width, int & height )
 	glLoadIdentity();
 
 	// Work Unit Description?
-	if (wu_desc_rows.size() > 0) {
+	if ( wu_desc_rows.size() > 0 ) {
 
-	  // generate box for description
+		// generate box for description
 		glViewport( 0, height - 3*small_box - wu_text_box_height*small_box, small_box*aspect_width, wu_text_box_height*small_box );
-	  gluOrtho2D(0,1,0,aspect);
-	  glMatrixMode( GL_MODELVIEW );
-	  glLoadIdentity();
-	  glColor3f( 0.5f, 0.5f, 0.5f );
-	  glTranslatef( 0.0, 0.0, 0.0 );
-	  glBegin( GL_LINE_STRIP ) ;
-	  glVertex2f(0,1); glVertex2f(0,0); glVertex2f(1,0); glVertex2f(1,1); //glVertex2f(0,0);
-	  glEnd();
-	  glLoadIdentity();
+		gluOrtho2D(0,1,0,aspect);
+		glMatrixMode( GL_MODELVIEW );
+		glLoadIdentity();
+		glColor3f( 0.5f, 0.5f, 0.5f );
+		glTranslatef( 0.0, 0.0, 0.0 );
+		glBegin( GL_LINE_STRIP ) ;
+		glVertex2f(0,1); glVertex2f(0,0); glVertex2f(1,0); glVertex2f(1,1); //glVertex2f(0,0);
+		glEnd();
+		glLoadIdentity();
 
 		display_wu_desc( height );
 
-	  // Main text box
-	  glViewport( 0, height - 4*small_box-int(wu_text_box_height*small_box),
-				int(small_box*aspect_width), small_box );
-	  display_text();
+		// Main text box
+		glViewport( 0, height - 4*small_box-int(wu_text_box_height*small_box),
+			int(small_box*aspect_width), small_box );
+		display_text();
 
 	} else {
 		glViewport( 0, height-4*small_box, small_box*6, small_box );
@@ -1062,11 +1069,11 @@ void draw_rosetta_screensaver( int & width, int & height )
 
 	glViewport( current_viewport_x, current_viewport_y, current_viewport_width, current_viewport_height );
 	mode_ortho_start();
-  glColor3f( 0.5f, 0.5f, 0.5f );
-  glTranslatef( 0.0, 0.0, 0.0 );
-  glBegin( GL_LINE_STRIP ) ;
-  glVertex2f(0,1); glVertex2f(1,1); glVertex2f(1,0);
-  glEnd();
+	glColor3f( 0.5f, 0.5f, 0.5f );
+	glTranslatef( 0.0, 0.0, 0.0 );
+	glBegin( GL_LINE_STRIP ) ;
+	glVertex2f(0,1); glVertex2f(1,1); glVertex2f(1,0);
+	glEnd();
 
 
 	using namespace graphics;
@@ -1074,22 +1081,22 @@ void draw_rosetta_screensaver( int & width, int & height )
 
 
 	// change view_type randomly
-	if( (time(NULL) - last_time_graphic_switch) > 100 ){
+	if ( (time(NULL) - last_time_graphic_switch) > 100 ) {
 		last_time_graphic_switch = time(NULL);
 
-		if( rand() % 2 == 0 ) current_gs.BBdisplay_state = SHOW_CARTOON;
+		if ( rand() % 2 == 0 ) current_gs.BBdisplay_state = SHOW_CARTOON;
 		else                  current_gs.BBdisplay_state = SHOW_BACKBONE;
 
-		if( rand() % 3 == 0 && max_pose_nres < 500 ) current_gs.SCdisplay_state = SHOW_STICK;
+		if ( rand() % 3 == 0 && max_pose_nres < 500 ) current_gs.SCdisplay_state = SHOW_STICK;
 		else                  current_gs.SCdisplay_state = SHOW_NOSC;
 
-		if( current_gs.SCdisplay_state != SHOW_NOSC ){
+		if ( current_gs.SCdisplay_state != SHOW_NOSC ) {
 			int randnum = rand() % 4;
-			if( randnum == 0 ) current_gs.Color_mode = RAINBOW_COLOR;
-			if( randnum == 1 ) current_gs.Color_mode = RAINBOW_CPK_COLOR;
-			if( randnum == 2 ) current_gs.Color_mode = RESIDUE_CPK_COLOR;
-			if( randnum == 3 ) current_gs.Color_mode = CPK_COLOR;
-		}else{
+			if ( randnum == 0 ) current_gs.Color_mode = RAINBOW_COLOR;
+			if ( randnum == 1 ) current_gs.Color_mode = RAINBOW_CPK_COLOR;
+			if ( randnum == 2 ) current_gs.Color_mode = RESIDUE_CPK_COLOR;
+			if ( randnum == 3 ) current_gs.Color_mode = CPK_COLOR;
+		} else {
 			current_gs.Color_mode = RAINBOW_COLOR;
 		}
 	}
@@ -1139,14 +1146,15 @@ void draw_rosetta_screensaver( int & width, int & height )
 	float rms_min = 0.0;
 	float rms_max = 0.0;
 	get_bounds( last_accepted_rmsd_vector, rms_min, rms_max );
-	if (rms_max > 20) rms_max = 20.00;
+	if ( rms_max > 20 ) rms_max = 20.00;
 	rms_max += 1.00;
 	rms_min -= 0.20;
-	if (rms_min < 1) rms_min = 0.01;
+	if ( rms_min < 1 ) rms_min = 0.01;
 
 	float energy_min = 0;
-	if( last_accepted_energy_vector.size() >= 1 )
+	if ( last_accepted_energy_vector.size() >= 1 ) {
 		energy_min = last_accepted_energy_vector[last_accepted_energy_vector.size()-1];
+	}
 	float energy_max = energy_min;
 	get_bounds( last_accepted_energy_vector, energy_min, energy_max );
 	energy_max += 10.00;
@@ -1155,10 +1163,10 @@ void draw_rosetta_screensaver( int & width, int & height )
 	if ( native_exists ) {
 
 		// LOW ENERGY BOX (SMALL)
-	  low_viewport_x      = 2 * dim_main;
-	  low_viewport_y      = height - small_box;
-	  low_viewport_width  = low_viewport_height = small_box;
-	  glViewport( low_viewport_x, low_viewport_y, low_viewport_width, low_viewport_height );
+		low_viewport_x      = 2 * dim_main;
+		low_viewport_y      = height - small_box;
+		low_viewport_width  = low_viewport_height = small_box;
+		glViewport( low_viewport_x, low_viewport_y, low_viewport_width, low_viewport_height );
 		mode_ortho_start();
 		glColor3f( 0.5f, 0.5f, 0.5f );
 		glTranslatef( 0.0, 0.0, 0.0 );
@@ -1167,25 +1175,25 @@ void draw_rosetta_screensaver( int & width, int & height )
 		glEnd();
 		writeStrokeString( "Low Energy", default_structure_text_color, 0.0f, 0.0f, 200);
 		mode_ortho_done();
-	  Structure_display(LOW, window_size);
+		Structure_display(LOW, window_size);
 
-	  // NATIVE BOX (SMALL)
-	  native_viewport_x      = 2 * dim_main;
-	  native_viewport_y      = height - 2*small_box;
-	  native_viewport_width  = native_viewport_height = small_box;
-	  glViewport( native_viewport_x, native_viewport_y, native_viewport_width, native_viewport_height );
+		// NATIVE BOX (SMALL)
+		native_viewport_x      = 2 * dim_main;
+		native_viewport_y      = height - 2*small_box;
+		native_viewport_width  = native_viewport_height = small_box;
+		glViewport( native_viewport_x, native_viewport_y, native_viewport_width, native_viewport_height );
 		mode_ortho_start();
-    glColor3f( 0.5f, 0.5f, 0.5f );
-    glTranslatef( 0.0, 0.0, 0.0 );
-    glBegin( GL_LINE_STRIP ) ;
-    glVertex2f(0,1); glVertex2f(1,1); glVertex2f(1,0);
-    glEnd();
+		glColor3f( 0.5f, 0.5f, 0.5f );
+		glTranslatef( 0.0, 0.0, 0.0 );
+		glBegin( GL_LINE_STRIP ) ;
+		glVertex2f(0,1); glVertex2f(1,1); glVertex2f(1,0);
+		glEnd();
 		writeStrokeString( "Native", default_structure_text_color, 0.0f, 0.0f, 200);
 		mode_ortho_done();
-	  Structure_display(NATIVE, native_window_size);
+		Structure_display(NATIVE, native_window_size);
 
-	  // RMSD TIME SERIES GRAPH BOX
-	  glViewport( 5*small_box, height-2*small_box, small_box, 2*small_box );
+		// RMSD TIME SERIES GRAPH BOX
+		glViewport( 5*small_box, height-2*small_box, small_box, 2*small_box );
 		mode_ortho_start();
 		writeStrokeString( "RMSD", default_structure_text_color, 0.0f, 0.0f, 180 );
 		mode_ortho_done();
@@ -1197,11 +1205,11 @@ void draw_rosetta_screensaver( int & width, int & height )
 		low_viewport_x      = 2 * dim_main;
 		low_viewport_y      = height - dim_main;
 		low_viewport_width  = low_viewport_height = dim_main;
-	  glViewport( 2*dim_main, height-dim_main, dim_main, dim_main );
+		glViewport( 2*dim_main, height-dim_main, dim_main, dim_main );
 		mode_ortho_start();
 		writeStrokeString( "Low Energy", default_structure_text_color, 0.0f, 0.0f, 280);
 		mode_ortho_done();
-	  Structure_display(LOW, window_size);
+		Structure_display(LOW, window_size);
 
 	}
 
@@ -1214,8 +1222,9 @@ void draw_rosetta_screensaver( int & width, int & height )
 
 	// ENERGY VS RMSD 2D PLOT
 	glViewport( 5*small_box, height-3*small_box, small_box, small_box );
-	if( native_exists)
-		plot_2D( last_accepted_rmsd_vector, last_accepted_energy_vector,	rms_min, rms_max, energy_min, energy_max );
+	if ( native_exists ) {
+		plot_2D( last_accepted_rmsd_vector, last_accepted_energy_vector, rms_min, rms_max, energy_min, energy_max );
+	}
 
 
 	glFlush();
@@ -1262,16 +1271,16 @@ RosettaInvalidParameterHandler(
 int main(int argc, char** argv) {
 	try {
 
-	using namespace graphics;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	std::cerr << "Starting graphics.." << std::endl;
-	// new boinc client specific options
-	option.add_relevant( OptionKeys::boinc::graphics );
-	option.add_relevant( OptionKeys::boinc::fullscreen );
-	option.add_relevant( OptionKeys::boinc::max_fps );
-	option.add_relevant( OptionKeys::boinc::max_cpu );
-	option.add_relevant( OptionKeys::boinc::noshmem );
+		using namespace graphics;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		std::cerr << "Starting graphics.." << std::endl;
+		// new boinc client specific options
+		option.add_relevant( OptionKeys::boinc::graphics );
+		option.add_relevant( OptionKeys::boinc::fullscreen );
+		option.add_relevant( OptionKeys::boinc::max_fps );
+		option.add_relevant( OptionKeys::boinc::max_cpu );
+		option.add_relevant( OptionKeys::boinc::noshmem );
 
 #ifdef _DEBUG
 	// DIAGNOSTICS
@@ -1285,17 +1294,17 @@ int main(int argc, char** argv) {
 		BOINC_DIAG_TRACETOSTDERR
 	);
 #else
- boinc_init_graphics_diagnostics(BOINC_DIAG_DEFAULTS);
+		boinc_init_graphics_diagnostics(BOINC_DIAG_DEFAULTS);
 #endif
 
 
-// FROM rosetta++ main.cc
+		// FROM rosetta++ main.cc
 #if _MSC_VER >= 1400
-  // Every once and awhile something looks at a std::vector or some other
-  // CRT/STL construct that throws an exception.  In this case we should
-  // dump whatever information we can and then bail.  When we bail we
-  // should dump as much data as possible.
-  _set_invalid_parameter_handler(RosettaInvalidParameterHandler);
+		// Every once and awhile something looks at a std::vector or some other
+		// CRT/STL construct that throws an exception.  In this case we should
+		// dump whatever information we can and then bail.  When we bail we
+		// should dump as much data as possible.
+		_set_invalid_parameter_handler(RosettaInvalidParameterHandler);
 #endif
 
 
@@ -1304,37 +1313,37 @@ int main(int argc, char** argv) {
 	setMacIcon(argv[0], MacAppIconData, sizeof(MacAppIconData));
 #endif
 
-	// create boinc object
-	protocols::boinc::Boinc boinc_wu = protocols::boinc::Boinc::instance();
+		// create boinc object
+		protocols::boinc::Boinc boinc_wu = protocols::boinc::Boinc::instance();
 
-  core::init::init( argc, argv );
+		core::init::init( argc, argv );
 
-	// avoid having to create the static protocol movers
-	//protocols::init::init( argc, argv );
+		// avoid having to create the static protocol movers
+		//protocols::init::init( argc, argv );
 
-	// override database option and set to current directory
-	option[in::path::database].value("minirosetta_database");
+		// override database option and set to current directory
+		option[in::path::database].value("minirosetta_database");
 #ifndef _DEBUG
-	option[out::mute].value("all");
+		option[out::mute].value("all");
 #endif
-	// BOINC GRAPHICS!
-	// get BOINC app init data - user, team, etc. info
-	boinc_parse_init_data_file();
-	boinc_get_init_data(app_init_data);
+		// BOINC GRAPHICS!
+		// get BOINC app init data - user, team, etc. info
+		boinc_parse_init_data_file();
+		boinc_get_init_data(app_init_data);
 
-	nativeposeOP =  core::pose::PoseOP( new core::pose::Pose() );
-	currentposeOP = core::pose::PoseOP( new core::pose::Pose() );
-	lowenergyposeOP = core::pose::PoseOP( new core::pose::Pose() );
-	lastacceptedposeOP = core::pose::PoseOP( new core::pose::Pose() );
+		nativeposeOP =  core::pose::PoseOP( new core::pose::Pose() );
+		currentposeOP = core::pose::PoseOP( new core::pose::Pose() );
+		lowenergyposeOP = core::pose::PoseOP( new core::pose::Pose() );
+		lastacceptedposeOP = core::pose::PoseOP( new core::pose::Pose() );
 
-	boinc_graphics_loop(argc, argv);
+		boinc_graphics_loop(argc, argv);
 
 #ifdef _DEBUG
 	  boinc_finish_diag();
 #endif
-	 } catch ( utility::excn::EXCN_Base const & e ) {
-		 std::cout << "caught exception " << e.msg() << std::endl;
-		 return -1;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
 }
 

@@ -62,21 +62,21 @@ public:
 
 	//Need get/set functions for options.
 
-  void fast_scan( bool const & setting ) { fast_scan_ = setting; }
+	void fast_scan( bool const & setting ) { fast_scan_ = setting; }
 
-	//	void
-	//	close_loops_carefully(
+	// void
+	// close_loops_carefully(
 	//     core::pose::Pose & pose,
-	//		 std::map< Size, Size > const & connections,
-	//		 Size const close_loops_rounds );
+	//   std::map< Size, Size > const & connections,
+	//   Size const close_loops_rounds );
 
 	void
 	close_loops_carefully(
-     core::pose::Pose & pose,
-		 std::map< Size, Size > const & connections );
+		core::pose::Pose & pose,
+		std::map< Size, Size > const & connections );
 
-	//	void
-	//	close_loops_carefully_one_round( core::pose::Pose & pose, core::scoring::ScoreFunctionOP const & scorefxn );
+	// void
+	// close_loops_carefully_one_round( core::pose::Pose & pose, core::scoring::ScoreFunctionOP const & scorefxn );
 
 	bool
 	check_closure( core::pose::Pose const & pose, core::Size const i, core::Real ccd_tolerance = -1.0 /* -1.0 means use absolute_ccd_tolerance_*/ );
@@ -86,8 +86,8 @@ public:
 
 	core::Real
 	get_dist_err( core::pose::Pose const & pose,
-								Size const cutpoint
-								) const;
+		Size const cutpoint
+	) const;
 
 	void
 	set_verbose( bool const setting ){ verbose_ = setting; }
@@ -103,15 +103,15 @@ private:
 
 	core::Real
 	get_chainbreak_xyz( core::pose::Pose const & pose,
-											Size const cutpoint,
-											utility::vector1< core::Vector > & upstream_xyzs,
-											utility::vector1< core::Vector > & downstream_xyzs
-											) const;
+		Size const cutpoint,
+		utility::vector1< core::Vector > & upstream_xyzs,
+		utility::vector1< core::Vector > & downstream_xyzs
+	) const;
 
 	core::Real
 	get_gap_distance( core::pose::Pose & pose,
-								Size const cutpoint
-								) const;
+		Size const cutpoint
+	) const;
 
 
 	utility::vector1< Size >
@@ -127,9 +127,9 @@ private:
 	local_minimize_at_chainbreaks( core::pose::Pose & pose, core::scoring::ScoreFunctionOP & scorefxn ) const;
 
 	void
-	tight_minimize( core::pose::Pose & pose	) const;
+	tight_minimize( core::pose::Pose & pose ) const;
 
- private:
+private:
 	//Make these options:
 	bool verbose_;
 	Size NUM_ROUNDS_;

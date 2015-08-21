@@ -32,37 +32,37 @@ namespace sequence {
 class AnnotatedSequence : public std::string {
 public:
 
-  AnnotatedSequence();
-  AnnotatedSequence( std::string const& );
-  AnnotatedSequence( AnnotatedSequence const& other );
+	AnnotatedSequence();
+	AnnotatedSequence( std::string const& );
+	AnnotatedSequence( AnnotatedSequence const& other );
 
-  void operator=( std::string const& );
-  AnnotatedSequence& operator=( AnnotatedSequence const& other );
+	void operator=( std::string const& );
+	AnnotatedSequence& operator=( AnnotatedSequence const& other );
 
-  //@brief sequence position is patched
-  bool is_patched( core::Size seqpos ) const;
+	//@brief sequence position is patched
+	bool is_patched( core::Size seqpos ) const;
 
-  //@brief return the string within the [ ] or ""
-  std::string patch_str( core::Size seqpos ) const;
+	//@brief return the string within the [ ] or ""
+	std::string patch_str( core::Size seqpos ) const;
 
-  char one_letter( core::Size seqpos ) const;
+	char one_letter( core::Size seqpos ) const;
 
 	core::chemical::AA aa( core::Size seqpos ) const;
 
-  std::string one_letter_sequence() const;
+	std::string one_letter_sequence() const;
 
 	core::Size length() const;
 
 private:
 
-  void calculate_map() const;
+	void calculate_map() const;
 
-  typedef utility::vector1< core::Size > PositionMap;
+	typedef utility::vector1< core::Size > PositionMap;
 
-  mutable PositionMap pos_map_;
-  mutable bool map_is_clean_;
-  mutable std::string one_letter_sequence_;
-  mutable core::Size length_;
+	mutable PositionMap pos_map_;
+	mutable bool map_is_clean_;
+	mutable std::string one_letter_sequence_;
+	mutable core::Size length_;
 };
 
 }

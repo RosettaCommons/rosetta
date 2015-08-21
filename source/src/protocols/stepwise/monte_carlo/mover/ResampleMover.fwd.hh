@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/monte_carlo/mover/ResampleMover.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -22,11 +22,11 @@ namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
 namespace mover {
-	
-	class ResampleMover;
-	typedef utility::pointer::shared_ptr< ResampleMover > ResampleMoverOP;
-	typedef utility::pointer::shared_ptr< ResampleMover const > ResampleMoverCOP;
-	
+
+class ResampleMover;
+typedef utility::pointer::shared_ptr< ResampleMover > ResampleMoverOP;
+typedef utility::pointer::shared_ptr< ResampleMover const > ResampleMoverCOP;
+
 } //mover
 } //monte_carlo
 } //stepwise

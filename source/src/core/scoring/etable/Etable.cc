@@ -85,9 +85,9 @@ using namespace basic::options::OptionKeys;
 
 //  constructor
 Etable::Etable(
-		chemical::AtomTypeSetCAP atom_set_in, // like etable namespace
-		EtableOptions const & options,
-		std::string const alternate_parameter_set // = ""
+	chemical::AtomTypeSetCAP atom_set_in, // like etable namespace
+	EtableOptions const & options,
+	std::string const alternate_parameter_set // = ""
 ) :
 	// from atop_props_in:
 	atom_set_                 ( atom_set_in ),
@@ -109,7 +109,7 @@ Etable::Etable(
 	lj_use_hbond_radii        ( true ),
 	lj_hbond_hdis             ( options.lj_hbond_hdis ),
 	// lj_hbond_accOch_dis       ( 2.80 ), // unused
-  // lj_hbond_accOch_hdis      ( 1.75 ), // unused
+	// lj_hbond_accOch_hdis      ( 1.75 ), // unused
 	lj_use_water_radii        ( true ),
 	lj_water_dis              ( 3.0 ),
 	lj_water_hdis             ( 1.95 ),
@@ -123,8 +123,8 @@ Etable::Etable(
 	epsilon                   ( 0.0001 ),
 	safe_max_dis2             ( max_dis2 - epsilon ),
 	hydrogen_interaction_cutoff2_( option[ score::fa_Hatr ] ?   // command-line option -- bad form; see note above.
-			std::pow( max_dis_ + 2*chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH, 2 ) :
-			std::pow(5.0,2) ),
+	std::pow( max_dis_ + 2*chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH, 2 ) :
+	std::pow(5.0,2) ),
 	max_non_hydrogen_lj_radius_( 0.0 ),
 	max_hydrogen_lj_radius_( 0.0 ),
 	slim_( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] ) // command-line option -- bad form; see note above.
@@ -193,7 +193,7 @@ Etable::initialize_from_input_atomset(
 	}
 
 	// rhiju/fang -- Use larger LJ_WDEPTH for protons to avoid clashes in RNA
-	if ( enlarge_h_lj_wdepth_ )	core::chemical::enlarge_h_lj_wdepth( lj_wdepth_, *atom_set_in );
+	if ( enlarge_h_lj_wdepth_ ) core::chemical::enlarge_h_lj_wdepth( lj_wdepth_, *atom_set_in );
 
 	// APL -- hydrophobic desolvation only; turn off hydrophilic desolvation penalty
 	if ( no_lk_polar_desolvation_ ) {
@@ -368,9 +368,9 @@ Etable::make_pairenergy_table()
 	TR << "Starting energy table calculation" << std::endl;
 
 
-// 	std::TR << "Energy table parameter set: " << etable_label << ' ' <<
-// 	 etable_revision.substr( 1, etable_revision.length() - 3 ) << ' ' <<
-// 	 etable_date.substr( 1, etable_date.length() - 3 ) << std::endl;
+	//  std::TR << "Energy table parameter set: " << etable_label << ' ' <<
+	//   etable_revision.substr( 1, etable_revision.length() - 3 ) << ' ' <<
+	//   etable_date.substr( 1, etable_date.length() - 3 ) << std::endl;
 
 	// ctsa - values precomputed from etable parameters:
 	//   these were all originally constants but need
@@ -383,19 +383,19 @@ Etable::make_pairenergy_table()
 	//   switch point divided by the wdepth (note that this
 	//   coefficient is independent of atomtype)
 	lj_switch_value2wdepth = std::pow( lj_switch_sigma2dis, 12 ) -
-	 2.0 * std::pow( lj_switch_sigma2dis, 6 );
+		2.0 * std::pow( lj_switch_sigma2dis, 6 );
 
 	// ctsa - slope of the lennard-jones potential at the linear
 	//   switch point times sigma divided by wdepth (note that this
 	//   coefficient is independent of atomtype)
 	lj_switch_slope_sigma2wdepth = -12.0 * (
-	 std::pow( lj_switch_sigma2dis, 13 ) -
-	 std::pow( lj_switch_sigma2dis, 7 ) );
+		std::pow( lj_switch_sigma2dis, 13 ) -
+		std::pow( lj_switch_sigma2dis, 7 ) );
 
 	//  initialize non-distance dependent coefficients
 	precalc_etable_coefficients( lj_sigma_, lj_r6_coeff_, lj_r12_coeff_,
-	 lj_switch_intercept_, lj_switch_slope_, lk_inv_lambda2_, lk_coeff_,
-	 lk_min_dis2sigma_value_ );
+		lj_switch_intercept_, lj_switch_slope_, lk_inv_lambda2_, lk_coeff_,
+		lk_min_dis2sigma_value_ );
 
 	//  calc distance**2 step per bin
 	Real const dis2_step = 1.0 / bins_per_A2;
@@ -414,7 +414,7 @@ Etable::make_pairenergy_table()
 			//  calculated analytically
 			for ( int disbin = 1; disbin <= normal_disbins; ++disbin ) {
 				Real const dis2 = ( disbin - 1 ) * dis2_step;
-				if( atype1_virtual || atype2_virtual ) {
+				if ( atype1_virtual || atype2_virtual ) {
 					ljatr(  disbin) = 0;
 					dljatr( disbin) = 0;
 					ljrep(  disbin) = 0;
@@ -423,7 +423,7 @@ Etable::make_pairenergy_table()
 					fasol2( disbin) = 0;
 					dfasol( disbin) = 0;
 					dfasol1(disbin) = 0;
-				} else{
+				} else {
 					Real atrE,d_atrE,repE,d_repE,solvE1,solvE2,dsolvE1,dsolvE2;
 					calc_etable_value(dis2,atype1,atype2,atrE,d_atrE,repE,d_repE,solvE1,
 						solvE2,dsolvE1,dsolvE2 );
@@ -470,18 +470,18 @@ Etable::make_pairenergy_table()
 				ljatr, dljatr, ljrep, dljrep,
 				fasol1, fasol2, dfasol, dfasol1 );
 
-			if( !option[ score::no_smooth_etables ] ) {
+			if ( !option[ score::no_smooth_etables ] ) {
 				smooth_etables_one_pair(
 					atype1, atype2,
 					ljatr, dljatr, ljrep, dljrep,
 					fasol1, fasol2, dfasol, dfasol1 );
 			}
 
-		  if ( !option[ score::fa_Hatr ]) {
-			zero_hydrogen_and_water_ljatr_one_pair(
-				atype1, atype2,
-				ljrep, ljatr, dljatr,
-				fasol1, fasol2, dfasol, dfasol1 );
+			if ( !option[ score::fa_Hatr ] ) {
+				zero_hydrogen_and_water_ljatr_one_pair(
+					atype1, atype2,
+					ljrep, ljatr, dljatr,
+					fasol1, fasol2, dfasol, dfasol1 );
 			}
 
 			if ( ! slim_ ) {
@@ -502,16 +502,16 @@ Etable::make_pairenergy_table()
 
 	// just for convenience in input/output_etables
 	map< string, FArray3D<Real>* > etables;
-	etables[ "ljatr"] = &  ljatr_;	etables[ "ljrep"] = &  ljrep_;
-	etables["dljatr"] = & dljatr_;	etables["dljrep"] = & dljrep_;
-	etables[ "solv1"] = &  solv1_;	etables[ "solv2"] = &  solv2_;
-	etables["dsolv"]  = & dsolv_;	etables["dsolv1"]  = & dsolv1_;
+	etables[ "ljatr"] = &  ljatr_; etables[ "ljrep"] = &  ljrep_;
+	etables["dljatr"] = & dljatr_; etables["dljrep"] = & dljrep_;
+	etables[ "solv1"] = &  solv1_; etables[ "solv2"] = &  solv2_;
+	etables["dsolv"]  = & dsolv_; etables["dsolv1"]  = & dsolv1_;
 
 
 	if ( option[ score::input_etables ].user() ) {
 		string tag = option[ score::input_etables ];
 		TR << "INPUT ETABLES " << tag << std::endl;
-		for (map<string,FArray3D<Real>*>::iterator i = etables.begin(); i != etables.end(); ++i) {
+		for ( map<string,FArray3D<Real>*>::iterator i = etables.begin(); i != etables.end(); ++i ) {
 			string ename = i->first;
 			string fname = tag+"."+ename+".etable";
 			std::ifstream input( fname.c_str() ); // TODO sheffler: figure out how to do this the right way
@@ -523,7 +523,7 @@ Etable::make_pairenergy_table()
 	if ( option[ score::output_etables ].user() ) {
 		string header = option[ score::output_etables ];
 		TR << "OUTPUT ETABLES " << header << std::endl;
-		for (map<string,FArray3D<Real>*>::iterator i = etables.begin(); i != etables.end(); ++i) {
+		for ( map<string,FArray3D<Real>*>::iterator i = etables.begin(); i != etables.end(); ++i ) {
 			string ename = i->first;
 			string fname = header+"."+ename+".etable";
 			TR << "output_etable: writing etable: " << ename << " to " << fname << std::endl;
@@ -621,7 +621,7 @@ Etable::assign_parameters_to_full_etables(
 	ObjexxFCL::FArray1A< Real > dfasol1
 )
 {
-debug_assert( ljatr_.size() != 0 );
+	debug_assert( ljatr_.size() != 0 );
 
 	ljatr.dimension(   etable_disbins );
 	dljatr.dimension(  etable_disbins );
@@ -749,7 +749,7 @@ Etable::modify_pot_one_pair(
 
 	bool const skip_mod_OCbb_OCbb_rep = basic::options::option[ basic::options::OptionKeys::score::unmodifypot ];
 
-	if(mod_hhrep) {
+	if ( mod_hhrep ) {
 		TR << "fullatom_setup: modifying h-h repulsion "
 			<< " hhrep center "   << c
 			<< " hhrep height "   << h
@@ -774,8 +774,8 @@ Etable::modify_pot_one_pair(
 
 		Real const bin = ( 4.2 * 4.2 / .05 ) + 1.0; //SGM Off-by-1 bug fix: Add + 1.0: Index 1 is at distance^2==0
 		int const ibin( static_cast< int >( bin ) );
- 		for ( int k = 1; k <= etable_disbins; ++k ) {
- 			Real const dis = std::sqrt( ( k - 1 ) * .05f ); //SGM Off-by-1 bug fix: k -> ( k - 1 )
+		for ( int k = 1; k <= etable_disbins; ++k ) {
+			Real const dis = std::sqrt( ( k - 1 ) * .05f ); //SGM Off-by-1 bug fix: k -> ( k - 1 )
 
 			// if( !SMOOTH_ETABLES ) {
 			if ( dis < 4.2 ) {
@@ -789,9 +789,9 @@ Etable::modify_pot_one_pair(
 					dfasol1( k ) = 0.0;
 				}
 			}
-				//   push carbonyl oxygens (in beta sheets) apart.  a proxy for the missing
-				//   electrostatic repulsion needed to counteract the LJatr which pulls the oxyens
-				//   together
+			//   push carbonyl oxygens (in beta sheets) apart.  a proxy for the missing
+			//   electrostatic repulsion needed to counteract the LJatr which pulls the oxyens
+			//   together
 			if ( dis <= 3.6 ) {
 				if ( atype1 == OCbb_idx && atype2 == OCbb_idx && ! skip_mod_OCbb_OCbb_rep ) {
 					Real const fac = std::max( dis - 3.6, -1.5 );
@@ -809,16 +809,16 @@ Etable::modify_pot_one_pair(
 			// use one half of a single term polynomial
 			// as the repulsive term for apolar hydrogens (types 23 & 24)
 
-			// 			if( mod_hhrep ) {
-			// 				if( dis < c ) {
-			// 					for ( int j = 23; j <= 24; ++j ) {
-			// 						for ( int kk = 23; kk <= 24; ++kk ) {
-			// 							ljrep_(k,j,kk)  = h * pow( min(0.0f, (dis-c)/w ), e );//  +
-			// 							dljrep_(k,j,kk) = h * e / w * pow( min(0.0f, dis-c)/w, e-1 ) ;//  +
-			// 						}
-			// 					}
-			// 				}
-			// 			}
+			//    if( mod_hhrep ) {
+			//     if( dis < c ) {
+			//      for ( int j = 23; j <= 24; ++j ) {
+			//       for ( int kk = 23; kk <= 24; ++kk ) {
+			//        ljrep_(k,j,kk)  = h * pow( min(0.0f, (dis-c)/w ), e );//  +
+			//        dljrep_(k,j,kk) = h * e / w * pow( min(0.0f, dis-c)/w, e-1 ) ;//  +
+			//       }
+			//      }
+			//     }
+			//    }
 
 		} // end  for ( int k = 1; k <= etable_disbins; ++k ) {
 
@@ -828,13 +828,13 @@ Etable::modify_pot_one_pair(
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// zero out the attractive and solvation energies for the REPLS and HREPS atom types
 	//
-	//	TR << "setting up REPLONLY residues to zero" << std::endl;
+	// TR << "setting up REPLONLY residues to zero" << std::endl;
 	chemical::AtomTypeSetCOP atom_set( atom_set_ );
 	Size repls_idx = atom_set->atom_type_index( "REPLS" );
 	Size hreps_idx = atom_set->atom_type_index( "HREPS" );
 	if ( atype1 == repls_idx || atype2 == repls_idx || atype1 == hreps_idx || atype2 == hreps_idx ) {
 		Size last_rep_bin( 0 );
-		for ( int i = 1; i <= etable_disbins; i++ ){
+		for ( int i = 1; i <= etable_disbins; i++ ) {
 			ljatr(   i ) = 0.0;
 			dljatr(  i ) = 0.0;
 			fasol1(  i ) = 0.0;
@@ -888,11 +888,11 @@ Etable::smooth_etables_one_pair(
 	dfasol1.dimension( etable_disbins );
 
 	FArray1D<Real> dis(etable_disbins);
-	for(int i = 1; i <= etable_disbins; ++i) {
+	for ( int i = 1; i <= etable_disbins; ++i ) {
 		dis(i) = sqrt( ( i - 1 ) * 1.0 / bins_per_A2 );
 	}
 	FArray1D<int> bin_of_dis(100);
-	for(int i = 1; i <= 100; ++i) {
+	for ( int i = 1; i <= 100; ++i ) {
 		float d = ((float)i)/10.0;
 		bin_of_dis(i) = (int)( d*d * bins_per_A2 + 1 );
 	}
@@ -909,7 +909,7 @@ Etable::smooth_etables_one_pair(
 	// find ljatr min
 	core::Real min_atr = 0;
 	int which_min = -1;
-	for(int i = 1; i <= etable_disbins; ++i) {
+	for ( int i = 1; i <= etable_disbins; ++i ) {
 		if ( ljatr(i) < min_atr ) {
 			min_atr = ljatr(i);
 			which_min = i;
@@ -942,8 +942,8 @@ Etable::smooth_etables_one_pair(
 		p.lj_val_at_minimum = 0;
 	}
 	// for dis below ljatr min, transfer ljatr to ljrep
-	if( min_atr < 0.0 ) {
-		for( int i = 1; i <= which_min; ++i ) {
+	if ( min_atr < 0.0 ) {
+		for ( int i = 1; i <= which_min; ++i ) {
 			ljrep(i)  += ljatr(i) - min_atr;
 			ljatr(i)  -= ljatr(i) - min_atr; // = min_atr;
 			dljrep(i) += dljatr(i);
@@ -955,7 +955,7 @@ Etable::smooth_etables_one_pair(
 	///////////////////////////////////////////////////////////////////
 	// 2) spline smooth ljatr/ljrep at fa_max_dis cut
 	//////////////////////////////////////////////////////////////////
- 	if ( atype1 == 1 && atype2 == 1 ) {
+	if ( atype1 == 1 && atype2 == 1 ) {
 		TR << "smooth_etable: spline smoothing lj etables (maxdis = " << max_dis_ << ")" << std::endl;
 	}
 
@@ -982,13 +982,13 @@ Etable::smooth_etables_one_pair(
 	// APL -- Disabling this behavior since I think it is unused and if it is used, then it would
 	// Prevent the analytic etable evaluation code I'm working on
 	//if( option[ score::etable_lr ].user() ) {
-	//		Real modx = option[ score::etable_lr ]();
-	//	Real mody = lbx * 0.5;
-	//	gen.add_known_value( modx, mody );
+	//  Real modx = option[ score::etable_lr ]();
+	// Real mody = lbx * 0.5;
+	// gen.add_known_value( modx, mody );
 	//}
 
 	InterpolatorOP interp( gen.get_interpolator() );
-	for( int i = start; i <= etable_disbins; ++i ) {
+	for ( int i = start; i <= etable_disbins; ++i ) {
 		interp->interpolate( dis(i), ljatr(i), dljatr(i) );
 	}
 
@@ -1011,7 +1011,7 @@ Etable::smooth_etables_one_pair(
 	/////////////////////////////////////////////////////////////////////////////
 	// 3) spline smooth solv1/solv2 at fa_max_dis cut && and first switchpoint
 	/////////////////////////////////////////////////////////////////////////////
- 	if ( atype1 == 1 && atype2 == 1 ) {
+	if ( atype1 == 1 && atype2 == 1 ) {
 		TR << "smooth_etable: spline smoothing solvation etables (max_dis = " << max_dis_ << ")" << std::endl;
 	}
 
@@ -1024,10 +1024,10 @@ Etable::smooth_etables_one_pair(
 	fasol_cubic_poly_far_xhi_ = dis( E2 );
 
 	int SWTCH = 1;
-	for( SWTCH=1; SWTCH <= etable_disbins; ++SWTCH) {
+	for ( SWTCH=1; SWTCH <= etable_disbins; ++SWTCH ) {
 		// std::cerr << SWTCH << "," << at1 << "," << at2 << "," << solv1_(SWTCH,at1,at2) << " ";
-		if( (fasol1(SWTCH) != fasol1(1)) ||
-			(fasol2(SWTCH) != fasol2(1)) ) {
+		if ( (fasol1(SWTCH) != fasol1(1)) ||
+				(fasol2(SWTCH) != fasol2(1)) ) {
 			break;
 		}
 	}
@@ -1062,7 +1062,7 @@ Etable::smooth_etables_one_pair(
 
 	InterpolatorOP interp11( gen11.get_interpolator() );
 	InterpolatorOP interp21( gen21.get_interpolator() );
-	for( int i = S1; i <= E1; ++i ) {
+	for ( int i = S1; i <= E1; ++i ) {
 		Real d1,d2;
 		interp11->interpolate( dis(i), fasol1(i), d1 );
 		interp21->interpolate( dis(i), fasol2(i), d2 );
@@ -1072,7 +1072,7 @@ Etable::smooth_etables_one_pair(
 
 	InterpolatorOP interp12( gen12.get_interpolator() );
 	InterpolatorOP interp22( gen22.get_interpolator() );
-	for( int i = S2; i <= E2; ++i ) {
+	for ( int i = S2; i <= E2; ++i ) {
 		Real d1,d2;
 		interp12->interpolate( dis(i), fasol1(i), d1 );
 		interp22->interpolate( dis(i), fasol2(i), d2 );
@@ -1268,11 +1268,11 @@ Etable::output_etable(
 	using namespace ObjexxFCL;
 
 	out << label << " " << etable_disbins << endl;
-	for(int at1 = 1; at1 <= n_atomtypes_; at1++) {
-		for(int at2 = 1; at2 <= n_atomtypes_; at2++) {
+	for ( int at1 = 1; at1 <= n_atomtypes_; at1++ ) {
+		for ( int at2 = 1; at2 <= n_atomtypes_; at2++ ) {
 			out << at1 << " "
-					<< at2 << " ";
-			for(int bin = 1; bin <= etable_disbins; bin++) {
+				<< at2 << " ";
+			for ( int bin = 1; bin <= etable_disbins; bin++ ) {
 				float evalue = etable(bin,at1,at2);
 				out << evalue << ' ';
 			}
@@ -1321,34 +1321,34 @@ Etable::input_etable(
 	// check header
 	in.getline(buf,100000);
 	intmp.str(buf);
-	if( !(intmp >> lblin >> numdisbin) ) {
+	if ( !(intmp >> lblin >> numdisbin) ) {
 		TR << "input_etable: WARNING bad etable header " << buf << endl;
 		return;
 	}
-	if( lblin != label || etable_disbins != numdisbin ) {
+	if ( lblin != label || etable_disbins != numdisbin ) {
 		TR << "input_etable: WARNING etable types don't match! "<< endl;
 		TR << "              expected " << label << "," << etable_disbins
-			 << " got " << lblin << ',' << numdisbin<< endl;
+			<< " got " << lblin << ',' << numdisbin<< endl;
 		utility_exit_with_message( "input_etable: WARNING etable types don't match! " );
 	} else {
 		TR << "input_etable expected etable " << label << " of size " << etable_disbins
-				 << ", got " << lblin << ',' << numdisbin<< endl;
+			<< ", got " << lblin << ',' << numdisbin<< endl;
 
 	}
 
 	// read in etable
 	int at1,at2,count=0,scount=0;
 	float evalue;
-	while( in.getline(buf,100000) ) {
+	while ( in.getline(buf,100000) ) {
 		//TR << "ASDFF buf  " << buf << endl;
 		count++;
 		intmp.clear();
 		intmp.str(buf);
-		if( ! (intmp >> at1 >> at2 ) ) {
+		if ( ! (intmp >> at1 >> at2 ) ) {
 			TR << "input_etable: error reading etable line: " << buf << endl;
 		} else {
-			for(int bin = 1; bin <=numdisbin; bin++) {
-				if( !(intmp >> evalue) ) {
+			for ( int bin = 1; bin <=numdisbin; bin++ ) {
+				if ( !(intmp >> evalue) ) {
 					TR << "input_etable: not enough bins on etable line: " << buf << endl;
 					utility_exit_with_message( "input_etable: not enough bins on etable line: " );
 				}
@@ -1408,10 +1408,10 @@ Etable::precalc_etable_coefficients(
 )
 {
 
-// 	using namespace etable;
-// 	using namespace param;
-// 	using namespace water;
-//   using namespace hbonds;
+	//  using namespace etable;
+	//  using namespace param;
+	//  using namespace water;
+	//   using namespace hbonds;
 
 	// locals
 	Real sigma,sigma6,sigma12,wdepth;
@@ -1438,7 +1438,7 @@ Etable::precalc_etable_coefficients(
 
 			sigma = Wradius * ( lj_radius(i) + lj_radius(j) );
 			//sigma = Wradius * ( atom_type(i).lj_radius() + atom_type(j).lj_radius() );
-//jjh temporary fix to prevent division by zero below
+			//jjh temporary fix to prevent division by zero below
 			sigma = ( sigma < 1.0e-9 ? 1.0e-9 : sigma );
 
 			// (bk) modify sigma for hbond donors and acceptors
@@ -1452,42 +1452,42 @@ Etable::precalc_etable_coefficients(
 
 			if ( lj_use_hbond_radii ) {
 				if ( ( atom_type(i).is_acceptor() && atom_type(j).is_donor() ) ||
-						 ( atom_type(i).is_donor() && atom_type(j).is_acceptor() ) ) {
+						( atom_type(i).is_donor() && atom_type(j).is_acceptor() ) ) {
 					// fpd this is bad ... can this be a property instead?
 					if ( ( atom_type(j).is_donor() && atom_type(j).name().substr(0,2) == "OH" ) ||
-					     ( atom_type(i).is_donor() && atom_type(i).name().substr(0,2) == "OH" ) ||
-							 ( atom_type(j).is_donor() && atom_type(j).name() == "Oet3" ) || // "Oet3" is ester atom (used for nucleic acid O4', used to be "OH")
-					     ( atom_type(i).is_donor() && atom_type(i).name() == "Oet3" ) ) {
+							( atom_type(i).is_donor() && atom_type(i).name().substr(0,2) == "OH" ) ||
+							( atom_type(j).is_donor() && atom_type(j).name() == "Oet3" ) || // "Oet3" is ester atom (used for nucleic acid O4', used to be "OH")
+							( atom_type(i).is_donor() && atom_type(i).name() == "Oet3" ) ) {
 						sigma = lj_hbond_OH_donor_dis;
 					} else {
 						sigma = lj_hbond_dis;
-//           if (tight_hb && ((i == 15 && j == 13) || (j == 15  && i == 13)))
-// 						sigma = lj_hbond_accOch_dis;
+						//           if (tight_hb && ((i == 15 && j == 13) || (j == 15  && i == 13)))
+						//       sigma = lj_hbond_accOch_dis;
 					}
 				} else if ( ( atom_type(i).is_acceptor() && atom_type(j).is_polar_hydrogen() ) ||
-										( atom_type(i).is_polar_hydrogen() && atom_type(j).is_acceptor() ) ) {
+						( atom_type(i).is_polar_hydrogen() && atom_type(j).is_acceptor() ) ) {
 					sigma = lj_hbond_hdis;
 				} else if ( ( atom_type(i).is_acceptor() && atom_type(j).name() == "MG2p" ) ||
-										( atom_type(i).name() == "MG2p" && atom_type(j).is_acceptor() ) ) {
+						( atom_type(i).name() == "MG2p" && atom_type(j).is_acceptor() ) ) {
 					sigma = lj_hbond_hdis;
-//           if (tight_hb && ((i == 15 && j == 22) || (j == 15 && i == 22)))
-// 						sigma = lj_hbond_accOch_hdis;
+					//           if (tight_hb && ((i == 15 && j == 22) || (j == 15 && i == 22)))
+					//       sigma = lj_hbond_accOch_hdis;
 				}
 			}
 
-//lin   modify sigma for water and hbond donors/acceptors
+			//lin   modify sigma for water and hbond donors/acceptors
 			if ( lj_use_water_radii ) {
 				if ( ( ( atom_type(i).is_acceptor() ||
-								 atom_type(i).is_donor() ) &&
-							 atom_type(j).is_h2o() ) ||
-						 ( ( atom_type(j).is_acceptor() ||
-								 atom_type(j).is_donor() ) &&
-							 atom_type(i).is_h2o() ) ) {
+						atom_type(i).is_donor() ) &&
+						atom_type(j).is_h2o() ) ||
+						( ( atom_type(j).is_acceptor() ||
+						atom_type(j).is_donor() ) &&
+						atom_type(i).is_h2o() ) ) {
 					sigma = lj_water_dis;
 				} else if ( ( atom_type(i).is_polar_hydrogen() &&
-											atom_type(j).is_h2o() ) ||
-										( atom_type(j).is_polar_hydrogen() &&
-											atom_type(i).is_h2o() ) ) {
+						atom_type(j).is_h2o() ) ||
+						( atom_type(j).is_polar_hydrogen() &&
+						atom_type(i).is_h2o() ) ) {
 					sigma = lj_water_hdis;
 				}
 			}
@@ -1517,13 +1517,13 @@ Etable::precalc_etable_coefficients(
 				//  slope = wdepth/sigma *
 				//          (slope@switch_point*sigma/wdepth)
 				lj_switch_slope(i,j) = (wdepth/sigma)*
-				 lj_switch_slope_sigma2wdepth;
+					lj_switch_slope_sigma2wdepth;
 				lj_switch_slope(j,i) = lj_switch_slope(i,j);
 
 				// intercept = wdepth*(lj@switch_point/wdepth)
 				//             - slope*switch_point_distance
 				lj_switch_intercept(i,j) = wdepth*lj_switch_value2wdepth -
-				 lj_switch_slope(i,j)*sigma*lj_switch_dis2sigma;
+					lj_switch_slope(i,j)*sigma*lj_switch_dis2sigma;
 				lj_switch_intercept(j,i) = lj_switch_intercept(i,j);
 			} else {
 
@@ -1531,7 +1531,7 @@ Etable::precalc_etable_coefficients(
 				//  is defined by a constant y intercept and the true lj repulsive
 				//  value at the linear switch point
 				lj_switch_slope(i,j) = -(1./sigma)*lj_switch_sigma2dis*
-				 (lj_slope_intercept-wdepth*lj_switch_value2wdepth);
+					(lj_slope_intercept-wdepth*lj_switch_value2wdepth);
 				lj_switch_slope(j,i) = lj_switch_slope(i,j);
 
 				lj_switch_intercept(i,j) = lj_slope_intercept;
@@ -1554,13 +1554,13 @@ Etable::precalc_etable_coefficients(
 			//Real dis_rad = thresh_dis - atom_type(i).lj_radius();
 			x_thresh = ( dis_rad * dis_rad ) * lk_inv_lambda2(i);
 			lk_min_dis2sigma_value(i,j) = std::exp(-x_thresh) * lk_coeff(i,j) *
-			 inv_thresh_dis2;
+				inv_thresh_dis2;
 
 			dis_rad = thresh_dis - lj_radius(j);
 			//dis_rad = thresh_dis - atom_type(j).lj_radius();
 			x_thresh = ( dis_rad * dis_rad ) * lk_inv_lambda2(j);
 			lk_min_dis2sigma_value(j,i) = std::exp(-x_thresh) * lk_coeff(j,i) *
-			 inv_thresh_dis2;
+				inv_thresh_dis2;
 
 		}
 	}
@@ -1636,9 +1636,9 @@ Etable::calc_etable_value(
 	Real & dsolvE2
 ) const
 {
-// 	using namespace etable;
-// 	using namespace param;
-// 	using namespace pdbstatistics_pack;
+	//  using namespace etable;
+	//  using namespace param;
+	//  using namespace pdbstatistics_pack;
 
 	// locals
 	Real ljE,d_ljE;
@@ -1681,10 +1681,10 @@ Etable::calc_etable_value(
 		inv_dis13 = inv_dis12 * inv_dis;
 
 		ljE = lj_r12_coeff_(atype1,atype2) * inv_dis12 +
-		 lj_r6_coeff_(atype1,atype2) * inv_dis6;
+			lj_r6_coeff_(atype1,atype2) * inv_dis6;
 
 		d_ljE = -12.*lj_r12_coeff_(atype1,atype2) * inv_dis13-6. *
-		 lj_r6_coeff_(atype1,atype2) * inv_dis7;
+			lj_r6_coeff_(atype1,atype2) * inv_dis7;
 	}
 
 	if ( ljE < 0. ) {
@@ -1735,10 +1735,10 @@ Etable::lk_solv_energy_and_deriv(
 
 	// ctsa - get d(lk_E)/dr
 	dsolvE1 = -2.0 * solvE1 *
-	 (((dis-lj_radius(atype1))*lk_inv_lambda2_(atype1))+inv_dis);
+		(((dis-lj_radius(atype1))*lk_inv_lambda2_(atype1))+inv_dis);
 	//(((dis-atom_type(atype1).lj_radius())*lk_inv_lambda2(atype1))+inv_dis);
 	dsolvE2 = -2.0 * solvE2 *
-	 (((dis-lj_radius(atype2))*lk_inv_lambda2_(atype2))+inv_dis);
+		(((dis-lj_radius(atype2))*lk_inv_lambda2_(atype2))+inv_dis);
 	//(((dis-atom_type(atype2).lj_radius())*lk_inv_lambda2(atype2))+inv_dis);
 }
 
@@ -1771,7 +1771,7 @@ Etable::zero_hydrogen_and_water_ljatr_one_pair(
 		// cbk  this is so very short range cut-offs can be used
 
 		Size first_zero_ljrep = 0;
-		for( int i = 1; i <= etable_disbins; ++i ) {
+		for ( int i = 1; i <= etable_disbins; ++i ) {
 			ljatr(i) = 0.0;
 			dljatr(i) = 0.0;
 			fasol1(i) = fasol2(i) = dfasol(i) = dfasol1(i) = 0.0; // APL TEMP.  Disable solvation term for hydrogen atoms

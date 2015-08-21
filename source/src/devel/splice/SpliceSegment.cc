@@ -51,7 +51,7 @@ SpliceSegment::read_many( string const Protein_family_path , string const segmen
 	using namespace basic::options::OptionKeys;
 
 	std::string fname;
-	for(size_t i = 1, i_end = option[ in::path::database ]().size(); i <= i_end; ++i) {
+	for ( size_t i = 1, i_end = option[ in::path::database ]().size(); i <= i_end; ++i ) {
 		fname = option[ in::path::database ](i).name();
 		//TR<<"Trying to open folder:"<<fname<<std::endl;
 	}
@@ -63,41 +63,38 @@ SpliceSegment::read_many( string const Protein_family_path , string const segmen
 
 	DIR *dir;
 	const char * c =target_path.c_str();
-	if ((dir = opendir (c))!= NULL) {
+	if ( (dir = opendir (c))!= NULL ) {
 		struct dirent *ent;
-		while ((ent = readdir (dir)) != NULL) {
+		while ( (ent = readdir (dir)) != NULL ) {
 			//TR<<"Loading PSSM from file "<<target_path+ent->d_name<<std::endl;
 			utility::io::izstream data( target_path+ent->d_name);
-			if ( !data )
+			if ( !data ) {
 				continue;
+			}
 			/*get segment name from file name*/
 			string segment_name(target_path+ent->d_name);
 			// Remove directory if present.
 			// Do this before extension removal incase directory has a period character.
 			const size_t last_slash_idx = segment_name.find_last_of("\\/");
-			if (std::string::npos != last_slash_idx)
-			{
+			if ( std::string::npos != last_slash_idx ) {
 				segment_name.erase(0, last_slash_idx + 1);
 			}
 
 			// Remove extension if present.
 			const size_t period_idx = segment_name.rfind('.');
-			if (std::string::npos != period_idx){
+			if ( std::string::npos != period_idx ) {
 				segment_name.erase(period_idx);
-			}
-			else{
+			} else {
 				continue;
 			}
-			//	TR<<"segment name:"<<segment_name<<std::endl;
-			if ((segment_name.compare("") == 0)||(segment_name.compare(".") == 0)){//hack to avoid trying to read . or.. when looking into directory
+			// TR<<"segment name:"<<segment_name<<std::endl;
+			if ( (segment_name.compare("") == 0)||(segment_name.compare(".") == 0) ) { //hack to avoid trying to read . or.. when looking into directory
 				continue;
 			}
 			read_profile(target_path+ent->d_name,segment_name);
 		}
 		closedir (dir);
-	}
-
-	else {
+	} else {
 		/* could not open directory */
 		utility_exit_with_message( "Directory path" + target_path+"was not found" );
 
@@ -148,7 +145,7 @@ concatenate_profiles( utility::vector1< SequenceProfileOP > const profiles, util
 	//TR<<"H3 seq "<<H3_seq<<std::endl;
 	SequenceProfileOP H3_profile( new SequenceProfile );
 	//TR<<"sequence of H3:"<<H3_seq<<std::endl;
-	if (H3_seq!=""){
+	if ( H3_seq!="" ) {
 		core::sequence::Sequence H3seq;
 		H3seq.sequence(H3_seq);
 		H3_profile->generate_from_sequence(H3seq);
@@ -156,17 +153,17 @@ concatenate_profiles( utility::vector1< SequenceProfileOP > const profiles, util
 	}
 
 
-	BOOST_FOREACH( SequenceProfileOP const prof, profiles ){
+	BOOST_FOREACH ( SequenceProfileOP const prof, profiles ) {
 		TR<<"now adding profile of segment "<< segment_names_ordered[ current_segment_name]<<std::endl;
 		//find H3 seq and constract a new PSSM from given seqeunce
 		bool first_pass=true;
-		for( core::Size pos = 1; pos <= prof->size(); ++pos ){
+		for ( core::Size pos = 1; pos <= prof->size(); ++pos ) {
 			current_profile_size++;
-			if (segment_names_ordered[ current_segment_name]=="H3" && pos>3 && first_pass){
-				for( core::Size H3_pos = 1; H3_pos <= H3_profile->size(); ++H3_pos ){
+			if ( segment_names_ordered[ current_segment_name]=="H3" && pos>3 && first_pass ) {
+				for ( core::Size H3_pos = 1; H3_pos <= H3_profile->size(); ++H3_pos ) {
 					concatenated_profile->prof_row( H3_profile->prof_row( H3_pos ), current_profile_size );
 					TR<<"Res: "<<current_profile_size<<",prof:"<<H3_profile->prof_row(H3_pos)<<std::endl;
-					if (basic::options::option[ basic::options::OptionKeys::out::file::use_occurrence_data ].value()){
+					if ( basic::options::option[ basic::options::OptionKeys::out::file::use_occurrence_data ].value() ) {
 						//this option is by default false. If set to true then we read the propensity matrix alongside the pssm matrix. T
 						utility::vector1< core::Real > occurence_row (20,0); //H3 lopps apexes do not have occurence data, so I just insert a vector of 0's, gideonla 16/08/14
 						concatenated_profile->probabilty_row(occurence_row, current_profile_size );
@@ -177,7 +174,7 @@ concatenate_profiles( utility::vector1< SequenceProfileOP > const profiles, util
 			}
 			TR<<"Res: "<<current_profile_size<<",prof:"<<prof->prof_row(pos)<<std::endl;
 			concatenated_profile->prof_row( prof->prof_row( pos ), current_profile_size );
-			if (basic::options::option[ basic::options::OptionKeys::out::file::use_occurrence_data ].value()){
+			if ( basic::options::option[ basic::options::OptionKeys::out::file::use_occurrence_data ].value() ) {
 				//this option is by default false. If set to true then we read the propensity matrix alongside the pssm matrix. T
 				concatenated_profile->probabilty_row( prof->probability_row( pos ), current_profile_size );
 			}
@@ -193,13 +190,14 @@ concatenate_profiles( utility::vector1< SequenceProfileOP > const profiles, util
 void
 SpliceSegment::read_pdb_profile( std::string const file_name ){
 	utility::io::izstream data( file_name );
-	if ( !data )
+	if ( !data ) {
 		utility_exit_with_message( "File not found " + file_name );
+	}
 	//TR<<"Loading pdb profile pairs from file "<<file_name<<std::endl;
 	string line;
-	while (getline( data, line )){
+	while ( getline( data, line ) ) {
 		istringstream line_stream( line );
-		while( !line_stream.eof() ){
+		while ( !line_stream.eof() ) {
 			std::string pdb, profile;
 			line_stream >> pdb >> profile;
 			pdb_to_profile_map_.insert( pair< string, string >( pdb, profile ) );
@@ -218,7 +216,7 @@ SpliceSegment::all_pdb_profile( string const Protein_family_path, string const s
 	using namespace basic::options::OptionKeys;
 
 	std::string path_to_db;
-	for(size_t i = 1, i_end = option[ in::path::database ]().size(); i <= i_end; ++i) {
+	for ( size_t i = 1, i_end = option[ in::path::database ]().size(); i <= i_end; ++i ) {
 		path_to_db = option[ in::path::database ](i).name();
 		//TR<<"Trying to open folder:"<<fname<<std::endl;
 	}
@@ -230,17 +228,18 @@ SpliceSegment::all_pdb_profile( string const Protein_family_path, string const s
 
 	DIR *dir;
 	const char * c =target_path.c_str();
-	if ((dir = opendir (c))!= NULL) {
+	if ( (dir = opendir (c))!= NULL ) {
 		string fileName(target_path+"pdb_profile_match."+segment);
 		utility::io::izstream data( fileName );
-		if ( !data )
+		if ( !data ) {
 			utility_exit_with_message( "File not found " + fileName );
+		}
 		std::string line;
 		// commenting out with gideon's permission -- producing silly changes in integration tests due to path differences.
 		// TR<<"Loading pdb profile pairs from file "<<fileName<<std::endl;
-		while (getline( data, line )){
+		while ( getline( data, line ) ) {
 			istringstream line_stream( line );
-			while( !line_stream.eof() ){
+			while ( !line_stream.eof() ) {
 				std::string pdb, profile;
 				line_stream >> pdb >> profile;
 				pdb_to_profile_map_.insert( pair< string, string >( pdb, profile ) );
@@ -264,19 +263,19 @@ read_H3_seq( std::string const & Protein_family_path){
 	std::map< std::string, std::string>pdb_to_H3_seq_map_;
 	pdb_to_H3_seq_map_.clear();
 	std::string path_to_db;
-	for(size_t i = 1, i_end = option[ in::path::database ]().size(); i <= i_end; ++i) {
+	for ( size_t i = 1, i_end = option[ in::path::database ]().size(); i <= i_end; ++i ) {
 		path_to_db = option[ in::path::database ](i).name();
 	}
 	const std::string H3_seq_file = (path_to_db+Protein_family_path+"pssm/H3/H3_seq");
 	utility::io::izstream data( H3_seq_file );
-	if ( !data ){
+	if ( !data ) {
 		TR<<"!!Can't open H3 seq file: "<<H3_seq_file<<". This is probably an error. Using PSSM files instead!!"<<std::endl;
 		return pdb_to_H3_seq_map_;//if file not found then return empty map.
 	}
 	std::string line;
-	while (getline( data, line )){
+	while ( getline( data, line ) ) {
 		istringstream line_stream( line );
-		while( !line_stream.eof() ){
+		while ( !line_stream.eof() ) {
 			std::string pdb, seq;
 			line_stream >> pdb >> seq;
 			pdb_to_H3_seq_map_.insert( pair< string, string >( pdb, seq ) );

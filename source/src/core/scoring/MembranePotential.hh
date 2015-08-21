@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/scoring/MembranePotential.hh
+/// @file  core/scoring/MembranePotential.hh
 ///
-/// @brief		Membrane Potential - Base Scoring Methods for LowRes Energy Function
-/// @details	Compute Low Res membrane energy terms: Menv, MPair, MCBeta and Membrane
-///				penalties. Also contains pass-through methods for accessing and updating
-///				mp framework supported data in a membrane conformation.
-///				Last Modified: 3/11/14
+/// @brief  Membrane Potential - Base Scoring Methods for LowRes Energy Function
+/// @details Compute Low Res membrane energy terms: Menv, MPair, MCBeta and Membrane
+///    penalties. Also contains pass-through methods for accessing and updating
+///    mp framework supported data in a membrane conformation.
+///    Last Modified: 3/11/14
 ///
-///	@author		Rebecca Faye Alford (rfalford12@gmail.com)
-/// @author		Julia Koehler Leman (julia.koehler1982@gmail.com)
-/// @author		Bjorn Wallner (Original)
+/// @author  Rebecca Faye Alford (rfalford12@gmail.com)
+/// @author  Julia Koehler Leman (julia.koehler1982@gmail.com)
+/// @author  Bjorn Wallner (Original)
 
 #ifndef INCLUDED_core_scoring_MembranePotential_hh
 #define INCLUDED_core_scoring_MembranePotential_hh
@@ -49,9 +49,9 @@ namespace scoring {
 
 /// @brief   Whole Pose Membrane Embedding
 /// @details Define the embedding of the membrane pose based on computed
-///			 normal and center parameters. These are initialzed in the membrane protein
-///			 framework and then recomputed based upon the structured and stored in MP residues
-///			 (see MP Framework code)
+///    normal and center parameters. These are initialzed in the membrane protein
+///    framework and then recomputed based upon the structured and stored in MP residues
+///    (see MP Framework code)
 class MembraneEmbed : public basic::datacache::CacheableData {
 
 public:
@@ -129,8 +129,8 @@ private: // data
 
 /// @brief   Rosetta Membrane Low Resolution Scoring Methods
 /// @details Compute scoring terms part of the Membrane Low resolution energy function. Developed
-///			 by Vladmir Yarov-Yaravoy et al. 2006. Includes Menv, MPair, MCBeta, and membrane
-///			 alpha helical specific penalties. Framework tied.
+///    by Vladmir Yarov-Yaravoy et al. 2006. Includes Menv, MPair, MCBeta, and membrane
+///    alpha helical specific penalties. Framework tied.
 class MembranePotential : public EnvPairPotential {
 
 public:
@@ -239,43 +239,43 @@ private:
 
 	/// @brief Score normal and center with environment score
 	void score_normal_center(
-							 pose::Pose const & pose,
-							 Vector const & normal,
-							 Vector const & center,
-							 Real & score
-							 ) const;
+		pose::Pose const & pose,
+		Vector const & normal,
+		Vector const & center,
+		Real & score
+	) const;
 
 	/// @brief Helper function to determine normal vector
 	void search_memb_normal(
-							Vector & n,
-							Real const & alpha,
-							Real const & theta
-							) const;
+		Vector & n,
+		Real const & alpha,
+		Real const & theta
+	) const;
 
 	/// @brief Helper function to determine membrane center
 	void search_memb_center(
-							Vector & c,
-							Vector & n,
-							Real const & delta) const; //vmyy
+		Vector & c,
+		Vector & n,
+		Real const & delta) const; //vmyy
 
 	/// @brief Randomnly Rotate Vector
 	void rot_perturb_vector(
-							Vector & v,
-							Real const & std_dev
-							) const;
+		Vector & v,
+		Real const & std_dev
+	) const;
 
 	/// @brief Randomnly Translate Vector
 	void rigid_perturb_vector(
-							  Vector & v,
-							  Real const & std_dev
-							  ) const;
+		Vector & v,
+		Real const & std_dev
+	) const;
 
 	/// @brief Check Spanning ( should use new adapted check spanning in metrics or geom)
 	bool check_spanning(
-						pose::Pose const & pose,
-						Vector const & normal,
-						Vector const & center
-						) const;
+		pose::Pose const & pose,
+		Vector const & normal,
+		Vector const & center
+	) const;
 
 private: // data
 

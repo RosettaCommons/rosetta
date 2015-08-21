@@ -128,17 +128,17 @@ MetropolisHastingsMover::MetropolisHastingsMover(
 	job_outputter_(metropolis_hastings_mover.job_outputter_),
 	checkpoint_count_(metropolis_hastings_mover.checkpoint_count_)
 {
-	for (core::Size i = 1; i <= metropolis_hastings_mover.movers_.size(); ++i) {
+	for ( core::Size i = 1; i <= metropolis_hastings_mover.movers_.size(); ++i ) {
 		movers_.push_back(utility::pointer::dynamic_pointer_cast<ThermodynamicMover>(metropolis_hastings_mover.movers_[i]));
 	}
 
-	for (core::Size i = 1; i <= metropolis_hastings_mover.observers_.size(); ++i) {
+	for ( core::Size i = 1; i <= metropolis_hastings_mover.observers_.size(); ++i ) {
 		observers_.push_back(utility::pointer::dynamic_pointer_cast<ThermodynamicObserver>(metropolis_hastings_mover.observers_[i]));
 	}
 
-	if (metropolis_hastings_mover.tempering_) {
+	if ( metropolis_hastings_mover.tempering_ ) {
 		tempering_ = utility::pointer::dynamic_pointer_cast<TemperatureController>(metropolis_hastings_mover.tempering_);
-		if (monte_carlo_) tempering_->set_monte_carlo(monte_carlo_);
+		if ( monte_carlo_ ) tempering_->set_monte_carlo(monte_carlo_);
 	}
 
 }
@@ -152,7 +152,7 @@ MetropolisHastingsMover::~MetropolisHastingsMover(){}
 /// commented out right now.
 core::Size
 MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
-	if (output_name() == "") {
+	if ( output_name() == "" ) {
 		set_output_name(protocols::jd2::JobDistributor::get_instance()->current_output_name());
 		tr.Info  << " obtained output name from JobDistributor " << std::endl;
 		output_name_from_job_distributor_ = true;
@@ -171,14 +171,14 @@ MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
 	core::Size cycle_number = 0;
 	Size temp_level = 0;
 	Real temperature = -1.0;
-// 	for (core::Size i = 1; i <= observers_.size() && !restart; ++i) {
-// 		tr.Info<< "Attempting restart using " << observers_[i]->get_name() << std::endl;
-// 		restart = observers_[i]->restart_simulation(pose, *this, cycle_number, temp_level, temperature );
-// 		if ( restart ) tr.Info<< "Restarted using " << observers_[i]->get_name() << std::endl;
-// 	}
+	//  for (core::Size i = 1; i <= observers_.size() && !restart; ++i) {
+	//   tr.Info<< "Attempting restart using " << observers_[i]->get_name() << std::endl;
+	//   restart = observers_[i]->restart_simulation(pose, *this, cycle_number, temp_level, temperature );
+	//   if ( restart ) tr.Info<< "Restarted using " << observers_[i]->get_name() << std::endl;
+	//  }
 
 	if ( get_checkpoints() ) {
-		for (core::Size i = 1; i <= observers_.size() && !restart; ++i) {
+		for ( core::Size i = 1; i <= observers_.size() && !restart; ++i ) {
 			if ( utility::pointer::dynamic_pointer_cast< TrajectoryRecorder >( observers_[i] ) ) { // first get the silent struct and cycle info
 				tr.Info<< "Attempting restart using " << observers_[i]->get_name() << std::endl;
 				restart = observers_[i]->restart_simulation(pose, *this, cycle_number, temp_level, temperature );
@@ -186,7 +186,7 @@ MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
 			}
 		}
 
-		for (core::Size i = 1; i <= observers_.size() && restart; ++i) { // if restart-able from silent trajectory file, collect BiasEnergy info
+		for ( core::Size i = 1; i <= observers_.size() && restart; ++i ) { // if restart-able from silent trajectory file, collect BiasEnergy info
 			BiasEnergyOP bias_energy( utility::pointer::dynamic_pointer_cast< BiasEnergy >( observers_[i] ));
 			if ( bias_energy ) {
 				tr.Debug << "bias energy used " << std::endl;
@@ -207,7 +207,7 @@ MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
 		tempering_->initialize_simulation(pose, *this, temp_level, temperature, cycle_number );
 	}
 
-	for (core::Size i = 1; i <= movers_.size(); ++i) {
+	for ( core::Size i = 1; i <= movers_.size(); ++i ) {
 		tr.Info << "Initializing " << movers_[i]->get_name() << std::endl;
 		movers_[i]->set_metropolis_hastings_mover(
 			MetropolisHastingsMoverAP( utility::pointer::static_pointer_cast< MetropolisHastingsMover >( get_self_ptr() ) )
@@ -219,7 +219,7 @@ MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
 	monte_carlo_->reset(pose);
 	monte_carlo_->reset_counters();
 
-	for (core::Size i = 1; i <= observers_.size(); ++i) {
+	for ( core::Size i = 1; i <= observers_.size(); ++i ) {
 		tr.Info << "Initializing " << observers_[i]->get_name() << std::endl;
 		observers_[i]->initialize_simulation(pose, *this, cycle_number);
 	}
@@ -242,17 +242,17 @@ MetropolisHastingsMover::apply( core::pose::Pose& pose ) {
 		ThermodynamicMoverOP mover(random_mover());
 		mover->apply(pose);
 		bool accepted = monte_carlo_->boltzmann(
-         pose,
-				 mover->type(),
-				 mover->last_proposal_density_ratio(),
-				 mover->last_inner_score_delta_over_temperature()
+			pose,
+			mover->type(),
+			mover->last_proposal_density_ratio(),
+			mover->last_inner_score_delta_over_temperature()
 		);
 		set_last_move( mover );
 		set_last_accepted( accepted );
 		tempering_->temperature_move( pose );
 		mover->observe_after_metropolis(*this);
 		tr.Trace << "current move accepted " << accepted <<std::endl;
-		for (core::Size i = 1; i <= observers_.size(); ++i) {
+		for ( core::Size i = 1; i <= observers_.size(); ++i ) {
 			observers_[i]->observe_after_metropolis(*this);
 		}
 		//currently used to write tempering stats every so often...
@@ -272,7 +272,7 @@ MetropolisHastingsMover::write_checkpoint( core::pose::Pose const & pose ) {
 	checkpoint_count_++;
 
 	std::ostringstream checkpoint_id;
-	//	checkpoint_id << jd2::current_output_filename(); // decoys.out
+	// checkpoint_id << jd2::current_output_filename(); // decoys.out
 	utility::file::FileName jd2_filename( jd2::current_output_filename() );
 	checkpoint_id << jd2_filename.base(); // decoys
 	checkpoint_id << "_" << jd2::current_output_name(); // protAB_0001
@@ -281,11 +281,11 @@ MetropolisHastingsMover::write_checkpoint( core::pose::Pose const & pose ) {
 
 	checkpoint_ids_.push_back( checkpoint_id.str() ); // decoys_protAB_0001_1_n
 	utility::io::ozstream out( checkpoint_id.str()+".out");
-	//	std::string const & checkpoint_id( jd2::current_output_name() + "_" + string_of( jd2::current_replica() ) + "_" + string_of( checkpoint_count_ ) ); // protAB_0001_3_N
-	//	utility::file::FileName jd2_filename( jd2::current_output_filename() );
-	//	checkpoint_ids_.push_back( jd2_filename.base()+"_"+checkpoint_id );
-	//	tr.Debug << "checkpoint_id: " << checkpoint_id << std::endl;  // "decoys_protAB_0001_3_n"
-	//	core::pose::Pose tmp_pose( pose );
+	// std::string const & checkpoint_id( jd2::current_output_name() + "_" + string_of( jd2::current_replica() ) + "_" + string_of( checkpoint_count_ ) ); // protAB_0001_3_N
+	// utility::file::FileName jd2_filename( jd2::current_output_filename() );
+	// checkpoint_ids_.push_back( jd2_filename.base()+"_"+checkpoint_id );
+	// tr.Debug << "checkpoint_id: " << checkpoint_id << std::endl;  // "decoys_protAB_0001_3_n"
+	// core::pose::Pose tmp_pose( pose );
 
 	core::io::silent::SilentStructOP pss( new core::io::silent::BinarySilentStruct() );
 	std::ostringstream tag;
@@ -299,12 +299,12 @@ MetropolisHastingsMover::write_checkpoint( core::pose::Pose const & pose ) {
 	if ( biased_mc ) { // if BiasedMonteCarlo, write out bias grid info
 		std::string str="";
 		biased_mc->bias_energy()->write_to_string( str );
-		//		core::pose::Pose tmp_pose( pose );
-		//		core::pose::add_comment( tmp_pose, "BIASENERGY", str );
+		//  core::pose::Pose tmp_pose( pose );
+		//  core::pose::add_comment( tmp_pose, "BIASENERGY", str );
 		pss->add_comment("BIASENERGY", str);
 	}
 	// write out snapshots for the replica, with joboutputter, the comment in pose will be not outputted
-	// 	job_outputter_->other_pose( jd2::get_current_job(), tmp_pose, checkpoint_id, current_trial_, false );
+	//  job_outputter_->other_pose( jd2::get_current_job(), tmp_pose, checkpoint_id, current_trial_, false );
 
 	protocols::jd2::add_job_data_to_ss( pss, jd2::get_current_job() );
 	pss->print_header( out );
@@ -312,11 +312,11 @@ MetropolisHastingsMover::write_checkpoint( core::pose::Pose const & pose ) {
 	pss->print_conformation( out );
 
 	Timer::reset();
-	//	tr.Debug << "have done writing checkpoint " << checkpoint_ids_.back() << std::endl;
+	// tr.Debug << "have done writing checkpoint " << checkpoint_ids_.back() << std::endl;
 
 	/// maintain 5 snapshots for each replica, delete the rest
 	if ( checkpoint_ids_.size() > 5 ) { ///keep 5 snapshots for each replica
-		//		tr.Debug << "deleting old checkpoints, only keep the last 5... " << std::endl;
+		//  tr.Debug << "deleting old checkpoints, only keep the last 5... " << std::endl;
 		utility::file::file_delete( checkpoint_ids_.front()+".out" );
 		checkpoint_ids_.erase( checkpoint_ids_.begin() ); ///each time delete one
 	}
@@ -397,19 +397,20 @@ MetropolisHastingsMover::get_checkpoints() {
 
 std::string
 MetropolisHastingsMover::get_last_checkpoint() const{
-	if ( checkpoint_ids_.size()==0 )
+	if ( checkpoint_ids_.size()==0 ) {
 		return "";
+	}
 	return checkpoint_ids_.back();
 }
 
 void
 MetropolisHastingsMover::wind_down_simulation( core::pose::Pose& pose) {
-	for (core::Size i = 1; i <= movers_.size(); ++i) {
+	for ( core::Size i = 1; i <= movers_.size(); ++i ) {
 		tr.Info << "Finalizing " << movers_[i]->get_name() << std::endl;
 		movers_[i]->finalize_simulation(pose, *this);
 	}
 
-	for (core::Size i = 1; i <= observers_.size(); ++i) {
+	for ( core::Size i = 1; i <= observers_.size(); ++i ) {
 		tr.Info << "Finalizing " << observers_[i]->get_name() << std::endl;
 		observers_[i]->finalize_simulation(pose, *this);
 	}
@@ -422,7 +423,7 @@ MetropolisHastingsMover::wind_down_simulation( core::pose::Pose& pose) {
 
 	monte_carlo_->show_counters();
 
-	if (output_name_from_job_distributor_) set_output_name("");
+	if ( output_name_from_job_distributor_ ) set_output_name("");
 }
 
 std::string
@@ -484,10 +485,10 @@ MetropolisHastingsMover::parse_my_tag(
 
 	//add movers and observers
 	utility::vector0< utility::tag::TagCOP > const subtags( tag->getTags() );
-	for( utility::vector0< utility::tag::TagCOP >::const_iterator subtag_it = subtags.begin(); subtag_it != subtags.end(); ++subtag_it ) {
+	for ( utility::vector0< utility::tag::TagCOP >::const_iterator subtag_it = subtags.begin(); subtag_it != subtags.end(); ++subtag_it ) {
 		TagCOP const subtag = *subtag_it;
 		protocols::moves::MoverOP mover;
-		if (subtag->getName() == "Add") { //add existing mover
+		if ( subtag->getName() == "Add" ) { //add existing mover
 			std::string mover_name = subtag->getOption<std::string>( "mover_name", "null" );
 			protocols::moves::Movers_map::const_iterator mover_iter( movers.find( mover_name ) );
 			if ( mover_iter == movers.end() ) {
@@ -507,7 +508,7 @@ MetropolisHastingsMover::parse_my_tag(
 		if ( th_mover ) { //its a mover
 			core::Real const weight( subtag->getOption< core::Real >( "sampling_weight", 1 ) );
 			add_mover( th_mover, weight, subtag );
-			// 			add_mover( th_mover, weight );
+			//    add_mover( th_mover, weight );
 		} else if ( th_observer ) { //its an observer
 			//it might also be a tempering module...
 			if ( temp_controller ) { // it is a temperature controller
@@ -582,16 +583,16 @@ MetropolisHastingsMover::output_file_name(
 	bool cumulate_replicas //= false
 ) const {
 
-	if (cumulate_jobs || cumulate_replicas) runtime_assert(utility::io::ozstream::MPI_reroute_rank() >= 0);
+	if ( cumulate_jobs || cumulate_replicas ) runtime_assert(utility::io::ozstream::MPI_reroute_rank() >= 0);
 
 	std::ostringstream file_name_stream;
 
-	if (!cumulate_jobs) {
+	if ( !cumulate_jobs ) {
 		file_name_stream << output_name_;
 	}
 
 	core::Size const replica( protocols::jd2::current_replica() );
-	if (!cumulate_replicas && replica) {
+	if ( !cumulate_replicas && replica ) {
 		if ( file_name_stream.str().length() ) file_name_stream << "_";
 		file_name_stream << std::setfill('0') << std::setw(3) << replica;
 	}
@@ -606,7 +607,7 @@ MetropolisHastingsMover::output_file_name(
 
 void
 MetropolisHastingsMover::set_last_move(
-  ThermodynamicMoverOP setting
+	ThermodynamicMoverOP setting
 ) {
 	last_move_ = setting;
 }
@@ -643,9 +644,9 @@ MetropolisHastingsMover::add_mover(
 /// add_mover().
 void
 MetropolisHastingsMover::add_mover(
-        ThermodynamicMoverOP mover,
-        core::Real weight,
-        utility::tag::TagCOP const&
+	ThermodynamicMoverOP mover,
+	core::Real weight,
+	utility::tag::TagCOP const&
 ) {
 	add_mover( mover, weight );
 }
@@ -655,7 +656,7 @@ MetropolisHastingsMover::add_backrub_mover(
 	core::Real weight
 )
 {
-	if (!weight) return;
+	if ( !weight ) return;
 
 	protocols::backrub::BackrubMoverOP backrub_mover( new protocols::backrub::BackrubMover );
 	backrub_mover->branchopt().read_database();
@@ -669,7 +670,7 @@ MetropolisHastingsMover::add_kic_mover(
 	protocols::loops::Loop const & loop
 )
 {
-	if (!weight) return;
+	if ( !weight ) return;
 
 	protocols::kinematic_closure::BalancedKicMoverOP kic_mover( new protocols::kinematic_closure::BalancedKicMover );
 	kic_mover->set_loop(loop);
@@ -682,7 +683,7 @@ MetropolisHastingsMover::add_small_mover(
 	core::Real weight
 )
 {
-	if (!weight) return;
+	if ( !weight ) return;
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -690,7 +691,7 @@ MetropolisHastingsMover::add_small_mover(
 	protocols::simple_moves::SmallMoverOP small_mover( new protocols::simple_moves::SmallMover );
 	small_mover->nmoves(1);
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
-	if (utility::file::file_exists(option[ in::file::movemap ])) {
+	if ( utility::file::file_exists(option[ in::file::movemap ]) ) {
 		movemap->init_from_file(option[ in::file::movemap ]);
 	} else {
 		movemap->set_bb(true);
@@ -705,7 +706,7 @@ MetropolisHastingsMover::add_shear_mover(
 	core::Real weight
 )
 {
-	if (!weight) return;
+	if ( !weight ) return;
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -713,7 +714,7 @@ MetropolisHastingsMover::add_shear_mover(
 	protocols::simple_moves::ShearMoverOP shear_mover( new protocols::simple_moves::ShearMover );
 	shear_mover->nmoves(1);
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
-	if (utility::file::file_exists(option[ in::file::movemap ])) {
+	if ( utility::file::file_exists(option[ in::file::movemap ]) ) {
 		movemap->init_from_file(option[ in::file::movemap ]);
 	} else {
 		movemap->set_bb(true);
@@ -731,7 +732,7 @@ MetropolisHastingsMover::add_sidechain_mover(
 	bool preserve_cbeta
 )
 {
-	if (!weight) return;
+	if ( !weight ) return;
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -744,7 +745,7 @@ MetropolisHastingsMover::add_sidechain_mover(
 	} else {
 		main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
 	}
-	if (preserve_cbeta) main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::PreserveCBeta ) );
+	if ( preserve_cbeta ) main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::PreserveCBeta ) );
 
 	protocols::simple_moves::sidechain_moves::SidechainMoverOP sidechain_mover( new protocols::simple_moves::sidechain_moves::SidechainMover );
 	sidechain_mover->set_task_factory(main_task_factory);
@@ -763,7 +764,7 @@ MetropolisHastingsMover::add_sidechain_mc_mover(
 	core::Size ntrials
 )
 {
-	if (!weight) return;
+	if ( !weight ) return;
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -776,7 +777,7 @@ MetropolisHastingsMover::add_sidechain_mc_mover(
 	} else {
 		main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
 	}
-	if (preserve_cbeta) main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::PreserveCBeta ) );
+	if ( preserve_cbeta ) main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::PreserveCBeta ) );
 
 	protocols::simple_moves::sidechain_moves::SidechainMCMoverOP sidechain_mc_mover( new protocols::simple_moves::sidechain_moves::SidechainMCMover );
 	sidechain_mc_mover->set_task_factory(main_task_factory);

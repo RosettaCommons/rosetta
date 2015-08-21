@@ -55,10 +55,10 @@ public:
 	virtual ConstraintOP clone() const {
 		return ConstraintOP( new DihedralConstraint(
 			atom1_, atom2_, atom3_, atom4_, func_, score_type()
-		) );
+			) );
 	}
 
-  Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1 ) const;
+	Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1 ) const;
 
 	void read_def(
 		std::istream & in,
@@ -74,7 +74,7 @@ public:
 	score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
 
 	Real
-	score( conformation::Conformation const & conformation 	) const;
+	score( conformation::Conformation const & conformation  ) const;
 
 	// atom deriv
 	void
@@ -124,16 +124,16 @@ public:
 		return *func_;
 	}
 
-  // Coppied Remapped_clone from AtomPairConstraint
-  /// @brief Copies the data from this Constraint into a new object and returns an OP
-  /// atoms are mapped to atoms with the same name in dest pose ( e.g. for switch from centroid to fullatom )
-  /// if a sequence_mapping is present it is used to map residue numbers .. NULL = identity mapping
-  /// to the new object. Intended to be implemented by derived classes.
-  virtual ConstraintOP remapped_clone(
-    pose::Pose const & src,
-    pose::Pose const & dest,
-    id::SequenceMappingCOP map = NULL
-  ) const;
+	// Coppied Remapped_clone from AtomPairConstraint
+	/// @brief Copies the data from this Constraint into a new object and returns an OP
+	/// atoms are mapped to atoms with the same name in dest pose ( e.g. for switch from centroid to fullatom )
+	/// if a sequence_mapping is present it is used to map residue numbers .. NULL = identity mapping
+	/// to the new object. Intended to be implemented by derived classes.
+	virtual ConstraintOP remapped_clone(
+		pose::Pose const & src,
+		pose::Pose const & dest,
+		id::SequenceMappingCOP map = NULL
+	) const;
 
 private:
 	Real

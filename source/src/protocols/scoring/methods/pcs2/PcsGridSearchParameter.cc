@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/PcsGridSearchParameter.cc
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/PcsGridSearchParameter.cc
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 
 // Unit Headers
@@ -193,7 +193,7 @@ operator << ( std::ostream& out, const PcsGridSearchParameter &me ){
 
 	out <<"filenames / individual_weights" << std::endl;
 	core::Size i;
-	for(i = 1; i <= me.filenames_.size(); ++i){
+	for ( i = 1; i <= me.filenames_.size(); ++i ) {
 		out <<"   "<< me.filenames_[i] << " " << me.individual_weights_[i]  << std::endl;
 	}
 
@@ -213,13 +213,13 @@ output_error_message(core::Size id){
 
 bool
 valide_include_only_stage(core::Size start, core::Size end){
-	if((start == 0) && (end == 0)){
+	if ( (start == 0) && (end == 0) ) {
 		return true;
 	}
-	if (start == 0 ){
+	if ( start == 0 ) {
 		return false;
 	}
-	if(start >= end){
+	if ( start >= end ) {
 		return false;
 	}
 	return true;
@@ -229,44 +229,44 @@ void
 PcsGridSearchParameter::control_grid_param(){
 
 	core::Size i;
-	if(
-		 (pcs_weight_stage1_ < 0)||
-		 (pcs_weight_stage2_ < 0)||
-		 (pcs_weight_stage3_ < 0)||
-		 (pcs_weight_stage4_ < 0)
-		 ){
+	if (
+			(pcs_weight_stage1_ < 0)||
+			(pcs_weight_stage2_ < 0)||
+			(pcs_weight_stage3_ < 0)||
+			(pcs_weight_stage4_ < 0)
+			) {
 		output_error_message(1);
 	}
-	if(valide_include_only_stage(include_only_start_stage1_, include_only_end_stage1_) == false){
+	if ( valide_include_only_stage(include_only_start_stage1_, include_only_end_stage1_) == false ) {
 		output_error_message(3);
 	}
-	if(valide_include_only_stage(include_only_start_stage2_, include_only_end_stage2_) == false){
+	if ( valide_include_only_stage(include_only_start_stage2_, include_only_end_stage2_) == false ) {
 		output_error_message(3);
 	}
-	if(valide_include_only_stage(include_only_start_stage3_, include_only_end_stage3_) == false){
+	if ( valide_include_only_stage(include_only_start_stage3_, include_only_end_stage3_) == false ) {
 		output_error_message(3);
 	}
-	if(valide_include_only_stage(include_only_start_stage4_, include_only_end_stage4_) == false){
+	if ( valide_include_only_stage(include_only_start_stage4_, include_only_end_stage4_) == false ) {
 		output_error_message(3);
 	}
-	if(
-		 (individual_scale_stage1_ < 0) ||
-		 (individual_scale_stage2_ < 0) ||
-		 (individual_scale_stage3_ < 0) ||
-		 (individual_scale_stage4_ < 0)
-		 ){
-		if(
-			 (individual_scale_stage1_ != -1.0) &&
-			 (individual_scale_stage2_ != -1.0) &&
-			 (individual_scale_stage3_ != -1.0) &&
-			 (individual_scale_stage4_ != -1.0)
-			 ){
+	if (
+			(individual_scale_stage1_ < 0) ||
+			(individual_scale_stage2_ < 0) ||
+			(individual_scale_stage3_ < 0) ||
+			(individual_scale_stage4_ < 0)
+			) {
+		if (
+				(individual_scale_stage1_ != -1.0) &&
+				(individual_scale_stage2_ != -1.0) &&
+				(individual_scale_stage3_ != -1.0) &&
+				(individual_scale_stage4_ != -1.0)
+				) {
 			output_error_message(4);
 		}
 	}
 
-	for(i = 1; i <= individual_weights_.size(); i++){
-		if(individual_weights_[i] < 0 ){
+	for ( i = 1; i <= individual_weights_.size(); i++ ) {
+		if ( individual_weights_[i] < 0 ) {
 			output_error_message(2);
 		}
 	}

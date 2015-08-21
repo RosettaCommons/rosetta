@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file core/scoring/rna/data/RNA_DMS_LowResolutionPotential.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -22,14 +22,14 @@ namespace core {
 namespace scoring {
 namespace rna {
 namespace data {
-	
-	class RNA_DMS_LowResolutionPotential;
-	typedef utility::pointer::shared_ptr< RNA_DMS_LowResolutionPotential > RNA_DMS_LowResolutionPotentialOP;
-	typedef utility::pointer::shared_ptr< RNA_DMS_LowResolutionPotential const > RNA_DMS_LowResolutionPotentialCOP;
-	
-} //data 
-} //rna 
-} //scoring 
-} //core 
+
+class RNA_DMS_LowResolutionPotential;
+typedef utility::pointer::shared_ptr< RNA_DMS_LowResolutionPotential > RNA_DMS_LowResolutionPotentialOP;
+typedef utility::pointer::shared_ptr< RNA_DMS_LowResolutionPotential const > RNA_DMS_LowResolutionPotentialCOP;
+
+} //data
+} //rna
+} //scoring
+} //core
 
 #endif

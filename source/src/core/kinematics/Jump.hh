@@ -41,7 +41,7 @@ static const utility::vector1<Real> ZERO( 6, 0.0 );
 /// See @ref atomtree_overview "AtomTree overview and concepts" for details.
 ///
 class Jump {
- public: // Types
+public: // Types
 	static const int TRANS_X = 1;
 	static const int TRANS_Y = 2;
 	static const int TRANS_Z = 3;
@@ -128,13 +128,13 @@ public:
 	/// Return the move that was applied
 	utility::vector1<Real> gaussian_move(int const dir, float const trans_mag, float const rot_mag);
 
-	 // @brief make a gaussian move with one selected rb dof
-  void
-  gaussian_move_single_rb(
-    int const dir,
-    float const mag,
-    int rb
-  );
+	// @brief make a gaussian move with one selected rb dof
+	void
+	gaussian_move_single_rb(
+		int const dir,
+		float const mag,
+		int rb
+	);
 
 	/// @brief make a rotation "matrix" about the center "center"
 	void
@@ -229,9 +229,9 @@ public:
 		Vector const & center
 	);
 
-  bool operator==( Jump const& ) const;
+	bool operator==( Jump const& ) const;
 
-  bool operator!=( Jump const& other ) const { return !operator==( other ); }
+	bool operator!=( Jump const& other ) const { return !operator==( other ); }
 
 	/// @brief stream output operator
 	friend std::ostream & operator <<( std::ostream & os, const Jump & jump );
@@ -251,7 +251,7 @@ private:
 	int
 	rb_index( int const dir ) const
 	{
-	debug_assert( dir == 1 || dir == -1 );
+		debug_assert( dir == 1 || dir == -1 );
 		return ( dir == 1 ? 1 : 2 );
 	}
 
@@ -266,16 +266,16 @@ private:
 	RT rt_;
 	/// changes to translation and rotation
 	/**
-			6x2 table, for each of the two folding directions, the first three are for translations
-			along xyz, and the next three are for rotatation around xyz axes.
+	6x2 table, for each of the two folding directions, the first three are for translations
+	along xyz, and the next three are for rotatation around xyz axes.
 	*/
 	utility::vector1< utility::vector1<Real> > rb_delta; // 6x2
 
 	/// the center around which the rotation is performed
 	/**
-		 3x2 table, for each of the two folding directions, the rotation center is written in the local frame
-		 of the downstream stub.
-	 */
+	3x2 table, for each of the two folding directions, the rotation center is written in the local frame
+	of the downstream stub.
+	*/
 	utility::vector1< Vector > rb_center; // 3x2
 
 }; // Jump
@@ -317,7 +317,7 @@ inline
 Real
 Jump::get_rb_delta( int const rb_no, int const dir ) const
 {
-debug_assert( dir == 1 || dir == -1 );
+	debug_assert( dir == 1 || dir == -1 );
 	return rb_delta[ rb_index( dir ) ][ rb_no ] ;
 }
 
@@ -327,7 +327,7 @@ inline
 Jump::Vector const &
 Jump::get_rb_center( int const dir ) const
 {
-debug_assert( dir == 1 || dir == -1 );
+	debug_assert( dir == 1 || dir == -1 );
 	return rb_center[ rb_index( dir ) ];
 }
 

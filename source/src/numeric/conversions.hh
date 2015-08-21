@@ -41,7 +41,7 @@ inline
 T
 radians( T const & angle, AngleUnit const unit )
 {
-	if (unit == DEGREES) {
+	if ( unit == DEGREES ) {
 		return angle * NumericTraits< T >::degrees_to_radians();
 	} else /* unit == RADIANS */ {
 		return angle;
@@ -65,7 +65,7 @@ inline
 T &
 to_radians( T & angle, AngleUnit const unit )
 {
-	if (unit == DEGREES) {
+	if ( unit == DEGREES ) {
 		return angle *= NumericTraits< T >::degrees_to_radians();
 	} else /* unit == RADIANS */ {
 		return angle;
@@ -89,7 +89,7 @@ inline
 T
 degrees( T const & angle, AngleUnit const unit )
 {
-	if (unit == RADIANS) {
+	if ( unit == RADIANS ) {
 		return angle * NumericTraits< T >::radians_to_degrees();
 	} else /* unit == DEGREES */ {
 		return angle;
@@ -113,7 +113,7 @@ inline
 T &
 to_degrees( T & angle, AngleUnit const unit )
 {
-	if (unit == RADIANS) {
+	if ( unit == RADIANS ) {
 		return angle *= NumericTraits< T >::radians_to_degrees();
 	} else /* unit == DEGREES */ {
 		return angle;
@@ -127,7 +127,7 @@ inline
 T
 from_radians( T const & angle, AngleUnit const unit )
 {
-	if (unit == DEGREES) {
+	if ( unit == DEGREES ) {
 		return angle * NumericTraits< T >::radians_to_degrees();
 	} else /* unit == RADIANS */ {
 		return angle;
@@ -141,7 +141,7 @@ inline
 T
 from_degrees( T const & angle, AngleUnit const unit )
 {
-	if (unit == RADIANS) {
+	if ( unit == RADIANS ) {
 		return angle * NumericTraits< T >::degrees_to_radians();
 	} else /* unit == DEGREES */ {
 		return angle;

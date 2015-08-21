@@ -51,7 +51,7 @@ public:
 	FibrilModelingClaimer( core::pose::Pose const& input_pose, loops::Loops rigid, loops::Loops input_rigid  );
 
 	void
-  make_fibril( core::pose::Pose & pose );
+	make_fibril( core::pose::Pose & pose );
 
 	//clone
 	virtual TopologyClaimerOP clone() const {
@@ -68,7 +68,7 @@ public:
 	}
 
 	virtual void add_mover(
-    moves::RandomMover& random_mover,
+		moves::RandomMover& random_mover,
 		core::pose::Pose const& pose,
 		abinitio::StageID stageID,
 		core::scoring::ScoreFunction const& scorefxn,
@@ -76,10 +76,10 @@ public:
 	);
 
 	virtual void initialize_dofs( core::pose::Pose&,
-																claims::DofClaims const& init_claims,
-																claims::DofClaims& /*failed_to_init*/ );
+		claims::DofClaims const& init_claims,
+		claims::DofClaims& /*failed_to_init*/ );
 
-  virtual void generate_claims( claims::DofClaims& new_claims );
+	virtual void generate_claims( claims::DofClaims& new_claims );
 
 	/// @brief has to decline foreign BB claims for slave regions
 	virtual bool allow_claim( claims::DofClaim const& /*foreign_claim*/ );
@@ -91,7 +91,7 @@ protected:
 private:
 
 	/// @brief monomer pose
-  core::pose::Pose input_pose_;
+	core::pose::Pose input_pose_;
 
 	/// @brief regions that can be used for rigid core
 	loops::Loops rigid_core_, input_rigid_core_;

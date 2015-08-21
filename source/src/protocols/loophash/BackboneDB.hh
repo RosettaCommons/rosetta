@@ -61,42 +61,42 @@ struct BBData {
 };
 
 class BackboneSegment {
-	public:
-		BackboneSegment(){}
+public:
+	BackboneSegment(){}
 
-		BackboneSegment(
-				const std::vector<core::Real> &phi,
-				const std::vector<core::Real> &psi,
-				const std::vector<core::Real> &omega
-				){
-			phi_ = phi;
-			psi_ = psi;
-			omega_ = omega;
-		}
+	BackboneSegment(
+		const std::vector<core::Real> &phi,
+		const std::vector<core::Real> &psi,
+		const std::vector<core::Real> &omega
+	){
+		phi_ = phi;
+		psi_ = psi;
+		omega_ = omega;
+	}
 
-		void apply_to_pose( core::pose::Pose &pose, core::Size ir, bool cut  = false ) const;
-		void read_from_pose( core::pose::Pose const &pose, core::Size ir, core::Size length );
+	void apply_to_pose( core::pose::Pose &pose, core::Size ir, bool cut  = false ) const;
+	void read_from_pose( core::pose::Pose const &pose, core::Size ir, core::Size length );
 
-		void print() const ;
+	void print() const ;
 
-		core::Size length() const { return  phi_.size(); }
-		const std::vector<core::Real> &phi()   const { return phi_; }
-		const std::vector<core::Real> &psi()   const { return psi_; }
-		const std::vector<core::Real> &omega() const { return omega_; }
-		
-		bool compare(const BackboneSegment &bs1, core::Real tolerance) const;
+	core::Size length() const { return  phi_.size(); }
+	const std::vector<core::Real> &phi()   const { return phi_; }
+	const std::vector<core::Real> &psi()   const { return psi_; }
+	const std::vector<core::Real> &omega() const { return omega_; }
 
-		bool operator==( const BackboneSegment &bs1 ) const;
+	bool compare(const BackboneSegment &bs1, core::Real tolerance) const;
 
-		bool operator!=(const BackboneSegment &other) const {
-		     return !(*this == other);
-		}
+	bool operator==( const BackboneSegment &bs1 ) const;
 
-		core::Size get_mem_foot_print(){ return phi_.size() * 3 * sizeof( core::Real ) + sizeof( BackboneSegment ); }
-	private:
-		std::vector<core::Real> phi_;
-		std::vector<core::Real> psi_;
-		std::vector<core::Real> omega_;
+	bool operator!=(const BackboneSegment &other) const {
+		return !(*this == other);
+	}
+
+	core::Size get_mem_foot_print(){ return phi_.size() * 3 * sizeof( core::Real ) + sizeof( BackboneSegment ); }
+private:
+	std::vector<core::Real> phi_;
+	std::vector<core::Real> psi_;
+	std::vector<core::Real> omega_;
 
 };
 
@@ -105,75 +105,75 @@ core::Real get_rmsd( const BackboneSegment &bs1, const BackboneSegment &bs2 );
 
 class BackboneDB
 {
-	public:
-		BackboneDB(){ extra_ = false; }
+public:
+	BackboneDB(){ extra_ = false; }
 
-		core::Real angle( core::Size index, core::Size offset );
+	core::Real angle( core::Size index, core::Size offset );
 
-		// Always grab extra data from Vall
-		void add_pose( const core::pose::Pose &pose, core::Size nres, core::Size &offset, protocols::frag_picker::VallChunkOP chunk = NULL );
+	// Always grab extra data from Vall
+	void add_pose( const core::pose::Pose &pose, core::Size nres, core::Size &offset, protocols::frag_picker::VallChunkOP chunk = NULL );
 
-		//obsolete?
-		//void add_backbone_segment( const BackboneSegment &bs, core::Size &offset );
+	//obsolete?
+	//void add_backbone_segment( const BackboneSegment &bs, core::Size &offset );
 
 
-		void get_protein( core::Size index, BBData & protein ) const;
-		void get_extra_data( core::Size index, BBExtraData & extra ) const;
-		void add_protein( BBData new_protein );
-		void add_extra_data( BBExtraData extra );
+	void get_protein( core::Size index, BBData & protein ) const;
+	void get_extra_data( core::Size index, BBExtraData & extra ) const;
+	void add_protein( BBData new_protein );
+	void add_extra_data( BBExtraData extra );
 
-		void get_backbone_segment(
-				const core::Size index,
-				const core::Size offset,
-				const core::Size len,
-				BackboneSegment &bs
-				) const;
+	void get_backbone_segment(
+		const core::Size index,
+		const core::Size offset,
+		const core::Size len,
+		BackboneSegment &bs
+	) const;
 
-		core::Size size() const { return data_.size(); }
-		core::Size extra_size() const { return extra_data_.size(); }
+	core::Size size() const { return data_.size(); }
+	core::Size extra_size() const { return extra_data_.size(); }
 
-		// Only supports writing to text, extra data is mandatory
-		void write_db( std::string filename );
+	// Only supports writing to text, extra data is mandatory
+	void write_db( std::string filename );
 
-		// Only supports reading from text, extra data must exist in db, loading is optional
-		// Returns a range of keys of which protein is read
-		// also returns a map of homolog indices
-		void read_db( std::string filename, bool load_extra,
-				core::Size num_partitions, core::Size assigned_num,
-				std::pair< core::Size, core::Size > & loop_range,
-				std::map< core::Size, bool > & homolog_index );
-		// Hack to give a default parameter to loop_range
-		inline void read_db( std::string filename, bool load_extra ) {
-			std::pair< core::Size, core::Size > range;
-			std::map < core::Size, bool > homolog_index;
-			read_db( filename, load_extra, 1, 0, range, homolog_index );
-		}
+	// Only supports reading from text, extra data must exist in db, loading is optional
+	// Returns a range of keys of which protein is read
+	// also returns a map of homolog indices
+	void read_db( std::string filename, bool load_extra,
+		core::Size num_partitions, core::Size assigned_num,
+		std::pair< core::Size, core::Size > & loop_range,
+		std::map< core::Size, bool > & homolog_index );
+	// Hack to give a default parameter to loop_range
+	inline void read_db( std::string filename, bool load_extra ) {
+		std::pair< core::Size, core::Size > range;
+		std::map < core::Size, bool > homolog_index;
+		read_db( filename, load_extra, 1, 0, range, homolog_index );
+	}
 
-		// For backwards compatability
-		void read_legacydb( std::string filename );
+	// For backwards compatability
+	void read_legacydb( std::string filename );
 
-		// Reads in homologs into homologs_
-		void read_homologs();
+	// Reads in homologs into homologs_
+	void read_homologs();
 
-		core::Size get_mem_foot_print(){ return data_.size() * sizeof( BBData ) + data_.size() * sizeof( BBExtraData ) + sizeof(BackboneDB); };
+	core::Size get_mem_foot_print(){ return data_.size() * sizeof( BBData ) + data_.size() * sizeof( BBExtraData ) + sizeof(BackboneDB); };
 
-	private:
+private:
 
-		// Gonna change this to a vector of BBData structs, one for each protein
-		// This obviously introduces overhead, but minimal (~2MB), and it makes it easier to store
-		// other info as well as sort the database
+	// Gonna change this to a vector of BBData structs, one for each protein
+	// This obviously introduces overhead, but minimal (~2MB), and it makes it easier to store
+	// other info as well as sort the database
 
-		// Extra info is stored in a separate struct (BBExtraData) with an index in the BBData struct
+	// Extra info is stored in a separate struct (BBExtraData) with an index in the BBData struct
 
-		// std::vector < short > data_;
-		std::vector < BBData > data_;
-		std::vector < BBExtraData > extra_data_;
+	// std::vector < short > data_;
+	std::vector < BBData > data_;
+	std::vector < BBExtraData > extra_data_;
 
-		// if this flag is true, extra_data_ is populated
-		bool extra_;
+	// if this flag is true, extra_data_ is populated
+	bool extra_;
 
-		/// @brief Homology map, contains all homologs
-		std::map< std::string, bool >             homologs_;
+	/// @brief Homology map, contains all homologs
+	std::map< std::string, bool >             homologs_;
 
 };
 

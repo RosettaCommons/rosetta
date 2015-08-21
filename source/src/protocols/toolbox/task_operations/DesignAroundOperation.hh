@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/toolbox/task_operations/DesignAroundOperation.hh
-/// @brief 
+/// @brief
 /// @author Sarel Fleishman sarelf@uw.edu
 
 #ifndef INCLUDED_protocols_toolbox_task_operations_DesignAroundOperation_hh
@@ -63,8 +63,9 @@ public:
 
 	void repack_shell( core::Real const repack_shell) {
 		repack_shell_ = repack_shell;
-		if( repack_shell <= design_shell() )
+		if ( repack_shell <= design_shell() ) {
 			design_shell_ = repack_shell;
+		}
 	}
 	core::Real repack_shell() const{ return repack_shell_; }
 

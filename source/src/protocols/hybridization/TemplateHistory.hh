@@ -26,7 +26,7 @@ namespace protocols {
 namespace hybridization {
 
 ///////////////////////////////////////////////////////////////////////////////
-// ncs residue mapping 
+// ncs residue mapping
 //   - stored in the pose and used by other movers (fragment insertion for example)
 class TemplateHistory:  public basic::datacache::CacheableData {
 public:

@@ -81,7 +81,7 @@ calc_protein_DNA_rmsd(
 
 void
 calc_DNA_bb_rmsd(
-  core::pose::Pose const & pose,
+	core::pose::Pose const & pose,
 	core::pose::Pose const & reference_pose,
 	core::Real & dna_bb_rmsd
 );
@@ -95,8 +95,8 @@ analyze_interface_sasa(
 	core::Real & bsasa5,
 	utility::vector1< core::id::AtomID > & buried_unsatisfied_donors,
 	utility::vector1< core::id::AtomID > & buried_unsatisfied_acceptors
-// 	int & buried_unsatisfied_donors,
-// 	int & buried_unsatisfied_acceptors
+	//  int & buried_unsatisfied_donors,
+	//  int & buried_unsatisfied_acceptors
 );
 
 void
@@ -108,12 +108,12 @@ analyze_interface_sasa(
 	core::Real & bsasa5,
 	utility::vector1< core::id::AtomID > & buried_unsatisfied_donors,
 	utility::vector1< core::id::AtomID > & buried_unsatisfied_acceptors
-// 	int & buried_unsatisfied_donors,
-// 	int & buried_unsatisfied_acceptors
+	//  int & buried_unsatisfied_donors,
+	//  int & buried_unsatisfied_acceptors
 );
 
 
-	/// uses default cutoff values, see .cc file
+/// uses default cutoff values, see .cc file
 void
 check_residue_proximity_to_dna(
 	core::Size const ppos,

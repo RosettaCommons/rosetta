@@ -17,8 +17,8 @@
 #include <utility/basic_sys_util.hh>
 
 #ifdef WIN32
-  #define _USE_MATH_DEFINES
-  #include <math.h>
+#define _USE_MATH_DEFINES
+#include <math.h>
 #endif
 
 namespace core {
@@ -45,21 +45,21 @@ FBnl_R(
 	for ( int nphi=1; nphi<=NPHI; ++nphi ) {                        // loop over each phi value
 
 		ObjexxFCL::FArray1D< std::complex <float> > f0(NZ);
-  	ObjexxFCL::FArray1D< float > x0(ML);
+		ObjexxFCL::FArray1D< float > x0(ML);
 		ObjexxFCL::FArray1D< std::complex <float> > f2(ML);
 
-  	for ( int nz=1; nz<=NZ; ++nz ) {                // loop over each z value
-  		std::complex< float> fij(fourier_in(rindex,nphi,nz)/(NZ), 0.0);
-			f0(nz) = fij;	
+		for ( int nz=1; nz<=NZ; ++nz ) {                // loop over each z value
+			std::complex< float> fij(fourier_in(rindex,nphi,nz)/(NZ), 0.0);
+			f0(nz) = fij;
 		}
 
 		// layer lines start from 0...
 		for ( int i=1; i<=ML; ++i ) {
 			x0(i)=-float(i-1)/float(NZ);
 		}
-    
-		ndft_1d(f0,x0,f2);                
-                
+
+		ndft_1d(f0,x0,f2);
+
 		// copy the result to f1
 		for ( int ml=1; ml<=ML; ++ml ) {
 			f1(ml,nphi)=f2(ml);
@@ -95,11 +95,11 @@ FBnl_R(
 			fourier_out(rindex,ml,mn)=fout(mn);
 		}
 	}
-        
+
 }
 
 
-void 
+void
 ft_nfft(
 	ObjexxFCL::FArray3D< float > & fourier_in,
 	utility::vector0< utility::vector0 < int > >::iterator & nvals,
@@ -110,7 +110,7 @@ ft_nfft(
 {
 
 	//Main FFT loop
-	for (Size ri=1; ri<= total_rvals; ++ri ) {
+	for ( Size ri=1; ri<= total_rvals; ++ri ) {
 		FBnl_R( fourier_in, nvals, lmax, ri, fourier_out );
 	}
 
@@ -130,34 +130,34 @@ ndft(
 
 	runtime_assert(Nt==Nphi);
 
-	for (Size i=1; i<=Nn; ++i ) {
+	for ( Size i=1; i<=Nn; ++i ) {
 		fout(i)=0.0;
-		for (Size j=1; j<=Nphi; ++j ) {
-    	double re = cos(-phi(j)*n(i))/Nphi;
-    	double im = sin(-phi(j)*n(i))/Nphi;
-    	std::complex< float> wij( re, im );
-    	fout(i)+= wij*fin(j);
+		for ( Size j=1; j<=Nphi; ++j ) {
+			double re = cos(-phi(j)*n(i))/Nphi;
+			double im = sin(-phi(j)*n(i))/Nphi;
+			std::complex< float> wij( re, im );
+			fout(i)+= wij*fin(j);
 		}
 	}
 }
 
 void
 ndft_1d(
-        ObjexxFCL::FArray1D < std::complex< float> >  & f0,
-        ObjexxFCL::FArray1D< float > & x0,
-        ObjexxFCL::FArray1D< std::complex< float> > & f2
+	ObjexxFCL::FArray1D < std::complex< float> >  & f0,
+	ObjexxFCL::FArray1D< float > & x0,
+	ObjexxFCL::FArray1D< std::complex< float> > & f2
 )
 {
 	Size NZ=f0.size();
 	Size ML=f2.size();
-	int m;	
-	for (Size l=1; l<=ML; ++l ) {
+	int m;
+	for ( Size l=1; l<=ML; ++l ) {
 		f2(l)=0.0;
-		for (Size k=1; k<=NZ; ++k ) {
+		for ( Size k=1; k<=NZ; ++k ) {
 			m = k - (NZ/2+1);
 			float arg1(1.0);
 			float arg2(-2*M_PI*m*x0(l));
-      f2(l) += f0(k)* std::polar<float>( arg1, arg2 );
+			f2(l) += f0(k)* std::polar<float>( arg1, arg2 );
 		}
 	}
 }

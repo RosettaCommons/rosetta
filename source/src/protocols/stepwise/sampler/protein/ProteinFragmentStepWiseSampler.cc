@@ -37,49 +37,49 @@ namespace stepwise {
 namespace sampler {
 namespace protein {
 
-	//Constructor
-	ProteinFragmentStepWiseSampler::ProteinFragmentStepWiseSampler( std::string const frag_file,
-																									utility::vector1< core::Size > const & slice_res,
-																									utility::vector1< core::Size > const & moving_residues	 )
-	{
-		initialize( frag_file, slice_res, moving_residues );
-		set_random( false );
+//Constructor
+ProteinFragmentStepWiseSampler::ProteinFragmentStepWiseSampler( std::string const frag_file,
+	utility::vector1< core::Size > const & slice_res,
+	utility::vector1< core::Size > const & moving_residues  )
+{
+	initialize( frag_file, slice_res, moving_residues );
+	set_random( false );
+}
+
+//Destructor
+ProteinFragmentStepWiseSampler::~ProteinFragmentStepWiseSampler()
+{}
+
+/////////////////////////////////////////////////////////////////////////
+void
+ProteinFragmentStepWiseSampler::apply( core::pose::Pose & pose, Size const id )
+{
+	runtime_assert( id <= size() );
+	frame_->apply( id, pose );
+}
+
+/////////////////////////////////////////////////////////////////////////
+core::Size
+ProteinFragmentStepWiseSampler::size() const { return frame_->nr_frags(); }
+
+/////////////////////////////////////////////////////////////////////////
+void
+ProteinFragmentStepWiseSampler::initialize( std::string const frag_file,
+	utility::vector1< core::Size > const & slice_res,
+	utility::vector1< core::Size > const & moving_residues  ) {
+
+	core::fragment::ConstantLengthFragSetOP fragset( new core::fragment::ConstantLengthFragSet( 0 /*frag_length ... is reset by reader*/, frag_file ) );
+
+	if ( fragset->max_frag_length() != moving_residues.size() ) {
+		utility_exit_with_message( "Number of -moving_res must match frag size!" );
 	}
+	fragment_set_slice( fragset, slice_res );
 
-	//Destructor
-	ProteinFragmentStepWiseSampler::~ProteinFragmentStepWiseSampler()
-	{}
-
-	/////////////////////////////////////////////////////////////////////////
-	void
-	ProteinFragmentStepWiseSampler::apply( core::pose::Pose & pose, Size const id )
-	{
-		runtime_assert( id <= size() );
-		frame_->apply( id, pose );
-	}
-
-	/////////////////////////////////////////////////////////////////////////
-	core::Size
-	ProteinFragmentStepWiseSampler::size() const { return frame_->nr_frags(); }
-
-	/////////////////////////////////////////////////////////////////////////
-	void
-	ProteinFragmentStepWiseSampler::initialize( std::string const frag_file,
-																			utility::vector1< core::Size > const & slice_res,
-																			utility::vector1< core::Size > const & moving_residues	 ) {
-
-		core::fragment::ConstantLengthFragSetOP fragset( new core::fragment::ConstantLengthFragSet( 0 /*frag_length ... is reset by reader*/, frag_file ) );
-
-		if( fragset->max_frag_length() != moving_residues.size() ) {
-			utility_exit_with_message( "Number of -moving_res must match frag size!" );
-		}
-		fragment_set_slice( fragset, slice_res );
-
-		core::fragment::FrameList frames;
-		insert_pos_ = moving_residues[ 1 ];
-		fragset->frames( insert_pos_, frames );
-		frame_ = frames[1];
-  }
+	core::fragment::FrameList frames;
+	insert_pos_ = moving_residues[ 1 ];
+	fragset->frames( insert_pos_, frames );
+	frame_ = frames[1];
+}
 
 } //protein
 } //sampler

@@ -7,23 +7,23 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/PcsInputLine.fwd.hh
- ///
- /// @brief Class that hold a line data of the input file
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/PcsInputLine.fwd.hh
+///
+/// @brief Class that hold a line data of the input file
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs2_PcsInputLine_fwd_hh
 #define INCLUDED_protocols_scoring_methods_pcs2_PcsInputLine_fwd_hh
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs2{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs2 {
 
 class PcsInputLine;
 

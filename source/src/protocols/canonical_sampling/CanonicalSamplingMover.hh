@@ -42,14 +42,14 @@ public:
 	CanonicalSamplingMover();
 
 	CanonicalSamplingMover(core::scoring::ScoreFunctionOP sfxn,
-												 protocols::canonical_sampling::mc_convergence_checks::Pool_RMSD_OP ptr,
-												 int ntrial);
+		protocols::canonical_sampling::mc_convergence_checks::Pool_RMSD_OP ptr,
+		int ntrial);
 
-  void add_mover(protocols::moves::MoverOP m,core::Real weight);
+	void add_mover(protocols::moves::MoverOP m,core::Real weight);
 
 	std::string get_ABGEO_string( core::pose::Pose & pose, protocols::loops::Loops & loop);
 
-  void ntrials(int ntrial);
+	void ntrials(int ntrial);
 
 	void set_defaults_from_cmdline();
 
@@ -79,9 +79,9 @@ public:
 
 	void output_only_cluster_transitions(bool truefalse);
 
-  void set_poolrmsd(protocols::canonical_sampling::mc_convergence_checks::Pool_RMSD_OP ptr);
+	void set_poolrmsd(protocols::canonical_sampling::mc_convergence_checks::Pool_RMSD_OP ptr);
 
-  virtual void apply(core::pose::Pose & pose);
+	virtual void apply(core::pose::Pose & pose);
 	virtual std::string get_name() const;
 
 private:
@@ -89,30 +89,30 @@ private:
 	core::Real periodic_range( core::Real a, core::Real x);
 
 	void dump_xtc_format_decoy(
-     std::ostream& os,
-		 core::pose::Pose const& pose,
-		 loops::Loops const& loop_to_dump
+		std::ostream& os,
+		core::pose::Pose const& pose,
+		loops::Loops const& loop_to_dump
 	);
 
 
 	void dump_decoy_or_score(
-     std::ostream& os,
-		 core::pose::Pose const& pose,
-		 core::Size i_trial,
-		 std::string const& jobname,
-		 loops::Loops const& loop_to_dump,
-		 bool score_only = false
+		std::ostream& os,
+		core::pose::Pose const& pose,
+		core::Size i_trial,
+		std::string const& jobname,
+		loops::Loops const& loop_to_dump,
+		bool score_only = false
 	);
 
 	void setup_constraints(core::pose::Pose & pose);
 
-  protocols::moves::MonteCarloOP mc_;
-  core::scoring::ScoreFunctionOP sfxn_;
-  moves::RandomMoverOP randmove_;
-  protocols::canonical_sampling::mc_convergence_checks::Pool_RMSD_OP pool_rms_;
+	protocols::moves::MonteCarloOP mc_;
+	core::scoring::ScoreFunctionOP sfxn_;
+	moves::RandomMoverOP randmove_;
+	protocols::canonical_sampling::mc_convergence_checks::Pool_RMSD_OP pool_rms_;
 
-  core::Size interval_posedump_;
-  core::Size interval_transitiondump_;
+	core::Size interval_posedump_;
+	core::Size interval_transitiondump_;
 	core::Size ntrials_;
 	bool detailed_balance_;
 	bool MPI_synchronize_pools_;

@@ -77,17 +77,17 @@ public:
 	void set_lowres_scorefxn( core::scoring::ScoreFunctionOP docking_scorefxn_low );
 
 	/// @brief Sets the score function that will be used in the high-resolution phase.
-	///		The same score function will be used for evaluating moves, packing and discriminating
+	///  The same score function will be used for evaluating moves, packing and discriminating
 	void set_highres_scorefxn( core::scoring::ScoreFunctionOP docking_scorefxn_high );
 
 	/// @brief Sets the score function that will be used in the high-resolution phase.
-	///		The first scorefunction will be used for evaluating moves and discriminating, the second will be used for packing
+	///  The first scorefunction will be used for evaluating moves and discriminating, the second will be used for packing
 	void set_highres_scorefxn(
 		core::scoring::ScoreFunctionCOP docking_scorefxn_high,
 		core::scoring::ScoreFunctionCOP docking_scorefxn_pack );
 
 	/// @brief Sets the score function that will be used in the high-resolution phase.
-	///		The first scorefunction will be used for evaluating moves, the second will be used for packing and the third for discriminating
+	///  The first scorefunction will be used for evaluating moves, the second will be used for packing and the third for discriminating
 	void set_highres_scorefxn(
 		core::scoring::ScoreFunctionCOP docking_scorefxn_high,
 		core::scoring::ScoreFunctionCOP docking_scorefxn_pack,
@@ -135,8 +135,8 @@ protected:
 	void finalize_setup( core::pose::Pose & pose );
 
 	/// @brief Sets up the instance of TemperedDocking and initializes all members based on values passed in at construction
-	///		or via the command line.
-  void init(
+	///  or via the command line.
+	void init(
 		DockJumps const movable_jumps,
 		core::scoring::ScoreFunctionCOP docking_score_low,
 		core::scoring::ScoreFunctionCOP docking_score_high

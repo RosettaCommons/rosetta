@@ -41,15 +41,15 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-	PCS_FragDistance::PCS_FragDistance(Size priority, Real lowest_acceptable_value, bool use_lowest,
-																		 ObjexxFCL::FArray2D_double target_ca_dev,
-																		 ObjexxFCL::FArray2D_double target_ca_dist, Size largest_fragment,
-																		 Size max_length) :
-		CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "PCS_FragDistance"),
-		target_ca_dev_(target_ca_dev),
-		target_ca_dist_(target_ca_dist),
-	  largest_fragment_(largest_fragment),
-		max_length_(max_length)
+PCS_FragDistance::PCS_FragDistance(Size priority, Real lowest_acceptable_value, bool use_lowest,
+	ObjexxFCL::FArray2D_double target_ca_dev,
+	ObjexxFCL::FArray2D_double target_ca_dist, Size largest_fragment,
+	Size max_length) :
+	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "PCS_FragDistance"),
+	target_ca_dev_(target_ca_dev),
+	target_ca_dist_(target_ca_dist),
+	largest_fragment_(largest_fragment),
+	max_length_(max_length)
 {
 }
 
@@ -58,12 +58,12 @@ void PCS_FragDistance::do_caching(VallChunkOP current_chunk) {
 	n_res_ = current_chunk->size();
 
 	chunk_ca_distances_.redimension(n_res_, n_res_, 0.0);
-	for (Size x = 1; x <= n_res_; ++x) {
+	for ( Size x = 1; x <= n_res_; ++x ) {
 		VallResidueOP xr = current_chunk->at(x);
 
-		for (Size y = x - largest_fragment_; (y <= x + largest_fragment_) && (y <= n_res_); ++y) {
+		for ( Size y = x - largest_fragment_; (y <= x + largest_fragment_) && (y <= n_res_); ++y ) {
 			//for (Size y = 1; y <= n_res_; ++y) {
-			if (y > 0) {
+			if ( y > 0 ) {
 				VallResidueOP yr = current_chunk->at(y);
 
 				Real distance = sqrt( pow( xr->x() - yr->x(), 2) + pow( xr->y() - yr->y(), 2) + pow( xr->z() - yr->z(), 2) );
@@ -80,7 +80,7 @@ bool PCS_FragDistance::score(FragmentCandidateOP fragment, FragmentScoreMapOP sc
 bool PCS_FragDistance::cached_score(FragmentCandidateOP fragment, FragmentScoreMapOP scores) {
 
 	std::string tmp = fragment->get_chunk()->chunk_key();
-	if (tmp.compare(cached_scores_id_) != 0) {
+	if ( tmp.compare(cached_scores_id_) != 0 ) {
 		do_caching(fragment->get_chunk());
 		cached_scores_id_ = tmp;
 	}
@@ -94,10 +94,10 @@ bool PCS_FragDistance::cached_score(FragmentCandidateOP fragment, FragmentScoreM
 	Real score = 0.0;
 
 	//for (Size ix = 1; ix < fragment->get_length(); ++ix) {
-	//	for (Size iy = ix+1; iy < fragment->get_length(); ++iy) {
+	// for (Size iy = ix+1; iy < fragment->get_length(); ++iy) {
 
-	for (Size ix = 1; ix <= fragment->get_length()+3; ++ix) {
-		for (Size iy = ix+1; iy <= fragment->get_length()+4; ++iy) {
+	for ( Size ix = 1; ix <= fragment->get_length()+3; ++ix ) {
+		for ( Size iy = ix+1; iy <= fragment->get_length()+4; ++iy ) {
 
 			Size res1 = ix+offset_q;
 			Size res2 = iy+offset_q;
@@ -106,7 +106,7 @@ bool PCS_FragDistance::cached_score(FragmentCandidateOP fragment, FragmentScoreM
 			Size v2 = iy+offset_v;
 
 			if ( ( res1 >= 3) && (res2 <= max_length_ + 2) &&
-					 ( v1 >= 3) && (v2 <= n_res_ + 2) ) {
+					( v1 >= 3) && (v2 <= n_res_ + 2) ) {
 
 				res1 -= 2;
 				res2 -= 2;
@@ -134,8 +134,9 @@ bool PCS_FragDistance::cached_score(FragmentCandidateOP fragment, FragmentScoreM
 
 	scores->set_score_component(score, id_);
 	//PROF_STOP( core::util::FRAGMENTPICKING_PHIPSI_SCORE );
-	if ((score > lowest_acceptable_value_) && (use_lowest_ == true))
+	if ( (score > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;
+	}
 
 	return true;
 }
@@ -145,21 +146,21 @@ void PCS_FragDistance::clean_up() {
 
 /// @brief Creates a PCS_FragDistance scoring method
 /// @param priority - priority of the scoring method. The higher value the earlier the score
-///		will be evaluated
+///  will be evaluated
 /// @param lowest_acceptable_value - if a calculated score is higher than this value,
-///		fragment will be neglected
+///  fragment will be neglected
 /// @param FragmentPickerOP object - not used
 /// @param line - the relevant line extracted from the scoring configuration file that defines this scoring method
-/// 		It could look like: "PCS_FragDistance                140     -5.0     100.0 additional_string"
-///		where 140, -5.0 && 100.0 are priority, weight && treshold, respectively.
-///		The additional string may be:
-///		- empty: then the maker tries to create a scoring object from a TALOS file
-///			trying in::file::talos_phi_psi flag. If fails, will try to use a pose from in::file::s
-///		- a pdb file, pdb extension is necessary. This will create a pose && steal Phi && Psi
-///		- a TALOS file with Phi/Psi prediction (tab extension is necessary)
+///   It could look like: "PCS_FragDistance                140     -5.0     100.0 additional_string"
+///  where 140, -5.0 && 100.0 are priority, weight && treshold, respectively.
+///  The additional string may be:
+///  - empty: then the maker tries to create a scoring object from a TALOS file
+///   trying in::file::talos_phi_psi flag. If fails, will try to use a pose from in::file::s
+///  - a pdb file, pdb extension is necessary. This will create a pose && steal Phi && Psi
+///  - a TALOS file with Phi/Psi prediction (tab extension is necessary)
 FragmentScoringMethodOP MakePCS_FragDistance::make(Size priority,
-		Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker//picker
-		, std::string )
+	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker//picker
+	, std::string )
 {
 
 	std::string target( picker->get_query_seq_string());
@@ -173,14 +174,14 @@ FragmentScoringMethodOP MakePCS_FragDistance::make(Size priority,
 	target_ca_dist.redimension(max_length, max_length, 0.0);
 
 
-	if (option[in::file::PCS_frag_cst].user()) {
+	if ( option[in::file::PCS_frag_cst].user() ) {
 
 		utility::io::izstream data( option[ in::file::PCS_frag_cst ]() );
 
 		// mjo commenting out 'max_data_res' because it is not used and casuses a warning
 		//Size max_data_res(0);
 		std::string line;
-		while (!data.eof()) {
+		while ( !data.eof() ) {
 			getline(data, line);
 			std::istringstream line_stream(line);
 
@@ -190,10 +191,10 @@ FragmentScoringMethodOP MakePCS_FragDistance::make(Size priority,
 			line_stream >> resX >> resY >> dist >> dev;
 
 			//if ( dev < 0.3 ) {
-			//	dev = 0.3;
-				//This was the lowest dev I observed during training.
-				//The score has not been tested for lower values and
-				//therefore you should not expect it to work for lower values!
+			// dev = 0.3;
+			//This was the lowest dev I observed during training.
+			//The score has not been tested for lower values and
+			//therefore you should not expect it to work for lower values!
 			//}
 
 			target_ca_dist(resX,resY) = dist;
@@ -208,11 +209,11 @@ FragmentScoringMethodOP MakePCS_FragDistance::make(Size priority,
 		runtime_assert( largest_fragment > 0 );
 
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new PCS_FragDistance(priority, lowest_acceptable_value, use_lowest,
-																													target_ca_dev, target_ca_dist, largest_fragment, max_length) );
+			target_ca_dev, target_ca_dist, largest_fragment, max_length) );
 	}
 
-		utility_exit_with_message(
-			"Can't read PCS_frag_cst file. Provide a connectivity file with -in::PCS_frag_cst <file>\n");
+	utility_exit_with_message(
+		"Can't read PCS_frag_cst file. Provide a connectivity file with -in::PCS_frag_cst <file>\n");
 
 	return NULL;
 

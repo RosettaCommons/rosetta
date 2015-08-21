@@ -14,8 +14,8 @@
 #ifndef INCLUDED_protocols_ligand_docking_rdf_RDFFunctionFactory_fwd_hh
 #define INCLUDED_protocols_ligand_docking_rdf_RDFFunctionFactory_fwd_hh
 
-namespace protocols{
-namespace ligand_docking{
+namespace protocols {
+namespace ligand_docking {
 namespace rdf {
 
 class RDFFunctionFactory;

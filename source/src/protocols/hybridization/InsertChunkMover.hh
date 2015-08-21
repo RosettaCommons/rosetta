@@ -49,17 +49,17 @@ public:
 	void set_bb_xyz_aligned(core::pose::Pose & pose);
 
 	bool success() {
-			return success_;
+		return success_;
 	}
 
 	void set_template(core::pose::PoseCOP template_pose, core::Size template_id,
-						std::map <core::Size, core::Size> const & sequence_alignment);
+		std::map <core::Size, core::Size> const & sequence_alignment);
 
 	void set_aligned_chunk(core::pose::Pose const & pose, Size const jump_number, bool anchor_insert_only_in);
 
 	bool get_local_sequence_mapping(core::pose::Pose & pose,
-									int registry_shift = 0,
-									Size MAX_TRIAL = 100 );
+		int registry_shift = 0,
+		Size MAX_TRIAL = 100 );
 
 	void check_overlap(core::pose::Pose & pose);
 

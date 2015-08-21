@@ -83,8 +83,8 @@ void
 SilentFileOptions::set_silent_struct_type(
 	string const & silent_struct_type
 ) {
-	if(!SilentStructFactory::get_instance()->has_silent_struct_type(
-			silent_struct_type)){
+	if ( !SilentStructFactory::get_instance()->has_silent_struct_type(
+			silent_struct_type) ) {
 		stringstream err_msg;
 		err_msg
 			<< "In SilentFileOptions,"
@@ -102,7 +102,7 @@ void
 SilentFileOptions::parse_my_tag(
 	TagCOP tag
 ) {
-	if(!tag->hasOption("silent_struct_type")){
+	if ( !tag->hasOption("silent_struct_type") ) {
 		throw utility::excn::EXCN_BadInput(
 			"The SilentFileOptions requires the tag 'silent_struct_type',"
 			" but it was not provided.");
@@ -110,8 +110,8 @@ SilentFileOptions::parse_my_tag(
 
 	silent_struct_type_ = tag->getOption<std::string>("silent_struct_type");
 
-	if(!SilentStructFactory::get_instance()->has_silent_struct_type(
-			silent_struct_type_)){
+	if ( !SilentStructFactory::get_instance()->has_silent_struct_type(
+			silent_struct_type_) ) {
 		stringstream err_msg;
 		err_msg
 			<< "In the SilentFileOptions with tag name '" << tag->getName() << "',"

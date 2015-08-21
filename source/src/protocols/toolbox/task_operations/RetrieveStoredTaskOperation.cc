@@ -57,7 +57,7 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-// @brief default constructor	
+// @brief default constructor
 RetrieveStoredTaskOperation::RetrieveStoredTaskOperation() {}
 
 // @brief destructor
@@ -83,10 +83,10 @@ RetrieveStoredTaskOperation::apply( core::pose::Pose const & pose, core::pack::t
 		utility_exit_with_message("Your pose does not have CacheableData of type STM_STORED_TASKS");
 	} else {
 		protocols::toolbox::task_operations::STMStoredTask const & stored_tasks = *( utility::pointer::static_pointer_cast< protocols::toolbox::task_operations::STMStoredTask const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) ) );
-		if (!stored_tasks.has_task(task_name_)) {
+		if ( !stored_tasks.has_task(task_name_) ) {
 			utility_exit_with_message("No stored task with the name " + task_name_ + " found");
 		} else {
- 			task.update_commutative( *( stored_tasks.get_task( task_name_ ) ) );
+			task.update_commutative( *( stored_tasks.get_task( task_name_ ) ) );
 		}
 	}
 }
@@ -102,7 +102,7 @@ void
 RetrieveStoredTaskOperation::parse_def( utility::lua::LuaObject const & def) {
 	task_name_ = def["task_name"].to<std::string>();
 }
-	
+
 } //namespace task_operations
 } //namespace toolbox
 } //namespace protocols

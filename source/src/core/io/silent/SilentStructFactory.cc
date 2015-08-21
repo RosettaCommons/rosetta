@@ -75,10 +75,10 @@ SilentStructFactory::show_available_silent_struct_types(
 	std::ostream & out
 ) {
 	out << "Available silent struct types:" << std::endl;
-	for(
-		std::map< std::string, io::silent::SilentStructCreatorCOP >::const_iterator
+	for (
+			std::map< std::string, io::silent::SilentStructCreatorCOP >::const_iterator
 			it = ss_types_.begin(), ite = ss_types_.end(); it != ite; ++it
-	) {
+			) {
 		out << "\t" << it->first << std::endl;
 	}
 }
@@ -178,8 +178,8 @@ SilentStructOP SilentStructFactory::get_silent_struct_out( core::pose::Pose cons
 	bool const score_jump(option[ out::file::silent_struct_type ]() == "score_jump");
 
 	// if the user has explicitly set the output type, honor the request
-	if ( option[ out::file::silent_struct_type ].user() ){
-		return get_silent_struct( option[ out::file::silent_struct_type ]() )	;
+	if ( option[ out::file::silent_struct_type ].user() ) {
+		return get_silent_struct( option[ out::file::silent_struct_type ]() ) ;
 	}
 
 	// if not, decide for the user or use the default
@@ -189,12 +189,12 @@ SilentStructOP SilentStructFactory::get_silent_struct_out( core::pose::Pose cons
 			binary_string = "binary_rna";
 		};
 		tr.Info << "detected attempt to write non-ideal pose to silent-file..."
-						<< "Automatically switching to " << binary_string << " silent-struct type" << std::endl;
+			<< "Automatically switching to " << binary_string << " silent-struct type" << std::endl;
 		return get_silent_struct( binary_string );
 	}
 
 	// use default
-	return get_silent_struct( option[ out::file::silent_struct_type ]() )	;
+	return get_silent_struct( option[ out::file::silent_struct_type ]() ) ;
 }
 
 

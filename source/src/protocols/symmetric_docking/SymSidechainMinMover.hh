@@ -68,7 +68,7 @@ protected:
 	core::pack::task::TaskFactoryOP tf_;
 	bool update_movemap_;
 
-	};
+};
 
 
 class SymInterfaceSidechainMinMover : public SymSidechainMinMover {
@@ -99,7 +99,7 @@ private:
 
 	protocols::scoring::InterfaceOP interface_;
 
-	};
+};
 
 } //symmetric_docking
 } // protocols

@@ -32,7 +32,7 @@ namespace rna {
 class BasePair
 {
 
- public:
+public:
 
 	BasePair():
 		res1( 0 ),
@@ -46,8 +46,8 @@ class BasePair
 	};
 
 	BasePair( Size const & res1_input, Size const res2_input,
-						 Size const & edge1_input, Size const edge2_input,
-						 Size const & orientation_input ):
+		Size const & edge1_input, Size const edge2_input,
+		Size const & orientation_input ):
 		res1( res1_input ),
 		res2( res2_input ),
 		edge1( edge1_input ),
@@ -58,11 +58,11 @@ class BasePair
 	{
 	};
 
-  Size res1;
-  Size res2;
-  Size edge1;
-  Size edge2;
-  Size orientation; // 1 = antiparallel; 2 = parallel
+	Size res1;
+	Size res2;
+	Size edge1;
+	Size edge2;
+	Size orientation; // 1 = antiparallel; 2 = parallel
 	Size LW_orientation; // 1 = cis; 2 = trans
 	Size num_hbonds;
 
@@ -71,22 +71,22 @@ class BasePair
 	print_info( std::ostream & out = std::cout ) const {
 		out << "res1 = "  << std::setw( 4 ) << res1;
 		out << " res2 = " << std::setw( 4 ) << res2;
-		out << " edge1 =	 " << std::setw( 6 ) << core::chemical::rna::get_full_edge_from_num( edge1 );
-		out << " edge2 =	 " << std::setw( 6 ) << core::chemical::rna::get_full_edge_from_num( edge2 );
+		out << " edge1 =\t " << std::setw( 6 ) << core::chemical::rna::get_full_edge_from_num( edge1 );
+		out << " edge2 =\t " << std::setw( 6 ) << core::chemical::rna::get_full_edge_from_num( edge2 );
 		out << " LW_orient = " << std::setw( 5 ) << core::chemical::rna::get_full_LW_orientation_from_num( LW_orientation );
 		out << " orient = " << std::setw( 5 ) << core::chemical::rna::get_full_orientation_from_num( orientation );
 		out << " #hbonds= " << std::setw(4) << num_hbonds;
 		out << " ";
 	}
 
-  friend
-    bool operator < ( BasePair const & lhs, BasePair const & rhs )
-  {
-    //There must be a more elegant way to do this...
-    if ( lhs.res1 < rhs.res1 ) {
-      return true;
+	friend
+	bool operator < ( BasePair const & lhs, BasePair const & rhs )
+	{
+		//There must be a more elegant way to do this...
+		if ( lhs.res1 < rhs.res1 ) {
+			return true;
 		} else if ( lhs.res1 == rhs.res1 ) {
-      if ( lhs.res2 < rhs.res2 ) {
+			if ( lhs.res2 < rhs.res2 ) {
 				return true;
 			} else if ( lhs.res2 == rhs.res2 ) {
 				if ( lhs.edge1 < rhs.edge1 ) {
@@ -94,39 +94,39 @@ class BasePair
 				} else if ( lhs.edge1 == rhs.edge1 ) {
 					if ( lhs.edge2 < rhs.edge2 ) {
 						return true;
-					}	else if ( lhs.edge2 == rhs.edge2 ) {
+					} else if ( lhs.edge2 == rhs.edge2 ) {
 						return ( lhs.orientation < rhs.orientation );
 					}
 				}
 			}
 		}
 		return false;
-  };
+	};
 
-  friend
-    bool operator == ( BasePair const & lhs, BasePair const & rhs )
-  {
+	friend
+	bool operator == ( BasePair const & lhs, BasePair const & rhs )
+	{
 		return ( lhs.res1 == rhs.res1 &&
-						lhs.res2 == rhs.res2 &&
-						lhs.edge1 == rhs.edge1 &&
-						lhs.edge2 == rhs.edge2 &&
-						lhs.orientation == rhs.orientation );
-  };
+			lhs.res2 == rhs.res2 &&
+			lhs.edge1 == rhs.edge1 &&
+			lhs.edge2 == rhs.edge2 &&
+			lhs.orientation == rhs.orientation );
+	};
 
 
-  friend
-    std::ostream &
-    operator << ( std::ostream & out, BasePair const & s ){
-    out << s.res1 << " " << s.res2 << " " << s.edge1 << " " << s.edge2 << " " << s.orientation;
-    return out;
-  }
+	friend
+	std::ostream &
+	operator << ( std::ostream & out, BasePair const & s ){
+		out << s.res1 << " " << s.res2 << " " << s.edge1 << " " << s.edge2 << " " << s.orientation;
+		return out;
+	}
 };
 
 typedef std::pair< Real, BasePair > EnergyBasePair;
 typedef std::list < EnergyBasePair > EnergyBasePairList;
 
 class BaseStack{
- public:
+public:
 
 	BaseStack():
 		res1( 0 ),
@@ -137,38 +137,38 @@ class BaseStack{
 	};
 
 
-  Size res1;
-  Size res2;
-  Size orientation; // 1 = antiparallel; 2 = parallel
-  Size which_side;  // 1 = residue 2 is 3' to residue1;  2 = residue 2 is 5' to residue 1
+	Size res1;
+	Size res2;
+	Size orientation; // 1 = antiparallel; 2 = parallel
+	Size which_side;  // 1 = residue 2 is 3' to residue1;  2 = residue 2 is 5' to residue 1
 
-  friend
-    bool operator < ( BaseStack const & lhs, BaseStack const & rhs ){
-    //There must be a more elegant way to do this...
-    if ( lhs.res1 < rhs.res1 ) {
-      return true;
+	friend
+	bool operator < ( BaseStack const & lhs, BaseStack const & rhs ){
+		//There must be a more elegant way to do this...
+		if ( lhs.res1 < rhs.res1 ) {
+			return true;
 		}  else if ( lhs.res1 == rhs.res1 ) {
-      if ( lhs.res2 < rhs.res2 ) {
+			if ( lhs.res2 < rhs.res2 ) {
 				return true;
 			} else if ( lhs.res2 == rhs.res2 ) {
 				if ( lhs.orientation < rhs.orientation ) {
 					return true;
-				}	else if ( lhs.orientation == rhs.orientation ) {
+				} else if ( lhs.orientation == rhs.orientation ) {
 					return ( lhs.which_side < rhs.which_side );
 				}
 			}
 		}
 		return false;
-  }
+	}
 
 
-  friend
-    std::ostream &
-    operator << ( std::ostream & out, BaseStack const & s )
-    {
-      out << s.res1 << " " << s.res2 << " " <<  s.orientation << " " << s.which_side;
-      return out;
-    }
+	friend
+	std::ostream &
+	operator << ( std::ostream & out, BaseStack const & s )
+	{
+		out << s.res1 << " " << s.res2 << " " <<  s.orientation << " " << s.which_side;
+		return out;
+	}
 
 
 };

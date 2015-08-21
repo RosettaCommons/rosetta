@@ -63,7 +63,7 @@ MatchConsolidator::process_match(
 	//runtime_assert( match_dspos1_groups_.size() == 0 );
 	note_match_processed();
 
-	if( !this->passes_filters( m ) ) return;
+	if ( !this->passes_filters( m ) ) return;
 
 	Size group = grouper_->assign_group_for_match( m );
 
@@ -87,7 +87,7 @@ MatchConsolidator::process_match(
 	//runtime_assert( match_groups_.size() == 0 );
 	note_match_processed();
 
-	if( !this->passes_filters( m ) ) return;
+	if ( !this->passes_filters( m ) ) return;
 
 	Size group = grouper_->assign_group_for_match( m );
 
@@ -133,36 +133,36 @@ MatchConsolidator::end_processing_of_regular_match_groups()
 {
 
 	/*for ( Size ii = 1; ii <= match_groups_.size(); ++ii ) {
-		Size ii_n_matches = match_groups_[ ii ].size();
-		utility::vector1< match > ii_matches( ii_n_matches );
-		utility::vector1< Real  > ii_scores(  ii_n_matches, 0.0 );
-		std::copy( match_groups_[ ii ].begin(), match_groups_[ ii ].end(), ii_matches.begin() );
-		for ( Size jj = 1; jj <= ii_n_matches; ++jj ) {
-			ii_scores[ jj ] = evaluator_->score( ii_matches[ jj ] );
-		}
-		utility::vector1< Size > top_score_indices( n_to_output_per_group_ );
+	Size ii_n_matches = match_groups_[ ii ].size();
+	utility::vector1< match > ii_matches( ii_n_matches );
+	utility::vector1< Real  > ii_scores(  ii_n_matches, 0.0 );
+	std::copy( match_groups_[ ii ].begin(), match_groups_[ ii ].end(), ii_matches.begin() );
+	for ( Size jj = 1; jj <= ii_n_matches; ++jj ) {
+	ii_scores[ jj ] = evaluator_->score( ii_matches[ jj ] );
+	}
+	utility::vector1< Size > top_score_indices( n_to_output_per_group_ );
 
-		// either sort or, if it's going to be fast, use utility::arg_least_several
-		if ( n_to_output_per_group_ > 50 ) {
-			utility::vector1< std::pair< Real, Size > > score_index_pairs( ii_n_matches );
-			for ( Size jj = 1; jj <= ii_n_matches; ++jj ) {
-				score_index_pairs[ jj ] = std::make_pair( ii_scores[ jj ], jj );
-			}
-			std::sort( score_index_pairs.begin(), score_index_pairs.end(), utility::SortFirst< Real, Size >() );
-			for ( Size jj = 1; jj <= n_to_output_per_group_; ++jj ) {
-				if ( jj > ii_n_matches ) {
-					top_score_indices.resize( ii_n_matches );
-					break;
-				}
-				top_score_indices[ jj ] = score_index_pairs[ jj ].second;
-			}
-		} else {
-			utility::arg_least_several( ii_scores, top_score_indices );
-		}
+	// either sort or, if it's going to be fast, use utility::arg_least_several
+	if ( n_to_output_per_group_ > 50 ) {
+	utility::vector1< std::pair< Real, Size > > score_index_pairs( ii_n_matches );
+	for ( Size jj = 1; jj <= ii_n_matches; ++jj ) {
+	score_index_pairs[ jj ] = std::make_pair( ii_scores[ jj ], jj );
+	}
+	std::sort( score_index_pairs.begin(), score_index_pairs.end(), utility::SortFirst< Real, Size >() );
+	for ( Size jj = 1; jj <= n_to_output_per_group_; ++jj ) {
+	if ( jj > ii_n_matches ) {
+	top_score_indices.resize( ii_n_matches );
+	break;
+	}
+	top_score_indices[ jj ] = score_index_pairs[ jj ].second;
+	}
+	} else {
+	utility::arg_least_several( ii_scores, top_score_indices );
+	}
 
-		for ( Size jj = 1; jj <= top_score_indices.size(); ++jj ) {
-			writer_->record_match( ii_matches[ top_score_indices[ jj ]] );
-		}
+	for ( Size jj = 1; jj <= top_score_indices.size(); ++jj ) {
+	writer_->record_match( ii_matches[ top_score_indices[ jj ]] );
+	}
 	}*/
 }
 
@@ -170,37 +170,37 @@ void
 MatchConsolidator::end_processing_of_match_dspos1_groups()
 {
 
-/*	for ( Size ii = 1; ii <= match_dspos1_groups_.size(); ++ii ) {
-		Size ii_n_matches = match_dspos1_groups_[ ii ].size();
-		utility::vector1< match_dspos1 > ii_matches( ii_n_matches );
-		utility::vector1< Real >         ii_scores(  ii_n_matches, 0.0 );
-		std::copy( match_dspos1_groups_[ ii ].begin(), match_dspos1_groups_[ ii ].end(), ii_matches.begin() );
-		for ( Size jj = 1; jj <= ii_n_matches; ++jj ) {
-			ii_scores[ jj ] = evaluator_->score( ii_matches[ jj ] );
-		}
-		utility::vector1< Size > top_score_indices( n_to_output_per_group_ );
+	/* for ( Size ii = 1; ii <= match_dspos1_groups_.size(); ++ii ) {
+	Size ii_n_matches = match_dspos1_groups_[ ii ].size();
+	utility::vector1< match_dspos1 > ii_matches( ii_n_matches );
+	utility::vector1< Real >         ii_scores(  ii_n_matches, 0.0 );
+	std::copy( match_dspos1_groups_[ ii ].begin(), match_dspos1_groups_[ ii ].end(), ii_matches.begin() );
+	for ( Size jj = 1; jj <= ii_n_matches; ++jj ) {
+	ii_scores[ jj ] = evaluator_->score( ii_matches[ jj ] );
+	}
+	utility::vector1< Size > top_score_indices( n_to_output_per_group_ );
 
-		// either sort or, if it's going to be fast, use utility::arg_least_several
-		if ( n_to_output_per_group_ > 50 ) {
-			utility::vector1< std::pair< Real, Size > > score_index_pairs( ii_n_matches );
-			for ( Size jj = 1; jj <= ii_n_matches; ++jj ) {
-				score_index_pairs[ jj ] = std::make_pair( ii_scores[ jj ], jj );
-			}
-			std::sort( score_index_pairs.begin(), score_index_pairs.end(), utility::SortFirst< Real, Size >() );
-			for ( Size jj = 1; jj <= n_to_output_per_group_; ++jj ) {
-				if ( jj > ii_n_matches ) {
-					top_score_indices.resize( ii_n_matches );
-					break;
-				}
-				top_score_indices[ jj ] = score_index_pairs[ jj ].second;
-			}
-		} else {
-			utility::arg_least_several( ii_scores, top_score_indices );
-		}
+	// either sort or, if it's going to be fast, use utility::arg_least_several
+	if ( n_to_output_per_group_ > 50 ) {
+	utility::vector1< std::pair< Real, Size > > score_index_pairs( ii_n_matches );
+	for ( Size jj = 1; jj <= ii_n_matches; ++jj ) {
+	score_index_pairs[ jj ] = std::make_pair( ii_scores[ jj ], jj );
+	}
+	std::sort( score_index_pairs.begin(), score_index_pairs.end(), utility::SortFirst< Real, Size >() );
+	for ( Size jj = 1; jj <= n_to_output_per_group_; ++jj ) {
+	if ( jj > ii_n_matches ) {
+	top_score_indices.resize( ii_n_matches );
+	break;
+	}
+	top_score_indices[ jj ] = score_index_pairs[ jj ].second;
+	}
+	} else {
+	utility::arg_least_several( ii_scores, top_score_indices );
+	}
 
-		for ( Size jj = 1; jj <= top_score_indices.size(); ++jj ) {
-			writer_->record_match( ii_matches[ top_score_indices[ jj ]] );
-		}
+	for ( Size jj = 1; jj <= top_score_indices.size(); ++jj ) {
+	writer_->record_match( ii_matches[ top_score_indices[ jj ]] );
+	}
 	}*/
 }
 

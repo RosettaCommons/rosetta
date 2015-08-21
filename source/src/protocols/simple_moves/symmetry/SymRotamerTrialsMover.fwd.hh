@@ -28,7 +28,7 @@ class SymEnergyCutRotamerTrialsMover;
 typedef utility::pointer::shared_ptr< SymEnergyCutRotamerTrialsMover > SymEnergyCutRotamerTrialsMoverOP;
 typedef utility::pointer::shared_ptr< SymEnergyCutRotamerTrialsMover const > SymEnergyCutRotamerTrialsMoverCOP;
 
-}	// symmetry
+} // symmetry
 } // moves
 } // protocols
 

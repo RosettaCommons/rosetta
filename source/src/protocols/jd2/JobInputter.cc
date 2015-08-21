@@ -70,17 +70,17 @@ JobInputter::job_inputter_input_source_to_string(
 	JobInputterInputSource::Enum source
 ) {
 	switch(source) {
-	case JobInputterInputSource::NONE: return "None";
-	case JobInputterInputSource::UNKNOWN: return "Uknown";
-	case JobInputterInputSource::POSE: return "Pose";
-	case JobInputterInputSource::SILENT_FILE: return "SilentFile";
-	case JobInputterInputSource::PDB_FILE: return "PdbFile";
-	case JobInputterInputSource::ATOM_TREE_FILE: return "AtomTreeFile";
-	case JobInputterInputSource::DATABASE: return "Database";
-	case JobInputterInputSource::MAKE_ROT_LIB: return "MakeRotLib";
-	case JobInputterInputSource::RESOURCE_MANAGED_JOB: return "ResourceManagerJob";
-	case JobInputterInputSource::SCREENING_FILE: return "ScreeningJobInputter";
-	default:
+	case JobInputterInputSource::NONE : return "None";
+	case JobInputterInputSource::UNKNOWN : return "Uknown";
+	case JobInputterInputSource::POSE : return "Pose";
+	case JobInputterInputSource::SILENT_FILE : return "SilentFile";
+	case JobInputterInputSource::PDB_FILE : return "PdbFile";
+	case JobInputterInputSource::ATOM_TREE_FILE : return "AtomTreeFile";
+	case JobInputterInputSource::DATABASE : return "Database";
+	case JobInputterInputSource::MAKE_ROT_LIB : return "MakeRotLib";
+	case JobInputterInputSource::RESOURCE_MANAGED_JOB : return "ResourceManagerJob";
+	case JobInputterInputSource::SCREENING_FILE : return "ScreeningJobInputter";
+	default :
 		utility_exit_with_message("Unrecognized JobInputterInputSource");
 	}
 }

@@ -89,12 +89,12 @@ PerturbChiSidechainMover::PerturbChiSidechainMover() {
 
 PerturbChiSidechainMover::PerturbChiSidechainMover(
 	pack::dunbrack::RotamerLibrary const & rotamer_library
-) :	Parent( rotamer_library ) {
+) : Parent( rotamer_library ) {
 	set_defaults();
 }
 
 PerturbChiSidechainMover::PerturbChiSidechainMover(
-  PerturbChiSidechainMover const & mover
+	PerturbChiSidechainMover const & mover
 ) : Parent ( mover ) {
 	set_defaults();
 }
@@ -112,7 +112,7 @@ PerturbChiSidechainMover::set_defaults() {
 
 void
 PerturbChiSidechainMover::parse_my_tag(
-  utility::tag::TagCOP tag,
+	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & /*data*/,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
@@ -134,7 +134,7 @@ PerturbChiSidechainMover::make_chi_move(
 	ChiVector& new_chi
 ) {
 	new_chi.resize( old_chi.size() );
-	for ( Size i = 1; i <= old_chi.size(); i++) {
+	for ( Size i = 1; i <= old_chi.size(); i++ ) {
 		if ( !gaussian_ ) {
 			Real rand = numeric::random::rg().uniform();
 			new_chi[ i ] = basic::periodic_range( (( 2.0*rand-1.0 )*magnitude_ + old_chi[ i ]) , 360.0 );

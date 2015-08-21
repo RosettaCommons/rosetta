@@ -111,37 +111,37 @@ MembraneLipo::finalize_total_energy(
 	Real lipo(0);
 
 	MembraneTopology const & topology( *( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) )));
-	if(topology.LipoDefined()) {
+	if ( topology.LipoDefined() ) {
 		Real cen10Buried(0);
 		Real cen10Exposed(0);
 		Real cen10Buried_norm(0);
 		Real cen10Exposed_norm(0);
-		CenListInfo const & cenlist( *( utility::pointer::static_pointer_cast< core::scoring::CenListInfo const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::CEN_LIST_INFO ) ))); 
-		for(Size i=1;i<=pose.total_residue();++i) {
+		CenListInfo const & cenlist( *( utility::pointer::static_pointer_cast< core::scoring::CenListInfo const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::CEN_LIST_INFO ) )));
+		for ( Size i=1; i<=pose.total_residue(); ++i ) {
 			Size rsdSeq(i);
 			if ( core::pose::symmetry::is_symmetric( pose ) ) {
 				using namespace core::conformation::symmetry;
 				SymmetricConformation const & symm_conf (
-														 dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
+					dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
 				SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
-				if (!symm_info->bb_is_independent(pose.residue(i).seqpos())) {
+				if ( !symm_info->bb_is_independent(pose.residue(i).seqpos()) ) {
 					rsdSeq = symm_info->bb_follows(pose.residue(i).seqpos());
 				}
-				if (symm_info->is_virtual(i)) {
+				if ( symm_info->is_virtual(i) ) {
 					rsdSeq = 0;
 				}
 			}
 
-			if (rsdSeq ==0 ) continue;
+			if ( rsdSeq ==0 ) continue;
 			if ( pose.residue(rsdSeq).aa() == core::chemical::aa_vrt ) continue;
-			if(topology.allow_scoring(rsdSeq)) {
+			if ( topology.allow_scoring(rsdSeq) ) {
 				Real B(topology.LipidBurial(rsdSeq));
 				Real E(topology.LipidExposure(rsdSeq));
-				if(B!=0) {
+				if ( B!=0 ) {
 					cen10Buried+=B*cenlist.fcen10(i);
 					cen10Buried_norm+=1;
 				}
-				if(E!=0) {
+				if ( E!=0 ) {
 					cen10Exposed+=E*cenlist.fcen10(i);
 					cen10Exposed_norm+=1;
 				}
@@ -150,10 +150,12 @@ MembraneLipo::finalize_total_energy(
 		}
 		Real B_mean(0);
 		Real E_mean(0);
-		if(cen10Exposed_norm!=0)
+		if ( cen10Exposed_norm!=0 ) {
 			E_mean=cen10Exposed/cen10Exposed_norm;
-		if(cen10Buried_norm!=0)
+		}
+		if ( cen10Buried_norm!=0 ) {
 			B_mean=cen10Buried/cen10Buried_norm;
+		}
 		lipo=(E_mean-B_mean)*topology.tmh_inserted();
 	}
 	emap[ Mlipo ]=lipo;

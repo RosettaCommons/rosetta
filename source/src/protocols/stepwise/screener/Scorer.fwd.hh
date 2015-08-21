@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/screener/Scorer.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace stepwise {
 namespace screener {
-	
-	class Scorer;
-	typedef utility::pointer::shared_ptr< Scorer > ScorerOP;
-	typedef utility::pointer::shared_ptr< Scorer const > ScorerCOP;
-	
+
+class Scorer;
+typedef utility::pointer::shared_ptr< Scorer > ScorerOP;
+typedef utility::pointer::shared_ptr< Scorer const > ScorerCOP;
+
 } //screener
 } //stepwise
 } //protocols

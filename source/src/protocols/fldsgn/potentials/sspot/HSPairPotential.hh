@@ -71,9 +71,9 @@ public: // scoring
 
 
 	/// @brief score secondary structure
-	void score(	Pose const & pose,
-							SS_Info2 const & ss_info,
-							Real & hs_score ) const;
+	void score( Pose const & pose,
+		SS_Info2 const & ss_info,
+		Real & hs_score ) const;
 
 
 private:

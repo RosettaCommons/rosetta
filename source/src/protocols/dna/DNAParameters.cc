@@ -105,7 +105,7 @@ DNABasestep::DNABasestep( utility::vector1< core::Real > const & values ) :
 // This is the case where we pass in the residues that form the base pair
 // and call out to a function in core/scoring/dna/base_geometry.hh
 DNABasestep::DNABasestep( conformation::Residue const & rsd1, conformation::Residue const & rsd2,
-													conformation::Residue const & rsd1_next, conformation::Residue const & rsd2_prev )
+	conformation::Residue const & rsd1_next, conformation::Residue const & rsd2_prev )
 {
 	assert( rsd1.is_DNA() );
 	assert( rsd2.is_DNA() );
@@ -219,17 +219,17 @@ DNAParameters::calculate( core::pose::Pose const & pose )
 	scoring::dna::find_basepairs( pose, partners_ );
 
 	// Fill in the single base torsions
-	for( core::Size resid( 1 ), endid( pose.total_residue() ) ; resid <= endid ; ++resid ) {
-		if( pose.residue( resid ).is_DNA() ) {
+	for ( core::Size resid( 1 ), endid( pose.total_residue() ) ; resid <= endid ; ++resid ) {
+		if ( pose.residue( resid ).is_DNA() ) {
 			dna_base_positions_.push_back( resid );
 			bases_[ resid ] =  DNABase( pose.residue( resid ) ) ;
 		}
 	}
 
 	// Now get the base pairs
-	for( core::Size resid( 1 ), endid( pose.total_residue() ) ; resid <= endid ; ++resid ) {
+	for ( core::Size resid( 1 ), endid( pose.total_residue() ) ; resid <= endid ; ++resid ) {
 		core::Size partner_check( partners_[ resid ] );
-		if( partner_check > resid ) {
+		if ( partner_check > resid ) {
 			basepairs_[ resid ] =  DNABasepair( pose.residue( resid ), pose.residue( partner_check ) ) ;
 			basepairs_[ partner_check] =  DNABasepair( pose.residue( partner_check ), pose.residue( resid ) ) ;
 			unique_basepairs_.push_back( resid );
@@ -238,7 +238,7 @@ DNAParameters::calculate( core::pose::Pose const & pose )
 
 	// And the base steps - note the range of the loop is foreshortened, since a base step
 	// can't start on the last residue
-	for( core::Size resid( 1 ), endid( pose.total_residue() - 1 ) ; resid <= endid ; ++resid ) {
+	for ( core::Size resid( 1 ), endid( pose.total_residue() - 1 ) ; resid <= endid ; ++resid ) {
 
 		core::Size partner_check( partners_[ resid ] );
 		core::Size next_residue( resid + 1 );
@@ -247,12 +247,12 @@ DNAParameters::calculate( core::pose::Pose const & pose )
 		// To form a base step, both resid and next_residue must be base paired.
 		// Note that I do one insertion max in the inner loop.  I let the same base step be
 		// found twice, once in each direction.  This is different from the base pairs above.
-		if( partner_check != 0 &&
+		if ( partner_check != 0 &&
 				next_residue_partner != 0 &&
 				!pose.residue( resid ).is_upper_terminus() ) {
 			basesteps_[ resid ] =  DNABasestep( pose.residue( resid ), pose.residue( partner_check ),
-																							pose.residue( next_residue ), pose.residue( next_residue_partner ) ) ;
-			if( resid < partner_check ) {
+				pose.residue( next_residue ), pose.residue( next_residue_partner ) ) ;
+			if ( resid < partner_check ) {
 				unique_basestep_starts_.push_back( resid );
 			}
 		}

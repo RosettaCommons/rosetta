@@ -55,7 +55,7 @@ void delete_virtual_residues(
 	core::pose::Pose & pose
 );
 
-void derive_sc_sc_restraints( 
+void derive_sc_sc_restraints(
 	core::pose::Pose & pose,
 	core::Real const upper_dist_cutoff
 );

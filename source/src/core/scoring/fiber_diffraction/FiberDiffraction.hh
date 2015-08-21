@@ -34,100 +34,100 @@ namespace core {
 namespace scoring {
 namespace fiber_diffraction {
 
-	class FiberDiffraction : public utility::pointer::ReferenceCount {
-		public:
-		 /// @brief constructor
-    FiberDiffraction();
+class FiberDiffraction : public utility::pointer::ReferenceCount {
+public:
+	/// @brief constructor
+	FiberDiffraction();
 
-		/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-		virtual ~FiberDiffraction();
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~FiberDiffraction();
 
-		/// @brief Initialize map from cmd line options
-		void init();
+	/// @brief Initialize map from cmd line options
+	void init();
 
-		/// @brief Load fiber diffraction layer lines
-		bool loadFiberDiffractionData( 
-			std::string layer_lines,
-			core::Real const & c, 
-			core::Real const & res_cutoff_high, 
-			core::Real const & res_cutoff_low
-		);
+	/// @brief Load fiber diffraction layer lines
+	bool loadFiberDiffractionData(
+		std::string layer_lines,
+		core::Real const & c,
+		core::Real const & res_cutoff_high,
+		core::Real const & res_cutoff_low
+	);
 
-		// @brief Load fiber diffraction layer lines
-		bool loadFiberDiffractionData( 
-			std::istream & input, 
-			std::string layer_lines, 
-			core::Real const & c, 
-      core::Real const & res_cutoff_high, 
-      core::Real const & res_cutoff_low	
-		);
-		
-		/// @brief Load fiber diffraction layer lines
-		bool trimFiberDiffractionData( 
-			core::Real const &c,
-  		core::Real const &res_cutoff_high,
-  		core::Real const &res_cutoff_low 
-		);
+	// @brief Load fiber diffraction layer lines
+	bool loadFiberDiffractionData(
+		std::istream & input,
+		std::string layer_lines,
+		core::Real const & c,
+		core::Real const & res_cutoff_high,
+		core::Real const & res_cutoff_low
+	);
 
-		bool setupBesselOrder();		
+	/// @brief Load fiber diffraction layer lines
+	bool trimFiberDiffractionData(
+		core::Real const &c,
+		core::Real const &res_cutoff_high,
+		core::Real const &res_cutoff_low
+	);
 
-		inline bool isFiberDataLoaded() const { return this->isLoaded; };
+	bool setupBesselOrder();
 
-		inline void getAllFiberData( 
-			utility::vector0< utility::vector1< core::Real > >::iterator & layer_lines_I_it,
-			utility::vector0< utility::vector1< core::Real > >::iterator & layer_lines_R_it,
-			utility::vector0 < utility::vector0 < int > >::iterator  & nvals_it,
-			core::Size & lmax_,
-			core::Size & Rmax_
-		) {
-      layer_lines_I_it = layer_lines_I.begin();
-			layer_lines_R_it = layer_lines_R.begin();
-			nvals_it = nvals.begin();
-			lmax_ = lmax;
-			Rmax_ = Rmax;
-    }
-			
-		inline void getIntensities( utility::vector0< utility::vector1< core::Real > >::iterator & layer_lines_I_it) {
-			layer_lines_I_it = layer_lines_I.begin();
-		}
-	
-		inline void getReciprocalRs( utility::vector0< utility::vector1< core::Real > >::iterator & layer_lines_R_it ) {
-      layer_lines_R_it = layer_lines_R.begin();
-    }
+	inline bool isFiberDataLoaded() const { return this->isLoaded; };
 
-		inline void getNVals ( utility::vector0 < utility::vector0 < int > >::iterator  & nvals_it  ) {
-			nvals_it = nvals.begin();
-		}
-		
-		
-		///////////
-		private:
-		bool isLoaded;
-		core::Real c;
-    core::Real res_cutoff_high;
-    core::Real res_cutoff_low;
-	
-		//Layer lines, maximum layer line number and reciprocal R
-		core::Size lmax, Rmax;
-		utility::vector0 < utility::vector1< core::Real > > original_layer_lines_I;
- 		utility::vector0 < utility::vector1< core::Real > > original_layer_lines_R;
+	inline void getAllFiberData(
+		utility::vector0< utility::vector1< core::Real > >::iterator & layer_lines_I_it,
+		utility::vector0< utility::vector1< core::Real > >::iterator & layer_lines_R_it,
+		utility::vector0 < utility::vector0 < int > >::iterator  & nvals_it,
+		core::Size & lmax_,
+		core::Size & Rmax_
+	) {
+		layer_lines_I_it = layer_lines_I.begin();
+		layer_lines_R_it = layer_lines_R.begin();
+		nvals_it = nvals.begin();
+		lmax_ = lmax;
+		Rmax_ = Rmax;
+	}
 
-		utility::vector0< utility::vector1< core::Real > > layer_lines_I;
-  	utility::vector0< utility::vector1< core::Real > > layer_lines_R;
+	inline void getIntensities( utility::vector0< utility::vector1< core::Real > >::iterator & layer_lines_I_it) {
+		layer_lines_I_it = layer_lines_I.begin();
+	}
 
-		//Bessel orders
-		utility::vector0 < utility::vector0 < int > > nvals;
-		
-		//TODO: What to do with form factors
-		//utility::vector0< utility::vector1< utility::vector1< core::Real > > >::iterator form_factors;
-		//Scattering centroids
-		//utility::vector1< OneGaussianScattering >::iterator sig_centroid;	
-	};
+	inline void getReciprocalRs( utility::vector0< utility::vector1< core::Real > >::iterator & layer_lines_R_it ) {
+		layer_lines_R_it = layer_lines_R.begin();
+	}
 
-	/// @brief The EDM instance
-	FiberDiffraction& getFiberDiffractionData(core::Real c = 0.0, core::Real res_cutoff_high = 0.0, core::Real res_cutoff_low = 0.0, bool force_reload = false);
-	/// @brief The EDM instance
-	FiberDiffraction& getFiberDiffractionData_legacy(core::Real c = 0.0, core::Real res_cutoff_high = 0.0, core::Real res_cutoff_low = 0.0, bool force_reload = false);
+	inline void getNVals ( utility::vector0 < utility::vector0 < int > >::iterator  & nvals_it  ) {
+		nvals_it = nvals.begin();
+	}
+
+
+	///////////
+private:
+	bool isLoaded;
+	core::Real c;
+	core::Real res_cutoff_high;
+	core::Real res_cutoff_low;
+
+	//Layer lines, maximum layer line number and reciprocal R
+	core::Size lmax, Rmax;
+	utility::vector0 < utility::vector1< core::Real > > original_layer_lines_I;
+	utility::vector0 < utility::vector1< core::Real > > original_layer_lines_R;
+
+	utility::vector0< utility::vector1< core::Real > > layer_lines_I;
+	utility::vector0< utility::vector1< core::Real > > layer_lines_R;
+
+	//Bessel orders
+	utility::vector0 < utility::vector0 < int > > nvals;
+
+	//TODO: What to do with form factors
+	//utility::vector0< utility::vector1< utility::vector1< core::Real > > >::iterator form_factors;
+	//Scattering centroids
+	//utility::vector1< OneGaussianScattering >::iterator sig_centroid;
+};
+
+/// @brief The EDM instance
+FiberDiffraction& getFiberDiffractionData(core::Real c = 0.0, core::Real res_cutoff_high = 0.0, core::Real res_cutoff_low = 0.0, bool force_reload = false);
+/// @brief The EDM instance
+FiberDiffraction& getFiberDiffractionData_legacy(core::Real c = 0.0, core::Real res_cutoff_high = 0.0, core::Real res_cutoff_low = 0.0, bool force_reload = false);
 }
 }
 }

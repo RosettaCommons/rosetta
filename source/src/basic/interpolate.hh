@@ -203,34 +203,34 @@ interpolate_get_angle_bins(
 	double & xd
 )
 {
-//------------------------------------------------------------------------------
-// ctsa - get nbins for binrange
-//
+	//------------------------------------------------------------------------------
+	// ctsa - get nbins for binrange
+	//
 	int const nbins = static_cast< int >( 360.0 / binrange );
 
-// ctsa -  convert angle to double(anglebin) and
-//         mod value to range: [1.,double(nbins)+1.)
-//
-//   note that:  double(anglebin) = 1. + (angle-.5*binrange)/binrange
-//     ...this solves for the lowest of the two bracketing bin averages,
-//       rather  than the nearest bin average, and is thus only
-//       appropriate for interpolation
+	// ctsa -  convert angle to double(anglebin) and
+	//         mod value to range: [1.,double(nbins)+1.)
+	//
+	//   note that:  double(anglebin) = 1. + (angle-.5*binrange)/binrange
+	//     ...this solves for the lowest of the two bracketing bin averages,
+	//       rather  than the nearest bin average, and is thus only
+	//       appropriate for interpolation
 
 
 	double const xbin_real = 1.0 + ObjexxFCL::mod(
-	 ObjexxFCL::mod( (x-(0.5*binrange))/binrange, static_cast< double >(nbins) ) + nbins,
-	 static_cast< double >(nbins) );
+		ObjexxFCL::mod( (x-(0.5*binrange))/binrange, static_cast< double >(nbins) ) + nbins,
+		static_cast< double >(nbins) );
 
-// ctsa -  convert double bin values to array lookup bin values
-//
+	// ctsa -  convert double bin values to array lookup bin values
+	//
 	xbin = static_cast< int >( xbin_real );
 
-// ctsa -  get next lookup bin and convert to range: (1,nbins)
-//
+	// ctsa -  get next lookup bin and convert to range: (1,nbins)
+	//
 	xbin_next = 1 + ObjexxFCL::mod( xbin, nbins );
 
-// ctsa -  get error
-//
+	// ctsa -  get error
+	//
 	xd = xbin_real - xbin;
 
 
@@ -316,14 +316,14 @@ interpolate_bilinear(
 {
 	xy_func.dimension( xbin_count, ybin_count );
 
-//------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------
 	double const x0y0 = xy_func(xbin,ybin);
 	double const x1y0 = xy_func(xbin_next,ybin);
 	double const x0y1 = xy_func(xbin,ybin_next);
 	double const x1y1 = xy_func(xbin_next,ybin_next);
 
 	interpolate_bilinear_by_value(x0y0,x1y0,x0y1,x1y1,xd,yd,binrange,angles,val,
-	 dval_dx,dval_dy);
+		dval_dx,dval_dy);
 }
 
 inline
@@ -415,21 +415,21 @@ interpolate_2d_func_of_angles(
 	int const nbins = { 36 };
 	xy_func.dimension( nbins, nbins );
 
-//ctsa fixed parameters
+	//ctsa fixed parameters
 	double const binrange = { 10.0f };
 
-//ctsa local
+	//ctsa local
 	int xbin,ybin,xbin_next,ybin_next;
 	double xd,yd;
 
-//------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------
 	interpolate_get_angle_bins(x,binrange,xbin,xbin_next,xd);
 	interpolate_get_angle_bins(y,binrange,ybin,ybin_next,yd);
 
 	bool const treat_as_angles = false;
 
 	interpolate_bilinear(xbin,xbin_next,xd,ybin,ybin_next,yd,xy_func,nbins,nbins,
-	 binrange,treat_as_angles,val,dval_dx,dval_dy);
+		binrange,treat_as_angles,val,dval_dx,dval_dy);
 }
 
 

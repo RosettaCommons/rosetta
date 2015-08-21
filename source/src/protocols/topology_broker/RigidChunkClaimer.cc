@@ -74,17 +74,17 @@ protocols::loops::Loops generate_rigid_from_alignment( pose::Pose query_pose, co
 	loops::LoopsOP loops = comparative_modeling::loops_from_alignment( query_pose.total_residue(), align, min_loop_size );
 
 	// this is now done in select_parts()
- 	// randomly grow loops by N residues (4 is a good amount)
+	// randomly grow loops by N residues (4 is a good amount)
 	return loops->invert( query_pose.total_residue() );
 }
 
 // having AdjacentJumps causes problems in fix_internal_coords_of_siblings.
 // can have more than two child on C(=0) for instance
 RigidChunkClaimer::RigidChunkClaimer()
-	: bExclusive_( true ),
-		bAllowAdjacentJumps_( false ),
-		bUseInputPose_( true ),
-		bRigidInRelax_( false ) {}
+: bExclusive_( true ),
+	bAllowAdjacentJumps_( false ),
+	bUseInputPose_( true ),
+	bRigidInRelax_( false ) {}
 
 RigidChunkClaimer::RigidChunkClaimer( pose::Pose const& input_pose, loops::Loops rigid ) :
 	input_pose_( input_pose ),
@@ -95,8 +95,9 @@ RigidChunkClaimer::RigidChunkClaimer( pose::Pose const& input_pose, loops::Loops
 	bUseInputPose_( true ),
 	bRigidInRelax_( false )
 {
-	if ( centroid_input_pose_.total_residue() && centroid_input_pose_.is_fullatom() )
-		core::util::switch_to_residue_type_set(	centroid_input_pose_, chemical::CENTROID );
+	if ( centroid_input_pose_.total_residue() && centroid_input_pose_.is_fullatom() ) {
+		core::util::switch_to_residue_type_set( centroid_input_pose_, chemical::CENTROID );
+	}
 }
 
 void RigidChunkClaimer::set_defaults() {
@@ -114,7 +115,7 @@ void RigidChunkClaimer::receive_message( ClaimerMessage& cm ) {
 
 		//find good residue
 		if ( !current_rigid_core_.size() ) return;
-		msg.good_fix_pos_ =	current_rigid_core_.begin()->start() + numeric::nint( 0.5 * current_rigid_core_.begin()->size() ) - 1;
+		msg.good_fix_pos_ = current_rigid_core_.begin()->start() + numeric::nint( 0.5 * current_rigid_core_.begin()->size() ) - 1;
 		msg.received_by_me( get_self_weak_ptr() );
 	}
 }
@@ -139,7 +140,7 @@ bool RigidChunkClaimer::read_tag( std::string tag, std::istream& is )
 		is >> file;
 		std::ifstream infile( file.c_str() );
 
-		if (!infile.good()) {
+		if ( !infile.good() ) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
 		}
 		loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file( infile, file, false /*no strict checking */ );
@@ -149,7 +150,7 @@ bool RigidChunkClaimer::read_tag( std::string tag, std::istream& is )
 		is >> file;
 		std::ifstream infile( file.c_str() );
 
-		if (!infile.good()) {
+		if ( !infile.good() ) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
 		}
 		loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file( infile, file, false /*no strict checking */ );
@@ -174,15 +175,14 @@ bool RigidChunkClaimer::read_tag( std::string tag, std::istream& is )
 		is >>  random_grow_loops_by_;
 	} else if ( tag == "RIGID_IN_RELAX" ) {
 		bRigidInRelax_ = true;
-	}
-	else return Parent::read_tag( tag, is );
+	} else return Parent::read_tag( tag, is );
 	return true;
 }
 
 void RigidChunkClaimer::init_after_reading() {
 	tr.Debug << type() << " initialized with input_pdb: " << input_pose_.sequence() << " and regions " << rigid_core_ << std::endl;
 	centroid_input_pose_=input_pose_;
-	if ( centroid_input_pose_.total_residue() && centroid_input_pose_.is_fullatom() ) core::util::switch_to_residue_type_set(	centroid_input_pose_, chemical::CENTROID );
+	if ( centroid_input_pose_.total_residue() && centroid_input_pose_.is_fullatom() ) core::util::switch_to_residue_type_set( centroid_input_pose_, chemical::CENTROID );
 }
 
 void RigidChunkClaimer::select_parts() {
@@ -192,7 +192,7 @@ void RigidChunkClaimer::select_parts() {
 	while ( current_rigid_core_.size() == 0 && attempts < 50 ) {
 		++attempts;
 		for ( loops::Loops::const_iterator it = rigid_core_.begin(), eit = rigid_core_.end();
-					it != eit; ++it ) {
+				it != eit; ++it ) {
 			if ( numeric::random::rg().uniform() >= it->skip_rate() )  {
 				current_rigid_core_.push_back( *it );
 			}
@@ -220,12 +220,12 @@ void RigidChunkClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	//stochastically select rigid_core ( if skip-rate is set >0, otherwise all loops are selected )
 	tr.Trace << "region selected: " << current_rigid_core_ << std::endl;
 
-	//	new_claims.push_back( new CutBiasClaim( *this ) ); we don't need this claim type --- always call manipulate_cut_bias
+	// new_claims.push_back( new CutBiasClaim( *this ) ); we don't need this claim type --- always call manipulate_cut_bias
 	for ( Loops::const_iterator loop_it = current_rigid_core_.begin(); loop_it != current_rigid_core_.end(); ++loop_it ) {
 		for ( Size pos = loop_it->start(); pos <= loop_it->stop(); ++pos ) {
 			new_claims.push_back( claims::DofClaimOP( new claims::BBClaim( get_self_weak_ptr(),
-																								 std::make_pair( label(), pos ),
-																								 claims::DofClaim::EXCLUSIVE ) ) );
+				std::make_pair( label(), pos ),
+				claims::DofClaim::EXCLUSIVE ) ) );
 		}
 	}
 }
@@ -242,7 +242,7 @@ void RigidChunkClaimer::new_decoy( core::pose::Pose const& pose ) {
 	if ( bUseInputPose_ ) {
 		input_pose_ = pose;
 		centroid_input_pose_=input_pose_;
-		if ( centroid_input_pose_.total_residue() && centroid_input_pose_.is_fullatom() ) core::util::switch_to_residue_type_set(	centroid_input_pose_, chemical::CENTROID );
+		if ( centroid_input_pose_.total_residue() && centroid_input_pose_.is_fullatom() ) core::util::switch_to_residue_type_set( centroid_input_pose_, chemical::CENTROID );
 
 		// use loops from ThreadingJob ???
 		if ( bUseThreadingJobLoops_ ) {
@@ -266,7 +266,7 @@ bool RigidChunkClaimer::allow_claim( claims::DofClaim const& foreign_claim ) {
 	claims::BBClaim const *bb_ptr( dynamic_cast< const claims::BBClaim* >( &foreign_claim ) );
 
 	if ( bb_ptr && current_rigid_core_.is_loop_residue( bb_ptr->global_position() ) ) {
-		if ( bExclusive_ ) { 	// if we want exclusive claim this is not acceptable
+		if ( bExclusive_ ) {  // if we want exclusive claim this is not acceptable
 			return false;
 		} else {
 			// allow only the weakest claim. We want to initialize ourselves... don't know if we need to be so restrictive!
@@ -302,8 +302,9 @@ bool RigidChunkClaimer::allow_claim( claims::DofClaim const& foreign_claim ) {
 			Size absolute_cut_position = broker().sequence_number_resolver().find_global_pose_number( cut_position );
 
 			if ( absolute_cut_position >= region->start() &&
-					 absolute_cut_position < region->stop() ) // cut claim can be at the chunk end
+					absolute_cut_position < region->stop() ) { // cut claim can be at the chunk end
 				return false; // no cuts within our rigid-core boundaries
+			}
 		}
 	}
 	return true;
@@ -337,7 +338,7 @@ void fix_internal_coords_of_siblings( pose::Pose& pose, pose::Pose const& ref_po
 		par1O=pose.conformation().atom_tree().atom( atom ).parent()->id();
 		std::string const & aname(pose.residue(par1O.rsd()).atom_name(par1O.atomno()));
 		ref_par1O=core::id::AtomID( ref_pose.residue( par1O.rsd() ).atom_index( aname ), par1O.rsd() );
-	}	else {
+	} else {
 		tr.Warning << "cannot fix internal coords of " << atom << " in RigidChunk because 1st parent is missing " << std::endl;
 		return;
 	}
@@ -345,7 +346,7 @@ void fix_internal_coords_of_siblings( pose::Pose& pose, pose::Pose const& ref_po
 	bool ref_has_par2( ref_pose.conformation().atom_tree().atom( ref_par1O ).parent() );
 	core::id::AtomID par2O;
 	core::id::AtomID ref_par2O;
- 	if ( has_par2 && ref_has_par2 ) {
+	if ( has_par2 && ref_has_par2 ) {
 		par2O=pose.conformation().atom_tree().atom( par1O ).parent()->id();
 		std::string const & aname(pose.residue(par2O.rsd()).atom_name(par2O.atomno()));
 		ref_par2O=core::id::AtomID( ref_pose.residue( par2O.rsd() ).atom_index( aname ), par2O.rsd() );
@@ -381,11 +382,11 @@ void fix_mainchain_connect( pose::Pose& pose, pose::Pose const& ref_pose, core::
 
 	core::conformation::Residue const & ref_resi = ref_pose.residue( upper_residue );
 	tr.Trace << "mainchain torsion: ref: " << ref_resi.mainchain_torsion( 1 ) << " atom-tree: "
-					 << ref_pose.conformation().torsion_angle( bb1, bb2, bb3, bb4 ) << std::endl;
+		<< ref_pose.conformation().torsion_angle( bb1, bb2, bb3, bb4 ) << std::endl;
 
 	core::conformation::Residue const & resi = pose.residue( upper_residue );
 	tr.Trace << "mainchain torsion (before): conf: " << resi.mainchain_torsion( 1 ) << " atom-tree: "
-					 << pose.conformation().torsion_angle( bb1, bb2, bb3, bb4 ) << std::endl;
+		<< pose.conformation().torsion_angle( bb1, bb2, bb3, bb4 ) << std::endl;
 
 	pose.conformation().set_bond_length( bb1, bb2, ref_pose.conformation().bond_length( bb1, bb2 ) );
 	pose.conformation().set_bond_angle ( bb0, bb1, bb2, ref_pose.conformation().bond_angle( bb0, bb1, bb2 ) );
@@ -396,7 +397,7 @@ void fix_mainchain_connect( pose::Pose& pose, pose::Pose const& ref_pose, core::
 
 	core::conformation::Residue const & new_resi = pose.residue( upper_residue ); //this should trigger update of coords and torsions
 	tr.Trace << "mainchain torsion (after): conf: " << new_resi.mainchain_torsion( 1 ) << " atom-tree: "
-					 << pose.conformation().torsion_angle( bb1, bb2, bb3, bb4 ) << std::endl;
+		<< pose.conformation().torsion_angle( bb1, bb2, bb3, bb4 ) << std::endl;
 
 	if ( prev_rsd.has( "O" ) ) {
 		core::id::AtomID ref_atomO( prev_rsd.atom_index( "O" ), upper_residue-1 );
@@ -427,7 +428,7 @@ void copy_internal_coords( pose::Pose& pose, pose::Pose const& ref_pose, loops::
 	///fpd if there are post modifications to pose (not in ref_pose), we can't just copy ref_pose->pose
 	///fpd    instead ... make xyz copy in rigid regions
 	for ( loops::Loops::const_iterator region = core.begin(); region != core.end(); ++region ) {
-		for (Size i=region->start(); i<=region->stop(); ++i) {
+		for ( Size i=region->start(); i<=region->stop(); ++i ) {
 			core::conformation::Residue const &rsd_i = ref_pose.residue(i);
 			pose.replace_residue ( i , rsd_i , false );
 		}
@@ -445,11 +446,11 @@ void copy_internal_coords( pose::Pose& pose, pose::Pose const& ref_pose, loops::
 		Size loop_stop  = region->stop();
 
 		bool lower_connect = ( loop_start > 1
-													 && !pose.residue(loop_start).is_lower_terminus()
-													 && !pose.fold_tree().is_cutpoint( loop_start-1 ) );
+			&& !pose.residue(loop_start).is_lower_terminus()
+			&& !pose.fold_tree().is_cutpoint( loop_start-1 ) );
 		bool upper_connect = ( loop_stop < pose.total_residue()
-													 && !pose.residue(loop_stop).is_upper_terminus()
-													 && !pose.fold_tree().is_cutpoint( loop_stop ) );
+			&& !pose.residue(loop_stop).is_upper_terminus()
+			&& !pose.fold_tree().is_cutpoint( loop_stop ) );
 
 		if ( lower_connect ) {
 			tr.Trace << "fixing lower connection for " << loop_start << std::endl;
@@ -476,18 +477,18 @@ void RigidChunkClaimer::adjust_relax_movemap(  core::kinematics::MoveMap& mm ) c
 void RigidChunkClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& /* init_claims*/, claims::DofClaims& /*failed_init_claims*/ ) {
 	//need to copy coords and jumps --- if chunks were idealized no problem .... but non-idealized stuff ?
 	//also take care of fullatom vs centroid...
-	//	tr.Warning << "[WARNING] *** use input structure of RigidChunkClaimer --- NEEDS TO BE IDEALIZED !!! *** \n";
+	// tr.Warning << "[WARNING] *** use input structure of RigidChunkClaimer --- NEEDS TO BE IDEALIZED !!! *** \n";
 	// to do this without idealized :
 
 	// get rigid-body reorientation for first residue... this must be applied to all residues in the chunk,
 	// and then just set from the coordinates.
 
 	//in a sense this is not necessary since we asked for exclusive rights for the stuff in RIGID ...
-	/*	for ( DofClaims::const_iterator claim=init_claims.begin(); claim!=init_claims.end(); ++claim ) {
-		if ( (*claim)->owner() != this ) continue;
+	/* for ( DofClaims::const_iterator claim=init_claims.begin(); claim!=init_claims.end(); ++claim ) {
+	if ( (*claim)->owner() != this ) continue;
 
-		}*/
-	//	superimpose_chain (pose, input_pose_, rigid_core_ );
+	}*/
+	// superimpose_chain (pose, input_pose_, rigid_core_ );
 
 
 	//need to have same number of residues for fold-tree transfer...
@@ -498,8 +499,9 @@ void RigidChunkClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClai
 	//fpd   (strictly greater-than since we have to have a flanking res on each side of each region)
 	//fpd   we still need missing dens in the gaps (but not at c term now!)
 	core::Size lastChunk=1;
-	for ( loops::Loops::const_iterator it = current_rigid_core_.begin(); it!=current_rigid_core_.end(); ++it )
+	for ( loops::Loops::const_iterator it = current_rigid_core_.begin(); it!=current_rigid_core_.end(); ++it ) {
 		lastChunk = std::max( lastChunk , it->stop() );
+	}
 	runtime_assert ( lastChunk <= centroid_input_pose_.total_residue() );
 
 	bool missing_density( false );
@@ -568,10 +570,10 @@ void RigidChunkClaimer::switch_to_fullatom( core::pose::Pose& pose , utility::ve
 // ======================== JumpCalculator ========================================
 // ================================================================================
 RigidChunkClaimer::JumpCalculator::JumpCalculator( loops::Loops const& rigid, bool bAllowAdjacentJumps )
-	: rigid_ ( rigid ),
-		visited_( rigid.size(), 0 ),
-		new_nr_( 1 ),
-		bAllowAdjacentJumps_( bAllowAdjacentJumps ) {}
+: rigid_ ( rigid ),
+	visited_( rigid.size(), 0 ),
+	new_nr_( 1 ),
+	bAllowAdjacentJumps_( bAllowAdjacentJumps ) {}
 
 bool is_not_neighbor_to_rigid( loops::Loops const& rigid, Size pos1, Size pos2 ) {
 	Size up1 = rigid.loop_index_of_residue( pos1-1 );
@@ -595,9 +597,9 @@ bool connects_rigid_regions( loops::Loops const& rigid, Size pos1, Size pos2 ) {
 
 bool RigidChunkClaimer::JumpCalculator::irrelevant_jump( Size global_start, Size global_end ) {
 	//TODO make better use of local positions
-	if( tr.Trace.visible() ) {
+	if ( tr.Trace.visible() ) {
 		tr.Trace << "Irrelevant_jump check for " << global_start << "->" << global_end << std::endl;
-		tr.Trace << "connects_rigid: " << connects_rigid_regions( rigid_,	global_start, global_end ) << std::endl;
+		tr.Trace << "connects_rigid: " << connects_rigid_regions( rigid_, global_start, global_end ) << std::endl;
 		tr.Trace << "is not_neighbor_to_rigid: " << is_not_neighbor_to_rigid( rigid_, global_start, global_end ) << std::endl;
 		tr.Trace << "bAllowAdjacent: " << bAllowAdjacentJumps_ << std::endl;
 	}
@@ -645,7 +647,7 @@ bool RigidChunkClaimer::JumpCalculator::good_jump( core::Size global_start, core
 			for ( Size i=1; i<=visited_.size(); i++ ) {
 				if ( visited_[ i ] == old_visit_nr ) visited_[ i ] = visit_nr;
 			}
-		} else if ( visited_[ up_loop ] || visited_[ down_loop ]) {
+		} else if ( visited_[ up_loop ] || visited_[ down_loop ] ) {
 			// case2: one already visited the other is still zero and thus neutral to addition
 			visit_nr = visited_[ up_loop ] + visited_[ down_loop ];
 		} // case3: none visited
@@ -659,7 +661,7 @@ bool RigidChunkClaimer::JumpCalculator::good_jump( core::Size global_start, core
 /// @detail generate a list of Jumps (Size tupels) that fix the remaining part of the chunk
 void
 RigidChunkClaimer::JumpCalculator::generate_rigidity_jumps( RigidChunkClaimer* parent_claimer, claims::DofClaims& extra_jumps, std::string label ) {
-	if( visited_.size() == 0 ){ // No rigid chunks ??
+	if ( visited_.size() == 0 ) { // No rigid chunks ??
 		return;
 	}
 
@@ -682,20 +684,20 @@ RigidChunkClaimer::JumpCalculator::generate_rigidity_jumps( RigidChunkClaimer* p
 
 	loops::Loops::LoopList rigid_loops = rigid_.loops(); // loops in sequence that correspond to the regions
 
-	//	take middle of this loop piece. ... there might be better ways to make the extra jumps...
+	// take middle of this loop piece. ... there might be better ways to make the extra jumps...
 	Size const anchor( static_cast< Size >( 0.5*(rigid_loops[ root_reg ].stop()
-				- rigid_loops[ root_reg ].start()) ) + rigid_loops[ root_reg ].start() );
+		- rigid_loops[ root_reg ].start()) ) + rigid_loops[ root_reg ].start() );
 
 	for ( Size region = 1; region <= visited_.size(); region++ ) {
 		Size old_visited = visited_[ region ];
 		if ( visited_[ region ] != visited_[ root_reg ] ) {
-			Size target_pos (	rigid_loops[ region ].start()
-							 + static_cast< Size >( 0.5*( rigid_loops[ region ].stop()-rigid_loops[ region ].start() ) ) );
+			Size target_pos ( rigid_loops[ region ].start()
+				+ static_cast< Size >( 0.5*( rigid_loops[ region ].stop()-rigid_loops[ region ].start() ) ) );
 
 			extra_jumps.push_back( claims::DofClaimOP( new claims::JumpClaim( parent_claimer ? parent_claimer->get_self_weak_ptr() : TopologyClaimerAP(),
-																										std::make_pair( label, anchor),
-																										std::make_pair( label, target_pos),
-																										claims::DofClaim::EXCLUSIVE ) ) );
+				std::make_pair( label, anchor),
+				std::make_pair( label, target_pos),
+				claims::DofClaim::EXCLUSIVE ) ) );
 			visited_[ region ] = visited_[ root_reg ];
 
 			if ( old_visited ) { //if we connected a cluster make sure to update all its nodes

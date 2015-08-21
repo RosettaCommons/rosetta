@@ -30,9 +30,9 @@
 
 static thread_local basic::Tracer tr( "protocols.forge.constraints.ConstraintFileRCG" );
 
-namespace protocols{
-namespace forge{
-namespace constraints{
+namespace protocols {
+namespace forge {
+namespace constraints {
 
 std::string
 ConstraintFileCstGeneratorCreator::keyname() const
@@ -60,8 +60,8 @@ ConstraintFileRCG::ConstraintFileRCG():
 	/*using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	if( option[ constraints::cst_file ].user() ){
-		filename_ = option[ constraints::cst_file ].value().at( 1 );
-		}*/
+	filename_ = option[ constraints::cst_file ].value().at( 1 );
+	}*/
 }
 
 /// @brief
@@ -75,10 +75,10 @@ ConstraintFileRCG::~ConstraintFileRCG() {}
 
 void
 ConstraintFileRCG::parse_my_tag( TagCOP const tag,
-												basic::datacache::DataMap & data,
-												protocols::filters::Filters_map const & filters,
-												protocols::moves::Movers_map const & movers,
-												core::pose::Pose const & pose )
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const & pose )
 {
 	RemodelConstraintGenerator::parse_my_tag( tag, data, filters, movers, pose );
 	set_cstfile( tag->getOption< std::string >( "filename", filename_ ) );

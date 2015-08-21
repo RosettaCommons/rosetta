@@ -17,8 +17,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace moves{
+namespace protocols {
+namespace moves {
 
 //Forwards and OP typedefs
 class TrialMover;

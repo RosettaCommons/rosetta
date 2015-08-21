@@ -43,11 +43,11 @@ namespace moves {
 
 /// @details ctor; will call MC ctor too
 DualMonteCarlo::DualMonteCarlo(
-															 core::pose::Pose const & DMC_pose,
-															 core::pose::Pose const & MC_pose,
-															 core::scoring::ScoreFunction const & DMC_scorefunction,
-															 core::scoring::ScoreFunction const & MC_scorefunction,
-															 core::Real const temperature
+	core::pose::Pose const & DMC_pose,
+	core::pose::Pose const & MC_pose,
+	core::scoring::ScoreFunction const & DMC_scorefunction,
+	core::scoring::ScoreFunction const & MC_scorefunction,
+	core::Real const temperature
 ):
 	MC_(MC_pose, MC_scorefunction, temperature)
 {
@@ -110,20 +110,20 @@ DualMonteCarlo::show_scores() const
 // void
 // DualMonteCarlo::score_function( core::scoring::ScoreFunction const & DMC_scorefunction )
 // {
-// 	score_function_ = new ScoreFunction(DMC_scorefunction);
+//  score_function_ = new ScoreFunction(DMC_scorefunction);
 
-// 	(*score_function_)( *lowest_score_pose_ );
-// 	score_function_->accumulate_residue_total_energies( *lowest_score_pose_ );
+//  (*score_function_)( *lowest_score_pose_ );
+//  score_function_->accumulate_residue_total_energies( *lowest_score_pose_ );
 
-// 	(*score_function_)( *last_accepted_pose_ );
-// 	score_function_->accumulate_residue_total_energies( *last_accepted_pose_ );
+//  (*score_function_)( *last_accepted_pose_ );
+//  score_function_->accumulate_residue_total_energies( *last_accepted_pose_ );
 // }
 
 // /// @brief change the scorefxns,  re-scores last-accepted and lowest-score pose, calls MC's score_function, and may change the identity of the poses if MC does too.
 // void
 // DualMonteCarlo::score_function(
-// 															 core::scoring::ScoreFunction const & DMC_scorefunction,
-// 															 core::scoring::ScoreFunction const & MC_scorefunction)
+//                 core::scoring::ScoreFunction const & DMC_scorefunction,
+//                 core::scoring::ScoreFunction const & MC_scorefunction)
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -131,37 +131,37 @@ DualMonteCarlo::show_scores() const
 //
 // return true for an accept, false otherwise
 //
-// 	mc_accepted
-// 		3 = accepted:score beat low score and last_accepted score
-// 		2 = accepted:score beat last_accepted score
-// 		1 = thermally accepted: score worse than last_accepted score
-// 		0 = not accepted
+//  mc_accepted
+//   3 = accepted:score beat low score and last_accepted score
+//   2 = accepted:score beat last_accepted score
+//   1 = thermally accepted: score worse than last_accepted score
+//   0 = not accepted
 /// @details remember that this function DOES NOT CARE what scores the DMC_poses have!
 bool
 DualMonteCarlo::boltzmann(
-													core::pose::Pose & DMC_pose,
-													core::pose::Pose & MC_pose,
-													std::string const & move_type// = "unk"
+	core::pose::Pose & DMC_pose,
+	core::pose::Pose & MC_pose,
+	std::string const & move_type// = "unk"
 )
 {
 	const bool accepted(MC_.boltzmann(MC_pose, move_type));
 
 	switch (MC_.mc_accepted()) {
-	case MCA_accepted_score_beat_low:
+	case MCA_accepted_score_beat_low :
 		reset_DMC(DMC_pose);
 		break;
 	case MCA_accepted_score_beat_last:
-	case MCA_accepted_thermally:
+	case MCA_accepted_thermally :
 		//PROF_START( basic::MC_ACCEPT );
 		*last_accepted_pose_ = DMC_pose;
 		//PROF_STOP( basic::MC_ACCEPT );
 		(*score_function_)( *last_accepted_pose_ );
 		/// Now handled automatically.  score_function_->accumulate_residue_total_energies( *last_accepted_pose_ );
 		break;
-	case MCA_rejected:
+	case MCA_rejected :
 		DMC_pose = *last_accepted_pose_;
 		break;
-	default:
+	default :
 		break;
 	}
 	return accepted;
@@ -172,44 +172,44 @@ DualMonteCarlo::boltzmann(
 // void
 // DualMonteCarlo::set_last_accepted_pose( Pose const & pose )
 // {
-// 	*last_accepted_pose_ = pose;
+//  *last_accepted_pose_ = pose;
 // }
 
 // // for recovering from a checkpoint
 // void
 // DualMonteCarlo::set_lowest_score_pose( Pose const & pose )
 // {
-// 	*lowest_score_pose_ = pose;
+//  *lowest_score_pose_ = pose;
 // }
 
 // void
 // DualMonteCarlo::attach_observer_to_last_accepted_conformation(
-// 	core::conformation::ConformationObserverOP observer
+//  core::conformation::ConformationObserverOP observer
 // )
 // {
-// 	last_accepted_pose_->conformation().attach_observer( observer );
+//  last_accepted_pose_->conformation().attach_observer( observer );
 // }
 
 // void
 // DualMonteCarlo::attach_observer_to_lowest_score_conformation(
-// 	core::conformation::ConformationObserverOP observer
+//  core::conformation::ConformationObserverOP observer
 // )
 // {
-// 	last_accepted_pose_->conformation().attach_observer( observer );
+//  last_accepted_pose_->conformation().attach_observer( observer );
 // }
 
 // void
 // DualMonteCarlo::attach_observer_to_last_accepted_pose(
-// 	core::pose::PoseObserver * observer
+//  core::pose::PoseObserver * observer
 // )
 // {
-// 	last_accepted_pose_->attach_observer( observer );
+//  last_accepted_pose_->attach_observer( observer );
 // }
 
 // void
 // DualMonteCarlo::attach_observer_to_lowest_score_pose( core::pose::PoseObserver * observer )
 // {
-// 	last_accepted_pose_->attach_observer( observer );
+//  last_accepted_pose_->attach_observer( observer );
 // }
 
 core::scoring::ScoreFunction const &
@@ -240,43 +240,43 @@ DualMonteCarlo::MC() const
 // void
 // DualMonteCarlo::reset_counters()
 // {
-// 	trial_counter.clear();
-// 	accept_counter.clear();
-// 	energy_drop_counter.clear();
+//  trial_counter.clear();
+//  accept_counter.clear();
+//  energy_drop_counter.clear();
 // }
 
 // /// @detail return number of trials since last reset
 // core::Size
 // DualMonteCarlo::total_trials() const {
-// 	Size ntrials( 0 );
-// 	for ( std::map< std::string, int >::const_iterator
-// 					it=trial_counter.begin(); it != trial_counter.end(); ++it ) {
-// 		ntrials += it->second;
-// 	}
-// 	return ntrials;
+//  Size ntrials( 0 );
+//  for ( std::map< std::string, int >::const_iterator
+//      it=trial_counter.begin(); it != trial_counter.end(); ++it ) {
+//   ntrials += it->second;
+//  }
+//  return ntrials;
 // }
 // /////////////////////////////////////////////////////////////////////////////
 // void
 // DualMonteCarlo::show_counters() const
 // {
-// 	for ( std::map< std::string, int >::const_iterator
-// 					it=trial_counter.begin(); it != trial_counter.end(); ++it ) {
-// 		std::string const & tag( it->first );
-// 		int const ntrials( it->second );
-// 		if  (accept_counter.count( tag )){
-// 			int const accepts( accept_counter.find( tag )->second );
-// 			core::Real const energy_drop( energy_drop_counter.find( tag )->second );
-// 			TR << A( 16, tag ) <<
-// 				" trials= " << I( 6, ntrials ) << "; " <<
-// 				" accepts= " << F( 6, 4, core::Real( accepts )/ntrials ) << "; " <<
-// 				" energy_drop/trial= " << F( 9, 5, core::Real( energy_drop ) / ntrials )<<
-// 				std::endl;
-// 		} else {
-// 			TR << A( 16, tag ) <<
-// 				" trials= " << I( 6, ntrials ) <<
-// 				" NO ACCEPTS." << std::endl;
-// 		} // else
-// 	} // for
+//  for ( std::map< std::string, int >::const_iterator
+//      it=trial_counter.begin(); it != trial_counter.end(); ++it ) {
+//   std::string const & tag( it->first );
+//   int const ntrials( it->second );
+//   if  (accept_counter.count( tag )){
+//    int const accepts( accept_counter.find( tag )->second );
+//    core::Real const energy_drop( energy_drop_counter.find( tag )->second );
+//    TR << A( 16, tag ) <<
+//     " trials= " << I( 6, ntrials ) << "; " <<
+//     " accepts= " << F( 6, 4, core::Real( accepts )/ntrials ) << "; " <<
+//     " energy_drop/trial= " << F( 9, 5, core::Real( energy_drop ) / ntrials )<<
+//     std::endl;
+//   } else {
+//    TR << A( 16, tag ) <<
+//     " trials= " << I( 6, ntrials ) <<
+//     " NO ACCEPTS." << std::endl;
+//   } // else
+//  } // for
 // }
 
 

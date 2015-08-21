@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///	@file		protocols/membrane/TransformIntoMembraneMover.fwd.hh
-/// @brief		Transform a pose into a membrane coordinate frame
-/// @author		Rebecca Faye Alford (rfalford12@gmail.com)
+/// @file  protocols/membrane/TransformIntoMembraneMover.fwd.hh
+/// @brief  Transform a pose into a membrane coordinate frame
+/// @author  Rebecca Faye Alford (rfalford12@gmail.com)
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 /// Last Modified: 6/11/15
 /// #RosettaMPMover

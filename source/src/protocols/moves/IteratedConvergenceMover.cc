@@ -58,7 +58,7 @@ IteratedConvergenceMover::IteratedConvergenceMover() :
 	maxcycles_(1000)
 {}
 
-	IteratedConvergenceMover::IteratedConvergenceMover( MoverOP submover, filters::FilterCOP filter, core::Real delta, core::Size cycles, core::Size maxcycles ) :
+IteratedConvergenceMover::IteratedConvergenceMover( MoverOP submover, filters::FilterCOP filter, core::Real delta, core::Size cycles, core::Size maxcycles ) :
 	Mover("IteratedConvergenceMover"),
 	submover_(submover),
 	filter_(filter),
@@ -88,7 +88,7 @@ IteratedConvergenceMover::apply( Pose & pose )
 
 	core::Real refval(filter_->report_sm(pose));
 	core::Size ncyc(0);
-	for( core::Size ii(1); ii <= maxcycles_; ++ii) {
+	for ( core::Size ii(1); ii <= maxcycles_; ++ii ) {
 		submover_->apply(pose);
 		core::Real trialval(filter_->report_sm(pose));
 		if ( (trialval < refval - delta_) || ( trialval > refval + delta_ ) ) {
@@ -100,7 +100,7 @@ IteratedConvergenceMover::apply( Pose & pose )
 		}
 		//within tolerance
 		++ncyc;
-		if( ncyc >= cycles_) {
+		if ( ncyc >= cycles_ ) {
 			TR << "Exiting IteratedConvergence with convergence after "<<ii<<" applications of mover."<<std::endl;
 			return;
 		}
@@ -135,17 +135,17 @@ IteratedConvergenceMover::parse_my_tag(
 	if ( tag->hasOption("filter") ) filter_name = tag->getOption< std::string >( "filter" );
 	if ( tag->hasOption("filter_name") ) filter_name = tag->getOption< std::string >( "filter_name" );
 
-  Movers_map::const_iterator  find_mover ( movers.find( mover_name ));
-  Filters_map::const_iterator find_filter( filters.find( filter_name ));
+	Movers_map::const_iterator  find_mover ( movers.find( mover_name ));
+	Filters_map::const_iterator find_filter( filters.find( filter_name ));
 
-  if( find_mover == movers.end() ) {
-    TR.Error << "ERROR !! mover not found in map: \n" << tag << std::endl;
-    runtime_assert( find_mover != movers.end() );
-  }
-  if( find_filter == filters.end() ) {
-    TR.Error << "ERROR !! filter not found in map: \n" << tag << std::endl;
-    runtime_assert( find_filter != filters.end() );
-  }
+	if ( find_mover == movers.end() ) {
+		TR.Error << "ERROR !! mover not found in map: \n" << tag << std::endl;
+		runtime_assert( find_mover != movers.end() );
+	}
+	if ( find_filter == filters.end() ) {
+		TR.Error << "ERROR !! filter not found in map: \n" << tag << std::endl;
+		runtime_assert( find_filter != filters.end() );
+	}
 	submover(find_mover->second);
 	filter(find_filter->second);
 
@@ -180,7 +180,7 @@ void IteratedConvergenceMover::filter( filters::FilterCOP filter )
 }
 
 void IteratedConvergenceMover::delta( core::Real delta ) {
-	if( delta < 0 ) {
+	if ( delta < 0 ) {
 		utility_exit_with_message("Delta value given to IteratedConvergenceMover must be non-negative");
 	}
 	delta_ = delta;

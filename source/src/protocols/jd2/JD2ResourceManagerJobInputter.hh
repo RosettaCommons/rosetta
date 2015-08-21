@@ -62,96 +62,96 @@ namespace jd2 {
 /* (<--- please ignore this; it is merely an artifact of writing doxygen)
 
 <JD2ResourceManager>
-   <ResourceLocators>
-      ... ResourceLocator definitions go in this block
-   </ResourceLocators>
-   <ResourceOptions>
-      ... ResourceOption definitions go in this block
-   </ResourceOptions>
-   <Resources>
-      ... Resource definitions go in this block
-   </Resources>
-   <Jobs>
-      Job definitions go here.  Currently the structure is:
-      List a) options and b) resources that are used by all jobs
-      List c) individual jobs
-         List options and resources for an individual job
-      or,
-      Provide d) a table of jobs and the resources that go with them
-      from a database.
+<ResourceLocators>
+... ResourceLocator definitions go in this block
+</ResourceLocators>
+<ResourceOptions>
+... ResourceOption definitions go in this block
+</ResourceOptions>
+<Resources>
+... Resource definitions go in this block
+</Resources>
+<Jobs>
+Job definitions go here.  Currently the structure is:
+List a) options and b) resources that are used by all jobs
+List c) individual jobs
+List options and resources for an individual job
+or,
+Provide d) a table of jobs and the resources that go with them
+from a database.
 
-      a) Give a command line option that will apply to all jobs.
-      <Option optionname=value/>
-         Each option's name must be given with full namespacing.  (This hopefully will change)
-         E.g.: if you want to set the -ex1 flag to true, you must pass it as
-         "packing:ex1=1"
-         with exactly one colon between the namespace (packing) and the flag (ex1).
+a) Give a command line option that will apply to all jobs.
+<Option optionname=value/>
+Each option's name must be given with full namespacing.  (This hopefully will change)
+E.g.: if you want to set the -ex1 flag to true, you must pass it as
+"packing:ex1=1"
+with exactly one colon between the namespace (packing) and the flag (ex1).
 
-         NOTE: Not all command line options are currently controlled by
-         the ResourceManager.  Check first if the option you're interested
-         in providing is controlled by the ResouceManager by looking...
-         (APL note to self: figure out where someone should look to tell
-         if an option is controlled by the ResourceManager)
+NOTE: Not all command line options are currently controlled by
+the ResourceManager.  Check first if the option you're interested
+in providing is controlled by the ResouceManager by looking...
+(APL note to self: figure out where someone should look to tell
+if an option is controlled by the ResourceManager)
 
-      b) Give a resource that should be used by all jobs
-      <Data desc=resource_description resource_tag=resource_name/>
-         * where resource_description is the string that a protocol will use to find the desired resource
-         e.g. "native", and
-         * where resource_name is the string that was given as a name to some previously-declared
-         resource.
-      or
-      <Data desc=startstruct pdb=pdbfilename/>
-         * where pdbfilename is the string that identifies a particular pdb located on the file system
-      or
-      <Data desc=startstruct pdb=pdbidentifier locator=locator_tag/>
-         * where pdbidentifier is a string that identifies a particular pdb, and
-         * where locator_tag is a string that was given as a name to some previously-declared
-         ResourceLocator.
-         E.g., if the given locator_tag names a DatabaseResourceLocator, then the pdbidentifier
-         will be used to construct an SQL query that rerieves a pdb-file string from a database.
+b) Give a resource that should be used by all jobs
+<Data desc=resource_description resource_tag=resource_name/>
+* where resource_description is the string that a protocol will use to find the desired resource
+e.g. "native", and
+* where resource_name is the string that was given as a name to some previously-declared
+resource.
+or
+<Data desc=startstruct pdb=pdbfilename/>
+* where pdbfilename is the string that identifies a particular pdb located on the file system
+or
+<Data desc=startstruct pdb=pdbidentifier locator=locator_tag/>
+* where pdbidentifier is a string that identifies a particular pdb, and
+* where locator_tag is a string that was given as a name to some previously-declared
+ResourceLocator.
+E.g., if the given locator_tag names a DatabaseResourceLocator, then the pdbidentifier
+will be used to construct an SQL query that rerieves a pdb-file string from a database.
 
-      c) List individual jobs
-      <Job name=jobname nstruct=number>
-         * where name=jobname is optional and allows you to control the name given to a job
-         and thus to the name of the output structures the job creates.  If no name is given
-         then the name will be taken from the "startstruct" data for this job.
-         And,
-         * where nstruct=number is optional and allows you to control the number of times this
-         job is to be performed.  If this is not provided, then the number of iterations is
-         set to 1.  number should be an integer string, e.g. "nstruct=100"
+c) List individual jobs
+<Job name=jobname nstruct=number>
+* where name=jobname is optional and allows you to control the name given to a job
+and thus to the name of the output structures the job creates.  If no name is given
+then the name will be taken from the "startstruct" data for this job.
+And,
+* where nstruct=number is optional and allows you to control the number of times this
+job is to be performed.  If this is not provided, then the number of iterations is
+set to 1.  number should be an integer string, e.g. "nstruct=100"
 
-         Note: All jobs must have a "startstruct" specified, either individually for the
-         given job, or through the Data block above that applies to all jobs.  If the
-         startstruct is given in the Data block above that applies to all jobs, then each
-         individual job needs to be given a different jobname.
+Note: All jobs must have a "startstruct" specified, either individually for the
+given job, or through the Data block above that applies to all jobs.  If the
+startstruct is given in the Data block above that applies to all jobs, then each
+individual job needs to be given a different jobname.
 
-         provide options for this job
-         <Option optionname=value/>
-             * where the format for optionname and value are exactly as described above
+provide options for this job
+<Option optionname=value/>
+* where the format for optionname and value are exactly as described above
 
-         provide the resources for this job
-         <Data desc=resource_description resource_tag=resource_name/> or
-         <Data desc=startstruct pdb=pdfilename/> or
-         <Data desc=startstruct pdb=pdbidentifier locator=locator_tag/>
-             * where the formats for these three types of resource statements are
-             exactly as described above
-      </Job>
+provide the resources for this job
+<Data desc=resource_description resource_tag=resource_name/> or
+<Data desc=startstruct pdb=pdfilename/> or
+<Data desc=startstruct pdb=pdbidentifier locator=locator_tag/>
+* where the formats for these three types of resource statements are
+exactly as described above
+</Job>
 
-      d) Provide a table of jobs from a database
-      <JobsTable sql_command=command database_resource=dbresource/>
-          * where command is a string representing an SQL query, and
-          * where dbresource is the name for a previously-declared database-connection resource
-          connection resource.
-          Each row of the jobs table should have one of the following formats
-                job_name, 'Resource', desc, resource_tag
-                job_name, 'Option', option_key, option_value
-             * desc: A job-agnostic description for a resource like 'native' or 'symm_data'
-               that can be referenced in the protocol.
-             * resource_tag: The tag of a resource described in the <Resources/> block.
-             * option_key: An optionally namespaced option key (string) for the options
-               system like 'in:file:native'
-             * option_value: A value or list of values that processed into the option system
-   </Jobs>
+d) Provide a table of jobs from a database
+<JobsTable sql_command=command database_resource=dbresource/>
+* where command is a string representing an SQL query, and
+* where dbresource is the name for a previously-declared database-connection resource
+connection resource.
+Each row of the jobs table should have one of the following formats
+job_name, 'Resource', desc, resource_tag
+job_name, 'Option', option_key, option_value
+* desc: A job-agnostic description for a resource like 'native' or 'symm_data'
+that can be referenced in the protocol.
+* resource_tag: The tag of a resource described in the <Resources/> block.
+* option_key: An optionally namespaced option key (string) for the options
+system like 'in:file:native'
+* option_value: A value or list of values that processed into the option system
+</Jobs>
 </JD2ResourceManager>
 \endverbatim
 */
@@ -166,7 +166,7 @@ public:
 	virtual ~JD2ResourceManagerJobInputter();
 
 	/// @brief this function is responsible for filling the pose reference with the pose indicated by the job.  The Job object (within its InnerJob) contains a PoseCOP.  This function needs to either fill the pose reference from the InnerJob or, on first demand of a pose from that InnerJob, instantiate the pose, hand off a COP to the InnerJob, and fill the reference.
- 	virtual void pose_from_job( core::pose::Pose & pose, JobOP job );
+	virtual void pose_from_job( core::pose::Pose & pose, JobOP job );
 
 	/// @brief this function determines what jobs exist.  This function neither knows nor cares what jobs are already complete on disk/memory - it just figures out what ones should exist given the input.  NOTE: your JobInputter should order Job objects in the Jobs vector to have as few "transitions" between inputs as possible (group all Jobs of the same input next to each other).  This improves efficiency of the "FAIL_BAD_INPUT" functionality.  Note I said "should", not "must".
 	virtual void fill_jobs( JobsContainer & jobs );

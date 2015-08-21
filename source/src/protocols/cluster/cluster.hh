@@ -153,7 +153,7 @@ public:
 
 public:
 
-	int 							cluster_center_;
+	int        cluster_center_;
 	std::deque< int > member;
 	core::Size        group_size_;       // Log this seperately, because sometimes members are prunned, but its still nice to know what the original size would have been
 
@@ -184,9 +184,9 @@ public:
 	core::Size size() const { return member.size(); }
 	void clear(){ member.clear(); }
 	void erase( core::Size j ){
-				std::deque< int >::iterator it = member.begin();
-				it += j;
-				member.erase(it);
+		std::deque< int >::iterator it = member.begin();
+		it += j;
+		member.erase(it);
 	}
 	void shuffle();
 
@@ -233,7 +233,7 @@ public:
 	std::vector< core::pose::PoseOP > return_top_poses_in_clusters(core::Size count);
 	void create_constraints( std::string prefix, EnsembleConstraints &constraint_maker);
 
-  std::vector < Cluster >  const & get_cluster_list() const{ return clusterlist; }
+	std::vector < Cluster >  const & get_cluster_list() const{ return clusterlist; }
 
 protected:
 	ObjexxFCL::FArray2D< core::Real >    distance_matrix;
@@ -265,7 +265,7 @@ public:
 class ClusterPhilStyle_Loop: public ClusterPhilStyle {
 public:
 	ClusterPhilStyle_Loop( protocols::loops::Loops loop_def )
-		: loop_def_(loop_def)
+	: loop_def_(loop_def)
 	{}
 
 	virtual ~ClusterPhilStyle_Loop() {}
@@ -287,7 +287,7 @@ private:
 class ClusterPhilStyle_PoseReporter : public ClusterPhilStyle {
 public:
 	ClusterPhilStyle_PoseReporter( protocols::rosetta_scripts::PosePropertyReporterOP reporter )
-		: reporter_(reporter)
+	: reporter_(reporter)
 	{}
 
 	virtual ~ClusterPhilStyle_PoseReporter() {}

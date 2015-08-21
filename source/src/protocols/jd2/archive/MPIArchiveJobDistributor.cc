@@ -69,7 +69,7 @@ using namespace core;
 /// @details constructor.  Notice it calls the parent class!  It also builds some internal variables for determining
 ///which processor it is in MPI land.
 MPIArchiveJobDistributor::MPIArchiveJobDistributor() :
-  MPIFileBufJobDistributor( in_master_rank_, in_file_buf_rank_, in_min_client_rank_, true /*start empty*/ ),
+	MPIFileBufJobDistributor( in_master_rank_, in_file_buf_rank_, in_min_client_rank_, true /*start empty*/ ),
 	nr_notify_( option[ OptionKeys::archive::completion_notify_frequency] ),
 	archive_rank_( in_archive_rank_ )
 {
@@ -96,7 +96,7 @@ MPIArchiveJobDistributor::go( protocols::moves::MoverOP mover )
 	/// JD
 	if ( rank() == master_rank() ) {
 		tr.Warning << "Master JD starts" << std::endl;
-    master_go( mover );
+		master_go( mover );
 	} else if ( rank() == file_buf_rank() ) {
 		/// FileBuffer
 		protocols::jd2::WriteOut_MpiFileBuffer buffer( file_buf_rank() );
@@ -111,10 +111,10 @@ MPIArchiveJobDistributor::go( protocols::moves::MoverOP mover )
 		tr.Warning << "send STOP to FileBuffer " << std::endl;
 		protocols::jd2::WriteOut_MpiFileBuffer buffer( file_buf_rank() );
 		buffer.stop();
-	} else if( rank() >= min_client_rank() ){
+	} else if ( rank() >= min_client_rank() ) {
 		/// Slave/Runner/Worker
 		go_main( mover );
-  }
+	}
 
 	// ideally these would be called in the dtor but the way we have the singleton pattern set up the dtors don't get
 	// called
@@ -131,7 +131,7 @@ MPIArchiveJobDistributor::go( protocols::moves::MoverOP mover )
 /// @detail receive a new batch from ArchiveManager -- interpret batch_nr == 0 as STOP
 bool
 MPIArchiveJobDistributor::receive_batch( Size MPI_ONLY( source_rank ) ) {
-basic::prof_show();
+	basic::prof_show();
 #ifdef USEMPI
 	MPI_Status status;
 	int buf[ 2 ];
@@ -211,7 +211,7 @@ MPIArchiveJobDistributor::sync_batches( Size MPI_ONLY( slave_rank ) ) {
 			MPI_Send(const_cast<char*> ( batch( send_id ).data()), batch( send_id ).size(), MPI_CHAR, slave_rank, MPI_JOB_DIST_TAG, MPI_COMM_WORLD );
 		}
 	}
-	#endif
+#endif
 	PROF_STOP( basic::ARCHIVE_SYNC_BATCHES );
 }
 
@@ -258,15 +258,15 @@ MPIArchiveJobDistributor::batch_underflow() {
 ////this is a good place to do it, since CompletionMessages are non-blocking and we are otherwise in blocking communication with WorkerNodes
 bool
 MPIArchiveJobDistributor::process_message(
-   core::Size msg_tag,
-	 core::Size slave_rank,
-	 core::Size slave_job_id,
-	 core::Size slave_batch_id,
-	 core::Real run_time
+	core::Size msg_tag,
+	core::Size slave_rank,
+	core::Size slave_job_id,
+	core::Size slave_batch_id,
+	core::Real run_time
 ) {
 	runtime_assert( rank() == master_rank() );
 
-	//	basic::show_time( tr,  "jd2 main msg-loop: process message..." );
+	// basic::show_time( tr,  "jd2 main msg-loop: process message..." );
 
 	// send out any pending notifications to archive if present -- this is non-blocking
 	_notify_archive(); //we should get here often enough... (basically every finished job
@@ -274,27 +274,27 @@ MPIArchiveJobDistributor::process_message(
 
 	// now go thru messages
 	switch ( msg_tag ) {
-	case BATCH_SYNC: //a slave has received a job with an unknown batch and asks for an update of the Batchlist
+	case BATCH_SYNC : //a slave has received a job with an unknown batch and asks for an update of the Batchlist
 		sync_batches( slave_rank );
 		break;
-	case ADD_BATCH: //the ArchiveManager adds a new BATCH
+	case ADD_BATCH : //the ArchiveManager adds a new BATCH
 		runtime_assert( slave_rank == archive_rank() );
 		receive_batch( archive_rank() );
 		break;
-	case CANCEL_BATCH: //the ArchiveManager cancels a certain BATCH
+	case CANCEL_BATCH : //the ArchiveManager cancels a certain BATCH
 		runtime_assert( slave_rank == archive_rank() );
 		{
-			//bool was_good( get_current_batch() != jd2::BatchJobInputter::BOGUS_BATCH_ID );
-			tr.Trace << "currently running batch " << get_current_batch() << std::endl;
-			receive_batch( archive_rank() ); //right now we hack it... ArchiveSends BOGUS_BATCH_ID 5 to cancel batch 5
-			// now in the batch_list the name of the respective batch willl be changed to BOGUS_BATCH_ID ... next time we
-			// get to it we will skip, if we are running it now, we will terminate.
-			tr.Trace << "now the current batch is " << get_current_batch() << std::endl;
-			// put this functionality into Baseclass: JobDistributor::obtain_new_job -- it was probably causing a dead-lock in the communication...
-			//			if ( was_good  && get_current_batch() == jd2::BatchJobInputter::BOGUS_BATCH_ID ) next_batch();
-		}
+		//bool was_good( get_current_batch() != jd2::BatchJobInputter::BOGUS_BATCH_ID );
+		tr.Trace << "currently running batch " << get_current_batch() << std::endl;
+		receive_batch( archive_rank() ); //right now we hack it... ArchiveSends BOGUS_BATCH_ID 5 to cancel batch 5
+		// now in the batch_list the name of the respective batch willl be changed to BOGUS_BATCH_ID ... next time we
+		// get to it we will skip, if we are running it now, we will terminate.
+		tr.Trace << "now the current batch is " << get_current_batch() << std::endl;
+		// put this functionality into Baseclass: JobDistributor::obtain_new_job -- it was probably causing a dead-lock in the communication...
+		//   if ( was_good  && get_current_batch() == jd2::BatchJobInputter::BOGUS_BATCH_ID ) next_batch();
+	}
 		break;
-	default:
+	default :
 		return Parent::process_message( msg_tag, slave_rank, slave_job_id, slave_batch_id, run_time );
 	}
 
@@ -307,9 +307,9 @@ MPIArchiveJobDistributor::notify_archive( CompletionMessage const& msg ) {
 	//TODO: check if there are older messages regarding this batch... if so ... remove
 	tr.Debug << "add to notification queue " << msg.batch_id << std::endl;
 	if ( pending_notifications_.size()
-		&& pending_notifications_.back().batch_id == msg.batch_id
-		&& pending_notifications_.back().msg_tag == msg.msg_tag
-	) {
+			&& pending_notifications_.back().batch_id == msg.batch_id
+			&& pending_notifications_.back().msg_tag == msg.msg_tag
+			) {
 		pending_notifications_.back() = msg;
 	} else {
 		pending_notifications_.push_back( msg );
@@ -374,24 +374,24 @@ MPIArchiveJobDistributor::notify_archive( core::Size batch_id ) {
 	if ( nr_completed_[ batch_id ] + nr_new_completed_[ batch_id ] + nr_bad_[ batch_id ] == nr_jobs_[ batch_id ] ) {
 		nr_completed_[ batch_id ] += nr_new_completed_[ batch_id ];
 		nr_new_completed_[ batch_id ] = 0;
-		//	still send to close files in MPI-FILE-BUF	if ( batch( batch_id ) != BatchJobInputter::BOGUS_BATCH_ID ) { //don't send message if this Batch has ben CANCELLED
+		// still send to close files in MPI-FILE-BUF if ( batch( batch_id ) != BatchJobInputter::BOGUS_BATCH_ID ) { //don't send message if this Batch has ben CANCELLED
 		notify_archive(  CompletionMessage( batch_id, true, nr_bad_[ batch_id ], nr_completed_[ batch_id ], nr_jobs_[ batch_id ] ) );
-			//		}
-			//// send "update" message ?
+		//  }
+		//// send "update" message ?
 	} else if ( nr_new_completed_[ batch_id ] >= nr_notify_ ) {
 		nr_completed_[ batch_id ] += nr_new_completed_[ batch_id ];
 		nr_new_completed_[ batch_id ] = 0;
 		//if ( batch( batch_id ) != BatchJobInputter::BOGUS_BATCH_ID ) { //don't send message if this Batch has ben CANCELLED
 		notify_archive( CompletionMessage( batch_id, false, nr_bad_[ batch_id ], nr_completed_[ batch_id ], nr_jobs_[ batch_id ] ) );
-			//		}
+		//  }
 	}
 	tr.Trace << "nr_batches " << nr_batches() << " current_job_id() " << current_job_id() << " get_jobs().size() " << get_jobs().size()
-					 << " nr_processors " << number_of_processors() << std::endl;
- 	//are we quickly running out of jobs? -- checking for equality to reduce number of messages -- is this safe? do we ever skip jobs?
+		<< " nr_processors " << number_of_processors() << std::endl;
+	//are we quickly running out of jobs? -- checking for equality to reduce number of messages -- is this safe? do we ever skip jobs?
 	if ( nr_batches() == batch_id && ( (int) current_job_id() == ( (int) get_jobs().size() - (int) number_of_processors() ) ) ) {
 		//tr.Info << "jobs are low... send QUEUE_EMPTY with " << batch_id << " batch_id " << std::endl;
-		//		pending_notifications_.push_front( CompletionMessage( batch_id, QUEUE_EMPTY ) );
-		//		_notify_archive();
+		//  pending_notifications_.push_front( CompletionMessage( batch_id, QUEUE_EMPTY ) );
+		//  _notify_archive();
 	}
 }
 
@@ -417,10 +417,10 @@ void MPIArchiveJobDistributor::mark_job_as_bad( core::Size job_id, core::Size ba
 
 /// @detail load new batch from BatchQueue .. overloaded to setup the statistics for CompletionMessages
 void MPIArchiveJobDistributor::load_new_batch() {
-	//	if ( current_batch_id() )	notify_archive( current_batch_id() );
+	// if ( current_batch_id() ) notify_archive( current_batch_id() );
 	Parent::load_new_batch();
 	if ( rank() == master_rank() ) { //in principle I'd rather do this in add_batch() but we need option of new batch for nstruct...
-		while( nr_jobs_.size() < current_batch_id() ) {
+		while ( nr_jobs_.size() < current_batch_id() ) {
 			nr_jobs_.push_back( get_jobs().size() );
 			nr_new_completed_.push_back( 0 );
 			nr_completed_.push_back( 0 );

@@ -20,7 +20,7 @@
 
 namespace devel {
 namespace sewing {
-	
+
 class FourHelixGraph;
 typedef utility::pointer::shared_ptr< FourHelixGraph > FourHelixGraphOP;
 typedef utility::pointer::shared_ptr< FourHelixGraph const > FourHelixGraphCOP;

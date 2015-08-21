@@ -26,48 +26,48 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 
 /*
 class EnergiesEdge : public core::graph::Edge {
 public:
-	core::scoring::EnergyMap energies;
+core::scoring::EnergyMap energies;
 
-	virtual EnergiesEdge () {};
+virtual EnergiesEdge () {};
 
-	virtual void copy_from (Edge const *source) {
-		energies = static_cast< EnergiesEdge const * > ( source ).energies;
-	}
+virtual void copy_from (Edge const *source) {
+energies = static_cast< EnergiesEdge const * > ( source ).energies;
+}
 
-	virtual unsigned int count_static_memory () const { return sizeof(EnergiesEdge); }
-	virtual unsigned int count_dynamic_memory () const { return 0; }
+virtual unsigned int count_static_memory () const { return sizeof(EnergiesEdge); }
+virtual unsigned int count_dynamic_memory () const { return 0; }
 }
 
 class EnergiesGraph : public core::graph::Graph {
 
 public:
 
-	virtual ~Graph() {
+virtual ~Graph() {
 
-	}
+}
 
-	virtual void 	delete_edge(Edge *edge) {
+virtual void  delete_edge(Edge *edge) {
 
-	}
+}
 
-	virtual unsigned int count_static_memory() const { return sizeof(EnergiesGraph); }
-	//virtual unsigned int count_dynamic_memory() const { return 0; }
-	//virtual Node * create_new_node(int node_index) {}
+virtual unsigned int count_static_memory() const { return sizeof(EnergiesGraph); }
+//virtual unsigned int count_dynamic_memory() const { return 0; }
+//virtual Node * create_new_node(int node_index) {}
 
-	virtual Edge * create_new_edge(int index1, int index2) {
+virtual Edge * create_new_edge(int index1, int index2) {
 
-	}
+}
 
-	virtual Edge * create_new_edge(Edge const *example_edge) {
+virtual Edge * create_new_edge(Edge const *example_edge) {
 
-	}
+}
 
 private:
 
@@ -78,26 +78,26 @@ class WeightsEdge : public core::graph::Edge {
 
 public:
 
-	core::scoring::EnergyMap weights;
-	bool use_original_weights;
-	core::Real master_weight;
+core::scoring::EnergyMap weights;
+bool use_original_weights;
+core::Real master_weight;
 
-	virtual WeightsEdge () {};
+virtual WeightsEdge () {};
 
-	virtual void copy_from (Edge const *source) {
-		energies = static_cast< EnergyMapEdge const * > ( source ).energies;
-		use_original_weights = static_cast< EnergyMapEdge const * > ( source ).use_original_weights;
-		master_weight = static_cast< EnergyMapEdge const * > ( source ).master_weight;
-	}
+virtual void copy_from (Edge const *source) {
+energies = static_cast< EnergyMapEdge const * > ( source ).energies;
+use_original_weights = static_cast< EnergyMapEdge const * > ( source ).use_original_weights;
+master_weight = static_cast< EnergyMapEdge const * > ( source ).master_weight;
+}
 
-	virtual unsigned int count_static_memory () const { return sizeof(WeightsEdge); }
-	virtual unsigned int count_dynamic_memory () const { return 0; }
+virtual unsigned int count_static_memory () const { return sizeof(WeightsEdge); }
+virtual unsigned int count_dynamic_memory () const { return 0; }
 }
 */
 
 class EnergiesData {
 
-	public:
+public:
 
 	EnergiesData():
 		use_original_weights_(true),

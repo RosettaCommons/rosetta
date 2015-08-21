@@ -10,7 +10,7 @@
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -150,43 +150,43 @@
 #include <vector>
 
 
-#define OPT(akey)							\
+#define OPT(akey)       \
   basic::options::option.add_relevant( basic::options::OptionKeys::akey )
 
-#define NEW_OPT(akey,help,adef)						\
+#define NEW_OPT(akey,help,adef)      \
   basic::options::option.add( basic::options::OptionKeys::akey , help ).def( adef ); \
   OPT( akey )
 
 // option macros for Vector options with multiple default values...
-#define NEW_OPT2(akey,help,adef,adef2)																				\
+#define NEW_OPT2(akey,help,adef,adef2)                    \
   basic::options::option.add( basic::options::OptionKeys::akey , help ).def( adef ).def( adef2 ); \
   OPT( akey )
 
-#define NEW_OPT3(akey,help,adef,adef2,adef3)																	\
+#define NEW_OPT3(akey,help,adef,adef2,adef3)                 \
   basic::options::option.add( basic::options::OptionKeys::akey , help ).def( adef ).def( adef2 ).def(adef3); \
   OPT( akey )
 
-#define NEW_OPT4(akey,help,adef,adef2,adef3,adef4)														\
+#define NEW_OPT4(akey,help,adef,adef2,adef3,adef4)              \
   basic::options::option.add( basic::options::OptionKeys::akey , help ).def( adef ).def( adef2 ).def(adef3).def(adef4); \
   OPT( akey )
 
-#define NEW_OPT5(akey,help,adef,adef2,adef3,adef4,adef5)											\
+#define NEW_OPT5(akey,help,adef,adef2,adef3,adef4,adef5)           \
   basic::options::option.add( basic::options::OptionKeys::akey , help ).def( adef ).def( adef2 ).def(adef3).def(adef4).def(adef5); \
   OPT( akey )
 
-#define NEW_OPT6(akey,help,adef,adef2,adef3,adef4,adef5,adef6)								\
+#define NEW_OPT6(akey,help,adef,adef2,adef3,adef4,adef5,adef6)        \
   basic::options::option.add( basic::options::OptionKeys::akey , help ).def( adef ).def( adef2 ).def(adef3).def(adef4).def(adef5).def(adef6); \
   OPT( akey )
 
-#define NEW_OPT7(akey,help,adef,adef2,adef3,adef4,adef5,adef6,adef7)					\
+#define NEW_OPT7(akey,help,adef,adef2,adef3,adef4,adef5,adef6,adef7)     \
   basic::options::option.add( basic::options::OptionKeys::akey , help ).def( adef ).def( adef2 ).def(adef3).def(adef4).def(adef5).def(adef6).def(adef7); \
   OPT( akey )
 
-#define NEW_OPT8(akey,help,adef,adef2,adef3,adef4,adef5,adef6,adef7,adef8)		\
+#define NEW_OPT8(akey,help,adef,adef2,adef3,adef4,adef5,adef6,adef7,adef8)  \
   basic::options::option.add( basic::options::OptionKeys::akey , help ).def( adef ).def( adef2 ).def(adef3).def(adef4).def(adef5).def(adef6).def(adef7).def(adef8); \
   OPT( akey )
 
-#define NEW_OPT9(akey,help,adef,adef2,adef3,adef4,adef5,adef6,adef7,adef8,adef9)	\
+#define NEW_OPT9(akey,help,adef,adef2,adef3,adef4,adef5,adef6,adef7,adef8,adef9) \
   basic::options::option.add( basic::options::OptionKeys::akey , help ).def( adef ).def( adef2 ).def(adef3).def(adef4).def(adef5).def(adef6).def(adef7).def(adef8).def(adef9); \
   OPT( akey )
 
@@ -194,44 +194,44 @@
   basic::options::option.add( basic::options::OptionKeys::akey , help ).def( adef ).def( adef2 ).def(adef3).def(adef4).def(adef5).def(adef6).def(adef7).def(adef8).def(adef9).def(adef10); \
   OPT( akey )
 
-#define OPT_KEY( type, key )					       \
+#define OPT_KEY( type, key )            \
   namespace basic { 	namespace options {	namespace OptionKeys {	\
 	basic::options::type##OptionKey const key( #key );		\
       }}}
 
-#define OPT_1GRP_KEY( type, grp, key )					\
+#define OPT_1GRP_KEY( type, grp, key )     \
   namespace basic { 	namespace options {	namespace OptionKeys { namespace grp { \
 	  basic::options::type##OptionKey const key( #grp":"#key );	\
 	}}}}
 
 
-#define OPT_2GRP_KEY( type, grp1, grp2, key )				\
+#define OPT_2GRP_KEY( type, grp1, grp2, key )    \
   namespace basic { 	namespace options {	namespace OptionKeys { namespace grp1 { namespace grp2 { \
 	    basic::options::type##OptionKey const key( #grp1":"#grp2":"#key ); \
 	  }}}}}
 
-#define OPT_3GRP_KEY( type, grp1, grp2, grp3, key )				\
+#define OPT_3GRP_KEY( type, grp1, grp2, grp3, key )    \
   namespace basic { 	namespace options {	namespace OptionKeys { namespace grp1 { namespace grp2 { namespace grp3 { \
 	    basic::options::type##OptionKey const key( #grp1":"#grp2":"#grp3":"#key ); \
 	  }}}}}}
 
 
-#define  EXTERN_OPT_KEY( type, key )					       \
+#define  EXTERN_OPT_KEY( type, key )            \
   namespace basic { 	namespace options {	namespace OptionKeys {	\
 	extern basic::options::type##OptionKey const key;		\
       }}}
 
-#define EXTERN_OPT_1GRP_KEY( type, grp, key )					\
+#define EXTERN_OPT_1GRP_KEY( type, grp, key )     \
   namespace basic { 	namespace options {	namespace OptionKeys { namespace grp { \
 			extern basic::options::type##OptionKey const key;			\
 	}}}}
 
-#define EXTERN_OPT_2GRP_KEY( type, grp1, grp2, key )				\
+#define EXTERN_OPT_2GRP_KEY( type, grp1, grp2, key )    \
   namespace basic { 	namespace options {	namespace OptionKeys { namespace grp1 { namespace grp2 { \
 	    extern basic::options::type##OptionKey const key; \
 	  }}}}}
 
-#define EXTERN_OPT_3GRP_KEY( type, grp1, grp2, grp3, key )				\
+#define EXTERN_OPT_3GRP_KEY( type, grp1, grp2, grp3, key )    \
   namespace basic { 	namespace options {	namespace OptionKeys { namespace grp1 { namespace grp2 { namespace grp3 { \
 	    extern basic::options::type##OptionKey const key; \
 	  }}}}}}

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -22,11 +22,11 @@ namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
 namespace submotif {
-	
-	class SubMotifLibrary;
-	typedef utility::pointer::shared_ptr< SubMotifLibrary > SubMotifLibraryOP;
-	typedef utility::pointer::shared_ptr< SubMotifLibrary const > SubMotifLibraryCOP;
-	
+
+class SubMotifLibrary;
+typedef utility::pointer::shared_ptr< SubMotifLibrary > SubMotifLibraryOP;
+typedef utility::pointer::shared_ptr< SubMotifLibrary const > SubMotifLibraryCOP;
+
 } //submotif
 } //monte_carlo
 } //stepwise

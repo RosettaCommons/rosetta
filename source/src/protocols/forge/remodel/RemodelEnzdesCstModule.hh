@@ -27,7 +27,7 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
+namespace protocols {
 namespace forge {
 namespace remodel {
 
@@ -41,7 +41,7 @@ public:
 
 	void apply(core::pose::Pose & pose);
 	void blueprint_cst_definition(core::pose::Pose & pose);
-  void enable_constraint_scoreterms(core::scoring::ScoreFunctionOP scorefxn);
+	void enable_constraint_scoreterms(core::scoring::ScoreFunctionOP scorefxn);
 	void use_backbone_only_blocks();
 	void use_all_blocks();
 private: // data

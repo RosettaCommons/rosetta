@@ -26,40 +26,40 @@ namespace protocols {
 namespace stepwise {
 namespace sampler {
 
-	class JumpStepWiseSampler: public StepWiseSamplerSized {
+class JumpStepWiseSampler: public StepWiseSamplerSized {
 
-	public:
+public:
 
-		//constructor
-		JumpStepWiseSampler( Size const which_jump,
-								 utility::vector1< core::kinematics::Jump > const & jumps,
-								 bool const choose_random = false );
+	//constructor
+	JumpStepWiseSampler( Size const which_jump,
+		utility::vector1< core::kinematics::Jump > const & jumps,
+		bool const choose_random = false );
 
-		//constructor
-		JumpStepWiseSampler();
+	//constructor
+	JumpStepWiseSampler();
 
-		//destructor
-		~JumpStepWiseSampler();
+	//destructor
+	~JumpStepWiseSampler();
 
-	public:
+public:
 
-		/// @brief Get the total number of rotamers in sampler
-		virtual core::Size size() const { return jumps_.size(); }
+	/// @brief Get the total number of rotamers in sampler
+	virtual core::Size size() const { return jumps_.size(); }
 
-		/// @brief Apply the i-th rotamer to pose
-		virtual void apply( core::pose::Pose &, core::Size const );
+	/// @brief Apply the i-th rotamer to pose
+	virtual void apply( core::pose::Pose &, core::Size const );
 
-		/// @brief Name of the class
-		virtual std::string get_name() const { return "JumpStepWiseSampler"; }
+	/// @brief Name of the class
+	virtual std::string get_name() const { return "JumpStepWiseSampler"; }
 
-		/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-		virtual StepWiseSamplerType type() const { return JUMP; }
+	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
+	virtual StepWiseSamplerType type() const { return JUMP; }
 
-	protected:
-		Size which_jump_;
-		utility::vector1< core::kinematics::Jump > jumps_;
+protected:
+	Size which_jump_;
+	utility::vector1< core::kinematics::Jump > jumps_;
 
-	};
+};
 
 } //sampler
 } //stepwise

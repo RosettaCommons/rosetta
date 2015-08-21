@@ -48,9 +48,9 @@ public:
 	// Standard methods //////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief  Standard constructor
 	RingConformerSet(
-			core::Size const ring_size,
-			std::string const & lowest_conformer,
-			utility::vector1< std::string > const & low_conformers );
+		core::Size const ring_size,
+		std::string const & lowest_conformer,
+		utility::vector1< std::string > const & low_conformers );
 
 	/// @brief  Copy constructor
 	RingConformerSet( RingConformerSet const & object_to_copy );
@@ -111,9 +111,9 @@ private:
 
 	// Initialize data members for the given ring size.
 	void init(
-			core::Size const ring_size,
-			std::string const & lowest_conformer_in,
-			utility::vector1< std::string > const & low_conformers );
+		core::Size const ring_size,
+		std::string const & lowest_conformer_in,
+		utility::vector1< std::string > const & low_conformers );
 
 	// Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
 	void copy_data( RingConformerSet & object_to_copy_to, RingConformerSet const & object_to_copy_from );

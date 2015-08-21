@@ -84,19 +84,19 @@ RRProtocolReferenceStructure::reference_structure(
 /// @details  measure rotamer recovery for each residue
 void
 RRProtocolReferenceStructure::run(
-  RRComparerOP comparer,
-  RRReporterOP reporter,
-  Pose const & pose,
+	RRComparerOP comparer,
+	RRReporterOP reporter,
+	Pose const & pose,
 	ScoreFunction const &,
-  PackerTask const & packer_task
+	PackerTask const & packer_task
 ) {
 	// Assume score_function.setup_for_scoring(pose) has already been called.
 
 	using namespace basic::resource_manager;
 
-	if(!reference_pose_){
-		if(ResourceManager::get_instance()->
-			has_resource_with_description("native")){
+	if ( !reference_pose_ ) {
+		if ( ResourceManager::get_instance()->
+				has_resource_with_description("native") ) {
 			reference_pose_ = get_resource< Pose >("native");
 		} else {
 			stringstream err_msg;
@@ -108,7 +108,7 @@ RRProtocolReferenceStructure::run(
 	}
 
 
-	if(pose.total_residue() != reference_pose_->total_residue()){
+	if ( pose.total_residue() != reference_pose_->total_residue() ) {
 		stringstream err_msg;
 		err_msg
 			<< "Attempting to run the Rotamer Recovery against Reference Structure protocol, "
@@ -116,8 +116,8 @@ RRProtocolReferenceStructure::run(
 		utility_exit_with_message(err_msg.str());
 	}
 
-	for(Size ii = 1; ii <= pose.total_residue(); ++ii){
-		if (!packer_task.pack_residue(ii)) continue;
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		if ( !packer_task.pack_residue(ii) ) continue;
 		measure_rotamer_recovery(
 			comparer, reporter,
 			pose, *reference_pose_,

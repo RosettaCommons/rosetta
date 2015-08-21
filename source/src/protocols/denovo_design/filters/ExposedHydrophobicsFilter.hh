@@ -43,28 +43,28 @@ namespace filters {
 class ExposedHydrophobicsFilter : public protocols::filters::Filter {
 public:
 
-  /// @brief Initialize ExposedHydrophobicsFilter
-  ExposedHydrophobicsFilter();
+	/// @brief Initialize ExposedHydrophobicsFilter
+	ExposedHydrophobicsFilter();
 
-  /// @brief virtual constructor to allow derivation
+	/// @brief virtual constructor to allow derivation
 	virtual ~ExposedHydrophobicsFilter();
 
-  /// @brief Parses the ExposedHydrophobicsFilter tags
+	/// @brief Parses the ExposedHydrophobicsFilter tags
 	void parse_my_tag(
-	  utility::tag::TagCOP tag,
-	  basic::datacache::DataMap & data,
-	  protocols::filters::Filters_map const &,
-	  protocols::moves::Movers_map const &,
-	  core::pose::Pose const &
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
 	);
 
-  /// @brief Return the name of this mover.
-  virtual std::string get_name() const;
+	/// @brief Return the name of this mover.
+	virtual std::string get_name() const;
 
-  /// @brief return a fresh instance of this class in an owning pointer
+	/// @brief return a fresh instance of this class in an owning pointer
 	virtual protocols::filters::FilterOP clone() const;
 
-  /// @brief Apply the ExposedHydrophobicsFilter. Overloaded apply function from filter base class.
+	/// @brief Apply the ExposedHydrophobicsFilter. Overloaded apply function from filter base class.
 	virtual bool apply( core::pose::Pose const & pose ) const;
 	protocols::filters::FilterOP fresh_instance() const;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/modeler/rna/sugar/VirtualSugarJustInTimeInstantiator.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -23,11 +23,11 @@ namespace stepwise {
 namespace modeler {
 namespace rna {
 namespace sugar {
-	
-	class VirtualSugarJustInTimeInstantiator;
-	typedef utility::pointer::shared_ptr< VirtualSugarJustInTimeInstantiator > VirtualSugarJustInTimeInstantiatorOP;
-	typedef utility::pointer::shared_ptr< VirtualSugarJustInTimeInstantiator const > VirtualSugarJustInTimeInstantiatorCOP;
-	
+
+class VirtualSugarJustInTimeInstantiator;
+typedef utility::pointer::shared_ptr< VirtualSugarJustInTimeInstantiator > VirtualSugarJustInTimeInstantiatorOP;
+typedef utility::pointer::shared_ptr< VirtualSugarJustInTimeInstantiator const > VirtualSugarJustInTimeInstantiatorCOP;
+
 } //sugar
 } //rna
 } //modeler

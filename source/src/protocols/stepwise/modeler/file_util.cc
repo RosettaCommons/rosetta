@@ -25,17 +25,17 @@ namespace protocols {
 namespace stepwise {
 namespace modeler {
 
-	///////////////////////////////////////////////////////////////////////
-	std::string
-	get_file_name( std::string const & silent_file, std::string const & tag )
-	{
-		int pos( silent_file.find( ".out" ) );
-		runtime_assert( pos > -1 );
-		std::string silent_file_sample( silent_file );
-		silent_file_sample.replace( pos, 4, tag+".out" );
-		return silent_file_sample;
+///////////////////////////////////////////////////////////////////////
+std::string
+get_file_name( std::string const & silent_file, std::string const & tag )
+{
+	int pos( silent_file.find( ".out" ) );
+	runtime_assert( pos > -1 );
+	std::string silent_file_sample( silent_file );
+	silent_file_sample.replace( pos, 4, tag+".out" );
+	return silent_file_sample;
 
-	}
+}
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

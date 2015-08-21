@@ -76,8 +76,8 @@ namespace protocols {
 namespace rosetta_scripts {
 
 using namespace core;
-	using namespace basic::options;
-	using namespace scoring;
+using namespace basic::options;
+using namespace scoring;
 using namespace moves;
 using namespace jd2;
 
@@ -143,7 +143,7 @@ RosettaScriptsParser::generate_mover_from_pose(
 
 	bool modified_pose( false );
 
-	if( !new_input && !guarantee_new_mover ) return modified_pose;
+	if ( !new_input && !guarantee_new_mover ) return modified_pose;
 
 	std::string const dock_design_filename( xml_fname == "" ? option[ OptionKeys::parser::protocol ] : xml_fname );
 	TR << "dock_design_filename=" << dock_design_filename << std::endl;
@@ -183,8 +183,7 @@ MoverOP RosettaScriptsParser::parse_protocol_tag(Pose & pose, utility::tag::TagC
 
 	MoverOP mover =  generate_mover_for_protocol(pose, modified_pose, protocol_tag);
 
-	if (modified_pose)
-	{
+	if ( modified_pose ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("RosettaScriptsParser::parse_protocol_tag resulted in modified_pose");
 	}
 
@@ -198,8 +197,7 @@ MoverOP RosettaScriptsParser::parse_protocol_tag(TagCOP protocol_tag)
 
 	MoverOP mover =  generate_mover_for_protocol(temp_pose, modified_pose, protocol_tag);
 
-	if (modified_pose)
-	{
+	if ( modified_pose ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("RosettaScriptsParser::parse_protocol_tag resulted in modified_pose");
 	}
 
@@ -268,7 +266,7 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(
 	// Load includes from separate files; nodes will be merged into the tag tree
 	{
 		int processed_includes = 0;
-		if( process_includes( tag, processed_includes ) ) {
+		if ( process_includes( tag, processed_includes ) ) {
 			TR << "Pre-processed script (with " << processed_includes << " includes):\n" << tag << std::endl;
 		}
 	}
@@ -289,38 +287,39 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(
 	}
 
 	// Round 1: Import previously defined filters and movers
-	BOOST_FOREACH( TagCOP const curr_tag, all_tags ){
+	BOOST_FOREACH ( TagCOP const curr_tag, all_tags ) {
 
 		////// IMPORT
-		if( curr_tag->getName() != "IMPORT" )
+		if ( curr_tag->getName() != "IMPORT" ) {
 			continue;
+		}
 
-		if(curr_tag->hasOption("taskoperations")) {
+		if ( curr_tag->hasOption("taskoperations") ) {
 			// Import task operations
 			std::string taskoperations_str( curr_tag->getOption<std::string>("taskoperations") );
 			std::istringstream taskoperation_ss(taskoperations_str);
 			std::string taskoperation_name;
-			while(std::getline(taskoperation_ss, taskoperation_name, ',')) {
+			while ( std::getline(taskoperation_ss, taskoperation_name, ',') ) {
 				import_tag_names.insert(std::make_pair("TASKOPERATIONS", taskoperation_name));
 			}
 		}//fi taskoperations
 
-		if(curr_tag->hasOption("filters")) {
+		if ( curr_tag->hasOption("filters") ) {
 			// Import filters
 			std::string filters_str( curr_tag->getOption<std::string>("filters") );
 			std::istringstream filters_ss(filters_str);
 			std::string filter_name;
-			while(std::getline(filters_ss, filter_name, ',')) {
+			while ( std::getline(filters_ss, filter_name, ',') ) {
 				import_tag_names.insert(std::make_pair("FILTERS", filter_name));
 			}
 		}//fi filters
 
-		if(curr_tag->hasOption("movers")) {
+		if ( curr_tag->hasOption("movers") ) {
 			// Import movers
 			std::string movers_str( curr_tag->getOption<std::string>("movers") );
 			std::istringstream movers_ss(movers_str);
 			std::string mover_name;
-			while(std::getline(movers_ss, mover_name, ',')) {
+			while ( std::getline(movers_ss, mover_name, ',') ) {
 				import_tag_names.insert(std::make_pair("MOVERS", mover_name));
 			}
 		}//fi movers
@@ -328,11 +327,12 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(
 	}// BOOST_FOREACH curr_tag
 
 	// Attempt to find and import requested objects; throws exception on failure
-	if(import_tag_names.size() > 0)
+	if ( import_tag_names.size() > 0 ) {
 		import_tags(import_tag_names, tag, data, filters, movers, pose);
+	}
 
 	// Round 2: Process definitions in this ROSETTASCRIPTS block
-	BOOST_FOREACH( TagCOP const curr_tag, all_tags ){
+	BOOST_FOREACH ( TagCOP const curr_tag, all_tags ) {
 
 		///// APPLY TO POSE
 		if ( curr_tag->getName() == "APPLY_TO_POSE" ) {
@@ -340,7 +340,7 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(
 			// apply to pose may affect all of the scorefxn definitions below, so it is called first.
 			TagCOPs const apply_tags( curr_tag->getTags() );
 
-			BOOST_FOREACH( TagCOP apply_tag_ptr, apply_tags ) {
+			BOOST_FOREACH ( TagCOP apply_tag_ptr, apply_tags ) {
 				std::string const mover_type( apply_tag_ptr->getName() );
 				MoverOP new_mover( MoverFactory::get_instance()->newMover( apply_tag_ptr, data, filters, movers, pose ) );
 				runtime_assert( new_mover != 0 );
@@ -359,15 +359,15 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(
 
 		////// FILTERS
 		if ( curr_tag->getName() == "FILTERS" ) {
-			BOOST_FOREACH(TagCOP const tag_ptr, curr_tag->getTags()){
+			BOOST_FOREACH ( TagCOP const tag_ptr, curr_tag->getTags() ) {
 				instantiate_filter(tag_ptr, data, filters, movers, pose);
 			}
 		}
 		TR.flush();
 
 		////// MOVERS
-		if( curr_tag->getName() == "MOVERS" ){
-			BOOST_FOREACH(TagCOP const tag_ptr, curr_tag->getTags()){
+		if ( curr_tag->getName() == "MOVERS" ) {
+			BOOST_FOREACH ( TagCOP const tag_ptr, curr_tag->getTags() ) {
 				instantiate_mover(tag_ptr, data, filters, movers, pose);
 			}
 		}
@@ -405,24 +405,24 @@ int RosettaScriptsParser::process_includes( TagCOP const_root_tag, int & process
 
 	utility::vector0 < TagOP > tags_from_includes;
 
-	for(
-		TagCOPs::iterator it = tags.begin();
-		it != tags.end() && processed_includes < MAX_INCLUDES;
-	 ){
+	for (
+			TagCOPs::iterator it = tags.begin();
+			it != tags.end() && processed_includes < MAX_INCLUDES;
+			) {
 		TagCOP tag( *it );
 
-		if( tag->getName() != "INCLUDES" ) {
+		if ( tag->getName() != "INCLUDES" ) {
 			++it;
 			continue;
 		}
 
 		TagCOPs const includes( tag->getTags() );
-		BOOST_FOREACH(TagCOP include, includes) {
+		BOOST_FOREACH ( TagCOP include, includes ) {
 
 			std::string include_type = include->getName();
 			std::transform( include_type.begin(), include_type.end(), include_type.begin(), ::toupper );
 
-			if(include_type == "XML") {
+			if ( include_type == "XML" ) {
 				process_include_xml(include, tags_from_includes, processed_includes);
 			} else {
 				throw utility::excn::EXCN_RosettaScriptsOption("Unknown include type: " + include_type);
@@ -433,7 +433,7 @@ int RosettaScriptsParser::process_includes( TagCOP const_root_tag, int & process
 	}
 
 	// Now add new tags (don't do it above as doing so may invalidate it)
-	BOOST_FOREACH(TagOP tag, tags_from_includes) {
+	BOOST_FOREACH ( TagOP tag, tags_from_includes ) {
 		root_tag->addTag(tag);
 	}
 
@@ -451,30 +451,31 @@ void RosettaScriptsParser::process_include_xml(
 	// Open include file
 	utility::io::izstream fin;
 	fin.open( filename.c_str() );
-	if(!fin.good()) {
+	if ( !fin.good() ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("Failed to open file for inclusion: " + filename);
 		return;
 	}
 
 	// Variable substitution from command line options
 	utility::options::StringVectorOption script_vars;
-	if( option[ OptionKeys::parser::script_vars ].user() ) {
+	if ( option[ OptionKeys::parser::script_vars ].user() ) {
 		script_vars = option[ OptionKeys::parser::script_vars ];
 	}
 
 	// Additional variable substitutions from tag
-	BOOST_FOREACH( utility::tag::Tag::options_t::value_type const & option, include->getOptions() ) {
-		if(option.first != "file")
+	BOOST_FOREACH ( utility::tag::Tag::options_t::value_type const & option, include->getOptions() ) {
+		if ( option.first != "file" ) {
 			script_vars.push_back(option.first + "=" + option.second);
+		}
 	}
 
 	// Replace variables in script
 	std::stringstream fin_sub;
 	fin_sub << "<XML>";
-	if( script_vars.size() ) {
+	if ( script_vars.size() ) {
 		substitute_variables_in_stream(fin, script_vars, fin_sub);
 	} else {
-		while(fin.good()) {
+		while ( fin.good() ) {
 			std::string s;
 			fin.getline(s);
 			fin_sub << s;
@@ -484,14 +485,14 @@ void RosettaScriptsParser::process_include_xml(
 
 	// Create new tag from substituted script
 	TagOP new_tag = utility::tag::Tag::create(fin_sub);
-	if(new_tag) {
+	if ( new_tag ) {
 		++processed_includes;
 		process_includes( new_tag, processed_includes );
-		BOOST_FOREACH( TagCOP tag, new_tag->getTags() ) {
+		BOOST_FOREACH ( TagCOP tag, new_tag->getTags() ) {
 			tags_from_includes.push_back( tag->clone() );
 		}
 
-		if(processed_includes > MAX_INCLUDES) {
+		if ( processed_includes > MAX_INCLUDES ) {
 			TR << "Inclusion file limit of " << MAX_INCLUDES << " files exceeded; possible inclusion cycle." << std::endl;
 			return;
 		}
@@ -507,13 +508,15 @@ void RosettaScriptsParser::instantiate_filter(
 	core::pose::Pose & pose
 ) {
 	std::string const type( tag_ptr->getName() );
-	if ( ! tag_ptr->hasOption("name") )
+	if ( ! tag_ptr->hasOption("name") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("Can't define unnamed Filter of type " + type);
+	}
 
 	std::string const user_defined_name( tag_ptr->getOption<std::string>("name") );
 	bool const name_exists( filters.find( user_defined_name ) != filters.end() );
-	if ( name_exists )
+	if ( name_exists ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("Filter of name \"" + user_defined_name + "\" (of type " + type + ") already exists.");
+	}
 
 	protocols::filters::FilterOP new_filter( protocols::filters::FilterFactory::get_instance()->newFilter( tag_ptr, data, filters, movers, pose ) );
 	runtime_assert( new_filter != 0 );
@@ -530,13 +533,15 @@ void RosettaScriptsParser::instantiate_mover(
 	core::pose::Pose & pose
 ) {
 	std::string const type( tag_ptr->getName() );
-	if ( ! tag_ptr->hasOption("name") )
+	if ( ! tag_ptr->hasOption("name") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("Can't define unnamed Mover of type " + type);
+	}
 
 	std::string const user_defined_name( tag_ptr->getOption<std::string>("name") );
 	bool const name_exists( movers.find( user_defined_name ) != movers.end() );
-	if ( name_exists )
+	if ( name_exists ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("Mover of name \"" + user_defined_name + "\" (of type " + type + ") already exists.");
+	}
 
 	MoverOP new_mover( MoverFactory::get_instance()->newMover( tag_ptr, data, filters, movers, pose ) );
 	runtime_assert( new_mover != 0 );
@@ -556,12 +561,14 @@ void RosettaScriptsParser::instantiate_taskoperation(
 	using namespace core::pack::task::operation;
 
 	std::string const type( tag_ptr->getName() );
-	if ( ! tag_ptr->hasOption("name") )
+	if ( ! tag_ptr->hasOption("name") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("Can't define unnamed TaskOperation of type " + type);
+	}
 
 	std::string const user_defined_name( tag_ptr->getOption<std::string>("name") );
-	if ( data.has( "task_operations", user_defined_name ) )
+	if ( data.has( "task_operations", user_defined_name ) ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation with name \"" + user_defined_name + "\" (of type " + type + ") already exists.");
+	}
 
 	TaskOperationOP new_t_o( TaskOperationFactory::get_instance()->newTaskOperation( type, data, tag_ptr ) );
 	runtime_assert( new_t_o != 0 );
@@ -586,24 +593,28 @@ TagCOP RosettaScriptsParser::find_rosettascript_tag(
 	} while(!tag_ap.expired() && tag_ap.lock()->getName() != "ROSETTASCRIPTS");
 
 	TagCOP tag( tag_ap.lock() );
-	if(!tag)
+	if ( !tag ) {
 		return NULL;
+	}
 
 	// Look for section_name (MOVERS, FITLERS, ...) directly below ROSETTASCRIPTS
-	if( tag->hasTag(section_name) ) {
+	if ( tag->hasTag(section_name) ) {
 		TagCOP section_tag( tag->getTag(section_name) );
-		if(!option_name.length())
+		if ( !option_name.length() ) {
 			return section_tag;
-		BOOST_FOREACH(TagCOP const child_tag, section_tag->getTags()){
-			if(child_tag->getOption<std::string>(option_name) == option_value)
+		}
+		BOOST_FOREACH ( TagCOP const child_tag, section_tag->getTags() ) {
+			if ( child_tag->getOption<std::string>(option_name) == option_value ) {
 				return child_tag;
+			}
 		}
 	}
 
 	// No match, walk up another level
 	TagCOP tagParent( tag->getParent().lock() );
-	if(tagParent)
+	if ( tagParent ) {
 		return find_rosettascript_tag(tagParent, section_name, option_name, option_value);
+	}
 
 	return NULL;
 }
@@ -621,54 +632,55 @@ void RosettaScriptsParser::import_tags(
 	// Process all parent ROSETTASCRIPTS tags, one at a time
 	TagCAP curr_level_tag_ap(my_tag);
 
-	while( !curr_level_tag_ap.expired() ) {
+	while ( !curr_level_tag_ap.expired() ) {
 
 		// Find direct parent ROSETTASCRIPTS tag
 		do {
 			TagCOP curr_level_tag = curr_level_tag_ap.lock();
 			curr_level_tag_ap = curr_level_tag ? curr_level_tag->getParent() : TagCAP();
 		} while(!curr_level_tag_ap.expired() && curr_level_tag_ap.lock()->getName() != "ROSETTASCRIPTS");
-		
+
 		TagCOP curr_level_tag( curr_level_tag_ap.lock() );
-		if(!curr_level_tag)
+		if ( !curr_level_tag ) {
 			break; // No ROSETTASCRIPTS tag to import from
+		}
 
 		TR.Debug << "Importing from tag: " << curr_level_tag << std::endl;
 
 		// Check what we'd like to import from it
-		BOOST_FOREACH( TagCOP tag, curr_level_tag->getTags() ) {
+		BOOST_FOREACH ( TagCOP tag, curr_level_tag->getTags() ) {
 
-			if(tag->getName() == "TASKOPERATIONS") {
-				BOOST_FOREACH( TagCOP taskoperation_tag, tag->getTags() ) {
+			if ( tag->getName() == "TASKOPERATIONS" ) {
+				BOOST_FOREACH ( TagCOP taskoperation_tag, tag->getTags() ) {
 					std::string taskoperation_name( taskoperation_tag->getOption<std::string>("name") );
 					ImportTagName key( std::make_pair( tag->getName(), taskoperation_name ) );
 					bool const need_import( import_tag_names.find( key ) != import_tag_names.end() );
-					if(need_import) {
+					if ( need_import ) {
 						instantiate_taskoperation(taskoperation_tag, data, filters, movers, pose);
 						import_tag_names.erase(key);
 					}
 				}
 			}
-			if(tag->getName() == "FILTERS") {
-				BOOST_FOREACH( TagCOP filter_tag, tag->getTags() ) {
+			if ( tag->getName() == "FILTERS" ) {
+				BOOST_FOREACH ( TagCOP filter_tag, tag->getTags() ) {
 					std::string filter_name( filter_tag->getOption<std::string>("name") );
 					ImportTagName key( std::make_pair( tag->getName(), filter_name ) );
 					bool const need_import( import_tag_names.find( key ) != import_tag_names.end() );
-					if(need_import) {
+					if ( need_import ) {
 						instantiate_filter(filter_tag, data, filters, movers, pose);
 						import_tag_names.erase(key);
 					}
 				}
 			}
 
-			if(tag->getName() == "MOVERS") {
-				BOOST_FOREACH( TagCOP mover_tag, tag->getTags() ) {
+			if ( tag->getName() == "MOVERS" ) {
+				BOOST_FOREACH ( TagCOP mover_tag, tag->getTags() ) {
 					std::string mover_name( mover_tag->getOption<std::string>("name") );
 					ImportTagName key( std::make_pair( tag->getName(), mover_name ) );
 					bool const need_import( import_tag_names.find( key ) != import_tag_names.end() );
-					if(need_import) {
+					if ( need_import ) {
 						TagCAP parent = my_tag->getParent();
-						if( utility::pointer::equal(parent, mover_tag) ) {
+						if ( utility::pointer::equal(parent, mover_tag) ) {
 							// Current mover_tag is our parent, i.e. same ROSETTASCRIPTS tag
 							throw utility::excn::EXCN_RosettaScriptsOption("Cannot import mover " + mover_name + " into itself; recursion detected");
 						}
@@ -680,8 +692,9 @@ void RosettaScriptsParser::import_tags(
 
 		} //BOOST_FOREACH curr_level_tag->getTags()
 
-		if(import_tag_names.size() <= 0)
+		if ( import_tag_names.size() <= 0 ) {
 			break; // All done
+		}
 
 		// Go up the tree
 		curr_level_tag_ap = curr_level_tag->getParent();
@@ -689,7 +702,7 @@ void RosettaScriptsParser::import_tags(
 	} // while
 
 	// Check if there are any remaining imports that could not be satisfied
-	BOOST_FOREACH( ImportTagName import_tag, import_tag_names ) {
+	BOOST_FOREACH ( ImportTagName import_tag, import_tag_names ) {
 		std::string msg("Failed to import " + import_tag.second + " from " + import_tag.first);
 		TR << msg << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption(msg);
@@ -707,16 +720,16 @@ RosettaScriptsParser::substitute_variables_in_stream( std::istream & in, utility
 	using namespace std;
 	//Parse variable substitutions
 	map<string,string> var_map;
-	for( Size ii = 1; ii <= script_vars.size(); ii++ ) {
+	for ( Size ii = 1; ii <= script_vars.size(); ii++ ) {
 		Size eq_pos(script_vars[ii].find('='));
-		if(eq_pos != string::npos) { //ignore ones without a '='
+		if ( eq_pos != string::npos ) { //ignore ones without a '='
 			var_map[ script_vars[ii].substr(0,eq_pos) ] = script_vars[ii].substr(eq_pos+1);
 		}
 	}
 	//Print parsing for confirmation
 	TR << "Variable substitution will occur with the following values: ";
-	for( map<string,string>::const_iterator map_it( var_map.begin() ), map_end( var_map.end() );
-			 map_it != map_end; ++map_it ){
+	for ( map<string,string>::const_iterator map_it( var_map.begin() ), map_end( var_map.end() );
+			map_it != map_end; ++map_it ) {
 		TR << "'%%" << map_it->first << "%%'='" << map_it->second << "';  ";
 	}
 	TR << std::endl;
@@ -724,19 +737,18 @@ RosettaScriptsParser::substitute_variables_in_stream( std::istream & in, utility
 	//Perform actual variable substitution
 	TR << "Substituted script:" << "\n";
 	string line;
-	while( getline( in, line ) ) {
+	while ( getline( in, line ) ) {
 		Size pos, end, last(0);
 		string outline; // empty string
-		while( ( pos = line.find("%%", last) ) != string::npos) {
+		while ( ( pos = line.find("%%", last) ) != string::npos ) {
 			end = line.find("%%", pos+2);
-			if(end == string::npos) break; //Unmatched %% on line - keep as is.
+			if ( end == string::npos ) break; //Unmatched %% on line - keep as is.
 			outline += line.substr( last, pos-last );
 			last = end+2;
 			string var( line.substr( pos+2, end-(pos+2) ) );
-			if( var_map.find( var ) != var_map.end() ) {
+			if ( var_map.find( var ) != var_map.end() ) {
 				outline += var_map[var];
-			}
-			else {
+			} else {
 				outline += "%%" + var + "%%"; // Silently ignore missing values - will probably cause error later.
 			}
 		}
@@ -763,25 +775,25 @@ RosettaScriptsParser::register_factory_prototypes()
 	//using namespace core::scoring::constraints;
 	//ConstraintFactory & cstf( ConstraintIO::get_cst_factory() );
 	//cstf.add_type( new core::scoring::constraints::SequenceProfileConstraint(
-	//	Size(), utility::vector1< id::AtomID >(), NULL ) );
+	// Size(), utility::vector1< id::AtomID >(), NULL ) );
 
 	// register calculators
 	core::Size const chain1( 1 ), chain2( 2 );
 	using namespace core::pose::metrics;
 
-	if( !CalculatorFactory::Instance().check_calculator_exists( "sasa_interface" ) ){
+	if ( !CalculatorFactory::Instance().check_calculator_exists( "sasa_interface" ) ) {
 		PoseMetricCalculatorOP int_sasa_calculator( new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator( chain1, chain2 ) );
 		CalculatorFactory::Instance().register_calculator( "sasa_interface", int_sasa_calculator );
 	}
-	if( !CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ){
+	if ( !CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ) {
 		PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy() );
 		CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 	}
-	if( !CalculatorFactory::Instance().check_calculator_exists( "ligneigh" ) ){
+	if ( !CalculatorFactory::Instance().check_calculator_exists( "ligneigh" ) ) {
 		PoseMetricCalculatorOP lig_neighbor_calc( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( chain1, chain2 ) );
 		CalculatorFactory::Instance().register_calculator( "ligneigh", lig_neighbor_calc );
 	}
-	if( !CalculatorFactory::Instance().check_calculator_exists( "liginterfE" ) ){
+	if ( !CalculatorFactory::Instance().check_calculator_exists( "liginterfE" ) ) {
 		PoseMetricCalculatorOP lig_interf_E_calc( new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator( "ligneigh" ) );
 		CalculatorFactory::Instance().register_calculator( "liginterfE", lig_interf_E_calc );
 	}

@@ -9,7 +9,7 @@
 
 /// @file   protocols/filters/ReplicateFilterCreator.hh
 /// @brief  FilterCreator for the ReplicateFilter
-/// @author Rocco Moretti (rmoretti@u.washington.edu) 
+/// @author Rocco Moretti (rmoretti@u.washington.edu)
 
 #ifndef INCLUDED_protocols_filters_ReplicateFilterCreator_hh
 #define INCLUDED_protocols_filters_ReplicateFilterCreator_hh

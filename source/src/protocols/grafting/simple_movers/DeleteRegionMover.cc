@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file    protocols/grafting/simple_movers/DeleteRegionMover.hh
-/// @brief  
+/// @brief
 /// @author  Jared Adolf-Bryfogle
 
 
@@ -29,7 +29,7 @@
 namespace protocols {
 namespace grafting {
 namespace simple_movers {
-			
+
 DeleteRegionMover::DeleteRegionMover():
 	protocols::moves::Mover("DeleteRegionMover"),
 	start_(0),
@@ -38,7 +38,7 @@ DeleteRegionMover::DeleteRegionMover():
 	cter_overhang_(0),
 	tag_(/* NULL */)
 {
-	
+
 }
 
 DeleteRegionMover::DeleteRegionMover(core::Size res_start, core::Size res_end):
@@ -49,9 +49,9 @@ DeleteRegionMover::DeleteRegionMover(core::Size res_start, core::Size res_end):
 	cter_overhang_(0),
 	tag_(/* NULL */)
 {
-	
+
 }
-		
+
 DeleteRegionMover::DeleteRegionMover(const DeleteRegionMover& src):
 	protocols::moves::Mover(src),
 	start_(src.start_),
@@ -60,7 +60,7 @@ DeleteRegionMover::DeleteRegionMover(const DeleteRegionMover& src):
 	cter_overhang_(src.cter_overhang_),
 	tag_(src.tag_)
 {
-	
+
 }
 
 DeleteRegionMover::~DeleteRegionMover(){}
@@ -135,19 +135,19 @@ DeleteRegionMover::parse_my_tag(
 	const moves::Movers_map& ,
 	const Pose& )
 {
-	
+
 	tag_ = tag->clone();
 	//std::cout << "Parsing tag"<<std::endl;
 	protocols::rosetta_scripts::parse_bogus_res_tag(tag_, "start_");
 	protocols::rosetta_scripts::parse_bogus_res_tag(tag_, "end_");
-	
+
 	nter_overhang_ = tag_->getOption<core::Size>("nter_overhang", 0);
 	cter_overhang_ = tag_->getOption<core::Size>("cter_overhang", 0);
 	//std::cout << " N "<<nter_overhang_<< " C " << cter_overhang_<<std::endl;
-	
+
 	protocols::rosetta_scripts::parse_bogus_res_tag(tag, "start_");
 	protocols::rosetta_scripts::parse_bogus_res_tag(tag, "end_");
-	
+
 	nter_overhang_ = tag->getOption<core::Size>("nter_overhang", 0);
 	cter_overhang_ = tag->getOption<core::Size>("cter_overhang", 0);
 	//std::cout << " N "<<nter_overhang_<< " C " << cter_overhang_<<std::endl;
@@ -155,20 +155,20 @@ DeleteRegionMover::parse_my_tag(
 
 void
 DeleteRegionMover::apply(core::pose::Pose& pose){
-	
-	if (tag_){
+
+	if ( tag_ ) {
 		start_ = core::pose::get_resnum(tag_, pose, "start_");
 		end_ = core::pose::get_resnum(tag_, pose, "end_");
 	}
-	
+
 	//std::cout <<"Start: "<<start_ << " End: " << end_ << std::endl;
 	PyAssert(start_ != 0, "Cannot delete region starting with 0 - make sure region is set for DeleteRegionMover");
 	PyAssert(end_ !=0, "Cannot delete region ending with 0 - make sure region is set for DeleteRegionMover");
 	PyAssert(end_ > start_, "Cannot delete region where end > start");
 	PyAssert(end_ <= pose.total_residue(), "Cannot delete region where end is > pose total_residues");
-	
+
 	protocols::grafting::delete_region(pose, start_ -  nter_overhang_, end_ + cter_overhang_);
-	
+
 }
 
 }

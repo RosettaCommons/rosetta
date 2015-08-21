@@ -48,31 +48,31 @@ namespace denovo_design {
 
 class RestrictRegion : public protocols::moves::Mover {
 public:
-  /// @brief Initialize RestrictRegion
-  RestrictRegion();
+	/// @brief Initialize RestrictRegion
+	RestrictRegion();
 
 	/// @brief copy constructor
 	RestrictRegion( RestrictRegion const & rval );
 
-  /// @brief virtual constructor to allow derivation
+	/// @brief virtual constructor to allow derivation
 	virtual ~RestrictRegion();
 
-  /// @brief Parses the RestrictRegion tags
+	/// @brief Parses the RestrictRegion tags
 	void parse_my_tag(
-	  utility::tag::TagCOP tag,
-	  basic::datacache::DataMap & data,
-	  protocols::filters::Filters_map const &,
-	  protocols::moves::Movers_map const &,
-	  core::pose::Pose const &
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
 	);
 
-  /// @brief Return the name of this mover.
-  virtual std::string get_name() const;
+	/// @brief Return the name of this mover.
+	virtual std::string get_name() const;
 
-  /// @brief return a fresh instance of this class in an owning pointer
+	/// @brief return a fresh instance of this class in an owning pointer
 	virtual protocols::moves::MoverOP clone() const;
 
-  /// @brief Apply the RestrictRegion. Overloaded apply function from mover base class.
+	/// @brief Apply the RestrictRegion. Overloaded apply function from mover base class.
 	virtual void apply( core::pose::Pose & pose );
 
 	/// @brief static method that tells the last residue affected by any RestrictRegion mover. This method also makes sure that the pose length hasn't changed. If this is called before any instance of the mover::apply() is called, returns 0.
@@ -99,9 +99,9 @@ private: // private methods
 
 	/// @brief tells whether a given fragment is compatible with the task
 	/// basically, this function makes sure every amino acid in the sequence is allowed at the position given
-  core::Size compatible_with_task( core::pack::task::PackerTaskOP task,
-														 core::Size const frag_id,
-														 core::fragment::FrameOP frame ) const;
+	core::Size compatible_with_task( core::pack::task::PackerTaskOP task,
+		core::Size const frag_id,
+		core::fragment::FrameOP frame ) const;
 
 
 	/// @brief restricts design at the specified position such that only the existing amino acid is allowed, and writes this to a resfile
@@ -163,7 +163,7 @@ private:   // other data
 	/// @brief Stores the last residue restricted by any RestrictRegion mover
 	static utility::vector1< core::Size > last_residues_restricted_;
 
-/// @brief strores a vector or the possible highestEnergyRegionOperations
+	/// @brief strores a vector or the possible highestEnergyRegionOperations
 	utility::vector1<task_operations::HighestEnergyRegionOperationOP> highestEnergyRegionOperation_ops_;
 };
 

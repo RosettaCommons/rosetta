@@ -38,7 +38,7 @@ namespace hbonds {
 /// and computes the fraction of containment for x, which is defined to be
 /// 0 if x is outside of (a,d), 1 if x is inside of [b,c],
 /// and a linear ramp otherwise.
-///    	___/-----\___
+///     ___/-----\___
 /// i.e. (x-a)/(b-a) for x in (a,b), and (d-x)/(d-c) for x in (c,d)
 /// This is used to ensure that hbond scoring as a sum Er + ExH + ExD goes to zero at the edges.
 ///
@@ -103,7 +103,7 @@ public:
 		Real const fmin,
 		Real const fmax,
 		Real const max0,
-	  bool const smooth = false);
+		bool const smooth = false);
 
 	FadeInterval(
 		std::string const & name,

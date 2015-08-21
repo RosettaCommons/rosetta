@@ -61,7 +61,7 @@ ResourceConfiguration::show(
 std::ostream &
 operator<<(
 	std::ostream & out,
-    ResourceConfiguration const & resource_configuration
+	ResourceConfiguration const & resource_configuration
 ) {
 	resource_configuration.show(out);
 	return out;
@@ -106,7 +106,7 @@ LazyResourceManager::create_resource_by_job_tag(
 	JobTag const & job_tag
 ) const {
 	ResourceTag resource_tag(find_resource_tag_by_job_tag(
-			resource_description, job_tag));
+		resource_description, job_tag));
 	return create_resource(resource_tag);
 }
 
@@ -120,24 +120,20 @@ LazyResourceManager::add_resource_tag_by_job_tag(
 	resource_tags_[make_pair(resource_description, job_tag)] = resource_tag;
 
 	ResourceJobMap::iterator job_set_it(incomplete_job_sets_.find(resource_tag));
-	if(job_set_it == incomplete_job_sets_.end())
-	{
+	if ( job_set_it == incomplete_job_sets_.end() ) {
 		std::set<JobTag> new_set;
 		new_set.insert(job_tag);
 		incomplete_job_sets_[resource_tag]= new_set;
-	}else
-	{
+	} else {
 		job_set_it->second.insert(job_tag);
 	}
 
 	JobResourceMap::iterator resource_list_it(resource_tag_lists_.find(job_tag));
-	if(resource_list_it == resource_tag_lists_.end())
-	{
+	if ( resource_list_it == resource_tag_lists_.end() ) {
 		std::list<ResourceTag> new_list;
 		new_list.push_back(resource_tag);
 		resource_tag_lists_[job_tag] = new_list;
-	}else
-	{
+	} else {
 		resource_list_it->second.push_back(resource_tag);
 	}
 
@@ -160,7 +156,7 @@ LazyResourceManager::find_resource_tag_by_job_tag(
 ) const {
 	ResourceTagsMap::const_iterator resource_tag(
 		resource_tags_.find(make_pair(resource_description, job_tag)));
-	if(resource_tag == resource_tags_.end()){
+	if ( resource_tag == resource_tags_.end() ) {
 		stringstream err_msg;
 		err_msg
 			<< "Unable to find resource tag for the resource description '"
@@ -177,7 +173,7 @@ LazyResourceManager::get_resource_by_job_tag(
 	JobTag const & job_tag
 ) {
 	ResourceTag resource_tag(find_resource_tag_by_job_tag(
-			resource_description, job_tag));
+		resource_description, job_tag));
 	return find_resource(resource_tag);
 }
 
@@ -186,8 +182,7 @@ LazyResourceManager::get_resource_tags_for_job_tag(
 	JobTag const & job_tag
 ) const{
 	JobResourceMap::const_iterator resource_list_it(resource_tag_lists_.find(job_tag));
-	if(resource_list_it == resource_tag_lists_.end())
-	{
+	if ( resource_list_it == resource_tag_lists_.end() ) {
 		stringstream err_msg;
 		err_msg
 			<< "Unable to find job tag '" << job_tag << "'" << std::endl;
@@ -202,8 +197,7 @@ LazyResourceManager::get_count_of_jobs_associated_with_resource_tag(
 	ResourceTag const & resource_tag) const
 {
 	ResourceJobMap::const_iterator job_set_it(incomplete_job_sets_.find(resource_tag));
-	if(job_set_it == incomplete_job_sets_.end())
-	{
+	if ( job_set_it == incomplete_job_sets_.end() ) {
 		stringstream err_msg;
 		err_msg
 			<< "Unable to find resource tag " << resource_tag <<std::endl;
@@ -220,12 +214,10 @@ LazyResourceManager::mark_job_tag_as_complete(
 
 	std::list<ResourceTag> tag_list( get_resource_tags_for_job_tag(job_tag) );
 	std::list<ResourceTag>::iterator tag_list_it(tag_list.begin());
-	for(;tag_list_it != tag_list.end();++tag_list_it)
-	{
+	for ( ; tag_list_it != tag_list.end(); ++tag_list_it ) {
 		ResourceJobMap::iterator job_set_it(incomplete_job_sets_.find(*tag_list_it));
 		std::set<JobTag>::iterator job_tag_it(job_set_it->second.find(job_tag));
-		if(job_tag_it != job_set_it->second.end())
-		{
+		if ( job_tag_it != job_set_it->second.end() ) {
 			job_set_it->second.erase(job_tag_it);
 		}
 	}
@@ -244,7 +236,7 @@ LazyResourceManager::free_resource_by_job_tag(
 	JobTag const & job_tag
 ) {
 	ResourceTag resource_tag(find_resource_tag_by_job_tag(
-			resource_description, job_tag));
+		resource_description, job_tag));
 	free_resource(resource_tag);
 }
 
@@ -275,7 +267,7 @@ LazyResourceManager::get_job_options(
 ) const {
 	JobOptionsMap::const_iterator job_options(
 		job_options_.find(job_tag));
-	if(job_options == job_options_.end()){
+	if ( job_options == job_options_.end() ) {
 		stringstream err_msg;
 		err_msg
 			<< "Unable to find job options for the resource description '"
@@ -295,7 +287,7 @@ LazyResourceManager::add_resource_configuration(
 	ResourceConfiguration const & resource_configuration
 ) {
 	ResourceConfigurationMap::const_iterator config( resource_configurations_.find( resource_tag ));
-	if( config != resource_configurations_.end() ){
+	if ( config != resource_configurations_.end() ) {
 		throw utility::excn::EXCN_Msg_Exception("Attempting to add multiple resource configurations with the resource tag '" + resource_tag + "'.");
 	}
 	resource_configurations_[ resource_tag ] = resource_configuration;
@@ -307,7 +299,7 @@ LazyResourceManager::add_resource_locator(
 	ResourceLocatorOP resource_locator
 ) {
 	ResourceLocatorsMap::const_iterator locator( resource_locators_.find( locator_tag ));
-	if( locator != resource_locators_.end() ){
+	if ( locator != resource_locators_.end() ) {
 		throw utility::excn::EXCN_Msg_Exception("Attempting to add multiple resource locators with the locator tag '" + locator_tag + "'.");
 	}
 	resource_locators_[ locator_tag ] = resource_locator;
@@ -320,7 +312,7 @@ LazyResourceManager::add_resource_options(
 	ResourceOptionsOP resource_options
 ) {
 	ResourceOptionsMap::const_iterator options( resource_options_.find( resource_options_tag ));
-	if( options != resource_options_.end() ){
+	if ( options != resource_options_.end() ) {
 		throw utility::excn::EXCN_Msg_Exception("Attempting to add multiple resource options with the resource optiosn tag '" + resource_options_tag + "'.");
 	}
 	resource_options_[ resource_options_tag ] = resource_options;
@@ -337,7 +329,7 @@ LazyResourceManager::find_resource_configuration(
 ) const {
 	ResourceConfigurationMap::const_iterator config(
 		resource_configurations_.find(resource_tag));
-	if( config == resource_configurations_.end() ){
+	if ( config == resource_configurations_.end() ) {
 		throw utility::excn::EXCN_Msg_Exception( "Unable to find resource configuration for the resource tag '" + resource_tag + "'.");
 	}
 	return config->second;
@@ -349,7 +341,7 @@ LazyResourceManager::find_resource_locator(
 ) const {
 	ResourceLocatorsMap::const_iterator resource_locator(
 		resource_locators_.find(locator_tag));
-	if(resource_locator == resource_locators_.end()){
+	if ( resource_locator == resource_locators_.end() ) {
 		throw utility::excn::EXCN_Msg_Exception("Unable to find resource locator for the locator tag '" + locator_tag + "'.");
 	}
 	return resource_locator->second;
@@ -361,7 +353,7 @@ LazyResourceManager::find_resource_options(
 ) const {
 	ResourceOptionsMap::const_iterator resource_options(
 		resource_options_.find(options_tag));
-	if(resource_options == resource_options_.end()){
+	if ( resource_options == resource_options_.end() ) {
 		throw utility::excn::EXCN_Msg_Exception("Unable to find resource options for the resource options tag '" + options_tag + "'.");
 	}
 	return resource_options->second;
@@ -371,9 +363,9 @@ bool
 LazyResourceManager::has_resource(
 	ResourceTag const & resource_tag
 ) const {
-	if(ResourceManager::has_resource(resource_tag)){
+	if ( ResourceManager::has_resource(resource_tag) ) {
 		return true;
-	} else if( has_resource_configuration(resource_tag)){
+	} else if ( has_resource_configuration(resource_tag) ) {
 		return true;
 	} else {
 		return false;
@@ -384,9 +376,9 @@ ResourceOP
 LazyResourceManager::find_resource(
 	ResourceTag const & resource_tag
 ) {
-	if(ResourceManager::has_resource(resource_tag)){
+	if ( ResourceManager::has_resource(resource_tag) ) {
 		return ResourceManager::find_resource(resource_tag);
-	} else if( has_resource_configuration(resource_tag)){
+	} else if ( has_resource_configuration(resource_tag) ) {
 		ResourceOP new_resource(create_resource(resource_tag));
 		add_resource(resource_tag, new_resource);
 		return new_resource;
@@ -415,7 +407,7 @@ LazyResourceManager::create_resource(
 
 	ResourceLoaderOP loader(
 		ResourceLoaderFactory::get_instance()->create_resource_loader(
-			config.loader_type));
+		config.loader_type));
 
 	ResourceOptionsOP resource_options;
 	if ( config.resource_options_tag != "" ) {
@@ -426,9 +418,9 @@ LazyResourceManager::create_resource(
 
 	ResourceOP resource(
 		loader->create_resource(
-			*resource_options,
-			config.locator_id,
-			stream->stream()));
+		*resource_options,
+		config.locator_id,
+		stream->stream()));
 
 	return resource;
 }
@@ -452,9 +444,9 @@ LazyResourceManager::show(
 		<< std::setiosflags(std::ios::left) << setw(16) << "ResourceDescription"
 		<< std::setiosflags(std::ios::left) << setw(16) << "JobTag ->"
 		<< "ResourceTag" << endl;
-	for(
-		LazyResourceManager::ResourceTagsMap::const_iterator
-			r = resource_tags_.begin(), re = resource_tags_.end(); r != re; ++r){
+	for (
+			LazyResourceManager::ResourceTagsMap::const_iterator
+			r = resource_tags_.begin(), re = resource_tags_.end(); r != re; ++r ) {
 		out
 			<< std::setiosflags(std::ios::left) << setw(16) << r->first.first << setw(16) << r->first.second
 			<< r->second << endl;
@@ -463,9 +455,9 @@ LazyResourceManager::show(
 
 	out
 		<< "LazyResourceManager.job_options:" << endl;
-	for(
-		LazyResourceManager::JobOptionsMap::const_iterator
-			r = job_options_.begin(), re = job_options_.end(); r != re; ++r){
+	for (
+			LazyResourceManager::JobOptionsMap::const_iterator
+			r = job_options_.begin(), re = job_options_.end(); r != re; ++r ) {
 		out
 			<< "ResourceTag: " << r->first << endl
 			<< *(r->second) << endl;
@@ -474,10 +466,10 @@ LazyResourceManager::show(
 
 	out
 		<< "LazyResourceManager.resource_configurations:" << endl;
-	for(
-		LazyResourceManager::ResourceConfigurationMap::const_iterator
+	for (
+			LazyResourceManager::ResourceConfigurationMap::const_iterator
 			r = resource_configurations_.begin(), re = resource_configurations_.end();
-		r != re; ++r){
+			r != re; ++r ) {
 		out
 			<< "ResourceTag: " << r->first << endl
 			<< r->second << endl;
@@ -486,10 +478,10 @@ LazyResourceManager::show(
 
 	out
 		<< "LazyResourceManager.resource_locators:" << endl;
-	for(
-		LazyResourceManager::ResourceLocatorsMap::const_iterator
+	for (
+			LazyResourceManager::ResourceLocatorsMap::const_iterator
 			r = resource_locators_.begin(), re = resource_locators_.end();
-		r != re; ++r){
+			r != re; ++r ) {
 		out
 			<< "LocatorTag: " << r->first << endl;
 		r->second->show(out);
@@ -499,9 +491,9 @@ LazyResourceManager::show(
 
 	out
 		<< "LazyResourceManager.resource_options:" << endl;
-	for(
-		LazyResourceManager::ResourceOptionsMap::const_iterator
-			r = resource_options_.begin(), re = resource_options_.end(); r != re; ++r){
+	for (
+			LazyResourceManager::ResourceOptionsMap::const_iterator
+			r = resource_options_.begin(), re = resource_options_.end(); r != re; ++r ) {
 		out
 			<< "LocatorOptionsTag: " << r->first << endl
 			<< *(r->second) << endl;

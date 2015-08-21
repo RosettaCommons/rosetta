@@ -69,7 +69,7 @@ SequenceDependentRefEnergy::SequenceDependentRefEnergy( utility::vector1< utilit
 {
 	aa_seq_weights_.clear();
 	for ( utility::vector1<utility::vector1< Real > >::const_iterator it = aa_seq_weights_in.begin(); it != aa_seq_weights_in.end(); ++it ) {
-			aa_seq_weights_.push_back(*it);
+		aa_seq_weights_.push_back(*it);
 	}
 }
 
@@ -86,12 +86,12 @@ void SequenceDependentRefEnergy::read_energy_weight_table() {
 		std::string const in_fname( option[ OptionKeys::score::seqdep_refene_fname ] );
 		std::cout << "JL reading SequenceDependentRefEnergy weights from " << in_fname << std::endl;
 		utility::io::izstream in_stream( in_fname );
-		if (!in_stream.good()) {
+		if ( !in_stream.good() ) {
 			utility_exit_with_message( "[ERROR] Error opening SequenceDependentRefEnergy file" );
 		}
 		std::string line;
 		core::Size seqpos(0);
-		while( getline( in_stream, line) ) {
+		while ( getline( in_stream, line) ) {
 			++seqpos;
 			std::cout << "JL got " << seqpos << " line " << line << std::endl;
 			utility::vector1< std::string > const tokens ( utility::split( line ) );
@@ -106,12 +106,12 @@ void SequenceDependentRefEnergy::read_energy_weight_table() {
 			std::string const in_fname( option[ OptionKeys::score::secondary_seqdep_refene_fname ] );
 			std::cout << "JL reading SECONDARY SequenceDependentRefEnergy weights from " << in_fname << std::endl;
 			utility::io::izstream in_stream( in_fname );
-			if (!in_stream.good()) {
+			if ( !in_stream.good() ) {
 				utility_exit_with_message( "[ERROR] Error opening SECONDARY SequenceDependentRefEnergy file" );
 			}
 			std::string line;
 			core::Size seqpos(0);
-			while( getline( in_stream, line) ) {
+			while ( getline( in_stream, line) ) {
 				++seqpos;
 				std::cout << "JL got " << seqpos << " line " << line << std::endl;
 				utility::vector1< std::string > const tokens ( utility::split( line ) );
@@ -156,7 +156,7 @@ SequenceDependentRefEnergy::residue_energy(
 
 	Real const ene = (aa_seq_weights_[seqpos])[ aa ];
 	emap[ seqdep_ref ] += ene;
-	//	std::cout << "JL at seqpos " << seqpos << " for aa " << aa << " using seqdep_ref " <<  ene << std::endl;
+	// std::cout << "JL at seqpos " << seqpos << " for aa " << aa << " using seqdep_ref " <<  ene << std::endl;
 
 	return;
 

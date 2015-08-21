@@ -93,11 +93,10 @@ bool
 HbondsToAtomFilter::apply( Pose const & pose ) const {
 	core::Size hbonded_res( compute( pose ) );
 	TR<<"found "<<hbonded_res<< " hbond to target residue " << resnum_ << " and name " << atomdesg_;
-	if( hbonded_res >= partners_ ) {
+	if ( hbonded_res >= partners_ ) {
 		TR << ". passing." << std::endl;
 		return( true );
-	}
-	else {
+	} else {
 		TR << ". failing." << std::endl;
 		return( false );
 	}
@@ -114,9 +113,9 @@ HbondsToAtomFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Da
 	resnum_ = core::pose::get_resnum( tag, pose );
 
 	if ( tag->hasOption( "atomname" ) ) {
-  	atomdesg_ = tag->getOption< std::string >( "atomname" );
+		atomdesg_ = tag->getOption< std::string >( "atomname" );
 	} else {
-      throw utility::excn::EXCN_RosettaScriptsOption("Need to set atomname");
+		throw utility::excn::EXCN_RosettaScriptsOption("Need to set atomname");
 	}
 
 	TR<<"Hbonds to atom filter for resnum "<<resnum_<<" and name " << atomdesg_ <<" with "<<partners_<<" hbonding partners"<<std::endl;
@@ -146,14 +145,13 @@ HbondsToAtomFilter::compute( Pose const & pose ) const {
 
 	Size const chain2begin( temp_pose.conformation().chain_begin( 2 ) );
 	Size partner_begin, partner_end;
-	if( resnum_ >= chain2begin ) {
+	if ( resnum_ >= chain2begin ) {
 		partner_begin = 1; partner_end = chain2begin-1;
-	}
-	else {
+	} else {
 		partner_begin = chain2begin; partner_end = temp_pose.total_residue();
 	}
 	std::set<Size> binders;
-	for( Size i=partner_begin; i<=partner_end; ++i ) binders.insert( i );
+	for ( Size i=partner_begin; i<=partner_end; ++i ) binders.insert( i );
 
 	std::list< Size> hbonded_res( hbonded_atom ( temp_pose, resnum_, atomdesg_,  binders, backbone_, sidechain_, energy_cutoff_, bb_bb_) );
 

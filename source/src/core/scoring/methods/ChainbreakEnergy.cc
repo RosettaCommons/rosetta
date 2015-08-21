@@ -65,7 +65,7 @@ ChainbreakEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction const 
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		using namespace core::conformation::symmetry;
 		SymmetricConformation const & symm_conf(
-				dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
+			dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
 		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 		max_res = symm_info->num_independent_residues() - 1;
 	}
@@ -81,7 +81,7 @@ ChainbreakEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction const 
 
 		// This logic restricts cutpoints from occurring at branch points, but that may be ok. ~Labonte
 		Residue const & upper_rsd( pose.residue( cutpoint + 1 ) );
-	debug_assert( upper_rsd.has_variant_type( CUTPOINT_UPPER ) );
+		debug_assert( upper_rsd.has_variant_type( CUTPOINT_UPPER ) );
 		Size const last_mainchain_atm( lower_rsd.mainchain_atoms().size() );
 
 		DistanceSquared current_dev( 0.0 );
@@ -89,12 +89,12 @@ ChainbreakEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction const 
 		// How well does the 1st main-chain atom of the downstream (upper) residue of this cutpoint overlap
 		// with the corresponding virtual atom stemming from the upstream (lower) residue of this cutpoint?
 		current_dev += upper_rsd.atom( upper_rsd.mainchain_atoms()[ 1 ] ).xyz().distance_squared(
-				lower_rsd.atom( "OVL1" ).xyz() );
+			lower_rsd.atom( "OVL1" ).xyz() );
 
 		// How well does the last main-chain atom of the upstream (upper) residue of this cutpoint overlap
 		// with the corresponding virtual atom stemming from the downstream (lower) residue of this cutpoint?
 		current_dev += lower_rsd.atom( lower_rsd.mainchain_atoms()[ last_mainchain_atm ] ).xyz().distance_squared(
-				upper_rsd.atom( "OVU1" ).xyz() );
+			upper_rsd.atom( "OVU1" ).xyz() );
 
 		// If this is a cutpoint on a carbohydrate chain, we don't care at all about a third virtual atom, because the
 		// residues connect at a single bond, not a partial-double as is the case with a peptide bond.
@@ -104,12 +104,12 @@ ChainbreakEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction const 
 			// How well does the 2nd main-chain atom of the downstream (upper) residue of this cutpoint overlap
 			// with the corresponding virtual atom stemming from the upstream (lower) residue of this cutpoint?
 			current_dev += upper_rsd.atom( upper_rsd.mainchain_atoms()[ 2 ] ).xyz().distance_squared(
-					lower_rsd.atom( "OVL2" ).xyz() );
+				lower_rsd.atom( "OVL2" ).xyz() );
 		}
 
 		total_dev += current_dev;
 	}
-debug_assert( std::abs( totals[ chainbreak ] ) < 1e-3 );
+	debug_assert( std::abs( totals[ chainbreak ] ) < 1e-3 );
 	totals[ chainbreak ] = total_dev;
 }
 
@@ -118,13 +118,13 @@ debug_assert( std::abs( totals[ chainbreak ] ) < 1e-3 );
 /// @note F1 and F2 are not zeroed -- contributions from this atom are just summed in.
 void
 ChainbreakEnergy::eval_atom_derivative(
-		id::AtomID const & id,
-		pose::Pose const & pose,
-		kinematics::DomainMap const &, // domain_map,
-		ScoreFunction const &, // sfxn,
-		EnergyMap const & weights,
-		Vector & F1,
-		Vector & F2
+	id::AtomID const & id,
+	pose::Pose const & pose,
+	kinematics::DomainMap const &, // domain_map,
+	ScoreFunction const &, // sfxn,
+	EnergyMap const & weights,
+	Vector & F1,
+	Vector & F2
 ) const
 {
 	using conformation::Residue;
@@ -135,10 +135,10 @@ ChainbreakEnergy::eval_atom_derivative(
 		using namespace core::conformation::symmetry;
 
 		SymmetricConformation const & symm_conf(
-				dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
+			dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
 		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 		Size max_res = symm_info->num_independent_residues() - 1;
-		if( id.rsd() > max_res ) return;
+		if ( id.rsd() > max_res ) return;
 	}
 
 	Vector const & xyz_moving( pose.xyz( id ) );  // position of the moving atom
@@ -161,14 +161,14 @@ ChainbreakEnergy::eval_atom_derivative(
 			xyz_fixed = upper_rsd.atom( "OVU1" ).xyz();
 			match = true;
 
-		// Case 2: The moving atom is the virtual atom OVL1 on the upstream residue across the cutpoint and
-		// should superimpose with the 1st main-chain atom from the downstream residue.
+			// Case 2: The moving atom is the virtual atom OVL1 on the upstream residue across the cutpoint and
+			// should superimpose with the 1st main-chain atom from the downstream residue.
 		} else if ( lower_rsd.atom_name( id.atomno() ) == "OVL1" ) {
 			xyz_fixed = upper_rsd.atom( upper_rsd.mainchain_atoms()[ 1 ] ).xyz();
 			match = true;
 
-		// Case 3: The moving atom is the virtual atom OVL2 on the upstream residue across the cutpoint and
-		// should superimpose with the 2nd main-chain atom from the downstream residue.
+			// Case 3: The moving atom is the virtual atom OVL2 on the upstream residue across the cutpoint and
+			// should superimpose with the 2nd main-chain atom from the downstream residue.
 		} else if ( lower_rsd.atom_name( id.atomno() ) == "OVL2" ) {
 			xyz_fixed = upper_rsd.atom( upper_rsd.mainchain_atoms()[ 2 ] ).xyz();
 			match = true;
@@ -182,7 +182,7 @@ ChainbreakEnergy::eval_atom_derivative(
 	// nection or one with only one main-chain atom and a single bond connection.  Neither case is at all likely.
 	// ~Labonte)
 	if ( ! match && id.rsd() > 1 && pose.fold_tree().is_cutpoint( id.rsd() - 1 ) &&
-			 pose.residue( id.rsd() ).has_variant_type( CUTPOINT_UPPER ) ) {
+			pose.residue( id.rsd() ).has_variant_type( CUTPOINT_UPPER ) ) {
 		// Get the two residues across the cutpoint.
 		Residue const & lower_rsd( pose.residue( id.rsd() - 1 ) );
 		Residue const & upper_rsd( pose.residue( id.rsd() ) );
@@ -193,14 +193,14 @@ ChainbreakEnergy::eval_atom_derivative(
 			xyz_fixed = lower_rsd.atom( "OVL1" ).xyz();
 			match = true;
 
-		// Case 5: The moving atom is the 2nd main-chain atom on the downstream residue across the cutpoint and
-		// should superimpose with virtual atom OVL2 from the upstream residue.
+			// Case 5: The moving atom is the 2nd main-chain atom on the downstream residue across the cutpoint and
+			// should superimpose with virtual atom OVL2 from the upstream residue.
 		} else if ( id.atomno() == upper_rsd.mainchain_atoms()[ 2 ] ) {
 			xyz_fixed = lower_rsd.atom( "OVL2" ).xyz();
 			match = true;
 
-		// Case 6: The moving atom is the virtual atom OVU1 on the downstream residue across the cutpoint and
-		// should superimpose with the last main-chain atom from the upstream residue.
+			// Case 6: The moving atom is the virtual atom OVU1 on the downstream residue across the cutpoint and
+			// should superimpose with the last main-chain atom from the upstream residue.
 		} else if ( upper_rsd.atom_name( id.atomno() ) == "OVU1" ) {
 			core::uint const last_mainchain_atm( lower_rsd.mainchain_atoms().size() );
 			xyz_fixed = lower_rsd.atom( lower_rsd.mainchain_atoms()[ last_mainchain_atm ] ).xyz();

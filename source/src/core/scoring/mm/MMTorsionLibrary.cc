@@ -58,24 +58,24 @@ MMTorsionLibrary::~MMTorsionLibrary() {}
 
 /// @details Constructs a MMTorsionLibrary instance from a filename string and constant access pointer to an MMAtomTypeSet
 MMTorsionLibrary::MMTorsionLibrary(
-	 std::string filename,
-	 core::chemical::MMAtomTypeSetCOP mm_atom_set
+	std::string filename,
+	core::chemical::MMAtomTypeSetCOP mm_atom_set
 )
 {
 	mm_atom_set_ = core::chemical::MMAtomTypeSetCAP( mm_atom_set );
-	
+
 	// read the file
 	std::string line;
 	utility::vector1< std::string > lines;
 	std::ifstream data( filename.c_str() );
 
-	while( getline( data, line ) ) {
-		if( line.size() < 1 || line[0] == '#' ) continue; // comment or blank lines
+	while ( getline( data, line ) ) {
+		if ( line.size() < 1 || line[0] == '#' ) continue; // comment or blank lines
 		lines.push_back( line );
 	}
 
 	// add the torsion params
-	for( Size i = 1; i <= lines.size(); ++i ) {
+	for ( Size i = 1; i <= lines.size(); ++i ) {
 
 		std::istringstream l( lines[i] );
 
@@ -97,17 +97,14 @@ MMTorsionLibrary::MMTorsionLibrary(
 		minimum = numeric::conversions::radians( minimum );
 
 		// add to correct library
-		if( atom_type_string_1 == "X" || atom_type_string_2 == "X" || atom_type_string_3 == "X" || atom_type_string_4 == "X" )
-			{
-				wildcard_mm_torsion_library_.insert( std::make_pair(
-					mm_torsion_atom_quad( atom_type_int1, atom_type_int2,	atom_type_int3,	atom_type_int4 ),
-					mm_torsion_param_set( k_theta, multiplicity, minimum )	)	);
-			}
-		else
-			{
-				fully_assigned_mm_torsion_library_.insert( std::make_pair(
-					mm_torsion_atom_quad( atom_type_int1, atom_type_int2,	atom_type_int3,	atom_type_int4 ),
-					mm_torsion_param_set( k_theta, multiplicity, minimum )	)	);
+		if ( atom_type_string_1 == "X" || atom_type_string_2 == "X" || atom_type_string_3 == "X" || atom_type_string_4 == "X" ) {
+			wildcard_mm_torsion_library_.insert( std::make_pair(
+				mm_torsion_atom_quad( atom_type_int1, atom_type_int2, atom_type_int3, atom_type_int4 ),
+				mm_torsion_param_set( k_theta, multiplicity, minimum ) ) );
+		} else {
+			fully_assigned_mm_torsion_library_.insert( std::make_pair(
+				mm_torsion_atom_quad( atom_type_int1, atom_type_int2, atom_type_int3, atom_type_int4 ),
+				mm_torsion_param_set( k_theta, multiplicity, minimum ) ) );
 		}
 	}
 
@@ -122,28 +119,28 @@ MMTorsionLibrary::MMTorsionLibrary(
 
 	// print number torsion params added
 	TR << "MM torsion sets added fully assigned: " << fully_assigned_mm_torsion_library_.size()
-		 << "; wildcard: " << wildcard_mm_torsion_library_.size() << " and 1 virtual parameter."
-		 << std::endl;
+		<< "; wildcard: " << wildcard_mm_torsion_library_.size() << " and 1 virtual parameter."
+		<< std::endl;
 }
 
 /// @details The lookup function returns a pair of iterators to the first and last element in the multimap library that
 /// corespond to the set(s) of mm params that corespond to the 4 mm atom type indices. If non are found it exits.
 mm_torsion_library_citer_pair
 MMTorsionLibrary::lookup(
-		int atom1,
-		int atom2,
-		int atom3,
-		int atom4) const
+	int atom1,
+	int atom2,
+	int atom3,
+	int atom4) const
 {
 	static std::string const x_string = "X";
 	static std::string const virt_string = "VIRT";
 
 	// forward
-	if( fully_assigned_mm_torsion_library_.count(
+	if ( fully_assigned_mm_torsion_library_.count(
 			mm_torsion_atom_quad( atom1, atom2, atom3, atom4 ) ) ) {
 		return fully_assigned_mm_torsion_library_.equal_range(
 			mm_torsion_atom_quad( atom1, atom2, atom3, atom4 ) );
-	} else if( fully_assigned_mm_torsion_library_.count(
+	} else if ( fully_assigned_mm_torsion_library_.count(
 			mm_torsion_atom_quad( atom4, atom3, atom2, atom1 ) ) ) {
 		// backward
 		return fully_assigned_mm_torsion_library_.equal_range(
@@ -170,41 +167,41 @@ MMTorsionLibrary::lookup(
 	// all of this looking through maps
 
 	// 1 wild card forward (XAAA, AXAA, AAXA, AAAX)
-	     if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, atom2, atom3, atom4 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, atom2, atom3, atom4 ) ); }
-  else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom1, wild_atom_type, atom3, atom4 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom1, wild_atom_type, atom3, atom4 ) ); }
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom1, atom2, wild_atom_type, atom4 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom1, atom2, wild_atom_type, atom4 ) ); }
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom1, atom2, atom3, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom1, atom2, atom3, wild_atom_type ) ); }
+	if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, atom2, atom3, atom4 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, atom2, atom3, atom4 ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom1, wild_atom_type, atom3, atom4 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom1, wild_atom_type, atom3, atom4 ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom1, atom2, wild_atom_type, atom4 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom1, atom2, wild_atom_type, atom4 ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom1, atom2, atom3, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom1, atom2, atom3, wild_atom_type ) ); }
 	// 1 wild card backward  (XAAA, AXAA, AAXA, AAAX)
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, atom3, atom2, atom1 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, atom3, atom2, atom1 ) ); }
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom4, wild_atom_type, atom2, atom1 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom4, wild_atom_type, atom2, atom1 ) ); }
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom4, atom3, wild_atom_type, atom1 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom4, atom3, wild_atom_type, atom1 ) ); }
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom4, atom3, atom2, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom4, atom3, atom2, wild_atom_type ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, atom3, atom2, atom1 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, atom3, atom2, atom1 ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom4, wild_atom_type, atom2, atom1 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom4, wild_atom_type, atom2, atom1 ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom4, atom3, wild_atom_type, atom1 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom4, atom3, wild_atom_type, atom1 ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom4, atom3, atom2, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom4, atom3, atom2, wild_atom_type ) ); }
 
 	// 2 wild card forward (AAXX, AXXA, XXAA, AXAX, XAXA, XAAX)
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom1, atom2, wild_atom_type, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom1, atom2, wild_atom_type, wild_atom_type ) ); }
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom1, wild_atom_type, wild_atom_type, atom4 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom1, wild_atom_type, wild_atom_type, atom4 ) ); }
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, atom3, atom4 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, atom3, atom4 ) ); }
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom1, wild_atom_type, atom3, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom1, wild_atom_type, atom3, wild_atom_type ) ); }
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, atom2, wild_atom_type, atom4 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, atom2, wild_atom_type, atom4 ) ); }
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, atom2, atom3, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, atom2, atom3, wild_atom_type ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom1, atom2, wild_atom_type, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom1, atom2, wild_atom_type, wild_atom_type ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom1, wild_atom_type, wild_atom_type, atom4 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom1, wild_atom_type, wild_atom_type, atom4 ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, atom3, atom4 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, atom3, atom4 ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom1, wild_atom_type, atom3, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom1, wild_atom_type, atom3, wild_atom_type ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, atom2, wild_atom_type, atom4 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, atom2, wild_atom_type, atom4 ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, atom2, atom3, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, atom2, atom3, wild_atom_type ) ); }
 	// 2 wild card backward (AAXX, AXXA, XXAA, AXAX, XAXA, XAAX)
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom4, atom3, wild_atom_type, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom4, atom3, wild_atom_type, wild_atom_type ) ); }
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom4, wild_atom_type, wild_atom_type, atom1 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom4, wild_atom_type, wild_atom_type, atom1 ) ); }
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, atom2, atom1 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, atom2, atom1 ) ); }
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom4, wild_atom_type, atom3, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom4, wild_atom_type, atom3, wild_atom_type ) ); }
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, atom3, wild_atom_type, atom1 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, atom3, wild_atom_type, atom1 ) ); }
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, atom3, atom2, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, atom3, atom2, wild_atom_type ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom4, atom3, wild_atom_type, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom4, atom3, wild_atom_type, wild_atom_type ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom4, wild_atom_type, wild_atom_type, atom1 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom4, wild_atom_type, wild_atom_type, atom1 ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, atom2, atom1 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, atom2, atom1 ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom4, wild_atom_type, atom3, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom4, wild_atom_type, atom3, wild_atom_type ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, atom3, wild_atom_type, atom1 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, atom3, wild_atom_type, atom1 ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, atom3, atom2, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, atom3, atom2, wild_atom_type ) ); }
 
 	// 3 wildcard forward (AXXX, XAXX, XXAX, XXXA)
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom1, wild_atom_type, wild_atom_type, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom1, wild_atom_type, wild_atom_type, wild_atom_type ) ); }
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, atom2, wild_atom_type, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, atom2, wild_atom_type, wild_atom_type ) ); }
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, atom3, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, atom3, wild_atom_type ) ); }
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, wild_atom_type, atom4 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, wild_atom_type, atom4 ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom1, wild_atom_type, wild_atom_type, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom1, wild_atom_type, wild_atom_type, wild_atom_type ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, atom2, wild_atom_type, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, atom2, wild_atom_type, wild_atom_type ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, atom3, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, atom3, wild_atom_type ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, wild_atom_type, atom4 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, wild_atom_type, atom4 ) ); }
 	// 3 wildcard backward (AXXX, XAXX, XXAX, XXXA)
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom4, wild_atom_type, wild_atom_type, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom4, wild_atom_type, wild_atom_type, wild_atom_type ) ); }
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, atom3, wild_atom_type, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, atom3, wild_atom_type, wild_atom_type ) ); }
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, atom2, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, atom2, wild_atom_type ) ); }
-	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, wild_atom_type, atom1 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, wild_atom_type, atom1 ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( atom4, wild_atom_type, wild_atom_type, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( atom4, wild_atom_type, wild_atom_type, wild_atom_type ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, atom3, wild_atom_type, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, atom3, wild_atom_type, wild_atom_type ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, atom2, wild_atom_type ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, atom2, wild_atom_type ) ); }
+	else if ( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, wild_atom_type, atom1 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, wild_atom_type, atom1 ) ); }
 
 	TR << "No parameters for "
 		<< (*mm_atom_set)[atom1].name() << "-"
@@ -214,10 +211,10 @@ MMTorsionLibrary::lookup(
 
 	/// Arriving here, we've failed to find essential parameters
 	utility_exit_with_message("COULD NOT FIND TORSION PARAMS FOR " +
-			boost::lexical_cast<std::string>(atom1) + " " +
-			boost::lexical_cast<std::string>(atom2) + " " +
-			boost::lexical_cast<std::string>(atom3) + " " +
-			boost::lexical_cast<std::string>(atom4) );
+		boost::lexical_cast<std::string>(atom1) + " " +
+		boost::lexical_cast<std::string>(atom2) + " " +
+		boost::lexical_cast<std::string>(atom3) + " " +
+		boost::lexical_cast<std::string>(atom4) );
 	return mm_torsion_library_citer_pair();  //< meaningless, just for removing gcc warning.
 }
 
@@ -225,10 +222,10 @@ MMTorsionLibrary::lookup(
 mm_torsion_library_citer_pair
 MMTorsionLibrary::lookup
 (
- std::string atom1,
- std::string atom2,
- std::string atom3,
- std::string atom4
+	std::string atom1,
+	std::string atom2,
+	std::string atom3,
+	std::string atom4
 ) const
 {
 	core::chemical::MMAtomTypeSetCOP mm_atom_set( mm_atom_set_ );

@@ -32,22 +32,22 @@ namespace stepwise {
 namespace legacy {
 namespace screener {
 
-	//Constructor
-	ProteinAtrRepScreener::ProteinAtrRepScreener( pose::Pose & pose_atr_rep_screen,
-																								modeler::protein::checker::ProteinAtrRepCheckerOP atr_rep_checker ):
-		stepwise::screener::SampleApplier( pose_atr_rep_screen ),
-		atr_rep_checker_( atr_rep_checker )
-	{}
+//Constructor
+ProteinAtrRepScreener::ProteinAtrRepScreener( pose::Pose & pose_atr_rep_screen,
+	modeler::protein::checker::ProteinAtrRepCheckerOP atr_rep_checker ):
+	stepwise::screener::SampleApplier( pose_atr_rep_screen ),
+	atr_rep_checker_( atr_rep_checker )
+{}
 
-	//Destructor
-	ProteinAtrRepScreener::~ProteinAtrRepScreener()
-	{}
+//Destructor
+ProteinAtrRepScreener::~ProteinAtrRepScreener()
+{}
 
-	bool
-	ProteinAtrRepScreener::check_screen(){
-		bool const pass_screen = ( atr_rep_checker_->check_screen( pose_ ) );
-		return pass_screen;
-	}
+bool
+ProteinAtrRepScreener::check_screen(){
+	bool const pass_screen = ( atr_rep_checker_->check_screen( pose_ ) );
+	return pass_screen;
+}
 
 } //screener
 } //legacy

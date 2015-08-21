@@ -115,8 +115,7 @@ trie_vs_trie(
 
 	r_heavy_depth_stack[1] = 0;
 
-	for ( Size ii = 1; ii <= trie1_natoms; ++ii )
-	{
+	for ( Size ii = 1; ii <= trie1_natoms; ++ii ) {
 		//std::cout << "tvt with ii = " << ii << std::endl;
 		/*typename*/ TrieNode< AT, CPDAT1 > const & r = trie1_atoms[ ii ];
 		energy_stack[1] = 0;
@@ -126,7 +125,7 @@ trie_vs_trie(
 
 		if ( r.first_atom_in_branch() ) --r_curr_stack_top;
 
-		if (r.has_sibling() ) { //push - copy stack downwards
+		if ( r.has_sibling() ) { //push - copy stack downwards
 
 			++r_curr_stack_top;
 			//std::cout << "r.has_sibling(): new stack top: " << r_curr_stack_top << std::endl;
@@ -148,18 +147,18 @@ trie_vs_trie(
 
 		//++r_tree_depth_stack[ r_curr_stack_top ];
 
-		if (! r.is_hydrogen() ) ++r_heavy_depth_stack[ r_curr_stack_top ];
+		if ( ! r.is_hydrogen() ) ++r_heavy_depth_stack[ r_curr_stack_top ];
 
 
 		//FArray1A< core::PackerEnergy > at_rot_array_proxy(at_v_rot_stack(1, r_curr_stack_top), trie2_num_unique_rotamers);
 
 		//FArray1A_int parent_wi_h_dist( parent_heavy_wi_hydrogen_cutoff( 1,
-		//	r_heavy_depth_stack[ r_curr_stack_top ] ), trie2_num_heavyatoms );
+		// r_heavy_depth_stack[ r_curr_stack_top ] ), trie2_num_heavyatoms );
 
 		//FArray1A_int r_heavy_skip_s_subtree_proxy
-		//	( r_heavy_skip_s_subtree(1, r_heavy_depth_stack[ r_curr_stack_top ] ), trie2_num_heavyatoms);
+		// ( r_heavy_skip_s_subtree(1, r_heavy_depth_stack[ r_curr_stack_top ] ), trie2_num_heavyatoms);
 
-		if (r.is_hydrogen()) {
+		if ( r.is_hydrogen() ) {
 			s_curr_stack_top = 2;
 			s_heavy_depth_stack[1] = 0;
 			//s_tree_depth_stack[1] = 0;
@@ -168,36 +167,37 @@ trie_vs_trie(
 				//std::cerr << "  ii: " << ii << " is H, jj : " << jj << " " << s_curr_stack_top << " ";
 				//std::cerr << "s_sibling_stack [";
 				//for ( Size kk = 1; kk <= s_curr_stack_top; ++kk )
-				// 	std::cerr << s_sibling_stack[kk] << " ";
+				//  std::cerr << s_sibling_stack[kk] << " ";
 				//std::cerr << " " <<  std::endl;
 
 
 				TrieNode< AT, CPDAT2 > const & s  = trie2_atoms[ jj ];
 
-				if ( s.first_atom_in_branch() )
+				if ( s.first_atom_in_branch() ) {
 					--s_curr_stack_top;
+				}
 
-				if (s.has_sibling() ) { //push - copy stack downwards
+				if ( s.has_sibling() ) { //push - copy stack downwards
 					++s_curr_stack_top;
 					energy_stack[s_curr_stack_top] = energy_stack[s_curr_stack_top - 1];
 					s_heavy_depth_stack[ s_curr_stack_top] = s_heavy_depth_stack[ s_curr_stack_top - 1];
 					//s_tree_depth_stack[ s_curr_stack_top]
-					//	= s_tree_depth_stack[ s_curr_stack_top - 1];
+					// = s_tree_depth_stack[ s_curr_stack_top - 1];
 					s_sibling_stack[s_curr_stack_top] = s.sibling();
 				}
 				//++s_tree_depth_stack[ s_curr_stack_top];
 
-				if (!s.is_hydrogen()) {
+				if ( !s.is_hydrogen() ) {
 					++s_heavyatoms_seen;
 					++s_heavy_depth_stack[s_curr_stack_top];
 					parent_heavy_wi_hcut_stack[s_heavy_depth_stack[s_curr_stack_top]]
 						= parent_heavy_wi_hydrogen_cutoff(s_heavyatoms_seen, r_heavy_depth_stack[ r_curr_stack_top ] );
 
 					if ( r_heavy_skip_s_subtree(s_heavyatoms_seen, r_heavy_depth_stack[ r_curr_stack_top ]) ) {
-						if (energy_stack[s_curr_stack_top] != 0.0f ) {
+						if ( energy_stack[s_curr_stack_top] != 0.0f ) {
 							for ( Size kk = s_rotamers_seen + 1;
-								kk <= s_rotamers_seen + s.num_rotamers_in_subtree();
-								++kk ) {
+									kk <= s_rotamers_seen + s.num_rotamers_in_subtree();
+									++kk ) {
 								at_v_rot_stack(kk, r_curr_stack_top) += energy_stack[s_curr_stack_top];
 							}
 						}
@@ -209,7 +209,7 @@ trie_vs_trie(
 
 				Real weight(1.0); core::PackerEnergy e(0.0); Size path_dist(0);
 				if ( parent_heavy_wi_hcut_stack[s_heavy_depth_stack[s_curr_stack_top] ] &&
-					count_pair( r.cp_data(), s.cp_data(), weight, path_dist) ) {
+						count_pair( r.cp_data(), s.cp_data(), weight, path_dist) ) {
 					if ( s.is_hydrogen() ) {
 						e = score_function.hydrogenatom_hydrogenatom_energy(r.atom(), s.atom(), path_dist );
 						energy_stack[ s_curr_stack_top ] += weight * e;
@@ -222,7 +222,7 @@ trie_vs_trie(
 					}
 				}
 
-				if (s.is_rotamer_terminal() ) {
+				if ( s.is_rotamer_terminal() ) {
 					++s_rotamers_seen;
 					at_v_rot_stack(s_rotamers_seen, r_curr_stack_top) += energy_stack[ s_curr_stack_top ];
 				}
@@ -240,37 +240,37 @@ trie_vs_trie(
 
 			for ( Size jj = 1; jj <= trie2_natoms; ++jj ) {
 				//std::cerr << "! ii: " << ii << " is H, jj : " << jj << " " << s_curr_stack_top <<
-				//	" " << s_rotamers_seen << " " << s_heavyatoms_seen << std::endl;
+				// " " << s_rotamers_seen << " " << s_heavyatoms_seen << std::endl;
 				//trie_node & s = rt_trie[jj];
 				TrieNode< AT, CPDAT2 > const & s  = trie2_atoms[ jj ];
 
 				//std::cerr << "s_sibling_stack [";
 				//for ( Size kk = 1; kk <= s_curr_stack_top; ++kk )
-				// 	std::cerr << s_sibling_stack[kk] << " ";
+				//  std::cerr << s_sibling_stack[kk] << " ";
 				//std::cerr << " " <<  std::endl;
 
 				if ( s.first_atom_in_branch() ) --s_curr_stack_top;
 
-				if (s.has_sibling() ) { //push - copy stack downwards
+				if ( s.has_sibling() ) { //push - copy stack downwards
 					++s_curr_stack_top;
 					energy_stack[s_curr_stack_top] = energy_stack[s_curr_stack_top - 1];
 					s_heavy_depth_stack[ s_curr_stack_top] = s_heavy_depth_stack[ s_curr_stack_top - 1];
 					//s_tree_depth_stack[ s_curr_stack_top]
-					//	= s_tree_depth_stack[ s_curr_stack_top - 1];
+					// = s_tree_depth_stack[ s_curr_stack_top - 1];
 					s_sibling_stack[s_curr_stack_top] = s.sibling();
 				}
 				//++s_tree_depth_stack[ s_curr_stack_top];
 
-				if (s.is_hydrogen()) {
+				if ( s.is_hydrogen() ) {
 					Real weight(1.0); Size path_dist(0);
-					if (parent_heavy_wi_hcut_stack[s_heavy_depth_stack[s_curr_stack_top]] &&
-						count_pair( r.cp_data(), s.cp_data(), weight, path_dist )) {
+					if ( parent_heavy_wi_hcut_stack[s_heavy_depth_stack[s_curr_stack_top]] &&
+							count_pair( r.cp_data(), s.cp_data(), weight, path_dist ) ) {
 						core::PackerEnergy e = score_function.heavyatom_hydrogenatom_energy( r.atom(), s.atom(), path_dist );
 						energy_stack[ s_curr_stack_top ] += weight * e;
 						//std::cout << "hv/h atom pair energy: " << ii << " & " << jj << " = " << weight * e  << "( unweighted: " << e << ") estack: " << energy_stack[ s_curr_stack_top ] << std::endl;
-							/*,trie1.res_id(), trie2.res_id(),
-							tri1.num_neighbors(), trie2.num_neighbors(),
-							Whbond);*/
+						/*,trie1.res_id(), trie2.res_id(),
+						tri1.num_neighbors(), trie2.num_neighbors(),
+						Whbond);*/
 					}
 
 				} else { // s is a heavy atom
@@ -296,9 +296,9 @@ trie_vs_trie(
 						parent_heavy_wi_hydrogen_cutoff(s_heavyatoms_seen, r_heavy_depth_stack[ r_curr_stack_top ]) =
 						(d2 < hydrogen_interaction_cutoff);
 
-					if (d2 > s.subtree_interaction_sphere_square_radius() ) {
+					if ( d2 > s.subtree_interaction_sphere_square_radius() ) {
 						r_heavy_skip_s_subtree(s_heavyatoms_seen, r_heavy_depth_stack[ r_curr_stack_top ]) = true;
-						if (energy_stack[s_curr_stack_top] != 0. ) {
+						if ( energy_stack[s_curr_stack_top] != 0. ) {
 							for ( Size kk = s_rotamers_seen + 1,
 									li_avrstack = at_v_rot_stack.index( kk, r_curr_stack_top );
 									kk <= s_rotamers_seen + s.num_rotamers_in_subtree();
@@ -312,18 +312,18 @@ trie_vs_trie(
 						continue;
 					}
 				}
-				if (s.is_rotamer_terminal() ) {
+				if ( s.is_rotamer_terminal() ) {
 					++s_rotamers_seen;
 					//std::cout << "s.is_rotamer_terminal " << s_rotamers_seen << " with energy: " << energy_stack[ s_curr_stack_top ] << std::endl;
 					at_v_rot_stack(s_rotamers_seen, r_curr_stack_top) += energy_stack[s_curr_stack_top];
 				}
 			}
 		}
-		if (r.is_rotamer_terminal()) {
+		if ( r.is_rotamer_terminal() ) {
 			++r_rotamers_seen;
 			//std::cout << "terminal #" << r_rotamers_seen << ": writing at_rot_array_proxy: ";
 			//for ( Size jj = 1; jj <= trie2_num_unique_rotamers; ++jj ) {
-			//	std::cout << " " << at_rot_array_proxy( jj );
+			// std::cout << " " << at_rot_array_proxy( jj );
 			//}
 			//std::cout << std::endl;
 			//FArray1A< core::PackerEnergy > rot_rot_table_row( rot_rot_table(1, r_rotamers_seen), trie2_num_unique_rotamers);
@@ -336,7 +336,7 @@ trie_vs_trie(
 
 			//std::cout << "rot rot table, column " << r_rotamers_seen << std::endl;
 			//for ( Size jj = 1; jj <= trie2_num_unique_rotamers; ++jj ) {
-			//	std::cout << " " << rot_rot_table( jj, r_rotamers_seen );
+			// std::cout << " " << rot_rot_table( jj, r_rotamers_seen );
 			//}
 			//std::cout << std::endl;
 

@@ -105,7 +105,7 @@ protected: // Assignment
 	Option &
 	operator =( Option const & option )
 	{
-		if ( this != &option ){
+		if ( this != &option ) {
 			is_group_ = option.is_group_;
 			been_accessed_ = option.been_accessed_;
 			restricted_access_ = option.restricted_access_;
@@ -407,7 +407,7 @@ public: // Properties
 	check_restricted_access (
 		bool do_check
 	) const {
-		if( restricted_access_ && do_check ){
+		if ( restricted_access_ && do_check ) {
 			throw utility::excn::EXCN_Msg_Exception(
 				"Attempting to access option '" + code() + "' that has restricted access. Please use 'basic::resource_manager::ResourceManager::get_instance()->get_option( " + code() + " );' instead.");
 		}

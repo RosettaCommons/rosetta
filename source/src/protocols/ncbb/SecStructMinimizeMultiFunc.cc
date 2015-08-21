@@ -67,18 +67,18 @@ SecStructMinimizeMultiFunc::SecStructMinimizeMultiFunc(
 	alpha_beta_pattern_( alpha_beta_pattern ),
 	dihedral_pattern_( dihedral_pattern )
 {
-	
+
 	setup_minimization_graph( pose_, scorefxn_, min_map_ );
-	
+
 	// The alpha beta pattern and dihedral pattern
 	// give a mapping between torsion IDs and the variable index that will control them
 	// (hooray!)
-	
+
 	utility::vector1< char > uniqs;
 	Size num;
 	count_uniq_char( dihedral_pattern_, num, uniqs );
 	utility::vector1< Size > starters( uniqs.size() );
-	
+
 	starters[ 1 ] = 1;
 	for ( Size i = 2; i <= uniqs.size(); ++i ) {
 		bool is_beta = false;
@@ -92,7 +92,7 @@ SecStructMinimizeMultiFunc::SecStructMinimizeMultiFunc(
 		}
 		starters[ i ] = starters[ i-1 ] + ( is_beta ? 3 : 2 );
 	}
-	
+
 	nvar_ = 0;
 	for ( Size i = 1; i <= uniqs.size(); ++i ) {
 		//TR << "What is the nature of the uniq " << uniqs[ i ] << "? " << std::endl;
@@ -111,7 +111,7 @@ SecStructMinimizeMultiFunc::SecStructMinimizeMultiFunc(
 		}
 	}
 	TR << "nvar_ = " << nvar_ << std::endl;
-	
+
 	for ( Size i = 1; i <= uniqs.size(); ++i ) {
 		for ( Size j = 1; j <= dihedral_pattern_.size(); ++j ) {
 			if ( dihedral_pattern_[ j ] == uniqs[ i ] ) {
@@ -133,7 +133,7 @@ SecStructMinimizeMultiFunc::SecStructMinimizeMultiFunc(
 			}
 		}
 	}
-	
+
 	get_dofs_map();
 	get_dofs_for_pose0();
 }
@@ -143,12 +143,12 @@ SecStructMinimizeMultiFunc::operator ()( Multivec const & vars ) const
 {
 	//TR << "Vars ";
 	//for ( Size i = 1; i <= vars.size(); ++i ) {
-	//	TR << vars[i] << " ";
+	// TR << vars[i] << " ";
 	//}
 	//TR << std::endl;
 	Multivec dofs( vars_to_dofs( vars ) );
 	min_map_.copy_dofs_to_pose( pose_, dofs );
-	
+
 	return scorefxn_( pose_ );
 }
 
@@ -160,39 +160,39 @@ SecStructMinimizeMultiFunc::setup_minimization_graph(
 	MinimizerMap const & min_map
 ) const {
 	scoring::MinimizationGraphOP mingraph( new scoring::MinimizationGraph( pose.total_residue() ) );
-		
+
 	scoring::EnergyMap dummy;
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		sfxn.setup_for_minimizing_for_node( * mingraph->get_minimization_node( ii ),
-										   pose.residue( ii ), min_map, pose, false, dummy );
+			pose.residue( ii ), min_map, pose, false, dummy );
 	}
-	
+
 	for ( graph::Graph::EdgeListIter
 			eiter = mingraph->edge_list_begin(), eiter_end = mingraph->edge_list_end();
 			eiter != eiter_end; ++eiter ) {
 		Size const node1 = (*eiter)->get_first_node_ind();
 		Size const node2 = (*eiter)->get_second_node_ind();
-			
+
 		scoring::MinimizationEdge & minedge( static_cast< scoring::MinimizationEdge & > (**eiter) );
-			
+
 		sfxn.setup_for_minimizing_sr2b_enmeths_for_minedge(
-															pose.residue( node1 ), pose.residue( node2 ),
-															minedge, min_map, pose, true, false,
-															static_cast< scoring::EnergyEdge const * > ( 0 ), dummy );
+			pose.residue( node1 ), pose.residue( node2 ),
+			minedge, min_map, pose, true, false,
+			static_cast< scoring::EnergyEdge const * > ( 0 ), dummy );
 	}
-		
+
 	/// Now initialize the long-range edges
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		for ( scoring::ScoreFunction::LR_2B_MethodIterator
 				iter = sfxn.long_range_energies_begin(),
 				iter_end = sfxn.long_range_energies_end();
 				iter != iter_end; ++iter ) {
-				
+
 			if ( (*iter)->minimize_in_whole_structure_context( pose ) ) continue;
-				
+
 			scoring::LREnergyContainerCOP lrec = pose.energies().long_range_container( (*iter)->long_range_type() );
 			if ( !lrec || lrec->empty() ) continue;
-				
+
 			// Potentially O(N) operation...
 			for ( scoring::ResidueNeighborConstIteratorOP
 					rni = lrec->const_neighbor_iterator_begin( ii ), // traverse both upper and lower neighbors
@@ -202,32 +202,32 @@ SecStructMinimizeMultiFunc::setup_minimization_graph(
 				Size const r2 = rni->upper_neighbor_id();
 				Size const jj = ( r1 == ii ? r2 : r1 );
 				bool const res_moving_wrt_eachother( true );
-					
+
 				if ( jj < ii ) continue; // only setup each edge once.
-				
+
 				conformation::Residue const & lower_res( r1 == ii ? pose.residue( ii ) : pose.residue( jj ) );
 				conformation::Residue const & upper_res( r1 == ii ? pose.residue( jj ) : pose.residue( ii ) );
 				sfxn.setup_for_lr2benmeth_minimization_for_respair(
-																	lower_res, upper_res, *iter, *mingraph, min_map, pose,
-																	res_moving_wrt_eachother, false, rni, dummy );
+					lower_res, upper_res, *iter, *mingraph, min_map, pose,
+					res_moving_wrt_eachother, false, rni, dummy );
 			}
 		}
 	}
-	
+
 	pose.energies().set_minimization_graph( mingraph );
 	//return mingraph;
 }
 
-	
+
 void
 SecStructMinimizeMultiFunc::dfunc( Multivec const & vars, Multivec & dE_dvars ) const
 {
 	Multivec dE_ddofs;
 	Multivec dofs = vars_to_dofs( vars );
-	
+
 	atom_tree_dfunc( pose_, min_map_, scorefxn_, dofs, dE_ddofs );
 	dE_dvars = dEddofs_to_dEdvars( dE_ddofs );
-	
+
 	return;
 }
 
@@ -259,28 +259,28 @@ SecStructMinimizeMultiFunc::vars_to_dofs( Multivec const & vars ) const {
 			}
 		}
 	}
-	
+
 	return dofs;
 } // end vars_to_dofs
-	
+
 Multivec
 SecStructMinimizeMultiFunc::dofs_to_vars( Multivec const & dofs ) const
 {
 
 	// Next, iter over vars to convert dofs info to vars info
 	Multivec vars( nvar_, 0.0 );
-	
-	for( Size i_var = 1; i_var <= nvar_; ++i_var ){
+
+	for ( Size i_var = 1; i_var <= nvar_; ++i_var ) {
 		std::map< Size, utility::vector1< Size > >::const_iterator it = map_BB_to_DOF_.find( i_var );
 		if ( it != map_BB_to_DOF_.end() ) {
 			utility::vector1< Size > const i_dofs( it->second );
-		
+
 			for ( Size iii = 1; iii <= i_dofs.size(); ++iii ) {
 				vars[ i_var ] = dofs[ i_dofs[ iii ] ];
 			}
 		}
 	}
-	
+
 	return vars;
 } // end dof_to_vars
 
@@ -288,13 +288,13 @@ Multivec
 SecStructMinimizeMultiFunc::dEddofs_to_dEdvars( Multivec const & dEddofs ) const
 {
 	Multivec dEdvars( nvar_, 0.0 );
-	
-	for( Size i_var = 1; i_var <= nvar_; ++i_var ){
+
+	for ( Size i_var = 1; i_var <= nvar_; ++i_var ) {
 		std::map< Size, utility::vector1< Size > >::const_iterator it = map_BB_to_DOF_.find( i_var );
 		if ( it != map_BB_to_DOF_.end() ) {
 
 			utility::vector1< Size > const i_dofs( it->second );
-			
+
 			// average!
 			for ( Size iii = 1; iii <= i_dofs.size(); ++iii ) {
 				dEdvars[ i_var ] += dEddofs[ i_dofs[ iii ] ];
@@ -302,7 +302,7 @@ SecStructMinimizeMultiFunc::dEddofs_to_dEdvars( Multivec const & dEddofs ) const
 			dEdvars[ i_var ] /= i_dofs.size();
 		}
 	}
-	
+
 	return dEdvars;
 }
 
@@ -310,18 +310,18 @@ void
 SecStructMinimizeMultiFunc::get_dofs_map()
 {
 	std::list< DOF_NodeOP > dof_nodes( min_map_.dof_nodes() );
-	
+
 	// Map between var index and DOF
 	map_BB_to_DOF_.clear();
 	map_DOF_to_BB_.clear();
-	
+
 	Size imap = 1;
-	
+
 	for ( std::list< DOF_NodeOP >::const_iterator it=dof_nodes.begin(),
-		 it_end = dof_nodes.end();	it != it_end; ++it, ++imap ) {
-		
+			it_end = dof_nodes.end(); it != it_end; ++it, ++imap ) {
+
 		id::TorsionID const tor_id( (*it)->torsion_id() );
-		
+
 		for ( Size i = 1; i <= nvar_; ++i ) {
 			//TR << "Initializing mapped DOFs for " << i << std::endl;
 
@@ -329,22 +329,22 @@ SecStructMinimizeMultiFunc::get_dofs_map()
 			//TR << "Grabbed " << torsions.size() << " torsions " << std::endl;
 			for ( Size j = 1; j <= torsions.size(); ++j ) {
 				id::TorsionID id = torsions[ j ];
-				
+
 				if ( id == tor_id ) {
 					//TR << "Passing " << i << " to get a dof will also get you dof number " << imap << std::endl;
 					map_BB_to_DOF_[ i ].push_back( imap );
-					
+
 					//TR << "Passing " << imap << " to get a var number will get you var number " << i << std::endl;
 					map_DOF_to_BB_[ imap ] = i;
 					break;
 				}
 			}
 		}
-		
+
 	}
 }
-	
-	
+
+
 /// @details Useful debugging code that can be re-enabled by changing the boolean
 /// variables at the top of this function.
 void

@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/mpi_refinement/MultiObjective.hh
-/// @brief 
-/// @author 
+/// @brief
+/// @author
 
 #ifndef INCLUDED_protocols_mpi_refinement_MultiObjective_hh
 #define INCLUDED_protocols_mpi_refinement_MultiObjective_hh
@@ -41,24 +41,24 @@ public:
 
 	bool
 	update_library_NSGAII(protocols::wum::SilentStructStore &structs,
-												protocols::wum::SilentStructStore &new_structs,
-												core::Size const nmax,
-												bool const update_obj_cut = false
-												);
+		protocols::wum::SilentStructStore &new_structs,
+		core::Size const nmax,
+		bool const update_obj_cut = false
+	);
 
 	void
 	filter_similar( protocols::wum::SilentStructStore &structs,
-									std::string const measure,
-									core::Real const criteria,
-									std::string const score_for_priority,
-									core::Size const nmax = 0
-									);
-	
+		std::string const measure,
+		core::Real const criteria,
+		std::string const score_for_priority,
+		core::Size const nmax = 0
+	);
+
 
 	void
 	add_objective_function_info( core::io::silent::SilentStructOP ss,
-															 protocols::wum::SilentStructStore & sstore
-															 ) const;
+		protocols::wum::SilentStructStore & sstore
+	) const;
 
 	void
 	add_objective_function_info( protocols::wum::SilentStructStore & sstore ) const;
@@ -71,7 +71,7 @@ public:
 	core::Size nobjs() const { return fobjnames_.size();}
 	std::string fobjnames( core::Size i ) const { return fobjnames_[i]; }
 	bool has_score( std::string value ) const { return fobjnames_.contains( value ); }
-	
+
 	core::Real get_fobj( core::io::silent::SilentStruct const &ss, core::Size i ) const
 	{ return ss.get_energy( fobjnames_[i] ); }
 
@@ -87,7 +87,7 @@ public:
 
 	void
 	calculate_pool_diversity( protocols::wum::SilentStructStore &structs1,
-														protocols::wum::SilentStructStore &structs2 ) const;
+		protocols::wum::SilentStructStore &structs2 ) const;
 
 	core::scoring::ScoreFunctionOP
 	get_scorefxn( core::Size const i ) const { return objsfxnOPs_[i]->clone(); }
@@ -99,18 +99,18 @@ private:
 
 	bool
 	is_dominant( core::io::silent::SilentStructCOP ss1,
-							 core::io::silent::SilentStructCOP ss2 );
+		core::io::silent::SilentStructCOP ss2 );
 
 	void
 	calculate_structure_diversity( core::io::silent::SilentStructOP ss1,
-																 protocols::wum::SilentStructStore &structs ) const;
+		protocols::wum::SilentStructStore &structs ) const;
 
 
 private:
-  utility::vector1< core::Real > obj_dominant_cut_;
-  utility::vector1< core::Real > obj_cut_increment_;
-  utility::vector1< std::string > fobjnames_;
-  utility::vector1< core::scoring::ScoreFunctionCOP > objsfxnOPs_;
+	utility::vector1< core::Real > obj_dominant_cut_;
+	utility::vector1< core::Real > obj_cut_increment_;
+	utility::vector1< std::string > fobjnames_;
+	utility::vector1< core::scoring::ScoreFunctionCOP > objsfxnOPs_;
 
 };
 

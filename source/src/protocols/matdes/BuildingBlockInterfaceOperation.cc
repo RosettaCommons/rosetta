@@ -81,14 +81,14 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 	typedef vector1<Size> Sizes;
 
 	utility::vector1<std::string> sym_dof_name_list;
-	if( sym_dof_names_ == "" ) {
+	if ( sym_dof_names_ == "" ) {
 		sym_dof_name_list = sym_dof_names( pose );
 	} else {
 		sym_dof_name_list = utility::string_split( sym_dof_names_ , ',' );
 	}
 
 	Sizes intra_subs1, intra_subs2;
-	if( multicomponent_ ) {
+	if ( multicomponent_ ) {
 		runtime_assert (sym_dof_name_list.size() == 2);  //fpd  multicomponent code assumes this holds
 		intra_subs1 = get_jump_name_to_subunits(pose,sym_dof_name_list[1]);
 		intra_subs2 = get_jump_name_to_subunits(pose,sym_dof_name_list[2]);
@@ -99,46 +99,46 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 	vector1<bool> indy_resis = sym_info->independent_residues();
 	Real const contact_dist_sq = contact_dist_ * contact_dist_;
-	Sizes design_pos; 
+	Sizes design_pos;
 	std::set<Size> filtered_design_pos;
 	Sizes comp_chains;
 	std::string select_interface_pos("select interface_pos, resi ");
 	std::string select_comp1_chains("select comp1_chains, chain ");
 	std::string select_comp2_chains("select comp2_chains, chain ");
-	for(Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++) {
-		if(sym_info->subunit_index(ir) != 1) continue;
+	for ( Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++ ) {
+		if ( sym_info->subunit_index(ir) != 1 ) continue;
 		std::string atom_i = (pose.residue(ir).name3() == "GLY") ? "CA" : "CB";
-		for(Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++) {
+		for ( Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++ ) {
 			std::string atom_j = (pose.residue(jr).name3() == "GLY") ? "CA" : "CB";
 
 			//If one component, then check for clashes between all residues in primary subunit and subunits with indices > nsub_bb
-			if( !multicomponent_ && sym_info->subunit_index(jr) <= nsub_bblock_ ) continue;
+			if ( !multicomponent_ && sym_info->subunit_index(jr) <= nsub_bblock_ ) continue;
 
-			//If two component, then check for clashes between all residues in primary subunitA and other building blocks, and all resis in primary subB and other building blocks. 
-			if( multicomponent_ ) {
+			//If two component, then check for clashes between all residues in primary subunitA and other building blocks, and all resis in primary subB and other building blocks.
+			if ( multicomponent_ ) {
 				Sizes const & isubs( get_component_of_residue(pose,ir)=='A'?intra_subs1:intra_subs2);
-				if (find(comp_chains.begin(),comp_chains.end(),pose.chain(jr))==comp_chains.end()) {
-					if (get_component_of_residue(pose,jr)=='A') {
+				if ( find(comp_chains.begin(),comp_chains.end(),pose.chain(jr))==comp_chains.end() ) {
+					if ( get_component_of_residue(pose,jr)=='A' ) {
 						select_comp1_chains.append("\"" + std::string(1, pose.pdb_info()->chain( jr )) +
-								"\"+"); // TODO: Jacob
+							"\"+"); // TODO: Jacob
 						comp_chains.push_back(pose.chain(jr));
-					} else if (get_component_of_residue(pose,jr)!='A') {
+					} else if ( get_component_of_residue(pose,jr)!='A' ) {
 						select_comp2_chains.append("\"" + std::string(1, pose.pdb_info()->chain( jr )) +
-								"\"+"); // TODO: Jacob
+							"\"+"); // TODO: Jacob
 						comp_chains.push_back(pose.chain(jr));
 					}
-				}	
-				if(get_component_of_residue(pose,ir)==get_component_of_residue(pose,jr)&&find(isubs.begin(),isubs.end(),sym_info->subunit_index(jr))!=isubs.end()) continue;
+				}
+				if ( get_component_of_residue(pose,ir)==get_component_of_residue(pose,jr)&&find(isubs.begin(),isubs.end(),sym_info->subunit_index(jr))!=isubs.end() ) continue;
 			}
 
-			if(pose.residue(ir).xyz(atom_i).distance_squared(pose.residue(jr).xyz(atom_j)) <= contact_dist_sq) {
+			if ( pose.residue(ir).xyz(atom_i).distance_squared(pose.residue(jr).xyz(atom_j)) <= contact_dist_sq ) {
 				design_pos.push_back(ir);
 				TR.Debug << ir << std::endl;
 				core::Size output_resi = ir;
 				if ( !basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {
 					output_resi = pose.pdb_info()->number( ir );
 				}
-				select_interface_pos.append(ObjexxFCL::string_of(output_resi) + "+");   
+				select_interface_pos.append(ObjexxFCL::string_of(output_resi) + "+");
 				break;
 			}
 		}
@@ -146,7 +146,7 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 	TR << select_interface_pos << std::endl;
 	TR.Debug << select_comp1_chains << std::endl;
 	TR.Debug << select_comp2_chains << std::endl;
-	
+
 	// Here we filter the residues that we are selecting for design
 	// to get rid of those that make intra-building block interactions
 	Pose scored_pose( pose );
@@ -155,41 +155,41 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 	std::string select_filtered_interface_pos("select filtered_interface_pos, resi ");
 	bool contact;
 
-	for(Size iip=1; iip<=design_pos.size(); iip++) {
+	for ( Size iip=1; iip<=design_pos.size(); iip++ ) {
 		Size ir = design_pos[iip];
 		if ( filter_intrabb_ ) {
 			TR.Debug << "Filtering: Checking resi: " << ir << std::endl;
 			contact = true;
-			for(Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++) {
-				if( !multicomponent_ ) {
-					if(sym_info->subunit_index(ir) > nsub_bblock_ || sym_info->subunit_index(jr) > nsub_bblock_) continue;
-				}	else {
+			for ( Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++ ) {
+				if ( !multicomponent_ ) {
+					if ( sym_info->subunit_index(ir) > nsub_bblock_ || sym_info->subunit_index(jr) > nsub_bblock_ ) continue;
+				} else {
 					Sizes const & intra_subs(get_component_of_residue(pose,ir)=='A'?intra_subs1:intra_subs2);
-					if(get_component_of_residue(pose,ir)!=get_component_of_residue(pose,jr)) continue;
-					if(find(intra_subs.begin(), intra_subs.end(), sym_info->subunit_index(jr)) == intra_subs.end()) continue;
+					if ( get_component_of_residue(pose,ir)!=get_component_of_residue(pose,jr) ) continue;
+					if ( find(intra_subs.begin(), intra_subs.end(), sym_info->subunit_index(jr)) == intra_subs.end() ) continue;
 				}
 
-				if(sym_info->subunit_index(jr) == 1) continue;
+				if ( sym_info->subunit_index(jr) == 1 ) continue;
 
-				for(Size ia = 1; ia<=pose.residue(ir).nheavyatoms(); ia++) {
-					for(Size ja = 1; ja<=pose.residue(jr).nheavyatoms(); ja++) {
-						if(pose.residue(ir).xyz(ia).distance_squared(pose.residue(jr).xyz(ja)) <= bblock_dist_sq)	{
-							if ( intrabb_only_ ) { contact = false; break; } 
+				for ( Size ia = 1; ia<=pose.residue(ir).nheavyatoms(); ia++ ) {
+					for ( Size ja = 1; ja<=pose.residue(jr).nheavyatoms(); ja++ ) {
+						if ( pose.residue(ir).xyz(ia).distance_squared(pose.residue(jr).xyz(ja)) <= bblock_dist_sq ) {
+							if ( intrabb_only_ ) { contact = false; break; }
 							else {
 								// However, if the residue in question is clashing badly (usually with a
 								// residue from another building block), it needs to be designed.
 								core::scoring::EnergyMap em1 = scored_pose.energies().residue_total_energies(ir);
 								Real resi_fa_rep = em1[core::scoring::fa_rep];
 								TR.Debug << "resi_fa_rep: " << resi_fa_rep << " fa_rep_cut_: " << fa_rep_cut_ << std::endl;
-								if (resi_fa_rep < fa_rep_cut_) { contact = false; TR.Debug << "Filtered out resi: " << ir << std::endl; break; }
+								if ( resi_fa_rep < fa_rep_cut_ ) { contact = false; TR.Debug << "Filtered out resi: " << ir << std::endl; break; }
 							}
 						}
 					}
-					if( contact == false ) break;
+					if ( contact == false ) break;
 				}
-				if( contact == false ) break;
+				if ( contact == false ) break;
 			}
-			if( (contact && !intrabb_only_) || ((contact == false) && (intrabb_only_ == true ))) {
+			if ( (contact && !intrabb_only_) || ((contact == false) && (intrabb_only_ == true )) ) {
 				filtered_design_pos.insert(ir);
 				core::Size output_resi = ir;
 				if ( !basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {
@@ -204,8 +204,8 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 	TR << select_filtered_interface_pos << std::endl;
 	// Now prevent_repacking at all positions that are not defined filtered design positions:
 	std::string output = "design_pos ";
-	for (Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++) {
-		if (filtered_design_pos.find(ir) != filtered_design_pos.end()) {
+	for ( Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++ ) {
+		if ( filtered_design_pos.find(ir) != filtered_design_pos.end() ) {
 			output += ObjexxFCL::string_of(ir)+"+";
 		} else {
 			TR.Debug << "resi " << ir << " will not be designed" << std::endl;
@@ -219,7 +219,7 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 void
 BuildingBlockInterfaceOperation::parse_tag( TagCOP tag , DataMap & )
 {
-  nsub_bblock_ = tag->getOption<core::Size>("nsub_bblock", 1);
+	nsub_bblock_ = tag->getOption<core::Size>("nsub_bblock", 1);
 	sym_dof_names_ = tag->getOption< std::string >( "sym_dof_names", "" );
 	contact_dist_ = tag->getOption<core::Real>("contact_dist", 10.0);
 	bblock_dist_ = tag->getOption<core::Real>("bblock_dist", 5.0);

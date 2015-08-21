@@ -53,7 +53,7 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
-	
+
 private:
 
 	core::Size const chiral_seq_pos_;

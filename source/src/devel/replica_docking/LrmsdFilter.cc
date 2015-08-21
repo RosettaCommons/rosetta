@@ -65,12 +65,12 @@ LrmsdFilter::LrmsdFilter( core::Size const rb_jump,core::Real const lower_thresh
 	if ( option[ in::file::native ].user() ) {
 		core::pose::PoseOP native_pose( new core::pose::Pose() );
 		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]);
- 		native_pose_ = native_pose;
+		native_pose_ = native_pose;
 	} else {
 		utility_exit_with_message("need to specify native pdb to calculate Lrmsd");
 	}
 
-	//	scorefxn_->show(TR.Info);
+	// scorefxn_->show(TR.Info);
 	movable_jumps_.push_back( rb_jump );
 	TR << "End constructer"<<std::endl;
 
@@ -95,10 +95,10 @@ LrmsdFilter::parse_my_tag(
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
-	) {
-// // 	scorefxn_ = new core::scoring::ScoreFunction( *(data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name )) );
+) {
+	// //  scorefxn_ = new core::scoring::ScoreFunction( *(data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name )) );
 
-// //	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
+	// // scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 
 	lower_threshold_ = tag->getOption<core::Real>( "threshold", 0.0 );
 	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 9999);
@@ -112,11 +112,10 @@ LrmsdFilter::apply( core::pose::Pose const & pose ) const {
 	core::Real const Lrmsd( compute( pose ) );
 
 	TR<<"Lrmsd is "<<Lrmsd<<". ";
-	if( Lrmsd >= lower_threshold_ && Lrmsd <= upper_threshold_ ){
+	if ( Lrmsd >= lower_threshold_ && Lrmsd <= upper_threshold_ ) {
 		TR<<"passing." <<std::endl;
 		return true;
-	}
-	else {
+	} else {
 		TR<<"failing."<<std::endl;
 		return false;
 	}

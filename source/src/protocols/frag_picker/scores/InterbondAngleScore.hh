@@ -41,7 +41,7 @@ public:
 	/// @details User may provide names of atoms that will be cached when a new
 	/// chunk is considered (i.e. at every do_caching() call)
 	InterbondAngleScore(Size, Real, bool, std::string, Size, utility::vector1<
-			std::string>);
+		std::string>);
 
 	/// @brief Prepare an atom-based score that utilizes the following predefined atoms: N, CA, C, O and CB
 	/// @details These atoms that will be cached when a new

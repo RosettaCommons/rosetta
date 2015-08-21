@@ -48,9 +48,9 @@ class IterativeFullatom : public IterativeBase {
 public:
 	static void register_options();
 
-  IterativeFullatom();
+	IterativeFullatom();
 
-/// @brief do initializing work that requires fully setup object here
+	/// @brief do initializing work that requires fully setup object here
 	virtual void initialize();
 
 	virtual bool ready_for_batch() const;

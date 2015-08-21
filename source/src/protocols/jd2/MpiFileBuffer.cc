@@ -38,11 +38,11 @@ static thread_local basic::Tracer tr( "protocols.jd2.MpiFileBuffer" );
 using basic::mem_tr;
 
 MpiFileBuffer::MpiFileBuffer( Size file_buf_rank )
-	: buffer_rank_( file_buf_rank ),
-		last_channel_( 0 ),
-		bSlaveCanOpenFile_( true ),
-		bKeepFilesAlive_( true ),
-		seconds_to_keep_files_alive_( 100 ) {
+: buffer_rank_( file_buf_rank ),
+	last_channel_( 0 ),
+	bSlaveCanOpenFile_( true ),
+	bKeepFilesAlive_( true ),
+	seconds_to_keep_files_alive_( 100 ) {
 
 	if ( seconds_to_keep_files_alive_<=0 ) bKeepFilesAlive_ = false;
 	last_garbage_collection_ = time(NULL);
@@ -110,14 +110,14 @@ void MpiFileBuffer::garbage_collection() {
 			}
 			if ( !buf->has_open_slaves() ) {
 				tr.Debug << "channel "<< channel
-								 << " has no more open slaves... and has not been touched again --- close via garbage collector" << std::endl;
-				//				garbage_collector_.erase( to_erase ); now removed from garbage_collector in close_file()
+					<< " has no more open slaves... and has not been touched again --- close via garbage collector" << std::endl;
+				//    garbage_collector_.erase( to_erase ); now removed from garbage_collector in close_file()
 				close_file( channel );
 				mem_tr << "closed_channel" << std::endl;
 			} else {
 				runtime_assert( false ); //shouldn't happen anymore
 				tr.Debug << "channel " << to_erase->first << " has open slaves again ... not closed, remove from closing list" << std::endl;
-				//				garbage_collector_.erase( to_erase );
+				//    garbage_collector_.erase( to_erase );
 			}
 		}
 	}
@@ -242,8 +242,8 @@ void MpiFileBuffer::block_file( std::string const& MPI_ONLY(filename) ) {
 bool MpiFileBuffer::remote_close_file( std::string const& filename ) {
 	runtime_assert( buffer_rank_ != my_rank_ );
 	int buf[ 4 ];
-  buf[ 0 ] = my_rank_;
-  buf[ 1 ] = filename.size();
+	buf[ 0 ] = my_rank_;
+	buf[ 1 ] = filename.size();
 	buf[ 2 ] = MPI_CLOSE_FILE;
 	buf[ 3 ] = 0;
 #ifdef USEMPI
@@ -362,7 +362,7 @@ void MpiFileBuffer::store_to_channel( Size slave, Size channel, std::string cons
 	SingleFileBufferOP buf = open_buffers_[ channel ];
 	runtime_assert( buf != 0 ); //writing to open file ?
 	buf->store_line( slave, channel, line );
-	if (buf->length(slave) > 5e6) {
+	if ( buf->length(slave) > 5e6 ) {
 		tr.Info << "autoflush threshold (5 MB) triggered for slave " << slave << " channel: " << channel << std::endl;
 		flush_channel(slave, channel);
 	}
@@ -380,7 +380,7 @@ void MpiFileBuffer::close_channel( Size slave, Size channel_id ) {
 	runtime_assert( buf != 0 ); //writing to open file ?
 	buf->close( slave );
 	tr.Debug << "close channel "<< channel_id <<" for slave " << slave
-					 << " currently " << buf->nr_open_slaves() << " open slave buffers; open files: " << open_buffers_.size() << std::endl;
+		<< " currently " << buf->nr_open_slaves() << " open slave buffers; open files: " << open_buffers_.size() << std::endl;
 	if ( !buf->has_open_slaves() && bSlaveCanOpenFile_ && !bKeepFilesAlive_ ) {
 		tr.Debug << "channel has no more open slaves... close completely now" << std::endl;
 		close_file( channel_id );

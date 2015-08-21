@@ -146,26 +146,24 @@ public: // tests
 		TS_ASSERT_EQUALS(work_pose.n_residue(), pose.n_residue() + pose2.n_residue());
 		TS_ASSERT_EQUALS(work_pose.sequence(), pose.sequence() + pose2.sequence());
 
-		for (core::Size i = 1; i <= pose.n_residue(); i++)
-		{
+		for ( core::Size i = 1; i <= pose.n_residue(); i++ ) {
 			TS_ASSERT_DELTA(
-					work_pose.residue(i).xyz(1),
-					pose.residue(i).xyz(1),
-					1e-6);
+				work_pose.residue(i).xyz(1),
+				pose.residue(i).xyz(1),
+				1e-6);
 			TS_ASSERT_EQUALS(
-					work_pose.pdb_info()->chain(i),
-					pose.pdb_info()->chain(i));
+				work_pose.pdb_info()->chain(i),
+				pose.pdb_info()->chain(i));
 		}
 
-		for (core::Size i = 1; i <= pose2.n_residue(); i++)
-		{
+		for ( core::Size i = 1; i <= pose2.n_residue(); i++ ) {
 			TS_ASSERT_DELTA(
-					work_pose.residue(i + pose.n_residue()).xyz(1),
-					pose2.residue(i).xyz(1),
-					1e-6);
+				work_pose.residue(i + pose.n_residue()).xyz(1),
+				pose2.residue(i).xyz(1),
+				1e-6);
 			TS_ASSERT_EQUALS(
-					work_pose.pdb_info()->chain(i + pose.n_residue()),
-					pose2.pdb_info()->chain(i));
+				work_pose.pdb_info()->chain(i + pose.n_residue()),
+				pose2.pdb_info()->chain(i));
 		}
 	}
 

@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //
-/// @file 
-/// @brief 
+/// @file
+/// @brief
 /// @author Neil King ( neilking@uw.edu )
 /// @author Javier Castellanos ( javiercv@uw.edu )
 /// @author Frank DiMaio
@@ -49,13 +49,13 @@ class GenericSymmetricSampler : public protocols::moves::Mover {
 	typedef utility::tag::TagCOP TagCOP;
 
 public:
-  GenericSymmetricSampler();
+	GenericSymmetricSampler();
 
-  // --- virtual functions from mover ---
-  virtual std::string get_name() const { return "GenericSymmetricSampler"; }
-  virtual void apply(Pose& pose);
+	// --- virtual functions from mover ---
+	virtual std::string get_name() const { return "GenericSymmetricSampler"; }
+	virtual void apply(Pose& pose);
 
-	// --- virtual copy constructors 
+	// --- virtual copy constructors
 	virtual MoverOP clone() const;
 
 
@@ -64,10 +64,10 @@ public:
 
 
 	virtual void parse_my_tag( TagCOP tag,
-														 basic::datacache::DataMap & data,
-														 Filters_map const &,
-														 Movers_map const &,
-														 Pose const & );
+		basic::datacache::DataMap & data,
+		Filters_map const &,
+		Movers_map const &,
+		Pose const & );
 
 private:
 	std::string dof_id_;

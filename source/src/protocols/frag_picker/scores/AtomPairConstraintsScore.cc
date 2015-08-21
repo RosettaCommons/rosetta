@@ -42,7 +42,7 @@ namespace scores {
 AtomPairConstraintsData::~AtomPairConstraintsData() {}
 
 static thread_local basic::Tracer trAtomPairConstraintsScore(
-		"fragment.picking.scores.AtomPairConstraintsScore");
+	"fragment.picking.scores.AtomPairConstraintsScore");
 
 /// @brief Prepare an AtomPair constraint - based score that utilizes some user-defined atoms.
 /// @param priority - the priority for this scoring method. The lower the priority, the later the score will be evaluated
@@ -53,10 +53,10 @@ static thread_local basic::Tracer trAtomPairConstraintsScore(
 /// @param constrainable_atoms - a vector of strings providing names of constrained atoms.
 /// On every do_cahing() event these && only these atoms will be cached from a chunk's pose
 AtomPairConstraintsScore::AtomPairConstraintsScore(Size priority,
-		Real lowest_acceptable_value, bool use_lowest, std::string constraints_file_name,
-		Size query_size, utility::vector1<std::string> constrainable_atoms) :
+	Real lowest_acceptable_value, bool use_lowest, std::string constraints_file_name,
+	Size query_size, utility::vector1<std::string> constrainable_atoms) :
 	AtomBasedConstraintsScore(priority, lowest_acceptable_value, use_lowest, query_size,
-			constrainable_atoms, "AtomPairConstraintsScore") {
+	constrainable_atoms, "AtomPairConstraintsScore") {
 
 	data_.resize(get_query_size());
 	read_constraints(constraints_file_name);
@@ -71,10 +71,10 @@ AtomPairConstraintsScore::AtomPairConstraintsScore(Size priority,
 /// @param constraints_file_name - from this file AtomPair constraints will be obtained
 /// @param query_size - the number of residues in the query sequence
 AtomPairConstraintsScore::AtomPairConstraintsScore(Size priority,
-		Real lowest_acceptable_value, bool use_lowest, std::string constraints_file_name,
-		Size query_size) :
+	Real lowest_acceptable_value, bool use_lowest, std::string constraints_file_name,
+	Size query_size) :
 	AtomBasedConstraintsScore(priority, lowest_acceptable_value, use_lowest, query_size,
-			"AtomPairConstraintsScore") {
+	"AtomPairConstraintsScore") {
 
 	data_.resize(get_query_size());
 	read_constraints(constraints_file_name);
@@ -85,7 +85,7 @@ AtomPairConstraintsScore::AtomPairConstraintsScore(Size priority,
 /// @param fragment - fragment to be scored
 /// @param scores - resulting score will be stored here
 bool AtomPairConstraintsScore::cached_score(FragmentCandidateOP fragment,
-		FragmentScoreMapOP scores) {
+	FragmentScoreMapOP scores) {
 
 	PROF_START( basic::FRAGMENTPICKING_ATOMPAIR_SCORE );
 
@@ -94,26 +94,29 @@ bool AtomPairConstraintsScore::cached_score(FragmentCandidateOP fragment,
 	Size qi = fragment->get_first_index_in_query();
 
 	Real total_score = 0;
-	for (Size i = 0; i < frag_len; ++i) {
-		for (Size c = 1; c <= data_[i + qi].size(); ++c) {
+	for ( Size i = 0; i < frag_len; ++i ) {
+		for ( Size c = 1; c <= data_[i + qi].size(); ++c ) {
 			Size firstQueryResidueIndex = qi + i;
 			AtomPairConstraintsDataOP r = data_[firstQueryResidueIndex][c];
-			if (r->get_offset() >= frag_len - i)
+			if ( r->get_offset() >= frag_len - i ) {
 				continue;
+			}
 			Size firstVallResidueIndex = vi + i;
 			Size secondVallResidueIndex = firstVallResidueIndex
-					+ r->get_offset();
-			if (!has_atom(firstVallResidueIndex, r->get_first_atom()))
+				+ r->get_offset();
+			if ( !has_atom(firstVallResidueIndex, r->get_first_atom()) ) {
 				continue;
-			if (!has_atom(secondVallResidueIndex, r->get_second_atom()))
+			}
+			if ( !has_atom(secondVallResidueIndex, r->get_second_atom()) ) {
 				continue;
+			}
 
-		debug_assert (fragment->get_chunk()->size() >=secondVallResidueIndex);
+			debug_assert (fragment->get_chunk()->size() >=secondVallResidueIndex);
 
 			numeric::xyzVector<Real> v1 = get_atom_coordinates(
-					firstVallResidueIndex, r->get_first_atom());
+				firstVallResidueIndex, r->get_first_atom());
 			numeric::xyzVector<Real> v2 = get_atom_coordinates(
-					secondVallResidueIndex, r->get_second_atom());
+				secondVallResidueIndex, r->get_second_atom());
 			Real d = v1.distance(v2);
 			total_score += r->get_function()->func(d);
 		}
@@ -121,10 +124,10 @@ bool AtomPairConstraintsScore::cached_score(FragmentCandidateOP fragment,
 	total_score /= (Real) frag_len;
 	scores->set_score_component(total_score, id_);
 	PROF_STOP( basic::FRAGMENTPICKING_ATOMPAIR_SCORE );
-	if ((total_score > lowest_acceptable_value_) && (use_lowest_ == true)) {
+	if ( (total_score > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		trAtomPairConstraintsScore.Debug << "Trashing a fragment: "
-				<< *fragment << " because its score is: " << total_score
-				<< std::endl;
+			<< *fragment << " because its score is: " << total_score
+			<< std::endl;
 		return false;
 	}
 
@@ -132,77 +135,77 @@ bool AtomPairConstraintsScore::cached_score(FragmentCandidateOP fragment,
 }
 
 void AtomPairConstraintsScore::read_constraints(
-		std::string constraints_file_name) {
+	std::string constraints_file_name) {
 	utility::io::izstream data(constraints_file_name.c_str());
 	trAtomPairConstraintsScore.Info << "reading constraints from "
-			<< constraints_file_name << std::endl;
-	if (!data) {
+		<< constraints_file_name << std::endl;
+	if ( !data ) {
 		utility_exit_with_message("[ERROR] Unable to open constraints file: "
-				+ constraints_file_name);
+			+ constraints_file_name);
 	}
 
 	std::string line;
 	getline(data, line); // header line
 	std::string tag;
 	Size n_constr = 0;
-	while (!data.fail()) {
+	while ( !data.fail() ) {
 		char c = data.peek();
-		if (c == '#' || c == '\n') {
+		if ( c == '#' || c == '\n' ) {
 			getline(data, line); //comment
 			continue;
 		}
 		data >> tag;
-		if (data.fail()) {
+		if ( data.fail() ) {
 			trAtomPairConstraintsScore.Debug << constraints_file_name
-					<< " end of file reached" << std::endl;
+				<< " end of file reached" << std::endl;
 			break;
 		}
-		if (tag == "AtomPair") {
+		if ( tag == "AtomPair" ) {
 			std::string name1, name2, func_type;
 			Size id1, id2;
 			data >> name1 >> id1 >> name2 >> id2 >> func_type;
 			trAtomPairConstraintsScore.Debug << "read: " << name1 << " " << id1
-					<< " " << name2 << " " << id2 << " func: " << func_type
-					<< std::endl;
+				<< " " << name2 << " " << id2 << " func: " << func_type
+				<< std::endl;
 			core::scoring::func::FuncOP func = factory_.new_func(
-					func_type);
+				func_type);
 			func->read_data(data);
 			std::map<std::string, Size> constr_atoms =
-					get_constrainable_atoms_map();
+				get_constrainable_atoms_map();
 			std::map<std::string, Size>::iterator it = constr_atoms.find(name1);
-			if (it == constr_atoms.end()) {
+			if ( it == constr_atoms.end() ) {
 				trAtomPairConstraintsScore.Warning << "Unknown backbone atom: "
-						<< name1
-						<< "\nThe following constraint will NOT be used:\n"
-						<< line << std::endl;
+					<< name1
+					<< "\nThe following constraint will NOT be used:\n"
+					<< line << std::endl;
 				continue;
 			}
 			Size a1 = it->second;
 			it = constr_atoms.find(name2);
-			if (it == constr_atoms.end()) {
+			if ( it == constr_atoms.end() ) {
 				trAtomPairConstraintsScore.Warning << "Unknown backbone atom: "
-						<< name2
-						<< "\nThe following constraint will NOT be used:\n"
-						<< line << std::endl;
+					<< name2
+					<< "\nThe following constraint will NOT be used:\n"
+					<< line << std::endl;
 				continue;
 			}
 			Size a2 = it->second;
 			AtomPairConstraintsDataOP dat;
-			if (id2 > id1) {
-				if (id2 > get_query_size()) {
+			if ( id2 > id1 ) {
+				if ( id2 > get_query_size() ) {
 					trAtomPairConstraintsScore.Warning
-							<< "Constrained atom id exceeds the length of a query sequence. The following constraint will NOT be used:\n"
-							<< line << std::endl;
+						<< "Constrained atom id exceeds the length of a query sequence. The following constraint will NOT be used:\n"
+						<< line << std::endl;
 					continue;
 				}
 				dat = AtomPairConstraintsDataOP( new AtomPairConstraintsData(func, id2 - id1, a1, a2) );
 				data_[id1].push_back(dat);
 				n_constr++;
 			} else {
-				if (id1 > get_query_size()) {
+				if ( id1 > get_query_size() ) {
 					trAtomPairConstraintsScore.Warning
-							<< "Constrained atom id exceeds the length of a query sequence. The following constraint will NOT be used:\n"
-							<< line << std::endl;
+						<< "Constrained atom id exceeds the length of a query sequence. The following constraint will NOT be used:\n"
+						<< line << std::endl;
 					continue;
 				}
 				dat = AtomPairConstraintsDataOP( new AtomPairConstraintsData(func, id1 - id2, a2, a1) );
@@ -212,25 +215,25 @@ void AtomPairConstraintsScore::read_constraints(
 		}
 	}
 	trAtomPairConstraintsScore << n_constr << " constraints loaded from a file"
-			<< std::endl;
+		<< std::endl;
 }
 
 FragmentScoringMethodOP MakeAtomPairConstraintsScore::make(Size priority,
-		Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string) {
+	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if (option[constraints::cst_file].user()) {
+	if ( option[constraints::cst_file].user() ) {
 		trAtomPairConstraintsScore << "Constraints loaded from: "
-				<< option[constraints::cst_file]()[1] << std::endl;
+			<< option[constraints::cst_file]()[1] << std::endl;
 
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new AtomPairConstraintsScore(priority,
-				lowest_acceptable_value, use_lowest, option[constraints::cst_file]()[1],
-				picker->size_of_query()) );
+			lowest_acceptable_value, use_lowest, option[constraints::cst_file]()[1],
+			picker->size_of_query()) );
 	}
 	utility_exit_with_message(
-			"Can't read a constraints file. Provide it with constraints::cst_file flag");
+		"Can't read a constraints file. Provide it with constraints::cst_file flag");
 
 	return NULL;
 }

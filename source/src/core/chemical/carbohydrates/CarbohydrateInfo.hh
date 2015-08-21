@@ -90,7 +90,7 @@ public: // Accessors/Mutators /////////////////////////////////////////////////
 	}
 
 	/// @brief  Return the standard/common, non-residue, short name of the monosaccharide.
-	std::string	base_name() const;
+	std::string base_name() const;
 
 
 	// Oxidation type

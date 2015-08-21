@@ -35,7 +35,7 @@ using namespace core;
 class CarbonHBondEnergyTests : public CxxTest::TestSuite {
 
 public:
-  void setUp() {
+	void setUp() {
 		core_init_with_additional_options( "-restore_pre_talaris_2013_behavior -override_rsd_type_limit");
 	}
 

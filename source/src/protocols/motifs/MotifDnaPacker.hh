@@ -97,7 +97,7 @@ private:
 		std::list< std::string > & info_lines,
 		core::pack::task::TaskFactoryOP taskfactory
 	);
-	
+
 	void
 	motif_expansion_inner_loop(
 		core::pose::Pose & pose,

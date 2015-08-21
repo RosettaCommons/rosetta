@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/antibody_design/AntibodyFeaturesCreator.cc
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 // Unit Headers
@@ -24,8 +24,8 @@
 
 namespace protocols {
 namespace antibody {
-	using namespace protocols::features;
-	
+using namespace protocols::features;
+
 AntibodyFeaturesCreator::AntibodyFeaturesCreator() {}
 AntibodyFeaturesCreator::~AntibodyFeaturesCreator() {}
 FeaturesReporterOP AntibodyFeaturesCreator::create_features_reporter() const {

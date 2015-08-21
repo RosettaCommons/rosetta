@@ -25,29 +25,29 @@ namespace protocols {
 namespace fldsgn {
 namespace topology {
 
-	class SS_Base;
-	class Strand;
-	class Helix;
-	class Loop;
-	class SS_Info2;
+class SS_Base;
+class Strand;
+class Helix;
+class Loop;
+class SS_Info2;
 
-	typedef utility::pointer::shared_ptr< SS_Base > SS_BaseOP;
-	typedef utility::pointer::shared_ptr< Helix > HelixOP;
-	typedef utility::pointer::shared_ptr< Strand > StrandOP;
-	typedef utility::pointer::shared_ptr< Loop > LoopOP;
+typedef utility::pointer::shared_ptr< SS_Base > SS_BaseOP;
+typedef utility::pointer::shared_ptr< Helix > HelixOP;
+typedef utility::pointer::shared_ptr< Strand > StrandOP;
+typedef utility::pointer::shared_ptr< Loop > LoopOP;
 
-	typedef utility::pointer::shared_ptr< SS_Base const > SS_BaseCOP;
-	typedef utility::pointer::shared_ptr< Helix const > HelixCOP;
-	typedef utility::pointer::shared_ptr< Strand const > StrandCOP;
-	typedef utility::pointer::shared_ptr< Loop const > LoopCOP;
+typedef utility::pointer::shared_ptr< SS_Base const > SS_BaseCOP;
+typedef utility::pointer::shared_ptr< Helix const > HelixCOP;
+typedef utility::pointer::shared_ptr< Strand const > StrandCOP;
+typedef utility::pointer::shared_ptr< Loop const > LoopCOP;
 
 
-	typedef utility::vector1< HelixOP > Helices;
-	typedef utility::vector1< StrandOP > Strands;
-	typedef utility::vector1< LoopOP > Loops;
+typedef utility::vector1< HelixOP > Helices;
+typedef utility::vector1< StrandOP > Strands;
+typedef utility::vector1< LoopOP > Loops;
 
-	typedef utility::pointer::shared_ptr< SS_Info2 > SS_Info2_OP;
-	typedef utility::pointer::shared_ptr< SS_Info2 const > SS_Info2_COP;
+typedef utility::pointer::shared_ptr< SS_Info2 > SS_Info2_OP;
+typedef utility::pointer::shared_ptr< SS_Info2 const > SS_Info2_COP;
 
 } // namespace topology
 } // namespace fldsgn

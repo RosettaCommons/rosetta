@@ -61,7 +61,7 @@ residue_gws_string( core::pose::Pose const & pose, core::uint const seqpos )
 	using namespace pose::carbohydrates;
 
 	Residue const & res( pose.residue( seqpos ) );
-debug_assert( res.is_carbohydrate() );
+	debug_assert( res.is_carbohydrate() );
 
 	stringstream gws_string( stringstream::out );
 
@@ -96,7 +96,7 @@ debug_assert( res.is_carbohydrate() );
 	} else /* is lower terminus */ {
 		gws_string << '?';
 	}
-debug_assert( gws_string.str().size() == 3 );  // If this fails, it probably indicates a design flaw; see above.
+	debug_assert( gws_string.str().size() == 3 );  // If this fails, it probably indicates a design flaw; see above.
 
 	gws_string << info->anomer()[ 0 ];
 	gws_string << info->anomeric_carbon();
@@ -112,15 +112,15 @@ debug_assert( gws_string.str().size() == 3 );  // If this fails, it probably ind
 		gws_string << "Ac";
 	}
 	switch ( info->ring_size() ) {
-		case 4:
-			gws_string << ",o";
-			break;
-		case 5:
-			gws_string << ",f";
-			break;
-		case 6:
-			gws_string << ",p";
-			break;
+	case 4 :
+		gws_string << ",o";
+		break;
+	case 5 :
+		gws_string << ",f";
+		break;
+	case 6 :
+		gws_string << ",p";
+		break;
 	}
 
 	return gws_string.str();
@@ -139,7 +139,7 @@ residue_range_gws_string( core::pose::Pose const & pose, core::uint const begin,
 
 		// Now, see if this residue has any branches off the main chain.
 		conformation::Residue const & res_i( pose.residue( i ) );
-	debug_assert( res_i.is_carbohydrate() );
+		debug_assert( res_i.is_carbohydrate() );
 		Size const n_branches( res_i.carbohydrate_info()->n_branches() );
 		Size const n_non_branch_residue_connections( res_i.n_residue_connections() - n_branches );
 
@@ -178,10 +178,10 @@ chain_gws_string( core::pose::Pose const & pose, core::uint const chain_id )
 
 	Conformation const & conf( pose.conformation() );
 
-debug_assert( chain_id <= conf.num_chains() );
+	debug_assert( chain_id <= conf.num_chains() );
 	PyAssert( chain_id <= conf.num_chains(),
-			"dump_gws_chain( core::pose::Pose const & pose, core::uint const chain_id, std::string const & filename ): "
-			"variable chain_id is out of range!" );
+		"dump_gws_chain( core::pose::Pose const & pose, core::uint const chain_id, std::string const & filename ): "
+		"variable chain_id is out of range!" );
 
 	core::uint begin( conf.chain_begin( chain_id ) );
 	core::uint const end( conf.chain_end( chain_id ) );

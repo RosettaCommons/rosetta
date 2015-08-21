@@ -63,10 +63,10 @@ namespace working_parameters {
 /////////////////////////////////////////////////////////////////////////
 StepWiseWorkingParametersOP
 setup_working_parameters_for_swa( utility::vector1< Size > const & moving_res_list,
-																	pose::Pose const & pose,
-																	pose::PoseCOP native_pose,
-																	utility::vector1< Size > const & user_defined_bridge_res,
-																	utility::vector1< Size > const & working_minimize_res ){
+	pose::Pose const & pose,
+	pose::PoseCOP native_pose,
+	utility::vector1< Size > const & user_defined_bridge_res,
+	utility::vector1< Size > const & working_minimize_res ){
 
 	using namespace core::pose::full_model_info;
 
@@ -82,10 +82,10 @@ setup_working_parameters_for_swa( utility::vector1< Size > const & moving_res_li
 	utility::vector1< Size > working_moving_suite_list;
 	bool is_prepend( false );
 	std::map< Size, bool > is_prepend_map;
-	for ( Size n = moving_res_list.size(); n >= 1; n-- ){ // backwards to set is_prepend to value at initial moving_res.
+	for ( Size n = moving_res_list.size(); n >= 1; n-- ) { // backwards to set is_prepend to value at initial moving_res.
 		Size const & moving_res = moving_res_list[n];
 		Size const parent_res = pose.fold_tree().get_parent_residue( moving_res );
-		if ( pose.fold_tree().jump_nr( moving_res, parent_res ) == 0 )	working_moving_suite_list.push_back( std::min( moving_res, parent_res ) );
+		if ( pose.fold_tree().jump_nr( moving_res, parent_res ) == 0 ) working_moving_suite_list.push_back( std::min( moving_res, parent_res ) );
 		is_prepend = ( moving_res < parent_res );
 		is_prepend_map[ res_list[ moving_res ] ] = is_prepend;
 	}
@@ -109,7 +109,7 @@ setup_working_parameters_for_swa( utility::vector1< Size > const & moving_res_li
 	utility::vector1< Size > fixed_res;
 	utility::vector1< Size > const & extra_minimize_res = const_full_model_info( pose ).extra_minimize_res();
 	utility::vector1< Size > const & sample_res = const_full_model_info( pose ).sample_res();
-	for ( Size n = 1; n <= full_sequence.size(); n++ )	{
+	for ( Size n = 1; n <= full_sequence.size(); n++ ) {
 		if ( extra_minimize_res.has_value( n ) ) continue;
 		if ( sample_res.has_value( n ) ) continue;
 		if ( fixed_domain_map[ n ] > 0  && !working_minimize_res.has_value( res_list.index( n ) ) ) {
@@ -139,8 +139,8 @@ setup_working_parameters_for_swa( utility::vector1< Size > const & moving_res_li
 	working_parameters->set_sequence( full_model_info.full_sequence() );
 	working_parameters->set_is_prepend( is_prepend );
 	working_parameters->set_is_prepend_map( is_prepend_map );
-	//		working_parameters->set_working_sequence( working_sequence ); // auto-updated with set_sequence
-	//		working_parameters->set_working_res_list( res_list ); // figured out from full_to_sub
+	//  working_parameters->set_working_sequence( working_sequence ); // auto-updated with set_sequence
+	//  working_parameters->set_working_res_list( res_list ); // figured out from full_to_sub
 	working_parameters->set_working_moving_res_list( working_moving_res_list );
 	//working_parameters->set_working_moving_suite_list( working_moving_suite_list );  // set at the same time as working_moving_res_list
 	//working_parameters->set_chain_boundaries(); // Not in use later. legacy of PoseSetup
@@ -156,7 +156,7 @@ setup_working_parameters_for_swa( utility::vector1< Size > const & moving_res_li
 	working_parameters->set_working_native_alignment( full_model_info.full_to_sub( fixed_res ) );
 	working_parameters->set_native_alignment( fixed_res );
 
-	//		working_parameters->set_working_superimpose_res( full_model_info.full_to_sub( superimpose_res ) ); // not in use! assumes pose is already superimposed.
+	//  working_parameters->set_working_superimpose_res( full_model_info.full_to_sub( superimpose_res ) ); // not in use! assumes pose is already superimposed.
 	working_parameters->set_working_calc_rms_res( full_model_info.full_to_sub( calc_rms_res_ ) );
 	working_parameters->set_working_bridge_res( full_model_info.full_to_sub( bridge_res ) );
 	working_parameters->set_working_moving_partition_res( working_moving_partition_res );
@@ -172,8 +172,8 @@ setup_working_parameters_for_swa( utility::vector1< Size > const & moving_res_li
 /////////////////////////////////////////////////////////////////////////////////////////////////
 StepWiseWorkingParametersOP
 setup_working_parameters_explicit( Size const rebuild_res, /* this must be in moving partition */
-																	 pose::Pose const & pose,
-																	 pose::PoseCOP native_pose ){
+	pose::Pose const & pose,
+	pose::PoseCOP native_pose ){
 	using namespace chemical;
 	using namespace pose::full_model_info;
 
@@ -192,7 +192,7 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 	// this loop will also determine any chainbreak that requires closure
 	utility::vector1< bool > partition_definition;
 	Size floating_base_anchor_res( 0 );
-	if ( floating_base ){
+	if ( floating_base ) {
 		floating_base_anchor_res = reference_res;
 		partition_definition = get_partition_definition_floating_base( pose, rebuild_res );
 	} else {
@@ -203,25 +203,25 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 
 	utility::vector1< Size > input_res1, input_res2 /*blank*/, cutpoint_open, cutpoint_closed;
 	//Size cutpoint_closed_distal( 0 );
-	for ( Size n = 1; n <= pose.total_residue(); n++ ){
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 		if ( !partition_definition[ n ] ) input_res1.push_back( n );
 		else input_res2.push_back( n );
 	}
 	utility::vector1< Size > const & moving_partition_res = ( partition_definition[ moving_res ] ) ? input_res2 :  input_res1;
 	utility::vector1< Size > five_prime_chain_breaks, three_prime_chain_breaks, chain_break_gap_sizes;
 	figure_out_moving_chain_breaks( pose, moving_partition_res,
-																	cutpoint_closed,
-																	five_prime_chain_breaks, three_prime_chain_breaks, chain_break_gap_sizes );
-	for ( Size n = 1; n <= pose.total_residue(); n++ ){
-		if ( pose.fold_tree().is_cutpoint( n ) && !five_prime_chain_breaks.has_value( n ) ){
+		cutpoint_closed,
+		five_prime_chain_breaks, three_prime_chain_breaks, chain_break_gap_sizes );
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		if ( pose.fold_tree().is_cutpoint( n ) && !five_prime_chain_breaks.has_value( n ) ) {
 			cutpoint_open.push_back( n );
 		}
 	}
 	Size five_prime_chain_break_res( 0 ), gap_size( 999 );
-	for ( Size i = 1; i <= five_prime_chain_breaks.size(); i++ ){
+	for ( Size i = 1; i <= five_prime_chain_breaks.size(); i++ ) {
 		Size const n = five_prime_chain_breaks[ i ];
 		if ( ( reference_res < rebuild_res && rebuild_res == (n+1) ) ||
-				 ( reference_res > rebuild_res && rebuild_res == n )	){
+				( reference_res > rebuild_res && rebuild_res == n ) ) {
 			runtime_assert( floating_base ); continue;
 		}
 		five_prime_chain_break_res = n;
@@ -230,8 +230,8 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 		break;
 	}
 
-	//	TR << TR.Blue << "INPUT_RES1 " << make_tag_with_dashes(input_res1) << " INPUT_RES2 " << make_tag_with_dashes(input_res2) << " REBUILD_RES " << rebuild_res << " REBUILD_SUITE " <<  rebuild_suite << " CUTPOINT_CLOSED " << cutpoint_closed << " CUTPOINT_CLOSED_DISTAL " << cutpoint_closed_distal << " FLOATING_BASE " << floating_base << TR.Reset << std::endl;
-	//	TR << pose.fold_tree() << std::endl;
+	// TR << TR.Blue << "INPUT_RES1 " << make_tag_with_dashes(input_res1) << " INPUT_RES2 " << make_tag_with_dashes(input_res2) << " REBUILD_RES " << rebuild_res << " REBUILD_SUITE " <<  rebuild_suite << " CUTPOINT_CLOSED " << cutpoint_closed << " CUTPOINT_CLOSED_DISTAL " << cutpoint_closed_distal << " FLOATING_BASE " << floating_base << TR.Reset << std::endl;
+	// TR << pose.fold_tree() << std::endl;
 
 	// if there's really just a single nucleotide being rebuilt, its nucleoside is not fixed.
 	// but if there's a whole chunk of stuff, its sugar & base are assumed fixed.
@@ -242,7 +242,7 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 	utility::vector1< Size> working_fixed_res_guess; // this is just a placeholder now, I think.
 	if ( moving_partition_res.size() > 1 ) {
 		if ( !working_fixed_res_guess.has_value( rebuild_res ) ) working_fixed_res_guess.push_back( rebuild_res );
-		if ( !floating_base ){
+		if ( !floating_base ) {
 			is_internal = true;
 			//moving_res = rebuild_suite; // parin-style old convention, where moving_res = moving_suite for internal suites. Sigh.
 		}
@@ -250,7 +250,7 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 
 	std::string full_sequence = full_model_info.full_sequence();
 	Size nres = full_sequence.size();
-	if ( full_sequence[ nres - 1] == 'X' ){
+	if ( full_sequence[ nres - 1] == 'X' ) {
 		full_sequence = full_sequence.substr( 0, nres - 1 );
 		nres -= 1;
 	}
@@ -293,7 +293,7 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 	working_parameters->set_terminal_res( terminal_res );
 	working_parameters->set_working_moving_partition_res( moving_partition_res );
 	working_parameters->set_input_res_vectors( make_vector1( full_model_info.sub_to_full( input_res1 ),
-																													 full_model_info.sub_to_full( input_res2 ) ) );
+		full_model_info.sub_to_full( input_res2 ) ) );
 	working_parameters->set_cutpoint_closed_list( full_model_info.sub_to_full( cutpoint_closed ) );
 	working_parameters->set_cutpoint_open_list( full_model_info.sub_to_full( cutpoint_open ) );
 	working_parameters->set_working_best_alignment( working_fixed_res_guess );
@@ -317,36 +317,36 @@ figure_out_rebuild_bulge_mode( pose::Pose const & pose, Size const rebuild_res )
 	kinematics::FoldTree const & f = pose.fold_tree();
 
 	// if the rebuild_res is connected to anything by a jump, better not virtualize it.
-	for ( Size n = 1; n <= f.num_jump(); n++ ){
+	for ( Size n = 1; n <= f.num_jump(); n++ ) {
 		if ( f.upstream_jump_residue( n )   == static_cast<int>(rebuild_res) ) return false;
 		if ( f.downstream_jump_residue( n ) == static_cast<int>(rebuild_res) ) return false;
 	}
 
 	if ( rebuild_res > 1 &&
-			 pose.residue( rebuild_res - 1 ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) &&
-			 ( !f.is_cutpoint( rebuild_res - 1 ) ||
-				 is_cutpoint_closed( pose, rebuild_res - 1 ) ) &&
-			 !f.is_cutpoint( rebuild_res ) &&
-			 f.jump_nr( rebuild_res - 1, rebuild_res + 1) > 0 ) return true;
+			pose.residue( rebuild_res - 1 ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) &&
+			( !f.is_cutpoint( rebuild_res - 1 ) ||
+			is_cutpoint_closed( pose, rebuild_res - 1 ) ) &&
+			!f.is_cutpoint( rebuild_res ) &&
+			f.jump_nr( rebuild_res - 1, rebuild_res + 1) > 0 ) return true;
 	if ( rebuild_res < pose.total_residue() &&
-			 pose.residue( rebuild_res + 1 ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) &&
-			 ( !f.is_cutpoint( rebuild_res ) ||
-				 is_cutpoint_closed( pose, rebuild_res ) ) &&
-			 !f.is_cutpoint( rebuild_res - 1 ) &&
-			 f.jump_nr( rebuild_res - 1, rebuild_res + 1 ) > 0 ) return true;
+			pose.residue( rebuild_res + 1 ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) &&
+			( !f.is_cutpoint( rebuild_res ) ||
+			is_cutpoint_closed( pose, rebuild_res ) ) &&
+			!f.is_cutpoint( rebuild_res - 1 ) &&
+			f.jump_nr( rebuild_res - 1, rebuild_res + 1 ) > 0 ) return true;
 	return false;
 }
 
 /////////////////////////////////////////////////////////////////////////
 bool
 figure_out_sample_both_sugar_base_rotamer( pose::Pose const & pose,
-																					 bool const floating_base,
-																					 Size const rebuild_suite ){
+	bool const floating_base,
+	Size const rebuild_suite ){
 	if ( !floating_base &&
-			 sampler::rna::modeler_sugar_at_five_prime(  pose, rebuild_suite ) &&
-			 sampler::rna::modeler_sugar_at_three_prime( pose, rebuild_suite ) ){
+			sampler::rna::modeler_sugar_at_five_prime(  pose, rebuild_suite ) &&
+			sampler::rna::modeler_sugar_at_three_prime( pose, rebuild_suite ) ) {
 		if ( !pose.residue( rebuild_suite ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) &&
-				 !pose.residue( rebuild_suite + 1 ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) {
+				!pose.residue( rebuild_suite + 1 ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) {
 			return true;
 		}
 	}

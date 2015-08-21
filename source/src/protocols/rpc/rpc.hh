@@ -45,7 +45,7 @@ public:
 	virtual bool do_init() { return false; };
 };
 
-// this is a functor that just clears the current options and sets 
+// this is a functor that just clears the current options and sets
 class BasicCmdLineInit: public protocols::rpc::BasicInit
 {
 public:
@@ -82,50 +82,50 @@ public:
 
 	virtual ~JSON_RPC() {}
 
-  JSON_RPC( JSON_RPC const & json_rpc);
+	JSON_RPC( JSON_RPC const & json_rpc);
 
-  JSON_RPC const & operator = ( JSON_RPC const & json_rpc );
+	JSON_RPC const & operator = ( JSON_RPC const & json_rpc );
 
-  virtual void run();
+	virtual void run();
 
-  long runtime() const { return endtime_ - starttime_; }
+	long runtime() const { return endtime_ - starttime_; }
 
-  std::string tracer() const { return tracer_output_stream_.str(); }
+	std::string tracer() const { return tracer_output_stream_.str(); }
 
-  const core::pose::Pose& outputpose() const { return outputpose_; }
+	const core::pose::Pose& outputpose() const { return outputpose_; }
 
-  core::Real get_fa_score();
+	core::Real get_fa_score();
 
-  core::Real get_irms() const;
+	core::Real get_irms() const;
 
 private: // member functions
-  void unpack( const std::string &msg );
+	void unpack( const std::string &msg );
 
-  void output_capture_start();
-  void output_capture_stop();
-  void output_capture_clear();
+	void output_capture_start();
+	void output_capture_stop();
+	void output_capture_clear();
 
-  void load_user_flag_file( const std::string &flags_file );
-  void load_new_set_of_user_flags(  const utility::json_spirit::mObject &json_user_flags );
-  void load_new_set_of_virtual_files(  const utility::json_spirit::mArray &json_user_files, bool clear_previous = true );
+	void load_user_flag_file( const std::string &flags_file );
+	void load_new_set_of_user_flags(  const utility::json_spirit::mObject &json_user_flags );
+	void load_new_set_of_virtual_files(  const utility::json_spirit::mArray &json_user_files, bool clear_previous = true );
 
 private: // member variables
-  std::string       msg_;
-  std::string       pdbdata_string_;
+	std::string       msg_;
+	std::string       pdbdata_string_;
 
-  core::pose::Pose  inputpose_;
-  core::pose::Pose  outputpose_;
-  std::string       xmlscript_;
-  std::string       command_;
+	core::pose::Pose  inputpose_;
+	core::pose::Pose  outputpose_;
+	std::string       xmlscript_;
+	std::string       command_;
 
-  bool              capture_tracer_;
-  std::stringstream tracer_output_stream_;
-  long              starttime_;
-  long              endtime_;
+	bool              capture_tracer_;
+	std::stringstream tracer_output_stream_;
+	long              starttime_;
+	long              endtime_;
 
-  utility::json_spirit::mObject parsed_json_;
+	utility::json_spirit::mObject parsed_json_;
 
-  BasicInit         *basic_init_; 
+	BasicInit         *basic_init_;
 };
 
 }

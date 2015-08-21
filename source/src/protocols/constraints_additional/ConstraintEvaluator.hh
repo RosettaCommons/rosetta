@@ -48,7 +48,7 @@
 //// C++ headers
 
 #ifdef WIN32
-	#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.hh>
 #endif
 
 
@@ -57,8 +57,8 @@ namespace constraints_additional {
 
 class ConstraintEvaluator : public evaluation::PoseEvaluator {
 public:
-  ConstraintEvaluator( std::string tag, core::scoring::constraints::ConstraintSet const&, Size viol_level = 0, core::Real threshold = 1.0, Size max_seq_sep = 0 );
-  ConstraintEvaluator( std::string tag, core::scoring::constraints::ConstraintCOPs const&, Size viol_level = 0, core::Real threshold = 1.0, Size max_seq_sep = 0 );
+	ConstraintEvaluator( std::string tag, core::scoring::constraints::ConstraintSet const&, Size viol_level = 0, core::Real threshold = 1.0, Size max_seq_sep = 0 );
+	ConstraintEvaluator( std::string tag, core::scoring::constraints::ConstraintCOPs const&, Size viol_level = 0, core::Real threshold = 1.0, Size max_seq_sep = 0 );
 
 	//constructor for a late input of constraints --- in case pose is not known at construction
 	// ( will read only once with first pose that comes )

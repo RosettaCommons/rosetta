@@ -465,16 +465,16 @@ NeighborList::setup(
 				//atom_has_been_updated_from_wide_[ ii ].resize( ii_natoms, 0 );
 			}
 		}
-	debug_assert( reference_coords_.size() == nres );
+		debug_assert( reference_coords_.size() == nres );
 		for ( Size ii = 1; ii <= nres; ++ii ) {
-		debug_assert( reference_coords_[ ii ].size() == pose.residue( ii ).natoms() );
-		debug_assert( wide_reference_coords_[ ii ].size() == pose.residue( ii ).natoms() );
+			debug_assert( reference_coords_[ ii ].size() == pose.residue( ii ).natoms() );
+			debug_assert( wide_reference_coords_[ ii ].size() == pose.residue( ii ).natoms() );
 			for ( Size jj = 1; jj <= reference_coords_[ ii ].size(); ++jj ) {
 				reference_coords_[ ii ][ jj ] = pose.residue( ii ).xyz( jj );
 				wide_reference_coords_[ ii ][ jj ] = pose.residue( ii ).xyz( jj );
 				/// if these aren't zero, then the logic for updating atom nblists from the wide-nblists has failed
-			debug_assert( atom_needs_update_from_wide_[ ii ][ jj ] == 0 );
-			//debug_assert( atom_has_been_updated_from_wide_[ ii ][ jj ] == 0 );
+				debug_assert( atom_needs_update_from_wide_[ ii ][ jj ] == 0 );
+				//debug_assert( atom_has_been_updated_from_wide_[ ii ][ jj ] == 0 );
 			}
 		}
 	}
@@ -483,7 +483,7 @@ NeighborList::setup(
 	// dimension the nblists, or on a subsquenct setup, remove the stale data from
 	// the nblists
 	bool const first_time_setup( nblist_.size() == 0 );
-debug_assert( first_time_setup || nblist_.size() == pose.total_residue() );
+	debug_assert( first_time_setup || nblist_.size() == pose.total_residue() );
 	if ( first_time_setup ) { nblist_.resize( nres ); upper_nblist_.resize( nres ); intrares_upper_nblist_.resize( nres ); }
 	if ( auto_update_ && first_time_setup ) wide_nblist_.resize( nres );
 	for ( Size i=1; i<= nres; ++i ) {
@@ -509,12 +509,12 @@ debug_assert( first_time_setup || nblist_.size() == pose.total_residue() );
 		( auto_update_ ? 2 * wide_nblist_extension_ : 0 ) ,
 		residue_mask
 	);
-// 	find_neighbors(
-// 		residue_point_graph,
-// 		2 * pose::pose_max_nbr_radius( pose ) +
-// 		XX_cutoff_ +
-// 		( auto_update_ ? 2 * wide_nblist_extension_ : 0 )
-// 	);
+	//  find_neighbors(
+	//   residue_point_graph,
+	//   2 * pose::pose_max_nbr_radius( pose ) +
+	//   XX_cutoff_ +
+	//   ( auto_update_ ? 2 * wide_nblist_extension_ : 0 )
+	//  );
 
 
 	////////////////////
@@ -523,7 +523,7 @@ debug_assert( first_time_setup || nblist_.size() == pose.total_residue() );
 		conformation::Residue const & ires( pose.residue( i ) );
 		int const imap( domain_map_(i) );
 
-		if (!residue_mask[i]) continue;
+		if ( !residue_mask[i] ) continue;
 		core::Real weight_func = pose.conformation().get_residue_weight(i,i);
 
 		// are we defining intraresidue interactions? if so, add them
@@ -553,8 +553,8 @@ debug_assert( first_time_setup || nblist_.size() == pose.total_residue() );
 						if ( auto_update_ ) {
 							Real const wide_cutoff
 								( ( iatom_is_hydrogen && jatom_is_hydrogen ) ?
-									HH_cutoff_wide_ : ( ( iatom_is_hydrogen || jatom_is_hydrogen ) ?
-									XH_cutoff_wide_ : XX_cutoff_wide_ ) );
+								HH_cutoff_wide_ : ( ( iatom_is_hydrogen || jatom_is_hydrogen ) ?
+								XH_cutoff_wide_ : XX_cutoff_wide_ ) );
 							if ( dist_sq <= wide_cutoff ) {
 								wide_nblist_[i][ii].push_back( AtomNeighbor( i, jj, path_dist, weight ) );
 								wide_nblist_[i][jj].push_back( AtomNeighbor( i, ii, path_dist, weight ) );
@@ -571,9 +571,9 @@ debug_assert( first_time_setup || nblist_.size() == pose.total_residue() );
 
 		// Iterate across the neighbors of residue i
 		//for ( graph::Graph::EdgeListConstIter
-		//		iru  = pose.energies().energy_graph().get_node(i)->const_upper_edge_list_begin(),
-		//		irue = pose.energies().energy_graph().get_node(i)->const_upper_edge_list_end();
-		//		iru != irue; ++iru ) {
+		//  iru  = pose.energies().energy_graph().get_node(i)->const_upper_edge_list_begin(),
+		//  irue = pose.energies().energy_graph().get_node(i)->const_upper_edge_list_end();
+		//  iru != irue; ++iru ) {
 		for ( core::conformation::PointGraph::UpperEdgeListConstIter
 				iru = residue_point_graph->get_vertex( i ).upper_edge_list_begin(),
 				irue = residue_point_graph->get_vertex( i ).upper_edge_list_end();
@@ -615,8 +615,8 @@ debug_assert( first_time_setup || nblist_.size() == pose.total_residue() );
 						if ( auto_update_ ) {
 							Real const wide_cutoff
 								( ( iatom_is_hydrogen && jatom_is_hydrogen ) ?
-									HH_cutoff_wide_ : ( ( iatom_is_hydrogen || jatom_is_hydrogen ) ?
-									XH_cutoff_wide_ : XX_cutoff_wide_ ) );
+								HH_cutoff_wide_ : ( ( iatom_is_hydrogen || jatom_is_hydrogen ) ?
+								XH_cutoff_wide_ : XX_cutoff_wide_ ) );
 							if ( dist_sq <= wide_cutoff ) {
 								wide_nblist_[i][ii].push_back( AtomNeighbor( j, jj, path_dist, weight, weight_func ) );
 								wide_nblist_[j][jj].push_back( AtomNeighbor( i, ii, path_dist, weight, weight_func ) );
@@ -653,10 +653,10 @@ NeighborList::prepare_for_scoring(
 	bool update_narrow = false; // true if any atom has moved > sqrt( move_tolerance_sqr_ ) from reference_coords_
 	bool update_wide = false; // true if any atom has moved > sqrt( wide_move_tolerance_sqr_ ) from wide_reference_coords_
 
-debug_assert( atom_needs_update_from_wide_.size() == nres );
+	debug_assert( atom_needs_update_from_wide_.size() == nres );
 	for ( Size ii = 1; ii <= nres; ++ii ) {
-	debug_assert( reference_coords_[ ii ].size() == pose.residue( ii ).natoms() );
-	debug_assert( atom_needs_update_from_wide_[ ii ].size() ==  pose.residue( ii ).natoms() );
+		debug_assert( reference_coords_[ ii ].size() == pose.residue( ii ).natoms() );
+		debug_assert( atom_needs_update_from_wide_[ ii ].size() ==  pose.residue( ii ).natoms() );
 		for ( Size jj = 1; jj <= reference_coords_[ ii ].size(); ++jj ) {
 			DistanceSquared dsqr_from_ref = reference_coords_[ ii ][ jj ].distance_squared( pose.residue( ii ).xyz( jj ));
 			if ( dsqr_from_ref > move_tolerance_sqr_ ) {

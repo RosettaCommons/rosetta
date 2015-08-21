@@ -64,8 +64,8 @@ Rotates::Rotates(): Mover("Rotates")
 {}
 
 Rotates::Rotates(Rotates const & that):
-		//utility::pointer::ReferenceCount(),
-		protocols::moves::Mover( that )
+	//utility::pointer::ReferenceCount(),
+	protocols::moves::Mover( that )
 {}
 
 Rotates::~Rotates() {}
@@ -85,27 +85,26 @@ std::string Rotates::get_name() const{
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 Rotates::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & /*data_map*/,
-		protocols::filters::Filters_map const & /*filters*/,
-		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & pose
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & /*data_map*/,
+	protocols::filters::Filters_map const & /*filters*/,
+	protocols::moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & pose
 )
 {
-	if ( tag->getName() != "Rotates" ){
+	if ( tag->getName() != "Rotates" ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
 	}
 	if ( ! tag->hasOption("distribution") ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotates' mover requires 'distribution' tag");
 	if ( ! tag->hasOption("degrees") ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotates' mover requires 'degrees' tag");
 	if ( ! tag->hasOption("cycles") ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotates' mover requires 'cycles' tag");
-	if( tag->hasOption("chain") && tag->hasOption("chains") ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotates' mover cannot have both a 'chain' and a 'chains' tag");
-	if( ! (tag->hasOption("chain") || tag->hasOption("chains") ) ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotates' mover requires either a 'chain' or a 'chains' tag");
+	if ( tag->hasOption("chain") && tag->hasOption("chains") ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotates' mover cannot have both a 'chain' and a 'chains' tag");
+	if ( ! (tag->hasOption("chain") || tag->hasOption("chains") ) ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotates' mover requires either a 'chain' or a 'chains' tag");
 
 	utility::vector1<std::string> chain_strs;
-	if( tag->hasOption("chain")){
+	if ( tag->hasOption("chain") ) {
 		chain_strs.push_back( tag->getOption<std::string>("chain") );
-	}
-	else if( tag->hasOption("chains") ){
+	} else if ( tag->hasOption("chains") ) {
 		std::string const chains_str = tag->getOption<std::string>("chains");
 		chain_strs= utility::string_split(chains_str, ',');
 	}
@@ -115,9 +114,9 @@ Rotates::parse_my_tag(
 	core::Size const degrees = tag->getOption<core::Size>("degrees");
 	core::Size const cycles = tag->getOption<core::Size>("cycles");
 
-	BOOST_FOREACH(std::string chain, chain_strs){
+	BOOST_FOREACH ( std::string chain, chain_strs ) {
 		utility::vector1<core::Size> chain_ids = core::pose::get_chain_ids_from_chain(chain, pose);
-		BOOST_FOREACH(core::Size chain_id, chain_ids){
+		BOOST_FOREACH ( core::Size chain_id, chain_ids ) {
 			Rotate_info rotate_info;
 			rotate_info.chain_id = chain_id;
 			rotate_info.jump_id = core::pose::get_jump_id_from_chain_id(chain_id, pose);
@@ -130,7 +129,7 @@ Rotates::parse_my_tag(
 }
 
 void Rotates::apply(core::pose::Pose & pose){
-	BOOST_FOREACH(RotateOP rotate, rotates_){
+	BOOST_FOREACH ( RotateOP rotate, rotates_ ) {
 		rotate->apply(pose);
 	}
 }

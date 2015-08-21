@@ -57,7 +57,7 @@ namespace jumping {
 class SameStrand : public utility::pointer::ReferenceCount {
 public:
 	/// @brief c'stor compute fractions from fragments
-  SameStrand( core::fragment::SecondaryStructureOP );
+	SameStrand( core::fragment::SecondaryStructureOP );
 
 	/// @brief explicit definitions of c'stor and d'stor
 	virtual ~SameStrand();
@@ -80,25 +80,25 @@ public:
 
 private:
 
-  void compute( core::fragment::SecondaryStructure const& ss ) const;
-  void do_strand_sum( core::fragment::SecondaryStructure const& ss ) const;
-  void do_same_strand( ) const; //uses only strand_sum_
+	void compute( core::fragment::SecondaryStructure const& ss ) const;
+	void do_strand_sum( core::fragment::SecondaryStructure const& ss ) const;
+	void do_same_strand( ) const; //uses only strand_sum_
 
-  /// @brief store loop/strand
+	/// @brief store loop/strand
 	mutable ObjexxFCL::FArray2D_bool same_strand_;
 
-  /// @brief
-  mutable ObjexxFCL::FArray1D_float strand_sum_;
+	/// @brief
+	mutable ObjexxFCL::FArray1D_float strand_sum_;
 
-  /// @brief length of FArrays
-  core::Size total_residue_;
+	/// @brief length of FArrays
+	core::Size total_residue_;
 
 	/// @brief ScondaryStructure information --- needed permanently for redo() method
 	core::fragment::SecondaryStructureOP secondary_structure_;
 
 };
 
-	/// @brief output operator
+/// @brief output operator
 inline std::ostream & operator <<(std::ostream & os, SameStrand const & t) {
 	t.show( os );
 	return os;

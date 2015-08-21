@@ -42,9 +42,9 @@ public:
 		std::string const & name);
 
 	/* Undefined commention out to fix PyRosetta build SilentFileOptions(
-		std::string const & name,
-		Real mapreso,
-		Real grid_spacing); */
+	std::string const & name,
+	Real mapreso,
+	Real grid_spacing); */
 
 	~SilentFileOptions();
 

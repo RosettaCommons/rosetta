@@ -9,9 +9,9 @@
 
 // TODO: Get rid of this class
 
-/// @file		core/conformation/membrane/util.fwd.hh
-/// @brief		utility functions for membrane things
-/// @author		JKLeman (julia.koehler1982@gmail.com)
+/// @file  core/conformation/membrane/util.fwd.hh
+/// @brief  utility functions for membrane things
+/// @author  JKLeman (julia.koehler1982@gmail.com)
 /// @author     Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_conformation_membrane_util_hh
@@ -36,7 +36,7 @@ namespace membrane {
 using namespace core;
 using namespace core::conformation;
 using namespace core::conformation::membrane;
-    
+
 // read multiple spanfiles from options
 utility::vector1< std::string > spanfile_names();
 

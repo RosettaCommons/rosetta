@@ -45,11 +45,11 @@ private:
 	PoseOP pose_multichain_;
 
 public:
-  void setUp() {
-    protocols_init();
+	void setUp() {
+		protocols_init();
 		pose_ = core::import_pose::pose_from_pdb("protocols/loops/2GB3.pdb");
 		pose_multichain_ = core::import_pose::pose_from_pdb("protocols/loops/4DZM.pdb");
-  }
+	}
 
 	void test_SingleLoopFoldTree() {
 		FoldTree ft(pose_->total_residue());

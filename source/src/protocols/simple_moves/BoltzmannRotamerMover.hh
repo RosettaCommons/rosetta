@@ -73,7 +73,7 @@ public:
 	virtual ~BoltzmannRotamerMover();
 
 	/// @brief clone this object
-	virtual	protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP clone() const;
 
 	/// @brief create this type of object
 	virtual protocols::moves::MoverOP fresh_instance() const;
@@ -86,7 +86,7 @@ public:
 	core::Size select_rotamer(
 		utility::vector1<std::pair<core::Size, core::Real> > const & boltzmann_factors,
 		core::Real const & partition_function);
-	
+
 	// setters
 	void set_score_function( core::scoring::ScoreFunctionCOP sf );
 	void set_task_factory( core::pack::task::TaskFactoryCOP tf );
@@ -97,7 +97,7 @@ public:
 	void set_bias_sampling( bool bias_sampling );
 	void set_randomize_resnum( bool randomize_resnum );
 	void set_bump_check( bool bump_check );
-	
+
 	// getters
 	core::Size get_resnum() const;
 	core::Size get_ligand_resnum() const;
@@ -110,11 +110,11 @@ public:
 public:
 
 	void parse_my_tag(
-  	TagCOP tag,
-  	basic::datacache::DataMap & data,
-	  Filters_map const &,
-	  protocols::moves::Movers_map const &,
-	  Pose const & );
+		TagCOP tag,
+		basic::datacache::DataMap & data,
+		Filters_map const &,
+		protocols::moves::Movers_map const &,
+		Pose const & );
 
 protected:
 
@@ -135,28 +135,28 @@ private:
 	TaskFactoryCOP factory_;
 
 	bool show_packer_task_;
-	
+
 	/// @brief residue number specifying the next residue to move
 	core::Size resnum_;
-	
+
 	/// @brief residue number specifying the ligand residue (0 if no ligand)
 	core::Size ligand_resnum_;
-	
+
 	/// @brief weight for interaction between resnum_ and ligand_resnum_
 	core::Real ligand_weight_;
-	
+
 	/// @brief kT value used for Boltzmann probability calculation
 	core::Real temperature_;
-	
+
 	/// @brief if true, bias rotamer selection based on energy
 	bool bias_sampling_;
-	
+
 	/// @brief if true, choose a random residue for the next move
 	bool randomize_resnum_;
-	
+
 	/// @brief if true, use bump check when generating rotamers
 	bool bump_check_;
-	
+
 };  // class BoltzmannRotamerMover
 
 std::ostream &operator<< (std::ostream &os, BoltzmannRotamerMover const &mover);

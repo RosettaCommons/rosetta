@@ -58,85 +58,87 @@ void register_options() {
 }
 
 int main(int argc, char * argv[]) {
-    try {
-	using namespace core;
-	using namespace core::sequence;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	try {
+		using namespace core;
+		using namespace core::sequence;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	register_options();
-	devel::init(argc, argv);
+		register_options();
+		devel::init(argc, argv);
 
-//------------ CREATE A PICKER OBJECT
-//	FragmentPickerOP my_picker = new FragmentPicker("PValuedFragmentScoreManager");
-	FragmentPickerOP my_picker( new FragmentPicker() );
+		//------------ CREATE A PICKER OBJECT
+		// FragmentPickerOP my_picker = new FragmentPicker("PValuedFragmentScoreManager");
+		FragmentPickerOP my_picker( new FragmentPicker() );
 
-//------------ PLUG-IN SEQUENCE PROFILE
-	SequenceProfileOP q_prof( new SequenceProfile );
-	q_prof->read_from_checkpoint(option[in::file::checkpoint]());
-	my_picker->set_query_profile(q_prof);
+		//------------ PLUG-IN SEQUENCE PROFILE
+		SequenceProfileOP q_prof( new SequenceProfile );
+		q_prof->read_from_checkpoint(option[in::file::checkpoint]());
+		my_picker->set_query_profile(q_prof);
 
-//------------ LOAD SECONDARY STRUCTURE(s) - it is possible to load more than one
-//------------ TWO PARAMETERS: SS_FILE AND A TAG
-//----------- THE TAG MUST BE CONSISTENT WITH THE ONE GIVEN IN THE SCORE CONFIG FILE!!!!!
-	my_picker->read_ss_file(option[in::file::psipred_ss2](),"johny");
+		//------------ LOAD SECONDARY STRUCTURE(s) - it is possible to load more than one
+		//------------ TWO PARAMETERS: SS_FILE AND A TAG
+		//----------- THE TAG MUST BE CONSISTENT WITH THE ONE GIVEN IN THE SCORE CONFIG FILE!!!!!
+		my_picker->read_ss_file(option[in::file::psipred_ss2](),"johny");
 
-//------------ READ VALL  AND PLUG IT INTO THE PICKER
-	VallProviderOP chunks( new VallProvider() );
-	chunks->vallChunksFromLibrary(option[in::file::vall]()[1]);
-	my_picker->set_vall(chunks);
+		//------------ READ VALL  AND PLUG IT INTO THE PICKER
+		VallProviderOP chunks( new VallProvider() );
+		chunks->vallChunksFromLibrary(option[in::file::vall]()[1]);
+		my_picker->set_vall(chunks);
 
-//------------ FRAGMENT SIZE: WE NEED 9-MERS AND 3-MERS
-	my_picker->frag_sizes_.push_back(3);
-	my_picker->frag_sizes_.push_back(9);
+		//------------ FRAGMENT SIZE: WE NEED 9-MERS AND 3-MERS
+		my_picker->frag_sizes_.push_back(3);
+		my_picker->frag_sizes_.push_back(9);
 
-//------------ HOW MANY CANDIDATES, HOW MANY FRAGMENTS
-	my_picker->n_candidates_ = option[frags::n_candidates]();
-	my_picker->n_frags_ = option[frags::n_frags]();
-	trace.Info << "Picking " << my_picker->n_frags_ << " fragments based on "<<
-				my_picker->n_candidates_ << " candidates" << std::endl;
+		//------------ HOW MANY CANDIDATES, HOW MANY FRAGMENTS
+		my_picker->n_candidates_ = option[frags::n_candidates]();
+		my_picker->n_frags_ = option[frags::n_frags]();
+		trace.Info << "Picking " << my_picker->n_frags_ << " fragments based on "<<
+			my_picker->n_candidates_ << " candidates" << std::endl;
 
-//----------- SETUP SCORING SYSTEM
-	FragmentScoreManagerOP scoring = my_picker->get_score_manager();
-	scoring->create_scores(option[frags::scoring::config](), my_picker);
+		//----------- SETUP SCORING SYSTEM
+		FragmentScoreManagerOP scoring = my_picker->get_score_manager();
+		scoring->create_scores(option[frags::scoring::config](), my_picker);
 
-//----------- SETUP COLLECTOR (for candidates) AND SELECTOR (for final fragments)
-	//- this comparator is used for collecting
-	Size n_scores = scoring->count_components();
-	CompareTotalScore comparator( my_picker->get_score_manager() );
-	CandidatesCollectorOP collector3( new BoundedCollector<CompareTotalScore> (
-		q_prof->length(), 	  // collector must know the size of query
-		my_picker->n_candidates_, // how many candidates to collect
-		comparator,		  // yes, here the comparator comes to sort fragments within the collector
-		n_scores) );
-	CandidatesCollectorOP collector9( new BoundedCollector<CompareTotalScore> (
-		q_prof->length(), 	  // collector must know the size of query
-		my_picker->n_candidates_, // how many candidates to collect
-		comparator,		  // yes, here the comparator comes to sort fragments within the collector
-		n_scores) );
-	my_picker->set_candidates_collector(3, collector3);
-	my_picker->set_candidates_collector(9, collector9);
+		//----------- SETUP COLLECTOR (for candidates) AND SELECTOR (for final fragments)
+		//- this comparator is used for collecting
+		Size n_scores = scoring->count_components();
+		CompareTotalScore comparator( my_picker->get_score_manager() );
+		CandidatesCollectorOP collector3( new BoundedCollector<CompareTotalScore> (
+			q_prof->length(),    // collector must know the size of query
+			my_picker->n_candidates_, // how many candidates to collect
+			comparator,    // yes, here the comparator comes to sort fragments within the collector
+			n_scores) );
+		CandidatesCollectorOP collector9( new BoundedCollector<CompareTotalScore> (
+			q_prof->length(),    // collector must know the size of query
+			my_picker->n_candidates_, // how many candidates to collect
+			comparator,    // yes, here the comparator comes to sort fragments within the collector
+			n_scores) );
+		my_picker->set_candidates_collector(3, collector3);
+		my_picker->set_candidates_collector(9, collector9);
 
-	if(option[frags::cluster_by_rms].user()) {
-	    my_picker->selector_ = FragmentSelectingRuleOP( new DiversifyCrmsdByClustering(my_picker->n_frags_) );
-	}
-	else
-    	    my_picker->selector_ = FragmentSelectingRuleOP( new BestTotalScoreSelector(my_picker->n_frags_, scoring) );
+		if ( option[frags::cluster_by_rms].user() ) {
+			my_picker->selector_ = FragmentSelectingRuleOP( new DiversifyCrmsdByClustering(my_picker->n_frags_) );
+		} else {
+			my_picker->selector_ = FragmentSelectingRuleOP( new BestTotalScoreSelector(my_picker->n_frags_, scoring) );
+		}
 
-	my_picker->prefix_ = "fragments";
-	if (option[out::file::frag_prefix].user())
-	    my_picker->prefix_ = option[out::file::frag_prefix]();
+		my_picker->prefix_ = "fragments";
+		if ( option[out::file::frag_prefix].user() ) {
+			my_picker->prefix_ = option[out::file::frag_prefix]();
+		}
 
-//----------- SETUP QUERY POSITIONS
-	if (option[frags::picking::query_pos].user())
-	    my_picker->set_picked_positions( option[frags::picking::query_pos]() );
+		//----------- SETUP QUERY POSITIONS
+		if ( option[frags::picking::query_pos].user() ) {
+			my_picker->set_picked_positions( option[frags::picking::query_pos]() );
+		}
 
-//----------- WE SET UP BOUNDED COLLECTOR, WE RUN BOUNDED PROTOCOL
-//----------- TO RUN QUOTA PROTOCOL, ONE HAS TO SET UP QUOTA SELECTOR AND QUOTA COLLECTOR
-	my_picker->bounded_protocol();
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+		//----------- WE SET UP BOUNDED COLLECTOR, WE RUN BOUNDED PROTOCOL
+		//----------- TO RUN QUOTA PROTOCOL, ONE HAS TO SET UP QUOTA SELECTOR AND QUOTA COLLECTOR
+		my_picker->bounded_protocol();
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                  }
-        return 0;
+	}
+	return 0;
 }

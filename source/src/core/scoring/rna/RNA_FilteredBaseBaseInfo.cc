@@ -71,28 +71,28 @@ RNA_FilteredBaseBaseInfo::RNA_FilteredBaseBaseInfo( RNA_FilteredBaseBaseInfo con
 	basestack_axis_scaling_( src.basestack_axis_scaling_ ),
 	include_neighbor_base_stacks_( src.include_neighbor_base_stacks_ )
 {
-  filtered_base_pair_array_ = src.filtered_base_pair_array_;
-  filtered_base_axis_array_ = src.filtered_base_axis_array_;
-  filtered_base_stagger_array_ = src.filtered_base_stagger_array_;
-  filtered_base_stack_array_ = src.filtered_base_stack_array_;
-  filtered_base_stack_axis_array_ = src.filtered_base_stack_axis_array_;
+	filtered_base_pair_array_ = src.filtered_base_pair_array_;
+	filtered_base_axis_array_ = src.filtered_base_axis_array_;
+	filtered_base_stagger_array_ = src.filtered_base_stagger_array_;
+	filtered_base_stack_array_ = src.filtered_base_stack_array_;
+	filtered_base_stack_axis_array_ = src.filtered_base_stack_axis_array_;
 	total_base_pair_score_ = src.total_base_pair_score_;
 	total_base_axis_score_ = src.total_base_axis_score_;
 	total_base_stagger_score_ = src.total_base_stagger_score_;
 	total_base_stack_score_ = src.total_base_stack_score_;
 	total_base_stack_axis_score_ = src.total_base_stack_axis_score_;
-  calculated_ = src.calculated_;
-  rna_verbose_ = src.rna_verbose_;
+	calculated_ = src.calculated_;
+	rna_verbose_ = src.rna_verbose_;
 }
 
 void
 RNA_FilteredBaseBaseInfo::resize( Size const & total_residue )
 {
-  filtered_base_pair_array_.dimension( total_residue, total_residue );
-  filtered_base_stagger_array_.dimension( total_residue, total_residue );
-  filtered_base_axis_array_.dimension( total_residue, total_residue );
-  filtered_base_stack_array_.dimension( total_residue, total_residue );
-  filtered_base_stack_axis_array_.dimension( total_residue, total_residue );
+	filtered_base_pair_array_.dimension( total_residue, total_residue );
+	filtered_base_stagger_array_.dimension( total_residue, total_residue );
+	filtered_base_axis_array_.dimension( total_residue, total_residue );
+	filtered_base_stack_array_.dimension( total_residue, total_residue );
+	filtered_base_stack_axis_array_.dimension( total_residue, total_residue );
 }
 
 
@@ -123,7 +123,7 @@ RNA_FilteredBaseBaseInfo::carry_out_filtering( RNA_RawBaseBaseInfo const & raw_b
 
 void
 RNA_FilteredBaseBaseInfo::figure_out_rna_base_pairs_to_score(
-		RNA_RawBaseBaseInfo const & raw_base_base_info
+	RNA_RawBaseBaseInfo const & raw_base_base_info
 )
 {
 	ObjexxFCL::FArray3D < Real > raw_base_pair_array( raw_base_base_info.base_pair_array() );
@@ -150,17 +150,17 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_pairs_to_score(
 	Size const total_residue = raw_base_base_info.size();
 	ObjexxFCL::FArray2D_bool edge_is_base_pairing( total_residue, NUM_EDGES, false );
 
-	for ( Size i = 1; i <= total_residue; i++ ){
-		for ( Size k = 1; k <= NUM_EDGES; k++ ){
+	for ( Size i = 1; i <= total_residue; i++ ) {
+		for ( Size k = 1; k <= NUM_EDGES; k++ ) {
 
-			for ( Size j = i + 1; j <= total_residue; j++ ){
-			//A base pair is only real if each partner called the other one a true partner.
-				if ( raw_base_pair_array( i, j, k ) < SCORE_CUTOFF ){
+			for ( Size j = i + 1; j <= total_residue; j++ ) {
+				//A base pair is only real if each partner called the other one a true partner.
+				if ( raw_base_pair_array( i, j, k ) < SCORE_CUTOFF ) {
 
 					Size found_match( 0 );
 					Real tmp_energy = 0.0;
-					for ( Size m = 1; m <= NUM_EDGES; m++ ){
-						if ( raw_base_pair_array( j, i, m ) < tmp_energy ){
+					for ( Size m = 1; m <= NUM_EDGES; m++ ) {
+						if ( raw_base_pair_array( j, i, m ) < tmp_energy ) {
 							found_match = m;
 							tmp_energy = raw_base_pair_array( j, i, m );
 						}
@@ -178,7 +178,7 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_pairs_to_score(
 					base_pair.edge2 = found_match;
 
 					//orientations are cos( theta ) and should be symmetric!
-				debug_assert( std::abs( raw_base_geometry_orientation_array( i, j ) - raw_base_geometry_orientation_array( j, i ) ) < 1.0e-2 );
+					debug_assert( std::abs( raw_base_geometry_orientation_array( i, j ) - raw_base_geometry_orientation_array( j, i ) ) < 1.0e-2 );
 					base_pair.orientation = ( raw_base_geometry_orientation_array( i, j ) + raw_base_geometry_orientation_array( j, i ) < 0.0 ? 1 : 2 );
 
 					energy_base_pair_list.push_back( std::make_pair( total_base_pair_energy, base_pair )  );
@@ -191,10 +191,10 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_pairs_to_score(
 
 	energy_base_pair_list.sort(); //Start with the lowest energy base pairs.
 
-	//	static bool const scale_axis_stagger_by_xy_score = true;
+	// static bool const scale_axis_stagger_by_xy_score = true;
 
 	for ( pose::rna::EnergyBasePairList::const_iterator it = energy_base_pair_list.begin();
-				it != energy_base_pair_list.end(); ++it ){
+			it != energy_base_pair_list.end(); ++it ) {
 		Real const energy = it->first;
 		pose::rna::BasePair const base_pair = it->second;
 
@@ -221,13 +221,13 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_pairs_to_score(
 		if ( rna_verbose_ ) {
 
 			std::cout << "BASE PAIR: " << I( 3, i ) << " " << I( 3, j ) << " "
-								<< get_edge_from_num( k ) << " "
-								<< get_edge_from_num( m ) << " "
-								<< get_orientation_from_num( base_pair.orientation )
-								<< "  ==  > "
-								<< F( 5, 3, raw_base_pair_array( i, j, k ) ) << " " << F( 5, 3, raw_base_pair_array( j, i, m ) )  << " "
-				//								<< scaled_axis_energy
-								<< std::endl;
+				<< get_edge_from_num( k ) << " "
+				<< get_edge_from_num( m ) << " "
+				<< get_orientation_from_num( base_pair.orientation )
+				<< "  ==  > "
+				<< F( 5, 3, raw_base_pair_array( i, j, k ) ) << " " << F( 5, 3, raw_base_pair_array( j, i, m ) )  << " "
+				//        << scaled_axis_energy
+				<< std::endl;
 
 		}
 
@@ -253,7 +253,7 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_pairs_to_score(
 ///////////////////////////////////////////////////////////////////////////////
 void
 RNA_FilteredBaseBaseInfo::figure_out_rna_base_stacks_to_score(
-   RNA_RawBaseBaseInfo const & raw_base_base_info )
+	RNA_RawBaseBaseInfo const & raw_base_base_info )
 {
 
 	ObjexxFCL::FArray2D < Real > raw_base_stack_array( raw_base_base_info.base_stack_array() );
@@ -261,7 +261,7 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_stacks_to_score(
 	ObjexxFCL::FArray2D < Real > raw_base_geometry_orientation_array( raw_base_base_info.base_geometry_orientation_array() );
 	ObjexxFCL::FArray2D < Real > raw_base_geometry_height_array( raw_base_base_info.base_geometry_height_array() );
 
-	// 	static bool const include_neighbor_base_stacks = false;//truefalseoption("include_neighbor_base_stacks");
+	//  static bool const include_neighbor_base_stacks = false;//truefalseoption("include_neighbor_base_stacks");
 
 	Size const total_residue = raw_base_base_info.size();
 
@@ -273,8 +273,8 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_stacks_to_score(
 	total_base_stack_score_ = 0.0;
 	total_base_stack_axis_score_ = 0.0;
 
-	for ( Size i = 1; i <= total_residue; i++ ){
-		for ( Size j = i + 1; j <= total_residue; j++ ){
+	for ( Size i = 1; i <= total_residue; i++ ) {
+		for ( Size j = i + 1; j <= total_residue; j++ ) {
 
 
 			//Base pairs and base stacks are mutually exclusive!
@@ -282,7 +282,7 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_stacks_to_score(
 
 			//Both partners should think they are stacked onto each other.
 			if ( raw_base_stack_array( i, j ) < 0.0 &&
-					 raw_base_stack_array( j, i ) < 0.0 ){
+					raw_base_stack_array( j, i ) < 0.0 ) {
 				if ( rna_verbose_ ) std::cout << "BASE STACK: " << i << " " << j << std::endl;
 
 				pose::rna::BaseStack base_stack;
@@ -290,7 +290,7 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_stacks_to_score(
 				base_stack.res2 = j;
 
 				//orientations are cos( theta ) and should be symmetric!
-			debug_assert( std::abs( raw_base_geometry_orientation_array( i, j ) - raw_base_geometry_orientation_array( j, i ) ) < 1.0e-2 );
+				debug_assert( std::abs( raw_base_geometry_orientation_array( i, j ) - raw_base_geometry_orientation_array( j, i ) ) < 1.0e-2 );
 				base_stack.orientation = ( raw_base_geometry_orientation_array( i, j ) + raw_base_geometry_orientation_array( j, i ) ) < 0.0 ? 1 : 2;
 
 				// height is not necessarily (anti)-symmetric if the planes of the two bases aren't co-planar.
@@ -329,13 +329,13 @@ Real RNA_FilteredBaseBaseInfo::get_data_score( data::RNA_DataInfo const & rna_da
 
 	utility::vector1< data::RNA_Datum > const & rna_data( rna_data_info.rna_data() );
 
-	for ( Size n = 1; n <= rna_data.size(); n++ ){
+	for ( Size n = 1; n <= rna_data.size(); n++ ) {
 
 		Size const seqpos( rna_data[n].position() );
 
 		// This could be accelerated if needed.
 		for ( pose::rna::EnergyBasePairList::const_iterator it = scored_base_pair_list_.begin();
-					it != scored_base_pair_list_.end(); ++it ){
+				it != scored_base_pair_list_.end(); ++it ) {
 
 			pose::rna::BasePair const base_pair = it->second;
 
@@ -343,9 +343,9 @@ Real RNA_FilteredBaseBaseInfo::get_data_score( data::RNA_DataInfo const & rna_da
 			Size const j = base_pair.res2;
 
 			Size k( 0 );
-			if ( i == seqpos ){
+			if ( i == seqpos ) {
 				k = base_pair.edge1;
-			} else if ( j == seqpos ){
+			} else if ( j == seqpos ) {
 				k = base_pair.edge2;
 			} else {
 				continue;

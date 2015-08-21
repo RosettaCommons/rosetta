@@ -37,23 +37,23 @@ namespace nonlocal {
 class NonlocalFrags : public protocols::moves::Mover {
 
 public:
-  /// @brief Constructs a new mover
-  NonlocalFrags();
+	/// @brief Constructs a new mover
+	NonlocalFrags();
 
-  /// @brief Finds interacting non-local fragment pairs
-  void apply(core::pose::Pose& pose);
+	/// @brief Finds interacting non-local fragment pairs
+	void apply(core::pose::Pose& pose);
 
-  /// @brief Returns the name of this mover.
-  std::string get_name() const;
+	/// @brief Returns the name of this mover.
+	std::string get_name() const;
 
-  /// @brief Creates a copy of this instance
-  protocols::moves::MoverOP clone() const;
+	/// @brief Creates a copy of this instance
+	protocols::moves::MoverOP clone() const;
 
-  /// @brief Creates a new instance by calling the no-argument constructor
-  protocols::moves::MoverOP fresh_instance() const;
+	/// @brief Creates a new instance by calling the no-argument constructor
+	protocols::moves::MoverOP fresh_instance() const;
 
-  /// @brief Registers applicable options
-  static void register_options();
+	/// @brief Registers applicable options
+	static void register_options();
 
 private:
 
@@ -66,7 +66,7 @@ private:
 
 	void read_checkpoint_file();
 
-  /* Members */
+	/* Members */
 
 	bool single_chain_;
 	bool relax_input_;

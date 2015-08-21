@@ -53,7 +53,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 
 namespace protocols {
-namespace protein_interface_design{
+namespace protein_interface_design {
 namespace filters {
 
 static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.FilterScanFilter" );
@@ -205,7 +205,7 @@ FilterScanFilter::task_factory( core::pack::task::TaskFactoryOP task_factory )
 
 void
 FilterScanFilter::unbind( core::pose::Pose & pose ) const{
-	if( !unbound() ) return;
+	if ( !unbound() ) return;
 	protocols::rigid::RigidBodyTransMover rbtm( pose, jump() );
 	rbtm.step_size( 10000.0 );
 	rbtm.apply( pose );
@@ -217,45 +217,46 @@ FilterScanFilter::single_substitution( core::pose::Pose & pose, core::Size const
 	using namespace core::chemical;
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
-  using namespace protocols::toolbox::task_operations;
+	using namespace protocols::toolbox::task_operations;
 
-  utility::vector1< bool > allowed_aas;
-  allowed_aas.clear();
-  allowed_aas.assign( num_canonical_aas, false );
-  allowed_aas[ target_aa ] = true;
-  TaskFactoryOP mut_res( new TaskFactory( *task_factory() ) );
-  DesignAroundOperationOP dao( new DesignAroundOperation );///restrict repacking to 8.0A around target res to save time
-  dao->design_shell( 0.1 );
-  dao->include_residue( resi );
-  mut_res->push_back( dao );
-  PackerTaskOP mutate_residue = mut_res->create_task_and_apply_taskoperations( pose );
-  mutate_residue->initialize_from_command_line().or_include_current( true );
-  for( core::Size resj = 1; resj <= pose.total_residue(); ++resj ){
-    if( resi != resj )
-      mutate_residue->nonconst_residue_task( resj ).restrict_to_repacking();
-    else
-      mutate_residue->nonconst_residue_task( resj ).restrict_absent_canonical_aas( allowed_aas );
-  }
-  TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to ";
-  protocols::simple_moves::PackRotamersMoverOP pack;
-  if( core::pose::symmetry::is_symmetric( pose ) ) {
+	utility::vector1< bool > allowed_aas;
+	allowed_aas.clear();
+	allowed_aas.assign( num_canonical_aas, false );
+	allowed_aas[ target_aa ] = true;
+	TaskFactoryOP mut_res( new TaskFactory( *task_factory() ) );
+	DesignAroundOperationOP dao( new DesignAroundOperation );///restrict repacking to 8.0A around target res to save time
+	dao->design_shell( 0.1 );
+	dao->include_residue( resi );
+	mut_res->push_back( dao );
+	PackerTaskOP mutate_residue = mut_res->create_task_and_apply_taskoperations( pose );
+	mutate_residue->initialize_from_command_line().or_include_current( true );
+	for ( core::Size resj = 1; resj <= pose.total_residue(); ++resj ) {
+		if ( resi != resj ) {
+			mutate_residue->nonconst_residue_task( resj ).restrict_to_repacking();
+		} else {
+			mutate_residue->nonconst_residue_task( resj ).restrict_absent_canonical_aas( allowed_aas );
+		}
+	}
+	TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to ";
+	protocols::simple_moves::PackRotamersMoverOP pack;
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		pack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue ) );
-	} else{
+	} else {
 		pack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue ) );
-  }
-  pack->apply( pose );
-  if( rtmin() ) {
+	}
+	pack->apply( pose );
+	if ( rtmin() ) {
 		// definition/allocation of RTmin mover must flag dependant, as some scoreterms are incompatable with RTmin initilization
-		if( core::pose::symmetry::is_symmetric( pose ) ) {
+		if ( core::pose::symmetry::is_symmetric( pose ) ) {
 			protocols::simple_moves::symmetry::SymRotamerTrialsMover rt( scorefxn(), *mutate_residue );
 			rt.apply( pose );
-		} else{
+		} else {
 			protocols::simple_moves::RotamerTrialsMinMoverOP rtmin;
 			rtmin = protocols::simple_moves::RotamerTrialsMinMoverOP( new protocols::simple_moves::RotamerTrialsMinMover( scorefxn(), *mutate_residue ) );
 			rtmin->apply(pose);
 		}
 	}
-  TR<<pose.residue( resi ).name3()<<". Now relaxing..."<<std::endl;
+	TR<<pose.residue( resi ).name3()<<". Now relaxing..."<<std::endl;
 	if ( relax_mover() ) {
 		relax_mover()->apply( pose );
 	}
@@ -277,11 +278,12 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 	utility::vector1< core::Size > being_designed;
 	being_designed.clear();
 
-	for( core::Size resi = 1; resi <= pose.total_residue(); ++resi ){
-		if( task->residue_task( resi ).being_designed() && pose.residue(resi).is_protein() )
+	for ( core::Size resi = 1; resi <= pose.total_residue(); ++resi ) {
+		if ( task->residue_task( resi ).being_designed() && pose.residue(resi).is_protein() ) {
 			being_designed.push_back( resi );
+		}
 	}
-	if( being_designed.empty() ) {
+	if ( being_designed.empty() ) {
 		TR.Warning << "WARNING: No residues are listed as designable." << std::endl;
 		return true;
 	}
@@ -290,91 +292,97 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 	residue_id_map.clear(); residue_id_val_map.clear();
 	unbind( pose );
 	core::pose::Pose const pose_orig( pose );// const to ensure that nothing silly happens along the way...
-	BOOST_FOREACH( core::Size const resi, being_designed ){
-		if( keep_native() )
+	BOOST_FOREACH ( core::Size const resi, being_designed ) {
+		if ( keep_native() ) {
 			residue_id_map[ resi ].insert( pose.residue( resi ).aa() );
+		}
 
 		pose = pose_orig;
 		///compute baseline
-// SJF 29Aug13 in the following we try to extract a stable baseline value for the substitution. The repacking steps create large levels of noise where mutations to self appear show high ddG differences. To prevent that, we cheat Rosetta by asking it to replace the residue to self three times in a row and take the baseline after the third computation. If you use ddG, it is recommended to use many repeats (>=5) to lower noise levels further. I think that if mutations to self show noise levels <=0.5R.e.u. the protocol is acceptable.
+		// SJF 29Aug13 in the following we try to extract a stable baseline value for the substitution. The repacking steps create large levels of noise where mutations to self appear show high ddG differences. To prevent that, we cheat Rosetta by asking it to replace the residue to self three times in a row and take the baseline after the third computation. If you use ddG, it is recommended to use many repeats (>=5) to lower noise levels further. I think that if mutations to self show noise levels <=0.5R.e.u. the protocol is acceptable.
 		single_substitution( pose, resi, pose.residue( resi ).aa() ); /// mutates to self. This simply activates packing/rtmin/relax at the site. By doing this on a per residue basis we ensure that the baseline is computed in exactly the same way as the mutations
 		single_substitution( pose, resi, pose.residue( resi ).aa() );
 		core::pose::Pose const pose_ref( pose ); // 10Jul14 Adi debugging: save pose after two substitutions to self but compute baseline relative to 3 substitutions
 		single_substitution( pose, resi, pose.residue( resi ).aa() );
-//		pose.dump_scored_pdb( "at_baseline.pdb", *scorefxn() );
-		BOOST_FOREACH( protocols::simple_filters::DeltaFilterOP const delta_filter, delta_filters_ ){
+		//  pose.dump_scored_pdb( "at_baseline.pdb", *scorefxn() );
+		BOOST_FOREACH ( protocols::simple_filters::DeltaFilterOP const delta_filter, delta_filters_ ) {
 			std::string const fname( delta_filter->get_user_defined_name() );
 			core::Real const fbaseline( delta_filter->filter()->report_sm( pose ) );
 			delta_filter->baseline( fbaseline );
 			TR<<"Computed baseline at position "<<resi<<" with filter "<<fname<<" is "<<fbaseline<<std::endl;
 		}
-    typedef std::list< ResidueTypeCOP > ResidueTypeCOPList;
-    ResidueTypeCOPList const & allowed( task->residue_task( resi ).allowed_residue_types() );
-    utility::vector1< AA > allow_temp;
-    allow_temp.clear();
-    BOOST_FOREACH( ResidueTypeCOP const t, allowed ){
-    	allow_temp.push_back( t->aa() );
-    }
-//		core::pose::Pose const pose_ref( pose ); //10Jul14 Adi debugging: original line for pose_ref
-		BOOST_FOREACH( AA const target_aa, allow_temp ){
-			 pose = pose_ref; //29Aug13 previously was pose_orig; here
-			 single_substitution( pose, resi, target_aa );
-//				pose.dump_scored_pdb( "after_mut.pdb", *scorefxn() );
-			 bool triage_filter_pass( false );
-			 if( delta_filters_.size() > 0 ){
-				 triage_filter_pass=true;
-				 BOOST_FOREACH( protocols::simple_filters::DeltaFilterCOP const delta_filter, delta_filters_ ){
-					 triage_filter_pass = delta_filter->apply( pose );
-					 if( delta_filters_.size() == 1 )
-							residue_id_val_map[ std::pair< core::Size, AA >( resi, target_aa ) ] = std::pair< core::Real, bool >(delta_filter->report_sm( pose ), triage_filter_pass);
+		typedef std::list< ResidueTypeCOP > ResidueTypeCOPList;
+		ResidueTypeCOPList const & allowed( task->residue_task( resi ).allowed_residue_types() );
+		utility::vector1< AA > allow_temp;
+		allow_temp.clear();
+		BOOST_FOREACH ( ResidueTypeCOP const t, allowed ) {
+			allow_temp.push_back( t->aa() );
+		}
+		//  core::pose::Pose const pose_ref( pose ); //10Jul14 Adi debugging: original line for pose_ref
+		BOOST_FOREACH ( AA const target_aa, allow_temp ) {
+			pose = pose_ref; //29Aug13 previously was pose_orig; here
+			single_substitution( pose, resi, target_aa );
+			//    pose.dump_scored_pdb( "after_mut.pdb", *scorefxn() );
+			bool triage_filter_pass( false );
+			if ( delta_filters_.size() > 0 ) {
+				triage_filter_pass=true;
+				BOOST_FOREACH ( protocols::simple_filters::DeltaFilterCOP const delta_filter, delta_filters_ ) {
+					triage_filter_pass = delta_filter->apply( pose );
+					if ( delta_filters_.size() == 1 ) {
+						residue_id_val_map[ std::pair< core::Size, AA >( resi, target_aa ) ] = std::pair< core::Real, bool >(delta_filter->report_sm( pose ), triage_filter_pass);
+					}
 
-					 if( !triage_filter_pass )
-						 break;
-				 }
-				 if( triage_filter_pass )
-    	 		 residue_id_map[ resi ].insert( target_aa );
-			 }
-			 else
-			 	triage_filter_pass = triage_filter()->apply( pose );
-			 if( !triage_filter_pass ){
-				 TR<<"Triage filter fails"<<std::endl;
-				 if(report_all_ && !delta()) {
-					 residue_id_val_map[ std::pair< core::Size, AA >( resi, target_aa ) ] = std::pair< core::Real, bool >(filter()->report_sm( pose ), false);
-				 }
-				 continue;
-			 }
-			 TR<<"Triage filter succeeds"<<std::endl;
-			 if( !delta() ){
-			 		residue_id_val_map[ std::pair< core::Size, AA >( resi, target_aa ) ] = std::pair< core::Real, bool >(filter()->report_sm( pose ), true);
-    	 		residue_id_map[ resi ].insert( target_aa );
-			 }
-			 if( dump_pdb() ){
-			 	using namespace protocols::jd2;
-			 	JobOP job( JobDistributor::get_instance()->current_job() );
-			 	std::stringstream fname;
-				if( dump_pdb_name_ != "" )
+					if ( !triage_filter_pass ) {
+						break;
+					}
+				}
+				if ( triage_filter_pass ) {
+					residue_id_map[ resi ].insert( target_aa );
+				}
+			} else {
+				triage_filter_pass = triage_filter()->apply( pose );
+			}
+			if ( !triage_filter_pass ) {
+				TR<<"Triage filter fails"<<std::endl;
+				if ( report_all_ && !delta() ) {
+					residue_id_val_map[ std::pair< core::Size, AA >( resi, target_aa ) ] = std::pair< core::Real, bool >(filter()->report_sm( pose ), false);
+				}
+				continue;
+			}
+			TR<<"Triage filter succeeds"<<std::endl;
+			if ( !delta() ) {
+				residue_id_val_map[ std::pair< core::Size, AA >( resi, target_aa ) ] = std::pair< core::Real, bool >(filter()->report_sm( pose ), true);
+				residue_id_map[ resi ].insert( target_aa );
+			}
+			if ( dump_pdb() ) {
+				using namespace protocols::jd2;
+				JobOP job( JobDistributor::get_instance()->current_job() );
+				std::stringstream fname;
+				if ( dump_pdb_name_ != "" ) {
 					fname << dump_pdb_name();
-				else
+				} else {
 					fname << job->input_tag();
+				}
 				fname << pose_orig.residue( resi ).name3() << resi << pose.residue( resi ).name3()<<".pdb";
-			 	TR<<"Saving pose "<<fname.str();
+				TR<<"Saving pose "<<fname.str();
 				pose.dump_scored_pdb( fname.str(), *scorefxn() );
-			 }
-			 TR.flush();
+			}
+			TR.flush();
 		}//foreach target_aa
 	}//foreach resi
 
-	if( delta_filter_thresholds_.size() > 0 && resfile_name() != "" ){
-		BOOST_FOREACH( core::Real const delta_threshold, delta_filter_thresholds_ ){
+	if ( delta_filter_thresholds_.size() > 0 && resfile_name() != "" ) {
+		BOOST_FOREACH ( core::Real const delta_threshold, delta_filter_thresholds_ ) {
 			std::map< core::Size, std::set< char > > map_position_allowed_aa;
 			map_position_allowed_aa.clear();
-			for( std::map< std::pair< core::Size, AA >, std::pair< core::Real, bool > >::const_iterator pair = residue_id_val_map.begin(); pair != residue_id_val_map.end(); ++pair ){
+			for ( std::map< std::pair< core::Size, AA >, std::pair< core::Real, bool > >::const_iterator pair = residue_id_val_map.begin(); pair != residue_id_val_map.end(); ++pair ) {
 				core::Size const position( pair->first.first );
 				AA const aa( pair->first.second );
-				if( keep_native() )
+				if ( keep_native() ) {
 					map_position_allowed_aa[ position ].insert( oneletter_code_from_aa( p.residue( position ).aa() ) );
+				}
 				core::Real const energy( pair->second.first );
-				if( energy <= delta_threshold ){
+				if ( energy <= delta_threshold ) {
 					map_position_allowed_aa[ position ].insert( oneletter_code_from_aa( aa ) );
 				}
 			}
@@ -385,31 +393,33 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 			ifile.close();
 			std::ofstream resfile;
 			resfile.open( ss.str().c_str(), std::ios::app );
-			if( !resfile_exists )
+			if ( !resfile_exists ) {
 				resfile << resfile_general_property()<<"\nstart\n";
+			}
 
-			for( std::map< core::Size, std::set< char > >::const_iterator pair = map_position_allowed_aa.begin(); pair != map_position_allowed_aa.end(); ++pair ){
+			for ( std::map< core::Size, std::set< char > >::const_iterator pair = map_position_allowed_aa.begin(); pair != map_position_allowed_aa.end(); ++pair ) {
 				resfile << pose.pdb_info()->number( pair->first )<<'\t'<<pose.pdb_info()->chain( pair->first )<<"\tPIKAA\t";
-				for( std::set< char >::const_iterator aa = pair->second.begin(); aa != pair->second.end(); ++aa ){
+				for ( std::set< char >::const_iterator aa = pair->second.begin(); aa != pair->second.end(); ++aa ) {
 					resfile<< *aa;
 				}
 				resfile<<'\n';
 			}
 			resfile.close();
 		}
-	} //fi delta_filter_thresholds && resfile_name()
-	else if( resfile_name() != "" ){
+	} else if ( resfile_name() != "" ) { //fi delta_filter_thresholds && resfile_name()
 		std::ifstream ifile( resfile_name().c_str() );
 		bool const resfile_exists( ifile );
 		ifile.close();
 		std::ofstream resfile;
 		resfile.open( resfile_name().c_str(), std::ios::app );
-		if( !resfile_exists)
+		if ( !resfile_exists ) {
 			resfile << resfile_general_property()<<"\nstart\n";
-		for( std::map< core::Size, std::set< AA > >::const_iterator pair = residue_id_map.begin(); pair != residue_id_map.end(); ++pair ){
+		}
+		for ( std::map< core::Size, std::set< AA > >::const_iterator pair = residue_id_map.begin(); pair != residue_id_map.end(); ++pair ) {
 			resfile << pose.pdb_info()->number( pair->first )<<'\t'<<pose.pdb_info()->chain( pair->first )<<"\tPIKAA\t";
-			BOOST_FOREACH( AA const aa, pair->second )
+			BOOST_FOREACH ( AA const aa, pair->second ) {
 				resfile<<oneletter_code_from_aa( aa );
+			}
 			resfile<<'\n';
 		}
 		resfile.close();
@@ -420,23 +430,23 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 		scorefile.open( score_log_file().c_str(), std::ios::out );
 
 		using namespace ObjexxFCL::format;
-		for( std::map< std::pair< core::Size, AA >, std::pair< core::Real, bool > >::const_iterator pair = residue_id_val_map.begin(); pair != residue_id_val_map.end(); ++pair ){
+		for ( std::map< std::pair< core::Size, AA >, std::pair< core::Real, bool > >::const_iterator pair = residue_id_val_map.begin(); pair != residue_id_val_map.end(); ++pair ) {
 			core::conformation::Residue const native_res( pose.conformation().residue( pair->first.first ) );
 			scorefile << pair->first.first << '\t'
-			<< p.residue( pair->first.first ).name1() <<'\t'
-			<< oneletter_code_from_aa( pair->first.second )<<'\t'
-			<< F(9,6, pair->second.first) <<std::endl;
+				<< p.residue( pair->first.first ).name1() <<'\t'
+				<< oneletter_code_from_aa( pair->first.second )<<'\t'
+				<< F(9,6, pair->second.first) <<std::endl;
 		}
 		scorefile.close();
 	} // fi score_log_file()
 
-	for( std::map< std::pair< core::Size, AA >, std::pair< core::Real, bool > >::const_iterator pair = residue_id_val_map.begin(); pair != residue_id_val_map.end(); ++pair ){
+	for ( std::map< std::pair< core::Size, AA >, std::pair< core::Real, bool > >::const_iterator pair = residue_id_val_map.begin(); pair != residue_id_val_map.end(); ++pair ) {
 		core::conformation::Residue const native_res( pose.conformation().residue( pair->first.first ) );
 		TR_residue_scan<<resfile_name()<<'\t'
-									 << pair->first.first<<'\t'
-									 << oneletter_code_from_aa( pair->first.second )<<'\t'
-		               <<pair->second.first
-                   <<(pair->second.second?"":"\tTRIAGED")<<std::endl;
+			<< pair->first.first<<'\t'
+			<< oneletter_code_from_aa( pair->first.second )<<'\t'
+			<<pair->second.first
+			<<(pair->second.second?"":"\tTRIAGED")<<std::endl;
 	}
 	TR.flush();
 	return true;
@@ -455,10 +465,10 @@ FilterScanFilter::report( std::ostream &, core::pose::Pose const & ) const
 
 void
 FilterScanFilter::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const &filters,
-		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & )
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const &filters,
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const & )
 {
 	TR << "FilterScanFilter"<<std::endl;
 	runtime_assert( tag->hasOption( "filter" ) || tag->hasOption( "delta_filters" ));
@@ -474,8 +484,9 @@ FilterScanFilter::parse_my_tag( utility::tag::TagCOP tag,
 		utility_exit_with_message( "Triage filter "+triage_filter_name+" not found" );
 #endif
 #ifndef USEMPI
-	if( triage_filter_it == filters.end() )
+	if ( triage_filter_it == filters.end() ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Triage filter "+triage_filter_name+" not found" );
+	}
 #endif
 
 	triage_filter( triage_filter_it->second );
@@ -488,8 +499,9 @@ FilterScanFilter::parse_my_tag( utility::tag::TagCOP tag,
 		utility_exit_with_message( "Filter "+filter_name+" not found" );
 #endif
 #ifndef USEMPI
-	if( filter_it == filters.end() )
+	if ( filter_it == filters.end() ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Filter "+filter_name+" not found" );
+	}
 #endif
 
 	filter( filter_it->second );
@@ -501,8 +513,9 @@ FilterScanFilter::parse_my_tag( utility::tag::TagCOP tag,
 		utility_exit_with_message( "Relax mover "+relax_mover_name+" not found" );
 #endif
 #ifndef USEMPI
-	if( mover_it == movers.end() )
+	if ( mover_it == movers.end() ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Relax mover "+relax_mover_name+" not found" );
+	}
 #endif
 
 	relax_mover( mover_it->second );
@@ -519,14 +532,14 @@ FilterScanFilter::parse_my_tag( utility::tag::TagCOP tag,
 
 	utility::vector1< std::string > delta_filter_names;
 	delta_filter_names.clear();
-	if( tag->hasOption( "delta_filters" ) ){
+	if ( tag->hasOption( "delta_filters" ) ) {
 		delta_filter_names = utility::string_split( tag->getOption< std::string >( "delta_filters" ), ',' );
 		TR<<"Using delta filters: ";
-		if( tag->hasOption( "delta_filter_thresholds" ) ){
+		if ( tag->hasOption( "delta_filter_thresholds" ) ) {
 			delta_filter_thresholds_ = utility::string_split( tag->getOption< std::string >( "delta_filter_thresholds" ), ',', core::Real() );
 			TR<<"using delta filter thresholds: "<<tag->getOption< std::string >( "delta_filter_thresholds" )<<std::endl;
 		}
-		BOOST_FOREACH( std::string const fname, delta_filter_names ){
+		BOOST_FOREACH ( std::string const fname, delta_filter_names ) {
 			delta_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::DeltaFilter > ( protocols::rosetta_scripts::parse_filter( fname, filters ) ) );
 			TR<<fname<<",";
 		}

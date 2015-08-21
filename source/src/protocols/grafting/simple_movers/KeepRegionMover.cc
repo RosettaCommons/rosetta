@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/grafting/simple_movers/KeepRegionMover.cc
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #include <protocols/moves/Mover.hh>
@@ -28,7 +28,7 @@ static thread_local basic::Tracer TR( "protocols.grafting.simple_movers.KeepRegi
 namespace protocols {
 namespace grafting {
 namespace simple_movers {
-	
+
 
 KeepRegionMover::KeepRegionMover() :
 	protocols::moves::Mover("KeepRegionMover"),
@@ -48,7 +48,7 @@ KeepRegionMover::KeepRegionMover(core::Size res_start, core::Size res_end):
 	cter_overhang_(0),
 	tag_(/* NULL */)
 {
-	
+
 }
 
 KeepRegionMover::~KeepRegionMover() {}
@@ -96,17 +96,17 @@ KeepRegionMoverCreator::mover_name() {
 
 void
 KeepRegionMover::parse_my_tag(
-		TagCOP tag,
-		basic::datacache::DataMap&,
-		const Filters_map&,
-		const protocols::moves::Movers_map&,
-		const Pose& ) 
+	TagCOP tag,
+	basic::datacache::DataMap&,
+	const Filters_map&,
+	const protocols::moves::Movers_map&,
+	const Pose& )
 {
 	tag_ = tag->clone();
 	//Protect from unused option crash.
 	protocols::rosetta_scripts::parse_bogus_res_tag(tag, "start_");
 	protocols::rosetta_scripts::parse_bogus_res_tag(tag, "end_");
-	
+
 	nter_overhang_ = tag->getOption<core::Size>("nter_overhang", 0);
 	cter_overhang_ = tag->getOption<core::Size>("cter_overhang", 0);
 }
@@ -144,20 +144,20 @@ KeepRegionMover::end() const{
 
 void
 KeepRegionMover::apply(core::pose::Pose& pose) {
-	
-	if (tag_){
+
+	if ( tag_ ) {
 		start_ = core::pose::get_resnum(tag_, pose, "start_");
 		end_ = core::pose::get_resnum(tag_, pose, "end_");
 	}
-	
+
 	PyAssert(start_ != 0, "Cannot keep region starting with 0 - make sure region is set for KeepRegionMover");
 	PyAssert(end_ !=0, "Cannot keep region ending with 0 - make sure region is set for KeepRegionMover");
 	PyAssert(end_ > start_, "Cannot keep region where end > start");
 	PyAssert(end_ <= pose.total_residue(), "Cannot keep region where end is > pose total_residues");
-	
+
 	core::pose::Pose temp_pose = protocols::grafting::return_region(pose, start_- nter_overhang_, end_ + cter_overhang_);
 	pose = temp_pose;
-	
+
 }
 
 }

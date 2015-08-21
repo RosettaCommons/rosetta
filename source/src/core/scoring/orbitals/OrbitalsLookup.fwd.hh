@@ -16,9 +16,9 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace core{
-namespace scoring{
-namespace orbitals{
+namespace core {
+namespace scoring {
+namespace orbitals {
 
 class OrbitalsLookup;
 

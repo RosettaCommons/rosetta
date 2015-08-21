@@ -61,10 +61,10 @@ namespace noesy_assign {
 Resonance::Resonance() {}
 
 Resonance::Resonance(  core::Size label, core::Real freq, core::Real error, core::id::NamedAtomID const& id, core::chemical::AA aa, core::Real intensity ) :
-  label_ ( label ),
-  freq_( freq ),
-  error_( error ),
-  atom_( id ),
+	label_ ( label ),
+	freq_( freq ),
+	error_( error ),
+	atom_( id ),
 	aa_( aa ),
 	intensity_( intensity )
 {
@@ -83,59 +83,59 @@ core::Real Resonance::_pmatch( core::Real peakfreq, core::Real error, FoldResona
 }
 
 void Resonance::_write_to_stream( std::ostream& os ) const {
-  os << ObjexxFCL::format::RJ( 10, label_ ) << " ";
-  os << ObjexxFCL::format::F( 10, 3, freq_ ) << " " << ObjexxFCL::format::F( 10, 3, error_ ) << " ";
-  os << ObjexxFCL::format::RJ( 5, atom_.atom() ) << " " << ObjexxFCL::format::RJ( 8, atom_.rsd() );
+	os << ObjexxFCL::format::RJ( 10, label_ ) << " ";
+	os << ObjexxFCL::format::F( 10, 3, freq_ ) << " " << ObjexxFCL::format::F( 10, 3, error_ ) << " ";
+	os << ObjexxFCL::format::RJ( 5, atom_.atom() ) << " " << ObjexxFCL::format::RJ( 8, atom_.rsd() );
 }
 
 void Resonance::write_to_stream( std::ostream& os ) const {
 	_write_to_stream( os );
-	//	os << " "<< intensity();
+	// os << " "<< intensity();
 }
 
 void Resonance::write_to_stream( std::ostream& os, core::chemical::AA aa ) const {
 	_write_to_stream( os );
 	os << " " << name_from_aa( aa ) << " " << oneletter_code_from_aa( aa );
-	//	os << " "<< intensity();
+	// os << " "<< intensity();
 }
 
 void Resonance::combine( std::deque< ResonanceOP >& last_resonances, bool drain=false  ) {
 	//is this a HB1, HG1 or a 1HG2 type of name ?
-  bool single_char ( name().size() == 3 );
+	bool single_char ( name().size() == 3 );
 	std::string combine_name;
-  Size str_cmp_length( 1 );
+	Size str_cmp_length( 1 );
 
-  std::string pseudo_letter( "Q" ); //default, single methyl group, proton
-  if ( name().substr(0,1)=="C" ) pseudo_letter = "C"; //not default, we don't have a proton
+	std::string pseudo_letter( "Q" ); //default, single methyl group, proton
+	if ( name().substr(0,1)=="C" ) pseudo_letter = "C"; //not default, we don't have a proton
 	if ( name().substr(0,1)=="Q" ) pseudo_letter = "QQ"; //not default, this is a double-methyl...
 	//if the two protons stuffed into the ambiguity queue are, .e.g, QG1 + QG2 --> QQG
 
 	core::Real intensity_sum( intensity() );
 
-//do we have enough protons for a QQX type of combined atom. (2 methyl groups... )
-  bool double_methyl( last_resonances.size() == (6 - (drain ? 1 : 0))  );
+	//do we have enough protons for a QQX type of combined atom. (2 methyl groups... )
+	bool double_methyl( last_resonances.size() == (6 - (drain ? 1 : 0))  );
 
-// construct combined atom name, QX, QQX
-	if ( single_char ) { 	//things like HB1+HB2 or QG1+QG2
-    combine_name=pseudo_letter+name().substr(1,1);
-  } else if ( double_methyl ) { //-->QQX
-    combine_name=pseudo_letter+pseudo_letter+name().substr(1,1);
-  } else { // HG11+HG12+HG13 --> QG1
-    combine_name=pseudo_letter+name().substr(1,2);
-    str_cmp_length=2;
-  }
+	// construct combined atom name, QX, QQX
+	if ( single_char ) {  //things like HB1+HB2 or QG1+QG2
+		combine_name=pseudo_letter+name().substr(1,1);
+	} else if ( double_methyl ) { //-->QQX
+		combine_name=pseudo_letter+pseudo_letter+name().substr(1,1);
+	} else { // HG11+HG12+HG13 --> QG1
+		combine_name=pseudo_letter+name().substr(1,2);
+		str_cmp_length=2;
+	}
 
 	//now figure out, how many atoms can be combined...
 	Size limit( drain ? 0 : 1 ); //should we go to the very end, or leave last atom behind...
-  while( last_resonances.size() > limit ) {//check others
-    if ( name().substr( 1, str_cmp_length ) == last_resonances.front()->name().substr( 1, str_cmp_length ) ) {
+	while ( last_resonances.size() > limit ) {//check others
+		if ( name().substr( 1, str_cmp_length ) == last_resonances.front()->name().substr( 1, str_cmp_length ) ) {
 			intensity_sum+=last_resonances.front()->intensity();
 			last_resonances.pop_front();
 		} else { //could not combine...
 			combine_name = name();
 			break;
 		}
-  } //now replace front of deque with the combined atom
+	} //now replace front of deque with the combined atom
 	atom_ = core::id::NamedAtomID( combine_name, resid() );
 	intensity_ = intensity_sum;
 }

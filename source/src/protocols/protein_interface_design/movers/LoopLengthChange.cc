@@ -73,64 +73,62 @@ LoopLengthChange::~LoopLengthChange() {}
 void
 LoopLengthChange::apply( core::pose::Pose & pose )
 {
-//    TR<<"Changing loop "<<loop_start()<<"-"<<loop_end()<<" by "<<delta()<<std::endl;
-//    if ( loop_end() + delta() < loop_start() ){
-//        pose.dump_pdb("dumping_as_loop_end_greater_than_loop_start.pdb");
-//    }
-    
-    //time_t rawtime;
-    //time (&rawtime);
-    //std::string timerstring = ctime(&rawtime);
-    //TR<<"Now dumping at time "<<timerstring<<std::endl;
-    //timerstring.erase(std::remove(timerstring.begin(), timerstring.end(), '\n'), timerstring.end());
-    //timerstring.erase(std::remove(timerstring.begin(), timerstring.end(), ' '), timerstring.end());
-    //pose.dump_pdb(timerstring+"_dump.pdb");
-    
-    //TR<<"loop end is "<<loop_end()<<" loop_start is "<<loop_start()<<" delta is "<<delta()<<std::endl;
-    
-  runtime_assert( loop_end() >= loop_start() );
-  //runtime_assert( loop_end() + delta() >= loop_start() );
+	//    TR<<"Changing loop "<<loop_start()<<"-"<<loop_end()<<" by "<<delta()<<std::endl;
+	//    if ( loop_end() + delta() < loop_start() ){
+	//        pose.dump_pdb("dumping_as_loop_end_greater_than_loop_start.pdb");
+	//    }
+
+	//time_t rawtime;
+	//time (&rawtime);
+	//std::string timerstring = ctime(&rawtime);
+	//TR<<"Now dumping at time "<<timerstring<<std::endl;
+	//timerstring.erase(std::remove(timerstring.begin(), timerstring.end(), '\n'), timerstring.end());
+	//timerstring.erase(std::remove(timerstring.begin(), timerstring.end(), ' '), timerstring.end());
+	//pose.dump_pdb(timerstring+"_dump.pdb");
+
+	//TR<<"loop end is "<<loop_end()<<" loop_start is "<<loop_start()<<" delta is "<<delta()<<std::endl;
+
+	runtime_assert( loop_end() >= loop_start() );
+	//runtime_assert( loop_end() + delta() >= loop_start() );
 	core::kinematics::FoldTree const & ft = pose.fold_tree();
 	core::Size jump_count( 0 );
-  if( delta() < 0 ){
-    TR << "DEBUG: I will try to delete residues" << std::endl;
-		TR << "Loop end is " << loop_end() << " delta is " << delta() << std::endl; 
-		
+	if ( delta() < 0 ) {
+		TR << "DEBUG: I will try to delete residues" << std::endl;
+		TR << "Loop end is " << loop_end() << " delta is " << delta() << std::endl;
 
-		for( int del(0); del>delta(); --del ){
-    	//TR<<"loop_end -delta()+ del =" <<loop_end()-delta()+ del<<std::endl;
-			if (tail_segment_){
+
+		for ( int del(0); del>delta(); --del ) {
+			//TR<<"loop_end -delta()+ del =" <<loop_end()-delta()+ del<<std::endl;
+			if ( tail_segment_ ) {
 				TR << "DEBUG: I will now delete residue " << loop_end() + del << std::endl;
 				//string res = static_cast<ostringstream*>( &(ostringstream() << loop_end() + del) )->str();
-        //pose.dump_pdb("llc_res_before_del_res_"+res+".pdb");
+				//pose.dump_pdb("llc_res_before_del_res_"+res+".pdb");
 				pose.delete_polymer_residue( loop_end() + del ); // there will never be jumps within the tail segment
-			}
-			else{
-				if( ft.is_jump_point( loop_end() + del - delta() - jump_count ) ){
-              TR<<"LoopLengthChange called across a jump. I'm skipping the jump residue"<<std::endl;
-              jump_count++;
-        }
-	
+			} else {
+				if ( ft.is_jump_point( loop_end() + del - delta() - jump_count ) ) {
+					TR<<"LoopLengthChange called across a jump. I'm skipping the jump residue"<<std::endl;
+					jump_count++;
+				}
+
 				TR << "DEBUG: I will now delete residue " << loop_end() + del - delta() - jump_count << std::endl;
 				//string res = static_cast<ostringstream*>( &(ostringstream() << loop_end() + del - delta() - jump_count) )->str();
-        //pose.dump_pdb("llc_res_before_del_res_"+res+".pdb");
+				//pose.dump_pdb("llc_res_before_del_res_"+res+".pdb");
 				pose.delete_polymer_residue( loop_end() + del - delta() - jump_count ); // was before pose.delete_polymer_residue( loop_end() + del - delta() + jump_count );
 				//pose.dump_pdb("llc_res_after_del_res_"+res+".pdb");
 			}
-//			pose.conformation().insert_ideal_geometry_at_polymer_bond( loop_start() );
-//			pose.conformation().insert_ideal_geometry_at_polymer_bond( loop_start() + 1 );
+			//   pose.conformation().insert_ideal_geometry_at_polymer_bond( loop_start() );
+			//   pose.conformation().insert_ideal_geometry_at_polymer_bond( loop_start() + 1 );
 		}
-  }
-  else if( delta() > 0 ){
-    using namespace core::chemical;
-    using namespace core::conformation;
+	} else if ( delta() > 0 ) {
+		using namespace core::chemical;
+		using namespace core::conformation;
 
-    ResidueTypeSet const & residue_set( pose.residue( 1 ).residue_type_set() ); // residuetypeset is noncopyable
-    ResidueCOP new_res = ResidueFactory::create_residue( residue_set.name_map( name_from_aa( aa_from_oneletter_code( 'A' ) ) ) );
-		if (tail_segment_){
+		ResidueTypeSet const & residue_set( pose.residue( 1 ).residue_type_set() ); // residuetypeset is noncopyable
+		ResidueCOP new_res = ResidueFactory::create_residue( residue_set.name_map( name_from_aa( aa_from_oneletter_code( 'A' ) ) ) );
+		if ( tail_segment_ ) {
 			/* This will be ugly: For some reason you cannot use .append_polymer_residue_after_seqpos to add residues
- *        to the very last position. Instead we are here adding n+1 residues to the second last position.  */
-			for( core::Size leng(1); leng<=(core::Size) delta() + 1; ++leng ){
+			*        to the very last position. Instead we are here adding n+1 residues to the second last position.  */
+			for ( core::Size leng(1); leng<=(core::Size) delta() + 1; ++leng ) {
 				pose.conformation().append_polymer_residue_after_seqpos( *new_res, loop_end()-2+leng, true/*build_ideal*/); // start growing the new loop from res loopEnd-1
 			}
 			// Now we need to delete the last residue
@@ -139,10 +137,8 @@ LoopLengthChange::apply( core::pose::Pose & pose )
 			//pose.dump_pdb("before_delete.pdb");
 			pose.conformation().delete_polymer_residue( unwantedLastResidueNo );
 			//pose.dump_pdb("after_delete.pdb");
-		}
-
-		else{
-			for( core::Size leng(1); leng<=(core::Size) delta(); ++leng ){
+		} else {
+			for ( core::Size leng(1); leng<=(core::Size) delta(); ++leng ) {
 				pose.conformation().prepend_polymer_residue_before_seqpos( *new_res, loop_end()+1, true/*build_ideal*/);
 				// string res = static_cast<ostringstream*>( &(ostringstream() << leng ))->str();
 				// pose.dump_pdb("llc_res_"+res+".pdb");
@@ -150,9 +146,9 @@ LoopLengthChange::apply( core::pose::Pose & pose )
 			}
 		}
 
-		
-  }
-  pose.update_residue_neighbors();
+
+	}
+	pose.update_residue_neighbors();
 	pose.pdb_info()->obsolete( true );
 }
 
@@ -168,15 +164,15 @@ LoopLengthChange::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, p
 	loop_end( core::pose::parse_resnum( tag->getOption< std::string >( "loop_end" ), pose ) );
 	delta( tag->getOption< int >( "delta" ) );
 
-  runtime_assert( loop_end() > loop_start() );
-  // runtime_assert( loop_end() + delta() >= loop_start() ); 
+	runtime_assert( loop_end() > loop_start() );
+	// runtime_assert( loop_end() + delta() >= loop_start() );
 
 	TR<<"LoopLengthChange with loop "<<loop_start()<<"-"<<loop_end()<<" and delta "<<delta()<<std::endl;
 }
 
 protocols::moves::MoverOP
 LoopLengthChange::clone() const {
-    return( protocols::moves::MoverOP( new LoopLengthChange( *this ) ));
+	return( protocols::moves::MoverOP( new LoopLengthChange( *this ) ));
 }
 
 void
@@ -186,17 +182,17 @@ LoopLengthChange::loop_start( core::Size const loop_start ){
 
 core::Size
 LoopLengthChange::loop_start() const{
-  return( loop_start_ );
+	return( loop_start_ );
 }
 
 void
 LoopLengthChange::loop_end( core::Size const l ){
-  loop_end_ = l;
+	loop_end_ = l;
 }
 
 core::Size
 LoopLengthChange::loop_end() const{
-  return( loop_end_ );
+	return( loop_end_ );
 }
 
 void
@@ -206,16 +202,16 @@ LoopLengthChange::loop_cut( core::Size const d ){
 
 core::Size
 LoopLengthChange::loop_cut() const{
-  return( loop_cut_ );
+	return( loop_cut_ );
 }
 void
 LoopLengthChange::delta( int const d ){
-  delta_ = d;
+	delta_ = d;
 }
 
 int
 LoopLengthChange::delta() const{
-  return( delta_ );
+	return( delta_ );
 }
 void
 LoopLengthChange::tail( bool b ){

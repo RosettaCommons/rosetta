@@ -78,7 +78,7 @@ SingleResiduePeptoidLibrary::SingleResiduePeptoidLibrary(
 	// since NCAAs are aa_unk we cannot hard code the information
 	// alternativly it is added to the residue type paramater files
 	read_options();
-	if (aa_ != chemical::aa_unk) {
+	if ( aa_ != chemical::aa_unk ) {
 		n_rotameric_bins_for_aa( aa_, n_chi_bins_, dun02_ );
 		for ( Size ii = n_rotameric_chi_; ii > 1; --ii ) {
 			n_chi_products_[ ii - 1 ] = n_chi_products_[ ii ] * n_chi_bins_[ ii ];
@@ -118,10 +118,12 @@ void
 SingleResiduePeptoidLibrary::read_options()
 {
 	using namespace basic::options;
-	if ( option[ OptionKeys::packing::dunbrack_prob_buried ].user() )
+	if ( option[ OptionKeys::packing::dunbrack_prob_buried ].user() ) {
 		prob_to_accumulate_buried( option[ OptionKeys::packing::dunbrack_prob_buried ]() );
-	if ( option[ OptionKeys::packing::dunbrack_prob_nonburied ].user() )
+	}
+	if ( option[ OptionKeys::packing::dunbrack_prob_nonburied ].user() ) {
 		prob_to_accumulate_nonburied( option[ OptionKeys::packing::dunbrack_prob_nonburied ]() );
+	}
 }
 
 /// @details the number of wells defined for the 08 library; includes
@@ -135,28 +137,28 @@ SingleResiduePeptoidLibrary::n_rotamer_bins_for_aa(
 	/// HARD CODED HACK -- SHOULD MOVE THIS TO BECOME A VIRTUAL FUNCTION CALL
 	using namespace chemical;
 	switch ( aa ) {
-		case aa_ala: rot.resize( 0 ); break;
-		case aa_cys: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_asp: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 6; break;
-		case aa_glu: rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = 6; break;
-		case aa_phe: rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 6; break;
-		case aa_gly: rot.resize( 0 ); break;
-		case aa_his: rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 12; break;
-		case aa_ile: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
-		case aa_lys: rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
-		case aa_leu: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
-		case aa_met: rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = 3; break;
-		case aa_asn: rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 12; break;
-		case aa_pro: rot.resize( 3 ); rot[ 1 ] = 2; rot[ 2 ] = rot[ 3 ] = 1; break;
-		case aa_gln: rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = 3; rot[ 3 ] = 12; break;
-		case aa_arg: rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
-		case aa_ser: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_thr: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_val: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_trp: rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 12; break;
-		case aa_tyr: rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 6; break;
-		default:
-			rot.resize( 0 );
+	case aa_ala : rot.resize( 0 ); break;
+	case aa_cys : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_asp : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 6; break;
+	case aa_glu : rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = 6; break;
+	case aa_phe : rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 6; break;
+	case aa_gly : rot.resize( 0 ); break;
+	case aa_his : rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 12; break;
+	case aa_ile : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
+	case aa_lys : rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
+	case aa_leu : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
+	case aa_met : rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = 3; break;
+	case aa_asn : rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 12; break;
+	case aa_pro : rot.resize( 3 ); rot[ 1 ] = 2; rot[ 2 ] = rot[ 3 ] = 1; break;
+	case aa_gln : rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = 3; rot[ 3 ] = 12; break;
+	case aa_arg : rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
+	case aa_ser : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_thr : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_val : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_trp : rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 12; break;
+	case aa_tyr : rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 6; break;
+	default :
+		rot.resize( 0 );
 	}
 }
 
@@ -176,28 +178,28 @@ SingleResiduePeptoidLibrary::n_rotameric_bins_for_aa(
 
 	using namespace chemical;
 	switch ( aa ) {
-		case aa_ala: rot.resize( 0 ); break;
-		case aa_cys: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_asp: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_glu: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
-		case aa_phe: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_gly: rot.resize( 0 ); break;
-		case aa_his: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_ile: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
-		case aa_lys: rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
-		case aa_leu: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
-		case aa_met: rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = 3; break;
-		case aa_asn: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_pro: rot.resize( 3 ); rot[ 1 ] = 2; rot[ 2 ] = rot[ 3 ] = 1; break;
-		case aa_gln: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
-		case aa_arg: rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
-		case aa_ser: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_thr: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_val: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_trp: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_tyr: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		default:
-			rot.resize( 0 );
+	case aa_ala : rot.resize( 0 ); break;
+	case aa_cys : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_asp : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_glu : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
+	case aa_phe : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_gly : rot.resize( 0 ); break;
+	case aa_his : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_ile : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
+	case aa_lys : rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
+	case aa_leu : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
+	case aa_met : rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = 3; break;
+	case aa_asn : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_pro : rot.resize( 3 ); rot[ 1 ] = 2; rot[ 2 ] = rot[ 3 ] = 1; break;
+	case aa_gln : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
+	case aa_arg : rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
+	case aa_ser : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_thr : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_val : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_trp : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_tyr : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	default :
+		rot.resize( 0 );
 	}
 }
 
@@ -211,28 +213,28 @@ SingleResiduePeptoidLibrary::n_rotamer_bins_for_aa_02(
 {
 	using namespace chemical;
 	switch ( aa ) {
-		case aa_ala: rot.resize( 0 ); break;
-		case aa_cys: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_asp: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
-		case aa_glu: rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = 3; break;
-		case aa_phe: rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 2; break;
-		case aa_gly: rot.resize( 0 ); break;
-		case aa_his: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
-		case aa_ile: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
-		case aa_lys: rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
-		case aa_leu: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
-		case aa_met: rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = 3; break;
-		case aa_asn: rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 6; break;
-		case aa_pro: rot.resize( 3 ); rot[ 1 ] = 2; rot[ 2 ] = rot[ 3 ] = 1; break;
-		case aa_gln: rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = 3; rot[ 3 ] = 4; break;
-		case aa_arg: rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
-		case aa_ser: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_thr: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_val: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_trp: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
-		case aa_tyr: rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 2; break;
-		default:
-			rot.resize( 0 );
+	case aa_ala : rot.resize( 0 ); break;
+	case aa_cys : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_asp : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
+	case aa_glu : rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = 3; break;
+	case aa_phe : rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 2; break;
+	case aa_gly : rot.resize( 0 ); break;
+	case aa_his : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
+	case aa_ile : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
+	case aa_lys : rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
+	case aa_leu : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
+	case aa_met : rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = 3; break;
+	case aa_asn : rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 6; break;
+	case aa_pro : rot.resize( 3 ); rot[ 1 ] = 2; rot[ 2 ] = rot[ 3 ] = 1; break;
+	case aa_gln : rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = 3; rot[ 3 ] = 4; break;
+	case aa_arg : rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
+	case aa_ser : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_thr : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_val : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_trp : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
+	case aa_tyr : rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 2; break;
+	default :
+		rot.resize( 0 );
 	}
 }
 
@@ -277,7 +279,7 @@ SingleResiduePeptoidLibrary::mark_rotwell_exists(
 	utility::vector1< Size > const & rotwell
 )
 {
-debug_assert( ! packed_rotno_conversion_data_current_ );
+	debug_assert( ! packed_rotno_conversion_data_current_ );
 	Size const rotno( rotwell_2_rotno( rotwell ) );
 	rotwell_exists_[ rotno ] = true;
 }
@@ -325,7 +327,7 @@ SingleResiduePeptoidLibrary::rotwell_2_rotno(
 	utility::vector1< Size > const & rotwell
 ) const
 {
-debug_assert( n_chi_products_.size() <= rotwell.size() );
+	debug_assert( n_chi_products_.size() <= rotwell.size() );
 	Size runsum = 1;
 	for ( Size ii = 1; ii <= n_chi_products_.size(); ++ii ) {
 		runsum += n_chi_products_[ ii ]*( rotwell[ ii ] - 1 );
@@ -338,7 +340,7 @@ debug_assert( n_chi_products_.size() <= rotwell.size() );
 Size
 SingleResiduePeptoidLibrary::rotwell_2_rotno( Size4 const & rotwell ) const
 {
-debug_assert( n_chi_products_.size() <= rotwell.size() );
+	debug_assert( n_chi_products_.size() <= rotwell.size() );
 	Size runsum = 1;
 	for ( Size ii = 1; ii <= n_chi_products_.size(); ++ii ) {
 		runsum += n_chi_products_[ ii ]*( rotwell[ ii ] - 1 );
@@ -353,7 +355,7 @@ debug_assert( n_chi_products_.size() <= rotwell.size() );
 Size
 SingleResiduePeptoidLibrary::rotno_2_packed_rotno( Size const rotno ) const
 {
-debug_assert( packed_rotno_conversion_data_current_ );
+	debug_assert( packed_rotno_conversion_data_current_ );
 	return rotno_2_packed_rotno_[ rotno ];
 }
 
@@ -363,7 +365,7 @@ SingleResiduePeptoidLibrary::rotwell_2_packed_rotno(
 	utility::vector1< Size > const & rotwell
 ) const
 {
-debug_assert( packed_rotno_conversion_data_current_ );
+	debug_assert( packed_rotno_conversion_data_current_ );
 	return rotno_2_packed_rotno( rotwell_2_rotno( rotwell ) );
 }
 
@@ -372,7 +374,7 @@ debug_assert( packed_rotno_conversion_data_current_ );
 Size
 SingleResiduePeptoidLibrary::rotwell_2_packed_rotno( Size4 const & rotwell ) const
 {
-debug_assert( packed_rotno_conversion_data_current_ );
+	debug_assert( packed_rotno_conversion_data_current_ );
 	return rotno_2_packed_rotno( rotwell_2_rotno( rotwell ) );
 }
 
@@ -392,7 +394,7 @@ SingleResiduePeptoidLibrary::packed_rotno_2_rotwell(
 	Size4 & rotwell
 ) const
 {
-debug_assert( packed_rotno_2_rotwell_[ packed_rotno ].size() <= rotwell.size() );
+	debug_assert( packed_rotno_2_rotwell_[ packed_rotno ].size() <= rotwell.size() );
 	std::copy( packed_rotno_2_rotwell_[ packed_rotno ].begin(), packed_rotno_2_rotwell_[ packed_rotno ].end(), rotwell.begin() );
 }
 
@@ -409,39 +411,39 @@ SingleResiduePeptoidLibrary::write_to_binary( utility::io::ozstream & out ) cons
 	using namespace boost;
 	/// 1. n_packed_rots_
 	{
-	boost::int32_t n_packed_rots( n_packed_rots_ );
-	out.write( (char*) & n_packed_rots, sizeof( boost::int32_t ));
+		boost::int32_t n_packed_rots( n_packed_rots_ );
+		out.write( (char*) & n_packed_rots, sizeof( boost::int32_t ));
 	}
 
 
 	/// 2. rotno_2_packed_rotno_
 	{
-	boost::int32_t * rotno_2_packed_rotno = new boost::int32_t[ n_possible_rots_ ];
-	for ( Size ii = 1; ii <= n_possible_rots_; ++ii ) rotno_2_packed_rotno[ ii - 1 ] = rotno_2_packed_rotno_[ ii ];
-	out.write( (char*) rotno_2_packed_rotno, n_possible_rots_ * sizeof( boost::int32_t ) );
-	delete [] rotno_2_packed_rotno; rotno_2_packed_rotno = 0;
+		boost::int32_t * rotno_2_packed_rotno = new boost::int32_t[ n_possible_rots_ ];
+		for ( Size ii = 1; ii <= n_possible_rots_; ++ii ) rotno_2_packed_rotno[ ii - 1 ] = rotno_2_packed_rotno_[ ii ];
+		out.write( (char*) rotno_2_packed_rotno, n_possible_rots_ * sizeof( boost::int32_t ) );
+		delete [] rotno_2_packed_rotno; rotno_2_packed_rotno = 0;
 	}
 
 	/// 3. packed_rotno_2_rotno_
 	{
-	boost::int32_t * packed_rotno_2_rotno = new boost::int32_t[ n_packed_rots_ ];
-	for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) packed_rotno_2_rotno[ ii - 1 ] = packed_rotno_2_rotno_[ ii ];
-	out.write( (char*) packed_rotno_2_rotno, n_packed_rots_ * sizeof( boost::int32_t ) );
-	delete [] packed_rotno_2_rotno; packed_rotno_2_rotno = 0;
+		boost::int32_t * packed_rotno_2_rotno = new boost::int32_t[ n_packed_rots_ ];
+		for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) packed_rotno_2_rotno[ ii - 1 ] = packed_rotno_2_rotno_[ ii ];
+		out.write( (char*) packed_rotno_2_rotno, n_packed_rots_ * sizeof( boost::int32_t ) );
+		delete [] packed_rotno_2_rotno; packed_rotno_2_rotno = 0;
 	}
 
 	/// 4. packed_rotno_2_rotwell_
 	{
-	boost::int32_t * packed_rotno_2_rotwell = new boost::int32_t[ n_packed_rots_ * n_rotameric_chi_ ];
-	Size count( 0 );
-	for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) {
-		for ( Size jj = 1; jj <= n_rotameric_chi_; ++jj ) {
-			packed_rotno_2_rotwell[ count ] = packed_rotno_2_rotwell_[ ii ][ jj ];
-			++count;
+		boost::int32_t * packed_rotno_2_rotwell = new boost::int32_t[ n_packed_rots_ * n_rotameric_chi_ ];
+		Size count( 0 );
+		for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) {
+			for ( Size jj = 1; jj <= n_rotameric_chi_; ++jj ) {
+				packed_rotno_2_rotwell[ count ] = packed_rotno_2_rotwell_[ ii ][ jj ];
+				++count;
+			}
 		}
-	}
-	out.write( (char*) packed_rotno_2_rotwell, n_packed_rots_ * n_rotameric_chi_ * sizeof( boost::int32_t ) );
-	delete [] packed_rotno_2_rotwell; packed_rotno_2_rotwell = 0;
+		out.write( (char*) packed_rotno_2_rotwell, n_packed_rots_ * n_rotameric_chi_ * sizeof( boost::int32_t ) );
+		delete [] packed_rotno_2_rotwell; packed_rotno_2_rotwell = 0;
 	}
 
 }
@@ -452,42 +454,42 @@ SingleResiduePeptoidLibrary::read_from_binary( utility::io::izstream & in )
 
 	/// 1. n_packed_rots_
 	{
-	boost::int32_t n_packed_rots( 0 );
-	in.read( (char*) & n_packed_rots, sizeof( boost::int32_t ));
-	n_packed_rots_ = n_packed_rots;
+		boost::int32_t n_packed_rots( 0 );
+		in.read( (char*) & n_packed_rots, sizeof( boost::int32_t ));
+		n_packed_rots_ = n_packed_rots;
 	}
 
 	/// 2. rotno_2_packed_rotno_
 	{
-	boost::int32_t * rotno_2_packed_rotno = new boost::int32_t[ n_possible_rots_ ];
-	in.read( (char*) rotno_2_packed_rotno, n_possible_rots_ * sizeof( boost::int32_t ) );
-	for ( Size ii = 1; ii <= n_possible_rots_; ++ii ) rotno_2_packed_rotno_[ ii ] = rotno_2_packed_rotno[ ii - 1 ];
-	delete [] rotno_2_packed_rotno; rotno_2_packed_rotno = 0;
+		boost::int32_t * rotno_2_packed_rotno = new boost::int32_t[ n_possible_rots_ ];
+		in.read( (char*) rotno_2_packed_rotno, n_possible_rots_ * sizeof( boost::int32_t ) );
+		for ( Size ii = 1; ii <= n_possible_rots_; ++ii ) rotno_2_packed_rotno_[ ii ] = rotno_2_packed_rotno[ ii - 1 ];
+		delete [] rotno_2_packed_rotno; rotno_2_packed_rotno = 0;
 	}
 
 	/// 3. packed_rotno_2_rotno_
 	{
-	boost::int32_t * packed_rotno_2_rotno = new boost::int32_t[ n_packed_rots_ ];
-	in.read( (char*) packed_rotno_2_rotno, n_packed_rots_ * sizeof( boost::int32_t ) );
-	packed_rotno_2_rotno_.resize( n_packed_rots_ );
-	for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) packed_rotno_2_rotno_[ ii ] = packed_rotno_2_rotno[ ii - 1 ];
-	delete [] packed_rotno_2_rotno; packed_rotno_2_rotno = 0;
+		boost::int32_t * packed_rotno_2_rotno = new boost::int32_t[ n_packed_rots_ ];
+		in.read( (char*) packed_rotno_2_rotno, n_packed_rots_ * sizeof( boost::int32_t ) );
+		packed_rotno_2_rotno_.resize( n_packed_rots_ );
+		for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) packed_rotno_2_rotno_[ ii ] = packed_rotno_2_rotno[ ii - 1 ];
+		delete [] packed_rotno_2_rotno; packed_rotno_2_rotno = 0;
 	}
 
 	/// 4. packed_rotno_2_rotwell_
 	{
-	boost::int32_t * packed_rotno_2_rotwell = new boost::int32_t[ n_packed_rots_ * n_rotameric_chi_ ];
-	in.read( (char*) packed_rotno_2_rotwell, n_packed_rots_ * n_rotameric_chi_ * sizeof( boost::int32_t ) );
-	packed_rotno_2_rotwell_.resize( n_packed_rots_ );
-	Size count( 0 );
-	for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) {
-		packed_rotno_2_rotwell_[ ii ].resize( n_rotameric_chi_ );
-		for ( Size jj = 1; jj <= n_rotameric_chi_; ++jj ) {
-			packed_rotno_2_rotwell_[ ii ][ jj ] = packed_rotno_2_rotwell[ count ];
-			++count;
+		boost::int32_t * packed_rotno_2_rotwell = new boost::int32_t[ n_packed_rots_ * n_rotameric_chi_ ];
+		in.read( (char*) packed_rotno_2_rotwell, n_packed_rots_ * n_rotameric_chi_ * sizeof( boost::int32_t ) );
+		packed_rotno_2_rotwell_.resize( n_packed_rots_ );
+		Size count( 0 );
+		for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) {
+			packed_rotno_2_rotwell_[ ii ].resize( n_rotameric_chi_ );
+			for ( Size jj = 1; jj <= n_rotameric_chi_; ++jj ) {
+				packed_rotno_2_rotwell_[ ii ][ jj ] = packed_rotno_2_rotwell[ count ];
+				++count;
+			}
 		}
-	}
-	delete [] packed_rotno_2_rotwell;
+		delete [] packed_rotno_2_rotwell;
 	}
 	packed_rotno_conversion_data_current_ = true;
 }
@@ -572,9 +574,9 @@ Size SingleResiduePeptoidLibrary::memory_usage_dynamic() const
 void
 SingleResiduePeptoidLibrary::hokey_template_workaround()
 {
-debug_assert( false );
+	debug_assert( false );
 	utility_exit_with_message(
-	"ERROR: SingleResiduePeptoidLibrary::hokey_template_workaround should never be called!");
+		"ERROR: SingleResiduePeptoidLibrary::hokey_template_workaround should never be called!");
 
 	RotamericSingleResiduePeptoidLibrary< ONE, THREE >   rsrdl_1;
 	RotamericSingleResiduePeptoidLibrary< TWO, THREE >   rsrdl_2;

@@ -25,7 +25,7 @@ class JSON_RPC;
 typedef utility::pointer::shared_ptr< JSON_RPC > JSON_RPCOP;
 typedef utility::pointer::shared_ptr< JSON_RPC const > JSON_RPCCOP;
 
-} //namespace rpc 
+} //namespace rpc
 } //namespace protocols
 
 #endif //INCLUDED_protocols_JSON_RPC_FWD_HH

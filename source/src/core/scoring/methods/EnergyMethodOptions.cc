@@ -137,14 +137,14 @@ void EnergyMethodOptions::initialize_from_options() {
 		split_unfolded_value_type_ = SPLIT_UNFOLDED_USER_DEFINED;
 	}
 
-	if ( basic::options::option[ basic::options::OptionKeys::edensity::sc_scaling ].user()) {
+	if ( basic::options::option[ basic::options::OptionKeys::edensity::sc_scaling ].user() ) {
 		fastdens_perres_weights_.resize( core::chemical::num_canonical_aas, basic::options::option[ basic::options::OptionKeys::edensity::sc_scaling ]() );
 	}
 }
 
 /// copy constructor
 EnergyMethodOptions::EnergyMethodOptions(EnergyMethodOptions const & src)
-	: ReferenceCount( src )
+: ReferenceCount( src )
 {
 	*this = src;
 }
@@ -509,7 +509,7 @@ EnergyMethodOptions::intrares_elec_correction_scale() const {
 
 void
 EnergyMethodOptions::intrares_elec_correction_scale( core::Real const setting ) {
-  intrares_elec_correction_scale_ = setting;
+	intrares_elec_correction_scale_ = setting;
 }
 
 bool
@@ -536,7 +536,7 @@ EnergyMethodOptions::hbond_options() {
 
 void
 EnergyMethodOptions::hbond_options( hbonds::HBondOptions const & opts ) {
- 	hbond_options_ = hbonds::HBondOptionsOP( new hbonds::HBondOptions( opts ) );
+	hbond_options_ = hbonds::HBondOptionsOP( new hbonds::HBondOptions( opts ) );
 }
 
 etable::EtableOptions const &
@@ -566,7 +566,7 @@ EnergyMethodOptions::rna_options() {
 
 void
 EnergyMethodOptions::rna_options( rna::RNA_EnergyMethodOptions const & opts ) {
- 	rna_options_ = rna::RNA_EnergyMethodOptionsOP( new rna::RNA_EnergyMethodOptions( opts ) );
+	rna_options_ = rna::RNA_EnergyMethodOptionsOP( new rna::RNA_EnergyMethodOptions( opts ) );
 }
 
 methods::FreeDOF_Options const &
@@ -581,7 +581,7 @@ EnergyMethodOptions::free_dof_options() {
 
 void
 EnergyMethodOptions::free_dof_options( methods::FreeDOF_Options const & opts ) {
- 	free_dof_options_ = methods::FreeDOF_OptionsOP( new methods::FreeDOF_Options( opts ) );
+	free_dof_options_ = methods::FreeDOF_OptionsOP( new methods::FreeDOF_Options( opts ) );
 }
 
 std::string const &
@@ -594,7 +594,7 @@ EnergyMethodOptions::pb_bound_tag() {
 }
 void
 EnergyMethodOptions::pb_bound_tag( std::string const & tag ) {
-	 pb_bound_tag_ = tag;
+	pb_bound_tag_ = tag;
 }
 std::string const &
 EnergyMethodOptions::pb_unbound_tag() const {
@@ -617,8 +617,9 @@ EnergyMethodOptions::get_density_sc_scale_byres() const {
 void
 EnergyMethodOptions::set_density_sc_scale_byres(core::chemical::AA aa, core::Real newscscale) {
 	runtime_assert ( aa <= core::chemical::num_canonical_aas );
-	if (fastdens_perres_weights_.size() == 0)
+	if ( fastdens_perres_weights_.size() == 0 ) {
 		fastdens_perres_weights_.resize( core::chemical::num_canonical_aas, 1.0 );
+	}
 	fastdens_perres_weights_[(int)aa] = newscscale;
 }
 
@@ -693,7 +694,7 @@ EnergyMethodOptions::cst_max_seq_sep( Size const setting ) {
 /// deprecated
 vector1<string> const &
 EnergyMethodOptions::bond_angle_central_atoms_to_score() const {
-	if (bond_angle_residue_type_param_set_) {
+	if ( bond_angle_residue_type_param_set_ ) {
 		return bond_angle_residue_type_param_set_->central_atoms_to_score();
 	}
 	return bond_angle_central_atoms_to_score_;
@@ -703,7 +704,7 @@ EnergyMethodOptions::bond_angle_central_atoms_to_score() const {
 void
 EnergyMethodOptions::bond_angle_central_atoms_to_score(vector1<string> const & atom_names) {
 	bond_angle_central_atoms_to_score_ = atom_names;
-	if (bond_angle_residue_type_param_set_) {
+	if ( bond_angle_residue_type_param_set_ ) {
 		bond_angle_residue_type_param_set_->central_atoms_to_score(atom_names);
 	}
 }
@@ -800,16 +801,16 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	out << "EnergyMethodOptions::show: split_unfolded_value_type: " << split_unfolded_value_type_ << std::endl;
 	out << "EnergyMethodOptions::show: atom_vdw_atom_type_set_name: " << atom_vdw_atom_type_set_name_ << std::endl;
 	out << "EnergyMethodOptions::show: exclude_protein_protein_fa_elec: "
-			<< (exclude_protein_protein_fa_elec_ ? "true" : "false") << std::endl;
+		<< (exclude_protein_protein_fa_elec_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: exclude_monomer_fa_elec: "
-			<< (exclude_monomer_fa_elec_ ? "true" : "false") << std::endl;
+		<< (exclude_monomer_fa_elec_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: elec_max_dis: " << elec_max_dis_ << std::endl;
 	out << "EnergyMethodOptions::show: elec_min_dis: " << elec_min_dis_ << std::endl;
 	out << "EnergyMethodOptions::show: elec_die: " << elec_die_ << std::endl;
 	out << "EnergyMethodOptions::show: elec_no_dis_dep_die: "
-			<< (elec_no_dis_dep_die_ ? "true" : "false") << std::endl;
+		<< (elec_no_dis_dep_die_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: elec_sigmoidal_die: "
-			<< (elec_sigmoidal_die_ ? "true" : "false") << std::endl;
+		<< (elec_sigmoidal_die_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: elec_sigmoidal_D: " << elec_sigmoidal_D_ << std::endl;
 	out << "EnergyMethodOptions::show: elec_sigmoidal_D0: " << elec_sigmoidal_D0_ << std::endl;
 	out << "EnergyMethodOptions::show: elec_sigmoidal_S: " << elec_sigmoidal_S_ << std::endl;
@@ -822,26 +823,26 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	out << "EnergyMethodOptions::show: elec_group_file: " << elec_group_file_ << std::endl;
 	out << "EnergyMethodOptions::show: grpelec_context_dependent: " << grpelec_context_dependent_ << std::endl;
 	out << "EnergyMethodOptions::show: use_polarization: "
-			<< (use_polarization_ ? "true" : "false") << std::endl;
+		<< (use_polarization_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: use_gen_kirkwood: "
-			<< (use_gen_kirkwood_ ? "true" : "false") << std::endl;
+		<< (use_gen_kirkwood_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: exclude_DNA_DNA: "
-			<< (exclude_DNA_DNA_ ? "true" : "false") << std::endl;
+		<< (exclude_DNA_DNA_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: exclude_intra_res_protein: "
-			<< (exclude_intra_res_protein_ ? "true" : "false") << std::endl;
+		<< (exclude_intra_res_protein_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: put_intra_into_total: "
-			<< (put_intra_into_total_ ? "true" : "false") << std::endl;
+		<< (put_intra_into_total_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: geom_sol_interres_path_distance_cutoff: "
-			<< (geom_sol_interres_path_distance_cutoff_ ? "true" : "false") << std::endl;
+		<< (geom_sol_interres_path_distance_cutoff_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: geom_sol_intrares_path_distance_cutoff: "
-			<< (geom_sol_intrares_path_distance_cutoff_ ? "true" : "false") << std::endl;
+		<< (geom_sol_intrares_path_distance_cutoff_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: envsmooth_zero_negatives: "
-			<< (envsmooth_zero_negatives_ ? "true" : "false") << std::endl;
+		<< (envsmooth_zero_negatives_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: cst_max_seq_sep: " << cst_max_seq_sep_ << std::endl;
 	out << "EnergyMethodOptions::show: pb_bound_tag: " << pb_bound_tag_ << std::endl;
 	out << "EnergyMethodOptions::show: pb_unbound_tag: " << pb_unbound_tag_ << std::endl;
 	out << "EnergyMethodOptions::show: bond_angle_central_atoms_to_score:";
-	if (bond_angle_residue_type_param_set_) {
+	if ( bond_angle_residue_type_param_set_ ) {
 		out << "setting ignored";
 	} else {
 		for ( Size i=1; i <= bond_angle_central_atoms_to_score_.size(); ++i ) {
@@ -850,16 +851,16 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	}
 	out << std::endl;
 	out << "EnergyMethodOptions::show: bond_angle_residue_type_param_set: "
-			<< (bond_angle_residue_type_param_set_ ? "in use" : "none") << std::endl;
-	if (bond_angle_residue_type_param_set_) {
+		<< (bond_angle_residue_type_param_set_ ? "in use" : "none") << std::endl;
+	if ( bond_angle_residue_type_param_set_ ) {
 		out << "  central_atoms_to_score:";
-		if (!bond_angle_residue_type_param_set_->central_atoms_to_score().size()) out << "all";
+		if ( !bond_angle_residue_type_param_set_->central_atoms_to_score().size() ) out << "all";
 		for ( Size i=1; i <= bond_angle_residue_type_param_set_->central_atoms_to_score().size(); ++i ) {
 			out << " \"" << bond_angle_residue_type_param_set_->central_atoms_to_score()[i] << "\"";
 		}
 		out << std::endl;
 		out << "  use_residue_type_theta0: "
-				<< (bond_angle_residue_type_param_set_->use_residue_type_theta0() ? "true" : "false") << std::endl;
+			<< (bond_angle_residue_type_param_set_->use_residue_type_theta0() ? "true" : "false") << std::endl;
 	}
 	out << *hbond_options_;
 	out << *rna_options_;
@@ -912,7 +913,7 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 
 	vector1< std::string > option_keys;
 	vector1< std::string > option_values;
-	if ( etable_options_->etable_type.size() ){
+	if ( etable_options_->etable_type.size() ) {
 		option_keys.push_back("etable_type");
 		option_values.push_back(etable_options_->etable_type);
 	}
@@ -1011,14 +1012,14 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 
 	string statement_string;
 	switch(db_session->get_db_mode()){
-	case utility::sql_database::DatabaseMode::sqlite3:
+	case utility::sql_database::DatabaseMode::sqlite3 :
 		statement_string = "INSERT OR IGNORE INTO score_function_method_options (batch_id, score_function_name, option_key, option_value) VALUES (?,?,?,?);";
 		break;
 	case utility::sql_database::DatabaseMode::mysql:
-	case utility::sql_database::DatabaseMode::postgres:
+	case utility::sql_database::DatabaseMode::postgres :
 		statement_string = "INSERT IGNORE INTO score_function_method_options (batch_id, score_function_name, option_key, option_value) VALUES (?,?,?,?);";
 		break;
-	default:
+	default :
 		utility_exit_with_message(
 			"Unrecognized database mode: '" +
 			name_from_database_mode(db_session->get_db_mode()) + "'");
@@ -1027,7 +1028,7 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 	cppdb::statement stmt(
 		basic::database::safely_prepare_statement(statement_string, db_session));
 
-	for(Size i=1; i <= option_keys.size(); ++i){
+	for ( Size i=1; i <= option_keys.size(); ++i ) {
 		stmt.bind(1, batch_id);
 		stmt.bind(2, score_function_name);
 		stmt.bind(3, option_keys[i]);

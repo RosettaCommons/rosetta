@@ -60,13 +60,13 @@ using utility::vector1;
 
 
 using namespace core;
-	using namespace chemical;
-	using namespace pack;
-		using namespace task;
-			using namespace operation;
-	using namespace scoring;
-		using namespace constraints;
-	using namespace sequence;
+using namespace chemical;
+using namespace pack;
+using namespace task;
+using namespace operation;
+using namespace scoring;
+using namespace constraints;
+using namespace sequence;
 
 using namespace protocols;
 
@@ -82,7 +82,7 @@ MSA_design(
 
 	// register SequenceProfileConstraint with the ConstraintFactory so that it can be constructed from a constraint file
 	//ConstraintIO::get_cst_factory().add_type(
-	//	new core::scoring::constraints::SequenceProfileConstraint( Size(), utility::vector1< id::AtomID >(), NULL ) );
+	// new core::scoring::constraints::SequenceProfileConstraint( Size(), utility::vector1< id::AtomID >(), NULL ) );
 
 	// set up scoring
 	// this sets BasePartner in pose cacheable data
@@ -107,8 +107,8 @@ MSA_design(
 			pose->add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( *pose, seqpos, profile ) ) ) );
 		}
 	} else {
-	  std::string cst_file( option[ OptionKeys::constraints::cst_file ]().front() );
-	  ConstraintSetOP cst_set =
+		std::string cst_file( option[ OptionKeys::constraints::cst_file ]().front() );
+		ConstraintSetOP cst_set =
 			ConstraintIO::get_instance()->read_constraints_new( cst_file, ConstraintSetOP( new ConstraintSet ), *pose );
 		pose->constraint_set( cst_set );
 	}
@@ -134,7 +134,7 @@ MSA_design(
 	// output structures
 	Size counter(0);
 	for ( utility::vector1< pose::PoseOP >::iterator result( pose_list.begin() ),
-				end( pose_list.end() ); result != end; ++result ) {
+			end( pose_list.end() ); result != end; ++result ) {
 		std::ostringstream ss;
 		ss << "MSA_design" << '_' << counter++ << ".pdb";
 		(*result)->dump_pdb( ss.str() );
@@ -157,7 +157,7 @@ MSA_design_main( void* )
 	if ( option[ in::file::l ].user() ) {
 		Filenames listnames( option[ in::file::l ]().vector() );
 		for ( Filenames::const_iterator filename( listnames.begin() );
-		      filename != listnames.end(); ++filename ) {
+				filename != listnames.end(); ++filename ) {
 			utility::io::izstream list( (*filename).name().c_str() );
 			while ( list ) {
 				std::string pdbname;
@@ -171,12 +171,12 @@ MSA_design_main( void* )
 
 	} else {
 		std::cerr << "No files given: Use either -file:s or -file:l "
-		          << "to designate a single pdb or a list of pdbs"
-		          << std::endl;
+			<< "to designate a single pdb or a list of pdbs"
+			<< std::endl;
 	}
 
 	for ( Filenames::const_iterator filename( pdbnames.begin() );
-	      filename != pdbnames.end(); ++filename ) {
+			filename != pdbnames.end(); ++filename ) {
 		std::cout << "Input pdb file " << *filename;
 		if ( !utility::file::file_exists( *filename ) ) {
 			std::cout << " not found, skipping" << std::endl;
@@ -197,10 +197,10 @@ main( int argc, char * argv[] )
 {
 	try {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	devel::init( argc, argv );
-	protocols::viewer::viewer_main( MSA_design_main );
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		devel::init( argc, argv );
+		protocols::viewer::viewer_main( MSA_design_main );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

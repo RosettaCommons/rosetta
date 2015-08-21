@@ -113,12 +113,12 @@ TorsionFragment::insert( pose::Pose & pose, Size const begin ) const
 				id::AtomID const id1( rsd.atom_index("N"), seqpos ), id2( rsd.atom_index("CA"), seqpos ),
 					id3( rsd.atom_index("C"), seqpos ), id4( rsd.atom_index("O"), seqpos );
 				pose.conformation().set_torsion_angle( id1, id2, id3, id4, numeric::conversions::radians( psi ) );
-// 				Real const actual_psi( numeric::dihedral_degrees( pose.xyz( id1 ), pose.xyz( id2 ), pose.xyz( id3 ),
-// 																													pose.xyz( id4 ) ) );
-// 				if ( std::abs( util::subtract_degree_angles( psi, actual_psi ) ) > 1.0 ) {
-// 					std::cerr << "setting psi at terminus failed: desired= " << psi << " actual= " << actual_psi << std::endl;
-// 					std::cout << "setting psi at terminus failed: desired= " << psi << " actual= " << actual_psi << std::endl;
-// 				}
+				//     Real const actual_psi( numeric::dihedral_degrees( pose.xyz( id1 ), pose.xyz( id2 ), pose.xyz( id3 ),
+				//                              pose.xyz( id4 ) ) );
+				//     if ( std::abs( util::subtract_degree_angles( psi, actual_psi ) ) > 1.0 ) {
+				//      std::cerr << "setting psi at terminus failed: desired= " << psi << " actual= " << actual_psi << std::endl;
+				//      std::cout << "setting psi at terminus failed: desired= " << psi << " actual= " << actual_psi << std::endl;
+				//     }
 			}
 		}
 		pose.set_secstruct( seqpos, secstruct_[i] );
@@ -154,12 +154,12 @@ TorsionFragmentLibrary::read_file(
 		return false;
 	}
 	std::string line;
-	while( getline( data, line ) ) {
+	while ( getline( data, line ) ) {
 		std::istringstream line_stream( line );
 		std::string tag1, tag2;
 		Size position, neighbors;
 		line_stream >> tag1 >> position >> tag2 >> neighbors;
-		if (line_stream.fail() || tag1 != "position:" || tag2 != "neighbors:" ) {
+		if ( line_stream.fail() || tag1 != "position:" || tag2 != "neighbors:" ) {
 			std::cerr << " format errors in fragment library file: " << line << std::endl;
 			resize(0);
 			return false;
@@ -181,9 +181,9 @@ TorsionFragmentLibrary::read_file(
 					last_chain = chain;
 					last_seqpos = seqpos;
 				} else {
-					if (last_pdb != pdb  || last_chain != chain ) {// || last_seqpos != (seqpos-j+1) ) {
+					if ( last_pdb != pdb  || last_chain != chain ) { // || last_seqpos != (seqpos-j+1) ) {
 						std::cerr << "fragment reading error -- pdb, chain and seqpos mismatch\n"
-										 << "position: " << position  << "; neighbor: " << i  << "; line: " << j << std::endl;
+							<< "position: " << position  << "; neighbor: " << i  << "; line: " << j << std::endl;
 						resize(0);
 						return false;
 					}
@@ -314,7 +314,7 @@ TorsionFragmentLibrary::derive_from_src_lib(
 	}
 	runtime_assert( !seg_start );
 
-	if ( seg_map.empty() ) {//size() ) {
+	if ( seg_map.empty() ) { //size() ) {
 		std::cerr << "Warning: source fragment library does not have any data!" << std::endl;
 		return false;
 	}
@@ -327,7 +327,7 @@ TorsionFragmentLibrary::derive_from_src_lib(
 
 	// loop through each segment and derive fragments
 	for ( std::map<Size, Size>::const_iterator it = seg_map.begin(),
-					it_end = seg_map.end(); it != it_end; ++it ) {
+			it_end = seg_map.end(); it != it_end; ++it ) {
 		Size const seg_begin(it->first);
 		Size const seg_end(it->second);
 		Size lib_index, copy_start;
@@ -336,12 +336,12 @@ TorsionFragmentLibrary::derive_from_src_lib(
 			SingleResidueTorsionFragmentLibraryOP my_residue_lib( fragments_[my_index] );
 			// figure out which subset of fragment data we should copy
 			if ( my_index < seg_begin + offset ) {
-			 	lib_index = seg_begin;
+				lib_index = seg_begin;
 				copy_start = 1 + my_index - seg_begin;
 			} else if ( my_index > seg_end + offset ) {
 				lib_index = seg_end;
 				copy_start = 1 + my_index - seg_end;
-			}	else {
+			} else {
 				lib_index = my_index - offset;
 				copy_start = 1 + offset;
 			}
@@ -433,10 +433,10 @@ FragLib::frag_sizes() const
 
 bool
 ss_length_check(
-								core::Size const min_len_helix,
-								core::Size const min_len_strand,
-								core::pose::Pose const & pose
-								)
+	core::Size const min_len_helix,
+	core::Size const min_len_strand,
+	core::pose::Pose const & pose
+)
 {
 	std::string const ss( pose.secstruct() );
 
@@ -541,19 +541,19 @@ utility::vector1< Size > const empty_size_list;
 
 void
 add_vall_fragments(
-									 utility::vector1< core::Size > const & frag_sizes,
-									 Size const nfrags,
-									 pose::Pose const & pose,
-									 core::kinematics::MoveMap const & mm,
-									 std::string const & secstruct,
-									 Real const seq_weight,
-									 Real const ss_weight,
-									 FragLib & frag_lib,
-									 utility::vector1< Size > const & homs_to_exclude, // = empty_size_list
-									 Real const bb_weight, // = 0
-									 std::string const & bigbins, // = empty string
-									 std::string const & inputseq // = empty string
-									 )
+	utility::vector1< core::Size > const & frag_sizes,
+	Size const nfrags,
+	pose::Pose const & pose,
+	core::kinematics::MoveMap const & mm,
+	std::string const & secstruct,
+	Real const seq_weight,
+	Real const ss_weight,
+	FragLib & frag_lib,
+	utility::vector1< Size > const & homs_to_exclude, // = empty_size_list
+	Real const bb_weight, // = 0
+	std::string const & bigbins, // = empty string
+	std::string const & inputseq // = empty string
+)
 {
 
 	Size const nres( pose.total_residue() );
@@ -570,9 +570,9 @@ add_vall_fragments(
 			for ( Size j=i; j<i+frag_size; ++j ) {
 				Residue const & jrsd( pose.residue(j) );
 				if ( ( j > i             && jrsd.is_lower_terminus() ) ||
-						 ( j < i+frag_size-1 && jrsd.is_upper_terminus() ) ||
-						 !pose.residue(j).is_protein() ||
-						 !mm.get_bb( j ) ) { // this call should not be allowed!
+						( j < i+frag_size-1 && jrsd.is_upper_terminus() ) ||
+						!pose.residue(j).is_protein() ||
+						!mm.get_bb( j ) ) { // this call should not be allowed!
 					allowed = false;
 					break;
 				}
@@ -583,26 +583,26 @@ add_vall_fragments(
 			std::string const frag_bb( bigbins.empty() ? bigbins : bigbins.substr( i-1,frag_size) );
 			bool const exclude_gly( false ), exclude_pro( false ), exclude_cis_peptides( true ); // except at pre-pro
 			get_frags( nfrags, frag_seq, frag_ss, seq_weight, ss_weight, exclude_gly, exclude_pro, exclude_cis_peptides,
-								 homs_to_exclude, lib[i], bb_weight, frag_bb );
+				homs_to_exclude, lib[i], bb_weight, frag_bb );
 		} // for each residue window
 	}
 }
 
 void
 add_vall_fragments(
-									 utility::vector1< core::Size > const & frag_sizes,
-									 Size const nfrags,
-									 pose::Pose const & pose,
-									 core::kinematics::MoveMap const & mm,
-									 utility::vector1< std::map< char, core::Real > > const & target_ss,
-									 Real const seq_weight,
-									 Real const ss_weight,
-									 FragLib & frag_lib,
-									 utility::vector1< Size > const & homs_to_exclude, // = empty_size_list
-									 Real const bb_weight, // = 0
-									 std::string const & bigbins, // = empty string
-									 std::string const & inputseq // = empty string
-									 )
+	utility::vector1< core::Size > const & frag_sizes,
+	Size const nfrags,
+	pose::Pose const & pose,
+	core::kinematics::MoveMap const & mm,
+	utility::vector1< std::map< char, core::Real > > const & target_ss,
+	Real const seq_weight,
+	Real const ss_weight,
+	FragLib & frag_lib,
+	utility::vector1< Size > const & homs_to_exclude, // = empty_size_list
+	Real const bb_weight, // = 0
+	std::string const & bigbins, // = empty string
+	std::string const & inputseq // = empty string
+)
 {
 
 	Size const nres( pose.total_residue() );
@@ -620,10 +620,10 @@ add_vall_fragments(
 			for ( Size j=i; j<i+frag_size; ++j ) {
 				Residue const & jrsd( pose.residue(j) );
 				if ( ( j > i             && jrsd.is_lower_terminus() ) ||
-						 ( j < i+frag_size-1 && jrsd.is_upper_terminus() ) ||
-						 !pose.residue(j).is_protein() ||
-						 j > target_ss.size() ||
-						 !mm.get_bb( j ) ) { // this call should not be allowed!
+						( j < i+frag_size-1 && jrsd.is_upper_terminus() ) ||
+						!pose.residue(j).is_protein() ||
+						j > target_ss.size() ||
+						!mm.get_bb( j ) ) { // this call should not be allowed!
 					allowed = false;
 					break;
 				}
@@ -635,22 +635,22 @@ add_vall_fragments(
 			std::string const frag_bb( bigbins.empty() ? bigbins : bigbins.substr( i-1,frag_size) );
 			bool const exclude_gly( false ), exclude_pro( false ), exclude_cis_peptides( true ); // except at pre-pro
 			get_frags( nfrags, frag_seq, frag_ss, seq_weight, ss_weight, exclude_gly, exclude_pro, exclude_cis_peptides,
-								 homs_to_exclude, lib[i], bb_weight, frag_bb );
+				homs_to_exclude, lib[i], bb_weight, frag_bb );
 		} // for each residue window
 	}
 }
 
 FragLibOP
 setup_vall_fragments(
-										 utility::vector1< core::Size > const & frag_sizes,
-										 Size const nfrags,
-										 pose::Pose const & pose,
-										 core::kinematics::MoveMap const & mm,
-										 std::string const & secstruct,
-										 Real const seq_weight,
-										 Real const ss_weight,
-										 utility::vector1< Size > const & homs_to_exclude // = empty_size_list
-										 )
+	utility::vector1< core::Size > const & frag_sizes,
+	Size const nfrags,
+	pose::Pose const & pose,
+	core::kinematics::MoveMap const & mm,
+	std::string const & secstruct,
+	Real const seq_weight,
+	Real const ss_weight,
+	utility::vector1< Size > const & homs_to_exclude // = empty_size_list
+)
 {
 	FragLibOP frag_lib( new FragLib() );
 	add_vall_fragments( frag_sizes, nfrags, pose, mm, secstruct, seq_weight, ss_weight, *frag_lib, homs_to_exclude );
@@ -660,19 +660,19 @@ setup_vall_fragments(
 
 void
 add_vall_cheating_fragments(
-														utility::vector1< core::Size > const & frag_sizes,
-														Size const nfrags,
-														pose::Pose const & pose,
-														core::kinematics::MoveMap const & mm,
-														std::string const & secstruct,
-														Real const seq_weight,
-														Real const ss_weight,
-														Real const torsion_weight,
-														Real const min_torsion_dev,
-														Real const max_torsion_dev,
-														FragLib & frag_lib,
-														utility::vector1< Size > const & homs_to_exclude // = empty_size_list
-														)
+	utility::vector1< core::Size > const & frag_sizes,
+	Size const nfrags,
+	pose::Pose const & pose,
+	core::kinematics::MoveMap const & mm,
+	std::string const & secstruct,
+	Real const seq_weight,
+	Real const ss_weight,
+	Real const torsion_weight,
+	Real const min_torsion_dev,
+	Real const max_torsion_dev,
+	FragLib & frag_lib,
+	utility::vector1< Size > const & homs_to_exclude // = empty_size_list
+)
 {
 	//FragLibOP frag_lib( new FragLib() );
 
@@ -688,9 +688,9 @@ add_vall_cheating_fragments(
 			for ( Size j=i; j<i+frag_size; ++j ) {
 				Residue const & jrsd( pose.residue(j) );
 				if ( ( j > i             && jrsd.is_lower_terminus() ) ||
-						 ( j < i+frag_size-1 && jrsd.is_upper_terminus() ) ||
-						 !pose.residue(j).is_protein() ||
-						 !mm.get_bb( j ) ) { // this call should not be allowed!
+						( j < i+frag_size-1 && jrsd.is_upper_terminus() ) ||
+						!pose.residue(j).is_protein() ||
+						!mm.get_bb( j ) ) { // this call should not be allowed!
 					allowed = false;
 					break;
 				}
@@ -716,9 +716,9 @@ add_vall_cheating_fragments(
 
 
 			get_cheating_frags( nfrags, frag_seq, frag_ss, frag_phi, frag_psi, frag_omega,
-													seq_weight, ss_weight, torsion_weight,
-													min_torsion_dev, max_torsion_dev,
-													homs_to_exclude, lib[i] );
+				seq_weight, ss_weight, torsion_weight,
+				min_torsion_dev, max_torsion_dev,
+				homs_to_exclude, lib[i] );
 
 		} // for each residue window
 	}
@@ -727,22 +727,22 @@ add_vall_cheating_fragments(
 
 FragLibOP
 setup_vall_cheating_fragments(
-															utility::vector1< core::Size > const & frag_sizes,
-															Size const nfrags,
-															pose::Pose const & pose,
-															core::kinematics::MoveMap const & mm,
-															std::string const & secstruct,
-															Real const seq_weight,
-															Real const ss_weight,
-															Real const torsion_weight,
-															Real const min_torsion_dev,
-															Real const max_torsion_dev,
-															utility::vector1< Size > const & homs_to_exclude // = empty_size_list
-															)
+	utility::vector1< core::Size > const & frag_sizes,
+	Size const nfrags,
+	pose::Pose const & pose,
+	core::kinematics::MoveMap const & mm,
+	std::string const & secstruct,
+	Real const seq_weight,
+	Real const ss_weight,
+	Real const torsion_weight,
+	Real const min_torsion_dev,
+	Real const max_torsion_dev,
+	utility::vector1< Size > const & homs_to_exclude // = empty_size_list
+)
 {
 	FragLibOP frag_lib( new FragLib() );
 	add_vall_cheating_fragments( frag_sizes, nfrags, pose, mm, secstruct, seq_weight, ss_weight, torsion_weight,
-															 min_torsion_dev, max_torsion_dev, *frag_lib, homs_to_exclude );
+		min_torsion_dev, max_torsion_dev, *frag_lib, homs_to_exclude );
 	return frag_lib;
 }
 
@@ -751,15 +751,15 @@ setup_vall_cheating_fragments(
 /// @note  Does not change the size of any of the individual fragment libraries
 void
 fill_in_gaps(
-						 Size const nfrags,
-						 pose::Pose const & pose,
-						 std::string const & secstruct,
-						 Real const seq_weight,
-						 Real const ss_weight,
-						 FragLib & frag_lib,
-						 utility::vector1< Size > const & homs_to_exclude, // = empty_size_list
-						 bool const allow_uninitialized_secstruct // = false
-						 )
+	Size const nfrags,
+	pose::Pose const & pose,
+	std::string const & secstruct,
+	Real const seq_weight,
+	Real const ss_weight,
+	FragLib & frag_lib,
+	utility::vector1< Size > const & homs_to_exclude, // = empty_size_list
+	bool const allow_uninitialized_secstruct // = false
+)
 {
 	string const seq( pose.sequence() );
 
@@ -839,7 +839,7 @@ insert_fragment(
 	// number of total residue in pose
 	int const pose_nres = pose.total_residue();
 	// ensure fragment library and pose matches each other
-  if( paranoid && pose_nres != (frag_nres + frag_size - 1) ){
+	if ( paranoid && pose_nres != (frag_nres + frag_size - 1) ) {
 		std::cerr << pose_nres << "  " << frag_nres << "  " << frag_size << std::endl;
 		utility_exit_with_message( "Fragment files and input PDB file don't match in length!" );
 	}
@@ -1034,10 +1034,10 @@ get_min_and_max_contigs( Sizes const & seg_in, core::Size & min_seg, core::Size 
 
 void
 insert_random_fragments_in_flexible_protein_regions(
-																										Sizes const & flex_protein,
-																										FragLib const & frag_lib,
-																										pose::Pose & pose
-																										)
+	Sizes const & flex_protein,
+	FragLib const & frag_lib,
+	pose::Pose & pose
+)
 {
 	Size const nres( pose.total_residue() );
 	vector1< Size > frag_sizes( frag_lib.frag_sizes() );
@@ -1057,12 +1057,12 @@ insert_random_fragments_in_flexible_protein_regions(
 			bool allowed( true );
 			for ( Size k=0; k< frag_size; ++k ) {
 				if ( ( k >           0 && pose.residue(i+k).is_lower_terminus() ) ||
-						 ( k < frag_size-1 && pose.residue(i+k).is_upper_terminus() ) ||
-						 !has_element( flex_protein, i+k ) ) allowed = false;
+						( k < frag_size-1 && pose.residue(i+k).is_upper_terminus() ) ||
+						!has_element( flex_protein, i+k ) ) allowed = false;
 			}
 			if ( allowed ) {
 				runtime_assert( pose.residue(i).is_protein() && pose.residue(i+frag_size-1).is_protein() &&
-												pose.chain(i) == pose.chain(i+frag_size-1 ) );
+					pose.chain(i) == pose.chain(i+frag_size-1 ) );
 				TR.Trace << "Inserting random " << frag_size << "-mer at position " << i <<
 					" frag_depth= " << lib[i].size() << endl;
 				// this will fail if there are no fragments in this window:

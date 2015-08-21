@@ -68,7 +68,7 @@ public:
 		resize( nres_in );
 	}
 
-	//	RNA_SilentStruct( RNA_SilentStruct const & src );
+	// RNA_SilentStruct( RNA_SilentStruct const & src );
 
 	RNA_SilentStruct()
 	{
@@ -124,9 +124,9 @@ public:
 	) const;
 
 	//virtual void fill_pose(
-	//	core::pose::Pose & pose,
-	//	core::chemical::ResidueTypeSet const & residue_set,
-	//	bool const use_input_pose
+	// core::pose::Pose & pose,
+	// core::chemical::ResidueTypeSet const & residue_set,
+	// bool const use_input_pose
 	//) const;
 
 	/// @brief opposite of fill_pose

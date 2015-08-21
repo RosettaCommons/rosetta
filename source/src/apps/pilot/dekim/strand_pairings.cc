@@ -71,7 +71,7 @@ public:
 		return MoverOP( new MyMover( *this ) );
 	}
 
-	virtual	MoverOP	fresh_instance() const {
+	virtual MoverOP fresh_instance() const {
 		return MoverOP( new MyMover );
 	}
 
@@ -86,21 +86,21 @@ MyMover::MyMover()
 }
 
 void MyMover::apply( core::pose::Pose& pose ) {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core;
 
 
 	core::scoring::dssp::StrandPairingSet strand_pairings( pose );
 	TR.Info << strand_pairings << std::endl;
 
-  for ( core::scoring::dssp::StrandPairingSet::const_iterator it = strand_pairings.begin();
-	       it != strand_pairings.end();  it++ ) {
+	for ( core::scoring::dssp::StrandPairingSet::const_iterator it = strand_pairings.begin();
+			it != strand_pairings.end();  it++ ) {
 		core::scoring::dssp::PairingList beta_pairs;
 
 		it->get_beta_pairs( beta_pairs );
 		for ( core::scoring::dssp::PairingList::const_iterator iti = beta_pairs.begin(), eiti = beta_pairs.end();
-		        iti != eiti; ++iti ) {
+				iti != eiti; ++iti ) {
 			TR.Info << *iti << std::endl;
 		}
 	}
@@ -110,31 +110,31 @@ void MyMover::apply( core::pose::Pose& pose ) {
 int
 main( int argc, char * argv [] )
 {
-    try {
-	using namespace protocols;
-	using namespace protocols::jd2;
+	try {
+		using namespace protocols;
+		using namespace protocols::jd2;
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core;
 
-	jd2::register_options();
+		jd2::register_options();
 
-	// initialize core
-	devel::init(argc, argv);
+		// initialize core
+		devel::init(argc, argv);
 
-	MoverOP mymover( new MyMover );
+		MoverOP mymover( new MyMover );
 
-	using namespace protocols::jd2;
+		using namespace protocols::jd2;
 
-	// Set up a job outputter that writes a scorefile and no PDBs and no Silent Files.
-	PDBJobOutputterOP jobout( new PDBJobOutputter );
+		// Set up a job outputter that writes a scorefile and no PDBs and no Silent Files.
+		PDBJobOutputterOP jobout( new PDBJobOutputter );
 
-	// If the user chooses something else, then so be it, but by default score(_jd2) should only create a score
-	// file and nothing else.
-	protocols::jd2::JobDistributor::get_instance()->set_job_outputter( JobDistributorFactory::create_job_outputter( jobout ));
+		// If the user chooses something else, then so be it, but by default score(_jd2) should only create a score
+		// file and nothing else.
+		protocols::jd2::JobDistributor::get_instance()->set_job_outputter( JobDistributorFactory::create_job_outputter( jobout ));
 
-	JobDistributor::get_instance()->go( mymover );
+		JobDistributor::get_instance()->go( mymover );
 	} catch ( utility::excn::EXCN_Base& excn ) {
 		std::cerr << "Exception: " << std::endl;
 		excn.show( std::cerr );

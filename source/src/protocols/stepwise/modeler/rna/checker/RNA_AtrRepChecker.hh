@@ -32,84 +32,84 @@ namespace modeler {
 namespace rna {
 namespace checker {
 
-	class RNA_AtrRepChecker: public utility::pointer::ReferenceCount {
+class RNA_AtrRepChecker: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//Constructor
-		RNA_AtrRepChecker( pose::Pose const & pose,
-											 working_parameters::StepWiseWorkingParametersCOP & working_parameters,
-											 bool const loose_rep_cutoff = false,
-											 scoring::methods::EnergyMethodOptionsCOP energy_method_options = 0 );
+	//Constructor
+	RNA_AtrRepChecker( pose::Pose const & pose,
+		working_parameters::StepWiseWorkingParametersCOP & working_parameters,
+		bool const loose_rep_cutoff = false,
+		scoring::methods::EnergyMethodOptionsCOP energy_method_options = 0 );
 
-		RNA_AtrRepChecker( pose::Pose const & pose,
-											 Size const moving_res,
-											 Size const reference_res,
-											 Size const gap_size,
-											 scoring::methods::EnergyMethodOptionsCOP energy_method_options = 0
-											 );
+	RNA_AtrRepChecker( pose::Pose const & pose,
+		Size const moving_res,
+		Size const reference_res,
+		Size const gap_size,
+		scoring::methods::EnergyMethodOptionsCOP energy_method_options = 0
+	);
 
-		//destructor
-		~RNA_AtrRepChecker();
+	//destructor
+	~RNA_AtrRepChecker();
 
-		Real delta_atr_score() const{ return delta_atr_score_; }
-		Real delta_rep_score() const{ return delta_rep_score_; }
-		Real base_atr_score() const{ return base_atr_score_; }
-		Real base_rep_score() const{ return base_rep_score_; }
+	Real delta_atr_score() const{ return delta_atr_score_; }
+	Real delta_rep_score() const{ return delta_rep_score_; }
+	Real base_atr_score() const{ return base_atr_score_; }
+	Real base_rep_score() const{ return base_rep_score_; }
 
-	public:
+public:
 
-		bool
-		check_screen( pose::Pose & current_pose_screen );
+	bool
+	check_screen( pose::Pose & current_pose_screen );
 
-		void
-		set_loose_rep_cutoff( bool const & setting ) { loose_rep_cutoff_ = setting;	}
+	void
+	set_loose_rep_cutoff( bool const & setting ) { loose_rep_cutoff_ = setting; }
 
-		void
-		set_extra_loose_rep_cutoff( bool const & setting ) { extra_loose_rep_cutoff_ = setting;	}
+	void
+	set_extra_loose_rep_cutoff( bool const & setting ) { extra_loose_rep_cutoff_ = setting; }
 
-		StepWiseRNA_CountStruct const &
-		count_data() const { return count_data_; }
+	StepWiseRNA_CountStruct const &
+	count_data() const { return count_data_; }
 
-	private:
+private:
 
-		void
-		get_base_atr_rep_score( core::pose::Pose const & pose );
+	void
+	get_base_atr_rep_score( core::pose::Pose const & pose );
 
-		void
-		initialize_scorefxn( core::scoring::methods::EnergyMethodOptionsCOP energy_method_options = 0 );
+	void
+	initialize_scorefxn( core::scoring::methods::EnergyMethodOptionsCOP energy_method_options = 0 );
 
-		void
-		initialize_parameters();
+	void
+	initialize_parameters();
 
-		void
-		output_rep( core::pose::Pose const & pose, std::string const tag );
+	void
+	output_rep( core::pose::Pose const & pose, std::string const tag );
 
-	private:
+private:
 
-		Size const moving_res_;
-		Size const reference_res_;
-		Size const gap_size_;
-		bool const is_prepend_;
-		bool const is_internal_;
-		bool const sample_both_sugar_base_rotamer_;
-		bool const separate_moving_residue_to_estimate_baseline_;
+	Size const moving_res_;
+	Size const reference_res_;
+	Size const gap_size_;
+	bool const is_prepend_;
+	bool const is_internal_;
+	bool const sample_both_sugar_base_rotamer_;
+	bool const separate_moving_residue_to_estimate_baseline_;
 
-		Real rep_cutoff_;
-		Real base_atr_score_;
-		Real base_rep_score_;
-		Real delta_atr_score_;
-		Real delta_rep_score_;
-		bool output_pdb_;
-		bool verbose_;
-		bool loose_rep_cutoff_;
-		bool extra_loose_rep_cutoff_;
+	Real rep_cutoff_;
+	Real base_atr_score_;
+	Real base_rep_score_;
+	Real delta_atr_score_;
+	Real delta_rep_score_;
+	bool output_pdb_;
+	bool verbose_;
+	bool loose_rep_cutoff_;
+	bool extra_loose_rep_cutoff_;
 
-		core::scoring::ScoreFunctionOP atr_rep_screening_scorefxn_;
+	core::scoring::ScoreFunctionOP atr_rep_screening_scorefxn_;
 
-		StepWiseRNA_CountStruct count_data_;
+	StepWiseRNA_CountStruct count_data_;
 
-	};
+};
 
 } //checker
 } //rna

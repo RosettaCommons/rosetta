@@ -76,10 +76,10 @@ optimize_H_and_notify(
 	pose::Pose const start_pose( pose );
 	pack::optimizeH( pose, *sfxn );
 	// warn about positions that changed
-	for ( Size i=1; i<= pose.total_residue(); ++i  ){
+	for ( Size i=1; i<= pose.total_residue(); ++i  ) {
 		Residue const & old_rsd( start_pose.residue(i) );
 		Residue const & new_rsd(       pose.residue(i) );
-	debug_assert( old_rsd.nchi() == new_rsd.nchi() && old_rsd.type().n_proton_chi() == new_rsd.type().n_proton_chi() );
+		debug_assert( old_rsd.nchi() == new_rsd.nchi() && old_rsd.type().n_proton_chi() == new_rsd.type().n_proton_chi() );
 		for ( Size chino=1; chino<= old_rsd.nchi(); ++chino ) {
 			Real const chidev( std::abs( basic::subtract_degree_angles( old_rsd.chi( chino ), new_rsd.chi( chino ) ) ) );
 			bool const chi_atom_was_missing( missing[ id::AtomID( old_rsd.chi_atoms( chino )[4], i ) ] );

@@ -38,103 +38,103 @@ namespace stepwise {
 namespace modeler {
 namespace align {
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  class StepWiseLegacyClusterer: public utility::pointer::ReferenceCount {
-  public:
+/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+class StepWiseLegacyClusterer: public utility::pointer::ReferenceCount {
+public:
 
-    //constructor!
-		StepWiseLegacyClusterer( utility::vector1< PoseOP > const & pose_list );
+	//constructor!
+	StepWiseLegacyClusterer( utility::vector1< PoseOP > const & pose_list );
 
-		StepWiseLegacyClusterer( utility::vector1< PoseOP > const & pose_list,
-											 utility::vector1< Size > const & moving_res_list,
-											 options::StepWiseModelerOptionsCOP options,
-											 bool const force_align );
+	StepWiseLegacyClusterer( utility::vector1< PoseOP > const & pose_list,
+		utility::vector1< Size > const & moving_res_list,
+		options::StepWiseModelerOptionsCOP options,
+		bool const force_align );
 
-    //destructor -- necessary?
-    virtual ~StepWiseLegacyClusterer();
+	//destructor -- necessary?
+	virtual ~StepWiseLegacyClusterer();
 
-    /// @brief Filter a list of poses by score.
+	/// @brief Filter a list of poses by score.
 
-		void set_max_decoys( core::Size const & setting ){ max_decoys_ = setting; }
+	void set_max_decoys( core::Size const & setting ){ max_decoys_ = setting; }
 
-		void set_cluster_radius( core::Real const & setting ){ cluster_radius_ = setting; }
+	void set_cluster_radius( core::Real const & setting ){ cluster_radius_ = setting; }
 
-		void set_cluster_by_all_atom_rmsd( core::Real const & setting ){ cluster_by_all_atom_rmsd_ = setting; }
+	void set_cluster_by_all_atom_rmsd( core::Real const & setting ){ cluster_by_all_atom_rmsd_ = setting; }
 
-		void set_rename_tags( core::Real const & setting ){ rename_tags_ = setting; }
+	void set_rename_tags( core::Real const & setting ){ rename_tags_ = setting; }
 
-		void set_score_diff_cut( core::Real const & setting ){ score_diff_cut_ = setting; }
+	void set_score_diff_cut( core::Real const & setting ){ score_diff_cut_ = setting; }
 
-		void set_auto_tune( bool const auto_tune ){ auto_tune_ = auto_tune; }
+	void set_auto_tune( bool const auto_tune ){ auto_tune_ = auto_tune; }
 
-		void set_force_align( bool const force_align ){ force_align_ = force_align; }
+	void set_force_align( bool const force_align ){ force_align_ = force_align; }
 
-    void set_calc_rms_res( utility::vector1< core::Size > const & calc_rms_res );
+	void set_calc_rms_res( utility::vector1< core::Size > const & calc_rms_res );
 
-		void cluster();
+	void cluster();
 
-		utility::vector1< PoseOP > rms_pose_list() { return rms_pose_list_; }
+	utility::vector1< PoseOP > rms_pose_list() { return rms_pose_list_; }
 
-		utility::vector1< PoseOP > get_pose_list() { return output_pose_list_; }
+	utility::vector1< PoseOP > get_pose_list() { return output_pose_list_; }
 
-  private:
+private:
 
-		void
-		initialize_parameters_and_input();
+	void
+	initialize_parameters_and_input();
 
-		void
-		initialize_cluster_list();
+	void
+	initialize_cluster_list();
 
-		void
-		initialize_corresponding_atom_id_map( core::pose::Pose const & pose );
+	void
+	initialize_corresponding_atom_id_map( core::pose::Pose const & pose );
 
-		void
-		do_some_clustering();
+	void
+	do_some_clustering();
 
-		Size
-		check_for_closeness( core::pose::PoseOP rms_pose );
+	Size
+	check_for_closeness( core::pose::PoseOP rms_pose );
 
-		void
-		cluster_with_auto_tune();
+	void
+	cluster_with_auto_tune();
 
-		void
-		recluster_current_pose_list();
+	void
+	recluster_current_pose_list();
 
-		void
-		initialize_auto_tune_cluster_rmsds();
+	void
+	initialize_auto_tune_cluster_rmsds();
 
-		core::io::silent::SilentStructOP
-		setup_silent_struct( Size const n );
+	core::io::silent::SilentStructOP
+	setup_silent_struct( Size const n );
 
-	private:
+private:
 
-		Size max_decoys_;
-		core::Real cluster_radius_;
-		bool cluster_by_all_atom_rmsd_;
-		core::Real score_diff_cut_;
-		bool auto_tune_;
-		bool rename_tags_;
-		bool force_align_;
+	Size max_decoys_;
+	core::Real cluster_radius_;
+	bool cluster_by_all_atom_rmsd_;
+	core::Real score_diff_cut_;
+	bool auto_tune_;
+	bool rename_tags_;
+	bool force_align_;
 
-		core::Real score_min_;
+	core::Real score_min_;
 
-		utility::vector1< core::pose::PoseOP > input_pose_list_;
+	utility::vector1< core::pose::PoseOP > input_pose_list_;
 
-		utility::vector1< core::pose::PoseOP > rms_pose_list_;
-		utility::vector1< core::pose::PoseOP > output_pose_list_;
-		utility::vector1< core::Size > num_pose_in_cluster_;
+	utility::vector1< core::pose::PoseOP > rms_pose_list_;
+	utility::vector1< core::pose::PoseOP > output_pose_list_;
+	utility::vector1< core::Size > num_pose_in_cluster_;
 
-		utility::vector1< core::Real > cluster_rmsds_to_try_with_auto_tune_;
+	utility::vector1< core::Real > cluster_rmsds_to_try_with_auto_tune_;
 
-		Size input_pose_counter_;
-		bool hit_score_cutoff_;
-		bool initialized_atom_id_map_for_rmsd_;
-    utility::vector1< core::Size > calc_rms_res_;
+	Size input_pose_counter_;
+	bool hit_score_cutoff_;
+	bool initialized_atom_id_map_for_rmsd_;
+	utility::vector1< core::Size > calc_rms_res_;
 
-		std::map< core::id::AtomID, core::id::AtomID > corresponding_atom_id_map_;
+	std::map< core::id::AtomID, core::id::AtomID > corresponding_atom_id_map_;
 
-  };
+};
 
 } //align
 } //modeler

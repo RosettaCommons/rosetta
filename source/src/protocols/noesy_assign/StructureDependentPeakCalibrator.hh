@@ -41,35 +41,35 @@ namespace noesy_assign {
 
 class StructureDependentPeakCalibrator : public PeakCalibrator {
 public:
-  typedef utility::vector1< core::pose::PoseOP > PoseVector;
+	typedef utility::vector1< core::pose::PoseOP > PoseVector;
 
-  StructureDependentPeakCalibrator( PoseVector const& structures, core::Real dcalibrate )
-    :    PeakCalibrator( -1 /*reverse sign*/ ),
-	 structures_( structures ),
-	 dcalibrate_( dcalibrate )
-  {}
+	StructureDependentPeakCalibrator( PoseVector const& structures, core::Real dcalibrate )
+	:    PeakCalibrator( -1 /*reverse sign*/ ),
+		structures_( structures ),
+		dcalibrate_( dcalibrate )
+	{}
 
-  virtual PeakCalibratorOP fresh_instance() {
-    return PeakCalibratorOP( new StructureDependentPeakCalibrator( structures_, dcalibrate_ ) );
-  }
+	virtual PeakCalibratorOP fresh_instance() {
+		return PeakCalibratorOP( new StructureDependentPeakCalibrator( structures_, dcalibrate_ ) );
+	}
 
 
-  //  virtual void reset_statistics();
-  //  virtual bool interpolate_on_statistics();
-  virtual void collect_upperbound_statistics( core::Size /*peak*/, TypeCumulator const& /*types*/ );
-  virtual void init_calibrator(); //to create constraints for example
-  void generate_constraints();
+	//  virtual void reset_statistics();
+	//  virtual bool interpolate_on_statistics();
+	virtual void collect_upperbound_statistics( core::Size /*peak*/, TypeCumulator const& /*types*/ );
+	virtual void init_calibrator(); //to create constraints for example
+	void generate_constraints();
 
-  // this is a service that has nothing to do with calibration,
-  // however, after calibration we have all the  constraints already generated, that are necessary to do this task
-  void eliminate_violated_constraints();
+	// this is a service that has nothing to do with calibration,
+	// however, after calibration we have all the  constraints already generated, that are necessary to do this task
+	void eliminate_violated_constraints();
 
 private:
-  //  core::Real accumulated_viol_percentage_[ MAX_TYPE ];
-  //  core::Size accumulated_count_[ MAX_TYPE ];
-  PoseVector structures_;
-  utility::vector1< core::scoring::constraints::ConstraintOP > constraints_;
-  core::Real dcalibrate_;
+	//  core::Real accumulated_viol_percentage_[ MAX_TYPE ];
+	//  core::Size accumulated_count_[ MAX_TYPE ];
+	PoseVector structures_;
+	utility::vector1< core::scoring::constraints::ConstraintOP > constraints_;
+	core::Real dcalibrate_;
 };
 
 

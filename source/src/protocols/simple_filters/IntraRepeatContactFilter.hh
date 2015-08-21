@@ -6,7 +6,7 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-// 
+//
 /// @file protocols/simple_filters/IntraRepeatContactFilter
 /// @brief filter structures by IntraRepeatContacts
 /// @details
@@ -42,91 +42,91 @@ namespace simple_filters {
 class IntraRepeatContactFilter : public protocols::filters::Filter {
 public:
 
-    typedef protocols::filters::Filter Super;
-    typedef protocols::filters::Filter Filter;
-    typedef protocols::filters::FilterOP FilterOP;
-    typedef core::Real Real;
-    typedef core::pose::Pose Pose;
-    typedef std::string String;
+	typedef protocols::filters::Filter Super;
+	typedef protocols::filters::Filter Filter;
+	typedef protocols::filters::FilterOP FilterOP;
+	typedef core::Real Real;
+	typedef core::pose::Pose Pose;
+	typedef std::string String;
 
-    typedef utility::tag::TagCOP TagCOP;
-    typedef protocols::filters::Filters_map Filters_map;
-    typedef basic::datacache::DataMap DataMap;
-    typedef protocols::moves::Movers_map Movers_map;
+	typedef utility::tag::TagCOP TagCOP;
+	typedef protocols::filters::Filters_map Filters_map;
+	typedef basic::datacache::DataMap DataMap;
+	typedef protocols::moves::Movers_map Movers_map;
 
 
 public:// constructor/destructor
 
 
-    // @brief default constructor
-    IntraRepeatContactFilter();
+	// @brief default constructor
+	IntraRepeatContactFilter();
 
-    // @brief copy constructor
-    IntraRepeatContactFilter( IntraRepeatContactFilter const & rval );
+	// @brief copy constructor
+	IntraRepeatContactFilter( IntraRepeatContactFilter const & rval );
 
-    virtual ~IntraRepeatContactFilter(){}
+	virtual ~IntraRepeatContactFilter(){}
 
 
 public:// virtual constructor
 
 
-    // @brief make clone
-    virtual filters::FilterOP clone() const { 
-				return filters::FilterOP(new IntraRepeatContactFilter( *this )); 
-		}
+	// @brief make clone
+	virtual filters::FilterOP clone() const {
+		return filters::FilterOP(new IntraRepeatContactFilter( *this ));
+	}
 
-    // @brief make fresh instance
-    virtual filters::FilterOP fresh_instance() const { 
-				return filters::FilterOP(new IntraRepeatContactFilter() ); 
-		}
+	// @brief make fresh instance
+	virtual filters::FilterOP fresh_instance() const {
+		return filters::FilterOP(new IntraRepeatContactFilter() );
+	}
 
 
 public:// mutator
 
 
-    // @brief
-    void filtered_value( Real const & value );
+	// @brief
+	void filtered_value( Real const & value );
 
 
 public:// accessor
 
 
-    // @brief get name of this filter
-    virtual std::string name() const { return "IntraRepeatContactFilter"; }
+	// @brief get name of this filter
+	virtual std::string name() const { return "IntraRepeatContactFilter"; }
 
 
 public:// parser
 
-    virtual void parse_my_tag( TagCOP tag,
-        basic::datacache::DataMap &,
-        filters::Filters_map const &,
-        Movers_map const &,
-        Pose const & );
+	virtual void parse_my_tag( TagCOP tag,
+		basic::datacache::DataMap &,
+		filters::Filters_map const &,
+		Movers_map const &,
+		Pose const & );
 
 
 public:// virtual main operation
 
 
-    // @brief returns true if the given pose passes the filter, false otherwise.
-    // In this case, the test is whether the give pose is the topology we want.
-    virtual bool apply( Pose const & pose ) const;
+	// @brief returns true if the given pose passes the filter, false otherwise.
+	// In this case, the test is whether the give pose is the topology we want.
+	virtual bool apply( Pose const & pose ) const;
 
-    /// @brief
-    virtual Real report_sm( Pose const & pose ) const;
+	/// @brief
+	virtual Real report_sm( Pose const & pose ) const;
 
-    /// @brief used to report score
-    virtual void report( std::ostream & out, Pose const & pose ) const;
+	/// @brief used to report score
+	virtual void report( std::ostream & out, Pose const & pose ) const;
 
-    /// @brief
-    Real compute( Pose const & pose ) const;
+	/// @brief
+	Real compute( Pose const & pose ) const;
 
 
 private:
 
-    Real filtered_value_;
-    Size numbRepeats_;
-    Size sequenceSep_;
-    Real distThresh_;
+	Real filtered_value_;
+	Size numbRepeats_;
+	Size sequenceSep_;
+	Real distThresh_;
 };
 
 } // filters

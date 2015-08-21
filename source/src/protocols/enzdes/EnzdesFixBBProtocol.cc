@@ -34,14 +34,14 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-namespace protocols{
-namespace enzdes{
+namespace protocols {
+namespace enzdes {
 
 static thread_local basic::Tracer tr( "protocols.enzdes.EnzdesFixBBProtocol" );
 
 EnzdesFixBBProtocol::EnzdesFixBBProtocol()
-	: EnzdesBaseProtocol(),
-		start_from_random_rb_conf_( basic::options::option[basic::options::OptionKeys::enzdes::start_from_random_rb_conf] )
+: EnzdesBaseProtocol(),
+	start_from_random_rb_conf_( basic::options::option[basic::options::OptionKeys::enzdes::start_from_random_rb_conf] )
 {}
 
 EnzdesFixBBProtocol::~EnzdesFixBBProtocol(){}
@@ -59,7 +59,7 @@ EnzdesFixBBProtocol::apply(
 	tr.Info << "starting apply function..." << std::endl;
 
 	//set the native pose if requested
-	if( ! basic::options::option[basic::options::OptionKeys::in::file::native].user() ){
+	if ( ! basic::options::option[basic::options::OptionKeys::in::file::native].user() ) {
 
 		core::pose::PoseOP natpose( new core::pose::Pose( pose ) );
 		(*scorefxn_)( *natpose );
@@ -67,12 +67,12 @@ EnzdesFixBBProtocol::apply(
 	}
 
 	//set up constraints (read cstfile, do mapping, etc, then add to pose)
-	if( basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ){
+	if ( basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ) {
 		enable_constraint_scoreterms();
 		setup_enzdes_constraints( pose, false );
 	}
 
-	if( start_from_random_rb_conf_ ){
+	if ( start_from_random_rb_conf_ ) {
 		ApplyRandomStoredRBConf ranconf;
 		ranconf.apply( pose );
 	}
@@ -85,7 +85,7 @@ EnzdesFixBBProtocol::apply(
 	(*scorefxn_)( pose );
 
 	//cst opt stage, if demanded
-	if(basic::options::option[basic::options::OptionKeys::enzdes::cst_opt]){
+	if ( basic::options::option[basic::options::OptionKeys::enzdes::cst_opt] ) {
 		design_pack_task =  create_enzdes_pack_task( pose );
 		tr.Info << "starting cst_opt minimization..." << std::endl;
 		cst_minimize(pose, design_pack_task, true);
@@ -94,40 +94,37 @@ EnzdesFixBBProtocol::apply(
 	}
 
 
-	if(basic::options::option[basic::options::OptionKeys::enzdes::cst_predock])
-	{
+	if ( basic::options::option[basic::options::OptionKeys::enzdes::cst_predock] ) {
 		//design_pack_task =  create_enzdes_pack_task( pose );
 		PredesignPerturbMoverOP predock( new PredesignPerturbMover() );
-    predock->set_ligand( get_ligand_id(pose, pose.num_jump()) );
-    predock->apply(pose);
-    (*scorefxn_)( pose );
+		predock->set_ligand( get_ligand_id(pose, pose.num_jump()) );
+		predock->apply(pose);
+		(*scorefxn_)( pose );
 	}
 
 
-	if(basic::options::option[basic::options::OptionKeys::enzdes::cst_design]){
+	if ( basic::options::option[basic::options::OptionKeys::enzdes::cst_design] ) {
 
 		design_pack_task = create_enzdes_pack_task( pose ); //make a new task in case the ligand has moved a lot
 		tr.Info << "starting cst_design, " << basic::options::option[basic::options::OptionKeys::enzdes::design_min_cycles] << " cycles of design/minimization ... " << std::endl;
 
 		core::Size design_min_cycles = basic::options::option[basic::options::OptionKeys::enzdes::design_min_cycles];
 
-//		bool favor_native_res(false);
-//		if( basic::options::option[basic::options::OptionKeys::enzdes::favor_native_res].user() ) favor_native_res = true;
+		//  bool favor_native_res(false);
+		//  if( basic::options::option[basic::options::OptionKeys::enzdes::favor_native_res].user() ) favor_native_res = true;
 
 		enzdes_pack( pose, design_pack_task, scorefxn_, design_min_cycles, basic::options::option[basic::options::OptionKeys::enzdes::cst_min], false, true );
 
 		design_pack_task = create_enzdes_pack_task( pose, false );
 
-		if( basic::options::option[basic::options::OptionKeys::enzdes::cst_min] ){
+		if ( basic::options::option[basic::options::OptionKeys::enzdes::cst_min] ) {
 			remove_enzdes_constraints( pose, true );
 			cst_minimize(pose, design_pack_task);
 			add_pregenerated_enzdes_constraints( pose );
 		}
 		(*scorefxn_)( pose );
 
-	} //if cst_design
-
-	else if( basic::options::option[basic::options::OptionKeys::enzdes::cst_min] ){
+	} else if ( basic::options::option[basic::options::OptionKeys::enzdes::cst_min] ) { //if cst_design
 
 		design_pack_task = create_enzdes_pack_task( pose );
 
@@ -136,7 +133,7 @@ EnzdesFixBBProtocol::apply(
 		(*scorefxn_)( pose );
 	}
 
-	if( basic::options::option[basic::options::OptionKeys::enzdes::make_consensus_mutations] ){
+	if ( basic::options::option[basic::options::OptionKeys::enzdes::make_consensus_mutations] ) {
 
 		simple_moves::ConsensusDesignMover consensus_mover( create_enzdes_pack_task( pose, false ), scorefxn_ );
 		consensus_mover.set_invert_task( true );
@@ -149,7 +146,7 @@ EnzdesFixBBProtocol::apply(
 
 
 	//do a repack without constraints
-	if( ! basic::options::option[basic::options::OptionKeys::enzdes::no_unconstrained_repack]){
+	if ( ! basic::options::option[basic::options::OptionKeys::enzdes::no_unconstrained_repack] ) {
 
 		remove_enzdes_constraints( pose, true );
 		(*scorefxn_)( pose );
@@ -158,7 +155,7 @@ EnzdesFixBBProtocol::apply(
 		protocols::simple_moves::PackRotamersMoverOP enzdes_repack( new protocols::simple_moves::PackRotamersMover(scorefxn_, repack_task) );
 		enzdes_repack->apply( pose );
 
-		if(basic::options::option[basic::options::OptionKeys::enzdes::cst_min]) cst_minimize(pose, repack_task);
+		if ( basic::options::option[basic::options::OptionKeys::enzdes::cst_min] ) cst_minimize(pose, repack_task);
 
 		//and turn constraints back on for the final scoring
 		add_pregenerated_enzdes_constraints( pose );
@@ -168,7 +165,7 @@ EnzdesFixBBProtocol::apply(
 
 	}
 
-	if(basic::options::option[basic::options::OptionKeys::enzdes::cst_dock] ){
+	if ( basic::options::option[basic::options::OptionKeys::enzdes::cst_dock] ) {
 
 
 		//note: this is not really ready to go yet, still to be developed
@@ -211,7 +208,7 @@ EnzdesFixBBProtocol::register_options()
 	option.add_relevant( OptionKeys::enzdes::design_min_cycles );
 	option.add_relevant( OptionKeys::enzdes::no_unconstrained_repack );
 
-  option.add_relevant( OptionKeys::in::file::pssm);
+	option.add_relevant( OptionKeys::in::file::pssm);
 }
 
 } //namespace enzdes

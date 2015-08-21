@@ -80,32 +80,32 @@ std::string JobOutputter::affixed_numbered_name( JobCOP job ){
 	// caused by path/ext removal.
 	std::string base_name = job->input_tag();
 	switch ( JobDistributor::get_instance()->job_inputter_input_source() ) {
-		case JobInputterInputSource::PDB_FILE : { // remove paths and ext.
+	case JobInputterInputSource::PDB_FILE : { // remove paths and ext.
 
-			// Treat tags as file names so that we put the number before the extension.
-			utility::vector1< std::string > temp_out_names= utility::split( base_name );
-			utility::file::FileName out_name = utility::file::combine_names( temp_out_names );
-			base_name = out_name.base();
+		// Treat tags as file names so that we put the number before the extension.
+		utility::vector1< std::string > temp_out_names= utility::split( base_name );
+		utility::file::FileName out_name = utility::file::combine_names( temp_out_names );
+		base_name = out_name.base();
 
-			break;
-		}
-		case JobInputterInputSource::SCREENING_FILE : {
+		break;
+	}
+	case JobInputterInputSource::SCREENING_FILE : {
 
-			//combine file names and group name.
-			Job::StringStringPairs string_pairs =job->get_string_string_pairs();
+		//combine file names and group name.
+		Job::StringStringPairs string_pairs =job->get_string_string_pairs();
 
-			Job::StringStringPairs::iterator group_name_it(string_pairs.find("input_group_name"));
-			assert(group_name_it != string_pairs.end()); //You shouldn't be able to get this far without a properly set group name
-			std::string group_name(group_name_it->second);
-			utility::vector1< std::string > temp_out_names= utility::split( base_name );
-			utility::file::FileName out_name = utility::file::combine_names( temp_out_names );
-			base_name = group_name + "_" + out_name.base();
+		Job::StringStringPairs::iterator group_name_it(string_pairs.find("input_group_name"));
+		assert(group_name_it != string_pairs.end()); //You shouldn't be able to get this far without a properly set group name
+		std::string group_name(group_name_it->second);
+		utility::vector1< std::string > temp_out_names= utility::split( base_name );
+		utility::file::FileName out_name = utility::file::combine_names( temp_out_names );
+		base_name = group_name + "_" + out_name.base();
 
-			break;
-		}
-		default : { // do nothing
-			break;
-		}
+		break;
+	}
+	default : { // do nothing
+		break;
+	}
 	}
 
 	// now construct the full name
@@ -130,9 +130,9 @@ void JobOutputter::evaluate(
 	std::string tag,
 	core::io::silent::SilentStruct & pss
 ) const {
-  if ( evaluators()->size() ) {
-    evaluators()->apply( pose, tag, pss );
-  }
+	if ( evaluators()->size() ) {
+		evaluators()->apply( pose, tag, pss );
+	}
 }
 
 /// @brief optionally pass a starting (reference) pose to a JobOutputter for comparison purposes and/or as interface for initializing evaluators. (Currently does nothing in this base class.)
@@ -140,14 +140,14 @@ void JobOutputter::starting_pose( core::pose::Pose const & ){}
 
 /// @details add another PoseEvaluator to the list of evaluations
 void JobOutputter::add_evaluation( evaluation::PoseEvaluatorOP ev_in ) {
-  evaluators_->add_evaluation( ev_in );
+	evaluators_->add_evaluation( ev_in );
 }
 
 /// @details set a list of Evaluations
 /// ( the list will be copied, the evaluations are OPs )
 ///
 void JobOutputter::set_evaluators( evaluation::PoseEvaluators const& ev_in ) {
-  evaluators_ = evaluation::PoseEvaluatorsOP( new protocols::evaluation::PoseEvaluators(ev_in) );
+	evaluators_ = evaluation::PoseEvaluatorsOP( new protocols::evaluation::PoseEvaluators(ev_in) );
 }
 
 /// @brief clear the list of evaluators
@@ -166,7 +166,7 @@ void JobOutputter::set_defaults() {
 
 /// @details return the list of PoseEvaluators
 evaluation::PoseEvaluatorsCOP JobOutputter::evaluators() const {
-  return evaluators_;
+	return evaluators_;
 }
 
 void JobOutputter::call_output_observers( core::pose::Pose const& pose, JobOP job  ) const {

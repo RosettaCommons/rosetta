@@ -42,66 +42,66 @@ using utility::vector1;
 /// designed protein sequence. And output the compare resultes to a special formated file which
 /// can be used for statistics calculations
 
-	class DesignContrast {
-	public :
-		/// @brief default constructor
-		DesignContrast	(){ }
+class DesignContrast {
+public :
+	/// @brief default constructor
+	DesignContrast (){ }
 
-		// @brief copy constructor
-		DesignContrast (DesignContrast const & dc);
+	// @brief copy constructor
+	DesignContrast (DesignContrast const & dc);
 
-		/// @brief default de-constructor
-		virtual ~DesignContrast(){
+	/// @brief default de-constructor
+	virtual ~DesignContrast(){
 		clear();
-		}
-		/// @brief Set number of neighbors for all residues in pose
-		void setNeighbors(pose::Pose & pose);
+	}
+	/// @brief Set number of neighbors for all residues in pose
+	void setNeighbors(pose::Pose & pose);
 
-		/// @brief Get number of neighbors for all residues in pose
-		vector1<int> & getNeighbors();
-		vector1<int> const & getNeighbors() const;
+	/// @brief Get number of neighbors for all residues in pose
+	vector1<int> & getNeighbors();
+	vector1<int> const & getNeighbors() const;
 
-		/// @brief Set secondary structure for all residues in pose
-		void setSecStruct(pose::Pose & pose);
+	/// @brief Set secondary structure for all residues in pose
+	void setSecStruct(pose::Pose & pose);
 
-		/// @brief Get secondary structure for all residues in pose
-		vector1<std::string> & getSecStruct();
-		vector1<std::string> const & getSecStruct() const;
+	/// @brief Get secondary structure for all residues in pose
+	vector1<std::string> & getSecStruct();
+	vector1<std::string> const & getSecStruct() const;
 
-		/// @brief Get pdb file names from the pdb list files.
-		void setNames (); // vector1<std::string> & pdb_file_names ); the pdb_file_names is a private member
+	/// @brief Get pdb file names from the pdb list files.
+	void setNames (); // vector1<std::string> & pdb_file_names ); the pdb_file_names is a private member
 
 
-		vector1<FileName> & getPdbNames();
-		vector1<FileName> const & getPdbNames() const;
+	vector1<FileName> & getPdbNames();
+	vector1<FileName> const & getPdbNames() const;
 
-		vector1<FileName> & getListNames();
-		vector1<FileName> const & getListNames() const;
+	vector1<FileName> & getListNames();
+	vector1<FileName> const & getListNames() const;
 
-		void setPdbCodes();
+	void setPdbCodes();
 
-		vector1<std::string> & getPdbCodes();
-		vector1<std::string> const & getPdbCodes() const;
+	vector1<std::string> & getPdbCodes();
+	vector1<std::string> const & getPdbCodes() const;
 
-		/// @brief this function will output the sequence comparing result between native pose and designed pose
-		void output_sqc_file (
-													pose::Pose & native_pose,
-													pose::Pose & decoy_pose,
-													std::string const & single_code,
-													std::ofstream & sqc
-													);
+	/// @brief this function will output the sequence comparing result between native pose and designed pose
+	void output_sqc_file (
+		pose::Pose & native_pose,
+		pose::Pose & decoy_pose,
+		std::string const & single_code,
+		std::ofstream & sqc
+	);
 
-		/// @brief clear function to clear all datas in this class.
-		void clear();
+	/// @brief clear function to clear all datas in this class.
+	void clear();
 
-	private:
-		vector1<FileName> list_file_names_;
-		//vector1<std::string> pdb_file_names_;
-		vector1<FileName> pdb_file_names_;
-		vector1<int> nneighbs_;
-		vector1<std::string> secstructs_;
-		vector1<std::string> pdb_codes_;
-	};
+private:
+	vector1<FileName> list_file_names_;
+	//vector1<std::string> pdb_file_names_;
+	vector1<FileName> pdb_file_names_;
+	vector1<int> nneighbs_;
+	vector1<std::string> secstructs_;
+	vector1<std::string> pdb_codes_;
+};
 } // namespace sequence_comparation
 } // namespace io
 } // namespace core

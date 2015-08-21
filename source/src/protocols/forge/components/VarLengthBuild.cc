@@ -330,10 +330,10 @@ void VarLengthBuild::apply( Pose & pose ) {
 			//pose it will have 1-to-1 mapping to the pose.  So need to make a fake
 			//original2modified map if running in restart_mode
 			Original2Modified dummy = manager_.original2modified();
-			for (Original2Modified::const_iterator it = dummy.begin(), end=dummy.end(); it != end; ++ it){
+			for ( Original2Modified::const_iterator it = dummy.begin(), end=dummy.end(); it != end; ++ it ) {
 				//TR << "idx restart mode " << it->second << std::endl;
-				if ( basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user() ){
-					if ((*it).second <= (remodel_data_.sequence.length()*2) ){
+				if ( basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user() ) {
+					if ( (*it).second <= (remodel_data_.sequence.length()*2) ) {
 						original2modified[(*it).second] = (*it).second;
 					}
 				} else {
@@ -345,7 +345,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 			original2modified = manager_.modify( pose );
 		}
 	}
-	if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
+	if ( basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user() ) {
 
 		Size len_start = remodel_data_.sequence.length();
 
@@ -354,24 +354,24 @@ void VarLengthBuild::apply( Pose & pose ) {
 		// residue. only for repeats with matching blueprint and pdb lengths.
 		//cache the phi psi angles
 		//if (len_start < pose.total_residue() && len_start * (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure]) == pose.total_residue() ){
-		if (len_start < pose.total_residue()){
-			for (Size i = len_start+1; i <= pose.total_residue(); i++){
+		if ( len_start < pose.total_residue() ) {
+			for ( Size i = len_start+1; i <= pose.total_residue(); i++ ) {
 				cached_phi.push_back( pose.phi( i ) );
 				cached_psi.push_back( pose.psi( i ) );
 				cached_omega.push_back( pose.omega( i ));
 			}
-	//std::cout << "HERE1-1" << std::endl;
+			//std::cout << "HERE1-1" << std::endl;
 
 			Size max_pdb_index = remodel_data_.blueprint.size()*2;
-	//std::cout << "max_pdb index" << max_pdb_index <<  std::endl;
+			//std::cout << "max_pdb index" << max_pdb_index <<  std::endl;
 
-			while (pose.total_residue() > max_pdb_index){
-	//std::cout << "pose total" << pose.total_residue() <<  std::endl;
+			while ( pose.total_residue() > max_pdb_index ) {
+				//std::cout << "pose total" << pose.total_residue() <<  std::endl;
 				pose.conformation().delete_residue_slow(pose.total_residue());
 			}
 
 			//similarly update archive pose in repeat cases
-			while (archive_pose.total_residue() > max_pdb_index){
+			while ( archive_pose.total_residue() > max_pdb_index ) {
 				archive_pose.conformation().delete_residue_slow(archive_pose.total_residue());
 			}
 		}
@@ -379,13 +379,13 @@ void VarLengthBuild::apply( Pose & pose ) {
 
 	// REPEAT: used for fragment picking and others
 	repeat_tail_length_ =0;
-  if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
+	if ( basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user() ) {
 		// adding a tail to the starter monomer pose
 		if ( pose.total_residue() < (remodel_data_.sequence.length()*2) ) {
 
 			Size len_diff = (2*remodel_data_.sequence.length()) - pose.total_residue();
 			// append a tail of the same length
-			for (Size i = 1; i<= len_diff; i++){
+			for ( Size i = 1; i<= len_diff; i++ ) {
 				//core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(2).residue_type_set());
 				core::chemical::ResidueTypeSetCOP const & rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map("VAL") ) );
@@ -393,10 +393,8 @@ void VarLengthBuild::apply( Pose & pose ) {
 				pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
 				pose.set_omega(pose.total_residue()-1,180);
 			}
-		}
-
-		else if ( pose.total_residue() > (remodel_data_.sequence.length()*2)){
-			while (pose.total_residue() != (2* remodel_data_.sequence.length())){
+		} else if ( pose.total_residue() > (remodel_data_.sequence.length()*2) ) {
+			while ( pose.total_residue() != (2* remodel_data_.sequence.length()) ) {
 				pose.conformation().delete_residue_slow(pose.total_residue());
 			}
 		}
@@ -407,7 +405,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 
 			Size len_diff = (2*remodel_data_.sequence.length()) - archive_pose.total_residue();
 			// append a tail of the same length
-			for (Size i = 1; i<= len_diff; i++){
+			for ( Size i = 1; i<= len_diff; i++ ) {
 				//core::chemical::ResidueTypeSet const & rsd_set = (archive_pose.residue(2).residue_type_set());
 				core::chemical::ResidueTypeSetCOP const & rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map("VAL") ) );
@@ -415,29 +413,27 @@ void VarLengthBuild::apply( Pose & pose ) {
 				archive_pose.conformation().insert_ideal_geometry_at_polymer_bond(archive_pose.total_residue()-1);
 				archive_pose.set_omega(archive_pose.total_residue()-1,180);
 			}
-		}
-
-		else if ( archive_pose.total_residue() > (remodel_data_.sequence.length()*2)){
-			while (archive_pose.total_residue() != (2* remodel_data_.sequence.length())){
+		} else if ( archive_pose.total_residue() > (remodel_data_.sequence.length()*2) ) {
+			while ( archive_pose.total_residue() != (2* remodel_data_.sequence.length()) ) {
 				archive_pose.conformation().delete_residue_slow(archive_pose.total_residue());
 			}
 		}
 
-	    // take care of terminal types
-	  core::pose::add_variant_type_to_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, pose.total_residue());
-	  core::pose::add_variant_type_to_pose_residue( archive_pose, core::chemical::UPPER_TERMINUS_VARIANT, archive_pose.total_residue());
+		// take care of terminal types
+		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, pose.total_residue());
+		core::pose::add_variant_type_to_pose_residue( archive_pose, core::chemical::UPPER_TERMINUS_VARIANT, archive_pose.total_residue());
 
 
 		assert( pose.total_residue() == (2* remodel_data_.sequence.length()));
 		repeat_tail_length_ = remodel_data_.sequence.length();
 
 		//update the new lengthened pose with pose angles.
-		for (Size i = remodel_data_.sequence.length()+1, j=1; i<= pose.total_residue(); i++,j++){
-			if (cached_phi.size() != 0){
+		for ( Size i = remodel_data_.sequence.length()+1, j=1; i<= pose.total_residue(); i++,j++ ) {
+			if ( cached_phi.size() != 0 ) {
 				pose.set_phi(i, cached_phi[j]);
 				pose.set_psi(i, cached_psi[j]);
 				pose.set_omega(i, cached_omega[j]);
-			}else {
+			} else {
 				pose.set_phi(i, 150);
 				pose.set_psi(i, 150);
 				pose.set_omega(i, 180);
@@ -448,13 +444,13 @@ void VarLengthBuild::apply( Pose & pose ) {
 	//flo may '12, give user supplied setup movers
 	//a chance to modify the pose before centroid building happens
 	//pose.dump_pdb("vlb_bef_setup_movers.pdb");
-	for( 	utility::vector1< moves::MoverOP >::iterator mover_it( setup_movers_.begin() ); mover_it != setup_movers_.end(); ++mover_it ){
+	for (  utility::vector1< moves::MoverOP >::iterator mover_it( setup_movers_.begin() ); mover_it != setup_movers_.end(); ++mover_it ) {
 		(*mover_it)->apply( pose );
 	}
 	//pose.dump_pdb("vlb_aft_setup_movers.pdb");
 
 	// fix the abego string to deal with ligands that might have been added to the pose
-	if( abego_.size() > 0 ) {
+	if ( abego_.size() > 0 ) {
 		TR << "Abego size=" << abego_.size() << " and pose size=" << pose.total_residue() << std::endl;
 		//runtime_assert( abego_.size() <= pose.total_residue() );
 		// account for possible ligands in the pose
@@ -485,15 +481,15 @@ void VarLengthBuild::apply( Pose & pose ) {
 		core::util::switch_to_residue_type_set( pose, archive_pose.residue( 1 ).residue_type_set().name() );
 	}
 
-  if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
-	  if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure] == 1){
-		  // do nothing
-	  } else {
-		//remove the added residue
-		//pose.conformation().delete_residue_slow(pose.total_residue());
-    //need to extend the archive pose, otherwise the connectivity is wrong
+	if ( basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user() ) {
+		if ( basic::options::option[basic::options::OptionKeys::remodel::repeat_structure] == 1 ) {
+			// do nothing
+		} else {
+			//remove the added residue
+			//pose.conformation().delete_residue_slow(pose.total_residue());
+			//need to extend the archive pose, otherwise the connectivity is wrong
 
-			for(Size ii = 1; ii<=remodel_data_.sequence.length(); ++ii){
+			for ( Size ii = 1; ii<=remodel_data_.sequence.length(); ++ii ) {
 				ResidueType const & rsd_type(pose.residue_type(ii));
 				Size res1 = ii;
 				Size res2 = ii+remodel_data_.sequence.length();
@@ -501,10 +497,10 @@ void VarLengthBuild::apply( Pose & pose ) {
 				replace_pose_residue_copying_existing_coordinates(archive_pose,res2,rsd_type);
 			}
 
-      using namespace protocols::loops;
-      using protocols::forge::methods::intervals_to_loops;
+			using namespace protocols::loops;
+			using protocols::forge::methods::intervals_to_loops;
 
-      std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
+			std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
 
 			LoopsOP loops( new Loops() );
 
@@ -513,25 +509,25 @@ void VarLengthBuild::apply( Pose & pose ) {
 			//archive pose extension, it is only special for de novo case
 			//std::cout << (*(loop_intervals.begin())).left << "left" << std::endl;
 			//std::cout << (*(loop_intervals.begin())).right << "right" << std::endl;
-			if (loop_intervals.size() == 1 && (*(loop_intervals.begin())).left == 1 && (*(loop_intervals.begin())).right == remodel_data_.blueprint.size()){
-			//	std::cout << "man handle loop." << std::endl;
+			if ( loop_intervals.size() == 1 && (*(loop_intervals.begin())).left == 1 && (*(loop_intervals.begin())).right == remodel_data_.blueprint.size() ) {
+				// std::cout << "man handle loop." << std::endl;
 				loops->add_loop( Loop(1, remodel_data_.blueprint.size()+2, 0, 0, true) );
 			} else {
-        loops = LoopsOP( new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) ) );
+				loops = LoopsOP( new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) ) );
 			}
 
-      Pose bufferPose(archive_pose);
-      protocols::forge::remodel::RemodelLoopMover RLM(loops);
-      RLM.set_repeat_tail_length(repeat_tail_length_);
-      RLM.repeat_generation_with_additional_residue( bufferPose, archive_pose );
-		  if ( option[ OptionKeys::symmetry::symmetry_definition].user()){
-			  //symmetrize if both rep+sym are used
-			  simple_moves::symmetry::SetupForSymmetryMover pre_mover;
-			  pre_mover.apply(archive_pose);
-			  archive_pose.pdb_info()->obsolete(true);
-		  }
+			Pose bufferPose(archive_pose);
+			protocols::forge::remodel::RemodelLoopMover RLM(loops);
+			RLM.set_repeat_tail_length(repeat_tail_length_);
+			RLM.repeat_generation_with_additional_residue( bufferPose, archive_pose );
+			if ( option[ OptionKeys::symmetry::symmetry_definition].user() ) {
+				//symmetrize if both rep+sym are used
+				simple_moves::symmetry::SetupForSymmetryMover pre_mover;
+				pre_mover.apply(archive_pose);
+				archive_pose.pdb_info()->obsolete(true);
+			}
 
-	  }
+		}
 	}
 	// recover side chains in fixed regions
 
@@ -539,13 +535,12 @@ void VarLengthBuild::apply( Pose & pose ) {
 
 	// finalize wrt to success/failure
 	if ( get_last_move_status() == MS_SUCCESS ) {
-		if (!basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()) {
+		if ( !basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::bypass_closure].user() ) {
 			// seal the tree
-			if (core::pose::symmetry::is_symmetric(pose) ) {
+			if ( core::pose::symmetry::is_symmetric(pose) ) {
 				pose.fold_tree ( core::pose::symmetry::sealed_symmetric_fold_tree( pose ) );
 			} else {
-				if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()){
-				}
+				if ( basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user() ) {}
 				else {
 					pose.fold_tree( fold_tree_from_pose( pose, pose.fold_tree().root(), MoveMap() ) );
 				}
@@ -559,9 +554,9 @@ void VarLengthBuild::apply( Pose & pose ) {
 		pose = archive_pose;
 
 	}
-//	pose.dump_pdb("vlb_aft_everything.pdb");
-//	std::cout << "fold tree after everything: " << pose.fold_tree() << std::endl;
-//	std::cout << "cutpoints: " << pose.fold_tree().cutpoints() << std::endl;
+	// pose.dump_pdb("vlb_aft_everything.pdb");
+	// std::cout << "fold tree after everything: " << pose.fold_tree() << std::endl;
+	// std::cout << "cutpoints: " << pose.fold_tree().cutpoints() << std::endl;
 }
 
 
@@ -590,17 +585,17 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 	// grab new secondary structure
 	String ss;
 	if ( !new_secondary_structure_override_.empty() ) { // user has overridden the string auto-setup
-/*
+		/*
 		// first check to make sure length of the override string corresponds
 		// to the working pose
 		if ( new_secondary_structure_override_.length() != pose.n_residue() ) {
-			// fail fast
-			TR.Error << "ERROR: new secondary structure override string not equal in length to newly modified Pose."
-				<< " Expected " << pose.n_residue() << " but found " << new_secondary_structure_override_.length()
-				<< ".  Programmer mistake!" << std::endl;
-			runtime_assert( false );
+		// fail fast
+		TR.Error << "ERROR: new secondary structure override string not equal in length to newly modified Pose."
+		<< " Expected " << pose.n_residue() << " but found " << new_secondary_structure_override_.length()
+		<< ".  Programmer mistake!" << std::endl;
+		runtime_assert( false );
 		}
-*/
+		*/
 		ss = new_secondary_structure_override_;
 
 	} else { // auto-setup, take directly from the pose
@@ -613,13 +608,13 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 
 		// first check to make sure length of the override string corresponds
 		// to the working pose
-//		if ( new_sequence_override_.length() != pose.n_residue() ) {
-//			// fail fast
-//			TR.Error << "ERROR: new sequence override string not equal in length to newly modified Pose."
-//				<< " Expected " << pose.n_residue() << " but found " << new_sequence_override_.length()
-//				<< ".  Programmer mistake!" << std::endl;
-//			runtime_assert( false );
-//		}
+		//  if ( new_sequence_override_.length() != pose.n_residue() ) {
+		//   // fail fast
+		//   TR.Error << "ERROR: new sequence override string not equal in length to newly modified Pose."
+		//    << " Expected " << pose.n_residue() << " but found " << new_sequence_override_.length()
+		//    << ".  Programmer mistake!" << std::endl;
+		//   runtime_assert( false );
+		//  }
 
 		aa = new_sequence_override_;
 
@@ -649,7 +644,7 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 	// identify regions to rebuild and pick fragments
 	std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
 
-	if (basic::options::option[basic::options::OptionKeys::remodel::domainFusion::insert_segment_from_pdb].user()){
+	if ( basic::options::option[basic::options::OptionKeys::remodel::domainFusion::insert_segment_from_pdb].user() ) {
 		//unfortunately hacky...  pre-process interval sets to make sure fragments
 		//aren't picked for the insertion region;  should move this processing to
 		//buildManager at some point
@@ -658,28 +653,28 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 		Size insertStartIndex = remodel_data_.dssp_updated_ss.find_first_of("I");
 		Size insertEndIndex = remodel_data_.dssp_updated_ss.find_last_of("I");
 
-			//loop over the interval set to find insertion and split it into two sections
-			for ( std::set< Interval >::iterator i = loop_intervals.begin(), ie = loop_intervals.end(); i != ie; ++i ) {
-				Interval interval = *i;
+		//loop over the interval set to find insertion and split it into two sections
+		for ( std::set< Interval >::iterator i = loop_intervals.begin(), ie = loop_intervals.end(); i != ie; ++i ) {
+			Interval interval = *i;
 
-				if (interval.left <= insertStartIndex && interval.right >= insertEndIndex && ((insertEndIndex-insertStartIndex) != 0)){
-					//found insertion
+			if ( interval.left <= insertStartIndex && interval.right >= insertEndIndex && ((insertEndIndex-insertStartIndex) != 0) ) {
+				//found insertion
 
-					//create new left interval
-					Interval split_interval_left(interval.left, insertStartIndex);
-					//create new right interval
-					Interval split_interval_right(insertEndIndex, interval.right);
+				//create new left interval
+				Interval split_interval_left(interval.left, insertStartIndex);
+				//create new right interval
+				Interval split_interval_right(insertEndIndex, interval.right);
 
-					//insert the intervals to loop_intervals definition
-					loop_intervals.insert(split_interval_left);
-					loop_intervals.insert(split_interval_right);
+				//insert the intervals to loop_intervals definition
+				loop_intervals.insert(split_interval_left);
+				loop_intervals.insert(split_interval_right);
 
-					//delete the current interval
-					loop_intervals.erase( i );
+				//delete the current interval
+				loop_intervals.erase( i );
 
-					break; //expect only one insertion, so can jump out if found one.
-				}
+				break; //expect only one insertion, so can jump out if found one.
 			}
+		}
 
 		// pick fragments for insertion case
 		for ( std::set< Interval >::const_iterator i = loop_intervals.begin(), ie = loop_intervals.end(); i != ie; ++i ) {
@@ -702,9 +697,9 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 
 		Size n_cuts = count_cutpoints( pose, interval.left, interval.right );
 
-		if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
+		if ( basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user() ) {
 			//if (interval.right == pose.total_residue()){
-			if (interval.right == remodel_data_.blueprint.size()){
+			if ( interval.right == remodel_data_.blueprint.size() ) {
 				//interval.right = interval.right + repeat_tail_length_; // pad interval to include the extra shadow residue in pose
 				interval.right = interval.right + 2; // pad interval to include the extra shadow residue in pose
 			}
@@ -715,21 +710,21 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 		runtime_assert( n_cuts < 2 );
 
 		// setup regions
-		if (interval.left != 1 && interval.right != pose.n_residue()){ //internal loop
+		if ( interval.left != 1 && interval.right != pose.n_residue() ) { //internal loop
 
 			Size cutpoint = find_cutpoint( pose, interval.left, interval.right );
 
 			loops->add_loop( Loop( interval.left, interval.right, cutpoint, 0.0, true ) );
-			if (cutpoint == 0){
+			if ( cutpoint == 0 ) {
 				loops->choose_cutpoints(pose);
 			}
 
 		} else if ( n_cuts == 0 ) { // fragment only region
 
-			if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user())	{
+			if ( basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user() ) {
 				loops->add_loop( Loop( interval.left, interval.right, 0, 0.0, true ) );//pick additional frame for connection to repeats
-			}else{
-			loops->add_loop( Loop( interval.left, interval.right, 0, 0.0, true ) );
+			} else {
+				loops->add_loop( Loop( interval.left, interval.right, 0, 0.0, true ) );
 			}
 		}
 
@@ -752,26 +747,26 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 	TR << "total 1-mer fragments: " << frag1_->size() << std::endl;
 
 	switch ( vall_memory_usage_ ) {
-		case VLB_VallMemoryUsage::KEEP_IN_MEMORY:
-			break;
-		case VLB_VallMemoryUsage::CLEAR_IF_CACHING_FRAGMENTS:
-			if ( cache_fragments_ ) {
-				/// WARNING WARNING WARNING! THREAD UNSAFE!  WHY WOULD YOU THINK THIS IS A GOOD IDEA?
-				FragmentLibraryManager::get_instance()->clear_Vall();
-			}
-			break;
-		case VLB_VallMemoryUsage::ALWAYS_CLEAR:
+	case VLB_VallMemoryUsage::KEEP_IN_MEMORY :
+		break;
+	case VLB_VallMemoryUsage::CLEAR_IF_CACHING_FRAGMENTS :
+		if ( cache_fragments_ ) {
 			/// WARNING WARNING WARNING! THREAD UNSAFE!  WHY WOULD YOU THINK THIS IS A GOOD IDEA?
 			FragmentLibraryManager::get_instance()->clear_Vall();
-			break;
-		default:
-			break;
+		}
+		break;
+	case VLB_VallMemoryUsage::ALWAYS_CLEAR :
+		/// WARNING WARNING WARNING! THREAD UNSAFE!  WHY WOULD YOU THINK THIS IS A GOOD IDEA?
+		FragmentLibraryManager::get_instance()->clear_Vall();
+		break;
+	default :
+		break;
 	}
 
 	//setup eventual remodel constraints
 	setup_remodel_constraints( pose );
 
-	if ( (!ignore_cmdline_enzdes_cstfile_) && basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ){
+	if ( (!ignore_cmdline_enzdes_cstfile_) && basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ) {
 
 		protocols::forge::remodel::RemodelEnzdesCstModuleOP cstOP( new protocols::forge::remodel::RemodelEnzdesCstModule(remodel_data_) );
 
@@ -788,16 +783,16 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 		cstOP->enable_constraint_scoreterms(sfx_);
 	}
 
-	if (basic::options::option[ basic::options::OptionKeys::constraints::cst_file ].user()){
-				//safety
-				pose.remove_constraints();
+	if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_file ].user() ) {
+		//safety
+		pose.remove_constraints();
 
-				protocols::simple_moves::ConstraintSetMoverOP constraint( new protocols::simple_moves::ConstraintSetMover() );
-				constraint->apply( pose );
+		protocols::simple_moves::ConstraintSetMoverOP constraint( new protocols::simple_moves::ConstraintSetMover() );
+		constraint->apply( pose );
 
-				sfx_->set_weight(core::scoring::atom_pair_constraint, 1.0);
-				sfx_->set_weight(core::scoring::dihedral_constraint, 10.0);
-  }
+		sfx_->set_weight(core::scoring::atom_pair_constraint, 1.0);
+		sfx_->set_weight(core::scoring::dihedral_constraint, 10.0);
+	}
 
 
 	// setup loop building protocol
@@ -816,7 +811,7 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 	// evaluate all chainbreaks using linear chainbreak
 	bool cbreaks_pass = true;
 
-	if (basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::bypass_closure].user() ){
+	if ( basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::bypass_closure].user() ) {
 		return cbreaks_pass;
 	}
 
@@ -855,7 +850,7 @@ VarLengthBuild::MoverOP VarLengthBuild::loop_mover_instance(
 		loop_mover->remodelData(remodel_data_);
 		loop_mover->scorefunction( *sfx_ );
 
-		if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
+		if ( basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user() ) {
 			loop_mover->set_repeat_tail_length( repeat_tail_length_ );
 		}
 
@@ -868,9 +863,9 @@ VarLengthBuild::MoverOP VarLengthBuild::loop_mover_instance(
 
 		loop_mover->false_movemap( false_mm );
 
-		if( loop_mover_fold_tree_constant_ ) loop_mover->set_keep_input_foldtree(true);
+		if ( loop_mover_fold_tree_constant_ ) loop_mover->set_keep_input_foldtree(true);
 
-		if( user_provided_movers_.size() != 0 ){
+		if ( user_provided_movers_.size() != 0 ) {
 			loop_mover->set_user_provided_movers( user_provided_movers_ );
 			loop_mover->user_provided_movers_apply_cycle( user_provided_movers_apply_cycle_ );
 		}
@@ -921,7 +916,7 @@ void VarLengthBuild::pick_all_fragments(
 
 	// pick full-mers
 	if ( use_fullmer_ ) {
-		if ( !fragfull_.get() ){
+		if ( !fragfull_.get() ) {
 			fragfull_ = OrderedFragSetOP( new OrderedFragSet() );
 		}
 
@@ -932,9 +927,9 @@ void VarLengthBuild::pick_all_fragments(
 	if ( !frag9_.get() ) {
 		frag9_ = ConstantLengthFragSetOP( new ConstantLengthFragSet( 9 ) );
 	}
-	if ( basic::options::option[basic::options::OptionKeys::in::file::frag9].user() ){
-    frag9_->read_fragment_file( basic::options::option[basic::options::OptionKeys::in::file::frag9]());
-  } else {
+	if ( basic::options::option[basic::options::OptionKeys::in::file::frag9].user() ) {
+		frag9_->read_fragment_file( basic::options::option[basic::options::OptionKeys::in::file::frag9]());
+	} else {
 		frag9_->add( pick_fragments( complete_ss, complete_aa, complete_abego, interval, 9, n_frags ) );
 	}
 
@@ -943,13 +938,13 @@ void VarLengthBuild::pick_all_fragments(
 		frag3_ = ConstantLengthFragSetOP( new ConstantLengthFragSet( 3 ) );
 	}
 	ConstantLengthFragSetOP tmp_frag3( new ConstantLengthFragSet( 3 ) );
-	if ( basic::options::option[basic::options::OptionKeys::in::file::frag3].user() ){
-    tmp_frag3->read_fragment_file( basic::options::option[basic::options::OptionKeys::in::file::frag3]());
-    frag3_->read_fragment_file( basic::options::option[basic::options::OptionKeys::in::file::frag3]());
-  } else {
-    tmp_frag3->add( pick_fragments( complete_ss, complete_aa, complete_abego, interval, 3, n_frags ) );
-    frag3_->add( *tmp_frag3 );
-  }
+	if ( basic::options::option[basic::options::OptionKeys::in::file::frag3].user() ) {
+		tmp_frag3->read_fragment_file( basic::options::option[basic::options::OptionKeys::in::file::frag3]());
+		frag3_->read_fragment_file( basic::options::option[basic::options::OptionKeys::in::file::frag3]());
+	} else {
+		tmp_frag3->add( pick_fragments( complete_ss, complete_aa, complete_abego, interval, 3, n_frags ) );
+		frag3_->add( *tmp_frag3 );
+	}
 
 	// make 1-mers from 3-mers
 	if ( !frag1_.get() ) {
@@ -1009,7 +1004,7 @@ VarLengthBuild::FrameList VarLengthBuild::pick_fragments(
 			runtime_assert( complete_ss.length() == complete_abego.size() );
 			Size pos( 1 );
 			abego_sub.resize( frag_length );
-			for( Size ii = interval.left + j; ii <= interval.left + j + frag_length - 1; ++ii, ++pos ) {
+			for ( Size ii = interval.left + j; ii <= interval.left + j + frag_length - 1; ++ii, ++pos ) {
 				if ( ii > complete_abego.size() ) {
 					abego_sub[ pos ] = "X";
 				} else {
@@ -1025,15 +1020,15 @@ VarLengthBuild::FrameList VarLengthBuild::pick_fragments(
 		frame->add_fragment( pick_fragments( ss_sub, aa_sub, abego_sub, n_frags, true, IndependentBBTorsionSRFD() ) );
 
 		// pick wrt sec.struct and possibly sequence bias
-		//	if ( !complete_aa.empty() ) {
-		//		String aa_sub = complete_aa.substr( interval.left + j - 1, frag_length );
-		//		if ( aa_sub.length() < frag_length ) {
-		//			aa_sub.append( frag_length - aa_sub.length(), '.' );
-		//		}
-		//		frame->add_fragment( pick_fragments_by_ss_plus_aa( ss_sub, aa_sub, n_frags, true, IndependentBBTorsionSRFD() ) );
-		//	} else {
-		//		frame->add_fragment( pick_fragments_by_ss( ss_sub, n_frags, true, IndependentBBTorsionSRFD() ) );
-		//	}
+		// if ( !complete_aa.empty() ) {
+		//  String aa_sub = complete_aa.substr( interval.left + j - 1, frag_length );
+		//  if ( aa_sub.length() < frag_length ) {
+		//   aa_sub.append( frag_length - aa_sub.length(), '.' );
+		//  }
+		//  frame->add_fragment( pick_fragments_by_ss_plus_aa( ss_sub, aa_sub, n_frags, true, IndependentBBTorsionSRFD() ) );
+		// } else {
+		//  frame->add_fragment( pick_fragments_by_ss( ss_sub, n_frags, true, IndependentBBTorsionSRFD() ) );
+		// }
 
 		frames.push_back( frame );
 	}
@@ -1051,7 +1046,7 @@ VarLengthBuild::setup_remodel_constraints(
 		return; // nothing to do...
 	}
 
-	for( utility::vector1< RemodelConstraintGeneratorOP >::iterator rcg_it = rcgs_.begin(); rcg_it != rcgs_.end(); ++rcg_it ){
+	for ( utility::vector1< RemodelConstraintGeneratorOP >::iterator rcg_it = rcgs_.begin(); rcg_it != rcgs_.end(); ++rcg_it ) {
 		(*rcg_it)->set_seqmap( this->manager().sequence_mapping());
 		TR << "Adding remodel constraints to pose using " << (*rcg_it)->get_name() << std::endl;
 		(*rcg_it)->add_remodel_constraints_to_pose( pose );
@@ -1068,7 +1063,7 @@ VarLengthBuild::remove_remodel_constraints(
 		return; // nothing to do...
 	}
 
-	for( utility::vector1< RemodelConstraintGeneratorOP >::iterator rcg_it = rcgs_.begin(); rcg_it != rcgs_.end(); ++rcg_it ){
+	for ( utility::vector1< RemodelConstraintGeneratorOP >::iterator rcg_it = rcgs_.begin(); rcg_it != rcgs_.end(); ++rcg_it ) {
 		(*rcg_it)->remove_remodel_constraints_from_pose( pose );
 	}
 }

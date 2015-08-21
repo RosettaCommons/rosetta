@@ -33,36 +33,36 @@ namespace scoring {
 namespace rna {
 namespace data {
 
-	core::Size
-	lookup_idx( Real const value, utility::vector1< Real > & values ) {
-		if ( values.has_value( value ) ) return values.index( value );
+core::Size
+lookup_idx( Real const value, utility::vector1< Real > & values ) {
+	if ( values.has_value( value ) ) return values.index( value );
 
-		// values must be read in in increasing order -- sanity check.
-		for ( Size n = 1; n <= values.size(); n++ ) runtime_assert( value > values[n] );
+	// values must be read in in increasing order -- sanity check.
+	for ( Size n = 1; n <= values.size(); n++ ) runtime_assert( value > values[n] );
 
-		values.push_back( value );
-		return values.size();
+	values.push_back( value );
+	return values.size();
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+Size
+get_bool_idx( bool const value, utility::vector1< bool > const & values ){
+	for ( Size n = 1; n <= values.size(); n++ ) {
+		if ( value == values[ n ] ) return n;
 	}
+	return 0;
+}
 
-	//////////////////////////////////////////////////////////////////////////////////
-	Size
-	get_bool_idx( bool const value, utility::vector1< bool > const & values ){
-		for ( Size n = 1; n <= values.size(); n++ ){
-			if ( value == values[ n ] ) return n;
-		}
-		return 0;
+//////////////////////////////////////////////////////////////////////////////////
+// Later upgrade to return how far into bin the value is, then carry out bilinear
+//  interpolation & derivs.
+Size
+get_idx( Real const value, utility::vector1< Real > const & values ){
+	for ( Size n = 1; n < values.size(); n++ ) {
+		if ( value >= values[ n ] && value < values[ n+1 ] ) return n;
 	}
-
-	//////////////////////////////////////////////////////////////////////////////////
-	// Later upgrade to return how far into bin the value is, then carry out bilinear
-	//  interpolation & derivs.
-	Size
-	get_idx( Real const value, utility::vector1< Real > const & values ){
-		for ( Size n = 1; n < values.size(); n++ ){
-			if ( value >= values[ n ] && value < values[ n+1 ] ) return n;
-		}
-		return values.size();
-	}
+	return values.size();
+}
 
 
 } //data

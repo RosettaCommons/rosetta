@@ -8,11 +8,11 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file utility/lua/LuaObject.hh
-/// @brief A wrapper around a luabind::object 
+/// @brief A wrapper around a luabind::object
 /// has bool conversion, [] support, nested table support, and a .to<T>() conversion function
 /// since a luabind::object is actually a pointer to the stack of a luastate object,
 /// if the luastate object is destroyed, before this wrapper class is destroyed, i don't know what will happen
-// 
+//
 // this is really just a convenience class
 /// @author Ken Jung
 
@@ -25,7 +25,7 @@
 #ifdef USELUA
 #include <lua.hpp>
 #include <luabind/luabind.hpp>
-#endif 
+#endif
 
 #include <iostream>
 #include <typeinfo>
@@ -36,7 +36,7 @@ namespace lua {
 
 class LuaObject {
 
-		public:
+public:
 #ifdef USELUA
     LuaObject( luabind::object object) :
 						object_(object) {}
@@ -51,23 +51,23 @@ class LuaObject {
 
 #endif
 
-    LuaObject(){}
+	LuaObject(){}
 
-				~LuaObject(){}
+	~LuaObject(){}
 
-				operator bool();
+	operator bool();
 
-				LuaIterator begin() const;
+	LuaIterator begin() const;
 
-				int size() const;
+	int size() const;
 
-				LuaObject operator[] ( std::string const & str ) const;
+	LuaObject operator[] ( std::string const & str ) const;
 
-				LuaObject operator[] ( const char *  str ) const;
+	LuaObject operator[] ( const char *  str ) const;
 
-				LuaObject operator[] ( int i ) const;
+	LuaObject operator[] ( int i ) const;
 
-				template <class T> T to() const {
+	template <class T> T to() const {
 #ifdef USELUA
 						if( ! object_.is_valid() ) {
 								std::cerr << "------Error in casting LuaObject to C++ type!-------" << std::endl
@@ -121,15 +121,15 @@ class LuaObject {
 						}
 						utility_exit_with_message("");
 #else
-						utility_exit_with_message("Can't use LuaObject without compiling with USELUA flag" );
-						// AMW: cppcheck will flag this extraneous return following a utility_exit
-						// The trouble is that acknowledging this will kill the windows.cl.PyRosetta build
-						T t;
-						return t;
+		utility_exit_with_message("Can't use LuaObject without compiling with USELUA flag" );
+		// AMW: cppcheck will flag this extraneous return following a utility_exit
+		// The trouble is that acknowledging this will kill the windows.cl.PyRosetta build
+		T t;
+		return t;
 #endif
-				}
+	}
 
-		private:
+private:
 #ifdef USELUA
 				luabind::object object_;
 #endif

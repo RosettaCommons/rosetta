@@ -94,8 +94,8 @@ public:
 	///
 	inline core::PackerEnergy project_deltaE_for_substitution
 	(
-			int alternate_state,
-			core::PackerEnergy & prev_node_energy
+		int alternate_state,
+		core::PackerEnergy & prev_node_energy
 	);
 	void commit_considered_substitution();
 
@@ -104,22 +104,22 @@ public:
 	/// by switching this node from its current state into another state
 	void project_deltaE_for_substitution
 	(
-			int alternate_state,
-			core::PackerEnergy & deltaE_unweighted,
-			core::PackerEnergy & prevE_unweighted,
-			core::PackerEnergy& deltaE_weighted,
-			core::PackerEnergy& prevE_weighted,
-			ObjexxFCL::FArray2D< core::PackerEnergy > const& weights
+		int alternate_state,
+		core::PackerEnergy & deltaE_unweighted,
+		core::PackerEnergy & prevE_unweighted,
+		core::PackerEnergy& deltaE_weighted,
+		core::PackerEnergy& prevE_weighted,
+		ObjexxFCL::FArray2D< core::PackerEnergy > const& weights
 	);
 	core::PackerEnergy get_weighted_energy_with_higher_indexed_nodes(ObjexxFCL::FArray2D< core::PackerEnergy > const& weights) const;
 	// </directed_design>
 
 	inline
 	void acknowledge_neighbors_state_substitution(
-			int edge_to_altered_neighbor,
-			core::PackerEnergy new_edge_energy,
-			int other_node_new_state,
-			SparseMatrixIndex const & other_node_new_state_sparse_info);
+		int edge_to_altered_neighbor,
+		core::PackerEnergy new_edge_energy,
+		int other_node_new_state,
+		SparseMatrixIndex const & other_node_new_state_sparse_info);
 
 	SparseMatrixIndex const &
 	get_sparse_mat_info_for_state(int state) const;
@@ -216,7 +216,7 @@ private:
 	core::PackerEnergy alternate_state_total_energy_;
 	std::vector< core::PackerEnergy > alternate_state_two_body_energies_;
 
-/*
+	/*
 	//variables for I/O
 	int num_states_in_file_;
 	ObjexxFCL::FArray1D_int instance_states_2_file_states_;
@@ -224,7 +224,7 @@ private:
 	ObjexxFCL::FArray1D_int aa_types_for_file_states_;
 	ObjexxFCL::FArray1D_int aa_types_for_instance_states_; //useful only for I/O
 	ObjexxFCL::FArray1D_int num_file_states_for_aa_;
-*/
+	*/
 	bool alternate_state_is_being_considered_;
 
 	//no default constructor, uncopyable
@@ -258,10 +258,10 @@ public:
 	core::PackerEnergy get_current_two_body_energy();
 
 	void acknowledge_state_change(
-			int node_ind,
-			int new_state,
-			SparseMatrixIndex const & new_state_sparse_info,
-			core::PackerEnergy & new_energy
+		int node_ind,
+		int new_state,
+		SparseMatrixIndex const & new_state_sparse_info,
+		core::PackerEnergy & new_energy
 	);
 
 	/// @brief updates bookkeeping information when one of the two nodes enters its
@@ -271,32 +271,32 @@ public:
 	static
 	inline
 	core::PackerEnergy get_alternate_state_energy_first_node(
-			int first_node_alt_state,
-			int second_node_orig_state,
-			SparseMatrixIndex const & second_node_orig_state_sparse_info,
-			int first_node_state_offset_minus_1,
-			int second_node_curr_num_states_per_aatype,
-			int aa_neighbor_offset,
+		int first_node_alt_state,
+		int second_node_orig_state,
+		SparseMatrixIndex const & second_node_orig_state_sparse_info,
+		int first_node_state_offset_minus_1,
+		int second_node_curr_num_states_per_aatype,
+		int aa_neighbor_offset,
 		ObjexxFCL::FArray1< core::PackerEnergy > & edge_energy_table
 	);
 
 	static
 	inline
 	core::PackerEnergy get_alternate_state_energy_second_node(
-			int first_node_orig_state,
-			int second_node_alt_state,
-			SparseMatrixIndex const & first_node_orig_state_sparse_info,
-			SparseMatrixIndex const & second_node_alternate_state_sparse_info,
-			int second_node_alt_state_num_states_per_aatype,
-			int aa_neighbor_offset,
-			ObjexxFCL::FArray1< core::PackerEnergy > & edge_energy_table
+		int first_node_orig_state,
+		int second_node_alt_state,
+		SparseMatrixIndex const & first_node_orig_state_sparse_info,
+		SparseMatrixIndex const & second_node_alternate_state_sparse_info,
+		int second_node_alt_state_num_states_per_aatype,
+		int aa_neighbor_offset,
+		ObjexxFCL::FArray1< core::PackerEnergy > & edge_energy_table
 	);
 
 	inline void acknowledge_substitution(
-			int substituted_node_index,
-			core::PackerEnergy const curr_state_energy,
-			int nodes_new_state,
-			SparseMatrixIndex const & nodes_new_state_sparse_info
+		int substituted_node_index,
+		core::PackerEnergy const curr_state_energy,
+		int nodes_new_state,
+		SparseMatrixIndex const & nodes_new_state_sparse_info
 	);
 
 	/// @brief Returns the array of offsets into the sparse two-body energy table
@@ -320,17 +320,17 @@ public:
 		int node2aa
 	) const;
 
-/*
+	/*
 	void read_edge_energies_from_file( std::ifstream & infile );
 	static void skip_over_edge_energies_from_file
 	(
-			std::ifstream & infile,
-			int num_aa,
-			ObjexxFCL::FArray1_int & num_file_states_for_aa_node1,
-			ObjexxFCL::FArray1_int & num_file_states_for_aa_node2
+	std::ifstream & infile,
+	int num_aa,
+	ObjexxFCL::FArray1_int & num_file_states_for_aa_node1,
+	ObjexxFCL::FArray1_int & num_file_states_for_aa_node2
 	);
 	void write_edge_energies_to_file( std::ofstream & outfile );
-*/
+	*/
 
 	virtual void set_edge_weight( Real weight );
 
@@ -409,7 +409,7 @@ public:
 	virtual unsigned int count_dynamic_memory() const;
 
 
-/*
+	/*
 	//Methods for I/O
 	void prepare_to_read_energies_from_file();
 	void declare_finished_reading_from_file();
@@ -428,7 +428,7 @@ public:
 
 	void read_edge_energies_from_file( std::ifstream & infile );
 	void write_edge_energies_to_file( std::ofstream & outfile );
-*/
+	*/
 
 	/// @brief a user may define subsets of the vertex set for which they would like to
 	/// know the internal energy sum.
@@ -439,14 +439,14 @@ public:
 	core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int & node_states, ObjexxFCL::FArray2D< core::PackerEnergy > const& weights);
 	virtual void consider_substitution
 	(
-	 int node_ind,
-	 int new_state,
-	 core::PackerEnergy & deltaE_unweighted,
-	 core::PackerEnergy & prevE_unweighted, // !!! remember this is the energy just for this node
-	 core::PackerEnergy & deltaE_weighted,
-	 core::PackerEnergy & prevE_weighted,
-	 ObjexxFCL::FArray2D< core::PackerEnergy > const& weights
-	 );
+		int node_ind,
+		int new_state,
+		core::PackerEnergy & deltaE_unweighted,
+		core::PackerEnergy & prevE_unweighted, // !!! remember this is the energy just for this node
+		core::PackerEnergy & deltaE_weighted,
+		core::PackerEnergy & prevE_weighted,
+		ObjexxFCL::FArray2D< core::PackerEnergy > const& weights
+	);
 	virtual core::PackerEnergy commit_considered_substitution(ObjexxFCL::FArray2D< core::PackerEnergy > const& weights);
 	// </directed_design>
 
@@ -612,7 +612,7 @@ PDEdge::get_alternate_state_energy_first_node(
 )
 {
 
-	if (first_node_alt_state == 0 || second_node_orig_state == 0) {
+	if ( first_node_alt_state == 0 || second_node_orig_state == 0 ) {
 		return 0.0f;
 	} else {
 		return AminoAcidNeighborSparseMatrix< float >::get(
@@ -647,7 +647,7 @@ PDEdge::acknowledge_substitution(
 	curr_state_energy_ = curr_state_energy;
 
 	get_pd_node( node_not_substituted )->
-	acknowledge_neighbors_state_substitution (
+		acknowledge_neighbors_state_substitution (
 		get_edges_position_in_nodes_edge_vector( node_not_substituted ),
 		curr_state_energy_,
 		nodes_new_state,
@@ -688,7 +688,7 @@ PDEdge::get_alternate_state_energy_second_node(
 )
 {
 
-	if (first_node_orig_state == 0 || second_node_alt_state == 0) {
+	if ( first_node_orig_state == 0 || second_node_alt_state == 0 ) {
 		return 0.0f;
 	} else {
 		return AminoAcidNeighborSparseMatrix< float >::get(
@@ -703,12 +703,12 @@ PDEdge::get_alternate_state_energy_second_node(
 /// @brief updates bookkeeping arrays for when a neighbor has changed its state
 ///
 /// @param edge_to_altered_neighbor - [in] - the index for the edge that connects
-/// 	this node to the node that just changed its state
+///  this node to the node that just changed its state
 /// @param new_edge_energ - [in] - the pair energy between this node in its current
-///	state and the new state of the node that just changed its state
+/// state and the new state of the node that just changed its state
 /// @param other_node_new_state - [in] - the state the neighbor just adopted
 /// @param other_node_new_state_sparse_info - [in] - the sparse-matrix info
-///	corresponding to the neighbor's new state
+/// corresponding to the neighbor's new state
 ///
 inline
 void PDNode::acknowledge_neighbors_state_substitution(
@@ -769,55 +769,55 @@ PDNode::project_deltaE_for_substitution(
 		index(1, 1, alt_state_sparse_mat_info_.get_aa_type() ) - 1;
 
 
-	for (int ii = 1; ii <= get_num_edges_to_smaller_indexed_nodes();
-		++ii, aa_neighb_linear_index_offset += num_aa_types_) {
+	for ( int ii = 1; ii <= get_num_edges_to_smaller_indexed_nodes();
+			++ii, aa_neighb_linear_index_offset += num_aa_types_ ) {
 
 		alternate_state_two_body_energies_[ ii ] =
 			get_incident_pd_edge(ii)->
-				get_alternate_state_energy_second_node(
-				neighbors_curr_state_[ii],
-				alternate_state_,
-				neighbors_curr_state_sparse_info_[ ii ],
-				alt_state_sparse_mat_info_,
-				alt_state_num_states_per_aa_type,
-				aa_offsets_for_edges_[
-					aa_neighb_linear_index_offset +
-					neighbors_curr_state_sparse_info_[ii].get_aa_type()
-				],
-				edge_matrix_ptrs_[ii]
-			);
+			get_alternate_state_energy_second_node(
+			neighbors_curr_state_[ii],
+			alternate_state_,
+			neighbors_curr_state_sparse_info_[ ii ],
+			alt_state_sparse_mat_info_,
+			alt_state_num_states_per_aa_type,
+			aa_offsets_for_edges_[
+			aa_neighb_linear_index_offset +
+			neighbors_curr_state_sparse_info_[ii].get_aa_type()
+			],
+			edge_matrix_ptrs_[ii]
+		);
 		alternate_state_total_energy_ += alternate_state_two_body_energies_[ ii ];
 		//if ( alternate_state_two_body_energies_[ ii ] != 0.0 ) {
-		//	std::cout << "( " << get_index_of_adjacent_node( ii ) << " , " << alternate_state_two_body_energies_[ ii ] <<" ) ";
+		// std::cout << "( " << get_index_of_adjacent_node( ii ) << " , " << alternate_state_two_body_energies_[ ii ] <<" ) ";
 		//}
 	}
 
-	for (int ii = get_num_edges_to_smaller_indexed_nodes() + 1;
-		ii <= get_num_incident_edges();
-		++ii, aa_neighb_linear_index_offset += num_aa_types_,
-		nstates_offset += num_aa_types_) {
+	for ( int ii = get_num_edges_to_smaller_indexed_nodes() + 1;
+			ii <= get_num_incident_edges();
+			++ii, aa_neighb_linear_index_offset += num_aa_types_,
+			nstates_offset += num_aa_types_ ) {
 
 		alternate_state_two_body_energies_[ ii ] =
 			get_incident_pd_edge(ii)->
-				get_alternate_state_energy_first_node(
-				alternate_state_,
-				neighbors_curr_state_[ii],
-				//alt_state_sparse_mat_info_,
-				neighbors_curr_state_sparse_info_[ii],
-				alt_state_for_aa_type_minus_1,
-				num_states_for_aa_type_for_higher_indexed_neighbor_[
-					nstates_offset +
-					neighbors_curr_state_sparse_info_[ii].get_aa_type()
-				],
-				aa_offsets_for_edges_[
-					aa_neighb_linear_index_offset +
-					neighbors_curr_state_sparse_info_[ii].get_aa_type()
-				],
-				edge_matrix_ptrs_[ii]
-			);
+			get_alternate_state_energy_first_node(
+			alternate_state_,
+			neighbors_curr_state_[ii],
+			//alt_state_sparse_mat_info_,
+			neighbors_curr_state_sparse_info_[ii],
+			alt_state_for_aa_type_minus_1,
+			num_states_for_aa_type_for_higher_indexed_neighbor_[
+			nstates_offset +
+			neighbors_curr_state_sparse_info_[ii].get_aa_type()
+			],
+			aa_offsets_for_edges_[
+			aa_neighb_linear_index_offset +
+			neighbors_curr_state_sparse_info_[ii].get_aa_type()
+			],
+			edge_matrix_ptrs_[ii]
+		);
 		alternate_state_total_energy_ += alternate_state_two_body_energies_[ ii ];
 		//if ( alternate_state_two_body_energies_[ ii ] != 0.0 ) {
-		//	std::cout << "( " << get_index_of_adjacent_node( ii ) << " , " << alternate_state_two_body_energies_[ ii ] <<" ) ";
+		// std::cout << "( " << get_index_of_adjacent_node( ii ) << " , " << alternate_state_two_body_energies_[ ii ] <<" ) ";
 		//}
 	}
 

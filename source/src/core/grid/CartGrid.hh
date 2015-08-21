@@ -59,21 +59,20 @@ public:
 
 	virtual ~CartGrid()
 	{
-		if (zones_ !=NULL)
-		{
+		if ( zones_ !=NULL ) {
 			delete [] zones_;
 			zones_ = NULL;
 		}
 	}
 
-/*
+	/*
 	std::ostream & operator<< (Grid<T> const & mygrid)
 	{
-		os <<mygrid.its_bX_ << " " << mygrid.its_bY_ << " " << mygrid.its_bZ_ << " | "
-				<< mygrid.its_tX_ << " " << mygrid.its_tY_ << " " << mygrid.its_tZ_;
-		return os;
+	os <<mygrid.its_bX_ << " " << mygrid.its_bY_ << " " << mygrid.its_bZ_ << " | "
+	<< mygrid.its_tX_ << " " << mygrid.its_tY_ << " " << mygrid.its_tZ_;
+	return os;
 	}
-*/
+	*/
 
 	void setBase(core::Real x, core::Real y, core::Real z)
 	{
@@ -110,50 +109,53 @@ public:
 	int longestSide() const
 	{
 		int ls = this->nX_;
-		if (this->nY_ > ls) ls = this->nY_;
-		if (this->nZ_ > ls) ls = this->nZ_;
+		if ( this->nY_ > ls ) ls = this->nY_;
+		if ( this->nZ_ > ls ) ls = this->nZ_;
 
 		return ls;
 	}
 	bool equalDimensions(CartGrid<T> const & rhs) const
 	{
-		if (nX_ != rhs.nX_)
+		if ( nX_ != rhs.nX_ ) {
 			return false;
-		if (nY_ != rhs.nY_)
+		}
+		if ( nY_ != rhs.nY_ ) {
 			return false;
-		if (nZ_ != rhs.nZ_)
+		}
+		if ( nZ_ != rhs.nZ_ ) {
 			return false;
+		}
 
-		if (lX_ != rhs.lX_)
+		if ( lX_ != rhs.lX_ ) {
 			return false;
-		if (lY_ != rhs.lY_)
+		}
+		if ( lY_ != rhs.lY_ ) {
 			return false;
-		if (lZ_ != rhs.lZ_)
+		}
+		if ( lZ_ != rhs.lZ_ ) {
 			return false;
+		}
 
 		return true;
 	}
 
 	bool equalBase(CartGrid<T> const & rhs) const
 	{
-		if (std::abs(this->bX_ - rhs.bX_) > 0.01) return false;
-		if (std::abs(this->bY_ - rhs.bY_) > 0.01) return false;
-		if (std::abs(this->bZ_ - rhs.bZ_) > 0.01) return false;
+		if ( std::abs(this->bX_ - rhs.bX_) > 0.01 ) return false;
+		if ( std::abs(this->bY_ - rhs.bY_) > 0.01 ) return false;
+		if ( std::abs(this->bZ_ - rhs.bZ_) > 0.01 ) return false;
 		return true;
 	}
 
 	bool is_in_grid(core::Real x, core::Real y, core::Real z) const
 	{
-		if (x < bX_ || x > tX_)
-		{
+		if ( x < bX_ || x > tX_ ) {
 			return false;
 		}
-		if (y < bY_ || y > tY_)
-		{
+		if ( y < bY_ || y > tY_ ) {
 			return false;
 		}
-		if (z < bZ_ || z > tZ_)
-		{
+		if ( z < bZ_ || z > tZ_ ) {
 			return false;
 		}
 
@@ -162,8 +164,7 @@ public:
 
 	bool setupZones()
 	{
-		if (zones_ != NULL)
-		{
+		if ( zones_ != NULL ) {
 			//delete zones_;
 			delete[] zones_;
 			zones_ = NULL;
@@ -190,13 +191,12 @@ public:
 
 	bool setValue(int ix, int iy, int iz, T value)
 	{
-		if (value == 0)
-		{
+		if ( value == 0 ) {
 			fullyOccupied_ = false;
 		}
 
 		int index = this->get_index(ix, iy, iz);
-	debug_assert( index >= 0 && index < npoints_ );
+		debug_assert( index >= 0 && index < npoints_ );
 		this->zones_[index] = value;
 		return true;
 	}
@@ -204,21 +204,21 @@ public:
 
 	bool setValue(core::Real fx, core::Real fy, core::Real fz, T value)
 	{
-		if (value == 0) {
+		if ( value == 0 ) {
 			fullyOccupied_ = false;
 		}
 
 		int ix = int((fx - bX_)/lX_);
-		if (ix < 0 || ix >= nX_) return 0;
+		if ( ix < 0 || ix >= nX_ ) return 0;
 
 		int iy = int((fy - bY_)/lY_);
-		if (iy < 0 || iy >= nY_) return 0;
+		if ( iy < 0 || iy >= nY_ ) return 0;
 
 		int iz = int((fz - bZ_)/lZ_);
-		if (iz < 0 || iz >= nZ_) return 0;
+		if ( iz < 0 || iz >= nZ_ ) return 0;
 
 		int index = this->get_index(ix,iy,iz);
-	debug_assert( index >= 0 && index < npoints_ );
+		debug_assert( index >= 0 && index < npoints_ );
 		this->zones_[index] = value;
 		return true;
 	}
@@ -233,13 +233,13 @@ public:
 	{
 		// --- round down --- //
 		int ix = int((fx - bX_)/lX_);
-		if (ix < 0 || ix >= nX_) return 0;
+		if ( ix < 0 || ix >= nX_ ) return 0;
 
 		int iy = int((fy - bY_)/lY_);
-		if (iy < 0 || iy >= nY_) return 0;
+		if ( iy < 0 || iy >= nY_ ) return 0;
 
 		int iz = int((fz - bZ_)/lZ_);
-		if (iz < 0 || iz >= nZ_) return 0;
+		if ( iz < 0 || iz >= nZ_ ) return 0;
 
 		int index = ix*(nY_*nZ_) + iy*(nZ_) + iz;
 		return this->zones_[index];
@@ -247,16 +247,14 @@ public:
 
 	void zero()
 	{
-		for (int i=0; i < npoints_; i++)
-		{
+		for ( int i=0; i < npoints_; i++ ) {
 			this->zones_[i] = 0;
 		}
 	}
 
 	void setFullOccupied(T value)
 	{
-		for (int i=0; i < npoints_; i++)
-		{
+		for ( int i=0; i < npoints_; i++ ) {
 			this->zones_[i] = value;
 		}
 		fullyOccupied_ = true;
@@ -284,7 +282,7 @@ public:
 
 		copy.setupZones();
 
-		for (int i=0; i < this->npoints_; i++) {
+		for ( int i=0; i < this->npoints_; i++ ) {
 			copy.zones_[i] = this->zones_[i];
 		}
 	}
@@ -298,10 +296,10 @@ public:
 		int maxy = 0;
 		int maxz = 0;
 
-		for (int ix=0; ix < this->nX_; ix++) {
-			for (int iy=0; iy < this->nY_; iy++) {
-				for (int iz=0; iz < this->nZ_; iz++) {
-					if (this->getValue(ix,iy,iz)) {
+		for ( int ix=0; ix < this->nX_; ix++ ) {
+			for ( int iy=0; iy < this->nY_; iy++ ) {
+				for ( int iz=0; iz < this->nZ_; iz++ ) {
+					if ( this->getValue(ix,iy,iz) ) {
 						minx = std::min(minx,ix);
 						miny = std::min(miny,iy);
 						minz = std::min(minz,iz);
@@ -314,7 +312,7 @@ public:
 			}
 		}
 
-		if (maxx*maxy*maxz == 0) {
+		if ( maxx*maxy*maxz == 0 ) {
 			return;   // no change
 		}
 
@@ -337,9 +335,9 @@ public:
 
 		int index2=0;
 		int value = 0;
-		for (int i=0; i < nx; i++) {
-			for (int j=0; j < ny; j++) {
-				for (int k=0; k < nz; k++) {
+		for ( int i=0; i < nx; i++ ) {
+			for ( int j=0; j < ny; j++ ) {
+				for ( int k=0; k < nz; k++ ) {
 					index2 = tmpgrid.get_index(minx+i, miny+j, minz+k);
 					value = tmpgrid.getValue(index2);
 					this->setValue(i,j,k,value);
@@ -350,10 +348,10 @@ public:
 
 	void fluff(utility::pointer::shared_ptr<CartGrid<T> > input, utility::pointer::shared_ptr<CartGrid<T> > original, int amount=6) {
 		int istart, iend, jstart, jend, kstart, kend;
-		for (int i=0; i < input->its_nX_; i++) {
-			for (int j=0; j < input->its_nY_; j++) {
-				for (int k=0; k < input->its_nZ_; k++) {
-					if (input->getValue(i,j,k) != 0) {
+		for ( int i=0; i < input->its_nX_; i++ ) {
+			for ( int j=0; j < input->its_nY_; j++ ) {
+				for ( int k=0; k < input->its_nZ_; k++ ) {
+					if ( input->getValue(i,j,k) != 0 ) {
 						istart = std::max(0, (i-amount));
 						iend   = std::min(input->its_nX_, (i+amount));
 
@@ -363,10 +361,10 @@ public:
 						kstart = std::max(0, (k-amount));
 						kend   = std::min(input->its_nZ_, (k+amount));
 
-						for (int ii=istart; ii < iend; ii++) {
-							for (int jj=jstart; jj < jend; jj++) {
-								for (int kk=kstart; kk < kend; kk++) {
-									if (original->getValue(ii,jj,kk) != 0) {
+						for ( int ii=istart; ii < iend; ii++ ) {
+							for ( int jj=jstart; jj < jend; jj++ ) {
+								for ( int kk=kstart; kk < kend; kk++ ) {
+									if ( original->getValue(ii,jj,kk) != 0 ) {
 										this->setValue(ii,jj,kk,1);
 									}
 								}
@@ -385,7 +383,7 @@ public:
 
 		file.open(filename.c_str());
 
-		if (!file) {
+		if ( !file ) {
 			std::cout << "read_gridfile - unable to open gridfile:" << filename << std::endl;
 			std::exit( EXIT_FAILURE );
 		}
@@ -399,11 +397,11 @@ public:
 		int nx=0, ny=0, nz=0;
 		int ix=0, iy=0;
 
-		while(file) {
+		while ( file ) {
 			getline(file, line);
 
 
-			if (ObjexxFCL::is_blank(line)) {
+			if ( ObjexxFCL::is_blank(line) ) {
 				ix++;
 				iy=0;
 				continue;
@@ -414,22 +412,21 @@ public:
 			line_stream.seekg( std::ios::beg );
 
 			line_stream >> keyword;
-			if (keyword == "NAME:") {
+			if ( keyword == "NAME:" ) {
 				line_stream >> name;
 				this->set_name(name);
-			}
-			else if (keyword == "BASE:") {
+			} else if ( keyword == "BASE:" ) {
 				line_stream >> bx >> by >> bz;
 				this->setBase(bx, by, bz);
-			} else if (keyword == "SIZE:") {
+			} else if ( keyword == "SIZE:" ) {
 				line_stream >> nx >> ny >> nz;
-			} else if (keyword == "LENGTH:") {
+			} else if ( keyword == "LENGTH:" ) {
 				line_stream >> lx >> ly >> lz;
 				this->setDimensions(nx, ny, nz, lx, ly, lz);
 				this->setupZones();
 			} else {
 				line_stream.seekg( std::ios::beg );
-				for (int iz=0; iz < nz; iz++) {
+				for ( int iz=0; iz < nz; iz++ ) {
 					line_stream >> occupied;
 					this->setValue(ix,iy,iz,occupied);
 				}
@@ -448,9 +445,9 @@ public:
 		file << "SIZE: " << this->nX_ << " " << this->nY_ << " " << this->nZ_ << std::endl;
 		file << "LENGTH: " << this->lX_ << " " << this->lY_ << " " << this->lZ_ << std::endl;
 
-		for (int i=0; i < this->nX_; i++) {
-			for (int j=0; j < this->nY_; j++) {
-				for (int k=0; k < this->nZ_; k++) {
+		for ( int i=0; i < this->nX_; i++ ) {
+			for ( int j=0; j < this->nY_; j++ ) {
+				for ( int k=0; k < this->nZ_; k++ ) {
 					file << this->getValue(i,j,k) << " ";
 				}
 				file << std::endl;
@@ -465,8 +462,8 @@ public:
 	}
 
 	bool isEmpty() const {
-		for (int i=0; i < npoints_; i++) {
-			if (this->zones_[i] != 0) {
+		for ( int i=0; i < npoints_; i++ ) {
+			if ( this->zones_[i] != 0 ) {
 				return false;
 			}
 		}
@@ -497,21 +494,21 @@ public:
 		std::string name = grid_data["name"].get_str();
 
 		utility::json_spirit::mArray base_data = grid_data["base"].get_array();
-	debug_assert(base_data.size() == 3);
+		debug_assert(base_data.size() == 3);
 
 		core::Real bX = base_data[0].get_real();
 		core::Real bY = base_data[1].get_real();
 		core::Real bZ = base_data[2].get_real();
 
 		utility::json_spirit::mArray size_data = grid_data["size"].get_array();
-	debug_assert(size_data.size() == 3);
+		debug_assert(size_data.size() == 3);
 
 		int nX = size_data[0].get_int();
 		int nY = size_data[1].get_int();
 		int nZ = size_data[2].get_int();
 
 		utility::json_spirit::mArray length_data = grid_data["length"].get_array();
-	debug_assert(length_data.size() == 3);
+		debug_assert(length_data.size() == 3);
 
 		core::Real lX = length_data[0].get_real();
 		core::Real lY = length_data[1].get_real();
@@ -525,7 +522,7 @@ public:
 		std::string point_data = grid_data["data"].get_str();
 
 		debug_assert( sizeof(T)*(npoints_+2)*4 >= point_data.size()*3 ) // 3 bytes of array data for every 4 bytes of string data
-		utility::decode6bit((unsigned char*)zones_,point_data);
+			utility::decode6bit((unsigned char*)zones_,point_data);
 
 	}
 
@@ -534,15 +531,15 @@ public:
 
 		this->zero();
 		T curr_value, new_value;
-		for (int i=0; i < ngrids; i++) {
-			if (!this->equalDimensions(*(list_grids[i]))) {
+		for ( int i=0; i < ngrids; i++ ) {
+			if ( !this->equalDimensions(*(list_grids[i])) ) {
 				return;
 			}
-			if (!this->equalBase(*(list_grids[i]))) {
+			if ( !this->equalBase(*(list_grids[i])) ) {
 				return;
 			}
 
-			for (int j=0; j < this->its_npoints; j++) {
+			for ( int j=0; j < this->its_npoints; j++ ) {
 				curr_value = this->getValue(j);
 				new_value = list_grids[i]->getValue(j);
 				curr_value += new_value;
@@ -565,7 +562,7 @@ public:
 
 	void split(int nsplits, int igrid, core::Real pad, utility::pointer::shared_ptr<CartGrid<T> > grid) {
 		int tsplits = nsplits*nsplits*nsplits;
-		if (igrid < 0 || igrid >= tsplits) {
+		if ( igrid < 0 || igrid >= tsplits ) {
 			utility_exit_with_message("accessing split out of bounds");
 		}
 
@@ -589,29 +586,23 @@ public:
 		int leftz = padz;
 		int rightz = padz;
 
-		if (ix == 0)
-		{
+		if ( ix == 0 ) {
 			leftx = 0;
 		}
-		if (iy == 0)
-		{
+		if ( iy == 0 ) {
 			lefty = 0;
 		}
-		if (iz == 0)
-		{
+		if ( iz == 0 ) {
 			leftz = 0;
 		}
 
-		if (ix == nsplits-1)
-		{
+		if ( ix == nsplits-1 ) {
 			rightx = 0;
 		}
-		if (iy == nsplits-1)
-		{
+		if ( iy == nsplits-1 ) {
 			righty = 0;
 		}
-		if (iz == nsplits-1)
-		{
+		if ( iz == nsplits-1 ) {
 			rightz = 0;
 		}
 
@@ -641,11 +632,11 @@ public:
 		int ystart = std::max(0,iy*split_y-pady);
 		int zstart = std::max(0,iz*split_z-padz);
 
-		for (int i=0; i < grid->its_nX_; i++) {
-			for (int j=0; j < grid->its_nY_; j++) {
-				for (int k=0; k < grid->its_nZ_; k++) {
+		for ( int i=0; i < grid->its_nX_; i++ ) {
+			for ( int j=0; j < grid->its_nY_; j++ ) {
+				for ( int k=0; k < grid->its_nZ_; k++ ) {
 					int value = this->getValue(xstart+i,ystart+j,zstart+k);
-					if (value == -1) value = 0;
+					if ( value == -1 ) value = 0;
 					grid->setValue(i,j,k,value);
 				}
 			}
@@ -744,16 +735,16 @@ public:
 		out << " Cell " << nX_*lX_ << ' ' << nY_*lY_ << ' ' << nZ_*lZ_ << " 90.0 90.0 90.0"; // dimensions of unit cell
 		out << " Prod 1 Plus " << plus << " Sigma 1\f";
 		// Now pad with spaces until we've writen 512 characters:
-		for(long i = out.tellp(); i < 512; ++i) out << ' ';
+		for ( long i = out.tellp(); i < 512; ++i ) out << ' ';
 		// Data stored in (padded) 8x8x8 blocks with X fast, Y medium, Z slow
 		typedef unsigned char ubyte;
-		for(int zz = 0; zz < nZ_; zz += 8) {
-			for(int yy = 0; yy < nY_; yy += 8) {
-				for(int xx = 0; xx < nX_; xx += 8) {
-					for(int z = zz, z_end = zz+8; z < z_end; ++z) {
-						for(int y = yy, y_end = yy+8; y < y_end; ++y) {
-							for(int x = xx, x_end = xx+8; x < x_end; ++x) {
-								if( x < nX_ && y < nY_ && z < nZ_ ) out << ubyte( getValue(x, y, z) + plus );
+		for ( int zz = 0; zz < nZ_; zz += 8 ) {
+			for ( int yy = 0; yy < nY_; yy += 8 ) {
+				for ( int xx = 0; xx < nX_; xx += 8 ) {
+					for ( int z = zz, z_end = zz+8; z < z_end; ++z ) {
+						for ( int y = yy, y_end = yy+8; y < y_end; ++y ) {
+							for ( int x = xx, x_end = xx+8; x < x_end; ++x ) {
+								if ( x < nX_ && y < nY_ && z < nZ_ ) out << ubyte( getValue(x, y, z) + plus );
 								else out << ubyte( 0 + plus );
 							}
 						}
@@ -773,21 +764,18 @@ private:
 
 	void setValue(int index, T value)
 	{
-		if (value == 0)
-		{
+		if ( value == 0 ) {
 			fullyOccupied_ = false;
 		}
-	debug_assert( index >= 0 && index < npoints_ );
+		debug_assert( index >= 0 && index < npoints_ );
 		this->zones_[index] = value;
 	}
 
 	T getValue(int index) const
 	{
-		if (index < 0 || index >= npoints_)
-		{
+		if ( index < 0 || index >= npoints_ ) {
 			return -1;
-		} else
-		{
+		} else {
 			return this->zones_[index];
 		}
 	}

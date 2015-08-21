@@ -32,8 +32,8 @@
 using namespace protocols::moves;
 using namespace core;
 
-namespace protocols{
-namespace docking{
+namespace protocols {
+namespace docking {
 
 //@TODO create default values in empty constructor
 DockMinMover::DockMinMover() : DockingHighRes()
@@ -42,7 +42,7 @@ DockMinMover::DockMinMover() : DockingHighRes()
 	set_default();
 	mc_ = moves::MonteCarloOP( new MonteCarlo( *scorefxn(), 0.8 ) );
 	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover
-				( movemap_, scorefxn(), min_type_, min_tolerance_, nb_list_ ) );
+		( movemap_, scorefxn(), min_type_, min_tolerance_, nb_list_ ) );
 	minimize_trial_ = moves::TrialMoverOP( new TrialMover( min_mover, mc_ ) );
 }
 
@@ -54,7 +54,7 @@ DockMinMover::DockMinMover(
 	set_default();
 	mc_ = moves::MonteCarloOP( new MonteCarlo( *scorefxn, 0.8 ) );
 	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover
-				( movemap_, scorefxn, min_type_, min_tolerance_, nb_list_ ) );
+		( movemap_, scorefxn, min_type_, min_tolerance_, nb_list_ ) );
 	minimize_trial_ = moves::TrialMoverOP( new TrialMover( min_mover, mc_ ) );
 }
 
@@ -69,7 +69,7 @@ DockMinMover::DockMinMover(
 	set_default();
 	mc_=mc;
 	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover
-			    ( movemap_, scorefxn, min_type_, min_tolerance_, nb_list_ ) );
+		( movemap_, scorefxn, min_type_, min_tolerance_, nb_list_ ) );
 	minimize_trial_ = moves::TrialMoverOP( new TrialMover( min_mover, mc_ ) );
 }
 
@@ -89,7 +89,7 @@ DockMinMover::DockMinMover(
 	nb_list_=nb_list;
 	mc_=mc;
 	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover
-				( movemap_, scorefxn, min_type_, min_tolerance_, nb_list_ ) );
+		( movemap_, scorefxn, min_type_, min_tolerance_, nb_list_ ) );
 	minimize_trial_ = moves::TrialMoverOP( new TrialMover( min_mover, mc_ ) );
 }
 
@@ -97,8 +97,8 @@ DockMinMover::~DockMinMover(){}
 
 void DockMinMover::set_default() {
 
-  using namespace basic::options; //quick hack by rhiju
-  using namespace basic::options::OptionKeys::docking; // quick hack by rhiju -- later feed this in through dockingprotocol
+	using namespace basic::options; //quick hack by rhiju
+	using namespace basic::options::OptionKeys::docking; // quick hack by rhiju -- later feed this in through dockingprotocol
 
 	//sets up default movemap
 	movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap() );
@@ -111,18 +111,18 @@ void DockMinMover::set_default() {
 
 	// perhaps call this dock_minimize_bb_res or something.
 	if ( option[ bb_min_res ].user() ) {
-	  utility::vector1< Size > const & min_res = option[ bb_min_res ]();
-	  for ( Size n = 1; n <= min_res.size(); n++ ) movemap_->set_bb( min_res[ n ], true );
+		utility::vector1< Size > const & min_res = option[ bb_min_res ]();
+		for ( Size n = 1; n <= min_res.size(); n++ ) movemap_->set_bb( min_res[ n ], true );
 	}
 	if ( option[ sc_min_res ].user() ) {
-	  utility::vector1< Size > const & min_res = option[ sc_min_res ]();
-	  for ( Size n = 1; n <= min_res.size(); n++ ) movemap_->set_chi( min_res[ n ], true );
+		utility::vector1< Size > const & min_res = option[ sc_min_res ]();
+		for ( Size n = 1; n <= min_res.size(); n++ ) movemap_->set_chi( min_res[ n ], true );
 	}
 
 
 	//sets up minimization parameters
-//	min_tolerance_ = 1.0; /////was 0.01, in r++ docking, it is actually 1.0!! with 0.02 as the "tight" tolerance
-//	JQX commented the line right above, the Legacy code use 0.01. Just want to match it
+	// min_tolerance_ = 1.0; /////was 0.01, in r++ docking, it is actually 1.0!! with 0.02 as the "tight" tolerance
+	// JQX commented the line right above, the Legacy code use 0.01. Just want to match it
 	min_tolerance_ = 0.01; //JQX added this line
 	min_type_ = std::string( "dfpmin_armijo_nonmonotone" );
 	nb_list_ = true;

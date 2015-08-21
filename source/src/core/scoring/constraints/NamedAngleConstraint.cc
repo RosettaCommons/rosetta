@@ -46,11 +46,11 @@ namespace scoring {
 namespace constraints {
 
 NamedAngleConstraint::NamedAngleConstraint(
-		id::NamedAtomID const & a1,
-		id::NamedAtomID const & a2,
-		id::NamedAtomID const & a3,
-		func::FuncOP func,
-		ScoreType scoretype ):
+	id::NamedAtomID const & a1,
+	id::NamedAtomID const & a2,
+	id::NamedAtomID const & a3,
+	func::FuncOP func,
+	ScoreType scoretype ):
 	AngleConstraint( id::AtomID( 0, a1.rsd() ), id::AtomID( 0, a2.rsd() ), id::AtomID( 0, a3.rsd() ), func, scoretype ),
 	named_atom1_( a1 ),
 	named_atom2_( a2 ),
@@ -62,7 +62,7 @@ std::string
 NamedAngleConstraint::type() const
 {
 	return "NamedAngleConstraint";
-}	
+}
 
 ConstraintOP
 NamedAngleConstraint::clone() const
@@ -76,9 +76,9 @@ NamedAngleConstraint::clone() const
 /// to the new object. Intended to be implemented by derived classes.
 ConstraintOP
 NamedAngleConstraint::remapped_clone(
-		pose::Pose const &,
-		pose::Pose const& dest,
-		id::SequenceMappingCOP smap ) const
+	pose::Pose const &,
+	pose::Pose const& dest,
+	id::SequenceMappingCOP smap ) const
 {
 	id::NamedAtomID atom1( named_atom1_ );
 	id::NamedAtomID atom2( named_atom2_ );
@@ -105,9 +105,9 @@ void
 NamedAngleConstraint::score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const
 {
 	emap[ this->score_type() ] += AngleConstraint::score(
-			xyz.residue( named_atom1_.rsd() ).xyz( named_atom1_.atom() ),
-			xyz.residue( named_atom2_.rsd() ).xyz( named_atom2_.atom() ),
-			xyz.residue( named_atom3_.rsd() ).xyz( named_atom3_.atom() ) );
+		xyz.residue( named_atom1_.rsd() ).xyz( named_atom1_.atom() ),
+		xyz.residue( named_atom2_.rsd() ).xyz( named_atom2_.atom() ),
+		xyz.residue( named_atom3_.rsd() ).xyz( named_atom3_.atom() ) );
 }
 
 void
@@ -147,7 +147,7 @@ NamedAngleConstraint::read_def(
 	TR.Debug << "read: " << name1 << " " << name2 << " " << name3 << " "
 		<< res1 << " " << res2 << " " << res3 << " func: " << func_type << std::endl;
 	if ( (res1 > pose.total_residue()) || (res2 > pose.total_residue()) || (res3 > pose.total_residue()) ) {
-		TR.Warning 	<< "ignored constraint (no such atom in pose!)"
+		TR.Warning  << "ignored constraint (no such atom in pose!)"
 			<< name1 << " " << name2 << " " << name3 << " " << res1 << " " << res2 << " " << res3 << std::endl;
 		data.setstate( std::ios_base::failbit );
 		return;
@@ -173,7 +173,7 @@ NamedAngleConstraint::read_def(
 	f->read_data( data );
 	set_func( f );
 
-	while( data.good() && (data.get() != '\n') ) {}
+	while ( data.good() && (data.get() != '\n') ) {}
 
 	if ( TR.Debug.visible() ) {
 		func()->show_definition( TR.Debug );

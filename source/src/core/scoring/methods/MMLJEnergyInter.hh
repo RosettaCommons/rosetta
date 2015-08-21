@@ -46,17 +46,17 @@ public:
 	typedef ContextIndependentTwoBodyEnergy  parent;
 public:
 
-  /// ctor
-  MMLJEnergyInter();
+	/// ctor
+	MMLJEnergyInter();
 
-  /// clone
-  virtual
-  EnergyMethodOP
-  clone() const;
+	/// clone
+	virtual
+	EnergyMethodOP
+	clone() const;
 
 	void
 	setup_for_minimizing(
-	  pose::Pose & pose,
+		pose::Pose & pose,
 		ScoreFunction const & sfxn,
 		kinematics::MinimizerMapBase const & min_map
 	) const;
@@ -85,15 +85,15 @@ public:
 	update_residue_for_packing( pose::Pose & pose, Size resid ) const;
 
 
-  virtual
-  void
-  residue_pair_energy(
-    conformation::Residue const & rsd1,
-    conformation::Residue const & rsd2,
-    pose::Pose const & pose,
-    ScoreFunction const &,
-    EnergyMap & emap
-  ) const;
+	virtual
+	void
+	residue_pair_energy(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		ScoreFunction const &,
+		EnergyMap & emap
+	) const;
 
 	virtual
 	void
@@ -107,18 +107,18 @@ public:
 		Vector & F2
 	) const;
 
-  virtual
-  bool
-  defines_intrares_energy( EnergyMap const & ) const;
+	virtual
+	bool
+	defines_intrares_energy( EnergyMap const & ) const;
 
-  virtual
-  void
-  eval_intrares_energy(
-    conformation::Residue const & rsd,
-    pose::Pose const & pose,
-    ScoreFunction const & sfxn,
-    EnergyMap & emap
-  ) const;
+	virtual
+	void
+	eval_intrares_energy(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn,
+		EnergyMap & emap
+	) const;
 
 	virtual
 	void
@@ -144,14 +144,14 @@ public:
 		utility::vector1< core::PackerEnergy > & energy_vector
 	) const;
 
-  /// @brief MMLJEnergyInter does not have an atomic interation threshold
-  virtual
-  Distance
-  atomic_interaction_cutoff() const;
+	/// @brief MMLJEnergyInter does not have an atomic interation threshold
+	virtual
+	Distance
+	atomic_interaction_cutoff() const;
 
-  /// @brief MMLJEnergyInter is context independent; indicates that no context graphs are required
-  virtual
-  void
+	/// @brief MMLJEnergyInter is context independent; indicates that no context graphs are required
+	virtual
+	void
 	indicate_required_context_graphs( utility::vector1< bool > & ) const;
 
 	/// @brief required for neighbor list and to be more lke the ETable
@@ -192,7 +192,7 @@ public:
 		pose::Pose const & pose
 	) const;
 
-	 // Hooks for trie algorithms
+	// Hooks for trie algorithms
 
 	///  How close do two heavy atoms have to be such that their hydrogen atoms might interact?
 	///  max heavy-to-hydrogen distance ( MAGIC NUMBER!!!! FIX IT ) + atom-pair interaction distance.
@@ -235,7 +235,7 @@ public:
 	) const
 	{
 		Real rep(0), atr(0);
-		potential_.score( at1.mm_atom_type(),	at2.mm_atom_type(),	path_dist, d2, rep, atr );
+		potential_.score( at1.mm_atom_type(), at2.mm_atom_type(), path_dist, d2, rep, atr );
 		return rep + atr;
 
 	}
@@ -249,7 +249,7 @@ public:
 	{
 		Real dist_squared( at1.xyz().distance_squared( at2.xyz() ) );
 		Real rep(0), atr(0);
-		potential_.score( at1.mm_atom_type(),	at2.mm_atom_type(),	path_dist, dist_squared, rep, atr );
+		potential_.score( at1.mm_atom_type(), at2.mm_atom_type(), path_dist, dist_squared, rep, atr );
 		return rep + atr;
 	}
 
@@ -262,7 +262,7 @@ public:
 	{
 		Real dist_squared( at1.xyz().distance_squared( at2.xyz() ) );
 		Real rep(0), atr(0);
-		potential_.score( at1.mm_atom_type(),	at2.mm_atom_type(),	path_dist, dist_squared, rep, atr );
+		potential_.score( at1.mm_atom_type(), at2.mm_atom_type(), path_dist, dist_squared, rep, atr );
 		return rep + atr;
 	}
 
@@ -275,7 +275,7 @@ public:
 	{
 		Real dist_squared( at1.xyz().distance_squared( at2.xyz() ) );
 		Real rep(0), atr(0);
-		potential_.score( at1.mm_atom_type(),	at2.mm_atom_type(),	path_dist, dist_squared, rep, atr );
+		potential_.score( at1.mm_atom_type(), at2.mm_atom_type(), path_dist, dist_squared, rep, atr );
 		return rep + atr;
 	}
 
@@ -303,8 +303,8 @@ public:
 
 private:
 	core::scoring::mm::MMLJEnergyTable const & potential_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

@@ -30,66 +30,66 @@ namespace protocols {
 namespace seeded_abinitio {
 
 class CAcstGenerator : public protocols::moves::Mover {
- public:
-  typedef core::pose::Pose Pose;
+public:
+	typedef core::pose::Pose Pose;
 
-  CAcstGenerator();
+	CAcstGenerator();
 
-  void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose );
 
-  virtual std::string get_name() const;
-  virtual protocols::moves::MoverOP clone() const;
-  virtual protocols::moves::MoverOP fresh_instance() const;
+	virtual std::string get_name() const;
+	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 
-  void parse_my_tag( utility::tag::TagCOP tag,
-                     basic::datacache::DataMap &,
-                     protocols::filters::Filters_map const &,
-                     protocols::moves::Movers_map const &,
-                     core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & );
 
-  virtual ~CAcstGenerator();
+	virtual ~CAcstGenerator();
 
- private:
-  core::scoring::constraints::ConstraintSetOP ca_cst_;
+private:
+	core::scoring::constraints::ConstraintSetOP ca_cst_;
 
-  /// determines whether constraints for the areas should be which will be "replaced" by the seeds
-  bool add_cst_seed_;
+	/// determines whether constraints for the areas should be which will be "replaced" by the seeds
+	bool add_cst_seed_;
 
-  /// container for the cutpoints, since there shouldnt be constraints to cutpoints
-  utility::vector1< core::Size > cut_points_;
+	/// container for the cutpoints, since there shouldnt be constraints to cutpoints
+	utility::vector1< core::Size > cut_points_;
 
 	/// container with residues from seeds that should have constraints
 	utility::vector1< core::Size > seed_exceptions_;
 
-  /// stddeviation for the harmonic CA constraints
-  core::Real stddev_;
+	/// stddeviation for the harmonic CA constraints
+	core::Real stddev_;
 
-  /// container that has the seed information
-  protocols::loops::Loops all_seeds_;
+	/// container that has the seed information
+	protocols::loops::Loops all_seeds_;
 
-  /// residues for which no constraints should be derrived
-  protocols::loops::Loops clear_seeds_;
+	/// residues for which no constraints should be derrived
+	protocols::loops::Loops clear_seeds_;
 
-  /// user specified which chain to gather the constraints from
-  core::Size from_chain_;
+	/// user specified which chain to gather the constraints from
+	core::Size from_chain_;
 
-  /// user specified to which chain of the input chain is applied to
-  core::Size to_chain_;
+	/// user specified to which chain of the input chain is applied to
+	core::Size to_chain_;
 
-  ///user specified a template
-  bool template_presence_;
+	///user specified a template
+	bool template_presence_;
 
-  /// template pdb
-  core::pose::PoseOP template_pdb_;
+	/// template pdb
+	core::pose::PoseOP template_pdb_;
 
-  /// the chain/pose that the user actually wants to read the constraints from
-  core::pose::PoseOP curr_pose_;
+	/// the chain/pose that the user actually wants to read the constraints from
+	core::pose::PoseOP curr_pose_;
 
-  /// replace constraints or add onto them
-  bool replace_;
+	/// replace constraints or add onto them
+	bool replace_;
 
-  /// sequence separation after which the pair constraints are added
-  core::Size seq_separation_;
+	/// sequence separation after which the pair constraints are added
+	core::Size seq_separation_;
 
 	/// distance separation
 	core::Real distance_cutoff_;

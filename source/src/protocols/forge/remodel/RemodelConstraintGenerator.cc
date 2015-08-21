@@ -36,17 +36,17 @@ RemodelConstraintGenerator::~RemodelConstraintGenerator()
 
 
 RemodelConstraintGenerator::RemodelConstraintGenerator()
-	: Mover("RemodelConstraintGenerator"),
-		id_( "" ),
-		seqmap_(/* NULL */),
-		vlb_(/* NULL */)
+: Mover("RemodelConstraintGenerator"),
+	id_( "" ),
+	seqmap_(/* NULL */),
+	vlb_(/* NULL */)
 {}
 
 RemodelConstraintGenerator::RemodelConstraintGenerator( RemodelConstraintGenerator const & rval )
-	: Mover( rval ),
-		id_( rval.id_ ),
-		seqmap_( rval.seqmap_ ),
-		vlb_( rval.vlb_ )
+: Mover( rval ),
+	id_( rval.id_ ),
+	seqmap_( rval.seqmap_ ),
+	vlb_( rval.vlb_ )
 {}
 
 /// @details When called, generates constraints for the pose, and adds them to the pose
@@ -60,10 +60,10 @@ RemodelConstraintGenerator::apply( core::pose::Pose & pose )
 /// @brief This is called if this mover is instantiated from XML
 void
 RemodelConstraintGenerator::parse_my_tag( utility::tag::TagCOP tag,
-																					basic::datacache::DataMap &,
-																					protocols::filters::Filters_map const &,
-																					protocols::moves::Movers_map const &,
-																					core::pose::Pose const & )
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & )
 {
 	// if there are any options that we might want, they will go here...
 	id_ = tag->getOption<std::string>( "name", id_ );
@@ -75,16 +75,16 @@ RemodelConstraintGenerator::add_remodel_constraints_to_pose(
 	core::pose::Pose & pose )
 {
 	//TR << "Clearing old constraints in RCG" << std::endl;
-	if ( csts_.size() > 0 ){
+	if ( csts_.size() > 0 ) {
 		clear_constraints();
 	}
 
 	//TR << "Generating remodel constraints in RCG" << std::endl;
-	generate_remodel_constraints(	pose );
+	generate_remodel_constraints( pose );
 	//TR << "Done generating remodel csts in RCG" << std::endl;
 
 	//safeguard against an RCG not generating anything
-	if( csts_.size() == 0 ) return;
+	if ( csts_.size() == 0 ) return;
 
 	//TR << this->get_name() << " generated " << csts_.size() << " constraints." << std::endl;
 
@@ -100,17 +100,17 @@ RemodelConstraintGenerator::remove_remodel_constraints_from_pose(
 	core::scoring::constraints::ConstraintCOPs remodel_csts( csts_ );
 
 	//safeguard against an RCG not generating anything
-	if( remodel_csts.size() == 0 ) return;
+	if ( remodel_csts.size() == 0 ) return;
 
 	//TR << this->get_name() << " is about to try to remove " << remodel_csts.size() << " constraints." << std::endl;
 
-	if( ! pose.remove_constraints( remodel_csts, true ) ){
+	if ( ! pose.remove_constraints( remodel_csts, true ) ) {
 		utility_exit_with_message("Remodel constraints somehow got lost among the way");
 	}
 }
 
 void
-RemodelConstraintGenerator::add_constraint(	core::scoring::constraints::ConstraintCOP cst )
+RemodelConstraintGenerator::add_constraint( core::scoring::constraints::ConstraintCOP cst )
 {
 	csts_.push_back( cst );
 }
@@ -118,8 +118,8 @@ RemodelConstraintGenerator::add_constraint(	core::scoring::constraints::Constrai
 void
 RemodelConstraintGenerator::add_constraints( core::scoring::constraints::ConstraintCOPs csts )
 {
-	for( core::scoring::constraints::ConstraintCOPs::const_iterator cst_it = csts.begin();
-			cst_it != csts.end(); ++cst_it ){
+	for ( core::scoring::constraints::ConstraintCOPs::const_iterator cst_it = csts.begin();
+			cst_it != csts.end(); ++cst_it ) {
 		add_constraint( (*cst_it) );
 	}
 }

@@ -53,7 +53,7 @@ public:
 	/// @brief Returns true if the given pose passes the filter, false otherwise.
 	virtual bool apply( core::pose::Pose const & pose ) const = 0;
 
-  std::string get_protein_sstype( core::pose::Pose const & pose ) const;
+	std::string get_protein_sstype( core::pose::Pose const & pose ) const;
 
 	virtual
 	std::string name() const { return "AbinitioBaseFilter"; };

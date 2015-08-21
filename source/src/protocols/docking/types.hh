@@ -19,11 +19,11 @@
 #include <utility/vector1.hh>
 
 namespace protocols {
-	namespace docking {
+namespace docking {
 
-		typedef utility::vector1_int DockJumps;
+typedef utility::vector1_int DockJumps;
 
-	} // docking
+} // docking
 } // protocols
 
 #endif

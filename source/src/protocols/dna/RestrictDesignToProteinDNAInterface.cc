@@ -52,15 +52,15 @@ namespace protocols {
 namespace dna {
 
 using namespace core;
-	using namespace chemical;
-	using namespace conformation;
-	using namespace basic::options;
-	using namespace pack;
-		using namespace task;
-			using namespace operation;
-	using namespace pose;
-	using namespace scoring;
-		using namespace constraints;
+using namespace chemical;
+using namespace conformation;
+using namespace basic::options;
+using namespace pack;
+using namespace task;
+using namespace operation;
+using namespace pose;
+using namespace scoring;
+using namespace constraints;
 
 using basic::t_info;
 using basic::t_debug;
@@ -73,15 +73,15 @@ TaskOperationOP RestrictDesignToProteinDNAInterfaceCreator::create_task_operatio
 }
 
 RestrictDesignToProteinDNAInterface::RestrictDesignToProteinDNAInterface()
-	: parent(),
-		dna_chains_(/* 0 */),
-		interface_(/* 0 */),
-		reference_pose_(/* 0 */),
-		base_only_( true ),
-		forget_chains_and_interface_( true ),
-		z_cutoff_( 0.0 ),
-		close_threshold_( 10. * 10. ),
-		contact_threshold_( 3.7 * 3.7 )
+: parent(),
+	dna_chains_(/* 0 */),
+	interface_(/* 0 */),
+	reference_pose_(/* 0 */),
+	base_only_( true ),
+	forget_chains_and_interface_( true ),
+	z_cutoff_( 0.0 ),
+	close_threshold_( 10. * 10. ),
+	contact_threshold_( 3.7 * 3.7 )
 {}
 
 RestrictDesignToProteinDNAInterface::~RestrictDesignToProteinDNAInterface() {}
@@ -146,12 +146,15 @@ RestrictDesignToProteinDNAInterface::parse_tag( TagCOP tag , DataMap & )
 	}
 	if ( tag->hasOption("base_only") ) base_only_ = tag->getOption< bool >("base_only");
 	if ( tag->hasOption("z_cutoff") ) z_cutoff_ = tag->getOption< Real >("z_cutoff");
-	if ( tag->hasOption("close_threshold") )
+	if ( tag->hasOption("close_threshold") ) {
 		close_threshold_ = tag->getOption< Real >("close_threshold");
-	if ( tag->hasOption("contact_threshold") )
+	}
+	if ( tag->hasOption("contact_threshold") ) {
 		close_threshold_ = tag->getOption< Real >("contact_threshold");
-	if ( tag->hasOption("forget_chains_and_interface") )
+	}
+	if ( tag->hasOption("forget_chains_and_interface") ) {
 		forget_chains_and_interface_ = tag->getOption< bool >("forget_chains_and_interface");
+	}
 }
 
 /// @brief determines the DNA interface residues and informs a PackerTask of their appropriate packing behavior
@@ -170,24 +173,24 @@ RestrictDesignToProteinDNAInterface::apply(
 
 	if ( z_cutoff_ == 0.0 ) z_cutoff_ = option[ OptionKeys::dna::design::z_cutoff ]();
 
-// This class does not try to automatically configure residues whose corresponding ResidueLevelTask do not have the behavior "AUTO". This behavior should be set for protein residues, either manually or by using another kind of TaskOperation.
+	// This class does not try to automatically configure residues whose corresponding ResidueLevelTask do not have the behavior "AUTO". This behavior should be set for protein residues, either manually or by using another kind of TaskOperation.
 
-/*
+	/*
 	// if no resfile was specified,
 	// assume all protein positions are "AUTO" positions (behavior automated)
 	if ( ! option[ OptionKeys::packing::resfile ].user() ) {
-		for ( Size i(1), end( ptask.total_residue() ); i <= end; ++i ) {
-			ResidueLevelTask & rtask( ptask.nonconst_residue_task(i) );
-			if ( pose.residue_type(i).is_protein() ) rtask.add_behavior("AUTO");
-		}
+	for ( Size i(1), end( ptask.total_residue() ); i <= end; ++i ) {
+	ResidueLevelTask & rtask( ptask.nonconst_residue_task(i) );
+	if ( pose.residue_type(i).is_protein() ) rtask.add_behavior("AUTO");
 	}
-*/
+	}
+	*/
 
 	Size const nres( pose.total_residue() );
 	runtime_assert( nres == ptask.total_residue() );
 
 
-/// Step 2: get info about DNA chains and set up DNA packing behavior
+	/// Step 2: get info about DNA chains and set up DNA packing behavior
 
 	// get basepairing info unless supplied by user
 	if ( !dna_chains_ ) {
@@ -199,7 +202,7 @@ RestrictDesignToProteinDNAInterface::apply(
 	if ( ! targeted_dna_.empty() ) {
 		// (by default, targeted_dna_ is an empty vector, so none of the following applies)
 		for ( DnaDesignDefOPs::const_iterator def( targeted_dna_.begin() );
-					def != targeted_dna_.end(); ++def ) {
+				def != targeted_dna_.end(); ++def ) {
 			Size index( (*def)->pdbpos );
 			if ( pose.pdb_info() ) {
 				// if pose has PDB numbering and chain info, assume DNA defs refer to them
@@ -208,10 +211,10 @@ RestrictDesignToProteinDNAInterface::apply(
 			}
 			if ( ! pose.residue_type( index ).is_DNA() ) {
 				std::cerr << "ERROR: DNA design def " << **def << " indicates a non-DNA position"
-				          << std::endl; utility_exit();
+					<< std::endl; utility_exit();
 			} else if ( ! dna_chains_->is_top( index ) ) {
 				std::cerr << "ERROR: DNA design def " << **def << " is DNA but is not in the 'top' strand"
-				          << std::endl; utility_exit();
+					<< std::endl; utility_exit();
 			}
 			DnaPosition const & pos( (*dna_chains_)[ index ] );
 			runtime_assert( index == pos.top() );
@@ -226,8 +229,8 @@ RestrictDesignToProteinDNAInterface::apply(
 				ResidueTypeCOPs const & name3map( rts.name3_map_DO_NOT_USE( (*def)->name3 ) );
 				// use the first ResidueType represented in the ResidueLevelTask that corresponds to one in the name3 map
 				for ( ResidueLevelTask::ResidueTypeCOPListConstIter
-					    allowed_type( toptask.allowed_residue_types_begin() ),
-					    end( toptask.allowed_residue_types_end() ); allowed_type != end; ++allowed_type ) {
+						allowed_type( toptask.allowed_residue_types_begin() ),
+						end( toptask.allowed_residue_types_end() ); allowed_type != end; ++allowed_type ) {
 					if ( std::find( name3map.begin(), name3map.end(), *allowed_type ) != name3map.end() ) {
 						toptask.target_type( *allowed_type );
 						break;
@@ -237,18 +240,18 @@ RestrictDesignToProteinDNAInterface::apply(
 				}
 				if ( ! toptask.target_type() ) {
 					TR(t_info) << "Error: target type " << (*def)->name3
-					   << " does not correspond to an allowed type at position " << pos.top()
-					   << std::endl; utility_exit();
+						<< " does not correspond to an allowed type at position " << pos.top()
+						<< std::endl; utility_exit();
 				}
 				if ( pos.paired() ) {
 					std::string const comp_name3( dna_comp_name_str( (*def)->name3 ) );
 					ResidueTypeCOPs const & name3map_comp( rts.name3_map_DO_NOT_USE( comp_name3 ) );
 					ResidueLevelTask & bottask( ptask.nonconst_residue_task( pos.bottom() ) );
 					for ( ResidueLevelTask::ResidueTypeCOPListConstIter
-						    allowed_type( bottask.allowed_residue_types_begin() ),
-						    end( bottask.allowed_residue_types_end() ); allowed_type != end; ++allowed_type ) {
+							allowed_type( bottask.allowed_residue_types_begin() ),
+							end( bottask.allowed_residue_types_end() ); allowed_type != end; ++allowed_type ) {
 						if ( std::find( name3map_comp.begin(), name3map_comp.end(), *allowed_type ) !=
-							   name3map_comp.end() ) {
+								name3map_comp.end() ) {
 							bottask.target_type( *allowed_type );
 							break;
 							//TR(t_info) << "Setting target type " << comp_name3 << " at position " << pos.bottom()
@@ -257,14 +260,14 @@ RestrictDesignToProteinDNAInterface::apply(
 					}
 					if ( ! bottask.target_type() ) {
 						TR(t_info) << "Error: target type " << comp_name3
-						   << " does not correspond to an allowed type at position " << pos.bottom()
-						   << std::endl; utility_exit();
+							<< " does not correspond to an allowed type at position " << pos.bottom()
+							<< std::endl; utility_exit();
 					}
 				}
 			}
 		}
 
-	// when targeting particular basepair positions, packing for all non-specified DNAs is disabled
+		// when targeting particular basepair positions, packing for all non-specified DNAs is disabled
 		for ( Size i(1); i <= ptask.total_residue(); ++i ) {
 			ResidueLevelTask & rtask( ptask.nonconst_residue_task(i) );
 			if ( pose.residue_type(i).is_DNA() && !rtask.has_behavior("TARGET") ) {
@@ -273,7 +276,7 @@ RestrictDesignToProteinDNAInterface::apply(
 		}
 	}
 
-/// Step 3: Determine protein-DNA interface
+	/// Step 3: Determine protein-DNA interface
 
 	// find protein-dna interface (unless user supplied one)
 	if ( !interface_ ) {
@@ -308,7 +311,7 @@ RestrictDesignToProteinDNAInterface::apply(
 				TR(t_info) << "\nTargeting DNA at position ";
 				if ( pose.pdb_info() ) {
 					TR << pose.pdb_info()->chain( dnapos.top() ) << "."
-					 << pose.pdb_info()->number( dnapos.top() ) << '\n';
+						<< pose.pdb_info()->number( dnapos.top() ) << '\n';
 				} else {
 					TR << pose.chain( dnapos.top() ) << "." << dnapos.top() << '\n';
 				}
@@ -345,11 +348,11 @@ RestrictDesignToProteinDNAInterface::apply(
 		interface_->determine_protein_interface( pose, protein_positions, dna_design_positions );
 	}
 
-/// Step 4: apply any new restrictions to resfile pack/design settings, and any existing constraints
+	/// Step 4: apply any new restrictions to resfile pack/design settings, and any existing constraints
 	bool const repack_only( option[ OptionKeys::dna::design::repack_only ]() );
 	ConstraintSetCOP constraint_set( pose.constraint_set() );
 	for ( DnaNeighbors::const_iterator itr( interface_->protein_neighbors().begin() ),
-	      end( interface_->protein_neighbors().end() ); itr != end; ++itr ) {
+			end( interface_->protein_neighbors().end() ); itr != end; ++itr ) {
 		Size const index( itr->first );
 		DnaNeighbor const & neighbor( itr->second );
 
@@ -372,7 +375,7 @@ RestrictDesignToProteinDNAInterface::apply(
 		else restask.prevent_repacking();
 	}
 
-/// Step 5: report
+	/// Step 5: report
 	for ( Size i(1), end( ptask.total_residue() ); i <= end; ++i ) {
 		ResidueLevelTask const & rlt( ptask.residue_task(i) );
 		if ( pose.residue_type(i).is_DNA() ) {
@@ -380,19 +383,18 @@ RestrictDesignToProteinDNAInterface::apply(
 			TR(t_info) << "DNA types allowed at ";
 			if ( pose.pdb_info() ) {
 				TR << pose.pdb_info()->number(i) << " "
-				   << pose.pdb_info()->chain(i);
-			}
-			else TR << i << " " << pose.chain(i);
+					<< pose.pdb_info()->chain(i);
+			} else TR << i << " " << pose.chain(i);
 			TR << ":";
 			// set used here to avoid redundant name3's from extra adduct variant allowed_types
 			std::set< std::string > name3set;
 			for ( ResidueLevelTask::ResidueTypeCOPListConstIter
-				    allowed_type( rlt.allowed_residue_types_begin() ),
-				    typesend( rlt.allowed_residue_types_end() ); allowed_type != typesend; ++allowed_type ) {
+					allowed_type( rlt.allowed_residue_types_begin() ),
+					typesend( rlt.allowed_residue_types_end() ); allowed_type != typesend; ++allowed_type ) {
 				name3set.insert( (*allowed_type)->name3() );
 			}
 			for ( std::set< std::string >::const_iterator n3( name3set.begin() ), n3end( name3set.end() );
-				n3 != n3end; ++n3 ) {
+					n3 != n3end; ++n3 ) {
 				TR << *n3 << ",";
 			}
 			TR << '\n';

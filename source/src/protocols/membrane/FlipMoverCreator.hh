@@ -9,9 +9,9 @@
 
 /// @file       protocols/membrane/FlipMoverCreator.hh
 /// @brief      Flips a span or protein in the membrane (Rosetta Scripts Hook)
-/// @details	Flips a span, protein or part of a pose in the membrane,
-///				depending on the jump number.
-///				ONLY FOR FIXED MEMBRANE AND FLEXIBLE PROTEIN
+/// @details Flips a span, protein or part of a pose in the membrane,
+///    depending on the jump number.
+///    ONLY FOR FIXED MEMBRANE AND FLEXIBLE PROTEIN
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_FlipMoverCreator_hh
@@ -25,13 +25,13 @@ namespace membrane {
 
 /// @brief Mover Creator
 class FlipMoverCreator : public protocols::moves::MoverCreator {
-	
+
 public:
-	
+
 	virtual protocols::moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
 	static std::string mover_name();
-	
+
 };
 
 } // membrane

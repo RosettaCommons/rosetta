@@ -49,7 +49,7 @@ gzip() {
 
 		for ( utility::vector1< std::string >::const_iterator
 				fn = file_list.begin(), end = file_list.end(); fn != end; ++fn
-		) {
+				) {
 			utility::io::izstream in_stream( *fn );
 			if ( in_stream ) {
 				in_stream.close();

@@ -38,8 +38,8 @@
 
 
 namespace core {
-	namespace scoring {
-		namespace func {
+namespace scoring {
+namespace func {
 
 class SplineFunc : public Func {
 
@@ -117,8 +117,8 @@ private:
 
 }; // SplineFunc class
 
-		} // constraints
-	} // scoring
+} // constraints
+} // scoring
 } // core
 
 #endif

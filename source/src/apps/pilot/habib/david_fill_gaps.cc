@@ -83,101 +83,101 @@ main( int argc, char * argv [] )
 {
 	try {
 
-std::vector<std::string> surface;
-std::set <std::string> interface;
-  NEW_OPT ( fa_file, "File name for fasta data","");
+		std::vector<std::string> surface;
+		std::set <std::string> interface;
+		NEW_OPT ( fa_file, "File name for fasta data","");
 
-  using namespace core;
-  using namespace core::scoring;
+		using namespace core;
+		using namespace core::scoring;
 
-  devel::init(argc, argv);
-  pose::Pose pose;
-  std::string const input_pdb_name ( basic::options::start_file() );
-  core::import_pose::pose_from_pdb( pose, input_pdb_name );
+		devel::init(argc, argv);
+		pose::Pose pose;
+		std::string const input_pdb_name ( basic::options::start_file() );
+		core::import_pose::pose_from_pdb( pose, input_pdb_name );
 
-  std::string const ffilename = option[ fa_file ];
-  std::string seq;
-  if ( ffilename != "" ){
-    std::ifstream ifs(ffilename.c_str(), std::ifstream::in);
-    if (!ifs.is_open()){
-      std::cout<< "Error opening fasta file "<<ffilename<<std::endl;
-      return -100;
-    }
-    while (ifs.good()){
-      std::string intres;
-      ifs >> intres;
-      if (intres.length() >0){
-        if (intres[0]!= '>'){
-          seq.append(intres);
-        }
-      }
-    }
-  }
+		std::string const ffilename = option[ fa_file ];
+		std::string seq;
+		if ( ffilename != "" ) {
+			std::ifstream ifs(ffilename.c_str(), std::ifstream::in);
+			if ( !ifs.is_open() ) {
+				std::cout<< "Error opening fasta file "<<ffilename<<std::endl;
+				return -100;
+			}
+			while ( ifs.good() ) {
+				std::string intres;
+				ifs >> intres;
+				if ( intres.length() >0 ) {
+					if ( intres[0]!= '>' ) {
+						seq.append(intres);
+					}
+				}
+			}
+		}
 
-  if (seq.length()==0){
-      std::cout<< "Fasta file contains no sequence: "<<ffilename<<std::endl;
-      return -101;
+		if ( seq.length()==0 ) {
+			std::cout<< "Fasta file contains no sequence: "<<ffilename<<std::endl;
+			return -101;
 
-  }
+		}
 
-  int last = -100;
-  core::chemical::ResidueTypeSet const & rsd_set( pose.residue(1).residue_type_set() );
+		int last = -100;
+		core::chemical::ResidueTypeSet const & rsd_set( pose.residue(1).residue_type_set() );
 
-  for( Size i = 1; i <= pose.total_residue(); ++i){
-    if (last == -100){
-      last = pose.pdb_info()->number(i);
-      std::cout<<i<<" "<< pose.pdb_info()->number(i)<<" "<<pose.residue(i).name1()<<"\n" ;
-      continue;
-    }
-    if (last > pose.pdb_info()->number(i)+1){
-      for (int j = last-1; j > pose.pdb_info()->number(i); j--){
-        std::cout<<seq[j-1]<<"\n";
-				// The representative type should have no/minimal variants
-        core::chemical::ResidueTypeCOP new_rsd_type( rsd_set.get_representative_type_name1( seq[j-1] ) );
-        core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
-        pose.append_polymer_residue_after_seqpos(*new_rsd, i, false );
-        pose.pdb_info()->number(i+2, pose.pdb_info()->number(i)-1);
-        pose.pdb_info()->chain(i+2, pose.pdb_info()->chain(i));
-      }
+		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+			if ( last == -100 ) {
+				last = pose.pdb_info()->number(i);
+				std::cout<<i<<" "<< pose.pdb_info()->number(i)<<" "<<pose.residue(i).name1()<<"\n" ;
+				continue;
+			}
+			if ( last > pose.pdb_info()->number(i)+1 ) {
+				for ( int j = last-1; j > pose.pdb_info()->number(i); j-- ) {
+					std::cout<<seq[j-1]<<"\n";
+					// The representative type should have no/minimal variants
+					core::chemical::ResidueTypeCOP new_rsd_type( rsd_set.get_representative_type_name1( seq[j-1] ) );
+					core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
+					pose.append_polymer_residue_after_seqpos(*new_rsd, i, false );
+					pose.pdb_info()->number(i+2, pose.pdb_info()->number(i)-1);
+					pose.pdb_info()->chain(i+2, pose.pdb_info()->chain(i));
+				}
 
-    }else if (last < pose.pdb_info()->number(i)-1){
-      for (int j = last+1; j < pose.pdb_info()->number(i); j++){
-        std::cout<<seq[j-1]<<"\n";
-				// The representative type should have no/minimal variants
-        core::chemical::ResidueTypeCOP new_rsd_type( rsd_set.get_representative_type_name1( seq[j-1] ) );
-        core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
-        pose.append_polymer_residue_after_seqpos(*new_rsd, i-1, false );
-        pose.pdb_info()->number(i, pose.pdb_info()->number(i-1)+1);
-        pose.pdb_info()->chain(i, pose.pdb_info()->chain(i-1));
-        i++;
-      }
+			} else if ( last < pose.pdb_info()->number(i)-1 ) {
+				for ( int j = last+1; j < pose.pdb_info()->number(i); j++ ) {
+					std::cout<<seq[j-1]<<"\n";
+					// The representative type should have no/minimal variants
+					core::chemical::ResidueTypeCOP new_rsd_type( rsd_set.get_representative_type_name1( seq[j-1] ) );
+					core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
+					pose.append_polymer_residue_after_seqpos(*new_rsd, i-1, false );
+					pose.pdb_info()->number(i, pose.pdb_info()->number(i-1)+1);
+					pose.pdb_info()->chain(i, pose.pdb_info()->chain(i-1));
+					i++;
+				}
 
 
-    }
-    std::cout<<i<<" "<< pose.pdb_info()->number(i)<<" "<<pose.residue(i).name1()<<"\n" ;
-    last = pose.pdb_info()->number(i);
-  }
+			}
+			std::cout<<i<<" "<< pose.pdb_info()->number(i)<<" "<<pose.residue(i).name1()<<"\n" ;
+			last = pose.pdb_info()->number(i);
+		}
 
-  for( Size i = 1; i <= pose.total_residue(); ++i){
-    std::cout<<pose.pdb_info()->number(i)<<"\n";
-  }
-  for( int i = 1; i <pose.pdb_info()->number(1); ++i){
-    std::cout<<" ";
-  }
-  for( Size i = 1; i <= pose.total_residue(); ++i){
-    std::cout<<pose.residue(i).name1();
-	}
-  std::cout<<"\n"<<seq<<"\n";
+		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+			std::cout<<pose.pdb_info()->number(i)<<"\n";
+		}
+		for ( int i = 1; i <pose.pdb_info()->number(1); ++i ) {
+			std::cout<<" ";
+		}
+		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+			std::cout<<pose.residue(i).name1();
+		}
+		std::cout<<"\n"<<seq<<"\n";
 
-  pose.pdb_info()->obsolete(false);
-  pose.dump_pdb("test.pdb");
+		pose.pdb_info()->obsolete(false);
+		pose.dump_pdb("test.pdb");
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
 
-  return 0;
+	return 0;
 
 }
 

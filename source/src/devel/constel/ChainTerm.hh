@@ -26,31 +26,31 @@ using core::Size;
 
 class ChainTerm {
 
-  char cid_; // chain id
+	char cid_; // chain id
 
-  Size n_ps_; // index of N-terminal residue in pose
-  Size c_ps_; // index of C-terminal residue in pose
+	Size n_ps_; // index of N-terminal residue in pose
+	Size c_ps_; // index of C-terminal residue in pose
 
-  int n_pdb_; // index of N-terminal residue in PDB file
-  int c_pdb_; // index of C-terminal residue in PDB file
+	int n_pdb_; // index of N-terminal residue in PDB file
+	int c_pdb_; // index of C-terminal residue in PDB file
 
 public:
 
-  /// @brief constructor
-  ChainTerm(char cid, Size nps, Size cps, int npdb, int cpdb) :
-    cid_(cid), n_ps_(nps), c_ps_(cps), n_pdb_(npdb), c_pdb_(cpdb) {}
+	/// @brief constructor
+	ChainTerm(char cid, Size nps, Size cps, int npdb, int cpdb) :
+		cid_(cid), n_ps_(nps), c_ps_(cps), n_pdb_(npdb), c_pdb_(cpdb) {}
 
-  /// @brief prints this chain's info to tracer t
-  void print(basic::Tracer& t) const;
+	/// @brief prints this chain's info to tracer t
+	void print(basic::Tracer& t) const;
 
-  /// @brief cid_ accessor
-  char get_cid() const {return cid_;}
+	/// @brief cid_ accessor
+	char get_cid() const {return cid_;}
 
-  /// @brief n_ps_ accessor
-  Size get_nps() const {return n_ps_;}
+	/// @brief n_ps_ accessor
+	Size get_nps() const {return n_ps_;}
 
-  /// @brief c_ps_ accessor
-  Size get_cps() const {return c_ps_;}
+	/// @brief c_ps_ accessor
+	Size get_cps() const {return c_ps_;}
 };
 
 

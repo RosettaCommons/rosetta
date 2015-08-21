@@ -35,8 +35,8 @@
 // #include <string>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class TrajectoryReportToDB : public ReportToDB {
 
@@ -86,7 +86,7 @@ public:
 
 	// Getters/Setters
 	virtual std::string name() { return "TrajectoryReportToDB"; }
- 	virtual std::string get_name() const { return "TrajectoryReportToDB"; }
+	virtual std::string get_name() const { return "TrajectoryReportToDB"; }
 
 	void
 	set_stride(

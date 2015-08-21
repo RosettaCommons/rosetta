@@ -9,7 +9,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-/// @brief  
+/// @brief
 /// @author TJ brunette
 
 
@@ -44,7 +44,7 @@ using namespace fragment;
 
 class VallLookbackFragMover : virtual public ClassicFragmentMover {
 public:
-	VallLookbackFragMover(core::fragment::FragSetCOP fragset, core::kinematics::MoveMapCOP movemap);		
+	VallLookbackFragMover(core::fragment::FragSetCOP fragset, core::kinematics::MoveMapCOP movemap);
 
 	~VallLookbackFragMover();
 

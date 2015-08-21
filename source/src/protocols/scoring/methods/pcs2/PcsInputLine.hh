@@ -7,26 +7,26 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/PcsInputLine.hh
- ///
- /// @brief Class that hold a line data of the input file
- ///
- /// @details This class hold the information of a pcs value:
- /// atom name, residue name, PCS value, PCS experimental
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/PcsInputLine.hh
+///
+/// @brief Class that hold a line data of the input file
+///
+/// @details This class hold the information of a pcs value:
+/// atom name, residue name, PCS value, PCS experimental
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs2_PcsInputLine_hh
 #define INCLUDED_protocols_scoring_methods_pcs2_PcsInputLine_hh
@@ -45,10 +45,10 @@
 // C++ headers
 #include <string>
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs2{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs2 {
 
 ///////////////////////////////////////////////////////////////////////////
 /// @brief PcsInputLine class: hold a line of the input file information (.npc format)
@@ -66,18 +66,18 @@ public:
 	operator=( PcsInputLine const & other ); //=
 
 	PcsInputLine(core::Size const residue_num,
-							 std::string const atom_name,
-							 core::Real const PCS_experimental,
-							 core::Real const PCS_tolerance
-							 );
+		std::string const atom_name,
+		core::Real const PCS_experimental,
+		core::Real const PCS_tolerance
+	);
 
 	/// @brief Give me the residue number of this PcsInputLine
- 	core::Size
+	core::Size
 	get_residue_num() const;
 
 	/// @brief Give me the atom name of this PcsInputLine
 	std::string
-  get_atom_name() const;
+	get_atom_name() const;
 
 	/// @brief Give me the experimental PCS of this PcsInputLine
 	core::Real

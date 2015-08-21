@@ -44,7 +44,7 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-	#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.hh>
 #endif
 
 
@@ -57,7 +57,7 @@ namespace sidechain_moves {
 class SidechainMCMover : public protocols::simple_moves::sidechain_moves::SidechainMover {
 
 public:
-//
+	//
 	/// @brief default constructor
 	SidechainMCMover();
 
@@ -94,7 +94,7 @@ public:
 
 	core::Size
 	ntrials(){
-		return 	ntrials_;
+		return  ntrials_;
 	}
 
 	void
@@ -181,9 +181,9 @@ private:
 
 	void
 	perturb_chi(numeric::random::RandomGenerator Rand,
-							core::Real max_deviation,
-							utility::vector1<core::Real> & current_chi,
-							utility::vector1<core::Real> & new_chi
+		core::Real max_deviation,
+		utility::vector1<core::Real> & current_chi,
+		utility::vector1<core::Real> & new_chi
 	);
 
 	//ek for fast sidechain sampling and internal mc trials

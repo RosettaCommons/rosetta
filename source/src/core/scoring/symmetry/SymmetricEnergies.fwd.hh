@@ -28,7 +28,7 @@ class SymmetricEnergies;
 typedef utility::pointer::shared_ptr< SymmetricEnergies       > SymmetricEnergiesOP;
 typedef utility::pointer::shared_ptr< SymmetricEnergies const > SymmetricEnergiesCOP;
 
-}	// namespace symmetry
+} // namespace symmetry
 } // namespace pose
 } // namespace core
 

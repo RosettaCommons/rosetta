@@ -29,38 +29,38 @@ namespace frag_picker {
 
 /// @brief setup the map that converts string name to enum
 std::map< std::string, ContactType > setup_name2type() {
-  std::map< std::string, ContactType > n2t;
-  n2t[ "ca" ] = CA;
-  n2t[ "cb" ] = CB;
-  n2t[ "cen" ] = CEN;
-  n2t[ "unk" ] = UNK;
-  return n2t;
+	std::map< std::string, ContactType > n2t;
+	n2t[ "ca" ] = CA;
+	n2t[ "cb" ] = CB;
+	n2t[ "cen" ] = CEN;
+	n2t[ "unk" ] = UNK;
+	return n2t;
 }
 
 /// @brief map that converts string name to enum
 inline
 std::map< std::string, ContactType > & name2type() {
-  // static initialization only happens once
-  static std::map< std::string, ContactType > * name2contacttype_ = new std::map< std::string, ContactType >( setup_name2type() );
-  return *name2contacttype_;
+	// static initialization only happens once
+	static std::map< std::string, ContactType > * name2contacttype_ = new std::map< std::string, ContactType >( setup_name2type() );
+	return *name2contacttype_;
 }
 
 /// @brief setup the vector that maps enum to string name
 utility::vector1< std::string > setup_type2name() {
-  utility::vector1< std::string > t2n( num_contact_types );
-  for ( std::map< std::string, ContactType >::const_iterator iter = name2type().begin(),
-    iter_end = name2type().end(); iter != iter_end; ++iter ) {
-    t2n[ iter->second ] = iter->first;
-  }
-  return t2n;
+	utility::vector1< std::string > t2n( num_contact_types );
+	for ( std::map< std::string, ContactType >::const_iterator iter = name2type().begin(),
+			iter_end = name2type().end(); iter != iter_end; ++iter ) {
+		t2n[ iter->second ] = iter->first;
+	}
+	return t2n;
 }
 
 /// @brief vector that maps enum to string name
 inline
 utility::vector1< std::string > & type2name() {
-  // static initialization only happens once
-  static utility::vector1< std::string > * contacttype2name_ = new utility::vector1< std::string >( setup_type2name() );
-  return *contacttype2name_;
+	// static initialization only happens once
+	static utility::vector1< std::string > * contacttype2name_ = new utility::vector1< std::string >( setup_type2name() );
+	return *contacttype2name_;
 }
 
 /// END: local functions
@@ -82,7 +82,7 @@ contact_type( std::string const & name ) {
 ///////////////////////////////////////////////////////
 std::string
 contact_name( ContactType type ) {
-	if (type > num_contact_types ) return "ContactTypeOutofRange";
+	if ( type > num_contact_types ) return "ContactTypeOutofRange";
 	return type2name()[ type ];
 }
 

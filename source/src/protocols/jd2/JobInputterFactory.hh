@@ -63,7 +63,7 @@ public:
 private:
 	JobInputterOP get_JobInputter_from_string( std::string const & job_inputter_type );
 
-  JobInputterFactory();
+	JobInputterFactory();
 
 	// Unimplemented -- uncopyable
 	JobInputterFactory( JobInputterFactory const & );

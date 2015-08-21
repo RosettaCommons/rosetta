@@ -116,7 +116,7 @@ count_pair_bs(
 )
 {
 	return ( pos2 == pos1 + 1 && partner[pos1] && partner[pos2] && partner[pos2] == partner[pos1]-1 &&
-					 partner[pos1] != pos2 );
+		partner[pos1] != pos2 );
 }
 
 
@@ -126,8 +126,8 @@ BasePartner const &
 retrieve_base_partner_from_pose_inline( pose::Pose const & pose )
 {
 	//using core::pose::datacache::CacheableDataType::BASE_PARTNER;
-debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::BASE_PARTNER ) );
-debug_assert( dynamic_cast< BasePartner const *>( &( pose.data().get( core::pose::datacache::CacheableDataType::BASE_PARTNER ))));
+	debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::BASE_PARTNER ) );
+	debug_assert( dynamic_cast< BasePartner const *>( &( pose.data().get( core::pose::datacache::CacheableDataType::BASE_PARTNER ))));
 	return ( static_cast< BasePartner const &>(    pose.data().get( core::pose::datacache::CacheableDataType::BASE_PARTNER )));
 }
 
@@ -183,7 +183,7 @@ DNA_BaseEnergy::eval_atom_derivative(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
- 	) const
+) const
 {
 	Size const  pos1( atom_id.rsd() );
 	Size const atom1( atom_id.atomno() );

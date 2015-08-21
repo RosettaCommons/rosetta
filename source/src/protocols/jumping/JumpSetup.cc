@@ -81,7 +81,7 @@ JumpSetup::read_file( std::string fname ) {
 	tr.Info << "read jump-definitions from " << fname << std::endl;
 	if ( !data ) {
 		std::cerr << "ERROR:: Unable to open constraints file: "
-				<< fname << std::endl;
+			<< fname << std::endl;
 		std::exit( 1 );
 	}
 
@@ -93,12 +93,12 @@ JumpSetup::read_file( std::string fname ) {
 		in >> jump.start_ >> jump.end_ >> cuts.start_;
 		if ( in ) {
 			in >> cuts.end_;
-		}	else {
+		} else {
 			cuts.end_=cuts.start_;
 		}
-		//		if ( in ) {
-		//			tr.Warning << "Ignore remaining line: " << line << std::endl;
-		//		}
+		//  if ( in ) {
+		//   tr.Warning << "Ignore remaining line: " << line << std::endl;
+		//  }
 		using namespace ObjexxFCL::format;
 		tr.Debug << "read Jumps: " << RJ(4, jump.start_) << RJ( 4, jump.end_ ) << RJ( 4, cuts.start_ ) << RJ( 4, cuts.end_ )<< std::endl;
 		add_jump( jump, cuts );
@@ -109,9 +109,9 @@ JumpSetup::read_file( std::string fname ) {
 //* ----------------------- JumpSelector ----------------------------*
 
 JumpSelector::JumpSelector()
-	: total_weight_( 0 ), min_loop_length_( 5 ), loop_extension_(2), nr_jumps_min_(3), nr_jumps_max_(6) {}
+: total_weight_( 0 ), min_loop_length_( 5 ), loop_extension_(2), nr_jumps_min_(3), nr_jumps_max_(6) {}
 JumpSelector::JumpSelector( std::string ss )
-	:	secstruct_( ss), total_weight_( 0 ), min_loop_length_( 5 ), loop_extension_(2), nr_jumps_min_(3), nr_jumps_max_(6) {}
+: secstruct_( ss), total_weight_( 0 ), min_loop_length_( 5 ), loop_extension_(2), nr_jumps_min_(3), nr_jumps_max_(6) {}
 
 JumpSelector::~JumpSelector() {}
 
@@ -189,7 +189,7 @@ fill_tags_( FArray1D_int& tags, Size fill_pos, int tag, Size nres ) {
 	while ( tags( pos ) >= -1 ) {
 		tags( pos++ ) = tag;
 		if ( pos > nres ) break;
-		//	dump_tags_( tags, nres, std::cout );
+		// dump_tags_( tags, nres, std::cout );
 	}
 	runtime_assert( pos > nres || tags( pos ) <= -10 );
 }
@@ -216,7 +216,7 @@ JumpSelector::create_jump_sample( ) const {
 	FArray1D_int tags( nres , 0 );
 	for ( Size i = 0; i < nres; i++ ) {
 		if ( secstruct_[i] == 'L' ) {
-			for ( int ii=std::max((int)i-(int)loop_extension_,0); ii<= std::min( (int) i + (int)loop_extension_, (int) nres-1); ii++) {
+			for ( int ii=std::max((int)i-(int)loop_extension_,0); ii<= std::min( (int) i + (int)loop_extension_, (int) nres-1); ii++ ) {
 				tags(ii+1)= -10;
 			}
 		}
@@ -250,7 +250,7 @@ JumpSelector::create_jump_sample( ) const {
 			Size ct = 0;
 			while ( tags( i+ct ) == 0 ) { ct++; if ( ct+i > nres ) break; }
 			if ( ct <= min_free_size_ ) {
-				for ( Size jj=0; jj<ct; jj++) {
+				for ( Size jj=0; jj<ct; jj++ ) {
 					tags( i+jj ) = -1;
 				}
 			}
@@ -267,7 +267,7 @@ JumpSelector::create_jump_sample( ) const {
 		Interval aJump = select_random();
 		int start_tag = tags( aJump.start_ );
 		int stop_tag = tags( aJump.end_ );
-		//		bool bReTag = start_tag > 0 && stop_tag > 0;
+		//  bool bReTag = start_tag > 0 && stop_tag > 0;
 		if ( start_tag == stop_tag && start_tag > 0 ) continue; //disallow jump
 		if ( start_tag < 0 || stop_tag < 0 ) continue; //don't jump into loop regions
 		++nr; // from now on we know that the jump will be inserted
@@ -292,8 +292,10 @@ JumpSelector::create_jump_sample( ) const {
 		if ( tr.Trace.visible() ) dump_tags_( tags, nres, std::cout );
 		jump_list.push_back( aJump );
 	}
-	if ( attempts >= 1000 ) tr.Warning << "failed to find " << nr_jumps << " jumps in "
-																		 <<attempts<<" attempts. Only " << nr << " possible jumps found\n";
+	if ( attempts >= 1000 ) {
+		tr.Warning << "failed to find " << nr_jumps << " jumps in "
+			<<attempts<<" attempts. Only " << nr << " possible jumps found\n";
+	}
 	typedef utility::vector1< CutList > MetaCutList; //take as many cuts from MetaCutList as jumps -- take one cutregion from each MetaCuts
 	// determine cut-regions
 	// not quite optimal, yet
@@ -308,16 +310,16 @@ JumpSelector::create_jump_sample( ) const {
 			tag_list[ tags( pos ) ] = true; // boolean doesn't really matter
 			CutList cut_list;
 			// move to end of jump region
-			while ( tags( pos ) > 0 ) { ++pos; if ( pos > nres) break; };
+			while ( tags( pos ) > 0 ) { ++pos; if ( pos > nres ) break; };
 			if ( pos > nres ) break;
 
- 			runtime_assert ( tags( pos ) <= 0 );
+			runtime_assert ( tags( pos ) <= 0 );
 			// go up until you find another jump region -- add all loops in between to possible cut-regions
 			// if you find chain-break before next jump region no cut-point is needed.
 			while ( tags( pos ) <= 0 ) {
 
 				// skip possible white-space
-				while ( tags( pos ) > -10 ) { ++pos; if ( pos > nres) break; };
+				while ( tags( pos ) > -10 ) { ++pos; if ( pos > nres ) break; };
 				if ( pos > nres ) break;
 
 				// now we are at beginning of new cut region
@@ -326,7 +328,7 @@ JumpSelector::create_jump_sample( ) const {
 				cut.start_ = pos;
 
 				// skip to end of cutable-region
-				while ( tags( pos ) == -10 ) { ++pos; if ( pos > nres) break; };
+				while ( tags( pos ) == -10 ) { ++pos; if ( pos > nres ) break; };
 				if ( pos > nres ) break;
 
 				runtime_assert( tags( pos-1 ) == -10 && tags( pos ) > -10 );
@@ -340,8 +342,8 @@ JumpSelector::create_jump_sample( ) const {
 			// only add if down-stream jumps are connected to up-stream
 			bool bConnected = false;
 			for ( std::map< int , bool>::const_iterator it = tag_list.begin(), eit = tag_list.end();
-						it!=eit && !bConnected;
-						++it ) {
+					it!=eit && !bConnected;
+					++it ) {
 				for ( Size ii = pos; ii<=nres && !bConnected; ii++ )  {
 					if ( it->first == tags ( ii ) ) bConnected = true;
 					if ( bConnected ) tr.Trace << "add cuts since tag " << it->first << " has been found at pos " << ii << std::endl;
@@ -355,10 +357,10 @@ JumpSelector::create_jump_sample( ) const {
 	MetaCutList::const_iterator cut_pool_it = all_cuts.begin();
 	JumpSetup my_jumps( nres );
 	for ( JumpList::const_iterator it = jump_list.begin(), eit = jump_list.end();
-				it!=eit; ++it ) {
+			it!=eit; ++it ) {
 		int cut_frame_num = static_cast< int >( numeric::random::rg().uniform() * cut_pool_it->size() ) + 1;
 		tr.Trace << "chosen jump-cut: " << it->start_ << " " << it->end_ << " cut:" << (*cut_pool_it)[cut_frame_num].start_
-						 << " " << (*cut_pool_it)[cut_frame_num].end_ << std::endl;
+			<< " " << (*cut_pool_it)[cut_frame_num].end_ << std::endl;
 		my_jumps.add_jump( *it, (*cut_pool_it)[cut_frame_num] );
 		++cut_pool_it;
 	}
@@ -368,8 +370,8 @@ JumpSelector::create_jump_sample( ) const {
 Interval
 JumpSelector::select_random() const {
 	// FArray1D_int freq(size(),0);
-	//	Size Nsample = 100000;
-	//	for ( int ii=1; ii < Nsample; ii++ ) {
+	// Size Nsample = 100000;
+	// for ( int ii=1; ii < Nsample; ii++ ) {
 
 	Real ran = numeric::random::rg().uniform() * total_weight_;
 	Real cumsum = 0.0;
@@ -386,32 +388,32 @@ JumpSelector::select_random() const {
 	// freq( ct ) += 1;
 	runtime_assert( it != eit );
 
-//	}
-//	const_iterator it = begin();
-//	for ( int i = 1; i<= size(); i++ ) {
-//		std::cout << 1.0*freq( i )/ ( 1.0*Nsample) << " " << it->weight_/total_weight_ << std::endl;
-//		++it;
-//	}
+	// }
+	// const_iterator it = begin();
+	// for ( int i = 1; i<= size(); i++ ) {
+	//  std::cout << 1.0*freq( i )/ ( 1.0*Nsample) << " " << it->weight_/total_weight_ << std::endl;
+	//  ++it;
+	// }
 	return it->jump_;
 }
 
 //JumpsFromConstraintForest::JumpsFromConstraintForest(
-//	const core::Size total_residue,
-//	core::scoring::constraints::ConstraintForestOP forest,
-//	ObjexxFCL::FArray1D_float const& cut_probability
+// const core::Size total_residue,
+// core::scoring::constraints::ConstraintForestOP forest,
+// ObjexxFCL::FArray1D_float const& cut_probability
 //) :
-//	total_residue_(total_residue),
-//	forest_(forest),
-//	cut_prob_(cut_probability)
+// total_residue_(total_residue),
+// forest_(forest),
+// cut_prob_(cut_probability)
 //{}
 //
 //JumpSample
 //JumpsFromConstraintForest::create_jump_sample() const {
-//	// STOPGAP SOLUTION: generate new jumps each time.  Need to take into account
-//	// that constraints will change too.
-//	// THIS HAS TO CHANGE.
-//	//forest_->generate_random_sample(); this is and has to be called where constraints are generated
-//	return JumpSample(total_residue_, forest_->get_pairings(), cut_prob_);
+// // STOPGAP SOLUTION: generate new jumps each time.  Need to take into account
+// // that constraints will change too.
+// // THIS HAS TO CHANGE.
+// //forest_->generate_random_sample(); this is and has to be called where constraints are generated
+// return JumpSample(total_residue_, forest_->get_pairings(), cut_prob_);
 //}
 
 //JumpsFromConstraintForest::~JumpsFromConstraintForest() { }
@@ -419,8 +421,8 @@ JumpSelector::select_random() const {
 //JumpSample
 //JumpsFromConstraintForest::clean_jumps( JumpSample const& js ) const
 //{
-//	std::cerr << "ERROR: JumpSetup::clean_jumps() not implemented" << std::endl;
-//	return js;
+// std::cerr << "ERROR: JumpSetup::clean_jumps() not implemented" << std::endl;
+// return js;
 //}
 
 

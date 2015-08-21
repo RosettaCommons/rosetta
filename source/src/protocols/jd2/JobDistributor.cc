@@ -87,21 +87,21 @@ static thread_local basic::Tracer tr( "protocols.jd2.JobDistributor" );
 //
 //namespace protocols
 //{
-//	namespace jd2
-//	{
-//		boost::thread_specific_pointer< JobDistributor > jd_ptr;
+// namespace jd2
+// {
+//  boost::thread_specific_pointer< JobDistributor > jd_ptr;
 //
-//		JobDistributor *
-//		JobDistributor::get_instance()
-//		{
-//			if ( jd_ptr.get() == 0 )
-//			{
-//				jd_ptr.reset( JobDistributorFactory::create_job_distributor() );
-//			}
-//			return jd_ptr.get();
-//		}
+//  JobDistributor *
+//  JobDistributor::get_instance()
+//  {
+//   if ( jd_ptr.get() == 0 )
+//   {
+//    jd_ptr.reset( JobDistributorFactory::create_job_distributor() );
+//   }
+//   return jd_ptr.get();
+//  }
 //
-//	} //jd2
+// } //jd2
 //} //protocols
 //
 ////non-multithreaded case behaves like a singleton
@@ -150,46 +150,43 @@ namespace jd2
 {
 
 JobDistributor::JobDistributor() :
-		//	job_inputter_( JobDistributorFactory::create_job_inputter() ),
-		// non-NULL starting state for this pointer; this makes calls to the
-		// JobDistributor safe even when not inside go() (of course you will get a
-		// stupid object, but at least it won't segfault).  This object deliberately
-		// goes away once it's not used.
-		job_inputter_(),
-		job_outputter_(),
-		parser_(),
-		jobs_(),
-		current_job_(JD2_BOGUS_JOB->copy_without_output()),
-		current_job_id_(0),
-		last_completed_job_(0),
-		number_failed_jobs_(0),
-		current_batch_id_(0)
+	// job_inputter_( JobDistributorFactory::create_job_inputter() ),
+	// non-NULL starting state for this pointer; this makes calls to the
+	// JobDistributor safe even when not inside go() (of course you will get a
+	// stupid object, but at least it won't segfault).  This object deliberately
+	// goes away once it's not used.
+	job_inputter_(),
+	job_outputter_(),
+	parser_(),
+	jobs_(),
+	current_job_(JD2_BOGUS_JOB->copy_without_output()),
+	current_job_id_(0),
+	last_completed_job_(0),
+	number_failed_jobs_(0),
+	current_batch_id_(0)
 {
 	init_jd();
 }
 
 JobDistributor::JobDistributor(bool empty) :
-		//	job_inputter_( JobDistributorFactory::create_job_inputter() ),
-		// non-NULL starting state for this pointer; this makes calls to the
-		// JobDistributor safe even when not inside go() (of course you will get a
-		// stupid object, but at least it won't segfault).  This object deliberately
-		// goes away once it's not used.
-		job_inputter_(),
-		job_outputter_(),
-		parser_(),
-		jobs_(),
-		current_job_(JD2_BOGUS_JOB->copy_without_output()),
-		current_job_id_(0),
-		last_completed_job_(0),
-		number_failed_jobs_(0),
-		current_batch_id_(0)
+	// job_inputter_( JobDistributorFactory::create_job_inputter() ),
+	// non-NULL starting state for this pointer; this makes calls to the
+	// JobDistributor safe even when not inside go() (of course you will get a
+	// stupid object, but at least it won't segfault).  This object deliberately
+	// goes away once it's not used.
+	job_inputter_(),
+	job_outputter_(),
+	parser_(),
+	jobs_(),
+	current_job_(JD2_BOGUS_JOB->copy_without_output()),
+	current_job_id_(0),
+	last_completed_job_(0),
+	number_failed_jobs_(0),
+	current_batch_id_(0)
 {
-	if (!empty)
-	{
+	if ( !empty ) {
 		init_jd();
-	}
-	else
-	{
+	} else {
 		job_inputter_ = NULL;
 		job_outputter_ = JobOutputterOP( new NoOutputJobOutputter );
 		parser_ = JobDistributorFactory::create_parser();
@@ -203,21 +200,19 @@ void JobDistributor::init_jd()
 
 	// are there batches?
 	populate_batch_list_from_cmd();
-	if (batches_.size() > 0)
-	{
+	if ( batches_.size() > 0 ) {
 		tr.Debug << "batches present... " << std::endl;
 		current_batch_id_ = 1;
 		job_inputter_ = JobInputterOP( new BatchJobInputter(batches_[1]) );
-	}
-	else
-	{ //no batches...
+	} else {
+		//no batches...
 		try{
 			job_inputter_ = JobDistributorFactory::create_job_inputter();
 		} catch (utility::excn::EXCN_Base & excn) {
 			basic::Error()
 				<< "ERROR: Exception caught by JobDistributor while trying to initialize the JobInputter of type '"
 				<< JobInputter::job_inputter_input_source_to_string(
-					job_inputter_->input_source())
+				job_inputter_->input_source())
 				<< "'" << std::endl;
 			basic::Error()
 				<< excn << std::endl;
@@ -230,17 +225,17 @@ void JobDistributor::init_jd()
 		jobs_ = JobsContainerOP( new JobsContainer ); //Create the jobs container object
 		job_inputter_->fill_jobs(*jobs_);
 	} catch (utility::excn::EXCN_Base & excn) {
-			basic::Error()
-				<< "ERROR: Exception caught by JobDistributor while trying to fill the input jobs with JobInputter of type type '"
-				<< JobInputter::job_inputter_input_source_to_string(
-					job_inputter_->input_source())
-				<< "'" << std::endl;
-			basic::Error()
-				<< excn << std::endl;
-			utility_exit();
-		}
+		basic::Error()
+			<< "ERROR: Exception caught by JobDistributor while trying to fill the input jobs with JobInputter of type type '"
+			<< JobInputter::job_inputter_input_source_to_string(
+			job_inputter_->input_source())
+			<< "'" << std::endl;
+		basic::Error()
+			<< excn << std::endl;
+		utility_exit();
+	}
 
-	// have to initialize these AFTER BatchJobInputter->fill_jobs since a new batch might change options
+// have to initialize these AFTER BatchJobInputter->fill_jobs since a new batch might change options
 	job_outputter_ = JobDistributorFactory::create_job_outputter();
 	parser_ = JobDistributorFactory::create_parser();
 }
@@ -248,11 +243,10 @@ void JobDistributor::init_jd()
 /// @details read -run:batches and put it into batches_ vector.
 void JobDistributor::populate_batch_list_from_cmd()
 {
-	if (basic::options::option[basic::options::OptionKeys::run::batches].user())
-	{
+	if ( basic::options::option[basic::options::OptionKeys::run::batches].user() ) {
 		//typedef utility::vector1< utility::file::FileName >::const_iterator iterator
 		utility::vector1<utility::file::FileName> const& fns(
-				basic::options::option[basic::options::OptionKeys::run::batches]);
+			basic::options::option[basic::options::OptionKeys::run::batches]);
 		std::copy(fns.begin(), fns.end(), std::back_inserter(batches_));
 	}
 }
@@ -308,14 +302,14 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 	} PROF_STOP( basic::JD2);
 
 	note_all_jobs_finished();
-	if (batches_.size()) {
+	if ( batches_.size() ) {
 		tr.Info << jobs_->size() << " jobs in last batch... in total ";
 	} else {
 		tr.Info << jobs_->size() << " jobs considered, ";
 	}
 	tr.Info << tried_jobs << " jobs attempted in "
 		<< (time(NULL) - allstarttime) << " seconds" << std::endl;
-	if (tried_jobs == 0) {
+	if ( tried_jobs == 0 ) {
 		tr.Info << "no jobs were attempted, did you forget to pass -overwrite?"
 			<< std::endl;
 	}
@@ -327,7 +321,7 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 	// In the MPI case, number_failed_jobs_ will stay zero because MPI overrides job_failed()
 	if ( option[OptionKeys::jd2::failed_job_exception] && (number_failed_jobs_ > 0) ) {
 		throw( utility::excn::EXCN_JD2Failure(
-				utility::to_string(number_failed_jobs_) + " jobs failed; check output for error messages"
+			utility::to_string(number_failed_jobs_) + " jobs failed; check output for error messages"
 			));
 	}
 
@@ -362,30 +356,31 @@ JobInputterInputSource::Enum JobDistributor::job_inputter_input_source() const
 
 bool JobDistributor::obtain_new_job(bool reconsider_current_job)
 {
-	if (reconsider_current_job)
+	if ( reconsider_current_job ) {
 		--current_job_id_;
+	}
 
-	if (batches_.size() == 0
-			|| get_current_batch() != BatchJobInputter::BOGUS_BATCH_ID) {
+	if ( batches_.size() == 0
+			|| get_current_batch() != BatchJobInputter::BOGUS_BATCH_ID ) {
 		//batches can be cancelled during computation
 		current_job_id_ = get_new_job_id(); //if no batches are present, or current batch still valid
 	} else {
 		current_job_id_ = 0; //batch got cancelled... jump to end of batch....
 	}
 
-	if (current_job_id_ == 0) {
-		if (next_batch()) { //query if there is a new batch to run after this one has finished
+	if ( current_job_id_ == 0 ) {
+		if ( next_batch() ) { //query if there is a new batch to run after this one has finished
 			current_job_id_ = 0;
 			return obtain_new_job(); //set to first job of new batch... --- if batch is already computed fully this might call next_batch() !
 		}
 		return false;
-	} else if (current_job_id_ <= jobs_->size()) {
+	} else if ( current_job_id_ <= jobs_->size() ) {
 		current_job_ = (*jobs_)[current_job_id_];
-		if (reconsider_current_job) {
+		if ( reconsider_current_job ) {
 			current_job_->clear_output();
 		}
 		return true;
-	}	else {
+	} else {
 		utility_exit_with_message(
 			"JobDistributor: nonexistent job returned in obtain_new_job()");
 		return false;
@@ -407,7 +402,7 @@ void JobDistributor::job_succeeded_additional_output(core::pose::Pose & pose, st
 
 /// @details Mark job as bad, so at the end of execution we know definitively how many jobs failed for any reason
 void JobDistributor::job_failed(core::pose::Pose & /*pose*/,
-		bool will_retry)
+	bool will_retry)
 {
 	if ( ! will_retry ) {
 		increment_failed_jobs();
@@ -416,12 +411,12 @@ void JobDistributor::job_failed(core::pose::Pose & /*pose*/,
 }
 
 void JobDistributor::mark_job_as_completed(core::Size job_id,
-		core::Real run_time)
+	core::Real run_time)
 {
 	(*jobs_)[job_id]->set_completed();
 	tr.Info << job_outputter_->output_name((*jobs_)[job_id])
-			<< " reported success in " << run_time << " seconds" << std::endl;
-	//	tr.Info << "completed job: " << job_outputter_->output_name( (*jobs_)[ job_id ] ) << std::endl;
+		<< " reported success in " << run_time << " seconds" << std::endl;
+	// tr.Info << "completed job: " << job_outputter_->output_name( (*jobs_)[ job_id ] ) << std::endl;
 }
 
 void JobDistributor::mark_job_as_bad(core::Size job_id)
@@ -483,24 +478,23 @@ JobDistributor::run_one_job(
 #endif
 
 
-	if ((option[OptionKeys::run::maxruntime].user())
-			&& (option[OptionKeys::run::maxruntime]() > 0))
-	{
+	if ( (option[OptionKeys::run::maxruntime].user())
+			&& (option[OptionKeys::run::maxruntime]() > 0) ) {
 		core::Size const elapsedtime(time(NULL) - allstarttime);
 		core::Size targettime( option[OptionKeys::run::maxruntime]() );
 		core::Size time_estimate(0);
-		if( option[OptionKeys::run::maxruntime_bufferfactor].user() ) {
+		if ( option[OptionKeys::run::maxruntime_bufferfactor].user() ) {
 			time_estimate = get_job_time_estimate();
 			targettime -= option[OptionKeys::run::maxruntime_bufferfactor] * time_estimate;
 		}
-		if( targettime < elapsedtime ) {
+		if ( targettime < elapsedtime ) {
 			basic::Error() << "Run terminating because runtime of "
-					<< elapsedtime << " s exceeded maxruntime of "
-					<< targettime << " s ";
-			if( option[OptionKeys::run::maxruntime_bufferfactor].user() ) {
+				<< elapsedtime << " s exceeded maxruntime of "
+				<< targettime << " s ";
+			if ( option[OptionKeys::run::maxruntime_bufferfactor].user() ) {
 				basic::Error() << "(" << option[OptionKeys::run::maxruntime] << " - "
-						<< option[OptionKeys::run::maxruntime_bufferfactor] << "*"
-						<< time_estimate << " s)";
+					<< option[OptionKeys::run::maxruntime_bufferfactor] << "*"
+					<< time_estimate << " s)";
 			}
 			basic::Error() << std::endl;
 			return false; //let it clean up in case there's useful prof information or something
@@ -511,7 +505,7 @@ JobDistributor::run_one_job(
 
 	// setup profiling
 	evaluation::TimeEvaluatorOP run_time(NULL);
-	if (!option[OptionKeys::run::no_prof_info_in_silentout]) {
+	if ( !option[OptionKeys::run::no_prof_info_in_silentout] ) {
 		job_outputter_->add_evaluation(run_time = evaluation::TimeEvaluatorOP( new evaluation::TimeEvaluator )); //just don't use this in integration tests!
 	}
 
@@ -539,45 +533,44 @@ JobDistributor::run_one_job(
 		throw;
 	} catch (utility::excn::EXCN_Base& excn) {
 		basic::Error()
-				<< "ERROR: Exception caught by JobDistributor while trying to get pose from job "
-				<< "'" << job_outputter_->output_name(current_job_) << "'" << std::endl
-				<< excn << std::endl;
+			<< "ERROR: Exception caught by JobDistributor while trying to get pose from job "
+			<< "'" << job_outputter_->output_name(current_job_) << "'" << std::endl
+			<< excn << std::endl;
 		basic::Error()
-				<< "Treating failure as bad input; canceling similar jobs"
-				<< std::endl;
+			<< "Treating failure as bad input; canceling similar jobs"
+			<< std::endl;
 		remove_bad_inputs_from_job_list();
 		job_failed(pose, false);
 		current_job_->end_timing();
 		return true;
 	}
 
-	//These if statements determine whether a new creation of the mover is appropriate
+//These if statements determine whether a new creation of the mover is appropriate
 	bool reinitialize_new_input(false);
 	bool new_input(false);
 	if ( current_job_->input_tag() != last_inner_job_tag ) {
 		//this means we have just changed inputs - the next pdb on -l, etc
 		tr.Debug << "new input detected, is: " << current_job_->input_tag()
-				<< ", last was: " << last_inner_job_tag << std::endl;
+			<< ", last was: " << last_inner_job_tag << std::endl;
 		last_inner_job_tag = current_job_->input_tag();
 		new_input = true;
 
 		//do we need to reinitialize because of the new input? - yes if mover says, or cmdline says
-		if (mover
+		if ( mover
 				&& (mover->reinitialize_for_new_input()
-				|| option[OptionKeys::run::reinitialize_mover_for_new_input]))
-		{
+				|| option[OptionKeys::run::reinitialize_mover_for_new_input]) ) {
 			reinitialize_new_input = true;
 		} //if we need to reinitialize
 
 	} //if the input pose is about to change
 
 	// Are we on a new output structure? (Or are we repeating a failed job?)
-	if( job_outputter_->output_name(current_job_) != last_output_tag ) {
+	if ( job_outputter_->output_name(current_job_) != last_output_tag ) {
 		last_output_tag = job_outputter_->output_name(current_job_);
 		retries_this_job = 0;
 	}
 
-	if (option[OptionKeys::jd2::delete_old_poses].user()) {
+	if ( option[OptionKeys::jd2::delete_old_poses].user() ) {
 		//to improve jd2 memory performance, we will delete the last
 		//input's starting pose. (Previous to this, jd2 never deleted
 		//input poses and would accumulate memory over large input sets
@@ -589,7 +582,7 @@ JobDistributor::run_one_job(
 		//probably be applied by default, once the issues with the
 		//special uses are worked out.
 
-		if (!first_job && last_completed_job_ != 0 && jobs_->has_job(last_completed_job_) ) {
+		if ( !first_job && last_completed_job_ != 0 && jobs_->has_job(last_completed_job_) ) {
 			tr.Debug << "deleting pose from job " << last_completed_job_ << std::endl;
 			(*jobs_)[last_completed_job_]->inner_job_nonconst()->set_pose( 0 );
 		}
@@ -598,9 +591,9 @@ JobDistributor::run_one_job(
 	//to pose (and it should have been) this will free the memory
 
 
-	if (current_batch_id() != last_batch_id) {
+	if ( current_batch_id() != last_batch_id ) {
 		tr.Debug << "new batch detected: get fresh instance from mover"
-				<< std::endl;
+			<< std::endl;
 		new_input = true;
 		reinitialize_new_input = true;
 		last_batch_id = current_batch_id();
@@ -609,8 +602,7 @@ JobDistributor::run_one_job(
 	//for regular movers, reinitialize if desired
 	if ( ! using_parser()
 			&& ( reinitialize_new_input || mover->reinitialize_for_each_job()
-			|| option[OptionKeys::run::reinitialize_mover_for_each_job] ))
-	{
+			|| option[OptionKeys::run::reinitialize_mover_for_each_job] ) ) {
 		tr.Trace << "reinitializing the mover" << std::endl;
 		PROF_STOP( basic::JD2);
 		PROF_START( basic::JD2_INIT_MOVER);
@@ -620,7 +612,7 @@ JobDistributor::run_one_job(
 		PROF_START( basic::JD2);
 	} else if ( using_parser() ) { //call the parser
 		tr.Trace << "Allowing the Parser to create a new Mover if desired"
-				<< std::endl;
+			<< std::endl;
 		try {
 			parser_->generate_mover_from_job(current_job_, pose, mover_copy, new_input);
 			mover = mover_copy; // save the mover generated by the parser
@@ -645,7 +637,7 @@ JobDistributor::run_one_job(
 			return true;
 		}
 
-		// the Parser might have modified the starting pose (with constraints) - so we'll refresh our copy
+// the Parser might have modified the starting pose (with constraints) - so we'll refresh our copy
 		job_inputter_->pose_from_job(pose, current_job_);
 
 #ifdef BOINC_GRAPHICS
@@ -669,7 +661,7 @@ JobDistributor::run_one_job(
 	mover_copy->reset_status();
 	// clear old string info from previous apply calls
 	mover_copy->clear_info();
-	if (run_time) {
+	if ( run_time ) {
 		run_time->reset(); //reset clock of TimeEvaluator
 	}
 
@@ -679,7 +671,7 @@ JobDistributor::run_one_job(
 	protocols::moves::MoverStatus status;
 	PROF_STOP( basic::JD2);
 	try {
-		if (basic::options::option[basic::options::OptionKeys::out::std_IO_exit_error_code]()	> 0) {
+		if ( basic::options::option[basic::options::OptionKeys::out::std_IO_exit_error_code]() > 0 ) {
 			std::cout.exceptions(std::ios_base::badbit);
 		}
 
@@ -736,16 +728,16 @@ core::Size
 JobDistributor::get_job_time_estimate() const {
 	core::Size time_sum( 0 );
 	core::Size number_completed( 0 );
-	for( core::Size ii(1); ii <= jobs_->size(); ++ii ) {
-		if( jobs_->has_job(ii) && (*jobs_)[ii]->end_time() != 0 ) {
+	for ( core::Size ii(1); ii <= jobs_->size(); ++ii ) {
+		if ( jobs_->has_job(ii) && (*jobs_)[ii]->end_time() != 0 ) {
 			time_sum += (*jobs_)[ii]->elapsed_time();
 			++number_completed;
-		} else if (!jobs_->has_job(ii) && tr.Warning.visible()) {
+		} else if ( !jobs_->has_job(ii) && tr.Warning.visible() ) {
 			tr.Warning << "Warning!  Job time estimation is not guaranteed to work properly if a JobInputter is used that prunes old jobs to save memory!" << std::endl;
 			tr.Warning.flush();
 		}
 	}
-	if( number_completed != 0 ) {
+	if ( number_completed != 0 ) {
 		time_sum = time_sum / number_completed;
 	}
 	return time_sum;
@@ -755,10 +747,10 @@ void JobDistributor::setup_pymol_observer( core::pose::Pose & pose )
 {
 	using namespace basic::options;
 
-	if (option[OptionKeys::run::show_simulation_in_pymol].user()) {
+	if ( option[OptionKeys::run::show_simulation_in_pymol].user() ) {
 		//Control what the observer gets attached to
-		if (option[OptionKeys::run::update_pymol_on_energy_changes_only]() &&
-				option[OptionKeys::run::update_pymol_on_conformation_changes_only]()) {
+		if ( option[OptionKeys::run::update_pymol_on_energy_changes_only]() &&
+				option[OptionKeys::run::update_pymol_on_conformation_changes_only]() ) {
 			tr.Warning << "PyMol updates for both only energy and only conformation set to true"
 				"Attaching observer as general pose observer instead" << std::endl;
 			moves::AddPyMolObserver(
@@ -766,13 +758,13 @@ void JobDistributor::setup_pymol_observer( core::pose::Pose & pose )
 				option[OptionKeys::run::keep_pymol_simulation_history](),
 				option[OptionKeys::run::show_simulation_in_pymol].value());
 
-		} else if (option[OptionKeys::run::update_pymol_on_energy_changes_only]()) {
+		} else if ( option[OptionKeys::run::update_pymol_on_energy_changes_only]() ) {
 
 			moves::AddPyMolObserver_to_energies(
 				pose,
 				option[OptionKeys::run::keep_pymol_simulation_history](),
 				option[OptionKeys::run::show_simulation_in_pymol].value());
-		} else if (option[OptionKeys::run::update_pymol_on_conformation_changes_only]()) {
+		} else if ( option[OptionKeys::run::update_pymol_on_conformation_changes_only]() ) {
 
 			moves::AddPyMolObserver_to_conformation(
 				pose,
@@ -802,7 +794,7 @@ void JobDistributor::write_output_from_job(
 
 	PROF_START( basic::JD2_OUTPUT);
 	// check cases: SUCCESS, FAIL_RETRY, FAIL_DO_NOT_RETRY, FAIL_BAD_INPUT
-	if ( status == protocols::moves::MS_SUCCESS) {
+	if ( status == protocols::moves::MS_SUCCESS ) {
 		last_completed_job_ = current_job_id_;
 		// tr.Info << job_outputter_->output_name( current_job_ ) << " reported success in " << jobtime << " seconds" << std::endl;
 
@@ -821,39 +813,39 @@ void JobDistributor::write_output_from_job(
 		job_succeeded(pose, jobtime, tag);
 
 		// Collect additional poses from mover
-		while(additional_pose) {
+		while ( additional_pose ) {
 			std::ostringstream s;
 			s << std::setfill('0') << std::setw(4) << i_additional_pose;
 			job_succeeded_additional_output(*additional_pose, s.str());
 			++i_additional_pose;
- 			additional_pose = mover_copy->get_additional_output();
+			additional_pose = mover_copy->get_additional_output();
 		}
-	} else if (status == protocols::moves::FAIL_RETRY) {
+	} else if ( status == protocols::moves::FAIL_RETRY ) {
 		using namespace basic::options::OptionKeys::jd2;
 		++retries_this_job;
 		if ( option[ntrials].user()
-				&& (retries_this_job >= (core::Size) option[ntrials].value())) {
+				&& (retries_this_job >= (core::Size) option[ntrials].value()) ) {
 			//this represents too many FAIL_RETRY - we will roll over into FAIL_DO_NOT_RETRY
 			tr.Warning << job_outputter_->output_name(current_job_)
-					<< " reported failure " << retries_this_job
-					<< " times and will no longer retry (permanent failure)"
-					<< std::endl;
+				<< " reported failure " << retries_this_job
+				<< " times and will no longer retry (permanent failure)"
+				<< std::endl;
 			job_failed(pose, false /* will not retry */);
 		} else {
 			mark_current_job_id_for_repetition();
 			tr.Warning << job_outputter_->output_name(current_job_)
-					<< " reported failure and will retry" << std::endl;
+				<< " reported failure and will retry" << std::endl;
 			current_job_->clear_output();
 			job_failed(pose, true /* will retry */);
 		}
-	} else if (status == protocols::moves::FAIL_DO_NOT_RETRY) {
+	} else if ( status == protocols::moves::FAIL_DO_NOT_RETRY ) {
 		tr.Warning << job_outputter_->output_name(current_job_)
-				<< " reported failure and will NOT retry" << std::endl;
+			<< " reported failure and will NOT retry" << std::endl;
 		job_failed(pose, false /* will not retry */);
-	} else if (status == protocols::moves::FAIL_BAD_INPUT) {
+	} else if ( status == protocols::moves::FAIL_BAD_INPUT ) {
 		tr.Warning << job_outputter_->output_name(current_job_)
-				<< " reported that its input was bad and will not retry"
-				<< std::endl;
+			<< " reported that its input was bad and will not retry"
+			<< std::endl;
 		remove_bad_inputs_from_job_list();
 		job_failed(pose, false /*will not retry */);
 	}
@@ -914,29 +906,27 @@ ParserOP JobDistributor::parser() const
 /////////////////////////batch stuff //////////////////////////
 std::string JobDistributor::get_current_batch() const
 {
-	if (current_batch_id_ && batches_.size() > 0
-			&& current_batch_id_ <= batches_.size())
-	{
+	if ( current_batch_id_ && batches_.size() > 0
+			&& current_batch_id_ <= batches_.size() ) {
 		return batches_[current_batch_id_];
-	}
-	else
-	{
+	} else {
 		return BatchJobInputter::BOGUS_BATCH_ID;
 	}
 }
 
 void JobDistributor::set_batch_id(core::Size setting)
 {
-	if (current_batch_id_ == setting)
+	if ( current_batch_id_ == setting ) {
 		return;
+	}
 	current_batch_id_ = setting;
-	if (current_batch_id_ > batches_.size())
+	if ( current_batch_id_ > batches_.size() ) {
 		batch_underflow();
-	if (current_batch_id_ > batches_.size())
-	{
+	}
+	if ( current_batch_id_ > batches_.size() ) {
 		tr.Error << "[ERROR] illegeal attempt to set batch_id to " << setting
-				<< " where we have only " << batches_.size() << " batches"
-				<< std::endl;
+			<< " where we have only " << batches_.size() << " batches"
+			<< std::endl;
 		utility_exit_with_message("wrong batch_id");
 	}
 	load_new_batch();
@@ -946,22 +936,22 @@ bool JobDistributor::next_batch()
 {
 	++current_batch_id_;
 
-	if (current_batch_id_ > batches_.size())
+	if ( current_batch_id_ > batches_.size() ) {
 		batch_underflow();
-	if (current_batch_id_ > batches_.size())
-	{ //still no new batches.
+	}
+	if ( current_batch_id_ > batches_.size() ) {
+		//still no new batches.
 		tr.Info << "no more batches to process... " << std::endl;
 		return false;
 	}
 
 	//skip BOGUS_BATCHES ..
-	while (current_batch_id_ <= batches_.size()
-			&& get_current_batch() == BatchJobInputter::BOGUS_BATCH_ID)
-		++current_batch_id_;
+	while ( current_batch_id_ <= batches_.size()
+			&& get_current_batch() == BatchJobInputter::BOGUS_BATCH_ID )
+			++current_batch_id_;
 
 	//if ended on BOGUS_BATCH
-	if (get_current_batch() == BatchJobInputter::BOGUS_BATCH_ID)
-	{
+	if ( get_current_batch() == BatchJobInputter::BOGUS_BATCH_ID ) {
 		tr.Trace << "last batch is CANCELLED: run next_batch()" << std::endl;
 		return next_batch();
 	}
@@ -975,16 +965,13 @@ bool JobDistributor::next_batch()
 /// a current batch, or while we are in non-batch mode
 void JobDistributor::add_batch(std::string const& batch, core::Size id)
 {
-	while (id > batches_.size())
-	{
+	while ( id > batches_.size() )
+			{
 		batches_.push_back(BatchJobInputter::BOGUS_BATCH_ID);
 	}
-	if (id > 0)
-	{
+	if ( id > 0 ) {
 		batches_[id] = batch;
-	}
-	else
-	{
+	} else {
 		batches_.push_back(batch);
 	}
 }
@@ -1027,37 +1014,42 @@ void JobDistributor::set_job_outputter(const JobOutputterOP &new_job_outputter)
 
 // // JobDistributorDestroyer functions
 // JobDistributorDestroyer::JobDistributorDestroyer(JobDistributor* jd) {
-// 	jd_ = jd;
+//  jd_ = jd;
 // }
 
 // JobDistributorDestroyer::~JobDistributorDestroyer() {
-// 	delete jd_;
+//  delete jd_;
 // }
 // void JobDistributorDestroyer::set_job_distributor(JobDistributor* jd) {
-// 	jd_ = jd;
+//  jd_ = jd;
 // }
 
 /// @details Default callback function for signal handling
 void JobDistributor::jd2_signal_handler(int signal_)
 {
 	std::cout << "Got some signal... It is:" << signal_ << std::endl;
-	if (signal_ == SIGINT)
+	if ( signal_ == SIGINT ) {
 		std::cout << "Ctrl-c was pressed!" << std::endl;
-	if (signal_ == SIGABRT)
+	}
+	if ( signal_ == SIGABRT ) {
 		std::cout << "Process was aborted!" << std::endl;
-	if (signal_ == SIGTERM)
+	}
+	if ( signal_ == SIGTERM ) {
 		std::cout << "Process was terminated!" << std::endl;
+	}
 
 #ifndef WIN32
-// // You can't catch SIGKILL - don't bother trying
-//	if (signal_ == SIGKILL)
-//		std::cout << "Process was SIGKILL!" << std::endl;
-	if (signal_ == SIGQUIT)
+	// // You can't catch SIGKILL - don't bother trying
+	// if (signal_ == SIGKILL)
+	//  std::cout << "Process was SIGKILL!" << std::endl;
+	if ( signal_ == SIGQUIT ) {
 		std::cout << "Process was SIGQUIT!" << std::endl;
+	}
 #endif
 
-	if (get_instance()->job_outputter_)
+	if ( get_instance()->job_outputter_ ) {
 		get_instance()->job_outputter_->flush(); //This call forces out any unprinted but finished data
+	}
 	get_instance()->handle_interrupt();
 
 	//utility_exit_with_status(1);
@@ -1070,14 +1062,14 @@ void JobDistributor::jd2_signal_handler(int signal_)
 void JobDistributor::setup_system_signal_handler(void(*signal_fn)(int))
 {
 #ifndef __native_client__
-  // Soooo many way to kill... wait - there is no special signal for HS with SVD? - lame...
+	// Soooo many way to kill... wait - there is no special signal for HS with SVD? - lame...
 	signal(SIGINT, signal_fn);
 	signal(SIGABRT, signal_fn);
 	signal(SIGTERM, signal_fn);
 
 #ifndef WIN32
-// // You can't catch SIGKILL - don't bother trying
-//	signal(SIGKILL, signal_fn);
+	// // You can't catch SIGKILL - don't bother trying
+	// signal(SIGKILL, signal_fn);
 	signal(SIGQUIT, signal_fn);
 #endif
 #endif
@@ -1092,8 +1084,8 @@ void JobDistributor::remove_system_signal_handler()
 	signal(SIGABRT, SIG_DFL);
 	signal(SIGTERM, SIG_DFL);
 #ifndef WIN32
-// // You can't catch SIGKILL - don't bother trying
-//	signal(SIGKILL, SIG_DFL);
+	// // You can't catch SIGKILL - don't bother trying
+	// signal(SIGKILL, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 #endif
 #endif

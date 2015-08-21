@@ -93,7 +93,7 @@ public:
 	// contain (or lack) the indicated proton
 	void assert_restype_w_atom_presence( core::pack::task::PackerTaskOP task, std::string const & proton, bool presence )
 	{
-		for(core::Size ii = 2; ii < task->total_residue(); ++ii ) {
+		for ( core::Size ii = 2; ii < task->total_residue(); ++ii ) {
 			bool present = false;
 			for ( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter
 					allowed_iter = task->residue_task( ii ).allowed_residue_types_begin(),
@@ -113,8 +113,8 @@ public:
 	void test_fix_his_tautomer() {
 		//// APL TEMP
 		//for ( core::Size ii = 1; ii <= 100; ++ii ) {
-		//	std::cout << "test_fix_his_taut " << ii << std::endl;
-		//	setUp();
+		// std::cout << "test_fix_his_taut " << ii << std::endl;
+		// setUp();
 
 
 		core::pose::Pose pose;
@@ -131,17 +131,17 @@ public:
 		utility::vector1< core::conformation::ResidueOP > HISs, HIS_Ds;
 
 		//create concrete HIS(_D) residues
-		for(core::Size i=2; i<pose.total_residue(); ++i) HISs.push_back(core::conformation::ResidueFactory::create_residue(HIS, pose.residue(i), pose.conformation(), true));
-		for(core::Size i=2; i<pose.total_residue(); ++i) HIS_Ds.push_back(core::conformation::ResidueFactory::create_residue(HIS_D, pose.residue(i), pose.conformation(), true));
+		for ( core::Size i=2; i<pose.total_residue(); ++i ) HISs.push_back(core::conformation::ResidueFactory::create_residue(HIS, pose.residue(i), pose.conformation(), true));
+		for ( core::Size i=2; i<pose.total_residue(); ++i ) HIS_Ds.push_back(core::conformation::ResidueFactory::create_residue(HIS_D, pose.residue(i), pose.conformation(), true));
 
 		//force all nonterminal to HIS
 		core::pose::Pose HISpose(poseconst);
-		for(core::Size i=2; i<pose.total_residue(); ++i) HISpose.replace_residue(i, *(HISs[i-1]), true);
+		for ( core::Size i=2; i<pose.total_residue(); ++i ) HISpose.replace_residue(i, *(HISs[i-1]), true);
 		//HISpose.dump_pdb("HISpose.pdb");
 
 		//force all nonterminal to HIS_D
 		core::pose::Pose HIS_Dpose(poseconst);
-		for(core::Size i=2; i<pose.total_residue(); ++i) HIS_Dpose.replace_residue(i, *(HIS_Ds[i-1]), true);
+		for ( core::Size i=2; i<pose.total_residue(); ++i ) HIS_Dpose.replace_residue(i, *(HIS_Ds[i-1]), true);
 		//HIS_Dpose.dump_pdb("HIS_Dpose.pdb");
 
 		//make copies of poses for independent manipulation

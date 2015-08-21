@@ -42,7 +42,7 @@ class TorsionFourierComponent : public utility::pointer::ReferenceCount
 
 public:
 	TorsionFourierComponent( Real factor, Real periodicity, Real phase ) :
-			factor_( factor ), periodicity_( periodicity ), phase_( phase ) {}
+		factor_( factor ), periodicity_( periodicity ), phase_( phase ) {}
 
 	Real compute( Real const torsion_angle, Real & deriv ) const;
 
@@ -51,9 +51,9 @@ public:
 	Real phase() const { return phase_; }
 
 private:
-	Real factor_;				// The value for Vn/2 - analog to spring constant
-	Real periodicity_;	// How many minima for torsion - i.e. two SP3 atoms would have 3
-	Real phase_;				// Offset to minimum in potential
+	Real factor_;    // The value for Vn/2 - analog to spring constant
+	Real periodicity_; // How many minima for torsion - i.e. two SP3 atoms would have 3
+	Real phase_;    // Offset to minimum in potential
 
 };
 

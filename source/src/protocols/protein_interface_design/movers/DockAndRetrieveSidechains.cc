@@ -92,7 +92,7 @@ DockAndRetrieveSidechains::apply( core::pose::Pose & pose )
 		sym_docking_mover_->set_input_pose( saved_pose );
 		sym_docking_mover_->apply( pose );
 		//set_last_move_status( sym_docking_mover_->get_last_move_status() ); might be needed
-	}	else {
+	} else {
 		docking_mover_->set_native_pose( saved_pose );
 		docking_mover_->set_input_pose( saved_pose );
 		docking_mover_->apply( pose );
@@ -100,14 +100,14 @@ DockAndRetrieveSidechains::apply( core::pose::Pose & pose )
 		set_last_move_status( docking_mover_->get_last_move_status() );
 	}
 
-	if( low_res_protocol_only_ ) {
+	if ( low_res_protocol_only_ ) {
 		protocols::simple_moves::SwitchResidueTypeSetMover to_all_atom( core::chemical::FA_STANDARD );
 		protocols::simple_moves::ReturnSidechainMover recover_sidechains( *saved_pose );
 		to_all_atom.apply( pose );
 		recover_sidechains.apply( pose );
 		pose.update_residue_neighbors();
 	}
-	if (conserve_foldtree_) pose.fold_tree( saved_ft );
+	if ( conserve_foldtree_ ) pose.fold_tree( saved_ft );
 
 }
 
@@ -141,8 +141,8 @@ DockAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::Dat
 		sym_docking_mover_->task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 		sym_docking_mover_->design( design );
 		TR << "symmetric docking mover with parameters low_res_protocol_only_ " << low_res_protocol_only_ << " local_refine " << local_refine
-			 << " view "<< view << "  lowres_scorefxn= " << score_low
-			 << "  highres_scorefxn= " << score_high << std::endl;
+			<< " view "<< view << "  lowres_scorefxn= " << score_low
+			<< "  highres_scorefxn= " << score_high << std::endl;
 		return;
 	}
 
@@ -152,7 +152,7 @@ DockAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::Dat
 
 	utility::vector1<std::string> jumps_str = utility::string_split( tag->getOption<string>( "jumps", "1" ), ',' );
 	utility::vector1<core::Size> movable_jumps;
-	for( utility::vector1<std::string>::const_iterator it = jumps_str.begin(); it != jumps_str.end(); ++it ) {
+	for ( utility::vector1<std::string>::const_iterator it = jumps_str.begin(); it != jumps_str.end(); ++it ) {
 		//movable_jumps.push_back( std::strtoul( *it, NULL, 0 ));
 		movable_jumps.push_back( std::atoi( it->c_str() ));
 	}
@@ -169,7 +169,7 @@ DockAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::Dat
 	docking_mover_->set_design( design );
 	TR<<"docking mover with parameters low_res_protocol_only_ "<< low_res_protocol_only_ <<" local_refine "<<local_refine<<" view "<<view<< "  lowres_scorefxn= " << score_low <<
 		"  highres_scorefxn= " << score_high<<" over rb_jumps ";
-	for( utility::vector1<core::Size>::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
+	for ( utility::vector1<core::Size>::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
 		TR << *it << ",";
 	}
 	TR << " optimize fold tree="<<optimize_foldtree<<std::endl;

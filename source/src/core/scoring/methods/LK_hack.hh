@@ -55,7 +55,7 @@ public:
 	LK_hack( LK_hack const & src );
 
 	virtual
- 	void
+	void
 	setup_for_derivatives(
 		pose::Pose & pose,
 		ScoreFunction const & scfxn
@@ -63,8 +63,8 @@ public:
 
 	/// called during gradient-based minimization inside dfunc
 	/**
-		 F1 and F2 are not zeroed -- contributions from this atom are
-		 just summed in
+	F1 and F2 are not zeroed -- contributions from this atom are
+	just summed in
 	**/
 	virtual
 	void
@@ -144,9 +144,9 @@ private:
 	void
 	distribute_pseudo_base_atom_derivatives( pose::Pose const & pose ) const;
 
-/////////////////////////////////////////////////////////////////////////////
-// data
-/////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////
+	// data
+	/////////////////////////////////////////////////////////////////////////////
 
 private:
 	etable::Etable const & etable_; // shouldn't this be a pointer? Reference count information is (dangerously) lost when
@@ -170,8 +170,8 @@ private:
 	mutable utility::vector1< utility::vector1< std::pair< Vector, Vector > > > atom_f1_f2s_;
 	mutable utility::vector1< utility::vector1< std::pair< Vector, Vector > > > base_pseudo_atom_f1_f2s_;
 	mutable Real lk_hack_weight_; // hold this while calculating derivatives.
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 };
 
 }

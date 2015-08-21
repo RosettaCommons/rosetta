@@ -18,13 +18,13 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
-    namespace simple_moves {
-        
-        class RepeatPropagationMover;
-        typedef utility::pointer::shared_ptr< RepeatPropagationMover > RepeatPropagationMoverOP;
-        typedef utility::pointer::shared_ptr< RepeatPropagationMover const > RepeatPropagationMoverCOP;
-        
-    } // moves
+namespace simple_moves {
+
+class RepeatPropagationMover;
+typedef utility::pointer::shared_ptr< RepeatPropagationMover > RepeatPropagationMoverOP;
+typedef utility::pointer::shared_ptr< RepeatPropagationMover const > RepeatPropagationMoverCOP;
+
+} // moves
 } // protocols
 
 #endif //INCLUDED_protocols_simple_moves_RepeatPropagationMover_fwd_hh

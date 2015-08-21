@@ -63,10 +63,10 @@ BB_Pos::take_coordinates_from_pose( pose::Pose const & pose )
 	for ( Size i=1; i<= pose.total_residue(); ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 		if ( rsd.is_protein() ) {
-		debug_assert( N_index_[ i ]  );
-		debug_assert( CA_index_[ i ] );
-		debug_assert( C_index_[ i ]  );
-		debug_assert( O_index_[ i ]  );
+			debug_assert( N_index_[ i ]  );
+			debug_assert( CA_index_[ i ] );
+			debug_assert( C_index_[ i ]  );
+			debug_assert( O_index_[ i ]  );
 
 			N_ [i] = rsd.xyz( N_index_[ i ]  );
 			CA_[i] = rsd.xyz( CA_index_[ i ] );
@@ -156,12 +156,12 @@ Strands::Strands(
 Strands::Strands(
 	Strands const & s
 ) : total_SS_dimer( s.total_SS_dimer ),
-		SS_resnum( s.SS_resnum ),
-		total_strands( s.total_strands ),
-		SS_strand( s.SS_strand ),
-		SS_dimer( s.SS_dimer ),
-		SS_strand_end( s.SS_strand_end ),
-		dimer_neighbor( s.dimer_neighbor )
+	SS_resnum( s.SS_resnum ),
+	total_strands( s.total_strands ),
+	SS_strand( s.SS_strand ),
+	SS_dimer( s.SS_dimer ),
+	SS_strand_end( s.SS_strand_end ),
+	dimer_neighbor( s.dimer_neighbor )
 	//strand_strand_score( s.strand_strand_score )
 {}
 
@@ -246,8 +246,8 @@ Helices::resize( int const nres )
 Helices::Helices(
 	Helices const & h
 ) : total_HH_dimer( h.total_HH_dimer ),
-		HH_resnum( h.HH_resnum ),
-		HH_helix_end( h.HH_helix_end )
+	HH_resnum( h.HH_resnum ),
+	HH_helix_end( h.HH_helix_end )
 {}
 
 Helices::~Helices()

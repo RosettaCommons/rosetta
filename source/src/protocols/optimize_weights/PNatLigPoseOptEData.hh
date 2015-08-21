@@ -139,7 +139,7 @@ public:
 	void
 	add_decoy( SingleStructureDataOP decoy );
 
-private:
+	private:
 	Size total_residue_;
 	SingleStructureDataOPs natives_;
 	SingleStructureDataOPs decoys_;

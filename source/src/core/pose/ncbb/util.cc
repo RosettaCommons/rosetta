@@ -61,26 +61,26 @@ initialize_ncbbs (
 	utility::vector1< core::Size > ncbb_seq_positions;
 	core::Size hbs = 0;
 
-	for ( Size i=1; i<= pose.total_residue(); ++i) {
+	for ( Size i=1; i<= pose.total_residue(); ++i ) {
 		// now we return both PRE and POST locations...
-		if( pose.residue(i).has_variant_type(chemical::OOP_PRE) == 1) {
+		if ( pose.residue(i).has_variant_type(chemical::OOP_PRE) == 1 ) {
 			ncbb_seq_positions.push_back( i );
 			core::pose::ncbb::add_oop_constraint(pose, i);
 		}
-		if( pose.residue(i).has_variant_type(chemical::OOP_POST)== 1) {
+		if ( pose.residue(i).has_variant_type(chemical::OOP_POST)== 1 ) {
 			ncbb_seq_positions.push_back( i );
 		}
-		if( pose.residue(i).has_variant_type(chemical::HBS_PRE) == 1) {
+		if ( pose.residue(i).has_variant_type(chemical::HBS_PRE) == 1 ) {
 			ncbb_seq_positions.push_back( i );
 			hbs = 1;
 			core::pose::ncbb::add_hbs_constraint(pose, i);
 		}
-		if( pose.residue(i).has_variant_type(chemical::HBS_POST)== 1) {
+		if ( pose.residue(i).has_variant_type(chemical::HBS_POST)== 1 ) {
 			ncbb_seq_positions.push_back( i );
 			hbs = 0;
 		}
 
-		if (hbs == 1) { // we're inside the hbs macrocycle; even though these residues are unpatched
+		if ( hbs == 1 ) { // we're inside the hbs macrocycle; even though these residues are unpatched
 			ncbb_seq_positions.push_back( i );
 		}
 	}
@@ -95,17 +95,17 @@ initialize_hbs (
 	utility::vector1< core::Size > hbs_seq_positions;
 	core::Size hbs = 0;
 
-	for ( Size i=1; i<= pose.total_residue(); ++i) {
-		if( pose.residue(i).has_variant_type(chemical::HBS_PRE) == 1) {
+	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		if ( pose.residue(i).has_variant_type(chemical::HBS_PRE) == 1 ) {
 			hbs_seq_positions.push_back( i );
 			hbs = 1;
 		}
-		if( pose.residue(i).has_variant_type(chemical::HBS_POST)== 1) {
+		if ( pose.residue(i).has_variant_type(chemical::HBS_POST)== 1 ) {
 			hbs_seq_positions.push_back( i );
 			hbs = 0;
 		}
 
-		if (hbs == 1) { // we're inside the hbs macrocycle; even thoough these residues are unpatched
+		if ( hbs == 1 ) { // we're inside the hbs macrocycle; even thoough these residues are unpatched
 			hbs_seq_positions.push_back( i );
 		}
 	}
@@ -116,21 +116,21 @@ void add_a3b_hbs_constraint( core::pose::Pose & pose, core::Size a3b_hbs_pre_pos
 {
 	add_a3b_hbs_constraint( pose, a3b_hbs_pre_position, 1.52, 0.05 );
 }
-	
+
 void add_a3b_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, core::Real distance, core::Real std )
 {
 	using namespace core::id;
 	using namespace core::scoring;
 	using namespace core::scoring::func;
 	using namespace core::scoring::constraints;
-		
+
 	HarmonicFuncOP harm_func  (new HarmonicFunc( distance, std ) );
 	HarmonicFuncOP harm_func_0  (new HarmonicFunc( 0, std ) );
 	CircularHarmonicFuncOP ang_func  (new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_2_over_3(), 0.02 ) );
 	CircularHarmonicFuncOP ang_func2 (new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_over_3(), 0.02 ) );
 	CircularHarmonicFuncOP dih_func  (new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
 	CircularHarmonicFuncOP dih_func2  (new CircularHarmonicFunc( (0-numeric::NumericTraits<float>::pi_over_3()), 0.02 ) );
-		
+
 	AtomID aidCYH( pose.residue( hbs_pre_position ).atom_index("CYH"), hbs_pre_position );
 	AtomID aidCZH( pose.residue( hbs_pre_position+2 ).atom_index("CZH"), hbs_pre_position+2 );
 	AtomID aidN  ( pose.residue( hbs_pre_position+2 ).atom_index("N"), hbs_pre_position+2 );
@@ -139,7 +139,7 @@ void add_a3b_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_positio
 	AtomID aidVYH( pose.residue( hbs_pre_position+2 ).atom_index("VYH"), hbs_pre_position+2 );
 	AtomID aidCY3( pose.residue( hbs_pre_position ).atom_index("CY3"), hbs_pre_position );
 	AtomID aidCY2( pose.residue( hbs_pre_position ).atom_index("CY2"), hbs_pre_position );
-		
+
 	ConstraintCOP atompair ( new AtomPairConstraint( aidCYH, aidCZH, harm_func ) );
 	ConstraintCOP atompair2 ( new AtomPairConstraint( aidCYH, aidVYH, harm_func_0 ) );
 	ConstraintCOP atompair3 ( new AtomPairConstraint( aidCZH, aidVZH, harm_func_0 ) );
@@ -147,8 +147,8 @@ void add_a3b_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_positio
 	ConstraintCOP angle2 ( new AngleConstraint( aidN, aidCZH, aidCYH, ang_func2 ) );
 	ConstraintCOP dihedral ( new DihedralConstraint( aidCZH, aidCYH, aidCY3, aidCY2, dih_func ) );
 	ConstraintCOP dihedral2 ( new DihedralConstraint( aidCA, aidN, aidCZH, aidCYH, dih_func2 ) );
-		
-	
+
+
 	pose.add_constraint( atompair );
 	pose.add_constraint( atompair2 );
 	pose.add_constraint( atompair3 );
@@ -161,54 +161,54 @@ void add_a3b_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_positio
 	TR << "and atom pair constraints with the virtual atoms" << std::endl;
 
 }
-	
+
 void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position )
 {
-  add_hbs_constraint( pose, hbs_pre_position, 1.52, 0.05 );
+	add_hbs_constraint( pose, hbs_pre_position, 1.52, 0.05 );
 }
 
 void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, core::Real distance, core::Real std )
 {
-  using namespace core::id;
-  using namespace core::scoring;
-  using namespace core::scoring::func;
-  using namespace core::scoring::constraints;
+	using namespace core::id;
+	using namespace core::scoring;
+	using namespace core::scoring::func;
+	using namespace core::scoring::constraints;
 
-  //kdrew: add constraint
-  HarmonicFuncOP harm_func( new HarmonicFunc( distance, std ) );
-  HarmonicFuncOP harm_func_0( new HarmonicFunc( 0, std ) );
-  CircularHarmonicFuncOP ang_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_2_over_3(), 0.02 ) );
-  CircularHarmonicFuncOP ang_func2( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_over_3(), 0.02 ) );
-  CircularHarmonicFuncOP ang_func3( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi()/180*109.5, 0.02 ) );
-  CircularHarmonicFuncOP dih_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
-  CircularHarmonicFuncOP dih_func2( new CircularHarmonicFunc( 0, 0.02 ) );
+	//kdrew: add constraint
+	HarmonicFuncOP harm_func( new HarmonicFunc( distance, std ) );
+	HarmonicFuncOP harm_func_0( new HarmonicFunc( 0, std ) );
+	CircularHarmonicFuncOP ang_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_2_over_3(), 0.02 ) );
+	CircularHarmonicFuncOP ang_func2( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_over_3(), 0.02 ) );
+	CircularHarmonicFuncOP ang_func3( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi()/180*109.5, 0.02 ) );
+	CircularHarmonicFuncOP dih_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
+	CircularHarmonicFuncOP dih_func2( new CircularHarmonicFunc( 0, 0.02 ) );
 
-  AtomID aidCYH( pose.residue( hbs_pre_position ).atom_index("CYH"), hbs_pre_position );
-  AtomID aidCZH( pose.residue( hbs_pre_position+2 ).atom_index("CZH"), hbs_pre_position+2 );
-  AtomID aidN  ( pose.residue( hbs_pre_position+2 ).atom_index("N"), hbs_pre_position+2 );
-  AtomID aidVZH( pose.residue( hbs_pre_position ).atom_index("VZH"), hbs_pre_position );
-  AtomID aidVYH( pose.residue( hbs_pre_position+2 ).atom_index("VYH"), hbs_pre_position+2 );
-  AtomID aidCY2( pose.residue( hbs_pre_position ).atom_index("CY2"), hbs_pre_position );
-  AtomID aidCY1( pose.residue( hbs_pre_position ).atom_index("CY1"), hbs_pre_position );
+	AtomID aidCYH( pose.residue( hbs_pre_position ).atom_index("CYH"), hbs_pre_position );
+	AtomID aidCZH( pose.residue( hbs_pre_position+2 ).atom_index("CZH"), hbs_pre_position+2 );
+	AtomID aidN  ( pose.residue( hbs_pre_position+2 ).atom_index("N"), hbs_pre_position+2 );
+	AtomID aidVZH( pose.residue( hbs_pre_position ).atom_index("VZH"), hbs_pre_position );
+	AtomID aidVYH( pose.residue( hbs_pre_position+2 ).atom_index("VYH"), hbs_pre_position+2 );
+	AtomID aidCY2( pose.residue( hbs_pre_position ).atom_index("CY2"), hbs_pre_position );
+	AtomID aidCY1( pose.residue( hbs_pre_position ).atom_index("CY1"), hbs_pre_position );
 
-  ConstraintCOP atompair( ConstraintOP( new AtomPairConstraint( aidCYH, aidCZH, harm_func ) ) );
-  ConstraintCOP atompair2( ConstraintOP( new AtomPairConstraint( aidCYH, aidVYH, harm_func_0 ) ) );
-  ConstraintCOP atompair3( ConstraintOP( new AtomPairConstraint( aidCZH, aidVZH, harm_func_0 ) ) );
-  ConstraintCOP angle( ConstraintOP( new AngleConstraint( aidCZH, aidCYH, aidCY2, ang_func2 ) ) );
-  ConstraintCOP angle2( ConstraintOP( new AngleConstraint( aidN, aidCZH, aidCYH, ang_func3 ) ) );
-  ConstraintCOP dihedral( ConstraintOP( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func ) ) );
-  ConstraintCOP dihedral2( ConstraintOP( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func2 ) ) );
+	ConstraintCOP atompair( ConstraintOP( new AtomPairConstraint( aidCYH, aidCZH, harm_func ) ) );
+	ConstraintCOP atompair2( ConstraintOP( new AtomPairConstraint( aidCYH, aidVYH, harm_func_0 ) ) );
+	ConstraintCOP atompair3( ConstraintOP( new AtomPairConstraint( aidCZH, aidVZH, harm_func_0 ) ) );
+	ConstraintCOP angle( ConstraintOP( new AngleConstraint( aidCZH, aidCYH, aidCY2, ang_func2 ) ) );
+	ConstraintCOP angle2( ConstraintOP( new AngleConstraint( aidN, aidCZH, aidCYH, ang_func3 ) ) );
+	ConstraintCOP dihedral( ConstraintOP( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func ) ) );
+	ConstraintCOP dihedral2( ConstraintOP( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func2 ) ) );
 
-  pose.add_constraint( atompair );
-  pose.add_constraint( atompair2 );
-  pose.add_constraint( atompair3 );
-  pose.add_constraint( angle );
-  pose.add_constraint( angle2 );
-  pose.add_constraint( dihedral );
-  pose.add_constraint( dihedral2 );
+	pose.add_constraint( atompair );
+	pose.add_constraint( atompair2 );
+	pose.add_constraint( atompair3 );
+	pose.add_constraint( angle );
+	pose.add_constraint( angle2 );
+	pose.add_constraint( dihedral );
+	pose.add_constraint( dihedral2 );
 
-  TR << "added atom pair constraint to hbs with distance: " << distance << " and std: "<< std << std::endl;
-  TR << "and atom pair constraints with the virtual atoms" << std::endl;
+	TR << "added atom pair constraint to hbs with distance: " << distance << " and std: "<< std << std::endl;
+	TR << "and atom pair constraints with the virtual atoms" << std::endl;
 
 }
 
@@ -218,10 +218,8 @@ initialize_oops(
 	Pose & pose
 ) {
 	utility::vector1< core::Size > oop_seq_positions;
-	for ( Size i=1; i<= pose.total_residue(); ++i )
-	{
-		if( pose.residue(i).has_variant_type(chemical::OOP_PRE) == 1 )
-		{
+	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		if ( pose.residue(i).has_variant_type(chemical::OOP_PRE) == 1 ) {
 			oop_seq_positions.push_back( i );
 			core::pose::ncbb::add_oop_constraint(pose, i);
 		}
@@ -265,18 +263,17 @@ void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position, c
 
 	//kdrew: remove old constraints that are identical
 	core::scoring::constraints::ConstraintCOPs cs = pose.constraint_set()->get_all_constraints();
-	for(Size i = 1; i <= cs.size(); i++)
-	{
+	for ( Size i = 1; i <= cs.size(); i++ ) {
 		Constraint const & other_cst = *cs[i];
-		if( !dynamic_cast< AtomPairConstraint const * > ( &other_cst ) )
-		{ continue; }
+		if ( !dynamic_cast< AtomPairConstraint const * > ( &other_cst ) ) {
+			continue;
+		}
 
 		AtomPairConstraint const & constraint_i( static_cast< AtomPairConstraint const & > (other_cst) );
 
 		if ( (constraint_i.atom(1) == CYP_CZP_atompair->atom(1) && constraint_i.atom(2) == CYP_CZP_atompair->atom(2))
-			|| (constraint_i.atom(1) == CYP_VYP_atompair->atom(1) && constraint_i.atom(2) == CYP_VYP_atompair->atom(2))
-			|| (constraint_i.atom(1) == CZP_VZP_atompair->atom(1) && constraint_i.atom(2) == CZP_VZP_atompair->atom(2))  )
-		{
+				|| (constraint_i.atom(1) == CYP_VYP_atompair->atom(1) && constraint_i.atom(2) == CYP_VYP_atompair->atom(2))
+				|| (constraint_i.atom(1) == CZP_VZP_atompair->atom(1) && constraint_i.atom(2) == CZP_VZP_atompair->atom(2))  ) {
 			pose.remove_constraint( cs[i], true );
 			TR << "found and removed atom pair constraint from oop at residue: " << oop_seq_position << std::endl;
 		}

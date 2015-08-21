@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/toolbox/PoseMetricCalculators/RotamerBoltzCalculator.hh
-/// @brief Calculates Rotamer occupancy of each rotameric state in a given set of residues. 
+/// @brief Calculates Rotamer occupancy of each rotameric state in a given set of residues.
 /// @author Hetu Kamisetty
 
 
@@ -18,7 +18,7 @@
 #include <utility/pointer/owning_ptr.hh>
 
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 

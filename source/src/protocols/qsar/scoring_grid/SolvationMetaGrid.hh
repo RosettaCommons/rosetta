@@ -58,13 +58,13 @@ public:
 	virtual utility::json_spirit::Value serialize();
 	/// @brief deserialize a json spirit Value into a GridBase object
 	virtual void deserialize(utility::json_spirit::mObject data);
-    /// @brief determine if all residue atoms are in a grid
-    virtual bool is_in_grid(core::conformation::UltraLightResidue const & residue);
-    /// @brief determine if all residue atoms are in a grid
-    virtual bool is_in_grid(core::conformation::Residue const & residue);
+	/// @brief determine if all residue atoms are in a grid
+	virtual bool is_in_grid(core::conformation::UltraLightResidue const & residue);
+	/// @brief determine if all residue atoms are in a grid
+	virtual bool is_in_grid(core::conformation::Residue const & residue);
 private:
-    std::string type_;
-    std::map<core::ShortSize,SingleGridOP> grid_map_;
+	std::string type_;
+	std::map<core::ShortSize,SingleGridOP> grid_map_;
 };
 
 }

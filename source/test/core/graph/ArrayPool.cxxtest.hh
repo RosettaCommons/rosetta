@@ -30,7 +30,7 @@ using namespace core::graph;
 
 class ArrayPoolTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 
 	// --------------- Fixtures --------------- //

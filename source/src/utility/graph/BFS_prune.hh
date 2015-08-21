@@ -42,41 +42,41 @@ class EXCN_Stop_BFS : public utility::excn::EXCN_Msg_Exception {
 /// See breadth_first_search_prune for details
 
 template <class IncidenceGraph, class Buffer, class BFSVisitor,
-          class ColorMap>
+class ColorMap>
 void breadth_first_visit_prune
-  (const IncidenceGraph& g,
-   typename boost::graph_traits<IncidenceGraph>::vertex_descriptor s,
-   BFSVisitor vis, ColorMap color, Buffer& Q)
+(const IncidenceGraph& g,
+	typename boost::graph_traits<IncidenceGraph>::vertex_descriptor s,
+	BFSVisitor vis, ColorMap color, Buffer& Q)
 {
-  boost::function_requires< boost::IncidenceGraphConcept<IncidenceGraph> >();
-  typedef boost::graph_traits<IncidenceGraph> GTraits;
-  typedef typename GTraits::vertex_descriptor Vertex;
-  //typedef typename GTraits::edge_descriptor Edge;
-  boost::function_requires< boost::BFSVisitorConcept<BFSVisitor, IncidenceGraph> >();
-  boost::function_requires< boost::ReadWritePropertyMapConcept<ColorMap, Vertex> >();
-  typedef typename boost::property_traits<ColorMap>::value_type ColorValue;
-  typedef boost::color_traits<ColorValue> Color;
-  typename GTraits::out_edge_iterator ei, ei_end;
+	boost::function_requires< boost::IncidenceGraphConcept<IncidenceGraph> >();
+	typedef boost::graph_traits<IncidenceGraph> GTraits;
+	typedef typename GTraits::vertex_descriptor Vertex;
+	//typedef typename GTraits::edge_descriptor Edge;
+	boost::function_requires< boost::BFSVisitorConcept<BFSVisitor, IncidenceGraph> >();
+	boost::function_requires< boost::ReadWritePropertyMapConcept<ColorMap, Vertex> >();
+	typedef typename boost::property_traits<ColorMap>::value_type ColorValue;
+	typedef boost::color_traits<ColorValue> Color;
+	typename GTraits::out_edge_iterator ei, ei_end;
 
 	try {
 		boost::put(color, s, Color::gray());
-		if( vis.discover_vertex(s, g) ) return;
+		if ( vis.discover_vertex(s, g) ) return;
 		Q.push(s);
-		while (! Q.empty()) {
+		while ( ! Q.empty() ) {
 			Vertex u = Q.top(); Q.pop();
-			if( vis.examine_vertex(u, g) ) continue;
-			for (boost::tie(ei, ei_end) = boost::out_edges(u, g); ei != ei_end; ++ei) {
+			if ( vis.examine_vertex(u, g) ) continue;
+			for ( boost::tie(ei, ei_end) = boost::out_edges(u, g); ei != ei_end; ++ei ) {
 				Vertex v = boost::target(*ei, g);
-				if( vis.examine_edge(*ei, g)) continue;
+				if ( vis.examine_edge(*ei, g) ) continue;
 				ColorValue v_color = get(color, v);
-				if (v_color == Color::white()) {
-				if( vis.tree_edge(*ei, g) ) continue;
+				if ( v_color == Color::white() ) {
+					if ( vis.tree_edge(*ei, g) ) continue;
 					boost::put(color, v, Color::gray());
-					if( vis.discover_vertex(v, g) ) continue;
+					if ( vis.discover_vertex(v, g) ) continue;
 					Q.push(v);
 				} else {
-				if( vis.non_tree_edge(*ei, g) ) continue;
-					if (v_color == Color::gray())       vis.gray_target(*ei, g);
+					if ( vis.non_tree_edge(*ei, g) ) continue;
+					if ( v_color == Color::gray() )       vis.gray_target(*ei, g);
 					else                                vis.black_target(*ei, g);
 				}
 			} // end for
@@ -89,11 +89,11 @@ void breadth_first_visit_prune
 } // breadth_first_visit
 
 template <class IncidenceGraph, class BFSVisitor,
-          class ColorMap>
+class ColorMap>
 void breadth_first_visit_prune
-  (const IncidenceGraph &,
-   typename boost::graph_traits<IncidenceGraph>::vertex_descriptor s,
-   BFSVisitor vis, ColorMap color)
+(const IncidenceGraph &,
+	typename boost::graph_traits<IncidenceGraph>::vertex_descriptor s,
+	BFSVisitor vis, ColorMap color)
 {
 	boost::queue< typename boost::graph_traits<IncidenceGraph>::vertex_descriptor > Q;
 	breadth_first_visit_prune( s, vis, color, Q );
@@ -121,19 +121,19 @@ void breadth_first_visit_prune
 /// Any of the above functions can throw a EXCN_Stop_BFS exception, which will immediately halt the search.
 
 template <class VertexListGraph, class Buffer, class BFSVisitor,
-          class ColorMap>
+class ColorMap>
 void breadth_first_search_prune
-  (const VertexListGraph& g,
-   typename boost::graph_traits<VertexListGraph>::vertex_descriptor s,
-   BFSVisitor vis, ColorMap color, Buffer& Q )
+(const VertexListGraph& g,
+	typename boost::graph_traits<VertexListGraph>::vertex_descriptor s,
+	BFSVisitor vis, ColorMap color, Buffer& Q )
 {
-  // Initialization
-  typedef typename boost::property_traits<ColorMap>::value_type ColorValue;
-  typedef boost::color_traits<ColorValue> Color;
-  typename boost::graph_traits<VertexListGraph>::vertex_iterator i, i_end;
+	// Initialization
+	typedef typename boost::property_traits<ColorMap>::value_type ColorValue;
+	typedef boost::color_traits<ColorValue> Color;
+	typename boost::graph_traits<VertexListGraph>::vertex_iterator i, i_end;
 
 	try {
-		for (boost::tie(i, i_end) = boost::vertices(g); i != i_end; ++i) {
+		for ( boost::tie(i, i_end) = boost::vertices(g); i != i_end; ++i ) {
 			vis.initialize_vertex(*i, g);
 			boost::put(color, *i, Color::white());
 		}
@@ -145,9 +145,9 @@ void breadth_first_search_prune
 
 template <class VertexListGraph, class BFSVisitor, class ColorMap>
 void breadth_first_search_prune
-  (const VertexListGraph& g,
-   typename boost::graph_traits<VertexListGraph>::vertex_descriptor s,
-   BFSVisitor vis, ColorMap color)
+(const VertexListGraph& g,
+	typename boost::graph_traits<VertexListGraph>::vertex_descriptor s,
+	BFSVisitor vis, ColorMap color)
 {
 	boost::queue< typename boost::graph_traits<VertexListGraph>::vertex_descriptor > Q;
 	breadth_first_visit_prune(g, s, vis, color, Q );
@@ -155,9 +155,9 @@ void breadth_first_search_prune
 
 template <class VertexListGraph, class BFSVisitor>
 void breadth_first_search_prune
-  (const VertexListGraph& g,
-   typename boost::graph_traits<VertexListGraph>::vertex_descriptor s,
-   BFSVisitor vis)
+(const VertexListGraph& g,
+	typename boost::graph_traits<VertexListGraph>::vertex_descriptor s,
+	BFSVisitor vis)
 {
 	boost::queue< typename boost::graph_traits<VertexListGraph>::vertex_descriptor > Q;
 	breadth_first_visit_prune(g, s, vis, make_two_bit_color_map(num_vertices(g), boost::get(boost::vertex_index,g)), Q );
@@ -216,7 +216,7 @@ public:
 	utility::vector1<VD> vertices(){return connected_vertices_;}
 
 	bool discover_vertex(VD vertex, Graph const & /*graph*/) {
-		if(vertex == hidden_vertex_){
+		if ( vertex == hidden_vertex_ ) {
 			return true;
 		} else {
 			++number_valid_vertices_;

@@ -9,7 +9,7 @@
 
 /// @file   devel/matdes/RestrictIdentitiesOperation.hh
 /// @brief  TaskOperation class that restricts a vector of Size defined residues to repacking
-///			when parsed, it takes in a string and splits by ","
+///   when parsed, it takes in a string and splits by ","
 /// @author Neil King (neilking@uw.edu)
 
 #ifndef INCLUDED_protocols_toolbox_task_operations_RestrictIdentitiesOperation_hh
@@ -61,7 +61,7 @@ private:
 	std::string unparsed_identities_;
 	utility::vector1 < std::string > identities_;
 	bool prevent_repacking_;
-	
+
 };
 
 } //namespace task_operations

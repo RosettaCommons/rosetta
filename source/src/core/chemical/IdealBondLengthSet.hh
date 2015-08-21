@@ -72,16 +72,16 @@ public:
 private:
 	void
 	add_bond_length(
-			std::string const & atom_type_name1,
-			std::string const & atom_type_name2,
-			BondLength const length
+		std::string const & atom_type_name1,
+		std::string const & atom_type_name2,
+		BondLength const length
 	);
 
 	void
 	add_bond_length(
-			AtomTypeIndex const atom_type_index1,
-			AtomTypeIndex const atom_type_index2,
-			Real const length
+		AtomTypeIndex const atom_type_index1,
+		AtomTypeIndex const atom_type_index2,
+		Real const length
 	);
 
 	/// @details pair of atom type indices and the ideal length between these atom types

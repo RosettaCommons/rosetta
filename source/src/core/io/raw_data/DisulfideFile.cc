@@ -51,15 +51,14 @@ static thread_local basic::Tracer TR( "core.io.raw_data.DisulfideFile" );
 void DisulfideFile::disulfides(vector1< pair<Size,Size> > & disulfides ) const {
 	disulfides.resize(disulfides.size()+disulfides_.size());
 
-	if(! up_to_date_ ) {
+	if ( ! up_to_date_ ) {
 		parse_disulf_file();
 		//mark cache as up to date
 		up_to_date_ = true;
 	}
-	for(vector1< pair<ResNum,ResNum> >::const_iterator disulf = disulfides_.begin(),
+	for ( vector1< pair<ResNum,ResNum> >::const_iterator disulf = disulfides_.begin(),
 			end_disulf = disulfides_.end();
-			disulf != end_disulf; ++disulf)
-	{
+			disulf != end_disulf; ++disulf ) {
 		Size l = disulf->first.n;
 		Size u = disulf->second.n;
 		disulfides.push_back(std::make_pair(l,u) );
@@ -81,15 +80,14 @@ void DisulfideFile::disulfides(vector1< pair<Size,Size> > & disulfides ) const {
 void DisulfideFile::disulfides(vector1< pair<Size,Size> > & disulfides, Pose const& pose) const {
 	disulfides.resize(disulfides.size()+disulfides_.size());
 
-	if(! up_to_date_ ) {
+	if ( ! up_to_date_ ) {
 		parse_disulf_file();
 		//mark cache as up to date
 		up_to_date_ = true;
 	}
-	for(vector1< pair<ResNum,ResNum> >::const_iterator disulf = disulfides_.begin(),
+	for ( vector1< pair<ResNum,ResNum> >::const_iterator disulf = disulfides_.begin(),
 			end_disulf = disulfides_.end();
-			disulf != end_disulf; ++disulf)
-	{
+			disulf != end_disulf; ++disulf ) {
 		Size l = resnum_to_rosetta_num(pose, disulf->first);
 		Size u = resnum_to_rosetta_num(pose, disulf->second);
 		disulfides.push_back(std::make_pair(l,u) );
@@ -113,26 +111,25 @@ void DisulfideFile::disulfides(vector1< pair<Size,Size> > & disulfides, Pose con
 ///
 /// @postcondition For each pair of residues (l,u) in this list,  l<u
 void DisulfideFile::read_in_and_set_disulfides( Pose &pose) {
-    utility::vector1< std::pair<Size, Size> > disulfides;
-        
-        
-    if(! up_to_date_ ) {
-        parse_disulf_file();
-        //mark cache as up to date
-        up_to_date_ = true;
-    }
-    for(vector1< pair<ResNum,ResNum> >::const_iterator disulf = disulfides_.begin(),
-        end_disulf = disulfides_.end();
-        disulf != end_disulf; ++disulf)
-    {
-        Size l = resnum_to_rosetta_num(pose, disulf->first);
-        Size u = resnum_to_rosetta_num(pose, disulf->second);
-        disulfides.push_back(std::make_pair(l,u) );
-    }
-    pose.conformation().fix_disulfides( disulfides );
+	utility::vector1< std::pair<Size, Size> > disulfides;
+
+
+	if ( ! up_to_date_ ) {
+		parse_disulf_file();
+		//mark cache as up to date
+		up_to_date_ = true;
+	}
+	for ( vector1< pair<ResNum,ResNum> >::const_iterator disulf = disulfides_.begin(),
+			end_disulf = disulfides_.end();
+			disulf != end_disulf; ++disulf ) {
+		Size l = resnum_to_rosetta_num(pose, disulf->first);
+		Size u = resnum_to_rosetta_num(pose, disulf->second);
+		disulfides.push_back(std::make_pair(l,u) );
+	}
+	pose.conformation().fix_disulfides( disulfides );
 }
- 
-    
+
+
 /// @brief Convert a ResNum object into the rosetta residue index
 /// @details For ResNums with the rosetta_num type, this just return the n field.
 ///  For pdb_num ResNums the pose's PDBInfo is used to translate to rosetta numbering.
@@ -143,21 +140,20 @@ Size DisulfideFile::resnum_to_rosetta_num(Pose const& pose, ResNum const& resnum
 	using namespace core::pose;
 
 	// Rosetta number
-	if( resnum.type == rosetta_num ||
-		(resnum.type == unknown_num && resnum.chain == 0) )
-	{
+	if ( resnum.type == rosetta_num ||
+			(resnum.type == unknown_num && resnum.chain == 0) ) {
 		return resnum.n;
 	}
 
 	//PDB number
 	PDBInfoCOP info( pose.pdb_info() );
-	if( info == 0 ) {
+	if ( info == 0 ) {
 		TR.Error << "[ERROR] PDB Number expected from format, but no PDB Info present."
 			<< std::endl;
 		utility_exit();
 	}
 	Size n( info->pdb2pose(resnum.chain, resnum.n) );
-	if( n == 0 ) {
+	if ( n == 0 ) {
 		TR.Error << "[ERROR] PDB Number " << resnum.n << resnum.chain
 			<< " does not correspond to a valid residue." << std::endl;
 		utility_exit();
@@ -173,7 +169,7 @@ void DisulfideFile::parse_disulf_file() const {
 	//Open disulfide file
 	utility::io::izstream disulf_stm;
 	disulf_stm.open( filename_ );
-	if( disulf_stm.fail() ) {
+	if ( disulf_stm.fail() ) {
 		TR.Error << "[ERROR] Unable to open disulfide file " << filename_ << "."<< std::endl;
 		utility_exit();
 	}
@@ -182,45 +178,46 @@ void DisulfideFile::parse_disulf_file() const {
 
 	//skip whitespace
 	disulf_stm >> skipws;
-	while(disulf_stm.good() ) {
+	while ( disulf_stm.good() ) {
 		//Decide what to do based on the next character
 		int next_char = disulf_stm.peek();
-		if(disulf_stm.eof())
+		if ( disulf_stm.eof() ) {
 			break;
-		if(disulf_stm.fail() || disulf_stm.bad() ) {
+		}
+		if ( disulf_stm.fail() || disulf_stm.bad() ) {
 			TR.Error << "[ERROR] Error reading disulfide file " << filename_ << "." << std::endl;
 			utility_exit();
 		}
 		switch( next_char ) {
-			case '#': {
-				//Ignore comments
-				std::string line;
-				disulf_stm.getline(line);
-				continue;
+		case '#' : {
+			//Ignore comments
+			std::string line;
+			disulf_stm.getline(line);
+			continue;
+		}
+		default : {
+			//Read pair of residue indices.
+			Size l,u;
+			disulf_stm >> l >> u >> std::ws;
+			if ( disulf_stm.fail() || disulf_stm.bad() ) {
+				TR.Error << "[ERROR] Error reading disulfide file " << filename_ << "." << std::endl;
+				utility_exit();
 			}
-			default: {
-				//Read pair of residue indices.
-				Size l,u;
-				disulf_stm >> l >> u >> std::ws;
-				if(disulf_stm.fail() || disulf_stm.bad() ) {
-					TR.Error << "[ERROR] Error reading disulfide file " << filename_ << "." << std::endl;
-					utility_exit();
-				}
 
-				//Guarantee that l < u
-				if( u < l) {
-					Size tmp = u;
-					u = l;
-					l = tmp;
-				}
-				TR.Info << "Fixing a disulfide between "
-					<< l << " and " << u << std::endl;
-				ResNum lres = { l,0,rosetta_num };
-				ResNum ures = { u,0,rosetta_num };
-				disulfides_.push_back(make_pair(lres,ures));
-
-				continue;
+			//Guarantee that l < u
+			if ( u < l ) {
+				Size tmp = u;
+				u = l;
+				l = tmp;
 			}
+			TR.Info << "Fixing a disulfide between "
+				<< l << " and " << u << std::endl;
+			ResNum lres = { l,0,rosetta_num };
+			ResNum ures = { u,0,rosetta_num };
+			disulfides_.push_back(make_pair(lres,ures));
+
+			continue;
+		}
 		}
 	}
 	//clean up

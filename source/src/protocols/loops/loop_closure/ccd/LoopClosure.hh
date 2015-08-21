@@ -10,7 +10,7 @@
 /// @file src/protocols/abinitio/LoopClosure.hh
 /// @brief header file for LoopClosure protocol
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -69,43 +69,43 @@ public:
 	//destructor
 	virtual ~LoopClosure();
 
-  //@brief run protocol on pose
-  virtual bool apply( core::pose::Pose const& pose );
+	//@brief run protocol on pose
+	virtual bool apply( core::pose::Pose const& pose );
 
-  //@brief return the list of collected fragments
-  // fo the basic LoopClosure class this will contain only 1 Frame. could have returned the frame
-  // but maybe it is worth to keep the interface more general ?
-  core::fragment::FrameOP
-  closure_fragments() const {
-    return closure_frame_;
-  }
+	//@brief return the list of collected fragments
+	// fo the basic LoopClosure class this will contain only 1 Frame. could have returned the frame
+	// but maybe it is worth to keep the interface more general ?
+	core::fragment::FrameOP
+	closure_fragments() const {
+		return closure_frame_;
+	}
 
-  //@brief returns current movemap
-  core::kinematics::MoveMapCOP movemap() const;
+	//@brief returns current movemap
+	core::kinematics::MoveMapCOP movemap() const;
 
- //  //@brief set new monte-carlo object
-//   void set_mc( moves::MonteCarloOP mc ) {
-//     mc_ = mc;
-//   }
+	//  //@brief set new monte-carlo object
+	//   void set_mc( moves::MonteCarloOP mc ) {
+	//     mc_ = mc;
+	//   }
 
-  //@brief obtain currently used monte-carlo object --> use to obtain current score-func: mc().score_function()
-  moves::MonteCarlo & mc() {
-    return *mc_;
-  }
+	//@brief obtain currently used monte-carlo object --> use to obtain current score-func: mc().score_function()
+	moves::MonteCarlo & mc() {
+		return *mc_;
+	}
 
-//   //@brief obtain currently used monte-carlo object --> use to obtain current score-func: mc().score_function()
-//   moves::MonteCarlo const& mc() const {
-//     return *mc_;
-//   }
+	//   //@brief obtain currently used monte-carlo object --> use to obtain current score-func: mc().score_function()
+	//   moves::MonteCarlo const& mc() const {
+	//     return *mc_;
+	//   }
 
-  core::scoring::ScoreFunction const& scorefxn() {
-    return *scorefxn_;
-  }
+	core::scoring::ScoreFunction const& scorefxn() {
+		return *scorefxn_;
+	}
 
 
-  //@brief override cycle setting, sets nr_fragments to 100*ratio
+	//@brief override cycle setting, sets nr_fragments to 100*ratio
 	//  and trials to 20*loopsize*ratio
-  void set_cycles( core::Real cycle_ratio = 1.0 );
+	void set_cycles( core::Real cycle_ratio = 1.0 );
 
 	void set_nr_fragments( core::Size nr_fragments = 100 );
 
@@ -118,75 +118,75 @@ public:
 	}
 
 protected:
-  //protected c'stor: set up relevant stuff
-  // and call set_defaults from derived-class c'stor
-  LoopClosure();
+	//protected c'stor: set up relevant stuff
+	// and call set_defaults from derived-class c'stor
+	LoopClosure();
 
-  void init();
+	void init();
 
-//   //@brief obtain currently used monte-carlo object --> use to obtain current score-func: mc().score_function()
-//   moves::MonteCarloOP mc_ptr() {
-//     return mc_;
-//   }
+	//   //@brief obtain currently used monte-carlo object --> use to obtain current score-func: mc().score_function()
+	//   moves::MonteCarloOP mc_ptr() {
+	//     return mc_;
+	//   }
 
-  //@brief inner-loop of fragment and ccd-moves
-  virtual void do_frag_cycles( core::pose::Pose &pose ) const;
+	//@brief inner-loop of fragment and ccd-moves
+	virtual void do_frag_cycles( core::pose::Pose &pose ) const;
 
-  /// @brief save the loop-fragment in closure_frames_
-  virtual void catch_fragment( core::pose::Pose const& pose );
+	/// @brief save the loop-fragment in closure_frames_
+	virtual void catch_fragment( core::pose::Pose const& pose );
 
-//   core::fragment::FrameOP&
-//   closure_fragments() {
-//     return closure_frame_;
-//   }
+	//   core::fragment::FrameOP&
+	//   closure_fragments() {
+	//     return closure_frame_;
+	//   }
 
-  /// @brief replace scorefxn
-  void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn );
+	/// @brief replace scorefxn
+	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn );
 
-  void set_loop( Loop const& loop_in ) {
-    loop_ = loop_in;
-  }
+	void set_loop( Loop const& loop_in ) {
+		loop_ = loop_in;
+	}
 
-  Loop const& loop() const {
-    return loop_;
-  }
+	Loop const& loop() const {
+		return loop_;
+	}
 
-  void init_mc();
+	void init_mc();
 
-  void set_movemap( core::kinematics::MoveMapCOP mm );
+	void set_movemap( core::kinematics::MoveMapCOP mm );
 
-  void set_fragset( core::fragment::FragSetCOP frags );
+	void set_fragset( core::fragment::FragSetCOP frags );
 
-  //@brief override temperature setting
-  void set_temperature( core::Real temperature ) {
-    temperature_ = temperature;
-  }
+	//@brief override temperature setting
+	void set_temperature( core::Real temperature ) {
+		temperature_ = temperature;
+	}
 
 	virtual void ramp_chainbreak( core::Size iter, core::Size total ) const;
 
 protected:
-  Loop loop_;
+	Loop loop_;
 
-  core::scoring::ScoreFunctionOP scorefxn_;  //score3
+	core::scoring::ScoreFunctionOP scorefxn_;  //score3
 
-  //@brief a temperature
-  core::Real temperature_;
+	//@brief a temperature
+	core::Real temperature_;
 
-  //@brief movemap --> which dofs can be moved during loops
-  core::kinematics::MoveMapCOP movemap_;
+	//@brief movemap --> which dofs can be moved during loops
+	core::kinematics::MoveMapCOP movemap_;
 
-  //@brief a MonteCarlo object -- set_default_mc() , access: mc()
-  moves::MonteCarloOP mc_;
+	//@brief a MonteCarlo object -- set_default_mc() , access: mc()
+	moves::MonteCarloOP mc_;
 
-  core::fragment::FrameOP closure_frame_;
+	core::fragment::FrameOP closure_frame_;
 
-  core::Size nr_fragments_; //outer_cycles;
-  core::Size cycles_; // trials per fragments
+	core::Size nr_fragments_; //outer_cycles;
+	core::Size cycles_; // trials per fragments
 
-  simple_moves::FragmentMoverOP frag_mover_;
-  moves::MoverOP ccd_mover_;
+	simple_moves::FragmentMoverOP frag_mover_;
+	moves::MoverOP ccd_mover_;
 
-  core::fragment::FragSetCOP fragset_;
+	core::fragment::FragSetCOP fragset_;
 
 	bool bEnableCcdMoves_;
 	bool bRampChainbreak_;

@@ -64,8 +64,8 @@ static thread_local basic::Tracer TR( "ProteinAssesmblyGraph" );
 ProteinAssemblyGraph::ProteinAssemblyGraph(
 	utility::sql_database::sessionOP db_session
 ):
-db_session_(db_session),
-inter_structure_edge_counter_(0)
+	db_session_(db_session),
+	inter_structure_edge_counter_(0)
 {
 	scorefxn_ = core::scoring::get_score_function();
 }
@@ -79,7 +79,7 @@ ProteinAssemblyGraph::addIntraStructureEdge(
 	nodes_.insert(node2);
 	AdjacencyMap::iterator adjacent = intra_structure_adjacency_map_.find(node1);
 
-	if(adjacent == intra_structure_adjacency_map_.end()){
+	if ( adjacent == intra_structure_adjacency_map_.end() ) {
 		std::set<NodeOP> new_adjacency_list;
 		intra_structure_adjacency_map_.insert(std::pair< NodeOP, std::set<NodeOP> >(node1,new_adjacency_list));
 	}
@@ -95,7 +95,7 @@ ProteinAssemblyGraph::addInterStructureEdge(
 	nodes_.insert(node2);
 	AdjacencyMap::iterator adjacent = inter_structure_adjacency_map_.find(node1);
 
-	if(adjacent == inter_structure_adjacency_map_.end()){
+	if ( adjacent == inter_structure_adjacency_map_.end() ) {
 		std::set<NodeOP> new_adjacency_list;
 		inter_structure_adjacency_map_.insert(std::pair< NodeOP, std::set<NodeOP> >(node1,new_adjacency_list));
 	}
@@ -111,14 +111,13 @@ ProteinAssemblyGraph::find_all_trees(
 	TR << "Total inter-bundle edges: " << total_inter_structure_edges() << std::endl;
 	core::Real round=0.0;
 	core::Real print_cutoff = 0.10;
-	for(std::set<NodeOP>::iterator it=nodes_.begin(); it!=nodes_.end(); ++it)
-	{
+	for ( std::set<NodeOP>::iterator it=nodes_.begin(); it!=nodes_.end(); ++it ) {
 		utility::vector1<NodeOP> visited;
 		visited.push_back((*it));
 
-//		DEBUG
-//		if((*it)->pair_id()==1052)
-//		{
+		//  DEBUG
+		//  if((*it)->pair_id()==1052)
+		//  {
 
 		core::Size path_size = get_path_size(num_helices);
 
@@ -129,11 +128,11 @@ ProteinAssemblyGraph::find_all_trees(
 
 		round+=1.0;
 		core::Real progress = round/nodes_.size();
-		if(progress > print_cutoff){
+		if ( progress > print_cutoff ) {
 			TR << print_cutoff*100 << "% complete - " << tree_list_.size() << " total trees" << std::endl;
 			print_cutoff+=0.10;
 		}
-//		}
+		//  }
 	}
 	return tree_list_;
 }
@@ -143,7 +142,7 @@ void
 ProteinAssemblyGraph::print_tree_simple(
 	EdgeList visited
 ){
-	for(core::Size i=1; i<=visited.size(); ++i){
+	for ( core::Size i=1; i<=visited.size(); ++i ) {
 		TR << "(" << visited[i].first->print() << ", " << visited[i].second->print() << ") ";
 	}
 	TR << std::endl;
@@ -168,15 +167,13 @@ ProteinAssemblyGraph::bb_score(
 	utility::vector1<core::conformation::Atom> new_helix_bb_atoms;
 	utility::vector1<core::conformation::Atom> other_bb_atoms;
 
-	for( Size j = 1; j <= pose.total_residue(); ++j ) {
+	for ( Size j = 1; j <= pose.total_residue(); ++j ) {
 		core::conformation::Residue const & res( pose.residue(j) );
 		core::chemical::AtomIndices bb_ai( res.mainchain_atoms() );
-		for( Size jj = 1; jj <= bb_ai.size(); ++jj ) {
-			if( j>=new_residues_begin && j<=new_residues_end ){
+		for ( Size jj = 1; jj <= bb_ai.size(); ++jj ) {
+			if ( j>=new_residues_begin && j<=new_residues_end ) {
 				new_helix_bb_atoms.push_back( res.atom(jj) );
-			}
-
-			else{
+			} else {
 				other_bb_atoms.push_back( res.atom(jj) );
 			}
 		}
@@ -191,7 +188,7 @@ ProteinAssemblyGraph::bb_score(
 	core::scoring::EMapVector tbemv;
 	core::Real atr_wt( scorefxn_->get_weight(core::scoring::fa_atr) );
 	core::Real rep_wt( scorefxn_->get_weight(core::scoring::fa_rep) );
-	for ( Size ii = 1; ii <= new_helix_bb_atoms.size(); ++ii ){
+	for ( Size ii = 1; ii <= new_helix_bb_atoms.size(); ++ii ) {
 		for ( Size jj = 1; jj <= other_bb_atoms.size(); ++jj ) {
 			//calc distr squared
 			Real d2(new_helix_bb_atoms[ii].xyz().distance_squared(other_bb_atoms[jj].xyz()));
@@ -214,16 +211,16 @@ ProteinAssemblyGraph::dump_resfile(
 	resfile.open(filename);
 
 	resfile << "NATRO\n"
-	"EX 1 EX 2\n"
-	"USE_INPUT_SC\n"
-	"start\n";
-	for(std::map<core::Size, utility::vector1<char> >::const_iterator it=sequence_map.begin();
-		it != sequence_map.end(); ++it){
+		"EX 1 EX 2\n"
+		"USE_INPUT_SC\n"
+		"start\n";
+	for ( std::map<core::Size, utility::vector1<char> >::const_iterator it=sequence_map.begin();
+			it != sequence_map.end(); ++it ) {
 		core::Size position = it->first;
 		utility::vector1<char> aas = it->second;
 
 		resfile << position << " A PIKAA ";
-		for(core::Size i=1; i<=aas.size(); ++i){
+		for ( core::Size i=1; i<=aas.size(); ++i ) {
 			resfile << aas[i];
 		}
 		resfile << "\n";
@@ -246,34 +243,32 @@ ProteinAssemblyGraph::print_tree(
 	Size starttime = time( NULL );
 
 	std::string select_pair_residues =
-	"SELECT r.seqpos AS resnum\n"
-	"FROM protein_residue_conformation r\n"
-	"WHERE\n"
-	"	r.struct_id = ? AND"
-	"	(r.seqpos BETWEEN ? AND ? OR\n"
-	"	r.seqpos BETWEEN ? AND ?)\n";
+		"SELECT r.seqpos AS resnum\n"
+		"FROM protein_residue_conformation r\n"
+		"WHERE\n"
+		"\tr.struct_id = ? AND"
+		"\t(r.seqpos BETWEEN ? AND ? OR\n"
+		"\tr.seqpos BETWEEN ? AND ?)\n";
 
 	cppdb::statement select_pair_residues_stmt =
-	basic::database::safely_prepare_statement(select_pair_residues, db_session_);
+		basic::database::safely_prepare_statement(select_pair_residues, db_session_);
 
 	protocols::features::ProteinSilentReportOP protein_silent_report( new protocols::features::ProteinSilentReport() );
 
 	std::map<std::string, core::pose::Pose> output_poses;
 	//std::map<Node, core::pose::Pose> poses;
 	//retrieve all the structural info we need for each bundle pair in the given tree
-	for(core::Size i=1; i<=visited.size(); ++i){
+	for ( core::Size i=1; i<=visited.size(); ++i ) {
 
 		NodeOP cur_node;
-		for(core::Size j=1; j<=2; ++j)
-		{
-			if(j==1){
+		for ( core::Size j=1; j<=2; ++j ) {
+			if ( j==1 ) {
 				cur_node=visited[i].first;
-			}
-			else{
+			} else {
 				cur_node=visited[i].second;
 			}
 
-			if(poses_.find(cur_node) == poses_.end()){//new node
+			if ( poses_.find(cur_node) == poses_.end() ) { //new node
 
 				std::set<core::Size> resnums;
 				core::pose::Pose pose;
@@ -284,7 +279,7 @@ ProteinAssemblyGraph::print_tree(
 				select_pair_residues_stmt.bind(4, cur_node->helix_2_begin());
 				select_pair_residues_stmt.bind(5, cur_node->helix_2_end());
 				cppdb::result res = basic::database::safely_read_from_database(select_pair_residues_stmt);
-				while(res.next()){
+				while ( res.next() ) {
 					core::Size resnum;
 					res >> resnum;
 					resnums.insert(resnum);
@@ -300,7 +295,7 @@ ProteinAssemblyGraph::print_tree(
 	TR << "Populated node poses in time: " << endtime - starttime << std::endl;
 
 	//Clear tree memory from previous assemblies
-	for(core::Size i=1; i<=visited.size(); ++i){
+	for ( core::Size i=1; i<=visited.size(); ++i ) {
 		visited[i].first->helix_1_positions_.clear();
 		visited[i].second->helix_1_positions_.clear();
 		visited[i].first->helix_2_positions_.clear();
@@ -312,17 +307,15 @@ ProteinAssemblyGraph::print_tree(
 	NativeRotamersMap native_residue_map;//for resfile
 	std::set<NodeOP> printed_nodes;
 	bool repeat=false;
-	for(core::Size i=1; i<=visited.size(); ++i){
+	for ( core::Size i=1; i<=visited.size(); ++i ) {
 
 		//For repeat proteins, clear the printed nodes list at the end of each repeat
-		if(visited[i].second == visited[1].first)
-		{
+		if ( visited[i].second == visited[1].first ) {
 			printed_nodes.clear();
 		}
 
 		//temp for 4 helix bundles only
-		if(visited.size() >= i+1 && visited[i+1].second == visited[1].first)
-		{
+		if ( visited.size() >= i+1 && visited[i+1].second == visited[1].first ) {
 			repeat=true;
 		}
 
@@ -332,60 +325,55 @@ ProteinAssemblyGraph::print_tree(
 
 		//For the first edge dump the starting node to a pdb and then map each residue in the node to
 		//to a residue number in the assembled pdb (this is the helix_1/2_positions map)
-		if(i==1){
+		if ( i==1 ) {
 			std::string frag_name = utility::to_string(tree_id) + "_" + utility::to_string(i) + "_" + edge_start->print() + ".pdb";
 			output_poses.insert(std::make_pair(frag_name, poses_[edge_start]));
 
 			//populate the residue mapping for the first two helices
 			core::Size position_counter=0;
-			if(edge_start->helix_2_begin() > edge_start->helix_1_begin()){
-				for(core::Size j=1; j<=helix_size; ++j){
+			if ( edge_start->helix_2_begin() > edge_start->helix_1_begin() ) {
+				for ( core::Size j=1; j<=helix_size; ++j ) {
 					position_counter++;
 					edge_start->helix_1_positions_[j]=position_counter;
 				}
-				for(core::Size j=1; j<=helix_size; ++j){
+				for ( core::Size j=1; j<=helix_size; ++j ) {
 					position_counter++;
 					edge_start->helix_2_positions_[j]=position_counter;
 				}
-			}
-			else{//helices will be assembled in the opposite sequence order they appear in the native
-				for(core::Size j=1; j<=helix_size; ++j){
+			} else { //helices will be assembled in the opposite sequence order they appear in the native
+				for ( core::Size j=1; j<=helix_size; ++j ) {
 					position_counter++;
 					edge_start->helix_2_positions_[j]=position_counter;
 				}
-				for(core::Size j=1; j<=helix_size; ++j){
+				for ( core::Size j=1; j<=helix_size; ++j ) {
 					position_counter++;
 					edge_start->helix_1_positions_[j]=position_counter;
 				}
 			}
 
 			//Go through the residue mapping and
-			for(std::map<core::Size,core::Size>::const_iterator it=edge_start->helix_1_positions_.begin();
-				it!=edge_start->helix_1_positions_.end(); ++it)
-			{
+			for ( std::map<core::Size,core::Size>::const_iterator it=edge_start->helix_1_positions_.begin();
+					it!=edge_start->helix_1_positions_.end(); ++it ) {
 				core::Size helix_resnum = it->first;
 				core::Size assembled_pose_resnum = it->second;
 
-				if(edge_start->reversed()){
+				if ( edge_start->reversed() ) {
 					sequence_map[assembled_pose_resnum].push_back(poses_[edge_start].residue(helix_resnum+helix_size).name1());
 					native_residue_map[assembled_pose_resnum].push_back(poses_[edge_start].residue(helix_resnum+helix_size).clone());
-				}
-				else{
+				} else {
 					sequence_map[it->second].push_back(poses_[edge_start].residue(helix_resnum).name1());
 					native_residue_map[it->second].push_back(poses_[edge_start].residue(helix_resnum).clone());
 				}
 			}
-			for(std::map<core::Size,core::Size>::const_iterator it=edge_start->helix_2_positions_.begin();
-				it!=edge_start->helix_2_positions_.end(); ++it)
-			{
+			for ( std::map<core::Size,core::Size>::const_iterator it=edge_start->helix_2_positions_.begin();
+					it!=edge_start->helix_2_positions_.end(); ++it ) {
 				core::Size helix_resnum = it->first;
 				core::Size assembled_pose_resnum = it->second;
 
-				if(edge_start->reversed()){
+				if ( edge_start->reversed() ) {
 					sequence_map[assembled_pose_resnum].push_back(poses_[edge_start].residue(helix_resnum).name1());
 					native_residue_map[assembled_pose_resnum].push_back(poses_[edge_start].residue(helix_resnum).clone());
-				}
-				else{
+				} else {
 					sequence_map[assembled_pose_resnum].push_back(poses_[edge_start].residue(helix_resnum+helix_size).name1());
 					native_residue_map[assembled_pose_resnum].push_back(poses_[edge_start].residue(helix_resnum+helix_size).clone());
 				}
@@ -393,59 +381,54 @@ ProteinAssemblyGraph::print_tree(
 		}
 
 		//Pairs come from the same bundle, only superimpose the matching helix
-		if(edge_start->bundle_id() == edge_end->bundle_id())
-		{
+		if ( edge_start->bundle_id() == edge_end->bundle_id() ) {
 			core::Size first_pair_offset;
 			core::Size second_pair_offset;
 			core::Size new_helix_start;
 			//all helices should be the same size
 
 			//Find which helix matches between the two pairs
-			if(edge_start->helix_1_id()== edge_end->helix_1_id()){
+			if ( edge_start->helix_1_id()== edge_end->helix_1_id() ) {
 				first_pair_offset=(edge_start->helix_1_begin()< edge_start->helix_2_begin()) ? 0 : helix_size;
 				second_pair_offset=(edge_end->helix_1_begin()< edge_end->helix_2_begin()) ? 0 : helix_size;
 				new_helix_start=(edge_end->helix_1_begin()< edge_end->helix_2_begin()) ? helix_size+1 : 1;
 
 				edge_end->helix_1_positions_= edge_start->helix_1_positions_;
 				core::Size position_start = master_pose.total_residue();
-				for(core::Size j=1; j<=helix_size; ++j){
+				for ( core::Size j=1; j<=helix_size; ++j ) {
 					edge_end->helix_2_positions_[j]=position_start+j;
 				}
-			}
-			else if(edge_start->helix_1_id()== edge_end->helix_2_id()){
+			} else if ( edge_start->helix_1_id()== edge_end->helix_2_id() ) {
 				first_pair_offset=(edge_start->helix_1_begin()< edge_start->helix_2_begin()) ? 0 : helix_size;
 				second_pair_offset=(edge_end->helix_1_begin()< edge_end->helix_2_begin()) ? helix_size : 0;
 				new_helix_start=(edge_end->helix_1_begin()< edge_end->helix_2_begin()) ? 1 : helix_size+1;
 
 				edge_end->helix_2_positions_= edge_start->helix_1_positions_;
 				core::Size position_start = master_pose.total_residue();
-				for(core::Size j=1; j<=helix_size; ++j){
+				for ( core::Size j=1; j<=helix_size; ++j ) {
 					edge_end->helix_1_positions_[j]=position_start+j;
 				}
-			}
-			else if(edge_start->helix_2_id()== edge_end->helix_1_id()){
+			} else if ( edge_start->helix_2_id()== edge_end->helix_1_id() ) {
 				first_pair_offset=(edge_start->helix_1_begin()< edge_start->helix_2_begin()) ? helix_size : 0;
 				second_pair_offset=(edge_end->helix_1_begin()< edge_end->helix_2_begin()) ? 0 : helix_size;
 				new_helix_start=(edge_end->helix_1_begin()< edge_end->helix_2_begin()) ? helix_size+1 : 1;
 
 				edge_end->helix_1_positions_= edge_start->helix_2_positions_;
 				core::Size position_start = master_pose.total_residue();
-				for(core::Size j=1; j<=helix_size; ++j){
+				for ( core::Size j=1; j<=helix_size; ++j ) {
 					edge_end->helix_2_positions_[j]=position_start+j;
 				}
-			}
-			else if(edge_start->helix_2_id()== edge_end->helix_2_id()){
+			} else if ( edge_start->helix_2_id()== edge_end->helix_2_id() ) {
 				first_pair_offset=(edge_start->helix_1_begin()< edge_start->helix_2_begin()) ? helix_size : 0;
 				second_pair_offset=(edge_end->helix_1_begin()< edge_end->helix_2_begin()) ? helix_size : 0;;
 				new_helix_start=(edge_end->helix_1_begin()< edge_end->helix_2_begin()) ? 1 : helix_size+1;
 
 				edge_end->helix_2_positions_= edge_start->helix_2_positions_;
 				core::Size position_start = master_pose.total_residue();
-				for(core::Size j=1; j<=helix_size; ++j){
+				for ( core::Size j=1; j<=helix_size; ++j ) {
 					edge_end->helix_1_positions_[j]=position_start+j;
 				}
-			}
-			else{
+			} else {
 				utility_exit_with_message(
 					"No helix ids shared between node " + utility::to_string(edge_start->pair_id())+" and "+
 					utility::to_string(edge_end->pair_id())+". Something has gone wrong with helical assembly!");
@@ -459,7 +442,7 @@ ProteinAssemblyGraph::print_tree(
 			atom_map.clear();
 			core::pose::initialize_atomid_map( atom_map, poses_[edge_end], core::id::BOGUS_ATOM_ID );
 
-			for(core::Size j=1; j<= helix_size; j++){
+			for ( core::Size j=1; j<= helix_size; j++ ) {
 				core::id::AtomID const id1( poses_[edge_start].residue(j+first_pair_offset).atom_index("CA"), j+first_pair_offset);
 				core::id::AtomID const id2( poses_[edge_end].residue(j+second_pair_offset).atom_index("CA"), j+second_pair_offset);
 				atom_map[ id2 ] = id1;
@@ -479,35 +462,31 @@ ProteinAssemblyGraph::print_tree(
 			core::scoring::superimpose_pose(poses_[edge_end], poses_[edge_start]/*const*/, atom_map);
 
 			//don't print the same node more than once
-			if(printed_nodes.find(edge_start) == printed_nodes.end())
-			{
-				if(repeat){
+			if ( printed_nodes.find(edge_start) == printed_nodes.end() ) {
+				if ( repeat ) {
 					core::pose::append_subpose_to_pose(master_pose, poses_[edge_end], new_helix_start, new_helix_start+helix_size-1, true);
 					repeat=false;
-				}
-				else{
+				} else {
 					core::pose::append_subpose_to_pose(master_pose, poses_[edge_end], new_helix_start, new_helix_start+helix_size-1, false);
 				}
 				printed_nodes.insert(edge_start);
 			}
 
-//			for(core::Size i=1; i<= master_poses.size(); ++i)
-//			{
-//				core::pose::append_subpose_to_pose(master_poses[i], poses_[edge_end], new_helix_start, new_helix_start+helix_size-1, false);
-//				core::pose::append_subpose_to_pose(master_poses[i], poses_[edge_end], new_helix_start, new_helix_start+helix_size-1, false);
-//			}
+			//   for(core::Size i=1; i<= master_poses.size(); ++i)
+			//   {
+			//    core::pose::append_subpose_to_pose(master_poses[i], poses_[edge_end], new_helix_start, new_helix_start+helix_size-1, false);
+			//    core::pose::append_subpose_to_pose(master_poses[i], poses_[edge_end], new_helix_start, new_helix_start+helix_size-1, false);
+			//   }
 			output_name+=utility::to_string(edge_start->pair_id()) + "_";
 
-//			core::Real clash_score = bb_score(master_pose, pose_size_before_addition+1, master_pose.total_residue());
-			//		TR << "Backbone-backbone score for addition of pair " << tag_1 << ": " << clash_score << std::endl;
-			//			if(clash_score > 5){
-			//				return;
-			//			}
+			//   core::Real clash_score = bb_score(master_pose, pose_size_before_addition+1, master_pose.total_residue());
+			//  TR << "Backbone-backbone score for addition of pair " << tag_1 << ": " << clash_score << std::endl;
+			//   if(clash_score > 5){
+			//    return;
+			//   }
 
-		}
-
-		//Pairs come from different bundles, superimpose both helices
-		else{
+		} else {
+			//Pairs come from different bundles, superimpose both helices
 			edge_end->helix_1_positions_= edge_start->helix_1_positions_;
 			edge_end->helix_2_positions_= edge_start->helix_2_positions_;
 
@@ -522,25 +501,23 @@ ProteinAssemblyGraph::print_tree(
 			core::Size pair_1_helix_2_offset;
 			core::Size pair_2_helix_1_offset;
 			core::Size pair_2_helix_2_offset;
-			if(edge_start->helix_1_begin() < edge_start->helix_2_begin()){
+			if ( edge_start->helix_1_begin() < edge_start->helix_2_begin() ) {
 				pair_1_helix_1_offset = 0;
 				pair_1_helix_2_offset = helix_size;
-			}
-			else{
+			} else {
 				pair_1_helix_1_offset = helix_size;
 				pair_1_helix_2_offset = 0;
 			}
 
-			if(edge_end->helix_1_begin() < edge_end->helix_2_begin()){
+			if ( edge_end->helix_1_begin() < edge_end->helix_2_begin() ) {
 				pair_2_helix_1_offset = 0;
 				pair_2_helix_2_offset = helix_size;
-			}
-			else{
+			} else {
 				pair_2_helix_1_offset = helix_size;
 				pair_2_helix_2_offset = 0;
 			}
 
-			for(core::Size j=1; j<=helix_size; j++){
+			for ( core::Size j=1; j<=helix_size; j++ ) {
 				core::id::AtomID const id1( poses_[edge_start].residue(j+pair_1_helix_1_offset).atom_index("CA"), j+pair_1_helix_1_offset);
 				helix_1_atoms.push_back(id1);
 
@@ -567,7 +544,7 @@ ProteinAssemblyGraph::print_tree(
 				atom_map[ id8 ] = id7;
 			}
 
-			for(core::Size j=1; j<=helix_size; j++){
+			for ( core::Size j=1; j<=helix_size; j++ ) {
 				core::id::AtomID const id1( poses_[edge_start].residue(j+pair_1_helix_2_offset).atom_index("CA"), j+pair_1_helix_2_offset);
 				helix_1_atoms.push_back(id1);
 
@@ -609,13 +586,11 @@ ProteinAssemblyGraph::print_tree(
 
 			TR << "RMSD for superimposition of pairs " << edge_start->print() << " " << edge_end->print() << ": " << test_rmsd << std::endl;
 
-			if(master_pose.total_residue() == 0){
+			if ( master_pose.total_residue() == 0 ) {
 				master_pose=print_first(visited, poses_);
-//				master_poses.push_back(poses_[edge_start])
-//				master_poses.push_back(poses_[edge_end])
-			}
-			else
-			{
+				//    master_poses.push_back(poses_[edge_start])
+				//    master_poses.push_back(poses_[edge_end])
+			} else {
 				//need to replace the two matching helices with new ones in all the master_poses
 			}
 		}
@@ -623,42 +598,40 @@ ProteinAssemblyGraph::print_tree(
 		std::string frag_name = utility::to_string(tree_id) + "_" + utility::to_string(i) + "_" + edge_end->print() + ".pdb";
 		output_poses.insert(std::make_pair(frag_name, poses_[edge_end]));
 
-		for(std::map<core::Size,core::Size>::const_iterator it=edge_end->helix_1_positions_.begin();
-			it!=edge_end->helix_1_positions_.end(); ++it){
-			if(edge_end->reversed()){
-//				TR << "ROUND: " << i << "-helix 1 mapping " << it->first+helix_size << " to bundle position " << it->second << std::endl;
+		for ( std::map<core::Size,core::Size>::const_iterator it=edge_end->helix_1_positions_.begin();
+				it!=edge_end->helix_1_positions_.end(); ++it ) {
+			if ( edge_end->reversed() ) {
+				//    TR << "ROUND: " << i << "-helix 1 mapping " << it->first+helix_size << " to bundle position " << it->second << std::endl;
 				sequence_map[it->second].push_back(poses_[edge_end].residue(it->first+helix_size).name1());
 				native_residue_map[it->second].push_back(poses_[edge_end].residue(it->first+helix_size).clone());
-			}
-			else{
-//				TR << "ROUND: " << i << "-helix 1 mapping " << it->first << " to bundle position " << it->second << std::endl;
+			} else {
+				//    TR << "ROUND: " << i << "-helix 1 mapping " << it->first << " to bundle position " << it->second << std::endl;
 				sequence_map[it->second].push_back(poses_[edge_end].residue(it->first).name1());
 				native_residue_map[it->second].push_back(poses_[edge_end].residue(it->first).clone());
 			}
 		}
-		for(std::map<core::Size,core::Size>::const_iterator it=edge_end->helix_2_positions_.begin();
-			it!=edge_end->helix_2_positions_.end(); ++it){
-			if(edge_end->reversed()){
-//				TR << "ROUND: " << i << "-helix 2 mapping " << it->first << " to bundle position " << it->second << std::endl;
+		for ( std::map<core::Size,core::Size>::const_iterator it=edge_end->helix_2_positions_.begin();
+				it!=edge_end->helix_2_positions_.end(); ++it ) {
+			if ( edge_end->reversed() ) {
+				//    TR << "ROUND: " << i << "-helix 2 mapping " << it->first << " to bundle position " << it->second << std::endl;
 				sequence_map[it->second].push_back(poses_[edge_end].residue(it->first).name1());
 				native_residue_map[it->second].push_back(poses_[edge_end].residue(it->first).clone());
-			}
-			else{
-//				TR << "ROUND: " << i << "-helix 2 mapping " << it->first+helix_size << " to bundle position " << it->second << std::endl;
+			} else {
+				//    TR << "ROUND: " << i << "-helix 2 mapping " << it->first+helix_size << " to bundle position " << it->second << std::endl;
 				sequence_map[it->second].push_back(poses_[edge_end].residue(it->first+helix_size).name1());
 				native_residue_map[it->second].push_back(poses_[edge_end].residue(it->first+helix_size).clone());
 			}
 		}
 	}
-//	master_pose.dump_pdb(output_name + ".pdb");
+	// master_pose.dump_pdb(output_name + ".pdb");
 	master_pose.dump_pdb("tree_" + utility::to_string(tree_id) + ".pdb");
 	//std::string repeat_name = "tree_" + utility::to_string(tree_id) + "_repeat_" + utility::to_string(repeat_counter);
 
 	dump_resfile(sequence_map, output_name + ".res");
 	devel::sewing::dump_native_residue_file(native_residue_map, output_name + ".rots");
-	for(std::map<std::string, core::pose::Pose>::const_iterator out_it=output_poses.begin();
-		out_it!= output_poses.end();
-		++out_it){
+	for ( std::map<std::string, core::pose::Pose>::const_iterator out_it=output_poses.begin();
+			out_it!= output_poses.end();
+			++out_it ) {
 		out_it->second.dump_pdb(out_it->first);
 	}
 }

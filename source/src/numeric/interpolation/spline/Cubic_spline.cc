@@ -39,11 +39,11 @@ namespace spline {
 //  FIRSTBE values for the first order derivative at begin and end of spline (only FIRSTDER)
 CubicSpline &CubicSpline::train
 (
-		const BorderFlag BORDER,
-		const Real START,
-		const Real DELTA,
-		const MathVector< Real> &RESULTS,
-		const std::pair< Real, Real> &FIRSTBE
+	const BorderFlag BORDER,
+	const Real START,
+	const Real DELTA,
+	const MathVector< Real> &RESULTS,
+	const std::pair< Real, Real> &FIRSTBE
 )
 {
 
@@ -66,8 +66,7 @@ CubicSpline &CubicSpline::train
 
 	// train once for the values of fxx
 	// those values are equivalent for every type of spline considered here
-	for( int i( 1); i < dim - 1; ++i)
-	{
+	for ( int i( 1); i < dim - 1; ++i ) {
 		coeffs( i, i - 1) = delta1;
 		coeffs( i, i    ) = delta2;
 		coeffs( i, i + 1) = delta1;
@@ -76,15 +75,13 @@ CubicSpline &CubicSpline::train
 	}
 
 	// setting the second order derivative on start and end to 0, "natural" cubic spline
-	if( border_ == e_Natural)
-	{
+	if ( border_ == e_Natural ) {
 		coeffs(     0,     0) = 1;
 		coeffs( dim-1, dim-1) = 1;
 	}
 
 	// periodic, the function starts over after reaching the ends, continuously differentiable everywhere
-	if( border_ == e_Periodic)
-	{
+	if ( border_ == e_Periodic ) {
 		coeffs(     0, dim - 1) = delta1;
 		coeffs(     0,       0) = delta2;
 		coeffs(     0,       1) = delta1;
@@ -97,8 +94,7 @@ CubicSpline &CubicSpline::train
 	}
 
 	// set the first order derivative at x_0 to first_start and at x_dim-1 to first_end
-	if( border_ == e_FirstDer)
-	{
+	if ( border_ == e_FirstDer ) {
 		coeffs(       0,       0) = -delta2/2;
 		coeffs(       0,       1) = -delta1;
 		derivs(       0)          = FIRSTBE.first - ( values_( 1) - values_( 0)) / DELTA;
@@ -128,21 +124,17 @@ Real CubicSpline::F( const Real &ARGUMENT) const
 	int i( int( floor( ( ARGUMENT - start_) / delta_)) + 1);
 
 	// not within supporting points - left
-	if( i < 1)
-	{
+	if ( i < 1 ) {
 		// if the spline is periodic, adjust i to be positive ( > 0) and within range
-		if( border_ == e_Periodic)
-		{
+		if ( border_ == e_Periodic ) {
 			// bring close to actual range
 			i %= dim;
 
 			// if between end and start
-			if( i == 0)
-			{
+			if ( i == 0 ) {
 				// see Numerical recipes in C++, pages 116-118
 				Real dxp( fmod( ARGUMENT - start_, delta_) / delta_); // relative offset from the beginning of the actual interval
-				if( dxp < 0.0)
-				{
+				if ( dxp < 0.0 ) {
 					dxp += 1.0;
 				}
 
@@ -150,39 +142,31 @@ Real CubicSpline::F( const Real &ARGUMENT) const
 				return Function( dim - 1, 0, dxp);
 			}
 			// generate positive index value ( > 0)
-			while( i < 1)
-			{
+			while ( i < 1 )
+					{
 				i += dim;
 			}
-		}
-		else
-		{
+		} else {
 			return Function( 0, 1, Real( 0)) + ( ARGUMENT - start_) * Derivative( 0, 1, Real( 0));
 		}
-	}
-	// not within supporting points - right
-	else if( i >= dim)
-	{
+	} else if ( i >= dim ) {
+		// not within supporting points - right
 		const int end( dim - 1);
 
 		// if the spline is periodic, adjust i to be positive ( > 0)
-		if( border_ == e_Periodic)
-		{
+		if ( border_ == e_Periodic ) {
 			// generate index value within range
 			i %= dim;
 
 			// special case, where interpolation happens between end and beginning
-			if( i == 0)
-			{
+			if ( i == 0 ) {
 				// see Numerical recipes in C++, pages 116-118
 				const Real dxp( fmod( ARGUMENT - start_, delta_) / delta_); // relative offset from the beginning of the actual interval
 
 				// return
 				return Function( end, 0, dxp);
 			}
-		}
-		else
-		{
+		} else {
 			// derivative at last supporting points
 			return Function( end -1, end, 1.0) + ( ARGUMENT - start_ - ( dim - 1) * delta_) * Derivative( end -1, end, 1.0);
 		}
@@ -190,8 +174,7 @@ Real CubicSpline::F( const Real &ARGUMENT) const
 
 	// see Numerical recipes in C++, pages 116-118
 	Real dxp( fmod( ARGUMENT - start_, delta_) / delta_); // delta_akt is an offset from the beginning of the actual interval\n";
-	if( dxp < 0.0)
-	{
+	if ( dxp < 0.0 ) {
 		dxp += 1.0;
 	}
 
@@ -211,21 +194,17 @@ Real CubicSpline::dF( const Real &ARGUMENT) const
 	int i( int( floor( ( ARGUMENT - start_) / delta_)) + 1);
 
 	// not within supporting points - left
-	if( i < 1)
-	{
+	if ( i < 1 ) {
 		// if the spline is periodic, adjust i to be positive ( > 0) and within range
-		if( border_ == e_Periodic)
-		{
+		if ( border_ == e_Periodic ) {
 			// bring close to actual range
 			i %= dim;
 
 			// if between end and start
-			if( i == 0)
-			{
+			if ( i == 0 ) {
 				// see Numerical recipes in C++, pages 116-118
 				Real dxp( fmod( ARGUMENT - start_, delta_) / delta_); // relative offset from the beginning of the actual interval
-				if( dxp < 0.0)
-				{
+				if ( dxp < 0.0 ) {
 					dxp += 1.0;
 				}
 
@@ -233,39 +212,31 @@ Real CubicSpline::dF( const Real &ARGUMENT) const
 				return Derivative( dim - 1, 0, dxp);
 			}
 			// generate positive index value ( > 0)
-			while( i < 1)
-			{
+			while ( i < 1 )
+					{
 				i += dim;
 			}
-		}
-		else
-		{
+		} else {
 			return Derivative( 0, 1, Real( 0));
 		}
-	}
-	// not within supporting points - right
-	else if( i >= dim)
-	{
+	} else if ( i >= dim ) {
+		// not within supporting points - right
 		const int end( dim - 1);
 
 		// if the spline is periodic, adjust i to be positive ( > 0)
-		if( border_ == e_Periodic)
-		{
+		if ( border_ == e_Periodic ) {
 			// generate index value within range
 			i %= dim;
 
 			// special case, where interpolation happens between end and beginning
-			if( i == 0)
-			{
+			if ( i == 0 ) {
 				// see Numerical recipes in C++, pages 116-118
 				const Real dxp( fmod( ARGUMENT - start_, delta_) / delta_); // relative offset from the beginning of the actual interval
 
 				// return
 				return Derivative( end, 0, dxp);
 			}
-		}
-		else
-		{
+		} else {
 			// derivative at last supporting points
 			return Derivative( end -1, end, 1.0);
 		}
@@ -273,8 +244,7 @@ Real CubicSpline::dF( const Real &ARGUMENT) const
 
 	// see Numerical recipes in C++, pages 116-118
 	Real dxp( fmod( ARGUMENT - start_, delta_) / delta_); // delta_akt is an offset from the beginning of the actual interval\n";
-	if( dxp < 0.0)
-	{
+	if ( dxp < 0.0 ) {
 		dxp += 1.0;
 	}
 
@@ -308,8 +278,8 @@ Real CubicSpline::Function( const int INDEX_LEFT, const int INDEX_RIGHT, const R
 	const Real dx3m( ( dxm * dxm * dxm - dxm) * sqr( delta_) / 6); // =0 at the gridpoints, adds cubic part of the spline
 
 	return
-			dxm * values_( INDEX_LEFT) + DXP  * values_( INDEX_RIGHT)
-			+ dx3m * dsecox_( INDEX_LEFT) + dx3p * dsecox_( INDEX_RIGHT);
+		dxm * values_( INDEX_LEFT) + DXP  * values_( INDEX_RIGHT)
+		+ dx3m * dsecox_( INDEX_LEFT) + dx3p * dsecox_( INDEX_RIGHT);
 }
 
 
@@ -325,9 +295,9 @@ Real CubicSpline::Derivative( const int INDEX_LEFT, const int INDEX_RIGHT, const
 	const Real dxm( 1 - DXP);
 
 	return
-			( values_( INDEX_RIGHT) - values_( INDEX_LEFT)) / delta_
-			- ( 3 * dxm * dxm - 1) / 6 * delta_ * dsecox_( INDEX_LEFT)
-			+ ( 3 * DXP * DXP - 1) / 6 * delta_ * dsecox_( INDEX_RIGHT);
+		( values_( INDEX_RIGHT) - values_( INDEX_LEFT)) / delta_
+		- ( 3 * dxm * dxm - 1) / 6 * delta_ * dsecox_( INDEX_LEFT)
+		+ ( 3 * DXP * DXP - 1) / 6 * delta_ * dsecox_( INDEX_RIGHT);
 }
 
 }//spline

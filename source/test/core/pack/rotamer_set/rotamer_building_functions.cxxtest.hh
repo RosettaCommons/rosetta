@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	 rotamer_building_functions.cxxtest.hh
+/// @file  rotamer_building_functions.cxxtest.hh
 /// @brief   Test suite for rotamer building functions
 /// @author  Labonte
 
@@ -68,7 +68,7 @@ public:
 		vector1<string> params;
 		params.push_back("core/pack/rotamer_set/GOL.params");
 
- 		// Instantiate default chemical type sets.
+		// Instantiate default chemical type sets.
 		ResidueTypeSet & res_type_set = ChemicalManager::get_instance()->nonconst_residue_type_set("fa_standard");
 
 		// Generate a non-standard ResidueTypeSet that includes parameters for glycerol.

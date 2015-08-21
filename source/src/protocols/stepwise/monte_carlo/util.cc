@@ -52,13 +52,13 @@ namespace monte_carlo {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 output_to_silent_file( std::string const & out_tag,
-											 std::string const & silent_file,
-											 pose::Pose & pose,
-											 pose::PoseCOP native_pose,
-											 bool const superimpose_over_all_instantiated /* = false */,
-											 bool const do_rms_fill_calculation /* = false */ ){
+	std::string const & silent_file,
+	pose::Pose & pose,
+	pose::PoseCOP native_pose,
+	bool const superimpose_over_all_instantiated /* = false */,
+	bool const do_rms_fill_calculation /* = false */ ){
 
-  using namespace core::io::silent;
+	using namespace core::io::silent;
 	SilentStructOP s = prepare_silent_struct( out_tag, pose, native_pose, superimpose_over_all_instantiated, do_rms_fill_calculation );
 
 	// output silent file.
@@ -70,14 +70,14 @@ output_to_silent_file( std::string const & out_tag,
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 core::io::silent::SilentStructOP
 prepare_silent_struct( std::string const & out_tag,
-											 pose::Pose & pose,
-											 pose::PoseCOP native_pose,
-											 bool const superimpose_over_all_instantiated /* = false */,
-											 bool const do_rms_fill_calculation /* = false */,
-											 core::pose::PoseOP full_model_pose /* = 0*/ ){
+	pose::Pose & pose,
+	pose::PoseCOP native_pose,
+	bool const superimpose_over_all_instantiated /* = false */,
+	bool const do_rms_fill_calculation /* = false */,
+	core::pose::PoseOP full_model_pose /* = 0*/ ){
 
-  using namespace core::io::silent;
-  using namespace protocols::stepwise::modeler::align;
+	using namespace core::io::silent;
+	using namespace protocols::stepwise::modeler::align;
 
 	Real rms( 0.0 ), rms_fill( 0.0 );
 	if ( native_pose != 0 ) {
@@ -85,7 +85,7 @@ prepare_silent_struct( std::string const & out_tag,
 		bool superimpose_over_all_instantiated_ = superimpose_over_all_instantiated || check_all_residues_sampled( pose );
 		rms = superimpose_with_stepwise_aligner( pose, *native_pose, superimpose_over_all_instantiated_ );
 
-		if ( do_rms_fill_calculation ){
+		if ( do_rms_fill_calculation ) {
 			TR <<  "Generating filled-in model for rms_fill... " << std::endl;
 			if ( full_model_pose == 0 ) full_model_pose = build_full_model( pose );
 			rms_fill = superimpose_with_stepwise_aligner( *full_model_pose, *native_pose, superimpose_over_all_instantiated_ );
@@ -106,8 +106,8 @@ prepare_silent_struct( std::string const & out_tag,
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 output_to_silent_file( std::string const & out_tag,
-											 std::string const & silent_file,
-											 pose::Pose const & pose ){
+	std::string const & silent_file,
+	pose::Pose const & pose ){
 	pose::Pose pose_copy = pose;
 	output_to_silent_file( out_tag, silent_file, pose_copy, 0 /*no native -- no superimpose*/ );
 }
@@ -115,11 +115,11 @@ output_to_silent_file( std::string const & out_tag,
 ////////////////////////////////////////////////////////////////////////////////////////////
 void
 output_to_silent_file( std::string const & silent_file,
-											 utility::vector1< pose::PoseOP > & pose_list,
-											 pose::PoseCOP native_pose ) {
-	for ( Size n = 1; n <= pose_list.size(); n++ ){
+	utility::vector1< pose::PoseOP > & pose_list,
+	pose::PoseCOP native_pose ) {
+	for ( Size n = 1; n <= pose_list.size(); n++ ) {
 		output_to_silent_file( tag_from_pose( *pose_list[n] ), silent_file,
-													 *pose_list[n], native_pose );
+			*pose_list[n], native_pose );
 	}
 }
 
@@ -162,7 +162,7 @@ get_all_res_list( pose::Pose & pose ) {
 	utility::vector1< pose::PoseOP > const & other_pose_list = const_full_model_info( pose ).other_pose_list();
 	if ( other_pose_list.size() == 0 ) return out_string;
 	out_string += " [ other_pose: ";
-	for ( Size n = 1; n <= other_pose_list.size(); n++ ){
+	for ( Size n = 1; n <= other_pose_list.size(); n++ ) {
 		out_string += get_all_res_list( *other_pose_list[n] );
 		if ( n < other_pose_list.size() ) out_string += "; ";
 	}

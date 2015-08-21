@@ -92,17 +92,17 @@ HeaderInformation::~HeaderInformation() {}
 void
 HeaderInformation::store_record(Record & R){
 	string const & type = R["type"].value;
-	if(type == "HEADER"){
+	if ( type == "HEADER" ) {
 		store_classification(R["classification"].value);
 		store_deposition_date(R["depDate"].value);
 		store_idCode(R["idCode"].value);
-	} else if(type == "TITLE "){
+	} else if ( type == "TITLE " ) {
 		store_title(R["title"].value);
-	} else if(type == "KEYWDS"){
+	} else if ( type == "KEYWDS" ) {
 		store_keywords(R["keywords"].value);
-	} else if(type == "COMPND"){
+	} else if ( type == "COMPND" ) {
 		store_compound(R["compound"].value);
-	} else if(type == "EXPDTA"){
+	} else if ( type == "EXPDTA" ) {
 		store_experimental_techniques(R["technique"].value);
 	} else {
 		std::stringstream err_msg;
@@ -160,23 +160,23 @@ void
 HeaderInformation::store_deposition_date(string const & depDate) {
 
 	dep_day_ = atoi(depDate.substr(0,2).c_str());
-	if(dep_day_ > 31 || dep_day_ < 1){
+	if ( dep_day_ > 31 || dep_day_ < 1 ) {
 		TR.Warning << "Deposition day not in range [1, 31]: " << dep_day_ << endl;
 	}
 
 	string const & mon(depDate.substr(3,3));
-	if( mon == "JAN" ) dep_month_ = 1;
-	else if( mon == "FEB" ) dep_month_ = 2;
-	else if( mon == "MAR" ) dep_month_ = 3;
-	else if( mon == "APR" ) dep_month_ = 4;
-	else if( mon == "MAY" ) dep_month_ = 5;
-	else if( mon == "JUN" ) dep_month_ = 6;
-	else if( mon == "JUL" ) dep_month_ = 7;
-	else if( mon == "AUG" ) dep_month_ = 8;
-	else if( mon == "SEP" ) dep_month_ = 9;
-	else if( mon == "OCT" ) dep_month_ = 10;
-	else if( mon == "NOV" ) dep_month_ = 11;
-	else if( mon == "DEC" ) dep_month_ = 12;
+	if ( mon == "JAN" ) dep_month_ = 1;
+	else if ( mon == "FEB" ) dep_month_ = 2;
+	else if ( mon == "MAR" ) dep_month_ = 3;
+	else if ( mon == "APR" ) dep_month_ = 4;
+	else if ( mon == "MAY" ) dep_month_ = 5;
+	else if ( mon == "JUN" ) dep_month_ = 6;
+	else if ( mon == "JUL" ) dep_month_ = 7;
+	else if ( mon == "AUG" ) dep_month_ = 8;
+	else if ( mon == "SEP" ) dep_month_ = 9;
+	else if ( mon == "OCT" ) dep_month_ = 10;
+	else if ( mon == "NOV" ) dep_month_ = 11;
+	else if ( mon == "DEC" ) dep_month_ = 12;
 	else {
 		TR.Warning << "Unrecognized month in HEADER deposition date " + depDate << mon << std::endl;
 	}
@@ -193,17 +193,17 @@ HeaderInformation::store_deposition_date(
 ) {
 
 	dep_year_ = yy;
-	if(dep_month_ > 99 || dep_day_ < 1){
+	if ( dep_month_ > 99 || dep_day_ < 1 ) {
 		TR.Warning << "Deposition month not in range [01, 99]: " << dep_month_ << endl;
 	}
 
 	dep_month_ = mm;
-	if(dep_month_ > 12 || dep_day_ < 1){
+	if ( dep_month_ > 12 || dep_day_ < 1 ) {
 		TR.Warning << "Deposition month not in range [1, 12]: " << dep_month_ << endl;
 	}
 
 	dep_day_ = dd;
-	if(dep_day_ > 31 || dep_day_ < 1){
+	if ( dep_day_ > 31 || dep_day_ < 1 ) {
 		TR.Warning << "Deposition day not in range [1, 31]: " << dep_day_ << endl;
 	}
 }
@@ -213,31 +213,31 @@ string
 HeaderInformation::deposition_date() const {
 	std::stringstream dep_date;
 
-	if(dep_day_ > 31 || dep_day_ < 1){
+	if ( dep_day_ > 31 || dep_day_ < 1 ) {
 		utility_exit_with_message("deposition day is outside of range [1,31]: " +
-				boost::lexical_cast<std::string>(dep_day_));
+			boost::lexical_cast<std::string>(dep_day_));
 	}
 	dep_date << dep_day_ << "-";
 	switch(dep_month_){
-	case 1: dep_date  << "JAN"; break;
-	case 2: dep_date  << "FEB"; break;
-	case 3: dep_date  << "MAR"; break;
-	case 4: dep_date  << "APR"; break;
-	case 5: dep_date  << "MAY"; break;
-	case 6: dep_date  << "JUN"; break;
-	case 7: dep_date  << "JUL"; break;
-	case 8: dep_date  << "AUG"; break;
-	case 9: dep_date  << "SEP"; break;
-	case 10: dep_date << "OCT"; break;
-	case 11: dep_date << "NOV"; break;
-	case 12: dep_date << "DEC"; break;
-	default:
+	case 1 : dep_date  << "JAN"; break;
+	case 2 : dep_date  << "FEB"; break;
+	case 3 : dep_date  << "MAR"; break;
+	case 4 : dep_date  << "APR"; break;
+	case 5 : dep_date  << "MAY"; break;
+	case 6 : dep_date  << "JUN"; break;
+	case 7 : dep_date  << "JUL"; break;
+	case 8 : dep_date  << "AUG"; break;
+	case 9 : dep_date  << "SEP"; break;
+	case 10 : dep_date << "OCT"; break;
+	case 11 : dep_date << "NOV"; break;
+	case 12 : dep_date << "DEC"; break;
+	default :
 		utility_exit_with_message("Unrecognized deposition month index " +
-				boost::lexical_cast<std::string>(dep_month_));
+			boost::lexical_cast<std::string>(dep_month_));
 	}
-	if( dep_year_ > 99 || dep_year_ < 1){
+	if ( dep_year_ > 99 || dep_year_ < 1 ) {
 		utility_exit_with_message("Deposition year is out side of range [01,99]: " +
-				boost::lexical_cast<std::string>(dep_year_));
+			boost::lexical_cast<std::string>(dep_year_));
 	}
 	dep_date << "-" << (dep_year_ < 10 ? "0" : "") << dep_year_;
 	return dep_date.str();
@@ -268,8 +268,8 @@ void
 HeaderInformation::fill_header_record(
 	std::vector< Record > & VR
 ) const {
-	if(!classification_.empty() &&
-		dep_year_ && dep_month_ && dep_day_ && !idCode_.empty()) {
+	if ( !classification_.empty() &&
+			dep_year_ && dep_month_ && dep_day_ && !idCode_.empty() ) {
 		Record R = Field::getRecordCollection()["HEADER"];
 		R["type"].value = "HEADER";
 		R["classification"].value = classification();
@@ -286,12 +286,12 @@ HeaderInformation::fill_header_record(
 /// first record and on the right for all records.
 void
 HeaderInformation::store_title(string const & title){
-	if(title.empty()){
+	if ( title.empty() ) {
 		TR.Warning << "Attempting to store empty title record field." << endl;
 		return;
 	}
 
-	if(title_.empty()) {
+	if ( title_.empty() ) {
 		title_ = title;
 		strip_whitespace(title_);
 	} else {
@@ -315,7 +315,7 @@ HeaderInformation::fill_title_records(
 	std::vector< Record > & VR
 ) const {
 
-	if(!title_.empty())	{
+	if ( !title_.empty() ) {
 		Size line_no(1);
 		fill_wrapped_records("TITLE ", "title", title_, line_no, VR);
 	}
@@ -325,23 +325,23 @@ HeaderInformation::fill_title_records(
 
 void
 HeaderInformation::store_keywords(string const & keywords){
-	if(keywords.empty()){
+	if ( keywords.empty() ) {
 		TR.Warning << "Attempting to add empty keywords string." << endl;
 		return;
 	}
 
 	size_t i(keywords.find_first_not_of(' '));
 	size_t j(i);
-	while(i != std::string::npos) {
+	while ( i != std::string::npos ) {
 		j = keywords.find(',', i);
-		if(keyword_in_progress_){
+		if ( keyword_in_progress_ ) {
 			keywords_.back().append(
 				" " + rstripped_whitespace(keywords.substr(i, j-i)));
 			keyword_in_progress_ = false;
 		} else {
 			keywords_.push_back(rstripped_whitespace(keywords.substr(i, j-i)));
 		}
-		if(j != std::string::npos){
+		if ( j != std::string::npos ) {
 			i = keywords.find_first_not_of(' ', j+1);
 		} else {
 			keyword_in_progress_ = true;
@@ -374,12 +374,12 @@ void
 HeaderInformation::fill_keyword_records(
 	std::vector< Record > & VR
 ) const {
-	if(keywords_.empty()) return;
+	if ( keywords_.empty() ) return;
 
 	string keywords;
 	list< string >::const_iterator k = keywords_.begin(), ke = keywords_.end();
-	for(; k!= ke; ++k){
-		if(!keywords.empty()) keywords.append(", ");
+	for ( ; k!= ke; ++k ) {
+		if ( !keywords.empty() ) keywords.append(", ");
 		keywords.append(*k);
 	}
 	Size line_no(1);
@@ -392,16 +392,16 @@ std::string
 HeaderInformation::compound_token_to_string(CompoundToken token) {
 	string token_str;
 	switch(token){
-	case MOL_ID:        token_str = "MOL_ID";        break;
-	case MOLECULE:      token_str = "MOLECULE";      break;
-	case CHAIN:         token_str = "CHAIN";         break;
-	case FRAGMENT:      token_str = "FRAGMENT";      break;
-	case SYNONYM:       token_str = "SYNONYM";       break;
-	case EC:            token_str = "EC";            break;
-	case ENGINEERED:    token_str = "ENGINEERED";    break;
-	case MUTATION:      token_str = "MUTATION";      break;
-	case OTHER_DETAILS: token_str = "OTHER_DETAILS"; break;
-	default:
+	case MOL_ID :        token_str = "MOL_ID";        break;
+	case MOLECULE :      token_str = "MOLECULE";      break;
+	case CHAIN :         token_str = "CHAIN";         break;
+	case FRAGMENT :      token_str = "FRAGMENT";      break;
+	case SYNONYM :       token_str = "SYNONYM";       break;
+	case EC :            token_str = "EC";            break;
+	case ENGINEERED :    token_str = "ENGINEERED";    break;
+	case MUTATION :      token_str = "MUTATION";      break;
+	case OTHER_DETAILS : token_str = "OTHER_DETAILS"; break;
+	default :
 		TR.Error << "Unrecognized compound token '" << token << "'" << endl;
 		utility_exit();
 	}
@@ -410,15 +410,15 @@ HeaderInformation::compound_token_to_string(CompoundToken token) {
 
 HeaderInformation::CompoundToken
 HeaderInformation::string_to_compound_token(std::string const & token) {
-	if(token == "MOL_ID")        return MOL_ID;
-	else if(token == "MOLECULE")      return MOLECULE;
-	else if(token == "CHAIN")         return CHAIN;
-	else if(token == "FRAGMENT")      return FRAGMENT;
-	else if(token == "SYNONYM")       return SYNONYM;
-	else if(token == "EC")            return EC;
-	else if(token == "ENGINEERED")    return ENGINEERED;
-	else if(token == "MUTATION")      return MUTATION;
-	else if(token == "OTHER_DETAILS") return OTHER_DETAILS;
+	if ( token == "MOL_ID" )        return MOL_ID;
+	else if ( token == "MOLECULE" )      return MOLECULE;
+	else if ( token == "CHAIN" )         return CHAIN;
+	else if ( token == "FRAGMENT" )      return FRAGMENT;
+	else if ( token == "SYNONYM" )       return SYNONYM;
+	else if ( token == "EC" )            return EC;
+	else if ( token == "ENGINEERED" )    return ENGINEERED;
+	else if ( token == "MUTATION" )      return MUTATION;
+	else if ( token == "OTHER_DETAILS" ) return OTHER_DETAILS;
 	else {
 		TR.Error << "Unrecognized compound token string '" << token << "'" << endl;
 		utility_exit();
@@ -434,7 +434,7 @@ HeaderInformation::string_to_compound_token(std::string const & token) {
 void
 HeaderInformation::store_compound(std::string const & compound) {
 
-	if(compound_in_progress_){
+	if ( compound_in_progress_ ) {
 		size_t v_end(compound.find(';'));
 		compound_in_progress_ = (v_end == std::string::npos);
 		compounds_[compounds_.size()].second.append(
@@ -444,7 +444,7 @@ HeaderInformation::store_compound(std::string const & compound) {
 
 	size_t t_begin(compound.find_first_not_of(' '));
 	size_t t_end(compound.find(':', t_begin));
-	if(t_end == std::string::npos) {
+	if ( t_end == std::string::npos ) {
 		TR.Error
 			<< "Attempting to add compound to header information "
 			<< "but no compund token was found in '" << compound << "'" << endl;
@@ -454,14 +454,14 @@ HeaderInformation::store_compound(std::string const & compound) {
 		string_to_compound_token(compound.substr(t_begin,t_end - t_begin)));
 
 	size_t v_begin(compound.find_first_not_of(' ', t_end + 1));
-	if(v_begin == std::string::npos){
+	if ( v_begin == std::string::npos ) {
 		TR.Error
 			<< "Attempting to add compound to header information "
 			<< "but no compund value was found in '" << compound << "'" << endl;
 		utility_exit();
 	}
 	size_t v_end(compound.find(';', v_begin));
-	if(v_end == std::string::npos){
+	if ( v_end == std::string::npos ) {
 		compound_in_progress_ = true;
 	}
 	compounds_.push_back(
@@ -503,14 +503,14 @@ HeaderInformation::fill_compound_records(
 
 	Size line_no(1);
 
-	for(Size t=1, te = compounds_.size(); t <= te; ++t){
+	for ( Size t=1, te = compounds_.size(); t <= te; ++t ) {
 
 		std::stringstream comp_field;
 		comp_field
 			// defacto standard in PDB is to add a space after a continuation field
 			<< (line_no == 1 ? "" : " ")
 			<< compound_token_to_string(
-				static_cast<CompoundToken>(compounds_[t].first))
+			static_cast<CompoundToken>(compounds_[t].first))
 			<< ": "
 			<< compounds_[t].second
 			// only add ';' to separate compound records
@@ -528,52 +528,52 @@ HeaderInformation::experimental_technique_to_string(
 ) {
 	string t;
 	switch(technique){
-	case X_RAY_DIFFRACTION:        t = "X-RAY DIFFRACTION";        break;
-	case FIBER_DIFFRACTION:        t = "FIBER DIFFRACTION";        break;
-	case NEUTRON_DIFFRACTION:      t = "NEUTRON DIFFRACTION";      break;
-	case ELECTRON_CRYSTALLOGRAPHY: t = "ELECTRON CRYSTALLOGRAPHY"; break;
-	case ELECTRON_MICROSCOPY:      t = "ELECTRON MICROSCOPY";      break;
-	case SOLID_STATE_NMR:          t = "SOLID-STATE NMR";          break;
-	case SOLUTION_NMR:             t = "SOLUTION NMR";             break;
-	case SOLUTION_SCATTERING:      t = "SOLUTION SCATTERING";      break;
-	case THEORETICAL_MODEL:        t = "THEORETICAL MODEL";        break;
+	case X_RAY_DIFFRACTION :        t = "X-RAY DIFFRACTION";        break;
+	case FIBER_DIFFRACTION :        t = "FIBER DIFFRACTION";        break;
+	case NEUTRON_DIFFRACTION :      t = "NEUTRON DIFFRACTION";      break;
+	case ELECTRON_CRYSTALLOGRAPHY : t = "ELECTRON CRYSTALLOGRAPHY"; break;
+	case ELECTRON_MICROSCOPY :      t = "ELECTRON MICROSCOPY";      break;
+	case SOLID_STATE_NMR :          t = "SOLID-STATE NMR";          break;
+	case SOLUTION_NMR :             t = "SOLUTION NMR";             break;
+	case SOLUTION_SCATTERING :      t = "SOLUTION SCATTERING";      break;
+	case THEORETICAL_MODEL :        t = "THEORETICAL MODEL";        break;
 
-	case ELECTRON_DEFRACTION:
+	case ELECTRON_DEFRACTION :
 		t = "ELECTRON DEFRACTION";
 		TR.Warning
 			<< "Encountered obsolete experimental technqiue coding '"
 			<< t << "'" << endl;
 		break;
 
-	case CRYO_ELECTRON_MICROSCOPY:
+	case CRYO_ELECTRON_MICROSCOPY :
 		t = "CRYO-ELECTRON MICROSCOPY";
 		TR.Warning
 			<< "Encountered obsolete experimental technqiue coding '"
 			<< t << "'" << endl;
 		break;
 
-	case SOLUTION_SCATTERING_THEORETICAL_MODEL:
+	case SOLUTION_SCATTERING_THEORETICAL_MODEL :
 		t = "SOLUTION SCATTERING, THEORETICAL MODEL";
 		TR.Warning
 			<< "Encountered obsolete experimental technqiue coding '"
 			<< t << "'" << endl;
 		break;
 
-	case FLORECENCE_TRANSFER:
+	case FLORECENCE_TRANSFER :
 		t = "FLORECENCE TRANSFER";
 		TR.Warning
 			<< "Encountered obsolete experimental technqiue coding '"
 			<< t << "'" << endl;
 		break;
 
-	case NMR:
+	case NMR :
 		t = "NMR";
 		TR.Warning
 			<< "Encountered obsolete experimental technqiue coding '"
 			<< t << "'" << endl;
 		break;
 
-	default:
+	default :
 		TR.Error
 			<< "Unrecognized experimental technique value '"
 			<< technique << "'" << endl;
@@ -586,34 +586,34 @@ HeaderInformation::ExperimentalTechnique
 HeaderInformation::string_to_experimental_technique(
 	string const & technique
 ) {
-	if(technique == "X-RAY DIFFRACTION")        return X_RAY_DIFFRACTION;
-	else if(technique == "FIBER DIFFRACTION")   return FIBER_DIFFRACTION;
-	else if(technique == "NEUTRON DIFFRACTION") return NEUTRON_DIFFRACTION;
-	else if(technique == "ELECTRON CRYSTALLOGRAPHY")
+	if ( technique == "X-RAY DIFFRACTION" )        return X_RAY_DIFFRACTION;
+	else if ( technique == "FIBER DIFFRACTION" )   return FIBER_DIFFRACTION;
+	else if ( technique == "NEUTRON DIFFRACTION" ) return NEUTRON_DIFFRACTION;
+	else if ( technique == "ELECTRON CRYSTALLOGRAPHY" ) {
 		return ELECTRON_CRYSTALLOGRAPHY;
-	else if(technique == "ELECTRON MICROSCOPY") return ELECTRON_MICROSCOPY;
-	else if(technique == "SOLID-STATE NMR")     return SOLID_STATE_NMR;
-	else if(technique == "SOLUTION NMR")        return SOLUTION_NMR;
-	else if(technique == "SOLUTION SCATTERING") return SOLUTION_SCATTERING;
-	else if(technique == "THEORETICAL MODEL")   return THEORETICAL_MODEL;
+	} else if ( technique == "ELECTRON MICROSCOPY" ) return ELECTRON_MICROSCOPY;
+	else if ( technique == "SOLID-STATE NMR" )     return SOLID_STATE_NMR;
+	else if ( technique == "SOLUTION NMR" )        return SOLUTION_NMR;
+	else if ( technique == "SOLUTION SCATTERING" ) return SOLUTION_SCATTERING;
+	else if ( technique == "THEORETICAL MODEL" )   return THEORETICAL_MODEL;
 
 	// Handle obsolete technique strings
-	else if(technique == "ELECTRON DEFRACTION") {
+	else if ( technique == "ELECTRON DEFRACTION" ) {
 		TR.Warning
 			<< "Encountered obsolete experimental technqiue string '"
 			<< technique << "'" << endl;
 		return ELECTRON_DEFRACTION;
-	} else if(technique == "CRYO-ELECTRON MICROSCOPY") {
+	} else if ( technique == "CRYO-ELECTRON MICROSCOPY" ) {
 		TR.Warning
 			<< "Encountered obsolete experimental technqiue string '"
 			<< technique << "'" << endl;
 		return CRYO_ELECTRON_MICROSCOPY;
-	} else if(technique == "FLORECENCE TRANSFER") {
+	} else if ( technique == "FLORECENCE TRANSFER" ) {
 		TR.Warning
 			<< "Encountered obsolete experimental technqiue string '"
 			<< technique << "'" << endl;
 		return FLORECENCE_TRANSFER;
-	} else if(technique == "NMR") {
+	} else if ( technique == "NMR" ) {
 		TR.Warning
 			<< "Encountered obsolete experimental technqiue string '"
 			<< technique << "'" << endl;
@@ -630,7 +630,7 @@ HeaderInformation::string_to_experimental_technique(
 void
 HeaderInformation::store_experimental_techniques(
 	string const & exp) {
-	if(exp.empty()){
+	if ( exp.empty() ) {
 		TR.Error << "Attempting to add empty experimental technique string." << endl;
 		utility_exit();
 	}
@@ -638,22 +638,22 @@ HeaderInformation::store_experimental_techniques(
 	size_t t_len(0);
 	SSize t_end(-1);
 
-	while(true){
+	while ( true ) {
 		size_t t_begin = exp.find_first_not_of(' ', t_end+1);
-		if(t_begin == std::string::npos) return;
+		if ( t_begin == std::string::npos ) return;
 
 		t_end = exp.find(';', t_begin);
-		if(t_end == SSize(std::string::npos)){
+		if ( t_end == SSize(std::string::npos) ) {
 			experimental_technique_in_progress_ =
 				rstripped_whitespace(exp.substr(t_begin, t_len));
 			return;
-		} else if(exp.length() - t_begin >= 3 && exp.compare(t_begin, 3, "NMR") == 0){
+		} else if ( exp.length() - t_begin >= 3 && exp.compare(t_begin, 3, "NMR") == 0 ) {
 			// The obsolete NMR tag took extra information that is ignored here
 			t_len = 3;
 		} else {
 			t_len = t_end - t_begin;
 		}
-		if(experimental_technique_in_progress_.empty()){
+		if ( experimental_technique_in_progress_.empty() ) {
 			experimental_techniques_.push_back(
 				string_to_experimental_technique(exp.substr(t_begin, t_len)));
 		} else {
@@ -681,7 +681,7 @@ HeaderInformation::experimental_techniques() const {
 
 void
 HeaderInformation::finalize_experimental_technique_records() {
-	if(experimental_technique_in_progress()){
+	if ( experimental_technique_in_progress() ) {
 		experimental_techniques_.push_back(
 			string_to_experimental_technique(experimental_technique_in_progress_));
 		experimental_technique_in_progress_.clear();
@@ -704,7 +704,7 @@ HeaderInformation::is_experimental_technique(
 ) const {
 	list< HeaderInformation::ExperimentalTechnique >::const_iterator
 		t = find(experimental_techniques_.begin(), experimental_techniques_.end(),
-			technique);
+		technique);
 
 	return t != experimental_techniques_.end();
 }
@@ -713,7 +713,7 @@ void
 HeaderInformation::fill_experimental_technique_records(
 	std::vector< Record > & VR
 ) const {
-	if(parse_in_progress()){
+	if ( parse_in_progress() ) {
 		TR.Error
 			<< "Attempting to fill experimental technique records the "
 			<< "HeaderInformation is in the middle of parsing. If you think the "
@@ -721,14 +721,14 @@ HeaderInformation::fill_experimental_technique_records(
 			<< "please call finalize_parse()";
 		utility_exit();
 	}
-	
-	if(experimental_techniques_.empty()) return;
+
+	if ( experimental_techniques_.empty() ) return;
 	string techniques;
 	ExperimentalTechniques::const_iterator
 		k = experimental_techniques_.begin(),
 		ke= experimental_techniques_.end();
-	for(; k != ke; ++k){
-		if(!techniques.empty()) techniques.append("; ");
+	for ( ; k != ke; ++k ) {
+		if ( !techniques.empty() ) techniques.append("; ");
 		techniques.append(experimental_technique_to_string(*k));
 	}
 	Size line_no(1);
@@ -750,13 +750,13 @@ HeaderInformation::fill_wrapped_records(
 	// Assume contents string is stripped of white space
 	size_t l_begin(0), l_len(0), l_end(0);
 	size_t field_width(60);
-	while(l_begin != contents.length()){
+	while ( l_begin != contents.length() ) {
 		Record R = Field::getRecordCollection()[record_type];
 		R["type"].value = record_type;
 		set_line_continuation(R, line_no);
 
 		//Will the remainder of the contents fit on this line?
-		if(contents.length() - l_begin <= field_width){
+		if ( contents.length() - l_begin <= field_width ) {
 			l_len = contents.length() - l_begin;
 		} else {
 			// Walk back from end where the field would truncate to locate
@@ -765,8 +765,8 @@ HeaderInformation::fill_wrapped_records(
 			l_end = l_begin + field_width;
 			// Note: Since the rest of the contents don't fit in the field,
 			// l_end < contents.length()
-			while(true){
-				if(l_end == l_begin){
+			while ( true ) {
+				if ( l_end == l_begin ) {
 					// We have walked all the way to l_begin. The next word is
 					// so big it cannot fit in the field
 					TR.Error
@@ -777,7 +777,7 @@ HeaderInformation::fill_wrapped_records(
 					TR.Error << field_name << ": " << contents << endl;
 					utility_exit();
 				}
-				if (contents[l_end] == ' ' || contents[l_end - 1] == '-'){
+				if ( contents[l_end] == ' ' || contents[l_end - 1] == '-' ) {
 					break;
 				} else {
 					--l_end;
@@ -802,14 +802,14 @@ HeaderInformation::set_line_continuation(
 	Size const line_no
 ) const {
 	std::string & con_field = R["continuation"].value;
-	if(line_no == 0){
+	if ( line_no == 0 ) {
 		TR.Error << "Attempting to write a line continuation record for line 0, please begin the line continuation count at 1." << endl;
 		utility_exit();
 	}
-	if(line_no == 1){
+	if ( line_no == 1 ) {
 		con_field = "  ";
 		return;
-	} else if(line_no > 99){
+	} else if ( line_no > 99 ) {
 		TR.Error << "Attempting to write record that takes more than 99 lines, which overflows the continuation field in the." << endl;
 		utility_exit();
 	} else {

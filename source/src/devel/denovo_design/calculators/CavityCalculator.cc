@@ -45,8 +45,8 @@ namespace calculators {
 
 /// @brief default constructor
 CavityCalculator::CavityCalculator() :
-  core::pose::metrics::StructureDependentCalculator(),
-  total_volume_( -1.0 )
+	core::pose::metrics::StructureDependentCalculator(),
+	total_volume_( -1.0 )
 {
 }
 
@@ -56,18 +56,18 @@ CavityCalculator::~CavityCalculator(){}
 /// @brief
 void
 CavityCalculator::lookup( std::string const & key,
-			  basic::MetricValueBase * valptr ) const
+	basic::MetricValueBase * valptr ) const
 {
-  if ( key == "volume" ) {
-    basic::check_cast( valptr, &total_volume_, "Total Cavity Volume" );
-    (static_cast< basic::MetricValue< core::Real > *>(valptr))->set( total_volume_ );
-  } else if ( key == "cavities" ) {
+	if ( key == "volume" ) {
+		basic::check_cast( valptr, &total_volume_, "Total Cavity Volume" );
+		(static_cast< basic::MetricValue< core::Real > *>(valptr))->set( total_volume_ );
+	} else if ( key == "cavities" ) {
 		basic::check_cast( valptr, &clusters_, "Cavities" );
 		(static_cast< basic::MetricValue< utility::vector1< core::scoring::packstat::CavityBallCluster > > *>(valptr))->set( clusters_ );
 	} else {
-    TR << "CavityCalculator cannot compute the requested metric " << key << std::endl;
-    utility_exit();
-  }
+		TR << "CavityCalculator cannot compute the requested metric " << key << std::endl;
+		utility_exit();
+	}
 } //lookup
 
 
@@ -75,21 +75,21 @@ CavityCalculator::lookup( std::string const & key,
 std::string
 CavityCalculator::print( std::string const & key ) const
 {
-  std::string result;
-  if ( key == "volume" ) {
-    result += boost::lexical_cast<std::string>( total_volume_ ) + " ";
+	std::string result;
+	if ( key == "volume" ) {
+		result += boost::lexical_cast<std::string>( total_volume_ ) + " ";
 	} else {
-    basic::Error() << "CavityCalculator cannot compute metric " << key << std::endl;
-  }
-  return result;
+		basic::Error() << "CavityCalculator cannot compute metric " << key << std::endl;
+	}
+	return result;
 } // print
 
 /// @brief recompute cavity volumes
 void
 CavityCalculator::recompute( core::pose::Pose const & pose )
 {
-  // convert to centroid and compare to saved pose; if it is the same, don't do anything.
-  total_volume_ = 0;
+	// convert to centroid and compare to saved pose; if it is the same, don't do anything.
+	total_volume_ = 0;
 
 	// setup sasa options -- same as in AddCavitiesMover
 	core::scoring::packstat::SasaOptions opts;
@@ -100,24 +100,25 @@ CavityCalculator::recompute( core::pose::Pose const & pose )
 	opts.area_cav_ball_required_exposed = 0.0;
 	opts.surrounding_sasa_smoothing_window = 1;
 
-  protocols::simple_moves::AddCavitiesMover add_cavities;
-  // parameters come from AddCavitiesMover
-  // 10.0 is hard coded, 150 is default, 3.0 is hard coded
-  core::scoring::packstat::CavBalls cbs( add_cavities.get_cavities( pose, 10.0, 150, 3.0 ) );
-  // hack required so CavBalls object is not modified
-  core::scoring::packstat::CavBalls tmp_cbs( cbs );
-  compute_cav_ball_volumes( tmp_cbs, opts );
+	protocols::simple_moves::AddCavitiesMover add_cavities;
+	// parameters come from AddCavitiesMover
+	// 10.0 is hard coded, 150 is default, 3.0 is hard coded
+	core::scoring::packstat::CavBalls cbs( add_cavities.get_cavities( pose, 10.0, 150, 3.0 ) );
+	// hack required so CavBalls object is not modified
+	core::scoring::packstat::CavBalls tmp_cbs( cbs );
+	compute_cav_ball_volumes( tmp_cbs, opts );
 
 	clusters_.clear();
 	clusters_ = compute_cav_ball_clusters( tmp_cbs, opts );
-  for( Size i = 1; i <= clusters_.size(); i++ ) {
-    for( Size j = 1; j <= clusters_[i].cavballs.size(); j++ ) {
-      if( clusters_[i].cavballs[j].radius() > 0.6 )
+	for ( Size i = 1; i <= clusters_.size(); i++ ) {
+		for ( Size j = 1; j <= clusters_[i].cavballs.size(); j++ ) {
+			if ( clusters_[i].cavballs[j].radius() > 0.6 ) {
 				TR    << clusters_[i].cavballs[j].hetero_atom_line( pose.total_residue()+i, i, 0.0 ) << std::endl;
-    }
+			}
+		}
 		TR << "Cluster " << i << ": volume=" << clusters_[i].volume << ", surface_area=" << clusters_[i].surface_area << ", surface_accessibility=" << clusters_[i].surface_accessibility << ", center=" << clusters_[i].center.x() << "," << clusters_[i].center.y() << "," << clusters_[i].center.z() << std::endl;
 		total_volume_ += clusters_[i].volume;
-  }
+	}
 }
 
 } // calculators

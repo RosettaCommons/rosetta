@@ -136,11 +136,10 @@ single_motif_from_stream(
 	std::string::size_type index( rest.find("REMARK ") );
 	std::string this_remark;
 	bool has_remark( false );
-	if( index != std::string::npos ) {
+	if ( index != std::string::npos ) {
 		this_remark = rest.substr( index + 7 );
 		has_remark = true;
-	} else {
-	}
+	} else { }
 
 	// Scan to end of line to skip comments
 	// motif_info.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -149,7 +148,7 @@ single_motif_from_stream(
 	motif_info >> motif_jump;
 
 	SingleMotifOP retval( new SingleMotif( res1, r1atom1, r1atom2, r1atom3, res2, r2atom1, r2atom2, r2atom3, motif_jump ) );
-	if( has_remark ) {
+	if ( has_remark ) {
 		retval->store_remark( this_remark );
 	}
 
@@ -188,12 +187,12 @@ single_motif_from_stream(
 	std::string::size_type index( rest.find("REMARK ") );
 	std::string this_remark;
 	bool has_remark( false );
-	if( index != std::string::npos ) {
+	if ( index != std::string::npos ) {
 		this_remark = rest.substr( index + 7 );
 		has_remark = true;
-		//	std::cout << "Remark is " << this_remark << std::endl;
-		} else {
-		//	std::cout << "No remark in motif" << std::endl;
+		// std::cout << "Remark is " << this_remark << std::endl;
+	} else {
+		// std::cout << "No remark in motif" << std::endl;
 	}
 
 	// Scan to end of line to skip comments
@@ -203,7 +202,7 @@ single_motif_from_stream(
 	motif_info >> motif_jump;
 
 	SingleMotifOP retval( new SingleMotif( res1, r1atom1, r1atom2, r1atom3, res2, r2atom1, r2atom2, r2atom3, motif_jump ) );
-	if( has_remark ) {
+	if ( has_remark ) {
 		retval->store_remark( this_remark );
 	}
 
@@ -241,14 +240,13 @@ single_ligand_motif_from_stream(
 	std::string::size_type index( rest.find("REMARK ") );
 	std::string this_remark;
 	bool has_remark( false );
-	if( index != std::string::npos ) {
+	if ( index != std::string::npos ) {
 		this_remark = rest.substr( index + 7 );
 		has_remark = true;
-		} else {
-	}
+	} else { }
 	motif_info >> motif_jump;
 	SingleMotifOP retval( new SingleMotif( res1, r1atom1, r1atom2, r1atom3, r2atom1, r2atom2, r2atom3, motif_jump ) );
-	if( has_remark ) {
+	if ( has_remark ) {
 		retval->store_remark( this_remark );
 	}
 
@@ -283,7 +281,7 @@ backbone_stub_match(
 	retval += r1.xyz( "C" ).distance_squared( r2.xyz( "C" ) );
 
 	// For the fourth atom, if either residue is glycine, you need to use HA, else use CB
-	if( r1.type().aa() == core::chemical::aa_gly || r2.type().aa() == core::chemical::aa_gly ) {
+	if ( r1.type().aa() == core::chemical::aa_gly || r2.type().aa() == core::chemical::aa_gly ) {
 		core::Size index1( r1.type().aa() == core::chemical::aa_gly ? r1.atom_index( "1HA" ) : r1.atom_index( "HA" ) );
 		core::Size index2( r2.type().aa() == core::chemical::aa_gly ? r2.atom_index( "1HA" ) : r2.atom_index( "HA" ) );
 		retval += r1.xyz( index1 ).distance_squared( r2.xyz( index2 ) );
@@ -300,8 +298,8 @@ void
 add_motif_bb_constraints(
 	core::scoring::constraints::ConstraintSetOP cst_set,
 	core::pose::Pose & pose,
-  core::Size this_pos,
-  core::conformation::Residue const & inv_rotamer
+	core::Size this_pos,
+	core::conformation::Residue const & inv_rotamer
 )
 {
 	using namespace core::scoring::constraints;
@@ -326,11 +324,11 @@ add_motif_bb_constraints(
 		fx3 ) ) ) );
 
 	// For the fourth atom, if either residue is glycine, you need to use HA, else use CB
-	if( pose.residue( this_pos ).type().aa() == core::chemical::aa_gly || inv_rotamer.type().aa() == core::chemical::aa_gly ) {
+	if ( pose.residue( this_pos ).type().aa() == core::chemical::aa_gly || inv_rotamer.type().aa() == core::chemical::aa_gly ) {
 		core::Size index1( pose.residue( this_pos ).type().aa() == core::chemical::aa_gly ?
-					pose.residue( this_pos ).atom_index( "1HA" ) : pose.residue( this_pos ).atom_index( "HA" ) );
+			pose.residue( this_pos ).atom_index( "1HA" ) : pose.residue( this_pos ).atom_index( "HA" ) );
 		core::Size index2( inv_rotamer.type().aa() == core::chemical::aa_gly ?
-					inv_rotamer.atom_index( "1HA" ) : inv_rotamer.atom_index( "HA" ) );
+			inv_rotamer.atom_index( "1HA" ) : inv_rotamer.atom_index( "HA" ) );
 
 		FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
 		cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( core::id::AtomID( index1, this_pos ),
@@ -352,8 +350,8 @@ void
 add_motif_sc_constraints(
 	core::scoring::constraints::ConstraintSetOP cst_set,
 	core::pose::Pose & pose,
-  core::Size this_pos,
-  core::conformation::Residue const & inv_rotamer,
+	core::Size this_pos,
+	core::conformation::Residue const & inv_rotamer,
 	MotifCOP this_motif,
 	bool const is_it_forward
 )
@@ -363,15 +361,15 @@ add_motif_sc_constraints(
 
 	core::Size const index1( pose.residue( this_pos ).atom_index(
 		( is_it_forward ? this_motif->res2_atom1_name() : this_motif->res1_atom1_name() )
-	) );
+		) );
 
 	core::Size const index2( pose.residue( this_pos ).atom_index(
 		( is_it_forward ? this_motif->res2_atom2_name() : this_motif->res1_atom2_name() )
-	) );
+		) );
 
 	core::Size const index3( pose.residue( this_pos ).atom_index(
 		( is_it_forward ? this_motif->res2_atom3_name() : this_motif->res1_atom3_name() )
-	) );
+		) );
 
 	// This section is necessary in case pose.residue(1) is not a protein residue, because a DNA residue would not have a CA atom
 	core::Size first_protein_resi(1);
@@ -418,10 +416,10 @@ void mutate_position_vector_for_search(
 	utility::vector1< bool > allow_vector( core::chemical::num_canonical_aas, false );
 	allow_vector[ core::chemical::aa_ala ] = true;
 
-	for( core::Size ires = 1, end_i = pose.total_residue() ; ires <= end_i ; ++ires ) {
+	for ( core::Size ires = 1, end_i = pose.total_residue() ; ires <= end_i ; ++ires ) {
 
-		if( find( trim_positions.begin(), trim_positions.end(), ires ) != trim_positions.end() ) {
-			if( pose.residue( ires ).aa() != core::chemical::aa_pro &&
+		if ( find( trim_positions.begin(), trim_positions.end(), ires ) != trim_positions.end() ) {
+			if ( pose.residue( ires ).aa() != core::chemical::aa_pro &&
 					pose.residue( ires ).aa() != core::chemical::aa_gly ) {
 				// Add it to the packer task
 				alanize_task->nonconst_residue_task( ires ).restrict_absent_canonical_aas( allow_vector );
@@ -454,9 +452,9 @@ void mutate_loops_for_search(
 	utility::vector1< bool > allow_vector( core::chemical::num_canonical_aas, false );
 	allow_vector[ core::chemical::aa_ala ] = true;
 
-	for( core::Size ires = 1, end_res = pose.total_residue() ; ires <= end_res ; ++ires ) {
-		if( flex_regions.is_loop_residue( ires ) ) {
-			if( pose.residue( ires ).aa() != core::chemical::aa_pro &&
+	for ( core::Size ires = 1, end_res = pose.total_residue() ; ires <= end_res ; ++ires ) {
+		if ( flex_regions.is_loop_residue( ires ) ) {
+			if ( pose.residue( ires ).aa() != core::chemical::aa_pro &&
 					pose.residue( ires ).aa() != core::chemical::aa_gly ) {
 				// Add it to the packer task
 				alanize_task->nonconst_residue_task( ires ).restrict_absent_canonical_aas( allow_vector );
@@ -558,8 +556,7 @@ get_targetconformers_user()
 				conformerOPs.push_back( pose->residue(i).clone() );
 			}
 		}
-	} else {
-	}
+	} else { }
 	return conformerOPs;
 }
 
@@ -570,7 +567,7 @@ setup_conformer_map(
 {
 	using namespace core::conformation;
 	std::map< std::string, ResidueOPs > conformer_map;
-	for	( ResidueOPs::const_iterator itr = conformerOPs.begin(), end_itr = conformerOPs.end();
+	for ( ResidueOPs::const_iterator itr = conformerOPs.begin(), end_itr = conformerOPs.end();
 			itr != end_itr; ++itr ) {
 		std::string name( (*itr)->name3() );
 		conformer_map[name].push_back( *itr );
@@ -591,7 +588,7 @@ get_target_positions_make_dna_mutations(
 	using namespace protocols::dna;
 	utility::vector1< core::Size > target_positions(0);
 	if ( option[ OptionKeys::motifs::target_dna_defs ].user() &&
-				option[ OptionKeys::dna::design::dna_defs ].user() ) {
+			option[ OptionKeys::dna::design::dna_defs ].user() ) {
 		// This situation would only arise if you want to make many
 		// DNA mutations, but only focus motif targeting on a subset
 		// The option target_dna_defs should only be used in this situation
@@ -640,7 +637,7 @@ get_target_position_map_make_dna_mutations(
 	//utility::vector1< std::pair< core::Size, utility::vector1< std::string > > > target_positions(0);
 	std::map< core::Size, std::set< std::string > > target_positions;
 	if ( option[ OptionKeys::motifs::target_dna_defs ].user() &&
-				option[ OptionKeys::dna::design::dna_defs ].user() ) {
+			option[ OptionKeys::dna::design::dna_defs ].user() ) {
 		DnaDesignDefOPs mutated_dna;
 		DnaDesignDefOPs targeted_dna;
 		load_dna_design_defs_from_options( mutated_dna );
@@ -676,7 +673,7 @@ make_dna_mutations(
 	using namespace basic::options;
 	using namespace protocols::dna;
 	if ( option[ OptionKeys::motifs::target_dna_defs ].user() &&
-				option[ OptionKeys::dna::design::dna_defs ].user() ) {
+			option[ OptionKeys::dna::design::dna_defs ].user() ) {
 		DnaDesignDefOPs mutated_dna;
 		DnaDesignDefOPs targeted_dna;
 		load_dna_design_defs_from_options( mutated_dna );
@@ -693,7 +690,7 @@ make_dna_mutations(
 		utility::vector1< std::string > str_def( option[ OptionKeys::motifs::target_dna_defs ]().vector() );
 		load_dna_design_defs_from_strings( targeted_dna, str_def );
 	} else {
-			mu_tr << "No input given for DNA target positions, will identify target positions based on input motif building positions." << std::endl;
+		mu_tr << "No input given for DNA target positions, will identify target positions based on input motif building positions." << std::endl;
 	}
 }
 
@@ -713,14 +710,14 @@ make_dna_mutations(
 		if ( ! (*def)->name3.empty() ) {
 			std::string basepairID( (*def)->name3 );
 			//if ( basepairID.length() == 3 ) {
-				if( protocols::dna::dna_full_name3( pose.residue(index).name3() ) != basepairID ) {
-					make_base_pair_mutation( pose, index, core::chemical::aa_from_name( basepairID ) ); //what if it has an X instead of a name3
-				}
-		//	} else {
+			if ( protocols::dna::dna_full_name3( pose.residue(index).name3() ) != basepairID ) {
+				make_base_pair_mutation( pose, index, core::chemical::aa_from_name( basepairID ) ); //what if it has an X instead of a name3
+			}
+			// } else {
 			// in the future this will end up checking to make sure that it = N or whatever other one-letter identifier you want
-		//		mu_tr << "DNA is set to be mutated to multiple DNA bases during the motif search" << std::endl;
-		//	}
-		// Actually, cannot add this functionality to this function, because the input from the dna_defs will affect the later steps with design, so I will need to find a new place to add this functionality, probably have to use target_defs if I want something other than simple one-to-one dna mutations to be made
+			//  mu_tr << "DNA is set to be mutated to multiple DNA bases during the motif search" << std::endl;
+			// }
+			// Actually, cannot add this functionality to this function, because the input from the dna_defs will affect the later steps with design, so I will need to find a new place to add this functionality, probably have to use target_defs if I want something other than simple one-to-one dna mutations to be made
 		} else {
 			mu_tr << "DNA was not mutated because input Def did not include a type!" << std::endl;
 			// Future: DEF Does not include a type, therefore I should mutate later in protocol to all types of bases for the RMSD comparison
@@ -767,7 +764,7 @@ defs2allowedtypes(
 			std::map < std::string, utility::vector1< std::string > > degeneracycodes(
 				utility::tools::make_map(
 				std::string("N"), utility::tools::make_vector1( std::string("ADE"), std::string("CYT"), std::string("CYT"), std::string("THY") )
-			) );
+				) );
 			names = degeneracycodes[name];
 			positions.push_back( std::make_pair( index, names ) );
 		} else {
@@ -801,7 +798,7 @@ defs2map(
 			std::map < std::string, utility::vector1< std::string > > degeneracycodes(
 				utility::tools::make_map(
 				std::string("N"), utility::tools::make_vector1( std::string("ADE"), std::string("CYT"), std::string("CYT"), std::string("THY") )
-			) );
+				) );
 			//names = degeneracycodes[name];
 		} else {
 			mu_tr << "All target positions will remain wild-type." << std::endl; // need to make sure code checks that in motif search and really does use wild-type if no other types are considered
@@ -832,17 +829,17 @@ bpdefs2map(
 			name1 << name[c];
 			if ( name1.str() == "X" ) {
 				utility::vector1< std::string > allAA(utility::tools::make_vector1(std::string("A"), std::string("C"), std::string("D"), std::string("E"), std::string("F"), std::string("H"), std::string("I"), std::string("K"), std::string("L"), std::string("M"), std::string("N"), std::string("P"), std::string("Q"), std::string("R"), std::string("S"), std::string("T"), std::string("V"), std::string("W"), std::string("Y") ) );
-				for( core::Size x(1); x <= allAA.size(); ++x ) {
+				for ( core::Size x(1); x <= allAA.size(); ++x ) {
 					names.insert( name3_from_oneletter( allAA[x] ) );
 				};
 			};
 			std::string name3( name3_from_oneletter( name1.str() ) );
 			names.insert( name3 );
-			if (name3 == "GLY") {
+			if ( name3 == "GLY" ) {
 				mu_tr << "There are no such thing as glycine motifs, check your build_position_defs and remove G" << std::endl;
 			}
 
-		// This function could be also potentially be converted to take a 3 letter code for some residue type that is not a canonical aa with a 1-letter
+			// This function could be also potentially be converted to take a 3 letter code for some residue type that is not a canonical aa with a 1-letter
 		}
 		positions[index] = names;
 	}
@@ -875,7 +872,7 @@ name3_from_oneletter(
 		std::string("V"), std::string("VAL"),
 		std::string("W"), std::string("TRP"),
 		std::string("Y"), std::string("TYR")
-	) );
+		) );
 	return name3_name1[ oneletter ];
 }
 
@@ -927,30 +924,30 @@ load_build_position_data(
 	utility::io::izstream data_file( filename.c_str() );
 	std::string key_in;
 	data_file >> key_in;
-	if( key_in == "POSITION" ) {
+	if ( key_in == "POSITION" ) {
 		bool keep_one_motif( true );
-		while( data_file >> key_in ) {
+		while ( data_file >> key_in ) {
 			std::stringstream bpseqpos;
 			bpseqpos << bp.seqpos();
-			if( key_in == bpseqpos.str() ) {
+			if ( key_in == bpseqpos.str() ) {
 				std::string key2_in;
-				while( data_file >> key2_in ) {
-					if( key2_in == "POSITION" ) {
+				while ( data_file >> key2_in ) {
+					if ( key2_in == "POSITION" ) {
 						std::string key3_in;
 						data_file >> key3_in;
 						break;
-					} else if( key2_in == "SINGLE" ) {
-						
+					} else if ( key2_in == "SINGLE" ) {
+
 						SingleMotifOP new_motif = ( ligand_marker == LIGAND ) ?
-								single_ligand_motif_from_stream( data_file ) :
-								single_motif_from_stream( data_file );
-						
-						if( ! keep_one_motif ) {
+							single_ligand_motif_from_stream( data_file ) :
+							single_motif_from_stream( data_file );
+
+						if ( ! keep_one_motif ) {
 							bp.keep_motif( *new_motif );
 						} else {
 							single_motifs[ new_motif->remark() ] = new_motif;
 						}
-					} else if( key2_in == "RESIDUE" ) {
+					} else if ( key2_in == "RESIDUE" ) {
 						core::conformation::ResidueOP rsd;
 						rsd = ( single_residue_from_stream( data_file )->clone() );
 						rsd->seqpos( bp.seqpos() );
@@ -960,20 +957,20 @@ load_build_position_data(
 						rsd->copy_residue_connections( pose.residue(bp.seqpos()) );
 						bp.keep_rotamer( *rsd );
 					}
-			}
-			break;
-			} else {
-					continue;
-			}
-		}
-			if( keep_one_motif ) {
-				for( std::map< std::string, SingleMotifOP >::iterator mot( single_motifs.begin() ), end( single_motifs.end()); mot != end; ++mot ) {
-					bp.keep_motif( *(mot->second) );
 				}
+				break;
+			} else {
+				continue;
 			}
-		} else {
-			mu_tr << "This file doesn't have any positions in it" << std::endl;
 		}
+		if ( keep_one_motif ) {
+			for ( std::map< std::string, SingleMotifOP >::iterator mot( single_motifs.begin() ), end( single_motifs.end()); mot != end; ++mot ) {
+				bp.keep_motif( *(mot->second) );
+			}
+		}
+	} else {
+		mu_tr << "This file doesn't have any positions in it" << std::endl;
+	}
 }
 
 utility::vector1< utility::file::FileName >
@@ -1007,33 +1004,33 @@ single_residue_from_stream(
 	getline( residue_info, firstline );
 	core::conformation::ResidueOP rsd = core::conformation::ResidueFactory::create_residue( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map( resname ) );
 	core::Size nlines( rsd->natoms() );
-	for( core::Size i(1); i <= nlines; ++i ) {
+	for ( core::Size i(1); i <= nlines; ++i ) {
 		//std::string atomline;
 		std::string atomname;
 		residue_info >> atomname;
 		//getline( residue_info, atomline );
 		utility::vector1< std::string > atomwords( utility::string_split( atomname, ':' ) );
 		std::string atomname2( atomwords.front() );
-	//	std::cout << "atomname: " << atomname << std::endl;
-	//	std::cout << "atomname2: " << atomname2 << std::endl;
+		// std::cout << "atomname: " << atomname << std::endl;
+		// std::cout << "atomname2: " << atomname2 << std::endl;
 		std::string skip, x, y, z;
-		if( atomname == atomname2 ) {
+		if ( atomname == atomname2 ) {
 			residue_info >> skip;
 			residue_info >> x;
 			residue_info >> y;
 			residue_info >> z;
-		//	std::cout << skip << x << y << z << std::endl;
+			// std::cout << skip << x << y << z << std::endl;
 		} else {
-				residue_info >> x;
-				residue_info >> y;
-				residue_info >> z;
+			residue_info >> x;
+			residue_info >> y;
+			residue_info >> z;
 		}
 		core::Vector atomxyz( utility::string2float(x), utility::string2float(y), utility::string2float(z) );
-	//numeric::xyzVector atomxyz;
-//	residueinfo >> atomxyz;
+		//numeric::xyzVector atomxyz;
+		// residueinfo >> atomxyz;
 		rsd->set_xyz( atomname2, atomxyz );
 	}
-//	std::cout << "TESTING\n" << *rsd << std::endl;
+	// std::cout << "TESTING\n" << *rsd << std::endl;
 	return rsd;
 }
 
@@ -1055,32 +1052,32 @@ make_base_pair_mutation(
 	core::chemical::AA const & na
 )
 {
-using namespace core::chemical;
-using namespace core::conformation;
-using namespace core::scoring::dna;
+	using namespace core::chemical;
+	using namespace core::conformation;
+	using namespace core::scoring::dna;
 
-ResidueTypeSet const & residue_set( pose.residue(1).residue_type_set() );
-BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
+	ResidueTypeSet const & residue_set( pose.residue(1).residue_type_set() );
+	BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
 
-for ( int r=1; r<= 2; ++r ) {
-	core::Size const pos( r == 1 ? seqpos : partner[seqpos] );
-	if ( pos == 0 ) continue; // unpaired
-	AA const aa( r == 1 ? na : protocols::dna::dna_base_partner( na ) );
+	for ( int r=1; r<= 2; ++r ) {
+		core::Size const pos( r == 1 ? seqpos : partner[seqpos] );
+		if ( pos == 0 ) continue; // unpaired
+		AA const aa( r == 1 ? na : protocols::dna::dna_base_partner( na ) );
 
-	Residue const & existing_residue( pose.residue( pos ) );
-	assert( existing_residue.is_DNA() );
+		Residue const & existing_residue( pose.residue( pos ) );
+		assert( existing_residue.is_DNA() );
 
-	// search for the matching residue type
-	ResidueTypeCOP rsd_type( residue_set.get_representative_type_aa( aa, existing_residue.type().variant_types() ) );
-	if ( rsd_type == 0 ) {
-		utility_exit_with_message("couldnt find residuetype for basepair mutation!");
+		// search for the matching residue type
+		ResidueTypeCOP rsd_type( residue_set.get_representative_type_aa( aa, existing_residue.type().variant_types() ) );
+		if ( rsd_type == 0 ) {
+			utility_exit_with_message("couldnt find residuetype for basepair mutation!");
+		}
+
+		ResidueOP rsd = ResidueFactory::create_residue( *rsd_type, existing_residue, pose.conformation() );
+		rsd->set_chi( 1, existing_residue.chi(1) );
+
+		pose.replace_residue( pos, *rsd, false );
 	}
-
-	ResidueOP rsd = ResidueFactory::create_residue( *rsd_type, existing_residue, pose.conformation() );
-	rsd->set_chi( 1, existing_residue.chi(1) );
-
-	pose.replace_residue( pos, *rsd, false );
-}
 }
 
 core::Real
@@ -1100,7 +1097,7 @@ atom_specific_rms(
 	// Make atom-number translation table
 	core::Real sum2( 0.0 );
 	core::Size natoms( 0 );
-	for( core::Size j = 1; j <= atoms.size(); ++j ) {
+	for ( core::Size j = 1; j <= atoms.size(); ++j ) {
 		core::Vector diff = rsd1.xyz( atoms[j] ) - rsd2.xyz( atoms[j] );
 		sum2 += diff.length_squared();
 		natoms +=1;
@@ -1108,7 +1105,7 @@ atom_specific_rms(
 	core::Real const curr_rms = std::sqrt(sum2 / natoms);
 
 	// Check vs. minimum rmsd
-	if( curr_rms < best_rms ) {
+	if ( curr_rms < best_rms ) {
 		best_rms = curr_rms;
 	}
 	return best_rms;
@@ -1131,7 +1128,7 @@ atom_specific_rms(
 	// Make atom-number translation table
 	core::Real sum2( 0.0 );
 	core::Size natoms( 0 );
-	for( core::Size j = 1; j <= atoms.size(); ++j ) {
+	for ( core::Size j = 1; j <= atoms.size(); ++j ) {
 		core::Vector diff = rsd1.xyz( atoms[j] ) - rsd2.xyz( atoms[j] );
 		sum2 += diff.length_squared();
 		natoms +=1;
@@ -1139,7 +1136,7 @@ atom_specific_rms(
 	core::Real const curr_rms = std::sqrt(sum2 / natoms);
 
 	// Check vs. minimum rmsd
-	if( curr_rms < best_rms ) {
+	if ( curr_rms < best_rms ) {
 		best_rms = curr_rms;
 	}
 	return best_rms;
@@ -1179,14 +1176,14 @@ build_rotamers_lite(
 	//task->nonconst_residue_task( rotamer_build_position ).or_include_current( true );
 	// You can't "include_current" because there is no current or native residue
 	//task->nonconst_residue_task( rotamer_build_position).or_exrandom_sample_level(core::pack::task::NO_EXTRA_CHI_SAMPLES);
-	if( ex_ > 0 ) task->nonconst_residue_task( rotamer_build_position ).or_ex1( true );
-	if( ex_ > 1 ) task->nonconst_residue_task( rotamer_build_position ).or_ex2( true );
-	if( ex_ > 2 ) task->nonconst_residue_task( rotamer_build_position ).or_ex3( true );
-	if( ex_ > 3 ) task->nonconst_residue_task( rotamer_build_position ).or_ex4( true );
-	if( ex_ > 4 ) task->nonconst_residue_task( rotamer_build_position ).or_ex1_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
-	if( ex_ > 5 ) task->nonconst_residue_task( rotamer_build_position ).or_ex2_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
-	if( ex_ > 6 ) task->nonconst_residue_task( rotamer_build_position ).or_ex3_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
-	if( ex_ > 7 ) task->nonconst_residue_task( rotamer_build_position ).or_ex4_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
+	if ( ex_ > 0 ) task->nonconst_residue_task( rotamer_build_position ).or_ex1( true );
+	if ( ex_ > 1 ) task->nonconst_residue_task( rotamer_build_position ).or_ex2( true );
+	if ( ex_ > 2 ) task->nonconst_residue_task( rotamer_build_position ).or_ex3( true );
+	if ( ex_ > 3 ) task->nonconst_residue_task( rotamer_build_position ).or_ex4( true );
+	if ( ex_ > 4 ) task->nonconst_residue_task( rotamer_build_position ).or_ex1_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
+	if ( ex_ > 5 ) task->nonconst_residue_task( rotamer_build_position ).or_ex2_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
+	if ( ex_ > 6 ) task->nonconst_residue_task( rotamer_build_position ).or_ex3_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
+	if ( ex_ > 7 ) task->nonconst_residue_task( rotamer_build_position ).or_ex4_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
 
 	scorefxn( pose );
 	core::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scorefxn, task );

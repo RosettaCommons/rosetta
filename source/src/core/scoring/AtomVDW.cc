@@ -66,10 +66,9 @@ AtomVDW::AtomVDW( std::string const & atom_type_set_name_with_suffix ):vdw_suffi
 	}
 
 	utility::io::izstream stream;
-	if (vdw_suffix_.compare("NULL")==0) {
+	if ( vdw_suffix_.compare("NULL")==0 ) {
 		stream.open( atom_set.directory() + "/atom_vdw.txt" );
-	}
-	else {
+	} else {
 		stream.open( atom_set.directory() + "/" + vdw_suffix_ + ".txt" );
 		TR << "Openning alternative vdw file: " << atom_set.directory() + "/" + vdw_suffix_ + ".txt" << std::endl;
 	}
@@ -121,14 +120,14 @@ void AtomVDW::get_atom_type_set_name( std::string ats_suff )
 	std::vector<std::string> elems;
 	std::stringstream ss(ats_suff);
 	std::string item;
-	while (std::getline(ss, item, ':')) {
+	while ( std::getline(ss, item, ':') ) {
 		elems.push_back(item);
 	}
 	Size n = elems.size();
-	if (n==0) utility_exit_with_message( "Unable to parse the atom_type_set name" );
+	if ( n==0 ) utility_exit_with_message( "Unable to parse the atom_type_set name" );
 	atom_type_set_name_ = elems[0];
-	if (n==2) vdw_suffix_ = elems[1];
-	if (n>2) utility_exit_with_message( "Error format of atom_type_set name" );
+	if ( n==2 ) vdw_suffix_ = elems[1];
+	if ( n>2 ) utility_exit_with_message( "Error format of atom_type_set name" );
 }
 
 /// @details  Calculates approximation to a single per-atom radius using the pairwise data from the file
@@ -144,7 +143,7 @@ AtomVDW::setup_approximate_vdw_radii(
 
 	Size const natoms_full( atom_vdw_.size() );
 	Size const natoms( atom_type_index.size() ); // # atoms in the db file
-debug_assert( natoms_full == Size( atom_type_set.n_atomtypes() ) );
+	debug_assert( natoms_full == Size( atom_type_set.n_atomtypes() ) );
 
 	// initialize
 	utility::vector1< Real > R( natoms_full );

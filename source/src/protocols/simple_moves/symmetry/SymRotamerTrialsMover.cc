@@ -102,21 +102,20 @@ SymRotamerTrialsMover::get_name() const {
 
 void
 SymRotamerTrialsMover::make_symmetric_task(
-  core::pose::Pose & pose,
-  core::pack::task::PackerTaskOP task
+	core::pose::Pose & pose,
+	core::pack::task::PackerTaskOP task
 )
 {
-  assert( core::pose::symmetry::is_symmetric( pose ) );
-  SymmetricConformation & SymmConf (
-    dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
-  core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
+	assert( core::pose::symmetry::is_symmetric( pose ) );
+	SymmetricConformation & SymmConf (
+		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
+	core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
-  utility::vector1<bool> allow_repacked( pose.total_residue(), false );
-  for (Size res=1; res <= pose.total_residue(); ++res )
-    {
-        if ( symm_info->fa_is_independent(res) ) allow_repacked.at(res) = true;
-    }
-    task->restrict_to_residues( allow_repacked );
+	utility::vector1<bool> allow_repacked( pose.total_residue(), false );
+	for ( Size res=1; res <= pose.total_residue(); ++res ) {
+		if ( symm_info->fa_is_independent(res) ) allow_repacked.at(res) = true;
+	}
+	task->restrict_to_residues( allow_repacked );
 }
 
 /// @brief parse xml
@@ -126,7 +125,7 @@ SymRotamerTrialsMover::parse_my_tag(
 	basic::datacache::DataMap & data,
 	Filters_map const &fm,
 	protocols::moves::Movers_map const &mm,
-	Pose const &pose ) 
+	Pose const &pose )
 {
 	RotamerTrialsMover::parse_my_tag( tag,data,fm,mm,pose );
 }
@@ -134,31 +133,31 @@ SymRotamerTrialsMover::parse_my_tag(
 /////////////////////////
 // default constructor
 SymEnergyCutRotamerTrialsMover::SymEnergyCutRotamerTrialsMover() :
-  SymRotamerTrialsMover()
+	SymRotamerTrialsMover()
 {
-  protocols::moves::Mover::type( "SymEnergyCutRotamerTrials" );
+	protocols::moves::Mover::type( "SymEnergyCutRotamerTrials" );
 }
 
 // constructor with arguments
 SymEnergyCutRotamerTrialsMover::SymEnergyCutRotamerTrialsMover(
-  ScoreFunctionCOP scorefxn_in,
-  PackerTask & task_in,
-  protocols::moves::MonteCarloOP mc_in,
-  core::Real energycut_in
+	ScoreFunctionCOP scorefxn_in,
+	PackerTask & task_in,
+	protocols::moves::MonteCarloOP mc_in,
+	core::Real energycut_in
 ) : SymRotamerTrialsMover(scorefxn_in, task_in), mc_( mc_in ), energycut_( energycut_in )
 {
-  protocols::moves::Mover::type( "SymEnergyCutRotamerTrials" );
+	protocols::moves::Mover::type( "SymEnergyCutRotamerTrials" );
 }
 
 // constructor with arguments
 SymEnergyCutRotamerTrialsMover::SymEnergyCutRotamerTrialsMover(
-  ScoreFunctionCOP scorefxn_in,
-  TaskFactoryCOP factory_in,
-  protocols::moves::MonteCarloOP mc_in,
-  core::Real energycut_in
+	ScoreFunctionCOP scorefxn_in,
+	TaskFactoryCOP factory_in,
+	protocols::moves::MonteCarloOP mc_in,
+	core::Real energycut_in
 ) : SymRotamerTrialsMover(scorefxn_in, factory_in), mc_( mc_in ), energycut_( energycut_in )
 {
-  protocols::moves::Mover::type( "SymEnergyCutRotamerTrials" );
+	protocols::moves::Mover::type( "SymEnergyCutRotamerTrials" );
 }
 
 SymEnergyCutRotamerTrialsMover::~SymEnergyCutRotamerTrialsMover() {}
@@ -166,13 +165,13 @@ SymEnergyCutRotamerTrialsMover::~SymEnergyCutRotamerTrialsMover() {}
 void
 SymEnergyCutRotamerTrialsMover::apply( core::pose::Pose & pose )
 {
-	  PackerTaskOP rottrial_task( task(pose)->clone() );
-  ( *scorefxn() )(pose);
-  /// Now handled automatically.  scorefxn()->accumulate_residue_total_energies( pose );
-  setup_energycut_task( pose, *mc(), *rottrial_task );
-  /// This call is dangerous.  If sequence or length has changed since task was created, it will crash.
-  /// Not a problem if you used a TaskFactory
-  core::pack::symmetric_rotamer_trials( pose, *scorefxn(), rottrial_task );
+	PackerTaskOP rottrial_task( task(pose)->clone() );
+	( *scorefxn() )(pose);
+	/// Now handled automatically.  scorefxn()->accumulate_residue_total_energies( pose );
+	setup_energycut_task( pose, *mc(), *rottrial_task );
+	/// This call is dangerous.  If sequence or length has changed since task was created, it will crash.
+	/// Not a problem if you used a TaskFactory
+	core::pack::symmetric_rotamer_trials( pose, *scorefxn(), rottrial_task );
 }
 
 /// @details starting from a fresh task, it reduces the number of residues to be repacked to only
@@ -213,22 +212,21 @@ SymEnergyCutRotamerTrialsMover::mc()
 
 void
 SymEnergyCutRotamerTrialsMover::make_symmetric_task(
-  core::pose::Pose & pose,
-  core::pack::task::PackerTaskOP task
+	core::pose::Pose & pose,
+	core::pack::task::PackerTaskOP task
 )
 {
-  assert( core::pose::symmetry::is_symmetric( pose ) );
-  if( task->symmetrize_by_union() || task->symmetrize_by_intersection() ) return; // new machinery
-  SymmetricConformation & SymmConf (
-    dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
-  core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
+	assert( core::pose::symmetry::is_symmetric( pose ) );
+	if ( task->symmetrize_by_union() || task->symmetrize_by_intersection() ) return; // new machinery
+	SymmetricConformation & SymmConf (
+		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
+	core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
-  utility::vector1<bool> allow_repacked( pose.total_residue(), false );
-  for (Size res=1; res <= pose.total_residue(); ++res )
-    {
-        if ( symm_info->fa_is_independent(res) ) allow_repacked.at(res) = true;
-    }
-    task->restrict_to_residues( allow_repacked );
+	utility::vector1<bool> allow_repacked( pose.total_residue(), false );
+	for ( Size res=1; res <= pose.total_residue(); ++res ) {
+		if ( symm_info->fa_is_independent(res) ) allow_repacked.at(res) = true;
+	}
+	task->restrict_to_residues( allow_repacked );
 
 }
 

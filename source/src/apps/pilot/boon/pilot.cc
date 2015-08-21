@@ -52,79 +52,79 @@ int main(int argc, char *argv[])
 {
 	try {
 
-	using namespace core;
-	using namespace import_pose;
-	using namespace pose;
+		using namespace core;
+		using namespace import_pose;
+		using namespace pose;
 
-	// initialize core
-	devel::init(argc, argv);
+		// initialize core
+		devel::init(argc, argv);
 
-	// declare variables
-	//Pose test_pose;
+		// declare variables
+		//Pose test_pose;
 
-	///////////////////////////////Arguments Setup////////////////////////////////////////////////////////
-	// create a score12 scorefxn
-	scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
-	scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score12" );
-	// create a loops object
-	Size start = 15, start2 = 51;
-	Size stop = 24, stop2 = 60;
-	Size cutpoint = 19, cutpoint2 = 55;
-	protocols::loops::Loop loop ( protocols::loops::Loop(start, stop, cutpoint) );
-	protocols::loops::Loop loop2 ( protocols::loops::Loop(start2, stop2, cutpoint2) );
-	protocols::loops::LoopsOP loops( new protocols::loops::Loops );
-	loops->add_loop(loop);
-	loops->add_loop(loop2);
+		///////////////////////////////Arguments Setup////////////////////////////////////////////////////////
+		// create a score12 scorefxn
+		scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+		scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score12" );
+		// create a loops object
+		Size start = 15, start2 = 51;
+		Size stop = 24, stop2 = 60;
+		Size cutpoint = 19, cutpoint2 = 55;
+		protocols::loops::Loop loop ( protocols::loops::Loop(start, stop, cutpoint) );
+		protocols::loops::Loop loop2 ( protocols::loops::Loop(start2, stop2, cutpoint2) );
+		protocols::loops::LoopsOP loops( new protocols::loops::Loops );
+		loops->add_loop(loop);
+		loops->add_loop(loop2);
 
-	/////////////////////////////////////RNA_Minimizer///////////////////////////////////////////////////
-	// minimizer setup
-	protocols::farna::RNA_Minimizer rna_minimizer;
-	rna_minimizer.deriv_check( true );
-	rna_minimizer.use_coordinate_constraints( false );
-	rna_minimizer.skip_o2prime_trials( true );
-	rna_minimizer.vary_bond_geometry( true );
-	std::cout << "\nPrint RNA_Minimizer:" << std::endl;
-	std::cout << rna_minimizer << std::endl;
+		/////////////////////////////////////RNA_Minimizer///////////////////////////////////////////////////
+		// minimizer setup
+		protocols::farna::RNA_Minimizer rna_minimizer;
+		rna_minimizer.deriv_check( true );
+		rna_minimizer.use_coordinate_constraints( false );
+		rna_minimizer.skip_o2prime_trials( true );
+		rna_minimizer.vary_bond_geometry( true );
+		std::cout << "\nPrint RNA_Minimizer:" << std::endl;
+		std::cout << rna_minimizer << std::endl;
 
-	/////////////////////////////////////RNA_DeNovoProtocol//////////////////////////////////////////////
-	Size const nstruct = 1;
-	std::string const silent_file = "output.txt";
-	bool const heat_structure( true );
-	bool const minimize_structure = false;
-	bool const relax_structure = false;
-	bool const is_allow_bulge = false;
+		/////////////////////////////////////RNA_DeNovoProtocol//////////////////////////////////////////////
+		Size const nstruct = 1;
+		std::string const silent_file = "output.txt";
+		bool const heat_structure( true );
+		bool const minimize_structure = false;
+		bool const relax_structure = false;
+		bool const is_allow_bulge = false;
 
-  protocols::farna::RNA_DeNovoProtocol rna_de_novo_protocol( nstruct,
-                                                             silent_file,
-                                                             heat_structure,
-                                                             minimize_structure,
-                                                             relax_structure,
-                                                             is_allow_bulge );
+		protocols::farna::RNA_DeNovoProtocol rna_de_novo_protocol( nstruct,
+			silent_file,
+			heat_structure,
+			minimize_structure,
+			relax_structure,
+			is_allow_bulge );
 
-	std::cout << "\nPrint RNA_DeNovoProtocol:" << std::endl;
-  std::cout << rna_de_novo_protocol << std::endl;
+		std::cout << "\nPrint RNA_DeNovoProtocol:" << std::endl;
+		std::cout << rna_de_novo_protocol << std::endl;
 
-	//////////////////////////////LoopMover_Perturb_KIC//////////////////////////////////////////////////
-	// create and print a KIC perturb loopmover
-	protocols::loops::loop_mover::perturb::LoopMover_Perturb_KIC loopmover;
-	std::cout << "\nPrint LoopMover Perturb KIC (w/o argument):" << std::endl;
-	std::cout << loopmover << std::endl;
-	std::cout << "\nPrint LoopMover Perturb KIC (with argument):" << std::endl;
-	// create another KIC perturb loopmover (add loops)
-	protocols::loops::loop_mover::perturb::LoopMover_Perturb_KIC loopmover2 (protocols::loops::loop_mover::perturb::LoopMover_Perturb_KIC(loops, scorefxn));
-	std::cout << loopmover2 << std::endl;
+		//////////////////////////////LoopMover_Perturb_KIC//////////////////////////////////////////////////
+		// create and print a KIC perturb loopmover
+		protocols::loops::loop_mover::perturb::LoopMover_Perturb_KIC loopmover;
+		std::cout << "\nPrint LoopMover Perturb KIC (w/o argument):" << std::endl;
+		std::cout << loopmover << std::endl;
+		std::cout << "\nPrint LoopMover Perturb KIC (with argument):" << std::endl;
+		// create another KIC perturb loopmover (add loops)
+		protocols::loops::loop_mover::perturb::LoopMover_Perturb_KIC loopmover2 (protocols::loops::loop_mover::perturb::LoopMover_Perturb_KIC(loops, scorefxn));
+		std::cout << loopmover2 << std::endl;
 
-	//////////////////////////////LoopMover_Refine_KIC//////////////////////////////////////////////////
-	// create and print a KIC refine loopmover
-	protocols::loops::loop_mover::refine::LoopMover_Refine_KIC loopmover3;
-	std::cout << "\nPrint LoopMover Refine KIC (w/o argument):" << std::endl;
-	std::cout << loopmover3 << std::endl;
-	std::cout << "\nPrint LoopMover Refine KIC (with argument):" << std::endl;
-	// create another KIC refine loopmover (add loops)
-	protocols::loops::loop_mover::refine::LoopMover_Refine_KIC loopmover4 (protocols::loops::loop_mover::refine::LoopMover_Refine_KIC(loops, scorefxn));
-	std::cout << loopmover4 << std::endl;
+		//////////////////////////////LoopMover_Refine_KIC//////////////////////////////////////////////////
+		// create and print a KIC refine loopmover
+		protocols::loops::loop_mover::refine::LoopMover_Refine_KIC loopmover3;
+		std::cout << "\nPrint LoopMover Refine KIC (w/o argument):" << std::endl;
+		std::cout << loopmover3 << std::endl;
+		std::cout << "\nPrint LoopMover Refine KIC (with argument):" << std::endl;
+		// create another KIC refine loopmover (add loops)
+		protocols::loops::loop_mover::refine::LoopMover_Refine_KIC loopmover4 (protocols::loops::loop_mover::refine::LoopMover_Refine_KIC(loops, scorefxn));
+		std::cout << loopmover4 << std::endl;
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////////////////////
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;

@@ -71,7 +71,7 @@ void RNA_NucleosideStepWiseSampler::init() {
 		/////Chi rotamers/////
 		if ( base_state_ != NO_CHI ) {
 			RNA_ChiStepWiseSamplerOP chi_rotamer( new RNA_ChiStepWiseSampler(
-					rsd_id_, pucker_states_[i], base_state_ ) );
+				rsd_id_, pucker_states_[i], base_state_ ) );
 			chi_rotamer->set_bin_size( bin_size_ );
 			chi_rotamer->set_extra_chi( extra_chi_);
 			if ( fast_ ) chi_rotamer->set_max_range( 1 );
@@ -80,7 +80,7 @@ void RNA_NucleosideStepWiseSampler::init() {
 
 		/////Pucker rotamers/////
 		RNA_SugarStepWiseSamplerOP pucker_rotamer( new RNA_SugarStepWiseSampler(
-				rsd_id_, pucker_states_[i] ) );
+			rsd_id_, pucker_states_[i] ) );
 		pucker_rotamer->set_skip_same_pucker( skip_same_pucker_ );
 		pucker_rotamer->set_idealize_coord( idealize_coord_ );
 		new_rotamer_agg->add_external_loop_rotamer( pucker_rotamer );

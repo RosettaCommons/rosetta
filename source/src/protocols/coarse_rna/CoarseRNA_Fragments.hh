@@ -32,90 +32,90 @@
 //  should be able to generate fragments of size 1, 2, or 3, with
 //  exact sequence matches, partial Y/R matches, or ignoring sequence.
 //
-namespace protocols{
-namespace coarse_rna{
+namespace protocols {
+namespace coarse_rna {
 
-	typedef std::pair< std::string, std::string > SequenceSecStructPair;
+typedef std::pair< std::string, std::string > SequenceSecStructPair;
 
-	class SourcePositions : public utility::pointer::ReferenceCount{
+class SourcePositions : public utility::pointer::ReferenceCount{
 
-	public:
+public:
 
-		SourcePositions(){}
-		virtual ~SourcePositions();
-		core::Size size() const { return source_positions_.size(); }
-		void push_back( core::Size const & value ){ source_positions_.push_back( value ); }
-		core::Size operator[]( core::Size num ){ return source_positions_[ num ]; }
+	SourcePositions(){}
+	virtual ~SourcePositions();
+	core::Size size() const { return source_positions_.size(); }
+	void push_back( core::Size const & value ){ source_positions_.push_back( value ); }
+	core::Size operator[]( core::Size num ){ return source_positions_[ num ]; }
 
-	private:
+private:
 
-		utility::vector1< core::Size > source_positions_;
+	utility::vector1< core::Size > source_positions_;
 
-	};
+};
 
-	typedef utility::pointer::shared_ptr< SourcePositions > SourcePositionsOP;
+typedef utility::pointer::shared_ptr< SourcePositions > SourcePositionsOP;
 
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////
-	class CoarseRNA_Fragments : public protocols::farna::RNA_Fragments {
-	public:
+/////////////////////////////////////////////////////////////////////////////////////////////////
+class CoarseRNA_Fragments : public protocols::farna::RNA_Fragments {
+public:
 
-		//Constructor -- needs vall_torsions_file to get started.
-		// CoarseRNA_Fragments();
-		CoarseRNA_Fragments( std::string const & filename );
-		virtual ~CoarseRNA_Fragments();
+	//Constructor -- needs vall_torsions_file to get started.
+	// CoarseRNA_Fragments();
+	CoarseRNA_Fragments( std::string const & filename );
+	virtual ~CoarseRNA_Fragments();
 
-		virtual void
-		apply_random_fragment(
-          core::pose::Pose & pose,
-					core::Size const position,
-					core::Size const size,
-					core::Size const type,
-					protocols::toolbox::AllowInsertOP allow_insert );
+	virtual void
+	apply_random_fragment(
+		core::pose::Pose & pose,
+		core::Size const position,
+		core::Size const size,
+		core::Size const type,
+		protocols::toolbox::AllowInsertOP allow_insert );
 
-		virtual bool
-		is_fullatom();
+	virtual bool
+	is_fullatom();
 
-	private:
+private:
 
-		void
-		insert_fragment(
-										core::pose::Pose & pose,
-										Size const & insert_res,
-										Size const & source_res,
-										Size const & frag_size,
-										protocols::toolbox::AllowInsertOP allow_insert );
+	void
+	insert_fragment(
+		core::pose::Pose & pose,
+		Size const & insert_res,
+		Size const & source_res,
+		Size const & frag_size,
+		protocols::toolbox::AllowInsertOP allow_insert );
 
-		void
-		find_source_positions( SequenceSecStructPair const & key );
+	void
+	find_source_positions( SequenceSecStructPair const & key );
 
-		Size
-		pick_random_fragment(
-												 std::string const RNA_string,
-												 std::string const RNA_secstruct_string,
-												 Size const type /* = MATCH_YR */);
+	Size
+	pick_random_fragment(
+		std::string const RNA_string,
+		std::string const RNA_secstruct_string,
+		Size const type /* = MATCH_YR */);
 
-		Size
-		pick_random_fragment(
-												 core::pose::Pose & pose,
-												 Size const position,
-												 Size const size,
-												 Size const type );
+	Size
+	pick_random_fragment(
+		core::pose::Pose & pose,
+		Size const position,
+		Size const size,
+		Size const type );
 
-		void
-		initialize_frag_source_pose();
+	void
+	initialize_frag_source_pose();
 
-		std::string frag_source_secstruct_;
+	std::string frag_source_secstruct_;
 
-		std::string const frag_source_file_;
-		core::pose::MiniPoseOP frag_source_pose_;
-		std::map< SequenceSecStructPair, SourcePositionsOP > source_positions_map_;
+	std::string const frag_source_file_;
+	core::pose::MiniPoseOP frag_source_pose_;
+	std::map< SequenceSecStructPair, SourcePositionsOP > source_positions_map_;
 
-		std::map< std::string, Size > coarse_rna_name_to_num_;
-	};
+	std::map< std::string, Size > coarse_rna_name_to_num_;
+};
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 }

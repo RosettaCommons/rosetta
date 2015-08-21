@@ -64,7 +64,7 @@ read_Gaussian_parameters_from_database_file( std::string const & filename )
 
 	if ( TR.Debug.visible() ) {
 		TR.Debug << "Read " << parameters.size() <<
-				" Gaussian parameter sets from the carbohydrate scoring database." << endl;
+			" Gaussian parameter sets from the carbohydrate scoring database." << endl;
 	}
 
 	return parameters;

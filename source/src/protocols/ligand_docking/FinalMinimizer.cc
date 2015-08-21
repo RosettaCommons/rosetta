@@ -70,14 +70,14 @@ FinalMinimizerCreator::mover_name()
 }
 
 FinalMinimizer::FinalMinimizer():
-				Mover("FinalMinimizer"),
-				score_fxn_(/* NULL */),
-				movemap_builder_(/* NULL */)
+	Mover("FinalMinimizer"),
+	score_fxn_(/* NULL */),
+	movemap_builder_(/* NULL */)
 {}
 
 FinalMinimizer::FinalMinimizer(
-		core::scoring::ScoreFunctionOP score_fxn,
-		MoveMapBuilderOP movemap_builder
+	core::scoring::ScoreFunctionOP score_fxn,
+	MoveMapBuilderOP movemap_builder
 ):
 	Mover("FinalMinimizer"),
 	score_fxn_(score_fxn),
@@ -86,10 +86,10 @@ FinalMinimizer::FinalMinimizer(
 {}
 
 FinalMinimizer::FinalMinimizer(FinalMinimizer const & that):
-	    		//utility::pointer::ReferenceCount(),
-				protocols::moves::Mover( that ),
-				score_fxn_(that.score_fxn_),
-				movemap_builder_(that.movemap_builder_)
+	//utility::pointer::ReferenceCount(),
+	protocols::moves::Mover( that ),
+	score_fxn_(that.score_fxn_),
+	movemap_builder_(that.movemap_builder_)
 {}
 
 FinalMinimizer::~FinalMinimizer() {}
@@ -109,11 +109,11 @@ std::string FinalMinimizer::get_name() const{
 //@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 FinalMinimizer::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & datamap,
-		protocols::filters::Filters_map const & /*filters*/,
-		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & /*pose*/
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & datamap,
+	protocols::filters::Filters_map const & /*filters*/,
+	protocols::moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/
 )
 {
 	if ( tag->getName() != "FinalMinimizer" ) throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
@@ -135,7 +135,7 @@ FinalMinimizer::apply( core::pose::Pose & pose ){
 	(*score_fxn_)(pose); // Debug Line, Remove Later...
 	assert(movemap_builder_);
 
-	if(movemap_builder_->minimize_backbone()){
+	if ( movemap_builder_->minimize_backbone() ) {
 		core::kinematics::FoldTree fold_tree_copy;
 		FinalMinimizer_tracer<< "setting up fold_tree for min_bb"<< std::endl;
 		fold_tree_copy= pose.fold_tree();
@@ -147,8 +147,7 @@ FinalMinimizer::apply( core::pose::Pose & pose ){
 		dfpMinTightTol->min_options()->nblist_auto_update(true);
 		dfpMinTightTol->apply(pose);
 		pose.fold_tree(fold_tree_copy);
-	}
-	else{
+	} else {
 		protocols::simple_moves::MinMoverOP const dfpMinTightTol = get_final_min_mover(pose);
 		dfpMinTightTol->min_options()->nblist_auto_update(true);
 		dfpMinTightTol->apply(pose);

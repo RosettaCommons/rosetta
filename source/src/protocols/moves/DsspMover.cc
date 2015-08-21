@@ -74,15 +74,15 @@ DsspMover::MoverOP DsspMover::fresh_instance() const {
 /// @details virtual main
 void DsspMover::apply( Pose & pose )
 {
-	if (!reduced_IG_as_L_) {
-	core::scoring::dssp::Dssp dssp( pose );
-	dssp.insert_ss_into_pose( pose );
-	TR << dssp.get_dssp_secstruct() << std::endl;
+	if ( !reduced_IG_as_L_ ) {
+		core::scoring::dssp::Dssp dssp( pose );
+		dssp.insert_ss_into_pose( pose );
+		TR << dssp.get_dssp_secstruct() << std::endl;
 	} else {
-  TR << "reduce IG as L" << std::endl;
-	core::scoring::dssp::Dssp dssp( pose );
-	dssp.insert_ss_into_pose_no_IG_helix( pose );
-	TR << dssp.get_dssp_secstruct() << std::endl;
+		TR << "reduce IG as L" << std::endl;
+		core::scoring::dssp::Dssp dssp( pose );
+		dssp.insert_ss_into_pose_no_IG_helix( pose );
+		TR << dssp.get_dssp_secstruct() << std::endl;
 	}
 }
 

@@ -112,7 +112,7 @@ rna_fullatom_minimize_test()
 			SilentFilePoseInputStreamOP input1( new SilentFilePoseInputStream(
 				option[ in::file::silent ](),
 				option[ in::file::tags ]()
-			) );
+				) );
 			input1->set_order_by_energy( true );
 			input = input1;
 		} else {
@@ -153,7 +153,7 @@ rna_fullatom_minimize_test()
 
 	Size i( 0 );
 
-	while ( input->has_another_pose() ){
+	while ( input->has_another_pose() ) {
 
 		input->fill_pose( pose, *rsd_set );
 		i++;
@@ -168,18 +168,18 @@ rna_fullatom_minimize_test()
 			// Not sure why but the constraint depends on the start pose given.
 			// Initialize a new pose to avoid the instability.
 			core::pose::Pose test_pose;
-			core::pose::make_pose_from_sequence( test_pose,	pose.annotated_sequence(),	*rsd_set );
+			core::pose::make_pose_from_sequence( test_pose, pose.annotated_sequence(), *rsd_set );
 			ConstraintSetOP cst_set = ConstraintIO::get_instance()->read_constraints(
-					option[OptionKeys::constraints::cst_fa_file][1], ConstraintSetOP( new ConstraintSet ), test_pose );
+				option[OptionKeys::constraints::cst_fa_file][1], ConstraintSetOP( new ConstraintSet ), test_pose );
 			pose.constraint_set( cst_set );
 		}
 
 		RNA_StructureParameters parameters;
 		if ( option[params_file].user() ) {
 			parameters.initialize(
-					pose, option[params_file],
-					basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat"),
-					false /*ignore_secstruct*/
+				pose, option[params_file],
+				basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat"),
+				false /*ignore_secstruct*/
 			);
 			// parameters.set_suppress_bp_constraint( 1.0 );
 			parameters.setup_base_pair_constraints( pose );
@@ -187,11 +187,11 @@ rna_fullatom_minimize_test()
 		}
 
 		AllowInsertOP allow_insert( new AllowInsert( pose ) );
-		if ( option[ in::file::minimize_res ].user() ){
+		if ( option[ in::file::minimize_res ].user() ) {
 			// don't allow anything to move, and then supply minimize_res as 'extra' minimize_res.
 			allow_insert->set( false );
 			rna_minimizer.set_extra_minimize_res( option[ in::file::minimize_res ]() );
-		} else if ( option[ one_torsion_test ]() ){
+		} else if ( option[ one_torsion_test ]() ) {
 			// allow_insert->set( false );
 			// for ( Size n = 1; n <= pose.residue(1).natoms(); n++ ) allow_insert->set_domain( id::AtomID( n, 1 ), 1 );
 			// for ( Size n = 1; n <= pose.residue(2).natoms(); n++ ) allow_insert->set_domain( id::AtomID( n, 2 ), 2 );
@@ -213,12 +213,12 @@ rna_fullatom_minimize_test()
 
 		// tag
 		std::string tag = tag_from_pose( pose );
-		Size pos = tag.find( ".pdb" ); 		// remove ".pdb"
+		Size pos = tag.find( ".pdb" );   // remove ".pdb"
 		if ( pos != std::string::npos ) tag.replace( pos, 4, "" );
 		tag += "_minimize";
 
 		// Do alignment to native
-		if ( native_exists ){
+		if ( native_exists ) {
 			utility::vector1< Size > superimpose_res;
 			for ( Size k = 1; k <= pose.total_residue(); ++k ) superimpose_res.push_back( k );
 			core::id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
@@ -229,7 +229,7 @@ rna_fullatom_minimize_test()
 
 		BinarySilentStruct s( pose, tag );
 
-		if ( native_exists ){
+		if ( native_exists ) {
 			Real const rmsd_init = all_atom_rmsd( native_pose, pose_init );
 			Real const rmsd      = all_atom_rmsd( native_pose, pose );
 			std::cout << "All atom rmsd: " << rmsd_init  << " to " << rmsd << std::endl;
@@ -275,39 +275,39 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-try {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	try {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	std::cout << std::endl << "Basic usage:  " << argv[0] << "  -s <pdb file> " << std::endl;
-	std::cout              << "              " << argv[0] << "  -in:file:silent <silent file> " << std::endl;
-	std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
+		std::cout << std::endl << "Basic usage:  " << argv[0] << "  -s <pdb file> " << std::endl;
+		std::cout              << "              " << argv[0] << "  -in:file:silent <silent file> " << std::endl;
+		std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
 
-	utility::vector1< Size > blank_size_vector;
+		utility::vector1< Size > blank_size_vector;
 
-	option.add_relevant( OptionKeys::rna::vary_geometry );
-	option.add_relevant( OptionKeys::rna::skip_coord_constraints );
-	option.add_relevant( OptionKeys::rna::skip_o2prime_trials );
-	option.add_relevant( OptionKeys::rna::deriv_check );
-	option.add_relevant( OptionKeys::constraints::cst_fa_file );
-	option.add_relevant( in::file::minimize_res );
-	option.add_relevant( score::weights );
-	option.add_relevant( out::pdb );
-	NEW_OPT( params_file, "Input file for pairings", "" );
-	NEW_OPT( one_torsion_test, "tracking down problem with geom_sol", false );
+		option.add_relevant( OptionKeys::rna::vary_geometry );
+		option.add_relevant( OptionKeys::rna::skip_coord_constraints );
+		option.add_relevant( OptionKeys::rna::skip_o2prime_trials );
+		option.add_relevant( OptionKeys::rna::deriv_check );
+		option.add_relevant( OptionKeys::constraints::cst_fa_file );
+		option.add_relevant( in::file::minimize_res );
+		option.add_relevant( score::weights );
+		option.add_relevant( out::pdb );
+		NEW_OPT( params_file, "Input file for pairings", "" );
+		NEW_OPT( one_torsion_test, "tracking down problem with geom_sol", false );
 
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	core::init::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		core::init::init(argc, argv);
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
-	protocols::viewer::viewer_main( my_main );
-} catch ( utility::excn::EXCN_Base const & e ) {
-	std::cout << "caught exception " << e.msg() << std::endl;
-	return -1;
-}
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
+		protocols::viewer::viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 }
 

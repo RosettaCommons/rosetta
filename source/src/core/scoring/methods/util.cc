@@ -83,8 +83,8 @@ bool atoms_interact(
 	core::id::AtomID const & id2,
 	core::Real const interaction_cutoff
 ) {
-debug_assert( id1.rsd() == rsd1.seqpos() );
-debug_assert( id2.rsd() == rsd2.seqpos() );
+	debug_assert( id1.rsd() == rsd1.seqpos() );
+	debug_assert( id2.rsd() == rsd2.seqpos() );
 
 	Distance const dist(
 		rsd1.xyz( id1.atomno() ).distance( rsd2.xyz( id2.atomno() ) )

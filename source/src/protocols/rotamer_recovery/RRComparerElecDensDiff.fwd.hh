@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/rotamer_recovery/RRComparerElecDensDiff.fwd.hh
-/// @brief Measure rotamer recovery by change in sidechain electron density correlation 
+/// @brief Measure rotamer recovery by change in sidechain electron density correlation
 /// @author Patrick Conway (ptconway@uw.edu)
 
 #ifndef INCLUDED_protocols_rotamer_recovery_RRComparerElecDensDiff_fwd_hh
@@ -17,8 +17,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace rotamer_recovery{
+namespace protocols {
+namespace rotamer_recovery {
 
 class RRComparerElecDensDiff;
 typedef utility::pointer::shared_ptr< RRComparerElecDensDiff > RRComparerElecDensDiffOP;

@@ -57,16 +57,16 @@ using std::string;
 static thread_local basic::Tracer tr( "core.sequence" );
 
 void read_all_alignments(const std::string& format,
-                         const utility::vector1<std::string>& files,
-                         utility::vector1<SequenceAlignment>* alignments) {
-  using std::string;
-  using utility::vector1;
+	const utility::vector1<std::string>& files,
+	utility::vector1<SequenceAlignment>* alignments) {
+	using std::string;
+	using utility::vector1;
 
- debug_assert(alignments);
-  for (vector1<string>::const_iterator i = files.begin(); i != files.end(); ++i) {
-    vector1<SequenceAlignment> current = read_aln(format, *i);
-    std::copy(current.begin(), current.end(), std::back_inserter(*alignments));
-  }
+	debug_assert(alignments);
+	for ( vector1<string>::const_iterator i = files.begin(); i != files.end(); ++i ) {
+		vector1<SequenceAlignment> current = read_aln(format, *i);
+		std::copy(current.begin(), current.end(), std::back_inserter(*alignments));
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -149,7 +149,7 @@ vector1< SequenceOP > read_fasta_file( std::string const & filename ) {
 		return sequences;
 	}
 
-	while( getline( input, line ) ) {
+	while ( getline( input, line ) ) {
 		if ( line.substr(0,1) == ">" ) {
 			if ( current_sequence != "" ) {
 				ObjexxFCL::strip_whitespace( current_id );
@@ -174,10 +174,10 @@ vector1< SequenceOP > read_fasta_file( std::string const & filename ) {
 
 std::string read_fasta_file_return_str( std::string const & filename ) {
 	/* who the fuck added this utility_exit? if you see a problem someone creeated either 1) fix it or 2) ignore it
-		you know what's worse than code dupliucation? BROKEN CODE.
-		I didn't write this code either, but you just fucked some peoples' workflow for no reason.
+	you know what's worse than code dupliucation? BROKEN CODE.
+	I didn't write this code either, but you just fucked some peoples' workflow for no reason.
 	utility_exit_with_message(
-		"This function is redundant with the functions above it. Ask for help with C++ if you need it, but this is really embarassing duplication."
+	"This function is redundant with the functions above it. Ask for help with C++ if you need it, but this is really embarassing duplication."
 	);
 	*/
 	std::string sequences;
@@ -195,9 +195,9 @@ std::string read_fasta_file_return_str( std::string const & filename ) {
 	// the following line is dangerous, because FASTA files don't necessarily
 	// have a > line.
 	getline( input, line ); // skip the > line
-	while( getline( input,line) ) {
+	while ( getline( input,line) ) {
 		std::istringstream line_stream( line );
-		while( line_stream >> aa ) {
+		while ( line_stream >> aa ) {
 			sequences += aa;
 		}
 	}
@@ -220,7 +220,7 @@ core::sequence::DerivedSequenceMapping simple_mapping_from_file( std::string con
 
 	std::string seq1, seq2;
 	Size start_seq2( 0 );
-	while( getline( input, line ) ) {
+	while ( getline( input, line ) ) {
 		//can I read ungapped ?
 		tr.Trace << "read line: " << line << std::endl;
 		{
@@ -254,7 +254,7 @@ core::sequence::DerivedSequenceMapping simple_mapping_from_file( std::string con
 	// create SequenceMapping object
 	DerivedSequenceMapping mapping( max_resi, max_resj );
 	for ( vector1< std::pair< Size,Size > >::const_iterator it = aligned.begin(), end = aligned.end();
-				it != end; ++it ) {
+			it != end; ++it ) {
 		mapping.insert_aligned_residue_safe( it->first, it->second );
 	} // for ( aligned )
 
@@ -262,7 +262,7 @@ core::sequence::DerivedSequenceMapping simple_mapping_from_file( std::string con
 	mapping.seq2( seq2 );
 	mapping.start_seq2( start_seq2 );
 
-	//	if ( tr.Trace.visible() ) mapping.show( tr.Trace );
+	// if ( tr.Trace.visible() ) mapping.show( tr.Trace );
 
 	return mapping;
 } // mapping_from_file
@@ -281,8 +281,8 @@ utility::vector1< SequenceOP > seqs_from_cmd_lines() {
 		for ( iter it = fns.begin(), end = fns.end(); it != end; ++it ) {
 			vector1< SequenceOP > temp_seqs( read_fasta_file( *it ) );
 			for ( vector1< SequenceOP >::const_iterator s_it = temp_seqs.begin(),
-						s_end = temp_seqs.end(); s_it != s_end; ++s_it
-			) {
+					s_end = temp_seqs.end(); s_it != s_end; ++s_it
+					) {
 				seqs.push_back( *s_it );
 			}
 		}
@@ -291,8 +291,8 @@ utility::vector1< SequenceOP > seqs_from_cmd_lines() {
 	if ( option[ in::file::pssm ].user() ) {
 		vector1< FileName > fns( option[ in::file::pssm ]() );
 		for ( vector1< FileName >::const_iterator it = fns.begin(), end = fns.end();
-					it != end; ++it
-		) {
+				it != end; ++it
+				) {
 			SequenceProfileOP prof( new SequenceProfile );
 			prof->read_from_file( *it );
 			prof->convert_profile_to_probs(); // was previously implicit in read_from_file()
@@ -310,9 +310,9 @@ utility::vector1< SequenceAlignment > read_aln(
 
 	utility::vector1< SequenceAlignment > retval;
 	if ( format == "general" ) {
-		retval = read_general_aln_file(	filename );
+		retval = read_general_aln_file( filename );
 	} else if ( format == "grishin" ) {
-		retval = read_grishin_aln_file(	filename );
+		retval = read_grishin_aln_file( filename );
 	} else {
 		utility_exit_with_message(
 			std::string( "No match for format " + format + "!" )
@@ -330,7 +330,7 @@ utility::vector1< SequenceAlignment > read_general_aln(
 	std::string line;
 	utility::vector1< SequenceAlignment > alignments;
 	SequenceAlignmentOP current( new SequenceAlignment );
-	while( getline( input, line ) ) {
+	while ( getline( input, line ) ) {
 		if ( line.substr(0,5) == "score" ) {
 			std::istringstream line_input( line );
 			std::string dummy;
@@ -386,7 +386,7 @@ utility::vector1< SequenceAlignment > read_grishin_aln_file(
 
 	std::string line, id1, id2, dummy;
 	SequenceAlignmentOP current( new SequenceAlignment );
-	while( getline( input, line ) ) {
+	while ( getline( input, line ) ) {
 		if ( line.substr(0,2) == "--" ) {
 			if ( current->size() > 0 ) {
 				alignments.push_back( *current );
@@ -407,9 +407,9 @@ utility::vector1< SequenceAlignment > read_grishin_aln_file(
 			core::Size count(1);
 			line_input >> score;
 			while ( !line_input.fail() ) {
-				 count++;
-				 current->score( (std::string) ("score" + string_of(count)), score ) ;
-				 line_input >> score;
+				count++;
+				current->score( (std::string) ("score" + string_of(count)), score ) ;
+				line_input >> score;
 			}
 		} else {
 			core::Size start;
@@ -453,7 +453,7 @@ n_correctly_aligned_positions(
 		if ( true_map[ resi_idx ] == 0 ) {
 			// true_map has a gap here
 			if ( candidate_map[ resi_idx ] == 0 ) {
-				 // candidate_map also has a gap here, it's a true negative
+				// candidate_map also has a gap here, it's a true negative
 				++n_correct;
 			}
 		} else {

@@ -75,8 +75,8 @@ core::pose::Pose & CartesianMultifunc::pose() const {
 /// variables at the top of this function.
 void
 CartesianMultifunc::dump( Multivec const & vars, Multivec const & vars2 ) const {
-    // AMW: cppcheck flags these bools as being inappropriately scoped for obvious reasons
-	// I don't suggest changing them, because the point is to have them at the top	
+	// AMW: cppcheck flags these bools as being inappropriately scoped for obvious reasons
+	// I don't suggest changing them, because the point is to have them at the top
 	bool debug_inaccurateG = false; // disables everything below
 	bool check_score_components = true;
 	bool check_score_components_verbose = false;
@@ -188,13 +188,13 @@ CartesianMultifunc::CartesianMultifunc(
 
 CartesianMultifunc::~CartesianMultifunc() {}
 
-CartesianMinimizerMap const & 
+CartesianMinimizerMap const &
 CartesianMultifunc::min_map() const {
-	 return min_map_;
+	return min_map_;
 }
 
 core::scoring::ScoreFunction const & CartesianMultifunc::score_function() const {
-	 return score_function_;
+	return score_function_;
 }
 
 } // namespace optimization

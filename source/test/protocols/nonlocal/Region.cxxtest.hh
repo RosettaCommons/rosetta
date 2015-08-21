@@ -39,7 +39,7 @@ using core::Size;
 using protocols::nonlocal::Region;
 
 class RegionTest : public CxxTest::TestSuite {
- public:
+public:
 	Region* region_;
 	Region* region_backward_;
 

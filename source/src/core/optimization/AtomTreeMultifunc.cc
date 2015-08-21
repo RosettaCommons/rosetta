@@ -177,58 +177,58 @@ AtomTreeMultifunc::dump( Multivec const & vars, Multivec const & vars2 ) const {
 	}
 
 	/*if ( check_nblist ) {
-		using namespace id;
-		using namespace etable;
+	using namespace id;
+	using namespace etable;
 
-		typedef utility::pointer::owning_ptr< EtableEnergy > EtableEnergyOP;
-		EtableEnergyOP etabE =
-			dynamic_cast< EtableEnergy * > (
-			(ScoringManager::get_instance()->energy_method( fa_atr, score_function_.energy_method_options() )).get() );
-		EnergyMap const & w( score_function_.weights() );
+	typedef utility::pointer::owning_ptr< EtableEnergy > EtableEnergyOP;
+	EtableEnergyOP etabE =
+	dynamic_cast< EtableEnergy * > (
+	(ScoringManager::get_instance()->energy_method( fa_atr, score_function_.energy_method_options() )).get() );
+	EnergyMap const & w( score_function_.weights() );
 
 	debug_assert( pose1.energies().minimization_graph() );
-		MinimizationGraphCOP g1 = pose1.energies().minimization_graph();
+	MinimizationGraphCOP g1 = pose1.energies().minimization_graph();
 	debug_assert( pose2.energies().minimization_graph() );
-		MinimizationGraphCOP g2 = pose2.energies().minimization_graph();
-		for ( graph::Graph::EdgeListConstIter
-				me1_iter = g1->const_edge_list_begin(), me1_iter_end = g1->const_edge_list_end(),
-				me2_iter = g2->const_edge_list_begin(), me2_iter_end = g2->const_edge_list_end();
-				me1_iter != me1_iter_end && me2_iter != me2_iter_end; ++me1_iter, ++me2_iter ) {
-			Size const r1( (*me1_iter)->get_first_node_ind() );
-			Size const r2( (*me1_iter)->get_second_node_ind() );
-		debug_assert( r1 == (*me2_iter)->get_first_node_ind() );
-		debug_assert( r2 == (*me2_iter)->get_second_node_ind() );
-			MinimizationEdge const & me1( static_cast< MinimizationEdge const & > ( ** me1_iter ));
-			MinimizationEdge const & me2( static_cast< MinimizationEdge const & > ( ** me2_iter ));
+	MinimizationGraphCOP g2 = pose2.energies().minimization_graph();
+	for ( graph::Graph::EdgeListConstIter
+	me1_iter = g1->const_edge_list_begin(), me1_iter_end = g1->const_edge_list_end(),
+	me2_iter = g2->const_edge_list_begin(), me2_iter_end = g2->const_edge_list_end();
+	me1_iter != me1_iter_end && me2_iter != me2_iter_end; ++me1_iter, ++me2_iter ) {
+	Size const r1( (*me1_iter)->get_first_node_ind() );
+	Size const r2( (*me1_iter)->get_second_node_ind() );
+	debug_assert( r1 == (*me2_iter)->get_first_node_ind() );
+	debug_assert( r2 == (*me2_iter)->get_second_node_ind() );
+	MinimizationEdge const & me1( static_cast< MinimizationEdge const & > ( ** me1_iter ));
+	MinimizationEdge const & me2( static_cast< MinimizationEdge const & > ( ** me2_iter ));
 
-			ResiduePairNeighborList const & nbl1( static_cast< ResiduePairNeighborList const & >
-				( * me1.res_pair_min_data().get_data( etab_pair_nblist )() ) );
-			ResiduePairNeighborList const & nbl2( static_cast< ResiduePairNeighborList const & >
-				( * me2.res_pair_min_data().get_data( etab_pair_nblist )() ) );
+	ResiduePairNeighborList const & nbl1( static_cast< ResiduePairNeighborList const & >
+	( * me1.res_pair_min_data().get_data( etab_pair_nblist )() ) );
+	ResiduePairNeighborList const & nbl2( static_cast< ResiduePairNeighborList const & >
+	( * me2.res_pair_min_data().get_data( etab_pair_nblist )() ) );
 
-			for ( Size ii = 1; ii <= pose1.residue( r1 ).natoms(); ++ii ) {
-				for ( Size jj = 1; jj <= pose1.residue( r2 ).natoms(); ++jj ) {
-					//if ( nbl1.r1_narrow_neighbors(ii)[ jj ].in_list() != nbl2.r1_narrow_neighbors(ii)[ jj ].in_list() ){
-					Real d2_1;
-					Real d2_2;
-					Real atrE1( 0.0 ), repE1( 0.0 ), solE1( 0.0 ), bogus1( 0.0 );
-					etabE->atom_pair_energy( pose1.residue( r1 ).atom( ii ), pose1.residue( r2 ).atom( jj ),
-						nbl1.r1_narrow_neighbors(ii)[ jj ].data().weight(), atrE1, repE1, solE1, bogus1, d2_1 );
+	for ( Size ii = 1; ii <= pose1.residue( r1 ).natoms(); ++ii ) {
+	for ( Size jj = 1; jj <= pose1.residue( r2 ).natoms(); ++jj ) {
+	//if ( nbl1.r1_narrow_neighbors(ii)[ jj ].in_list() != nbl2.r1_narrow_neighbors(ii)[ jj ].in_list() ){
+	Real d2_1;
+	Real d2_2;
+	Real atrE1( 0.0 ), repE1( 0.0 ), solE1( 0.0 ), bogus1( 0.0 );
+	etabE->atom_pair_energy( pose1.residue( r1 ).atom( ii ), pose1.residue( r2 ).atom( jj ),
+	nbl1.r1_narrow_neighbors(ii)[ jj ].data().weight(), atrE1, repE1, solE1, bogus1, d2_1 );
 
-					Real atrE2( 0.0 ), repE2( 0.0 ), solE2( 0.0 ), bogus2( 0.0 );
-					etabE->atom_pair_energy( pose2.residue( r1 ).atom( ii ), pose2.residue( r2 ).atom( jj ),
-						nbl2.r1_narrow_neighbors(ii)[ jj ].data().weight(), atrE2, repE2, solE2, bogus2, d2_2 );
-					Real e1 = w[ fa_atr ] * atrE1 + w[ fa_rep ] * repE1 + w[ fa_sol ] * solE1;
-					Real e2 = w[ fa_atr ] * atrE2 + w[ fa_rep ] * repE2 + w[ fa_sol ] * solE2;
-					if ( std::abs( e1 - e2 ) > 1e-4 ) {
+	Real atrE2( 0.0 ), repE2( 0.0 ), solE2( 0.0 ), bogus2( 0.0 );
+	etabE->atom_pair_energy( pose2.residue( r1 ).atom( ii ), pose2.residue( r2 ).atom( jj ),
+	nbl2.r1_narrow_neighbors(ii)[ jj ].data().weight(), atrE2, repE2, solE2, bogus2, d2_2 );
+	Real e1 = w[ fa_atr ] * atrE1 + w[ fa_rep ] * repE1 + w[ fa_sol ] * solE1;
+	Real e2 = w[ fa_atr ] * atrE2 + w[ fa_rep ] * repE2 + w[ fa_sol ] * solE2;
+	if ( std::abs( e1 - e2 ) > 1e-4 ) {
 
-						std::cout << "  nblist change: " << r1 << " " << ii << " and " << r2 << " " << jj << " d1: " <<
-							std::sqrt( d2_1 ) << " d2: " << std::sqrt( d2_2 ) << " repE1: " <<
-							repE1 << " repE2: " << repE2  << " e1: " << e1 << " e2: " << e2 << std::endl;
-					}
-				}
-			}
-		}
+	std::cout << "  nblist change: " << r1 << " " << ii << " and " << r2 << " " << jj << " d1: " <<
+	std::sqrt( d2_1 ) << " d2: " << std::sqrt( d2_2 ) << " repE1: " <<
+	repE1 << " repE2: " << repE2  << " e1: " << e1 << " e2: " << e2 << std::endl;
+	}
+	}
+	}
+	}
 	}*/
 }
 
@@ -250,11 +250,11 @@ AtomTreeMultifunc::AtomTreeMultifunc(
 AtomTreeMultifunc::~AtomTreeMultifunc() {}
 
 MinimizerMap const & AtomTreeMultifunc::min_map() const {
-	 return min_map_;
+	return min_map_;
 }
 
 core::scoring::ScoreFunction const & AtomTreeMultifunc::score_function() const {
-	 return score_function_;
+	return score_function_;
 }
 
 } // namespace optimization

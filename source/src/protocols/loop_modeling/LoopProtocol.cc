@@ -106,11 +106,11 @@ LoopProtocol::LoopProtocol() { // {{{1
 LoopProtocol::~LoopProtocol() {} // {{{1
 
 void LoopProtocol::parse_my_tag( // {{{1
-		TagCOP tag,
-		DataMap & data,
-		Filters_map const & filters,
-		Movers_map const & movers,
-		Pose const & pose) {
+	TagCOP tag,
+	DataMap & data,
+	Filters_map const & filters,
+	Movers_map const & movers,
+	Pose const & pose) {
 
 	LoopMover::parse_my_tag(tag, data, filters, movers, pose);
 	utilities::set_scorefxn_from_tag(*this, tag, data);
@@ -130,14 +130,14 @@ void LoopProtocol::parse_my_tag( // {{{1
 	// should be the specified number multiplied by the loop length.  Otherwise
 	// the number of cycles will just be the specified number.
 
-	if (tag->hasOption("temp_cycles")) {
+	if ( tag->hasOption("temp_cycles") ) {
 		using namespace boost::xpressive;
 
 		string cycles = tag->getOption<string>("temp_cycles");
 		sregex regex = (s1 = +digit) >> (s2 = !as_xpr('x'));
 		smatch match;
 
-		if (regex_match(cycles, match, regex)) {
+		if ( regex_match(cycles, match, regex) ) {
 			temp_cycles_ = boost::lexical_cast<Size>(match[1]);
 			scale_temp_cycles_ = (match[2] == "x");
 		} else {
@@ -156,34 +156,31 @@ void LoopProtocol::parse_my_tag( // {{{1
 	// want to specify your own refinement algorithm, you need to disable this
 	// behavior via the auto_refine flag.
 
-	if (! tag->getOption<bool>("auto_refine", true)) {
+	if ( ! tag->getOption<bool>("auto_refine", true) ) {
 		clear_refiners();
 	}
 
 	// Parse the 'fast' tag.
 
-	if (tag->getOption<bool>("fast", false)) {
+	if ( tag->getOption<bool>("fast", false) ) {
 		mark_as_test_run();
 	}
 
 	// Add loop movers to this protocol by parsing the subtags.
 
-	foreach (TagCOP subtag, tag->getTags()) {
+	foreach ( TagCOP subtag, tag->getTags() ) {
 
 		// Ignore <Loop> subtags (parsed by parent class).
 
-		if (subtag->getName() == "Loop") { continue; }
+		if ( subtag->getName() == "Loop" ) { continue; }
 
 		// Parse <AcceptanceCheck> subtags.
 
-		else if (subtag->getName() == "AcceptanceCheck") {
+		else if ( subtag->getName() == "AcceptanceCheck" ) {
 			string name = subtag->getOption<string>("name", "loop_modeling");
 			add_acceptance_check(name);
-		}
-
-		// Parse LoopMover subtags.
-
-		else {
+		} else {
+			// Parse LoopMover subtags.
 			LoopMoverOP loop_mover = utilities::loop_mover_from_tag(subtag, data, filters, movers, pose);
 			add_mover(loop_mover);
 		}
@@ -193,14 +190,14 @@ void LoopProtocol::parse_my_tag( // {{{1
 bool LoopProtocol::do_apply(Pose & pose) { // {{{1
 	start_protocol(pose);
 
-	for (Size i = 1; i <= get_sfxn_cycles(); i++) {
+	for ( Size i = 1; i <= get_sfxn_cycles(); i++ ) {
 		monte_carlo_->recover_low(pose);
 		ramp_score_function(i);
 
-		for (Size j = 1; j <= get_temp_cycles(); j++) {
+		for ( Size j = 1; j <= get_temp_cycles(); j++ ) {
 			ramp_temperature(j);
 
-			for (Size k = 1; k <= get_mover_cycles(); k++) {
+			for ( Size k = 1; k <= get_mover_cycles(); k++ ) {
 				attempt_loop_move(pose, i, j, k);
 			}
 		}
@@ -222,7 +219,7 @@ void LoopProtocol::start_protocol(Pose & pose) { // {{{1
 	using core::scoring::constraints::add_fa_constraints_from_cmdline;
 	using core::scoring::constraints::add_constraints_from_cmdline;
 
-	if (movers_->empty() && refiners_->empty()) {
+	if ( movers_->empty() && refiners_->empty() ) {
 		utility_exit_with_message("Refusing to run LoopProtocol without any movers or refiners.");
 	}
 
@@ -233,40 +230,40 @@ void LoopProtocol::start_protocol(Pose & pose) { // {{{1
 	protocols::loops::add_cutpoint_variants(pose);
 	protocols::loops::loop_mover::loops_set_chainbreak_weight(scorefxn, 1);
 
-	if (pose.is_fullatom()) {
+	if ( pose.is_fullatom() ) {
 		add_fa_constraints_from_cmdline(pose, *scorefxn);
 	} else {
 		add_constraints_from_cmdline(pose, *scorefxn);\
-	}
+			}
 
-	monte_carlo_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo(
+			monte_carlo_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo(
 			pose, *scorefxn, initial_temp_) );
 
-	original_repulsive_weight_ = scorefxn->get_weight(fa_rep);
-	original_rama_weight_ = scorefxn->get_weight(rama);
-	original_rama2b_weight_ = scorefxn->get_weight(rama2b);
+		original_repulsive_weight_ = scorefxn->get_weight(fa_rep);
+		original_rama_weight_ = scorefxn->get_weight(rama);
+		original_rama2b_weight_ = scorefxn->get_weight(rama2b);
 
-	// Describe the protocol to the user.
+		// Describe the protocol to the user.
 
-	vector1<string> algorithm_names;
-	movers_->get_children_names(algorithm_names);
-	refiners_->get_children_names(algorithm_names);
+		vector1<string> algorithm_names;
+		movers_->get_children_names(algorithm_names);
+		refiners_->get_children_names(algorithm_names);
 
-	TR << "sfxn_cycles:    " << get_sfxn_cycles() << endl;
-	TR << "temp_cycles:    " << get_temp_cycles() << endl;
-	TR << "mover_cycles:   " << get_mover_cycles() << endl;
-	TR << "ramp_sfxn_rep:  " << ramp_sfxn_rep_ << endl;
-	TR << "ramp_sfxn_rama: " << ramp_sfxn_rama_ << endl;
-	TR << "ramp_temp:      " << ramp_temp_ << endl;
-	TR << "initial_temp:   " << initial_temp_ << endl;
-	TR << "final_temp:     " << final_temp_ << endl;
-	foreach (string name, algorithm_names) {
-		TR << "loop_movers:    " << name << endl;
+		TR << "sfxn_cycles:    " << get_sfxn_cycles() << endl;
+		TR << "temp_cycles:    " << get_temp_cycles() << endl;
+		TR << "mover_cycles:   " << get_mover_cycles() << endl;
+		TR << "ramp_sfxn_rep:  " << ramp_sfxn_rep_ << endl;
+		TR << "ramp_sfxn_rama: " << ramp_sfxn_rama_ << endl;
+		TR << "ramp_temp:      " << ramp_temp_ << endl;
+		TR << "initial_temp:   " << initial_temp_ << endl;
+		TR << "final_temp:     " << final_temp_ << endl;
+		foreach ( string name, algorithm_names ) {
+			TR << "loop_movers:    " << name << endl;
+		}
 	}
-}
 
-void LoopProtocol::ramp_score_function(Size iteration) { // {{{1
-	using core::scoring::fa_rep;
+	void LoopProtocol::ramp_score_function(Size iteration) { // {{{1
+		using core::scoring::fa_rep;
 	using core::scoring::rama;
 	using core::scoring::rama2b;
 	using core::scoring::chainbreak;
@@ -280,18 +277,18 @@ void LoopProtocol::ramp_score_function(Size iteration) { // {{{1
 
 	// Ramp the repulsive score term.
 
-	if (ramp_sfxn_rep_) {
+	if ( ramp_sfxn_rep_ ) {
 		score_function->set_weight(
-				fa_rep, original_repulsive_weight_ * ramp_factor);
+			fa_rep, original_repulsive_weight_ * ramp_factor);
 	}
 
 	// Ramp the rama and/or rama2b score terms.
 
-	if (ramp_sfxn_rama_) {
+	if ( ramp_sfxn_rama_ ) {
 		score_function->set_weight(
-				rama, original_rama_weight_ * ramp_factor);
+			rama, original_rama_weight_ * ramp_factor);
 		score_function->set_weight(
-				rama2b, original_rama2b_weight_ * ramp_factor);
+			rama2b, original_rama2b_weight_ * ramp_factor);
 	}
 
 	// The MonteCarlo object has to be explicitly updated with the new score
@@ -303,21 +300,21 @@ void LoopProtocol::ramp_score_function(Size iteration) { // {{{1
 }
 
 void LoopProtocol::ramp_temperature(Size /*iteration*/) { // {{{1
-	if (ramp_temp_) {
+	if ( ramp_temp_ ) {
 		Real temperature = monte_carlo_->temperature();
 		Real ramp_factor = std::pow(
-				final_temp_ / initial_temp_,
-				1.0 / (get_sfxn_cycles() * get_temp_cycles()));
+			final_temp_ / initial_temp_,
+			1.0 / (get_sfxn_cycles() * get_temp_cycles()));
 		monte_carlo_->set_temperature(temperature * ramp_factor);
 	}
 }
 
 void LoopProtocol::attempt_loop_move( // {{{1
-		Pose & pose, Size /*i*/ , Size /*j*/, Size /*k*/) {
+	Pose & pose, Size /*i*/ , Size /*j*/, Size /*k*/) {
 
 	protocol_->apply(pose);
 
-	if (protocol_->was_successful()) {
+	if ( protocol_->was_successful() ) {
 		monte_carlo_->boltzmann(pose);
 	} else {
 		monte_carlo_->set_last_accepted_pose(pose);
@@ -375,7 +372,7 @@ Size LoopProtocol::get_sfxn_cycles() { // {{{1
 }
 
 Size LoopProtocol::get_temp_cycles() { // {{{1
-	if (test_run_) { return 3; }
+	if ( test_run_ ) { return 3; }
 	return scale_temp_cycles_ ?
 		temp_cycles_ * get_loops()->loop_size() :
 		temp_cycles_;

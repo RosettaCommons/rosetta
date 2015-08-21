@@ -27,7 +27,7 @@ namespace utilities {
 using protocols::moves::MonteCarloOP;
 
 AcceptanceCheck::AcceptanceCheck(MonteCarloOP monte_carlo, string name)
-	: monte_carlo_(monte_carlo), name_(name) {}
+: monte_carlo_(monte_carlo), name_(name) {}
 
 bool AcceptanceCheck::do_apply(Pose & pose) {
 	return monte_carlo_->boltzmann(pose, name_);

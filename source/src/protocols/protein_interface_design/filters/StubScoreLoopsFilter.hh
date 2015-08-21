@@ -34,7 +34,7 @@
 // Unit headers
 
 namespace protocols {
-namespace protein_interface_design{
+namespace protein_interface_design {
 namespace filters {
 
 class StubScoreLoopsFilter : public protocols::simple_filters::ConstraintScoreCutoffFilter

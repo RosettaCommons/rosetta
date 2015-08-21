@@ -30,8 +30,8 @@ namespace abinitio {
 /// @brief insert fragments in a linker region. Very similar to what's in looprelax_main
 class DomainAssembly : public protocols::moves::Mover
 {
-typedef core::fragment::FragSetOP FragSetOP;
-typedef core::fragment::FragSetCOP FragSetCOP;
+	typedef core::fragment::FragSetOP FragSetOP;
+	typedef core::fragment::FragSetCOP FragSetCOP;
 public:
 	DomainAssembly();
 	DomainAssembly(

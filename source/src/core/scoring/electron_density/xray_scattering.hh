@@ -22,9 +22,9 @@
 
 #ifdef WIN32
 
-  #define _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
 
-  #include <math.h>
+#include <math.h>
 
 #endif
 
@@ -81,18 +81,18 @@ public:
 		core::Real B = ( 4*( s - sigma_eff ) );
 
 		// smooth to flat at B==0
-		if (B < 0) B = 0;
-		else if (B<10) B = sqrt(10*B);
+		if ( B < 0 ) B = 0;
+		else if ( B<10 ) B = sqrt(10*B);
 		return ( B );
 	}
 
 	inline core::Real k( core::Real B , core::Real lim=600) const {
 		core::Real sigma_eff = sigma_;
 		core::Real B_eff = B;
-		if (B<0) B_eff = 0;
-		else if (B<1) B_eff = B*B;
-		else if (B>lim-10.0) B_eff = lim-(1.0/10.0)*(lim-B)*(lim-B);
-		else if (B>lim) B_eff = lim;
+		if ( B<0 ) B_eff = 0;
+		else if ( B<1 ) B_eff = B*B;
+		else if ( B>lim-10.0 ) B_eff = lim-(1.0/10.0)*(lim-B)*(lim-B);
+		else if ( B>lim ) B_eff = lim;
 		core::Real s = sigma_eff + B_eff/4;
 		core::Real k = M_PI*M_PI/s;
 		return k;
@@ -103,15 +103,15 @@ public:
 		core::Real sigma_eff = sigma_;
 
 		core::Real B_eff = B;
-		if (B<0 || B>lim) return 0;
-		else if (B<1) B_eff = B*B;
-		else if (B>lim-10.0) B_eff = lim-(1.0/10.0)*(lim-B)*(lim-B);
+		if ( B<0 || B>lim ) return 0;
+		else if ( B<1 ) B_eff = B*B;
+		else if ( B>lim-10.0 ) B_eff = lim-(1.0/10.0)*(lim-B)*(lim-B);
 
 		core::Real s = sigma_eff + B_eff/4;
 		core::Real dkdb = -M_PI*M_PI/(4*s*s);
 
-		if (B<1) dkdb *= 2*B;
-		if (B>lim-10.0) dkdb *= (1.0/5.0)*(lim-B);
+		if ( B<1 ) dkdb *= 2*B;
+		if ( B>lim-10.0 ) dkdb *= (1.0/5.0)*(lim-B);
 
 		return dkdb;
 	}

@@ -188,8 +188,8 @@ public: // Conversion
 	inline
 	operator Values &()
 	{
-		if ( state_ == INACTIVE ) inactive_error();
-		return value_;
+	if ( state_ == INACTIVE ) inactive_error();
+	return value_;
 	} */
 
 
@@ -424,13 +424,13 @@ public: // Methods
 			state_ = USER;
 			Values const vs( values_of( stripped_value_str ) );
 
-			for ( Size i = 1; i <= vs.size(); i++ ){
+			for ( Size i = 1; i <= vs.size(); i++ ) {
 				Value v = vs[ i ];
 
 				value_.push_back( v );
 				if ( ! legal_value( v ) ) {
 					std::cerr << "ERROR: Illegal value specified for option -" << id()
-										<< " : " << value_str << std::endl;
+						<< " : " << value_str << std::endl;
 					std::exit( EXIT_FAILURE );
 				}
 			}
@@ -539,7 +539,7 @@ public: // Methods
 			}
 			if ( error ) {
 				std::cerr << "ERROR: Inconsistent lower and upper limits in option -" << id()
-				 << " : " << legal_string() << std::endl;
+					<< " : " << legal_string() << std::endl;
 			}
 		}
 		return ( ! error );
@@ -570,12 +570,12 @@ public: // Methods
 		bool error( false );
 		if ( ! legal_default_size() ) {
 			std::cerr << "ERROR: Illegal number of default values in option -" << id()
-			 << " : " << default_string() << std::endl;
+				<< " : " << default_string() << std::endl;
 			error = true;
 		}
 		if ( ! legal_default_value() ) {
 			std::cerr << "ERROR: Illegal default value in option -" << id()
-			 << " : " << default_string() << std::endl;
+				<< " : " << default_string() << std::endl;
 			error = true;
 		}
 		return ( ! error );
@@ -590,12 +590,12 @@ public: // Methods
 		bool error( false );
 		if ( ! legal_default_size() ) {
 			std::cerr << "ERROR: Illegal number of default values in option -" << id()
-			 << " : " << default_string() << std::endl;
+				<< " : " << default_string() << std::endl;
 			error = true;
 		}
 		if ( ! legal_default_value() ) {
 			std::cerr << "ERROR: Illegal default value in option -" << id()
-			 << " : " << default_string() << std::endl;
+				<< " : " << default_string() << std::endl;
 			error = true;
 		}
 		if ( error ) std::exit( EXIT_FAILURE );
@@ -609,7 +609,7 @@ public: // Methods
 	{
 		if ( ! legal_value( value_a ) ) {
 			std::cerr << "ERROR: Illegal default value in option -" << id()
-			 << " : " << value_string_of( value_a ) << std::endl;
+				<< " : " << value_string_of( value_a ) << std::endl;
 			std::exit( EXIT_FAILURE );
 		}
 	}
@@ -623,12 +623,12 @@ public: // Methods
 		bool error( false );
 		if ( ! legal_size() ) {
 			std::cerr << "ERROR: Illegal number of values specified for option -" << id()
-			 << " : " << value_string() << std::endl;
+				<< " : " << value_string() << std::endl;
 			error = true;
 		}
 		if ( ! legal_value() ) {
 			std::cerr << "ERROR: Illegal value specified for option -" << id()
-			 << " : " << value_string() << std::endl;
+				<< " : " << value_string() << std::endl;
 			error = true;
 		}
 		return ( ! error );
@@ -643,12 +643,12 @@ public: // Methods
 		bool error( false );
 		if ( ! legal_size() ) {
 			std::cerr << "ERROR: Illegal number of values specified for option -" << id()
-			 << " : " << value_string() << std::endl;
+				<< " : " << value_string() << std::endl;
 			error = true;
 		}
 		if ( ! legal_value() ) {
 			std::cerr << "ERROR: Illegal value specified for option -" << id()
-			 << " : " << value_string() << std::endl;
+				<< " : " << value_string() << std::endl;
 			error = true;
 		}
 		if ( error ) std::exit( EXIT_FAILURE );
@@ -662,7 +662,7 @@ public: // Methods
 	{
 		if ( ! legal_value( value_a ) ) {
 			std::cerr << "ERROR: Illegal value specified for option -" << id()
-			 << " : " << value_string_of( value_a ) << std::endl;
+				<< " : " << value_string_of( value_a ) << std::endl;
 			std::exit( EXIT_FAILURE );
 		}
 	}
@@ -758,7 +758,7 @@ public: // Properties
 		return short_description_;
 	}
 
-	inline void	short_description(std::string const & sd)
+	inline void short_description(std::string const & sd)
 	{
 		short_description_ = sd;
 	}
@@ -1301,7 +1301,7 @@ protected: // Methods
 	void
 	default_inactive_error() const
 	{
-	debug_assert( default_state_ == INACTIVE ); // Or else why are we here
+		debug_assert( default_state_ == INACTIVE ); // Or else why are we here
 		std::cerr << "ERROR: Inactive default value of option accessed: -" << key_.id() << std::endl;
 		std::exit( EXIT_FAILURE );
 	}
@@ -1313,7 +1313,7 @@ protected: // Methods
 	void
 	inactive_error() const
 	{
-	debug_assert( state_ == INACTIVE ); // Or else why are we here
+		debug_assert( state_ == INACTIVE ); // Or else why are we here
 		std::cerr << "ERROR: Value of inactive option accessed: -" << key_.id() << std::endl;
 		std::exit( EXIT_FAILURE );
 	}

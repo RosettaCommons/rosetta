@@ -29,7 +29,7 @@ typedef utility::pointer::shared_ptr< TorsionFragment > TorsionFragmentOP;
 class SingleResidueTorsionFragmentLibrary;
 typedef utility::pointer::shared_ptr< SingleResidueTorsionFragmentLibrary > SingleResidueTorsionFragmentLibraryOP;
 
-class	TorsionFragmentLibrary;
+class TorsionFragmentLibrary;
 typedef utility::pointer::shared_ptr< TorsionFragmentLibrary > TorsionFragmentLibraryOP;
 typedef utility::pointer::shared_ptr< TorsionFragmentLibrary const > TorsionFragmentLibraryCOP;
 

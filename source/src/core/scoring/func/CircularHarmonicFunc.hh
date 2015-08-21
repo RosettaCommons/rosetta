@@ -30,11 +30,11 @@ class CircularHarmonicFunc : public Func {
 public:
 	CircularHarmonicFunc(
 		Real const x0_radians, Real const sd_radians
-											 ): x0_( x0_radians ), sd_( sd_radians ), offset_( 0.0 ) {}
+	): x0_( x0_radians ), sd_( sd_radians ), offset_( 0.0 ) {}
 
 	CircularHarmonicFunc(
-											 Real const x0_radians, Real const sd_radians, Real const offset
-											 ): x0_( x0_radians ), sd_( sd_radians ), offset_( offset ) {}
+		Real const x0_radians, Real const sd_radians, Real const offset
+	): x0_( x0_radians ), sd_( sd_radians ), offset_( offset ) {}
 
 	FuncOP clone() const { return FuncOP( new CircularHarmonicFunc( *this ) ); }
 

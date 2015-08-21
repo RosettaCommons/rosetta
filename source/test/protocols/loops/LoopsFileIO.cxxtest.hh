@@ -137,7 +137,7 @@ public:
 		std::istringstream loopfstream( loopfile );
 		protocols::loops::LoopsFileIO reader;
 		protocols::loops::LoopsFileData lfd = *reader.read_loop_file_stream( loopfstream, "bogus" );
-		
+
 		TS_ASSERT( lfd.size() == 2 );
 		TS_ASSERT( lfd[ 1 ].start_res().unassigned() == false );
 		TS_ASSERT( lfd[ 1 ].start_res().pose_numbered() == true );
@@ -171,7 +171,7 @@ public:
 
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		protocols::loops::SerializedLoopList sloops = lfd.resolve_as_serialized_loops( trpcage ); 
+		protocols::loops::SerializedLoopList sloops = lfd.resolve_as_serialized_loops( trpcage );
 		TS_ASSERT( sloops.size() == 2 );
 		TS_ASSERT( sloops[ 1 ].start == 2 );
 		TS_ASSERT( sloops[ 1 ].stop  == 10 );
@@ -224,7 +224,7 @@ public:
 
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		protocols::loops::SerializedLoopList sloops = lfd.resolve_as_serialized_loops( trpcage ); 
+		protocols::loops::SerializedLoopList sloops = lfd.resolve_as_serialized_loops( trpcage );
 		TS_ASSERT( sloops.size() == 2 );
 		TS_ASSERT( sloops[ 1 ].start == 2 );
 		TS_ASSERT( sloops[ 1 ].stop  == 10 );
@@ -277,7 +277,7 @@ public:
 
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		protocols::loops::SerializedLoopList sloops = lfd.resolve_as_serialized_loops( trpcage ); 
+		protocols::loops::SerializedLoopList sloops = lfd.resolve_as_serialized_loops( trpcage );
 		TS_ASSERT( sloops.size() == 2 );
 		TS_ASSERT( sloops[ 1 ].start == 2 );
 		TS_ASSERT( sloops[ 1 ].stop  == 10 );
@@ -331,7 +331,7 @@ public:
 		/// While we're at it, lets convert these loop indices into pose indices.
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		protocols::loops::SerializedLoopList sloops = lfd.resolve_as_serialized_loops( trpcage ); 
+		protocols::loops::SerializedLoopList sloops = lfd.resolve_as_serialized_loops( trpcage );
 		TS_ASSERT( sloops.size() == 2 );
 		TS_ASSERT( sloops[ 1 ].start == 2 );
 		TS_ASSERT( sloops[ 1 ].stop  == 10 );
@@ -353,7 +353,7 @@ public:
 			"    \"stop\"   : { \"resSeq\" : 10, \"iCode\" : \" \", \"chainID\" : \"A\" },\n"
 			"    \"cut\"    : { \"resSeq\" : 8,  \"iCode\" : \" \", \"chainID\" : \"A\" },\n"
 			"    \"extras\" : { \"skip_rate\" : 0.5, \"extend\" : true },\n"
-    		"  }]\n"
+			"  }]\n"
 			"}\n";
 		std::istringstream loopfstream( json_loopfile );
 		protocols::loops::LoopsFileIO reader;
@@ -382,7 +382,7 @@ public:
 
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		protocols::loops::SerializedLoopList sloops = lfd.resolve_as_serialized_loops( trpcage ); 
+		protocols::loops::SerializedLoopList sloops = lfd.resolve_as_serialized_loops( trpcage );
 
 		TS_ASSERT( sloops.size() == 1 );
 		TS_ASSERT( sloops[ 1 ].start == 2 );

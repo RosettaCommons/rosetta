@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/TensorsOptimizerSvd.hh
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/TensorsOptimizerSvd.hh
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs2_TensorsOptimizerSvd_hh
 #define INCLUDED_protocols_scoring_methods_pcs2_TensorsOptimizerSvd_hh
@@ -48,10 +48,10 @@
 // C++ headers
 
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs2{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs2 {
 
 class TensorsOptimizerSvd : public core::optimization::Multifunc {
 
@@ -61,25 +61,25 @@ public:
 
 	//TensorsOptimizerSvd();
 
-  TensorsOptimizerSvd(PcsDataCenter /*const*/  & pcs_d_c);
+	TensorsOptimizerSvd(PcsDataCenter /*const*/  & pcs_d_c);
 
-  virtual
-  ~TensorsOptimizerSvd();
+	virtual
+	~TensorsOptimizerSvd();
 
-  // @brief OptE func
-  virtual
-  core::Real
-  operator ()( core::optimization::Multivec const & vars ) const;
+	// @brief OptE func
+	virtual
+	core::Real
+	operator ()( core::optimization::Multivec const & vars ) const;
 
-  core::Real
-  func( core::optimization::Multivec const & vars ) const;
+	core::Real
+	func( core::optimization::Multivec const & vars ) const;
 
 
-  /// @brief OptE dfunc
-  virtual
-  void
-  dfunc(core::optimization::Multivec const & vars,
-	core::optimization::Multivec & dE_dvars
+	/// @brief OptE dfunc
+	virtual
+	void
+	dfunc(core::optimization::Multivec const & vars,
+		core::optimization::Multivec & dE_dvars
 	) const;
 
 	virtual
@@ -87,15 +87,15 @@ public:
 	abort_min(core::optimization::Multivec const & vars ) const;
 
 	/// @brief exact derivative (fast)
-  void
-  dfunc_exact(core::optimization::Multivec const & vars,
-	core::optimization::Multivec & dE_dvars
+	void
+	dfunc_exact(core::optimization::Multivec const & vars,
+		core::optimization::Multivec & dE_dvars
 	) const;
 
 	/// @brief numeric derivative (slow)
-  void
-  dfunc_numeric(core::optimization::Multivec const & vars,
-	core::optimization::Multivec & dE_dvars
+	void
+	dfunc_numeric(core::optimization::Multivec const & vars,
+		core::optimization::Multivec & dE_dvars
 	) const;
 
 private:
@@ -110,7 +110,7 @@ private:
 /*
 static const core::Real FACT_USI_PRECALC_FOR_A_3( (10000.0/12.0/ core::Real( numeric::constants::d::pi ) ) * 3.0 );
 
-static const core::Real	FACT_20_PI_OVER_10000(20 * numeric::constants::d::pi / 10000.0);
-static const core::Real	FACT_10000_OVER_4PI(10000.0/(4 * numeric::constants::d::pi));
+static const core::Real FACT_20_PI_OVER_10000(20 * numeric::constants::d::pi / 10000.0);
+static const core::Real FACT_10000_OVER_4PI(10000.0/(4 * numeric::constants::d::pi));
 */
 #endif

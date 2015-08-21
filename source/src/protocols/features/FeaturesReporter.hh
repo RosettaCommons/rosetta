@@ -36,9 +36,9 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-  #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.hh>
 #else
-  #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #endif
 
 
@@ -137,7 +137,7 @@ public:
 	// and the feature type involves multiple residues
 	// --explicit mode means that all residues of the feature must be specified, and implicit mode mode means that at least one of the residues has to be specified.
 	//
-	
+
 	void
 	set_relevant_residues_mode(
 		RelevantResiduesMode::T setting);

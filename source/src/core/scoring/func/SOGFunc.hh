@@ -69,16 +69,16 @@ public:
 	/// @brief Initializes this SOGFunc from the given istream.
 	/// @details The parameters are:
 	/*!
-	 * Initializes this SOGFunc from the given istream. An example
-	 * of the type of string from which the istream should be constructed is:
-	 * "SOGFUNC 2 19.396 7.643 0.4 17.312 2.4 0.6". The interpretation is to
-	 * create initialize this SOGFunc object with the following parameters:
-	 * - one Gaussian function with mean 19.396 and sd 7.643, weighted with a
-	 * weight of 0.4
-	 * - another Gaussian function with mean of 17.312 and sd 2.4, with a weight
-	 * of 0.6.
-	 * Weights need not add up to 1, but many times they will.
-	 */
+	* Initializes this SOGFunc from the given istream. An example
+	* of the type of string from which the istream should be constructed is:
+	* "SOGFUNC 2 19.396 7.643 0.4 17.312 2.4 0.6". The interpretation is to
+	* create initialize this SOGFunc object with the following parameters:
+	* - one Gaussian function with mean 19.396 and sd 7.643, weighted with a
+	* weight of 0.4
+	* - another Gaussian function with mean of 17.312 and sd 2.4, with a weight
+	* of 0.6.
+	* Weights need not add up to 1, but many times they will.
+	*/
 	void read_data( std::istream & in );
 
 private:

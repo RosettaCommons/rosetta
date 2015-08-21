@@ -43,15 +43,14 @@ void ScoreOnlyJobOutputter::final_pose( JobOP job, core::pose::Pose const & pose
 }
 
 void ScoreOnlyJobOutputter::other_pose(
-  JobOP job,
+	JobOP job,
 	core::pose::Pose const & pose,
 	std::string const & tag,
 	int /*copy_count*/, /*default -1 */
 	bool /*score_only*/ /*default false*/
 ) {
 	call_output_observers( pose, job );
-	if( basic::options::option[ basic::options::OptionKeys::run::other_pose_to_scorefile ].value() )
-	{
+	if ( basic::options::option[ basic::options::OptionKeys::run::other_pose_to_scorefile ].value() ) {
 		scorefile(job, pose, tag, "", basic::options::option[ basic::options::OptionKeys::run::other_pose_scorefile ].value());
 	}
 }
@@ -84,12 +83,13 @@ void ScoreOnlyJobOutputter::read_done_jobs() {
 	if ( utility::file::file_exists( scorefile_name() ) ) {
 		core::io::silent::SilentFileData sfd;
 		score_file_tags_ = sfd.read_tags_fast( scorefile_name() );
-		BOOST_FOREACH( std::string & tag, score_file_tags_ ) {
-		/// eliminate the FAILURE_ prefix so that jobs know to start from
-		/// the 'next' nstruct on restart. This is important to avoid duplicate
-		/// entries
-			if( tag.substr( 0, 8 ) == "FAILURE_" )
+		BOOST_FOREACH ( std::string & tag, score_file_tags_ ) {
+			/// eliminate the FAILURE_ prefix so that jobs know to start from
+			/// the 'next' nstruct on restart. This is important to avoid duplicate
+			/// entries
+			if ( tag.substr( 0, 8 ) == "FAILURE_" ) {
 				tag = tag.substr( 8 ); //start at 8, go for as many possible charachers as possible.
+			}
 		} //foreach
 	} else {
 		score_file_tags_.clear();
@@ -106,12 +106,12 @@ std::string ScoreOnlyJobOutputter::output_name(JobCOP job)
 std::string
 ScoreOnlyJobOutputterCreator::keyname() const
 {
-        return "ScoreOnlyJobOutputter";
+	return "ScoreOnlyJobOutputter";
 }
 
 protocols::jd2::JobOutputterOP
 ScoreOnlyJobOutputterCreator::create_JobOutputter() const {
-        return protocols::jd2::JobOutputterOP( new ScoreOnlyJobOutputter );
+	return protocols::jd2::JobOutputterOP( new ScoreOnlyJobOutputter );
 }
 
 }

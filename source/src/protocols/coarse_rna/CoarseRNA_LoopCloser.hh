@@ -70,7 +70,7 @@ public:
 
 	void
 	get_all_solutions( core::pose::Pose & pose,
-										 utility::vector1< core::pose::PoseOP > & pose_list );
+		utility::vector1< core::pose::PoseOP > & pose_list );
 
 	void
 	set_allow_insert( protocols::toolbox::AllowInsertOP allow_insert );
@@ -99,13 +99,13 @@ private:
 	////////////////////////////////////////////////////////////////////////////////////////
 	void
 	remove_res( utility::vector1< core::Size > & res_vector,
-							Size const & res );
+		Size const & res );
 
 	void
 	backtrack( core::kinematics::tree::Atom const * current_atom,
-						 utility::vector1< core::Size > & upstream_res,
-						 utility::vector1< bool > & is_upstream_res,
-						 core::pose::Pose const & pose );
+		utility::vector1< core::Size > & upstream_res,
+		utility::vector1< bool > & is_upstream_res,
+		core::pose::Pose const & pose );
 
 	void
 	figure_out_forward_backward_res_by_backtracking( core::pose::Pose const & pose );
@@ -115,8 +115,8 @@ private:
 
 	void
 	filter_path( utility::vector1< core::Size > & upstream_res,
-							 utility::vector1< bool > const & is_filter_res,
-							 core::pose::Pose const & pose );
+		utility::vector1< bool > const & is_filter_res,
+		core::pose::Pose const & pose );
 
 	void
 	figure_out_pivot_res_and_scratch_res();
@@ -126,37 +126,37 @@ private:
 
 	void
 	figure_out_dof_ids_and_offsets( core::pose::Pose const & pose,
-																	utility::vector1<core::Real> const & dt_ang );
+		utility::vector1<core::Real> const & dt_ang );
 
 
 	void
 	figure_out_offset(
-										core::pose::Pose const & pose,
-										core::Size const & pivot,
-										core::id::DOF_ID const & dof_id,
-										core::Real const & original_torsion_value,
-										utility::vector1< core::Real > & offset_save );
+		core::pose::Pose const & pose,
+		core::Size const & pivot,
+		core::id::DOF_ID const & dof_id,
+		core::Real const & original_torsion_value,
+		utility::vector1< core::Real > & offset_save );
 
 	void
 	apply_solutions( core::pose::Pose & pose );
 
 	void
 	fill_solution( core::pose::Pose & pose,
-								 Size const n ) const;
+		Size const n ) const;
 
 	void
 	output_chainTORS( utility::vector1< core::Real > const & dt_ang,
-										utility::vector1< core::Real > const & db_ang,
-										utility::vector1< core::Real > const & db_len ) const;
+		utility::vector1< core::Real > const & db_ang,
+		utility::vector1< core::Real > const & db_len ) const;
 
 	void
 	fill_chainTORS(
-								 core::pose::Pose const & pose,
-								 utility::vector1< core::id::NamedAtomID> const & atom_ids,
-								 utility::vector1<utility::vector1<core::Real> > & atoms,
-								 utility::vector1<core::Real> & dt_ang,
-								 utility::vector1<core::Real> & db_ang,
-								 utility::vector1<core::Real> & db_len) const;
+		core::pose::Pose const & pose,
+		utility::vector1< core::id::NamedAtomID> const & atom_ids,
+		utility::vector1<utility::vector1<core::Real> > & atoms,
+		utility::vector1<core::Real> & dt_ang,
+		utility::vector1<core::Real> & db_ang,
+		utility::vector1<core::Real> & db_len) const;
 
 private:
 

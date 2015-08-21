@@ -57,38 +57,38 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	OPT(in::path::database);
-	OPT(in::file::s);
-	OPT(in::file::l);
-	OPT(in::file::movemap);
-	OPT(in::ignore_unrecognized_res);
-	OPT(out::nstruct);
-	OPT(packing::resfile);
-	OPT(constraints::cst_fa_weight);
-	OPT(constraints::cst_fa_file);
-	OPT(backrub::pivot_residues);
-	OPT(backrub::pivot_atoms);
-	OPT(backrub::min_atoms);
-	OPT(backrub::max_atoms);
-	OPT(backrub::ntrials);
-	OPT(backrub::sc_prob);
-	OPT(backrub::sm_prob);
-	OPT(backrub::sc_prob_uniform);
-	OPT(backrub::sc_prob_withinrot);
-	OPT(backrub::mc_kt);
-	OPT(backrub::mm_bend_weight);
-	OPT(backrub::initial_pack);
-	OPT(backrub::minimize_movemap);
-	OPT(backrub::trajectory);
-	OPT(backrub::trajectory_gz);
-	OPT(backrub::trajectory_stride);
+		OPT(in::path::database);
+		OPT(in::file::s);
+		OPT(in::file::l);
+		OPT(in::file::movemap);
+		OPT(in::ignore_unrecognized_res);
+		OPT(out::nstruct);
+		OPT(packing::resfile);
+		OPT(constraints::cst_fa_weight);
+		OPT(constraints::cst_fa_file);
+		OPT(backrub::pivot_residues);
+		OPT(backrub::pivot_atoms);
+		OPT(backrub::min_atoms);
+		OPT(backrub::max_atoms);
+		OPT(backrub::ntrials);
+		OPT(backrub::sc_prob);
+		OPT(backrub::sm_prob);
+		OPT(backrub::sc_prob_uniform);
+		OPT(backrub::sc_prob_withinrot);
+		OPT(backrub::mc_kt);
+		OPT(backrub::mm_bend_weight);
+		OPT(backrub::initial_pack);
+		OPT(backrub::minimize_movemap);
+		OPT(backrub::trajectory);
+		OPT(backrub::trajectory_gz);
+		OPT(backrub::trajectory_stride);
 
-	// initialize Rosetta
-	devel::init(argc, argv);
+		// initialize Rosetta
+		devel::init(argc, argv);
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 
-	 } catch ( utility::excn::EXCN_Base const & e ) {
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

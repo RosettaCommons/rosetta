@@ -49,21 +49,21 @@ struct Line {
 	/// @brief value constructor
 	inline
 	Line(
-	 Real const r1,
-	 Real const r2,
-	 bool const b // true means region above the line is indicated
+		Real const r1,
+		Real const r2,
+		bool const b // true means region above the line is indicated
 	) :
-	slope( r1 ),
-	intercept( r2 ),
-	region( b )
+		slope( r1 ),
+		intercept( r2 ),
+		region( b )
 	{}
 
 	/// @brief copy constructor
 	inline
 	Line( Line const & rval ) :
-	slope( rval.slope ),
-	intercept( rval.intercept ),
-	region( rval.region )
+		slope( rval.slope ),
+		intercept( rval.intercept ),
+		region( rval.region )
 	{}
 
 
@@ -114,11 +114,11 @@ public:
 
 	/// @brief value constructor
 	ABEGO( char const & name,
-				 Real phi_min,
-				 Real phi_max,
-				 Real psi_min,
-				 Real psi_max,
-				 bool cis_omega ) :
+		Real phi_min,
+		Real phi_max,
+		Real psi_min,
+		Real psi_max,
+		bool cis_omega ) :
 		name_( name ),
 		phi_min_( phi_min ),
 		phi_max_( phi_max ),

@@ -48,37 +48,37 @@ using namespace basic::options::OptionKeys;
 
 void register_options() {
 
-  OPT(in::file::native);
-  OPT(in::file::s);
-  OPT(in::file::xyz);
-  OPT(in::file::fasta);
-  OPT(in::file::pssm);
-  OPT(in::file::checkpoint);
-  OPT(in::file::talos_phi_psi);
-  OPT(in::file::torsion_bin_probs);
-  OPT(in::path::database);
+	OPT(in::file::native);
+	OPT(in::file::s);
+	OPT(in::file::xyz);
+	OPT(in::file::fasta);
+	OPT(in::file::pssm);
+	OPT(in::file::checkpoint);
+	OPT(in::file::talos_phi_psi);
+	OPT(in::file::torsion_bin_probs);
+	OPT(in::path::database);
 
-  OPT(frags::scoring::config);
-  OPT(frags::scoring::profile_score);
-  OPT(frags::ss_pred);
-  OPT(frags::n_frags);
-  OPT(frags::n_candidates);
-  OPT(frags::frag_sizes);
-  OPT(frags::write_ca_coordinates);
-  OPT(frags::allowed_pdb);
-  OPT(frags::denied_pdb);
-  OPT(frags::describe_fragments);
-  OPT(frags::keep_all_protocol);
-  OPT(frags::bounded_protocol);
-  OPT(frags::quota_protocol);
-  OPT(frags::picking::selecting_rule);
-  OPT(frags::picking::selecting_scorefxn);
-  OPT(frags::picking::quota_config_file);
-  OPT(frags::picking::query_pos);
+	OPT(frags::scoring::config);
+	OPT(frags::scoring::profile_score);
+	OPT(frags::ss_pred);
+	OPT(frags::n_frags);
+	OPT(frags::n_candidates);
+	OPT(frags::frag_sizes);
+	OPT(frags::write_ca_coordinates);
+	OPT(frags::allowed_pdb);
+	OPT(frags::denied_pdb);
+	OPT(frags::describe_fragments);
+	OPT(frags::keep_all_protocol);
+	OPT(frags::bounded_protocol);
+	OPT(frags::quota_protocol);
+	OPT(frags::picking::selecting_rule);
+	OPT(frags::picking::selecting_scorefxn);
+	OPT(frags::picking::quota_config_file);
+	OPT(frags::picking::query_pos);
 
-  OPT(constraints::cst_file);
+	OPT(constraints::cst_file);
 
-  OPT(out::file::frag_prefix);
+	OPT(out::file::frag_prefix);
 
 	OPT(frags::nonlocal_pairs);
 	OPT(frags::nonlocal::min_contacts_per_res);
@@ -91,43 +91,44 @@ void register_options() {
 
 int main(int argc, char * argv[]) {
 
-try {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	try {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-  register_options();
-  devel::init(argc, argv);
+		register_options();
+		devel::init(argc, argv);
 
-  if (option[in::file::native].user()) {
-    trace.Debug << option[in::file::native]() << std::endl;
-  }
+		if ( option[in::file::native].user() ) {
+			trace.Debug << option[in::file::native]() << std::endl;
+		}
 
-  //---------- Set up a picker.
-  FragmentPickerOP pickIt;
-  if(option[frags::p_value_selection]() == true)
-    pickIt = FragmentPickerOP( new FragmentPicker("PValuedFragmentScoreManager") );
-  else
-    pickIt = FragmentPickerOP( new FragmentPicker() );
-  pickIt->parse_command_line();
-  trace << "After setup; size of a query is: " << pickIt->size_of_query() << std::endl;
+		//---------- Set up a picker.
+		FragmentPickerOP pickIt;
+		if ( option[frags::p_value_selection]() == true ) {
+			pickIt = FragmentPickerOP( new FragmentPicker("PValuedFragmentScoreManager") );
+		} else {
+			pickIt = FragmentPickerOP( new FragmentPicker() );
+		}
+		pickIt->parse_command_line();
+		trace << "After setup; size of a query is: " << pickIt->size_of_query() << std::endl;
 
-  //-------- Trata ta ta, tra ta... (picking fragment candidates)
-  trace << "Picking candidates" << std::endl;
+		//-------- Trata ta ta, tra ta... (picking fragment candidates)
+		trace << "Picking candidates" << std::endl;
 
-  if (option[frags::picking::quota_config_file].user() || option[frags::quota_protocol].user() ) {
-		trace << "Running quota protocol" << std::endl;
-		pickIt->quota_protocol();
-  } else {
-    if (option[frags::keep_all_protocol].user()) {
-      trace << "Running keep-all protocol" << std::endl;
-      pickIt->keep_all_protocol();
-    } else {
-      trace << "Running bounded protocol" << std::endl;
-      pickIt->bounded_protocol();
-    }
-  }
-  basic::prof_show();
-}
+		if ( option[frags::picking::quota_config_file].user() || option[frags::quota_protocol].user() ) {
+			trace << "Running quota protocol" << std::endl;
+			pickIt->quota_protocol();
+		} else {
+			if ( option[frags::keep_all_protocol].user() ) {
+				trace << "Running keep-all protocol" << std::endl;
+				pickIt->keep_all_protocol();
+			} else {
+				trace << "Running bounded protocol" << std::endl;
+				pickIt->bounded_protocol();
+			}
+		}
+		basic::prof_show();
+	}
 catch (utility::excn::EXCN_Base const & e) {
 	std::cout << "caught exception " << e.msg() << std::endl;
 	return -1;

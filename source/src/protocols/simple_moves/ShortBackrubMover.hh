@@ -39,13 +39,13 @@ class ShortBackrubMover : public protocols::moves::Mover {
 public:
 
 	typedef protocols::moves::MoverOP MoverOP;
-	
+
 	// default constructor
 	ShortBackrubMover();
 
 	/// @brief constructor that sets input pose
 	ShortBackrubMover( core::pose::PoseOP pose );
-	
+
 	/// @brief copy constructor
 	ShortBackrubMover( ShortBackrubMover const & rval );
 
@@ -53,21 +53,21 @@ public:
 	virtual ~ShortBackrubMover();
 
 	/// @brief clone this object
-	virtual	protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP clone() const;
 
 	/// @brief create this type of object
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
-	
+
 	// setters
 	void set_resnum( core::Size resnum );
 	void set_rotation_std_dev( core::Real rotation_std_dev );
 	void set_randomize_resnum( bool randomize_resnum );
 	void set_uniform_backrub( bool uniform_backrub );
 	virtual void set_input_pose( core::pose::PoseCOP pose );
-	
+
 	// getters
 	core::Size get_resnum() const;
 	core::Real get_rotation_std_dev() const;
@@ -76,29 +76,29 @@ public:
 	protocols::backrub::BackrubMoverOP get_backrubmover() const;
 
 	void parse_my_tag(
-  	TagCOP tag,
-  	basic::datacache::DataMap & data,
-	  Filters_map const &,
-	  protocols::moves::Movers_map const &,
-	  Pose const & );
+		TagCOP tag,
+		basic::datacache::DataMap & data,
+		Filters_map const &,
+		protocols::moves::Movers_map const &,
+		Pose const & );
 
 private:
 
 	/// @brief mover used for Backrub moves
 	protocols::backrub::BackrubMoverOP backrubmover_;
-	
+
 	/// @brief residue number specifying the center residue for the next Backrub move
 	core::Size resnum_;
-	
+
 	/// @brief standard deviation of rotation angle (degrees) used for Backrub moves
 	core::Real rotation_std_dev_;
-	
+
 	/// @brief if true, choose a random residue for the next move
 	bool randomize_resnum_;
-	
+
 	/// @brief if true, sample rotation angle from a uniform distribution from -20 to 20
 	bool uniform_backrub_;
-	
+
 };  // class ShortBackrubMover
 
 } // moves

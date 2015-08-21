@@ -30,8 +30,8 @@
 #include <string>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class ProtocolFeatures : public utility::pointer::ReferenceCount{
 public:

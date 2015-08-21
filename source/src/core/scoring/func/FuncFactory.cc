@@ -90,10 +90,10 @@ FuncFactory::FuncFactory(void) {
 	FuncFactory::add_type( "SQUARE_WELL2", FuncOP( new SquareWell2Func(0,0,0) ) );
 	FuncFactory::add_type( "FADE", FuncOP( new FadeFunc(0,0,0) ) );
 	FuncFactory::add_type( "LINEAR_PENALTY", FuncOP( new LinearPenaltyFunction(0,0,0,0) ) );
-  FuncFactory::add_type( "KARPLUS", FuncOP( new KarplusFunc(6.98,-1.38,1.72,-1.05,0,0,0) ));
+	FuncFactory::add_type( "KARPLUS", FuncOP( new KarplusFunc(6.98,-1.38,1.72,-1.05,0,0,0) ));
 	FuncFactory::add_type( "IDENTITY", FuncOP( new IdentityFunc() ) );
-  FuncFactory::add_type( "FLAT_HARMONIC", FuncOP( new FlatHarmonicFunc( 0, 0, 0 ) ) );
-  FuncFactory::add_type( "TOPOUT", FuncOP( new TopOutFunc( 0, 0, 0 ) ) );
+	FuncFactory::add_type( "FLAT_HARMONIC", FuncOP( new FlatHarmonicFunc( 0, 0, 0 ) ) );
+	FuncFactory::add_type( "TOPOUT", FuncOP( new TopOutFunc( 0, 0, 0 ) ) );
 }
 
 } //constraints

@@ -36,100 +36,100 @@ namespace stepwise {
 namespace monte_carlo {
 namespace mover {
 
-	class StepWiseMasterMover: public protocols::moves::Mover {
+class StepWiseMasterMover: public protocols::moves::Mover {
 
-	public:
+public:
 
-		//constructor
-		StepWiseMasterMover( core::scoring::ScoreFunctionCOP scorefxn, options::StepWiseMonteCarloOptionsCOP options );
+	//constructor
+	StepWiseMasterMover( core::scoring::ScoreFunctionCOP scorefxn, options::StepWiseMonteCarloOptionsCOP options );
 
-		//destructor
-		~StepWiseMasterMover();
+	//destructor
+	~StepWiseMasterMover();
 
-	public:
+public:
 
-		using Mover::apply;
-		virtual void apply( Pose & );
+	using Mover::apply;
+	virtual void apply( Pose & );
 
-		virtual std::string get_name() const { return "StepWiseMasterMover"; }
+	virtual std::string get_name() const { return "StepWiseMasterMover"; }
 
-		void
-		apply( core::pose::Pose & pose,
-					 StepWiseMove const & stepwise_move,
-					 bool const figure_out_all_possible_moves = true );
+	void
+	apply( core::pose::Pose & pose,
+		StepWiseMove const & stepwise_move,
+		bool const figure_out_all_possible_moves = true );
 
-		void
-		do_the_move( StepWiseMove const & move, core::pose::Pose & pose );
+	void
+	do_the_move( StepWiseMove const & move, core::pose::Pose & pose );
 
-		bool apply_legacy( Pose & );
+	bool apply_legacy( Pose & );
 
-		void
-		initialize( core::scoring::ScoreFunctionCOP scorefxn, options::StepWiseMonteCarloOptionsCOP options );
+	void
+	initialize( core::scoring::ScoreFunctionCOP scorefxn, options::StepWiseMonteCarloOptionsCOP options );
 
-		void initialize_pose_if_empty( core::pose::Pose & pose );
+	void initialize_pose_if_empty( core::pose::Pose & pose );
 
-		void
-		set_minimize_single_res( bool const minimize_single_res );
+	void
+	set_minimize_single_res( bool const minimize_single_res );
 
-		bool
-		do_test_move( StepWiseMove const & move,
-									core::pose::Pose & pose );
+	bool
+	do_test_move( StepWiseMove const & move,
+		core::pose::Pose & pose );
 
-		void
-		preminimize_pose( core::pose::Pose & pose );
+	void
+	preminimize_pose( core::pose::Pose & pose );
 
-		void
-		set_options( options::StepWiseMonteCarloOptionsCOP options ){ options_ = options; }
+	void
+	set_options( options::StepWiseMonteCarloOptionsCOP options ){ options_ = options; }
 
-		void
-		set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn ){ scorefxn_ = scorefxn; }
+	void
+	set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn ){ scorefxn_ = scorefxn; }
 
-		std::string move_type_string() const { return move_type_string_; }
+	std::string move_type_string() const { return move_type_string_; }
 
-		bool success() const { return success_; }
+	bool success() const { return success_; }
 
-		core::Real const & proposal_density_ratio() const { return proposal_density_ratio_; }
+	core::Real const & proposal_density_ratio() const { return proposal_density_ratio_; }
 
-		void
-		build_full_model( core::pose::Pose const & start_pose, core::pose::Pose & full_model_pose );
+	void
+	build_full_model( core::pose::Pose const & start_pose, core::pose::Pose & full_model_pose );
 
-		void set_submotif_library( monte_carlo::submotif::SubMotifLibraryCOP setting ) { submotif_library_ = setting; }
+	void set_submotif_library( monte_carlo::submotif::SubMotifLibraryCOP setting ) { submotif_library_ = setting; }
 
-	private:
+private:
 
-		void initialize();
+	void initialize();
 
-		bool minimize_single_res_;
+	bool minimize_single_res_;
 
-		modeler::StepWiseModelerOP
-		setup_unified_stepwise_modeler();
+	modeler::StepWiseModelerOP
+	setup_unified_stepwise_modeler();
 
-		bool
-		test_all_moves( core::pose::Pose & pose );
+	bool
+	test_all_moves( core::pose::Pose & pose );
 
-		void
-		test_all_moves_recursively( core::pose::Pose & pose );
+	void
+	test_all_moves_recursively( core::pose::Pose & pose );
 
-	private:
+private:
 
-		core::scoring::ScoreFunctionCOP scorefxn_;
-		options::StepWiseMonteCarloOptionsCOP options_;
+	core::scoring::ScoreFunctionCOP scorefxn_;
+	options::StepWiseMonteCarloOptionsCOP options_;
 
-		modeler::StepWiseModelerOP stepwise_modeler_;
-		DeleteMoverOP delete_mover_;
-		AddMoverOP add_mover_;
-		FromScratchMoverOP from_scratch_mover_;
-		AddOrDeleteMoverOP add_or_delete_mover_;
-		ResampleMoverOP resample_mover_;
-		monte_carlo::submotif::SubMotifLibraryCOP submotif_library_;
-		StepWiseMoveSelectorOP stepwise_move_selector_;
+	modeler::StepWiseModelerOP stepwise_modeler_;
+	DeleteMoverOP delete_mover_;
+	AddMoverOP add_mover_;
+	FromScratchMoverOP from_scratch_mover_;
+	AddOrDeleteMoverOP add_or_delete_mover_;
+	ResampleMoverOP resample_mover_;
+	monte_carlo::submotif::SubMotifLibraryCOP submotif_library_;
+	StepWiseMoveSelectorOP stepwise_move_selector_;
 
-		bool success_;
-		std::string move_type_string_;
-		core::Real proposal_density_ratio_;
+	bool success_;
+	std::string move_type_string_;
+	core::Real proposal_density_ratio_;
 
-		Size num_tested_moves_;
-	};
+	Size num_tested_moves_;
+};
 
 } //mover
 } //monte_carlo

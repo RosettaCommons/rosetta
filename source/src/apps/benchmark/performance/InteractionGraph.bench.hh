@@ -71,35 +71,35 @@ public:
 		core::import_pose::pose_from_pdb(*pose_, "test_in2.pdb");
 		scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
 		switch ( benchtype_ ) {
-			case interaction_graph_perfbench_linmemig_score12 :
-				setup_for_score12();
-				trajectory_fname_ = "interaction_graph_perfbench_linmemig_score12.traj.gz";
-				setup_for_linmemig();
+		case interaction_graph_perfbench_linmemig_score12 :
+			setup_for_score12();
+			trajectory_fname_ = "interaction_graph_perfbench_linmemig_score12.traj.gz";
+			setup_for_linmemig();
 			break;
-			case interaction_graph_perfbench_linmemig_sc12sp2 :
-				setup_for_sc12sp2();
-				trajectory_fname_ = "interaction_graph_perfbench_linmemig_sc12sp2.traj";
-				setup_for_linmemig();
+		case interaction_graph_perfbench_linmemig_sc12sp2 :
+			setup_for_sc12sp2();
+			trajectory_fname_ = "interaction_graph_perfbench_linmemig_sc12sp2.traj";
+			setup_for_linmemig();
 			break;
-			case interaction_graph_perfbench_linmemig_sc12he :
-				setup_for_sc12he();
-				trajectory_fname_ = "interaction_graph_perfbench_linmemig_sc12he.traj";
-				setup_for_linmemig();
+		case interaction_graph_perfbench_linmemig_sc12he :
+			setup_for_sc12he();
+			trajectory_fname_ = "interaction_graph_perfbench_linmemig_sc12he.traj";
+			setup_for_linmemig();
 			break;
-			case interaction_graph_perfbench_linmemig_mmstd :
-				setup_for_mmstd();
-				trajectory_fname_ = "interaction_graph_perfbench_linmemig_mmstd.traj";
-				setup_for_linmemig();
+		case interaction_graph_perfbench_linmemig_mmstd :
+			setup_for_mmstd();
+			trajectory_fname_ = "interaction_graph_perfbench_linmemig_mmstd.traj";
+			setup_for_linmemig();
 			break;
-			case interaction_graph_perfbench_pdig_score12 :
-				setup_for_score12();
-				trajectory_fname_ = "interaction_graph_perfbench_pdig_score12.traj";
-				setup_for_pdig();
+		case interaction_graph_perfbench_pdig_score12 :
+			setup_for_score12();
+			trajectory_fname_ = "interaction_graph_perfbench_pdig_score12.traj";
+			setup_for_pdig();
 			break;
-			case interaction_graph_perfbench_denseig_score12 :
-				setup_for_score12();
-				trajectory_fname_ = "interaction_graph_perfbench_denseig_score12.traj";
-				setup_for_denseig();
+		case interaction_graph_perfbench_denseig_score12 :
+			setup_for_score12();
+			trajectory_fname_ = "interaction_graph_perfbench_denseig_score12.traj";
+			setup_for_denseig();
 			break;
 		}
 	}
@@ -119,14 +119,14 @@ public:
 
 		/// SETUP RUN CODE
 		//FixbbSimAnnealer fixbbsa(
-		//	bestrotamer_at_seqpos,
-		//	bestenergy,
-		//	false,
-		//	ig_,
-		//	rsets,
-		//	current_rot_index,
-		//	false,
-		//	rot_freq
+		// bestrotamer_at_seqpos,
+		// bestenergy,
+		// false,
+		// ig_,
+		// rsets,
+		// current_rot_index,
+		// false,
+		// rot_freq
 		//);
 		//fixbbsa.record_annealer_trajectory( true );
 		//fixbbsa.trajectory_file_name( trajectory_fname_ );
@@ -147,7 +147,7 @@ public:
 		dba.annealer_file( trajectory_fname_ );
 
 		core::Size reps( (core::Size)(base_scale_ * scaleFactor) );
-		if( reps == 0 ) { reps = 1; } // Do at least one rep, regardless of scaling factor
+		if ( reps == 0 ) { reps = 1; } // Do at least one rep, regardless of scaling factor
 		for ( core::Size ii = 1; ii <= reps; ++ii ) {
 			dba.run(); // the main piece of code to benchmark
 		}

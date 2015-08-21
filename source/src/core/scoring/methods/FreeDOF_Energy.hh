@@ -84,28 +84,28 @@ public:
 	virtual
 	void
 	finalize_total_energy(
-	  pose::Pose & pose,
+		pose::Pose & pose,
 		ScoreFunction const &,
-		EnergyMap & totals	) const;
+		EnergyMap & totals ) const;
 
 private:
 
 
-void
-accumulate_stack_energy(
-	pose::Pose & pose,
-	ScoreFunction const & scorefxn,
-	utility::vector1< Real > & stack_energy	) const;
+	void
+	accumulate_stack_energy(
+		pose::Pose & pose,
+		ScoreFunction const & scorefxn,
+		utility::vector1< Real > & stack_energy ) const;
 
-void
-do_fa_stack_scorefunction_checks( ScoreFunction const & scorefxn ) const;
+	void
+	do_fa_stack_scorefunction_checks( ScoreFunction const & scorefxn ) const;
 
-void
-get_hbond_energy(
-	pose::Pose & pose,
-	ScoreFunction const & scorefxn,
-	utility::vector1< Real > & base_hbond_energy,
-	utility::vector1< Real > & sugar_hbond_energy ) const;
+	void
+	get_hbond_energy(
+		pose::Pose & pose,
+		ScoreFunction const & scorefxn,
+		utility::vector1< Real > & base_hbond_energy,
+		utility::vector1< Real > & sugar_hbond_energy ) const;
 
 private:
 

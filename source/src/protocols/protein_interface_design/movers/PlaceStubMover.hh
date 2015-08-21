@@ -91,11 +91,11 @@ public:
 
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const {
-		 return protocols::moves::MoverOP( new PlaceStubMover );
+		return protocols::moves::MoverOP( new PlaceStubMover );
 	}
 
 	void stub_minimize_movers( utility::vector1< DesignMoverRealPair > const & dmrp ) {
-		 stub_minimize_movers_ = dmrp;
+		stub_minimize_movers_ = dmrp;
 	}
 
 	utility::vector1< DesignMoverRealPair > const&
@@ -212,8 +212,8 @@ private: // data members
 	/// should not be changed to design movers down stream. Note that this is a different implementation than
 	/// the one used in PlaceSimultaneously.
 	core::pack::task::TaskFactoryOP residue_level_tasks_for_placed_hotspots_;
-  utility::pointer::shared_ptr< basic::datacache::DataMapObj< utility::vector1< core::Size > > > residue_numbers_; /// dflt NULL; a vector of residue numbers placed on the basic::datacache::DataMap which specifies all the placed residues. Useful to communicate between movers and filters, without the pesky NotifyMovers strategy
-  std::string user_defined_name_; // reserved for keeping the name of the current stub placement mover
+	utility::pointer::shared_ptr< basic::datacache::DataMapObj< utility::vector1< core::Size > > > residue_numbers_; /// dflt NULL; a vector of residue numbers placed on the basic::datacache::DataMap which specifies all the placed residues. Useful to communicate between movers and filters, without the pesky NotifyMovers strategy
+	std::string user_defined_name_; // reserved for keeping the name of the current stub placement mover
 };
 
 } //movers

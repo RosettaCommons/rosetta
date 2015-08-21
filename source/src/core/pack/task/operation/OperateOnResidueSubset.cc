@@ -44,22 +44,22 @@ using basic::t_debug;
 static thread_local basic::Tracer TR( "core.pack.task.operation.OperateOnResidueSubset", t_info );
 
 OperateOnResidueSubset::OperateOnResidueSubset()
-	: parent(),
-		op_(/* 0 */),
-		residue_selector_(/* 0 */)
+: parent(),
+	op_(/* 0 */),
+	residue_selector_(/* 0 */)
 {}
 
 OperateOnResidueSubset::OperateOnResidueSubset(
 	ResLvlTaskOperationCOP rlto,
 	residue_selector::ResidueSelectorCOP selector
 )
-	: parent(),
-		op_( rlto ),
-		residue_selector_( selector )
+: parent(),
+	op_( rlto ),
+	residue_selector_( selector )
 {}
 
 OperateOnResidueSubset::OperateOnResidueSubset( OperateOnResidueSubset const & src )
-	: TaskOperation( src )
+: TaskOperation( src )
 {
 	*this = src;
 }
@@ -114,8 +114,8 @@ void OperateOnResidueSubset::selector( residue_selector::ResidueSelectorCOP rs_i
 Example Tag syntax for parser as of October 2013
 
 <OperateOnResidueSubset name=disable1to10>
-	<PreventRepackingRLT/>
-	<Index resnums=1-10/>
+<PreventRepackingRLT/>
+<Index resnums=1-10/>
 </OperateOnResidueSubset>
 
 */
@@ -137,8 +137,8 @@ void OperateOnResidueSubset::parse_tag( TagCOP tag , DataMap & datamap )
 		}
 	}
 
-  utility::vector0< TagCOP > const & subtags( tag->getTags() );
-  for ( utility::vector0< TagCOP >::const_iterator
+	utility::vector0< TagCOP > const & subtags( tag->getTags() );
+	for ( utility::vector0< TagCOP >::const_iterator
 			subtag( subtags.begin() ), end( subtags.end() );
 			subtag != end; ++subtag ) {
 		std::string const type( (*subtag)->getName() );

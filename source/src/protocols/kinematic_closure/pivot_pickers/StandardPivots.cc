@@ -43,18 +43,17 @@ Loop StandardPivots::pick(Pose const &, Loop const & loop) {
 
 	using numeric::random::random_range;
 
-	// I don't think this will give a uniform distribution of pivots.  The first 
-	// pivot will be uniform, but the second pivot will be more likely to be one 
-	// of the last few residues because of the min() call.  Flipping the 
-	// directional bias every time will fudge things a bit, but there will still 
-	// be a bias away from the middle.  
+	// I don't think this will give a uniform distribution of pivots.  The first
+	// pivot will be uniform, but the second pivot will be more likely to be one
+	// of the last few residues because of the min() call.  Flipping the
+	// directional bias every time will fudge things a bit, but there will still
+	// be a bias away from the middle.
 
 	if ( counter_++ % 2 == 0 ) {
 		pivot_1 = random_range(loop_start, loop_stop - min_offset);
 		pivot_3 = random_range(pivot_1 + min_offset, loop_stop);
 		pivot_3 = min(pivot_3, pivot_1 + max_offset);
-	}
-	else {
+	} else {
 		pivot_3 = random_range(loop_start + min_offset, loop_stop);
 		pivot_1 = random_range(loop_start, pivot_3 - min_offset);
 		pivot_1 = max(pivot_1, pivot_3 - max_offset);

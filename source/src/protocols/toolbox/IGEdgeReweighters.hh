@@ -53,13 +53,13 @@ class ResidueGroupIGEdgeUpweighter : public core::pack::task::IGEdgeReweighter{
 public:
 	/*
 	ResidueGroupIGEdgeUpweighter(
-		core::Real weight_factor,
-		T const & group1_in,
-		T const & group2_in
+	core::Real weight_factor,
+	T const & group1_in,
+	T const & group2_in
 	) : weight_factor_(weight_factor)
 	{
-		for( t_it g1it = group1_in.begin(); g1it != group1_in.end(); ++g1it ) group1_.insert( *g1it );
-		for( t_it g2it = group2_in.begin(); g2it != group2_in.end(); ++g2it ) group2_.insert( *g2it );
+	for( t_it g1it = group1_in.begin(); g1it != group1_in.end(); ++g1it ) group1_.insert( *g1it );
+	for( t_it g2it = group2_in.begin(); g2it != group2_in.end(); ++g2it ) group2_.insert( *g2it );
 	}
 	*/
 	// /*
@@ -69,8 +69,8 @@ public:
 		utility::vector1< core::Size> const & group2_in
 	) : weight_factor_(weight_factor)
 	{
-		for( utility::vector1< core::Size>::const_iterator g1it = group1_in.begin(); g1it != group1_in.end(); ++g1it ) group1_.insert( *g1it );
-		for( utility::vector1< core::Size>::const_iterator g2it = group2_in.begin(); g2it != group2_in.end(); ++g2it ) group2_.insert( *g2it );
+		for ( utility::vector1< core::Size>::const_iterator g1it = group1_in.begin(); g1it != group1_in.end(); ++g1it ) group1_.insert( *g1it );
+		for ( utility::vector1< core::Size>::const_iterator g2it = group2_in.begin(); g2it != group2_in.end(); ++g2it ) group2_.insert( *g2it );
 	}
 	// */
 
@@ -80,11 +80,10 @@ public:
 		Size res1,
 		Size res2
 	) const {
-		if( ( (group1_.find(res1) != group1_.end()) && (group2_.find(res2) != group2_.end() ) )
-			||( (group2_.find(res1) != group2_.end()) && (group1_.find(res2) != group1_.end() ) ) ){
+		if ( ( (group1_.find(res1) != group1_.end()) && (group2_.find(res2) != group2_.end() ) )
+				||( (group2_.find(res1) != group2_.end()) && (group1_.find(res2) != group1_.end() ) ) ) {
 			return weight_factor_;
-		}
-		else return default_weight_;
+		} else return default_weight_;
 	}
 
 private:

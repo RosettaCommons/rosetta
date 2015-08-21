@@ -41,7 +41,7 @@ using namespace core::pose;
 using namespace core::pose::metrics;
 using namespace utility;
 
-namespace core{
+namespace core {
 namespace pose {
 namespace metrics {
 namespace simple_calculators {
@@ -60,18 +60,18 @@ InterfaceDeltaEnergeticsCalculator::InterfaceDeltaEnergeticsCalculator( std::str
 }
 
 // preferred alternative constructor - use an existing InterfaceNeighborDefinitionCalculator and define a set of score types to ignore
-    InterfaceDeltaEnergeticsCalculator::InterfaceDeltaEnergeticsCalculator( std::string const & NameOfInterfaceNeighborDefinitionCalculator, utility::vector1<core::scoring::ScoreType> const & score_types_to_ignore ) :
+InterfaceDeltaEnergeticsCalculator::InterfaceDeltaEnergeticsCalculator( std::string const & NameOfInterfaceNeighborDefinitionCalculator, utility::vector1<core::scoring::ScoreType> const & score_types_to_ignore ) :
 	EnergyDependentCalculator(),
 	name_of_InterfaceNeighborDefinitionCalculator_(NameOfInterfaceNeighborDefinitionCalculator)
 {
-    score_types_to_ignore_=score_types_to_ignore;
-    if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( name_of_InterfaceNeighborDefinitionCalculator_ ) ) {
-        basic::Error() << "Tried to tie InterfaceDeltaEnergeticsCalculator to InterfaceNeighborDefinitionCalculator " <<
-        name_of_InterfaceNeighborDefinitionCalculator_ << " but this calculator does not exist." << std::endl;
-        utility_exit();
-    }
+	score_types_to_ignore_=score_types_to_ignore;
+	if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( name_of_InterfaceNeighborDefinitionCalculator_ ) ) {
+		basic::Error() << "Tried to tie InterfaceDeltaEnergeticsCalculator to InterfaceNeighborDefinitionCalculator " <<
+			name_of_InterfaceNeighborDefinitionCalculator_ << " but this calculator does not exist." << std::endl;
+		utility_exit();
+	}
 }
-    
+
 
 // less preferred constructor - creates a new InterfaceNeighborDefinitionCalculator
 InterfaceDeltaEnergeticsCalculator::InterfaceDeltaEnergeticsCalculator( Size const chain1_number, Size const chain2_number ) :
@@ -158,9 +158,9 @@ void InterfaceDeltaEnergeticsCalculator::recompute( Pose const & this_pose ) {
 	// Loop over interactions across the interface
 	for ( Size i = ch1_begin_num; i <= ch1_end_num; ++i ) {
 		for ( graph::Graph::EdgeListConstIter
-						iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
-						irue = energy_graph.get_node(i)->const_upper_edge_list_end();
-					iru != irue; ++iru ) {
+				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
+				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
+				iru != irue; ++iru ) {
 			const scoring::EnergyEdge * edge( static_cast< const scoring::EnergyEdge *> (*iru) );
 			Size const j( edge->get_second_node_ind() );
 			if ( ( j >= ch2_begin_num ) && ( j <= ch2_end_num ) ) {
@@ -172,9 +172,9 @@ void InterfaceDeltaEnergeticsCalculator::recompute( Pose const & this_pose ) {
 	// Graph is asymmetric, so switch i/j and redo
 	for ( Size i = ch2_begin_num; i <= ch2_end_num; ++i ) {
 		for ( graph::Graph::EdgeListConstIter
-						iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
-						irue = energy_graph.get_node(i)->const_upper_edge_list_end();
-					iru != irue; ++iru ) {
+				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
+				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
+				iru != irue; ++iru ) {
 			const scoring::EnergyEdge * edge( static_cast< const scoring::EnergyEdge *> (*iru) );
 			Size const j( edge->get_second_node_ind() );
 			if ( ( j >= ch1_begin_num ) && ( j <= ch1_end_num ) ) {
@@ -184,20 +184,20 @@ void InterfaceDeltaEnergeticsCalculator::recompute( Pose const & this_pose ) {
 	}
 
 	//let's not forget the long range energies
-	for( Size lr = 1; lr <= scoring::methods::n_long_range_types; lr++){
+	for ( Size lr = 1; lr <= scoring::methods::n_long_range_types; lr++ ) {
 		scoring::methods::LongRangeEnergyType lr_type = scoring::methods::LongRangeEnergyType( lr );
 		scoring::LREnergyContainerCOP lrec = this_pose.energies().long_range_container( lr_type );
 		//runtime_assert( lrec );
-		if( !lrec ) continue;
-		if( lrec->empty() ) continue;
+		if ( !lrec ) continue;
+		if ( lrec->empty() ) continue;
 
-		for( Size i = ch1_begin_num; i <= ch1_end_num; ++i ){
+		for ( Size i = ch1_begin_num; i <= ch1_end_num; ++i ) {
 			for ( scoring::ResidueNeighborConstIteratorOP
 					rni = lrec->const_upper_neighbor_iterator_begin( i );
 					*rni != *( lrec->const_upper_neighbor_iterator_end( i ) );
 					++(*rni) ) {
 				Size j = rni->upper_neighbor_id();
-				if( ( j >= ch2_begin_num ) && ( j <= ch2_end_num ) ) {
+				if ( ( j >= ch2_begin_num ) && ( j <= ch2_end_num ) ) {
 					scoring::EnergyMap emap;
 					rni->retrieve_energy( emap );
 					delta_energies_unweighted_ += emap;
@@ -205,13 +205,13 @@ void InterfaceDeltaEnergeticsCalculator::recompute( Pose const & this_pose ) {
 			}
 		} //loop over chain 1 residues
 
-		for( Size i = ch2_begin_num; i <= ch2_end_num; ++i ){
+		for ( Size i = ch2_begin_num; i <= ch2_end_num; ++i ) {
 			for ( scoring::ResidueNeighborConstIteratorOP
 					rni = lrec->const_upper_neighbor_iterator_begin( i );
 					*rni != *( lrec->const_upper_neighbor_iterator_end( i ) );
 					++(*rni) ) {
 				Size j = rni->upper_neighbor_id();
-				if( ( j >= ch1_begin_num ) && ( j <= ch1_end_num ) ) {
+				if ( ( j >= ch1_begin_num ) && ( j <= ch1_end_num ) ) {
 					scoring::EnergyMap emap;
 					rni->retrieve_energy( emap );
 					delta_energies_unweighted_ += emap;
@@ -223,20 +223,20 @@ void InterfaceDeltaEnergeticsCalculator::recompute( Pose const & this_pose ) {
 
 	// Save the most recently used weights
 	weights_ = this_pose.energies().weights();
-    //set weights of score types to ignore to 0 
-    for (vector1<core::scoring::ScoreType>::const_iterator cit=score_types_to_ignore_.begin(); cit!=score_types_to_ignore_.end(); ++cit) {
-        weights_[*cit]=0.0;
-    }
-    //Save the total (weighted) delta score
+	//set weights of score types to ignore to 0
+	for ( vector1<core::scoring::ScoreType>::const_iterator cit=score_types_to_ignore_.begin(); cit!=score_types_to_ignore_.end(); ++cit ) {
+		weights_[*cit]=0.0;
+	}
+	//Save the total (weighted) delta score
 	weighted_total_ = delta_energies_unweighted_.dot(weights_);
 
 	//debug stuff
 	//std::cerr << "intef Delta E calc has following non-zero values: ";
 	//for( Size ii = 1; ii <= scoring::n_score_types; ii++ ){
-	//	scoring::ScoreType scotype = scoring::ScoreType( ii );
-	//	if( weights_[scotype] != 0 ){
-	//		std::cerr << scoring::name_from_score_type( scotype ) << " " << delta_energies_unweighted_[ scotype ] * weights_[ scotype ] << "; ";
-	//	}
+	// scoring::ScoreType scotype = scoring::ScoreType( ii );
+	// if( weights_[scotype] != 0 ){
+	//  std::cerr << scoring::name_from_score_type( scotype ) << " " << delta_energies_unweighted_[ scotype ] * weights_[ scotype ] << "; ";
+	// }
 	//}
 	//std::cerr << " you happy?" << std::endl;
 	//debug stuff over

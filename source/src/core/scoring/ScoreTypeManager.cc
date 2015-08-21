@@ -40,7 +40,7 @@ void fill_score_range(std::map< std::string, ScoreType > & M, std::string prefix
 {
 	M[ prefix + "_first" ] = ScoreType(first);
 	M[ prefix + "_last" ] = ScoreType(last);
-	for(int i=first+1; i<last; i++) {
+	for ( int i=first+1; i<last; i++ ) {
 		std::ostringstream s; s << prefix << '_' << i;
 		M[ s.str() ] = ScoreType(i);
 	}
@@ -93,7 +93,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "cart_bonded_angle" ] = cart_bonded_angle;
 	name2score_type_[ "cart_bonded_length" ] = cart_bonded_length;
 	name2score_type_[ "cart_bonded_torsion" ] = cart_bonded_torsion;
-//	name2score_type_[ "csd_torsion" ] = csd_torsion; kwk commenting out csd atom type related code until I have implemented them fully
+	// name2score_type_[ "csd_torsion" ] = csd_torsion; kwk commenting out csd atom type related code until I have implemented them fully
 	name2score_type_[ "fa_elec" ] = fa_elec;
 	name2score_type_[ "fa_elec_bb_bb" ] = fa_elec_bb_bb;
 	name2score_type_[ "fa_elec_bb_sc" ] = fa_elec_bb_sc;
@@ -132,11 +132,11 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_["vall_lb"] = vall_lb;
 
 	// PyRosetta score types
-	#ifdef PYROSETTA
+#ifdef PYROSETTA
 		fill_score_range(name2score_type_, "PyRosettaTwoBodyContextIndepenedentEnergy", PyRosettaTwoBodyContextIndepenedentEnergy_first, PyRosettaTwoBodyContextIndepenedentEnergy_last);
 		fill_score_range(name2score_type_, "PyRosettaTwoBodyContextDependentEnergy", PyRosettaTwoBodyContextDependentEnergy_first, PyRosettaTwoBodyContextDependentEnergy_last);
 		fill_score_range(name2score_type_, "PyRosettaEnergy", PyRosettaEnergy_first, PyRosettaEnergy_last);
-	#endif
+#endif
 
 	name2score_type_[ "python" ] = python;
 
@@ -148,9 +148,9 @@ ScoreTypeManager::setup_score_type_names()
 
 	name2score_type_[ "fiberdiffraction" ] = fiberdiffraction;
 	name2score_type_[ "fiberdiffractiondens" ] = fiberdiffractiondens;
-	#ifdef USECUDA
+#ifdef USECUDA
 	name2score_type_[ "fiberdiffractiongpu" ] = fiberdiffractiongpu;
-	#endif
+#endif
 
 	name2score_type_[ "fa_pair" ] = fa_pair; // fa_pair == fa_pair_pol_pol
 	name2score_type_[ "fa_pair_aro_aro" ] = fa_pair_aro_aro;
@@ -234,7 +234,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "omega"    ] = omega;
 	name2score_type_[ "fa_dun" ] = fa_dun;
 	name2score_type_[ "fa_dun_dev" ] = fa_dun_dev;
- 	name2score_type_[ "fa_dun_rot" ] = fa_dun_rot;
+	name2score_type_[ "fa_dun_rot" ] = fa_dun_rot;
 	name2score_type_[ "fa_dun_semi" ] = fa_dun_semi;
 	name2score_type_[ "dna_chi" ] = dna_chi;
 	name2score_type_[ "p_aa_pp" ] = p_aa_pp;
@@ -496,7 +496,7 @@ ScoreTypeManager::setup_score_type_names()
 
 	score_type2name_.resize( end_of_score_type_enumeration );
 	for ( std::map< std::string, ScoreType >::const_iterator iter = name2score_type_.begin(),
-					iter_end = name2score_type_.end(); iter != iter_end; ++iter ) {
+			iter_end = name2score_type_.end(); iter != iter_end; ++iter ) {
 		score_type2name_[ iter->second ] = iter->first;
 	}
 

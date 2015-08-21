@@ -32,14 +32,14 @@ public:
 
 	typedef core::pose::Pose Pose;
 
-  /// @brief
-  MatchGrafter();
+	/// @brief
+	MatchGrafter();
 
-  virtual ~MatchGrafter();
+	virtual ~MatchGrafter();
 
-  virtual Pose graft( Pose & match, Pose & partner_ungrafted );
-  virtual Pose build_combined_pose_with_zinc_overlay( Pose & partner1, Pose & partner2 );
-  virtual void ensure_proper_his_tautomers( Pose & combined, utility::vector1< core::Size > metalsite_seqpos );
+	virtual Pose graft( Pose & match, Pose & partner_ungrafted );
+	virtual Pose build_combined_pose_with_zinc_overlay( Pose & partner1, Pose & partner2 );
+	virtual void ensure_proper_his_tautomers( Pose & combined, utility::vector1< core::Size > metalsite_seqpos );
 
 private:
 

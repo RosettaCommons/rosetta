@@ -41,7 +41,7 @@ using namespace core::scoring::methods;
 
 class RG_Energy_Tests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	Pose pose;
 	RG_Energy_Fast rg_energy_fast;

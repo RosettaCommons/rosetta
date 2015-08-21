@@ -19,9 +19,9 @@
 namespace protocols {
 namespace flexpep_docking {
 
-  class FlexPepDockingPoseMetrics;
-  typedef utility::pointer::shared_ptr< FlexPepDockingPoseMetrics > FlexPepDockingPoseMetricsOP;
-  typedef utility::pointer::shared_ptr< FlexPepDockingPoseMetrics const > FlexPepDockingPoseMetricsCOP;
+class FlexPepDockingPoseMetrics;
+typedef utility::pointer::shared_ptr< FlexPepDockingPoseMetrics > FlexPepDockingPoseMetricsOP;
+typedef utility::pointer::shared_ptr< FlexPepDockingPoseMetrics const > FlexPepDockingPoseMetricsCOP;
 
 } // moves
 } // protocols

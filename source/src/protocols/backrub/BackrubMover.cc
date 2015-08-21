@@ -144,8 +144,8 @@ init_backrub_mover_with_options(
 	using namespace basic::options::OptionKeys;
 
 	utility::vector1<core::Size> pivot_residues;
-	for (core::Size i = 1; i <= option[ OptionKeys::backrub::pivot_residues ].size(); ++i) {
-		if (option[ OptionKeys::backrub::pivot_residues ][i] >= 1) pivot_residues.push_back(option[ OptionKeys::backrub::pivot_residues ][i]);
+	for ( core::Size i = 1; i <= option[ OptionKeys::backrub::pivot_residues ].size(); ++i ) {
+		if ( option[ OptionKeys::backrub::pivot_residues ][i] >= 1 ) pivot_residues.push_back(option[ OptionKeys::backrub::pivot_residues ][i]);
 	}
 
 	mover.set_pivot_residues(pivot_residues);
@@ -203,9 +203,9 @@ protocols::backrub::BackrubMover::initialize_simulation(
 {
 	if ( ! branchopt_.initialized() ) branchopt_.read_database();
 
-	if (!(num_segments() && get_input_pose() && get_input_pose()->fold_tree() == pose.fold_tree())) {
+	if ( !(num_segments() && get_input_pose() && get_input_pose()->fold_tree() == pose.fold_tree()) ) {
 
-  	if (!(get_input_pose() && get_input_pose()->fold_tree() == pose.fold_tree())) {
+		if ( !(get_input_pose() && get_input_pose()->fold_tree() == pose.fold_tree()) ) {
 			set_input_pose(PoseCOP( PoseOP( new core::pose::Pose(pose) ) ));
 		}
 
@@ -216,16 +216,16 @@ protocols::backrub::BackrubMover::initialize_simulation(
 
 	protocols::moves::MonteCarloCOP monte_carlo(metropolis_hastings_mover.monte_carlo());
 
-	if (monte_carlo->score_function().get_weight(core::scoring::mm_bend) == 0.0) {
+	if ( monte_carlo->score_function().get_weight(core::scoring::mm_bend) == 0.0 ) {
 		TR << "*** WARNING: Using BackrubMover without mm_bend Score Term ***" << std::endl;
-		if (require_mm_bend_) {
+		if ( require_mm_bend_ ) {
 			TR << "Exit can be prevented by setting require_mm_bend to false" << std::endl;
 			utility_exit();
 		}
 	}
 
 	// tell the branch angle optimizer about the score function MMBondAngleResidueTypeParamSet, if any
-	if (monte_carlo->score_function().energy_method_options().bond_angle_residue_type_param_set()) {
+	if ( monte_carlo->score_function().energy_method_options().bond_angle_residue_type_param_set() ) {
 		branchopt_.bond_angle_residue_type_param_set(monte_carlo->score_function().energy_method_options().bond_angle_residue_type_param_set());
 	}
 
@@ -241,9 +241,9 @@ protocols::backrub::BackrubMover::apply(
 	// the BranchAngleOptimizer must be initialized by reading a database. Do so now if this has not occurred
 	if ( ! branchopt_.initialized() ) branchopt_.read_database();
 
-	if (!(num_segments() && get_input_pose() && get_input_pose()->fold_tree() == pose.fold_tree())) {
+	if ( !(num_segments() && get_input_pose() && get_input_pose()->fold_tree() == pose.fold_tree()) ) {
 
-  	if (!(get_input_pose() && get_input_pose()->fold_tree() == pose.fold_tree())) {
+		if ( !(get_input_pose() && get_input_pose()->fold_tree() == pose.fold_tree()) ) {
 			set_input_pose(PoseCOP( PoseOP( new core::pose::Pose(pose) ) ));
 		}
 
@@ -255,7 +255,7 @@ protocols::backrub::BackrubMover::apply(
 
 	// pick a random segment
 	Size segment_id;
-	if (next_segment_id_) {
+	if ( next_segment_id_ ) {
 		segment_id = next_segment_id_;
 		next_segment_id_ = 0;
 	} else {
@@ -266,7 +266,7 @@ protocols::backrub::BackrubMover::apply(
 	last_segment_id_ = segment_id;
 	id::AtomID atomid1(segments_[segment_id].start_atomid());
 	id::AtomID atomid2(segments_[segment_id].end_atomid());
-	if (atomid2 < atomid1) {
+	if ( atomid2 < atomid1 ) {
 		id::AtomID temp(atomid1);
 		atomid1 = atomid2;
 		atomid2 = temp;
@@ -279,16 +279,17 @@ protocols::backrub::BackrubMover::apply(
 	utility::vector0<Real> end_constants;
 
 	// pick a random angle
-	if (custom_angle_)
+	if ( custom_angle_ ) {
 		last_angle_ = next_angle_;
-	else
+	} else {
 		last_angle_ = random_angle(pose, segment_id, start_constants, end_constants);
+	}
 
 	TR.Debug << "Applying " << numeric::conversions::degrees(last_angle_) << " degree rotation to segment " << segment_id
-	         << std::endl;
+		<< std::endl;
 
 	// rotate the segment of the angle is not 0
-	if (last_angle_ != 0) {
+	if ( last_angle_ != 0 ) {
 		rotate_segment(pose, segment_id, last_angle_, start_constants, end_constants);
 	}
 
@@ -303,7 +304,7 @@ protocols::backrub::BackrubMover::get_name() const {
 // /// @details
 // void
 // BackrubMover::test_move(
-// 	Pose &
+//  Pose &
 // )
 // {
 //
@@ -318,8 +319,8 @@ int tree_distance(
 {
 	kinematics::tree::Atom const * current = descendent.get();
 
-	for (int tdist = 0; current; ++tdist) {
-		if (ancestor.get() == current) return tdist;
+	for ( int tdist = 0; current; ++tdist ) {
+		if ( ancestor.get() == current ) return tdist;
 		current = current->parent().get();
 	}
 
@@ -357,9 +358,9 @@ protocols::backrub::BackrubMover::add_segment(
 	int tdist(tree_distance(start_atom, end_atom));
 
 	// if no ancestry is detected, check to see if the atoms were reversed
-	if (tdist < 0) {
+	if ( tdist < 0 ) {
 		tdist = tree_distance(end_atom, start_atom);
-		if (tdist >= 2) {
+		if ( tdist >= 2 ) {
 			//TR.Warning << "Warning: Backrub segment " << start_atomid << " to " << end_atomid
 			//           << " ordered wrong, reversing" << std::endl;
 			kinematics::tree::AtomCOP const temp_atom(start_atom);
@@ -372,23 +373,23 @@ protocols::backrub::BackrubMover::add_segment(
 	}
 
 	// if no ancestry is still detected, the segment is invalid
-	if (tdist < 0) {
+	if ( tdist < 0 ) {
 		TR.Warning << "Warning: Backrub segment " << start_atomid << " to " << end_atomid << " invalid, ignoring"
-		           << std::endl;
+			<< std::endl;
 		return 0;
 	}
 
 	// if the tree distance is too short, the segment is invalid
-	if (tdist < 2) {
+	if ( tdist < 2 ) {
 		TR.Warning << "Warning: Backrub segment " << start_atomid << " to " << end_atomid << " too short, ignoring"
-							 << std::endl;
+			<< std::endl;
 		return 0;
 	}
 
 	// check for duplicates
 	if ( Size segid = segment_id(start_atomid, end_atomid) ) {
 		TR.Warning << "Warning: Backrub segment " << start_atomid << " to " << end_atomid << " already exists, ignoring"
-		           << std::endl;
+			<< std::endl;
 		return segid;
 	}
 
@@ -397,14 +398,14 @@ protocols::backrub::BackrubMover::add_segment(
 
 	if ( !(start_atom->stub_atom1() && start_atom->stub_atom2() && start_atom->stub_atom3()) ) {
 		TR.Warning << "Warning: Backrub segment " << start_atomid << " to " << end_atomid
-							 << " has incomplete start stub, ignoring" << std::endl;
+			<< " has incomplete start stub, ignoring" << std::endl;
 		return 0;
 	}
 
 	// Find the first two atoms on the path from start to end
 	id::AtomID start_atomid1(end_atom->parent()->id());
 	id::AtomID start_atomid2(end_atom->id());
-	for (kinematics::tree::Atom const * current_atom = end_atom->parent()->parent().get();
+	for ( kinematics::tree::Atom const * current_atom = end_atom->parent()->parent().get();
 			current_atom != start_atom.get();
 			current_atom = current_atom->parent().get() ) {
 		start_atomid2 = start_atomid1;
@@ -414,15 +415,15 @@ protocols::backrub::BackrubMover::add_segment(
 	// This catches a rare case that we can't currently handle
 	if ( start_atom->stub_atom2()->id() == start_atomid1 ) {
 		//TR.Warning << "Warning: Backrub segment " << start_atomid << " to " << end_atomid
-		//					 << " has incompatible stub, ignoring" << std::endl;
+		//      << " has incompatible stub, ignoring" << std::endl;
 		return 0;
 	}
 
 	TR.Debug << "Adding Backrub segment " << start_atomid << " to " << end_atomid << " (size " << tdist+1 << ")" << std::endl;
 
 	// use default maximum angular displacement parameters if it was not provided
-	if (max_angle_disp == 0) {
-		if (tdist+1 < 7) {
+	if ( max_angle_disp == 0 ) {
+		if ( tdist+1 < 7 ) {
 			max_angle_disp = max_angle_disp_4_ + (tdist+1 - 4) * max_angle_disp_slope_;
 		} else {
 			max_angle_disp = max_angle_disp_7_ + (tdist+1 - 7) * max_angle_disp_slope_;
@@ -452,34 +453,34 @@ connected_mainchain_atomids(
 	// make sure that atomid is a mainchain atom
 	chemical::AtomIndices const & mainchain_atoms(pose.residue_type(atomid.rsd()).mainchain_atoms());
 	Size mainchain_index(0);
-	for (Size i = 1; i <= mainchain_atoms.size(); ++i) {
-		if (mainchain_atoms[i] == atomid.atomno()) {
+	for ( Size i = 1; i <= mainchain_atoms.size(); ++i ) {
+		if ( mainchain_atoms[i] == atomid.atomno() ) {
 			mainchain_index = i;
 			break;
 		}
 	}
 	// we weren't given a mainchain atom, return nothing
-	if (! mainchain_index) return 0;
+	if ( ! mainchain_index ) return 0;
 
 	// rewind to the beginning of the chain
 	Size resnum(atomid.rsd());
-	while(true) {
+	while ( true ) {
 		conformation::Residue const & residue(pose.residue(resnum));
 		chemical::AtomIndices const & mainchain_atoms(residue.mainchain_atoms());
 
-		if (!mainchain_atoms.size()) break;
+		if ( !mainchain_atoms.size() ) break;
 
 		// loop over all residue connections in the current residue
-		for (Size i = 1; i <= residue.n_residue_connections(); ++i) {
+		for ( Size i = 1; i <= residue.n_residue_connections(); ++i ) {
 
 			// check to see if the connection is to the first mainchain atom
-			if (residue.residue_connect_atom_index(i) == mainchain_atoms.front() && !residue.connection_incomplete(i)) {
+			if ( residue.residue_connect_atom_index(i) == mainchain_atoms.front() && !residue.connection_incomplete(i) ) {
 
 				// check to see if the atom it is connected to is the last mainchain atom of the corresponding residue
 				chemical::ResConnID resconid(residue.actual_residue_connection(i));
 				Size connected_atomno(pose.residue(resconid.resid()).residue_connect_atom_index(resconid.connid()));
 				chemical::AtomIndices const & mainchain_atoms(pose.residue(resconid.resid()).mainchain_atoms());
-				if (mainchain_atoms.size() && mainchain_atoms.back() == connected_atomno) {
+				if ( mainchain_atoms.size() && mainchain_atoms.back() == connected_atomno ) {
 					// success, set the new residue number
 					resnum = resconid.resid();
 					break;
@@ -488,35 +489,35 @@ connected_mainchain_atomids(
 		}
 
 		// get out of the loop if we didn't decrement resnum
-		if (resnum == residue.seqpos()) break;
+		if ( resnum == residue.seqpos() ) break;
 	}
 
 	// now iterate over all connected residues and insert their mainchain atomids
-	while (resnum) {
+	while ( resnum ) {
 		conformation::Residue const & residue(pose.residue(resnum));
 		chemical::AtomIndices const & mainchain_atoms(residue.mainchain_atoms());
 
 		// set the loop to exit by default
 		resnum = 0;
 
-		for (Size i = 1; i <= mainchain_atoms.size(); i++) {
+		for ( Size i = 1; i <= mainchain_atoms.size(); i++ ) {
 			atomids.push_back(id::AtomID(mainchain_atoms[i], residue.seqpos()));
-			if (atomids.back() == atomid) {
+			if ( atomids.back() == atomid ) {
 				mainchain_index = atomids.size();
 			}
 		}
 
 		// loop over all residue connections in the current residue
-		for (Size i = 1; i <= residue.n_residue_connections(); ++i) {
+		for ( Size i = 1; i <= residue.n_residue_connections(); ++i ) {
 
 			// check to see if the connection is to the last mainchain atom
-			if (residue.residue_connect_atom_index(i) == mainchain_atoms.back() && !residue.connection_incomplete(i)) {
+			if ( residue.residue_connect_atom_index(i) == mainchain_atoms.back() && !residue.connection_incomplete(i) ) {
 
 				// check to see if the atom it is connected to is the first mainchain atom of the corresponding residue
 				chemical::ResConnID resconid(residue.actual_residue_connection(i));
 				Size connected_atomno(pose.residue(resconid.resid()).residue_connect_atom_index(resconid.connid()));
 				chemical::AtomIndices const & mainchain_atoms(pose.residue(resconid.resid()).mainchain_atoms());
-				if (mainchain_atoms.size() && mainchain_atoms.front() == connected_atomno) {
+				if ( mainchain_atoms.size() && mainchain_atoms.front() == connected_atomno ) {
 					// success, set the new residue number
 					resnum = resconid.resid();
 					break;
@@ -547,33 +548,33 @@ protocols::backrub::BackrubMover::add_mainchain_segments(
 
 		// get a list of contiguous mainchain atoms connected to the first atomid in the set
 		utility::vector1<core::id::AtomID> mainchain_atomids;
-		if (!connected_mainchain_atomids(*input_pose, *atomid_set.begin(), mainchain_atomids)) {
+		if ( !connected_mainchain_atomids(*input_pose, *atomid_set.begin(), mainchain_atomids) ) {
 			// if it wasn't a mainchain atom, delete it from the set
 			atomid_set.erase(*atomid_set.begin());
 		}
 
 		// iterate over all atoms in the chain
-		for (Size i = 1; i <= mainchain_atomids.size(); ++i) {
+		for ( Size i = 1; i <= mainchain_atomids.size(); ++i ) {
 
 			// check to see if the atom is in our set
-			if (atomid_set.count(mainchain_atomids[i])) {
+			if ( atomid_set.count(mainchain_atomids[i]) ) {
 				// delete it from the set
 				atomid_set.erase(mainchain_atomids[i]);
 
 				// exclude proline N/CA atoms
-				if (input_pose->residue(mainchain_atomids[i].rsd()).aa() == chemical::aa_pro &&
+				if ( input_pose->residue(mainchain_atomids[i].rsd()).aa() == chemical::aa_pro &&
 						(input_pose->residue(mainchain_atomids[i].rsd()).atom_name(mainchain_atomids[i].atomno()) == " N  " ||
-						 input_pose->residue(mainchain_atomids[i].rsd()).atom_name(mainchain_atomids[i].atomno()) == " CA ")) {
+						input_pose->residue(mainchain_atomids[i].rsd()).atom_name(mainchain_atomids[i].atomno()) == " CA ") ) {
 					continue;
 				}
 
 				// add any segments for atomids in the set
-				for (Size j = i+min_atoms-1; j <= i+max_atoms-1 && j <= mainchain_atomids.size(); ++j) {
-					if (atomid_set.count(mainchain_atomids[j])) {
+				for ( Size j = i+min_atoms-1; j <= i+max_atoms-1 && j <= mainchain_atomids.size(); ++j ) {
+					if ( atomid_set.count(mainchain_atomids[j]) ) {
 						// exclude proline N/CA atoms
-						if (input_pose->residue(mainchain_atomids[j].rsd()).aa() == chemical::aa_pro &&
+						if ( input_pose->residue(mainchain_atomids[j].rsd()).aa() == chemical::aa_pro &&
 								(input_pose->residue(mainchain_atomids[j].rsd()).atom_name(mainchain_atomids[j].atomno()) == " N  " ||
-						     input_pose->residue(mainchain_atomids[j].rsd()).atom_name(mainchain_atomids[j].atomno()) == " CA ")) {
+								input_pose->residue(mainchain_atomids[j].rsd()).atom_name(mainchain_atomids[j].atomno()) == " CA ") ) {
 							continue;
 						}
 						add_segment(mainchain_atomids[i], mainchain_atomids[j]);
@@ -605,28 +606,28 @@ protocols::backrub::BackrubMover::add_mainchain_segments(
 
 	TR << "Segment lengths: " << min_atoms << "-" << max_atoms << " atoms" << std::endl;
 	TR << "Main chain pivot atoms:";
-	for (core::Size i = 1; i <= pivot_atoms_.size(); ++i) TR << ' ' << pivot_atoms_[i];
+	for ( core::Size i = 1; i <= pivot_atoms_.size(); ++i ) TR << ' ' << pivot_atoms_[i];
 	TR << std::endl;
 
 	// loop over all contiguous segments
 	core::Size contiguous_begin = 1;
-	while (contiguous_begin <= resnums.size()) {
+	while ( contiguous_begin <= resnums.size() ) {
 
 		// find the end of the current segment
 		core::Size contiguous_end = contiguous_begin;
-		while (contiguous_end+1 <= resnums.size() && resnums[contiguous_end]+1 == resnums[contiguous_end+1]) {
+		while ( contiguous_end+1 <= resnums.size() && resnums[contiguous_end]+1 == resnums[contiguous_end+1] ) {
 			++contiguous_end;
 		}
 
 		TR << "Adding backrub segments for residues " << resnums[contiguous_begin] << "-" << resnums[contiguous_end]
-			 << std::endl;
+			<< std::endl;
 
 		// create a vector of input atomids
 		utility::vector1<core::id::AtomID> mainchain_atomids;
-		for (core::Size i = contiguous_begin; i <= contiguous_end; ++i) {
+		for ( core::Size i = contiguous_begin; i <= contiguous_end; ++i ) {
 			core::Size resnum(resnums[i]);
-			if (resnum >= 1 && resnum <= input_pose->total_residue()) {
-				for (core::Size j = 1; j <= atomnames.size(); j++) {
+			if ( resnum >= 1 && resnum <= input_pose->total_residue() ) {
+				for ( core::Size j = 1; j <= atomnames.size(); j++ ) {
 					// KAB - Added if statement to only add atom to vector if it actually exists in the residue
 					// This allows for HETATMS without C-alphas (or other pivot atoms)
 					//   to be excluded automatically
@@ -653,9 +654,9 @@ core::Size
 protocols::backrub::BackrubMover::add_mainchain_segments()
 {
 	utility::vector1<core::Size> resnums(pivot_residues_);
-	if (resnums.size() == 0) {
+	if ( resnums.size() == 0 ) {
 		// use all residues if none defined
-		for (core::Size i = 1; i <= get_input_pose()->total_residue(); ++i) resnums.push_back(i);
+		for ( core::Size i = 1; i <= get_input_pose()->total_residue(); ++i ) resnums.push_back(i);
 	}
 
 	// add segments to the backrub mover
@@ -675,13 +676,13 @@ protocols::backrub::BackrubMover::optimize_branch_angles(
 	Pose & pose
 )
 {
-	for (std::map<protocols::backrub::BackrubSegment::BondAngleKey, core::Size>::iterator iter(bond_angle_map_.begin());
-			 iter != bond_angle_map_.end(); ++iter) {
+	for ( std::map<protocols::backrub::BackrubSegment::BondAngleKey, core::Size>::iterator iter(bond_angle_map_.begin());
+			iter != bond_angle_map_.end(); ++iter ) {
 
 		BackrubSegment::BondAngleKey const & bond_angle_key(iter->first);
-		if (bond_angle_key.key1().valid() && bond_angle_key.key2().valid() && bond_angle_key.key3().valid()) {
+		if ( bond_angle_key.key1().valid() && bond_angle_key.key2().valid() && bond_angle_key.key3().valid() ) {
 			TR.Debug << "Optimizing angles for:" << bond_angle_key.key1() << bond_angle_key.key2() << bond_angle_key.key3()
-							 << std::endl;
+				<< std::endl;
 			branchopt_.optimize_angles(pose, bond_angle_key.key1(), bond_angle_key.key2(), bond_angle_key.key3(), preserve_detailed_balance_);
 		}
 	}
@@ -852,7 +853,7 @@ protocols::backrub::BackrubMover::dof_id_ranges(
 
 	std::set<core::id::DOF_ID_Range> range_set;
 
-	for (core::Size i = 1; i <= segments_.size(); ++i) {
+	for ( core::Size i = 1; i <= segments_.size(); ++i ) {
 
 		BackrubSegment & segment(segments_[i]);
 
@@ -865,21 +866,21 @@ protocols::backrub::BackrubMover::dof_id_ranges(
 		kinematics::tree::AtomCOP end_atom2(end_atom1 ? end_atom1->get_nonjump_atom(0) : kinematics::tree::AtomCOP( 0 ) );
 
 		// Only proceed if stub_atom2 != start_atom1
-		if (start_atom->stub_atom2()->id() != segment.start_atomid1()) {
+		if ( start_atom->stub_atom2()->id() != segment.start_atomid1() ) {
 
 			// get overall bond angle parameters for the mainchain bond angle
 			Real start_Ktheta(0);
 			Real start_theta0(0);
 			Real start_energy0(0);
 			branchopt_.overall_params(pose, start_atom->stub_atom2()->id(), segment.start_atomid(), segment.start_atomid1(),
-																start_Ktheta, start_theta0, start_energy0);
+				start_Ktheta, start_theta0, start_energy0);
 
 			// limit bond angles to those having probabilites greater than 5% at a kT of 0.6
 			Real start_angle_dev(std::sqrt(-0.6*std::log(0.05)/start_Ktheta));
 
 			range_set.insert(id::DOF_ID_Range(id::DOF_ID(segment.start_atomid1(), id::THETA),
-			                                  pi - start_theta0 - start_angle_dev,
-			                                  pi - start_theta0 + start_angle_dev));
+				pi - start_theta0 - start_angle_dev,
+				pi - start_theta0 + start_angle_dev));
 
 			id::DOF_ID const start_dofid1(id::DOF_ID(start_atom1->id(), id::PHI));
 			range_set.insert(id::DOF_ID_Range(start_dofid1, -pi, pi));
@@ -889,28 +890,28 @@ protocols::backrub::BackrubMover::dof_id_ranges(
 		}
 
 		// Only proceed if end_atom1 exists
-		if (end_atom1) {
+		if ( end_atom1 ) {
 
 			// get overall bond angle parameters for the mainchain bond angle
 			Real end_Ktheta(0);
 			Real end_theta0(0);
 			Real end_energy0(0);
 			branchopt_.overall_params(pose, end_atom->parent()->id(), segment.end_atomid(), end_atom1->id(),
-																end_Ktheta, end_theta0, end_energy0);
+				end_Ktheta, end_theta0, end_energy0);
 
 			// limit bond angles to those having probabilites greater than 5% at a kT of 0.6
 			Real end_angle_dev(std::sqrt(-0.6*std::log(0.05)/end_Ktheta));
 
 			range_set.insert(id::DOF_ID_Range(id::DOF_ID(end_atom1->id(), id::THETA),
-			                                  pi - end_theta0 - end_angle_dev,
-			                                  pi - end_theta0 + end_angle_dev));
+				pi - end_theta0 - end_angle_dev,
+				pi - end_theta0 + end_angle_dev));
 
 			// Set torsion angle 1 by incrementing the oldest sibling PHI DOF
 			id::DOF_ID const end_dofid1(id::DOF_ID(end_atom1->id(), id::PHI));
 			range_set.insert(id::DOF_ID_Range(end_dofid1, -pi, pi));
 
 			// Only proceed if end_atom2 exists
-			if (end_atom2) {
+			if ( end_atom2 ) {
 
 				// Set torsion angle 2 by incrementing the oldest sibling PHI DOF
 				id::DOF_ID const end_dofid2(id::DOF_ID(end_atom2->id(), id::PHI));
@@ -950,34 +951,34 @@ protocols::backrub::BackrubMover::random_angle(
 	numeric::IntervalSet<Real> tau_intervals_bond_angle(-pi, pi);
 
 	// Only proceed if stub_atom2 != start_atom1
-	if (start_atom->stub_atom2()->id() != segment.start_atomid1()) {
+	if ( start_atom->stub_atom2()->id() != segment.start_atomid1() ) {
 
 		// get overall bond angle parameters for the mainchain bond angle
 		Real start_Ktheta(0);
 		Real start_theta0(0);
 		Real start_energy0(0);
 		branchopt_.overall_params(pose, start_atom->stub_atom2()->id(), segment.start_atomid(), segment.start_atomid1(),
-															start_Ktheta, start_theta0, start_energy0);
+			start_Ktheta, start_theta0, start_energy0);
 
 		// limit bond angles to those having probabilites greater than 5% at a kT of 0.6
 		Real start_angle_dev(std::sqrt(-0.6*std::log(0.05)/start_Ktheta));
 
 		// get bond angle constraint interval & constants for analytically calculating updated DOF values
 		backrub_rotation_constants(start_atom->stub_atom3(), start_atom->stub_atom2(), start_atom, start_atom1, start_atom2,
-															 end_atom, start_constants, start_theta0 - start_angle_dev, start_theta0 + start_angle_dev,
-															 &tau_intervals_bond_angle);
+			end_atom, start_constants, start_theta0 - start_angle_dev, start_theta0 + start_angle_dev,
+			&tau_intervals_bond_angle);
 		//TR << "Start Bond Angle Intervals: " << tau_intervals_bond_angle << std::endl;
 	}
 
 	// Only proceed if end_atom1 exists
-	if (end_atom1) {
+	if ( end_atom1 ) {
 
 		// get overall bond angle parameters for the mainchain bond angle
 		Real end_Ktheta(0);
 		Real end_theta0(0);
 		Real end_energy0(0);
 		branchopt_.overall_params(pose, end_atom->parent()->id(), segment.end_atomid(), end_atom1->id(),
-														  end_Ktheta, end_theta0, end_energy0);
+			end_Ktheta, end_theta0, end_energy0);
 
 		// limit bond angles to those having probabilites greater than 5% at a kT of 0.6
 		Real end_angle_dev(std::sqrt(-0.6*std::log(0.05)/end_Ktheta));
@@ -985,8 +986,8 @@ protocols::backrub::BackrubMover::random_angle(
 		// get bond angle constraint interval & constants for analytically calculating updated DOF values
 		numeric::IntervalSet<Real> tau_intervals_bond_angle_end;
 		backrub_rotation_constants(end_atom->parent()->parent(), end_atom->parent(), end_atom, end_atom1, end_atom2,
-		                           start_atom, end_constants, end_theta0 - end_angle_dev, end_theta0 + end_angle_dev,
-															 &tau_intervals_bond_angle_end);
+			start_atom, end_constants, end_theta0 - end_angle_dev, end_theta0 + end_angle_dev,
+			&tau_intervals_bond_angle_end);
 		//TR << "End Bond Angle Intervals: " << tau_intervals_bond_angle_end << std::endl;
 
 		// calculate overall bond angle constraining interval
@@ -1003,14 +1004,14 @@ protocols::backrub::BackrubMover::random_angle(
 	Real const tau_intervals_length(tau_intervals.length());
 
 	// return early if there are no angles to pick from
-	if (tau_intervals_length == 0) {
+	if ( tau_intervals_length == 0 ) {
 		return 0;
 	}
 
 	Real angle(0);
 	numeric::IntervalSet<Real> tau_intervals_rotation_angle_p;
 	Real const threshold(numeric::random::rg().uniform());
-	for (Size i = 0; i < 100000; i++) {
+	for ( Size i = 0; i < 100000; i++ ) {
 
 		angle = tau_intervals.random_point(numeric::random::rg());
 
@@ -1018,7 +1019,7 @@ protocols::backrub::BackrubMover::random_angle(
 		Real max_angle_p = angle + angle_disp;
 		min_angle_p = numeric::nearest_angle_radians(min_angle_p, 0.);
 		max_angle_p = numeric::nearest_angle_radians(max_angle_p, 0.);
-		if (min_angle_p < max_angle_p) {
+		if ( min_angle_p < max_angle_p ) {
 			tau_intervals_rotation_angle_p.set(min_angle_p, max_angle_p);
 		} else {
 			tau_intervals_rotation_angle_p.set(-pi, max_angle_p, min_angle_p, pi);
@@ -1028,7 +1029,7 @@ protocols::backrub::BackrubMover::random_angle(
 
 		Real tau_intervals_length_p = (tau_intervals_bond_angle & tau_intervals_rotation_angle_p).length();
 
-		if (tau_intervals_length_p == 0 || tau_intervals_length/tau_intervals_length_p >= threshold) break;
+		if ( tau_intervals_length_p == 0 || tau_intervals_length/tau_intervals_length_p >= threshold ) break;
 	}
 
 	return angle;
@@ -1067,9 +1068,9 @@ protocols::backrub::BackrubMover::rotate_segment(
 
 	// Get constants for analytically calculating updated DOF values
 	// Only recalculate the constants if they haven't already been calculated
-	if (start_constants.size() == 0) {
+	if ( start_constants.size() == 0 ) {
 		backrub_rotation_constants(start_atom->stub_atom3(), start_atom->stub_atom2(), start_atom, start_atom1, start_atom2,
-		                           end_atom, start_constants);
+			end_atom, start_constants);
 	}
 
 	// Get angles before and after the rotation
@@ -1080,7 +1081,7 @@ protocols::backrub::BackrubMover::rotate_segment(
 
 	//TR << "Start: Delta bondangle: " << start_bondangle-start_0_bondangle
 	//   << " Delta torsion1: " << start_torsion1 - start_0_torsion1
-	//	 << " Delta torsion2: " << start_torsion2 - start_0_torsion2 << std::endl;
+	//  << " Delta torsion2: " << start_torsion2 - start_0_torsion2 << std::endl;
 
 	// Set bond angles directly
 	pose.set_dof(id::DOF_ID(segment.start_atomid1(), id::THETA), pi - start_bondangle);
@@ -1097,22 +1098,22 @@ protocols::backrub::BackrubMover::rotate_segment(
 	//TR << start_atom2->id() << "\t" << start_atom2->parent()->get_nonjump_atom(0)->id() << std::endl;
 
 	// Only proceed if stub_atom2 != start_atom1
-	if (start_atom->stub_atom2()->id() != segment.start_atomid1()) {
+	if ( start_atom->stub_atom2()->id() != segment.start_atomid1() ) {
 
 		// optimize branching atom angles around the start pivot
-		if (!preserve_detailed_balance_) {
+		if ( !preserve_detailed_balance_ ) {
 			branchopt_.optimize_angles(pose, start_atom->stub_atom2()->id(), segment.start_atomid(), segment.start_atomid1());
 		}
 	}
 
 	// Only proceed if end_atom1 exists
-	if (end_atom1) {
+	if ( end_atom1 ) {
 
 		// Get constants for analytically calculating updated DOF values
 		// Only recalculate the constants if they haven't already been calculated
-		if (end_constants.size() == 0) {
+		if ( end_constants.size() == 0 ) {
 			backrub_rotation_constants(end_atom->parent()->parent(), end_atom->parent(), end_atom, end_atom1, end_atom2,
-			                           start_atom, end_constants);
+				start_atom, end_constants);
 		}
 
 		Real end_bondangle(0), end_torsion1(0), end_torsion2(0);
@@ -1122,7 +1123,7 @@ protocols::backrub::BackrubMover::rotate_segment(
 
 		//TR << "End: Delta bondangle: " << end_bondangle-end_0_bondangle
 		//   << " Delta torsion1: " << end_torsion1 - end_0_torsion1
-		//	 << " Delta torsion2: " << end_torsion2 - end_0_torsion2 << std::endl;
+		//  << " Delta torsion2: " << end_torsion2 - end_0_torsion2 << std::endl;
 
 		// Set bond angles directly
 		pose.set_dof(id::DOF_ID(end_atom1->id(), id::THETA), pi - end_bondangle);
@@ -1132,7 +1133,7 @@ protocols::backrub::BackrubMover::rotate_segment(
 		pose.set_dof(end_dofid1, pose.dof(end_dofid1) - end_0_torsion1 + end_torsion1);
 
 		// Only proceed if end_atom2 exists
-		if (end_atom2) {
+		if ( end_atom2 ) {
 
 			// Set torsion angle 2 by incrementing the oldest sibling PHI DOF
 			id::DOF_ID const end_dofid2(id::DOF_ID(end_atom2->id(), id::PHI));
@@ -1140,7 +1141,7 @@ protocols::backrub::BackrubMover::rotate_segment(
 		}
 
 		// optimize branching atom angles around the end pivot
-		if (!preserve_detailed_balance_) {
+		if ( !preserve_detailed_balance_ ) {
 			branchopt_.optimize_angles(pose, end_atom->parent()->id(), segment.end_atomid(), end_atom1->id());
 		}
 	}
@@ -1152,9 +1153,9 @@ protocols::backrub::BackrubMover::rotate_segment(
 
 	if (end_atom_distsq > 1e-4 || end_atom1_distsq > 1e-4 || end_atom2_distsq > 1e-4) {
 
-		TR << "ERROR: " << start_atom->atom_id() << "\t" << end_atom->atom_id() << std::endl;
-		TR << end_atom_distsq << "\t" << end_atom1_distsq << "\t" << end_atom2_distsq << std::endl;
-		//runtime_assert(false);
+	TR << "ERROR: " << start_atom->atom_id() << "\t" << end_atom->atom_id() << std::endl;
+	TR << end_atom_distsq << "\t" << end_atom1_distsq << "\t" << end_atom2_distsq << std::endl;
+	//runtime_assert(false);
 	}
 	*/
 }
@@ -1226,7 +1227,7 @@ protocols::backrub::BackrubMover::update_type()
 	ObjexxFCL::strip(end_atom_name);
 
 	mt << "br_" << start_atom_name << "_" << end_atom_name << "_"
-	   << std::setw(2) << std::setfill('0') << segments_[last_segment_id_].size();
+		<< std::setw(2) << std::setfill('0') << segments_[last_segment_id_].size();
 
 	std::string new_type(mt.str());
 	type(new_type);
@@ -1269,7 +1270,7 @@ backrub_rotation_constants(
 	Real static const pi(numeric::NumericTraits<Real>::pi());
 
 	constants.resize(15);
-	for (int i = 0; i < 15; i++) {
+	for ( int i = 0; i < 15; i++ ) {
 		constants[i] = 0;
 	}
 
@@ -1294,14 +1295,14 @@ backrub_rotation_constants(
 	Real const cos_alpha = std::cos(alpha);
 
 	Real const tau_u = ((dot(U, cross(V, R)) < 0) ? -1 : 1) *
-	                     std::acos(sin_cos_range((cos_alpha + cos_sigma_v * cos_sigma_u) /
-	                                             (sin_sigma_v * sin_sigma_u)));
+		std::acos(sin_cos_range((cos_alpha + cos_sigma_v * cos_sigma_u) /
+		(sin_sigma_v * sin_sigma_u)));
 
 	Real const a1 = constants[0] = sin_sigma_v * sin_sigma_u * std::cos(tau_u);
 	Real const b1 = constants[1] = -sin_sigma_v * sin_sigma_u * std::sin(tau_u);
 	Real const c1 = constants[2] = -cos_sigma_v * cos_sigma_u;
 
-	if (PM2_atom) {
+	if ( PM2_atom ) {
 
 		PointPosition const & Cm1(PM2_atom->xyz());
 
@@ -1317,8 +1318,8 @@ backrub_rotation_constants(
 		Real const cos_gamma = std::cos(gamma);
 
 		Real const tau_w = ((dot(U, cross(W, R)) < 0) ? -1 : 1) *
-	                       std::acos(sin_cos_range((-dot(W, U) + cos_sigma_w * cos_sigma_u) /
-	                                               (sin_sigma_w * sin_sigma_u)));
+			std::acos(sin_cos_range((-dot(W, U) + cos_sigma_w * cos_sigma_u) /
+			(sin_sigma_w * sin_sigma_u)));
 
 		constants[3] = (sin_sigma_w * sin_sigma_u * std::cos(tau_w) + a1 * cos_gamma) / sin_gamma;
 		constants[4] = (-sin_sigma_w * sin_sigma_u * std::sin(tau_w) + b1 * cos_gamma) / sin_gamma;
@@ -1332,15 +1333,15 @@ backrub_rotation_constants(
 		Real const cos_sigma_wn = std::cos(sigma_wn);
 
 		Real const tau_wn = ((dot(U, cross(Wn, R)) < 0) ? -1 : 1) *
-	                        std::acos(sin_cos_range((-dot(Wn, U) + cos_sigma_wn * cos_sigma_u) /
-		                                              (sin_sigma_wn * sin_sigma_u)));
+			std::acos(sin_cos_range((-dot(Wn, U) + cos_sigma_wn * cos_sigma_u) /
+			(sin_sigma_wn * sin_sigma_u)));
 
 		constants[9] = cos_sigma_wn * cos_sigma_u;
 		constants[10] = sin_sigma_wn * sin_sigma_u;
 		constants[11] = tau_wn;
 	}
 
-	if (PP2_atom) {
+	if ( PP2_atom ) {
 
 		PointPosition const & Np1(PP2_atom->xyz());
 
@@ -1356,8 +1357,8 @@ backrub_rotation_constants(
 		Real const cos_beta = std::cos(beta);
 
 		Real const tau_w1 = ((dot(W1, cross(V, R)) < 0) ? -1 : 1) *
-												 std::acos(sin_cos_range((-dot(V, W1) + cos_sigma_v * cos_sigma_w1) /
-																								 (sin_sigma_v * sin_sigma_w1)));
+			std::acos(sin_cos_range((-dot(V, W1) + cos_sigma_v * cos_sigma_w1) /
+			(sin_sigma_v * sin_sigma_w1)));
 
 		constants[6] = (sin_sigma_v * sin_sigma_w1 * std::cos(tau_w1) + a1 * cos_beta) / sin_beta;
 		constants[7] = (-sin_sigma_v * sin_sigma_w1 * std::sin(tau_w1) + b1 * cos_beta) / sin_beta;
@@ -1371,17 +1372,17 @@ backrub_rotation_constants(
 		Real const cos_sigma_w1n = std::cos(sigma_w1n);
 
 		Real const tau_w1n = ((dot(W1n, cross(V, R)) < 0) ? -1 : 1) *
-													std::acos(sin_cos_range((-dot(V, W1n) + cos_sigma_v * cos_sigma_w1n) /
-																									(sin_sigma_v * sin_sigma_w1n)));
+			std::acos(sin_cos_range((-dot(V, W1n) + cos_sigma_v * cos_sigma_w1n) /
+			(sin_sigma_v * sin_sigma_w1n)));
 
 		constants[12] = cos_sigma_w1n * cos_sigma_v;
 		constants[13] = sin_sigma_w1n * sin_sigma_v;
 		constants[14] = tau_w1n;
 	}
 
-	if (tau_intervals != NULL && alpha_min >= 0 && alpha_max > alpha_min) {
+	if ( tau_intervals != NULL && alpha_min >= 0 && alpha_max > alpha_min ) {
 
-		if (alpha_min == 0 && alpha_max == pi) {
+		if ( alpha_min == 0 && alpha_max == pi ) {
 
 			// easiest base case: unconstrained
 			tau_intervals->set(-pi, pi);
@@ -1393,7 +1394,7 @@ backrub_rotation_constants(
 
 			Real const min_value = (cos_sigma_v * cos_sigma_u + std::cos(alpha_min)) / (sin_sigma_v * sin_sigma_u);
 
-			if (in_sin_cos_range(min_value, 0.00000001)) {
+			if ( in_sin_cos_range(min_value, 0.00000001) ) {
 
 				Real const acos_min = std::acos(sin_cos_range(min_value));
 				Real tau1 = -acos_min - tau_u;
@@ -1402,21 +1403,21 @@ backrub_rotation_constants(
 				tau1 = numeric::nearest_angle_radians(tau1, 0.);
 				tau2 = numeric::nearest_angle_radians(tau2, 0.);
 
-				if (tau1 > tau2) {
+				if ( tau1 > tau2 ) {
 					Real const temp = tau1;
 					tau1 = tau2;
 					tau2 = temp;
 				}
 
 				Real const alpha_mid = std::acos(sin_cos_range(sin_sigma_v * sin_sigma_u *
-				                                               std::cos(tau_u + (tau1 + tau2)/2) - cos_sigma_v * cos_sigma_u));
+					std::cos(tau_u + (tau1 + tau2)/2) - cos_sigma_v * cos_sigma_u));
 
-				if (alpha_mid > alpha_min) {
+				if ( alpha_mid > alpha_min ) {
 					min_intervals.set(tau1, tau2);
 				} else {
 					min_intervals.set(-pi, tau1, tau2, pi);
 				}
-			} else if (alpha > alpha_min) {
+			} else if ( alpha > alpha_min ) {
 				min_intervals.set(-pi, pi);
 			} else {
 				//std::cout << "Error: No tau angles meet minimum alpha bond angle" << std::endl;
@@ -1424,16 +1425,16 @@ backrub_rotation_constants(
 
 			/*
 			if (min_intervals.endpoints().size() && !min_intervals.is_inside(0)) {
-				std::cout << "Min not inside " << tau_u << " "
-									<< (in_sin_cos_range(min_value) ? std::acos(sin_cos_range(min_value)) : -1) << " "
-									<< min_value << std::endl;
-				std::cout << min_intervals << std::endl;
+			std::cout << "Min not inside " << tau_u << " "
+			<< (in_sin_cos_range(min_value) ? std::acos(sin_cos_range(min_value)) : -1) << " "
+			<< min_value << std::endl;
+			std::cout << min_intervals << std::endl;
 			}
 			*/
 
 			Real const max_value = (cos_sigma_v * cos_sigma_u + std::cos(alpha_max)) / (sin_sigma_v * sin_sigma_u);
 
-			if (in_sin_cos_range(max_value, 0.00000001)) {
+			if ( in_sin_cos_range(max_value, 0.00000001) ) {
 
 				Real const acos_max = std::acos(sin_cos_range(max_value));
 				Real tau1 = -acos_max - tau_u;
@@ -1442,21 +1443,21 @@ backrub_rotation_constants(
 				tau1 = numeric::nearest_angle_radians(tau1, 0.);
 				tau2 = numeric::nearest_angle_radians(tau2, 0.);
 
-				if (tau1 > tau2) {
+				if ( tau1 > tau2 ) {
 					Real const temp = tau1;
 					tau1 = tau2;
 					tau2 = temp;
 				}
 
 				Real const alpha_mid = std::acos(sin_cos_range(sin_sigma_v * sin_sigma_u *
-																											 std::cos(tau_u + (tau1 + tau2)/2) - cos_sigma_v * cos_sigma_u));
+					std::cos(tau_u + (tau1 + tau2)/2) - cos_sigma_v * cos_sigma_u));
 
-				if (alpha_mid < alpha_max) {
+				if ( alpha_mid < alpha_max ) {
 					max_intervals.set(tau1, tau2);
 				} else {
 					max_intervals.set(-pi, tau1, tau2, pi);
 				}
-			} else if (alpha < alpha_max) {
+			} else if ( alpha < alpha_max ) {
 				max_intervals.set(-pi, pi);
 			} else {
 				//std::cout << "Error: No tau angles meet maximum alpha bond angle" << std::endl;
@@ -1464,10 +1465,10 @@ backrub_rotation_constants(
 
 			/*
 			if (max_intervals.endpoints().size() && !max_intervals.is_inside(0)) {
-				std::cout << "Max not inside " << tau_u << " "
-									<< (in_sin_cos_range(max_value) ? std::acos(sin_cos_range(max_value)) : -1) << " "
-									<< max_value << std::endl;
-				std::cout << max_intervals << std::endl;
+			std::cout << "Max not inside " << tau_u << " "
+			<< (in_sin_cos_range(max_value) ? std::acos(sin_cos_range(max_value)) : -1) << " "
+			<< max_value << std::endl;
+			std::cout << max_intervals << std::endl;
 			}
 			*/
 
@@ -1497,10 +1498,10 @@ backrub_rotation_angles(
 	Real const sin_bondange = std::sin(bondange);
 
 	torsion1 = acos(sin_cos_range((constants[3]*cos_tau + constants[4]*sin_tau + constants[5]) / sin_bondange));
-	if (constants[9] < constants[10]*std::cos(constants[11] + tau)) torsion1 = -torsion1;
+	if ( constants[9] < constants[10]*std::cos(constants[11] + tau) ) torsion1 = -torsion1;
 
 	torsion2 = acos(sin_cos_range((constants[6]*cos_tau + constants[7]*sin_tau + constants[8]) / sin_bondange));
-	if (constants[12] < constants[13]*std::cos(constants[14] + tau)) torsion2 = -torsion2;
+	if ( constants[12] < constants[13]*std::cos(constants[14] + tau) ) torsion2 = -torsion2;
 }
 
 } // moves

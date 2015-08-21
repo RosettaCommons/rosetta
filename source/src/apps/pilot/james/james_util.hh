@@ -77,7 +77,7 @@ public:
 	DistanceMatrix(
 		core::pose::Pose const & pose,
 		std::string const & atom_name)
-		: atom_name_( atom_name )
+	: atom_name_( atom_name )
 	{
 		calculate_distances( pose );
 	}
@@ -319,8 +319,8 @@ utility::vector1< core::Real > calc_dgaps(
 		// find minimum distance to a position in gap_positions
 		Real closest_dgap( static_cast< Real > ( aln.length() ) );
 		for ( vector1< Size >::const_iterator it = gap_positions.begin(),
-					end = gap_positions.end(); it != end; ++it
-		) {
+				end = gap_positions.end(); it != end; ++it
+				) {
 			Real const this_dgap(
 				std::abs( static_cast< Real > (*it - ii) )
 			);

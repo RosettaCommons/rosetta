@@ -48,7 +48,7 @@ AlignChainMoverCreator::mover_name()
 }
 
 AlignChainMover::AlignChainMover()
-	: moves::Mover("AlignChain"),
+: moves::Mover("AlignChain"),
 	pose_( /* NULL */ ),
 	source_chain_( 0 ),
 	target_chain_( 0 )
@@ -63,13 +63,13 @@ AlignChainMover::pose( core::pose::PoseOP pose ){ pose_ = pose; }
 
 utility::vector1< numeric::xyzVector< core::Real > >
 Ca_coord( core::pose::Pose const & pose, utility::vector1< core::Size > const positions ){
-    utility::vector1< numeric::xyzVector< core::Real > > coords;
+	utility::vector1< numeric::xyzVector< core::Real > > coords;
 
-    coords.clear();
-    BOOST_FOREACH( core::Size const pos, positions ){
-        coords.push_back( pose.residue( pos ).xyz( "CA" ) );
-    }
-    return coords;
+	coords.clear();
+	BOOST_FOREACH ( core::Size const pos, positions ) {
+		coords.push_back( pose.residue( pos ).xyz( "CA" ) );
+	}
+	return coords;
 }
 
 void
@@ -83,10 +83,12 @@ AlignChainMover::apply( Pose & in_pose )
 	core::Size const target_pose_chain_begin( target_chain() == 0 ? 1 : pose()->conformation().chain_begin( target_chain() ) );
 	core::Size const target_pose_chain_end  ( target_chain() == 0 ? pose()->total_residue() : pose()->conformation().chain_end( target_chain() ) );
 	TR<<"In_pose from residue: "<<in_pose_chain_begin<<" to_residue: "<<in_pose_chain_end<<"\ntarget_pose from residue: "<<target_pose_chain_begin<<" to_residue: "<<target_pose_chain_end<<std::endl;
-	for( core::Size i = in_pose_chain_begin; i<=in_pose_chain_end; ++i )
+	for ( core::Size i = in_pose_chain_begin; i<=in_pose_chain_end; ++i ) {
 		in_pose_positions.push_back( i );
-	for( core::Size i = target_pose_chain_begin; i<=target_pose_chain_end; ++i )
+	}
+	for ( core::Size i = target_pose_chain_begin; i<=target_pose_chain_end; ++i ) {
 		target_positions.push_back( i );
+	}
 
 	utility::vector1< numeric::xyzVector< core::Real > > init_coords( Ca_coord( in_pose, in_pose_positions ) ), ref_coords( Ca_coord( *pose(), target_positions ) );
 

@@ -211,11 +211,11 @@ intervals_to_confirmation_loops(
 		std::cout << "left: " << i->left << " right: " << i->right << " cut: " << cut << std::endl;
 
 		protocols::loops::Loop loop;
-		if (i->left <= 3) { //N-term
+		if ( i->left <= 3 ) { //N-term
 			Loop loop( 1, i->right+2, cut);
 			loops.add_loop(loop);
 			//std::cout << "added loop " << "1" << ":" << i->right+2 << ":" << cut << std::endl;
-		} else if (i->right >= nres-2){ //cterm
+		} else if ( i->right >= nres-2 ) { //cterm
 			Loop loop(i->left-2, nres, cut);
 			loops.add_loop(loop);
 			//std::cout << "added loop " << i->left-2 << ":" << nres << ":" << cut << std::endl;
@@ -264,10 +264,10 @@ calc_rsd_sasa( core::pose::Pose const & pose );
 
 void
 apply_transformation(
-           core::pose::Pose & mod_pose,
-           std::list <core::Size> const & residue_list,
-           numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT
-           );
+	core::pose::Pose & mod_pose,
+	std::list <core::Size> const & residue_list,
+	numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT
+);
 
 
 void

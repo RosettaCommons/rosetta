@@ -90,13 +90,12 @@ Real VallLookbackFragMover::lookbackMaxRmsd(pose::Pose & pose, Size resStart,Siz
 void VallLookbackFragMover::markChangedResid(pose::Pose & pose,Size resStart,Size resEnd) const{
 	using namespace core::pose::datacache;
 	using namespace core::scoring::methods;
-	if(!pose.data().has( CacheableDataType::VALL_LOOKBACK_DATA)){
+	if ( !pose.data().has( CacheableDataType::VALL_LOOKBACK_DATA) ) {
 		VallLookbackDataOP history = core::scoring::methods::VallLookbackDataOP(new VallLookbackData(pose));
 		pose.data().set( CacheableDataType::VALL_LOOKBACK_DATA,history);
-	}
-	else{
+	} else {
 		VallLookbackDataOP history_ = utility::pointer::static_pointer_cast<core::scoring::methods::VallLookbackData >(pose.data().get_ptr( CacheableDataType::VALL_LOOKBACK_DATA ));
-		for(Size ii=resStart; ii<=resEnd; ++ii){
+		for ( Size ii=resStart; ii<=resEnd; ++ii ) {
 			history_->set_res_changed(ii,true);
 		}
 	}
@@ -113,11 +112,13 @@ bool VallLookbackFragMover::apply_frames( pose::Pose &pose, FrameList const& fra
 	Size frame_num;
 	Size frag_num;
 	if ( !choose_fragment( frames, pose, frame_num /*output*/, frag_num /*output*/ ) ) return false;
-	if ( tr.Trace.visible() ) tr.Trace
-															<< "frag (" << frames[ frame_num ]->start() << ","
-															<< frag_num << ","
-															<< frames[ frame_num ]->nr_res_affected( *movemap_ )
-															<< ")" << std::endl;
+	if ( tr.Trace.visible() ) {
+		tr.Trace
+			<< "frag (" << frames[ frame_num ]->start() << ","
+			<< frag_num << ","
+			<< frames[ frame_num ]->nr_res_affected( *movemap_ )
+			<< ")" << std::endl;
+	}
 	//count number of positions above threshold
 	VallLookbackPotential potential_ = ScoringManager::get_instance()->get_vallLookbackPotential();
 	Size fragmentStore_fragment_length = potential_.fragLengthInDB();
@@ -128,14 +129,16 @@ bool VallLookbackFragMover::apply_frames( pose::Pose &pose, FrameList const& fra
 	Size resStart = 999;
 	Size resEnd = 999;
 	Real thresholdDistance = option[fragment_threshold_distance]();
-	if((int)fragBeingSwapped-(int)adjRes >= 1)
+	if ( (int)fragBeingSwapped-(int)adjRes >= 1 ) {
 		resStart = fragBeingSwapped-adjRes;
-	else
+	} else {
 		resStart = 1;
-	if(fragBeingSwapped+fragment_length+adjRes<= pose.total_residue())
+	}
+	if ( fragBeingSwapped+fragment_length+adjRes<= pose.total_residue() ) {
 		resEnd = fragBeingSwapped+adjRes;
-	else
+	} else {
 		resEnd = pose.total_residue()-fragmentStore_fragment_length;
+	}
 	Real startLookbackRmsd= lookbackMaxRmsd(pose,resStart,resEnd);
 	//cache fragment to be changed from initial pose so you can apply it later if the move fails.
 	utility::vector1< Real >phi;
@@ -144,39 +147,38 @@ bool VallLookbackFragMover::apply_frames( pose::Pose &pose, FrameList const& fra
 	utility::vector1< char > secstruct;
 	utility::vector1< Real > rmsd_cache;
 	VallLookbackDataOP history_ = utility::pointer::static_pointer_cast<core::scoring::methods::VallLookbackData >(pose.data().get_ptr( CacheableDataType::VALL_LOOKBACK_DATA ));
-	for(Size ii=fragBeingSwapped; ii<=fragBeingSwapped+fragment_length; ++ii){
+	for ( Size ii=fragBeingSwapped; ii<=fragBeingSwapped+fragment_length; ++ii ) {
 		phi.push_back(pose.phi(ii));
 		psi.push_back(pose.psi(ii));
 		omega.push_back(pose.omega(ii));
 		secstruct.push_back(pose.secstruct(ii));
 	}
-	for(Size ii=resStart; ii<=resEnd; ++ii){
+	for ( Size ii=resStart; ii<=resEnd; ++ii ) {
 		rmsd_cache.push_back(history_->get_rmsd(ii));
 	}
 	bool valid = apply_fragment( *frames[ frame_num ], frag_num, *movemap_, pose );
-	if(valid){
+	if ( valid ) {
 		markChangedResid(pose,resStart,resEnd);
 		Real endLookbackRmsd = lookbackMaxRmsd(pose,resStart,resEnd);
 		//std::cout << "end:" << endLookbackRmsd <<" ,start:" << startLookbackRmsd << " ,thresh" << thresholdDistance << std::endl;
-		if(endLookbackRmsd <= startLookbackRmsd || endLookbackRmsd <= thresholdDistance){
+		if ( endLookbackRmsd <= startLookbackRmsd || endLookbackRmsd <= thresholdDistance ) {
 			return true;
-		}
-		else{//report false & go back to cached pose
-			for(Size ii=1; ii<=fragment_length; ++ii){
+		} else { //report false & go back to cached pose
+			for ( Size ii=1; ii<=fragment_length; ++ii ) {
 				pose.set_phi(fragBeingSwapped+ii-1,phi.at(ii));
 				pose.set_psi(fragBeingSwapped+ii-1,psi.at(ii));
 				pose.set_omega(fragBeingSwapped+ii-1,omega.at(ii));
 				pose.set_secstruct(fragBeingSwapped+ii-1,secstruct.at(ii));
 				history_->set_rmsd(fragBeingSwapped+ii-1,rmsd_cache.at(ii));
 			}
-			for(Size ii=resStart; ii<=resEnd; ++ii){
-					history_->set_rmsd(ii,rmsd_cache.at(ii-resStart+1));
+			for ( Size ii=resStart; ii<=resEnd; ++ii ) {
+				history_->set_rmsd(ii,rmsd_cache.at(ii-resStart+1));
 			}
 			return false;
 		}
-	}
-	else
+	} else {
 		return false; //return from valid check up above.
+	}
 }
 } // simple_moves
 } // protocols

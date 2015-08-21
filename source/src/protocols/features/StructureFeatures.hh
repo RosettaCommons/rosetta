@@ -30,8 +30,8 @@
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class StructureFeatures : public protocols::features::FeaturesReporter {
 public:

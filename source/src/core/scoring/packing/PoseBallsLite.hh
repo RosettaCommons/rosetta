@@ -64,8 +64,8 @@ public:
 		return balls_[ id_to_index_[id] ];
 	}
 
-	inline Ball & ball( core::Size const & index ) { return balls_[index];	}
-	inline Ball & ball( core::id::AtomID const & id ) { return balls_[ id_to_index_[id] ];	}
+	inline Ball & ball( core::Size const & index ) { return balls_[index]; }
+	inline Ball & ball( core::id::AtomID const & id ) { return balls_[ id_to_index_[id] ]; }
 
 	inline core::Size const & atom_num( core::Size const & index ) const {
 		return atom_num_[index];
@@ -90,7 +90,7 @@ private:
 template< class T >
 void
 initialize_AtomID_Map( core::id::AtomID_Map<T> & map, PoseBallsLite const & pb ) {
-	for( Size i = 1; i <= pb.nballs(); i++ ) {
+	for ( Size i = 1; i <= pb.nballs(); i++ ) {
 		Size res_num = pb.res_num(i);
 		Size atom_num = pb.atom_num(i);
 		map.resize( std::max(map.size(),res_num) );

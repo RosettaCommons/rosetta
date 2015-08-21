@@ -95,7 +95,7 @@ TryRotamers::TryRotamers( Size resnum,
 	final_filter_(final_filter.clone())
 {}
 
-	/// @note Pass everything through the final filter (True Filter)
+/// @note Pass everything through the final filter (True Filter)
 TryRotamers::TryRotamers( core::Size resnum,
 	core::scoring::ScoreFunction const& scorefxn,
 	Size explosion, // rotamer explosion
@@ -103,7 +103,7 @@ TryRotamers::TryRotamers( core::Size resnum,
 	bool solo_res,
 	bool clash_check,
 	bool include_current
-	) :
+) :
 	protocols::moves::Mover(),
 	scorefxn_( scorefxn.clone() ),
 	resnum_(resnum),
@@ -137,10 +137,10 @@ TryRotamers::setup_rotamer_set( pose::Pose & pose )
 	restask.or_ex2( true );
 	restask.or_ex3( true );
 	restask.or_ex4( true );
-	if( explosion_ > 0 ) restask.or_ex1_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
-	if( explosion_ > 1	) restask.or_ex2_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
-	if( explosion_ > 2	) restask.or_ex3_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
-	if( explosion_ > 3	) restask.or_ex4_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
+	if ( explosion_ > 0 ) restask.or_ex1_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
+	if ( explosion_ > 1 ) restask.or_ex2_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
+	if ( explosion_ > 2 ) restask.or_ex3_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
+	if ( explosion_ > 3 ) restask.or_ex4_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
 	restask.or_include_current( include_current_ );
 
 	restask.restrict_to_repacking();
@@ -163,43 +163,41 @@ TryRotamers::apply ( pose::Pose & pose )
 
 	TR << "current fold-tree:\n" << pose.fold_tree() << std::endl;
 
-	if( automatic_connection_ ){
+	if ( automatic_connection_ ) {
 		core::kinematics::FoldTree const new_ft( make_hotspot_foldtree( pose ) );
 		TR<<"New foldtree:\n"<<new_ft<<std::endl;
 		pose.fold_tree( new_ft );
 	}
 
-	BOOST_FOREACH( core::Size const resid, shove_residues_ )
+	BOOST_FOREACH ( core::Size const resid, shove_residues_ ) {
 		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::SHOVE_BB, resid );
+	}
 
-	if (solo_res_) {
+	if ( solo_res_ ) {
 		core::pose::add_lower_terminus_type_to_pose_residue( pose, pose.total_residue() ); //prolly critical so that the dunbrack library uses neutral phi
 		core::pose::add_upper_terminus_type_to_pose_residue( pose, pose.total_residue() );
 	}
 
 	pose.update_residue_neighbors();
 
- if ( !rotset_ || rotset_->num_rotamers() == 0 ) {
-	 setup_rotamer_set(pose);
+	if ( !rotset_ || rotset_->num_rotamers() == 0 ) {
+		setup_rotamer_set(pose);
 	}//end building rotamer set
 
 	// job distributor iterates ...
-	if ( rotamer_it_ == rotset_->end() )
-	{
+	if ( rotamer_it_ == rotset_->end() ) {
 		set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
 		TR<<"reached the end of the rotamer ensemble "  <<std::endl;
 		pose.fold_tree( saved_ft );
 		return;
 	}
 
-	if ( final_filter_->apply( pose ) )
-	{
-		if( jump_num_ > 0 ) { // Let 0 indicate no jumps
-		core::kinematics::Jump const saved_jump( pose.jump( jump_num_ ) );
-		pose.replace_residue ( resnum_, **rotamer_it_, false/*orient bb*/ );
+	if ( final_filter_->apply( pose ) ) {
+		if ( jump_num_ > 0 ) { // Let 0 indicate no jumps
+			core::kinematics::Jump const saved_jump( pose.jump( jump_num_ ) );
+			pose.replace_residue ( resnum_, **rotamer_it_, false/*orient bb*/ );
 			pose.set_jump( jump_num_, saved_jump );
-		}
-		else { // no jumps to save
+		} else { // no jumps to save
 			pose.replace_residue ( resnum_, **rotamer_it_, false/*orient bb*/ );
 		}
 		TR << "TryRotamers passed the final_filter" <<std::endl;
@@ -207,9 +205,7 @@ TryRotamers::apply ( pose::Pose & pose )
 		++rotamer_it_;
 		pose.fold_tree( saved_ft );
 		return;
-	}
-	else
-	{
+	} else {
 		set_last_move_status( protocols::moves::FAIL_RETRY );
 		++rotamer_it_;
 		TR << std::endl;
@@ -224,10 +220,10 @@ TryRotamers::get_name() const {
 
 void
 TryRotamers::parse_my_tag( TagCOP const tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const &filters,
-		Movers_map const &,
-		Pose const & pose)
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const &filters,
+	Movers_map const &,
+	Pose const & pose)
 {
 	resnum_ = core::pose::get_resnum( tag, pose );
 	automatic_connection_ = tag->getOption< bool >( "automatic_connection", 1 );
@@ -242,21 +238,21 @@ TryRotamers::parse_my_tag( TagCOP const tag,
 
 	explosion_ = tag->getOption<core::Size>( "explosion", 0);
 	bool const filter_found( find_filter != filters.end() );
-	if( filter_found )
+	if ( filter_found ) {
 		final_filter_ = find_filter->second->clone();
-	else {
-		if( final_filter_name != "true_filter" ){
+	} else {
+		if ( final_filter_name != "true_filter" ) {
 			TR<<"***WARNING WARNING! Filter defined for TryRotamers not found in filter_list!!!! Defaulting to truefilter***"<<std::endl;
 			runtime_assert( filter_found );
-		}
-		else
+		} else {
 			final_filter_ = protocols::filters::FilterOP( new protocols::filters::TrueFilter );
+		}
 	}
 
-	if( tag->hasOption( "shove" ) ){
-  	std::string const shove_val( tag->getOption< std::string >( "shove" ) );
-  	utility::vector1< std::string > const shove_keys( utility::string_split( shove_val, ',' ) );
-  	BOOST_FOREACH( std::string const key, shove_keys ){
+	if ( tag->hasOption( "shove" ) ) {
+		std::string const shove_val( tag->getOption< std::string >( "shove" ) );
+		utility::vector1< std::string > const shove_keys( utility::string_split( shove_val, ',' ) );
+		BOOST_FOREACH ( std::string const key, shove_keys ) {
 			core::Size const resnum( core::pose::parse_resnum( key, pose ) );
 			shove_residues_.push_back( resnum );
 			TR<<"Using shove atomtype for "<< key <<'\n';

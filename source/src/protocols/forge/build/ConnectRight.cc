@@ -250,18 +250,17 @@ void ConnectRight::on_residue_delete( LengthEvent const & event ) {
 	assert( event.position != left_position_ );
 	if ( event.position < left_position_ ) {
 		//--left_position_;
-		if( int(left_position_) + event.length_change < int(event.position) ) left_position_ = event.position;
+		if ( int(left_position_) + event.length_change < int(event.position) ) left_position_ = event.position;
 		else left_position_ = left_position_ + event.length_change;
 	}
 
 	if ( modify_was_successful() && event.position < interval_.left ) {
 		//--interval_.left;
 		//--interval_.right;
-		if( int(interval_.left) + event.length_change < int(event.position) ){
+		if ( int(interval_.left) + event.length_change < int(event.position) ) {
 			interval_.right = interval_.right - (interval_.left - event.position);
 			interval_.left = event.position;
-		}
-		else{
+		} else {
 			interval_.left = interval_.left + event.length_change;
 			interval_.right = interval_.right + event.length_change;
 		}
@@ -331,10 +330,9 @@ void ConnectRight::modify_impl( Pose & pose_left ) {
 	// residue of pose_right is not a lower terminus, then assume that we're
 	// not starting a new chain
 	if (
-		!pose_left.residue( original_left_nres ).is_upper_terminus() &&
-		!pose_right_.residue( 1 ).is_lower_terminus()
-	)
-	{
+			!pose_left.residue( original_left_nres ).is_upper_terminus() &&
+			!pose_right_.residue( 1 ).is_lower_terminus()
+			) {
 		current_chain = pose_right_.residue( 1 ).chain();
 	}
 

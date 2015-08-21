@@ -29,7 +29,7 @@
 #include <protocols/filters/Filter.hh>
 
 namespace protocols {
-namespace design_opt{
+namespace design_opt {
 
 class GreedyOptMutationMover : public protocols::moves::Mover
 {
@@ -47,12 +47,12 @@ public:
 		bool dump_pdb = false,
 		bool dump_table = false,
 		bool parallel = false,
-    bool stop_before_condition = false,
-    bool skip_best_check = false,
-    bool rtmin = false,
-    bool shuffle_order = false,
-    bool diversify = false,
-    bool incl_nonopt = false,
+		bool stop_before_condition = false,
+		bool skip_best_check = false,
+		bool rtmin = false,
+		bool shuffle_order = false,
+		bool diversify = false,
+		bool incl_nonopt = false,
 		protocols::filters::FilterOP stopping_condition = protocols::filters::FilterOP( NULL )
 	);
 
@@ -95,20 +95,20 @@ public:
 	void filter_deltas( utility::vector1< core::Real > const filter_deltas );
 	void stopping_condition( protocols::filters::FilterOP f ){ stopping_condition_ = f; }
 	protocols::filters::FilterOP stopping_condition() const{ return stopping_condition_; }
-  bool stop_before_condition() const;
-  void stop_before_condition( bool const stop_before_condition );
-  bool skip_best_check() const;
-  void skip_best_check( bool const skip_best_check );
-  utility::vector1< protocols::simple_filters::DeltaFilterOP > delta_filters() const;
-  void delta_filters( utility::vector1< protocols::simple_filters::DeltaFilterOP > const d );
-  bool rtmin() const;
-  void rtmin( bool const b );
-  bool shuffle_order() const;
-  void shuffle_order( bool const b );
-  bool diversify() const;
-  void diversify( bool const b );
-  bool incl_nonopt() const;
-  void incl_nonopt( bool const b );
+	bool stop_before_condition() const;
+	void stop_before_condition( bool const stop_before_condition );
+	bool skip_best_check() const;
+	void skip_best_check( bool const skip_best_check );
+	utility::vector1< protocols::simple_filters::DeltaFilterOP > delta_filters() const;
+	void delta_filters( utility::vector1< protocols::simple_filters::DeltaFilterOP > const d );
+	bool rtmin() const;
+	void rtmin( bool const b );
+	bool shuffle_order() const;
+	void shuffle_order( bool const b );
+	bool diversify() const;
+	void diversify( bool const b );
+	bool incl_nonopt() const;
+	void incl_nonopt( bool const b );
 
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
@@ -121,7 +121,7 @@ private:
 	bool parallel_;
 	protocols::filters::FilterOP stopping_condition_; // dflt NULL ; if defined, stops greedy optimization when the filter's apply evaluates to true;
 	utility::vector1< std::pair< core::Size, utility::vector1<
-			std::pair< core::chemical::AA, utility::vector1< core::Real > > > > > seqpos_aa_vals_vec_;
+		std::pair< core::chemical::AA, utility::vector1< core::Real > > > > > seqpos_aa_vals_vec_;
 	utility::vector1< core::Real > filter_deltas_;
 	core::pose::Pose ref_pose_;
 	utility::vector1< core::pose::Pose > pfront_poses_;

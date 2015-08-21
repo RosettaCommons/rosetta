@@ -88,64 +88,64 @@ std::list < core::Size > downstream_residues_from_jump(core::pose::Pose const & 
 // atom_map: from mod_pose to ref_pose
 void
 get_superposition_transformation(
-								 core::pose::Pose const & mod_pose,
-								 core::pose::Pose const & ref_pose,
-								 core::id::AtomID_Map< core::id::AtomID > const & atom_map,
-								 numeric::xyzMatrix< core::Real > &R, numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT );
+	core::pose::Pose const & mod_pose,
+	core::pose::Pose const & ref_pose,
+	core::id::AtomID_Map< core::id::AtomID > const & atom_map,
+	numeric::xyzMatrix< core::Real > &R, numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT );
 
 core::Size atom_map_valid_size(
-							   core::pose::Pose const & pose,
-							   core::id::AtomID_Map< core::id::AtomID > const & atom_map
-							   );
+	core::pose::Pose const & pose,
+	core::id::AtomID_Map< core::id::AtomID > const & atom_map
+);
 
 void
 partial_align(
-		core::pose::Pose & pose,
-		core::pose::Pose const & ref_pose,
-		core::id::AtomID_Map< core::id::AtomID > const & atom_map,
-		bool iterate_convergence,
-		utility::vector1<core::Real> distance_thresholds,
-		core::Real min_coverage );
+	core::pose::Pose & pose,
+	core::pose::Pose const & ref_pose,
+	core::id::AtomID_Map< core::id::AtomID > const & atom_map,
+	bool iterate_convergence,
+	utility::vector1<core::Real> distance_thresholds,
+	core::Real min_coverage );
 
 void
 partial_align(
-			  core::pose::Pose & pose,
-			  core::pose::Pose const & ref_pose,
-			  core::id::AtomID_Map< core::id::AtomID > const & atom_map,
-			  std::list <core::Size> const & residue_list,
-			  bool iterate_convergence = false,
-				utility::vector1<core::Real> distance_thresholds=utility::vector1<core::Real>(0),
-				core::Real min_coverage = 0.2);
+	core::pose::Pose & pose,
+	core::pose::Pose const & ref_pose,
+	core::id::AtomID_Map< core::id::AtomID > const & atom_map,
+	std::list <core::Size> const & residue_list,
+	bool iterate_convergence = false,
+	utility::vector1<core::Real> distance_thresholds=utility::vector1<core::Real>(0),
+	core::Real min_coverage = 0.2);
 
 core::id::AtomID_Map< core::id::AtomID >
 update_atom_map(
-				core::pose::Pose & pose,
-				core::pose::Pose const & ref_pose,
-				core::id::AtomID_Map< core::id::AtomID > const & atom_map,
-				core::Real distance_squared_threshold
-				);
+	core::pose::Pose & pose,
+	core::pose::Pose const & ref_pose,
+	core::id::AtomID_Map< core::id::AtomID > const & atom_map,
+	core::Real distance_squared_threshold
+);
 
 core::Size
 natom_aligned(
-			  core::pose::Pose & pose,
-			  core::pose::Pose const & ref_pose,
-			  core::id::AtomID_Map< core::id::AtomID > const & atom_map,
-			  core::Real distance_squared_threshold = 4.0
-			  );
+	core::pose::Pose & pose,
+	core::pose::Pose const & ref_pose,
+	core::id::AtomID_Map< core::id::AtomID > const & atom_map,
+	core::Real distance_squared_threshold = 4.0
+);
 
 void
 get_superposition_transformation(
-								 core::pose::Pose const & mod_pose,
-								 core::pose::Pose const & ref_pose,
-								 core::id::AtomID_Map< core::id::AtomID > const & atom_map,
-								 numeric::xyzMatrix< core::Real > &R, numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT );
+	core::pose::Pose const & mod_pose,
+	core::pose::Pose const & ref_pose,
+	core::id::AtomID_Map< core::id::AtomID > const & atom_map,
+	numeric::xyzMatrix< core::Real > &R, numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT );
 
 void
 apply_transformation(
-					 core::pose::Pose & mod_pose,
-					 std::list <core::Size> const & residue_list,
-					 numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT
-					 );
+	core::pose::Pose & mod_pose,
+	std::list <core::Size> const & residue_list,
+	numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT
+);
 
 core::fragment::FragSetOP
 create_fragment_set( core::pose::Pose const & pose, core::Size len, core::Size nfrag );

@@ -50,7 +50,7 @@ WaterPackingInfo::operator[] ( Size const seqpos ) {
 
 WaterAnchorInfo const &
 WaterPackingInfo::operator[] ( Size const seqpos ) const {
-debug_assert( seqpos <= data_.size() && data_[ seqpos ] );
+	debug_assert( seqpos <= data_.size() && data_[ seqpos ] );
 	return *( data_[ seqpos ] );
 }
 

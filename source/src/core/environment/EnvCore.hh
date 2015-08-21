@@ -35,34 +35,34 @@ namespace environment {
 
 class EnvCore : public utility::pointer::ReferenceCount {
 public:
-  EnvCore( std::string const& env_name );
+	EnvCore( std::string const& env_name );
 
-  virtual ~EnvCore();
+	virtual ~EnvCore();
 
-  std::string const& name() const;
+	std::string const& name() const;
 
-  EnvCoreCAP superenv() const;
+	EnvCoreCAP superenv() const;
 
-  core::Size const& id() const;
+	core::Size const& id() const;
 
 protected:
 
-  DofPassportOP issue_passport( std::string const& mover_name ) const;
+	DofPassportOP issue_passport( std::string const& mover_name ) const;
 
-  void set_superenv( EnvCoreCAP );
+	void set_superenv( EnvCoreCAP );
 
 private:
 
-  static core::Size generate_id();
+	static core::Size generate_id();
 
-  std::string const name_;
+	std::string const name_;
 
-  core::Size id_;
+	core::Size id_;
 
-  EnvCoreCAP superenv_;
+	EnvCoreCAP superenv_;
 
-  //TODO: make this thread safe
-  static core::Size current_maximum_id_; // = 0
+	//TODO: make this thread safe
+	static core::Size current_maximum_id_; // = 0
 
 }; // end EnvCore base class
 

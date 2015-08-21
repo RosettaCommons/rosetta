@@ -43,25 +43,25 @@ class CoupledMover : public protocols::moves::Mover {
 public:
 
 	typedef protocols::moves::MoverOP MoverOP;
-	
+
 	// default constructor
 	CoupledMover();
 
 	/// @brief constructor that sets input pose, score function and packer task
-	CoupledMover( 
-		core::pose::PoseOP pose, 
+	CoupledMover(
+		core::pose::PoseOP pose,
 		core::scoring::ScoreFunctionOP score_fxn,
 		core::pack::task::PackerTaskOP packer_task
 	);
-	
+
 	/// @brief constructor that sets input pose, score function and packer task and ligand residue number
-	CoupledMover( 
-		core::pose::PoseOP pose, 
+	CoupledMover(
+		core::pose::PoseOP pose,
 		core::scoring::ScoreFunctionOP score_fxn,
 		core::pack::task::PackerTaskOP packer_task_,
 		core::Size ligand_resnum
 	);
-	
+
 	/// @brief copy constructor
 	CoupledMover( CoupledMover const & rval );
 
@@ -69,14 +69,14 @@ public:
 	virtual ~CoupledMover();
 
 	/// @brief clone this object
-	virtual	protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP clone() const;
 
 	/// @brief create this type of object
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
-	
+
 	// setters
 	void set_resnum( core::Size resnum );
 	void set_randomize_resnum( bool randomize_resnum );
@@ -97,7 +97,7 @@ public:
 	void set_rigid_body_mover( protocols::rigid::RigidBodyPerturbMoverOP rigid_body_mover );
 	void set_score_fxn( core::scoring::ScoreFunctionOP score_fxn );
 	void set_packer_task( core::pack::task::PackerTaskOP packer_task );
-	
+
 	// getters
 	core::Size get_resnum() const;
 	bool get_randomize_resnum() const;
@@ -119,68 +119,68 @@ public:
 	core::pack::task::PackerTaskOP get_packer_task() const;
 
 	void parse_my_tag(
-  	TagCOP tag,
-  	basic::datacache::DataMap & data,
-	  Filters_map const &,
-	  protocols::moves::Movers_map const &,
-	  Pose const & );
+		TagCOP tag,
+		basic::datacache::DataMap & data,
+		Filters_map const &,
+		protocols::moves::Movers_map const &,
+		Pose const & );
 
 private:
 
 	/// @brief residue number specifying the residue for the next move
 	core::Size resnum_;
-	
+
 	/// @brief if true, choose a random residue for the next move
 	bool randomize_resnum_;
-	
+
 	/// @brief if true, do not perform backbone moves
 	bool fix_backbone_;
-	
+
 	/// @brief standard deviation of rotation angle (degrees) used for ShortBackrubMover
 	core::Real rotation_std_dev_;
-	
+
 	/// @brief if true, sample rotation angle from a uniform distribution from -20 to 20
 	bool uniform_backrub_;
-	
+
 	/// @brief kT value used for Boltzmann probability calculation
 	core::Real temperature_;
-	
+
 	/// @brief if true, bias rotamer selection based on energy
 	bool bias_sampling_;
-	
+
 	/// @brief if true, use bump check when generating rotamers
 	bool bump_check_;
-	
+
 	/// @brief residue number specifying the ligand (set to zero if there is no ligand)
 	core::Size ligand_resnum_;
-	
+
 	/// @brief jump id specifying the ligand jump (set to zero if there is no ligand)
 	core::Size ligand_jump_id_;
-	
+
 	/// @brief weight of interaction between resnum_ and ligand_resnum_
 	core::Real ligand_weight_;
 
 	/// @brief the magnitude of ligand rotation used by the RigidBodyMover (in degrees)
 	core::Real rotation_magnitude_;
-	
+
 	/// @brief the magnitude of ligand translation used by the RigidBodyMover (in angstroms)
-	core::Real translation_magnitude_; 
-	
+	core::Real translation_magnitude_;
+
 	/// @brief mover used for backbone moves
 	protocols::simple_moves::ShortBackrubMoverOP short_backrub_mover_;
-	
+
 	/// @brief mover used for side-chain moves
 	protocols::simple_moves::BoltzmannRotamerMoverOP boltzmann_rotamer_mover_;
-	
+
 	/// @brief mover used for rigid body rotation and translation
 	protocols::rigid::RigidBodyPerturbMoverOP rigid_body_mover_;
-	
+
 	/// @brief score function needed for the BoltzmannRotamerMover
 	core::scoring::ScoreFunctionOP score_fxn_;
-	
+
 	/// @brief packer task needed for the BoltzmannRotamerMover
 	core::pack::task::PackerTaskOP packer_task_;
-	
+
 };  // class CoupledMover
 
 } // moves

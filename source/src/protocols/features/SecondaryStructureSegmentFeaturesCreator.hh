@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/features/SecondaryStructureSegmentFeaturesCreator.hh
-/// @brief  
+/// @brief
 /// @author Tim Jacobs
 
 #ifndef INCLUDED_protocols_features_SecondaryStructureSegmentFeaturesCreator_hh
@@ -23,18 +23,18 @@
 
 namespace protocols {
 namespace features {
-	
+
 /// @brief creator for the SecondaryStructureSegmentFeaturesCreator class
 class SecondaryStructureSegmentFeaturesCreator : public FeaturesReporterCreator
 {
 public:
 	SecondaryStructureSegmentFeaturesCreator();
 	virtual ~SecondaryStructureSegmentFeaturesCreator();
-	
+
 	virtual FeaturesReporterOP create_features_reporter() const;
 	virtual std::string type_name() const;
 };
-	
+
 } //namespace features
 } //namespace protocols
 

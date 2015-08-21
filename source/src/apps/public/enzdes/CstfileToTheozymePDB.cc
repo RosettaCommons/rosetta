@@ -64,19 +64,18 @@ create_theozyme_pdb()
 	//test whether the input cstfile is in the same directory or somewhere else
 	std::string::size_type const slash_loc = cstfile_name.find_last_of( '/' );
 	std::string outname_base;
-	if( slash_loc == std::string::npos ) { // same directory
+	if ( slash_loc == std::string::npos ) { // same directory
 		outname_base = "PDB_Model_"+cstfile_name;
-	}
-	else{
+	} else {
 		outname_base = "PDB_Model_"+cstfile_name.substr(slash_loc+1, cstfile_name.size() );
 	}
 	invrot_tree->dump_invrots_tree_as_multimodel_pdbs( outname_base );
 
 	//stealth functionality: can also use this app to read in a pose
 	//and align it to the theozyme
-	if( basic::options::option[basic::options::OptionKeys::in::file::s].user() ){
+	if ( basic::options::option[basic::options::OptionKeys::in::file::s].user() ) {
 		utility::vector1< std::string > input_files = basic::options::start_files();
-		if( input_files.size() == 1){
+		if ( input_files.size() == 1 ) {
 			core::pose::PoseOP pose( new core::pose::Pose() );
 			core::import_pose::pose_from_pdb( *pose, input_files[ 1 ] );
 			protocols::toolbox::match_enzdes_util::AllowedSeqposForGeomCstOP allowed_seqpos( new protocols::toolbox::match_enzdes_util::AllowedSeqposForGeomCst() );

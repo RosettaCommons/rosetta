@@ -21,13 +21,13 @@ namespace scoring {
 namespace methods {
 namespace pcsTs4 {
 
-	class PseudocontactShiftEnergyCreator_Ts4 : public core::scoring::methods::EnergyMethodCreator
+class PseudocontactShiftEnergyCreator_Ts4 : public core::scoring::methods::EnergyMethodCreator
 {
 public:
 	/// @brief Instantiate a new PseudoconstactShiftEnergy
 	virtual
 	core::scoring::methods::EnergyMethodOP
-		create_energy_method(
+	create_energy_method(
 		core::scoring::methods::EnergyMethodOptions const &
 	) const;
 

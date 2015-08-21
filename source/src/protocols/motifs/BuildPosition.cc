@@ -29,17 +29,17 @@
 // C++ Headers
 
 namespace protocols {
-namespace motifs{
+namespace motifs {
 
 BuildPosition::BuildPosition(
 	Size const seqpos,
 	utility::vector1< Size > const & target_positions
 ) : seqpos_( seqpos ),
-		target_positions_( target_positions ),
-		allowed_types_(),
-		best_rotamers_(/* 0 */),
-		best_motifs_(/* 0 */),
-		best_motifhits_(/* 0 */)
+	target_positions_( target_positions ),
+	allowed_types_(),
+	best_rotamers_(/* 0 */),
+	best_motifs_(/* 0 */),
+	best_motifhits_(/* 0 */)
 {}
 
 
@@ -48,11 +48,11 @@ BuildPosition::BuildPosition(
 	utility::vector1< Size > const & target_positions,
 	std::set< std::string > const & allowed_types
 ) : seqpos_( seqpos ),
-		target_positions_( target_positions ),
-		allowed_types_( allowed_types ),
-		best_rotamers_(/* 0 */),
-		best_motifs_(/* 0 */),
-		best_motifhits_(/* 0 */)
+	target_positions_( target_positions ),
+	allowed_types_( allowed_types ),
+	best_rotamers_(/* 0 */),
+	best_motifs_(/* 0 */),
+	best_motifhits_(/* 0 */)
 {}
 
 BuildPosition::~BuildPosition()

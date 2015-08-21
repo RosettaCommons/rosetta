@@ -96,51 +96,51 @@ public:
 		// nw one_score_type_test(fa_pair, "core/scoring/test_in.pdb", "core/scoring/fa_pair.u");
 		//one_score_type_test(fa_plane, "core/scoring/test_in.pdb", "core/scoring/fa_plane.u");
 		one_score_type_test(hbond_sr_bb, "core/scoring/test_in.pdb", "core/scoring/hbond_sr_bb.data");
-	/*
-	 hbond_lr_bb,
-	hbond_bb_sc,
-	hbond_sc,
-	gb_elec,
-	dslf_ss_dst,
-	dslf_cs_ang,
-	dslf_ss_dih,
-	dslf_ca_dih,
-	dslf_cbs_ds,
+		/*
+		hbond_lr_bb,
+		hbond_bb_sc,
+		hbond_sc,
+		gb_elec,
+		dslf_ss_dst,
+		dslf_cs_ang,
+		dslf_ss_dih,
+		dslf_ca_dih,
+		dslf_cbs_ds,
 
-	rama,
-	omega,
-	fa_dun,
-	p_aa_pp,
-	ref,
-	envsmooth,
+		rama,
+		omega,
+		fa_dun,
+		p_aa_pp,
+		ref,
+		envsmooth,
 
-	// rigid body move specific scores begin - Monica Berrondo
-	rb_scorefxn,
-	rb_env,
-	rb_pair,
-	rb_cont,
-	rb_cont_cap,
-	rb_vdw,
-	rb_site_cst,
-	rb_fab,
-	rb_fab_cap,
-	rb_wsl_elec,
-	// rigid body move specific scores end - Monica Berrondo
+		// rigid body move specific scores begin - Monica Berrondo
+		rb_scorefxn,
+		rb_env,
+		rb_pair,
+		rb_cont,
+		rb_cont_cap,
+		rb_vdw,
+		rb_site_cst,
+		rb_fab,
+		rb_fab_cap,
+		rb_wsl_elec,
+		// rigid body move specific scores end - Monica Berrondo
 
-	// centroid scores
-	env,
-	pair,
-	cbeta,
-	vdw,
-	rg,
-	cenpack,
-	hs_pair,
-	ss_pair,
-	rsigma,
+		// centroid scores
+		env,
+		pair,
+		cbeta,
+		vdw,
+		rg,
+		cenpack,
+		hs_pair,
+		ss_pair,
+		rsigma,
 
 
-	chainbreak,
-	*/
+		chainbreak,
+		*/
 
 	}
 
@@ -167,7 +167,7 @@ public:
 
 		D.push_back( score );
 
-		for(Size r=1; r<=pose.total_residue(); r++) {
+		for ( Size r=1; r<=pose.total_residue(); r++ ) {
 			EnergyMap em = pose.energies().residue_total_energies(r);
 
 			D.push_back( em[st] );
@@ -177,20 +177,20 @@ public:
 
 		write_vector_to_file(D, file2);
 		//TS_ASSERT_FILE_EQ_AS_DOUBLE(data_file_name.c_str(), file2.c_str(),
-		//							abs_p, rel_p);
+		//       abs_p, rel_p);
 		CxxTest::doAssertFileEQ_AsDouble(__FILE__, __LINE__,
-										 data_file_name.c_str(), data_file_name.c_str(),
-										 file2.c_str(), file2.c_str(), abs_p, rel_p, 0);
+			data_file_name.c_str(), data_file_name.c_str(),
+			file2.c_str(), file2.c_str(), abs_p, rel_p, 0);
 
 	}
 
 	void write_vector_to_file(std::vector<double> const & v, std::string filename) {
 		std::ofstream file(filename.c_str(), std::ios::out | std::ios::binary);
-		if(!file) {
+		if ( !file ) {
 			Error() << "write_vector_to_file: Unable to open file:" << filename << " for writing!!!\n";
 			return;
 		}
-		for(unsigned int i=0; i<v.size(); i++) file << v[i] << "\n";
+		for ( unsigned int i=0; i<v.size(); i++ ) file << v[i] << "\n";
 		file.close();
 	}
 
@@ -214,7 +214,7 @@ public:
 		test::UTracer UT(utracer_file_name);
 		UT << (int)st << " Energy=" << score << "\n";
 
-		for(Size r=1; r<=pose.total_residue(); r++) {
+		for ( Size r=1; r<=pose.total_residue(); r++ ) {
 			EnergyMap em = pose.energies().residue_total_energies(r);
 
 			UT << " residue: " << r << " Energy=" << em[st] << "\n";

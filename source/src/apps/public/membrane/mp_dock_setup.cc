@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		apps/pilot/membrane/mp_dock_setup.cc
+/// @file  apps/pilot/membrane/mp_dock_setup.cc
 ///
-/// @brief		RosettaMP Membrane Protein-Protein Docking Protocol Setup Application
-/// @details	Setup poses for 2-body docking
+/// @brief  RosettaMP Membrane Protein-Protein Docking Protocol Setup Application
+/// @details Setup poses for 2-body docking
 ///
-/// @author		Julia Koehler Leman (julia.koehler1982@gmail.com)
-/// @author 	Rebecca Faye Alford (rfalford12@gmail.com)
-/// @note 		Last Updated: 5/18/15
+/// @author  Julia Koehler Leman (julia.koehler1982@gmail.com)
+/// @author  Rebecca Faye Alford (rfalford12@gmail.com)
+/// @note   Last Updated: 5/18/15
 
 // App headers
 #include <devel/init.hh>
@@ -34,17 +34,17 @@ main( int argc, char * argv [] )
 	try {
 
 		using namespace protocols::docking::membrane;
-		
+
 		// initialize options, RNG, and factory-registrators
 		devel::init(argc, argv);
-		
+
 		// create empty pose
 		core::pose::Pose pose;
-		
+
 		// create MPdockingSetup mover and apply to pose
 		MPDockingSetupMoverOP mpdsm( new MPDockingSetupMover() );
 		mpdsm->apply(pose);
-		
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

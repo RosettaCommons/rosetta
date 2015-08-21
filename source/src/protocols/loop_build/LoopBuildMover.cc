@@ -51,15 +51,15 @@
 #include <protocols/simple_filters/RmsdEvaluator.hh>
 
 #ifdef WIN32
-	#include <ctime>
+#include <ctime>
 #endif
 
-namespace protocols{
-namespace loop_build{
+namespace protocols {
+namespace loop_build {
 
 
 LoopBuildMover::LoopBuildMover(protocols::comparative_modeling::LoopRelaxMover loop_relax_mover) :
-		loop_relax_mover_( loop_relax_mover)
+	loop_relax_mover_( loop_relax_mover)
 {}
 
 
@@ -96,7 +96,7 @@ void LoopBuildMover::apply(core::pose::Pose & pose){
 			native_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ]()
 		);
 		core::pose::set_ss_from_phipsi( native_pose );
-	} else	{
+	} else {
 		native_pose = pose;
 	}
 
@@ -106,10 +106,10 @@ void LoopBuildMover::apply(core::pose::Pose & pose){
 		evaluation::PoseEvaluatorOP( new simple_filters::SelectRmsdEvaluator( native_pose, "_native" ) )
 	);
 
-static thread_local basic::Tracer TR( "protocols.loop_build.LoopBuildMover" );
+	static thread_local basic::Tracer TR( "protocols.loop_build.LoopBuildMover" );
 
 	TR << "Annotated sequence of pose: "
-			<< pose.annotated_sequence(true) << std::endl;
+		<< pose.annotated_sequence(true) << std::endl;
 
 	std::string const refine       ( basic::options::option[ basic::options::OptionKeys::loops::refine ]() );
 	std::string const remodel      ( basic::options::option[ basic::options::OptionKeys::loops::remodel ]() );
@@ -141,13 +141,13 @@ static thread_local basic::Tracer TR( "protocols.loop_build.LoopBuildMover" );
 	using core::pose::getPoseExtraScore;
 	if ( core::pose::getPoseExtraScore(
 			pose, std::string("final_looprelax_score"), final_score
-	)
-	) {
+			)
+			) {
 		if ( basic::options::option[ basic::options::OptionKeys::loops::final_score_filter ].user() &&
 				final_score > basic::options::option[ basic::options::OptionKeys::loops::final_score_filter ]()
-		) {
+				) {
 			TR.Debug <<  "FailedFilter " << final_score << " > "
-					<< basic::options::option[  basic::options::OptionKeys::loops::final_score_filter ]() << std::endl;
+				<< basic::options::option[  basic::options::OptionKeys::loops::final_score_filter ]() << std::endl;
 			return;
 		}
 	}
@@ -159,53 +159,53 @@ static thread_local basic::Tracer TR( "protocols.loop_build.LoopBuildMover" );
 
 	if ( ! basic::options::option[ basic::options::OptionKeys::out::file::silent ].user() ) {
 
-			// if closure failed don't output
-			if ( remodel == "perturb_kic" || remodel == "perturb_kic_refactor" || remodel == "perturb_kic_with_fragments") {
-				set_last_move_status( loop_relax_mover_.get_last_move_status() );
-				if ( get_last_move_status() != protocols::moves::MS_SUCCESS ) {
-					TR << "Initial kinematic closure failed. Not outputting."
-							<< std::endl;
-					return;
-				}
+		// if closure failed don't output
+		if ( remodel == "perturb_kic" || remodel == "perturb_kic_refactor" || remodel == "perturb_kic_with_fragments" ) {
+			set_last_move_status( loop_relax_mover_.get_last_move_status() );
+			if ( get_last_move_status() != protocols::moves::MS_SUCCESS ) {
+				TR << "Initial kinematic closure failed. Not outputting."
+					<< std::endl;
+				return;
 			}
-			if ( loop_relax_mover_.compute_rmsd() ) {
-				if ( remodel != "no" ) {
+		}
+		if ( loop_relax_mover_.compute_rmsd() ) {
+			if ( remodel != "no" ) {
 
-					if ( remodel == "perturb_kic_refactor" ) {
-						core::Real rebuild_looprms=0.0;
-						getPoseExtraScore( pose, "rebuild_looprms", rebuild_looprms );
-						job->add_string_real_pair("loop_rebuildrms ",rebuild_looprms );
-                        // mirror to tracer
-						TR << "loop_rebuildrms: " << rebuild_looprms << std::endl;
-					}
+				if ( remodel == "perturb_kic_refactor" ) {
+					core::Real rebuild_looprms=0.0;
+					getPoseExtraScore( pose, "rebuild_looprms", rebuild_looprms );
+					job->add_string_real_pair("loop_rebuildrms ",rebuild_looprms );
+					// mirror to tracer
+					TR << "loop_rebuildrms: " << rebuild_looprms << std::endl;
+				}
 
-					core::Real cen_looprms=0.0;
-					getPoseExtraScore( pose, "cen_looprms", cen_looprms );
-					job->add_string_real_pair("loop_cenrms ",cen_looprms );
-					// mirror to tracer
-					TR << "loop_cenrms: " << cen_looprms << std::endl;
-				}
-				if ( refine != "no" ) {
-					core::Real final_looprms=0.0;
-					core::Real final_score=0.0;
-					core::Real final_chainbreak=0.0;
-					getPoseExtraScore( pose, "looprms", final_looprms );
-					getPoseExtraScore( pose, "final_looprelax_score", final_score );
-					getPoseExtraScore( pose, "final_chainbreak", final_chainbreak );
-					job->add_string_real_pair("loop_rms ", final_looprms);
-					job->add_string_real_pair("total_energy ", final_score);
-					job->add_string_real_pair("chainbreak ", final_chainbreak);
-					// mirror to tracer
-					TR << "loop_rms " << final_looprms << std::endl;
-					TR << "total_energy " << final_score << std::endl;
-					TR << "chainbreak " << final_chainbreak << std::endl;
-				}
+				core::Real cen_looprms=0.0;
+				getPoseExtraScore( pose, "cen_looprms", cen_looprms );
+				job->add_string_real_pair("loop_cenrms ",cen_looprms );
+				// mirror to tracer
+				TR << "loop_cenrms: " << cen_looprms << std::endl;
 			}
+			if ( refine != "no" ) {
+				core::Real final_looprms=0.0;
+				core::Real final_score=0.0;
+				core::Real final_chainbreak=0.0;
+				getPoseExtraScore( pose, "looprms", final_looprms );
+				getPoseExtraScore( pose, "final_looprelax_score", final_score );
+				getPoseExtraScore( pose, "final_chainbreak", final_chainbreak );
+				job->add_string_real_pair("loop_rms ", final_looprms);
+				job->add_string_real_pair("total_energy ", final_score);
+				job->add_string_real_pair("chainbreak ", final_chainbreak);
+				// mirror to tracer
+				TR << "loop_rms " << final_looprms << std::endl;
+				TR << "total_energy " << final_score << std::endl;
+				TR << "chainbreak " << final_chainbreak << std::endl;
+			}
+		}
 	}
 	clock_t stoptime = clock();
 	if ( keep_time ) {
 		TR << "Job " << curr_nstruct << " took "<< ((double) stoptime - starttime )/CLOCKS_PER_SEC
-				<< " seconds" << std::endl;
+			<< " seconds" << std::endl;
 	}
 }
 
@@ -216,7 +216,7 @@ std::string LoopBuildMover::get_name() const
 void LoopBuildMover::setup_loop_definition()
 {
 	using namespace basic::resource_manager;
-  // load loopfile
+	// load loopfile
 	if ( ! ResourceManager::get_instance()->has_resource_with_description( "LoopsFile" ) ) {
 		throw utility::excn::EXCN_Msg_Exception( "No loop file specified." );
 	}

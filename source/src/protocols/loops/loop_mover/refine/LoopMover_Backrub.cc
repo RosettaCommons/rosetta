@@ -181,7 +181,7 @@ void LoopMover_Refine_Backrub::apply(
 
 	// setup monte carlo
 	float const init_temp( option[ OptionKeys::loops::refine_init_temp ]() );
-	float const	final_temp( option[ OptionKeys::loops::refine_final_temp ]() );
+	float const final_temp( option[ OptionKeys::loops::refine_final_temp ]() );
 	float const gamma = std::pow( (final_temp/init_temp), 1.0f/(outer_cycles*inner_cycles) );
 	float temperature = init_temp;
 	protocols::moves::MonteCarlo mc( pose, *score_fxn, temperature );
@@ -229,7 +229,7 @@ void LoopMover_Refine_Backrub::apply(
 	mc.boltzmann( pose, move_type );
 
 	std::string backrub_move_type = backrubmover.type();
-	for (int i=1; i<=outer_cycles; ++i) {
+	for ( int i=1; i<=outer_cycles; ++i ) {
 		tr() << "loopmover backrub outer refinement cycle " << i << std::endl;
 		mc.score_function( *score_fxn );
 		mc.recover_low( pose );
@@ -269,17 +269,17 @@ LoopMover_Refine_Backrub::get_name() const {
 
 basic::Tracer & LoopMover_Refine_Backrub::tr() const
 {
-    return TR;
+	return TR;
 }
 
 LoopMover_Refine_BackrubCreator::~LoopMover_Refine_BackrubCreator() {}
 
 moves::MoverOP LoopMover_Refine_BackrubCreator::create_mover() const {
-  return moves::MoverOP( new LoopMover_Refine_Backrub() );
+	return moves::MoverOP( new LoopMover_Refine_Backrub() );
 }
 
 std::string LoopMover_Refine_BackrubCreator::keyname() const {
-  return "LoopMover_Refine_Backrub";
+	return "LoopMover_Refine_Backrub";
 }
 
 } // namespace refine

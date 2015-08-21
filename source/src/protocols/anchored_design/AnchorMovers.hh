@@ -34,7 +34,7 @@ namespace anchored_design {
 class AnchoredDesignMover : public protocols::moves::Mover {
 
 public:
-  /// @brief constructor with arguments
+	/// @brief constructor with arguments
 	AnchoredDesignMover( protocols::anchored_design::AnchorMoversDataOP interface_in);
 
 	/// @brief ctor with no arguments
@@ -181,7 +181,7 @@ private:
 class AnchoredPerturbMover : public protocols::moves::Mover {
 
 public:
-  //@brief constructor with arguments
+	//@brief constructor with arguments
 	AnchoredPerturbMover( protocols::anchored_design::AnchorMoversDataOP interface_in );
 
 	virtual ~AnchoredPerturbMover();
@@ -260,8 +260,8 @@ private:
 class AnchoredRefineMover : public protocols::moves::Mover {
 
 public:
-  //@brief constructor with arguments
-  AnchoredRefineMover( protocols::anchored_design::AnchorMoversDataOP interface_in );
+	//@brief constructor with arguments
+	AnchoredRefineMover( protocols::anchored_design::AnchorMoversDataOP interface_in );
 
 	virtual ~AnchoredRefineMover();
 

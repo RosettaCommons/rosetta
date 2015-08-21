@@ -25,27 +25,27 @@ namespace modeler {
 namespace rna {
 namespace bulge {
 
-	class BulgeApplyMover: public protocols::moves::Mover {
+class BulgeApplyMover: public protocols::moves::Mover {
 
-	public:
+public:
 
-		//constructor
-		BulgeApplyMover( Size const moving_res );
+	//constructor
+	BulgeApplyMover( Size const moving_res );
 
-		//destructor
-		~BulgeApplyMover();
+	//destructor
+	~BulgeApplyMover();
 
-	public:
+public:
 
-		virtual void apply( Pose & );
+	virtual void apply( Pose & );
 
-		virtual std::string get_name() const { return "BulgeApplyMover"; }
+	virtual std::string get_name() const { return "BulgeApplyMover"; }
 
-	private:
+private:
 
-		Size const moving_res_;
+	Size const moving_res_;
 
-	};
+};
 
 } //bulge
 } //rna

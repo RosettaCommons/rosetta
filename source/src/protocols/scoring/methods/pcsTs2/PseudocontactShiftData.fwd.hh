@@ -6,22 +6,22 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
- //////////////////////////////////////////////
- /// @file PseudocontactShiftData.fwd.hh
- ///
- /// @authorv Christophe Schmitz , Kala Bharath Pilla
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+/// @file PseudocontactShiftData.fwd.hh
+///
+/// @authorv Christophe Schmitz , Kala Bharath Pilla
+///
+////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcsTs2_PseudocontactShiftData_fwd_hh
 #define INCLUDED_protocols_scoring_methods_pcsTs2_PseudocontactShiftData_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcsTs2{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcsTs2 {
 
 class PCS_data_per_lanthanides_Ts2;
 

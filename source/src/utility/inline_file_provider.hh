@@ -37,9 +37,9 @@ typedef utility::pointer::shared_ptr< Inline_File_Provider_Hook const > Inline_F
 // base class for adding file-providing hooks into Inline_File_Provider
 class Inline_File_Provider_Hook: public utility::pointer::ReferenceCount {
 public:
-  Inline_File_Provider_Hook(){}
-  virtual bool request_file( const std::string & filename, std::string &result_data ) = 0;
-  virtual void return_file_callback( const std::string &result_data, bool error ) = 0;
+	Inline_File_Provider_Hook(){}
+	virtual bool request_file( const std::string & filename, std::string &result_data ) = 0;
+	virtual void return_file_callback( const std::string &result_data, bool error ) = 0;
 };
 
 class Inline_File_Provider : public utility::SingletonBase< Inline_File_Provider > {

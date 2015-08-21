@@ -58,7 +58,7 @@ SchemePlaceMotifsMoverCreator::mover_name()
 
 SchemePlaceMotifsMover::SchemePlaceMotifsMover() : halt_on_error_(false)
 {
-	core::scoring::motif::MotifHashManager::get_instance(); 
+	core::scoring::motif::MotifHashManager::get_instance();
 }
 
 protocols::moves::MoverOP
@@ -82,24 +82,24 @@ SchemePlaceMotifsMover::apply(Pose & pose) {
 	core::scoring::motif::ResPairMotifQuery q(pose);
 	core::scoring::motif::MotifHits hits;
 
-	if( motif_sets_.size() ){
+	if ( motif_sets_.size() ) {
 		TR << "using motif set names from XML" << std::endl;
-		BOOST_FOREACH(std::string const & msetname, motif_sets_ ){
+		BOOST_FOREACH ( std::string const & msetname, motif_sets_ ) {
 			core::scoring::motif::MotifHash const & mh( *core::scoring::motif::MotifHashManager::get_instance()->get_motif_hash_by_fname(msetname) );
 			int n = mh.get_matching_motifs(q,hits);
 			TR << n << " new hits from mset: " << msetname << ", total: " << hits.size() << std::endl;
-		} 
+		}
 	} else {
 		TR << "using all motif sets from CLI" << std::endl;
 		core::scoring::motif::MotifHashManager::get_instance()->get_matching_motifs(q,hits);
 	}
-	if( halt_on_error_ && hits.size()==0 ){
+	if ( halt_on_error_ && hits.size()==0 ) {
 		utility_exit_with_message("no matching motifs found!");
 	}
 
 	std::cout << "found " << hits.size() << " matching motifs" << std::endl;
-	if( dumpfile_!="" && hits.size() ){
-		for(Size i = 0; i < 1; ++i) std::cout << "!!!!!!!!!!!!!!! DUMPING MOTIFS " << dumpfile_ << "!!!!!!!!!!!!!!!!" << std::endl;
+	if ( dumpfile_!="" && hits.size() ) {
+		for ( Size i = 0; i < 1; ++i ) std::cout << "!!!!!!!!!!!!!!! DUMPING MOTIFS " << dumpfile_ << "!!!!!!!!!!!!!!!!" << std::endl;
 		static int dump_count = 0;
 		hits.dump_motifs_pdb(dumpfile_+"_"+ObjexxFCL::string_of(++dump_count)+".pdb");
 	}
@@ -108,8 +108,8 @@ SchemePlaceMotifsMover::apply(Pose & pose) {
 	///////////////////////// remove interface sidechains //////////////////////////////
 	////////////////////////////////////////////////////////////////////////////
 
-	for(core::Size ir = 1; ir <= pose.n_residue(); ++ir){
-		if(pose.residue(ir).is_protein()){
+	for ( core::Size ir = 1; ir <= pose.n_residue(); ++ir ) {
+		if ( pose.residue(ir).is_protein() ) {
 			core::pose::replace_pose_residue_copying_existing_coordinates( pose, ir, pose.residue(ir).residue_type_set().name_map("ALA") );
 		}
 	}
@@ -120,46 +120,46 @@ SchemePlaceMotifsMover::apply(Pose & pose) {
 
 	/*
 	core::scoring::methods::FloatingPointCloudRestraintEnergyFuncType type = core::scoring::methods::FloatingPointCloudRestraintEnergyFuncType_HARMINIC;
-	
+
 	core::scoring::methods::FloatingPointCloudRestraintEnergyInfoOP fpcinfo( new core::scoring::methods::FloatingPointCloudRestraintEnergyInfo );
 	pose.data().set( core::pose::datacache::CacheableDataType::FLOATING_POINT_CLOUD_INFO, fpcinfo );
 	utility::vector1< core::scoring::methods::FloatingPoints > & clouds = fpcinfo->point_clouds();
 	BOOST_FOREACH( core::scoring::motif::MotifHit const & mh, hits ){
-		// numeric::xyzTransform<core::Real> x = numeric::random::gaussian_random_xform(360.0,20.0);
-		core::scoring::methods::FloatingPoints cloud;
-		BOOST_FOREACH(std::string atomname, utility::string_split("N CA C O CB",' ')){
-			if( pose.residue(mh.residue1).has(atomname) && mh.mpose().residue(1).has(atomname) ){
-				cloud.push_back( core::scoring::methods::FloatingPoint(
-				mh.mpose().residue(1).xyz(atomname),
-					core::id::AtomID( pose.residue(mh.residue1).atom_index(atomname), mh.residue1 ),
-					1.0,
-					type
-				) );
-			}
-			if( pose.residue(mh.residue2).has(atomname) && mh.mpose().residue(2).has(atomname) ){
-				cloud.push_back( core::scoring::methods::FloatingPoint(
-					mh.mpose().residue(2).xyz(atomname),
-					core::id::AtomID( pose.residue(mh.residue2).atom_index(atomname), mh.residue2 ),
-					1.0,
-					type
-				) );
-			}
-		}
-		clouds.push_back(cloud);
-		// mh.mpose().dump_pdb("mtest.pdb");
-		// utility_exit_with_message("foo");
+	// numeric::xyzTransform<core::Real> x = numeric::random::gaussian_random_xform(360.0,20.0);
+	core::scoring::methods::FloatingPoints cloud;
+	BOOST_FOREACH(std::string atomname, utility::string_split("N CA C O CB",' ')){
+	if( pose.residue(mh.residue1).has(atomname) && mh.mpose().residue(1).has(atomname) ){
+	cloud.push_back( core::scoring::methods::FloatingPoint(
+	mh.mpose().residue(1).xyz(atomname),
+	core::id::AtomID( pose.residue(mh.residue1).atom_index(atomname), mh.residue1 ),
+	1.0,
+	type
+	) );
+	}
+	if( pose.residue(mh.residue2).has(atomname) && mh.mpose().residue(2).has(atomname) ){
+	cloud.push_back( core::scoring::methods::FloatingPoint(
+	mh.mpose().residue(2).xyz(atomname),
+	core::id::AtomID( pose.residue(mh.residue2).atom_index(atomname), mh.residue2 ),
+	1.0,
+	type
+	) );
+	}
+	}
+	clouds.push_back(cloud);
+	// mh.mpose().dump_pdb("mtest.pdb");
+	// utility_exit_with_message("foo");
 	}
 	fpcinfo->reinitialize_point_map();
 	pose.dump_pdb("test.pdb");
-		
+
 	// fpcinfo->dump_debug_pdb("fcp_test0.pdb");
 	// fpcinfo->align_clouds_to_pose(pose);
 	// fpcinfo->dump_debug_pdb("fcp_test1.pdb");
 	// utility_exit_with_message("foo");
-		*/
+	*/
 }
 
-void 
+void
 SchemePlaceMotifsMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & /*datamap*/,
@@ -172,17 +172,17 @@ SchemePlaceMotifsMover::parse_my_tag(
 	halt_on_error_ = tag->getOption<bool>("halt_on_error",false);
 	std::string const motif_sets = tag->getOption< std::string >("motif_sets","");
 	TR << "checking motif sets: " << motif_sets << std::endl;
-	BOOST_FOREACH(std::string const & mset, utility::string_split(motif_sets,',')){
-		if( mset=="" ) continue;
-		if(!core::scoring::motif::MotifHashManager::get_instance()->have_motif_set_named(mset)){
-			BOOST_FOREACH(std::string s,core::scoring::motif::MotifHashManager::get_instance()->motif_set_names()){
+	BOOST_FOREACH ( std::string const & mset, utility::string_split(motif_sets,',') ) {
+		if ( mset=="" ) continue;
+		if ( !core::scoring::motif::MotifHashManager::get_instance()->have_motif_set_named(mset) ) {
+			BOOST_FOREACH ( std::string s,core::scoring::motif::MotifHashManager::get_instance()->motif_set_names() ) {
 				std::cout << "candidate: " << s << std::endl;
 			}
 			utility_exit_with_message("MotifResiduesOperation: unknown motif set: "+mset+"\nspecify -mh:path:motifs");
 		}
 		motif_sets_.push_back(mset);
 	}
-	if(motif_sets_.size()==0){
+	if ( motif_sets_.size()==0 ) {
 		TR << "WARNING: no motif sets in XML " << tag_name_ << ", will use all from cli" << std::endl;
 		// utility_exit_with_message("MotifResiduesOperation: no motif sets specified, use motif_sets='foo,bar,baz'!");
 	}

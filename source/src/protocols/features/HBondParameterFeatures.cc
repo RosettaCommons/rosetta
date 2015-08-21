@@ -42,8 +42,8 @@
 #include <utility/vector0.hh>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 
 using std::string;
@@ -117,7 +117,7 @@ HBondParameterFeatures::parse_my_tag(
 	Movers_map const & /*movers*/,
 	Pose const & /*pose*/
 ) {
-	if(tag->hasOption("scorefxn")){
+	if ( tag->hasOption("scorefxn") ) {
 		string scorefxn_name = tag->getOption<string>("scorefxn");
 		scfxn_ = data.get_ptr<ScoreFunction>("scorefxns", scorefxn_name);
 	} else {
@@ -134,7 +134,7 @@ Size
 HBondParameterFeatures::report_features(
 	Pose const &,
 	vector1< bool > const &,
-    StructureID const,
+	StructureID const,
 	sessionOP db_session
 ){
 

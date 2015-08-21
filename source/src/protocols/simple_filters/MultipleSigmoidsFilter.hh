@@ -35,32 +35,32 @@ namespace simple_filters {
 /// @brief simply takes a list of pdbs and creates relative pose then extract sigmoids and call operator (product)
 class MultipleSigmoids : public filters::Filter
 {
-  public:
-    MultipleSigmoids();
-    virtual ~MultipleSigmoids();
-		filters::FilterOP clone() const;
-		filters::FilterOP fresh_instance() const;
-		virtual bool apply( core::pose::Pose const & pose ) const;
-		virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
-		virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-		void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & );
-		core::Real compute( core::pose::Pose const & pose ) const;
-  	core::Real threshold() const{ return threshold_; }
-  	void threshold( core::Real const t ){ threshold_ = t; }
-		OperatorOP operator_filter() const;
-		void operator_filter( OperatorOP opt );
-		SigmoidOP sigmoid_filter() const;
-		// Undefined, commenting out to fix PyRosetta build  void sigmoid_filter( SigmoidOP sig );
-		RelativePoseFilterOP relative_pose_filter() const;
-		void relative_pose_filter( RelativePoseFilterOP rpose);
-		void reset_baseline( core::pose::Pose const & pose, bool const attempt_read_from_checkpoint ); /// allows within-trajectory resetting of the baseline. Notice this is nonconst, so can't be called from apply. attempt_read_from_checkpoint should be true for MC trials > 1, but false otherwise
+public:
+	MultipleSigmoids();
+	virtual ~MultipleSigmoids();
+	filters::FilterOP clone() const;
+	filters::FilterOP fresh_instance() const;
+	virtual bool apply( core::pose::Pose const & pose ) const;
+	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
+	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & );
+	core::Real compute( core::pose::Pose const & pose ) const;
+	core::Real threshold() const{ return threshold_; }
+	void threshold( core::Real const t ){ threshold_ = t; }
+	OperatorOP operator_filter() const;
+	void operator_filter( OperatorOP opt );
+	SigmoidOP sigmoid_filter() const;
+	// Undefined, commenting out to fix PyRosetta build  void sigmoid_filter( SigmoidOP sig );
+	RelativePoseFilterOP relative_pose_filter() const;
+	void relative_pose_filter( RelativePoseFilterOP rpose);
+	void reset_baseline( core::pose::Pose const & pose, bool const attempt_read_from_checkpoint ); /// allows within-trajectory resetting of the baseline. Notice this is nonconst, so can't be called from apply. attempt_read_from_checkpoint should be true for MC trials > 1, but false otherwise
 
-	private:
-		std::string file_names_; // dflt ""
-		core::Real threshold_; // dflt 0
-		RelativePoseFilterOP r_pose_; //dflt NULL
-		SigmoidOP sig_; //dflt NULL
-		OperatorOP operatorF_; //dflt NULL
+private:
+	std::string file_names_; // dflt ""
+	core::Real threshold_; // dflt 0
+	RelativePoseFilterOP r_pose_; //dflt NULL
+	SigmoidOP sig_; //dflt NULL
+	OperatorOP operatorF_; //dflt NULL
 };
 }
 }

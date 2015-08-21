@@ -205,7 +205,7 @@ public:
 	// useful helper function for manipulating stubs
 	/// @brief  update the stub without actually updating coordinates
 	/** since for a jump atom, update internal coords or xyz dont change input
-			jump, so we do not do anything here*/
+	jump, so we do not do anything here*/
 	inline
 	virtual
 	void
@@ -232,7 +232,7 @@ public: // Properties
 	/////////////////////////////////////////////////////////////////////////////
 	/// @brief stub_atom2 of a jump-atom
 	/** it is its first bonded child if a stub can be defined for it. Otherwise
-			it is parent's stub_atom2. */
+	it is parent's stub_atom2. */
 	inline
 	AtomCOP
 	stub_atom2() const
@@ -241,7 +241,7 @@ public: // Properties
 			return get_nonjump_atom(0);
 		}
 		AtomCOP parent_op = parent();
-		if(parent_op) {
+		if ( parent_op ) {
 			return parent_op->stub_atom2();
 		}
 		return 0;
@@ -249,7 +249,7 @@ public: // Properties
 	/////////////////////////////////////////////////////////////////////////////
 	/// @brief stub_atom3 of a jump atom
 	/** it is its child's child or its second child if a stub can be defined for it,
-			otherwise it is its parent's stub_atom3 */
+	otherwise it is its parent's stub_atom3 */
 	inline
 	AtomCOP
 	stub_atom3() const
@@ -265,7 +265,7 @@ public: // Properties
 			}
 		}
 		AtomCOP parent_op = parent();
-		if( parent_op ) {
+		if ( parent_op ) {
 			return parent_op->stub_atom3();
 		}
 		return 0;
@@ -296,13 +296,13 @@ private: // Fields
 
 	/// @brief Jump
 	/**
-		 A jump atom is connected to its parent via rigid-body transformation("jump").
-		 It requires two stubs to define a jump, one is the parent atoms's stub and
-		 the other is the stub centered at this jump atom, which requires at least
-		 three atoms on the jump atom's side (including itself). For example, a stub
-		 is defined from B-A-C or A-B-C (A is the jump atom, B and C are its offspring).
-		 If less than 3 atoms on the jump atom's side, i.e., stub_defined() == False,
-		 this atom will just use its parent stub.
+	A jump atom is connected to its parent via rigid-body transformation("jump").
+	It requires two stubs to define a jump, one is the parent atoms's stub and
+	the other is the stub centered at this jump atom, which requires at least
+	three atoms on the jump atom's side (including itself). For example, a stub
+	is defined from B-A-C or A-B-C (A is the jump atom, B and C are its offspring).
+	If less than 3 atoms on the jump atom's side, i.e., stub_defined() == False,
+	this atom will just use its parent stub.
 	*/
 	Jump jump_;
 

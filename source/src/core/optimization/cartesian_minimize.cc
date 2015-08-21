@@ -83,7 +83,7 @@ cartesian_dfunc(
 
 	//fpd  scale derivatives for symmetry
 	core::Real scale = 1;
-	if (pose::symmetry::is_symmetric( pose ) ) {
+	if ( pose::symmetry::is_symmetric( pose ) ) {
 		using namespace conformation::symmetry;
 		SymmetricConformation & symm_conf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
@@ -117,7 +117,7 @@ cartesian_collect_atompairE_deriv(
 	using namespace scoring::symmetry;
 	using namespace conformation::symmetry;
 
-debug_assert( pose.energies().minimization_graph() );
+	debug_assert( pose.energies().minimization_graph() );
 	MinimizationGraphCOP mingraph = pose.energies().minimization_graph();
 
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
@@ -144,7 +144,7 @@ debug_assert( pose.energies().minimization_graph() );
 	}
 
 	// if we're symmetric loop over other edges
-	if (pose::symmetry::is_symmetric( pose ) ) {
+	if ( pose::symmetry::is_symmetric( pose ) ) {
 		SymmetricEnergies const & symm_energies( dynamic_cast< SymmetricEnergies const & > (pose.energies()) );
 		MinimizationGraphCOP dmingraph = symm_energies.derivative_graph();
 
@@ -167,7 +167,7 @@ debug_assert( pose.energies().minimization_graph() );
 	}
 
 	Size natoms=min_map.natoms();
-	for ( Size i=1; i<=natoms; ++i) {
+	for ( Size i=1; i<=natoms; ++i ) {
 		id::AtomID const & atom_id( min_map.get_atom(i) );
 		core::Vector F1(0,0,0),F2(0,0,0);
 		scorefxn.eval_npd_atom_derivative( atom_id, pose, min_map.domain_map(), F1, F2 );
@@ -188,20 +188,20 @@ void cartesian_collect_torsional_deriv(
 	core::Real scale
 )
 {
- 	using namespace core;
- 	using namespace core::optimization;
+	using namespace core;
+	using namespace core::optimization;
 	using namespace id;
 
 	// loop over the torsions
 	Size ntorsions=min_map.ntorsions();
-	for ( Size i=1; i<=ntorsions; ++i) {
+	for ( Size i=1; i<=ntorsions; ++i ) {
 		id::DOF_ID const & dof_id( min_map.get_dof_id(i) );
 		id::TorsionID const & TorsionID( min_map.get_TorsionID(i) );
 
 		// eg rama,Paa,dunbrack,and torsional constraints
 		Real deriv = scorefxn.eval_dof_derivative( dof_id, TorsionID, pose );
 
-		if( deriv == 0 ) continue;
+		if ( deriv == 0 ) continue;
 
 		// work out which atoms are involved !
 		AtomID id1, id2, id3, id4;
@@ -217,22 +217,22 @@ void cartesian_collect_torsional_deriv(
 		core::Size atmidx3 = min_map.get_atom_index(id3);
 		core::Size atmidx4 = min_map.get_atom_index(id4);
 
-		if (atmidx1>0) {
+		if ( atmidx1>0 ) {
 			dE_dvars[3*atmidx1-2] += scale*(grads.get<0>().x());
 			dE_dvars[3*atmidx1-1] += scale*(grads.get<0>().y());
 			dE_dvars[3*atmidx1  ] += scale*(grads.get<0>().z());
 		}
-		if (atmidx2>0) {
+		if ( atmidx2>0 ) {
 			dE_dvars[3*atmidx2-2] += scale*(grads.get<1>().x());
 			dE_dvars[3*atmidx2-1] += scale*(grads.get<1>().y());
 			dE_dvars[3*atmidx2  ] += scale*(grads.get<1>().z());
 		}
-		if (atmidx3>0) {
+		if ( atmidx3>0 ) {
 			dE_dvars[3*atmidx3-2] += scale*(grads.get<2>().x());
 			dE_dvars[3*atmidx3-1] += scale*(grads.get<2>().y());
 			dE_dvars[3*atmidx3  ] += scale*(grads.get<2>().z());
 		}
-		if (atmidx4>0) {
+		if ( atmidx4>0 ) {
 			dE_dvars[3*atmidx4-2] += scale*(grads.get<3>().x());
 			dE_dvars[3*atmidx4-1] += scale*(grads.get<3>().y());
 			dE_dvars[3*atmidx4  ] += scale*(grads.get<3>().z());
@@ -278,9 +278,9 @@ cart_numerical_derivative_check(
 	//Real const f00 = func( vars );
 
 	Size natoms=min_map.natoms();
-	for ( Size i=1; i<=natoms; ++i) {
+	for ( Size i=1; i<=natoms; ++i ) {
 		id::AtomID const & atm_id( min_map.get_atom(i) );
-		for ( int jj=0; jj<3; ++jj) {
+		for ( int jj=0; jj<3; ++jj ) {
 			Size ii = (i-1)*3+jj+1;
 
 			Real deriv_dev = 10000.0;
@@ -302,7 +302,7 @@ cart_numerical_derivative_check(
 				vars[ii] = start_vars[ii];
 
 				Real const ratio( std::abs( dE_dvars[ii] ) < 0.001 ? 0.0 :
-													 deriv / dE_dvars[ii] );
+					deriv / dE_dvars[ii] );
 
 				if ( std::abs(dE_dvars[ii]) > 0.001 || std::abs(deriv) > 0.001 ) {
 					if ( verbose && write_to_stdout ) {
@@ -346,10 +346,10 @@ cart_numerical_derivative_check(
 				if ( min_debug ) min_debug->abs_deriv_dev( ii, deriv_dev );
 
 				//if ( verbose && write_to_stdout ) {
-					// if you change this output, please also change the comments
-					// at the beginning of this section
-				//	TR << "deriv_dev:" << SS(ii) << SS(ndofs) << SS(f00) << SS( atm_id.atomno() ) <<
-				//		SS( atm_id.rsd() ) << SS( dE_dvars[ii] ) << SS( deriv_dev ) << SS(ratio) << std::endl;
+				// if you change this output, please also change the comments
+				// at the beginning of this section
+				// TR << "deriv_dev:" << SS(ii) << SS(ndofs) << SS(f00) << SS( atm_id.atomno() ) <<
+				//  SS( atm_id.rsd() ) << SS( dE_dvars[ii] ) << SS( deriv_dev ) << SS(ratio) << std::endl;
 				//}
 			}
 		}
@@ -457,7 +457,7 @@ tors_deriv_to_cartesian( Real dE_dtor, VectorQuad const & coords, VectorQuad & d
 
 	//phi = -atan2(sin_phi, cos_phi);
 
-	if(fabs(sin_phi) > 0.1) {
+	if ( fabs(sin_phi) > 0.1 ) {
 		nrml1.x() *= inv_nrml1_mag;
 		nrml1.y() *= inv_nrml1_mag;
 		nrml1.z() *= inv_nrml1_mag;
@@ -486,7 +486,7 @@ tors_deriv_to_cartesian( Real dE_dtor, VectorQuad const & coords, VectorQuad & d
 	dE_dtor *= -1;
 
 	// forces
-	if(fabs(sin_phi) > 0.1) {
+	if ( fabs(sin_phi) > 0.1 ) {
 		dE_dtor /= sin_phi;
 		fi.x() += dE_dtor * (vta_vtb.y() * dcosdnrml1.z() - vta_vtb.z() * dcosdnrml1.y());
 		fi.y() += dE_dtor * (vta_vtb.z() * dcosdnrml1.x() - vta_vtb.x() * dcosdnrml1.z());
@@ -503,15 +503,15 @@ tors_deriv_to_cartesian( Real dE_dtor, VectorQuad const & coords, VectorQuad & d
 	} else {
 		dE_dtor /= -cos_phi;
 
-		fi.x() += dE_dtor * 
+		fi.x() += dE_dtor *
 			((vta_vtb.y()*vta_vtb.y() + vta_vtb.z()*vta_vtb.z())*dsindnrml3.x()
-			 - vta_vtb.x()*vta_vtb.y()*dsindnrml3.y() - vta_vtb.x()* vta_vtb.z()*dsindnrml3.z());
+			- vta_vtb.x()*vta_vtb.y()*dsindnrml3.y() - vta_vtb.x()* vta_vtb.z()*dsindnrml3.z());
 		fi.y() += dE_dtor *
-			((vta_vtb.z()*vta_vtb.z() + vta_vtb.x()*vta_vtb.x())*dsindnrml3.y() 
-			 - vta_vtb.y()*vta_vtb.z()*dsindnrml3.z() - vta_vtb.y()* vta_vtb.x()*dsindnrml3.x());
-		fi.z() += dE_dtor * 
-			((vta_vtb.x()*vta_vtb.x() + vta_vtb.y()*vta_vtb.y())*dsindnrml3.z() 
-			 - vta_vtb.z()*vta_vtb.x()*dsindnrml3.x() - vta_vtb.z()*vta_vtb.y()*dsindnrml3.y());
+			((vta_vtb.z()*vta_vtb.z() + vta_vtb.x()*vta_vtb.x())*dsindnrml3.y()
+			- vta_vtb.y()*vta_vtb.z()*dsindnrml3.z() - vta_vtb.y()* vta_vtb.x()*dsindnrml3.x());
+		fi.z() += dE_dtor *
+			((vta_vtb.x()*vta_vtb.x() + vta_vtb.y()*vta_vtb.y())*dsindnrml3.z()
+			- vta_vtb.z()*vta_vtb.x()*dsindnrml3.x() - vta_vtb.z()*vta_vtb.y()*dsindnrml3.y());
 
 		fj.x() += dE_dtor * (dsindnrml2.y() * vta_vtb.z() - dsindnrml2.z() * vta_vtb.y());
 		fj.y() += dE_dtor * (dsindnrml2.z() * vta_vtb.x() - dsindnrml2.x() * vta_vtb.z());

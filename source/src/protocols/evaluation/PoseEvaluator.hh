@@ -10,7 +10,7 @@
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -72,7 +72,7 @@ public:
 	/// @brief evaluate pose and store values in Silent_Struct
 	/// why is this specific to a specific type of SilentStruct? that seems needlessly pointless and overly constraining.
 	virtual void apply( core::pose::Pose&, std::string tag, core::io::silent::SilentStruct &pss) const;
-	//	void apply( core::pose::Pose&, std::string tag, core::io::silent::SilentStruct &pss) const;
+	// void apply( core::pose::Pose&, std::string tag, core::io::silent::SilentStruct &pss) const;
 
 	using PoseEvaluator::apply;
 
@@ -80,7 +80,7 @@ public:
 	virtual T apply( core::pose::Pose& ) const = 0;
 	virtual bool applicable( core::pose::Pose const& ) const { return true; }
 
-	//	void apply( core::pose::Pose&, std::string tag, core::io::silent::SilentStruct &pss) const;
+	// void apply( core::pose::Pose&, std::string tag, core::io::silent::SilentStruct &pss) const;
 
 	virtual core::Size size() const { return 1; }
 	virtual std::string name( core::Size ) const {
@@ -147,7 +147,7 @@ private:
 //@brief evaluate pose and store values in Silent_Struct
 template< class T >
 void SingleValuePoseEvaluator< T >::apply( core::pose::Pose &pose, std::string, core::io::silent::SilentStruct &pss) const {
-	if ( applicable( pose ) )	pss.add_energy ( name_, apply( pose ) );
+	if ( applicable( pose ) ) pss.add_energy ( name_, apply( pose ) );
 }
 
 

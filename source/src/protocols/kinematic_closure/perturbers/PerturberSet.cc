@@ -36,23 +36,23 @@ PerturberSet::PerturberSet() {
 PerturberSet::~PerturberSet() {}
 
 void PerturberSet::perturb_subset(
-		Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
+	Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
 
-	foreach (PerturberOP perturber, perturbers_) {
+	foreach ( PerturberOP perturber, perturbers_ ) {
 		perturber->perturb_subset(pose, residues, problem);
 	}
 }
 
 void PerturberSet::perturb_subset_with_balance(
-		Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
+	Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
 
-	foreach (PerturberOP perturber, perturbers_) {
+	foreach ( PerturberOP perturber, perturbers_ ) {
 		perturber->perturb_subset_with_balance(pose, residues, problem);
 	}
 }
 
 void PerturberSet::add(PerturberOP perturber) {
-	if (is_default_) { clear(); is_default_ = false; }
+	if ( is_default_ ) { clear(); is_default_ = false; }
 	perturbers_.push_back(perturber);
 }
 
@@ -65,9 +65,9 @@ void PerturberSet::mark_as_default() {
 }
 
 void PerturberSet::get_perturber_names(
-		utility::vector1<string> & names, string indent) const {
+	utility::vector1<string> & names, string indent) const {
 
-	foreach (PerturberOP perturber, perturbers_) {
+	foreach ( PerturberOP perturber, perturbers_ ) {
 		names.push_back(indent + perturber->get_name());
 	}
 }

@@ -46,8 +46,8 @@ class PartialSecondarySimilarity: public CachingScoringMethod {
 public:
 
 	PartialSecondarySimilarity(Size priority, Real lowest_acceptable_value, bool use_lowest,
-			core::fragment::SecondaryStructureOP query_prediction, std::string prediction_name,
-			Size sequence_length, Size longest_vall_chunk);
+		core::fragment::SecondaryStructureOP query_prediction, std::string prediction_name,
+		Size sequence_length, Size longest_vall_chunk);
 
 	~PartialSecondarySimilarity() {}
 
@@ -86,19 +86,19 @@ public:
 	}
 
 	FragmentScoringMethodOP make(Size priority, Real lowest_acceptable_value, bool use_lowest,
-			FragmentPickerOP picker, std::string prediction_id) {
+		FragmentPickerOP picker, std::string prediction_id) {
 
 		Size sequence_length = picker->get_query_seq()->length();
 		Size vall_max_len = picker->get_vall()->get_largest_chunk_size();
 
 		core::fragment::SecondaryStructureOP query_prediction( picker->get_query_ss(prediction_id) );
-		if( ! query_prediction ) {
+		if ( ! query_prediction ) {
 			utility_exit_with_message("Unable to find secondary structure prediction for "+prediction_id);
 		}
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new PartialSecondarySimilarity(priority,
-						lowest_acceptable_value, use_lowest,
-						query_prediction,prediction_id,
-						sequence_length,vall_max_len) );
+			lowest_acceptable_value, use_lowest,
+			query_prediction,prediction_id,
+			sequence_length,vall_max_len) );
 	}
 };
 

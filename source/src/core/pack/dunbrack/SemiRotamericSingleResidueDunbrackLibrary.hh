@@ -127,7 +127,7 @@ template < Size N >
 struct BBDepScoreInterpData
 {
 public:
-    BBDepScoreInterpData() {}
+	BBDepScoreInterpData() {}
 
 	inline bool operator==( BBDepScoreInterpData< N > const & other ) const;
 
@@ -405,7 +405,7 @@ protected:
 		conformation::Residue const & rsd,
 		RotamerLibraryScratchSpace & scratch,
 		Real & dnrchi_score_dnrchi,
-        utility::fixedsizearray1< Real, N > & dnrchi_score_dbb
+		utility::fixedsizearray1< Real, N > & dnrchi_score_dbb
 	) const;
 
 	void
@@ -505,7 +505,7 @@ private:
 		Real & nrchi_alpha
 	) const;
 
-    BBDepNRChiSample< Real >
+	BBDepNRChiSample< Real >
 	interpolate_bbdep_nrchi_sample(
 		Size const packed_rotno,
 		Size const nrchi_bin,

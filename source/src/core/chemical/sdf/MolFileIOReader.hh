@@ -53,34 +53,34 @@ private:
 /// @brief Convert the vector of MolFileIOMolecules into a single residue type,
 /// using multiple entries as rotamers
 ResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > molfile_data,
-			std::string atom_type_tag = "fa_standard",
-			std::string element_type_tag = "default",
-			std::string mm_atom_type_tag = "fa_standard");
+	std::string atom_type_tag = "fa_standard",
+	std::string element_type_tag = "default",
+	std::string mm_atom_type_tag = "fa_standard");
 
 /// @brief Convert the vector of MolFileIOMolecules into a single residue type,
 /// using multiple entries as rotamers
 ResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > molfile_data,
-			AtomTypeSetCOP atom_types,
-			ElementSetCOP element_types,
-			MMAtomTypeSetCOP mm_atom_types);
+	AtomTypeSetCOP atom_types,
+	ElementSetCOP element_types,
+	MMAtomTypeSetCOP mm_atom_types);
 
 /// @brief Convert the vector of MolFileIOMolecules into multiple residue types
 /// If load_rotamers is false, each will be loaded as a single ResidueType
 /// Otherwise, entries with the same name will be loaded as rotamers
 utility::vector1< ResidueTypeOP > convert_to_ResidueTypes( utility::vector1< MolFileIOMoleculeOP > molfile_data,
-			bool load_rotamers = true,
-			std::string atom_type_tag = "fa_standard",
-			std::string element_type_tag = "default",
-			std::string mm_atom_type_tag = "fa_standard");
+	bool load_rotamers = true,
+	std::string atom_type_tag = "fa_standard",
+	std::string element_type_tag = "default",
+	std::string mm_atom_type_tag = "fa_standard");
 
 /// @brief Convert the vector of MolFileIOMolecules into multiple residue types
 /// If load_rotamers is false, each will be loaded as a single ResidueType
 /// Otherwise, entries with the same name will be loaded as rotamers
 utility::vector1< ResidueTypeOP > convert_to_ResidueTypes( utility::vector1< MolFileIOMoleculeOP > molfile_data,
-			bool load_rotamers,
-			AtomTypeSetCOP atom_types,
-			ElementSetCOP element_types,
-			MMAtomTypeSetCOP mm_atom_types);
+	bool load_rotamers,
+	AtomTypeSetCOP atom_types,
+	ElementSetCOP element_types,
+	MMAtomTypeSetCOP mm_atom_types);
 
 
 }

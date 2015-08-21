@@ -78,12 +78,12 @@ Coulomb::initialize() {
 	//no_dis_dep_die_ = false;
 
 	C0_ = 322.0637 ;
-	if( sigmoidal_die_ ) {
+	if ( sigmoidal_die_ ) {
 		C1_ = C0_ ;
 		C2_ = C1_ / (max_dis_*sigmoid_eps (max_dis_));
 		min_dis_score_ = C1_ / (min_dis_*sigmoid_eps (min_dis_)) - C2_ ;
 		dEfac_ = -1.0 * C0_ ;
-	} else if( no_dis_dep_die_ ) {
+	} else if ( no_dis_dep_die_ ) {
 		C1_ = C0_ / die_ ;
 		C2_ = C1_ / max_dis_ ;
 		min_dis_score_ = C1_ / min_dis_ - C2_ ;
@@ -106,7 +106,7 @@ Coulomb::initialize() {
 			using namespace numeric::interpolation::spline;
 			Real low_poly_end_score(0.0), low_poly_end_deriv(0.0);
 
-			if( sigmoidal_die_ ) {
+			if ( sigmoidal_die_ ) {
 				Real eps_low = sigmoid_eps (low_poly_end_);
 				Real deps_low = sigmoid_deps_dr (low_poly_end_);
 				low_poly_end_score = C1_ / (low_poly_end_*eps_low) - C2_;
@@ -143,7 +143,7 @@ Coulomb::initialize() {
 		{
 			using namespace numeric::interpolation::spline;
 			Real hi_poly_start_score(0.0), hi_poly_start_deriv(0.0);
-			if( sigmoidal_die_ ) {
+			if ( sigmoidal_die_ ) {
 				Real eps_hi = sigmoid_eps (hi_poly_start_);
 				Real deps_hi = sigmoid_deps_dr (hi_poly_start_);
 				hi_poly_start_score = C1_ / (hi_poly_start_*eps_hi) - C2_;

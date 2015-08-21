@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/TensorsOptimizer.cc
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890
- ///
- /// @authorv Christophe Schmitz , Kala Bharath Pilla
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/TensorsOptimizer.cc
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890
+///
+/// @authorv Christophe Schmitz , Kala Bharath Pilla
+///
+////////////////////////////////////////////////
 
 
 // Unit headers
@@ -49,10 +49,10 @@
 #include <sstream>
 #include <iostream>
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcsTs3{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcsTs3 {
 
 static thread_local basic::Tracer TR_tsr_opt_Ts3( "protocols.scoring.methods.pcsTs3.TensorsOptimizer_Ts3" );
 
@@ -75,7 +75,7 @@ TensorsOptimizer_Ts3::operator ()( core::optimization::Multivec const & vars ) c
 	score = 0;
 	n_la = pcs_d_.get_n_lanthanides();
 
-	if(n_la != (vars.size() - 3) / 5){
+	if ( n_la != (vars.size() - 3) / 5 ) {
 		TR_tsr_opt_Ts3 << "n_la: " << n_la << " (vars.size() - 3) / 5):" << (vars.size() - 3) / 5 << " vars.size(): " << vars.size() <<std::endl;
 		utility_exit_with_message("The number of lanthanides is inconsistent with the derivatives size of vars");
 	}
@@ -87,15 +87,15 @@ TensorsOptimizer_Ts3::operator ()( core::optimization::Multivec const & vars ) c
 
 	const utility::vector1<PCS_data_per_lanthanides_Ts3> & pcs_d_p_l_a(pcs_d_.get_pcs_data_per_lanthanides_all());
 
-  const utility::vector1<core::Real> & X_all(pcs_d_.get_X_all());
-  const utility::vector1<core::Real> & Y_all(pcs_d_.get_Y_all());
-  const utility::vector1<core::Real> & Z_all(pcs_d_.get_Z_all());
+	const utility::vector1<core::Real> & X_all(pcs_d_.get_X_all());
+	const utility::vector1<core::Real> & Y_all(pcs_d_.get_Y_all());
+	const utility::vector1<core::Real> & Z_all(pcs_d_.get_Z_all());
 
-	if(n_la != pcs_d_p_l_a.size()){
+	if ( n_la != pcs_d_p_l_a.size() ) {
 		utility_exit_with_message("The number of lanthanides is inconsistent");
 	}
 
-	for (i = 1; i <= n_la; i++){
+	for ( i = 1; i <= n_la; i++ ) {
 		core::Real Xxx(vars[3 + 5*(i-1) + 1]);
 		core::Real Xxy(vars[3 + 5*(i-1) + 2]);
 		core::Real Xxz(vars[3 + 5*(i-1) + 3]);
@@ -109,9 +109,9 @@ TensorsOptimizer_Ts3::operator ()( core::optimization::Multivec const & vars ) c
 		core::Real weight(pcs_d_p_l.get_weight());
 		n_pcs = pcs_d_p_l.get_n_pcs();
 
-		//		std::cerr << weight << " applyed to minimization" << std::endl;
+		//  std::cerr << weight << " applyed to minimization" << std::endl;
 		score_la = 0;
-		for (j = 1; j <= n_pcs; j++){
+		for ( j = 1; j <= n_pcs; j++ ) {
 			idx = A_index[j]; //index on the vector X_all_, Y_all_, Z_all_
 			x = X_all[idx];
 			y = Y_all[idx];
@@ -124,13 +124,13 @@ TensorsOptimizer_Ts3::operator ()( core::optimization::Multivec const & vars ) c
 		score += score_la * weight / pcs_d_p_l.get_normalization_factor() / pcs_d_p_l.get_normalization_factor();
 	}
 
-  return(sqrt(score));
+	return(sqrt(score));
 }
 
 void
 TensorsOptimizer_Ts3::dfunc(core::optimization::Multivec const & vars,
-												core::optimization::Multivec & dE_dvars
-												) const{
+	core::optimization::Multivec & dE_dvars
+) const{
 	core::Size i, j, k, idx;
 	core::Size n_la, n_pcs;
 	core::Real x, y, z, xS, yS, zS;
@@ -141,12 +141,12 @@ TensorsOptimizer_Ts3::dfunc(core::optimization::Multivec const & vars,
 
 	n_la = pcs_d_.get_n_lanthanides();
 
-	if(n_la != (dE_dvars.size() - 3) / 5){
+	if ( n_la != (dE_dvars.size() - 3) / 5 ) {
 		utility_exit_with_message("The number of lanthanides is inconsistent with the derivativessize of dE_dvars");
 	}
 
 	//lets' init everyone to zero because we are going to use +=
-	for (i = 1; i <= dE_dvars.size(); i++){
+	for ( i = 1; i <= dE_dvars.size(); i++ ) {
 		dE_dvars[i] = 0;
 	}
 
@@ -157,15 +157,15 @@ TensorsOptimizer_Ts3::dfunc(core::optimization::Multivec const & vars,
 
 	const utility::vector1<PCS_data_per_lanthanides_Ts3> & pcs_d_p_l_a(pcs_d_.get_pcs_data_per_lanthanides_all());
 
-  const utility::vector1<core::Real> & X_all(pcs_d_.get_X_all());
-  const utility::vector1<core::Real> & Y_all(pcs_d_.get_Y_all());
-  const utility::vector1<core::Real> & Z_all(pcs_d_.get_Z_all());
+	const utility::vector1<core::Real> & X_all(pcs_d_.get_X_all());
+	const utility::vector1<core::Real> & Y_all(pcs_d_.get_Y_all());
+	const utility::vector1<core::Real> & Z_all(pcs_d_.get_Z_all());
 
-	if(n_la != pcs_d_p_l_a.size()){
+	if ( n_la != pcs_d_p_l_a.size() ) {
 		utility_exit_with_message("The number of lanthanides is inconsistent");
 	}
 
-	for (i = 1; i <= n_la; i++){
+	for ( i = 1; i <= n_la; i++ ) {
 		core::Real Xxx(vars[3 + 5*(i-1) + 1]);
 		core::Real Xxy(vars[3 + 5*(i-1) + 2]);
 		core::Real Xxz(vars[3 + 5*(i-1) + 3]);
@@ -178,7 +178,7 @@ TensorsOptimizer_Ts3::dfunc(core::optimization::Multivec const & vars,
 
 		core::Real weight(pcs_d_p_l.get_weight());
 		n_pcs = pcs_d_p_l.get_n_pcs();
-		for (j = 1; j <= n_pcs; j++){
+		for ( j = 1; j <= n_pcs; j++ ) {
 			idx = A_index[j]; //index on the vector X_all_, Y_all_, Z_all_
 			xS = X_all[idx];
 			yS = Y_all[idx];
@@ -189,7 +189,7 @@ TensorsOptimizer_Ts3::dfunc(core::optimization::Multivec const & vars,
 			common = 2 * (PCS_calc - PCS_exp) * weight;
 
 			//This is for the derivatve of Xxx, Xxy, Xxz, Xyy, Xyz
-			for (k = 1; k <= 5; k++){
+			for ( k = 1; k <= 5; k++ ) {
 				dE_dvars[3 + 5*(i-1) + k] += common * A[k];
 			}
 

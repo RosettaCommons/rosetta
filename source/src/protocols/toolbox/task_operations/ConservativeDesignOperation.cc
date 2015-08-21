@@ -30,7 +30,7 @@ static thread_local basic::Tracer TR( "protocols.toolbox.task_operations.Conserv
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
-	using utility::vector1;
+using utility::vector1;
 
 ConservativeDesignOperation::ConservativeDesignOperation() : core::pack::task::operation::TaskOperation(){
 	set_defaults();
@@ -64,16 +64,15 @@ void
 ConservativeDesignOperation::set_data_source(std::string const data_source) {
 
 	std::string original_data_source = data_source_;
-	if (data_source == "chothia_1976"){
+	if ( data_source == "chothia_1976" ) {
 		data_source_ = data_source;
-	}
-	else{
+	} else {
 		std::string data_source_copy = data_source;
-		 boost::to_upper(data_source_copy);
+		boost::to_upper(data_source_copy);
 		data_source_ = data_source_copy;
 	}
 
-	if ( original_data_source != data_source_){
+	if ( original_data_source != data_source_ ) {
 		load_data_from_db();
 	}
 }
@@ -148,19 +147,19 @@ ConservativeDesignOperation::load_data_from_db() {
 
 	std::string base_statement =
 		"SELECT \n"
-		"	id,\n"
-		"	aa\n"
+		"\tid,\n"
+		"\taa\n"
 		"FROM \n"
-		"	conservation\n"
+		"\tconservation\n"
 		"WHERE\n"
-		"	data_source = ?;";
+		"\tdata_source = ?;";
 
 	cppdb::statement select_statement(basic::database::safely_prepare_statement(base_statement, session));
 	select_statement.bind(1, data_source_);
 
 	cppdb::result amino_result(basic::database::safely_read_from_database(select_statement));
 
-	while(amino_result.next()){
+	while ( amino_result.next() ) {
 		core::Size aa_index;
 		std::string conserved_aminos;
 		amino_result >> aa_index >> conserved_aminos;
@@ -168,7 +167,7 @@ ConservativeDesignOperation::load_data_from_db() {
 		vector1<char> conserved_char(conserved_aminos.begin(), conserved_aminos.end());
 		vector1<bool> allowed_aminos(20, false);
 
-		for (core::Size i = 1; i<= conserved_char.size(); ++i){
+		for ( core::Size i = 1; i<= conserved_char.size(); ++i ) {
 			core::chemical::AA  amino = core::chemical::aa_from_oneletter_code(conserved_char[ i ]);
 			//TR <<"enabling " << i << " " << conserved_char[ i ] <<std::endl;
 			allowed_aminos[amino] = true;
@@ -181,19 +180,19 @@ void
 ConservativeDesignOperation::apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const {
 
 	vector1< bool > design_positions = task.designing_residues();
-	for (core::Size i = 1; i <=pose.total_residue(); ++i){
+	for ( core::Size i = 1; i <=pose.total_residue(); ++i ) {
 
 
 		//If its not a design position or the residue doesn't exist in set positions, keep going
 		std::string seq = pose_sequence_;
-		if (pose_sequence_.empty()){
+		if ( pose_sequence_.empty() ) {
 			seq = pose.sequence();
 		}
 
-		if (! design_positions[i] || (! positions_.empty() && std::find(positions_.begin(), positions_.end(), i) == positions_.end() ) ){continue;}
+		if ( ! design_positions[i] || (! positions_.empty() && std::find(positions_.begin(), positions_.end(), i) == positions_.end() ) ) { continue;}
 
 		//Skip any unrecognized residues
-		if (! core::chemical::oneletter_code_specifies_aa(seq[i-1])){ continue; };
+		if ( ! core::chemical::oneletter_code_specifies_aa(seq[i-1]) ) { continue; };
 
 		//task.nonconst_residue_task(i).get_original_residue()
 		//TR << "Using conservative mutations for position: " << i << std::endl;
@@ -202,20 +201,19 @@ ConservativeDesignOperation::apply(core::pose::Pose const & pose, core::pack::ta
 		vector1<bool> allowed_aminos = conserved_mutations_[native_amino];
 
 		//TR<< utility::to_string(allowed_aminos) << std::endl;
-		if (include_native_aa_){
+		if ( include_native_aa_ ) {
 			allowed_aminos[native_amino] = true;
 		}
 
 		//Add the residues to the allowed list in task, or replace it.
-		if (add_to_allowed_aas_){
-			for (core::Size aa_num = 1; aa_num <= 20; ++aa_num){
+		if ( add_to_allowed_aas_ ) {
+			for ( core::Size aa_num = 1; aa_num <= 20; ++aa_num ) {
 				core::chemical::AA amino = static_cast<core::chemical::AA>(aa_num);
-				if (allowed_aminos[aa_num]){
+				if ( allowed_aminos[aa_num] ) {
 					task.nonconst_residue_task(i).allow_aa(amino);
 				}
 			}
-		}
-		else{
+		} else {
 			task.nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aminos);
 		}
 		//task.show_residue_task(std::cout, i);

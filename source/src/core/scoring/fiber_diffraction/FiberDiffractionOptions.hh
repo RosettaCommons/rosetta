@@ -45,7 +45,7 @@ public:
 		std::string const & name,
 		Real c,
 		Real res_cutoff_high,
-  	Real res_cutoff_low );
+		Real res_cutoff_low );
 
 	FiberDiffractionOptions(
 		FiberDiffractionOptions const & src);
@@ -54,23 +54,23 @@ public:
 
 	Real get_res_high() const;
 
-  void set_res_high( Real res_cutoff_high_ );
+	void set_res_high( Real res_cutoff_high_ );
 
-  Real get_res_low() const;
+	Real get_res_low() const;
 
-  void set_res_low( Real res_cutoff_low_ );
+	void set_res_low( Real res_cutoff_low_ );
 
 	Real get_c_repeat() const;
 
-  void set_c_repeat( Real c_ );
+	void set_c_repeat( Real c_ );
 
 
 public: // The ResourceOptions public interface
 	virtual
-  void
-  parse_my_tag(
-    utility::tag::TagCOP tag
-  );	
+	void
+	parse_my_tag(
+		utility::tag::TagCOP tag
+	);
 
 	/// @brief The class name for a particular ResourceOptions instance.
 	/// This function allows for better error message delivery

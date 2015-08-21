@@ -75,7 +75,7 @@ public:
 
 	/// @brief create File data structure from string containing PDB information and a set of options.
 	static FileData createFileData(const String & data, PDB_DReaderOptions const & options);
-	
+
 	/// @brief create PDB-like string to represent given FileData object
 	static String createPDBData(FileData const &fd);
 

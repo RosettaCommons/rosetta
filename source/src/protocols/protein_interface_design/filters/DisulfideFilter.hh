@@ -41,19 +41,19 @@ namespace protein_interface_design {
 namespace filters {
 
 /**
- * @brief Filters for structures which could form a disulfide bond across the
- * docking interface.
- *
- * @details Use this filter when you are trying to design one docking member
- * so that it forms a disulfide bond to one or more target residues of the other
- * docking partner. The filter does not consider the indentities of the residues
- * involved, only their Cb position.
- *
- * This filter only applies to centroid poses. Calling it with a full atom pose
- * will result in everything failing.
- *
- * @author Spencer Bliven <blivens@u.washington.edu>
- */
+* @brief Filters for structures which could form a disulfide bond across the
+* docking interface.
+*
+* @details Use this filter when you are trying to design one docking member
+* so that it forms a disulfide bond to one or more target residues of the other
+* docking partner. The filter does not consider the indentities of the residues
+* involved, only their Cb position.
+*
+* This filter only applies to centroid poses. Calling it with a full atom pose
+* will result in everything failing.
+*
+* @author Spencer Bliven <blivens@u.washington.edu>
+*/
 class DisulfideFilter : public protocols::filters::Filter
 {
 private:

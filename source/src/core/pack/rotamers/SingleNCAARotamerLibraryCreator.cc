@@ -62,11 +62,11 @@ SingleNCAARotamerLibraryCreator::create( core::chemical::ResidueType const & res
 	// Some basic error checking against restype
 	Size pose_n_rotlib_chi( restype.nchi() - restype.n_proton_chi() - ( dun02 ? 0 : 1 ) );
 	Size n_rotlib_chi( ncaa_libspec->ncaa_rotlib_n_rotameric_bins() );
-	if( n_rotlib_chi != pose_n_rotlib_chi ) {
+	if ( n_rotlib_chi != pose_n_rotlib_chi ) {
 		TR.Error << "Number of chi mismatch. Expected " << n_rotlib_chi << " rotatable heavy atom chis, found " << pose_n_rotlib_chi << std::endl;
 		utility_exit_with_message("Number of chi mismatch in NCAA rotlib loading.");
 	}
-	if( restype.aa() != aan ) {
+	if ( restype.aa() != aan ) {
 		TR.Warning << "WARNING: AA designation " << restype.aa() << " for NCAA rotamer library will not be obseved." << std::endl;
 	}
 
@@ -94,7 +94,7 @@ SingleNCAARotamerLibraryCreator::create( core::chemical::ResidueType const & res
 	std::string dir_name = basic::database::full_name( "/rotamer/ncaa_rotlibs/" );
 	// trust the params file to correctly name the rotamer library even if it's densities format
 	std::string file_name = ncaa_libspec->ncaa_rotlib_path();
-	if( ! file_name.size() ) {
+	if ( ! file_name.size() ) {
 		utility_exit_with_message("Unspecified NCAA rotlib path with residue type " + restype.name() );
 	}
 	std::string full_path = dir_name + file_name;
@@ -142,307 +142,307 @@ SingleNCAARotamerLibraryCreator::create( core::chemical::ResidueType const & res
 		// because in the canonicals that's how many semirotameric rotlib chi we have
 		// so stick to that for now...
 		switch ( n_rotlib_chi ) {
-			case 1: {
-				switch ( n_rotlib_bb ) {
-					case 1: {
-						SemiRotamericSingleResidueDunbrackLibrary< ONE, ONE > * r1 =
-						new SemiRotamericSingleResidueDunbrackLibrary< ONE, ONE >( aan, false, false );
-						r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-						initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
-						ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-						break;
-					}
-					case 2: {
-						SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO > * r1 =
-						new SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO >( aan, false, false );
-						r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-						initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
-						ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-						break;
-					}
-					case 3: {
-						SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE > * r1 =
-						new SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE >( aan, false, false );
-						r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-						initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
-						ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-						break;
-					}
-					case 4: {
-						SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR > * r1 =
-						new SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR >( aan, false, false );
-						r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-						initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
-						ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-						break;
-					}
-					case 5: {
-						SemiRotamericSingleResidueDunbrackLibrary< ONE, FIVE > * r1 =
-						new SemiRotamericSingleResidueDunbrackLibrary< ONE, FIVE >( aan, false, false );
-						r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-						initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
-						ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-						break;
-					}
-					default:
-						utility_exit_with_message( "ERROR: too many bb angles desired for NCAA library: " +
-												  boost::lexical_cast<std::string>(n_rotlib_bb) );
-						break;
-				}
-
-			} break;
-			case 2: {
-				switch ( n_rotlib_bb ) {
-					case 1: {
-						SemiRotamericSingleResidueDunbrackLibrary< TWO, ONE > * r1 =
-						new SemiRotamericSingleResidueDunbrackLibrary< TWO, ONE >( aan, false, false );
-						r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-						initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
-						ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-						break;
-					}
-					case 2: {
-						SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO > * r1 =
-						new SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO >( aan, false, false );
-						r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-						initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
-						ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-						break;
-					}
-					case 3: {
-						SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE > * r1 =
-						new SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE >( aan, false, false );
-						r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-						initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
-						ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-						break;
-					}
-					case 4: {
-						SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR > * r1 =
-						new SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR >( aan, false, false );
-						r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-						initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
-						ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-						break;
-					}
-					case 5: {
-						SemiRotamericSingleResidueDunbrackLibrary< TWO, FIVE > * r1 =
-						new SemiRotamericSingleResidueDunbrackLibrary< TWO, FIVE >( aan, false, false );
-						r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-						initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
-						ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-						break;
-					}
-					default:
-						utility_exit_with_message( "ERROR: too many bb angles desired for semirotameric NCAA library: " +
-												  boost::lexical_cast<std::string>(n_rotlib_bb) );
-						break;
-				}
-			} break;
-			default:
-				utility_exit_with_message( "ERROR: too many chi angles desired for semirotameric NCAA library: " +
-										  boost::lexical_cast<std::string>(n_rotlib_chi) );
+		case 1 : {
+			switch ( n_rotlib_bb ) {
+			case 1 : {
+				SemiRotamericSingleResidueDunbrackLibrary< ONE, ONE > * r1 =
+					new SemiRotamericSingleResidueDunbrackLibrary< ONE, ONE >( aan, false, false );
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
 				break;
+			}
+			case 2 : {
+				SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO > * r1 =
+					new SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO >( aan, false, false );
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			case 3 : {
+				SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE > * r1 =
+					new SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE >( aan, false, false );
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			case 4 : {
+				SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR > * r1 =
+					new SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR >( aan, false, false );
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			case 5 : {
+				SemiRotamericSingleResidueDunbrackLibrary< ONE, FIVE > * r1 =
+					new SemiRotamericSingleResidueDunbrackLibrary< ONE, FIVE >( aan, false, false );
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			default :
+				utility_exit_with_message( "ERROR: too many bb angles desired for NCAA library: " +
+					boost::lexical_cast<std::string>(n_rotlib_bb) );
+				break;
+			}
+
+		} break;
+		case 2 : {
+			switch ( n_rotlib_bb ) {
+			case 1 : {
+				SemiRotamericSingleResidueDunbrackLibrary< TWO, ONE > * r1 =
+					new SemiRotamericSingleResidueDunbrackLibrary< TWO, ONE >( aan, false, false );
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			case 2 : {
+				SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO > * r1 =
+					new SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO >( aan, false, false );
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			case 3 : {
+				SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE > * r1 =
+					new SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE >( aan, false, false );
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			case 4 : {
+				SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR > * r1 =
+					new SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR >( aan, false, false );
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			case 5 : {
+				SemiRotamericSingleResidueDunbrackLibrary< TWO, FIVE > * r1 =
+					new SemiRotamericSingleResidueDunbrackLibrary< TWO, FIVE >( aan, false, false );
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle, defstream, rotlib_in, densstream );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			default :
+				utility_exit_with_message( "ERROR: too many bb angles desired for semirotameric NCAA library: " +
+					boost::lexical_cast<std::string>(n_rotlib_bb) );
+				break;
+			}
+		} break;
+		default :
+			utility_exit_with_message( "ERROR: too many chi angles desired for semirotameric NCAA library: " +
+				boost::lexical_cast<std::string>(n_rotlib_chi) );
+			break;
 		}
 	} else {
 		// dun02 style
 		switch ( n_rotlib_chi ) {
-		case 1: {
+		case 1 : {
 			switch ( n_rotlib_bb ) {
-				case 1: {
-					RotamericSingleResidueDunbrackLibrary< ONE, ONE > * r1 =
+			case 1 : {
+				RotamericSingleResidueDunbrackLibrary< ONE, ONE > * r1 =
 					new RotamericSingleResidueDunbrackLibrary< ONE, ONE >( aan, dun02 );
-					r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-					r1->read_from_file( rotlib_in, false );
-					ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-					break;
-				}
-				case 2: {
-					RotamericSingleResidueDunbrackLibrary< ONE, TWO > * r1 =
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				r1->read_from_file( rotlib_in, false );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			case 2 : {
+				RotamericSingleResidueDunbrackLibrary< ONE, TWO > * r1 =
 					new RotamericSingleResidueDunbrackLibrary< ONE, TWO >( aan, dun02 );
-					r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-					r1->read_from_file( rotlib_in, false );
-					ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-					break;
-				}
-				case 3: {
-					RotamericSingleResidueDunbrackLibrary< ONE, THREE > * r1 =
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				r1->read_from_file( rotlib_in, false );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			case 3 : {
+				RotamericSingleResidueDunbrackLibrary< ONE, THREE > * r1 =
 					new RotamericSingleResidueDunbrackLibrary< ONE, THREE >( aan, dun02 );
-					r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-					r1->read_from_file( rotlib_in, false );
-					ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-					break;
-				}
-				case 4: {
-					RotamericSingleResidueDunbrackLibrary< ONE, FOUR > * r1 =
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				r1->read_from_file( rotlib_in, false );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			case 4 : {
+				RotamericSingleResidueDunbrackLibrary< ONE, FOUR > * r1 =
 					new RotamericSingleResidueDunbrackLibrary< ONE, FOUR >( aan, dun02 );
-					r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-					r1->read_from_file( rotlib_in, false );
-					ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-					break;
-				}
-				case 5: {
-					RotamericSingleResidueDunbrackLibrary< ONE, FIVE > * r1 =
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				r1->read_from_file( rotlib_in, false );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			case 5 : {
+				RotamericSingleResidueDunbrackLibrary< ONE, FIVE > * r1 =
 					new RotamericSingleResidueDunbrackLibrary< ONE, FIVE >( aan, dun02 );
-					r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-					r1->read_from_file( rotlib_in, false );
-					ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-					break;
-				}
-				default:
-					utility_exit_with_message( "ERROR: too many bb angles desired for NCAA library: " +
-											  boost::lexical_cast<std::string>(n_rotlib_bb) );
-					break;
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				r1->read_from_file( rotlib_in, false );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			default :
+				utility_exit_with_message( "ERROR: too many bb angles desired for NCAA library: " +
+					boost::lexical_cast<std::string>(n_rotlib_bb) );
+				break;
 			}
 
 		} break;
-		case 2: {
+		case 2 : {
 			switch ( n_rotlib_bb ) {
-				case 1: {
-					RotamericSingleResidueDunbrackLibrary< TWO, ONE > * r1 =
+			case 1 : {
+				RotamericSingleResidueDunbrackLibrary< TWO, ONE > * r1 =
 					new RotamericSingleResidueDunbrackLibrary< TWO, ONE >( aan, dun02 );
-					r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-					r1->read_from_file( rotlib_in, false );
-					ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-					break;
-				}
-				case 2: {
-					RotamericSingleResidueDunbrackLibrary< TWO, TWO > * r1 =
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				r1->read_from_file( rotlib_in, false );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			case 2 : {
+				RotamericSingleResidueDunbrackLibrary< TWO, TWO > * r1 =
 					new RotamericSingleResidueDunbrackLibrary< TWO, TWO >( aan, dun02 );
-					r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-					r1->read_from_file( rotlib_in, false );
-					ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-					break;
-				}
-				case 3: {
-					RotamericSingleResidueDunbrackLibrary< TWO, THREE > * r1 =
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				r1->read_from_file( rotlib_in, false );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			case 3 : {
+				RotamericSingleResidueDunbrackLibrary< TWO, THREE > * r1 =
 					new RotamericSingleResidueDunbrackLibrary< TWO, THREE >( aan, dun02 );
-					r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-					r1->read_from_file( rotlib_in, false );
-					ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-					break;
-				}
-				case 4: {
-					RotamericSingleResidueDunbrackLibrary< TWO, FOUR > * r1 =
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				r1->read_from_file( rotlib_in, false );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			case 4 : {
+				RotamericSingleResidueDunbrackLibrary< TWO, FOUR > * r1 =
 					new RotamericSingleResidueDunbrackLibrary< TWO, FOUR >( aan, dun02 );
-					r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-					r1->read_from_file( rotlib_in, false );
-					ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-					break;
-				}
-				case 5: {
-					RotamericSingleResidueDunbrackLibrary< TWO, FIVE > * r1 =
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				r1->read_from_file( rotlib_in, false );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			case 5 : {
+				RotamericSingleResidueDunbrackLibrary< TWO, FIVE > * r1 =
 					new RotamericSingleResidueDunbrackLibrary< TWO, FIVE >( aan, dun02 );
-					r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-					r1->read_from_file( rotlib_in, false );
-					ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-					break;
-				}
-				default:
-					utility_exit_with_message( "ERROR: too many bb angles desired for NCAA library: " +
-											  boost::lexical_cast<std::string>(n_rotlib_bb) );
-					break;
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				r1->read_from_file( rotlib_in, false );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			default :
+				utility_exit_with_message( "ERROR: too many bb angles desired for NCAA library: " +
+					boost::lexical_cast<std::string>(n_rotlib_bb) );
+				break;
 			}
 		} break;
-		case 3: {
+		case 3 : {
 			switch ( n_rotlib_bb ) {
-				case 1: {
-					RotamericSingleResidueDunbrackLibrary< THREE, ONE > * r1 =
+			case 1 : {
+				RotamericSingleResidueDunbrackLibrary< THREE, ONE > * r1 =
 					new RotamericSingleResidueDunbrackLibrary< THREE, ONE >( aan, dun02 );
-					r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-					r1->read_from_file( rotlib_in, false );
-					ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-					break;
-				}
-				case 2: {
-					RotamericSingleResidueDunbrackLibrary< THREE, TWO > * r1 =
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				r1->read_from_file( rotlib_in, false );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			case 2 : {
+				RotamericSingleResidueDunbrackLibrary< THREE, TWO > * r1 =
 					new RotamericSingleResidueDunbrackLibrary< THREE, TWO >( aan, dun02 );
-					r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-					r1->read_from_file( rotlib_in, false );
-					ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-					break;
-				}
-				case 3: {
-					RotamericSingleResidueDunbrackLibrary< THREE, THREE > * r1 =
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				r1->read_from_file( rotlib_in, false );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			case 3 : {
+				RotamericSingleResidueDunbrackLibrary< THREE, THREE > * r1 =
 					new RotamericSingleResidueDunbrackLibrary< THREE, THREE >( aan, dun02 );
-					r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-					r1->read_from_file( rotlib_in, false );
-					ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-					break;
-				}
-				case 4: {
-					RotamericSingleResidueDunbrackLibrary< THREE, FOUR > * r1 =
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				r1->read_from_file( rotlib_in, false );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			case 4 : {
+				RotamericSingleResidueDunbrackLibrary< THREE, FOUR > * r1 =
 					new RotamericSingleResidueDunbrackLibrary< THREE, FOUR >( aan, dun02 );
-					r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-					r1->read_from_file( rotlib_in, false );
-					ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-					break;
-				}
-				case 5: {
-					RotamericSingleResidueDunbrackLibrary< THREE, FIVE > * r1 =
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				r1->read_from_file( rotlib_in, false );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			case 5 : {
+				RotamericSingleResidueDunbrackLibrary< THREE, FIVE > * r1 =
 					new RotamericSingleResidueDunbrackLibrary< THREE, FIVE >( aan, dun02 );
-					r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-					r1->read_from_file( rotlib_in, false );
-					ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-					break;
-				}
-				default:
-					utility_exit_with_message( "ERROR: too many bb angles desired for NCAA library: " +
-											  boost::lexical_cast<std::string>(n_rotlib_bb) );
-					break;
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				r1->read_from_file( rotlib_in, false );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			default :
+				utility_exit_with_message( "ERROR: too many bb angles desired for NCAA library: " +
+					boost::lexical_cast<std::string>(n_rotlib_bb) );
+				break;
 			};
 		} break;
-		case 4: {
+		case 4 : {
 			switch ( n_rotlib_bb ) {
-				case 1: {
-					RotamericSingleResidueDunbrackLibrary< FOUR, ONE > * r1 =
+			case 1 : {
+				RotamericSingleResidueDunbrackLibrary< FOUR, ONE > * r1 =
 					new RotamericSingleResidueDunbrackLibrary< FOUR, ONE >( aan, dun02 );
-					r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-					r1->read_from_file( rotlib_in, false );
-					ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-					break;
-				}
-				case 2: {
-					RotamericSingleResidueDunbrackLibrary< FOUR, TWO > * r1 =
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				r1->read_from_file( rotlib_in, false );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			case 2 : {
+				RotamericSingleResidueDunbrackLibrary< FOUR, TWO > * r1 =
 					new RotamericSingleResidueDunbrackLibrary< FOUR, TWO >( aan, dun02 );
-					r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-					r1->read_from_file( rotlib_in, false );
-					ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-					break;
-				}
-				case 3: {
-					RotamericSingleResidueDunbrackLibrary< FOUR, THREE > * r1 =
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				r1->read_from_file( rotlib_in, false );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			case 3 : {
+				RotamericSingleResidueDunbrackLibrary< FOUR, THREE > * r1 =
 					new RotamericSingleResidueDunbrackLibrary< FOUR, THREE >( aan, dun02 );
-					r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-					r1->read_from_file( rotlib_in, false );
-					ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-					break;
-				}
-				case 4: {
-					RotamericSingleResidueDunbrackLibrary< FOUR, FOUR > * r1 =
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				r1->read_from_file( rotlib_in, false );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			case 4 : {
+				RotamericSingleResidueDunbrackLibrary< FOUR, FOUR > * r1 =
 					new RotamericSingleResidueDunbrackLibrary< FOUR, FOUR >( aan, dun02 );
-					r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-					r1->read_from_file( rotlib_in, false );
-					ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-					break;
-				}
-				case 5: {
-					RotamericSingleResidueDunbrackLibrary< FOUR, FIVE > * r1 =
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				r1->read_from_file( rotlib_in, false );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			case 5 : {
+				RotamericSingleResidueDunbrackLibrary< FOUR, FIVE > * r1 =
 					new RotamericSingleResidueDunbrackLibrary< FOUR, FIVE >( aan, dun02 );
-					r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-					r1->read_from_file( rotlib_in, false );
-					ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
-					break;
-				}
-				default:
-					utility_exit_with_message( "ERROR: too many bb angles desired for NCAA library: " +
-											  boost::lexical_cast<std::string>(n_rotlib_bb) );
-					break;
+				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
+				r1->read_from_file( rotlib_in, false );
+				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
+				break;
+			}
+			default :
+				utility_exit_with_message( "ERROR: too many bb angles desired for NCAA library: " +
+					boost::lexical_cast<std::string>(n_rotlib_bb) );
+				break;
 			}
 		} break;
-		default:
+		default :
 			utility_exit_with_message( "ERROR: too many chi angles desired for NCAA library: " +
-					boost::lexical_cast<std::string>(n_rotlib_chi) );
+				boost::lexical_cast<std::string>(n_rotlib_chi) );
 			break;
 		}
 	}

@@ -55,7 +55,7 @@ using namespace core;
 void TopologyClaimer::initialize_dofs( core::pose::Pose&, claims::DofClaims const& init_dofs, claims::DofClaims& failed_to_init ) {
 	claims::DofClaims my_claims;
 	for ( claims::DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
-				it != eit; ++it ) {
+			it != eit; ++it ) {
 		if ( (*it)->owner().lock().get() == this ) {
 			my_claims.push_back( *it );
 		}
@@ -67,17 +67,17 @@ void TopologyClaimer::initialize_dofs( core::pose::Pose&, claims::DofClaims cons
 }
 
 /*void TopologyClaimer::initialize_residues( core::pose::Pose&, claims::SequenceClaimOP init_claim, claims::DofClaims& failed_to_init ) {
-	runtime_assert( init_claim->owner()==this );
-	failed_to_init.push_back( init_claim );
-	tr.Warning << "[WARNING]" << type() << "did not initialize residues as requested for claim..." << *init_claim << std::endl;
+runtime_assert( init_claim->owner()==this );
+failed_to_init.push_back( init_claim );
+tr.Warning << "[WARNING]" << type() << "did not initialize residues as requested for claim..." << *init_claim << std::endl;
 }*/
 
 void TopologyClaimer::add_mover(
-  	moves::RandomMover& random_mover,
-		core::pose::Pose const& pose,
-		abinitio::StageID stageID, /* abinitio sampler stage */
-		core::scoring::ScoreFunction const& /*scorefxn*/, /* scorefxn of this stage */
-		core::Real progress /* progress within stage */
+	moves::RandomMover& random_mover,
+	core::pose::Pose const& pose,
+	abinitio::StageID stageID, /* abinitio sampler stage */
+	core::scoring::ScoreFunction const& /*scorefxn*/, /* scorefxn of this stage */
+	core::Real progress /* progress within stage */
 ) {
 	moves::MoverOP mover = get_mover( pose );
 	if ( mover ) {
@@ -128,10 +128,10 @@ bool TopologyClaimer::read_tag( std::string tag, std::istream& is ) {
 		return true;
 	}
 
-    std::string arg;
-    is >> arg;
-    tr.Error << "[ERROR]: The tag '" << tag << "' with argument '" << arg << "' was not recognized." << std::endl;
-    return false;
+	std::string arg;
+	is >> arg;
+	tr.Error << "[ERROR]: The tag '" << tag << "' with argument '" << arg << "' was not recognized." << std::endl;
+	return false;
 }
 
 

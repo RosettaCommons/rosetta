@@ -119,12 +119,12 @@ void benchmark_contacts ( pose::Pose const & start_pose, scoring::ScoreFunctionO
 
 	// calculate all interface residues over all jumps
 	utility::vector1< Size > interface( pose.total_residue(), false );
-	for( Size i=1; i<=pose.num_jump(); ++i ) {
+	for ( Size i=1; i<=pose.num_jump(); ++i ) {
 		protocols::scoring::Interface iface( i );
 		iface.distance( 10 );
 		iface.calculate( pose );
-		for( Size n=1; n<=pose.total_residue(); ++n ) {
-			if( iface.is_interface( n ) ) {
+		for ( Size n=1; n<=pose.total_residue(); ++n ) {
+			if ( iface.is_interface( n ) ) {
 				interface[n] = true;
 			}
 		}
@@ -134,17 +134,17 @@ void benchmark_contacts ( pose::Pose const & start_pose, scoring::ScoreFunctionO
 
 	// iterate over all single-chain poses
 	for ( utility::vector1<pose::PoseOP>::iterator target_chain_it = singlechain_poses.begin();
-		  target_chain_it != singlechain_poses.end();
-		  ++target_chain_it ) {
+			target_chain_it != singlechain_poses.end();
+			++target_chain_it ) {
 
-		  //for ( conformation::ResidueOPs::iterator res_it = pose.res_begin();
-			//res_it != pose.res_end();
-			//	++res_it ) {
+		//for ( conformation::ResidueOPs::iterator res_it = pose.res_begin();
+		//res_it != pose.res_end();
+		// ++res_it ) {
 		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 
 			// make a convenience residue to avoid constant double-dereferencing iterator of OP
 			conformation::Residue const & residue =  pose.residue( ii );
-			if( !interface[ residue.seqpos() ] ) continue; // skip if we're not in the interface
+			if ( !interface[ residue.seqpos() ] ) continue; // skip if we're not in the interface
 
 			// avoid self-interactions
 			//if ( res_chain_it == target_chain_it )  continue;
@@ -152,8 +152,8 @@ void benchmark_contacts ( pose::Pose const & start_pose, scoring::ScoreFunctionO
 			// make a new residue for each residue in chain1
 			// we do this for ALL residues (not just interface ones) to avoid rb_jump confusion in poses with >2 chains
 			//for ( conformation::ResidueOPs::iterator res_it = pose->res_begin();
-			//	  res_it != (*res_chain_it)->res_end();
-			//	  ++res_it ) {
+			//   res_it != (*res_chain_it)->res_end();
+			//   ++res_it ) {
 
 			// don't operate on G or C (since we don't consider them as hotspots, anyway)
 			// in the future, can get a HUGE speedup by checking if the residue is at the interface before scoring
@@ -164,9 +164,9 @@ void benchmark_contacts ( pose::Pose const & start_pose, scoring::ScoreFunctionO
 
 			// append the new residue and set its backbone virtual (emulate de novo hashing)
 			(*target_chain_it)->append_residue_by_jump( residue, (*target_chain_it)->total_residue(), "", "", true );
-			if( option[hotspot::sc_only]() ) {
+			if ( option[hotspot::sc_only]() ) {
 				core::pose::add_variant_type_to_pose_residue( **target_chain_it,
-						core::chemical::SHOVE_BB, (*target_chain_it)->total_residue() );
+					core::chemical::SHOVE_BB, (*target_chain_it)->total_residue() );
 			}
 
 			//Size const pdb_seqpos = residue->seqpos() + pose.conformation().chain_begin( chain2 ) - 1;
@@ -200,7 +200,7 @@ void benchmark_contacts ( pose::Pose const & start_pose, scoring::ScoreFunctionO
 			(*target_chain_it)->conformation().delete_residue_slow( placed_seqpos );
 		} // end residue iteration
 	} // end target chain iteration
-//	} // end residue source chain iteration
+	// } // end residue source chain iteration
 	// flush score output
 	TR.flush();
 } // end benchmark_contacts
@@ -211,47 +211,93 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	using namespace scoring;
+		using namespace scoring;
 
-	OPT(hotspot::target);
-	OPT(hotspot::residue);
-	OPT(hotspot::benchmark);
-	OPT(hotspot::hashfile);
-	OPT(hotspot::target_res);
-	OPT(hotspot::target_dist);
-	OPT(hotspot::threshold);
-	OPT(hotspot::sc_only);
-	OPT(out::scorecut);
-	OPT(run::n_cycles);
-	OPT(out::file::o);
-	OPT(out::overwrite);
-	OPT(score::weights);
-	OPT(score::patch);
-	OPT(hotspot::envhb);
-	OPT(hotspot::angle);
-	OPT(hotspot::angle_res);
+		OPT(hotspot::target);
+		OPT(hotspot::residue);
+		OPT(hotspot::benchmark);
+		OPT(hotspot::hashfile);
+		OPT(hotspot::target_res);
+		OPT(hotspot::target_dist);
+		OPT(hotspot::threshold);
+		OPT(hotspot::sc_only);
+		OPT(out::scorecut);
+		OPT(run::n_cycles);
+		OPT(out::file::o);
+		OPT(out::overwrite);
+		OPT(score::weights);
+		OPT(score::patch);
+		OPT(hotspot::envhb);
+		OPT(hotspot::angle);
+		OPT(hotspot::angle_res);
 
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	// turn on extra rotamers for finding good hotspots
-	option[ packing::ex1::ex1 ].value( true );
-	option[ packing::ex2::ex2 ].value( true );
-	option[ packing::extrachi_cutoff ].value( 0 );
-	//option[ docking::fake_native ].value( true );  THIS OPTION IS DEPRECATED
-	option[ docking::randomize1 ].value( true );
-	option[ docking::randomize2 ].value( true );
-	option[ in::file::sucker_params ].value( "scoring/sucker/pusher.params" );
-	option[ OptionKeys::chemical::patch_selectors ].push_back( "SHOVE_BB" ); // CMDLINE_SELECTOR in ShoveBB.txt
+		// turn on extra rotamers for finding good hotspots
+		option[ packing::ex1::ex1 ].value( true );
+		option[ packing::ex2::ex2 ].value( true );
+		option[ packing::extrachi_cutoff ].value( 0 );
+		//option[ docking::fake_native ].value( true );  THIS OPTION IS DEPRECATED
+		option[ docking::randomize1 ].value( true );
+		option[ docking::randomize2 ].value( true );
+		option[ in::file::sucker_params ].value( "scoring/sucker/pusher.params" );
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "SHOVE_BB" ); // CMDLINE_SELECTOR in ShoveBB.txt
 
-	// necessary to make sure NANs in hbonding don't cause an exit
-	option[ in::file::fail_on_bad_hbond ].value( false );
+		// necessary to make sure NANs in hbonding don't cause an exit
+		option[ in::file::fail_on_bad_hbond ].value( false );
 
-	// BENCHMARKING EXISTING COMPLEXES
-	if ( option[ hotspot::benchmark ].user() ) {
+		// BENCHMARKING EXISTING COMPLEXES
+		if ( option[ hotspot::benchmark ].user() ) {
 
+			core::scoring::ScoreFunctionOP scorefxn;
+			if ( option[ score::weights ].user() ) {
+				scorefxn = core::scoring::get_score_function();
+			} else {
+				scorefxn = core::scoring::get_score_function_legacy( "score13" );
+				scorefxn->set_weight( core::scoring::fa_dun, 0.1 );
+				scorefxn->set_weight( core::scoring::envsmooth, 0 );
+			}
+			core::scoring::methods::EnergyMethodOptions options( scorefxn->energy_method_options() );
+			TR << "Setting envinromental hbonds to: " << option[ hotspot::envhb]() << std::endl;
+			options.hbond_options().use_hb_env_dep( option[ hotspot::envhb]() );
+			scorefxn->set_energy_method_options( options );
+
+			// do benchmarking
+			pose::Pose pose;
+			if ( option[in::file::l].user() ) {
+				utility::vector1< std::string > pdbnames = basic::options::start_files() ;
+				for ( utility::vector1<std::string>::iterator filename( pdbnames.begin() );
+						filename != pdbnames.end(); ++filename ) {
+					core::import_pose::pose_from_pdb( pose, *filename );
+					benchmark_contacts( pose, scorefxn );
+				}
+			} else if ( option[in::file::s].user() ) {
+				core::import_pose::pose_from_pdb( pose, basic::options::start_file() );
+				benchmark_contacts( pose, scorefxn );
+
+			} else {
+				utility_exit_with_message( "No files given: Use either -s or -l to designate a single pdb or a list of pdbs" );
+			}
+			return 0;
+		} // BENCHMARKING
+
+
+		// main objects
+		pose::Pose pose;
+		protocols::hotspot_hashing::HotspotStubSet stubset;
+		stubset.sc_only( option[hotspot::sc_only]() );
+
+		// SET VARIABLES BASED ON THE COMMAND LINE
+		// Residues to use for hashing (defaults to all, sans Gly and Pro)
+		utility::vector1< std::string > resnames;
+		if ( option[ hotspot::residue ].user() ) {
+			resnames = option[ hotspot::residue ]();
+		} else resnames.push_back( "ALL" );
+
+		// set scorefunction.
 		core::scoring::ScoreFunctionOP scorefxn;
-		if( option[ score::weights ].user() ) {
+		if ( option[ score::weights ].user() ) {
 			scorefxn = core::scoring::get_score_function();
 		} else {
 			scorefxn = core::scoring::get_score_function_legacy( "score13" );
@@ -263,211 +309,152 @@ main( int argc, char * argv [] )
 		options.hbond_options().use_hb_env_dep( option[ hotspot::envhb]() );
 		scorefxn->set_energy_method_options( options );
 
-		// do benchmarking
-		pose::Pose pose;
-		if ( option[in::file::l].user() ) {
-			utility::vector1< std::string > pdbnames = basic::options::start_files() ;
-			for ( utility::vector1<std::string>::iterator filename( pdbnames.begin() );
-				  filename != pdbnames.end(); ++filename ) {
-				core::import_pose::pose_from_pdb( pose, *filename );
-				benchmark_contacts( pose, scorefxn );
-			}
-		}
-		else if ( option[in::file::s].user() ) {
-			core::import_pose::pose_from_pdb( pose, basic::options::start_file() );
-			benchmark_contacts( pose, scorefxn );
 
+		// number of stubs to find (defalts to 1000)
+		int n_stubs( 1000 ); // must be int, otherwise subtracting causes baaadness
+		if ( option[ run::n_cycles ].user() ) {
+			n_stubs = option[ run::n_cycles ]();
+		}
+
+		// set threshold for finding hotspots (default -1.0)
+		core::Real threshold = option[ hotspot::threshold ]();
+		stubset.score_threshold( threshold );
+
+		// options for hashing against specific areas on the target
+		// defaulting target res to 0 lets us easily test for option setting
+		core::Size target_resnum(0);
+		core::Real target_distance(20.0);
+		if ( option[ hotspot::target_res ].user() ) target_resnum = option[ hotspot::target_res ]();
+		if ( option[ hotspot::target_dist ].user() ) target_distance = option[ hotspot::target_dist ]();
+
+		// read in the pose of our target
+		std::string target_fname;
+		if ( option[hotspot::target].user() ) {
+			target_fname = option[ hotspot::target ]();
+			core::import_pose::pose_from_pdb( pose, target_fname );
 		} else {
-			utility_exit_with_message( "No files given: Use either -s or -l to designate a single pdb or a list of pdbs" );
+			utility_exit_with_message("You must specify a target to hash using -target <filename>");
 		}
-		return 0;
-	} // BENCHMARKING
 
-
-	// main objects
-	pose::Pose pose;
-	protocols::hotspot_hashing::HotspotStubSet stubset;
-	stubset.sc_only( option[hotspot::sc_only]() );
-
-	// SET VARIABLES BASED ON THE COMMAND LINE
-	// Residues to use for hashing (defaults to all, sans Gly and Pro)
-	utility::vector1< std::string > resnames;
-	if (option[ hotspot::residue ].user() ) {
-		resnames = option[ hotspot::residue ]();
-	}
-	else resnames.push_back( "ALL" );
-
-	// set scorefunction.
-	core::scoring::ScoreFunctionOP scorefxn;
-	if( option[ score::weights ].user() ) {
-		scorefxn = core::scoring::get_score_function();
-	} else {
-		scorefxn = core::scoring::get_score_function_legacy( "score13" );
-		scorefxn->set_weight( core::scoring::fa_dun, 0.1 );
-		scorefxn->set_weight( core::scoring::envsmooth, 0 );
-	}
-	core::scoring::methods::EnergyMethodOptions options( scorefxn->energy_method_options() );
-	TR << "Setting envinromental hbonds to: " << option[ hotspot::envhb]() << std::endl;
-	options.hbond_options().use_hb_env_dep( option[ hotspot::envhb]() );
-	scorefxn->set_energy_method_options( options );
-
-
-	// number of stubs to find (defalts to 1000)
-	int n_stubs( 1000 ); // must be int, otherwise subtracting causes baaadness
-	if (option[ run::n_cycles ].user() ) {
-		n_stubs = option[ run::n_cycles ]();
-	}
-
-	// set threshold for finding hotspots (default -1.0)
-	core::Real threshold = option[ hotspot::threshold ]();
-	stubset.score_threshold( threshold );
-
-	// options for hashing against specific areas on the target
-	// defaulting target res to 0 lets us easily test for option setting
-	core::Size target_resnum(0);
-	core::Real target_distance(20.0);
-	if( option[ hotspot::target_res ].user() ) target_resnum = option[ hotspot::target_res ]();
-	if( option[ hotspot::target_dist ].user() ) target_distance = option[ hotspot::target_dist ]();
-
-	// read in the pose of our target
-	std::string target_fname;
-	if ( option[hotspot::target].user() )
-	{
-		target_fname = option[ hotspot::target ]();
-		core::import_pose::pose_from_pdb( pose, target_fname );
-	}
-	else
-	{
-		utility_exit_with_message("You must specify a target to hash using -target <filename>");
-	}
-
-	// option to read in an existing set
-	std::string hashin_fname = "";
-	if (option[hotspot::hashfile].user() )
-	{
-		hashin_fname = option[hotspot::hashfile]();
-	}
-	// option to write out new set
-	std::string hashout_fname;
-	if ( option[ out::file::o ].user() )
-	{
-		hashout_fname = option[ out::file::o ]();
-	}
-	else
-	{
-		hashout_fname = "hash.hsh";
-	}
-	TR << "Writing stubs to " << hashout_fname << std::endl;
-
-	// read existing hashes
-	if ( utility::file::file_exists( hashin_fname ) ) {
-		if( (option[ out::overwrite ].user()) ) utility::file::file_delete( hashin_fname );
-		else {
-			stubset.read_data( hashin_fname );
-			TR << "Found hash file " << hashin_fname << std::endl;
+		// option to read in an existing set
+		std::string hashin_fname = "";
+		if ( option[hotspot::hashfile].user() ) {
+			hashin_fname = option[hotspot::hashfile]();
 		}
-	}
-	if ( utility::file::file_exists( hashout_fname ) ) {
-		if( (option[ out::overwrite ].user()) ) utility::file::file_delete( hashout_fname );
-		else {
-			stubset.read_data( hashout_fname );
-			TR << "Found hash file " << hashout_fname << std::endl;
+		// option to write out new set
+		std::string hashout_fname;
+		if ( option[ out::file::o ].user() ) {
+			hashout_fname = option[ out::file::o ]();
+		} else {
+			hashout_fname = "hash.hsh";
 		}
-	}
+		TR << "Writing stubs to " << hashout_fname << std::endl;
 
-	// fill residues to hash based on convenience name.
-	// ALL = everything but G & C
-	if( std::find( resnames.begin(), resnames.end(), "ALL" ) != resnames.end() ) {
-		resnames.erase( std::find( resnames.begin(), resnames.end(), "ALL" ) );
-		resnames.push_back( "ALA" );
-		resnames.push_back( "ARG" );
-		resnames.push_back( "ASN" );
-		resnames.push_back( "ASP" );
-		resnames.push_back( "GLU" );
-		resnames.push_back( "GLN" );
-		resnames.push_back( "HIS" );
-		resnames.push_back( "ILE" );
-		resnames.push_back( "LEU" );
-		resnames.push_back( "LYS" );
-		resnames.push_back( "MET" );
-		resnames.push_back( "PHE" );
-		resnames.push_back( "SER" );
-		resnames.push_back( "THR" );
-		resnames.push_back( "TRP" );
-		resnames.push_back( "TYR" );
-		resnames.push_back( "VAL" );
-	}
-
-	TR << "Finding hotspots using residues ";
- 	for( utility::vector1< std::string >::const_iterator it=resnames.begin() ; it!=resnames.end(); ++it ) {
-		TR << *it << " ";
-	}
-	TR << "." << std::endl;
-
-	// for each residue requested
-	for( utility::vector1< std::string >::const_iterator it=resnames.begin() ; it!=resnames.end(); ++it ) {
-		std::string resname = *it;
-
-		TR << "Hash contains " << stubset.size(resname) << " " << resname << " stubs." << std::endl;
-
-		// check to see if we've already finished our hash
-		int stubs_left = n_stubs;
-		stubs_left -= stubset.size( resname );
-
-		// if we're done
-		if( stubs_left <= 0 )
-		{
-			TR << "No more " << resname << " hotspots to be found." << std::endl;
-			// perform a scorecut
-			if ( basic::options::option[ basic::options::OptionKeys::out::scorecut ].user() )
-			{
-				Real score_cutoff = option[ out::scorecut ]();
-				std::stringstream i;
-				i.str("");
-				i << score_cutoff;
-				stubset.clear();
-				stubset.read_data( hashout_fname );
-				protocols::hotspot_hashing::HotspotStubSetOP cut_stubs = stubset.subset( score_cutoff );
-				std::string newfname = i.str() + "cut_" + hashout_fname;
-				cut_stubs->write_all( newfname );
+		// read existing hashes
+		if ( utility::file::file_exists( hashin_fname ) ) {
+			if ( (option[ out::overwrite ].user()) ) utility::file::file_delete( hashin_fname );
+			else {
+				stubset.read_data( hashin_fname );
+				TR << "Found hash file " << hashin_fname << std::endl;
 			}
-			continue;
+		}
+		if ( utility::file::file_exists( hashout_fname ) ) {
+			if ( (option[ out::overwrite ].user()) ) utility::file::file_delete( hashout_fname );
+			else {
+				stubset.read_data( hashout_fname );
+				TR << "Found hash file " << hashout_fname << std::endl;
+			}
 		}
 
-    TR << "Finding " << stubs_left << " " << resname << " hotspots." << std::endl;
+		// fill residues to hash based on convenience name.
+		// ALL = everything but G & C
+		if ( std::find( resnames.begin(), resnames.end(), "ALL" ) != resnames.end() ) {
+			resnames.erase( std::find( resnames.begin(), resnames.end(), "ALL" ) );
+			resnames.push_back( "ALA" );
+			resnames.push_back( "ARG" );
+			resnames.push_back( "ASN" );
+			resnames.push_back( "ASP" );
+			resnames.push_back( "GLU" );
+			resnames.push_back( "GLN" );
+			resnames.push_back( "HIS" );
+			resnames.push_back( "ILE" );
+			resnames.push_back( "LEU" );
+			resnames.push_back( "LYS" );
+			resnames.push_back( "MET" );
+			resnames.push_back( "PHE" );
+			resnames.push_back( "SER" );
+			resnames.push_back( "THR" );
+			resnames.push_back( "TRP" );
+			resnames.push_back( "TYR" );
+			resnames.push_back( "VAL" );
+		}
 
-		// do hashing in 10-stub cycles to minimize file i/o. If we named a target residue, do 1-stub cycles (targets are a rare find)
-		Size n_per;
-		if( target_resnum ) n_per = 1;
-		else n_per = 10;
-		Size n_cycles = n_stubs / n_per;
-		// make sure we do at least one cycle
-		if( n_cycles <= 0 ) n_cycles = 1;
-		// PERFORM HASHING
-		for( Size i = 1; i <= n_cycles; ++i )
-		{
-			Size const length( option[ hotspot::length ]() );
+		TR << "Finding hotspots using residues ";
+		for ( utility::vector1< std::string >::const_iterator it=resnames.begin() ; it!=resnames.end(); ++it ) {
+			TR << *it << " ";
+		}
+		TR << "." << std::endl;
+
+		// for each residue requested
+		for ( utility::vector1< std::string >::const_iterator it=resnames.begin() ; it!=resnames.end(); ++it ) {
+			std::string resname = *it;
+
+			TR << "Hash contains " << stubset.size(resname) << " " << resname << " stubs." << std::endl;
+
+			// check to see if we've already finished our hash
+			int stubs_left = n_stubs;
+			stubs_left -= stubset.size( resname );
+
+			// if we're done
+			if ( stubs_left <= 0 ) {
+				TR << "No more " << resname << " hotspots to be found." << std::endl;
+				// perform a scorecut
+				if ( basic::options::option[ basic::options::OptionKeys::out::scorecut ].user() ) {
+					Real score_cutoff = option[ out::scorecut ]();
+					std::stringstream i;
+					i.str("");
+					i << score_cutoff;
+					stubset.clear();
+					stubset.read_data( hashout_fname );
+					protocols::hotspot_hashing::HotspotStubSetOP cut_stubs = stubset.subset( score_cutoff );
+					std::string newfname = i.str() + "cut_" + hashout_fname;
+					cut_stubs->write_all( newfname );
+				}
+				continue;
+			}
+
+			TR << "Finding " << stubs_left << " " << resname << " hotspots." << std::endl;
+
+			// do hashing in 10-stub cycles to minimize file i/o. If we named a target residue, do 1-stub cycles (targets are a rare find)
+			Size n_per;
+			if ( target_resnum ) n_per = 1;
+			else n_per = 10;
+			Size n_cycles = n_stubs / n_per;
+			// make sure we do at least one cycle
+			if ( n_cycles <= 0 ) n_cycles = 1;
+			// PERFORM HASHING
+			for ( Size i = 1; i <= n_cycles; ++i ) {
+				Size const length( option[ hotspot::length ]() );
+				stubset.clear();
+				stubset.hotspot_length( length );
+				if ( target_resnum ) stubset.fill( pose, scorefxn, target_resnum, target_distance, resname, n_per );
+				else stubset.fill( pose, scorefxn, resname, n_per );
+				stubset.write_all( hashout_fname );
+			}
+		} // for each residue
+
+		// perform a scorecut
+		if ( option[ out::scorecut ].user() ) {
+			Real score_cutoff = option[ out::scorecut ]();
+			std::stringstream i;
+			i.str("");
+			i << score_cutoff;
 			stubset.clear();
-			stubset.hotspot_length( length );
-			if( target_resnum ) stubset.fill( pose, scorefxn, target_resnum, target_distance, resname, n_per );
-			else stubset.fill( pose, scorefxn, resname, n_per );
-			stubset.write_all( hashout_fname );
+			stubset.read_data( hashout_fname );
+			protocols::hotspot_hashing::HotspotStubSetOP cut_stubs = stubset.subset( score_cutoff );
+			std::string newfname = i.str() + "cut_" + hashout_fname;
+			cut_stubs->write_all( newfname);
 		}
-	} // for each residue
-
-	// perform a scorecut
-	if ( option[ out::scorecut ].user() )
-	{
-		Real score_cutoff = option[ out::scorecut ]();
-		std::stringstream i;
-		i.str("");
-		i << score_cutoff;
-		stubset.clear();
-		stubset.read_data( hashout_fname );
-		protocols::hotspot_hashing::HotspotStubSetOP cut_stubs = stubset.subset( score_cutoff );
-		std::string newfname = i.str() + "cut_" + hashout_fname;
-		cut_stubs->write_all( newfname);
-	}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

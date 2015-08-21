@@ -65,8 +65,8 @@ private:
 	char chain_; // insertion code
 
 
-friend class Mutant;
-friend class PointMutScanDriver;
+	friend class Mutant;
+	friend class PointMutScanDriver;
 
 }; // class MutationData
 
@@ -95,7 +95,7 @@ private:
 
 	utility::vector1< MutationData > mutations_;
 
-friend class PointMutScanDriver;
+	friend class PointMutScanDriver;
 
 }; // class Mutant
 

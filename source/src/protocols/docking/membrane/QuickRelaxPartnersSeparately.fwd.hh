@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief      Mover partners apart and relax them separately
-/// @details	Run quick relax on separated partners; this emulates unbound docking
+/// @details Run quick relax on separated partners; this emulates unbound docking
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 
 #ifndef INCLUDED_protocols_docking_membrane_QuickRelaxPartnersSeparately_fwd_hh

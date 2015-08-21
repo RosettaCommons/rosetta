@@ -536,13 +536,13 @@ void SegmentInsert::on_residue_delete( LengthEvent const & event ) {
 	// during modify().
 	if ( event.position < interval_.left ) { // left
 		//--interval_.left;
-		if( int(interval_.left) + event.length_change < int(event.position) ) interval_.left = event.position;
+		if ( int(interval_.left) + event.length_change < int(event.position) ) interval_.left = event.position;
 		else interval_.left += event.length_change;
 	}
 
 	if ( event.position < interval_.right ) { // right
 		//--interval_.right;
-		if( int(interval_.right) + event.length_change < int(event.position) ) interval_.right = event.position;
+		if ( int(interval_.right) + event.length_change < int(event.position) ) interval_.right = event.position;
 		else interval_.right += event.length_change;
 	}
 }
@@ -763,9 +763,8 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 		Size const root = ft.root();
 
 		if ( n_cutpoints == 0 && !left_has_lower_terminus && !right_has_upper_terminus
-			&& !left_has_upper_terminus && !right_has_lower_terminus
-		)
-		{
+				&& !left_has_upper_terminus && !right_has_lower_terminus
+				) {
 			Size const new_jump_number = ft.new_jump( interval_.left, interval_.right, interval_.left );
 
 			// following ensures changes in dihedral below do not shift the conformation
@@ -904,32 +903,32 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 	// add the residues from the insert Pose and grow any directly connected
 	// flanking regions
 	switch ( insert_connection_scheme ) {
-		case N: {
-			Size const new_anchor = grow_right_r(
-				pose,
-				before_insert_point, insert_residues.begin(), insert_residues.end(),
-				true,
-				true // place coordinates as-is
-			);
-			if ( right_has_upper_terminus ) {
-				grow_right_rtype( pose, new_anchor, r_types_flanking_right.begin(), r_types_flanking_right.end() );
-			}
-			break;
+	case N : {
+		Size const new_anchor = grow_right_r(
+			pose,
+			before_insert_point, insert_residues.begin(), insert_residues.end(),
+			true,
+			true // place coordinates as-is
+		);
+		if ( right_has_upper_terminus ) {
+			grow_right_rtype( pose, new_anchor, r_types_flanking_right.begin(), r_types_flanking_right.end() );
 		}
-		case C: {
-			Size const new_anchor = grow_left_r(
-				pose,
-				after_insert_point, insert_residues.rbegin(), insert_residues.rend(),
-				true,
-				true // place coordinates as-is
-			);
-			if ( left_has_lower_terminus ) {
-				grow_left_rtype( pose, new_anchor, r_types_flanking_left.rbegin(), r_types_flanking_left.rend() );
-			}
-			break;
+		break;
+	}
+	case C : {
+		Size const new_anchor = grow_left_r(
+			pose,
+			after_insert_point, insert_residues.rbegin(), insert_residues.rend(),
+			true,
+			true // place coordinates as-is
+		);
+		if ( left_has_lower_terminus ) {
+			grow_left_rtype( pose, new_anchor, r_types_flanking_left.rbegin(), r_types_flanking_left.rend() );
 		}
-		default:
-			runtime_assert( false ); // should never get here
+		break;
+	}
+	default :
+		runtime_assert( false ); // should never get here
 	}
 
 	// finalize the interval so that it accurately reflects the new region
@@ -960,29 +959,29 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 		assert( cutpoint > 0 ); // there should be a cutpoint
 
 		switch ( insert_connection_scheme ) {
-			case N: {
-				// must remember to avoid making cut that affects bb torsions
-				// at junction if user requests that option
-				Size const largest_possible_cut_position = keep_known_bb_torsions_at_junctions_ ? interval_.right - 1 : interval_.right;
+		case N : {
+			// must remember to avoid making cut that affects bb torsions
+			// at junction if user requests that option
+			Size const largest_possible_cut_position = keep_known_bb_torsions_at_junctions_ ? interval_.right - 1 : interval_.right;
 
-				if ( flanking_right_nres() > 0 ) {
-					new_cutpoint = numeric::random::rg().random_range( interval_.right - flanking_right_nres(), largest_possible_cut_position );
-				} else { // flanking_right_nres == 0
-					new_cutpoint = interval_.right;
-				}
-				break;
+			if ( flanking_right_nres() > 0 ) {
+				new_cutpoint = numeric::random::rg().random_range( interval_.right - flanking_right_nres(), largest_possible_cut_position );
+			} else { // flanking_right_nres == 0
+				new_cutpoint = interval_.right;
 			}
-			case C: {
-				if ( flanking_left_nres() > 0 ) {
-					new_cutpoint = numeric::random::rg().random_range( interval_.left, interval_.left + flanking_left_nres() - 1 );
-				} else {
-					assert( interval_.left > 1 ); // safety, should never happen
-					new_cutpoint = interval_.left - 1;
-				}
-				break;
+			break;
+		}
+		case C : {
+			if ( flanking_left_nres() > 0 ) {
+				new_cutpoint = numeric::random::rg().random_range( interval_.left, interval_.left + flanking_left_nres() - 1 );
+			} else {
+				assert( interval_.left > 1 ); // safety, should never happen
+				new_cutpoint = interval_.left - 1;
 			}
-			default:
-				runtime_assert( false ); // should never get here
+			break;
+		}
+		default :
+			runtime_assert( false ); // should never get here
 		}
 
 		if ( new_cutpoint != cutpoint ) {
@@ -1047,51 +1046,51 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 		pose.fold_tree( ft );
 	}
 
- // special case for Remodel
-  if (basic::options::option[basic::options::OptionKeys::remodel::no_jumps]){
-    //ft.simple_tree(pose.total_residue());
-    //idealize across the loop, in case they are not -- a big problem when taking out jumps
-  //  protocols:loops::Loops loops_def_for_idealization;
-   // loops_def_for_idealization.add_loop(protocols::loops::Loop(interval_.left-2,interval_.right+2, 1));
+	// special case for Remodel
+	if ( basic::options::option[basic::options::OptionKeys::remodel::no_jumps] ) {
+		//ft.simple_tree(pose.total_residue());
+		//idealize across the loop, in case they are not -- a big problem when taking out jumps
+		//  protocols:loops::Loops loops_def_for_idealization;
+		// loops_def_for_idealization.add_loop(protocols::loops::Loop(interval_.left-2,interval_.right+2, 1));
 
-    utility::vector1<Size> cuts;
-    utility::vector1< std::pair<Size,Size> > jumps;
-    protocols::forge::methods::jumps_and_cuts_from_pose(pose,jumps, cuts);
-    //debug
-    //std::cout << "num cuts: " << cuts.size() << " num jumps: " << jumps.size() << std::endl;
-    //translate:
-    ObjexxFCL::FArray1D_int Fcuts( num_jumps_pre_processing);
-    ObjexxFCL::FArray2D_int Fjumps(2, num_jumps_pre_processing);
+		utility::vector1<Size> cuts;
+		utility::vector1< std::pair<Size,Size> > jumps;
+		protocols::forge::methods::jumps_and_cuts_from_pose(pose,jumps, cuts);
+		//debug
+		//std::cout << "num cuts: " << cuts.size() << " num jumps: " << jumps.size() << std::endl;
+		//translate:
+		ObjexxFCL::FArray1D_int Fcuts( num_jumps_pre_processing);
+		ObjexxFCL::FArray2D_int Fjumps(2, num_jumps_pre_processing);
 
-  for ( Size i = 1; i<= num_jumps_pre_processing; ++i ) { // only keeping the old jumps, wipe new ones
-      //std::cout << (int)jumps[i].first << " " << (int)jumps[i].second << std::endl;
+		for ( Size i = 1; i<= num_jumps_pre_processing; ++i ) { // only keeping the old jumps, wipe new ones
+			//std::cout << (int)jumps[i].first << " " << (int)jumps[i].second << std::endl;
 
-      Fjumps(1,i) = std::min( (int)jumps[i].first, (int)jumps[i].second);
-      Fjumps(2,i) = std::max( (int)jumps[i].first, (int)jumps[i].second);
-      // DEBUG -- PRINT JUMPS AND CUTS
-      //TR.Error << " jump " << i << " : " << jumps(1,i) << " , " << jumps(2,i) << std::endl;
-    }
-    //erase the new cut created
-    cuts.erase( std::remove( cuts.begin(), cuts.end(), new_cutpoint ), cuts.end() );
+			Fjumps(1,i) = std::min( (int)jumps[i].first, (int)jumps[i].second);
+			Fjumps(2,i) = std::max( (int)jumps[i].first, (int)jumps[i].second);
+			// DEBUG -- PRINT JUMPS AND CUTS
+			//TR.Error << " jump " << i << " : " << jumps(1,i) << " , " << jumps(2,i) << std::endl;
+		}
+		//erase the new cut created
+		cuts.erase( std::remove( cuts.begin(), cuts.end(), new_cutpoint ), cuts.end() );
 
-    for ( Size i = 1; i<= cuts.size(); ++i ) {
-      //std::cout << "cut " << (int)cuts[i] << std::endl;
-      Fcuts(i) = (int)cuts[i];
-  //    std::cout << " cut " << i << " : " << cuts(i) << std::endl;
-    }
+		for ( Size i = 1; i<= cuts.size(); ++i ) {
+			//std::cout << "cut " << (int)cuts[i] << std::endl;
+			Fcuts(i) = (int)cuts[i];
+			//    std::cout << " cut " << i << " : " << cuts(i) << std::endl;
+		}
 
-    // 4 make the foldtree
-    FoldTree nojump_ft;
-    nojump_ft.tree_from_jumps_and_cuts( pose.total_residue(), num_jumps_pre_processing, Fjumps, Fcuts, ft.root(), true ); // true );
-    //std::cout << nojump_ft << std::endl;
+		// 4 make the foldtree
+		FoldTree nojump_ft;
+		nojump_ft.tree_from_jumps_and_cuts( pose.total_residue(), num_jumps_pre_processing, Fjumps, Fcuts, ft.root(), true ); // true );
+		//std::cout << nojump_ft << std::endl;
 
-    pose.fold_tree(nojump_ft);
-    //std::cout << "IDEALIZE " << interval_.left << " to " << interval_.right << std::endl;
-    //protocols::loops::set_extended_torsions_and_idealize_loops( pose, loops_def_for_idealization);
-    for (Size i = interval_.left; i <= interval_.right; i++){
-      core::conformation::idealize_position(i, pose.conformation());
-    }
-  }
+		pose.fold_tree(nojump_ft);
+		//std::cout << "IDEALIZE " << interval_.left << " to " << interval_.right << std::endl;
+		//protocols::loops::set_extended_torsions_and_idealize_loops( pose, loops_def_for_idealization);
+		for ( Size i = interval_.left; i <= interval_.right; i++ ) {
+			core::conformation::idealize_position(i, pose.conformation());
+		}
+	}
 
 
 	// Mark flanking regions and any existing connecting residues at left-1 and right
@@ -1129,46 +1128,46 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 	// insert regions.  This will "rubber band snap" the insert into the right
 	// position with existing (possibly non-ideal) internal geometry intact.
 	switch ( insert_connection_scheme ) {
-		case N:
-			// always handle 'left_flanking <-> insert' junction residue, this
-			// will never be a cutpoint
-			if ( flanking_left_nres() > 0 ) {
-				assert( omega_left_end > 0 );
-				assert( !pose.fold_tree().is_cutpoint( omega_left_end ) );
-				pose.conformation().insert_ideal_geometry_at_polymer_bond( omega_left_end );
-			}
+	case N :
+		// always handle 'left_flanking <-> insert' junction residue, this
+		// will never be a cutpoint
+		if ( flanking_left_nres() > 0 ) {
+			assert( omega_left_end > 0 );
+			assert( !pose.fold_tree().is_cutpoint( omega_left_end ) );
+			pose.conformation().insert_ideal_geometry_at_polymer_bond( omega_left_end );
+		}
 
-			// handle 'insert <-> right_flanking' junction residue only if not
-			// a cutpoint
-			if ( flanking_right_nres() > 0 ) {
-				assert( omega_right_start > 0 );
-				if ( !pose.fold_tree().is_cutpoint( omega_right_start ) ) {
-					pose.conformation().insert_ideal_geometry_at_polymer_bond( omega_right_start );
-				}
-			}
-
-			break;
-		case C:
-			// handle 'left_flanking <-> insert' junction residue only if not
-			// a cutpoint
-			if ( flanking_left_nres() > 0 ) {
-				assert( omega_left_end > 0 );
-				if ( !pose.fold_tree().is_cutpoint( omega_left_end ) ) {
-					pose.conformation().insert_ideal_geometry_at_polymer_bond( omega_left_end );
-				}
-			}
-
-			// always handle 'insert <-> right_flanking' junction residue, this
-			// will never be a cutpoint
-			if ( flanking_right_nres() > 0 ) {
-				assert( omega_right_start > 0 );
-				assert( !pose.fold_tree().is_cutpoint( omega_right_start ) );
+		// handle 'insert <-> right_flanking' junction residue only if not
+		// a cutpoint
+		if ( flanking_right_nres() > 0 ) {
+			assert( omega_right_start > 0 );
+			if ( !pose.fold_tree().is_cutpoint( omega_right_start ) ) {
 				pose.conformation().insert_ideal_geometry_at_polymer_bond( omega_right_start );
 			}
+		}
 
-			break;
-		default:
-			runtime_assert( false ); // should never get here
+		break;
+	case C :
+		// handle 'left_flanking <-> insert' junction residue only if not
+		// a cutpoint
+		if ( flanking_left_nres() > 0 ) {
+			assert( omega_left_end > 0 );
+			if ( !pose.fold_tree().is_cutpoint( omega_left_end ) ) {
+				pose.conformation().insert_ideal_geometry_at_polymer_bond( omega_left_end );
+			}
+		}
+
+		// always handle 'insert <-> right_flanking' junction residue, this
+		// will never be a cutpoint
+		if ( flanking_right_nres() > 0 ) {
+			assert( omega_right_start > 0 );
+			assert( !pose.fold_tree().is_cutpoint( omega_right_start ) );
+			pose.conformation().insert_ideal_geometry_at_polymer_bond( omega_right_start );
+		}
+
+		break;
+	default :
+		runtime_assert( false ); // should never get here
 	}
 
 	// recover psi @ left-1 and phi @ right+1 to ensure they are set correctly

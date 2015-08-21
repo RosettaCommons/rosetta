@@ -24,43 +24,43 @@ namespace protocols {
 namespace farna {
 
 
-	///////////////////////////////////
-	//        5'-- ( i) -- ( i+1) -- 3'
-	//               |        |
-	//               |        |
-	//        3'-- (j+1) -- ( j ) -- 5'
-	///////////////////////////////////
-	class BasePairStep: public utility::pointer::ReferenceCount {
+///////////////////////////////////
+//        5'-- ( i) -- ( i+1) -- 3'
+//               |        |
+//               |        |
+//        3'-- (j+1) -- ( j ) -- 5'
+///////////////////////////////////
+class BasePairStep: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//constructor
-		// This is more information than is required -- i_next should be i+1, j_next should be j+1.
-		//  but I wanted this to be explicit to prevent confusion for which numbers correspond to what.
-		BasePairStep( Size const i, Size const i_next,
-									Size const j, Size const j_next );
+	//constructor
+	// This is more information than is required -- i_next should be i+1, j_next should be j+1.
+	//  but I wanted this to be explicit to prevent confusion for which numbers correspond to what.
+	BasePairStep( Size const i, Size const i_next,
+		Size const j, Size const j_next );
 
-		//destructor
-		~BasePairStep();
+	//destructor
+	~BasePairStep();
 
-		Size const & i() const { return base_pair_step_.first.first; };
-		Size const & i_next() const { return base_pair_step_.first.second; };
-		Size const & j() const { return base_pair_step_.second.first; };
-		Size const & j_next() const { return base_pair_step_.second.second; };
+	Size const & i() const { return base_pair_step_.first.first; };
+	Size const & i_next() const { return base_pair_step_.first.second; };
+	Size const & j() const { return base_pair_step_.second.first; };
+	Size const & j_next() const { return base_pair_step_.second.second; };
 
-		friend
-		std::ostream &
-		operator <<( std::ostream & os, BasePairStep const & bps ){
-			os << bps.base_pair_step_.first.first << "-" << bps.base_pair_step_.first.second << " " << bps.base_pair_step_.second.first << "-" << bps.base_pair_step_.second.second;
-			return os;
-		}
+	friend
+	std::ostream &
+	operator <<( std::ostream & os, BasePairStep const & bps ){
+		os << bps.base_pair_step_.first.first << "-" << bps.base_pair_step_.first.second << " " << bps.base_pair_step_.second.first << "-" << bps.base_pair_step_.second.second;
+		return os;
+	}
 
-	private:
+private:
 
-		typedef std::pair< Size, Size > DinucleotideStrand;
-		std::pair< DinucleotideStrand, DinucleotideStrand > base_pair_step_;
+	typedef std::pair< Size, Size > DinucleotideStrand;
+	std::pair< DinucleotideStrand, DinucleotideStrand > base_pair_step_;
 
-	};
+};
 
 } //farna
 } //protocols

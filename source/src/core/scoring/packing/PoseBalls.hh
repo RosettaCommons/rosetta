@@ -62,8 +62,8 @@ public:
 		return balls_[ id_to_index_[id] ];
 	}
 
-	inline Ball & ball( core::Size const & index ) { return balls_[index];	}
-	inline Ball & ball( core::id::AtomID const & id ) { return balls_[ id_to_index_[id] ];	}
+	inline Ball & ball( core::Size const & index ) { return balls_[index]; }
+	inline Ball & ball( core::id::AtomID const & id ) { return balls_[ id_to_index_[id] ]; }
 
 	inline std::string const & atom_name( core::Size const & index ) const {
 		return atom_name_[index];
@@ -87,9 +87,9 @@ public:
 
 	void reset_surf() {
 		surf_.resize(nballs_);
-		for( core::Size i = 1; i <= nballs_; i++ ) {
+		for ( core::Size i = 1; i <= nballs_; i++ ) {
 			surf_[i].resize(20);
-			for( core::Size j = 1; j <= 20; j++ ) surf_[i][j] = 0.0;
+			for ( core::Size j = 1; j <= 20; j++ ) surf_[i][j] = 0.0;
 		}
 	}
 
@@ -133,7 +133,7 @@ public:
 
 	void output_pdb( std::ostream & out ) const;
 
-   void compute_smooth_nb();
+	void compute_smooth_nb();
 
 private:
 
@@ -160,7 +160,7 @@ private:
 template< class T >
 void
 initialize_AtomID_Map( core::id::AtomID_Map<T> & map, PoseBalls const & pb ) {
-	for( Size i = 1; i <= pb.nballs(); i++ ) {
+	for ( Size i = 1; i <= pb.nballs(); i++ ) {
 		Size res_num = pb.res_num(i);
 		Size atom_num = pb.atom_num(i);
 		map.resize( std::max(map.size(),res_num) );

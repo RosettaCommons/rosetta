@@ -27,13 +27,13 @@
 
 // Platform headers
 #if (defined WIN32) && (!defined WIN_PYROSETTA)
-	#include <windows.h>
-	#include <float.h>
-	#else // Not _WIN32
+#include <windows.h>
+#include <float.h>
+#else // Not _WIN32
 
-	#ifndef WIN_PYROSETTA
+#ifndef WIN_PYROSETTA
 		#include <unistd.h>
-	#endif
+#endif
 
 #endif // _WIN32
 
@@ -57,9 +57,9 @@ sys_sleep( double const seconds )
 	//cout << "sleep" << endl;
 
 #ifdef _WIN32
-	#ifndef WIN_PYROSETTA
-		::Sleep( (int) (1000 * seconds) );
-    #endif
+#ifndef WIN_PYROSETTA
+	::Sleep( (int) (1000 * seconds) );
+#endif
 
 #else // Not _WIN32
 	unsigned int remaining_time = (int) seconds;
@@ -100,14 +100,14 @@ timestamp()
 
 	ostringstream timestamp;
 	timestamp
-	 << "["
-	 << setw( 4 ) << ( now->tm_year + 1900 ) << "-"
-	 << setw( 2 ) << ( now->tm_mon + 1 ) << "-"
-	 << setw( 2 ) << ( now->tm_mday ) << " "
-	 << setw( 2 ) << ( now->tm_hour ) << ":"
-	 << setw( 2 ) << ( now->tm_min ) << ":"
-	 << setw( 2 ) << ( now->tm_sec ) << ":"
-	 << "]";
+		<< "["
+		<< setw( 4 ) << ( now->tm_year + 1900 ) << "-"
+		<< setw( 2 ) << ( now->tm_mon + 1 ) << "-"
+		<< setw( 2 ) << ( now->tm_mday ) << " "
+		<< setw( 2 ) << ( now->tm_hour ) << ":"
+		<< setw( 2 ) << ( now->tm_min ) << ":"
+		<< setw( 2 ) << ( now->tm_sec ) << ":"
+		<< "]";
 
 	return timestamp.str();
 }
@@ -127,12 +127,12 @@ timestamp_short()
 
 	ostringstream timestamp;
 	timestamp << std::setfill('0')
-	 << setw( 4 ) << ( now->tm_year + 1900 )
-	 << setw( 2 ) << ( now->tm_mon + 1 )
-	 << setw( 2 ) << ( now->tm_mday )
-	 << setw( 2 ) << ( now->tm_hour )
-	 << setw( 2 ) << ( now->tm_min )
-	 << setw( 2 ) << ( now->tm_sec );
+		<< setw( 4 ) << ( now->tm_year + 1900 )
+		<< setw( 2 ) << ( now->tm_mon + 1 )
+		<< setw( 2 ) << ( now->tm_mday )
+		<< setw( 2 ) << ( now->tm_hour )
+		<< setw( 2 ) << ( now->tm_min )
+		<< setw( 2 ) << ( now->tm_sec );
 
 	return timestamp.str();
 }

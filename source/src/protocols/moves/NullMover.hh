@@ -33,15 +33,15 @@ class NullMover : public moves::MoveMapMover
 {
 public:
 	/// @brief
-	/// 	empty constructor fills values with the values
-	///		read in from the commandline
+	///  empty constructor fills values with the values
+	///  read in from the commandline
 	NullMover();
 	virtual void apply( core::pose::Pose &  );
 	virtual std::string get_name() const;
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const;
-  virtual void set_movemap( core::kinematics::MoveMapCOP ) {}
-  virtual core::kinematics::MoveMapCOP movemap() const { return core::kinematics::MoveMapCOP( new core::kinematics::MoveMap ); }
+	virtual void set_movemap( core::kinematics::MoveMapCOP ) {}
+	virtual core::kinematics::MoveMapCOP movemap() const { return core::kinematics::MoveMapCOP( new core::kinematics::MoveMap ); }
 	virtual ~NullMover();
 	virtual void test_move( core::pose::Pose &  ){};
 

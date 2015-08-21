@@ -20,8 +20,8 @@
 #include <string>
 
 #ifdef WIN32
-  #define _USE_MATH_DEFINES
-  #include <math.h>
+#define _USE_MATH_DEFINES
+#include <math.h>
 #endif
 
 
@@ -108,28 +108,28 @@ private:
 //
 // class AtomScattering {
 // public:
-// 	AtomScattering();
+//  AtomScattering();
 //
-// 	// mask scattering
-// 	AtomScattering( core::Real mask, core::Real reso );
+//  // mask scattering
+//  AtomScattering( core::Real mask, core::Real reso );
 //
-// 	// atom scattering (single gaussian)
-// 	AtomScattering( core::Real a, core::Real B, core::Real mask, core::Real reso );
+//  // atom scattering (single gaussian)
+//  AtomScattering( core::Real a, core::Real B, core::Real mask, core::Real reso );
 //
-// 	// TODO: atom scattering (crystallographic form-factors)
-// 	//AtomScattering( KromerMann f0, core::Real mask, core::Real reso );
+//  // TODO: atom scattering (crystallographic form-factors)
+//  //AtomScattering( KromerMann f0, core::Real mask, core::Real reso );
 //
-// 	// interp at a Cartesian point X
-// 	core::Real interp_linear( numeric::xyzVector< core::Real > const & X ) const;
+//  // interp at a Cartesian point X
+//  core::Real interp_linear( numeric::xyzVector< core::Real > const & X ) const;
 //
 // private:
-// 	// common initialization
-// 	void init( core::Real mask, core::Real reso );
+//  // common initialization
+//  void init( core::Real mask, core::Real reso );
 //
-// 	ObjexxFCL::FArray3D< double > data;
-// 	numeric::xyzVector< core::Real > c2i, i2c;    // always construct orthogonal
-// 	numeric::xyzVector< core::Size > grid;
-// 	core::Real reso;
+//  ObjexxFCL::FArray3D< double > data;
+//  numeric::xyzVector< core::Real > c2i, i2c;    // always construct orthogonal
+//  numeric::xyzVector< core::Size > grid;
+//  core::Real reso;
 // };
 
 

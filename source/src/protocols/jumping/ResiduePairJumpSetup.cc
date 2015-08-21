@@ -104,8 +104,9 @@ ResiduePairJumpSetup::read_file( std::string fname ) {
 			for ( int i = 1; i <= 2; ++i ) {
 				std::string name;
 				in >> name;
-				if ( residue_type_set->name_map(name).is_protein() )
+				if ( residue_type_set->name_map(name).is_protein() ) {
 					name = name + ":CtermProteinFull:NtermProteinFull";
+				}
 				core::chemical::ResidueType const & res_type( residue_type_set->name_map(name) );
 				residue_pair_jump->add_residue_single( res_type );
 			}
@@ -127,35 +128,35 @@ ResiduePairJumpSetup::read_file( std::string fname ) {
 			}
 		} else if ( tag == "disAB:" ) {
 			Real value;
-			while (in >> value) {
+			while ( in >> value ) {
 				residue_pair_jump->set_cstInfo( disAB, value );
 			}
 		} else if ( tag == "angleA:" ) {
 			Real value;
-			while (in >> value) {
+			while ( in >> value ) {
 				residue_pair_jump->set_cstInfo( angleA, value );
 			}
 		} else if ( tag == "angleB:" ) {
 			Real value;
-			while (in >> value) {
+			while ( in >> value ) {
 				residue_pair_jump->set_cstInfo( angleB, value );
 			}
 		} else if ( tag == "dihedralA:" ) {
 			Real value;
-			while (in >> value) {
+			while ( in >> value ) {
 				residue_pair_jump->set_cstInfo( dihedralA, value );
 			}
 		} else if ( tag == "dihedralB:" ) {
 			Real value;
-			while (in >> value) {
+			while ( in >> value ) {
 				residue_pair_jump->set_cstInfo( dihedralB, value );
 			}
 		} else if ( tag == "dihedralAB:" ) {
 			Real value;
-			while (in >> value) {
+			while ( in >> value ) {
 				residue_pair_jump->set_cstInfo( dihedralAB, value );
 			}
- 		}
+		}
 	}
 	set_root( root );
 }
@@ -167,10 +168,10 @@ ResiduePairJumpSetup::generate_jump_frags( JumpSample const& jumps, kinematics::
 	//runtime_assert( jumps.total_residue() == total_residue() );
 	ObjexxFCL::FArray2D_int const & in_jumps ( jumps.jumps() );
 	int ct = 1;
-  for ( ResiduePairJumpSetup::const_iterator it=begin(), eit=end(); it!=eit; ++it, ct++ ) {
+	for ( ResiduePairJumpSetup::const_iterator it=begin(), eit=end(); it!=eit; ++it, ct++ ) {
 		Size jump_number = 0;
 		for ( Size i = 1; i <= jumps.size(); ++i ) {
-			if  ( ( in_jumps( 1, i ) == int( it->jump_.start_) ) && ( in_jumps( 2, i ) == int( it->jump_.end_ ) ) ){
+			if  ( ( in_jumps( 1, i ) == int( it->jump_.start_) ) && ( in_jumps( 2, i ) == int( it->jump_.end_ ) ) ) {
 				jump_number = i;
 				break;
 			}
@@ -204,21 +205,21 @@ ResiduePairJumpSetup::create_jump_sample() const
 	ObjexxFCL::FArray1D_int cuts( jumps_.size() );
 	ObjexxFCL::FArray2D<std::string> jump_atoms(2, jumps_.size(),"");
 
-  int ct = 1;
+	int ct = 1;
 	Size total_residue = total_residue_;
-  for ( ResiduePairJumpSetup::const_iterator it=begin(), eit=end(); it!=eit; ++it, ct++ ) {
-    jumps( 1, ct ) = it->jump_.start_;
-    jumps( 2, ct ) = it->jump_.end_;
-    Size const crs ( it->cut_reg_.start_ );
-    Size const cre ( it->cut_reg_.end_ );
+	for ( ResiduePairJumpSetup::const_iterator it=begin(), eit=end(); it!=eit; ++it, ct++ ) {
+		jumps( 1, ct ) = it->jump_.start_;
+		jumps( 2, ct ) = it->jump_.end_;
+		Size const crs ( it->cut_reg_.start_ );
+		Size const cre ( it->cut_reg_.end_ );
 		if ( crs > total_residue ) total_residue = crs;
 		if ( cre > total_residue ) total_residue = cre;
 		if ( it->jump_.end_ > total_residue ) total_residue = it->jump_.end_;
 		if ( it->jump_.start_ > total_residue ) total_residue = it->jump_.start_;
-    cuts( ct ) = crs+int( numeric::random::uniform()*( cre-crs ) + 0.5 );
+		cuts( ct ) = crs+int( numeric::random::uniform()*( cre-crs ) + 0.5 );
 		jump_atoms(1, ct) = ResiduePairJumps_[ct]->jumpAtoms(1)[1];
 		jump_atoms(2, ct) = ResiduePairJumps_[ct]->jumpAtoms(2)[1];
-  }
+	}
 	return JumpSample( total_residue, jumps_.size(), jumps, jump_atoms, cuts, root() );
 }
 

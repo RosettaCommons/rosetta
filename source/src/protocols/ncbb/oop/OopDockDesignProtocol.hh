@@ -25,95 +25,95 @@ namespace protocols {
 namespace ncbb {
 namespace oop {
 
-class OopDockDesignProtocol : public moves::Mover 
+class OopDockDesignProtocol : public moves::Mover
 {
 
-	public:
+public:
 
-		//default ctor
-		//OopDockDesignProtocol(): Mover("OopDockDesignProtocol"){}
-		OopDockDesignProtocol();
+	//default ctor
+	//OopDockDesignProtocol(): Mover("OopDockDesignProtocol"){}
+	OopDockDesignProtocol();
 
-		OopDockDesignProtocol(
-			core::scoring::ScoreFunctionOP score_function, 
-			core::Real const mc_temp,
-			core::Real const pert_mc_temp,
-			core::Real const pert_dock_rot_mag,
-			core::Real const pert_dock_trans_mag,
-			core::Real const pert_pep_small_temp,
-			core::Real const pert_pep_small_H,
-			core::Real const pert_pep_small_L,
-			core::Real const pert_pep_small_E,
-			core::Real const pert_pep_shear_temp,
-			core::Real const pert_pep_shear_H,
-			core::Real const pert_pep_shear_L,
-			core::Real const pert_pep_shear_E,
+	OopDockDesignProtocol(
+		core::scoring::ScoreFunctionOP score_function,
+		core::Real const mc_temp,
+		core::Real const pert_mc_temp,
+		core::Real const pert_dock_rot_mag,
+		core::Real const pert_dock_trans_mag,
+		core::Real const pert_pep_small_temp,
+		core::Real const pert_pep_small_H,
+		core::Real const pert_pep_small_L,
+		core::Real const pert_pep_small_E,
+		core::Real const pert_pep_shear_temp,
+		core::Real const pert_pep_shear_H,
+		core::Real const pert_pep_shear_L,
+		core::Real const pert_pep_shear_E,
 
-			core::Size const pert_pep_num_rep,
-			core::Size const pert_num,
-			core::Size const dock_design_loop_num,
+		core::Size const pert_pep_num_rep,
+		core::Size const pert_num,
+		core::Size const dock_design_loop_num,
 
-			bool const no_design,
-			bool const final_design_min,
-			bool const use_soft_rep,
-			bool const mc_initial_pose,
-			bool const oop_design_first,
+		bool const no_design,
+		bool const final_design_min,
+		bool const use_soft_rep,
+		bool const mc_initial_pose,
+		bool const oop_design_first,
 
-			bool const pymol,
-			bool const keep_history
+		bool const pymol,
+		bool const keep_history
 
-		);
+	);
 
-		OopDockDesignProtocol(
-			core::scoring::ScoreFunctionOP score_function, 
-			core::Real const mc_temp,
-			core::Real const pert_dock_rot_mag,
-			core::Real const pert_dock_trans_mag,
-			core::Size const dock_design_loop_num,
-			bool const no_design,
-			bool const final_design_min,
-			bool const pymol,
-			bool const keep_history
-		);
+	OopDockDesignProtocol(
+		core::scoring::ScoreFunctionOP score_function,
+		core::Real const mc_temp,
+		core::Real const pert_dock_rot_mag,
+		core::Real const pert_dock_trans_mag,
+		core::Size const dock_design_loop_num,
+		bool const no_design,
+		bool const final_design_min,
+		bool const pymol,
+		bool const keep_history
+	);
 
-		
-		//default dtor
-		virtual ~OopDockDesignProtocol(){}
 
-		//methods
-		virtual void apply( core::pose::Pose & pose );
-		virtual std::string get_name() const { return "OopDockDesignProtocol"; }
-		protocols::moves::MoverOP fresh_instance() const { return OopDockDesignProtocolOP( new OopDockDesignProtocol ); }
-        protocols::moves::MoverOP clone() const;
-        void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	//default dtor
+	virtual ~OopDockDesignProtocol(){}
 
-	private:
-		core::scoring::ScoreFunctionOP score_fxn_;
-		core::Real mc_temp_;
-		core::Real pert_mc_temp_;
-		core::Real pert_dock_rot_mag_;
-		core::Real pert_dock_trans_mag_;
-		core::Real pert_pep_small_temp_;
-		core::Real pert_pep_small_H_;
-		core::Real pert_pep_small_L_;
-		core::Real pert_pep_small_E_;
-		core::Real pert_pep_shear_temp_;
-		core::Real pert_pep_shear_H_;
-		core::Real pert_pep_shear_L_;
-		core::Real pert_pep_shear_E_;
+	//methods
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const { return "OopDockDesignProtocol"; }
+	protocols::moves::MoverOP fresh_instance() const { return OopDockDesignProtocolOP( new OopDockDesignProtocol ); }
+	protocols::moves::MoverOP clone() const;
+	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
-		core::Size pert_pep_num_rep_;
-		core::Size pert_num_;
-		core::Size dock_design_loop_num_;
+private:
+	core::scoring::ScoreFunctionOP score_fxn_;
+	core::Real mc_temp_;
+	core::Real pert_mc_temp_;
+	core::Real pert_dock_rot_mag_;
+	core::Real pert_dock_trans_mag_;
+	core::Real pert_pep_small_temp_;
+	core::Real pert_pep_small_H_;
+	core::Real pert_pep_small_L_;
+	core::Real pert_pep_small_E_;
+	core::Real pert_pep_shear_temp_;
+	core::Real pert_pep_shear_H_;
+	core::Real pert_pep_shear_L_;
+	core::Real pert_pep_shear_E_;
 
-		bool no_design_;
-		bool final_design_min_;
-		bool use_soft_rep_;
-		bool mc_initial_pose_;
-		bool oop_design_first_;
+	core::Size pert_pep_num_rep_;
+	core::Size pert_num_;
+	core::Size dock_design_loop_num_;
 
-		bool pymol_;
-		bool keep_history_;
+	bool no_design_;
+	bool final_design_min_;
+	bool use_soft_rep_;
+	bool mc_initial_pose_;
+	bool oop_design_first_;
+
+	bool pymol_;
+	bool keep_history_;
 
 };
 

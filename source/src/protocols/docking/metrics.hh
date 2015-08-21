@@ -44,14 +44,14 @@ core::Real calc_Lrmsd( const core::pose::Pose & pose, const core::pose::Pose & n
 
 /// @brief Calculates C-alpha RMSD of the superimposed larger partner
 /// @details The larger partner is the fixed partner; this is mostly for
-///			membrane proteins, where we move the partners apart, then do relax
-///			on both partners
+///   membrane proteins, where we move the partners apart, then do relax
+///   on both partners
 core::Real calc_P1rmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose, DockJumps const movable_jumps);
 
 /// @brief Calculates C-alpha RMSD of the superimposed smaller partner
 /// @details This calculates the RMSD of the smaller partner after superimposing it
-///			 The computed RMSD is not from the docking, but from the flexible
-///			 backbone relax
+///    The computed RMSD is not from the docking, but from the flexible
+///    backbone relax
 core::Real calc_P2rmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose, DockJumps const movable_jumps);
 
 /// @brief Calculates the all-atom RMSD of all residues within 5A of the interface at superposition along those same atoms

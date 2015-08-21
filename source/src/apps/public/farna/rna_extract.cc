@@ -84,7 +84,7 @@ extract_pdbs_test()
 
 	bool use_tags = false;
 	std::set< std::string > desired_tags;
-	if( option[ in::file::tags ].active() ) {
+	if ( option[ in::file::tags ].active() ) {
 		use_tags = true;
 		desired_tags.insert( option[ in::file::tags ]().begin(), option[ in::file::tags ]().end() );
 	}
@@ -93,7 +93,7 @@ extract_pdbs_test()
 
 		std::string const tag = iter->decoy_tag();
 
-		if (use_tags && ( !desired_tags.count( tag ) ) ) continue;
+		if ( use_tags && ( !desired_tags.count( tag ) ) ) continue;
 
 		std::cout << "Extracting: " << tag << std::endl;
 
@@ -103,16 +103,16 @@ extract_pdbs_test()
 		//std::cout << "debug_rmsd(" << tag << ") = " << iter->get_debug_rmsd() << " over " << pose.total_residue() << " residues... \n";
 
 
-		if( option[ remove_variant_cutpoint_atoms ]()==true ){
+		if ( option[ remove_variant_cutpoint_atoms ]()==true ) {
 			for ( Size n = 1; n <= pose.total_residue(); n++  ) {
 				pose::remove_variant_type_from_pose_residue( pose, core::chemical::CUTPOINT_LOWER, n );
 				pose::remove_variant_type_from_pose_residue( pose, core::chemical::CUTPOINT_UPPER, n );
 			}
 		}
 
-        std::string out_prefix = "";
+		std::string out_prefix = "";
 
-        if( option[out::prefix].user() ) out_prefix = option[out::prefix]();
+		if ( option[out::prefix].user() ) out_prefix = option[out::prefix]();
 
 		pose.dump_pdb( out_prefix + tag + ".pdb" );
 
@@ -132,26 +132,26 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-    try {
-        using namespace basic::options;
+	try {
+		using namespace basic::options;
 
-        std::cout << std::endl << "Basic usage:  " << argv[0] << "  -in::file::silent <silent file> -tags <model tag like S_00001> " << std::endl;
-        std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
+		std::cout << std::endl << "Basic usage:  " << argv[0] << "  -in::file::silent <silent file> -tags <model tag like S_00001> " << std::endl;
+		std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
 
-        NEW_OPT( remove_variant_cutpoint_atoms , "remove_variant_cutpoint_atoms", false );
-        ////////////////////////////////////////////////////////////////////////////
-        // setup
-        ////////////////////////////////////////////////////////////////////////////
-        core::init::init(argc, argv);
+		NEW_OPT( remove_variant_cutpoint_atoms , "remove_variant_cutpoint_atoms", false );
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		core::init::init(argc, argv);
 
-        ////////////////////////////////////////////////////////////////////////////
-        // end of setup
-        ////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-        protocols::viewer::viewer_main( my_main );
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cout << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
+		protocols::viewer::viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 }
 

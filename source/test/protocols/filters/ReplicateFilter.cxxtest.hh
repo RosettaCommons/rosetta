@@ -56,12 +56,12 @@ public:
 		TS_ASSERT( filterN.apply(*testpose_) );
 		filterP.threshold( 1000 );
 		filterN.threshold( 1000 );
-    TS_ASSERT( filterP.apply(*testpose_) );
-    TS_ASSERT( filterN.apply(*testpose_) );
+		TS_ASSERT( filterP.apply(*testpose_) );
+		TS_ASSERT( filterN.apply(*testpose_) );
 		filterP.threshold( -1000 );
 		filterN.threshold( -1000 );
-    TS_ASSERT( ! filterP.apply(*testpose_) );
-    TS_ASSERT( ! filterN.apply(*testpose_) );
+		TS_ASSERT( ! filterP.apply(*testpose_) );
+		TS_ASSERT( ! filterN.apply(*testpose_) );
 	}
 
 	void test_basic() {
@@ -74,7 +74,7 @@ public:
 		values.push_back(-10);
 		values.push_back(20);
 		values.push_back(7);
-		
+
 		StubMultiFilterOP sf( new StubMultiFilter );
 		sf->set(values);
 		protocols::filters::ReplicateFilter filter(sf,8);
@@ -95,15 +95,15 @@ public:
 
 
 		StubMultiFilterOP sf( new StubMultiFilter );
-    utility::vector1<core::Real> values;
-    values.push_back(-2);
-    values.push_back(-4);
-    values.push_back(-1);
-    values.push_back(-6);
-    values.push_back(-5);
-    values.push_back(-10);
-    values.push_back(20);
-    values.push_back(7);
+		utility::vector1<core::Real> values;
+		values.push_back(-2);
+		values.push_back(-4);
+		values.push_back(-1);
+		values.push_back(-6);
+		values.push_back(-5);
+		values.push_back(-10);
+		values.push_back(20);
+		values.push_back(7);
 		values.push_back(-3);
 		values.push_back(1);
 

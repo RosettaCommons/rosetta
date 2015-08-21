@@ -53,10 +53,10 @@ using basic::t_trace;
 static thread_local basic::Tracer TR( "protocols.constraints_additional.SequenceCouplingConstraint" );
 
 SequenceCouplingConstraint::SequenceCouplingConstraint()
-	: Constraint( res_type_constraint ),
-		seqpos1_(0),
-		seqpos2_(0),
-		sequence_coupling_(/* NULL */)
+: Constraint( res_type_constraint ),
+	seqpos1_(0),
+	seqpos2_(0),
+	sequence_coupling_(/* NULL */)
 {}
 
 SequenceCouplingConstraint::SequenceCouplingConstraint(
@@ -101,7 +101,7 @@ SequenceCouplingConstraint::read_def(
 	Size residue_index2(0);
 	std::string coupling_filename;
 
-//	note: is >> "SequenceProfile" has already occured
+	// note: is >> "SequenceProfile" has already occured
 	is >> residue_index1 >> residue_index2 >> coupling_filename;
 
 	TR(t_debug) << "reading: " << residue_index1 << " " << residue_index2 << " " << coupling_filename << std::endl;
@@ -124,9 +124,9 @@ SequenceCouplingConstraint::read_def(
 		if ( ! file_exists( coupling_filename ) ) {
 			utility_exit_with_message( "no such file " + coupling_filename );
 		}
-	// if filename not specified, load from commandline option -pssm only if sequence_coupling_ is NULL
+		// if filename not specified, load from commandline option -pssm only if sequence_coupling_ is NULL
 	} else {
-			utility_exit_with_message("\"none\" is not a valid value for -pssm in this context!");
+		utility_exit_with_message("\"none\" is not a valid value for -pssm in this context!");
 	}
 
 	// if filename is not "none" by this point, read it even if sequence_coupling_ is not currently NULL
@@ -149,14 +149,14 @@ void
 SequenceCouplingConstraint::show( std::ostream & os ) const {
 	os << "SequenceCouplingConstraint between seqpos " << seqpos1_ << " " << seqpos2_ << ": ";
 	if ( ! sequence_coupling_ ) os << "(uninitialized sequence profile)";
-//	else {
-//		typedef utility::vector1<Real> RealVec;
-//		RealVec const & aa_scores( sequence_profile_->prof_row( seqpos_ ) );
-//		runtime_assert( aa_scores.size() >= num_canonical_aas );
-//		for ( Size aa(1); aa <= num_canonical_aas; ++aa ) {
-//			os << aa_scores[aa] << " ";
-//		}
-//	}
+	// else {
+	//  typedef utility::vector1<Real> RealVec;
+	//  RealVec const & aa_scores( sequence_profile_->prof_row( seqpos_ ) );
+	//  runtime_assert( aa_scores.size() >= num_canonical_aas );
+	//  for ( Size aa(1); aa <= num_canonical_aas; ++aa ) {
+	//   os << aa_scores[aa] << " ";
+	//  }
+	// }
 	os << '\n';
 }
 
@@ -181,19 +181,19 @@ SequenceCouplingConstraint::residues() const {
 }
 
 /*
- * hk: how does one fix sequencecoupling on a remap_resid call?
- *
+* hk: how does one fix sequencecoupling on a remap_resid call?
+*
 ConstraintOP
 SequenceCouplingConstraint::remap_resid(
-	SequenceMapping const & seqmap
+SequenceMapping const & seqmap
 ) const {
-	Size newseqpos1( seqmap[ seqpos1_ ] );
-	if ( newseqpos != 0 ) {
-		TR(t_debug) << "Remapping resid " << seqpos1_ << " to " << newseqpos1 << std::endl;
+Size newseqpos1( seqmap[ seqpos1_ ] );
+if ( newseqpos != 0 ) {
+TR(t_debug) << "Remapping resid " << seqpos1_ << " to " << newseqpos1 << std::endl;
 
-		return new SequenceCouplingConstraint(	newseqpos1, newseqpos2, sequence_coupling_ );
-	}
-	else return NULL;
+return new SequenceCouplingConstraint( newseqpos1, newseqpos2, sequence_coupling_ );
+}
+else return NULL;
 }
 */
 
@@ -212,24 +212,24 @@ SequenceCouplingConstraint::score(
 
 	chemical::AA aa1( xyz_func.residue( seqpos1_ ).type().aa() );
 	chemical::AA aa2( xyz_func.residue( seqpos2_ ).type().aa() );
-	if ( seqpos1_ > sequence_coupling_->npos() || seqpos2_ > sequence_coupling_->npos()) return; // safety/relevance check
+	if ( seqpos1_ > sequence_coupling_->npos() || seqpos2_ > sequence_coupling_->npos() ) return; // safety/relevance check
 
 	Size edgeId = sequence_coupling_->findEdgeId(seqpos1_, seqpos2_);
 	Real score( 0);
-	if(edgeId<=0){//direction important. if (i,j) edge exists, will not return if (j,i) asked
-		 edgeId = sequence_coupling_->findEdgeId(seqpos2_, seqpos1_);
+	if ( edgeId<=0 ) { //direction important. if (i,j) edge exists, will not return if (j,i) asked
+		edgeId = sequence_coupling_->findEdgeId(seqpos2_, seqpos1_);
 
-		 //epot = sequence_coupling_->edgePotBetween(edgeId);
-		 utility::vector1< utility::vector1 < Real > > const &  epot(sequence_coupling_->edgePotBetween(edgeId));
-		 //runtime_assert(epot);
-		 /*
-		 if(epot==NULL){
-			std::cerr << "no such edge " << seqpos1_ << " " << seqpos2_ << " in sequence coupling !)" << std::endl;
-			utility_exit();
-		 }
-		 */
-		 score = epot[aa2][aa1];
-	}else{
+		//epot = sequence_coupling_->edgePotBetween(edgeId);
+		utility::vector1< utility::vector1 < Real > > const &  epot(sequence_coupling_->edgePotBetween(edgeId));
+		//runtime_assert(epot);
+		/*
+		if(epot==NULL){
+		std::cerr << "no such edge " << seqpos1_ << " " << seqpos2_ << " in sequence coupling !)" << std::endl;
+		utility_exit();
+		}
+		*/
+		score = epot[aa2][aa1];
+	} else {
 		utility::vector1< utility::vector1 < Real > > const &  epot(sequence_coupling_->edgePotBetween(edgeId));
 		//runtime_assert(epot);
 		score = epot[aa1][aa2];

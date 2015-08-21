@@ -75,13 +75,13 @@ using namespace basic::options::OptionKeys;
 using namespace ObjexxFCL::format;
 
 namespace sequence_recovery {
-	FileOptionKey const native_pdb_list( "sequence_recovery::native_pdb_list" );
-	FileOptionKey const redesign_pdb_list( "sequence_recovery::redesign_pdb_list" );
-	FileOptionKey const parse_taskops_file( "sequence_recovery::parse_taskops_file" );
-	BooleanOptionKey const rotamer_recovery( "sequence_recovery::rotamer_recovery" );
-	StringOptionKey const seq_recov_filename( "sequence_recovery::seq_recov_filename" );
-	StringOptionKey const sub_matrix_filename( "sequence_recovery::sub_matrix_filename" );
-	IntegerOptionKey const se_cutoff( "sequence_recovery::se_cutoff" );
+FileOptionKey const native_pdb_list( "sequence_recovery::native_pdb_list" );
+FileOptionKey const redesign_pdb_list( "sequence_recovery::redesign_pdb_list" );
+FileOptionKey const parse_taskops_file( "sequence_recovery::parse_taskops_file" );
+BooleanOptionKey const rotamer_recovery( "sequence_recovery::rotamer_recovery" );
+StringOptionKey const seq_recov_filename( "sequence_recovery::seq_recov_filename" );
+StringOptionKey const sub_matrix_filename( "sequence_recovery::sub_matrix_filename" );
+IntegerOptionKey const se_cutoff( "sequence_recovery::se_cutoff" );
 }
 
 std::string usage_string;
@@ -91,16 +91,16 @@ void init_usage_prompt( std::string exe ) {
 	// place the prompt up here so that it gets updated easily; global this way, but that's ok
 	std::stringstream usage_stream;
 	usage_stream << "No files given: Use either -file:s or -file:l to designate a single pdb or a list of pdbs.\n\n"
-					<< "Usage: " << exe
-					<< "\n\t-native_pdb_list <list file>"
-					<< "\n\t-redesign_pdb_list <list file>"
+		<< "Usage: " << exe
+		<< "\n\t-native_pdb_list <list file>"
+		<< "\n\t-redesign_pdb_list <list file>"
 
-					<< "\n\t[-seq_recov_filename <file>] file to output sequence recoveries to (default: sequencerecovery.txt)"
-					<< "\n\t[-sub_matrix_filename <file>] file to output substitution matrix to (default: submatrix.txt)"
-					<< "\n\t[-parse_taskops_file <file>] tagfile which contains task operations to apply before measuring recovery (optional)"
-					<< "\n\t[-ignore_unrecognized_res]"
+		<< "\n\t[-seq_recov_filename <file>] file to output sequence recoveries to (default: sequencerecovery.txt)"
+		<< "\n\t[-sub_matrix_filename <file>] file to output substitution matrix to (default: submatrix.txt)"
+		<< "\n\t[-parse_taskops_file <file>] tagfile which contains task operations to apply before measuring recovery (optional)"
+		<< "\n\t[-ignore_unrecognized_res]"
 
-					<< "\n\n";
+		<< "\n\n";
 
 	usage_string = usage_stream.str();
 
@@ -174,8 +174,9 @@ std::set< Size > fill_designable_set( pose::Pose & pose, pack::task::TaskFactory
 
 	// iterate over all residues
 	for ( Size ii = 1; ii<= design_task->total_residue(); ++ii ) {
-		if( design_task->being_designed( ii ) )
+		if ( design_task->being_designed( ii ) ) {
 			designable_set.insert( ii );
+		}
 	}
 
 	return designable_set;
@@ -212,7 +213,7 @@ void measure_sequence_recovery( utility::vector1<core::pose::Pose> & native_pose
 	utility::vector1< core::pose::Pose >::iterator native_itr( native_poses.begin() ), native_last( native_poses.end() );
 	utility::vector1< core::pose::Pose >::iterator redesign_itr( redesign_poses.begin() ), redesign_last( redesign_poses.end() );
 
-	while( ( native_itr != native_last ) && (redesign_itr != redesign_last ) ) {
+	while ( ( native_itr != native_last ) && (redesign_itr != redesign_last ) ) {
 
 		// get local copies of the poses
 		core::pose::Pose native_pose( *native_itr );
@@ -301,14 +302,14 @@ void measure_sequence_recovery( utility::vector1<core::pose::Pose> & native_pose
 
 	// write header
 	outputFile << "Residue\tNo.correct core\tNo.native core\tNo.designed core\tNo.correct/ No.native core\tNo.correct/ No.designed core\t"
-				 << "No.correct\tNo.native\tNo.designed\tNo.correct/ No.native\tNo.correct/ No.designed\t"
-				 << "Residue\tNo.correct surface\tNo.native surface\tNo.designed surface\tNo.correct/ No.native\tNo.correct/ No.designed" << std::endl;
+		<< "No.correct\tNo.native\tNo.designed\tNo.correct/ No.native\tNo.correct/ No.designed\t"
+		<< "Residue\tNo.correct surface\tNo.native surface\tNo.designed surface\tNo.correct/ No.native\tNo.correct/ No.designed" << std::endl;
 
 	// write AA data
 	for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
 
 		outputFile << chemical::name_from_aa( chemical::AA(ii) ) << "\t"
-					<< n_correct_core[ ii ] << "\t" << n_native_core[ ii ] << "\t" << n_designed_core[ ii ] << "\t";
+			<< n_correct_core[ ii ] << "\t" << n_native_core[ ii ] << "\t" << n_designed_core[ ii ] << "\t";
 
 		if ( n_native_core[ii] != 0 ) outputFile << F(4,2, (float)n_correct_core[ii]/n_native_core[ii] ) << "\t";
 		else outputFile << "---\t";
@@ -330,7 +331,7 @@ void measure_sequence_recovery( utility::vector1<core::pose::Pose> & native_pose
 		//if ( n_designed[ii] != 0 ) std::cout << F(4,2, (float)n_correct[ii]/n_designed[ii] ) << "\t";
 
 		outputFile << chemical::name_from_aa( chemical::AA(ii) ) << "\t"
-							 << n_correct_surface[ ii ] << "\t" << n_native_surface[ ii ] << "\t" << n_designed_surface[ ii ] << "\t";
+			<< n_correct_surface[ ii ] << "\t" << n_native_surface[ ii ] << "\t" << n_designed_surface[ ii ] << "\t";
 
 		if ( n_native_surface[ii] != 0 ) outputFile << F(4,2, (float)n_correct_surface[ii]/n_native_surface[ii] ) << "\t";
 		else outputFile << "---\t";
@@ -346,10 +347,10 @@ void measure_sequence_recovery( utility::vector1<core::pose::Pose> & native_pose
 
 	// write totals
 	outputFile << "Total\t"
-				<< n_correct_total_core << "\t" << n_total_core << "\t\t" << F(5,3, (float)n_correct_total_core/n_total_core ) << "\t\t"
-				<< n_correct_total << "\t" << n_total << "\t\t" << F(5,3, (float)n_correct_total/n_total ) << "\t\tTotal\t"
-				<< n_correct_total_surface << "\t" << n_total_surface << "\t\t" << F(5,3, (float)n_correct_total_surface/n_total_surface )
-				<< std::endl;
+		<< n_correct_total_core << "\t" << n_total_core << "\t\t" << F(5,3, (float)n_correct_total_core/n_total_core ) << "\t\t"
+		<< n_correct_total << "\t" << n_total << "\t\t" << F(5,3, (float)n_correct_total/n_total ) << "\t\tTotal\t"
+		<< n_correct_total_surface << "\t" << n_total_surface << "\t\t" << F(5,3, (float)n_correct_total_surface/n_total_surface )
+		<< std::endl;
 
 
 	// output the sequence substitution file
@@ -372,24 +373,24 @@ void measure_sequence_recovery( utility::vector1<core::pose::Pose> & native_pose
 		matrixFile << std::endl;
 	}
 
-// 	///output the sequence substitution file with percent of native recovered
-// 	utility::io::ozstream matrixFileratio( "submatrix.ratio.txt" ) ; //allow naming later
-// 	//write the header
-// 	matrixFileratio << "AA_TYPE" << "\t" ;
-// 	for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
-// 	  matrixFileratio << "nat_"<<chemical::name_from_aa( chemical::AA(ii) ) << "\t";
-// 	}
-// 	matrixFileratio<<std::endl;
+	//  ///output the sequence substitution file with percent of native recovered
+	//  utility::io::ozstream matrixFileratio( "submatrix.ratio.txt" ) ; //allow naming later
+	//  //write the header
+	//  matrixFileratio << "AA_TYPE" << "\t" ;
+	//  for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
+	//    matrixFileratio << "nat_"<<chemical::name_from_aa( chemical::AA(ii) ) << "\t";
+	//  }
+	//  matrixFileratio<<std::endl;
 
-// 	//now write the numbers
-// 	for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) { //redesigns
-// 	  matrixFileratio << "sub_" << chemical::name_from_aa( chemical::AA(ii) );
-// 	  for ( Size jj = 1; jj <= chemical::num_canonical_aas; ++jj ) { //natives
-// 	    //std::cout<<"Native: "<< jj << " Sub: " << ii << "  Value: "<<sub_matrix( jj, ii ) << std::endl;
-// 	    matrixFileratio<< "\t"<< F(4,2, (float)sub_matrix( jj, ii )/sub_matrix( jj, jj ) );
-// 	  }
-// 	  matrixFileratio << std::endl;
-// 	}
+	//  //now write the numbers
+	//  for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) { //redesigns
+	//    matrixFileratio << "sub_" << chemical::name_from_aa( chemical::AA(ii) );
+	//    for ( Size jj = 1; jj <= chemical::num_canonical_aas; ++jj ) { //natives
+	//      //std::cout<<"Native: "<< jj << " Sub: " << ii << "  Value: "<<sub_matrix( jj, ii ) << std::endl;
+	//      matrixFileratio<< "\t"<< F(4,2, (float)sub_matrix( jj, ii )/sub_matrix( jj, jj ) );
+	//    }
+	//    matrixFileratio << std::endl;
+	//  }
 
 }
 
@@ -403,94 +404,94 @@ int main( int argc, char* argv[] ) {
 
 	try {
 
-	using utility::file::file_exists;
-	using utility::file::FileName;
+		using utility::file::file_exists;
+		using utility::file::FileName;
 
-	option.add( sequence_recovery::native_pdb_list, "List of pdb files of the native structures." );
-	option.add( sequence_recovery::redesign_pdb_list, "List of pdb files of the redesigned structures." );
-	option.add( sequence_recovery::parse_taskops_file, "XML file which contains task operations to apply before measuring recovery (optional)" );
-	option.add( sequence_recovery::rotamer_recovery, "Compare the rotamer recovery instead of sequence recovery." ).def( false );
-	option.add( sequence_recovery::seq_recov_filename, "Name of file for sequence recovery output." ).def("sequencerecovery.txt");
-	option.add( sequence_recovery::sub_matrix_filename, "Name of file substitution matrix output." ).def("submatrix.txt");
-	option.add( sequence_recovery::se_cutoff, "Integer for how many nbs a residue must have less than or equal to to be considered surface exposed." ).def( 16 );
+		option.add( sequence_recovery::native_pdb_list, "List of pdb files of the native structures." );
+		option.add( sequence_recovery::redesign_pdb_list, "List of pdb files of the redesigned structures." );
+		option.add( sequence_recovery::parse_taskops_file, "XML file which contains task operations to apply before measuring recovery (optional)" );
+		option.add( sequence_recovery::rotamer_recovery, "Compare the rotamer recovery instead of sequence recovery." ).def( false );
+		option.add( sequence_recovery::seq_recov_filename, "Name of file for sequence recovery output." ).def("sequencerecovery.txt");
+		option.add( sequence_recovery::sub_matrix_filename, "Name of file substitution matrix output." ).def("submatrix.txt");
+		option.add( sequence_recovery::se_cutoff, "Integer for how many nbs a residue must have less than or equal to to be considered surface exposed." ).def( 16 );
 
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-	// changing this so that native_pdb_list and redesign_pdb_list do not have default values. giving these options can lead
-	// to users measuring recovery against the wrong set of PDBs.
-	if ( argc == 1 || !option[ sequence_recovery::native_pdb_list ].user() || !option[ sequence_recovery::redesign_pdb_list ].user() ) {
-		init_usage_prompt( argv[0] );
-		utility_exit_with_message_status( usage_string, 1 );
-	}
-
-	// read list file. open the file specified by the flag 'native_pdb_list' and read in all the lines in it
-	std::vector< FileName > native_pdb_file_names;
-	std::string native_pdb_list_file_name( option[ sequence_recovery::native_pdb_list ].value() );
-	std::ifstream native_data( native_pdb_list_file_name.c_str() );
-	std::string native_line;
-	if ( !native_data.good() ) {
-		utility_exit_with_message( "Unable to open file: " + native_pdb_list_file_name + '\n' );
-	}
-	while( getline( native_data, native_line ) ) {
-		native_pdb_file_names.push_back( FileName( native_line ) );
-	}
-
-	native_data.close();
-
-	// read list file. open the file specified by the flag 'redesign_pdb_list' and read in all the lines in it
-	std::vector< FileName > redesign_pdb_file_names;
-	std::string redesign_pdb_list_file_name( option[ sequence_recovery::redesign_pdb_list ].value() );
-	std::ifstream redesign_data( redesign_pdb_list_file_name.c_str() );
-	std::string redesign_line;
-	if ( !redesign_data.good() ) {
-		utility_exit_with_message( "Unable to open file: " + redesign_pdb_list_file_name + '\n' );
-	}
-	while( getline( redesign_data, redesign_line ) ) {
-		redesign_pdb_file_names.push_back( FileName( redesign_line ) );
-	}
-	redesign_data.close();
-
-	// check that the vectors are the same size. if not error out immediately.
-	if ( native_pdb_file_names.size() != redesign_pdb_file_names.size() ) {
-		utility_exit_with_message( "Size of native pdb list file: " + native_pdb_list_file_name + " does not equal size of redesign pdb list: " + redesign_pdb_list_file_name + "!\n" );
-	}
-
-	// iterate over both FileName vector and read in the PDB files
-	utility::vector1< pose::Pose > native_poses;
-	utility::vector1< pose::Pose > redesign_poses;
-
-	std::vector< FileName >::iterator native_pdb( native_pdb_file_names.begin() ), native_last_pdb(native_pdb_file_names.end());
-	std::vector< FileName >::iterator redesign_pdb( redesign_pdb_file_names.begin() ), redesign_last_pdb(redesign_pdb_file_names.end());
-
-	while ( ( native_pdb != native_last_pdb ) && ( redesign_pdb != redesign_last_pdb ) ) {
-
-		// check to make sure the file exists
-		if ( !file_exists( *native_pdb ) ) {
-			utility_exit_with_message( "Native pdb " + std::string(*native_pdb) + " not found! skipping" );
-		}
-		if ( !file_exists( *redesign_pdb ) ) {
-			utility_exit_with_message( "Redesign pdb " + std::string(*redesign_pdb) + " not found! skipping" );
+		// changing this so that native_pdb_list and redesign_pdb_list do not have default values. giving these options can lead
+		// to users measuring recovery against the wrong set of PDBs.
+		if ( argc == 1 || !option[ sequence_recovery::native_pdb_list ].user() || !option[ sequence_recovery::redesign_pdb_list ].user() ) {
+			init_usage_prompt( argv[0] );
+			utility_exit_with_message_status( usage_string, 1 );
 		}
 
-		TR << "Reading in poses " << *native_pdb << " and " << *redesign_pdb << std::endl;
-		core::pose::Pose native_pose, redesign_pose;
-		core::import_pose::pose_from_pdb( native_pose, *native_pdb );
-		core::import_pose::pose_from_pdb( redesign_pose, *redesign_pdb );
+		// read list file. open the file specified by the flag 'native_pdb_list' and read in all the lines in it
+		std::vector< FileName > native_pdb_file_names;
+		std::string native_pdb_list_file_name( option[ sequence_recovery::native_pdb_list ].value() );
+		std::ifstream native_data( native_pdb_list_file_name.c_str() );
+		std::string native_line;
+		if ( !native_data.good() ) {
+			utility_exit_with_message( "Unable to open file: " + native_pdb_list_file_name + '\n' );
+		}
+		while ( getline( native_data, native_line ) ) {
+			native_pdb_file_names.push_back( FileName( native_line ) );
+		}
 
-		native_poses.push_back( native_pose ); redesign_poses.push_back( redesign_pose );
-		native_pdb++; redesign_pdb++;
-	}
+		native_data.close();
+
+		// read list file. open the file specified by the flag 'redesign_pdb_list' and read in all the lines in it
+		std::vector< FileName > redesign_pdb_file_names;
+		std::string redesign_pdb_list_file_name( option[ sequence_recovery::redesign_pdb_list ].value() );
+		std::ifstream redesign_data( redesign_pdb_list_file_name.c_str() );
+		std::string redesign_line;
+		if ( !redesign_data.good() ) {
+			utility_exit_with_message( "Unable to open file: " + redesign_pdb_list_file_name + '\n' );
+		}
+		while ( getline( redesign_data, redesign_line ) ) {
+			redesign_pdb_file_names.push_back( FileName( redesign_line ) );
+		}
+		redesign_data.close();
+
+		// check that the vectors are the same size. if not error out immediately.
+		if ( native_pdb_file_names.size() != redesign_pdb_file_names.size() ) {
+			utility_exit_with_message( "Size of native pdb list file: " + native_pdb_list_file_name + " does not equal size of redesign pdb list: " + redesign_pdb_list_file_name + "!\n" );
+		}
+
+		// iterate over both FileName vector and read in the PDB files
+		utility::vector1< pose::Pose > native_poses;
+		utility::vector1< pose::Pose > redesign_poses;
+
+		std::vector< FileName >::iterator native_pdb( native_pdb_file_names.begin() ), native_last_pdb(native_pdb_file_names.end());
+		std::vector< FileName >::iterator redesign_pdb( redesign_pdb_file_names.begin() ), redesign_last_pdb(redesign_pdb_file_names.end());
+
+		while ( ( native_pdb != native_last_pdb ) && ( redesign_pdb != redesign_last_pdb ) ) {
+
+			// check to make sure the file exists
+			if ( !file_exists( *native_pdb ) ) {
+				utility_exit_with_message( "Native pdb " + std::string(*native_pdb) + " not found! skipping" );
+			}
+			if ( !file_exists( *redesign_pdb ) ) {
+				utility_exit_with_message( "Redesign pdb " + std::string(*redesign_pdb) + " not found! skipping" );
+			}
+
+			TR << "Reading in poses " << *native_pdb << " and " << *redesign_pdb << std::endl;
+			core::pose::Pose native_pose, redesign_pose;
+			core::import_pose::pose_from_pdb( native_pose, *native_pdb );
+			core::import_pose::pose_from_pdb( redesign_pose, *redesign_pdb );
+
+			native_poses.push_back( native_pose ); redesign_poses.push_back( redesign_pose );
+			native_pdb++; redesign_pdb++;
+		}
 
 
-	if ( option[ sequence_recovery::rotamer_recovery ].value() ) {
-		TR << "Measuring rotamer recovery"  << std::endl;
-		measure_rotamer_recovery( native_poses, redesign_poses );
-	} else {
-		TR << "Measuring sequence recovery" << std::endl;
-		measure_sequence_recovery( native_poses, redesign_poses );
-	}
-	 } catch ( utility::excn::EXCN_Base const & e ) {
+		if ( option[ sequence_recovery::rotamer_recovery ].value() ) {
+			TR << "Measuring rotamer recovery"  << std::endl;
+			measure_rotamer_recovery( native_poses, redesign_poses );
+		} else {
+			TR << "Measuring sequence recovery" << std::endl;
+			measure_sequence_recovery( native_poses, redesign_poses );
+		}
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

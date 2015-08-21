@@ -95,7 +95,7 @@ void ChemicalShiftSequence::read_from_file(
 
 	while ( line.substr(0,13) == "DATA SEQUENCE" ) {
 		std::string dummy;
-	 	std::istringstream ls( line );
+		std::istringstream ls( line );
 		ls >> dummy >> dummy;
 		while ( ls.good() ) {
 			ls >> dummy;
@@ -109,8 +109,8 @@ void ChemicalShiftSequence::read_from_file(
 
 	vector1< Real > prof_row( order.size(), bad_shift );
 	//vector1< vector1< Real > > new_prof(
-	//	aa_seq.size(), prof_row
-	//	//( order.size(), bad_shift )
+	// aa_seq.size(), prof_row
+	// //( order.size(), bad_shift )
 	//);
 
 	vector1< vector1< Real > > new_prof;
@@ -118,8 +118,8 @@ void ChemicalShiftSequence::read_from_file(
 	//std::cout << "SEQUENCE: " << aa_seq << std::endl;
 	Size last_res_no(0);
 	aa_seq = "";
-	while( getline( input, line ) ) {
-	 	std::istringstream ls( line );
+	while ( getline( input, line ) ) {
+		std::istringstream ls( line );
 		core::Size res_no;
 		std::string atm_name;
 		char aa;

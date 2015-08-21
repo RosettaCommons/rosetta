@@ -112,7 +112,7 @@ private:
 	core::Energy score_torsion(core::pose::Pose & pose);
 
 	/// @brief boltzmann calculation - is the new score acceptable?
-  bool boltzmann( core::Energy const pre_score, core::Energy const post_score );
+	bool boltzmann( core::Energy const pre_score, core::Energy const post_score );
 
 	//data
 

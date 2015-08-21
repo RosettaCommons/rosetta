@@ -19,7 +19,7 @@
 
 namespace protocols {
 namespace canonical_sampling {
-namespace mc_convergence_checks{
+namespace mc_convergence_checks {
 
 struct PoolData;
 typedef utility::pointer::shared_ptr< PoolData > PoolDataOP;

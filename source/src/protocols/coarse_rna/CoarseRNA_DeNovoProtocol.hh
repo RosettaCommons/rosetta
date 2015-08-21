@@ -48,9 +48,9 @@ public:
 	/// @brief Construct the protocol object given
 	/// the RNA fragment library to use.
 	CoarseRNA_DeNovoProtocol(
-										 Size const nstruct,
-										 Size const monte_carlo_cycles,
-										 std::string const silent_file );
+		Size const nstruct,
+		Size const monte_carlo_cycles,
+		std::string const silent_file );
 
 	~CoarseRNA_DeNovoProtocol();
 
@@ -95,7 +95,7 @@ public:
 	}
 
 	void
-	set_input_res( 	utility::vector1< core::Size > const & setting ){ input_res_ = setting; }
+	set_input_res(  utility::vector1< core::Size > const & setting ){ input_res_ = setting; }
 
 
 	void
@@ -149,7 +149,7 @@ private:
 	initialize_constraints( core::pose::Pose & pose );
 
 	Size
-  figure_out_constraint_separation_cutoff( Size const & r, Size const & rounds, Size const & max_dist );
+	figure_out_constraint_separation_cutoff( Size const & r, Size const & rounds, Size const & max_dist );
 
 	void
 	update_pose_constraints( Size const & r, Size const & rounds, core::pose::Pose & pose );

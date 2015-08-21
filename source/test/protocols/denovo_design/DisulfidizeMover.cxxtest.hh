@@ -83,11 +83,11 @@ public:
 #endif
 
 		core::pose::PoseOP additional = disulf.get_additional_output();
-		
+
 #ifdef test_protocols_denovo_design_DisulfidizeMoverTests_dump_pdbs
 		core::Size temp(0);
 #endif
-		
+
 		while ( additional ) {
 #ifdef test_protocols_denovo_design_DisulfidizeMoverTests_dump_pdbs
 			++temp;
@@ -105,12 +105,13 @@ public:
 
 		// each should have disulfides
 		std::set< core::Size > num_disulf;
-		BOOST_FOREACH( core::pose::PoseOP p, poses ) {
+		BOOST_FOREACH ( core::pose::PoseOP p, poses ) {
 			core::Size cyd_count = 0;
 			for ( core::Size i=1, endi=p->total_residue(); i<=endi; ++i ) {
 				TS_ASSERT( p );
-				if ( p->residue(i).type().is_disulfide_bonded() )
+				if ( p->residue(i).type().is_disulfide_bonded() ) {
 					++cyd_count;
+				}
 			}
 			TS_ASSERT( cyd_count );
 			num_disulf.insert( cyd_count );
@@ -166,7 +167,7 @@ public:
 		for ( core::Size i=1, endi=input_pose.total_residue(); i<=endi; ++i ) {
 			for ( core::Size j=i, endj=input_pose.total_residue(); j<=endj; ++j ) {
 				core::Real const dist = input_pose.residue(j).nbr_atom_xyz().distance(
-						input_pose.residue(i).nbr_atom_xyz() );
+					input_pose.residue(i).nbr_atom_xyz() );
 				if ( dist > 5 ) {
 					TS_ASSERT( !disulf.check_disulfide_cb_distance( input_pose, i, j ) );
 					TS_ASSERT( !disulf.check_disulfide_cb_distance( input_pose, j, i ) );
@@ -216,13 +217,13 @@ public:
 		TR << residueset2[1] << std::endl;
 		DisulfidizeMover::DisulfideList disulfs =
 			disulf.find_possible_disulfides( input_pose, residueset1, residueset2 );
-		
-		TR << "Pair\tRes1\tRes2" << std::endl;	
-		for(core::Size i=1, imax=disulfs.size(); i<=imax; ++i) {
+
+		TR << "Pair\tRes1\tRes2" << std::endl;
+		for ( core::Size i=1, imax=disulfs.size(); i<=imax; ++i ) {
 			TR << i << "\t" << disulfs[i].first << "\t" << disulfs[i].second << std::endl;
 		}
 
-#ifdef test_protocols_denovo_design_DisulfidizeMoverTests_dump_pdbs			
+#ifdef test_protocols_denovo_design_DisulfidizeMoverTests_dump_pdbs
 		input_pose.dump_pdb("disulfidize_temp.pdb");
 #endif
 

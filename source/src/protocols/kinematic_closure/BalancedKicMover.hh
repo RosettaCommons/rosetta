@@ -57,7 +57,7 @@ namespace kinematic_closure {
 
 class BalancedKicMover
 	: public protocols::canonical_sampling::ThermodynamicMover,
-	  private boost::noncopyable {
+	private boost::noncopyable {
 
 public:
 
@@ -106,17 +106,17 @@ public:
 	/// @brief Pick a solution in a way that cancels out the geometrical bias of
 	/// the kinematic closure algorithm.
 	static ClosureSolutionCOP pick_solution(
-			SolutionList const & unperturbed_solutions,
-			SolutionList const & perturbed_solutions);
+		SolutionList const & unperturbed_solutions,
+		SolutionList const & perturbed_solutions);
 
 
 	/// @brief Return true if the given solution is the same as the input pose.
 	/// This allows for a more accurate reporting of Monte Carlo statistics.
 	static bool is_solution_trivial(
-			ClosureProblemCOP problem,
-			ClosureSolutionCOP solution,
-			SolutionList const & unperturbed_solutions,
-			SolutionList const & perturbed_solutions);
+		ClosureProblemCOP problem,
+		ClosureSolutionCOP solution,
+		SolutionList const & unperturbed_solutions,
+		SolutionList const & perturbed_solutions);
 
 private:
 	bool is_fold_tree_stale_;

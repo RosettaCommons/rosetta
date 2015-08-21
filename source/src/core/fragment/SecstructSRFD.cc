@@ -42,9 +42,9 @@ static thread_local basic::Tracer tr( "core.fragment" );
 
 
 bool SecstructSRFD::apply( pose::Pose& pose, Size seqpos ) const {
-  //  Parent::apply( pose, seqpos );
-  pose.set_secstruct( seqpos, secstruct() );
-  return true; //can something go wrong ? check has_torsion() ?
+	//  Parent::apply( pose, seqpos );
+	pose.set_secstruct( seqpos, secstruct() );
+	return true; //can something go wrong ? check has_torsion() ?
 }
 
 
@@ -60,33 +60,33 @@ bool SecstructSRFD::apply( kinematics::MoveMap const &, pose::Pose & pose, Size 
 
 
 bool SecstructSRFD::apply_ss( std::string& ss, Size seqpos ) const {
-  // Parent::apply_ss( ss, seqpos );
- ss[ seqpos - 1 ] = secstruct();
- return true; //can something go wrong ? check has_torsion() ?
+	// Parent::apply_ss( ss, seqpos );
+	ss[ seqpos - 1 ] = secstruct();
+	return true; //can something go wrong ? check has_torsion() ?
 }
 
 
 bool SecstructSRFD::steal( pose::Pose const& pose, Size seqpos ) {
-  Parent::steal( pose, seqpos );
-  secstruct_ = pose.secstruct( seqpos );
+	Parent::steal( pose, seqpos );
+	secstruct_ = pose.secstruct( seqpos );
 	tr.Trace << "steal secstructur " << secstruct_ << " at position " << seqpos  << std::endl;
-  return true;
+	return true;
 }
 
 bool SecstructSRFD::is_compatible( SingleResidueFragData const& aSRFD) const {
-  //SecstructSRFD const* ptr = dynamic_cast< SecstructSRFD const* > ( & aSRFD );
-  return dynamic_cast< SecstructSRFD const* > ( & aSRFD ); //cast succesful same type
+	//SecstructSRFD const* ptr = dynamic_cast< SecstructSRFD const* > ( & aSRFD );
+	return dynamic_cast< SecstructSRFD const* > ( & aSRFD ); //cast succesful same type
 }
 
 bool SecstructSRFD::is_applicable( kinematics::MoveMap const&, Size) const {
-  //movemap always allows changes of the secstruct id ( it doesn't move anything but changes the energy -- strange dof )
-  return true;
+	//movemap always allows changes of the secstruct id ( it doesn't move anything but changes the energy -- strange dof )
+	return true;
 }
 
 void SecstructSRFD::show( std::ostream &out ) const {
-  using namespace ObjexxFCL::format;
+	using namespace ObjexxFCL::format;
 	Parent::show( out );
-  out << sequence() << ' ' << secstruct() << ' ';
+	out << sequence() << ' ' << secstruct() << ' ';
 }
 
 void SecstructSRFD::read_data( std::istream &in ) {

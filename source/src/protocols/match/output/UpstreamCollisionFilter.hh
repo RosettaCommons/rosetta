@@ -149,7 +149,7 @@ public:
 	bool
 	passes_hardsphere_filter(
 		core::Size geomcst_a,
-    core::Size geomcst_b,
+		core::Size geomcst_b,
 		Hit const & upstream_hit_a,
 		Hit const & upstream_hit_b
 	) const;

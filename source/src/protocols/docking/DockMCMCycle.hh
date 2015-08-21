@@ -10,9 +10,9 @@
 /// @file docking_initialization_protocols
 /// @brief initialization protocols for docking
 /// @details
-///		This contains the functions that create initial positions for docking
-///		You can either randomize partner 1 or partner 2, spin partner 2, or
-///		perform a simple perturbation.
+///  This contains the functions that create initial positions for docking
+///  You can either randomize partner 1 or partner 2, spin partner 2, or
+///  perform a simple perturbation.
 /// @author Monica Berrondo
 /// @author Modified by Sergey Lyskov
 
@@ -53,14 +53,14 @@ public:
 	DockMCMCycle();
 
 	/// @brief Constructor with two arguments: The first argument is the jump number to dock over.
-	///		The second is a scorefunction that will be used for docking and packing.
+	///  The second is a scorefunction that will be used for docking and packing.
 	DockMCMCycle(
 		core::Size const rb_jump,
 		core::scoring::ScoreFunctionOP scorefxn
 	);
 
 	/// @brief Constructor with arguments: The first argument is the jump number to dock over.
-	///		The second is a scorefunction that will be used for docking, the third is a scorefunction that will be used for packing.
+	///  The second is a scorefunction that will be used for docking, the third is a scorefunction that will be used for packing.
 	DockMCMCycle(
 		core::Size const rb_jump,
 		core::scoring::ScoreFunctionOP scorefxn,
@@ -68,7 +68,7 @@ public:
 	);
 
 	/// @brief Constructor with arguments: The first argument is a DockJumps vector.
-	///		The second is a scorefunction that will be used for docking, the third is a scorefunction that will be used for packing.
+	///  The second is a scorefunction that will be used for docking, the third is a scorefunction that will be used for packing.
 	DockMCMCycle(
 		DockJumps const movable_jumps,
 		core::scoring::ScoreFunctionOP scorefxn,
@@ -101,9 +101,9 @@ public:
 	void reset_cycle_index();
 	void init_mc(core::pose::Pose & pose);
 
-    void set_scmin(bool setting){scmin_=setting;}
-    void set_rtmin(bool setting){rtmin_=setting;}
-    void set_rot_magnitude(core::Real value){rot_magnitude_=value;}
+	void set_scmin(bool setting){scmin_=setting;}
+	void set_rtmin(bool setting){rtmin_=setting;}
+	void set_rot_magnitude(core::Real value){rot_magnitude_=value;}
 
 	DockJumps const & movable_jumps() const;
 

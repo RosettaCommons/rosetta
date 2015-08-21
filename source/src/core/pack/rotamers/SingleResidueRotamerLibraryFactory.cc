@@ -81,14 +81,14 @@ SingleResidueRotamerLibraryFactory::has_type( std::string const & selector_type 
 std::string
 SingleResidueRotamerLibraryFactory::type_for_residuetype( core::chemical::ResidueType const & restype ) const {
 	core::chemical::rotamers::RotamerLibrarySpecificationCOP const & rotlibspec( restype.rotamer_library_specification() );
-	if( rotlibspec ) {
+	if ( rotlibspec ) {
 		std::string type( rotlibspec->keyname() );
 
 		// Check to make sure that it's appropriately registered.
-		if( ! has_type(type) ) {
+		if ( ! has_type(type) ) {
 			TR << "For residue " << restype.name() << ", can't find SingleResidueRotamerLibraryCreator for type '" << type << "'. Known types are: " << std::endl;
 			TR << "\t\t";
-			for( CreatorMap::const_iterator iter( creator_map_.begin() ), iter_end( creator_map_.end() ); iter != iter_end; ++iter ) {
+			for ( CreatorMap::const_iterator iter( creator_map_.begin() ), iter_end( creator_map_.end() ); iter != iter_end; ++iter ) {
 				TR << iter->first << ", ";
 			}
 			TR << std::endl;
@@ -105,7 +105,7 @@ SingleResidueRotamerLibraryFactory::type_for_residuetype( core::chemical::Residu
 std::string
 SingleResidueRotamerLibraryFactory::get_cachetag( core::chemical::ResidueType const & restype ) const {
 	core::chemical::rotamers::RotamerLibrarySpecificationCOP const & rotlibspec( restype.rotamer_library_specification() );
-	if( rotlibspec ) {
+	if ( rotlibspec ) {
 		return rotlibspec->cache_tag( restype );
 	} else {
 		return "";
@@ -122,37 +122,37 @@ SingleResidueRotamerLibraryFactory::get_cachetag( core::chemical::ResidueType co
 core::pack::rotamers::SingleResidueRotamerLibraryCOP
 SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & restype ) const {
 	std::string type( type_for_residuetype( restype ) );
-	if( type == "" ) {
+	if ( type == "" ) {
 		// A null pointer means that there isn't a rotamer library
 		return core::pack::rotamers::SingleResidueRotamerLibraryCOP(0);
 	}
 	std::string cachetag( get_cachetag(restype) );
 	std::pair< std::string, std::string > cachepair(type,cachetag);
-	if( cachetag.size() ) {
+	if ( cachetag.size() ) {
 #ifdef MULTI_THREADED
 #ifdef CXX11
 		std::lock_guard<std::mutex> lock(cache_mutex_); // mutex will release when this scope exits
 #endif
 #endif
-		if( cache_.count( cachepair ) ) {
+		if ( cache_.count( cachepair ) ) {
 			return cache_[ cachepair ];
 		}
 	}
 
 	CreatorMap::const_iterator entry(creator_map_.find( type ) );
 	assert( entry != creator_map_.end() );
-	core::pack::rotamers::SingleResidueRotamerLibraryCOP library(	entry->second->create( restype ) );
+	core::pack::rotamers::SingleResidueRotamerLibraryCOP library( entry->second->create( restype ) );
 
 	// Some creators (e.g. Dunbrack for Gly/Ala) will return empty residue library pointers
 	// We can cache a null pointer
 
-	if( cachetag.size() ) {
+	if ( cachetag.size() ) {
 #ifdef MULTI_THREADED
 #ifdef CXX11
 		std::lock_guard<std::mutex> lock(cache_mutex_); // mutex will release when this scope exits
 #endif
 #endif
-		if( ! cache_.count( cachepair ) ) {
+		if ( ! cache_.count( cachepair ) ) {
 			cache_[ cachepair ] = library;
 		}
 		return cache_[ cachepair ]; // Catch case where another thread already assigned cachepair
@@ -163,7 +163,7 @@ SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & res
 core::pack::rotamers::SingleResidueRotamerLibraryCOP
 SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & restype, core::conformation::Residue const & residue ) const {
 	std::string cachetag( get_cachetag(restype) );
-	if( cachetag.size() ) {
+	if ( cachetag.size() ) {
 		// Cachable means that you can't alter the library creator based on the Residue being passed
 		return get( restype );
 	}

@@ -105,25 +105,24 @@ MembraneEnvEnergy::residue_energy(
 ) const
 {
 	Real env_score( 0.0 ); // cb_score( 0.0 ); //, cb_score12( 0.0 ), cb_score( 0.0 );
-//	basic::MetricValue<core::Vector> depth_vector;
-//	pose.metric("MCN","depth",depth_vector);
-//	Size pos=rsd.seqpos();
-//	Real depth=depth_vector[ rsd.seqpos() ];
-//	Real depth=30;
-//	std::cout << rsd.seqpos() << "\n "; << depth << "\n";
+	// basic::MetricValue<core::Vector> depth_vector;
+	// pose.metric("MCN","depth",depth_vector);
+	// Size pos=rsd.seqpos();
+	// Real depth=depth_vector[ rsd.seqpos() ];
+	// Real depth=30;
+	// std::cout << rsd.seqpos() << "\n "; << depth << "\n";
 	//std::cout << pos << "\n";
 	if ( rsd.aa() == core::chemical::aa_vrt ) return;
-	if(MembraneTopology_from_pose( pose ).allow_scoring(rsd.seqpos()))
-	{
+	if ( MembraneTopology_from_pose( pose ).allow_scoring(rsd.seqpos()) ) {
 		potential_.evaluate_env( pose, rsd, env_score);
-	//potential_.evaluate_cbeta( pose, rsd,cb_score);
+		//potential_.evaluate_cbeta( pose, rsd,cb_score);
 	}
-//	env_score *= 0.5;2.019;
+	// env_score *= 0.5;2.019;
 	//cb_score = 2.667 * ( cb_score ) * 0.3;
-//bw is this something we like?
+	//bw is this something we like?
 	//core::Real rsd_wt = get_residue_weight_by_ss( pose.conformation().secstruct( rsd.seqpos() ) );
 
-		emap[ Menv ] += env_score;// * rsd_wt;
+	emap[ Menv ] += env_score;// * rsd_wt;
 	//emap[ Mcbeta ] = cb_score;// * rsd_wt;
 
 } // residue_energy
@@ -139,18 +138,18 @@ MembraneEnvEnergy::finalize_total_energy(
 	std::cout << "BEFORE emap[ Menv ] " << emap[ Menv ] << std::endl;
 	if(potential_.Menv_penalties()) //bw quick hack before putting them as individual scoring terms....
 	{
-		Real tm_projection(0);
-		Real hbond_pen(0);
-		Real termini_pen(0);
-		potential_.tm_projection_penalty(pose,tm_projection);
-		potential_.hbond_penalty(pose,hbond_pen);
-		potential_.termini_penalty(pose,termini_pen);
-		emap[ Menv ]+=(tm_projection+hbond_pen+termini_pen+10);
+	Real tm_projection(0);
+	Real hbond_pen(0);
+	Real termini_pen(0);
+	potential_.tm_projection_penalty(pose,tm_projection);
+	potential_.hbond_penalty(pose,hbond_pen);
+	potential_.termini_penalty(pose,termini_pen);
+	emap[ Menv ]+=(tm_projection+hbond_pen+termini_pen+10);
 
-		std::cout << "Menv_penalties (tm_projection+hbond_pen+termini_pen+10) " << tm_projection << " " << hbond_pen << " " << termini_pen << std::endl;
+	std::cout << "Menv_penalties (tm_projection+hbond_pen+termini_pen+10) " << tm_projection << " " << hbond_pen << " " << termini_pen << std::endl;
 	}
 	std::cout << "AFTER emap[ Menv ] " << emap[ Menv ] << std::endl;
-	 */
+	*/
 	potential_.finalize( pose );
 	//std::cout << "AFTER2 emap[ Menv ] " << emap[ Menv ] << std::endl;
 }

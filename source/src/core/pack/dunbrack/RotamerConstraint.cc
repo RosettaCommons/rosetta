@@ -52,11 +52,11 @@ void load_unboundrot(pose::Pose & pose)
 {
 	using namespace basic::options;
 	using namespace core::pose;
-	if( !option[ OptionKeys::packing::unboundrot ].active() ) return;
+	if ( !option[ OptionKeys::packing::unboundrot ].active() ) return;
 
 	static core::pose::PoseCOPs unboundrot_poses;
-	if( unboundrot_poses.empty() ) {
-		for(Size i = 1; i <= option[ OptionKeys::packing::unboundrot ]().size(); ++i) {
+	if ( unboundrot_poses.empty() ) {
+		for ( Size i = 1; i <= option[ OptionKeys::packing::unboundrot ]().size(); ++i ) {
 			std::string filename = option[ OptionKeys::packing::unboundrot ]()[i].name();
 			TR << "Adding 'unbound' rotamers from " << filename << std::endl;
 			PoseOP pose( new Pose() );
@@ -71,25 +71,25 @@ void load_unboundrot(pose::Pose & pose)
 
 void load_unboundrot(pose::Pose & pose, core::pose::PoseCOPs const & unboundrot_poses)
 {
-	if( unboundrot_poses.empty() ) return; // guaranteed at least one pose now
+	if ( unboundrot_poses.empty() ) return; // guaranteed at least one pose now
 
 	using namespace std;
-	for(Size rsd_num = 1; rsd_num <= pose.total_residue(); ++rsd_num) {
+	for ( Size rsd_num = 1; rsd_num <= pose.total_residue(); ++rsd_num ) {
 		// Each constraint can contain only one ResidueType, so we have to sort them out here.
 		// We should get any scoring overlap since ResidueTypes are mutually exclusive.
 		map< string, RotamerConstraintOP > by_res_type;
-		for(Size pose_num = 1; pose_num <= unboundrot_poses.size(); ++pose_num) {
-			if( rsd_num > unboundrot_poses[pose_num]->total_residue() ) continue;
+		for ( Size pose_num = 1; pose_num <= unboundrot_poses.size(); ++pose_num ) {
+			if ( rsd_num > unboundrot_poses[pose_num]->total_residue() ) continue;
 			conformation::Residue const & rsd = unboundrot_poses[pose_num]->residue(rsd_num);
-			if( !rsd.is_protein() ) {
+			if ( !rsd.is_protein() ) {
 				// Can't determine rotamer number for anything but protein.
 				TR << "Can't use " << rsd.type().name() << " " << rsd_num << " for residue constraint -- protein only." << std::endl;
 				continue;
 			}
 			// no point in creating constrains if the residue doesn't have a rotamer library
-			if( ! core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( rsd.type() ) ) continue;
+			if ( ! core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( rsd.type() ) ) continue;
 
-			if( by_res_type.find( rsd.type().name() ) == by_res_type.end() ) { // first one, create constraint
+			if ( by_res_type.find( rsd.type().name() ) == by_res_type.end() ) { // first one, create constraint
 				TR.Debug << "Creating rotamer constraint for " << rsd.type().name() << " at " << rsd_num << std::endl;
 				RotamerConstraintOP constraint( new RotamerConstraint( *unboundrot_poses[pose_num], rsd_num ) );
 				pose.add_constraint( constraint );
@@ -137,7 +137,7 @@ RotamerConstraint::RotamerConstraint(
 	// Depends on ~ all heavy atoms (all chis + phi and psi)
 	// Could cause problems if this position mutates to something with fewer atoms?
 	conformation::Residue const & rsd( pose.residue(seqpos_) );
-	for(Size i = 1, i_end = rsd.nheavyatoms(); i <= i_end; ++i) {
+	for ( Size i = 1, i_end = rsd.nheavyatoms(); i <= i_end; ++i ) {
 		atom_ids_.push_back(AtomID( i, seqpos_ )); // atom, rsd
 	}
 
@@ -154,7 +154,7 @@ RotamerConstraint::~RotamerConstraint() {}
 void
 RotamerConstraint::add_residue( conformation::Residue const & rsd )
 {
-debug_assert( rsd.type().name() == rsd_type_name_ );
+	debug_assert( rsd.type().name() == rsd_type_name_ );
 	favored_rotamers_.push_back( rsd.chi() );
 	pack::dunbrack::RotVector rot;
 	pack::dunbrack::rotamer_from_chi( rsd, rot );
@@ -187,21 +187,21 @@ RotamerConstraint::score(
 ) const
 {
 	rotamers::SingleResidueRotamerLibraryCOP rotlib( rotlib_ );
-	if( ! rotlib ) return;
-	if( weights[ this->score_type() ] == 0 ) return; // what's the point?
+	if ( ! rotlib ) return;
+	if ( weights[ this->score_type() ] == 0 ) return; // what's the point?
 
 	conformation::Residue const & rsd( xyz_func.residue(seqpos_) );
 
-	if( rsd.type().name() != rsd_type_name_ ) return; // residue types must match
+	if ( rsd.type().name() != rsd_type_name_ ) return; // residue types must match
 
 	pack::dunbrack::RotVector rot;
 	pack::dunbrack::rotamer_from_chi( rsd, rot );
-	for(Size i = 1, i_end = favored_rotamer_numbers_.size(); i <= i_end; ++i) {
-		if( rot == favored_rotamer_numbers_[i] ) {
+	for ( Size i = 1, i_end = favored_rotamer_numbers_.size(); i <= i_end; ++i ) {
+		if ( rot == favored_rotamer_numbers_[i] ) {
 			pack::dunbrack::RotamerLibraryScratchSpace scratch;
 			Real const best_rotE = rotlib->best_rotamer_energy(rsd, false /* => global min */, scratch);
 			Real const this_rotE = rotlib->best_rotamer_energy(rsd, true /* => local min */, scratch);
-		debug_assert( best_rotE <= this_rotE );
+			debug_assert( best_rotE <= this_rotE );
 			TR << "rotamer constraint active for " << seqpos_ << " thisE = " << this_rotE << " bestE = " << best_rotE << " dE = " << ( best_rotE - this_rotE ) << std::endl;
 			emap[ this->score_type() ] +=  ( best_rotE - this_rotE );
 			return; // quit once we find a match
@@ -229,9 +229,9 @@ RotamerConstraint::fill_f1_f2(
 void RotamerConstraint::show( std::ostream & out ) const
 {
 	out << type() << ": " << seqpos_ << " " << rsd_type_name_ << " " << favored_rotamer_numbers_.size();
-	for(Size i = 1, i_end = favored_rotamer_numbers_.size(); i <= i_end; ++i) {
+	for ( Size i = 1, i_end = favored_rotamer_numbers_.size(); i <= i_end; ++i ) {
 		out << ",";
-		for(Size j = 1, j_end = favored_rotamer_numbers_[i].size(); j <= j_end; ++j) {
+		for ( Size j = 1, j_end = favored_rotamer_numbers_[i].size(); j <= j_end; ++j ) {
 			out << " " << favored_rotamer_numbers_[i][j];
 		}
 	}

@@ -17,7 +17,7 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
-namespace features{
+namespace features {
 
 class ResidueGridScoresFeatures;
 typedef utility::pointer::shared_ptr< ResidueGridScoresFeatures > ResidueGridScoresFeaturesOP;

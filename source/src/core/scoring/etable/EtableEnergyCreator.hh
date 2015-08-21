@@ -32,7 +32,7 @@ public:
 	/// @brief Instantiate a new EtableEnergy
 	virtual
 	methods::EnergyMethodOP
-		create_energy_method(
+	create_energy_method(
 		methods::EnergyMethodOptions const &
 	) const;
 
@@ -50,7 +50,7 @@ public:
 	/// @brief Instantiate a new EtableEnergy
 	virtual
 	methods::EnergyMethodOP
-		create_energy_method(
+	create_energy_method(
 		methods::EnergyMethodOptions const &
 	) const;
 

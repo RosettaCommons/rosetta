@@ -61,7 +61,7 @@ bool AtomicContactFilter::apply(core::pose::Pose const & pose ) const
 {
 	core::Real const dist( compute( pose ) );
 	report( TR.Debug, pose );
-	if( dist <= distance_ ) return true;
+	if ( dist <= distance_ ) return true;
 	return false;
 }
 
@@ -70,7 +70,7 @@ AtomicContactFilter::compute( core::pose::Pose const & pose ) const
 {
 	using namespace core::conformation;
 
-	if( !get_resid() ){
+	if ( !get_resid() ) {
 		TR.Error<<"ERROR: residue2 has not been defined"<<std::endl;
 		runtime_assert( get_resid() );
 	}
@@ -81,22 +81,22 @@ AtomicContactFilter::compute( core::pose::Pose const & pose ) const
 		Residue const res1( pose.residue( residue1 ) );
 
 		Atoms::const_iterator atom1_begin( res1.atom_begin() ), atom1_end( res1.atom_end() ), atom2_begin( res2.atom_begin() ), atom2_end( res2.atom_end() );
-		if( sidechain_ && !backbone_ ){
+		if ( sidechain_ && !backbone_ ) {
 			atom1_begin = res1.sidechainAtoms_begin();
 			atom2_begin = res2.sidechainAtoms_begin();
 		}
-		if( !sidechain_ && backbone_ ){
+		if ( !sidechain_ && backbone_ ) {
 			atom1_end = res1.sidechainAtoms_begin();
 			atom2_end = res2.sidechainAtoms_begin();
 		}
-		if( !protons_ ){
+		if ( !protons_ ) {
 			atom1_end = res1.heavyAtoms_end();
 			atom2_end = res2.heavyAtoms_end();
 		}
-		for( Atoms::const_iterator atom1=atom1_begin; atom1!=atom1_end; ++atom1 ){
-			for( Atoms::const_iterator atom2=atom2_begin; atom2!=atom2_end; ++atom2 ){
+		for ( Atoms::const_iterator atom1=atom1_begin; atom1!=atom1_end; ++atom1 ) {
+			for ( Atoms::const_iterator atom2=atom2_begin; atom2!=atom2_end; ++atom2 ) {
 				core::Real const dist( atom1->xyz().distance( atom2->xyz() ) );
-				if( dist <= nearest_distance ) nearest_distance = dist;
+				if ( dist <= nearest_distance ) nearest_distance = dist;
 			}//foreach atom2
 		}//foreach atom1
 	}
@@ -117,10 +117,10 @@ void AtomicContactFilter::report( std::ostream & out, core::pose::Pose const & p
 }
 
 void AtomicContactFilter::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & pose)
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & pose)
 {
 	distance_ = tag->getOption< core::Real >( "distance", 4.0 );
 	if ( tag->hasOption("range1") ) {
@@ -138,12 +138,11 @@ void AtomicContactFilter::parse_my_tag( utility::tag::TagCOP tag,
 		residue1_ = core::pose::parse_resnum( res1, pose );
 		range1_.push_back( residue1_ );
 	}
-	if( tag->hasOption( "residue2" ) ){
+	if ( tag->hasOption( "residue2" ) ) {
 		std::string const res2( tag->getOption< std::string >( "residue2" ) );
 		set_resid( core::pose::parse_resnum( res2, pose ) );
 		modifiable( false );
-	}
-	else{
+	} else {
 		modifiable( true );
 		TR<<"AtomicContact: residue2 was not defined. A mover/filter will have to set it during the protocol\n";
 	}

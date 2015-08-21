@@ -46,125 +46,125 @@ namespace rna {
 namespace sugar {
 
 
-	class VirtualSugarSampler: public protocols::moves::MoverForPoseList {
+class VirtualSugarSampler: public protocols::moves::MoverForPoseList {
 
-	public:
+public:
 
-		//constructor
-		VirtualSugarSampler( working_parameters::StepWiseWorkingParametersCOP & working_parameters, SugarModeling & sugar_modeling	);
+	//constructor
+	VirtualSugarSampler( working_parameters::StepWiseWorkingParametersCOP & working_parameters, SugarModeling & sugar_modeling );
 
-		//destructor
-		~VirtualSugarSampler();
+	//destructor
+	~VirtualSugarSampler();
 
-		virtual void apply( core::pose::Pose & pose_to_visualize );
+	virtual void apply( core::pose::Pose & pose_to_visualize );
 
-		virtual void
-		apply( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & pose_to_visualize );
+	virtual void
+	apply( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & pose_to_visualize );
 
-		virtual std::string get_name() const;
+	virtual std::string get_name() const;
 
-		void set_tag( std::string const & setting ) { tag_ = setting;	}
+	void set_tag( std::string const & setting ) { tag_ = setting; }
 
-		void set_use_phenix_geo( bool const & setting ) { use_phenix_geo_ = setting;	}
+	void set_use_phenix_geo( bool const & setting ) { use_phenix_geo_ = setting; }
 
-		void set_legacy_mode( bool const & setting ) { legacy_mode_ = setting;	}
+	void set_legacy_mode( bool const & setting ) { legacy_mode_ = setting; }
 
-		void set_choose_random( bool const & setting ) { choose_random_ = setting;	}
+	void set_choose_random( bool const & setting ) { choose_random_ = setting; }
 
-		void set_keep_base_fixed( bool const & setting ) { keep_base_fixed_ = setting;	}
+	void set_keep_base_fixed( bool const & setting ) { keep_base_fixed_ = setting; }
 
-		void set_do_minimize( bool const & setting ) { do_minimize_ = setting;	}
+	void set_do_minimize( bool const & setting ) { do_minimize_ = setting; }
 
-		void set_do_screens( bool const & setting ) { do_screens_ = setting;	}
+	void set_do_screens( bool const & setting ) { do_screens_ = setting; }
 
-		void set_integration_test_mode( bool const & setting ){ integration_test_mode_ = setting; }
+	void set_integration_test_mode( bool const & setting ){ integration_test_mode_ = setting; }
 
-		void set_virtual_sugar_is_from_prior_step( bool const & setting ) { virtual_sugar_is_from_prior_step_ = setting;	}
+	void set_virtual_sugar_is_from_prior_step( bool const & setting ) { virtual_sugar_is_from_prior_step_ = setting; }
 
-		void set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn );
+	void set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn );
 
-	private:
+private:
 
-		void
-		setup_sugar_conformations( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & pose );
+	void
+	setup_sugar_conformations( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & pose );
 
-		void
-		minimize_sugar( core::pose::Pose & pose_with_sugar );
+	void
+	minimize_sugar( core::pose::Pose & pose_with_sugar );
 
-		void
-		get_sugar_setup_scorefxns( core::scoring::ScoreFunctionOP & sugar_scorefxn, core::scoring::ScoreFunctionOP & sugar_scorefxn_without_ch_bond, core::scoring::ScoreFunctionOP & rescaled_sugar_score_fxn_without_ch_bond ) const;
+	void
+	get_sugar_setup_scorefxns( core::scoring::ScoreFunctionOP & sugar_scorefxn, core::scoring::ScoreFunctionOP & sugar_scorefxn_without_ch_bond, core::scoring::ScoreFunctionOP & rescaled_sugar_score_fxn_without_ch_bond ) const;
 
-		void
-		do_chain_closure_modeler( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & viewer_pose );
+	void
+	do_chain_closure_modeler( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & viewer_pose );
 
-		void
-		bulge_chain_closure( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & viewer_pose );
+	void
+	bulge_chain_closure( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & viewer_pose );
 
-		void
-		bulge_chain_closure_complete( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & viewer_pose );
+	void
+	bulge_chain_closure_complete( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & viewer_pose );
 
-		void
-		bulge_chain_closure_legacy( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & viewer_pose );
+	void
+	bulge_chain_closure_legacy( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & viewer_pose );
 
-		void
-		bulge_chain_minimize_legacy( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & viewer_pose );
+	void
+	bulge_chain_minimize_legacy( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & viewer_pose );
 
-		void
-		reinstantiate_backbone_at_moving_res( core::pose::Pose & pose, core::Size const rebuild_res,
-																					core::Size const five_prime_chain_break_res );
+	void
+	reinstantiate_backbone_at_moving_res( core::pose::Pose & pose, core::Size const rebuild_res,
+		core::Size const five_prime_chain_break_res );
 
-		void
-		initialize_pose_variants_for_chain_closure( utility::vector1< core::pose::PoseOP > & pose_list );
+	void
+	initialize_pose_variants_for_chain_closure( utility::vector1< core::pose::PoseOP > & pose_list );
 
-		void
-		restore_pose_variants_after_chain_closure( utility::vector1< core::pose::PoseOP > & pose_list );
+	void
+	restore_pose_variants_after_chain_closure( utility::vector1< core::pose::PoseOP > & pose_list );
 
-		bool
-		fast_full_atom_VDW_repulsion_screen( core::pose::Pose const & pose, core::Size const res_1, core::Size const res_2, bool const is_prepend );
+	bool
+	fast_full_atom_VDW_repulsion_screen( core::pose::Pose const & pose, core::Size const res_1, core::Size const res_2, bool const is_prepend );
 
-		void
-		setup_VDW_bin_checker( core::pose::Pose const & input_pose );
+	void
+	setup_VDW_bin_checker( core::pose::Pose const & input_pose );
 
-		void
-		virtualize_distal_partition( core::pose::Pose & input_pose );
+	void
+	virtualize_distal_partition( core::pose::Pose & input_pose );
 
-		void
-		reinstantiate_distal_partition( utility::vector1< core::pose::PoseOP > & final_pose_list );
+	void
+	reinstantiate_distal_partition( utility::vector1< core::pose::PoseOP > & final_pose_list );
 
-		void
-		reinstantiate_distal_partition( core::pose::Pose & current_pose );
+	void
+	reinstantiate_distal_partition( core::pose::Pose & current_pose );
 
-		void
-		reinstate_original_constraints( utility::vector1< core::pose::PoseOP >  & pose_list );
+	void
+	reinstate_original_constraints( utility::vector1< core::pose::PoseOP >  & pose_list );
 
-	private:
+private:
 
-		working_parameters::StepWiseWorkingParametersCOP working_parameters_;
-		SugarModeling & sugar_modeling_; // trick -- inputs some modeling info, and holds poses_list as output.
-		std::string tag_;
-		bool use_phenix_geo_;
-		bool keep_base_fixed_;
-		bool choose_random_;
-		bool do_minimize_;
-		bool do_screens_;
-		bool integration_test_mode_;
-		bool virtual_sugar_is_from_prior_step_;
-		bool legacy_mode_;
-		bool const do_chain_closure_;
-		bool const first_minimize_with_fixed_base_;
-		Size const max_tries_for_random_sugar_setup_;
-		bool sugar_setup_success_;
-		core::scoring::ScoreFunctionCOP scorefxn_;
-		checker::RNA_VDW_BinCheckerOP VDW_bin_checker_;
+	working_parameters::StepWiseWorkingParametersCOP working_parameters_;
+	SugarModeling & sugar_modeling_; // trick -- inputs some modeling info, and holds poses_list as output.
+	std::string tag_;
+	bool use_phenix_geo_;
+	bool keep_base_fixed_;
+	bool choose_random_;
+	bool do_minimize_;
+	bool do_screens_;
+	bool integration_test_mode_;
+	bool virtual_sugar_is_from_prior_step_;
+	bool legacy_mode_;
+	bool const do_chain_closure_;
+	bool const first_minimize_with_fixed_base_;
+	Size const max_tries_for_random_sugar_setup_;
+	bool sugar_setup_success_;
+	core::scoring::ScoreFunctionCOP scorefxn_;
+	checker::RNA_VDW_BinCheckerOP VDW_bin_checker_;
 
-		utility::vector1 < core::Size > distal_partition_res_;
-		utility::vector1 < core::Size > already_virtualized_res_list_;
-		bool moving_phosphate_virtualized_;
-		core::pose::PoseOP pose_with_original_terminal_phosphates_;
+	utility::vector1 < core::Size > distal_partition_res_;
+	utility::vector1 < core::Size > already_virtualized_res_list_;
+	bool moving_phosphate_virtualized_;
+	core::pose::PoseOP pose_with_original_terminal_phosphates_;
 
- 		core::scoring::constraints::ConstraintSetOP original_constraint_set_;
+	core::scoring::constraints::ConstraintSetOP original_constraint_set_;
 
-	};
+};
 
 
 } //sugar

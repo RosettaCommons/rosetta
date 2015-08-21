@@ -46,20 +46,20 @@ detect_base_contacts( core::pose::Pose const & pose ) {
 		bool found_contact( false );
 		Size num_contacts( 0 );
 		for ( Size ii = pose.residue_type( i ).first_sidechain_atom()+1 /*just nucleobase, no O2'*/;
-					ii < pose.residue_type( i ).nheavyatoms(); ii++ ){
+				ii < pose.residue_type( i ).nheavyatoms(); ii++ ) {
 			if ( pose.residue_type( i ).is_virtual( ii ) ) continue;
 
 			bool found_atom_contact( false );
-			for ( Size j = 1; j <= pose.total_residue(); j++ ){
+			for ( Size j = 1; j <= pose.total_residue(); j++ ) {
 				if ( i == j ) continue;
 				if ( ( pose.residue( i ).nbr_atom_xyz() - pose.residue( j ).nbr_atom_xyz() ).length() > NBR_DIST_CUTOFF ) continue;
 
 				for ( Size jj = 1;
-							jj < pose.residue_type( i ).nheavyatoms(); jj++ ){
+						jj < pose.residue_type( i ).nheavyatoms(); jj++ ) {
 					if ( pose.residue_type( j ).is_virtual( jj ) ) continue;
 					if ( ( pose.residue( i ).xyz( ii ) - pose.residue( j ).xyz( jj ) ).length() < CONTACT_DIST_CUTOFF ) {
-						//						TR << "FOUND CONTACT " << pose.pdb_info()->chain(i) << ":" << pose.pdb_info()->number( i ) << " " << pose.residue(i).atom_name(ii)
-						//	 << " with " << pose.pdb_info()->chain(j) << ":" << pose.pdb_info()->number( j ) << " " << pose.residue(j).atom_name(jj) << std::endl;
+						//      TR << "FOUND CONTACT " << pose.pdb_info()->chain(i) << ":" << pose.pdb_info()->number( i ) << " " << pose.residue(i).atom_name(ii)
+						//  << " with " << pose.pdb_info()->chain(j) << ":" << pose.pdb_info()->number( j ) << " " << pose.residue(j).atom_name(jj) << std::endl;
 						found_atom_contact = true;
 						break;
 					}

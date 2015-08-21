@@ -50,7 +50,7 @@ public:
 	//clone
 	virtual
 	core::scoring::methods::EnergyMethodOP
-  	clone() const;
+	clone() const;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
@@ -67,10 +67,10 @@ public:
 	/// object's "use_nblist()" method returns true.
 	/*virtual
 	void
-		setup_for_minimizing(
-		core::pose::Pose & ,
-		core::scoring::ScoreFunction const & ,
-		core::optimization::MinimizerMap const &
+	setup_for_minimizing(
+	core::pose::Pose & ,
+	core::scoring::ScoreFunction const & ,
+	core::optimization::MinimizerMap const &
 	) const;
 	*/
 	void
@@ -85,33 +85,33 @@ public:
 		utility::vector1< bool > & /*context_graphs_required*/
 	) const {}
 
- private:
+private:
 
 	protocols::scoring::ResidualDipolarCouplingRigidSegments& rdc_segments_from_pose(
-	core::pose::Pose & pose
+		core::pose::Pose & pose
 	) const;
 
 	core::Real eval_dipolar(
-	core::pose::Pose & pose
+		core::pose::Pose & pose
 	) const;
 
-	/*	virtual void eval_atom_derivative(
-			 core::id::AtomID const & id,
-			 core::pose::Pose const & pose,
-    	 core::kinematics::DomainMap const & domain_map,
-	   	 core::scoring::ScoreFunction const & sfxn,
-		   core::scoring::EnergyMap const & weights,
-		   Vector & F1,
-		   Vector & F2
+	/* virtual void eval_atom_derivative(
+	core::id::AtomID const & id,
+	core::pose::Pose const & pose,
+	core::kinematics::DomainMap const & domain_map,
+	core::scoring::ScoreFunction const & sfxn,
+	core::scoring::EnergyMap const & weights,
+	Vector & F1,
+	Vector & F2
 	) const;
 	*/
 private:
 
-//used by Energy Method during scoring... should this become part of ResidualDipolarCoupling and thus cached in the pose
+	//used by Energy Method during scoring... should this become part of ResidualDipolarCoupling and thus cached in the pose
 	mutable core::Real dip_score_; //computed in setup_for_scoring.. delivered in finalize
 	mutable core::id::AtomID_Map< Size > atom2rdc_map_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 };
 
 } //methods

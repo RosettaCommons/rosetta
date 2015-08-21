@@ -75,7 +75,7 @@ protocols::backrub::BackrubSegment::start_bond_angle_key(
 	kinematics::tree::AtomCOP start_atom_m1, start_atom, start_atom_p1;
 	start_atoms1(pose, start_atom_m1, start_atom, start_atom_p1);
 
-	if (start_atom_m1->id() < start_atom_p1->id()) {
+	if ( start_atom_m1->id() < start_atom_p1->id() ) {
 		return BondAngleKey(start_atom_m1->id(), start_atom->id(), start_atom_p1->id());
 	}
 
@@ -121,11 +121,11 @@ protocols::backrub::BackrubSegment::end_bond_angle_key(
 	kinematics::tree::AtomCOP end_atom_m1, end_atom, end_atom_p1;
 	end_atoms1(pose, end_atom_m1, end_atom, end_atom_p1);
 
-	if (!end_atom_p1) {
+	if ( !end_atom_p1 ) {
 		return BondAngleKey(end_atom_m1->id(), end_atom->id(), id::BOGUS_ATOM_ID);
 	}
 
-	if (end_atom_m1->id() < end_atom_p1->id()) {
+	if ( end_atom_m1->id() < end_atom_p1->id() ) {
 		return BondAngleKey(end_atom_m1->id(), end_atom->id(), end_atom_p1->id());
 	}
 

@@ -66,7 +66,7 @@ operator >>(
 		//std::cout << "score_typeextract succeeded " << name << std::endl;
 		score_type = ScoreTypeManager::score_type_from_name( name );
 	} else {
- 		std::cout << "score_typeextract failed: " << name << std::endl;
+		std::cout << "score_typeextract failed: " << name << std::endl;
 		score_type = total_score;
 		is.setstate( std::ios_base::failbit );
 	}
@@ -95,8 +95,8 @@ operator <<(
 	ScoreTypes const & score_types
 )
 {
-	for (core::Size ii(1); ii <= score_types.size(); ++ii) {
-		if (ii == 1) {
+	for ( core::Size ii(1); ii <= score_types.size(); ++ii ) {
+		if ( ii == 1 ) {
 			os << "( ";
 		} else {
 			os << ", ";

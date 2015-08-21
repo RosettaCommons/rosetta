@@ -42,9 +42,9 @@ core::pack::task::operation::TaskOperationOP SetIGTypeOperation::clone() const
 
 void SetIGTypeOperation::apply( core::pose::Pose const &, core::pack::task::PackerTask & task ) const
 {
-	if (lin_mem_) task.or_linmem_ig( true );
-	else if (lazy_) task.or_lazy_ig( true );
-	else if (double_lazy_) task.or_double_lazy_ig( true );
+	if ( lin_mem_ ) task.or_linmem_ig( true );
+	else if ( lazy_ ) task.or_lazy_ig( true );
+	else if ( double_lazy_ ) task.or_double_lazy_ig( true );
 }
 
 void SetIGTypeOperation::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & )

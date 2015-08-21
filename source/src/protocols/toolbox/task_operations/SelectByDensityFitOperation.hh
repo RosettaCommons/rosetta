@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @brief  Restrict design to residues with electron density correlation above threshold value 
+/// @brief  Restrict design to residues with electron density correlation above threshold value
 /// @author Patrick Conway
 
 #ifndef INCLUDED_protocols_toolbox_task_operations_SelectByDensityFitOperation_hh
@@ -29,13 +29,13 @@
 
 // C++ Headers
 
-namespace protocols { 
+namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
 class SelectByDensityFitOperation : public core::pack::task::operation::TaskOperation {
 public:
-	SelectByDensityFitOperation( core::Real threshold = 0.72, bool invert = 0 ); 
+	SelectByDensityFitOperation( core::Real threshold = 0.72, bool invert = 0 );
 
 	virtual ~SelectByDensityFitOperation();
 
@@ -57,4 +57,4 @@ private:
 } //namespace toolbox
 } //namespace protocols
 
-#endif 
+#endif

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/screener/CentroidDistanceScreener.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace stepwise {
 namespace screener {
-	
-	class CentroidDistanceScreener;
-	typedef utility::pointer::shared_ptr< CentroidDistanceScreener > CentroidDistanceScreenerOP;
-	typedef utility::pointer::shared_ptr< CentroidDistanceScreener const > CentroidDistanceScreenerCOP;
-	
+
+class CentroidDistanceScreener;
+typedef utility::pointer::shared_ptr< CentroidDistanceScreener > CentroidDistanceScreenerOP;
+typedef utility::pointer::shared_ptr< CentroidDistanceScreener const > CentroidDistanceScreenerCOP;
+
 } //screener
 } //stepwise
 } //protocols

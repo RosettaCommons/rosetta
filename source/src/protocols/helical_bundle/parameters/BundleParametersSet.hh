@@ -42,104 +42,104 @@
 
 
 namespace protocols {
-	namespace helical_bundle {
-		namespace parameters {
+namespace helical_bundle {
+namespace parameters {
 
-			/// @brief  BundleParametersSet class, used to store sets of parameters for parametric helical bundle generation.
-			///
-			class BundleParametersSet : public core::conformation::parametric::ParametersSet
-			{
+/// @brief  BundleParametersSet class, used to store sets of parameters for parametric helical bundle generation.
+///
+class BundleParametersSet : public core::conformation::parametric::ParametersSet
+{
 
-				public: //Typedefs:
+public: //Typedefs:
 
-					typedef core::conformation::parametric::Parameters Parameters;
-					typedef core::conformation::parametric::ParametersOP ParametersOP;
-					typedef core::conformation::parametric::ParametersSet ParametersSet;
-					typedef core::conformation::parametric::ParametersSetOP ParametersSetOP;
+	typedef core::conformation::parametric::Parameters Parameters;
+	typedef core::conformation::parametric::ParametersOP ParametersOP;
+	typedef core::conformation::parametric::ParametersSet ParametersSet;
+	typedef core::conformation::parametric::ParametersSetOP ParametersSetOP;
 
-				public:
+public:
 
-					/// @brief constructors
-					///
-					BundleParametersSet();
+	/// @brief constructors
+	///
+	BundleParametersSet();
 
-					BundleParametersSet( BundleParametersSet const & src );
+	BundleParametersSet( BundleParametersSet const & src );
 
-					~BundleParametersSet();
+	~BundleParametersSet();
 
-					/// @brief Copy this residue( allocate actual memory for it )
-					///
-					ParametersSetOP clone() const;
+	/// @brief Copy this residue( allocate actual memory for it )
+	///
+	ParametersSetOP clone() const;
 
-				public: //Getters
+public: //Getters
 
-					/// @brief Returns the symmetry of the bundle created.
-					/// @details A value of 0 or 1 indicates no symmetry.  Larger values indicate n-fold radial symmetry
-					/// (for example, 3 means threefold radial symmetry about the bundle axis, and each helix defined will
-					/// be replicated a total of three times).					
-					core::Size bundle_symmetry() const { return bundle_symmetry_; }
+	/// @brief Returns the symmetry of the bundle created.
+	/// @details A value of 0 or 1 indicates no symmetry.  Larger values indicate n-fold radial symmetry
+	/// (for example, 3 means threefold radial symmetry about the bundle axis, and each helix defined will
+	/// be replicated a total of three times).
+	core::Size bundle_symmetry() const { return bundle_symmetry_; }
 
-					/// @brief Returns the number of symmetry copies to generate.
-					/// @details A value of 0 means to generate all copies.  Higher values mean to generate only the first N
-					/// copies.  For example, if the symmetry were 16 but bundle_symmetry_copies_ were set to 4, only the
-					/// first 4 symmetry repeats would be generated.				
-					core::Size bundle_symmetry_copies() const { return bundle_symmetry_copies_; }
+	/// @brief Returns the number of symmetry copies to generate.
+	/// @details A value of 0 means to generate all copies.  Higher values mean to generate only the first N
+	/// copies.  For example, if the symmetry were 16 but bundle_symmetry_copies_ were set to 4, only the
+	/// first 4 symmetry repeats would be generated.
+	core::Size bundle_symmetry_copies() const { return bundle_symmetry_copies_; }
 
-					/// @brief Get the number of helices defined in each symmetry copy of this bundle.
-					///
-					core::Size n_helices() const { return n_helices_; }
-
-
-				public: //Setters
-
-					/// @brief Sets the symmetry of the bundle created.
-					/// @details A value of 0 or 1 indicates no symmetry.  Larger values indicate n-fold radial symmetry
-					/// (for example, 3 means threefold radial symmetry about the bundle axis, and each helix defined will
-					/// be replicated a total of three times).					
-					void set_bundle_symmetry( core::Size const val ) { bundle_symmetry_ = val; return; }
-
-					/// @brief Sets the number of symmetry copies to generate.
-					/// @details A value of 0 means to generate all copies.  Higher values mean to generate only the first N
-					/// copies.  For example, if the symmetry were 16 but bundle_symmetry_copies_ were set to 4, only the
-					/// first 4 symmetry repeats would be generated.				
-					void set_bundle_symmetry_copies( core::Size const val ) { bundle_symmetry_copies_ = val; return; }
-
-					/// @brief Set the number of helices defined in each symmetry copy of this bundle.
-					///
-					void set_n_helices( core::Size const val ) { n_helices_=val; return; }
-					
-					/// @brief Get a summary of this ParametersSet object, for output to remark lines of a PDB file.
-					/// @details Default function can be overridden by derived classes.  This version actually outputs
-					/// Crick parameter information.
-					virtual void get_pdb_remark(std::stringstream &remark) const;
-
-				private:
-
-					/********************************************************************************
-								PRIVATE DATA
-					*********************************************************************************/
-
-					/// @brief The symmetry of the bundle created.
-					/// @details A value of 0 or 1 indicates no symmetry.  Larger values indicate n-fold radial symmetry
-					/// (for example, 3 means threefold radial symmetry about the bundle axis, and each helix defined will
-					/// be replicated a total of three times).
-					core::Size bundle_symmetry_;
-
-					/// @brief The symmetry copies to generate.
-					/// @details A value of 0 means to generate all copies.  Higher values mean to generate only the first N
-					/// copies.  For example, if the symmetry were 16 but bundle_symmetry_copies_ were set to 4, only the
-					/// first 4 symmetry repeats would be generated.
-					core::Size bundle_symmetry_copies_;
-
-					/// @brief The number of helices defined in each symmetry copy of this bundle.
-					///
-					core::Size n_helices_;
+	/// @brief Get the number of helices defined in each symmetry copy of this bundle.
+	///
+	core::Size n_helices() const { return n_helices_; }
 
 
-			}; //class BundleParametersSet
+public: //Setters
 
-		} // namespace parameters
-	} // namespace helical_bundle
+	/// @brief Sets the symmetry of the bundle created.
+	/// @details A value of 0 or 1 indicates no symmetry.  Larger values indicate n-fold radial symmetry
+	/// (for example, 3 means threefold radial symmetry about the bundle axis, and each helix defined will
+	/// be replicated a total of three times).
+	void set_bundle_symmetry( core::Size const val ) { bundle_symmetry_ = val; return; }
+
+	/// @brief Sets the number of symmetry copies to generate.
+	/// @details A value of 0 means to generate all copies.  Higher values mean to generate only the first N
+	/// copies.  For example, if the symmetry were 16 but bundle_symmetry_copies_ were set to 4, only the
+	/// first 4 symmetry repeats would be generated.
+	void set_bundle_symmetry_copies( core::Size const val ) { bundle_symmetry_copies_ = val; return; }
+
+	/// @brief Set the number of helices defined in each symmetry copy of this bundle.
+	///
+	void set_n_helices( core::Size const val ) { n_helices_=val; return; }
+
+	/// @brief Get a summary of this ParametersSet object, for output to remark lines of a PDB file.
+	/// @details Default function can be overridden by derived classes.  This version actually outputs
+	/// Crick parameter information.
+	virtual void get_pdb_remark(std::stringstream &remark) const;
+
+private:
+
+	/********************************************************************************
+	PRIVATE DATA
+	*********************************************************************************/
+
+	/// @brief The symmetry of the bundle created.
+	/// @details A value of 0 or 1 indicates no symmetry.  Larger values indicate n-fold radial symmetry
+	/// (for example, 3 means threefold radial symmetry about the bundle axis, and each helix defined will
+	/// be replicated a total of three times).
+	core::Size bundle_symmetry_;
+
+	/// @brief The symmetry copies to generate.
+	/// @details A value of 0 means to generate all copies.  Higher values mean to generate only the first N
+	/// copies.  For example, if the symmetry were 16 but bundle_symmetry_copies_ were set to 4, only the
+	/// first 4 symmetry repeats would be generated.
+	core::Size bundle_symmetry_copies_;
+
+	/// @brief The number of helices defined in each symmetry copy of this bundle.
+	///
+	core::Size n_helices_;
+
+
+}; //class BundleParametersSet
+
+} // namespace parameters
+} // namespace helical_bundle
 } // namespace protocols
 
 #endif

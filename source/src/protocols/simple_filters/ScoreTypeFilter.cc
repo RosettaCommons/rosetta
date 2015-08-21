@@ -45,7 +45,7 @@
 #include <basic/options/option_macros.hh>
 #include <core/pose/util.hh>
 
-namespace protocols{
+namespace protocols {
 namespace simple_filters {
 
 using namespace core;
@@ -96,24 +96,24 @@ ScoreTypeFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 
 	score_type_ = core::scoring::score_type_from_name( tag->getOption<std::string>( "score_type", "total_score" ) );
-	if( ! tag->hasOption( "threshold" ) ) throw utility::excn::EXCN_RosettaScriptsOption("Must specify 'threshold' for ScoreTypeFilter.");
+	if ( ! tag->hasOption( "threshold" ) ) throw utility::excn::EXCN_RosettaScriptsOption("Must specify 'threshold' for ScoreTypeFilter.");
 	score_type_threshold_ = tag->getOption<core::Real>( "threshold" );
 
 	score_type_filter_tracer<<"ScoreType filter for score_type "<<score_type_<<" with threshold "<<score_type_threshold_<<std::endl;
 }
 void ScoreTypeFilter::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & score_fxns,
-				utility::lua::LuaObject const & /*tasks*/ ) {
+	utility::lua::LuaObject const & score_fxns,
+	utility::lua::LuaObject const & /*tasks*/ ) {
 	using namespace core::scoring;
 
-	if( def["scorefxn"] ) {
+	if ( def["scorefxn"] ) {
 		scorefxn_ = protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns );
 	} else {
 		scorefxn_ = score_fxns["score12"].to<ScoreFunctionSP>()->clone();
 	}
 
 	score_type_ = core::scoring::score_type_from_name( def["score_type"] ? def["score_type"].to<std::string>() : "total_score" );
-	if( ! def["threshold"] ) utility_exit_with_message("Must specify 'threshold' for ScoreTypeFilter.");
+	if ( ! def["threshold"] ) utility_exit_with_message("Must specify 'threshold' for ScoreTypeFilter.");
 	score_type_threshold_ = def["threshold"].to<core::Real>();
 
 	score_type_filter_tracer<<"ScoreType filter for score_type "<<score_type_<<" with threshold "<<score_type_threshold_<<std::endl;
@@ -123,11 +123,10 @@ bool
 ScoreTypeFilter::apply( core::pose::Pose const & pose ) const {
 	core::Real const score( compute( pose ) );
 	score_type_filter_tracer<<"score "<<core::scoring::ScoreTypeManager::name_from_score_type( score_type_ )<<" is "<<score<<". ";
-	if( score <= score_type_threshold_ ) {
+	if ( score <= score_type_threshold_ ) {
 		score_type_filter_tracer<<"passing." << std::endl;
 		return true;
-	}
-	else {
+	} else {
 		score_type_filter_tracer<<"failing."<<std::endl;
 		return false;
 	}
@@ -152,15 +151,13 @@ ScoreTypeFilter::compute( core::pose::Pose const & pose ) const {
 
 	// make sure that scoring weights are compatible with pose's residue type set
 	// check centroid case
-	if( ( (*scorefxn_)[fa_rep] == 0.0 && (*scorefxn_)[fa_atr] == 0.0 ) // full atom terms are off
-				&& ( (*scorefxn_)[interchain_vdw] > 0.0 || (*scorefxn_)[vdw] > 0.0)  ) // a centroid term is on
-		{
-			if( in_pose->is_fullatom() ) { // but pose is full atom
+	if ( ( (*scorefxn_)[fa_rep] == 0.0 && (*scorefxn_)[fa_atr] == 0.0 ) // full atom terms are off
+			&& ( (*scorefxn_)[interchain_vdw] > 0.0 || (*scorefxn_)[vdw] > 0.0)  ) { // a centroid term is on
+		if ( in_pose->is_fullatom() ) { // but pose is full atom
 			core::util::switch_to_residue_type_set( *in_pose, core::chemical::CENTROID );
 		}
-	}
-	else { // full atom case
-		if( in_pose->is_centroid() ) { // but pose is centroid
+	} else { // full atom case
+		if ( in_pose->is_centroid() ) { // but pose is centroid
 			core::util::switch_to_residue_type_set( *in_pose, core::chemical::FA_STANDARD );
 		}
 	}
@@ -169,7 +166,7 @@ ScoreTypeFilter::compute( core::pose::Pose const & pose ) const {
 	/// Now handled automatically.  scorefxn_->accumulate_residue_total_energies( *in_pose );
 	core::Real const weight( (*scorefxn_)[ ScoreType( score_type_ ) ] );
 	core::Real const score( in_pose->energies().total_energies()[ ScoreType( score_type_ ) ]);
-	if( score_type_ == total_score ) return( score );
+	if ( score_type_ == total_score ) return( score );
 	core::Real const weighted_score( weight * score );
 	return( weighted_score );
 }

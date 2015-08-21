@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 // @file   core/scoring/facts/FACTSEnergy.hh
-// @brief  
+// @brief
 // @author Hahnbeom Park
 
 #ifndef INCLUDED_devel_facts_FACTSEnergy_FWD_HH
@@ -24,14 +24,14 @@
 
 
 namespace core {
-	namespace scoring {
-		namespace methods {
+namespace scoring {
+namespace methods {
 
 
-			class FACTSEnergy;
+class FACTSEnergy;
 
-		}
-	}
+}
+}
 }
 
 #endif

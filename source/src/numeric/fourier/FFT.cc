@@ -42,7 +42,7 @@ void ifft(ObjexxFCL::FArray1D< std::complex<double> > &fX , ObjexxFCL::FArray1D<
 
 	// rescale
 	int dimsProd = X.I1().size();
-	for (int i=0; i<dimsProd; ++i) X[i] /= (double)dimsProd;
+	for ( int i=0; i<dimsProd; ++i ) X[i] /= (double)dimsProd;
 }
 
 /// @brief 1D fft r->c double
@@ -50,7 +50,7 @@ void fft(ObjexxFCL::FArray1D< double > &X , ObjexxFCL::FArray1D< std::complex<do
 	ObjexxFCL::FArray1D< std::complex<double> > Xcpx;
 	Xcpx.dimension (X.I1().size());
 	int dimsProd = X.I1().size();
-	for (int i=0; i<dimsProd; ++i) Xcpx[i] = X[i];
+	for ( int i=0; i<dimsProd; ++i ) Xcpx[i] = X[i];
 	fft(Xcpx,fX);
 }
 
@@ -60,7 +60,7 @@ void ifft(ObjexxFCL::FArray1D< std::complex<double> > &fX , ObjexxFCL::FArray1D<
 	ifft( fX,Xcpx );
 	X.dimension(fX.I1().size());
 	int dimsProd = X.I1().size();
-	for (int i=0; i<dimsProd; ++i) X[i] = (float)Xcpx[i].real();
+	for ( int i=0; i<dimsProd; ++i ) X[i] = (float)Xcpx[i].real();
 }
 
 /// @brief 1D fft r->c float .. wraps double version
@@ -68,7 +68,7 @@ void fft(ObjexxFCL::FArray1D< float > &X , ObjexxFCL::FArray1D< std::complex<dou
 	ObjexxFCL::FArray1D< std::complex<double> > Xcpx;
 	Xcpx.dimension (X.I1().size());
 	int dimsProd = X.I1().size();
-	for (int i=0; i<dimsProd; ++i) Xcpx[i] = X[i];
+	for ( int i=0; i<dimsProd; ++i ) Xcpx[i] = X[i];
 	fft(Xcpx,fX);
 }
 
@@ -78,7 +78,7 @@ void ifft(ObjexxFCL::FArray1D< std::complex<double> > &fX , ObjexxFCL::FArray1D<
 	ifft( fX,Xcpx );
 	X.dimension(fX.I1().size());
 	int dimsProd = X.I1().size();
-	for (int i=0; i<dimsProd; ++i) X[i] = (float)Xcpx[i].real();
+	for ( int i=0; i<dimsProd; ++i ) X[i] = (float)Xcpx[i].real();
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -105,7 +105,7 @@ void ifft2(ObjexxFCL::FArray2D< std::complex<double> > &fX , ObjexxFCL::FArray2D
 
 	// rescale
 	int dimsProd = X.I1().size()*X.I2().size();
-	for (int i=0; i<dimsProd; ++i) X[i] /= (double)dimsProd;
+	for ( int i=0; i<dimsProd; ++i ) X[i] /= (double)dimsProd;
 }
 
 /// @brief 2D fft r->c double
@@ -113,7 +113,7 @@ void fft2(ObjexxFCL::FArray2D< double > &X , ObjexxFCL::FArray2D< std::complex<d
 	ObjexxFCL::FArray2D< std::complex<double> > Xcpx;
 	Xcpx.dimension (X.I1().size(),X.I2().size());
 	int dimsProd = X.I1().size()*X.I2().size();
-	for (int i=0; i<dimsProd; ++i) Xcpx[i] = X[i];
+	for ( int i=0; i<dimsProd; ++i ) Xcpx[i] = X[i];
 	fft2(Xcpx,fX);
 }
 
@@ -123,7 +123,7 @@ void ifft2(ObjexxFCL::FArray2D< std::complex<double> > &fX , ObjexxFCL::FArray2D
 	ifft2( fX,Xcpx );
 	X.dimension(fX.I1().size(),fX.I2().size());
 	int dimsProd = fX.I1().size()*fX.I2().size();
-	for (int i=0; i<dimsProd; ++i) X[i] = (double)Xcpx[i].real();
+	for ( int i=0; i<dimsProd; ++i ) X[i] = (double)Xcpx[i].real();
 }
 
 /// @brief 2D fft r->c float
@@ -131,7 +131,7 @@ void fft2(ObjexxFCL::FArray2D< float > &X , ObjexxFCL::FArray2D< std::complex<do
 	ObjexxFCL::FArray2D< std::complex<double> > Xcpx;
 	Xcpx.dimension (X.I1().size(),X.I2().size());
 	int dimsProd = X.I1().size()*X.I2().size();
-	for (int i=0; i<dimsProd; ++i) Xcpx[i] = X[i];
+	for ( int i=0; i<dimsProd; ++i ) Xcpx[i] = X[i];
 	fft2(Xcpx,fX);
 }
 
@@ -141,7 +141,7 @@ void ifft2(ObjexxFCL::FArray2D< std::complex<double> > &fX , ObjexxFCL::FArray2D
 	ifft2( fX,Xcpx );
 	X.dimension(fX.I1().size(),fX.I2().size());
 	int dimsProd = fX.I1().size()*fX.I2().size();
-	for (int i=0; i<dimsProd; ++i) X[i] = (float)Xcpx[i].real();
+	for ( int i=0; i<dimsProd; ++i ) X[i] = (float)Xcpx[i].real();
 }
 
 
@@ -169,7 +169,7 @@ void ifft3(ObjexxFCL::FArray3D< std::complex<double> > const &fX , ObjexxFCL::FA
 
 	// rescale
 	int dimsProd = X.I1().size()*X.I2().size()*X.I3().size();
-	for (int i=0; i<dimsProd; ++i) X[i] /= (double)dimsProd;
+	for ( int i=0; i<dimsProd; ++i ) X[i] /= (double)dimsProd;
 }
 
 /////////////////////////////////////
@@ -196,7 +196,7 @@ void ifft3_dynamic(ObjexxFCL::FArray3D< std::complex<double> > &fX , ObjexxFCL::
 
 	// rescale
 	int dimsProd = X.I1().size()*X.I2().size()*X.I3().size();
-	for (int i=0; i<dimsProd; ++i) X[i] /= (double)dimsProd;
+	for ( int i=0; i<dimsProd; ++i ) X[i] /= (double)dimsProd;
 }
 //////////////////////////////////
 
@@ -205,7 +205,7 @@ void fft3(ObjexxFCL::FArray3D< double > const &X , ObjexxFCL::FArray3D< std::com
 	ObjexxFCL::FArray3D< std::complex<double> > Xcpx;
 	Xcpx.dimension (X.I1().size(),X.I2().size(),X.I3().size());
 	int dimsProd = X.I1().size()*X.I2().size()*X.I3().size();
-	for (int i=0; i<dimsProd; ++i) Xcpx[i] = X[i];
+	for ( int i=0; i<dimsProd; ++i ) Xcpx[i] = X[i];
 	fft3(Xcpx,fX);
 }
 
@@ -215,7 +215,7 @@ void ifft3(ObjexxFCL::FArray3D< std::complex<double> > const &fX , ObjexxFCL::FA
 	ifft3( fX,Xcpx );
 	X.dimension(fX.I1().size(),fX.I2().size(),fX.I3().size());
 	int dimsProd = fX.I1().size()*fX.I2().size()*fX.I3().size();
-	for (int i=0; i<dimsProd; ++i) X[i] = (double) Xcpx[i].real();
+	for ( int i=0; i<dimsProd; ++i ) X[i] = (double) Xcpx[i].real();
 }
 
 /// @brief 3D fft r->c float
@@ -223,7 +223,7 @@ void fft3(ObjexxFCL::FArray3D< float > const &X , ObjexxFCL::FArray3D< std::comp
 	ObjexxFCL::FArray3D< std::complex<double> > Xcpx;
 	Xcpx.dimension (X.I1().size(),X.I2().size(),X.I3().size());
 	int dimsProd = X.I1().size()*X.I2().size()*X.I3().size();
-	for (int i=0; i<dimsProd; ++i) Xcpx[i] = X[i];
+	for ( int i=0; i<dimsProd; ++i ) Xcpx[i] = X[i];
 	fft3(Xcpx,fX);
 }
 
@@ -233,7 +233,7 @@ void ifft3(ObjexxFCL::FArray3D< std::complex<double> > const &fX , ObjexxFCL::FA
 	ifft3( fX,Xcpx );
 	X.dimension(fX.I1().size(),fX.I2().size(),fX.I3().size());
 	int dimsProd = fX.I1().size()*fX.I2().size()*fX.I3().size();
-	for (int i=0; i<dimsProd; ++i) X[i] = (float) Xcpx[i].real();
+	for ( int i=0; i<dimsProd; ++i ) X[i] = (float) Xcpx[i].real();
 }
 
 

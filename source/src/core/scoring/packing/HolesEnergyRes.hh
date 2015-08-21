@@ -55,7 +55,7 @@ public:
 	virtual
 	methods::EnergyMethodOP
 	clone() const {
-	  return methods::EnergyMethodOP( new HolesEnergyRes() );
+		return methods::EnergyMethodOP( new HolesEnergyRes() );
 	}
 
 
@@ -93,7 +93,7 @@ public:
 		utility::vector1< bool > & /*context_graphs_required*/
 	) const {}
 
- private:
+private:
 
 	HolesParamsRes params_;
 	virtual

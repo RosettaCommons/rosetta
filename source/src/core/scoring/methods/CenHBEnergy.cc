@@ -107,33 +107,33 @@ CenHBEnergy::residue_pair_energy(
 	Vector bbH, bbO, bbC, bbN;
 	Real r, xd, xh;
 
-	if (rsd1.aa() != core::chemical::aa_pro) {
+	if ( rsd1.aa() != core::chemical::aa_pro ) {
 		bbH = rsd1.atom( rsd1.atom_index("H") ).xyz();
 		bbO = rsd2.atom( rsd2.atom_index("O") ).xyz();
-	
+
 		r =  bbH.distance( bbO );
 		if ( r <= potential_.cutoff( seqsep ) ) {
 			bbN = rsd1.atom( rsd1.atom_index("N") ).xyz();
 			bbC = rsd2.atom( rsd2.atom_index("C") ).xyz();
 			xd = numeric::angle_degrees( bbN,bbH,bbO );
 			xh = numeric::angle_degrees( bbH,bbO,bbC );
-	
+
 			//std::cerr << " r,xd,xh = " << r << ","  << 180-xd << ","  << 180-xh << " -- " << potential_.func( seqsep, r,180-xd,180-xh ) << std::endl;
 			score += potential_.func( seqsep, r,180-xd,180-xh );
 		}
 	}
 
-	if (rsd2.aa() != core::chemical::aa_pro) {
+	if ( rsd2.aa() != core::chemical::aa_pro ) {
 		bbH = rsd2.atom( rsd2.atom_index("H") ).xyz();
 		bbO = rsd1.atom( rsd1.atom_index("O") ).xyz();
-	
+
 		r =  bbH.distance( bbO );//, xd, xh;
 		if ( r <= potential_.cutoff( seqsep ) ) {
 			bbN = rsd2.atom( rsd2.atom_index("N") ).xyz();
 			bbC = rsd1.atom( rsd1.atom_index("C") ).xyz();
 			xd = numeric::angle_degrees( bbN,bbH,bbO );
 			xh = numeric::angle_degrees( bbH,bbO,bbC );
-	
+
 			score += potential_.func( seqsep, r,180-xd,180-xh );
 			//std::cerr << " r,xd,xh = " << r << ","  << 180-xd << ","  << 180-xh << " -- " << potential_.func( seqsep, r,180-xd,180-xh ) << std::endl;
 		}
@@ -164,7 +164,7 @@ CenHBEnergy::eval_residue_pair_derivatives(
 	Size seqsep = rsd1.polymeric_sequence_distance( rsd2 );
 	Real weight = weights[ cen_hb ];
 
-	if (rsd1.aa() != core::chemical::aa_pro) {
+	if ( rsd1.aa() != core::chemical::aa_pro ) {
 		idxH = rsd1.atom_index("H"); bbH = rsd1.atom( idxH ).xyz();
 		idxO = rsd2.atom_index("O"); bbO = rsd2.atom( idxO ).xyz();
 		r =  bbH.distance( bbO );
@@ -173,7 +173,7 @@ CenHBEnergy::eval_residue_pair_derivatives(
 			idxC = rsd2.atom_index("C"); bbC = rsd2.atom( idxC ).xyz();
 			xd = numeric::angle_degrees( bbN,bbH,bbO );
 			xh = numeric::angle_degrees( bbH,bbO,bbC );
-	
+
 			Vector dfunc = potential_.dfunc( seqsep, r,180-xd,180-xh );
 
 			// convert deg->radians + invert angular terms, scale by weight
@@ -190,7 +190,7 @@ CenHBEnergy::eval_residue_pair_derivatives(
 			r1_atom_derivs[ idxH ].f2() += dfunc[0] * f2;
 			r2_atom_derivs[ idxO ].f1() += -dfunc[0] * f1;
 			r2_atom_derivs[ idxO ].f2() += -dfunc[0] * f2;
-		
+
 			/// N-H-O angle
 			angle_p1_deriv(  bbO, bbH, bbN, temp_ang, f1, f2);
 			r2_atom_derivs[ idxO ].f1() += dfunc[1] * f1;
@@ -201,7 +201,7 @@ CenHBEnergy::eval_residue_pair_derivatives(
 			angle_p2_deriv(  bbN, bbH, bbO, temp_ang, f1, f2);
 			r1_atom_derivs[ idxH ].f1() += dfunc[1] * f1;
 			r1_atom_derivs[ idxH ].f2() += dfunc[1] * f2;
-		
+
 			/// H-O-C angle
 			angle_p1_deriv(  bbH, bbO, bbC, temp_ang, f1, f2);
 			r1_atom_derivs[ idxH ].f1() += dfunc[2] * f1;
@@ -215,7 +215,7 @@ CenHBEnergy::eval_residue_pair_derivatives(
 		}
 	}
 
-	if (rsd2.aa() != core::chemical::aa_pro) {
+	if ( rsd2.aa() != core::chemical::aa_pro ) {
 		idxH = rsd2.atom_index("H"); bbH = rsd2.atom( idxH ).xyz();
 		idxO = rsd1.atom_index("O"); bbO = rsd1.atom( idxO ).xyz();
 		r =  bbH.distance( bbO );
@@ -224,7 +224,7 @@ CenHBEnergy::eval_residue_pair_derivatives(
 			idxC = rsd1.atom_index("C"); bbC = rsd1.atom( idxC ).xyz();
 			xd = numeric::angle_degrees( bbN,bbH,bbO );
 			xh = numeric::angle_degrees( bbH,bbO,bbC );
-	
+
 			Vector dfunc = potential_.dfunc( seqsep, r,180-xd,180-xh );
 			// convert deg->radians + invert angular terms, scale by weight
 			dfunc[0] *= weight;
@@ -241,7 +241,7 @@ CenHBEnergy::eval_residue_pair_derivatives(
 			r2_atom_derivs[ idxH ].f2() += dfunc[0] * f2;
 			r1_atom_derivs[ idxO ].f1() -= dfunc[0] * f1;
 			r1_atom_derivs[ idxO ].f2() -= dfunc[0] * f2;
-		
+
 			/// N-H-O angle
 			angle_p1_deriv(  bbO, bbH, bbN, temp_ang, f1, f2);
 			r1_atom_derivs[ idxO ].f1() += dfunc[1] * f1;
@@ -263,7 +263,7 @@ CenHBEnergy::eval_residue_pair_derivatives(
 			angle_p2_deriv(  bbC, bbO, bbH, temp_ang, f1, f2);
 			r1_atom_derivs[ idxO ].f1() += dfunc[2] * f1;
 			r1_atom_derivs[ idxO ].f2() += dfunc[2] * f2;
-		
+
 		}
 	}
 }
@@ -280,7 +280,7 @@ void
 CenHBEnergy::indicate_required_context_graphs( utility::vector1< bool > & /* context_graphs_required */ ) const {}
 
 core::Size
-CenHBEnergy::version() const { 
+CenHBEnergy::version() const {
 	return 1; // Initial versioning
 }
 

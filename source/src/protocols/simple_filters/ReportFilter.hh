@@ -54,17 +54,17 @@ public:
 	void filter( protocols::filters::FilterOP f ){ filter_ = f; }
 	protocols::filters::FilterOP filter() const{ return filter_; }
 	std::string report_filter_name() const{ return report_filter_name_; }
-    core::Real filter_val() const{ return filter_val_; }
-    std::string checkpointing_file() const{ return checkpointing_file_; }
-    void checkpointing_file( std::string const s ){ checkpointing_file_ = s ;}
+	core::Real filter_val() const{ return filter_val_; }
+	std::string checkpointing_file() const{ return checkpointing_file_; }
+	void checkpointing_file( std::string const s ){ checkpointing_file_ = s ;}
 private:
-    void checkpoint_read() const; // read from a checkpoint
-    void checkpoint_write() const; // write from a checkpoint
+	void checkpoint_read() const; // read from a checkpoint
+	void checkpoint_write() const; // write from a checkpoint
 	utility::pointer::shared_ptr< basic::datacache::DataMapObj< std::string > > report_string_; //dflt ""
 	protocols::filters::FilterOP filter_; //dflt NULL; either filter or report_string should be turned on
 	std::string report_filter_name_; // the user defined filter name used in reporting
-    mutable core::Real filter_val_; // stores filter_'s report_sm value at the time of apply call. Then, when report_sm for teh ReportFilter is called it reports the saved value
-    std::string checkpointing_file_; //dflt ""; stores the filter_'s report_sm if the protocol is checkpointed. If a checkpointing file exists, the filter sticks to the value within the checkpointing file
+	mutable core::Real filter_val_; // stores filter_'s report_sm value at the time of apply call. Then, when report_sm for teh ReportFilter is called it reports the saved value
+	std::string checkpointing_file_; //dflt ""; stores the filter_'s report_sm if the protocol is checkpointed. If a checkpointing file exists, the filter sticks to the value within the checkpointing file
 };
 
 }

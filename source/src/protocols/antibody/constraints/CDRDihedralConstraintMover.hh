@@ -34,7 +34,7 @@
 namespace protocols {
 namespace antibody {
 namespace constraints {
-			
+
 ///@brief Add Cluster or General Dihedral CircularHarmonic constraints to a CDR.
 ///  Cluster constraints currently only work for AHO renumbered CDRs.
 ///   (This will be rafactored to create constraints on-the-fly from cluster Mean/SD instead of from cst files.)
@@ -43,11 +43,11 @@ class CDRDihedralConstraintMover : public protocols::moves::Mover {
 public:
 
 	CDRDihedralConstraintMover();
-	
+
 	CDRDihedralConstraintMover(AntibodyInfoCOP ab_info);
-			
+
 	CDRDihedralConstraintMover(AntibodyInfoCOP ab_info, CDRNameEnum cdr);
-	
+
 	CDRDihedralConstraintMover(CDRDihedralConstraintMover const & src);
 
 	virtual~CDRDihedralConstraintMover();
@@ -60,14 +60,14 @@ public:
 		moves::Movers_map const & movers,
 		Pose const & pose
 	);
-	
-	
-	
+
+
+
 	///@brief Attempt to add cluster-based dihedral constraints.  If this is set to false will simply add General Dihedral constraints instead.
 	/// Default True
 	void
 	set_use_cluster_csts(bool use_cluster_csts);
-	
+
 	///@brief If we are set to use cluster csts and:
 	///  1) the cluster is NA,
 	///  2) there is sparse data for the cluster, or
@@ -76,47 +76,47 @@ public:
 	// Default True
 	void
 	set_use_general_csts_on_cluster_failure(bool use_general_csts_on_failure);
-	
-	
+
+
 	void
 	set_cdr(CDRNameEnum cdr);
-	
+
 	virtual void
 	apply(core::pose::Pose & pose);
 
 public:
-	
+
 	///@brief Do not use AntibodyInfo to for cluster - use this cluster instead
 	void
 	set_force_cluster(clusters::CDRClusterEnum cluster);
-	
+
 	///@brief Remove any forced cluster settings.
 	void
 	set_remove_any_set_forced_cluster();
-	
+
 	void
 	set_cluster_csts_data_cutoff(core::Size cutoff);
-	
-	///@brief Use constraints which have the means as the actual cluster means.  
+
+	///@brief Use constraints which have the means as the actual cluster means.
 	///  Setting this to false will use constraints that have the cst means set as cluster center data.
 	void
 	set_cluster_csts_use_mean_cst_data(bool use_mean_cst_data);
-	
+
 	void
 	set_cluster_csts_use_outlier_data(bool use_outlier_data);
-	
+
 	///@brief Set to use H3 cluster data for constraints if we are doing cluster-based constraints.
 	/// Default False - H3 does not cluster well.  If use_general_data_on_failure is false, we will skip H3.
 	void
 	set_use_cluster_for_H3(bool use_cluster_for_H3);
-	
+
 public:
 	void
 	set_general_phi_sd(core::Real phi_sd);
-	
+
 	void
 	set_general_psi_sd(core::Real psi_sd);
-	
+
 	///@brief By default, if cluster information is present in the datacache, we attempt to use that first.
 	/// Override this behavior by setting this option to true.
 	void
@@ -136,15 +136,15 @@ public:
 	virtual moves::MoverOP fresh_instance() const;
 
 private:
-	
+
 	void
 	set_defaults();
-	
+
 	void
 	read_command_line_options();
 
 private:
-	
+
 	/// @brief Adds a harmonic constraint to a Pose CDR based on cluster type
 	/// @details Currently requires North_AHO numbering.
 	bool
@@ -159,19 +159,19 @@ private:
 
 	std::string
 	get_harmonic_cluster_constraint_db_directory();
-	
-	
+
+
 private:
-	
+
 	AntibodyInfoCOP ab_info_;
 	CDRNameEnum cdr_;
 	std::string db_base_path_;
-	
+
 	bool cdr_is_set_;
-	
+
 	clusters::CDRClusterEnum forced_cluster_;
 	bool force_cluster_;
-	
+
 	bool use_cluster_csts_;
 	bool use_outliers_;
 	bool use_mean_cst_data_;
@@ -190,7 +190,7 @@ private:
 
 
 
-#endif	//INCLUDED_protocols_antibody_constraints_CDRDihedralConstraintMover
+#endif //INCLUDED_protocols_antibody_constraints_CDRDihedralConstraintMover
 
 
 

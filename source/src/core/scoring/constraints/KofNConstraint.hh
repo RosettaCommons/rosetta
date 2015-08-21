@@ -43,11 +43,11 @@ namespace constraints {
 class KofNConstraint : public MultiConstraint {
 public:
 
-  /// @brief Constructor
+	/// @brief Constructor
 	KofNConstraint( core::Size K=0 );
 
 	/// @brief Constructor
-  KofNConstraint( ConstraintCOPs & cst_in, core::Size K=0 );
+	KofNConstraint( ConstraintCOPs & cst_in, core::Size K=0 );
 
 
 	void
@@ -83,12 +83,12 @@ public:
 	void
 	read_def( std::istream& data, pose::Pose const& pose,func::FuncFactory const& func_factory );
 
-  /// @brief compute score
-  void
-  score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
+	/// @brief compute score
+	void
+	score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
 
-  core::Real
-  calculate_total_cst_score( EnergyMap const & weights, EnergyMap & emap) const;
+	core::Real
+	calculate_total_cst_score( EnergyMap const & weights, EnergyMap & emap) const;
 
 	virtual
 	ConstraintOP
@@ -108,7 +108,7 @@ public:
 
 	utility::vector1<ConstraintCOP> active_constraints() const;
 
-	//	void read_def( std::istream& in, pose::Pose const& pose, func::FuncFactory const& func_factory );
+	// void read_def( std::istream& in, pose::Pose const& pose, func::FuncFactory const& func_factory );
 	Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1.0 ) const;
 
 

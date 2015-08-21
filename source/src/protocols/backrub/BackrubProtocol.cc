@@ -93,36 +93,36 @@ namespace backrub {
 
 
 BackrubProtocol::BackrubProtocol(): Mover(),
-		scorefxn_(NULL),
-		main_task_factory_(NULL),
-		backrubmover_(protocols::backrub::BackrubMoverOP( new protocols::backrub::BackrubMover() )),
-		smallmover_(protocols::simple_moves::SmallMoverOP(new protocols::simple_moves::SmallMover())),
-		sidechainmover_(protocols::simple_moves::sidechain_moves::SidechainMoverOP(new protocols::simple_moves::sidechain_moves::SidechainMover())),
-		packrotamersmover_(protocols::simple_moves::PackRotamersMoverOP(new protocols::simple_moves::PackRotamersMover())),
-		movemap_smallmover_(NULL)
+	scorefxn_(NULL),
+	main_task_factory_(NULL),
+	backrubmover_(protocols::backrub::BackrubMoverOP( new protocols::backrub::BackrubMover() )),
+	smallmover_(protocols::simple_moves::SmallMoverOP(new protocols::simple_moves::SmallMover())),
+	sidechainmover_(protocols::simple_moves::sidechain_moves::SidechainMoverOP(new protocols::simple_moves::sidechain_moves::SidechainMover())),
+	packrotamersmover_(protocols::simple_moves::PackRotamersMoverOP(new protocols::simple_moves::PackRotamersMover())),
+	movemap_smallmover_(NULL)
 {
 	read_cmd_line_options();
 }
 
 BackrubProtocol::BackrubProtocol(BackrubProtocol const & bp): Mover(bp),
-		scorefxn_(bp.scorefxn_),
-		main_task_factory_(bp.main_task_factory_),
-		backrubmover_(bp.backrubmover_),
-		smallmover_(bp.smallmover_),
-		sidechainmover_(bp.sidechainmover_),
-		packrotamersmover_(bp.packrotamersmover_),
-		ntrials_(bp.ntrials_),
-		movemap_smallmover_(bp.movemap_smallmover_),
-		pivot_residues_(bp.pivot_residues_),
-		pivot_atoms_(bp.pivot_atoms_),
-		min_atoms_(bp.min_atoms_),
-		max_atoms_(bp.max_atoms_),
-		sm_prob_(bp.sm_prob_),
-		sc_prob_(bp.sc_prob_),
-		sc_prob_uniform_(bp.sc_prob_uniform_),
-		sc_prob_withinrot_(bp.sc_prob_withinrot_),
-		mc_kt_(bp.mc_kt_),
-		initial_pack_(bp.initial_pack_)
+	scorefxn_(bp.scorefxn_),
+	main_task_factory_(bp.main_task_factory_),
+	backrubmover_(bp.backrubmover_),
+	smallmover_(bp.smallmover_),
+	sidechainmover_(bp.sidechainmover_),
+	packrotamersmover_(bp.packrotamersmover_),
+	ntrials_(bp.ntrials_),
+	movemap_smallmover_(bp.movemap_smallmover_),
+	pivot_residues_(bp.pivot_residues_),
+	pivot_atoms_(bp.pivot_atoms_),
+	min_atoms_(bp.min_atoms_),
+	max_atoms_(bp.max_atoms_),
+	sm_prob_(bp.sm_prob_),
+	sc_prob_(bp.sc_prob_),
+	sc_prob_uniform_(bp.sc_prob_uniform_),
+	sc_prob_withinrot_(bp.sc_prob_withinrot_),
+	mc_kt_(bp.mc_kt_),
+	initial_pack_(bp.initial_pack_)
 {}
 
 BackrubProtocol::~BackrubProtocol(){}
@@ -137,9 +137,9 @@ BackrubProtocol::read_cmd_line_options(){
 	pivot_residues_.clear();
 	pivot_atoms_.clear();
 
-	if (option[ OptionKeys::backrub::pivot_residues].user()){
-		for (core::Size i = 1; i <= option[ OptionKeys::backrub::pivot_residues ].size(); ++i) {
-			if (option[ OptionKeys::backrub::pivot_residues ][i] >= 1) pivot_residues_.push_back(option[ OptionKeys::backrub::pivot_residues ][i]);
+	if ( option[ OptionKeys::backrub::pivot_residues].user() ) {
+		for ( core::Size i = 1; i <= option[ OptionKeys::backrub::pivot_residues ].size(); ++i ) {
+			if ( option[ OptionKeys::backrub::pivot_residues ][i] >= 1 ) pivot_residues_.push_back(option[ OptionKeys::backrub::pivot_residues ][i]);
 		}
 	}
 
@@ -224,7 +224,7 @@ BackrubProtocol::finalize_setup(core::pose::Pose & pose){
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 
-	if (! main_task_factory_){
+	if ( ! main_task_factory_ ) {
 		main_task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory() );
 		main_task_factory_->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
 		if ( option[ OptionKeys::packing::resfile ].user() ) {
@@ -240,7 +240,7 @@ BackrubProtocol::finalize_setup(core::pose::Pose & pose){
 
 	// set up the score function and add the bond angle energy term
 
-	if (! scorefxn_){
+	if ( ! scorefxn_ ) {
 		scorefxn_ = core::scoring::get_score_function();
 	}
 	scorefxn_->set_weight_if_zero(core::scoring::mm_bend, option[ OptionKeys::backrub::mm_bend_weight ]);
@@ -257,13 +257,13 @@ BackrubProtocol::finalize_setup(core::pose::Pose & pose){
 	// read known and unknown optimization parameters from the database
 	backrubmover_->branchopt().read_database();
 	// tell the branch angle optimizer about the score function MMBondAngleResidueTypeParamSet, if any
-	if (energymethodoptions.bond_angle_residue_type_param_set()) {
+	if ( energymethodoptions.bond_angle_residue_type_param_set() ) {
 		backrubmover_->branchopt().bond_angle_residue_type_param_set(energymethodoptions.bond_angle_residue_type_param_set());
 	}
 
 	// set up the SmallMover
-	if (sm_prob_ > 0) {
-		if (! movemap_smallmover_){
+	if ( sm_prob_ > 0 ) {
+		if ( ! movemap_smallmover_ ) {
 			core::kinematics::MoveMapOP mm(new core::kinematics::MoveMap );
 			mm->init_from_file(option[ OptionKeys::in::file::movemap ]);
 			set_movemap_smallmover(mm);
@@ -281,7 +281,7 @@ BackrubProtocol::finalize_setup(core::pose::Pose & pose){
 	packrotamersmover_->task_factory(main_task_factory_);
 	packrotamersmover_->score_function(scorefxn_);
 
-	if (pivot_residues_.size() > 0){
+	if ( pivot_residues_.size() > 0 ) {
 		backrubmover_->set_pivot_residues( pivot_residues_ );
 	}
 
@@ -296,11 +296,11 @@ BackrubProtocol::finalize_setup(core::pose::Pose & pose){
 
 //void
 //BackrubProtocol::parse_my_tag(
-//		TagCOP tag,
-//		basic::datacache::DataMap&,
-//		const Filters_map&,
-//		const Movers_map&,
-//		const Pose&) {
+//  TagCOP tag,
+//  basic::datacache::DataMap&,
+//  const Filters_map&,
+//  const Movers_map&,
+//  const Pose&) {
 //
 //}
 
@@ -313,7 +313,7 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 
 	bool custom_fold_tree = false;
 	std::string input_tag = protocols::jd2::JobDistributor::get_instance()->current_job()->inner_job()->input_tag();
-	if ( pose.is_centroid()) {
+	if ( pose.is_centroid() ) {
 		TR.Warning << "*** This is untested with centroid mode! ***" << std::endl;
 		//core::import_pose::centroid_pose_from_pdb( *input_pose, input_jobs[jobnum]->input_tag() );
 		custom_fold_tree = read_fold_tree_from_file( pose, input_tag );
@@ -333,7 +333,7 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 	//input_pose->dump_pdb(input_jobs[jobnum]->output_tag(0) + "_postoptbranch.pdb");
 	sidechainmover_->idealize_sidechains(pose);
 	//input_pose->dump_pdb(input_jobs[jobnum]->output_tag(0) + "_postidealizesc.pdb");
-	if (sc_prob_ && sidechainmover_->packed_residues().size() == 0) {
+	if ( sc_prob_ && sidechainmover_->packed_residues().size() == 0 ) {
 		sc_prob_ = 0;
 		TR << "Warning: No side chains to move. Not using SidechainMover." << std::endl;
 	}
@@ -346,13 +346,13 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 
 	core::pack::task::PackerTaskOP temp_task(main_task_factory_->create_task_and_apply_taskoperations(pose));
 	utility::vector1<core::Size> incompatible_positions(positions_incompatible_with_task(pose, *temp_task));
-	if (incompatible_positions.size()) {
+	if ( incompatible_positions.size() ) {
 		TR << "Starting ResidueType not allowed in resfile at position(s):";
-		for (core::Size i = 1; i <= incompatible_positions.size(); i++) {
+		for ( core::Size i = 1; i <= incompatible_positions.size(); i++ ) {
 			TR << " " << incompatible_positions[i];
 		}
 		TR << std::endl;
-		if (!initial_pack_) {
+		if ( !initial_pack_ ) {
 			initial_pack_ = true;
 			TR << "Forcing initial pack" << std::endl;
 		}
@@ -372,12 +372,12 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 	core::pose::PoseOP pose_copy( new core::pose::Pose(pose) );
 
 	// repack/redesign at the beginning if specified/necessary
-	if (initial_pack_) {
+	if ( initial_pack_ ) {
 		packrotamersmover_->apply(*pose_copy);
 		//pose->dump_pdb(input_jobs[jobnum]->output_tag(structnum) + "_postpack.pdb");
 
 		// if a minimization movemap was specified, go through a series of minimizations
-		if (option[ OptionKeys::backrub::minimize_movemap ].user()) {
+		if ( option[ OptionKeys::backrub::minimize_movemap ].user() ) {
 
 			// setup the MoveMaps
 			core::kinematics::MoveMapOP minimize_movemap( new core::kinematics::MoveMap );
@@ -390,27 +390,27 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 			minmover.min_type("dfpmin");
 
 			// first minimize just the side chains
-			for (core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
-			     iter != minimize_movemap->movemap_torsion_id_end(); ++iter) {
-				if (iter->first.second == core::id::CHI) minimize_movemap_progressive->set(iter->first, iter->second);
+			for ( core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
+					iter != minimize_movemap->movemap_torsion_id_end(); ++iter ) {
+				if ( iter->first.second == core::id::CHI ) minimize_movemap_progressive->set(iter->first, iter->second);
 			}
 			minmover.movemap(minimize_movemap_progressive);
 			minmover.apply(*pose_copy);
 			//pose->dump_pdb(input_jobs[jobnum]->output_tag(structnum) + "_postminchi.pdb");
 
 			// next minimize the side chains and backbone
-			for (core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
-			     iter != minimize_movemap->movemap_torsion_id_end(); ++iter) {
-				if (iter->first.second == core::id::BB) minimize_movemap_progressive->set(iter->first, iter->second);
+			for ( core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
+					iter != minimize_movemap->movemap_torsion_id_end(); ++iter ) {
+				if ( iter->first.second == core::id::BB ) minimize_movemap_progressive->set(iter->first, iter->second);
 			}
 			minmover.movemap(minimize_movemap_progressive);
 			minmover.apply(*pose_copy);
 			//pose->dump_pdb(input_jobs[jobnum]->output_tag(structnum) + "_postminbb.pdb");
 
 			// finally minimize everything
-			for (core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
-			     iter != minimize_movemap->movemap_torsion_id_end(); ++iter) {
-				if (iter->first.second == core::id::JUMP) minimize_movemap_progressive->set(iter->first, iter->second);
+			for ( core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
+					iter != minimize_movemap->movemap_torsion_id_end(); ++iter ) {
+				if ( iter->first.second == core::id::JUMP ) minimize_movemap_progressive->set(iter->first, iter->second);
 			}
 			minmover.movemap(minimize_movemap_progressive);
 			minmover.apply(*pose_copy);
@@ -424,7 +424,7 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 	mc.reset(*pose_copy);
 
 	protocols::canonical_sampling::PDBTrajectoryRecorder trajectory;
-	if (option[ OptionKeys::backrub::trajectory ]) {
+	if ( option[ OptionKeys::backrub::trajectory ] ) {
 		trajectory.file_name(output_tag + "_traj.pdb" + (option[ OptionKeys::backrub::trajectory_gz ] ? ".gz" : ""));
 		trajectory.stride(option[ OptionKeys::backrub::trajectory_stride ]);
 		trajectory.reset(mc);
@@ -432,16 +432,16 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 
 	TR << "Running " << ntrials_ << " trials..." << std::endl;
 
-	for (core::Size i = 1; i <= ntrials_; ++i) {
+	for ( core::Size i = 1; i <= ntrials_; ++i ) {
 
 		std::string move_type;
 
 		// could use random mover for this...
 		core::Real move_prob = numeric::random::rg().uniform();
-		if (move_prob > sm_prob_ + sc_prob_) {
+		if ( move_prob > sm_prob_ + sc_prob_ ) {
 			backrubmover_->apply(*pose_copy);
 			move_type = backrubmover_->type();
-		} else if (move_prob > sc_prob_) {
+		} else if ( move_prob > sc_prob_ ) {
 			smallmover_->apply(*pose_copy);
 			move_type = smallmover_->type();
 		} else {
@@ -451,7 +451,7 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 
 		mc.boltzmann(*pose_copy, move_type);
 
-		if (option[ OptionKeys::backrub::trajectory ]) trajectory.update_after_boltzmann(mc);
+		if ( option[ OptionKeys::backrub::trajectory ] ) trajectory.update_after_boltzmann(mc);
 	}
 
 	mc.show_counters();
@@ -479,7 +479,7 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 	mc.last_accepted_pose().dump_pdb(output_tag + "_last.pdb");
 	mc.lowest_score_pose().dump_pdb(output_tag + "_low.pdb");
 
-	if (custom_fold_tree) {
+	if ( custom_fold_tree ) {
 		append_fold_tree_to_file(mc.lowest_score_pose().fold_tree(),  output_tag + "_low.pdb"); // this is the lowest scoring from MC trials
 		append_fold_tree_to_file(mc.last_accepted_pose().fold_tree(), output_tag + "_last.pdb"); // this is the last accepted pose from MC trials
 	}

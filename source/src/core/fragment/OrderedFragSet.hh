@@ -42,10 +42,10 @@ namespace fragment {
 /* classic 9mer Frags would be in one of those */
 class OrderedFragSet : public FragSet {
 public:
-  typedef FragSet Parent;
-  typedef std::map< Size, FrameList > FrameMap;
+	typedef FragSet Parent;
+	typedef std::map< Size, FrameList > FrameMap;
 
-// ConstantLengthFragSet is a FragSet with only one frame per position!
+	// ConstantLengthFragSet is a FragSet with only one frame per position!
 public:
 
 	OrderedFragSet();
@@ -77,11 +77,11 @@ public:
 
 protected:
 
-  virtual void add_( FrameOP aframe );
+	virtual void add_( FrameOP aframe );
 
 
 private:
-  FrameMap frames_;
+	FrameMap frames_;
 
 };
 

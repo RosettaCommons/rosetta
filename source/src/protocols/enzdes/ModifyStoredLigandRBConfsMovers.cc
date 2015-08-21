@@ -57,7 +57,7 @@ static thread_local basic::Tracer tr( "protocols.enzdes.ModifyStoredLigandRBConf
 //static core::Size applycalls_ = 0;
 
 ModifyStoredRBConfs::ModifyStoredRBConfs( std::string const name )
-	: parent( name ) {}
+: parent( name ) {}
 
 ModifyStoredRBConfs::~ModifyStoredRBConfs(){}
 
@@ -77,7 +77,7 @@ ModifyStoredRBConfs::swap_coordinates_in_pose(
 	runtime_assert( pose.residue( seqpos ).natoms() == rescoords.natoms() );
 	core::Size res_atoms(  pose.residue( seqpos ).natoms() );
 
-	for( core::Size atm = 1; atm <= res_atoms; ++atm ){
+	for ( core::Size atm = 1; atm <= res_atoms; ++atm ) {
 		core::PointPosition save_pos( pose.residue( seqpos ).xyz( atm ) );
 		core::Size other_ind( rescoords.atom_index( pose.residue( seqpos ).atom_name( atm ) ) );
 		pose.set_xyz( core::id::AtomID ( atm, seqpos ), rescoords.xyz( other_ind ) );
@@ -92,7 +92,7 @@ ModifyStoredRBConfs::closest_orient_atoms_msd(
 ) const
 {
 	utility::vector1< Real > to_return( confs.size(), 0.0 );
-	if( to_return.size() == 0 ) return to_return;
+	if ( to_return.size() == 0 ) return to_return;
 	Size center(0), nbr1(0), nbr2(0);
 	core::conformation::Residue const & pose_res( pose.residue( confs[1]->seqpos() ) );
 	runtime_assert( confs[1]->name3() == pose_res.name3() );
@@ -101,11 +101,11 @@ ModifyStoredRBConfs::closest_orient_atoms_msd(
 	runtime_assert( confs[1]->atom_name( nbr1 ) == pose_res.atom_name( nbr1 ) );
 	runtime_assert( confs[1]->atom_name( nbr2 ) == pose_res.atom_name( nbr2 ) );
 
-	for( Size i = 1; i <= confs.size(); ++i ){
+	for ( Size i = 1; i <= confs.size(); ++i ) {
 		Real min_msd( pose_res.xyz( center ).distance_squared( confs[i]->xyz(center) ) + pose_res.xyz( nbr1 ).distance_squared( confs[i]->xyz(nbr1) ) + pose_res.xyz( nbr2 ).distance_squared( confs[i]->xyz(nbr2) ) );
-		for( Size j = 1; j < i; ++j){
+		for ( Size j = 1; j < i; ++j ) {
 			Real cur_msd( confs[j]->xyz( center ).distance_squared( confs[i]->xyz(center) ) + confs[j]->xyz( nbr1 ).distance_squared( confs[i]->xyz(nbr1) ) + confs[j]->xyz( nbr2 ).distance_squared( confs[i]->xyz(nbr2) ) );
-			if( cur_msd < min_msd ) min_msd = cur_msd;
+			if ( cur_msd < min_msd ) min_msd = cur_msd;
 		}
 		to_return[i] = min_msd;
 	}
@@ -120,8 +120,8 @@ ModifyStoredRBConfs::get_rigid_body_confs( core::pose::Pose const & pose ) const
 	toolbox::match_enzdes_util::EnzdesCacheableObserverCOP enz_obs( toolbox::match_enzdes_util::get_enzdes_observer( pose ) ); //toolbox::match_enzdes_util::get_enzdes_observer with const pose can return NULL
 	if ( !enz_obs ) return to_return;
 	std::map< core::Size, utility::vector1< core::conformation::ResidueCOP > > const & rb_confs( enz_obs->lig_rigid_body_confs() );
-	for( std::map< core::Size, utility::vector1< core::conformation::ResidueCOP > >::const_iterator map_it = rb_confs.begin(); map_it != rb_confs.end(); ++map_it ){
-		if( pose.residue( map_it->first ).type().is_ligand() ) to_return.push_back( map_it->second );
+	for ( std::map< core::Size, utility::vector1< core::conformation::ResidueCOP > >::const_iterator map_it = rb_confs.begin(); map_it != rb_confs.end(); ++map_it ) {
+		if ( pose.residue( map_it->first ).type().is_ligand() ) to_return.push_back( map_it->second );
 	}
 	return to_return;
 }
@@ -129,8 +129,8 @@ ModifyStoredRBConfs::get_rigid_body_confs( core::pose::Pose const & pose ) const
 void
 ModifyStoredRBConfs::set_rigid_body_confs( RBConfLists rbs, core::pose::Pose & pose ) const
 {
-	for( core::Size i = 1; i <= rbs.size(); ++i ){
-		if( rbs[i].size() > 0 ){
+	for ( core::Size i = 1; i <= rbs.size(); ++i ) {
+		if ( rbs[i].size() > 0 ) {
 			set_rigid_body_confs_for_seqpos( rbs[i][1]->seqpos(), rbs[i], pose );
 		}
 	}
@@ -150,7 +150,7 @@ GenerateStoredRBConfs::GenerateStoredRBConfs(
 	Size num_total_rbconfs,
 	bool include_metals
 ) :  parent( "GenerateStoredRBConfs" ),
-		 num_total_rbconfs_( num_total_rbconfs ), include_metals_(include_metals) {}
+	num_total_rbconfs_( num_total_rbconfs ), include_metals_(include_metals) {}
 
 GenerateStoredRBConfs::~GenerateStoredRBConfs(){}
 
@@ -174,9 +174,9 @@ GenerateStoredRBConfs::apply(
 
 	RBConfLists rb_confs( get_rigid_body_confs( pose ) );
 	//1.
-	for( Size i = 1; i <= rb_confs.size(); ++i ){
+	for ( Size i = 1; i <= rb_confs.size(); ++i ) {
 		present_confs_seqpos.insert( rb_confs[i][1]->seqpos() );
-		for( Size j = rb_confs[i].size(); j <= num_total_rbconfs_; ++j ){
+		for ( Size j = rb_confs[i].size(); j <= num_total_rbconfs_; ++j ) {
 			rb_confs[i].push_back( (rb_confs[i][1])->clone() );
 		}
 		diversifier.diversify_all_confs( pose, rb_confs[i] );
@@ -184,13 +184,13 @@ GenerateStoredRBConfs::apply(
 	}
 
 	//2.
-	for( Size i = 1; i <= pose.total_residue(); ++i ){
-		if( pose.residue_type(i).is_ligand() && !( !include_metals_ && (pose.residue_type(i).natoms() <= 3) ) ){
-			if( present_confs_seqpos.find( i ) != present_confs_seqpos.end() ) continue;
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( pose.residue_type(i).is_ligand() && !( !include_metals_ && (pose.residue_type(i).natoms() <= 3) ) ) {
+			if ( present_confs_seqpos.find( i ) != present_confs_seqpos.end() ) continue;
 
 			tr << num_total_rbconfs_ << " random new rigid body conformations to be used in packing will be generated for residue " << pose.residue(i).name() << " " << i << "." << std::endl;
 			utility::vector1< core::conformation::ResidueCOP > new_rb_confs;
-			for( Size j = 1; j <= num_total_rbconfs_; ++j ){
+			for ( Size j = 1; j <= num_total_rbconfs_; ++j ) {
 				new_rb_confs.push_back( pose.residue( i ).clone() );
 			}
 			diversifier.diversify_all_confs( pose, new_rb_confs );
@@ -200,7 +200,7 @@ GenerateStoredRBConfs::apply(
 }
 
 ApplyRandomStoredRBConf::ApplyRandomStoredRBConf()
-	: parent( "ApplyRandomStoredRBConf" ) {}
+: parent( "ApplyRandomStoredRBConf" ) {}
 
 ApplyRandomStoredRBConf::~ApplyRandomStoredRBConf(){}
 
@@ -212,7 +212,7 @@ ApplyRandomStoredRBConf::apply(
 
 	RBConfLists rb_confs( get_rigid_body_confs( pose ) );
 	//pose.dump_pdb("random_apply_before.pdb");
-	for( core::Size i = 1; i <= rb_confs.size(); ++i ){
+	for ( core::Size i = 1; i <= rb_confs.size(); ++i ) {
 		core::Size picked_conf( numeric::random::random_range( 1, rb_confs[i].size()) );
 		tr << "Randomly appying conf " << picked_conf << " of " << rb_confs[i].size() <<" for respos " << rb_confs[i][picked_conf]->seqpos() << std::endl;
 		core::conformation::ResidueOP exchange_res( rb_confs[i][picked_conf]->clone() );
@@ -231,7 +231,7 @@ ApplyRandomStoredRBConf::get_name() const {
 
 
 MinimizeStoredRBConfs::MinimizeStoredRBConfs( core::scoring::ScoreFunctionCOP sfxn )
-	: parent( "MinimizeStoredRBConfs" ), sfxn_(sfxn), min_rms_(0.08) {}
+: parent( "MinimizeStoredRBConfs" ), sfxn_(sfxn), min_rms_(0.08) {}
 
 MinimizeStoredRBConfs::~MinimizeStoredRBConfs(){}
 
@@ -241,8 +241,8 @@ MinimizeStoredRBConfs::apply(
 	core::pose::Pose & pose )
 {
 	RBConfLists rb_confs( get_rigid_body_confs( pose ) );
-	for( Size i = 1; i <= rb_confs.size(); ++i ){
-		if( rb_confs[i].size() > 0){
+	for ( Size i = 1; i <= rb_confs.size(); ++i ) {
+		if ( rb_confs[i].size() > 0 ) {
 			rb_minimize_all_confs( pose, rb_confs[i] );
 			set_rigid_body_confs_for_seqpos( rb_confs[i][1]->seqpos(), rb_confs[i], pose );
 		}
@@ -273,13 +273,13 @@ MinimizeStoredRBConfs::rb_minimize_all_confs(
 	//I guess we need a task...
 	core::pack::task::PackerTaskOP rtmin_task = core::pack::task::TaskFactory::create_packer_task( mod_pose );
 	rtmin_task->initialize_from_command_line();
-	for( Size i = 1; i<= mod_pose.total_residue(); ++i ){
-		if( i == seqpos ) rtmin_task->nonconst_residue_task( i ).restrict_to_repacking();
+	for ( Size i = 1; i<= mod_pose.total_residue(); ++i ) {
+		if ( i == seqpos ) rtmin_task->nonconst_residue_task( i ).restrict_to_repacking();
 		else rtmin_task->nonconst_residue_task( i ).prevent_repacking();
 	}
 	//if( applycalls_ == 1 ) mod_pose.dump_pdb("apply1_start.pdb");
 
-	for( Size conf = 1; conf <= confs.size(); ++conf ){
+	for ( Size conf = 1; conf <= confs.size(); ++conf ) {
 		core::conformation::ResidueOP exchange_res( confs[conf]->clone() );
 		swap_coordinates_in_pose( mod_pose, *exchange_res );
 		//if( applycalls_ == 1 ) mod_pose.dump_pdb("before_rtmin_conf_"+utility::to_string( conf )+".pdb" );
@@ -294,7 +294,7 @@ MinimizeStoredRBConfs::rb_minimize_all_confs(
 		//if( applycalls_ == 1 ) mod_pose.dump_pdb("after_rtmin_conf_"+utility::to_string( conf )+".pdb" );
 		//now that the pose is rtmined, we need to get the new coordinates
 		core::conformation::Residue const & newpos( mod_pose.residue( seqpos ) );
-		for( core::Size atm = 1; atm <= natoms; ++atm ){
+		for ( core::Size atm = 1; atm <= natoms; ++atm ) {
 			exchange_res->set_xyz( atm, newpos.xyz( exchange_res->atom_name( atm ) ) );
 		}
 		confs[conf] = exchange_res;
@@ -303,14 +303,14 @@ MinimizeStoredRBConfs::rb_minimize_all_confs(
 	//debug
 	/*
 	if( applycalls_ == 1 ) {
-		core::Size atcounter(0);
-		std::ofstream out( "storeconfs_afterothermin.pdb" );
-		for( Size conf = 1; conf <= confs.size(); ++conf ){
-			out << "MODEL " << conf << "   " << std::endl;
-			core::io::pdb::dump_pdb_residue( *confs[conf], atcounter, out );
-			out << "ENDMDL " << std::endl;
-		}
-		out.close();
+	core::Size atcounter(0);
+	std::ofstream out( "storeconfs_afterothermin.pdb" );
+	for( Size conf = 1; conf <= confs.size(); ++conf ){
+	out << "MODEL " << conf << "   " << std::endl;
+	core::io::pdb::dump_pdb_residue( *confs[conf], atcounter, out );
+	out << "ENDMDL " << std::endl;
+	}
+	out.close();
 	}
 	*/
 	//debug over
@@ -323,14 +323,14 @@ MinimizeStoredRBConfs::rb_minimize_all_confs(
 	//debug
 	/*
 	if( applycalls_ == 1 ) {
-		core::Size atcounter(0);
-		std::ofstream out( "storeconfs_afterdiversify.pdb" );
-		for( Size conf = 1; conf <= confs.size(); ++conf ){
-			out << "MODEL " << conf << "   " << std::endl;
-			core::io::pdb::dump_pdb_residue( *confs[conf], atcounter, out );
-			out << "ENDMDL " << std::endl;
-		}
-		out.close();
+	core::Size atcounter(0);
+	std::ofstream out( "storeconfs_afterdiversify.pdb" );
+	for( Size conf = 1; conf <= confs.size(); ++conf ){
+	out << "MODEL " << conf << "   " << std::endl;
+	core::io::pdb::dump_pdb_residue( *confs[conf], atcounter, out );
+	out << "ENDMDL " << std::endl;
+	}
+	out.close();
 	}
 	*/
 	//debug over
@@ -339,7 +339,7 @@ MinimizeStoredRBConfs::rb_minimize_all_confs(
 
 DiversifyStoredRBConfs::DiversifyStoredRBConfs(
 	Real min_rms )
-	: parent( "DiversifyStoredRBConfs" ), min_rms_(min_rms), max_trials_(10) {}
+: parent( "DiversifyStoredRBConfs" ), min_rms_(min_rms), max_trials_(10) {}
 
 DiversifyStoredRBConfs::~DiversifyStoredRBConfs(){}
 
@@ -349,8 +349,8 @@ DiversifyStoredRBConfs::apply(
 {
 
 	RBConfLists rb_confs( get_rigid_body_confs( pose ) );
-	for( Size i = 1; i <= rb_confs.size(); ++i ){
-		if( rb_confs[i].size() > 0){
+	for ( Size i = 1; i <= rb_confs.size(); ++i ) {
+		if ( rb_confs[i].size() > 0 ) {
 			diversify_all_confs( pose, rb_confs[i] );
 			set_rigid_body_confs_for_seqpos( rb_confs[i][1]->seqpos(), rb_confs[i], pose );
 		}
@@ -374,23 +374,23 @@ DiversifyStoredRBConfs::diversify_all_confs(
 	Size seqpos( confs[1]->seqpos() );
 	protocols::rigid::RigidBodyPerturbMover simple_rigbod( mod_pose.fold_tree().get_jump_that_builds_residue( confs[1]->seqpos() ), numeric::conversions::degrees(0.05), min_rms_);
 
-	for( Size i = 1; i <= max_trials_; ++i ){
+	for ( Size i = 1; i <= max_trials_; ++i ) {
 		utility::vector1< Real > min_dist( closest_orient_atoms_msd( pose, confs ) );
 		utility::vector1< Size > confs_to_change;
 		//tr << "before trial " << i << ", confs have the following rms: " << std::endl;
-		for( Size j = 1; j <= min_dist.size(); ++j ){
+		for ( Size j = 1; j <= min_dist.size(); ++j ) {
 			//tr << j << " has rms of " << min_dist[j] << std::endl;
-			if( min_dist[j] <= min_rms_ ) confs_to_change.push_back( j );
+			if ( min_dist[j] <= min_rms_ ) confs_to_change.push_back( j );
 		}
-		if( confs_to_change.size() == 0 ) break; // we're done
+		if ( confs_to_change.size() == 0 ) break; // we're done
 
-		for( Size j = 1; j <= confs_to_change.size(); ++j ){
+		for ( Size j = 1; j <= confs_to_change.size(); ++j ) {
 			Size conf( confs_to_change[j] );
 			core::conformation::ResidueOP exchange_res( confs[conf]->clone() );
 			swap_coordinates_in_pose( mod_pose, *exchange_res );
 			simple_rigbod.apply( mod_pose );
 			core::conformation::Residue const & newpos( mod_pose.residue( seqpos ) );
-			for( core::Size atm = 1; atm <= natoms; ++atm ){
+			for ( core::Size atm = 1; atm <= natoms; ++atm ) {
 				exchange_res->set_xyz( atm, newpos.xyz( exchange_res->atom_name( atm ) ) );
 			}
 			confs[conf] = exchange_res;

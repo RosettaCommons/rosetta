@@ -62,7 +62,7 @@ find_seqpos_of_saccharides_parent_residue( conformation::Residue const & residue
 
 	if ( ! residue.is_lower_terminus() ) {
 		uint const id_of_connection_to_parent(
-				residue.type().residue_connection_id_for_atom( residue.carbohydrate_info()->anomeric_carbon_index() ) );
+			residue.type().residue_connection_id_for_atom( residue.carbohydrate_info()->anomeric_carbon_index() ) );
 		return residue.residue_connection_partner( id_of_connection_to_parent );
 	} else /* residue is lower terminus */ {
 		if ( TR.Debug.visible() ) {
@@ -83,9 +83,9 @@ get_glycosidic_bond_residues( Pose const & pose, uint const sequence_position )
 	// Get the 1st residue of interest.
 	ResidueCOP res_n( pose.residue( sequence_position ).get_self_ptr() );
 
-	if (res_n->is_lower_terminus()) {
+	if ( res_n->is_lower_terminus() ) {
 		TR.Warning << "Glycosidic torsions are undefined for the first polysaccharide residue of a chain unless part of"
-				" a branch." << endl;
+			" a branch." << endl;
 		return make_pair( res_n, res_n );
 	}
 
@@ -260,17 +260,17 @@ get_reference_atoms( uint const torsion_id, Pose const & pose, uint const sequen
 
 	vector1< AtomID > ref_atoms;
 	switch ( torsion_id ) {
-		case phi_torsion:
-			ref_atoms = get_reference_atoms_for_phi( pose, sequence_position );
-			break;
-		case psi_torsion:
-			ref_atoms = get_reference_atoms_for_psi( pose, sequence_position );
-			break;
-		case omega_torsion:
-			ref_atoms = get_reference_atoms_for_1st_omega( pose, sequence_position );
-			break;
-		default:
-			utility_exit_with_message( "An invalid torsion angle was requested." );
+	case phi_torsion :
+		ref_atoms = get_reference_atoms_for_phi( pose, sequence_position );
+		break;
+	case psi_torsion :
+		ref_atoms = get_reference_atoms_for_psi( pose, sequence_position );
+		break;
+	case omega_torsion :
+		ref_atoms = get_reference_atoms_for_1st_omega( pose, sequence_position );
+		break;
+	default :
+		utility_exit_with_message( "An invalid torsion angle was requested." );
 	}
 	return ref_atoms;
 }
@@ -322,7 +322,7 @@ align_virtual_atoms_in_carbohydrate_residue( conformation::Conformation & conf, 
 
 		conf.set_xyz( AtomID( HOY, sequence_position ), conf.xyz( AtomID( HOY_ref, parent_res_seqpos ) ) );
 		TR.Debug << "  HOY aligned with atom " << parent_res->atom_name( HOY_ref ) <<
-				" of residue " << parent_res_seqpos << endl;
+			" of residue " << parent_res_seqpos << endl;
 
 		TR.Debug << "   Updating torsions..." << endl;
 		ResidueCOP dummy( conf.residue( sequence_position ).get_self_ptr() );  // to trigger private method commented below
@@ -331,7 +331,7 @@ align_virtual_atoms_in_carbohydrate_residue( conformation::Conformation & conf, 
 
 		conf.set_xyz( AtomID( OY, sequence_position ), conf.xyz( AtomID( OY_ref, parent_res_seqpos ) ) );
 		TR.Debug << "  OY aligned with atom " << parent_res->atom_name( OY_ref ) <<
-				" of residue " << parent_res_seqpos << endl;
+			" of residue " << parent_res_seqpos << endl;
 	}
 
 	// Find and align HOZ(s), if applicable.
@@ -411,24 +411,24 @@ is_psi_torsion( Pose const & pose, id::TorsionID const & torsion_id )
 		debug_assert( residue.is_carbohydrate() );
 
 		switch( torsion_id.type() ) {
-			case BB:
-				if ( ! residue.is_upper_terminus() ) {
-					return ( torsion_id.torsion() == residue.n_mainchain_atoms() - 1 );
+		case BB :
+			if ( ! residue.is_upper_terminus() ) {
+				return ( torsion_id.torsion() == residue.n_mainchain_atoms() - 1 );
+			}
+			break;
+		case CHI :
+			{
+			chemical::carbohydrates::CarbohydrateInfoCOP info( residue.carbohydrate_info() );
+			Size const n_branches( info->n_branches() );
+			for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
+				if ( torsion_id.torsion() == info->branch_point( branch_num ) ) {
+					return true;
 				}
-				break;
-			case CHI:
-				{
-					chemical::carbohydrates::CarbohydrateInfoCOP info( residue.carbohydrate_info() );
-					Size const n_branches( info->n_branches() );
-					for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
-						if ( torsion_id.torsion() == info->branch_point( branch_num ) ) {
-							return true;
-						}
-					}
-				}
-				break;
-			default:
-				break;
+			}
+		}
+			break;
+		default :
+			break;
 		}
 	}
 	return false;
@@ -453,21 +453,21 @@ is_omega_torsion( Pose const & pose, id::TorsionID const & torsion_id )
 
 		if ( info->has_exocyclic_linkage() ) {
 			switch( torsion_id.type() ) {
-				case BB:
-					if ( ! residue.is_upper_terminus() ) {
-						return ( torsion_id.torsion() == residue.n_mainchain_atoms() - 2 );
-					}
-					break;
+			case BB :
+				if ( ! residue.is_upper_terminus() ) {
+					return ( torsion_id.torsion() == residue.n_mainchain_atoms() - 2 );
+				}
+				break;
 				/*case CHI:
-					Size const n_branches( info->n_branches() );
-					for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
-						if ( torsion_id.torsion() == info->branch_point( branch_num ) -1  ) {
-							return true;
-						}
-					}
-					break;*/
-				default:
-					break;
+				Size const n_branches( info->n_branches() );
+				for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
+				if ( torsion_id.torsion() == info->branch_point( branch_num ) -1  ) {
+				return true;
+				}
+				}
+				break;*/
+			default :
+				break;
 			}
 		}
 	}
@@ -504,7 +504,7 @@ get_glycosidic_torsion( uint const torsion_id, Pose const & pose, uint const seq
 	}
 
 	Angle const angle_in_radians(
-			pose.conformation().torsion_angle( ref_atoms[ 1 ], ref_atoms[ 2 ], ref_atoms[ 3 ], ref_atoms[ 4 ]) );
+		pose.conformation().torsion_angle( ref_atoms[ 1 ], ref_atoms[ 2 ], ref_atoms[ 3 ], ref_atoms[ 4 ]) );
 	return principal_angle_degrees( conversions::degrees( angle_in_radians ) );
 }
 
@@ -537,7 +537,7 @@ set_glycosidic_torsion( uint const torsion_id, Pose & pose, uint const sequence_
 
 	Angle const setting_in_radians( conversions::radians( setting ) );
 	pose.conformation().set_torsion_angle(
-			ref_atoms[ 1 ], ref_atoms[ 2 ], ref_atoms[ 3 ], ref_atoms[ 4 ], setting_in_radians );
+		ref_atoms[ 1 ], ref_atoms[ 2 ], ref_atoms[ 3 ], ref_atoms[ 4 ], setting_in_radians );
 	align_virtual_atoms_in_carbohydrate_residue( pose, sequence_position );
 }
 

@@ -89,8 +89,8 @@ WaterAdductHBondPotential::h2o_hbond_score_1way(
 	static Real const HO_y_dist( HO_dist * std::sin( theta ) );
 
 	// Loop over waters
-	for( Size i = 1, ei = h2o_rsd.natoms() ; i <= ei ; ++i ) {
-		if( !h2o_rsd.atom_type(i).is_h2o() ) continue;
+	for ( Size i = 1, ei = h2o_rsd.natoms() ; i <= ei ; ++i ) {
+		if ( !h2o_rsd.atom_type(i).is_h2o() ) continue;
 
 		Size const h2o_index( i );
 
@@ -100,16 +100,16 @@ WaterAdductHBondPotential::h2o_hbond_score_1way(
 		Vector const normal_from_base( Vector( h2o_coord - h2o_base_coord ).normalized() );
 
 		// First check for interactions with donors
-		for( Size j = 1, ej = other_rsd.Hpos_polar().size() ; j <= ej ; ++j ) {
+		for ( Size j = 1, ej = other_rsd.Hpos_polar().size() ; j <= ej ; ++j ) {
 			Size const hyd_index( other_rsd.Hpos_polar()[j] );
 			Size const donor_index( other_rsd.atom_base( hyd_index ) );
 			Vector const hyd_coord( other_rsd.xyz( hyd_index ) );
 			Vector const donor_coord( other_rsd.xyz( donor_index ) );
 
-	//		std::cout << "other rsd type " << other_rsd.type().name() << " hyd name " << other_rsd.atom_name( hyd_index ) << " donor name " << other_rsd.atom_name( donor_index ) << std::endl;
+			//  std::cout << "other rsd type " << other_rsd.type().name() << " hyd name " << other_rsd.atom_name( hyd_index ) << " donor name " << other_rsd.atom_name( donor_index ) << std::endl;
 
 			Vector const separation( hyd_coord - h2o_coord );
-			if( separation.length_squared() > scoring::hbonds::MAX_R2 ) continue;
+			if ( separation.length_squared() > scoring::hbonds::MAX_R2 ) continue;
 
 			scoring::hbonds::HBEvalTuple const hbe_type( donor_index, other_rsd, h2o_index, h2o_rsd );
 
@@ -119,19 +119,19 @@ WaterAdductHBondPotential::h2o_hbond_score_1way(
 				hbe_type, donor_coord, hyd_coord, h2o_coord, h2o_base_coord, h2o_base2_coord,
 				h2o_hbond_energy, eval_deriv, deriv );
 
-			if( h2o_hbond_energy < 0.0 ) {
+			if ( h2o_hbond_energy < 0.0 ) {
 				h2o_hbond_score += h2o_hbond_energy;
 			}
 
 		}
 
 		// Second check for interactions with acceptors
-		for( Size j = 1, ej = other_rsd.accpt_pos().size() ; j <= ej ; ++j ) {
+		for ( Size j = 1, ej = other_rsd.accpt_pos().size() ; j <= ej ; ++j ) {
 			Size accpt_index( other_rsd.accpt_pos()[j] );
 			Vector accpt_coord( other_rsd.xyz( accpt_index ) );
 
 			Vector const separation( accpt_coord - h2o_coord );
-			if( separation.length_squared() > scoring::hbonds::MAX_R2 ) continue;
+			if ( separation.length_squared() > scoring::hbonds::MAX_R2 ) continue;
 
 			Size accpt_base_index( other_rsd.atom_base( accpt_index ) );
 			Vector accpt_base_coord( other_rsd.xyz( accpt_base_index ) );
@@ -151,7 +151,7 @@ WaterAdductHBondPotential::h2o_hbond_score_1way(
 				hbe_type, h2o_coord, faux_hyd_coord, accpt_coord, accpt_base_coord, accpt_base2_coord,
 				h2o_hbond_energy, eval_deriv, deriv );
 
-			if( h2o_hbond_energy < 0.0 ) {
+			if ( h2o_hbond_energy < 0.0 ) {
 				h2o_hbond_score += h2o_hbond_energy;
 			}
 		}
@@ -163,16 +163,16 @@ WaterAdductHBondPotential::h2o_hbond_score_1way(
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
-	 This routine fills an hbond-set with hbonds. All hbonds are included,
-	 even ones which might be excluded later based on the backbone-hbond
-	 exclusion.
+This routine fills an hbond-set with hbonds. All hbonds are included,
+even ones which might be excluded later based on the backbone-hbond
+exclusion.
 **/
 
 void
 WaterAdductHBondPotential::fill_h2o_hbond_set(
 	pose::Pose const & pose,
 	hbonds::HBondSet & hbond_set
-)	const
+) const
 {
 	// clear old data
 	hbond_set.clear();
@@ -212,8 +212,8 @@ WaterAdductHBondPotential::fill_h2o_hbond_set(
 
 
 /**
-	 compiles list of hbonds
-	 and evaluates the derivative
+compiles list of hbonds
+and evaluates the derivative
 **/
 
 
@@ -228,7 +228,7 @@ WaterAdductHBondPotential::get_residue_residue_h2o_hbonds_1way(
 	hbonds::HBondSet & hbond_set
 ) const
 {
-debug_assert( h2o_rsd.seqpos() != other_rsd.seqpos() ); // otherwise include in allow
+	debug_assert( h2o_rsd.seqpos() != other_rsd.seqpos() ); // otherwise include in allow
 
 	// <f1,f2> -- derivative vectors
 	hbonds::HBondDerivs deriv;
@@ -239,8 +239,8 @@ debug_assert( h2o_rsd.seqpos() != other_rsd.seqpos() ); // otherwise include in 
 	static Real const HO_y_dist( HO_dist * std::sin( theta ) );
 
 	// Loop over waters
-	for( Size i = 1, ei = h2o_rsd.natoms() ; i <= ei ; ++i ) {
-		if( !h2o_rsd.atom_type(i).is_h2o() ) continue;
+	for ( Size i = 1, ei = h2o_rsd.natoms() ; i <= ei ; ++i ) {
+		if ( !h2o_rsd.atom_type(i).is_h2o() ) continue;
 
 		Size const h2o_index( i );
 
@@ -250,16 +250,16 @@ debug_assert( h2o_rsd.seqpos() != other_rsd.seqpos() ); // otherwise include in 
 		Vector const normal_from_base( Vector( h2o_coord - h2o_base_coord ).normalized() );
 
 		// First check for interactions with donors
-		for( Size j = 1, ej = other_rsd.Hpos_polar().size() ; j <= ej ; ++j ) {
+		for ( Size j = 1, ej = other_rsd.Hpos_polar().size() ; j <= ej ; ++j ) {
 			Size const hyd_index( other_rsd.Hpos_polar()[j] );
 			Size const donor_index( other_rsd.atom_base( hyd_index ) );
 			Vector const hyd_coord( other_rsd.xyz( hyd_index ) );
 			Vector const donor_coord( other_rsd.xyz( donor_index ) );
 
-	//		std::cout << "other rsd type " << other_rsd.type().name() << " hyd name " << other_rsd.atom_name( hyd_index ) << " donor name " << other_rsd.atom_name( donor_index ) << std::endl;
+			//  std::cout << "other rsd type " << other_rsd.type().name() << " hyd name " << other_rsd.atom_name( hyd_index ) << " donor name " << other_rsd.atom_name( donor_index ) << std::endl;
 
 			Vector const separation( hyd_coord - h2o_coord );
-			if( separation.length_squared() > scoring::hbonds::MAX_R2 ) continue;
+			if ( separation.length_squared() > scoring::hbonds::MAX_R2 ) continue;
 
 			scoring::hbonds::HBEvalTuple const hbe_type( donor_index, other_rsd, h2o_index, h2o_rsd );
 
@@ -269,34 +269,34 @@ debug_assert( h2o_rsd.seqpos() != other_rsd.seqpos() ); // otherwise include in 
 				hbe_type, donor_coord, hyd_coord, h2o_coord, h2o_base_coord, h2o_base2_coord,
 				h2o_hbond_energy, eval_deriv, deriv );
 
-			if( h2o_hbond_energy < 0.0 ) {
-//				Real const weight ( get_environment_dependent_weight( hbe_type, h2o_nb, other_nb, *hbond_set.options() ) );
+			if ( h2o_hbond_energy < 0.0 ) {
+				//    Real const weight ( get_environment_dependent_weight( hbe_type, h2o_nb, other_nb, *hbond_set.options() ) );
 				Real const weight ( 1.0 );
 				hbond_set.append_hbond(
 					hyd_index, other_rsd, h2o_index, h2o_rsd, hbe_type,
 					h2o_hbond_energy, weight, deriv );
-//				std::cout << "Stashing h2o hbond, water is acceptor " << std::endl;
-//				std::cout << "Energy is " << h2o_hbond_energy << std::endl;
-//				std::cout << "F1 is " <<
-//				deriv.first[0] << " " <<
-//				deriv.first[1] << " " <<
-//				deriv.first[2] << " " <<
-//				std::endl;
-//				std::cout << "F2 is " <<
-//				deriv.second[0] << " " <<
-//				deriv.second[1] << " " <<
-//				deriv.second[2] << " " <<
-//				std::endl;
+				//    std::cout << "Stashing h2o hbond, water is acceptor " << std::endl;
+				//    std::cout << "Energy is " << h2o_hbond_energy << std::endl;
+				//    std::cout << "F1 is " <<
+				//    deriv.first[0] << " " <<
+				//    deriv.first[1] << " " <<
+				//    deriv.first[2] << " " <<
+				//    std::endl;
+				//    std::cout << "F2 is " <<
+				//    deriv.second[0] << " " <<
+				//    deriv.second[1] << " " <<
+				//    deriv.second[2] << " " <<
+				//    std::endl;
 			}
 		}
 
 		// Second check for interactions with acceptors
-		for( Size j = 1, ej = other_rsd.accpt_pos().size() ; j <= ej ; ++j ) {
+		for ( Size j = 1, ej = other_rsd.accpt_pos().size() ; j <= ej ; ++j ) {
 			Size accpt_index( other_rsd.accpt_pos()[j] );
 			Vector accpt_coord( other_rsd.xyz( accpt_index ) );
 
 			Vector const separation( accpt_coord - h2o_coord );
-			if( separation.length_squared() > scoring::hbonds::MAX_R2 ) continue;
+			if ( separation.length_squared() > scoring::hbonds::MAX_R2 ) continue;
 
 			Size accpt_base_index( other_rsd.atom_base( accpt_index ) );
 			Vector accpt_base_coord( other_rsd.xyz( accpt_base_index ) );
@@ -316,23 +316,23 @@ debug_assert( h2o_rsd.seqpos() != other_rsd.seqpos() ); // otherwise include in 
 				accpt_coord, accpt_base_coord, accpt_base2_coord,
 				h2o_hbond_energy, eval_deriv, deriv );
 
-			if( h2o_hbond_energy < 0.0 ) {
-//				Real const weight ( get_environment_dependent_weight( hbe_type, h2o_nb, other_nb, *hbond_set.options() ) );
+			if ( h2o_hbond_energy < 0.0 ) {
+				//    Real const weight ( get_environment_dependent_weight( hbe_type, h2o_nb, other_nb, *hbond_set.options() ) );
 				Real const weight ( 1.0 );
 				hbond_set.append_hbond( h2o_index, h2o_rsd, accpt_index, other_rsd, hbe_type,
 					h2o_hbond_energy, weight, deriv );
-//				std::cout << "Stashing h2o hbond, water is donor " << std::endl;
-//				std::cout << "Energy is " << h2o_hbond_energy << std::endl;
-//				std::cout << "F1 is " <<
-//				deriv.first[0] << " " <<
-//				deriv.first[1] << " " <<
-//				deriv.first[2] << " " <<
-//				std::endl;
-//				std::cout << "F2 is " <<
-//				deriv.second[0] << " " <<
-//				deriv.second[1] << " " <<
-//				deriv.second[2] << " " <<
-//				std::endl;
+				//    std::cout << "Stashing h2o hbond, water is donor " << std::endl;
+				//    std::cout << "Energy is " << h2o_hbond_energy << std::endl;
+				//    std::cout << "F1 is " <<
+				//    deriv.first[0] << " " <<
+				//    deriv.first[1] << " " <<
+				//    deriv.first[2] << " " <<
+				//    std::endl;
+				//    std::cout << "F2 is " <<
+				//    deriv.second[0] << " " <<
+				//    deriv.second[1] << " " <<
+				//    deriv.second[2] << " " <<
+				//    std::endl;
 			}
 		}
 	}

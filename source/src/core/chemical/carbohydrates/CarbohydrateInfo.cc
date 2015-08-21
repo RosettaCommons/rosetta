@@ -70,8 +70,8 @@ CarbohydrateInfo::CarbohydrateInfo( core::chemical::ResidueTypeCAP residue_type 
 
 // "Copy constructor"
 CarbohydrateInfo::CarbohydrateInfo( CarbohydrateInfo const & object_to_copy,
-		core::chemical::ResidueTypeCAP new_owner ) :
-		utility::pointer::ReferenceCount( object_to_copy )
+	core::chemical::ResidueTypeCAP new_owner ) :
+	utility::pointer::ReferenceCount( object_to_copy )
 {
 	residue_type_ = new_owner;
 	copy_data( *this, object_to_copy );
@@ -98,44 +98,44 @@ CarbohydrateInfo::show( std::ostream & output ) const
 		prefix = string( 1, num ) + string( "-keto" );
 	}
 	switch ( n_carbons_ ) {
-		case 3:
-			suffix = "triose";
-			break;
-		case 4:
-			suffix = "tetrose";
-			break;
-		case 5:
-			suffix = "pentose";
-			break;
-		case 6:
-			suffix = "hexose";
-			break;
-		case 7:
-			suffix = "heptose";
-			break;
-		case 8:
-			suffix = "octose";
-			break;
-		case 9:
-			suffix = "nonose";
-			break;
+	case 3 :
+		suffix = "triose";
+		break;
+	case 4 :
+		suffix = "tetrose";
+		break;
+	case 5 :
+		suffix = "pentose";
+		break;
+	case 6 :
+		suffix = "hexose";
+		break;
+	case 7 :
+		suffix = "heptose";
+		break;
+	case 8 :
+		suffix = "octose";
+		break;
+	case 9 :
+		suffix = "nonose";
+		break;
 	}
 	switch ( ring_size_ ) {
-		case 3:
-			ring_form = "oxirose";
-			break;
-		case 4:
-			ring_form = "oxetose";
-			break;
-		case 5:
-			ring_form = "furanose";
-			break;
-		case 6:
-			ring_form = "pyranose";
-			break;
-		case 7:
-			ring_form = "septanose";
-			break;
+	case 3 :
+		ring_form = "oxirose";
+		break;
+	case 4 :
+		ring_form = "oxetose";
+		break;
+	case 5 :
+		ring_form = "furanose";
+		break;
+	case 6 :
+		ring_form = "pyranose";
+		break;
+	case 7 :
+		ring_form = "septanose";
+		break;
 	}
 	for ( uint position = 1; position <= n_carbons_; ++position ) {
 		if ( modifications_[ position ] != "" ) {
@@ -188,7 +188,7 @@ CarbohydrateInfo::code_to_root_map() {
 	// If statement ensures that the data is only created once, i.e., is constant.
 	if ( ! CODE_TO_ROOT_MAP ) {
 		CODE_TO_ROOT_MAP = new map< string, string >( read_codes_and_roots_from_database_file(
-				basic::database::full_name( "chemical/carbohydrates/codes_to_roots.map" ) ) );
+			basic::database::full_name( "chemical/carbohydrates/codes_to_roots.map" ) ) );
 	}
 
 	return *CODE_TO_ROOT_MAP;
@@ -242,10 +242,10 @@ CarbohydrateInfo::base_name() const
 core::uint
 CarbohydrateInfo::branch_point( core::uint const i ) const
 {
-debug_assert( ( i > 0 ) && ( i <= n_branches() ) );
+	debug_assert( ( i > 0 ) && ( i <= n_branches() ) );
 	PyAssert( (i > 0) && ( i <= n_branches() ),
-			"CarbohydrateInfo::branch_point( core::uint i ): "
-			"There is no ith branch point on this carbohydrate residue.");
+		"CarbohydrateInfo::branch_point( core::uint i ): "
+		"There is no ith branch point on this carbohydrate residue.");
 
 	return branch_points_[ i ];
 }
@@ -319,8 +319,8 @@ CarbohydrateInfo::init( core::chemical::ResidueTypeCAP residue_type_in )
 // Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
 void
 CarbohydrateInfo::copy_data(
-		CarbohydrateInfo & object_to_copy_to,
-		CarbohydrateInfo const & object_to_copy_from)
+	CarbohydrateInfo & object_to_copy_to,
+	CarbohydrateInfo const & object_to_copy_from)
 {
 	object_to_copy_to.full_name_ = object_to_copy_from.full_name_;
 	object_to_copy_to.short_name_ = object_to_copy_from.short_name_;
@@ -359,7 +359,7 @@ CarbohydrateInfo::get_n_carbons() const
 		}
 	}
 	utility_exit_with_message(
-			"This residue is not a sugar or else there is an error in C atom labeling in the .params file.");
+		"This residue is not a sugar or else there is an error in C atom labeling in the .params file.");
 	return 0;  // will never be reached
 }
 
@@ -398,8 +398,8 @@ CarbohydrateInfo::read_and_set_properties()
 
 	// Ring Size
 	Size const n_ring_size_properties( properties.has_property( OXIROSE ) + properties.has_property( OXETOSE ) +
-			properties.has_property( FURANOSE ) + properties.has_property( PYRANOSE ) +
-			properties.has_property( SEPTANOSE ) );
+		properties.has_property( FURANOSE ) + properties.has_property( PYRANOSE ) +
+		properties.has_property( SEPTANOSE ) );
 	if ( n_ring_size_properties == 0 ) {
 		ring_size_ = 0;  // assumes linear
 	} else if ( n_ring_size_properties == 1 ) {
@@ -454,7 +454,7 @@ CarbohydrateInfo::read_and_set_properties()
 		if ( position ) {
 			if ( modifications_[ position ] != "" ) {
 				utility_exit_with_message(
-						"A sugar cannot have multiple modifications at the same position; check the .params file.");
+					"A sugar cannot have multiple modifications at the same position; check the .params file.");
 			} else {
 				variant = variant.substr( 3 );  // assumes 1st character is a "C" and the 3rd an underscore
 				if ( variant != "BRANCH_POINT" ) {
@@ -469,7 +469,7 @@ CarbohydrateInfo::read_and_set_properties()
 	// Double-check for inconsistencies.
 	if ( ( ring_size_ != 0 ) && ( anomer_ == "" ) ) {
 		utility_exit_with_message(
-				"A cyclic sugar must have its anomeric property declared; check the .params file." );
+			"A cyclic sugar must have its anomeric property declared; check the .params file." );
 	}
 	if ( ( ring_size_ == 0 ) && ( anomer_ != "" ) ) {
 		utility_exit_with_message( "An acyclic sugar cannot be alpha or beta; check the .params file." );
@@ -588,26 +588,26 @@ CarbohydrateInfo::determine_IUPAC_names()
 	stringstream long_suffix( stringstream::out );
 	stringstream short_suffix( stringstream::out );
 	switch ( ring_size_ ) {
-		case 3:
-			long_suffix << "ooxir";
-			break;
-		case 4:
-			long_suffix << "ooxet";
-			break;
-		case 5:
-			long_suffix << "ofuran";
-			short_suffix << 'f';
-			break;
-		case 6:
-			if ( ! is_Neu ) {  // (For some odd reason, "opyran" is not used with Neu, though "p" is....)
-				long_suffix << "opyran";
-			}
-			short_suffix << 'p';
-			break;
-		case 7:
-			long_suffix << "oseptan";
-			short_suffix << 's';
-			break;
+	case 3 :
+		long_suffix << "ooxir";
+		break;
+	case 4 :
+		long_suffix << "ooxet";
+		break;
+	case 5 :
+		long_suffix << "ofuran";
+		short_suffix << 'f';
+		break;
+	case 6 :
+		if ( ! is_Neu ) {  // (For some odd reason, "opyran" is not used with Neu, though "p" is....)
+			long_suffix << "opyran";
+		}
+		short_suffix << 'p';
+		break;
+	case 7 :
+		long_suffix << "oseptan";
+		short_suffix << 's';
+		break;
 	}
 	if ( residue_type->is_lower_terminus() ) {
 		if ( is_glycoside_ ) {  // TODO: Extract name of R-group.

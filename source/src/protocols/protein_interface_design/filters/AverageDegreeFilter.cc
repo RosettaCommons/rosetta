@@ -26,7 +26,7 @@
 
 
 namespace protocols {
-namespace protein_interface_design{
+namespace protein_interface_design {
 namespace filters {
 
 static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.AverageDegreeFilter" );
@@ -84,21 +84,22 @@ AverageDegreeFilter::compute( core::pose::Pose const & pose ) const{
 	core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 	core::Size count_residues( 0 );
 	core::Size count_neighbors( 0 );
-	for( core::Size resi=1; resi<=pose.total_residue(); ++resi ){
-		if( packer_task->being_packed( resi ) ){
+	for ( core::Size resi=1; resi<=pose.total_residue(); ++resi ) {
+		if ( packer_task->being_packed( resi ) ) {
 			core::Size resi_neighbors( 0 );
 			++count_residues;
-/// which chain is resi on?
+			/// which chain is resi on?
 			core::Size chain( 1 );
-			for( ; chain <= pose.conformation().num_chains(); ++chain )
-				if( pose.conformation().chain_begin( chain ) <= resi && pose.conformation().chain_end( chain ) >= resi ) break;
+			for ( ; chain <= pose.conformation().num_chains(); ++chain ) {
+				if ( pose.conformation().chain_begin( chain ) <= resi && pose.conformation().chain_end( chain ) >= resi ) break;
+			}
 			core::Size const chain_begin( pose.conformation().chain_begin( chain ) );
 			core::Size const chain_end( pose.conformation().chain_end( chain ) );
 			core::conformation::Residue const res_target( pose.conformation().residue( resi ) );
-			for( core::Size j=chain_begin; j<=chain_end; ++j ){
+			for ( core::Size j=chain_begin; j<=chain_end; ++j ) {
 				core::conformation::Residue const resj( pose.residue( j ) );
 				core::Real const distance( resj.xyz( resj.nbr_atom() ).distance( res_target.xyz( res_target.nbr_atom() ) ) );
-				if( distance <= distance_threshold() ){
+				if ( distance <= distance_threshold() ) {
 					++count_neighbors;
 					++resi_neighbors;
 				}
@@ -123,10 +124,10 @@ AverageDegreeFilter::report( std::ostream & out, core::pose::Pose const & pose )
 
 void
 AverageDegreeFilter::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & )
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & )
 {
 	TR << "AverageDegreeFilter"<<std::endl;
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );

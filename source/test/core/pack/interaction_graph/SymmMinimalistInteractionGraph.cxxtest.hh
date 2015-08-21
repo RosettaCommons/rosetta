@@ -133,8 +133,8 @@ public:
 		sfxn->set_weight( atom_pair_constraint, 0.5 );
 
 		methods::EnergyMethodOptionsOP emopts( new methods::EnergyMethodOptions( sfxn->energy_method_options() ) );
-    emopts->hbond_options().decompose_bb_hb_into_pair_energies( true );
-    sfxn->set_energy_method_options( *emopts );
+		emopts->hbond_options().decompose_bb_hb_into_pair_energies( true );
+		sfxn->set_energy_method_options( *emopts );
 
 		pose.add_constraint( core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AtomPairConstraint( core::id::AtomID( 4, 11 ), core::id::AtomID( 4, 12 ), core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( 5.0, 1.0 ) )) ));
 		//core::Real const initial_score = (*sfxn)( pose ); // score the pose first;
@@ -265,35 +265,35 @@ public:
 					pose.replace_residue( ii, *rotsets->rotamer_set_for_residue( ii )->rotamer( jj ), false );
 					core::Real jjenergy = (*sfxn)( pose );
 					//if ( ii == 11 && jj == 2 ) {
-					//	for ( core::graph::Node::EdgeListConstIter
-					//			eiter = pose.energies().energy_graph().get_node(11)->const_edge_list_begin(),
-					//			eiter_end = pose.energies().energy_graph().get_node(11)->const_edge_list_end();
-					//			eiter != eiter_end; ++eiter ) {
-					//		EnergyEdge const * eedge = static_cast< EnergyEdge const * > (*eiter);
-					//		Size const other_node_ind = ( eedge->get_other_ind( 11 ) - 1 ) % 32 + 1;
-					//		if ( other_node_ind == 12 || other_node_ind == 13 ) continue;
-					//		std::cout << "pose energies: 11 rotamer 1 w/ " << eedge->get_other_ind( 11 ) << "= " << eedge->dot( sfxn->weights() ) << std::endl;
-					//	}
+					// for ( core::graph::Node::EdgeListConstIter
+					//   eiter = pose.energies().energy_graph().get_node(11)->const_edge_list_begin(),
+					//   eiter_end = pose.energies().energy_graph().get_node(11)->const_edge_list_end();
+					//   eiter != eiter_end; ++eiter ) {
+					//  EnergyEdge const * eedge = static_cast< EnergyEdge const * > (*eiter);
+					//  Size const other_node_ind = ( eedge->get_other_ind( 11 ) - 1 ) % 32 + 1;
+					//  if ( other_node_ind == 12 || other_node_ind == 13 ) continue;
+					//  std::cout << "pose energies: 11 rotamer 1 w/ " << eedge->get_other_ind( 11 ) << "= " << eedge->dot( sfxn->weights() ) << std::endl;
+					// }
 					//}
 					//utility::vector1< core::Real > two_body_energy_sum( 3, 0.0 );
 					//for ( Size kk = 11; kk <= 13; ++kk ) {
-					//	for ( core::graph::Node::EdgeListConstIter
-					//			eiter = pose.energies().energy_graph().get_node(kk)->const_upper_edge_list_begin(),
-					//			eiter_end = pose.energies().energy_graph().get_node(kk)->const_upper_edge_list_end();
-					//			eiter != eiter_end; ++eiter ) {
-					//		EnergyEdge const * eedge = static_cast< EnergyEdge const * > (*eiter);
-					//		Size const other_node_ind = ( eedge->get_other_ind( kk ) - 1 ) % 32 + 1;
-					//		if ( other_node_ind == kk ) continue;
-					//		if ( kk != ii && other_node_ind != ii ) continue;
-					//		if ( other_node_ind == 11 || other_node_ind == 12 || other_node_ind == 13 ) {
-					//			Size notii = other_node_ind == ii ? kk : other_node_ind;
-					//			two_body_energy_sum[ notii-10 ] += eedge->dot( sfxn->weights() );
+					// for ( core::graph::Node::EdgeListConstIter
+					//   eiter = pose.energies().energy_graph().get_node(kk)->const_upper_edge_list_begin(),
+					//   eiter_end = pose.energies().energy_graph().get_node(kk)->const_upper_edge_list_end();
+					//   eiter != eiter_end; ++eiter ) {
+					//  EnergyEdge const * eedge = static_cast< EnergyEdge const * > (*eiter);
+					//  Size const other_node_ind = ( eedge->get_other_ind( kk ) - 1 ) % 32 + 1;
+					//  if ( other_node_ind == kk ) continue;
+					//  if ( kk != ii && other_node_ind != ii ) continue;
+					//  if ( other_node_ind == 11 || other_node_ind == 12 || other_node_ind == 13 ) {
+					//   Size notii = other_node_ind == ii ? kk : other_node_ind;
+					//   two_body_energy_sum[ notii-10 ] += eedge->dot( sfxn->weights() );
 					//
-					//			//std::cout << "edge between " << eedge->get_first_node_ind() << " " << eedge->get_second_node_ind() << " energy " << eedge->dot( sfxn->weights() ) << "      ";
-					//			//std::cout << "kkcbeta: " << pose.residue( kk ).xyz( "CB" ).x() << " "  << pose.residue( kk ).xyz( "CB" ).y() << " " << pose.residue( kk ).xyz( "CB" ).z();
-					//			//std::cout << "; othercbeta: " << pose.residue( eedge->get_second_node_ind() ).xyz( "CB" ).x() << " "  << pose.residue( eedge->get_second_node_ind() ).xyz( "CB" ).y() << " " << pose.residue( eedge->get_second_node_ind() ).xyz( "CB" ).z() << std::endl;
-					//		}
-					//	}
+					//   //std::cout << "edge between " << eedge->get_first_node_ind() << " " << eedge->get_second_node_ind() << " energy " << eedge->dot( sfxn->weights() ) << "      ";
+					//   //std::cout << "kkcbeta: " << pose.residue( kk ).xyz( "CB" ).x() << " "  << pose.residue( kk ).xyz( "CB" ).y() << " " << pose.residue( kk ).xyz( "CB" ).z();
+					//   //std::cout << "; othercbeta: " << pose.residue( eedge->get_second_node_ind() ).xyz( "CB" ).x() << " "  << pose.residue( eedge->get_second_node_ind() ).xyz( "CB" ).y() << " " << pose.residue( eedge->get_second_node_ind() ).xyz( "CB" ).z() << std::endl;
+					//  }
+					// }
 					//}
 
 					symmin_ig->consider_substitution( iimoltenresid, jj, deltaE, prevnode_energy );
@@ -302,12 +302,12 @@ public:
 
 					//SymmMinimalistNode * iinode = static_cast< SymmMinimalistNode * > ( symmin_ig->get_node( ii-10 ) );
 					//for ( int kk = 1; kk <= iinode->get_num_incident_edges(); ++kk ) {
-					//	Size other_node = iinode->get_index_of_adjacent_node( kk );
-					//	TS_ASSERT_DELTA( two_body_energy_sum[ other_node ],  jj == 1 ? iinode->get_incident_symmin_edge(kk)->alt_state_energy() : iinode->get_incident_symmin_edge(kk)->curr_state_energy(), 1e-5 );
-					//	//std::cout << "IG: edge to node " << iinode->get_index_of_adjacent_node( kk ) << " alt energy: " << iinode->get_incident_symmin_edge(kk)->alt_state_energy() << std::endl;
+					// Size other_node = iinode->get_index_of_adjacent_node( kk );
+					// TS_ASSERT_DELTA( two_body_energy_sum[ other_node ],  jj == 1 ? iinode->get_incident_symmin_edge(kk)->alt_state_energy() : iinode->get_incident_symmin_edge(kk)->curr_state_energy(), 1e-5 );
+					// //std::cout << "IG: edge to node " << iinode->get_index_of_adjacent_node( kk ) << " alt energy: " << iinode->get_incident_symmin_edge(kk)->alt_state_energy() << std::endl;
 					//}
 
-					if ( ! (std::abs( ( deltaE - (jjenergy - state1_energy)) / ( jjenergy - state1_energy + 1e-6 ) ) < 2e-4 || ( std::abs( jjenergy - state1_energy ) < 1.0 && std::abs( deltaE - ( jjenergy - state1_energy )) < 2e-4 ) )) {
+					if ( ! (std::abs( ( deltaE - (jjenergy - state1_energy)) / ( jjenergy - state1_energy + 1e-6 ) ) < 2e-4 || ( std::abs( jjenergy - state1_energy ) < 1.0 && std::abs( deltaE - ( jjenergy - state1_energy )) < 2e-4 ) ) ) {
 						if ( rotsets->rotamer_set_for_residue( ii )->rotamer( jj )->aa() == aa_gly ) {
 							// iterate across edges; subtract half of the difference between the alanine and glycine bb/bb interaction energy from deltaE
 							// note: there is error here in the IG which we're tolerating for the sake of speed
@@ -315,9 +315,9 @@ public:
 								Size kkmoltenresid = kk-10;
 								core::conformation::Residue const & kkres = symmin_ig->get_on_the_fly_node( kkmoltenresid )->get_rotamer( kk == ii ? jj : 1, 1 );
 								for ( core::graph::Node::EdgeListConstIter
-												eiter = pose.energies().energy_graph().get_node(kk)->const_upper_edge_list_begin(),
-												eiter_end = pose.energies().energy_graph().get_node(kk)->const_upper_edge_list_end();
-											eiter != eiter_end; ++eiter ) {
+										eiter = pose.energies().energy_graph().get_node(kk)->const_upper_edge_list_begin(),
+										eiter_end = pose.energies().energy_graph().get_node(kk)->const_upper_edge_list_end();
+										eiter != eiter_end; ++eiter ) {
 									EnergyEdge const * eedge = static_cast< EnergyEdge const * > (*eiter);
 									Size const other_node_ind = ( eedge->get_other_ind( kk ) - 1 ) % 32 + 1;
 									if ( other_node_ind == kk ) continue;
@@ -346,7 +346,7 @@ public:
 					}
 
 					TS_ASSERT( std::abs( ( deltaE - (jjenergy - state1_energy)) / ( jjenergy - state1_energy + 1e-6 ) ) < 2e-4 || ( std::abs( jjenergy - state1_energy ) < 1.0 && std::abs( deltaE - ( jjenergy - state1_energy )) < 2e-4 ));
-					if ( ! (std::abs( ( deltaE - (jjenergy - state1_energy)) / ( jjenergy - state1_energy + 1e-6 ) ) < 2e-4 || ( std::abs( jjenergy - state1_energy ) < 1.0 && std::abs( deltaE - ( jjenergy - state1_energy )) < 2e-4 ) )) {
+					if ( ! (std::abs( ( deltaE - (jjenergy - state1_energy)) / ( jjenergy - state1_energy + 1e-6 ) ) < 2e-4 || ( std::abs( jjenergy - state1_energy ) < 1.0 && std::abs( deltaE - ( jjenergy - state1_energy )) < 2e-4 ) ) ) {
 						std::cout << ii << " " << jj << " bad deltaE for " << rotsets->rotamer_set_for_residue( ii )->rotamer( jj )->name() << ": " << deltaE << " vs " << jjenergy - state1_energy << " relative: " << std::abs( ( deltaE - (jjenergy - state1_energy)) / ( jjenergy - state1_energy + 1e-6 ) ) << " diff: " << std::abs( ( deltaE - (jjenergy - state1_energy))) << std::endl;
 
 
@@ -399,7 +399,7 @@ public:
 						}
 					}
 					TS_ASSERT( std::abs( ( regular_deltaE - deltaE ) / ( regular_deltaE + 1e-6 ) ) < 2e-4 || ( std::abs( regular_deltaE ) < 1.0 && std::abs( deltaE - regular_deltaE ) < 2e-4 ));
-					if ( ! (std::abs( ( regular_deltaE - deltaE ) / ( regular_deltaE + 1e-6 ) ) < 2e-4 || ( std::abs( regular_deltaE ) < 1.0 && std::abs( deltaE - regular_deltaE ) < 2e-4 ) )) {
+					if ( ! (std::abs( ( regular_deltaE - deltaE ) / ( regular_deltaE + 1e-6 ) ) < 2e-4 || ( std::abs( regular_deltaE ) < 1.0 && std::abs( deltaE - regular_deltaE ) < 2e-4 ) ) ) {
 						std::cout << ii << " " << jj << " bad deltaE for " << rotsets->rotamer_set_for_residue( ii )->rotamer( jj )->name() << " vs regular ig: " << deltaE << " vs " << regular_deltaE << " relative: " << std::abs( ( regular_deltaE - deltaE ) / ( regular_deltaE + 1e-6 ) ) << " diff " << std::abs( ( regular_deltaE - deltaE )) << std::endl;
 					}
 				}

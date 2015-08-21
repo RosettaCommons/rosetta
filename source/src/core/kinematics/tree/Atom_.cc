@@ -92,7 +92,7 @@ Atom_::show() const
 	}
 	std::cout << std::endl;
 	for ( Atoms::const_iterator it= atoms_.begin(), it_end = atoms_.end(); it != it_end; ++it ) {
-			(*it)->show();
+		(*it)->show();
 	}
 }
 
@@ -127,7 +127,7 @@ Atom_::show(int const & n_level) const
 	TR << std::endl;
 
 	//TR << "Yifan debug: " << n_level << std::endl;
-	if (n_level > 0) {
+	if ( n_level > 0 ) {
 		int const next_level(n_level - 1);
 		for ( Atoms::const_iterator it= atoms_.begin(), it_end = atoms_.end(); it != it_end; ++it ) {
 			(*it)->show(next_level);
@@ -259,7 +259,7 @@ Atom_::insert_atom(
 {
 	atom->parent( get_self_weak_ptr() ); // Note: you cannot give "this" to the child, or the reference-count information will be lost with boost::weak_ptr
 
-debug_assert( index >= 0 );
+	debug_assert( index >= 0 );
 	Atoms::iterator pos( atoms_.begin() + index );
 	if ( atom->is_jump() ) {
 		if ( pos > nonjump_atoms_begin() ) pos = nonjump_atoms_begin();
@@ -285,22 +285,22 @@ Atom_::replace_atom(
 	AtomOP const new_atom
 )
 {
-debug_assert( ( old_atom->is_jump() && new_atom->is_jump() ) ||
+	debug_assert( ( old_atom->is_jump() && new_atom->is_jump() ) ||
 		( !old_atom->is_jump() && !new_atom->is_jump() ) );
 
 	Atoms::iterator iter( std::find( atoms_.begin(), atoms_.end(), old_atom ) );
 	if ( iter == atoms_.end() ) {
 		std::cout << "old_atom not present in atoms list! " <<
 			atoms_.size() << std::endl;
-	debug_assert( false );
+		debug_assert( false );
 		utility_exit();
 	}
 	new_atom->parent( get_self_weak_ptr() ); // Note: you cannot give "this" to the child atom, or the reference-count data will be lost with boost::weak_ptr
 	iter = atoms_.insert( iter, new_atom );
-	// 		std::cout << (*iter == new_atom) << ' ' <<
-	// 			(*iter == old_atom) << std::endl;
+	//   std::cout << (*iter == new_atom) << ' ' <<
+	//    (*iter == old_atom) << std::endl;
 	++iter;
-debug_assert( *iter == old_atom );
+	debug_assert( *iter == old_atom );
 	atoms_.erase( iter );
 }
 
@@ -349,7 +349,7 @@ Atom_::child( Size const k )
 Size
 Atom_::child_index( AtomCOP child ) const
 {
-debug_assert( child->parent().get() == this );
+	debug_assert( child->parent().get() == this );
 	for ( Size k=0; k< atoms_.size(); ++k ) {
 		if ( atoms_[k] == child ) return k;
 	}
@@ -360,7 +360,7 @@ debug_assert( child->parent().get() == this );
 Size
 Atom_::raw_child_index( Atom const * child ) const
 {
-debug_assert( child->raw_parent() == this );
+	debug_assert( child->raw_parent() == this );
 	for ( Size k=0; k < atoms_.size(); ++k ) {
 		if ( atoms_[k].get() == child ) return k;
 	}
@@ -458,11 +458,11 @@ Stub
 Atom_::get_input_stub() const
 {
 	if ( !parent_.expired() ) {
-// 		std::cout << "Get input stub: ";
-// 		std::cout << "(0: " << input_stub_atom0()->atom_id().rsd() << ", "<< input_stub_atom0()->atom_id().atomno() << ") ";
-// 		std::cout << "(1: " << input_stub_atom1()->atom_id().rsd() << ", "<< input_stub_atom1()->atom_id().atomno() << ") ";
-// 		std::cout << "(2: " << input_stub_atom2()->atom_id().rsd() << ", "<< input_stub_atom2()->atom_id().atomno() << ") ";
-// 		std::cout << "(3: " << input_stub_atom3()->atom_id().rsd() << ", "<< input_stub_atom3()->atom_id().atomno() << ") " << std::endl;
+		//   std::cout << "Get input stub: ";
+		//   std::cout << "(0: " << input_stub_atom0()->atom_id().rsd() << ", "<< input_stub_atom0()->atom_id().atomno() << ") ";
+		//   std::cout << "(1: " << input_stub_atom1()->atom_id().rsd() << ", "<< input_stub_atom1()->atom_id().atomno() << ") ";
+		//   std::cout << "(2: " << input_stub_atom2()->atom_id().rsd() << ", "<< input_stub_atom2()->atom_id().atomno() << ") ";
+		//   std::cout << "(3: " << input_stub_atom3()->atom_id().rsd() << ", "<< input_stub_atom3()->atom_id().atomno() << ") " << std::endl;
 		return Stub(
 			input_stub_atom0()->position(),
 			input_stub_atom1()->position(),
@@ -563,7 +563,7 @@ Atom_::stub_defined() const
 	if ( is_jump() ) {
 		AtomCOP first = get_nonjump_atom(0);
 		if ( first != 0 &&
-			( first->get_nonjump_atom(0) != 0 || get_nonjump_atom(1) != 0 ) ) {
+				( first->get_nonjump_atom(0) != 0 || get_nonjump_atom(1) != 0 ) ) {
 			return true;
 		} else {
 			return false;
@@ -637,8 +637,9 @@ void
 Atom_::get_path_from_root( utility::vector1< AtomCAP > & path ) const
 {
 	AtomCOP parent = parent_.lock();
-	if ( parent )
+	if ( parent ) {
 		parent->get_path_from_root( path );
+	}
 	path.push_back( get_self_weak_ptr() );
 }
 
@@ -647,8 +648,9 @@ Atom_::get_path_from_root( utility::vector1< AtomCAP > & path ) const
 bool
 Atom_::atom_is_on_path_from_root( AtomCOP atm ) const
 {
-	if( atm.get() == this)
+	if ( atm.get() == this ) {
 		return true;
+	}
 	AtomCOP parent = parent_.lock();
 	return ( parent && parent->atom_is_on_path_from_root( atm ) );
 }
@@ -725,7 +727,7 @@ Atom_::note_dof_change(
 		changset.push_back( AtomWithDOFChange( atom_id_ ) );
 		dof_refold_index_ = changset.size();
 	} else {
-	debug_assert( changset[ dof_refold_index_].atomid_ == atom_id_ );
+		debug_assert( changset[ dof_refold_index_].atomid_ == atom_id_ );
 	}
 }
 
@@ -798,7 +800,7 @@ Atom_::raw_input_stub_atom3() const
 	Atom const * parent_ptr = raw_parent();
 	Atom const * sibling_ptr = raw_previous_sibling();
 	if ( is_jump() || ! sibling_ptr || sibling_ptr->is_jump() ||
-			( parent_ptr->is_jump() && sibling_ptr->id() == parent_ptr->stub_atom2_id() )) {
+			( parent_ptr->is_jump() && sibling_ptr->id() == parent_ptr->stub_atom2_id() ) ) {
 		return parent_ptr->raw_stub_atom3();
 	} else {
 		return sibling_ptr;

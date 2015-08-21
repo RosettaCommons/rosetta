@@ -30,7 +30,7 @@ class ResidueFeatureFactory {
 public:
 	ResidueFeatureFactory(void);
 
- 	/// @brief adds a ResidueFeatureOP
+	/// @brief adds a ResidueFeatureOP
 	void add_type( ResidueFeatureOP feature_ );
 	ResidueFeatureOP get_residue_feature( std::string const & type ) const;
 

@@ -100,7 +100,7 @@ static basic::Tracer TR( "SecStructFinder" );
 
 namespace protocols {
 namespace ncbb {
-		
+
 SecStructFinder::SecStructFinder():
 	residue_( "ALA" ),
 	min_length_( 5 ),
@@ -117,7 +117,7 @@ SecStructFinder::SecStructFinder():
 	dissimilarity_( 10 )
 {
 	Mover::type("SecStructFinder");
-	
+
 	score_fxn_ = get_score_function();
 	scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn_);
 }
@@ -157,54 +157,74 @@ SecStructFinder::SecStructFinder(
 	dihedral_max_ = ( dihedral_min_ > dihedral_max ) ? dihedral_min_ : dihedral_max;
 
 	Mover::type("SecStructFinder");
-		
+
 	score_fxn_ = get_score_function();
 	scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn_);
 }
 
 std::string
 SecStructFinder::alpha_to_beta( std::string alpha ) {
-	if ( alpha == "ALA" )
+	if ( alpha == "ALA" ) {
 		return "B3A";
-	if ( alpha == "CYS" )
+	}
+	if ( alpha == "CYS" ) {
 		return "B3C";
-	if ( alpha == "ASP" )
+	}
+	if ( alpha == "ASP" ) {
 		return "B3D";
-	if ( alpha == "GLU" )
+	}
+	if ( alpha == "GLU" ) {
 		return "B3E";
-	if ( alpha == "PHE" )
+	}
+	if ( alpha == "PHE" ) {
 		return "B3F";
-	if ( alpha == "GLY" )
+	}
+	if ( alpha == "GLY" ) {
 		return "B3G";
-	if ( alpha == "HIS" )
+	}
+	if ( alpha == "HIS" ) {
 		return "B3H";
-	if ( alpha == "ILE" )
+	}
+	if ( alpha == "ILE" ) {
 		return "B3I";
-	if ( alpha == "LYS" )
+	}
+	if ( alpha == "LYS" ) {
 		return "B3K";
-	if ( alpha == "LEU" )
+	}
+	if ( alpha == "LEU" ) {
 		return "B3L";
-	if ( alpha == "MET" )
+	}
+	if ( alpha == "MET" ) {
 		return "B3M";
-	if ( alpha == "ASN" )
+	}
+	if ( alpha == "ASN" ) {
 		return "B3N";
-	if ( alpha == "GLN" )
+	}
+	if ( alpha == "GLN" ) {
 		return "B3Q";
-	if ( alpha == "ARG" )
+	}
+	if ( alpha == "ARG" ) {
 		return "B3R";
-	if ( alpha == "SER" )
+	}
+	if ( alpha == "SER" ) {
 		return "B3S";
-	if ( alpha == "THR" )
+	}
+	if ( alpha == "THR" ) {
 		return "B3T";
-	if ( alpha == "VAL" )
+	}
+	if ( alpha == "VAL" ) {
 		return "B3V";
-	if ( alpha == "TRP" )
+	}
+	if ( alpha == "TRP" ) {
 		return "B3W";
-	if ( alpha == "TYR" )
+	}
+	if ( alpha == "TYR" ) {
 		return "B3Y";
-	if ( alpha == "PRO" )
+	}
+	if ( alpha == "PRO" ) {
 		return "B3P";
-	
+	}
+
 	return "B3A";
 }
 
@@ -250,7 +270,7 @@ SecStructFinder::initialize_rtype_vector() {
 	} else {
 		restypes.push_back( residue_set_cap->name_map( "201:AcetylatedPeptoidNterm" ) );
 	}
-	
+
 	for ( Size resi = 1; resi < min_length_-1; ++resi ) {
 		if ( alpha_beta_pattern_[ resi ] == 'B' ) {
 			restypes.push_back( residue_set_cap->name_map( alpha_to_beta( residue_ ) ) );
@@ -277,8 +297,9 @@ SecStructFinder::make_filename (
 ) {
 	std::stringstream filename;
 	filename << residue_ << "_" << dihedral_pattern_ << "_" << min_length_;
-	for ( Size i = 1; i <= number_dihedrals; ++i )
+	for ( Size i = 1; i <= number_dihedrals; ++i ) {
 		filename << "_" << dihedrals[i];
+	}
 	filename << ".pdb";
 	return filename.str();
 }
@@ -297,7 +318,7 @@ SecStructFinder::get_number_dihedrals (
 					// TODO: figure out an appropriate way to decide if you want to do omega sampling
 					// for peptoids; I don't suggest this yet--at worst you can minimize it later?
 					number += 2;
-				} else if (alpha_beta_pattern_[j] == 'B' ) {
+				} else if ( alpha_beta_pattern_[j] == 'B' ) {
 					number += 3;
 				}
 				j = dihedral_pattern_.length();
@@ -313,8 +334,8 @@ SecStructFinder::too_similar( Size i, Size j, utility::vector1< Real > dihedrals
 	if ( alpha_beta_pattern_[i] == alpha_beta_pattern_[j] ) { //  don't compare dissimilars
 		if ( alpha_beta_pattern_[i] == 'A' || alpha_beta_pattern_[i] == 'P' ) {
 			/*if ( ( dihedrals[i] == dihedrals[j] && dihedrals[i+1] == dihedrals[j+1]) {
-			 skip = true;
-			 }*/
+			skip = true;
+			}*/
 			if ( std::abs(basic::periodic_range( dihedrals[i] - dihedrals[j], 360 )) < dissimilarity_ && std::abs(basic::periodic_range( dihedrals[i+1] - dihedrals[j+1], 360 ) ) < dissimilarity_ ) {
 				similar = true;
 			}
@@ -349,103 +370,103 @@ SecStructFinder::add_dihedral_constraints_to_pose(
 	utility::vector1< char > uniqs
 ) {
 	Pose minpose( pose );
-	
+
 	Real bin_size_rad = bin_size_ * numeric::NumericTraits<float>::pi()/180;
-	
+
 	for ( Size resi = 1; resi <= pose.n_residue(); ++resi ) {
-		
+
 		Size vec_index = 1;
 		for ( Size i = 2; i <= number_dihedral_sets; ++i ) {
 			if ( dihedral_pattern_[ resi-1 ] == uniqs[ i ] ) vec_index = i;
 		}
-		
+
 		if ( pose.residue( resi ).type().is_beta_aa() ) {
-			
+
 			Size take_from_here = give_dihedral_index( vec_index, uniqs, dihedral_pattern_, alpha_beta_pattern_ );
-			
+
 			CircularHarmonicFuncOP dih_func_phi (new CircularHarmonicFunc( dihedrals[ take_from_here ]*numeric::NumericTraits<float>::pi()/180, bin_size_rad ) );
 			CircularHarmonicFuncOP dih_func_tht (new CircularHarmonicFunc( dihedrals[ take_from_here+1 ]*numeric::NumericTraits<float>::pi()/180, bin_size_rad ) );
 			CircularHarmonicFuncOP dih_func_psi (new CircularHarmonicFunc( dihedrals[ take_from_here+2 ]*numeric::NumericTraits<float>::pi()/180, bin_size_rad ) );
-			
+
 			AtomID aidC1( ( resi == 1 ) ? pose.residue( resi ).atom_index( "CO" )
-						 : pose.residue(resi-1).atom_index( "C" ),
-						 ( resi == 1 ) ? resi : resi - 1 );
-			
-			
+				: pose.residue(resi-1).atom_index( "C" ),
+				( resi == 1 ) ? resi : resi - 1 );
+
+
 			AtomID aidN1( pose.residue( resi ).atom_index( "N" ), resi );
 			AtomID aidCA( pose.residue( resi ).atom_index( "CA" ), resi );
 			AtomID aidCM( pose.residue( resi ).atom_index( "CM" ), resi );
 			AtomID aidC2( pose.residue( resi ).atom_index( "C" ), resi );
 			AtomID aidN2( ( resi == pose.n_residue() ) ? pose.residue( resi ).atom_index( "NM" )
-						 : pose.residue(resi+1).atom_index( "N" ),
-						 ( resi == pose.n_residue() ) ? resi : resi + 1 );
-			
-			
+				: pose.residue(resi+1).atom_index( "N" ),
+				( resi == pose.n_residue() ) ? resi : resi + 1 );
+
+
 			ConstraintCOP phiconstraint( new DihedralConstraint( aidC1, aidN1, aidCA, aidCM, dih_func_phi ) );
 			ConstraintCOP thtconstraint( new DihedralConstraint( aidN1, aidCA, aidCM, aidC2, dih_func_tht ) );
 			ConstraintCOP psiconstraint( new DihedralConstraint( aidCA, aidCM, aidC2, aidN2, dih_func_psi ) );
-			
+
 			minpose.add_constraint( phiconstraint );
 			minpose.add_constraint( thtconstraint );
 			minpose.add_constraint( psiconstraint );
-			
+
 		} else if ( pose.residue( resi ).type().is_alpha_aa() ) {
-			
+
 			Size take_from_here = give_dihedral_index( vec_index, uniqs, dihedral_pattern_, alpha_beta_pattern_ );
-			
+
 			CircularHarmonicFuncOP dih_func_phi (new CircularHarmonicFunc( dihedrals[ take_from_here ]*numeric::NumericTraits<float>::pi()/180, bin_size_rad ) );
 			CircularHarmonicFuncOP dih_func_psi (new CircularHarmonicFunc( dihedrals[ take_from_here+1 ]*numeric::NumericTraits<float>::pi()/180, bin_size_rad ) );
-			
-			
+
+
 			AtomID aidC1( ( resi == 1 ) ? pose.residue( resi ).atom_index( "CO" )
-						 : pose.residue(resi-1).atom_index( "C" ),
-						 ( resi == 1 ) ? resi : resi - 1 );
-			
-			
+				: pose.residue(resi-1).atom_index( "C" ),
+				( resi == 1 ) ? resi : resi - 1 );
+
+
 			AtomID aidN1( pose.residue( resi ).atom_index( "N" ), resi );
 			AtomID aidCA( pose.residue( resi ).atom_index( "CA" ), resi );
 			AtomID aidC2( pose.residue( resi ).atom_index( "C" ), resi );
 			AtomID aidN2( ( resi == pose.n_residue() ) ? pose.residue( resi ).atom_index( "NM" )
-						 : pose.residue(resi+1).atom_index( "N" ),
-						 ( resi == pose.n_residue() ) ? resi : resi + 1 );
-			
-			
+				: pose.residue(resi+1).atom_index( "N" ),
+				( resi == pose.n_residue() ) ? resi : resi + 1 );
+
+
 			ConstraintCOP phiconstraint( new DihedralConstraint( aidC1, aidN1, aidCA, aidC2, dih_func_phi ) );
 			ConstraintCOP psiconstraint( new DihedralConstraint( aidN1, aidCA, aidC2, aidN2, dih_func_psi ) );
-			
+
 			minpose.add_constraint( phiconstraint );
 			minpose.add_constraint( psiconstraint );
-			
+
 		} /*else {
-		
-			Size take_from_here = give_dihedral_index( vec_index, uniqs, dihedral_pattern_, alpha_beta_pattern_  );
-			
-			CircularHarmonicFuncOP dih_func_phi (new CircularHarmonicFunc( dihedrals[ take_from_here ]*numeric::NumericTraits<float>::pi()/180, bin_size_rad ) );
-			CircularHarmonicFuncOP dih_func_psi (new CircularHarmonicFunc( dihedrals[ take_from_here+1 ]*numeric::NumericTraits<float>::pi()/180, bin_size_rad ) );
-			
-			
-			AtomID aidC1( ( resi == 1 ) ? pose.residue( resi ).atom_index( "CO" )
-						 : pose.residue(resi-1).atom_index( "C" ),
-						 ( resi == 1 ) ? resi : resi - 1 );
-			
-			
-			AtomID aidN1( pose.residue( resi ).atom_index( "N" ), resi );
-			AtomID aidCA( pose.residue( resi ).atom_index( "CA" ), resi );
-			AtomID aidC2( pose.residue( resi ).atom_index( "C" ), resi );
-			AtomID aidN2( ( resi == pose.n_residue() ) ? pose.residue( resi ).atom_index( "OXT" )
-						 : pose.residue(resi+1).atom_index( "N" ),
-						 ( resi == pose.n_residue() ) ? resi : resi + 1 );
-			
-			
-			ConstraintCOP phiconstraint( new DihedralConstraint( aidC1, aidN1, aidCA, aidC2, dih_func_phi ) );
-			ConstraintCOP psiconstraint( new DihedralConstraint( aidN1, aidCA, aidC2, aidN2, dih_func_psi ) );
-			
-			minpose.add_constraint( phiconstraint );
-			minpose.add_constraint( psiconstraint );
+
+		Size take_from_here = give_dihedral_index( vec_index, uniqs, dihedral_pattern_, alpha_beta_pattern_  );
+
+		CircularHarmonicFuncOP dih_func_phi (new CircularHarmonicFunc( dihedrals[ take_from_here ]*numeric::NumericTraits<float>::pi()/180, bin_size_rad ) );
+		CircularHarmonicFuncOP dih_func_psi (new CircularHarmonicFunc( dihedrals[ take_from_here+1 ]*numeric::NumericTraits<float>::pi()/180, bin_size_rad ) );
+
+
+		AtomID aidC1( ( resi == 1 ) ? pose.residue( resi ).atom_index( "CO" )
+		: pose.residue(resi-1).atom_index( "C" ),
+		( resi == 1 ) ? resi : resi - 1 );
+
+
+		AtomID aidN1( pose.residue( resi ).atom_index( "N" ), resi );
+		AtomID aidCA( pose.residue( resi ).atom_index( "CA" ), resi );
+		AtomID aidC2( pose.residue( resi ).atom_index( "C" ), resi );
+		AtomID aidN2( ( resi == pose.n_residue() ) ? pose.residue( resi ).atom_index( "OXT" )
+		: pose.residue(resi+1).atom_index( "N" ),
+		( resi == pose.n_residue() ) ? resi : resi + 1 );
+
+
+		ConstraintCOP phiconstraint( new DihedralConstraint( aidC1, aidN1, aidCA, aidC2, dih_func_phi ) );
+		ConstraintCOP psiconstraint( new DihedralConstraint( aidN1, aidCA, aidC2, aidN2, dih_func_psi ) );
+
+		minpose.add_constraint( phiconstraint );
+		minpose.add_constraint( psiconstraint );
 		}*/
-		
+
 	}
-	
+
 	return minpose;
 }
 
@@ -455,15 +476,15 @@ SecStructFinder::apply( Pose & pose )
 	Size number_dihedral_sets;
 	utility::vector1< char > uniqs;
 	count_uniq_char( dihedral_pattern_, number_dihedral_sets, uniqs );
-	
+
 	Size number_dihedrals = get_number_dihedrals( uniqs );//2 * number_dihedral_sets; // plus one per beta AA!
 	TR << "Investigating dihedral pattern " << dihedral_pattern_ << " with " << number_dihedral_sets << " uniques " << std::endl;
-	
+
 	utility::vector1< ResidueType > restypes = initialize_rtype_vector();
-	
+
 	pose.append_residue_by_jump( Residue(restypes[1], true), 1 );
 	for ( Size i = 2; i <= min_length_; ++i ) pose.append_residue_by_bond( Residue(restypes[i], true), true );
-	
+
 	kinematics::MoveMapOP min_mm( new kinematics::MoveMap );
 	min_mm->set_bb( true );
 	min_mm->set_chi( true );
@@ -478,11 +499,11 @@ SecStructFinder::apply( Pose & pose )
 
 	// now we have our pose
 	utility::vector1< Real > dihedrals( number_dihedrals+1, dihedral_min_ );
-	
+
 	// while loop idiom for looping through every layer of a vector of indices
 	Size p = 1;
 	while ( dihedrals[ number_dihedrals+1 ] == dihedral_min_ ) {
-		
+
 		// skip if the dihedrals for A are the same as B, etc.
 		// break after first example found
 		bool skip = false;
@@ -493,14 +514,14 @@ SecStructFinder::apply( Pose & pose )
 			}
 			if ( skip ) break;
 		}
-			
+
 		if ( !skip ) {
-			
+
 			TR << "Trying ";
 			for ( Size ii = 1; ii <= number_dihedrals; ++ii ) {
 				TR << dihedrals[ii] << ", ";
 			} TR << std::endl;
-			
+
 			for ( Size resi = 1; resi <= pose.n_residue(); ++resi ) {
 				Size take_from_here = 1;
 				for ( Size i = 1; i <= number_dihedral_sets; ++i ) {
@@ -508,7 +529,7 @@ SecStructFinder::apply( Pose & pose )
 						take_from_here = give_dihedral_index( i, uniqs, dihedral_pattern_, alpha_beta_pattern_  );
 					}
 				}
-					
+
 				if ( pose.residue( resi ).type().is_beta_aa() ) {
 					pose.set_torsion( TorsionID( resi, BB, 1 ), dihedrals[ take_from_here ] );
 					pose.set_torsion( TorsionID( resi, BB, 2 ), dihedrals[ take_from_here+1 ] );
@@ -520,48 +541,49 @@ SecStructFinder::apply( Pose & pose )
 					pose.set_omega( resi, 180 );
 				}
 			}
-			
+
 			show_current_dihedrals( number_dihedral_sets, uniqs, dihedrals );
-			
+
 			Real score = ( *score_fxn_ ) ( pose );
 			TR << "score is " << score << std::endl;;
-			
+
 			if ( min_everything_ ) {
-				
-				if ( score_fxn_->has_zero_weight( core::scoring::dihedral_constraint ) )
+
+				if ( score_fxn_->has_zero_weight( core::scoring::dihedral_constraint ) ) {
 					score_fxn_->set_weight( core::scoring::dihedral_constraint, 1.0 );
-				
+				}
+
 				Pose minpose = constrain_ ?
 					add_dihedral_constraints_to_pose( pose, dihedrals, number_dihedral_sets, uniqs )
-				  : pose;
-				
+					: pose;
+
 				core::optimization::MinimizerMap min_map;
 				min_map.setup( minpose, *min_mm );
-				
+
 				( *score_fxn_ ) ( minpose );
 				SecStructMinimizeMultiFunc ssmmf( minpose, *score_fxn_, min_map, alpha_beta_pattern_, dihedral_pattern_ );
-				
+
 				core::optimization::MinimizerOptions minoptions( "lbfgs_armijo_nonmonotone", 0.0001, true, false, false ); // investigate the final bools?
 				minpose.energies().set_use_nblist( minpose, min_map.domain_map(), false );
 				core::optimization::Minimizer minimizer( ssmmf, minoptions );
-				
+
 				//minmover.apply ( minpose );
 				utility::vector1< Real > dihedrals_for_minimization;
 				for ( Size index = 1; index <= number_dihedrals; ++index ) {
 					dihedrals_for_minimization.push_back( dihedrals[ index ] );
 				}
 				minimizer.run( dihedrals_for_minimization );
-				
+
 				minpose.energies().reset_nblist();
-				
+
 				score_fxn_->set_weight( core::scoring::dihedral_constraint, 0.0 );
 				Real score = ( ( *score_fxn_ ) ( minpose ) );
-				
+
 				TR << " and minned is " << score << std::endl;
 				if ( score <= dump_threshold_ ) {
 					TR << "Thus, dumping ";
 					std::string filename = make_filename( number_dihedrals, dihedrals );
-					
+
 					minpose.dump_scored_pdb( filename.c_str(), ( *score_fxn_ ) );
 					TR << " ( " << minpose.torsion( TorsionID( 1, BB, 1 ) ) << ", " << minpose.psi( 1 ) << " ), ";
 					for ( Size resi = 2; resi < pose.n_residue(); ++resi ) {
@@ -573,7 +595,7 @@ SecStructFinder::apply( Pose & pose )
 				if ( score <= dump_threshold_ ) {
 					TR << " thus, dumping ";
 					std::string filename = make_filename( number_dihedrals, dihedrals );
-					
+
 					pose.dump_scored_pdb( filename.c_str(), ( *score_fxn_ ) );
 					TR << filename.c_str() << " " << score << std::endl;
 					poses_to_min.push_back( pose );
@@ -586,7 +608,7 @@ SecStructFinder::apply( Pose & pose )
 				}
 			}
 		}
-			
+
 		dihedrals[ 1 ] += bin_size_;
 		while ( dihedrals[ p ] == dihedral_max_ ) {
 			dihedrals[ p ] = dihedral_min_;
@@ -594,25 +616,25 @@ SecStructFinder::apply( Pose & pose )
 			if ( dihedrals[ p ] != dihedral_max_ ) p = 1;
 		}
 	}
-	
+
 	// now min all our poses to min
 	if ( poses_to_min.size() == 0 ) return;
-	
+
 	for ( Size ii = 1, sz = poses_to_min.size(); ii < sz; ++ii ) {
-		
+
 		Pose minpose = constrain_ ?
 			add_dihedral_constraints_to_pose( poses_to_min[ii], dihedrals, number_dihedral_sets, uniqs )
-		  : poses_to_min[ii];
-		
+			: poses_to_min[ii];
+
 		core::optimization::MinimizerMap min_map;
 		min_map.setup( minpose, *min_mm );
 		( *score_fxn_ ) ( minpose );
 		SecStructMinimizeMultiFunc ssmmf( minpose, *score_fxn_, min_map, alpha_beta_pattern_, dihedral_pattern_ );
-		
+
 		core::optimization::MinimizerOptions minoptions( "lbfgs_armijo_nonmonotone", 0.0001, true, false, false ); // investigate the final bools?
 		minpose.energies().set_use_nblist( minpose, min_map.domain_map(), false );
 		core::optimization::Minimizer minimizer( ssmmf, minoptions );
-		
+
 		utility::vector1< Real > dihedrals_for_minimization;
 		for ( Size index = 1; index <= number_dihedrals; ++index ) {
 			dihedrals_for_minimization.push_back( dihedrals_to_min[ii][ index ] );
@@ -674,65 +696,75 @@ void SecStructFinder::parse_my_tag(
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & ) {
-	
-	if ( tag->hasOption( "residue" ) )
+
+	if ( tag->hasOption( "residue" ) ) {
 		this->residue_ = tag->getOption<std::string>("residue", residue_);
-	else
+	} else {
 		residue_ = "ALA";
-	
-	if ( tag->hasOption( "min_length" ) )
+	}
+
+	if ( tag->hasOption( "min_length" ) ) {
 		this->min_length_ = tag->getOption<Size>("min_length", min_length_);
-	else
+	} else {
 		min_length_ = 5;
-	
-	if ( tag->hasOption( "max_length" ) )
+	}
+
+	if ( tag->hasOption( "max_length" ) ) {
 		this->max_length_ = tag->getOption<Size>("max_length", max_length_);
-	else
+	} else {
 		max_length_ = 5;
-	
+	}
+
 	if ( max_length_ < min_length_ ) max_length_ = min_length_;
-	
-	if ( tag->hasOption( "bin_size" ) )
+
+	if ( tag->hasOption( "bin_size" ) ) {
 		this->bin_size_ = tag->getOption<Real>("bin_size", bin_size_);
-	else
+	} else {
 		bin_size_ = 10;
-	
-	if ( tag->hasOption( "dissimilarity" ) )
+	}
+
+	if ( tag->hasOption( "dissimilarity" ) ) {
 		this->dissimilarity_ = tag->getOption<Real>("dissimilarity", dissimilarity_);
-	else
+	} else {
 		dissimilarity_ = 10;
-	
+	}
+
 	if ( dissimilarity_ < bin_size_ ) dissimilarity_ = bin_size_;
-	
-	if ( tag->hasOption( "dump_threshold" ) )
+
+	if ( tag->hasOption( "dump_threshold" ) ) {
 		this->dump_threshold_ = tag->getOption<Real>("dump_threshold", dump_threshold_);
-	else
+	} else {
 		dump_threshold_ = 10;
-	
-	if ( tag->hasOption( "dihedral_pattern" ) )
+	}
+
+	if ( tag->hasOption( "dihedral_pattern" ) ) {
 		this->dihedral_pattern_ = tag->getOption<std::string>("dihedral_pattern", dihedral_pattern_);
-	else
+	} else {
 		dihedral_pattern_ = "A";
-	
+	}
+
 	dihedral_pattern_ = expand_pattern_to_fit( dihedral_pattern_, min_length_ );
-	
-	if ( tag->hasOption( "alpha_beta_pattern" ) )
+
+	if ( tag->hasOption( "alpha_beta_pattern" ) ) {
 		this->alpha_beta_pattern_ = tag->getOption<std::string>("alpha_beta_pattern", alpha_beta_pattern_);
-	else
+	} else {
 		alpha_beta_pattern_ = "A";
-	
+	}
+
 	alpha_beta_pattern_ = expand_pattern_to_fit( alpha_beta_pattern_, min_length_ );
-	
-	if ( tag->hasOption( "min_everything" ) )
+
+	if ( tag->hasOption( "min_everything" ) ) {
 		this->min_everything_ = tag->getOption<bool>("min_everything", min_everything_);
-	else
+	} else {
 		min_everything_ = false;
-	
-	if ( tag->hasOption( "cart" ) )
+	}
+
+	if ( tag->hasOption( "cart" ) ) {
 		this->cart_ = tag->getOption<bool>("cart", cart_);
-	else
+	} else {
 		cart_ = false;
-	
+	}
+
 }
 
 // MoverCreator

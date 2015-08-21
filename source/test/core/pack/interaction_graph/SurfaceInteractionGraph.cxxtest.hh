@@ -525,12 +525,12 @@ public:
 		/* this section tests scoring, as opposed to testing the interaction graph; thus, leave it out.
 		// after the annealer is done runnning, place new rotamers on the input pose
 		for ( core::uint ii = 1; ii <= rotsets->nmoltenres(); ++ii ) {
-			core::uint iiresid = rotsets->moltenres_2_resid( ii );
-			core::uint iibestrot = rotsets->rotid_on_moltenresidue( bestrotamer_at_seqpos( iiresid ) );
-			conformation::ResidueCOP bestrot( rotsets->rotamer_set_for_moltenresidue( ii )->rotamer( iibestrot ) );
+		core::uint iiresid = rotsets->moltenres_2_resid( ii );
+		core::uint iibestrot = rotsets->rotid_on_moltenresidue( bestrotamer_at_seqpos( iiresid ) );
+		conformation::ResidueCOP bestrot( rotsets->rotamer_set_for_moltenresidue( ii )->rotamer( iibestrot ) );
 
-			conformation::ResidueOP newresidue( bestrot->create_residue() );
-			pose.replace_residue( iiresid, *newresidue, false );
+		conformation::ResidueOP newresidue( bestrot->create_residue() );
+		pose.replace_residue( iiresid, *newresidue, false );
 		}
 
 		Energy design_score = (*scorefxn)( pose );
@@ -594,12 +594,12 @@ public:
 		/* this section tests scoring, as opposed to testing the interaction graph; thus, leave it out.
 		// after the annealer is done runnning, place new rotamers on the input pose
 		for ( core::uint ii = 1; ii <= rotsets->nmoltenres(); ++ii ) {
-			core::uint iiresid = rotsets->moltenres_2_resid( ii );
-			core::uint iibestrot = rotsets->rotid_on_moltenresidue( bestrotamer_at_seqpos( iiresid ) );
-			conformation::ResidueCOP bestrot( rotsets->rotamer_set_for_moltenresidue( ii )->rotamer( iibestrot ) );
+		core::uint iiresid = rotsets->moltenres_2_resid( ii );
+		core::uint iibestrot = rotsets->rotid_on_moltenresidue( bestrotamer_at_seqpos( iiresid ) );
+		conformation::ResidueCOP bestrot( rotsets->rotamer_set_for_moltenresidue( ii )->rotamer( iibestrot ) );
 
-			conformation::ResidueOP newresidue( bestrot->create_residue() );
-			pose.replace_residue( iiresid, *newresidue, false );
+		conformation::ResidueOP newresidue( bestrot->create_residue() );
+		pose.replace_residue( iiresid, *newresidue, false );
 		}
 
 		Energy design_score = (*scorefxn)( pose );

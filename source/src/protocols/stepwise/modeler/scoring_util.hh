@@ -24,22 +24,22 @@ namespace protocols {
 namespace stepwise {
 namespace modeler {
 
-	core::scoring::ScoreFunctionOP
-	get_minimize_scorefxn( core::pose::Pose const & pose,
-												 core::scoring::ScoreFunctionCOP scorefxn,
-												 options::StepWiseModelerOptionsCOP options );
+core::scoring::ScoreFunctionOP
+get_minimize_scorefxn( core::pose::Pose const & pose,
+	core::scoring::ScoreFunctionCOP scorefxn,
+	options::StepWiseModelerOptionsCOP options );
 
 
-	core::scoring::ScoreFunctionCOP
-	initialize_sample_scorefxn( core::scoring::ScoreFunctionCOP scorefxn,
-															core::pose::Pose const & pose,
-															options::StepWiseModelerOptionsCOP options );
+core::scoring::ScoreFunctionCOP
+initialize_sample_scorefxn( core::scoring::ScoreFunctionCOP scorefxn,
+	core::pose::Pose const & pose,
+	options::StepWiseModelerOptionsCOP options );
 
-	core::scoring::ScoreFunctionCOP
-	initialize_pack_scorefxn( core::scoring::ScoreFunctionCOP sample_scorefxn, core::pose::Pose const & pose );
+core::scoring::ScoreFunctionCOP
+initialize_pack_scorefxn( core::scoring::ScoreFunctionCOP sample_scorefxn, core::pose::Pose const & pose );
 
-	core::scoring::ScoreFunctionCOP
-	initialize_o2prime_pack_scorefxn( core::scoring::ScoreFunctionCOP const & scorefxn );
+core::scoring::ScoreFunctionCOP
+initialize_o2prime_pack_scorefxn( core::scoring::ScoreFunctionCOP const & scorefxn );
 
 } //modeler
 } //stepwise

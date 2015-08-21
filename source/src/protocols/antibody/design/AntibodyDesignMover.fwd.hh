@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/antibody/design/AntibodyDesignMover.fwd.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
@@ -20,9 +20,9 @@
 
 
 // C++ Headers
-namespace protocols{
-namespace antibody{
-namespace design{
+namespace protocols {
+namespace antibody {
+namespace design {
 
 // Forward
 class AntibodyDesignMover;
@@ -36,5 +36,5 @@ typedef utility::pointer::shared_ptr< AntibodyDesignMover const > AntibodyDesign
 } //namespace protocols
 
 
-#endif	//INCLUDED_protocols_antibody_design_AntibodyDesignMover.fwd.hh
+#endif //INCLUDED_protocols_antibody_design_AntibodyDesignMover.fwd.hh
 

@@ -25,26 +25,26 @@ namespace modeler {
 namespace rna {
 namespace sugar {
 
-	class SugarInstantiateMover: public protocols::moves::Mover {
+class SugarInstantiateMover: public protocols::moves::Mover {
 
-	public:
+public:
 
-		//constructor
-		SugarInstantiateMover( Size const moving_res );
+	//constructor
+	SugarInstantiateMover( Size const moving_res );
 
-		//destructor
-		~SugarInstantiateMover();
+	//destructor
+	~SugarInstantiateMover();
 
-	public:
+public:
 
-		virtual void apply( core::pose::Pose & pose );
-		virtual std::string get_name() const { return "SugarInstantiateMover"; }
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const { return "SugarInstantiateMover"; }
 
-	private:
+private:
 
-		Size const moving_res_;
+	Size const moving_res_;
 
-	};
+};
 
 } //sugar
 } //rna

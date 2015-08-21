@@ -35,7 +35,7 @@ using namespace core;
 class GeometricSolEnergyTests : public CxxTest::TestSuite {
 
 public:
-  void setUp() {
+	void setUp() {
 		core_init();
 	}
 

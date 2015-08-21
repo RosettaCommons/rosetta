@@ -20,8 +20,8 @@
 namespace protocols {
 namespace relax {
 
-	class MiniRelax;
-	typedef utility::pointer::shared_ptr< MiniRelax > MiniRelaxOP;
+class MiniRelax;
+typedef utility::pointer::shared_ptr< MiniRelax > MiniRelaxOP;
 
 }
 }

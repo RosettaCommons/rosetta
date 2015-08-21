@@ -29,7 +29,7 @@ class SoedingFunc : public Func {
 public:
 
 	SoedingFunc()
-		: w1_(0.0), mean1_(0.0), sdev1_(0.0), w2_(0.0), mean2_(0.0), sdev2_(0.0)
+	: w1_(0.0), mean1_(0.0), sdev1_(0.0), w2_(0.0), mean2_(0.0), sdev2_(0.0)
 	{}
 
 	/// @brief returns a clone of this SoedingFunc

@@ -41,7 +41,7 @@ using namespace protocols::pmut_scan;
 
 class PointMutScanDriverTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	bool suite_initialized;
 	core::Real TOLERATED_ERROR;

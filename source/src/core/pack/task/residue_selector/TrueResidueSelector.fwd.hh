@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/pack/task/residue_selector/TrueResidueSelector.fwd.hh
-/// @brief  Forward declaration of a class that combines ResidueSelector logic 
+/// @brief  Forward declaration of a class that combines ResidueSelector logic
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
 
 #ifndef INCLUDED_core_pack_task_residue_selector_TrueResidueSelector_FWD_HH

@@ -83,8 +83,8 @@ P_AA_pp_Energy::residue_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ){
-			return;
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) {
+		return;
 	}
 
 	emap[ p_aa_pp ] += p_aa_.P_AA_pp_energy( rsd );
@@ -110,8 +110,8 @@ P_AA_pp_Energy::eval_residue_dof_derivative(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ){
-			return 0.0;
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) {
+		return 0.0;
 	}
 
 	if ( ! tor_id.valid() ) return 0.0;
@@ -129,8 +129,8 @@ P_AA_pp_Energy::eval_dof_derivative(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( pose.residue( tor_id.rsd() ).has_variant_type( core::chemical::REPLONLY ) ){
-			return 0.0;
+	if ( pose.residue( tor_id.rsd() ).has_variant_type( core::chemical::REPLONLY ) ) {
+		return 0.0;
 	}
 
 	if ( ! tor_id.valid() ) return 0.0;

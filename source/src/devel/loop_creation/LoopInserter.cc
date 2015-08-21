@@ -41,7 +41,7 @@ LoopInserter::modified_range(
 ){
 	modified_range_=std::make_pair(res_begin, res_end);
 }
-	
+
 std::pair<core::Size, core::Size>
 LoopInserter::modified_range() const{
 	return modified_range_;
@@ -58,14 +58,14 @@ void
 LoopInserter::parse_loop_anchor(
 	utility::tag::TagCOP tag
 ){
-	if(tag->hasOption("loop_anchor")){
+	if ( tag->hasOption("loop_anchor") ) {
 		loop_anchor_ =
 			tag->getOption<core::Size>("loop_anchor");
 	}
-//	else{
-//		utility_exit_with_message("You must specify the loop anchor to use for loop insertion with the 'loop_anchor' tag");
-//	}
+	// else{
+	//  utility_exit_with_message("You must specify the loop anchor to use for loop insertion with the 'loop_anchor' tag");
+	// }
 }
-	
+
 } //loop creation
 } //devel

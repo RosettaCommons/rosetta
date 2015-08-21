@@ -148,9 +148,9 @@ public:
 		features_reporters_.push_back(protocols::features::FeaturesReporterOP( new StructureScoresFeatures(score_function_) ));
 		features_reporters_.push_back(protocols::features::FeaturesReporterOP( new UnrecognizedAtomFeatures() ));
 
-    // Use arbitrary outputtag and inputtag, instead of being dependent on getting this from JD2
-    output_tag_ = "FeaturesReporterTests_outputtag";
-    input_tag_ = "FeaturesReporterTests_inputtag";
+		// Use arbitrary outputtag and inputtag, instead of being dependent on getting this from JD2
+		output_tag_ = "FeaturesReporterTests_outputtag";
+		input_tag_ = "FeaturesReporterTests_inputtag";
 	}
 
 	void test_main() {
@@ -164,7 +164,7 @@ public:
 
 		structure_reporter_->write_schema_to_db(db_session);
 
-		foreach( FeaturesReporterOP const & reporter, features_reporters_ ){
+		foreach ( FeaturesReporterOP const & reporter, features_reporters_ ) {
 			tr << "Writing schema for '" << reporter->type_name() << "'" << std::endl;
 			reporter->write_schema_to_db(db_session);
 		}
@@ -172,7 +172,7 @@ public:
 
 	void do_test_type_name() {
 		using protocols::features::FeaturesReporterOP;
-		foreach(FeaturesReporterOP const & reporter, features_reporters_){
+		foreach ( FeaturesReporterOP const & reporter, features_reporters_ ) {
 			TS_ASSERT_DIFFERS(reporter->type_name(), "Unknown_FeaturesReporter");
 		}
 	}
@@ -185,7 +185,7 @@ public:
 		StructureID parent_id = structure_reporter_->report_features(batch_id_, db_session_, output_tag_, input_tag_);
 		tr << "Created structure id:" << parent_id << std::endl;
 
-		foreach( FeaturesReporterOP const & reporter, features_reporters_ ){
+		foreach ( FeaturesReporterOP const & reporter, features_reporters_ ) {
 			tr << "Reporting features for '" << reporter->type_name() << "'" << std::endl;
 			reporter->report_features(*pose_1ten_, batch_id_, db_session_);
 		}
@@ -235,30 +235,30 @@ public:
 		TS_ASSERT(struct_id_two_partition1 == 2 + structure_prefix);
 	}
 
-  void test_trajectory_report_to_db() {
-    using protocols::features::TrajectoryReportToDBOP;
-    TrajectoryReportToDBOP traj_reporter( new protocols::features::TrajectoryReportToDB(
-      db_session_, "fake_batch_name", "fake_batch_description",
-      false, // false = don't use transactions
-      1 // cache_size
-    ) );
+	void test_trajectory_report_to_db() {
+		using protocols::features::TrajectoryReportToDBOP;
+		TrajectoryReportToDBOP traj_reporter( new protocols::features::TrajectoryReportToDB(
+			db_session_, "fake_batch_name", "fake_batch_description",
+			false, // false = don't use transactions
+			1 // cache_size
+			) );
 
-    // Verify that default stride is 1 (to help make sure changes to this default are noticed)
-    TS_ASSERT(traj_reporter->get_stride() == 1);
+		// Verify that default stride is 1 (to help make sure changes to this default are noticed)
+		TS_ASSERT(traj_reporter->get_stride() == 1);
 
-    TS_ASSERT_THROWS_NOTHING( traj_reporter->set_stride(2) );
-    TS_ASSERT( traj_reporter->get_stride() == 2 );
+		TS_ASSERT_THROWS_NOTHING( traj_reporter->set_stride(2) );
+		TS_ASSERT( traj_reporter->get_stride() == 2 );
 
-    TS_ASSERT_THROWS_NOTHING( traj_reporter->apply(*pose_1ten_) );
+		TS_ASSERT_THROWS_NOTHING( traj_reporter->apply(*pose_1ten_) );
 
-    // Verify that cycle_counts is initialized correctly
-    TS_ASSERT( traj_reporter->get_cycle_counts().size() == 1 );
-    TS_ASSERT( traj_reporter->get_cycle_counts().begin()->second == 1 );
+		// Verify that cycle_counts is initialized correctly
+		TS_ASSERT( traj_reporter->get_cycle_counts().size() == 1 );
+		TS_ASSERT( traj_reporter->get_cycle_counts().begin()->second == 1 );
 
-    // Verify that cycle counting is working correctly for same pose apply
-    TS_ASSERT_THROWS_NOTHING( traj_reporter->apply(*pose_1ten_) );
-    TS_ASSERT( traj_reporter->get_cycle_counts().begin()->second == 2 );
-  }
+		// Verify that cycle counting is working correctly for same pose apply
+		TS_ASSERT_THROWS_NOTHING( traj_reporter->apply(*pose_1ten_) );
+		TS_ASSERT( traj_reporter->get_cycle_counts().begin()->second == 2 );
+	}
 
 private:
 	core::pose::PoseOP pose_1ten_;
@@ -273,6 +273,6 @@ private:
 	std::string database_filename_;
 	utility::sql_database::sessionOP db_session_;
 
-  std::string output_tag_;
-  std::string input_tag_;
+	std::string output_tag_;
+	std::string input_tag_;
 };

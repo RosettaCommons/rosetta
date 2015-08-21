@@ -33,38 +33,38 @@ namespace fragment {
 FragmentRmsd::~FragmentRmsd() {}
 
 FragmentRmsd::FragmentRmsd(FragSetCOP fragments) : fragments_(fragments) {
-  for ( ConstFrameIterator i = fragments_->begin(); i != fragments_->end(); ++i) {
-    FrameCOP frame = *i;
-    frames_[frame->start()] = frame;
-  }
+	for ( ConstFrameIterator i = fragments_->begin(); i != fragments_->end(); ++i ) {
+		FrameCOP frame = *i;
+		frames_[frame->start()] = frame;
+	}
 }
 
 FrameCOP FragmentRmsd::frame(core::Size position) const {
-  if (frames_.find(position) == frames_.end()) {
-    utility_exit_with_message("Requested invalid position in FragmentRmsd::fragment");
-  }
+	if ( frames_.find(position) == frames_.end() ) {
+		utility_exit_with_message("Requested invalid position in FragmentRmsd::fragment");
+	}
 
-  return frames_[position];
+	return frames_[position];
 }
 
 FragDataCOP FragmentRmsd::fragment(core::Size position, core::Size k) const {
-  FrameCOP f = frame(position);
+	FrameCOP f = frame(position);
 
-  if (k < 1 || k > f->nr_frags()) {
-    utility_exit_with_message("Requested invalid fragment number in FragmentRmsd::fragment");
-  }
+	if ( k < 1 || k > f->nr_frags() ) {
+		utility_exit_with_message("Requested invalid fragment number in FragmentRmsd::fragment");
+	}
 
-  return f->fragment_ptr(k);
+	return f->fragment_ptr(k);
 }
 
 core::Real FragmentRmsd::rmsd(core::Size position, core::Size k, const core::pose::Pose& reference) const {
-  core::pose::Pose pose;
-  core::pose::make_pose_from_sequence(pose, reference.sequence(), "centroid");
+	core::pose::Pose pose;
+	core::pose::make_pose_from_sequence(pose, reference.sequence(), "centroid");
 
-  FrameCOP f = frame(position);
-  f->apply(k, pose);
+	FrameCOP f = frame(position);
+	f->apply(k, pose);
 
-  return core::scoring::CA_rmsd(pose, reference, f->start(), f->stop());
+	return core::scoring::CA_rmsd(pose, reference, f->start(), f->stop());
 }
 
 }  // namespace fragment

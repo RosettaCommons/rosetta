@@ -29,7 +29,7 @@ namespace count_pair {
 class CountPairAll : public CountPairFunction
 {
 public:
-	public:
+public:
 	typedef CountPairFunction parent;
 
 public:

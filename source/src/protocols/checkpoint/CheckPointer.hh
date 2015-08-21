@@ -10,7 +10,7 @@
 /// @file CheckPointer
 /// @brief Application-level code for Abrelax, fold_cst and JumpingFoldCst protocols
 /// @details
-///	   use -help to see options
+///    use -help to see options
 ///    usage of class:
 ///
 /// @author Mike Tyka
@@ -50,7 +50,7 @@ namespace protocols {
 namespace checkpoint {
 
 class FileBuffer {
- public:
+public:
 	FileBuffer( const std::string filename, bool gzipped = false ):
 		filename_( filename ),
 		gzipped_( gzipped )
@@ -65,7 +65,7 @@ class FileBuffer {
 
 	core::Size size(){ return contents_.length(); }
 
- private:
+private:
 	std::string filename_;
 	bool gzipped_;
 	std::string contents_;
@@ -74,17 +74,17 @@ class FileBuffer {
 
 class CheckPointer : public utility::pointer::ReferenceCount {
 public:
-  CheckPointer( std::string const& type );
+	CheckPointer( std::string const& type );
 
-  virtual ~CheckPointer() {
-    clear_checkpoints();
-  }
+	virtual ~CheckPointer() {
+		clear_checkpoints();
+	}
 
 	void clear_checkpoints();
 
 	void flush_checkpoints();
 
-  bool recover_checkpoint(
+	bool recover_checkpoint(
 		core::pose::Pose &pose,
 		moves::MonteCarlo *mc,
 		std::string const& current_tag,
@@ -116,7 +116,7 @@ public:
 		return recover_checkpoint( pose, NULL, current_tag, id, fullatom, foldtree );
 	}
 
-  void checkpoint(
+	void checkpoint(
 		core::pose::Pose &pose,
 		moves::MonteCarlo *mc,
 		std::string const& current_tag,
@@ -144,13 +144,13 @@ public:
 	}
 
 
-  std::string const& type() const {
-    return type_;
-  }
+	std::string const& type() const {
+		return type_;
+	}
 
 	void set_type( const std::string &new_type) {
-    type_ = new_type;
-  }
+		type_ = new_type;
+	}
 
 
 	/// print checksum data
@@ -161,8 +161,8 @@ public:
 
 	core::Size get_checkpoint_recoveries() const { return count_checkpoint_recoveries_; }
 private:
-  std::string type_;
-  std::vector< std::string > checkpoint_ids_;
+	std::string type_;
+	std::vector< std::string > checkpoint_ids_;
 
 	bool disabled_;
 	bool delete_checkpoints_;

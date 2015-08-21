@@ -39,7 +39,7 @@ class BluePrintTests : public CxxTest::TestSuite {
 	typedef core::kinematics::MoveMap MoveMap;
 	typedef core::kinematics::MoveMapOP MoveMapOP;
 
-	
+
 public:
 
 
@@ -54,26 +54,26 @@ public:
 
 	// ------------- Helper Functions ------------- //
 
-	void test_blueprint() 
+	void test_blueprint()
 	{
 		using protocols::jd2::parser::BluePrint;
 		BluePrint bbskel( "protocols/jd2/parser/test.bbskel" );
-		
+
 		TS_ASSERT( bbskel.total_residue() == 14 );
 		TS_ASSERT( bbskel.total_residue_wolig() == 13 );
 		TS_ASSERT( bbskel.secstruct() == "LEEELLLHHHHDDL" );
 		TS_ASSERT( bbskel.sequence() == "VVVGGILFVVVVVX" );
 
 		Size lig( 0 );
-		for( Size ii=1; ii<=bbskel.total_residue(); ii++ ) {
-			if( bbskel.extra( ii ) == "LIGAND" ) lig ++;								
+		for ( Size ii=1; ii<=bbskel.total_residue(); ii++ ) {
+			if ( bbskel.extra( ii ) == "LIGAND" ) lig ++;
 		}
 		TS_ASSERT( bbskel.total_residue() == ( bbskel.total_residue_wolig() + lig ) );
-		
+
 		TS_ASSERT( bbskel.strand_pairings() == "1-3.A.2;1-4.A.0;2-3.P.0" );
 		TS_ASSERT( bbskel.helix_pairings() == "1-2.A;3-4.P" );
 		TS_ASSERT( bbskel.hss_triplets() == "1,1-2;2,2-3");
-		
+
 		TS_ASSERT( bbskel.insertion( 1 ) == "I_like_play" );
 		TS_ASSERT( bbskel.insertion( 2 ) == "the_piano" );
 
@@ -81,22 +81,22 @@ public:
 		TS_ASSERT( bbskel.abego( 2 ) == "B" );
 		TS_ASSERT( bbskel.abego( 4 ) == "SPZYD" );
 		TS_ASSERT( bbskel.abego( 9 ) == "A" );
-		
+
 		TS_ASSERT( bbskel.buildtype( 1 ) == '.' );
 		TS_ASSERT( bbskel.buildtype( 2 ) == 'W' );
 		TS_ASSERT( bbskel.buildtype( 3 ) == 'F' );
 		TS_ASSERT( bbskel.buildtype( 4 ) == 'P' );
-		TS_ASSERT( bbskel.buildtype( 5 ) == 'R' );		
-		TS_ASSERT( bbskel.buildtype( 6 ) == 'C' );		
-		TS_ASSERT( bbskel.buildtype( 7 ) == 'I' );		
-		
+		TS_ASSERT( bbskel.buildtype( 5 ) == 'R' );
+		TS_ASSERT( bbskel.buildtype( 6 ) == 'C' );
+		TS_ASSERT( bbskel.buildtype( 7 ) == 'I' );
+
 		TS_ASSERT( bbskel.resnum_map( 6 ) == 9 );
 		TS_ASSERT( bbskel.resnum_map( 7 ) == 10 );
 		TS_ASSERT( bbskel.resnum_map( 8 ) == 11 );
 		TS_ASSERT( bbskel.resnum_map( 9 ) == 12 );
 		TS_ASSERT( bbskel.resnum_map( 13 ) == 0 );
 		TS_ASSERT( bbskel.resnum_map( 14 ) == 0 );
-		
+
 		MoveMapOP mm( new MoveMap );
 		bbskel.set_movemap( mm );
 
@@ -109,14 +109,14 @@ public:
 		// F
 		TS_ASSERT( !mm->get_bb( 3 ) );
 		TS_ASSERT( !mm->get_chi( 3 ) );
-		// P		
+		// P
 		TS_ASSERT( !mm->get_bb( 4 ) );
 		TS_ASSERT( mm->get_chi( 4 ) );
-		// R		
+		// R
 		TS_ASSERT( mm->get_bb( 5 ) );
 		TS_ASSERT( mm->get_chi( 5 ) );
-			
-		
+
+
 	}// end test_blueprint
 
 };//end class

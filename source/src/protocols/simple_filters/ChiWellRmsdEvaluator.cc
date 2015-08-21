@@ -52,21 +52,21 @@ using namespace core;
 
 
 ChiWellRmsdEvaluator::ChiWellRmsdEvaluator( core::pose::PoseCOP pose, core::Size nchi_max,  core::Real sasa_threshold, utility::vector1< Size> const& selection, std::string tag )
-  : evaluation::SingleValuePoseEvaluator< Real >( tag ),
-		rmsd_pose_( pose ),
-		nchi_max_( nchi_max ),
-		sasa_threshold_( sasa_threshold ),
-		tag_( tag )
+: evaluation::SingleValuePoseEvaluator< Real >( tag ),
+	rmsd_pose_( pose ),
+	nchi_max_( nchi_max ),
+	sasa_threshold_( sasa_threshold ),
+	tag_( tag )
 {
 	copy( selection.begin(), selection.end(), std::back_inserter( selection_ ) );
 }
 
 ChiWellRmsdEvaluator::ChiWellRmsdEvaluator( core::pose::PoseCOP pose, core::Size nchi_max, core::Real sasa_threshold, std::string tag )
-	: evaluation::SingleValuePoseEvaluator< Real >( tag ),
-		rmsd_pose_( pose ),
-		nchi_max_( nchi_max ),
-		sasa_threshold_( sasa_threshold ),
-		tag_( tag )
+: evaluation::SingleValuePoseEvaluator< Real >( tag ),
+	rmsd_pose_( pose ),
+	nchi_max_( nchi_max ),
+	sasa_threshold_( sasa_threshold ),
+	tag_( tag )
 {
 	if ( pose ) evaluation::find_existing_residues( pose, tag, selection_ );
 }
@@ -80,7 +80,7 @@ ChiWellRmsdEvaluator::apply( core::pose::Pose& pose ) const {
 	}
 	if ( !target_pose ) utility_exit_with_message(" no target pose for rmsd simple_filters "+tag_ );
 
-  core::Size correct( 0 );
+	core::Size correct( 0 );
 	core::Size  total( 0 );
 
 	core::pose::metrics::simple_calculators::SasaCalculatorLegacy sasa_calc;
@@ -89,9 +89,9 @@ ChiWellRmsdEvaluator::apply( core::pose::Pose& pose ) const {
 	sasa_calc.get( "residue_sasa", residue_sasa, pose );
 
 
-	for (	core::scoring::ResidueSelection::const_iterator it = selection_.begin(); it != selection_.end(); ++it ) {
+	for ( core::scoring::ResidueSelection::const_iterator it = selection_.begin(); it != selection_.end(); ++it ) {
 		Size seqpos( *it );
-		if ( 	residue_sasa.value()[ seqpos ] > sasa_threshold_ ) {
+		if (  residue_sasa.value()[ seqpos ] > sasa_threshold_ ) {
 			tr.Debug << "residue " << seqpos << " is solvent exposed (SASA: " << residue_sasa.value()[ seqpos ] << " ) ignored... " << std::endl;
 			continue;
 		}

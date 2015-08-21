@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @brief 	 Unit test for TiltMover
+/// @brief   Unit test for TiltMover
 /// @author  JKLeman (julia.koehler1982@gmail.com)
 
 // Test Headers
@@ -18,7 +18,7 @@
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
-#include <protocols/membrane/util.hh> 
+#include <protocols/membrane/util.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/TiltMover.hh>
 #include <core/pose/Pose.hh>
@@ -47,21 +47,21 @@ using namespace protocols::membrane;
 using namespace protocols::membrane::geometry;
 
 class TiltMoverTest : public CxxTest::TestSuite {
-	
+
 public: // test functions
-    
-    /// Test Setup Functions ////////
-    
-    /// @brief Setup Test
-    void setUp(){
-	
-        // Initialize
-        core_init();
+
+	/// Test Setup Functions ////////
+
+	/// @brief Setup Test
+	void setUp(){
+
+		// Initialize
+		core_init();
 
 		// Load in pose from pdb
 		pose_ = Pose();
 		core::import_pose::pose_from_pdb( pose_, "protocols/membrane/1C17_tr.pdb" );
-		
+
 		// Initialize Spans from spanfile
 		std::string spanfile = "protocols/membrane/1C17_tr.span";
 
@@ -70,19 +70,19 @@ public: // test functions
 		add_mem->apply( pose_ );
 
 	}
-    
-    /// @brief Standard Tear Down
-    void tearDown() {}
-	    
-    ///// Test Methods /////////////
 
-////////////////////////////////////////////////////////////////////////////////
+	/// @brief Standard Tear Down
+	void tearDown() {}
+
+	///// Test Methods /////////////
+
+	////////////////////////////////////////////////////////////////////////////////
 
 	// test constructor from jumpnum and angle
 	void test_constructor_from_jumpnum_and_angle () {
-		
+
 		TS_TRACE("\n\n========== TESTING CONSTUCTOR FROM JUMP NUMBER AND ANGLE");
-		
+
 		// jump = 1
 		// angle = -43
 		// axis = perpendicular to axis connecting protein embedding centers
@@ -91,14 +91,14 @@ public: // test functions
 		SpanningTopologyOP topo = pose_.conformation().membrane_info()->spanning_topology();
 		SpanningTopologyOP topo_up_( new SpanningTopology() );
 		SpanningTopologyOP topo_down_( new SpanningTopology() );
-		
+
 		// show foldtree and membrane info
 		pose_.fold_tree().show( std::cout );
 		pose_.conformation().membrane_info()->show();
-		
+
 		// split_topology_by_jump_noshift
 		split_topology_by_jump_noshift( pose_, 1, topo, topo_up_, topo_down_ );
-		
+
 		// compute embedding for downstream partner
 		EmbeddingDefOP emb_down( compute_structure_based_embedding( pose_, *topo_down_ ) );
 
@@ -107,7 +107,7 @@ public: // test functions
 		Vector norm_before(0.0076786, 0.0858815, 0.996276);
 		Vector cntr_after(18.6087, 11.9908, -0.248);
 		Vector norm_after(0.566798, 0.44631, 0.692494);
-		
+
 		// compare before
 		TS_ASSERT( position_equal_within_delta( emb_down->center(), cntr_before, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( emb_down->normal(), norm_before, 0.001 ) );
@@ -119,27 +119,27 @@ public: // test functions
 
 		// compute embedding for downstream partner
 		EmbeddingDefOP emb_down1( compute_structure_based_embedding( pose_, *topo_down_ ) );
-		
+
 		// compare after
 		TS_ASSERT( position_equal_within_delta( emb_down1->center(), cntr_after, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( emb_down1->normal(), norm_after, 0.001 ) );
-		
+
 	}
-	
-////////////////////////////////////////////////////////////////////////////////
+
+	////////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Position equal within delta (helper method)
 	bool position_equal_within_delta( Vector a, Vector b, Real delta ) {
-		
+
 		TS_ASSERT_DELTA( a.x(), b.x(), delta );
 		TS_ASSERT_DELTA( a.y(), b.y(), delta );
 		TS_ASSERT_DELTA( a.z(), b.z(), delta );
-		
+
 		return true;
 	}
-	
-	private: // data
-	
-		core::pose::Pose pose_;
+
+private: // data
+
+	core::pose::Pose pose_;
 
 };

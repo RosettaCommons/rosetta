@@ -55,27 +55,27 @@ public:
 
 	void test_BLOSUM62() {
 		core::Real const TOLERATED_ERROR( 5e-3 );
-		//		for ( Sparta::SpartaLib::BlosumMatrix::iterator it1 = lib().BLOSUM_62.begin(); it1 != lib().BLOSUM_62.end(); ++it1 ) {
+		//  for ( Sparta::SpartaLib::BlosumMatrix::iterator it1 = lib().BLOSUM_62.begin(); it1 != lib().BLOSUM_62.end(); ++it1 ) {
 		//core::Size ct( 0 );
 		//for ( Sparta::SpartaLib::BlosumMatrix::mapped_type::iterator it2 = it1->second.begin(); it2 != it1->second.end(); ++it2, ++ct ) {
-		//	std::cout << it1->first << " " << ct << " " << *it2 << std::endl;
-		//	}
+		// std::cout << it1->first << " " << ct << " " << *it2 << std::endl;
+		// }
 		//}
-		//		TS_ASSERT_EQUAL( lib().BLOSUM_62["A"][4]
+		//  TS_ASSERT_EQUAL( lib().BLOSUM_62["A"][4]
 		#include "asserts_BLOSUM62.cc"
 	}
 
 	void test_PDB() {
 		PDB& PDB=lib().inPDB;
 
-// 		std::cout << "dumping the ATOMS entry of PDB " << std::endl;
-// 		for ( PDB::AtomsMap::const_iterator it1 = PDB.ATOMS.begin(); it1!=PDB.ATOMS.end(); ++it1 ) {
-// 			for ( PDB::EntryMap::const_iterator it2 = it1->second.begin(); it2 != it1->second.end(); ++it2 ) {
-// 				for ( PDB::AtomEntries::const_iterator it3 = it2->second.begin(); it3 != it2->second.end(); ++it3 ) {
-// 					std::cout << it1->first << " " << it2->first << " " << it3->first << " " << it3->second << std::endl;
-// 				}
-// 			}
-// 		}
+		//   std::cout << "dumping the ATOMS entry of PDB " << std::endl;
+		//   for ( PDB::AtomsMap::const_iterator it1 = PDB.ATOMS.begin(); it1!=PDB.ATOMS.end(); ++it1 ) {
+		//    for ( PDB::EntryMap::const_iterator it2 = it1->second.begin(); it2 != it1->second.end(); ++it2 ) {
+		//     for ( PDB::AtomEntries::const_iterator it3 = it2->second.begin(); it3 != it2->second.end(); ++it3 ) {
+		//      std::cout << it1->first << " " << it2->first << " " << it3->first << " " << it3->second << std::endl;
+		//     }
+		//    }
+		//   }
 		TS_ASSERT_EQUALS( PDB.ATOMS[1][87]["HN"].atomNum, 1245 );
 		TS_ASSERT_EQUALS( PDB.ATOMS[1][87]["HN"].resNum, 87 );
 		TS_ASSERT_EQUALS( PDB.ATOMS[1][87]["HN"].resName, "HIS" );
@@ -84,29 +84,29 @@ public:
 		TS_ASSERT_EQUALS( PDB.ATOMS[1][32]["C"].atomNum, 435 );
 	}
 
-// 	void test_PDB_Hbonds() {
-// 		PDB& inPDB=lib().inPDB;
-// 		inPDB.initOrbitalShift();
-// 		inPDB.initHBond();
-// 		PDB::HBondMap const& hbd( inPDB.HBDistList );
-// 		for ( PDB::HBondMap::const_iterator it1 = hbd.begin(); it1 != hbd.end(); ++it1 ) {
-// 			for ( PDB::HBondMap::mapped_type::const_iterator it2 = it1->second.begin(); it2 != it1->second.end(); ++it2 ) {
-// 				std::cout << "hbd-map: " << it1->first << " " << it2->first << " " << it2->second << std::endl;
-// 			}
-// 		}
-// 		PDB::HBondMap const& dho_angles( inPDB.HB_DHO_AngleList );
-// 		for ( PDB::HBondMap::const_iterator it1 = dho_angles.begin(); it1 != dho_angles.end(); ++it1 ) {
-// 			for ( PDB::HBondMap::mapped_type::const_iterator it2 = it1->second.begin(); it2 != it1->second.end(); ++it2 ) {
-// 				std::cout << "dho-map: " << it1->first << " " << it2->first << " " << it2->second << std::endl;
-// 			}
-// 		}
-// 		PDB::HBondMap const& hoa_angles( inPDB.HB_HOA_AngleList );
-// 		for ( PDB::HBondMap::const_iterator it1 = hoa_angles.begin(); it1 != hoa_angles.end(); ++it1 ) {
-// 			for ( PDB::HBondMap::mapped_type::const_iterator it2 = it1->second.begin(); it2 != it1->second.end(); ++it2 ) {
-// 				std::cout << "hoa-map: " << it1->first << " " << it2->first << " " << it2->second << std::endl;
-// 			}
-// 		}
-//	}
+	//  void test_PDB_Hbonds() {
+	//   PDB& inPDB=lib().inPDB;
+	//   inPDB.initOrbitalShift();
+	//   inPDB.initHBond();
+	//   PDB::HBondMap const& hbd( inPDB.HBDistList );
+	//   for ( PDB::HBondMap::const_iterator it1 = hbd.begin(); it1 != hbd.end(); ++it1 ) {
+	//    for ( PDB::HBondMap::mapped_type::const_iterator it2 = it1->second.begin(); it2 != it1->second.end(); ++it2 ) {
+	//     std::cout << "hbd-map: " << it1->first << " " << it2->first << " " << it2->second << std::endl;
+	//    }
+	//   }
+	//   PDB::HBondMap const& dho_angles( inPDB.HB_DHO_AngleList );
+	//   for ( PDB::HBondMap::const_iterator it1 = dho_angles.begin(); it1 != dho_angles.end(); ++it1 ) {
+	//    for ( PDB::HBondMap::mapped_type::const_iterator it2 = it1->second.begin(); it2 != it1->second.end(); ++it2 ) {
+	//     std::cout << "dho-map: " << it1->first << " " << it2->first << " " << it2->second << std::endl;
+	//    }
+	//   }
+	//   PDB::HBondMap const& hoa_angles( inPDB.HB_HOA_AngleList );
+	//   for ( PDB::HBondMap::const_iterator it1 = hoa_angles.begin(); it1 != hoa_angles.end(); ++it1 ) {
+	//    for ( PDB::HBondMap::mapped_type::const_iterator it2 = it1->second.begin(); it2 != it1->second.end(); ++it2 ) {
+	//     std::cout << "hoa-map: " << it1->first << " " << it2->first << " " << it2->second << std::endl;
+	//    }
+	//   }
+	// }
 
 	void test_ANN_PARAMETERS() {
 		using namespace core;
@@ -114,32 +114,32 @@ public:
 		ann.init( 113,30,1,9,6,3,lib().TAB_DIR, "HN" );
 		//typedef utility::vector0<float> WeightVector;
 		core::Real const TOLERATED_ERROR( 5e-3 );
-// 		Size ct = 0;
-// 		for ( WeightVector::const_iterator it = ann.BI_1.begin(); it != ann.BI_1.end(); ++it, ++ct ) {
-// 			std::cout << "BI_1 " << ct << " " << *it << std::endl;
-// 		}
-// 		ct = 0;
-// 		for ( WeightVector::const_iterator it = ann.BI_2.begin(); it != ann.BI_2.end(); ++it, ++ct ) {
-// 			std::cout << "BI_2 " << ct << " " << *it << std::endl;
-// 		}
-// 		ct = 0;
-// 		for ( WeightVector::const_iterator it = ann.BI_3.begin(); it != ann.BI_3.end(); ++it, ++ct ) {
-// 			std::cout << "BI_3 " << ct << " " << *it << std::endl;
-// 		}
-// 		ct = 0;
-// 		for ( WeightVector::const_iterator it = ann.BI_1.begin(); it != ann.BI_1.end(); ++it, ++ct ) {
-// 			std::cout << "BI_1 " << ct << " " << *it << std::endl;
-// 		}
-// 		typedef boost::unordered_map<int, utility::vector0<float> > WeightMap;
-// 		for ( WeightMap::const_iterator it = ann.WI_1.begin(); it != ann.WI_1.end(); ++it ) {
-// 			std::cout << "WI_1 " << it->first << " " << it->second[0] << " " <<it->second[1] << " " <<it->second[2] <<  std::endl;
-// 		}
-// 		for ( WeightMap::const_iterator it = ann.WI_2.begin(); it != ann.WI_2.end(); ++it ) {
-// 			std::cout << "WI_2 " << it->first << " " << it->second[0] << " " <<it->second[1] << " " <<it->second[2] <<  std::endl;
-// 		}
-// 		for ( WeightMap::const_iterator it = ann.WI_3.begin(); it != ann.WI_3.end(); ++it ) {
-// 			std::cout << "WI_3 " << it->first << " " << it->second[0] << " " <<it->second[1] << " " <<it->second[2] <<  std::endl;
-// 		}
+		//   Size ct = 0;
+		//   for ( WeightVector::const_iterator it = ann.BI_1.begin(); it != ann.BI_1.end(); ++it, ++ct ) {
+		//    std::cout << "BI_1 " << ct << " " << *it << std::endl;
+		//   }
+		//   ct = 0;
+		//   for ( WeightVector::const_iterator it = ann.BI_2.begin(); it != ann.BI_2.end(); ++it, ++ct ) {
+		//    std::cout << "BI_2 " << ct << " " << *it << std::endl;
+		//   }
+		//   ct = 0;
+		//   for ( WeightVector::const_iterator it = ann.BI_3.begin(); it != ann.BI_3.end(); ++it, ++ct ) {
+		//    std::cout << "BI_3 " << ct << " " << *it << std::endl;
+		//   }
+		//   ct = 0;
+		//   for ( WeightVector::const_iterator it = ann.BI_1.begin(); it != ann.BI_1.end(); ++it, ++ct ) {
+		//    std::cout << "BI_1 " << ct << " " << *it << std::endl;
+		//   }
+		//   typedef boost::unordered_map<int, utility::vector0<float> > WeightMap;
+		//   for ( WeightMap::const_iterator it = ann.WI_1.begin(); it != ann.WI_1.end(); ++it ) {
+		//    std::cout << "WI_1 " << it->first << " " << it->second[0] << " " <<it->second[1] << " " <<it->second[2] <<  std::endl;
+		//   }
+		//   for ( WeightMap::const_iterator it = ann.WI_2.begin(); it != ann.WI_2.end(); ++it ) {
+		//    std::cout << "WI_2 " << it->first << " " << it->second[0] << " " <<it->second[1] << " " <<it->second[2] <<  std::endl;
+		//   }
+		//   for ( WeightMap::const_iterator it = ann.WI_3.begin(); it != ann.WI_3.end(); ++it ) {
+		//    std::cout << "WI_3 " << it->first << " " << it->second[0] << " " <<it->second[1] << " " <<it->second[2] <<  std::endl;
+		//   }
 		#include "asserts_ANN_Parameters.cc"
 
 	}
@@ -148,13 +148,13 @@ public:
 		//typedef utility::vector0<float> Values;
 
 		// for ( int resid = lib().r1+1; resid < lib().rN; resid++ ) {
-		// 			Values const& temp( lib().ANN_IN_MTX[resid] );
-		// 			core::Size ct( 0 );
-		// 			std::cout << "DUMP ANN INPUT for residue " << resid << std::endl;
-		// 			for ( Values::const_iterator it = temp.begin(); it != temp.end(); ++it, ++ct ) {
-		// 				std::cout << resid << " " << ct << " " << *it << std::endl;
-		// 			}
-		// 		}
+		//    Values const& temp( lib().ANN_IN_MTX[resid] );
+		//    core::Size ct( 0 );
+		//    std::cout << "DUMP ANN INPUT for residue " << resid << std::endl;
+		//    for ( Values::const_iterator it = temp.begin(); it != temp.end(); ++it, ++ct ) {
+		//     std::cout << resid << " " << ct << " " << *it << std::endl;
+		//    }
+		//   }
 		TS_ASSERT_DELTA( lib().ANN_IN_MTX[78][3],   0.1000, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( lib().ANN_IN_MTX[78][4],  -0.3000, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( lib().ANN_IN_MTX[78][5],  -0.2000, TOLERATED_ERROR );
@@ -373,24 +373,24 @@ public:
 
 	void test_PRED_SUM() {
 		core::Real const TOLERATED_ERROR( 5e-3 );
-		//		lib().setup_for_scoring( test_pose_ );
+		//  lib().setup_for_scoring( test_pose_ );
 		GDB Pred_Sum = lib().get_ANN_data( false );
 		//dump all entries
-	// 	for ( Sparta::SpartaLib::AtomNameList::const_iterator it = lib().aN.begin(); it != lib().aN.end(); ++it ) {
-//  			std::string const& atom_name( it->second );
-//  			std::cout << " dump predicted shifts for " << atom_name << std::endl;
-//  			for ( core::Size resid = 1; resid <= 87; ++resid ) {
-//  				GDB_Entry temp = Pred_Sum.getEntry("RESID",string_of( resid ),"ATOMNAME",atom_name,1);
-//  				float pred_shift = atof( (temp["SHIFT"]).c_str() );
-//  				std::cout << " residue " << resid << " " << pred_shift
-// 									<< " " << temp["HM_SHIFT"]
-// 									<< " " << temp["EF_SHIFT"]
-// 									<< " " << temp["RC_SHIFT"]
-// 									<< " " << temp["SS_SHIFT"]
-// 									<< " " << temp["SIGMA"]
-// 									<< std::endl;
-//  			}
-// 		}
+		//  for ( Sparta::SpartaLib::AtomNameList::const_iterator it = lib().aN.begin(); it != lib().aN.end(); ++it ) {
+		//     std::string const& atom_name( it->second );
+		//     std::cout << " dump predicted shifts for " << atom_name << std::endl;
+		//     for ( core::Size resid = 1; resid <= 87; ++resid ) {
+		//      GDB_Entry temp = Pred_Sum.getEntry("RESID",string_of( resid ),"ATOMNAME",atom_name,1);
+		//      float pred_shift = atof( (temp["SHIFT"]).c_str() );
+		//      std::cout << " residue " << resid << " " << pred_shift
+		//          << " " << temp["HM_SHIFT"]
+		//          << " " << temp["EF_SHIFT"]
+		//          << " " << temp["RC_SHIFT"]
+		//          << " " << temp["SS_SHIFT"]
+		//          << " " << temp["SIGMA"]
+		//          << std::endl;
+		//     }
+		//   }
 		#include "asserts_PRED_SUM.cc"
 	}
 

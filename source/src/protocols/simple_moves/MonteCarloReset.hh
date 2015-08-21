@@ -54,7 +54,7 @@ public:
 	typedef protocols::moves::MoverOP MoverOP;
 
 
-public:	// constructor/destructor
+public: // constructor/destructor
 
 	/// @brief default constructor
 	MonteCarloReset();
@@ -84,11 +84,11 @@ public:	// constructor/destructor
 		Pose const &
 	);
 
-//	bool recover_low() const;
-//	void recover_low( bool const recover );
+	// bool recover_low() const;
+	// void recover_low( bool const recover );
 
 private: // data
-//	bool recover_low_; //dflt true; if false, recovers last
+	// bool recover_low_; //dflt true; if false, recovers last
 
 	/// @brief mover
 	GenericMonteCarloMoverOP MC_mover_;

@@ -29,76 +29,76 @@ namespace stepwise {
 namespace monte_carlo {
 namespace submotif {
 
-	typedef utility::vector1< std::string > SubMotifSequenceSet;
-	typedef std::string PoseTag;
-	typedef utility::vector1< core::Size > SequenceMapping;
+typedef utility::vector1< std::string > SubMotifSequenceSet;
+typedef std::string PoseTag;
+typedef utility::vector1< core::Size > SequenceMapping;
 
-	class SubMotifLibrary: public utility::pointer::ReferenceCount {
+class SubMotifLibrary: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//constructor
-		SubMotifLibrary( core::chemical::ResidueTypeSetCAP rsd_set );
+	//constructor
+	SubMotifLibrary( core::chemical::ResidueTypeSetCAP rsd_set );
 
-		//destructor
-		~SubMotifLibrary();
+	//destructor
+	~SubMotifLibrary();
 
-	public:
+public:
 
-		pose::PoseOP
-		create_new_submotif( SequenceMapping const & sequence_mapping,
-												 PoseTag const submotif_tag,
-												 pose::Pose const & pose ) const;
+	pose::PoseOP
+	create_new_submotif( SequenceMapping const & sequence_mapping,
+		PoseTag const submotif_tag,
+		pose::Pose const & pose ) const;
 
-		utility::vector1< monte_carlo::mover::StepWiseMove >
-		get_submotif_moves( pose::Pose const & pose ) const;
+	utility::vector1< monte_carlo::mover::StepWiseMove >
+	get_submotif_moves( pose::Pose const & pose ) const;
 
-	private:
+private:
 
-		void
-		initialize();
+	void
+	initialize();
 
-		void
-		initialize_from_directory( std::string const dir_name );
+	void
+	initialize_from_directory( std::string const dir_name );
 
-		SubMotifSequenceSet
-		get_submotif_sequence_set( pose::Pose const & pose, bool sort_sequences = true ) const;
+	SubMotifSequenceSet
+	get_submotif_sequence_set( pose::Pose const & pose, bool sort_sequences = true ) const;
 
 
-		utility::vector1< SequenceMapping >
-		get_matches_for_one_submotif_sequence_set( SubMotifSequenceSet const & submotif_sequence_set,
-																							 pose::Pose const & pose,
-																							 bool const use_full_model_info = true ) const;
+	utility::vector1< SequenceMapping >
+	get_matches_for_one_submotif_sequence_set( SubMotifSequenceSet const & submotif_sequence_set,
+		pose::Pose const & pose,
+		bool const use_full_model_info = true ) const;
 
-		void
-		get_moves_for_one_submotif( pose::PoseCOP submotif_pose, pose::Pose const & pose ) const;
+	void
+	get_moves_for_one_submotif( pose::PoseCOP submotif_pose, pose::Pose const & pose ) const;
 
-		void
-		get_matches( utility::vector1< SequenceMapping > & all_matches /* stores matches */,
-								 SequenceMapping const matching_residues /* working mapping */,
-								 std::string const & submotif_sequence,
-								 utility::vector1< Size > const & submotif_cutpoints,
-								 std::string const & pose_sequence,
-								 utility::vector1< Size > const & pose_cutpoints,
-								 utility::vector1< Size > const & pose_domain_map ) const;
+	void
+	get_matches( utility::vector1< SequenceMapping > & all_matches /* stores matches */,
+		SequenceMapping const matching_residues /* working mapping */,
+		std::string const & submotif_sequence,
+		utility::vector1< Size > const & submotif_cutpoints,
+		std::string const & pose_sequence,
+		utility::vector1< Size > const & pose_cutpoints,
+		utility::vector1< Size > const & pose_domain_map ) const;
 
-		void
-		output_tags() const;
+	void
+	output_tags() const;
 
-	private:
+private:
 
-		core::chemical::ResidueTypeSetCAP rsd_set_;
+	core::chemical::ResidueTypeSetCAP rsd_set_;
 
-		// central list of 'submotif sets', grouped by chain sequences. So [aa, uu] will not show up twice as [uu, aa].
-		std::set< SubMotifSequenceSet > submotif_sequence_sets_;
+	// central list of 'submotif sets', grouped by chain sequences. So [aa, uu] will not show up twice as [uu, aa].
+	std::set< SubMotifSequenceSet > submotif_sequence_sets_;
 
-		// each submotif set could map to a lot of different poses.
-		// In fact a submotif set like [g, g] will map into the same g/g mismatch pose in two different orders.
-		// Those mappings are all kept separately.
-		std::map< SubMotifSequenceSet, utility::vector1< std::pair< PoseTag, SequenceMapping > > > submotif_mappings_by_sequence_set_;
-		std::map< PoseTag, core::pose::PoseCOP > submotif_poses_by_tag_;
+	// each submotif set could map to a lot of different poses.
+	// In fact a submotif set like [g, g] will map into the same g/g mismatch pose in two different orders.
+	// Those mappings are all kept separately.
+	std::map< SubMotifSequenceSet, utility::vector1< std::pair< PoseTag, SequenceMapping > > > submotif_mappings_by_sequence_set_;
+	std::map< PoseTag, core::pose::PoseCOP > submotif_poses_by_tag_;
 
-	};
+};
 
 } //submotif
 } //monte_carlo

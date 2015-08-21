@@ -10,11 +10,11 @@
 /// @file       protocols/membrane/RandomMembranePositionMover.cc
 ///
 /// @brief      Random membrane position mover
-/// @details	Make random perturbations in the position of the membrane
-///				as define by some center position and normal coordinate
-///				(also of fixed thickness). Rotation mover rotates normal
-///				from a random angle, Translation mover picks a randomly
-///				translated position from the current position.
+/// @details Make random perturbations in the position of the membrane
+///    as define by some center position and normal coordinate
+///    (also of fixed thickness). Rotation mover rotates normal
+///    from a random angle, Translation mover picks a randomly
+///    translated position from the current position.
 ///
 /// @author     Rebecca Alford (rfalford12@gmail.com)
 /// @note       Last Modified (7/10/14)
@@ -60,7 +60,7 @@ RandomPositionRotationMover::RandomPositionRotationMover() :
 RandomPositionRotationMover::RandomPositionRotationMover(
 	Real rot_mag,
 	core::SSize rb_jump
-	) :
+) :
 	Mover(),
 	rot_mag_( rot_mag ),
 	rb_jump_( rb_jump )
@@ -81,7 +81,7 @@ RandomPositionRotationMover::operator=( RandomPositionRotationMover const & src 
 {
 
 	// Abort self-assignment.
-	if (this == &src) {
+	if ( this == &src ) {
 		return *this;
 	}
 
@@ -111,12 +111,12 @@ RandomPositionRotationMover::apply( Pose & pose ) {
 	using namespace core::conformation::membrane;
 
 	// Check the pose is a membrane protein
-	if (! pose.conformation().is_membrane() ) {
+	if ( ! pose.conformation().is_membrane() ) {
 		utility_exit_with_message( "Cannot apply membrane move to a non-membrane pose!" );
 	}
 
 	// Check the membrane fold tree is reasonable
-	if (! pose.conformation().membrane_info()->check_membrane_fold_tree( pose.fold_tree() ) ) {
+	if ( ! pose.conformation().membrane_info()->check_membrane_fold_tree( pose.fold_tree() ) ) {
 		utility_exit_with_message( "Cannot apply membrane move with unreasonable membrane fold tree" );
 	}
 
@@ -149,7 +149,7 @@ RandomPositionTranslationMover::RandomPositionTranslationMover() :
 RandomPositionTranslationMover::RandomPositionTranslationMover(
 	Real trans_mag,
 	SSize rb_jump
-	) :
+) :
 	Mover(),
 	trans_mag_( trans_mag ),
 	rb_jump_( rb_jump )
@@ -170,7 +170,7 @@ RandomPositionTranslationMover &
 RandomPositionTranslationMover::operator=( RandomPositionTranslationMover const & src ) {
 
 	// Abort self-assignment.
-	if (this == &src) {
+	if ( this == &src ) {
 		return *this;
 	}
 
@@ -200,12 +200,12 @@ RandomPositionTranslationMover::apply( Pose & pose ) {
 	using namespace protocols::simple_moves;
 
 	// Check the pose is a membrane protein
-	if (! pose.conformation().is_membrane() ) {
+	if ( ! pose.conformation().is_membrane() ) {
 		utility_exit_with_message( "Cannot apply membrane move to a non-membrane pose!" );
 	}
 
 	// Check the membrane fold tree is reasonable
-	if (! pose.conformation().membrane_info()->check_membrane_fold_tree( pose.fold_tree() ) ) {
+	if ( ! pose.conformation().membrane_info()->check_membrane_fold_tree( pose.fold_tree() ) ) {
 		utility_exit_with_message( "Cannot apply membrane move with unreasonable membrane fold tree" );
 	}
 

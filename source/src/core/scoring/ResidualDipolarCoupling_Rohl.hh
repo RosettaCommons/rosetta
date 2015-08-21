@@ -40,7 +40,7 @@ public: // typedefs
 
 public:
 
-  ResidualDipolarCoupling_Rohl(){
+	ResidualDipolarCoupling_Rohl(){
 		read_RDC_file();
 	}
 
@@ -48,14 +48,14 @@ public:
 
 	//  ResidualDipolarCoupling_Rohl( ResidualDipolarCoupling_Rohl const & src ){}
 
-  basic::datacache::CacheableDataOP
-  clone() const
-  {
-    return basic::datacache::CacheableDataOP( new ResidualDipolarCoupling_Rohl( *this ) );
-  }
+	basic::datacache::CacheableDataOP
+	clone() const
+	{
+		return basic::datacache::CacheableDataOP( new ResidualDipolarCoupling_Rohl( *this ) );
+	}
 
 
-  void read_RDC_file();
+	void read_RDC_file();
 
 	Size get_RDC_data_type(
 		std::string const & atom1,
@@ -78,71 +78,72 @@ private:
 class RDC_Rohl {
 
 public:
-  RDC_Rohl(){}
+	RDC_Rohl(){}
 
-  RDC_Rohl(
-	  Size type,
-	  Size res,
-	  Real Jdipolar,
+	RDC_Rohl(
+		Size type,
+		Size res,
+		Real Jdipolar,
 		Real weight = 1.0//for alignment calculation
-		//		core::Real Reduced_Jdipolar
+		//  core::Real Reduced_Jdipolar
 	) :
-	  type_( type ),
-	  res_( res ),
-	  Jdipolar_( Jdipolar ),
+		type_( type ),
+		res_( res ),
+		Jdipolar_( Jdipolar ),
 		weight_( weight )
-		//		Reduced_Jdipolar_( Reduced_Jdipolar )
-  {}
+		//  Reduced_Jdipolar_( Reduced_Jdipolar )
+	{}
 
-  inline Size type() const
-  {
-    return type_;
-  }
+	inline Size type() const
+	{
+		return type_;
+	}
 
-  inline Size res() const
-  {
-    return res_;
-  }
+	inline Size res() const
+	{
+		return res_;
+	}
 
-  inline Real Jdipolar() const
-  {
-    return Jdipolar_;
-  }
+	inline Real Jdipolar() const
+	{
+		return Jdipolar_;
+	}
 
-  /*	inline core::Real Reduced_Jdipolar() const
-		{
+	/* inline core::Real Reduced_Jdipolar() const
+	{
 	return Reduced_Jdipolar_;
-		}
+	}
 	*/
 
-  inline Real fixed_dist() const
-  {
-    Real fixed_dist(0.0);
-    if ( type_ ==  1 )
-      fixed_dist = 1.01;
-    else if ( type_ == 2 )
-      fixed_dist = 1.08;
-    else if ( type_ == 3 )
-      fixed_dist = 1.52325877;
-    //************* ADD MORE TYPES LATER !! ***************
-    return fixed_dist;
+	inline Real fixed_dist() const
+	{
+		Real fixed_dist(0.0);
+		if ( type_ ==  1 ) {
+			fixed_dist = 1.01;
+		} else if ( type_ == 2 ) {
+			fixed_dist = 1.08;
+		} else if ( type_ == 3 ) {
+			fixed_dist = 1.52325877;
+		}
+		//************* ADD MORE TYPES LATER !! ***************
+		return fixed_dist;
 
-  }
+	}
 
-  inline Real Reduced_Jdipolar() const
-  {
-    using namespace numeric;
+	inline Real Reduced_Jdipolar() const
+	{
+		using namespace numeric;
 
-  //   Real invDcnst(0.0);
-//     if ( type_ == 1 )
-//       invDcnst = 0.0000821215;
-//     else if ( type_ == 2 )
-//       invDcnst = -0.0000331025;
-//     else if ( type_ == 3 )
-//       invDcnst = 0.000326533;
-    return Jdipolar_*invDcnst()*numeric::cube( fixed_dist() );
+		//   Real invDcnst(0.0);
+		//     if ( type_ == 1 )
+		//       invDcnst = 0.0000821215;
+		//     else if ( type_ == 2 )
+		//       invDcnst = -0.0000331025;
+		//     else if ( type_ == 3 )
+		//       invDcnst = 0.000326533;
+		return Jdipolar_*invDcnst()*numeric::cube( fixed_dist() );
 
-  }
+	}
 
 	Real weight() const {
 		return weight_;
@@ -152,22 +153,23 @@ public:
 		weight_ = w_in;
 	}
 
-  inline Real invDcnst() const
-  {
+	inline Real invDcnst() const
+	{
 
-    core::Real invDcnst(0.0);
-    if ( type_ == 1 )
-      invDcnst = 0.0000821215;
-    else if ( type_ == 2 )
-      invDcnst = -0.0000331025;
-    else if ( type_ == 3 )
-      invDcnst = 0.000326533;
-    return invDcnst;
-  }
+		core::Real invDcnst(0.0);
+		if ( type_ == 1 ) {
+			invDcnst = 0.0000821215;
+		} else if ( type_ == 2 ) {
+			invDcnst = -0.0000331025;
+		} else if ( type_ == 3 ) {
+			invDcnst = 0.000326533;
+		}
+		return invDcnst;
+	}
 
 private:
 	Size type_, res_;
-  Real Jdipolar_, Reduced_Jdipolar_;
+	Real Jdipolar_, Reduced_Jdipolar_;
 	Real weight_;
 };
 

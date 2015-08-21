@@ -38,21 +38,22 @@ void ScoreStructJSON::print_scores(
 	utility::json_spirit::Object record;
 
 	// Meta data
-	if(!decoy_tag_.empty())
+	if ( !decoy_tag_.empty() ) {
 		record.push_back( Pair( "decoy", decoy_tag_ ) );
+	}
 
 	// Scores
-	for(std::map< std::string, core::Real >::const_iterator it( score_map.begin()), end( score_map.end() );
-		it != end;
-		++it
-	) {
+	for ( std::map< std::string, core::Real >::const_iterator it( score_map.begin()), end( score_map.end() );
+			it != end;
+			++it
+			) {
 		record.push_back( Pair( it->first, it->second ) );
 	}
 
-	for(std::map< std::string, std::string >::const_iterator it( string_map.begin()), end( string_map.end() );
-		it != end;
-		++it
-	) {
+	for ( std::map< std::string, std::string >::const_iterator it( string_map.begin()), end( string_map.end() );
+			it != end;
+			++it
+			) {
 		record.push_back( Pair( it->first, it->second ) );
 	}
 

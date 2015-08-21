@@ -25,7 +25,7 @@ namespace protocols {
 namespace features {
 namespace strand_assembly {
 
-using namespace core; 
+using namespace core;
 using namespace std;
 
 bool
@@ -33,9 +33,9 @@ change_sheet_id_if_possible(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	core::pose::Pose const & pose,
-	Real	min_CA_CA_dis_,
-	Real	max_CA_CA_dis_,
-	Real	min_C_O_N_angle_);
+	Real min_CA_CA_dis_,
+	Real max_CA_CA_dis_,
+	Real min_C_O_N_angle_);
 
 Size
 delete_this_struct_id(
@@ -57,10 +57,10 @@ prepare_WriteToDB_sandwich(
 void
 WriteToDB_AA_to_terminal_loops (
 	StructureID struct_id,
-	utility::sql_database::sessionOP	db_session,
+	utility::sql_database::sessionOP db_session,
 	core::pose::Pose & dssp_pose,
-	Size	sandwich_PK_id_counter,
-	Size	sw_can_by_sh_id,
+	Size sandwich_PK_id_counter,
+	Size sw_can_by_sh_id,
 	string tag,
 	bool starting_loop,
 	Size residue_begin,
@@ -69,65 +69,65 @@ WriteToDB_AA_to_terminal_loops (
 
 Size
 WriteToDB_ending_loop(
-	StructureID	struct_id,
-	utility::sql_database::sessionOP	db_session,
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
 	core::pose::Pose & dssp_pose,
-	Size	sandwich_PK_id_counter,
-	Size	sw_can_by_sh_id,
-	string	tag,
-	Size	max_starting_loop_size_);
+	Size sandwich_PK_id_counter,
+	Size sw_can_by_sh_id,
+	string tag,
+	Size max_starting_loop_size_);
 
 Size
 WriteToDB_long_strand_id_in_each_sw (
 	StructureID struct_id,
-	utility::sql_database::sessionOP	db_session,
-	Size	sw_can_by_sh_id);
+	utility::sql_database::sessionOP db_session,
+	Size sw_can_by_sh_id);
 
 Size
 WriteToDB_avg_b_factor_CB_at_each_component (
 	StructureID struct_id,
-	utility::sql_database::sessionOP	db_session,
+	utility::sql_database::sessionOP db_session,
 	core::pose::Pose const & pose,
-	Size	sw_can_by_sh_id);
+	Size sw_can_by_sh_id);
 
 Size
 WriteToDB_dihedral_angle_between_core_strands_across_facing_sheets (
 	StructureID struct_id,
-	utility::sql_database::sessionOP	db_session,
+	utility::sql_database::sessionOP db_session,
 	core::pose::Pose const & pose,
-	Size	sw_can_by_sh_id);
+	Size sw_can_by_sh_id);
 
 Size
 WriteToDB_dssp_ratio_in_sw(
-	StructureID	struct_id,
-	utility::sql_database::sessionOP	db_session,
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
 	core::pose::Pose & dssp_pose,
 	Size sw_can_by_sh_id);
 
 Size
 WriteToDB_hydrophobic_ratio_net_charge (
 	StructureID struct_id,
-	utility::sql_database::sessionOP	db_session,
-	Size	sw_can_by_sh_id);
+	utility::sql_database::sessionOP db_session,
+	Size sw_can_by_sh_id);
 
 
 Size
 WriteToDB_min_avg_dis_between_sheets_by_cen_res (
 	StructureID struct_id,
-	utility::sql_database::sessionOP	db_session,
-	Size	sw_can_by_sh_id,
+	utility::sql_database::sessionOP db_session,
+	Size sw_can_by_sh_id,
 	core::pose::Pose & dssp_pose,
-	utility::vector1<Size>	all_distinct_sheet_ids,
-	Size	min_num_strands_in_sheet_);
+	utility::vector1<Size> all_distinct_sheet_ids,
+	Size min_num_strands_in_sheet_);
 
 
 Size
 WriteToDB_min_dis_between_sheets_by_all_res (
 	StructureID struct_id,
-	utility::sql_database::sessionOP	db_session,
-	Size	sw_can_by_sh_id,
+	utility::sql_database::sessionOP db_session,
+	Size sw_can_by_sh_id,
 	core::pose::Pose & dssp_pose,
-	utility::vector1<Size>	all_distinct_sheet_ids);
+	utility::vector1<Size> all_distinct_sheet_ids);
 
 Size
 WriteToDB_number_of_AAs_in_a_pair_of_edge_strands (
@@ -141,20 +141,20 @@ WriteToDB_number_of_AAs_in_a_pair_of_edge_strands (
 
 void
 WriteToDB_number_of_core_heading_W_in_sw(
-	StructureID	struct_id,
-	utility::sql_database::sessionOP	db_session,
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_id);
 
 Size
 WriteToDB_number_of_core_heading_LWY_in_core_strands_in_sw(
-	StructureID	struct_id,
-	utility::sql_database::sessionOP	db_session,
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_id);
 
 void
 WriteToDB_number_of_core_heading_FWY_in_sw(
-	StructureID	struct_id,
-	utility::sql_database::sessionOP	db_session,
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_id);
 
 
@@ -177,8 +177,8 @@ WriteToDB_number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands (
 Size
 WriteToDB_number_of_edge_strands_in_each_sw (
 	StructureID struct_id,
-	utility::sql_database::sessionOP	db_session,
-	Size	sw_can_by_sh_id);
+	utility::sql_database::sessionOP db_session,
+	Size sw_can_by_sh_id);
 
 Size
 WriteToDB_number_of_sheets_that_surround_this_sheet(
@@ -190,44 +190,44 @@ WriteToDB_number_of_sheets_that_surround_this_sheet(
 Size
 WriteToDB_number_strands_in_each_sw (
 	StructureID struct_id,
-	utility::sql_database::sessionOP	db_session,
-	Size	sw_can_by_sh_id);
+	utility::sql_database::sessionOP db_session,
+	Size sw_can_by_sh_id);
 
 Size
 WriteToDB_prolines_that_seem_to_prevent_aggregation(
-	StructureID	struct_id,
-	utility::sql_database::sessionOP	db_session,
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_id,
-	Real	wt_for_pro_in_starting_loop_,
-	Real	wt_for_pro_in_1st_inter_sheet_loop_,
-	Real	wt_for_pro_in_3rd_inter_sheet_loop_);
+	Real wt_for_pro_in_starting_loop_,
+	Real wt_for_pro_in_1st_inter_sheet_loop_,
+	Real wt_for_pro_in_3rd_inter_sheet_loop_);
 
 Size
 WriteToDB_ratio_of_core_heading_FWY_in_sw(
-	StructureID	struct_id,
-	utility::sql_database::sessionOP	db_session,
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_id,
 	core::pose::Pose const & pose);
 
 Size
 WriteToDB_rkde(
 	StructureID struct_id,
-	utility::sql_database::sessionOP	db_session,
-	Size	rkde_PK_id_counter,
+	utility::sql_database::sessionOP db_session,
+	Size rkde_PK_id_counter,
 	string tag,
 	Size residue_number,
-	string	residue_type);
+	string residue_type);
 
 Size
 WriteToDB_rkde_in_strands(
 	StructureID struct_id,
-	utility::sql_database::sessionOP	db_session,
-	Size	rkde_in_strands_PK_id_counter,
+	utility::sql_database::sessionOP db_session,
+	Size rkde_in_strands_PK_id_counter,
 	string tag,
 	Size sw_can_by_sh_id,
 	Size residue_number,
-	string	residue_type,
-	string	heading_direction);
+	string residue_type,
+	string heading_direction);
 
 Size
 WriteToDB_sheet (
@@ -258,8 +258,8 @@ WriteToDB_sheet_connectivity(
 	Size inter_sheet_con_id,
 	string LR,
 	string cano_LR,
-	string	PA_by_preceding_E,
-	string	PA_by_following_E,
+	string PA_by_preceding_E,
+	string PA_by_following_E,
 	string cano_PA,
 	string heading_direction,
 	string heading_parallel,
@@ -278,65 +278,65 @@ WriteToDB_sheet_id(
 Real
 WriteToDB_shortest_dis_between_facing_aro_in_sw (
 	StructureID struct_id,
-	utility::sql_database::sessionOP	db_session,
-	Size	sw_can_by_sh_id,
+	utility::sql_database::sessionOP db_session,
+	Size sw_can_by_sh_id,
 	core::pose::Pose const & pose,
-	utility::vector1<Size>	all_distinct_sheet_ids,
-	Size	min_num_strands_in_sheet_);
+	utility::vector1<Size> all_distinct_sheet_ids,
+	Size min_num_strands_in_sheet_);
 
 Size
 WriteToDB_starting_loop(
-	StructureID	struct_id,
-	utility::sql_database::sessionOP	db_session,
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
 	core::pose::Pose & dssp_pose,
-	Size	sandwich_PK_id_counter,
-	Size	sw_can_by_sh_id,
-	string	tag,
-	Size	max_starting_loop_size_);
+	Size sandwich_PK_id_counter,
+	Size sw_can_by_sh_id,
+	string tag,
+	Size max_starting_loop_size_);
 
 Size
 Run_WriteToDB_sandwich(
-	string	tag,
+	string tag,
 	core::pose::Pose & dssp_pose,
 	utility::vector1<SandwichFragment> bs_of_sw_can_by_sh,
-	Size	max_num_sw_per_pdb_,
+	Size max_num_sw_per_pdb_,
 	StructureID struct_id,
 	utility::sql_database::sessionOP  db_session,
 	Real min_CA_CA_dis_,
 	Real max_CA_CA_dis_,
-	Size	sandwich_PK_id_counter);
+	Size sandwich_PK_id_counter);
 
 
 Size
 WriteToDB_sandwich(
-	StructureID	struct_id,
-	utility::sql_database::sessionOP	db_session,
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
 	core::pose::Pose const & pose,
-	Size	sandwich_PK_id_counter,
-	string	tag,
-	Size	sw_can_by_sh_id,
-	Size	sheet_id,
-	string	sheet_antiparellel,
-	Size	sandwich_bs_id,
-	string	strand_is_at_edge,
+	Size sandwich_PK_id_counter,
+	string tag,
+	Size sw_can_by_sh_id,
+	Size sheet_id,
+	string sheet_antiparellel,
+	Size sandwich_bs_id,
+	string strand_is_at_edge,
 	Size component_size,
-	Size	residue_begin,
-	Size	residue_end);
+	Size residue_begin,
+	Size residue_end);
 
 
 Size
 WriteToDB_sandwich_by_AA_w_direction(
-	StructureID	struct_id,
-	utility::sql_database::sessionOP	db_session,
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
 	core::pose::Pose const & pose,
 	core::pose::Pose const & pose_w_center_000,
-	Size	sw_can_by_sh_id,
-	Size	sheet_id,
-	Size	residue_begin,
-	Size	residue_end);
+	Size sw_can_by_sh_id,
+	Size sheet_id,
+	Size residue_begin,
+	Size residue_end);
 
 Size
-WriteToDB_sw_can_by_sh	(
+WriteToDB_sw_can_by_sh (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_PK_id_counter,
@@ -347,16 +347,16 @@ WriteToDB_sw_can_by_sh	(
 
 Size
 WriteToDB_sw_res_size(
-	StructureID	struct_id,
-	utility::sql_database::sessionOP	db_session,
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_id);
 
 
 Size
 WriteToDB_topology_candidate (
 	StructureID struct_id,
-	utility::sql_database::sessionOP	db_session,
-	Size	sw_can_by_sh_id);
+	utility::sql_database::sessionOP db_session,
+	Size sw_can_by_sh_id);
 
 void
 WriteToDB_turn_AA(
@@ -376,12 +376,12 @@ WriteToDB_turn_type(
 	Size end_res,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	Real	allowed_deviation_for_turn_type_id_);
+	Real allowed_deviation_for_turn_type_id_);
 
 Size
 WriteToDB_whether_sw_is_not_connected_with_continuous_atoms(
-	StructureID	struct_id,
-	utility::sql_database::sessionOP	db_session,
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_id,
 	string sw_is_not_connected_with_continuous_atoms);
 

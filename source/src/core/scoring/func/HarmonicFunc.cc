@@ -60,11 +60,11 @@ HarmonicFunc::show_definition( std::ostream &out ) const {
 
 Size
 HarmonicFunc::show_violations( std::ostream& out, Real x, Size verbose_level, Real threshold) const {
-	if (verbose_level > 100 ) {
+	if ( verbose_level > 100 ) {
 		out << "HARM " <<  ( x - x0_ )/sd_ << std::endl;
-	} else if (verbose_level > 70 ) {
+	} else if ( verbose_level > 70 ) {
 		if ( x < x0_  && ( this->func(x) > threshold ) ) out << "-";
-		else if ( x > x0_ && ( this->func(x) > threshold )) out << "+";
+		else if ( x > x0_ && ( this->func(x) > threshold ) ) out << "+";
 		else out << ".";
 	}
 	return Func::show_violations( out, x, verbose_level, threshold);

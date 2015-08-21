@@ -98,8 +98,8 @@ private:
 
 	// const-ref to scoring database
 	MembranePotential const & potential_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

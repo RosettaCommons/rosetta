@@ -70,31 +70,31 @@ public:
 		core_init();
 	}
 
-void test_transitive_mapping() {
-	using namespace core::id;
-	using namespace core::sequence;
+	void test_transitive_mapping() {
+		using namespace core::id;
+		using namespace core::sequence;
 
-	SequenceMapping map1, map2;
-	map1.insert_aligned_residue_safe( 1, 1 );
-	map1.insert_aligned_residue_safe( 2, 0 );
-	map1.insert_aligned_residue_safe( 3, 2 );
-	map1.insert_aligned_residue_safe( 4, 3 );
-	map1.insert_aligned_residue_safe( 5, 5 );
-	map1.insert_aligned_residue_safe( 6, 6 );
+		SequenceMapping map1, map2;
+		map1.insert_aligned_residue_safe( 1, 1 );
+		map1.insert_aligned_residue_safe( 2, 0 );
+		map1.insert_aligned_residue_safe( 3, 2 );
+		map1.insert_aligned_residue_safe( 4, 3 );
+		map1.insert_aligned_residue_safe( 5, 5 );
+		map1.insert_aligned_residue_safe( 6, 6 );
 
-	map2.insert_aligned_residue_safe( 2, 3 );
-	map2.insert_aligned_residue_safe( 3, 0 );
-	map2.insert_aligned_residue_safe( 4, 4 );
-	map2.insert_aligned_residue_safe( 5, 6 );
-	map2.insert_aligned_residue_safe( 6, 7 );
+		map2.insert_aligned_residue_safe( 2, 3 );
+		map2.insert_aligned_residue_safe( 3, 0 );
+		map2.insert_aligned_residue_safe( 4, 4 );
+		map2.insert_aligned_residue_safe( 5, 6 );
+		map2.insert_aligned_residue_safe( 6, 7 );
 
-	SequenceMapping trans_map = transitive_map( map1, map2 );
-	TS_ASSERT( trans_map[1] == 0 );
-	TS_ASSERT( trans_map[2] == 0 );
-	TS_ASSERT( trans_map[3] == 3 );
-	TS_ASSERT( trans_map[4] == 0 );
-	TS_ASSERT( trans_map[5] == 6 );
-	TS_ASSERT( trans_map[6] == 7 );
-} // test_transitive_map
+		SequenceMapping trans_map = transitive_map( map1, map2 );
+		TS_ASSERT( trans_map[1] == 0 );
+		TS_ASSERT( trans_map[2] == 0 );
+		TS_ASSERT( trans_map[3] == 3 );
+		TS_ASSERT( trans_map[4] == 0 );
+		TS_ASSERT( trans_map[5] == 6 );
+		TS_ASSERT( trans_map[6] == 7 );
+	} // test_transitive_map
 
 };

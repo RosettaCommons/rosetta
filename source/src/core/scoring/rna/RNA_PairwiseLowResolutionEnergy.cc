@@ -142,7 +142,7 @@ RNA_PairwiseLowResolutionEnergy::setup_for_derivatives( pose::Pose & pose, Score
 
 }
 
-	/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
 void
 RNA_PairwiseLowResolutionEnergy::setup_for_packing(
 	pose::Pose & pose,
@@ -197,7 +197,7 @@ RNA_PairwiseLowResolutionEnergy::residue_pair_energy(
 
 	////////////////////////////////////////////////////////////////////////////////
 	emap[ rna_base_backbone ]     += rna_low_resolution_potential_.rna_base_backbone_pair_energy( rsd1, rsd2,
-																													centroid1, centroid2, stub1, stub2 );
+		centroid1, centroid2, stub1, stub2 );
 
 	////////////////////////////////////////////////////////////////////////////////
 	emap[ rna_backbone_backbone ] += rna_low_resolution_potential_.rna_backbone_backbone_pair_energy( rsd1, rsd2 );
@@ -250,9 +250,9 @@ RNA_PairwiseLowResolutionEnergy::rna_base_pair_pairwise_pair_energy(
 {
 	ObjexxFCL::FArray3D < Real > const & base_pair_array ( rna_raw_base_base_info_->base_pair_array() );
 	Real score( 0.0 );
-	for ( Size i = 1; i <= NUM_EDGES; i++ ){
-	  score += base_pair_array( rsd1.seqpos(), rsd2.seqpos(), i );
-	  score += base_pair_array( rsd2.seqpos(), rsd1.seqpos(), i );
+	for ( Size i = 1; i <= NUM_EDGES; i++ ) {
+		score += base_pair_array( rsd1.seqpos(), rsd2.seqpos(), i );
+		score += base_pair_array( rsd2.seqpos(), rsd1.seqpos(), i );
 	}
 	return score;
 }
@@ -266,9 +266,9 @@ RNA_PairwiseLowResolutionEnergy::rna_base_axis_pairwise_pair_energy(
 {
 	ObjexxFCL::FArray3D < Real > const & base_axis_array ( rna_raw_base_base_info_->base_axis_array() );
 	Real score( 0.0 );
-	for ( Size i = 1; i <= NUM_EDGES; i++ ){
-	  score += base_axis_array( rsd1.seqpos(), rsd2.seqpos(), i );
-	  score += base_axis_array( rsd2.seqpos(), rsd1.seqpos(), i );
+	for ( Size i = 1; i <= NUM_EDGES; i++ ) {
+		score += base_axis_array( rsd1.seqpos(), rsd2.seqpos(), i );
+		score += base_axis_array( rsd2.seqpos(), rsd1.seqpos(), i );
 	}
 	return score;
 }
@@ -282,9 +282,9 @@ RNA_PairwiseLowResolutionEnergy::rna_base_stagger_pairwise_pair_energy(
 {
 	ObjexxFCL::FArray3D < Real > const & base_stagger_array ( rna_raw_base_base_info_->base_stagger_array() );
 	Real score( 0.0 );
-	for ( Size i = 1; i <= NUM_EDGES; i++ ){
-	  score += base_stagger_array( rsd1.seqpos(), rsd2.seqpos(), i );
-	  score += base_stagger_array( rsd2.seqpos(), rsd1.seqpos(), i );
+	for ( Size i = 1; i <= NUM_EDGES; i++ ) {
+		score += base_stagger_array( rsd1.seqpos(), rsd2.seqpos(), i );
+		score += base_stagger_array( rsd2.seqpos(), rsd1.seqpos(), i );
 	}
 	return score;
 }
@@ -329,11 +329,10 @@ RNA_PairwiseLowResolutionEnergy::finalize_total_energy(
 	// Get Pose cached pairwise "raw" base-base info. This was
 	// updated above.
 	if ( sfxn.has_nonzero_weight( rna_base_pair ) ||
-			 sfxn.has_nonzero_weight( rna_base_axis ) ||
-			 sfxn.has_nonzero_weight( rna_base_stagger ) ||
-			 sfxn.has_nonzero_weight( rna_base_stack ) ||
-			 sfxn.has_nonzero_weight( rna_base_stack_axis ) )
-	{
+			sfxn.has_nonzero_weight( rna_base_axis ) ||
+			sfxn.has_nonzero_weight( rna_base_stagger ) ||
+			sfxn.has_nonzero_weight( rna_base_stack ) ||
+			sfxn.has_nonzero_weight( rna_base_stack_axis ) ) {
 
 		// Create Pose cached non-pairwise, "filtered" base-base info.
 		// This forces each base edge to have only one pairing partner.
@@ -349,14 +348,14 @@ RNA_PairwiseLowResolutionEnergy::finalize_total_energy(
 		totals[ rna_base_stack ]       = rna_filtered_base_base_info.get_total_base_stack_score();
 		totals[ rna_base_stack_axis ]  = rna_filtered_base_base_info.get_total_base_stack_axis_score();
 
-		//		rna_filtered_base_base_info.set_calculated( false );
+		//  rna_filtered_base_base_info.set_calculated( false );
 		rna::data::RNA_DataInfo const & rna_data_info( rna_scoring_info.rna_data_info() );
 		totals[ rna_data_base ] += rna_filtered_base_base_info.get_data_score( rna_data_info );
 
 	}
 
-	//	rna_low_resolution_potential_.finalize( pose );
-	//	std::cout << "DONE SCORING " << std::endl;
+	// rna_low_resolution_potential_.finalize( pose );
+	// std::cout << "DONE SCORING " << std::endl;
 
 }
 
@@ -371,7 +370,7 @@ RNA_PairwiseLowResolutionEnergy::eval_atom_derivative(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
- 	) const
+) const
 {
 
 	// NOTE -- currently have not put in derivatives for pairwise terms!!!! Would not be too hard actually!
@@ -404,7 +403,7 @@ RNA_PairwiseLowResolutionEnergy::eval_atom_derivative(
 
 void
 RNA_PairwiseLowResolutionEnergy::clean_up_rna_two_body_energy_tables(
-  scoring::rna::RNA_RawBaseBaseInfo & raw_base_base_info,
+	scoring::rna::RNA_RawBaseBaseInfo & raw_base_base_info,
 	pose::Pose & pose ) const
 {
 

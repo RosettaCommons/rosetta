@@ -84,7 +84,7 @@ void RNA_SugarStepWiseSampler::apply( pose::Pose & pose, core::Size const i ) {
 
 	if ( pucker_state == ANY_PUCKER ) pucker_state = curr_pucker;
 
-	if (idealize_coord_) {
+	if ( idealize_coord_ ) {
 		if ( pucker_state == NORTH ) {
 			if (  north_pucker_dofs_have_not_been_initialized_ ) {
 				// Arvind - 10/06/2013
@@ -108,7 +108,7 @@ void RNA_SugarStepWiseSampler::apply( pose::Pose & pose, core::Size const i ) {
 
 				for ( Size index = 1; index <= saved_torsion_id.size(); ++index ) {
 					bool const is_exists = ideal_coord.is_torsion_exists( pose, saved_torsion_id[index] );
-					if (is_exists) {
+					if ( is_exists ) {
 						saved_torsions.push_back( pose.torsion( saved_torsion_id[index] ) );
 					} else {
 						saved_torsions.push_back( -9999 );
@@ -117,7 +117,7 @@ void RNA_SugarStepWiseSampler::apply( pose::Pose & pose, core::Size const i ) {
 
 				// If we've already cached all the dofs, we can just loop through them directly without using the copy_dofs() machinery.
 				for ( std::map < id::DOF_ID , Real >::const_iterator
-					 it=north_pucker_dof_key_values_.begin(), it_end = north_pucker_dof_key_values_.end(); it != it_end; ++it ) {
+						it=north_pucker_dof_key_values_.begin(), it_end = north_pucker_dof_key_values_.end(); it != it_end; ++it ) {
 					pose.set_dof( it->first, it->second );
 				}
 
@@ -148,7 +148,7 @@ void RNA_SugarStepWiseSampler::apply( pose::Pose & pose, core::Size const i ) {
 
 				for ( Size index = 1; index <= saved_torsion_id.size(); ++index ) {
 					bool const is_exists = ideal_coord.is_torsion_exists( pose, saved_torsion_id[index] );
-					if (is_exists) {
+					if ( is_exists ) {
 						saved_torsions.push_back( pose.torsion( saved_torsion_id[index] ) );
 					} else {
 						saved_torsions.push_back( -9999 );
@@ -157,7 +157,7 @@ void RNA_SugarStepWiseSampler::apply( pose::Pose & pose, core::Size const i ) {
 
 				// If we've already cached all the dofs, we can just loop through them directly without using the copy_dofs() machinery.
 				for ( std::map < id::DOF_ID , Real >::const_iterator
-					 it=south_pucker_dof_key_values_.begin(), it_end = south_pucker_dof_key_values_.end(); it != it_end; ++it ) {
+						it=south_pucker_dof_key_values_.begin(), it_end = south_pucker_dof_key_values_.end(); it != it_end; ++it ) {
 					pose.set_dof( it->first, it->second );
 				}
 
@@ -168,7 +168,7 @@ void RNA_SugarStepWiseSampler::apply( pose::Pose & pose, core::Size const i ) {
 		}
 
 	} else {
-		if (pucker_state == NORTH) {
+		if ( pucker_state == NORTH ) {
 			delta = torsion_info.delta_north();
 			nu2 = torsion_info.nu2_north();
 			nu1 = torsion_info.nu1_north();

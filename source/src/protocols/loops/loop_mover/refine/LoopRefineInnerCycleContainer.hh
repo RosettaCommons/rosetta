@@ -51,7 +51,7 @@ public: // boiler plate / virtuals
 
 	// destructor
 	virtual ~LoopRefineInnerCycleContainer();
-	
+
 	virtual void apply( Pose & );
 	virtual std::string get_name() const;
 

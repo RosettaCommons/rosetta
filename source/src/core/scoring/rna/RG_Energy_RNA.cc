@@ -166,7 +166,7 @@ RG_Energy_RNA::eval_atom_derivative(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
- 	) const
+) const
 {
 
 	using namespace conformation;

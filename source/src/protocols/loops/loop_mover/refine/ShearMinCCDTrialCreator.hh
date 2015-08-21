@@ -25,12 +25,12 @@ namespace refine {
 /// @brief creator for the ShearMinCCDTrial class
 class ShearMinCCDTrialCreator : public moves::MoverCreator {
 public:
-  ShearMinCCDTrialCreator() {}
-  virtual ~ShearMinCCDTrialCreator();
+	ShearMinCCDTrialCreator() {}
+	virtual ~ShearMinCCDTrialCreator();
 
-  virtual moves::MoverOP create_mover() const;
+	virtual moves::MoverOP create_mover() const;
 
-  virtual std::string keyname() const;
+	virtual std::string keyname() const;
 
 };
 

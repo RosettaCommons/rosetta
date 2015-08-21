@@ -61,17 +61,16 @@ star_fold_tree( core::pose::Pose & pose )
 	linear_ft.clear();
 	core::Size const chain_num( pose.conformation().num_chains() );
 	core::Size jump_num( 1 );
-	for( core::Size c=1; c<=chain_num; ++c ) {
+	for ( core::Size c=1; c<=chain_num; ++c ) {
 		core::Size const chain_begin( pose.conformation().chain_begin( c ) );
 		core::Size const chain_end( pose.conformation().chain_end( c ) );
 
-		if( !pose.residue( chain_end ).is_polymer() ){ //ligand
+		if ( !pose.residue( chain_end ).is_polymer() ) { //ligand
 			linear_ft.add_edge( chain_end-1, chain_end, jump_num );
 			++jump_num;
-		}
-		else{
+		} else {
 			linear_ft.add_edge( chain_begin, chain_end, kinematics::Edge::PEPTIDE );
-			if( c > 1 ){
+			if ( c > 1 ) {
 				linear_ft.add_edge( 1,chain_begin, jump_num );
 				++jump_num;
 			}
@@ -89,33 +88,46 @@ star_fold_tree( core::pose::Pose & pose )
 std::string
 optimal_connection_point( std::string const & residue_type ){
 	std::string connect_to( "CB" ); // to which atom to hook up the atom tree
-	if( residue_type == "GLN" || residue_type == "DGN"  || residue_type == "GLU"  || residue_type == "DGU" )
+	if ( residue_type == "GLN" || residue_type == "DGN"  || residue_type == "GLU"  || residue_type == "DGU" ) {
 		connect_to = "CD";
-	if( residue_type == "ARG" || residue_type == "DAR" )
+	}
+	if ( residue_type == "ARG" || residue_type == "DAR" ) {
 		connect_to = "CZ";
-	if( residue_type == "MET" || residue_type == "DME")
+	}
+	if ( residue_type == "MET" || residue_type == "DME" ) {
 		connect_to = "SD";
+	}
 	// AMW: cppcheck, thankfully, notices that DAS was included twice!
-	if( residue_type == "PHE" || residue_type == "DPH" || residue_type == "TRP" || residue_type == "DTR" || residue_type == "TYR" || residue_type == "DTY" || residue_type == "ASN" || residue_type == "DAN" || residue_type == "ASP"|| residue_type == "DAS" || residue_type == "HIS" || residue_type == "DHI")
+	if ( residue_type == "PHE" || residue_type == "DPH" || residue_type == "TRP" || residue_type == "DTR" || residue_type == "TYR" || residue_type == "DTY" || residue_type == "ASN" || residue_type == "DAN" || residue_type == "ASP"|| residue_type == "DAS" || residue_type == "HIS" || residue_type == "DHI" ) {
 		connect_to = "CG";
-	if( residue_type == "LEU" || residue_type == "DLE" )
+	}
+	if ( residue_type == "LEU" || residue_type == "DLE" ) {
 		connect_to = "CD2";
-	if( residue_type == "ILE" || residue_type == "DIL" )
+	}
+	if ( residue_type == "ILE" || residue_type == "DIL" ) {
 		connect_to = "CD1";
-	if( residue_type == "VAL" || residue_type == "DVA" )
+	}
+	if ( residue_type == "VAL" || residue_type == "DVA" ) {
 		connect_to = "CG1";
-	if( residue_type == "PRO" || residue_type == "DPR" )
+	}
+	if ( residue_type == "PRO" || residue_type == "DPR" ) {
 		connect_to = "CD";
-	if( residue_type == "SER" || residue_type == "DSE" )
+	}
+	if ( residue_type == "SER" || residue_type == "DSE" ) {
 		connect_to = "OG";
-	if( residue_type == "THR" || residue_type == "DTH" )
+	}
+	if ( residue_type == "THR" || residue_type == "DTH" ) {
 		connect_to = "OG1";
-	if( residue_type == "CYS" || residue_type == "DCS" )
+	}
+	if ( residue_type == "CYS" || residue_type == "DCS" ) {
 		connect_to = "SG";
-	if( residue_type == "LYS" || residue_type == "DLY"  )
+	}
+	if ( residue_type == "LYS" || residue_type == "DLY"  ) {
 		connect_to = "NZ";
-	if( residue_type == "GLY" )
+	}
+	if ( residue_type == "GLY" ) {
 		connect_to = "CA";
+	}
 
 	TR.Debug << "residue_type: " << residue_type << " connect_to: " << connect_to << std::endl;
 
@@ -146,7 +158,7 @@ make_hotspot_foldtree( core::pose::Pose const & pose )
 	utility::vector1< core::Size >::iterator last = std::unique( connection_points.begin(), connection_points.end() );
 	connection_points.erase( last, connection_points.end() );
 	core::Size upstream_position( 1 );
-	BOOST_FOREACH( core::Size const con, connection_points ){
+	BOOST_FOREACH ( core::Size const con, connection_points ) {
 		ft.add_edge( upstream_position, con, Edge::PEPTIDE );
 		upstream_position = con;
 	}
@@ -171,12 +183,12 @@ get_bbcsts( core::pose::Pose const & pose ) {
 	// sort through pose's constraint set and pull out only active bbcst's
 	ConstraintCOPs original_csts = nonconst_pose.constraint_set()->get_all_constraints();
 	ConstraintCOPs new_csts;
-	for( ConstraintCOPs::const_iterator it = original_csts.begin(), end = original_csts.end(); it != end; ++it ) {
+	for ( ConstraintCOPs::const_iterator it = original_csts.begin(), end = original_csts.end(); it != end; ++it ) {
 		ConstraintCOP cst( *it );
-		if( cst->type() == "AmbiguousConstraint" ) {
+		if ( cst->type() == "AmbiguousConstraint" ) {
 			AmbiguousConstraintCOP ambiguous_cst = AmbiguousConstraintCOP( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::AmbiguousConstraint const > ( cst ) ); //downcast to derived ambiguous constraint
-			if( ambiguous_cst) { // safety check for downcasting
-				if( ambiguous_cst->active_constraint()->type() == "BackboneStub" ) {
+			if ( ambiguous_cst ) { // safety check for downcasting
+				if ( ambiguous_cst->active_constraint()->type() == "BackboneStub" ) {
 					new_csts.push_back( ambiguous_cst->active_constraint() );
 				}
 			}
@@ -205,16 +217,16 @@ best_bbcst_residues( core::pose::Pose const & pose, core::Size const chain, core
 	/// Now handled automatically.  scorefxn->accumulate_residue_total_energies( nonconst_pose );
 
 	// get pairs of residue number and weighted cst energy
-	for( core::Size i=nonconst_pose.conformation().chain_begin( chain ); i<=nonconst_pose.conformation().chain_end( chain ); ++i ){
+	for ( core::Size i=nonconst_pose.conformation().chain_begin( chain ); i<=nonconst_pose.conformation().chain_end( chain ); ++i ) {
 		core::Real const score( nonconst_pose.energies().residue_total_energies( i )[ backbone_stub_constraint ] );
 		core::Real const weight( (*scorefxn)[ backbone_stub_constraint ] );
 		core::Real const curr_energy( weight * score );
 		all_residues.push_back(std::make_pair( curr_energy, i ));
 	}
 	sort( all_residues.begin(), all_residues.end() );
-	for( core::Size i=1; i<=n_return; ++i ) {
+	for ( core::Size i=1; i<=n_return; ++i ) {
 		// only use it if the cst actually evaluates
-		if( all_residues[i].first < 0 ) best_residues.push_back( all_residues[i].second );
+		if ( all_residues[i].first < 0 ) best_residues.push_back( all_residues[i].second );
 	}
 	assert( best_residues.size() <= n_return );
 	return best_residues;
@@ -228,11 +240,11 @@ find_lowest_constraint_energy_residue( core::pose::Pose const & pose, core::Size
 
 	resi = 0;
 	lowest_energy = 100000.0;
-	for( core::Size i=pose.conformation().chain_begin( chain ); i<=pose.conformation().chain_end( chain ); ++i ){
+	for ( core::Size i=pose.conformation().chain_begin( chain ); i<=pose.conformation().chain_end( chain ); ++i ) {
 		using namespace core::scoring;
 		simple_filters::EnergyPerResidueFilter const eprf( i, scorefxn, backbone_stub_constraint, 10000.0/*dummy threshold*/ );
 		core::Real const curr_energy( eprf.compute( pose ) );
-		if( curr_energy<=lowest_energy ){
+		if ( curr_energy<=lowest_energy ) {
 			lowest_energy = curr_energy;
 			resi = i;
 		}
@@ -246,18 +258,18 @@ remove_coordinate_constraints_from_pose( core::pose::Pose & pose )
 {
 	using namespace core::scoring::constraints;
 
-  ConstraintCOPs original_csts = pose.constraint_set()->get_all_constraints() ;
-  ConstraintCOPs crd_csts;
-  for( ConstraintCOPs::const_iterator it = original_csts.begin(), end = original_csts.end(); it != end; ++it ) {
-    ConstraintCOP cst( *it );
-    if( cst->type() == "CoordinateConstraint" ) {
-      ConstraintCOP crd_cst = utility::pointer::dynamic_pointer_cast< core::scoring::constraints::CoordinateConstraint const > ( cst ); //downcast to derived ambiguous constraint
-      if( crd_cst) { // safety check for downcasting
-         crd_csts.push_back( cst ); // add the entire ambiguous cst, since it contained a bbcst
-      }
-    }
-  }
-  pose.remove_constraints( crd_csts ); // remove all the ambigcsts that contain a bbcst
+	ConstraintCOPs original_csts = pose.constraint_set()->get_all_constraints() ;
+	ConstraintCOPs crd_csts;
+	for ( ConstraintCOPs::const_iterator it = original_csts.begin(), end = original_csts.end(); it != end; ++it ) {
+		ConstraintCOP cst( *it );
+		if ( cst->type() == "CoordinateConstraint" ) {
+			ConstraintCOP crd_cst = utility::pointer::dynamic_pointer_cast< core::scoring::constraints::CoordinateConstraint const > ( cst ); //downcast to derived ambiguous constraint
+			if ( crd_cst ) { // safety check for downcasting
+				crd_csts.push_back( cst ); // add the entire ambiguous cst, since it contained a bbcst
+			}
+		}
+	}
+	pose.remove_constraints( crd_csts ); // remove all the ambigcsts that contain a bbcst
 	return( crd_csts );
 }
 
@@ -268,30 +280,30 @@ best_cutpoint( core::pose::Pose & pose, core::Size const prev_u, core::Size cons
 {
 	// if the pose is all loops (mini default), then run dssp
 	// this logic may cause a problem for miniproteins that are indeed all loop. But for now it's certainly OK
-	for( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
 		char const ss = pose.secstruct( i );
-		if( ss == 'H' || ss == 'S' ) break;
-		if( i == pose.total_residue() ) {
+		if ( ss == 'H' || ss == 'S' ) break;
+		if ( i == pose.total_residue() ) {
 			core::scoring::dssp::Dssp dssp( pose );
 			dssp.insert_ss_into_pose( pose );
 		}
 	}
 
-	for( core::Size res = prev_d; res <= d-1; ++res ){
-		if( pose.secstruct( res ) == 'L' ){
-			if( pose.secstruct( res + 1 ) == 'L' && pose.secstruct( res + 2 ) == 'L' ) return res;
+	for ( core::Size res = prev_d; res <= d-1; ++res ) {
+		if ( pose.secstruct( res ) == 'L' ) {
+			if ( pose.secstruct( res + 1 ) == 'L' && pose.secstruct( res + 2 ) == 'L' ) return res;
 		}
 	}
-	for( core::Size res = prev_u; res <= u-1; ++res ){
-		if( pose.secstruct( res ) == 'L' ){
-			if( pose.secstruct( res + 1 ) == 'L' && pose.secstruct( res + 2 ) == 'L' ) return res;
+	for ( core::Size res = prev_u; res <= u-1; ++res ) {
+		if ( pose.secstruct( res ) == 'L' ) {
+			if ( pose.secstruct( res + 1 ) == 'L' && pose.secstruct( res + 2 ) == 'L' ) return res;
 		}
 	}
-	for( core::Size res = prev_d; res <= d; ++res ){
-		if( pose.secstruct( res ) == 'L' ) return res;
+	for ( core::Size res = prev_d; res <= d; ++res ) {
+		if ( pose.secstruct( res ) == 'L' ) return res;
 	}
-	for( core::Size res = prev_u; res <= u-1; ++res ){
-		if( pose.secstruct( res ) == 'L' ) return res;
+	for ( core::Size res = prev_u; res <= u-1; ++res ) {
+		if ( pose.secstruct( res ) == 'L' ) return res;
 	}
 	return 0; // sign of trouble
 }
@@ -300,11 +312,11 @@ best_cutpoint( core::pose::Pose & pose, core::Size const prev_u, core::Size cons
 core::Size
 find_nearest_residue( core::pose::Pose const & pose, core::Size const target_chain, core::Size const res, std::string const & atom/*=="CA"*/ )
 {
-  core::Size nearest_resi( 0 );
+	core::Size nearest_resi( 0 );
 	core::Real nearest_dist( 100000.0 );
-	for( core::Size resi( pose.conformation().chain_begin( target_chain ) ); resi<=pose.conformation().chain_end( target_chain ); ++resi ){
+	for ( core::Size resi( pose.conformation().chain_begin( target_chain ) ); resi<=pose.conformation().chain_end( target_chain ); ++resi ) {
 		core::Real const distance( pose.residue(resi).xyz( pose.residue(resi).nbr_atom() ).distance( pose.residue( res ).xyz( atom ) ) );
-		if( distance<=nearest_dist ){
+		if ( distance<=nearest_dist ) {
 			nearest_resi = resi;
 			nearest_dist = distance;
 		}

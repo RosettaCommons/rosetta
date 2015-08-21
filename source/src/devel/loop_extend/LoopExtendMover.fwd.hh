@@ -19,8 +19,8 @@
 #include <utility/pointer/owning_ptr.hh>
 
 
-namespace devel{
-namespace loop_extend{
+namespace devel {
+namespace loop_extend {
 
 //Forwards and OP typedefs
 class LoopExtendMover;

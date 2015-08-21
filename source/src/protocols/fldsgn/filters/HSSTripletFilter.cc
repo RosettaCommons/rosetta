@@ -181,7 +181,7 @@ HSSTripletFilter::apply( Pose const & pose ) const
 	using protocols::fldsgn::topology::HSSTripletOP;
 
 	// set secondary structure
-	if( secstruct_ == "" ) {
+	if ( secstruct_ == "" ) {
 		Dssp dssp( pose );
 		secstruct_ = dssp.get_dssp_secstruct();
 	}
@@ -195,32 +195,32 @@ HSSTripletFilter::apply( Pose const & pose ) const
 	// check conformation hsstriplets
 	bool filter( true );
 	Size current_id( 0 );
-	for( HSSTriplets::const_iterator
-				 it=hss3set_->hss_triplets().begin(), ite=hss3set_->hss_triplets().end(); it != ite; ++it ) {
+	for ( HSSTriplets::const_iterator
+			it=hss3set_->hss_triplets().begin(), ite=hss3set_->hss_triplets().end(); it != ite; ++it ) {
 
 		current_id ++;
 		HSSTripletOP const & hssop( *it );
 
-		if( !( helices.size() >= hssop->helix() ) || helices[ hssop->helix() ]->length() < 5 ) {
+		if ( !( helices.size() >= hssop->helix() ) || helices[ hssop->helix() ]->length() < 5 ) {
 			TR << "Helix " << hssop->helix() << " dones not exist, or is too short. " << std::endl;
 			return false;
 		}
-		if( !( strands.size() >= hssop->strand1() ) || strands[ hssop->strand1() ]->length() < 2 ) {
+		if ( !( strands.size() >= hssop->strand1() ) || strands[ hssop->strand1() ]->length() < 2 ) {
 			TR << "Strand1 " << hssop->strand1() << " dones not exist, or is too short. " << std::endl;
 			return false;
 		}
-		if( !( strands.size() >= hssop->strand2() ) || strands[ hssop->strand2() ]->length() < 2 ) {
+		if ( !( strands.size() >= hssop->strand2() ) || strands[ hssop->strand2() ]->length() < 2 ) {
 			TR << "Strand2 " << hssop->strand2() << " dones not exist, or is too short. " << std::endl;
 			return false;
 		}
-		
+
 		TR << *hssop << " ";
 		hssop->calc_geometry( ss_info );
 
 		TR << "hsheet_dist=" << hssop->hsheet_dist() << ", hs_angle=" << hssop->hs_angle()
-		   << ", hs_dist1=" << hssop->hs1_dist() << ", hs_dist2=" << hssop->hs2_dist() << std::endl;
+			<< ", hs_dist1=" << hssop->hs1_dist() << ", hs_dist2=" << hssop->hs2_dist() << std::endl;
 
-		if( hssop->hsheet_dist() < filter_min_dist_ || hssop->hsheet_dist() > filter_max_dist_ ) {
+		if ( hssop->hsheet_dist() < filter_min_dist_ || hssop->hsheet_dist() > filter_max_dist_ ) {
 			filter = false;
 		}
 
@@ -235,11 +235,11 @@ HSSTripletFilter::apply( Pose const & pose ) const
 			}
 		}
 
-		if( angle_val < filter_min_angle_ || angle_val > filter_max_angle_ ) {
+		if ( angle_val < filter_min_angle_ || angle_val > filter_max_angle_ ) {
 			filter = false;
 		}
 
-		if( output_id_ == current_id ) {
+		if ( output_id_ == current_id ) {
 			if ( output_type_ == "dist" ) {
 				output_value_ = hssop->hsheet_dist();
 			} else if ( output_type_ == "angle" ) {
@@ -249,7 +249,7 @@ HSSTripletFilter::apply( Pose const & pose ) const
 
 	}
 
-	if( filter ) {
+	if ( filter ) {
 		TR << " Filter success ! " << std::endl;
 	} else {
 		TR << " Filter failed ! " << std::endl;
@@ -280,17 +280,16 @@ HSSTripletFilter::parse_my_tag(
 
 	// set filtered helix_pairings
 	bool triplets_specified( false );
-  String const hss3s = tag->getOption<String>( "hsstriplets", "" );
-	if( hss3s != ""  ) {
+	String const hss3s = tag->getOption<String>( "hsstriplets", "" );
+	if ( hss3s != ""  ) {
 		HSSTripletSet hss3set( hss3s );
 		add_hsstriplets( hss3set.hss_triplets() );
 		triplets_specified = true;
-	} else {
-	}
+	} else { }
 
 	// secondary strucuture info
 	String const blueprint = tag->getOption<String>( "blueprint", "" );
-	if( blueprint != "" ) {
+	if ( blueprint != "" ) {
 		BluePrint blue( blueprint );
 		secstruct_ = blue.secstruct();
 		if ( ! triplets_specified ) {
@@ -308,28 +307,28 @@ HSSTripletFilter::parse_my_tag(
 		runtime_assert( false );
 	}
 
-  filter_min_dist_  = tag->getOption<Real>( "min_dist", 7.5 );
-  filter_max_dist_  = tag->getOption<Real>( "max_dist", 13.0);
-  filter_min_angle_ = tag->getOption<Real>( "min_angle", -12.5 );
-  filter_max_angle_ = tag->getOption<Real>( "max_angle", 90.0 );
+	filter_min_dist_  = tag->getOption<Real>( "min_dist", 7.5 );
+	filter_max_dist_  = tag->getOption<Real>( "max_dist", 13.0);
+	filter_min_angle_ = tag->getOption<Real>( "min_angle", -12.5 );
+	filter_max_angle_ = tag->getOption<Real>( "max_angle", 90.0 );
 
 	ignore_helix_direction_ = tag->getOption<bool>( "ignore_helix_direction", ignore_helix_direction_ );
 	output_id_ = tag->getOption<Size>( "output_id", 1 );
 	output_type_ = tag->getOption<String>( "output_type", "dist" );
 
-	if( output_type_ != "dist" && output_type_ != "angle" ) {
+	if ( output_type_ != "dist" && output_type_ != "angle" ) {
 
 		TR << "Invalid type of output_type, choose either dist or angle. " << std::endl;
 
 	} else {
 
-		if( output_id_ > hss3set_->hss_triplets().size() ) {
+		if ( output_id_ > hss3set_->hss_triplets().size() ) {
 			TR << "[ERROR] The value of output_id is more than the number of input hsstriplets " << std::endl;
 			runtime_assert( false );
 		}
 
 		TR << "HSSTriplet " << hss3set_->hss_triplet( output_id_ ) << ", "
-			 << output_type_ << " is used for output value. " << std::endl;
+			<< output_type_ << " is used for output value. " << std::endl;
 	}
 
 }

@@ -79,8 +79,8 @@ private:
 
 	// const-ref to scoring database
 	//InterchainPotential const & potential_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

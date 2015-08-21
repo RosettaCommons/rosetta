@@ -101,12 +101,12 @@ EnvSmoothEnergy::initialize( EnergyMethodOptions const & options )
 {
 	// envdata is provided for each aa in 40 bins, corresponding to number of neighbors in 12A neighbor graph
 	core::Size const num_bins( 40 );
-	
+
 	envdata_.resize( chemical::num_canonical_aas );
-	
+
 	// check option for alternative envsmooth database file
 	utility::io::izstream stream;
-	if( options.envsmooth_zero_negatives() ){
+	if ( options.envsmooth_zero_negatives() ) {
 		basic::database::open( stream, "scoring/score_functions/envsmooth/envdata_zero_negatives.txt" );
 	} else {
 		basic::database::open( stream, "scoring/score_functions/envsmooth/envdata.txt" );
@@ -115,17 +115,17 @@ EnvSmoothEnergy::initialize( EnergyMethodOptions const & options )
 	core::Real bin_value;
 	std::string line;
 
-	// fill envdata_ with values from file	
-	for( core::Size ii = 0; ii < chemical::num_canonical_aas; ++ii ){
-	debug_assert( stream );
+	// fill envdata_ with values from file
+	for ( core::Size ii = 0; ii < chemical::num_canonical_aas; ++ii ) {
+		debug_assert( stream );
 		getline( stream, line );
 		std::istringstream l( line );
 
-		for( core::Size jj = 0; jj < num_bins; ++jj ){
-		debug_assert( l );
+		for ( core::Size jj = 0; jj < num_bins; ++jj ) {
+			debug_assert( l );
 			l >> bin_value;
 			envdata_[ ii ].push_back( bin_value );
-		} 
+		}
 	}
 }
 
@@ -153,18 +153,18 @@ EnvSmoothEnergy::setup_for_derivatives(
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetricConformation & SymmConf (
-		dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 	}
 
- 	residue_N_.clear();
- 	residue_E_.clear();
- 	residue_dEdN_.clear();
+	residue_N_.clear();
+	residue_E_.clear();
+	residue_dEdN_.clear();
 
 	// iterate over all the residues in the protein and count their neighbours
 	// and save values of E, N, and dEdN
 	for ( Size i = 1; i <= nres; ++i ) {
-		if( symm_info && !symm_info->bb_is_independent( i ) ) {
+		if ( symm_info && !symm_info->bb_is_independent( i ) ) {
 			residue_E_.push_back(0);
 			residue_N_.push_back(0);
 			residue_dEdN_.push_back(0);
@@ -174,7 +174,7 @@ EnvSmoothEnergy::setup_for_derivatives(
 		// get the appropriate residue from the pose.
 		conformation::Residue const & rsd( pose.residue(i) );
 		// currently this is only for protein residues
-		if( !rsd.is_protein() || rsd.aa() == chemical::aa_unk ) {
+		if ( !rsd.is_protein() || rsd.aa() == chemical::aa_unk ) {
 			residue_E_.push_back(0);
 			residue_N_.push_back(0);
 			residue_dEdN_.push_back(0);
@@ -218,9 +218,9 @@ EnvSmoothEnergy::setup_for_derivatives(
 	}
 
 	// symmetrize
-	if( symm_info ) {
+	if ( symm_info ) {
 		for ( Size i = 1; i <= nres; ++i ) {
-			if( !symm_info->bb_is_independent( i ) ) {
+			if ( !symm_info->bb_is_independent( i ) ) {
 				Size master_i = symm_info->bb_follows( i );
 				residue_N_[i] = residue_N_[master_i];
 				residue_E_[i] = residue_E_[master_i];
@@ -252,13 +252,13 @@ EnvSmoothEnergy::residue_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ){
-			return;
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) {
+		return;
 	}
 
 	// currently this is only for protein residues
 	if ( ! rsd.is_protein() ) return;
-	if( rsd.aa() == chemical::aa_unk ) return;
+	if ( rsd.aa() == chemical::aa_unk ) return;
 
 	TwelveANeighborGraph const & graph ( pose.energies().twelveA_neighbor_graph() );
 	Size const atomindex_i = rsd.atom_index( representative_atom_name( rsd.aa() ));
@@ -275,7 +275,7 @@ EnvSmoothEnergy::residue_energy(
 		conformation::Residue const & rsd_j( pose.residue(j) );
 
 		// if virtual residue, don't score
-		if (rsd_j.aa() == core::chemical::aa_vrt) continue;
+		if ( rsd_j.aa() == core::chemical::aa_vrt ) continue;
 
 		Size atomindex_j( rsd_j.nbr_atom() );
 
@@ -307,13 +307,13 @@ EnvSmoothEnergy::eval_atom_derivative(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( pose.residue( atom_id.rsd() ).has_variant_type( core::chemical::REPLONLY )){
+	if ( pose.residue( atom_id.rsd() ).has_variant_type( core::chemical::REPLONLY ) ) {
 		return;
 	}
 
 	conformation::Residue const & rsd = pose.residue( atom_id.rsd() );
 
-	if (! rsd.is_protein() ) return;
+	if ( ! rsd.is_protein() ) return;
 	if ( rsd.aa() == chemical::aa_unk ) return;
 
 	Size const i = rsd.seqpos();
@@ -321,7 +321,7 @@ EnvSmoothEnergy::eval_atom_derivative(
 	Size const i_rep_atom = rsd.atom_index( representative_atom_name( rsd.aa() ));
 
 	// forces act only on the nbr atom (CB or CA) or the representative atom
-	if( i_nbr_atom != (Size) atom_id.atomno() && i_rep_atom != (Size) atom_id.atomno() ) return;
+	if ( i_nbr_atom != (Size) atom_id.atomno() && i_rep_atom != (Size) atom_id.atomno() ) return;
 
 	core::conformation::Atom const & atom_i = rsd.atom( atom_id.atomno() );
 
@@ -341,7 +341,7 @@ EnvSmoothEnergy::eval_atom_derivative(
 		conformation::Residue const & rsd_j( pose.residue(j) );
 
 		// if virtual residue, don't score
-		if (rsd_j.aa() == core::chemical::aa_vrt ) continue;
+		if ( rsd_j.aa() == core::chemical::aa_vrt ) continue;
 
 		if ( input_atom_is_nbr && input_atom_is_rep && (rsd_j.is_protein() && rsd_j.aa()<=core::chemical::num_canonical_aas) ) {
 			Size const resj_rep_atom = rsd_j.atom_index( representative_atom_name( rsd_j.aa() ));
@@ -404,28 +404,28 @@ EnvSmoothEnergy::representative_atom_name( chemical::AA const aa ) const
 	static std::string const sdelta_string( "SD"  );
 
 	switch ( aa ) {
-		case ( chemical::aa_ala ) : return cbeta_string;  break;
-		case ( chemical::aa_cys ) : return sgamma_string; break;
-		case ( chemical::aa_asp ) : return cgamma_string; break;
-		case ( chemical::aa_glu ) : return cdelta_string; break;
-		case ( chemical::aa_phe ) : return czeta_string;  break;
-		case ( chemical::aa_gly ) : return calpha_string; break;
-		case ( chemical::aa_his ) : return ceps_1_string; break;
-		case ( chemical::aa_ile ) : return cdel_1_string; break;
-		case ( chemical::aa_lys ) : return cdelta_string; break;
-		case ( chemical::aa_leu ) : return cgamma_string; break;
-		case ( chemical::aa_met ) : return sdelta_string; break;
-		case ( chemical::aa_asn ) : return cgamma_string; break;
-		case ( chemical::aa_pro ) : return cgamma_string; break;
-		case ( chemical::aa_gln ) : return cdelta_string; break;
-		case ( chemical::aa_arg ) : return czeta_string;  break;
-		case ( chemical::aa_ser ) : return cbeta_string;  break;
-		case ( chemical::aa_thr ) : return cbeta_string;  break;
-		case ( chemical::aa_val ) : return cbeta_string;  break;
-		case ( chemical::aa_trp ) : return ceps_2_string; break;
-		case ( chemical::aa_tyr ) : return czeta_string;  break;
-		default :
-			utility_exit_with_message( "ERROR: Failed to find amino acid " + chemical::name_from_aa( aa ) + " in EnvSmooth::representative_atom_name" );
+	case ( chemical::aa_ala ) : return cbeta_string;  break;
+	case ( chemical::aa_cys ) : return sgamma_string; break;
+	case ( chemical::aa_asp ) : return cgamma_string; break;
+	case ( chemical::aa_glu ) : return cdelta_string; break;
+	case ( chemical::aa_phe ) : return czeta_string;  break;
+	case ( chemical::aa_gly ) : return calpha_string; break;
+	case ( chemical::aa_his ) : return ceps_1_string; break;
+	case ( chemical::aa_ile ) : return cdel_1_string; break;
+	case ( chemical::aa_lys ) : return cdelta_string; break;
+	case ( chemical::aa_leu ) : return cgamma_string; break;
+	case ( chemical::aa_met ) : return sdelta_string; break;
+	case ( chemical::aa_asn ) : return cgamma_string; break;
+	case ( chemical::aa_pro ) : return cgamma_string; break;
+	case ( chemical::aa_gln ) : return cdelta_string; break;
+	case ( chemical::aa_arg ) : return czeta_string;  break;
+	case ( chemical::aa_ser ) : return cbeta_string;  break;
+	case ( chemical::aa_thr ) : return cbeta_string;  break;
+	case ( chemical::aa_val ) : return cbeta_string;  break;
+	case ( chemical::aa_trp ) : return ceps_2_string; break;
+	case ( chemical::aa_tyr ) : return czeta_string;  break;
+	default :
+		utility_exit_with_message( "ERROR: Failed to find amino acid " + chemical::name_from_aa( aa ) + " in EnvSmooth::representative_atom_name" );
 		break;
 	}
 
@@ -461,12 +461,12 @@ EnvSmoothEnergy::calc_energy(
 
 	int const aa_as_int = static_cast< int > (aa);
 
-	if (high_bin < 40 ){
+	if ( high_bin < 40 ) {
 		score = envdata_[ aa_as_int - 1 ][ low_bin ]  * (1.0-inter) +
 			envdata_[ aa_as_int - 1 ][ high_bin ] * (inter);
 		dscore_dneighbor_count = envdata_[ aa_as_int - 1 ][ high_bin ] -
 			envdata_[ aa_as_int - 1 ][ low_bin ];
-	}else{
+	} else {
 		score = envdata_[ aa_as_int - 1 ][ 39 ];
 		dscore_dneighbor_count = 0;
 	}
@@ -477,9 +477,9 @@ EnvSmoothEnergy::calc_energy(
 Real
 EnvSmoothEnergy::sigmoidish_neighbor( DistanceSquared const sqdist ) const
 {
-	if( sqdist > end_sig2 ) {
+	if ( sqdist > end_sig2 ) {
 		return 0.0;
-	} else if( sqdist < start_sig2 ) {
+	} else if ( sqdist < start_sig2 ) {
 		return 1.0;
 	} else {
 		Real dist = sqrt( sqdist );

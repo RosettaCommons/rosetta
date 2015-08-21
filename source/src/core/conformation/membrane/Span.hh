@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/conformation/membrane/Span.fwd.hh
+/// @file  core/conformation/membrane/Span.fwd.hh
 ///
-/// @brief		Object for describing start and end of a transmembrane span
-/// @details	The Span object stores 2 SSizes - a stard and end position of a transmembrane span.
-///				Should be kept in a vector of spans toward describing the total spanning topology of a
-///				membrane protein.
-///				Last Modified: 7/23/14
+/// @brief  Object for describing start and end of a transmembrane span
+/// @details The Span object stores 2 SSizes - a stard and end position of a transmembrane span.
+///    Should be kept in a vector of spans toward describing the total spanning topology of a
+///    membrane protein.
+///    Last Modified: 7/23/14
 ///
-/// @author		Julia Koehler Leman (julia.koehler1982@gmail.com)
-/// @author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Julia Koehler Leman (julia.koehler1982@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_conformation_membrane_Span_hh
 #define INCLUDED_core_conformation_membrane_Span_hh
@@ -38,7 +38,7 @@ class Span : public utility::pointer::ReferenceCount {
 
 public: // constructors
 
-	/// @brief	Default Constructor
+	/// @brief Default Constructor
 	/// @details Construct a default span object representing a span from 1-1
 	/// this constructor should eventually be made private because it doesn't build a real thing
 	Span();
@@ -49,30 +49,30 @@ public: // constructors
 
 	/// @brief Copy Consturctor
 	/// @details Make a deep copy of this object
-    Span( Span const & src );
+	Span( Span const & src );
 
 	/// @brief Assignment Operator
 	/// @details Make a deep copy of this object
-    Span &
-    operator=( Span const & src );
+	Span &
+	operator=( Span const & src );
 
-	/// @brief	Destructor
+	/// @brief Destructor
 	~Span();
 
 public: // getters
 
-    /// @brief Get start position
+	/// @brief Get start position
 	/// @details Get the Starting Position of a transmembrane span
-    Size start() const;
+	Size start() const;
 
-    /// @brief Get end position
+	/// @brief Get end position
 	/// @details Get the end position of a transmembrane span
-    Size end() const;
+	Size end() const;
 
-	
+
 	/// @brief Get residue closest to center
 	Size center() const;
-	
+
 	/// @brief Shift by offset
 	/// @details Shift the transmembrane span by a user-provided offset
 	void shift( Size offset );
@@ -92,8 +92,8 @@ public: // getters
 private: // data
 
 	// Specify start/end position of a transmembrane span
-    Size start_;
-    Size end_;
+	Size start_;
+	Size end_;
 
 };
 

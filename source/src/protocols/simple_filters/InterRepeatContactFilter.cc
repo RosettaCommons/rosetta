@@ -41,96 +41,96 @@ namespace simple_filters {
 
 // @brief default constructor
 InterRepeatContactFilter::InterRepeatContactFilter():
-    Filter( "InterRepeatContactsPerResidue" ),
-    filtered_value_( 0.0 ),
-    numbRepeats_(4),
-    sequenceSep_(6),
-    distThresh_(10)
+	Filter( "InterRepeatContactsPerResidue" ),
+	filtered_value_( 0.0 ),
+	numbRepeats_(4),
+	sequenceSep_(6),
+	distThresh_(10)
 {}
 
 // @brief copy constructor
 InterRepeatContactFilter::InterRepeatContactFilter( InterRepeatContactFilter const & rval ):
-    Super( rval ),
-    filtered_value_( rval.filtered_value_ ),
-    numbRepeats_(rval.numbRepeats_),
-    sequenceSep_(rval.sequenceSep_),
-    distThresh_(rval.distThresh_)
+	Super( rval ),
+	filtered_value_( rval.filtered_value_ ),
+	numbRepeats_(rval.numbRepeats_),
+	sequenceSep_(rval.sequenceSep_),
+	distThresh_(rval.distThresh_)
 {}
 
 // @brief set filtered value
 void InterRepeatContactFilter::filtered_value( Real const & value )
 {
-    filtered_value_ = value;
+	filtered_value_ = value;
 }
 
 /// @brief
 InterRepeatContactFilter::Real
 InterRepeatContactFilter::report_sm( Pose const & pose ) const
 {
-    return  compute( pose );
+	return  compute( pose );
 }
 
 /// @brief
 void
 InterRepeatContactFilter::report( std::ostream & out, Pose const & pose ) const
 {
-    out << "InterRepeatContacts: " <<  compute( pose ) << std::endl;
+	out << "InterRepeatContacts: " <<  compute( pose ) << std::endl;
 }
 
 /// @brief
 InterRepeatContactFilter::Real
 InterRepeatContactFilter::compute( Pose const & pose ) const
 {
-    using numeric::xyzVector;
-    Size repeatLength = pose.total_residue()/numbRepeats_;
-    Size region1Start = 1;
-    Size region1End = repeatLength;
-    Size region2Start = repeatLength+1;
-    Size region2End = repeatLength*2;
-    Size contactCt = 0;
-    for(Size ii=region1Start; ii<=region1End; ++ii){
-        for(Size jj=region2Start; jj<=region2End; ++jj){
-            if((jj-ii)>sequenceSep_){
-                xyzVector<double> a = pose.xyz(core::id::NamedAtomID("CA", ii));
-                xyzVector<double> b = pose.xyz(core::id::NamedAtomID("CA", jj));
-                if(a.distance(b)<distThresh_){
-                    contactCt+=1;
-                }
-            }
-        }
-    }
-    return((Real(contactCt))/Real(repeatLength*2));
+	using numeric::xyzVector;
+	Size repeatLength = pose.total_residue()/numbRepeats_;
+	Size region1Start = 1;
+	Size region1End = repeatLength;
+	Size region2Start = repeatLength+1;
+	Size region2End = repeatLength*2;
+	Size contactCt = 0;
+	for ( Size ii=region1Start; ii<=region1End; ++ii ) {
+		for ( Size jj=region2Start; jj<=region2End; ++jj ) {
+			if ( (jj-ii)>sequenceSep_ ) {
+				xyzVector<double> a = pose.xyz(core::id::NamedAtomID("CA", ii));
+				xyzVector<double> b = pose.xyz(core::id::NamedAtomID("CA", jj));
+				if ( a.distance(b)<distThresh_ ) {
+					contactCt+=1;
+				}
+			}
+		}
+	}
+	return((Real(contactCt))/Real(repeatLength*2));
 }
 
 // @brief returns true if the given pose passes the filter, false otherwise.
 // In this case, the test is whether the give pose is the topology we want.
 bool InterRepeatContactFilter::apply( Pose const & pose ) const
 {
-    Real value = compute( pose );
-    if( value > filtered_value_ ){
-        tr << "Successfully filtered: " << value << std::endl;
-        return true;
-    }else{
-        tr << "Filter failed current/threshold=" << value << "/" << filtered_value_ << std::endl;
-        return false;
-    }
+	Real value = compute( pose );
+	if ( value > filtered_value_ ) {
+		tr << "Successfully filtered: " << value << std::endl;
+		return true;
+	} else {
+		tr << "Filter failed current/threshold=" << value << "/" << filtered_value_ << std::endl;
+		return false;
+	}
 } // apply_filter
 
 /// @brief parse xml
 void
 InterRepeatContactFilter::parse_my_tag(
-    TagCOP const tag,
-    basic::datacache::DataMap &,
-    filters::Filters_map const &,
-    Movers_map const &,
-    Pose const & )
+	TagCOP const tag,
+	basic::datacache::DataMap &,
+	filters::Filters_map const &,
+	Movers_map const &,
+	Pose const & )
 {
-    // set threshold
-    filtered_value_ = tag->getOption<Real>( "threshold", -1.0 );
-    numbRepeats_ = tag->getOption<Size>("numb_repeats",4);
-    sequenceSep_ = tag->getOption<Size>("sequenceSeperation",6);
-    distThresh_ = tag->getOption<Size>("distanceThreshold",10.0);
-    tr << "Structures which have InterRepeatContacts less than " << filtered_value_ << " will be filtered." << std::endl;
+	// set threshold
+	filtered_value_ = tag->getOption<Real>( "threshold", -1.0 );
+	numbRepeats_ = tag->getOption<Size>("numb_repeats",4);
+	sequenceSep_ = tag->getOption<Size>("sequenceSeperation",6);
+	distThresh_ = tag->getOption<Size>("distanceThreshold",10.0);
+	tr << "Structures which have InterRepeatContacts less than " << filtered_value_ << " will be filtered." << std::endl;
 }
 
 filters::FilterOP

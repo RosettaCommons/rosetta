@@ -33,4 +33,4 @@ typedef utility::pointer::shared_ptr< AntibodyEnumManager const > AntibodyEnumMa
 } //namespace protocols
 
 
-#endif	//INCLUDED_protocols_antibody_AntibodyEnumManager.fwd.hh
+#endif //INCLUDED_protocols_antibody_AntibodyEnumManager.fwd.hh

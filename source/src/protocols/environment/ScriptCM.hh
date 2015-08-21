@@ -36,56 +36,56 @@ namespace protocols {
 namespace environment {
 
 class ScriptCM : public environment::ClientMover {
-  typedef environment::claims::EnvClaims EnvClaims;
+	typedef environment::claims::EnvClaims EnvClaims;
 
 public:
-  ScriptCM();
+	ScriptCM();
 
-  virtual
-  ~ScriptCM() {};
+	virtual
+	~ScriptCM() {};
 
-  virtual
-  EnvClaims yield_claims( core::pose::Pose const&,
-                          basic::datacache::WriteableCacheableMapOP );
+	virtual
+	EnvClaims yield_claims( core::pose::Pose const&,
+		basic::datacache::WriteableCacheableMapOP );
 
-  virtual std::string get_name() const;
+	virtual std::string get_name() const;
 
-  virtual void initialize( core::pose::Pose& pose );
+	virtual void initialize( core::pose::Pose& pose );
 
-  virtual void apply( core::pose::Pose& );
+	virtual void apply( core::pose::Pose& );
 
-  virtual void
-  parse_my_tag( utility::tag::TagCOP tag,
-                basic::datacache::DataMap & data,
-                protocols::filters::Filters_map const & filters,
-                protocols::moves::Movers_map const & movers,
-                core::pose::Pose const & pose );
+	virtual void
+	parse_my_tag( utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose );
 
-  std::string const& name() const { return name_; }
+	std::string const& name() const { return name_; }
 
-  void name( std::string const& name ) { name_ = name; }
+	void name( std::string const& name ) { name_ = name; }
 
-  virtual
-  moves::MoverOP fresh_instance() const;
+	virtual
+	moves::MoverOP fresh_instance() const;
 
-  virtual
-  moves::MoverOP clone() const;
+	virtual
+	moves::MoverOP clone() const;
 
 protected:
-  virtual void passport_updated();
+	virtual void passport_updated();
 
-  void set_client( moves::MoverOP );
+	void set_client( moves::MoverOP );
 
-  void add_claim( claims::EnvClaimOP claim );
+	void add_claim( claims::EnvClaimOP claim );
 
-  moves::MoveMapMoverOP client() { return client_; }
+	moves::MoveMapMoverOP client() { return client_; }
 
-  moves::MoveMapMoverCOP client() const { return client_; }
+	moves::MoveMapMoverCOP client() const { return client_; }
 
 private:
-  std::string name_;
-  EnvClaims claim_list_;
-  moves::MoveMapMoverOP client_;
+	std::string name_;
+	EnvClaims claim_list_;
+	moves::MoveMapMoverOP client_;
 
 }; // end ScriptCM base class
 

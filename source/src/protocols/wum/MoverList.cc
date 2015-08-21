@@ -30,7 +30,7 @@ void MoverList::register_mover( const std::string &name, moves::MoverCOP the_mov
 moves::MoverCOP MoverList::get_mover( const std::string &name ) const{
 	TR << "Getting Mover.." << std::endl;
 	std::map< std::string, moves::MoverCOP >::const_iterator iter = mover_list_.find( name );
-	if( iter == mover_list_.end() ){
+	if ( iter == mover_list_.end() ) {
 		utility_exit_with_message( "ERROR: Cannot find Mover named '" + name + "'" );
 	}
 	return iter->second;

@@ -36,27 +36,27 @@ namespace scoring {
 namespace disulfides {
 
 /**
- * @details This class scores centroid disulfide bonds
- * It is intended to be a singleton with a single instance held by ScoringManager.
- *
- * The energy functions are derived from those present in Rosetta++
- */
+* @details This class scores centroid disulfide bonds
+* It is intended to be a singleton with a single instance held by ScoringManager.
+*
+* The energy functions are derived from those present in Rosetta++
+*/
 class DisulfideMatchingPotential : public utility::pointer::ReferenceCount {
 public:
 	DisulfideMatchingPotential();
 	virtual ~DisulfideMatchingPotential();
 
 	/**
-	 * @brief Calculates scoring terms for the disulfide bond specified
-	 */
+	* @brief Calculates scoring terms for the disulfide bond specified
+	*/
 	void
 	score_disulfide(core::conformation::Residue const & res1,
-			core::conformation::Residue const & res2,
-									core::Energy & match_t,
-									core::Energy & match_r,
-									core::Energy & match_rt,
-									bool const mirror=false /*For scoring mirror-image disulfides (DCYS-DCYS)*/
-			) const;
+		core::conformation::Residue const & res2,
+		core::Energy & match_t,
+		core::Energy & match_r,
+		core::Energy & match_rt,
+		bool const mirror=false /*For scoring mirror-image disulfides (DCYS-DCYS)*/
+	) const;
 
 	// Not used by scoring machinery, exists so that other apps can compute the score directly
 	Energy compute_matching_energy( pose::Pose const & pose ) const;
@@ -65,13 +65,13 @@ public:
 private:
 
 	/**
-	 * @brief calculates RT object for residue pair
-	 */
+	* @brief calculates RT object for residue pair
+	*/
 	core::kinematics::RT
 	disulfide_RT(
-			core::conformation::Residue const& res1,
-			core::conformation::Residue const& res2,
-			bool const mirror=false
+		core::conformation::Residue const& res1,
+		core::conformation::Residue const& res2,
+		bool const mirror=false
 	) const;
 
 private:
@@ -87,28 +87,28 @@ private:
 class RT_helper {
 public:
 
-static
-core::kinematics::RT
-RT_from_epos( ObjexxFCL::FArray2A_float Epos1, ObjexxFCL::FArray2A_float Epos2);
+	static
+	core::kinematics::RT
+	RT_from_epos( ObjexxFCL::FArray2A_float Epos1, ObjexxFCL::FArray2A_float Epos2);
 
 private:
 
-static
-numeric::xyzMatrix_double
-get_ncac ( ObjexxFCL::FArray2A_float pos );
+	static
+	numeric::xyzMatrix_double
+	get_ncac ( ObjexxFCL::FArray2A_float pos );
 
-static
-void
-get_ncac(
-	ObjexxFCL::FArray2A_float pos,
-	numeric::xyzMatrix_double & p
+	static
+	void
+	get_ncac(
+		ObjexxFCL::FArray2A_float pos,
+		numeric::xyzMatrix_double & p
 	);
 
-static
-void
-get_coordinate_system(
-	numeric::xyzMatrix_double const & p, //FArray2A_double p, // input
-	numeric::xyzMatrix_double & m //FArray2A_double m // output
+	static
+	void
+	get_coordinate_system(
+		numeric::xyzMatrix_double const & p, //FArray2A_double p, // input
+		numeric::xyzMatrix_double & m //FArray2A_double m // output
 	);
 
 }; // RT_helper

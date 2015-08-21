@@ -117,11 +117,11 @@ class PredesignPerturbMover : public protocols::rigid::RigidBodyPerturbMover
 {
 
 public:
-  //Deafault constructor
-  PredesignPerturbMover();
+	//Deafault constructor
+	PredesignPerturbMover();
 
-  //Deafault constructor
-  ~PredesignPerturbMover();
+	//Deafault constructor
+	~PredesignPerturbMover();
 
 	void
 	set_docking_pose(
@@ -135,11 +135,11 @@ public:
 
 	//void
 	//add_constrained_lig_atoms_from_multiconstraint(
-	//	core::scoring::constraints::MultiConstraintCOP real_multi_constraint );
+	// core::scoring::constraints::MultiConstraintCOP real_multi_constraint );
 
 	//void
 	//add_constrained_lig_atom(
-	//	core::Size atom_no );
+	// core::Size atom_no );
 
 	void
 	find_constraints_to_ligand(
@@ -169,7 +169,7 @@ public:
 	find_geometric_center_for_constrained_lig_atoms(
 		core::pose::Pose const &pose );
 
-//parser functions
+	//parser functions
 
 	void
 	parse_my_tag(
@@ -226,8 +226,8 @@ public:
 	set_calculate_silent_Es(
 		bool calculate );
 
-    void
-    set_separate_prt_ligand( bool separate_prt_ligand );
+	void
+	set_separate_prt_ligand( bool separate_prt_ligand );
 
 
 	utility::vector1< core::io::silent::SilentEnergy > const &
@@ -247,8 +247,8 @@ private:
 	bool calculate_silent_Es_;
 	core::pack::task::PackerTaskOP ptask_;
 	utility::vector1< core::io::silent::SilentEnergy > silent_Es_;
-    // PG 21-05-2013
-    bool separate_prt_ligand_;
+	// PG 21-05-2013
+	bool separate_prt_ligand_;
 };
 
 /// @brief mover that updates the enzdes pdb header, for use in cases where catalytic residues may be designed

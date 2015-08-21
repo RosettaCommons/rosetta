@@ -64,7 +64,7 @@ private:
 	core::Real bump_cutoff_;
 	bool apply_ambiguous_constraints_;
 	bool colonyE_;
-  std::string stub_energy_fxn_;
+	std::string stub_energy_fxn_;
 };
 
 } // movers

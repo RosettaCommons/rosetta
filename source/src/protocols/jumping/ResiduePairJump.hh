@@ -127,13 +127,13 @@ private:
 
 
 enum cstType {
-		disAB = 1,
-		angleA,
-		angleB,
-		dihedralA,
-		dihedralAB,
-		dihedralB,
-		num_cstType = dihedralB
+	disAB = 1,
+	angleA,
+	angleB,
+	dihedralA,
+	dihedralAB,
+	dihedralB,
+	num_cstType = dihedralB
 };
 
 enum dofType {

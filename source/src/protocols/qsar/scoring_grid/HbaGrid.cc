@@ -99,18 +99,14 @@ void HbaGrid::refresh(core::pose::Pose const & pose, core::Vector const & )
 
 	this->fill_with_value(0.0);
 
-	for(core::Size residue_index = 1; residue_index <= pose.total_residue();++residue_index)
-	{
+	for ( core::Size residue_index = 1; residue_index <= pose.total_residue(); ++residue_index ) {
 		core::conformation::Residue const residue = pose.residue(residue_index);
-		if(!residue.is_protein())
-		{
+		if ( !residue.is_protein() ) {
 			continue;
 		}
-		for(core::Size atom_index=1; atom_index <= residue.natoms();++atom_index)
-		{
+		for ( core::Size atom_index=1; atom_index <= residue.natoms(); ++atom_index ) {
 			core::chemical::AtomType atom_type(residue.atom_type(atom_index));
-			if(atom_type.is_acceptor())
-			{
+			if ( atom_type.is_acceptor() ) {
 				core::id::AtomID atom_id(atom_index,residue_index);
 				core::Vector xyz(pose.xyz(atom_id));
 				this->set_score_sphere_for_atom(lj_spline_,xyz,5.0);
@@ -130,25 +126,20 @@ void HbaGrid::refresh(core::pose::Pose const & pose, core::Vector const & center
 }
 
 core::Real HbaGrid::score(
-		core::conformation::UltraLightResidue const & residue,
-		core::Real const max_score,
-		qsarMapOP /*qsar_map*/)
+	core::conformation::UltraLightResidue const & residue,
+	core::Real const max_score,
+	qsarMapOP /*qsar_map*/)
 {
 	core::Real score = 0.0;
 	//GridBaseTracer << "map size is: " << qsar_map->size() <<std::endl;
-	for(core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score;++atom_index)
-	{
+	for ( core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index ) {
 		core::Vector const & atom_coord(residue[atom_index]);
-		if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
-		{
+		if ( this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()) ) {
 			core::chemical::AtomType atom_type(residue.residue()->atom_type(atom_index));
-			if(atom_type.is_hydrogen())
-			{
+			if ( atom_type.is_hydrogen() ) {
 				utility::vector1<core::Size> bonded_to_hydrogen(residue.residue()->bonded_neighbor(atom_index));
-				for(core::Size index = 1; index <= bonded_to_hydrogen.size();++index)
-				{
-					if(residue.residue()->atom_type(bonded_to_hydrogen[index]).is_donor())
-					{
+				for ( core::Size index = 1; index <= bonded_to_hydrogen.size(); ++index ) {
+					if ( residue.residue()->atom_type(bonded_to_hydrogen[index]).is_donor() ) {
 						core::Real grid_value = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
 						score += grid_value;
 					}
@@ -161,22 +152,18 @@ core::Real HbaGrid::score(
 }
 
 core::Real HbaGrid::atom_score(
-		core::conformation::UltraLightResidue const & residue,
-		core::Size atomno,
-		qsarMapOP /*qsar_map*/)
+	core::conformation::UltraLightResidue const & residue,
+	core::Size atomno,
+	qsarMapOP /*qsar_map*/)
 {
 	core::Real score = 0;
 	core::Vector const & atom_coord(residue[atomno]);
-	if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
-	{
+	if ( this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()) ) {
 		core::chemical::AtomType atom_type(residue.residue()->atom_type(atomno));
-		if(atom_type.is_hydrogen())
-		{
+		if ( atom_type.is_hydrogen() ) {
 			utility::vector1<core::Size> bonded_to_hydrogen(residue.residue()->bonded_neighbor(atomno));
-			for(core::Size index = 1; index <= bonded_to_hydrogen.size();++index)
-			{
-				if(residue.residue()->atom_type(bonded_to_hydrogen[index]).is_donor())
-				{
+			for ( core::Size index = 1; index <= bonded_to_hydrogen.size(); ++index ) {
+				if ( residue.residue()->atom_type(bonded_to_hydrogen[index]).is_donor() ) {
 					core::Real grid_value = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
 					score += grid_value;
 				}
@@ -191,19 +178,14 @@ core::Real HbaGrid::score(core::conformation::Residue const & residue, core::Rea
 {
 	core::Real score = 0.0;
 	//GridBaseTracer << "map size is: " << qsar_map->size() <<std::endl;
-	for(core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score;++atom_index)
-	{
+	for ( core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index ) {
 		core::Vector const & atom_coord(residue.xyz(atom_index));
-		if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
-		{
+		if ( this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()) ) {
 			core::chemical::AtomType atom_type(residue.atom_type(atom_index));
-			if(atom_type.is_hydrogen())
-			{
+			if ( atom_type.is_hydrogen() ) {
 				utility::vector1<core::Size> bonded_to_hydrogen(residue.bonded_neighbor(atom_index));
-				for(core::Size index = 1; index <= bonded_to_hydrogen.size();++index)
-				{
-					if(residue.atom_type(bonded_to_hydrogen[index]).is_donor())
-					{
+				for ( core::Size index = 1; index <= bonded_to_hydrogen.size(); ++index ) {
+					if ( residue.atom_type(bonded_to_hydrogen[index]).is_donor() ) {
 						core::Real grid_value = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
 						score += grid_value;
 					}
@@ -219,16 +201,12 @@ core::Real HbaGrid::atom_score(core::conformation::Residue const & residue, core
 {
 	core::Real score = 0;
 	core::Vector const & atom_coord(residue.xyz(atomno));
-	if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
-	{
+	if ( this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()) ) {
 		core::chemical::AtomType atom_type(residue.atom_type(atomno));
-		if(atom_type.is_hydrogen())
-		{
+		if ( atom_type.is_hydrogen() ) {
 			utility::vector1<core::Size> bonded_to_hydrogen(residue.bonded_neighbor(atomno));
-			for(core::Size index = 1; index <= bonded_to_hydrogen.size();++index)
-			{
-				if(residue.atom_type(bonded_to_hydrogen[index]).is_donor())
-				{
+			for ( core::Size index = 1; index <= bonded_to_hydrogen.size(); ++index ) {
+				if ( residue.atom_type(bonded_to_hydrogen[index]).is_donor() ) {
 					core::Real grid_value = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
 					score += grid_value;
 				}

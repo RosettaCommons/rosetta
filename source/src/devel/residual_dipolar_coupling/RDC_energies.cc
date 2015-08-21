@@ -10,7 +10,7 @@
 /// @file Residual Dipolar Coupling scoring
 /// @brief Residual Dipolar Coupling scoring
 /// @details
-///	  Contains currently: LoopModeler
+///   Contains currently: LoopModeler
 ///
 ///
 /// @author Vatsan Raman
@@ -76,7 +76,7 @@ void eval_dipolar(
 	}
 
 	calc_ordermatrix( number_of_rows, ORDERSIZE, A, b, x, reject );
-	if( reject ) std::cout << "SET SCORE VALUE, FIX THIS LATER " << std::endl;
+	if ( reject ) std::cout << "SET SCORE VALUE, FIX THIS LATER " << std::endl;
 	calc_orderparam( x, vec, Azz, eta );
 	calc_dipscore( A, x, b, All_RDC_lines, ORDERSIZE, Azz );
 
@@ -94,32 +94,32 @@ void assemble_datamatrix(
 )
 {
 
-	//	numeric::xyzVector< Real > N,H;
+	// numeric::xyzVector< Real > N,H;
 	numeric::xyzVector< Real > umn;
 
 	utility::vector1< devel::residual_dipolar_coupling::RDC >::const_iterator it;
 	core::Size nrow( 0 );
-	for( it = All_RDC_lines.begin(); it != All_RDC_lines.end(); ++it) {
+	for ( it = All_RDC_lines.begin(); it != All_RDC_lines.end(); ++it ) {
 
 		++nrow;
-			umn = pose.residue(it->res1()).atom("N").xyz() - pose.residue(it->res1()).atom("H").xyz();
+		umn = pose.residue(it->res1()).atom("N").xyz() - pose.residue(it->res1()).atom("H").xyz();
 
-			core::Real umn_x = umn.x()/it->fixed_dist();
-			core::Real umn_y = umn.y()/it->fixed_dist();
-			core::Real umn_z = umn.z()/it->fixed_dist();
+		core::Real umn_x = umn.x()/it->fixed_dist();
+		core::Real umn_y = umn.y()/it->fixed_dist();
+		core::Real umn_z = umn.z()/it->fixed_dist();
 
-			//filling matrix A
-			A( nrow, 1 ) = umn_y*umn_y - umn_x*umn_x;
-			A( nrow, 2 ) = umn_z*umn_z - umn_x*umn_x;
-			A( nrow, 3 ) = 2.0*umn_x*umn_y;
-			A( nrow, 4 ) = 2.0*umn_x*umn_z;
-			A( nrow, 5 ) = 2.0*umn_z*umn_y;
+		//filling matrix A
+		A( nrow, 1 ) = umn_y*umn_y - umn_x*umn_x;
+		A( nrow, 2 ) = umn_z*umn_z - umn_x*umn_x;
+		A( nrow, 3 ) = 2.0*umn_x*umn_y;
+		A( nrow, 4 ) = 2.0*umn_x*umn_z;
+		A( nrow, 5 ) = 2.0*umn_z*umn_y;
 
-			//filling matrix b
-			b( nrow ) = it->Reduced_Jdipolar();
+		//filling matrix b
+		b( nrow ) = it->Reduced_Jdipolar();
 
-			std::cout << "nrow " << nrow << std::endl;
-			//		std::cout << "Matrix A " << A(nrow,1) << " " << A(nrow,2) << " " << A(nrow,3) << " " << A(nrow,4) << " " << A(nrow,5) << std::endl;
+		std::cout << "nrow " << nrow << std::endl;
+		//  std::cout << "Matrix A " << A(nrow,1) << " " << A(nrow,2) << " " << A(nrow,3) << " " << A(nrow,4) << " " << A(nrow,5) << std::endl;
 	}
 
 }
@@ -149,7 +149,7 @@ void calc_ordermatrix(
 	core::Size sing; // number of singular values in w
 	core::Real Sxx;
 
-	for( core::Size i = 1; i <= nrow; ++i ) { // copy A
+	for ( core::Size i = 1; i <= nrow; ++i ) { // copy A
 		U(i,1) = A(i,1); // copy into U
 		U(i,2) = A(i,2);
 		U(i,3) = A(i,3);
@@ -176,16 +176,17 @@ void calc_ordermatrix(
 			++sing;
 		}
 	}
-	if ( sing > core::Size( std::abs( int( nrow ) - int( ORDERSIZE ) ) ) )
-	 std::cout << "SVD yielded a matrix singular above expectation " <<
-	 "in get_ordermatrix" << std::endl;
+	if ( sing > core::Size( std::abs( int( nrow ) - int( ORDERSIZE ) ) ) ) {
+		std::cout << "SVD yielded a matrix singular above expectation " <<
+			"in get_ordermatrix" << std::endl;
+	}
 
 	// find solution for exact dipolar values
 
 	svbksb( U, w, v, nrow, ORDERSIZE, b, x );
 
-// x components: (Syy,Szz,Sxy,Sxz,Syz)
-// check for acceptable values
+	// x components: (Syy,Szz,Sxy,Sxz,Syz)
+	// check for acceptable values
 
 	reject = false;
 	Sxx = -x(1) - x(2);
@@ -198,8 +199,8 @@ void calc_ordermatrix(
 
 	if ( reject ) {
 		std::cout << "order matrix not physically meaningful" << std::endl;
-//		try with errors on dipolar values? map error?
-//		score = 0.0;
+		//  try with errors on dipolar values? map error?
+		//  score = 0.0;
 		return;
 	}
 
@@ -220,7 +221,7 @@ void svdcmp(
 
 	std::cout << "Do nothing svdcmp ! " << std::endl;
 
-//U    USES pythag
+	//U    USES pythag
 	core::Size i,its,j,jj,k,l,nm;
 	FArray1D< core::Real > rv1( n );
 	core::Real anorm, c, f, g, h, s, scale, x, y, z;
@@ -378,7 +379,7 @@ void svdcmp(
 					a(j,i) = -(y*s)+(z*c);
 				}
 			}
-L2:
+			L2:
 			z = w(k);
 			if ( l == k ) {
 				if ( z < 0.0 ) {
@@ -389,7 +390,7 @@ L2:
 				}
 				break;
 			}
-			if ( its == 30) utility_exit_with_message("no convergence in svdcmp \n" );
+			if ( its == 30 ) utility_exit_with_message("no convergence in svdcmp \n" );
 			x = w(l);
 			nm = k-1;
 			y = w(nm);
@@ -529,7 +530,7 @@ void calc_orderparam(
 	core::Real temp1, temp2;
 
 	// Assemble order matrix
-	numeric::xyzMatrix< core::Real > S = numeric::xyzMatrix< core::Real >::rows(	-x(1) - x(2), x(3), x(4),x(3), x(1), x(5), x(4), x(5), x(2) );
+	numeric::xyzMatrix< core::Real > S = numeric::xyzMatrix< core::Real >::rows( -x(1) - x(2), x(3), x(4),x(3), x(1), x(5), x(4), x(5), x(2) );
 
 
 	numeric::xyzVector< core::Real > val; // Eigenvalues
@@ -560,14 +561,14 @@ void calc_orderparam(
 	Azz = val(sort(1));
 	eta = (2.0/3.0) * std::abs(val(sort(2))-val(sort(3))/Azz);
 
-// sort eigen values      // largest to smallest : Azz,Ayy,Axx
+	// sort eigen values      // largest to smallest : Azz,Ayy,Axx
 	temp1 = val(sort(1));
 	temp2 = val(sort(2));
 	val(3) = val(sort(3));
 	val(2) = temp2;
 	val(1) = temp1;
 
-// sort eigen vectors
+	// sort eigen vectors
 	for ( core::Size i = 1; i <= 3; ++i ) {
 		temp1 = xyz_vec(i,sort(3));
 		temp2 = xyz_vec(i,sort(2));
@@ -603,10 +604,10 @@ void calc_dipscore(
 
 	utility::vector1< devel::residual_dipolar_coupling::RDC >::const_iterator it;
 	core::Size nrow( 0 );
-	for( it = All_RDC_lines.begin(); it != All_RDC_lines.end(); ++it) {
+	for ( it = All_RDC_lines.begin(); it != All_RDC_lines.end(); ++it ) {
 		core::Real Jcalc( 0.0 );
 		++nrow;
-		for( core::Size j = 1; j <= ORDERSIZE; ++j ) {
+		for ( core::Size j = 1; j <= ORDERSIZE; ++j ) {
 			Jcalc += A( nrow, j )*x(j);
 		}
 		score += ( b( nrow ) -Jcalc )*( b( nrow ) - Jcalc );

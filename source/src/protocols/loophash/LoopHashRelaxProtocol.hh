@@ -42,13 +42,13 @@ typedef utility::pointer::shared_ptr< LoopHashRelaxProtocol const > LoopHashRela
 class LoopHashRelaxProtocol: public protocols::moves::Mover {
 public:
 
-  LoopHashRelaxProtocol(
-    LoopHashLibraryOP library
+	LoopHashRelaxProtocol(
+		LoopHashLibraryOP library
 	);
 
 	virtual void apply( core::pose::Pose& pose );
 
-  void manual_call( core::pose::Pose& pose );
+	void manual_call( core::pose::Pose& pose );
 
 	virtual protocols::moves::MoverOP clone() const;
 
@@ -56,10 +56,10 @@ public:
 		return "LoopHashRelaxProtocol";
 	}
 
-	virtual	protocols::moves::MoverOP	fresh_instance() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 
 private:
-  LoopHashLibraryOP library_;
+	LoopHashLibraryOP library_;
 
 };
 

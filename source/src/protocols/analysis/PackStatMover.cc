@@ -85,22 +85,22 @@ PackStatMover::apply( pose::Pose & pose )
 	core::Real packing_score = compute_packing_score( pd, oversample_ );
 
 	TR << "packing score: " << fname << " " << packing_score;
-	if( include_water_ ) {
+	if ( include_water_ ) {
 		TR << " ( with waters? (pose?) )";
 	}
 	TR << std::endl;
 
 	utility::vector1<core::Real> res_scores; // needed if output res scores or pdb
-	if( packstat_pdb_ || residue_scores_ ) {
+	if ( packstat_pdb_ || residue_scores_ ) {
 		res_scores = compute_residue_packing_scores( pd, oversample_ );
 	}
 
 	// if( packstat_pdb_ ) {
-	// 	output_packstat_pdb( fname, res_scores );
+	//  output_packstat_pdb( fname, res_scores );
 	// }
 
-	if( residue_scores_ ) {
-		for( int i = 1; i <= (int)res_scores.size(); ++i ) {
+	if ( residue_scores_ ) {
+		for ( int i = 1; i <= (int)res_scores.size(); ++i ) {
 			TR << "packing score: residue " << i << " " << res_scores[i] << std::endl;
 		}
 	}

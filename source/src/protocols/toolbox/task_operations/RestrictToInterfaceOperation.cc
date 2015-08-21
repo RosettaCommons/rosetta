@@ -44,17 +44,17 @@ namespace task_operations {
 
 /// @details this ctor assumes a pregenerated calculator - if you want a particular non-default cutoff distance
 RestrictToInterfaceOperation::RestrictToInterfaceOperation( std::string const & calculator )
-	: parent(), calculator_name_(calculator)
+: parent(), calculator_name_(calculator)
 {
 	//I suppose you could reasonably create this object BEFORE the calculator was generated/registered
-// 	if( !core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( calculator_name_ ) ){
-// 		utility_exit_with_message("In RestrictToInterfaceOperation, calculator " + calculator + " does not exist.");
-// 	}
+	//  if( !core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( calculator_name_ ) ){
+	//   utility_exit_with_message("In RestrictToInterfaceOperation, calculator " + calculator + " does not exist.");
+	//  }
 }
 
 /// @brief this ctor will generate the calculator for you (may use defaults)
 RestrictToInterfaceOperation::RestrictToInterfaceOperation( core::Size upper_chain, core::Size lower_chain )
-	: parent(), calculator_name_("")
+: parent(), calculator_name_("")
 {
 	make_calculator( upper_chain, lower_chain );
 }
@@ -64,12 +64,12 @@ void RestrictToInterfaceOperation::make_calculator( core::Size upper_chain, core
 	make_name( upper_chain, lower_chain );
 
 	using namespace core::pose::metrics;
-	if( CalculatorFactory::Instance().check_calculator_exists( calculator_name_ ) ){
+	if ( CalculatorFactory::Instance().check_calculator_exists( calculator_name_ ) ) {
 		Warning() << "In RestrictToInterfaceOperation, calculator " << calculator_name_
-							<< " already exists, this is hopefully correct for your purposes" << std::endl;
+			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
-	using core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator;
-	CalculatorFactory::Instance().register_calculator( calculator_name_, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( upper_chain, lower_chain ) ) );
+		using core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator;
+		CalculatorFactory::Instance().register_calculator( calculator_name_, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( upper_chain, lower_chain ) ) );
 	}
 }
 
@@ -96,12 +96,12 @@ core::pack::task::operation::TaskOperationOP RestrictToInterfaceOperation::clone
 void
 RestrictToInterfaceOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {
- 	//vector for filling packertask
- 	utility::vector1_bool repack(pose.total_residue(), false);
+	//vector for filling packertask
+	utility::vector1_bool repack(pose.total_residue(), false);
 
 	run_calculator(pose, calculator_name_, "interface_residues", repack);
 
- 	task.restrict_to_residues(repack);
+	task.restrict_to_residues(repack);
 }
 
 } //namespace protocols

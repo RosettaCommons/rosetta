@@ -9,11 +9,11 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file protocols/antibody/design/MutateFrameworkForClusterCreator.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_antibody_design_MutateFrameworkForClusterCreator_hh
-#define	INCLUDED_protocols_antibody_design_MutateFrameworkForClusterCreator_hh
+#define INCLUDED_protocols_antibody_design_MutateFrameworkForClusterCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 

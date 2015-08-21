@@ -67,8 +67,8 @@
 #include <core/scoring/EnergyGraph.hh>
 
 
-namespace protocols{
-namespace enzdes{
+namespace protocols {
+namespace enzdes {
 
 static thread_local basic::Tracer tr( "protocols.enzdes.SecondaryMatchProtocol" );
 
@@ -98,9 +98,9 @@ SecondaryMatchProtocol::apply(
 	//using core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG;
 
 	//in case we want to swich ligands, let's do it now
-	if( basic::options::option[basic::options::OptionKeys::enzdes::change_lig].user() ){
+	if ( basic::options::option[basic::options::OptionKeys::enzdes::change_lig].user() ) {
 		bool lig_switch = exchange_ligands_in_pose( start_pose, true, reduced_scofx_ );
-		if( !lig_switch ){
+		if ( !lig_switch ) {
 			tr << "Warning: could not perform the requested ligand switch, aborting protocol... " << std::endl;
 			return;
 		}
@@ -108,20 +108,17 @@ SecondaryMatchProtocol::apply(
 
 
 	//set up constraints (read cstfile, do mapping, etc, then add to pose)
-	if( basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ){
+	if ( basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ) {
 		enable_constraint_scoreterms();
 		setup_enzdes_constraints( start_pose, true );
-	}
-	//if there is no cstfile but a change of lig requested, we need to dump the pose now before returning
-	else if( basic::options::option[basic::options::OptionKeys::enzdes::change_lig].user() ){
+	} else if ( basic::options::option[basic::options::OptionKeys::enzdes::change_lig].user() ) {
+		//if there is no cstfile but a change of lig requested, we need to dump the pose now before returning
 
 		std::string outtag = start_pose.data().get_ptr< CacheableString >( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG )->str() + "_" + "lx.pdb";
 		start_pose.dump_pdb( outtag );
 
 		return;
-	}
-
-	else utility_exit_with_message("This protocol either needs a cstfile or change_lig file.");
+	} else utility_exit_with_message("This protocol either needs a cstfile or change_lig file.");
 
 	//TO DO: check whether the newly placed ligand clashes with the catalytic residues
 
@@ -159,7 +156,7 @@ SecondaryMatchProtocol::do_matching(
 	match_params_.clear();
 
 	toolbox::match_enzdes_util::EnzConstraintIOCOP cstio( enzutil::get_enzcst_io( start_pose ) );
-	if( !cstio ){
+	if ( !cstio ) {
 		tr << "Weird. No constraints seem to have been setup in the pose." << std::endl;
 		return false;
 	}
@@ -168,38 +165,37 @@ SecondaryMatchProtocol::do_matching(
 	//utility::vector1< EnzConstraintParametersCOP > match_params;
 
 	//first we'll clone the missing params
-	for( utility::vector1< toolbox::match_enzdes_util::EnzConstraintParametersCOP >::const_iterator tmp_it = tmp_params.begin();
-			 tmp_it != tmp_params.end(); ++tmp_it) {
+	for ( utility::vector1< toolbox::match_enzdes_util::EnzConstraintParametersCOP >::const_iterator tmp_it = tmp_params.begin();
+			tmp_it != tmp_params.end(); ++tmp_it ) {
 		toolbox::match_enzdes_util::EnzConstraintParametersOP p( new toolbox::match_enzdes_util::EnzConstraintParameters( **tmp_it ) );
 		match_params_.push_back( p );
 	}
 
 	core::Size num_res_to_match = match_params_.size();
 
-	if( num_res_to_match == 0 ){
+	if ( num_res_to_match == 0 ) {
 		tr.Info << "The pose already has all the required constraints present, aborting protocol.\n";
 		return true;
-	}
-	else tr.Info << "There are " << num_res_to_match << " interactions that need to be found.\n" << std::endl;
+	} else tr.Info << "There are " << num_res_to_match << " interactions that need to be found.\n" << std::endl;
 
-	for( utility::vector1< toolbox::match_enzdes_util::EnzConstraintParametersCOP >::const_iterator param_it = match_params_.begin();
-			 param_it != match_params_.end(); ++param_it) {
+	for ( utility::vector1< toolbox::match_enzdes_util::EnzConstraintParametersCOP >::const_iterator param_it = match_params_.begin();
+			param_it != match_params_.end(); ++param_it ) {
 
 		toolbox::match_enzdes_util::EnzCstTemplateResCOP missing_template = (*param_it)->get_missing_template_res( start_pose );
 		toolbox::match_enzdes_util::EnzCstTemplateResCOP present_template = (*param_it)->get_missing_template_other_res( start_pose );
 
-		for( utility::vector1< core::pose::PoseOP >::iterator pose_it = poses_to_process.begin();
-				 pose_it != poses_to_process.end(); ++pose_it){
+		for ( utility::vector1< core::pose::PoseOP >::iterator pose_it = poses_to_process.begin();
+				pose_it != poses_to_process.end(); ++pose_it ) {
 
 			add_enz_cst_interaction_to_pose( **pose_it, *param_it, missing_template, present_template, cstio);
 
 		} // loop over all poses to process
 
-		if( found_resis_.size() == 0 ) {
+		if ( found_resis_.size() == 0 ) {
 			tr.Info << "Bummer :( Could not find the desired interaction... " << std::endl;
 
 			//in case a switch of ligands was requested, we dump the pose(s) now
-			if( basic::options::option[basic::options::OptionKeys::enzdes::change_lig].user() ){
+			if ( basic::options::option[basic::options::OptionKeys::enzdes::change_lig].user() ) {
 
 				std::string outtag = poses_to_process[1]->data().get_ptr< CacheableString >( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG )->str() + "_" + "lx.pdb";
 				poses_to_process[1]->dump_pdb( outtag );
@@ -233,17 +229,17 @@ SecondaryMatchProtocol::add_enz_cst_interaction_to_pose(
 	utility::vector1< core::Size > target_residues;
 
 	tr.Info << "Trying to add interaction of pose residue(s) ";
-	for( std::map< Size, EnzCstTemplateResAtomsOP >::const_iterator
+	for ( std::map< Size, EnzCstTemplateResAtomsOP >::const_iterator
 			pos_it = get_enzdes_observer( pose )->cst_cache()->param_cache( params->cst_block() )->template_res_cache( present_template->param_index() )->seqpos_map_begin(),
 			pos_end = get_enzdes_observer( pose )->cst_cache()->param_cache( params->cst_block() )->template_res_cache( present_template->param_index() )->seqpos_map_end();
-			pos_it != pos_end; ++pos_it ){
+			pos_it != pos_end; ++pos_it ) {
 		target_residues.push_back( pos_it->first );
 		tr.Info << pose.residue_type( pos_it->first ).name() << " " << pos_it->first << ", ";
 	}
 
-	if( target_residues.size() != 1 ){
+	if ( target_residues.size() != 1 ) {
 		utility_exit_with_message("Error: there are more (or less) than 1 target residue. "
-				"This protocol isn't setup to handle dealing with multiple target residues yet( and it shouldn't necessarily be.");
+			"This protocol isn't setup to handle dealing with multiple target residues yet( and it shouldn't necessarily be.");
 	}
 	core::Size target_residue = target_residues[1];
 
@@ -251,12 +247,12 @@ SecondaryMatchProtocol::add_enz_cst_interaction_to_pose(
 
 	utility::vector1< std::string > trial_restypes = missing_template->allowed_res_types();
 
-	if( missing_template->is_backbone() ){
+	if ( missing_template->is_backbone() ) {
 		trial_restypes.clear();
 		trial_restypes.push_back( "GLY" );
 	}
 
-	for( utility::vector1< std::string >::const_iterator resi_it = trial_restypes.begin(); resi_it != trial_restypes.end(); ++resi_it ){
+	for ( utility::vector1< std::string >::const_iterator resi_it = trial_restypes.begin(); resi_it != trial_restypes.end(); ++resi_it ) {
 		tr.Info << *resi_it << ", ";
 	}
 	tr.Info << std::endl;
@@ -268,33 +264,33 @@ SecondaryMatchProtocol::add_enz_cst_interaction_to_pose(
 
 	core::conformation::Residue ala_res( restype_set_op->name_map("ALA"), true );
 
-	for( utility::vector1< std::string >::const_iterator resi_it = trial_restypes.begin(); resi_it != trial_restypes.end(); ++resi_it ){
+	for ( utility::vector1< std::string >::const_iterator resi_it = trial_restypes.begin(); resi_it != trial_restypes.end(); ++resi_it ) {
 
 		core::conformation::Residue trial_res( restype_set_op->name_map( *resi_it ), true );
 
 		tr << "starting search for restype " << *resi_it << "... ";
 
-		for( utility::vector1< core::Size >::const_iterator pos_try_it = trial_positions_.begin(); pos_try_it != trial_positions_.end(); ++pos_try_it){
+		for ( utility::vector1< core::Size >::const_iterator pos_try_it = trial_positions_.begin(); pos_try_it != trial_positions_.end(); ++pos_try_it ) {
 
 			tr << "searching position " << *pos_try_it << "... ";
 
-			if( ! restype_possible_at_position( pose, trial_res.type().get_self_ptr(), pose.residue( target_residue ).get_self_ptr(), *pos_try_it ) ) continue;
+			if ( ! restype_possible_at_position( pose, trial_res.type().get_self_ptr(), pose.residue( target_residue ).get_self_ptr(), *pos_try_it ) ) continue;
 
 			utility::vector1< std::string > current_variants;
 			bool match = variants_match( pose.residue_type( *pos_try_it ), trial_res.type() );
 
-			if( ! match ){
+			if ( ! match ) {
 				current_variants = pose.residue_type( *pos_try_it ).properties().get_list_of_variants();
 			}
 
 			pose.replace_residue( *pos_try_it, trial_res, true);
 
-			if( ! match ){
+			if ( ! match ) {
 				for ( core::Size var = 1; var <= current_variants.size(); ++var ) {
 					core::pose::add_variant_type_to_pose_residue(
-							pose,
-							core::chemical::ResidueProperties::get_variant_from_string( current_variants[ var ] ),
-							*pos_try_it );
+						pose,
+						core::chemical::ResidueProperties::get_variant_from_string( current_variants[ var ] ),
+						*pos_try_it );
 				}
 			}
 
@@ -306,12 +302,11 @@ SecondaryMatchProtocol::add_enz_cst_interaction_to_pose(
 
 			core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
 			//task->initialize_from_command_line();
-			for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i) {
-				if( ( i == *pos_try_it ) || ( i == target_residue ) ){
+			for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+				if ( ( i == *pos_try_it ) || ( i == target_residue ) ) {
 					task->nonconst_residue_task( i ).restrict_to_repacking();
 					task->nonconst_residue_task( i ).initialize_from_command_line();
-				}
-				else task->nonconst_residue_task( i ).prevent_repacking();
+				} else task->nonconst_residue_task( i ).prevent_repacking();
 			}
 
 			protocols::simple_moves::PackRotamersMoverOP trial_packer( new protocols::simple_moves::PackRotamersMover(reduced_scofx_, task) );
@@ -325,7 +320,7 @@ SecondaryMatchProtocol::add_enz_cst_interaction_to_pose(
 
 			core::scoring::EnergyEdge const * eedge = pose.energies().energy_graph().find_energy_edge( *pos_try_it, target_residue );
 
-			if( eedge != 0 ){
+			if ( eedge != 0 ) {
 				// apl -- removing TwoBodyEnergyMap + making this call a little more efficient.
 				try_targ_clash = eedge->dot( reduced_scofx_->weights() );
 			}
@@ -336,11 +331,11 @@ SecondaryMatchProtocol::add_enz_cst_interaction_to_pose(
 			//little hacky, not the real bbclash energy, but in this case probably a better approximation because it also includes the clash with ALAs, etc
 			core::Real try_bb_clash = pose.energies().residue_total_energies( *pos_try_it )[ core::scoring::fa_rep ];
 
-		tr.Info << "For restype " << pose.residue_type( *pos_try_it ).name() << " at pos " << *pos_try_it << " the cst_sum is " << cst_sum << " and the clashE is " << try_targ_clash << "." << std::endl;
+			tr.Info << "For restype " << pose.residue_type( *pos_try_it ).name() << " at pos " << *pos_try_it << " the cst_sum is " << cst_sum << " and the clashE is " << try_targ_clash << "." << std::endl;
 
-			if( ( cst_sum < basic::options::option[basic::options::OptionKeys::enzdes::secmatch_Ecutoff] )
-				&& ( try_targ_clash < basic::options::option[basic::options::OptionKeys::enzdes::sc_sc_bump_cutoff] )
-				&& try_bb_clash < basic::options::option[basic::options::OptionKeys::enzdes::bb_bump_cutoff]){
+			if ( ( cst_sum < basic::options::option[basic::options::OptionKeys::enzdes::secmatch_Ecutoff] )
+					&& ( try_targ_clash < basic::options::option[basic::options::OptionKeys::enzdes::sc_sc_bump_cutoff] )
+					&& try_bb_clash < basic::options::option[basic::options::OptionKeys::enzdes::bb_bump_cutoff] ) {
 
 				core::conformation::ResidueOP fres( new core::conformation::Residue( pose.residue( *pos_try_it ) ) );
 
@@ -357,12 +352,12 @@ SecondaryMatchProtocol::add_enz_cst_interaction_to_pose(
 
 			pose.replace_residue( *pos_try_it, ala_res, true);
 
-			if( ! match ){
+			if ( ! match ) {
 				for ( core::Size var = 1; var <= current_variants.size(); ++var ) {
 					core::pose::add_variant_type_to_pose_residue(
-							pose,
-							core::chemical::ResidueProperties::get_variant_from_string( current_variants[ var ] ),
-							*pos_try_it );
+						pose,
+						core::chemical::ResidueProperties::get_variant_from_string( current_variants[ var ] ),
+						*pos_try_it );
 				}
 			}
 
@@ -394,20 +389,20 @@ SecondaryMatchProtocol::find_all_allowed_positions(
 
 	//utility::vector1< core::Size > cat_res = catalytic_res();
 
-	for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i){
+	for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
 
-		if( allowed_res[ i ] == true ){
+		if ( allowed_res[ i ] == true ) {
 
 
-			if( pose.residue_type( i ).is_ligand() ) continue;
+			if ( pose.residue_type( i ).is_ligand() ) continue;
 
-			if( ( pose.residue_type( i ).name3() == "GLY" )
-				|| ( pose.residue_type( i ).name3() == "PRO" ) ) continue;
+			if ( ( pose.residue_type( i ).name3() == "GLY" )
+					|| ( pose.residue_type( i ).name3() == "PRO" ) ) continue;
 
 			//utility::vector1< Size >::iterator find_res = find( cat_res.begin(), cat_res.end(), i );
 
 			//if( find_res == cat_res.end() ) trial_positions_.push_back( i );
-			if( !is_catalytic_position( pose, i ) ) trial_positions_.push_back( i );
+			if ( !is_catalytic_position( pose, i ) ) trial_positions_.push_back( i );
 
 		}
 	}
@@ -429,35 +424,32 @@ SecondaryMatchProtocol::generate_and_dump_pose_found_residues_combinations( core
 
 	process_combos.push_back( protocols::enzdes::PoseFoundResiduesCombinationOP( new PoseFoundResiduesCombination( ref_poseCOP,
 		SecondaryMatchProtocolCAP( utility::pointer::dynamic_pointer_cast< SecondaryMatchProtocol const >( get_self_ptr() ) )
-	) ) );
+		) ) );
 
 
-	for( utility::vector1< utility::vector1< core::conformation::ResidueOP > >::iterator param_it = found_resis_.begin();
-			 param_it != found_resis_.end(); ++param_it )
-		{
+	for ( utility::vector1< utility::vector1< core::conformation::ResidueOP > >::iterator param_it = found_resis_.begin();
+			param_it != found_resis_.end(); ++param_it ) {
 
-			//utility::vector1< core::pose::PoseCOP > temp_poses;
-			utility::vector1< PoseFoundResiduesCombinationOP > temp_combos;
+		//utility::vector1< core::pose::PoseCOP > temp_poses;
+		utility::vector1< PoseFoundResiduesCombinationOP > temp_combos;
 
-			for( utility::vector1< core::conformation::ResidueOP >::iterator res_it = param_it->begin();
-					 res_it != param_it->end(); ++res_it )
-				{
+		for ( utility::vector1< core::conformation::ResidueOP >::iterator res_it = param_it->begin();
+				res_it != param_it->end(); ++res_it ) {
 
-					for( utility::vector1< PoseFoundResiduesCombinationOP >::iterator pp_it = process_combos.begin();
-					 pp_it != process_combos.end(); ++pp_it )
-						{
-							//core::pose::PoseOP success_pose = new core::pose::Pose(**pp_it);
-							//success_pose->replace_residue( (*res_it)->seqpos(), **res_it, true);
-							PoseFoundResiduesCombinationOP success_combo( new PoseFoundResiduesCombination( **pp_it ) );
-							success_combo->add_residue( *res_it );
-							temp_combos.push_back( success_combo );
-						}
-
-				}
-
-			process_combos = temp_combos;
+			for ( utility::vector1< PoseFoundResiduesCombinationOP >::iterator pp_it = process_combos.begin();
+					pp_it != process_combos.end(); ++pp_it ) {
+				//core::pose::PoseOP success_pose = new core::pose::Pose(**pp_it);
+				//success_pose->replace_residue( (*res_it)->seqpos(), **res_it, true);
+				PoseFoundResiduesCombinationOP success_combo( new PoseFoundResiduesCombination( **pp_it ) );
+				success_combo->add_residue( *res_it );
+				temp_combos.push_back( success_combo );
+			}
 
 		}
+
+		process_combos = temp_combos;
+
+	}
 
 	//now hopefully all the output poses are in the process combos array
 
@@ -466,11 +458,10 @@ SecondaryMatchProtocol::generate_and_dump_pose_found_residues_combinations( core
 
 	bool successful = false;
 
-	for( utility::vector1< PoseFoundResiduesCombinationOP >::iterator pp_it = process_combos.begin();
-					 pp_it != process_combos.end(); ++pp_it )
-		{
-			if( (*pp_it)->construct_and_dump_outpose( match_params_ ) ) successful = true;
-		}
+	for ( utility::vector1< PoseFoundResiduesCombinationOP >::iterator pp_it = process_combos.begin();
+			pp_it != process_combos.end(); ++pp_it ) {
+		if ( (*pp_it)->construct_and_dump_outpose( match_params_ ) ) successful = true;
+	}
 
 	return successful;
 
@@ -495,10 +486,9 @@ SecondaryMatchProtocol::restype_possible_at_position(
 
 	core::Real dist = trial_xyz.distance( targ_neighbor_xyz );
 
-	if( dist < ( 4.0 + restype->nbr_radius() + target_residue->type().nbr_radius() ) ) {
+	if ( dist < ( 4.0 + restype->nbr_radius() + target_residue->type().nbr_radius() ) ) {
 		return true;
-	}
-	else{
+	} else {
 		tr.Info << "Can't place " << restype->name3() << " at position " << trial_pos << "because it's too far from target "<< target_residue->type().name3() << target_residue->seqpos() << "." << std::endl;
 	}
 
@@ -517,21 +507,21 @@ SecondaryMatchProtocol::residues_compatible(
 
 	using namespace core::conformation;
 
-	if( !found_res_compatibility_determined_ ){
+	if ( !found_res_compatibility_determined_ ) {
 		utility_exit_with_message( "Error: trying to lookup residue compatibility without having determined it previously." );
 	}
 
 
 	std::map< ResidueCOP, std::map< ResidueCOP, core::Size > >::const_iterator map_this_res = found_res_compatibility_.find( res1 );
 
-	if( map_this_res == found_res_compatibility_.end() ){
+	if ( map_this_res == found_res_compatibility_.end() ) {
 		utility_exit_with_message( "Error: no residue compatibility map found for residue "+utility::to_string( res1->seqpos() )+"." );
 	}
 
 	std::map< ResidueCOP, core::Size>::const_iterator res2_it = map_this_res->second.find( res2 );
 
-	if( res2_it == map_this_res->second.end() ){
-			utility_exit_with_message( "Error: no residue compatibility info found for res1 "+utility::to_string( res1->seqpos() )+" and res2 "+utility::to_string( res2->seqpos() ) +"." );
+	if ( res2_it == map_this_res->second.end() ) {
+		utility_exit_with_message( "Error: no residue compatibility info found for res1 "+utility::to_string( res1->seqpos() )+" and res2 "+utility::to_string( res2->seqpos() ) +"." );
 	}
 
 	return res2_it->second;
@@ -550,27 +540,27 @@ SecondaryMatchProtocol::determine_found_residues_compatibility(
 	core::Real Ecutoff = basic::options::option[ basic::options::OptionKeys::enzdes::sc_sc_bump_cutoff ];
 	found_res_compatibility_.clear();
 
-	for( core::Size i = 1; i <= found_resis_.size(); ++i ){
+	for ( core::Size i = 1; i <= found_resis_.size(); ++i ) {
 
 
-		for( utility::vector1< core::conformation::ResidueOP >::const_iterator res1_it = found_resis_[i].begin();
-				 res1_it != found_resis_[i].end(); ++res1_it){
+		for ( utility::vector1< core::conformation::ResidueOP >::const_iterator res1_it = found_resis_[i].begin();
+				res1_it != found_resis_[i].end(); ++res1_it ) {
 
 			std::map< core::conformation::ResidueCOP, core::Size > map_this_res;
 
-			for( core::Size j  = i+1; j<= found_resis_.size(); ++j ){
+			for ( core::Size j  = i+1; j<= found_resis_.size(); ++j ) {
 
-				for( utility::vector1< core::conformation::ResidueOP>::const_iterator res2_it = found_resis_[j].begin();
-						 res2_it != found_resis_[j].end(); ++res2_it){
+				for ( utility::vector1< core::conformation::ResidueOP>::const_iterator res2_it = found_resis_[j].begin();
+						res2_it != found_resis_[j].end(); ++res2_it ) {
 
 					core::Size compatible(0);
-					if( (*res1_it)->seqpos() != (*res2_it)->seqpos() ){
+					if ( (*res1_it)->seqpos() != (*res2_it)->seqpos() ) {
 
 						//perform the clash check between res1 and res2
 						core::scoring::EnergyMap emap;
 						reduced_scofx_->bump_check_full( **res1_it, **res2_it, *ref_poseCOP, emap );
 
-						if( (reduced_scofx_->weights().dot( emap )) < Ecutoff ) compatible = 1;
+						if ( (reduced_scofx_->weights().dot( emap )) < Ecutoff ) compatible = 1;
 						//std::cerr << "just checked compatibility for i=" << i << " and j=" << j;
 						//std::cerr << ", res i is a " << (*res1_it)->name3() << " at " << (*res1_it)->seqpos() << ", and res j is a " << (*res2_it)->name3() << " at " << (*res2_it)->seqpos() <<  std::endl;
 					}
@@ -579,7 +569,7 @@ SecondaryMatchProtocol::determine_found_residues_compatibility(
 				}
 			}
 
-				//save the map for this residue
+			//save the map for this residue
 			found_res_compatibility_.insert( std::pair< core::conformation::ResidueCOP, std::map< core::conformation::ResidueCOP, core::Size > > ( *res1_it, map_this_res) );
 
 		}
@@ -596,8 +586,8 @@ PoseFoundResiduesCombination::~PoseFoundResiduesCombination() {}
 PoseFoundResiduesCombination::PoseFoundResiduesCombination(
 	core::pose::PoseCOP ref_pose_in,
 	SecondaryMatchProtocolCAP secmatch_in
-	) : ref_pose_( ref_pose_in ),
-			secmatch_prot_( secmatch_in )
+) : ref_pose_( ref_pose_in ),
+	secmatch_prot_( secmatch_in )
 {
 	combine_resis_.clear();
 }
@@ -626,17 +616,17 @@ PoseFoundResiduesCombination::construct_and_dump_outpose(
 	// out if they are all compatible with each other and
 	// generate the new header line
 
-  bool all_residues_compatible = true;
+	bool all_residues_compatible = true;
 
 	core::Size num_resis_to_combine = combine_resis_.size();
 
-	if( num_resis_to_combine != match_params.size() ){
+	if ( num_resis_to_combine != match_params.size() ) {
 		utility_exit_with_message("ERROR: number of matching parameters doesn't fit number of residues.\n");
 	}
-	
+
 	SecondaryMatchProtocolCOP secmatch_prot( secmatch_prot_ );
 
-	for( core::Size i = 1; i <= num_resis_to_combine; ++i){
+	for ( core::Size i = 1; i <= num_resis_to_combine; ++i ) {
 
 		//generate the header line for this interaction
 		std::string mis_chain(""), mis_name3("");
@@ -646,7 +636,7 @@ PoseFoundResiduesCombination::construct_and_dump_outpose(
 		mispos = outpose.pdb_info()->number( combine_resis_[i]->seqpos() );
 
 		//for traditional reasons, if residue is a ligand, it will be set to 0
-		if( outpose.residue_type( combine_resis_[i]->seqpos() ).is_ligand() ) mispos = 0;
+		if ( outpose.residue_type( combine_resis_[i]->seqpos() ).is_ligand() ) mispos = 0;
 
 		mis_name3 = combine_resis_[i]->name3();
 		mis_chain =  outpose.pdb_info()->chain( combine_resis_[i]->seqpos() );
@@ -655,35 +645,33 @@ PoseFoundResiduesCombination::construct_and_dump_outpose(
 		toolbox::match_enzdes_util::EnzCstTemplateResCOP other_template( match_params[i]->get_missing_template_other_res( outpose ) );
 		toolbox::match_enzdes_util::EnzCstTemplateResCacheCOP other_template_cache( toolbox::match_enzdes_util::get_enzdes_observer( outpose )->cst_cache()->param_cache( match_params[i]->cst_block() )->template_res_cache( other_template->param_index() ) );
 
-		for( std::map< Size, toolbox::match_enzdes_util::EnzCstTemplateResAtomsOP >::const_iterator pos_it = other_template_cache->seqpos_map_begin(), pos_end = other_template_cache->seqpos_map_end();
-				 pos_it != pos_end; ++pos_it ){
-		//for( std::map< Size, EnzCstTemplateResAtomsOP >::const_iterator pos_it = match_params[i]->get_missing_template_other_res( outpose )->respos_map_begin();
-				 //pos_it != match_params[i]->get_missing_template_other_res( outpose )->respos_map_end(); ++pos_it ){
+		for ( std::map< Size, toolbox::match_enzdes_util::EnzCstTemplateResAtomsOP >::const_iterator pos_it = other_template_cache->seqpos_map_begin(), pos_end = other_template_cache->seqpos_map_end();
+				pos_it != pos_end; ++pos_it ) {
+			//for( std::map< Size, EnzCstTemplateResAtomsOP >::const_iterator pos_it = match_params[i]->get_missing_template_other_res( outpose )->respos_map_begin();
+			//pos_it != match_params[i]->get_missing_template_other_res( outpose )->respos_map_end(); ++pos_it ){
 			other_positions.push_back( pos_it->first );
 		}
-		if( other_positions.size() != 1 ){
+		if ( other_positions.size() != 1 ) {
 			utility_exit_with_message("Impossible error just happened...");
 		}
 
 		otherpos = outpose.pdb_info()->number( other_positions[1] );
 
 		//for traditional reasons, if residue is a ligand, it will be set to 0
-		if( outpose.residue_type( other_positions[1] ).is_ligand() ) otherpos = 0;
+		if ( outpose.residue_type( other_positions[1] ).is_ligand() ) otherpos = 0;
 
 		other_name3 = outpose.residue_type( other_positions[1] ).name3();
 		other_chain = outpose.pdb_info()->chain( other_positions[1] );
 
 		core::pose::RemarkInfo ri;
 
-		if( match_params[i]->resA() == match_params[i]->get_missing_template_res( outpose ) ){
+		if ( match_params[i]->resA() == match_params[i]->get_missing_template_res( outpose ) ) {
 			//ri.value = "BONE TEMPLATE "+mis_remark+" MATCH MOTIF "+other_remark;
 			ri.value = toolbox::match_enzdes_util::assemble_remark_line( mis_chain, mis_name3, mispos, other_chain, other_name3, otherpos, match_params[i]->cst_block() );
-		}
-		else if( match_params[i]->resB() == match_params[i]->get_missing_template_res( outpose ) ){
-			//			ri.value = "BONE TEMPLATE "+other_remark+" MATCH MOTIF "+mis_remark;
+		} else if ( match_params[i]->resB() == match_params[i]->get_missing_template_res( outpose ) ) {
+			//   ri.value = "BONE TEMPLATE "+other_remark+" MATCH MOTIF "+mis_remark;
 			ri.value = toolbox::match_enzdes_util::assemble_remark_line( other_chain, other_name3, otherpos, mis_chain, mis_name3, mispos, match_params[i]->cst_block() );
-		}
-		else{
+		} else {
 			utility_exit_with_message("Weird. Suddenly no residue is missing anymore.\n");
 		}
 
@@ -691,10 +679,10 @@ PoseFoundResiduesCombination::construct_and_dump_outpose(
 
 		//then determine if it's compatible with all other residues
 
-		for( core::Size j = i + 1; j <= num_resis_to_combine; ++j){
+		for ( core::Size j = i + 1; j <= num_resis_to_combine; ++j ) {
 
 			//if( ! residues_compatible_without_checking( combine_resis_[i], combine_resis_[j] ) ){
-			if( secmatch_prot->residues_compatible( combine_resis_[i], combine_resis_[j] ) == 0 ) {
+			if ( secmatch_prot->residues_compatible( combine_resis_[i], combine_resis_[j] ) == 0 ) {
 				all_residues_compatible = false;
 				return false;
 			}
@@ -716,7 +704,7 @@ PoseFoundResiduesCombination::construct_and_dump_outpose(
 	//the cst_score is still below the cutoff
 
 	//note: the all_residues_compatible check is not really necessary, but just to make sure...
-	if( all_residues_compatible ){
+	if ( all_residues_compatible ) {
 		outpose.dump_pdb( outtag );
 		return true;
 	}

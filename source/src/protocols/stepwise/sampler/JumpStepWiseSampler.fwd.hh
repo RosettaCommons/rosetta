@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/sampler/JumpStepWiseSampler.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace stepwise {
 namespace sampler {
-	
-	class JumpStepWiseSampler;
-	typedef utility::pointer::shared_ptr< JumpStepWiseSampler > JumpStepWiseSamplerOP;
-	typedef utility::pointer::shared_ptr< JumpStepWiseSampler const > JumpStepWiseSamplerCOP;
-	
+
+class JumpStepWiseSampler;
+typedef utility::pointer::shared_ptr< JumpStepWiseSampler > JumpStepWiseSamplerOP;
+typedef utility::pointer::shared_ptr< JumpStepWiseSampler const > JumpStepWiseSamplerCOP;
+
 } //sampler
 } //stepwise
 } //protocols

@@ -48,9 +48,9 @@ protected:
 	/// @brief Helper function to get a coordinate transformation from 3 points:
 	///   the origin, a point specifying the +z axis, and a point specifying the x-z plane
 	static numeric::xyzMatrix< core::Real > coordTransformFromThreePoints(
-	                                       numeric::xyzVector< core::Real > ori,
-	                                       numeric::xyzVector< core::Real > zAxis,
-	                                       numeric::xyzVector< core::Real > xzPlane );
+		numeric::xyzVector< core::Real > ori,
+		numeric::xyzVector< core::Real > zAxis,
+		numeric::xyzVector< core::Real > xzPlane );
 
 	/// @brief Helper function computes center of mass of the segment in the pose
 	inline numeric::xyzVector< core::Real > getCoM( core::pose::Pose const & pose );
@@ -61,7 +61,7 @@ public:
 
 	/// @brief constructor
 	RBSegmentMover( RBSegment const & seg ) :
-		segment_(seg) {	}
+		segment_(seg) { }
 
 	/// @brief Apply the rigid-body fragment mover to a pose.  Must be defined by derived classes.
 	virtual void apply( core::pose::Pose & pose ) = 0;
@@ -135,7 +135,7 @@ public:
 	void print() {
 		int nsegs = segment_.nContinuousSegments();
 		std::cerr << nsegs << " segment object\n";
-		for (int i=1; i<=nsegs; ++i) {
+		for ( int i=1; i<=nsegs; ++i ) {
 			std::cerr << "    " << i << ":  " << segment_[i].start() << " to " << segment_[i].end() << std::endl;
 		}
 	}
@@ -161,10 +161,10 @@ public:
 	/// @li sigOffAxisR: the stdev of rotation normal to the helical axis
 	/// @li sigOffAxisT: the stdev of movement normal to the helical axis
 	HelicalGaussianMover( RBSegment const & seg,
-	                      core::Real sigAxisR=0.0,
-	                      core::Real sigAxisT=0.0,
-	                      core::Real sigOffAxisR=0.0,
-	                      core::Real sigOffAxisT=0.0 ) :
+		core::Real sigAxisR=0.0,
+		core::Real sigAxisT=0.0,
+		core::Real sigOffAxisR=0.0,
+		core::Real sigOffAxisT=0.0 ) :
 		RBSegmentMover(seg),
 		sigAxisT_( sigAxisT ),
 		sigAxisR_( sigAxisR ),
@@ -191,10 +191,10 @@ public:
 	/// @li sigOffAxisT: the stdev of movement normal to the helical axis
 	virtual void set_movement( core::Real sigAxisR=0.0, core::Real sigAxisT=0.0, core::Real sigOffAxisR=0.0, core::Real sigOffAxisT=0.0)
 	{
-		if (sigAxisT != 0.0) sigAxisT_ = sigAxisT;
-		if (sigAxisR != 0.0) sigAxisR_ = sigAxisR;
-		if (sigOffAxisT != 0.0) sigOffAxisT_ = sigOffAxisT;
-		if (sigOffAxisR != 0.0) sigOffAxisR_ = sigOffAxisR;
+		if ( sigAxisT != 0.0 ) sigAxisT_ = sigAxisT;
+		if ( sigAxisR != 0.0 ) sigAxisR_ = sigAxisR;
+		if ( sigOffAxisT != 0.0 ) sigOffAxisT_ = sigOffAxisT;
+		if ( sigOffAxisR != 0.0 ) sigOffAxisR_ = sigOffAxisR;
 
 		std::cerr << "HelicalGaussianMover : Setting params (" << sigAxisR_ << ", " << sigAxisT_ << ", " << sigOffAxisR_ << ", " << sigOffAxisT_ << ")\n";
 	}
@@ -209,8 +209,8 @@ public:
 	/// Defined such that +z points to the C-terminal end of the helix axis,
 	/// +x from the helix axis to the N-terminal residue
 	void getCoordinateTransformation(  core::pose::Pose const & pose,
-																		 numeric::xyzVector< core::Real > &rotationCenter,
-																		 numeric::xyzMatrix< core::Real > &coordinateTransform );
+		numeric::xyzVector< core::Real > &rotationCenter,
+		numeric::xyzMatrix< core::Real > &coordinateTransform );
 };
 
 ///////////////////////////////////////////
@@ -262,7 +262,7 @@ public:
 
 	/// @brief set movement parameters.  ignore all input args
 	virtual void
-	set_movement( core::Real /*sigAxisR=0.0*/, core::Real /*sigAxisT=0.0*/, core::Real /*sigOffAxisR=0.0*/, core::Real /*sigOffAxisT=0.0*/)	{ }
+	set_movement( core::Real /*sigAxisR=0.0*/, core::Real /*sigAxisT=0.0*/, core::Real /*sigOffAxisR=0.0*/, core::Real /*sigOffAxisT=0.0*/) { }
 
 	/// @brief Apply a + or - residue "shift" to this helix
 	void
@@ -333,12 +333,13 @@ public:
 	/// @li sigT: the stdev of movement
 	virtual void set_movement( core::Real sigAxisR=0.0, core::Real sigAxisT=0.0, core::Real sigOffAxisR=0.0, core::Real sigOffAxisT=0.0)
 	{
-		if (sigAxisT != 0.0) sigma_trans = sigAxisT;
-		if (sigAxisR != 0.0) sigma_rot = sigAxisR;
+		if ( sigAxisT != 0.0 ) sigma_trans = sigAxisT;
+		if ( sigAxisR != 0.0 ) sigma_rot = sigAxisR;
 
 		std::cerr << "GaussianRBSegmentMover : Setting params (" << sigma_rot << ", " << sigma_trans << ")\n";
-		if (sigOffAxisR != 0.0 || sigOffAxisT != 0.0 )
+		if ( sigOffAxisR != 0.0 || sigOffAxisT != 0.0 ) {
 			std::cerr << "GaussianRBSegmentMover : Ignore params (" << sigOffAxisR << ", " << sigOffAxisT << ")\n";
+		}
 	}
 
 	/// @brief clone this object
@@ -353,8 +354,8 @@ public:
 	/// Defined such that +z points to the C-terminal end of the helix axis,
 	/// +x from the helix axis to the N-terminal residue
 	void getCoordinateTransformation( core::pose::Pose const & pose,
-																		numeric::xyzVector< core::Real > &rotationCenter,
-																		numeric::xyzMatrix< core::Real > &coordinateTransform );
+		numeric::xyzVector< core::Real > &rotationCenter,
+		numeric::xyzMatrix< core::Real > &coordinateTransform );
 };
 
 ///////////////////////////////////////////
@@ -376,10 +377,10 @@ public:
 	/// @li sigOffAxisR: the stdev of rotation normal to the helical axis
 	/// @li sigOffAxisT: the stdev of movement normal to the helical axis
 	StrandTwistingMover ( RBSegment const & seg,
-	                      core::Real sigAxisR=0.0,
-	                      core::Real sigAxisT=0.0,
-	                      core::Real sigOffAxisR=0.0,
-	                      core::Real sigOffAxisT=0.0 ) :
+		core::Real sigAxisR=0.0,
+		core::Real sigAxisT=0.0,
+		core::Real sigOffAxisR=0.0,
+		core::Real sigOffAxisT=0.0 ) :
 		RBSegmentMover(seg),
 		sigAxisT_( sigAxisT ),
 		sigAxisR_( sigAxisR ),
@@ -406,10 +407,10 @@ public:
 	/// @li sigOffAxisT: the stdev of movement normal to the helical axis
 	virtual void set_movement( core::Real sigAxisR=0.0, core::Real sigAxisT=0.0, core::Real sigOffAxisR=0.0, core::Real sigOffAxisT=0.0)
 	{
-		if (sigAxisT != 0.0) sigAxisT_ = sigAxisT;
-		if (sigAxisR != 0.0) sigAxisR_ = sigAxisR;
-		if (sigOffAxisT != 0.0) sigOffAxisT_ = sigOffAxisT;
-		if (sigOffAxisR != 0.0) sigOffAxisR_ = sigOffAxisR;
+		if ( sigAxisT != 0.0 ) sigAxisT_ = sigAxisT;
+		if ( sigAxisR != 0.0 ) sigAxisR_ = sigAxisR;
+		if ( sigOffAxisT != 0.0 ) sigOffAxisT_ = sigOffAxisT;
+		if ( sigOffAxisR != 0.0 ) sigOffAxisR_ = sigOffAxisR;
 
 		std::cerr << "StrandTwistingMover : Setting params (" << sigAxisR_ << ", " << sigAxisT_ << ", " << sigOffAxisR_ << ", " << sigOffAxisT_ << ")\n";
 	}

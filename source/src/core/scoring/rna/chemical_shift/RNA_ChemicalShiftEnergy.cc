@@ -94,7 +94,7 @@ RNA_ChemicalShiftEnergy::setup_for_derivatives( pose::Pose &, ScoreFunction cons
 
 
 	//MIGHT BENEFIT FROM SOME BOOKKEEPING such as MAPPING atom_namerealatomdata_index/ to atom_index for fast look-up;
-	//or precalculate the calc_chem_shift values of the atoms with CS_data 
+	//or precalculate the calc_chem_shift values of the atoms with CS_data
 	//this assumes that the pose conformation does change between the call to setup_for_derivative() and the calls to eval_atom_derivative()
 
 }
@@ -122,7 +122,7 @@ RNA_ChemicalShiftEnergy::eval_atom_derivative(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
- 	) const
+) const
 {
 
 	rna_chemical_shift_potential_.eval_atom_derivative( atom_id, pose, domain_map, weights, F1, F2 );

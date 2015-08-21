@@ -53,121 +53,123 @@ namespace environment {
 namespace claims {
 
 EnvClaimOP EnvClaim::make_claim( std::string const& name,
-                                 ClientMoverOP owner,
-                                 utility::tag::TagCOP tag,
-                                 basic::datacache::DataMap& datamap ) {
-  if      ( name == "CutBiasClaim" ) return EnvClaimOP( new CutBiasClaim( owner, tag, datamap ) );
-  else if ( name == "JumpClaim" )    return EnvClaimOP( new JumpClaim( owner, tag, datamap ) );
-  else if ( name == "TorsionClaim" ) return EnvClaimOP( new TorsionClaim( owner, tag, datamap ) );
-  else if ( name == "VrtResClaim" )  return EnvClaimOP( new VirtResClaim( owner, tag, datamap ) );
-  else if ( name == "XYZClaim" )     return EnvClaimOP( new XYZClaim( owner, tag, datamap ) );
-  else throw utility::excn::EXCN_RosettaScriptsOption( "'" + name + "' is not a known EnvClaim type." );
+	ClientMoverOP owner,
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap& datamap ) {
+	if      ( name == "CutBiasClaim" ) return EnvClaimOP( new CutBiasClaim( owner, tag, datamap ) );
+	else if ( name == "JumpClaim" )    return EnvClaimOP( new JumpClaim( owner, tag, datamap ) );
+	else if ( name == "TorsionClaim" ) return EnvClaimOP( new TorsionClaim( owner, tag, datamap ) );
+	else if ( name == "VrtResClaim" )  return EnvClaimOP( new VirtResClaim( owner, tag, datamap ) );
+	else if ( name == "XYZClaim" )     return EnvClaimOP( new XYZClaim( owner, tag, datamap ) );
+	else throw utility::excn::EXCN_RosettaScriptsOption( "'" + name + "' is not a known EnvClaim type." );
 }
 
 bool EnvClaim::is_claim( std::string const& name ) {
-  if      ( name == "CutBiasClaim" ) return true;
-  else if ( name == "JumpClaim" )    return true;
-  else if ( name == "TorsionClaim" ) return true;
-  else if ( name == "VrtResClaim" )  return true;
-  else if ( name == "XYZClaim" )     return true;
-  else return false;
+	if      ( name == "CutBiasClaim" ) return true;
+	else if ( name == "JumpClaim" )    return true;
+	else if ( name == "TorsionClaim" ) return true;
+	else if ( name == "VrtResClaim" )  return true;
+	else if ( name == "XYZClaim" )     return true;
+	else return false;
 }
 
 EnvClaim::EnvClaim( ClientMoverOP owner ):
-  ReferenceCount(),
-  claim_source_( owner )
+	ReferenceCount(),
+	claim_source_( owner )
 {}
 
 /// @details Auto-generated virtual destructor
 EnvClaim::~EnvClaim() {}
 
 void EnvClaim::show( std::ostream& os ) const {
-    os << "owned by, " << owner()->type() << ";";
+	os << "owned by, " << owner()->type() << ";";
 }
 
 DOFElement EnvClaim::wrap_dof_id( core::id::DOF_ID const& id ) const {
-  DOFElement e;
-  e.id = id;
+	DOFElement e;
+	e.id = id;
 
-  return e;
+	return e;
 }
 
 ClientMoverOP EnvClaim::owner() const {
-  return claim_source_;
+	return claim_source_;
 }
 
 ControlStrength EnvClaim::parse_ctrl_str( std::string const& str ) const {
-  std::string lower = str;
-  boost::algorithm::to_lower( lower );
+	std::string lower = str;
+	boost::algorithm::to_lower( lower );
 
-  if( lower == "does_not_control" ){
-    return DOES_NOT_CONTROL;
-  } else if( lower == "can_control" ){
-    return CAN_CONTROL;
-  } else if( lower == "must_control" ){
-    return MUST_CONTROL;
-  } else if( lower == "exclusive" ){
-    return EXCLUSIVE;
-  } else {
-    throw utility::excn::EXCN_BadInput( "The initialization strength '" + str +
-                                        "' is not recognized." );
-  }
+	if ( lower == "does_not_control" ) {
+		return DOES_NOT_CONTROL;
+	} else if ( lower == "can_control" ) {
+		return CAN_CONTROL;
+	} else if ( lower == "must_control" ) {
+		return MUST_CONTROL;
+	} else if ( lower == "exclusive" ) {
+		return EXCLUSIVE;
+	} else {
+		throw utility::excn::EXCN_BadInput( "The initialization strength '" + str +
+			"' is not recognized." );
+	}
 }
 
 void EnvClaim::annotate( core::pose::Pose const& pose, core::environment::SequenceAnnotationOP ann ) const {
-  BOOST_FOREACH( AnnotatingSelectors::value_type pair, selector_list_ ){
-    std::string const& label = pair.first;
-    ResidueSelectorCOP selector = pair.second;
+	BOOST_FOREACH ( AnnotatingSelectors::value_type pair, selector_list_ ) {
+		std::string const& label = pair.first;
+		ResidueSelectorCOP selector = pair.second;
 
-    utility::vector1< bool > subset = selector->apply( pose );
+		utility::vector1< bool > subset = selector->apply( pose );
 
-    utility::vector1< Size > trues;
-    for( Size i = 1; i <= subset.size(); ++i ){
-      if( subset[i] )
-        trues.push_back( i );
-    }
+		utility::vector1< Size > trues;
+		for ( Size i = 1; i <= subset.size(); ++i ) {
+			if ( subset[i] ) {
+				trues.push_back( i );
+			}
+		}
 
-    try{
-      ann->add_seq_label( label, trues );
-    } catch ( utility::excn::EXCN_KeyError& e ) {
-      std::ostringstream ss;
-      ss << "While " << *this << " was annotating the pose for broking, the " << selector->get_name()
-         << "Selector produced a conflicting residue selection.";
-      e.add_msg( ss.str() );
-      throw;// e;
-    }
-  }
+		try{
+			ann->add_seq_label( label, trues );
+		} catch ( utility::excn::EXCN_KeyError& e ) {
+			std::ostringstream ss;
+			ss << "While " << *this << " was annotating the pose for broking, the " << selector->get_name()
+				<< "Selector produced a conflicting residue selection.";
+			e.add_msg( ss.str() );
+			throw;// e;
+		}
+	}
 }
 
 void EnvClaim::queue_for_annotation( std::string const& label, ResidueSelectorCOP selector ) {
-  if( selector_list_.find( label ) == selector_list_.end() ||            // no selector with label 'label' exists
-      selector_list_.find( label )->second.get() == selector.get() ){    // selector with label 'label' *is* 'selector'
-    selector_list_[ label ] = selector;
-  } else {
-    std::ostringstream ss;
-    ss << "In claim " << *this << ", the label '" << label << "' was to be used for the selection of a "
-       << selector->get_name() << "Selector, but that label was already used by an existing "
-       << selector_list_[label]->get_name() << "Selector.";
-    if( selector->get_name() == selector_list_[label]->get_name() )
-      ss << " They aren't the same ResidueSelector.";  // Make sure error is clear that selector-sameness has be checked already.
-    throw utility::excn::EXCN_BadInput( ss.str() );
-  }
+	if ( selector_list_.find( label ) == selector_list_.end() ||            // no selector with label 'label' exists
+			selector_list_.find( label )->second.get() == selector.get() ) {    // selector with label 'label' *is* 'selector'
+		selector_list_[ label ] = selector;
+	} else {
+		std::ostringstream ss;
+		ss << "In claim " << *this << ", the label '" << label << "' was to be used for the selection of a "
+			<< selector->get_name() << "Selector, but that label was already used by an existing "
+			<< selector_list_[label]->get_name() << "Selector.";
+		if ( selector->get_name() == selector_list_[label]->get_name() ) {
+			ss << " They aren't the same ResidueSelector.";  // Make sure error is clear that selector-sameness has be checked already.
+		}
+		throw utility::excn::EXCN_BadInput( ss.str() );
+	}
 }
 
 extern std::ostream& operator<<( std::ostream& os, EnvClaim const& claim ) {
-  claim.show( os );
-  return os;
+	claim.show( os );
+	return os;
 }
 
 extern std::ostream& operator<<( std::ostream& os, EnvClaims const& claims ) {
-  for ( EnvClaims::const_iterator it = claims.begin(); it != claims.end(); ++it ) {
-    if ( *it ) {
-      os << **it << "\n";
-    } else {
-      os << "No-Claim\n";
-    }
-  }
-  return os;
+	for ( EnvClaims::const_iterator it = claims.begin(); it != claims.end(); ++it ) {
+		if ( *it ) {
+			os << **it << "\n";
+		} else {
+			os << "No-Claim\n";
+		}
+	}
+	return os;
 }
 
 } //claims

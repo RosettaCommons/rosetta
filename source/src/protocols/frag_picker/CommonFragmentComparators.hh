@@ -37,10 +37,10 @@ public:
 	/// @details returns true if second_candidate starts on the later residue than first_candidate
 	/// Using this comparator to sort fragment candidates orders them ascending by their sequence position
 	bool operator()(
-			ScoredCandidate first_candidate,
-			ScoredCandidate second_candidate) {
+		ScoredCandidate first_candidate,
+		ScoredCandidate second_candidate) {
 		return (first_candidate.first->get_first_index_in_query()
-				< second_candidate.first->get_first_index_in_query());
+			< second_candidate.first->get_first_index_in_query());
 	}
 
 };
@@ -62,10 +62,10 @@ public:
 	/// Using this comparator to sort fragment candidates order them descending according
 	/// to their total score
 	bool operator()(
-			ScoredCandidate first_candidate,
-			ScoredCandidate second_candidate) {
+		ScoredCandidate first_candidate,
+		ScoredCandidate second_candidate) {
 		return (scoring_->total_score(first_candidate.second)
-				< scoring_->total_score(second_candidate.second));
+			< scoring_->total_score(second_candidate.second));
 	}
 
 	~CompareTotalScore() {}
@@ -83,10 +83,10 @@ public:
 	/// from a vector of small scores (those gathered in a FragmentScoreMap object)
 	CompareByScoreCombination(utility::vector1<Size> which_components,utility::vector1<Real> weights) {
 
-	debug_assert ( which_components.size() == weights.size() );
-		for(Size i=1;i<=which_components.size();i++) {
-		    components_.push_back( which_components[i] );
-		    weights_.push_back( weights[i] );
+		debug_assert ( which_components.size() == weights.size() );
+		for ( Size i=1; i<=which_components.size(); i++ ) {
+			components_.push_back( which_components[i] );
+			weights_.push_back( weights[i] );
 		}
 	}
 
@@ -95,12 +95,12 @@ public:
 	/// Using this comparator to sort fragment candidates order them descending according
 	/// to their total score
 	bool operator()(
-			ScoredCandidate first_candidate,
-			ScoredCandidate second_candidate) {
+		ScoredCandidate first_candidate,
+		ScoredCandidate second_candidate) {
 
 		Real t1(0);
 		Real t2(0);
-		for(Size i=1;i<=components_.size();i++) {
+		for ( Size i=1; i<=components_.size(); i++ ) {
 			t1 += first_candidate.second->at( components_[i] ) * weights_[i];
 			t2 += second_candidate.second->at( components_[i] ) * weights_[i];
 		}
@@ -129,10 +129,10 @@ public:
 	/// Using this comparator to sort fragment candidates order them ascending according
 	/// to their total score
 	bool operator()(
-			ScoredCandidate first_candidate,
-			ScoredCandidate second_candidate) {
+		ScoredCandidate first_candidate,
+		ScoredCandidate second_candidate) {
 		return (first_candidate.second->get_score_components()[component_id_]
-				< second_candidate.second->get_score_components()[component_id_]);
+			< second_candidate.second->get_score_components()[component_id_]);
 	}
 
 private:

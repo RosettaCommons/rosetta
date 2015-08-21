@@ -20,8 +20,8 @@ namespace kinematic_closure {
 namespace pivot_pickers {
 
 /// @brief Use a fixed set of pivots specified in advance.
-/// @details The pivots are specified in the constructor.  Make sure that the 
-/// pivots will always be contained in the loop being sampled, otherwise 
+/// @details The pivots are specified in the constructor.  Make sure that the
+/// pivots will always be contained in the loop being sampled, otherwise
 /// strange behavior may occur.
 
 class FixedPivots : public PivotPicker {

@@ -80,10 +80,10 @@ public:
 
 	// shared data
 	pose::PoseOP start_pose;
-	core::chemical::ResidueTypeSetCOP	rsd_set;
+	core::chemical::ResidueTypeSetCOP rsd_set;
 
 	pose::PoseOP centroid_pose_;
-	core::chemical::ResidueTypeSetCOP	cen_rsd_set_;
+	core::chemical::ResidueTypeSetCOP cen_rsd_set_;
 
 	// Shared initialization goes here.
 	void setUp() {
@@ -91,12 +91,12 @@ public:
 
 		rsd_set =
 			core::chemical::ChemicalManager::get_instance()->residue_type_set(
-				"fa_standard"
-			);
+			"fa_standard"
+		);
 		cen_rsd_set_ =
 			core::chemical::ChemicalManager::get_instance()->residue_type_set(
-				"centroid"
-			);
+			"centroid"
+		);
 		start_pose = core::import_pose::pose_from_pdb("core/io/test_in_idealized.pdb");
 		centroid_pose_ = core::import_pose::pose_from_pdb(*cen_rsd_set_, "core/io/test_in_idealized.pdb");
 
@@ -146,7 +146,7 @@ public:
 			);
 			for ( Size chi_idx = 1; chi_idx <= start_pose->residue_type(seqpos).nchi();
 					++chi_idx
-			) {
+					) {
 				TS_ASSERT_DELTA(
 					start_pose->chi( chi_idx, seqpos ),
 					restored_pose.chi( chi_idx, seqpos ), CHI_ERROR
@@ -352,7 +352,7 @@ public:
 		TS_ASSERT_EQUALS( ss->get_comment("comment"), retval );
 	}
 
-void test_save_and_restore_centroid() {
+	void test_save_and_restore_centroid() {
 		using namespace core::io::silent;
 
 		// configuration information for tests
@@ -376,7 +376,7 @@ void test_save_and_restore_centroid() {
 		iter->fill_pose( restored_pose );
 
 		TS_ASSERT( !restored_pose.is_fullatom() )
-		TS_ASSERT( centroid_pose_->total_residue() == restored_pose.total_residue() );
+			TS_ASSERT( centroid_pose_->total_residue() == restored_pose.total_residue() );
 		for ( Size seqpos = 1; seqpos <= restored_pose.total_residue(); ++seqpos ) {
 			TS_ASSERT_DELTA(
 				centroid_pose_->phi( seqpos ), restored_pose.phi( seqpos ),

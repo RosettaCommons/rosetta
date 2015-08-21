@@ -84,7 +84,7 @@
 
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 
@@ -98,13 +98,13 @@ OPT_1GRP_KEY( String, msd, seed_sequence_from_input_pdb )
 OPT_1GRP_KEY( String, msd, seed_sequence_using_correspondence_file )
 OPT_1GRP_KEY( Integer, msd, n_worker_threads_per_process )
 
-/*		Option( 'double_lazy_ig_mem_limit', 'Integer',
-			desc="The amount of memory, in MB, that each double-lazy interaction graph should be allowed \
-				to allocate toward rotamer pair energies.  Using this flag will not trigger the \
-				use of the double-lazy interaction graph, and this flag is not read in the PackerTask's \
-				initialize_from_command_line routine.  For use in multistate design",
-			default='0',
-		),*/
+/*  Option( 'double_lazy_ig_mem_limit', 'Integer',
+desc="The amount of memory, in MB, that each double-lazy interaction graph should be allowed \
+to allocate toward rotamer pair energies.  Using this flag will not trigger the \
+use of the double-lazy interaction graph, and this flag is not read in the PackerTask's \
+initialize_from_command_line routine.  For use in multistate design",
+default='0',
+),*/
 
 
 using basic::t_info;
@@ -114,91 +114,91 @@ static thread_local basic::Tracer TR( "apps.public.design.mpi_msd", t_info );
 /*class SimpleDGBindAggregateFunction : public protocols::pack_daemon::MultistateAggregateFunction
 {
 public:
-	typedef protocols::pack_daemon::MultistateAggregateFunction parent;
+typedef protocols::pack_daemon::MultistateAggregateFunction parent;
 
 public:
-	SimpleDGBindAggregateFunction() : parent() {}
-	virtual ~SimpleDGBindAggregateFunction() {}
+SimpleDGBindAggregateFunction() : parent() {}
+virtual ~SimpleDGBindAggregateFunction() {}
 
-	virtual core::Real evaluate( utility::vector1< core::Real > const & vec, Entity const &  ) {
-		if ( vec.size() != 2 ) {
-			utility_exit_with_message( "SimpleDGBindAggregateFunction expects exactly 2 states" );
-		}
-		return vec[ 1 ] - vec[ 2 ];
-	}
+virtual core::Real evaluate( utility::vector1< core::Real > const & vec, Entity const &  ) {
+if ( vec.size() != 2 ) {
+utility_exit_with_message( "SimpleDGBindAggregateFunction expects exactly 2 states" );
+}
+return vec[ 1 ] - vec[ 2 ];
+}
 
-	virtual StateIndices select_relevant_states( StateEnergies const & ) {
-		StateIndices two_vec;
-		two_vec.push_back( 1 );
-		two_vec.push_back( 2 );
-		return two_vec;
-	}
+virtual StateIndices select_relevant_states( StateEnergies const & ) {
+StateIndices two_vec;
+two_vec.push_back( 1 );
+two_vec.push_back( 2 );
+return two_vec;
+}
 };*/
 
 
 //protocols::genetic_algorithm::EntityElements
 //entity_elements_from_1letterstring(
-//	std::string const & input
+// std::string const & input
 //)
 //{
-//	protocols::genetic_algorithm::EntityElements elements( input.size() );
-//	for ( core::Size ii = 0, count = 1; ii < input.size(); ++ii, ++count ) {
-//		std::ostringstream output;
-//		output << "AA:" << count << ":" << input[ ii ];
-//		elements[ count ] = protocols::genetic_algorithm::EntityElementFactory::get_instance()->element_from_string( output.str() );
-//	}
-//	return elements;
+// protocols::genetic_algorithm::EntityElements elements( input.size() );
+// for ( core::Size ii = 0, count = 1; ii < input.size(); ++ii, ++count ) {
+//  std::ostringstream output;
+//  output << "AA:" << count << ":" << input[ ii ];
+//  elements[ count ] = protocols::genetic_algorithm::EntityElementFactory::get_instance()->element_from_string( output.str() );
+// }
+// return elements;
 //}
 
 //std::string
 //read_native_sequence_for_entity_elements( core::Size n_designed_positions )
 //{
-//	using namespace basic::options;
-//	using namespace basic::options::OptionKeys;
-//	using namespace core;
-//	using namespace protocols::pack_daemon;
+// using namespace basic::options;
+// using namespace basic::options::OptionKeys;
+// using namespace core;
+// using namespace protocols::pack_daemon;
 //
-//	if ( ! option[ msd::seed_sequence_using_correspondence_file ].user() ) {
-//		utility_exit_with_message( "Must provide correspondence file to read the native sequence" );
-//	}
+// if ( ! option[ msd::seed_sequence_using_correspondence_file ].user() ) {
+//  utility_exit_with_message( "Must provide correspondence file to read the native sequence" );
+// }
 //
-//	std::string pdb_name = option[ msd::seed_sequence_from_input_pdb ];
-//	std::string correspondence_file_name = option[ msd::seed_sequence_using_correspondence_file ];
+// std::string pdb_name = option[ msd::seed_sequence_from_input_pdb ];
+// std::string correspondence_file_name = option[ msd::seed_sequence_using_correspondence_file ];
 //
-//	/// Read in the pdb
-//	pose::Pose pose;
-//	import_pose::pose_from_pdb( pose, pdb_name );
+// /// Read in the pdb
+// pose::Pose pose;
+// import_pose::pose_from_pdb( pose, pdb_name );
 //
-//	utility::io::izstream correspondence_file( correspondence_file_name );
-//	if ( ! correspondence_file ) {
-//		utility_exit_with_message( "Could not open correspondence file named: " + correspondence_file_name );
-//	}
+// utility::io::izstream correspondence_file( correspondence_file_name );
+// if ( ! correspondence_file ) {
+//  utility_exit_with_message( "Could not open correspondence file named: " + correspondence_file_name );
+// }
 //
-//	EntityCorrespondenceOP ec = new EntityCorrespondence;
-//	ec->set_pose( new pose::Pose( pose ));
-//	ec->set_num_entities( n_designed_positions );
-//	ec->initialize_from_correspondence_file( correspondence_file );
+// EntityCorrespondenceOP ec = new EntityCorrespondence;
+// ec->set_pose( new pose::Pose( pose ));
+// ec->set_num_entities( n_designed_positions );
+// ec->initialize_from_correspondence_file( correspondence_file );
 //
 //
-//	std::map< Size, chemical::AA > aa_for_design_position;
-//	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-//		Size ii_entity = ec->entity_for_residue( ii );
-//		if ( ii_entity  == 0 ) continue;
-//		if ( aa_for_design_position.find( ii_entity ) != aa_for_design_position.end() ) {
-//			utility_exit_with_message( "Repeat entity element for native pdb: " + pdb_name + " with correspondence file " +
-//				correspondence_file_name + ".  Entity correspondence file should only include each residue once");
-//		}
-//		aa_for_design_position[ ii_entity ] = pose.residue_type( ii ).aa();
-//	}
-//	std::string aa_string( n_designed_positions, 'X' );
-//	for ( Size ii = 1; ii <= n_designed_positions; ++ii ) {
-//		if ( aa_for_design_position.find( ii ) == aa_for_design_position.end() ) {
-//			utility_exit_with_message( "Did not find residue assigned to correspond to entity element " +
-//				utility::to_string( ii ) + " while reading correspondence file " + correspondence_file_name );
-//		}
-//		aa_string[ ii-1 ] = oneletter_code_from_aa( aa_for_design_position[ ii ] );
-//	}
-//	return aa_string;
+// std::map< Size, chemical::AA > aa_for_design_position;
+// for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+//  Size ii_entity = ec->entity_for_residue( ii );
+//  if ( ii_entity  == 0 ) continue;
+//  if ( aa_for_design_position.find( ii_entity ) != aa_for_design_position.end() ) {
+//   utility_exit_with_message( "Repeat entity element for native pdb: " + pdb_name + " with correspondence file " +
+//    correspondence_file_name + ".  Entity correspondence file should only include each residue once");
+//  }
+//  aa_for_design_position[ ii_entity ] = pose.residue_type( ii ).aa();
+// }
+// std::string aa_string( n_designed_positions, 'X' );
+// for ( Size ii = 1; ii <= n_designed_positions; ++ii ) {
+//  if ( aa_for_design_position.find( ii ) == aa_for_design_position.end() ) {
+//   utility_exit_with_message( "Did not find residue assigned to correspond to entity element " +
+//    utility::to_string( ii ) + " while reading correspondence file " + correspondence_file_name );
+//  }
+//  aa_string[ ii-1 ] = oneletter_code_from_aa( aa_for_design_position[ ii ] );
+// }
+// return aa_string;
 //
 //
 //}
@@ -211,23 +211,23 @@ public:
 //{
 //public:
 //
-//	virtual
-//	core::Real
-//	calculate( core::pose::Pose const & p ) {
-//		return core::pack::interaction_graph::SurfacePotential::get_instance()->compute_pose_hpatch_score( p );
-//	}
+// virtual
+// core::Real
+// calculate( core::pose::Pose const & p ) {
+//  return core::pack::interaction_graph::SurfacePotential::get_instance()->compute_pose_hpatch_score( p );
+// }
 //
 //};
 //
 //class HPatchNPDCalculatorCreator : public protocols::pack_daemon::NPDPropCalculatorCreator
 //{
-//	virtual
-//	std::string
-//	calculator_name() const {return "hpatch"; }
+// virtual
+// std::string
+// calculator_name() const {return "hpatch"; }
 //
-//	virtual
-//	protocols::pack_daemon::NPDPropCalculatorOP
-//	new_calculator() const { return new HPatchNPDCalculator; }
+// virtual
+// protocols::pack_daemon::NPDPropCalculatorOP
+// new_calculator() const { return new HPatchNPDCalculator; }
 //};
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -238,57 +238,57 @@ public:
 //class HPatchByChainNPDCalculator : public protocols::pack_daemon::NPDPropCalculator
 //{
 //public:
-//	virtual
-//	void
-//	setup(
-//		core::pose::Pose const & pose,
-//		core::pack::task::PackerTask const & task
-//	){
-//		chains_ = pose.split_by_chain();
-//		task_ = task.clone();
-//		Size last_chain( 1 ), first_residue_for_chain( 1 );
-//		resid_2_chain_and_resid_.resize( pose.total_residue() );
-//		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-//			if ( pose.residue( ii ).chain() != last_chain ) {
-//				last_chain = pose.residue( ii ).chain();
-//				first_residue_for_chain = ii;
-//			}
-//			resid_2_chain_and_resid_[ ii ] = std::make_pair( pose.residue( ii ).chain(), ii + 1 - first_residue_for_chain );
-//		}
-//	}
+// virtual
+// void
+// setup(
+//  core::pose::Pose const & pose,
+//  core::pack::task::PackerTask const & task
+// ){
+//  chains_ = pose.split_by_chain();
+//  task_ = task.clone();
+//  Size last_chain( 1 ), first_residue_for_chain( 1 );
+//  resid_2_chain_and_resid_.resize( pose.total_residue() );
+//  for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+//   if ( pose.residue( ii ).chain() != last_chain ) {
+//    last_chain = pose.residue( ii ).chain();
+//    first_residue_for_chain = ii;
+//   }
+//   resid_2_chain_and_resid_[ ii ] = std::make_pair( pose.residue( ii ).chain(), ii + 1 - first_residue_for_chain );
+//  }
+// }
 //
-//	virtual
-//	core::Real
-//	calculate( core::pose::Pose const & p ) {
-//		// MJO COMMENTING OUT BECAUSE IT IS UNUSED:
-//		// Size chain_offset = 0;
-//		for ( core::Size ii = 1; ii <= p.total_residue(); ++ii ) {
-//			if ( ! task_->being_packed( ii ) ) continue;
-//			chains_[ resid_2_chain_and_resid_[ ii ].first ]->replace_residue(
-//				resid_2_chain_and_resid_[ ii ].second, p.residue( ii ), false );
-//		}
+// virtual
+// core::Real
+// calculate( core::pose::Pose const & p ) {
+//  // MJO COMMENTING OUT BECAUSE IT IS UNUSED:
+//  // Size chain_offset = 0;
+//  for ( core::Size ii = 1; ii <= p.total_residue(); ++ii ) {
+//   if ( ! task_->being_packed( ii ) ) continue;
+//   chains_[ resid_2_chain_and_resid_[ ii ].first ]->replace_residue(
+//    resid_2_chain_and_resid_[ ii ].second, p.residue( ii ), false );
+//  }
 //
-//		core::Real hpatch_sum = 0;
-//		for ( Size ii = 1; ii <= chains_.size(); ++ii ) {
-//			hpatch_sum += core::pack::interaction_graph::SurfacePotential::get_instance()->compute_pose_hpatch_score( *chains_[ ii ] );
-//		}
-//		return hpatch_sum;
-//	}
+//  core::Real hpatch_sum = 0;
+//  for ( Size ii = 1; ii <= chains_.size(); ++ii ) {
+//   hpatch_sum += core::pack::interaction_graph::SurfacePotential::get_instance()->compute_pose_hpatch_score( *chains_[ ii ] );
+//  }
+//  return hpatch_sum;
+// }
 //private:
-//	utility::vector1< core::pose::PoseOP > chains_;
-//	core::pack::task::PackerTaskOP task_;
-//	utility::vector1< std::pair< core::Size, core::Size > > resid_2_chain_and_resid_;
+// utility::vector1< core::pose::PoseOP > chains_;
+// core::pack::task::PackerTaskOP task_;
+// utility::vector1< std::pair< core::Size, core::Size > > resid_2_chain_and_resid_;
 //};
 //
 //class HPatchByChainNPDCalculatorCreator : public protocols::pack_daemon::NPDPropCalculatorCreator
 //{
-//	virtual
-//	std::string
-//	calculator_name() const {return "hpatch_by_chain"; }
+// virtual
+// std::string
+// calculator_name() const {return "hpatch_by_chain"; }
 //
-//	virtual
-//	protocols::pack_daemon::NPDPropCalculatorOP
-//	new_calculator() const { return new HPatchByChainNPDCalculator; }
+// virtual
+// protocols::pack_daemon::NPDPropCalculatorOP
+// new_calculator() const { return new HPatchByChainNPDCalculator; }
 //};
 
 
@@ -299,62 +299,62 @@ public:
 //class NBuriedUnsatsCalcultor : public protocols::pack_daemon::NPDPropCalculator
 //{
 //public:
-//	virtual
-//	void
-//	setup(
-//		core::pose::Pose const & pose,
-//		core::pack::task::PackerTask const & task
-//	){
-//		pose_ = new core::pose::Pose( pose );
-//		task_ = task.clone();
-//		sfxn_ = core::scoring::get_score_function();
+// virtual
+// void
+// setup(
+//  core::pose::Pose const & pose,
+//  core::pack::task::PackerTask const & task
+// ){
+//  pose_ = new core::pose::Pose( pose );
+//  task_ = task.clone();
+//  sfxn_ = core::scoring::get_score_function();
 //
-//		//register calculators
-//		if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ) {
-//			core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new devel::vardist_solaccess::VarSolDistSasaCalculator;
-//			core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
-//		}
+//  //register calculators
+//  if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ) {
+//   core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new devel::vardist_solaccess::VarSolDistSasaCalculator;
+//   core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
+//  }
 //
-//		if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "num_hbonds" ) ) {
-//			core::pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator = new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator();
-//			core::pose::metrics::CalculatorFactory::Instance().register_calculator( "num_hbonds", num_hbonds_calculator );
-//		}
+//  if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "num_hbonds" ) ) {
+//   core::pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator = new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator();
+//   core::pose::metrics::CalculatorFactory::Instance().register_calculator( "num_hbonds", num_hbonds_calculator );
+//  }
 //
-//		if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "unsat" ) ) {
-//			core::pose::metrics::PoseMetricCalculatorOP unsat_calculator = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds");
-//			core::pose::metrics::CalculatorFactory::Instance().register_calculator( "unsat", unsat_calculator );
-//		}
+//  if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "unsat" ) ) {
+//   core::pose::metrics::PoseMetricCalculatorOP unsat_calculator = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds");
+//   core::pose::metrics::CalculatorFactory::Instance().register_calculator( "unsat", unsat_calculator );
+//  }
 //
-//	}
+// }
 //
-//	virtual
-//	core::Real
-//	calculate( core::pose::Pose const & p ) {
-//		for ( core::Size ii = 1; ii <= pose_->total_residue(); ++ii ) {
-//			if ( ! task_->being_packed( ii ) ) continue;
-//			pose_->replace_residue( ii, p.residue( ii ), false );
-//		}
-//		(*sfxn_)(*pose_);
-//		basic::MetricValue< core::Size > nburied_unsats;
-//		pose_->metric( "unsat", "all_bur_unsat_polars", nburied_unsats );
-//		return nburied_unsats.value();
-//	}
+// virtual
+// core::Real
+// calculate( core::pose::Pose const & p ) {
+//  for ( core::Size ii = 1; ii <= pose_->total_residue(); ++ii ) {
+//   if ( ! task_->being_packed( ii ) ) continue;
+//   pose_->replace_residue( ii, p.residue( ii ), false );
+//  }
+//  (*sfxn_)(*pose_);
+//  basic::MetricValue< core::Size > nburied_unsats;
+//  pose_->metric( "unsat", "all_bur_unsat_polars", nburied_unsats );
+//  return nburied_unsats.value();
+// }
 //
 //private:
-//	core::pose::PoseOP             pose_;
-//	core::pack::task::PackerTaskOP task_;
-//	core::scoring::ScoreFunctionOP sfxn_;
+// core::pose::PoseOP             pose_;
+// core::pack::task::PackerTaskOP task_;
+// core::scoring::ScoreFunctionOP sfxn_;
 //};
 //
 //class NBuriedUnsatsCalcultorCreator : public protocols::pack_daemon::NPDPropCalculatorCreator
 //{
-//	virtual
-//	std::string
-//	calculator_name() const {return "nbunsats"; }
+// virtual
+// std::string
+// calculator_name() const {return "nbunsats"; }
 //
-//	virtual
-//	protocols::pack_daemon::NPDPropCalculatorOP
-//	new_calculator() const { return new NBuriedUnsatsCalcultor; }
+// virtual
+// protocols::pack_daemon::NPDPropCalculatorOP
+// new_calculator() const { return new NBuriedUnsatsCalcultor; }
 //};
 
 

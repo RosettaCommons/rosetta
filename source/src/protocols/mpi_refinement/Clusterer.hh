@@ -30,37 +30,37 @@ class Clusterer
 {
 public:
 
-Clusterer();
-~Clusterer();
+	Clusterer();
+	~Clusterer();
 
-void set_defaults();
+	void set_defaults();
 
-protocols::wum::SilentStructStore
-apply( protocols::wum::SilentStructStore structs,
-       core::Size const ncluster,
-       core::Real const dist_cut ) const;
-
-private:
-
-bool
-get_distance( core::io::silent::SilentStructOP ss1, 
-	      core::io::silent::SilentStructOP ss2,
-	      core::Real &distance,
-	      core::Real const dist_cut ) const;
-
-protocols::wum::SilentStructStore
-energy_sort_cluster( protocols::wum::SilentStructStore structs,
-		     core::Size const ncluster,
-		     core::Real const dist_cut = 2.0 ) const;
+	protocols::wum::SilentStructStore
+	apply( protocols::wum::SilentStructStore structs,
+		core::Size const ncluster,
+		core::Real const dist_cut ) const;
 
 private:
 
-  //core::Real simlimit_;
-  std::string similarity_method_;
-  std::string similarity_measure_;
-  core::Real simtol_;
-  std::string sim_replace_obj_;
-  std::string method_;
+	bool
+	get_distance( core::io::silent::SilentStructOP ss1,
+		core::io::silent::SilentStructOP ss2,
+		core::Real &distance,
+		core::Real const dist_cut ) const;
+
+	protocols::wum::SilentStructStore
+	energy_sort_cluster( protocols::wum::SilentStructStore structs,
+		core::Size const ncluster,
+		core::Real const dist_cut = 2.0 ) const;
+
+private:
+
+	//core::Real simlimit_;
+	std::string similarity_method_;
+	std::string similarity_measure_;
+	core::Real simtol_;
+	std::string sim_replace_obj_;
+	std::string method_;
 
 }; // class Clusterer
 }

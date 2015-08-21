@@ -24,36 +24,36 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class PhosphateScreener: public SampleApplier {
+class PhosphateScreener: public SampleApplier {
 
-	public:
+public:
 
-		//constructor
-		PhosphateScreener( modeler::rna::phosphate::MultiPhosphateSamplerOP phosphate_sampler );
+	//constructor
+	PhosphateScreener( modeler::rna::phosphate::MultiPhosphateSamplerOP phosphate_sampler );
 
-		//destructor
-		~PhosphateScreener();
+	//destructor
+	~PhosphateScreener();
 
-	public:
+public:
 
-		std::string
-		name() const { return "PhosphateScreener"; }
+	std::string
+	name() const { return "PhosphateScreener"; }
 
-		StepWiseScreenerType
-		type() const { return PHOSPHATE_PACK; }
+	StepWiseScreenerType
+	type() const { return PHOSPHATE_PACK; }
 
-		bool
-		check_screen();
+	bool
+	check_screen();
 
-		void
-		add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
+	void
+	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
 
-	private:
+private:
 
-		modeler::rna::phosphate::MultiPhosphateSamplerOP phosphate_sampler_;
-		modeler::rna::phosphate::MultiPhosphateSamplerOP phosphate_sampler_for_restoration_;
+	modeler::rna::phosphate::MultiPhosphateSamplerOP phosphate_sampler_;
+	modeler::rna::phosphate::MultiPhosphateSamplerOP phosphate_sampler_for_restoration_;
 
-	};
+};
 
 } //screener
 } //stepwise

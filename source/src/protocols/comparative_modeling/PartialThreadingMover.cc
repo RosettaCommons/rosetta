@@ -85,7 +85,7 @@ void PartialThreadingMover::apply(
 
 	tr.flush_all_channels();
 } // apply
- 
+
 void PartialThreadingMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & /* data */,

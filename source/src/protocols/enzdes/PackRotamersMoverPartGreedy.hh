@@ -38,12 +38,12 @@ namespace enzdes {
 class PackRotamersMoverPartGreedy: public protocols::moves::Mover {
 
 	typedef core::pack::task::PackerTaskOP PackerTaskOP;
-  typedef core::pack::task::TaskFactoryOP TaskFactoryOP;
-  typedef core::scoring::ScoreFunctionOP ScoreFunctionOP;
+	typedef core::pack::task::TaskFactoryOP TaskFactoryOP;
+	typedef core::scoring::ScoreFunctionOP ScoreFunctionOP;
 
 public:
 	/// @brief default constructors
-	 PackRotamersMoverPartGreedy(
+	PackRotamersMoverPartGreedy(
 		ScoreFunctionOP scorefxn,
 		PackerTaskOP task,
 		utility::vector1 <core::Size> target_residues
@@ -56,38 +56,38 @@ public:
 	// destructor
 	virtual ~PackRotamersMoverPartGreedy();
 
-	 //parser stuff
-  void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
-  void apply( core::pose::Pose &pose );
-  virtual std::string get_name() const;
-  protocols::moves::MoverOP clone() const;
-  protocols::moves::MoverOP fresh_instance() const;
+	//parser stuff
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
+	void apply( core::pose::Pose &pose );
+	virtual std::string get_name() const;
+	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP fresh_instance() const;
 
 	// methods
 	void greedy_around(
-        core::pose::Pose & pose,
-        utility::vector1<core::Size > const & target_res,
-        core::pack::task::PackerTaskOP task,
-        core::scoring::ScoreFunctionCOP scorefxn
+		core::pose::Pose & pose,
+		utility::vector1<core::Size > const & target_res,
+		core::pack::task::PackerTaskOP task,
+		core::scoring::ScoreFunctionCOP scorefxn
 	);
 
 	utility::vector1< core::Size > compute_designable_neighbors(
-																	core::Size const & position,
-																	core::pack::task::PackerTaskCOP task,
-																	core::pose::Pose const & pose
+		core::Size const & position,
+		core::pack::task::PackerTaskCOP task,
+		core::pose::Pose const & pose
 	);
 
 	void update_task_and_neighbors(
-				core::Size const & best_neigh,
-				core::pack::task::PackerTaskOP task,
-				utility::vector1< core::Size > & current_neighbors
+		core::Size const & best_neigh,
+		core::pack::task::PackerTaskOP task,
+		utility::vector1< core::Size > & current_neighbors
 	);
 
 	// getters and setters
 
 	void task_factory( core::pack::task::TaskFactoryOP p );
 	void task( core::pack::task::PackerTaskOP task );
-  void target_residues (utility::vector1< core::Size > & trg_res);
+	void target_residues (utility::vector1< core::Size > & trg_res);
 
 	//choose n best residues interacting with ligand
 	utility::vector1<core::Size> choose_n_best(
@@ -98,15 +98,15 @@ public:
 private:
 	core::scoring::ScoreFunctionOP scorefxn_repack_;
 	core::scoring::ScoreFunctionOP scorefxn_repack_greedy_;
-  core::scoring::ScoreFunctionOP scorefxn_minimize_;
-  core::pack::task::PackerTaskOP task_;
-  core::pack::task::TaskFactoryOP task_factory_;
+	core::scoring::ScoreFunctionOP scorefxn_minimize_;
+	core::pack::task::PackerTaskOP task_;
+	core::pack::task::TaskFactoryOP task_factory_;
 	utility::vector1< core::Size > target_residues_;
 	utility::vector1< core::Size > restrict_to_repacking_;
 	bool use_cstids_;
 	core::Real threshold_;
 	std::string cstid_list_;
-  core::Size n_best_;
+	core::Size n_best_;
 };
 
 

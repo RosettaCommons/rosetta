@@ -122,12 +122,15 @@ public:
 
 		core::Size repeats = option[ OptionKeys::min::repeats ]();
 
-		if ( option[ OptionKeys::relax::jump_move ].user() )
+		if ( option[ OptionKeys::relax::jump_move ].user() ) {
 			mm.set_jump( option[ OptionKeys::relax::jump_move ]() );
-		if ( option[ OptionKeys::relax::bb_move ].user() )
+		}
+		if ( option[ OptionKeys::relax::bb_move ].user() ) {
 			mm.set_bb( option[ OptionKeys::relax::bb_move ]() );
-		if ( option[ OptionKeys::relax::chi_move ].user() )
+		}
+		if ( option[ OptionKeys::relax::chi_move ].user() ) {
 			mm.set_chi( option[ OptionKeys::relax::chi_move ]() );
+		}
 
 
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
@@ -138,9 +141,9 @@ public:
 
 		// csts
 		if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
-				protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
-				loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
-				loadCsts->apply(pose);
+			protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
+			loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
+			loadCsts->apply(pose);
 		}
 
 		// now add density scores from cmd line
@@ -189,7 +192,7 @@ public:
 				TR << "SYMTORSION MINTEST: " << "\n";
 				TR << "start score: " << (*scorefxn)(pose) << "\n";
 				long t1=clock();
-				for (int i=1; i<=(int)repeats; ++i) minimizer.run( pose, mm, *scorefxn, options );
+				for ( int i=1; i<=(int)repeats; ++i ) minimizer.run( pose, mm, *scorefxn, options );
 				long t2=clock();
 				double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
 				TR << "end score: " << (*scorefxn)(pose) << "\n";
@@ -201,7 +204,7 @@ public:
 				TR << "TORSION MINTEST: " << "\n";
 				TR << "start score: " << (*scorefxn)(pose) << "\n";
 				long t1=clock();
-				for (int i=1; i<=(int)repeats; ++i) minimizer.run( pose, mm, *scorefxn, options );
+				for ( int i=1; i<=(int)repeats; ++i ) minimizer.run( pose, mm, *scorefxn, options );
 				long t2=clock();
 				double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
 				TR << "end score: " << (*scorefxn)(pose) << "\n";
@@ -250,20 +253,20 @@ my_main( void* ) {
 int
 main( int argc, char * argv [] )
 {
-try {
-	NEW_OPT(min::debug, "debug derivs?", false);
-	NEW_OPT(min::debug_verbose, "debug derivs verbose?", false);
-	NEW_OPT(min::cartesian, "cartesian minimization?", false);
-	NEW_OPT(min::repeats, "#repeats", 1);
-	NEW_OPT(min::pack, "pack first?", false);
-	NEW_OPT(min::minimizer, "minimizer?", "lbfgs_armijo_nonmonotone");
+	try {
+		NEW_OPT(min::debug, "debug derivs?", false);
+		NEW_OPT(min::debug_verbose, "debug derivs verbose?", false);
+		NEW_OPT(min::cartesian, "cartesian minimization?", false);
+		NEW_OPT(min::repeats, "#repeats", 1);
+		NEW_OPT(min::pack, "pack first?", false);
+		NEW_OPT(min::minimizer, "minimizer?", "lbfgs_armijo_nonmonotone");
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	protocols::viewer::viewer_main( my_main );
-} catch ( utility::excn::EXCN_Base const & e ) {
-	std::cout << "caught exception " << e.msg() << std::endl;
-	return -1;
-}
+		protocols::viewer::viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 	return 0;
 }

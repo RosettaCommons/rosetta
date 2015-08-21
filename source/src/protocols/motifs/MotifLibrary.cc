@@ -46,7 +46,7 @@ MotifLibrary::MotifLibrary(
 )
 {
 	for ( FileNames::const_iterator filename( motif_filenames.begin() );
-		filename != motif_filenames.end(); ++filename ) {
+			filename != motif_filenames.end(); ++filename ) {
 		if ( !utility::file::file_exists( *filename ) ) {
 			continue;
 		}
@@ -60,8 +60,8 @@ MotifLibrary::MotifLibrary(
 )
 {
 	std::string key_in;
-	while( motif_info >> key_in ) {
-		if( key_in == "SINGLE" ) {
+	while ( motif_info >> key_in ) {
+		if ( key_in == "SINGLE" ) {
 			SingleMotifOP new_motif = single_motif_from_stream( motif_info );
 			add_to_library( *new_motif );
 		} else {
@@ -74,11 +74,11 @@ MotifLibrary::MotifLibrary(
 	std::istream & motif_info, core::Size
 )
 {
-		//std::cout << "In MotifLibrary.cc, in LigandMotifLibrary istream function" << std::endl;
+	//std::cout << "In MotifLibrary.cc, in LigandMotifLibrary istream function" << std::endl;
 	std::string key_in;
-	while( motif_info >> key_in ) {
-		if( key_in == "SINGLE" ) {
-		//std::cout << "In MotifLibrary.cc, about to make single motif OP" << std::endl;
+	while ( motif_info >> key_in ) {
+		if ( key_in == "SINGLE" ) {
+			//std::cout << "In MotifLibrary.cc, about to make single motif OP" << std::endl;
 
 			SingleMotifOP new_motif = single_ligand_motif_from_stream( motif_info );
 			add_to_library( *new_motif );
@@ -106,7 +106,7 @@ MotifLibrary::add_from_file( std::string const & motif_filename )
 	// Try to open the file
 	std::ifstream motif_file;
 	motif_file.open( motif_filename.c_str() );
-	if( !motif_file ) {
+	if ( !motif_file ) {
 		std::cout << "ERROR:  No motif file " << motif_filename << " - FAILING!\n";
 		return;
 	}
@@ -115,7 +115,7 @@ MotifLibrary::add_from_file( std::string const & motif_filename )
 	MotifLibrary new_library( motif_file );
 
 	// Add to this library
-	for( MotifCOPs::const_iterator pmot = new_library.begin() ; pmot != new_library.end() ; ++pmot ) {
+	for ( MotifCOPs::const_iterator pmot = new_library.begin() ; pmot != new_library.end() ; ++pmot ) {
 		add_to_library( **pmot );
 	}
 }
@@ -124,7 +124,7 @@ std::ostream & operator <<(
 	std::ostream & os, MotifLibrary const & mlib
 )
 {
-	for( MotifCOPs::const_iterator pmot = mlib.begin() ; pmot != mlib.end() ; ++pmot ) {
+	for ( MotifCOPs::const_iterator pmot = mlib.begin() ; pmot != mlib.end() ; ++pmot ) {
 		os << (*pmot)->print();
 	}
 	return os;
@@ -135,17 +135,17 @@ MotifLibrary::add_ligand_from_file( std::string const & motif_filename )
 {
 	std::ifstream motif_file;
 	motif_file.open( motif_filename.c_str() );
-	if( !motif_file ) {
+	if ( !motif_file ) {
 		std::cout << "ERROR:  No motif file " << motif_filename << " - FAILING!\n";
 		return;
 	}
 
 	// Attempt to read in motifs until exhausted
-		core::Size ligand_marker = 1;
+	core::Size ligand_marker = 1;
 	MotifLibrary new_library( motif_file, ligand_marker );
 
 	// Add to this library
-	for( MotifCOPs::const_iterator pmot = new_library.begin() ; pmot != new_library.end() ; ++pmot ) {
+	for ( MotifCOPs::const_iterator pmot = new_library.begin() ; pmot != new_library.end() ; ++pmot ) {
 		add_to_library( **pmot );
 	}
 }

@@ -103,8 +103,8 @@ SidechainMoverBase::SidechainMoverBase(
 	last_nchi_(mover.last_nchi_),
 	last_proposal_density_ratio_(mover.last_proposal_density_ratio_)
 {
-	if (mover.task_factory_) task_factory_ = core::pack::task::TaskFactoryCOP( core::pack::task::TaskFactoryOP( new pack::task::TaskFactory(*mover.task_factory_) ) );
-	if (mover.task_) task_ = mover.task_->clone();
+	if ( mover.task_factory_ ) task_factory_ = core::pack::task::TaskFactoryCOP( core::pack::task::TaskFactoryOP( new pack::task::TaskFactory(*mover.task_factory_) ) );
+	if ( mover.task_ ) task_ = mover.task_->clone();
 }
 
 SidechainMoverBase::~SidechainMoverBase() {}
@@ -126,7 +126,7 @@ SidechainMoverBase::parse_my_tag(
 		typedef utility::vector1< std::string > StringVec;
 		StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
 		for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
-					t_o_key != end; ++t_o_key ) {
+				t_o_key != end; ++t_o_key ) {
 			if ( data.has( "task_operations", *t_o_key ) ) {
 				new_task_factory->push_back( data.get_ptr< pack::task::operation::TaskOperation >( "task_operations", *t_o_key ) );
 			} else {
@@ -245,26 +245,26 @@ SidechainMoverBase::make_move( conformation::ResidueOP old_res )
 	Real proposal_density_reverse(1);
 	Real proposal_density_forward(1);
 
-	if (preserve_detailed_balance_) {
+	if ( preserve_detailed_balance_ ) {
 		proposal_density_reverse = compute_proposal_density(*old_res, resnum, *new_res_type, new_chi);
 	}
 	//tr << "chi1 (old/new): " << format::F(8,4,old_chi[ 1 ]) << " " << format::F( 8,4,new_chi[ 1 ]) << std::endl;
 	/// set the chi
 	conformation::ResidueOP new_residue = old_res;
 	conformation::ResidueOP previous_residue = old_res;
-	if (  false ) { /* replace by	if (residue_type() != & previous_residue->type() ) */
+	if (  false ) { /* replace by if (residue_type() != & previous_residue->type() ) */
 		/* do design stuff */
 		/* new_residue = < a new residue > */
-		/*		new_residue =
-			conformation::ResidueFactory::create_residue(*residue_type,
-			*old_res,
-			pose_->conformation(),
-			residue_task.preserve_c_beta());
-			for( Size ii = 1; ii <= residue_type->nchi(); ii++ ){
-			new_residue->set_chi( ii, numeric::principal_angle_degrees(last_chi_angles_[ ii ] ));
+		/*  new_residue =
+		conformation::ResidueFactory::create_residue(*residue_type,
+		*old_res,
+		pose_->conformation(),
+		residue_task.preserve_c_beta());
+		for( Size ii = 1; ii <= residue_type->nchi(); ii++ ){
+		new_residue->set_chi( ii, numeric::principal_angle_degrees(last_chi_angles_[ ii ] ));
 		*/
 	} else {
-		for (Size i = 1; i <= old_res->nchi(); ++i) {
+		for ( Size i = 1; i <= old_res->nchi(); ++i ) {
 			new_residue->set_chi( i, new_chi[ i ] );
 		}
 	}
@@ -295,7 +295,7 @@ SidechainMoverBase::idealize_sidechains(
 {
 	utility::vector1<Real> chi;
 	init_task(pose);
-	for (Size i = 1; i <= packed_residues_.size(); ++i) {
+	for ( Size i = 1; i <= packed_residues_.size(); ++i ) {
 		Size const resnum(packed_residues_[i]);
 
 		// get the residue type and residue level task
@@ -303,23 +303,23 @@ SidechainMoverBase::idealize_sidechains(
 		pack::task::ResidueLevelTask const & residue_task(task_->residue_task(resnum));
 
 		// disable proline idealization for now
-		if (residue_type.aa() == aa_pro) continue;
+		if ( residue_type.aa() == aa_pro ) continue;
 
 		// save original chi angles
-		if (residue_type.nchi() > chi.size()) chi.resize(residue_type.nchi());
-		for (Size chinum = 1; chinum <= residue_type.nchi(); ++chinum) {
+		if ( residue_type.nchi() > chi.size() ) chi.resize(residue_type.nchi());
+		for ( Size chinum = 1; chinum <= residue_type.nchi(); ++chinum ) {
 			chi[chinum] = pose.chi(chinum, resnum);
 		}
 
 		// create a new residue and replace the old one with it
 		ResidueOP new_residue(
 			ResidueFactory::create_residue(residue_type, pose.residue(resnum), pose.conformation(),
-			                                             residue_task.preserve_c_beta())
+			residue_task.preserve_c_beta())
 		);
 		pose.replace_residue(resnum, *new_residue, false);
 
 		// put original chi angles back
-		for (Size chinum = 1; chinum <= residue_type.nchi(); ++chinum) {
+		for ( Size chinum = 1; chinum <= residue_type.nchi(); ++chinum ) {
 			pose.set_chi(chinum, resnum, chi[chinum]);
 		}
 	}
@@ -336,7 +336,7 @@ SidechainMoverBase::task_factory() const {
 }
 
 void
-SidechainMoverBase::set_task_factory(	pack::task::TaskFactoryCOP task_factory ) {
+SidechainMoverBase::set_task_factory( pack::task::TaskFactoryCOP task_factory ) {
 	task_factory_ = task_factory;
 }
 
@@ -346,7 +346,7 @@ SidechainMoverBase::task() const {
 }
 
 void
-SidechainMoverBase::set_task(	pack::task::PackerTaskCOP task ) {
+SidechainMoverBase::set_task( pack::task::PackerTaskCOP task ) {
 	using pack::task::ResidueLevelTask;
 
 	task_ = task;
@@ -354,16 +354,16 @@ SidechainMoverBase::set_task(	pack::task::PackerTaskCOP task ) {
 	// update the list of residues being packed
 	packed_residues_.clear();
 	residue_packed_.resize(task_->total_residue());
-	for (Size i = 1; i <= task_->total_residue(); ++i) {
+	for ( Size i = 1; i <= task_->total_residue(); ++i ) {
 
 		// loop over all possible residue types and check if any have chi angles
 		residue_packed_[i] = false;
 		pack::task::ResidueLevelTask const & residue_task(task->residue_task(i));
-		for (ResidueLevelTask::ResidueTypeCOPListConstIter iter(residue_task.allowed_residue_types_begin());
-		     iter != residue_task.allowed_residue_types_end(); ++iter) {
+		for ( ResidueLevelTask::ResidueTypeCOPListConstIter iter(residue_task.allowed_residue_types_begin());
+				iter != residue_task.allowed_residue_types_end(); ++iter ) {
 
 			// temporarily exclude proline residues from side chain sampling
-			if ((*iter)->nchi() > 0 && (*iter)->aa() != aa_pro) {
+			if ( (*iter)->nchi() > 0 && (*iter)->aa() != aa_pro ) {
 				packed_residues_.push_back(i);
 				residue_packed_[i] = true;
 				break;
@@ -408,7 +408,7 @@ SidechainMoverBase::dof_id_ranges( pose::Pose & pose ) {
 
 	utility::vector1<id::DOF_ID_Range> range_vector;
 
-	for (Size i = 1; i <= packed_residues_.size(); ++i) {
+	for ( Size i = 1; i <= packed_residues_.size(); ++i ) {
 
 		Size const resnum(packed_residues_[i]);
 
@@ -417,22 +417,22 @@ SidechainMoverBase::dof_id_ranges( pose::Pose & pose ) {
 		// we only monitor DOFs of residues that won't change primary type
 		// check to see if pose residue type has the same name as all allowed residue types
 		pack::task::ResidueLevelTask const & residueleveltask(task_->residue_task(resnum));
-		for (pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter iter(residueleveltask.allowed_residue_types_begin());
-				 iter != residueleveltask.allowed_residue_types_end(); ++iter) {
+		for ( pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter iter(residueleveltask.allowed_residue_types_begin());
+				iter != residueleveltask.allowed_residue_types_end(); ++iter ) {
 
-			if ((*iter)->name3() != pose.residue_type(resnum).name3()) {
+			if ( (*iter)->name3() != pose.residue_type(resnum).name3() ) {
 				all_names_match = false;
 				break;
 			}
 		}
 
-		if (!all_names_match) break;
+		if ( !all_names_match ) break;
 
-		for (Size j = 1; j <= pose.residue_type(resnum).nchi(); ++j) {
+		for ( Size j = 1; j <= pose.residue_type(resnum).nchi(); ++j ) {
 
 			id::TorsionID chi_torsion(resnum, id::CHI, j);
 			id::DOF_ID chi_dof(pose.conformation().dof_id_from_torsion_id(chi_torsion));
-			if (chi_dof.valid()) range_vector.push_back(id::DOF_ID_Range(chi_dof, -pi, pi));
+			if ( chi_dof.valid() ) range_vector.push_back(id::DOF_ID_Range(chi_dof, -pi, pi));
 		}
 	}
 

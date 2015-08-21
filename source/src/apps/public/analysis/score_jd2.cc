@@ -54,7 +54,7 @@
 #include <basic/options/keys/broker.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
-#include <basic/options/keys/mp.OptionKeys.gen.hh> 
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <basic/options/keys/rescore.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
@@ -87,7 +87,7 @@ public:
 		return MoverOP( new MyScoreMover( *this ) );
 	}
 
-	virtual	MoverOP	fresh_instance() const {
+	virtual MoverOP fresh_instance() const {
 		return MoverOP( new MyScoreMover );
 	}
 
@@ -104,27 +104,27 @@ private:
 MyScoreMover::MyScoreMover():
 	keep_scores_flag_(false),
 	skip_scoring_(false)
- {
+{
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core;
 
 	// get scorefxn and add constraints if defined
 	sfxn_ = core::scoring::get_score_function();
-	if ( option[ in::file::keep_input_scores ]() ){
+	if ( option[ in::file::keep_input_scores ]() ) {
 		set_keep_input_scores();
 	}
-	if ( option[ rescore::skip ]() ){
+	if ( option[ rescore::skip ]() ) {
 		set_skip_scoring();
 	}
 
 	assign_ss_ = false;
-	if ( option[ rescore::assign_ss ]() ){
+	if ( option[ rescore::assign_ss ]() ) {
 		assign_ss_ = true;
 	}
 
 	// add cst scores from cmd line
-	if( option[ in::file::fullatom ]() ) {
+	if ( option[ in::file::fullatom ]() ) {
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *sfxn_ );
 	} else {
 		core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn( *sfxn_ );
@@ -161,43 +161,43 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	using namespace protocols;
-	using namespace protocols::jd2;
+		using namespace protocols;
+		using namespace protocols::jd2;
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core;
 
-	jd2::register_options();
+		jd2::register_options();
 
-	OPT(rescore::assign_ss);
-	OPT(rescore::skip);
+		OPT(rescore::assign_ss);
+		OPT(rescore::skip);
 
-	// initialize core
-	devel::init(argc, argv);
+		// initialize core
+		devel::init(argc, argv);
 
-	option[ OptionKeys::chemical::patch_selectors ].push_back( "PEPTIDE_CAP" ); // N_acetylated.txt and C_methylamidated.txt
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "PEPTIDE_CAP" ); // N_acetylated.txt and C_methylamidated.txt
 
-	//The following lines are to ensure one can rescore the pcs energy term (that uses TopologyClaimer)
-	if( option[ broker::setup ].user() ){
-		protocols::topology_broker::TopologyBrokerOP top_bro_OP( new  topology_broker::TopologyBroker() );
-		try{
-			add_cmdline_claims(*top_bro_OP, false /*do_I_need_fragments */);
+		//The following lines are to ensure one can rescore the pcs energy term (that uses TopologyClaimer)
+		if ( option[ broker::setup ].user() ) {
+			protocols::topology_broker::TopologyBrokerOP top_bro_OP( new  topology_broker::TopologyBroker() );
+			try{
+				add_cmdline_claims(*top_bro_OP, false /*do_I_need_fragments */);
+			}
+catch ( utility::excn::EXCN_Exception &excn )  {
+	excn.show( TR.Error );
+	utility_exit();
+}
 		}
-		catch ( utility::excn::EXCN_Exception &excn )  {
-			excn.show( TR.Error );
-			utility_exit();
-		}
-	}
 
-	//MyScoreMover* scoremover = new MyScoreMover;
-	MoverOP scoremover( new MyScoreMover );
+		//MyScoreMover* scoremover = new MyScoreMover;
+		MoverOP scoremover( new MyScoreMover );
 
-	// add constraints from cmd line
-	if ( option[ OptionKeys::constraints::cst_fa_file ].user() || option[ OptionKeys::constraints::cst_file ].user() ) {
+		// add constraints from cmd line
+		if ( option[ OptionKeys::constraints::cst_fa_file ].user() || option[ OptionKeys::constraints::cst_file ].user() ) {
 			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
 			protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
-			if( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
+			if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
 				loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
 			} else {
 				loadCsts->constraint_file( core::scoring::constraints::get_cst_file_option() );
@@ -205,68 +205,68 @@ main( int argc, char * argv [] )
 			seqmov->add_mover( loadCsts );
 			seqmov->add_mover( scoremover );
 			scoremover = seqmov;
-	}
-
-	// set pose for density scoring if a map was input
-	//   + (potentially) dock map into density
-	if ( option[ edensity::mapfile ].user() ) {
-		protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
-		seqmov->add_mover( MoverOP( new protocols::electron_density::SetupForDensityScoringMover ) );
-		seqmov->add_mover( scoremover );
-		scoremover = seqmov;
-	}
-
-	// set pose for symmetry
-	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-		protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
-		seqmov->add_mover( MoverOP( new protocols::simple_moves::symmetry::SetupForSymmetryMover ) );
-		seqmov->add_mover( scoremover );
-		scoremover = seqmov;
-	}
-	
-	// set pose for membranes
-	if ( option[ OptionKeys::in::membrane ].user() ) {
-		protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
-		seqmov->add_mover( protocols::moves::MoverOP( new protocols::membrane::AddMembraneMover ) );
-
-		if ( option[ OptionKeys::mp::setup::transform_into_membrane ].user() ) {
-			seqmov->add_mover( protocols::moves::MoverOP( new protocols::membrane::TransformIntoMembraneMover ) );
 		}
-		
-        // If user asks, position the protein in a membrane, position determined
-        // by transmembrane spanning topology
-        if ( option[ OptionKeys::mp::setup::position_from_topo ].user() ) {
-            seqmov->add_mover( protocols::moves::MoverOP( new protocols::membrane::MembranePositionFromTopologyMover ) );
-        }
-        
-		seqmov->add_mover( scoremover );
-		scoremover = seqmov;
-	}
 
-	using namespace protocols::jd2;
+		// set pose for density scoring if a map was input
+		//   + (potentially) dock map into density
+		if ( option[ edensity::mapfile ].user() ) {
+			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
+			seqmov->add_mover( MoverOP( new protocols::electron_density::SetupForDensityScoringMover ) );
+			seqmov->add_mover( scoremover );
+			scoremover = seqmov;
+		}
 
-	// Make sure the default JobOutputter is SilentJobOutputter to ensure that when score_jd2
-	// is called with default arguments is prints a proper scorefile and not the hacky thing that
-	// the  JobOutputter scorefile() function produces (which for example skips Evaluators!!)
+		// set pose for symmetry
+		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
+			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
+			seqmov->add_mover( MoverOP( new protocols::simple_moves::symmetry::SetupForSymmetryMover ) );
+			seqmov->add_mover( scoremover );
+			scoremover = seqmov;
+		}
 
-	// Set up a job outputter that writes a scorefile and no PDBs and no Silent Files.
-	SilentFileJobOutputterOP jobout( new SilentFileJobOutputter );
-	jobout->set_write_no_structures();
-	jobout->set_write_separate_scorefile(true);
+		// set pose for membranes
+		if ( option[ OptionKeys::in::membrane ].user() ) {
+			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
+			seqmov->add_mover( protocols::moves::MoverOP( new protocols::membrane::AddMembraneMover ) );
 
-	// If the user chooses something else, then so be it, but by default score(_jd2) should only create a score
-	// file and nothing else.
-	protocols::jd2::JobDistributor::get_instance()->set_job_outputter( JobDistributorFactory::create_job_outputter( jobout ));
+			if ( option[ OptionKeys::mp::setup::transform_into_membrane ].user() ) {
+				seqmov->add_mover( protocols::moves::MoverOP( new protocols::membrane::TransformIntoMembraneMover ) );
+			}
 
-	try{
-		JobDistributor::get_instance()->go( scoremover );
-	} catch ( utility::excn::EXCN_Base& excn ) {
-		std::cerr << "Exception: " << std::endl;
-		excn.show( std::cerr );
-		std::cout << "Exception: " << std::endl;
-		excn.show( std::cout ); //so its also seen in a >LOG file
-	}
-	 } catch ( utility::excn::EXCN_Base const & e ) {
+			// If user asks, position the protein in a membrane, position determined
+			// by transmembrane spanning topology
+			if ( option[ OptionKeys::mp::setup::position_from_topo ].user() ) {
+				seqmov->add_mover( protocols::moves::MoverOP( new protocols::membrane::MembranePositionFromTopologyMover ) );
+			}
+
+			seqmov->add_mover( scoremover );
+			scoremover = seqmov;
+		}
+
+		using namespace protocols::jd2;
+
+		// Make sure the default JobOutputter is SilentJobOutputter to ensure that when score_jd2
+		// is called with default arguments is prints a proper scorefile and not the hacky thing that
+		// the  JobOutputter scorefile() function produces (which for example skips Evaluators!!)
+
+		// Set up a job outputter that writes a scorefile and no PDBs and no Silent Files.
+		SilentFileJobOutputterOP jobout( new SilentFileJobOutputter );
+		jobout->set_write_no_structures();
+		jobout->set_write_separate_scorefile(true);
+
+		// If the user chooses something else, then so be it, but by default score(_jd2) should only create a score
+		// file and nothing else.
+		protocols::jd2::JobDistributor::get_instance()->set_job_outputter( JobDistributorFactory::create_job_outputter( jobout ));
+
+		try{
+			JobDistributor::get_instance()->go( scoremover );
+		} catch ( utility::excn::EXCN_Base& excn ) {
+			std::cerr << "Exception: " << std::endl;
+			excn.show( std::cerr );
+			std::cout << "Exception: " << std::endl;
+			excn.show( std::cout ); //so its also seen in a >LOG file
+		}
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

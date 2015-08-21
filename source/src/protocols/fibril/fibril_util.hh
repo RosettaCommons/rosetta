@@ -32,7 +32,7 @@ namespace fibril {
 void
 reorient_extended_fibril(
 	core::conformation::Conformation & src_conformation,
-  core::conformation::symmetry::SymmData & symmdata
+	core::conformation::symmetry::SymmData & symmdata
 );
 
 void
@@ -43,9 +43,9 @@ make_symmetric_fibril(
 void
 superimpose_pose_on_subset_bb(
 	core::pose::Pose& pose,
-  core::pose::Pose& ref_pose,
-  protocols::loops::Loops core,
-  protocols::loops::Loops ref_core
+	core::pose::Pose& ref_pose,
+	protocols::loops::Loops core,
+	protocols::loops::Loops ref_core
 );
 
 

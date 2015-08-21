@@ -53,12 +53,12 @@ typedef core::PackerEnergy PackerEnergy;
 
 
 FlexPacker::FlexPacker(
-  core::pack::task::PackerTaskCOP task, // SHOULD TAKE A TASK FACTORY, NOT A TASK COP!
-  utility::vector1< core::fragment::FrameOP > const & frames,
-  core::scoring::ScoreFunctionCOP scorefxn
+	core::pack::task::PackerTaskCOP task, // SHOULD TAKE A TASK FACTORY, NOT A TASK COP!
+	utility::vector1< core::fragment::FrameOP > const & frames,
+	core::scoring::ScoreFunctionCOP scorefxn
 ) : task_(task), scorefxn_(scorefxn)
 {
-  this->set_frames( frames );
+	this->set_frames( frames );
 }
 
 FlexPacker::~FlexPacker() {}
@@ -115,7 +115,7 @@ FlexPacker::apply(
 	FArray1D< PackerEnergy > rot_freq( flex_rotsets->nrotamers() );
 	FArray1D_int current_rot_index( pose.total_residue(), 1 );
 	//for ( Size ii = 1; ii <= flex_rotsets->nmoltenres(); ++ii ) {
-	//	current_rot_index( flex_rotsets->moltenres_2_resid( ii ) ) = 1 + flex_rotsets->nrotamer_offset_for_moltenres( ii );
+	// current_rot_index( flex_rotsets->moltenres_2_resid( ii ) ) = 1 + flex_rotsets->nrotamer_offset_for_moltenres( ii );
 	//}
 	tr << "Current rot index: ";
 	for ( Size ii = 1; ii <= flex_rotsets->nmoltenres(); ++ii ) {
@@ -170,7 +170,7 @@ FlexPacker::apply(
 	}
 
 	tr << "The final assigned backbone fragments are: ";
-	for( Size jj = 1; jj<= flex_rotsets->nflexible_segments(); ++jj){
+	for ( Size jj = 1; jj<= flex_rotsets->nflexible_segments(); ++jj ) {
 		Size representative_seqpos = flex_rotsets->flexsegment_start_resid( jj );
 		Size representative_moltenres = flex_rotsets->resid_2_moltenres( representative_seqpos );
 		Size rep_rotamer = bestrotamer_at_seqpos( representative_seqpos ) - flex_rotsets->nrotamer_offset_for_moltenres( representative_moltenres );
@@ -207,14 +207,14 @@ FlexPacker::get_name() const {
 
 void
 FlexPacker::set_frames(
- utility::vector1< core::fragment::FrameOP > const & frames
+	utility::vector1< core::fragment::FrameOP > const & frames
 )
 {
 
-  for( utility::vector1< core::fragment::FrameOP >::const_iterator frame_it = frames.begin(); frame_it != frames.end(); ++frame_it ){
+	for ( utility::vector1< core::fragment::FrameOP >::const_iterator frame_it = frames.begin(); frame_it != frames.end(); ++frame_it ) {
 
-    frames_.push_back( *frame_it );
-  }
+		frames_.push_back( *frame_it );
+	}
 
 } //set_frames
 

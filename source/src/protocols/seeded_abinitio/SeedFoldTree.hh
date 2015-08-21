@@ -42,8 +42,8 @@ public:
 	core::kinematics::FoldTreeOP fold_tree() const;
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
-  virtual protocols::moves::MoverOP clone() const;
-  virtual protocols::moves::MoverOP fresh_instance() const;
+	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 
 	core::scoring::ScoreFunctionOP scorefxn() const;
 	void scorefxn( core::scoring::ScoreFunctionOP scorefxn );
@@ -53,17 +53,17 @@ public:
 	std::set< core::Size > get_folding_verteces();
 
 	void parse_my_tag( utility::tag::TagCOP tag,
-							  basic::datacache::DataMap &,
-							  protocols::filters::Filters_map const &,
-							  protocols::moves::Movers_map const &,
-							  core::pose::Pose const & );
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & );
 
 
 	core::kinematics::FoldTreeOP set_foldtree(
-												core::pose::PoseOP & seed_target_chain,
-												std::string secstr,
-												protocols::loops::Loops & loops,
-												bool protein_not_folded_yet );
+		core::pose::PoseOP & seed_target_chain,
+		std::string secstr,
+		protocols::loops::Loops & loops,
+		bool protein_not_folded_yet );
 
 	bool ddg_based();
 	void ddg_based( bool ddgb );
@@ -110,8 +110,8 @@ private:
 	core::pose::PoseOP seeds_only_;
 	core::pose::PoseOP only_seeds_chain_;
 	std::set< core::Size > folding_verteces_;
-	};
-	}//end seeded_abinitio
+};
+}//end seeded_abinitio
 }//end protocols
 
 #endif

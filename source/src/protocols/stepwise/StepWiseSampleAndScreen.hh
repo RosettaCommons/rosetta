@@ -26,65 +26,65 @@
 namespace protocols {
 namespace stepwise {
 
-	class StepWiseSampleAndScreen: public utility::pointer::ReferenceCount {
+class StepWiseSampleAndScreen: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-    //constructor
-    StepWiseSampleAndScreen( sampler::StepWiseSamplerBaseOP sampler,
-															 utility::vector1< screener::StepWiseScreenerOP > screener );
+	//constructor
+	StepWiseSampleAndScreen( sampler::StepWiseSamplerBaseOP sampler,
+		utility::vector1< screener::StepWiseScreenerOP > screener );
 
-		//destructor
-		~StepWiseSampleAndScreen();
+	//destructor
+	~StepWiseSampleAndScreen();
 
 
-	public:
+public:
 
-		void
-		run();
+	void
+	run();
 
-		void
-		reset();
+	void
+	reset();
 
-		void
-		output_counts() const;
+	void
+	output_counts() const;
 
-		Size const &
-		num_tries() const;
+	Size const &
+	num_tries() const;
 
-		Size const &
-		num_successes() const;
+	Size const &
+	num_successes() const;
 
-		Size
-		num_screeners() const;
+	Size
+	num_screeners() const;
 
-		void
-		output_info_on_random_trials() const;
+	void
+	output_info_on_random_trials() const;
 
-		void set_max_ntries( core::Size const & setting ){ max_ntries_ = setting; }
-		core::Size max_ntries() const{ return max_ntries_; }
+	void set_max_ntries( core::Size const & setting ){ max_ntries_ = setting; }
+	core::Size max_ntries() const{ return max_ntries_; }
 
-		void set_num_random_samples( core::Size const & setting ){ num_random_samples_ = setting; }
-		core::Size num_random_samples() const{ return num_random_samples_; }
+	void set_num_random_samples( core::Size const & setting ){ num_random_samples_ = setting; }
+	core::Size num_random_samples() const{ return num_random_samples_; }
 
-		void set_verbose( bool const & setting ){ verbose_ = setting; }
-		bool verbose() const{ return max_ntries_; }
+	void set_verbose( bool const & setting ){ verbose_ = setting; }
+	bool verbose() const{ return max_ntries_; }
 
-	private:
+private:
 
-		void set_ok_to_increment();
+	void set_ok_to_increment();
 
-		void early_exit_check( Size const n );
+	void early_exit_check( Size const n );
 
-	public:
+public:
 
-		sampler::StepWiseSamplerBaseOP sampler_;
-		utility::vector1< screener::StepWiseScreenerOP > screeners_;
-		core::Size max_ntries_;
-		core::Size num_random_samples_;
-		bool verbose_;
+	sampler::StepWiseSamplerBaseOP sampler_;
+	utility::vector1< screener::StepWiseScreenerOP > screeners_;
+	core::Size max_ntries_;
+	core::Size num_random_samples_;
+	bool verbose_;
 
-	};
+};
 
 } //stepwise
 } //protocols

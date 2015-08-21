@@ -67,27 +67,27 @@ public:
 		core::import_pose::pose_from_pdb(*pose_, "test_in2.pdb");
 		scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
 		switch ( benchtype_ ) {
-			case fast_relax_perfbench_score12 :
-				setup_for_score12();
+		case fast_relax_perfbench_score12 :
+			setup_for_score12();
 			break;
-			case fast_relax_perfbench_sc12sp2 :
-				setup_for_sc12sp2();
+		case fast_relax_perfbench_sc12sp2 :
+			setup_for_sc12sp2();
 			break;
-			case fast_relax_perfbench_sc12he :
-				setup_for_sc12he();
+		case fast_relax_perfbench_sc12he :
+			setup_for_sc12he();
 			break;
-			case fast_relax_perfbench_mmstd :
-				setup_for_mmstd();
+		case fast_relax_perfbench_mmstd :
+			setup_for_mmstd();
 			break;
-			case fast_relax_perfbench_sp2hecart :
-				setup_for_sp2hecart();
+		case fast_relax_perfbench_sp2hecart :
+			setup_for_sp2hecart();
 			break;
 		}
 	}
 
 	virtual void run(core::Real scaleFactor) {
 		core::Size reps( (core::Size)(1 * scaleFactor) );
-		if( reps == 0 ) { reps = 1; } // do at least one repetition, regardless of scale factor.
+		if ( reps == 0 ) { reps = 1; } // do at least one repetition, regardless of scale factor.
 		for ( core::Size ii = 1; ii <= reps; ++ii ) {
 			core::pose::Pose runpose = *pose_; // don't start from the last iteration's pose
 			fr_->apply( runpose );

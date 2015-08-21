@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 
+/// @file
 /// @brief amino acid composition energy
 /// @author Nobuyasu Koga
 
@@ -78,7 +78,7 @@ public: // constructor/destructor
 	virtual ~AACompositionEnergy();
 
 	/// @brief clone
-	virtual	EnergyMethodOP clone() const;
+	virtual EnergyMethodOP clone() const;
 
 
 private:
@@ -101,16 +101,16 @@ public:
 	void
 	residue_energy(
 		Residue const & rsd,
-	  Pose const & pose,
+		Pose const & pose,
 		EnergyMap & emap
 	) const;
 
 
 	/// @brief scoring
-	// virtual	void setup_for_scoring( Pose &, ScoreFunction const & ) const;
+	// virtual void setup_for_scoring( Pose &, ScoreFunction const & ) const;
 
 	/// @brief scoring
-	// virtual void finalize_total_energy( Pose & pose, ScoreFunction const &,	EnergyMap & totals ) const;
+	// virtual void finalize_total_energy( Pose & pose, ScoreFunction const &, EnergyMap & totals ) const;
 
 
 	/// @brief DunbrackEnergy is context independent; indicates that no

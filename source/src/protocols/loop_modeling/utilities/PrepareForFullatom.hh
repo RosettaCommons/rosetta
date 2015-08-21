@@ -31,30 +31,30 @@ namespace utilities {
 
 /// @brief Convert a pose to fullatom mode for high-resolution loop modeling.
 ///
-/// @details Before we start high-resolution loop modeling, we need to make 
-/// sure that all the residues in the pose have sidechains.  There are three 
-/// ways this could happen.  This first is that the pose is already in fullatom 
-/// mode and we don't have to do anything.  This is important to check, because 
-/// we don't want to mess anything up if low-resolution loop modeling was 
-/// skipped.  The second is by copying sidechains from the original structure, 
-/// except for those in regions where the backbone was moved, which have to be 
-/// repacked.  This is the default action.  The third option, which has to be 
+/// @details Before we start high-resolution loop modeling, we need to make
+/// sure that all the residues in the pose have sidechains.  There are three
+/// ways this could happen.  This first is that the pose is already in fullatom
+/// mode and we don't have to do anything.  This is important to check, because
+/// we don't want to mess anything up if low-resolution loop modeling was
+/// skipped.  The second is by copying sidechains from the original structure,
+/// except for those in regions where the backbone was moved, which have to be
+/// repacked.  This is the default action.  The third option, which has to be
 /// explicitly requested, is to simply repack everything.
 
 class PrepareForFullatom : public LoopMover {
 
 public:
-	
+
 	/// @brief Default constructor.
 	PrepareForFullatom();
 
 	/// @copydoc LoopMover::parse_my_tag
 	void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & data,
-			protocols::filters::Filters_map const & filters,
-			protocols::moves::Movers_map const & movers,
-			Pose const & pose);
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		Pose const & pose);
 
 	/// @copydoc LoopMover::get_name
 	string get_name() const { return "PrepareForFullatom"; }

@@ -32,41 +32,41 @@ namespace nonlocal {
 /// @class Implements the Policy interface. Given a Frame, chooses the fragment
 /// that, when applied to the pose, minimizes total distortion ("smooth move").
 class SmoothPolicy : public Policy {
-  typedef core::fragment::FragSetCOP FragSetCOP;
-  typedef protocols::simple_moves::GunnCost GunnCost;
+	typedef core::fragment::FragSetCOP FragSetCOP;
+	typedef protocols::simple_moves::GunnCost GunnCost;
 
- public:
+public:
 
-  /// @class Simple container that associates fragment indices with Gunn scores
-  class Candidate {
-   public:
-    Candidate(core::Real score, core::Size fragment_num)
-        : score_(score), fragment_num_(fragment_num) {}
+	/// @class Simple container that associates fragment indices with Gunn scores
+	class Candidate {
+	public:
+		Candidate(core::Real score, core::Size fragment_num)
+		: score_(score), fragment_num_(fragment_num) {}
 
-    /// @brief Returns the candidate's score
-    core::Real score() const {
-      return score_;
-    }
+		/// @brief Returns the candidate's score
+		core::Real score() const {
+			return score_;
+		}
 
-    /// @brief Returns the candidate's position within the Frame
-    core::Size fragment_num() const {
-      return fragment_num_;
-    }
+		/// @brief Returns the candidate's position within the Frame
+		core::Size fragment_num() const {
+			return fragment_num_;
+		}
 
-   private:
-    core::Real score_;
-    core::Size fragment_num_;
-  };
+	private:
+		core::Real score_;
+		core::Size fragment_num_;
+	};
 
-  explicit SmoothPolicy(FragSetCOP fragments);
+	explicit SmoothPolicy(FragSetCOP fragments);
 
-  /// @brief Given the current state of <pose>, selects the fragment in <frame>
-  /// that minimizes overall distortion
-  virtual core::Size choose(const core::fragment::Frame& frame,
-                            const core::pose::Pose&);
+	/// @brief Given the current state of <pose>, selects the fragment in <frame>
+	/// that minimizes overall distortion
+	virtual core::Size choose(const core::fragment::Frame& frame,
+		const core::pose::Pose&);
 
- private:
-  GunnCost scorer_;
+private:
+	GunnCost scorer_;
 };
 
 }  // namespace nonlocal

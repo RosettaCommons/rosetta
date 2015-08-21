@@ -42,25 +42,27 @@ class ABEGO_SS_Score: public CachingScoringMethod {
 public:
 
 	ABEGO_SS_Score(Size priority, Real lowest_acceptable_value, bool use_lowest,
-			std::string prediction_file_name,Size longest_vall_chunk) :
+		std::string prediction_file_name,Size longest_vall_chunk) :
 		CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
-				"ABEGO_SS_Score") {
+		"ABEGO_SS_Score") {
 
 		quota::ABEGO_SS_Config prediction_file(prediction_file_name);
 		query_len_ = prediction_file.size();
 		n_classes_ = prediction_file.n_columns();
-		for (Size i = 1; i <= query_len_; ++i) {
+		for ( Size i = 1; i <= query_len_; ++i ) {
 			utility::vector1<Real> row(longest_vall_chunk);
 			scores_.push_back(row);
 		}
-		for(Size iseq=1;iseq<=query_len_;iseq++) {
-		    utility::vector1<Real> row;
-		    for(Size ibin=1;ibin<=n_classes_;ibin++)
-			row.push_back(prediction_file.probability(iseq,ibin));
-		    ratios_.push_back( row );
+		for ( Size iseq=1; iseq<=query_len_; iseq++ ) {
+			utility::vector1<Real> row;
+			for ( Size ibin=1; ibin<=n_classes_; ibin++ ) {
+				row.push_back(prediction_file.probability(iseq,ibin));
+			}
+			ratios_.push_back( row );
 		}
-		for(Size ibin=1;ibin<=n_classes_;ibin++)
-		    maps_.push_back( utility::pointer::shared_ptr<class protocols::frag_picker::quota::ABEGO_SS_Map>( new quota::ABEGO_SS_Map(prediction_file.get_pool_bins(ibin)) ) );
+		for ( Size ibin=1; ibin<=n_classes_; ibin++ ) {
+			maps_.push_back( utility::pointer::shared_ptr<class protocols::frag_picker::quota::ABEGO_SS_Map>( new quota::ABEGO_SS_Map(prediction_file.get_pool_bins(ibin)) ) );
+		}
 	}
 
 	~ABEGO_SS_Score() {}
@@ -90,7 +92,7 @@ public:
 	}
 
 	FragmentScoringMethodOP make(Size, Real, bool,
-			FragmentPickerOP, std::string);
+		FragmentPickerOP, std::string);
 };
 
 } // scores

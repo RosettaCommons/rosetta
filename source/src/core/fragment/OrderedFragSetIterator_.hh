@@ -47,9 +47,9 @@
 
 
 /* Just a mad thought: with fragments becoming ever more "Residue" like one might want to use the
-	 packer to choose a combination of good fragments instead of makeing independent choices.
-	 I guess, it is only a question of keeping the combinatorics in control...
-	 maybe it makes sense to pack with only "unconfident" regions of the backbone flexible ..
+packer to choose a combination of good fragments instead of makeing independent choices.
+I guess, it is only a question of keeping the combinatorics in control...
+maybe it makes sense to pack with only "unconfident" regions of the backbone flexible ..
 */
 
 namespace core {
@@ -57,76 +57,76 @@ namespace fragment {
 
 /* iterate over a map of vectors such that if feels like a flat data-structure */
 class OrderedFragSetIterator_ : public FrameIteratorWorker_ {
-  friend class OrderedFragSet;
-  typedef std::map< Size, FrameList > FrameMap;
-  typedef FrameMap::const_iterator OuterIterator;
-  typedef FrameList::const_iterator InnerIterator;
+	friend class OrderedFragSet;
+	typedef std::map< Size, FrameList > FrameMap;
+	typedef FrameMap::const_iterator OuterIterator;
+	typedef FrameList::const_iterator InnerIterator;
 protected:
-  OrderedFragSetIterator_( OuterIterator it, OuterIterator eit ) : outer_( it ), outer_end_( eit ) {
-    if ( outer_ != outer_end_ ) {
-      inner_ = outer_->second.begin();
-      inner_end_ = outer_->second.end();
-      if ( !(inner_ != inner_end_) ) increment_outer();
-      else if ( (*this)->nr_frags() == 0 ) ++(*this); //move forward to first real frame
-    }
-  };
+	OrderedFragSetIterator_( OuterIterator it, OuterIterator eit ) : outer_( it ), outer_end_( eit ) {
+		if ( outer_ != outer_end_ ) {
+			inner_ = outer_->second.begin();
+			inner_end_ = outer_->second.end();
+			if ( !(inner_ != inner_end_) ) increment_outer();
+			else if ( (*this)->nr_frags() == 0 ) ++(*this); //move forward to first real frame
+		}
+	};
 
-  virtual bool operator != ( FrameIteratorWorker_ const& fiw ) const {
-    OrderedFragSetIterator_ const& fsit ( dynamic_cast< OrderedFragSetIterator_ const& > ( fiw ) );
-    bool bOut ( outer_!=fsit.outer_ );
-    if ( !bOut && fsit.outer_ != fsit.outer_end_ && outer_ != outer_end_ ) {
-      return inner_ != fsit.inner_;
-    } else return bOut;
-  };
+	virtual bool operator != ( FrameIteratorWorker_ const& fiw ) const {
+		OrderedFragSetIterator_ const& fsit ( dynamic_cast< OrderedFragSetIterator_ const& > ( fiw ) );
+		bool bOut ( outer_!=fsit.outer_ );
+		if ( !bOut && fsit.outer_ != fsit.outer_end_ && outer_ != outer_end_ ) {
+			return inner_ != fsit.inner_;
+		} else return bOut;
+	};
 
-  virtual FrameIteratorWorker_& operator++ () {
-    if ( increment_inner() ) return *this; //increment inner-loop to the end
-    increment_outer(); //then increment outer-loop
-    return *this;
-  }
+	virtual FrameIteratorWorker_& operator++ () {
+		if ( increment_inner() ) return *this; //increment inner-loop to the end
+		increment_outer(); //then increment outer-loop
+		return *this;
+	}
 
-  bool increment_outer () {
-    while ( ++outer_ != outer_end_ ) {
-      inner_ = outer_->second.begin();
-      inner_end_ = outer_->second.end();
-      if ( inner_ != inner_end_ ) {
-	if ( (*inner_)->nr_frags() ) return true;
-	else if ( increment_inner() ) return true;
-      }
-    }
-    return false;
-  }
+	bool increment_outer () {
+		while ( ++outer_ != outer_end_ ) {
+			inner_ = outer_->second.begin();
+			inner_end_ = outer_->second.end();
+			if ( inner_ != inner_end_ ) {
+				if ( (*inner_)->nr_frags() ) return true;
+				else if ( increment_inner() ) return true;
+			}
+		}
+		return false;
+	}
 
-  bool increment_inner () {
-    while ( ++inner_ != inner_end_ ) {
-      if ( (*inner_)->nr_frags() ) return true;
-    }
-    return false;
-  }
+	bool increment_inner () {
+		while ( ++inner_ != inner_end_ ) {
+			if ( (*inner_)->nr_frags() ) return true;
+		}
+		return false;
+	}
 
 
-  virtual FrameIteratorWorker_& operator = ( FrameIteratorWorker_ const& fiw ) {
-    OrderedFragSetIterator_ const& fsit ( dynamic_cast< OrderedFragSetIterator_ const& > ( fiw ) );
-    inner_ = fsit.inner_;
-    inner_end_ = fsit.inner_end_;
-    outer_ = fsit.outer_;
-    outer_end_ = fsit.outer_end_;
-    return *this;
-  }
+	virtual FrameIteratorWorker_& operator = ( FrameIteratorWorker_ const& fiw ) {
+		OrderedFragSetIterator_ const& fsit ( dynamic_cast< OrderedFragSetIterator_ const& > ( fiw ) );
+		inner_ = fsit.inner_;
+		inner_end_ = fsit.inner_end_;
+		outer_ = fsit.outer_;
+		outer_end_ = fsit.outer_end_;
+		return *this;
+	}
 
-  virtual FrameOP frame_ptr() {
-    return *inner_; //call get() of owning_ptr
-  }
+	virtual FrameOP frame_ptr() {
+		return *inner_; //call get() of owning_ptr
+	}
 
-  virtual FrameCOP frame_ptr() const {
-    return *inner_; //call get() of owning_ptr
-  }
+	virtual FrameCOP frame_ptr() const {
+		return *inner_; //call get() of owning_ptr
+	}
 
 private:
-  OuterIterator outer_;
-  OuterIterator outer_end_;
-  InnerIterator inner_;
-  InnerIterator inner_end_;
+	OuterIterator outer_;
+	OuterIterator outer_end_;
+	InnerIterator inner_;
+	InnerIterator inner_end_;
 };
 
 }

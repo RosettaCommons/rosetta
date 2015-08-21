@@ -46,7 +46,7 @@ public:
 
 	//toolbox::match_enzdes_util::EnzConstraintIOOP cst_io(){ return cst_io_; }
 
- //catalytic res INCLUDING all ligands in pose numbering in a particular order
+	//catalytic res INCLUDING all ligands in pose numbering in a particular order
 	utility::vector1<Size> catalytic_res( core::pose::Pose const & pose) const;
 
 	std::set< Size > const & design_targets( core::pose::Pose const & pose ) const;
@@ -74,7 +74,7 @@ public:
 	reduced_scorefxn() const;
 
 	core::scoring::ScoreFunctionOP
-  reduced_scorefxn();
+	reduced_scorefxn();
 
 	core::Real
 	design_targets_score(
@@ -129,7 +129,7 @@ public:
 		bool const & min_rb,
 		bool const & min_lig,
 		bool backrub = false){
-	chi_min_ = min_sc; bb_min_= min_bb; rb_min_=min_rb; minimize_ligand_torsions_=min_lig; bb_backrub_ =backrub;
+		chi_min_ = min_sc; bb_min_= min_bb; rb_min_=min_rb; minimize_ligand_torsions_=min_lig; bb_backrub_ =backrub;
 	}
 
 	void

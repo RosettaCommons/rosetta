@@ -41,17 +41,18 @@ public:
 
 	/// @brief  creates a predicted psi-based scoring function.
 	Psi(Size priority, Real lowest_acceptable_value, bool use_lowest,
-				std::string & fastaQuerySequence, utility::vector1<core::Real> & query_psi_prediction,
-				utility::vector1<core::Real> & query_psi_prediction_conf) :
-			CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
-				"Psi"),  query_(fastaQuerySequence) {
+		std::string & fastaQuerySequence, utility::vector1<core::Real> & query_psi_prediction,
+		utility::vector1<core::Real> & query_psi_prediction_conf) :
+		CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
+		"Psi"),  query_(fastaQuerySequence) {
 
-				if (query_.length() != query_psi_prediction.size())
-					utility_exit_with_message("Query length does not match predicted psi values");
+		if ( query_.length() != query_psi_prediction.size() ) {
+			utility_exit_with_message("Query length does not match predicted psi values");
+		}
 
-				query_len_ = query_.length();
-				query_psi_prediction_ = query_psi_prediction;
-				query_psi_prediction_conf_ = query_psi_prediction_conf;
+		query_len_ = query_.length();
+		query_psi_prediction_ = query_psi_prediction;
+		query_psi_prediction_conf_ = query_psi_prediction_conf;
 	}
 
 	~Psi() {};
@@ -65,8 +66,8 @@ private:
 	std::string cached_scores_id_;
 	std::string & query_;
 	Size query_len_;
-  utility::vector1<Real> query_psi_prediction_;
-  utility::vector1<Real> query_psi_prediction_conf_;
+	utility::vector1<Real> query_psi_prediction_;
+	utility::vector1<Real> query_psi_prediction_conf_;
 };
 
 /// @brief  Maker class that produces a new Psi object
@@ -78,11 +79,11 @@ public:
 	}
 
 	FragmentScoringMethodOP make(Size priority, Real lowest_acceptable_value, bool use_lowest,
-				FragmentPickerOP picker, std::string) {
+		FragmentPickerOP picker, std::string) {
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new Psi(priority,
-        lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), picker->get_query_psi_prediction(),
-				picker->get_query_psi_prediction_conf()) );
-  }
+			lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), picker->get_query_psi_prediction(),
+			picker->get_query_psi_prediction_conf()) );
+	}
 
 };
 

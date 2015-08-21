@@ -27,7 +27,7 @@
 #include <core/scoring/ScoreType.hh>
 
 
-namespace core{
+namespace core {
 namespace pose {
 namespace metrics {
 namespace simple_calculators {
@@ -38,8 +38,8 @@ public:
 
 	// preferred constructor - use an existing InterfaceNeighborDefinitionCalculator
 	InterfaceDeltaEnergeticsCalculator( std::string const & NameOfInterfaceNeighborDefinitionCalculator );
-    
-    // preferred alternative constructor - use an existing InterfaceNeighborDefinitionCalculator and define a set of score types to ignore
+
+	// preferred alternative constructor - use an existing InterfaceNeighborDefinitionCalculator and define a set of score types to ignore
 	InterfaceDeltaEnergeticsCalculator( std::string const & NameOfInterfaceNeighborDefinitionCalculator, utility::vector1<core::scoring::ScoreType> const & score_types_to_ignore );
 
 	// less preferred constructor - create a new InterfaceNeighborDefinitionCalculator
@@ -60,7 +60,7 @@ protected:
 private:
 
 	std::string name_of_InterfaceNeighborDefinitionCalculator_;
-    utility::vector1<core::scoring::ScoreType> score_types_to_ignore_;
+	utility::vector1<core::scoring::ScoreType> score_types_to_ignore_;
 
 	core::scoring::EnergyMap delta_energies_unweighted_;
 	core::scoring::EnergyMap weights_;

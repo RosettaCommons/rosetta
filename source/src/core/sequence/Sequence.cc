@@ -42,7 +42,7 @@ Sequence::Sequence( core::pose::Pose const & pose ):
 	start_(1),
 	gap_char_('-')
 {
-	if(! pose.pdb_info() ) {
+	if ( ! pose.pdb_info() ) {
 		id_ = pose.pdb_info()->name();
 	} else {
 		id_ = "unknown";

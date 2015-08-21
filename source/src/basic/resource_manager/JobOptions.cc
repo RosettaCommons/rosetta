@@ -66,33 +66,33 @@ JobOptions::show(
 		<< std::setiosflags(std::ios::left) << setw(16) << "OptionKeyType"
 		<< std::setiosflags(std::ios::left) << setw(16) << "OptionKey"
 		<< "OptionValue" << endl;
-	for(
-		map<BooleanOptionKey, bool>::const_iterator
-			o = boolean_options_.begin(), oe = boolean_options_.end(); o != oe; ++o){
+	for (
+			map<BooleanOptionKey, bool>::const_iterator
+			o = boolean_options_.begin(), oe = boolean_options_.end(); o != oe; ++o ) {
 		out
 			<< std::setiosflags(std::ios::left) << setw(16) << "Boolean"
 			<< std::setiosflags(std::ios::left) << setw(16) << o->first.id()
 			<< o->second << endl;
 	}
 
-	for(
-		map<BooleanVectorOptionKey, vector1<bool> >::const_iterator
+	for (
+			map<BooleanVectorOptionKey, vector1<bool> >::const_iterator
 			o = boolean_vector_options_.begin(), oe = boolean_vector_options_.end();
-		o != oe; ++o){
+			o != oe; ++o ) {
 		out
 			<< std::setiosflags(std::ios::left) << setw(16) << "BooleanVector"
 			<< std::setiosflags(std::ios::left) << setw(16) << o->first.id();
 		bool first(true);
-		for(
-			vector1<bool>::const_iterator
-				k = o->second.begin(), ke = o->second.end(); k != ke; ++k){
-			if(!first){
+		for (
+				vector1<bool>::const_iterator
+				k = o->second.begin(), ke = o->second.end(); k != ke; ++k ) {
+			if ( !first ) {
 				out << " ";
 			} else {
 				first = false;
 			}
 
-			out	<< (*k ? "true" : "false");
+			out << (*k ? "true" : "false");
 		}
 		out << endl;
 	}
@@ -128,7 +128,7 @@ JobOptions::get_option(
 ) const {
 	map< BooleanOptionKey, bool >::const_iterator val(
 		boolean_options_.find(key));
-	if(val == boolean_options_.end()){
+	if ( val == boolean_options_.end() ) {
 		throw EXCN_Msg_Exception("BooleanOptionKey '" + key.identifier() + "' not found in JobOptions");
 	} else {
 		return val->second;
@@ -157,7 +157,7 @@ JobOptions::get_option(
 ) const {
 	map< BooleanVectorOptionKey, vector1< bool > >::const_iterator val(
 		boolean_vector_options_.find(key));
-	if(val == boolean_vector_options_.end()){
+	if ( val == boolean_vector_options_.end() ) {
 		throw EXCN_Msg_Exception("BooleanVectorOptionKey '" + key.identifier() + "' not found in JobOptions");
 	} else {
 		return val->second;
@@ -186,7 +186,7 @@ JobOptions::get_option(
 ) const {
 	map< FileOptionKey, FileName >::const_iterator val(
 		file_options_.find(key));
-	if(val == file_options_.end()){
+	if ( val == file_options_.end() ) {
 		throw EXCN_Msg_Exception("FileOptionKey '" + key.identifier() + "' not found in JobOptions");
 	} else {
 		return val->second;
@@ -216,7 +216,7 @@ JobOptions::get_option(
 ) const {
 	map< FileVectorOptionKey, vector1< FileName > >::const_iterator val(
 		file_vector_options_.find(key));
-	if(val == file_vector_options_.end()){
+	if ( val == file_vector_options_.end() ) {
 		throw EXCN_Msg_Exception("BooleanOptionKey '" + key.identifier() + "' not found in JobOptions");
 	} else {
 		return val->second;
@@ -245,7 +245,7 @@ JobOptions::get_option(
 ) const {
 	map< IntegerOptionKey, int >::const_iterator val(
 		integer_options_.find(key));
-	if(val == integer_options_.end()){
+	if ( val == integer_options_.end() ) {
 		throw EXCN_Msg_Exception("IntegerOptionKey '" + key.identifier() + "' not found in JobOptions");
 	} else {
 		return val->second;
@@ -274,7 +274,7 @@ JobOptions::get_option(
 ) const {
 	map< IntegerVectorOptionKey, vector1< int > >::const_iterator val(
 		integer_vector_options_.find(key));
-	if(val == integer_vector_options_.end()){
+	if ( val == integer_vector_options_.end() ) {
 		throw EXCN_Msg_Exception("IntegerVectorOptionKey '" + key.identifier() + "' not found in JobOptions");
 	} else {
 		return val->second;
@@ -303,7 +303,7 @@ JobOptions::get_option(
 ) const {
 	map< PathOptionKey, PathName >::const_iterator val(
 		path_options_.find(key));
-	if(val == path_options_.end()){
+	if ( val == path_options_.end() ) {
 		throw EXCN_Msg_Exception("PathOptionKey '" + key.identifier() + "' not found in JobOptions");
 	} else {
 		return val->second;
@@ -332,7 +332,7 @@ JobOptions::get_option(
 ) const {
 	map< PathVectorOptionKey, vector1< PathName > >::const_iterator val(
 		path_vector_options_.find(key));
-	if(val == path_vector_options_.end()){
+	if ( val == path_vector_options_.end() ) {
 		throw EXCN_Msg_Exception("PathVectorOptionKey '" + key.identifier() + "' not found in JobOptions");
 	} else {
 		return val->second;
@@ -361,7 +361,7 @@ JobOptions::get_option(
 ) const {
 	map< RealOptionKey, Real >::const_iterator val(
 		real_options_.find(key));
-	if(val == real_options_.end()){
+	if ( val == real_options_.end() ) {
 		throw EXCN_Msg_Exception("RealOptionKey '" + key.identifier() + "' not found in JobOptions");
 	} else {
 		return val->second;
@@ -390,7 +390,7 @@ JobOptions::get_option(
 ) const {
 	map< RealVectorOptionKey, vector1< Real> >::const_iterator val(
 		real_vector_options_.find(key));
-	if(val == real_vector_options_.end()){
+	if ( val == real_vector_options_.end() ) {
 		throw EXCN_Msg_Exception("RealVectorOptionKey '" + key.identifier() + "' not found in JobOptions");
 	} else {
 		return val->second;
@@ -419,7 +419,7 @@ JobOptions::get_option(
 ) const {
 	map< StringOptionKey, string >::const_iterator val(
 		string_options_.find(key));
-	if(val == string_options_.end()){
+	if ( val == string_options_.end() ) {
 		throw EXCN_Msg_Exception("StringOptionKey '" + key.identifier() + "' not found in JobOptions");
 	} else {
 		return val->second;
@@ -448,7 +448,7 @@ JobOptions::get_option(
 ) const {
 	map< StringVectorOptionKey, vector1< string > >::const_iterator val(
 		string_vector_options_.find(key));
-	if(val == string_vector_options_.end()){
+	if ( val == string_vector_options_.end() ) {
 		throw EXCN_Msg_Exception("StringVectorOptionKey '" + key.identifier() + "' not found in JobOptions");
 	} else {
 		return val->second;

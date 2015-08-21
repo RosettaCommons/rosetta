@@ -94,7 +94,7 @@ bool DisulfideFilter::apply(Pose const & pose ) const
 {
 	vector1< pair<Size,Size> > disulfides;
 	DisulfideMover::disulfide_list(pose, targets_, rb_jump_, disulfides);
-	if( disulfides.empty() ) {
+	if ( disulfides.empty() ) {
 		TR << "Failing."<<std::endl;
 		return false;
 	} else {
@@ -109,14 +109,13 @@ void DisulfideFilter::report( ostream & out, Pose const & pose ) const
 	DisulfideMover::disulfide_list(pose, targets_, rb_jump_, disulfides);
 
 	out << disulfides.size() << " disulfides possible: ";
-	for( vector1< pair<Size,Size> >::const_iterator disulf = disulfides.begin(),
+	for ( vector1< pair<Size,Size> >::const_iterator disulf = disulfides.begin(),
 			end_disulf = disulfides.end();
-			disulf != end_disulf; ++disulf)
-		{
+			disulf != end_disulf; ++disulf ) {
 		out << disulf->first << '-' << disulf->second << ", ";
-			}
+	}
 	out << "\n";
-		}
+}
 /// @return The number of disulfides possible
 Real DisulfideFilter::report_sm( Pose const & pose ) const
 {
@@ -127,25 +126,24 @@ Real DisulfideFilter::report_sm( Pose const & pose ) const
 }
 
 /**
- * @details Parameters recognized:
- *  - targets. A list of possible target residues, seperated by commas.
- */
+* @details Parameters recognized:
+*  - targets. A list of possible target residues, seperated by commas.
+*/
 void DisulfideFilter::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & pose)
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & pose)
 {
 
 	// Set target to the residue specified by "target_pdb_num" or "target_res_num"
-	if( tag->hasOption("targets") ) {
+	if ( tag->hasOption("targets") ) {
 		targets_ = core::pose::get_resnum_list(tag, "targets",pose);
 	}
 
 	TR.Info << "DisulfideFilter targeting residues ";
-	for(vector1<Size>::const_iterator target = targets_.begin();
-			target != targets_.end();++target)
-	{
+	for ( vector1<Size>::const_iterator target = targets_.begin();
+			target != targets_.end(); ++target ) {
 		TR.Info<<*target<<", ";
 	}
 	TR.Info<<std::endl;

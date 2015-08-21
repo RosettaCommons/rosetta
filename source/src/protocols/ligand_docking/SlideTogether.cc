@@ -59,10 +59,10 @@ SlideTogether::SlideTogether(){}
 SlideTogether::SlideTogether(std::string const & chain): chain_(chain), jumps_(){}
 
 SlideTogether::SlideTogether(SlideTogether const & that):
-	    //utility::pointer::ReferenceCount(),
-		protocols::moves::Mover( that ),
-		chain_(that.chain_),
-		jumps_(that.jumps_)
+	//utility::pointer::ReferenceCount(),
+	protocols::moves::Mover( that ),
+	chain_(that.chain_),
+	jumps_(that.jumps_)
 {}
 
 SlideTogether::~SlideTogether() {}
@@ -82,11 +82,11 @@ std::string SlideTogether::get_name() const{
 //@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 SlideTogether::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & /*datamap*/,
-		protocols::filters::Filters_map const & /*filters*/,
-		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & pose
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & /*datamap*/,
+	protocols::filters::Filters_map const & /*filters*/,
+	protocols::moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & pose
 )
 {
 	if ( tag->getName() != "SlideTogether" ) throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
@@ -94,9 +94,9 @@ SlideTogether::parse_my_tag(
 
 	std::string const chains_str = tag->getOption<std::string>("chains");
 	utility::vector1<std::string> chain_strs= utility::string_split(chains_str, ',');
-	BOOST_FOREACH(std::string chain_str, chain_strs){
+	BOOST_FOREACH ( std::string chain_str, chain_strs ) {
 		utility::vector1<core::Size> chain_ids= get_chain_ids_from_chain(chain_str, pose);
-		BOOST_FOREACH( core::Size chain_id, chain_ids){
+		BOOST_FOREACH ( core::Size chain_id, chain_ids ) {
 			core::Size jump_id= core::pose::get_jump_id_from_chain_id(chain_id, pose);
 			jumps_.push_back(jump_id);
 		}
@@ -108,12 +108,12 @@ SlideTogether::apply( core::pose::Pose & pose ){
 	slide_together_tracer<< "Applying slide_together"<< std::endl;
 
 	// If we are not using parse_my_tags...
-	if(! chain_.empty()){
-		if(jumps_.size() > 0){
+	if ( ! chain_.empty() ) {
+		if ( jumps_.size() > 0 ) {
 			utility_exit_with_message("This should be impossible");// jumps are set through parse_my_tags, chain through the 1-arg constructor
 		}
 		utility::vector1<core::Size> chain_ids= get_chain_ids_from_chain(chain_, pose);
-		BOOST_FOREACH( core::Size chain_id, chain_ids){
+		BOOST_FOREACH ( core::Size chain_id, chain_ids ) {
 			core::Size jump_id= core::pose::get_jump_id_from_chain_id(chain_id, pose);
 			jumps_.push_back(jump_id);
 		}

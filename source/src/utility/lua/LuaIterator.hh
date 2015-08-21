@@ -10,7 +10,7 @@
 /// @file utility/lua/LuaIterator.hh
 /// @brief A wrapper around a luabind::iterator
 /// has skey() and ikey() functions that return a string or int conversion of the key
-// 
+//
 // this is really just a convenience class
 /// @author Ken Jung
 
@@ -30,37 +30,37 @@ namespace lua {
 
 class LuaIterator {
 
-		public:
+public:
 
 #ifdef USELUA
     LuaIterator( luabind::iterator iterator) : 
 						iterator_ (iterator) {}
 #endif
 
-    LuaIterator(){}
+	LuaIterator(){}
 
-				~LuaIterator(){}
+	~LuaIterator(){}
 
-				std::string skey();
+	std::string skey();
 
-				int ikey();
+	int ikey();
 
 #ifdef USELUA
 				luabind::iterator raw();
 #endif
 
-				bool operator==(LuaIterator & other);
+	bool operator==(LuaIterator & other);
 
-				bool operator!=(LuaIterator & other);
+	bool operator!=(LuaIterator & other);
 
-				LuaObject operator * ();
-				LuaObject *  operator -> ();
+	LuaObject operator * ();
+	LuaObject *  operator -> ();
 
-				LuaIterator operator++(int);
+	LuaIterator operator++(int);
 
-				LuaIterator & operator++();
+	LuaIterator & operator++();
 
-		private:
+private:
 #ifdef USELUA
 				luabind::iterator iterator_;
 #endif

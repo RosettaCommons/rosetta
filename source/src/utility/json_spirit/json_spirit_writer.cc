@@ -56,47 +56,47 @@ using namespace json_spirit;
 #endif
 
 #if defined( JSON_SPIRIT_WVALUE_ENABLED ) && !defined( BOOST_NO_STD_WSTRING )
-    void json_spirit::write( const wValue& value, std::wostream& os, unsigned int options )
-    {
-        write_stream( value, os, options );
-    }
+void json_spirit::write( const wValue& value, std::wostream& os, unsigned int options )
+{
+	write_stream( value, os, options );
+}
 
-    std::wstring json_spirit::write( const wValue& value, unsigned int options )
-    {
-        return write_string( value, options );
-    }
+std::wstring json_spirit::write( const wValue& value, unsigned int options )
+{
+	return write_string( value, options );
+}
 
-    void json_spirit::write_formatted( const wValue& value, std::wostream& os )
-    {
-        write_stream( value, os, pretty_print );
-    }
+void json_spirit::write_formatted( const wValue& value, std::wostream& os )
+{
+	write_stream( value, os, pretty_print );
+}
 
-    std::wstring json_spirit::write_formatted( const wValue& value )
-    {
-        return write_string( value, pretty_print );
-    }
+std::wstring json_spirit::write_formatted( const wValue& value )
+{
+	return write_string( value, pretty_print );
+}
 #endif
 
 #if defined( JSON_SPIRIT_WMVALUE_ENABLED ) && !defined( BOOST_NO_STD_WSTRING )
-    void json_spirit::write_formatted( const wmValue& value, std::wostream& os )
-    {
-        write_stream( value, os, pretty_print );
-    }
+void json_spirit::write_formatted( const wmValue& value, std::wostream& os )
+{
+	write_stream( value, os, pretty_print );
+}
 
-    std::wstring json_spirit::write_formatted( const wmValue& value )
-    {
-        return write_string( value, pretty_print );
-    }
+std::wstring json_spirit::write_formatted( const wmValue& value )
+{
+	return write_string( value, pretty_print );
+}
 
-    void json_spirit::write( const wmValue& value, std::wostream& os, unsigned int options )
-    {
-        write_stream( value, os, options );
-    }
+void json_spirit::write( const wmValue& value, std::wostream& os, unsigned int options )
+{
+	write_stream( value, os, options );
+}
 
-    std::wstring json_spirit::write( const wmValue& value, unsigned int options )
-    {
-        return write_string( value, options );
-    }
+std::wstring json_spirit::write( const wmValue& value, unsigned int options )
+{
+	return write_string( value, options );
+}
 #endif
 
 //} // namespace json_spirit

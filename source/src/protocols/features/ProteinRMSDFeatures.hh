@@ -35,8 +35,8 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class ProteinRMSDFeatures : public FeaturesReporter {
 public:

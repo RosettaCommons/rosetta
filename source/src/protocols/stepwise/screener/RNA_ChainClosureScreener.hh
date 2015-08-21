@@ -25,44 +25,44 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class RNA_ChainClosureScreener: public SampleApplier {
+class RNA_ChainClosureScreener: public SampleApplier {
 
-	public:
+public:
 
-		//constructor
-		RNA_ChainClosureScreener( modeler::rna::checker::RNA_ChainClosureCheckerOP chain_closure_checker,
-													core::pose::Pose & screening_pose,
-													bool const just_do_closure_check = false );
+	//constructor
+	RNA_ChainClosureScreener( modeler::rna::checker::RNA_ChainClosureCheckerOP chain_closure_checker,
+		core::pose::Pose & screening_pose,
+		bool const just_do_closure_check = false );
 
-		RNA_ChainClosureScreener( modeler::rna::checker::RNA_ChainClosureCheckerOP chain_closure_checker );
+	RNA_ChainClosureScreener( modeler::rna::checker::RNA_ChainClosureCheckerOP chain_closure_checker );
 
-		//destructor
-		~RNA_ChainClosureScreener();
+	//destructor
+	~RNA_ChainClosureScreener();
 
-	public:
+public:
 
-		std::string
-		name() const { return "RNA_ChainClosureScreener"; }
+	std::string
+	name() const { return "RNA_ChainClosureScreener"; }
 
-		StepWiseScreenerType
-		type() const { return RNA_CHAIN_CLOSURE; }
+	StepWiseScreenerType
+	type() const { return RNA_CHAIN_CLOSURE; }
 
-		bool
-		check_screen();
+	bool
+	check_screen();
 
-		void
-		add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
+	void
+	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
 
-		void
-		fast_forward( sampler::StepWiseSamplerBaseOP sampler );
+	void
+	fast_forward( sampler::StepWiseSamplerBaseOP sampler );
 
-	private:
+private:
 
-		modeler::rna::checker::RNA_ChainClosureCheckerOP chain_closure_checker_;
-		core::pose::Pose & screening_pose_;
-		bool const just_do_closure_check_;
+	modeler::rna::checker::RNA_ChainClosureCheckerOP chain_closure_checker_;
+	core::pose::Pose & screening_pose_;
+	bool const just_do_closure_check_;
 
-	};
+};
 
 } //screener
 } //stepwise

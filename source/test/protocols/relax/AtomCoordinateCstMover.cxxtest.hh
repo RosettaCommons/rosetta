@@ -38,18 +38,18 @@
 
 //class OldAddCst : public protocols::relax::FastRelax {
 //public:
-//	OldAddCst() {
-//		set_scorefxn( core::scoring::get_score_function() );
-//	}
-//	void apply( core::pose::Pose & pose ) {
-//		core::kinematics::MoveMapOP local_movemap = get_movemap()->clone();
-//		initialize_movemap( pose, *local_movemap );
-//		set_movemap(local_movemap);
-//		set_up_constraints( pose, *local_movemap );
-//	}
+// OldAddCst() {
+//  set_scorefxn( core::scoring::get_score_function() );
+// }
+// void apply( core::pose::Pose & pose ) {
+//  core::kinematics::MoveMapOP local_movemap = get_movemap()->clone();
+//  initialize_movemap( pose, *local_movemap );
+//  set_movemap(local_movemap);
+//  set_up_constraints( pose, *local_movemap );
+// }
 //};
 
- // --------------- Test Class --------------- //
+// --------------- Test Class --------------- //
 
 class AtomCoordinateCstMoverTests : public CxxTest::TestSuite {
 

@@ -25,11 +25,11 @@
 
 //#include <basic/Tracer.hh>
 
-namespace protocols{
-namespace match{
-namespace downstream{
+namespace protocols {
+namespace match {
+namespace downstream {
 
-	//static basic::Tracer TR( "protocols.match.downstream.SecMatchEvaluatorFactory" );
+//static basic::Tracer TR( "protocols.match.downstream.SecMatchEvaluatorFactory" );
 
 
 SecMatchResiduePairEvaluatorOP
@@ -41,7 +41,7 @@ SecMatchEvaluatorFactory::create_SecMatchResiduePairEvaluatorOP(
 	core::pose::Pose const & upstream_pose
 ){
 	Size found = SecMatchStr.find("SCORING_SECMATCH");
-	if (found!=std::string::npos){
+	if ( found!=std::string::npos ) {
 		ScoringSecMatchRPEOP ssmOP( new ScoringSecMatchRPE ( SecMatchStr, upstream_pose ) );
 		return ssmOP;
 	}

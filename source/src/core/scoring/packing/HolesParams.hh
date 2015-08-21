@@ -41,12 +41,12 @@ class HolesParams {
 public:
 
 	HolesParams()
-	 : max_atom_types_(21), sep_ss_(21,true) {
-	 	init_atype_maps();
+	: max_atom_types_(21), sep_ss_(21,true) {
+		init_atype_maps();
 	}
 
 	HolesParams( std::string fname )
-	 : max_atom_types_(21), sep_ss_(21,true) {
+	: max_atom_types_(21), sep_ss_(21,true) {
 		read_data_file( fname );
 		init_atype_maps();
 	}
@@ -78,12 +78,12 @@ public:
 		atype2holes_[ ats->atom_type_index("CObb") ] = 20;
 		atype2holes_[ ats->atom_type_index("OCbb") ] = 21;
 
-		for( size_t i = 1; i <= atype2holes_.size(); ++i ){
-			if( atype2holes_[i] > 0 ){
+		for ( size_t i = 1; i <= atype2holes_.size(); ++i ) {
+			if ( atype2holes_[i] > 0 ) {
 				holes2atype_[ atype2holes_[i] ] = i;
 			}
 		}
-		
+
 	}
 
 	void read_data_file( std::string fname ) {
@@ -96,29 +96,29 @@ public:
 		in.clear();
 		in.open( fname.c_str() );
 
-      if( !in ) { utility_exit_with_message("HolesParams::read_data_file can't find file"); }
+		if ( !in ) { utility_exit_with_message("HolesParams::read_data_file can't find file"); }
 
 		string tmp;
 		char ss;
 		Size at;
-		for( Size i = 1; i <=24; ++i ) {
+		for ( Size i = 1; i <=24; ++i ) {
 			in >> tmp;
 			// std::cerr << "in: " << tmp << std::endl;
 		}
-		while( true ) {
+		while ( true ) {
 			// std::cerr << "LOOP START" << std::endl;
 			in >> at;
-			if( 999 == at ) break;
+			if ( 999 == at ) break;
 			in >> ss;
 			// std::cerr << "atype / ss " << "'" << at << "' '" << ss << "'" << std::endl;
 			vector1<char> SS;
-			if( '*'==ss ) { SS.push_back('E'); SS.push_back('H'); SS.push_back('L'); sep_ss_[at] = false; }
+			if ( '*'==ss ) { SS.push_back('E'); SS.push_back('H'); SS.push_back('L'); sep_ss_[at] = false; }
 			else SS.push_back(ss);
 
 			Key k(at,SS[1]);
 			in >> nb_weights_[k];
 			sa_weights_[k].resize(20,0.0);
-			for( Size i = 1; i <= 20; ++i ) in >> sa_weights_[k][i];
+			for ( Size i = 1; i <= 20; ++i ) in >> sa_weights_[k][i];
 			in >> intercepts_[k];
 
 			// std::cerr << "nb:   " << nb_weights_[k] << std::endl;
@@ -126,7 +126,7 @@ public:
 			// std::cerr << std::endl;
 			// std::cerr << "icpt: " << intercepts_[k] << std::endl;
 
-			for( Size i = 2; i <= SS.size(); ++i ) {
+			for ( Size i = 2; i <= SS.size(); ++i ) {
 				nb_weights_[Key(at,SS[i])] = nb_weights_[k];
 				sa_weights_[Key(at,SS[i])] = sa_weights_[k];
 				intercepts_[Key(at,SS[i])] = intercepts_[k];
@@ -138,18 +138,18 @@ public:
 
 	core::Real nb_weight( core::Size const at, char const ss ) const {
 		std::map<Key,core::Real>::const_iterator i = nb_weights_.find(Key(atype2holes_[at],ss));
-		if( i == nb_weights_.end() ) return 0.0;
+		if ( i == nb_weights_.end() ) return 0.0;
 		else                         return i->second;
 	}
 	core::Real sa_weight( core::Size const at, char const ss, core::Size sa ) const {
 		std::map<Key,utility::vector1<core::Real> >::const_iterator i = sa_weights_.find(Key(atype2holes_[at],ss));
-		if( i == sa_weights_.end() )      return 0.0;
-		else if( sa > i->second.size()  ) return 0.0;
+		if ( i == sa_weights_.end() )      return 0.0;
+		else if ( sa > i->second.size()  ) return 0.0;
 		else                              return i->second[sa];
 	}
 	core::Real intercept( core::Size const at, char const ss ) const {
 		std::map<Key,core::Real>::const_iterator i = intercepts_.find(Key(atype2holes_[at],ss));
-		if( i == intercepts_.end() ) return 0.0;
+		if ( i == intercepts_.end() ) return 0.0;
 		else                         return i->second;
 	}
 	core::Real intercept() const { return intercept_; }
@@ -166,13 +166,13 @@ public:
 	operator<< (std::ostream & out, HolesParams const & hp) {
 		using namespace core;
 		using namespace std;
-		for( Size at = 1; at <= hp.max_atom_types(); ++at ) {
-			if( hp.sep_ss(at) ) {
-				out<<at<<" E "<<hp.nb_weight(at,'E'); for(Size i=1;i<21;++i) { out<<" "<<hp.sa_weight(at,'E',i); } out<<" "<<hp.intercept(at,'E')<<endl;
-				out<<at<<" H "<<hp.nb_weight(at,'H'); for(Size i=1;i<21;++i) { out<<" "<<hp.sa_weight(at,'H',i); } out<<" "<<hp.intercept(at,'H')<<endl;
-				out<<at<<" L "<<hp.nb_weight(at,'L'); for(Size i=1;i<21;++i) { out<<" "<<hp.sa_weight(at,'L',i); } out<<" "<<hp.intercept(at,'L')<<endl;
+		for ( Size at = 1; at <= hp.max_atom_types(); ++at ) {
+			if ( hp.sep_ss(at) ) {
+				out<<at<<" E "<<hp.nb_weight(at,'E'); for ( Size i=1; i<21; ++i ) { out<<" "<<hp.sa_weight(at,'E',i); } out<<" "<<hp.intercept(at,'E')<<endl;
+				out<<at<<" H "<<hp.nb_weight(at,'H'); for ( Size i=1; i<21; ++i ) { out<<" "<<hp.sa_weight(at,'H',i); } out<<" "<<hp.intercept(at,'H')<<endl;
+				out<<at<<" L "<<hp.nb_weight(at,'L'); for ( Size i=1; i<21; ++i ) { out<<" "<<hp.sa_weight(at,'L',i); } out<<" "<<hp.intercept(at,'L')<<endl;
 			} else {
-				out<<at<<" * "<<hp.nb_weight(at,'E'); for(Size i=1;i<21;++i) { out<<" "<<hp.sa_weight(at,'E',i); } out<<" "<<hp.intercept(at,'E')<<endl;
+				out<<at<<" * "<<hp.nb_weight(at,'E'); for ( Size i=1; i<21; ++i ) { out<<" "<<hp.sa_weight(at,'E',i); } out<<" "<<hp.intercept(at,'E')<<endl;
 			}
 		}
 		out << "999 " << hp.intercept() << endl;

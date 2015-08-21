@@ -47,15 +47,15 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	using namespace protocols::symmetric_docking;
-	using namespace protocols::jd2;
+		using namespace protocols::symmetric_docking;
+		using namespace protocols::jd2;
 
-	// initialize core
-	devel::init(argc, argv);
+		// initialize core
+		devel::init(argc, argv);
 
-	protocols::symmetric_docking::SymDock_main();
+		protocols::symmetric_docking::SymDock_main();
 
-	 } catch ( utility::excn::EXCN_Base const & e ) {
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

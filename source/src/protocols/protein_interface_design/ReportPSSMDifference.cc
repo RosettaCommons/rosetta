@@ -40,40 +40,40 @@ protocols::protein_interface_design::ReportPSSMDifferences::load_pssm_data(
 	std::string const & native_filename
 )
 {
-		std::string native_substr = native_filename.substr( 0, native_filename.size() - 4 );
-		std::string pssm_file_name = native_substr + ".fasta";
-		std::cerr << "Openning PSSM File " << pssm_file_name << " " << std::endl;
-		std::ifstream pssm_file( pssm_file_name.c_str() );
+	std::string native_substr = native_filename.substr( 0, native_filename.size() - 4 );
+	std::string pssm_file_name = native_substr + ".fasta";
+	std::cerr << "Openning PSSM File " << pssm_file_name << " " << std::endl;
+	std::ifstream pssm_file( pssm_file_name.c_str() );
 
-		utility::vector1< Real > pssm_prob_dist( core::chemical::num_canonical_aas, 0.0 );
-		Size linenum( 0 );
-		pssm_data_.clear();
-		while ( pssm_file ) {
-			++linenum;
-			char line_aa;
-			pssm_file >> line_aa;
-			core::chemical::AA aa( core::chemical::aa_from_oneletter_code( line_aa ));
-			Real sum( 0.0 );
-			for ( Size ii = 1; ii <= core::chemical::num_canonical_aas; ++ii ) {
-				pssm_file >> pssm_prob_dist[ ii ];
-				sum += pssm_prob_dist[ ii ];
-			}
-			if ( std::abs( sum - 1 ) > 0.001 ) {
-				TR << "Warning: pssm probability distribution does not sum to 1.0: " << sum << std::endl;
-				TR << "Problem on line " << linenum << " of " << pssm_file_name << std::endl;
-			}
-			pssm_data_.push_back( std::make_pair( aa, pssm_prob_dist ));
+	utility::vector1< Real > pssm_prob_dist( core::chemical::num_canonical_aas, 0.0 );
+	Size linenum( 0 );
+	pssm_data_.clear();
+	while ( pssm_file ) {
+		++linenum;
+		char line_aa;
+		pssm_file >> line_aa;
+		core::chemical::AA aa( core::chemical::aa_from_oneletter_code( line_aa ));
+		Real sum( 0.0 );
+		for ( Size ii = 1; ii <= core::chemical::num_canonical_aas; ++ii ) {
+			pssm_file >> pssm_prob_dist[ ii ];
+			sum += pssm_prob_dist[ ii ];
 		}
+		if ( std::abs( sum - 1 ) > 0.001 ) {
+			TR << "Warning: pssm probability distribution does not sum to 1.0: " << sum << std::endl;
+			TR << "Problem on line " << linenum << " of " << pssm_file_name << std::endl;
+		}
+		pssm_data_.push_back( std::make_pair( aa, pssm_prob_dist ));
+	}
 
-		if ( pssm_data_.size() == 0 ) { std::cerr << "Did not read file -- possibly not found" << std::endl; return false; }
+	if ( pssm_data_.size() == 0 ) { std::cerr << "Did not read file -- possibly not found" << std::endl; return false; }
 
-		return true;
+	return true;
 }
 
 
 core::Real
 protocols::protein_interface_design::ReportPSSMDifferences::calculate(
-		core::pose::Pose const & pose1_in, core::pose::Pose const & pose2_in, core::pack::task::PackerTaskCOP const & task
+	core::pose::Pose const & pose1_in, core::pose::Pose const & pose2_in, core::pack::task::PackerTaskCOP const & task
 )
 {
 	using namespace core::scoring;
@@ -82,21 +82,16 @@ protocols::protein_interface_design::ReportPSSMDifferences::calculate(
 	core::pose::Pose pose2( pose2_in );
 	core::Real pssm = 0.;
 
-	for( core::Size i = 1; i <= pose1.total_residue(); ++i ) {
-		if( !pose1.residue(i).is_protein() ) continue;
+	for ( core::Size i = 1; i <= pose1.total_residue(); ++i ) {
+		if ( !pose1.residue(i).is_protein() ) continue;
 		core::chemical::AA const restype( pose2.residue(i).aa() );
 
-		if (task->being_designed( i ))
-		{
-			if ( pssm_data_[i].first == restype )
-			{
+		if ( task->being_designed( i ) ) {
+			if ( pssm_data_[i].first == restype ) {
 				pssm += pssm_data_[i].second[ restype ];
-			}
-			else
-			{
+			} else {
 				TR << "Warning: No pssm data found. Falling back on Sequence comparison." << std::endl;
-				if ( pose1.residue(i).aa() ==  pose2.residue(i).aa() )
-				{
+				if ( pose1.residue(i).aa() ==  pose2.residue(i).aa() ) {
 					pssm += 1.;
 				}
 			}

@@ -38,9 +38,9 @@ namespace frag_picker {
 namespace quota {
 
 typedef LazySortedVector1<std::pair<FragmentCandidateOP,
-                scores::FragmentScoreMapOP>, CompareByScoreCombination> BoundedQuotaContainer;
+	scores::FragmentScoreMapOP>, CompareByScoreCombination> BoundedQuotaContainer;
 typedef utility::pointer::shared_ptr<BoundedQuotaContainer>
-		BoundedQuotaContainerOP;
+	BoundedQuotaContainerOP;
 
 /// @brief represents a single pool used by quota selector
 class ABEGO_SS_Pool : public QuotaPool {
@@ -48,13 +48,13 @@ public:
 	/// @brief Creates a pool of a given size and name
 	/// @param size - total number of fragments from all the pools at a given position
 	/// @param name - name assigned to this pool. This in general may be any string that
-	///	later allows one control pool's behavior from a flag file
+	/// later allows one control pool's behavior from a flag file
 	/// @param abego_ss_pairs - what types of secondary structure and ABEGO this pool is accepting
 	/// @param score_components_id - which scores will be used to sort this pool
 	/// @param weights - weights for the scores that in general may be different than these used for fragment picking
 	/// @param fraction - fraction of this pool in the entire population
 	ABEGO_SS_Pool(Size,std::string,utility::vector1<std::pair<Size,Size> >,
-	    utility::vector1<Size>,utility::vector1<Real>,Real,Size,Size);
+		utility::vector1<Size>,utility::vector1<Real>,Real,Size,Size);
 
 	bool accepts(char ss_type,char abego_type) { return ss_abego_types_->check_status(ss_type,abego_type); }
 
@@ -72,14 +72,14 @@ public:
 	virtual bool could_be_accepted(ScoredCandidate candidate) const;
 
 	void resize(Size new_size) {
-	    storage_->resize(new_size,new_size*buffer_factor_);
+		storage_->resize(new_size,new_size*buffer_factor_);
 	}
 
 	virtual void set_fraction(Real new_fraction) {
 
 		QuotaPool::set_fraction(new_fraction);
 		this_size_ = (Size)(total_size_*new_fraction);
-		if(this_size_<20) {
+		if ( this_size_<20 ) {
 			this_size_ = 20;
 		}
 		storage_->resize(this_size_,this_size_*buffer_factor_);
@@ -115,10 +115,11 @@ public:
 	/// Candidates may or may not get inserted depending on the candidate
 	void insert(Size, CandidatesCollectorOP collector) {
 		ABEGO_SS_PoolOP c = utility::pointer::dynamic_pointer_cast< protocols::frag_picker::quota::ABEGO_SS_Pool > ( collector );
-		if (c == 0)
+		if ( c == 0 ) {
 			utility_exit_with_message("Cant' cast candidates' collector to ABEGO_SS_Pool.");
+		}
 		ScoredCandidatesVector1 & content = c->get_candidates(0);
-		for(Size l=1;l<=content.size();l++) storage_->push( content[l] );
+		for ( Size l=1; l<=content.size(); l++ ) storage_->push( content[l] );
 	}
 
 	/// @brief  Returns all the candidate in this pool
@@ -131,11 +132,12 @@ public:
 
 	virtual Real quota_score(ScoredCandidate candidate) const {
 
-	    Real t2(0);
-	    for(Size i=1;i<=components_.size();i++)
-		t2 += candidate.second->at( components_[i] ) * weights_[i];
+		Real t2(0);
+		for ( Size i=1; i<=components_.size(); i++ ) {
+			t2 += candidate.second->at( components_[i] ) * weights_[i];
+		}
 
-	    return t2;
+		return t2;
 	}
 
 private:

@@ -86,7 +86,7 @@
 #include <utility> //for std::pair
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 // Contains mover - bbG, MD, Relax
@@ -98,23 +98,23 @@ static basic::Tracer TR("WorkUnit_Sampler.Relax");
 
 ////////////////////////////////////////////
 //////// WorkUnit bbGauss
-WorkUnit_bbGauss::WorkUnit_bbGauss( core::Size const nstruct, 
-																		core::Real const kT,
-																		bool const centroid,
-																		bool const on_defined_segment )
-	//: WorkUnit_SilentStructStore()
+WorkUnit_bbGauss::WorkUnit_bbGauss( core::Size const nstruct,
+	core::Real const kT,
+	bool const centroid,
+	bool const on_defined_segment )
+//: WorkUnit_SilentStructStore()
 {
 	set_defaults();
 	set_nstruct( nstruct );
 	set_kT( kT );
 
-	if( centroid ){
+	if ( centroid ) {
 		set_centroid( 1 );
 	} else {
 		set_centroid( 0 );
 	}
 
-	if( on_defined_segment ){
+	if ( on_defined_segment ) {
 		set_segdef( 1 );
 	} else {
 		set_segdef( 0 );
@@ -128,10 +128,10 @@ void
 WorkUnit_bbGauss::run()
 {
 	using namespace core::io::silent;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-	if( decoys().size() == 0 ){
+	if ( decoys().size() == 0 ) {
 		//TR << "Empty WorkUnit ! Cannot execute run() " << std::endl;
 		return;
 	}
@@ -146,7 +146,7 @@ WorkUnit_bbGauss::run()
 	decoys().clear();
 
 	// scmc setup
-	core::pack::task::PackerTaskOP pt 
+	core::pack::task::PackerTaskOP pt
 		= core::pack::task::TaskFactory::create_packer_task( pose );
 
 	protocols::simple_moves::sidechain_moves::SidechainMCMover scmc;
@@ -154,14 +154,14 @@ WorkUnit_bbGauss::run()
 	scmc.set_task( pt );
 	pt->restrict_to_repacking();
 
-	protocols::moves::MoverOP tofa 
+	protocols::moves::MoverOP tofa
 		( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD ) );
-	protocols::moves::MoverOP tocen 
+	protocols::moves::MoverOP tocen
 		( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
 
 	bool centroid = (get_centroid() == 1) ? true : false;
 
-	if( centroid ) tocen->apply( pose );
+	if ( centroid ) tocen->apply( pose );
 	core::scoring::ScoreFunctionCOP sfxn_loc = centroid ?
 		core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth" ) :
 		core::scoring::ScoreFunctionFactory::create_score_function( option[ score::weights ]() );
@@ -170,7 +170,7 @@ WorkUnit_bbGauss::run()
 	scmc.set_ntrials( 100 );
 	scmc.set_prob_uniform( 0.0 );
 	scmc.set_prob_withinrot( 0.0 );
-	scmc.set_prob_random_pert_current( 0.1 ); 
+	scmc.set_prob_random_pert_current( 0.1 );
 	scmc.set_preserve_detailed_balance( false );
 	scmc.set_temperature( get_kT() );
 	scmc.set_scorefunction( *sfxn_loc );
@@ -179,7 +179,7 @@ WorkUnit_bbGauss::run()
 	// Setup MC / bbgmover
 	protocols::moves::MonteCarlo mc( pose, *sfxn_loc, get_kT() );
 
-	// I don't know why yet, but using bbgmover as local class 
+	// I don't know why yet, but using bbgmover as local class
 	// breaks run; let's initiate it temporarily every time
 	protocols::simple_moves::BBG8T3AMover bbgmover;
 
@@ -191,7 +191,7 @@ WorkUnit_bbGauss::run()
 
 	// Minimizer
 	core::optimization::MinimizerOptions minoption( "lbfgs_armijo_nonmonotone",
-																									0.001, true, false, false );
+		0.001, true, false, false );
 	minoption.max_iter( 50 );
 	core::optimization::AtomTreeMinimizer minimizer;
 
@@ -199,19 +199,19 @@ WorkUnit_bbGauss::run()
 	core::Size nstruct( get_nstruct() );
 
 	//TR << "Executing WorkUnit_bbGauss_Mover on ssid " << start_struct->get_energy("ssid")
-		// << " with report_step " << nstep_store;
-		// << " at kT = " << get_kT() << std::endl;
-		// << std::endl;
+	// << " with report_step " << nstep_store;
+	// << " at kT = " << get_kT() << std::endl;
+	// << std::endl;
 
 	//core::Size starttime = time(NULL);
 	core::Size istep( 0 );
-	while( true ){
+	while ( true ) {
 		istep++;
 		core::Real prob = numeric::random::rg().uniform();
 		core::Real proposal_density_ratio( 1.0 );
 		std::string movetype;
 
-		if ( prob > 0.0 ){
+		if ( prob > 0.0 ) {
 			bbgmover.apply( pose );
 			movetype = bbgmover.type();
 			proposal_density_ratio = bbgmover.last_proposal_density_ratio();
@@ -223,16 +223,16 @@ WorkUnit_bbGauss::run()
 
 		mc.boltzmann( pose, movetype, proposal_density_ratio );
 
-		if( istep%nstep_store == 0 ){
+		if ( istep%nstep_store == 0 ) {
 			// Run short minimization before storing?
 
 			core::pose::Pose pose_tmp( pose );
-			if( pose_tmp.is_centroid() ) tofa->apply( pose_tmp );
+			if ( pose_tmp.is_centroid() ) tofa->apply( pose_tmp );
 
 			store_to_decoys( start_struct, pose_tmp );
 		}
 
-		if( decoys().size() >= nstruct ) break;
+		if ( decoys().size() >= nstruct ) break;
 	}
 
 	//core::Size endtime = time(NULL);
@@ -244,11 +244,11 @@ WorkUnit_bbGauss::run()
 ////////////////////////////////////////////
 //////// WorkUnit MD
 WorkUnit_MD::WorkUnit_MD( core::Size const relaxtype,
-													core::Size const scoretype,
-													core::Size const nstruct, 
-													core::Real const cstweight,
-													bool const looponly )
-	//: WorkUnit_SilentStructStore()
+	core::Size const scoretype,
+	core::Size const nstruct,
+	core::Real const cstweight,
+	bool const looponly )
+//: WorkUnit_SilentStructStore()
 {
 	set_defaults();
 
@@ -256,7 +256,7 @@ WorkUnit_MD::WorkUnit_MD( core::Size const relaxtype,
 	set_scoretype( scoretype );
 	set_nstruct( nstruct );
 	set_cstweight( cstweight );
-	if( looponly ){
+	if ( looponly ) {
 		set_options( "looponly" );
 	} else {
 		set_options( "no" );
@@ -270,10 +270,10 @@ void
 WorkUnit_MD::run()
 {
 	using namespace core::io::silent;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-	if( decoys().size() == 0 ){
+	if ( decoys().size() == 0 ) {
 		//TR << "Empty WorkUnit ! Cannot execute run() " << std::endl;
 		return;
 	}
@@ -287,8 +287,8 @@ WorkUnit_MD::run()
 
 	//TR << "Executing WorkUnit_MD_Mover with relaxtype " << get_relaxtype()
 	// << ", scoretype " << get_scoretype();
-	// << ", nsteps " << get_nstruct()*nstep_store 
-	//	 << std::endl;
+	// << ", nsteps " << get_nstruct()*nstep_store
+	//  << std::endl;
 	//core::Size starttime = time(NULL);
 
 	bool partial_sampling = false;
@@ -296,15 +296,15 @@ WorkUnit_MD::run()
 
 	//std::string mdoption = get_options();
 	std::string mdoption("");
-	if( mdoption.compare("cen") == 0 ){
+	if ( mdoption.compare("cen") == 0 ) {
 		centroid = true;
-	} else if( mdoption.compare( "looponly" ) == 0 ){
+	} else if ( mdoption.compare( "looponly" ) == 0 ) {
 		partial_sampling = true;
 	}
 
-	protocols::moves::MoverOP tofa 
+	protocols::moves::MoverOP tofa
 		( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD ) );
-	protocols::moves::MoverOP tocen 
+	protocols::moves::MoverOP tocen
 		( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
 
 	// Starts here
@@ -312,91 +312,92 @@ WorkUnit_MD::run()
 	bool softpack = ( get_relaxtype() == 2 )? true: false;
 
 	core::Real cst_weight( 0.0 );
-	if( basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_file ].user() ){
+	if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_file ].user() ) {
 		cst_weight = get_cstweight();
 		//TR << "Applying cst_fa_file given by user with weight " << get_cstweight() << std::endl;
 	}
 
 	std::string sfxn_name("");
-	if( centroid ){
+	if ( centroid ) {
 		sfxn_name = "cen_cart";
 		softpack = false;
-	} else if( get_scoretype() == 1 ){ // facts
+	} else if ( get_scoretype() == 1 ) { // facts
 		sfxn_name = "scorefacts_cart";
 	} else {
 		sfxn_name = "talaris2013_cart";
 	}
 
 	core::scoring::ScoreFunctionOP sfxn_sampling = get_energy( sfxn_name,
-																														 softpack, cst_weight );
+		softpack, cst_weight );
 
 	core::scoring::ScoreFunctionOP sfxn_pack = get_energy( "talaris2013_cart", softpack );
 
 	// 2. MD setup
 	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
-	if( partial_sampling ){
+	if ( partial_sampling ) {
 		mm = get_movemap( pose, "looponly", true );
 	} else {
 		mm = get_movemap( pose, "full", true );
 	}
 
-	if( sfxn_sampling->get_weight( core::scoring::elec_dens_fast ) > 0.0 )
+	if ( sfxn_sampling->get_weight( core::scoring::elec_dens_fast ) > 0.0 ) {
 		TR << "Sampling with elec_dens_fast : " << sfxn_sampling->get_weight( core::scoring::elec_dens_fast ) << std::endl;
+	}
 
-  protocols::md::CartesianMD MD( pose, sfxn_sampling, mm );
+	protocols::md::CartesianMD MD( pose, sfxn_sampling, mm );
 
 	core::Size neqstep( 2 );  // first 1ps is for eq and will be removed
-  MD.set_store_trj( true );
-  MD.set_nstep( get_nstruct()*nstep_store );
-	MD.set_reportstep( nstep_store ); 
-  MD.set_temperature( 150.0 );
+	MD.set_store_trj( true );
+	MD.set_nstep( get_nstruct()*nstep_store );
+	MD.set_reportstep( nstep_store );
+	MD.set_temperature( 150.0 );
 
 	// Turn on if no other cst_fa_file provided
 	// BTW, MD instance will take care of applying cst_fa_file...
-	if( !basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_file ].user() &&
-			get_cstweight() > 0.0 ){
+	if ( !basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_file ].user() &&
+			get_cstweight() > 0.0 ) {
 		//TR << "Applying uniform coord_constraint with weight " << get_cstweight() << std::endl;
 		core::Real stdev = std::sqrt( 1.0/get_cstweight() );
 		MD.set_constraint( stdev );
-	} 
+	}
 
 	core::pose::Pose pose_work( pose );
-	if( centroid ) tocen->apply( pose_work );
+	if ( centroid ) tocen->apply( pose_work );
 
 	sfxn_sampling->score( pose );
 
 	// 3. Run!
-	repack( pose, sfxn_pack ); 	// repack before MD
+	repack( pose, sfxn_pack );  // repack before MD
 
 	MD.apply( pose_work );
 	utility::vector1< core::pose::Pose > poses_out = MD.dump_poses( pose );
 
-	for( Size i = 1+neqstep; i <= poses_out.size(); ++i ){
+	for ( Size i = 1+neqstep; i <= poses_out.size(); ++i ) {
 		core::pose::Pose pose_out( poses_out[i] );
-		if( pose_out.is_centroid() ) tofa->apply( pose_out );
+		if ( pose_out.is_centroid() ) tofa->apply( pose_out );
 
 		store_to_decoys( start_struct, pose_out, "_"+string_of( i ) );
 
-		if( decoys().store().size() >= get_nstruct() ) break;
+		if ( decoys().store().size() >= get_nstruct() ) break;
 	}
 
 	//core::Size endtime = time(NULL);
 	//TR.Debug << "Build " << decoys().size() << " structures in ";
 	//TR.Debug << endtime - starttime << " s " << std::endl;
 
-  // Revert parameters if necessary
-	if( get_scoretype() == 1 ) revert_facts_params();
+	// Revert parameters if necessary
+	if ( get_scoretype() == 1 ) revert_facts_params();
 
 } // WorkUnit MD
 
 ////////////////////////////////////////////
 //////// WorkUnit Relax
 WorkUnit_Relax::WorkUnit_Relax( core::Size const relaxtype,
-																core::Size const scoretype,
-																core::Size const nrepeat,
-																core::Real const cstweight
-																)
-	//: WorkUnit_SilentStructStore()
+	core::Size const scoretype,
+	core::Size const nrepeat,
+	core::Real const cstweight
+)
+//: WorkUnit_SilentStructStore()
 {
 	set_defaults();
 	set_relaxtype( relaxtype );
@@ -408,12 +409,12 @@ WorkUnit_Relax::WorkUnit_Relax( core::Size const relaxtype,
 void
 WorkUnit_Relax::set_defaults(){}
 
-std::vector< std::string > 
+std::vector< std::string >
 WorkUnit_Relax::set_relax_schedule() const
 {
 	// Current setup:
 
-	// 0: Null 
+	// 0: Null
 	// 1: CartStd, 2 cycles
 	// 2: DualStd, 5 cycles
 	// 3: CartProb, 2 cycles
@@ -426,49 +427,46 @@ WorkUnit_Relax::set_relax_schedule() const
 
 	std::vector< std::string > cmdlines;
 
-	if( get_relaxtype() ==  0 ) return cmdlines;
+	if ( get_relaxtype() ==  0 ) return cmdlines;
 
 	// Special schedule for rerelax-style
-	if( get_relaxtype() == 10 ){ //prv 5
+	if ( get_relaxtype() == 10 ) { //prv 5
 		cmdlines.push_back( "switch:cartesian" );
 		cmdlines.push_back( "repeat 1" );
 		cmdlines.push_back( "ramp_repack_min 1.0   0.00001 0.0 200");
 		cmdlines.push_back( "accept_to_best" );
 		cmdlines.push_back( "endrepeat" );
 		return cmdlines;
-	} else 
-	if( get_relaxtype() == 11 ){ // veryshort, prv 6
+	} else if ( get_relaxtype() == 11 ) { // veryshort, prv 6
 		cmdlines.push_back( "switch:cartesian" );
 		cmdlines.push_back( "repeat 1" );
 		cmdlines.push_back( "ramp_repack_min 1.0   0.00001 0.0 10");
 		cmdlines.push_back( "accept_to_best" );
 		cmdlines.push_back( "endrepeat" );
 		return cmdlines;
-	} else if( get_relaxtype() == 12 ){ // prv7
+	} else if ( get_relaxtype() == 12 ) { // prv7
 		cmdlines.push_back( "switch:cartesian" );
 		cmdlines.push_back( "repeat 1" );
 		cmdlines.push_back( "ramp_repack_min 1.0   0.00001 1.0 200");
 		cmdlines.push_back( "accept_to_best" );
 		cmdlines.push_back( "endrepeat" );
-		return cmdlines; 
-	} else if( get_relaxtype() == 13 ){ //prv 8
+		return cmdlines;
+	} else if ( get_relaxtype() == 13 ) { //prv 8
 		cmdlines.push_back( "switch:cartesian" );
 		cmdlines.push_back( "repeat 1" );
 		cmdlines.push_back( "ramp_repack_min 1.0   0.00001 10.0 200");
 		cmdlines.push_back( "accept_to_best" );
 		cmdlines.push_back( "endrepeat" );
 		return cmdlines;
-	} else if( get_relaxtype() == 14 ){ //prv 9
+	} else if ( get_relaxtype() == 14 ) { //prv 9
 		cmdlines.push_back( "switch:cartesian" );
 		cmdlines.push_back( "repeat 1" );
 		cmdlines.push_back( "ramp_repack_min 1.0   0.00001  0.0 200");
 		cmdlines.push_back( "accept_to_best" );
 		cmdlines.push_back( "endrepeat" );
 		return cmdlines;
-	}
-
-	// special relax, ramping but restricting CA, soft pack
-	else if( get_relaxtype() == 15 ){
+	} else if ( get_relaxtype() == 15 ) {
+		// special relax, ramping but restricting CA, soft pack
 		cmdlines.push_back( "switch:cartesian" );
 		cmdlines.push_back( "repeat 1" );
 		cmdlines.push_back( "scale:coordinate_constraint 10.0" );
@@ -484,7 +482,7 @@ WorkUnit_Relax::set_relax_schedule() const
 		cmdlines.push_back( "accept_to_best" );
 		cmdlines.push_back( "endrepeat" );
 		return cmdlines;
-	} else if( get_relaxtype() == 16 ){ 
+	} else if ( get_relaxtype() == 16 ) {
 		cmdlines.push_back( "switch:torsion" );
 		cmdlines.push_back( "ramp_repack_min 1.0   0.001    1.0 100");
 		cmdlines.push_back( "switch:cartesian" );
@@ -492,7 +490,7 @@ WorkUnit_Relax::set_relax_schedule() const
 		cmdlines.push_back( "accept_to_best" );
 		cmdlines.push_back( "endrepeat" );
 		return cmdlines;
-	} else if( get_relaxtype() == 17 ){ 
+	} else if ( get_relaxtype() == 17 ) {
 		cmdlines.push_back( "switch:torsion" );
 		cmdlines.push_back( "ramp_repack_min 0.02  0.001    1.0  50");
 		cmdlines.push_back( "ramp_repack_min 0.25  0.001    0.5  50");
@@ -506,16 +504,16 @@ WorkUnit_Relax::set_relax_schedule() const
 	}
 
 	// Torsion first
-	if( get_relaxtype() == 2 || get_relaxtype() == 4 || get_relaxtype() == 5 
-			|| get_relaxtype() == 6 || get_relaxtype() == 9 ){
+	if ( get_relaxtype() == 2 || get_relaxtype() == 4 || get_relaxtype() == 5
+			|| get_relaxtype() == 6 || get_relaxtype() == 9 ) {
 		cmdlines.push_back( "switch:torsion" );
-		if( get_relaxtype() == 5 || get_relaxtype() == 6 ){
+		if ( get_relaxtype() == 5 || get_relaxtype() == 6 ) {
 			cmdlines.push_back( "repeat 2" );
 		} else {
 			cmdlines.push_back( "repeat 3" );
 		}
 		// iter1: stdpack or probpack
-		if( get_relaxtype() == 4 || get_relaxtype() == 5 ){ //probpack
+		if ( get_relaxtype() == 4 || get_relaxtype() == 5 ) { //probpack
 			cmdlines.push_back( "scale:coordinate_constraint 1.0" );
 			cmdlines.push_back( "scale:fa_rep 0.01" );
 			cmdlines.push_back( "scale:fa_atr 0.0" );
@@ -533,21 +531,21 @@ WorkUnit_Relax::set_relax_schedule() const
 		cmdlines.push_back( "endrepeat" );
 	}
 
-	if( get_relaxtype() == 6 ) return cmdlines; 
+	if ( get_relaxtype() == 6 ) return cmdlines;
 
 	// Add cartesian
 	cmdlines.push_back( "switch:cartesian" );
-	if( get_relaxtype() == 5 ){
+	if ( get_relaxtype() == 5 ) {
 		cmdlines.push_back( "repeat 2" );
 	} else {
 		cmdlines.push_back( "repeat 1" );
 	}
 
-	if( get_relaxtype() == 1 || get_relaxtype() == 2 || get_relaxtype() == 7 ){ //stdpack
+	if ( get_relaxtype() == 1 || get_relaxtype() == 2 || get_relaxtype() == 7 ) { //stdpack
 		cmdlines.push_back( "ramp_repack_min 0.02  0.01    1.0  50");
 
-	} else if( get_relaxtype() == 3 || get_relaxtype() == 4 ||
-						 get_relaxtype() == 5 || get_relaxtype() == 8 || get_relaxtype() == 9 ){ // probpack
+	} else if ( get_relaxtype() == 3 || get_relaxtype() == 4 ||
+			get_relaxtype() == 5 || get_relaxtype() == 8 || get_relaxtype() == 9 ) { // probpack
 		cmdlines.push_back( "scale:coordinate_constraint 1.0" );
 		cmdlines.push_back( "scale:fa_rep 0.01" );
 		cmdlines.push_back( "scale:fa_atr 0.0" );
@@ -559,7 +557,7 @@ WorkUnit_Relax::set_relax_schedule() const
 	}
 
 	// fixed relax
-	if( get_relaxtype() == 7 || get_relaxtype() == 8 || get_relaxtype() == 9 ){
+	if ( get_relaxtype() == 7 || get_relaxtype() == 8 || get_relaxtype() == 9 ) {
 		cmdlines.push_back( "ramp_repack_min 0.250 0.01    0.5  50");
 		cmdlines.push_back( "ramp_repack_min 0.550 0.01    0.1 100");
 		cmdlines.push_back( "ramp_repack_min 1.0   0.00001 0.1 200");
@@ -579,10 +577,10 @@ void
 WorkUnit_Relax::run()
 {
 	using namespace core::io::silent;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-	if( decoys().size() == 0 ){
+	if ( decoys().size() == 0 ) {
 		//TR << "Empty WorkUnit ! Cannot execute run() " << std::endl;
 		return;
 	}
@@ -592,17 +590,17 @@ WorkUnit_Relax::run()
 	decoys().clear();
 
 	//TR << "Executing WorkUnit_Relax_Mover on ndecoys " << decoys_in.size()
-		//	 << ", relaxtype " << get_relaxtype()
-		//	 << ", scoretype " << get_scoretype()
-		//	 <<", cstweight " << get_cstweight() 
-	//	 << std::endl;
+	//  << ", relaxtype " << get_relaxtype()
+	//  << ", scoretype " << get_scoretype()
+	//  <<", cstweight " << get_cstweight()
+	//  << std::endl;
 
 	//core::Size starttime = time(NULL);
 
 	// Start here
 	// 1. Score function setup
 	std::string sfxn_name("");
-	if( get_scoretype() == 1 ){
+	if ( get_scoretype() == 1 ) {
 		sfxn_name = "scorefacts_cart";
 	} else {
 		sfxn_name = "talaris2013_cart";
@@ -610,13 +608,14 @@ WorkUnit_Relax::run()
 
 	core::scoring::ScoreFunctionOP sfxn_sampling = get_energy( sfxn_name, false, get_cstweight() );
 
-	if( sfxn_sampling->get_weight( core::scoring::elec_dens_fast ) > 0.0 )
+	if ( sfxn_sampling->get_weight( core::scoring::elec_dens_fast ) > 0.0 ) {
 		TR << "Sampling with elec_dens_fast : " << sfxn_sampling->get_weight( core::scoring::elec_dens_fast ) << std::endl;
+	}
 
 	core::pose::Pose pose;
 
 	// Relax schedule setup
-  protocols::relax::FastRelax relax( sfxn_sampling );
+	protocols::relax::FastRelax relax( sfxn_sampling );
 	//relax.cst_calpha_only( true ); // only calpha; default is all backbones
 	//relax.set_movemap( mm_ );
 
@@ -625,17 +624,17 @@ WorkUnit_Relax::run()
 	relax.min_type( "lbfgs_armijo_nonmonotone" );
 
 	// Run
-	for( core::Size i = 0; i < decoys_in.size(); ++i ){
+	for ( core::Size i = 0; i < decoys_in.size(); ++i ) {
 		SilentStructCOP start_struct = decoys_in.get_struct(0);
 		decoys_in.get_pose( i, pose );
 
 		// call user-defined cstfile
-		if( option[ constraints::cst_fa_file ].user() ){
+		if ( option[ constraints::cst_fa_file ].user() ) {
 			//TR << "Applying constraints from cmd" << std::endl;
 			core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose( pose );
 		}
 
-		for( core::Size j = 1; j <= get_nrepeat(); ++j ){
+		for ( core::Size j = 1; j <= get_nrepeat(); ++j ) {
 			core::pose::Pose pose_work( pose );
 			relax.apply( pose_work );
 
@@ -648,8 +647,8 @@ WorkUnit_Relax::run()
 	//TR.Debug << "Build " << decoys().size() << " structures in ";
 	//TR.Debug << endtime - starttime << " s " << std::endl;
 
-  // Revert parameters
-	if( get_scoretype() == 1 ) revert_facts_params();
+	// Revert parameters
+	if ( get_scoretype() == 1 ) revert_facts_params();
 
 } // WorkUnit_Relax
 

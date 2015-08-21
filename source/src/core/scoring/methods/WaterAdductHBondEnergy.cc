@@ -125,13 +125,13 @@ WaterAdductHBondEnergy::eval_atom_derivative(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
- 	) const
+) const
 {
 	using EnergiesCacheableDataType::H2O_HBOND_SET;
 	/// f1 and f2 are zeroed
 	hbonds::HBondSet const & hbond_set
-	( static_cast< hbonds::HBondSet const & >
-	( pose.energies().data().get( H2O_HBOND_SET ) ) );
+		( static_cast< hbonds::HBondSet const & >
+		( pose.energies().data().get( H2O_HBOND_SET ) ) );
 	Vector f1,f2;
 	get_atom_h2o_hbond_derivative( atom_id, hbond_set, weights, f1, f2 );
 	F1 += f1;
@@ -169,26 +169,26 @@ WaterAdductHBondEnergy::get_atom_h2o_hbond_derivative(
 			sign_factor = 1.0;
 		}
 
-//		std::cout << "Processing h2o hbond with energy" << hbond.energy() << std::endl;
+		//  std::cout << "Processing h2o hbond with energy" << hbond.energy() << std::endl;
 
 		// get the appropriate type of hbond weight
 		Real const weight ( sign_factor * hbond.weight() * weights[ h2o_hbond ] );
-//		std::cout << "Applying weight " << weight << std::endl;
-//		std::cout << "sign_factor " << sign_factor << std::endl;
-//		std::cout << "hbond stored weight " << hbond.weight() << std::endl;
-//		std::cout << "stupid type weight " << weights[ h2o_hbond ]  << std::endl;
+		//  std::cout << "Applying weight " << weight << std::endl;
+		//  std::cout << "sign_factor " << sign_factor << std::endl;
+		//  std::cout << "hbond stored weight " << hbond.weight() << std::endl;
+		//  std::cout << "stupid type weight " << weights[ h2o_hbond ]  << std::endl;
 		f1 += weight * hbond.derivs().h_deriv.f1();
 		f2 += weight * hbond.derivs().h_deriv.f2();
-//		std::cout << "F1 is " <<
-//		f1[0] << " " <<
-//		f1[1] << " " <<
-//		f1[2] << " " <<
-//		std::endl;
-//		std::cout << "F2 is " <<
-//		f2[0] << " " <<
-//		f2[1] << " " <<
-//		f2[2] << " " <<
-//		std::endl;
+		//  std::cout << "F1 is " <<
+		//  f1[0] << " " <<
+		//  f1[1] << " " <<
+		//  f1[2] << " " <<
+		//  std::endl;
+		//  std::cout << "F2 is " <<
+		//  f2[0] << " " <<
+		//  f2[1] << " " <<
+		//  f2[2] << " " <<
+		//  std::endl;
 	}
 }
 

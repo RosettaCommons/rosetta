@@ -115,7 +115,7 @@ DatabaseResourceLocator::locate_resource_stream(
 	string const & locator_id
 ) const {
 
-	if(!ResourceManager::get_instance()->has_resource(database_session_resource_tag_)){
+	if ( !ResourceManager::get_instance()->has_resource(database_session_resource_tag_) ) {
 		stringstream err_msg;
 		err_msg
 			<< "Attempting to locate the data for key='" << locator_id << "' "
@@ -128,9 +128,9 @@ DatabaseResourceLocator::locate_resource_stream(
 	}
 
 	sessionOP db_session(utility::pointer::dynamic_pointer_cast< session > (
-			ResourceManager::get_instance()->find_resource(database_session_resource_tag_)));
+		ResourceManager::get_instance()->find_resource(database_session_resource_tag_)));
 
-	if(!db_session){
+	if ( !db_session ) {
 		stringstream err_msg;
 		err_msg
 			<< "Attempting to locate the data for key='" << locator_id << "' "
@@ -146,7 +146,7 @@ DatabaseResourceLocator::locate_resource_stream(
 	select_stmt.bind(1, locator_id);
 	result res(safely_read_from_database(select_stmt));
 
-	if(!res.next()) {
+	if ( !res.next() ) {
 		stringstream err_msg;
 		err_msg
 			<< "In the DatabaseLocator with tag '" << locator_tag() << "', the query:" << endl
@@ -156,7 +156,7 @@ DatabaseResourceLocator::locate_resource_stream(
 	}
 
 
-	if(res.cols() == 0 || res.cols() == -1){
+	if ( res.cols() == 0 || res.cols() == -1 ) {
 		stringstream err_msg;
 		err_msg
 			<< "In the DatabaseLocator with tag '" << locator_tag() << "', the query:" << endl
@@ -166,16 +166,16 @@ DatabaseResourceLocator::locate_resource_stream(
 	}
 
 	stringstream concatenated_result;
-	for(Size col = 1, ncols = res.cols(); col <= ncols; ++col){
+	for ( Size col = 1, ncols = res.cols(); col <= ncols; ++col ) {
 		std::string col_val;
 		res >> col_val;
 		concatenated_result << col_val;
-		if(col < ncols){
+		if ( col < ncols ) {
 			concatenated_result << column_separator_;
 		}
 	}
 
-	if(res.next()){
+	if ( res.next() ) {
 		stringstream err_msg;
 		err_msg
 			<< "In the DatabaseLocator with tag '" << locator_tag() << "', the query:" << endl
@@ -194,14 +194,14 @@ void
 DatabaseResourceLocator::parse_my_tag(
 	TagCOP tag
 ) {
-	if(tag->hasOption("database_session_tag")){
+	if ( tag->hasOption("database_session_tag") ) {
 		database_session_resource_tag_ = tag->getOption<string>("database_session_tag");
 	} else {
 		throw utility::excn::EXCN_Msg_Exception
 			( "The DatabaseResourceLocator requires a 'database_session_tag' that corresponds with a 'DatabaseSession' resource defined in a <Resources/> block.");
 	}
 
-	if(tag->hasOption("sql_command")){
+	if ( tag->hasOption("sql_command") ) {
 		sql_command_ = tag->getOption<string>("sql_command");
 		basic::database::check_statement_sanity(sql_command_);
 	} else {

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file core/scoring/rna/data/RNA_DMS_Potential.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -22,14 +22,14 @@ namespace core {
 namespace scoring {
 namespace rna {
 namespace data {
-	
-	class RNA_DMS_Potential;
-	typedef utility::pointer::shared_ptr< RNA_DMS_Potential > RNA_DMS_PotentialOP;
-	typedef utility::pointer::shared_ptr< RNA_DMS_Potential const > RNA_DMS_PotentialCOP;
-	
-} //data 
-} //rna 
-} //scoring 
-} //core 
+
+class RNA_DMS_Potential;
+typedef utility::pointer::shared_ptr< RNA_DMS_Potential > RNA_DMS_PotentialOP;
+typedef utility::pointer::shared_ptr< RNA_DMS_Potential const > RNA_DMS_PotentialCOP;
+
+} //data
+} //rna
+} //scoring
+} //core
 
 #endif

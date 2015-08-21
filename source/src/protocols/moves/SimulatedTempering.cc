@@ -77,9 +77,9 @@ bool SimulatedTempering::boltzmann( Pose & pose ) {
 
 	// Metropolis criterion
 	if (
-		new_score <= cached_score_ ||
-		numeric::random::rg().uniform() < exp( ( cached_score_ - new_score ) / temperature() )
-	) {
+			new_score <= cached_score_ ||
+			numeric::random::rg().uniform() < exp( ( cached_score_ - new_score ) / temperature() )
+			) {
 		cached_score_ = new_score;
 		return true;
 	}

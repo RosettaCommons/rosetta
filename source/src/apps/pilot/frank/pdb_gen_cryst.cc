@@ -85,19 +85,19 @@ using namespace basic::options::OptionKeys;
 ////////////////////////////////////////////////
 // helper functions
 inline int pos_mod(int x,int y) {
-	int r=x%y; if (r<0) r+=y;
+	int r=x%y; if ( r<0 ) r+=y;
 	return r;
 }
 inline Real pos_mod(Real x,Real y) {
-	Real r=std::fmod(x,y); if (r<0) r+=y;
+	Real r=std::fmod(x,y); if ( r<0 ) r+=y;
 	return r;
 }
 inline int min_mod(int x,int y) {
-  int r=x%y; if (r<-y/2) { r+=y; } if (r>=y/2) { r-=y; }
+	int r=x%y; if ( r<-y/2 ) { r+=y; } if ( r>=y/2 ) { r-=y; }
 	return r;
 }
 inline double min_mod(double x,double y) {
-  double r=std::fmod(x,y); if (r<-0.5*y) { r+=y; } if (r>=0.5*y) { r-=y; }
+	double r=std::fmod(x,y); if ( r<-0.5*y ) { r+=y; } if ( r>=0.5*y ) { r-=y; }
 	return r;
 }
 
@@ -106,22 +106,22 @@ static thread_local basic::Tracer TR( "cryst.gen" );
 //missing string printf
 //this is safe and convenient but not exactly efficient
 inline std::string formatstr(const char* fmt, ...){
-    int size = 512;
-    char* buffer = 0;
-    buffer = new char[size];
-    va_list vl;
-    va_start(vl, fmt);
-    int nsize = vsnprintf(buffer, size, fmt, vl);
-    if(size<=nsize){ //fail delete buffer and try again
-        delete[] buffer;
-        buffer = 0;
-        buffer = new char[nsize+1]; //+1 for /0
-        nsize = vsnprintf(buffer, size, fmt, vl);
-    }
-    std::string ret(buffer);
-    va_end(vl);
-    delete[] buffer;
-    return ret;
+	int size = 512;
+	char* buffer = 0;
+	buffer = new char[size];
+	va_list vl;
+	va_start(vl, fmt);
+	int nsize = vsnprintf(buffer, size, fmt, vl);
+	if ( size<=nsize ) { //fail delete buffer and try again
+		delete[] buffer;
+		buffer = 0;
+		buffer = new char[nsize+1]; //+1 for /0
+		nsize = vsnprintf(buffer, size, fmt, vl);
+	}
+	std::string ret(buffer);
+	va_end(vl);
+	delete[] buffer;
+	return ret;
 }
 
 
@@ -152,8 +152,8 @@ readPDBcoords(std::string filename, Spacegroup &sg, utility::vector1<pdbline> &p
 	std::ifstream inpdb(filename.c_str());
 	std::string buf;
 
-	while (std::getline(inpdb, buf ) ) {
-		if( buf.substr(0,6)=="CRYST1") {
+	while ( std::getline(inpdb, buf ) ) {
+		if ( buf.substr(0,6)=="CRYST1" ) {
 			sg.set_spacegroup( buf.substr(55,10) );
 			sg.set_parameters(
 				atof(buf.substr(7,8).c_str()), atof(buf.substr(16,8).c_str()), atof(buf.substr(25,8).c_str()),
@@ -161,8 +161,8 @@ readPDBcoords(std::string filename, Spacegroup &sg, utility::vector1<pdbline> &p
 			continue;
 		}
 
-		if( buf.substr(0,6)!="ATOM  " && buf.substr(0,6)!="HETATM") continue;
-		if( buf.substr(16,1)!=" " && buf.substr(16,1)!="A") continue;
+		if ( buf.substr(0,6)!="ATOM  " && buf.substr(0,6)!="HETATM" ) continue;
+		if ( buf.substr(16,1)!=" " && buf.substr(16,1)!="A" ) continue;
 		pdblines.push_back( pdbline(buf) );
 
 		if ( buf.substr(12,4) == " CA " ) {
@@ -173,10 +173,10 @@ readPDBcoords(std::string filename, Spacegroup &sg, utility::vector1<pdbline> &p
 
 void
 apply_transform( numeric::xyzMatrix<Real> R, numeric::xyzVector<Real> T, utility::vector1<pdbline> &pdblines, utility::vector1<Vector> &CAs) {
-	for (int i=1; i<=(int)pdblines.size(); ++i) {
+	for ( int i=1; i<=(int)pdblines.size(); ++i ) {
 		pdblines[i].X = R*pdblines[i].X + T;
 	}
-	for (int i=1; i<=(int)CAs.size(); ++i) {
+	for ( int i=1; i<=(int)CAs.size(); ++i ) {
 		CAs[i] = R*CAs[i] + T;
 	}
 }
@@ -190,12 +190,12 @@ main( int argc, char * argv [] ) {
 		Real contact_dist=12.0;
 		std::string pdbfile;
 
-		if (argc<=1) {
+		if ( argc<=1 ) {
 			std::cerr << "USAGE: " << argv[0] << " pdbfile [clashdist]" << std::endl;
 			exit (1);
 		} else {
 			pdbfile = argv[1];
-			if (argc>=3) contact_dist = atof(argv[2]);
+			if ( argc>=3 ) contact_dist = atof(argv[2]);
 		}
 
 		// load pose using minimal reader
@@ -207,7 +207,7 @@ main( int argc, char * argv [] ) {
 		Vector com(0,0,0);
 		Size nres = CAs.size();
 
-		if( nres == 0 ) {
+		if ( nres == 0 ) {
 			std::cerr << "Error reading PDB information from " << pdbfile << std::endl;
 			exit(1);
 		}
@@ -226,13 +226,13 @@ main( int argc, char * argv [] ) {
 		Vector bestoffset(0,0,0);
 		mindis2=1e6;
 		com = sg.c2f()*com;
-		for (Size i=1; i<=nsymm; ++i) {
+		for ( Size i=1; i<=nsymm; ++i ) {
 			Vector foffset = sg.symmop(i).get_rotation()*com + sg.symmop(i).get_translation(), rfoffset;
 			rfoffset[0] = min_mod( foffset[0], 1.0 );
 			rfoffset[1] = min_mod( foffset[1], 1.0 );
 			rfoffset[2] = min_mod( foffset[2], 1.0 );
 			Real dist = (sg.f2c()*rfoffset).length_squared();
-			if (dist<mindis2) {
+			if ( dist<mindis2 ) {
 				mindis2=dist;
 				bestxform=i;
 				bestoffset = foffset - rfoffset;
@@ -245,52 +245,55 @@ main( int argc, char * argv [] ) {
 		// write main chain
 		int nchains = chains.length();
 		int currchain = 0;
-		for (int i=1; i<=(int)pdblines.size(); ++i) {
+		for ( int i=1; i<=(int)pdblines.size(); ++i ) {
 			std::cout <<pdblines[i].getline(chains[currchain])<<std::endl;
 		}
 		currchain = (currchain+1)%nchains;
 
 		//// find contacts
 		Real radius = 0;
-		for ( Size i=1; i<= nres; ++i )
+		for ( Size i=1; i<= nres; ++i ) {
 			radius = std::max( (CAs[i]).length_squared() , radius );
+		}
 		radius = sqrt(radius);
 
-		for (int s=1; s<=(int)sg.nsymmops(); ++s) {
+		for ( int s=1; s<=(int)sg.nsymmops(); ++s ) {
 			numeric::xyzMatrix<Real> R_i = sg.symmop(s).get_rotation();
 
-			for (int a=-1; a<=1; ++a)
-			for (int b=-1; b<=1; ++b)
-			for (int c=-1; c<=1; ++c) {
-				if (s==1 && a==0 && b==0 && c==0) continue;
+			for ( int a=-1; a<=1; ++a ) {
+				for ( int b=-1; b<=1; ++b ) {
+					for ( int c=-1; c<=1; ++c ) {
+						if ( s==1 && a==0 && b==0 && c==0 ) continue;
 
-				numeric::xyzVector<Real> T_i = sg.symmop(s).get_translation() + numeric::xyzVector<Real>(a,b,c);
+						numeric::xyzVector<Real> T_i = sg.symmop(s).get_translation() + numeric::xyzVector<Real>(a,b,c);
 
-				// pass 1 check vrt-vrt dist to throw out very distant things
-				Real disVRT = (sg.f2c()*T_i).length();
-				if (disVRT>contact_dist+2*radius) continue;
+						// pass 1 check vrt-vrt dist to throw out very distant things
+						Real disVRT = (sg.f2c()*T_i).length();
+						if ( disVRT>contact_dist+2*radius ) continue;
 
-				// pass 2 check ca-ca dists
-				numeric::xyzMatrix<core::Real> R_i_realspace =  sg.f2c()*R_i*sg.c2f();
-				bool contact=false;
-				for ( Size j=1; j<= nres && !contact; ++j ) {
-					Vector Xi = R_i_realspace*CAs[j] + sg.f2c()*T_i;
-					for ( Size k=1; k<= nres && !contact; ++k ) {
-						if ((Xi-CAs[k]).length_squared() < contact_dist*contact_dist) {
-							contact=true;
+						// pass 2 check ca-ca dists
+						numeric::xyzMatrix<core::Real> R_i_realspace =  sg.f2c()*R_i*sg.c2f();
+						bool contact=false;
+						for ( Size j=1; j<= nres && !contact; ++j ) {
+							Vector Xi = R_i_realspace*CAs[j] + sg.f2c()*T_i;
+							for ( Size k=1; k<= nres && !contact; ++k ) {
+								if ( (Xi-CAs[k]).length_squared() < contact_dist*contact_dist ) {
+									contact=true;
+								}
+							}
+						}
+
+						if ( contact ) {
+							utility::vector1<pdbline> pdblines_i = pdblines;
+							utility::vector1<Vector> CAs_i; // dummy
+							apply_transform( R_i_realspace, sg.f2c()*T_i, pdblines_i, CAs_i );
+
+							for ( int i=1; i<=(int)pdblines_i.size(); ++i ) {
+								std::cout <<pdblines_i[i].getline(chains[currchain])<<std::endl;
+							}
+							currchain = (currchain+1)%nchains;
 						}
 					}
-				}
-
-				if (contact) {
-					utility::vector1<pdbline> pdblines_i = pdblines;
-					utility::vector1<Vector> CAs_i; // dummy
-					apply_transform( R_i_realspace, sg.f2c()*T_i, pdblines_i, CAs_i );
-
-					for (int i=1; i<=(int)pdblines_i.size(); ++i) {
-						std::cout <<pdblines_i[i].getline(chains[currchain])<<std::endl;
-					}
-					currchain = (currchain+1)%nchains;
 				}
 			}
 		}

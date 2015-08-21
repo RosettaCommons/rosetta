@@ -70,8 +70,9 @@ NetChargeFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 	chain_ = tag->getOption<core::Size>( "chain", 0 );
 	net_charge_max_ = tag->getOption<signed int>( "max", 100 );
 	net_charge_min_ = tag->getOption<signed int>( "min", -100 );
-	if( tag->hasOption( "task_operations" ) )
+	if ( tag->hasOption( "task_operations" ) ) {
 		task_factory( protocols::rosetta_scripts::parse_task_operations( tag->getOption< std::string >( "task_operations" ), data ) );
+	}
 
 	TR<<"Net charge will be caculated for chain " << chain_ << " with maximum cutoff " << net_charge_max_ << " and minimum cutoff " << net_charge_min_ << "." << std::endl;
 }
@@ -83,12 +84,11 @@ NetChargeFilter::apply( core::pose::Pose const & pose ) const {
 	bool const status_max = (net_charge <= net_charge_max_) ? (true) : (false);
 	bool const status_min = (net_charge >= net_charge_min_) ? (true) : (false);
 	bool const status = (status_max && status_min) ? (true) : (false);
-	if( status_max && status_min ) {
-			TR << "passing." << std::endl;
+	if ( status_max && status_min ) {
+		TR << "passing." << std::endl;
+	} else {
+		TR << "failing." << std::endl;
 	}
-	else {
-			TR << "failing." << std::endl;
-  }
 	return status;
 }
 
@@ -114,20 +114,21 @@ NetChargeFilter::compute( core::pose::Pose const & pose ) const {
 	utility::vector1< core::Size > target_res;
 	target_res.clear();
 
-	if( !task_factory() ){
-		for( core::Size i = 1; i <= pose.total_residue(); ++i )
+	if ( !task_factory() ) {
+		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 			target_res.push_back( i );
-	}
-	else
+		}
+	} else {
 		target_res = protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, false/*packable*/ );
+	}
 
-	BOOST_FOREACH( core::Size const i, target_res ){
+	BOOST_FOREACH ( core::Size const i, target_res ) {
 		core::Size const chain = copy_pose.residue( i ).chain();
 
 		// Skip if current residue is not part of the chain specified.
 		// Otherwise, the default chain=0 means consider all chains.
-		if (chain_ != 0) {
-				if (chain != chain_) continue;
+		if ( chain_ != 0 ) {
+			if ( chain != chain_ ) continue;
 		}
 
 		std::string arg_res ("ARG");
@@ -142,21 +143,18 @@ NetChargeFilter::compute( core::pose::Pose const & pose ) const {
 		out << pose.aa(i);
 		cur_res = out.str();
 
-		if (arg_res.compare(cur_res) == 0) {
-				TR << "AA:  +1  " << cur_res << " " << i << std::endl;
-				net_charge++;
-		}
-		else if (lys_res.compare(cur_res) == 0) {
-				TR << "AA:  +1  " << cur_res << " " << i << std::endl;
-				net_charge++;
-		}
-		else if (asp_res.compare(cur_res) == 0) {
-				TR << "AA:  -1  " << cur_res << " " << i << std::endl;
-				net_charge--;
-		}
-		else if (glu_res.compare(cur_res) == 0) {
-				TR << "AA:  -1  " << cur_res << " " << i << std::endl;
-				net_charge--;
+		if ( arg_res.compare(cur_res) == 0 ) {
+			TR << "AA:  +1  " << cur_res << " " << i << std::endl;
+			net_charge++;
+		} else if ( lys_res.compare(cur_res) == 0 ) {
+			TR << "AA:  +1  " << cur_res << " " << i << std::endl;
+			net_charge++;
+		} else if ( asp_res.compare(cur_res) == 0 ) {
+			TR << "AA:  -1  " << cur_res << " " << i << std::endl;
+			net_charge--;
+		} else if ( glu_res.compare(cur_res) == 0 ) {
+			TR << "AA:  -1  " << cur_res << " " << i << std::endl;
+			net_charge--;
 		}
 
 	}

@@ -43,8 +43,8 @@ public:
 	~AtomCoordinateCstMover();
 	std::string get_name() const { return "AtomCoordinateCstMover"; }
 
-	virtual	protocols::moves::MoverOP	fresh_instance() const;
-  virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
+	virtual protocols::moves::MoverOP clone() const;
 	virtual void apply( core::pose::Pose & pose );
 
 	void parse_my_tag(

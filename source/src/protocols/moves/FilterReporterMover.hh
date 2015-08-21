@@ -44,15 +44,15 @@ private:
 
 	/// used by cctor and operator= to assign one such object to the other
 	static void assign(FilterReporterMover & lhs,
-			FilterReporterMover const & rhs);
+		FilterReporterMover const & rhs);
 
 public:
 	// ctors and dtors
 	FilterReporterMover();
 	FilterReporterMover(protocols::moves::MoverOP const &,
-			protocols::filters::FilterOP const &, core::Size const,
-			std::ostream &, protocols::moves::MoverStatus const =
-					protocols::moves::FAIL_DO_NOT_RETRY);
+		protocols::filters::FilterOP const &, core::Size const,
+		std::ostream &, protocols::moves::MoverStatus const =
+		protocols::moves::FAIL_DO_NOT_RETRY);
 	FilterReporterMover(FilterReporterMover const &);
 	~FilterReporterMover();
 

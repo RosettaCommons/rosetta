@@ -45,16 +45,16 @@ namespace simple_filters {
 
 class ExternalEvaluator : public evaluation::SingleValuePoseEvaluator< core::Real > {
 public:
-  ExternalEvaluator( std::string tag, std::string command = "echo NO_COMMAND_SPECIFIED" );
+	ExternalEvaluator( std::string tag, std::string command = "echo NO_COMMAND_SPECIFIED" );
 	virtual ~ExternalEvaluator();
-  virtual core::Real apply( core::pose::Pose& pose ) const;
-  virtual bool applicable(  core::pose::Pose const& ) const { return true; };
+	virtual core::Real apply( core::pose::Pose& pose ) const;
+	virtual bool applicable(  core::pose::Pose const& ) const { return true; };
 	void set_command( std::string const&  command_in ) { command_ = command_in; };
 	std::string scratch_dir() const {
 		return scratch_dir_;
 	}
 private:
-  std::string command_;
+	std::string command_;
 	std::string scratch_dir_;
 	std::string work_dir_;
 };

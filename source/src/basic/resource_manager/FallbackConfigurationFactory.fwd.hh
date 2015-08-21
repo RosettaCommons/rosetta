@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   basic/resource_manager/FallbackConfigurationFactory.fwd.hh
-/// @brief  
+/// @brief
 /// @author Brian D. Weitzner brian.weitzner@gmail.com
 
 #ifndef INCLUDED_basic_resource_manager_fallback_configuration_factory_FWD_HH

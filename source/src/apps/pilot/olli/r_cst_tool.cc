@@ -90,22 +90,22 @@ OPT_KEY( Integer, skip_redundant_width )
 void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-  Templates::register_options();
-  OPT( in::file::s );
-  OPT( constraints::cst_file );
-  OPT( out::prefix );
+	Templates::register_options();
+	OPT( in::file::s );
+	OPT( constraints::cst_file );
+	OPT( out::prefix );
 	NEW_OPT( threshold, "what makes a violation", 1 );
-  NEW_OPT( level, "how much detail for violation output", 71 );
+	NEW_OPT( level, "how much detail for violation output", 71 );
 	NEW_OPT( in::top, "read topology from this file for checking", "");
 	NEW_OPT( no_out, "don't write individual .viol files", false);
-  //NEW_OPT( viol_type, "work only on these types of constraints", "");
+	//NEW_OPT( viol_type, "work only on these types of constraints", "");
 	NEW_OPT( out::cst, "write the resulting constraint set to this file", "scanned.cst");
 	NEW_OPT( clean, "write only PASSED constraints to file ( out::cst )", false );
 	NEW_OPT( skip, "write only X-th part of constraints (default 100percent: 1.0)", 1.0 );
 	NEW_OPT( show_atom_numbers, "dump information on all residues ", false );
 	NEW_OPT( skip_redundant, "skip redundant constraints ( util.cc ) ", false );
 	NEW_OPT( skip_redundant_width, "skip residue pairs in X neighbourhood ", 1);
-	//	NEW_OPT( combine, "combine constraints randomly with OR ", 1 );
+	// NEW_OPT( combine, "combine constraints randomly with OR ", 1 );
 	OPT( constraints::combine );
 }
 
@@ -167,11 +167,11 @@ void ConstraintToolMover::apply( core::pose::Pose &pose ) {
 		ConstraintCOPs added_constraints = cstset_->get_all_constraints();
 		utility::vector1< bool > exclude_res;
 		//if ( option[ OptionKeys::constraints::combine_exclude_region ].user() ) {
-		//	std::string const file( option[ OptionKeys::constraints::combine_exclude_region ]() );
-		//	loops::Loops rigid_core;
-		//	rigid_core.read_loop_file( file, false /*no strict looprlx checking*/, "RIGID" );
-		//	exclude_res.resize( pose.total_residue(), false );
-		//	rigid_core.transfer_to_residue_vector( exclude_res, true );
+		// std::string const file( option[ OptionKeys::constraints::combine_exclude_region ]() );
+		// loops::Loops rigid_core;
+		// rigid_core.read_loop_file( file, false /*no strict looprlx checking*/, "RIGID" );
+		// exclude_res.resize( pose.total_residue(), false );
+		// rigid_core.transfer_to_residue_vector( exclude_res, true );
 		//}
 		if ( option[ OptionKeys::skip_redundant ]() ) skip_redundant_constraints( added_constraints, pose.total_residue(), option[ OptionKeys::skip_redundant_width ]() );
 
@@ -259,14 +259,14 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	register_options();
-	devel::init( argc, argv );
+		register_options();
+		devel::init( argc, argv );
 
-	try{
-		run();
-	} catch ( utility::excn::EXCN_Base& excn ) {
-		excn.show( std::cerr );
-	}
+		try{
+			run();
+		} catch ( utility::excn::EXCN_Base& excn ) {
+			excn.show( std::cerr );
+		}
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

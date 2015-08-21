@@ -36,7 +36,7 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-	#include <core/fragment/FragID.hh>
+#include <core/fragment/FragID.hh>
 #endif
 
 
@@ -47,19 +47,19 @@ namespace fragment {
 
 /// @detail The FragSet: (Interface Definition -- Virtual BaseClass )
 /*
-	 The FragSet is the basic interface to communicate with mover classes. Its main purpose is a fast access
-	 to fragments by seqpos. More functionality might be coming.
+The FragSet is the basic interface to communicate with mover classes. Its main purpose is a fast access
+to fragments by seqpos. More functionality might be coming.
 
-	 To access fragments:
+To access fragments:
 
-	 by region: --> region( .. )
-	 all frames: FrameIterator it = fragset.begin() ... fragset.end()
-	 all fragments: FragID_Iterator it = fragset.begin() ... fragset.end()
+by region: --> region( .. )
+all frames: FrameIterator it = fragset.begin() ... fragset.end()
+all fragments: FragID_Iterator it = fragset.begin() ... fragset.end()
 
-	 Two simple extensions are already provided:
-		ConstantLengthFragSet: fragments are stored by their start-sequence position, only one frame per position
-		OrderFragSet: fragments are stored by their start-sequence position, multiple frames per position
-		what might be useful: a map from position to all fragments that overlap with that position
+Two simple extensions are already provided:
+ConstantLengthFragSet: fragments are stored by their start-sequence position, only one frame per position
+OrderFragSet: fragments are stored by their start-sequence position, multiple frames per position
+what might be useful: a map from position to all fragments that overlap with that position
 
 */
 
@@ -119,17 +119,17 @@ public:
 		core::Size min_length,
 		FrameList &frames
 	) const = 0;
-    
-    /// @brief returns the number and list of all fragment alignment frames that somehow overlap with the given region
-    ///(also allows those frames that start before the region and reach into it)
-    virtual Size overlapping_with_region(
-        kinematics::MoveMap const& mm,
-        core::Size start,
-        core::Size end,
-        core::Size min_overlap,
-        core::Size min_length,
-        FrameList &frames
-    ) const;
+
+	/// @brief returns the number and list of all fragment alignment frames that somehow overlap with the given region
+	///(also allows those frames that start before the region and reach into it)
+	virtual Size overlapping_with_region(
+		kinematics::MoveMap const& mm,
+		core::Size start,
+		core::Size end,
+		core::Size min_overlap,
+		core::Size min_length,
+		FrameList &frames
+	) const;
 
 	/// @brief InsertMap and InsertSize gives quick overview which residues can be affected by fragments.
 	/// insert_map --- list of start-positions, insert_size corresponding list of longest fragment at position x

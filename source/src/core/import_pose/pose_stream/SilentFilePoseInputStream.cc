@@ -212,11 +212,11 @@ void SilentFilePoseInputStream::read_all_files_() {
 	basic::Tracer tr( "core.io.pose_stream.silent" );
 	using utility::vector1;
 
-	if (record_source_) sfd_->set_record_source( true );
+	if ( record_source_ ) sfd_->set_record_source( true );
 
 	for ( vector1< FileName >::const_iterator current_fn_ = filenames_.begin();
-				current_fn_ != filenames_.end(); ++current_fn_
-  ) {
+			current_fn_ != filenames_.end(); ++current_fn_
+			) {
 
 		if ( !file_exists( *current_fn_ ) ) {
 			tr.Error << "Hey! Could not find " + std::string(*current_fn_)
@@ -250,7 +250,7 @@ void SilentFilePoseInputStream::read_all_files_() {
 void
 SilentFilePoseInputStream::set_order_by_energy( bool const & setting ) {
 	order_by_energy_ = setting;
-	if (setting) sfd_->order_by_energy();
+	if ( setting ) sfd_->order_by_energy();
 	current_position_ = sfd_->begin();
 }
 

@@ -20,8 +20,8 @@
 
 // Setup Mover
 #include <protocols/rotamer_recovery/RotamerRecoveryMoverCreator.hh>
-namespace protocols{
-namespace rotamer_recovery{
+namespace protocols {
+namespace rotamer_recovery {
 
 std::string
 RotamerRecoveryMoverCreator::keyname() const
@@ -222,19 +222,19 @@ RotamerRecoveryMover::parse_my_tag(
 {
 	score_function( parse_score_function( tag, datamap ) );
 
-	if( rotamer_recovery_ ){
+	if ( rotamer_recovery_ ) {
 		TR << "WARNING: Attempting to redefine rotamer_recovery_ object from Parser Script" << endl;
 		throw utility::excn::EXCN_RosettaScriptsOption("");
 	}
 
-	if(tag->hasOption("protocol") && (tag->hasOption("mover") || tag->hasOption("mover_name"))){
+	if ( tag->hasOption("protocol") && (tag->hasOption("mover") || tag->hasOption("mover_name")) ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("Please either the 'protocol' field or the 'mover' field but not both.");
 	}
 
 	RotamerRecoveryFactory * factory(RotamerRecoveryFactory::get_instance());
 
 	RRProtocolOP protocol;
-	if(tag->hasOption("mover") || tag->hasOption("mover_name")){
+	if ( tag->hasOption("mover") || tag->hasOption("mover_name") ) {
 		MoverOP mover = parse_mover(tag->hasOption("mover") ?
 			tag->getOption<string>("mover") : tag->getOption<string>("mover_name"), movers);
 		protocol = RRProtocolOP( new RRProtocolMover(mover) );
@@ -243,19 +243,20 @@ RotamerRecoveryMover::parse_my_tag(
 	}
 	RRComparerOP comparer(
 		factory->get_rotamer_recovery_comparer(
-			tag->getOption<string>("comparer", "RRComparerAutomorphicRMSD")));
+		tag->getOption<string>("comparer", "RRComparerAutomorphicRMSD")));
 
 	RRReporterOP reporter(
 		factory->get_rotamer_recovery_reporter(
-			tag->getOption<string>("reporter", "RRReporterSimple")));
+		tag->getOption<string>("reporter", "RRReporterSimple")));
 
 	rotamer_recovery_ = rotamer_recovery::RotamerRecoveryOP( new RotamerRecovery(protocol, comparer, reporter) );
 }
 
 ScoreFunctionOP
 RotamerRecoveryMover::score_function(){
-	if ( !scfxn_ )
+	if ( !scfxn_ ) {
 		scfxn_ = get_score_function();
+	}
 
 	return scfxn_;
 }

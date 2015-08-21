@@ -67,7 +67,7 @@ InteractionGraphFactory::create_interaction_graph(
 	if ( the_task.linmem_ig() ) {
 		/// Symmetric OTFIGs are not currently capable of handling either the Surface or HPatch scores, so check
 		/// for symmetry first and return a (pairwise-decomposable) SymmLinearMemoryInteractionGraph if requested.
-		if ( pose::symmetry::is_symmetric( pose )) {
+		if ( pose::symmetry::is_symmetric( pose ) ) {
 			T << "Instantiating SymmLinearMemoryInteractionGraph" << std::endl;
 			SymmLinearMemoryInteractionGraphOP symlinmemig( new SymmLinearMemoryInteractionGraph( the_task.num_to_be_packed() ) );
 			symlinmemig->set_pose( pose );

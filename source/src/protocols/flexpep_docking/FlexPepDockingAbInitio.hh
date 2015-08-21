@@ -67,7 +67,7 @@ public:
 
 	virtual std::string get_name() const;
 
-	private:
+private:
 
 	/// @brief initial setup for apply
 	void setup_for_apply(core::pose::Pose& pose);
@@ -120,7 +120,7 @@ public:
 	// @param pose pose for conversion
 	// @param pSer_positions[out] - positions that were converted from pSer to Asp
 	/////////////////////////////////////////////////////////////////////////////
-        void convertPSERtoGLU(core::pose::Pose& pose, std::set<int>& pSer_positions);
+	void convertPSERtoGLU(core::pose::Pose& pose, std::set<int>& pSer_positions);
 
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -155,7 +155,7 @@ private:
 	// loop mover for modeling loop closure // TODO: this is a wrapper, use the loop modeller directly
 	protocols::comparative_modeling::LoopRelaxMoverOP loop_relax_mover_;
 
-        // set of fragments from a fragment library
+	// set of fragments from a fragment library
 	core::fragment::ConstantLengthFragSetOP fragset3mer_;
 	core::fragment::ConstantLengthFragSetOP fragset9mer_;
 	core::fragment::ConstantLengthFragSetOP fragset5mer_;

@@ -92,7 +92,7 @@ void CoreDunbrackFilter::filter_type( String const & value )
 CoreDunbrackFilter::Real
 CoreDunbrackFilter::report_sm( Pose const & pose ) const
 {
-	return 	compute( pose );
+	return  compute( pose );
 }
 
 /// @brief
@@ -125,7 +125,7 @@ CoreDunbrackFilter::compute( Pose const & pose ) const
 
 	// store working pose
 	Pose copy_pose( pose );
-	ScoreFunctionOP sfxn = 	core::scoring::get_score_function();
+	ScoreFunctionOP sfxn =  core::scoring::get_score_function();
 	(*sfxn)( copy_pose );
 
 	Real asa_core( 40.0 );
@@ -133,9 +133,9 @@ CoreDunbrackFilter::compute( Pose const & pose ) const
 	Size num_frustrated_residue( 0 );
 	Size rnum_core( 0 );
 	// take dunbrack score
-	for( Size i=1; i<=pose.total_residue(); i++ ) {
-		if( rsd_sasa[ i ] < asa_core ) {
-			if( name_from_aa( pose.aa( i ) ) == "TRP" ||
+	for ( Size i=1; i<=pose.total_residue(); i++ ) {
+		if ( rsd_sasa[ i ] < asa_core ) {
+			if ( name_from_aa( pose.aa( i ) ) == "TRP" ||
 					name_from_aa( pose.aa( i ) ) == "TYR" ||
 					name_from_aa( pose.aa( i ) ) == "MET" ||
 					name_from_aa( pose.aa( i ) ) == "PHE" ||
@@ -144,9 +144,9 @@ CoreDunbrackFilter::compute( Pose const & pose ) const
 					name_from_aa( pose.aa( i ) ) == "VAL" ) {
 
 				Real fa_dun = ( copy_pose.energies().residue_total_energies( i ) )[ core::scoring::fa_dun ];
-				if( fa_dun > fa_dun_danger_ ) {
+				if ( fa_dun > fa_dun_danger_ ) {
 					tr << "CAUTION high dubrack score " << i << " " << name_from_aa( pose.aa( i ) ) << " " << rsd_sasa[ i ] << " "
-						 << fa_dun << std::endl;
+						<< fa_dun << std::endl;
 					num_frustrated_residue ++;
 				}
 
@@ -160,14 +160,14 @@ CoreDunbrackFilter::compute( Pose const & pose ) const
 
 	Real ave = Real( frustration )/Real( rnum_core );
 	tr << "Frustration: " << frustration << " ,num_hydrophobic_in_core: " << rnum_core
-		 << "average: " << ave << " ,num_frustrated_residue: " << num_frustrated_residue << std::endl;
+		<< "average: " << ave << " ,num_frustrated_residue: " << num_frustrated_residue << std::endl;
 
 	Real value( 0.0 );
-	if( type_ == "average" ) {
+	if ( type_ == "average" ) {
 		value = ave;
-	} else if( type_ == "num_frustrated_residue" ) {
+	} else if ( type_ == "num_frustrated_residue" ) {
 		value = num_frustrated_residue;
-	} else if( type_ == "total" ) {
+	} else if ( type_ == "total" ) {
 		value = frustration;
 	} else {
 		tr << "improper type specification " << type_ << std::endl;
@@ -183,10 +183,10 @@ CoreDunbrackFilter::compute( Pose const & pose ) const
 bool CoreDunbrackFilter::apply( Pose const & pose ) const
 {
 	Real value = compute( pose );
-	if( value < filter_value_ ){
+	if ( value < filter_value_ ) {
 		tr << "Successfully filtered: " << type_ << " " << value << std::endl;
 		return true;
-	}else{
+	} else {
 		tr << "Filter failed current/threshold=" << value << "/" << filter_value_ << std::endl;
 		return false;
 	}
@@ -205,11 +205,11 @@ CoreDunbrackFilter::parse_my_tag(
 	type_ = tag->getOption<String>( "type", "average" );
 
 	// set threshold
- 	filter_value_ = tag->getOption<Real>( "threshold", Real( pose.total_residue() ) );
-	if( type_ == "average" ) {
-	} else if ( type_ == "num_frustrated_residue" ) {
-	} else if ( type_ == "total" ) {
-	} else {
+	filter_value_ = tag->getOption<Real>( "threshold", Real( pose.total_residue() ) );
+	if ( type_ == "average" ) {}
+	else if ( type_ == "num_frustrated_residue" ) {}
+	else if ( type_ == "total" ) {}
+	else {
 		tr << "invalid type specification, slect from average, num_frustrated_residue, or total" << std::endl;
 		runtime_assert( false );
 	}

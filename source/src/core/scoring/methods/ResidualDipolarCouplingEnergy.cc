@@ -93,13 +93,13 @@ EnergyMethodOP
 ResidualDipolarCouplingEnergy::clone() const
 {
 
-  return EnergyMethodOP( new ResidualDipolarCouplingEnergy() );
+	return EnergyMethodOP( new ResidualDipolarCouplingEnergy() );
 
 }
 
 void ResidualDipolarCouplingEnergy::setup_for_scoring(
-  pose::Pose & pose,
-  ScoreFunction const &
+	pose::Pose & pose,
+	ScoreFunction const &
 ) const
 {
 	//ResidualDipolarCoupling& rdc_data( rdc_from_pose( pose ) );
@@ -107,17 +107,17 @@ void ResidualDipolarCouplingEnergy::setup_for_scoring(
 }
 
 void ResidualDipolarCouplingEnergy::finalize_total_energy(
-  pose::Pose &,
-  ScoreFunction const &,
-  EnergyMap & totals
+	pose::Pose &,
+	ScoreFunction const &,
+	EnergyMap & totals
 ) const
 {
 	totals[ rdc ] = dip_score_;
 }
 
 void ResidualDipolarCouplingEnergy::setup_for_minimizing(
-  pose::Pose & pose,
-  ScoreFunction const &,
+	pose::Pose & pose,
+	ScoreFunction const &,
 	kinematics::MinimizerMapBase const &
 ) const
 {
@@ -125,7 +125,7 @@ void ResidualDipolarCouplingEnergy::setup_for_minimizing(
 	ResidualDipolarCoupling::RDC_lines const& All_RDC_lines( rdc_data.get_RDC_data() );
 	ResidualDipolarCoupling::RDC_lines::const_iterator it;
 	Size ct = 0;
-	for( it = All_RDC_lines.begin(); it != All_RDC_lines.end(); ++it) {
+	for ( it = All_RDC_lines.begin(); it != All_RDC_lines.end(); ++it ) {
 		id::AtomID atom1( pose.residue(it->res1()).atom_index(it->atom1()), it->res1());
 		id::AtomID atom2( pose.residue(it->res2()).atom_index(it->atom2()), it->res2());
 		tr.Trace << "insert in atom-map " << atom1 << " " << atom2 << std::endl;
@@ -148,14 +148,14 @@ ResidualDipolarCouplingEnergy::rdc_from_pose(
 	pose::Pose & pose
 ) const
 {
-// 	//using core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA;
+	//  //using core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA;
 
-// 	if( pose.data().has( RESIDUAL_DIPOLAR_COUPLING_DATA ) )
-// 		return *( static_cast< ResidualDipolarCoupling const * >( pose.data().get_const_ptr( RESIDUAL_DIPOLAR_COUPLING_DATA )() ) );
+	//  if( pose.data().has( RESIDUAL_DIPOLAR_COUPLING_DATA ) )
+	//   return *( static_cast< ResidualDipolarCoupling const * >( pose.data().get_const_ptr( RESIDUAL_DIPOLAR_COUPLING_DATA )() ) );
 
-// 	ResidualDipolarCouplingOP rdc_info = new ResidualDipolarCoupling;
-// 	pose.data().set( RESIDUAL_DIPOLAR_COUPLING_DATA, rdc_info );
- 	ResidualDipolarCouplingOP rdc_info( retrieve_RDC_from_pose( pose ) );
+	//  ResidualDipolarCouplingOP rdc_info = new ResidualDipolarCoupling;
+	//  pose.data().set( RESIDUAL_DIPOLAR_COUPLING_DATA, rdc_info );
+	ResidualDipolarCouplingOP rdc_info( retrieve_RDC_from_pose( pose ) );
 	if ( !rdc_info ) {
 		rdc_info = ResidualDipolarCouplingOP( new ResidualDipolarCoupling );
 		store_RDC_in_pose( rdc_info, pose );
@@ -168,7 +168,7 @@ ResidualDipolarCouplingEnergy::rdc_from_pose(
 // this has to be spread out over different routines to make this energy yield derivatives
 //////////////////////////////////////////////////////
 Real ResidualDipolarCouplingEnergy::eval_dipolar(
-		pose::Pose& pose
+	pose::Pose& pose
 ) const
 {
 	ResidualDipolarCoupling& rdc_data( rdc_from_pose( pose ) );
@@ -176,8 +176,8 @@ Real ResidualDipolarCouplingEnergy::eval_dipolar(
 }
 
 Real ResidualDipolarCouplingEnergy::eval_dipolar(
-		pose::Pose const& pose,
-		ResidualDipolarCoupling& rdc_data
+	pose::Pose const& pose,
+	ResidualDipolarCoupling& rdc_data
 ) const
 {
 	Real score;
@@ -193,7 +193,7 @@ Real ResidualDipolarCouplingEnergy::eval_dipolar(
 			std::string const filename( basic::options::option[ basic::options::OptionKeys::rdc::dump_weight_trajectory ]() );
 			utility::io::ozstream out( filename , std::ios_base::out | std::ios_base::app );
 			utility::vector1< core::scoring::RDC >::const_iterator it;
-			for ( it = All_RDC_lines.begin(); it != All_RDC_lines.end(); ++it) {
+			for ( it = All_RDC_lines.begin(); it != All_RDC_lines.end(); ++it ) {
 				out << RJ( 4, it->weight()) << " ";
 			}
 			out << std::endl;
@@ -208,23 +208,23 @@ Real ResidualDipolarCouplingEnergy::eval_dipolar(
 		} else {
 			using namespace basic::options;
 			using namespace basic::options::OptionKeys;
-			if (option[ OptionKeys::rdc::fixDa].user()) {
-				if (option[ OptionKeys::rdc::fixR].user()) {
+			if ( option[ OptionKeys::rdc::fixDa].user() ) {
+				if ( option[ OptionKeys::rdc::fixR].user() ) {
 					//Real const tensorDa( option[ OptionKeys::rdc::fixDa] );
 					//Real const tensorR( option[ OptionKeys::rdc::fixR] );
 					utility::vector1<Real> const tensorDa = option[ OptionKeys::rdc::fixDa]();
 					utility::vector1<Real> const tensorR = option[ OptionKeys::rdc::fixR]();
 
 					//make sure R is between 0 and 2/3
-					for ( core::Size i = 1; i <= option[ OptionKeys::rdc::fixR ]().size(); ++i) {
+					for ( core::Size i = 1; i <= option[ OptionKeys::rdc::fixR ]().size(); ++i ) {
 						if ( (tensorR[i] < 0) || (tensorR[i] > 2.0/3.0) ) {
 							utility_exit_with_message("0=< R <=2/3");
 						}
 					}
 
 					//make sure user provide the same number Da and R
-					if (  ( option[ OptionKeys::rdc::fixDa ]().size() !=	option[ OptionKeys::in::file::rdc ]().size() )
-						|| ( option[ OptionKeys::rdc::fixR ]().size() !=  option[ OptionKeys::in::file::rdc ]().size() )   )  {
+					if (  ( option[ OptionKeys::rdc::fixDa ]().size() != option[ OptionKeys::in::file::rdc ]().size() )
+							|| ( option[ OptionKeys::rdc::fixR ]().size() !=  option[ OptionKeys::in::file::rdc ]().size() )   )  {
 						utility_exit_with_message("Number of Da and R must be the same as in number of experiment");
 					}
 
@@ -235,19 +235,18 @@ Real ResidualDipolarCouplingEnergy::eval_dipolar(
 					//tr.Trace << "nls and fixDa: " << tensorDa  << std::endl;
 					score = rdc_data.compute_dipscore_nlsDa( pose, tensorDa);
 				} //end of Da and noR
-			}	else {//end of fixDa
-				if (option[ OptionKeys::rdc::fixR].user()) {
+			} else { //end of fixDa
+				if ( option[ OptionKeys::rdc::fixR].user() ) {
 					//Real const tensorR( option[ OptionKeys::rdc::fixR] );
 					utility::vector1<Real> const tensorR = option[ OptionKeys::rdc::fixR]();
 					//tr.Trace << "nls and fixR: " << tensorR << std::endl;
-					for ( core::Size i = 1; i <= option[ OptionKeys::rdc::fixR ]().size(); ++i) {
+					for ( core::Size i = 1; i <= option[ OptionKeys::rdc::fixR ]().size(); ++i ) {
 						if ( (tensorR[i] < 0) || (tensorR[i] > 2.0/3.0) ) {
 							utility_exit_with_message("0=< R <=2/3");
 						}
 					}
 					score = rdc_data.compute_dipscore_nlsR( pose, tensorR);
-				}//end of noDa and R
-				else {
+				} else { //end of noDa and R
 					//tr.Trace << "nls" << std::endl;
 					score = rdc_data.compute_dipscore_nls( pose );
 				}//end of noDa and noR
@@ -260,23 +259,23 @@ Real ResidualDipolarCouplingEnergy::eval_dipolar(
 
 void
 ResidualDipolarCouplingEnergy::eval_atom_derivative(
-			 id::AtomID const & aid,
-			 pose::Pose const & pose,
-    	 kinematics::DomainMap const &,
-	   	 ScoreFunction const &,
-		   EnergyMap const & score_weights,
-		   Vector & F1,
-		   Vector & F2
+	id::AtomID const & aid,
+	pose::Pose const & pose,
+	kinematics::DomainMap const &,
+	ScoreFunction const &,
+	EnergyMap const & score_weights,
+	Vector & F1,
+	Vector & F2
 ) const {
 
 	if ( !atom2rdc_map_.has( aid ) ) return; //damn this "has" isn't correct at all
 	utility::vector1< Size > const rdc_nrs( atom2rdc_map_[ aid ] );
 	if ( rdc_nrs.size() == 0 ) {
-		//		tr.Trace << "no RDC entry for " << aid << " skipping.. "<< std::endl;
+		//  tr.Trace << "no RDC entry for " << aid << " skipping.. "<< std::endl;
 		return;
 	}
 	Vector fij(0,0,0);
-	for (core::Size ii=1; ii<=rdc_nrs.size(); ++ii) {
+	for ( core::Size ii=1; ii<=rdc_nrs.size(); ++ii ) {
 		core::Size rdc_nr = rdc_nrs[ ii ];
 		ResidualDipolarCoupling const& rdc_cache( *retrieve_RDC_from_pose( pose ) );
 		utility::vector1< core::scoring::RDC > All_RDC_lines( rdc_cache.get_RDC_data() );
@@ -286,16 +285,16 @@ ResidualDipolarCouplingEnergy::eval_atom_derivative(
 		conformation::Residue const& rsd2( pose.residue( rdc_data.res2() ) );
 		if ( aid.rsd() == rdc_data.res1() && utility::trimmed_compare( rsd1.atom_name( aid.atomno() ), rdc_data.atom1() ) ) {
 			fij += rdc_data.fij();
-		} else if ( aid.rsd() == rdc_data.res2() && utility::trimmed_compare( rsd2.atom_name( aid.atomno() ), rdc_data.atom2() ) ){
+		} else if ( aid.rsd() == rdc_data.res2() && utility::trimmed_compare( rsd2.atom_name( aid.atomno() ), rdc_data.atom2() ) ) {
 			fij -= rdc_data.fij();
 		} else return;
 	}
 
-	//	Real fij;
+	// Real fij;
 	//thanks to Will Sheffler:
 	numeric::xyzVector<core::Real> atom_x = pose.xyz(aid);
 	numeric::xyzVector<core::Real> const f2( -fij );
-	numeric::xyzVector<core::Real> const atom_y = atom_x - f2;   // a	"fake" atom in the direcion of the gradient
+	numeric::xyzVector<core::Real> const atom_y = atom_x - f2;   // a "fake" atom in the direcion of the gradient
 	numeric::xyzVector<core::Real> const f1( atom_x.cross( atom_y ) );
 
 	F1 += score_weights[ rdc ] * f1;

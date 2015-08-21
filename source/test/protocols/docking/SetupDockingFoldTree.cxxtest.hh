@@ -89,14 +89,14 @@ public:
 
 		TS_ASSERT_EQUALS(default_foldtree.str(), specified_foldtree.str());
 	}
-	
+
 	void test_residue_selector_based_setup(){
 		core::pose::Pose pose;
 		tr << "Test setup for multichain pose..."<< std::endl;
 		core::import_pose::pose_from_pdb(pose, "protocols/docking/DockingMultiChain.pdb" );
 		protocols::docking::DockJumps movable_jumps;
 		movable_jumps.push_back( 1 );
-		
+
 		std::stringstream target_foldtree;
 		target_foldtree << "FOLD_TREE  ";
 		target_foldtree << "EDGE 1 214 -1  ";
@@ -106,14 +106,14 @@ public:
 		target_foldtree << "EDGE 384 488 1  ";
 		target_foldtree << "EDGE 488 433 -1  ";
 		target_foldtree << "EDGE 488 561 -1 ";
-		
+
 		protocols::docking::setup_foldtree( pose, "AB_E", movable_jumps );
-		
+
 		std::stringstream computed_foldtree;
 		computed_foldtree << pose.fold_tree();
-		
+
 		TS_ASSERT_EQUALS( computed_foldtree.str(), target_foldtree.str() );
-		
+
 		std::stringstream out_of_order_foldtree;
 		out_of_order_foldtree << "FOLD_TREE  ";
 		out_of_order_foldtree << "EDGE 1 98 -1  ";
@@ -123,12 +123,12 @@ public:
 		out_of_order_foldtree << "EDGE 325 215 -1  ";
 		out_of_order_foldtree << "EDGE 325 432 -1  ";
 		out_of_order_foldtree << "EDGE 433 561 -1 ";
-		
+
 		protocols::docking::setup_foldtree( pose, "AE_B", movable_jumps );
 
 		std::stringstream computed_out_of_order_foldtree;
 		computed_out_of_order_foldtree << pose.fold_tree();
-		
+
 		TS_ASSERT_EQUALS( computed_out_of_order_foldtree.str(), out_of_order_foldtree.str() );
 	}
 

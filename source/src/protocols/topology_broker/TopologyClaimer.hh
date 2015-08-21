@@ -50,19 +50,19 @@ namespace topology_broker {
 /// @detail
 //    the claim functions are called from the Broker in this sequence
 //     generate_sequence_claims()
-// 		 initialize_residues() /// puts in the correct residue-types can copy segments of pose
-// 		 1 x generate_claims()
-// 		 n x allow_claim()
-// 		 [ evtl. n x accept_declined_claim() ]
+//    initialize_residues() /// puts in the correct residue-types can copy segments of pose
+//    1 x generate_claims()
+//    n x allow_claim()
+//    [ evtl. n x accept_declined_claim() ]
 
-// 		 // here we don't call claim_accepted because I want to be able to take individual jumps out if they make fold-trees impossible
+//    // here we don't call claim_accepted because I want to be able to take individual jumps out if they make fold-trees impossible
 
-// 		 1 x finalize_claims()
-// 		 n x allow_claim()
-// 		 [ evtl. n x accept_declined_claim() ]
-// 		 n x claim_accepted( ) //hopefully ;-)
+//    1 x finalize_claims()
+//    n x allow_claim()
+//    [ evtl. n x accept_declined_claim() ]
+//    n x claim_accepted( ) //hopefully ;-)
 
-// 		 initialize_dofs( init_claims [ subset of your claims ] ) ///only act on internal dofs -- no structure building
+//    initialize_dofs( init_claims [ subset of your claims ] ) ///only act on internal dofs -- no structure building
 
 class TopologyClaimer : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< TopologyClaimer >
 {
@@ -100,7 +100,7 @@ public:
 		return false;
 	}
 
-//	virtual void set_pose_from_broker(core::pose::Pose& pose) {};
+	// virtual void set_pose_from_broker(core::pose::Pose& pose) {};
 
 	/// @brief in case a claimer has its own fold_tree.  get_fold_tree() is called by the broker
 	virtual core::kinematics::FoldTreeOP get_fold_tree(core::pose::Pose&) {return NULL;}
@@ -179,7 +179,7 @@ public:
 	/// if you don't want to do anything special --- don't overload this method!
 	/// default: adds mover given by virtual call get_mover()  with stage-dependent weight given by abinitio_mover_weight_
 	virtual void add_mover(
-    moves::RandomMover& /* random_mover */,
+		moves::RandomMover& /* random_mover */,
 		core::pose::Pose const& /*pose*/,
 		abinitio::StageID /*stageID*/, /* abinitio sampler stage */
 		core::scoring::ScoreFunction const& /*scorefxn*/,
@@ -234,7 +234,7 @@ public:
 protected:
 
 	/// @brief what is your mover ... called by add_mover --- overload this or add_mover if you have movers too supply
-	virtual moves::MoverOP get_mover(	core::pose::Pose const& /*pose*/ ) const { return NULL; };
+	virtual moves::MoverOP get_mover( core::pose::Pose const& /*pose*/ ) const { return NULL; };
 
 	virtual bool read_tag( std::string tag, std::istream& is );
 

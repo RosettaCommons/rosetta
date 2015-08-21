@@ -47,7 +47,7 @@ public:
 
 	virtual TaskOperationOP clone() const;
 
-	virtual	void apply( Pose const & pose, PackerTask & ptask ) const;
+	virtual void apply( Pose const & pose, PackerTask & ptask ) const;
 
 	void copy_dna_chains( DnaChainsCOP chains );
 	DnaChainsCOP dna_chains() const;

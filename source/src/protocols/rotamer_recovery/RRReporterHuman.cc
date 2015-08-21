@@ -149,7 +149,7 @@ PerNativeRRReporterHuman::torsion2big_bin(
 void
 PerNativeRRReporterHuman::set_native(
 	Pose const & native_pose) {
-	if ( !native_pose_  && !initialized_ ){
+	if ( !native_pose_  && !initialized_ ) {
 		native_pose_ = core::pose::PoseCOP( core::pose::PoseOP( new Pose( native_pose ) ) ); // deep copy please
 	} else {
 		TR << "Attempting to set the native pose in PerNativeRRReporterHuman after it has already been initialized." << endl;
@@ -160,9 +160,9 @@ PerNativeRRReporterHuman::set_native(
 		Residue const & res( native_pose.residue(ii) );
 		nat_bb_bins_.push_back(
 			torsion2big_bin(
-				res.mainchain_torsion(1),
-				res.mainchain_torsion(2),
-				res.mainchain_torsion(3)
+			res.mainchain_torsion(1),
+			res.mainchain_torsion(2),
+			res.mainchain_torsion(3)
 			)
 		);
 
@@ -193,7 +193,7 @@ PerNativeRRReporterHuman::report_rotamer_recovery(
 	Real const score,
 	bool const recovered)
 {
-	if( !initialized_ ){
+	if ( !initialized_ ) {
 		utility_exit_with_message("Attempting to report rotamer recovery when the native has not be set");
 	}
 
@@ -209,14 +209,14 @@ PerNativeRRReporterHuman::initialized(
 
 void
 PerNativeRRReporterHuman::show(
- ostream & out,
- Size const column_width,
- Size const precision
+	ostream & out,
+	Size const column_width,
+	Size const precision
 ) const {
 	out << "#Structure: " << tag_from_pose( *native_pose_ ) << endl;
 
-  for(Size ii=1; ii <= native_pose_->total_residue(); ++ii ){
-		if( res_scores_[ii].size() == 0 ) continue;
+	for ( Size ii=1; ii <= native_pose_->total_residue(); ++ii ) {
+		if ( res_scores_[ii].size() == 0 ) continue;
 
 		Real mean_score = mean(
 			res_scores_[ii].begin(), res_scores_[ii].end(), Real(0) );
@@ -226,8 +226,8 @@ PerNativeRRReporterHuman::show(
 
 		out << A(column_width,string_of(ii));
 		out << A(column_width,nat_bb_bins_[ii]);
-		for( Size i=1; i <= 4; ++i ){
-			if( i <= nat_rots_[ii].size() ){
+		for ( Size i=1; i <= 4; ++i ) {
+			if ( i <= nat_rots_[ii].size() ) {
 				out << F(column_width,
 					precision,
 					static_cast< long double >(nat_rots_[ii][i]));
@@ -238,7 +238,7 @@ PerNativeRRReporterHuman::show(
 		out << F(column_width,precision,mean_score);
 		out << F(column_width,precision,std_dev_score);
 		out << endl;
-  }
+	}
 }
 
 
@@ -321,7 +321,7 @@ RRReporterHuman::report_rotamer_recovery(
 
 	string pname = tag_from_pose( pose1 );
 	PerNativeRRReporterHuman & native_recovery( per_native_recovery_[ pname ] );
-	if( ! native_recovery.initialized() ){
+	if ( ! native_recovery.initialized() ) {
 		native_recovery.set_native( pose1 );
 	}
 	native_recovery.report_rotamer_recovery( pose2, res2, score, recovered );
@@ -339,7 +339,7 @@ RRReporterHuman::write_header( ostream & out ) const {
 	out << "#Number of native structures: " << per_native_recovery_.size() << endl;
 	out << "#Number of residues in decoys: " << residues_considered_ << endl;
 
-	Real recovery_rate = 		static_cast< Real >(rotamers_recovered_) / static_cast< Real >(residues_considered_);
+	Real recovery_rate =   static_cast< Real >(rotamers_recovered_) / static_cast< Real >(residues_considered_);
 
 	out << "#Recovery rate: " << recovery_rate << endl;
 	out << "#" << comparer_name_ << " Recovery score mean: " << recovery_score_mean_ << endl;
@@ -368,11 +368,10 @@ RRReporterHuman::show( ostream & out ) const {
 	write_header( out );
 	out << endl;
 
-	for(map< string, PerNativeRRReporterHuman >::const_iterator
-		nat_it = per_native_recovery_.begin(),
-		nat_it_end = per_native_recovery_.end();
-		nat_it != nat_it_end; ++nat_it)
-	{
+	for ( map< string, PerNativeRRReporterHuman >::const_iterator
+			nat_it = per_native_recovery_.begin(),
+			nat_it_end = per_native_recovery_.end();
+			nat_it != nat_it_end; ++nat_it ) {
 		nat_it->second.show( out );
 		out << endl;
 	}

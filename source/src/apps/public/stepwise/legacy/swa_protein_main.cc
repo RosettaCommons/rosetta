@@ -229,18 +229,18 @@ rebuild_test(){
 	utility::vector1< InputStreamWithResidueInfoOP > input_streams;
 	initialize_input_streams( input_streams );
 
-  utility::vector1< core::Size > const moving_res_list = option[ sample_res ]();
+	utility::vector1< core::Size > const moving_res_list = option[ sample_res ]();
 
 	// move following to its own function?
 	StepWiseProteinPoseSetupOP stepwise_pose_setup( new StepWiseProteinPoseSetup( moving_res_list, /*the first element of moving_res_list is the modeler_res*/
-																	desired_sequence,
-																	input_streams,
-																	option[ OptionKeys::full_model::cutpoint_open ](),
-																	option[ OptionKeys::full_model::cutpoint_closed ]() ) );
+		desired_sequence,
+		input_streams,
+		option[ OptionKeys::full_model::cutpoint_open ](),
+		option[ OptionKeys::full_model::cutpoint_closed ]() ) );
 	stepwise_pose_setup->set_native_pose( native_pose );
 	// it would be better to have reasonable defaults for the following...
 	stepwise_pose_setup->set_fixed_res( option[ OptionKeys::stepwise::fixed_res ]() );
-	if ( option[ superimpose_res ].user() )	stepwise_pose_setup->set_superimpose_res( option[ superimpose_res ]() );
+	if ( option[ superimpose_res ].user() ) stepwise_pose_setup->set_superimpose_res( option[ superimpose_res ]() );
 	else stepwise_pose_setup->set_superimpose_res( option[ OptionKeys::stepwise::fixed_res ]() );
 	stepwise_pose_setup->set_calc_rms_res( option[ OptionKeys::full_model::calc_rms_res ]() );
 	stepwise_pose_setup->set_jump_res( option[ OptionKeys::full_model::jump_res ]() );
@@ -274,7 +274,7 @@ rebuild_test(){
 	stepwise_options->set_silent_file( option[ out::file::silent ]() );
 	stepwise_options->set_disallow_realign( true );
 	if ( stepwise_options->pack_weights().size() == 0 ) stepwise_options->set_pack_weights( "stepwise/protein/pack_no_hb_env_dep.wts" );
-	if ( stepwise_options->dump()	) pose.dump_pdb( "after_setup.pdb" );
+	if ( stepwise_options->dump() ) pose.dump_pdb( "after_setup.pdb" );
 	remove_silent_file_if_it_exists( option[ out::file::silent] );
 
 	ScoreFunctionOP scorefxn;
@@ -310,15 +310,15 @@ initialize_native_pose( core::pose::PoseOP & native_pose, core::chemical::Residu
 	import_pose::pose_from_pdb( *native_pose, *rsd_set.lock(), native_pdb_file );
 
 	native_pose->conformation().detect_disulfides();
-	if (!option[ OptionKeys::stepwise::protein::disulfide_file ].user() ){
-		for (Size n = 1; n <= native_pose->total_residue(); n++){
+	if ( !option[ OptionKeys::stepwise::protein::disulfide_file ].user() ) {
+		for ( Size n = 1; n <= native_pose->total_residue(); n++ ) {
 			if ( native_pose->residue_type( n ).has_variant_type( core::chemical::DISULFIDE ) ) utility_exit_with_message( "native pose has disulfides -- you should probable specify disulfides with -disulfide_file" );
 		}
 	}
 
 	// this is weird, but I'm trying to reduce memory footprint by not saving the big 2-body energy arrays that get allocated
 	// when native_poses with missing atoms are 'packed' during pose_from_pdb().
-	//	native_pose->set_new_energies_object( 0 );
+	// native_pose->set_new_energies_object( 0 );
 	if ( option[ basic::options::OptionKeys::stepwise::dump ]() ) native_pose->dump_pdb("full_native.pdb");
 
 }
@@ -336,18 +336,18 @@ cluster_outfile_test(){
 	StepWiseLegacyClustererSilentBased stepwise_clusterer( silent_files_in );
 
 	Size max_decoys( 400 );
-	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
+	if ( option[ out::nstruct].user() )  max_decoys =  option[ out::nstruct ];
 	stepwise_clusterer.set_max_decoys( max_decoys );
 
 	utility::vector1< Size > const working_calc_rms_res = convert_to_working_res( option[ OptionKeys::full_model::calc_rms_res ](),
-																																								option[ basic::options::OptionKeys::full_model::working_res ]() );
+		option[ basic::options::OptionKeys::full_model::working_res ]() );
 	stepwise_clusterer.set_calc_rms_res( working_calc_rms_res );
 
 	stepwise_clusterer.set_force_align( true );
 
 	Real cluster_radius( 0.25 );
 	if ( option[ OptionKeys::cluster::radius ].user() ) cluster_radius = option[ OptionKeys::cluster::radius ]();
-	stepwise_clusterer.set_cluster_radius( cluster_radius	);
+	stepwise_clusterer.set_cluster_radius( cluster_radius );
 
 	stepwise_clusterer.set_cluster_by_all_atom_rmsd( option[ basic::options::OptionKeys::stepwise::protein::cluster_by_all_atom_rmsd ] );
 
@@ -402,7 +402,7 @@ calc_rms_test(){
 		core::io::silent::SilentStructOP silent_struct( input->next_struct() );
 		silent_struct->fill_pose( *pose_op );
 		output_silent_struct( *pose_op, native_pose, silent_file_out, silent_struct->decoy_tag(),
-													sfd_dummy, calc_rms_res_	);
+			sfd_dummy, calc_rms_res_ );
 	}
 
 }
@@ -414,17 +414,17 @@ my_main( void* )
 
 	using namespace basic::options;
 
-	if ( option[ cluster_test ] ){
+	if ( option[ cluster_test ] ) {
 		cluster_outfile_test(); // probably should unify with 'PoseSelection' soon.
-	} else if ( option[ generate_beta_database ] ){
+	} else if ( option[ generate_beta_database ] ) {
 		protocols::stepwise::sampler::protein::generate_beta_database_test(); // in StepWiseBetaAntiParallelUtil.cc
-	} else if ( option[ combine_loops ] ){
+	} else if ( option[ combine_loops ] ) {
 		utility_exit_with_message( "-combine_loops is deprecated." );
-	} else if ( option[ big_bins ] ){
+	} else if ( option[ big_bins ] ) {
 		utility_exit_with_message( "-big_bins is deprecated." );
-	} else if ( option[ calc_rms ] ){
+	} else if ( option[ calc_rms ] ) {
 		calc_rms_test();
-	}	else {
+	} else {
 		rebuild_test();
 	}
 
@@ -439,89 +439,89 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	using namespace basic::options;
+		using namespace basic::options;
 
-	utility::vector1< Size > blank_size_vector;
-	utility::vector1< std::string > blank_string_vector;
+		utility::vector1< Size > blank_size_vector;
+		utility::vector1< std::string > blank_string_vector;
 
-	option.add_relevant( OptionKeys::in::file::frag_files );
-	option.add_relevant( OptionKeys::full_model::cutpoint_open );
-	option.add_relevant( OptionKeys::full_model::cutpoint_closed );
-	option.add_relevant( OptionKeys::full_model::virtual_res );
-	option.add_relevant( OptionKeys::full_model::jump_res );
-	option.add_relevant( OptionKeys::full_model::working_res );
-	option.add_relevant( OptionKeys::stepwise::skip_minimize );
-	option.add_relevant( OptionKeys::stepwise::min_type );
-	option.add_relevant( OptionKeys::stepwise::min_tolerance );
-	option.add_relevant( OptionKeys::stepwise::dump );
-	option.add_relevant( OptionKeys::stepwise::rmsd_screen );
-	option.add_relevant( OptionKeys::stepwise::atr_rep_screen );
-	option.add_relevant( OptionKeys::stepwise::use_green_packer );
-	option.add_relevant( OptionKeys::stepwise::fixed_res );
-	option.add_relevant( OptionKeys::stepwise::align_pdb );
-	option.add_relevant( OptionKeys::stepwise::protein::centroid_output );
-	option.add_relevant( OptionKeys::stepwise::protein::n_sample );
-	option.add_relevant( OptionKeys::stepwise::protein::score_diff_cut );
-	option.add_relevant( OptionKeys::stepwise::protein::filter_native_big_bins );
-	option.add_relevant( OptionKeys::stepwise::protein::centroid_screen );
-	option.add_relevant( OptionKeys::stepwise::protein::centroid_weights );
-	option.add_relevant( OptionKeys::stepwise::protein::ghost_loops );
-	option.add_relevant( OptionKeys::stepwise::protein::sample_beta );
-	option.add_relevant( OptionKeys::stepwise::protein::nstruct_centroid );
-	option.add_relevant( OptionKeys::stepwise::protein::global_optimize );
-	option.add_relevant( OptionKeys::stepwise::protein::disable_sampling_of_loop_takeoff );
-	option.add_relevant( OptionKeys::stepwise::protein::use_packer_instead_of_rotamer_trials );
-	option.add_relevant( OptionKeys::stepwise::protein::ccd_close );
-	option.add_relevant( OptionKeys::stepwise::protein::move_jumps_between_chains );
-	option.add_relevant( OptionKeys::stepwise::protein::bridge_res );
-	option.add_relevant( OptionKeys::stepwise::protein::cart_min );
-	option.add_relevant( OptionKeys::stepwise::protein::cluster_by_all_atom_rmsd );
-	option.add_relevant( OptionKeys::stepwise::protein::protein_prepack );
-	option.add_relevant( OptionKeys::stepwise::protein::allow_virtual_side_chains );
-	option.add_relevant( OptionKeys::stepwise::protein::disulfide_file );
-	NEW_OPT( rebuild, "rebuild", false );
-	NEW_OPT( cluster_test, "cluster", false );
-	NEW_OPT( calc_rms, "calculate rms for input silent file", false );
-	NEW_OPT( rename_tags, "After clustering, rename tags S_0, S_1, etc.", false );
-	NEW_OPT( n_terminus, "build N terminus", false );
-	NEW_OPT( c_terminus, "build C terminus", false );
-	NEW_OPT( cst_file, "Input file for constraints", "" );
-	NEW_OPT( start_pdb, "For combine_loops, parent pdb", "" );
-	NEW_OPT( no_sample_junction, "disable modeler of residue at junction inherited from start pose", false );
-	NEW_OPT( add_peptide_plane, "Include N-acetylation and C-methylamidation caps at termini", false );
-	NEW_OPT( generate_beta_database, "generate_beta_database", false );
-	NEW_OPT( combine_loops, "take a bunch of pdbs with loops remodeled and merge them into the parent pose", false );
-	NEW_OPT( sample_res, "residues to build, the first element is the actual sample res while the other are the bulge residues", blank_size_vector ); //I am here.
-	NEW_OPT( superimpose_res, "optional: residues fixed in space which are superimposable in all poses", blank_size_vector );
-	NEW_OPT( loop_bounds, "residue numbers for beginning and end of loops", blank_size_vector );
-	NEW_OPT( working_loop_bounds, "residue numbers for beginning and end of loops", blank_size_vector );
-	NEW_OPT( secstruct, "desired secondary structure for full length pose", "" );
-	NEW_OPT( centroid, "Use centroid representation", false );
-	NEW_OPT( auto_tune, "autotune rmsd for clustering between 0.1A up to 2.0A", false );
-	NEW_OPT( big_bins, "Check out big bin assignment for an input pdb", false );
-	NEW_OPT( add_virt_res, "Add virtual residue as root for edensity", false );
+		option.add_relevant( OptionKeys::in::file::frag_files );
+		option.add_relevant( OptionKeys::full_model::cutpoint_open );
+		option.add_relevant( OptionKeys::full_model::cutpoint_closed );
+		option.add_relevant( OptionKeys::full_model::virtual_res );
+		option.add_relevant( OptionKeys::full_model::jump_res );
+		option.add_relevant( OptionKeys::full_model::working_res );
+		option.add_relevant( OptionKeys::stepwise::skip_minimize );
+		option.add_relevant( OptionKeys::stepwise::min_type );
+		option.add_relevant( OptionKeys::stepwise::min_tolerance );
+		option.add_relevant( OptionKeys::stepwise::dump );
+		option.add_relevant( OptionKeys::stepwise::rmsd_screen );
+		option.add_relevant( OptionKeys::stepwise::atr_rep_screen );
+		option.add_relevant( OptionKeys::stepwise::use_green_packer );
+		option.add_relevant( OptionKeys::stepwise::fixed_res );
+		option.add_relevant( OptionKeys::stepwise::align_pdb );
+		option.add_relevant( OptionKeys::stepwise::protein::centroid_output );
+		option.add_relevant( OptionKeys::stepwise::protein::n_sample );
+		option.add_relevant( OptionKeys::stepwise::protein::score_diff_cut );
+		option.add_relevant( OptionKeys::stepwise::protein::filter_native_big_bins );
+		option.add_relevant( OptionKeys::stepwise::protein::centroid_screen );
+		option.add_relevant( OptionKeys::stepwise::protein::centroid_weights );
+		option.add_relevant( OptionKeys::stepwise::protein::ghost_loops );
+		option.add_relevant( OptionKeys::stepwise::protein::sample_beta );
+		option.add_relevant( OptionKeys::stepwise::protein::nstruct_centroid );
+		option.add_relevant( OptionKeys::stepwise::protein::global_optimize );
+		option.add_relevant( OptionKeys::stepwise::protein::disable_sampling_of_loop_takeoff );
+		option.add_relevant( OptionKeys::stepwise::protein::use_packer_instead_of_rotamer_trials );
+		option.add_relevant( OptionKeys::stepwise::protein::ccd_close );
+		option.add_relevant( OptionKeys::stepwise::protein::move_jumps_between_chains );
+		option.add_relevant( OptionKeys::stepwise::protein::bridge_res );
+		option.add_relevant( OptionKeys::stepwise::protein::cart_min );
+		option.add_relevant( OptionKeys::stepwise::protein::cluster_by_all_atom_rmsd );
+		option.add_relevant( OptionKeys::stepwise::protein::protein_prepack );
+		option.add_relevant( OptionKeys::stepwise::protein::allow_virtual_side_chains );
+		option.add_relevant( OptionKeys::stepwise::protein::disulfide_file );
+		NEW_OPT( rebuild, "rebuild", false );
+		NEW_OPT( cluster_test, "cluster", false );
+		NEW_OPT( calc_rms, "calculate rms for input silent file", false );
+		NEW_OPT( rename_tags, "After clustering, rename tags S_0, S_1, etc.", false );
+		NEW_OPT( n_terminus, "build N terminus", false );
+		NEW_OPT( c_terminus, "build C terminus", false );
+		NEW_OPT( cst_file, "Input file for constraints", "" );
+		NEW_OPT( start_pdb, "For combine_loops, parent pdb", "" );
+		NEW_OPT( no_sample_junction, "disable modeler of residue at junction inherited from start pose", false );
+		NEW_OPT( add_peptide_plane, "Include N-acetylation and C-methylamidation caps at termini", false );
+		NEW_OPT( generate_beta_database, "generate_beta_database", false );
+		NEW_OPT( combine_loops, "take a bunch of pdbs with loops remodeled and merge them into the parent pose", false );
+		NEW_OPT( sample_res, "residues to build, the first element is the actual sample res while the other are the bulge residues", blank_size_vector ); //I am here.
+		NEW_OPT( superimpose_res, "optional: residues fixed in space which are superimposable in all poses", blank_size_vector );
+		NEW_OPT( loop_bounds, "residue numbers for beginning and end of loops", blank_size_vector );
+		NEW_OPT( working_loop_bounds, "residue numbers for beginning and end of loops", blank_size_vector );
+		NEW_OPT( secstruct, "desired secondary structure for full length pose", "" );
+		NEW_OPT( centroid, "Use centroid representation", false );
+		NEW_OPT( auto_tune, "autotune rmsd for clustering between 0.1A up to 2.0A", false );
+		NEW_OPT( big_bins, "Check out big bin assignment for an input pdb", false );
+		NEW_OPT( add_virt_res, "Add virtual residue as root for edensity", false );
 
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
-	if ( option[ OptionKeys::stepwise::protein::allow_virtual_side_chains ]() ) {
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_SIDE_CHAIN" );
-	}
-	option[ OptionKeys::chemical::patch_selectors ].push_back( "PEPTIDE_CAP" ); // N_acetylated.txt and C_methylamidated.txt
+		if ( option[ OptionKeys::stepwise::protein::allow_virtual_side_chains ]() ) {
+			option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_SIDE_CHAIN" );
+		}
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "PEPTIDE_CAP" ); // N_acetylated.txt and C_methylamidated.txt
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 
-	exit( 0 );
+		exit( 0 );
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

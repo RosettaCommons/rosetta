@@ -9,7 +9,7 @@
 
 /// @file    per_residue_sc_sasa.cc
 /// @brief   Computes the SASA of all the sidechains in the protein
-///			 also computes the relative one
+///    also computes the relative one
 /// @author  JKLeman (julia.koehler1982@gmail.com)
 
 // App headers
@@ -56,28 +56,28 @@ main( int argc, char * argv [] )
 		devel::init(argc, argv);
 
 		// cry if PDB not given
-		if ( ! option[OptionKeys::in::file::s].user() ){
+		if ( ! option[OptionKeys::in::file::s].user() ) {
 			throw new utility::excn::EXCN_Msg_Exception("Please provide PDB file!");
 		}
-		
+
 		// read in pose
 		Pose pose;
 		core::import_pose::pose_from_pdb( pose, option[OptionKeys::in::file::s].value_string() );
-		
+
 		// get residue SASA
 		utility::vector1< Real > res_sasa = per_res_sc_sasa( pose );
 		utility::vector1< Real > rel_res_sasa = rel_per_res_sc_sasa( pose );
-		
+
 		// print SASA
 		for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
 			TR << "PDB resn: " << pose.pdb_info()->pose2pdb( i ) << " " << pose.residue( i ).name3() << " sasa: " << res_sasa[ i ] << " rel sasa: " << rel_res_sasa[ i ] << std::endl;
 		}
 	}
 
-	catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
-		return -1;
-	}
+catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+	return -1;
+}
 
 	return 0;
 }

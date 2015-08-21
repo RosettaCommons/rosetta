@@ -42,19 +42,19 @@ namespace unfolded_state_energy_calculator {
 class UnfoldedStateEnergyCalculatorJobDistributor : public protocols::jd2::FileSystemJobDistributor
 {
 public:
-	typedef	std::map<std::string, utility::vector1< core::scoring::EMapVector > >::iterator uem_iter;
+	typedef std::map<std::string, utility::vector1< core::scoring::EMapVector > >::iterator uem_iter;
 
-/// @brief ctor is protected; singleton pattern
-  UnfoldedStateEnergyCalculatorJobDistributor();
+	/// @brief ctor is protected; singleton pattern
+	UnfoldedStateEnergyCalculatorJobDistributor();
 
 	///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 	///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
-  virtual ~UnfoldedStateEnergyCalculatorJobDistributor();
+	virtual ~UnfoldedStateEnergyCalculatorJobDistributor();
 
 	/// @brief
-  virtual
-  void
-  go( protocols::moves::MoverOP mover );
+	virtual
+	void
+	go( protocols::moves::MoverOP mover );
 
 	/// @brief
 	void

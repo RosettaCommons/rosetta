@@ -16,8 +16,8 @@
 #include <sstream>
 #include <iostream>
 
-namespace protocols{
-namespace wum2{
+namespace protocols {
+namespace wum2 {
 
 boost::uint64_t WUQueue::serialized_size( WorkUnitSP /*wu*/ ) {
 #ifdef SERIALIZE
@@ -29,24 +29,25 @@ boost::uint64_t WUQueue::serialized_size( WorkUnitSP /*wu*/ ) {
   return 0;
 #else
 	std::cerr << "Memory usage tracked only if compiled against boost::serialize" << std::endl;
-  return 0;
+	return 0;
 #endif
 }
 
 WorkUnitSP WUQueue::pop_front() {
-  WorkUnitSP tmp;
-  if( empty() )
-    return tmp;
-  current_mem_ -= deque_.front().first;
-  tmp = deque_.front().second;
-  deque_.pop_front();
-  return tmp;
+	WorkUnitSP tmp;
+	if ( empty() ) {
+		return tmp;
+	}
+	current_mem_ -= deque_.front().first;
+	tmp = deque_.front().second;
+	deque_.pop_front();
+	return tmp;
 }
 
 // so much unnecessary copying
 std::vector<WorkUnitSP> WUQueue::pop_all() {
 	std::vector<WorkUnitSP> tmp;
-	for( std::deque<wu_mem_pair>::iterator itr=deque_.begin(), end = deque_.end(); itr != end; ++itr ) {
+	for ( std::deque<wu_mem_pair>::iterator itr=deque_.begin(), end = deque_.end(); itr != end; ++itr ) {
 		tmp.push_back( itr->second );
 	}
 	deque_.clear();
@@ -54,21 +55,21 @@ std::vector<WorkUnitSP> WUQueue::pop_all() {
 }
 
 void WUQueue::push_back( std::vector<WorkUnitSP> wulist ) {
-	for( std::vector<WorkUnitSP>::iterator itr=wulist.begin(), end = wulist.end(); itr != end; ++itr ) {
+	for ( std::vector<WorkUnitSP>::iterator itr=wulist.begin(), end = wulist.end(); itr != end; ++itr ) {
 		push_back( *itr );
 	}
 }
 
 void WUQueue::push_front( WorkUnitSP wu ) {
-  boost::uint64_t mem_size = serialized_size( wu );
-  deque_.push_front( wu_mem_pair( mem_size, wu ) );
-  current_mem_ += mem_size;
+	boost::uint64_t mem_size = serialized_size( wu );
+	deque_.push_front( wu_mem_pair( mem_size, wu ) );
+	current_mem_ += mem_size;
 }
 
 void WUQueue::push_back( WorkUnitSP wu ) {
-  boost::uint64_t mem_size = serialized_size( wu );
-  deque_.push_back( wu_mem_pair( mem_size, wu ) );
-  current_mem_ += mem_size;
+	boost::uint64_t mem_size = serialized_size( wu );
+	deque_.push_back( wu_mem_pair( mem_size, wu ) );
+	current_mem_ += mem_size;
 }
 
 }// wum2

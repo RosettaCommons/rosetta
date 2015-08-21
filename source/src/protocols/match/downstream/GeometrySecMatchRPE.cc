@@ -75,7 +75,7 @@ bool
 AtomGeometrySecMatchRPE::check_value(
 	core::Real value ) const
 {
-	if( value > highval_ ) return false;
+	if ( value > highval_ ) return false;
 	else if ( value < lowval_ ) return false;
 	else return true;
 }
@@ -133,7 +133,7 @@ AtomDistanceSecMatchRPE::evaluate_residues(
 	core::Real distance_squared( candidate_res.xyz( at_inds()[1].second ).distance_squared( target_res.xyz( at_inds()[2].second ) ) );
 
 	/*if ( ! check_value( distance_squared ) ) {
-		std::cout << "AtomDistanceSecMatchRPE::evaluate_residues fail: " << distance_squared << std::endl;
+	std::cout << "AtomDistanceSecMatchRPE::evaluate_residues fail: " << distance_squared << std::endl;
 	}*/
 	return check_value( distance_squared );
 
@@ -227,10 +227,10 @@ AtomAngleSecMatchRPE::evaluate_residues(
 
 
 	/*if ( ! check_value( angle ) ) {
-		std::cout << "AtomAngleSecMatchRPE::evaluate_residues fail: " <<
-			numeric::constants::d::radians_to_degrees * angle << " low " <<
-			numeric::constants::d::radians_to_degrees * lowval() << " high " <<
-			numeric::constants::d::radians_to_degrees * highval() << std::endl;
+	std::cout << "AtomAngleSecMatchRPE::evaluate_residues fail: " <<
+	numeric::constants::d::radians_to_degrees * angle << " low " <<
+	numeric::constants::d::radians_to_degrees * lowval() << " high " <<
+	numeric::constants::d::radians_to_degrees * highval() << std::endl;
 	}*/
 
 
@@ -262,11 +262,11 @@ AtomAngleSecMatchRPE::print(
 AtomDihedralSecMatchRPE::AtomDihedralSecMatchRPE(
 	protocols::toolbox::match_enzdes_util::GeomSampleInfo const & gsi
 ) : AtomGeometrySecMatchRPE( gsi ),
-		check_periodicity_(gsi.periodicity() != 360.0 ),
-		periodicity_(gsi.periodicity() * numeric::constants::d::degrees_to_radians ),
-		offset_( basic::periodic_range( gsi.ideal_val() * numeric::constants::d::degrees_to_radians,  periodicity_ ) )
+	check_periodicity_(gsi.periodicity() != 360.0 ),
+	periodicity_(gsi.periodicity() * numeric::constants::d::degrees_to_radians ),
+	offset_( basic::periodic_range( gsi.ideal_val() * numeric::constants::d::degrees_to_radians,  periodicity_ ) )
 {
- 	set_lowval( -( gsi.tolerance() * numeric::constants::d::degrees_to_radians ) );
+	set_lowval( -( gsi.tolerance() * numeric::constants::d::degrees_to_radians ) );
 	set_highval(  gsi.tolerance() * numeric::constants::d::degrees_to_radians  );
 }
 
@@ -287,9 +287,9 @@ AtomDihedralSecMatchRPE::evaluate_residues(
 	Real value( basic::periodic_range( numeric::dihedral_radians( p1, p2, p3, p4 ) - offset_, periodicity_ ) );
 
 	/*if ( ! check_value( value )) {
-		std::cout << "AtomDihedralSecMatchRPE::evaluate_residues fail: " <<
-			numeric::constants::d::radians_to_degrees * numeric::dihedral_radians( p1, p2, p3, p4 ) << " offsetper corrected " <<
-			numeric::constants::d::radians_to_degrees * value << " tol: " << numeric::constants::d::radians_to_degrees * highval() << std::endl;
+	std::cout << "AtomDihedralSecMatchRPE::evaluate_residues fail: " <<
+	numeric::constants::d::radians_to_degrees * numeric::dihedral_radians( p1, p2, p3, p4 ) << " offsetper corrected " <<
+	numeric::constants::d::radians_to_degrees * value << " tol: " << numeric::constants::d::radians_to_degrees * highval() << std::endl;
 	}*/
 
 	return check_value( value );
@@ -343,14 +343,14 @@ GeometrySecMatchRPE::GeometrySecMatchRPE(
 	utility::vector1< core::Size > const & upstream_inds
 ){
 
-	if( mcfi.dis_U1D1() ){
+	if ( mcfi.dis_U1D1() ) {
 		AtomDistanceSecMatchRPEOP adist( new AtomDistanceSecMatchRPE( *(mcfi.dis_U1D1() ) ) );
 		adist->add_at_ind( 1, upstream_inds[1] );
 		adist->add_at_ind( 2, downstream_inds[1] );
 		atom_geom_rpes_.push_back( adist );
 	}
 
-	if( mcfi.ang_U2D1() ){
+	if ( mcfi.ang_U2D1() ) {
 		AtomAngleSecMatchRPEOP aang1( new AtomAngleSecMatchRPE( *(mcfi.ang_U2D1() ) ) );
 		aang1->add_at_ind( 1, upstream_inds[2] );
 		aang1->add_at_ind( 1, upstream_inds[1] );
@@ -358,7 +358,7 @@ GeometrySecMatchRPE::GeometrySecMatchRPE(
 		atom_geom_rpes_.push_back( aang1 );
 	}
 
-	if( mcfi.ang_U1D2() ){
+	if ( mcfi.ang_U1D2() ) {
 		AtomAngleSecMatchRPEOP aang2( new AtomAngleSecMatchRPE( *(mcfi.ang_U1D2() ) ) );
 		aang2->add_at_ind( 1, upstream_inds[1] );
 		aang2->add_at_ind( 2, downstream_inds[1] );
@@ -366,7 +366,7 @@ GeometrySecMatchRPE::GeometrySecMatchRPE(
 		atom_geom_rpes_.push_back( aang2 );
 	}
 
-	if( mcfi.tor_U3D1() ){
+	if ( mcfi.tor_U3D1() ) {
 		AtomDihedralSecMatchRPEOP adih1( new AtomDihedralSecMatchRPE( *(mcfi.tor_U3D1() ) ) );
 		adih1->add_at_ind( 1, upstream_inds[3] );
 		adih1->add_at_ind( 1, upstream_inds[2] );
@@ -375,7 +375,7 @@ GeometrySecMatchRPE::GeometrySecMatchRPE(
 		atom_geom_rpes_.push_back( adih1 );
 	}
 
-	if( mcfi.tor_U2D2() ){
+	if ( mcfi.tor_U2D2() ) {
 		AtomDihedralSecMatchRPEOP adih2( new AtomDihedralSecMatchRPE( *(mcfi.tor_U2D2() ) ) );
 		adih2->add_at_ind( 1, upstream_inds[2] );
 		adih2->add_at_ind( 1, upstream_inds[1] );
@@ -384,7 +384,7 @@ GeometrySecMatchRPE::GeometrySecMatchRPE(
 		atom_geom_rpes_.push_back( adih2 );
 	}
 
-	if( mcfi.tor_U1D3() ){
+	if ( mcfi.tor_U1D3() ) {
 		AtomDihedralSecMatchRPEOP adih3( new AtomDihedralSecMatchRPE( *(mcfi.tor_U1D3() ) ) );
 		adih3->add_at_ind( 1, upstream_inds[1] );
 		adih3->add_at_ind( 2, downstream_inds[1] );
@@ -402,7 +402,7 @@ GeometrySecMatchRPE::evaluate_residues(
 {
 	for ( utility::vector1< AtomGeometrySecMatchRPECOP >::const_iterator
 			it = atom_geom_rpes_.begin(), it_end = atom_geom_rpes_.end();
-			it != it_end; ++it ){
+			it != it_end; ++it ) {
 		if ( ! (*it)->evaluate_residues( candidate_res, target_res ) ) return false;
 	}
 	//if we've made it to here, that means all AtomGeomRPEs returned true
@@ -421,7 +421,7 @@ GeometrySecMatchRPE::require_target_atom_coordinate( Size target_atom_id ) const
 {
 	for ( utility::vector1< AtomGeometrySecMatchRPECOP >::const_iterator
 			it = atom_geom_rpes_.begin(), it_end = atom_geom_rpes_.end();
-			it != it_end; ++it ){
+			it != it_end; ++it ) {
 		if ( (*it)->require_target_atom_coordinate( target_atom_id ) ) return true;
 	}
 	return false;
@@ -432,7 +432,7 @@ GeometrySecMatchRPE::require_candidate_residue_atoms_to_lie_near_target_atom( Si
 {
 	for ( utility::vector1< AtomGeometrySecMatchRPECOP >::const_iterator
 			it = atom_geom_rpes_.begin(), it_end = atom_geom_rpes_.end();
-			it != it_end; ++it ){
+			it != it_end; ++it ) {
 		if ( (*it)->require_candidate_residue_atoms_to_lie_near_target_atom( target_atom_id ) ) return true;
 	}
 	return false;
@@ -448,7 +448,7 @@ GeometrySecMatchRPE::candidate_res_atoms_reqd_near_target_atom(
 	std::list< Size > atoms;
 	for ( utility::vector1< AtomGeometrySecMatchRPECOP >::const_iterator
 			it = atom_geom_rpes_.begin(), it_end = atom_geom_rpes_.end();
-			it != it_end; ++it ){
+			it != it_end; ++it ) {
 		utility::vector1< Size > reqd_atoms = (*it)->candidate_res_atoms_reqd_near_target_atom( target_atom_id );
 		if ( reqd_atoms.size() != 0 ) {
 			for ( Size ii = 1; ii <= reqd_atoms.size(); ++ii ) {

@@ -133,7 +133,7 @@ core::Real PhenixInterface::getScore (
 #ifdef WITH_PYTHON
 		core::pose::Pose const & pose)
 #else
-		core::pose::Pose const & /*pose*/)
+	core::pose::Pose const & /*pose*/)
 #endif
 {
 #ifdef WITH_PYTHON
@@ -177,8 +177,8 @@ core::Real PhenixInterface::getScoreAndDerivs (
 		core::pose::Pose const & pose,
 		utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > & grads)
 #else
-		core::pose::Pose const & /*pose*/,
-		utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > & /*grads*/)
+	core::pose::Pose const & /*pose*/,
+	utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > & /*grads*/)
 #endif
 {
 #ifdef WITH_PYTHON
@@ -228,7 +228,7 @@ void PhenixInterface::fitBfactors (
 #ifdef WITH_PYTHON
 		core::pose::Pose & pose)
 #else
-		core::pose::Pose & /*pose*/)
+	core::pose::Pose & /*pose*/)
 #endif
 {
 #ifdef WITH_PYTHON
@@ -571,8 +571,8 @@ void PhenixInterface::stealBfactorsFromFile(
 		core::pose::Pose & pose,
 		std::string filename)
 #else
-		core::pose::Pose & /*pose*/,
-		std::string /*filename*/)
+	core::pose::Pose & /*pose*/,
+	std::string /*filename*/)
 #endif
 {
 #ifdef WITH_PYTHON
@@ -674,7 +674,7 @@ void PhenixInterface::updateSolventMask (
 	Py_XDECREF(pValue);
 
 #else
-		core::pose::Pose const &)
+	core::pose::Pose const &)
 {
 	utility_exit_with_message( "ERROR!  To use crystal refinement compile Rosetta with extras=python." );
 #endif
@@ -749,8 +749,8 @@ void PhenixInterface::setResLimits(
 		core::Real res_high /*=0.0*/,
 		core::Real res_low /*=0.0*/)
 #else
-		core::Real /*res_high=0.0*/,
-		core::Real /*res_low=0.0*/)
+	core::Real /*res_high=0.0*/,
+	core::Real /*res_low=0.0*/)
 #endif
 {
 #ifdef WITH_PYTHON
@@ -773,7 +773,7 @@ PhenixInterface::setTwinLaw(
 #ifdef WITH_PYTHON
 		std::string twin_law)
 #else
-		std::string /*twin_law*/)
+	std::string /*twin_law*/)
 #endif
 {
 #ifdef WITH_PYTHON
@@ -794,7 +794,7 @@ PhenixInterface::setAlgorithm(
 #ifdef WITH_PYTHON
 		std::string algo)
 #else
-		std::string /*algo*/)
+	std::string /*algo*/)
 #endif
 {
 #ifdef WITH_PYTHON
@@ -815,7 +815,7 @@ PhenixInterface::set_map_type(
 #ifdef WITH_PYTHON
 		std::string map_type)
 #else
-		std::string /*map_type*/)
+	std::string /*map_type*/)
 #endif
 {
 #ifdef WITH_PYTHON
@@ -887,8 +887,8 @@ void PhenixInterface::initialize_target_evaluator(
 		core::pose::Pose const & pose,
 		std::string eff_file /*=""*/)
 #else
-		core::pose::Pose const & /*pose*/,
-		std::string /*eff_file=""*/)
+	core::pose::Pose const & /*pose*/,
+	std::string /*eff_file=""*/)
 #endif
 {
 #ifdef WITH_PYTHON
@@ -1106,8 +1106,8 @@ std::string PhenixInterface::calculateDensityMap (
 		core::pose::Pose & pose,
 		bool /*no_sidechain =false*/)
 #else
-		core::pose::Pose & /*pose*/,
-		bool /*no_sidechain=false*/)
+	core::pose::Pose & /*pose*/,
+	bool /*no_sidechain=false*/)
 #endif
 {
 #ifdef WITH_PYTHON

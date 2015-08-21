@@ -36,15 +36,15 @@ static thread_local basic::Tracer tr( "protocols.cluster", basic::t_info );
 using namespace core;
 
 ClusterOptions::ClusterOptions( bool assign_new_cluster_tag_in )
-	: assign_new_cluster_tag( assign_new_cluster_tag_in ),
-		limit_cluster_size( basic::options::option[ basic::options::OptionKeys::cluster::limit_cluster_size ] ),
-		cluster_radius( basic::options::option[ basic::options::OptionKeys::cluster::radius ] ),
-		keep_center( true )
+: assign_new_cluster_tag( assign_new_cluster_tag_in ),
+	limit_cluster_size( basic::options::option[ basic::options::OptionKeys::cluster::limit_cluster_size ] ),
+	cluster_radius( basic::options::option[ basic::options::OptionKeys::cluster::radius ] ),
+	keep_center( true )
 { }
 
 void ClusterBase::print_cluster_assignment( std::ostream & out ) const {
-	for( Size i=1; i <= clusterlist_.size(); i++ ) {
-		for( Size j=1; j<= clusterlist_[i].size(); j++ ) {
+	for ( Size i=1; i <= clusterlist_.size(); i++ ) {
+		for ( Size j=1; j<= clusterlist_[i].size(); j++ ) {
 			out << RJ( 3,clusterlist_[i] [ j-1 ]) << " " << RJ( 5,i) << RJ(5, j)
 				<< std::endl;
 		}
@@ -63,10 +63,10 @@ std::ostream & operator<< (
 ) {
 	Size ncl( 1 );
 	for ( ClusterBase::ClusterList::const_iterator it = cl.begin(), eit = cl.end();
-				it != eit; ++it ) {
+			it != eit; ++it ) {
 		out << "CLUSTER " << RJ(3, ncl++ ) << " " << RJ(4, it->size()) << " ";
 		for ( ClusterBase::IntraClusterIterator cit = it->begin(), ecit = it->end();
-					cit != ecit; ++cit ) {
+				cit != ecit; ++cit ) {
 			out << RJ( 4, *cit ) << " ";
 		}
 	}
@@ -91,7 +91,7 @@ std::istream & operator>>( std::istream & in, ClusterBase::ClusterList & cl ) {
 			break;
 		}
 		ClusterBase::Cluster new_clust;
-		for ( Size i = 1; i<=size && in.good(); i++) {
+		for ( Size i = 1; i<=size && in.good(); i++ ) {
 			Size new_elem;
 			in >> new_elem;
 			if ( in.good() ) new_clust.push_back( new_elem );
@@ -122,8 +122,8 @@ void ClusterBase::print_summary( utility::vector1< std::string > tags, utility::
 		count += clusterlist_[i].size();
 		for ( Size j=1; j <= clusterlist_[i].size(); j++ ) {
 			tr.Info << tags[ clusterlist_[i][j-1] ] << "    " << all_energies[ clusterlist_[i][j-1] ]
-							<< " " << dist( clusterlist_[i][j-1], clusterlist_[i][0] )
-							<< std::endl;
+				<< " " << dist( clusterlist_[i][j-1], clusterlist_[i][0] )
+				<< std::endl;
 		}
 		tr.Info << std::endl;
 	}
@@ -144,23 +144,23 @@ void ClusterPhilStyle::compute() {
 
 	utility::vector1<Size> clustercentre;
 	// now assign groupings
-	while( true ) {
+	while ( true ) {
 		// count each's neighbors
 		for ( Size i=1; i <= listsize; i++ ) {
 			neighbors[i] = 0;
-			if ( clusternr[i] > 0) continue; // ignore ones already taken
+			if ( clusternr[i] > 0 ) continue; // ignore ones already taken
 			for ( Size j=1; j <= listsize; j++ ) {
 				if ( clusternr[j] > 0 ) continue; // ignore ones already taken
-				if ( dist( i, j ) < cluster_radius_) neighbors[i]++;
+				if ( dist( i, j ) < cluster_radius_ ) neighbors[i]++;
 			}
 		}
 
 		mostneighbors = 1;
-		for ( Size i=1; i <= listsize; i++) {
+		for ( Size i=1; i <= listsize; i++ ) {
 			if ( neighbors[i] > neighbors[mostneighbors] ) mostneighbors=i;
 		}
-		if ( neighbors[ mostneighbors ] == 0) break;  // finished!
-		for ( Size i=1; i <= listsize; i++){
+		if ( neighbors[ mostneighbors ] == 0 ) break;  // finished!
+		for ( Size i=1; i <= listsize; i++ ) {
 			if ( clusternr[i] > 0 ) continue; // ignore ones already taken
 			if ( dist( i, mostneighbors ) < cluster_radius_ ) {
 				clusternr[i] = mostneighbors;
@@ -174,9 +174,9 @@ void ClusterPhilStyle::compute() {
 	}
 
 
-	for( Size i=1; i <= clustercentre.size(); i++ ) {
+	for ( Size i=1; i <= clustercentre.size(); i++ ) {
 		std::deque< Size > newlist;
-		for( Size j=1; j <=listsize; j++ ) {
+		for ( Size j=1; j <=listsize; j++ ) {
 			// if that struture belongs to a given cluster
 			if ( clusternr[j] == clustercentre[i] ) {
 				//add it
@@ -191,8 +191,8 @@ void ClusterPhilStyle::compute() {
 	}
 
 	// redistribute groups - i.e. take each structure, calculate the rms to each cluster centre.
-	for ( Size i = 1; i <= clusterlist_.size(); i++) {
-		for ( Size j = 1; j <= clusterlist_[i].size(); j++) {
+	for ( Size i = 1; i <= clusterlist_.size(); i++ ) {
+		for ( Size j = 1; j <= clusterlist_[i].size(); j++ ) {
 			Size lowrmsi=i;
 			Real lowrms=10000.0;
 			for ( Size m=1; m <= clusterlist_.size(); m++ ) {

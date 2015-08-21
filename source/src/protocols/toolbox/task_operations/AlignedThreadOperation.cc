@@ -68,35 +68,36 @@ AlignedThreadOperation::apply( core::pose::Pose const & pose, core::pack::task::
 {
 	std::string query_seq, template_seq; // query is the sequence we want to model; template is the sequence of the PDB structure
 
-  utility::io::izstream data(alignment_file());
-  runtime_assert( data );
-  string line;
-  getline(data, line);
-  while( data ) {
-    if (line.length() == 0) {
+	utility::io::izstream data(alignment_file());
+	runtime_assert( data );
+	string line;
+	getline(data, line);
+	while ( data ) {
+		if ( line.length() == 0 ) {
 			continue;
-    }
-		if( line.substr(1, query_name().length() ) == query_name() ){
-			while( data ){
+		}
+		if ( line.substr(1, query_name().length() ) == query_name() ) {
+			while ( data ) {
 				getline( data, line );
-				if( line[0] == '>' )
+				if ( line[0] == '>' ) {
 					break;
+				}
 				query_seq += line;
 			}
-		}
-		else if( line.substr(1, template_name().length() ) == template_name() ){
-			while( data ){
+		} else if ( line.substr(1, template_name().length() ) == template_name() ) {
+			while ( data ) {
 				getline( data, line );
-				if( line[0] == '>' )
+				if ( line[0] == '>' ) {
 					break;
+				}
 				template_seq += line;
 			}
-		}
-		else {
-			while( data ){
+		} else {
+			while ( data ) {
 				getline( data, line );
-				if( line[0] == '>' )
+				if ( line[0] == '>' ) {
 					break;
+				}
 			}
 		}
 	}
@@ -106,10 +107,11 @@ AlignedThreadOperation::apply( core::pose::Pose const & pose, core::pack::task::
 	std::string target_sequence("");
 	tso.start_res( start_res() );
 
-	for( core::Size i = 0; i < template_seq.length(); ++i ){
-		if( template_seq[i] == '-' )
+	for ( core::Size i = 0; i < template_seq.length(); ++i ) {
+		if ( template_seq[i] == '-' ) {
 			continue;
-		if( query_seq[i] == '-' ){
+		}
+		if ( query_seq[i] == '-' ) {
 			target_sequence += template_seq[i];
 			continue;
 		}

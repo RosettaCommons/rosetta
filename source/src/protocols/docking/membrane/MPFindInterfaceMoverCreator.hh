@@ -9,8 +9,8 @@
 
 /// @file       protocols/docking/membrane/MPFindInterfaceMoverCreator.hh
 /// @brief      Sample protein-protein interface in the membrane
-/// @details	The foldtree after the mover is reset to the original one as it
-///				was before - so it should work with both fixed and movable membrane
+/// @details The foldtree after the mover is reset to the original one as it
+///    was before - so it should work with both fixed and movable membrane
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 
 #ifndef INCLUDED_protocols_docking_membrane_MPFindInterfaceMoverCreator_hh
@@ -25,13 +25,13 @@ namespace membrane {
 
 /// @brief Mover Creator
 class MPFindInterfaceMoverCreator : public protocols::moves::MoverCreator {
-	
+
 public:
-	
+
 	virtual protocols::moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
 	static std::string mover_name();
-	
+
 };
 
 } // membrane

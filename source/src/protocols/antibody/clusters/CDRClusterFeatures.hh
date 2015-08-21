@@ -27,31 +27,31 @@
 namespace protocols {
 namespace antibody {
 namespace clusters {
-	
+
 class CDRClusterFeatures : public features::FeaturesReporter {
 
 public:
 	CDRClusterFeatures();
-	
+
 	virtual ~CDRClusterFeatures();
 
 	std::string
 	type_name() const;
-	
+
 	//Required
 	void
 	write_schema_to_db(utility::sql_database::sessionOP db_session) const;
-	
+
 	utility::vector1< std::string >
 	features_reporter_dependencies() const;
-	
+
 	core::Size
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & residues,
 		features::StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
-	
+
 	/// @brief Specify specific CDRs to load and analyze, with cdr_definition and scheme
 	void
 	parse_my_tag(
@@ -62,29 +62,29 @@ public:
 		core::pose::Pose const & /*pose*/);
 
 public:
-	
+
 	/// @brief Limit CDRs being analyzed.
 	void
 	set_cdrs_to_use(utility::vector1< CDRNameEnum > cdrs );
-	
+
 	/// @brief set the numbering scheme used by the pose.
 	void
 	set_numbering_scheme(AntibodyNumberingSchemeEnum const & numbering_scheme);
-	
+
 private:
-	
+
 	utility::vector1< CDRNameEnum > cdrs_;
 	AntibodyNumberingSchemeEnum numbering_scheme_;
-	
+
 };
-	
-	
-	
-	
+
+
+
+
 }
 }
 }
 
 
-#endif	//#ifndef INCLUDED_protocols/antibody_clusters_CDRCLUSTERFEATURES_HH
+#endif //#ifndef INCLUDED_protocols/antibody_clusters_CDRCLUSTERFEATURES_HH
 

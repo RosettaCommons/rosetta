@@ -28,7 +28,7 @@
 // Unit headers
 
 namespace protocols {
-namespace protein_interface_design{
+namespace protein_interface_design {
 namespace filters {
 
 class SpecificResiduesNearInterfaceFilter : public protocols::filters::Filter

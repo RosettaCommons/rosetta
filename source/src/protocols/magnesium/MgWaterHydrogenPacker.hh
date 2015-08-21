@@ -25,79 +25,79 @@
 namespace protocols {
 namespace magnesium {
 
-	class MgWaterHydrogenPacker: public moves::Mover {
+class MgWaterHydrogenPacker: public moves::Mover {
 
-	public:
+public:
 
-		//constructor
-		MgWaterHydrogenPacker();
+	//constructor
+	MgWaterHydrogenPacker();
 
-		//constructor
-		MgWaterHydrogenPacker( utility::vector1< Size > const & mg_res_list );
+	//constructor
+	MgWaterHydrogenPacker( utility::vector1< Size > const & mg_res_list );
 
-		//destructor
-		~MgWaterHydrogenPacker();
+	//destructor
+	~MgWaterHydrogenPacker();
 
-	public:
+public:
 
-		using Mover::apply;
+	using Mover::apply;
 
-		virtual void apply( core::pose::Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
-		void
-		apply( core::pose::Pose & pose,
-					 std::pair< core::Size, core::Size > const & mg_water );
+	void
+	apply( core::pose::Pose & pose,
+		std::pair< core::Size, core::Size > const & mg_water );
 
 
-		virtual std::string get_name() const{ return "MgWaterHydrogenPacker"; }
+	virtual std::string get_name() const{ return "MgWaterHydrogenPacker"; }
 
-		void remove_waters_except_mg_bound( core::pose::Pose & pose ) const;
+	void remove_waters_except_mg_bound( core::pose::Pose & pose ) const;
 
-		void set_excise_mini_pose( bool const & setting ){ excise_mini_pose_ = setting; }
-		bool excise_mini_pose() const { return excise_mini_pose_; }
+	void set_excise_mini_pose( bool const & setting ){ excise_mini_pose_ = setting; }
+	bool excise_mini_pose() const { return excise_mini_pose_; }
 
-		void set_use_fast_heuristic( bool const & setting ){ use_fast_heuristic_ = setting; }
-		bool use_fast_heuristic() const { return use_fast_heuristic_; }
+	void set_use_fast_heuristic( bool const & setting ){ use_fast_heuristic_ = setting; }
+	bool use_fast_heuristic() const { return use_fast_heuristic_; }
 
 private:
 
-		void
-		pack_mg_water_hydrogens_in_pose( core::pose::Pose & pose,
-																		 std::pair< core::Size, core::Size > const & mg_water_pair );
+	void
+	pack_mg_water_hydrogens_in_pose( core::pose::Pose & pose,
+		std::pair< core::Size, core::Size > const & mg_water_pair );
 
-		core::Real
-		get_heuristic_water_hydrogen_score( utility::vector1< core::Vector > const & acc_vecs,
-																				utility::vector1< core::Vector > const & rep_vecs,
-																				core::Vector const & mg_vec,
-																				core::Vector const & OH1c,
-																				core::Vector const & OH2c,
-																				numeric::xyzMatrix< core::Real > const & R ) const;
+	core::Real
+	get_heuristic_water_hydrogen_score( utility::vector1< core::Vector > const & acc_vecs,
+		utility::vector1< core::Vector > const & rep_vecs,
+		core::Vector const & mg_vec,
+		core::Vector const & OH1c,
+		core::Vector const & OH2c,
+		numeric::xyzMatrix< core::Real > const & R ) const;
 
-		void
-		find_water_neighbor_vecs( core::pose::Pose const & pose,
-															core::Size const water_res,
-															core::Size const mg_res,
-															utility::vector1< core::Vector > & acc_vecs,
-															utility::vector1< core::Vector > & rep_vecs,
-															core::Vector & mg_vec ) const;
+	void
+	find_water_neighbor_vecs( core::pose::Pose const & pose,
+		core::Size const water_res,
+		core::Size const mg_res,
+		utility::vector1< core::Vector > & acc_vecs,
+		utility::vector1< core::Vector > & rep_vecs,
+		core::Vector & mg_vec ) const;
 
-		bool
-		rotate_water_away_from_magnesium( core::pose::Pose & pose,
-																			core::Size const seqpos,
-																			core::Vector const & O,
-																			core::Vector const & OH1c,
-																			core::Vector const & OH2c,
-																			core::Vector const & MG,
-																			numeric::xyzMatrix< core::Real > const & R ) const;
-	private:
+	bool
+	rotate_water_away_from_magnesium( core::pose::Pose & pose,
+		core::Size const seqpos,
+		core::Vector const & O,
+		core::Vector const & OH1c,
+		core::Vector const & OH2c,
+		core::Vector const & MG,
+		numeric::xyzMatrix< core::Real > const & R ) const;
+private:
 
-		utility::vector1< core::Size > mg_res_list_;
-		utility::vector1< std::pair< core::Size, core::Size > > mg_water_pairs_;
-		bool excise_mini_pose_;
-		bool use_fast_heuristic_;
-		numeric::UniformRotationSamplerCOP urs_;
+	utility::vector1< core::Size > mg_res_list_;
+	utility::vector1< std::pair< core::Size, core::Size > > mg_water_pairs_;
+	bool excise_mini_pose_;
+	bool use_fast_heuristic_;
+	numeric::UniformRotationSamplerCOP urs_;
 
-	};
+};
 
 } //magnesium
 } //protocols

@@ -95,7 +95,7 @@ OnTheFlyNode::set_rotamers(
 		sparse_mat_info_for_state_[ ii ].set_state_ind_for_this_aa_type( count_for_restype );
 		++count_for_restype;
 		++num_states_for_aatype_[ curr_restype ];
-		while ( count_for_restype > rotamers->get_n_rotamers_for_residue_group( curr_restype )) {
+		while ( count_for_restype > rotamers->get_n_rotamers_for_residue_group( curr_restype ) ) {
 			// increment curr_restype and skip over restypes with 0 rotamers
 			++curr_restype;
 			count_for_restype = 1;
@@ -209,19 +209,19 @@ OnTheFlyNode::compute_rotamer_pair_energy(
 				tbody_emap );
 
 			/*get_on_the_fly_owner()->score_function().eval_ci_2b_sc_sc(
-				get_rotamer( state_this ),
-				neighbor.get_rotamer( state_other ),
-				get_on_the_fly_owner()->pose(),
-				tbody_emap );
+			get_rotamer( state_this ),
+			neighbor.get_rotamer( state_other ),
+			get_on_the_fly_owner()->pose(),
+			tbody_emap );
 
 			get_on_the_fly_owner()->score_function().eval_cd_2b_sc_sc(
-				get_rotamer( state_this ),
-				neighbor.get_rotamer( state_other ),
-				get_on_the_fly_owner()->pose(),
-				tbody_emap
+			get_rotamer( state_this ),
+			neighbor.get_rotamer( state_other ),
+			get_on_the_fly_owner()->pose(),
+			tbody_emap
 			);*/
 
-		break;
+			break;
 		case ( sc_whole ) :
 			get_on_the_fly_owner()->score_function().eval_ci_2b_sc_sc(
 				get_rotamer( state_this ),
@@ -249,7 +249,7 @@ OnTheFlyNode::compute_rotamer_pair_energy(
 				tbody_emap
 			);
 
-		break;
+			break;
 		case ( whole_sc ) :
 			get_on_the_fly_owner()->score_function().eval_ci_2b_sc_sc(
 				get_rotamer( state_this ),
@@ -278,7 +278,7 @@ OnTheFlyNode::compute_rotamer_pair_energy(
 			);
 
 
-		break;
+			break;
 		case ( whole_whole ) :
 
 			get_on_the_fly_owner()->score_function().eval_ci_2b(
@@ -294,7 +294,7 @@ OnTheFlyNode::compute_rotamer_pair_energy(
 				tbody_emap
 			);
 
-		break;
+			break;
 		}
 		esum += static_cast< core::PackerEnergy > ( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) );
 
@@ -305,8 +305,8 @@ OnTheFlyNode::compute_rotamer_pair_energy(
 	if ( get_incident_otf_edge( edge_making_energy_request )->long_range_interactions_exist() ) {
 		EnergyMap emap;
 		for ( ScoreFunction::LR_2B_MethodIterator iter = get_on_the_fly_owner()->score_function().long_range_energies_begin(),
-					iter_end = get_on_the_fly_owner()->score_function().long_range_energies_end();
-					iter != iter_end; ++iter ) {
+				iter_end = get_on_the_fly_owner()->score_function().long_range_energies_end();
+				iter != iter_end; ++iter ) {
 			(*iter)->residue_pair_energy(
 				get_rotamer( state_this ),
 				get_adjacent_otf_node( edge_making_energy_request )->get_rotamer( state_other ),
@@ -318,13 +318,11 @@ OnTheFlyNode::compute_rotamer_pair_energy(
 	}
 
 
-	if ( get_adjacent_otf_node( edge_making_energy_request )->get_rotamer( state_other ).aa() == chemical::aa_pro )
-	{
+	if ( get_adjacent_otf_node( edge_making_energy_request )->get_rotamer( state_other ).aa() == chemical::aa_pro ) {
 		esum += get_incident_otf_edge( edge_making_energy_request )->
 			get_proline_correction_for_node( get_node_index(), state_this );
 	}
-	if ( get_rotamer( state_this ).aa() == chemical::aa_pro )
-	{
+	if ( get_rotamer( state_this ).aa() == chemical::aa_pro ) {
 		esum += get_incident_otf_edge( edge_making_energy_request )->
 			get_proline_correction_for_node( get_index_of_adjacent_node( edge_making_energy_request ),
 			state_other
@@ -334,7 +332,7 @@ OnTheFlyNode::compute_rotamer_pair_energy(
 
 	return get_incident_edge( edge_making_energy_request )->edge_weight() * esum;
 
-	//	if ( ! get_on_the_fly_owner()->check_empty_weight_map() ) {
+	// if ( ! get_on_the_fly_owner()->check_empty_weight_map() ) {
 	//esum *= get_on_the_fly_owner()->get_residue_weights(this_rotamer.get_resid(), aa_this,
 	// other_rotamer.get_resid(), aa_other);
 
@@ -356,7 +354,7 @@ OnTheFlyEdge::OnTheFlyEdge(
 	short_range_interactions_exist_( false )
 {
 	bool distinguish_sc_bb[ 2 ];
-	for ( int ii = 0; ii < 2; ++ii) {
+	for ( int ii = 0; ii < 2; ++ii ) {
 		proline_corrections_[ ii ].resize( get_num_states_for_node( ii ) );
 		std::fill( proline_corrections_[ ii ].begin(), proline_corrections_[ ii ].end(), 0.0f );
 		distinguish_sc_bb[ ii ] = get_otf_node( ii )->distinguish_backbone_and_sidechain();
@@ -462,14 +460,14 @@ void
 OnTheFlyInteractionGraph::set_score_function( ScoreFunction const & sfxn )
 {
 	score_function_ = sfxn.clone();
-	if ( pose_ ) (*score_function_)(*pose_); // rescore the pose with the input score function
+	if ( pose_ ) ( *score_function_)(*pose_); // rescore the pose with the input score function
 }
 
 void
 OnTheFlyInteractionGraph::set_pose( pose::Pose const & pose )
 {
 	pose_ = pose::PoseOP( new pose::Pose( pose ) );
-	if ( score_function_ ) (*score_function_)(*pose_);
+	if ( score_function_ ) ( *score_function_)(*pose_);
 }
 
 void
@@ -530,7 +528,7 @@ OnTheFlyInteractionGraph::set_sparse_aa_info_for_edge(
 )
 {
 	OnTheFlyEdge* edge = (OnTheFlyEdge*) find_edge( node1, node2 );
-	if (edge != 0) {
+	if ( edge != 0 ) {
 		edge->set_sparse_aa_info( sparse_conn_info );
 	}
 }
@@ -548,8 +546,7 @@ OnTheFlyInteractionGraph::set_ProCorrection_values_for_edge(
 )
 {
 	OnTheFlyEdge* edge = (OnTheFlyEdge*) find_edge( node1, node2 );
-	if (edge != 0)
-	{
+	if ( edge != 0 ) {
 		edge->set_ProCorrection_values(
 			node_not_neccessarily_proline, state,
 			bb_nonprobb_E, bb_probb_E, sc_nonprobb_E, sc_probb_E );
@@ -563,7 +560,7 @@ OnTheFlyInteractionGraph::note_short_range_interactions_exist_for_edge(
 )
 {
 	OnTheFlyEdge* edge = (OnTheFlyEdge*) find_edge( node1, node2 );
-	if (edge != 0) {
+	if ( edge != 0 ) {
 		edge->note_short_range_interactions_exist();
 	}
 }
@@ -575,7 +572,7 @@ OnTheFlyInteractionGraph::note_long_range_interactions_exist_for_edge(
 )
 {
 	OnTheFlyEdge* edge = (OnTheFlyEdge*) find_edge( node1, node2 );
-	if (edge != 0) {
+	if ( edge != 0 ) {
 		edge->note_long_range_interactions_exist( );
 	}
 }

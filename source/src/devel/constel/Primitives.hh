@@ -37,13 +37,13 @@ core::Size get_pose_resnum(int const pdbnum, char const pdbchn, Pose& ps);
 ///
 struct ResMut {
 
-  char saa; // start amino acid type
-  char eaa; // end amino acid type
-  char cid; // identifier of the chain that the residue belongs to
-  int pdbn; // pdb number of the residue in the chain
-  Size psn; // number of the residue in its Rosetta pose
+	char saa; // start amino acid type
+	char eaa; // end amino acid type
+	char cid; // identifier of the chain that the residue belongs to
+	int pdbn; // pdb number of the residue in the chain
+	Size psn; // number of the residue in its Rosetta pose
 
-  ResMut(char s, char e, char c, int d, Size r) : saa(s), eaa(e), cid(c), pdbn(d), psn(r) {}
+	ResMut(char s, char e, char c, int d, Size r) : saa(s), eaa(e), cid(c), pdbn(d), psn(r) {}
 };
 
 /// @brief Outputs all pair-constellations between a given pair of residues
@@ -63,26 +63,26 @@ void out_triple_constel(ResMut const& mut1, ResMut const& mut2,
 
 
 /// @brief A class to hold data structures and functions shared by filters that
-/// 	consider hydrogen bonding.
+///  consider hydrogen bonding.
 ///
 class HBondCommon {
 
-	public:
+public:
 
 	/// @brief common database for the computation of hydrogen bonds
-  static core::scoring::hbonds::HBondDatabaseCOP hb_database;
+	static core::scoring::hbonds::HBondDatabaseCOP hb_database;
 
-  static void init();
+	static void init();
 
 	/// @brief Tells whether a residue's moiety forms hydrogen bonds.
-  static bool is_rmoi_hbonded(Pose const& ps, utility::vector1<Size> const& cnl,
-                              Size const im, bool const is_donor,
-                              utility::vector1<std::string> const& hb_atoms);
+	static bool is_rmoi_hbonded(Pose const& ps, utility::vector1<Size> const& cnl,
+		Size const im, bool const is_donor,
+		utility::vector1<std::string> const& hb_atoms);
 };
 
 
 /// @brief A class to hold data structures and functions common to filters that
-/// 	consider how groups of atoms within a constellation are oriented.
+///  consider how groups of atoms within a constellation are oriented.
 ///
 class OrientCommon {
 
@@ -96,8 +96,8 @@ public:
 
 
 /// @brief A class to hold data structures and functions shared by filters that
-/// 	check whether the amino acids and atoms they require in the constellation
-///		are indeed present.
+///  check whether the amino acids and atoms they require in the constellation
+///  are indeed present.
 ///
 ///
 class PresenceCommon {
@@ -118,6 +118,6 @@ public:
 
 
 } // constel
-} // devel 
+} // devel
 
 #endif

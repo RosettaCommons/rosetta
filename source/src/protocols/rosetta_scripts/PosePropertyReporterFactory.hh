@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/rosetta_scripts/PosePropertyReporterFactory.hh
-/// @brief	Factory for PosePropertyReporters
+/// @brief Factory for PosePropertyReporters
 /// @author Luki Goldschmidt <lugo@uw.edu>
 
 #ifndef INCLUDED_protocols_moves_PosePropertyReporterFactory_hh

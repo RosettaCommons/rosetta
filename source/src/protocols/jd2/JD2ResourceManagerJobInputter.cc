@@ -110,10 +110,10 @@ JD2ResourceManagerJobInputter::pose_from_job(
 
 	std::string const & input_tag(job->inner_job()->input_tag());
 
-	if(last_input_tag_ == ""){
+	if ( last_input_tag_ == "" ) {
 		last_input_tag_ = input_tag;
 	} else {
-		if(last_input_tag_ != input_tag){
+		if ( last_input_tag_ != input_tag ) {
 			cleanup_after_job_completion(last_input_tag_);
 			last_input_tag_ = input_tag;
 		}
@@ -129,14 +129,12 @@ JD2ResourceManagerJobInputter::pose_from_job(
 
 		// Check to see if we have a Residue resource, if so load it into the chemical manager if it hasn't already been loaded
 		// APL: Sam, is there anywhere else this code could live?
-		if(jd2_resource_manager->has_resource_tag_by_job_tag("residue", input_tag))
-		{
+		if ( jd2_resource_manager->has_resource_tag_by_job_tag("residue", input_tag) ) {
 			ResourceOP residue_resource(jd2_resource_manager->get_resource_by_job_tag("residue",input_tag));
 
 			core::chemical::ResidueTypeOP new_residue(utility::pointer::dynamic_pointer_cast< core::chemical::ResidueType > ( residue_resource ));
 			std::string type_set_name(new_residue->residue_type_set().name());
-			if(!core::chemical::ChemicalManager::get_instance()->residue_type_set(type_set_name)->has_name(new_residue->name()))
-			{
+			if ( !core::chemical::ChemicalManager::get_instance()->residue_type_set(type_set_name)->has_name(new_residue->name()) ) {
 				tr << "loading residue " << new_residue->name() << " into " << type_set_name <<" residue_type_set" <<std::endl;
 				core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set(type_set_name).add_residue_type(new_residue);
 			}
@@ -145,7 +143,7 @@ JD2ResourceManagerJobInputter::pose_from_job(
 		try {
 			tr << "Loading startstruct " << jd2_resource_manager->find_resource_tag_by_job_tag( "startstruct", input_tag ) << " for job " <<
 				input_tag <<std::endl;
-			 resource = jd2_resource_manager->get_resource_by_job_tag("startstruct", input_tag);
+			resource = jd2_resource_manager->get_resource_by_job_tag("startstruct", input_tag);
 		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
 			std::ostringstream err;
 			err << e.msg() << std::endl;
@@ -200,7 +198,7 @@ JD2ResourceManagerJobInputter::fill_jobs( JobsContainer & jobs )
 		utility::io::izstream instream( resource_definition_files[ii]().c_str() );
 		utility::vector1 < JobOP > jobs_list;
 		fill_jobs_from_stream( instream, jobs_list );
-		for(core::Size jj=1; jj<=jobs_list.size(); ++jj) {
+		for ( core::Size jj=1; jj<=jobs_list.size(); ++jj ) {
 			jobs.push_back(jobs_list[jj]);
 		}
 	}
@@ -211,18 +209,16 @@ JD2ResourceManagerJobInputter::cleanup_after_job_completion(
 	std::string const & job_tag)
 {
 	JD2ResourceManager * jd2_resource_manager(
-				JD2ResourceManager::get_jd2_resource_manager_instance());
+		JD2ResourceManager::get_jd2_resource_manager_instance());
 
 	jd2_resource_manager->mark_job_tag_as_complete(job_tag);
 	std::list<ResourceTag> resources_for_job(jd2_resource_manager->get_resource_tags_for_job_tag(job_tag));
 
 	std::list<ResourceTag>::iterator resource_list_it = resources_for_job.begin();
-	for(; resource_list_it != resources_for_job.end(); ++resource_list_it)
-	{
+	for ( ; resource_list_it != resources_for_job.end(); ++resource_list_it ) {
 		core::Size job_count(jd2_resource_manager->get_count_of_jobs_associated_with_resource_tag(*resource_list_it));
-		if(job_count == 0)
-		{
-			if(!jd2_resource_manager->ResourceManager::has_resource(*resource_list_it)){
+		if ( job_count == 0 ) {
+			if ( !jd2_resource_manager->ResourceManager::has_resource(*resource_list_it) ) {
 				tr << "Skipping deleting '" << *resource_list_it << "' because it doesn't exist in the ResourceManager." << std::endl;
 				continue;
 			}
@@ -231,8 +227,7 @@ JD2ResourceManagerJobInputter::cleanup_after_job_completion(
 			ResourceOP current_residue = jd2_resource_manager->find_resource(*resource_list_it);
 			core::chemical::ResidueTypeOP new_residue(utility::pointer::dynamic_pointer_cast< core::chemical::ResidueType > ( current_residue ));
 
-			if(new_residue)
-			{
+			if ( new_residue ) {
 				std::string residue_type_set = new_residue->residue_type_set().name();
 				core::chemical::ChemicalManager::get_instance()->
 					ChemicalManager::nonconst_residue_type_set(residue_type_set).remove_residue_type(new_residue->name());
@@ -303,7 +298,7 @@ JD2ResourceManagerJobInputter::parse_jobs_tags(
 		std::string const & tagname = (*tag_iter)->getName();
 		if ( tagname == "Job" ) {
 			parse_job_tag( *tag_iter, generic_resources_for_job, *generic_job_options, jobs );
-		} else if( tagname == "JobsTable"){
+		} else if ( tagname == "JobsTable" ) {
 			parse_jobs_table_tag( *tag_iter, generic_resources_for_job, *generic_job_options, jobs );
 		} else {
 			std::ostringstream err;
@@ -331,7 +326,7 @@ JD2ResourceManagerJobInputter::parse_job_tag(
 
 
 	/// if the name is not given
-	if ( jobs_tag->hasOption( "name" )) {
+	if ( jobs_tag->hasOption( "name" ) ) {
 		jobname = jobs_tag->getOption< std::string >( "name" );
 	}
 
@@ -345,12 +340,12 @@ JD2ResourceManagerJobInputter::parse_job_tag(
 			read_Option_subtag_for_job( *tag_iter, job_options );
 		} else if ( tagname == "Data" ) {
 			read_Data_for_subtag( *tag_iter, jobname, input_tag, resources_for_job );
-		} else if (tagname == "ResidueType") {
+		} else if ( tagname == "ResidueType" ) {
 			read_ResidueType_for_subtag(*tag_iter, resources_for_job);
 		}// are there other kinds of tags?
 	}
 
-	if(jobs_tag->hasOption("nstruct")){
+	if ( jobs_tag->hasOption("nstruct") ) {
 		// if it's not specified here, it can be specified in an <Option/>
 		// tag or default to 1.
 		parse_options_name_and_value(
@@ -358,7 +353,7 @@ JD2ResourceManagerJobInputter::parse_job_tag(
 	}
 
 	if ( jobname.size() == 0 ) {
-  		JD2ResourceManager * jd2rm( JD2ResourceManager::get_jd2_resource_manager_instance());
+		JD2ResourceManager * jd2rm( JD2ResourceManager::get_jd2_resource_manager_instance());
 		if ( jd2rm->has_resource_configuration( input_tag ) ) {
 			std::ostringstream err;
 			err << "Repeat input startstruct for a job which has not been given a name. Ordinarily, if a job is\n";
@@ -387,7 +382,7 @@ JD2ResourceManagerJobInputter::parse_jobs_table_tag(
 	utility::sql_database::sessionOP db_session = parse_database_connection(tag);
 
 	string sql_command;
-	if(tag->hasOption("sql_command")){
+	if ( tag->hasOption("sql_command") ) {
 		sql_command = tag->getOption<string>("sql_command");
 		check_statement_sanity(sql_command);
 	} else {
@@ -416,11 +411,11 @@ JD2ResourceManagerJobInputter::parse_jobs_table_tag(
 		" * resource_tag: The tag of a resource described in the <Resources/> block.\n"
 		"\n"
 		" * option_key: An optionally namespaced option key (string) for the options\n"
-    "   system like 'in:file:native'\n"
+		"   system like 'in:file:native'\n"
 		"\n"
 		" * option_value: A value or list of values that processed into the option system\n";
 
-	if(res.cols() != 4){
+	if ( res.cols() != 4 ) {
 		stringstream err_msg;
 		err_msg
 			<< "The JobsTable tag requires a 'sql_command' tag" << endl
@@ -436,13 +431,13 @@ JD2ResourceManagerJobInputter::parse_jobs_table_tag(
 	string input_tag;
 	std::map< string, string > resources_for_job(generic_resources_for_job);
 	JobOptionsOP job_options( new JobOptions(generic_job_options) );
-	while(res.next()){
+	while ( res.next() ) {
 		row_number++;
 
 		string job_name, resource_type, key, value;
 		res >> job_name >> resource_type >> key >> value;
 
-		if(row_number != 1 && previous_job_name != job_name){
+		if ( row_number != 1 && previous_job_name != job_name ) {
 			// we've just finished collecting information for the job,
 			// record job and reset the invariants
 			record_job(previous_job_name, resources_for_job, job_options, jobs);
@@ -453,9 +448,9 @@ JD2ResourceManagerJobInputter::parse_jobs_table_tag(
 		}
 
 
-		if(resource_type == "Resource"){
+		if ( resource_type == "Resource" ) {
 			resources_for_job[ key ] = value;
-		} else if (resource_type == "Option"){
+		} else if ( resource_type == "Option" ) {
 			parse_options_name_and_value(key, value, job_options);
 		} else {
 			stringstream err_msg;
@@ -468,7 +463,7 @@ JD2ResourceManagerJobInputter::parse_jobs_table_tag(
 				<< sql_command << endl
 				<< endl
 				<< "Resources:" << endl;
-			for(std::map<string,string>::const_iterator i=resources_for_job.begin(), ie=resources_for_job.end(); i != ie; ++i){
+			for ( std::map<string,string>::const_iterator i=resources_for_job.begin(), ie=resources_for_job.end(); i != ie; ++i ) {
 				err_msg << "\t '" << i->first << "' <- '" << i->second << "'" << endl;
 			}
 			err_msg
@@ -478,12 +473,12 @@ JD2ResourceManagerJobInputter::parse_jobs_table_tag(
 			throw EXCN_Msg_Exception(err_msg.str());
 		}
 
-		if(previous_job_name.empty()){
+		if ( previous_job_name.empty() ) {
 			previous_job_name = job_name;
 		}
 	}
 
-	if(row_number == 0){
+	if ( row_number == 0 ) {
 		tr.Warning << "JobsTable returned no rows." << endl;
 	}
 
@@ -498,7 +493,7 @@ JD2ResourceManagerJobInputter::record_job(
 	Jobs & jobs
 ) {
 
-  JD2ResourceManager * jd2rm(
+	JD2ResourceManager * jd2rm(
 		JD2ResourceManager::get_jd2_resource_manager_instance());
 
 	using namespace basic::options;
@@ -514,16 +509,16 @@ JD2ResourceManagerJobInputter::record_job(
 
 	//Have the jobs with this job_name already been created?
 	core::Size n_jobs(0);
-	for(Jobs::const_iterator ii = jobs.begin(), iie = jobs.end(); ii != iie; ++ii){
-		if( (*ii)->input_tag() == job_name ) {
+	for ( Jobs::const_iterator ii = jobs.begin(), iie = jobs.end(); ii != iie; ++ii ) {
+		if ( (*ii)->input_tag() == job_name ) {
 			n_jobs++;
 		}
 	}
 
 	//If not, then add them
-	if(n_jobs==0){
+	if ( n_jobs==0 ) {
 		Size nstruct(1);
-		if(job_options->has_option(OptionKeys::out::nstruct)){
+		if ( job_options->has_option(OptionKeys::out::nstruct) ) {
 			nstruct = job_options->get_option(OptionKeys::out::nstruct);
 		}
 
@@ -532,9 +527,9 @@ JD2ResourceManagerJobInputter::record_job(
 			jobs.push_back( protocols::jd2::JobOP( new Job( inner_job, ii ) ));
 		}
 	} else {
-		if(job_options->has_option(OptionKeys::out::nstruct)){
+		if ( job_options->has_option(OptionKeys::out::nstruct) ) {
 			Size requested_nstruct = job_options->get_option(OptionKeys::out::nstruct);
-			if(requested_nstruct != n_jobs){
+			if ( requested_nstruct != n_jobs ) {
 				std::stringstream err_msg;
 				err_msg
 					<< "Conflicting specification for nstruct for job with name '" << job_name << "'" << std::endl
@@ -638,10 +633,10 @@ JD2ResourceManagerJobInputter::parse_options_name_and_value(
 
 void
 JD2ResourceManagerJobInputter::read_BooleanOption_subtag_for_job(
-		basic::options::BooleanOptionKey const & boolopt,
-		std::string const & optname,
-		std::string const & val,
-		basic::resource_manager::JobOptionsOP job_options
+	basic::options::BooleanOptionKey const & boolopt,
+	std::string const & optname,
+	std::string const & val,
+	basic::resource_manager::JobOptionsOP job_options
 )
 {
 	bool boolval;
@@ -858,8 +853,7 @@ JD2ResourceManagerJobInputter::read_ResidueType_for_subtag(
 	std::string rname;
 
 	std::ostringstream err;
-	if(!options_tag->hasOption("resource_tag"))
-	{
+	if ( !options_tag->hasOption("resource_tag") ) {
 		err << "you must specify the resource_tag option when using a ResidueType tag";
 		err <<std::endl;
 		throw EXCN_Msg_Exception( err.str() );
@@ -868,8 +862,7 @@ JD2ResourceManagerJobInputter::read_ResidueType_for_subtag(
 			opt_iter = options_tag->getOptions().begin(),
 			opt_iter_end = options_tag->getOptions().end();
 			opt_iter != opt_iter_end; ++opt_iter ) {
-		if(opt_iter->first == "resource_tag")
-		{
+		if ( opt_iter->first == "resource_tag" ) {
 			rname = opt_iter->second;
 			resources_for_job["residue"] = rname;
 		}
@@ -894,7 +887,7 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 	std::map< std::string, std::string > & resources_for_job
 )
 {
-  JD2ResourceManager * jd2rm( JD2ResourceManager::get_jd2_resource_manager_instance());
+	JD2ResourceManager * jd2rm( JD2ResourceManager::get_jd2_resource_manager_instance());
 
 	bool desc_found( false );
 	bool resource_found( false );
@@ -919,8 +912,7 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 		} else if ( opt_iter->first == "pdb" ) {
 			pdb_found = true;
 			rname = opt_iter->second;
-		} else if (opt_iter->first == "locator")
-		{
+		} else if ( opt_iter->first == "locator" ) {
 			locator = opt_iter->second;
 		}
 	}
@@ -939,7 +931,7 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 	if ( resource_found && pdb_found ) {
 		in_error = true;
 		err << "Error: Both a 'resource_tag' and a 'pdb' tag were found for a 'Data' tag in the Job tag." << std::endl;
-	} else if ( resource_found && ! jd2rm->has_resource_configuration( rname )) {
+	} else if ( resource_found && ! jd2rm->has_resource_configuration( rname ) ) {
 		in_error = true;
 		err << "Error: In Data subtag with descr='" << desc << "', the ResourceManager has no resource configuration for ResourceTag '" << rname << "'.\n";
 	}
@@ -958,7 +950,7 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 		err << "Problem encountered ";
 		if ( jobname.size() != 0 ) {
 			err << "for job named '" << jobname << "'";
-		} else if ( desc != "startstruct" && resources_for_job.find("startstruct") != resources_for_job.end()) {
+		} else if ( desc != "startstruct" && resources_for_job.find("startstruct") != resources_for_job.end() ) {
 			err << "for job whose starstruct is given as '" << resources_for_job[ "startstruct" ] << "'";
 		}
 		err << ".\nOptions given:\n";
@@ -1003,13 +995,13 @@ void
 JD2ResourceManagerJobInputter::check_each_job_has_startstruct(
 	Jobs const & jobs
 ) const {
-  JD2ResourceManager * jd2rm(
+	JD2ResourceManager * jd2rm(
 		JD2ResourceManager::get_jd2_resource_manager_instance());
 
-	for(
-		Jobs::const_iterator job=jobs.begin(), jobs_end=jobs.end();
-		job != jobs_end; ++job){
-		if(!(jd2rm->has_resource_tag_by_job_tag("startstruct", (*job)->input_tag()))) {
+	for (
+			Jobs::const_iterator job=jobs.begin(), jobs_end=jobs.end();
+			job != jobs_end; ++job ) {
+		if ( !(jd2rm->has_resource_tag_by_job_tag("startstruct", (*job)->input_tag())) ) {
 			std::stringstream errmsg;
 			errmsg
 				<< "Error: Job '" << (*job)->input_tag() << "' given without a 'startstruct'";

@@ -87,7 +87,7 @@ public:
 
 
 	virtual void eval_atom_derivative(
-	id::AtomID const & id,
+		id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
 		ScoreFunction const & sfxn,
@@ -96,24 +96,24 @@ public:
 		Vector & F2
 	) const;
 
- private:
+private:
 
 	DipolarCoupling& dc_from_pose(
 		pose::Pose & pose
 	) const;
 
-  	Real eval_dc(
-  		pose::Pose & pose
-  	) const;
+	Real eval_dc(
+		pose::Pose & pose
+	) const;
 
 
 private:
 
-//used by Energy Method during scoring... should this become part of DipolarCoupling and thus cached in the pose
+	//used by Energy Method during scoring... should this become part of DipolarCoupling and thus cached in the pose
 	mutable core::Real dc_score_; //computed in setup_for_scoring.. delivered in finalize
 	mutable id::AtomID_Map< utility::vector1<Size> > atom2dc_map_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 };
 
 } //methods

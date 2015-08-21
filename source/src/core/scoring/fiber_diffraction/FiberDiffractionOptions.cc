@@ -45,13 +45,13 @@ FiberDiffractionOptionsCreator::options_type() const {
 	return "FiberDiffractionOptions";
 }
 
-//3A and 12A resolution cutoffs. 
+//3A and 12A resolution cutoffs.
 //c repeat 3.0A is typical for inoviruses but has to be adjusted for each system
 FiberDiffractionOptions::FiberDiffractionOptions() :
 	ResourceOptions(),
 	c(3.0),
 	res_cutoff_high(0.333333),
-	res_cutoff_low(0.0833333)	
+	res_cutoff_low(0.0833333)
 {}
 
 
@@ -61,19 +61,19 @@ FiberDiffractionOptions::FiberDiffractionOptions(
 	ResourceOptions(name),
 	c(3.0),
 	res_cutoff_high(0.333333),
-  res_cutoff_low(0.0833333)
+	res_cutoff_low(0.0833333)
 {}
 
 FiberDiffractionOptions::FiberDiffractionOptions(
-  string const & name,
+	string const & name,
 	Real c_,
 	Real res_cutoff_high_,
 	Real res_cutoff_low_
 ) :
-  ResourceOptions(name),
+	ResourceOptions(name),
 	c(c_),
-  res_cutoff_high(res_cutoff_high_),
-  res_cutoff_low(res_cutoff_low_)
+	res_cutoff_high(res_cutoff_high_),
+	res_cutoff_low(res_cutoff_low_)
 {}
 
 
@@ -82,43 +82,43 @@ FiberDiffractionOptions::FiberDiffractionOptions(
 ) :
 	ResourceOptions(src),
 	c(src.c),
-  res_cutoff_high(src.res_cutoff_high),
-  res_cutoff_low(src.res_cutoff_low)
+	res_cutoff_high(src.res_cutoff_high),
+	res_cutoff_low(src.res_cutoff_low)
 {}
 
 FiberDiffractionOptions::~FiberDiffractionOptions() {}
 
 Real FiberDiffractionOptions::get_res_high() const {
 	return  res_cutoff_high;
-	}
+}
 
 void  FiberDiffractionOptions::set_res_high( Real res_cutoff_high_ ) {
 	res_cutoff_high = res_cutoff_high_;
 }
 
 Real FiberDiffractionOptions::get_res_low() const {
-  return  res_cutoff_low;
-  }
+	return  res_cutoff_low;
+}
 
 void  FiberDiffractionOptions::set_res_low( Real res_cutoff_low_ ) {
-  res_cutoff_low = res_cutoff_low_;
+	res_cutoff_low = res_cutoff_low_;
 }
 
 Real FiberDiffractionOptions::get_c_repeat() const {
-  return c;
+	return c;
 }
 
 void  FiberDiffractionOptions::set_c_repeat( Real c_ ) {
-  c = c_;
+	c = c_;
 }
 
 void
 FiberDiffractionOptions::parse_my_tag(
-  TagCOP tag
+	TagCOP tag
 ) {
 	c = tag->getOption<Real>("c", 3.0);
 	res_cutoff_high = tag->getOption<Real>("res_cutoff_high", 0.333333);
-  res_cutoff_low = tag->getOption<Real>("res_cutoff_low", 0.0833333);
+	res_cutoff_low = tag->getOption<Real>("res_cutoff_low", 0.0833333);
 
 }
 

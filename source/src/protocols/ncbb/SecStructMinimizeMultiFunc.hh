@@ -62,54 +62,54 @@ public: // Methods
 	virtual
 	void
 	dfunc( Multivec const & vars, Multivec & dE_dvars ) const;
-	
+
 	/// @brief give short set of torsions from full dofs
 	Multivec
 	dofs_to_vars( Multivec const & dofs ) const;
-	
+
 	/// @brief give full dofs from short set of torsions
 	Multivec
 	vars_to_dofs( Multivec const & vars ) const;
 
 
 	/// @brief Error state reached -- derivative does not match gradient
-  ///
+	///
 	virtual
 	void
 	dump( Multivec const & vars, Multivec const & vars2 ) const;
 
 private:
 
-/*************************************************************
-					PRIVATE DATA
-*************************************************************/
-	
+	/*************************************************************
+	PRIVATE DATA
+	*************************************************************/
+
 	void get_dofs_for_pose0( );
 	void get_dofs_map( );
 	Real dofs_for_pose0( Size const i_dof ) const { return dofs_for_pose0_[i_dof]; }
 	Multivec
 	dEddofs_to_dEdvars( Multivec const & dEdtors ) const;
-	
+
 	// Map between BB torsionID <-> min_map DOF_ID
 	// Ah! and I need a map to a vector of Size for bb to dof...
 	std::map< Size, utility::vector1< Size > > map_BB_to_DOF_;
 	std::map< Size, Size > map_DOF_to_BB_;
-	
+
 	void
 	setup_minimization_graph( pose::Pose & pose, scoring::ScoreFunction const & sfxn, MinimizerMap const & min_map ) const;
-	
+
 	core::pose::Pose & pose_;
-	
+
 	core::scoring::ScoreFunction & scorefxn_;
-	
+
 	core::optimization::MinimizerMap & min_map_;
-	
+
 	// Reference pose during minimization( set as initial structure )
 	pose::Pose & pose0_;
 	Multivec dofs_for_pose0_;
-	
+
 	std::string alpha_beta_pattern_;
-	
+
 	/// @brief The pattern at which dihedrals are applied
 	///
 	std::string dihedral_pattern_;

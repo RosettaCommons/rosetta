@@ -32,7 +32,7 @@ namespace protein_interface_design {
 
 struct Transformation
 {
-  typedef core::Real Real;
+	typedef core::Real Real;
 
 	Real alpha, beta, gamma; // Euler angles
 	numeric::xyzVector< Real > translation; // translation
@@ -46,8 +46,8 @@ public:
 	/// @brief if no native is read
 	void read_poses( core::pose::Pose & input_pose, std::string & input_tag );
 
-/// @brief reads input and native poses from file. If patchdock flags are used will read the patchdock transformation
-/// and transform the input pose accordingly
+	/// @brief reads input and native poses from file. If patchdock flags are used will read the patchdock transformation
+	/// and transform the input pose accordingly
 	void read_poses( core::pose::Pose & input_pose, core::pose::Pose & native_pose, std::string & input_tag, std::string & native_tag );
 
 	void read_patchdock( std::string & input_tag, std::string & native_tag );

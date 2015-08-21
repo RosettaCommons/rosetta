@@ -28,7 +28,7 @@
 #include <string>
 
 
-namespace protocols{
+namespace protocols {
 namespace enzdes {
 
 
@@ -38,20 +38,20 @@ class SetCatalyticResPackBehavior : public core::pack::task::operation::TaskOper
 {
 
 public:
-  typedef core::pack::task::operation::TaskOperationOP TaskOperationOP;
-  typedef core::pose::Pose Pose;
-  typedef core::pack::task::PackerTask PackerTask;
+	typedef core::pack::task::operation::TaskOperationOP TaskOperationOP;
+	typedef core::pose::Pose Pose;
+	typedef core::pack::task::PackerTask PackerTask;
 
 public:
 
-  SetCatalyticResPackBehavior();
+	SetCatalyticResPackBehavior();
 	~SetCatalyticResPackBehavior();
 
-  virtual TaskOperationOP clone() const;
+	virtual TaskOperationOP clone() const;
 
-  /// @brief Change a packer task in some way.  The input pose is the one to which the input
-  /// task will be later applied.
-  virtual void apply( Pose const & pose, PackerTask & task ) const;
+	/// @brief Change a packer task in some way.  The input pose is the one to which the input
+	/// task will be later applied.
+	virtual void apply( Pose const & pose, PackerTask & task ) const;
 
 	virtual void parse_tag( TagCOP tag , DataMap & );
 
@@ -75,25 +75,25 @@ class DetectProteinLigandInterface: public core::pack::task::operation::TaskOper
 {
 
 public:
-  typedef core::pack::task::operation::TaskOperationOP TaskOperationOP;
-  typedef core::pose::Pose Pose;
-  typedef core::pack::task::PackerTask PackerTask;
+	typedef core::pack::task::operation::TaskOperationOP TaskOperationOP;
+	typedef core::pose::Pose Pose;
+	typedef core::pack::task::PackerTask PackerTask;
 
 public:
 
-  DetectProteinLigandInterface();
-  ~DetectProteinLigandInterface();
+	DetectProteinLigandInterface();
+	~DetectProteinLigandInterface();
 
-  virtual TaskOperationOP clone() const;
+	virtual TaskOperationOP clone() const;
 
-  /// @brief Initialize the class based on the command line options.
+	/// @brief Initialize the class based on the command line options.
 	void init_from_options();
 
-  /// @brief Change a packer task in some way.  The input pose is the one to which the input
-  /// task will be later applied.
-  virtual void apply( Pose const & pose, PackerTask & task) const;
+	/// @brief Change a packer task in some way.  The input pose is the one to which the input
+	/// task will be later applied.
+	virtual void apply( Pose const & pose, PackerTask & task) const;
 
-  virtual void parse_tag( TagCOP, DataMap & );
+	virtual void parse_tag( TagCOP, DataMap & );
 
 	void
 	find_design_interface(
@@ -105,7 +105,7 @@ public:
 		core::Real cut4,
 		utility::vector1< bool > & repack_res,
 		utility::vector1< bool > & design_res
-		) const;
+	) const;
 
 	void
 	find_design_interface_arg_sweep(
@@ -118,7 +118,7 @@ public:
 		core::Real arg_sweep_cutoff,
 		utility::vector1< bool > & repack_res,
 		utility::vector1< bool > & design_res
-		) const;
+	) const;
 
 	static void register_options();
 
@@ -195,7 +195,7 @@ public:
 
 	static void register_options();
 
-	bool get_weight() const {	return lig_packer_weight_;}
+	bool get_weight() const { return lig_packer_weight_;}
 	void set_weight(bool const weight_in) {lig_packer_weight_ = weight_in;}
 
 private:
@@ -208,22 +208,22 @@ class AddRigidBodyLigandConfs : public core::pack::task::operation::TaskOperatio
 {
 
 public:
-  typedef core::pack::task::operation::TaskOperationOP TaskOperationOP;
-  typedef core::pose::Pose Pose;
-  typedef core::pack::task::PackerTask PackerTask;
+	typedef core::pack::task::operation::TaskOperationOP TaskOperationOP;
+	typedef core::pose::Pose Pose;
+	typedef core::pack::task::PackerTask PackerTask;
 
 public:
 
-  AddRigidBodyLigandConfs();
+	AddRigidBodyLigandConfs();
 	~AddRigidBodyLigandConfs();
 
-  virtual TaskOperationOP clone() const;
+	virtual TaskOperationOP clone() const;
 
 	void parse_tag( TagCOP tag , DataMap & );
 
-  /// @brief Change a packer task in some way.  The input pose is the one to which the input
-  /// task will be later applied.
-  virtual void apply( Pose const &, PackerTask & ) const;
+	/// @brief Change a packer task in some way.  The input pose is the one to which the input
+	/// task will be later applied.
+	virtual void apply( Pose const &, PackerTask & ) const;
 
 };
 
@@ -232,9 +232,9 @@ class AddLigandMotifRotamers : public core::pack::task::operation::TaskOperation
 {
 
 public:
-  typedef core::pack::task::operation::TaskOperationOP TaskOperationOP;
-  typedef core::pose::Pose Pose;
-  typedef core::pack::task::PackerTask PackerTask;
+	typedef core::pack::task::operation::TaskOperationOP TaskOperationOP;
+	typedef core::pose::Pose Pose;
+	typedef core::pack::task::PackerTask PackerTask;
 
 private:
 	protocols::motifs::LigandMotifSearchOP motif_search_;
@@ -242,18 +242,18 @@ private:
 
 public:
 
-  AddLigandMotifRotamers();
+	AddLigandMotifRotamers();
 	~AddLigandMotifRotamers();
 
-  virtual TaskOperationOP clone() const;
+	virtual TaskOperationOP clone() const;
 
 	static void register_options();
 
 	virtual void parse_tag( TagCOP, DataMap & );
 
-  /// @brief Change a packer task in some way.  The input pose is the one to which the input
-  /// task will be later applied.
-  virtual void apply( Pose const &, PackerTask & ) const;
+	/// @brief Change a packer task in some way.  The input pose is the one to which the input
+	/// task will be later applied.
+	virtual void apply( Pose const &, PackerTask & ) const;
 
 };
 

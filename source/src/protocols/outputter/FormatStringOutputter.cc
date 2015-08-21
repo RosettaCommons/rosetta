@@ -50,20 +50,20 @@ OutputterSP FormatStringOutputter::create() {
 
 void FormatStringOutputter::write( PipeMap & p ){
 	TR << "-------Outputting PipeMap to File--------" << std::endl;
-	for( PipeMap::iterator itr = p.begin(), end = p.end(); itr != end; ++itr ) {
+	for ( PipeMap::iterator itr = p.begin(), end = p.end(); itr != end; ++itr ) {
 		PipeSP current_pipe = itr->second;
 		filenameparts_["pipe_name"] = itr->first;
-		if( current_pipe ) {
+		if ( current_pipe ) {
 			write( *current_pipe );
 		}
 	}
 }
 
 void FormatStringOutputter::write( Pipe & p ) {
-	for( core::Size idx = 0; idx < p.size(); idx++ ) {
+	for ( core::Size idx = 0; idx < p.size(); idx++ ) {
 		PoseSP current_pose = p[idx];
 		filenameparts_["pipe_idx"] = idx;
-		if( current_pose ) {
+		if ( current_pose ) {
 			std::string filename;
 			core::pose::get_comment(*current_pose, "inputfile", filename );
 			utility::file::FileName f(filename);
@@ -81,8 +81,8 @@ void FormatStringOutputter::write( Pipe & p ) {
 void FormatStringOutputter::parse_format_string( boost::unordered_map< std::string, std::string> & filenameparts, std::string const & format_string, std::string & filename ) {
 	std::string potential_key = "";
 	bool in_potential_key = false;
-	for( core::Size i = 0; i < format_string.size() ; i++ ) {
-		if( format_string[i] != '%' && ! in_potential_key ) {
+	for ( core::Size i = 0; i < format_string.size() ; i++ ) {
+		if ( format_string[i] != '%' && ! in_potential_key ) {
 			filename.push_back( format_string[i] );
 		} else if ( format_string[i] == '%' && in_potential_key ) {
 			// the key we though wasn't, so push it onto the filename
@@ -94,7 +94,7 @@ void FormatStringOutputter::parse_format_string( boost::unordered_map< std::stri
 		} else if ( in_potential_key ) {
 			potential_key.push_back(format_string[i]);
 			boost::unordered_map< std::string, std::string>::iterator itr = filenameparts.find( potential_key );
-			if( itr != filenameparts.end() ) {
+			if ( itr != filenameparts.end() ) {
 				// potential key is real key
 				filename += itr->second;
 				in_potential_key=false;
@@ -102,9 +102,10 @@ void FormatStringOutputter::parse_format_string( boost::unordered_map< std::stri
 			}
 		}
 	}
-	if( in_potential_key ) 
+	if ( in_potential_key ) {
 		// the rest of the input name was a potential key that turned out to be false, so just append it
 		filename += '%' + potential_key;
+	}
 }
 
 

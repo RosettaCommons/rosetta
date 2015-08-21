@@ -61,17 +61,17 @@ static thread_local basic::Tracer TR( "protocols.generalized_kinematic_closure.p
 
 /// @brief Creator for GeneralizedKICperturber.
 GeneralizedKICperturber::GeneralizedKICperturber():
-		utility::pointer::ReferenceCount(),
-		bbgmover_(),
-		bin_transition_calculator_(),
-		effect_(no_effect),
-		inputvalues_real_(),
-		residues_(),
-		atoms_(),
-		iterations_(1),
-		must_switch_bins_(false),
-		bin_("")
-		//TODO -- make sure above data are copied properly when duplicating this mover.
+	utility::pointer::ReferenceCount(),
+	bbgmover_(),
+	bin_transition_calculator_(),
+	effect_(no_effect),
+	inputvalues_real_(),
+	residues_(),
+	atoms_(),
+	iterations_(1),
+	must_switch_bins_(false),
+	bin_("")
+	//TODO -- make sure above data are copied properly when duplicating this mover.
 {}
 
 /// @brief Copy constructor for GeneralizedKICperturber.
@@ -88,8 +88,8 @@ GeneralizedKICperturber::GeneralizedKICperturber( GeneralizedKICperturber const 
 	must_switch_bins_(src.must_switch_bins_),
 	bin_(src.bin_)
 {
-	if(src.bbgmover_) bbgmover_ = utility::pointer::dynamic_pointer_cast< protocols::simple_moves::BBGaussianMover >(src.bbgmover_->clone());
-	if(src.bin_transition_calculator_) bin_transition_calculator_ = utility::pointer::dynamic_pointer_cast< core::scoring::bin_transitions::BinTransitionCalculator >(src.bin_transition_calculator_->clone());
+	if ( src.bbgmover_ ) bbgmover_ = utility::pointer::dynamic_pointer_cast< protocols::simple_moves::BBGaussianMover >(src.bbgmover_->clone());
+	if ( src.bin_transition_calculator_ ) bin_transition_calculator_ = utility::pointer::dynamic_pointer_cast< core::scoring::bin_transitions::BinTransitionCalculator >(src.bin_transition_calculator_->clone());
 }
 
 /// @brief Destructor for GeneralizedKICperturber mover.
@@ -112,8 +112,8 @@ std::string GeneralizedKICperturber::get_name() const{
 ///        Returns unknown_effect if can't find a match for the name.
 perturber_effect GeneralizedKICperturber::get_perturber_effect_from_name( std::string const &name ) const
 {
-	for(core::Size i=1; i<end_of_effect_list; ++i) {
-		if(get_perturber_effect_name( i ) == name) return static_cast<perturber_effect>(i);
+	for ( core::Size i=1; i<end_of_effect_list; ++i ) {
+		if ( get_perturber_effect_name( i ) == name ) return static_cast<perturber_effect>(i);
 	}
 	return unknown_effect;
 }
@@ -126,56 +126,56 @@ std::string GeneralizedKICperturber::get_perturber_effect_name( core::Size &effe
 	std::string returnstring = "";
 
 	switch(effect) {
-		case no_effect:
-			returnstring = "no_effect";
-			break;
-		case set_dihedral:
-			returnstring = "set_dihedral";
-			break;
-		case set_bondangle:
-			returnstring = "set_bondangle";
-			break;
-		case set_bondlength:
-			returnstring = "set_bondlength";
-			break;
-		case set_backbone_bin:
-			returnstring = "set_backbone_bin";
-			break;
-		case randomize_dihedral:
-			returnstring = "randomize_dihedral";
-			break;
-		case randomize_alpha_backbone_by_rama:
-			returnstring = "randomize_alpha_backbone_by_rama";
-			break;
-		case randomize_backbone_by_bins:
-			returnstring = "randomize_backbone_by_bins";
-			break;
-		case perturb_dihedral:
-			returnstring = "perturb_dihedral";
-			break;
-		case perturb_dihedral_bbg:
-			returnstring = "perturb_dihedral_bbg";
-			break;
-		case perturb_backbone_by_bins:
-			returnstring = "perturb_backbone_by_bins";
-			break;
-		case sample_cis_peptide_bond:
-			returnstring = "sample_cis_peptide_bond";
-			break;
-		default:
-			returnstring = "unknown_effect";
-			break;
+	case no_effect :
+		returnstring = "no_effect";
+		break;
+	case set_dihedral :
+		returnstring = "set_dihedral";
+		break;
+	case set_bondangle :
+		returnstring = "set_bondangle";
+		break;
+	case set_bondlength :
+		returnstring = "set_bondlength";
+		break;
+	case set_backbone_bin :
+		returnstring = "set_backbone_bin";
+		break;
+	case randomize_dihedral :
+		returnstring = "randomize_dihedral";
+		break;
+	case randomize_alpha_backbone_by_rama :
+		returnstring = "randomize_alpha_backbone_by_rama";
+		break;
+	case randomize_backbone_by_bins :
+		returnstring = "randomize_backbone_by_bins";
+		break;
+	case perturb_dihedral :
+		returnstring = "perturb_dihedral";
+		break;
+	case perturb_dihedral_bbg :
+		returnstring = "perturb_dihedral_bbg";
+		break;
+	case perturb_backbone_by_bins :
+		returnstring = "perturb_backbone_by_bins";
+		break;
+	case sample_cis_peptide_bond :
+		returnstring = "sample_cis_peptide_bond";
+		break;
+	default :
+		returnstring = "unknown_effect";
+		break;
 	}
 
 	return returnstring;
 }
 
-/// @brief Sets the effect of this perturber. 
+/// @brief Sets the effect of this perturber.
 void GeneralizedKICperturber::set_perturber_effect( perturber_effect const &effect )
 {
 	runtime_assert_string_msg(effect > 0 && effect < end_of_effect_list, "The perturber effect type is not recognized.");
 	effect_ = effect;
-		
+
 	return;
 }
 
@@ -195,16 +195,16 @@ void GeneralizedKICperturber::set_perturber_effect( std::string const &effectnam
 void GeneralizedKICperturber::load_bin_params( std::string const &bin_params_file )
 {
 	using namespace core::scoring::bin_transitions;
-	
+
 	//Create the object, if it doesn't exist.
-	if(!bin_transition_calculator_) {
-		if(TR.visible()) TR << "Creating BinTransitionCalculator." << std::endl;
+	if ( !bin_transition_calculator_ ) {
+		if ( TR.visible() ) TR << "Creating BinTransitionCalculator." << std::endl;
 		bin_transition_calculator_=BinTransitionCalculatorOP( new BinTransitionCalculator );
 	}
 
-	if(TR.visible()) TR << "Loading bin_params file " << bin_params_file << "." << std::endl;
+	if ( TR.visible() ) TR << "Loading bin_params file " << bin_params_file << "." << std::endl;
 	bin_transition_calculator_->load_bin_params(bin_params_file);
-	
+
 	return;
 }
 
@@ -235,47 +235,47 @@ void GeneralizedKICperturber::apply(
 	utility::vector1 < utility::vector1 < core::id::AtomID > > AtomIDs_loopindexed; //The list of lists of AtomIDs, with indices based on loop_pose.  If necessary, will be generated.
 
 	switch(effect_) {
-		case set_dihedral:
-			reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
-			apply_set_dihedral(AtomIDs_loopindexed, atomlist, inputvalues_real_, torsions, 0);
-			break;
-		case set_bondangle:
-			reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
-			apply_set_bondangle(AtomIDs_loopindexed, atomlist, inputvalues_real_, bondangles);
-			break;
-		case set_bondlength:
-			reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
-			apply_set_bondlength(AtomIDs_loopindexed, atomlist, inputvalues_real_, bondlengths);
-			break;
-		case set_backbone_bin:
-			apply_set_backbone_bin( original_pose, loop_pose, residues_, atomlist, residue_map, tail_residue_map, torsions );
-			break;
-		case randomize_dihedral:
-			reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
-			apply_set_dihedral(AtomIDs_loopindexed, atomlist, inputvalues_real_, torsions, 1); //We recycle the apply_set_dihedral() function to avoid code duplication
-			break;
-		case randomize_alpha_backbone_by_rama:
-			apply_randomize_alpha_backbone_by_rama(original_pose, loop_pose, residues_, atomlist, residue_map, tail_residue_map, torsions);
-			break;
-		case randomize_backbone_by_bins:
-			apply_randomize_backbone_by_bins( original_pose, loop_pose, residues_, atomlist, residue_map, tail_residue_map, torsions );
-			break;
-		case perturb_dihedral:
-			reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
-			apply_set_dihedral(AtomIDs_loopindexed, atomlist, inputvalues_real_, torsions, 2); //We recycle the apply_set_dihedral() function to avoid code duplication
-			break;
-		case perturb_dihedral_bbg:
-			reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
-			apply_perturb_dihedral_bbg(original_pose, loop_pose, residues_, atomlist, residue_map, torsions);
-			break;
-		case perturb_backbone_by_bins:
-			apply_perturb_backbone_by_bins( original_pose, loop_pose, residues_, atomlist, residue_map, tail_residue_map, torsions );
-			break;
-		case sample_cis_peptide_bond:
-			apply_sample_cis_peptide_bond(loop_pose, atomlist, residues_, residue_map, tail_residue_map, torsions);
-			break;
-		default:
-			break;
+	case set_dihedral :
+		reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
+		apply_set_dihedral(AtomIDs_loopindexed, atomlist, inputvalues_real_, torsions, 0);
+		break;
+	case set_bondangle :
+		reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
+		apply_set_bondangle(AtomIDs_loopindexed, atomlist, inputvalues_real_, bondangles);
+		break;
+	case set_bondlength :
+		reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
+		apply_set_bondlength(AtomIDs_loopindexed, atomlist, inputvalues_real_, bondlengths);
+		break;
+	case set_backbone_bin :
+		apply_set_backbone_bin( original_pose, loop_pose, residues_, atomlist, residue_map, tail_residue_map, torsions );
+		break;
+	case randomize_dihedral :
+		reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
+		apply_set_dihedral(AtomIDs_loopindexed, atomlist, inputvalues_real_, torsions, 1); //We recycle the apply_set_dihedral() function to avoid code duplication
+		break;
+	case randomize_alpha_backbone_by_rama :
+		apply_randomize_alpha_backbone_by_rama(original_pose, loop_pose, residues_, atomlist, residue_map, tail_residue_map, torsions);
+		break;
+	case randomize_backbone_by_bins :
+		apply_randomize_backbone_by_bins( original_pose, loop_pose, residues_, atomlist, residue_map, tail_residue_map, torsions );
+		break;
+	case perturb_dihedral :
+		reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
+		apply_set_dihedral(AtomIDs_loopindexed, atomlist, inputvalues_real_, torsions, 2); //We recycle the apply_set_dihedral() function to avoid code duplication
+		break;
+	case perturb_dihedral_bbg :
+		reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
+		apply_perturb_dihedral_bbg(original_pose, loop_pose, residues_, atomlist, residue_map, torsions);
+		break;
+	case perturb_backbone_by_bins :
+		apply_perturb_backbone_by_bins( original_pose, loop_pose, residues_, atomlist, residue_map, tail_residue_map, torsions );
+		break;
+	case sample_cis_peptide_bond :
+		apply_sample_cis_peptide_bond(loop_pose, atomlist, residues_, residue_map, tail_residue_map, torsions);
+		break;
+	default :
+		break;
 	}
 
 	return;
@@ -291,10 +291,10 @@ core::Size GeneralizedKICperturber::get_loop_index (
 	core::Size const original_pose_index,
 	utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map
 ) const {
-	for(core::Size i=1, imax=residue_map.size(); i<=imax; ++i) {
-		if(residue_map[i].second == original_pose_index) return residue_map[i].first;
+	for ( core::Size i=1, imax=residue_map.size(); i<=imax; ++i ) {
+		if ( residue_map[i].second == original_pose_index ) return residue_map[i].first;
 	}
-	
+
 	utility_exit_with_message("Residue does not exist in loop.  Exiting from GeneralizedKICperturber::get_loop_index with error status.");
 
 	return 0;
@@ -311,16 +311,16 @@ void GeneralizedKICperturber::reindex_AtomIDs (
 ) const {
 	using namespace core::id;
 	AtomIDs_reindexed.clear();
-	for(core::Size i=1, imax=atoms_.size(); i<=imax; ++i) {
+	for ( core::Size i=1, imax=atoms_.size(); i<=imax; ++i ) {
 		utility::vector1 < AtomID > newAtomIDset;
-		for(core::Size j=1, jmax=atoms_[i].size(); j<=jmax; ++j) { //Looping through atoms in the set
+		for ( core::Size j=1, jmax=atoms_[i].size(); j<=jmax; ++j ) { //Looping through atoms in the set
 			runtime_assert_string_msg( atoms_[i][j].rsd() <= original_pose.n_residue(), "GeneralizedKICperturber::reindex_AtomIDs can't find the specified residue." );
 			runtime_assert_string_msg( original_pose.residue( atoms_[i][j].rsd() ).has( atoms_[i][j].atom() ),
-					"GeneralizedKICperturber::reindex_AtomIDs can't find atom " + atoms_[i][j].atom() + " in the specified residue." );
-			newAtomIDset.push_back(        
+				"GeneralizedKICperturber::reindex_AtomIDs can't find atom " + atoms_[i][j].atom() + " in the specified residue." );
+			newAtomIDset.push_back(
 				AtomID(
-					original_pose.residue( atoms_[i][j].rsd() ).atom_index( atoms_[i][j].atom() ),
-					get_loop_index(atoms_[i][j].rsd(), residue_map)
+				original_pose.residue( atoms_[i][j].rsd() ).atom_index( atoms_[i][j].atom() ),
+				get_loop_index(atoms_[i][j].rsd(), residue_map)
 				)
 			);
 		} //Looping through AtomIDs in the set
@@ -350,48 +350,48 @@ void GeneralizedKICperturber::apply_set_dihedral (
 	//TR << "Applying set_dihedral perturbation effect." << std::endl;
 
 	runtime_assert_string_msg( dihedrallist.size() > 0, "Could not apply GeneralizedKICperturber::apply_set_dihedral, since no atoms were provided as input." );
-	if(effect==0) runtime_assert_string_msg( inputvalues_real.size() > 0, "Could not set dihedral value with GeneralizedKICperturber::apply_set_dihedral, since no value for the dihedral angle was provided as input." );
-	if(effect==2) runtime_assert_string_msg( inputvalues_real.size() > 0, "Could not perturb dihedrals with GeneralizedKICperturber::apply_set_dihedral, since no value for the dihedral angle perturbation magnitude provided as input." );
+	if ( effect==0 ) runtime_assert_string_msg( inputvalues_real.size() > 0, "Could not set dihedral value with GeneralizedKICperturber::apply_set_dihedral, since no value for the dihedral angle was provided as input." );
+	if ( effect==2 ) runtime_assert_string_msg( inputvalues_real.size() > 0, "Could not perturb dihedrals with GeneralizedKICperturber::apply_set_dihedral, since no value for the dihedral angle perturbation magnitude provided as input." );
 
 
 	bool separate_values = false; //Have separate dihedral values been provided for each dihedral in the list, or are we setting everything to one value?
-	if(effect==0 || effect==2) {
+	if ( effect==0 || effect==2 ) {
 		std::string str1=" set";
 		std::string str2=" to";
 		std::string str3="Setting ";
 		std::string str4=" to ";
-		if(effect==2) {
+		if ( effect==2 ) {
 			str1=" perturbed"; str2=" by"; str3="Perturbing "; str4=" by ";
 		}
-		if(inputvalues_real.size()>=dihedrallist.size()) {
+		if ( inputvalues_real.size()>=dihedrallist.size() ) {
 			separate_values = true;
-			if(inputvalues_real.size()>dihedrallist.size()) {
-				if(TR.Warning.visible()) TR.Warning << "Warning! Number of input values for set_dihedral pertruber effect exceeds the number of torsions to be" << str1 << ".  Using only the first " << dihedrallist.size() << " values." << std::endl;
+			if ( inputvalues_real.size()>dihedrallist.size() ) {
+				if ( TR.Warning.visible() ) TR.Warning << "Warning! Number of input values for set_dihedral pertruber effect exceeds the number of torsions to be" << str1 << ".  Using only the first " << dihedrallist.size() << " values." << std::endl;
 			}
-		} else if (inputvalues_real.size()!=1) {
+		} else if ( inputvalues_real.size()!=1 ) {
 			separate_values = false;
-			if(TR.Warning.visible()) TR.Warning << "Warning! Number of input values does not match the number of dihedral angles specified.  All angles will be" << str1 << str2 << " the first value." << std::endl;
+			if ( TR.Warning.visible() ) TR.Warning << "Warning! Number of input values does not match the number of dihedral angles specified.  All angles will be" << str1 << str2 << " the first value." << std::endl;
 		} else { //inputvalues_real.size()==1 and dihedrallist.size() > 1
-			if(TR.Debug.visible()) TR.Debug << str3 << "all specified dihedral angles" << str4 << inputvalues_real[1] << "." << std::endl;
+			if ( TR.Debug.visible() ) TR.Debug << str3 << "all specified dihedral angles" << str4 << inputvalues_real[1] << "." << std::endl;
 		}
 	}
 
-	for( core::Size i=1, imax=dihedrallist.size(); i<=imax; ++i ) { //Loop through each dihedral angle given as input
+	for ( core::Size i=1, imax=dihedrallist.size(); i<=imax; ++i ) { //Loop through each dihedral angle given as input
 		runtime_assert_string_msg( dihedrallist[i].size()==4 || dihedrallist[i].size()==2, "Error in GeneralizedKICperturber::apply_set_dihedral().  Either two or four AtomIDs must be provided to define a dihedral angle." );
 
 		//If four atoms are specified, that uniquely defines the dihedral angle.
 		//If only two are specified, we assume that the upstream and downstream atoms of those two are the other two atoms needed to define the dihedral.
 		utility::vector1 < core::id::AtomID > dihed_atoms;
-		if(dihedrallist[i].size()==4) dihed_atoms=dihedrallist[i];
-		else if (dihedrallist[i].size()==2) {
-			for(core::Size j=2, jmax=atomlist.size()-2; j<=jmax; ++j) { //Find the upstream and downstream atoms:
-				if(dihedrallist[i][1]==atomlist[j].first && dihedrallist[i][2]==atomlist[j+1].first) {
+		if ( dihedrallist[i].size()==4 ) dihed_atoms=dihedrallist[i];
+		else if ( dihedrallist[i].size()==2 ) {
+			for ( core::Size j=2, jmax=atomlist.size()-2; j<=jmax; ++j ) { //Find the upstream and downstream atoms:
+				if ( dihedrallist[i][1]==atomlist[j].first && dihedrallist[i][2]==atomlist[j+1].first ) {
 					dihed_atoms.push_back( atomlist[j-1].first );
 					dihed_atoms.push_back( atomlist[j].first );
 					dihed_atoms.push_back( atomlist[j+1].first );
 					dihed_atoms.push_back( atomlist[j+2].first );
 					break;
-				} else if(dihedrallist[i][2]==atomlist[j].first && dihedrallist[i][1]==atomlist[j+1].first) {
+				} else if ( dihedrallist[i][2]==atomlist[j].first && dihedrallist[i][1]==atomlist[j+1].first ) {
 					dihed_atoms.push_back( atomlist[j+2].first );
 					dihed_atoms.push_back( atomlist[j+1].first );
 					dihed_atoms.push_back( atomlist[j].first );
@@ -405,30 +405,30 @@ void GeneralizedKICperturber::apply_set_dihedral (
 
 		//Find this dihedral angle in the atom list:
 		core::Size torsion_index = 0;
-		for(core::Size j=3, jmax=atomlist.size()-2; j<=jmax; ++j) { //Loop through all atoms in the chain of atoms to be closed (excluding the anchors).
-			if(dihed_atoms[2]==atomlist[j].first) {
-				if( j<jmax && dihed_atoms[3]==atomlist[j+1].first && dihed_atoms[4]==atomlist[j+2].first && dihed_atoms[1]==atomlist[j-1].first ) { //dihedral going forward
+		for ( core::Size j=3, jmax=atomlist.size()-2; j<=jmax; ++j ) { //Loop through all atoms in the chain of atoms to be closed (excluding the anchors).
+			if ( dihed_atoms[2]==atomlist[j].first ) {
+				if ( j<jmax && dihed_atoms[3]==atomlist[j+1].first && dihed_atoms[4]==atomlist[j+2].first && dihed_atoms[1]==atomlist[j-1].first ) { //dihedral going forward
 					torsion_index=j;
 				} else if ( j>3 && dihed_atoms[1]==atomlist[j+1].first && dihed_atoms[3]==atomlist[j-1].first && dihed_atoms[4]==atomlist[j-2].first ) { //dihedral going backward
 					torsion_index=j-1;
 				}
 			}
-			if(torsion_index > 0) break;
+			if ( torsion_index > 0 ) break;
 		}
 		runtime_assert_string_msg(torsion_index > 0, "Error in GeneralizedKICperturber::apply_set_dihedral.  The dihedral angle specified was not found in the chain of atoms to be closed.");
-		if (effect==2) {
+		if ( effect==2 ) {
 			torsions[torsion_index] += numeric::random::rg().gaussian() * (separate_values ? inputvalues_real[i] : inputvalues_real[1]); //Add a randomly chosen value from a gaussian distribution of specified bredth.
-		} else if(effect==1) { //randomizing torsions
+		} else if ( effect==1 ) { //randomizing torsions
 			torsions[torsion_index] = numeric::random::rg().uniform()*360.0; //Set the desired torsion to the user-specified value.
-		} else if (effect==0) { //setting torsions
+		} else if ( effect==0 ) { //setting torsions
 			torsions[torsion_index] = (separate_values ? inputvalues_real[i] : inputvalues_real[1]); //Set the desired torsion to the user-specified value.
 		}
 	}
 
-  if(TR.Warning.visible()) TR.Warning.flush();
-  if(TR.Debug.visible()) TR.Debug.flush();
-  if(TR.visible()) TR.flush();
-	
+	if ( TR.Warning.visible() ) TR.Warning.flush();
+	if ( TR.Debug.visible() ) TR.Debug.flush();
+	if ( TR.visible() ) TR.flush();
+
 	return;
 }
 
@@ -436,7 +436,7 @@ void GeneralizedKICperturber::init_bbgmover(
 	core::pose::Pose const &loop_pose,
 	utility::vector1< std::pair< core::Size, core::Size > > const &residue_map
 ) {
-	if (!bbgmover_) {
+	if ( !bbgmover_ ) {
 		bbgmover_ = simple_moves::BBGaussianMoverOP( new simple_moves::BBGaussianMover() );
 
 		Size looplength = loop_pose.n_residue();
@@ -446,10 +446,10 @@ void GeneralizedKICperturber::init_bbgmover(
 		//all controled by residue list
 		core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 
-		for (Size i=1, imax=residues_.size(); i<=imax; i++) {
-			for (Size j=1, jmax=residue_map.size(); j<=jmax; j++) {
+		for ( Size i=1, imax=residues_.size(); i<=imax; i++ ) {
+			for ( Size j=1, jmax=residue_map.size(); j<=jmax; j++ ) {
 				//std::cout << residue_map[j].first << "<-->" << residue_map[j].second << std::endl;
-				if (residue_map[j].second == residues_[i]) {
+				if ( residue_map[j].second == residues_[i] ) {
 					mm->set_bb(residue_map[j].first, true);
 					//std::cout << residue_map[j].first << " set to be true!" << std::endl;
 				}
@@ -464,7 +464,7 @@ void GeneralizedKICperturber::init_bbgmover(
 /// @details  Backbone Gaussian Perturbation
 /// @param[in] original_pose - The input pose.
 /// @param[in] loop_pose - A pose that is just the loop to be closed (possibly with other things hanging off of it).
-/// @param[in] residues - A vector of the indices of residues affected by this perturber.  Note that 
+/// @param[in] residues - A vector of the indices of residues affected by this perturber.  Note that
 /// @param[in] atomlist - A vector of pairs of AtomID, xyz coordinate.  Residue indices are based on the loop pose, NOT the original pose.
 /// @param[in] residue_map - A vector of pairs of (loop pose index, original pose index).
 /// @param[in,out] torsions - A vector of desired torsions, some of which are randomized by this function.
@@ -478,7 +478,7 @@ void GeneralizedKICperturber::apply_perturb_dihedral_bbg(
 ) const {
 	using namespace protocols::generalized_kinematic_closure;
 
-	if(TR.visible()) { TR << "Applying apply_perturb_dihedral_bbg perturbation effect." << std::endl;  TR.flush(); } //DELETE ME
+	if ( TR.visible() ) { TR << "Applying apply_perturb_dihedral_bbg perturbation effect." << std::endl;  TR.flush(); } //DELETE ME
 
 	runtime_assert_string_msg( residues.size() > 0 , "Residues must be specified for the apply_perturb_dihedral_bbg generalized kinematic closure perturber." );
 
@@ -494,18 +494,17 @@ void GeneralizedKICperturber::apply_perturb_dihedral_bbg(
 		bbgmover_->last_proposal_density_ratio();
 		//loop_pose_copy.dump_pdb("after.pdb");
 		//runtime_assert_string_msg(false, "exit");
-	}
-	else {
+	} else {
 		runtime_assert_string_msg( residues.size() > 0 , "BBGmover is not initialized correctly!");
 	}
 
-	for(core::Size ir=1, irmax=residues.size(); ir<=irmax; ++ir) {
+	for ( core::Size ir=1, irmax=residues.size(); ir<=irmax; ++ir ) {
 		runtime_assert_string_msg( residues[ir] <= nres, "Unable to apply apply_perturb_dihedral_bbg perturbation.  Residue list includes residues that are not in the original pose." );
 
 		//Check for alpha amino acids:
-		if(!original_pose.residue(residues[ir]).type().is_alpha_aa()) {
-		  if(TR.Warning.visible()) {
-		  	TR.Warning << "Warning! Residue " << residues[ir] << " was passed to GeneralizedKICperturber::apply_perturb_dihedral_bbg, but this residue is not an alpha-amino acid.  Skipping." << std::endl;
+		if ( !original_pose.residue(residues[ir]).type().is_alpha_aa() ) {
+			if ( TR.Warning.visible() ) {
+				TR.Warning << "Warning! Residue " << residues[ir] << " was passed to GeneralizedKICperturber::apply_perturb_dihedral_bbg, but this residue is not an alpha-amino acid.  Skipping." << std::endl;
 				TR.Warning.flush();
 			}
 			continue;
@@ -522,12 +521,12 @@ void GeneralizedKICperturber::apply_perturb_dihedral_bbg(
 		at1list.push_back("N"); at1list.push_back("CA");
 		at2list.push_back("CA"); at2list.push_back("C");
 		angname.push_back("phi"); angname.push_back("psi");
-		for(core::Size j=1; j<=2; ++j) {
-			for(core::Size ia=4, iamax=atomlist.size()-3; ia<=iamax; ++ia) {
-				if(atomlist[ia].first.rsd()!=loopindex) continue;
-				if(atomlist[ia].first.atomno() == loop_pose_copy.residue(loopindex).atom_index(at1list[j])) {
+		for ( core::Size j=1; j<=2; ++j ) {
+			for ( core::Size ia=4, iamax=atomlist.size()-3; ia<=iamax; ++ia ) {
+				if ( atomlist[ia].first.rsd()!=loopindex ) continue;
+				if ( atomlist[ia].first.atomno() == loop_pose_copy.residue(loopindex).atom_index(at1list[j]) ) {
 					core::Real angleval=0.0;
-					if(ia<iamax && atomlist[ia+1].first.rsd()==loopindex && atomlist[ia+1].first.atomno()==loop_pose_copy.residue(loopindex).atom_index(at2list[j]) ) { //Torsion going forward
+					if ( ia<iamax && atomlist[ia+1].first.rsd()==loopindex && atomlist[ia+1].first.atomno()==loop_pose_copy.residue(loopindex).atom_index(at2list[j]) ) { //Torsion going forward
 						numeric::dihedral_degrees (
 							loop_pose_copy.xyz(atomlist[ia-1].first),
 							loop_pose_copy.xyz(atomlist[ia].first),
@@ -536,7 +535,7 @@ void GeneralizedKICperturber::apply_perturb_dihedral_bbg(
 							angleval
 						);
 						torsions[ia]=angleval;
-					} else if (ia>4 && atomlist[ia-1].first.rsd()==loopindex && atomlist[ia-1].first.atomno()==loop_pose_copy.residue(loopindex).atom_index(at2list[j]) ) { //Torsion going backward
+					} else if ( ia>4 && atomlist[ia-1].first.rsd()==loopindex && atomlist[ia-1].first.atomno()==loop_pose_copy.residue(loopindex).atom_index(at2list[j]) ) { //Torsion going backward
 						numeric::dihedral_degrees (
 							loop_pose_copy.xyz(atomlist[ia+1].first),
 							loop_pose_copy.xyz(atomlist[ia].first),
@@ -546,7 +545,7 @@ void GeneralizedKICperturber::apply_perturb_dihedral_bbg(
 						);
 						torsions[ia-1]=angleval;
 					} else {
-						if(TR.Warning.visible()) {
+						if ( TR.Warning.visible() ) {
 							TR.Warning << "Warning! Residue " << residues[ir] << " was passed to GeneralizedKICperturber::apply_perturb_dihedral_bbg, but its " << angname[j] << " dihedral angle was not part of the chain of atoms to be closed." << std::endl;  TR.Warning.flush();
 						}
 					}
@@ -580,26 +579,26 @@ void GeneralizedKICperturber::apply_set_bondangle (
 	runtime_assert_string_msg( inputvalues_real.size() > 0, "Could not apply GeneralizedKICperturber::apply_set_bondangle, since no value for the bond angle was provided as input." );
 
 	bool separate_values = false; //Have separate bond angle values been provided for each bond angle in the list, or are we setting everything to one value?
-	if(inputvalues_real.size()>=bondanglelist.size()) {
+	if ( inputvalues_real.size()>=bondanglelist.size() ) {
 		separate_values = true;
-		if(inputvalues_real.size()>bondanglelist.size()) {
-			if(TR.Warning.visible()) TR.Warning << "Warning! Number of input values for set_bondangle pertruber effect exceeds the number of bond angles to be set.  Using only the first " << bondanglelist.size() << " values." << std::endl;
+		if ( inputvalues_real.size()>bondanglelist.size() ) {
+			if ( TR.Warning.visible() ) TR.Warning << "Warning! Number of input values for set_bondangle pertruber effect exceeds the number of bond angles to be set.  Using only the first " << bondanglelist.size() << " values." << std::endl;
 		}
-	} else if (inputvalues_real.size()!=1) {
+	} else if ( inputvalues_real.size()!=1 ) {
 		separate_values = false;
-		if(TR.Warning.visible()) TR.Warning << "Warning! Number of input values does not match the number of bond angles specified.  All angles will be set to the first value." << std::endl;
+		if ( TR.Warning.visible() ) TR.Warning << "Warning! Number of input values does not match the number of bond angles specified.  All angles will be set to the first value." << std::endl;
 	} else { //inputvalues_real.size()==1 and bondanglelist.size() > 1
-		if(TR.Debug.visible()) TR.Debug << "Setting all specified bond angles to " << inputvalues_real[1] << "." << std::endl;
+		if ( TR.Debug.visible() ) TR.Debug << "Setting all specified bond angles to " << inputvalues_real[1] << "." << std::endl;
 	}
 
-	for( core::Size i=1, imax=bondanglelist.size(); i<=imax; ++i ) { //Loop through each bond angle given as input
+	for ( core::Size i=1, imax=bondanglelist.size(); i<=imax; ++i ) { //Loop through each bond angle given as input
 		runtime_assert_string_msg( bondanglelist[i].size()==3 || bondanglelist[i].size()==1, "Error in GeneralizedKICperturber::apply_set_bondangle.  Either one or three AtomIDs must be provided to define a bond angle." );
 
 		utility::vector1 < core::id::AtomID > ang_atoms;
-		if(bondanglelist[i].size()==3) ang_atoms = bondanglelist[i]; //If three atoms are specified for this bond angle, use them.
-		else if (bondanglelist[i].size()==1) { //If only one atom is specified for this bond angle, we assume that the upstream and downstream atoms in the atom list are the other two atoms defining the angle.
-			for(core::Size j=2, jmax=atomlist.size()-1; j<=jmax; ++j) { //Find the upstream and downstream atoms:
-				if(bondanglelist[i][1]==atomlist[j].first) {
+		if ( bondanglelist[i].size()==3 ) ang_atoms = bondanglelist[i]; //If three atoms are specified for this bond angle, use them.
+		else if ( bondanglelist[i].size()==1 ) { //If only one atom is specified for this bond angle, we assume that the upstream and downstream atoms in the atom list are the other two atoms defining the angle.
+			for ( core::Size j=2, jmax=atomlist.size()-1; j<=jmax; ++j ) { //Find the upstream and downstream atoms:
+				if ( bondanglelist[i][1]==atomlist[j].first ) {
 					ang_atoms.push_back( atomlist[j-1].first );
 					ang_atoms.push_back( atomlist[j].first );
 					ang_atoms.push_back( atomlist[j+1].first );
@@ -610,23 +609,23 @@ void GeneralizedKICperturber::apply_set_bondangle (
 
 		//Find this bond angle in the atom list:
 		core::Size bondangle_index = 0;
-		for(core::Size j=3, jmax=atomlist.size()-2; j<=jmax; ++j) { //Loop through all atoms in the chain of atoms to be closed (excluding the anchors).
-			if(ang_atoms[2]==atomlist[j].first) {
-				if( ang_atoms[1]==atomlist[j-1].first && ang_atoms[3]==atomlist[j+1].first ) { //bond angle going forward
+		for ( core::Size j=3, jmax=atomlist.size()-2; j<=jmax; ++j ) { //Loop through all atoms in the chain of atoms to be closed (excluding the anchors).
+			if ( ang_atoms[2]==atomlist[j].first ) {
+				if ( ang_atoms[1]==atomlist[j-1].first && ang_atoms[3]==atomlist[j+1].first ) { //bond angle going forward
 					bondangle_index=j;
 				} else if ( ang_atoms[1]==atomlist[j+1].first && ang_atoms[3]==atomlist[j-1].first ) { //bond angle going backward
 					bondangle_index=j;
 				}
 			}
-			if(bondangle_index > 0) break;
+			if ( bondangle_index > 0 ) break;
 		}
 		runtime_assert_string_msg(bondangle_index > 0, "Error in GeneralizedKICperturber::apply_set_bondangle.  The bond angle specified was not found in the chain of atoms to be closed.");
 		bondangles[bondangle_index] = (separate_values ? inputvalues_real[i] : inputvalues_real[1]); //Set the desired bond angle to the user-specified value.
 	}
 
-  if(TR.Warning.visible()) TR.Warning.flush();
-  if(TR.Debug.visible()) TR.Debug.flush();
-  if(TR.visible()) TR.flush();
+	if ( TR.Warning.visible() ) TR.Warning.flush();
+	if ( TR.Debug.visible() ) TR.Debug.flush();
+	if ( TR.visible() ) TR.flush();
 
 	return;
 }
@@ -651,40 +650,40 @@ void GeneralizedKICperturber::apply_set_bondlength (
 	runtime_assert_string_msg( inputvalues_real.size() > 0, "Could not apply GeneralizedKICperturber::apply_set_bondlength, since no value for the bond length was provided as input." );
 
 	bool separate_values = false; //Have separate bond length values been provided for each bond length in the list, or are we setting everything to one value?
-	if(inputvalues_real.size()>=bondlengthlist.size()) {
+	if ( inputvalues_real.size()>=bondlengthlist.size() ) {
 		separate_values = true;
-		if(inputvalues_real.size()>bondlengthlist.size()) {
-			if(TR.Warning.visible()) TR.Warning << "Warning! Number of input values for set_bondlength pertruber effect exceeds the number of bond lengths to be set.  Using only the first " << bondlengthlist.size() << " values." << std::endl;
+		if ( inputvalues_real.size()>bondlengthlist.size() ) {
+			if ( TR.Warning.visible() ) TR.Warning << "Warning! Number of input values for set_bondlength pertruber effect exceeds the number of bond lengths to be set.  Using only the first " << bondlengthlist.size() << " values." << std::endl;
 		}
-	} else if (inputvalues_real.size()!=1) {
+	} else if ( inputvalues_real.size()!=1 ) {
 		separate_values = false;
-		if(TR.Warning.visible()) TR.Warning << "Warning! Number of input values does not match the number of bond lengths specified.  All lengths will be set to the first value." << std::endl;
+		if ( TR.Warning.visible() ) TR.Warning << "Warning! Number of input values does not match the number of bond lengths specified.  All lengths will be set to the first value." << std::endl;
 	} else { //inputvalues_real.size()==1 and bondlengthlist.size() > 1
-		if(TR.Debug.visible()) TR.Debug << "Setting all specified bond lengths to " << inputvalues_real[1] << "." << std::endl;
+		if ( TR.Debug.visible() ) TR.Debug << "Setting all specified bond lengths to " << inputvalues_real[1] << "." << std::endl;
 	}
 
-	for( core::Size i=1, imax=bondlengthlist.size(); i<=imax; ++i ) { //Loop through each bond length given as input
+	for ( core::Size i=1, imax=bondlengthlist.size(); i<=imax; ++i ) { //Loop through each bond length given as input
 		runtime_assert_string_msg( bondlengthlist[i].size()==2, "Error in GeneralizedKICperturber::apply_set_bondlength.  Two AtomIDs must be provided to define a bond length." );
 
 		//Find this bond length in the atom list:
 		core::Size bondlength_index = 0;
-		for(core::Size j=3, jmax=atomlist.size()-2; j<=jmax; ++j) { //Loop through all atoms in the chain of atoms to be closed (excluding the anchors).
-			if(bondlengthlist[i][1]==atomlist[j].first) {
-				if(j<jmax && bondlengthlist[i][2]==atomlist[j+1].first ) { //bond length going forward
+		for ( core::Size j=3, jmax=atomlist.size()-2; j<=jmax; ++j ) { //Loop through all atoms in the chain of atoms to be closed (excluding the anchors).
+			if ( bondlengthlist[i][1]==atomlist[j].first ) {
+				if ( j<jmax && bondlengthlist[i][2]==atomlist[j+1].first ) { //bond length going forward
 					bondlength_index=j;
-				} else if (j>3 && bondlengthlist[i][2]==atomlist[j-1].first ) { //bond length going backward
+				} else if ( j>3 && bondlengthlist[i][2]==atomlist[j-1].first ) { //bond length going backward
 					bondlength_index=j-1;
 				}
 			}
-			if(bondlength_index > 0) break;
+			if ( bondlength_index > 0 ) break;
 		}
 		runtime_assert_string_msg(bondlength_index > 0, "Error in GeneralizedKICperturber::apply_set_bondlength.  The bond length specified was not found in the chain of atoms to be closed.");
 		bondlengths[bondlength_index] = (separate_values ? inputvalues_real[i] : inputvalues_real[1]); //Set the desired bond length to the user-specified value.
 	}
 
-  if(TR.Warning.visible()) TR.Warning.flush();
-  if(TR.Debug.visible()) TR.Debug.flush();
-  if(TR.visible()) TR.flush();
+	if ( TR.Warning.visible() ) TR.Warning.flush();
+	if ( TR.Debug.visible() ) TR.Debug.flush();
+	if ( TR.visible() ) TR.flush();
 
 	return;
 } //set_bondlength
@@ -709,42 +708,44 @@ void GeneralizedKICperturber::apply_set_backbone_bin (
 	utility::vector1< core::Real > &torsions //desired torsions for each atom (input/output)
 ) const {
 	//Initial checks:
-	if(!bin_transition_calculator_)
+	if ( !bin_transition_calculator_ ) {
 		utility_exit_with_message( "In GeneralizedKICperturber::apply_set_backbone_bin(): The BinTransitionCalculator object has not been created!  This should be impossible -- consult a developer or a mortician." );
-	if(!bin_transition_calculator_->bin_params_loaded())
+	}
+	if ( !bin_transition_calculator_->bin_params_loaded() ) {
 		utility_exit_with_message( "In GeneralizedKICperturber::apply_set_backbone_bin(): The BinTransitionCalculator object has not loaded a bin params file!" );
-	if(bin_=="") utility_exit_with_message( "No bin has been specified!  Failing in GeneralizedKICperturber::apply_set_backbone_bin()." );
+	}
+	if ( bin_=="" ) utility_exit_with_message( "No bin has been specified!  Failing in GeneralizedKICperturber::apply_set_backbone_bin()." );
 
 	core::Size const rescount( residues.size() );
-	if(rescount<1) utility_exit_with_message( "In GeneralizedKICperturber::apply_set_backbone_bin(): no residues have been specified!  Failing gracelessly." );
+	if ( rescount<1 ) utility_exit_with_message( "In GeneralizedKICperturber::apply_set_backbone_bin(): no residues have been specified!  Failing gracelessly." );
 	core::Size const nres( original_pose.n_residue() );
 
 	utility::vector1 <core::Size> loop_indices; //The indices in the loop of the defined residues.
 	loop_indices.resize( rescount, 0 );
-	for(core::Size ir=1, irmax=rescount; ir<=irmax; ++ir) { //Loop through all residues in the residues list
+	for ( core::Size ir=1, irmax=rescount; ir<=irmax; ++ir ) { //Loop through all residues in the residues list
 		//Confirm that this residue exists in the pose.
-		if( !(residues[ir]>0 && residues[ir]<=nres) ) utility_exit_with_message("In GeneralizedKICperturber::apply_set_backbone_bin(): At least one of the residues specified does not exist in the pose!" );
+		if ( !(residues[ir]>0 && residues[ir]<=nres) ) utility_exit_with_message("In GeneralizedKICperturber::apply_set_backbone_bin(): At least one of the residues specified does not exist in the pose!" );
 		//Get this residue's index in the loop pose:
 		core::Size const loopindex = get_loop_index(residues[ir], residue_map);
 		loop_indices[ir]=loopindex;
-		if(ir>1) {
-			for(core::Size jr=1, jrmax=ir-1; jr<=jrmax; ++jr) {
-				if( loop_indices[jr]==loopindex ) utility_exit_with_message( "In GeneralizedKICperturber::apply_set_backbone_bin(): The same residue cannot be specified twice!" ) ;
+		if ( ir>1 ) {
+			for ( core::Size jr=1, jrmax=ir-1; jr<=jrmax; ++jr ) {
+				if ( loop_indices[jr]==loopindex ) utility_exit_with_message( "In GeneralizedKICperturber::apply_set_backbone_bin(): The same residue cannot be specified twice!" ) ;
 			}
 		}
 	}
-	
+
 	utility::vector1 < utility::vector1 < core::Real > > mainchain_torsions; //Vector of mainchain torsion values that will be populated by the BinTransitionCalculator object.
 	bin_transition_calculator_->random_mainchain_torsions_from_bin( bin_, loop_pose.conformation(), loop_indices, mainchain_torsions ); //Get the BinTransitionCalculator to draw a random sequence of torsions from the specified bin.
 
 	//Generate list of atoms defining the mainchain torsions to set:
 	utility::vector1 < utility::vector1 <core::id::AtomID> > dihedral_list;
 	utility::vector1 < core::Real > inputvalues_real;
-	for(core::Size i=1, imax=loop_indices.size(); i<=imax; ++i) {
-		for(core::Size j=1, jmax=mainchain_torsions[i].size(); j<=jmax; ++j) {
+	for ( core::Size i=1, imax=loop_indices.size(); i<=imax; ++i ) {
+		for ( core::Size j=1, jmax=mainchain_torsions[i].size(); j<=jmax; ++j ) {
 			utility::vector1 < core::id::AtomID > cur_atomid_list;
 			cur_atomid_list.push_back( core::id::AtomID( loop_pose.conformation().residue(loop_indices[i]).mainchain_atoms()[j], loop_indices[i] ) );
-			if(j<jmax) {
+			if ( j<jmax ) {
 				cur_atomid_list.push_back( core::id::AtomID( loop_pose.conformation().residue(loop_indices[i]).mainchain_atoms()[j+1], loop_indices[i] ) );
 			} else { //For the last torsion, we have to look up what the last mainchain atom is bonded to.
 				core::conformation::Residue const &cur_res( loop_pose.conformation().residue(loop_indices[i]) );
@@ -752,8 +753,8 @@ void GeneralizedKICperturber::apply_set_backbone_bin (
 				core::Size const other_conn_id( cur_res.connect_map( cur_res.type().upper_connect_id() ).connid() ); //Index of the connection on the other residue.
 				cur_atomid_list.push_back(
 					core::id::AtomID (
-						loop_pose.conformation().residue(other_res).residue_connect_atom_index( other_conn_id  ), //Other atom that this one is connected to at its upper connection
-						other_res //Other residue that this one is connected to at its upper connection.
+					loop_pose.conformation().residue(other_res).residue_connect_atom_index( other_conn_id  ), //Other atom that this one is connected to at its upper connection
+					other_res //Other residue that this one is connected to at its upper connection.
 					)
 				);
 			}
@@ -771,7 +772,7 @@ void GeneralizedKICperturber::apply_set_backbone_bin (
 /// @details This checks whether each residue is an alpha-amino acid.
 /// @param[in] original_pose - The input pose.
 /// @param[in] loop_pose - A pose that is just the loop to be closed (possibly with other things hanging off of it).
-/// @param[in] residues - A vector of the indices of residues affected by this perturber.  Note that 
+/// @param[in] residues - A vector of the indices of residues affected by this perturber.  Note that
 /// @param[in] atomlist - A vector of pairs of AtomID, xyz coordinate.  Residue indices are based on the loop pose, NOT the original pose.
 /// @param[in] residue_map - A vector of pairs of (loop pose index, original pose index).
 /// @param[in] tail_residue_map - A vector of pairs of (loop pose index of tail residue, original pose index of tail residue).
@@ -782,8 +783,8 @@ void GeneralizedKICperturber::apply_randomize_alpha_backbone_by_rama(
 	utility::vector1 <core::Size> const &residues,
 	utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
 	utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map, //Mapping of (loop_pose, original_pose).
-		utility::vector1 < std::pair < core::Size, core::Size > > const &/*tail_residue_map*/, //Mapping of (tail residue in loop_pose, tail residue in original_pose).
-		utility::vector1< core::Real > &torsions //desired torsions for each atom (input/output)
+	utility::vector1 < std::pair < core::Size, core::Size > > const &/*tail_residue_map*/, //Mapping of (tail residue in loop_pose, tail residue in original_pose).
+	utility::vector1< core::Real > &torsions //desired torsions for each atom (input/output)
 ) const {
 	using namespace protocols::generalized_kinematic_closure;
 
@@ -798,12 +799,12 @@ void GeneralizedKICperturber::apply_randomize_alpha_backbone_by_rama(
 	//Make a copy of the loop_pose
 	core::pose::Pose loop_pose_copy = loop_pose; //TODO -- switch this to just a conformation.
 
-	for(core::Size ir=1, irmax=residues.size(); ir<=irmax; ++ir) {
+	for ( core::Size ir=1, irmax=residues.size(); ir<=irmax; ++ir ) {
 		runtime_assert_string_msg( residues[ir] <= nres, "Unable to apply randomize_alpha_backbone_by_rama perturbation.  Residue list includes residues that are not in the original pose." );
 
 		//Check for alpha amino acids:
-		if(!original_pose.residue(residues[ir]).type().is_alpha_aa())	{
-			if(TR.Warning.visible()) {
+		if ( !original_pose.residue(residues[ir]).type().is_alpha_aa() ) {
+			if ( TR.Warning.visible() ) {
 				TR.Warning << "Warning! Residue " << residues[ir] << " was passed to GeneralizedKICperturber::apply_randomize_alpha_backbone_by_rama, but this residue is not an alpha-amino acid.  Skipping." << std::endl;
 				TR.Warning.flush();
 			}
@@ -828,12 +829,12 @@ void GeneralizedKICperturber::apply_randomize_alpha_backbone_by_rama(
 		at1list.push_back("N"); at1list.push_back("CA");
 		at2list.push_back("CA"); at2list.push_back("C");
 		angname.push_back("phi"); angname.push_back("psi");
-		for(core::Size j=1; j<=2; ++j) {
-			for(core::Size ia=4, iamax=atomlist.size()-3; ia<=iamax; ++ia) {
-				if(atomlist[ia].first.rsd()!=loopindex) continue;
-				if(atomlist[ia].first.atomno() == loop_pose_copy.residue(loopindex).atom_index(at1list[j])) {
+		for ( core::Size j=1; j<=2; ++j ) {
+			for ( core::Size ia=4, iamax=atomlist.size()-3; ia<=iamax; ++ia ) {
+				if ( atomlist[ia].first.rsd()!=loopindex ) continue;
+				if ( atomlist[ia].first.atomno() == loop_pose_copy.residue(loopindex).atom_index(at1list[j]) ) {
 					core::Real angleval=0.0;
-					if(ia<iamax && atomlist[ia+1].first.rsd()==loopindex && atomlist[ia+1].first.atomno()==loop_pose_copy.residue(loopindex).atom_index(at2list[j]) ) { //Torsion going forward
+					if ( ia<iamax && atomlist[ia+1].first.rsd()==loopindex && atomlist[ia+1].first.atomno()==loop_pose_copy.residue(loopindex).atom_index(at2list[j]) ) { //Torsion going forward
 						numeric::dihedral_degrees (
 							loop_pose_copy.xyz(atomlist[ia-1].first),
 							loop_pose_copy.xyz(atomlist[ia].first),
@@ -842,7 +843,7 @@ void GeneralizedKICperturber::apply_randomize_alpha_backbone_by_rama(
 							angleval
 						);
 						torsions[ia]=angleval;
-					} else if (ia>4 && atomlist[ia-1].first.rsd()==loopindex && atomlist[ia-1].first.atomno()==loop_pose_copy.residue(loopindex).atom_index(at2list[j]) ) { //Torsion going backward
+					} else if ( ia>4 && atomlist[ia-1].first.rsd()==loopindex && atomlist[ia-1].first.atomno()==loop_pose_copy.residue(loopindex).atom_index(at2list[j]) ) { //Torsion going backward
 						numeric::dihedral_degrees (
 							loop_pose_copy.xyz(atomlist[ia+1].first),
 							loop_pose_copy.xyz(atomlist[ia].first),
@@ -852,7 +853,7 @@ void GeneralizedKICperturber::apply_randomize_alpha_backbone_by_rama(
 						);
 						torsions[ia-1]=angleval;
 					} else {
-						if(TR.Debug.visible()) TR.Debug << "Warning! Residue " << residues[ir] << " was passed to GeneralizedKICperturber::apply_randomize_alpha_backbone_by_rama, but its " << angname[j] << " dihedral angle was not part of the chain of atoms to be closed." << std::endl;
+						if ( TR.Debug.visible() ) TR.Debug << "Warning! Residue " << residues[ir] << " was passed to GeneralizedKICperturber::apply_randomize_alpha_backbone_by_rama, but its " << angname[j] << " dihedral angle was not part of the chain of atoms to be closed." << std::endl;
 					}
 					break;
 				}
@@ -861,9 +862,9 @@ void GeneralizedKICperturber::apply_randomize_alpha_backbone_by_rama(
 
 	}
 
-	if(TR.Warning.visible()) TR.Warning.flush();
-	if(TR.Debug.visible()) TR.Debug.flush();
-	if(TR.visible()) TR.flush();
+	if ( TR.Warning.visible() ) TR.Warning.flush();
+	if ( TR.Debug.visible() ) TR.Debug.flush();
+	if ( TR.visible() ) TR.flush();
 
 	return;
 } //apply_randomize_alpha_backbone_by_rama
@@ -893,44 +894,44 @@ void GeneralizedKICperturber::apply_randomize_backbone_by_bins(
 
 	core::Size const rescount( residues.size() ); //Number of residues that have been defined for this perturber
 	core::Size const nres( original_pose.n_residue() ); //Number of residues in the original pose
-	
+
 	runtime_assert_string_msg(rescount>0, "In GeneralizedKICperturber::apply_randomize_backbone_by_bins(): At least one residue must be defined!");
-	
+
 	//Confirm that the residues are contiguous, and conventionally joined:
 	utility::vector1 <core::Size> loop_indices; //The indices in the loop of the defined residues.
 	loop_indices.resize( rescount, 0 );
-	for(core::Size ir=1, irmax=rescount; ir<=irmax; ++ir) { //Loop through all residues in the residues list
+	for ( core::Size ir=1, irmax=rescount; ir<=irmax; ++ir ) { //Loop through all residues in the residues list
 		//Confirm that this residue exists in the pose.
 		runtime_assert_string_msg( residues[ir]>0 && residues[ir]<=nres, "In GeneralizedKICperturber::apply_randomize_backbone_by_bins(): At least one of the residues specified does not exist in the pose!" );
-	
+
 		//Get this residue's index in the loop pose:
 		core::Size const loopindex = get_loop_index(residues[ir], residue_map);
 		loop_indices[ir]=loopindex;
-		if(ir>1) { for(core::Size jr=1, jrmax=ir-1; jr<=jrmax; ++jr) { runtime_assert_string_msg( loop_indices[jr]!=loopindex, "In GeneralizedKICperturber::apply_randomize_backbone_by_bins(): The same residue cannot be specified twice!" ); } }
+		if ( ir>1 ) { for ( core::Size jr=1, jrmax=ir-1; jr<=jrmax; ++jr ) { runtime_assert_string_msg( loop_indices[jr]!=loopindex, "In GeneralizedKICperturber::apply_randomize_backbone_by_bins(): The same residue cannot be specified twice!" ); } }
 		//TR << "Current loop index is " << loopindex << std::endl; TR.flush(); //DELETE ME
 	}
 	std::string const errmsg( "In GeneralizedKICperturber::apply_randomize_backbone_by_bins(): The selected residues are not regularly connected through mainchain polymer bonds!" );
-	for(core::Size ir=1, irmax=rescount; ir<=irmax; ++ir) {
-		if(ir==1) {
-			if(irmax>1) runtime_assert_string_msg( loop_pose.residue(loop_indices[ir]).is_polymer_bonded( loop_indices[ir+1] ), errmsg + "  Problem is with start residue." );
-		} else if(ir==irmax) {
-			if(irmax>1) runtime_assert_string_msg( loop_pose.residue(loop_indices[ir]).is_polymer_bonded( loop_indices[ir-1] ), errmsg + "  Problem is with end residue." );
+	for ( core::Size ir=1, irmax=rescount; ir<=irmax; ++ir ) {
+		if ( ir==1 ) {
+			if ( irmax>1 ) runtime_assert_string_msg( loop_pose.residue(loop_indices[ir]).is_polymer_bonded( loop_indices[ir+1] ), errmsg + "  Problem is with start residue." );
+		} else if ( ir==irmax ) {
+			if ( irmax>1 ) runtime_assert_string_msg( loop_pose.residue(loop_indices[ir]).is_polymer_bonded( loop_indices[ir-1] ), errmsg + "  Problem is with end residue." );
 		} else {
 			runtime_assert_string_msg( loop_pose.residue(loop_indices[ir]).is_polymer_bonded( loop_indices[ir-1] ) && loop_pose.residue(loop_indices[ir]).is_polymer_bonded( loop_indices[ir+1] ) , errmsg + "  Problem is with a middle residue." );
 		}
 	}
-	
+
 	utility::vector1 < utility::vector1 < core::Real > > mainchain_torsions; //Vector of mainchain torsion values that will be populated by the BinTransitionCalculator object.
 	bin_transition_calculator_->random_mainchain_torsions_from_bins( loop_pose.conformation(), loop_indices, mainchain_torsions ); //Get the BinTransitionCalculator to generate a random sequence of bins, and then draw a random sequence of torsions from it.
 
 	//Generate list of atoms defining the mainchain torsions to set:
 	utility::vector1 < utility::vector1 <core::id::AtomID> > dihedral_list;
 	utility::vector1 < core::Real > inputvalues_real;
-	for(core::Size i=1, imax=loop_indices.size(); i<=imax; ++i) {
-		for(core::Size j=1, jmax=mainchain_torsions[i].size(); j<=jmax; ++j) {
+	for ( core::Size i=1, imax=loop_indices.size(); i<=imax; ++i ) {
+		for ( core::Size j=1, jmax=mainchain_torsions[i].size(); j<=jmax; ++j ) {
 			utility::vector1 < core::id::AtomID > cur_atomid_list;
 			cur_atomid_list.push_back( core::id::AtomID( loop_pose.conformation().residue(loop_indices[i]).mainchain_atoms()[j], loop_indices[i] ) );
-			if(j<jmax) {
+			if ( j<jmax ) {
 				cur_atomid_list.push_back( core::id::AtomID( loop_pose.conformation().residue(loop_indices[i]).mainchain_atoms()[j+1], loop_indices[i] ) );
 			} else { //For the last torsion, we have to look up what the last mainchain atom is bonded to.
 				core::conformation::Residue const &cur_res( loop_pose.conformation().residue(loop_indices[i]) );
@@ -938,8 +939,8 @@ void GeneralizedKICperturber::apply_randomize_backbone_by_bins(
 				core::Size const other_conn_id( cur_res.connect_map( cur_res.type().upper_connect_id() ).connid() ); //Index of the connection on the other residue.
 				cur_atomid_list.push_back(
 					core::id::AtomID (
-						loop_pose.conformation().residue(other_res).residue_connect_atom_index( other_conn_id  ), //Other atom that this one is connected to at its upper connection
-						other_res //Other residue that this one is connected to at its upper connection.
+					loop_pose.conformation().residue(other_res).residue_connect_atom_index( other_conn_id  ), //Other atom that this one is connected to at its upper connection
+					other_res //Other residue that this one is connected to at its upper connection.
 					)
 				);
 			}
@@ -983,34 +984,34 @@ void GeneralizedKICperturber::apply_perturb_backbone_by_bins(
 
 	core::Size const rescount( residues.size() ); //Number of residues that have been defined for this perturber
 	core::Size const nres( original_pose.n_residue() ); //Number of residues in the original pose
-	
+
 	runtime_assert_string_msg(rescount>0, "In GeneralizedKICperturber::apply_perturb_backbone_by_bins(): At least one residue must be defined!");
 
 	//Confirm that the residues are contiguous, and conventionally joined:
 	utility::vector1 <core::Size> loop_indices; //The indices in the loop of the defined residues.
 	loop_indices.resize( rescount, 0 );
-	for(core::Size ir=1, irmax=rescount; ir<=irmax; ++ir) { //Loop through all residues in the residues list
+	for ( core::Size ir=1, irmax=rescount; ir<=irmax; ++ir ) { //Loop through all residues in the residues list
 		//Confirm that this residue exists in the pose.
 		runtime_assert_string_msg( residues[ir]>0 && residues[ir]<=nres, "In GeneralizedKICperturber::apply_perturb_backbone_by_bins(): At least one of the residues specified does not exist in the pose!" );
-	
+
 		//Get this residue's index in the loop pose:
 		core::Size const loopindex = get_loop_index(residues[ir], residue_map);
 		loop_indices[ir]=loopindex;
-		if(ir>1) { for(core::Size jr=1, jrmax=ir-1; jr<=jrmax; ++jr) { runtime_assert_string_msg( loop_indices[jr]!=loopindex, "In GeneralizedKICperturber::apply_perturb_backbone_by_bins(): The same residue cannot be specified twice!" ); } }
+		if ( ir>1 ) { for ( core::Size jr=1, jrmax=ir-1; jr<=jrmax; ++jr ) { runtime_assert_string_msg( loop_indices[jr]!=loopindex, "In GeneralizedKICperturber::apply_perturb_backbone_by_bins(): The same residue cannot be specified twice!" ); } }
 		//TR << "Current loop index is " << loopindex << std::endl; TR.flush(); //DELETE ME
 	}
 	std::string const errmsg( "In GeneralizedKICperturber::apply_perturb_backbone_by_bins(): The selected residues are not regularly connected through mainchain polymer bonds!" );
-	for(core::Size ir=1, irmax=rescount; ir<=irmax; ++ir) {
-		if(ir==1) {
-			if(irmax>1) runtime_assert_string_msg( loop_pose.residue(loop_indices[ir]).is_polymer_bonded( loop_indices[ir+1] ), errmsg + "  Problem is with start residue." );
-		} else if(ir==irmax) {
-			if(irmax>1) runtime_assert_string_msg( loop_pose.residue(loop_indices[ir]).is_polymer_bonded( loop_indices[ir-1] ), errmsg + "  Problem is with end residue." );
+	for ( core::Size ir=1, irmax=rescount; ir<=irmax; ++ir ) {
+		if ( ir==1 ) {
+			if ( irmax>1 ) runtime_assert_string_msg( loop_pose.residue(loop_indices[ir]).is_polymer_bonded( loop_indices[ir+1] ), errmsg + "  Problem is with start residue." );
+		} else if ( ir==irmax ) {
+			if ( irmax>1 ) runtime_assert_string_msg( loop_pose.residue(loop_indices[ir]).is_polymer_bonded( loop_indices[ir-1] ), errmsg + "  Problem is with end residue." );
 		} else {
 			runtime_assert_string_msg( loop_pose.residue(loop_indices[ir]).is_polymer_bonded( loop_indices[ir-1] ) && loop_pose.residue(loop_indices[ir]).is_polymer_bonded( loop_indices[ir+1] ) , errmsg + "  Problem is with a middle residue." );
 		}
 	}
-	
-	for(core::Size irepeat=1; irepeat<=n_iterations; ++irepeat) { //Loop through the iterations
+
+	for ( core::Size irepeat=1; irepeat<=n_iterations; ++irepeat ) { //Loop through the iterations
 		utility::vector1 < core::Real > mainchain_torsions; //Vector of mainchain torsion values for a single residue that will be populated by the BinTransitionCalculator object.
 		core::Size res_index( loop_indices[ numeric::random::rg().random_range( 1, loop_indices.size() ) ] ); //Index (in the loop) of the residue that will be set my the mover this iteration.  This is randomly drawn from the range [startres, endres] inclusive.
 
@@ -1022,10 +1023,10 @@ void GeneralizedKICperturber::apply_perturb_backbone_by_bins(
 
 		//Generate list of atoms defining the mainchain torsions to set:
 		utility::vector1 < utility::vector1 <core::id::AtomID> > dihedral_list;
-		for(core::Size j=1, jmax=mainchain_torsions.size(); j<=jmax; ++j) {
+		for ( core::Size j=1, jmax=mainchain_torsions.size(); j<=jmax; ++j ) {
 			utility::vector1 < core::id::AtomID > cur_atomid_list;
 			cur_atomid_list.push_back( core::id::AtomID( loop_pose.conformation().residue(res_index).mainchain_atoms()[j], res_index ) );
-			if(j<jmax) {
+			if ( j<jmax ) {
 				cur_atomid_list.push_back( core::id::AtomID( loop_pose.conformation().residue(res_index).mainchain_atoms()[j+1], res_index ) );
 			} else { //For the last torsion, we have to look up what the last mainchain atom is bonded to.
 				core::conformation::Residue const &cur_res( loop_pose.conformation().residue(res_index) );
@@ -1033,8 +1034,8 @@ void GeneralizedKICperturber::apply_perturb_backbone_by_bins(
 				core::Size const other_conn_id( cur_res.connect_map( cur_res.type().upper_connect_id() ).connid() ); //Index of the connection on the other residue.
 				cur_atomid_list.push_back(
 					core::id::AtomID (
-						loop_pose.conformation().residue(other_res).residue_connect_atom_index( other_conn_id  ), //Other atom that this one is connected to at its upper connection
-						other_res //Other residue that this one is connected to at its upper connection.
+					loop_pose.conformation().residue(other_res).residue_connect_atom_index( other_conn_id  ), //Other atom that this one is connected to at its upper connection
+					other_res //Other residue that this one is connected to at its upper connection.
 					)
 				);
 			}
@@ -1043,7 +1044,7 @@ void GeneralizedKICperturber::apply_perturb_backbone_by_bins(
 
 		apply_set_dihedral ( dihedral_list, atomlist, mainchain_torsions, torsions, 0); //Recycle this function.
 	} //Iterate until the number of iterations is reached
-	
+
 	return;
 }
 
@@ -1060,7 +1061,7 @@ void GeneralizedKICperturber::apply_sample_cis_peptide_bond(
 	utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
 	utility::vector1 <core::Size> const &residues,
 	utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map, //Mapping of (loop_pose, original_pose).
-		utility::vector1 < std::pair < core::Size, core::Size > > const &/*tail_residue_map*/, //Mapping of (tail residue in loop_pose, tail residue in original_pose).
+	utility::vector1 < std::pair < core::Size, core::Size > > const &/*tail_residue_map*/, //Mapping of (tail residue in loop_pose, tail residue in original_pose).
 	utility::vector1< core::Real > &torsions //desired torsions for each atom (input/output)
 ) const {
 	using namespace protocols::generalized_kinematic_closure;
@@ -1070,48 +1071,48 @@ void GeneralizedKICperturber::apply_sample_cis_peptide_bond(
 
 	//Cis probability:
 	core::Real cis_prob = 0.1;
-	if(inputvalues_real_.size()>0) {
+	if ( inputvalues_real_.size()>0 ) {
 		cis_prob=inputvalues_real_[1];
-		if(inputvalues_real_.size()>1) {
-			if(TR.Warning.visible()) TR.Warning << "Warning!  Multiple input values were passed to a sample_cis_peptide_bond perturber.  The first value is being used as the probability of a cis peptide bond." << std::endl;
+		if ( inputvalues_real_.size()>1 ) {
+			if ( TR.Warning.visible() ) TR.Warning << "Warning!  Multiple input values were passed to a sample_cis_peptide_bond perturber.  The first value is being used as the probability of a cis peptide bond." << std::endl;
 		}
 	}
 
-	for(core::Size ir=1; ir<=nres; ++ir) { //Loop through all specified residues.
+	for ( core::Size ir=1; ir<=nres; ++ir ) { //Loop through all specified residues.
 		core::Size const curres = get_loop_index(residues[ir], residue_map);
-		if(loop_pose.residue(curres).type().is_alpha_aa() || loop_pose.residue(curres).type().is_beta_aa() ) { //If this is either an alpha- or a beta-amino acid.
+		if ( loop_pose.residue(curres).type().is_alpha_aa() || loop_pose.residue(curres).type().is_beta_aa() ) { //If this is either an alpha- or a beta-amino acid.
 			core::Size omegaindex=0;
-			for(core::Size ia=4, iamax=atomlist.size()-3; ia<=iamax; ++ia) { //Loop through the atom list and find the appropriate omega value
-				if(atomlist[ia].first.rsd()!=curres) continue; //First find an atom with the current residue number.
+			for ( core::Size ia=4, iamax=atomlist.size()-3; ia<=iamax; ++ia ) { //Loop through the atom list and find the appropriate omega value
+				if ( atomlist[ia].first.rsd()!=curres ) continue; //First find an atom with the current residue number.
 				//TR << "Found residue." << std::endl; TR.flush(); //DELETE ME
-				if(loop_pose.residue(atomlist[ia].first.rsd()).atom_index("C") == atomlist[ia].first.atomno()) { //If we've found the carbonyl carbon
+				if ( loop_pose.residue(atomlist[ia].first.rsd()).atom_index("C") == atomlist[ia].first.atomno() ) { //If we've found the carbonyl carbon
 					//TR << "Found carbonyl carbon." << std::endl; TR.flush(); //DELETE ME
-					if(loop_pose.residue(atomlist[ia+1].first.rsd()).atom_index("N") == atomlist[ia+1].first.atomno()) { //Omega going forward
+					if ( loop_pose.residue(atomlist[ia+1].first.rsd()).atom_index("N") == atomlist[ia+1].first.atomno() ) { //Omega going forward
 						omegaindex=ia;
 						break;
-					} else if( loop_pose.residue(atomlist[ia-1].first.rsd()).atom_index("N") == atomlist[ia-1].first.atomno() ) { //Omega going backward
+					} else if ( loop_pose.residue(atomlist[ia-1].first.rsd()).atom_index("N") == atomlist[ia-1].first.atomno() ) { //Omega going backward
 						omegaindex=ia-1;
 						break;
 					}
 				}
 			}
 
-			if(omegaindex!=0) { //If omega was found.
-				if(numeric::random::rg().uniform() < cis_prob) { //Die-roll to decide whether to set this to a cis peptide bond
+			if ( omegaindex!=0 ) { //If omega was found.
+				if ( numeric::random::rg().uniform() < cis_prob ) { //Die-roll to decide whether to set this to a cis peptide bond
 					torsions[omegaindex]=0.0; //Set to a cis peptide bond.
 				}
 			} else { //Else if omega wasn't found:
-				if(TR.Warning.visible()) TR.Warning<<"Warning!  No omega angle was found for residue " << residues[ir] << " in the chain of atoms to close by GeneralizedKIC." << std::endl;
+				if ( TR.Warning.visible() ) TR.Warning<<"Warning!  No omega angle was found for residue " << residues[ir] << " in the chain of atoms to close by GeneralizedKIC." << std::endl;
 			}
 
 		} else { //If this is neither an alpha- nor a beta-amino acid.
-			if(TR.Warning.visible()) TR.Warning << "Warning!  Residue " << residues[ir] << " was passed to a sample_cis_peptide_bond perturber, but this residue is neither an alpha- nor a beta-amino acid.  Skipping." << std::endl;
+			if ( TR.Warning.visible() ) TR.Warning << "Warning!  Residue " << residues[ir] << " was passed to a sample_cis_peptide_bond perturber, but this residue is neither an alpha- nor a beta-amino acid.  Skipping." << std::endl;
 		}
 	}
 
-	if(TR.visible()) TR.flush();
-	if(TR.Warning.visible()) TR.Warning.flush();
-	if(TR.Debug.visible()) TR.Debug.flush();
+	if ( TR.visible() ) TR.flush();
+	if ( TR.Warning.visible() ) TR.Warning.flush();
+	if ( TR.Debug.visible() ) TR.Debug.flush();
 
 	return;
 }

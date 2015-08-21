@@ -116,24 +116,24 @@ public:
 	void
 	initialize( pose::Pose const & pose );
 
-  // Setter functions
-  void
-  set_fcen6( Size const seqpos, Real value )
-  {
-    fcen6_[ seqpos ] = value;
-  }
+	// Setter functions
+	void
+	set_fcen6( Size const seqpos, Real value )
+	{
+		fcen6_[ seqpos ] = value;
+	}
 
-  void
-  set_fcen10( Size const seqpos, Real value )
-  {
-    fcen10_[ seqpos ] = value;
-  }
+	void
+	set_fcen10( Size const seqpos, Real value )
+	{
+		fcen10_[ seqpos ] = value;
+	}
 
-  void
-  set_fcen12( Size const seqpos, Real value )
-  {
-    fcen12_[ seqpos ] = value;
-  }
+	void
+	set_fcen12( Size const seqpos, Real value )
+	{
+		fcen12_[ seqpos ] = value;
+	}
 
 private:
 	utility::vector1< Real > fcen6_;

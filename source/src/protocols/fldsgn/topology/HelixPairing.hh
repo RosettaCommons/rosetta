@@ -35,39 +35,39 @@ namespace topology {
 class HelixPairing : public utility::pointer::ReferenceCount {
 public:
 
-  typedef std::string String;
-  typedef core::Size Size;
-  typedef core::Real Real;
+	typedef std::string String;
+	typedef core::Size Size;
+	typedef core::Real Real;
 	typedef core::Vector Vector;
 	typedef protocols::fldsgn::topology::SS_Info2_COP SS_Info2_COP;
 
 public:// construct/destruct
 
 
-  /// @brief default constructor
-  HelixPairing();
+	/// @brief default constructor
+	HelixPairing();
 
-  /// @brief value constructor
-  HelixPairing(
-     Size const h1,
-     Size const h2,
-     char const o
-								);
+	/// @brief value constructor
+	HelixPairing(
+		Size const h1,
+		Size const h2,
+		char const o
+	);
 
-
-	/// @brief copy constructor
-  HelixPairing( String const & hp );
 
 	/// @brief copy constructor
-  HelixPairing( HelixPairing const & hp );
+	HelixPairing( String const & hp );
 
-  /// @brief default destructor
-  virtual ~HelixPairing();
+	/// @brief copy constructor
+	HelixPairing( HelixPairing const & hp );
+
+	/// @brief default destructor
+	virtual ~HelixPairing();
 
 	/// @brief clone this object
 	HelixPairingOP clone();
 
-  /// @brief return strand pairing
+	/// @brief return strand pairing
 	friend
 	std::ostream & operator<<(std::ostream & out, const HelixPairing &hp);
 
@@ -76,10 +76,10 @@ public: //accessors
 
 
 	/// @brief the strand number of the 1st strand in strand pairing
-	inline Size h1() const	{	return h1_;	}
+	inline Size h1() const { return h1_; }
 
 	/// @brief the strand number of the 2nd strand in strand pairing
-	inline Size h2() const	{	return h2_; }
+	inline Size h2() const { return h2_; }
 
 	/// @brief orientation, parallel or anti-parallel, of helix pairing
 	inline char orient() const { return orient_; }
@@ -116,14 +116,14 @@ public:
 private:  // data
 
 
-  /// @brief Helix number of first strand in the strand pair
-  Size h1_;
+	/// @brief Helix number of first strand in the strand pair
+	Size h1_;
 
-  /// @brief Helix number of second strand in the strand pair
-  Size h2_;
+	/// @brief Helix number of second strand in the strand pair
+	Size h2_;
 
-  /// @brief two helices make a pair  by parallel, "P", anti parallel, "A", and if not defined, "N"
-  char orient_;
+	/// @brief two helices make a pair  by parallel, "P", anti parallel, "A", and if not defined, "N"
+	char orient_;
 
 	/// @brief helix_pairing as in the style: h1_-h2_.orient_
 	String name_;
@@ -156,25 +156,25 @@ public: // typedef
 public:// construct/destruct
 
 
-  /// @brief default constructor
-  HelixPairingSet();
+	/// @brief default constructor
+	HelixPairingSet();
 
-  /// @brief value constructor
-  HelixPairingSet( HelixPairings const & helix_pairings );
+	/// @brief value constructor
+	HelixPairingSet( HelixPairings const & helix_pairings );
 
-  /// @brief value constructor
-  HelixPairingSet( String const & helix_pairings );
+	/// @brief value constructor
+	HelixPairingSet( String const & helix_pairings );
 
 	/// @brief copy constructor
-  HelixPairingSet( HelixPairingSet const & s );
+	HelixPairingSet( HelixPairingSet const & s );
 
-  /// @brief default destructor
-  virtual ~HelixPairingSet();
+	/// @brief default destructor
+	virtual ~HelixPairingSet();
 
 	/// @brief clone this object
 	HelixPairingSetOP clone() const;
 
-  /// @brief return strand pairing
+	/// @brief return strand pairing
 	friend std::ostream & operator<<( std::ostream & out, const HelixPairingSet &s );
 
 
@@ -199,7 +199,7 @@ public: // accessors
 	HelixPairingOP helix_pairing( Size const h1, Size const h2 );
 
 	/// @brief return all helix pairings
-	HelixPairings const &	helix_pairings() const;
+	HelixPairings const & helix_pairings() const;
 
 	/// @brief return the size of helix_pairings_
 	Size size() const;

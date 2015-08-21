@@ -61,8 +61,8 @@ DNA_FragLib::suite_pose() const
 ///////////////////////////////////////////////////////////////////////////////
 void
 build_frag_libraries(
-										 utility::vector1< std::string > const & files,
-										 DNA_FragLib & lib
+	utility::vector1< std::string > const & files,
+	DNA_FragLib & lib
 )
 {
 	using namespace pose;
@@ -145,8 +145,8 @@ build_frag_libraries(
 
 void
 setup_suite_pose(
-								 pose::Pose & suite_pose
-								 )
+	pose::Pose & suite_pose
+)
 {
 	using namespace conformation;
 	using namespace chemical;
@@ -172,26 +172,26 @@ setup_suite_pose(
 } // ns cartesian_frags
 } // ns devel
 
-// 		{ // some chainbreak diagnostics
-// 			using namespace scoring;
-// 			setup_dna_chainbreak_constraints( pose );
-// 			ScoreFunction scorefxn;
-// 			scorefxn.set_weight( atom_pair_constraint, 1.0 );
-// 			scorefxn.set_weight(     angle_constraint, 1.0 );
-// 			Size nstep(0.0);
-// 			for ( Size i=1; i< pose.total_residue(); ++i ) {
-// 				Residue const & rsd1( pose.residue( i   ) );
-// 				Residue const & rsd2( pose.residue( i+1 ) );
-// 				if ( rsd1.is_DNA() && !rsd1.is_upper_terminus() && rsd2.is_DNA() && !rsd2.is_lower_terminus() ) {
-// 					++nstep;
-// 					if ( rsd1.xyz("O3*").distance( rsd2.xyz("P") ) > 2.0 ) {
-// 						td << "WARNING: long bond in frag input file: " << files[n] << ' ' << i << ' ' <<
-// 							rsd1.xyz("O3*").distance( rsd2.xyz("P") ) << std::endl;
-// 					}
-// 				}
-// 			}
-// 			Real const cstscore( scorefxn( pose ) );
-// 			tt << "cstscore " << files[n] << ' ' << cstscore << " nstep: " << nstep << " score/step " <<
-// 				cstscore/nstep << std::endl;
-// 			scorefxn.show( tt, pose );
-// 		}
+//   { // some chainbreak diagnostics
+//    using namespace scoring;
+//    setup_dna_chainbreak_constraints( pose );
+//    ScoreFunction scorefxn;
+//    scorefxn.set_weight( atom_pair_constraint, 1.0 );
+//    scorefxn.set_weight(     angle_constraint, 1.0 );
+//    Size nstep(0.0);
+//    for ( Size i=1; i< pose.total_residue(); ++i ) {
+//     Residue const & rsd1( pose.residue( i   ) );
+//     Residue const & rsd2( pose.residue( i+1 ) );
+//     if ( rsd1.is_DNA() && !rsd1.is_upper_terminus() && rsd2.is_DNA() && !rsd2.is_lower_terminus() ) {
+//      ++nstep;
+//      if ( rsd1.xyz("O3*").distance( rsd2.xyz("P") ) > 2.0 ) {
+//       td << "WARNING: long bond in frag input file: " << files[n] << ' ' << i << ' ' <<
+//        rsd1.xyz("O3*").distance( rsd2.xyz("P") ) << std::endl;
+//      }
+//     }
+//    }
+//    Real const cstscore( scorefxn( pose ) );
+//    tt << "cstscore " << files[n] << ' ' << cstscore << " nstep: " << nstep << " score/step " <<
+//     cstscore/nstep << std::endl;
+//    scorefxn.show( tt, pose );
+//   }

@@ -126,49 +126,49 @@ public:
 private:
 	void
 	get_centroid_information(
-													 conformation::Residue const & rsd1,
-													 conformation::Residue const & rsd2,
-													 pose::Pose const & pose,
-													 Vector & centroid1,
-													 Vector & centroid2,
-													 kinematics::Stub & stub1,
-													 kinematics::Stub & stub2 ) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		Vector & centroid1,
+		Vector & centroid2,
+		kinematics::Stub & stub1,
+		kinematics::Stub & stub2 ) const;
 
 	//Need to get rid of the following...
 	Real
 	rna_base_pair_pairwise_pair_energy(
-																					 conformation::Residue const & rsd1,
-																					 conformation::Residue const & rsd2
-																					 ) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2
+	) const;
 
 	Real
 	rna_base_axis_pairwise_pair_energy(
-																					 conformation::Residue const & rsd1,
-																					 conformation::Residue const & rsd2
-																					 ) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2
+	) const;
 
 	Real
 	rna_base_stagger_pairwise_pair_energy(
-																					 conformation::Residue const & rsd1,
-																					 conformation::Residue const & rsd2
-																					 ) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2
+	) const;
 
 	Real
 	rna_base_stack_pairwise_pair_energy(
-																					 conformation::Residue const & rsd1,
-																					 conformation::Residue const & rsd2
-																					 ) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2
+	) const;
 
 	Real
 	rna_base_stack_axis_pairwise_pair_energy(
-																					 conformation::Residue const & rsd1,
-																					 conformation::Residue const & rsd2
-																					 ) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2
+	) const;
 
 	void
 	clean_up_rna_two_body_energy_tables(
-																			scoring::rna::RNA_RawBaseBaseInfo & raw_base_base_info,
-																			pose::Pose & pose ) const;
+		scoring::rna::RNA_RawBaseBaseInfo & raw_base_base_info,
+		pose::Pose & pose ) const;
 
 private:
 
@@ -176,8 +176,8 @@ private:
 	rna::RNA_LowResolutionPotential const & rna_low_resolution_potential_;
 	mutable rna::RNA_RawBaseBaseInfo * rna_raw_base_base_info_;
 	mutable bool might_be_designing_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

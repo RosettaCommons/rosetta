@@ -53,7 +53,7 @@ public:
 
 	virtual std::string get_name() const;
 	//setters
-//			void set_scorefunction(core::scoring::ScoreFunction & s);
+	//   void set_scorefunction(core::scoring::ScoreFunction & s);
 
 	void
 	reduce_fa_rep(float fraction_fa_rep, core::scoring::ScoreFunction & s);

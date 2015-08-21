@@ -96,22 +96,22 @@ RNA_AtomVDW::RNA_AtomVDW()
 		runtime_assert( pos1 <= rna_vdw_parameter_.size2() );
 
 		rna_vdw_parameter_( pos1,
-												pos2,
-												rna_residue_name_to_num( which_residue1 ),
-												rna_residue_name_to_num( which_residue2 ) ) = input_bump_parameter;
+			pos2,
+			rna_residue_name_to_num( which_residue1 ),
+			rna_residue_name_to_num( which_residue2 ) ) = input_bump_parameter;
 		//perhaps we should explicitly force symmetry here?
 
 	}
 
-	//	for ( Size i = 1; i <= 9; i++ ) {
-	//		for ( Size j = 1; j <= 9; j++ ) {
-	//			for ( Size m = 1; m <= 5; m++ ) {
-	//				for ( Size n = 1; n <= 5; n++ ) {
-					//					std::cout << "BUMP PARAM: " << i << " " << j << " " << m << " " << n << " " << rna_vdw_parameter_( i, j, m, n ) << std::endl;
-	//				}
-	//			}
-	//		}
-	//	}
+	// for ( Size i = 1; i <= 9; i++ ) {
+	//  for ( Size j = 1; j <= 9; j++ ) {
+	//   for ( Size m = 1; m <= 5; m++ ) {
+	//    for ( Size n = 1; n <= 5; n++ ) {
+	//     std::cout << "BUMP PARAM: " << i << " " << j << " " << m << " " << n << " " << rna_vdw_parameter_( i, j, m, n ) << std::endl;
+	//    }
+	//   }
+	//  }
+	// }
 
 }
 
@@ -132,11 +132,11 @@ RNA_AtomVDW::vdw_atom_list( char const which_nucleotide ) const
 
 Real
 RNA_AtomVDW::bump_parameter( Size const atom1, Size const atom2,
-														 char const which_residue1, char const which_residue2 ) const
+	char const which_residue1, char const which_residue2 ) const
 {
 	return rna_vdw_parameter_( atom1, atom2,
-														 rna_residue_name_to_num( which_residue1 ),
-														 rna_residue_name_to_num( which_residue2 ) );
+		rna_residue_name_to_num( which_residue1 ),
+		rna_residue_name_to_num( which_residue2 ) );
 }
 
 

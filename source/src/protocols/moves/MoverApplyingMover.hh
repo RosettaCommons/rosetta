@@ -33,16 +33,16 @@ namespace protocols {
 namespace moves {
 
 class MoverApplyingMover : public Mover {
-  typedef Mover Parent;
+	typedef Mover Parent;
 public:
-  MoverApplyingMover( std::string const& name ) : Parent( name ) {}
-  MoverApplyingMover( MoverApplyingMover const & other ) : Parent( other ) {}
+	MoverApplyingMover( std::string const& name ) : Parent( name ) {}
+	MoverApplyingMover( MoverApplyingMover const & other ) : Parent( other ) {}
 
-  virtual ~MoverApplyingMover() {};
+	virtual ~MoverApplyingMover() {};
 
-  virtual void set_mover( MoverOP ) = 0;
+	virtual void set_mover( MoverOP ) = 0;
 
-  virtual MoverOP mover() const = 0;
+	virtual MoverOP mover() const = 0;
 
 }; // end MoverApplyingMover base class
 

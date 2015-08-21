@@ -173,9 +173,9 @@ public: // Conversion
 	inline
 	operator Value &()
 	{
-		//been_accessed();
-		if ( state_ == INACTIVE ) inactive_error();
-		return value_;
+	//been_accessed();
+	if ( state_ == INACTIVE ) inactive_error();
+	return value_;
 	}
 	*/
 
@@ -403,7 +403,7 @@ public: // Methods
 			}
 			if ( error ) {
 				std::cerr << "ERROR: Inconsistent lower and upper limits in option -" << id()
-				 << " : " << legal_string() << std::endl;
+					<< " : " << legal_string() << std::endl;
 			}
 		}
 		return ( ! error );
@@ -427,7 +427,7 @@ public: // Methods
 		bool error( false );
 		if ( ! legal_default() ) {
 			std::cerr << "ERROR: Illegal default value in option -" << id()
-			 << " : " << default_string() << std::endl;
+				<< " : " << default_string() << std::endl;
 			error = true;
 		}
 		return ( ! error );
@@ -441,7 +441,7 @@ public: // Methods
 	{
 		if ( ! legal_default() ) {
 			std::cerr << "ERROR: Illegal default value in option -" << id()
-			 << " : " << default_string() << std::endl;
+				<< " : " << default_string() << std::endl;
 			std::exit( EXIT_FAILURE );
 		}
 	}
@@ -454,7 +454,7 @@ public: // Methods
 	{
 		if ( ! legal_value( value_a ) ) {
 			std::cerr << "ERROR: Illegal default value in option -" << id()
-			 << " : " << value_string_of( value_a ) << std::endl;
+				<< " : " << value_string_of( value_a ) << std::endl;
 			std::exit( EXIT_FAILURE );
 		}
 	}
@@ -589,12 +589,12 @@ public: // Properties
 		return short_description_;
 	}
 
-	inline void	short_description(std::string const & sd)
+	inline void short_description(std::string const & sd)
 	{
 		short_description_ = sd;
 	}
 
-	inline void	description(std::string const & sd )
+	inline void description(std::string const & sd )
 	{
 		description_ = sd;
 	}
@@ -931,7 +931,7 @@ protected: // Methods
 	void
 	default_inactive_error() const
 	{
-	debug_assert( default_state_ == INACTIVE ); // Or else why are we here
+		debug_assert( default_state_ == INACTIVE ); // Or else why are we here
 		std::cerr << "ERROR: Inactive default value of option accessed: -" << key_.id() << std::endl;
 		std::exit( EXIT_FAILURE );
 	}
@@ -943,7 +943,7 @@ protected: // Methods
 	void
 	inactive_error() const
 	{
-	debug_assert( state_ == INACTIVE ); // Or else why are we here
+		debug_assert( state_ == INACTIVE ); // Or else why are we here
 		std::cerr << "ERROR: Value of inactive option accessed: -" << key_.id() << std::endl;
 		std::exit( EXIT_FAILURE );
 	}

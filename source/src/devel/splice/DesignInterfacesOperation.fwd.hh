@@ -18,7 +18,7 @@
 
 namespace devel {
 namespace splice {
-    
+
 class DesignInterfacesOperation;
 
 typedef utility::pointer::shared_ptr< DesignInterfacesOperation > DesignInterfacesOperationOP;

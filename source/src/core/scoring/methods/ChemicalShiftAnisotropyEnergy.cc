@@ -93,29 +93,29 @@ ChemicalShiftAnisotropyEnergy::ChemicalShiftAnisotropyEnergy() :
 EnergyMethodOP
 ChemicalShiftAnisotropyEnergy::clone() const
 {
-  return EnergyMethodOP( new ChemicalShiftAnisotropyEnergy() );
+	return EnergyMethodOP( new ChemicalShiftAnisotropyEnergy() );
 }
 
 void ChemicalShiftAnisotropyEnergy::setup_for_scoring(
-  pose::Pose & pose,
-  ScoreFunction const &
+	pose::Pose & pose,
+	ScoreFunction const &
 ) const
 {
 	csa_score_ = eval_csa( pose );
 }
 
 void ChemicalShiftAnisotropyEnergy::finalize_total_energy(
-  pose::Pose &,
-  ScoreFunction const &,
-  EnergyMap & totals
+	pose::Pose &,
+	ScoreFunction const &,
+	EnergyMap & totals
 ) const
 {
 	totals[ csa ] = csa_score_;
 }
 
 void ChemicalShiftAnisotropyEnergy::setup_for_minimizing(
-  pose::Pose & pose,
-  ScoreFunction const &,
+	pose::Pose & pose,
+	ScoreFunction const &,
 	kinematics::MinimizerMapBase const &
 ) const
 {
@@ -123,7 +123,7 @@ void ChemicalShiftAnisotropyEnergy::setup_for_minimizing(
 	ChemicalShiftAnisotropy::CSA_lines const& All_CSA_lines( csa_data.get_CSA_data() );
 	ChemicalShiftAnisotropy::CSA_lines::const_iterator it;
 	Size ct = 0;
-	for( it = All_CSA_lines.begin(); it != All_CSA_lines.end(); ++it) {
+	for ( it = All_CSA_lines.begin(); it != All_CSA_lines.end(); ++it ) {
 		id::AtomID atom1( pose.residue(it->res1()).atom_index(it->atom1()), it->res1());
 		id::AtomID atom2( pose.residue(it->res2()).atom_index(it->atom2()), it->res2());
 		id::AtomID atom3( pose.residue(it->res3()).atom_index(it->atom3()), it->res3());
@@ -152,7 +152,7 @@ ChemicalShiftAnisotropyEnergy::csa_from_pose(
 	pose::Pose & pose
 ) const
 {
- 	ChemicalShiftAnisotropyOP csa_info( retrieve_CSA_from_pose( pose ) );
+	ChemicalShiftAnisotropyOP csa_info( retrieve_CSA_from_pose( pose ) );
 	if ( !csa_info ) {
 		csa_info = ChemicalShiftAnisotropyOP( new ChemicalShiftAnisotropy );
 		store_CSA_in_pose( csa_info, pose );
@@ -165,7 +165,7 @@ ChemicalShiftAnisotropyEnergy::csa_from_pose(
 // this has to be spread out over different routines to make this energy yield derivatives
 //////////////////////////////////////////////////////
 Real ChemicalShiftAnisotropyEnergy::eval_csa(
-  pose::Pose & pose
+	pose::Pose & pose
 ) const
 {
 
@@ -176,13 +176,13 @@ Real ChemicalShiftAnisotropyEnergy::eval_csa(
 
 void
 ChemicalShiftAnisotropyEnergy::eval_atom_derivative(
-			 id::AtomID const & aid,
-			 pose::Pose const & pose,
-    	 kinematics::DomainMap const &,
-	   	 ScoreFunction const &,
-		   EnergyMap const & score_weights,
-		   Vector & F1,
-		   Vector & F2
+	id::AtomID const & aid,
+	pose::Pose const & pose,
+	kinematics::DomainMap const &,
+	ScoreFunction const &,
+	EnergyMap const & score_weights,
+	Vector & F1,
+	Vector & F2
 ) const {
 
 	if ( !atom2csa_map_.has( aid ) ) return; //damn this "has" isn't correct at all
@@ -190,17 +190,17 @@ ChemicalShiftAnisotropyEnergy::eval_atom_derivative(
 	//tr.Trace << " aid " << aid << std::endl;
 
 	if ( csa_nrs.size() == 0 ) {
-		//		tr.Trace << "no CSA entry for " << aid << " skipping.. "<< std::endl;
+		//  tr.Trace << "no CSA entry for " << aid << " skipping.. "<< std::endl;
 		return;
 	}
 	//tr.Trace << "csa_nrs.size(): " << csa_nrs.size() << std::endl;
 
 	Vector fij(0,0,0);
 
-	for (Size ii=1; ii<=csa_nrs.size(); ++ii) {
+	for ( Size ii=1; ii<=csa_nrs.size(); ++ii ) {
 		core::Size csa_nr = csa_nrs[ ii ];
-	  //tr.Trace << "csa_nr: " << csa_nr << std::endl;
-	  //tr.Trace << "aid.rsd(): " << aid.rsd() << std::endl;
+		//tr.Trace << "csa_nr: " << csa_nr << std::endl;
+		//tr.Trace << "aid.rsd(): " << aid.rsd() << std::endl;
 		ChemicalShiftAnisotropy const& csa_cache( *retrieve_CSA_from_pose( pose ) );
 		utility::vector1< core::scoring::CSA > All_CSA_lines( csa_cache.get_CSA_data() );
 		runtime_assert( csa_nr <= All_CSA_lines.size() );
@@ -208,16 +208,16 @@ ChemicalShiftAnisotropyEnergy::eval_atom_derivative(
 		conformation::Residue const& rsd1( pose.residue( csa_data.res1() ) );
 		conformation::Residue const& rsd2( pose.residue( csa_data.res2() ) );
 		conformation::Residue const& rsd3( pose.residue( csa_data.res3() ) );
-	  //tr.Trace << "rsd1.atom_name( aid.atomno() " << rsd1.atom_name( aid.atomno()) << std::endl;
+		//tr.Trace << "rsd1.atom_name( aid.atomno() " << rsd1.atom_name( aid.atomno()) << std::endl;
 
 		if ( aid.rsd() == csa_data.res1() && utility::trimmed_compare( rsd1.atom_name( aid.atomno() ), csa_data.atom1() ) ) {
-	    //tr.Trace << "aid.rsd(): " << aid.rsd() << " rsd1.atom_name( aid.atomno() ) "<< rsd1.atom_name( aid.atomno() ) << " csa_data.atom1() " << csa_data.atom1() <<  std::endl;
+			//tr.Trace << "aid.rsd(): " << aid.rsd() << " rsd1.atom_name( aid.atomno() ) "<< rsd1.atom_name( aid.atomno() ) << " csa_data.atom1() " << csa_data.atom1() <<  std::endl;
 			fij += csa_data.f1ij();
-		} else if ( aid.rsd() == csa_data.res2() && utility::trimmed_compare( rsd2.atom_name( aid.atomno() ), csa_data.atom2() ) ){
-	    //tr.Trace << "aid.rsd(): " << aid.rsd() << " rsd2.atom_name( aid.atomno() ) "<< rsd2.atom_name( aid.atomno() ) << " csa_data.atom2() " << csa_data.atom2() << std::endl;
+		} else if ( aid.rsd() == csa_data.res2() && utility::trimmed_compare( rsd2.atom_name( aid.atomno() ), csa_data.atom2() ) ) {
+			//tr.Trace << "aid.rsd(): " << aid.rsd() << " rsd2.atom_name( aid.atomno() ) "<< rsd2.atom_name( aid.atomno() ) << " csa_data.atom2() " << csa_data.atom2() << std::endl;
 			fij += csa_data.f2ij();
-		} else if ( aid.rsd() == csa_data.res3() && utility::trimmed_compare( rsd3.atom_name( aid.atomno() ), csa_data.atom3() ) ){
-	    //tr.Trace << "aid.rsd(): " << aid.rsd() << " rsd3.atom_name( aid.atomno() ) "<< rsd3.atom_name( aid.atomno() ) << " csa_data.atom3() " << csa_data.atom3() << std::endl;
+		} else if ( aid.rsd() == csa_data.res3() && utility::trimmed_compare( rsd3.atom_name( aid.atomno() ), csa_data.atom3() ) ) {
+			//tr.Trace << "aid.rsd(): " << aid.rsd() << " rsd3.atom_name( aid.atomno() ) "<< rsd3.atom_name( aid.atomno() ) << " csa_data.atom3() " << csa_data.atom3() << std::endl;
 			fij += csa_data.f3ij();
 		} else return;
 
@@ -226,10 +226,10 @@ ChemicalShiftAnisotropyEnergy::eval_atom_derivative(
 	//tr.Trace << "fij[0]: " << fij[0]<< " fij[1]: " << fij[1]<< " fij[2]: " << fij[2]<< std::endl;
 	//tr.Trace << "torsion gradient: " << aid << std::endl;
 	//tr.Trace << "score_weights[ csa ]: " << score_weights[ csa ] << std::endl;
-  //thanks to Will Sheffler:
+	//thanks to Will Sheffler:
 	numeric::xyzVector<core::Real> atom_x = pose.xyz(aid);
 	numeric::xyzVector<core::Real> const f2( fij );
-	numeric::xyzVector<core::Real> const atom_y = atom_x - f2;   // a	"fake" atom in the direcion of the gradient
+	numeric::xyzVector<core::Real> const atom_y = atom_x - f2;   // a "fake" atom in the direcion of the gradient
 	numeric::xyzVector<core::Real> const f1( atom_x.cross( atom_y ) );
 
 	F1 += score_weights[ csa ] * f1;

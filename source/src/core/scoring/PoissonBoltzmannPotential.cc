@@ -80,18 +80,18 @@ const std::string PB::DEFAULT_APBS_PATH = "apbs";
 PB::~PoissonBoltzmannPotential() {}
 
 PB::PoissonBoltzmannPotential()
-	:config_filename_("Unknown.in"),
-	 pqr_filename_("Unknown.pqr"),
-	 dx_filename_("Unknown.dx"),
-	 apbs_path_(DEFAULT_APBS_PATH),
-	 calcenergy_(false)
+:config_filename_("Unknown.in"),
+pqr_filename_("Unknown.pqr"),
+dx_filename_("Unknown.dx"),
+apbs_path_(DEFAULT_APBS_PATH),
+calcenergy_(false)
 {
 }
 
 core::Real
 PB::get_potential(ObjexxFCL::FArray3D< core::Real > const & potential,
-numeric::xyzVector<core::Real> const & cartX) const {
-	if (out_of_bounds(cartX)) return 0.0;
+	numeric::xyzVector<core::Real> const & cartX) const {
+	if ( out_of_bounds(cartX) ) return 0.0;
 
 	numeric::xyzVector<core::Real> idxX;
 	cart2idx(cartX, idxX);
@@ -99,28 +99,27 @@ numeric::xyzVector<core::Real> const & cartX) const {
 }
 void
 PB::eval_PB_energy_residue(
-						   core::conformation::Residue const & rsd,
-						   Real & PB_energy_residue,
-						   Real & PB_energy_backbone,
-						   Real & PB_energy_sidechain,
-						   Real const & PB_burial_weight
-						   ) const {
+	core::conformation::Residue const & rsd,
+	Real & PB_energy_residue,
+	Real & PB_energy_backbone,
+	Real & PB_energy_sidechain,
+	Real const & PB_burial_weight
+) const {
 
 	PB_energy_residue = 0.0;
 	PB_energy_backbone = 0.0;
 	PB_energy_sidechain = 0.0;
 
-  // Compute potential. Linear sum.
+	// Compute potential. Linear sum.
 	for ( Size iatom=1; iatom<=rsd.natoms(); ++iatom ) {
-		if (rsd.atomic_charge(iatom) > -1e-6 && rsd.atomic_charge(iatom) < 1e-6) continue;
+		if ( rsd.atomic_charge(iatom) > -1e-6 && rsd.atomic_charge(iatom) < 1e-6 ) continue;
 		core::Real iatom_potential = get_potential(potential_, rsd.xyz(iatom));
 
 		core::Real atom_energy = rsd.atomic_charge(iatom)*iatom_potential * PB_burial_weight;
 
-		if (rsd.atom_is_backbone(iatom)) {
+		if ( rsd.atom_is_backbone(iatom) ) {
 			PB_energy_backbone += atom_energy;
-		}
-		else {
+		} else {
 			PB_energy_sidechain += atom_energy;
 		}
 		PB_energy_residue += atom_energy;
@@ -240,15 +239,15 @@ PB::load_potential(const double grid_meta[],
 
 void
 PB::solve_pb( core::pose::Pose const & pose,
-							std::string const & tag,
-							std::map<std::string, bool> const &charged_residues )
+	std::string const & tag,
+	std::map<std::string, bool> const &charged_residues )
 {
-#ifndef __native_client__	
-  using namespace std;
+#ifndef __native_client__
+	using namespace std;
 	time_t begin;
 	time(&begin);
 
-	if (basic::options::option[basic::options::OptionKeys::pb_potential::apbs_path].user()) {
+	if ( basic::options::option[basic::options::OptionKeys::pb_potential::apbs_path].user() ) {
 		apbs_path_ = basic::options::option[basic::options::OptionKeys::pb_potential::apbs_path];
 	}
 
@@ -262,13 +261,13 @@ PB::solve_pb( core::pose::Pose const & pose,
 	write_pqr(pose, charged_residues );
 	write_config(pose);
 	std::string command_line(apbs_path_ + " " + config_filename_);
-	if (system(command_line.c_str()) == -1) {
+	if ( system(command_line.c_str()) == -1 ) {
 		TR.Error << "Shell command failed to run!" << std::endl;
 	}
 
 	// Check if APBS succeeded.  If not, get out.
 	std::ifstream dxstream(dx_filename_.c_str());
-	if( ! dxstream.good() ) {
+	if ( ! dxstream.good() ) {
 		TR << "APBS failed to generate the result file.  Terminating the program." << std::endl;
 		TR.flush();
 		runtime_assert(false);
@@ -288,11 +287,11 @@ void
 PB::load_APBS_potential()
 {
 	utility::io::izstream p_stream( dx_filename_ );
-  runtime_assert(p_stream);
+	runtime_assert(p_stream);
 
 	std::string line;
-	while (p_stream) {
-		//	# Comments
+	while ( p_stream ) {
+		// # Comments
 		char first_char = p_stream.peek();
 		if ( first_char == '#' ) {
 			p_stream.getline( line );
@@ -301,7 +300,7 @@ PB::load_APBS_potential()
 
 		//object 1 class gridpositions counts nx ny nz
 		std::string buff;
-		for (Size i=0;i<5;++i) p_stream >> buff;
+		for ( Size i=0; i<5; ++i ) p_stream >> buff;
 		p_stream >> n_grid_[0] >> n_grid_[1] >> n_grid_[2];
 
 		//origin xmin ymin zmin
@@ -318,13 +317,13 @@ PB::load_APBS_potential()
 		p_stream >> buff >> buff >> grid_spacing_[1] >> buff;
 		p_stream >> buff >> buff >> buff >> grid_spacing_[2];
 		i2c_ = numeric::xyzMatrix <core::Real>::rows(
-													 grid_spacing_[0],0.,0.,
-													 0.,grid_spacing_[1],0.,
-													 0.,0.,grid_spacing_[2]);
+			grid_spacing_[0],0.,0.,
+			0.,grid_spacing_[1],0.,
+			0.,0.,grid_spacing_[2]);
 		c2i_ = numeric::xyzMatrix <core::Real>::rows(
-													 1./grid_spacing_[0],0.,0.,
-													 0.,1./grid_spacing_[1],0.,
-													 0.,0.,1./grid_spacing_[2]);
+			1./grid_spacing_[0],0.,0.,
+			0.,1./grid_spacing_[1],0.,
+			0.,0.,1./grid_spacing_[2]);
 
 		//object 2 class gridconnections counts nx ny nz
 		//object 3 class array type double rank 0 items n data follows
@@ -335,18 +334,20 @@ PB::load_APBS_potential()
 		//u(0,0,0) u(0,0,1) u(0,0,2)
 		potential_.dimension(n_grid_[0],n_grid_[1],n_grid_[2]);
 
-		for (int i=1; i<=potential_.u1(); i++)
-			for (int j=1; j<=potential_.u2(); j++)
-				for (int k=1; k<=potential_.u3(); k++) {
+		for ( int i=1; i<=potential_.u1(); i++ ) {
+			for ( int j=1; j<=potential_.u2(); j++ ) {
+				for ( int k=1; k<=potential_.u3(); k++ ) {
 					p_stream >> buff;
 					potential_(i,j,k) = atof(buff.c_str());
-					if (potential_(i,j,k) > basic::options::option[ basic::options::OptionKeys::pb_potential::potential_cap ]) {
+					if ( potential_(i,j,k) > basic::options::option[ basic::options::OptionKeys::pb_potential::potential_cap ] ) {
 						potential_(i,j,k) = basic::options::option[ basic::options::OptionKeys::pb_potential::potential_cap ];
 					}
-					if (potential_(i,j,k) < -basic::options::option[ basic::options::OptionKeys::pb_potential::potential_cap ]) {
+					if ( potential_(i,j,k) < -basic::options::option[ basic::options::OptionKeys::pb_potential::potential_cap ] ) {
 						potential_(i,j,k) = -basic::options::option[ basic::options::OptionKeys::pb_potential::potential_cap ];
 					}
 				}
+			}
+		}
 		break;
 	}
 
@@ -368,7 +369,7 @@ PB::load_APBS_potential()
 //==============================================================================
 void
 PB::write_pqr( core::pose::Pose const & pose,
-							 std::map<std::string, bool> const & is_residue_charged_by_name_) const {
+	std::map<std::string, bool> const & is_residue_charged_by_name_) const {
 	// Generate .pqr
 	std::ofstream pqr_ostr(pqr_filename_.c_str());
 
@@ -382,8 +383,8 @@ PB::write_pqr( core::pose::Pose const & pose,
 
 	for ( Size i=1; i<= nres; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
-    // TODO: Sachko 11/19/2012
-    // This search result should be cached.
+		// TODO: Sachko 11/19/2012
+		// This search result should be cached.
 		bool residue_charged = const_cast<std::map<std::string,bool>&>(is_residue_charged_by_name_)[rsd.type().name()];
 		for ( Size j=1; j<= rsd.natoms(); ++j ) {
 			conformation::Atom const & atom( rsd.atom(j) );
@@ -391,34 +392,33 @@ PB::write_pqr( core::pose::Pose const & pose,
 			//skip outputing virtual atom unless specified.
 			//fixed so that the last atom in atom type set can be something other than a virtual atom --steven combs
 			//if ( !basic::options::option[ basic::options::OptionKeys::out::file::output_virtual ]() &&
-			//	rsd.atom_type(j).is_virtual() ) continue;
+			// rsd.atom_type(j).is_virtual() ) continue;
 			if ( rsd.atom_type(j).is_virtual() ) continue;
 
 			++number;
 
-			//			runtime_assert( rsd.chain() < chains.size() ); // silly restriction
+			//   runtime_assert( rsd.chain() < chains.size() ); // silly restriction
 
 			char const chain( chr_chains[ (rsd.chain()-1)%chr_chains.size() ] );
-			//			char const chain( chains[ rsd.chain() ] );
-			if (residue_charged) {
+			//   char const chain( chains[ rsd.chain() ] );
+			if ( residue_charged ) {
 				using namespace ObjexxFCL::format;
 				pqr_ostr << "ATOM  " << I(5,number) << ' ' << rsd.atom_name(j) << ' ' <<
-				rsd.name3() << ' ' << chain << I(4,rsd.seqpos() ) << "    " <<
-				F(8,3,atom.xyz()(1)) <<
-				F(8,3,atom.xyz()(2)) <<
-				F(8,3,atom.xyz()(3)) <<
+					rsd.name3() << ' ' << chain << I(4,rsd.seqpos() ) << "    " <<
+					F(8,3,atom.xyz()(1)) <<
+					F(8,3,atom.xyz()(2)) <<
+					F(8,3,atom.xyz()(3)) <<
 					F(8,3,pose.residue_type(i).atom(j).charge()) <<
-				F(8,3,rsd.atom_type(j).lj_radius()) << '\n';
-			}
-			else {
+					F(8,3,rsd.atom_type(j).lj_radius()) << '\n';
+			} else {
 				using namespace ObjexxFCL::format;
 				pqr_ostr << "ATOM  " << I(5,number) << ' ' << rsd.atom_name(j) << ' ' <<
-				rsd.name3() << ' ' << chain << I(4,rsd.seqpos() ) << "    " <<
-				F(8,3,atom.xyz()(1)) <<
-				F(8,3,atom.xyz()(2)) <<
-				F(8,3,atom.xyz()(3)) <<
-				F(8,3,0.0) <<
-				F(8,3,rsd.atom_type(j).lj_radius()) << '\n';
+					rsd.name3() << ' ' << chain << I(4,rsd.seqpos() ) << "    " <<
+					F(8,3,atom.xyz()(1)) <<
+					F(8,3,atom.xyz()(2)) <<
+					F(8,3,atom.xyz()(3)) <<
+					F(8,3,0.0) <<
+					F(8,3,rsd.atom_type(j).lj_radius()) << '\n';
 			}
 		}
 	}
@@ -438,13 +438,13 @@ PB::write_config (core::pose::Pose const & pose) const {
 	numeric::xyzVector <core::Real> min_r(9999,9999,9999);
 	numeric::xyzVector <core::Real> max_r(-9999,-9999,-9999);
 	// Find the min & max coords within the moleculer system to define the grid.
-	for (core::Size ires=1; ires<=pose.total_residue(); ++ires) {
-		for (core::Size iatom=1; iatom<=pose.residue(ires).natoms(); ++iatom) {
-			for (core::Size i=0; i<3; ++i) {
-				if (pose.residue(ires).xyz(iatom)[i] < min_r[i]) {
+	for ( core::Size ires=1; ires<=pose.total_residue(); ++ires ) {
+		for ( core::Size iatom=1; iatom<=pose.residue(ires).natoms(); ++iatom ) {
+			for ( core::Size i=0; i<3; ++i ) {
+				if ( pose.residue(ires).xyz(iatom)[i] < min_r[i] ) {
 					min_r[i] = pose.residue(ires).xyz(iatom)[i];
 				}
-				if (pose.residue(ires).xyz(iatom)[i] > max_r[i]) {
+				if ( pose.residue(ires).xyz(iatom)[i] > max_r[i] ) {
 					max_r[i] = pose.residue(ires).xyz(iatom)[i];
 				}
 			}

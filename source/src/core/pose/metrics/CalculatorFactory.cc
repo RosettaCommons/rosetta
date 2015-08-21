@@ -52,7 +52,7 @@ void CalculatorFactory::register_calculator( std::string const & calculator_name
 bool CalculatorFactory::check_calculator_exists( std::string const & calculator_name ) {
 	std::map< std::string, PoseMetricCalculatorOP >::const_iterator calculator_iter;
 	calculator_iter = calculators_.find( calculator_name );
-	if (calculator_iter == calculators_.end() ) {
+	if ( calculator_iter == calculators_.end() ) {
 		// this calculator has not yet been setup
 		return false;
 	}
@@ -89,7 +89,7 @@ bool CalculatorFactory::clear_calculators() {
 PoseMetricCalculatorOP CalculatorFactory::retrieve_calculator( std::string const & calculator_name ) {
 	std::map< std::string, PoseMetricCalculatorOP >::const_iterator calculator_iter;
 	calculator_iter = calculators_.find( calculator_name );
-	if (calculator_iter == calculators_.end() ) {
+	if ( calculator_iter == calculators_.end() ) {
 		// this calculator has not yet been setup
 		basic::Error() << "Could not find calculator " << calculator_name << " - need to register it before use" << std::endl;
 		utility_exit();

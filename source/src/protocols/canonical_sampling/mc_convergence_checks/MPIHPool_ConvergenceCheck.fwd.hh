@@ -19,7 +19,7 @@
 
 namespace protocols {
 namespace canonical_sampling {
-namespace mc_convergence_checks{
+namespace mc_convergence_checks {
 class MPIHPool_RMSD;
 typedef utility::pointer::shared_ptr< MPIHPool_RMSD > MPIHPool_RMSD_OP;
 typedef utility::pointer::shared_ptr< MPIHPool_RMSD const > MPIHPool_RMSD_COP;

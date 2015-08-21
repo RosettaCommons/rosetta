@@ -50,7 +50,7 @@ public:
 	/// reference from the InnerJob or, on first demand of a pose from that
 	/// InnerJob, instantiate the pose, hand off a COP to the InnerJob, and fill
 	/// the reference.
- 	virtual void pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP job );
+	virtual void pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP job );
 
 	/// @brief this function determines what jobs exist
 	virtual void fill_jobs( protocols::jd2::JobsContainer & jobs );

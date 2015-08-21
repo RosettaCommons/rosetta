@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace stepwise {
 namespace setup {
-	
-	class FullModelInfoSetupFromCommandLine;
-	typedef utility::pointer::shared_ptr< FullModelInfoSetupFromCommandLine > FullModelInfoSetupFromCommandLineOP;
-	typedef utility::pointer::shared_ptr< FullModelInfoSetupFromCommandLine const > FullModelInfoSetupFromCommandLineCOP;
-	
+
+class FullModelInfoSetupFromCommandLine;
+typedef utility::pointer::shared_ptr< FullModelInfoSetupFromCommandLine > FullModelInfoSetupFromCommandLineOP;
+typedef utility::pointer::shared_ptr< FullModelInfoSetupFromCommandLine const > FullModelInfoSetupFromCommandLineCOP;
+
 } //setup
 } //stepwise
 } //protocols

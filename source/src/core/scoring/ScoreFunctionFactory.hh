@@ -117,7 +117,7 @@ core::scoring::ScoreFunctionOP get_score_function_legacy(
 );
 
 /// @brief use the logic of get_score_function to get the name.
-/// The 	name format is <weights_tag>[_<patch_tag> ... ]
+/// The  name format is <weights_tag>[_<patch_tag> ... ]
 std::string
 get_score_functionName(
 	bool const is_fullatom = true );

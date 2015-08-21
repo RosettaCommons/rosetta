@@ -32,8 +32,8 @@
 
 
 namespace core {
-namespace pack{
-namespace interaction_graph{
+namespace pack {
+namespace interaction_graph {
 
 class SimpleNode : public graph::Node
 {
@@ -269,7 +269,7 @@ public:
 
 	scoring::ScoreFunction const &
 	scorefunction() const {
-	  return *sfxn_;
+		return *sfxn_;
 	}
 
 	pose::Pose const &
@@ -292,10 +292,10 @@ public:
 
 	//required functions to override
 
-  virtual  Size count_static_memory() const {return 0;}
-  virtual  Size count_dynamic_memory() const {return 0;}
+	virtual  Size count_static_memory() const {return 0;}
+	virtual  Size count_dynamic_memory() const {return 0;}
 
-  virtual void delete_edge( graph::Edge * );
+	virtual void delete_edge( graph::Edge * );
 
 	SimpleNode *
 	get_simple_node( Size ind ) {
@@ -309,10 +309,10 @@ public:
 
 protected:
 
-  virtual graph::Node* create_new_node( Size node_index );
-  virtual graph::Edge* create_new_edge( Size index1, platform::Size index2 );
+	virtual graph::Node* create_new_node( Size node_index );
+	virtual graph::Edge* create_new_edge( Size index1, platform::Size index2 );
 
-  //virtual Edge* create_new_edge( Edge * example_edge );
+	//virtual Edge* create_new_edge( Edge * example_edge );
 
 private:
 
@@ -320,7 +320,7 @@ private:
 	pose::PoseCOP pose_;
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
 	// Real accumulated_ediff_; //since data stored in energies
-  //object, need to subtract out diffs
+	//object, need to subtract out diffs
 
 }; //SimpleInteractionGraph
 

@@ -71,7 +71,7 @@ public:
 	/// @brief lookup by atom type strings
 	mm_torsion_library_citer_pair
 	lookup( std::string atom1, std::string atom2,
-					std::string atom3, std::string atom4 ) const;
+		std::string atom3, std::string atom4 ) const;
 
 private:
 

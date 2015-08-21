@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief a class to filter out constellations based on proximity constraints
-/// 	on the N- and C-termini of their chains.
+///  on the N- and C-termini of their chains.
 /// @author Andrea Bazzoli
 
 #ifndef INCLUDED_FilterByProxTerm_hh
@@ -39,7 +39,7 @@ private:
 	static Size nchains_;
 
 	/// @brief squared value of the maximum distance for a constellation to be
-	/// 	considered proximal	to the termini
+	///  considered proximal to the termini
 	static Real dct_max_2_;
 
 	/// @brief number of residues forming either terminus in a chain

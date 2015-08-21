@@ -63,7 +63,7 @@ void RandomConformerMover::apply( core::pose::Pose & pose )
 
 	// Retrieve conformers
 	core::pack::rotamers::SingleResidueRotamerLibraryCOP reslib = core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( pose.residue_type(resid_) );
-	if( ! reslib ) return;
+	if ( ! reslib ) return;
 	reslib->fill_rotamer_vector(
 		pose,
 		dummy_scorefxn,
@@ -78,8 +78,8 @@ void RandomConformerMover::apply( core::pose::Pose & pose )
 	// If -include_current push back current conformer
 	// This is rarely necessary...
 	//if( option[ OptionKeys::packing::use_input_sc ] ) {
-	//	ResidueOP curr_copy = new Residue( pose.residue(resid_) );
-	//	conformers.push_back(curr_copy);
+	// ResidueOP curr_copy = new Residue( pose.residue(resid_) );
+	// conformers.push_back(curr_copy);
 	//}
 	// Choose one at random
 	ResidueOP selected_res = conformers[ numeric::random::rg().random_range(1, conformers.size()) ];

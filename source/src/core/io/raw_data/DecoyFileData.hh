@@ -30,27 +30,27 @@
 namespace core {
 namespace io {
 namespace raw_data {
-	class DecoyFileData : public RawFileData {
-		public:
-			///////////////////////////////////////////////////////////////////////////
-			// constructor
-			DecoyFileData(std::string filename) : filename_(filename) {}
+class DecoyFileData : public RawFileData {
+public:
+	///////////////////////////////////////////////////////////////////////////
+	// constructor
+	DecoyFileData(std::string filename) : filename_(filename) {}
 
-			bool write_struct(
-				const DecoyStruct s,
-				std::map < std::string, core::Real > const & score_map
-			);
+	bool write_struct(
+		const DecoyStruct s,
+		std::map < std::string, core::Real > const & score_map
+	);
 
-			bool write_pose(
-				const core::pose::Pose & pose,
-				std::map < std::string, core::Real > const & score_map,
-				std::string tag,
-				bool fullatom
-			);
+	bool write_pose(
+		const core::pose::Pose & pose,
+		std::map < std::string, core::Real > const & score_map,
+		std::string tag,
+		bool fullatom
+	);
 
-		private:
-			std::string filename_;
-	};
+private:
+	std::string filename_;
+};
 
 } // namespace silent
 } // namespace io

@@ -63,7 +63,7 @@ SecondaryStructureWeights::setup_parallel_antiparallel_weights(
 		// Choose whether to weight up parallel or antiparallel
 		Real randomnumber = numeric::random::rg().uniform();
 		Real randomweight = 10.0 * numeric::random::rg().uniform(); // Pretty drastic reweighting...
-		if ( randomnumber < 0.5 ){
+		if ( randomnumber < 0.5 ) {
 			set_parallel_weight( randomweight );
 			set_antiparallel_weight( 1.0/randomweight );
 		} else {

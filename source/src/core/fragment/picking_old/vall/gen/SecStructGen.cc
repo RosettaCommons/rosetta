@@ -84,7 +84,7 @@ SecStructGen::Extent SecStructGen::operator ()( VallResidueIterator extent_begin
 		// check if secondary structure string matches
 		Size str_idx = 0;
 		for ( VallResidueIterator i = extent.begin; i != extent.end; ++i, ++str_idx ) {
-		debug_assert( str_idx != ss_.length() );
+			debug_assert( str_idx != ss_.length() );
 
 			// if secondary structure string doesn't match, set invalid
 			// Extent and break out of loop

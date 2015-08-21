@@ -9,7 +9,7 @@
 
 
 //kdrew: based on code from mini/src/apps/public/scenarios/doug_dock_design_min_mod2_cal_cal.cc
-//			and https://svn.rosettacommons.org/source/branches/releases/rosetta-3.1/manual/advanced/example_protocol.cc
+//   and https://svn.rosettacommons.org/source/branches/releases/rosetta-3.1/manual/advanced/example_protocol.cc
 
 //Headers are generally organized by either what they do or where they come from.  This organization is first core library headers, then protocols library, then utility stuff.
 
@@ -118,7 +118,7 @@ using utility::file::FileName;
 //   +-Monte Carlo Mover---------------------------------------+
 //   | +-Random Mover-( 1 / 2 / 1 / 1 )--------------------+ | |
 //   | | +-Docking Mover-----------------------------------+ | |
-//   | | | small rigid body movements between the peptide	 | | |
+//   | | | small rigid body movements between the peptide  | | |
 //   | | | and protein for conformational diversity        | | |
 //   | | +-------------------------------------------------+ | |
 //   | | +-Peptide Modeling--------------------------------+ | |
@@ -134,8 +134,8 @@ using utility::file::FileName;
 //
 // Design Minimization Phase
 //   | +-Pack Rotamers Mover---------------------------------+ |
-//   | | repack and design rotamers to explore sequence 	   | |
-//   | | space  	                                           | |
+//   | | repack and design rotamers to explore sequence     | |
+//   | | space                                              | |
 //   | +-----------------------------------------------------+ |
 //   | +-Minimization Mover----------------------------------+ |
 //   | | energy minimize the current conformation            | |
@@ -147,56 +147,56 @@ static thread_local basic::Tracer TR( "ODDM" );
 
 // application specific options
 namespace oddm {
-	// pert options
-	RealOptionKey const mc_temp( "oddm::mc_temp" );
-	RealOptionKey const pert_mc_temp( "oddm::pert_mc_temp" );
-	RealOptionKey const pert_dock_rot_mag( "oddm::pert_dock_rot_mag" );
-	RealOptionKey const pert_dock_trans_mag( "oddm::pert_dock_trans_mag" );
-	RealOptionKey const pert_pep_small_temp( "oddm::pert_pep_small_temp" );
-	RealOptionKey const pert_pep_small_H( "oddm::pert_pep_small_H" );
-	RealOptionKey const pert_pep_small_L( "oddm::pert_pep_small_L" );
-	RealOptionKey const pert_pep_small_E( "oddm::pert_pep_small_E" );
-	RealOptionKey const pert_pep_shear_temp( "oddm::pert_pep_shear_temp" );
-	RealOptionKey const pert_pep_shear_H( "oddm::pert_pep_shear_H" );
-	RealOptionKey const pert_pep_shear_L( "oddm::pert_pep_shear_L" );
-	RealOptionKey const pert_pep_shear_E( "oddm::pert_pep_shear_E" );
+// pert options
+RealOptionKey const mc_temp( "oddm::mc_temp" );
+RealOptionKey const pert_mc_temp( "oddm::pert_mc_temp" );
+RealOptionKey const pert_dock_rot_mag( "oddm::pert_dock_rot_mag" );
+RealOptionKey const pert_dock_trans_mag( "oddm::pert_dock_trans_mag" );
+RealOptionKey const pert_pep_small_temp( "oddm::pert_pep_small_temp" );
+RealOptionKey const pert_pep_small_H( "oddm::pert_pep_small_H" );
+RealOptionKey const pert_pep_small_L( "oddm::pert_pep_small_L" );
+RealOptionKey const pert_pep_small_E( "oddm::pert_pep_small_E" );
+RealOptionKey const pert_pep_shear_temp( "oddm::pert_pep_shear_temp" );
+RealOptionKey const pert_pep_shear_H( "oddm::pert_pep_shear_H" );
+RealOptionKey const pert_pep_shear_L( "oddm::pert_pep_shear_L" );
+RealOptionKey const pert_pep_shear_E( "oddm::pert_pep_shear_E" );
 
-	IntegerOptionKey const pert_pep_num_rep( "oddm::pert_pep_num_rep" );
-	IntegerOptionKey const pert_num( "oddm::pert_num" );
-	IntegerOptionKey const dock_design_loop_num( "oddm::dock_design_loop_num" );
+IntegerOptionKey const pert_pep_num_rep( "oddm::pert_pep_num_rep" );
+IntegerOptionKey const pert_num( "oddm::pert_num" );
+IntegerOptionKey const dock_design_loop_num( "oddm::dock_design_loop_num" );
 
-	BooleanOptionKey const no_design( "oddm::no_design" );
-	BooleanOptionKey const final_design_min( "oddm::final_design_min" );
-	BooleanOptionKey const use_soft_rep( "oddm::use_soft_rep" );
-	BooleanOptionKey const mc_initial_pose( "oddm::mc_initial_pose" );
-	BooleanOptionKey const oop_design_first( "oddm::oop_design_first" );
+BooleanOptionKey const no_design( "oddm::no_design" );
+BooleanOptionKey const final_design_min( "oddm::final_design_min" );
+BooleanOptionKey const use_soft_rep( "oddm::use_soft_rep" );
+BooleanOptionKey const mc_initial_pose( "oddm::mc_initial_pose" );
+BooleanOptionKey const oop_design_first( "oddm::oop_design_first" );
 
-	BooleanOptionKey const pymol( "oddm::pymol" );
-	BooleanOptionKey const keep_history( "oddm::keep_history" );
+BooleanOptionKey const pymol( "oddm::pymol" );
+BooleanOptionKey const keep_history( "oddm::keep_history" );
 
-	// design options
-	RealOptionKey const desn_mc_temp( "oddm::desn_mc_temp" );
+// design options
+RealOptionKey const desn_mc_temp( "oddm::desn_mc_temp" );
 
-	//IntegerVectorOptionKey const oop_positions( "oddm::oop_positions" );
+//IntegerVectorOptionKey const oop_positions( "oddm::oop_positions" );
 
 }
 
 /*
- * class OopDockDesignMinimizeMover : public Mover {
+* class OopDockDesignMinimizeMover : public Mover {
 
-	public:
+public:
 
-		//default ctor
-		OopDockDesignMinimizeMover(): Mover("OopDockDesignMinimizeMover"){}
+//default ctor
+OopDockDesignMinimizeMover(): Mover("OopDockDesignMinimizeMover"){}
 
-		//default dtor
-		virtual ~OopDockDesignMinimizeMover(){}
+//default dtor
+virtual ~OopDockDesignMinimizeMover(){}
 
-		//methods
-		void setup_pert_foldtree( core::pose::Pose & pose);
-		void setup_filter_stats();
-		virtual void apply( core::pose::Pose & pose );
-		virtual std::string get_name() const { return "OopDockDesignMinimizeMover"; }
+//methods
+void setup_pert_foldtree( core::pose::Pose & pose);
+void setup_filter_stats();
+virtual void apply( core::pose::Pose & pose );
+virtual std::string get_name() const { return "OopDockDesignMinimizeMover"; }
 
 };
 
@@ -207,87 +207,87 @@ typedef utility::pointer::owning_ptr< OopDockDesignMinimizeMover const > OopDock
 int
 main( int argc, char* argv[] )
 {
-    try {
-	/*********************************************************************************************************************
-	Common Setup
-	**********************************************************************************************************************/
+	try {
+		/*********************************************************************************************************************
+		Common Setup
+		**********************************************************************************************************************/
 
-	// add application specific options to options system
-	// There are far more options here than you will realistically need for a program of this complexity - but this gives you an idea of how to fine-grain option-control everything
-	option.add( oddm::mc_temp, "The temperature to use for the outer loop of the ODDM protocol. Defaults to 1.0." ).def( 1.0 );
-	option.add( oddm::pert_mc_temp, "The temperature to use for the pertubation phase of the ODDM protocol. Defaults to 0.8." ).def( 0.8 );
-	option.add( oddm::pert_dock_rot_mag, "The rotation magnitude for the ridged body pertubation in the pertubation phase of the ODDM protocol. Defaults to 1.0." ).def( 1 );
-	option.add( oddm::pert_dock_trans_mag, "The translation magnitude for the ridged body pertubation in the pertubation phase of the ODDM protocol. Defaults to 0.5." ).def( 0.5 );
-	option.add( oddm::pert_pep_small_temp, "" ).def( 0.8 );
-	option.add( oddm::pert_pep_shear_temp, "" ).def( 0.8 );
+		// add application specific options to options system
+		// There are far more options here than you will realistically need for a program of this complexity - but this gives you an idea of how to fine-grain option-control everything
+		option.add( oddm::mc_temp, "The temperature to use for the outer loop of the ODDM protocol. Defaults to 1.0." ).def( 1.0 );
+		option.add( oddm::pert_mc_temp, "The temperature to use for the pertubation phase of the ODDM protocol. Defaults to 0.8." ).def( 0.8 );
+		option.add( oddm::pert_dock_rot_mag, "The rotation magnitude for the ridged body pertubation in the pertubation phase of the ODDM protocol. Defaults to 1.0." ).def( 1 );
+		option.add( oddm::pert_dock_trans_mag, "The translation magnitude for the ridged body pertubation in the pertubation phase of the ODDM protocol. Defaults to 0.5." ).def( 0.5 );
+		option.add( oddm::pert_pep_small_temp, "" ).def( 0.8 );
+		option.add( oddm::pert_pep_shear_temp, "" ).def( 0.8 );
 
-	option.add( oddm::pert_pep_small_H, "" ).def( 2.0 );
-	option.add( oddm::pert_pep_small_L, "" ).def( 2.0 );
-	option.add( oddm::pert_pep_small_E, "" ).def( 2.0 );
-	option.add( oddm::pert_pep_shear_H, "" ).def( 2.0 );
-	option.add( oddm::pert_pep_shear_L, "" ).def( 2.0 );
-	option.add( oddm::pert_pep_shear_E, "" ).def( 2.0 );
+		option.add( oddm::pert_pep_small_H, "" ).def( 2.0 );
+		option.add( oddm::pert_pep_small_L, "" ).def( 2.0 );
+		option.add( oddm::pert_pep_small_E, "" ).def( 2.0 );
+		option.add( oddm::pert_pep_shear_H, "" ).def( 2.0 );
+		option.add( oddm::pert_pep_shear_L, "" ).def( 2.0 );
+		option.add( oddm::pert_pep_shear_E, "" ).def( 2.0 );
 
-	option.add( oddm::pert_pep_num_rep, "Number of small and shear iterations for the peptide" ).def( 100 );
-	option.add( oddm::pert_num, "Number of iterations of perturbation loop per design" ).def(10);
-	option.add( oddm::dock_design_loop_num, "Number of iterations of pertubation and design" ).def(10);
+		option.add( oddm::pert_pep_num_rep, "Number of small and shear iterations for the peptide" ).def( 100 );
+		option.add( oddm::pert_num, "Number of iterations of perturbation loop per design" ).def(10);
+		option.add( oddm::dock_design_loop_num, "Number of iterations of pertubation and design" ).def(10);
 
-	option.add( oddm::no_design, "Only repack, do not design. Default false" ).def(false);
-	option.add( oddm::final_design_min, "Do a final repack/design and minimization. Default true" ).def(true);
-	option.add( oddm::use_soft_rep, "Use soft repulsion for pertubation and initial design. Default false" ).def(false);
-	option.add( oddm::mc_initial_pose, "Allow initial pose to be considered as lowest energy pose. Default false" ).def(false);
-	option.add( oddm::oop_design_first, "Design before pertubation (want when initial struct is aligned to hotspot)  Default false" ).def(false);
+		option.add( oddm::no_design, "Only repack, do not design. Default false" ).def(false);
+		option.add( oddm::final_design_min, "Do a final repack/design and minimization. Default true" ).def(true);
+		option.add( oddm::use_soft_rep, "Use soft repulsion for pertubation and initial design. Default false" ).def(false);
+		option.add( oddm::mc_initial_pose, "Allow initial pose to be considered as lowest energy pose. Default false" ).def(false);
+		option.add( oddm::oop_design_first, "Design before pertubation (want when initial struct is aligned to hotspot)  Default false" ).def(false);
 
-	option.add( oddm::pymol, "Set up pymol mover. Default false" ).def(false);
-	option.add( oddm::keep_history, "Keep history in pymol. Requires oddm::pymol set to true. Default false" ).def(false);
+		option.add( oddm::pymol, "Set up pymol mover. Default false" ).def(false);
+		option.add( oddm::keep_history, "Keep history in pymol. Requires oddm::pymol set to true. Default false" ).def(false);
 
-	option.add( oddm::desn_mc_temp, "The temperature to use for the design/minimization phase of the ODDM protocol. Defaults to 0.8." ).def( 0.8 );
+		option.add( oddm::desn_mc_temp, "The temperature to use for the design/minimization phase of the ODDM protocol. Defaults to 0.8." ).def( 0.8 );
 
-	//utility::vector1< core::Size > empty_vector(0);
-	//option.add( oddm::oop_positions, "The positions of the first residues of oop rings" ).def( empty_vector );
+		//utility::vector1< core::Size > empty_vector(0);
+		//option.add( oddm::oop_positions, "The positions of the first residues of oop rings" ).def( empty_vector );
 
-	// init command line options
-	//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
-	devel::init(argc, argv);
+		// init command line options
+		//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
+		devel::init(argc, argv);
 
-	scoring::ScoreFunctionOP score_fxn = get_score_function();
-	scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn);
+		scoring::ScoreFunctionOP score_fxn = get_score_function();
+		scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn);
 
-	//create mover instance
-	OopDockDesignProtocolOP ODDM_mover( new OopDockDesignProtocol(
-	score_fxn,
-	option[ oddm::mc_temp].value(),
-	option[ oddm::pert_mc_temp].value(),
-	option[ oddm::pert_dock_rot_mag].value(),
-	option[ oddm::pert_dock_trans_mag].value(),
-	option[ oddm::pert_pep_small_temp].value(),
-	option[ oddm::pert_pep_small_H].value(),
-	option[ oddm::pert_pep_small_L].value(),
-	option[ oddm::pert_pep_small_E].value(),
-	option[ oddm::pert_pep_shear_temp].value(),
-	option[ oddm::pert_pep_shear_H].value(),
-	option[ oddm::pert_pep_shear_L].value(),
-	option[ oddm::pert_pep_shear_E].value(),
-	option[ oddm::pert_pep_num_rep].value(),
-	option[ oddm::pert_num].value(),
-	option[ oddm::dock_design_loop_num].value(),
-	option[ oddm::no_design].value(),
-	option[ oddm::final_design_min].value(),
-	option[ oddm::use_soft_rep].value(),
-	option[ oddm::mc_initial_pose].value(),
-	option[ oddm::oop_design_first].value(),
-	option[ oddm::pymol].value(),
-	option[ oddm::keep_history].value()
-	) );
+		//create mover instance
+		OopDockDesignProtocolOP ODDM_mover( new OopDockDesignProtocol(
+			score_fxn,
+			option[ oddm::mc_temp].value(),
+			option[ oddm::pert_mc_temp].value(),
+			option[ oddm::pert_dock_rot_mag].value(),
+			option[ oddm::pert_dock_trans_mag].value(),
+			option[ oddm::pert_pep_small_temp].value(),
+			option[ oddm::pert_pep_small_H].value(),
+			option[ oddm::pert_pep_small_L].value(),
+			option[ oddm::pert_pep_small_E].value(),
+			option[ oddm::pert_pep_shear_temp].value(),
+			option[ oddm::pert_pep_shear_H].value(),
+			option[ oddm::pert_pep_shear_L].value(),
+			option[ oddm::pert_pep_shear_E].value(),
+			option[ oddm::pert_pep_num_rep].value(),
+			option[ oddm::pert_num].value(),
+			option[ oddm::dock_design_loop_num].value(),
+			option[ oddm::no_design].value(),
+			option[ oddm::final_design_min].value(),
+			option[ oddm::use_soft_rep].value(),
+			option[ oddm::mc_initial_pose].value(),
+			option[ oddm::oop_design_first].value(),
+			option[ oddm::pymol].value(),
+			option[ oddm::keep_history].value()
+			) );
 
-	protocols::ncbb::setup_filter_stats();
+		protocols::ncbb::setup_filter_stats();
 
-	//call job distributor
-	protocols::jd2::JobDistributor::get_instance()->go( ODDM_mover );
+		//call job distributor
+		protocols::jd2::JobDistributor::get_instance()->go( ODDM_mover );
 
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-				return -1;
-    }
-    return 0;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }//main

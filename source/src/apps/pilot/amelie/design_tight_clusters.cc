@@ -105,14 +105,14 @@ OPT_1GRP_KEY(Boolean, design_tight_clusters, soft_repack_min_hard_repack_min)
 OPT_1GRP_KEY(Boolean, design_tight_clusters, backrub)
 OPT_1GRP_KEY(Real, design_tight_clusters, backrub_sc_prob) // probability of making a side chain move within the backrub option -- default 0.25
 /*
- the following set of options os for providing an external cluster (e.e., from a baseline run)
- that can either be repacked and evaluated, or the user provides an externally repacked structure,
- which needs to come with a reference structure via -in:file:native
+the following set of options os for providing an external cluster (e.e., from a baseline run)
+that can either be repacked and evaluated, or the user provides an externally repacked structure,
+which needs to come with a reference structure via -in:file:native
 
- a native structure can also be provided e.g. for repacking after backbone relaxation
- -- in this case we may first want to check whether chi1/2 of the cluster residues are
- still the same as in the native structure, but this isn't implemented yet
- */
+a native structure can also be provided e.g. for repacking after backbone relaxation
+-- in this case we may first want to check whether chi1/2 of the cluster residues are
+still the same as in the native structure, but this isn't implemented yet
+*/
 
 OPT_1GRP_KEY(StringVector, design_tight_clusters, external_cluster) // PDB numbering -- positions will be casted to int, probably won't be able to deal well with insertion codes etc.... but when starting the initial (cluster detection) run from a renumbered structure this should be fine
 //OPT_1GRP_KEY(Boolean, design_tight_clusters, evaluate_externally_repacked_structure)
@@ -124,18 +124,18 @@ bool sort_min(const std::pair<core::Size, core::Real> & left, const std::pair<co
 
 // simple function to detect all residues within a certain distance of the starting position
 void detect_neighbors(
-					  const core::pose::Pose & p,
-					  const core::Size pos,
-					  const core::Real radius,
-					  std::map<core::Size, bool> & neighbor_map) {
+	const core::pose::Pose & p,
+	const core::Size pos,
+	const core::Real radius,
+	std::map<core::Size, bool> & neighbor_map) {
 
-	for (core::Size i = 1; i <= p.total_residue(); i++) {
+	for ( core::Size i = 1; i <= p.total_residue(); i++ ) {
 		neighbor_map[i] = false;
-		if (pos != i) {
-			for (core::Size a = 1; a <= p.residue(pos).natoms(); a++) {
-				for (core::Size b = 1; b <= p.residue(i).natoms(); b++) {
+		if ( pos != i ) {
+			for ( core::Size a = 1; a <= p.residue(pos).natoms(); a++ ) {
+				for ( core::Size b = 1; b <= p.residue(i).natoms(); b++ ) {
 					core::Real dist = p.residue(pos).xyz(a).distance(p.residue(i).xyz(b));
-					if (dist <= radius) {
+					if ( dist <= radius ) {
 						neighbor_map[i] = true;
 						break;
 					}
@@ -151,13 +151,13 @@ void detect_neighbors(
 // WARNING: if the native structure doesn't match the repacked structure in size etc., we have a problem --> assertion will fail, program will quit
 // NOTE: this now also checks whether the residue identity has changed or not, as we're testing design -- report both the native and the target residue, so that we can plot them in a heat map
 void compare_residues_and_chi1_2_angles(
-										const core::pose::Pose & native_p,
-										const core::pose::Pose & repacked_p,
-										const std::set<core::Size> & cluster,
-										utility::vector1<std::string> & mutations,
-										utility::vector1<std::string> & chi_dev_details
+	const core::pose::Pose & native_p,
+	const core::pose::Pose & repacked_p,
+	const std::set<core::Size> & cluster,
+	utility::vector1<std::string> & mutations,
+	utility::vector1<std::string> & chi_dev_details
 
-										)
+)
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -176,7 +176,7 @@ void compare_residues_and_chi1_2_angles(
 	mutations.clear();
 	mutations.resize(cluster.size()); // AS_DEBUG -- for some reason this variable contains garbage, trying to get rid of it...
 
-	for (IntegerVectorOption::const_iterator it = option[ design_tight_clusters::chi_deviation_thresholds ]().begin(), end = option[ design_tight_clusters::chi_deviation_thresholds ]().end(); it != end; it++) {
+	for ( IntegerVectorOption::const_iterator it = option[ design_tight_clusters::chi_deviation_thresholds ]().begin(), end = option[ design_tight_clusters::chi_deviation_thresholds ]().end(); it != end; it++ ) {
 
 		//const core::Size chi_deviation_threshold ( *it );
 		rrc_chi_diff.set_recovery_threshold( *it );
@@ -191,57 +191,58 @@ void compare_residues_and_chi1_2_angles(
 		utility::vector1<core::Size> individual_chi_dev_vector(4); // this could be a vector of bools, but I think Size prints more reliably -- AS_DEBUG -- still needed?
 
 		int i = 0; // size isn't random-access, so I'll need a counter to keep track of where we are -- this already looks error-prone
-		for(std::set<core::Size>::iterator iter = cluster.begin(); iter != cluster.end(); iter++) {
-		  i++; // working with vector1
-		  core::conformation::Residue const & refres( native_p.residue( *iter ) );
-		  core::conformation::Residue const & rp_res( repacked_p.residue( *iter ) );
-		  //	  mutations.push_back(refres.name1() + ":" + rp_res.name1()); // AS_DEBUG -- this seems to access some weird part of the code instead of .name1()...
-		  mutations[i] = utility::to_string(refres.name1()) + ":" + utility::to_string(rp_res.name1()); // AS_DEBUG -- this seems to access some weird part of the code instead of .name1()...
+		for ( std::set<core::Size>::iterator iter = cluster.begin(); iter != cluster.end(); iter++ ) {
+			i++; // working with vector1
+			core::conformation::Residue const & refres( native_p.residue( *iter ) );
+			core::conformation::Residue const & rp_res( repacked_p.residue( *iter ) );
+			//   mutations.push_back(refres.name1() + ":" + rp_res.name1()); // AS_DEBUG -- this seems to access some weird part of the code instead of .name1()...
+			mutations[i] = utility::to_string(refres.name1()) + ":" + utility::to_string(rp_res.name1()); // AS_DEBUG -- this seems to access some weird part of the code instead of .name1()...
 
-		  //  TR << " -- debug info within function compare_residues_and_chi12_angles -- " << i << " " << refres.name1() << "->" << rp_res.name1() << " *" << mutations[mutations.size()] << "* " << mutations.size() << std::endl; // AS_DEBUG
-
-
-		  // record residue identity or fetch existing data
-		  std::string res_info;
-		  if (chi_dev_details[i] != "") // AS_DEBUG -- this might not work
-		    res_info = chi_dev_details[i];
-		  else
-		    res_info = refres.name1();
+			//  TR << " -- debug info within function compare_residues_and_chi12_angles -- " << i << " " << refres.name1() << "->" << rp_res.name1() << " *" << mutations[mutations.size()] << "* " << mutations.size() << std::endl; // AS_DEBUG
 
 
-		  if (refres.name1() == rp_res.name1()) {
-		    bool within_chi_threshold = false; // the logic of the reporter is inverted vs. what I did before -- it reports true if the chi delta is within the threshold (!)
-		    core::Real max_chi_diff; // we're not reporting this at the moment, but the function wants it
-		    bool measured = rrc_chi_diff.measure_rotamer_recovery(native_p, repacked_p, refres, rp_res, max_chi_diff, within_chi_threshold);
-		    bool chi_threshold_exceeded = !within_chi_threshold;
-
-		    if (!measured) {
-		      TR << "WARNING -- chi diff could not be assessed for residues at position " << *iter << std::endl;
-		    } else {
-		      if ( chi_threshold_exceeded ) {
-			pos_with_chi_dev[*iter]++;
-		      }
-		      //pos_with_chi_dev[*iter] = chi_threshold_exceeded; // I'm not sure if this is always 1 2 3 4... check -- this probably was replaced with res_info now -- AS_DEBUG remove?
-		      //TR << " checking individual chi thresholds: " << i << " " << chi_threshold_exceeded << std::endl; // AS_DEBUG
-		      res_info += ":" + utility::to_string(chi_threshold_exceeded);
-		    }
-		  } else {
-		    res_info += "?"; // for mutations we cannot determine the chi differences
-		  }
+			// record residue identity or fetch existing data
+			std::string res_info;
+			if ( chi_dev_details[i] != "" ) { // AS_DEBUG -- this might not work
+				res_info = chi_dev_details[i];
+			} else {
+				res_info = refres.name1();
+			}
 
 
-		  //TR << res_info << std::endl; // AS_DEBUG
+			if ( refres.name1() == rp_res.name1() ) {
+				bool within_chi_threshold = false; // the logic of the reporter is inverted vs. what I did before -- it reports true if the chi delta is within the threshold (!)
+				core::Real max_chi_diff; // we're not reporting this at the moment, but the function wants it
+				bool measured = rrc_chi_diff.measure_rotamer_recovery(native_p, repacked_p, refres, rp_res, max_chi_diff, within_chi_threshold);
+				bool chi_threshold_exceeded = !within_chi_threshold;
 
-		  chi_dev_details[i] = res_info; // store (partial) information about current residue
+				if ( !measured ) {
+					TR << "WARNING -- chi diff could not be assessed for residues at position " << *iter << std::endl;
+				} else {
+					if ( chi_threshold_exceeded ) {
+						pos_with_chi_dev[*iter]++;
+					}
+					//pos_with_chi_dev[*iter] = chi_threshold_exceeded; // I'm not sure if this is always 1 2 3 4... check -- this probably was replaced with res_info now -- AS_DEBUG remove?
+					//TR << " checking individual chi thresholds: " << i << " " << chi_threshold_exceeded << std::endl; // AS_DEBUG
+					res_info += ":" + utility::to_string(chi_threshold_exceeded);
+				}
+			} else {
+				res_info += "?"; // for mutations we cannot determine the chi differences
+			}
+
+
+			//TR << res_info << std::endl; // AS_DEBUG
+
+			chi_dev_details[i] = res_info; // store (partial) information about current residue
 		}
 	}
 }
 
 core::kinematics::MoveMapOP derive_MoveMap_from_cluster_lst(
-															core::pose::Pose const & pose,
-															utility::vector1< bool > const & is_flexible,
-															bool allow_bb_move = false
-															)
+	core::pose::Pose const & pose,
+	utility::vector1< bool > const & is_flexible,
+	bool allow_bb_move = false
+)
 {
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 
@@ -262,11 +263,11 @@ core::kinematics::MoveMapOP derive_MoveMap_from_cluster_lst(
 /// @details note that fastrelax doesn't seem to allow design, so we'll need separate design and packing steps for this
 void
 sidechain_fastrelax(
-										core::scoring::ScoreFunctionOP scorefxn,
-										utility::vector1< bool > const & is_flexible,
-										bool const cartesian_min,
-										core::pose::Pose & pose
-										)
+	core::scoring::ScoreFunctionOP scorefxn,
+	utility::vector1< bool > const & is_flexible,
+	bool const cartesian_min,
+	core::pose::Pose & pose
+)
 {
 	protocols::relax::FastRelax fastrelax( scorefxn, 0 );
 	fastrelax.cartesian( cartesian_min );
@@ -281,28 +282,28 @@ sidechain_fastrelax(
 /// @brief as some of our packing functions cannot do design (fastrelax, backrub with restrictions) we need to have the option to do packing independent of / interleaved with design
 /// @details assumption: the packer_task has already been set up correctly and knows which residues may be designed and which should only be packed
 void repack_step (
-				  core::pose::Pose & repacked, // will be repacked and thus modified
-				  const core::pack::task::PackerTaskOP repack_packer_task,
-				  const core::scoring::ScoreFunctionOP score_fxn,
-				  utility::vector1<bool> allow_repacked
-				  )
+	core::pose::Pose & repacked, // will be repacked and thus modified
+	const core::pack::task::PackerTaskOP repack_packer_task,
+	const core::scoring::ScoreFunctionOP score_fxn,
+	utility::vector1<bool> allow_repacked
+)
 {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-  bool const cartmin( option[ design_tight_clusters::cartmin ] );
+	bool const cartmin( option[ design_tight_clusters::cartmin ] );
 
 	if ( option[ design_tight_clusters::min_pack ] ) {
 		core::pack::min_pack( repacked, *score_fxn, repack_packer_task );
 
 	} else if ( option[ design_tight_clusters::rot_trials ]() ) {
-		for (core::Size ri = 0; ri < rot_trials_iterations; ri++) {
+		for ( core::Size ri = 0; ri < rot_trials_iterations; ri++ ) {
 			core::pack::rotamer_trials( repacked, *score_fxn, repack_packer_task );
 		}
 	} else if ( option[ design_tight_clusters::rot_trials_min ]() ) {
 
 		core::pack::RTMin rtmin;
-		for (core::Size ri = 0; ri < rot_trials_iterations; ri++) {
+		for ( core::Size ri = 0; ri < rot_trials_iterations; ri++ ) {
 			rtmin.rtmin( repacked, *score_fxn, repack_packer_task );
 		}
 
@@ -315,10 +316,11 @@ void repack_step (
 		// make soft scorefxn
 
 		core::scoring::ScoreFunctionOP soft_sfxn;
-		if ( option[ score::soft_wts ].user() )
+		if ( option[ score::soft_wts ].user() ) {
 			soft_sfxn = core::scoring::ScoreFunctionFactory::create_score_function( option[ score::soft_wts ]() );
-		else
+		} else {
 			soft_sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "soft_rep_design" );
+		}
 
 		// repack with soft
 		core::pack::pack_rotamers( repacked, *soft_sfxn, repack_packer_task );
@@ -340,22 +342,22 @@ void repack_step (
 		min_mover->apply( repacked );
 
 
-	} else if ( option[ design_tight_clusters::backrub ]() ) {// note that backrub only makes sense for 8A repacking
+	} else if ( option[ design_tight_clusters::backrub ]() ) { // note that backrub only makes sense for 8A repacking
 
-	  // removed for now -- we're not using it and it would make splitting the two steps more difficut (can all be fixed though)
+		// removed for now -- we're not using it and it would make splitting the two steps more difficut (can all be fixed though)
 
 	}
 }
 
 
 void design_cluster(
-					const core::pose::Pose & p, // this is the native/reference structure
-					core::pose::Pose repacked, // this one will be modified (well, repacked)
-					core::scoring::ScoreFunctionOP score_fxn,
-					std::set<core::Size> cluster,
-					const std::string cluster_acc, // information about the cluster sf_acc -- not very useful at the moment though
-					std::string p_name,
-					utility::io::ozstream & outfile) {
+	const core::pose::Pose & p, // this is the native/reference structure
+	core::pose::Pose repacked, // this one will be modified (well, repacked)
+	core::scoring::ScoreFunctionOP score_fxn,
+	std::set<core::Size> cluster,
+	const std::string cluster_acc, // information about the cluster sf_acc -- not very useful at the moment though
+	std::string p_name,
+	utility::io::ozstream & outfile) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -387,8 +389,8 @@ void design_cluster(
 
 
 	// now we first need to iterate over all cluster positions once, to make sure we know about all that should be designed and hence NOT restricted to repacking
-	for(std::set<core::Size>::iterator iter = cluster.begin(); iter != cluster.end(); iter++) {
-		if (!allow_design.at(*iter)) { // prevent duplicates -- shouldn't matter here as only the cluster residues are allowed to be designed though
+	for ( std::set<core::Size>::iterator iter = cluster.begin(); iter != cluster.end(); iter++ ) {
+		if ( !allow_design.at(*iter) ) { // prevent duplicates -- shouldn't matter here as only the cluster residues are allowed to be designed though
 			allow_design.at((*iter)) = true;
 			allow_repacked.at((*iter)) = true; // don't think we need this, design should be "above" packing if there is a hierarchy
 			positions.push_back(*iter);
@@ -403,16 +405,16 @@ void design_cluster(
 	} // first iteration done -- now we know which residues may be designed
 
 
-	for(std::set<core::Size>::iterator iter = cluster.begin(); iter != cluster.end(); iter++) { // determine repack shell
+	for ( std::set<core::Size>::iterator iter = cluster.begin(); iter != cluster.end(); iter++ ) { // determine repack shell
 		std::map<core::Size, bool> neighbor_map;
 		detect_neighbors(p, *iter, repack_sphere_radius, neighbor_map);
-		for (std::map<core::Size, bool>::const_iterator m_iter = neighbor_map.begin(); m_iter != neighbor_map.end(); m_iter++) {
-			if (m_iter->second && !allow_repacked.at(m_iter->first)) { // try to avoid duplicates
+		for ( std::map<core::Size, bool>::const_iterator m_iter = neighbor_map.begin(); m_iter != neighbor_map.end(); m_iter++ ) {
+			if ( m_iter->second && !allow_repacked.at(m_iter->first) ) { // try to avoid duplicates
 				allow_repacked.at((m_iter->first)) = true;
 				positions.push_back(m_iter->first);
-				if (!allow_design.at(m_iter->first)) { // we must not restrict the cluster residues
-				  initial_packer_task->nonconst_residue_task(m_iter->first).restrict_to_repacking(); // residues in the shell will only be repacked, but not designed
-				  repack_packer_task->nonconst_residue_task(m_iter->first).restrict_to_repacking();
+				if ( !allow_design.at(m_iter->first) ) { // we must not restrict the cluster residues
+					initial_packer_task->nonconst_residue_task(m_iter->first).restrict_to_repacking(); // residues in the shell will only be repacked, but not designed
+					repack_packer_task->nonconst_residue_task(m_iter->first).restrict_to_repacking();
 				}
 				repacked_pos_in_PDB_numbering.push_back(utility::to_string(p.pdb_info()->chain(m_iter->first)) + ":" + utility::to_string(p.pdb_info()->number(m_iter->first)));
 
@@ -425,7 +427,7 @@ void design_cluster(
 
 	if ( option[ design_tight_clusters::debug ]() ) {
 		TR << "repacked positions: ";
-		for (core::Size pos = 1; pos <= positions.size(); pos++) {
+		for ( core::Size pos = 1; pos <= positions.size(); pos++ ) {
 			TR << positions[pos] << ", ";
 		}
 		TR << std::endl;
@@ -438,8 +440,8 @@ void design_cluster(
 		protocols::protein_interface_design::FavorNativeResidue fnr(repacked, option[ OptionKeys::design_tight_clusters::favor_native ]());
 
 		// this is a type of constraint -- and apparently we need to set the constraint weight specifically
-		if( score_fxn->get_weight( core::scoring::res_type_constraint ) == 0.0 ){
-			//	TR << " -- constraint weight was 0 so far... " << std::endl; // AS_DEBUG
+		if ( score_fxn->get_weight( core::scoring::res_type_constraint ) == 0.0 ) {
+			// TR << " -- constraint weight was 0 so far... " << std::endl; // AS_DEBUG
 			score_fxn->set_weight( core::scoring::res_type_constraint, option[ OptionKeys::design_tight_clusters::favor_native ]() );
 			//TR << *(repacked.constraint_set()) << std::endl;
 		}
@@ -456,17 +458,18 @@ void design_cluster(
 	// initial repack & design step
 	core::pack::pack_rotamers( repacked, *score_fxn, initial_packer_task );
 
-	for (int c = 1; c <= option[ OptionKeys::design_tight_clusters::num_cycles ](); c++) {
+	for ( int c = 1; c <= option[ OptionKeys::design_tight_clusters::num_cycles ](); c++ ) {
 
-	  TR << " cycle " << c << std::endl;
+		TR << " cycle " << c << std::endl;
 		// first operation is always standard packing -- only affected by the command line flags, and by which rotamers get to move
 		// this sets the baseline and ensures that native side chains are discarded (except when running with -use_input_sc)
 		// NOTE: now this also includes a first round of design (!)
-	  if (c > 1)
-	    core::pack::pack_rotamers( repacked, *score_fxn, repack_packer_task );
+		if ( c > 1 ) {
+			core::pack::pack_rotamers( repacked, *score_fxn, repack_packer_task );
+		}
 
-	  // next: repack -- and possibly design, depending on the mover -- the pose
-	  repack_step(repacked, repack_packer_task, score_fxn, allow_repacked);
+		// next: repack -- and possibly design, depending on the mover -- the pose
+		repack_step(repacked, repack_packer_task, score_fxn, allow_repacked);
 	}
 
 	// evaluation
@@ -477,7 +480,7 @@ void design_cluster(
 
 	std::string cluster_name = "";
 	std::map<core::Size, core::Size> all_neighbors; // make sure we don't append residues multiple times to a pose, that would probably be a mess
-	for(std::set<core::Size>::iterator iter = cluster.begin(); iter != cluster.end(); iter++) {
+	for ( std::set<core::Size>::iterator iter = cluster.begin(); iter != cluster.end(); iter++ ) {
 		cluster_name += utility::to_string(p.pdb_info()->number(*iter)) + "_";
 		starting_cluster.append_residue_by_jump(p.residue(*iter), starting_cluster.total_residue());
 		repacked_cluster.append_residue_by_jump(repacked.residue(*iter), repacked_cluster.total_residue());
@@ -493,9 +496,9 @@ void design_cluster(
 		// we'll also want the repacked residues in the output set -- note that this will affect the RMSD calculation (!)
 		std::map<core::Size, bool> neighbor_map;
 		detect_neighbors(p, *iter, repack_sphere_radius, neighbor_map);
-		for (std::map<core::Size, bool>::const_iterator m_iter = neighbor_map.begin(); m_iter != neighbor_map.end(); m_iter++) {
-			if (m_iter->second) {
-				if (all_neighbors.find(m_iter->first) == all_neighbors.end()) {
+		for ( std::map<core::Size, bool>::const_iterator m_iter = neighbor_map.begin(); m_iter != neighbor_map.end(); m_iter++ ) {
+			if ( m_iter->second ) {
+				if ( all_neighbors.find(m_iter->first) == all_neighbors.end() ) {
 					starting_cluster.append_residue_by_jump(p.residue(m_iter->first), starting_cluster.total_residue());
 					repacked_cluster.append_residue_by_jump(repacked.residue(m_iter->first), repacked_cluster.total_residue());
 					all_neighbors[m_iter->first]++;
@@ -506,8 +509,8 @@ void design_cluster(
 
 	core::Real motif_starting_energy = 0.0;
 
-	for(core::Size i = 1; i <= positions.size(); i++) {
-		for(core::Size j = i+1; j <= positions.size(); j++) {
+	for ( core::Size i = 1; i <= positions.size(); i++ ) {
+		for ( core::Size j = i+1; j <= positions.size(); j++ ) {
 			core::scoring::EMapVector energymap;
 			score_fxn->eval_ci_2b_sc_sc(p.residue(positions[i]), p.residue(positions[j]), p, energymap);
 			score_fxn->eval_cd_2b_sc_sc(p.residue(positions[i]), p.residue(positions[j]), p, energymap);
@@ -518,8 +521,8 @@ void design_cluster(
 
 	core::Real motif_repacked_energy = 0.0;
 
-	for(core::Size i = 1; i <= positions.size(); i++) {
-		for(core::Size j = i+1; j <= positions.size(); j++) {
+	for ( core::Size i = 1; i <= positions.size(); i++ ) {
+		for ( core::Size j = i+1; j <= positions.size(); j++ ) {
 			core::scoring::EMapVector energymap;
 			score_fxn->eval_ci_2b_sc_sc(repacked.residue(positions[i]), repacked.residue(positions[j]), repacked, energymap);
 			score_fxn->eval_cd_2b_sc_sc(repacked.residue(positions[i]), repacked.residue(positions[j]), repacked, energymap);
@@ -528,7 +531,7 @@ void design_cluster(
 		}
 	}
 
-	if (basic::options::option[ basic::options::OptionKeys::design_tight_clusters::generate_output_structures ]() ) {
+	if ( basic::options::option[ basic::options::OptionKeys::design_tight_clusters::generate_output_structures ]() ) {
 		//starting_cluster.dump_pdb( p_name+"_"+cluster_name+"starting.pdb" );
 		//repacked_cluster.dump_pdb( option[ out::path::pdb ]().path() + p_name+"_"+cluster_name+"repacked.pdb" );
 		repacked_cluster.dump_pdb( p_name+"_"+cluster_name+"repacked.pdb" );// just the repacked residues
@@ -542,36 +545,36 @@ void design_cluster(
 	compare_residues_and_chi1_2_angles(p, repacked, cluster, mutations, chi_dev_details);
 
 	outfile << p_name << "\t"
-	<< cluster_name << "\t"
-	<< motif_rmsd;
+		<< cluster_name << "\t"
+		<< motif_rmsd;
 
-	for (core::Size i = 1; i <= mutations.size(); i++) {
+	for ( core::Size i = 1; i <= mutations.size(); i++ ) {
 		outfile << "\t" << mutations[i];
 	}
 
 	// report failures per residue
-	for (core::Size i = 1; i <= chi_dev_details.size(); i++) {
+	for ( core::Size i = 1; i <= chi_dev_details.size(); i++ ) {
 		outfile << "\t" << chi_dev_details[i];
 	}
 
 	// report RMSD per residue -- note that I think these are not symmetry-corrected
-	for (core::Size i = 1; i <= individual_pos_RMSDs.size(); i++) {
+	for ( core::Size i = 1; i <= individual_pos_RMSDs.size(); i++ ) {
 		outfile << "\t" << individual_pos_RMSDs[i];
 	}
 
 	outfile << "\t" << cluster_acc << "\t" << p.energies().total_energy() << "\t"
-	<< repacked.energies().total_energy() << "\t"
-	<< motif_starting_energy << "\t"
-	<< motif_repacked_energy << "\t"
-	<< repacked_cluster.sequence() << "\t";
+		<< repacked.energies().total_energy() << "\t"
+		<< motif_starting_energy << "\t"
+		<< motif_repacked_energy << "\t"
+		<< repacked_cluster.sequence() << "\t";
 
-	for (core::Size i = 1; i <= cluster_pos_in_PDB_numbering.size(); i++) {
+	for ( core::Size i = 1; i <= cluster_pos_in_PDB_numbering.size(); i++ ) {
 		outfile << cluster_pos_in_PDB_numbering[i] << ",";
 	}
 
 	outfile << "\t";
 
-	for (core::Size i = 1; i <= repacked_pos_in_PDB_numbering.size(); i++) {
+	for ( core::Size i = 1; i <= repacked_pos_in_PDB_numbering.size(); i++ ) {
 		outfile << repacked_pos_in_PDB_numbering[i] << ",";
 	}
 
@@ -597,7 +600,7 @@ int main( int argc, char * argv [] )
 		NEW_OPT(design_tight_clusters::num_cycles, "number of pack/design cycles to be performed", 2);
 		NEW_OPT(design_tight_clusters::favor_native, "energy benefit for native residues", 0.0);
 
-		//	NEW_OPT(design_tight_clusters::cluster_file_suffix, "extension for the filename with the cluster results", "test");
+		// NEW_OPT(design_tight_clusters::cluster_file_suffix, "extension for the filename with the cluster results", "test");
 		NEW_OPT(design_tight_clusters::chi_deviation_thresholds, "list of chi1/2 deviation thresholds", utility::vector1<core::Size>()); // -- haven't figured out how to give this default weights: 40, 20, 10));
 		NEW_OPT(design_tight_clusters::min_pack, "use MinPacker", false);
 		//NEW_OPT(design_tight_clusters::stochastic_pack, "use stochastic pack", false);
@@ -608,7 +611,7 @@ int main( int argc, char * argv [] )
 		NEW_OPT(design_tight_clusters::backrub, "use backrub to move both backbone and side chain", false);
 		NEW_OPT(design_tight_clusters::backrub_sc_prob, "probability of making a side chain move within backrub (default 0.25)", 0.25);
 		NEW_OPT(design_tight_clusters::external_cluster, "provide all cluster positions in PDB numbering (chain pos vector)", utility::vector1<std::string>()); // half of these will be casted to chars, the other half to ints...
-		//	NEW_OPT(design_tight_clusters::evaluate_externally_repacked_structure, "evaluate chi1/2 of an externally repacked structure -- requires -in:file:native for the reference structure", false);
+		// NEW_OPT(design_tight_clusters::evaluate_externally_repacked_structure, "evaluate chi1/2 of an externally repacked structure -- requires -in:file:native for the reference structure", false);
 		NEW_OPT(design_tight_clusters::soft_repack_min_hard_repack_min, "(hard repack to normalize, as for all runs, then) soft repack, hard minimize, hard repack w/ include_current, hard min", false);
 
 
@@ -616,18 +619,18 @@ int main( int argc, char * argv [] )
 		devel::init(argc, argv);
 
 		std::stringstream cluster_filename_suffix;
-		if (basic::options::option[ basic::options::OptionKeys::design_tight_clusters::repack_radius ]()) {
+		if ( basic::options::option[ basic::options::OptionKeys::design_tight_clusters::repack_radius ]() ) {
 			cluster_filename_suffix << "." << basic::options::option[ basic::options::OptionKeys::design_tight_clusters::repack_radius ]() << "A_repack";
 		}
 
 		/*
-		 if (option[ design_tight_clusters::cluster_file_suffix ].user()) {
-		 cluster_filename_suffix << "." << option[ design_tight_clusters::cluster_file_suffix ]();
-		 TR << "setting cluster file suffix: " << cluster_filename_suffix << std::endl;
-		 }
-		 */
+		if (option[ design_tight_clusters::cluster_file_suffix ].user()) {
+		cluster_filename_suffix << "." << option[ design_tight_clusters::cluster_file_suffix ]();
+		TR << "setting cluster file suffix: " << cluster_filename_suffix << std::endl;
+		}
+		*/
 		//cluster_filename_suffix << "." << option[ design_tight_clusters::chi_deviation_threshold ]();
-		for (IntegerVectorOption::const_iterator it = option[ design_tight_clusters::chi_deviation_thresholds ]().begin(), end = option[ design_tight_clusters::chi_deviation_thresholds ]().end(); it != end; it++) {
+		for ( IntegerVectorOption::const_iterator it = option[ design_tight_clusters::chi_deviation_thresholds ]().begin(), end = option[ design_tight_clusters::chi_deviation_thresholds ]().end(); it != end; it++ ) {
 			cluster_filename_suffix << "." << *it;
 		}
 
@@ -648,13 +651,15 @@ int main( int argc, char * argv [] )
 
 		if ( option[ out::path::pdb ].user() ) {
 			size_t si = outfile_core.rfind("/"); // last occurrence of /
-			if (si != std::string::npos)
+			if ( si != std::string::npos ) {
 				outfile_core = outfile_core.substr(si+1); // // we only want the name, but leave out the input path
+			}
 			outfile_core = option[ out::path::pdb ]().path() + outfile_core;
 		} else if ( option[ out::path::all ].user() ) {
 			size_t si = outfile_core.rfind("/"); // last occurrence of /
-			if (si != std::string::npos)
+			if ( si != std::string::npos ) {
 				outfile_core = outfile_core.substr(si+1); // // we only want the name, but leave out the input path
+			}
 			outfile_core = option[ out::path::all ]().path() + outfile_core;
 		}
 
@@ -689,24 +694,24 @@ int main( int argc, char * argv [] )
 		pose::Pose native_p(p); // actual native if provided, otherwise this is a copy of the input structure
 		(*score_fxn)(native_p);
 
-		if ( option[ design_tight_clusters::external_cluster ]().size() % 2 != 0) {
+		if ( option[ design_tight_clusters::external_cluster ]().size() % 2 != 0 ) {
 			TR << "error -- -external_cluster parameters must always be pairs of chain and position!" << std::endl;
 			return 2;
 		}
 
 
 		/* --- not implemented yet ---
-		 if ( option [ design_tight_clusters::evaluate_externally_repacked_structure ]() ) { // requires native for reference
-		 // it might be easier to directly call comparison on the given cluster
-		 if (! option[ in::file::native ].user() ) {
-		 TR << "error -- native pose required for comparison with externally repacked structures!" << std::endl;
-		 return 2;
-		 }
-		 native_p.clear();
-		 core::import_pose::pose_from_pdb(native_p, option[ in::file::native ]()); // does this work?
-		 (*score_fxn)(native_p); // initial scoring is required to get actual energies
-		 }
-		 */
+		if ( option [ design_tight_clusters::evaluate_externally_repacked_structure ]() ) { // requires native for reference
+		// it might be easier to directly call comparison on the given cluster
+		if (! option[ in::file::native ].user() ) {
+		TR << "error -- native pose required for comparison with externally repacked structures!" << std::endl;
+		return 2;
+		}
+		native_p.clear();
+		core::import_pose::pose_from_pdb(native_p, option[ in::file::native ]()); // does this work?
+		(*score_fxn)(native_p); // initial scoring is required to get actual energies
+		}
+		*/
 
 		std::set<core::Size> ext_cluster;
 		std::string cluster_name = "";
@@ -714,7 +719,7 @@ int main( int argc, char * argv [] )
 		core::pose::Pose native_cluster;
 		core::pose::Pose repacked_cluster;
 
-		for (core::Size c_pos = 1; c_pos <= option[ design_tight_clusters::external_cluster ]().size(); c_pos += 2) {
+		for ( core::Size c_pos = 1; c_pos <= option[ design_tight_clusters::external_cluster ]().size(); c_pos += 2 ) {
 
 			core::Size mapped_pos = p.pdb_info()->pdb2pose(option[ design_tight_clusters::external_cluster ][c_pos][0], atoi(option[ design_tight_clusters::external_cluster ][c_pos+1].c_str()));
 
@@ -727,8 +732,8 @@ int main( int argc, char * argv [] )
 
 			if ( option[ design_tight_clusters::debug ]() ) {
 				TR << " *** evaluating external cluster *** " << option[ design_tight_clusters::external_cluster ][c_pos]
-				<< " " << option[ design_tight_clusters::external_cluster ][c_pos+1] << " "
-				<< mapped_pos << std::endl;
+					<< " " << option[ design_tight_clusters::external_cluster ][c_pos+1] << " "
+					<< mapped_pos << std::endl;
 			}
 
 
@@ -740,7 +745,7 @@ int main( int argc, char * argv [] )
 
 
 		// repack all the filtered clusters (whether externally provided or detected in this run)
-		for (std::map<std::set<core::Size>, std::string>::const_iterator mi = filtered_clusters.begin(); mi != filtered_clusters.end(); mi++) {
+		for ( std::map<std::set<core::Size>, std::string>::const_iterator mi = filtered_clusters.begin(); mi != filtered_clusters.end(); mi++ ) {
 			design_cluster(native_p, p, score_fxn, mi->first, mi->second, outfile_core, outfile);
 		}
 

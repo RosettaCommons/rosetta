@@ -24,7 +24,7 @@ namespace etable {
 class MembEtable;
 
 typedef utility::pointer::shared_ptr< MembEtable > MembEtableOP;
-	//typedef utility::pointer::owning_ptr< Etable const > EtableCOP;
+//typedef utility::pointer::owning_ptr< Etable const > EtableCOP;
 typedef utility::pointer::weak_ptr< MembEtable const > MembEtableCAP;
 
 } // etable

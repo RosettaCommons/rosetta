@@ -32,13 +32,13 @@ public:
 		using namespace basic::options;
 
 		core::Size reps( (core::Size)(4000*scaleFactor) ); // /10
-		if( reps == 0 ) { reps = 1; } // do at least one rep, regardless of scale factor.
-		for(core::Size i=0; i<reps; i++) {
-			for( KeyLookup< OptionKey >::ConstIterator
-						 k = KeyLookup< OptionKey >::begin(),
-						 ke = KeyLookup< OptionKey >::end();
-					 k != ke; ++k) {
-				if( option.has(*k) ){
+		if ( reps == 0 ) { reps = 1; } // do at least one rep, regardless of scale factor.
+		for ( core::Size i=0; i<reps; i++ ) {
+			for ( KeyLookup< OptionKey >::ConstIterator
+					k = KeyLookup< OptionKey >::begin(),
+					ke = KeyLookup< OptionKey >::end();
+					k != ke; ++k ) {
+				if ( option.has(*k) ) {
 					option( *k ).user();
 				}
 			}

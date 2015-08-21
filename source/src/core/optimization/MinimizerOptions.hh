@@ -88,28 +88,28 @@ public:
 	void
 	minimize_tolerance( Real minimize_tolerance_in );
 
-	/// @brief Indicate whether or not a handful of optimizations regarding the 
+	/// @brief Indicate whether or not a handful of optimizations regarding the
 	/// neighbor list have been enabled.
 	/// @copydetails use_nblist()
 	bool
 	use_nblist() const;
 
-	/// @brief Indicate whether or not a handful of optimizations regarding the 
+	/// @brief Indicate whether or not a handful of optimizations regarding the
 	/// neighbor list should be enabled.
 	///
-	/// @details The neighbor list is based on the move map.  It includes any 
-	/// atoms that can be moved by the minimizer plus their neighbors.  This list 
-	/// is not updated during minimization.  All scores for atoms and atom pairs 
-	/// outside the neighbor list are held fixed.  All scores for atoms and atom 
-	/// pairs within the list are not cached (usually they would be), since it 
-	/// assumed that they will be changing rapidly.  These optimizations are 
-	/// effective when a large number of small moves are being made.  You may 
-	/// prefer to enable this option when minimizing in fullatom mode, and to 
+	/// @details The neighbor list is based on the move map.  It includes any
+	/// atoms that can be moved by the minimizer plus their neighbors.  This list
+	/// is not updated during minimization.  All scores for atoms and atom pairs
+	/// outside the neighbor list are held fixed.  All scores for atoms and atom
+	/// pairs within the list are not cached (usually they would be), since it
+	/// assumed that they will be changing rapidly.  These optimizations are
+	/// effective when a large number of small moves are being made.  You may
+	/// prefer to enable this option when minimizing in fullatom mode, and to
 	/// disable it in centroid mode.
 	///
-	/// @note I wrote this docstring after I reading through a bunch of code to 
-	/// figure out what this option meant, but I don't have any expertise with 
-	/// the minimizer.  So the above represents my understanding of this option, 
+	/// @note I wrote this docstring after I reading through a bunch of code to
+	/// figure out what this option meant, but I don't have any expertise with
+	/// the minimizer.  So the above represents my understanding of this option,
 	/// but there could very well be errors or misstatements.
 	///
 	/// @see core::scoring::AtomNeighbor
@@ -179,8 +179,8 @@ private:
 
 	bool silent_;  // no minimizer output
 
-	Real gmax_cutoff_for_convergence_;  // armijo line min: only converge if max grad < this value 
-	                                    //    defaults to 1.0
+	Real gmax_cutoff_for_convergence_;  // armijo line min: only converge if max grad < this value
+	//    defaults to 1.0
 
 	Real ax_init_;
 	Real xx_init_;

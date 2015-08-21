@@ -37,24 +37,24 @@ namespace datacache {
 /// bool is_conserved = core::pose::is_position_conserved_residue(pose, residue)
 //
 class PositionConservedResiduesStore : public basic::datacache::CacheableData {
-  typedef boost::unordered_map<core::Size, bool> ConservationMap;
+	typedef boost::unordered_map<core::Size, bool> ConservationMap;
 
- public:
-  /// @brief Default constructor
-  PositionConservedResiduesStore();
+public:
+	/// @brief Default constructor
+	PositionConservedResiduesStore();
 
-  /// @brief Creates a copy of this instance
-  basic::datacache::CacheableDataOP clone() const;
+	/// @brief Creates a copy of this instance
+	basic::datacache::CacheableDataOP clone() const;
 
-  /// @brief Returns true if <residue> is positionally conserved, false otherwise
-  bool is_conserved(core::Size residue) const;
+	/// @brief Returns true if <residue> is positionally conserved, false otherwise
+	bool is_conserved(core::Size residue) const;
 
-  /// @brief Updates the positional conservation of <residue>
-  void set_conserved(core::Size residue, bool conserved);
+	/// @brief Updates the positional conservation of <residue>
+	void set_conserved(core::Size residue, bool conserved);
 
- private:
-  /// @brief Associates real-valued structural conservation scores with residues
-  mutable ConservationMap conservation_;
+private:
+	/// @brief Associates real-valued structural conservation scores with residues
+	mutable ConservationMap conservation_;
 };
 
 }  // namespace datacache

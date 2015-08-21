@@ -91,11 +91,11 @@ public:
 class ScoreJumpFileSilentStructCreator : public SilentStructCreator
 {
 public:
-  ScoreJumpFileSilentStructCreator();
-  virtual ~ScoreJumpFileSilentStructCreator();
+	ScoreJumpFileSilentStructCreator();
+	virtual ~ScoreJumpFileSilentStructCreator();
 
-  virtual SilentStructOP create_silent_struct() const;
-  virtual std::string keyname() const;
+	virtual SilentStructOP create_silent_struct() const;
+	virtual std::string keyname() const;
 };
 
 

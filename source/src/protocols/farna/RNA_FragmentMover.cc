@@ -58,53 +58,53 @@ namespace farna {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Empty constructor
 RNA_FragmentMover::RNA_FragmentMover() : Mover(),
-		num_insertable_residues_( 0 ),
-		insert_map_frag_size_( 0 ),
-		frag_size_( 0 )
+	num_insertable_residues_( 0 ),
+	insert_map_frag_size_( 0 ),
+	frag_size_( 0 )
 {
 	Mover::type("RNA_FragmentMover");
 }
 
 RNA_FragmentMover::RNA_FragmentMover(
-		RNA_FragmentsOP rna_fragments,
-		protocols::toolbox::AllowInsertOP allow_insert
+	RNA_FragmentsOP rna_fragments,
+	protocols::toolbox::AllowInsertOP allow_insert
 ) : Mover(),
-		rna_fragments_( rna_fragments ),
-		allow_insert_( allow_insert ),
-		num_insertable_residues_( 0 ),
-		insert_map_frag_size_( 0 ),
-		frag_size_( 0 )
+	rna_fragments_( rna_fragments ),
+	allow_insert_( allow_insert ),
+	num_insertable_residues_( 0 ),
+	insert_map_frag_size_( 0 ),
+	frag_size_( 0 )
 {
 	Mover::type("RNA_FragmentMover");
 }
 
 // This constructor is not actually used anymore -- better to use AllowInsert object above.
 RNA_FragmentMover::RNA_FragmentMover( RNA_FragmentsOP all_rna_fragments,
-		ObjexxFCL::FArray1D<bool> const & allow_insert_in,
-		pose::Pose const & pose ):
-		Mover(),
-		rna_fragments_( all_rna_fragments ),
-		num_insertable_residues_( 0 ),
-		insert_map_frag_size_( 0 ),
-		frag_size_( 0 )
+	ObjexxFCL::FArray1D<bool> const & allow_insert_in,
+	pose::Pose const & pose ):
+	Mover(),
+	rna_fragments_( all_rna_fragments ),
+	num_insertable_residues_( 0 ),
+	insert_map_frag_size_( 0 ),
+	frag_size_( 0 )
 {
 	Mover::type("RNA_FragmentMover");
 
 	allow_insert_ = protocols::toolbox::AllowInsertOP( new toolbox::AllowInsert( pose ) );
 	allow_insert_->set( false );
-	for ( Size i = 1; i <= allow_insert_in.size(); i++ ){
+	for ( Size i = 1; i <= allow_insert_in.size(); i++ ) {
 		if ( pose.residue_type( i ).is_RNA() && allow_insert_in[ i ] ) allow_insert_->set( i, true );
 	}
 }
 
 // Copy constructor
 RNA_FragmentMover::RNA_FragmentMover(RNA_FragmentMover const & object_to_copy) : Mover(object_to_copy),
-		rna_fragments_(object_to_copy.rna_fragments_),
-		allow_insert_(object_to_copy.allow_insert_),
-		insert_map_(object_to_copy.insert_map_),
-		num_insertable_residues_(object_to_copy.num_insertable_residues_),
-		insert_map_frag_size_(object_to_copy.insert_map_frag_size_),
-		frag_size_(object_to_copy.frag_size_)
+	rna_fragments_(object_to_copy.rna_fragments_),
+	allow_insert_(object_to_copy.allow_insert_),
+	insert_map_(object_to_copy.insert_map_),
+	num_insertable_residues_(object_to_copy.num_insertable_residues_),
+	insert_map_frag_size_(object_to_copy.insert_map_frag_size_),
+	frag_size_(object_to_copy.frag_size_)
 {}
 
 
@@ -133,7 +133,7 @@ RNA_FragmentMover::fresh_instance() const
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_FragmentMover::apply(
-	 core::pose::Pose & pose
+	core::pose::Pose & pose
 )
 {
 	//Note, its better to call random_fragment_insertion directly...
@@ -146,13 +146,13 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 {
 
 	// Maybe we don't need to do any updating.
-	if (frag_size_ == insert_map_frag_size_) return;
+	if ( frag_size_ == insert_map_frag_size_ ) return;
 
 	// OK we do.
 	num_insertable_residues_ = 0;
 	insert_map_.clear();
 
-	for (Size i = 1; i <= pose.total_residue() - frag_size_ + 1; i++ ) {
+	for ( Size i = 1; i <= pose.total_residue() - frag_size_ + 1; i++ ) {
 
 		// Look to see if frame has *any* insertable residues.
 		// This is different from the past. Now we have a atom-resolution
@@ -160,9 +160,9 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 		// avoid changing atom positions that should be fixed.
 		//bool frame_ok = true;
 
-		//		if ( !rna_fragments_->is_fullatom() ){
+		//  if ( !rna_fragments_->is_fullatom() ){
 		bool frame_ok = false;
-		for (Size offset = 1; offset <= frag_size_; offset++ ){
+		for ( Size offset = 1; offset <= frag_size_; offset++ ) {
 			Size const n = i + offset - 1;
 			if ( allow_insert_->get( n ) ) { //sucka!
 				frame_ok = true;
@@ -170,45 +170,45 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 			}
 		}
 
-		//		} else {
+		//  } else {
 
-		//			frame_ok = true;
-		//			//Old school. Default for full-atom fragments.
-		//			for (Size offset = 1; offset <= frag_size_; offset++ ){
-		//				if ( !allow_insert_->get( i + offset - 1 ) ) { //sucka!
-		//					frame_ok = false;
-		//					break;
-		//				}
-		//			}
-		//		}
+		//   frame_ok = true;
+		//   //Old school. Default for full-atom fragments.
+		//   for (Size offset = 1; offset <= frag_size_; offset++ ){
+		//    if ( !allow_insert_->get( i + offset - 1 ) ) { //sucka!
+		//     frame_ok = false;
+		//     break;
+		//    }
+		//   }
+		//  }
 
 		if ( !frame_ok ) continue;
 
 		// Must make sure the whole frame is RNA, of course.
 
-		for (Size offset = 1; offset <= frag_size_; offset++ ){
-			if ( !pose.residue_type( i + offset - 1 ).is_RNA() ){
+		for ( Size offset = 1; offset <= frag_size_; offset++ ) {
+			if ( !pose.residue_type( i + offset - 1 ).is_RNA() ) {
 				frame_ok = false; break;
 			}
 		}
 
 		// Check for cutpoints that interrupt frame. Wait. why?
-		//		for (Size offset = 1; offset <= frag_size_; offset++ ){
-		//			if ( offset < frag_size_ &&
-		//					 pose.fold_tree().is_cutpoint( i + offset - 1) &&
-		//					 !( pose.residue_type( i+offset-1).has_variant_type( chemical::CUTPOINT_LOWER ) &&
-		//							pose.residue_type( i+offset  ).has_variant_type( chemical::CUTPOINT_UPPER ) ) ) {
-		//				frame_ok = false; break;
-		//			}
-		//		}
+		//  for (Size offset = 1; offset <= frag_size_; offset++ ){
+		//   if ( offset < frag_size_ &&
+		//      pose.fold_tree().is_cutpoint( i + offset - 1) &&
+		//      !( pose.residue_type( i+offset-1).has_variant_type( chemical::CUTPOINT_LOWER ) &&
+		//       pose.residue_type( i+offset  ).has_variant_type( chemical::CUTPOINT_UPPER ) ) ) {
+		//    frame_ok = false; break;
+		//   }
+		//  }
 
-		if ( !frame_ok ) continue;		//		for (Size offset = 1; offset <= frag_size_; offset++ ){
-		//			if ( offset < frag_size_ &&
-		//					 pose.fold_tree().is_cutpoint( i + offset - 1) &&
-		//					 !( pose.residue_type( i+offset-1).has_variant_type( chemical::CUTPOINT_LOWER ) &&
-		//							pose.residue_type( i+offset  ).has_variant_type( chemical::CUTPOINT_UPPER ) ) ) {
-		//				frame_ok = false; break;
-		//			}
+		if ( !frame_ok ) continue;  //  for (Size offset = 1; offset <= frag_size_; offset++ ){
+		//   if ( offset < frag_size_ &&
+		//      pose.fold_tree().is_cutpoint( i + offset - 1) &&
+		//      !( pose.residue_type( i+offset-1).has_variant_type( chemical::CUTPOINT_LOWER ) &&
+		//       pose.residue_type( i+offset  ).has_variant_type( chemical::CUTPOINT_UPPER ) ) ) {
+		//    frame_ok = false; break;
+		//   }
 
 
 		num_insertable_residues_++;
@@ -220,7 +220,7 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 
 	// std::cout << "ALLOW INSERT! ALLOW INSERT! ALLOW INSERT!" << std::endl;
 	// for (Size i = 1; i <= pose.total_residue(); i++ ){
-	// 	std::cout << allow_insert_->get( i );
+	//  std::cout << allow_insert_->get( i );
 	// }
 	// std::cout << std::endl;
 	// std::cout << "ALLOW INSERT! ALLOW INSERT! ALLOW INSERT!"<< std::endl;
@@ -233,8 +233,8 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 ////////////////////////////////////////////////////////////////////////////////////////
 Size
 RNA_FragmentMover::random_fragment_insertion(
-	 core::pose::Pose & pose,
-	 Size const & frag_size
+	core::pose::Pose & pose,
+	Size const & frag_size
 )
 {
 	frag_size_ = frag_size;
@@ -244,11 +244,11 @@ RNA_FragmentMover::random_fragment_insertion(
 
 	// Make this insertion stuff a class before checking in?
 	update_insert_map( pose );
-	if ( num_insertable_residues_ == 0) return 0; // nothing to do
+	if ( num_insertable_residues_ == 0 ) return 0; // nothing to do
 	Size const position_index = static_cast <int> ( numeric::random::rg().uniform() * num_insertable_residues_ ) + 1;
 	Size const position = insert_map_[ position_index ];
 
-	//	std::cout << " --- Trying fragment! at " << position << std::endl;
+	// std::cout << " --- Trying fragment! at " << position << std::endl;
 
 	rna_fragments_->apply_random_fragment( pose, position, frag_size_, type, allow_insert_ );
 
@@ -258,7 +258,7 @@ RNA_FragmentMover::random_fragment_insertion(
 
 void
 RNA_FragmentMover::set_frag_size(
-	 Size const fragment_size
+	Size const fragment_size
 )
 {
 	frag_size_ = fragment_size;

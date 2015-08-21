@@ -33,8 +33,8 @@
 
 #include <basic/Tracer.hh>
 
-namespace protocols{
-namespace simple_moves{
+namespace protocols {
+namespace simple_moves {
 
 static thread_local basic::Tracer TR( "protocols.simple_moves.O2M_MutateMover" );
 
@@ -45,11 +45,11 @@ void O2M_MutateMover::apply( core::io::serialization::PipeMap & pmap)
 	using namespace core::chemical;
 	using namespace core::conformation;
 
-	if( ! task_factory_) {
+	if ( ! task_factory_ ) {
 		TR << "Task factory not initialized" << std::endl;
 		return;
 	}
-	if( ! scorefxn_) {
+	if ( ! scorefxn_ ) {
 		TR << "Score function not initialized" << std::endl;
 		return;
 	}
@@ -58,11 +58,11 @@ void O2M_MutateMover::apply( core::io::serialization::PipeMap & pmap)
 	core::pose::add_comment( *starting_pose, "mut_pos", "AA0" );
 	PackerTaskCOP starting_task = task_factory_->create_task_and_apply_taskoperations( *starting_pose );
 
-	for( core::Size resi = 1; resi <= starting_pose->total_residue(); ++resi ){
-		if( starting_task->residue_task( resi ).being_designed() && starting_pose->residue(resi).is_protein() ) {
+	for ( core::Size resi = 1; resi <= starting_pose->total_residue(); ++resi ) {
+		if ( starting_task->residue_task( resi ).being_designed() && starting_pose->residue(resi).is_protein() ) {
 			std::list<ResidueTypeCOP> const & allowed( starting_task->residue_task( resi ).allowed_residue_types() );
-			for( std::list<ResidueTypeCOP>::const_iterator itr=allowed.begin(), end= allowed.end(); itr != end; ++itr ){
-				if( (*itr)->aa() != starting_pose->residue( resi ).aa() ) {
+			for ( std::list<ResidueTypeCOP>::const_iterator itr=allowed.begin(), end= allowed.end(); itr != end; ++itr ) {
+				if ( (*itr)->aa() != starting_pose->residue( resi ).aa() ) {
 					PoseSP working_pose( new Pose( *starting_pose) );
 
 					PackerTaskOP mutate_task( starting_task->clone() );
@@ -84,7 +84,7 @@ void O2M_MutateMover::apply( core::io::serialization::PipeMap & pmap)
 					mut_pos += working_pose->residue(resi).name1();
 					mut_pos += utility::to_string(resi);
 					core::pose::add_comment( *working_pose, "mut_pos", mut_pos );
-					pmap["input"]->push_back( working_pose );	
+					pmap["input"]->push_back( working_pose );
 				}
 			}
 		}
@@ -92,16 +92,16 @@ void O2M_MutateMover::apply( core::io::serialization::PipeMap & pmap)
 }
 
 void O2M_MutateMover::parse_def( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const & score_fxns,
-		utility::lua::LuaObject const & tasks,
-		protocols::moves::MoverCacheSP ) {
+	utility::lua::LuaObject const & score_fxns,
+	utility::lua::LuaObject const & tasks,
+	protocols::moves::MoverCacheSP ) {
 
-	if( def["scorefxn"] ) {
+	if ( def["scorefxn"] ) {
 		scorefxn_ = protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns );
 	} else {
 		scorefxn_ = score_fxns["score12"].to<core::scoring::ScoreFunctionSP>()->clone();
 	}
-	if( def["tasks"] ) {
+	if ( def["tasks"] ) {
 		task_factory_ = protocols::elscripts::sp_parse_taskdef( def["tasks"], tasks );
 	} else {
 		task_factory_ = core::pack::task::TaskFactorySP( new core::pack::task::TaskFactory );

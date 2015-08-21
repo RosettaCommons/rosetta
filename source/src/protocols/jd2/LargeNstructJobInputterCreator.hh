@@ -17,15 +17,15 @@
 #include <protocols/jd2/JobInputterCreator.hh>
 
 namespace protocols {
-	namespace jd2 {
+namespace jd2 {
 
-		class LargeNstructJobInputterCreator : public protocols::jd2::JobInputterCreator {
-		public:
-			virtual protocols::jd2::JobInputterOP create_JobInputter() const;
-			virtual std::string keyname() const;
-		};
+class LargeNstructJobInputterCreator : public protocols::jd2::JobInputterCreator {
+public:
+	virtual protocols::jd2::JobInputterOP create_JobInputter() const;
+	virtual std::string keyname() const;
+};
 
-	} // jd2
+} // jd2
 } // protocols
 
 #endif //INCLUDED_protocols_jd2_LargeNstructJobInputterCreator_hh

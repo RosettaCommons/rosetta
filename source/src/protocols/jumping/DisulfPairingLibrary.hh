@@ -72,24 +72,24 @@ public:
 
 	//virtual void
 	//create_jump_fragments(
-  //  int const orientation,
-	//	int const pleating,
-	//	bool bWithTorsion,
-	//	core::fragment::FragDataOPs &
+	//  int const orientation,
+	// int const pleating,
+	// bool bWithTorsion,
+	// core::fragment::FragDataOPs &
 	//) const = 0;
 
 	//virtual void
 	//generate_jump_frags(
-	//	PairingsList const& pairings,
-	//	core::kinematics::MoveMap const& mm,
-	//	bool bWithTorsion,
-	//	core::fragment::FragSet& frags_accumulator
+	// PairingsList const& pairings,
+	// core::kinematics::MoveMap const& mm,
+	// bool bWithTorsion,
+	// core::fragment::FragSet& frags_accumulator
 	//) = 0;
 };
 
 class DisulfPairingLibrary : public BaseDisulfPairingLibrary {
-  typedef std::vector< DisulfTemplate > DisulfTemplateList;
-  typedef std::map< std::pair< int, int >, DisulfTemplateList > DisulfTemplateMap;
+	typedef std::vector< DisulfTemplate > DisulfTemplateList;
+	typedef std::map< std::pair< int, int >, DisulfTemplateList > DisulfTemplateMap;
 public:
 	DisulfPairingLibrary():num_of_pairings_(0) {};
 	void read_from_file( std::string const& fn);
@@ -116,9 +116,9 @@ public:
 	) const; // APL TESTING -- CAN THIS BE CONST?
 
 private:
-  DisulfTemplateMap pairings_;
+	DisulfTemplateMap pairings_;
 	DisulfTemplateList all_pairings_;
-  core::Size num_of_pairings_;
+	core::Size num_of_pairings_;
 };
 
 /// @brief The %StandardDisulfPairingsLibrary initializes itself in its constructor

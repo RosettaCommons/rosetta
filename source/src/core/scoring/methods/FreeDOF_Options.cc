@@ -25,42 +25,42 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-	//Constructor
-	FreeDOF_Options::FreeDOF_Options()
-	{
-		initialize_from_options();
-	}
+//Constructor
+FreeDOF_Options::FreeDOF_Options()
+{
+	initialize_from_options();
+}
 
-	//Destructor
-	FreeDOF_Options::~FreeDOF_Options()
-	{}
+//Destructor
+FreeDOF_Options::~FreeDOF_Options()
+{}
 
-	/////////////////////////////
-	void FreeDOF_Options::initialize_from_options() {
-		free_suite_bonus_ = basic::options::option[ basic::options::OptionKeys::score::free_suite_bonus ]();
-		free_2HOprime_bonus_ = basic::options::option[ basic::options::OptionKeys::score::free_2HOprime_bonus ]();
-		free_sugar_bonus_ = basic::options::option[ basic::options::OptionKeys::score::free_sugar_bonus ](); // this is -1.0 by default (also ad ho
-		pack_phosphate_penalty_ = basic::options::option[ basic::options::OptionKeys::score::pack_phosphate_penalty ]();
-		free_side_chain_bonus_ = basic::options::option[ basic::options::OptionKeys::score::free_side_chain_bonus ]();
-	}
+/////////////////////////////
+void FreeDOF_Options::initialize_from_options() {
+	free_suite_bonus_ = basic::options::option[ basic::options::OptionKeys::score::free_suite_bonus ]();
+	free_2HOprime_bonus_ = basic::options::option[ basic::options::OptionKeys::score::free_2HOprime_bonus ]();
+	free_sugar_bonus_ = basic::options::option[ basic::options::OptionKeys::score::free_sugar_bonus ](); // this is -1.0 by default (also ad ho
+	pack_phosphate_penalty_ = basic::options::option[ basic::options::OptionKeys::score::pack_phosphate_penalty ]();
+	free_side_chain_bonus_ = basic::options::option[ basic::options::OptionKeys::score::free_side_chain_bonus ]();
+}
 
-	////////////////////////////
-	bool
-	operator==( FreeDOF_Options const & a, FreeDOF_Options const & b ){
+////////////////////////////
+bool
+operator==( FreeDOF_Options const & a, FreeDOF_Options const & b ){
 
-		return ( ( a.free_suite_bonus_ == b.free_suite_bonus_ ) &&
-						 ( a.free_2HOprime_bonus_ == b.free_2HOprime_bonus_ ) &&
-						 ( a.free_sugar_bonus_ == b.free_sugar_bonus_ ) &&
-						 ( a.pack_phosphate_penalty_ == b.pack_phosphate_penalty_ ) &&
-						 ( a.free_side_chain_bonus_ == b.free_side_chain_bonus_ ) );
-	}
+	return ( ( a.free_suite_bonus_ == b.free_suite_bonus_ ) &&
+		( a.free_2HOprime_bonus_ == b.free_2HOprime_bonus_ ) &&
+		( a.free_sugar_bonus_ == b.free_sugar_bonus_ ) &&
+		( a.pack_phosphate_penalty_ == b.pack_phosphate_penalty_ ) &&
+		( a.free_side_chain_bonus_ == b.free_side_chain_bonus_ ) );
+}
 
-	////////////////////////////
-	std::ostream &
-	operator<< ( std::ostream & out, const FreeDOF_Options & options ){
-		options.show( out );
-		return out;
-	}
+////////////////////////////
+std::ostream &
+operator<< ( std::ostream & out, const FreeDOF_Options & options ){
+	options.show( out );
+	return out;
+}
 
 
 void

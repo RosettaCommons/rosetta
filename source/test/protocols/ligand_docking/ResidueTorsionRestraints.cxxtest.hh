@@ -44,8 +44,8 @@ public:
 		utility::vector1< std::string > params_files;
 		ResidueTypeSetCOP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
-		if(!residue_set.has_name("ZNx")) params_files.push_back("protocols/ligand_docking/ZNx.params");
-		if(!residue_set.has_name("CP1")) params_files.push_back("protocols/ligand_docking/7cpa.params");
+		if ( !residue_set.has_name("ZNx") ) params_files.push_back("protocols/ligand_docking/ZNx.params");
+		if ( !residue_set.has_name("CP1") ) params_files.push_back("protocols/ligand_docking/7cpa.params");
 		residue_set.read_files(params_files);
 	}
 
@@ -78,7 +78,7 @@ public:
 			MoverOP random_conf( new RandomConformerMover(ligres) );
 			int score_went_up = 0;
 			int const num_trials = 10;
-			for(int i = 0; i < num_trials; ++i) {
+			for ( int i = 0; i < num_trials; ++i ) {
 				// Operating on a copy of the pose is significant because the constraints get cloned.
 				core::pose::Pose pose_copy(pose);
 				core::Real const old_score = (*sfxn)( pose_copy );
@@ -86,7 +86,7 @@ public:
 				random_conf->apply(pose_copy);
 				core::Real const new_score = (*sfxn)( pose_copy );
 				TR << "Constraint score for random conformation: " << new_score << std::endl;
-				if(new_score > start_score + 1.0) score_went_up += 1;
+				if ( new_score > start_score + 1.0 ) score_went_up += 1;
 			}
 			TR << "Constraint score increased on " << score_went_up << " out of " << num_trials << " random trials." << std::endl;
 			TS_ASSERT( score_went_up > (9*num_trials)/10 );
@@ -106,7 +106,7 @@ public:
 			MoverOP better_random_conf( new UnconstrainedTorsionsMover( random_conf, restraints ) );
 			int score_went_up = 0;
 			int const num_trials = 10;
-			for(int i = 0; i < num_trials; ++i) {
+			for ( int i = 0; i < num_trials; ++i ) {
 				// Operating on a copy of the pose is significant because the constraints get cloned.
 				core::pose::Pose pose_copy(pose);
 				core::Real const old_score = (*sfxn)( pose_copy );
@@ -118,7 +118,7 @@ public:
 				TS_ASSERT( pose_copy.constraint_set()->get_all_constraints().size() == start_num_constraints );
 				core::Real const new_score = (*sfxn)( pose_copy );
 				TR << "Constraint score for random conformation: " << new_score << std::endl;
-				if(new_score > start_score + score_eps) score_went_up += 1;
+				if ( new_score > start_score + score_eps ) score_went_up += 1;
 			}
 			TR << "Constraint score increased on " << score_went_up << " out of " << num_trials << " random trials." << std::endl;
 			TS_ASSERT( score_went_up == 0 );

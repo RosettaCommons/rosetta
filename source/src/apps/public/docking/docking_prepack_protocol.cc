@@ -33,20 +33,20 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	using namespace basic::options;
-	using namespace protocols::docking;
-	using namespace protocols::jd2;
+		using namespace basic::options;
+		using namespace protocols::docking;
+		using namespace protocols::jd2;
 
-	// initialize core
-	devel::init(argc, argv);
-	DockingHighResOP dp;
+		// initialize core
+		devel::init(argc, argv);
+		DockingHighResOP dp;
 
-	if ( option[ OptionKeys::docking::ensemble1 ].user() || option[ OptionKeys::docking::ensemble2 ].user() )
-		dp = DockingHighResOP( new DockingEnsemblePrepackProtocol() );
-	else dp = DockingHighResOP( new DockingPrepackProtocol() );
+		if ( option[ OptionKeys::docking::ensemble1 ].user() || option[ OptionKeys::docking::ensemble2 ].user() ) {
+			dp = DockingHighResOP( new DockingEnsemblePrepackProtocol() );
+		} else dp = DockingHighResOP( new DockingPrepackProtocol() );
 
-	JobDistributor::get_instance()->go(dp);
-	 } catch ( utility::excn::EXCN_Base const & e ) {
+		JobDistributor::get_instance()->go(dp);
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

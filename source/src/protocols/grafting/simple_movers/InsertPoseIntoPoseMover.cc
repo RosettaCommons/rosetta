@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file    protocols/grafting/simple_movers/InsertPoseIntoPoseMover.hh
-/// @brief  
+/// @brief
 /// @author  Jared Adolf-Bryfogle
 
 #include <protocols/grafting/simple_movers/InsertPoseIntoPoseMover.hh>
@@ -29,16 +29,16 @@ namespace grafting {
 namespace simple_movers {
 
 InsertPoseIntoPoseMover::InsertPoseIntoPoseMover(bool copy_pdbinfo /*false*/):
-protocols::moves::Mover("InsertPoseIntoPoseMover"),
-		start_(0),
-		end_(0),
-		copy_pdbinfo_(copy_pdbinfo),
-		src_pose_(/* NULL */),
-		tag_(/* NULL */)
+	protocols::moves::Mover("InsertPoseIntoPoseMover"),
+	start_(0),
+	end_(0),
+	copy_pdbinfo_(copy_pdbinfo),
+	src_pose_(/* NULL */),
+	tag_(/* NULL */)
 {
-	
+
 }
-	
+
 InsertPoseIntoPoseMover::InsertPoseIntoPoseMover(
 	const core::pose::Pose& src_pose,
 	core::Size res_start,
@@ -52,18 +52,18 @@ InsertPoseIntoPoseMover::InsertPoseIntoPoseMover(
 {
 	src_pose_ = core::pose::PoseOP( new core::pose::Pose(src_pose) );
 }
-	
-	
+
+
 InsertPoseIntoPoseMover::InsertPoseIntoPoseMover(const InsertPoseIntoPoseMover& src) :
 	protocols::moves::Mover(src),
-	
+
 	start_(src.start_),
 	end_(src.end_),
 	copy_pdbinfo_(src.copy_pdbinfo_),
 	src_pose_(src.src_pose_),
 	tag_(src.tag_)
 {
-	
+
 }
 
 InsertPoseIntoPoseMover::~InsertPoseIntoPoseMover(){}
@@ -112,14 +112,14 @@ InsertPoseIntoPoseMover::parse_my_tag(
 	const Pose& )
 {
 	tag_ = tag->clone();
-	
+
 	//Protect from unused option crash.
 	protocols::rosetta_scripts::parse_bogus_res_tag(tag, "start_");
 	protocols::rosetta_scripts::parse_bogus_res_tag(tag, "end_");
-	
+
 	src_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag, data_map, "spm_reference_name");
 	copy_pdbinfo_ = tag->getOption<bool>("copy_pdbinfo", false);
-	
+
 }
 
 protocols::moves::MoverOP
@@ -139,19 +139,19 @@ InsertPoseIntoPoseMoverCreator::mover_name(){
 
 void
 InsertPoseIntoPoseMover::apply(core::pose::Pose& pose) {
-	
-	if (tag_){
+
+	if ( tag_ ) {
 		start_ = core::pose::get_resnum(tag_, pose, "start_");
 		end_ = core::pose::get_resnum(tag_, pose, "end_");
 	}
-	
+
 	PyAssert(start_ != 0, "Cannot insert region starting with 0 - make sure region is set for InsertPoseIntoPoseMover");
 	PyAssert(end_ !=0, "Cannot insert region ending with 0 - make sure region is set for InsertPoseIntoPoseMover");
 	PyAssert(end_ > start_, "Cannot insert into a region where end > start");
 	PyAssert(end_ <= pose.total_residue(), "Cannot insert a region where end is > pose.total_residues of the scaffold");
-	
+
 	pose = protocols::grafting::insert_pose_into_pose(pose, *src_pose_, start_, end_);
-	
+
 }
 
 

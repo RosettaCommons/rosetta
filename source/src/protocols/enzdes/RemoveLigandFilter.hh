@@ -38,36 +38,36 @@ class RemoveLigandFilter: public protocols::filters::Filter {
 
 public:
 
-typedef protocols::filters::Filter Filter;
-typedef protocols::filters::FilterOP FilterOP;
-typedef protocols::filters::Filters_map Filters_map;
-typedef protocols::moves::MoverOP MoverOP;
-typedef core::pose::Pose Pose;
+	typedef protocols::filters::Filter Filter;
+	typedef protocols::filters::FilterOP FilterOP;
+	typedef protocols::filters::Filters_map Filters_map;
+	typedef protocols::moves::MoverOP MoverOP;
+	typedef core::pose::Pose Pose;
 
 public:
-    //default constructor
-    RemoveLigandFilter( );
-    // value constructor
-    RemoveLigandFilter( core::Real threshold );
+	//default constructor
+	RemoveLigandFilter( );
+	// value constructor
+	RemoveLigandFilter( core::Real threshold );
 
-    RemoveLigandFilter( RemoveLigandFilter const & rval );
+	RemoveLigandFilter( RemoveLigandFilter const & rval );
 
-    bool apply( Pose const & pose ) const;
+	bool apply( Pose const & pose ) const;
 
-    // Undefined, commenting out to fix PyRosetta build  void set_min_mover( MoverOP min_mover );
+	// Undefined, commenting out to fix PyRosetta build  void set_min_mover( MoverOP min_mover );
 
-    // Undefined, commenting out to fix PyRosetta build  core::Real compute( Pose const & pose ) const;
+	// Undefined, commenting out to fix PyRosetta build  core::Real compute( Pose const & pose ) const;
 
-    core::Real report_sm( Pose const & pose ) const;
+	core::Real report_sm( Pose const & pose ) const;
 
-    void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
-    FilterOP clone() const { return FilterOP( new RemoveLigandFilter( *this ) ); }
-    FilterOP fresh_instance() const { return FilterOP( new RemoveLigandFilter ); }
+	FilterOP clone() const { return FilterOP( new RemoveLigandFilter( *this ) ); }
+	FilterOP fresh_instance() const { return FilterOP( new RemoveLigandFilter ); }
 private:
-    core::Real threshold_;
-    MoverOP mover_;
-    FilterOP filter_;
+	core::Real threshold_;
+	MoverOP mover_;
+	FilterOP filter_;
 };
 } // enzdes
 } // protocols

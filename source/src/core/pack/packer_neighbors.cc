@@ -76,7 +76,7 @@ create_packer_graph(
 	GraphOP g( new Graph( total_nodes ) );
 
 	if ( ! task->design_any() && ! pose.conformation().structure_moved() ) {
-	//if ( false ) {
+		//if ( false ) {
 		g->copy_connectivity( pose.energies().energy_graph() );
 	} else {
 
@@ -109,9 +109,9 @@ create_packer_graph(
 			}
 			Distance const ii_itxn_rad = residue_radii[ ii_asu ] + atomic_itxn_dist;
 			for ( core::conformation::PointGraph::UpperEdgeListConstIter
-				iter = point_graph->get_vertex( ii ).const_upper_edge_list_begin(),
-				iter_end = point_graph->get_vertex( ii ).const_upper_edge_list_end();
-				iter != iter_end; ++iter ) {
+					iter = point_graph->get_vertex( ii ).const_upper_edge_list_begin(),
+					iter_end = point_graph->get_vertex( ii ).const_upper_edge_list_end();
+					iter != iter_end; ++iter ) {
 
 				Size jj = iter->upper_vertex();
 				Size jj_asu = jj;
@@ -152,56 +152,56 @@ find_residue_max_radii(
 		/*
 		if ( task->design_residue( ii ) ) {
 
-			for ( ResidueTypeSet::AAsIter iter = residue_set.aas_defined_begin(),
-				eiter = residue_set.aas_defined_end(); iter != eiter; ++iter ) {
+		for ( ResidueTypeSet::AAsIter iter = residue_set.aas_defined_begin(),
+		eiter = residue_set.aas_defined_end(); iter != eiter; ++iter ) {
 
-				if ( task->allow_aa( ii, *iter )) {
-					ResidueTypeCOPs const & concrete_residues( residue_set.aa_map( *iter ) );
-					for ( ResidueTypeCOPs::const_iterator resiter = concrete_residues.begin(),
-							eresiter = concrete_residues.end(); resiter != eresiter; ++resiter ) {
-						if ( task->allow_concrete( pose.residue(ii), **resiter )) {
-							if ( (*resiter)->nbr_radius() > max_radius_for_res ) {
-								max_radius_for_res = (*resiter)->nbr_radius();
-							}
-						}
-					}
-				}
-			}
+		if ( task->allow_aa( ii, *iter )) {
+		ResidueTypeCOPs const & concrete_residues( residue_set.aa_map( *iter ) );
+		for ( ResidueTypeCOPs::const_iterator resiter = concrete_residues.begin(),
+		eresiter = concrete_residues.end(); resiter != eresiter; ++resiter ) {
+		if ( task->allow_concrete( pose.residue(ii), **resiter )) {
+		if ( (*resiter)->nbr_radius() > max_radius_for_res ) {
+		max_radius_for_res = (*resiter)->nbr_radius();
+		}
+		}
+		}
+		}
+		}
 		} else if ( task->pack_residue( ii ) ) {
 
-			chemical::AA const resaa( pose.residue( ii ).aa());
-			ResidueTypeCOPs const & concrete_residues( residue_set.aa_map( resaa ) );
-			for ( ResidueTypeCOPs::const_iterator resiter = concrete_residues.begin(),
-					eresiter = concrete_residues.end(); resiter != eresiter; ++resiter ) {
-				if ( task->repacking_allow_concrete( pose.residue(ii), **resiter)) {
-					if ( (*resiter)->nbr_radius() > max_radius_for_res ) {
-						max_radius_for_res = (*resiter)->nbr_radius();
-					}
-				}
-			}
+		chemical::AA const resaa( pose.residue( ii ).aa());
+		ResidueTypeCOPs const & concrete_residues( residue_set.aa_map( resaa ) );
+		for ( ResidueTypeCOPs::const_iterator resiter = concrete_residues.begin(),
+		eresiter = concrete_residues.end(); resiter != eresiter; ++resiter ) {
+		if ( task->repacking_allow_concrete( pose.residue(ii), **resiter)) {
+		if ( (*resiter)->nbr_radius() > max_radius_for_res ) {
+		max_radius_for_res = (*resiter)->nbr_radius();
+		}
+		}
+		}
 		} */
 		if ( the_task->pack_residue( ii ) ) {
 			for ( task::ResidueLevelTask::ResidueTypeCOPListConstIter
 					allowed_iter = the_task->residue_task( ii ).allowed_residue_types_begin(),
 					allowed_end = the_task->residue_task( ii ).allowed_residue_types_end();
 					allowed_iter != allowed_end; ++allowed_iter ) {
-				if ((*allowed_iter)->nbr_radius() > max_radius_for_res ) {
+				if ( (*allowed_iter)->nbr_radius() > max_radius_for_res ) {
 					max_radius_for_res = (*allowed_iter)->nbr_radius();
 				}
 			}
 			//check whether the radius at any position needs to be increased
 			Distance max_rad_change(0.0);
 			for ( rotamer_set::RotSetOperationListIterator
-							rotsetop_iter = the_task->residue_task( ii ).rotamer_set_operation_begin(),
-							rotsetop_end = the_task->residue_task( ii ).rotamer_set_operation_end();
-						rotsetop_iter != rotsetop_end; ++rotsetop_iter ) {
+					rotsetop_iter = the_task->residue_task( ii ).rotamer_set_operation_begin(),
+					rotsetop_end = the_task->residue_task( ii ).rotamer_set_operation_end();
+					rotsetop_iter != rotsetop_end; ++rotsetop_iter ) {
 
 				core::Real radius_change = (*rotsetop_iter)->increase_packer_residue_radius( pose, the_task, ii );
-				if( radius_change > max_rad_change ) {
+				if ( radius_change > max_rad_change ) {
 					max_rad_change = radius_change;
 				}
 			}
-			if( max_rad_change != 0.0 ) max_radius_for_res = max_radius_for_res + max_rad_change;
+			if ( max_rad_change != 0.0 ) max_radius_for_res = max_radius_for_res + max_rad_change;
 		} else {
 			max_radius_for_res = pose.residue( ii ).nbr_radius();
 		}
@@ -220,9 +220,9 @@ pack_scorefxn_pose_handshake(
 	scoring::ScoreFunction const & scfxn
 )
 {
-//	if ( true ){//pose.energies().get_scorefxn_info() != *(scfxn.info() ) ) {
-		scfxn( pose );
-//	}
+	// if ( true ){//pose.energies().get_scorefxn_info() != *(scfxn.info() ) ) {
+	scfxn( pose );
+	// }
 }
 
 } // namespace core

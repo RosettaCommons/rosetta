@@ -30,7 +30,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 
-namespace protocols{
+namespace protocols {
 namespace simple_filters {
 
 static thread_local basic::Tracer TR( "protocols.simple_filters.MultipleSigmoids" );
@@ -43,12 +43,12 @@ std::string
 MultipleSigmoidsFilterCreator::keyname() const { return "MultipleSigmoids"; }
 
 MultipleSigmoids::MultipleSigmoids() :
-protocols::filters::Filter( "MultipleSigmoids" ),
-file_names_ ( "" ), // dflt ""
-threshold_(0.0),
-r_pose_( /* NULL */ ),
-sig_( /* NULL */ ),
-operatorF_( /* NULL */ )
+	protocols::filters::Filter( "MultipleSigmoids" ),
+	file_names_ ( "" ), // dflt ""
+	threshold_(0.0),
+	r_pose_( /* NULL */ ),
+	sig_( /* NULL */ ),
+	operatorF_( /* NULL */ )
 {
 }
 
@@ -56,8 +56,8 @@ MultipleSigmoids::~MultipleSigmoids() {}
 
 void
 MultipleSigmoids::reset_baseline( core::pose::Pose const & pose, bool const attempt_read_from_checkpoint ){
-			operatorF_->reset_baseline( pose, attempt_read_from_checkpoint );
-			TR<<"MultipleSigmoids: reset baseline"<<std::endl;
+	operatorF_->reset_baseline( pose, attempt_read_from_checkpoint );
+	TR<<"MultipleSigmoids: reset baseline"<<std::endl;
 }
 
 void
@@ -77,71 +77,65 @@ MultipleSigmoids::relative_pose_filter() const{ return r_pose_; }
 
 
 void
-  MultipleSigmoids::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, filters::Filters_map const &filters, moves::Movers_map const &movers, core::pose::Pose const & pose )
-	{
+MultipleSigmoids::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, filters::Filters_map const &filters, moves::Movers_map const &movers, core::pose::Pose const & pose )
+{
 	threshold( tag->getOption< core::Real >( "threshold", 0 ) );
 	utility::vector1< std::string > const pdb_names( utility::string_split( tag->getOption< std::string >( "file_names" ), ',' ) ); //split file names
 	operatorF_ = OperatorOP( new protocols::simple_filters::Operator );
 	utility::vector1< utility::tag::TagCOP > const sub_tags( tag->getTags() ); //tags
-	BOOST_FOREACH( utility::tag::TagCOP const sub_tag, sub_tags ){
-		if( sub_tag->getName() == "Operator" )
+	BOOST_FOREACH ( utility::tag::TagCOP const sub_tag, sub_tags ) {
+		if ( sub_tag->getName() == "Operator" ) {
 			operatorF_->parse_my_tag( sub_tag, data, filters, movers, pose ) ;
+		}
 	}
 
-		BOOST_FOREACH( std::string const fname, pdb_names )
-		{
-				BOOST_FOREACH( utility::tag::TagCOP const sub_tag, sub_tags ){
-				if( sub_tag->getName() == "RelativePose" )
-				{
-					r_pose_ = RelativePoseFilterOP( new RelativePoseFilter );
-					TR<<"I'm now reading from RelativePose filter"<<std::endl;
-					r_pose_->pdb_name(fname);
-					r_pose_->parse_my_tag(sub_tag, data, filters, movers, pose);
-				}
-				else if( sub_tag->getName() == "Sigmoid" )
-				{
-					sig_ = SigmoidOP( new Sigmoid );
-					TR<<"I'm now reading from Sigmoid filter for fname "<<fname<<std::endl;
-					sig_->set_user_defined_name( fname );
-					sig_->filter(r_pose_);
-					sig_->parse_my_tag(sub_tag, data, filters, movers, pose);
-				}
-				else if( sub_tag->getName() == "Operator" )
-				{
-		  		operatorF_->add_filter(sig_);
-					TR<<"Adding filter to the operator"<<std::endl;
-				}
-				else{
-		  		utility_exit_with_message( "MultipleSigmoids subtag not recognized: " + sub_tag->getName() );
-				}
-			} //tags foreach
-		} //pdbs foreach
-	} //parse_my_tag
+	BOOST_FOREACH ( std::string const fname, pdb_names ) {
+		BOOST_FOREACH ( utility::tag::TagCOP const sub_tag, sub_tags ) {
+			if ( sub_tag->getName() == "RelativePose" ) {
+				r_pose_ = RelativePoseFilterOP( new RelativePoseFilter );
+				TR<<"I'm now reading from RelativePose filter"<<std::endl;
+				r_pose_->pdb_name(fname);
+				r_pose_->parse_my_tag(sub_tag, data, filters, movers, pose);
+			} else if ( sub_tag->getName() == "Sigmoid" ) {
+				sig_ = SigmoidOP( new Sigmoid );
+				TR<<"I'm now reading from Sigmoid filter for fname "<<fname<<std::endl;
+				sig_->set_user_defined_name( fname );
+				sig_->filter(r_pose_);
+				sig_->parse_my_tag(sub_tag, data, filters, movers, pose);
+			} else if ( sub_tag->getName() == "Operator" ) {
+				operatorF_->add_filter(sig_);
+				TR<<"Adding filter to the operator"<<std::endl;
+			} else {
+				utility_exit_with_message( "MultipleSigmoids subtag not recognized: " + sub_tag->getName() );
+			}
+		} //tags foreach
+	} //pdbs foreach
+} //parse_my_tag
 
-	bool MultipleSigmoids::apply( core::pose::Pose const & pose ) const
-	{
-		core::Real const val ( compute( pose ) );
-		return( val <= threshold() );
-	}
+bool MultipleSigmoids::apply( core::pose::Pose const & pose ) const
+{
+	core::Real const val ( compute( pose ) );
+	return( val <= threshold() );
+}
 void
 MultipleSigmoids::report( std::ostream &o, core::pose::Pose const & pose ) const {
-	  core::Real const val = compute( pose );
-		  o << "Multiplesigmoids returns "<<val<<std::endl;
+	core::Real const val = compute( pose );
+	o << "Multiplesigmoids returns "<<val<<std::endl;
 }
 core::Real
 MultipleSigmoids::report_sm( core::pose::Pose const & pose ) const {
-		operatorF_->report_sm( pose );
-	  return( compute( pose ) );
+	operatorF_->report_sm( pose );
+	return( compute( pose ) );
 }
 core::Real
 MultipleSigmoids::compute(
-  core::pose::Pose const & pose
-	) const
-	{
-	  core::Real const val( operatorF_->compute( pose ) );
-		TR<<"filter MultipleSigmoids returns "<<val<<std::endl;
-		return( val );
-	}
+	core::pose::Pose const & pose
+) const
+{
+	core::Real const val( operatorF_->compute( pose ) );
+	TR<<"filter MultipleSigmoids returns "<<val<<std::endl;
+	return( val );
+}
 
 protocols::filters::FilterOP
 MultipleSigmoids::clone() const{

@@ -26,7 +26,7 @@
 
 namespace protocols {
 namespace simple_filters {
-	
+
 class ScoreTypeFilterCreator : public protocols::filters::FilterCreator
 {
 public:

@@ -21,7 +21,7 @@
 
 namespace protocols {
 namespace abinitio {
-namespace abscript{
+namespace abscript {
 
 class FragmentCM;
 typedef utility::pointer::shared_ptr< FragmentCM > FragmentCMOP;

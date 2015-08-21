@@ -75,7 +75,7 @@ DGBindOptEData::do_score(
 		dE_dvars[ ii ] += component_weights[ type() ] * 2 * diff_dG * ( bound_->free_data()[ ii ] - unbound_->free_data()[ ii ] );
 	}
 
-	if( print ) {
+	if ( print ) {
 		ostr << "DGBindOptEData bound[ " << boundE << " ] - unbound[ " << unboundE << " ] = predicted[ " << pred_dG << " ], "
 			<< "predicted[ " << pred_dG << " ] - experimental[ " << deltaG_bind_ << " ] = error[ " << diff_dG << " ], "
 			<< "error^2[ " << sq_err << " ], weighted error^2[ " << component_weights[ type() ]*sq_err << " ]" << std::endl;

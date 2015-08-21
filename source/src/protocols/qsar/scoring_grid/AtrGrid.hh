@@ -40,8 +40,8 @@ public:
 private:
 	void set_protein_rings( core::conformation::Residue const & rsd);
 	void set_ligand_rings(
-			core::conformation::Residue const & rsd,
-			utility::vector1<core::Size> ligand_chain_ids_to_exclude
+		core::conformation::Residue const & rsd,
+		utility::vector1<core::Size> ligand_chain_ids_to_exclude
 	);
 
 	core::Real inner_radius_;

@@ -35,9 +35,9 @@ struct Quat { core::Real x,y,z,w; };
 void R2quat( numeric::xyzMatrix< core::Real > R, Quat &Q );
 void quat2R( Quat &Q ,numeric::xyzMatrix< core::Real > R );
 core::Real RMSwrapper( utility::vector1 <numeric::xyzVector< core::Real > > chainA,
-                       utility::vector1 <numeric::xyzVector< core::Real > > chainB,
-                       numeric::xyzMatrix< core::Real > &R,
-                      numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT);
+	utility::vector1 <numeric::xyzVector< core::Real > > chainB,
+	numeric::xyzMatrix< core::Real > &R,
+	numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT);
 
 
 class SymmetricMotifFilter : public protocols::filters::Filter
@@ -81,7 +81,7 @@ public:
 	// symmetry-specific variants
 	bool compute_d2( core::pose::Pose const & pose, core::Real &best_score, std::string &motifhit ) const;
 	core::Real score_d2( core::Real rms, core::Real angle, core::Real trans, core::Size clash ) const {
-		if (rms<=rmsd_thresh_ && angle<=angle_thresh_ && clash<=clash_thresh_) {
+		if ( rms<=rmsd_thresh_ && angle<=angle_thresh_ && clash<=clash_thresh_ ) {
 			return(
 				angle_wt_ * (angle-angle_thresh_)
 				+ rmsd_wt_ * (rms-rmsd_thresh_)

@@ -153,7 +153,7 @@ GrowLeft::MoveMap GrowLeft::movemap() const {
 
 	MoveMap mm;
 
-	for( Positions::const_iterator i = newp.begin(), ie = newp.end(); i != ie; ++i ) {
+	for ( Positions::const_iterator i = newp.begin(), ie = newp.end(); i != ie; ++i ) {
 		mm.set_bb( *i, true );
 		mm.set_chi( *i, true );
 	}
@@ -184,7 +184,7 @@ void GrowLeft::on_residue_prepend( LengthEvent const & event ) {
 void GrowLeft::on_residue_delete( LengthEvent const & event ) {
 	if ( pos_ > 1 && event.position <= pos_ && ( int(pos_) + event.length_change > 0) ) {
 		//--pos_;
-		if( int(pos_) + event.length_change < int(event.position) ) pos_ = event.position - 1;
+		if ( int(pos_) + event.length_change < int(event.position) ) pos_ = event.position - 1;
 		pos_ += event.length_change;
 	}
 }

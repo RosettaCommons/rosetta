@@ -27,8 +27,8 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-	using namespace core::pack::task::operation;
-	using utility::vector1;
+using namespace core::pack::task::operation;
+using utility::vector1;
 
 MutationSetDesignOperation::~MutationSetDesignOperation(){}
 
@@ -48,7 +48,7 @@ MutationSetDesignOperation::MutationSetDesignOperation(utility::vector1<Mutation
 MutationSetDesignOperation::MutationSetDesignOperation(
 	utility::vector1<MutationSet> mutation_sets,
 	utility::vector1<core::Real> weights ) :
-		TaskOperation()
+	TaskOperation()
 {
 	set_defaults();
 	set_mutation_sets(mutation_sets, weights);
@@ -153,7 +153,7 @@ MutationSetDesignOperation::set_sample_index(core::Size sample_index) {
 
 void
 MutationSetDesignOperation::apply(const core::pose::Pose& pose, core::pack::task::PackerTask& task) const{
-	if (mutation_sets_.size() != weights_.size()){
+	if ( mutation_sets_.size() != weights_.size() ) {
 		utility_exit_with_message("Mutation sets and weights must be equivalent in length!");
 	}
 
@@ -161,27 +161,26 @@ MutationSetDesignOperation::apply(const core::pose::Pose& pose, core::pack::task
 	vector1< vector1< bool > > pose_allowed_aminos;
 	vector1< bool > sampled_resnums(pose.total_residue(), false);
 
-	for (core::Size i = 1;  i <= pose.total_residue(); ++i){
+	for ( core::Size i = 1;  i <= pose.total_residue(); ++i ) {
 		vector1<bool> allowed_aminos(20, false);
-		if (include_native_aa_){
+		if ( include_native_aa_ ) {
 			allowed_aminos[ task.residue_task(i).get_original_residue() ] = true;
 		}
 		pose_allowed_aminos.push_back(allowed_aminos);
 	}
 
 	core::Size picking_rounds = picking_rounds_;
-	if (sample_index_ != 0){ picking_rounds = 1;}
+	if ( sample_index_ != 0 ) { picking_rounds = 1;}
 
-	for (core::Size round = 1; round <= picking_rounds; ++round){
+	for ( core::Size round = 1; round <= picking_rounds; ++round ) {
 		MutationSet current_set;
-		if (sample_index_ != 0){
-			if (sample_index_ > mutation_sets_.size()){
+		if ( sample_index_ != 0 ) {
+			if ( sample_index_ > mutation_sets_.size() ) {
 				utility_exit_with_message("Sample index > length of mutation_sets!");
 			}
 
 			current_set = mutation_sets_[sample_index_];
-		}
-		else {
+		} else {
 
 			numeric::random::WeightedSampler sampler;
 			sampler.weights(weights_);
@@ -192,8 +191,8 @@ MutationSetDesignOperation::apply(const core::pose::Pose& pose, core::pack::task
 		//Iterate through the map, setting positions.
 		//std::string mutant;
 		utility::vector1<core::Size> positions;
-		
-		for (std::map< core::Size, core::chemical::AA>::const_iterator ele = current_set.begin(), ele_end = current_set.end(); ele != ele_end; ++ele ){
+
+		for ( std::map< core::Size, core::chemical::AA>::const_iterator ele = current_set.begin(), ele_end = current_set.end(); ele != ele_end; ++ele ) {
 			core::Size resnum = ele->first;
 			core::chemical::AA allowed_mutation = ele->second;
 			//mutant = mutant + oneletter_code_from_aa(allowed_mutation);
@@ -209,19 +208,18 @@ MutationSetDesignOperation::apply(const core::pose::Pose& pose, core::pack::task
 	} //For picking rounds
 
 	//Add to already allowed aminos
-	for (core::Size i = 1; i <= pose.total_residue(); ++i){
-		if (! sampled_resnums[ i ]){ continue;}
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( ! sampled_resnums[ i ] ) { continue;}
 
-		if (add_to_allowed_aas_){
-			for (core::Size aa_num = 1; aa_num <= 20; ++aa_num){
+		if ( add_to_allowed_aas_ ) {
+			for ( core::Size aa_num = 1; aa_num <= 20; ++aa_num ) {
 				core::chemical::AA amino = static_cast<core::chemical::AA>(aa_num);
-				if (pose_allowed_aminos[ i ][ aa_num ]){
+				if ( pose_allowed_aminos[ i ][ aa_num ] ) {
 					task.nonconst_residue_task(i).allow_aa(amino);
 				}
 			}
-		}
-		//Replace the current aminos
-		else{
+		} else {
+			//Replace the current aminos
 			task.nonconst_residue_task(i).restrict_absent_canonical_aas(pose_allowed_aminos[ i ]);
 		}
 	}

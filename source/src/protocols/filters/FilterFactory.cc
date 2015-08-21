@@ -89,7 +89,7 @@ FilterFactory::factory_register( FilterCreatorOP creator )
 
 /// @brief return new Filter by key lookup in filter_prototype_map_ (new Filter parses Tag if provided)
 FilterOP
-FilterFactory::newFilter(	std::string const & filter_type )
+FilterFactory::newFilter( std::string const & filter_type )
 {
 	FilterMap::const_iterator iter( filter_creator_map_.find( filter_type ) );
 	if ( iter != filter_creator_map_.end() ) {
@@ -102,8 +102,9 @@ FilterFactory::newFilter(	std::string const & filter_type )
 		return iter->second->create_filter();
 	} else {
 		TR<<"Available filters: ";
-		for( FilterMap::const_iterator filt_it = filter_creator_map_.begin(); filt_it != filter_creator_map_.end(); ++filt_it )
+		for ( FilterMap::const_iterator filt_it = filter_creator_map_.begin(); filt_it != filter_creator_map_.end(); ++filt_it ) {
 			TR<<filt_it->first<<", ";
+		}
 		TR<<std::endl;
 		utility_exit_with_message( filter_type + " is not known to the FilterFactory. Was it registered via a FilterRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
 		return NULL;
@@ -113,19 +114,19 @@ FilterFactory::newFilter(	std::string const & filter_type )
 /// @brief return new Filter by Tag parsing
 /*FilterOP
 FilterFactory::newFilter(
-	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Filters_map const & filters,
-	moves::Movers_map const & movers,
-	Pose const & pose )
+TagCOP const tag,
+basic::datacache::DataMap & data,
+Filters_map const & filters,
+moves::Movers_map const & movers,
+Pose const & pose )
 {
-	FilterOP filter( newFilter( tag->getName() ) );
-	runtime_assert( filter );
-	filter->parse_my_tag( tag, data, filters, movers, pose );
-	return filter;
-	}*/
+FilterOP filter( newFilter( tag->getName() ) );
+runtime_assert( filter );
+filter->parse_my_tag( tag, data, filters, movers, pose );
+return filter;
+}*/
 
- /// @brief return new Filter by Tag parsing
+/// @brief return new Filter by Tag parsing
 FilterOP
 FilterFactory::newFilter(
 	TagCOP const tag,
@@ -134,24 +135,25 @@ FilterFactory::newFilter(
 	moves::Movers_map const & movers,
 	core::pose::Pose const & pose )
 {
-  FilterOP filter( newFilter( tag->getName() ) );
-  runtime_assert( filter != 0 );
-  if ( ! tag->hasOption("name") )
-    utility_exit_with_message("Can't define unnamed Filter");
-  filter->set_user_defined_name( tag->getOption<std::string>("name") );
-  filter->parse_my_tag( tag, data, filters, movers, pose );
-  // if confidence specified, link to StochasticFilter and wrap inside CompoundFilter
+	FilterOP filter( newFilter( tag->getName() ) );
+	runtime_assert( filter != 0 );
+	if ( ! tag->hasOption("name") ) {
+		utility_exit_with_message("Can't define unnamed Filter");
+	}
+	filter->set_user_defined_name( tag->getOption<std::string>("name") );
+	filter->parse_my_tag( tag, data, filters, movers, pose );
+	// if confidence specified, link to StochasticFilter and wrap inside CompoundFilter
 	core::Real const confidence( tag->getOption< core::Real >( "confidence", 1.0 ) );
-  if ( confidence < 0.999 ) { // fuzzy logic
+	if ( confidence < 0.999 ) { // fuzzy logic
 		CompoundFilter::CompoundStatement fuzzy_statement;
-    FilterCOP stochastic_filter( FilterOP( new StochasticFilter( confidence ) ) );
-    fuzzy_statement.push_back( std::make_pair( stochastic_filter->clone(), OR ) );
-    fuzzy_statement.push_back( std::make_pair( filter->clone(), OR ) );
-    FilterOP compound_filter( new CompoundFilter( fuzzy_statement ) );
-    compound_filter->set_user_defined_name( tag->getOption<std::string>("name") );
-    return compound_filter;
-  }
-  return filter;
+		FilterCOP stochastic_filter( FilterOP( new StochasticFilter( confidence ) ) );
+		fuzzy_statement.push_back( std::make_pair( stochastic_filter->clone(), OR ) );
+		fuzzy_statement.push_back( std::make_pair( filter->clone(), OR ) );
+		FilterOP compound_filter( new CompoundFilter( fuzzy_statement ) );
+		compound_filter->set_user_defined_name( tag->getOption<std::string>("name") );
+		return compound_filter;
+	}
+	return filter;
 }
 
 

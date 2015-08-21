@@ -35,7 +35,7 @@
 #include <numeric/MathMatrix.hh>
 
 #include <algorithm> //needed for std::transform, std::find_if
-namespace numeric{
+namespace numeric {
 
 
 //////////////////////
@@ -52,11 +52,11 @@ MathMatrix< T> & operator += ( MathMatrix< T> &MATRIX_LHS, const MathMatrix< T> 
 {
 
 	std::transform
-	(
-			MATRIX_LHS.begin(), MATRIX_LHS.end(),
-			MATRIX_RHS.begin(),
-			MATRIX_LHS.begin(),
-			std::plus< T>()
+		(
+		MATRIX_LHS.begin(), MATRIX_LHS.end(),
+		MATRIX_RHS.begin(),
+		MATRIX_LHS.begin(),
+		std::plus< T>()
 	);
 
 	return MATRIX_LHS;
@@ -73,11 +73,11 @@ MathMatrix< T> & operator -= ( MathMatrix< T> &MATRIX_LHS, const MathMatrix< T> 
 
 
 	std::transform
-	(
-			MATRIX_LHS.begin(), MATRIX_LHS.end(),
-			MATRIX_RHS.begin(),
-			MATRIX_LHS.begin(),
-			std::minus< T>()
+		(
+		MATRIX_LHS.begin(), MATRIX_LHS.end(),
+		MATRIX_RHS.begin(),
+		MATRIX_LHS.begin(),
+		std::minus< T>()
 	);
 
 	return MATRIX_LHS;
@@ -104,10 +104,10 @@ inline
 MathMatrix< T> & operator += ( MathMatrix< T> &MATRIX_LHS, const T &VALUE )
 {
 	std::transform
-	(
-			MATRIX_LHS.begin(), MATRIX_LHS.end(),
-			MATRIX_LHS.begin(),
-			std::bind2nd( std::plus< T>(), VALUE)
+		(
+		MATRIX_LHS.begin(), MATRIX_LHS.end(),
+		MATRIX_LHS.begin(),
+		std::bind2nd( std::plus< T>(), VALUE)
 	);
 
 	return MATRIX_LHS;
@@ -122,10 +122,10 @@ inline
 MathMatrix< T> & operator -= ( MathMatrix< T> &MATRIX_LHS, const T &VALUE )
 {
 	std::transform
-	(
-			MATRIX_LHS.begin(), MATRIX_LHS.end(),
-			MATRIX_LHS.begin(),
-			std::bind2nd( std::minus< T>(), VALUE)
+		(
+		MATRIX_LHS.begin(), MATRIX_LHS.end(),
+		MATRIX_LHS.begin(),
+		std::bind2nd( std::minus< T>(), VALUE)
 	);
 
 	return MATRIX_LHS;
@@ -140,10 +140,10 @@ inline
 MathMatrix< T> & operator *= ( MathMatrix< T> &MATRIX_LHS, const T &SCALAR )
 {
 	std::transform
-	(
-			MATRIX_LHS.begin(), MATRIX_LHS.end(),
-			MATRIX_LHS.begin(),
-			std::bind2nd( std::multiplies< T>(), SCALAR)
+		(
+		MATRIX_LHS.begin(), MATRIX_LHS.end(),
+		MATRIX_LHS.begin(),
+		std::bind2nd( std::multiplies< T>(), SCALAR)
 	);
 
 	return MATRIX_LHS;
@@ -158,10 +158,10 @@ inline
 MathMatrix< T> & operator /= ( MathMatrix< T> &MATRIX_LHS, const T &SCALAR )
 {
 	std::transform
-	(
-			MATRIX_LHS.begin(), MATRIX_LHS.end(),
-			MATRIX_LHS.begin(),
-			std::bind2nd( std::divides< T>(), SCALAR)
+		(
+		MATRIX_LHS.begin(), MATRIX_LHS.end(),
+		MATRIX_LHS.begin(),
+		std::bind2nd( std::divides< T>(), SCALAR)
 	);
 
 	return MATRIX_LHS;
@@ -180,8 +180,7 @@ inline
 bool operator == ( const MathMatrix< T> &MATRIX_LHS, const MathMatrix< T> &MATRIX_RHS )
 {
 	// not equal if different size
-	if( !same_dimensions( MATRIX_LHS, MATRIX_RHS))
-	{
+	if ( !same_dimensions( MATRIX_LHS, MATRIX_RHS) ) {
 		return false;
 	}
 
@@ -209,10 +208,10 @@ inline
 bool operator == ( const MathMatrix< T> &MATRIX_LHS, const T &VALUE_RHS )
 {
 	return std::find_if
-			(
-					MATRIX_LHS.begin(), MATRIX_LHS.end(),
-					std::bind2nd( std::not_equal_to< T>(), VALUE_RHS)
-			) == MATRIX_LHS.end();
+		(
+		MATRIX_LHS.begin(), MATRIX_LHS.end(),
+		std::bind2nd( std::not_equal_to< T>(), VALUE_RHS)
+		) == MATRIX_LHS.end();
 }
 
 /// @brief compare if all items in matrix are equal to a given VALUE
@@ -235,10 +234,10 @@ inline
 bool operator != ( const MathMatrix< T> &MATRIX_LHS, const T &VALUE_RHS )
 {
 	return std::find_if
-			(
-					MATRIX_LHS.begin(), MATRIX_LHS.end(),
-					std::bind2nd( std::not_equal_to< T>(), VALUE_RHS)
-			) != MATRIX_LHS.end();
+		(
+		MATRIX_LHS.begin(), MATRIX_LHS.end(),
+		std::bind2nd( std::not_equal_to< T>(), VALUE_RHS)
+		) != MATRIX_LHS.end();
 }
 
 /// @brief compare if all items in matrix are not equal to a given VALUE
@@ -297,12 +296,9 @@ MathMatrix< T> operator * ( const MathMatrix< T> &MATRIX_LHS, const MathMatrix< 
 
 
 	MathMatrix< T> new_matrix( MATRIX_LHS.get_number_rows(), MATRIX_RHS.get_number_cols());
-	for( Size i( 0); i < new_matrix.get_number_rows(); ++i)
-	{
-		for( Size j( 0); j < new_matrix.get_number_cols(); ++j)
-		{
-			for( Size k( 0); k < MATRIX_LHS.get_number_cols(); ++k)
-			{
+	for ( Size i( 0); i < new_matrix.get_number_rows(); ++i ) {
+		for ( Size j( 0); j < new_matrix.get_number_cols(); ++j ) {
+			for ( Size k( 0); k < MATRIX_LHS.get_number_cols(); ++k ) {
 				new_matrix( i, j) += MATRIX_LHS.operator()( i, k) * MATRIX_RHS( k, j);
 			}
 		}
@@ -391,10 +387,8 @@ inline
 MathVector< T> operator * ( const MathMatrix< T> &MATRIX_LHS, const MathVector< T> &VECTOR_RHS )
 {
 	MathVector< T> new_vector( MATRIX_LHS.get_number_rows());
-	for( Size i( 0); i < MATRIX_LHS.get_number_rows(); ++i)
-	{
-		for( Size j( 0); j < MATRIX_LHS.get_number_cols(); ++j)
-		{
+	for ( Size i( 0); i < MATRIX_LHS.get_number_rows(); ++i ) {
+		for ( Size j( 0); j < MATRIX_LHS.get_number_cols(); ++j ) {
 			new_vector( i ) += MATRIX_LHS.operator()( i, j) * VECTOR_RHS( j);
 		}
 	}

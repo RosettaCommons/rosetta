@@ -55,7 +55,7 @@ namespace protocols {
 namespace farna {
 
 /////////////////////////////////////
-	MultipleDomainMover::MultipleDomainMover( pose::Pose const & pose, protocols::coarse_rna::CoarseRNA_LoopCloserOP rna_loop_closer  ):
+MultipleDomainMover::MultipleDomainMover( pose::Pose const & pose, protocols::coarse_rna::CoarseRNA_LoopCloserOP rna_loop_closer  ):
 	verbose_( false ),
 	rot_mag_( 10.0 ),
 	trans_mag_( 0.5 ),
@@ -75,7 +75,7 @@ MultipleDomainMover::apply( core::pose::Pose & pose )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-	////////////////////////
+////////////////////////
 std::string
 MultipleDomainMover::get_name() const {
 	return "MultipleDomainMover";
@@ -86,7 +86,7 @@ MultipleDomainMover::get_name() const {
 Size
 MultipleDomainMover::apply_and_return_jump( core::pose::Pose & pose )
 {
-  Size const n = static_cast<Size> ( numeric::random::rg().uniform() * num_domains_ ) + 1;
+	Size const n = static_cast<Size> ( numeric::random::rg().uniform() * num_domains_ ) + 1;
 	return apply_at_domain( pose, n );
 }
 
@@ -104,7 +104,7 @@ MultipleDomainMover::apply_at_domain( core::pose::Pose & pose, Size const & n )
 ////////////////////////////////////////////////////////////////
 void
 MultipleDomainMover::initialize( pose::Pose const & pose,toolbox::AllowInsertOP allow_insert ){
-	//	std::cout << "HELLO! " << pose.residue_type( pose.total_residue() ).name3() << std::endl;
+	// std::cout << "HELLO! " << pose.residue_type( pose.total_residue() ).name3() << std::endl;
 	if ( pose.residue_type( pose.total_residue() ).name3() != "XXX" /*virtual residue*/ ) return;
 	setup_jump_numbers_and_partner( pose );
 	setup_ok_for_centroid_calculation( allow_insert );
@@ -127,8 +127,8 @@ MultipleDomainMover::get_centroid( pose::Pose const & pose ){
 	Vector cen( 0.0, 0.0, 0.0 );
 	Size nres( 0 );
 	// Look at all residues except anchor (last residue).
-	for ( Size i = 1; i < pose.total_residue(); i++ ){
-		if ( ok_for_centroid_calculation_[ i ] ){
+	for ( Size i = 1; i < pose.total_residue(); i++ ) {
+		if ( ok_for_centroid_calculation_[ i ] ) {
 			cen += pose.xyz( core::id::AtomID( 1, i ) );
 			nres += 1;
 		}
@@ -146,9 +146,9 @@ MultipleDomainMover::slide_back_to_origin( pose::Pose & pose ){
 	if ( num_domains_ < 2 ) return;
 
 	Vector cen = get_centroid( pose );
-	//	std::cout << "CENTROID1: " << cen(1) << ' ' << cen(2) << ' ' << cen(3) << std::endl;
+	// std::cout << "CENTROID1: " << cen(1) << ' ' << cen(2) << ' ' << cen(3) << std::endl;
 
-	for ( Size n = 1; n <= num_domains_; n++ ){
+	for ( Size n = 1; n <= num_domains_; n++ ) {
 		Size jumpno( jump_numbers_[ n ] );
 		Jump j( pose.jump( jumpno ) );
 		Stub stub = pose.conformation().upstream_jump_stub( jumpno );
@@ -157,8 +157,8 @@ MultipleDomainMover::slide_back_to_origin( pose::Pose & pose ){
 		pose.set_jump( jumpno, j );
 	}
 
-	//	cen = get_centroid( pose );
-	//	std::cout << "CENTROID2: " << cen(1) << ' ' << cen(2) << ' ' << cen(3) << std::endl;
+	// cen = get_centroid( pose );
+	// std::cout << "CENTROID2: " << cen(1) << ' ' << cen(2) << ' ' << cen(3) << std::endl;
 
 }
 
@@ -177,7 +177,7 @@ void MultipleDomainMover::setup_jump_numbers_and_partner( pose::Pose const & pos
 	for ( Size n = 1; n <= pose.fold_tree().num_jump(); n++ ) {
 		Size const i = pose.fold_tree().upstream_jump_residue( n );
 		Size const j = pose.fold_tree().downstream_jump_residue( n );
-		if ( i == virt_res || j == virt_res ){
+		if ( i == virt_res || j == virt_res ) {
 
 			jump_numbers_.push_back( n );
 
@@ -200,9 +200,9 @@ MultipleDomainMover::setup_ok_for_centroid_calculation(toolbox::AllowInsertOP & 
 	// Need to find jump number [Can try alternate constructor later]
 	ok_for_centroid_calculation_.clear();
 
-	for ( Size i = 1; i <= allow_insert->nres(); i++) {
+	for ( Size i = 1; i <= allow_insert->nres(); i++ ) {
 		ok_for_centroid_calculation_.push_back(  !allow_insert->get( core::id::AtomID( 2, i) ) );
-		if (verbose_) std::cout <<  "OK " << i << " " << ok_for_centroid_calculation_[ i ] << std::endl;
+		if ( verbose_ ) std::cout <<  "OK " << i << " " << ok_for_centroid_calculation_[ i ] << std::endl;
 	}
 
 }
@@ -213,12 +213,12 @@ MultipleDomainMover::randomize_orientations( pose::Pose & pose ) {
 
 	using namespace protocols::moves;
 
-	for ( Size n = 1; n<= num_domains_; n++ ){
+	for ( Size n = 1; n<= num_domains_; n++ ) {
 		rigid::RigidBodyRandomizeMover rb( pose, jump_numbers_[ n ], partner_[ n ] );
 		rb.apply( pose );
 	}
 
-	if (verbose_) pose.dump_pdb( "random.pdb" );
+	if ( verbose_ ) pose.dump_pdb( "random.pdb" );
 
 }
 
@@ -232,7 +232,7 @@ void MultipleDomainMover::try_to_slide_into_contact( pose::Pose & pose ) {
 
 	utility::vector1< bool > slid_into_contact( pose.total_residue(), false );
 
-	for ( Size n = 2; n <= num_domains_; n++ ){ // no need to move domain 1.
+	for ( Size n = 2; n <= num_domains_; n++ ) { // no need to move domain 1.
 
 		Size jumpno( jump_numbers_[ n ] );
 
@@ -241,22 +241,22 @@ void MultipleDomainMover::try_to_slide_into_contact( pose::Pose & pose ) {
 		utility::vector1< Size > const & cutpos_list = rna_loop_closer_->cutpos_list();
 
 		Size cutpoint_closed( 0 );
-		for (Size i = 1; i <= cutpos_list.size() ; i++ ){
-			if ( !slid_into_contact[ cutpos_list[ i ] ]  ){
+		for ( Size i = 1; i <= cutpos_list.size() ; i++ ) {
+			if ( !slid_into_contact[ cutpos_list[ i ] ]  ) {
 				cutpoint_closed = cutpos_list[ i ]; break;
 			}
 		}
-		if (verbose_) std::cout << "CUTPOINT_CLOSED: " << cutpoint_closed << std::endl;
+		if ( verbose_ ) std::cout << "CUTPOINT_CLOSED: " << cutpoint_closed << std::endl;
 		if ( cutpoint_closed == 0 ) continue;
 
-		// find locations of overlap atoms. 	// figure out translation
+		// find locations of overlap atoms.  // figure out translation
 		Vector diff = pose.residue( cutpoint_closed ).xyz( "OVL1" ) - pose.residue( cutpoint_closed+1 ).xyz( " P  " );
-		if ( verbose_) std::cout << "OLD VEC " <<  diff.length() << std::endl;
+		if ( verbose_ ) std::cout << "OLD VEC " <<  diff.length() << std::endl;
 		// apply translation
 		// This could be generalized. Note that this relies on one partner being
 		// the VRT residue at the origin!!!
 		Jump j( pose.jump( jumpno ) );
-		if (verbose_){
+		if ( verbose_ ) {
 			std::cout << "OLD JUMP  " << j << std::endl;
 			std::cout << "UPSTREAM DOWNSTREAM " << pose.fold_tree().upstream_jump_residue( jumpno ) <<' ' <<  pose.fold_tree().downstream_jump_residue( jumpno ) << std::endl;
 		}
@@ -265,18 +265,18 @@ void MultipleDomainMover::try_to_slide_into_contact( pose::Pose & pose ) {
 		int sign_jump = ( partition_definition( cutpoint_closed ) == partition_definition( pose.fold_tree().downstream_jump_residue( jumpno ) )  ? -1: 1);
 
 		Stub stub = pose.conformation().upstream_jump_stub( jumpno );
-		if (verbose_) std::cout << ' ' << stub.M.col_x()[0]<< ' ' << stub.M.col_x()[1]<< ' ' << stub.M.col_x()[2] << std::endl;
+		if ( verbose_ ) std::cout << ' ' << stub.M.col_x()[0]<< ' ' << stub.M.col_x()[1]<< ' ' << stub.M.col_x()[2] << std::endl;
 		Vector new_translation = j.get_translation() + sign_jump * stub.M.transposed() * diff;
 		j.set_translation( new_translation );//+ Vector( 50.0, 0.0, 0.0 ) );
 		pose.set_jump( jumpno, j );
-		if (verbose_) std::cout << "NEW JUMP  " << pose.jump( jumpno ) << std::endl;
+		if ( verbose_ ) std::cout << "NEW JUMP  " << pose.jump( jumpno ) << std::endl;
 		Vector diff2 = pose.residue( cutpoint_closed ).xyz( "OVL1" ) - pose.residue( cutpoint_closed+1 ).xyz( " P  " );
-		if (verbose_) std::cout << "NEW VEC " <<  diff2.length() << std::endl << std::endl;
+		if ( verbose_ ) std::cout << "NEW VEC " <<  diff2.length() << std::endl << std::endl;
 
 		slid_into_contact[ cutpoint_closed ] = true;
 	}
 
-	if (verbose_) pose.dump_pdb( "slide.pdb" );
+	if ( verbose_ ) pose.dump_pdb( "slide.pdb" );
 
 }
 
@@ -299,10 +299,10 @@ MultipleDomainMover::initialize_rigid_body_movers(){
 	rb_movers_.clear();
 
 	std::cout << "NUM_DOMAINS: " << num_domains_ << std::endl;
-	for ( Size n = 1; n <= num_domains_; n++ ){
+	for ( Size n = 1; n <= num_domains_; n++ ) {
 		rb_movers_.push_back( protocols::rigid::RigidBodyPerturbMoverOP( new rigid::RigidBodyPerturbMover( jump_numbers_[ n ],
-																										 rot_mag_, trans_mag_,
-																										 partner_[ n ], ok_for_centroid_calculation_ ) ) );
+			rot_mag_, trans_mag_,
+			partner_[ n ], ok_for_centroid_calculation_ ) ) );
 	}
 
 }
@@ -312,7 +312,7 @@ void
 MultipleDomainMover::update_rot_trans_mag( Real const & rot_mag, Real const & trans_mag ){
 	rot_mag_ = rot_mag;
 	trans_mag_ = trans_mag;
-	for ( Size n = 1; n <= num_domains_; n++ ){
+	for ( Size n = 1; n <= num_domains_; n++ ) {
 		rb_movers_[ n ]->rot_magnitude( rot_mag_ );
 		rb_movers_[ n ]->trans_magnitude( rot_mag_ );
 	}

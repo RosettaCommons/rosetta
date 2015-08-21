@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		protocols/membrane/geometry/Embedding.hh
+/// @file  protocols/membrane/geometry/Embedding.hh
 ///
 /// @brief      Methods for Computing Membrane Embeddings
 /// @details    Includes methods for computing membrane embeddings from search,
-///				sequence, structure, user input, and smaller component embeddings
-///				Last Modified: 7/24/14
+///    sequence, structure, user input, and smaller component embeddings
+///    Last Modified: 7/24/14
 ///
-/// @author		Julia Koehler (julia.koehler1982@gmail.com)
-/// @author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Julia Koehler (julia.koehler1982@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_geometry_Embedding_hh
 #define INCLUDED_protocols_membrane_geometry_Embedding_hh
@@ -50,17 +50,17 @@ using namespace core::pose;
 using namespace core::conformation::membrane;
 
 class Embedding : public utility::pointer::ReferenceCount {
-    
+
 public: // constructors
 
-	/// @brief	Detault Constructors
+	/// @brief Detault Constructors
 	/// @details Construct an empty embedding object
 	Embedding();
 
-	/// @brief	Construction from single EmbeddingDef object
+	/// @brief Construction from single EmbeddingDef object
 	Embedding( EmbeddingDef const & embedding );
 
-	/// @brief	Constructs bogus object from topology
+	/// @brief Constructs bogus object from topology
 	Embedding( SpanningTopology const & topology, Real radius );
 
 	/// @brief Custom Constructor - from topology & structure
@@ -73,23 +73,23 @@ public: // constructors
 	/// @brief Assignment Operator
 	Embedding & operator = ( Embedding const & src );
 
-	/// @brief	Destructor
+	/// @brief Destructor
 	~Embedding();
-    
+
 public: // methods
 
 	// show object
 	virtual void show( std::ostream & out=std::cout ) const;
-	
+
 	// invert all normals in Embedding object
 	void invert();
-	
+
 	// number of span embeddings in object
 	Size nspans() const;
 
 	// get span embedding by number
 	EmbeddingDefOP embedding( Size span_number ) const;
-	
+
 	// add span embedding
 	void add_span_embedding( EmbeddingDefOP span_embed );
 

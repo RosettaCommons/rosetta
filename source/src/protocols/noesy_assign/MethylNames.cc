@@ -128,7 +128,7 @@ void MethylNames::add_methyl( std::string const& methyl, std::string const& rose
 		rosetta2methyl_[ rosetta ] = AtomList( 1, methyl );
 	}
 
-	NameTable::iterator it = 	nmr2rosetta_.find( methyl );
+	NameTable::iterator it =  nmr2rosetta_.find( methyl );
 	if ( it != nmr2rosetta_.end() ) {
 		it->second.push_back( rosetta );
 	} else {
@@ -149,7 +149,7 @@ std::string const& MethylNames::rosetta2nmr( std::string const& proton ) const {
 }
 
 MethylNames::AtomList const& MethylNames::nmr2rosetta( std::string const& proton ) const {
-	NameTable::const_iterator it = 	nmr2rosetta_.find( proton );
+	NameTable::const_iterator it =  nmr2rosetta_.find( proton );
 	if ( it == nmr2rosetta_.end() ) {
 		throw EXCN_UnknownAtomname("proton_name " + proton + " not recognized for aminoacid " + aa_name() );
 	}
@@ -157,7 +157,7 @@ MethylNames::AtomList const& MethylNames::nmr2rosetta( std::string const& proton
 }
 
 MethylNames::AtomList const& MethylNames::rosetta2methyl( std::string const& proton ) const {
-	NameTable::const_iterator it = 	rosetta2methyl_.find( proton );
+	NameTable::const_iterator it =  rosetta2methyl_.find( proton );
 	if ( it == rosetta2methyl_.end() ) {
 		throw EXCN_UnknownAtomname("proton_name " + proton + " not recognized for aminoacid " + aa_name() );
 	}

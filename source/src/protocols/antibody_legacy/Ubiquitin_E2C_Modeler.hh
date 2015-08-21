@@ -54,23 +54,23 @@ public:
 	void setup_move_maps();
 
 	void setup_complex_fold_tree(
-	    core::pose::Pose & pose_in,
-	    bool trim = false );
+		core::pose::Pose & pose_in,
+		bool trim = false );
 
 	void initial_cter_perturbation( core::pose::Pose & pose_in );
 
 	void setup_simple_fold_tree(
-	    core::Size jumppoint1,
-	    core::Size cutpoint,
-	    core::Size jumppoint2,
-	    core::Size nres,
-	    core::pose::Pose & pose_in );
+		core::Size jumppoint1,
+		core::Size cutpoint,
+		core::Size jumppoint2,
+		core::Size nres,
+		core::pose::Pose & pose_in );
 
 	void trim_cter( core::pose::Pose & pose_in );
 
 	void restore_cter(
-	    core::pose::Pose & pose_in,
-	    core::pose::Pose without_cter );
+		core::pose::Pose & pose_in,
+		core::pose::Pose without_cter );
 
 	void init_k48r_perturbation( core::pose::Pose & pose_in );
 
@@ -84,21 +84,21 @@ public:
 
 	void initial_repack( core::pose::Pose & pose_in );
 
-	void setup_packer_task(	core::pose::Pose & pose_in );
+	void setup_packer_task( core::pose::Pose & pose_in );
 
 	void restrict_to_interfacial_loop_packing( core::pose::Pose & pose_in );
 
 	void set_e2g2_diubi_fold_tree( core::pose::Pose & pose_in );
 
 	core::Real calc_interaction_energy(
-	    const core::pose::Pose & pose_in,
-	    bool dimer = true );
+		const core::pose::Pose & pose_in,
+		bool dimer = true );
 
 	core::Real CSP_fraction(
-	    const core::pose::Pose & pose_in,
-	    bool non_CSP = false,
-	    bool trim = false,
-	    bool swap = false );
+		const core::pose::Pose & pose_in,
+		bool non_CSP = false,
+		bool trim = false,
+		bool swap = false );
 
 	bool centroid_filter( core::pose::Pose & pose_in );
 
@@ -106,9 +106,9 @@ public:
 
 	core::Real
 	calc_Lrmsd(
-	    const core::pose::Pose & pose_in,
-	    const core::pose::Pose & native_pose,
-	    core::Size ubiquitin );
+		const core::pose::Pose & pose_in,
+		const core::pose::Pose & native_pose,
+		core::Size ubiquitin );
 
 	void evaluate_native( core::pose::Pose & pose_in );
 
@@ -140,7 +140,7 @@ private:
 
 	// move maps
 	core::kinematics::MoveMapOP k48r_docking_map_;
-	core::kinematics::MoveMapOP	d77_docking_map_;
+	core::kinematics::MoveMapOP d77_docking_map_;
 	core::kinematics::MoveMapOP docking_map_;
 	core::kinematics::MoveMapOP flex_cter_map_;
 	core::kinematics::MoveMapOP all_dof_map_;
@@ -252,7 +252,7 @@ private:
 	void monoub_fullatom_mode_perturbation( core::pose::Pose & pose_in );
 
 	core::Real monoub_calc_interaction_energy(
-	    const core::pose::Pose & pose_in );
+		const core::pose::Pose & pose_in );
 
 	core::Real monoub_CSP_fraction( const core::pose::Pose & pose_in );
 
@@ -261,18 +261,18 @@ private:
 	bool monoub_fullatom_filter( core::pose::Pose & pose_in );
 
 	core::Real monoub_calc_Lrmsd (
-	    const core::pose::Pose & pose_in,
-	    const core::pose::Pose & native_pose );
+		const core::pose::Pose & pose_in,
+		const core::pose::Pose & native_pose );
 
 
 	core::Size monoub_end_;
 	core::Size monoub_ctr_of_mass_;
 
 	core::kinematics::MoveMapOP monoub_all_dof_map_;
-	core::kinematics::MoveMapOP	monoub_docking_map_;
+	core::kinematics::MoveMapOP monoub_docking_map_;
 	core::kinematics::MoveMapOP monoub_flex_cter_map_;
 	core::kinematics::MoveMapOP init_monoub_all_dof_map_;
-	core::kinematics::MoveMapOP	init_monoub_docking_map_;
+	core::kinematics::MoveMapOP init_monoub_docking_map_;
 	core::kinematics::MoveMapOP init_monoub_flex_cter_map_;
 
 }; // class ubi_e2c_modeler

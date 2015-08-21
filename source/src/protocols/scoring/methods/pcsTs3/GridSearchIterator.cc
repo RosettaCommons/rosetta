@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file GridSearchIterator.cc
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890
- ///
- /// @authorv Christophe Schmitz , Kala Bharath Pilla
- /// ,
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file GridSearchIterator.cc
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890
+///
+/// @authorv Christophe Schmitz , Kala Bharath Pilla
+/// ,
+////////////////////////////////////////////////
 
 
 // Unit headers
@@ -49,10 +49,10 @@
 
 //#include <limits>
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcsTs3{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcsTs3 {
 
 
 GridSearchIterator_Ts3::GridSearchIterator_Ts3():
@@ -104,12 +104,12 @@ GridSearchIterator_Ts3::GridSearchIterator_Ts3(GridSearchIterator_Ts3 const & ot
 GridSearchIterator_Ts3 &
 GridSearchIterator_Ts3::operator=(GridSearchIterator_Ts3 const & other){
 	if ( this != &other ) {
-		if((x_center_ != other.x_center_)||
-			 (y_center_ != other.y_center_)||
-			 (z_center_ != other.z_center_)||
-			 (step_ != other.step_)||
-			 (edge_ != other.edge_)||
-			 (delta_ != other.delta_)){
+		if ( (x_center_ != other.x_center_)||
+				(y_center_ != other.y_center_)||
+				(z_center_ != other.z_center_)||
+				(step_ != other.step_)||
+				(edge_ != other.edge_)||
+				(delta_ != other.delta_) ) {
 			utility_exit_with_message( "You can't call the = operator on GridSearchIterator_Ts3 object of different size" );
 		}
 		x_current_ = other.x_current_;
@@ -147,10 +147,10 @@ GridSearchIterator_Ts3::GridSearchIterator_Ts3(numeric::xyzVector< core::Real > 
 	norme_vector_(sqrt( (coo2.x()-coo1.x())*(coo2.x()-coo1.x()) + (coo2.y()-coo1.y())*(coo2.y()-coo1.y()) + (coo2.z()-coo1.z())*(coo2.z()-coo1.z()) )),
 	cone_angle_cos_(cos(cone_angle/180.0*core::Real( numeric::constants::d::pi )))
 {
-	if( edge_size < 0){
+	if ( edge_size < 0 ) {
 		utility_exit_with_message("Edge size of the cube search is negative and has to be positive");
 	}
-	if( step_size <= 0){
+	if ( step_size <= 0 ) {
 		utility_exit_with_message("step_size of the cube search has to be strictly positive");
 	}
 
@@ -160,21 +160,21 @@ GridSearchIterator_Ts3::GridSearchIterator_Ts3(numeric::xyzVector< core::Real > 
 
 bool
 GridSearchIterator_Ts3::next_center(core::Real &x,
-																core::Real &y,
-																core::Real &z){
+	core::Real &y,
+	core::Real &z){
 
 	//double r2;
-	while(next(x, y, z) == true){
+	while ( next(x, y, z) == true ) {
 		double r2 = (x-x_center_)*(x-x_center_) + (y-y_center_)* (y-y_center_) + (z-z_center_)*(z-z_center_);
-		if((r2 <= large_cutoff_square_) && (r2 >= small_cutoff_square_ )){ //we test small and large cutoff
+		if ( (r2 <= large_cutoff_square_) && (r2 >= small_cutoff_square_ ) ) { //we test small and large cutoff
 			core::Real cos_angle = ((x-x_center_)*x_vector_ + (y-y_center_)*y_vector_ + (z-z_center_)*z_vector_ );
-			if((r2 == 0 ) || (norme_vector_ == 0)){
+			if ( (r2 == 0 ) || (norme_vector_ == 0) ) {
 				return true;
 			}
 			cos_angle = cos_angle / sqrt(r2) / norme_vector_;
 			//std::cout << "comparing " << cos_angle << "with ref" << cone_angle_cos_ << std::endl;
 			//std::cout << x_vector_ << y_vector_ << z_vector_ << std::endl;
-			if(cos_angle >= cone_angle_cos_){ //we test cone angle
+			if ( cos_angle >= cone_angle_cos_ ) { //we test cone angle
 				return true;
 			}
 		}
@@ -190,49 +190,49 @@ GridSearchIterator_Ts3::next_center(core::Real &x,
 // It will be important if I decide to work on unassigned PCS Data.
 bool
 GridSearchIterator_Ts3::next(core::Real &x,
-												 core::Real &y,
-												 core::Real &z){
+	core::Real &y,
+	core::Real &z){
 	x = x_current_;
 	y = y_current_;
 	z = z_current_;
 
-	if(!next_to_return_){
+	if ( !next_to_return_ ) {
 		reset();
 		return(false);
 	}
 
-	if( z_current_ - z_center_ > edge_/2.0){
+	if ( z_current_ - z_center_ > edge_/2.0 ) {
 		next_to_return_ = false;
 		return(true);
 	}
 
 	x_current_ += step_x_;
 
-	if( x_current_ - x_center_> edge_/2.0 + delta_){
-			step_x_ = -step_;
-			x_current_ += step_x_;
-			y_current_ += step_y_;
+	if ( x_current_ - x_center_> edge_/2.0 + delta_ ) {
+		step_x_ = -step_;
+		x_current_ += step_x_;
+		y_current_ += step_y_;
 	}
 
-	if( x_current_ - x_center_ < -edge_/2.0 - delta_){
-			step_x_ = step_;
-			x_current_ += step_x_;
-			y_current_ += step_y_;
+	if ( x_current_ - x_center_ < -edge_/2.0 - delta_ ) {
+		step_x_ = step_;
+		x_current_ += step_x_;
+		y_current_ += step_y_;
 	}
 
-	if( y_current_ - y_center_> edge_/2.0 + delta_){
-			step_y_ = -step_;
-			y_current_ += step_y_;
-			z_current_ += step_z_;
+	if ( y_current_ - y_center_> edge_/2.0 + delta_ ) {
+		step_y_ = -step_;
+		y_current_ += step_y_;
+		z_current_ += step_z_;
 	}
 
-	if( y_current_ - y_center_ < -edge_/2.0 - delta_){
-			step_y_ = step_;
-			y_current_ += step_y_;
-			z_current_ += step_z_;
+	if ( y_current_ - y_center_ < -edge_/2.0 - delta_ ) {
+		step_y_ = step_;
+		y_current_ += step_y_;
+		z_current_ += step_z_;
 	}
 
-	if( z_current_ - z_center_ > edge_/2.0 + delta_){
+	if ( z_current_ - z_center_ > edge_/2.0 + delta_ ) {
 		next_to_return_ = false;
 		return(true);
 	}
@@ -242,13 +242,13 @@ GridSearchIterator_Ts3::next(core::Real &x,
 
 void
 GridSearchIterator_Ts3::reset(){
-		x_current_ = -edge_/2.0 + x_center_;
-		y_current_ = -edge_/2.0 + y_center_;
-		z_current_ = -edge_/2.0 + z_center_;
-		step_x_ = step_;
-		step_y_ = step_;
-		step_z_ = step_;
-		next_to_return_ = true;
+	x_current_ = -edge_/2.0 + x_center_;
+	y_current_ = -edge_/2.0 + y_center_;
+	z_current_ = -edge_/2.0 + z_center_;
+	step_x_ = step_;
+	step_y_ = step_;
+	step_z_ = step_;
+	next_to_return_ = true;
 }
 
 } //namespace pcsTs3

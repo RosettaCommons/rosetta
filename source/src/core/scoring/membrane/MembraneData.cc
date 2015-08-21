@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/scoring/membrane/MembraneData.cc
+/// @file  core/scoring/membrane/MembraneData.cc
 ///
-///	@brief		Membrane Scorefunction Statistics Class
-///	@details	Access to centroid rotamer pair potential and membrane
-///				environemnt potential statistics. Loads data in database tables
-///				in construction. All immutable data - no setters please and const!.
-///				Last Modified: 5/13/14
+/// @brief  Membrane Scorefunction Statistics Class
+/// @details Access to centroid rotamer pair potential and membrane
+///    environemnt potential statistics. Loads data in database tables
+///    in construction. All immutable data - no setters please and const!.
+///    Last Modified: 5/13/14
 ///
-///	@author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_scoring_membrane_MembraneData_cc
 #define INCLUDED_core_scoring_membrane_MembraneData_cc
@@ -54,11 +54,11 @@ static thread_local basic::Tracer TR( "core.scoring.membrane.MembraneData" );
 namespace core {
 namespace scoring {
 namespace membrane {
-					
+
 /// @brief Default Constructor
 MembraneData::MembraneData() :
 	core::scoring::EnvPairPotential(),
-	
+
 	//cems transition regions between environment bins
 	//cems transition is from +/- sqrt(36+pad6) +/- sqrt(100+pad10) etc
 	cen_dist5_pad_( 0.5 ),
@@ -66,18 +66,18 @@ MembraneData::MembraneData() :
 	cen_dist7_pad_( 0.65 ),
 	cen_dist10_pad_( 1.0 ),
 	cen_dist12_pad_( 1.2 ),
-	
+
 	cen_dist5_pad_plus_( cen_dist5_pad_  + 25.0 ),
 	cen_dist6_pad_plus_( cen_dist6_pad_ + 36.0 ),
 	cen_dist7_pad_plus_( cen_dist7_pad_  + 56.25 ),
 	cen_dist10_pad_plus_( cen_dist10_pad_ + 100.0 ),
 	cen_dist12_pad_plus_( cen_dist12_pad_ + 144.0 ),
-	
+
 	cen_dist5_pad_minus_( cen_dist5_pad_  - 25.0 ),
 	cen_dist7_pad_minus_( cen_dist7_pad_  - 56.25 ),
 	cen_dist10_pad_minus_( cen_dist10_pad_ - 100.0 ),
 	cen_dist12_pad_minus_( cen_dist12_pad_ - 144.0 ),
-	
+
 	cen_dist5_pad_hinv_( 0.5 / cen_dist5_pad_ ),
 	cen_dist6_pad_hinv_( 0.5 / cen_dist6_pad_ ),
 	cen_dist7_pad_hinv_( 0.5 / cen_dist7_pad_ ),
@@ -87,7 +87,7 @@ MembraneData::MembraneData() :
 	// Load mp env info
 	load_menv_info();
 }
-	
+
 /// @brief Destructor
 MembraneData::~MembraneData() {}
 
@@ -105,13 +105,13 @@ MembraneData::get_cenlist_from_pose( pose::Pose const & pose ) const
 {
 	using namespace core::pose::datacache;
 	return *( utility::pointer::static_pointer_cast< core::scoring::CenListInfo const > ( pose.data().get_const_ptr( CacheableDataType::CEN_LIST_INFO ) ));
-	
-} 
+
+}
 
 /// @brief Database IO Helper Methods for Membrane
 void
 MembraneData::load_menv_info() {
-	
+
 	// Initialize Database Info
 	Size const max_aa( 20 ); // restrict to canonical AAs for now
 	Size const env_log_table_cen6_bins( 15 );
@@ -120,15 +120,15 @@ MembraneData::load_menv_info() {
 	Size const cbeta_den_table_size( 45 );
 	Size const max_mem_layers( 3 );
 	Size const min_mem_layers( 2 );
-	
+
 	std::string tag,line;
 	chemical::AA aa;
-	
+
 	{ // mem_env_cen6:
 		mem_env_log6_.dimension( max_aa, max_mem_layers,env_log_table_cen6_bins );
 		utility::io::izstream stream;
 		basic::database::open( stream, "scoring/score_functions/MembranePotential/CEN6_mem_env_log.txt" );
-		for ( Size i = 1; i <= max_aa; ++i ){
+		for ( Size i = 1; i <= max_aa; ++i ) {
 			getline( stream, line );
 			std::istringstream l( line );
 			l >> tag >> aa;
@@ -144,10 +144,10 @@ MembraneData::load_menv_info() {
 	}
 	{ // mem_env_cen10:
 		mem_env_log10_.dimension( max_aa, max_mem_layers,env_log_table_cen10_bins );
-		
+
 		utility::io::izstream stream;
 		basic::database::open( stream, "scoring/score_functions/MembranePotential/CEN10_mem_env_log.txt" );
-		for ( Size i = 1; i <= max_aa; ++i ){
+		for ( Size i = 1; i <= max_aa; ++i ) {
 			getline( stream, line );
 			std::istringstream l( line );
 			l >> tag >> aa;
@@ -161,7 +161,7 @@ MembraneData::load_menv_info() {
 			}
 		}
 	}
-	
+
 	{ // cbeta_den_6/12
 		mem_cbeta_den6_.dimension( cbeta_den_table_size );
 		mem_cbeta_den12_.dimension( cbeta_den_table_size );
@@ -169,18 +169,18 @@ MembraneData::load_menv_info() {
 		mem_cbeta_2TM_den12_.dimension( cbeta_den_table_size );
 		mem_cbeta_4TM_den6_.dimension( cbeta_den_table_size );
 		mem_cbeta_4TM_den12_.dimension( cbeta_den_table_size );
-		
-		
+
+
 		// Read in etables into private vars
 		utility::io::izstream stream;
 		basic::database::open( stream, "scoring/score_functions/MembranePotential/memcbeta_den.txt" );
-		
+
 		{ // den6
 			getline( stream, line );
 			{
 				std::istringstream l(line);
-				l >>	tag;
-				for ( Size i = 1; i <= cbeta_den_table_size; ++i ){
+				l >> tag;
+				for ( Size i = 1; i <= cbeta_den_table_size; ++i ) {
 					l >>mem_cbeta_den6_( i );
 				}
 				if ( l.fail() || tag != "MEMCBETA_DEN6:"  ) utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/memcbeta_den.txt (DEN6)");
@@ -189,7 +189,7 @@ MembraneData::load_menv_info() {
 			{
 				std::istringstream l( line );
 				l >> tag;
-				for ( Size i = 1; i<= cbeta_den_table_size; ++i ){
+				for ( Size i = 1; i<= cbeta_den_table_size; ++i ) {
 					l >> mem_cbeta_2TM_den6_( i );
 				}
 				if ( l.fail() || tag != "MEMCBETA_2TM_DEN6:"  ) utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/memcbeta_den.txt (2TM_DEN6)");
@@ -198,19 +198,19 @@ MembraneData::load_menv_info() {
 			{
 				std::istringstream l( line );
 				l >> tag;
-				for ( Size i = 1; i <= cbeta_den_table_size; ++i ){
+				for ( Size i = 1; i <= cbeta_den_table_size; ++i ) {
 					l >> mem_cbeta_4TM_den6_( i );
 				}
 				if ( l.fail() || tag != "MEMCBETA_4TM_DEN6:"  ) utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/memcbeta_den.txt (4TM_DEN6)");
 			}
 		} // end den6
-		
+
 		{ // den12
 			{
 				getline( stream, line );
 				std::istringstream l( line );
 				l >> tag;
-				for ( Size i = 1; i <= cbeta_den_table_size; ++i ){
+				for ( Size i = 1; i <= cbeta_den_table_size; ++i ) {
 					l >> mem_cbeta_den12_( i );
 				}
 				if ( l.fail() || tag != "MEMCBETA_DEN12:"  ) utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/memcbeta_den.txt (DEN12)");
@@ -219,7 +219,7 @@ MembraneData::load_menv_info() {
 			{
 				std::istringstream l(line);
 				l >> tag;
-				for ( Size i = 1; i <= cbeta_den_table_size; ++i ){
+				for ( Size i = 1; i <= cbeta_den_table_size; ++i ) {
 					l >> mem_cbeta_2TM_den12_( i );
 				}
 				if ( l.fail() || tag != "MEMCBETA_2TM_DEN12:"  ) utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/memcbeta_den.txt (2TM_DEN12)");
@@ -228,18 +228,18 @@ MembraneData::load_menv_info() {
 			{
 				std::istringstream l(line);
 				l >> tag;
-				for ( Size i = 1; i <= cbeta_den_table_size; ++i ){
+				for ( Size i = 1; i <= cbeta_den_table_size; ++i ) {
 					l >> mem_cbeta_4TM_den12_( i );
 				}
 				if ( l.fail() || tag != "MEMCBETA_4TM_DEN12:"  ) utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/memcbeta_den.txt (4TM_DEN12)");
 			}
-			
+
 		}
 	} // end den 12
-	
+
 	{ // pair_log
 		mem_pair_log_.dimension( min_mem_layers, pair_log_table_size, max_aa, max_aa );
-		
+
 		utility::io::izstream stream;
 		basic::database::open( stream, "scoring/score_functions/MembranePotential/mem_pair_log.txt" );
 		for ( Size i = 1; i <= min_mem_layers; ++i ) {
@@ -249,20 +249,19 @@ MembraneData::load_menv_info() {
 					std::istringstream l( line );
 					Size ii,jj;
 					l >> tag >> ii >> jj >> aa;
-				debug_assert( Size( aa ) == k );
-					for ( Size n=1; n <= max_aa; ++n )
-					{
+					debug_assert( Size( aa ) == k );
+					for ( Size n=1; n <= max_aa; ++n ) {
 						l >> mem_pair_log_(i, j, aa, n );
 					}
 					if ( l.fail() || ii != i || jj != j || tag != "MEM_PAIR_LOG:"  ) utility_exit_with_message("scoring/score_functions/MembranePotential/mem_pair_log.txt");
 				}
-				
+
 			}
 		}
 	} // end pair log
-	
+
 }
-		
+
 /// @brief Membrane Base Potential Statistics
 FArray3D< Real > MembraneData::mem_env_log6() const { return mem_env_log6_; }
 FArray3D< Real > MembraneData::mem_env_log10() const { return mem_env_log10_; }

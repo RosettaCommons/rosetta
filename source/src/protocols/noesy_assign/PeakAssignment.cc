@@ -10,7 +10,7 @@
 /// @file FragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -56,16 +56,16 @@ PeakAssignment::~PeakAssignment() {}
 using namespace core;
 
 PeakAssignment::PeakAssignment( CrossPeak * cp, core::Size assign_spin1, core::Size assign_spin2 )
-  : crosspeak_( cp ),
-    spin_assign_index1_( assign_spin1 ),
-    spin_assign_index2_( assign_spin2 ),
-		chemshift_overlap_( 1.0 ),
-		symmetry_compliance_( 0 ),
-		covalent_compliance_( false ),
-		decoy_compatibility_( 1.0 ),
-		network_anchoring_( 1.0 ),
-		network_anchoring_per_residue_( 200 ), //so we are not eliminated by default
-		native_distance_viol_( -1 )
+: crosspeak_( cp ),
+	spin_assign_index1_( assign_spin1 ),
+	spin_assign_index2_( assign_spin2 ),
+	chemshift_overlap_( 1.0 ),
+	symmetry_compliance_( 0 ),
+	covalent_compliance_( false ),
+	decoy_compatibility_( 1.0 ),
+	network_anchoring_( 1.0 ),
+	network_anchoring_per_residue_( 200 ), //so we are not eliminated by default
+	native_distance_viol_( -1 )
 {
 	if ( cp )  update_resonances_from_peak();
 }
@@ -78,11 +78,11 @@ void PeakAssignment::dump_weights( std::ostream& os ) const {
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	using namespace ObjexxFCL::format;
 	os << F( 5, 2, chemshift_overlap_ ) << " "
-		 << F( 5, 2, std::max( symmetry_compliance_*params.symmetry_compliance_weight_, 1.0 ) ) << " "
-		 << F( 5, 2, covalent_compliance_ ? params.covalent_compliance_weight_ : 1.0 ) << " "
-		 << F( 5, 2, decoy_compatibility_ ) << " "
-		 << F( 5, 2, network_anchoring_ ) << " "
-		 << F( 5, 2, network_anchoring_per_residue_ ) << " ";
+		<< F( 5, 2, std::max( symmetry_compliance_*params.symmetry_compliance_weight_, 1.0 ) ) << " "
+		<< F( 5, 2, covalent_compliance_ ? params.covalent_compliance_weight_ : 1.0 ) << " "
+		<< F( 5, 2, decoy_compatibility_ ) << " "
+		<< F( 5, 2, network_anchoring_ ) << " "
+		<< F( 5, 2, network_anchoring_per_residue_ ) << " ";
 	os << F( 5, 2, native_distance_viol_ ) << " ";
 }
 
@@ -90,10 +90,10 @@ Real PeakAssignment::peak_volume() const {
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	return chemshift_overlap_
 		* std::min( params.smax_,
-			std::max( symmetry_compliance_*params.symmetry_compliance_weight_, 1.0 )
-			* ( covalent_compliance_ ? params.covalent_compliance_weight_ : 1.0 )
-			* network_anchoring_ )
-			* decoy_compatibility_;
+		std::max( symmetry_compliance_*params.symmetry_compliance_weight_, 1.0 )
+		* ( covalent_compliance_ ? params.covalent_compliance_weight_ : 1.0 )
+		* network_anchoring_ )
+		* decoy_compatibility_;
 }
 
 Real PeakAssignment::normalized_peak_volume() const {
@@ -102,8 +102,8 @@ Real PeakAssignment::normalized_peak_volume() const {
 }
 
 void PeakAssignment::update_resonances_from_peak() {
-  resonance1_ = crosspeak_->proton( 1 ).assignment( spin_id( 1 ) );
-  resonance2_ = crosspeak_->proton( 2 ).assignment( spin_id( 2 ) );
+	resonance1_ = crosspeak_->proton( 1 ).assignment( spin_id( 1 ) );
+	resonance2_ = crosspeak_->proton( 2 ).assignment( spin_id( 2 ) );
 }
 
 void PeakAssignment::update_chemshiftscore_from_peak() {
@@ -114,8 +114,8 @@ void PeakAssignment::update_chemshiftscore_from_peak() {
 		CrossPeak::Spin const& spin( crosspeak_->spin( d ) );
 		Resonance const& assigned_resonance( resonances()[ spin.assignment( spin_id( d>2 ? d-2 : d ) ) ] );
 		Real s = 1.0/weight*assigned_resonance.pmatch( spin.freq(), crosspeak_->tolerance( d ), crosspeak_->folder( d ) );
-		//		Real diff( spin.freq()-crosspeak_->fold_resonance( assigned_resonance.freq(), d ) );
-		//		Real s( diff/weight/std::max( crosspeak_->tolerance( d ), assigned_resonance.tolerance() ) );
+		//  Real diff( spin.freq()-crosspeak_->fold_resonance( assigned_resonance.freq(), d ) );
+		//  Real s( diff/weight/std::max( crosspeak_->tolerance( d ), assigned_resonance.tolerance() ) );
 		sum += s*s;
 	}
 	chemshift_overlap_ = exp( -0.5*sum );
@@ -137,9 +137,9 @@ core::Size PeakAssignment::float_ambiguity() const {
 }
 
 PeakAssignment::NmrConstraintOP PeakAssignment::create_constraint(
-					pose::Pose const& pose,
-					core::Size ifloat,
-					core::scoring::func::FuncOP func
+	pose::Pose const& pose,
+	core::Size ifloat,
+	core::scoring::func::FuncOP func
 ) const {
 	basic::ProfileThis doit( basic::NOESY_ASSIGN_PA_GEN_CST );
 
@@ -153,21 +153,22 @@ PeakAssignment::NmrConstraintOP PeakAssignment::create_constraint(
 	core::id::NamedAtomID const& atom2( resonances()[ flip ? resonance1 : resonance2 ].atom() );
 
 	tr.Debug << "create constraint for atom: " << atom1 << " " << atom2 << " from resonances id: "
-					 << resonance1 << " " << resonance2 << std::endl;
+		<< resonance1 << " " << resonance2 << std::endl;
 
 	using namespace core::scoring::constraints;
-	if ( !func )
+	if ( !func ) {
 		func = core::scoring::func::FuncOP( new BoundFunc( 1.5,
-		5.5,
-		1.0,
+			5.5,
+			1.0,
 			"VC "+ObjexxFCL::string_of( normalized_peak_volume(), 3 )
-	) );
+			) );
+	}
 	return PeakAssignment::NmrConstraintOP( new NmrConstraint( atom1, atom2, pose, func ) ); //later figure out what the func should be...
 }
 
 core::scoring::constraints::ConstraintOP PeakAssignment::create_constraint(
-					pose::Pose const& pose,
-					core::scoring::func::FuncOP func
+	pose::Pose const& pose,
+	core::scoring::func::FuncOP func
 ) const {
 	if ( float_ambiguity() > 1 ) {
 		return create_float_constraint( pose, func );
@@ -176,10 +177,10 @@ core::scoring::constraints::ConstraintOP PeakAssignment::create_constraint(
 }
 
 core::scoring::constraints::AmbiguousNMRConstraintOP PeakAssignment::create_float_constraint(
-					pose::Pose const& pose,
-					core::scoring::func::FuncOP func
+	pose::Pose const& pose,
+	core::scoring::func::FuncOP func
 ) const {
-/// create Ambiguous constraint with BoundFunc describing the whole thing...
+	/// create Ambiguous constraint with BoundFunc describing the whole thing...
 	using namespace core::scoring::constraints;
 	AmbiguousNMRConstraintOP full_cst( new AmbiguousNMRConstraint( func ) );
 	core::Size const n_float = float_ambiguity();
@@ -192,12 +193,12 @@ core::scoring::constraints::AmbiguousNMRConstraintOP PeakAssignment::create_floa
 	return full_cst;
 }
 
-	/// @brief return resonance_id, i.e., pointer into Resonance list that will resolve in assigned atom
+/// @brief return resonance_id, i.e., pointer into Resonance list that will resolve in assigned atom
 core::Size PeakAssignment::label_resonance_id( core::Size select ) const {
-  runtime_assert( select == 1 || select == 2 );
-  runtime_assert( crosspeak_ );
-  runtime_assert( crosspeak_->has_label( select ) );
-  return crosspeak_->label( select ).assignment( spin_id( select ) );
+	runtime_assert( select == 1 || select == 2 );
+	runtime_assert( crosspeak_ );
+	runtime_assert( crosspeak_->has_label( select ) );
+	return crosspeak_->label( select ).assignment( spin_id( select ) );
 }
 
 PeakAssignment const BOGUS_ASSIGNMENT( NULL, 0, 0 );
@@ -207,7 +208,7 @@ bool PeakAssignment::is_symmetric_partner_of( PeakAssignment const& other ) cons
 
 	//because I also allow now the peaks that have not turned around residue numbers we have to exclude assignments with the same peak
 	if ( crosspeak_->same_peak( *other.crosspeak_ ) ) {
-		//		tr.Debug << " SAME " << std::endl;
+		//  tr.Debug << " SAME " << std::endl;
 		return false;
 	}
 	for ( Size select = 1; select <=2 && match; ++select ) {
@@ -216,12 +217,12 @@ bool PeakAssignment::is_symmetric_partner_of( PeakAssignment const& other ) cons
 		if ( has_label( self ) && other.has_label( partner ) ) {
 			match = match && label_resonance_id( self ) == other.label_resonance_id( partner );
 		}
-		//		if ( has_proton( self ) && other.has_proton( partner ) ) {
+		//  if ( has_proton( self ) && other.has_proton( partner ) ) {
 		match = match && resonance_id( self ) == other.resonance_id( partner );
-		//		} else {
-		//			match = match && label_atom_
+		//  } else {
+		//   match = match && label_atom_
 	}
-	//	return match;
+	// return match;
 	//we also have to match 1-1 and 2-2 since this can be the case when comparing
 	// CHH and CCH spectra.
 	if ( crosspeak_->exp_hash() == other.crosspeak().exp_hash() ) return match;
@@ -233,12 +234,12 @@ bool PeakAssignment::is_symmetric_partner_of( PeakAssignment const& other ) cons
 		if ( has_label( self ) && other.has_label( partner ) ) {
 			match = match && label_resonance_id( self ) == other.label_resonance_id( partner );
 		}
-		//		if ( has_proton( self ) && other.has_proton( partner ) ) {
-			match = match && resonance_id( self ) == other.resonance_id( partner );
-			//		}
+		//  if ( has_proton( self ) && other.has_proton( partner ) ) {
+		match = match && resonance_id( self ) == other.resonance_id( partner );
+		//  }
 	}
 	return match;
-	//	return resonance_id( 1 ) == other.resonance_id( 2 ) && resonance_id( 2 ) == other.resonance_id( 1 );
+	// return resonance_id( 1 ) == other.resonance_id( 2 ) && resonance_id( 2 ) == other.resonance_id( 1 );
 }
 
 void PeakAssignment::show( std::ostream& os ) const {

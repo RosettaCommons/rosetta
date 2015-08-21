@@ -39,10 +39,10 @@ DbMoverMessageListener::request(
 	bool need_slave_data=false;
 
 	//Has a protocol id been set yet? If not, return 0 and request a protocol id from the slave
-	if(protocol_id_==0){
+	if ( protocol_id_==0 ) {
 		need_slave_data=true;
 	}
-	if(!batch_ids_.count(identifier)){
+	if ( !batch_ids_.count(identifier) ) {
 		batch_ids_[identifier]=0;
 		need_slave_data=true;
 	}
@@ -61,7 +61,7 @@ void
 DbMoverMessageListener::deserialize_data(
 	std::string const & data){
 	utility::vector1< std::string > tokens = utility::split(data);
-	if(tokens.size() != 3){
+	if ( tokens.size() != 3 ) {
 		utility_exit_with_message("failed to deserialize the database message from slave node.");
 	}
 	//Received a protocol id from the slave node, and thus it has been written to the database

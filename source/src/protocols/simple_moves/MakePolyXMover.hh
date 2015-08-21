@@ -53,10 +53,10 @@ public:
 	~MakePolyXMover();
 
 	/// @brief clone this object
-	virtual	protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP clone() const;
 
 	/// @brief create this type of object
-	virtual	protocols::moves::MoverOP fresh_instance() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 
 	// @brief virtual main operation
 	virtual void apply( core::pose::Pose & pose );

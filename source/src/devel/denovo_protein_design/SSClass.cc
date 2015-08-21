@@ -25,8 +25,8 @@
 
 // ObjexxFCL Headers
 
-namespace devel{
-namespace denovo_protein_design{
+namespace devel {
+namespace denovo_protein_design {
 
 using namespace core;
 
@@ -36,7 +36,7 @@ static thread_local basic::Tracer tr( "SS" );
 std::ostream & operator<< ( std::ostream & os, const SSs & sss_ ) {
 	os << "SS  begin  end  type" << std::endl;
 	for ( SSs::const_iterator it = sss_.begin(), it_end = sss_.end();
-			 it != it_end; ++it ) {
+			it != it_end; ++it ) {
 		os << *it << std::endl;
 	}
 	return os;
@@ -56,8 +56,8 @@ SSs::write_ss_to_file(
 		utility_exit_with_message( "Couldn't write check point ss file " );
 	}
 
-	for( SSs::const_iterator it= this->begin(), it_end=this->end();
-			 it != it_end; ++it ) {
+	for ( SSs::const_iterator it= this->begin(), it_end=this->end();
+			it != it_end; ++it ) {
 		data << "SS " << it->start() << " " << it->stop() << " " << it->sstype() << std::endl;
 	}
 
@@ -68,9 +68,9 @@ SSs::write_ss_to_file(
 
 void
 SSs::add_ss( SS ss_ ) {
-	 ss_.start();
-	 ss_.stop();
-	 ss_.sstype();
+	ss_.start();
+	ss_.stop();
+	ss_.sstype();
 	sss_.push_back( ss_ );
 }
 
@@ -78,10 +78,10 @@ SSs::add_ss( SS ss_ ) {
 //////////////////////////////////////////////////////////////////////
 void
 SSs::add_ss(
-						core::Size const start,
-						core::Size const stop,
-						char const sstype
-						)
+	core::Size const start,
+	core::Size const stop,
+	char const sstype
+)
 {
 	add_ss( SS( start, stop, sstype ));
 }
@@ -105,8 +105,8 @@ SSs::delete_ss(
 {
 	runtime_assert( start < stop );
 
-	for( iterator it=sss_.begin(), it_end=sss_.end();
-			 it != it_end; ++it ) {
+	for ( iterator it=sss_.begin(), it_end=sss_.end();
+			it != it_end; ++it ) {
 		if ( start == it->start() && stop == it->stop() ) {
 			sss_.erase( it );
 			break;
@@ -121,28 +121,28 @@ SSs::one_random_ss_element() const {
 	Size index =0;
 	Size const end = static_cast< Size >( numeric::random::uniform()*size );
 	const_iterator it = sss_.begin();
-  while( index != end ) { ++index; ++it; }
-  return it;
+	while ( index != end ) { ++index; ++it; }
+	return it;
 
 }
 /////////////////////////////////////////////////////////////////////////////
 /*
 Size
 SSs::ss_size(
-	Size const num
+Size const num
 ) const {
-	runtime_assert( num > 0 && num <= sss_.size() );
-	return sss_[num-1].size();
+runtime_assert( num > 0 && num <= sss_.size() );
+return sss_[num-1].size();
 }
 /////////////////////////////////////////////////////////////////////////////
 Size
 SSs::ss_size() const {
-	Size sssize = 0;
-	for( const_iterator it=sss_.begin(), it_end=sss_.end();
-			 it != it_end; ++it ) {
-		sssize += it->size();
-	}
-	return sssize;
+Size sssize = 0;
+for( const_iterator it=sss_.begin(), it_end=sss_.end();
+it != it_end; ++it ) {
+sssize += it->size();
+}
+return sssize;
 }
 */
 
@@ -151,19 +151,19 @@ SSs::clear(){
 	sss_.clear();
 }
 
-	/*
+/*
 void SSs::read_ss_file(
-													 std::string filename
+std::string filename
 ) {
-	clear();
-	std::ifstream infile( filename.c_str() );
+clear();
+std::ifstream infile( filename.c_str() );
 
-	if (!infile.good()) {
-		utility_exit_with_message( "[ERROR] Error opening SS file '" + filename + "'" );
-	}
+if (!infile.good()) {
+utility_exit_with_message( "[ERROR] Error opening SS file '" + filename + "'" );
+}
 
 }
-	*/
+*/
 
 } // namespace denovo_protein_design
 } // namespace devel

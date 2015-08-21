@@ -112,7 +112,7 @@ IntermolEnergy::get_num_chains_frozen( pose::Pose const & pose ) const {
 
 	// there used to be an alternative way to calculate # chains frozen, but I discovered
 	// a bug in it & deprecated it -- rhiju.
-	//	runtime_assert( num_subgraphs == max( connection_domains ) );
+	// runtime_assert( num_subgraphs == max( connection_domains ) );
 
 	return ( num_chains - max( connection_domains ) );
 }
@@ -128,7 +128,7 @@ IntermolEnergy::eval_atom_derivative(
 	EnergyMap const &,
 	Vector &,
 	Vector &
- 	) const
+) const
 {
 	// no op.
 } // eval atom derivative

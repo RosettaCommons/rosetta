@@ -56,9 +56,9 @@ SelectResiduesByLayer::SelectResiduesByLayer() : utility::pointer::ReferenceCoun
 
 /// @brief value constructor
 SelectResiduesByLayer::SelectResiduesByLayer(
-		bool const pick_core,
-		bool const pick_boundary,
-		bool const pick_surface ) : utility::pointer::ReferenceCount(),
+	bool const pick_core,
+	bool const pick_boundary,
+	bool const pick_surface ) : utility::pointer::ReferenceCount(),
 	pick_core_( pick_core ),
 	pick_boundary_( pick_boundary ),
 	pick_surface_( pick_surface ),
@@ -80,7 +80,7 @@ SelectResiduesByLayer::SelectResiduesByLayer( String const pick ) : utility::poi
 {
 	initialize( 20.0, 40.0 );
 	utility::vector1< String > layers( utility::string_split( pick, '_' ) );
-	for( utility::vector1< String >::const_iterator iter = layers.begin(); iter != layers.end() ; ++iter) {
+	for ( utility::vector1< String >::const_iterator iter = layers.begin(); iter != layers.end() ; ++iter ) {
 		String layer(*iter);
 		if ( layer == "core" ) {
 			pick_core_ = true;
@@ -248,7 +248,7 @@ SelectResiduesByLayer::calc_sc_neighbors( Pose const & pose ) const {
 
 	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 		Real my_neighbors(0.0);
-		
+
 		numeric::xyzVector< Real > my_sc_coordinates;
 		numeric::xyzVector< Real > my_bb_coordinates;
 
@@ -256,7 +256,7 @@ SelectResiduesByLayer::calc_sc_neighbors( Pose const & pose ) const {
 			my_sc_coordinates = pose.residue(i).atom(pose.residue(i).atom_index("2HA")).xyz() ;
 			my_bb_coordinates = pose.residue(i).atom(pose.residue(i).atom_index("CA")).xyz() ;
 		} else {
-			if(pose.residue(i).is_polymer()) {
+			if ( pose.residue(i).is_polymer() ) {
 				my_sc_coordinates = pose.residue(i).atom(pose.residue(i).first_sidechain_atom()).xyz() ;
 				core::Size parent_atom_index = pose.residue(i).icoor( pose.residue(i).first_sidechain_atom() ).stub_atom1().atomno();
 				my_bb_coordinates = pose.residue(i).atom( parent_atom_index ).xyz() ;
@@ -269,14 +269,14 @@ SelectResiduesByLayer::calc_sc_neighbors( Pose const & pose ) const {
 		numeric::xyzVector< Real > my_sc_vector = (my_sc_coordinates - my_bb_coordinates).normalize() ;
 
 		for ( Size j = 1; j <= pose.total_residue(); ++j ) {
-		
-			if (i != j) {
+
+			if ( i != j ) {
 
 				numeric::xyzVector< Real > other_bb_coordinates;
 				if ( pose.residue(j).name3() == "GLY" ) {
 					other_bb_coordinates = pose.residue(j).atom(pose.residue(j).atom_index("CA")).xyz();
 				} else {
-					if( pose.residue(j).is_polymer() ) { //If this is a polymer atom, use the parent of the first sidechain atom.
+					if ( pose.residue(j).is_polymer() ) { //If this is a polymer atom, use the parent of the first sidechain atom.
 						core::Size parent_atom_index = pose.residue(j).icoor( pose.residue(j).first_sidechain_atom() ).stub_atom1().atomno();
 						other_bb_coordinates = pose.residue(j).atom( parent_atom_index ).xyz();
 					} else { //If this is not a polymer residue, use the nbr_atom:
@@ -289,7 +289,7 @@ SelectResiduesByLayer::calc_sc_neighbors( Pose const & pose ) const {
 
 				Real dist_term(1.0 / (1.0 + exp(new_sc_vector.length() - 9.0)));
 				Real angle_term(my_sc_vector.dot(new_sc_vector.normalize()) + 0.5 );
-				if (angle_term < 0) {
+				if ( angle_term < 0 ) {
 					angle_term = 0.0;
 				}
 				my_neighbors += (dist_term * angle_term * angle_term);
@@ -311,8 +311,8 @@ utility::vector1< core::Size > const
 SelectResiduesByLayer::compute( Pose const & pose, String secstruct )
 {
 	// define secstruct if it is empty
-	if( secstruct == "" ) {
-	// calc dssp
+	if ( secstruct == "" ) {
+		// calc dssp
 		core::scoring::dssp::Dssp dssp( pose );
 		dssp.dssp_reduced();
 		secstruct = dssp.get_dssp_secstruct();
@@ -327,7 +327,7 @@ SelectResiduesByLayer::compute( Pose const & pose, String secstruct )
 	selected_boundary_residues_.clear();
 
 	std::ofstream output;
-	if( make_rasmol_format_file_ ) {
+	if ( make_rasmol_format_file_ ) {
 		output.open( "srb.ras" ,std::ios::out );
 	}
 
@@ -335,8 +335,8 @@ SelectResiduesByLayer::compute( Pose const & pose, String secstruct )
 	TR << " core ( E, L, H ): " << burial_[ 'E' ] << ' ' << burial_[ 'L' ] << ' ' << burial_[ 'H' ] << std::endl;
 	TR << " surface (E, L, H ): " << surface_[ 'E' ] << ' ' << surface_[ 'L' ] << ' ' << surface_[ 'H' ] << std::endl;
 
-	if (use_sidechain_neighbors_) {
-		rsd_sasa_ = calc_sc_neighbors( pose );		
+	if ( use_sidechain_neighbors_ ) {
+		rsd_sasa_ = calc_sc_neighbors( pose );
 	} else {
 		rsd_sasa_ = calc_rsd_sasa( pose );
 	}
@@ -344,7 +344,7 @@ SelectResiduesByLayer::compute( Pose const & pose, String secstruct )
 	rsd_layer_.resize( pose.total_residue() );
 
 	utility::vector1< Size > selected_residues;
-	for( Size iaa=1; iaa<=pose.total_residue(); iaa++ ) {
+	for ( Size iaa=1; iaa<=pose.total_residue(); iaa++ ) {
 
 		char ss = secstruct.at( iaa-1 );
 		runtime_assert( ss == 'L' || ss =='E' || ss=='H' );
@@ -352,31 +352,31 @@ SelectResiduesByLayer::compute( Pose const & pose, String secstruct )
 		rsd_layer_[ iaa ] = "";
 
 		bool flag( false );
-		for( Size i=1; i<=excluded_aatypes_for_selection_.size(); i++ ) {
-			if( pose.aa( iaa ) == excluded_aatypes_for_selection_[ i ] ) {
+		for ( Size i=1; i<=excluded_aatypes_for_selection_.size(); i++ ) {
+			if ( pose.aa( iaa ) == excluded_aatypes_for_selection_[ i ] ) {
 				flag = true;
 				break;
 			}
 		}
-		if( flag ) continue;
+		if ( flag ) continue;
 
-		if( restricted_aatypes_for_selection_.size() > 0 ) flag = true;
-		for( Size i=1; i<=restricted_aatypes_for_selection_.size(); i++ ) {
-			if( pose.aa( iaa ) == restricted_aatypes_for_selection_[ i ] ) {
+		if ( restricted_aatypes_for_selection_.size() > 0 ) flag = true;
+		for ( Size i=1; i<=restricted_aatypes_for_selection_.size(); i++ ) {
+			if ( pose.aa( iaa ) == restricted_aatypes_for_selection_[ i ] ) {
 				flag = false;
 				break;
 			}
 		}
-		if( flag ) continue;
+		if ( flag ) continue;
 
 		if ( pick_core_ && ( (rsd_sasa_[ iaa ] <= burial_[ ss ] && !use_sidechain_neighbors_ ) ||
-							 (rsd_sasa_[ iaa ] >= burial_[ ss ] &&  use_sidechain_neighbors_ ) ) ) {
+				(rsd_sasa_[ iaa ] >= burial_[ ss ] &&  use_sidechain_neighbors_ ) ) ) {
 
 
 			selected_core_residues_.push_back( iaa );
 			selected_residues.push_back( iaa );
 
-			if( make_rasmol_format_file_ ) {
+			if ( make_rasmol_format_file_ ) {
 				output << "select " << iaa << std::endl;
 				output << "color blue " << std::endl;
 			}
@@ -384,12 +384,12 @@ SelectResiduesByLayer::compute( Pose const & pose, String secstruct )
 			rsd_layer_[ iaa ] = "core";
 
 		} else if ( pick_surface_ && ( (rsd_sasa_[ iaa ] >= surface_[ ss ] && !use_sidechain_neighbors_ ) ||
-									   (rsd_sasa_[ iaa ] <= surface_[ ss ] &&  use_sidechain_neighbors_ ) ) ) {
+				(rsd_sasa_[ iaa ] <= surface_[ ss ] &&  use_sidechain_neighbors_ ) ) ) {
 
 			selected_surface_residues_.push_back( iaa );
 			selected_residues.push_back( iaa );
 
-			if( make_rasmol_format_file_ ) {
+			if ( make_rasmol_format_file_ ) {
 				output << "select " << iaa << std::endl;
 				output << "color red " << std::endl;
 			}
@@ -397,12 +397,12 @@ SelectResiduesByLayer::compute( Pose const & pose, String secstruct )
 			rsd_layer_[ iaa ] = "surface";
 
 		} else if ( pick_boundary_ && ( ( rsd_sasa_[ iaa ] < surface_[ ss ] && rsd_sasa_[ iaa ] > burial_[ ss ] && !use_sidechain_neighbors_ ) ||
-									    ( rsd_sasa_[ iaa ] > surface_[ ss ] && rsd_sasa_[ iaa ] < burial_[ ss ] &&  use_sidechain_neighbors_ ) ) ) {
+				( rsd_sasa_[ iaa ] > surface_[ ss ] && rsd_sasa_[ iaa ] < burial_[ ss ] &&  use_sidechain_neighbors_ ) ) ) {
 
 			selected_boundary_residues_.push_back( iaa );
 			selected_residues.push_back( iaa );
 
-			if( make_rasmol_format_file_ ) {
+			if ( make_rasmol_format_file_ ) {
 				output << "select " << iaa << std::endl;
 				output << "color green " << std::endl;
 			}

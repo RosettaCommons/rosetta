@@ -28,17 +28,14 @@ dump_native_residue_file(
 ){
 	utility::io::ozstream native_residue_file;
 	native_residue_file.open(filename);
-	
-	for(NativeRotamersMap::const_iterator pos_it=native_residue_map.begin();
-		pos_it != native_residue_map.end(); ++pos_it)
-	{
+
+	for ( NativeRotamersMap::const_iterator pos_it=native_residue_map.begin();
+			pos_it != native_residue_map.end(); ++pos_it ) {
 		native_residue_file << "RESNUM " << pos_it->first << "\n";
-		for(utility::vector1<core::conformation::ResidueOP>::const_iterator res_it=pos_it->second.begin();
-			res_it != pos_it->second.end(); ++res_it)
-		{
+		for ( utility::vector1<core::conformation::ResidueOP>::const_iterator res_it=pos_it->second.begin();
+				res_it != pos_it->second.end(); ++res_it ) {
 			native_residue_file << "RESIDUE " << (*res_it)->type().name() << "\n";
-			for(core::Size i=1; i<=(*res_it)->natoms(); ++i)
-			{
+			for ( core::Size i=1; i<=(*res_it)->natoms(); ++i ) {
 				native_residue_file << "ATOM " << i << " " <<
 					(*res_it)->xyz(i).x() << " " <<
 					(*res_it)->xyz(i).y() << " " <<

@@ -47,9 +47,9 @@
 #include <core/chemical/ResidueGraphTypes.hh>
 
 //Auto Headers
-namespace core{
-namespace chemical{
-namespace orbitals{
+namespace core {
+namespace chemical {
+namespace orbitals {
 
 class ICoorOrbitalData{
 public:
@@ -78,9 +78,9 @@ public:
 
 	Vector
 	build(
-			Vector stub1_xyz,
-			Vector stub2_xyz,
-			Vector stub3_xyz
+		Vector stub1_xyz,
+		Vector stub2_xyz,
+		Vector stub3_xyz
 	) const;
 
 

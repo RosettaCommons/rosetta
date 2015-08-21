@@ -147,8 +147,8 @@ void dump_score_line(
 
 /// @brief Helper function for writing entries -- not usually called by clients.
 /* void dump_score_line(
-	std::ostream & out,
-	std::string const & pose_tag
+std::ostream & out,
+std::string const & pose_tag
 ); */
 
 /// @brief Embeds a reference pose as PDB coords + foldtree; will be used for reconstructing subsequent diffs.

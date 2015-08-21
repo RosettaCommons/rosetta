@@ -55,8 +55,8 @@
 using basic::Tracer;
 static thread_local basic::Tracer TR( "protocols.features.WaterFeatures" );
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 //using std::string;
 //using std::stringstream;
@@ -191,24 +191,23 @@ WaterFeatures::parse_my_tag(
 ) {
 
 	// TODO add logic to parse targets=name3:atom_name,... tag option
-  	if ( tag->hasOption("targets") ) {
+	if ( tag->hasOption("targets") ) {
 		//stringstream error_msg;
 		//error_msg
-		//	<< "The " << type_name() << " reporter requires a 'targets' tag:" << endl
-		//	<< endl
-		//	<< "    <feature name=" << type_name() <<" targets=comma_separated_resName:atmName_list />" << endl;
+		// << "The " << type_name() << " reporter requires a 'targets' tag:" << endl
+		// << endl
+		// << "    <feature name=" << type_name() <<" targets=comma_separated_resName:atmName_list />" << endl;
 		//throw utility::excn::EXCN_RosettaScriptsOption(error_msg.str());
 		std::string water_names_list = tag->getOption< std::string >("targets");
 		utility::vector0< std::string > const water_names( utility::string_split( water_names_list, ',' ) );
-  		for ( utility::vector0< std::string>::const_iterator water_name( water_names.begin() ),
+		for ( utility::vector0< std::string>::const_iterator water_name( water_names.begin() ),
 				end( water_names.end() ); water_name != end; ++water_name ) {
 			utility::vector0< std::string > const resn_atomn( utility::string_split( *water_name, ':' ) );
 			std::string resname = resn_atomn[0];
 			std::string atomname = resn_atomn[1];
 			names_for_water_.push_back(std::make_pair(resname, atomname));
 		}
-	}
-	else {
+	} else {
 		// resn:atomn, resn:atomn ...
 		// HOH:O, DOD:O, WAT:O
 		names_for_water_.push_back(std::make_pair("HOH", "O"));
@@ -217,7 +216,7 @@ WaterFeatures::parse_my_tag(
 	}
 	for ( utility::vector1< std::pair<std::string, std::string> >::iterator
 			ur_ua_it = names_for_water_.begin(), ur_ua_preend = names_for_water_.end();
-			ur_ua_it != ur_ua_preend; ++ur_ua_it) {
+			ur_ua_it != ur_ua_preend; ++ur_ua_it ) {
 		TR << "Name for water: " << "resName: " << ur_ua_it->first << ", atomName: " << ur_ua_it->second << std::endl;
 	}
 
@@ -235,7 +234,7 @@ WaterFeatures::report_features(
 	sessionOP db_session
 ){
 	core::pose::PDBInfoCOP pdb_info(pose.pdb_info());
-	if(!pdb_info) return 0;
+	if ( !pdb_info ) return 0;
 
 	InsertGenerator igen_wat_accepts("water_hbond_acceptors");
 	igen_wat_accepts.add_column("struct_id");
@@ -261,40 +260,40 @@ WaterFeatures::report_features(
 
 	water_ss <<
 		"SELECT\n"
-		"	ua.residue_number,\n"
-		"	ua.atom_name,\n"
+		"\tua.residue_number,\n"
+		"\tua.atom_name,\n"
 		"   ua.coord_x,\n"
 		"   ua.coord_y,\n"
 		"   ua.coord_z \n"
 		"FROM\n"
-		"	unrecognized_atoms AS ua\n"
+		"\tunrecognized_atoms AS ua\n"
 		"JOIN\n"
 		"   unrecognized_residues AS ur\n"
 		"ON\n"
 		"   ua.struct_id = ur.struct_id AND\n"
 		"   ua.residue_number = ur.residue_number\n"
 		"WHERE\n"
-		"	ua.struct_id = ? AND\n"
-		"	(\n";
+		"\tua.struct_id = ? AND\n"
+		"\t(\n";
 
 	for ( utility::vector1< std::pair<std::string, std::string> >::iterator
 			ur_ua_it = names_for_water_.begin(), ur_ua_preend = names_for_water_.end() - 1;
-			ur_ua_it != ur_ua_preend; ++ur_ua_it) {
+			ur_ua_it != ur_ua_preend; ++ur_ua_it ) {
 		water_ss << "   (ur.name3 = ? AND ua.atom_name = ?) OR\n";
 	}
 	water_ss << "   (ur.name3 = ? and ua.atom_name = ?) );\n";
 	std::string water_string(water_ss.str());
 	statement water_stmt(basic::database::safely_prepare_statement(water_string,db_session));
-//	water_stmt.bind(1, struct_id);
-//	for (Size i = 1; i <= names_for_water_.size(); ++i) {
-//		water_stmt.bind(2*i,names_for_water_[i].first);
-//		water_stmt.bind(2*i+1,names_for_water_[i].second);
-//	}
+	// water_stmt.bind(1, struct_id);
+	// for (Size i = 1; i <= names_for_water_.size(); ++i) {
+	//  water_stmt.bind(2*i,names_for_water_[i].first);
+	//  water_stmt.bind(2*i+1,names_for_water_[i].second);
+	// }
 
 	TR << "Water query template:" << water_string << std::endl;
 
 	water_stmt << struct_id;
-	for (Size i = 1; i <= names_for_water_.size(); ++i) {
+	for ( Size i = 1; i <= names_for_water_.size(); ++i ) {
 		water_stmt << names_for_water_[i].first;
 		water_stmt << names_for_water_[i].second;
 	}
@@ -302,26 +301,26 @@ WaterFeatures::report_features(
 
 	std::string hbond_site_string =
 		"SELECT\n"
-		"	hs.site_id,\n"
-		"	hs.is_donor,\n"
-		"	hsa.atm_x,\n"
-		"	hsa.atm_y,\n"
-		"	hsa.atm_z,\n"
-		"	hsa.base_x,\n"
-		"	hsa.base_y,\n"
-		"	hsa.base_z,\n"
-		"	hsa.base2_x,\n"
-		"	hsa.base2_y,\n"
-		"	hsa.base2_z \n"
+		"\ths.site_id,\n"
+		"\ths.is_donor,\n"
+		"\thsa.atm_x,\n"
+		"\thsa.atm_y,\n"
+		"\thsa.atm_z,\n"
+		"\thsa.base_x,\n"
+		"\thsa.base_y,\n"
+		"\thsa.base_z,\n"
+		"\thsa.base2_x,\n"
+		"\thsa.base2_y,\n"
+		"\thsa.base2_z \n"
 		"FROM\n"
-		"	hbond_sites AS hs\n"
+		"\thbond_sites AS hs\n"
 		"JOIN\n"
-		"	hbond_site_atoms AS hsa\n"
+		"\thbond_site_atoms AS hsa\n"
 		"ON\n"
-		"	hs.struct_id = hsa.struct_id AND\n"
-		"	hs.site_id = hsa.site_id\n"
+		"\ths.struct_id = hsa.struct_id AND\n"
+		"\ths.site_id = hsa.site_id\n"
 		"WHERE\n"
-		"	hs.struct_id = ?;\n";
+		"\ths.struct_id = ?;\n";
 
 	statement hbond_site_stmt(basic::database::safely_prepare_statement(hbond_site_string,db_session));
 	hbond_site_stmt.bind(1,struct_id);
@@ -332,7 +331,7 @@ WaterFeatures::report_features(
 
 
 	TR << "Checking water hbond site combinations for struct_id" << struct_id << std::endl;
-	while(wat_result.next()){
+	while ( wat_result.next() ) {
 		TR << "Checking a water site for nearby hbond-sites." << std::endl;
 		Size unrecognized_atom_res;
 		std::string unrecognized_atom_name;
@@ -347,7 +346,7 @@ WaterFeatures::report_features(
 		Vector wat_xyz(wat_x, wat_y, wat_z);
 
 		result hbond_site_result(basic::database::safely_read_from_database(hbond_site_stmt));
-		while(hbond_site_result.next()){
+		while ( hbond_site_result.next() ) {
 			//TR << "Testing water-hbond site for potential interaction." << std::endl;
 			Size partner_site_id;
 			hbond_site_result >> partner_site_id;
@@ -373,13 +372,13 @@ WaterFeatures::report_features(
 			hbond_site_result >> hbond_site_base2_z;
 			Vector hbond_site_base2_xyz(hbond_site_base2_x, hbond_site_base2_y, hbond_site_base2_z);
 
-			if (hbond_site_is_donor) {
+			if ( hbond_site_is_donor ) {
 				core::Length whdist = hbond_site_xyz.distance(wat_xyz);
 				TR << "Hbond site is a donor." << std::endl;
-				if (whdist > don_dist_cutoff_) continue;
+				if ( whdist > don_dist_cutoff_ ) continue;
 				TR << "Hbond site is within interaction range." << std::endl;
 				Angle whd = numeric::angle_degrees(hbond_site_base_xyz, hbond_site_xyz,
-						                              wat_xyz);
+					wat_xyz);
 
 				TR << "Attempting write to water_hbonds_acceptors with struct_id="
 					<< struct_id << ", unrecognized_atom_res="
@@ -387,48 +386,47 @@ WaterFeatures::report_features(
 					<< unrecognized_atom_name << ", partner_site_id="
 					<< partner_site_id << std::endl;
 				igen_wat_accepts.add_row(
-						utility::tools::make_vector(
-							struct_id_data,
-							RowDataBaseOP( new RowData<Size>(
-									"unrecognized_atom_res",
-									unrecognized_atom_res) ),
-							RowDataBaseOP( new RowData<std::string>(
-									"unrecognized_atom_name",
-									unrecognized_atom_name) ),
-							RowDataBaseOP( new RowData<core::Real>("partner_site_id", partner_site_id) ),
-							RowDataBaseOP( new RowData<core::Real>("WHdist", whdist) ),
-							RowDataBaseOP( new RowData<core::Real>("WHD", whd) )));
-			}
-			else {
+					utility::tools::make_vector(
+					struct_id_data,
+					RowDataBaseOP( new RowData<Size>(
+					"unrecognized_atom_res",
+					unrecognized_atom_res) ),
+					RowDataBaseOP( new RowData<std::string>(
+					"unrecognized_atom_name",
+					unrecognized_atom_name) ),
+					RowDataBaseOP( new RowData<core::Real>("partner_site_id", partner_site_id) ),
+					RowDataBaseOP( new RowData<core::Real>("WHdist", whdist) ),
+					RowDataBaseOP( new RowData<core::Real>("WHD", whd) )));
+			} else {
 				core::Length awdist = hbond_site_xyz.distance(wat_xyz);
 				TR << "Hbond site is an acceptor." << std::endl;
-				if (awdist > acc_dist_cutoff_) continue;
+				if ( awdist > acc_dist_cutoff_ ) continue;
 				TR << "Hbond site is within interaction range." << std::endl;
 				Angle baw = numeric::angle_degrees(hbond_site_base_xyz, hbond_site_xyz,
-						                              wat_xyz);
+					wat_xyz);
 				Angle chi = numeric::angle_degrees(hbond_site_base2_xyz,
-						                              hbond_site_base_xyz,
-						                              hbond_site_xyz, wat_xyz);
+					hbond_site_base_xyz,
+					hbond_site_xyz, wat_xyz);
 				TR << "Attempting write to water_hbonds_donors with struct_id="
 					<< struct_id << ", unrecognized_atom_res="
 					<< unrecognized_atom_res << ", unrecognized_atom_name="
 					<< unrecognized_atom_name << ", partner_site_id="
 					<< partner_site_id << std::endl;
 				igen_wat_donates.add_row(
-						utility::tools::make_vector(
-							struct_id_data,
-							RowDataBaseOP( new RowData<Size>(
-									"unrecognized_atom_res",
-									unrecognized_atom_res) ),
-							RowDataBaseOP( new RowData<std::string>(
-									"unrecognized_atom_name",
-									unrecognized_atom_name) ),
-							RowDataBaseOP( new RowData<Size>(
-									"partner_site_id",
-									partner_site_id) ),
-							RowDataBaseOP( new RowData<core::Real>("AWdist", awdist) ),
-							RowDataBaseOP( new RowData<core::Real>("BAW", baw) ),
-							RowDataBaseOP( new RowData<core::Real>("chi", chi) )));
+					utility::tools::make_vector(
+					struct_id_data,
+					RowDataBaseOP( new RowData<Size>(
+					"unrecognized_atom_res",
+					unrecognized_atom_res) ),
+					RowDataBaseOP( new RowData<std::string>(
+					"unrecognized_atom_name",
+					unrecognized_atom_name) ),
+					RowDataBaseOP( new RowData<Size>(
+					"partner_site_id",
+					partner_site_id) ),
+					RowDataBaseOP( new RowData<core::Real>("AWdist", awdist) ),
+					RowDataBaseOP( new RowData<core::Real>("BAW", baw) ),
+					RowDataBaseOP( new RowData<core::Real>("chi", chi) )));
 			}
 		} //while(hbond_site_result.next()){
 	} //while(wat_result.next()){

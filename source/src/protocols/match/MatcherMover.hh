@@ -71,10 +71,10 @@ public: // virtual constructors
 
 	virtual
 	void parse_my_tag( TagCOP tag,
-										 basic::datacache::DataMap &,
-									   Filters_map const &,
-										 Movers_map const &,
-										 Pose const & );
+		basic::datacache::DataMap &,
+		Filters_map const &,
+		Movers_map const &,
+		Pose const & );
 
 
 public:

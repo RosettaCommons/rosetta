@@ -31,11 +31,11 @@ namespace protocols {
 namespace simple_moves {
 namespace symmetry {
 
-	class SymRotamerTrialsMover : public protocols::simple_moves::RotamerTrialsMover {
+class SymRotamerTrialsMover : public protocols::simple_moves::RotamerTrialsMover {
 public:
 
-typedef core::conformation::symmetry::SymmetricConformation SymmetricConformation;
-typedef core::conformation::symmetry::SymmetryInfo SymmetryInfo;
+	typedef core::conformation::symmetry::SymmetricConformation SymmetricConformation;
+	typedef core::conformation::symmetry::SymmetryInfo SymmetryInfo;
 
 public:
 
@@ -68,18 +68,18 @@ public:
 	);
 
 	virtual void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap &data,
-			filters::Filters_map const &filters,
-			moves::Movers_map const &movers,
-			core::pose::Pose const & pose );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &data,
+		filters::Filters_map const &filters,
+		moves::Movers_map const &movers,
+		core::pose::Pose const & pose );
 };
 
 class SymEnergyCutRotamerTrialsMover : public SymRotamerTrialsMover {
 public:
 
-typedef core::conformation::symmetry::SymmetricConformation SymmetricConformation;
-typedef core::conformation::symmetry::SymmetryInfo SymmetryInfo;
+	typedef core::conformation::symmetry::SymmetricConformation SymmetricConformation;
+	typedef core::conformation::symmetry::SymmetryInfo SymmetryInfo;
 
 
 public:

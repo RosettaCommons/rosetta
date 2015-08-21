@@ -39,30 +39,30 @@ using namespace protocols::match;
 
 class VoxelSetIteratorTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
-		typedef core::Vector Vector;
-		typedef core::Size   Size;
-		typedef core::Real   Real;
-		typedef numeric::geometry::BoundingBox< Vector > BoundingBox;
-		typedef protocols::match::Real6 Real6;
-	  typedef numeric::geometry::hashing::Real3 Real3;
+	typedef core::Vector Vector;
+	typedef core::Size   Size;
+	typedef core::Real   Real;
+	typedef numeric::geometry::BoundingBox< Vector > BoundingBox;
+	typedef protocols::match::Real6 Real6;
+	typedef numeric::geometry::hashing::Real3 Real3;
 
-	private:
-		Vector lower;
-		Vector upper;
-		BoundingBox bb;
+private:
+	Vector lower;
+	Vector upper;
+	BoundingBox bb;
 
-		//Real6 p;
+	//Real6 p;
 
-		Real3 xyz_bin_widths;
-		Real3 euler_bin_widths;
-		Real3 xyz_bin_halfwidths;
-		Real3 euler_bin_halfwidths;
-		Size3 n_xyz_bins;
-		Size3 n_euler_bins;
+	Real3 xyz_bin_widths;
+	Real3 euler_bin_widths;
+	Real3 xyz_bin_halfwidths;
+	Real3 euler_bin_halfwidths;
+	Size3 n_xyz_bins;
+	Size3 n_euler_bins;
 
-	public:
+public:
 
 	// --------------- Fixtures --------------- //
 

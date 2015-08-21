@@ -59,15 +59,15 @@ DNA_BasePotential::base_string( Residue const & rsd ) const
 {
 	using namespace chemical;
 	switch ( rsd.aa() ) {
-	case na_ade:
+	case na_ade :
 		return "A";
-	case na_cyt:
+	case na_cyt :
 		return "C";
-	case na_gua:
+	case na_gua :
 		return "G";
-	case na_thy:
+	case na_thy :
 		return "T";
-	default:
+	default :
 		utility_exit_with_message("bad rsd type for DNA_BasePotential: "+rsd.name() );
 	}
 	return "X";
@@ -178,7 +178,7 @@ DNA_BasePotential::load_score_tables()
 			int param_index;
 			Real mean, stddev;
 			l >> type_name >> bases >> param_name >> param_index >> mean >> stddev;
-		debug_assert( type_name == "BS" || type_name == "BP" );
+			debug_assert( type_name == "BS" || type_name == "BP" );
 			InteractionType const type( type_name == "BS" ? BS_type : BP_type );
 			if ( l.fail() || param_index < 1 || param_index > 6 ) {
 				std::cout << "failline:" << line << std::endl;
@@ -193,7 +193,7 @@ DNA_BasePotential::load_score_tables()
 			Real Fij;
 			std::string tmp;
 			l >> type_name >> bases >> tmp >> i;
-		debug_assert( type_name == "BS" || type_name == "BP" );
+			debug_assert( type_name == "BS" || type_name == "BP" );
 			InteractionType const type( type_name == "BS" ? BS_type : BP_type );
 			for ( int j=1; j<= 6; ++j ) {
 				l >> Fij;
@@ -222,7 +222,7 @@ DNA_BasePotential::base_score(
 	utility::vector1< Real > const & params
 ) const
 {
-debug_assert( params.size() == 6 );
+	debug_assert( params.size() == 6 );
 
 	// max allowed deviation from average beyond which the score is capped
 	// PB -- this seems very large! it's in standard deviations, right?
@@ -264,7 +264,7 @@ DNA_BasePotential::base_step_score(
 ) const
 {
 	utility::vector1< Real > params(6);
-debug_assert( rsd2.seqpos() == rsd1.seqpos() + 1 );
+	debug_assert( rsd2.seqpos() == rsd1.seqpos() + 1 );
 
 	get_base_step_params( rsd1, rsd2, params );
 
@@ -281,7 +281,7 @@ DNA_BasePotential::eval_base_step_Z_scores(
 {
 	utility::vector1< Real > params(6);
 	z_scores.resize(6);
-debug_assert( rsd2.seqpos() == rsd1.seqpos() + 1 );
+	debug_assert( rsd2.seqpos() == rsd1.seqpos() + 1 );
 
 	get_base_step_params( rsd1, rsd2, params );
 
@@ -319,14 +319,14 @@ DNA_BasePotential::base_pair_score(
 ) const
 {
 	utility::vector1< Real > params(6);
-//debug_assert( rsd1.seqpos() < rsd2.seqpos() );
+	//debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 	get_base_pair_params( rsd1, rsd2, params );
 	std::string const bpstr( base_string(rsd1) + base_string(rsd2) );
 
 	// ashworth scoring potential is made highly intolerant of non-Watson-Crick basepairs. This is justified because there are currently no basepair parameter scores for non-Watson-Crick basepairs in the default database parameter file (dna_bp_bs.dat)
-	if ( bpstr == "AT" || bpstr == "CG" || bpstr == "GC" || bpstr == "TA" )
+	if ( bpstr == "AT" || bpstr == "CG" || bpstr == "GC" || bpstr == "TA" ) {
 		return base_score( BP_type, bpstr, params );
-	else return 1e9;
+	} else return 1e9;
 }
 
 
@@ -346,15 +346,15 @@ DNA_BasePotential::eval_base_step_derivative(
 
 	bool const debug( true ), verbose( false );
 
-debug_assert( rsd1.seqpos() + 1 == rsd2.seqpos() );
+	debug_assert( rsd1.seqpos() + 1 == rsd2.seqpos() );
 
 	kinematics::Stub const stub1( get_base_stub( rsd1, 1 ) ), stub2( get_base_stub( rsd2, 1 ) );
 
 	// copy matrices
 	Matrix M1( stub1.M ), M2( stub2.M );
 
-debug_assert( is_orthonormal( M1, 1e-3 ) );
-debug_assert( is_orthonormal( M2, 1e-3 ) );
+	debug_assert( is_orthonormal( M1, 1e-3 ) );
+	debug_assert( is_orthonormal( M2, 1e-3 ) );
 
 	if ( dot( M1.col_z(), M2.col_z() ) < 0.0 ) {
 		std::cout << "dna_bs_deriv: base flip!" << std::endl;
@@ -371,26 +371,26 @@ debug_assert( is_orthonormal( M2, 1e-3 ) );
 	M2 = R_gamma_2 * M2;
 	M1 = R_gamma_2.transposed() * M1;
 
-debug_assert( is_orthonormal( M1, 1e-3 ) );
-debug_assert( is_orthonormal( M2, 1e-3 ) );
+	debug_assert( is_orthonormal( M1, 1e-3 ) );
+	debug_assert( is_orthonormal( M2, 1e-3 ) );
 
 	// build mid-base-pair triad
-debug_assert( M1.col_z().distance( M2.col_z() ) < 1e-3 );
-debug_assert( std::abs( dot( rt, M1.col_z() ) ) < 1e-3 );
+	debug_assert( M1.col_z().distance( M2.col_z() ) < 1e-3 );
+	debug_assert( std::abs( dot( rt, M1.col_z() ) ) < 1e-3 );
 
 	Matrix MBT;
 	MBT.col_z( M1.col_z() );
 
-debug_assert( std::abs( dot( M1.col_x(), MBT.col_z() ) ) < 1e-3 );
-debug_assert( std::abs( dot( M2.col_x(), MBT.col_z() ) ) < 1e-3 );
-debug_assert( std::abs( dot( M1.col_y(), MBT.col_z() ) ) < 1e-3 );
-debug_assert( std::abs( dot( M2.col_y(), MBT.col_z() ) ) < 1e-3 );
+	debug_assert( std::abs( dot( M1.col_x(), MBT.col_z() ) ) < 1e-3 );
+	debug_assert( std::abs( dot( M2.col_x(), MBT.col_z() ) ) < 1e-3 );
+	debug_assert( std::abs( dot( M1.col_y(), MBT.col_z() ) ) < 1e-3 );
+	debug_assert( std::abs( dot( M2.col_y(), MBT.col_z() ) ) < 1e-3 );
 
 	// get
 	MBT.col_y( ( 0.5f * ( M1.col_y() + M2.col_y() ) ).normalized() );
 	MBT.col_x( ( 0.5f * ( M1.col_x() + M2.col_x() ) ).normalized() );
 
-debug_assert( is_orthonormal( MBT, 1e-3 ) );
+	debug_assert( is_orthonormal( MBT, 1e-3 ) );
 
 	// angular params
 
@@ -399,7 +399,7 @@ debug_assert( is_orthonormal( MBT, 1e-3 ) );
 	utility::vector1< Real > params( 6, 0.0 );
 
 	params[1] = std::atan2( dot( M1.col_x(), M2.col_y() ),
-													dot( M1.col_x(), M2.col_x() ) );
+		dot( M1.col_x(), M2.col_x() ) );
 	// ROLL:
 	params[2] = gamma * dot( rt, MBT.col_y() );
 
@@ -414,7 +414,7 @@ debug_assert( is_orthonormal( MBT, 1e-3 ) );
 	params[6] = dot( displacement, MBT.col_z() ); // RISE
 
 	// check sign conventions
-debug_assert( params[1] * dot( MBT.col_z(), cross( M2.col_y(), M1.col_y() ) ) > 0);
+	debug_assert( params[1] * dot( MBT.col_z(), cross( M2.col_y(), M1.col_y() ) ) > 0);
 
 	// convert to degrees
 	Real const twist( params[1] );
@@ -431,7 +431,7 @@ debug_assert( params[1] * dot( MBT.col_z(), cross( M2.col_y(), M1.col_y() ) ) > 
 		utility::vector1< Real > new_params;
 		get_base_step_params( rsd1, rsd2, new_params );
 		for ( Size i=1; i<= 6; ++i ) {
-		debug_assert( std::abs( params[i] - new_params[i] ) < 1e-2 );
+			debug_assert( std::abs( params[i] - new_params[i] ) < 1e-2 );
 		}
 	}
 
@@ -442,7 +442,7 @@ debug_assert( params[1] * dot( MBT.col_z(), cross( M2.col_y(), M1.col_y() ) ) > 
 	FArray1D_Real dE_dp(6,0.0);
 
 	bool out_of_bounds( false );
- 	std::string const bases( base_string( rsd1 ) + base_string( rsd2 ) );
+	std::string const bases( base_string( rsd1 ) + base_string( rsd2 ) );
 
 	for ( int i = 1; i <= 6; ++i ) {
 		Real const max_delta_i = MAX_SCORE_DEV * stddev( BS_type, bases, i );
@@ -522,10 +522,10 @@ debug_assert( params[1] * dot( MBT.col_z(), cross( M2.col_y(), M1.col_y() ) ) > 
 		Vector x1( stub1.M.col_x() );
 		Vector R_gamma_x2( rotation_matrix( rt, gamma) * Vector(stub2.M.col_x()) );
 
-	debug_assert( Vector(stub1.M.col_z()).distance( rotation_matrix(rt,gamma) * Vector(stub2.M.col_z())) <1e-2);
+		debug_assert( Vector(stub1.M.col_z()).distance( rotation_matrix(rt,gamma) * Vector(stub2.M.col_z())) <1e-2);
 
 		Real c( std::cos( twist ) );
-	debug_assert( std::abs( c - dot( x1,R_gamma_x2 ) ) < 1e-2 );
+		debug_assert( std::abs( c - dot( x1,R_gamma_x2 ) ) < 1e-2 );
 		c = std::min( std::max( min_c, c ), max_c );
 
 		Real const dtwist_dc = -1 / std::sqrt( 1 - c * c );
@@ -535,10 +535,12 @@ debug_assert( params[1] * dot( MBT.col_z(), cross( M2.col_y(), M1.col_y() ) ) > 
 
 		int const sign_factor( twist < 0 ? -1 : 1 );
 
-		if ( verbose ) std::cout << "dE_dtwist: " <<
-										 F(9,3, dE_dtwist ) <<
-										 F(9,3, dtwist_dc ) <<
-										 F(9,3, cross(R_gamma_x2,x1).length() ) << std::endl;
+		if ( verbose ) {
+			std::cout << "dE_dtwist: " <<
+				F(9,3, dE_dtwist ) <<
+				F(9,3, dtwist_dc ) <<
+				F(9,3, cross(R_gamma_x2,x1).length() ) << std::endl;
+		}
 
 		F1 += sign_factor * dE_dtwist * rad2deg * dtwist_dc*
 			cross( R_gamma_x2, x1 );
@@ -576,18 +578,18 @@ debug_assert( params[1] * dot( MBT.col_z(), cross( M2.col_y(), M1.col_y() ) ) > 
 		Real const gamma_sin_gamma( gamma / std::sin( gamma ) );
 
 		runtime_assert( std::abs( roll - gamma_sin_gamma *
-											dot( cross( z2, z1 ), MBT.col_y() ) ) < 1e-2 );
+			dot( cross( z2, z1 ), MBT.col_y() ) ) < 1e-2 );
 
 		runtime_assert( std::abs( tilt - gamma_sin_gamma *
-											dot( cross( z2, z1 ), MBT.col_x() ) ) < 1e-2 );
+			dot( cross( z2, z1 ), MBT.col_x() ) ) < 1e-2 );
 
 		F1 += dE_dtilt * gamma_sin_gamma * rad2deg *
 			( cross( z1, cross( z2, MBT.col_x() ) ) +        // 1st term: dz1/dphi
-				0.5f * cross( MBT.col_x(), cross( z1, z2 ) ) );// 2nd term: dx_MBT/dphi
+			0.5f * cross( MBT.col_x(), cross( z1, z2 ) ) );// 2nd term: dx_MBT/dphi
 
 		F1 += dE_droll * gamma_sin_gamma * rad2deg *
 			( cross( z1, cross( z2, MBT.col_y() ) ) +
-				0.5f * cross( MBT.col_y(), cross( z1, z2 ) ) );
+			0.5f * cross( MBT.col_y(), cross( z1, z2 ) ) );
 
 	}
 
@@ -638,7 +640,7 @@ DNA_BasePotential::eval_base_pair_derivative(
 
 	bool const debug( true );
 
-debug_assert( rsd1.seqpos() < rsd2.seqpos() );
+	debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 
 	utility::vector1< Real > params( 6, 0.0 );
 	Real const MAX_SCORE_DEV = 100.0; // should be same as in dna_bp_score
@@ -649,8 +651,8 @@ debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 	// copy matrices
 	Matrix M1( stub1.M ), M2( stub2.M );
 
-debug_assert( is_orthonormal( M1, 1e-3 ) );
-debug_assert( is_orthonormal( M2, 1e-3 ) );
+	debug_assert( is_orthonormal( M1, 1e-3 ) );
+	debug_assert( is_orthonormal( M2, 1e-3 ) );
 
 	if ( dot( M1.col_z(), M2.col_z() ) < 0.0 ) {
 		std::cout << "dna_bp_deriv: base flip!" << std::endl;
@@ -667,10 +669,10 @@ debug_assert( is_orthonormal( M2, 1e-3 ) );
 	M2 = R_gamma_2 * M2;
 	M1 = R_gamma_2.transposed() * M1;
 
-debug_assert( is_orthonormal( M1, 1e-3 ) );
-debug_assert( is_orthonormal( M2, 1e-3 ) );
-debug_assert( M1.col_y().distance( M2.col_y() ) < 1e-3 );
-debug_assert( std::abs( dot( bo, M1.col_y() ) ) < 1e-3 );
+	debug_assert( is_orthonormal( M1, 1e-3 ) );
+	debug_assert( is_orthonormal( M2, 1e-3 ) );
+	debug_assert( M1.col_y().distance( M2.col_y() ) < 1e-3 );
+	debug_assert( std::abs( dot( bo, M1.col_y() ) ) < 1e-3 );
 
 	// build mid-base-pair triad
 	Matrix MBT;
@@ -684,12 +686,12 @@ debug_assert( std::abs( dot( bo, M1.col_y() ) ) < 1e-3 );
 	// propeller
 	// z,x,y make rh coord system
 	Real const omega = std::atan2( dot( M1.col_z(), M2.col_x() ),
-																	dot( M1.col_z(), M2.col_z() ) );
+		dot( M1.col_z(), M2.col_z() ) );
 
-debug_assert( ( std::abs( std::abs( omega ) -
-											arccos( dot( M1.col_z(), M2.col_z() ) ) )<1e-2 ) &&
-					( std::abs( std::abs( omega ) -
-											arccos( dot( M1.col_x(), M2.col_x() ) ) )<1e-2 ) );
+	debug_assert( ( std::abs( std::abs( omega ) -
+		arccos( dot( M1.col_z(), M2.col_z() ) ) )<1e-2 ) &&
+		( std::abs( std::abs( omega ) -
+		arccos( dot( M1.col_x(), M2.col_x() ) ) )<1e-2 ) );
 
 	// buckle:
 	Real const kappa = gamma * dot( bo, MBT.col_x() );
@@ -707,7 +709,7 @@ debug_assert( ( std::abs( std::abs( omega ) -
 
 	/////////////
 	// check sign conventions
-debug_assert( omega * dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) > 0);
+	debug_assert( omega * dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) > 0);
 
 	// convert to degrees
 	params[1] = degrees( omega );
@@ -719,7 +721,7 @@ debug_assert( omega * dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) > 0);
 		utility::vector1< Real > new_params;
 		get_base_pair_params( rsd1, rsd2, new_params );
 		for ( Size i=1; i<= 6; ++i ) {
-		debug_assert( std::abs( params[i] - new_params[i] ) < 1e-2 );
+			debug_assert( std::abs( params[i] - new_params[i] ) < 1e-2 );
 		}
 	}
 
@@ -808,10 +810,10 @@ debug_assert( omega * dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) > 0);
 		Vector x1( stub1.M.col_x() );
 		Vector R_gamma_x2( rotation_matrix( bo, gamma) * Vector(stub2.M.col_x()) );
 
-	debug_assert( Vector(stub1.M.col_y()).distance( rotation_matrix(bo,gamma) * Vector(stub2.M.col_y())) <1e-2);
+		debug_assert( Vector(stub1.M.col_y()).distance( rotation_matrix(bo,gamma) * Vector(stub2.M.col_y())) <1e-2);
 
 		Real c( std::cos( omega ) );
-	debug_assert( std::abs( c - dot( x1,R_gamma_x2 ) ) < 1e-2 );
+		debug_assert( std::abs( c - dot( x1,R_gamma_x2 ) ) < 1e-2 );
 		c = std::min( std::max( min_c, c ), max_c );
 
 		Real const domega_dc = -1 / std::sqrt( 1 - c * c );
@@ -858,11 +860,11 @@ debug_assert( omega * dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) > 0);
 
 		F1 += dE_dkappa * gamma_sin_gamma * rad2deg *
 			( cross( y1, cross( y2, MBT.col_x() ) ) +        // 1st term: dy1/dphi
-				0.5f * cross( MBT.col_x(), cross( y1, y2 ) ) );// 2nd term: dx_MBT/dphi
+			0.5f * cross( MBT.col_x(), cross( y1, y2 ) ) );// 2nd term: dx_MBT/dphi
 
 		F1 += dE_dsigma * gamma_sin_gamma * rad2deg *
 			( cross( y1, cross( y2, MBT.col_z() ) ) +
-				0.5f * cross( MBT.col_z(), cross( y1, y2 ) ) );
+			0.5f * cross( MBT.col_z(), cross( y1, y2 ) ) );
 
 	}
 

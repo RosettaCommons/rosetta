@@ -83,9 +83,9 @@ SurfEnergy::SurfEnergy() :
 //////////////////////////////////////////////////////
 void
 SurfEnergy::finalize_total_energy(
-  pose::Pose & pose,
-  ScoreFunction const &,
-  EnergyMap & totals
+	pose::Pose & pose,
+	ScoreFunction const &,
+	EnergyMap & totals
 ) const
 {
 	totals[ dab_sasa ] = get_surf_tot(pose,1.4);
@@ -104,7 +104,7 @@ SurfEnergy::setup_for_derivatives(
 	using namespace numeric;
 	using basic::datacache::DataCache_CacheableData;
 
-	if( !pose.data().has( core::pose::datacache::CacheableDataType::DAB_SASA_POSE_INFO ) ) {
+	if ( !pose.data().has( core::pose::datacache::CacheableDataType::DAB_SASA_POSE_INFO ) ) {
 		pose.data().set( core::pose::datacache::CacheableDataType::DAB_SASA_POSE_INFO, DataCache_CacheableData::DataOP( new CacheableAtomID_MapVector ) );
 		pose.data().set(  core::pose::datacache::CacheableDataType::DAB_SEV_POSE_INFO, DataCache_CacheableData::DataOP( new CacheableAtomID_MapVector ) );
 	}
@@ -122,11 +122,11 @@ SurfEnergy::setup_for_derivatives(
 	core::pose::initialize_atomid_map_heavy_only(sasa_derivs,pose);
 	core::pose::initialize_atomid_map_heavy_only( sev_derivs,pose);
 
-	for( Size ir = 1; ir <= sasa_derivs.size(); ir++ ) {
-		for( Size ia = 1; ia <= sasa_derivs.n_atom(ir); ia++ ) {
+	for ( Size ir = 1; ir <= sasa_derivs.size(); ir++ ) {
+		for ( Size ia = 1; ia <= sasa_derivs.n_atom(ir); ia++ ) {
 			AtomID const i(ia,ir);
 			sasa_derivs[i] = svd.dsurf[i];
-			 sev_derivs[i] = svd. dvol[i];
+			sev_derivs[i] = svd. dvol[i];
 		}
 	}
 
@@ -162,7 +162,7 @@ SurfEnergy::eval_atom_derivative(
 	CacheableAtomID_MapVectorCOP cachemap2 = utility::pointer::static_pointer_cast< core::id::CacheableAtomID_MapVector const > ( dat2 );
 	AtomID_Map<xyzVector<Real> > const & sev_derivs(cachemap2->map());
 
-	if( aid.rsd() > sasa_derivs.n_residue() || aid.atomno() > sasa_derivs.n_atom(aid.rsd()) ) {
+	if ( aid.rsd() > sasa_derivs.n_residue() || aid.atomno() > sasa_derivs.n_atom(aid.rsd()) ) {
 		return;
 	}
 	// std::cerr << "eval_atom_derivative " << aid << " " << derivs[aid].x() << " " << derivs[aid].y() << " " << derivs[aid].z() << std::endl;
@@ -170,7 +170,7 @@ SurfEnergy::eval_atom_derivative(
 	// F1 += weights * derivs[aid].cross(xyzVector<Real>(1,0,0));
 
 	{
-  		numeric::xyzVector<core::Real> atom_x = pose.xyz(aid);
+		numeric::xyzVector<core::Real> atom_x = pose.xyz(aid);
 		numeric::xyzVector<core::Real> const f2( sasa_derivs[aid] );
 		numeric::xyzVector<core::Real> const atom_y = atom_x - f2;   // a "fake" atom in the direcion of the gradient
 		numeric::xyzVector<core::Real> const f1( atom_x.cross( atom_y ) );
@@ -178,7 +178,7 @@ SurfEnergy::eval_atom_derivative(
 		F2 += weights[ dab_sasa ] * f2;
 	}
 	{
-  		numeric::xyzVector<core::Real> atom_x = pose.xyz(aid);
+		numeric::xyzVector<core::Real> atom_x = pose.xyz(aid);
 		numeric::xyzVector<core::Real> const f2( sev_derivs[aid] );
 		numeric::xyzVector<core::Real> const atom_y = atom_x - f2;   // a "fake" atom in the direcion of the gradient
 		numeric::xyzVector<core::Real> const f1( atom_x.cross( atom_y ) );

@@ -27,12 +27,12 @@ class SingResCnlCrea {
 	static bool stripped_;
 
 	/// @brief mutation-specific lists of constellation atoms whose occupancy must
-	/// 	be zeroed 	when the constellation is output to file
+	///  be zeroed  when the constellation is output to file
 	typedef std::pair<char, char> MutTyp;
 	static std::map<MutTyp, std::string> zeroed_occ_;
 
 	/// @brief sets occupancy to 0 for a residue's backbone atoms and hydrogen
-	/// 	atoms. Sets occupancy to 1 for the residue's remaining atoms.
+	///  atoms. Sets occupancy to 1 for the residue's remaining atoms.
 	static void zero_occ_bb_h(Pose& ps, core::Size seqpos);
 
 public:
@@ -43,7 +43,7 @@ public:
 	static void init(bool stripped);
 
 	/// @brief Lists the amino acid types that a given amino acid type can be
-	/// 	reduced to.
+	///  reduced to.
 	static utility::vector1<char> list_allowable_mutations(
 		char const starting_aa );
 
@@ -52,7 +52,7 @@ public:
 		char const target_aa);
 
 	/// @brief sets occupancy to zero for constellation atoms that are not
-	/// 	to be printed on output.
+	///  to be printed on output.
 	static void strip_atoms(Pose & pose, core::Size seqpos,
 		char const target_aa);
 };

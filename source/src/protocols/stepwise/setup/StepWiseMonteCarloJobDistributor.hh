@@ -25,54 +25,54 @@ namespace protocols {
 namespace stepwise {
 namespace setup {
 
-	class StepWiseMonteCarloJobDistributor: public StepWiseJobDistributor {
+class StepWiseMonteCarloJobDistributor: public StepWiseJobDistributor {
 
-	public:
+public:
 
-		//constructor
-		StepWiseMonteCarloJobDistributor( stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo,
-														std::string const silent_file,
-														core::Size const nstruct );
+	//constructor
+	StepWiseMonteCarloJobDistributor( stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo,
+		std::string const silent_file,
+		core::Size const nstruct );
 
-		//destructor
-		~StepWiseMonteCarloJobDistributor();
+	//destructor
+	~StepWiseMonteCarloJobDistributor();
 
-	public:
+public:
 
-		virtual std::string get_name() const {
-			return "StepWiseMonteCarloJobDistributor";
-		}
+	virtual std::string get_name() const {
+		return "StepWiseMonteCarloJobDistributor";
+	}
 
-		virtual
-		void
-		apply( core::pose::Pose & pose );
+	virtual
+	void
+	apply( core::pose::Pose & pose );
 
-		virtual
-		void
-		initialize( core::pose::Pose const & pose );
+	virtual
+	void
+	initialize( core::pose::Pose const & pose );
 
-		virtual
-		bool
-		has_another_job();
+	virtual
+	bool
+	has_another_job();
 
-	private:
+private:
 
-		void
-		move_forward_to_next_model();
+	void
+	move_forward_to_next_model();
 
-		bool
-		get_out_tag();
+	bool
+	get_out_tag();
 
-	private:
+private:
 
-		core::Size count_;
-		std::string out_tag_;
+	core::Size count_;
+	std::string out_tag_;
 
-		bool init_tag_is_done_;
-		std::map< std::string, bool > tag_is_done_;
+	bool init_tag_is_done_;
+	std::map< std::string, bool > tag_is_done_;
 
 
-	};
+};
 
 } //setup
 } //stepwise

@@ -66,13 +66,13 @@
 static thread_local basic::Tracer TR( "protocols.grafting.AnchoredGraftMover" );
 namespace protocols {
 namespace grafting {
-	using namespace core::scoring;
-	using namespace core::pose;
-	using namespace core::pack::task;
-	using namespace basic::options;
-	using namespace protocols::loops;
-	using namespace protocols::simple_moves;
-	using namespace core::kinematics;
+using namespace core::scoring;
+using namespace core::pose;
+using namespace core::pack::task;
+using namespace basic::options;
+using namespace protocols::loops;
+using namespace protocols::simple_moves;
+using namespace core::kinematics;
 
 
 AnchoredGraftMover::AnchoredGraftMover():
@@ -84,7 +84,7 @@ AnchoredGraftMover::AnchoredGraftMover():
 }
 
 AnchoredGraftMover::AnchoredGraftMover(const Size start, Size const end, bool copy_pdb_info /*false*/)
-	:GraftMoverBase(start, end, "AnchoredGraftMover")
+:GraftMoverBase(start, end, "AnchoredGraftMover")
 
 {
 	//moves::Mover("GraftMover"),
@@ -101,7 +101,7 @@ AnchoredGraftMover::AnchoredGraftMover(
 	Size Nter_overhang_length,
 	Size Cter_overhang_length,
 	bool copy_pdb_info /*false*/)
-	:GraftMoverBase(start, end, "AnchoredGraftMover", piece, Nter_overhang_length, Cter_overhang_length)
+:GraftMoverBase(start, end, "AnchoredGraftMover", piece, Nter_overhang_length, Cter_overhang_length)
 
 {
 	set_defaults();
@@ -210,28 +210,26 @@ AnchoredGraftMover::parse_my_tag(
 
 	piece(protocols::rosetta_scripts::saved_reference_pose(tag, data, "spm_reference_name"));
 
-	if (tag->hasOption("cen_scorefxn")){
+	if ( tag->hasOption("cen_scorefxn") ) {
 		std::string cen_scorefxn = tag->getOption<std::string>("cen_scorefxn");
 		cen_scorefxn_ = data.get_ptr<core::scoring::ScoreFunction>("scorefxns", cen_scorefxn);
 	}
-	if (tag->hasOption("fa_scorefxn")){
+	if ( tag->hasOption("fa_scorefxn") ) {
 		std::string fa_scorefxn = tag->getOption<std::string>("fa_scorefxn");
 		fa_scorefxn_ = data.get_ptr<core::scoring::ScoreFunction>("scorefxns", fa_scorefxn);
 	}
 
-	if (protocols::rosetta_scripts::has_branch(tag, "MoveMap")){
+	if ( protocols::rosetta_scripts::has_branch(tag, "MoveMap") ) {
 		protocols::rosetta_scripts::add_movemaps_to_datamap(tag, pose, data, false);
 
 	}
 	// AMW: cppcheck notes that this was the same condition on both sides of an &&
-	if (data.has("movemaps", "scaffold_movemap") ) {//&& data.has("movemaps", "scaffold_movemap")){
+	if ( data.has("movemaps", "scaffold_movemap") ) { //&& data.has("movemaps", "scaffold_movemap")){
 		scaffold_movemap_ = data.get_ptr<MoveMap>("movemaps", "scaffold_movemap");
 		insert_movemap_ = data.get_ptr<MoveMap>("movemaps", "insert_movemap");
-	}
-	else if (protocols::rosetta_scripts::has_branch(tag, "MoveMap")){
+	} else if ( protocols::rosetta_scripts::has_branch(tag, "MoveMap") ) {
 		utility_exit_with_message("Movemaps must be specified using the names scaffold_movemap and insert_movemap");
-	}
-	else {
+	} else {
 		TR <<"scaffold_movemap and insert_movemap unspecified.  Using set flexibility settings." << std::endl;
 	}
 
@@ -244,9 +242,9 @@ AnchoredGraftMover::idealize_insert(bool idealize){
 
 void
 AnchoredGraftMover::set_scaffold_flexibility(const Size Nter_scaffold_flexibility, const Size Cter_scaffold_flexibility){
-    //Insert flexibility stays at default values (0)
-    Nter_scaffold_flexibility_=Nter_scaffold_flexibility;
-    Cter_scaffold_flexibility_=Cter_scaffold_flexibility;
+	//Insert flexibility stays at default values (0)
+	Nter_scaffold_flexibility_=Nter_scaffold_flexibility;
+	Cter_scaffold_flexibility_=Cter_scaffold_flexibility;
 }
 
 Size
@@ -312,13 +310,13 @@ AnchoredGraftMover::set_movemaps(MoveMapCOP scaffold_mm, MoveMapCOP insert_mm){
 
 void
 AnchoredGraftMover::setup_scorefunction(){
-    if (! cen_scorefxn_){
-	this->set_default_cen_scorefunction();
-    }
+	if ( ! cen_scorefxn_ ) {
+		this->set_default_cen_scorefunction();
+	}
 
-    if (! fa_scorefxn_){
-	this->set_default_fa_scorefunction();
-    }
+	if ( ! fa_scorefxn_ ) {
+		this->set_default_fa_scorefunction();
+	}
 }
 
 void
@@ -365,13 +363,12 @@ AnchoredGraftMover::set_default_fa_scorefunction(){
 
 void
 AnchoredGraftMover::setup_movemap_and_regions(Pose & pose){
-	if (scaffold_movemap_ && insert_movemap_){
+	if ( scaffold_movemap_ && insert_movemap_ ) {
 		movemap_ = protocols::grafting::combine_movemaps_post_insertion(scaffold_movemap_, insert_movemap_,
-				end(), original_end(), insertion_length());
+			end(), original_end(), insertion_length());
 
 		set_regions_from_movemap(pose);
-	}
-	else{
+	} else {
 		set_regions_from_flexibility();
 		set_default_movemap();
 	}
@@ -381,13 +378,13 @@ AnchoredGraftMover::setup_movemap_and_regions(Pose & pose){
 
 void
 AnchoredGraftMover::set_default_movemap(){
-    TR <<"Setting default movemap"<<std::endl;
+	TR <<"Setting default movemap"<<std::endl;
 	movemap_ = MoveMapOP( new core::kinematics::MoveMap() );
-	for (Size i=Nter_loop_start_; i<=Nter_loop_end_; ++i){
+	for ( Size i=Nter_loop_start_; i<=Nter_loop_end_; ++i ) {
 		movemap_->set_bb(i, true);
 		movemap_->set_chi(i, true);
 	}
-	for (Size i=Cter_loop_start_; i<=Cter_loop_end_; ++i){
+	for ( Size i=Cter_loop_start_; i<=Cter_loop_end_; ++i ) {
 		movemap_->set_bb(i, true);
 		movemap_->set_chi(i, true);
 	}
@@ -410,51 +407,49 @@ AnchoredGraftMover::set_regions_from_flexibility(){
 
 void
 AnchoredGraftMover::set_regions_from_movemap(Pose & pose){
-    //N terminal
-    for (Size i=1; i<=start(); ++i){
-        if (movemap_->get_bb(i)){
-            Nter_loop_start_=i;
-            break;
-        }
-    }
+	//N terminal
+	for ( Size i=1; i<=start(); ++i ) {
+		if ( movemap_->get_bb(i) ) {
+			Nter_loop_start_=i;
+			break;
+		}
+	}
 
-    //C terminal end
-    for (Size i=pose.total_residue(); i>=Nter_loop_start_; --i){
-        if (movemap_->get_bb(i)){
-        	TR <<i<<std::endl;
-            Cter_loop_end_=i;
-            break;
-        }
-    }
+	//C terminal end
+	for ( Size i=pose.total_residue(); i>=Nter_loop_start_; --i ) {
+		if ( movemap_->get_bb(i) ) {
+			TR <<i<<std::endl;
+			Cter_loop_end_=i;
+			break;
+		}
+	}
 
-    //Insertion default flexiblity.  Will not effect single_loop foldtrees.
-    Nter_insert_flexibility_=0;
-    for (Size i = start()+1; i<=start()+insertion_length(); ++i){
-        if (movemap_->get_bb(i)){
-            ++Nter_insert_flexibility_;
-        }
-        else{
-            Nter_loop_end_=start()+Nter_insert_flexibility_;
+	//Insertion default flexiblity.  Will not effect single_loop foldtrees.
+	Nter_insert_flexibility_=0;
+	for ( Size i = start()+1; i<=start()+insertion_length(); ++i ) {
+		if ( movemap_->get_bb(i) ) {
+			++Nter_insert_flexibility_;
+		} else {
+			Nter_loop_end_=start()+Nter_insert_flexibility_;
 
-            break;
-        }
-    }
+			break;
+		}
+	}
 
-    Cter_insert_flexibility_=0;
-    for (Size i = start()+insertion_length(); i>=1; --i){
-        if (movemap_->get_bb(i)){
-            ++Cter_insert_flexibility_;
-        }
-        else{
-            Cter_loop_start_=start()+insertion_length()-Cter_insert_flexibility_;
-            break;
-        }
-    }
-    //TR <<"Nter_insert_flex: "<<Nter_insert_flexibility_<<std::endl;
-    //TR <<"Nter_loop_start: "<<Nter_loop_start_<<std::endl;
-    //TR <<"Nter_loop_end: "<<Nter_loop_end_<<std::endl;
-    //TR <<"Cter_loop_start:  "<<Cter_loop_start_<<std::endl;
-    //TR <<"Cter_loop_end:  "<<Cter_loop_end_<<std::endl;
+	Cter_insert_flexibility_=0;
+	for ( Size i = start()+insertion_length(); i>=1; --i ) {
+		if ( movemap_->get_bb(i) ) {
+			++Cter_insert_flexibility_;
+		} else {
+			Cter_loop_start_=start()+insertion_length()-Cter_insert_flexibility_;
+			break;
+		}
+	}
+	//TR <<"Nter_insert_flex: "<<Nter_insert_flexibility_<<std::endl;
+	//TR <<"Nter_loop_start: "<<Nter_loop_start_<<std::endl;
+	//TR <<"Nter_loop_end: "<<Nter_loop_end_<<std::endl;
+	//TR <<"Cter_loop_start:  "<<Cter_loop_start_<<std::endl;
+	//TR <<"Cter_loop_end:  "<<Cter_loop_end_<<std::endl;
 }
 
 MinMoverOP
@@ -475,20 +470,20 @@ AnchoredGraftMover::setup_default_small_mover(){
 
 void
 AnchoredGraftMover::stop_at_closure(bool stop_at_closure){
-    stop_at_closure_ = stop_at_closure;
+	stop_at_closure_ = stop_at_closure;
 }
 bool
 AnchoredGraftMover::stop_at_closure(){
-    return stop_at_closure_;
+	return stop_at_closure_;
 }
 
 void
 AnchoredGraftMover::final_repack(bool final_repack){
-    final_repack_ = final_repack;
+	final_repack_ = final_repack;
 }
 bool
 AnchoredGraftMover::final_repack(){
-    return final_repack_;
+	return final_repack_;
 }
 
 protocols::moves::MoverOP
@@ -521,7 +516,7 @@ AnchoredGraftMover::apply(Pose & pose){
 	//TR <<"Beginning of anchored graft mover" <<std::endl;
 	//pose.constraint_set()->show(TR);
 
-	if (tag_){
+	if ( tag_ ) {
 		core::Size scaffold_start = core::pose::get_resnum(tag_, pose, "start_");
 		core::Size scaffold_end = core::pose::get_resnum(tag_, pose, "end_");
 
@@ -570,32 +565,32 @@ AnchoredGraftMover::apply(Pose & pose){
 	SmallMoverOP small = setup_default_small_mover();
 
 
-	if (test_control_mode_){perturb_backbone_for_test(combined, movemap_);}
+	if ( test_control_mode_ ) { perturb_backbone_for_test(combined, movemap_);}
 	MonteCarlo mc(combined, (*cen_scorefxn_), 0.8);
 
 	/////////////////////////Protocol//////////////////////////////////////////////////////////
 	TR << "start " << ((*cen_scorefxn_))(combined) << std::endl;
 
 	bool skip_mc = false;
-	for( core::Size i(1); i<=cycles_; ++i){
+	for ( core::Size i(1); i<=cycles_; ++i ) {
 		TR <<"round "<<i <<std::endl;
-		if (!skip_sampling_){small->apply(combined);}
+		if ( !skip_sampling_ ) { small->apply(combined);}
 
 		ccd_mover->apply(combined);
 		combined.conformation().insert_ideal_geometry_at_polymer_bond(Cter_loop.cut()); //Not sure if this really helps, but Steven had it, so it probably does.
 		min_mover->apply(combined);
 		combined.conformation().insert_ideal_geometry_at_polymer_bond(Cter_loop.cut());
 
-		if (stop_at_closure() && graft_closed(combined, *loops_)){
+		if ( stop_at_closure() && graft_closed(combined, *loops_) ) {
 			TR << "Graft Closed early - returning" << std::endl;
 			skip_mc = true;
 			TR << i << " " << ((*cen_scorefxn()))(combined) << std::endl;
 			break;
 		}
-		if(mc.boltzmann(combined)) TR << i << " " << ((*cen_scorefxn()))(combined) << std::endl;
+		if ( mc.boltzmann(combined) ) TR << i << " " << ((*cen_scorefxn()))(combined) << std::endl;
 	}
 
-	if (! skip_mc) mc.recover_low(combined);
+	if ( ! skip_mc ) mc.recover_low(combined);
 
 
 
@@ -608,7 +603,7 @@ AnchoredGraftMover::apply(Pose & pose){
 	remove_cutpoint_variants_for_ccd(combined, *loops_);
 	combined.fold_tree(original_ft);
 
-	if (final_repack_){
+	if ( final_repack_ ) {
 		repack_connection_and_residues_in_movemap_and_piece_and_neighbors( pose, fa_scorefxn_,
 			start(), end(), movemap_, neighbor_dis());
 	}
@@ -626,68 +621,68 @@ void AnchoredGraftMover::movemap(MoveMapOP movemap){movemap_ = movemap;}
 MoveMapOP AnchoredGraftMover::movemap() const {return movemap_;}
 
 void AnchoredGraftMover::scaffold_movemap(MoveMapCOP scaffold_movemap){
-    scaffold_movemap_ = scaffold_movemap;
+	scaffold_movemap_ = scaffold_movemap;
 }
 
 MoveMapCOP AnchoredGraftMover::scaffold_movemap() const {
-    return scaffold_movemap_;
+	return scaffold_movemap_;
 }
 
 void AnchoredGraftMover::insert_movemap(MoveMapCOP insert_movemap){
-    insert_movemap_ = insert_movemap;
+	insert_movemap_ = insert_movemap;
 }
 MoveMapCOP AnchoredGraftMover::insert_movemap() const {
-    return insert_movemap_;
+	return insert_movemap_;
 }
 ScoreFunctionOP AnchoredGraftMover::cen_scorefxn() const {
-    return cen_scorefxn_;
+	return cen_scorefxn_;
 }
 ScoreFunctionOP AnchoredGraftMover::fa_scorefxn() const {
-    return fa_scorefxn_;
+	return fa_scorefxn_;
 }
 void AnchoredGraftMover::use_default_movemap(bool use_default_movemap){
-    use_default_movemap_ = use_default_movemap;
+	use_default_movemap_ = use_default_movemap;
 }
 bool AnchoredGraftMover::use_default_movemap() const {
-    return use_default_movemap_;
+	return use_default_movemap_;
 }
 bool AnchoredGraftMover::test_control_mode() const {
-    return test_control_mode_;
+	return test_control_mode_;
 }
 Size AnchoredGraftMover::Nter_insert_flexibility() const {
-    return Nter_insert_flexibility_;
+	return Nter_insert_flexibility_;
 }
 Size AnchoredGraftMover::Cter_insert_flexibility() const {
-    return Cter_insert_flexibility_;
+	return Cter_insert_flexibility_;
 }
 Size AnchoredGraftMover::Nter_scaffold_flexibility() const {
-    return Nter_scaffold_flexibility_;
+	return Nter_scaffold_flexibility_;
 }
 Size AnchoredGraftMover::Cter_scaffold_flexibility() const {
-    return Cter_scaffold_flexibility_;
+	return Cter_scaffold_flexibility_;
 }
 Size AnchoredGraftMover::Nter_loop_start() const {
-    return Nter_loop_start_;
+	return Nter_loop_start_;
 }
 Size AnchoredGraftMover::Nter_loop_end() const {
-    return Nter_loop_end_;
+	return Nter_loop_end_;
 }
 Size AnchoredGraftMover::Cter_loop_start() const {
-    return Cter_loop_start_;
+	return Cter_loop_start_;
 }
 Size AnchoredGraftMover::Cter_loop_end() const {
-    return Cter_loop_end_;
+	return Cter_loop_end_;
 }
 std::string AnchoredGraftMover::mintype() const {
-    return mintype_;
+	return mintype_;
 }
 
 Size AnchoredGraftMover::cycles() const {
-    return cycles_;
+	return cycles_;
 }
 
 bool AnchoredGraftMover::skip_sampling() const {
-    return skip_sampling_;
+	return skip_sampling_;
 }
 
 void AnchoredGraftMover::neighbor_dis(core::Real dis){

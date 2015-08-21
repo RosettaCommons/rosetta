@@ -43,7 +43,7 @@ using namespace core;
 
 
 GraftedStemOptimizer::GraftedStemOptimizer( CDRNameEnum const & cdr_name,
-        AntibodyInfoOP antibody_info) : Mover( "GraftedStemOptimizer" ) {
+	AntibodyInfoOP antibody_info) : Mover( "GraftedStemOptimizer" ) {
 	cdr_name_  = cdr_name;
 	ab_info_   = antibody_info;
 
@@ -66,7 +66,7 @@ GraftedStemOptimizer::init() {
 void
 GraftedStemOptimizer::set_stem_size(Size const & setting) {
 	stem_size_=setting;
-	if( stem_size_ % 2 != 0 ) {
+	if ( stem_size_ % 2 != 0 ) {
 		TRG<<"The stem_size_ must be dividable by 2"<<std::endl;
 		exit(-1);
 	}
@@ -81,7 +81,7 @@ GraftedStemOptimizer::setup_protocol(pose::Pose & pose) {
 	TRG<<"          Setting Up the Optimizer Mover ..... "<<std::endl;
 
 	/// scoring function
-	if(!scorefxn_) {
+	if ( !scorefxn_ ) {
 		scorefxn_=scoring::get_score_function();
 		scorefxn_->set_weight( scoring::chainbreak, 30./3. );
 		//Turning off overlap_chainbreak - causes Inaccurate G! errors
@@ -112,8 +112,8 @@ GraftedStemOptimizer::setup_protocol(pose::Pose & pose) {
 	shear_mover->angle_max( 'L', 6.0 );
 
 	/// Ccd_Loop_Closure_Mover
-        loops::Loop Nter_stem(cdr_loop_->start()-stem_size_-1, cdr_loop_->start(), cdr_loop_->start()-stem_size_/2-1);
-        loops::Loop Cter_stem(cdr_loop_->stop(), cdr_loop_->stop()+stem_size_+1, cdr_loop_->stop()+stem_size_/2 );
+	loops::Loop Nter_stem(cdr_loop_->start()-stem_size_-1, cdr_loop_->start(), cdr_loop_->start()-stem_size_/2-1);
+	loops::Loop Cter_stem(cdr_loop_->stop(), cdr_loop_->stop()+stem_size_+1, cdr_loop_->stop()+stem_size_/2 );
 	using namespace loops::loop_closure::ccd;
 	CCDLoopClosureMoverOP close_Nter_stem( new CCDLoopClosureMover(Nter_stem, get_stem_movemap(pose, "N")) );
 	close_Nter_stem->tolerance( 0.001 );
@@ -133,7 +133,7 @@ GraftedStemOptimizer::setup_protocol(pose::Pose & pose) {
 	/// Sequence_Mover
 	optimize_stems_ = moves::SequenceMoverOP( new moves::SequenceMover() );
 
-	if(deep_optimization_) {
+	if ( deep_optimization_ ) {
 		optimize_stems_ -> add_mover(small_mover);
 		optimize_stems_ -> add_mover(shear_mover);
 		optimize_stems_ -> add_mover(close_Nter_stem);
@@ -161,18 +161,18 @@ GraftedStemOptimizer::apply( pose::Pose & pose ) {
 
 	/*
 	if (deep_optimization_){
-	    for(Size i=cdr_loop_->start()-stem_size_; i<=cdr_loop_->start()+stem_size_-1; ++i){
-	        conformation::idealize_position( i, pose.conformation() );
-	        pose.set_omega(i, 179.8);
-	    }
-	    for(Size i=cdr_loop_->stop()-stem_size_+1; i<=cdr_loop_->stop()+stem_size_; ++i){
-	        conformation::idealize_position( i, pose.conformation() );
-	        pose.set_omega(i, 179.8);
-	    }
-	    // REFERENCE: protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh and .cc
-	    // see the   OMEGA_MEAN_(179.8)
+	for(Size i=cdr_loop_->start()-stem_size_; i<=cdr_loop_->start()+stem_size_-1; ++i){
+	conformation::idealize_position( i, pose.conformation() );
+	pose.set_omega(i, 179.8);
 	}
-	 */
+	for(Size i=cdr_loop_->stop()-stem_size_+1; i<=cdr_loop_->stop()+stem_size_; ++i){
+	conformation::idealize_position( i, pose.conformation() );
+	pose.set_omega(i, 179.8);
+	}
+	// REFERENCE: protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh and .cc
+	// see the   OMEGA_MEAN_(179.8)
+	}
+	*/
 
 
 	// adding cutpoint variants for chainbreak score computation
@@ -184,7 +184,7 @@ GraftedStemOptimizer::apply( pose::Pose & pose ) {
 
 	Size inner_cycles( stem_size_ * 3 );
 	Size outer_cycles( 5 );
-	if(benchmark_) {
+	if ( benchmark_ ) {
 		inner_cycles=1;
 		outer_cycles=1;
 	}
@@ -198,7 +198,7 @@ GraftedStemOptimizer::apply( pose::Pose & pose ) {
 	moves::TrialMoverOP optimize_trial( new moves::TrialMover(optimize_stems_, mc_) );
 
 
-	for(Size i = 1; i <= outer_cycles; i++) {
+	for ( Size i = 1; i <= outer_cycles; i++ ) {
 		mc_->recover_low( pose );
 		for ( Size j = 1; j <= inner_cycles; j++ ) {
 			temperature *= gamma;
@@ -220,7 +220,7 @@ GraftedStemOptimizer::apply( pose::Pose & pose ) {
 }
 
 
-/// 	      ####LLLLLLLLLLLLLLLLLLL####              L1-3.pdb, H1-3.pdb
+///        ####LLLLLLLLLLLLLLLLLLL####              L1-3.pdb, H1-3.pdb
 /// ..ffffffff@@@@                   @@@@ffffffffff..  framework.pdb
 ///                       ||
 ///                       || grafting
@@ -334,19 +334,19 @@ GraftedStemOptimizer::get_stem_movemap( pose::Pose const & pose, std::string con
 	utility::vector1< bool> sc_is_flexible( pose.total_residue(), false );
 
 	if ( (type == "N") || (type == "NC")  ) {
-		for(Size i=cdr_loop_->start()-stem_size_; i<=cdr_loop_->start()-1; ++i) {
+		for ( Size i=cdr_loop_->start()-stem_size_; i<=cdr_loop_->start()-1; ++i ) {
 			bb_is_flexible[i]=true;
 			sc_is_flexible[i]=true;
 		}
 	}
 	if ( (type == "C") || (type == "NC")  ) {
-		for(Size i=cdr_loop_->stop()+1; i<=cdr_loop_->stop()+stem_size_; ++i) {
+		for ( Size i=cdr_loop_->stop()+1; i<=cdr_loop_->stop()+stem_size_; ++i ) {
 			bb_is_flexible[i]=true;
 			sc_is_flexible[i]=true;
 		}
 	}
 
-	if(include_nb_sc) {
+	if ( include_nb_sc ) {
 		loops::get_tenA_neighbor_residues(pose, sc_is_flexible);
 	}
 	// a function in the loops namespace to calculate the neighbors.
@@ -378,17 +378,17 @@ GraftedStemOptimizer::get_stem_taskfactory( pose::Pose & pose, std::string const
 	vector1< bool> sc_is_packable( pose.total_residue(), false );
 
 	if ( (type == "N") || (type == "NC")  ) {
-		for(Size i=cdr_loop_->start()-stem_size_; i<=cdr_loop_->start()-1; ++i) {
+		for ( Size i=cdr_loop_->start()-stem_size_; i<=cdr_loop_->start()-1; ++i ) {
 			sc_is_packable[i]=true;
 		}
 	}
 	if ( (type == "C") || (type == "NC")  ) {
-		for(Size i=cdr_loop_->stop()+1; i<=cdr_loop_->stop()+stem_size_; ++i) {
+		for ( Size i=cdr_loop_->stop()+1; i<=cdr_loop_->stop()+stem_size_; ++i ) {
 			sc_is_packable[i]=true;
 		}
 	}
 
-	if(include_nb_sc) {
+	if ( include_nb_sc ) {
 		loops::get_tenA_neighbor_residues(pose, sc_is_packable);
 	}
 
@@ -418,7 +418,7 @@ GraftedStemOptimizer::GraftedStemOptimizer( GraftedStemOptimizer const & rhs ) :
 /// @brief assignment operator
 GraftedStemOptimizer & GraftedStemOptimizer::operator=( GraftedStemOptimizer const & rhs ) {
 	//abort self-assignment
-	if (this == &rhs) return *this;
+	if ( this == &rhs ) return *this;
 	Mover::operator=(rhs);
 	initForEqualOperatorAndCopyConstructor(*this, rhs);
 	return *this;

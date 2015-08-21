@@ -20,8 +20,8 @@
 namespace protocols {
 namespace moves {
 
-	class FilterMover;
-	typedef utility::pointer::shared_ptr< FilterMover > FilterMoverOP;
+class FilterMover;
+typedef utility::pointer::shared_ptr< FilterMover > FilterMoverOP;
 
 } // moves
 } // protocols

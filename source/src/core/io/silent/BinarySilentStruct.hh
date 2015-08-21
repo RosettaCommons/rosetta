@@ -42,7 +42,7 @@ namespace silent {
 //class BinarySilentStruct : public ProteinSilentStruct {
 class BinarySilentStruct : public SilentStruct {
 
-  typedef SilentStruct Parent;
+	typedef SilentStruct Parent;
 
 public:
 
@@ -124,21 +124,21 @@ public:
 	virtual Real get_debug_rmsd();
 
 
- 	void add_jump( kinematics::Jump jump ) {
- 		jumps_.push_back( jump.rt() );
- 	}
+	void add_jump( kinematics::Jump jump ) {
+		jumps_.push_back( jump.rt() );
+	}
 
- 	kinematics::RT const & jump( Size jump_num ) const {
- 		return jumps_[ jump_num ];
- 	}
+	kinematics::RT const & jump( Size jump_num ) const {
+		return jumps_[ jump_num ];
+	}
 
- 	void fold_tree( kinematics::FoldTree f ) {
- 		fold_tree_ = f;
- 	}
+	void fold_tree( kinematics::FoldTree f ) {
+		fold_tree_ = f;
+	}
 
- 	kinematics::FoldTree const& fold_tree( ) const {
- 		return fold_tree_;
- 	}
+	kinematics::FoldTree const& fold_tree( ) const {
+		return fold_tree_;
+	}
 
 	bool fullatom() const {
 		return fullatom_;
@@ -148,13 +148,13 @@ public:
 		fullatom_ = fullatom;
 	}
 
- 	char secstruct( unsigned int seqpos ) const {
- 		return secstruct_[seqpos];
- 	}
+	char secstruct( unsigned int seqpos ) const {
+		return secstruct_[seqpos];
+	}
 
- 	void secstruct( unsigned int seqpos, char ss ) {
- 		secstruct_[seqpos] = ss;
- 	}
+	void secstruct( unsigned int seqpos, char ss ) {
+		secstruct_[seqpos] = ss;
+	}
 
 	void symmetry_info( core::conformation::symmetry::SymmetryInfo & s ) {
 		symminfo_ = core::conformation::symmetry::SymmetryInfoOP( new core::conformation::symmetry::SymmetryInfo( s ) );

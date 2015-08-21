@@ -75,26 +75,26 @@ inline Real sqr(Real x) {
 //@brief reads in RDC data file
 //////////////////////////////////////////////////////
 extern void store_RDC_in_pose(ResidualDipolarCouplingOP rdc_info,
-		core::pose::Pose& pose) {
+	core::pose::Pose& pose) {
 	// ////using core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA;
 	pose.data().set(core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA, rdc_info);
 }
 
 extern ResidualDipolarCouplingCOP retrieve_RDC_from_pose(
-		core::pose::Pose const& pose) {
+	core::pose::Pose const& pose) {
 	// ////using core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA;
-	if (pose.data().has(core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA)) {
+	if ( pose.data().has(core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA) ) {
 		return utility::pointer::static_pointer_cast< core::scoring::ResidualDipolarCoupling const > ( pose.data().get_const_ptr(
-				core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA) );
+			core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA) );
 	};
 	return NULL;
 }
 
 extern ResidualDipolarCouplingOP retrieve_RDC_from_pose(core::pose::Pose& pose) {
 	// ////using core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA;
-	if (pose.data().has(core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA)) {
+	if ( pose.data().has(core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA) ) {
 		return utility::pointer::static_pointer_cast< core::scoring::ResidualDipolarCoupling > ( pose.data().get_ptr(
-				core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA) );
+			core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA) );
 	};
 	return NULL;
 }
@@ -110,7 +110,7 @@ void ResidualDipolarCoupling::show(std::ostream& out) const {
 void RDC::show(std::ostream& out) const {
 	using namespace ObjexxFCL::format;
 	out << RJ(4, res1_) << RJ(3, atom1_) << " " << RJ(4, res2_)
-			<< RJ(3, atom2_) << " " << RJ(5, Jdipolar_);
+		<< RJ(3, atom2_) << " " << RJ(5, Jdipolar_);
 }
 
 std::ostream& operator<<(std::ostream& out, RDC const& rdc) {
@@ -149,10 +149,10 @@ void ResidualDipolarCoupling::read_RDC_file( Size expid, std::string const& file
 	if ( !infile.good() ) {
 		throw( utility::excn::EXCN_FileNotFound( filename ) );
 	}
-	//	std::cout << "Reading RDC file " << filename << std::endl;
+	// std::cout << "Reading RDC file " << filename << std::endl;
 	tr.Info << "Reading RDC file " << filename << std::endl;
 	Size lines_previously_read( All_RDC_lines_.size() );
-	while (getline(infile, line)) {
+	while ( getline(infile, line) ) {
 		std::istringstream line_stream(line);
 		std::string atom1, atom2;
 		Size res1, res2;
@@ -161,8 +161,8 @@ void ResidualDipolarCoupling::read_RDC_file( Size expid, std::string const& file
 
 		if ( atom1 == "HN" ) atom1 = "H"; //take care of typical NMR community notation
 		if ( atom2 == "HN" ) atom2 = "H";
-		//		if ( res1 == 1 && atom1 == "H" ) atom1 = "1H"; //this does not work since it is "H" in centroid mode and "1H" in full-atom mode
-		//		if ( res2 == 1 && atom2 == "H" ) atom2 = "1H";
+		//  if ( res1 == 1 && atom1 == "H" ) atom1 = "1H"; //this does not work since it is "H" in centroid mode and "1H" in full-atom mode
+		//  if ( res2 == 1 && atom2 == "H" ) atom2 = "1H";
 		if ( line_stream.fail() ) {
 			tr.Error << "couldn't read line " << line << " in rdc-file " << filename << std::endl;
 			throw( utility::excn::EXCN_BadInput(" invalid line "+line+" in rdc-file "+filename));
@@ -175,15 +175,15 @@ void ResidualDipolarCoupling::read_RDC_file( Size expid, std::string const& file
 
 		Real weight(1.0);
 		line_stream >> weight;
-		if (line_stream.fail()) {
+		if ( line_stream.fail() ) {
 			tr.Debug << " set weight for RDC " << res1 << " to 1.0 ";
 			weight = 1.0;
 		}
-		//			if ( core.size() == 0 || ( core.has( res1 ) && core.has( res2 )  ) ) {
+		//   if ( core.size() == 0 || ( core.has( res1 ) && core.has( res2 )  ) ) {
 		tr.Debug << "... added to dataset!";
 		All_RDC_lines_.push_back(RDC(res1, atom1, res2, atom2, Jdipolar,
-				weight, expid - 1 /*C-style counting*/));
-		//			}
+			weight, expid - 1 /*C-style counting*/));
+		//   }
 		tr.Debug << std::endl;
 	}
 	if ( All_RDC_lines_.size() == lines_previously_read ) {
@@ -204,10 +204,10 @@ void ResidualDipolarCoupling::read_RDC_file() {
 	}
 
 	nex_ = 0;
-	//	protocols::loops::Loops core;
-	//	if ( option[ OptionKeys::rdc::select_residues_file ].user() ) {
-	//		core.read_loop_file( option[ OptionKeys::rdc::select_residues_file ](), false, "RIGID" );
-	//	}
+	// protocols::loops::Loops core;
+	// if ( option[ OptionKeys::rdc::select_residues_file ].user() ) {
+	//  core.read_loop_file( option[ OptionKeys::rdc::select_residues_file ](), false, "RIGID" );
+	// }
 	for ( Size expid = 1; expid <= option[ OptionKeys::in::file::rdc ]().size(); expid++ ) {
 		nex_ = expid;
 		std::string filename( option[ OptionKeys::in::file::rdc ]()[expid] );
@@ -216,27 +216,27 @@ void ResidualDipolarCoupling::read_RDC_file() {
 
 
 	//extra weight file?
-	if (option[OptionKeys::rdc::weights].user()) {
+	if ( option[OptionKeys::rdc::weights].user() ) {
 		std::string filename(option[OptionKeys::rdc::weights]().name());
 		std::ifstream infile(filename.c_str());
 		std::string line;
-		while (getline(infile, line)) {
+		while ( getline(infile, line) ) {
 			std::istringstream line_stream(line);
 			Real weight;
 			Size res1;
 			line_stream >> res1 >> weight;
-			if (line_stream.fail()) {
+			if ( line_stream.fail() ) {
 				tr.Error << "[Error] reading rdc-weight-file " << filename
-						<< std::endl;
+					<< std::endl;
 				throw(utility::excn::EXCN_BadInput(" invalid line " + line
-						+ " in rdc-weight-file " + filename));
+					+ " in rdc-weight-file " + filename));
 			}
-			for (RDC_lines::iterator it = All_RDC_lines_.begin(); it
-					!= All_RDC_lines_.end(); ++it) {
-				if (it->res1() == res1) {
+			for ( RDC_lines::iterator it = All_RDC_lines_.begin(); it
+					!= All_RDC_lines_.end(); ++it ) {
+				if ( it->res1() == res1 ) {
 					it->weight(weight);
 					tr.Info << "set tensor-weight for RDCs to " << weight
-							<< " at residue (res1) " << res1 << std::endl;
+						<< " at residue (res1) " << res1 << std::endl;
 				}
 			}
 		}
@@ -254,10 +254,12 @@ ResidualDipolarCoupling::~ResidualDipolarCoupling() {
 void ResidualDipolarCoupling::reserve_buffers() {
 	Size nex(nex_);
 	Size nrows(nrows_);
-	if (nex_ < 1)
+	if ( nex_ < 1 ) {
 		nex = 1; //keep always 1 around so that pointers are never empty
-	if (nrows_ < 1)
+	}
+	if ( nrows_ < 1 ) {
 		nrows = 1;
+	}
 	tr.Trace << "reserve buffers for nex: " << nex << " and nrows " << nrows << std::endl;
 	D_ = new rvec5[nrows];
 	rhs_ = new rvec5[nex];
@@ -275,7 +277,7 @@ void ResidualDipolarCoupling::reserve_buffers() {
 	exprdc_=new core::Real[nrows];
 	rdcconst_=new core::Real[nrows];
 	rdcweight_=new core::Real[nrows];
-  lenex_=new core::Size[nex+1];
+	lenex_=new core::Size[nex+1];
 }
 
 void ResidualDipolarCoupling::release_buffers() {
@@ -295,7 +297,7 @@ void ResidualDipolarCoupling::release_buffers() {
 	delete[] exprdc_;
 	delete[] rdcconst_;
 	delete[] rdcweight_;
-  delete[] lenex_;
+	delete[] lenex_;
 }
 
 //initialize local buffers ( S, T, etc. )
@@ -305,21 +307,25 @@ void ResidualDipolarCoupling::preprocess_data() {
 	//find highest expid
 	nex_ = 0;
 	utility::vector1<core::scoring::RDC>::const_iterator it;
-	for (it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it) {
-		if (it->expid() >= nex_)
+	for ( it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it ) {
+		if ( it->expid() >= nex_ ) {
 			nex_ = it->expid() + 1; //C-counting
+		}
 	}
 
 	nrows_ = All_RDC_lines_.size();
 }
 
 std::string element_string(std::string atom) {
-	if (atom == "HN" || atom == "H" || atom == "HA" || atom == "1H" )
+	if ( atom == "HN" || atom == "H" || atom == "HA" || atom == "1H" ) {
 		return "H";
-	if (atom == "C" || atom == "CA")
+	}
+	if ( atom == "C" || atom == "CA" ) {
 		return "C";
-	if (atom == "N")
+	}
+	if ( atom == "N" ) {
 		return "N";
+	}
 	throw(utility::excn::EXCN_BadInput("unknown atom for RDC: " + atom));
 	return ""; //to make compile happy.
 }
@@ -327,26 +333,27 @@ std::string element_string(std::string atom) {
 //@brief returns type of RDC data N-H, HA-CA etc
 //////////////////////////////////////////////////////
 RDC::RDC_TYPE RDC::get_RDC_data_type(std::string const & atom1,
-		std::string const & atom2) {
+	std::string const & atom2) {
 	std::string elem1(element_string(atom1));
 	std::string elem2(element_string(atom2));
 
 	RDC_TYPE RDC_type;
-	if ((elem1 == "N" && elem2 == "H") || (elem1 == "H" && elem2 == "N"))
+	if ( (elem1 == "N" && elem2 == "H") || (elem1 == "H" && elem2 == "N") ) {
 		RDC_type = RDC_TYPE_NH;
-	else if ((elem1 == "CA" && elem2 == "HA") || (elem1 == "HA" && elem2 == "CA"))
+	} else if ( (elem1 == "CA" && elem2 == "HA") || (elem1 == "HA" && elem2 == "CA") ) {
 		RDC_type = RDC_TYPE_CH;
-	else if ((elem1 == "C" && elem2 == "N") || (elem1 == "N" && elem2 == "C"))
+	} else if ( (elem1 == "C" && elem2 == "N") || (elem1 == "N" && elem2 == "C") ) {
 		RDC_type = RDC_TYPE_NC;
-	else if ((elem1 == "C" && elem2 == "C"))
+	} else if ( (elem1 == "C" && elem2 == "C") ) {
 		RDC_type = RDC_TYPE_CC;
-	else if ((elem1 == "C" && elem2 == "H") || (elem1 == "H" && elem2 == "C"))
+	} else if ( (elem1 == "C" && elem2 == "H") || (elem1 == "H" && elem2 == "C") ) {
 		RDC_type = RDC_TYPE_CHN;
-	else if ((elem1 == "N" && elem2 == "CA") || (elem1 == "CA" && elem2 == "N"))
+	} else if ( (elem1 == "N" && elem2 == "CA") || (elem1 == "CA" && elem2 == "N") ) {
 		RDC_type = RDC_TYPE_NCA;
-	else
+	} else {
 		throw(utility::excn::EXCN_BadInput(
-				"unknown combination of atoms for RDC " + atom1 + " " + atom2));
+			"unknown combination of atoms for RDC " + atom1 + " " + atom2));
+	}
 	return RDC_type;
 }
 
@@ -376,28 +383,28 @@ inline void mvmul(matrix a, const rvec src, rvec dest) {
 
 inline int compare_by_abs(const void * a, const void * b)
 {
-	//	int a_i = (int*) a;
-//	int b_i = (const int*) b;
-//	std::cout << std::abs(*(int*)a) << ' '<< std::abs(*(int*)b) << ' ' <<std::abs(*(core::Real*)a) - std::abs(*(core::Real*)b) <<std::endl;
-//	std::cout << "james_hack: " << a_i << ' ' << b_i << std::endl;
-//	int temp = std::abs(*(int*)a) - std::abs(*(int*)b) ;
-//	std::cout <<temp <<std::endl;
+	// int a_i = (int*) a;
+	// int b_i = (const int*) b;
+	// std::cout << std::abs(*(int*)a) << ' '<< std::abs(*(int*)b) << ' ' <<std::abs(*(core::Real*)a) - std::abs(*(core::Real*)b) <<std::endl;
+	// std::cout << "james_hack: " << a_i << ' ' << b_i << std::endl;
+	// int temp = std::abs(*(int*)a) - std::abs(*(int*)b) ;
+	// std::cout <<temp <<std::endl;
 
 	if ( *(core::Real*)a ==  *(core::Real*)b ) {
 		return 0;
-	} else if ( std::abs( *(core::Real*)a) - std::abs( *(core::Real*)b) > 0){
+	} else if ( std::abs( *(core::Real*)a) - std::abs( *(core::Real*)b) > 0 ) {
 		return 1;
-	} else {return -1;}
+	} else { return -1; }
 
 }
 
 
 Real ResidualDipolarCoupling::iterate_tensor_weights(
-		core::pose::Pose const& pose, core::Real sigma2, core::Real tolerance,
-		bool reset) {
+	core::pose::Pose const& pose, core::Real sigma2, core::Real tolerance,
+	bool reset) {
 	utility::vector1<core::scoring::RDC>::iterator it;
-	if (reset) {
-		for (it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it) {
+	if ( reset ) {
+		for ( it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it ) {
 			it->weight(1.0);
 		}
 	}
@@ -408,22 +415,22 @@ Real ResidualDipolarCoupling::iterate_tensor_weights(
 	tr.Debug << "wRDC: iter  wsum   wRDC" << std::endl;
 	Size ct(0);
 	Real score(999);
-	while (std::abs(wsum_old - wsum) > tolerance) {
+	while ( std::abs(wsum_old - wsum) > tolerance ) {
 		score = compute_dipscore(pose);
 		wsum_old = wsum;
 		wsum = 0.0;
 		Real wMSD = 0.0;
-		for (it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it) {
+		for ( it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it ) {
 			Real dev = it->Jcomputed() - it->Jdipolar();
 			it->weight(exp(-dev * dev / sigma2));
 			wsum += it->weight() * invn;
 			wMSD += it->weight() * dev * dev;
 		}
 		tr.Debug << "wRMSD: " << ++ct << " " << wsum << " " << sqrt(wMSD)
-				<< std::endl;
-		if (ct > 200) {
+			<< std::endl;
+		if ( ct > 200 ) {
 			tr.Warning << "no convergence in wRDC aka iterate_tensor_weights"
-					<< std::endl;
+				<< std::endl;
 			return score;
 			//break;
 		}
@@ -442,16 +449,16 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 	Size nrow(0);
 
 	/* Calculate the order tensor S for each experiment via optimization */
-	for (core::Size ex = 0; ex < nex_; ex++) {
-		for (Size i = 0; i < 5; i++) {
+	for ( core::Size ex = 0; ex < nex_; ex++ ) {
+		for ( Size i = 0; i < 5; i++ ) {
 			rhs_[ex][i] = 0;
-			for (Size j = 0; j <= i; j++) {
+			for ( Size j = 0; j <= i; j++ ) {
 				T_[ex][i][j] = 0;
 			}
 		}
 	}
 
-	for (it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it) {
+	for ( it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it ) {
 		if ( it->res1() > pose.total_residue() || it->res2() > pose.total_residue() ) {
 			tr.Warning << "non-existing residue, ignore RDC" << std::endl;
 			continue;
@@ -464,8 +471,8 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 
 		//check for cutpoints!!!
 		kinematics::FoldTree const& ft(pose.fold_tree());
-		if ((ft.is_cutpoint(std::min((int) it->res1(), (int) it->res2())))
-				&& it->res1() != it->res2()) {
+		if ( (ft.is_cutpoint(std::min((int) it->res1(), (int) it->res2())))
+				&& it->res1() != it->res2() ) {
 			tr.Warning << "cutpoint: ignore RDC " << *it << std::endl;
 			continue;
 		}
@@ -486,67 +493,68 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 
 		core::Real pfac = it->Dconst();
 		bool bCSA(false);// hook up for later... to compute chemical shift anisotropy
-		if (!bCSA) {
+		if ( !bCSA ) {
 			pfac *= invr * invr * invr;
 		}
 		Size const d(nrow - 1);
 
-	//put a length there should change it
-	  //r.normalized(1);
+		//put a length there should change it
+		//r.normalized(1);
 
 		D_[d][0] = pfac * (2* r [0] * r[0] + r[1] * r[1] - r.norm_squared());
 		D_[d][1] = pfac * (2* r [0] * r[1]);
 		D_[d][2] = pfac * (2* r [0] * r[2]);
 		D_[d][3] = pfac * (2* r [1] * r[1] + r[0] * r[0] - r.norm_squared());
 		D_[d][4] = pfac * (2* r [1] * r[2]);
-		// 			Real umn_x = umn.x()/it->fixed_dist();
-		// 			Real umn_y = umn.y()/it->fixed_dist();
-		// 			Real umn_z = umn.z()/it->fixed_dist();
+		//    Real umn_x = umn.x()/it->fixed_dist();
+		//    Real umn_y = umn.y()/it->fixed_dist();
+		//    Real umn_z = umn.z()/it->fixed_dist();
 
 
-	//type   = forceatoms[fa];
+		//type   = forceatoms[fa];
 		core::Size ex = it->expid(); //only one experiment now
 		core::Real weight = it->weight(); //force constant
 		core::Real obs = it->Jdipolar();
 		/* Calculate the vector rhs and half the matrix T for the 5 equations */
-		for (Size i = 0; i < 5; i++) {
+		for ( Size i = 0; i < 5; i++ ) {
 			rhs_[ex][i] += D_[d][i] * obs * weight;
-			for (Size j = 0; j <= i; j++)
+			for ( Size j = 0; j <= i; j++ ) {
 				T_[ex][i][j] += D_[d][i] * D_[d][j] * weight;
+			}
 		}
 	} //cycle over atoms
 
 	/* Now we have all the data we can calculate S */
 	runtime_assert( nex_ < 200 );
 	Real Smax[200];
-	for (Size ex = 0; ex < nex_; ex++) {
+	for ( Size ex = 0; ex < nex_; ex++ ) {
 		/* Correct corrfac and copy one half of T to the other half */
-		//		std::cout << " T_[ex][j][i]: ";
-		for (Size i = 0; i < 5; i++) {
-			for (Size j = 0; j < i; j++) {
+		//  std::cout << " T_[ex][j][i]: ";
+		for ( Size i = 0; i < 5; i++ ) {
+			for ( Size j = 0; j < i; j++ ) {
 				T_[ex][j][i] = T_[ex][i][j];
-				//			std::cout << " " << T_[ex][j][i] ;
+				//   std::cout << " " << T_[ex][j][i] ;
 			}
 		}
-		//		std::cout << std::endl;
+		//  std::cout << std::endl;
 		try {
 			m_inv_gen(T_[ex], 5, T_[ex]);
-//			std::cout << "performing SVD decomposition" << std::endl;
+			//   std::cout << "performing SVD decomposition" << std::endl;
 		} catch (utility::excn::EXCN_BadInput &excn) {
-			if (tr.Debug) {
+			if ( tr.Debug ) {
 				pose.dump_pdb("failed_jacobi.pdb");
 			}
 			// changed from throw excn--you do not want to copy the exception you catch
 			throw;
 		}
 
-		/* Calculate the orientation tensor S for this experiment */
+/* Calculate the orientation tensor S for this experiment */
 		S_[ex][0][0] = 0;
 		S_[ex][0][1] = 0;
 		S_[ex][0][2] = 0;
 		S_[ex][1][1] = 0;
 		S_[ex][1][2] = 0;
-		for (Size i = 0; i < 5; i++) {
+		for ( Size i = 0; i < 5; i++ ) {
 			S_[ex][0][0] += T_[ex][0][i] * rhs_[ex][i];
 			S_[ex][0][1] += T_[ex][1][i] * rhs_[ex][i];
 			S_[ex][0][2] += T_[ex][2][i] * rhs_[ex][i];
@@ -558,10 +566,10 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 		S_[ex][2][1] = S_[ex][1][2];
 		S_[ex][2][2] = -S_[ex][0][0] - S_[ex][1][1];
 
-	  //Always use one, otherwise it is overwritten.
+		//Always use one, otherwise it is overwritten.
 		Smax[ex] = 1;
 
-		//	std::cout << "AL.TENSOR (molecular frame): " << S_[ex][0][0] << ' ' <<  S_[ex][0][1]  << ' ' << 	S_[ex][0][2] << ' ' << S_[ex][1][1] << ' ' << S_[ex][1][2] << std::endl;
+		// std::cout << "AL.TENSOR (molecular frame): " << S_[ex][0][0] << ' ' <<  S_[ex][0][1]  << ' ' <<  S_[ex][0][2] << ' ' << S_[ex][1][1] << ' ' << S_[ex][1][2] << std::endl;
 
 
 		{
@@ -577,13 +585,13 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 
 		tr.Debug << "Smax( " << ex << " ): " << Smax[ex] << std::endl;
 
-		//		std::cout << 'AL.TENSOR elements : ' << S_[ex][0][0]) << ' ' <<  S_[ex][0][1]  << ' ' << 	S_[ex][0][2] << ' '
-		//				<< S_[ex][1][1] << ' ' << S_[ex][1][2] << std::endl;
+		//  std::cout << 'AL.TENSOR elements : ' << S_[ex][0][0]) << ' ' <<  S_[ex][0][1]  << ' ' <<  S_[ex][0][2] << ' '
+		//    << S_[ex][1][1] << ' ' << S_[ex][1][2] << std::endl;
 
 
 	} // for ( ex = 0 .. nex )
 
-  //Always diagonalize the matrix to find out the alignment
+	//Always diagonalize the matrix to find out the alignment
 	try{
 		compute_tensor_stats();
 	} catch (utility::excn::EXCN_BadInput &excn) {
@@ -593,7 +601,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 		throw;
 	}
 
-  //Compute the fitting stats
+//Compute the fitting stats
 	Real wsv2 = 0;
 	Real sw = 0;
 	Real vtot = 0;
@@ -605,8 +613,8 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 	//Size excnt(0);
 	Size ex(0);
 	//Size exold(0);
-	for (utility::vector1<core::scoring::RDC>::iterator it =
-			All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it) {
+	for ( utility::vector1<core::scoring::RDC>::iterator it =
+			All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it ) {
 
 		//check for cutpoints!!!
 		kinematics::FoldTree const& ft(pose.fold_tree());
@@ -614,8 +622,8 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 			tr.Warning << "non-existing residue, ignore RDC" << *it << std::endl;
 			continue;
 		}
-		if ((ft.is_cutpoint(std::min((int) it->res1(), (int) it->res2())))
-				&& it->res1() != it->res2()) {
+		if ( (ft.is_cutpoint(std::min((int) it->res1(), (int) it->res2())))
+				&& it->res1() != it->res2() ) {
 			tr.Warning << "cutpoint: ignore RDC " << *it << std::endl;
 			continue;
 		}
@@ -632,7 +640,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 
 		Real computed_coupling = it->Jdipolar_computed_ = S_[ex][0][0] * D_[d][0] + S_[ex][0][1] * D_[d][1] + S_[ex][0][2] * D_[d][2] + S_[ex][1][1] * D_[d][3] + S_[ex][1][2] * D_[d][4];
 
-		//		pfac  = fc*ip[type].orires.c*invr2;
+		//  pfac  = fc*ip[type].orires.c*invr2;
 		//for(i=0; i<power; i++)
 		//    pfac *= invr;
 		//Size const power(3); //this will be 0 for CSA see above
@@ -645,47 +653,49 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 		Real dev = computed_coupling - obs;
 		Real weight = it->weight()*Smax[ex]; //force constant
 
-    //compute derivatives
+		//compute derivatives
 		//prefactor used in derivative calculations
 		core::Real pfac = weight* rdc.Dconst() * invr2 * invr;
-    core::Real const pfac_NH = weight * COMMON_DENOMINATOR;
+		core::Real const pfac_NH = weight * COMMON_DENOMINATOR;
 
-		if (bReduced) {
-			if ( tr.Trace.visible() ) tr.Trace << "reducing coupling for " << rdc << " dev: " << dev
-																			 << " pfac: " << pfac << " pfac_NH " << pfac_NH;
+		if ( bReduced ) {
+			if ( tr.Trace.visible() ) {
+				tr.Trace << "reducing coupling for " << rdc << " dev: " << dev
+					<< " pfac: " << pfac << " pfac_NH " << pfac_NH;
+			}
 			pfac = pfac_NH;
 			dev *= pfac_NH / pfac;
 			obs *= pfac_NH / pfac;
 			if ( tr.Trace.visible() ) tr.Trace << " new dev: " << dev << std::endl;
 		}
 
-//		rvec Sr;
-//		rvec rgmx;
-//		rgmx[0] = r[0];
-//		rgmx[1] = r[1];
-//		rgmx[2] = r[2];
-//		mvmul(S_[ex], rgmx, Sr);
-//		for (Size i = 0; i < 3; i++) {
-//			rdc.fij_[i] = -pfac * dev * (4* Sr [i] - 2* (2 + power ) * invr2 * iprod (Sr ,rgmx) * rgmx[ i]);
-//    }
-    rdc.fij_[0]= -dev * pfac * (S_[ex][0][0]*2*r.x()+S_[ex][0][1]*2*r.y()+S_[ex][0][2]*2*r.z()+S_[ex][1][1]*0+S_[ex][1][2]*0);
-    rdc.fij_[1]= -dev * pfac * (S_[ex][0][0]*0+S_[ex][0][1]*2*r.x()+S_[ex][0][2]*0+S_[ex][1][1]*2*r.y()+S_[ex][1][2]*2*r.z());
-    rdc.fij_[2]= -dev * pfac * (-S_[ex][0][0]*2*r.z()+S_[ex][0][1]*0+S_[ex][0][2]*2*r.x()-S_[ex][1][1]*2*r.z()+S_[ex][1][2]*2*r.y());
+		//  rvec Sr;
+		//  rvec rgmx;
+		//  rgmx[0] = r[0];
+		//  rgmx[1] = r[1];
+		//  rgmx[2] = r[2];
+		//  mvmul(S_[ex], rgmx, Sr);
+		//  for (Size i = 0; i < 3; i++) {
+		//   rdc.fij_[i] = -pfac * dev * (4* Sr [i] - 2* (2 + power ) * invr2 * iprod (Sr ,rgmx) * rgmx[ i]);
+		//    }
+		rdc.fij_[0]= -dev * pfac * (S_[ex][0][0]*2*r.x()+S_[ex][0][1]*2*r.y()+S_[ex][0][2]*2*r.z()+S_[ex][1][1]*0+S_[ex][1][2]*0);
+		rdc.fij_[1]= -dev * pfac * (S_[ex][0][0]*0+S_[ex][0][1]*2*r.x()+S_[ex][0][2]*0+S_[ex][1][1]*2*r.y()+S_[ex][1][2]*2*r.z());
+		rdc.fij_[2]= -dev * pfac * (-S_[ex][0][0]*2*r.z()+S_[ex][0][1]*0+S_[ex][0][2]*2*r.x()-S_[ex][1][1]*2*r.z()+S_[ex][1][2]*2*r.y());
 
 		//compute size for each experiment and normalize energy by size
-/*
+		/*
 		if (ex==exold)  {
-			excnt++;
+		excnt++;
 		} else {
-			vtot=vtot+vtoti/excnt;
-			vtoti=0;
-			excnt=1;
+		vtot=vtot+vtoti/excnt;
+		vtoti=0;
+		excnt=1;
 		}
 		exold = ex;
-*/
+		*/
 
-    //compute contribution from one ex
-		//	std::cout << "WEIGHT " << weight <<std::endl;
+		//compute contribution from one ex
+		// std::cout << "WEIGHT " << weight <<std::endl;
 		//COMMON_DENOMINATOR is the Dcnst_NH/1.041^3
 		vtot += 0.5*sqr( dev )*weight;
 		//vtoti += 0.5*sqr( dev )*Smax[ex];
@@ -727,10 +737,10 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 		// mjo comment out precision because it is not used and causes a warning.
 		//Size const precision( 2 );
 		//std::string tag( core::pose::tag_from_pose(pose) );
-		for (Size ex = 0; ex < nex_; ex++) {
+		for ( Size ex = 0; ex < nex_; ex++ ) {
 			//Real Smax = sqrt(sqr(S_[ex][0][0]) + sqr(S_[ex][0][1]) + sqr(S_[ex][0][2]) + sqr(S_[ex][1][1]) + sqr(S_[ex][1][2]));
 			//out << A( width_large, "TAG ")   << A( width, tag ) << A( width, "EXP       ")   << I( width, ex ) << I( width, Smax )
-			//		<< I( width, vtot )<< I( width, Rohl2Hess )<< std::endl;
+			//  << I( width, vtot )<< I( width, Rohl2Hess )<< std::endl;
 			show_tensor_stats( out, ex );
 			show_tensor_matrix( out, ex );
 			show_rdc_values( out, ex );
@@ -747,67 +757,67 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 //Auxillary functions for compute_dipscore_nls
 double frdc( double r0, double r1, double r2, double rdcconst, const double *par)
 {
-        double Ax=par[0];
-        double Ay=par[1];
-        double Az=-par[0]-par[1];
-//use radius instead
-        double a=par[2];
-        double b=par[3];
-        double c=par[4];
-        double rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
-        double rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
-        double rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
-        return rdcconst*(rdcx*rdcx*Ax+rdcy*rdcy*Ay+rdcz*rdcz*Az);
+	double Ax=par[0];
+	double Ay=par[1];
+	double Az=-par[0]-par[1];
+	//use radius instead
+	double a=par[2];
+	double b=par[3];
+	double c=par[4];
+	double rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
+	double rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
+	double rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
+	return rdcconst*(rdcx*rdcx*Ax+rdcy*rdcy*Ay+rdcz*rdcz*Az);
 }//frdc
 
 double frdcDa( double r0, double r1, double r2, double rdcconst, double const tensorDa, const double *par)
 {
-        double Ax=(3.0*par[0]/2.0-1.0)*tensorDa/(36.5089/1.041/1.041/1.041);
-        double Ay=-(3.0*par[0]/2.0+1.0)*tensorDa/(36.5089/1.041/1.041/1.041);
-        double Az=2.0*tensorDa/(36.5089/1.041/1.041/1.041);
-//use radius instead
-        double a=par[1];
-        double b=par[2];
-        double c=par[3];
-        double rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
-        double rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
-        double rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
-        return rdcconst*(rdcx*rdcx*Ax+rdcy*rdcy*Ay+rdcz*rdcz*Az);
+	double Ax=(3.0*par[0]/2.0-1.0)*tensorDa/(36.5089/1.041/1.041/1.041);
+	double Ay=-(3.0*par[0]/2.0+1.0)*tensorDa/(36.5089/1.041/1.041/1.041);
+	double Az=2.0*tensorDa/(36.5089/1.041/1.041/1.041);
+	//use radius instead
+	double a=par[1];
+	double b=par[2];
+	double c=par[3];
+	double rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
+	double rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
+	double rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
+	return rdcconst*(rdcx*rdcx*Ax+rdcy*rdcy*Ay+rdcz*rdcz*Az);
 }//frdcDa
 
 double frdcR( double r0, double r1, double r2, double rdcconst, double const tensorR, const double *par)
 {
-        double Ax=(3.0*tensorR/2.0-1.0)*par[0]/(36.5089/1.041/1.041/1.041);
-        double Ay=-(3.0*tensorR/2.0+1.0)*par[0]/(36.5089/1.041/1.041/1.041);
-        double Az=2.0*par[0]/(36.5089/1.041/1.041/1.041);
-//use radius instead
-        double a=par[1];
-        double b=par[2];
-        double c=par[3];
-        double rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
-        double rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
-        double rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
-        return rdcconst*(rdcx*rdcx*Ax+rdcy*rdcy*Ay+rdcz*rdcz*Az);
+	double Ax=(3.0*tensorR/2.0-1.0)*par[0]/(36.5089/1.041/1.041/1.041);
+	double Ay=-(3.0*tensorR/2.0+1.0)*par[0]/(36.5089/1.041/1.041/1.041);
+	double Az=2.0*par[0]/(36.5089/1.041/1.041/1.041);
+	//use radius instead
+	double a=par[1];
+	double b=par[2];
+	double c=par[3];
+	double rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
+	double rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
+	double rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
+	return rdcconst*(rdcx*rdcx*Ax+rdcy*rdcy*Ay+rdcz*rdcz*Az);
 }//frdcR
 
 double frdcDaR( double r0, double r1, double r2, double rdcconst, double const tensorDa, double const tensorR, const double *par)
 {
-        double Ax=(3.0*tensorR/2.0-1.0)*tensorDa/(36.5089/1.041/1.041/1.041);
-        double Ay=-(3.0*tensorR/2.0+1.0)*tensorDa/(36.5089/1.041/1.041/1.041);
-        double Az=2.0*tensorDa/(36.5089/1.041/1.041/1.041);
-//use radius instead
-        double a=par[0];
-        double b=par[1];
-        double c=par[2];
-        double rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
-        double rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
-        double rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
-        return rdcconst*(rdcx*rdcx*Ax+rdcy*rdcy*Ay+rdcz*rdcz*Az);
+	double Ax=(3.0*tensorR/2.0-1.0)*tensorDa/(36.5089/1.041/1.041/1.041);
+	double Ay=-(3.0*tensorR/2.0+1.0)*tensorDa/(36.5089/1.041/1.041/1.041);
+	double Az=2.0*tensorDa/(36.5089/1.041/1.041/1.041);
+	//use radius instead
+	double a=par[0];
+	double b=par[1];
+	double c=par[2];
+	double rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
+	double rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
+	double rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
+	return rdcconst*(rdcx*rdcx*Ax+rdcy*rdcy*Ay+rdcz*rdcz*Az);
 }//frdcDaR
 
 class data_struct {
 public:
-	
+
 	data_struct( double* _r0, double* _r1, double* _r2, double* _rdc, double* _rdcconst, double* _rdcweight, double _tensorDa, double _tensorR, int _type_of_computation) :
 		r0( _r0 ),
 		r1( _r1 ),
@@ -819,7 +829,7 @@ public:
 		tensorR( _tensorR ),
 		type_of_computation( _type_of_computation )
 	{ }
-	
+
 	double *r0, *r1, *r2;
 	double *rdc;
 	double *rdcconst;
@@ -827,7 +837,7 @@ public:
 	double const tensorDa;
 	double const tensorR;
 	int type_of_computation;
-	
+
 };
 
 //Evaluaterdc function required by lmmin
@@ -870,18 +880,18 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
 	utility::vector1<Real> tensorDa;
 	return compute_dipscore_nls( pose, tensorDa, tensorR );
 }
-	
+
 Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& pose, utility::vector1<Real> const tensorDa, utility::vector1<Real> const tensorR) {
 	return compute_dipscore_nls( pose, tensorDa, tensorR );
 }
-	
+
 
 Real ResidualDipolarCoupling::compute_dipscore_nls(
 	core::pose::Pose const& pose,
 	utility::vector1<Real> const tensorDa,
 	utility::vector1<Real> const tensorR
 ) {
-	
+
 	// Really explicitly separate the four cases
 	Size type_of_computation = 0;
 	if ( tensorDa.size() == 0 ) {
@@ -897,56 +907,56 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 			type_of_computation = NLSDAR;
 		}
 	}
-	
+
 	if ( nex_ == 0 || nrows_ == 0 ) return 0;
-	
+
 	//non-linear square fitting of RDC data
 	utility::vector1<core::scoring::RDC>::const_iterator it;
 	bool const correct_NH( basic::options::option[basic::options::OptionKeys::rdc::correct_NH_length]);
 	core::Size nrow(0);
 	core::Size id(0);
 	core::Real obs(0.0);
-	
+
 	//initialize the cnt
-	for (id = 0; id < nex_+1; id++) {
+	for ( id = 0; id < nex_+1; id++ ) {
 		lenex_[id]=0;
 	}
 	id=0;
-	
+
 	core::Real scale_to_NH = COMMON_DENOMINATOR;
-	
-	for (it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it) {
+
+	for ( it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it ) {
 		if ( it->res1() > pose.total_residue() || it->res2() > pose.total_residue() ) {
 			if ( tr.Debug.visible() ) tr.Debug << "non-existing residue, ignore RDC" << std::endl;
 			continue;
 		}
-		
+
 		//check for cutpoints!!!
 		kinematics::FoldTree const& ft(pose.fold_tree());
-		if ((ft.is_cutpoint(std::min((int) it->res1(), (int) it->res2()))) && it->res1() != it->res2()) {
+		if ( (ft.is_cutpoint(std::min((int) it->res1(), (int) it->res2()))) && it->res1() != it->res2() ) {
 			if ( tr.Trace.visible() ) tr.Trace << "cutpoint: ignore RDC " << *it << std::endl;
 			continue;
 		}
-		
+
 		++nrow;
-		
+
 		numeric::xyzVector<Real> r( pose.residue(it->res1()).atom(it->atom1()).xyz() - pose.residue(it->res2()).atom(it->atom2()).xyz());
 		core::Real r2 = r.norm_squared();
 		core::Real invr = 1.0 / sqrt(r2);
 		if ( correct_NH )  {
 			do_correct_NH( it, r, r2, invr );
 		}
-		
+
 		core::Real pfac = it->Dconst();
 		bool bCSA(false);// hook up for later... to compute chemical shift anisotropy
-		if (!bCSA) {
+		if ( !bCSA ) {
 			pfac *= invr * invr * invr;
 		}
-		
+
 		//check the -1 if it is correct
 		id = All_RDC_lines_[nrow].expid();
 		obs = All_RDC_lines_[nrow].Jdipolar()*(scale_to_NH)/pfac;
-		
+
 		r0_[nrow-1] = r.normalized().x();
 		r1_[nrow-1] = r.normalized().y();
 		r2_[nrow-1] = r.normalized().z();
@@ -956,35 +966,35 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 		lenex_[id+1]=lenex_[id+1]+1;
 		//tr.Trace << "weight: " << it->weight() << std::endl;
 	} //cycle over atoms
-	
-	
+
+
 	//parameters
 	int n_par = 3; // number of parameters in model function frdcR
 	int nrepeat = basic::options::option[ basic::options::OptionKeys::rdc::nlsrepeat ](); // number of repeat lmfit
-	
+
 	//double parbest[n_par*nex_];
 	//double par[n_par*nex_];
 	std::vector<double> parbest(n_par*nex_);
 	std::vector<double> par(n_par*nex_);
-	
+
 	int i,j;
 	Size prelen=0;
-	
+
 	//optional weighting provided by user
 	runtime_assert( nex_ < 200 );
 	Real Smax[200];
-	
+
 	//experimental data array
-	for (Size ex = 0; ex < nex_; ex++) {
+	for ( Size ex = 0; ex < nex_; ex++ ) {
 
 		//compute the length of previous exps
 		prelen=0;
-		for (Size cnt=0; cnt<=ex; cnt++) {
+		for ( Size cnt=0; cnt<=ex; cnt++ ) {
 			prelen+=lenex_[cnt];
 		}
-		
+
 		//perform lmfit on each exp
-		//	data_structDaR data = { r0_+prelen, r1_+prelen, r2_+prelen, exprdc_+prelen, rdcconst_+prelen, rdcweight_+prelen, tensorDa[ex+1], tensorR[ex+1], frdcDaR };
+		// data_structDaR data = { r0_+prelen, r1_+prelen, r2_+prelen, exprdc_+prelen, rdcconst_+prelen, rdcweight_+prelen, tensorDa[ex+1], tensorR[ex+1], frdcDaR };
 		double p1 = -99999;
 		double p2 = -99999;
 		if ( type_of_computation == NLSR ) {
@@ -995,12 +1005,12 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 			p1 = tensorDa[ex+1];
 			p2 = tensorR[ex+1];
 		}
-		
+
 		data_struct data( r0_+prelen, r1_+prelen, r2_+prelen, exprdc_+prelen, rdcconst_+prelen, rdcweight_+prelen, p1, p2, type_of_computation );
-		
+
 		//definition of auxiliary parameters
 		numeric::nls::lm_status_struct status;
-		
+
 		Smax[ex] = 1;
 		{
 			using namespace basic::options;
@@ -1011,10 +1021,10 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 				Smax[ ex ] = option[ OptionKeys::rdc::fix_normAzz ]()[ ex+1 ];
 			}
 		}
-		
+
 		double bestnorm = 1e12;
-		
-		for (j = 0; j < nrepeat; j++) {
+
+		for ( j = 0; j < nrepeat; j++ ) {
 			//random starting value
 			par[ex*n_par+0]=2.0*numeric::NumericTraits<Real>::pi()*numeric::random::uniform();//alpha
 			par[ex*n_par+1]=2.0*numeric::NumericTraits<Real>::pi()*numeric::random::uniform();//beta
@@ -1027,55 +1037,57 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 				tr.Trace << "Iteration: " << j << " status.fnorm: " << status.fnorm << " bestnorm: "<< bestnorm << std::endl;
 			}
 			//save to best fitting parameter
-			if (status.fnorm < bestnorm) {
+			if ( status.fnorm < bestnorm ) {
 				tr.Trace << "status.fnorm: " << status.fnorm << " replaced by bestnorm: " << bestnorm << std::endl;
 				bestnorm=status.fnorm;
-				for (i=0; i<n_par ; i++)
+				for ( i=0; i<n_par ; i++ ) {
 					parbest[ex*n_par+i]=par[ex*n_par+i];
+				}
 			}
-			
+
 		}//repeat lmfit five times with different starting parameters
-		
+
 		//copy back to par
-		for (i=0; i<n_par ; i++)
+		for ( i=0; i<n_par ; i++ ) {
 			par[ex*n_par+i]=parbest[ex*n_par+i];
-		
+		}
+
 		double Ax = 0;
 		double Ay = 0;
 		//sort the right order Ax<Ay and calculate Da and R
 		if ( type_of_computation == NLS ) {
-			if (parbest[ex*n_par+0]>0) {
-				if (parbest[ex*n_par+1]>0) {
-					if (parbest[ex*n_par+0]<parbest[ex*n_par+1]) {
+			if ( parbest[ex*n_par+0]>0 ) {
+				if ( parbest[ex*n_par+1]>0 ) {
+					if ( parbest[ex*n_par+0]<parbest[ex*n_par+1] ) {
 						Ax=parbest[ex*n_par+0];
 						Ay=parbest[ex*n_par+1];
-					}else {
+					} else {
 						Ax=parbest[ex*n_par+1];
 						Ay=parbest[ex*n_par+0];
 					}
-				}else {
-					if (parbest[ex*n_par+0]<-parbest[ex*n_par+1]) {
+				} else {
+					if ( parbest[ex*n_par+0]<-parbest[ex*n_par+1] ) {
 						Ax=std::min(parbest[ex*n_par+0],-parbest[ex*n_par+1]-parbest[ex*n_par+0]);
 						Ay=std::max(parbest[ex*n_par+0],-parbest[ex*n_par+1]-parbest[ex*n_par+0]);
-					}else {
+					} else {
 						Ax=std::max(parbest[ex*n_par+1],-parbest[ex*n_par+1]-parbest[ex*n_par+0]);
 						Ay=std::min(parbest[ex*n_par+1],-parbest[ex*n_par+1]-parbest[ex*n_par+0]);
 					}
 				}
 			} else {
-				if (parbest[ex*n_par+1]>0) {
-					if (-parbest[ex*n_par+0]<parbest[ex*n_par+1]) {
+				if ( parbest[ex*n_par+1]>0 ) {
+					if ( -parbest[ex*n_par+0]<parbest[ex*n_par+1] ) {
 						Ax=std::max(parbest[ex*n_par+0],-parbest[ex*n_par+1]-parbest[ex*n_par+0]);
 						Ay=std::min(parbest[ex*n_par+0],-parbest[ex*n_par+1]-parbest[ex*n_par+0]);
-					}else{
+					} else {
 						Ax=std::min(parbest[ex*n_par+1],-parbest[ex*n_par+1]-parbest[ex*n_par+0]);
 						Ay=std::max(parbest[ex*n_par+1],-parbest[ex*n_par+1]-parbest[ex*n_par+0]);
 					}
-				}else{
-					if (parbest[ex*n_par+0]<parbest[ex*n_par+1]) {
+				} else {
+					if ( parbest[ex*n_par+0]<parbest[ex*n_par+1] ) {
 						Ax=parbest[ex*n_par+1];
 						Ay=parbest[ex*n_par+0];
-					}else {
+					} else {
 						Ax=parbest[ex*n_par+0];
 						Ay=parbest[ex*n_par+1];
 					}
@@ -1085,7 +1097,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 			parbest[ex*n_par+0]=1.0/2.0*(-Ax-Ay);
 			parbest[ex*n_par+1]=2.0/3.0*(Ay-Ax)/(Ax+Ay);
 		}
-		
+
 		//debug
 		if ( tr.Trace.visible() ) {
 			tr.Trace << std::endl;
@@ -1112,7 +1124,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 			}
 		}
 	}//end of loop through all exps
-	
+
 	//compute scores and other stats for all exps
 	Real wsv2 = 0;
 	Real sw = 0;
@@ -1120,18 +1132,18 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 	Real Q = 0;
 	Real Qex = 0;
 	Real Qnorm = 0;
-	
+
 	Size irow(0);
-	for (utility::vector1<core::scoring::RDC>::iterator it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it) {
-		
+	for ( utility::vector1<core::scoring::RDC>::iterator it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it ) {
+
 		Size ex = it->expid();
-		
+
 		//compute the length of previous exps
 		prelen = 0;
 		for ( Size cnt = 0; cnt <= ex; cnt++ ) {
 			prelen += lenex_[ cnt ];
 		}
-		
+
 		// amw: another place where I need to split behavior
 		Real computed_coupling;
 		if ( type_of_computation == NLS ) {
@@ -1143,29 +1155,29 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 		} else {
 			computed_coupling = frdcDaR(r0_[prelen+irow], r1_[prelen+irow], r2_[prelen+irow], rdcconst_[prelen+irow], tensorDa[ex+1], tensorR[ex+1], &par[ex*n_par]);
 		}
-		
-		//	std::cout << "WEIGHT " << weight <<std::endl;
+
+		// std::cout << "WEIGHT " << weight <<std::endl;
 		//normalized by the tensor values and number of experiments
-		
+
 		//compute derivatives
 		RDC& rdc = *it;
 		numeric::xyzVector<Real> r( pose.residue(rdc.res1()).atom(rdc.atom1()).xyz() - pose.residue(rdc.res2()).atom(rdc.atom2()).xyz());
 		numeric::xyzVector<Real> r_copy( pose.residue(rdc.res1()).atom(rdc.atom1()).xyz() - pose.residue(rdc.res2()).atom(rdc.atom2()).xyz());
 		core::Real r2 = r.norm_squared();
 		core::Real invr = 1.0 / sqrt(r2);
-		
+
 		if ( correct_NH )  {
 			do_correct_NH( it, r, r2, invr );
 		}
 		core::Real invr2 = sqr(invr);
-		
+
 		//prefactor used in derivative calculations
 		Real weight = it->weight()*Smax[ex]; //force constant
 		core::Real pfac = scale_to_NH*(1/r.length())*(1/r_copy.length())*weight;
 		Real obs = rdc.Jdipolar()*(scale_to_NH)/(rdc.Dconst() * invr2 * invr);
 		Real dev = computed_coupling - obs;
 		it->Jdipolar_computed_ = computed_coupling/((scale_to_NH)/(rdc.Dconst() * invr2 * invr));
-		
+
 		core::Real Axx, Ayy, Azz, a, b, c;
 		//parameters after fitting
 		if ( type_of_computation == NLS ) {
@@ -1182,7 +1194,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 			a=par[ex*n_par+1];
 			b=par[ex*n_par+2];
 			c=par[ex*n_par+3];
-			
+
 		} else if ( type_of_computation == NLSDA ) {
 			Axx=(3.0*par[ex*n_par+0]/2.0-1.0)*tensorDa[ex+1]/ COMMON_DENOMINATOR;
 			Ayy=-(3.0*par[ex*n_par+0]/2.0+1.0)*tensorDa[ex+1]/ COMMON_DENOMINATOR;
@@ -1216,7 +1228,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 		rdc.fij_[0] = - dev * pfac * 2 * (Axx*rx*r00+Ayy*ry*r10+Azz*rz*r20) ;
 		rdc.fij_[1] = - dev * pfac * 2 * (Axx*rx*r01+Ayy*ry*r11+Azz*rz*r21);
 		rdc.fij_[2] = - dev * pfac * 2 * (Axx*rx*r02+Ayy*ry*r12+Azz*rz*r22) ;
-		
+
 		//compute energy
 		vtot += 0.5*sqr( dev )*weight;
 		//vtot += 0.5*sqr( dev )*Smax[ex]/(lenex_[ex+1]);
@@ -1226,7 +1238,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 		Q += sqr( dev );
 		Qex +=sqr( dev );
 		Qnorm += sqr( obs );
-		
+
 		//printout Qbax_ for each experiment
 		if ( irow==lenex_[ex+1]-1 ) {
 			if ( tr.Trace.visible() ) {
@@ -1245,7 +1257,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 			}
 			Qex=0;
 		}
-		
+
 		//increament the array
 		if ( irow < lenex_[ ex + 1 ] - 1 ) {
 			irow++;
@@ -1253,38 +1265,38 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 			irow=0;
 		}
 	}
-	
+
 	R_ = sqrt( Q/Qnorm/2 );
 	rmsd_ = sqrt(wsv2/sw);
-	
+
 	if ( tr.Trace.visible() ) {
 		tr.Trace << "R_: " << R_ << std::endl;
 		tr.Trace << "rmsd_: " << rmsd_ << std::endl;
 		tr.Trace << "All_RDC_lines_.size(): " << All_RDC_lines_.size() << std::endl;
 	}
-	
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace ObjexxFCL;
 	using namespace ObjexxFCL::format;
-	
+
 	//print the rdc values
 	if ( option[ OptionKeys::rdc::print_rdc_values ].user() ) {
 		std::string filename( option[ OptionKeys::rdc::print_rdc_values ]() );
 		utility::io::ozstream out;
-		
+
 		out.open_append( filename ) ;
 		using namespace core::pose::datacache;
 		//Size const width( 8 );
 		//Size const width_large(6);
 		//std::string tag( core::pose::tag_from_pose(pose) );
-		for (Size ex = 0; ex < nex_; ex++) {
+		for ( Size ex = 0; ex < nex_; ex++ ) {
 			show_rdc_values( out, ex );
 		}
 		out << "//" <<std::endl;
 		out.close();
 	}
-	
+
 	return vtot;
 }
 
@@ -1324,13 +1336,13 @@ ResidualDipolarCoupling::do_correct_NH(
 		throw( utility::excn::EXCN_BadInput("unreognized type or residue sequence separation does not allow using correct_NH "));
 	}
 }
-	
+
 void ResidualDipolarCoupling::show_tensor_stats( std::ostream& out, Size ex ) const {
 	using namespace ObjexxFCL;
 	using namespace ObjexxFCL::format;
 
-  Real Aa = EV_[ex][0]/2;
-  Real Ar = (EV_[ex][2]-EV_[ex][1])/3;
+	Real Aa = EV_[ex][0]/2;
+	Real Ar = (EV_[ex][2]-EV_[ex][1])/3;
 
 	Size const width( 10 );
 	Size const precision( 2 );
@@ -1342,16 +1354,16 @@ void ResidualDipolarCoupling::show_tensor_stats( std::ostream& out, Size ex ) co
 }
 
 void ResidualDipolarCoupling::show_tensor_stats_nls( std::ostream& out, Size, const double *par) const {
-  using namespace ObjexxFCL;
-  using namespace ObjexxFCL::format;
+	using namespace ObjexxFCL;
+	using namespace ObjexxFCL::format;
 
-  Real Ax = par[0];
-  Real Ay = par[1];
-  Real Az = -par[0]-par[1];
-  Size const width( 10 );
-  Size const precision( 2 );
-  out << A( width, "Ax" ) << " " << A( width, "Ay" ) << A( width, "Az" ) << std::endl;
-  out << F( width, precision, Ax ) << F( width, precision, Ay ) << F( width, precision, Az) << std::endl;
+	Real Ax = par[0];
+	Real Ay = par[1];
+	Real Az = -par[0]-par[1];
+	Size const width( 10 );
+	Size const precision( 2 );
+	out << A( width, "Ax" ) << " " << A( width, "Ay" ) << A( width, "Az" ) << std::endl;
+	out << F( width, precision, Ax ) << F( width, precision, Ay ) << F( width, precision, Az) << std::endl;
 }
 
 void ResidualDipolarCoupling::show_tensor_matrix( std::ostream& out, Size ex ) const {
@@ -1363,9 +1375,9 @@ void ResidualDipolarCoupling::show_tensor_matrix( std::ostream& out, Size ex ) c
 	//Size const width_large(6);
 	Size const precision( 2 );
 	out << A( width, "AL.EVAL   ")   << F(width, precision, EV_[ex][0]) <<  F(width, precision, EV_[ex][1])  <<  F(width, precision, EV_[ex][2])  << std::endl
-			<< A( width, "AL.EVEC XX")   << F(width, precision, EIG_[ex][0][0]) <<  F(width, precision, EIG_[ex][1][0])  <<  F(width, precision, EIG_[ex][2][0])  << std::endl
-			<< A( width, "AL.EVEC YY")   << F(width, precision, EIG_[ex][0][1]) <<  F(width, precision, EIG_[ex][1][1])  <<  F(width, precision, EIG_[ex][2][1])  << std::endl
-			<< A( width, "AL.EVEC ZZ")   << F(width, precision, EIG_[ex][0][2]) <<  F(width, precision, EIG_[ex][1][2])  <<  F(width, precision, EIG_[ex][2][2])  << std::endl;
+		<< A( width, "AL.EVEC XX")   << F(width, precision, EIG_[ex][0][0]) <<  F(width, precision, EIG_[ex][1][0])  <<  F(width, precision, EIG_[ex][2][0])  << std::endl
+		<< A( width, "AL.EVEC YY")   << F(width, precision, EIG_[ex][0][1]) <<  F(width, precision, EIG_[ex][1][1])  <<  F(width, precision, EIG_[ex][2][1])  << std::endl
+		<< A( width, "AL.EVEC ZZ")   << F(width, precision, EIG_[ex][0][2]) <<  F(width, precision, EIG_[ex][1][2])  <<  F(width, precision, EIG_[ex][2][2])  << std::endl;
 }
 
 void ResidualDipolarCoupling::show_rdc_values( std::ostream& out, Size ex ) const {
@@ -1377,33 +1389,33 @@ void ResidualDipolarCoupling::show_rdc_values( std::ostream& out, Size ex ) cons
 	//Size const width_large(6);
 	Size const precision( 3 );
 	utility::vector1<core::scoring::RDC>::const_iterator it;
-	for (it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it) {
-		if(it->expid() == ex){
+	for ( it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it ) {
+		if ( it->expid() == ex ) {
 			Size count( it->res1() );
 			std::string type;
-			if ( it->type() == RDC::RDC_TYPE_NH ) {type ="NH";}
-			if ( it->type() == RDC::RDC_TYPE_CH ) {type ="CH";}
-			if ( it->type() == RDC::RDC_TYPE_NC ) {type ="NC";}
-			if ( it->type() == RDC::RDC_TYPE_CC ) {type ="CC";}
-			if ( it->type() == RDC::RDC_TYPE_CHN ) {type ="CHN";}
-			if ( it->type() == RDC::RDC_TYPE_NCA ) {type ="NCA";}
+			if ( it->type() == RDC::RDC_TYPE_NH ) { type ="NH";}
+			if ( it->type() == RDC::RDC_TYPE_CH ) { type ="CH";}
+			if ( it->type() == RDC::RDC_TYPE_NC ) { type ="NC";}
+			if ( it->type() == RDC::RDC_TYPE_CC ) { type ="CC";}
+			if ( it->type() == RDC::RDC_TYPE_CHN ) { type ="CHN";}
+			if ( it->type() == RDC::RDC_TYPE_NCA ) { type ="NCA";}
 			Real rdc_exp( it->Jdipolar() );
 			Real rdc_computed ( it->Jcomputed());
 			out   << A( width, "RDC" )
-						<< A( width, type )
-						<< I( width, count )
-						<< F( width, precision, rdc_exp )
-						<< F( width, precision, rdc_computed )
-						<< std::endl;
+				<< A( width, type )
+				<< I( width, count )
+				<< F( width, precision, rdc_exp )
+				<< F( width, precision, rdc_computed )
+				<< std::endl;
 		}
 	}
 }
 
 void ResidualDipolarCoupling::compute_tensor_stats() {
-	for (Size ex = 0; ex < nex_; ex++) {
+	for ( Size ex = 0; ex < nex_; ex++ ) {
 		// This section performs diagonlization of the recently optimized alignment tensor (NGS)
 
-    SD_[ex][0][0] =  S_[ex][0][0];
+		SD_[ex][0][0] =  S_[ex][0][0];
 		SD_[ex][0][1] =  S_[ex][0][1];
 		SD_[ex][0][2] =  S_[ex][0][2];
 		SD_[ex][1][1] =  S_[ex][1][1];
@@ -1414,10 +1426,10 @@ void ResidualDipolarCoupling::compute_tensor_stats() {
 		SD_[ex][2][2] =  S_[ex][2][2];
 
 
-		//	std::cout << "AL.TENSOR (molecular frame): " << SD_[ex][0][0] << ' ' <<  SD_[ex][0][1]  << ' ' << 	SD_[ex][0][2] << ' ' << SD_[ex][1][1] << ' ' << SD_[ex][1][2] << std::endl;
+		// std::cout << "AL.TENSOR (molecular frame): " << SD_[ex][0][0] << ' ' <<  SD_[ex][0][1]  << ' ' <<  SD_[ex][0][2] << ' ' << SD_[ex][1][1] << ' ' << SD_[ex][1][2] << std::endl;
 
 
-  	Tensor v2;
+		Tensor v2;
 		int nrot2;
 		rvec ev2;
 
@@ -1439,12 +1451,12 @@ void ResidualDipolarCoupling::compute_tensor_stats() {
 		EV_[ex][1] = ev2[1];
 		EV_[ex][2] = ev2[0];
 
-		//		std::cout << "AL_TENSOR eigenvalues : " << EV_[ex][0] << ' ' << EV_[ex][1]  << ' ' << 	EV_[ex][2]  << ' ' << nrot2 << std::endl;
+		//  std::cout << "AL_TENSOR eigenvalues : " << EV_[ex][0] << ' ' << EV_[ex][1]  << ' ' <<  EV_[ex][2]  << ' ' << nrot2 << std::endl;
 
 		/*std::cout << "AL_TENSOR eigenvectors  : " << std::endl;
-			std::cout << v2[0][0] << "\t" << v2[1][0]  << "\t" << 	v2[2][0]  << std::endl;
-			std::cout << v2[0][1] << "\t" << v2[1][1]  << "\t" << 	v2[2][1]  << std::endl;
-			std::cout << v2[0][2] << "\t" << v2[1][2]  << "\t" << 	v2[2][2]  << std::endl;*/
+		std::cout << v2[0][0] << "\t" << v2[1][0]  << "\t" <<  v2[2][0]  << std::endl;
+		std::cout << v2[0][1] << "\t" << v2[1][1]  << "\t" <<  v2[2][1]  << std::endl;
+		std::cout << v2[0][2] << "\t" << v2[1][2]  << "\t" <<  v2[2][2]  << std::endl;*/
 		trace_[ex] = v2[0][0] + v2[1][1] + v2[2][2];
 		rvec tempvec;
 		tempvec[0] =  v2[0][2];
@@ -1452,15 +1464,15 @@ void ResidualDipolarCoupling::compute_tensor_stats() {
 		tempvec[2] =  v2[2][2];
 		qsort(tempvec, 3, sizeof(core::Real),compare_by_abs);
 		maxz_[ex] = tempvec[0];
-		//	Real ev_trace =  (ev2[2] + ev2[1] +ev2[0]) / 3;
-		//		FA_[ex] = 4.0;
-		//			FA_[ex] = sqrt (0.5) *  sqrt( (ev2[0] - ev_trace)*(ev2[0] - ev_trace) +  (ev2[1] - ev_trace)*(ev2[1] - ev_trace) +  (ev2[2] - ev_trace)*(ev2[2] - ev_trace) ) / sqrt (ev2[0] * ev2[0] + ev2[1] * ev2[1] + ev2[2] * ev2[2]);
-		//	std::cout << "Fractional Anisotropy " << FA_[ex] << std::endl;
+		// Real ev_trace =  (ev2[2] + ev2[1] +ev2[0]) / 3;
+		//  FA_[ex] = 4.0;
+		//   FA_[ex] = sqrt (0.5) *  sqrt( (ev2[0] - ev_trace)*(ev2[0] - ev_trace) +  (ev2[1] - ev_trace)*(ev2[1] - ev_trace) +  (ev2[2] - ev_trace)*(ev2[2] - ev_trace) ) / sqrt (ev2[0] * ev2[0] + ev2[1] * ev2[1] + ev2[2] * ev2[2]);
+		// std::cout << "Fractional Anisotropy " << FA_[ex] << std::endl;
 
-		//	std::cout << "AL.TENSOR (molecular frame after): " << S_[ex][0][0] << ' ' <<  S_[ex][0][1]  << ' ' << 	S_[ex][0][2] << ' ' << S_[ex][1][1] << ' ' << S_[ex][1][2] << std::endl;
+		// std::cout << "AL.TENSOR (molecular frame after): " << S_[ex][0][0] << ' ' <<  S_[ex][0][1]  << ' ' <<  S_[ex][0][2] << ' ' << S_[ex][1][1] << ' ' << S_[ex][1][2] << std::endl;
 
-		//	delete[] v2;
-		//	delete[] ev2;
+		// delete[] v2;
+		// delete[] ev2;
 
 	} //for ( ex = 0 .. nex )
 }
@@ -1472,38 +1484,45 @@ int m_inv_gen(Tensor5 m,int n,Tensor5 minv)
 	Real tol,s;
 	int nzero,i,j,k,nrot;
 	//   md = new Real*[n];
-	// 	v = new Real*[n];
+	//  v = new Real*[n];
 	//   for(i=0; i<n; i++) {
 	//     md[i] = new Real[n];
 	//     v[i] = new Real[n];
-	// 	}
-	// 	eig = new Real[ n ];
-	for(i=0; i<n; i++)
-		for(j=0; j<n; j++)
+	//  }
+	//  eig = new Real[ n ];
+	for ( i=0; i<n; i++ ) {
+		for ( j=0; j<n; j++ ) {
 			md[i][j] = m[i][j];
+		}
+	}
 
 	tol = 0;
-	for(i=0; i<n; i++)
+	for ( i=0; i<n; i++ ) {
 		tol += fabs(md[i][i]);
+	}
 	tol = 1e-6*tol/n;
 
 	jacobi(md,eig,v,&nrot);
 
 	nzero = 0;
-	for(i=0; i<n; i++)
-	if (fabs(eig[i]) < tol) {
-		eig[i] = 0;
-		nzero++;
-	} else
-		eig[i] = 1.0/eig[i];
+	for ( i=0; i<n; i++ ) {
+		if ( fabs(eig[i]) < tol ) {
+			eig[i] = 0;
+			nzero++;
+		} else {
+			eig[i] = 1.0/eig[i];
+		}
+	}
 
-	for(i=0; i<n; i++)
-		for(j=0; j<n; j++) {
+	for ( i=0; i<n; i++ ) {
+		for ( j=0; j<n; j++ ) {
 			s = 0;
-			for(k=0; k<n; k++)
+			for ( k=0; k<n; k++ ) {
 				s += eig[k]*v[i][k]*v[j][k];
+			}
 			minv[i][j] = s;
 		}
+	}
 
 	return nzero;
 }
@@ -1518,42 +1537,44 @@ void jacobi(Real a[5][5],Real d[],Real v[5][5],int *nrot) {
 	Real b[5];
 	Real z[5];
 	int const n( 5 );
-	for (ip=0; ip<n; ip++) {
-		for (iq=0; iq<n; iq++) v[ip][iq]=0.0;
+	for ( ip=0; ip<n; ip++ ) {
+		for ( iq=0; iq<n; iq++ ) v[ip][iq]=0.0;
 		v[ip][ip]=1.0;
 	}
-	for (ip=0; ip<n;ip++) {
+	for ( ip=0; ip<n; ip++ ) {
 		b[ip]=d[ip]=a[ip][ip];
 		z[ip]=0.0;
 	}
 	*nrot=0;
-	for (i=1; i<=50; i++) {
+	for ( i=1; i<=50; i++ ) {
 		sm=0.0;
-		for (ip=0; ip<n-1; ip++) {
-			for (iq=ip+1; iq<n; iq++)
+		for ( ip=0; ip<n-1; ip++ ) {
+			for ( iq=ip+1; iq<n; iq++ ) {
 				sm += fabs(a[ip][iq]);
+			}
 		}
-		if (sm == 0.0) {
+		if ( sm == 0.0 ) {
 			return;
 		}
-		if (i < 4) //first 3 iterations
+		if ( i < 4 ) { //first 3 iterations
 			tresh=0.2*sm/(n*n);
-		else
+		} else {
 			tresh=0.0;
-		for (ip=0; ip<n-1; ip++) {
-			for (iq=ip+1; iq<n; iq++) {
+		}
+		for ( ip=0; ip<n-1; ip++ ) {
+			for ( iq=ip+1; iq<n; iq++ ) {
 				g=100.0*fabs(a[ip][iq]);
-				if (i > 4 && fabs(d[ip])+g == fabs(d[ip])
-					&& fabs(d[iq])+g == fabs(d[iq]))
+				if ( i > 4 && fabs(d[ip])+g == fabs(d[ip])
+						&& fabs(d[iq])+g == fabs(d[iq]) ) {
 					a[ip][iq]=0.0;
-				else if (fabs(a[ip][iq]) > tresh) {
+				} else if ( fabs(a[ip][iq]) > tresh ) {
 					h=d[iq]-d[ip];
-					if (fabs(h)+g == fabs(h))
+					if ( fabs(h)+g == fabs(h) ) {
 						t=(a[ip][iq])/h;
-					else {
+					} else {
 						theta=0.5*h/(a[ip][iq]);
 						t=1.0/(fabs(theta)+sqrt(1.0+theta*theta));
-						if (theta < 0.0) t = -t;
+						if ( theta < 0.0 ) t = -t;
 					}
 					c=1.0/sqrt(1+t*t);
 					s=t*c;
@@ -1564,75 +1585,77 @@ void jacobi(Real a[5][5],Real d[],Real v[5][5],int *nrot) {
 					d[ip] -= h;
 					d[iq] += h;
 					a[ip][iq]=0.0;
-					for (j=0; j<ip; j++) {
+					for ( j=0; j<ip; j++ ) {
 						ROTATE(a,j,ip,j,iq)
+							}
+							for (j=ip+1; j<iq; j++) {
+							ROTATE(a,ip,j,j,iq)
+							}
+							for (j=iq+1; j<n; j++) {
+							ROTATE(a,ip,j,iq,j)
+							}
+							for (j=0; j<n; j++) {
+							ROTATE(v,j,ip,j,iq)
+							}
+							++(*nrot);
 					}
-					for (j=ip+1; j<iq; j++) {
-						ROTATE(a,ip,j,j,iq)
-					}
-					for (j=iq+1; j<n; j++) {
-						ROTATE(a,ip,j,iq,j)
-					}
-					for (j=0; j<n; j++) {
-						ROTATE(v,j,ip,j,iq)
-					}
-					++(*nrot);
 				}
 			}
+			for ( ip=0; ip<n; ip++ ) {
+				b[ip] +=  z[ip];
+				d[ip]  =  b[ip];
+				z[ip]  =  0.0;
+			}
 		}
-		for (ip=0; ip<n; ip++) {
-			b[ip] +=  z[ip];
-			d[ip]  =  b[ip];
-			z[ip]  =  0.0;
-		}
+		//probably different type of Exception is better suited
+		throw( utility::excn::EXCN_BadInput(" too many iterations in Jacobi when compute RDC tensor") );
 	}
-	//probably different type of Exception is better suited
-	throw( utility::excn::EXCN_BadInput(" too many iterations in Jacobi when compute RDC tensor") );
-}
 
-void jacobi3(Real a[3][3],Real d[],Real v[3][3],int *nrot) {
-	int j,i;
+	void jacobi3(Real a[3][3],Real d[],Real v[3][3],int *nrot) {
+		int j,i;
 	int iq,ip;
 	Real tresh,theta,tau,t,sm,s,h,g,c;
 	Real b[3];
 	Real z[3];
 	int const n( 3 );
-	for (ip=0; ip<n; ip++) {
-		for (iq=0; iq<n; iq++) v[ip][iq]=0.0;
+	for ( ip=0; ip<n; ip++ ) {
+		for ( iq=0; iq<n; iq++ ) v[ip][iq]=0.0;
 		v[ip][ip]=1.0;
 	}
-	for (ip=0; ip<n;ip++) {
+	for ( ip=0; ip<n; ip++ ) {
 		b[ip]=d[ip]=a[ip][ip];
 		z[ip]=0.0;
 	}
 	*nrot=0;
-	for (i=1; i<=50; i++) {
+	for ( i=1; i<=50; i++ ) {
 		sm=0.0;
-		for (ip=0; ip<n-1; ip++) {
-			for (iq=ip+1; iq<n; iq++)
+		for ( ip=0; ip<n-1; ip++ ) {
+			for ( iq=ip+1; iq<n; iq++ ) {
 				sm += fabs(a[ip][iq]);
+			}
 		}
-		if (sm == 0.0) {
+		if ( sm == 0.0 ) {
 			return;
 		}
-		if (i < 4) //first 3 iterations
+		if ( i < 4 ) { //first 3 iterations
 			tresh=0.2*sm/(n*n);
-		else
+		} else {
 			tresh=0.0;
-		for (ip=0; ip<n-1; ip++) {
-			for (iq=ip+1; iq<n; iq++) {
+		}
+		for ( ip=0; ip<n-1; ip++ ) {
+			for ( iq=ip+1; iq<n; iq++ ) {
 				g=100.0*fabs(a[ip][iq]);
-				if (i > 4 && fabs(d[ip])+g == fabs(d[ip])
-					&& fabs(d[iq])+g == fabs(d[iq]))
+				if ( i > 4 && fabs(d[ip])+g == fabs(d[ip])
+						&& fabs(d[iq])+g == fabs(d[iq]) ) {
 					a[ip][iq]=0.0;
-				else if (fabs(a[ip][iq]) > tresh) {
+				} else if ( fabs(a[ip][iq]) > tresh ) {
 					h=d[iq]-d[ip];
-					if (fabs(h)+g == fabs(h))
+					if ( fabs(h)+g == fabs(h) ) {
 						t=(a[ip][iq])/h;
-					else {
+					} else {
 						theta=0.5*h/(a[ip][iq]);
 						t=1.0/(fabs(theta)+sqrt(1.0+theta*theta));
-						if (theta < 0.0) t = -t;
+						if ( theta < 0.0 ) t = -t;
 					}
 					c=1.0/sqrt(1+t*t);
 					s=t*c;
@@ -1643,23 +1666,23 @@ void jacobi3(Real a[3][3],Real d[],Real v[3][3],int *nrot) {
 					d[ip] -= h;
 					d[iq] += h;
 					a[ip][iq]=0.0;
-					for (j=0; j<ip; j++) {
+					for ( j=0; j<ip; j++ ) {
 						ROTATE(a,j,ip,j,iq);
 					}
-					for (j=ip+1; j<iq; j++) {
+					for ( j=ip+1; j<iq; j++ ) {
 						ROTATE(a,ip,j,j,iq);
 					}
-					for (j=iq+1; j<n; j++) {
+					for ( j=iq+1; j<n; j++ ) {
 						ROTATE(a,ip,j,iq,j);
 					}
-					for (j=0; j<n; j++) {
+					for ( j=0; j<n; j++ ) {
 						ROTATE(v,j,ip,j,iq);
 					}
 					++(*nrot);
 				}
 			}
 		}
-		for (ip=0; ip<n; ip++) {
+		for ( ip=0; ip<n; ip++ ) {
 			b[ip] +=  z[ip];
 			d[ip]  =  b[ip];
 			z[ip]  =  0.0;

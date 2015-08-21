@@ -66,7 +66,7 @@ std::string join(utility::vector1<T> const & vector, std::string const & connect
 	std::ostringstream os;
 	typename utility::vector1<T>::const_iterator begin= vector.begin();
 	os << *begin++;
-	for(; begin != vector.end(); ++begin){
+	for ( ; begin != vector.end(); ++begin ) {
 		os<< connector<< *begin;
 	}
 	return os.str();
@@ -179,7 +179,7 @@ void replace_in( std::string & s, const char from, const char *to )
 {
 	// fix string
 	for ( unsigned int c = 0; c < s.length(); ++c ) {
-		if( s[c] == from ) s.replace(c,1,to);
+		if ( s[c] == from ) s.replace(c,1,to);
 	}
 }
 
@@ -203,9 +203,9 @@ inline T const from_string (std::string const & s, T )
 	std::istringstream ss(s);
 	ss >> t;
 	if ( ss.fail() ) {
-			const char* type = typeid(T).name();
-			utility_exit_with_message("cannot convert string "+s+" to type "+type);
-		}
+		const char* type = typeid(T).name();
+		utility_exit_with_message("cannot convert string "+s+" to type "+type);
+	}
 
 	return t;
 }
@@ -214,7 +214,7 @@ template <class T>
 inline utility::vector1<T> const string_split (std::string const &in,char splitchar,T)
 {
 	utility::vector1<T> parts;
-	if (in.size()==0) {
+	if ( in.size()==0 ) {
 		return parts;
 	}
 
@@ -226,9 +226,9 @@ inline utility::vector1<T> const string_split (std::string const &in,char splitc
 		std::istringstream ss(item);
 		ss >> t;
 		if ( ss.fail() ) {
-				const char* type = typeid(T).name();
-				utility_exit_with_message("cannot convert string '"+item+"' to type "+type);
-			}
+			const char* type = typeid(T).name();
+			utility_exit_with_message("cannot convert string '"+item+"' to type "+type);
+		}
 
 		parts.push_back( t );
 		i = j+1;
@@ -281,13 +281,13 @@ is_false_string( std::string const & value_str )
 /// @brief Compactifies vectors of ints:  1 2 3 9 10 11 to "1-3 9-11"
 std::string
 make_tag_with_dashes( utility::vector1< int > res_vector,
-											char const delimiter = ' ' );
+	char const delimiter = ' ' );
 
 // Compactifies vectors of ints and chars (resnum and chain):  1A 2A 3A 9B 10B 11B to "A:1-3 B:9-11"
 std::string
 make_tag_with_dashes( utility::vector1< int > res_vector,
-											utility::vector1< char > chain_vector,
-											char const delimiter = ' ' );
+	utility::vector1< char > chain_vector,
+	char const delimiter = ' ' );
 
 std::string
 make_tag( utility::vector1< int > res_vector );
@@ -299,8 +299,8 @@ get_resnum_and_chain( std::string const & s, bool & string_is_ok );
 /// @brief helper function for get_resnum_and_chain
 bool
 get_resnum_and_chain_from_one_tag( std::string const & tag,
-																	 std::vector< int > & resnum,
-																	 std::vector< char > & chains );
+	std::vector< int > & resnum,
+	std::vector< char > & chains );
 
 
 platform::Size

@@ -29,8 +29,8 @@
 #include <math.h> // for round, floor, ceil, trunc, sqrt
 
 // c++
-#include <algorithm>	// for avg,min,max
-#include <cmath>	// for std::abs				// reference:	http://www.cplusplus.com/reference/cmath/abs/
+#include <algorithm> // for avg,min,max
+#include <cmath> // for std::abs    // reference: http://www.cplusplus.com/reference/cmath/abs/
 #include <fstream>
 #include <iostream>
 #include <numeric>
@@ -95,13 +95,13 @@
 
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 
 template <typename T, size_t N> const T* mybegin(const T (&a)[N]) { return a; }
 template <typename T, size_t N> const T* myend  (const T (&a)[N]) { return a+N; }
-// reference:	http://stackoverflow.com/questions/9874802/how-can-i-get-the-max-or-min-value-in-a-vector-c
+// reference: http://stackoverflow.com/questions/9874802/how-can-i-get-the-max-or-min-value-in-a-vector-c
 
 
 namespace protocols {

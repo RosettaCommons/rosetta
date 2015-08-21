@@ -9,8 +9,8 @@
 
 /// @file   core/conformation/symmetry/SymmetricConformation.hh
 /// @brief  symmetry conformation container.
-//					Contains overloaded functions needed to
-//					make changes in conformation symmetric
+//     Contains overloaded functions needed to
+//     make changes in conformation symmetric
 /// @author Phil Bradley, Ingemar Andre
 
 // Unit headers
@@ -47,16 +47,16 @@ static thread_local basic::Tracer TR( "core.conformation.symmetry.Conformation" 
 
 /// @brief  Default CTOR
 SymmetricConformation::SymmetricConformation():
-		Conformation(),
-		symm_info_()
+	Conformation(),
+	symm_info_()
 {
 	Tsymm_.clear();
 }
 
 /// @brief  Default CTOR
 SymmetricConformation::SymmetricConformation(Conformation const & conf, SymmetryInfo const & symm_info):
-		Conformation(conf),
-		symm_info_()
+	Conformation(conf),
+	symm_info_()
 {
 	symm_info_ = symm_info.clone();
 	Tsymm_.clear();  // force recompute
@@ -99,14 +99,14 @@ SymmetricConformation::clone() const
 bool
 SymmetricConformation::same_type_as_me( Conformation const & other, bool recurse  /* = true */ ) const
 {
-   if ( ! dynamic_cast< SymmetricConformation const * > ( &other) ) {
-      return false;
-   }
-   if ( recurse ) {
-      return other.same_type_as_me( *this, false );
-   } else {
-      return true;
-   }
+	if ( ! dynamic_cast< SymmetricConformation const * > ( &other) ) {
+		return false;
+	}
+	if ( recurse ) {
+		return other.same_type_as_me( *this, false );
+	} else {
+		return true;
+	}
 }
 
 SymmetryInfoCOP
@@ -134,7 +134,7 @@ SymmetricConformation::set_dof( DOF_ID const & id, Real const setting )
 
 	if ( !symm_info_->dof_is_independent( id, *this ) ) {
 		TR.Debug << "SymmetricConformation:: directly setting a dependent DOF!, try to set its parent" << std::endl;
-		if (id.type() >= id::RB1 && id.type() <= id::RB6) {
+		if ( id.type() >= id::RB1 && id.type() <= id::RB6 ) {
 			int parent_jump = symm_info_->jump_follows( fold_tree().get_jump_that_builds_residue( id.rsd() ) );
 			parent_rsd = fold_tree().downstream_jump_residue( parent_jump );
 		} else {
@@ -144,7 +144,7 @@ SymmetricConformation::set_dof( DOF_ID const & id, Real const setting )
 		parent_rsd = id.rsd();
 	}
 
-	if (id.type() >= id::RB1 && id.type() <= id::RB6) {
+	if ( id.type() >= id::RB1 && id.type() <= id::RB6 ) {
 		Tsymm_.clear();
 	}
 
@@ -170,7 +170,7 @@ SymmetricConformation::set_secstruct( Size const seqpos, char const setting )
 	Conformation::set_secstruct( seqpos, setting );
 	if ( symm_info_->bb_is_independent( seqpos ) ) {
 		for ( SymmetryInfo::Clones::const_iterator pos=symm_info_->bb_clones( seqpos ).begin(),
-			epos=symm_info_->bb_clones( seqpos ).end(); pos != epos; ++pos ) {
+				epos=symm_info_->bb_clones( seqpos ).end(); pos != epos; ++pos ) {
 			Conformation::set_secstruct( *pos, setting );
 		}
 	} else {
@@ -257,7 +257,7 @@ SymmetricConformation::set_torsion_angle(
 		SymmetryInfo::Clones clones3 = symm_info_->bb_clones( parent_atom3.rsd() );
 		SymmetryInfo::Clones clones4 = symm_info_->bb_clones( parent_atom4.rsd() );
 		AtomID dep_atom1, dep_atom2, dep_atom3, dep_atom4;
-		for (int i=1; i<=(int)nclones; ++i) {
+		for ( int i=1; i<=(int)nclones; ++i ) {
 			dep_atom1 = id::AtomID( atom1.atomno(), clones1[i] );
 			dep_atom2 = id::AtomID( atom2.atomno(), clones2[i] );
 			dep_atom3 = id::AtomID( atom3.atomno(), clones3[i] );
@@ -303,7 +303,7 @@ SymmetricConformation::set_bond_angle(
 		SymmetryInfo::Clones clones2 = symm_info_->bb_clones( parent_atom2.rsd() );
 		SymmetryInfo::Clones clones3 = symm_info_->bb_clones( parent_atom3.rsd() );
 		AtomID dep_atom1, dep_atom2, dep_atom3;
-		for (int i=1; i<=(int)nclones; ++i) {
+		for ( int i=1; i<=(int)nclones; ++i ) {
 			dep_atom1 = id::AtomID( atom1.atomno(), clones1[i] );
 			dep_atom2 = id::AtomID( atom2.atomno(), clones2[i] );
 			dep_atom3 = id::AtomID( atom3.atomno(), clones3[i] );
@@ -343,7 +343,7 @@ SymmetricConformation::set_bond_length(
 		SymmetryInfo::Clones clones1 = symm_info_->bb_clones( parent_atom1.rsd() );
 		SymmetryInfo::Clones clones2 = symm_info_->bb_clones( parent_atom2.rsd() );
 		AtomID dep_atom1, dep_atom2, dep_atom3;
-		for (int i=1; i<=(int)nclones; ++i) {
+		for ( int i=1; i<=(int)nclones; ++i ) {
 			dep_atom1 = id::AtomID( atom1.atomno(), clones1[i] );
 			dep_atom2 = id::AtomID( atom2.atomno(), clones2[i] );
 			Conformation::set_bond_length( dep_atom1, dep_atom2, setting );
@@ -372,7 +372,7 @@ SymmetricConformation::set_jump( int const jump_number, kinematics::Jump const &
 		TR.Warning << "the jump " << jump_number << " is controlled by " << symm_info_->jump_follows( jump_number ) << std::endl;
 	} else {
 		for ( Clones::const_iterator pos= symm_info_->jump_clones( jump_number ).begin(),
-		      epos=symm_info_->jump_clones( jump_number ).end(); pos != epos; ++pos ) {
+				epos=symm_info_->jump_clones( jump_number ).end(); pos != epos; ++pos ) {
 			id::AtomID const id_clone( Conformation::jump_atom_id( *pos ) );
 			Conformation::set_jump( id_clone, new_jump );
 		}
@@ -393,11 +393,11 @@ SymmetricConformation::set_jump( id::AtomID const & id, kinematics::Jump const &
 	Conformation::set_jump( id, new_jump );
 
 	int const jump_number ( fold_tree().get_jump_that_builds_residue( id.rsd() ) );
- 	if ( !symm_info_->jump_is_independent( jump_number ) ) {
-   TR.Warning << "SymmetricConformation:: directly setting a dependent ATOM!" << std::endl;
+	if ( !symm_info_->jump_is_independent( jump_number ) ) {
+		TR.Warning << "SymmetricConformation:: directly setting a dependent ATOM!" << std::endl;
 	} else {
 		for ( Clones::const_iterator pos= symm_info_->jump_clones( jump_number ).begin(),
-		      epos=symm_info_->jump_clones( jump_number ).end(); pos != epos; ++pos ) {
+				epos=symm_info_->jump_clones( jump_number ).end(); pos != epos; ++pos ) {
 			id::AtomID const id_clone( Conformation::jump_atom_id( *pos ) );
 			Conformation::set_jump( id_clone, new_jump );
 		}
@@ -431,9 +431,9 @@ SymmetricConformation::replace_residue( Size const seqpos, Residue const & new_r
 		parent_rsd = symm_info_->bb_follows( seqpos ) ;
 
 		// if we're not orienting backbone, we need to transform the coord frame to that of the ind. subunit
-		if (!orient_backbone) {
+		if ( !orient_backbone ) {
 			// make the new res
-			for (int i=1; i<=(int)new_rsd.natoms(); ++i) {
+			for ( int i=1; i<=(int)new_rsd.natoms(); ++i ) {
 				new_rsd.set_xyz(i , apply_transformation( new_rsd_in.xyz(i), seqpos, parent_rsd ) );
 			}
 		}
@@ -446,13 +446,13 @@ SymmetricConformation::replace_residue( Size const seqpos, Residue const & new_r
 
 	// now the copies
 	for ( SymmetryInfo::Clones::const_iterator pos=symm_info_->bb_clones( parent_rsd ).begin(),
-	      epos=symm_info_->bb_clones( parent_rsd ).end(); pos != epos; ++pos ) {
+			epos=symm_info_->bb_clones( parent_rsd ).end(); pos != epos; ++pos ) {
 		// if we're not orienting backbone, update symm copies using local coord frame for each
 		//fpd --> we already oriented backbone for master, that should be good enough
-		if (!orient_backbone) {
+		if ( !orient_backbone ) {
 			// make the new res
 			Residue new_new_rsd = new_rsd;
-			for (int i=1; i<=(int)new_new_rsd.natoms(); ++i) {
+			for ( int i=1; i<=(int)new_new_rsd.natoms(); ++i ) {
 				new_new_rsd.set_xyz(i , apply_transformation( new_rsd.xyz(i), parent_rsd, *pos ) );
 			}
 			Conformation::replace_residue( *pos, new_new_rsd, false );
@@ -462,14 +462,14 @@ SymmetricConformation::replace_residue( Size const seqpos, Residue const & new_r
 	}
 
 	//fpd may have implicitly changed a jump
-	if (residue(seqpos).aa() == core::chemical::aa_vrt) Tsymm_.clear();
+	if ( residue(seqpos).aa() == core::chemical::aa_vrt ) Tsymm_.clear();
 }
 
 /// @details symmetry-safe replace residue
 void
 SymmetricConformation::replace_residue( Size const seqpos,
-                 Residue const & new_rsd,
-                 utility::vector1< std::pair< std::string, std::string > > const & atom_pairs )  {
+	Residue const & new_rsd,
+	utility::vector1< std::pair< std::string, std::string > > const & atom_pairs )  {
 	core::Size parent_rsd;
 
 	if ( !symm_info_->bb_is_independent( seqpos ) ) {
@@ -484,25 +484,26 @@ SymmetricConformation::replace_residue( Size const seqpos,
 
 	// now the copies
 	for ( SymmetryInfo::Clones::const_iterator pos=symm_info_->bb_clones( parent_rsd ).begin(),
-	      epos=symm_info_->bb_clones( parent_rsd ).end(); pos != epos; ++pos ) {
+			epos=symm_info_->bb_clones( parent_rsd ).end(); pos != epos; ++pos ) {
 		//fpd Same logic as above; we already oriented backbone for master, that should be good enough
 		// make the new res
 		Residue new_new_rsd = new_rsd;
-		for (int i=1; i<=(int)new_new_rsd.natoms(); ++i) {
+		for ( int i=1; i<=(int)new_new_rsd.natoms(); ++i ) {
 			new_new_rsd.set_xyz(i , apply_transformation( new_rsd.xyz(i), parent_rsd, *pos ) );
 		}
 		Conformation::replace_residue( *pos, new_new_rsd, false );
 	}
 
 	//fpd may have implicitly changed a jump
-	if (residue(seqpos).aa() == core::chemical::aa_vrt) Tsymm_.clear();
+	if ( residue(seqpos).aa() == core::chemical::aa_vrt ) Tsymm_.clear();
 }
 
 
 core::Size
 SymmetricConformation::get_upstream_vrt( Size seqpos ) const {
-	if (this->residue( seqpos ).aa() == core::chemical::aa_vrt)
+	if ( this->residue( seqpos ).aa() == core::chemical::aa_vrt ) {
 		return seqpos;
+	}
 
 	// find peptide segment that contains this res (?)
 	core::kinematics::Edge const &e = fold_tree().get_residue_edge( seqpos );
@@ -519,11 +520,12 @@ SymmetricConformation::get_upstream_vrt( Size seqpos ) const {
 // Get the transformation controlling resid i
 numeric::HomogeneousTransform< core::Real >
 SymmetricConformation::get_transformation( core::Size resid ) {
-	if ( Tsymm_.size() == 0 )
+	if ( Tsymm_.size() == 0 ) {
 		recalculate_transforms( );
+	}
 
 	char compid = 'A';
-	if (symm_info_->get_num_components() >= 2) {
+	if ( symm_info_->get_num_components() >= 2 ) {
 		compid = symm_info_->get_component_of_residue( resid );
 	}
 
@@ -533,16 +535,17 @@ SymmetricConformation::get_transformation( core::Size resid ) {
 //  Remap coordinate X from resid i to j
 PointPosition
 SymmetricConformation::apply_transformation(
-		PointPosition Xin,
-		core::Size residfrom,
-		core::Size residto,
-		bool rotationonly ) {
-	if (Tsymm_.size() == 0 )
+	PointPosition Xin,
+	core::Size residfrom,
+	core::Size residto,
+	bool rotationonly ) {
+	if ( Tsymm_.size() == 0 ) {
 		recalculate_transforms( );
+	}
 
 	char compid = 'A';
-	if (symm_info_->get_num_components() >= 2) {
-	debug_assert( symm_info_->get_component_of_residue(residfrom) == symm_info_->get_component_of_residue(residto) );
+	if ( symm_info_->get_num_components() >= 2 ) {
+		debug_assert( symm_info_->get_component_of_residue(residfrom) == symm_info_->get_component_of_residue(residto) );
 		compid = symm_info_->get_component_of_residue( residfrom );
 	}
 
@@ -551,7 +554,7 @@ SymmetricConformation::apply_transformation(
 	numeric::HomogeneousTransform< core::Real > Tsymm_from = T_i[ symm_info_->subunit_index( residfrom ) ];
 	numeric::HomogeneousTransform< core::Real > Tsymm_to = T_i[ symm_info_->subunit_index( residto ) ];
 
-	if (rotationonly) {
+	if ( rotationonly ) {
 		Tsymm_from.set_identity_transform();
 		Tsymm_to.set_identity_transform();
 	}
@@ -568,13 +571,13 @@ SymmetricConformation::apply_transformation(
 //  Remap coordinate X from resid i to j
 PointPosition
 SymmetricConformation::apply_transformation_norecompute(
-		PointPosition Xin,
-		core::Size residfrom,
-		core::Size residto,
-		bool rotationonly ) const {
+	PointPosition Xin,
+	core::Size residfrom,
+	core::Size residto,
+	bool rotationonly ) const {
 	char compid = 'A';
-	if (symm_info_->get_num_components() >= 2) {
-	debug_assert( symm_info_->get_component_of_residue(residfrom) == symm_info_->get_component_of_residue(residto) );
+	if ( symm_info_->get_num_components() >= 2 ) {
+		debug_assert( symm_info_->get_component_of_residue(residfrom) == symm_info_->get_component_of_residue(residto) );
 		compid = symm_info_->get_component_of_residue( residfrom );
 	}
 
@@ -583,7 +586,7 @@ SymmetricConformation::apply_transformation_norecompute(
 	numeric::HomogeneousTransform< core::Real > Tsymm_from = T_i[ symm_info_->subunit_index( residfrom ) ];
 	numeric::HomogeneousTransform< core::Real > Tsymm_to = T_i[ symm_info_->subunit_index( residto ) ];
 
-	if (rotationonly) {
+	if ( rotationonly ) {
 		Tsymm_from.set_identity_transform();
 		Tsymm_to.set_identity_transform();
 	}
@@ -597,8 +600,8 @@ SymmetricConformation::apply_transformation_norecompute(
 //  Symmetric set_xyz
 void
 SymmetricConformation::set_xyz(
-		AtomID const & id,
-		PointPosition const & position ) {
+	AtomID const & id,
+	PointPosition const & position ) {
 	TR.Debug << "SymmetricConformation::set_xyz: " << id << std::endl;
 
 	AtomID parent_id;
@@ -625,7 +628,7 @@ SymmetricConformation::set_xyz(
 	// set parent XYZ using base-class method, followed by all copies
 	Conformation::set_xyz( parent_id, parent_pos );
 	for ( SymmetryInfo::Clones::const_iterator pos=symm_info_->bb_clones( parent_id.rsd() ).begin(),
-	      epos=symm_info_->bb_clones( parent_id.rsd() ).end(); pos != epos; ++pos ) {
+			epos=symm_info_->bb_clones( parent_id.rsd() ).end(); pos != epos; ++pos ) {
 		AtomID id_i = AtomID( id.atomno(), *pos );
 		PointPosition pos_i = apply_transformation( parent_pos, parent_id.rsd(), *pos );
 		Conformation::set_xyz( id_i, pos_i );
@@ -646,7 +649,7 @@ SymmetricConformation::batch_set_xyz(
 
 	// pass set_xyz on symmetric vrts directly to the base class
 	// this is potentially dangerous but may be useful
-	for (int i=1; i<=(int)ids.size(); ++i) {
+	for ( int i=1; i<=(int)ids.size(); ++i ) {
 		AtomID id=ids[i], parent_id;
 		PointPosition position=positions[i], parent_pos;
 
@@ -669,7 +672,7 @@ SymmetricConformation::batch_set_xyz(
 			ids_with_symm.push_back( parent_id );
 			positions_with_symm.push_back( parent_pos );
 			for ( SymmetryInfo::Clones::const_iterator pos=symm_info_->bb_clones( parent_id.rsd() ).begin(),
-						epos=symm_info_->bb_clones( parent_id.rsd() ).end(); pos != epos; ++pos ) {
+					epos=symm_info_->bb_clones( parent_id.rsd() ).end(); pos != epos; ++pos ) {
 				AtomID id_i = AtomID( id.atomno(), *pos );
 				PointPosition pos_i = apply_transformation( parent_pos, parent_id.rsd(), *pos );
 				ids_with_symm.push_back( id_i );
@@ -712,9 +715,9 @@ SymmetricConformation::recalculate_transforms( ) {
 				for ( Size j=1; j<= f.num_jump(); ++j ) {
 					Size downstream = f.downstream_jump_residue(j), upstream = f.upstream_jump_residue(j);
 					if ( this->residue( upstream ).aa() == chemical::aa_vrt
-								&& downstream <= symm_info_->num_total_residues_without_pseudo()
-								&& symm_info_->subunit_index( downstream ) == isub
-								&& ( ncomps==1 || symm_info_->get_component_of_residue( downstream ) == comptag ) ) {
+							&& downstream <= symm_info_->num_total_residues_without_pseudo()
+							&& symm_info_->subunit_index( downstream ) == isub
+							&& ( ncomps==1 || symm_info_->get_component_of_residue( downstream ) == comptag ) ) {
 						vrt_ctrl = f.upstream_jump_residue(j);
 						//TR.Trace << "Found control virtual: subunit= " << isub << " vrt_ctrl= " << vrt_ctrl << std::endl;
 						break;
@@ -737,9 +740,9 @@ SymmetricConformation::recalculate_transforms( ) {
 				for ( Size j=1; j<= f.num_jump(); ++j ) {
 					Size downstream = f.downstream_jump_residue(j), upstream = f.upstream_jump_residue(j);
 					if ( this->residue( upstream ).aa() == chemical::aa_vrt
-								&& downstream <= symm_info_->num_total_residues_without_pseudo()
-								&& symm_info_->subunit_index( downstream ) == isub
-								&& ( ncomps==1 || symm_info_->get_component_of_residue( downstream ) == comptag ) ) {
+							&& downstream <= symm_info_->num_total_residues_without_pseudo()
+							&& symm_info_->subunit_index( downstream ) == isub
+							&& ( ncomps==1 || symm_info_->get_component_of_residue( downstream ) == comptag ) ) {
 						vrt_ctrl = f.upstream_jump_residue(j);
 						//TR.Trace << "Found control virtual: subunit= " << isub << " vrt_ctrl= " << vrt_ctrl << std::endl;
 						break;
@@ -770,7 +773,7 @@ SymmetricConformation::recalculate_transforms( ) {
 				} else {
 					for ( Size i=1; i<= this->size(); ++i ) {
 						if ( symm_info_->chi_follows(i) == first_independent_res &&
-								 symm_info_->subunit_index(i) == isub ) {
+								symm_info_->subunit_index(i) == isub ) {
 							coordframe_pos = i;
 							break;
 						}
@@ -823,9 +826,9 @@ SymmetricConformation::recalculate_transforms( ) {
 
 			//TR.Debug << "[TRANSFORM " << i << "/" << vrt_ctrl << "]" << std::endl
 			//         << "     X =  (" << X[0] << "," << X[1] << "," << X[2] << ")" << std::endl
-			// 				 << "     Y =  (" << Y[0] << "," << Y[1] << "," << Y[2] << ")" << std::endl
-			// 				 << "     Z =  (" << Z[0] << "," << Z[1] << "," << Z[2] << ")" << std::endl
-			// 				 << "  orig =  (" << orig[0] << "," << orig[1] << "," << orig[2] << ")" << std::endl;
+			//      << "     Y =  (" << Y[0] << "," << Y[1] << "," << Y[2] << ")" << std::endl
+			//      << "     Z =  (" << Z[0] << "," << Z[1] << "," << Z[2] << ")" << std::endl
+			//      << "  orig =  (" << orig[0] << "," << orig[1] << "," << orig[2] << ")" << std::endl;
 			Tsymm_[comptag][isub] = HomogeneousTransform< core::Real>( orig-Y,orig-Z, orig );
 		}
 	}
@@ -842,7 +845,7 @@ SymmetricConformation::append_residue_by_jump(
 	bool const start_new_chain // default false
 )
 {
-	if (start_new_chain) {
+	if ( start_new_chain ) {
 		TR.Warning << "SymmetricConformation::append_residue_by_jump ignores start_new_chain" << std::endl;
 	}
 
@@ -860,7 +863,7 @@ SymmetricConformation::append_residue_by_jump(
 		Residue new_new_rsd = new_rsd;
 		if ( !symm_info_->bb_is_independent( seqpos ) ) {
 			// transform coords
-			for (int j=1; j<=(int)new_new_rsd.natoms(); ++j) {
+			for ( int j=1; j<=(int)new_new_rsd.natoms(); ++j ) {
 				new_new_rsd.set_xyz(j , apply_transformation( new_rsd.xyz(j), nres_monomer, seqpos ) );
 			}
 		}
@@ -886,7 +889,7 @@ SymmetricConformation::insert_conformation_by_jump(
 	std::string const & anchor_atom,
 	std::string const & root_atom
 ) {
-	if (anchor_jump_number != 0) {
+	if ( anchor_jump_number != 0 ) {
 		TR.Warning << "SymmetricConformation::insert_conformation_by_jump ignores anchor_jump_number" << std::endl;
 	}
 
@@ -906,8 +909,8 @@ SymmetricConformation::insert_conformation_by_jump(
 		ConformationOP new_new_conf = new_conf.clone();
 		if ( !symm_info_->bb_is_independent( anchor_i ) ) {
 			// transform coords
-			for (core::Size j=1; j<=new_new_conf->size(); ++j) {
-				for (core::Size k=1; k<=new_new_conf->residue(j).natoms(); ++k) {
+			for ( core::Size j=1; j<=new_new_conf->size(); ++j ) {
+				for ( core::Size k=1; k<=new_new_conf->residue(j).natoms(); ++k ) {
 					new_new_conf->set_xyz(core::id::AtomID(k,j) , apply_transformation( new_conf.residue(j).xyz(k), nres_monomer, anchor_i ) );
 				}
 			}
@@ -926,20 +929,20 @@ SymmetricConformation::insert_conformation_by_jump(
 }
 
 /**
- * @brief Detect existing disulfides from the protein structure.
- * @details For full atom confomations, looks at SG-SG distance. If the SG-SG
- *  are about 2.02 A apart, calls it a disulfide bond. For centroid and other
- *  conformations, the less accurate CB-CB distance is used instead. In this
- *  case a CB-CB distance of 3.72 A is optimal.
- */
+* @brief Detect existing disulfides from the protein structure.
+* @details For full atom confomations, looks at SG-SG distance. If the SG-SG
+*  are about 2.02 A apart, calls it a disulfide bond. For centroid and other
+*  conformations, the less accurate CB-CB distance is used instead. In this
+*  case a CB-CB distance of 3.72 A is optimal.
+*/
 void
 SymmetricConformation::detect_disulfides()
 {
 	using namespace graph;
 	using namespace basic::options;
 	if ( ! option[ OptionKeys::in::detect_disulf ].user() || // if the option is not specified
-			 ( option[ OptionKeys::in::detect_disulf ].user() && option[ OptionKeys::in::detect_disulf ]() )  // option specified and is true
-		   ) { 
+			( option[ OptionKeys::in::detect_disulf ].user() && option[ OptionKeys::in::detect_disulf ]() )  // option specified and is true
+			) {
 
 		// gather all cys, construct mapping from resid to cys index
 		utility::vector1< Size > resid_2_cysid( size(), 0 );
@@ -962,10 +965,9 @@ SymmetricConformation::detect_disulfides()
 
 		// If all the cys are fullatom, use stricter criteria
 		bool fullatom(true);
-		for( Size ii = 1; ii <= num_cys; ++ii) {
-			if( residue_type(cysid_2_resid[ii]).residue_type_set().name()
-					!= core::chemical::FA_STANDARD )
-			{
+		for ( Size ii = 1; ii <= num_cys; ++ii ) {
+			if ( residue_type(cysid_2_resid[ii]).residue_type_set().name()
+					!= core::chemical::FA_STANDARD ) {
 				fullatom = false;
 				break;
 			}
@@ -973,8 +975,8 @@ SymmetricConformation::detect_disulfides()
 		// SG-SG distance for fullatom, CB-CB distance otherwise
 		Real const typical_disulfide_distance = fullatom? 2.02 : 3.72;
 		Real const tolerance = option[OptionKeys::in::detect_disulf_tolerance].user()
-												 ? option[OptionKeys::in::detect_disulf_tolerance]()
-												 : ( fullatom? 0.5 : 1.0 );
+			? option[OptionKeys::in::detect_disulf_tolerance]()
+			: ( fullatom? 0.5 : 1.0 );
 
 		// Create point graph
 		PointGraphOP pg( new PointGraph );
@@ -995,11 +997,11 @@ SymmetricConformation::detect_disulfides()
 		std::set< Size > processed_cys; // track cys that have already been processed
 		for ( Size ii = 1; ii <= num_cys; ++ii ) {
 			Size const ii_resid = cysid_2_resid[ ii ];
-			if(ii_resid > symm_info_->num_independent_residues()) continue;
+			if ( ii_resid > symm_info_->num_independent_residues() ) continue;
 			//Size const ii_n_conn = residue( ii_resid ).type().n_residue_connections();
 			Residue const & ii_res( residue( ii_resid ) );
 			//if ii already processed, continue
-			if( processed_cys.find( ii_resid) != processed_cys.end() ) {
+			if ( processed_cys.find( ii_resid) != processed_cys.end() ) {
 				continue;
 			}
 
@@ -1012,7 +1014,7 @@ SymmetricConformation::detect_disulfides()
 				ii_sg_atomno = ii_res.type().atom_index( ii_res.type().get_disulfide_atom_name() );
 			}
 			Size ii_distance_atom_id = fullatom ? ii_sg_atomno : ii_res.atom_index( "CB" );
-			
+
 
 			Distance best_match( 0.0 );
 			Size best_neighbor( 0 );
@@ -1023,16 +1025,16 @@ SymmetricConformation::detect_disulfides()
 					ii_end_iter = pg->get_vertex( ii ).upper_edge_list_end();
 					ii_iter != ii_end_iter; ++ii_iter ) {
 				Size const jj = ii_iter->upper_vertex();
-				
+
 				Size const jj_resid = cysid_2_resid[ jj ];
-				
+
 				//TR << "looking for valid distance to res" << jj_resid << std::endl;
-				
+
 				Residue const & jj_res( residue( jj_resid ) );
-				
+
 				//if jj already processed, continue
 				if ( processed_cys.find( jj_resid) != processed_cys.end() ) continue;
-				
+
 				Size jj_sg_atomno(0);
 				if ( jj_res.type().get_disulfide_atom_name() == "NONE" ) {
 					TR.Error << "Error: Can't find an atom to disulfide bond from at residue "<< jj_resid <<std::endl;
@@ -1040,9 +1042,9 @@ SymmetricConformation::detect_disulfides()
 				} else {
 					jj_sg_atomno = jj_res.type().atom_index( jj_res.type().get_disulfide_atom_name() );
 				}
-				
+
 				Size jj_distance_atom_id = fullatom ? jj_sg_atomno : jj_res.atom_index( "CB" );
-				
+
 				//TR << "distance between " << ii_distance_atom << " and " << jj_distance_atom << std::endl;
 				Distance dist = ii_res.atom( ii_distance_atom_id ).xyz().distance( jj_res.atom( jj_distance_atom_id ).xyz() );
 				if ( best_neighbor == 0 || dist < best_match ) {
@@ -1079,10 +1081,12 @@ SymmetricConformation::detect_disulfides()
 				std::string ii_name_start = residues_[ ii_resid ]->type().name();
 				std::string bn_name_start = residues_[ best_neighbor ]->type().name();
 				// unless it's for cys/cyd itself, condense that part for integration test clarity.
-				if ( residues_[ ii_resid ]->type().name3() == "CYS" )
+				if ( residues_[ ii_resid ]->type().name3() == "CYS" ) {
 					ii_name_start = ( residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
-				if ( residues_[ best_neighbor ]->type().name3() == "CYS" )
+				}
+				if ( residues_[ best_neighbor ]->type().name3() == "CYS" ) {
 					bn_name_start = ( residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
+				}
 				TR << "current variant for " << ii_resid << " " << ii_name_start << std::endl;
 				TR << "current variant for " << best_neighbor << " " << bn_name_start << std::endl;
 
@@ -1098,13 +1102,15 @@ SymmetricConformation::detect_disulfides()
 				if ( !success_at_best_neighbor ) {
 					TR.Error << "ERROR: unable to create residue type CYD for disulfide at resid " << best_neighbor << std::endl;
 				}
-				
+
 				ii_name_start = residues_[ ii_resid ]->type().name();
 				bn_name_start = residues_[ best_neighbor ]->type().name();
-				if ( residues_[ ii_resid ]->type().name3() == "CYS" )
+				if ( residues_[ ii_resid ]->type().name3() == "CYS" ) {
 					ii_name_start = ( residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
-				if ( residues_[ best_neighbor ]->type().name3() == "CYS" )
+				}
+				if ( residues_[ best_neighbor ]->type().name3() == "CYS" ) {
 					bn_name_start = ( residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
+				}
 				TR << "current variant for " << ii_resid << " " << ii_name_start << std::endl;
 				TR << "current variant for " << best_neighbor << " " << bn_name_start << std::endl;
 

@@ -242,10 +242,10 @@ public: // Properties
 	/////////////////////////////////////////////////////////////////////////////
 	/// @brief stub_atom3 of a bonded atom
 	/**
-			- if this atom's parent is a bonded_atom it is this atom's parent's parent.
-			- if this atom's parent is a jump atom, it is this atom's first non-jump
-				sibling or its second non-jump sibling (if it itself is the first) or
-				its first non-jump child (if it does not have any sibling)
+	- if this atom's parent is a bonded_atom it is this atom's parent's parent.
+	- if this atom's parent is a jump atom, it is this atom's first non-jump
+	sibling or its second non-jump sibling (if it itself is the first) or
+	its first non-jump child (if it does not have any sibling)
 	*/
 	inline
 	AtomCOP
@@ -254,7 +254,7 @@ public: // Properties
 		//std::cout << "stub_atom3: " << this << ' ' << parent_ << std::endl();
 		AtomCOP parent_op = parent(); // must have parent
 		if ( parent_op->is_jump() ) {
-		debug_assert( parent_op->stub_defined() ); // weird behavior otherwise
+			debug_assert( parent_op->stub_defined() ); // weird behavior otherwise
 			AtomCOP p_stub2( parent_op->stub_atom2() );
 			AtomID const & p_stub2_id( p_stub2->id() );
 			if ( id() == p_stub2_id ) {
@@ -294,15 +294,15 @@ private: // Fields
 
 	/// @brief DOF properties of a bonded atom
 	/**
-		 - a bonded atom is an atom who connects to its parent by a "bond" (covalent
-		 or virtual) and therefore its position is defined by three internal
-		 coordinates: d_, theta_, and phi_.
-		 - d_ is the bond distance between this atom and its parent.
-		 - theta_ is the bond angle between this atom(A), its parent's stub_atom1(B)
-		 and its parent's stub_atom2(C), i.e., angle in between B->A ^ C->B.
-		 - phi_ is either the torsion angle defined by A, B, C and D (C's parents),
-		 or the improper angle defined by A, B, C and D (B's child and A's previous sibling).
-	 */
+	- a bonded atom is an atom who connects to its parent by a "bond" (covalent
+	or virtual) and therefore its position is defined by three internal
+	coordinates: d_, theta_, and phi_.
+	- d_ is the bond distance between this atom and its parent.
+	- theta_ is the bond angle between this atom(A), its parent's stub_atom1(B)
+	and its parent's stub_atom2(C), i.e., angle in between B->A ^ C->B.
+	- phi_ is either the torsion angle defined by A, B, C and D (C's parents),
+	or the improper angle defined by A, B, C and D (B's child and A's previous sibling).
+	*/
 	Real phi_, theta_, d_;
 
 	/// @brief Track whether a dof change from this node (since the last update_xyz)

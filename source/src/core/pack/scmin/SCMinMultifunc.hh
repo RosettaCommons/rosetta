@@ -93,9 +93,9 @@ private:
 
 	/*void
 	eval_atom_deriv(
-		id::AtomID const & atom,
-		Vector & F1,
-		Vector & F2
+	id::AtomID const & atom,
+	Vector & F1,
+	Vector & F2
 	) const;*/
 
 

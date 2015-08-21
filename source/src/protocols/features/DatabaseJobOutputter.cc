@@ -81,26 +81,26 @@ DatabaseJobOutputter::load_options_from_option_system(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if (option.has(inout::dbms::database_name) &&
-		option[inout::dbms::database_name].user()){
+	if ( option.has(inout::dbms::database_name) &&
+			option[inout::dbms::database_name].user() ) {
 		set_database_name(option[inout::dbms::database_name]);
 	}
 
-	if (option.has(inout::dbms::pq_schema) &&
-		option[inout::dbms::pq_schema].user()){
+	if ( option.has(inout::dbms::pq_schema) &&
+			option[inout::dbms::pq_schema].user() ) {
 		set_database_pq_schema(option[inout::dbms::pq_schema]);
 	}
-	
+
 	if ( option[ out::path::db ].user() ) {
 		path_ = option[ out::path::db ]().path();
-	} else if (option[ inout::dbms::path ].user() ) {
+	} else if ( option[ inout::dbms::path ].user() ) {
 		path_ = option[ inout::dbms::path ]().path();
-	}else if (option[ out::path::all ].user() ) {
+	} else if ( option[ out::path::all ].user() ) {
 		path_ = option[ out::path::all ]().path();
 	} else {
 		path_ = "";
 	}
-	
+
 }
 
 void
@@ -142,7 +142,7 @@ DatabaseJobOutputter::set_database_name(
 
 std::string
 DatabaseJobOutputter::get_database_name() const {
-	if(database_name_ == ""){
+	if ( database_name_ == "" ) {
 		utility_exit_with_message(
 			"To use the DatabaseJobInputter, please specify the database "
 			"where the input is data is stored, eg. via the -inout:dbms:database_name "
@@ -206,13 +206,11 @@ bool DatabaseJobOutputter::job_has_completed(
 	protein_silent_report_->initialize(db_session);
 
 	result res;
-	if(option[out::resume_batch].user())
-	{
+	if ( option[out::resume_batch].user() ) {
 		utility::vector1<core::Size> batch_ids(option[out::resume_batch].value());
 		core::Size placeholder_count = batch_ids.size();
 		std::string placeholder_block= "(?";
-		for(Size j = 1; j < placeholder_count; ++j)
-		{
+		for ( Size j = 1; j < placeholder_count; ++j ) {
 			placeholder_block += ",?";
 		}
 		placeholder_block += ")";
@@ -220,15 +218,13 @@ bool DatabaseJobOutputter::job_has_completed(
 		std::string job_completion_string = "SELECT count(*) FROM sampled_structures WHERE tag=? AND batch_id IN " +placeholder_block+";";
 		cppdb::statement job_completion_statement(basic::database::safely_prepare_statement(job_completion_string,db_session));
 		job_completion_statement.bind(1,output_name(job));
-		for(Size i = 1; i <= batch_ids.size();++i)
-		{
+		for ( Size i = 1; i <= batch_ids.size(); ++i ) {
 			core::Size column_index =i+1;
 			job_completion_statement.bind(column_index,batch_ids[i]);
 		}
 		res = basic::database::safely_read_from_database(job_completion_statement);
 
-	}else
-	{
+	} else {
 		std::string job_completion_string = "SELECT count(*) FROM sampled_structures WHERE tag=? and batch_id = ?;";
 		cppdb::statement job_completion_statement(basic::database::safely_prepare_statement(job_completion_string,db_session));
 		job_completion_statement.bind(1,output_name(job));

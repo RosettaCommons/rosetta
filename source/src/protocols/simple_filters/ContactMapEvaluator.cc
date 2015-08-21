@@ -50,18 +50,18 @@ get_contact_features(
 	Size feat_idx(1);
 	Size const step_size( 1 + skip_res );
 	for ( Size ii = 1; ii <= pose.total_residue(); ii += step_size ) {
-	for ( Size jj = ii + min_seqsep; jj <= pose.total_residue(); jj += step_size ) {
-		Real const dist_sq(
-			pose.residue(ii).xyz(atom_name).distance_squared(
+		for ( Size jj = ii + min_seqsep; jj <= pose.total_residue(); jj += step_size ) {
+			Real const dist_sq(
+				pose.residue(ii).xyz(atom_name).distance_squared(
 				pose.residue(jj).xyz(atom_name)
-			)
-		);
+				)
+			);
 
-		if ( dist_sq < dist_threshold_sq ) {
-			features[feat_idx] = 1;
-		}
-		feat_idx++;
-	} // jj
+			if ( dist_sq < dist_threshold_sq ) {
+				features[feat_idx] = 1;
+			}
+			feat_idx++;
+		} // jj
 	} // ii
 
 	return features;
@@ -74,8 +74,8 @@ core::Real pct_features_in_common(
 	using core::Real;
 
 	boost::dynamic_bitset<> result = (set1 & set2);
-		//( set1 &  set2) |
-		//(~set1 & ~set2);
+	//( set1 &  set2) |
+	//(~set1 & ~set2);
 	//std::string s1, s2;
 	//boost::to_string(set1,s1);
 	//boost::to_string(set2,s2);

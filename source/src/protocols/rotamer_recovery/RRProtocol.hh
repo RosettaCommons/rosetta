@@ -45,11 +45,11 @@ public: // constructors destructors
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~RRProtocol();
 
-//	RRProtocol();
-//
-//	~RRProtocol();
-//
-//	RRProtocol( RRProtocol const & src );
+	// RRProtocol();
+	//
+	// ~RRProtocol();
+	//
+	// RRProtocol( RRProtocol const & src );
 
 protected:
 	bool

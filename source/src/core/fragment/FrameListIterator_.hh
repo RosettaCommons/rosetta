@@ -26,9 +26,9 @@
 #include <core/fragment/FrameIteratorWorker_.hh>
 
 /* Just a mad thought: with fragments becoming ever more "Residue" like one might want to use the
-	 packer to choose a combination of good fragments instead of makeing independent choices.
-	 I guess, it is only a question of keeping the combinatorics in control...
-	 maybe it makes sense to pack with only "unconfident" regions of the backbone flexible ..
+packer to choose a combination of good fragments instead of makeing independent choices.
+I guess, it is only a question of keeping the combinatorics in control...
+maybe it makes sense to pack with only "unconfident" regions of the backbone flexible ..
 */
 
 namespace core {

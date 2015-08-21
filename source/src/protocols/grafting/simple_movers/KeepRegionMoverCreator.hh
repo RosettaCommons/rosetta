@@ -8,18 +8,18 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/grafting/simple_movers/KeepRegionMoverCreator.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_grafting_simple_movers_KeepRegionMoverCreator_hh
-#define	INCLUDED_protocols_grafting_simple_movers_KeepRegionMoverCreator_hh
+#define INCLUDED_protocols_grafting_simple_movers_KeepRegionMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
 namespace grafting {
 namespace simple_movers {
-			
+
 
 class KeepRegionMoverCreator : public protocols::moves::MoverCreator {
 public:

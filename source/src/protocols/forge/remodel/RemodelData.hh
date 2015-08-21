@@ -57,7 +57,7 @@ public:
 	void getLoopsToBuildFromFile( std::string filename );
 
 	void splitString( std::string str, std::string delim, std::vector< std::string > & results );
-	
+
 	void updateWithDsspAssignment( ObjexxFCL::FArray1D_char & dsspSS );
 
 	void collectInsertionPose();
@@ -102,7 +102,7 @@ public:
 	core::pose::Pose insertPose;
 	int insertionSize;
 	std::string insertionSS;
-						
+
 	float total_chain_break_score;
 
 };

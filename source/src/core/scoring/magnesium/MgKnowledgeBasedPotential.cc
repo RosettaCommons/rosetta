@@ -67,8 +67,8 @@ MgKnowledgeBasedPotential::MgKnowledgeBasedPotential():
 	gaussian_parameter_costheta_exocyclic_oxygen_indirect_( 1.00, -0.56, 0.61 ),
 	gaussian_parameter_costheta_o2prime_indirect_          ( 1.00, -0.74, 0.55 ), // not enough stats, copy from phosphate_oxygen
 
-  // Followinig is a guess: Note that this ends up defining alignment of
-  // acceptors to orbitals to radians -- width becomes 0.1 * 180/pi ~ 6 degrees.
+	// Followinig is a guess: Note that this ends up defining alignment of
+	// acceptors to orbitals to radians -- width becomes 0.1 * 180/pi ~ 6 degrees.
 	v_angle_width_( 0.1 ) // guess.
 {
 }
@@ -98,15 +98,15 @@ MgKnowledgeBasedPotential::get_mg_potential_gaussian_parameter( core::conformati
 		return gaussian_parameter_imine_;
 	} else if ( atom_type_name == "OCbb" ) { // exocyclic oxygens
 		return gaussian_parameter_exocyclic_oxygen_;
-	} else if ( rsd.atom_name( j ) == " O2'" ){
+	} else if ( rsd.atom_name( j ) == " O2'" ) {
 		return gaussian_parameter_o2prime_;
-	} else if ( rsd.atom_name( j ) == " O  " ){
+	} else if ( rsd.atom_name( j ) == " O  " ) {
 		return gaussian_parameter_water_oxygen_;
-	} else if ( atom_type_name == "Oet3" || atom_type_name == "Oet2" ){
+	} else if ( atom_type_name == "Oet3" || atom_type_name == "Oet2" ) {
 		return gaussian_parameter_o2prime_; // ether sp3 -- do not have good stats, so just use O2'
-	} else if ( rsd.atom_name( j ) == " P  " ){
+	} else if ( rsd.atom_name( j ) == " P  " ) {
 		return gaussian_parameter_phosphate_p_;
-	} else if ( atom_type_name == "Hpol" ){ // repulsive term?
+	} else if ( atom_type_name == "Hpol" ) { // repulsive term?
 		return gaussian_parameter_polar_H_;
 	} else if ( atom_type_name == "Hapo" ) { //|| atom_type_name == "Haro" ){
 		return gaussian_parameter_nonpolar_H_; // repulsive term?
@@ -131,9 +131,9 @@ MgKnowledgeBasedPotential::get_mg_potential_indirect_gaussian_parameter( core::c
 			return gaussian_parameter_imine_indirect_;
 		} else if ( atom_type_name == "OCbb" ) { // exocyclic oxygens
 			return gaussian_parameter_exocyclic_oxygen_indirect_;
-		} else if ( rsd.atom_name( j ) == " O2'" ){
+		} else if ( rsd.atom_name( j ) == " O2'" ) {
 			return gaussian_parameter_o2prime_indirect_;
-		} else if ( rsd.atom_name( j ) == " O  " ){
+		} else if ( rsd.atom_name( j ) == " O  " ) {
 			return gaussian_parameter_water_oxygen_;
 		}
 	}
@@ -154,13 +154,13 @@ MgKnowledgeBasedPotential::get_mg_potential_costheta_gaussian_parameter( core::c
 		return gaussian_parameter_costheta_imine_;
 	} else if ( atom_type_name == "OCbb" ) { // exocyclic oxygens
 		return gaussian_parameter_costheta_exocyclic_oxygen_;
-	} else if ( rsd.atom_name( j ) == " O2'" ){
+	} else if ( rsd.atom_name( j ) == " O2'" ) {
 		return gaussian_parameter_costheta_o2prime_;
-	} else if ( rsd.atom_name( j ) == " O  " ){
+	} else if ( rsd.atom_name( j ) == " O  " ) {
 		return gaussian_parameter_costheta_water_oxygen_;
-	} else if ( atom_type_name == "Oet3" || atom_type_name == "Oet2" ){
+	} else if ( atom_type_name == "Oet3" || atom_type_name == "Oet2" ) {
 		return gaussian_parameter_costheta_o2prime_; // ether sp3 -- do not have good stats, so just use O2'
-	} else if ( atom_type_name == "Hpol" ){
+	} else if ( atom_type_name == "Hpol" ) {
 		return gaussian_parameter_costheta_polar_H_;
 	} else if ( atom_type_name == "Hapo" ) { //|| atom_type_name == "Haro" ){
 		return gaussian_parameter_costheta_nonpolar_H_;
@@ -182,7 +182,7 @@ MgKnowledgeBasedPotential::get_mg_potential_costheta_indirect_gaussian_parameter
 		return gaussian_parameter_costheta_imine_indirect_;
 	} else if ( atom_type_name == "OCbb" ) { // exocyclic oxygens
 		return gaussian_parameter_costheta_exocyclic_oxygen_indirect_;
-	} else if ( rsd.atom_name( j ) == " O2'" ){
+	} else if ( rsd.atom_name( j ) == " O2'" ) {
 		return gaussian_parameter_costheta_o2prime_indirect_;
 	}
 
@@ -203,14 +203,14 @@ MgKnowledgeBasedPotential::setup_info_for_mg_calculation( pose::Pose & pose ) co
 	rna::RNA_ScoringInfo & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
 
 	if ( rna_scoring_info.mg_calculation_annotated_sequence() == pose.annotated_sequence() ) {
-		//		tr << "matching sequence -- early return from setup_info_for_mg_calculation" << std::endl;
+		//  tr << "matching sequence -- early return from setup_info_for_mg_calculation" << std::endl;
 		return; // should be up to date
 	}
 	rna_scoring_info.set_mg_calculation_annotated_sequence( pose.annotated_sequence() );
 
 	utility::vector1< bool > & is_magnesium = rna_scoring_info.nonconst_is_magnesium();
 	utility::vector1< utility::vector1< Size > > &
-			atom_numbers( rna_scoring_info.nonconst_atom_numbers_for_mg_calculation() );
+		atom_numbers( rna_scoring_info.nonconst_atom_numbers_for_mg_calculation() );
 
 	Size const total_residue( pose.total_residue() );
 
@@ -227,13 +227,13 @@ MgKnowledgeBasedPotential::setup_info_for_mg_calculation( pose::Pose & pose ) co
 
 
 			// we go over all atoms, because we are putting in some repulsions (from polar hydrogens & phosphorus)
-			for ( Size j = 1; j <= rsd.natoms(); j++ ){
+			for ( Size j = 1; j <= rsd.natoms(); j++ ) {
 				core::chemical::rna::GaussianParameter gaussian_parameter = get_mg_potential_gaussian_parameter( rsd, j );
 				//tr << j << rsd.atom_name(j) << " ==> gaussian parameter " << gaussian_parameter.center << std::endl;
 				if ( gaussian_parameter.center > 0.0 ) atom_numbers[ i ].push_back( j );
 			}
 
-		} else if ( rsd.name3() == " MG" ){
+		} else if ( rsd.name3() == " MG" ) {
 			is_magnesium[ i ] = true;
 		}
 

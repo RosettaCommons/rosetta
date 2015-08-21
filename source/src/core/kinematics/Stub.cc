@@ -81,13 +81,13 @@ Stub::build_fake_xyz( Size const index ) const
 	Vector const xyz3( xyz2 + length * M * Vector( std::cos( angle ), std::sin( angle ), 0 ) );
 
 	switch( index ) {
-	case 1:
+	case 1 :
 		return xyz1;
-	case 2:
+	case 2 :
 		return xyz2;
-	case 3:
+	case 3 :
 		return xyz3;
-	default:
+	default :
 		utility_exit_with_message( "Stub::build_fake_xyz must be called with 1<= index <= 3" );
 	}
 

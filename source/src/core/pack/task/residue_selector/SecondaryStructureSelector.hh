@@ -43,8 +43,8 @@ public:
 	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
 
 	virtual void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & datamap );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & datamap );
 
 	virtual std::string get_name() const;
 
@@ -62,9 +62,9 @@ public:
 
 private:
 	void add_overlap(
-			ResidueSubset & matching_ss,
-			pose::Pose const & pose,
-			std::string const & ss ) const;
+		ResidueSubset & matching_ss,
+		pose::Pose const & pose,
+		std::string const & ss ) const;
 
 	bool check_ss( std::string const & ss ) const;
 

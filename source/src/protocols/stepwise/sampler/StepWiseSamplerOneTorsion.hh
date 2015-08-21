@@ -42,13 +42,13 @@ public:
 	virtual ~StepWiseSamplerOneTorsion();
 
 	/// @brief Apply the current rotamer to pose
-	virtual void apply( core::pose::Pose & pose ) {	apply( pose, id_ ); }
+	virtual void apply( core::pose::Pose & pose ) { apply( pose, id_ ); }
 
 	/// @brief Apply the i-th rotamer to pose
 	virtual void apply( core::pose::Pose & pose, Size const i );
 
 	/// @brief Set the allowed torsions in sampler
-	virtual void set_torsions( TorsionList const & setting	) {
+	virtual void set_torsions( TorsionList const & setting ) {
 		set_values( setting );
 	}
 

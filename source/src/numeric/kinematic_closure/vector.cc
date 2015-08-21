@@ -42,7 +42,7 @@ Coordinate norm (Coordinate const &a) { // {{{1
 	Coordinate result (3);
 
 	Real magnitude = sqrt(
-			a[1]*a[1] + a[2]*a[2] + a[3]*a[3]);
+		a[1]*a[1] + a[2]*a[2] + a[3]*a[3]);
 
 	result[1] = a[1] / magnitude;
 	result[2] = a[2] / magnitude;
@@ -53,9 +53,9 @@ Coordinate norm (Coordinate const &a) { // {{{1
 // }}}1
 
 // Overloaded Operators
- 
+
 std::ostream& operator << (std::ostream &out, ParameterList const &x) { // {{{1
-	for (Size i = 1; i <= x.size(); i++) {
+	for ( Size i = 1; i <= x.size(); i++ ) {
 		std::string prefix = (i == 1) ? "[" : " ";
 		std::string suffix = (i == x.size()) ? "]" : ",";
 
@@ -65,7 +65,7 @@ std::ostream& operator << (std::ostream &out, ParameterList const &x) { // {{{1
 }
 
 std::ostream& operator << (std::ostream &out, ParameterMatrix const &xx) { // {{{1
-	for (Size i = 1; i <= xx.size(); i++) {
+	for ( Size i = 1; i <= xx.size(); i++ ) {
 		std::string prefix = (i == 1) ? "[" : " ";
 		std::string suffix = (i == xx.size()) ? "]" : ",";
 

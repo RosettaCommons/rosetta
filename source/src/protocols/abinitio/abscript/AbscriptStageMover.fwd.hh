@@ -21,7 +21,7 @@
 
 namespace protocols {
 namespace abinitio {
-namespace abscript{
+namespace abscript {
 
 class AbscriptStageMover;
 typedef utility::pointer::shared_ptr< AbscriptStageMover > AbscriptStageMoverOP;

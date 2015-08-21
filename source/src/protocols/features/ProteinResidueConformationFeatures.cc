@@ -55,8 +55,8 @@
 #include <cmath>
 #include <sstream>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 static thread_local basic::Tracer TR( "protocols.features.ProteinResidueConformationFeatures" );
 
@@ -83,7 +83,7 @@ ProteinResidueConformationFeatures::ProteinResidueConformationFeatures()
 }
 
 ProteinResidueConformationFeatures::ProteinResidueConformationFeatures(
-		ProteinResidueConformationFeatures const & ) : FeaturesReporter()
+	ProteinResidueConformationFeatures const & ) : FeaturesReporter()
 {
 	compact_residue_schema_ = basic::options::option[basic::options::OptionKeys::inout::dbms::use_compact_residue_schema]();
 }
@@ -139,8 +139,7 @@ ProteinResidueConformationFeatures::write_schema_to_db(utility::sql_database::se
 
 	protein_residue_conformation.write(db_session);
 
-	if(compact_residue_schema_)
-	{
+	if ( compact_residue_schema_ ) {
 		//******compact_residue_atom_coords*****//
 		Column coord_data("coord_data",DbDataTypeOP( new DbText() ));
 		Column atom_count("atom_count",DbDataTypeOP( new DbInteger() ),false);
@@ -156,8 +155,7 @@ ProteinResidueConformationFeatures::write_schema_to_db(utility::sql_database::se
 		compact_residue_atom_coords.add_foreign_key(ForeignKey(fkey_cols, "residues", fkey_reference_cols, true));
 		compact_residue_atom_coords.write(db_session);
 
-	}else
-	{
+	} else {
 		//******residue_atom_coords******//
 		Column atomno("atomno", DbDataTypeOP( new DbInteger() ), false);
 		Column x("x", DbDataTypeOP( new DbDouble() ), false);
@@ -209,21 +207,19 @@ ProteinResidueConformationFeatures::report_features(
 	// and as force_nonideal_structure is the default option, it is unlikely
 	// this code will not be run very often
 	bool ideal = true;
-	if(!basic::options::option[basic::options::OptionKeys::out::file::force_nonideal_structure]())
-		{
-			core::conformation::Conformation const & conformation(pose.conformation());
-			for(core::Size resn=1; resn <= pose.n_residue();++resn){
-				if(!check_relevant_residues( relevant_residues, resn )) continue;
-				bool residue_status(core::conformation::is_ideal_position(resn,conformation));
-				if(!residue_status){
-					ideal = false;
-					break;
-				}
+	if ( !basic::options::option[basic::options::OptionKeys::out::file::force_nonideal_structure]() ) {
+		core::conformation::Conformation const & conformation(pose.conformation());
+		for ( core::Size resn=1; resn <= pose.n_residue(); ++resn ) {
+			if ( !check_relevant_residues( relevant_residues, resn ) ) continue;
+			bool residue_status(core::conformation::is_ideal_position(resn,conformation));
+			if ( !residue_status ) {
+				ideal = false;
+				break;
 			}
-		}else
-		{
-			ideal = false;
 		}
+	} else {
+		ideal = false;
+	}
 
 	InsertGenerator conformation_insert("protein_residue_conformation");
 	conformation_insert.add_column("struct_id");
@@ -256,11 +252,10 @@ ProteinResidueConformationFeatures::report_features(
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
-	for (Size i = 1; i <= pose.total_residue(); ++i) {
-		if(!check_relevant_residues( relevant_residues, i )) continue;
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( !check_relevant_residues( relevant_residues, i ) ) continue;
 		Residue const & resi = pose.residue(i);
-		if(resi.aa() > num_canonical_aas)
-		{
+		if ( resi.aa() > num_canonical_aas ) {
 			continue;
 		}
 		std::string secstruct = utility::to_string<char>(pose.secstruct(i));
@@ -292,17 +287,14 @@ ProteinResidueConformationFeatures::report_features(
 		// KAB - We're still only saving coordinate data if the structure is not ideal
 		// If anyone is interested in saving this data always, you probably can make it happen now that we save if a structure
 		// is ideal or not in the pose_conformations table. This is what I did in order to always save backbone torsions.
-		if(!ideal)
-		{
-			if(compact_residue_schema_)
-			{
+		if ( !ideal ) {
+			if ( compact_residue_schema_ ) {
 				std::string residue_data_string(serialize_residue_xyz_coords(resi));
 				RowDataBaseOP atom_count( new RowData<core::Size>("atom_count",resi.natoms()) );
 				RowDataBaseOP residue_data( new RowData<std::string>("coord_data",residue_data_string) );
 				compact_residue_insert.add_row(utility::tools::make_vector(struct_id_data,atom_count,seqpos_data,residue_data));
-			}else
-			{
-				for(Size atom = 1; atom <= resi.natoms(); ++atom){
+			} else {
+				for ( Size atom = 1; atom <= resi.natoms(); ++atom ) {
 					core::Vector coords = resi.xyz(atom);
 
 					RowDataBaseOP atom_data( new RowData<Size>("atomno",atom) );
@@ -318,11 +310,9 @@ ProteinResidueConformationFeatures::report_features(
 	}
 
 	conformation_insert.write_to_database(db_session);
-	if(compact_residue_schema_)
-	{
+	if ( compact_residue_schema_ ) {
 		compact_residue_insert.write_to_database(db_session);
-	}else
-	{
+	} else {
 		atom_insert.write_to_database(db_session);
 	}
 
@@ -339,13 +329,11 @@ ProteinResidueConformationFeatures::delete_record(
 	statement conf_stmt(basic::database::safely_prepare_statement("DELETE FROM protein_residue_conformation WHERE struct_id = ?;\n",db_session));
 	conf_stmt.bind(1,struct_id);
 	basic::database::safely_write_to_database(conf_stmt);
-	if(compact_residue_schema_)
-	{
+	if ( compact_residue_schema_ ) {
 		statement compact_coords_stmt(basic::database::safely_prepare_statement("DELETE FROM compact_residue_atom_coords WHERE struct_id = ?;",db_session));
 		compact_coords_stmt.bind(1,struct_id);
 		basic::database::safely_write_to_database(compact_coords_stmt);
-	}else
-	{
+	} else {
 		statement atom_stmt(basic::database::safely_prepare_statement("DELETE FROM residue_atom_coords WHERE struct_id = ?;\n",db_session));
 		atom_stmt.bind(1,struct_id);
 		basic::database::safely_write_to_database(atom_stmt);
@@ -371,35 +359,33 @@ ProteinResidueConformationFeatures::load_conformation(
 	bool ideal
 ){
 
-	if(!basic::database::table_exists(db_session, "protein_residue_conformation")){
+	if ( !basic::database::table_exists(db_session, "protein_residue_conformation") ) {
 		TR << "WARNING: protein_residue_conformation table does not exist and thus respective data will not be added to the pose!" << std::endl;
 		return;
 	}
 
-	if(compact_residue_schema_)
-	{
+	if ( compact_residue_schema_ ) {
 		set_coords_for_residue_from_compact_schema(db_session,struct_id,pose);
-	}else
-	{
+	} else {
 		set_coords_for_residues(db_session,struct_id,pose);
 	}
 
 
-	if(pose.is_fullatom()){
+	if ( pose.is_fullatom() ) {
 		std::string statement_string =
 			"SELECT\n"
-			"	secstruct,\n"
-			"	phi,\n"
-			"	psi,\n"
-			"	omega,\n"
-			"	chi1,\n"
-			"	chi2,\n"
-			"	chi3,\n"
-			"	chi4\n"
+			"\tsecstruct,\n"
+			"\tphi,\n"
+			"\tpsi,\n"
+			"\tomega,\n"
+			"\tchi1,\n"
+			"\tchi2,\n"
+			"\tchi3,\n"
+			"\tchi4\n"
 			"FROM\n"
-			"	protein_residue_conformation\n"
+			"\tprotein_residue_conformation\n"
 			"WHERE\n"
-			"	protein_residue_conformation.struct_id=?;";
+			"\tprotein_residue_conformation.struct_id=?;";
 		statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 		//std::string struct_id_string(to_string(struct_id));
 		stmt.bind(1,struct_id);
@@ -407,55 +393,54 @@ ProteinResidueConformationFeatures::load_conformation(
 		result res(basic::database::safely_read_from_database(stmt));
 
 		Size seqpos(1);
-		while(res.next()){
+		while ( res.next() ) {
 			Real phi,psi,omega,chi1,chi2,chi3,chi4;
 			std::string secstruct;
 			res >> secstruct >> phi >> psi >> omega >> chi1 >> chi2 >> chi3 >> chi4 ;
-			if (!pose.residue_type(seqpos).is_protein()){
+			if ( !pose.residue_type(seqpos).is_protein() ) {
 				// WARNING why are you storing non-protein in the ProteinSilentReport?
 				continue;
 			}
-			if( ideal && !(phi < 0.00001 && psi < 0.00001 && omega < 0.00001) )
-			{
+			if ( ideal && !(phi < 0.00001 && psi < 0.00001 && omega < 0.00001) ) {
 				pose.set_phi(seqpos,phi);
 				pose.set_psi(seqpos,psi);
 				pose.set_omega(seqpos,omega);
 			}
 			pose.set_secstruct(seqpos,static_cast<char>(secstruct[0]));
 			Size nchi(pose.residue_type(seqpos).nchi());
-			if(1 <= nchi) pose.set_chi(1, seqpos, chi1);
-			if(2 <= nchi) pose.set_chi(2, seqpos, chi2);
-			if(3 <= nchi) pose.set_chi(3, seqpos, chi3);
-			if(4 <= nchi) pose.set_chi(4, seqpos, chi4);
+			if ( 1 <= nchi ) pose.set_chi(1, seqpos, chi1);
+			if ( 2 <= nchi ) pose.set_chi(2, seqpos, chi2);
+			if ( 3 <= nchi ) pose.set_chi(3, seqpos, chi3);
+			if ( 4 <= nchi ) pose.set_chi(4, seqpos, chi4);
 			seqpos++;
 		}
 
-	}else{
-	//	statement stmt = (*db_session) <<
-	//		"SELECT\n"
-	//		"	seqpos,\n"
-	//		"	phi,\n"
-	//		"	psi,\n"
-	//		"	omega\n"
-	//		"FROM\n"
-	//		"	protein_residue_conformation\n"
-	//		"WHERE\n"
-	//		"	protein_residue_conformation.struct_id=?;" << struct_id;
-	//
-	//	result res(basic::database::safely_read_from_database(stmt));
-	//	while(res.next()){
-	//		Size seqpos;
-	//		Real phi,psi,omega;
-	//		res >> seqpos >> phi >> psi >> omega;
-	//		if (!pose.residue_type(seqpos).is_protein()){
-	//			// WARNING why are you storing non-protein in the ProteinSilentReport?
-	//			continue;
-	//		}
-	//
-	//		//pose.set_phi(seqpos,phi);
-	//		//pose.set_psi(seqpos,psi);
-	//		//pose.set_omega(seqpos,omega);
-	//	}
+	} else {
+		// statement stmt = (*db_session) <<
+		//  "SELECT\n"
+		//  " seqpos,\n"
+		//  " phi,\n"
+		//  " psi,\n"
+		//  " omega\n"
+		//  "FROM\n"
+		//  " protein_residue_conformation\n"
+		//  "WHERE\n"
+		//  " protein_residue_conformation.struct_id=?;" << struct_id;
+		//
+		// result res(basic::database::safely_read_from_database(stmt));
+		// while(res.next()){
+		//  Size seqpos;
+		//  Real phi,psi,omega;
+		//  res >> seqpos >> phi >> psi >> omega;
+		//  if (!pose.residue_type(seqpos).is_protein()){
+		//   // WARNING why are you storing non-protein in the ProteinSilentReport?
+		//   continue;
+		//  }
+		//
+		//  //pose.set_phi(seqpos,phi);
+		//  //pose.set_psi(seqpos,psi);
+		//  //pose.set_omega(seqpos,omega);
+		// }
 	}
 }
 
@@ -468,7 +453,7 @@ ProteinResidueConformationFeatures::check_num_requested_atoms(
 	StructureID struct_id,
 	sessionOP db_session
 ) const {
-	if(num_requested_atoms != pose.residue_type(pose_resNum).natoms()){
+	if ( num_requested_atoms != pose.residue_type(pose_resNum).natoms() ) {
 		string get_res_type_stmt_str("SELECT res_type FROM residues WHERE struct_id = ? AND resNum = ?;");
 		statement get_res_type_stmt(basic::database::safely_prepare_statement(get_res_type_stmt_str, db_session));
 		get_res_type_stmt.bind(1, struct_id);
@@ -478,20 +463,20 @@ ProteinResidueConformationFeatures::check_num_requested_atoms(
 		string db_res_type;
 		get_res_type_res >> db_res_type;
 
-		if(
-			db_res_type == "CYD" && num_requested_atoms == 10 &&
-			pose.residue_type(pose_resNum).name() == "CYS"
-		){
+		if (
+				db_res_type == "CYD" && num_requested_atoms == 10 &&
+				pose.residue_type(pose_resNum).name() == "CYS"
+				) {
 			// The pose incorrectly says this cystine is
 			// forming a disulfide while the coordinates say that is
 			// not. Convert the residue type to CYD.
 			bool success = core::conformation::change_cys_state(
 				pose_resNum, "CYD", pose.conformation());
-			if(!success){
+			if ( !success ) {
 				std::stringstream errmsg;
 				errmsg
 					<< "Failed to convert cystine from CYS to CYD for residue '" << resNum << "'";
-				if( pose_resNum != resNum){
+				if ( pose_resNum != resNum ) {
 					errmsg
 						<< ", which has been renumbered to '" << pose_resNum << "'." << std::endl;
 				} else {
@@ -509,7 +494,7 @@ ProteinResidueConformationFeatures::check_num_requested_atoms(
 		std::stringstream errmsg;
 		errmsg
 			<< "Attempting to set atom coordinates for residue '" << resNum << "'";
-		if( pose_resNum != resNum){
+		if ( pose_resNum != resNum ) {
 			errmsg
 				<< ", which has been renumbered to '" << pose_resNum << "'." << std::endl;
 		} else {
@@ -519,7 +504,7 @@ ProteinResidueConformationFeatures::check_num_requested_atoms(
 
 		errmsg
 			<< "The pose residue has '" << pose.residue_type(pose_resNum).natoms() << "' coordinates but '" << num_requested_atoms << "' were provided." << std::endl;
-		if( db_res_type != pose.residue_type(pose_resNum).name()){
+		if ( db_res_type != pose.residue_type(pose_resNum).name() ) {
 			errmsg
 				<< "The pose residue type is '" << pose.residue_type(pose_resNum).name() << "' while the residue type in the database is '" << db_res_type << "'." << std::endl;
 		} else {
@@ -546,9 +531,9 @@ ProteinResidueConformationFeatures::check_num_requested_atoms(
 ///    resNum -> the numbering in the residues table
 
 void ProteinResidueConformationFeatures::set_coords_for_residues(
-		sessionOP db_session,
-		StructureID struct_id,
-		Pose & pose
+	sessionOP db_session,
+	StructureID struct_id,
+	Pose & pose
 ){
 	// lookup and set all the atoms at once because each query is
 	// roughly O(n*log(n) + k) where n is the size of the tables and k
@@ -557,17 +542,17 @@ void ProteinResidueConformationFeatures::set_coords_for_residues(
 
 	std::string statement_string =
 		"SELECT\n"
-		"	r.resNum,\n"
-		"	c.atomno,\n"
-		"	c.x,\n"
-		"	c.y,\n"
-		"	c.z\n"
+		"\tr.resNum,\n"
+		"\tc.atomno,\n"
+		"\tc.x,\n"
+		"\tc.y,\n"
+		"\tc.z\n"
 		"FROM\n"
-		"	residues AS r LEFT JOIN\n"
-		"	residue_atom_coords AS c ON\n"
-		"	r.struct_id = c.struct_id AND r.resNum = c.seqpos\n"
+		"\tresidues AS r LEFT JOIN\n"
+		"\tresidue_atom_coords AS c ON\n"
+		"\tr.struct_id = c.struct_id AND r.resNum = c.seqpos\n"
 		"WHERE\n"
-		"	r.struct_id=?;";
+		"\tr.struct_id=?;";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,struct_id);
 
@@ -583,17 +568,17 @@ void ProteinResidueConformationFeatures::set_coords_for_residues(
 	Size natoms_in_residue(0);
 	Size resNum, atomno;
 	Real x, y, z;
-	while(res.next()){
+	while ( res.next() ) {
 		res >> resNum >> atomno >> x >> y >> z;
-		if(!initial_iteration && prev_resNum != resNum){
-			if(!last_residue_missing){
+		if ( !initial_iteration && prev_resNum != resNum ) {
+			if ( !last_residue_missing ) {
 				check_num_requested_atoms(natoms_in_residue, pose_resNum, pose, prev_resNum, struct_id, db_session);
 			}
 			pose_resNum++;
 			natoms_in_residue = 0;
 		}
 
-		if(res.is_null(1)) {
+		if ( res.is_null(1) ) {
 			missing_coordinates.push_back(pose_resNum);
 			last_residue_missing = true;
 			continue;
@@ -606,7 +591,7 @@ void ProteinResidueConformationFeatures::set_coords_for_residues(
 		prev_resNum = resNum;
 		initial_iteration=false;
 	}
-	if(!last_residue_missing){
+	if ( !last_residue_missing ) {
 		check_num_requested_atoms(natoms_in_residue, pose_resNum, pose, resNum, struct_id, db_session);
 	}
 
@@ -615,17 +600,17 @@ void ProteinResidueConformationFeatures::set_coords_for_residues(
 	pose.batch_set_xyz(atom_ids, coords);
 
 
-	if(missing_coordinates.size() > 0){
+	if ( missing_coordinates.size() > 0 ) {
 		TR.Warning << "In loading the residue coodinates, some of the residues did not have coordinates specified:" << std::endl << "\t[";
-		for(Size ii=1; ii <= missing_coordinates.size(); ++ii){
+		for ( Size ii=1; ii <= missing_coordinates.size(); ++ii ) {
 			TR.Warning << missing_coordinates[ii] << ",";
 		}
 		TR.Warning << "]" << std::endl;
 		TR.Warning << "This can happen because you are using ProteinResidueConformationFeatures with a structure that contains non-protein residues, for example. To avoid this, extract with the ResidueConformationFeatures instead." << std::endl;
-//		TR.Warning << "These residues will be deleted from the pose." << std::endl;
-//		for(Size ii=1; ii < missing_coordinates.size(); ++ii){
-//			pose.conformation().delete_residue_slow(ii);
-//		}
+		//  TR.Warning << "These residues will be deleted from the pose." << std::endl;
+		//  for(Size ii=1; ii < missing_coordinates.size(); ++ii){
+		//   pose.conformation().delete_residue_slow(ii);
+		//  }
 	}
 }
 
@@ -638,24 +623,23 @@ ProteinResidueConformationFeatures::set_coords_for_residue_from_compact_schema(
 
 	std::string statement_string =
 		"SELECT\n"
-		"	coord_data,\n"
-		"	atom_count\n"
+		"\tcoord_data,\n"
+		"\tatom_count\n"
 		"FROM\n"
-		"	compact_residue_atom_coords\n"
+		"\tcompact_residue_atom_coords\n"
 		"WHERE\n"
-		"	compact_residue_atom_coords.struct_id=?";
+		"\tcompact_residue_atom_coords.struct_id=?";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,struct_id);
 
 	result res(basic::database::safely_read_from_database(stmt));
 	Size seqpos(1);
-	while(res.next()){
+	while ( res.next() ) {
 		std::string coords;
 		core::Size atom_count = 0;
 		res >> coords >> atom_count;
-		utility::vector1<numeric::xyzVector<core::Real> > residue_coords(deserialize_xyz_coords(coords,atom_count)	);
-		for(core::Size atomno = 1; atomno <= residue_coords.size();++atomno)
-		{
+		utility::vector1<numeric::xyzVector<core::Real> > residue_coords(deserialize_xyz_coords(coords,atom_count) );
+		for ( core::Size atomno = 1; atomno <= residue_coords.size(); ++atomno ) {
 			core::id::AtomID atom_id(atomno,seqpos);
 			pose.set_xyz(atom_id,residue_coords[atomno]);
 		}

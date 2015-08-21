@@ -23,7 +23,7 @@ namespace scoring {
 namespace packstat {
 
 
-	/// @brief
+/// @brief
 class AtomRadiusMap;
 
 } // namespace packstat

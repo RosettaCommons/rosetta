@@ -47,7 +47,7 @@ public:
 
 	//ctor sets up the pose once
 	RestrictToCDRH3LoopTest(){
-        core_init();
+		core_init();
 		core::import_pose::pose_from_pdb( pose, "protocols/util/aHo_antibody.pdb" );
 	}
 	virtual ~RestrictToCDRH3LoopTest() {}
@@ -60,18 +60,15 @@ public:
 	void tearDown() {}
 
 	// ------------- Helper Functions ------------- //
-    void perform_relevant_assertions( core::pack::task::PackerTaskOP const & task, core::Size residue_number )
-    {
-        if ( residue_number >= pose.pdb_info()->pdb2pose( 'H', 107 ) && residue_number <= pose.pdb_info()->pdb2pose( 'H', 138 ) )
-        {
-            TS_ASSERT_EQUALS( task->residue_task(residue_number).being_packed(), true );
-        }
-        else
-        {
-            TS_ASSERT_EQUALS( task->residue_task(residue_number).being_packed(), false );
-        }
-        TS_ASSERT_EQUALS( task->residue_task(residue_number).being_designed(), false );
-    }
+	void perform_relevant_assertions( core::pack::task::PackerTaskOP const & task, core::Size residue_number )
+	{
+		if ( residue_number >= pose.pdb_info()->pdb2pose( 'H', 107 ) && residue_number <= pose.pdb_info()->pdb2pose( 'H', 138 ) ) {
+			TS_ASSERT_EQUALS( task->residue_task(residue_number).being_packed(), true );
+		} else {
+			TS_ASSERT_EQUALS( task->residue_task(residue_number).being_packed(), false );
+		}
+		TS_ASSERT_EQUALS( task->residue_task(residue_number).being_designed(), false );
+	}
 
 	// --------------- Test Cases --------------- //
 
@@ -80,8 +77,8 @@ public:
 	/// the positions with neighbors fewer than the cutoff are designable.
 
 	void test_RestrictToCDRH3Loop() {
-    
-		
+
+
 		using protocols::toolbox::task_operations::RestrictToCDRH3Loop;
 		using core::pack::task::operation::TaskOperationCOP;
 		//using namespace ObjexxFCL::format;
@@ -93,12 +90,11 @@ public:
 
 		// the following call should work even if the pose hasn't been scored
 		core::pack::task::PackerTaskOP task = tf.create_task_and_apply_taskoperations( pose );
-        
-        for ( core::Size residue_number = 1; residue_number <= pose.total_residue(); ++residue_number )
-        {
-            perform_relevant_assertions( task, residue_number);
-        }
-        
+
+		for ( core::Size residue_number = 1; residue_number <= pose.total_residue(); ++residue_number ) {
+			perform_relevant_assertions( task, residue_number);
+		}
+
 
 	}
 

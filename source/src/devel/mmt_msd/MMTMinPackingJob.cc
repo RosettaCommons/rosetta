@@ -61,7 +61,7 @@ void MMTMinPackingJob::optimize()
 	best_assignment_ = core::pack::scmin::SidechainStateAssignmentOP( new core::pack::scmin::SidechainStateAssignment( rotsets_->nmoltenres() ) );
 
 	core::pack::min_pack_optimize(
-		pose(),	sfxn(),	task(), rotsets_, scminmap_,
+		pose(), sfxn(), task(), rotsets_, scminmap_,
 		mingraph_, atc_, *min_options_, *best_assignment_ );
 
 	// it'd be better if the minpacker tracked the total energy

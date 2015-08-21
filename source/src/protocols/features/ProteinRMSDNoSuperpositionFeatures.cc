@@ -61,8 +61,8 @@
 #include <utility/vector0.hh>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::string;
 using std::list;
@@ -171,7 +171,7 @@ ProteinRMSDNoSuperpositionFeatures::parse_my_tag(
 ) {
 	runtime_assert(tag->getOption<string>("name") == type_name());
 
-	if(tag->hasOption("reference_name")){
+	if ( tag->hasOption("reference_name") ) {
 		// Use with SavePoseMover
 		// WARNING! reference_pose is not initialized until apply time
 		reference_pose(saved_reference_pose(tag, data));
@@ -183,12 +183,12 @@ ProteinRMSDNoSuperpositionFeatures::parse_my_tag(
 void
 ProteinRMSDNoSuperpositionFeatures::reference_pose_from_options(core::pose::Pose const & pose) {
 	using namespace basic::options;
-	if (option[OptionKeys::in::file::native].user()) {
+	if ( option[OptionKeys::in::file::native].user() ) {
 		PoseOP ref_pose( new core::pose::Pose() );
 		string native_pdb_fname(option[OptionKeys::in::file::native]());
 		pose_from_pdb(*ref_pose, native_pdb_fname);
 		tr << "Adding features reporter '" << type_name() << "' referencing '"
-		<< " the -in:file:native='" << native_pdb_fname << "'" << endl;
+			<< " the -in:file:native='" << native_pdb_fname << "'" << endl;
 		reference_pose(ref_pose);
 	} else {
 		tr << "Setting '" << type_name() << "' to reference the starting structure." << endl;
@@ -205,14 +205,14 @@ ProteinRMSDNoSuperpositionFeatures::report_features(
 ){
 	using namespace core::scoring;
 
-	if(!reference_pose_ || !reference_pose_->total_residue()){
+	if ( !reference_pose_ || !reference_pose_->total_residue() ) {
 		utility_exit_with_message("No reference pose has been initialized.");
 		return 0;
 	}
 
 	ObjexxFCL::FArray1D_bool subset_array (relevant_residues.size(), false);
-	for(Size i = 1; i <= relevant_residues.size(); ++i){
-		if(relevant_residues[i]) subset_array[i-1] = true;
+	for ( Size i = 1; i <= relevant_residues.size(); ++i ) {
+		if ( relevant_residues[i] ) subset_array[i-1] = true;
 	}
 
 	std::string statement_string = "INSERT INTO protein_rmsd_no_superposition (struct_id, reference_tag, protein_CA, protein_CA_or_CB, protein_backbone, protein_backbone_including_O, protein_backbone_sidechain_heavyatom, heavyatom, nbr_atom, all_atom) VALUES (?,?,?,?,?,?,?,?,?,?);";

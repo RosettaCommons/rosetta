@@ -71,7 +71,7 @@ RemodelRotamerLinks::apply(
 ) const
 {
 	Size nres_asymm;
-	if ( core::pose::symmetry::is_symmetric(pose) ){
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 		nres_asymm = symm_info->num_independent_residues();
 	} else {
@@ -88,11 +88,11 @@ RemodelRotamerLinks::apply(
 
 	utility::vector1< utility::vector1< Size > > equiv_pos;
 
-//find all the equivalent positions, first pass iterate over the base
-	for (Size res = 1; res<= segment_length ; res++){
+	//find all the equivalent positions, first pass iterate over the base
+	for ( Size res = 1; res<= segment_length ; res++ ) {
 		utility::vector1< Size> list;
 
-		for (Size rep = 0; rep < repeat_number; rep++){
+		for ( Size rep = 0; rep < repeat_number; rep++ ) {
 			list.push_back(res+(segment_length*rep));
 		}
 		equiv_pos.push_back(list);
@@ -101,21 +101,21 @@ RemodelRotamerLinks::apply(
 
 	//second pass, iterate over to populate the entire chain
 
-	for (Size i = 1; i <= nres ; i++){
+	for ( Size i = 1; i <= nres ; i++ ) {
 		Size subcounter = (i%segment_length);
-		if (subcounter == 0){
+		if ( subcounter == 0 ) {
 			subcounter = segment_length;
 		}
 
 		links->set_equiv(i, equiv_pos[subcounter]);
 
 		//std::cout << "linking " << i << " with " << subcounter << "array with ";
-		for (Size k=1; k<= equiv_pos[subcounter].size(); k++){
-		//std::cout << " " << equiv_pos[subcounter][k];
+		for ( Size k=1; k<= equiv_pos[subcounter].size(); k++ ) {
+			//std::cout << " " << equiv_pos[subcounter][k];
 		}
-	//std::cout << std::endl;
-	// check for similarities
-	//std::cout << ptask.task_string(pose);
+		//std::cout << std::endl;
+		// check for similarities
+		//std::cout << ptask.task_string(pose);
 
 	}
 

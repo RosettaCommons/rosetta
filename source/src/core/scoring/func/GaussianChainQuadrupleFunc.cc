@@ -34,8 +34,8 @@ namespace scoring {
 namespace func {
 
 GaussianChainQuadrupleFunc::GaussianChainQuadrupleFunc( Real const gaussian_variance,
-																												Real const loop_fixed_cost,
-																												Real const D2, Real const D3, Real const D4 ):
+	Real const loop_fixed_cost,
+	Real const D2, Real const D3, Real const D4 ):
 	gaussian_variance_( gaussian_variance ),
 	loop_fixed_cost_( loop_fixed_cost ),
 	D2_( D2 ),
@@ -91,9 +91,9 @@ GaussianChainQuadrupleFunc::func( Real const z ) const
 	Real const s = sqrt( 2 * gaussian_variance_ );
 
 	Real L_sum = 0.0;
-	for ( int sgn2 = -1; sgn2 <= 1; sgn2 += 2 ){
-		for ( int sgn3 = -1; sgn3 <= 1; sgn3 += 2 ){
-			for ( int sgn4 = -1; sgn4 <= 1; sgn4 += 2 ){
+	for ( int sgn2 = -1; sgn2 <= 1; sgn2 += 2 ) {
+		for ( int sgn3 = -1; sgn3 <= 1; sgn3 += 2 ) {
+			for ( int sgn4 = -1; sgn4 <= 1; sgn4 += 2 ) {
 				Real D_sum = D1 + ( sgn2 * D2 ) + ( sgn3 * D3 ) + ( sgn4 * D4 );
 				D_sum /= s;
 				int sgn = -1 * sgn2 * sgn3 * sgn4;
@@ -121,9 +121,9 @@ GaussianChainQuadrupleFunc::dfunc( Real const z ) const
 
 	Real L_sum = 0.0;
 	Real deriv_sum = 0.0;
-	for ( int sgn2 = -1; sgn2 <= 1; sgn2 += 2 ){
-		for ( int sgn3 = -1; sgn3 <= 1; sgn3 += 2 ){
-			for ( int sgn4 = -1; sgn4 <= 1; sgn4 += 2 ){
+	for ( int sgn2 = -1; sgn2 <= 1; sgn2 += 2 ) {
+		for ( int sgn3 = -1; sgn3 <= 1; sgn3 += 2 ) {
+			for ( int sgn4 = -1; sgn4 <= 1; sgn4 += 2 ) {
 				Real D_sum = D1 + ( sgn2 * D2 ) + ( sgn3 * D3 ) + ( sgn4 * D4 );
 				D_sum /= s;
 				int sgn = -1 * sgn2 * sgn3 * sgn4;

@@ -95,7 +95,7 @@ close_to_dna(
 	bool base_only /* = false */
 )
 {
-//	TR << "pres " << pres << " dres " << dres << std::endl;
+	// TR << "pres " << pres << " dres " << dres << std::endl;
 	// iterate over dna base ('sidechain') atoms, check for distance to protein sidechain takeoff point
 	Atoms::const_iterator baseatom = ( base_only ? dres.sidechainAtoms_begin() : dres.atom_begin() );
 	for ( Atoms::const_iterator end( dres.heavyAtoms_end() ); baseatom != end; ++baseatom ) {
@@ -120,7 +120,7 @@ argrot_dna_dis2(
 	using namespace scoring;
 	using namespace task;
 
-//	TR << "Arg rot screen for " << pres << " " << presid << " vs " << dres << std::endl;
+	// TR << "Arg rot screen for " << pres << " " << presid << " vs " << dres << std::endl;
 
 	PackerTaskOP ptask( TaskFactory::create_packer_task( pose ) );
 	ptask->set_bump_check( false );
@@ -137,8 +137,9 @@ argrot_dna_dis2(
 
 	// mostly if not completely irrelevant here, but required as an argument for building rotamers
 	std::string weights_tag("dna");
-	if ( option[ OptionKeys::score::weights ].user() )
+	if ( option[ OptionKeys::score::weights ].user() ) {
 		weights_tag = option[ OptionKeys::score::weights ]();
+	}
 	ScoreFunctionOP scrfxn( ScoreFunctionFactory::create_score_function( weights_tag ) );
 	// unnecessary here, yet also required
 	graph::GraphOP dummygraph( new graph::Graph( pose.total_residue() ) );
@@ -148,7 +149,7 @@ argrot_dna_dis2(
 	rotset->set_resid( presid );
 	rotset->build_rotamers( pose, *scrfxn, *ptask, dummygraph, false );
 
-//	TR(basic::t_debug) << "arg screen w/ " << rotset->num_rotamers() << " rots" << std::endl;
+	// TR(basic::t_debug) << "arg screen w/ " << rotset->num_rotamers() << " rots" << std::endl;
 
 	// add a bump check here first
 
@@ -163,8 +164,8 @@ argrot_dna_dis2(
 		}
 
 		Atoms::const_iterator prot_begin( (*rotamer)->sidechainAtoms_begin() ),
-													prot_end( (*rotamer)->heavyAtoms_end() ),
-													dna_end( dres.heavyAtoms_end() );
+			prot_end( (*rotamer)->heavyAtoms_end() ),
+			dna_end( dres.heavyAtoms_end() );
 		Atoms::const_iterator dna_begin =
 			( base_only ? dres.sidechainAtoms_begin() : dres.atom_begin() );
 
@@ -209,8 +210,8 @@ Real z_axis_dist(
 	using namespace scoring::dna;
 
 	xyzVec const Z( get_z_axis( dres, get_y_axis(dres,1) ) ),
-							 prot( pres.nbr_atom_xyz() ),
-							 dna( dres.xyz( dres.first_sidechain_atom() ) );
+		prot( pres.nbr_atom_xyz() ),
+		dna( dres.xyz( dres.first_sidechain_atom() ) );
 
 	// vector from first protein sidechain atom to DNA N1/N9
 	xyzVec vec( prot - dna );
@@ -254,18 +255,18 @@ dna_base_partner( chemical::AA const & na )
 	using namespace chemical;
 
 	switch( na ) {
-	case na_ade:
+	case na_ade :
 		return na_thy;
-	case na_thy:
+	case na_thy :
 		return na_ade;
-	case na_gua:
+	case na_gua :
 		return na_cyt;
-	case na_cyt:
+	case na_cyt :
 		return na_gua;
-	default:
+	default :
 		utility_exit_with_message( "Bad DNA aa "+chemical::name_from_aa(na) );
 	}
-//	return na_ade;
+	// return na_ade;
 	return aa_unk;
 }
 
@@ -322,7 +323,7 @@ find_basepairs(
 
 		// hbond atom, base y-axis, base z-axis
 		xyzVec const hbatm_xyz_i( i_rsd.xyz( hbond_atom[ i_aa ] ) ),
-								 base_yaxis_i( get_y_axis( i_rsd, 1 /*strand*/ ) );
+			base_yaxis_i( get_y_axis( i_rsd, 1 /*strand*/ ) );
 		xyzVec const base_zaxis_i( get_z_axis( i_rsd, base_yaxis_i ) );
 
 		bool paired( false );
@@ -345,7 +346,7 @@ find_basepairs(
 			// -geometry check-
 			xyzVec const base_yaxis_j( get_y_axis( j_rsd, 2 ) );
 			xyzVec const base_zaxis_j( get_z_axis( j_rsd, base_yaxis_j ) ),
-									 hb_vec( ( hbatm_xyz_i - hbatm_xyz_j ).normalized() );
+				hb_vec( ( hbatm_xyz_i - hbatm_xyz_j ).normalized() );
 
 			Real const
 				// base y-axes parallel?
@@ -366,16 +367,15 @@ find_basepairs(
 			int verbosity(0); // to do: learn to use Tracer properly
 			if ( verbosity >= 2 ) {
 				TR << "basepair geom "
-				   << pdbi << " vs. " << pdbj << " dis " << d
-				   << " ydot " << ydot
-				   << " hbydots " << dothbyi << " " << dothbyj
-				   << " hbzdots " << dothbzi << " " << dothbzj;
+					<< pdbi << " vs. " << pdbj << " dis " << d
+					<< " ydot " << ydot
+					<< " hbydots " << dothbyi << " " << dothbyj
+					<< " hbzdots " << dothbzi << " " << dothbzj;
 			}
 
 			if ( dotsum < bestdotsum || ydot < 0.8 ||
-					 dothbyi < 0.6 || dothbyj < 0.6 ||
-					 dothbzi > 0.5 || dothbzj > 0.5 )
-			{
+					dothbyi < 0.6 || dothbyj < 0.6 ||
+					dothbzi > 0.5 || dothbzj > 0.5 ) {
 				if ( verbosity >= 2 ) TR << '\n';
 				continue;
 			}
@@ -384,9 +384,9 @@ find_basepairs(
 			// -complementarity check-
 			if ( j_aa != base_partner[ i_aa ] ) {
 				std::cerr << "Warning: nucleic acids " << i_rsd.name3() << " " <<
-				 pdbi << " and " << j_rsd.name3() << " " <<
-				 pdbj << " have basepaired geometry, but are not " <<
-				 "complementary types" << '\n';
+					pdbi << " and " << j_rsd.name3() << " " <<
+					pdbj << " have basepaired geometry, but are not " <<
+					"complementary types" << '\n';
 				continue; // skip non-canonical basepairs for now
 			}
 			// passed: save j as optimal basepair partner
@@ -421,7 +421,7 @@ make_sequence_combinations(
 	ResidueLevelTask const & restask( ptask->residue_task( resid ) );
 
 	for ( ResidueLevelTask::ResidueTypeCOPListConstIter type( restask.allowed_residue_types_begin() );
-				type != restask.allowed_residue_types_end(); ++type ) {
+			type != restask.allowed_residue_types_end(); ++type ) {
 		// ignore adduct variant types for now (probably hydrated)
 		if ( (*type)->has_variant_type( chemical::ADDUCT_VARIANT ) ) continue;
 		sequence[ resid ] = *type;
@@ -445,7 +445,7 @@ make_single_mutants(
 		Size index( it->first );
 		ResidueLevelTask const & rtask( ptask->residue_task(index) );
 		for ( ResidueLevelTask::ResidueTypeCOPListConstIter type( rtask.allowed_residue_types_begin() );
-					type != rtask.allowed_residue_types_end(); ++type ) {
+				type != rtask.allowed_residue_types_end(); ++type ) {
 			// ignore adduct variant types for now (probably hydrated)
 			if ( (*type)->has_variant_type( chemical::ADDUCT_VARIANT ) ) continue;
 			if ( (*type)->aa() == it->second->aa() ) continue; // avoid duplicating input sequence
@@ -467,10 +467,9 @@ design_residues_list(
 	for ( Size index(1); index <= nres; ++index ) {
 		if ( pose.residue_type(index).is_DNA() ) {
 			if ( !ptask.residue_task(index).has_behavior("TARGET") &&
-			     !ptask.residue_task(index).has_behavior("SCAN") &&
-			     !ptask.residue_task(index).being_designed() ) continue;
-		}
-		else if ( !ptask.pack_residue( index ) ) continue;
+					!ptask.residue_task(index).has_behavior("SCAN") &&
+					!ptask.residue_task(index).being_designed() ) continue;
+		} else if ( !ptask.pack_residue( index ) ) continue;
 		design_residues.push_back(
 			PositionType( index, pose.residue_type( index ).get_self_ptr(), ptask.design_residue( index ) ) );
 	}
@@ -565,14 +564,14 @@ restrict_dna_rotamers(
 		if ( seqindex != seq.end() ) {
 			// compare only the name3's on order to allow variants
 			std::string seq_typename( (seqindex->second)->name3() ),
-									rot_typename( rot_type.name3() );
+				rot_typename( rot_type.name3() );
 			if ( seq_typename != rot_typename ) continue;
 		}
 		rot_to_pack.push_back( roti );
 	}
 	Size const rots_off( nrot - rot_to_pack.size() );
 	TR << "Fixing DNA rotamers: " << rots_off
-						<< " out of " << nrot << " rotamers disabled." << std::endl;
+		<< " out of " << nrot << " rotamers disabled." << std::endl;
 }
 
 /// @details for packing a single sequence out of a RotamerSets that (potentially) represents sequence variability
@@ -593,13 +592,13 @@ restrict_to_single_sequence(
 		// compare names here
 		// name3 comparison should allow variants
 		std::string seq_typename( ( single_sequence[ rotpos ] )->name3() ),
-								rot_typename( rot_type.name3() );
+			rot_typename( rot_type.name3() );
 		if ( seq_typename != rot_typename ) continue;
 		rot_to_pack.push_back( roti );
 	}
 	Size const rots_off( nrot - rot_to_pack.size() );
 	TR << "Fixing rotamers for a single sequence: " << rots_off
-						<< " out of " << nrot << " rotamers disabled." << std::endl;
+		<< " out of " << nrot << " rotamers disabled." << std::endl;
 }
 
 /// @details
@@ -636,11 +635,11 @@ write_checkpoint( pose::Pose & pose, Size iter )
 	// write checkpoint file
 	std::string checkpointname( fileroot + ".checkpoint" );
 	utility::io::ozstream out( checkpointname.c_str() );
-//	std::ofstream out( checkpointname.c_str() );
+	// std::ofstream out( checkpointname.c_str() );
 
 	if ( !out ) {
 		std::cerr << "trouble opening file " << checkpointname
-		          << " for writing... skipping checkpoint" << std::endl;
+			<< " for writing... skipping checkpoint" << std::endl;
 		runtime_assert( false ); // die here in debug mode
 		return;
 	}
@@ -699,7 +698,7 @@ checkpoint_cleanup()
 	filenames.push_back( fileroot + ".pdb.checkpoint" );
 
 	for ( std::list< std::string >::const_iterator filename( filenames.begin() );
-	      filename != filenames.end(); ++filename ) {
+			filename != filenames.end(); ++filename ) {
 		if ( utility::file::file_exists( *filename ) ) {
 			std::string nameold( *filename + ".old" );
 			std::rename( (*filename).c_str(), nameold.c_str() );
@@ -719,7 +718,7 @@ load_dna_design_defs_from_strings(
 )
 {
 	for ( Strings::const_iterator str_def( str_defs.begin() ), end( str_defs.end() );
-	      str_def != end; ++str_def ) {
+			str_def != end; ++str_def ) {
 		defs.push_back( DnaDesignDefOP( new DnaDesignDef( *str_def ) ) );
 	}
 }
@@ -784,8 +783,7 @@ add_constraints_from_file(
 	std::string cst_file;
 	if ( option[ OptionKeys::constraints::cst_file ].user() ) {
 		cst_file = option[ OptionKeys::constraints::cst_file ]().front();
-	}
-	else return;
+	} else return;
 
 	ConstraintSetOP cst_set =
 		ConstraintIO::get_instance()->read_constraints_new( cst_file, ConstraintSetOP( new ConstraintSet ), pose );
@@ -803,7 +801,7 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 
 	// Identify DNA duplexed regions
 	protocols::dna::DNAParameters dna_info( pose );
-//	dna_info.calculate( pose );
+	// dna_info.calculate( pose );
 
 	Size num_chains( 1 );
 	utility::vector1< Size > chain_start;
@@ -811,8 +809,8 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 	utility::vector1< Size > chain_type;
 
 	chain_start.push_back( 1 );
-	for( Size resid = 1 ; resid < nres ; ++resid ) {
-		if( pdb_data->chain( resid ) != pdb_data->chain( resid + 1 ) ){
+	for ( Size resid = 1 ; resid < nres ; ++resid ) {
+		if ( pdb_data->chain( resid ) != pdb_data->chain( resid + 1 ) ) {
 			chain_end.push_back( resid );
 			chain_start.push_back( resid + 1 );
 			num_chains++;
@@ -827,7 +825,7 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 	Size jump_pair_count( 1 );
 
 	// We can fill the cut info now
-	for( Size cut_num = 1 ; cut_num < chain_end.size() ; ++cut_num ){
+	for ( Size cut_num = 1 ; cut_num < chain_end.size() ; ++cut_num ) {
 		cut_positions( cut_num ) = chain_end[ cut_num ];
 	}
 
@@ -839,24 +837,24 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 	utility::vector1< Size > closest_base( num_chains, 0 );
 
 	// Analyze each chain
-	for( Size this_chain = 1 ; this_chain <= num_chains ; ++this_chain ) {
+	for ( Size this_chain = 1 ; this_chain <= num_chains ; ++this_chain ) {
 		TR << "Working on chain " << this_chain << std::endl;
 
 		// Check for amino acid chain
-		if( pose.residue( chain_start[ this_chain ] ).is_protein() ) {
+		if ( pose.residue( chain_start[ this_chain ] ).is_protein() ) {
 			chain_type.push_back( amino );
 			TR << "Found 1 initial segments for chain " << this_chain << std::endl;
 			TR << "Chain " << this_chain << " segment 1 start res " << chain_start[ this_chain ] <<
-										" end res " << chain_end[ this_chain ] << " of type 1" << std::endl;
+				" end res " << chain_end[ this_chain ] << " of type 1" << std::endl;
 
 
 			// Find the DNA base with the closest C1' atom to some Calpha in this protein
 			Real best_dist( 9999.0 );
-			for( Size prot_res = chain_start[ this_chain ] ; prot_res <= chain_end[ this_chain ] ; ++prot_res ) {
-				for( Size dna_res = 1 ; dna_res <= nres ; ++dna_res ) {
-					if( !pose.residue( dna_res ).is_DNA() ) continue;
+			for ( Size prot_res = chain_start[ this_chain ] ; prot_res <= chain_end[ this_chain ] ; ++prot_res ) {
+				for ( Size dna_res = 1 ; dna_res <= nres ; ++dna_res ) {
+					if ( !pose.residue( dna_res ).is_DNA() ) continue;
 					Real check_dist = pose.residue( prot_res ).xyz( "CA" ).distance_squared( pose.residue( dna_res ).xyz( "C1'" ) );
-					if( check_dist < best_dist ) {
+					if ( check_dist < best_dist ) {
 						best_dist = check_dist;
 						protein_root[ this_chain ] = prot_res;
 						closest_base[ this_chain ] = dna_res;
@@ -867,7 +865,7 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 			TR << "Protein closest approach is res " << protein_root[ this_chain ]<< " with base " << closest_base[ this_chain ] << " with distance " << std::sqrt( best_dist ) << std::endl;
 
 			// Note this pair as a jump
-			if( protein_root[this_chain] < closest_base[this_chain] ) {
+			if ( protein_root[this_chain] < closest_base[this_chain] ) {
 				jump_pairs( 1, jump_pair_count ) = protein_root[this_chain];
 				jump_pairs( 2, jump_pair_count ) = closest_base[this_chain];
 			} else {
@@ -880,7 +878,7 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 		}
 
 		// Bail if it's something other than protein or DNA
-		if( !pose.residue( chain_start[ this_chain ] ).is_DNA() ) {
+		if ( !pose.residue( chain_start[ this_chain ] ).is_DNA() ) {
 			std::cerr << "Bad call to make_basepair_aware_fold_tree() with non-protein, non-DNA type" << std::endl;
 			utility_exit_with_message( "make_base_aware_fold_tree() takes only protein, DNA!" );
 		}
@@ -895,17 +893,17 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 		utility::vector1< Size > segment_type;
 
 		segment_start.push_back( chain_start[ this_chain ] );
-		if( dna_info.find_partner( chain_start[ this_chain ] ) != 0 ) {
+		if ( dna_info.find_partner( chain_start[ this_chain ] ) != 0 ) {
 			segment_type.push_back( bped_dna );
 		} else {
 			segment_type.push_back( non_bped_dna );
 		}
-		for( Size resid = chain_start[this_chain]  ; resid < chain_end[ this_chain ] ; ++resid ) {
+		for ( Size resid = chain_start[this_chain]  ; resid < chain_end[ this_chain ] ; ++resid ) {
 			// Check for difference
 			bool this_bped( dna_info.find_partner( resid ) != 0 );
 			bool next_bped( dna_info.find_partner( resid + 1 ) != 0 );
 			// Switch from base paired to not base paired
-			if( this_bped && !next_bped ) { // Switch from base paired to not base paired
+			if ( this_bped && !next_bped ) { // Switch from base paired to not base paired
 				segment_end.push_back( resid );
 				segment_start.push_back( resid + 1 );
 				segment_type.push_back( non_bped_dna );
@@ -913,10 +911,10 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 				segment_end.push_back( resid );
 				segment_start.push_back( resid + 1 );
 				segment_type.push_back( bped_dna );
-			} else if (!this_bped && !next_bped ) { // No switch - do nothing
+			} else if ( !this_bped && !next_bped ) { // No switch - do nothing
 				continue;
 			} else if ( pdb_data->chain( dna_info.find_partner( resid ) ) !=
-									pdb_data->chain( dna_info.find_partner( resid + 1 ) ) ) { // Both base-paired, but to different strands
+					pdb_data->chain( dna_info.find_partner( resid + 1 ) ) ) { // Both base-paired, but to different strands
 				segment_end.push_back( resid );
 				segment_start.push_back( resid + 1 );
 				segment_type.push_back( bped_dna );
@@ -928,17 +926,17 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 
 		// Let's see what we have
 		TR << "Found " << num_segments << " initial segments for chain " << this_chain << std::endl;
-		for( Size this_segment = 1 ; this_segment <= num_segments ; ++this_segment ) {
+		for ( Size this_segment = 1 ; this_segment <= num_segments ; ++this_segment ) {
 			TR << "Chain " << this_chain << " segment " << this_segment << " start res " << segment_start[ this_segment ] <<
-										" end res " << segment_end[ this_segment ] << " of type " << segment_type[ this_segment ] << std::endl;
+				" end res " << segment_end[ this_segment ] << " of type " << segment_type[ this_segment ] << std::endl;
 		}
 
 
 		// Record mid-points of base paired segments
 		utility::vector1< Size > bp_middle( num_segments, 0 );
 
-		for( Size this_segment = 1 ; this_segment <= num_segments ; ++this_segment ) {
-			if( segment_type[ this_segment ] == bped_dna ) {
+		for ( Size this_segment = 1 ; this_segment <= num_segments ; ++this_segment ) {
+			if ( segment_type[ this_segment ] == bped_dna ) {
 				bp_middle[ this_segment ] = ( segment_start[ this_segment ] + segment_end[ this_segment ] ) / 2;
 			}
 		}
@@ -947,17 +945,17 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 
 		Size num_processed( num_segments );
 
-		if( num_segments  > 1 ) {
-			for( Size this_segment = 1 ; this_segment <= num_segments ; ++this_segment ) {
-				if( segment_type[ this_segment ] == non_bped_dna  && num_segments > 1 ) {
+		if ( num_segments  > 1 ) {
+			for ( Size this_segment = 1 ; this_segment <= num_segments ; ++this_segment ) {
+				if ( segment_type[ this_segment ] == non_bped_dna  && num_segments > 1 ) {
 					num_processed--;
-					if( this_segment == 1 ) { // Just merge with the next segment
+					if ( this_segment == 1 ) { // Just merge with the next segment
 						segment_start[ this_segment + 1 ] = segment_start[ this_segment ];
-					} else if( this_segment == num_segments ) { // Just merge with the previous segment
+					} else if ( this_segment == num_segments ) { // Just merge with the previous segment
 						segment_end[ this_segment - 1 ] = segment_end[ this_segment ];
 					} else {  // Must be between two base paired segments - split evenly
 						// Handle single residue segment
-						if( segment_start[ this_segment ] == segment_end[ this_segment ] ) {
+						if ( segment_start[ this_segment ] == segment_end[ this_segment ] ) {
 							// Just give it to the previous
 							segment_end[ this_segment - 1 ] = segment_end[ this_segment ];
 						} else {
@@ -972,14 +970,14 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 		}
 
 		// Need to handle the case of a single segment chain of non-base paired DNA - it needs a jump somewhere
-		if( num_segments == 1 && chain_type[ this_chain ] == non_bped_dna ) {
+		if ( num_segments == 1 && chain_type[ this_chain ] == non_bped_dna ) {
 			// Find the amino acid with the closest Calpha atom to some C1' atom this chain
 			Real best_dist( 9999.0 );
-			for( Size dna_res = chain_start[ this_chain ] ; dna_res <= chain_end[ this_chain ] ; ++dna_res ) {
-				for( Size prot_res = 1 ; prot_res <= nres ; ++prot_res ) {
-					if( !pose.residue( prot_res ).is_protein() ) continue;
+			for ( Size dna_res = chain_start[ this_chain ] ; dna_res <= chain_end[ this_chain ] ; ++dna_res ) {
+				for ( Size prot_res = 1 ; prot_res <= nres ; ++prot_res ) {
+					if ( !pose.residue( prot_res ).is_protein() ) continue;
 					Real check_dist = pose.residue( prot_res ).xyz( "CA" ).distance_squared( pose.residue( dna_res ).xyz( "C1'" ) );
-					if( check_dist < best_dist ) {
+					if ( check_dist < best_dist ) {
 						best_dist = check_dist;
 						protein_root[ this_chain ] = prot_res;
 						closest_base[ this_chain ] = dna_res;
@@ -990,7 +988,7 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 			TR << "Unpaired DNA closest approach is res " << closest_base[ this_chain ]<< " with amino acid " << protein_root[ this_chain ] << " with distance " << std::sqrt( best_dist ) << std::endl;
 
 			// Note this pair as a jump
-			if( protein_root[this_chain] < closest_base[this_chain] ) {
+			if ( protein_root[this_chain] < closest_base[this_chain] ) {
 				jump_pairs( 1, jump_pair_count ) = protein_root[this_chain];
 				jump_pairs( 2, jump_pair_count ) = closest_base[this_chain];
 			} else {
@@ -1004,11 +1002,11 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 		// Let's see what we have
 		TR << "Found " << num_processed << " final segments for chain " << this_chain << std::endl;
 		Size accum_count( 0 );
-		for( Size this_segment = 1 ; this_segment <= num_segments ; ++this_segment ) {
-			if( segment_type[ this_segment ] == bped_dna ) {
+		for ( Size this_segment = 1 ; this_segment <= num_segments ; ++this_segment ) {
+			if ( segment_type[ this_segment ] == bped_dna ) {
 				accum_count++;
 				TR << "Chain " << this_chain << " segment " << accum_count << " start res " << segment_start[ this_segment ] <<
-										" end res " << segment_end[ this_segment ] << " of type " << segment_type[ this_segment ] << std::endl;
+					" end res " << segment_end[ this_segment ] << " of type " << segment_type[ this_segment ] << std::endl;
 
 				// retrieve the mid-point base pair and its partner
 				Size mid_partner = dna_info.find_partner( bp_middle[ this_segment ] );
@@ -1017,8 +1015,8 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 				// Also check to make sure these chains haven't already been connected.  This
 				// can happen in two strands are base-paired at the ends but have a non-bp-ed
 				// bubble in between.
-				if( ( bp_middle[ this_segment ] < mid_partner ) &&
-							not_already_connected( pose, jump_pair_count - 1, pose.pdb_info()->chain( bp_middle[ this_segment] ), pose.pdb_info()->chain( mid_partner ), jump_pairs ) ) {
+				if ( ( bp_middle[ this_segment ] < mid_partner ) &&
+						not_already_connected( pose, jump_pair_count - 1, pose.pdb_info()->chain( bp_middle[ this_segment] ), pose.pdb_info()->chain( mid_partner ), jump_pairs ) ) {
 					TR << "Making jump between " << bp_middle[ this_segment ] << " and " << mid_partner << std::endl;
 					jump_pairs( 1, jump_pair_count ) = bp_middle[ this_segment ];
 					jump_pairs( 2, jump_pair_count ) = mid_partner;
@@ -1045,7 +1043,7 @@ not_already_connected(
 )
 {
 
-	for( Size i = 1 ; i <= num_jumps ; ++i ) {
+	for ( Size i = 1 ; i <= num_jumps ; ++i ) {
 
 		// Get chain ids for residues involved in jumps
 		char const jump_chain1( pose.pdb_info()->chain( jump_pairs( 1, i ) ) );
@@ -1053,7 +1051,7 @@ not_already_connected(
 
 		// Check versus pre-existing jump ( both ways )
 
-		if( ( jump_chain1 == this_chain && jump_chain2 == other_chain ) ||
+		if ( ( jump_chain1 == this_chain && jump_chain2 == other_chain ) ||
 				( jump_chain2 == this_chain && jump_chain1 == other_chain ) ) {
 			return false;
 		}
@@ -1076,7 +1074,7 @@ set_base_segment_chainbreak_constraints(
 
 	pose::PDBInfoCOP pdb_data( pose.pdb_info() );
 
-//	Size const nres( pose.total_residue() );
+	// Size const nres( pose.total_residue() );
 
 	// From Phil
 	Real const O3_P_distance( 1.608 );
@@ -1095,7 +1093,7 @@ set_base_segment_chainbreak_constraints(
 	assert( start_base <= end_base );
 
 	// First the start base
-	if( !pose.residue_type( start_base ).is_lower_terminus() ) {
+	if ( !pose.residue_type( start_base ).is_lower_terminus() ) {
 		conformation::Residue const & rsd1( pose.residue( start_base-1 ) );
 		conformation::Residue const & rsd2( pose.residue( start_base   ) );
 
@@ -1107,19 +1105,19 @@ set_base_segment_chainbreak_constraints(
 		AtomID const O5_id( rsd2.atom_index( "O5'" ), start_base );
 		AtomID const OP2_id( rsd2.atom_index( "OP2" ), start_base );
 
-     // distance from O3' to P
-     pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint( O3_id, P_id, distance_func ) ) ) );
-     // angle at O3'
-     pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint( C3_id, O3_id, P_id, O3_angle_func ) ) ) );
-     // angle at P
-     pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint( O3_id, P_id, O5_id,  P_angle_func ) ) ) );
-     // another angle at P - try not to get goofy geometries
-     pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint( O3_id, P_id, O5_id,  P_angle_func ) ) ) );
-     pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint( O3_id, P_id, OP2_id,  OP2_angle_func ) ) ) );
+		// distance from O3' to P
+		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint( O3_id, P_id, distance_func ) ) ) );
+		// angle at O3'
+		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint( C3_id, O3_id, P_id, O3_angle_func ) ) ) );
+		// angle at P
+		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint( O3_id, P_id, O5_id,  P_angle_func ) ) ) );
+		// another angle at P - try not to get goofy geometries
+		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint( O3_id, P_id, O5_id,  P_angle_func ) ) ) );
+		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint( O3_id, P_id, OP2_id,  OP2_angle_func ) ) ) );
 	}
 
 	// Next the end base
-	if( !pose.residue_type( end_base ).is_upper_terminus() ) {
+	if ( !pose.residue_type( end_base ).is_upper_terminus() ) {
 		conformation::Residue const & rsd1( pose.residue( end_base   ) );
 		conformation::Residue const & rsd2( pose.residue( end_base+1 ) );
 
@@ -1131,13 +1129,13 @@ set_base_segment_chainbreak_constraints(
 		AtomID const O5_id( rsd2.atom_index( "O5'" ), end_base + 1 );
 		AtomID const OP2_id( rsd2.atom_index( "OP2" ), end_base + 1 );
 
-     // distance from O3' to P
-     pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint( O3_id, P_id, distance_func ) ) ) );
-     pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint( O3_id, P_id, OP2_id,  OP2_angle_func ) ) ) );
-     // angle at O3'
-     pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint( C3_id, O3_id, P_id, O3_angle_func ) ) ) );
-     // angle at P
-     pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint( O3_id, P_id, O5_id,  P_angle_func ) ) ) );
+		// distance from O3' to P
+		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint( O3_id, P_id, distance_func ) ) ) );
+		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint( O3_id, P_id, OP2_id,  OP2_angle_func ) ) ) );
+		// angle at O3'
+		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint( C3_id, O3_id, P_id, O3_angle_func ) ) ) );
+		// angle at P
+		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint( O3_id, P_id, O5_id,  P_angle_func ) ) ) );
 	}
 
 }

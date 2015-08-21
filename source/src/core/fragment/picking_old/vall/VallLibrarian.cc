@@ -83,27 +83,25 @@ VallLibrarian::FragDataOPs VallLibrarian::fragments(
 	TR << "best fragment:   " << ( *begin ) << std::endl;
 	TR << "worst fragment:  " << ( *( end - 1) ) << std::endl;
 
-	core::Real max_allowed_score( basic::options::option[ basic::options::OptionKeys::frags::picking_old_max_score ].value() ); 
+	core::Real max_allowed_score( basic::options::option[ basic::options::OptionKeys::frags::picking_old_max_score ].value() );
 	//flo debug
 	//TR << "allscores: ";
 	core::Size num_frags_picked(1);
 	//for( Scores::const_iterator tmp_it( scores().begin() + ( from - 1 ) ); tmp_it != scores().begin() + to -1; ++tmp_it, ++hack ){
-	//	TR << "(" << hack << "/" << *tmp_it << "),";
+	// TR << "(" << hack << "/" << *tmp_it << "),";
 	//}
 	//TR << std::endl;
 	//debug over
 
 	for ( Scores::const_iterator i = begin; i != end; ++i, ++num_frags_picked ) {
 		core::Real this_score(i->score);
-		if( this_score < max_allowed_score ){
+		if ( this_score < max_allowed_score ) {
 			fdl.push_back( extent_to_fragdata( i->extent_begin, i->extent_end, this_score, srfd_type ) );
-		}
-		else {
-			if( fdl.size() == 0 ){ //in case every fragment was too bad we only take the first to prevent crash
+		} else {
+			if ( fdl.size() == 0 ) { //in case every fragment was too bad we only take the first to prevent crash
 				TR << "no fragments had good score, only picking 1. this is probably a bad sign..." << std::endl;
 				fdl.push_back( extent_to_fragdata( begin->extent_begin, begin->extent_end,this_score, srfd_type ) );
-			}
-			else TR << "fragments with bad score (" << this_score << ") observed after fragment " << num_frags_picked << ", skipping everything afterwards." << std::endl;
+			} else TR << "fragments with bad score (" << this_score << ") observed after fragment " << num_frags_picked << ", skipping everything afterwards." << std::endl;
 			break;
 		}
 	}

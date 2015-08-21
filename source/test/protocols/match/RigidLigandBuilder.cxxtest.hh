@@ -62,7 +62,7 @@ using namespace protocols::toolbox::match_enzdes_util;
 
 class RigidLigandBuilderTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	typedef core::Real Real;
 	typedef core::Size Size;
@@ -302,7 +302,7 @@ class RigidLigandBuilderTests : public CxxTest::TestSuite {
 		ClassicMatchAlgorithmOP match_algorithm( new ClassicMatchAlgorithm( 1 ) );
 		match_algorithm->set_residue_type( cys_restype );
 		match_algorithm->add_external_geom_sampler(
-			exsampler, 1, "CA", "CB", "SG",	rigid_builder );
+			exsampler, 1, "CA", "CB", "SG", rigid_builder );
 		WriteUpstreamCoordinateKinemageOP dsalgorithm( new WriteUpstreamCoordinateKinemage( fout ) );
 		dsalgorithm->set_match_algorithm( match_algorithm );
 		dsalgorithm->set_n_downstream_to_output( 5 );
@@ -407,7 +407,7 @@ class RigidLigandBuilderTests : public CxxTest::TestSuite {
 		ClassicMatchAlgorithmOP match_algorithm( new ClassicMatchAlgorithm( 1 ) );
 		match_algorithm->set_residue_type( cys_restype );
 		match_algorithm->add_external_geom_sampler(
-			exsampler, 1, "CA", "CB", "SG",	rigid_builder );
+			exsampler, 1, "CA", "CB", "SG", rigid_builder );
 		WriteUpstreamCoordinateKinemageOP dsalgorithm( new WriteUpstreamCoordinateKinemage( fout ) );
 		dsalgorithm->set_match_algorithm( match_algorithm );
 		dsalgorithm->set_n_downstream_to_output( 15 );

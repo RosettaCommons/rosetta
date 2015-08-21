@@ -59,9 +59,9 @@ namespace matdes {
 
 // @brief default constructor
 OligomericAverageDegreeFilter::OligomericAverageDegreeFilter():
-  task_factory_( /* NULL */ ),
-  threshold_( 0 ),
-  distance_threshold_( 10.0 ),
+	task_factory_( /* NULL */ ),
+	threshold_( 0 ),
+	distance_threshold_( 10.0 ),
 	jump_set_( false ),
 	jump_id_( 1 ),
 	sym_dof_names_( "" ),
@@ -97,12 +97,12 @@ OligomericAverageDegreeFilter::~OligomericAverageDegreeFilter() {}
 
 protocols::filters::FilterOP
 OligomericAverageDegreeFilter::fresh_instance() const{
-  return protocols::filters::FilterOP( new OligomericAverageDegreeFilter() );
+	return protocols::filters::FilterOP( new OligomericAverageDegreeFilter() );
 }
 
 protocols::filters::FilterOP
 OligomericAverageDegreeFilter::clone() const{
-  return protocols::filters::FilterOP( new OligomericAverageDegreeFilter( *this ) );
+	return protocols::filters::FilterOP( new OligomericAverageDegreeFilter( *this ) );
 }
 
 // @brief getters
@@ -134,9 +134,9 @@ core::Real OligomericAverageDegreeFilter::compute( Pose const & pose, bool const
 	runtime_assert( task_factory() != 0 );
 	utility::vector1<std::string> sym_dof_name_list;
 	//std::string sym_dof_name;
-  core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
+	core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 
-  // Partition pose according to specified jump and symmetry information
+	// Partition pose according to specified jump and symmetry information
 	Size nsubposes=1;
 	utility::vector1<Size> sym_aware_jump_ids;
 	if ( multicomp_ ) {
@@ -144,70 +144,72 @@ core::Real OligomericAverageDegreeFilter::compute( Pose const & pose, bool const
 		sym_dof_name_list = utility::string_split( sym_dof_names_ , ',' );
 		nsubposes = sym_dof_name_list.size();
 		TR.Debug << "nsubposes: " << nsubposes << std::endl;
-	} else if (sym_dof_names_ != "") {
+	} else if ( sym_dof_names_ != "" ) {
 		// expand system along provided DOFs
 		sym_dof_name_list = utility::string_split( sym_dof_names_ , ',' );
-		for (Size j = 1; j <= sym_dof_name_list.size(); j++)
+		for ( Size j = 1; j <= sym_dof_name_list.size(); j++ ) {
 			sym_aware_jump_ids.push_back( core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name_list[j] ) );
+		}
 	} else if ( jump_set_ ) {
 		sym_aware_jump_ids.push_back( core::pose::symmetry::get_sym_aware_jump_num(pose, jump_id_ ) );
 	} else {
 		// if we're symmetric and not multicomponent, expand along all slide DOFs
 		Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
 		TR.Debug << "#slidable jumps: " << nslidedofs << std::endl;
-		for (Size j = 1; j <= nslidedofs; j++)
+		for ( Size j = 1; j <= nslidedofs; j++ ) {
 			sym_aware_jump_ids.push_back( core::pose::symmetry::get_sym_aware_jump_num(pose, j ) );
+		}
 	}
 
-  core::Size count_residues( 0 );
-  core::Size count_neighbors( 0 );
+	core::Size count_residues( 0 );
+	core::Size count_neighbors( 0 );
 
-	for (Size i = 1; i <= nsubposes; i++) {
+	for ( Size i = 1; i <= nsubposes; i++ ) {
 		ObjexxFCL::FArray1D_bool is_upstream ( pose.total_residue(), false );
 		if ( multicomp_ ) {
 			TR.Debug << "computing neighbors for sym_dof_name " << sym_dof_name_list[i] << std::endl;
 			int sym_aware_jump_id;
 			sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name_list[i] );
 			pose.fold_tree().partition_by_jump( sym_aware_jump_id, is_upstream );
-  	} else {
+		} else {
 			core::pose::symmetry::partition_by_symm_jumps( sym_aware_jump_ids, pose.fold_tree(), core::pose::symmetry::symmetry_info(pose), is_upstream );
 		}
 
 		// Count neighbors in the sub_pose
-		for( core::Size resi=1; resi<=pose.total_residue(); ++resi ) {
-			if(pose.residue_type(resi).aa() == core::chemical::aa_vrt) continue;
-			if( packer_task->being_packed( resi ) ){
+		for ( core::Size resi=1; resi<=pose.total_residue(); ++resi ) {
+			if ( pose.residue_type(resi).aa() == core::chemical::aa_vrt ) continue;
+			if ( packer_task->being_packed( resi ) ) {
 				bool which_side = is_upstream(resi);  //fpd  designable residues may be upstream ... that's ok as long as we're separated
 				if ( multicomp() && (which_side != false) ) continue;
 				++count_residues;
 				TR.Debug << "resi: " << resi << std::endl;
 				core::Size resi_neighbors( 0 );
 				core::conformation::Residue const res_target( pose.conformation().residue( resi ) );
-				for( core::Size j=1; j<=pose.total_residue(); ++j ) {
+				for ( core::Size j=1; j<=pose.total_residue(); ++j ) {
 					if ( is_upstream(j) == which_side ) {
 						core::conformation::Residue const resj( pose.residue( j ) );
-						if(resj.aa() == core::chemical::aa_vrt) continue;
+						if ( resj.aa() == core::chemical::aa_vrt ) continue;
 						core::Real const distance( resj.xyz( resj.nbr_atom() ).distance( res_target.xyz( res_target.nbr_atom() ) ) );
-					 	if( distance <= distance_threshold() ){
+						if ( distance <= distance_threshold() ) {
 							TR.Debug << "j: " << j << std::endl;
 							TR.Debug << "count_residues: " << count_residues << " count_neighbors: " << count_neighbors << std::endl;
-						 	++count_neighbors;
-						 	++resi_neighbors;
-					 	}
+							++count_neighbors;
+							++resi_neighbors;
+						}
 					}
 				}
-				if ( verbose ) { 
+				if ( verbose ) {
 					if ( basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {
-						TR << "Connectivity of " << res_target.name3() << resi << " is " << resi_neighbors << std::endl; 
+						TR << "Connectivity of " << res_target.name3() << resi << " is " << resi_neighbors << std::endl;
 					} else {
-						TR << "Connectivity of " << res_target.name3() << pose.pdb_info()->number( resi ) << " is " << resi_neighbors << std::endl; 
+						TR << "Connectivity of " << res_target.name3() << pose.pdb_info()->number( resi ) << " is " << resi_neighbors << std::endl;
 					}
 				}
 				if ( write ) { write_to_pdb( pose, resi, res_target.name3(), resi_neighbors ); }
 			}
 		}
 	}
-  return( (core::Real) count_neighbors / count_residues );
+	return( (core::Real) count_neighbors / count_residues );
 } // compute
 
 void OligomericAverageDegreeFilter::write_to_pdb( Pose const & pose, core::Size const residue, std::string const residue_name, core::Size const neighbors ) const
@@ -239,8 +241,8 @@ bool OligomericAverageDegreeFilter::apply( Pose const & pose ) const
 {
 
 	// Get the oligomeric avg_deg from the compute function and filter
-  core::Real const average_degree( compute( pose, false, false ) );
-  return( average_degree >= threshold() );
+	core::Real const average_degree( compute( pose, false, false ) );
+	return( average_degree >= threshold() );
 
 } // apply_filter
 
@@ -253,46 +255,46 @@ OligomericAverageDegreeFilter::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
-  TR << "OligomericAverageDegreeFilter"<<std::endl;
-  task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
-  threshold( tag->getOption< core::Size >( "threshold", 0 ) );
-  distance_threshold( tag->getOption< core::Real >( "distance_threshold", 10.0 ) );
-	if( tag->hasOption( "jump" ) ){
+	TR << "OligomericAverageDegreeFilter"<<std::endl;
+	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
+	threshold( tag->getOption< core::Size >( "threshold", 0 ) );
+	distance_threshold( tag->getOption< core::Real >( "distance_threshold", 10.0 ) );
+	if ( tag->hasOption( "jump" ) ) {
 		jump_set( true );
-  	jump_id( tag->getOption< core::Size >( "jump", 1 ) );
+		jump_id( tag->getOption< core::Size >( "jump", 1 ) );
 	}
 	sym_dof_names( tag->getOption< std::string >( "sym_dof_names" , "" ) );
 	write2pdb( tag->getOption< bool >("write2pdb", 0) );
 	verbose( tag->getOption< bool >("verbose", 0) );
 	multicomp( tag->getOption< bool >("multicomp", 0) );
-  TR << "with options threshold: " <<threshold() << " and distance_threshold " << distance_threshold() << std::endl;
+	TR << "with options threshold: " <<threshold() << " and distance_threshold " << distance_threshold() << std::endl;
 }
 
 void OligomericAverageDegreeFilter::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & ,
-				utility::lua::LuaObject const & tasks ) {
-  TR << "OligomericAverageDegreeFilter"<<std::endl;
+	utility::lua::LuaObject const & ,
+	utility::lua::LuaObject const & tasks ) {
+	TR << "OligomericAverageDegreeFilter"<<std::endl;
 	task_factory( protocols::elscripts::parse_taskdef( def["tasks"], tasks ));
 	threshold( def["threshold"] ? def["threshold"].to<core::Size>() : 0 );
 	distance_threshold( def["distance_threshold"] ? def["distance_threshold"].to<core::Real>() : 10.0 );
-	if( def["jump"] ) {
+	if ( def["jump"] ) {
 		jump_set( true);
 		jump_id( def["jump"] ? def["jump"].to<core::Size>() : 1 );
 	}
 	write2pdb( def["write2pdb"] ? def["write2pdb"].to<bool>() : 0 );
 	verbose( def["verbose"] ? def["verbose"].to<bool>() : 0 );
-  TR << "with options threshold: " <<threshold() << " and distance_threshold " << distance_threshold() << std::endl;
+	TR << "with options threshold: " <<threshold() << " and distance_threshold " << distance_threshold() << std::endl;
 }
 core::Real
 OligomericAverageDegreeFilter::report_sm( core::pose::Pose const & pose ) const
 {
-  return( compute( pose, false, false ) );
-} 
+	return( compute( pose, false, false ) );
+}
 
 void
 OligomericAverageDegreeFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
-  out << "OligomericAverageDegreeFilter returns " << compute( pose, verbose_, write2pdb_ ) << std::endl;
+	out << "OligomericAverageDegreeFilter returns " << compute( pose, verbose_, write2pdb_ ) << std::endl;
 }
 
 protocols::filters::FilterOP

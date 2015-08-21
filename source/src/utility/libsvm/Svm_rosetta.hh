@@ -34,7 +34,7 @@ using std::string;
 //using platform::Real;
 
 class Svm_node_rosetta: public utility::pointer::ReferenceCount {
- public:
+public:
 	Svm_node_rosetta(platform::Size index, platform::Real value);
 	~Svm_node_rosetta();
 	void set_index(platform::Size index){
@@ -49,20 +49,20 @@ class Svm_node_rosetta: public utility::pointer::ReferenceCount {
 	platform::Real value(){
 		return(value_);
 	};
- private:
+private:
 	platform::Size index_;
 	platform::Real value_;
 };
 
 
 class Svm_rosetta: public utility::pointer::ReferenceCount {
- public:
-  Svm_rosetta(string model_filename);
-  ~Svm_rosetta();
-  platform::Size get_nr_class();
+public:
+	Svm_rosetta(string model_filename);
+	~Svm_rosetta();
+	platform::Size get_nr_class();
 	vector1< platform::Real > predict_probability(vector1< Svm_node_rosettaOP > & features);
-  platform::Real predict( const vector1< Svm_node_rosettaOP > & features);     
- private:
+	platform::Real predict( const vector1< Svm_node_rosettaOP > & features);
+private:
 	svm_model *svm_model_;
 };
 }//libsvm

@@ -68,15 +68,15 @@ public:
 	void set_default_settings();
 
 
-    core::Size get_max_kic_build_attempts() const
-    {
-        return max_kic_build_attempts_;
-    }
+	core::Size get_max_kic_build_attempts() const
+	{
+		return max_kic_build_attempts_;
+	}
 
-    void set_max_kic_build_attempts( core::Size max_kic_build_attempts )
-    {
-        max_kic_build_attempts_ = max_kic_build_attempts;
-    }
+	void set_max_kic_build_attempts( core::Size max_kic_build_attempts )
+	{
+		max_kic_build_attempts_ = max_kic_build_attempts;
+	}
 
 
 	/// @brief Clone this object
@@ -92,12 +92,12 @@ private:
 
 protected:
 
-    virtual loop_mover::LoopResult model_loop(
+	virtual loop_mover::LoopResult model_loop(
 		core::pose::Pose & pose,
 		protocols::loops::Loop const & loop
 	);
 
-    virtual basic::Tracer & tr() const;
+	virtual basic::Tracer & tr() const;
 };
 
 std::ostream &operator<< ( std::ostream &os, LoopMover_Perturb_KIC const &mover );

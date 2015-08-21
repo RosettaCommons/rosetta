@@ -57,7 +57,7 @@ public:
 
 	virtual void
 	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, Pose const & );
-  virtual void parse_def( utility::lua::LuaObject const & def,
+	virtual void parse_def( utility::lua::LuaObject const & def,
 		utility::lua::LuaObject const & score_fxns,
 		utility::lua::LuaObject const & tasks,
 		protocols::moves::MoverCacheSP cache );

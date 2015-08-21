@@ -22,29 +22,29 @@ namespace cyclic_peptide {
 
 class CreateTorsionConstraint : public moves::Mover
 {
-	public:
-		CreateTorsionConstraint();
-		virtual ~CreateTorsionConstraint();
+public:
+	CreateTorsionConstraint();
+	virtual ~CreateTorsionConstraint();
 
-		virtual void apply( core::pose::Pose &pose );
-		virtual std::string get_name() const;
+	virtual void apply( core::pose::Pose &pose );
+	virtual std::string get_name() const;
 
-		virtual moves::MoverOP clone() const;
-		virtual moves::MoverOP fresh_instance() const;
+	virtual moves::MoverOP clone() const;
+	virtual moves::MoverOP fresh_instance() const;
 
-		virtual void
-		parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, core::pose::Pose const & );
+	virtual void
+	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, core::pose::Pose const & );
 
-	private:
-    utility::vector1<Size> res1_;
-    utility::vector1<std::string> atom1_;
-    utility::vector1<Size> res2_;
-    utility::vector1<std::string> atom2_;
-    utility::vector1<Size> res3_;
-    utility::vector1<std::string> atom3_;
-    utility::vector1<Size> res4_;
-    utility::vector1<std::string> atom4_;
-    utility::vector1<std::string> cst_func_;
+private:
+	utility::vector1<Size> res1_;
+	utility::vector1<std::string> atom1_;
+	utility::vector1<Size> res2_;
+	utility::vector1<std::string> atom2_;
+	utility::vector1<Size> res3_;
+	utility::vector1<std::string> atom3_;
+	utility::vector1<Size> res4_;
+	utility::vector1<std::string> atom4_;
+	utility::vector1<std::string> cst_func_;
 };
 
 } // moves

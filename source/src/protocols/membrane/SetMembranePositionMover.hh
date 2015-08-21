@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		protocols/membrane/SetMembranePositionMover.hh
+/// @file  protocols/membrane/SetMembranePositionMover.hh
 ///
-/// @brief		Sets the membrane position normal and center
-///	@details	Sets the membrane position normal and center
-///				CAUTION: ONLY FOR FLEXIBLE MEMBRANE AND FIXED PROTEIN!!!
-///				Last Modified: 6/28/14
+/// @brief  Sets the membrane position normal and center
+/// @details Sets the membrane position normal and center
+///    CAUTION: ONLY FOR FLEXIBLE MEMBRANE AND FIXED PROTEIN!!!
+///    Last Modified: 6/28/14
 ///
-/// @author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_SetMembranePositionMover_hh
 #define INCLUDED_protocols_membrane_SetMembranePositionMover_hh
@@ -41,204 +41,204 @@ using namespace protocols::moves;
 
 /// @brief Membrane Position Translation-Rotation Mover
 class SetMembranePositionMover : public Mover {
-	
+
 public:
-	
+
 	////////////////////
 	/// Constructors ///
 	////////////////////
-	
+
 	/// @brief Construct a Default Membrane Position Mover
 	SetMembranePositionMover();
-	
+
 	/// @brief Custom Constructor
 	/// @details Specify a new membrane center and normal
-	///	to move this position to
+	/// to move this position to
 	SetMembranePositionMover( Vector center, Vector normal );
-	
+
 	/// @brief Copy Constructor
 	/// @details Make a deep copy of this mover object
 	SetMembranePositionMover( SetMembranePositionMover const & src );
-	
+
 	/// @brief Assignment Operator
 	/// @details Make a deep copy of this mover object, overriding the assignment operator
 	SetMembranePositionMover &
 	operator=( SetMembranePositionMover const & src );
-	
+
 	/// @brief Destructor
 	~SetMembranePositionMover();
-	
+
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
-	
+
 	/// @brief Get the name of this mover
 	virtual std::string get_name() const;
-	
+
 	/// @brief Apply Rotation/Translation to Membrane
 	/// @brief Translate the membrane position in this pose
 	/// to the new center position, and rotate to new normal
 	virtual void apply( Pose & pose );
-	
+
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
 	///////////////////////////////
-	
+
 	/// @brief Create a Clone of this mover
 	virtual protocols::moves::MoverOP clone() const;
-	
+
 	/// @brief Create a Fresh Instance of this Mover
 	virtual protocols::moves::MoverOP fresh_instance() const;
-	
+
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void parse_my_tag(
-	  utility::tag::TagCOP tag,
-	  basic::datacache::DataMap &,
-	  protocols::filters::Filters_map const &,
-	  protocols::moves::Movers_map const &,
-	  core::pose::Pose const &
-	  );
-	
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
+	);
+
 private:
-	
+
 	// Store new normal/center pair
 	Vector center_;
 	Vector normal_;
-	
+
 };
 
 /// @brief Membrane Position Rotation Move
 /// @details Rotate the orientation of the membrane position to a new
 /// normal position. Applies rotation to jump
 class SetMembraneNormalMover : public Mover {
-	
+
 public:
-	
+
 	////////////////////
 	/// Constructors ///
 	////////////////////
-	
+
 	/// @brief Construct a Default Membrane Position Mover
 	SetMembraneNormalMover();
-	
+
 	/// @brief Custom Constructor
 	/// @details Specify a new normal to rotate membranes to
-	///	to move this position to
+	/// to move this position to
 	SetMembraneNormalMover( Vector normal );
-	
+
 	/// @brief Copy Constructor
 	/// @details Make a deep copy of this mover object
 	SetMembraneNormalMover( SetMembraneNormalMover const & src );
-	
+
 	/// @brief Assignment Operator
 	/// @details Make a deep copy of this mover object, overriding the assignment operator
 	SetMembraneNormalMover &
 	operator=( SetMembraneNormalMover const & src );
-	
+
 	/// @brief Destructor
 	~SetMembraneNormalMover();
-	
+
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
-	
+
 	/// @brief Get the name of this mover
 	virtual std::string get_name() const;
-	
+
 	/// @brief Apply Rotation to Membrane
 	/// @brief Rotate the membrane to the new normal position
 	virtual void apply( Pose & pose );
-	
+
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
 	///////////////////////////////
-	
+
 	/// @brief Create a Clone of this mover
 	virtual protocols::moves::MoverOP clone() const;
-	
+
 	/// @brief Create a Fresh Instance of this Mover
 	virtual protocols::moves::MoverOP fresh_instance() const;
-	
+
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void parse_my_tag(
-	  utility::tag::TagCOP tag,
-	  basic::datacache::DataMap &,
-	  protocols::filters::Filters_map const &,
-	  protocols::moves::Movers_map const &,
-	  core::pose::Pose const &
-	  );
-	
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
+	);
+
 private:
-	
+
 	// Store new normal
 	Vector normal_;
-	
+
 };
 
 /// @brief Membrane Position Translation Move
 /// @details Translate the center of the membrane stub ot the specified position
 class SetMembraneCenterMover : public Mover {
-	
+
 public:
-	
+
 	////////////////////
 	/// Constructors ///
 	////////////////////
-	
+
 	/// @brief Construct a Default Membrane Position Mover
 	SetMembraneCenterMover();
-	
+
 	/// @brief Custom Constructor
 	/// @details Specify a new center position to translate this stub to
 	SetMembraneCenterMover( Vector center );
-	
+
 	/// @brief Copy Constructor
 	/// @details Make a deep copy of this mover object
 	SetMembraneCenterMover( SetMembraneCenterMover const & src );
-	
+
 	/// @brief Assignment Operator
 	/// @details Make a deep copy of this mover object, overriding the assignment operator
 	SetMembraneCenterMover &
 	operator=( SetMembraneCenterMover const & src );
-	
+
 	/// @brief Destructor
 	~SetMembraneCenterMover();
-	
+
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
-	
+
 	/// @brief Get the name of this mover
 	virtual std::string get_name() const;
-	
+
 	/// @brief Apply Translation to membrane position
 	/// @brief Translate membrane position to new center
 	virtual void apply( Pose & pose );
-	
+
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
 	///////////////////////////////
-	
+
 	/// @brief Create a Clone of this mover
 	virtual protocols::moves::MoverOP clone() const;
-	
+
 	/// @brief Create a Fresh Instance of this Mover
 	virtual protocols::moves::MoverOP fresh_instance() const;
-	
+
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void parse_my_tag(
-	  utility::tag::TagCOP tag,
-	  basic::datacache::DataMap &,
-	  protocols::filters::Filters_map const &,
-	  protocols::moves::Movers_map const &,
-	  core::pose::Pose const &
-	  );
-	
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
+	);
+
 private:
-	
+
 	// Store new center
 	Vector center_;
-	
+
 };
 
 } // membrane

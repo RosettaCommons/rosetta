@@ -57,15 +57,15 @@ replaced_symmetric_foldtree_with_new_monomer(
 
 void
 recenter(
-  conformation::Conformation & src_conformation,
-  conformation::symmetry::SymmData & symmdata
+	conformation::Conformation & src_conformation,
+	conformation::symmetry::SymmData & symmdata
 );
 
 // @details shift jump numbers in dof
 void
 shift_jump_numbers_in_dofs(
-  conformation::Conformation & src_conformation,
-  Size shift
+	conformation::Conformation & src_conformation,
+	Size shift
 );
 
 kinematics::FoldTree

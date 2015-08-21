@@ -44,74 +44,73 @@
 
 namespace core {
 namespace io {
-namespace PositionDdGInfo{
-	
+namespace PositionDdGInfo {
 
-	PositionDdGInfo::PositionDdGInfo(
-									 core::Size seqpos,
-									 core::chemical::AA wt_aa
-									 )
-	: seqpos_(seqpos),
+
+PositionDdGInfo::PositionDdGInfo(
+	core::Size seqpos,
+	core::chemical::AA wt_aa
+)
+: seqpos_(seqpos),
 	wt_aa_(wt_aa)
-	{}
-	
-	PositionDdGInfo::~PositionDdGInfo(){}
-	
-	/// @details doesn't check whether something for this mutation already exists,
-	/// so previously added stuff will be overwritten
-	void
-	PositionDdGInfo::add_mutation_ddG(
-									  core::chemical::AA aa,
-									  core::Real ddG
-									  )
-	{
-		std::map< core::chemical::AA, core::Real >::iterator map_it = mutation_ddGs_.find( aa );
-		if( map_it == mutation_ddGs_.end() ){
-			mutation_ddGs_.insert( std::pair< core::chemical::AA, core::Real >(aa, ddG) );
+{}
+
+PositionDdGInfo::~PositionDdGInfo(){}
+
+/// @details doesn't check whether something for this mutation already exists,
+/// so previously added stuff will be overwritten
+void
+PositionDdGInfo::add_mutation_ddG(
+	core::chemical::AA aa,
+	core::Real ddG
+)
+{
+	std::map< core::chemical::AA, core::Real >::iterator map_it = mutation_ddGs_.find( aa );
+	if ( map_it == mutation_ddGs_.end() ) {
+		mutation_ddGs_.insert( std::pair< core::chemical::AA, core::Real >(aa, ddG) );
+	} else map_it->second = ddG;
+}
+
+const std::map< core::Size, PositionDdGInfoOP >
+read_ddg_predictions_file( std::string filename )
+{
+
+	utility::io::izstream data( filename.c_str() );
+	if ( !data ) utility_exit_with_message("File "+filename+"could not be opened.");
+	std::map< core::Size, PositionDdGInfoOP > to_return;
+
+	while ( !data.eof() ) {
+
+		std::string line;
+		getline(data,line);
+		utility::vector1< std::string > tokens; tokens.push_back("");
+		tokens = utility::split(line);
+		if ( tokens.size() < 2 ) continue; //ddg predictions output file has empty lines :(
+		std::string mutstring( tokens[2] );
+		core::Size mutaaloc( mutstring.length() - 1 );
+		std::string wt_res = mutstring.substr(0,1);
+		std::string mut_res = mutstring.substr(mutaaloc, 1 );
+		std::string string_seqpos( mutstring.substr(1, mutaaloc - 1 ) );
+		core::Size mut_seqpos( atoi( string_seqpos.c_str() ));
+		core::Real ddG( atof(tokens[3].c_str() ) );
+
+		//std::cerr << "Reading ddg out file, at pos " << mut_seqpos << " wt " << wt_res << " turned to " << mut_res << " with ddG of " << ddG << std::endl;
+
+		core::chemical::AA wt_aa( core::chemical::aa_from_oneletter_code( wt_res[0] ) );
+		core::chemical::AA mut_aa( core::chemical::aa_from_oneletter_code( mut_res[0] ) );
+
+		std::map< core::Size, PositionDdGInfoOP >::iterator muts_it( to_return.find( mut_seqpos ));
+		if ( muts_it == to_return.end() ) {
+			PositionDdGInfoOP pos_info( new PositionDdGInfo( mut_seqpos, wt_aa ) );
+			to_return.insert( std::pair< core::Size, PositionDdGInfoOP >( mut_seqpos, pos_info ) );
+			muts_it = to_return.find( mut_seqpos );
 		}
-		else map_it->second = ddG;
+		muts_it->second->add_mutation_ddG( mut_aa, ddG );
 	}
-	
-	const std::map< core::Size, PositionDdGInfoOP >
-	read_ddg_predictions_file( std::string filename )
-	{
-		
-		utility::io::izstream data( filename.c_str() );
-		if ( !data ) utility_exit_with_message("File "+filename+"could not be opened.");
-		std::map< core::Size, PositionDdGInfoOP > to_return;
-		
-		while( !data.eof() ) {
-			
-			std::string line;
-			getline(data,line);
-			utility::vector1< std::string > tokens; tokens.push_back("");
-			tokens = utility::split(line);
-			if( tokens.size() < 2 ) continue; //ddg predictions output file has empty lines :(
-			std::string mutstring( tokens[2] );
-			core::Size mutaaloc( mutstring.length() - 1 );
-			std::string wt_res = mutstring.substr(0,1);
-			std::string mut_res = mutstring.substr(mutaaloc, 1 );
-			std::string string_seqpos( mutstring.substr(1, mutaaloc - 1 ) );
-			core::Size mut_seqpos( atoi( string_seqpos.c_str() ));
-			core::Real ddG( atof(tokens[3].c_str() ) );
-			
-			//std::cerr << "Reading ddg out file, at pos " << mut_seqpos << " wt " << wt_res << " turned to " << mut_res << " with ddG of " << ddG << std::endl;
-			
-			core::chemical::AA wt_aa( core::chemical::aa_from_oneletter_code( wt_res[0] ) );
-			core::chemical::AA mut_aa( core::chemical::aa_from_oneletter_code( mut_res[0] ) );
-			
-			std::map< core::Size, PositionDdGInfoOP >::iterator muts_it( to_return.find( mut_seqpos ));
-			if( muts_it == to_return.end() ){
-				PositionDdGInfoOP pos_info( new PositionDdGInfo( mut_seqpos, wt_aa ) );
-				to_return.insert( std::pair< core::Size, PositionDdGInfoOP >( mut_seqpos, pos_info ) );
-				muts_it = to_return.find( mut_seqpos );
-			}
-			muts_it->second->add_mutation_ddG( mut_aa, ddG );
-		}
-		data.close();
-		return to_return;
-	}
-	
+	data.close();
+	return to_return;
+}
+
 } //namespace ddG
 } //namespace io
 } //namespace core

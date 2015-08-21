@@ -40,7 +40,7 @@ template < class CrossoverBehavior >
 class CountPairIntraRes : public CrossoverBehavior
 {
 public:
-	public:
+public:
 	typedef CrossoverBehavior parent;
 
 public:
@@ -181,8 +181,8 @@ template < class CrossoverBehavior >
 CountPairIntraRes< CrossoverBehavior >::CountPairIntraRes(
 	conformation::Residue const & res
 ) :
-	parent(),
-	path_dists_( res.path_distances() )
+parent(),
+path_dists_( res.path_distances() )
 {
 }
 

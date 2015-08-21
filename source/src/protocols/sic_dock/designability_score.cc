@@ -17,8 +17,8 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
-namespace protocols{
-namespace sic_dock{
+namespace protocols {
+namespace sic_dock {
 
 using platform::Real;
 using numeric::min;
@@ -44,13 +44,13 @@ get_xform_stats(
 	// std::cout << axis << " " << ang << std::endl;
 
 	Real phi,psi,theta;
-	if( fabs(R.zx())-1.0 < 0.00001 ) {
+	if ( fabs(R.zx())-1.0 < 0.00001 ) {
 		theta = -asin(R.zx());
 		Real const ctheta = cos(theta);
 		psi = atan2(R.zy()/ctheta,R.zz()/ctheta);
 		phi = atan2(R.yx()/ctheta,R.xx()/ctheta);
 	} else {
-		if( R.zx() < 0.0 ) {
+		if ( R.zx() < 0.0 ) {
 			theta = numeric::constants::d::pi / 2.0;
 			psi = atan2(R.xy(),R.xz());
 		} else {
@@ -94,7 +94,7 @@ XfoxmScore::fillarray(
 ){
 	std::cout << "reading " << fname << std::endl;
 	utility::io::izstream in(fname,std::ios::binary);
-	if(!in.good()) utility_exit_with_message("bad file");
+	if ( !in.good() ) utility_exit_with_message("bad file");
 	in.read(a,16*16*16*24*12*24);
 	in.close();
 }
@@ -104,8 +104,8 @@ XfoxmScore::makebinary(
 ){
 	std::cout << "reading " << fname << std::endl;
 	utility::io::izstream in(fname);
-	if(!in.good()) utility_exit_with_message("bad file");
-	for(int i = 0; i < 16*16*16*24*12*24; ++i){
+	if ( !in.good() ) utility_exit_with_message("bad file");
+	for ( int i = 0; i < 16*16*16*24*12*24; ++i ) {
 		float f;
 		in >> f;
 		int tmp = (int)((log(f)+2.5)*12.0);
@@ -131,19 +131,19 @@ XfoxmScore::score(
 	char ss1, char ss2
 ) const {
 	using numeric::constants::d::pi_2;
-	if( ss1=='L' || ss2=='L' ) return 0.0;
-	if( (~s1*(s2.t)).length_squared() > 64.0 ) return 0.0;
+	if ( ss1=='L' || ss2=='L' ) return 0.0;
+	if ( (~s1*(s2.t)).length_squared() > 64.0 ) return 0.0;
 	char *a = hh;
-	if( ss1=='E' && ss2=='E' ) a = ee;
-	else if( ss2=='E' || ss1=='E' ) a = he;
+	if ( ss1=='E' && ss2=='E' ) a = ee;
+	else if ( ss2=='E' || ss1=='E' ) a = he;
 	// if( ss1=='E' && ss2=='E' ) a = ee;
 	// // if( ss1=='L' && ss2=='L' ) a = ll;
 	// else if( ss1=='H' && ss2=='E' || ss1=='E' && ss2=='H' ) a = he;
 	// // if( ss1=='H' && ss2=='L' || ss1=='L' && ss2=='H' ) a = hl;
 	// // if( ss1=='E' && ss2=='L' || ss1=='L' && ss2=='E' ) a = el;
 	Real dx,dy,dz,ex,ey,ez;
-	if((ss1=='E' && ss2=='H') || (ss1=='L' && ss2=='H') || (ss1=='L' && ss2=='E')){
-		   get_xform_stats(s2,s1,dx,dy,dz,ex,ey,ez); // reverse
+	if ( (ss1=='E' && ss2=='H') || (ss1=='L' && ss2=='H') || (ss1=='L' && ss2=='E') ) {
+		get_xform_stats(s2,s1,dx,dy,dz,ex,ey,ez); // reverse
 	} else get_xform_stats(s1,s2,dx,dy,dz,ex,ey,ez);
 	int idx = static_cast<int>(dx+8.0); // 0.0-0.999 -> 10
 	int idy = static_cast<int>(dy+8.0);
@@ -152,7 +152,7 @@ XfoxmScore::score(
 	int iey = static_cast<int>(ey/pi_2*24.0 +  6.0);
 	int iez = static_cast<int>(ez/pi_2*24.0 + 12.0);
 	int index = idx + 16*idy + 16*16*idz + 16*16*16*iex + 16*16*16*24*iey + 16*16*16*24*12*iez;
-	if( 0 > index || index >= 16*16*16*24*12*24 ) utility_exit_with_message("FOO");
+	if ( 0 > index || index >= 16*16*16*24*12*24 ) utility_exit_with_message("FOO");
 	// expensive memory lookup
 	char val = a[index];
 	//
@@ -167,10 +167,10 @@ XfoxmScore::score(
 	platform::Size rsd1,
 	platform::Size rsd2
 ) const {
-	if(!pose.residue(rsd1).is_protein()) return 0.0;
-	if(!pose.residue(rsd2).is_protein()) return 0.0;
-	if(!pose.residue(rsd1).has("CB")) return 0.0;
-	if(!pose.residue(rsd2).has("CB")) return 0.0;
+	if ( !pose.residue(rsd1).is_protein() ) return 0.0;
+	if ( !pose.residue(rsd2).is_protein() ) return 0.0;
+	if ( !pose.residue(rsd1).has("CB") ) return 0.0;
+	if ( !pose.residue(rsd2).has("CB") ) return 0.0;
 	Vec CBi = pose.residue(rsd1).xyz("CB");
 	Vec CAi = pose.residue(rsd1).xyz("CA");
 	Vec  Ni = pose.residue(rsd1).xyz( "N");
@@ -178,7 +178,7 @@ XfoxmScore::score(
 	Vec CBj = pose.residue(rsd2).xyz("CB");
 	Vec CAj = pose.residue(rsd2).xyz("CA");
 	Vec  Nj = pose.residue(rsd2).xyz( "N");
-	if( CBi.distance_squared(CBj) > 64.0 ) return 0.0;
+	if ( CBi.distance_squared(CBj) > 64.0 ) return 0.0;
 	Xform sjr(CBj,CAj,Nj);
 	return score(sir,sjr,pose.secstruct(rsd1),pose.secstruct(rsd2));
 }
@@ -188,13 +188,13 @@ XfoxmScore::score(
 	core::pose::Pose & pose,
 	bool compute_ss
 ) const {
-	if(compute_ss){
+	if ( compute_ss ) {
 		core::scoring::dssp::Dssp dssp(pose);
 		dssp.insert_ss_into_pose(pose);
 	}
 	float tot_score = 0.0;
-	for(platform::Size ir = 1; ir <= pose.n_residue(); ++ir){
-		for(platform::Size jr = ir+1; jr <= pose.n_residue(); ++jr){
+	for ( platform::Size ir = 1; ir <= pose.n_residue(); ++ir ) {
+		for ( platform::Size jr = ir+1; jr <= pose.n_residue(); ++jr ) {
 			float s1 = score(pose,ir,jr);
 			float s2 = score(pose,jr,ir);
 			// if( s1 < 0.0f ) std::cout << s1 << std::endl;
@@ -210,8 +210,8 @@ XfoxmScore::score(
 	core::pose::Pose const & pose
 ) const {
 	float tot_score = 0.0;
-	for(platform::Size ir = 1; ir <= pose.n_residue(); ++ir){
-		for(platform::Size jr = ir+1; jr <= pose.n_residue(); ++jr){
+	for ( platform::Size ir = 1; ir <= pose.n_residue(); ++ir ) {
+		for ( platform::Size jr = ir+1; jr <= pose.n_residue(); ++jr ) {
 			float s1 = score(pose,ir,jr);
 			float s2 = score(pose,jr,ir);
 			// if( s1 < 0.0f ) std::cout << s1 << std::endl;

@@ -51,11 +51,11 @@ public:
 	core::Real normalization(core::pose::Pose & pose, core::id::AtomID atmid, core::scoring::ScoreFunctionOP sfxn );
 
 	virtual void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap &data,
-			filters::Filters_map const &filters,
-			moves::Movers_map const &movers,
-			core::pose::Pose const & pose );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &data,
+		filters::Filters_map const &filters,
+		moves::Movers_map const &movers,
+		core::pose::Pose const & pose );
 
 private:
 	bool verbose_;
@@ -73,11 +73,11 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap &data,
-			filters::Filters_map const &filters,
-			moves::Movers_map const &movers,
-			core::pose::Pose const & pose );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &data,
+		filters::Filters_map const &filters,
+		moves::Movers_map const &movers,
+		core::pose::Pose const & pose );
 
 private:
 	bool autoset_wt_;
@@ -99,11 +99,11 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap &data,
-			filters::Filters_map const &filters,
-			moves::Movers_map const &movers,
-			core::pose::Pose const & pose );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &data,
+		filters::Filters_map const &filters,
+		moves::Movers_map const &movers,
+		core::pose::Pose const & pose );
 
 
 private:
@@ -120,11 +120,11 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap &data,
-			filters::Filters_map const &filters,
-			moves::Movers_map const &movers,
-			core::pose::Pose const & pose );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &data,
+		filters::Filters_map const &filters,
+		moves::Movers_map const &movers,
+		core::pose::Pose const & pose );
 
 
 private:
@@ -143,11 +143,11 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap &data,
-			filters::Filters_map const &filters,
-			moves::Movers_map const &movers,
-			core::pose::Pose const & pose );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &data,
+		filters::Filters_map const &filters,
+		moves::Movers_map const &movers,
+		core::pose::Pose const & pose );
 
 private:
 	void randomize_bs( core::pose::Pose & pose );
@@ -165,11 +165,11 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap &data,
-			filters::Filters_map const &filters,
-			moves::Movers_map const &movers,
-			core::pose::Pose const & pose );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &data,
+		filters::Filters_map const &filters,
+		moves::Movers_map const &movers,
+		core::pose::Pose const & pose );
 
 private:
 	bool update_mask_ , update_fcalc_, optimize_mask_, optimize_params_;
@@ -185,11 +185,11 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap &data,
-			filters::Filters_map const &filters,
-			moves::Movers_map const &movers,
-			core::pose::Pose const & pose );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &data,
+		filters::Filters_map const &filters,
+		moves::Movers_map const &movers,
+		core::pose::Pose const & pose );
 
 private:
 	std::string tag_;
@@ -207,11 +207,11 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap &data,
-			filters::Filters_map const &filters,
-			moves::Movers_map const &movers,
-			core::pose::Pose const & pose );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &data,
+		filters::Filters_map const &filters,
+		moves::Movers_map const &movers,
+		core::pose::Pose const & pose );
 
 private:
 	core::Real res_high_, res_low_;

@@ -137,7 +137,7 @@ CenRotEnvEnergy::eval_residue_derivatives(
 	Vector const cb_x = rsd.atom( rsd.nbr_atom() ).xyz();
 	Vector cb_y = -f2_cb_env + cb_x;
 	Vector const f1_cb_env( cb_x.cross( cb_y ) );
-	
+
 	Vector const f2_cb_cbeta( f2_cb_cb6 + f2_cb_cb12 );
 	cb_y = -f2_cb_cbeta + cb_x;
 	Vector const f1_cb_cbeta( cb_x.cross( cb_y ) );

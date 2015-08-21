@@ -37,17 +37,17 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 
 
 /// @details This is complicated, so pay attention.  You define groups of residues within a protein (say, the N and C terminal domains).  You then define which pairs of groups you are interested in.  This calculator returns the union of the sets of residues at the interfaces between these domains/groups.  Functionally it is intended for "interface design" at the non-chainbreak interface between domains of multidomain proteins.  It contains a superset of the functionality of some of the other calculators (so I'll be obsoleting them, maybe?).  The pose does NOT have to have been scored.
 /**
-	 @li "groups" string returns the input groups; of type utility::vector1< std::pair< std::set< core::Size >, std::set< core::Size > > >  (not a calculated value)
-	 @li "dist_cutoff" returns the input cutoff distance for neighbor finding (not a calculated value)
-	 @li "neighbors" returns a std::set<core::Size> of the neighbors calculated between the group pairs.
-	 @li "num_neighbors" returns the size of the neighbors set.
+@li "groups" string returns the input groups; of type utility::vector1< std::pair< std::set< core::Size >, std::set< core::Size > > >  (not a calculated value)
+@li "dist_cutoff" returns the input cutoff distance for neighbor finding (not a calculated value)
+@li "neighbors" returns a std::set<core::Size> of the neighbors calculated between the group pairs.
+@li "num_neighbors" returns the size of the neighbors set.
 **/
 class InterGroupNeighborsCalculator : public core::pose::metrics::StructureDependentCalculator {
 
@@ -58,10 +58,10 @@ public:
 	typedef utility::vector1< group_pair > group_set;
 	//group_set = utility::vector1< std::pair< std::set<core::Size>, std::set<core::Size> > >
 
-  /// @brief
-  InterGroupNeighborsCalculator(
-													 group_set const & groups,
-													 core::Real dist_cutoff = basic::options::option[basic::options::OptionKeys::pose_metrics::inter_group_neighbors_cutoff]
+	/// @brief
+	InterGroupNeighborsCalculator(
+		group_set const & groups,
+		core::Real dist_cutoff = basic::options::option[basic::options::OptionKeys::pose_metrics::inter_group_neighbors_cutoff]
 	);
 
 	InterGroupNeighborsCalculator( InterGroupNeighborsCalculator const & calculator );
@@ -79,20 +79,20 @@ public:
 
 protected:
 
-  virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-  virtual std::string print( std::string const & key ) const;
-  virtual void recompute( core::pose::Pose const & pose );
+	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
+	virtual std::string print( std::string const & key ) const;
+	virtual void recompute( core::pose::Pose const & pose );
 
 private:
 
-  /// @brief stores the input - whose neighbors are we finding?
-  group_set const groups_;
+	/// @brief stores the input - whose neighbors are we finding?
+	group_set const groups_;
 	/// @brief stores the input - how far away is a neighbor?
 	core::Real const dist_cutoff_;
 	/// @brief the number of neighbors in the set neighbors_
-  core::Size num_neighbors_;
-  /// @brief the set of neighbors to return - union of interfaces between groups
-  std::set< core::Size > neighbors_;
+	core::Size num_neighbors_;
+	/// @brief the set of neighbors to return - union of interfaces between groups
+	std::set< core::Size > neighbors_;
 
 };
 

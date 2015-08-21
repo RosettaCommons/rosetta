@@ -35,20 +35,20 @@ using namespace core;
 using namespace basic::options;
 void setup_convergence_checks_from_cmdline( moves::MonteCarlo& mc ) {
 
-  if ( option[ OptionKeys::mc::known_structures ].user() ) {
-    /* this block is to take care of a
-       particular problem with the archive... the file can be gone for short-whiles (during IO of Archive-process ) */
-    Size trial( 100 );
-    utility::io::izstream testin;
-    do {
-		utility::sys_sleep( 1 );
-      testin.open( option[ OptionKeys::mc::known_structures ]() );
-    } while ( !testin.good() && trial-- > 0 );
-		//	if ( trial == 0 ) throw EXCN_BadInput( "can't open "+option[ OptionKeys::mc::known_structures ]() );
-    /* okay file is now good, or will never be... */
+	if ( option[ OptionKeys::mc::known_structures ].user() ) {
+		/* this block is to take care of a
+		particular problem with the archive... the file can be gone for short-whiles (during IO of Archive-process ) */
+		Size trial( 100 );
+		utility::io::izstream testin;
+		do {
+			utility::sys_sleep( 1 );
+			testin.open( option[ OptionKeys::mc::known_structures ]() );
+		} while ( !testin.good() && trial-- > 0 );
+		// if ( trial == 0 ) throw EXCN_BadInput( "can't open "+option[ OptionKeys::mc::known_structures ]() );
+		/* okay file is now good, or will never be... */
 		Pool_RMSD_OP pool_ptr( new Pool_RMSD(
-       option[ OptionKeys::mc::known_structures ]()
-		) );
+			option[ OptionKeys::mc::known_structures ]()
+			) );
 
 		if ( option[ OptionKeys::mc::excluded_residues_from_rmsd ].user() ) {
 			pool_ptr->set_excluded_residues( option[ OptionKeys::mc::excluded_residues_from_rmsd ]() );
@@ -57,15 +57,15 @@ void setup_convergence_checks_from_cmdline( moves::MonteCarlo& mc ) {
 		mc.push_back( moves::MonteCarloExceptionConvergeOP( new Pool_ConvergenceCheck( pool_ptr, option[ OptionKeys::mc::max_rmsd_against_known_structures ]()  ) ));
 		protocols::jd2::JobDistributor::get_instance()->job_outputter()->add_evaluation( evaluation::PoseEvaluatorOP( new Pool_Evaluator( pool_ptr ) ) );
 
-  }
+	}
 
-  /* other convergence checker */
-  if ( option[ basic::options::OptionKeys::mc::heat_convergence_check ].user() ) {
-    mc.push_back( moves::MonteCarloExceptionConvergeOP( new Heat_ConvergenceCheck() ) );
-    mc.set_heat_after_cycles( option[ basic::options::OptionKeys::mc::heat_convergence_check ] );
-  }
+	/* other convergence checker */
+	if ( option[ basic::options::OptionKeys::mc::heat_convergence_check ].user() ) {
+		mc.push_back( moves::MonteCarloExceptionConvergeOP( new Heat_ConvergenceCheck() ) );
+		mc.set_heat_after_cycles( option[ basic::options::OptionKeys::mc::heat_convergence_check ] );
+	}
 
-  /* add more checkers here ... */
+	/* add more checkers here ... */
 }
 
 }

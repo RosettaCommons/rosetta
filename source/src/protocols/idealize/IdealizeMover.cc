@@ -74,18 +74,18 @@ static thread_local basic::Tracer TR( "protocols.idealize.IdealizeMover" );
 std::string
 IdealizeMoverCreator::keyname() const
 {
-  return IdealizeMoverCreator::mover_name();
+	return IdealizeMoverCreator::mover_name();
 }
 
 protocols::moves::MoverOP
 IdealizeMoverCreator::create_mover() const {
-  return protocols::moves::MoverOP( new IdealizeMover );
+	return protocols::moves::MoverOP( new IdealizeMover );
 }
 
 std::string
 IdealizeMoverCreator::mover_name()
 {
-  return "Idealize";
+	return "Idealize";
 }
 
 
@@ -118,22 +118,23 @@ IdealizeMover::setup_idealize_constraints( core::pose::Pose & pose ) {
 
 	if ( atom_pair_constraint_weight_ != 0.0 || symm_info ) {
 		for ( Size i=1; i<= nres-1; ++i ) {
-			if( std::find( ignore_residues_in_csts().begin(), ignore_residues_in_csts().end(), i ) != ignore_residues_in_csts().end() ) continue;
+			if ( std::find( ignore_residues_in_csts().begin(), ignore_residues_in_csts().end(), i ) != ignore_residues_in_csts().end() ) continue;
 			Residue const & i_rsd( pose.residue(i) );
-			if (i_rsd.aa() == core::chemical::aa_vrt) continue;
+			if ( i_rsd.aa() == core::chemical::aa_vrt ) continue;
 
 			for ( Size j=i+1; j<= nres-1; ++j ) {
-				if( std::find( ignore_residues_in_csts().begin(), ignore_residues_in_csts().end(), j ) != ignore_residues_in_csts().end() ) continue;
+				if ( std::find( ignore_residues_in_csts().begin(), ignore_residues_in_csts().end(), j ) != ignore_residues_in_csts().end() ) continue;
 				Residue const & j_rsd( pose.residue(j) );
-				if (j_rsd.aa() == core::chemical::aa_vrt) continue;
+				if ( j_rsd.aa() == core::chemical::aa_vrt ) continue;
 
 				//fpd  for symmetry, we only need generate csts w.r.t. scoring subunit
 				if ( symm_info && !symm_info->bb_is_independent( i ) && !symm_info->bb_is_independent( j ) ) continue;
 
 				//fpd  if atom pair cst weight is 0, we _only_ generate atom pair csts across symm interface
 				if ( symm_info && atom_pair_constraint_weight_ == 0.0 &&
-				     symm_info->bb_is_independent( i ) && symm_info->bb_is_independent( j ) )
+						symm_info->bb_is_independent( i ) && symm_info->bb_is_independent( j ) ) {
 					continue;
+				}
 
 				for ( Size ii = 1; ii<= i_rsd.natoms(); ++ii ) {
 					chemical::AtomType const & it( i_rsd.atom_type( ii ) );
@@ -144,8 +145,8 @@ IdealizeMover::setup_idealize_constraints( core::pose::Pose & pose ) {
 						Real const dis2( i_rsd.xyz( ii ).distance_squared( j_rsd.xyz( jj ) ) );
 
 						if ( ( it.is_polar_hydrogen() && jt.is_acceptor()  && dis2 <    polarH_dis2_threshold ) ||
-								 ( jt.is_polar_hydrogen() && it.is_acceptor()  && dis2 <    polarH_dis2_threshold ) ||
-								 ( it.is_heavyatom()      && jt.is_heavyatom() && dis2 < heavyatom_dis2_threshold ) ) {
+								( jt.is_polar_hydrogen() && it.is_acceptor()  && dis2 <    polarH_dis2_threshold ) ||
+								( it.is_heavyatom()      && jt.is_heavyatom() && dis2 < heavyatom_dis2_threshold ) ) {
 
 							pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint( AtomID(ii,i), AtomID(jj,j), core::scoring::func::FuncOP( new HarmonicFunc( std::sqrt( dis2 ), atom_pair_sdev ) ) ) ) ) );
 							++total_atompairs;
@@ -164,8 +165,9 @@ IdealizeMover::setup_idealize_constraints( core::pose::Pose & pose ) {
 		for ( Size i=1; i<= nres-1; ++i ) {
 			// only put coord csts on master
 			if ( symm_info &&
-			     ( !symm_info->bb_is_independent( i ) || pose.residue(i).aa() == core::chemical::aa_vrt) )
+					( !symm_info->bb_is_independent( i ) || pose.residue(i).aa() == core::chemical::aa_vrt) ) {
 				continue;
+			}
 			Residue const & i_rsd( pose.residue(i) );
 			for ( Size ii = 1; ii<= i_rsd.natoms(); ++ii ) {
 				pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID(ii,i), AtomID(1,nres), i_rsd.xyz( ii ), core::scoring::func::FuncOP( new HarmonicFunc( 0.0, coord_sdev ) ) ) ) ) );
@@ -186,8 +188,9 @@ IdealizeMover::apply( pose::Pose & pose ) {
 
 	// save a copy of the pose's constraints
 	scoring::constraints::ConstraintSetOP original_cst_set( pose.constraint_set()->clone() );
-	if( impose_constraints() )
+	if ( impose_constraints() ) {
 		pose.constraint_set( NULL );
+	}
 	// add virtual residue at the end
 	//Size const old_root( pose.fold_tree().root() );
 	if ( pose.residue( pose.total_residue() ).aa() != core::chemical::aa_vrt ) {
@@ -195,7 +198,7 @@ IdealizeMover::apply( pose::Pose & pose ) {
 		Size const midpoint( pose.total_residue() == 1 ? 1 : pose.total_residue() / 2 );
 		pose.append_residue_by_jump(
 			*conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map( "VRT" ) ),
-				midpoint
+			midpoint
 		);
 
 		Size const nres( pose.total_residue() ); // includes pseudo-rsd
@@ -215,16 +218,18 @@ IdealizeMover::apply( pose::Pose & pose ) {
 
 	// setup scorefunction
 	scoring::ScoreFunctionOP scorefxn;
-	if (symm_info)
+	if ( symm_info ) {
 		scorefxn = scoring::ScoreFunctionOP( new scoring::symmetry::SymmetricScoreFunction() );
-	else
+	} else {
 		scorefxn = scoring::ScoreFunctionOP( new scoring::ScoreFunction() );
+	}
 	scorefxn->set_weight( atom_pair_constraint,  atom_pair_constraint_weight_ );
 	scorefxn->set_weight( coordinate_constraint, coordinate_constraint_weight_ );
 
 	// if we're symmetric, we need to turn atom pair csts on
-	if (symm_info && atom_pair_constraint_weight_ == 0)
+	if ( symm_info && atom_pair_constraint_weight_ == 0 ) {
 		scorefxn->set_weight( atom_pair_constraint,  coordinate_constraint_weight_ );
+	}
 
 
 	if ( pose.is_fullatom() ) {
@@ -235,35 +240,39 @@ IdealizeMover::apply( pose::Pose & pose ) {
 		scorefxn->set_weight( dslf_cs_ang, 2.0 );//CB-SG-SG covalent bond angle
 	}
 	// setup constraints
-	if( impose_constraints() )
+	if ( impose_constraints() ) {
 		setup_idealize_constraints( pose );
-	if( constraints_only() )
+	}
+	if ( constraints_only() ) {
 		return;
+	}
 
 	// by default idealize everything
 	//fpd  ... unless symmetric, then only idealize master
 	if ( pos_list_.size() == 0 ) {
 		for ( Size i = 1; i <= pose.total_residue()-1; ++i ) {
-				if ( symm_info &&
-				    (!symm_info->bb_is_independent( i ) || pose.residue(i).aa() == core::chemical::aa_vrt ) )
-					continue;
-				pos_list_.push_back( i );
+			if ( symm_info &&
+					(!symm_info->bb_is_independent( i ) || pose.residue(i).aa() == core::chemical::aa_vrt ) ) {
+				continue;
+			}
+			pos_list_.push_back( i );
 		}
 	}
 
 
-	if( !(option[ basic::options::OptionKeys::run::dry_run ]() )){
+	if ( !(option[ basic::options::OptionKeys::run::dry_run ]() ) ) {
 		basic_idealize( pose, pos_list_, *scorefxn, fast_, chainbreaks_ );
 	}
 
 	// remove that virtual residue now!
 	pose::Pose final_pose = unmodified_pose;
 
-	if (symm_info) {
+	if ( symm_info ) {
 		// special case for symmetry .. replace VRTs first
 		for ( Size ii = unmodified_pose.total_residue(); ii>=1; --ii ) {
-			if ( symm_info->bb_is_independent(ii) )
+			if ( symm_info->bb_is_independent(ii) ) {
 				final_pose.replace_residue( ii, pose.residue( ii ), false );
+			}
 		}
 	} else {
 		for ( Size ii = 1; ii <= unmodified_pose.total_residue(); ++ii ) {
@@ -279,10 +288,10 @@ IdealizeMover::apply( pose::Pose & pose ) {
 	(*scorefxn)( pose );
 
 	TR.Info << "RMS between original pose and idealised pose: ";
-	if( report_CA_rmsd_ ) TR.Info << core::scoring::CA_rmsd( unmodified_pose, pose ) << " CA RMSD, ";
+	if ( report_CA_rmsd_ ) TR.Info << core::scoring::CA_rmsd( unmodified_pose, pose ) << " CA RMSD, ";
 
 	TR.Info << core::scoring::all_atom_rmsd( unmodified_pose, pose ) << " All-Atom RMSD, "
-					<< std::endl;
+		<< std::endl;
 	TR.flush();
 } // apply
 
@@ -298,12 +307,14 @@ IdealizeMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap
 	fast( tag->getOption< bool >( "fast", false ) );
 	chainbreaks( tag->getOption< bool >( "chainbreaks", false ) );
 	report_CA_rmsd( tag->getOption< bool >( "report_CA_rmsd", true ) );
-	if( tag->hasOption( "ignore_residues_in_csts" ) )
+	if ( tag->hasOption( "ignore_residues_in_csts" ) ) {
 		ignore_residues_in_csts( core::pose::get_resnum_list( tag, "ignore_residues_in_csts", pose ) );
+	}
 	impose_constraints( tag->getOption< bool >( "impose_constraints", 1 ) );
 	constraints_only( tag->getOption< bool >( "constraints_only", 0 ) );
-	if( tag->hasOption( "pos_list" ) )
-	 pos_list_ = utility::string_split( tag->getOption< std::string >( "pos_list", "" ), ',', core::Size() );
+	if ( tag->hasOption( "pos_list" ) ) {
+		pos_list_ = utility::string_split( tag->getOption< std::string >( "pos_list", "" ), ',', core::Size() );
+	}
 
 	TR<<"IdealizeMover with atom_pair_constraint_weight="<<atom_pair_constraint_weight_<<" coordinate_constraint_weight="<<coordinate_constraint_weight_<<" fast="<<fast_<<" chainbreaks="<<chainbreaks_<<" and report CA_rmsd_="<<report_CA_rmsd_<<" impose constraints "<<impose_constraints()<<std::endl;
 }

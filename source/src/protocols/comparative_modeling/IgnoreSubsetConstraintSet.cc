@@ -50,7 +50,7 @@ IgnoreSubsetConstraintSet::IgnoreSubsetConstraintSet(
 	std::set< int > residues_to_ignore,
 	ConstraintSet const & other
 ) :
-  ConstraintSet( other ),
+	ConstraintSet( other ),
 	ignore_list_( residues_to_ignore )
 {}
 
@@ -64,28 +64,28 @@ IgnoreSubsetConstraintSet::IgnoreSubsetConstraintSet(
 
 /*void
 IgnoreSubsetConstraintSet::eval_atom_derivative_for_residue_pairs (
-  id::AtomID const & atom_id,
-  pose::Pose const & pose,
-  scoring::ScoreFunction const &,
-  scoring::EnergyMap const & weights,
-  Vector & F1,
-  Vector & F2
+id::AtomID const & atom_id,
+pose::Pose const & pose,
+scoring::ScoreFunction const &,
+scoring::EnergyMap const & weights,
+Vector & F1,
+Vector & F2
 ) const
 {
-  using scoring::constraints::ResidueConstraints;
+using scoring::constraints::ResidueConstraints;
 
-  Size const resi( atom_id.rsd() );
+Size const resi( atom_id.rsd() );
 
-	for ( ResidueConstraints::const_iterator
-			it= residue_pair_constraints_begin( resi ), ite = residue_pair_constraints_end( resi );
-			it != ite; ++it ) {
-      Size const resj( it->first );
-      if ( !ignore(resi) && !ignore(resj) ) {
-			it->second->eval_atom_derivative(
-				atom_id, pose.conformation(), weights, F1, F2
-			);
-      } // if ( !ignore)
-	}
+for ( ResidueConstraints::const_iterator
+it= residue_pair_constraints_begin( resi ), ite = residue_pair_constraints_end( resi );
+it != ite; ++it ) {
+Size const resj( it->first );
+if ( !ignore(resi) && !ignore(resj) ) {
+it->second->eval_atom_derivative(
+atom_id, pose.conformation(), weights, F1, F2
+);
+} // if ( !ignore)
+}
 
 } // eval_atom_derivative_for_residue_pairs
 */
@@ -93,18 +93,18 @@ IgnoreSubsetConstraintSet::eval_atom_derivative_for_residue_pairs (
 
 void
 IgnoreSubsetConstraintSet::residue_pair_energy(
-   Residue const & rsd1,
-   Residue const & rsd2,
-   Pose const & pose,
-   core::scoring::ScoreFunction const & scorefxn,
-   core::scoring::EnergyMap & emap
+	Residue const & rsd1,
+	Residue const & rsd2,
+	Pose const & pose,
+	core::scoring::ScoreFunction const & scorefxn,
+	core::scoring::EnergyMap & emap
 ) const
 {
-  int const pos1( rsd1.seqpos() ), pos2( rsd2.seqpos() );
-  if ( ignore(pos1) || ignore(pos2) ) {
-    return; //cast avoids warning
-  }
-  ConstraintSet::residue_pair_energy( rsd1, rsd2, pose, scorefxn, emap );
+	int const pos1( rsd1.seqpos() ), pos2( rsd2.seqpos() );
+	if ( ignore(pos1) || ignore(pos2) ) {
+		return; //cast avoids warning
+	}
+	ConstraintSet::residue_pair_energy( rsd1, rsd2, pose, scorefxn, emap );
 }
 
 void

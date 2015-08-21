@@ -78,7 +78,7 @@ public:// constructor/destructor
 		Movers_map const & movers,
 		Pose const & pose);
 
-  virtual void  apply( core::pose::Pose & pose );
+	virtual void  apply( core::pose::Pose & pose );
 
 private:
 	bool superimpose_;

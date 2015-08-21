@@ -31,13 +31,13 @@ namespace loophash {
 class MPI_LoopHashRefine_Master: public MPI_LoopHashRefine {
 public:
 	MPI_LoopHashRefine_Master( core::Size my_emperor,
-	                           core::Size master_rank ):
+		core::Size master_rank ):
 		MPI_LoopHashRefine( 'M' ),
 		my_emperor_( my_emperor ),
 		master_rank_( master_rank )
-		{
-			set_defaults();
-		}
+	{
+		set_defaults();
+	}
 
 	virtual ~MPI_LoopHashRefine_Master(){};
 

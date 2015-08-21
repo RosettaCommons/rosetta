@@ -23,28 +23,28 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	//Constructor
-	StepWiseScreener::StepWiseScreener():
-		utility::pointer::ReferenceCount(),
-		count_( 0 ),
-		ok_to_increment_( true ) // silly hack.
-	{}
+//Constructor
+StepWiseScreener::StepWiseScreener():
+	utility::pointer::ReferenceCount(),
+	count_( 0 ),
+	ok_to_increment_( true ) // silly hack.
+{}
 
-	//Destructor
-	StepWiseScreener::~StepWiseScreener()
-	{}
+//Destructor
+StepWiseScreener::~StepWiseScreener()
+{}
 
-	void
-	StepWiseScreener::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
-		update_mover->add_mover( 0 );
-		restore_mover->add_mover( 0 );
-	}
+void
+StepWiseScreener::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
+	update_mover->add_mover( 0 );
+	restore_mover->add_mover( 0 );
+}
 
-	void
-	StepWiseScreener::increment_count(){
-		if ( ok_to_increment_ ) count_++;
-		ok_to_increment_ = false; // needs to be manually reset by SampleAndScreen. Useful if you don't want to increment in some inner modeler loops.
-	}
+void
+StepWiseScreener::increment_count(){
+	if ( ok_to_increment_ ) count_++;
+	ok_to_increment_ = false; // needs to be manually reset by SampleAndScreen. Useful if you don't want to increment in some inner modeler loops.
+}
 
 } //screener
 } //stepwise

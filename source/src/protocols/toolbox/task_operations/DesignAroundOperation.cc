@@ -90,45 +90,45 @@ DesignAroundOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 
 	utility::vector1< core::Size > packing_residues, prevent_repacking_residues;
 	packing_residues.clear(); prevent_repacking_residues.clear();
-	for( core::Size i=1; i<=pose.total_residue(); ++i ){
+	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
 		bool allow_design_res( false );
 		bool allow_packing( false );
-		BOOST_FOREACH( core::Size const res, focus_residues ){ // don't change anything for focus residues
-			if( i == res ){
-				if( resnums_allow_design() ) allow_design_res = true;
+		BOOST_FOREACH ( core::Size const res, focus_residues ) { // don't change anything for focus residues
+			if ( i == res ) {
+				if ( resnums_allow_design() ) allow_design_res = true;
 				break;
 			}
 		}
 		//check if design res nbr
-		if( allow_design() && !allow_design_res ){
-			BOOST_FOREACH( core::Size const res, focus_residues ){
-				if( i == res ) continue; //dont need to check if is nbr of self
+		if ( allow_design() && !allow_design_res ) {
+			BOOST_FOREACH ( core::Size const res, focus_residues ) {
+				if ( i == res ) continue; //dont need to check if is nbr of self
 				core::Real const distance( pose.residue( i ).xyz( pose.residue( i ).nbr_atom() ).distance( pose.residue( res ).xyz( pose.residue( res ).nbr_atom() )) );
-				if( distance <= design_shell() || distance <= 0.0001 /*if design_shell is specified as 0 ensure that focus residues are allowed to design*/){
+				if ( distance <= design_shell() || distance <= 0.0001 /*if design_shell is specified as 0 ensure that focus residues are allowed to design*/ ) {
 					allow_design_res = true;
 					break;
 				}// fi distance
 			} //foreach res
 		}
-		if( allow_design_res ) continue;
-		BOOST_FOREACH( core::Size const res, focus_residues ){
+		if ( allow_design_res ) continue;
+		BOOST_FOREACH ( core::Size const res, focus_residues ) {
 			core::Real const distance( pose.residue( i ).xyz( pose.residue( i ).nbr_atom() ).distance( pose.residue( res ).xyz( pose.residue( res ).nbr_atom() )) );
-			if( distance <= repack_shell() ){
+			if ( distance <= repack_shell() ) {
 				allow_packing = true;
 				break;
 			}// fi distance
 		} //foreach res
-		if( allow_packing ) packing_residues.push_back( i );
+		if ( allow_packing ) packing_residues.push_back( i );
 		else prevent_repacking_residues.push_back( i );
 	}//for i
-///for some unfathomable reason OperateOnCertainResidues defaults to applying to all residues if none are defined, so you have to be careful here...
+	///for some unfathomable reason OperateOnCertainResidues defaults to applying to all residues if none are defined, so you have to be careful here...
 	OperateOnCertainResidues oocr_repacking, oocr_prevent_repacking;
-	if( packing_residues.size() ){
+	if ( packing_residues.size() ) {
 		oocr_repacking.op( ResLvlTaskOperationCOP( new RestrictToRepackingRLT ) );
 		oocr_repacking.residue_indices( packing_residues );
 		oocr_repacking.apply( pose, task );
 	}
-	if( prevent_repacking_residues.size() ){
+	if ( prevent_repacking_residues.size() ) {
 		oocr_prevent_repacking.op( ResLvlTaskOperationCOP( new PreventRepackingRLT ) );
 		oocr_prevent_repacking.residue_indices( prevent_repacking_residues );
 		oocr_prevent_repacking.apply( pose, task );
@@ -139,8 +139,9 @@ void
 DesignAroundOperation::design_shell( core::Real const radius )
 {
 	design_shell_ = radius;
-	if( radius >= repack_shell() )
+	if ( radius >= repack_shell() ) {
 		repack_shell_ = radius;
+	}
 }
 
 void
@@ -161,12 +162,13 @@ DesignAroundOperation::parse_tag( TagCOP tag , DataMap & )
 	TR<<"repack_shell = "<<repack_shell()<<" design shell = "<<design_shell()<<std::endl;
 }
 void DesignAroundOperation::parse_def( utility::lua::LuaObject const & def ) {
-	if( def["resnums"] ) {
+	if ( def["resnums"] ) {
 		ostringstream oss("");
 		utility::lua::LuaIterator beg = def["resnums"].begin();
-		for (utility::lua::LuaIterator i=beg, end; i != end; ++i) {
-			if( i != beg )
+		for ( utility::lua::LuaIterator i=beg, end; i != end; ++i ) {
+			if ( i != beg ) {
 				oss << ",";
+			}
 			oss << (*i).to<core::Size>();
 		}
 		string_resnums_ = oss.str();

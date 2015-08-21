@@ -42,17 +42,17 @@ public:
 
 	/// @brief constructor with arguments
 	RefineOneCDRLoopCentroid(AntibodyInfoCOP antibody_info,
-	                         CDRNameEnum const & loop_name);
+		CDRNameEnum const & loop_name);
 
 	RefineOneCDRLoopCentroid(AntibodyInfoCOP antibody_info,
-	                         CDRNameEnum const & loop_name,
-	                         core::scoring::ScoreFunctionCOP scorefxn );
+		CDRNameEnum const & loop_name,
+		core::scoring::ScoreFunctionCOP scorefxn );
 
 	/// @brief constructor with arguments
 	RefineOneCDRLoopCentroid( loops::Loop const & a_cdr_loop);
 
 	RefineOneCDRLoopCentroid( loops::Loop const & a_cdr_loop,
-	                          core::scoring::ScoreFunctionCOP scorefxn );
+		core::scoring::ScoreFunctionCOP scorefxn );
 
 	/// @brief default destructor
 	~RefineOneCDRLoopCentroid();
@@ -80,9 +80,9 @@ private:
 	void set_default();
 	void finalize_setup( core::pose::Pose const & pose );
 	void loop_centroid_relax(
-	    pose::Pose & pose,
-	    Size const loop_begin,
-	    Size const loop_end );
+		pose::Pose & pose,
+		Size const loop_begin,
+		Size const loop_end );
 
 private:
 	loops::Loop the_cdr_loop_;

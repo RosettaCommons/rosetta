@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	    protocols/membrane/VisualizeMembraneMover.hh
+/// @file     protocols/membrane/VisualizeMembraneMover.hh
 /// @brief      Visualize Membrane Planes by many atoms
 /// @details    This does not represent the membrane planes as planes but rather
-///				as a large number of additional HETATOMs in the PDB file.
-///				IF YOU USE PYMOL, IT'S BETTER TO USE THE PYMOLMOVER INSTEAD!
-///				If you use Chimera or alternate methods for visualization, it
-///				it is still useful.
-///				Last Modified: 6/19/14
-/// @author		Rebecca Alford (rflaford12@gmail.com)
+///    as a large number of additional HETATOMs in the PDB file.
+///    IF YOU USE PYMOL, IT'S BETTER TO USE THE PYMOLMOVER INSTEAD!
+///    If you use Chimera or alternate methods for visualization, it
+///    it is still useful.
+///    Last Modified: 6/19/14
+/// @author  Rebecca Alford (rflaford12@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_visualize_VisualizeMembraneMover_cc
 #define INCLUDED_protocols_membrane_visualize_VisualizeMembraneMover_cc
@@ -65,9 +65,9 @@ using namespace core::pose;
 /// Constructors ///
 ////////////////////
 
-/// @brief	  Defualt Constructor
+/// @brief   Defualt Constructor
 /// @details  Construct membrane residues with spacing = 5,
-///	          width = 100
+///           width = 100
 VisualizeMembraneMover::VisualizeMembraneMover() :
 	protocols::moves::Mover(),
 	spacing_( 5 ),
@@ -80,7 +80,7 @@ VisualizeMembraneMover::VisualizeMembraneMover() :
 
 /// @brief    Construct with User specified spacing & width
 /// @details  Construct membranes with a given spacing and
-///			  width in angstroms
+///     width in angstroms
 VisualizeMembraneMover::VisualizeMembraneMover( Real spacing, Real width, Real thickness ) :
 	protocols::moves::Mover(),
 	spacing_( spacing ),
@@ -103,7 +103,7 @@ VisualizeMembraneMover &
 VisualizeMembraneMover::operator=( VisualizeMembraneMover const & src ) {
 
 	// Abort self-assignment.
-	if (this == &src) {
+	if ( this == &src ) {
 		return *this;
 	}
 
@@ -134,12 +134,12 @@ VisualizeMembraneMover::fresh_instance() const {
 /// @brief Pase Rosetta Scripts Options for this Mover
 void
 VisualizeMembraneMover::parse_my_tag(
-  utility::tag::TagCOP tag,
-  basic::datacache::DataMap &,
-  protocols::filters::Filters_map const &,
-  protocols::moves::Movers_map const &,
-  core::pose::Pose const &
-  ) {
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
+) {
 
 	// Read in spacing option
 	if ( tag->hasOption( "spacing" ) ) {
@@ -188,7 +188,7 @@ VisualizeMembraneMover::apply( Pose & pose ) {
 	TR << "Adding membrane planes represented as virtual residues to pose" << std::endl;
 
 	// Check that I am a membrane pose
-	if (! pose.conformation().is_membrane() ) {
+	if ( ! pose.conformation().is_membrane() ) {
 		utility_exit_with_message("Cannot visualize a non-membrane pose!");
 	}
 
@@ -283,7 +283,7 @@ VisualizeMembraneMover::create_membrane_virtual( Vector pos, bool fullatom ) {
 	// Grab the current residue typeset and create a new residue
 	ResidueTypeSetCOP const & residue_set(
 		core::chemical::ChemicalManager::get_instance()->residue_type_set( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
-		);
+	);
 
 	// Create a new Residue from rsd typeset of type MEM
 	ResidueTypeCOP rsd_type( residue_set->get_representative_type_name3("MEM") );

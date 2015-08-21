@@ -22,7 +22,7 @@
 #include <core/pose/Pose.hh>
 
 #ifdef WIN32
-	#include <protocols/simple_moves/CopyDofMover.hh>
+#include <protocols/simple_moves/CopyDofMover.hh>
 #endif
 
 namespace protocols {
@@ -30,41 +30,41 @@ namespace stepwise {
 namespace sampler {
 namespace copy_dofs {
 
-	class CopyDofStepWiseSampler: public StepWiseSamplerSized {
+class CopyDofStepWiseSampler: public StepWiseSamplerSized {
 
-	public:
+public:
 
-		//constructor
-		CopyDofStepWiseSampler( utility::vector1< core::pose::PoseOP > const & pose_list,
-										std::map< Size, Size > const & res_map,
-										core::pose::Pose const & starting_pose );
+	//constructor
+	CopyDofStepWiseSampler( utility::vector1< core::pose::PoseOP > const & pose_list,
+		std::map< Size, Size > const & res_map,
+		core::pose::Pose const & starting_pose );
 
-		//constructor
-		CopyDofStepWiseSampler( utility::vector1< core::pose::PoseOP > const & pose_list,
-										std::map< Size, Size > const & res_map );
-
-
-	public:
-
-		/// @brief Get the total number of rotamers in sampler
-		virtual core::Size size() const{ return copy_dof_movers_.size(); }
-
-		/// @brief Apply the i-th rotamer to pose
-		virtual void apply( core::pose::Pose&, core::Size const );
-
-		/// @brief Name of the class
-		virtual std::string get_name() const { return "CopyDofStepWiseSampler"; }
-
-		/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-		virtual StepWiseSamplerType type() const { return COPY_DOF; }
+	//constructor
+	CopyDofStepWiseSampler( utility::vector1< core::pose::PoseOP > const & pose_list,
+		std::map< Size, Size > const & res_map );
 
 
-	protected:
-		utility::vector1< simple_moves::CopyDofMoverOP > copy_dof_movers_;
-		utility::vector1< core::pose::PoseOP > pose_list_;
+public:
+
+	/// @brief Get the total number of rotamers in sampler
+	virtual core::Size size() const{ return copy_dof_movers_.size(); }
+
+	/// @brief Apply the i-th rotamer to pose
+	virtual void apply( core::pose::Pose&, core::Size const );
+
+	/// @brief Name of the class
+	virtual std::string get_name() const { return "CopyDofStepWiseSampler"; }
+
+	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
+	virtual StepWiseSamplerType type() const { return COPY_DOF; }
 
 
-	};
+protected:
+	utility::vector1< simple_moves::CopyDofMoverOP > copy_dof_movers_;
+	utility::vector1< core::pose::PoseOP > pose_list_;
+
+
+};
 
 } //copy_dofs
 } //sampler

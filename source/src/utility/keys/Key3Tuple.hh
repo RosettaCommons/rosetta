@@ -29,9 +29,9 @@ namespace keys {
 
 /// @brief 3-tuple meta-key
 template<
-	typename K1,
-	typename K2,
-	typename K3
+typename K1,
+typename K2,
+typename K3
 >
 class Key3Tuple
 {
@@ -193,9 +193,9 @@ private: // Fields
 
 /// @brief Key3Tuple == Key3Tuple
 template<
-	typename K1,
-	typename K2,
-	typename K3
+typename K1,
+typename K2,
+typename K3
 >
 bool
 operator ==( Key3Tuple< K1, K2, K3 > const & a, Key3Tuple< K1, K2, K3 > const & b );
@@ -203,9 +203,9 @@ operator ==( Key3Tuple< K1, K2, K3 > const & a, Key3Tuple< K1, K2, K3 > const & 
 
 /// @brief Key3Tuple != Key3Tuple
 template<
-	typename K1,
-	typename K2,
-	typename K3
+typename K1,
+typename K2,
+typename K3
 >
 bool
 operator !=( Key3Tuple< K1, K2, K3 > const & a, Key3Tuple< K1, K2, K3 > const & b );
@@ -213,9 +213,9 @@ operator !=( Key3Tuple< K1, K2, K3 > const & a, Key3Tuple< K1, K2, K3 > const & 
 
 /// @brief Key3Tuple < Key3Tuple
 template<
-	typename K1,
-	typename K2,
-	typename K3
+typename K1,
+typename K2,
+typename K3
 >
 bool
 operator <( Key3Tuple< K1, K2, K3 > const & a, Key3Tuple< K1, K2, K3 > const & b );

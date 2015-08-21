@@ -187,7 +187,7 @@ ProteinDNA_Relax::apply( pose::Pose & pose )
 	//
 	// this guy to the (ramp_cycles-1) power should be 1.0 / initial_weight
 	core::Real const ramping_multiplier( ( ramping_cycles_ < 1 ) ?
-																			 1.0 : std::exp( std::log( 1.0 / ramping_initial_weight_ ) / ( ramping_cycles_)));
+		1.0 : std::exp( std::log( 1.0 / ramping_initial_weight_ ) / ( ramping_cycles_)));
 	core::Real ramping_weight_factor( ramping_initial_weight_ / ramping_multiplier );
 	core::Real const final_fa_rep_weight( (*scorefxn_)[ scoring::fa_rep ] );
 

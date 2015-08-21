@@ -49,7 +49,7 @@ public:
 	SidechainMinMover( core::scoring::ScoreFunctionOP scorefxn, core::pack::task::TaskFactoryCOP );
 
 	/// @brief Constructor with two arguments.  The first is the jump that docking will occur over, the second is the
-	///		scorefunction to minimize with.
+	///  scorefunction to minimize with.
 	SidechainMinMover( core::Size rb_jump, core::scoring::ScoreFunctionOP scorefxn );
 
 	// destructor

@@ -63,8 +63,7 @@ RDFEtableFunction::~RDFEtableFunction()
 
 void RDFEtableFunction::parse_my_tag(utility::tag::TagCOP tag, basic::datacache::DataMap & data_map)
 {
-	if(!tag->hasOption("scorefxn"))
-	{
+	if ( !tag->hasOption("scorefxn") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("'RDFEtableFunction' requires 'scorefxn' tag");
 	}
 
@@ -123,8 +122,7 @@ void RDFElecFunction::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data_map)
 {
-	if(!tag->hasOption("scorefxn"))
-	{
+	if ( !tag->hasOption("scorefxn") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("'RDFEtableFunction' requires 'scorefxn' tag");
 	}
 
@@ -169,26 +167,22 @@ RDFChargeFunction::~RDFChargeFunction()
 
 }
 void RDFChargeFunction::parse_my_tag(
-								   utility::tag::TagCOP tag,
-								   basic::datacache::DataMap &)
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &)
 {
 	//Sign mode can be "ligand_plus" or "ligand_minus" or "same_sign
 	std::string sign_mode = tag->getOption<std::string>("sign_mode","same_sign");
-	if(sign_mode == "ligand_plus")
-	{
+	if ( sign_mode == "ligand_plus" ) {
 		function_sign_ = LigandPlusProteinMinus;
 		function_name_ = "charge_plus";
 
-	}else if(sign_mode == "ligand_minus")
-	{
+	} else if ( sign_mode == "ligand_minus" ) {
 		function_sign_ = LigandMinusProteinPlus;
 		function_name_ = "charge_minus";
-	}else if(sign_mode == "same_sign")
-	{
+	} else if ( sign_mode == "same_sign" ) {
 		function_sign_ = SameSign;
 		function_name_ = "charge_unsigned";
-	}else
-	{
+	} else {
 		utility::excn::EXCN_RosettaScriptsOption("RDFHbondFunction sign_mode can only be ligand_acceptor or ligand_donor");
 	}
 	this->add_function_name(function_name_);
@@ -199,24 +193,21 @@ RDFResultList RDFChargeFunction::operator()(AtomPairData const & atom_data )
 	RDFResultList results;
 
 	core::Real charge_product = atom_data.protein_atom_charge*atom_data.ligand_atom_charge;
-	if(function_sign_ == LigandMinusProteinPlus &&
-		atom_data.ligand_atom_charge < 0 &&
-		atom_data.protein_atom_charge >= 0
-	   )
-	{
+	if ( function_sign_ == LigandMinusProteinPlus &&
+			atom_data.ligand_atom_charge < 0 &&
+			atom_data.protein_atom_charge >= 0
+			) {
 		results.push_back(std::make_pair(function_name_, charge_product));
-	}else if(function_sign_ == LigandPlusProteinMinus &&
-		atom_data.ligand_atom_charge >= 0 &&
-		atom_data.protein_atom_charge < 0
-			 )
-	{
+	} else if ( function_sign_ == LigandPlusProteinMinus &&
+			atom_data.ligand_atom_charge >= 0 &&
+			atom_data.protein_atom_charge < 0
+			) {
 		results.push_back(std::make_pair(function_name_, charge_product));
-	}else if(function_sign_ == SameSign &&
-			 ((atom_data.ligand_atom_charge < 0 &&
-			 atom_data.protein_atom_charge < 0) ||
-			 (atom_data.ligand_atom_charge >= 0 &&
-			 atom_data.protein_atom_charge >= 0)) )
-	{
+	} else if ( function_sign_ == SameSign &&
+			((atom_data.ligand_atom_charge < 0 &&
+			atom_data.protein_atom_charge < 0) ||
+			(atom_data.ligand_atom_charge >= 0 &&
+			atom_data.protein_atom_charge >= 0)) ) {
 		results.push_back(std::make_pair(function_name_, charge_product));
 	}
 
@@ -249,21 +240,17 @@ void RDFHbondFunction::parse_my_tag(
 {
 	//Sign mode can be "ligand_acceptor" or "ligand_donor"
 	std::string sign_mode = tag->getOption<std::string>("sign_mode","unsigned");
-	if(sign_mode == "ligand_acceptor")
-	{
+	if ( sign_mode == "ligand_acceptor" ) {
 		function_sign_ = LigandPlusProteinMinus;
 		function_name_ = "hbond_acceptor";
 
-	}else if(sign_mode == "ligand_donor")
-	{
+	} else if ( sign_mode == "ligand_donor" ) {
 		function_sign_ = LigandMinusProteinPlus;
 		function_name_ = "hbond_donor";
-	}else if(sign_mode == "unsigned")
-	{
+	} else if ( sign_mode == "unsigned" ) {
 		function_sign_ = SameSign;
 		function_name_ = "hbond_unsigned";
-	}else
-	{
+	} else {
 		utility::excn::EXCN_RosettaScriptsOption("RDFHbondFunction sign_mode can only be ligand_acceptor or ligand_donor");
 	}
 	this->add_function_name(function_name_);
@@ -280,27 +267,23 @@ RDFResultList RDFHbondFunction::operator()(AtomPairData const & atom_data )
 {
 	RDFResultList results;
 	//get hbond energy if availible
-	utility::vector1< core::scoring::hbonds::HBondCOP > hbond_list(hbond_set_->atom_hbonds(atom_data.protein_atom_id));	//Most atoms will have zero or some small number of hbonds, this is a short loop
-	for(core::Size hbond_index = 1; hbond_index <= hbond_list.size();++hbond_index)
-	{
+	utility::vector1< core::scoring::hbonds::HBondCOP > hbond_list(hbond_set_->atom_hbonds(atom_data.protein_atom_id)); //Most atoms will have zero or some small number of hbonds, this is a short loop
+	for ( core::Size hbond_index = 1; hbond_index <= hbond_list.size(); ++hbond_index ) {
 		core::scoring::hbonds::HBondCOP current_bond(hbond_list[hbond_index]);
 		core::id::AtomID acc_id(current_bond->acc_atm(),current_bond->acc_res());
 		core::id::AtomID don_id(current_bond->don_hatm(),current_bond->don_res());
 
-		if((function_sign_ == SameSign) && ((acc_id == atom_data.ligand_atom_id) || (don_id == atom_data.ligand_atom_id)))
-		{
+		if ( (function_sign_ == SameSign) && ((acc_id == atom_data.ligand_atom_id) || (don_id == atom_data.ligand_atom_id)) ) {
 			//Unsigned function
 			core::Real hbond = current_bond->energy();
 			results.push_back(std::make_pair(function_name_, hbond));
 			return results;
-		}else if( (function_sign_ == LigandPlusProteinMinus) && (acc_id == atom_data.ligand_atom_id) )
-		{
+		} else if ( (function_sign_ == LigandPlusProteinMinus) && (acc_id == atom_data.ligand_atom_id) ) {
 			//ligand_acceptor function
 			core::Real hbond = current_bond->energy();
 			results.push_back(std::make_pair(function_name_, hbond));
 			return results;
-		}else if( (function_sign_ == LigandMinusProteinPlus) && (don_id == atom_data.ligand_atom_id) )
-		{
+		} else if ( (function_sign_ == LigandMinusProteinPlus) && (don_id == atom_data.ligand_atom_id) ) {
 			//ligand_donor function
 			core::Real hbond = current_bond->energy();
 			results.push_back(std::make_pair(function_name_, hbond));
@@ -337,21 +320,17 @@ void RDFBinaryHbondFunction::parse_my_tag(utility::tag::TagCOP tag,basic::dataca
 {
 	//Sign mode can be "ligand_acceptor" or "ligand_donor", or matching pair
 	std::string sign_mode = tag->getOption<std::string>("sign_mode","matching_pair");
-	if(sign_mode == "ligand_acceptor")
-	{
+	if ( sign_mode == "ligand_acceptor" ) {
 		function_sign_ = LigandPlusProteinMinus;
 		function_name_ = "hbond_binary_acceptor";
-	}else if(sign_mode == "ligand_donor")
-	{
+	} else if ( sign_mode == "ligand_donor" ) {
 		function_sign_ = LigandMinusProteinPlus;
 		function_name_ = "hbond_binary_donor";
 
-	}else if(sign_mode == "matching_pair")
-	{
+	} else if ( sign_mode == "matching_pair" ) {
 		function_sign_ = SameSign;
 		function_name_ = "hbond_matching_pair";
-	}else
-	{
+	} else {
 		utility::excn::EXCN_RosettaScriptsOption("RDFHbondFunction sign_mode can only be ligand_acceptor or ligand_donor or matching pair");
 	}
 	this->add_function_name(function_name_);
@@ -362,23 +341,19 @@ RDFResultList RDFBinaryHbondFunction::operator()(AtomPairData const & atom_data)
 	RDFResultList results;
 	//is the current pair of atoms a donor and acceptor?
 	core::Real hbond_binary = 0.0;
-	if((function_sign_ == LigandPlusProteinMinus) &&
-		( atom_data.protein_atom_type.is_donor() && atom_data.ligand_atom_type.is_acceptor()) )
-	{
+	if ( (function_sign_ == LigandPlusProteinMinus) &&
+			( atom_data.protein_atom_type.is_donor() && atom_data.ligand_atom_type.is_acceptor()) ) {
 
 		hbond_binary = 1.0;
-	}else if((function_sign_ == LigandMinusProteinPlus) &&
-		(atom_data.protein_atom_type.is_acceptor() && atom_data.ligand_atom_type.is_donor()))
-	{
+	} else if ( (function_sign_ == LigandMinusProteinPlus) &&
+			(atom_data.protein_atom_type.is_acceptor() && atom_data.ligand_atom_type.is_donor()) ) {
 		hbond_binary = 1.0;
-	}else if( (function_sign_ == SameSign) &&
-		( (atom_data.protein_atom_type.is_donor() && atom_data.ligand_atom_type.is_donor() ) ||
-		  (atom_data.protein_atom_type.is_acceptor() && atom_data.ligand_atom_type.is_acceptor()))
-		)
-	{
+	} else if ( (function_sign_ == SameSign) &&
+			( (atom_data.protein_atom_type.is_donor() && atom_data.ligand_atom_type.is_donor() ) ||
+			(atom_data.protein_atom_type.is_acceptor() && atom_data.ligand_atom_type.is_acceptor()))
+			) {
 		hbond_binary = 1.0;
-	}
-	else{
+	} else {
 		hbond_binary = 0.0;
 	}
 
@@ -491,25 +466,22 @@ RDFResultList RDFBinaryOrbitalFunction::operator()(AtomPairData const & atom_dat
 	core::Real salt_bridge_counts = 0.0;
 	core::Real hbond_orbital_counts = 0.0;
 	core::Real cation_pi_counts = 0.0;
-	for(
-		utility::vector1< core::Size >::const_iterator
-		protein_orb_it = protein_orbitals.begin(),
-		protein_orb_end = protein_orbitals.end();
-		protein_orb_it != protein_orb_end; ++protein_orb_it)
-	{
-		std::string protein_orb = protein_residue.orbital_type(*protein_orb_it).name();
-		for(
+	for (
 			utility::vector1< core::Size >::const_iterator
-			ligand_orb_it = ligand_orbitals.begin(),
-			ligand_orb_end = ligand_orbitals.end();
-			ligand_orb_it != ligand_orb_end; ++ligand_orb_it)
-		{
+			protein_orb_it = protein_orbitals.begin(),
+			protein_orb_end = protein_orbitals.end();
+			protein_orb_it != protein_orb_end; ++protein_orb_it ) {
+		std::string protein_orb = protein_residue.orbital_type(*protein_orb_it).name();
+		for (
+				utility::vector1< core::Size >::const_iterator
+				ligand_orb_it = ligand_orbitals.begin(),
+				ligand_orb_end = ligand_orbitals.end();
+				ligand_orb_it != ligand_orb_end; ++ligand_orb_it ) {
 			std::string ligand_orb = ligand_residue.orbital_type(*ligand_orb_it).name();
-			if(
-			   (ligand_orb == "C.pi.sp2" && protein_orb == "C.pi.sp2") ||
-			   (ligand_orb == "C.pi.sp2" && protein_orb == "N.pi.sp2") ||
-			   (ligand_orb == "N.pi.sp2" && protein_orb == "C.pi.sp2"))
-			{
+			if (
+					(ligand_orb == "C.pi.sp2" && protein_orb == "C.pi.sp2") ||
+					(ligand_orb == "C.pi.sp2" && protein_orb == "N.pi.sp2") ||
+					(ligand_orb == "N.pi.sp2" && protein_orb == "C.pi.sp2") ) {
 				pi_pi_counts += 1.0;
 			}
 		}
@@ -517,60 +489,44 @@ RDFResultList RDFBinaryOrbitalFunction::operator()(AtomPairData const & atom_dat
 
 	std::string protein_atom_name = protein_residue.type().atom_type((atom_data.protein_atom_id.atomno())).name();
 	std::string ligand_atom_name = ligand_residue.type().atom_type((atom_data.ligand_atom_id.atomno())).name();
-	if(protein_atom_name == "Hpol" || protein_atom_name == "Haro")
-	{
-		for(
-			utility::vector1< core::Size >::const_iterator
-			ligand_orb_it = ligand_orbitals.begin(),
-			ligand_orb_end = ligand_orbitals.end();
-			ligand_orb_it != ligand_orb_end; ++ligand_orb_it)
-		{
+	if ( protein_atom_name == "Hpol" || protein_atom_name == "Haro" ) {
+		for (
+				utility::vector1< core::Size >::const_iterator
+				ligand_orb_it = ligand_orbitals.begin(),
+				ligand_orb_end = ligand_orbitals.end();
+				ligand_orb_it != ligand_orb_end; ++ligand_orb_it ) {
 			std::string ligand_orb = ligand_residue.orbital_type(*ligand_orb_it).name();
-			if (protein_atom_name == "Hpol")
-			{
-				if(ligand_orb == "O.p.sp2")
-				{
+			if ( protein_atom_name == "Hpol" ) {
+				if ( ligand_orb == "O.p.sp2" ) {
 					salt_bridge_counts += 1.0;
-				}else if(ligand_orb == "O.p.sp3")
-				{
+				} else if ( ligand_orb == "O.p.sp3" ) {
 					hbond_orbital_counts += 1.0;
-				}else if(ligand_orb == "C.pi.sp2")
-				{
+				} else if ( ligand_orb == "C.pi.sp2" ) {
 					cation_pi_counts += 1.0;
 				}
-			}else if(protein_atom_name == "Haro")
-			{
-				if(ligand_orb == "C.pi.sp2")
-				{
+			} else if ( protein_atom_name == "Haro" ) {
+				if ( ligand_orb == "C.pi.sp2" ) {
 					pi_pi_counts += 1.0;
 				}
 			}
 		}
-	}else if(ligand_atom_name == "Hpol" || ligand_atom_name == "Haro")
-	{
-		for(
-			utility::vector1< core::Size >::const_iterator
-			protein_orb_it = protein_orbitals.begin(),
-			protein_orb_end = protein_orbitals.end();
-			protein_orb_it != protein_orb_end; ++protein_orb_it)
-		{
+	} else if ( ligand_atom_name == "Hpol" || ligand_atom_name == "Haro" ) {
+		for (
+				utility::vector1< core::Size >::const_iterator
+				protein_orb_it = protein_orbitals.begin(),
+				protein_orb_end = protein_orbitals.end();
+				protein_orb_it != protein_orb_end; ++protein_orb_it ) {
 			std::string protein_orb = protein_residue.orbital_type(*protein_orb_it).name();
-			if (ligand_atom_name == "Hpol")
-			{
-				if(protein_orb == "O.p.sp2")
-				{
+			if ( ligand_atom_name == "Hpol" ) {
+				if ( protein_orb == "O.p.sp2" ) {
 					salt_bridge_counts += 1.0;
-				}else if(protein_orb == "O.p.sp3")
-				{
+				} else if ( protein_orb == "O.p.sp3" ) {
 					hbond_orbital_counts += 1.0;
-				}else if(protein_orb == "C.pi.sp2")
-				{
+				} else if ( protein_orb == "C.pi.sp2" ) {
 					cation_pi_counts += 1.0;
 				}
-			}else if(ligand_atom_name == "Haro")
-			{
-				if(protein_orb == "C.pi.sp2")
-				{
+			} else if ( ligand_atom_name == "Haro" ) {
+				if ( protein_orb == "C.pi.sp2" ) {
 					pi_pi_counts += 1.0;
 				}
 			}

@@ -35,17 +35,17 @@ main( int argc, char * argv [] )
 		using namespace protocols::jd2;
 		using namespace protocols::docking::membrane;
 
-		
+
 		// initialize options, RNG, and factory-registrators
 		devel::init(argc, argv);
-		
+
 		MPDockingMoverOP mpdm( new MPDockingMover() );
 		JobDistributor::get_instance()->go(mpdm);
 	}
-	catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
-		return -1;
-	}
+catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+	return -1;
+}
 
 	return 0;
 }

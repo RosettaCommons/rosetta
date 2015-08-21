@@ -68,7 +68,7 @@ MPIFileBufJobDistributor::MPIFileBufJobDistributor() :
 	rank_( 0 ),
 	slave_current_job_id_( 0 ),
 	slave_current_batch_id_( 0 ),
-	//	next_job_to_assign_( 0 ),
+	// next_job_to_assign_( 0 ),
 	bad_job_id_( 0 ),
 	repeat_job_( false ),
 	master_rank_( 1 ),
@@ -78,7 +78,7 @@ MPIFileBufJobDistributor::MPIFileBufJobDistributor() :
 	cumulated_jobs_( 0 )
 {
 
-  // set n_rank_ and rank based on whether we are using MPI or not
+	// set n_rank_ and rank based on whether we are using MPI or not
 #ifdef USEMPI
 	int int_rank, int_n_rank;                         //don't cast pointers - copy it over instead
 	MPI_Comm_rank( MPI_COMM_WORLD, &int_rank );
@@ -104,7 +104,7 @@ MPIFileBufJobDistributor::MPIFileBufJobDistributor(
 	rank_( 0 ),
 	slave_current_job_id_( 0 ),
 	slave_current_batch_id_( 0 ),
-	//	next_job_to_assign_( 0 ),
+	// next_job_to_assign_( 0 ),
 	bad_job_id_( 0 ),
 	repeat_job_( false ),
 	master_rank_( master_rank ),
@@ -147,8 +147,8 @@ MPIFileBufJobDistributor::go( protocols::moves::MoverOP mover ) {
 		tr.Debug << "send STOP to FileBuffer " << std::endl;
 		buffer.stop(); //this communicates to the file_buf_rank_ that it has to stop the run() loop.
 	} else if ( rank_ >= min_client_rank_ ) {
-			go_main( mover );
-			tr.Debug << "Slave JD finished!" << std::endl;
+		go_main( mover );
+		tr.Debug << "Slave JD finished!" << std::endl;
 	}
 
 	// ideally these would be called in the dtor but the way we have the singleton pattern set up the dtors don't get
@@ -193,7 +193,7 @@ void MPIFileBufJobDistributor::send_job_to_slave( Size MPI_ONLY(slave_rank) ) {
 bool
 MPIFileBufJobDistributor::process_message( Size msg_tag, Size slave_rank, Size slave_job_id, Size slave_batch_id, core::Real runtime ) {
 	switch ( msg_tag ) {
-	case NEW_JOB_ID:  //slave requested a new job id ... send new job or spin-down signal
+	case NEW_JOB_ID :  //slave requested a new job id ... send new job or spin-down signal
 		tr.Debug << "Master Node: Sending new job id " << current_job_id() << " " << "job: " << current_job()->input_tag() << " to node " << slave_rank << std::endl;
 		send_job_to_slave( slave_rank );
 		if ( current_job_id() ) {
@@ -203,20 +203,20 @@ MPIFileBufJobDistributor::process_message( Size msg_tag, Size slave_rank, Size s
 			--n_nodes_left_to_spin_down_;
 		}
 		break;
-	case BAD_INPUT: //slave reports failed job
+	case BAD_INPUT : //slave reports failed job
 		tr.Debug << "Master Node: Received job failure message for job id " << slave_job_id << " from node " << slave_rank << std::endl;
 		++bad_input_jobs_;
 		mark_job_as_bad( slave_job_id, slave_batch_id );
 		++jobs_returned_;
 		break;
-	case JOB_SUCCESS:
+	case JOB_SUCCESS :
 		mark_job_as_completed( slave_job_id, slave_batch_id, runtime );
 		++jobs_returned_;
 		break;
 	case JOB_FAILED_NO_RETRY :
 		++jobs_returned_;
 		break;
-	default:
+	default :
 		tr.Error << "[ERROR] from " << slave_rank << " tag: "  << msg_tag << " " << slave_job_id << std::endl;
 		utility_exit_with_message(" unknown tag "+ ObjexxFCL::string_of( msg_tag ) +" in master_loop of MPIFileBufJobDistributor ");
 		return false;
@@ -269,7 +269,7 @@ MPIFileBufJobDistributor::eat_signal( Size msg_tag_in, int MPI_ONLY( source ) ) 
 #endif
 
 	tr.Debug << "eating expected signal " << msg_tag_in << std::endl;
-	//	runtime_assert( msg_tag == msg_tag_in );
+	// runtime_assert( msg_tag == msg_tag_in );
 }
 
 /// @brief the main message loop --- master cycles thru until all slave nodes have been spun down
@@ -349,11 +349,11 @@ MPIFileBufJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 core::Size
 MPIFileBufJobDistributor::get_new_job_id()
 {
-  if ( rank_ == master_rank_ ) {
-    return master_get_new_job_id();
-  } else {
-    return slave_get_new_job_id();
-  }
+	if ( rank_ == master_rank_ ) {
+		return master_get_new_job_id();
+	} else {
+		return slave_get_new_job_id();
+	}
 	return 0;
 }
 
@@ -365,29 +365,29 @@ MPIFileBufJobDistributor::master_get_new_job_id()
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-  JobsContainer const & jobs( get_jobs() );
-  JobOutputterOP outputter = job_outputter();
+	JobsContainer const & jobs( get_jobs() );
+	JobOutputterOP outputter = job_outputter();
 
 	//increase job-id until a new job is found
-	for( core::Size next_job_to_assign = current_job_id() + 1;
-       next_job_to_assign <= jobs.size(); ++next_job_to_assign ) {
+	for ( core::Size next_job_to_assign = current_job_id() + 1;
+			next_job_to_assign <= jobs.size(); ++next_job_to_assign ) {
 
-    basic::show_time( tr,  "assign job "+ObjexxFCL::string_of(next_job_to_assign)+" batch: "+ObjexxFCL::lead_zero_string_of( current_batch_id(),5 ) );
+		basic::show_time( tr,  "assign job "+ObjexxFCL::string_of(next_job_to_assign)+" batch: "+ObjexxFCL::lead_zero_string_of( current_batch_id(),5 ) );
 
 		if ( jobs[ next_job_to_assign ]->bad() ) { //don't start jobs with known bad input
-      tr.Debug << "Job " << ObjexxFCL::string_of(next_job_to_assign) << " being skipped due to known bad input." << std::endl;
+			tr.Debug << "Job " << ObjexxFCL::string_of(next_job_to_assign) << " being skipped due to known bad input." << std::endl;
 			continue;
 		} else if ( !outputter->job_has_completed( jobs[ next_job_to_assign ] ) ) { //don't start jobs which have been completed ( in previous runs )
-				tr.Debug << "Master Node: Getting next job to assign from list id " << next_job_to_assign << " of " << jobs.size() << std::endl;
-				return next_job_to_assign;
+			tr.Debug << "Master Node: Getting next job to assign from list id " << next_job_to_assign << " of " << jobs.size() << std::endl;
+			return next_job_to_assign;
 		} else if ( outputter->job_has_completed( jobs[ next_job_to_assign ] ) &&
-                option[ out::overwrite ].value() ) {  //ignore what I just said -- we ignore previous data
+				option[ out::overwrite ].value() ) {  //ignore what I just said -- we ignore previous data
 			tr.Debug << "Master Node: Getting next job to assign from list, overwriting id " << next_job_to_assign << " of " << jobs.size() << std::endl;
 			return next_job_to_assign;
 		}
 
-    //arrives here only if job has already been completed on the file-system
-    mark_job_as_completed( next_job_to_assign, current_batch_id(), -1.0 ); //need this for the MPIArchiveJobDistributor
+		//arrives here only if job has already been completed on the file-system
+		mark_job_as_completed( next_job_to_assign, current_batch_id(), -1.0 ); //need this for the MPIArchiveJobDistributor
 	}
 	tr.Debug << "Master Node: No more jobs to assign, setting next job id to zero" << std::endl;
 	return 0;
@@ -428,12 +428,12 @@ MPIFileBufJobDistributor::slave_get_new_job_id()
 void
 MPIFileBufJobDistributor::mark_current_job_id_for_repetition()
 {
-  if ( rank_ == master_rank_ ) {
-    master_mark_current_job_id_for_repetition();
-  } else {
-    slave_mark_current_job_id_for_repetition();
+	if ( rank_ == master_rank_ ) {
+		master_mark_current_job_id_for_repetition();
+	} else {
+		slave_mark_current_job_id_for_repetition();
 		clear_current_job_output();
-  }
+	}
 }
 
 void
@@ -456,11 +456,11 @@ MPIFileBufJobDistributor::slave_mark_current_job_id_for_repetition()
 void
 MPIFileBufJobDistributor::remove_bad_inputs_from_job_list()
 {
-  if ( rank_ == master_rank_ ) {
-    master_remove_bad_inputs_from_job_list();
-  } else {
-    slave_remove_bad_inputs_from_job_list();
-  }
+	if ( rank_ == master_rank_ ) {
+		master_remove_bad_inputs_from_job_list();
+	} else {
+		slave_remove_bad_inputs_from_job_list();
+	}
 }
 
 void
@@ -472,8 +472,8 @@ MPIFileBufJobDistributor::master_remove_bad_inputs_from_job_list()
 		JobsContainer const& jobs( get_jobs() );
 		std::string const & bad_job_id_input_tag( jobs[ bad_job_id_ ]->input_tag() );
 		tr.Debug << "Master Node: Job id "
-						 << job_outputter()->output_name( jobs[ bad_job_id_ ] )
-						 << " failed, reporting bad input; other jobs of same input will be canceled: " <<  bad_job_id_input_tag << std::endl;
+			<< job_outputter()->output_name( jobs[ bad_job_id_ ] )
+			<< " failed, reporting bad input; other jobs of same input will be canceled: " <<  bad_job_id_input_tag << std::endl;
 	}
 
 	Parent::mark_job_as_bad( bad_job_id_ ); // this sets all jobs with this input_tag to bad!
@@ -504,12 +504,12 @@ MPIFileBufJobDistributor::slave_remove_bad_inputs_from_job_list()
 void
 MPIFileBufJobDistributor::job_succeeded(core::pose::Pose & pose, core::Real runtime, std::string const & tag)
 {
-  if ( rank_ == master_rank_ ) {
-    master_job_succeeded( pose, tag );
-  } else {
+	if ( rank_ == master_rank_ ) {
+		master_job_succeeded( pose, tag );
+	} else {
 		slave_current_runtime_ = runtime;
-    slave_job_succeeded( pose, tag );
-  }
+		slave_job_succeeded( pose, tag );
+	}
 }
 
 void

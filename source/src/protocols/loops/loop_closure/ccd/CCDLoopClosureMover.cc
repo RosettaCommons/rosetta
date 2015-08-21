@@ -106,7 +106,7 @@ CCDLoopClosureMover::CCDLoopClosureMover( protocols::loops::Loop const & loop ) 
 
 // Constructor with Loop and MoveMap input options
 CCDLoopClosureMover::CCDLoopClosureMover( protocols::loops::Loop const & loop, kinematics::MoveMapCOP mm ) :
-		Mover()
+	Mover()
 {
 	init( loop, mm );
 }
@@ -156,15 +156,15 @@ CCDLoopClosureMover::show( std::ostream & output ) const
 	Mover::show( output );  // name, type, tag
 	loop_.show( output );
 	output << "\nNumber of CCD cycles:    " << max_cycles_ <<
-				"\nTolerance:               " << tolerance_ <<
-				"\nbRama check:             " << ( check_rama_scores_ ? "True" : "False" ) <<
-				"\nMax total delta helix:   " << max_total_torsion_delta_per_residue( helix ) <<
-				"\nMax total delta strand:  " << max_total_torsion_delta_per_residue( strand ) <<
-				"\nMax total delta loop:    " << max_total_torsion_delta_per_residue( coil ) << endl;
+		"\nTolerance:               " << tolerance_ <<
+		"\nbRama check:             " << ( check_rama_scores_ ? "True" : "False" ) <<
+		"\nMax total delta helix:   " << max_total_torsion_delta_per_residue( helix ) <<
+		"\nMax total delta strand:  " << max_total_torsion_delta_per_residue( strand ) <<
+		"\nMax total delta loop:    " << max_total_torsion_delta_per_residue( coil ) << endl;
 	output << "Movemap: " << endl;
 	movemap_->show( output );
 
-	if (check_rama_scores() ) {
+	if ( check_rama_scores() ) {
 		output << "RamaCheck: " << endl;
 		rama()->show( output );
 	}
@@ -494,10 +494,10 @@ CCDLoopClosureMover::get_anchors( conformation::Residue const & residue ) const
 		anchors.push_back( residue.atom( second_upper_mainchain_atom ).xyz() );
 	} else {
 		std::string const msg( "CCDLoopClosureMover::get_anchors( core::conformation::Residue const & residue ): "
-				"Residue is not a cutpoint variant! You must add cutpoint variants before applying this Mover." );
-		#ifdef PYROSETTA
+			"Residue is not a cutpoint variant! You must add cutpoint variants before applying this Mover." );
+#ifdef PYROSETTA
 		  PyAssert( false, msg );
-		#endif
+#endif
 		throw utility::excn::EXCN_BadInput( msg );
 	}
 
@@ -507,7 +507,7 @@ CCDLoopClosureMover::get_anchors( conformation::Residue const & residue ) const
 // TODO: Is it possible to ever call this in cases where atom > ( 1  + number_mc_atoms )?
 void
 CCDLoopClosureMover::index_pair_in_range(
-		core::uint & pos, core::uint & atom, Size const n_mainchain_atoms ) const
+	core::uint & pos, core::uint & atom, Size const n_mainchain_atoms ) const
 {
 	while ( atom > n_mainchain_atoms ) {
 		atom -= n_mainchain_atoms;
@@ -524,11 +524,11 @@ CCDLoopClosureMover::index_pair_in_range(
 
 void
 CCDLoopClosureMover::get_torsion_axis(
-		pose::Pose const & pose,
-		core::uint const seqpos,
-		core::uint const torsion_num,
-		Vector & axis_atom_coords,
-		Vector & axis_unit_vector ) const
+	pose::Pose const & pose,
+	core::uint const seqpos,
+	core::uint const torsion_num,
+	Vector & axis_atom_coords,
+	Vector & axis_unit_vector ) const
 {
 	Size const n_mainchain_atoms( pose.residue( seqpos ).mainchain_atoms().size() );
 	core::uint const upstream_atom_resnum( seqpos ), upstream_mainchain_atom_num( torsion_num );
@@ -540,7 +540,7 @@ CCDLoopClosureMover::get_torsion_axis(
 	// TODO: Pull from the list of main-chain atoms, in case they aren't the 1st atoms in the residue.
 	axis_atom_coords = pose.residue( downstream_atom_resnum ).xyz( downstream_mainchain_atom_num );
 	axis_unit_vector = ( axis_atom_coords -
-			pose.residue( upstream_atom_resnum ).xyz( upstream_mainchain_atom_num ) ).normalized();
+		pose.residue( upstream_atom_resnum ).xyz( upstream_mainchain_atom_num ) ).normalized();
 }
 
 /// @param <F>: the coordinates of the fixed target atoms
@@ -552,10 +552,10 @@ CCDLoopClosureMover::get_torsion_axis(
 /// Canutescu & Dunbrack (2003) Prot. Sci. 12, 963.
 Angle
 CCDLoopClosureMover::calculate_ccd_angle(
-		pose::Pose const & pose,
-		core::uint const seqpos,
-		core::uint const torsion_num,
-		ChainDirection const direction )
+	pose::Pose const & pose,
+	core::uint const seqpos,
+	core::uint const torsion_num,
+	ChainDirection const direction )
 {
 	using std::endl;
 	using utility::vector1;
@@ -568,14 +568,14 @@ CCDLoopClosureMover::calculate_ccd_angle(
 	// We need to change it so that it is 2 instead of three for non-peptide cases. ~Labonte
 	vector1< PointPosition > fixed_atoms, moving_atoms;
 	switch ( direction ) {
-		case forward:
-			moving_atoms = get_anchors( pose.residue( loop_.cut() ) );
-			fixed_atoms = get_anchors( pose.residue( loop_.cut() + 1 ) );
-			break;
-		case backward:
-			moving_atoms = get_anchors( pose.residue( loop_.cut() + 1 ) );
-			fixed_atoms = get_anchors( pose.residue( loop_.cut() ) );
-			break;
+	case forward :
+		moving_atoms = get_anchors( pose.residue( loop_.cut() ) );
+		fixed_atoms = get_anchors( pose.residue( loop_.cut() + 1 ) );
+		break;
+	case backward :
+		moving_atoms = get_anchors( pose.residue( loop_.cut() + 1 ) );
+		fixed_atoms = get_anchors( pose.residue( loop_.cut() ) );
+		break;
 	}
 	Size number_of_atoms( numeric::min( fixed_atoms.size(), moving_atoms.size() ) );
 
@@ -605,10 +605,10 @@ CCDLoopClosureMover::calculate_ccd_angle(
 }
 
 void CCDLoopClosureMover::get_maximum_torsion_deltas_for_residue(
-		core::pose::Pose const & pose,
-		core::uint const seqpos,
-		core::Real & per_move_allowed_delta,
-		core::Real & total_allowed_delta ) const
+	core::pose::Pose const & pose,
+	core::uint const seqpos,
+	core::Real & per_move_allowed_delta,
+	core::Real & total_allowed_delta ) const
 {
 	per_move_allowed_delta = max_per_move_torsion_delta_per_residue( pose.secstruct( seqpos ) );
 	total_allowed_delta = max_total_torsion_delta_per_residue( pose.secstruct( seqpos ) );
@@ -617,12 +617,12 @@ void CCDLoopClosureMover::get_maximum_torsion_deltas_for_residue(
 // This method performs much of the work of the CCD closure.
 // It operates on a single residue
 void CCDLoopClosureMover::adjust_residue_to_minimize_deviation(
-		core::pose::Pose & pose,
-		core::pose::Pose const & starting_pose,
-		core::uint const seqpos,
-		ChainDirection const direction,
-		Real const max_per_move_torsion_delta,
-		Real const max_total_torsion_delta )
+	core::pose::Pose & pose,
+	core::pose::Pose const & starting_pose,
+	core::uint const seqpos,
+	ChainDirection const direction,
+	Real const max_per_move_torsion_delta,
+	Real const max_total_torsion_delta )
 {
 	using std::endl;
 	using basic::subtract_degree_angles;
@@ -635,7 +635,7 @@ void CCDLoopClosureMover::adjust_residue_to_minimize_deviation(
 
 		if ( TR.Debug.visible() ) {
 			TR.Debug << "Residue number: " << seqpos << " Torsion number: " << torsion_num << " Direction: "
-			<< ( (direction == forward ) ? "forward" : "backward" ) << endl;
+				<< ( (direction == forward ) ? "forward" : "backward" ) << endl;
 		}
 
 		TorsionID const torsion_id( seqpos, BB, torsion_num );
@@ -651,7 +651,7 @@ void CCDLoopClosureMover::adjust_residue_to_minimize_deviation(
 		// Check for total movement during closure run.
 
 		Angle const total_torsion_delta( subtract_degree_angles( starting_pose.torsion( torsion_id ),
-									pose.torsion( torsion_id ) + alpha ) );
+			pose.torsion( torsion_id ) + alpha ) );
 
 		if ( total_torsion_delta > max_total_torsion_delta ) {
 			// This logic is a little tricky:
@@ -677,25 +677,25 @@ void CCDLoopClosureMover::adjust_residue_to_minimize_deviation(
 // It operates on the loop from the anchor to the cutpoint
 void
 CCDLoopClosureMover::close_loop_in_single_direction(
-		pose::Pose & pose,
-		pose::Pose const & starting_pose,
-		ChainDirection const direction )
+	pose::Pose & pose,
+	pose::Pose const & starting_pose,
+	ChainDirection const direction )
 {
 	using std::endl;
 
 	core::uint start_pos, stop_pos;
 	switch ( direction ) {
-		case forward:
-			start_pos = loop_.start();
-			stop_pos = loop_.cut();
-			break;
-		case backward:
-			start_pos = loop_.stop();
-			stop_pos = loop_.cut() + 1;
-			break;
-		default:
-			utility_exit_with_message("Unknown chain direction.");
-			break;
+	case forward :
+		start_pos = loop_.start();
+		stop_pos = loop_.cut();
+		break;
+	case backward :
+		start_pos = loop_.stop();
+		stop_pos = loop_.cut() + 1;
+		break;
+	default :
+		utility_exit_with_message("Unknown chain direction.");
+		break;
 	}
 
 	// Cycle through each residue position in the loop in the proper direction.
@@ -717,7 +717,7 @@ CCDLoopClosureMover::close_loop_in_single_direction(
 		if ( max_total_torsion_delta <= 0.01 ) {
 			if ( TR.Debug.visible() ) {
 				TR.Debug << "Settings for maximum allowed changes in torsion angles prevent movement of residue: " <<
-						seqpos << endl;
+					seqpos << endl;
 			}
 			continue;
 		}
@@ -745,14 +745,14 @@ void CCDLoopClosureMover::compute_closure_metrics(
 		for ( core::uint j = 1; j<= n_mainchain_atoms; ++j ) {
 			TorsionID torsion_id( i, BB, j );
 			total_change_in_torsion_angle +=
-					std::abs( subtract_degree_angles( starting_pose.torsion( torsion_id ), pose.torsion( torsion_id ) ) );
+				std::abs( subtract_degree_angles( starting_pose.torsion( torsion_id ), pose.torsion( torsion_id ) ) );
 		}
 	}
 	average_change_in_torsion_angle_ = total_change_in_torsion_angle / loop_.size();
-	
+
 	// Calculate change in Rama score if applicable
 	average_change_in_rama_score_ = 0.0;
-	if (check_rama_scores() ) {
+	if ( check_rama_scores() ) {
 		average_change_in_rama_score_ = rama()->average_change_in_rama_score_over_range(
 			pose, loop_.start(), loop_.stop() );
 	}

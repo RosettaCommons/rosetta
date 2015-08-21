@@ -71,7 +71,7 @@ public:
 		utility::vector1< bool > & /*context_graphs_required*/
 	) const {}
 
- private:
+private:
 
 	ResidualDipolarCoupling_Rohl const & rdc_from_pose(
 		pose::Pose & pose
@@ -132,15 +132,15 @@ public:
 	) const;
 
 	Real calc_dipscore(
-	ObjexxFCL::FArray2D< Real > const & A,
-	ObjexxFCL::FArray1D< Real > const & x,
-	ObjexxFCL::FArray1D< Real > const & b,
-	utility::vector1< core::scoring::RDC_Rohl > const & All_RDC_lines,
-	Size const & ORDERSIZE,
-	Real const & Azz
+		ObjexxFCL::FArray2D< Real > const & A,
+		ObjexxFCL::FArray1D< Real > const & x,
+		ObjexxFCL::FArray1D< Real > const & b,
+		utility::vector1< core::scoring::RDC_Rohl > const & All_RDC_lines,
+		Size const & ORDERSIZE,
+		Real const & Azz
 	) const;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

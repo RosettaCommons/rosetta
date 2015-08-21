@@ -33,7 +33,7 @@ using namespace core::chemical;
 
 class AtomTypeSetTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	// Shared data elements go here.
 	AtomTypeSetOP atomtypeset;

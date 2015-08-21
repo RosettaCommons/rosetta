@@ -114,12 +114,12 @@ namespace farna {
 static thread_local basic::Tracer TR( "protocols.rna.RNA_DeNovoProtocol" );
 
 RNA_DeNovoProtocol::RNA_DeNovoProtocol(
-	 Size const nstruct,
-	 std::string const silent_file,
-	 bool const heat_structure /*= true*/,
-	 bool const minimize_structure /*= false*/,
-	 bool const relax_structure /*=false*/,
-	 bool const allow_bulge /*=false*/):
+	Size const nstruct,
+	std::string const silent_file,
+	bool const heat_structure /*= true*/,
+	bool const minimize_structure /*= false*/,
+	bool const relax_structure /*=false*/,
+	bool const allow_bulge /*=false*/):
 	Mover(),
 	nstruct_( nstruct ),
 	rounds_( 10 ),
@@ -142,8 +142,8 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol(
 	allow_bulge_( allow_bulge ),
 	allow_consecutive_bulges_( false ),
 	use_chem_shift_data_( basic::options::option[
-																							 basic::options::OptionKeys::
-																							 score::rna_chemical_shift_exp_data].user()),
+	basic::options::OptionKeys::
+	score::rna_chemical_shift_exp_data].user()),
 	m_Temperature_( 2.0 ),
 	frag_size_( 3 ),
 	rna_params_file_( "" ),
@@ -179,7 +179,7 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol(
 {
 	Mover::type("RNA_DeNovoProtocol");
 	rna_loop_closer_ = protocols::farna::RNA_LoopCloserOP( new protocols::farna::RNA_LoopCloser );
-	//	rna_loop_closer_->fast_scan( true );
+	// rna_loop_closer_->fast_scan( true );
 	local_rna_low_resolution_potential_.more_precise_base_pair_classification( true );
 }
 
@@ -193,7 +193,7 @@ RNA_DeNovoProtocol::~RNA_DeNovoProtocol() {}
 
 /// @details  Apply the RNA de novo modeling protocol to a pose.
 ///
-void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
+void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 
 	using namespace core::pose;
 	using namespace core::scoring;
@@ -208,7 +208,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 	// Some useful movers...
 	////////////////////////////////////////
 	initialize_movers( pose );
-	if (dump_pdb_) pose.dump_pdb( "init.pdb" );
+	if ( dump_pdb_ ) pose.dump_pdb( "init.pdb" );
 
 	// RNA score function (both low-res and high-res).
 	initialize_scorefxn( pose );
@@ -224,16 +224,16 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 	initialize_tag_is_done();
 
 	Size max_tries( 1 );
-	if (filter_lores_base_pairs_ || filter_chain_closure_ )  max_tries = 10;
+	if ( filter_lores_base_pairs_ || filter_chain_closure_ )  max_tries = 10;
 
 	///////////////////////////////////////////////////////////////////////////
 	// Main Loop.
 	///////////////////////////////////////////////////////////////////////////
 	Size refine_pose_id( 1 );
-	for (Size n = 1; n <= nstruct_; n++ ) {
+	for ( Size n = 1; n <= nstruct_; n++ ) {
 
 		std::string const out_file_tag = "S_"+lead_zero_string_of( n, 6 );
-		if (tag_is_done_[ out_file_tag ] ) continue;
+		if ( tag_is_done_[ out_file_tag ] ) continue;
 
 		for ( Size ntries = 1; ntries <= max_tries; ++ntries ) {
 			time_t pdb_start_time = time(NULL);
@@ -261,11 +261,11 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 				do_close_loops_ = false;
 			}
 
-			if (dump_pdb_) dump_pdb( pose, "start.pdb" );
+			if ( dump_pdb_ ) dump_pdb( pose, "start.pdb" );
 
 			if ( heat_structure_ && !refine_from_silent_ ) do_random_moves( pose );
 
-			if (dump_pdb_) dump_pdb( pose, "random.pdb" );
+			if ( dump_pdb_ ) dump_pdb( pose, "random.pdb" );
 			monte_carlo_->reset( pose );
 
 			TR << "Beginning main loop... " << std::endl;
@@ -299,7 +299,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 				//////////////////////
 				// This is it ... do the loop.
 				//////////////////////
-				for( Size i = 1; i <= monte_carlo_cycles_ / rounds_; ++i ) {
+				for ( Size i = 1; i <= monte_carlo_cycles_ / rounds_; ++i ) {
 					// Make this generic fragment/jump multimover next?
 					RNA_move_trial( pose );
 				}
@@ -315,7 +315,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 
 				if ( r == 2 || rounds_ == 1 ) { //special 'early' stage
 					lores_score_early_ = (*denovo_scorefxn_)( pose );
-					if ( filter_lores_base_pairs_early_ ){
+					if ( filter_lores_base_pairs_early_ ) {
 						bool const base_pairs_OK = rna_structure_parameters_->check_base_pairs( pose );
 						TR << "Checking base pairs early! Result: " << base_pairs_OK << std::endl;
 						if ( !base_pairs_OK ) {
@@ -325,8 +325,8 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 					}
 				}
 
-				if ( r == rounds_ / 2 || rounds_ == 1 ){ // halway point
-					if ( filter_chain_closure_halfway_ ){
+				if ( r == rounds_ / 2 || rounds_ == 1 ) { // halway point
+					if ( filter_chain_closure_halfway_ ) {
 						Real const filter_chain_closure_distance_halfway = 2 * filter_chain_closure_distance_;
 						bool const rna_loops_OK = rna_loop_closer_->check_closure( pose, filter_chain_closure_distance_halfway );
 						TR << "Checking loop closure with tolerance of " << filter_chain_closure_distance_halfway << " Angstroms! Result: " << rna_loops_OK << std::endl;
@@ -357,7 +357,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 				}
 			}
 
-			if (filter_lores_base_pairs_) {
+			if ( filter_lores_base_pairs_ ) {
 				if ( !rna_structure_parameters_->check_base_pairs( pose ) ) {
 					TR << "Failed base pairing filter." << std::endl;
 					continue;
@@ -426,48 +426,48 @@ RNA_DeNovoProtocol::show(std::ostream & output) const
 {
 	Mover::show(output);
 	output <<   "nstruct:                       " << nstruct_  <<
-	      "\nRounds:                        " << rounds_ <<
-	      "\nMonte Carlo cycles:            " << monte_carlo_cycles_ <<
-				"\nMC cycle max default:          " << monte_carlo_cycles_max_default_ <<
-				"\nUser defined MC cycles:        " << (user_defined_cycles_  ? "True" : "False") <<
-				"\nAll RNA fragment file:         " << all_rna_fragments_file_ <<
-				"\nHeat structure:                " << (heat_structure_ ? "True" : "False") <<
-				"\nDump pdb:                      " << (dump_pdb_ ? "True" : "False") <<
-				"\nMinimize structure:            " << (minimize_structure_ ? "True" : "False") <<
-				"\nRelax structure:               " << (relax_structure_ ? "True" : "False") <<
-				"\nIgnore secstruct:              " << (ignore_secstruct_ ? "True" : "False") <<
-				"\nDo close loops:                " << (do_close_loops_ ? "True" : "False") <<
-				"\nClose loops at end:            " << (close_loops_at_end_ ? "True" : "False") <<
-				"\nClose loops in each round:     " << (close_loops_in_last_round_ ? "True" : "False") <<
-				"\nClose loops after each move:   " << (close_loops_after_each_move_ ? "True" : "False") <<
-				"\nSimple rmsd cutoff relax:      " << (simple_rmsd_cutoff_relax_ ? "True" : "False") <<
-				"\nAllow bulges:                  " << (allow_bulge_ ? "True" : "False") <<
-				"\nAllow consecutive bulges:      " << (allow_consecutive_bulges_ ? "True" : "False") <<
-				"\nUse chem shift data:           " << (use_chem_shift_data_ ? "True" : "False") <<
-				"\nDefault temperature for MC:    " << m_Temperature_ <<
-				"\nFragment size:                 " << frag_size_ <<
-				"\nInput rna params file?:        " << ((rna_params_file_ == "" ) ? "No" : "Yes") <<
-				"\nInput rna data file?:          " << ((rna_data_file_ == "" ) ? "No" : "Yes") <<
-				"\nJump library file:             " << jump_library_file_ <<
-				"\nOutput lores silent file:      " << (output_lores_silent_file_ ? "True" : "False") <<
-				"\nFilter lores base pairs:       " << (filter_lores_base_pairs_ ? "True" : "False") <<
-				"\nFilter lores base pairs early: " << (filter_lores_base_pairs_early_ ? "True" : "False") <<
-				"\nFilter chain closure:          " << (filter_chain_closure_ ? "True" : "False") <<
-				"\nFilter chain closure distance: " << filter_chain_closure_distance_ <<
-				"\nFilter chain closure halfway:  " << (filter_chain_closure_halfway_ ? "True" : "False") <<
-				"\nVary bond geometry:            " << (vary_bond_geometry_ ? "True" : "False") <<
-				"\nBinary RNA output:             " << (binary_rna_output_ ? "True" : "False") <<
-				"\nJump change frequency:         " << jump_change_frequency_ <<
-				"\nChunk coverage:                " << chunk_coverage_ <<
-				"\nStaged constraints:            " << (staged_constraints_ ? "True" : "False") <<
-				"\nTitrate stack bonus:           " << (titrate_stack_bonus_ ? "True" : "False") <<
-				"\nMove first rigid body:         " << (move_first_rigid_body_ ? "True" : "False") <<
-				"\nRoot at first rigid body:      " << (root_at_first_rigid_body_ ? "True" : "False") <<
-				"\nOutput Filters:                " << (output_filters_ ? "True" : "False") <<
-				"\nLores score early:             " << (lores_score_early_ ? "True" : "False") <<
-				"\nLores score final:             " << (lores_score_final_ ? "True" : "False") <<
-				"\nAutofilter:                    " << (autofilter_ ? "True" : "False") <<
-				"\nAutofilter score quantile:     " << autofilter_score_quantile_;
+		"\nRounds:                        " << rounds_ <<
+		"\nMonte Carlo cycles:            " << monte_carlo_cycles_ <<
+		"\nMC cycle max default:          " << monte_carlo_cycles_max_default_ <<
+		"\nUser defined MC cycles:        " << (user_defined_cycles_  ? "True" : "False") <<
+		"\nAll RNA fragment file:         " << all_rna_fragments_file_ <<
+		"\nHeat structure:                " << (heat_structure_ ? "True" : "False") <<
+		"\nDump pdb:                      " << (dump_pdb_ ? "True" : "False") <<
+		"\nMinimize structure:            " << (minimize_structure_ ? "True" : "False") <<
+		"\nRelax structure:               " << (relax_structure_ ? "True" : "False") <<
+		"\nIgnore secstruct:              " << (ignore_secstruct_ ? "True" : "False") <<
+		"\nDo close loops:                " << (do_close_loops_ ? "True" : "False") <<
+		"\nClose loops at end:            " << (close_loops_at_end_ ? "True" : "False") <<
+		"\nClose loops in each round:     " << (close_loops_in_last_round_ ? "True" : "False") <<
+		"\nClose loops after each move:   " << (close_loops_after_each_move_ ? "True" : "False") <<
+		"\nSimple rmsd cutoff relax:      " << (simple_rmsd_cutoff_relax_ ? "True" : "False") <<
+		"\nAllow bulges:                  " << (allow_bulge_ ? "True" : "False") <<
+		"\nAllow consecutive bulges:      " << (allow_consecutive_bulges_ ? "True" : "False") <<
+		"\nUse chem shift data:           " << (use_chem_shift_data_ ? "True" : "False") <<
+		"\nDefault temperature for MC:    " << m_Temperature_ <<
+		"\nFragment size:                 " << frag_size_ <<
+		"\nInput rna params file?:        " << ((rna_params_file_ == "" ) ? "No" : "Yes") <<
+		"\nInput rna data file?:          " << ((rna_data_file_ == "" ) ? "No" : "Yes") <<
+		"\nJump library file:             " << jump_library_file_ <<
+		"\nOutput lores silent file:      " << (output_lores_silent_file_ ? "True" : "False") <<
+		"\nFilter lores base pairs:       " << (filter_lores_base_pairs_ ? "True" : "False") <<
+		"\nFilter lores base pairs early: " << (filter_lores_base_pairs_early_ ? "True" : "False") <<
+		"\nFilter chain closure:          " << (filter_chain_closure_ ? "True" : "False") <<
+		"\nFilter chain closure distance: " << filter_chain_closure_distance_ <<
+		"\nFilter chain closure halfway:  " << (filter_chain_closure_halfway_ ? "True" : "False") <<
+		"\nVary bond geometry:            " << (vary_bond_geometry_ ? "True" : "False") <<
+		"\nBinary RNA output:             " << (binary_rna_output_ ? "True" : "False") <<
+		"\nJump change frequency:         " << jump_change_frequency_ <<
+		"\nChunk coverage:                " << chunk_coverage_ <<
+		"\nStaged constraints:            " << (staged_constraints_ ? "True" : "False") <<
+		"\nTitrate stack bonus:           " << (titrate_stack_bonus_ ? "True" : "False") <<
+		"\nMove first rigid body:         " << (move_first_rigid_body_ ? "True" : "False") <<
+		"\nRoot at first rigid body:      " << (root_at_first_rigid_body_ ? "True" : "False") <<
+		"\nOutput Filters:                " << (output_filters_ ? "True" : "False") <<
+		"\nLores score early:             " << (lores_score_early_ ? "True" : "False") <<
+		"\nLores score final:             " << (lores_score_final_ ? "True" : "False") <<
+		"\nAutofilter:                    " << (autofilter_ ? "True" : "False") <<
+		"\nAutofilter score quantile:     " << autofilter_score_quantile_;
 
 }
 
@@ -497,7 +497,7 @@ RNA_DeNovoProtocol::initialize_scorefxn( core::pose::Pose & pose ) {
 	hires_scorefxn_ = rna_minimizer_->clone_scorefxn();
 
 	// RNA high-resolution score function + rna_chem_shift term
-	if(use_chem_shift_data_){
+	if ( use_chem_shift_data_ ) {
 		Real const CS_weight = 4.0; //hard-coded to 4.0 based on CS-ROSETTA-RNA work (Parin et al. 2012).
 		chem_shift_scorefxn_ = core::scoring::ScoreFunctionOP( new ScoreFunction );
 		chem_shift_scorefxn_ = hires_scorefxn_->clone();
@@ -512,7 +512,7 @@ RNA_DeNovoProtocol::initialize_constraints( core::pose::Pose & pose ) {
 
 	using namespace core::scoring;
 
-	if (pose.constraint_set()->has_constraints() )	{
+	if ( pose.constraint_set()->has_constraints() ) {
 		denovo_scorefxn_->set_weight( atom_pair_constraint, 1.0 );
 		denovo_scorefxn_->set_weight( coordinate_constraint, 1.0 ); // now useable in RNA denovo!
 		constraint_set_ = pose.constraint_set()->clone();
@@ -547,7 +547,7 @@ RNA_DeNovoProtocol::initialize_movers( core::pose::Pose & pose ){
 	std::cout << pose.annotated_sequence() << std::endl;
 
 	rna_structure_parameters_->setup_virtual_phosphate_variants( pose ); // needed to refreeze virtual phosphates!
-	//	rna_structure_parameters_->allow_insert()->show();
+	// rna_structure_parameters_->allow_insert()->show();
 
 	rna_chunk_library_->set_allow_insert( rna_structure_parameters_->allow_insert() );
 	rna_fragment_mover_ = protocols::farna::RNA_FragmentMoverOP( new RNA_FragmentMover( all_rna_fragments_, rna_structure_parameters_->allow_insert() ) );
@@ -569,7 +569,7 @@ RNA_DeNovoProtocol::initialize_movers( core::pose::Pose & pose ){
 void
 RNA_DeNovoProtocol::setup_monte_carlo_cycles( core::pose::Pose const & pose ){
 
-	if (user_defined_cycles_) return;
+	if ( user_defined_cycles_ ) return;
 
 	// figure out rough number of degrees of freedom.
 
@@ -587,7 +587,7 @@ RNA_DeNovoProtocol::setup_monte_carlo_cycles( core::pose::Pose const & pose ){
 
 	monte_carlo_cycles_ = 2000 * ( nres_move + nchunks ) + 20000 * nbody_move;
 
-	if ( monte_carlo_cycles_ > monte_carlo_cycles_max_default_ ){
+	if ( monte_carlo_cycles_ > monte_carlo_cycles_max_default_ ) {
 		monte_carlo_cycles_ = monte_carlo_cycles_max_default_;
 		TR << "Using maximum default Monte Carlo cycles: " <<  monte_carlo_cycles_ << ". Use -cycles option to change this." << std::endl;
 	}
@@ -644,7 +644,7 @@ RNA_DeNovoProtocol::initialize_lores_silent_file() {
 	static std::string const new_prefix( "_LORES.out" );
 
 	std::string::size_type pos = silent_file_.find( ".out", 0 );
-	if (pos == std::string::npos ){
+	if ( pos == std::string::npos ) {
 		utility_exit_with_message(  "If you want to output a lores silent file, better use .out suffix ==> " + silent_file_ );
 	}
 	lores_silent_file_ = silent_file_;
@@ -675,9 +675,9 @@ RNA_DeNovoProtocol::calc_rmsds( core::io::silent::SilentStruct & s, core::pose::
 ///////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DeNovoProtocol::output_silent_struct(
-    core::io::silent::SilentStruct & s, core::io::silent::SilentFileData & silent_file_data,
-    std::string const & silent_file, pose::Pose & pose, std::string const out_file_tag,
-    bool const score_only /* = false */) const
+	core::io::silent::SilentStruct & s, core::io::silent::SilentFileData & silent_file_data,
+	std::string const & silent_file, pose::Pose & pose, std::string const out_file_tag,
+	bool const score_only /* = false */) const
 {
 
 	using namespace core::io::silent;
@@ -685,14 +685,14 @@ RNA_DeNovoProtocol::output_silent_struct(
 
 	if ( get_native_pose() ) calc_rmsds( s, pose, out_file_tag  );
 
-	//	TR << "ADD_NUMBER_BASE_PAIRS" << std::endl;
+	// TR << "ADD_NUMBER_BASE_PAIRS" << std::endl;
 	add_number_base_pairs( pose, s );
-	//	TR << "ADD_NUMBER_NATIVE_BASE_PAIRS" << std::endl;
+	// TR << "ADD_NUMBER_NATIVE_BASE_PAIRS" << std::endl;
 	if ( get_native_pose() ) add_number_native_base_pairs( pose, s );
 
-	if ( output_filters_ ){
-	  s.add_energy( "lores_early", lores_score_early_ ) ;
-	  if ( minimize_structure_ ) s.add_energy( "lores_final", lores_score_final_ ) ;
+	if ( output_filters_ ) {
+		s.add_energy( "lores_early", lores_score_early_ ) ;
+		if ( minimize_structure_ ) s.add_energy( "lores_final", lores_score_final_ ) ;
 	}
 
 	TR << "Outputting to silent file: " << silent_file << std::endl;
@@ -704,10 +704,10 @@ RNA_DeNovoProtocol::output_silent_struct(
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DeNovoProtocol::output_to_silent_file(
-    core::pose::Pose & pose,
-    std::string const & silent_file,
-    std::string const & out_file_tag,
-    bool const score_only /* = false */) const
+	core::pose::Pose & pose,
+	std::string const & silent_file,
+	std::string const & out_file_tag,
+	bool const score_only /* = false */) const
 {
 
 	using namespace core::io::silent;
@@ -721,21 +721,21 @@ RNA_DeNovoProtocol::output_to_silent_file(
 	// Why do I need to supply the damn file name? That seems silly.
 	TR << "Making silent struct for " << out_file_tag << std::endl;
 
-    if ( binary_rna_output_ ) {
-        BinarySilentStruct s( pose, out_file_tag );
+	if ( binary_rna_output_ ) {
+		BinarySilentStruct s( pose, out_file_tag );
 
-        if(use_chem_shift_data_) add_chem_shift_info( s, pose);
+		if ( use_chem_shift_data_ ) add_chem_shift_info( s, pose);
 
-        output_silent_struct( s, silent_file_data, silent_file, pose, out_file_tag, score_only );
+		output_silent_struct( s, silent_file_data, silent_file, pose, out_file_tag, score_only );
 
-    } else {
-        RNA_SilentStruct s( pose, out_file_tag );
+	} else {
+		RNA_SilentStruct s( pose, out_file_tag );
 
-        if(use_chem_shift_data_) add_chem_shift_info( s, pose);
+		if ( use_chem_shift_data_ ) add_chem_shift_info( s, pose);
 
-        output_silent_struct( s, silent_file_data, silent_file, pose, out_file_tag, score_only );
+		output_silent_struct( s, silent_file_data, silent_file, pose, out_file_tag, score_only );
 
-    }
+	}
 
 }
 
@@ -748,7 +748,7 @@ RNA_DeNovoProtocol::get_moving_res( core::pose::Pose const & pose ) const {
 
 	protocols::toolbox::AllowInsertOP const & allow_insert = rna_structure_parameters_->allow_insert();
 
-	for( Size n = 1; n <= pose.total_residue(); n++ ){
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 		if ( allow_insert->get( n ) ) {
 			moving_res.push_back( n );
 		}
@@ -766,7 +766,7 @@ RNA_DeNovoProtocol::final_score( core::pose::Pose & pose ){
 		final_scorefxn_->set_weight( core::scoring::rna_chem_map, 1.0 );
 	}
 	( *final_scorefxn_ )( pose );
-	if ( final_scorefxn_->has_nonzero_weight( core::scoring::rna_chem_map ) )	final_scorefxn_->show( pose );
+	if ( final_scorefxn_->has_nonzero_weight( core::scoring::rna_chem_map ) ) final_scorefxn_->show( pose );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -776,11 +776,11 @@ RNA_DeNovoProtocol::align_and_output_to_silent_file( core::pose::Pose & pose, st
 
 	// if input pdbs were specified with -s or -silent, then automatic alignment to first of these input chunks.
 	// otherwise, align to native pose, if specified.
-	if ( input_res_.size() > 0 ){
+	if ( input_res_.size() > 0 ) {
 
 		rna_chunk_library_->superimpose_to_first_chunk( pose );
 
-	} else if ( get_native_pose() ){
+	} else if ( get_native_pose() ) {
 		Pose const & native_pose = *get_native_pose();
 
 		//realign to native for ease of viewing.
@@ -788,8 +788,8 @@ RNA_DeNovoProtocol::align_and_output_to_silent_file( core::pose::Pose & pose, st
 		utility::vector1< Size > superimpose_res = get_moving_res( pose );
 
 		// if no fixed domains, just superimpose over all residues.
-		if ( superimpose_res.size() == 0 ){
-			for( Size n = 1; n <= pose.total_residue(); n++ )  superimpose_res.push_back( n );
+		if ( superimpose_res.size() == 0 ) {
+			for ( Size n = 1; n <= pose.total_residue(); n++ )  superimpose_res.push_back( n );
 		}
 
 		id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
@@ -798,9 +798,9 @@ RNA_DeNovoProtocol::align_and_output_to_silent_file( core::pose::Pose & pose, st
 		TR << "Aligning pose to native." << std::endl;
 
 		//pose.dump_pdb( "before_align.pdb");
-		//		native_pose.dump_pdb( "native.pdb" );
+		//  native_pose.dump_pdb( "native.pdb" );
 		core::scoring::superimpose_pose( pose, native_pose, alignment_atom_id_map_native );
-		//		pose.dump_pdb( "after_align.pdb");
+		//  pose.dump_pdb( "after_align.pdb");
 
 	}
 
@@ -814,28 +814,28 @@ RNA_DeNovoProtocol::do_random_moves( core::pose::Pose & pose ) {
 	rna_chunk_library_->check_fold_tree_OK( pose );
 	rna_chunk_library_->initialize_random_chunks( pose );
 
-	if (dump_pdb_) pose.dump_pdb( "add_chunks.pdb" );
+	if ( dump_pdb_ ) pose.dump_pdb( "add_chunks.pdb" );
 
 	Size const heat_cycles = 3 * pose.total_residue();
 	TR << "Heating up... " << std::endl;
 
-	for (Size i = 1; i <= heat_cycles; i++ ){
+	for ( Size i = 1; i <= heat_cycles; i++ ) {
 		rna_fragment_mover_->random_fragment_insertion( pose, 1 /*frag_size*/ );
 	}
 
-	if (dump_pdb_) 	pose.dump_pdb( "random_moves1.pdb" );
+	if ( dump_pdb_ )  pose.dump_pdb( "random_moves1.pdb" );
 
 	rna_chunk_library_->initialize_random_chunks( pose, dump_pdb_ );
 
-	if (dump_pdb_) 	pose.dump_pdb( "random_moves2.pdb" );
+	if ( dump_pdb_ )  pose.dump_pdb( "random_moves2.pdb" );
 
 	translate_virtual_anchor_to_first_rigid_body( pose ); //useful for graphics viewing & final output
 
-	if (dump_pdb_) 	pose.dump_pdb( "random_moves3.pdb" );
+	if ( dump_pdb_ )  pose.dump_pdb( "random_moves3.pdb" );
 
 	randomize_rigid_body_orientations( pose );
 
-	if (dump_pdb_) 	pose.dump_pdb( "random_moves4.pdb" );
+	if ( dump_pdb_ )  pose.dump_pdb( "random_moves4.pdb" );
 
 }
 
@@ -849,7 +849,7 @@ RNA_DeNovoProtocol::randomize_rigid_body_orientations( pose::Pose & pose ){
 
 	utility::vector1< Size > const rigid_body_jumps = get_rigid_body_jumps( pose );
 	Size const found_jumps = rigid_body_jumps.size();
-	if ( found_jumps <= 1 )	 return; // nothing to rotate/translate relative to another object.
+	if ( found_jumps <= 1 )  return; // nothing to rotate/translate relative to another object.
 
 	// translation to first, fixed rigid body.
 	Vector first_rigid_body_position = pose.jump( rigid_body_jumps[ 1 ] ).get_translation();
@@ -934,7 +934,7 @@ RNA_DeNovoProtocol::update_pose_constraints( Size const r, core::pose::Pose & po
 {
 	using namespace core::scoring::constraints;
 
-	if ( !staged_constraints_) return;
+	if ( !staged_constraints_ ) return;
 
 	if ( !constraint_set_ ) return;
 
@@ -1001,7 +1001,7 @@ RNA_DeNovoProtocol::RNA_move_trial( pose::Pose & pose ) {
 			did_a_trial = random_chunk_trial( pose );
 		}
 
-		if ( !did_a_trial ){
+		if ( !did_a_trial ) {
 			random_fragment_trial( pose );
 		}
 	}
@@ -1016,12 +1016,12 @@ RNA_DeNovoProtocol::random_jump_trial( pose::Pose & pose ) {
 	bool success( false );
 	std::string move_type( "" );
 
-	//	pose.dump_pdb( "BEFORE.pdb" );
-	//	std::cout << "BEFORE!" << std::endl;
-	//	(*denovo_scorefxn_)( pose );
-	//	denovo_scorefxn_->show( std::cout, pose );
+	// pose.dump_pdb( "BEFORE.pdb" );
+	// std::cout << "BEFORE!" << std::endl;
+	// (*denovo_scorefxn_)( pose );
+	// denovo_scorefxn_->show( std::cout, pose );
 
-	if ( rigid_body_mover_ &&  numeric::random::rg().uniform() < 0.8 /*totally arbitrary*/ ){
+	if ( rigid_body_mover_ &&  numeric::random::rg().uniform() < 0.8 /*totally arbitrary*/ ) {
 		rigid_body_mover_->apply( pose );
 		success = true; /* rigid body mover is from docking  */
 		move_type = "rigid_body";
@@ -1030,15 +1030,15 @@ RNA_DeNovoProtocol::random_jump_trial( pose::Pose & pose ) {
 		move_type = "jump_change";
 	}
 
-	if (!success) return;
+	if ( !success ) return;
 
 	if ( do_close_loops_ ) rna_loop_closer_->apply( pose );
 
-	//	pose.dump_pdb( "AFTER.pdb" );
-	//	std::cout << "AFTER!" << std::endl;
-	//	(*denovo_scorefxn_)( pose );
-	//	denovo_scorefxn_->show( std::cout, pose );
-	//	exit( 0 );
+	// pose.dump_pdb( "AFTER.pdb" );
+	// std::cout << "AFTER!" << std::endl;
+	// (*denovo_scorefxn_)( pose );
+	// denovo_scorefxn_->show( std::cout, pose );
+	// exit( 0 );
 
 	monte_carlo_->boltzmann( pose, move_type );
 
@@ -1059,20 +1059,20 @@ RNA_DeNovoProtocol::random_fragment_trial( pose::Pose & pose ) {
 bool
 RNA_DeNovoProtocol::random_chunk_trial( pose::Pose & pose ) {
 
-	//	if ( frag_size_ == 2 ) {
-	//		pose.dump_pdb( "before_chunk.pdb" );
-	//		std::cout << "BEFORE: " << (*denovo_scorefxn_)( pose ) << std::endl;
-	//		denovo_scorefxn_->show( std::cout, pose  );
-	//	}
+	// if ( frag_size_ == 2 ) {
+	//  pose.dump_pdb( "before_chunk.pdb" );
+	//  std::cout << "BEFORE: " << (*denovo_scorefxn_)( pose ) << std::endl;
+	//  denovo_scorefxn_->show( std::cout, pose  );
+	// }
 
 	bool const did_an_insertion = rna_chunk_library_->random_chunk_insertion( pose );
 	if ( !did_an_insertion ) return false;
 
-	//	if ( frag_size_ == 2 ) {
-	//		pose.dump_pdb( "after_chunk.pdb" );
-	//		std::cout << "AFTER: " << (*denovo_scorefxn_)( pose ) << std::endl;
-	//		denovo_scorefxn_->show( std::cout, pose );
-	// 	}
+	// if ( frag_size_ == 2 ) {
+	//  pose.dump_pdb( "after_chunk.pdb" );
+	//  std::cout << "AFTER: " << (*denovo_scorefxn_)( pose ) << std::endl;
+	//  denovo_scorefxn_->show( std::cout, pose );
+	//  }
 
 	if ( do_close_loops_ ) rna_loop_closer_->apply( pose );
 
@@ -1092,13 +1092,13 @@ RNA_DeNovoProtocol::add_number_base_pairs( pose::Pose const & pose, io::silent::
 	using namespace pose::rna;
 	using namespace conformation;
 
-	//	pose::Pose pose = pose_input;
-	//	(*denovo_scorefxn_)( pose );
-	//	local_rna_low_resolution_potential_.update_rna_base_pair_list( pose );
+	// pose::Pose pose = pose_input;
+	// (*denovo_scorefxn_)( pose );
+	// local_rna_low_resolution_potential_.update_rna_base_pair_list( pose );
 
-	//	RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
-	//	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
-	//	EnergyBasePairList const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
+	// RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
+	// RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
+	// EnergyBasePairList const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
 
 	utility::vector1< core::pose::rna::BasePair > base_pair_list;
 	utility::vector1< bool > is_bulged;
@@ -1106,8 +1106,8 @@ RNA_DeNovoProtocol::add_number_base_pairs( pose::Pose const & pose, io::silent::
 
 	Size N_WC( 0 ), N_NWC( 0 );
 
-	//	for ( EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
-	//				it != scored_base_pair_list.end(); ++it ){
+	// for ( EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
+	//    it != scored_base_pair_list.end(); ++it ){
 	for ( Size n = 1; n <= base_pair_list.size(); n++ ) {
 
 		BasePair const base_pair = base_pair_list[ n ];
@@ -1122,27 +1122,27 @@ RNA_DeNovoProtocol::add_number_base_pairs( pose::Pose const & pose, io::silent::
 		Residue const & rsd_j( pose.residue( j ) );
 
 		if ( ( k == core::chemical::rna::WATSON_CRICK && m == core::chemical::rna::WATSON_CRICK
-					 && base_pair.orientation == 1 )  &&
-				 core::chemical::rna::possibly_canonical( rsd_i.aa(), rsd_j.aa() ) )		{
+				&& base_pair.orientation == 1 )  &&
+				core::chemical::rna::possibly_canonical( rsd_i.aa(), rsd_j.aa() ) )  {
 			N_WC++;
 		} else {
 			N_NWC++;
 		}
 	}
 
- 	s.add_string_value( "N_WC",  ObjexxFCL::format::I( 9, N_WC) );
+	s.add_string_value( "N_WC",  ObjexxFCL::format::I( 9, N_WC) );
 	s.add_string_value( "N_NWC", ObjexxFCL::format::I( 9, N_NWC ) );
 	s.add_string_value( "N_BS",  ObjexxFCL::format::I( 9, core::pose::rna::get_number_base_stacks( pose ) ) );
 
- 	//s.add_energy( "N_WC",  N_WC );
-	//	s.add_energy( "N_NWC", N_NWC );
-	//	s.add_energy( "N_BS",  core::pose::rna::get_number_base_stacks( pose ) );
+	//s.add_energy( "N_WC",  N_WC );
+	// s.add_energy( "N_NWC", N_NWC );
+	// s.add_energy( "N_BS",  core::pose::rna::get_number_base_stacks( pose ) );
 }
 
 /////////////////////////////////////////////////////////////////////
 bool
 check_in_base_pair_list( pose::rna::BasePair const & base_pair /*from native*/,
-												 utility::vector1< core::pose::rna::BasePair > const & base_pair_list /*for decoy*/)
+	utility::vector1< core::pose::rna::BasePair > const & base_pair_list /*for decoy*/)
 {
 	using namespace pose::rna;
 
@@ -1153,15 +1153,15 @@ check_in_base_pair_list( pose::rna::BasePair const & base_pair /*from native*/,
 		BasePair const base_pair2 = base_pair_list[ n ];
 
 		if ( ( base_pair.res1 == base_pair2.res1 && base_pair.res2 == base_pair2.res2 )  &&
-				 ( base_pair.edge1 == base_pair2.edge1 && base_pair.edge2 == base_pair2.edge2 )  &&
-				 base_pair.orientation == base_pair2.orientation ) {
+				( base_pair.edge1 == base_pair2.edge1 && base_pair.edge2 == base_pair2.edge2 )  &&
+				base_pair.orientation == base_pair2.orientation ) {
 			in_list = true;
 			break;
 		}
 
 		if ( ( base_pair.res2 == base_pair2.res1 && base_pair.res1 == base_pair2.res2 )  &&
-				 ( base_pair.edge2 == base_pair2.edge1 && base_pair.edge1 == base_pair2.edge2 )  &&
-				 base_pair.orientation == base_pair2.orientation ) {
+				( base_pair.edge2 == base_pair2.edge1 && base_pair.edge1 == base_pair2.edge2 )  &&
+				base_pair.orientation == base_pair2.orientation ) {
 			in_list = true;
 			break;
 		}
@@ -1194,17 +1194,17 @@ RNA_DeNovoProtocol::add_number_native_base_pairs(pose::Pose & pose, io::silent::
 
 
 	//(*denovo_scorefxn_)( pose );
-	//	(*denovo_scorefxn_)( native_pose );
+	// (*denovo_scorefxn_)( native_pose );
 	//local_rna_low_resolution_potential_.update_rna_base_pair_list( native_pose );
 	//local_rna_low_resolution_potential_.update_rna_base_pair_list( pose );
 
-	//	RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
-	//	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
-	//	EnergyBasePairList const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
+	// RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
+	// RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
+	// EnergyBasePairList const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
 
-	//	RNA_ScoringInfo const & rna_scoring_info_native( rna_scoring_info( native_pose ) );
-	//	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info_native( rna_scoring_info_native.rna_filtered_base_base_info() );
-	//	EnergyBasePairList const & scored_base_pair_list_native( rna_filtered_base_base_info_native.scored_base_pair_list() );
+	// RNA_ScoringInfo const & rna_scoring_info_native( rna_scoring_info( native_pose ) );
+	// RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info_native( rna_scoring_info_native.rna_filtered_base_base_info() );
+	// EnergyBasePairList const & scored_base_pair_list_native( rna_filtered_base_base_info_native.scored_base_pair_list() );
 
 	Size N_WC_NATIVE( 0 ), N_NWC_NATIVE( 0 );
 	Size N_WC( 0 ), N_NWC( 0 );
@@ -1213,8 +1213,8 @@ RNA_DeNovoProtocol::add_number_native_base_pairs(pose::Pose & pose, io::silent::
 	for ( Size n = 1; n <= base_pair_list_native.size(); n++ ) {
 
 		//Real const score = it->first;
-		//		Real const SCORE_CUTOFF( -1.0 );
-		//		if (score > SCORE_CUTOFF) continue;
+		//  Real const SCORE_CUTOFF( -1.0 );
+		//  if (score > SCORE_CUTOFF) continue;
 
 		core::pose::rna::BasePair const base_pair = base_pair_list_native[ n ];
 
@@ -1230,13 +1230,13 @@ RNA_DeNovoProtocol::add_number_native_base_pairs(pose::Pose & pose, io::silent::
 		//std::cout << " NATIVE BASE PAIR " << i << " " << j << " " << k << " " << m << " " << it->first << std::endl;
 
 		if ( ( k == core::chemical::rna::WATSON_CRICK && m == core::chemical::rna::WATSON_CRICK
-					 && base_pair.orientation == 1 )  &&
-				 possibly_canonical( rsd_i.aa(), rsd_j.aa() ) )		{
+				&& base_pair.orientation == 1 )  &&
+				possibly_canonical( rsd_i.aa(), rsd_j.aa() ) )  {
 			N_WC_NATIVE++;
 			if ( check_in_base_pair_list( base_pair /*from native*/, base_pair_list /*for decoy*/) ) N_WC++;
 		} else {
 			N_NWC_NATIVE++;
-			if ( check_in_base_pair_list( base_pair /*from native*/, base_pair_list /*for decoy*/) ){
+			if ( check_in_base_pair_list( base_pair /*from native*/, base_pair_list /*for decoy*/) ) {
 				N_NWC++;
 			} else {
 				std::cout << "Missing native base pair " << pose.residue( i ).name1() << i << " " << pose.residue(j).name1() << j << "  " << get_edge_from_num( k ) << " " << get_edge_from_num( m ) << " " << std::endl;
@@ -1245,8 +1245,8 @@ RNA_DeNovoProtocol::add_number_native_base_pairs(pose::Pose & pose, io::silent::
 	}
 
 	Real f_natWC( 0.0 ), f_natNWC( 0.0 ), f_natBP( 0.0 );
-	if (N_WC_NATIVE > 0 ) f_natWC = ( N_WC / (1.0 * N_WC_NATIVE) );
-	if (N_NWC_NATIVE > 0 ) f_natNWC = ( N_NWC / (1.0 * N_NWC_NATIVE) );
+	if ( N_WC_NATIVE > 0 ) f_natWC = ( N_WC / (1.0 * N_WC_NATIVE) );
+	if ( N_NWC_NATIVE > 0 ) f_natNWC = ( N_NWC / (1.0 * N_NWC_NATIVE) );
 	if ( (N_WC_NATIVE + N_NWC_NATIVE) > 0 ) f_natBP = ( (N_WC+N_NWC) / (1.0 * (N_WC_NATIVE + N_NWC_NATIVE) ));
 
 	s.add_energy( "f_natWC" , f_natWC );
@@ -1282,7 +1282,7 @@ RNA_DeNovoProtocol::check_score_filter( Real const lores_score, std::list< Real 
 	// the one pain with lists -- need to iterate through to find the element corresponding to the quantile score.
 	Real all_lores_score_cutoff = all_lores_score.front();
 	Size i( 1 );
-	for ( std::list< Real >::const_iterator iter = all_lores_score.begin(), end = all_lores_score.end(); iter != end; ++iter, i++ ){
+	for ( std::list< Real >::const_iterator iter = all_lores_score.begin(), end = all_lores_score.end(); iter != end; ++iter, i++ ) {
 		if ( i == cutoff_index ) all_lores_score_cutoff = *iter;
 	}
 
@@ -1299,7 +1299,7 @@ RNA_DeNovoProtocol::apply_chem_shift_data(core::pose::Pose & pose, std::string c
 
 	runtime_assert( use_chem_shift_data_ );
 
-	if (minimize_structure_){
+	if ( minimize_structure_ ) {
 		rna_minimizer_->set_score_function(chem_shift_scorefxn_); //use the chem_shift_scorefxn_
 		rna_minimizer_->apply( pose );
 		rna_minimizer_->set_score_function(hires_scorefxn_); //set back the original scorefxn.
@@ -1313,49 +1313,49 @@ RNA_DeNovoProtocol::apply_chem_shift_data(core::pose::Pose & pose, std::string c
 
 void
 RNA_DeNovoProtocol::add_chem_shift_info(core::io::silent::SilentStruct & silent_struct,
-																				core::pose::Pose const & const_pose) const {
+	core::pose::Pose const & const_pose) const {
 
-  using namespace core::scoring;
-  using namespace core::pose;
+	using namespace core::scoring;
+	using namespace core::pose;
 
-  if(!use_chem_shift_data_){
+	if ( !use_chem_shift_data_ ) {
 		utility_exit_with_message("use_chem_shift_data_ == false!");
 	}
 
-  pose::Pose chem_shift_pose=const_pose; //HARD COPY SLOW!
+	pose::Pose chem_shift_pose=const_pose; //HARD COPY SLOW!
 
-  core::scoring::ScoreFunctionOP temp_scorefxn( new ScoreFunction );
+	core::scoring::ScoreFunctionOP temp_scorefxn( new ScoreFunction );
 
-  temp_scorefxn->set_weight( scoring::rna_chem_shift  , 1.00 );
+	temp_scorefxn->set_weight( scoring::rna_chem_shift  , 1.00 );
 
-  (*temp_scorefxn)(chem_shift_pose);
+	(*temp_scorefxn)(chem_shift_pose);
 
-  EnergyMap const & energy_map=chem_shift_pose.energies().total_energies();
+	EnergyMap const & energy_map=chem_shift_pose.energies().total_energies();
 
-  Real const rosetta_chem_shift_score= energy_map[ scoring::rna_chem_shift ];
+	Real const rosetta_chem_shift_score= energy_map[ scoring::rna_chem_shift ];
 
-  //This statement should be very fast except possibly the 1st call.
-  core::scoring::rna::chemical_shift::RNA_ChemicalShiftPotential const &
-      rna_chemical_shift_potential( core::scoring::ScoringManager::
-																		get_instance()->get_RNA_ChemicalShiftPotential() );
+	//This statement should be very fast except possibly the 1st call.
+	core::scoring::rna::chemical_shift::RNA_ChemicalShiftPotential const &
+		rna_chemical_shift_potential( core::scoring::ScoringManager::
+		get_instance()->get_RNA_ChemicalShiftPotential() );
 
-  Size const num_chem_shift_data_points=rna_chemical_shift_potential.get_total_exp_chemical_shift_data_points();
+	Size const num_chem_shift_data_points=rna_chemical_shift_potential.get_total_exp_chemical_shift_data_points();
 
-  //rosetta_chem_shift_score --> Sum_square chemical_shift deviation.
+	//rosetta_chem_shift_score --> Sum_square chemical_shift deviation.
 
-  Real const chem_shift_RMSD=sqrt( rosetta_chem_shift_score /
-																	 float(num_chem_shift_data_points) );
+	Real const chem_shift_RMSD=sqrt( rosetta_chem_shift_score /
+		float(num_chem_shift_data_points) );
 
-  silent_struct.add_energy( "chem_shift_RMSD", chem_shift_RMSD);
+	silent_struct.add_energy( "chem_shift_RMSD", chem_shift_RMSD);
 
-  silent_struct.add_energy( "num_chem_shift_data",
-														float(num_chem_shift_data_points) );
+	silent_struct.add_energy( "num_chem_shift_data",
+		float(num_chem_shift_data_points) );
 
-  if(silent_struct.has_energy("rna_chem_shift")==false){
-      //If missing this term, then the rna_chem_shift weight is probably
-			//zero in the weight_file.
-      silent_struct.add_energy( "rna_chem_shift", 0.0);
-  }
+	if ( silent_struct.has_energy("rna_chem_shift")==false ) {
+		//If missing this term, then the rna_chem_shift weight is probably
+		//zero in the weight_file.
+		silent_struct.add_energy( "rna_chem_shift", 0.0);
+	}
 }
 
 void

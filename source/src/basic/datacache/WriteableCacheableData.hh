@@ -46,14 +46,14 @@ namespace datacache {
 class WriteableCacheableData : public CacheableData {
 
 public:
-  virtual
-  ~WriteableCacheableData() {}
+	virtual
+	~WriteableCacheableData() {}
 
-  virtual
-  void write( std::ostream &out ) const = 0;
+	virtual
+	void write( std::ostream &out ) const = 0;
 
-  virtual
-  std::string datatype() const = 0;
+	virtual
+	std::string datatype() const = 0;
 
 };
 

@@ -77,51 +77,51 @@ class MPIWorkPartitionJobDistributor : public JobDistributor
 {
 protected:
 	/// @brief ctor is protected; singleton pattern
-  MPIWorkPartitionJobDistributor();
+	MPIWorkPartitionJobDistributor();
 
-  virtual void handle_interrupt() {}
+	virtual void handle_interrupt() {}
 
 public:
 	///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 	///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
-  virtual ~MPIWorkPartitionJobDistributor();
+	virtual ~MPIWorkPartitionJobDistributor();
 
 	virtual
 	void
 	go( protocols::moves::MoverOP mover );
 
-  virtual
-  core::Size
-  get_new_job_id();
+	virtual
+	core::Size
+	get_new_job_id();
 
-  virtual
-  void
-  mark_current_job_id_for_repetition();
+	virtual
+	void
+	mark_current_job_id_for_repetition();
 
-  virtual
-  void
-  remove_bad_inputs_from_job_list();
+	virtual
+	void
+	remove_bad_inputs_from_job_list();
 
-  friend class JobDistributorFactory;  //singleton management
+	friend class JobDistributorFactory;  //singleton management
 
 private:
 	/// @brief ctor helper function splits up job list
-  void
-  determine_job_ids_to_run();
+	void
+	determine_job_ids_to_run();
 
-  /// @brief total number of processing elements
-  core::Size npes_;
+	/// @brief total number of processing elements
+	core::Size npes_;
 
-  /// @brief rank of the "local" instance
-  core::Size rank_;
+	/// @brief rank of the "local" instance
+	core::Size rank_;
 
-  //@brief start of Jobs vector slice
-  core::Size job_id_start_;
+	//@brief start of Jobs vector slice
+	core::Size job_id_start_;
 
-  //@brief end of Jobs vector slice
-  core::Size job_id_end_;
+	//@brief end of Jobs vector slice
+	core::Size job_id_end_;
 
-  core::Size next_job_to_try_assigning_;
+	core::Size next_job_to_try_assigning_;
 };
 
 }//jd2

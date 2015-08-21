@@ -84,57 +84,57 @@ void init_usage_prompt( std::string exe ) {
 	// place the prompt up here so that it gets updated easily; global this way, but that's ok
 	std::stringstream usage_stream;
 	usage_stream
-			<< "Usage: " << exe
-			<< "\n"
-			<< "\n\t-database path/to/rosetta/database"
-			<< "\n\t-s pdb | -silent silent_file                        read in input PDB file or silent file"
-			<< "\n\t-pdb_gz | -silent_gz                                compress output PDB or silent files"
-			<< "\n"
-			<< "\n\t-remodel:blueprint blueprint_file                   blueprint file which explains how to run remodel"
-			<< "\n"
-			<< "\n\t-remodel::num_trajectory                            number of build trajectories to run (default: 10)"
-			<< "\n\t-remodel::dr_cycles <int>                           number of design/refine cycles to run (default: 3)"
-			<< "\n"
-			<< "\n\t-remodel::quick_and_dirty                           only do fragment sampling; bypass refinement of final structures which is slow. useful in early stages of design when one wants to sample different loop lengths to find appropriate setup (default: false)"
-			<< "\n"
-			<< "\n\t-remodel::bypass_fragments                          skip creation of fragments for remodelling; do refinement only. no extensions or deletions are honored in the blueprint (default: false)"
-			<< "\n\t-remodel::use_blueprint_sequence                    find fragments which have the same amino acid sequence and secondary structure as what is specified in the second column of the blueprint file (default: false)"
-			<< "\n\t-remodel::use_same_length_fragments                 harvest fragments that match the length of the segment being rebuilt (default: true)"
-			<< "\n"
-			<< "\n\t-remodel::build_disulf                              use Remodel to find residue pairs - between the \"build\" and \"landing\" residues - which would make good disulfide bonds (default: false)"
-			<< "\n\t-remodel::match_rt_limit <float>                    the score cutoff to use for determining how closely a potential disulfide must match observed disulfide distributions (default: 0.4)"
-			<< "\n\t-remodel::disulf_landing_range <range>              the range within which Remodel attempts to find disulfides for positions in the \"build\" region (default: none)"
-			<< "\n"
-			<< "\n\t-remodel::use_pose_relax                            add fast relax to the refinement stage (instead of the default minimization step), but use constraints in a similar way (default: false)"
-			<< "\n\t-remodel::run_confirmation                          use kinematic loop closure algorithm for build confirmation (default: false)"
-			<< "\n\t-remodel::swap_refine_confirm_protocols             swap protocols used for refinement and confirmation test; i.e. use kinematic loop closure instead of CCD closure (default: false)"
-			<< "\n\t-remodel::repeat_structure                          build identical repeats this many times (default: 1)"
-			<< "\n"
-			<< "\n\t-symmetry::symmetry_definition                      text file describing symmetry setup (default: none)"
-			<< "\n"
-			<< "\n\t-enzdes::cstfile                                    enzyme design constraints file"
-			<< "\n\t-remodel::cstfilter                                 threshold to put on the atom_pair_constraint score type filter during the centroid build phase refinement (default: 10)"
-			<< "\n"
-			<< "\n\t-remodel::domainFusion::insert_segment_from_pdb     segment PDB file to be inserted into the input structure"
-			<< "\n"
-			<< "\n\t-remodel::checkpoint                                turns on checkpointing, for use in preemptive scheduling environments. writes out the best pdbs collected after each design step. (default: false)"
-			<< "\n\t-remodel::use_clusters                              specifies whether to perform clustering during structure aggregation (default: false)"
-			<< "\n\t-remodel::save_top                                  the number of final lowest scoring pdbs to keep (default: 5)"
-			<< "\n"
-			<< "\n\t-remodel::generic_aa <letter>                       residue type to use as placeholder during centroid phase (default: V)"
-			<< "\n\t-remodel::cen_sfxn                                  score function to be used for centroid phase building (default: remodel_cen)"
-			<< "\n\t-remodel::cen_minimize                              centroid minimization after fragment building (default: false)"
-			<< "\n"
-			<< "\n\t-run::chain <letter>                                chain id of the chain to remodel, if a multichain structure is given (default: -)"
-			<< "\n"
-			<< "\n\t[-overwrite]"
-			<< "\n\t[-ignore_unrecognized_res]"
-			<< "\n\t[-mute core.io core.conformation core.pack core.scoring]"
+		<< "Usage: " << exe
+		<< "\n"
+		<< "\n\t-database path/to/rosetta/database"
+		<< "\n\t-s pdb | -silent silent_file                        read in input PDB file or silent file"
+		<< "\n\t-pdb_gz | -silent_gz                                compress output PDB or silent files"
+		<< "\n"
+		<< "\n\t-remodel:blueprint blueprint_file                   blueprint file which explains how to run remodel"
+		<< "\n"
+		<< "\n\t-remodel::num_trajectory                            number of build trajectories to run (default: 10)"
+		<< "\n\t-remodel::dr_cycles <int>                           number of design/refine cycles to run (default: 3)"
+		<< "\n"
+		<< "\n\t-remodel::quick_and_dirty                           only do fragment sampling; bypass refinement of final structures which is slow. useful in early stages of design when one wants to sample different loop lengths to find appropriate setup (default: false)"
+		<< "\n"
+		<< "\n\t-remodel::bypass_fragments                          skip creation of fragments for remodelling; do refinement only. no extensions or deletions are honored in the blueprint (default: false)"
+		<< "\n\t-remodel::use_blueprint_sequence                    find fragments which have the same amino acid sequence and secondary structure as what is specified in the second column of the blueprint file (default: false)"
+		<< "\n\t-remodel::use_same_length_fragments                 harvest fragments that match the length of the segment being rebuilt (default: true)"
+		<< "\n"
+		<< "\n\t-remodel::build_disulf                              use Remodel to find residue pairs - between the \"build\" and \"landing\" residues - which would make good disulfide bonds (default: false)"
+		<< "\n\t-remodel::match_rt_limit <float>                    the score cutoff to use for determining how closely a potential disulfide must match observed disulfide distributions (default: 0.4)"
+		<< "\n\t-remodel::disulf_landing_range <range>              the range within which Remodel attempts to find disulfides for positions in the \"build\" region (default: none)"
+		<< "\n"
+		<< "\n\t-remodel::use_pose_relax                            add fast relax to the refinement stage (instead of the default minimization step), but use constraints in a similar way (default: false)"
+		<< "\n\t-remodel::run_confirmation                          use kinematic loop closure algorithm for build confirmation (default: false)"
+		<< "\n\t-remodel::swap_refine_confirm_protocols             swap protocols used for refinement and confirmation test; i.e. use kinematic loop closure instead of CCD closure (default: false)"
+		<< "\n\t-remodel::repeat_structure                          build identical repeats this many times (default: 1)"
+		<< "\n"
+		<< "\n\t-symmetry::symmetry_definition                      text file describing symmetry setup (default: none)"
+		<< "\n"
+		<< "\n\t-enzdes::cstfile                                    enzyme design constraints file"
+		<< "\n\t-remodel::cstfilter                                 threshold to put on the atom_pair_constraint score type filter during the centroid build phase refinement (default: 10)"
+		<< "\n"
+		<< "\n\t-remodel::domainFusion::insert_segment_from_pdb     segment PDB file to be inserted into the input structure"
+		<< "\n"
+		<< "\n\t-remodel::checkpoint                                turns on checkpointing, for use in preemptive scheduling environments. writes out the best pdbs collected after each design step. (default: false)"
+		<< "\n\t-remodel::use_clusters                              specifies whether to perform clustering during structure aggregation (default: false)"
+		<< "\n\t-remodel::save_top                                  the number of final lowest scoring pdbs to keep (default: 5)"
+		<< "\n"
+		<< "\n\t-remodel::generic_aa <letter>                       residue type to use as placeholder during centroid phase (default: V)"
+		<< "\n\t-remodel::cen_sfxn                                  score function to be used for centroid phase building (default: remodel_cen)"
+		<< "\n\t-remodel::cen_minimize                              centroid minimization after fragment building (default: false)"
+		<< "\n"
+		<< "\n\t-run::chain <letter>                                chain id of the chain to remodel, if a multichain structure is given (default: -)"
+		<< "\n"
+		<< "\n\t[-overwrite]"
+		<< "\n\t[-ignore_unrecognized_res]"
+		<< "\n\t[-mute core.io core.conformation core.pack core.scoring]"
 
-			<< "\n\nPlease see the Rosetta Remodel documentation in the Rosetta Manual for more information, including a list of all available options."
-			<< "\nhttp://www.rosettacommons.org/manual_guide"
+		<< "\n\nPlease see the Rosetta Remodel documentation in the Rosetta Manual for more information, including a list of all available options."
+		<< "\nhttp://www.rosettacommons.org/manual_guide"
 
-			<< "\n\n";
+		<< "\n\n";
 	usage_string = usage_stream.str();
 
 }
@@ -231,7 +231,7 @@ core::Size load_loops_from_file(
 	Size count = 0;
 	String line;
 	utility::vector1< String > entries;
-	while( getline( in, line ) ) {
+	while ( getline( in, line ) ) {
 		// split by whitespace " \n\t"
 		boost::tokenizer< boost::char_separator< char > > tokens( line, boost::char_separator< char >( " \n\t" ) );
 		entries.assign( tokens.begin(), tokens.end() );
@@ -257,10 +257,10 @@ core::Size load_loops_from_file(
 
 			bdr.add_instruction(
 				BuildInstructionOP( new SegmentRebuild(
-					Interval( left, right ),
-					ss, aa_during_build,
-					core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ),
-					option[ ufv::keep_junction_torsions ]
+				Interval( left, right ),
+				ss, aa_during_build,
+				core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ),
+				option[ ufv::keep_junction_torsions ]
 				) ),
 				aa_during_design_refine
 			);
@@ -268,7 +268,7 @@ core::Size load_loops_from_file(
 			++count;
 
 			TR << "added loop: [" << left << ", " << right << "]  " << ss << "  "
-			   << aa_during_build << "  " << aa_during_design_refine << std::endl;
+				<< aa_during_build << "  " << aa_during_design_refine << std::endl;
 
 		} else {
 			// error message
@@ -380,7 +380,7 @@ void setup_segment_insert( protocols::forge::components::BDR & bdr ) {
 		insert,
 		false, // force false for now
 		connection_scheme
-	) );
+		) );
 
 	// add to BDR
 	bdr.add_instruction( si, aa_during_design_refine );
@@ -409,11 +409,11 @@ void* graphics_main( void* ) {
 	String aa_during_design_refine;
 
 	if ( option[ ufv::aa_during_build ].user() ) {
-		aa_during_build = option[ ufv::aa_during_build ];
+	aa_during_build = option[ ufv::aa_during_build ];
 	}
 
 	if ( option[ ufv::aa_during_design_refine ].user() ) {
-		aa_during_design_refine = option[ ufv::aa_during_design_refine ];
+	aa_during_design_refine = option[ ufv::aa_during_design_refine ];
 	}
 	*/
 	// init BDR
@@ -423,34 +423,34 @@ void* graphics_main( void* ) {
 	JobDistributor::get_instance()->go( rmdl );
 
 	protocols::viewer::clear_conformation_viewers();
-  exit( 0 ); // ensures graceful exit of graphics.
+	exit( 0 ); // ensures graceful exit of graphics.
 }
 
 
 int main( int argc, char * argv [] ) {
-try {
-	// check to see if no flags or the -h flag were specified.
-	if ( argc == 1 || ( argc > 1 && strcmp(argv[ 1 ], "-h") == 0 ) ) {
-		init_usage_prompt( argv[0] );
-		std::cout << usage_string;
-		exit(0);
+	try {
+		// check to see if no flags or the -h flag were specified.
+		if ( argc == 1 || ( argc > 1 && strcmp(argv[ 1 ], "-h") == 0 ) ) {
+			init_usage_prompt( argv[0] );
+			std::cout << usage_string;
+			exit(0);
+		}
+
+		KeyVec optional_options;
+		fill_optional_options( optional_options );
+
+		// register options so help file appears correctly
+		register_options( optional_options );
+
+		// initialize rosetta
+		devel::init( argc, argv );
+
+		// viewer_main() just calls graphics_main with the parameter NULL and returns 0
+		protocols::viewer::viewer_main( graphics_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
-
-	KeyVec optional_options;
-	fill_optional_options( optional_options );
-
-	// register options so help file appears correctly
-	register_options( optional_options );
-
-	// initialize rosetta
-	devel::init( argc, argv );
-
-	// viewer_main() just calls graphics_main with the parameter NULL and returns 0
-	protocols::viewer::viewer_main( graphics_main );
-} catch ( utility::excn::EXCN_Base const & e ) {
-	std::cout << "caught exception " << e.msg() << std::endl;
-	return -1;
-}
 	return 0;
 }
 

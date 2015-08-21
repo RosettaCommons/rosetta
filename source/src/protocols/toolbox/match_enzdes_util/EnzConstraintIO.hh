@@ -24,10 +24,10 @@
 
 
 #ifdef WIN32
-	#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
-	#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
-	#include <core/scoring/constraints/Constraints.hh>
-	#include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
+#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
+#include <core/scoring/constraints/Constraints.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
 #endif
 
 
@@ -115,7 +115,7 @@ public:
 	void
 	add_pregenerated_constraints_to_pose(
 		core::pose::Pose & pose,
- 		core::scoring::ScoreFunctionCOP scofx
+		core::scoring::ScoreFunctionCOP scofx
 	) const;
 
 	void
@@ -203,14 +203,14 @@ public:
 	/*
 	void
 	setup_favor_native_constraints(
-		core::pose::Pose & pose,
-		core::pack::task::PackerTaskCOP task,
-		core::pose::Pose const & native_pose
+	core::pose::Pose & pose,
+	core::pack::task::PackerTaskCOP task,
+	core::pose::Pose const & native_pose
 	);
 
 	void
 	remove_favor_native_constraints(
-		core::pose::Pose & pose
+	core::pose::Pose & pose
 	);
 	*/
 	EnzConstraintParametersCOP

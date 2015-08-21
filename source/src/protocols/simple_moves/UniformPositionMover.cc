@@ -10,8 +10,8 @@
 /// @file       protocols/simple_moves/UniformPositionMover.hh
 ///
 /// @brief      Apply a uniform (deterministic move) to a given position
-/// @details	Generic movers for applying a uniform rotation or translation move
-///				along a jump to a given partner in the pose.
+/// @details Generic movers for applying a uniform rotation or translation move
+///    along a jump to a given partner in the pose.
 ///
 /// @author     Rebecca Alford (rfalford12@gmail.com)
 /// @note       Last Modified (7/10/14)
@@ -64,7 +64,7 @@ UniformRotationMover::UniformRotationMover(
 	Real alpha,
 	Vector axis,
 	core::SSize rb_jump
-	) :
+) :
 	Mover(),
 	alpha_( alpha ),
 	axis_( axis ),
@@ -85,15 +85,15 @@ UniformRotationMover::UniformRotationMover( UniformRotationMover const & src ) :
 UniformRotationMover &
 UniformRotationMover::operator=( UniformRotationMover const & src )
 {
-	
+
 	// Abort self-assignment.
-	if (this == &src) {
+	if ( this == &src ) {
 		return *this;
 	}
-	
+
 	// Otherwise, create a new object
 	return *( new UniformRotationMover( *this ) );
-	
+
 }
 
 /// @brief Destructor
@@ -113,23 +113,23 @@ UniformRotationMover::get_name() const {
 /// @brief Rotate position over jump given an axis & angle
 void
 UniformRotationMover::apply( Pose & pose ) {
-	
+
 	using namespace numeric;
 	using namespace core::kinematics;
-	
+
 	// Grab the upstream & downstream stubs from the pose
 	Stub downstream_stub( pose.conformation().downstream_jump_stub( rb_jump_ ) );
 	Stub upstream_stub( pose.conformation().upstream_jump_stub( rb_jump_ ) );
-	
+
 	// Compute Rotation (delta_rot)
 	xyzMatrix< core::Real > delta_rot = rotation_matrix( axis_, alpha_ );
 	downstream_stub.M = delta_rot * downstream_stub.M;
-	
+
 	Jump flexible_jump = Jump( RT( downstream_stub, upstream_stub ) );
-	
+
 	// Set jump in the pose
 	pose.set_jump( rb_jump_, flexible_jump );
-	
+
 }
 
 
@@ -151,7 +151,7 @@ UniformTranslationMover::UniformTranslationMover() :
 UniformTranslationMover::UniformTranslationMover(
 	Vector new_position,
 	SSize rb_jump
-	) :
+) :
 	Mover(),
 	new_position_( new_position ),
 	rb_jump_( rb_jump )
@@ -170,15 +170,15 @@ UniformTranslationMover::UniformTranslationMover( UniformTranslationMover const 
 UniformTranslationMover &
 UniformTranslationMover::operator=( UniformTranslationMover const & src )
 {
-	
+
 	// Abort self-assignment.
-	if (this == &src) {
+	if ( this == &src ) {
 		return *this;
 	}
-	
+
 	// Otherwise, create a new object
 	return *( new UniformTranslationMover( *this ) );
-	
+
 }
 
 /// @brief Destructor
@@ -197,22 +197,22 @@ UniformTranslationMover::get_name() const {
 /// @brief Apply Translation
 void
 UniformTranslationMover::apply( Pose & pose ) {
-	
+
 	using namespace numeric;
 	using namespace core::kinematics;
-	
+
 	// Grab the upstream and downstream stubs in the foldtree
 	Stub downstream_stub( pose.conformation().downstream_jump_stub( rb_jump_ ) );
 	Stub upstream_stub( pose.conformation().upstream_jump_stub( rb_jump_ ) );
-	
+
 	downstream_stub.v = new_position_;
-	
+
 	// Create a jump between the upstream and downsteam jump
 	Jump flexible_jump = Jump( RT( upstream_stub, downstream_stub ) );
-	
+
 	// Set jump in the pose
 	pose.set_jump( rb_jump_, flexible_jump );
-	
+
 }
 
 

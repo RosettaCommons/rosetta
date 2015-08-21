@@ -61,7 +61,7 @@ namespace metal_interface {
 
 /// @details Adds zinc coordination constraints to a pose.  Zinc site should be parsed with protocols/metal_interface/ZincSiteFinder, and the resulting vector of MetalSiteResidue objects is needed to initialize this class.
 AddZincSiteConstraints::AddZincSiteConstraints( utility::vector1< protocols::metal_interface::MetalSiteResidueOP > msr )
-	: msr_(msr)
+: msr_(msr)
 {
 }
 
@@ -146,7 +146,7 @@ AddZincSiteConstraints::add_constraints( pose::Pose & pose ) {
 
 
 	//Print out what we've got in msr_ as a check
-	for (Size ii(1); ii <=msr_.size(); ii++) {
+	for ( Size ii(1); ii <=msr_.size(); ii++ ) {
 		TR << "msr_" << ii << " " << msr_[ii]->get_seqpos() << " " << msr_[ii]->get_ligand_atom_xyz() << " " << msr_[ii]->get_ligand_atom_name() << std::endl;
 	}
 
@@ -157,7 +157,7 @@ AddZincSiteConstraints::add_constraints( pose::Pose & pose ) {
 	atom_ids.push_back( zinc_id );
 	pre_atom_ids.push_back( zinc_id );  // not needed, just to keep numbering consistent
 
-	for (Size ii(2); ii <=msr_.size(); ii++) { //start with 2 because zinc is 1
+	for ( Size ii(2); ii <=msr_.size(); ii++ ) { //start with 2 because zinc is 1
 
 		atom_ids.push_back( msr_[ii]->get_ligand_atom_id() );
 		TR << "Ligand " << ii << " atom_id: " << msr_[ii]->get_ligand_atom_id() << std::endl;
@@ -168,7 +168,7 @@ AddZincSiteConstraints::add_constraints( pose::Pose & pose ) {
 
 
 	// Distances and Angles
-	for( core::Size i(2); i <= msr_.size(); ++i ) { // zinc is 1
+	for ( core::Size i(2); i <= msr_.size(); ++i ) { // zinc is 1
 		std::string resn( msr_[i]->get_resname() );
 		TR << "RES NAME " << resn << std::endl;
 		if ( resn == "CYS" ) { // CYS
@@ -179,8 +179,7 @@ AddZincSiteConstraints::add_constraints( pose::Pose & pose ) {
 			TR << "Adding Cys angle_constraint " << pre_atom_ids[i] << " " << atom_ids[i] << " " << zinc_id << std::endl;
 			angle_constraints_.push_back( core::scoring::constraints::AngleConstraintCOP( core::scoring::constraints::AngleConstraintOP( new AngleConstraint( pre_atom_ids[i], atom_ids[i], zinc_id, S_angle_func ) ) ) );
 			pose.add_constraint( angle_constraints_[ angle_constraints_.size() ] );
-		}
-		else if ( resn == "HIS") { // HIS
+		} else if ( resn == "HIS" ) { // HIS
 			TR << "Adding His atom_pair_constraint " << atom_ids[i] << " " << zinc_id << std::endl;
 			distance_constraints_.push_back( core::scoring::constraints::AtomPairConstraintCOP( core::scoring::constraints::AtomPairConstraintOP( new AtomPairConstraint( atom_ids[i], zinc_id, N_dist_func ) ) ) );
 			pose.add_constraint( distance_constraints_[ distance_constraints_.size() ] );
@@ -188,8 +187,7 @@ AddZincSiteConstraints::add_constraints( pose::Pose & pose ) {
 			TR << "Adding His angle_constraint " << pre_atom_ids[i] << " " << atom_ids[i] << " " << zinc_id << std::endl;
 			angle_constraints_.push_back( core::scoring::constraints::AngleConstraintCOP( core::scoring::constraints::AngleConstraintOP( new AngleConstraint( pre_atom_ids[i], atom_ids[i], zinc_id, N_angle_func ) ) ) );
 			pose.add_constraint( angle_constraints_[ angle_constraints_.size() ] );
-		}
-		else if ( resn == "ASP" || resn == "GLU" ) { // ASP/GLU
+		} else if ( resn == "ASP" || resn == "GLU" ) { // ASP/GLU
 			TR << "Adding Asp/Glu atom_pair_constraint " << atom_ids[i] << " " << zinc_id << std::endl;
 			distance_constraints_.push_back( core::scoring::constraints::AtomPairConstraintCOP( core::scoring::constraints::AtomPairConstraintOP( new AtomPairConstraint( atom_ids[i], zinc_id, O_dist_func ) ) ) );
 			pose.add_constraint( distance_constraints_[ distance_constraints_.size() ] );
@@ -203,7 +201,7 @@ AddZincSiteConstraints::add_constraints( pose::Pose & pose ) {
 
 	// Tetrahedral Angles (not totally generalized code, but it was the easy and quick solution)
 	TR << "Adding tetrahedral angle constraints" << std::endl;
-	if( msr_.size() == 5 ) {
+	if ( msr_.size() == 5 ) {
 		AngleConstraintCOP tetr1_constraint( AngleConstraintOP( new AngleConstraint( msr_[2]->get_ligand_atom_id(), zinc_id, msr_[3]->get_ligand_atom_id(), tetr_func ) ) );
 		AngleConstraintCOP tetr2_constraint( AngleConstraintOP( new AngleConstraint( msr_[2]->get_ligand_atom_id(), zinc_id, msr_[4]->get_ligand_atom_id(), tetr_func ) ) );
 		AngleConstraintCOP tetr3_constraint( AngleConstraintOP( new AngleConstraint( msr_[2]->get_ligand_atom_id(), zinc_id, msr_[5]->get_ligand_atom_id(), tetr_func ) ) );
@@ -222,8 +220,7 @@ AddZincSiteConstraints::add_constraints( pose::Pose & pose ) {
 		pose.add_constraint( tetr4_constraint );
 		pose.add_constraint( tetr5_constraint );
 		pose.add_constraint( tetr6_constraint );
-	}
-	else if( msr_.size() == 4) {
+	} else if ( msr_.size() == 4 ) {
 		AngleConstraintCOP tetr1_constraint( AngleConstraintOP( new AngleConstraint( msr_[2]->get_ligand_atom_id(), zinc_id, msr_[3]->get_ligand_atom_id(), tetr_func ) ) );
 		AngleConstraintCOP tetr2_constraint( AngleConstraintOP( new AngleConstraint( msr_[2]->get_ligand_atom_id(), zinc_id, msr_[4]->get_ligand_atom_id(), tetr_func ) ) );
 		AngleConstraintCOP tetr3_constraint( AngleConstraintOP( new AngleConstraint( msr_[3]->get_ligand_atom_id(), zinc_id, msr_[4]->get_ligand_atom_id(), tetr_func ) ) );
@@ -233,15 +230,14 @@ AddZincSiteConstraints::add_constraints( pose::Pose & pose ) {
 		pose.add_constraint( tetr1_constraint );
 		pose.add_constraint( tetr2_constraint );
 		pose.add_constraint( tetr3_constraint );
-	}
-	else if( msr_.size() == 3) {
+	} else if ( msr_.size() == 3 ) {
 		AngleConstraintCOP tetr1_constraint( AngleConstraintOP( new AngleConstraint( msr_[2]->get_ligand_atom_id(), zinc_id, msr_[3]->get_ligand_atom_id(), tetr_func ) ) );
 		tetrahedral_constraints_.push_back( tetr1_constraint );
 		pose.add_constraint( tetr1_constraint );
 	}
 
 	// Dihedrals
-	for( core::Size i(2); i <= msr_.size(); ++i ) { // zinc is 1
+	for ( core::Size i(2); i <= msr_.size(); ++i ) { // zinc is 1
 		//if( msr_[i]->get_resname() == "CYS" ) { continue; }
 
 		AtomID id1( msr_[i]->get_pre_pre_ligand_atom_id() );
@@ -271,35 +267,30 @@ AddZincSiteConstraints::add_constraints( pose::Pose & pose ) {
 			dihedral_func = core::scoring::func::FuncOP( new core::scoring::func::CircularHarmonicFunc( ND1_dihedral, ND1_dev ) );
 			dihedral_constraints_.push_back( core::scoring::constraints::DihedralConstraintCOP( core::scoring::constraints::DihedralConstraintOP( new DihedralConstraint( id1, id2, id3, id4, dihedral_func ) ) ) );
 			pose.add_constraint( dihedral_constraints_[ dihedral_constraints_.size() ] );
-		}
-		else if ( msr_[i]->get_ligand_atom_name() == " NE2" ) {
+		} else if ( msr_[i]->get_ligand_atom_name() == " NE2" ) {
 			TR << "Adding dihedral constraint for NE2 His" << std::endl;
 			dihedral_func = core::scoring::func::FuncOP( new core::scoring::func::CircularHarmonicFunc( NE2_dihedral, NE2_dev ) );
 			dihedral_constraints_.push_back( core::scoring::constraints::DihedralConstraintCOP( core::scoring::constraints::DihedralConstraintOP( new DihedralConstraint( id1, id2, id3, id4, dihedral_func ) ) ) );
 			pose.add_constraint( dihedral_constraints_[ dihedral_constraints_.size() ] );
-		}
-		else if ( msr_[i]->get_resname() == "ASP" || msr_[i]->get_resname() == "GLU" ) {
+		} else if ( msr_[i]->get_resname() == "ASP" || msr_[i]->get_resname() == "GLU" ) {
 			TR << "Adding dihedral constraint for Asp or Glu" << std::endl;
 			Real dihed = numeric::dihedral_degrees( p1, p2, p3, p4);
 			TR << "Computed_DIHEDRAL " << i << " " << dihed << std::endl;
 			Real dihed_diff_180 = fabs(fabs(dihed) - 180.0);
 			Real dihed_diff_0 = fabs(dihed);
 
-			if(dihed_diff_180 < dihed_diff_0) {
+			if ( dihed_diff_180 < dihed_diff_0 ) {
 				TR << "Adding dihedral constraint for Oxy_anti" << std::endl;
 				dihedral_func = core::scoring::func::FuncOP( new core::scoring::func::CircularHarmonicFunc( NE2_dihedral, NE2_dev ) );
 				dihedral_constraints_.push_back( core::scoring::constraints::DihedralConstraintCOP( core::scoring::constraints::DihedralConstraintOP( new DihedralConstraint( id1, id2, id3, id4, dihedral_func ) ) ) );
 				pose.add_constraint( dihedral_constraints_[ dihedral_constraints_.size() ] );
-			}
-
- 			else if(dihed_diff_0 < dihed_diff_180) {
+			} else if ( dihed_diff_0 < dihed_diff_180 ) {
 				TR << "Adding dihedral constraint for Oxy_syn" << std::endl;
 				dihedral_func = core::scoring::func::FuncOP( new core::scoring::func::CircularHarmonicFunc( ND1_dihedral, ND1_dev ) );
 				dihedral_constraints_.push_back( core::scoring::constraints::DihedralConstraintCOP( core::scoring::constraints::DihedralConstraintOP( new DihedralConstraint( id1, id2, id3, id4, dihedral_func ) ) ) );
 				pose.add_constraint( dihedral_constraints_[ dihedral_constraints_.size() ] );
 			}
-		}
-		else if ( msr_[i]->get_ligand_atom_name() == " SG " ) {
+		} else if ( msr_[i]->get_ligand_atom_name() == " SG " ) {
 			TR << "Adding dihedral constraint for SG Cys" << std::endl;
 			dihedral_func = core::scoring::func::FuncOP( new core::scoring::func::MinMultiHarmonicFunc( SG_dihedrals, SG_devs ) );
 			dihedral_constraints_.push_back( core::scoring::constraints::DihedralConstraintCOP( core::scoring::constraints::DihedralConstraintOP( new DihedralConstraint( id1, id2, id3, id4, dihedral_func ) ) ) );
@@ -320,7 +311,7 @@ AddZincSiteConstraints::add_constraints( pose::Pose & pose ) {
 
 void
 AddZincSiteConstraints::evaluate_constraints( core::pose::Pose const & pose ) {
-	if(distance_constraints_.size() == 0) {
+	if ( distance_constraints_.size() == 0 ) {
 		TR << "The constraints have not been added, no info to give." << std::endl;
 		return;
 	}
@@ -331,22 +322,22 @@ AddZincSiteConstraints::evaluate_constraints( core::pose::Pose const & pose ) {
 	Real tetrahedral_total_score( 0.0 );
 
 	//Distances
-	for( Size i(1); i <= distance_constraints_.size(); ++i ) {
+	for ( Size i(1); i <= distance_constraints_.size(); ++i ) {
 		AtomID lig_atom_id( distance_constraints_[i]->atom(1) );
 		AtomID zinc_id    ( distance_constraints_[i]->atom(2) );
 
 		TR << "CONSTRAINT: Distance: "
-		<< pose.residue(lig_atom_id.rsd()).name3() << " "
-		<< lig_atom_id.rsd()  << " "
-		<< pose.residue(lig_atom_id.rsd()).atom_name(lig_atom_id.atomno()) << " "
-		<< distance_constraints_[i]->dist( pose ) << " "
-		<< distance_constraints_[i]->score( pose ) << std::endl;
+			<< pose.residue(lig_atom_id.rsd()).name3() << " "
+			<< lig_atom_id.rsd()  << " "
+			<< pose.residue(lig_atom_id.rsd()).atom_name(lig_atom_id.atomno()) << " "
+			<< distance_constraints_[i]->dist( pose ) << " "
+			<< distance_constraints_[i]->score( pose ) << std::endl;
 
 		distance_total_score += distance_constraints_[i]->score( pose );
 	}
 
 	//Angles
-	for( Size i(1); i <= angle_constraints_.size(); ++i ) {
+	for ( Size i(1); i <= angle_constraints_.size(); ++i ) {
 		AtomID pre_lig_atom_id( angle_constraints_[i]->atom(1) );
 		AtomID lig_atom_id    ( angle_constraints_[i]->atom(2) );
 		AtomID zinc_id        ( angle_constraints_[i]->atom(3) );
@@ -359,17 +350,17 @@ AddZincSiteConstraints::evaluate_constraints( core::pose::Pose const & pose ) {
 		Real angle = numeric::conversions::degrees( angle_of( xyz1, xyz2, xyz3 ) );
 
 		TR << "CONSTRAINT: Angle   : "
-		<< pose.residue(lig_atom_id.rsd()).name3() << " "
-		<< lig_atom_id.rsd()  << " "
-		<< pose.residue(lig_atom_id.rsd()).atom_name(lig_atom_id.atomno()) << " "
-		<< angle << " "
-		<< angle_constraints_[i]->score( xyz1, xyz2, xyz3 ) << std::endl;
+			<< pose.residue(lig_atom_id.rsd()).name3() << " "
+			<< lig_atom_id.rsd()  << " "
+			<< pose.residue(lig_atom_id.rsd()).atom_name(lig_atom_id.atomno()) << " "
+			<< angle << " "
+			<< angle_constraints_[i]->score( xyz1, xyz2, xyz3 ) << std::endl;
 
 		angle_total_score += angle_constraints_[i]->score( xyz1, xyz2, xyz3 );
 	}
 
 	//Dihedrals
-	for( Size i(1); i <= dihedral_constraints_.size(); ++i ) {
+	for ( Size i(1); i <= dihedral_constraints_.size(); ++i ) {
 
 		AtomID pre_pre_lig_atom_id( dihedral_constraints_[i]->atom(1) );
 		AtomID pre_lig_atom_id    ( dihedral_constraints_[i]->atom(2) );
@@ -386,18 +377,18 @@ AddZincSiteConstraints::evaluate_constraints( core::pose::Pose const & pose ) {
 		Real dihedral = numeric::dihedral_degrees( xyz1, xyz2, xyz3, xyz4 );
 
 		TR << "CONSTRAINT: Dihedral: "
-		<< pose.residue(lig_atom_id.rsd()).name3() << " "
-		<< lig_atom_id.rsd() << " "
-		<< pose.residue(lig_atom_id.rsd()).atom_name(lig_atom_id.atomno()) << " "
-		<< dihedral << " "
-		<< dihedral_constraints_[i]->score( xyz1, xyz2, xyz3, xyz4 ) << std::endl;
+			<< pose.residue(lig_atom_id.rsd()).name3() << " "
+			<< lig_atom_id.rsd() << " "
+			<< pose.residue(lig_atom_id.rsd()).atom_name(lig_atom_id.atomno()) << " "
+			<< dihedral << " "
+			<< dihedral_constraints_[i]->score( xyz1, xyz2, xyz3, xyz4 ) << std::endl;
 
 		dihedral_total_score += dihedral_constraints_[i]->score( xyz1, xyz2, xyz3, xyz4 );
 	}
 
 
 	//Tetrahedral
-	for( Size i(1); i <= tetrahedral_constraints_.size(); ++i ) {
+	for ( Size i(1); i <= tetrahedral_constraints_.size(); ++i ) {
 
 		AtomID lig_atom_id_1( tetrahedral_constraints_[i]->atom(1) );
 		AtomID       zinc_id( tetrahedral_constraints_[i]->atom(2) );
@@ -411,10 +402,10 @@ AddZincSiteConstraints::evaluate_constraints( core::pose::Pose const & pose ) {
 		Real tetr_angle = numeric::conversions::degrees( angle_of( xyz1, xyz2, xyz3 ) );
 
 		TR << "CONSTRAINT: Tetrahedral   : "
-		<< lig_atom_id_1 << " and "
-		<< lig_atom_id_2 << " "
-		<< tetr_angle << " "
-		<< tetrahedral_constraints_[i]->score( xyz1, xyz2, xyz3 ) << std::endl;
+			<< lig_atom_id_1 << " and "
+			<< lig_atom_id_2 << " "
+			<< tetr_angle << " "
+			<< tetrahedral_constraints_[i]->score( xyz1, xyz2, xyz3 ) << std::endl;
 
 		tetrahedral_total_score += tetrahedral_constraints_[i]->score( xyz1, xyz2, xyz3 );
 	}
@@ -438,38 +429,38 @@ AddZincSiteConstraints::evaluate_constraints( core::pose::Pose const & pose ) {
 //assumes only one pdb opened in pymol
 void
 AddZincSiteConstraints::view_constraints_in_pymol( core::pose::Pose const & pose ) {
-	if(distance_constraints_.size() == 0) {
+	if ( distance_constraints_.size() == 0 ) {
 		TR_PYMOL << "The constraints have not been added, no info to give." << std::endl;
 		return;
 	}
 
 	//Distances
-	for( Size i(1); i <= distance_constraints_.size(); ++i ) {
+	for ( Size i(1); i <= distance_constraints_.size(); ++i ) {
 		AtomID lig_atom_id( distance_constraints_[i]->atom(1) );
 		AtomID zinc_id    ( distance_constraints_[i]->atom(2) );
 		std::stringstream ss;
 		ss << "dist_" << lig_atom_id.rsd();
 		TR_PYMOL << "select " << ss.str() << ", resi "
-		<< lig_atom_id.rsd() << " and name " << pose.residue(lig_atom_id.rsd()).atom_name(lig_atom_id.atomno()) << " + resi "
-		<< zinc_id.rsd() << " and name " << pose.residue(zinc_id.rsd()).atom_name(zinc_id.atomno()) << std::endl;
+			<< lig_atom_id.rsd() << " and name " << pose.residue(lig_atom_id.rsd()).atom_name(lig_atom_id.atomno()) << " + resi "
+			<< zinc_id.rsd() << " and name " << pose.residue(zinc_id.rsd()).atom_name(zinc_id.atomno()) << std::endl;
 	}
 
 	//Angles
-	for( Size i(1); i <= angle_constraints_.size(); ++i ) {
+	for ( Size i(1); i <= angle_constraints_.size(); ++i ) {
 		AtomID pre_lig_atom_id( angle_constraints_[i]->atom(1) );
 		AtomID lig_atom_id    ( angle_constraints_[i]->atom(2) );
 		AtomID zinc_id        ( angle_constraints_[i]->atom(3) );
 		std::stringstream ss;
 		ss << "angle_" << lig_atom_id.rsd();
 		TR_PYMOL << "select " << ss.str() << ", resi "
-		<< pre_lig_atom_id.rsd() << " and name " << pose.residue(pre_lig_atom_id.rsd()).atom_name(pre_lig_atom_id.atomno()) << " + resi "
-		<< lig_atom_id.rsd() << " and name " << pose.residue(lig_atom_id.rsd()).atom_name(lig_atom_id.atomno()) << " + resi "
-		<< zinc_id.rsd() << " and name " << pose.residue(zinc_id.rsd()).atom_name(zinc_id.atomno()) << std::endl;
+			<< pre_lig_atom_id.rsd() << " and name " << pose.residue(pre_lig_atom_id.rsd()).atom_name(pre_lig_atom_id.atomno()) << " + resi "
+			<< lig_atom_id.rsd() << " and name " << pose.residue(lig_atom_id.rsd()).atom_name(lig_atom_id.atomno()) << " + resi "
+			<< zinc_id.rsd() << " and name " << pose.residue(zinc_id.rsd()).atom_name(zinc_id.atomno()) << std::endl;
 
 	}
 
 	//Dihedrals
-	for( Size i(1); i <= dihedral_constraints_.size(); ++i ) {
+	for ( Size i(1); i <= dihedral_constraints_.size(); ++i ) {
 		AtomID pre_pre_lig_atom_id( dihedral_constraints_[i]->atom(1) );
 		AtomID pre_lig_atom_id    ( dihedral_constraints_[i]->atom(2) );
 		AtomID lig_atom_id        ( dihedral_constraints_[i]->atom(3) );
@@ -477,24 +468,24 @@ AddZincSiteConstraints::view_constraints_in_pymol( core::pose::Pose const & pose
 		std::stringstream ss;
 		ss << "dihed_" << lig_atom_id.rsd();
 		TR_PYMOL << "select " << ss.str() << ", resi "
-		<< pre_pre_lig_atom_id.rsd() << " and name " << pose.residue(pre_pre_lig_atom_id.rsd()).atom_name(pre_pre_lig_atom_id.atomno()) << " + resi "
-		<< pre_lig_atom_id.rsd() << " and name " << pose.residue(pre_lig_atom_id.rsd()).atom_name(pre_lig_atom_id.atomno()) << " + resi "
-		<< lig_atom_id.rsd() << " and name " << pose.residue(lig_atom_id.rsd()).atom_name(lig_atom_id.atomno()) << " + resi "
-		<< zinc_id.rsd() << " and name " << pose.residue(zinc_id.rsd()).atom_name(zinc_id.atomno()) << std::endl;
+			<< pre_pre_lig_atom_id.rsd() << " and name " << pose.residue(pre_pre_lig_atom_id.rsd()).atom_name(pre_pre_lig_atom_id.atomno()) << " + resi "
+			<< pre_lig_atom_id.rsd() << " and name " << pose.residue(pre_lig_atom_id.rsd()).atom_name(pre_lig_atom_id.atomno()) << " + resi "
+			<< lig_atom_id.rsd() << " and name " << pose.residue(lig_atom_id.rsd()).atom_name(lig_atom_id.atomno()) << " + resi "
+			<< zinc_id.rsd() << " and name " << pose.residue(zinc_id.rsd()).atom_name(zinc_id.atomno()) << std::endl;
 	}
 
 
 	//Tetrahedral
-	for( Size i(1); i <= tetrahedral_constraints_.size(); ++i ) {
+	for ( Size i(1); i <= tetrahedral_constraints_.size(); ++i ) {
 		AtomID lig_atom_id_1( tetrahedral_constraints_[i]->atom(1) );
 		AtomID       zinc_id( tetrahedral_constraints_[i]->atom(2) );
 		AtomID lig_atom_id_2( tetrahedral_constraints_[i]->atom(3) );
 		std::stringstream ss;
 		ss << "tetr_" << lig_atom_id_1.rsd() << "_" << lig_atom_id_2.rsd();
 		TR_PYMOL << "select " << ss.str() << ", resi "
-		<< lig_atom_id_1.rsd() << " and name " << pose.residue(lig_atom_id_1.rsd()).atom_name(lig_atom_id_1.atomno()) << " + resi "
-		<< zinc_id.rsd() << " and name " << pose.residue(zinc_id.rsd()).atom_name(zinc_id.atomno()) << " + resi "
-		<< lig_atom_id_2.rsd() << " and name " << pose.residue(lig_atom_id_2.rsd()).atom_name(lig_atom_id_2.atomno()) << std::endl;
+			<< lig_atom_id_1.rsd() << " and name " << pose.residue(lig_atom_id_1.rsd()).atom_name(lig_atom_id_1.atomno()) << " + resi "
+			<< zinc_id.rsd() << " and name " << pose.residue(zinc_id.rsd()).atom_name(zinc_id.atomno()) << " + resi "
+			<< lig_atom_id_2.rsd() << " and name " << pose.residue(lig_atom_id_2.rsd()).atom_name(lig_atom_id_2.atomno()) << std::endl;
 
 	}
 
@@ -506,7 +497,7 @@ AddZincSiteConstraints::view_constraints_in_pymol( core::pose::Pose const & pose
 
 void
 AddZincSiteConstraints::output_constraints_file( core::pose::Pose const & pose ) {
-	if(distance_constraints_.size() == 0) {
+	if ( distance_constraints_.size() == 0 ) {
 		TR_PYMOL << "The constraints have not been added, no info to give." << std::endl;
 		return;
 	}
@@ -519,58 +510,58 @@ AddZincSiteConstraints::output_constraints_file( core::pose::Pose const & pose )
 	TR << "Zinc constraints will be written to a file called " << zinc_cst_file_name << std::endl;
 
 	//Distances
-	for( Size i(1); i <= distance_constraints_.size(); ++i ) {
+	for ( Size i(1); i <= distance_constraints_.size(); ++i ) {
 		AtomID lig_atom_id( distance_constraints_[i]->atom(1) );
 		AtomID zinc_id    ( distance_constraints_[i]->atom(2) );
 		const scoring::func::HarmonicFunc & dist_func = dynamic_cast< const scoring::func::HarmonicFunc& >( distance_constraints_[i]->get_func() );
 		OutputConstraints << "AtomPair  "
-		<< pose.residue(lig_atom_id.rsd()).atom_name(lig_atom_id.atomno()) << " " << lig_atom_id.rsd() << pose.pdb_info()->chain(lig_atom_id.rsd()) << " "
-		<< pose.residue(zinc_id.rsd()).atom_name(zinc_id.atomno()) << " " << zinc_id.rsd() << pose.pdb_info()->chain(zinc_id.rsd()) << " "
-		<< " \t\t\tHARMONIC " << dist_func.x0() << "  " << dist_func.sd() << std::endl;
+			<< pose.residue(lig_atom_id.rsd()).atom_name(lig_atom_id.atomno()) << " " << lig_atom_id.rsd() << pose.pdb_info()->chain(lig_atom_id.rsd()) << " "
+			<< pose.residue(zinc_id.rsd()).atom_name(zinc_id.atomno()) << " " << zinc_id.rsd() << pose.pdb_info()->chain(zinc_id.rsd()) << " "
+			<< " \t\t\tHARMONIC " << dist_func.x0() << "  " << dist_func.sd() << std::endl;
 
 	}
 
 	//Angles
-	for( Size i(1); i <= angle_constraints_.size(); ++i ) {
+	for ( Size i(1); i <= angle_constraints_.size(); ++i ) {
 		AtomID pre_lig_atom_id( angle_constraints_[i]->atom(1) );
 		AtomID lig_atom_id    ( angle_constraints_[i]->atom(2) );
 		AtomID zinc_id        ( angle_constraints_[i]->atom(3) );
 		const scoring::func::HarmonicFunc & angle_func = dynamic_cast< const scoring::func::HarmonicFunc& >( angle_constraints_[i]->get_func() );
 		OutputConstraints << "Angle     "
-		<< pose.residue(pre_lig_atom_id.rsd()).atom_name(pre_lig_atom_id.atomno()) << " " << pre_lig_atom_id.rsd() << pose.pdb_info()->chain(pre_lig_atom_id.rsd()) << " "
-		<< pose.residue(lig_atom_id.rsd()).atom_name(lig_atom_id.atomno()) << " " << lig_atom_id.rsd() << pose.pdb_info()->chain(lig_atom_id.rsd()) << " "
-		<< pose.residue(zinc_id.rsd()).atom_name(zinc_id.atomno()) << " " << zinc_id.rsd() << pose.pdb_info()->chain(zinc_id.rsd()) << " "
-		<< " \t\tHARMONIC " << angle_func.x0() << "  " << angle_func.sd() << std::endl; // radians or degrees
+			<< pose.residue(pre_lig_atom_id.rsd()).atom_name(pre_lig_atom_id.atomno()) << " " << pre_lig_atom_id.rsd() << pose.pdb_info()->chain(pre_lig_atom_id.rsd()) << " "
+			<< pose.residue(lig_atom_id.rsd()).atom_name(lig_atom_id.atomno()) << " " << lig_atom_id.rsd() << pose.pdb_info()->chain(lig_atom_id.rsd()) << " "
+			<< pose.residue(zinc_id.rsd()).atom_name(zinc_id.atomno()) << " " << zinc_id.rsd() << pose.pdb_info()->chain(zinc_id.rsd()) << " "
+			<< " \t\tHARMONIC " << angle_func.x0() << "  " << angle_func.sd() << std::endl; // radians or degrees
 
 	}
 
 	//Dihedrals
-	for( Size i(1); i <= dihedral_constraints_.size(); ++i ) {
+	for ( Size i(1); i <= dihedral_constraints_.size(); ++i ) {
 		AtomID pre_pre_lig_atom_id( dihedral_constraints_[i]->atom(1) );
 		AtomID pre_lig_atom_id    ( dihedral_constraints_[i]->atom(2) );
 		AtomID lig_atom_id        ( dihedral_constraints_[i]->atom(3) );
 		AtomID zinc_id            ( dihedral_constraints_[i]->atom(4) );
 		const scoring::func::CircularHarmonicFunc & dihed_func = dynamic_cast< const scoring::func::CircularHarmonicFunc& >( dihedral_constraints_[i]->get_func() );
 		OutputConstraints << "Dihedral  "
-		<< pose.residue(pre_pre_lig_atom_id.rsd()).atom_name(pre_pre_lig_atom_id.atomno()) << " " << pre_pre_lig_atom_id.rsd() << pose.pdb_info()->chain(pre_pre_lig_atom_id.rsd()) << " "
-		<< pose.residue(pre_lig_atom_id.rsd()).atom_name(pre_lig_atom_id.atomno()) << " " << pre_lig_atom_id.rsd() << pose.pdb_info()->chain(pre_lig_atom_id.rsd()) << " "
-		<< pose.residue(lig_atom_id.rsd()).atom_name(lig_atom_id.atomno()) << " " << lig_atom_id.rsd() << pose.pdb_info()->chain(lig_atom_id.rsd()) << " "
-		<< pose.residue(zinc_id.rsd()).atom_name(zinc_id.atomno()) << " " << zinc_id.rsd() << pose.pdb_info()->chain(zinc_id.rsd()) << " "
-		<< " HARMONIC " << dihed_func.x0() << "  " << dihed_func.sd() << std::endl; // radians or degrees
+			<< pose.residue(pre_pre_lig_atom_id.rsd()).atom_name(pre_pre_lig_atom_id.atomno()) << " " << pre_pre_lig_atom_id.rsd() << pose.pdb_info()->chain(pre_pre_lig_atom_id.rsd()) << " "
+			<< pose.residue(pre_lig_atom_id.rsd()).atom_name(pre_lig_atom_id.atomno()) << " " << pre_lig_atom_id.rsd() << pose.pdb_info()->chain(pre_lig_atom_id.rsd()) << " "
+			<< pose.residue(lig_atom_id.rsd()).atom_name(lig_atom_id.atomno()) << " " << lig_atom_id.rsd() << pose.pdb_info()->chain(lig_atom_id.rsd()) << " "
+			<< pose.residue(zinc_id.rsd()).atom_name(zinc_id.atomno()) << " " << zinc_id.rsd() << pose.pdb_info()->chain(zinc_id.rsd()) << " "
+			<< " HARMONIC " << dihed_func.x0() << "  " << dihed_func.sd() << std::endl; // radians or degrees
 	}
 
 
 	//Tetrahedral
-	for( Size i(1); i <= tetrahedral_constraints_.size(); ++i ) {
+	for ( Size i(1); i <= tetrahedral_constraints_.size(); ++i ) {
 		AtomID lig_atom_id_1( tetrahedral_constraints_[i]->atom(1) );
 		AtomID       zinc_id( tetrahedral_constraints_[i]->atom(2) );
 		AtomID lig_atom_id_2( tetrahedral_constraints_[i]->atom(3) );
 		const scoring::func::HarmonicFunc & tetr_func = dynamic_cast< const scoring::func::HarmonicFunc& >( tetrahedral_constraints_[i]->get_func() );
 		OutputConstraints << "Angle     "
-		<< pose.residue(lig_atom_id_1.rsd()).atom_name(lig_atom_id_1.atomno()) << " " << lig_atom_id_1.rsd() << pose.pdb_info()->chain(lig_atom_id_1.rsd()) << " "
-		<< pose.residue(zinc_id.rsd()).atom_name(zinc_id.atomno()) << " " << zinc_id.rsd() << pose.pdb_info()->chain(zinc_id.rsd()) << " "
-		<< pose.residue(lig_atom_id_2.rsd()).atom_name(lig_atom_id_2.atomno()) << " " << lig_atom_id_2.rsd() << pose.pdb_info()->chain(lig_atom_id_2.rsd()) << " "
-		<< " \t\tHARMONIC " << tetr_func.x0() << "  " << tetr_func.sd() << std::endl; // radians or degrees
+			<< pose.residue(lig_atom_id_1.rsd()).atom_name(lig_atom_id_1.atomno()) << " " << lig_atom_id_1.rsd() << pose.pdb_info()->chain(lig_atom_id_1.rsd()) << " "
+			<< pose.residue(zinc_id.rsd()).atom_name(zinc_id.atomno()) << " " << zinc_id.rsd() << pose.pdb_info()->chain(zinc_id.rsd()) << " "
+			<< pose.residue(lig_atom_id_2.rsd()).atom_name(lig_atom_id_2.atomno()) << " " << lig_atom_id_2.rsd() << pose.pdb_info()->chain(lig_atom_id_2.rsd()) << " "
+			<< " \t\tHARMONIC " << tetr_func.x0() << "  " << tetr_func.sd() << std::endl; // radians or degrees
 	}
 
 

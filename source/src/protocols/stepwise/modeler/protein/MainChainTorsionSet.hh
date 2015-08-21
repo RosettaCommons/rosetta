@@ -51,7 +51,7 @@ private:
 	core::Real omega_;
 };
 
-	typedef utility::vector1< MainChainTorsionSet > MainChainTorsionSetList ;
+typedef utility::vector1< MainChainTorsionSet > MainChainTorsionSetList ;
 
 
 } //protein

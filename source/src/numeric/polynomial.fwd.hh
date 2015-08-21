@@ -17,7 +17,7 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace numeric{
+namespace numeric {
 
 class Polynomial_1d;
 

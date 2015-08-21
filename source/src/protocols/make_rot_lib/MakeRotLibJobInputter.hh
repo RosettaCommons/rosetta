@@ -38,18 +38,18 @@ class MakeRotLibJobInputter : public protocols::jd2::JobInputter
 {
 public:
 
-  MakeRotLibJobInputter();
+	MakeRotLibJobInputter();
 
-  virtual ~MakeRotLibJobInputter();
+	virtual ~MakeRotLibJobInputter();
 
-  /// @brief this function is responsible for filling the pose reference with the pose indicated by the job
-  virtual void pose_from_job( core::pose::Pose & pose, jd2::JobOP job );
+	/// @brief this function is responsible for filling the pose reference with the pose indicated by the job
+	virtual void pose_from_job( core::pose::Pose & pose, jd2::JobOP job );
 
-  /// @brief Determines what jobs exist from the make_rot_lib options file
-  virtual void fill_jobs( jd2::JobsContainer & jobs );
+	/// @brief Determines what jobs exist from the make_rot_lib options file
+	virtual void fill_jobs( jd2::JobsContainer & jobs );
 
-  /// @brief Return the type of input source that the MakeRotLibJobInputter is currently using.
-  virtual jd2::JobInputterInputSource::Enum input_source() const;
+	/// @brief Return the type of input source that the MakeRotLibJobInputter is currently using.
+	virtual jd2::JobInputterInputSource::Enum input_source() const;
 
 private:
 

@@ -75,8 +75,8 @@ ReadResfileFromDB::ReadResfileFromDB(
 {}
 
 ReadResfileFromDB::ReadResfileFromDB(ReadResfileFromDB const & src) : TaskOperation(src),
-		database_table_(src.database_table_),
-		db_session_(src.db_session_)
+	database_table_(src.database_table_),
+	db_session_(src.db_session_)
 {}
 
 ReadResfileFromDB::~ReadResfileFromDB() {}
@@ -102,7 +102,7 @@ ReadResfileFromDB::apply( Pose const & pose, PackerTask & task ) const {
 	check_statement_sanity(sql);
 	statement select_stmt(safely_prepare_statement(sql, db_session_));
 	result res(safely_read_from_database(select_stmt));
-	if(!res.next()){
+	if ( !res.next() ) {
 		stringstream error_message;
 		error_message
 			<< "Unable to locate resfile for job distributor input tag '"
@@ -145,35 +145,33 @@ ReadResfileFromDB::parse_tag( TagCOP tag , DataMap & )
 {
 	using namespace basic::resource_manager;
 
-	if(tag->hasOption("db")){
+	if ( tag->hasOption("db") ) {
 		utility_exit_with_message(
 			"The 'db' tag has been deprecated. Please use 'database_name' instead.");
 	}
 
-	if(tag->hasOption("db_mode")){
+	if ( tag->hasOption("db_mode") ) {
 		utility_exit_with_message(
 			"The 'db_mode' tag has been deprecated. "
 			"Please use the 'database_mode' instead.");
 	}
 
-	if(tag->hasOption("database_table")){
+	if ( tag->hasOption("database_table") ) {
 		database_table_ = tag->getOption<string>("database_table");
-	} else if(tag->hasOption("table")){
+	} else if ( tag->hasOption("table") ) {
 		database_table_ = tag->getOption<string>("table");
 	}
 
-	if(tag->hasOption("resource_description")){
+	if ( tag->hasOption("resource_description") ) {
 		std::string resource_description = tag->getOption<string>("resource_description");
-		if(!ResourceManager::get_instance()->has_resource_with_description(
-				resource_description))
-		{
+		if ( !ResourceManager::get_instance()->has_resource_with_description(
+				resource_description) ) {
 			throw utility::excn::EXCN_Msg_Exception
 				( "You specified a resource_description of " + resource_description +
-					" for ReadResfileFromDB, but the ResourceManager doesn't have a resource with that description" );
+				" for ReadResfileFromDB, but the ResourceManager doesn't have a resource with that description" );
 		}
 		db_session_ = get_resource< utility::sql_database::session >( resource_description );
-	}
-	else{
+	} else {
 		db_session_ = basic::database::parse_database_connection(tag);
 	}
 

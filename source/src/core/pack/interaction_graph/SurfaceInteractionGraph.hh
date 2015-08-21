@@ -79,140 +79,140 @@ template < typename V, typename E, typename G > class SurfaceInteractionGraph;
 template < typename V, typename E, typename G >
 class SurfaceNode : public FirstClassNode< V, E, G > {
 
-	public:
-		typedef FirstClassNode< V, E, G > parent;
+public:
+	typedef FirstClassNode< V, E, G > parent;
 
-	public:
-		SurfaceNode( G* owner, int node_index, int num_states );
-		virtual ~SurfaceNode();
+public:
+	SurfaceNode( G* owner, int node_index, int num_states );
+	virtual ~SurfaceNode();
 
-		virtual void assign_zero_state();
-		virtual bool state_unassigned() const { return parent::get_current_state() == 0; }
+	virtual void assign_zero_state();
+	virtual bool state_unassigned() const { return parent::get_current_state() == 0; }
 
-		void assign_state_surface( int state );
-		Real get_curr_state_surface_energy() const;
-		Real project_deltaE_for_substitution_surface( int alternate_state, core::PackerEnergy & prev_energy_for_node, float deltaE_thresh_for_avoiding_surface_calcs );
+	void assign_state_surface( int state );
+	Real get_curr_state_surface_energy() const;
+	Real project_deltaE_for_substitution_surface( int alternate_state, core::PackerEnergy & prev_energy_for_node, float deltaE_thresh_for_avoiding_surface_calcs );
 
-		Real get_surface_deltaE_for_neighbors_state_substitution( SurfaceNode<V,E,G>* node_considering_substitution, int changing_nodes_curr_state, int changing_nodes_alt_state );
+	Real get_surface_deltaE_for_neighbors_state_substitution( SurfaceNode<V,E,G>* node_considering_substitution, int changing_nodes_curr_state, int changing_nodes_alt_state );
 
-		Real commit_considered_substitution_surface();
-		void acknowledge_neighbors_substitution_surface();
+	Real commit_considered_substitution_surface();
+	void acknowledge_neighbors_substitution_surface();
 
-		bool detect_neighborship_with_node( int node_id, bool first_class ) const;
+	bool detect_neighborship_with_node( int node_id, bool first_class ) const;
 
-		static void print_surface_avoidance_stats();
-		static void reset_surface_avoidance_stats();
+	static void print_surface_avoidance_stats();
+	static void reset_surface_avoidance_stats();
 
-		// virtual methods from NodeBase class
-		virtual void print() const;
+	// virtual methods from NodeBase class
+	virtual void print() const;
 
-		virtual void prepare_for_simulated_annealing();
-		virtual unsigned int getMemoryUsageInBytes() const;
-		virtual unsigned int count_static_memory() const;
-		virtual unsigned int count_dynamic_memory() const;
+	virtual void prepare_for_simulated_annealing();
+	virtual unsigned int getMemoryUsageInBytes() const;
+	virtual unsigned int count_static_memory() const;
+	virtual unsigned int count_dynamic_memory() const;
 
-		// setter for the rotamers object.
-		void set_rotamers( rotamer_set::RotamerSetCOP rotamers );
-		conformation::ResidueCOP get_rotamer( int state ) const;
+	// setter for the rotamers object.
+	void set_rotamers( rotamer_set::RotamerSetCOP rotamers );
+	conformation::ResidueCOP get_rotamer( int state ) const;
 
-		// hold on to these so we can look up is_hydrophobic on state changes
-		rotamer_set::RotamerSetCOP rotamer_set_;
-		utility::vector1< conformation::ResidueCOP > rotamers_vector_;
+	// hold on to these so we can look up is_hydrophobic on state changes
+	rotamer_set::RotamerSetCOP rotamer_set_;
+	utility::vector1< conformation::ResidueCOP > rotamers_vector_;
 
-		inline
-		int wt_seqpos_for_node() const {
-			return get_surface_owner()->rotamer_sets().moltenres_2_resid( parent::get_node_index() );
-		}
-		inline
-		conformation::Residue wt_residue_for_node() const {
-			return get_surface_owner()->pose().residue( (get_surface_owner()->rotamer_sets().moltenres_2_resid( parent::get_node_index() )) );
-		}
+	inline
+	int wt_seqpos_for_node() const {
+		return get_surface_owner()->rotamer_sets().moltenres_2_resid( parent::get_node_index() );
+	}
+	inline
+	conformation::Residue wt_residue_for_node() const {
+		return get_surface_owner()->pose().residue( (get_surface_owner()->rotamer_sets().moltenres_2_resid( parent::get_node_index() )) );
+	}
 
 
-		Real get_surface_score_difference() const;
+	Real get_surface_score_difference() const;
 
-		bool is_surface_exposed() const;
-		void surface_exposed( bool value );
-		bool is_below_buried_residue_no_hsasa_cutoff() const;
-		void is_below_buried_residue_no_hsasa_cutoff( bool value );
+	bool is_surface_exposed() const;
+	void surface_exposed( bool value );
+	bool is_below_buried_residue_no_hsasa_cutoff() const;
+	void is_below_buried_residue_no_hsasa_cutoff( bool value );
 
-		void reset_alt_state_total_hASA();
+	void reset_alt_state_total_hASA();
 
-		void initialize_num_neighbors_counting_self() const;
-		int num_neighbors_counting_self() const;
+	void initialize_num_neighbors_counting_self() const;
+	int num_neighbors_counting_self() const;
 
-		void init_hASA_variables();
-		Real calculate_amount_total_hydrophobic_ASA();
-		Real average_residue_hASA() const;
-		Real average_residue_hASA( chemical::AA residue_type, Size num_nbs ) const;
-		Real hASA_energy( Real patch_area ) const;
+	void init_hASA_variables();
+	Real calculate_amount_total_hydrophobic_ASA();
+	Real average_residue_hASA() const;
+	Real average_residue_hASA( chemical::AA residue_type, Size num_nbs ) const;
+	Real hASA_energy( Real patch_area ) const;
 
-		void verify_patch_areas_correct( int node_id, int previous_state, Real previous_state_hASA );
+	void verify_patch_areas_correct( int node_id, int previous_state, Real previous_state_hASA );
 
-		// Extra methods only used only for the unit tests.
-		void set_observed_sufficient_boolean_true();
-		std::vector<Real> get_hASA_for_node_and_nbs();
-		std::vector<Real> get_alt_state_hASA_for_node_and_nbs();
-		Real get_current_hASA();
-		Real get_alt_hASA();
+	// Extra methods only used only for the unit tests.
+	void set_observed_sufficient_boolean_true();
+	std::vector<Real> get_hASA_for_node_and_nbs();
+	std::vector<Real> get_alt_state_hASA_for_node_and_nbs();
+	Real get_current_hASA();
+	Real get_alt_hASA();
 
-	protected:
-		inline
-		SurfaceEdge< V, E, G >* get_incident_surface_edge( int index ) const {
-			return (SurfaceEdge< V, E, G >*) parent::get_incident_edge( index );
-		}
+protected:
+	inline
+	SurfaceEdge< V, E, G >* get_incident_surface_edge( int index ) const {
+		return (SurfaceEdge< V, E, G >*) parent::get_incident_edge( index );
+	}
 
-		inline
-		SurfaceBackgroundEdge< V, E, G >* get_edge_to_surface_bg_node( int index ) const {
-			return (SurfaceBackgroundEdge< V, E, G >*) parent::get_edge_to_bg_node( index );
-		}
+	inline
+	SurfaceBackgroundEdge< V, E, G >* get_edge_to_surface_bg_node( int index ) const {
+		return (SurfaceBackgroundEdge< V, E, G >*) parent::get_edge_to_bg_node( index );
+	}
 
-		inline
-		SurfaceInteractionGraph< V, E, G >* get_surface_owner() const {
-			return (SurfaceInteractionGraph< V, E, G >*) parent::get_owner();
-		}
+	inline
+	SurfaceInteractionGraph< V, E, G >* get_surface_owner() const {
+		return (SurfaceInteractionGraph< V, E, G >*) parent::get_owner();
+	}
 
-	private:
-		Real project_surface_deltaE();
-		void track_surface_E_min();
+private:
+	Real project_surface_deltaE();
+	void track_surface_E_min();
 
-		bool decide_procrastinate_surface_computations( Real const pd_deltaE, Real const threshold ) const;
+	bool decide_procrastinate_surface_computations( Real const pd_deltaE, Real const threshold ) const;
 
-		bool calculated_surface_deltaE_;
-		Real deltaE_for_substitution_;
+	bool calculated_surface_deltaE_;
+	Real deltaE_for_substitution_;
 
-		Real curr_state_total_hASA_;
-		Real alt_state_total_hASA_;
+	Real curr_state_total_hASA_;
+	Real alt_state_total_hASA_;
 
-		bool have_prepared_for_simA_;
+	bool have_prepared_for_simA_;
 
-		Real surface_score_min_last_100_;
-		Real surface_score_min_recent_;
-		int num_substitutions_since_surface_min_update_;
-		bool observed_sufficient_surface_E_to_predict_min_;
+	Real surface_score_min_last_100_;
+	Real surface_score_min_recent_;
+	int num_substitutions_since_surface_min_update_;
+	bool observed_sufficient_surface_E_to_predict_min_;
 
-		bool surface_exposed_;
-		bool is_below_buried_residue_no_hsasa_cutoff_;
-		std::map< std::pair<int, int >, int > fc_neighbor_map;
-		std::map< std::pair<int, int >, int > bg_neighbor_map;
+	bool surface_exposed_;
+	bool is_below_buried_residue_no_hsasa_cutoff_;
+	std::map< std::pair<int, int >, int > fc_neighbor_map;
+	std::map< std::pair<int, int >, int > bg_neighbor_map;
 
-		mutable int num_neighbors_counting_self_;
+	mutable int num_neighbors_counting_self_;
 
-		static Real surface_energy_weight_;
-		static const int MAX_SURFACE_ENERGY;
-		static const int INTERACTION_RADIUS = 10;
-		static const int SURFACE_EXPOSED_CUTOFF = 20;
-		static const int BURIED_RESIDUE_NO_HSASA_CUTOFF = 24;
-		static const int MAX_PATCH_SURFACE_AREA = 1100;
+	static Real surface_energy_weight_;
+	static const int MAX_SURFACE_ENERGY;
+	static const int INTERACTION_RADIUS = 10;
+	static const int SURFACE_EXPOSED_CUTOFF = 20;
+	static const int BURIED_RESIDUE_NO_HSASA_CUTOFF = 24;
+	static const int MAX_PATCH_SURFACE_AREA = 1100;
 
-		static int num_state_substitutions_considered_;
-		static int num_surface_comps_procrastinated_;
-		static int num_surface_comps_later_made_;
+	static int num_state_substitutions_considered_;
+	static int num_surface_comps_procrastinated_;
+	static int num_surface_comps_later_made_;
 
-		//no default constructor, uncopyable
-		SurfaceNode();
-		SurfaceNode( SurfaceNode< V, E, G > const & );
-		SurfaceNode< V, E, G > & operator = ( SurfaceNode< V, E, G > const & );
+	//no default constructor, uncopyable
+	SurfaceNode();
+	SurfaceNode( SurfaceNode< V, E, G > const & );
+	SurfaceNode< V, E, G > & operator = ( SurfaceNode< V, E, G > const & );
 
 
 };
@@ -230,85 +230,85 @@ class SurfaceNode : public FirstClassNode< V, E, G > {
 template < typename V, typename E, typename G >
 class SurfaceBackgroundNode : public BackgroundNode< V, E, G > {
 
-	public:
-		typedef BackgroundNode< V, E, G > parent;
+public:
+	typedef BackgroundNode< V, E, G > parent;
 
-	public:
+public:
 
-		SurfaceBackgroundNode( AdditionalBackgroundNodesInteractionGraph< V, E, G > * owner, int node_index );
-		virtual ~SurfaceBackgroundNode();
+	SurfaceBackgroundNode( AdditionalBackgroundNodesInteractionGraph< V, E, G > * owner, int node_index );
+	virtual ~SurfaceBackgroundNode();
 
-		bool detect_neighborship( SurfaceNode< V, E, G >* node ) const;
+	bool detect_neighborship( SurfaceNode< V, E, G >* node ) const;
 
-		Real project_surface_deltaE_for_substitution( SurfaceNode< V, E, G >* fc_node_changing,
-				int changing_nodes_curr_state, int changing_nodes_alt_state );
+	Real project_surface_deltaE_for_substitution( SurfaceNode< V, E, G >* fc_node_changing,
+		int changing_nodes_curr_state, int changing_nodes_alt_state );
 
-		void acknowledge_substitution_surface();
-		Real get_surface_score() const;
+	void acknowledge_substitution_surface();
+	Real get_surface_score() const;
 
-		virtual void prepare_for_simulated_annealing();
-		void print() const;
+	virtual void prepare_for_simulated_annealing();
+	void print() const;
 
-		virtual unsigned int count_static_memory() const;
-		virtual unsigned int count_dynamic_memory() const;
+	virtual unsigned int count_static_memory() const;
+	virtual unsigned int count_dynamic_memory() const;
 
-		inline
-		conformation::Residue const & wt_residue_for_node() const {
-			return get_surface_owner()->pose().residue( (get_surface_owner()->bg_node_2_resid(parent::get_node_index())) );
-		}
+	inline
+	conformation::Residue const & wt_residue_for_node() const {
+		return get_surface_owner()->pose().residue( (get_surface_owner()->bg_node_2_resid(parent::get_node_index())) );
+	}
 
-		bool is_surface_exposed() const;
-		void surface_exposed( bool value );
-		bool is_below_buried_residue_no_hsasa_cutoff() const;
-		void is_below_buried_residue_no_hsasa_cutoff( bool value );
+	bool is_surface_exposed() const;
+	void surface_exposed( bool value );
+	bool is_below_buried_residue_no_hsasa_cutoff() const;
+	void is_below_buried_residue_no_hsasa_cutoff( bool value );
 
-		void reset_alt_state_total_hASA();
+	void reset_alt_state_total_hASA();
 
-		void initialize_num_neighbors_counting_self() const;
-		int num_neighbors_counting_self() const;
+	void initialize_num_neighbors_counting_self() const;
+	int num_neighbors_counting_self() const;
 
-		void init_hASA_variables();
-		Real calculate_amount_total_hydrophobic_ASA();
-		Real average_residue_hASA() const;
-		Real average_residue_hASA( chemical::AA residue_type, Size num_nbs ) const;
-		Real hASA_energy( Real patch_area ) const;
+	void init_hASA_variables();
+	Real calculate_amount_total_hydrophobic_ASA();
+	Real average_residue_hASA() const;
+	Real average_residue_hASA( chemical::AA residue_type, Size num_nbs ) const;
+	Real hASA_energy( Real patch_area ) const;
 
-		// Only used for the unit tests.
-		Real get_current_hASA();
-		Real get_alt_hASA();
+	// Only used for the unit tests.
+	Real get_current_hASA();
+	Real get_alt_hASA();
 
-	protected:
-		inline
-		SurfaceInteractionGraph< V, E, G >* get_surface_owner() const {
-			return (SurfaceInteractionGraph< V, E, G >*) parent::get_owner();
-		}
+protected:
+	inline
+	SurfaceInteractionGraph< V, E, G >* get_surface_owner() const {
+		return (SurfaceInteractionGraph< V, E, G >*) parent::get_owner();
+	}
 
-		inline
-		SurfaceBackgroundEdge< V, E, G >* get_surface_bg_edge( int index ) {
-			return (SurfaceBackgroundEdge< V, E, G >*) parent::get_incident_edge( index );
-		}
+	inline
+	SurfaceBackgroundEdge< V, E, G >* get_surface_bg_edge( int index ) {
+		return (SurfaceBackgroundEdge< V, E, G >*) parent::get_incident_edge( index );
+	}
 
-	private:
-		static Real surface_energy_weight_;
-		static const int MAX_SURFACE_ENERGY;
-		static const int INTERACTION_RADIUS = 10;
-		static const int SURFACE_EXPOSED_CUTOFF = 20;
-		static const int BURIED_RESIDUE_NO_HSASA_CUTOFF = 24;
-		static const int MAX_PATCH_SURFACE_AREA = 1100;
+private:
+	static Real surface_energy_weight_;
+	static const int MAX_SURFACE_ENERGY;
+	static const int INTERACTION_RADIUS = 10;
+	static const int SURFACE_EXPOSED_CUTOFF = 20;
+	static const int BURIED_RESIDUE_NO_HSASA_CUTOFF = 24;
+	static const int MAX_PATCH_SURFACE_AREA = 1100;
 
-		Real curr_state_total_hASA_;
-		Real alt_state_total_hASA_;
+	Real curr_state_total_hASA_;
+	Real alt_state_total_hASA_;
 
-		bool have_prepared_for_simA_;
+	bool have_prepared_for_simA_;
 
-		bool surface_exposed_;
-		bool is_below_buried_residue_no_hsasa_cutoff_;
-		mutable int num_neighbors_counting_self_;
+	bool surface_exposed_;
+	bool is_below_buried_residue_no_hsasa_cutoff_;
+	mutable int num_neighbors_counting_self_;
 
-		//no default constructor, uncopyable
-		SurfaceBackgroundNode();
-		SurfaceBackgroundNode( SurfaceBackgroundNode< V, E, G > const & );
-		SurfaceBackgroundNode< V, E, G > & operator = ( SurfaceBackgroundNode< V, E, G > const & );
+	//no default constructor, uncopyable
+	SurfaceBackgroundNode();
+	SurfaceBackgroundNode( SurfaceBackgroundNode< V, E, G > const & );
+	SurfaceBackgroundNode< V, E, G > & operator = ( SurfaceBackgroundNode< V, E, G > const & );
 
 };
 
@@ -324,66 +324,66 @@ class SurfaceBackgroundNode : public BackgroundNode< V, E, G > {
 template < typename V, typename E, typename G >
 class  SurfaceEdge : public FirstClassEdge< V, E, G > {
 
-	public:
-		typedef  FirstClassEdge< V, E, G >  parent;
+public:
+	typedef  FirstClassEdge< V, E, G >  parent;
 
-	public:
-		SurfaceEdge( G* owner, int node1, int node2 );
-		virtual ~SurfaceEdge();
+public:
+	SurfaceEdge( G* owner, int node1, int node2 );
+	virtual ~SurfaceEdge();
 
-		void acknowledge_state_zeroed_surface( int node_index );
+	void acknowledge_state_zeroed_surface( int node_index );
 
-		Real get_surface_deltaE_for_neighbor( int node_considering_substitution, int alt_state );
+	Real get_surface_deltaE_for_neighbor( int node_considering_substitution, int alt_state );
 
-		Real get_current_two_body_energy() const;
-		void acknowledge_substitution_surface();
+	Real get_current_two_body_energy() const;
+	void acknowledge_substitution_surface();
 
-		//Virtual methods from EdgeBase
-		virtual void declare_energies_final();
-		virtual void prepare_for_simulated_annealing();
-		virtual unsigned int getMemoryUsageInBytes() const;
+	//Virtual methods from EdgeBase
+	virtual void declare_energies_final();
+	virtual void prepare_for_simulated_annealing();
+	virtual unsigned int getMemoryUsageInBytes() const;
 
-		Real get_max_surface_deltaE_guess( int node_changing ) const;
+	Real get_max_surface_deltaE_guess( int node_changing ) const;
 
-		virtual unsigned int count_static_memory() const;
-		virtual unsigned int count_dynamic_memory() const;
+	virtual unsigned int count_static_memory() const;
+	virtual unsigned int count_dynamic_memory() const;
 
-		// this method used only for testing
-		inline
-		void set_max_surface_deltaE() {
-			max_surface_deltaE_last_50_commits_[0] = max_surface_deltaE_last_50_commits_[1] = 0.1;
-		}
+	// this method used only for testing
+	inline
+	void set_max_surface_deltaE() {
+		max_surface_deltaE_last_50_commits_[0] = max_surface_deltaE_last_50_commits_[1] = 0.1;
+	}
 
-//	protected:
-	public:
-		// Need to make this method public so that SurfaceNodes can call methods on the SurfaceBackgroundNode connected to them
-		// via this Edge.  The class hierarchy/design does not necessitate this; just some debugging checks in the SurfaceNode that need
-		// access to the BackgroundNode object.
-		inline
-		SurfaceNode< V, E, G >* get_surface_node( int index ) {
-			return (SurfaceNode< V, E, G >*) E::get_node( index );
-		}
+	// protected:
+public:
+	// Need to make this method public so that SurfaceNodes can call methods on the SurfaceBackgroundNode connected to them
+	// via this Edge.  The class hierarchy/design does not necessitate this; just some debugging checks in the SurfaceNode that need
+	// access to the BackgroundNode object.
+	inline
+	SurfaceNode< V, E, G >* get_surface_node( int index ) {
+		return (SurfaceNode< V, E, G >*) E::get_node( index );
+	}
 
-	private:
-		inline
-		void inform_non_changing_node_of_neighbors_change();
+private:
+	inline
+	void inform_non_changing_node_of_neighbors_change();
 
-		int node_changing_;
-		int node_not_changing_;
-		int nodes_curr_states_[2];
-		int nodes_alt_states_[2];
+	int node_changing_;
+	int node_not_changing_;
+	int nodes_curr_states_[2];
+	int nodes_alt_states_[2];
 
-		Real max_surface_deltaE_last_50_commits_[2];
-		Real max_surface_deltaE_recent_50_commits_[2];
-		Real magnitude_last_surface_deltaE_[2];
-		int num_surface_deltaE_observations_since_update_[2];
+	Real max_surface_deltaE_last_50_commits_[2];
+	Real max_surface_deltaE_recent_50_commits_[2];
+	Real magnitude_last_surface_deltaE_[2];
+	int num_surface_deltaE_observations_since_update_[2];
 
-		void track_max_magnitude_surface_deltaE();
+	void track_max_magnitude_surface_deltaE();
 
-		//no default constructor, uncopyable
-		SurfaceEdge();
-		SurfaceEdge( SurfaceEdge< V, E, G > const & );
-		SurfaceEdge< V, E, G > & operator = ( SurfaceEdge< V, E, G > const & );
+	//no default constructor, uncopyable
+	SurfaceEdge();
+	SurfaceEdge( SurfaceEdge< V, E, G > const & );
+	SurfaceEdge< V, E, G > & operator = ( SurfaceEdge< V, E, G > const & );
 };
 
 
@@ -402,60 +402,60 @@ class  SurfaceEdge : public FirstClassEdge< V, E, G > {
 template < typename V, typename E, typename G >
 class SurfaceBackgroundEdge : public BackgroundToFirstClassEdge< V, E, G > {
 
-	public:
-		typedef  BackgroundToFirstClassEdge< V, E, G > parent;
+public:
+	typedef  BackgroundToFirstClassEdge< V, E, G > parent;
 
-	public:
-		SurfaceBackgroundEdge( AdditionalBackgroundNodesInteractionGraph< V, E, G >* owner, int first_class_node_index, int background_node_index );
-		virtual ~SurfaceBackgroundEdge();
+public:
+	SurfaceBackgroundEdge( AdditionalBackgroundNodesInteractionGraph< V, E, G >* owner, int first_class_node_index, int background_node_index );
+	virtual ~SurfaceBackgroundEdge();
 
-		void prepare_for_simulated_annealing();
+	void prepare_for_simulated_annealing();
 
-		Real get_surface_deltaE_for_substitution( int alt_state );
-		void acknowledge_substitution_surface();
-		void acknowledge_state_change( int new_state );
-		Real get_max_surface_deltaE_guess() const;
+	Real get_surface_deltaE_for_substitution( int alt_state );
+	void acknowledge_substitution_surface();
+	void acknowledge_state_change( int new_state );
+	Real get_max_surface_deltaE_guess() const;
 
-		virtual unsigned int count_static_memory() const;
-		virtual unsigned int count_dynamic_memory() const;
+	virtual unsigned int count_static_memory() const;
+	virtual unsigned int count_dynamic_memory() const;
 
-		// this function only used for unit tests
-		inline
-		void set_max_surface_deltaE() {
-			max_surface_deltaE_last_50_commits_ = 0.1;
-		}
+	// this function only used for unit tests
+	inline
+	void set_max_surface_deltaE() {
+		max_surface_deltaE_last_50_commits_ = 0.1;
+	}
 
-	public:
-		// Making this method public also so that a BGNode can call a method on a Node via this Edge.
-		inline
-		SurfaceNode< V, E, G >* get_surface_node() const {
-			return (SurfaceNode< V, E, G >*) parent::get_first_class_node();
-		}
+public:
+	// Making this method public also so that a BGNode can call a method on a Node via this Edge.
+	inline
+	SurfaceNode< V, E, G >* get_surface_node() const {
+		return (SurfaceNode< V, E, G >*) parent::get_first_class_node();
+	}
 
-	public:
-		// Need to make this method public so that SurfaceNodes can call methods on the SurfaceBackgroundNode connected to them
-		// via this Edge.  The class hierarchy/design does not necessitate this; just some debugging checks in the SurfaceNode that need
-		// access to the BackgroundNode object.
-		inline
-		SurfaceBackgroundNode< V, E, G >* get_surface_bg_node() const {
-			return (SurfaceBackgroundNode< V, E, G >*) parent::get_background_node();
-		}
+public:
+	// Need to make this method public so that SurfaceNodes can call methods on the SurfaceBackgroundNode connected to them
+	// via this Edge.  The class hierarchy/design does not necessitate this; just some debugging checks in the SurfaceNode that need
+	// access to the BackgroundNode object.
+	inline
+	SurfaceBackgroundNode< V, E, G >* get_surface_bg_node() const {
+		return (SurfaceBackgroundNode< V, E, G >*) parent::get_background_node();
+	}
 
-	private:
-		int fc_node_curr_state_;
-		int fc_node_alt_state_;
+private:
+	int fc_node_curr_state_;
+	int fc_node_alt_state_;
 
-		Real max_surface_deltaE_last_50_commits_;
-		Real max_surface_deltaE_recent_50_commits_;
-		Real magnitude_last_surface_deltaE_;
-		int num_surface_deltaE_observations_since_update_;
+	Real max_surface_deltaE_last_50_commits_;
+	Real max_surface_deltaE_recent_50_commits_;
+	Real magnitude_last_surface_deltaE_;
+	int num_surface_deltaE_observations_since_update_;
 
-		void track_max_magnitude_surface_deltaE();
+	void track_max_magnitude_surface_deltaE();
 
-		//no default constructor, uncopyable
-		SurfaceBackgroundEdge();
-		SurfaceBackgroundEdge( SurfaceBackgroundEdge< V, E, G > const & );
-		SurfaceBackgroundEdge< V, E, G > & operator = ( SurfaceBackgroundEdge< V, E, G > const & );
+	//no default constructor, uncopyable
+	SurfaceBackgroundEdge();
+	SurfaceBackgroundEdge( SurfaceBackgroundEdge< V, E, G > const & );
+	SurfaceBackgroundEdge< V, E, G > & operator = ( SurfaceBackgroundEdge< V, E, G > const & );
 
 };
 
@@ -475,116 +475,116 @@ class SurfaceBackgroundEdge : public BackgroundToFirstClassEdge< V, E, G > {
 template < typename V, typename E, typename G >
 class SurfaceInteractionGraph : public AdditionalBackgroundNodesInteractionGraph< V, E, G > {
 
-	public:
-		typedef  AdditionalBackgroundNodesInteractionGraph< V, E, G >  parent;
+public:
+	typedef  AdditionalBackgroundNodesInteractionGraph< V, E, G >  parent;
 
-	public:
-		SurfaceInteractionGraph( int num_nodes );
-		virtual ~SurfaceInteractionGraph();
+public:
+	SurfaceInteractionGraph( int num_nodes );
+	virtual ~SurfaceInteractionGraph();
 
-		void initialize( rotamer_set::RotamerSetsBase const & rot_sets );
+	void initialize( rotamer_set::RotamerSetsBase const & rot_sets );
 
-		// Virtual public methods from InteractionGraphBase
-		virtual void prepare_for_simulated_annealing();
-		virtual void  blanket_assign_state_0();
-		virtual core::PackerEnergy set_state_for_node( int node_ind, int new_state );
-		virtual core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int& node_states );
+	// Virtual public methods from InteractionGraphBase
+	virtual void prepare_for_simulated_annealing();
+	virtual void  blanket_assign_state_0();
+	virtual core::PackerEnergy set_state_for_node( int node_ind, int new_state );
+	virtual core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int& node_states );
 
-		virtual void consider_substitution( int node_ind, int new_state, core::PackerEnergy & delta_energy, core::PackerEnergy & prev_energy_for_node );
-		virtual core::PackerEnergy commit_considered_substitution();
-		virtual core::PackerEnergy get_energy_current_state_assignment();
+	virtual void consider_substitution( int node_ind, int new_state, core::PackerEnergy & delta_energy, core::PackerEnergy & prev_energy_for_node );
+	virtual core::PackerEnergy commit_considered_substitution();
+	virtual core::PackerEnergy get_energy_current_state_assignment();
 
-		using parent::set_errorfull_deltaE_threshold;
+	using parent::set_errorfull_deltaE_threshold;
 
-		virtual void set_errorfull_deltaE_threshold( Real deltaE );
+	virtual void set_errorfull_deltaE_threshold( Real deltaE );
 
-		void set_num_residues_in_protein( int num_res );
-		void set_num_background_residues( int num_background_residues );
-		void set_residue_as_background_residue( int residue );
+	void set_num_residues_in_protein( int num_res );
+	void set_num_background_residues( int num_background_residues );
+	void set_residue_as_background_residue( int residue );
 
-		void print_internal_energies_for_current_state_assignment();
+	void print_internal_energies_for_current_state_assignment();
 
-		virtual int get_edge_memory_usage() const;
-		virtual unsigned int count_static_memory() const;
-		virtual unsigned int count_dynamic_memory() const;
-		void print() const;
+	virtual int get_edge_memory_usage() const;
+	virtual unsigned int count_static_memory() const;
+	virtual unsigned int count_dynamic_memory() const;
+	void print() const;
 
-		inline
-		pose::Pose const & pose() const { return *pose_; }
-		void set_pose( pose::Pose const & pose );
+	inline
+	pose::Pose const & pose() const { return *pose_; }
+	void set_pose( pose::Pose const & pose );
 
-		inline
-		task::PackerTask const & packer_task() const { return *packer_task_; }
-		void set_packer_task( task::PackerTask const & task );
+	inline
+	task::PackerTask const & packer_task() const { return *packer_task_; }
+	void set_packer_task( task::PackerTask const & task );
 
-		void set_surface_score_weight( Real weight ) { surface_score_weight_ = weight; }
-		Real surface_score_weight() { return surface_score_weight_; }
+	void set_surface_score_weight( Real weight ) { surface_score_weight_ = weight; }
+	Real surface_score_weight() { return surface_score_weight_; }
 
-		inline
-		rotamer_set::RotamerSets const & rotamer_sets() const { return *rotamer_sets_; }
-		void set_rotamer_sets( rotamer_set::RotamerSets const & rotsets );
+	inline
+	rotamer_set::RotamerSets const & rotamer_sets() const { return *rotamer_sets_; }
+	void set_rotamer_sets( rotamer_set::RotamerSets const & rotsets );
 
-		int bg_node_2_resid( int node_index );
+	int bg_node_2_resid( int node_index );
 
-		// methods used only by unit tests
-		std::vector<int> get_network_state() const;
-		void set_observed_sufficient_boolean_true();
-		std::vector<Real> get_hASA_for_node_and_nbs(int index);
-		std::vector<Real> get_alt_state_hASA_for_node_and_nbs(int index);
+	// methods used only by unit tests
+	std::vector<int> get_network_state() const;
+	void set_observed_sufficient_boolean_true();
+	std::vector<Real> get_hASA_for_node_and_nbs(int index);
+	std::vector<Real> get_alt_state_hASA_for_node_and_nbs(int index);
 
-	protected:
+protected:
 
-		//Factory Methods:
-		//From InteractionGraphBase
-		virtual core::pack::interaction_graph::NodeBase* create_new_node( int node_index, int num_states );
-		virtual core::pack::interaction_graph::EdgeBase* create_new_edge( int index1, int index2);
+	//Factory Methods:
+	//From InteractionGraphBase
+	virtual core::pack::interaction_graph::NodeBase* create_new_node( int node_index, int num_states );
+	virtual core::pack::interaction_graph::EdgeBase* create_new_edge( int index1, int index2);
 
-		//From AdditionalBackgroundNodesInteractionGraph
-		virtual BackgroundNode< V, E, G >* create_background_node( int node_index );
-		virtual BackgroundToFirstClassEdge< V, E, G >* create_background_edge( int fc_node_index, int bg_node_index);
+	//From AdditionalBackgroundNodesInteractionGraph
+	virtual BackgroundNode< V, E, G >* create_background_node( int node_index );
+	virtual BackgroundToFirstClassEdge< V, E, G >* create_background_edge( int fc_node_index, int bg_node_index);
 
-		inline
-		SurfaceNode< V, E, G >* get_surface_node( int index ) const {
-			return (SurfaceNode< V, E, G >*) G::get_node( index );
-		}
+	inline
+	SurfaceNode< V, E, G >* get_surface_node( int index ) const {
+		return (SurfaceNode< V, E, G >*) G::get_node( index );
+	}
 
-		inline
-		SurfaceBackgroundNode< V, E, G >* get_surface_bg_node( int index ) const {
-			return (SurfaceBackgroundNode< V, E, G >*) parent::get_background_node( index );
-		}
+	inline
+	SurfaceBackgroundNode< V, E, G >* get_surface_bg_node( int index ) const {
+		return (SurfaceBackgroundNode< V, E, G >*) parent::get_background_node( index );
+	}
 
-		void update_internal_energy_totals_surface();
+	void update_internal_energy_totals_surface();
 
-	private:
-		void detect_background_residue_and_first_class_residue_neighbors();
-		void blanket_reset_alt_state_total_hASAs();
+private:
+	void detect_background_residue_and_first_class_residue_neighbors();
+	void blanket_reset_alt_state_total_hASAs();
 
-		int num_total_residues_;
-		int num_residues_assigned_as_background_;
+	int num_total_residues_;
+	int num_residues_assigned_as_background_;
 
-		utility::vector1< int > resid_2_bgenumeration_;
-		utility::vector1< int > bgenumeration_2_resid_;
+	utility::vector1< int > resid_2_bgenumeration_;
+	utility::vector1< int > bgenumeration_2_resid_;
 
-		int num_commits_since_last_update_;
-		core::PackerEnergy total_energy_current_state_assignment_;
-		core::PackerEnergy total_energy_alternate_state_assignment_;
-		int node_considering_alt_state_;
-		Real deltaE_threshold_for_avoiding_surface_calcs_;
-		bool prepared_for_simulated_annealing_;
+	int num_commits_since_last_update_;
+	core::PackerEnergy total_energy_current_state_assignment_;
+	core::PackerEnergy total_energy_alternate_state_assignment_;
+	int node_considering_alt_state_;
+	Real deltaE_threshold_for_avoiding_surface_calcs_;
+	bool prepared_for_simulated_annealing_;
 
-		static const int COMMIT_LIMIT_BETWEEN_UPDATES = 1024; // 2^10
-		static const int SURFACE_EXPOSED_CUTOFF = 20;
-		static const int BURIED_RESIDUE_NO_HSASA_CUTOFF = 24;
+	static const int COMMIT_LIMIT_BETWEEN_UPDATES = 1024; // 2^10
+	static const int SURFACE_EXPOSED_CUTOFF = 20;
+	static const int BURIED_RESIDUE_NO_HSASA_CUTOFF = 24;
 
-		pose::PoseOP pose_;
-		task::PackerTaskOP packer_task_;
-		rotamer_set::RotamerSetsOP rotamer_sets_;
-		core::Real surface_score_weight_;
+	pose::PoseOP pose_;
+	task::PackerTaskOP packer_task_;
+	rotamer_set::RotamerSetsOP rotamer_sets_;
+	core::Real surface_score_weight_;
 
-		//no default constructor, uncopyable
-		SurfaceInteractionGraph();
-		SurfaceInteractionGraph( SurfaceInteractionGraph< V, E, G > const & );
-		SurfaceInteractionGraph< V, E, G > & operator = ( SurfaceInteractionGraph< V, E, G > const & );
+	//no default constructor, uncopyable
+	SurfaceInteractionGraph();
+	SurfaceInteractionGraph( SurfaceInteractionGraph< V, E, G > const & );
+	SurfaceInteractionGraph< V, E, G > & operator = ( SurfaceInteractionGraph< V, E, G > const & );
 
 };
 
@@ -622,20 +622,20 @@ int SurfaceNode< V, E, G >::num_surface_comps_later_made_( 0 );
 ///
 template < typename V, typename E, typename G >
 SurfaceNode< V, E, G >::SurfaceNode( G* owner, int node_index, int num_states ) :
-	FirstClassNode< V, E, G > ( owner, node_index, num_states ),
-	rotamers_vector_( num_states ),
-	calculated_surface_deltaE_( false ),
-	deltaE_for_substitution_( 0.0f ),
-	curr_state_total_hASA_( 0.0 ),
-	alt_state_total_hASA_( 0 ),
-	have_prepared_for_simA_( false ),
-	surface_score_min_last_100_( 0 ),
-	surface_score_min_recent_( 0 ),
-	num_substitutions_since_surface_min_update_( 0 ),
-	observed_sufficient_surface_E_to_predict_min_( false ),
-	surface_exposed_( false ),
-	is_below_buried_residue_no_hsasa_cutoff_( false ),
-	num_neighbors_counting_self_(-1)
+FirstClassNode< V, E, G > ( owner, node_index, num_states ),
+rotamers_vector_( num_states ),
+calculated_surface_deltaE_( false ),
+deltaE_for_substitution_( 0.0f ),
+curr_state_total_hASA_( 0.0 ),
+alt_state_total_hASA_( 0 ),
+have_prepared_for_simA_( false ),
+surface_score_min_last_100_( 0 ),
+surface_score_min_recent_( 0 ),
+num_substitutions_since_surface_min_update_( 0 ),
+observed_sufficient_surface_E_to_predict_min_( false ),
+surface_exposed_( false ),
+is_below_buried_residue_no_hsasa_cutoff_( false ),
+num_neighbors_counting_self_(-1)
 {
 	// the weight to apply to the surface score is stored in the packer task. this allows users to change the
 	// weight with a command line option
@@ -764,10 +764,10 @@ bool SurfaceNode< V, E, G >::detect_neighborship_with_node( int node_index, bool
 
 	// for every Edge in the neighbor graph, figure out if that residue is surface exposed *and* hydrophobic
 	/* for ( core::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node( fc_node_index )->const_edge_list_begin(),
-		eli_end = tenA_neighbor_graph.get_node( fc_node_index )->const_edge_list_end(); eli != eli_end; ++eli ) {
-		if ( (*eli)->get_other_ind( fc_node_index ) == node_index ) {
-			return true;
-		}
+	eli_end = tenA_neighbor_graph.get_node( fc_node_index )->const_edge_list_end(); eli != eli_end; ++eli ) {
+	if ( (*eli)->get_other_ind( fc_node_index ) == node_index ) {
+	return true;
+	}
 	} */
 
 	// if not within the interaction radius, not neighbors
@@ -804,7 +804,7 @@ void SurfaceNode< V, E, G >::assign_zero_state() {
 
 	parent::update_bg_edge_vector();
 
-	for (int ii = 1; ii <= parent::get_num_edges_to_background_nodes(); ++ii ) {
+	for ( int ii = 1; ii <= parent::get_num_edges_to_background_nodes(); ++ii ) {
 		get_edge_to_surface_bg_node( ii )->acknowledge_state_change( 0 );
 	}
 
@@ -1109,13 +1109,15 @@ bool SurfaceNode< V, E, G >::decide_procrastinate_surface_computations( Real con
 
 	Real surface_deltaE_max = 0;
 
-	if ( ! observed_sufficient_surface_E_to_predict_min_ )
+	if ( ! observed_sufficient_surface_E_to_predict_min_ ) {
 		return false;
+	}
 
-	if ( threshold < 0 || pd_deltaE < 0 )
+	if ( threshold < 0 || pd_deltaE < 0 ) {
 		return false;
+	}
 
-	for( int ii = 1; ii <= parent::get_num_incident_edges(); ++ii) {
+	for ( int ii = 1; ii <= parent::get_num_incident_edges(); ++ii ) {
 		Real mag_deltaE = get_incident_surface_edge(ii)->get_max_surface_deltaE_guess( parent::get_node_index() );
 		if ( mag_deltaE < 0.0f ) {
 			return false;
@@ -1169,7 +1171,7 @@ bool SurfaceNode< V, E, G >::decide_procrastinate_surface_computations( Real con
 /// the current state of this node may be unassigned (0). if so, we need to initialize the hASA properly.
 /// as of 7/22, the current amount of hydrophobic surface area should be init'd after prep for simA runs. alt state also.
 /// if ( parent::get_current_state() == 0 )
-///	curr_state_total_hASA_ = get_surface_owner()->calculate_amount_total_hydrophobic_ASA;
+/// curr_state_total_hASA_ = get_surface_owner()->calculate_amount_total_hydrophobic_ASA;
 ///
 /// 07/24/08 problem situation
 /// it's probable that a sub that was considered before wasn't committed, so the alt state count at this node needs to go
@@ -1178,13 +1180,13 @@ bool SurfaceNode< V, E, G >::decide_procrastinate_surface_computations( Real con
 /// will have its alt state count reset but what about all the other nodes in the previous set.  how will their counts get
 /// reset to the current state count?  perhaps a check in the commit method can be added.  nope, a new method has been
 /// added to Nodes and BGNodes to handle this case.
-///	alt_state_total_hASA_ = curr_state_total_hASA_;
+/// alt_state_total_hASA_ = curr_state_total_hASA_;
 ///
 /// 02/20/09 Changed all variable names above to reflect hASA instead of counts.
 ///
 template < typename V, typename E, typename G >
 Real SurfaceNode< V, E, G >::get_surface_deltaE_for_neighbors_state_substitution(
-			SurfaceNode<V,E,G>* node_considering_substitution, int changing_nodes_curr_state, int changing_nodes_alt_state ) {
+	SurfaceNode<V,E,G>* node_considering_substitution, int changing_nodes_curr_state, int changing_nodes_alt_state ) {
 
 	// If this node is not surface exposed, then it doesn't have a surface score. Even if another neighboring node is
 	// changing state, this node should be unaffected because it's not on the surface.  Only residues which are on the
@@ -1313,7 +1315,7 @@ Real SurfaceNode< V, E, G >::get_surface_score_difference() const {
 template < typename V, typename E, typename G >
 Real SurfaceNode< V, E, G >::commit_considered_substitution_surface() {
 
-debug_assert( parent::considering_alternate_state() );
+	debug_assert( parent::considering_alternate_state() );
 
 #ifdef DOUBLE_CHECK_COUNTS
 	int previous_state = parent::get_current_state();
@@ -1345,7 +1347,7 @@ debug_assert( parent::considering_alternate_state() );
 	for ( int ii = 1; ii <= parent::get_num_incident_edges(); ++ii ) {
 		get_incident_surface_edge(ii)->acknowledge_substitution_surface();
 	}
-	for (int ii = 1; ii <= parent::get_num_edges_to_background_nodes(); ++ii) {
+	for ( int ii = 1; ii <= parent::get_num_edges_to_background_nodes(); ++ii ) {
 		get_edge_to_surface_bg_node(ii)->acknowledge_substitution_surface();
 	}
 
@@ -1394,7 +1396,7 @@ void SurfaceNode< V, E, G >::verify_patch_areas_correct( int node_id, int previo
 	//core::scoring::TenANeighborGraph const & tenA_neighbor_graph( get_surface_owner()->pose().energies().tenA_neighbor_graph() );
 
 	//for ( core::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node( parent::get_node_index() )->const_edge_list_begin(),
-	//		eli_end = tenA_neighbor_graph.get_node( parent::get_node_index() )->const_edge_list_end(); eli != eli_end; ++eli ) {
+	//  eli_end = tenA_neighbor_graph.get_node( parent::get_node_index() )->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 	pose::Pose poseRef = get_surface_owner()->pose();
 
@@ -1430,13 +1432,13 @@ void SurfaceNode< V, E, G >::verify_patch_areas_correct( int node_id, int previo
 
 				//if ( get_incident_surface_edge(ii)->get_surface_node( edge_index )->is_surface_exposed() ) {
 
-					// don't bother checking the patch areas if there's still unassigned nodes
-					if ( (get_incident_surface_edge(ii)->get_surface_node( edge_index ))->get_current_state() == 0 ) {
-						return;
-					}
-					total_hASA += (get_incident_surface_edge(ii)->get_surface_node( edge_index ))->average_residue_hASA();
-					TR_NODE << "verify_patch_areas_correct(): adding " << (get_incident_surface_edge(ii)->get_surface_node( edge_index ))->average_residue_hASA()
-						<< " to total_hASA for incident edge " << ii << ", total_hASA: " << total_hASA << std::endl;
+				// don't bother checking the patch areas if there's still unassigned nodes
+				if ( (get_incident_surface_edge(ii)->get_surface_node( edge_index ))->get_current_state() == 0 ) {
+					return;
+				}
+				total_hASA += (get_incident_surface_edge(ii)->get_surface_node( edge_index ))->average_residue_hASA();
+				TR_NODE << "verify_patch_areas_correct(): adding " << (get_incident_surface_edge(ii)->get_surface_node( edge_index ))->average_residue_hASA()
+					<< " to total_hASA for incident edge " << ii << ", total_hASA: " << total_hASA << std::endl;
 				//}
 			}
 		}
@@ -1463,9 +1465,9 @@ void SurfaceNode< V, E, G >::verify_patch_areas_correct( int node_id, int previo
 
 				// got the right SurfaceBackgroundEdge, now call the right methods on the BackgroundNode object
 				//if ( get_edge_to_surface_bg_node(ii)->get_surface_bg_node()->is_surface_exposed() ) {
-					total_hASA += (get_edge_to_surface_bg_node(ii)->get_surface_bg_node())->average_residue_hASA();
-					TR_NODE << "verify_patch_areas_correct(): adding " << (get_edge_to_surface_bg_node(ii)->get_surface_bg_node())->average_residue_hASA()
-						<< " to total_hASA for incident bg edge " << ii << ", total_hASA: " << total_hASA << std::endl;
+				total_hASA += (get_edge_to_surface_bg_node(ii)->get_surface_bg_node())->average_residue_hASA();
+				TR_NODE << "verify_patch_areas_correct(): adding " << (get_edge_to_surface_bg_node(ii)->get_surface_bg_node())->average_residue_hASA()
+					<< " to total_hASA for incident bg edge " << ii << ", total_hASA: " << total_hASA << std::endl;
 				//}
 			}
 		}
@@ -1516,7 +1518,7 @@ void SurfaceNode< V, E, G >::verify_patch_areas_correct( int node_id, int previo
 		std::cout << "Nodes counted iterating over all residues:" << std::endl;
 
 		{ // complete duplication of code above, but this is all debugging code!
-				for ( Size rr = 1; rr <= get_surface_owner()->rotamer_sets().nmoltenres(); ++rr ) {
+			for ( Size rr = 1; rr <= get_surface_owner()->rotamer_sets().nmoltenres(); ++rr ) {
 
 				if ( (int)rr == parent::get_node_index() ) { continue; } // skip if we're on the current residue
 
@@ -1594,15 +1596,16 @@ void SurfaceNode< V, E, G >::track_surface_E_min() {
 
 	Real alt_surfaceE = surface_energy_weight_ * hASA_energy( alt_state_total_hASA_ );
 
-	if ( surface_score_min_recent_ > alt_surfaceE )
+	if ( surface_score_min_recent_ > alt_surfaceE ) {
 		surface_score_min_recent_ = alt_surfaceE;
+	}
 
 	// every 100 substitutions, update the variable surface_score_min_last_100 with the value held in
 	// surface_score_min_recent_.  That explains the difference between last_100 and recent.
 	if ( num_substitutions_since_surface_min_update_ == 100 ) {
 		surface_score_min_last_100_ = surface_score_min_recent_;
 		Real curr_surfaceE = surface_energy_weight_ * hASA_energy( curr_state_total_hASA_ );
-		if (curr_surfaceE < surface_score_min_last_100_ ) {
+		if ( curr_surfaceE < surface_score_min_last_100_ ) {
 			surface_score_min_last_100_ = curr_surfaceE;
 		}
 		observed_sufficient_surface_E_to_predict_min_ = true;
@@ -1639,7 +1642,7 @@ void SurfaceNode< V, E, G >::print() const {
 		<< ", se: " << surface_exposed_ << std::endl;
 
 	//for ( int ii = 1; ii <= parent::get_num_incident_edges(); ++ii ) {
-	//	std::cout << "e:" << get_incident_surface_edge(ii)->get_first_node_ind() << "-" << get_incident_surface_edge(ii)->get_second_node_ind() << ", ";
+	// std::cout << "e:" << get_incident_surface_edge(ii)->get_first_node_ind() << "-" << get_incident_surface_edge(ii)->get_second_node_ind() << ", ";
 	//}
 	//std::cout << std::endl << std::endl;
 }
@@ -1683,13 +1686,14 @@ unsigned int SurfaceNode< V, E, G >::getMemoryUsageInBytes() const {
 template < typename V, typename E, typename G >
 void SurfaceNode< V, E, G >::print_surface_avoidance_stats() {
 
-	if (num_state_substitutions_considered_ == 0)
+	if ( num_state_substitutions_considered_ == 0 ) {
 		return;
+	}
 
 	TR_STATS << "SurfaceE Calculation Avoidance Statistics:" << std::endl;
 	TR_STATS << "num state substitutions considered: " << num_state_substitutions_considered_ << ", "
-			<< "num surface calcs procrastinated: " << num_surface_comps_procrastinated_ << ", "
-			<< "num surface calcs later computed: " << num_surface_comps_later_made_ << std::endl;
+		<< "num surface calcs procrastinated: " << num_surface_comps_procrastinated_ << ", "
+		<< "num surface calcs later computed: " << num_surface_comps_later_made_ << std::endl;
 	TR_STATS << "Percent Avoided: " << (double)(num_surface_comps_procrastinated_ - num_surface_comps_later_made_) / num_state_substitutions_considered_ << ", ";
 
 	if ( num_surface_comps_procrastinated_ != 0 ) {
@@ -1834,14 +1838,14 @@ void SurfaceNode< V, E, G >::initialize_num_neighbors_counting_self() const {
 
 	for ( Size ii=1; ii < poseRef.total_residue(); ++ii ) {
 
-		if ( ii == get_surface_owner()->rotamer_sets().moltenres_2_resid( parent::get_node_index() ) ) { continue; }
+	if ( ii == get_surface_owner()->rotamer_sets().moltenres_2_resid( parent::get_node_index() ) ) { continue; }
 
-		conformation::Residue const & rsd2 = poseRef.residue( ii );
+	conformation::Residue const & rsd2 = poseRef.residue( ii );
 
-		distanceBetweenAtoms = rsd1.xyz( rsd1.nbr_atom() ).distance( rsd2.xyz( rsd2.nbr_atom() ) );
-		if ( distanceBetweenAtoms <= INTERACTION_RADIUS ) {
-			num_neighbors_counting_self_++;
-		}
+	distanceBetweenAtoms = rsd1.xyz( rsd1.nbr_atom() ).distance( rsd2.xyz( rsd2.nbr_atom() ) );
+	if ( distanceBetweenAtoms <= INTERACTION_RADIUS ) {
+	num_neighbors_counting_self_++;
+	}
 
 	}
 
@@ -1969,7 +1973,7 @@ Real SurfaceNode<V, E, G>::calculate_amount_total_hydrophobic_ASA() {
 	}
 
 	//if ( total_hASA > 1200 ) {
-	//	utility_exit_with_message( "Nonsensical amount of hydrophobic accessible surface area found for residue. Quitting." );
+	// utility_exit_with_message( "Nonsensical amount of hydrophobic accessible surface area found for residue. Quitting." );
 	//}
 
 #ifdef FILE_DEBUG
@@ -2045,13 +2049,13 @@ const int SurfaceBackgroundNode< V, E, G >::MAX_SURFACE_ENERGY = 100;
 ///
 template < typename V, typename E, typename G >
 SurfaceBackgroundNode< V, E, G >::SurfaceBackgroundNode( AdditionalBackgroundNodesInteractionGraph< V, E, G >* owner, int node_index ) :
-	BackgroundNode< V, E, G > ( owner, node_index ),
-	curr_state_total_hASA_( 0.0 ),
-	alt_state_total_hASA_( 0.0 ),
-	have_prepared_for_simA_( false ),
-	surface_exposed_( false ),
-	is_below_buried_residue_no_hsasa_cutoff_( false ),
-	num_neighbors_counting_self_(-1)
+BackgroundNode< V, E, G > ( owner, node_index ),
+curr_state_total_hASA_( 0.0 ),
+alt_state_total_hASA_( 0.0 ),
+have_prepared_for_simA_( false ),
+surface_exposed_( false ),
+is_below_buried_residue_no_hsasa_cutoff_( false ),
+num_neighbors_counting_self_(-1)
 {
 	surface_energy_weight_ = get_surface_owner()->surface_score_weight();
 #ifdef FILE_DEBUG
@@ -2075,8 +2079,9 @@ SurfaceBackgroundNode< V, E, G >::~SurfaceBackgroundNode() {}
 template < typename V, typename E, typename G >
 void SurfaceBackgroundNode< V, E, G >::prepare_for_simulated_annealing() {
 
-	if ( ! parent::get_edge_vector_up_to_date() )
+	if ( ! parent::get_edge_vector_up_to_date() ) {
 		parent::update_edge_vector();
+	}
 
 	// initialize the areas for this background node properly
 	// the calculate ASA method assumes that BGNodes have edges to other FC nodes by this point.
@@ -2371,14 +2376,14 @@ void SurfaceBackgroundNode< V, E, G >::initialize_num_neighbors_counting_self() 
 
 	for ( Size ii=1; ii < poseRef.total_residue(); ++ii ) {
 
-		if ( ii == get_surface_owner()->rotamer_sets().moltenres_2_resid( parent::get_node_index() ) ) { continue; }
+	if ( ii == get_surface_owner()->rotamer_sets().moltenres_2_resid( parent::get_node_index() ) ) { continue; }
 
-		conformation::Residue const & rsd2 = poseRef.residue( ii );
+	conformation::Residue const & rsd2 = poseRef.residue( ii );
 
-		distanceBetweenAtoms = rsd1.xyz( rsd1.nbr_atom() ).distance( rsd2.xyz( rsd2.nbr_atom() ) );
-		if ( distanceBetweenAtoms <= INTERACTION_RADIUS ) {
-			num_neighbors_counting_self_++;
-		}
+	distanceBetweenAtoms = rsd1.xyz( rsd1.nbr_atom() ).distance( rsd2.xyz( rsd2.nbr_atom() ) );
+	if ( distanceBetweenAtoms <= INTERACTION_RADIUS ) {
+	num_neighbors_counting_self_++;
+	}
 
 	}
 
@@ -2464,9 +2469,9 @@ Real SurfaceBackgroundNode<V, E, G>::calculate_amount_total_hydrophobic_ASA() {
 	}
 
 	//if ( total_hASA > 1200 ) {
-	//	TR_BGNODE << "calculate_amount_total_hydrophobic_ASA(): calculating patch area for residue " << wt_residue_for_node().name3() << " "
-	//			<< get_surface_owner()->bg_node_2_resid( parent::get_node_index() ) << std::endl;
-	//	print();
+	// TR_BGNODE << "calculate_amount_total_hydrophobic_ASA(): calculating patch area for residue " << wt_residue_for_node().name3() << " "
+	//   << get_surface_owner()->bg_node_2_resid( parent::get_node_index() ) << std::endl;
+	// print();
 	//}
 
 #ifdef FILE_DEBUG
@@ -2537,9 +2542,9 @@ Real SurfaceBackgroundNode< V, E, G >::hASA_energy( Real patch_area ) const {
 ///
 template < typename V, typename E, typename G >
 SurfaceEdge< V, E, G >::SurfaceEdge( G* owner, int node1, int node2 ) :
-	FirstClassEdge< V, E, G > ( owner, node1, node2 ),
-	node_changing_( -1 ),
-	node_not_changing_( -1 )
+FirstClassEdge< V, E, G > ( owner, node1, node2 ),
+node_changing_( -1 ),
+node_not_changing_( -1 )
 {
 
 	nodes_curr_states_[ 0 ] = nodes_curr_states_[ 1 ] = 0;
@@ -2572,11 +2577,11 @@ void SurfaceEdge< V, E, G >::prepare_for_simulated_annealing() {
 		// if the two fc nodes aren't neighbors, then we don't need to keep this edge
 		if ( !( get_surface_node(0)->detect_neighborship_with_node( parent::get_node_index(1), true ) ) ) {
 
-		// if the two fc nodes aren't neighbors, then we don't need to keep this edge
-//#ifdef FILE_DEBUG
-//			TR_EDGE << "prepare_for_simulated_annealing - dropping edge e(" << parent::get_node_index( 0 )
-//				<< "," << parent::get_node_index( 1 ) << ")" << std::endl;
-//#endif
+			// if the two fc nodes aren't neighbors, then we don't need to keep this edge
+			//#ifdef FILE_DEBUG
+			//   TR_EDGE << "prepare_for_simulated_annealing - dropping edge e(" << parent::get_node_index( 0 )
+			//    << "," << parent::get_node_index( 1 ) << ")" << std::endl;
+			//#endif
 			delete this;
 		}
 	}
@@ -2625,7 +2630,7 @@ Real SurfaceEdge< V, E, G >::get_surface_deltaE_for_neighbor( int node_consideri
 	// nodes_curr_states_[ node_changing_ ] is the current state at the node considering substitution
 
 	Real surface_deltaE = get_surface_node( node_not_changing_ )->get_surface_deltaE_for_neighbors_state_substitution(
-			get_surface_node( node_changing_ ), nodes_curr_states_[ node_changing_ ], alt_state );
+		get_surface_node( node_changing_ ), nodes_curr_states_[ node_changing_ ], alt_state );
 
 	magnitude_last_surface_deltaE_[ node_changing_ ] = std::abs( surface_deltaE );
 
@@ -2757,10 +2762,10 @@ unsigned int SurfaceEdge< V, E, G >::count_dynamic_memory() const {
 ///
 template < typename V, typename E, typename G >
 SurfaceBackgroundEdge< V, E, G >::SurfaceBackgroundEdge
-	( AdditionalBackgroundNodesInteractionGraph < V, E, G >* owner, int first_class_node_index, int background_node_index ):
-	BackgroundToFirstClassEdge< V, E, G >( owner, first_class_node_index, background_node_index ),
-	fc_node_curr_state_( 0 ),
-	fc_node_alt_state_( 0 )
+( AdditionalBackgroundNodesInteractionGraph < V, E, G >* owner, int first_class_node_index, int background_node_index ):
+BackgroundToFirstClassEdge< V, E, G >( owner, first_class_node_index, background_node_index ),
+fc_node_curr_state_( 0 ),
+fc_node_alt_state_( 0 )
 {
 	max_surface_deltaE_last_50_commits_ = -1.0f;
 	max_surface_deltaE_recent_50_commits_ = -1.0f;
@@ -2799,8 +2804,9 @@ void SurfaceBackgroundEdge< V, E, G >::prepare_for_simulated_annealing() {}
 template < typename V, typename E, typename G >
 void SurfaceBackgroundEdge< V, E, G >::acknowledge_state_change( int new_state ) {
 
-	if ( new_state == fc_node_curr_state_ )
+	if ( new_state == fc_node_curr_state_ ) {
 		return;
+	}
 
 	get_surface_deltaE_for_substitution( new_state );
 	acknowledge_substitution_surface();
@@ -2832,7 +2838,7 @@ Real SurfaceBackgroundEdge< V, E, G >::get_surface_deltaE_for_substitution( int 
 	// was changing. the current state (and alt_state) of the changing node is kept as a member variable in this class.
 
 	Real const surface_deltaE = get_surface_bg_node()->project_surface_deltaE_for_substitution(
-			get_surface_node(), fc_node_curr_state_, fc_node_alt_state_ );
+		get_surface_node(), fc_node_curr_state_, fc_node_alt_state_ );
 
 	magnitude_last_surface_deltaE_ = std::abs( surface_deltaE );
 
@@ -2864,7 +2870,7 @@ void SurfaceBackgroundEdge< V, E, G >::track_max_magnitude_surface_deltaE() {
 
 	++num_surface_deltaE_observations_since_update_;
 
-	if ( magnitude_last_surface_deltaE_ > max_surface_deltaE_recent_50_commits_) {
+	if ( magnitude_last_surface_deltaE_ > max_surface_deltaE_recent_50_commits_ ) {
 		max_surface_deltaE_recent_50_commits_ = magnitude_last_surface_deltaE_;
 	}
 
@@ -2913,16 +2919,16 @@ unsigned int SurfaceBackgroundEdge< V, E, G >::count_dynamic_memory() const {
 ///
 template < typename V, typename E, typename G >
 SurfaceInteractionGraph< V, E, G >::SurfaceInteractionGraph( int num_nodes ) :
-	AdditionalBackgroundNodesInteractionGraph< V, E, G > ( num_nodes ),
-	num_total_residues_( 0 ),
-	num_residues_assigned_as_background_( 0 ),
-	num_commits_since_last_update_( 0 ),
-	total_energy_current_state_assignment_( 0 ),
-	total_energy_alternate_state_assignment_( 0 ),
-	node_considering_alt_state_( 0 ),
-	deltaE_threshold_for_avoiding_surface_calcs_( -1.0f ),
-	prepared_for_simulated_annealing_( false ),
-	surface_score_weight_( 1 )
+AdditionalBackgroundNodesInteractionGraph< V, E, G > ( num_nodes ),
+num_total_residues_( 0 ),
+num_residues_assigned_as_background_( 0 ),
+num_commits_since_last_update_( 0 ),
+total_energy_current_state_assignment_( 0 ),
+total_energy_alternate_state_assignment_( 0 ),
+node_considering_alt_state_( 0 ),
+deltaE_threshold_for_avoiding_surface_calcs_( -1.0f ),
+prepared_for_simulated_annealing_( false ),
+surface_score_weight_( 1 )
 {}
 
 ///
@@ -2957,7 +2963,7 @@ SurfaceInteractionGraph< V, E, G >::~SurfaceInteractionGraph() {}
 /// to the Pose, the Task, and the RotamerSets objects since it needs all of these things to do tasks 1) and 2).
 ///
 ///
-///	prepare_for_simulated_annealing gets called by the FixbbSA::run() method.  Before this method, the
+/// prepare_for_simulated_annealing gets called by the FixbbSA::run() method.  Before this method, the
 /// rotamersets object has called compute_energies() (the whole process being started in pack_rotamers)
 /// which calls initialize() on the IG.  I need to place the SIG init method directly after the IG init
 /// method that the RS object calls.
@@ -3030,9 +3036,9 @@ void SurfaceInteractionGraph< V, E, G >::initialize( rotamer_set::RotamerSetsBas
 	// and those shouldn't be considered first class nodes (would be very inefficient to do so!)
 	//int num_designed = 0;
 	//for (Size ii = 1; ii <= pose().total_residue(); ++ii) {
-	//	if ( packer_task().being_designed(ii) ) {
-	//		num_designed++;
-	//	}
+	// if ( packer_task().being_designed(ii) ) {
+	//  num_designed++;
+	// }
 	//}
 	//int nbackground = pose().total_residue() - num_designed;
 
@@ -3040,7 +3046,7 @@ void SurfaceInteractionGraph< V, E, G >::initialize( rotamer_set::RotamerSetsBas
 	int nbackground = pose().total_residue() - rot_sets.nmoltenres();
 	set_num_background_residues( nbackground );
 
-	for (Size ii = 1; ii <= pose().total_residue(); ++ii) {
+	for ( Size ii = 1; ii <= pose().total_residue(); ++ii ) {
 
 		// IS THE NEIGHBOR GRAPH even going to be populated at this point?  Hopefully, yes.  It seems that at the
 		// start of pack_rotamers, the scorefunction is evaulated on the pose which should populate the graphs.
@@ -3063,15 +3069,15 @@ void SurfaceInteractionGraph< V, E, G >::initialize( rotamer_set::RotamerSetsBas
 
 	// set the surface_exposed_ and is_below_buried_residue_no_hsasa booleans for all FC nodes, then BG nodes
 	Size node_num_nbs = 0;
-	for (int ii = 1; ii <= parent::get_num_nodes(); ++ii) {
+	for ( int ii = 1; ii <= parent::get_num_nodes(); ++ii ) {
 		node_num_nbs = get_surface_node( ii )->num_neighbors_counting_self();
 
 		// Note: we have to set two booleans here: surface_exposed_ and is_below_buried_residue_no_hsasa_cutoff_.
 		// a Node may have more than the SURFACE_EXPOSED_CUTOFF number of neighbors, but still contribute hSASA to other nodes.
 
 		if ( node_num_nbs <= (Size)SURFACE_EXPOSED_CUTOFF ) {
-		// old way commented below
-		// if ( tenA_neighbor_graph.get_node(ii)->num_neighbors_counting_self() <= SURFACE_EXPOSED_CUTOFF ) {
+			// old way commented below
+			// if ( tenA_neighbor_graph.get_node(ii)->num_neighbors_counting_self() <= SURFACE_EXPOSED_CUTOFF ) {
 			get_surface_node( ii )->surface_exposed( true );
 			get_surface_node( ii )->is_below_buried_residue_no_hsasa_cutoff( true );
 #ifdef FILE_DEBUG
@@ -3086,10 +3092,10 @@ void SurfaceInteractionGraph< V, E, G >::initialize( rotamer_set::RotamerSetsBas
 
 	}
 
-	for (int ii = 1; ii <= parent::get_num_background_nodes(); ++ii) {
+	for ( int ii = 1; ii <= parent::get_num_background_nodes(); ++ii ) {
 		node_num_nbs = get_surface_bg_node( ii )->num_neighbors_counting_self();
 		if ( node_num_nbs <= (Size)SURFACE_EXPOSED_CUTOFF ) {
-		// if ( tenA_neighbor_graph.get_node(ii)->num_neighbors_counting_self() <= SURFACE_EXPOSED_CUTOFF ) {
+			// if ( tenA_neighbor_graph.get_node(ii)->num_neighbors_counting_self() <= SURFACE_EXPOSED_CUTOFF ) {
 			get_surface_bg_node( ii )->surface_exposed( true );
 			get_surface_bg_node( ii )->is_below_buried_residue_no_hsasa_cutoff( true );
 #ifdef FILE_DEBUG
@@ -3133,7 +3139,7 @@ void SurfaceInteractionGraph< V, E, G >::set_num_residues_in_protein( int num_re
 
 	num_total_residues_ = num_res;
 	resid_2_bgenumeration_.resize( num_total_residues_ );
-	for (int ii = 1; ii <= num_total_residues_; ++ii) {
+	for ( int ii = 1; ii <= num_total_residues_; ++ii ) {
 		resid_2_bgenumeration_[ii] = 0;
 	}
 }
@@ -3159,11 +3165,12 @@ void SurfaceInteractionGraph< V, E, G >::set_num_background_residues( int num_ba
 #endif
 
 	parent::set_num_background_nodes( num_background_residues );
-	if ( parent::get_num_background_nodes() == 0 )
+	if ( parent::get_num_background_nodes() == 0 ) {
 		return;
+	}
 
 	bgenumeration_2_resid_.resize( parent::get_num_background_nodes() );
-	for (int ii = 1; ii <= parent::get_num_background_nodes(); ++ii) {
+	for ( int ii = 1; ii <= parent::get_num_background_nodes(); ++ii ) {
 		bgenumeration_2_resid_[ii] = 0;
 	}
 }
@@ -3181,7 +3188,7 @@ void SurfaceInteractionGraph< V, E, G >::set_num_background_residues( int num_ba
 template < typename V, typename E, typename G >
 void SurfaceInteractionGraph< V, E, G >::set_residue_as_background_residue( int residue ) {
 
-debug_assert( resid_2_bgenumeration_[ residue ] == 0 );
+	debug_assert( resid_2_bgenumeration_[ residue ] == 0 );
 
 #ifdef FILE_DEBUG
 	TR_SIG << "set_residue_as_background_residue: setting residue " << pose().residue( residue ).name3() << " " << residue << " as background node." << std::endl;
@@ -3236,10 +3243,12 @@ void SurfaceInteractionGraph< V, E, G >::prepare_for_simulated_annealing() {
 		// prep_for_simA() call.  But we don't need to go through and recalculate neighbors and creating Nodes/Edges and all
 		// that.  All we really need to do is reset/re-initialize the starting hASA variables.  So, if we've already gone
 		// through this method once, just tell all Nodes/BGNodes to reinit themselves.
-		for (int ii = 1; ii <= parent::get_num_nodes(); ++ii)
+		for ( int ii = 1; ii <= parent::get_num_nodes(); ++ii ) {
 			get_surface_node( ii )->init_hASA_variables();
-		for (int ii = 1; ii <= parent::get_num_background_nodes(); ++ii)
+		}
+		for ( int ii = 1; ii <= parent::get_num_background_nodes(); ++ii ) {
 			get_surface_bg_node( ii )->init_hASA_variables();
+		}
 
 		return;
 	}
@@ -3272,14 +3281,14 @@ void SurfaceInteractionGraph< V, E, G >::prepare_for_simulated_annealing() {
 template < typename V, typename E, typename G >
 void SurfaceInteractionGraph< V, E, G >::detect_background_residue_and_first_class_residue_neighbors() {
 
-	for (int ii = 1; ii <= parent::get_num_background_nodes(); ++ii) {
+	for ( int ii = 1; ii <= parent::get_num_background_nodes(); ++ii ) {
 
 #ifdef FILE_DEBUG
 		TR_SIG << "detect_bg_and_fc_residue_neighbors: checking for neighbors of background residue " << pose().residue( bgenumeration_2_resid_[ ii ] ).name3()
 			<< " " << pose().residue( bgenumeration_2_resid_[ ii ] ).seqpos() << std::endl;
 #endif
 
-		for (int jj = 1; jj <= parent::get_num_nodes(); ++jj) {
+		for ( int jj = 1; jj <= parent::get_num_nodes(); ++jj ) {
 
 			// ii: background node index, jj: first-class node index
 			// the background nodes and first-class nodes should be set at this point due to the initalize method above.
@@ -3311,7 +3320,7 @@ void SurfaceInteractionGraph< V, E, G >::blanket_assign_state_0() {
 #ifdef FILE_DEBUG
 	TR_SIG << "blanket_assign_state_0() called" << std::endl;
 #endif
-	for (int ii = 1; ii <= parent::get_num_nodes(); ++ii) {
+	for ( int ii = 1; ii <= parent::get_num_nodes(); ++ii ) {
 		get_surface_node( ii )->assign_zero_state();
 	}
 	update_internal_energy_totals_surface();
@@ -3335,12 +3344,12 @@ void SurfaceInteractionGraph< V, E, G >::update_internal_energy_totals_surface()
 	parent::update_internal_energy_totals();
 	total_energy_current_state_assignment_ = parent::get_energy_PD_current_state_assignment();
 
-	for (int ii = 1; ii <= parent::get_num_nodes(); ++ii) {
+	for ( int ii = 1; ii <= parent::get_num_nodes(); ++ii ) {
 		Real fc_surface = get_surface_node( ii )->get_curr_state_surface_energy();
 		total_energy_current_state_assignment_ += fc_surface;
 	}
 
-	for (int ii = 1; ii <= parent::get_num_background_nodes(); ++ii) {
+	for ( int ii = 1; ii <= parent::get_num_background_nodes(); ++ii ) {
 		Real bg_surface = get_surface_bg_node( ii )->get_surface_score();
 		total_energy_current_state_assignment_ += bg_surface;
 	}
@@ -3408,7 +3417,7 @@ void SurfaceInteractionGraph< V, E, G >::consider_substitution( int node_ind, in
 	node_considering_alt_state_ = node_ind;
 
 	delta_energy = get_surface_node( node_ind )->project_deltaE_for_substitution_surface(
-			new_state, prev_energy_for_node, deltaE_threshold_for_avoiding_surface_calcs_ );
+		new_state, prev_energy_for_node, deltaE_threshold_for_avoiding_surface_calcs_ );
 
 #ifdef FILE_DEBUG
 	TR_SIG << "consider_substitution: delta_energy: " << delta_energy << std::endl;
@@ -3438,14 +3447,14 @@ void SurfaceInteractionGraph< V, E, G >::blanket_reset_alt_state_total_hASAs() {
 #ifdef FILE_DEBUG
 	TR_SIG << "blanket_reset_alt_state_total_hASAs: calling reset_alt_state_total_hASA on all FC nodes." << std::endl;
 #endif
-	for (int ii = 1; ii <= parent::get_num_nodes(); ++ii) {
+	for ( int ii = 1; ii <= parent::get_num_nodes(); ++ii ) {
 		get_surface_node( ii )->reset_alt_state_total_hASA();
 	}
 
 #ifdef FILE_DEBUG
 	TR_SIG << "blanket_reset_alt_state_total_hASAs: calling reset_alt_state_total_hASA on all BG nodes." << std::endl;
 #endif
-	for (int ii = 1; ii <= parent::get_num_background_nodes(); ++ii) {
+	for ( int ii = 1; ii <= parent::get_num_background_nodes(); ++ii ) {
 		get_surface_bg_node( ii )->reset_alt_state_total_hASA();
 	}
 }
@@ -3496,7 +3505,7 @@ core::PackerEnergy SurfaceInteractionGraph< V, E, G >::set_network_state( Objexx
 
 	blanket_reset_alt_state_total_hASAs();  // why is this needed here again?
 
-	for (int ii = 1; ii <= parent::get_num_nodes(); ++ii) {
+	for ( int ii = 1; ii <= parent::get_num_nodes(); ++ii ) {
 		get_surface_node( ii )->assign_state_surface( node_states(ii) );
 	}
 	update_internal_energy_totals_surface();
@@ -3612,14 +3621,14 @@ void SurfaceInteractionGraph< V, E, G >::print_internal_energies_for_current_sta
 
 	// print out the one-body and surface energies for all first class nodes
 	TR_SIG << "internal energies: " << std::endl;
-	for (int ii = 1; ii <= parent::get_num_nodes(); ++ii) {
+	for ( int ii = 1; ii <= parent::get_num_nodes(); ++ii ) {
 		Real one_body = get_surface_node( ii )->get_curr_state_one_body_energy();
 		TR_SIG << "node " << ii << " 1b: " << one_body;
 
 		Real surface = get_surface_node( ii )->get_curr_state_surface_energy();
 		TR_SIG << ", surface = " << surface;
 
-		if ( ii % 3 == 0) {
+		if ( ii % 3 == 0 ) {
 			TR_SIG << std::endl;
 		}
 	}
@@ -3627,7 +3636,7 @@ void SurfaceInteractionGraph< V, E, G >::print_internal_energies_for_current_sta
 	TR_SIG << std::endl;
 
 	// print out the surface energies for all background nodes
-	for (int ii = 1; ii <= parent::get_num_background_nodes(); ++ii) {
+	for ( int ii = 1; ii <= parent::get_num_background_nodes(); ++ii ) {
 
 		Real bg_surface = get_surface_bg_node( ii )->get_surface_score();
 		TR_SIG << "bg res: " << bgenumeration_2_resid_[ ii ] << " surface: " << bg_surface << std::endl;
@@ -3635,12 +3644,13 @@ void SurfaceInteractionGraph< V, E, G >::print_internal_energies_for_current_sta
 
 	// print out the two-body energies for all edges between first-class nodes only?
 	int count_edges = 0;
-	for (std::list< core::pack::interaction_graph::EdgeBase*>::const_iterator iter = parent::get_edge_list_begin(); iter != parent::get_edge_list_end(); ++iter) {
+	for ( std::list< core::pack::interaction_graph::EdgeBase*>::const_iterator iter = parent::get_edge_list_begin(); iter != parent::get_edge_list_end(); ++iter ) {
 		Real edge_energy = ((SurfaceEdge< V, E, G >*) (*iter))->get_current_two_body_energy();
 		TR_SIG << "edge: " << edge_energy << " ";
 
-		if ( count_edges % 5 == 0)
+		if ( count_edges % 5 == 0 ) {
 			TR_SIG << std::endl;
+		}
 		++count_edges;
 	}
 }
@@ -3718,12 +3728,12 @@ SurfaceInteractionGraph<V, E, G>::print() const {
 
 	std::cout << "Surface Interaction Graph state: " << std::endl;
 	std::cout << "nodes: " << std::endl;
-	for (int jj = 1; jj <= parent::get_num_nodes(); ++jj) {
+	for ( int jj = 1; jj <= parent::get_num_nodes(); ++jj ) {
 		get_surface_node( jj )->print();
 	}
 
 	std::cout << "bgnodes: " << std::endl;
-	for (int ii = 1; ii <= parent::get_num_background_nodes(); ++ii) {
+	for ( int ii = 1; ii <= parent::get_num_background_nodes(); ++ii ) {
 		get_surface_bg_node( ii )->print();
 	}
 }
@@ -3741,11 +3751,13 @@ template< typename V, typename E, typename G >
 void SurfaceNode<V, E, G>::set_observed_sufficient_boolean_true() {
 	observed_sufficient_surface_E_to_predict_min_ = true;
 
-	for( int ii = 1; ii <= parent::get_num_incident_edges(); ++ii)
+	for ( int ii = 1; ii <= parent::get_num_incident_edges(); ++ii ) {
 		get_incident_surface_edge(ii)->set_max_surface_deltaE(); // defined in header, sets value to 0.1
+	}
 
-	for ( int ii = 1; ii <= parent::get_num_edges_to_background_nodes(); ++ii )
+	for ( int ii = 1; ii <= parent::get_num_edges_to_background_nodes(); ++ii ) {
 		get_edge_to_surface_bg_node(ii)->set_max_surface_deltaE(); // defined in header, sets value to 0.1
+	}
 
 }
 
@@ -3853,7 +3865,7 @@ template< typename V, typename E, typename G >
 std::vector< int > SurfaceInteractionGraph<V, E, G>::get_network_state() const {
 
 	std::vector< int > networkstate;
-	for (int jj = 1; jj <= parent::get_num_nodes(); ++jj) {
+	for ( int jj = 1; jj <= parent::get_num_nodes(); ++jj ) {
 		networkstate.push_back( get_surface_node(jj)->get_current_state() );
 	}
 	return networkstate;
@@ -3883,7 +3895,7 @@ std::vector< Real > SurfaceInteractionGraph<V, E, G>::get_alt_state_hASA_for_nod
 ///
 template< typename V, typename E, typename G >
 void SurfaceInteractionGraph<V, E, G>::set_observed_sufficient_boolean_true() {
-	for (int jj = 1; jj <= parent::get_num_nodes(); ++jj) {
+	for ( int jj = 1; jj <= parent::get_num_nodes(); ++jj ) {
 		get_surface_node(jj)->set_observed_sufficient_boolean_true();
 	}
 }

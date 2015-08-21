@@ -27,83 +27,83 @@ namespace environment {
 namespace claims {
 
 ClaimStrength::ClaimStrength( PrioSubtype subtype, Size subprio ):
-  Parent(),
-  subtype_( subtype ),
-  subprio_( subprio )
+	Parent(),
+	subtype_( subtype ),
+	subprio_( subprio )
 {}
 
 
 ClaimStrength::ClaimStrength( ClaimStrength const& src ) :
-  Parent(),
-  subtype_( src.subtype_ ),
-  subprio_( src.subprio_ )
+	Parent(),
+	subtype_( src.subtype_ ),
+	subprio_( src.subprio_ )
 {}
 
 
 bool ClaimStrength::operator< ( ClaimStrength const& other ) const {
-  if( other.subtype_ < subtype_ ){
-    return true;
-  } else if ( other.subtype_ > subtype_ ){
-    return false;
-  } else {
-    if( other.subprio_ < subprio_ ){
-      return true;
-    } else {
-      return false;
-    }
-  }
+	if ( other.subtype_ < subtype_ ) {
+		return true;
+	} else if ( other.subtype_ > subtype_ ) {
+		return false;
+	} else {
+		if ( other.subprio_ < subprio_ ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
 
 
 bool ClaimStrength::operator== ( ClaimStrength const& other ) const {
-  if( other.subtype_ == subtype_ &&
-      other.subprio_ == subprio_ ){
-    return true;
-  } else {
-    return false;
-  }
+	if ( other.subtype_ == subtype_ &&
+			other.subprio_ == subprio_ ) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 bool ClaimStrength::operator!= ( ClaimStrength const& other ) const{
-  return !operator==( other );
+	return !operator==( other );
 }
 
 bool ClaimStrength::operator> (ClaimStrength const& other ) const {
-  return other.operator<( *this );
+	return other.operator<( *this );
 }
 
 bool ClaimStrength::operator>= (ClaimStrength const& other) const {
-  return !operator<( other );
+	return !operator<( other );
 }
 
 bool ClaimStrength::operator<= ( ClaimStrength const& other ) const{
-  return !operator>( other );
+	return !operator>( other );
 }
 
 ClaimStrength::PrioSubtype ClaimStrength::subtype() const {
-  return subtype_;
+	return subtype_;
 }
 
 core::Size ClaimStrength::subprio() const {
-  return subprio_;
+	return subprio_;
 }
 
 extern std::ostream& operator<<( std::ostream& os, ClaimStrength const& ir) {
-  os << "(" << ir.subtype() << "," << ir.subprio() << ")";
-  return os;
+	os << "(" << ir.subtype() << "," << ir.subprio() << ")";
+	return os;
 }
 
 extern std::ostream& operator<<( std::ostream& os, ClaimStrength::PrioSubtype const& ir) {
-  if( ir == ClaimStrength::CAN_CONTROL ){
-    os << "CAN_INIT";
-  } else if ( ir == ClaimStrength::MUST_CONTROL ){
-    os << "MUST_INIT";
-  } else if ( ir == ClaimStrength::EXCLUSIVE ){
-    os << "EXCLUSIVE";
-  } else {
-    assert( false );
-  }
-  return os;
+	if ( ir == ClaimStrength::CAN_CONTROL ) {
+		os << "CAN_INIT";
+	} else if ( ir == ClaimStrength::MUST_CONTROL ) {
+		os << "MUST_INIT";
+	} else if ( ir == ClaimStrength::EXCLUSIVE ) {
+		os << "EXCLUSIVE";
+	} else {
+		assert( false );
+	}
+	return os;
 }
 
 } // protocols

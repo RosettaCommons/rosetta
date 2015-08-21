@@ -29,23 +29,23 @@ namespace modeler {
 namespace rna {
 namespace bulge {
 
-	//Constructor
-	BulgeApplyMover::BulgeApplyMover( Size const moving_res ):
-		moving_res_( moving_res )
-	{}
+//Constructor
+BulgeApplyMover::BulgeApplyMover( Size const moving_res ):
+	moving_res_( moving_res )
+{}
 
-	//Destructor
-	BulgeApplyMover::~BulgeApplyMover()
-	{}
+//Destructor
+BulgeApplyMover::~BulgeApplyMover()
+{}
 
-	////////////////////////////////////////////////////////////////////////////////////////
-	void
-	BulgeApplyMover::apply( core::pose::Pose & pose ) {
-		Pose const pose_save = pose;
-		runtime_assert( !is_virtual_base( pose.residue( moving_res_ ) ) );
-		core::pose::rna::apply_virtual_rna_residue_variant_type( pose, moving_res_, true );
-		protocols::stepwise::modeler::map_constraints_from_original_pose( pose_save, pose );
-	}
+////////////////////////////////////////////////////////////////////////////////////////
+void
+BulgeApplyMover::apply( core::pose::Pose & pose ) {
+	Pose const pose_save = pose;
+	runtime_assert( !is_virtual_base( pose.residue( moving_res_ ) ) );
+	core::pose::rna::apply_virtual_rna_residue_variant_type( pose, moving_res_, true );
+	protocols::stepwise::modeler::map_constraints_from_original_pose( pose_save, pose );
+}
 
 
 } //bulge

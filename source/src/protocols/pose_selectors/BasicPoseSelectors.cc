@@ -58,7 +58,7 @@ LogicalSelector::~LogicalSelector()
 protocols::rosetta_scripts::PoseSelectorFlags LogicalSelector::get_flags() const
 {
 	protocols::rosetta_scripts::PoseSelectorFlags flags(protocols::rosetta_scripts::PSF_NONE);
-	BOOST_FOREACH( protocols::rosetta_scripts::PoseSelectorOP selector, selectors_ ) {
+	BOOST_FOREACH ( protocols::rosetta_scripts::PoseSelectorOP selector, selectors_ ) {
 		flags = (protocols::rosetta_scripts::PoseSelectorFlags)( flags | selector->get_flags() );
 	}
 	return flags;
@@ -73,10 +73,10 @@ void LogicalSelector::parse_my_tag(
 )
 {
 	// Children of tag are selectors
-	BOOST_FOREACH( utility::tag::TagCOP const curr_tag, tag->getTags() ) {
+	BOOST_FOREACH ( utility::tag::TagCOP const curr_tag, tag->getTags() ) {
 		protocols::rosetta_scripts::PoseSelectorOP new_selector(
 			protocols::rosetta_scripts::PoseSelectorFactory::get_instance()->
-				newPoseSelector( curr_tag, data, filters, movers, pose )
+			newPoseSelector( curr_tag, data, filters, movers, pose )
 		);
 		runtime_assert( new_selector != 0 );
 		selectors_.push_back( new_selector );
@@ -94,30 +94,30 @@ utility::vector1<bool> LogicalSelector::select_poses(
 
 	selected_poses.resize( poses.size(), get_default() );
 
-	BOOST_FOREACH( protocols::rosetta_scripts::PoseSelectorOP selector, selectors_ ) {
+	BOOST_FOREACH ( protocols::rosetta_scripts::PoseSelectorOP selector, selectors_ ) {
 		utility::vector1<bool> selector_selected_poses( selector->select_poses( poses ) );
 
 		// Merge sets using logical operator
-		for(
-			utility::vector1<bool>::iterator
+		for (
+				utility::vector1<bool>::iterator
 				i = selected_poses.begin(),
 				j = selector_selected_poses.begin();
-			i != selected_poses.end() &&
-			j != selector_selected_poses.end();
-			++i, ++j) {
+				i != selected_poses.end() &&
+				j != selector_selected_poses.end();
+				++i, ++j ) {
 
 			(*i) = selection_operation(*i, *j);
 		}
 
 		TR.Debug << "Pose selections for " << get_name() << " after " << selector->get_name() << ": ";
-		BOOST_FOREACH( bool selection, selected_poses ) {
+		BOOST_FOREACH ( bool selection, selected_poses ) {
 			TR.Debug << selection << " ";
 		}
 		TR.Debug << std::endl;
 	}
 
 	TR.Debug << "Final pose selections for " << get_name() << ": ";
-	BOOST_FOREACH( bool selection, selected_poses ) {
+	BOOST_FOREACH ( bool selection, selected_poses ) {
 		TR.Debug << selection << " ";
 	}
 	TR.Debug << std::endl;
@@ -131,7 +131,7 @@ utility::vector1<bool> LogicalSelector::select_poses(
 
 // Creator
 protocols::rosetta_scripts::PoseSelectorOP AndSelectorCreator::create_selector() const {
-  return protocols::rosetta_scripts::PoseSelectorOP( new AndSelector() );
+	return protocols::rosetta_scripts::PoseSelectorOP( new AndSelector() );
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -139,7 +139,7 @@ protocols::rosetta_scripts::PoseSelectorOP AndSelectorCreator::create_selector()
 
 // Creator
 protocols::rosetta_scripts::PoseSelectorOP OrSelectorCreator::create_selector() const {
-  return protocols::rosetta_scripts::PoseSelectorOP( new OrSelector() );
+	return protocols::rosetta_scripts::PoseSelectorOP( new OrSelector() );
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -147,7 +147,7 @@ protocols::rosetta_scripts::PoseSelectorOP OrSelectorCreator::create_selector() 
 
 // Creator
 protocols::rosetta_scripts::PoseSelectorOP TopNByPropertyCreator::create_selector() const {
-  return protocols::rosetta_scripts::PoseSelectorOP( new TopNByProperty() );
+	return protocols::rosetta_scripts::PoseSelectorOP( new TopNByProperty() );
 }
 
 // Selector
@@ -168,11 +168,11 @@ void TopNByProperty::parse_my_tag(
 	// n = selection limit
 	n_ = tag->getOption<core::Size>("n");
 
-	if(tag->hasOption("order")) {
+	if ( tag->hasOption("order") ) {
 		std::string order( tag->getOption<std::string>("order") );
-		if(order == "asc" || order == "ascending") {
+		if ( order == "asc" || order == "ascending" ) {
 			order_ = 1;
-		} else if(order == "desc" || order == "descending") {
+		} else if ( order == "desc" || order == "descending" ) {
 			order_ = -1;
 		} else {
 			throw utility::excn::EXCN_RosettaScriptsOption("Unknown order: " + order);
@@ -180,10 +180,10 @@ void TopNByProperty::parse_my_tag(
 	}
 
 	// Children of tag are reporters
-	BOOST_FOREACH( utility::tag::TagCOP const curr_tag, tag->getTags() ) {
+	BOOST_FOREACH ( utility::tag::TagCOP const curr_tag, tag->getTags() ) {
 		protocols::rosetta_scripts::PosePropertyReporterOP new_reporter(
 			protocols::rosetta_scripts::PosePropertyReporterFactory::get_instance()->
-				newPosePropertyReporter( curr_tag, data, filters, movers, pose )
+			newPosePropertyReporter( curr_tag, data, filters, movers, pose )
 		);
 		runtime_assert( new_reporter != 0 );
 		reporter_ = new_reporter;
@@ -207,7 +207,7 @@ utility::vector1<bool> TopNByProperty::select_poses(
 	// Obtain properties of all poses
 	{
 		core::Size i = 1;
-		BOOST_FOREACH(core::pose::PoseOP pose, poses) {
+		BOOST_FOREACH ( core::pose::PoseOP pose, poses ) {
 			core::Real r = reporter_->report_property( *pose );
 			pose_properties.push_back( Pose_Property(i, r) );
 			++i;
@@ -218,16 +218,16 @@ utility::vector1<bool> TopNByProperty::select_poses(
 	// order_ =  1: ascending (default)
 	// order_ = -1: descending
 	// order_ =  0: no sorting
-	if(order_ != 0) {
+	if ( order_ != 0 ) {
 		std::sort(pose_properties.begin(), pose_properties.end(), utility::SortSecond< core::Size, core::Real >());
-		if(order_ < 1) {
+		if ( order_ < 1 ) {
 			std::reverse(pose_properties.begin(), pose_properties.end());
 		}
 	}
 
 	// Debug
 	TR.Debug << "Sorted poses:" << std::endl;
-	for(utility::vector1<Pose_Property>::iterator it=pose_properties.begin(); it!=pose_properties.end(); ++it) {
+	for ( utility::vector1<Pose_Property>::iterator it=pose_properties.begin(); it!=pose_properties.end(); ++it ) {
 		Pose_Property &p = *it;
 		TR.Debug << p.first << " = " << p.second << std::endl;
 	}
@@ -235,7 +235,7 @@ utility::vector1<bool> TopNByProperty::select_poses(
 	// Create selected poses vector
 	selected_poses.resize(poses.size(), false);
 	core::Size n = poses.size() < n_ ? poses.size() : n_;
-	for(core::Size i = 1; i <= n; ++i) {
+	for ( core::Size i = 1; i <= n; ++i ) {
 		selected_poses[ pose_properties[i].first ] = true;
 	}
 
@@ -247,7 +247,7 @@ utility::vector1<bool> TopNByProperty::select_poses(
 
 // Creator
 protocols::rosetta_scripts::PoseSelectorOP FilterCreator::create_selector() const {
-  return protocols::rosetta_scripts::PoseSelectorOP( new Filter() );
+	return protocols::rosetta_scripts::PoseSelectorOP( new Filter() );
 }
 
 // Selector
@@ -270,42 +270,44 @@ void Filter::parse_my_tag(
 	TagCOP filter_tag(NULL);
 	std::string filter_name;
 
-	if(tag->hasOption("filter")) {
+	if ( tag->hasOption("filter") ) {
 		// Find a filter by name defined somewhere upstream in the script
 		RosettaScriptsParser parser;
 		filter_name = tag->getOption<std::string>("filter");
 		filter_tag = parser.find_rosettascript_tag(
-				tag,
-				"FILTERS",
-				"name",
-				filter_name
+			tag,
+			"FILTERS",
+			"name",
+			filter_name
 		);
 
-		if(!filter_tag)
+		if ( !filter_tag ) {
 			throw utility::excn::EXCN_RosettaScriptsOption("Cannot find filter named \"" + filter_name + "\"");
+		}
 
 	} else {
 		// Filter is defined inline (first child tag)
 		utility::vector0< TagCOP > tags( tag->getTags() );
-		for(utility::vector0< TagCOP >::const_iterator it = tags.begin(); it != tags.end(); ++it) {
+		for ( utility::vector0< TagCOP >::const_iterator it = tags.begin(); it != tags.end(); ++it ) {
 			filter_tag = *it;
 			break;
 		}
 	}
 
-	if(filter_tag) {
-		if(filter_name.empty() && filter_tag->hasOption("name"))
+	if ( filter_tag ) {
+		if ( filter_name.empty() && filter_tag->hasOption("name") ) {
 			filter_name = filter_tag->getOption<std::string>("name");
+		}
 		filter_  = protocols::filters::FilterFactory::get_instance()->newFilter( filter_tag, data, filters, movers, pose );
 	}
 
-	if(!filter_) {
+	if ( !filter_ ) {
 		std::ostringstream s;
 		s << "Cannot create filter from script tag: " << tag;
 		throw utility::excn::EXCN_RosettaScriptsOption(s.str());
 	}
 
-	if(filters.find(filter_name) != filters.end()) {
+	if ( filters.find(filter_name) != filters.end() ) {
 		TR.Warning << "Filter named \"" << filter_name << "\" already defined. Not adding this filter instance to the map." << std::endl;
 	} else {
 		filters.insert( std::make_pair( filter_name, filter_ ) );
@@ -319,7 +321,7 @@ utility::vector1<bool> Filter::select_poses(
 {
 	utility::vector1<bool> selected_poses(poses.size(), true);
 
-	if(!filter_) {
+	if ( !filter_ ) {
 		TR << "No filter instance!" << std::endl;
 		return selected_poses;
 	}
@@ -327,7 +329,7 @@ utility::vector1<bool> Filter::select_poses(
 	TR << "Applying selector " << get_name() << ": " << filter_->get_user_defined_name() << std::endl;
 
 	core::Size i = 1;
-	BOOST_FOREACH(core::pose::PoseOP pose, poses) {
+	BOOST_FOREACH ( core::pose::PoseOP pose, poses ) {
 		TR.Debug << "Pose " << i << "..." << std::endl;
 
 		bool ok = filter_->apply( *pose );

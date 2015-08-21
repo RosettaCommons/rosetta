@@ -27,23 +27,23 @@ namespace core {
 namespace io {
 namespace raw_data {
 
-	// abstract base classes
-	class RawStruct;
-	class RawFileData;
+// abstract base classes
+class RawStruct;
+class RawFileData;
 
-	// derived classes
-	class DecoyStruct;
-	class DecoyFileData;
-	class ScoreStruct;
-	class ScoreFileData;
+// derived classes
+class DecoyStruct;
+class DecoyFileData;
+class ScoreStruct;
+class ScoreFileData;
 
-	// owning pointers
-	typedef utility::pointer::shared_ptr< RawStruct > RawStructOP;
-	typedef utility::pointer::shared_ptr< DecoyStruct > DecoyStructOP;
-	typedef utility::pointer::shared_ptr< ScoreStruct > ScoreStructOP;
+// owning pointers
+typedef utility::pointer::shared_ptr< RawStruct > RawStructOP;
+typedef utility::pointer::shared_ptr< DecoyStruct > DecoyStructOP;
+typedef utility::pointer::shared_ptr< ScoreStruct > ScoreStructOP;
 
-	// data types
-	typedef std::map< std::string, RawStructOP > StructureMap;
+// data types
+typedef std::map< std::string, RawStructOP > StructureMap;
 } // namespace silent
 } // namespace io
 } // namespace core

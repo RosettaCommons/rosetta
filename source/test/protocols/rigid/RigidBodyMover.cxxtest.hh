@@ -82,7 +82,7 @@ public:
 		core::Real trans_mag(8.0);
 
 		RigidBodyPerturbMoverOP RB_mover( new RigidBodyPerturbMover(rb_jump, rot_mag, trans_mag,
-				protocols::rigid::partner_downstream, false) );
+			protocols::rigid::partner_downstream, false) );
 
 		/////////////////////////run
 		RB_mover->apply(pose);
@@ -104,11 +104,11 @@ public:
 
 		core::scoring::ScoreFunctionOP scorefxn;
 		scorefxn = core::scoring::ScoreFunctionFactory::create_score_function(
-				core::scoring::PRE_TALARIS_2013_STANDARD_WTS, core::scoring::DOCK_PATCH ) ;
+			core::scoring::PRE_TALARIS_2013_STANDARD_WTS, core::scoring::DOCK_PATCH ) ;
 		(*scorefxn)(pose);  //sets up EnergyGraph for interface calculation
 
 		RigidBodyPerturbMoverOP RB_mover( new RigidBodyPerturbMover(rb_jump, rot_mag, trans_mag,
-				protocols::rigid::partner_downstream, true) );
+			protocols::rigid::partner_downstream, true) );
 
 		/////////////////////////run
 		RB_mover->apply(pose);
@@ -147,7 +147,7 @@ public:
 		using protocols::rigid::RigidBodyRandomizeMover;
 
 		RigidBodyRandomizeMoverOP RB_mover( new RigidBodyRandomizeMover(pose, rb_jump,
-				protocols::rigid::partner_downstream) );
+			protocols::rigid::partner_downstream) );
 
 		/////////////////////////run
 		RB_mover->apply(pose);

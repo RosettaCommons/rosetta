@@ -19,17 +19,17 @@
 #include <utility/pointer/owning_ptr.fwd.hh>
 
 namespace protocols {
-    namespace simple_filters {
+namespace simple_filters {
 
-        // Forward
-        class MotifScoreFilter;
+// Forward
+class MotifScoreFilter;
 
-        // Types
-        typedef utility::pointer::shared_ptr< MotifScoreFilter >  MotifScoreFilterOP;
-        typedef utility::pointer::shared_ptr< MotifScoreFilter const >  MotifScoreFilterCOP;
+// Types
+typedef utility::pointer::shared_ptr< MotifScoreFilter >  MotifScoreFilterOP;
+typedef utility::pointer::shared_ptr< MotifScoreFilter const >  MotifScoreFilterCOP;
 
 
-    } // namespace protocols
+} // namespace protocols
 } // namespace filters
 
 #endif

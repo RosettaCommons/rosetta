@@ -25,41 +25,41 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	//Constructor
-	RNA_ChainClosableGeometryResidueBasedScreener::RNA_ChainClosableGeometryResidueBasedScreener( modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker ):
-		StepWiseResiduePairScreener( chain_closable_geometry_checker->five_prime_chain_break_res(),
-																 chain_closable_geometry_checker->three_prime_chain_break_res() ),
-		chain_closable_geometry_checker_( chain_closable_geometry_checker )
-	{}
+//Constructor
+RNA_ChainClosableGeometryResidueBasedScreener::RNA_ChainClosableGeometryResidueBasedScreener( modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker ):
+	StepWiseResiduePairScreener( chain_closable_geometry_checker->five_prime_chain_break_res(),
+	chain_closable_geometry_checker->three_prime_chain_break_res() ),
+	chain_closable_geometry_checker_( chain_closable_geometry_checker )
+{}
 
-	//Destructor
-	RNA_ChainClosableGeometryResidueBasedScreener::~RNA_ChainClosableGeometryResidueBasedScreener()
-	{}
+//Destructor
+RNA_ChainClosableGeometryResidueBasedScreener::~RNA_ChainClosableGeometryResidueBasedScreener()
+{}
 
-	///////////////////////////////////////////////////////////////////
-	void
-	RNA_ChainClosableGeometryResidueBasedScreener::get_update( sampler::StepWiseSamplerBaseOP sampler ){
+///////////////////////////////////////////////////////////////////
+void
+RNA_ChainClosableGeometryResidueBasedScreener::get_update( sampler::StepWiseSamplerBaseOP sampler ){
 
-		using namespace sampler;
-		using namespace sampler::rigid_body;
+	using namespace sampler;
+	using namespace sampler::rigid_body;
 
-		runtime_assert( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES );
-		RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
+	runtime_assert( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES );
+	RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
 
-		five_prime_xyz_ = rigid_body_rotamer_with_residue_alternatives.get_xyz( res1_, " O3'" ); // 5' residue
-		three_prime_xyz_ = rigid_body_rotamer_with_residue_alternatives.get_xyz( res2_, " C5'" ); // 3' residue
-		//		TR << "RES: " << res1_ << " " << res2_ <<  "  FIVE_PRIME X: " << five_prime_xyz_.x() << " -- " << "THREE_PRIME X: " << three_prime_xyz_.x() << std::endl;
-		return;
-	}
+	five_prime_xyz_ = rigid_body_rotamer_with_residue_alternatives.get_xyz( res1_, " O3'" ); // 5' residue
+	three_prime_xyz_ = rigid_body_rotamer_with_residue_alternatives.get_xyz( res2_, " C5'" ); // 3' residue
+	//  TR << "RES: " << res1_ << " " << res2_ <<  "  FIVE_PRIME X: " << five_prime_xyz_.x() << " -- " << "THREE_PRIME X: " << three_prime_xyz_.x() << std::endl;
+	return;
+}
 
 
-	///////////////////////////////////////////////////////////////////
-	bool
-	RNA_ChainClosableGeometryResidueBasedScreener::check_screen() {
-		bool const ok = chain_closable_geometry_checker_->check_chain_closable_geometry( five_prime_xyz_, three_prime_xyz_ );
-		//		TR << chain_closable_geometry_checker_->dist_squared() << " < " << chain_closable_geometry_checker_->max_dist_squared() << " " << ok << std::endl;
-		return ok;
-	}
+///////////////////////////////////////////////////////////////////
+bool
+RNA_ChainClosableGeometryResidueBasedScreener::check_screen() {
+	bool const ok = chain_closable_geometry_checker_->check_chain_closable_geometry( five_prime_xyz_, three_prime_xyz_ );
+	//  TR << chain_closable_geometry_checker_->dist_squared() << " < " << chain_closable_geometry_checker_->max_dist_squared() << " " << ok << std::endl;
+	return ok;
+}
 
 } //screener
 } //stepwise

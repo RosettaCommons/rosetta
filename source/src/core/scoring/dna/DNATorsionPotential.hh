@@ -50,13 +50,13 @@ public:
 	~DNATorsionPotential() {}
 
 
-    /* Undefinded, comented out to make python bindings complile
+	/* Undefinded, comented out to make python bindings complile
 	void
 	eval_dna_torsion_score_residue(
-	  conformation::Residue const & rsd,
-		Size const dna_torsion_number,
-		Real & score,
-		Real & deriv ) const;
+	conformation::Residue const & rsd,
+	Size const dna_torsion_number,
+	Real & score,
+	Real & deriv ) const;
 
 
 	void
@@ -65,17 +65,17 @@ public:
 
 	void
 	eval_ribose_closure_derivative(
-		id::AtomID const & id,
-		pose::Pose const & pose,
-		Vector & f1,
-		Vector & f2 ) const;
-		*/
+	id::AtomID const & id,
+	pose::Pose const & pose,
+	Vector & f1,
+	Vector & f2 ) const;
+	*/
 
-	//	void update_constraints( pose::Pose & pose ) const;
+	// void update_constraints( pose::Pose & pose ) const;
 
 	void
 	setup_constraints( pose::Pose & pose, constraints::ConstraintSetOP & dna_torsion_constraints,
-	 constraints::ConstraintSetOP & dna_sugar_close_constraints, constraints::ConstraintSetOP & dna_base_distance_constraints ) const;
+		constraints::ConstraintSetOP & dna_sugar_close_constraints, constraints::ConstraintSetOP & dna_base_distance_constraints ) const;
 
 	Real delta_cutoff() const { return DELTA_CUTOFF_; }
 
@@ -105,16 +105,16 @@ private:
 
 	void
 	add_dna_torsion_tethers(
-	  pose::Pose & pose,
+		pose::Pose & pose,
 		constraints::ConstraintSet & cst_set ) const;
 
 	void
 	add_DNA_torsion_constraint(
-			 pose::Pose & pose,
-			 Size const i,
-			 constraints::ConstraintSet & cst_set,
-			 Size const dna_torsion_number,
-			 utility::vector1< func::AmberPeriodicFuncOP > const & gaussian_parameter_set ) const;
+		pose::Pose & pose,
+		Size const i,
+		constraints::ConstraintSet & cst_set,
+		Size const dna_torsion_number,
+		utility::vector1< func::AmberPeriodicFuncOP > const & gaussian_parameter_set ) const;
 
 
 	bool

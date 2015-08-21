@@ -71,13 +71,13 @@ public:  // OneBodyEnergy Methods /////////////////////////////////////////////
 
 	/// @brief    Evaluate the DoF derivative for a particular residue.
 	virtual core::Real eval_residue_dof_derivative(
-			conformation::Residue const & rsd,
-			ResSingleMinimizationData const & min_data,
-			id::DOF_ID const & dof_id,
-			id::TorsionID const & torsion_id,
-			pose::Pose const & pose,
-			ScoreFunction const & sf,
-			EnergyMap const & weights ) const;
+		conformation::Residue const & rsd,
+		ResSingleMinimizationData const & min_data,
+		id::DOF_ID const & dof_id,
+		id::TorsionID const & torsion_id,
+		pose::Pose const & pose,
+		ScoreFunction const & sf,
+		EnergyMap const & weights ) const;
 
 
 private:  // Private methods //////////////////////////////////////////////////

@@ -35,36 +35,36 @@ namespace noesy_assign {
 
 class FoldResonance {
 public:
-  FoldResonance() : start_( 0 ), window_( 0 ) {}
+	FoldResonance() : start_( 0 ), window_( 0 ) {}
 
-  void set_window( core::Real start, core::Real end ) {
-    start_ = start;
-    window_ = end-start;
-  }
+	void set_window( core::Real start, core::Real end ) {
+		start_ = start;
+		window_ = end-start;
+	}
 
-  bool is_folded_down( core::Real freq ) const {
-    return window_ > 0.1 && freq < start();
-  }
+	bool is_folded_down( core::Real freq ) const {
+		return window_ > 0.1 && freq < start();
+	}
 
-  bool is_folded_up( core::Real freq ) const {
-    return window_ > 0.1 && freq > end();
-  }
+	bool is_folded_up( core::Real freq ) const {
+		return window_ > 0.1 && freq > end();
+	}
 
-  bool is_folded( core::Real freq ) const {
-    return is_folded_down(freq) || is_folded_up( freq );
-  }
+	bool is_folded( core::Real freq ) const {
+		return is_folded_down(freq) || is_folded_up( freq );
+	}
 
-  core::Real start() const { return start_; }
-  core::Real end() const { return start_+window_; }
+	core::Real start() const { return start_; }
+	core::Real end() const { return start_+window_; }
 
-  core::Real operator() ( core::Real freq ) const {
+	core::Real operator() ( core::Real freq ) const {
 		if ( !is_folded( freq ) ) return freq;
-		//e	return std::fmod( freq-start_, window_ ) + start_;   //modulus does not necessarily work right with negative values
-    while( is_folded_down( freq ) ) { freq+=window_; }
-    while( is_folded_up( freq ) ) { freq-=window_; }
-    assert( !is_folded( freq ) );
-    return freq;
-  }
+		//e return std::fmod( freq-start_, window_ ) + start_;   //modulus does not necessarily work right with negative values
+		while ( is_folded_down( freq ) ) { freq+=window_; }
+		while ( is_folded_up( freq ) ) { freq-=window_; }
+		assert( !is_folded( freq ) );
+		return freq;
+	}
 
 	bool is_folded() const {
 		return window_ > 0; //< BOGUS_SW-1;
@@ -79,8 +79,8 @@ public:
 	}
 
 private:
-  core::Real start_;
-  core::Real window_;
+	core::Real start_;
+	core::Real window_;
 };
 
 }

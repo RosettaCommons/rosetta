@@ -44,13 +44,13 @@ class ParametricSheet : public utility::pointer::ReferenceCount {
 public:
 	struct StrandData {
 		StrandData( std::string const name_val,
-								core::Size const len,
-								core::Size const reg_shift,
-								std::string const orient )
-			: name( name_val),
-				length( len ),
-				register_shift( reg_shift ),
-				orientation( orient )
+			core::Size const len,
+			core::Size const reg_shift,
+			std::string const orient )
+		: name( name_val),
+			length( len ),
+			register_shift( reg_shift ),
+			orientation( orient )
 		{}
 		std::string name;
 		core::Size length;
@@ -79,7 +79,7 @@ public:
 	/// @brief default constructor
 	ParametricSheet();
 
-  /// @brief virtual constructor to allow derivation
+	/// @brief virtual constructor to allow derivation
 	virtual ~ParametricSheet();
 
 	/// @brief setup the parameters via a set of xml tags
@@ -133,9 +133,9 @@ public:
 	/// @brief creates a vector for a new residue in the sheet based on the previous c and h vectors
 	void
 	new_strand( core::Size const strand_num,
-							core::Size const prev_strand,
-							core::Size const prev2_strand,
-							core::Size const center_resi );
+		core::Size const prev_strand,
+		core::Size const prev2_strand,
+		core::Size const center_resi );
 
 	/// @brief generates a transformation matrix to rotate about an arbitrary axis which runs through 0,0,0
 	numeric::xyzMatrix< core::Real >
@@ -144,30 +144,30 @@ public:
 	/// @brief generates a Ca coordinate based on a position on the beta sheet ribbon
 	void
 	create_ca_point( core::Size const strand, core::Size const prev_strand, core::Size const prev2_strand,
-									 core::Size const resi, core::Size const prev_resi, core::Size const prev2_resi );
+		core::Size const resi, core::Size const prev_resi, core::Size const prev2_resi );
 
 	/// @brief builds a small idealized strand fragment to be used for parameterized stuff
 	core::pose::Pose
 	build_ideal_strand( core::chemical::ResidueTypeSetCAP restype_set,
-											std::string const & res_name,
-											core::Size const len ) const;
+		std::string const & res_name,
+		core::Size const len ) const;
 
 	/// @brief convert a point in (c-direction, h-direction, z-direction local coordinates to xyz coordinates
 	/// c_point1 is assumed to be 0,0,0 in chz coordinates
 	core::Vector
 	chz_to_xyz( core::Vector const & chz_point,
-							core::Vector const & c_point1,
-							core::Vector const & c_point2,
-							core::Vector const & h_point1,
-							core::Vector const & h_point2,
-							core::Size const resi ) const;
+		core::Vector const & c_point1,
+		core::Vector const & c_point2,
+		core::Vector const & h_point1,
+		core::Vector const & h_point2,
+		core::Size const resi ) const;
 
 	/// @brief Take the previous point in the c direction, the previous point in the h direction and a reference point and twist about the axis of the two points with the reference point as 0,0,0
 	core::Vector
 	twist( core::Vector const & xyz_point,
-				 core::Vector const & c_prev,
-				 core::Vector const & h_prev,
-				 core::Vector const & reference ) const;
+		core::Vector const & c_prev,
+		core::Vector const & h_prev,
+		core::Vector const & reference ) const;
 
 	/// @brief initializes the set of ca coords
 	void
@@ -190,9 +190,9 @@ public:
 	/// @brief given two previous h points, determine the h direction
 	core::Vector
 	get_h_axis( core::Vector const & p1,
-							core::Vector const & p2,
-							core::Vector const & c_axis,
-							core::Size const resi ) const;
+		core::Vector const & p2,
+		core::Vector const & c_axis,
+		core::Size const resi ) const;
 
 	/// @brief Ca points are generated in a rectangular grid. This function computes the maximum required height of that grid in the C-direction based on strand lengths and register shifts
 	core::Size
@@ -205,7 +205,7 @@ public:
 	/// @brief calculates the ca distance along the c axis between the given strand and residue numbers
 	core::Real
 	calc_cdist( core::Size const strand1, core::Size const resi1,
-			core::Size const strand2, core::Size const resi2 ) const;
+		core::Size const strand2, core::Size const resi2 ) const;
 
 	/// @brief calculates mean and std dev of twist
 	std::pair< core::Real, core::Real >

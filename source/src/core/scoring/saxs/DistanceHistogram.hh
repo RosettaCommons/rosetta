@@ -55,10 +55,10 @@ public:
 
 	/// @brief Adds a distance observation to the histogram
 	void inline insert(Real distance) {
-	  Size b = (Size)(distance*factor_);
-	  if( b>last_nonempty_bin_ ) last_nonempty_bin_ = b;
-	  if ( b>0) {
-	    ++h_[b];
+		Size b = (Size)(distance*factor_);
+		if ( b>last_nonempty_bin_ ) last_nonempty_bin_ = b;
+		if ( b>0 ) {
+			++h_[b];
 		}
 	}
 
@@ -66,14 +66,15 @@ public:
 	Size size() { return h_.size(); }
 
 	/// @brief Clears this histogram by filling each cell with 0.0
-	void zeros() { for(Size i=1;i<=h_.size();i++) { h_[i] = 0; } last_nonempty_bin_ = 0; }
+	void zeros() { for ( Size i=1; i<=h_.size(); i++ ) { h_[i] = 0; } last_nonempty_bin_ = 0; }
 
 	/// @brief Returns the total number of counts in this histogram
 	Size total() const {
-	  Size cnt = 0;
-	  for(Size i=1;i<=h_.size();i++)
-	    cnt+=h_[i];
-	  return cnt;
+		Size cnt = 0;
+		for ( Size i=1; i<=h_.size(); i++ ) {
+			cnt+=h_[i];
+		}
+		return cnt;
 	}
 
 	Size last_nonempty_bin() const { return last_nonempty_bin_; }

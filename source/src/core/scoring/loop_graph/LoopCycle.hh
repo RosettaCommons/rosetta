@@ -25,37 +25,37 @@ namespace core {
 namespace scoring {
 namespace loop_graph {
 
-	class LoopCycle: public utility::pointer::ReferenceCount {
+class LoopCycle: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
 	//constructor
-		LoopCycle();
+	LoopCycle();
 
-		LoopCycle( utility::vector1< Loop > const & loops );
+	LoopCycle( utility::vector1< Loop > const & loops );
 
 	//destructor
 	~LoopCycle();
 
-	public:
+public:
 
-		Loop const & loop( Size const n ) const;
+	Loop const & loop( Size const n ) const;
 
-		utility::vector1< Loop > const & loops() const { return loops_; }
+	utility::vector1< Loop > const & loops() const { return loops_; }
 
-		Size size() const { return loops_.size(); }
+	Size size() const { return loops_.size(); }
 
-		Size find_index_for_loop_landing_at_domain( Size const & takeoff_domain );
+	Size find_index_for_loop_landing_at_domain( Size const & takeoff_domain );
 
-		friend
-		/// @brief Test IO operator for debug and Python bindings
-		std::ostream & operator << ( std::ostream & os, LoopCycle const & loop_cycle);
+	friend
+	/// @brief Test IO operator for debug and Python bindings
+	std::ostream & operator << ( std::ostream & os, LoopCycle const & loop_cycle);
 
-	private:
+private:
 
-		utility::vector1< Loop > loops_;
+	utility::vector1< Loop > loops_;
 
-	};
+};
 
 
 } //loop_graph

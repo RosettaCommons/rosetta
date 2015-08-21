@@ -231,7 +231,7 @@ public:
 	typedef TaskOperation parent;
 
 public:
-  ExtraRotamersGeneric();
+	ExtraRotamersGeneric();
 	virtual ~ExtraRotamersGeneric();
 
 	virtual TaskOperationOP clone() const;

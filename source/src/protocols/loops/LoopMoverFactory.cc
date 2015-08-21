@@ -119,15 +119,15 @@ LoopMoverFactory::create_loop_mover(
 {
 	std::string type_name;
 	// deprecated names
-	if(type_name_in == "quick_ccd"){
+	if ( type_name_in == "quick_ccd" ) {
 		type_name = "LoopMover_Perturb_QuickCCD";
-	} else if(type_name_in == "sdwindow"){
+	} else if ( type_name_in == "sdwindow" ) {
 		type_name = "LoopMover_SlidingWindow";
-	} else if(type_name_in == "quick_ccd_moves"){
+	} else if ( type_name_in == "quick_ccd_moves" ) {
 		type_name = "LoopMover_Perturb_QuickCCD_Moves";
-	} else if(type_name_in == "perturb_ccd"){
+	} else if ( type_name_in == "perturb_ccd" ) {
 		type_name = "LoopMover_Perturb_CCD";
-	} else if(type_name_in == "perturb_kic"){
+	} else if ( type_name_in == "perturb_kic" ) {
 		type_name = "LoopMover_Perturb_KIC";
 	} else {
 		type_name = type_name_in;
@@ -135,7 +135,7 @@ LoopMoverFactory::create_loop_mover(
 
 	tr.Trace << "generate LoopMover of type " << type_name << std::endl;
 	loop_mover::LoopMoverOP loop_mover( utility::pointer::dynamic_pointer_cast< loop_mover::LoopMover > ( (moves::MoverFactory::get_instance()->newMover(type_name)) ));
-	if(!loop_mover){
+	if ( !loop_mover ) {
 		stringstream error_msg;
 		error_msg
 			<< "Attempting to create Mover "

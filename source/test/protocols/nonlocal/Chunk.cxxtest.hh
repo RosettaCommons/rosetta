@@ -37,21 +37,22 @@ using protocols::nonlocal::Region;
 using protocols::nonlocal::RegionOP;
 
 class ChunkTest : public CxxTest::TestSuite {
- public:
+public:
 	MoveMapOP movable_;
 	boost::scoped_ptr<Chunk> valid_chunk_;
 	boost::scoped_ptr<Chunk> invalid_chunk_;
 
 	void setUp() {
-    core_init();
+		core_init();
 
-    // define the movable backbone degrees of freedom
+		// define the movable backbone degrees of freedom
 		movable_ = MoveMapOP( new MoveMap() );
 		movable_->set_bb(true);
-		for (Size i = 5; i <= 10; ++i)
+		for ( Size i = 5; i <= 10; ++i ) {
 			movable_->set_bb(i, false);
+		}
 
-    valid_chunk_.reset(new Chunk(RegionOP( new Region(1,5) ), movable_));
+		valid_chunk_.reset(new Chunk(RegionOP( new Region(1,5) ), movable_));
 		invalid_chunk_.reset(new Chunk(RegionOP( new Region(5,10) ), movable_));
 	}
 
@@ -76,8 +77,8 @@ class ChunkTest : public CxxTest::TestSuite {
 	/// @brief Ensure that all insertion positions selected in choose() are on the
 	/// closed interval [start(), stop()].
 	void test_samples_in_range() {
-    for (int i = 0; i < 10000; ++i) {
-      Size insert_pos = valid_chunk_->choose();
+		for ( int i = 0; i < 10000; ++i ) {
+			Size insert_pos = valid_chunk_->choose();
 			TS_ASSERT(insert_pos >= valid_chunk_->start());
 			TS_ASSERT(insert_pos <= valid_chunk_->stop());
 		}

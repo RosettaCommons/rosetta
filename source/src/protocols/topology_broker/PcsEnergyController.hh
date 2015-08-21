@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- /// @file protocols/topology_broker/PcsEnergyController.hh
- ///
- /// @authorv Christophe Schmitz & Oliver Lange
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+/// @file protocols/topology_broker/PcsEnergyController.hh
+///
+/// @authorv Christophe Schmitz & Oliver Lange
+///
+////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_topology_broker_PcsEnergyController_hh
 #define INCLUDED_protocols_topology_broker_PcsEnergyController_hh
@@ -79,11 +79,11 @@ public:
 	/// @brief This is called each time the stageID is changed
 	virtual void
 	add_mover(moves::RandomMover& /* random_mover */,
-						core::pose::Pose const& /*pose*/,
-						abinitio::StageID /*stageID*/, /* abinitio sampler stage */
-						core::scoring::ScoreFunction const& /*scorefxn*/,
-						core::Real /* progress */ /* progress within stage */
-						);
+		core::pose::Pose const& /*pose*/,
+		abinitio::StageID /*stageID*/, /* abinitio sampler stage */
+		core::scoring::ScoreFunction const& /*scorefxn*/,
+		core::Real /* progress */ /* progress within stage */
+	);
 
 	/// @brief Called Each time END CLAIMER is processed
 	virtual void

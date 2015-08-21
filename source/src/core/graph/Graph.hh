@@ -42,58 +42,58 @@
 namespace core {
 namespace graph {
 
-	/// @brief An extensible graph class
+/// @brief An extensible graph class
 
-	/**
-		@li Nodes are identified by positive integers -- each node is assigned a unique integer starting at 1.
+/**
+@li Nodes are identified by positive integers -- each node is assigned a unique integer starting at 1.
 
-		@li Nodes know about both their upper and their lower edges.  Iterators can range over all
-			edges, just the upper edges or just the lower edges.
+@li Nodes know about both their upper and their lower edges.  Iterators can range over all
+edges, just the upper edges or just the lower edges.
 
-		@li Nodes store their incident edge information in edge lists; they provide const and non-const
-			iterators which return const and non-const pointers to Edge objects.
+@li Nodes store their incident edge information in edge lists; they provide const and non-const
+iterators which return const and non-const pointers to Edge objects.
 
-		@li The Graph object provides iterators for all of the edges in the graph; this list is unordered.
+@li The Graph object provides iterators for all of the edges in the graph; this list is unordered.
 
-		@li This graph is instantiatable (ie not a pure virtual class).  It was also built with extension
-			in mind.  See core/scoring/EnergyGraph for an example on how to create an extension of
-			the Node, Edge and Graph classes
+@li This graph is instantiatable (ie not a pure virtual class).  It was also built with extension
+in mind.  See core/scoring/EnergyGraph for an example on how to create an extension of
+the Node, Edge and Graph classes
 
-		@li Derived graph classes must define two factory methods: create_node and create_edge
-			which are called by the base class when adding graph elements.
+@li Derived graph classes must define two factory methods: create_node and create_edge
+which are called by the base class when adding graph elements.
 
-		@li Edges offer constant-time deletion -- edges remove themselves from the edge-lists
-			that their nodes maintain, and from the edge-list that the Graph maintains without
-			having to iterate over those lists.
+@li Edges offer constant-time deletion -- edges remove themselves from the edge-lists
+that their nodes maintain, and from the edge-list that the Graph maintains without
+having to iterate over those lists.
 
-		@li Memory is carefully managed to make edge addition and deletion exceedingly fast.
-			The management is through a class "unodered_object_pool" which is very much
-			like boost::object_pool.  The base class ueses these unordered object pools for
-			base class edges (when used) and for the edge lists elements.  Derived classes
-			may take advantage of this by defining their own unordered_object_pool objects.
+@li Memory is carefully managed to make edge addition and deletion exceedingly fast.
+The management is through a class "unodered_object_pool" which is very much
+like boost::object_pool.  The base class ueses these unordered object pools for
+base class edges (when used) and for the edge lists elements.  Derived classes
+may take advantage of this by defining their own unordered_object_pool objects.
 
-		@li Graphs own the vertices and edges they create.  Graphs cannot share or give away edges.
+@li Graphs own the vertices and edges they create.  Graphs cannot share or give away edges.
 
-		@li To delete an edge pointed to by Edge* e in a graph g, call the virtual function
-			"g->delete_edge( &e );"
+@li To delete an edge pointed to by Edge* e in a graph g, call the virtual function
+"g->delete_edge( &e );"
 
-		@li Derived classes must invoke the "destroy_everything" method in their virtual destructors so that
-			they are empty by the time the base class destructor is called.  The destroy_everything method
-			invokes the virtual delete_edge() method -- remember, virtual methods do not work in base class
-			constructors or destructors.  If a derived class does not call destroy_everything in its destructor,
-			~Graph() will call Graph::destroy_everything which will call (surprisingly) Graph::delete_edge
-			and not Derived::delete_edge.
+@li Derived classes must invoke the "destroy_everything" method in their virtual destructors so that
+they are empty by the time the base class destructor is called.  The destroy_everything method
+invokes the virtual delete_edge() method -- remember, virtual methods do not work in base class
+constructors or destructors.  If a derived class does not call destroy_everything in its destructor,
+~Graph() will call Graph::destroy_everything which will call (surprisingly) Graph::delete_edge
+and not Derived::delete_edge.
 
-		@li Derived classes should not invoke the base class copy constructors for the same reason.
-			The base class copy constructor will call the base class create_node and create_edge methods
-			and not the desired derived class versions.
+@li Derived classes should not invoke the base class copy constructors for the same reason.
+The base class copy constructor will call the base class create_node and create_edge methods
+and not the desired derived class versions.
 
-		@li The virtual functions Derived graph classes must override:
-				Node: copy_from, print, count_static_memory, count_dynamic_memory
-				Edge: copy_from, count_static_mmory, count_dynamic_memory
-				Graph: create_node, create_edge, delete_edge, count_static_memory, count_dynamic_memory
+@li The virtual functions Derived graph classes must override:
+Node: copy_from, print, count_static_memory, count_dynamic_memory
+Edge: copy_from, count_static_mmory, count_dynamic_memory
+Graph: create_node, create_edge, delete_edge, count_static_memory, count_dynamic_memory
 
-	**/
+**/
 
 
 /// @brief Custom written edge list element class.  Little more than a struct.
@@ -103,7 +103,7 @@ class EdgeListElement
 public:
 	EdgeListElement() : edge_( 0 ), previous_( 0 ), next_( 0 ) {}
 	EdgeListElement( Edge * edge, EdgeListElement * previous, EdgeListElement * next )
-		: edge_( edge ), previous_( previous ), next_( next ) {}
+	: edge_( edge ), previous_( previous ), next_( next ) {}
 
 
 	~EdgeListElement() {}
@@ -141,19 +141,19 @@ public:
 
 	/// @brief default constructor, owner and element set to null
 	EdgeListIterator()
-		: owner_( 0 ), element_( 0 ) {}
+	: owner_( 0 ), element_( 0 ) {}
 
 	/// @brief owner constructor
 	EdgeListIterator( EdgeList const * owner )
-		: owner_( owner ), element_( 0 ) {}
+	: owner_( owner ), element_( 0 ) {}
 
 	/// @brief owner and element constructor: points at a position in a list
 	EdgeListIterator( EdgeList const * owner, EdgeListElement * element )
-		: owner_( owner ), element_( element ) {}
+	: owner_( owner ), element_( element ) {}
 
 	/// @brief copy constructor
 	EdgeListIterator( EdgeListIterator const & src )
-		: owner_( src.owner_ ), element_( src.element_ ) {}
+	: owner_( src.owner_ ), element_( src.element_ ) {}
 
 	/// @brief non-virtual destructor, does nothing
 	~EdgeListIterator() {}
@@ -180,7 +180,7 @@ public:
 	/// that they belong to the same list.  Never compare elements from separate lists.
 	inline
 	bool operator == ( EdgeListIterator const & rhs ) const {
-	debug_assert( owner_ == rhs.owner_ );
+		debug_assert( owner_ == rhs.owner_ );
 		return element_ == rhs.element_;
 	}
 
@@ -226,23 +226,23 @@ public:
 
 	/// @brief default constructor, owner and element set to null
 	EdgeListConstIterator()
-		: owner_( 0 ), element_( 0 ) {}
+	: owner_( 0 ), element_( 0 ) {}
 
 	/// @brief owner constructor
 	EdgeListConstIterator( EdgeList const * owner )
-		: owner_( owner ), element_( 0 ) {}
+	: owner_( owner ), element_( 0 ) {}
 
 	/// @brief owner and element constructor: points at a position in a list
 	EdgeListConstIterator( EdgeList const * owner, EdgeListElement const * element )
-		: owner_( owner ), element_( element ) {}
+	: owner_( owner ), element_( element ) {}
 
 	/// @brief copy constructor
 	EdgeListConstIterator( EdgeListConstIterator const & src )
-		: owner_( src.owner_ ), element_( src.element_ ) {}
+	: owner_( src.owner_ ), element_( src.element_ ) {}
 
 	/// @brief const-cast constructor
 	EdgeListConstIterator( EdgeListIterator const & src )
-		: owner_( src.owner_ ), element_( src.element_ ) {}
+	: owner_( src.owner_ ), element_( src.element_ ) {}
 
 
 	/// @brief non-virtual destructor, does nothing
@@ -270,7 +270,7 @@ public:
 	/// that they belong to the same list.  Never compare elements from separate lists.
 	inline
 	bool operator == ( EdgeListConstIterator const & rhs ) const {
-	debug_assert( owner_ == rhs.owner_ );
+		debug_assert( owner_ == rhs.owner_ );
 		return element_ == rhs.element_;
 	}
 
@@ -278,7 +278,7 @@ public:
 	/// that they belong to the same list.  Never compare elements from separate lists.
 	inline
 	bool operator == ( EdgeListIterator const & rhs ) const {
-	debug_assert( owner_ == rhs.owner_ );
+		debug_assert( owner_ == rhs.owner_ );
 		return element_ == rhs.element_;
 	}
 
@@ -488,13 +488,13 @@ public:
 	}
 
 	/// @brief the number of neighbors counting "self" as neighbor. Defaults to
-  /// num_neighbors_counting_self() but can be set to other values as well.
-  /// Useful in calculation of symmetrical structures.
-  inline
-  platform::Size num_neighbors_counting_self_static() const
-  {
-    return num_neighbors_counting_self_static_;
-  }
+	/// num_neighbors_counting_self() but can be set to other values as well.
+	/// Useful in calculation of symmetrical structures.
+	inline
+	platform::Size num_neighbors_counting_self_static() const
+	{
+		return num_neighbors_counting_self_static_;
+	}
 
 	/// @brief the number of lower neighbors
 	inline
@@ -610,7 +610,7 @@ protected:
 	inline
 	platform::Size get_node_index( platform::Size index ) const
 	{
-	debug_assert( index == 0 || index == 1 );
+		debug_assert( index == 0 || index == 1 );
 		return node_indices_[ index ];
 	}
 
@@ -620,7 +620,7 @@ protected:
 	Node const *
 	get_node( platform::Size index ) const
 	{
-	debug_assert( index == 0 || index == 1 );
+		debug_assert( index == 0 || index == 1 );
 		return nodes_[ index ];
 	}
 
@@ -630,7 +630,7 @@ protected:
 	Node *
 	get_node( platform::Size index )
 	{
-	debug_assert( index == 0 || index == 1 );
+		debug_assert( index == 0 || index == 1 );
 		return nodes_[ index ];
 	}
 
@@ -747,14 +747,14 @@ public:
 	inline
 	Node const * get_node( platform::Size index ) const
 	{
-	debug_assert( index > 0 && index <= num_nodes_ );
+		debug_assert( index > 0 && index <= num_nodes_ );
 		return nodes_[ index ];
 	}
 
 	inline
 	Node* get_node( platform::Size index )
 	{
-	debug_assert( index > 0 && index <= num_nodes_ );
+		debug_assert( index > 0 && index <= num_nodes_ );
 		return nodes_[ index ];
 	}
 

@@ -23,8 +23,8 @@
 
 
 #ifdef WIN32
-	#include <protocols/stepwise/modeler/rna/checker/RNA_AtrRepChecker.hh>
-	#include <protocols/stepwise/legacy/screener/RNA_AtrRepScreener.hh>
+#include <protocols/stepwise/modeler/rna/checker/RNA_AtrRepChecker.hh>
+#include <protocols/stepwise/legacy/screener/RNA_AtrRepScreener.hh>
 #endif
 
 
@@ -33,38 +33,38 @@ namespace stepwise {
 namespace legacy {
 namespace screener {
 
-	class RNA_AtrRepScreener: public stepwise::screener::StepWiseScreener {
+class RNA_AtrRepScreener: public stepwise::screener::StepWiseScreener {
 
-	public:
+public:
 
-		//constructor
-		RNA_AtrRepScreener( protocols::stepwise::modeler::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker,
-										core::pose::Pose & screening_pose );
+	//constructor
+	RNA_AtrRepScreener( protocols::stepwise::modeler::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker,
+		core::pose::Pose & screening_pose );
 
-		//destructor
-		~RNA_AtrRepScreener();
+	//destructor
+	~RNA_AtrRepScreener();
 
-	public:
+public:
 
-		std::string
-		name() const { return "RNA_AtrRepScreener"; }
+	std::string
+	name() const { return "RNA_AtrRepScreener"; }
 
-		stepwise::screener::StepWiseScreenerType
-		type() const { return stepwise::screener::ATR_REP; }
+	stepwise::screener::StepWiseScreenerType
+	type() const { return stepwise::screener::ATR_REP; }
 
-		bool
-		check_screen();
+	bool
+	check_screen();
 
-		void
-		set_exit_on_fail( bool const setting ){ exit_on_fail_ = setting; }
+	void
+	set_exit_on_fail( bool const setting ){ exit_on_fail_ = setting; }
 
-	private:
+private:
 
-		protocols::stepwise::modeler::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker_;
-		core::pose::Pose & screening_pose_;
-		bool exit_on_fail_;
+	protocols::stepwise::modeler::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker_;
+	core::pose::Pose & screening_pose_;
+	bool exit_on_fail_;
 
-	};
+};
 
 } //screener
 } //legacy

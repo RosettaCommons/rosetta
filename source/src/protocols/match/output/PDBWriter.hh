@@ -76,7 +76,7 @@ public:
 
 	//core::pose::PoseCOP
 	//create_output_pose_from_dspos1_match(
-	//	match_dspos1 const & m );
+	// match_dspos1 const & m );
 
 	void
 	set_coordinate_cacher( UpstreamHitCacherOP );
@@ -86,7 +86,7 @@ public:
 
 	void
 	initialize_from_matcher_task(
-			MatcherTaskCOP mtask
+		MatcherTaskCOP mtask
 	);
 
 	void
@@ -208,7 +208,7 @@ public:
 	void
 	write_match_groups();
 
-//accessors
+	//accessors
 public:
 
 	utility::vector1< UpstreamHitSets > const & match_groups_ushits() const;

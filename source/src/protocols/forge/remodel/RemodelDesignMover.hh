@@ -79,7 +79,7 @@ public: // accessors
 public: // options
 
 	void mode1_packertask(Pose & pose); // auto loop only
-	void mode1_1_packertask(Pose & pose); // auto all 
+	void mode1_1_packertask(Pose & pose); // auto all
 	void mode2_packertask(Pose & pose); // auto loop with design neighbor
 	void mode3_packertask(Pose & pose); // auto loop with repack neighbor
 	void mode4_packertask(Pose & pose); // full manual
@@ -92,14 +92,14 @@ public: // options
 	void set_state( std::string state_tag );
 
 	bool find_disulfides_in_the_neighborhood( Pose & pose, utility::vector1<std::pair<Size, Size> > & disulf_partners, const core::Energy & match_rt_limit, const Size & rosetta_scripts_min_loop,
-											const bool & rosetta_scripts_include_current_ds, const bool & rosetta_scripts_keep_current_ds,
-											const bool & relax_bb_for_disulf, const bool & use_match_rt, const bool & use_disulf_fa_score, const core::Real disulf_fa_max);
+		const bool & rosetta_scripts_include_current_ds, const bool & rosetta_scripts_keep_current_ds,
+		const bool & relax_bb_for_disulf, const bool & use_match_rt, const bool & use_disulf_fa_score, const core::Real disulf_fa_max);
 	void make_disulfide( Pose & pose, utility::vector1<std::pair<Size, Size> > & disulf_partners, core::kinematics::MoveMapOP mm );
 	void make_disulfide_fast( Pose & pose, utility::vector1<std::pair<Size, Size> > & disulf_partners);
 
 	virtual void apply( Pose & pose );
 	virtual std::string get_name() const;
-	
+
 private:
 	void run_calculator( core::pose::Pose const & pose, std::string const & calculator, std::string const & calculation, utility::vector1_bool & residues );
 
@@ -110,9 +110,9 @@ private: // data
 	PackerTaskOP archived_starting_task_;
 	utility::vector1<bool> non_default_positions_;
 	std::string state_;
-//	PackerTaskOP packer_task_;
+	// PackerTaskOP packer_task_;
 	ScoreFunctionOP score_fxn_;
-//	MoveMap move_map_;
+	// MoveMap move_map_;
 };
 
 } // remodel

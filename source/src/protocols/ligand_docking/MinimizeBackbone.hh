@@ -105,10 +105,10 @@ private:
 		core::pose::Pose & pose
 	);
 	void restrain_protein_Calpha(
-			ligand_options::Interface const & interface,
-			core::pose::Pose & pose,
-			core::Size residue_id,
-			core::id::AtomID const & fixed_pt
+		ligand_options::Interface const & interface,
+		core::pose::Pose & pose,
+		core::Size residue_id,
+		core::id::AtomID const & fixed_pt
 	);
 };
 

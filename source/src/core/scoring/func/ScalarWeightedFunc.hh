@@ -35,37 +35,37 @@ namespace core {
 namespace scoring {
 namespace func {
 
-	class ScalarWeightedFunc : public Func {
-	public:
-		ScalarWeightedFunc(
-			Real const weight,
-			FuncOP myfunc
-		): weight_( weight ), func_to_weight_( myfunc ) {}
+class ScalarWeightedFunc : public Func {
+public:
+	ScalarWeightedFunc(
+		Real const weight,
+		FuncOP myfunc
+	): weight_( weight ), func_to_weight_( myfunc ) {}
 
-		virtual ~ScalarWeightedFunc();
+	virtual ~ScalarWeightedFunc();
 
-		virtual
-		FuncOP
-		clone() const { return FuncOP( new ScalarWeightedFunc( *this ) ); }
+	virtual
+	FuncOP
+	clone() const { return FuncOP( new ScalarWeightedFunc( *this ) ); }
 
-		virtual
-		Real func( Real const x ) const;
-		virtual
-		Real dfunc( Real const x ) const;
+	virtual
+	Real func( Real const x ) const;
+	virtual
+	Real dfunc( Real const x ) const;
 
-		virtual
-		void read_data( std::istream& );
+	virtual
+	void read_data( std::istream& );
 
-		virtual
-		void show_definition( std::ostream &out ) const;
-		virtual
-		Size show_violations(std::ostream &out, Real x, Size verbose_level, Real threshold = 1) const;
+	virtual
+	void show_definition( std::ostream &out ) const;
+	virtual
+	Size show_violations(std::ostream &out, Real x, Size verbose_level, Real threshold = 1) const;
 
 
-	private:
-		Real weight_;
-		FuncOP func_to_weight_;
-	};
+private:
+	Real weight_;
+	FuncOP func_to_weight_;
+};
 } // constraints
 } // scoring
 } // core

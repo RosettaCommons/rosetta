@@ -21,7 +21,7 @@ namespace devel {
 namespace denovo_design {
 
 
-		
+
 class DumpStatsSSCreator : public protocols::moves::MoverCreator
 {
 public:

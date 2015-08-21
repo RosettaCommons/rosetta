@@ -52,7 +52,7 @@ private:
 
 	// private fxns
 	void derive_staple_constraints_( core::pose::Pose & pose );
-	void minimize_(	core::pose::Pose & pose );
+	void minimize_( core::pose::Pose & pose );
 
 	//void build_staple_ ( core::pose::Pose & pose, core::Size const seqpos, core::Size const staple_gap );
 

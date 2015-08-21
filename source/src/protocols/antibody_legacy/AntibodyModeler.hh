@@ -56,46 +56,46 @@ public:
 
 	virtual protocols::moves::MoverOP clone() const;
 
-	virtual	void init_on_new_input();
+	virtual void init_on_new_input();
 
 	void set_snugdock_foldtree( core::pose::Pose & pose_in );
 
 	void setup_simple_fold_tree(
-	    core::Size jumppoint1,
-	    core::Size cutpoint,
-	    core::Size jumppoint2,
-	    core::Size nres,
-	    core::pose::Pose & pose_in );
+		core::Size jumppoint1,
+		core::Size cutpoint,
+		core::Size jumppoint2,
+		core::Size nres,
+		core::pose::Pose & pose_in );
 
 	void relax_cdrs();
 
 	void all_cdr_VL_VH_fold_tree(
-	    core::pose::Pose & pose_in,
-	    const loops::Loops & loops );
+		core::pose::Pose & pose_in,
+		const loops::Loops & loops );
 
 	void repulsive_ramp(
-	    core::pose::Pose & pose_in,
-	    loops::Loops loops_in );
+		core::pose::Pose & pose_in,
+		loops::Loops loops_in );
 
 	void snugfit_MC_min (
-	    core::pose::Pose & pose_in,
-	    core::kinematics::MoveMapOP cdr_dock_map,
-	    core::Size cycles,
-	    core::Real minimization_threshold,
-	    core::scoring::ScoreFunctionOP scorefxn,
-	    core::scoring::ScoreFunctionOP pack_scorefxn,
-	    utility::vector1< bool> is_flexible );
+		core::pose::Pose & pose_in,
+		core::kinematics::MoveMapOP cdr_dock_map,
+		core::Size cycles,
+		core::Real minimization_threshold,
+		core::scoring::ScoreFunctionOP scorefxn,
+		core::scoring::ScoreFunctionOP pack_scorefxn,
+		utility::vector1< bool> is_flexible );
 
 	void snugfit_mcm_protocol(
-	    core::pose::Pose & pose_in,
-	    loops::Loops loops_in );
+		core::pose::Pose & pose_in,
+		loops::Loops loops_in );
 
 	void setup_packer_task( core::pose::Pose & pose_in );
 
 	core::Real global_loop_rmsd (
-	    const core::pose::Pose & pose_in,
-	    const core::pose::Pose & native_pose,
-	    std::string cdr_type );
+		const core::pose::Pose & pose_in,
+		const core::pose::Pose & native_pose,
+		std::string cdr_type );
 
 	void read_and_store_fragments();
 

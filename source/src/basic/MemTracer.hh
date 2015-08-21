@@ -51,16 +51,16 @@ void get_usage_from_procfilesystem( std::ostream& mem_report );
 class MemTracer : public Tracer {
 	typedef Tracer Parent;
 
- public:
-  MemTracer( TracerPriority priority=t_info, bool muted_by_default = true )
-    : Tracer( "memory_usage", priority, muted_by_default ) {}
+public:
+	MemTracer( TracerPriority priority=t_info, bool muted_by_default = true )
+	: Tracer( "memory_usage", priority, muted_by_default ) {}
 
- protected:
-  /// @brief overload member function.
-  virtual void t_flush(std::string const &);
+protected:
+	/// @brief overload member function.
+	virtual void t_flush(std::string const &);
 
- private:
-  static bool single_line_;
+private:
+	static bool single_line_;
 };
 
 extern MemTracer mem_tr;

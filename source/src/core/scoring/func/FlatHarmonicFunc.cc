@@ -33,23 +33,22 @@ namespace func {
 Real
 FlatHarmonicFunc::func( Real const x ) const
 {
-		if( fabs( x - x0_ ) <= tol_ ) return 0.0;
-		else if( x > x0_ ){
-				Real const z = ( x - x0_ - tol_ ) / sd_;
-				return z * z;
-		}
-		else{
-				Real const z = ( x - x0_ + tol_ ) / sd_;
-				return z * z;
-		}
+	if ( fabs( x - x0_ ) <= tol_ ) return 0.0;
+	else if ( x > x0_ ) {
+		Real const z = ( x - x0_ - tol_ ) / sd_;
+		return z * z;
+	} else {
+		Real const z = ( x - x0_ + tol_ ) / sd_;
+		return z * z;
+	}
 }
 
 Real
 FlatHarmonicFunc::dfunc( Real const x ) const
 {
-		if( fabs( x - x0_ ) <= tol_ ) return 0.0;
-		else if( x > x0_ ) return 2 * ( x - x0_ - tol_ ) / ( sd_ * sd_ );
-		else return 2 * ( x - x0_ + tol_ ) / ( sd_ * sd_ );
+	if ( fabs( x - x0_ ) <= tol_ ) return 0.0;
+	else if ( x > x0_ ) return 2 * ( x - x0_ - tol_ ) / ( sd_ * sd_ );
+	else return 2 * ( x - x0_ + tol_ ) / ( sd_ * sd_ );
 }
 
 void
@@ -64,19 +63,18 @@ FlatHarmonicFunc::show_definition( std::ostream &out ) const {
 
 Size
 FlatHarmonicFunc::show_violations( std::ostream& out, Real x, Size verbose_level, Real threshold) const {
-	if (verbose_level > 100 ) {
-		if( fabs( x - x0_ ) <= tol_ ) out << "HARM " << 0.0 << std::endl;
-		else if( x > x0_ ){
-				Real const z = ( x - x0_ - tol_ ) / sd_;
-				out << "FLHARM " << z << std::endl;
+	if ( verbose_level > 100 ) {
+		if ( fabs( x - x0_ ) <= tol_ ) out << "HARM " << 0.0 << std::endl;
+		else if ( x > x0_ ) {
+			Real const z = ( x - x0_ - tol_ ) / sd_;
+			out << "FLHARM " << z << std::endl;
+		} else {
+			Real const z = ( x - x0_ + tol_ ) / sd_;
+			out << "FLHARM " << z << std::endl;
 		}
-		else{
-				Real const z = ( x - x0_ + tol_ ) / sd_;
-				out << "FLHARM " << z << std::endl;
-		}
-	} else if (verbose_level > 70 ) {
+	} else if ( verbose_level > 70 ) {
 		if ( x < x0_ + tol_  && ( this->func(x) > threshold ) ) out << "-";
-		else if ( x > x0_ + tol_ && ( this->func(x) > threshold )) out << "+";
+		else if ( x > x0_ + tol_ && ( this->func(x) > threshold ) ) out << "+";
 		else out << ".";
 	}
 	return Func::show_violations( out, x, verbose_level, threshold);

@@ -55,7 +55,7 @@ RigidBodySilentStruct::fill_struct(
 	sequence( pose.annotated_sequence( true /* show-all-variants */ ) );
 	for ( Size i = 1; i <= pose.num_jump(); ++i ) {
 		jumps_.clear();
-		for ( Size nr = 1; nr <= pose.num_jump(); nr++)  {
+		for ( Size nr = 1; nr <= pose.num_jump(); nr++ )  {
 			add_jump( pose.jump(nr) );
 		}
 	}
@@ -93,16 +93,16 @@ bool RigidBodySilentStruct::init_from_lines(
 		++iter;
 		read_score_headers( *iter, energy_names, container ); ++iter;
 	} // get header information
-	for ( utility::vector1< std::string >::const_iterator end = lines.end(); iter != end;	++iter ) {
+	for ( utility::vector1< std::string >::const_iterator end = lines.end(); iter != end; ++iter ) {
 		std::string tag;
 		std::istringstream line_stream( *iter );
 
 		if ( iter->substr(0,6) == "REMARK" ) {
-// 			std::string tag;
-// 			std::string comment;
-// 			std::string value;
-// 			runtime_assert( tag == "REMARK" );
-// 			line_stream >> tag >> comment >> value;
+			//    std::string tag;
+			//    std::string comment;
+			//    std::string value;
+			//    runtime_assert( tag == "REMARK" );
+			//    line_stream >> tag >> comment >> value;
 			comment_from_line( *iter );//add_comment( comment, value );
 			continue;  // don't skip comments
 		}
@@ -136,7 +136,7 @@ bool RigidBodySilentStruct::init_from_lines(
 				tr.Warning << "skipping duplicate sequence declaration " << std::endl;
 				//after a SEQUENCE declaration we might find another SCORE header that should be skipped, too...
 				utility::vector1< std::string >::const_iterator iter2 = ++iter;
-				if (( iter2 != end ) && iter2->substr(0,7) == "SCORE: " ) {
+				if ( ( iter2 != end ) && iter2->substr(0,7) == "SCORE: " ) {
 					tr.Warning << "re-reading score declaration from second line... " << std::endl;
 					read_score_headers( *iter2, energy_names, container );
 					++iter;
@@ -197,7 +197,7 @@ void RigidBodySilentStruct::fill_pose(
 		utility_exit_with_message( "RuntimeAssert failed: num_jump() == jumps in silent-struct" );
 	}
 
-	for ( Size nr = 1; nr <= pose.num_jump(); nr++)  {
+	for ( Size nr = 1; nr <= pose.num_jump(); nr++ )  {
 		pose.set_jump( nr, jump( nr ) );
 	}
 
@@ -214,22 +214,22 @@ void RigidBodySilentStruct::fill_pose(
 
 void RigidBodySilentStruct::print_conformation( std::ostream & output ) const {
 	// fold tree
-	//	output << "REMARK RIGID_BODY_SILENTFILE" << std::endl;
+	// output << "REMARK RIGID_BODY_SILENTFILE" << std::endl;
 	if ( write_fold_tree_ && fold_tree_ ) { //assume non-trivial fold_tree only if more than one edge, i.e., EDGE 1 <nres> -1
 		output << "FOLD_TREE ";
 		for ( kinematics::FoldTree::const_iterator it = fold_tree().begin(), it_end = fold_tree().end();
-					it != it_end; ++it ) {
+				it != it_end; ++it ) {
 			output << *it;
 		}
-		//		output << fold_tree(); this produces a new-line --- wrong behaviour of fold_tree but I don't want to fix 1000 u-tracer unit-tests!
+		//  output << fold_tree(); this produces a new-line --- wrong behaviour of fold_tree but I don't want to fix 1000 u-tracer unit-tests!
 		output << ' ' << decoy_tag() << "\n";
 	}
 	for ( Size i = 1; i <= jumps_.size(); i++ ) {
 		output << jumps_[ i ] << ' ' << decoy_tag() << "\n";
 	}
 
-	//	output << ' ' << decoy_tag();
-	//	output << "\n";
+	// output << ' ' << decoy_tag();
+	// output << "\n";
 } // print_conformation
 
 

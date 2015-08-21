@@ -55,26 +55,26 @@ public:
 	~DockingLowResEnsemble();
 
 	/// @brief Constructor with two arguments.  The first is scorefunction to be used for docking, the second is the
-	///		DockJumps.
+	///  DockJumps.
 	DockingLowResEnsemble(
-        core::scoring::ScoreFunctionCOP scorefxn,
-        DockJumps const movable_jumps
-    );
-	
-    virtual protocols::moves::MoverOP clone() const;
-    
-    virtual void show( std::ostream & out=std::cout ) const;
-    
+		core::scoring::ScoreFunctionCOP scorefxn,
+		DockJumps const movable_jumps
+	);
+
+	virtual protocols::moves::MoverOP clone() const;
+
+	virtual void show( std::ostream & out=std::cout ) const;
+
 	// option setters
 	void set_ensemble1( DockingEnsembleOP ensemble1 );
 	void set_ensemble2( DockingEnsembleOP ensemble2 );
-    
+
 protected:
 	/// @brief Performs the portion of setup of non-primitive members that requires a pose - called on apply
 	virtual void finalize_setup( core::pose::Pose & pose); // Comment out by DK
 
 private:
-    protocols::docking::ConformerSwitchMoverOP ensemble1_mover_;
+	protocols::docking::ConformerSwitchMoverOP ensemble1_mover_;
 	protocols::docking::ConformerSwitchMoverOP ensemble2_mover_;
 };
 

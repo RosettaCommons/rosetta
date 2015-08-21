@@ -22,9 +22,9 @@ namespace protocols {
 namespace stepwise {
 namespace modeler {
 
-	class StepWiseMinimizer;
-	typedef utility::pointer::shared_ptr< StepWiseMinimizer > StepWiseMinimizerOP;
-	typedef utility::pointer::shared_ptr< StepWiseMinimizer const > StepWiseMinimizerCOP;
+class StepWiseMinimizer;
+typedef utility::pointer::shared_ptr< StepWiseMinimizer > StepWiseMinimizerOP;
+typedef utility::pointer::shared_ptr< StepWiseMinimizer const > StepWiseMinimizerCOP;
 
 } //modeler
 } //stepwise

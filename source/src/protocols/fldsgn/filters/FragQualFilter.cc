@@ -73,7 +73,7 @@ void FragQualFilter::filtered_type( String const & value )
 FragQualFilter::Real
 FragQualFilter::report_sm( Pose const & pose ) const
 {
-	return 	compute( pose );
+	return  compute( pose );
 }
 
 /// @brief
@@ -97,10 +97,10 @@ FragQualFilter::compute( Pose const & pose ) const
 bool FragQualFilter::apply( Pose const & pose ) const
 {
 	Real value = compute( pose );
-	if( value > filtered_value_ ){
+	if ( value > filtered_value_ ) {
 		tr << "Successfully filtered: " << value << std::endl;
 		return true;
-	}else{
+	} else {
 		tr << "Filter failed current/threshold=" << value << "/" << filtered_value_ << std::endl;
 		return false;
 	}
@@ -119,14 +119,14 @@ FragQualFilter::parse_my_tag(
 	using protocols::toolbox::pose_metric_calculators::FragQualCalculator;
 
 	// set filtered type
- 	filtered_type_ = tag->getOption<String>( "type", "num_goodfrag" );
-	if( filtered_type_ != "num_goodfrag" && filtered_type_ != "coverage" ) {
+	filtered_type_ = tag->getOption<String>( "type", "num_goodfrag" );
+	if ( filtered_type_ != "num_goodfrag" && filtered_type_ != "coverage" ) {
 		tr << "Filter type, " << filtered_type_ <<  " is not defined." << std::endl;
 		runtime_assert( false );
 	}
 
 	// set threshold
- 	filtered_value_ = tag->getOption<Real>( "threshold", 0.0 );
+	filtered_value_ = tag->getOption<Real>( "threshold", 0.0 );
 	tr << "Structures with fragqual value, " << filtered_type_ << " above " << filtered_value_ << " will be filtred." << std::endl;
 
 	// set FragQual

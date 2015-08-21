@@ -53,18 +53,18 @@ public:
 	std::string
 	read_in_spanfile();
 
-//pba
-  bool
-  initialized() const
-  {
-    return initialized_;
-  }
+	//pba
+	bool
+	initialized() const
+	{
+		return initialized_;
+	}
 
-  bool &
-  initialized()
-  {
-    return initialized_;
-  }
+	bool &
+	initialized()
+	{
+		return initialized_;
+	}
 
 	Size
 	tmhelix() const {
@@ -113,7 +113,7 @@ public:
 	void
 	shift_span(Size shift);
 
- 	//void attach_to_pose(pose::Pose & pose);
+	//void attach_to_pose(pose::Pose & pose);
 
 
 	void
@@ -122,25 +122,24 @@ public:
 	bool
 	allow_scoring(Size const seqpos) const
 	{
-		if(seqpos > allow_scoring_.size())
-		{
+		if ( seqpos > allow_scoring_.size() ) {
 			throw utility::excn::EXCN_RangeError(
-					"tried to get Membrane score for residue " +
-					utility::to_string(seqpos) +
-					" but spanfile only specifies " +
-					utility::to_string(allow_scoring_.size())+
-					" residues. Check your spanfile.");
+				"tried to get Membrane score for residue " +
+				utility::to_string(seqpos) +
+				" but spanfile only specifies " +
+				utility::to_string(allow_scoring_.size())+
+				" residues. Check your spanfile.");
 			return false; //so the compiler is ok with it
 		}
 		return allow_scoring_[seqpos];
 	}
-/*
+	/*
 	bool &
 	allow_scoring(Size const seqpos)
 	{
-		return allow_scoring_[seqpos];
+	return allow_scoring_[seqpos];
 	}
-*/
+	*/
 	Size
 	tmh_inserted() const
 	{
@@ -156,12 +155,10 @@ public:
 	reset_allowed_scoring()
 	{
 		tmh_inserted_=0;
-		for(Size i=1;i<=allow_tmh_scoring_.size();++i)
-		{
+		for ( Size i=1; i<=allow_tmh_scoring_.size(); ++i ) {
 			allow_tmh_scoring_[i]=false;
 		}
-		for(Size i=1;i<=allow_scoring_.size();++i)
-		{
+		for ( Size i=1; i<=allow_scoring_.size(); ++i ) {
 			allow_scoring_[i]=false;
 		}
 
@@ -212,24 +209,24 @@ public:
 	bool &
 	allow_tmh_scoring(Size const tmh)
 	{
-		return allow_tmh_scoring_[tmh];
+	return allow_tmh_scoring_[tmh];
 	}
 	bool &
 	allow_scoring(Size const pos)
 	{
-		return allow_scoring_[pos];
+	return allow_scoring_[pos];
 	}
-	 */
+	*/
 
- protected:
+protected:
 
 
-/*	Real const cen_dist_cutoff2;
+	/* Real const cen_dist_cutoff2;
 
 
 	CenListInfo const & cenlist_from_pose( pose::Pose const & ) const;
 	CenListInfo & nonconst_cenlist_from_pose( pose::Pose & ) const;
-*/
+	*/
 private:
 
 
@@ -248,7 +245,7 @@ private: // data
 	bool init_;
 	bool beta_barrel_;
 	bool N_term_inside_;
-  bool initialized_; //pba
+	bool initialized_; //pba
 	utility::vector1< bool > tmregion_; //stores if the residue is in the TM or not
 	utility::vector1< bool > allow_scoring_;
 	utility::vector1< bool > allow_tmh_scoring_;

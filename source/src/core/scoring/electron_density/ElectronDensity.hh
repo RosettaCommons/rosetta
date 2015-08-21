@@ -63,9 +63,9 @@ public:
 	/// @brief constructor from an FArray3D (used for debugging only!)
 	template<class T>
 	ElectronDensity( ObjexxFCL::FArray3D< T > const &map,
-	                 core::Real apix = 1.0,
-	                 numeric::xyzVector< core::Real > new_origin=numeric::xyzVector< core::Real >(0,0,0),
-	                 bool fftshift=false) {
+		core::Real apix = 1.0,
+		numeric::xyzVector< core::Real > new_origin=numeric::xyzVector< core::Real >(0,0,0),
+		bool fftshift=false) {
 		init();
 
 		isLoaded = true;
@@ -74,12 +74,12 @@ public:
 		cellDimensions = numeric::xyzVector< float >(apix*map.u1(),apix*map.u2(),apix*map.u3());
 		cellAngles = numeric::xyzVector< float >(90,90,90);
 		density.dimension( map.u1(),map.u2(),map.u3() );
-		if (fftshift) origin -= grid/2;
-		for (int i=1; i<=(int)map.u1(); ++i) {
+		if ( fftshift ) origin -= grid/2;
+		for ( int i=1; i<=(int)map.u1(); ++i ) {
 			int fi = (int)(fftshift ? pos_mod( i-(map.u1()/2)-1 , map.u1())+1 : i);
-			for (int j=1; j<=(int)map.u2(); ++j) {
+			for ( int j=1; j<=(int)map.u2(); ++j ) {
 				int fj = (int)(fftshift ? pos_mod( j-(map.u2()/2)-1 , map.u2())+1 : j);
-				for (int k=1; k<=(int)map.u3(); ++k) {
+				for ( int k=1; k<=(int)map.u3(); ++k ) {
 					int fk = (int)(fftshift ? pos_mod( k-(map.u3()/2)-1 , map.u3())+1 : k);
 					density(fi,fj,fk) = (float)map(i,j,k);
 				}
@@ -114,19 +114,19 @@ public:
 	/// @brief Align a pose about a 2D rotation axis
 	numeric::xyzMatrix< core::Real > rotAlign2DPose( core::pose::Pose const &pose, std::string axis );
 
-	// 
-	numeric::xyzVector< core::Real > 
-	poseSHT(  
+	//
+	numeric::xyzVector< core::Real >
+	poseSHT(
 		pose::Pose const &pose,
 		core::Size &nRsteps,
-		ObjexxFCL::FArray3D< double > &sigR, 
-		ObjexxFCL::FArray3D< double > &poseCoefR, 
+		ObjexxFCL::FArray3D< double > &sigR,
+		ObjexxFCL::FArray3D< double > &poseCoefR,
 		ObjexxFCL::FArray3D< double > &poseCoefI,
 		core::Size bandwidth=32
 	);
 
 	//
-	core::Real 
+	core::Real
 	mapSHT(
 		core::Real const & no_density_score,
 		core::Size &nRsteps,
@@ -134,7 +134,7 @@ public:
 		double &map_s2,
 		double &pose_s,
 		double &pose_s2,
-		ObjexxFCL::FArray3D< double > &poseCoefR, 
+		ObjexxFCL::FArray3D< double > &poseCoefR,
 		ObjexxFCL::FArray3D< double > &poseCoefI,
 		numeric::xyzMatrix<core::Real> &rotation,
 		numeric::xyzVector<core::Real> &pre_trans,
@@ -170,37 +170,37 @@ public:
 	/// @brief get resolution bins (informational)
 	void
 	getResolutionBins(
-			core::Size nbuckets, core::Real maxreso, core::Real minreso,
- 			utility::vector1< core::Real > &,
-		 	utility::vector1< core::Size > &,
-			bool S2_bin=false );
+		core::Size nbuckets, core::Real maxreso, core::Real minreso,
+		utility::vector1< core::Real > &,
+		utility::vector1< core::Size > &,
+		bool S2_bin=false );
 
 	/// @brief Compute map intensities, masked by a pose.  Also compute mask intensities
 	void
 	getIntensities(
-			ObjexxFCL::FArray3D< std::complex<double> > const &FrhoC,
-			core::Size nbuckets,
-			core::Real maxreso,
-			core::Real minreso,
-			utility::vector1< core::Real > &Imap,
-			bool S2_bin=false );
+		ObjexxFCL::FArray3D< std::complex<double> > const &FrhoC,
+		core::Size nbuckets,
+		core::Real maxreso,
+		core::Real minreso,
+		utility::vector1< core::Real > &Imap,
+		bool S2_bin=false );
 
 	/// @brief Compute model-map FSC & errors
 	void
 	getFSC(
-			ObjexxFCL::FArray3D< std::complex<double> > const &Frho1,
-			ObjexxFCL::FArray3D< std::complex<double> > const &Frho2,
-			core::Size nbuckets, core::Real maxreso, core::Real minreso,
-			utility::vector1< core::Real >& FSC,
-			bool S2_bin=false);
+		ObjexxFCL::FArray3D< std::complex<double> > const &Frho1,
+		ObjexxFCL::FArray3D< std::complex<double> > const &Frho2,
+		core::Size nbuckets, core::Real maxreso, core::Real minreso,
+		utility::vector1< core::Real >& FSC,
+		bool S2_bin=false);
 
 	void
 	getPhaseError(
-			ObjexxFCL::FArray3D< std::complex<double> > const &Frho1,
-			ObjexxFCL::FArray3D< std::complex<double> > const &Frho2,
-			core::Size nbuckets, core::Real maxreso, core::Real minreso,
-			utility::vector1< core::Real >& phaseError,
-			bool S2_bin=false);
+		ObjexxFCL::FArray3D< std::complex<double> > const &Frho1,
+		ObjexxFCL::FArray3D< std::complex<double> > const &Frho2,
+		core::Size nbuckets, core::Real maxreso, core::Real minreso,
+		utility::vector1< core::Real >& phaseError,
+		bool S2_bin=false);
 
 	/// @brief Real-space correlation
 	core::Real
@@ -223,12 +223,12 @@ public:
 	/// @brief get Rho Calc
 	void
 	calcRhoC(
-			poseCoords const &pose,
-			core::Real radius,
-			ObjexxFCL::FArray3D< double > &rhoC,
-			ObjexxFCL::FArray3D< double > &mask,
-			core::Real forceB = -1.0,
-			core::Real B_upper_limit = 600 );
+		poseCoords const &pose,
+		core::Real radius,
+		ObjexxFCL::FArray3D< double > &rhoC,
+		ObjexxFCL::FArray3D< double > &mask,
+		core::Real forceB = -1.0,
+		core::Real B_upper_limit = 600 );
 
 	core::Real
 	maxNominalRes();
@@ -442,8 +442,9 @@ public:
 		scoring_mask_[ scoring_mask ] = 1;
 	}
 	void maskResidues( utility::vector1< int > const & scoring_mask ) {
-		for (core::Size i=1; i<= scoring_mask.size(); ++i)
+		for ( core::Size i=1; i<= scoring_mask.size(); ++i ) {
 			scoring_mask_[ scoring_mask[i] ] = 1;
+		}
 	}
 	void clearMask( ) {
 		scoring_mask_.clear();
@@ -455,10 +456,10 @@ public:
 	// raw data pointer
 	inline ObjexxFCL::FArray3D< float > const & data() const { return density; };
 	inline void set_data(ObjexxFCL::FArray3D< double > const & density_in) {
-	debug_assert(density.u1() == density_in.u1());
-	debug_assert(density.u2() == density_in.u2());
-	debug_assert(density.u3() == density_in.u3());
-		for (Size i=0;i<density_in.size(); ++i) density[i] = density_in[i];
+		debug_assert(density.u1() == density_in.u1());
+		debug_assert(density.u2() == density_in.u2());
+		debug_assert(density.u3() == density_in.u3());
+		for ( Size i=0; i<density_in.size(); ++i ) density[i] = density_in[i];
 	};
 
 
@@ -468,23 +469,23 @@ public:
 	inline void cart2idx( numeric::xyzVector<core::Real> const & cartX , numeric::xyzVector<core::Real> &idxX ) const {
 		numeric::xyzVector<core::Real> fracX = c2f*cartX;
 		idxX = numeric::xyzVector<core::Real>( fracX[0]*grid[0] - efforigin[0] + 1,
-		                                       fracX[1]*grid[1] - efforigin[1] + 1,
-		                                       fracX[2]*grid[2] - efforigin[2] + 1);
+			fracX[1]*grid[1] - efforigin[1] + 1,
+			fracX[2]*grid[2] - efforigin[2] + 1);
 	}
 
 	template<class Q>
 	void idx2cart( numeric::xyzVector<Q> const & idxX , numeric::xyzVector<core::Real> &cartX ) const {
 		numeric::xyzVector<core::Real> fracX( (idxX[0]  + efforigin[0] -1 ) / grid[0],
-		                                      (idxX[1]  + efforigin[1] -1 ) / grid[1],
-		                                      (idxX[2]  + efforigin[2] -1 ) / grid[2] );
+			(idxX[1]  + efforigin[1] -1 ) / grid[1],
+			(idxX[2]  + efforigin[2] -1 ) / grid[2] );
 		cartX = f2c*fracX;
 	}
 
 	template<class Q>
 	void idxoffset2cart( numeric::xyzVector<Q> const & idxX , numeric::xyzVector<core::Real> &cartX ) const {
 		numeric::xyzVector<core::Real> fracX( ( (core::Real) idxX[0] ) / grid[0],
-		                                      ( (core::Real) idxX[1] ) / grid[1],
-		                                      ( (core::Real) idxX[2] ) / grid[2] );
+			( (core::Real) idxX[1] ) / grid[1],
+			( (core::Real) idxX[2] ) / grid[2] );
 		cartX = f2c*fracX;
 	}
 
@@ -530,8 +531,8 @@ public:
 
 	//void
 	//set(int i, int j, int k, core::Real val) {
-	//	density(i,j,k) = val;
-	//	density_change_trigger();
+	// density(i,j,k) = val;
+	// density_change_trigger();
 	//}
 
 	void
@@ -548,9 +549,9 @@ public:
 	//ObjexxFCL::FArray3D< float > get_density_data_array() const { return density; }
 
 
-///////////
-// PRIVATE MEMBER FUNCTIONS
-///////////
+	///////////
+	// PRIVATE MEMBER FUNCTIONS
+	///////////
 private:
 	/// @brief The function is called everytime the density changes
 	void
@@ -584,11 +585,11 @@ private:
 	// get S2 (reciprocal space dist^2)
 	double S2(int h, int k, int l) {
 		return ( h*h*RcellDimensions[0]*RcellDimensions[0]
-		           + k*k*RcellDimensions[1]*RcellDimensions[1]
-		           + l*l*RcellDimensions[2]*RcellDimensions[2]
-		           + 2*h*k*RcellDimensions[0]*RcellDimensions[1]*cosRcellAngles[2]
-		           + 2*h*l*RcellDimensions[0]*RcellDimensions[2]*cosRcellAngles[1]
-		           + 2*k*l*RcellDimensions[1]*RcellDimensions[2]*cosRcellAngles[0] );
+			+ k*k*RcellDimensions[1]*RcellDimensions[1]
+			+ l*l*RcellDimensions[2]*RcellDimensions[2]
+			+ 2*h*k*RcellDimensions[0]*RcellDimensions[1]*cosRcellAngles[2]
+			+ 2*h*l*RcellDimensions[0]*RcellDimensions[2]*cosRcellAngles[1]
+			+ 2*k*l*RcellDimensions[1]*RcellDimensions[2]*cosRcellAngles[0] );
 	}
 
 	// volume of 1 voxel
@@ -596,9 +597,9 @@ private:
 		return V / (grid[0]*grid[1]*grid[2]);
 	}
 
-///////////
-// DATA
-///////////
+	///////////
+	// DATA
+	///////////
 private:
 	// do we have a map loaded?
 	bool isLoaded;
@@ -738,15 +739,15 @@ ElectronDensity& getDensityMap_legacy(std::string filename ="", bool force_reloa
 
 // x mod y, returns z in [0,y-1]
 inline int pos_mod(int x,int y) {
-	int r=x%y; if (r<0) r+=y;
+	int r=x%y; if ( r<0 ) r+=y;
 	return r;
 }
 inline float pos_mod(float x,float y) {
-	float r=std::fmod(x,y); if (r<0) r+=y;
+	float r=std::fmod(x,y); if ( r<0 ) r+=y;
 	return r;
 }
 inline double pos_mod(double x,double y) {
-	double r=std::fmod(x,y); if (r<0) r+=y;
+	double r=std::fmod(x,y); if ( r<0 ) r+=y;
 	return r;
 }
 

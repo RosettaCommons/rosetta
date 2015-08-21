@@ -47,30 +47,30 @@ int
 main( int argc, char * argv [] ) {
 	try {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace protocols::jobdist;
-	using namespace protocols::moves;
-	using namespace protocols::relax;
-	using namespace core::scoring::constraints;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace protocols::jobdist;
+		using namespace protocols::moves;
+		using namespace protocols::relax;
+		using namespace core::scoring::constraints;
 
-	ClassicRelax::register_options();
-	FastRelax::register_options();
-	register_options_universal_main();
-	option.add_relevant( OptionKeys::in::file::fullatom );
-	option.add_relevant( OptionKeys::relax::fast );
-	devel::init(argc, argv);
+		ClassicRelax::register_options();
+		FastRelax::register_options();
+		register_options_universal_main();
+		option.add_relevant( OptionKeys::in::file::fullatom );
+		option.add_relevant( OptionKeys::relax::fast );
+		devel::init(argc, argv);
 
-	protocols::moves::MoverOP protocol = generate_relax_from_cmd();
-	if ( option[ constraints::cst_fa_file ].user() ) {
-		SequenceMoverOP seqmov( new SequenceMover );
-		protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
-		loadCsts->constraint_file( get_cst_fa_file_option() );
-		seqmov->add_mover( loadCsts );
-		seqmov->add_mover( protocol );
-		protocol = seqmov;
-	}
-	not_universal_main( *protocol );
+		protocols::moves::MoverOP protocol = generate_relax_from_cmd();
+		if ( option[ constraints::cst_fa_file ].user() ) {
+			SequenceMoverOP seqmov( new SequenceMover );
+			protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
+			loadCsts->constraint_file( get_cst_fa_file_option() );
+			seqmov->add_mover( loadCsts );
+			seqmov->add_mover( protocol );
+			protocol = seqmov;
+		}
+		not_universal_main( *protocol );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

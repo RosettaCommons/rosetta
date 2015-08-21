@@ -105,7 +105,7 @@ public: // Friends
 	)
 	{
 		return ( a.atom_id_ < b.atom_id_ ||
-				 ( a.atom_id_ == b.atom_id_ && a.type_ < b.type_ ) );
+			( a.atom_id_ == b.atom_id_ && a.type_ < b.type_ ) );
 	}
 
 private: // Fields
@@ -129,8 +129,8 @@ inline
 DOF_Type
 get_rb_type( Size const k ) {
 	debug_assert( k>=1 && k<=6 );
-//	return ( k == 1 ? RB1 : ( k==2 ? RB2 : ( k == 3 ? RB3 :
-//				 ( k == 4 ? RB4 : ( k==5 ? RB5 : RB6 ) ) ) ) );
+	// return ( k == 1 ? RB1 : ( k==2 ? RB2 : ( k == 3 ? RB3 :
+	//     ( k == 4 ? RB4 : ( k==5 ? RB5 : RB6 ) ) ) ) );
 	return DOF_Type( RB1 + k - 1 ); //SGM I think this should work and be a little faster: Requires RB's to be contiguous but that seem safe
 }
 
@@ -139,11 +139,11 @@ get_rb_type( Size const k ) {
 inline
 Size
 get_rb_number( DOF_Type const t ) {
-//	if ( t == PHI || t == THETA || t == D ) return 0;
-//	else {
-//		return ( t == RB1 ? 1 : ( t == RB2 ? 2 : ( t == RB3 ? 3 :
-//					 ( t == RB4 ? 4 : t == RB5 ? 5 : 6 ) ) ) );
-//	}
+	// if ( t == PHI || t == THETA || t == D ) return 0;
+	// else {
+	//  return ( t == RB1 ? 1 : ( t == RB2 ? 2 : ( t == RB3 ? 3 :
+	//      ( t == RB4 ? 4 : t == RB5 ? 5 : 6 ) ) ) );
+	// }
 	return ( ( t >= RB1 ) && ( t <= RB6 ) ? t - RB1 + 1 : 0 ); //SGM I think this should work and be a little faster: Requires RB's to be contiguous but that seem safe
 }
 

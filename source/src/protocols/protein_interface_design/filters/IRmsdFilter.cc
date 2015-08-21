@@ -42,18 +42,18 @@ namespace protein_interface_design {
 namespace filters {
 
 IRmsdFilter::IRmsdFilter() :
-  protocols::filters::Filter( "IRmsd" ),
-  threshold_( 5.0 ),
-  reference_pose_( /* NULL */ )
+	protocols::filters::Filter( "IRmsd" ),
+	threshold_( 5.0 ),
+	reference_pose_( /* NULL */ )
 {}
 
 IRmsdFilter::IRmsdFilter(protocols::docking::DockJumps const movable_jumps,
-			 core::Real const threshold,
-			 core::pose::PoseOP reference_pose)
-  : protocols::filters::Filter( "IRmsd" ),
-    threshold_(threshold),
-    reference_pose_(reference_pose),
-    movable_jumps_(movable_jumps)
+	core::Real const threshold,
+	core::pose::PoseOP reference_pose)
+: protocols::filters::Filter( "IRmsd" ),
+	threshold_(threshold),
+	reference_pose_(reference_pose),
+	movable_jumps_(movable_jumps)
 {}
 
 IRmsdFilter::~IRmsdFilter() {}
@@ -68,7 +68,7 @@ core::Real
 IRmsdFilter::compute( core::pose::Pose const & pose ) const
 {
 	//ScoreFunctionOP temp = new ScoreFuntion(scorefxn_)
-  return protocols::docking::calc_Irmsd(pose, *reference_pose_, scorefxn_, movable_jumps_);
+	return protocols::docking::calc_Irmsd(pose, *reference_pose_, scorefxn_, movable_jumps_);
 }
 
 bool
@@ -76,12 +76,10 @@ IRmsdFilter::apply( core::pose::Pose const & pose ) const {
 	TR << "Beginning compute" << std::endl;
 	core::Real const rmsd( compute( pose ));
 	TR << "I_rmsd: " << rmsd ;
-	if( rmsd <= threshold_ )
-	{
+	if ( rmsd <= threshold_ ) {
 		TR<<" passing."<<std::endl;
 		return( true );
-	}
-	else TR<<" failing." << std::endl;
+	} else TR<<" failing." << std::endl;
 	return( false );
 }
 
@@ -103,13 +101,13 @@ IRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &
 	/// @details
 	///if the save pose mover has been instantiated, this filter can calculate the rms
 	///against the ref pose
-	if( tag->hasOption("reference_name") ){
+	if ( tag->hasOption("reference_name") ) {
 		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data_map );
-	}
-	else{
+	} else {
 		reference_pose_ = core::pose::PoseOP( new core::pose::Pose( reference_pose ) );
-		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() )
+		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 			core::import_pose::pose_from_pdb( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] );
+		}
 	}
 
 	threshold_ = tag->getOption<core::Real>( "threshold", 5 );
@@ -119,7 +117,7 @@ IRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &
 
 	movable_jumps_.push_back(jump_num);
 
- 	scorefxn_ = rosetta_scripts::parse_score_function( tag, data_map )->clone();
+	scorefxn_ = rosetta_scripts::parse_score_function( tag, data_map )->clone();
 
 	TR<<"Built IRmsdFilter with threshold " << threshold_ << ", scorefxn " <<
 		rosetta_scripts::get_score_function_name(tag) <<", jump "<< jump_num << std::endl;

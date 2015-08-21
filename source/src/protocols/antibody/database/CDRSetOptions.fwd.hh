@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 /// @file protocols/antibody_design/AntibodyCDRSetInstructions.fwd.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
@@ -19,8 +19,8 @@
 
 
 // C++ Headers
-namespace protocols{
-namespace antibody{
+namespace protocols {
+namespace antibody {
 
 
 // Forward
@@ -34,7 +34,7 @@ typedef utility::pointer::shared_ptr< CDRSetOptions const > CDRSetOptionsCOP;
 } //namespace protocols
 
 
-#endif	//INCLUDED_protocols_antibody_design_AntibodyCDRSetInstructions.fwd.hh
+#endif //INCLUDED_protocols_antibody_design_AntibodyCDRSetInstructions.fwd.hh
 
 
 

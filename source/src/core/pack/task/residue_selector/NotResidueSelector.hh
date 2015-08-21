@@ -31,10 +31,10 @@ namespace pack {
 namespace task {
 namespace residue_selector {
 
-/// @brief The NotResidueSelector negates the input of one loaded ResidueSelector, i.e., it is a logical NOT - 
-/// it selects all unselected residues and deselects the selected ones.  True becomes false, false becomes true. 
-/// The ResidueSelector to be negated can be pulled in through RosettaScipt using the selector option, subtags for 
-/// ResidueSelectors known to the ResidueSelectorFactory or programmatically using set_residue_selector.  
+/// @brief The NotResidueSelector negates the input of one loaded ResidueSelector, i.e., it is a logical NOT -
+/// it selects all unselected residues and deselects the selected ones.  True becomes false, false becomes true.
+/// The ResidueSelector to be negated can be pulled in through RosettaScipt using the selector option, subtags for
+/// ResidueSelectors known to the ResidueSelectorFactory or programmatically using set_residue_selector.
 /// Note that since most ResidueSelectors clear the input ResidueSubset, NOT can be thought of as simply selecting
 /// the opposite of the passed in selector.
 class NotResidueSelector : public ResidueSelector {
@@ -63,7 +63,7 @@ public:
 	void set_residue_selector(ResidueSelectorCOP selector);
 
 private: // data members
-	 ResidueSelectorCOP selector_;
+	ResidueSelectorCOP selector_;
 
 };
 

@@ -59,22 +59,23 @@ public:
 	/// @brief returns a vector of know atom names
 	utility::vector1<std::string> get_known_atoms() {
 
-	    return known_atoms_;
+		return known_atoms_;
 	}
 
 	/// @brief returns an index of an atom type or 0 if teh atom is not registered
 	Size get_atom_index(std::string atom_name) {
 
-	    if(names_to_indexes_.find(atom_name) != names_to_indexes_.end()) {
-		return names_to_indexes_.find(atom_name)->second;
-	    } else
-		return 0;
+		if ( names_to_indexes_.find(atom_name) != names_to_indexes_.end() ) {
+			return names_to_indexes_.find(atom_name)->second;
+		} else {
+			return 0;
+		}
 	}
 
 	/// @brief asks all the registered form factors to tabulate their values for the new vector of q-arguments
 	void tabulate(const utility::vector1<Real> & q) {
 
-	    for(Size i=1;i<=ff_vector_.size();++i)  ff_vector_[i]->tabulate(q);
+		for ( Size i=1; i<=ff_vector_.size(); ++i )  ff_vector_[i]->tabulate(q);
 	}
 
 private:

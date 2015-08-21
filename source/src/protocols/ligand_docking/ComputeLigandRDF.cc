@@ -108,12 +108,10 @@ void ComputeLigandRDF::apply( core::pose::Pose & pose )
 
 	std::map<std::string, utility::vector1<core::Real> > rdf_map;
 
-	if(mode_ == "pocket")
-	{
+	if ( mode_ == "pocket" ) {
 		compute_rdf_tracer << "computing ligand pocket RDFs" <<std::endl;
 		rdf_map = protein_protein_rdf(pose);
-	}else if(mode_ == "interface")
-	{
+	} else if ( mode_ == "interface" ) {
 		compute_rdf_tracer << "computing ligand_interface RDFs" <<std::endl;
 		rdf_map = ligand_protein_rdf(pose);
 	}
@@ -122,8 +120,7 @@ void ComputeLigandRDF::apply( core::pose::Pose & pose )
 
 	std::map<std::string, utility::vector1<core::Real> >::iterator it;
 	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
-	for(it = rdf_map.begin(); it != rdf_map.end();++it)
-	{
+	for ( it = rdf_map.begin(); it != rdf_map.end(); ++it ) {
 		std::string rdf_string(utility::join(it->second," "));
 		std::string rdf_tag(it->first+"_"+mode_+"_rdf");
 		job->add_string_string_pair(rdf_tag, rdf_string);
@@ -144,22 +141,19 @@ void ComputeLigandRDF::parse_my_tag
 	core::pose::Pose const & /*pose*/
 )
 {
-	if(! tag->hasOption("mode"))
-	{
+	if ( ! tag->hasOption("mode") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("Mover 'ComputeLigandRDF' needs option 'mode'");
 	}
 
 	//right now, we assume that all things that aren't the ligand chain are the protein chain
-	if(!tag->hasOption("ligand_chain"))
-	{
+	if ( !tag->hasOption("ligand_chain") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("Mover 'ComputeLigandRDF' needs option 'ligand_chain'");
 	}
 
 	mode_ = tag->getOption<std::string>("mode");
 	ligand_chain_ = tag->getOption<std::string>("ligand_chain");
 
-	if(mode_ != "pocket" && mode_ != "interface")
-	{
+	if ( mode_ != "pocket" && mode_ != "interface" ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("Mover 'ComputeLigandRDF' must have a mode of either 'pocket' or 'interface'");
 	}
 
@@ -170,11 +164,11 @@ void ComputeLigandRDF::parse_my_tag
 	utility::vector0< TagCOP >::const_iterator begin=tag->getTags().begin();
 	utility::vector0< TagCOP >::const_iterator end=tag->getTags().end();
 
-	for(; begin != end; ++begin){
+	for ( ; begin != end; ++begin ) {
 		TagCOP function_tag= *begin;
-		//	BOOST_FOREACH(TagCOP const & feature_tag, tag->getTags()){
+		// BOOST_FOREACH(TagCOP const & feature_tag, tag->getTags()){
 
-		if(function_tag->getName() != "RDF"){
+		if ( function_tag->getName() != "RDF" ) {
 			compute_rdf_tracer.Error << "Please include only tags with name 'RDF' as subtags of ReportToDB" << std::endl;
 			compute_rdf_tracer.Error << "Tag with name '" << function_tag->getName() << "' is invalid" << std::endl;
 			throw utility::excn::EXCN_RosettaScriptsOption("");
@@ -199,30 +193,24 @@ std::map<std::string, utility::vector1<core::Real> > ComputeLigandRDF::ligand_pr
 	compute_rdf_tracer << "Identifying ligand interface atom pairs"<<std::endl;
 	utility::vector1<std::pair<core::id::AtomID, core::id::AtomID> > atom_pair_list;
 	//outer loop over ligand residue(s)
-	for(core::Size ligand_resnum = ligand_start; ligand_resnum <= ligand_end; ++ligand_resnum)
-	{
+	for ( core::Size ligand_resnum = ligand_start; ligand_resnum <= ligand_end; ++ligand_resnum ) {
 		core::conformation::Residue ligand_residue(pose.conformation().residue(ligand_resnum));
 
-		for(core::Size ligand_atom_index = 1; ligand_atom_index <= ligand_residue.natoms();++ligand_atom_index)
-		{
+		for ( core::Size ligand_atom_index = 1; ligand_atom_index <= ligand_residue.natoms(); ++ligand_atom_index ) {
 			core::id::AtomID ligand_atom_id(ligand_atom_index,ligand_resnum);
 			core::Vector ligand_atom_coords(ligand_residue.xyz(ligand_atom_index));
 			for ( core::graph::Graph::EdgeListConstIter
-				ir  = graph.get_node( ligand_resnum )->const_edge_list_begin(),
-				ire = graph.get_node( ligand_resnum )->const_edge_list_end();
-				ir != ire; ++ir )
-			{
+					ir  = graph.get_node( ligand_resnum )->const_edge_list_begin(),
+					ire = graph.get_node( ligand_resnum )->const_edge_list_end();
+					ir != ire; ++ir ) {
 				core::Size protein_resnum = (*ir)->get_other_ind(ligand_resnum);
-				if(pose.chain(protein_resnum) == chain_id)
-				{
+				if ( pose.chain(protein_resnum) == chain_id ) {
 					continue;
 				}
 				core::conformation::Residue protein_residue(pose.conformation().residue((*ir)->get_other_ind(ligand_resnum)));
-				for(core::Size protein_atom_index = 1; protein_atom_index <= protein_residue.natoms();++protein_atom_index)
-				{
+				for ( core::Size protein_atom_index = 1; protein_atom_index <= protein_residue.natoms(); ++protein_atom_index ) {
 					core::Vector protein_atom_coords(protein_residue.xyz(protein_atom_index));
-					if(protein_atom_coords.distance_squared(ligand_atom_coords) <= range_squared_)
-					{
+					if ( protein_atom_coords.distance_squared(ligand_atom_coords) <= range_squared_ ) {
 						core::id::AtomID protein_atom_id(protein_atom_index,protein_resnum);
 						atom_pair_list.push_back(std::make_pair(ligand_atom_id,protein_atom_id));
 					}
@@ -245,40 +233,32 @@ std::map<std::string, utility::vector1<core::Real> > ComputeLigandRDF::protein_p
 
 	compute_rdf_tracer << "Identifying ligand pocket atom pairs"<<std::endl;
 	utility::vector1<core::id::AtomID> binding_pocket_atoms;
-	for(core::Size ligand_resnum = ligand_start; ligand_resnum <= ligand_end; ++ligand_resnum)
-	{
+	for ( core::Size ligand_resnum = ligand_start; ligand_resnum <= ligand_end; ++ligand_resnum ) {
 		for ( core::graph::Graph::EdgeListConstIter
-			ir  = graph.get_node( ligand_resnum )->const_edge_list_begin(),
-			ire = graph.get_node( ligand_resnum )->const_edge_list_end();
-			ir != ire; ++ir )
-		{
+				ir  = graph.get_node( ligand_resnum )->const_edge_list_begin(),
+				ire = graph.get_node( ligand_resnum )->const_edge_list_end();
+				ir != ire; ++ir ) {
 			core::Size protein_resnum = (*ir)->get_other_ind(ligand_resnum);
-			if(pose.chain(protein_resnum) == chain_id)
-			{
+			if ( pose.chain(protein_resnum) == chain_id ) {
 				continue;
 			}
 			core::conformation::Residue protein_residue(pose.conformation().residue((*ir)->get_other_ind(ligand_resnum)));
-			for(core::Size protein_atom_index = 1; protein_atom_index <= protein_residue.natoms();++protein_atom_index)
-			{
+			for ( core::Size protein_atom_index = 1; protein_atom_index <= protein_residue.natoms(); ++protein_atom_index ) {
 				core::id::AtomID protein_atom_id(protein_atom_index,protein_resnum);
 				binding_pocket_atoms.push_back(protein_atom_id);
 			}
 		}
 	}
 
-	for(core::Size outer_atom_index = 1; outer_atom_index <= binding_pocket_atoms.size();++outer_atom_index)
-	{
+	for ( core::Size outer_atom_index = 1; outer_atom_index <= binding_pocket_atoms.size(); ++outer_atom_index ) {
 		core::Vector outer_atom_coords(pose.xyz(binding_pocket_atoms[outer_atom_index]));
-		for(core::Size inner_atom_index = outer_atom_index; inner_atom_index <= binding_pocket_atoms.size();++inner_atom_index)
-		{
-			if(outer_atom_index == inner_atom_index)
-			{
+		for ( core::Size inner_atom_index = outer_atom_index; inner_atom_index <= binding_pocket_atoms.size(); ++inner_atom_index ) {
+			if ( outer_atom_index == inner_atom_index ) {
 				continue;
 			}
 			core::Vector inner_atom_coords(pose.xyz(binding_pocket_atoms[inner_atom_index]));
 
-			if(outer_atom_coords.distance_squared(inner_atom_coords) <= range_squared_)
-			{
+			if ( outer_atom_coords.distance_squared(inner_atom_coords) <= range_squared_ ) {
 				atom_pair_list.push_back(std::make_pair(binding_pocket_atoms[outer_atom_index],binding_pocket_atoms[inner_atom_index]));
 			}
 		}
@@ -301,23 +281,20 @@ std::map<std::string, utility::vector1<core::Real> > ComputeLigandRDF::compute_r
 	//we fill rdf map with an vector of 0.0 RDF values for each generated term
 	//the empty vectors will be populated further down.
 
-	for(core::Size rdf_count = 1; rdf_count <= rdf_functions_.size();++rdf_count)
-	{
+	for ( core::Size rdf_count = 1; rdf_count <= rdf_functions_.size(); ++rdf_count ) {
 		//While we're looping through all our RDFs we can also run the "preamble" function for each
 		//Which will set up various data that only need to be computed once per pose
 		rdf_functions_[rdf_count]->preamble(pose);
 		utility::vector1<std::string> function_names(rdf_functions_[rdf_count]->get_function_names());
 
-		for(core::Size func_count = 1; func_count <= function_names.size();++func_count)
-		{
+		for ( core::Size func_count = 1; func_count <= function_names.size(); ++func_count ) {
 			rdf_map[function_names[func_count]] = rdf_vector;
 		}
 	}
 
 	pose.update_residue_neighbors();
 
-	for(core::Size pair_index = 1; pair_index <= atom_pairs.size();++pair_index)
-	{
+	for ( core::Size pair_index = 1; pair_index <= atom_pairs.size(); ++pair_index ) {
 		// The AtomPairData object is a struct which is used to pass around derived
 		// data that is needed by the various RDF functions.
 
@@ -337,8 +314,7 @@ std::map<std::string, utility::vector1<core::Real> > ComputeLigandRDF::compute_r
 		atom_data.atom_atom_distance =  atom_data.ligand_atom_coords.distance(atom_data.protein_atom_coords);
 
 		// We use a 10 A cutoff for everything
-		if(atom_data.atom_atom_distance > 10.0)
-		{
+		if ( atom_data.atom_atom_distance > 10.0 ) {
 			continue;
 		}
 
@@ -354,8 +330,7 @@ std::map<std::string, utility::vector1<core::Real> > ComputeLigandRDF::compute_r
 
 		// Compute all the RDF data for this pair of atoms
 		rdf::RDFResultList total_results;
-		for(core::Size rdf_count = 1; rdf_count <= rdf_functions_.size();++rdf_count)
-		{
+		for ( core::Size rdf_count = 1; rdf_count <= rdf_functions_.size(); ++rdf_count ) {
 			rdf::RDFBaseOP current_rdf = rdf_functions_[rdf_count];
 			rdf::RDFResultList current_results(current_rdf->operator()(atom_data));
 			total_results.insert(total_results.end(), current_results.begin(), current_results.end());
@@ -364,13 +339,11 @@ std::map<std::string, utility::vector1<core::Real> > ComputeLigandRDF::compute_r
 
 
 		//compute the RDF component for each bin
-		for(core::Size bin_index = 1; bin_index <= rdf_vector.size(); bin_index++)
-		{
+		for ( core::Size bin_index = 1; bin_index <= rdf_vector.size(); bin_index++ ) {
 			core::Real shell_radius = bin_index*step_size;
 			core::Real rdf_bin_value = exp(-smoothing_factor_*(pow((shell_radius-atom_data.atom_atom_distance),2)));
 
-			for(rdf::RDFResultList::iterator it = total_results.begin(); it != total_results.end();++it)
-			{
+			for ( rdf::RDFResultList::iterator it = total_results.begin(); it != total_results.end(); ++it ) {
 				std::string term_name(it->first);
 				core::Real term_value(it->second);
 				rdf_map[term_name][bin_index] += term_value*rdf_bin_value;
@@ -380,10 +353,8 @@ std::map<std::string, utility::vector1<core::Real> > ComputeLigandRDF::compute_r
 	}
 	//Normalize the rdf bin
 	std::map<std::string, utility::vector1<core::Real> >::iterator rdf_map_it;
-	for(rdf_map_it = rdf_map.begin();rdf_map_it != rdf_map.end();++rdf_map_it)
-	{
-		for(core::Size bin_index = 1; bin_index <= rdf_map_it->second.size();++bin_index)
-		{
+	for ( rdf_map_it = rdf_map.begin(); rdf_map_it != rdf_map.end(); ++rdf_map_it ) {
+		for ( core::Size bin_index = 1; bin_index <= rdf_map_it->second.size(); ++bin_index ) {
 			rdf_map_it->second[bin_index] = rdf_map_it->second[bin_index]/2;
 		}
 	}

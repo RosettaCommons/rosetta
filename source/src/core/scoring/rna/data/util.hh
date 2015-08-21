@@ -24,14 +24,14 @@ namespace scoring {
 namespace rna {
 namespace data {
 
-	core::Size
-	lookup_idx( core::Real const value, utility::vector1< core::Real > & values );
+core::Size
+lookup_idx( core::Real const value, utility::vector1< core::Real > & values );
 
-	core::Size
-	get_bool_idx( bool const value, utility::vector1< bool > const & values );
+core::Size
+get_bool_idx( bool const value, utility::vector1< bool > const & values );
 
-	core::Size
-	get_idx( core::Real const value, utility::vector1< core::Real > const & values );
+core::Size
+get_idx( core::Real const value, utility::vector1< core::Real > const & values );
 
 } //data
 } //rna

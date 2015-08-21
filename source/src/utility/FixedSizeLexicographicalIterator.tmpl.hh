@@ -25,8 +25,8 @@ namespace utility {
 /// @details -- fake that there's one alphabet and that it has size 0.
 template < platform::Size S >
 FixedSizeLexicographicalIterator< S >::FixedSizeLexicographicalIterator() :
-	dim_sizes_( 0 ),
-	curr_pos_( 1 )
+dim_sizes_( 0 ),
+curr_pos_( 1 )
 {
 }
 
@@ -35,10 +35,10 @@ template < platform::Size S >
 FixedSizeLexicographicalIterator< S >::FixedSizeLexicographicalIterator(
 	fsarray const & dim_sizes
 ) :
-	dim_sizes_( dim_sizes ),
-	curr_pos_( 1 )
+dim_sizes_( dim_sizes ),
+curr_pos_( 1 )
 {
-	for( Size ii = 1; ii <= S; ++ii ) {
+	for ( Size ii = 1; ii <= S; ++ii ) {
 		assert ( dim_sizes[ ii ] > 0 );
 	}
 }
@@ -49,8 +49,8 @@ void FixedSizeLexicographicalIterator< S >::set_dimension_sizes(
 )
 {
 	dim_sizes_ = dim_sizes;
-	for( Size ii = 1; ii <= S; ++ii ) {
-	debug_assert( dim_sizes[ ii ] > 0 );
+	for ( Size ii = 1; ii <= S; ++ii ) {
+		debug_assert( dim_sizes[ ii ] > 0 );
 	}
 	begin();
 }
@@ -71,7 +71,7 @@ template < platform::Size S >
 bool FixedSizeLexicographicalIterator< S >::at_end() const
 {
 	//for ( Size ii = 1; ii <= dim_sizes_.size(); ++ii ) {
-	//	if ( curr_pos_[ ii ] != dim_sizes_[ ii ] ) return false;
+	// if ( curr_pos_[ ii ] != dim_sizes_[ ii ] ) return false;
 	//}
 	//return true;
 	return curr_pos_[ 1 ] > dim_sizes_[ 1 ];

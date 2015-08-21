@@ -34,40 +34,40 @@
 
 // C++ Headers
 
-namespace protocols { 
+namespace protocols {
 namespace matdes {
 
 class ExtractSubposeMover : public protocols::moves::Mover {
 public:
 
-  // default constructor
+	// default constructor
 	ExtractSubposeMover();
 
 	ExtractSubposeMover(const ExtractSubposeMover& rval);
 
 	virtual std::string get_name() const { return "ExtractSubposeMover"; }
-  virtual void apply( core::pose::Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
-  virtual protocols::moves::MoverOP clone() const;
-  virtual protocols::moves::MoverOP fresh_instance() const;
+	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 
-  void parse_my_tag(
-      utility::tag::TagCOP tag,
-      basic::datacache::DataMap &data,
-      protocols::filters::Filters_map const &filters,
-      protocols::moves::Movers_map const &movers,
-      core::pose::Pose const & pose );
+	void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &data,
+		protocols::filters::Filters_map const &filters,
+		protocols::moves::Movers_map const &movers,
+		core::pose::Pose const & pose );
 
 private:
 
-  std::string sym_dof_names_;
+	std::string sym_dof_names_;
 	std::string prefix_;
 	std::string suffix_;
-  core::Real contact_dist_;
+	core::Real contact_dist_;
 	bool extras_;
 };
 
-} //namespace matdes 
+} //namespace matdes
 } //namespace protocols
 
-#endif 
+#endif

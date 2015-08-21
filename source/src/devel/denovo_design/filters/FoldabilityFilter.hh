@@ -68,11 +68,11 @@ public:
 
 	/// @brief Parses the FoldabilityFilter tags
 	void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & data,
-			protocols::filters::Filters_map const &,
-			protocols::moves::Movers_map const &,
-			core::pose::Pose const & );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & );
 
 	/// @brief Return the name of this mover.
 	virtual std::string get_name() const;
@@ -88,9 +88,9 @@ public:
 
 	core::Real compute( core::pose::Pose const & pose ) const;
 	core::Real compute_segment(
-			core::pose::Pose const & pose,
-			IntervalVec const & segments,
-			core::Size const segment ) const;
+		core::pose::Pose const & pose,
+		IntervalVec const & segments,
+		core::Size const segment ) const;
 
 	// mutators
 public:
@@ -101,51 +101,51 @@ public:
 protected:
 	/// @brief determine start and end window, from selector if necessary
 	void choose_start_and_end(
-			core::Size & start,
-			core::Size & end,
-			core::Size const segment,
-			core::pose::Pose const & pose ) const;
+		core::Size & start,
+		core::Size & end,
+		core::Size const segment,
+		core::pose::Pose const & pose ) const;
 
 	/// @brief gets aa string, ss string, and abego vector for the area to rebuild
 	void get_aa_ss_abego(
-			std::string & aa,
-			std::string & ss,
-			utility::vector1< std::string > & abego,
-			core::Size const start,
-			core::Size & end,
-			core::pose::Pose const & pose ) const;
+		std::string & aa,
+		std::string & ss,
+		utility::vector1< std::string > & abego,
+		core::Size const start,
+		core::Size & end,
+		core::pose::Pose const & pose ) const;
 
 	/// @brief gets non-const version the pose for the filter to work on
 	core::pose::PoseOP generate_pose( core::pose::Pose const & pose ) const;
 
 	/// @brief prepares the pose/segment from start to end for insertion
 	void prepare_pose(
-			core::pose::Pose & pose,
-			core::Size const start,
-			core::Size const end ) const;
+		core::pose::Pose & pose,
+		core::Size const start,
+		core::Size const end ) const;
 
 	/// @brief performs fragment picking/other preparations for building
 	protocols::moves::MoverOP
-		create_fragment_insertion_mover(
-				std::string const & complete_aa,
-				std::string const & complete_ss,
-				utility::vector1< std::string > const & complete_abego,
-				core::Size const start,
-				core::Size const end ) const;
+	create_fragment_insertion_mover(
+		std::string const & complete_aa,
+		std::string const & complete_ss,
+		utility::vector1< std::string > const & complete_abego,
+		core::Size const start,
+		core::Size const end ) const;
 
 	/// @brief performs fragment insertion and returns number of successful builds. Assumes setup_vlb() has already been called
 	core::Size fragment_insertion(
-			core::pose::Pose const & pose,
-			protocols::moves::Mover & fragment_mover,
-			core::Size const end,
-			core::conformation::Residue const & end_res ) const;
+		core::pose::Pose const & pose,
+		protocols::moves::Mover & fragment_mover,
+		core::Size const end,
+		core::conformation::Residue const & end_res ) const;
 
 	/// @brief queries the abego db and calculates the best scoring loop
 	core::Real abegodb_score(
-			core::pose::Pose const & pose,
-			utility::vector1< std::string > const & abego,
-			core::Size const start,
-			core::Size const stop ) const;
+		core::pose::Pose const & pose,
+		utility::vector1< std::string > const & abego,
+		core::Size const start,
+		core::Size const stop ) const;
 
 private:   // options
 	/// @brief the motif to try to build

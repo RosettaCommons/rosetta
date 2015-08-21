@@ -27,9 +27,9 @@
 #include <protocols/forge/remodel/RemodelData.hh>
 
 
-namespace protocols{
-namespace forge{
-namespace remodel{
+namespace protocols {
+namespace forge {
+namespace remodel {
 
 // this class holds all the info for the model pose
 // in the future a new variable might be added to delete a certain jump

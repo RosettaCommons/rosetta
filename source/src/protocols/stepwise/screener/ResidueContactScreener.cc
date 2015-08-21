@@ -24,28 +24,28 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	//Constructor
-	ResidueContactScreener::ResidueContactScreener(  pose::Pose & screening_pose,
-																									 Size const last_append_res,
-																									 Size const last_prepend_res,
-																									 Distance const atom_atom_overlap_dist_cutoff ):
-		screening_pose_( screening_pose ),
-		last_append_res_( last_append_res ),
-		last_prepend_res_( last_prepend_res ),
-		atom_atom_overlap_dist_cutoff_( atom_atom_overlap_dist_cutoff )
-	{}
+//Constructor
+ResidueContactScreener::ResidueContactScreener(  pose::Pose & screening_pose,
+	Size const last_append_res,
+	Size const last_prepend_res,
+	Distance const atom_atom_overlap_dist_cutoff ):
+	screening_pose_( screening_pose ),
+	last_append_res_( last_append_res ),
+	last_prepend_res_( last_prepend_res ),
+	atom_atom_overlap_dist_cutoff_( atom_atom_overlap_dist_cutoff )
+{}
 
-	//Destructor
-	ResidueContactScreener::~ResidueContactScreener()
-	{}
+//Destructor
+ResidueContactScreener::~ResidueContactScreener()
+{}
 
-	///////////////////////////////////////////////////////////
-	bool
-	ResidueContactScreener::check_screen(){
-		return modeler::rna::is_residues_in_contact( last_append_res_, screening_pose_,
-																									 last_prepend_res_, screening_pose_,
-																									 atom_atom_overlap_dist_cutoff_, 1 /*num_atom_contacts_cutoff*/ );
-	}
+///////////////////////////////////////////////////////////
+bool
+ResidueContactScreener::check_screen(){
+	return modeler::rna::is_residues_in_contact( last_append_res_, screening_pose_,
+		last_prepend_res_, screening_pose_,
+		atom_atom_overlap_dist_cutoff_, 1 /*num_atom_contacts_cutoff*/ );
+}
 
 } //screener
 } //stepwise

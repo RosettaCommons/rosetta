@@ -30,55 +30,55 @@ namespace modeler {
 namespace protein {
 namespace loop_close {
 
-	class StepWiseProteinCCD_MultiPoseCloser: public protocols::moves::Mover {
+class StepWiseProteinCCD_MultiPoseCloser: public protocols::moves::Mover {
 
-	public:
+public:
 
-		//constructor
-		StepWiseProteinCCD_MultiPoseCloser( working_parameters::StepWiseWorkingParametersCOP working_parameters,
-																			  sampler::StepWiseSamplerSizedOP sampler );
+	//constructor
+	StepWiseProteinCCD_MultiPoseCloser( working_parameters::StepWiseWorkingParametersCOP working_parameters,
+		sampler::StepWiseSamplerSizedOP sampler );
 
-		//destructor
-		~StepWiseProteinCCD_MultiPoseCloser();
+	//destructor
+	~StepWiseProteinCCD_MultiPoseCloser();
 
-	public:
+public:
 
-    /// @brief Apply the minimizer to one pose
-    virtual void apply( core::pose::Pose & pose_to_visualize );
+	/// @brief Apply the minimizer to one pose
+	virtual void apply( core::pose::Pose & pose_to_visualize );
 
-		virtual std::string get_name() const { return "StepWiseProteinCCD_MultiPoseCloser"; }
+	virtual std::string get_name() const { return "StepWiseProteinCCD_MultiPoseCloser"; }
 
-		utility::vector1< utility::vector1< core::Real > > const & main_chain_torsion_sets() const;
+	utility::vector1< utility::vector1< core::Real > > const & main_chain_torsion_sets() const;
 
-		void
-		set_ccd_close_res( core::Size const value ){ ccd_close_res_ = value;}
+	void
+	set_ccd_close_res( core::Size const value ){ ccd_close_res_ = value;}
 
-		void
-		set_working_moving_res_list( utility::vector1< core::Size > const & setting ){ moving_residues_ = setting; }
+	void
+	set_working_moving_res_list( utility::vector1< core::Size > const & setting ){ moving_residues_ = setting; }
 
-		void set_choose_random( bool const & setting ){ choose_random_ = setting; }
-		bool choose_random() const{ return choose_random_; }
+	void set_choose_random( bool const & setting ){ choose_random_ = setting; }
+	bool choose_random() const{ return choose_random_; }
 
-		void set_num_random_samples( core::Size const & setting ){ num_random_samples_ = setting; }
-		core::Size num_random_samples() const{ return num_random_samples_; }
+	void set_num_random_samples( core::Size const & setting ){ num_random_samples_ = setting; }
+	core::Size num_random_samples() const{ return num_random_samples_; }
 
-		utility::vector1< core::id::TorsionID > const & which_torsions() const;
+	utility::vector1< core::id::TorsionID > const & which_torsions() const;
 
-	private:
+private:
 
-		StepWiseProteinCCD_CloserOP ccd_closer_;
-		sampler::StepWiseSamplerSizedOP sampler_;
+	StepWiseProteinCCD_CloserOP ccd_closer_;
+	sampler::StepWiseSamplerSizedOP sampler_;
 
-		utility::vector1< utility::vector1< core::Real > > main_chain_torsion_sets_;
+	utility::vector1< utility::vector1< core::Real > > main_chain_torsion_sets_;
 
-		bool choose_random_;
-		core::Size num_random_samples_;
-		core::Size max_ntries_;
+	bool choose_random_;
+	core::Size num_random_samples_;
+	core::Size max_ntries_;
 
-		core::Size ccd_close_res_;
-		utility::vector1< core::Size > moving_residues_;
+	core::Size ccd_close_res_;
+	utility::vector1< core::Size > moving_residues_;
 
-	};
+};
 
 } //loop_close
 } //protein

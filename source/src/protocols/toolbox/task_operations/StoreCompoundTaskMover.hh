@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/toolbox/task_operations/StoreCompoundTaskMover.cc
-/// @brief  Combine tasks using boolean logic for residues that are packable or designable, as 
+/// @brief  Combine tasks using boolean logic for residues that are packable or designable, as
 /// well as for residue specific AA sets, and store the resulting task in the pose's cacheable data.
 /// @author Jacob Bale (balej@uw.edu)
 

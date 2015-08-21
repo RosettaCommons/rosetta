@@ -29,22 +29,22 @@ namespace stepwise {
 namespace sampler {
 namespace rna {
 
-	sampler::StepWiseSamplerBaseOP
-	setup_sampler( core::pose::Pose const & pose,
-												 protocols::stepwise::modeler::options::StepWiseModelerOptionsCOP options,
-												 protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters,
-												 bool const build_pose_from_scratch,
-												 bool const kic_modeler,
-												 bool const close_chain );
+sampler::StepWiseSamplerBaseOP
+setup_sampler( core::pose::Pose const & pose,
+	protocols::stepwise::modeler::options::StepWiseModelerOptionsCOP options,
+	protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters,
+	bool const build_pose_from_scratch,
+	bool const kic_modeler,
+	bool const close_chain );
 
-	bool
-	modeler_sugar_at_five_prime( pose::Pose const & pose,
-																Size const moving_suite );
+bool
+modeler_sugar_at_five_prime( pose::Pose const & pose,
+	Size const moving_suite );
 
 
-	bool
-	modeler_sugar_at_three_prime( pose::Pose const & pose,
-																 Size const moving_suite );
+bool
+modeler_sugar_at_three_prime( pose::Pose const & pose,
+	Size const moving_suite );
 
 
 } //rna

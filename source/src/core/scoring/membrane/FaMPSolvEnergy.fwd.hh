@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/scoring/membrane/FaMPSolvEnergy.cc
+/// @file  core/scoring/membrane/FaMPSolvEnergy.cc
 ///
-/// @brief		LK-Type Membrane Solvation Energy
-/// @details	Last Modified: 5/13/14
+/// @brief  LK-Type Membrane Solvation Energy
+/// @details Last Modified: 5/13/14
 ///
-/// @author		Patrick Barth (Original)
-/// @author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Patrick Barth (Original)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_scoring_membrane_FaMPSolvEnergy_cc
 #define INCLUDED_core_scoring_membrane_FaMPSolvEnergy_cc
@@ -45,11 +45,11 @@
 namespace core {
 namespace scoring {
 namespace membrane {
-	
+
 class FaMPSolvEnergy;
 typedef utility::pointer::shared_ptr< FaMPSolvEnergy > FaMPSolvEnergyOP;
 typedef utility::pointer::shared_ptr< FaMPSolvEnergy const > FaMPSolvEnergyCOP;
-	
+
 } // membrane
 } // scoring
 } // core

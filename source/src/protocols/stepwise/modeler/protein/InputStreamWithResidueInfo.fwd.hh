@@ -21,9 +21,9 @@ namespace stepwise {
 namespace modeler {
 namespace protein {
 
-	class InputStreamWithResidueInfo;
-	typedef utility::pointer::shared_ptr< InputStreamWithResidueInfo > InputStreamWithResidueInfoOP;
-	typedef utility::pointer::shared_ptr< InputStreamWithResidueInfo const > InputStreamWithResidueInfoCOP;
+class InputStreamWithResidueInfo;
+typedef utility::pointer::shared_ptr< InputStreamWithResidueInfo > InputStreamWithResidueInfoOP;
+typedef utility::pointer::shared_ptr< InputStreamWithResidueInfo const > InputStreamWithResidueInfoCOP;
 
 } //protein
 } //modeler

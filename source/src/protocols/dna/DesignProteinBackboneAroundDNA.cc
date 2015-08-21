@@ -66,12 +66,12 @@ namespace protocols {
 namespace dna {
 
 using namespace core;
-	using namespace basic::options;
-	using namespace pack;
-		using namespace task;
-			using namespace operation;
-	using namespace pose;
-	using namespace scoring;
+using namespace basic::options;
+using namespace pack;
+using namespace task;
+using namespace operation;
+using namespace pose;
+using namespace scoring;
 
 using basic::t_warning;
 using basic::t_info;
@@ -242,8 +242,9 @@ void DesignProteinBackboneAroundDNA::parse_my_tag(
 	if ( tag->hasOption("repack_rate") ) repack_rate_ = tag->getOption<Size>("repack_rate");
 	if ( tag->hasOption("temp_initial") ) temp_initial_ = tag->getOption<Real>("temp_initial");
 	if ( tag->hasOption("temp_final") ) temp_final_ = tag->getOption<Real>("temp_final");
-	if ( tag->hasOption("designable_second_shell") )
-			designable_second_shell_ = tag->getOption<bool>("designable_second_shell");
+	if ( tag->hasOption("designable_second_shell") ) {
+		designable_second_shell_ = tag->getOption<bool>("designable_second_shell");
+	}
 	// the following are calls to PackRotamersMover methods
 	parse_score_function( tag, datamap, filters, movers, pose );
 	parse_task_operations( tag, datamap, filters, movers, pose );

@@ -8,10 +8,10 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief      Does translation and rotation of a pose or the membrane
-/// @details	Translates along a vector and rotates a pose or membrane around
-///				the axis perpendicular to both vectors. Works for both
-///				fixed protein/flexible membrane or fixed membrane/flexible protein
-///				Takes the jump number as input, default is the membrane jump
+/// @details Translates along a vector and rotates a pose or membrane around
+///    the axis perpendicular to both vectors. Works for both
+///    fixed protein/flexible membrane or fixed membrane/flexible protein
+///    Takes the jump number as input, default is the membrane jump
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_TranslationRotationMover_fwd_hh
@@ -27,12 +27,12 @@ class TranslationMover;
 typedef utility::pointer::shared_ptr< TranslationMover > TranslationMoverOP;
 typedef utility::pointer::shared_ptr< TranslationMover const > TranslationMoverCOP;
 
-	
+
 class RotationMover;
 typedef utility::pointer::shared_ptr< RotationMover > RotationMoverOP;
 typedef utility::pointer::shared_ptr< RotationMover const > RotationMoverCOP;
 
-	
+
 class TranslationRotationMover;
 typedef utility::pointer::shared_ptr< TranslationRotationMover > TranslationRotationMoverOP;
 typedef utility::pointer::shared_ptr< TranslationRotationMover const > TranslationRotationMoverCOP;

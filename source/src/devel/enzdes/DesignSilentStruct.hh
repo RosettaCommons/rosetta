@@ -51,7 +51,7 @@ namespace enzdes {
 class DesignSilentStruct : public core::io::silent::ProteinSilentStruct {
 
 public:
-  typedef core::io::silent::ProteinSilentStruct parent;
+	typedef core::io::silent::ProteinSilentStruct parent;
 
 public:
 
@@ -62,51 +62,51 @@ public:
 		bool const onlyadd_in
 	);
 
-  DesignSilentStruct(
-	  core::pose::Pose const & pose,
-    std::string tag, // = "empty_tag",
-    utility::vector1<core::Size> const & spec_res_in,
-    utility::vector1< std::string > const & rel_score_in,
-    bool const add_in,
-    bool const onlyadd_in );
+	DesignSilentStruct(
+		core::pose::Pose const & pose,
+		std::string tag, // = "empty_tag",
+		utility::vector1<core::Size> const & spec_res_in,
+		utility::vector1< std::string > const & rel_score_in,
+		bool const add_in,
+		bool const onlyadd_in );
 
-  DesignSilentStruct(
-    core::pose::Pose const & pose,
-    std::string tag, // = "empty_tag",
-    utility::vector1<core::Size> const & spec_res_in,
-    utility::vector1< std::string > const & rel_score_in,
-    std::map< core::Size, utility::vector1< std::pair< std::string, std::string > > > const & calculators,
-    bool const add_in,
-    bool const onlyadd_in );
+	DesignSilentStruct(
+		core::pose::Pose const & pose,
+		std::string tag, // = "empty_tag",
+		utility::vector1<core::Size> const & spec_res_in,
+		utility::vector1< std::string > const & rel_score_in,
+		std::map< core::Size, utility::vector1< std::pair< std::string, std::string > > > const & calculators,
+		bool const add_in,
+		bool const onlyadd_in );
 
 
-  //this function will calculate the additional information
+	//this function will calculate the additional information
 
-void calculate_additional_info(
-  core::pose::Pose const & pose,
-  utility::vector1<core::Size> const & special_res,
-  utility::vector1< std::string > const & score_terms,
-  std::map< core::Size, utility::vector1< std::pair< std::string, std::string > > > const & calculators );
+	void calculate_additional_info(
+		core::pose::Pose const & pose,
+		utility::vector1<core::Size> const & special_res,
+		utility::vector1< std::string > const & score_terms,
+		std::map< core::Size, utility::vector1< std::pair< std::string, std::string > > > const & calculators );
 
 	void add_to_additional_silent_energies(
 		utility::vector1< core::io::silent::SilentEnergy > const & silent_Es);
 
-  //this function will go over the special_residues_ member object, and for each of these residues
-  //write out the values for the relevant score terms as well as the evaluate the metric calculators
-  void print_additional_info(std::ostream& out) const;
+	//this function will go over the special_residues_ member object, and for each of these residues
+	//write out the values for the relevant score terms as well as the evaluate the metric calculators
+	void print_additional_info(std::ostream& out) const;
 
-  void print_header( std::ostream& out ) const;
+	void print_header( std::ostream& out ) const;
 
-  void print_scores( std::ostream& out ) const;
+	void print_scores( std::ostream& out ) const;
 
-  core::Real sum_constraint_terms( core::pose::Pose const & pose, int which_res);
+	core::Real sum_constraint_terms( core::pose::Pose const & pose, int which_res);
 
 private:
 
-  utility::vector1< core::io::silent::SilentEnergy > additional_info_silent_energy_;
+	utility::vector1< core::io::silent::SilentEnergy > additional_info_silent_energy_;
 
-  bool print_additional_;
-  bool print_only_additional_;
+	bool print_additional_;
+	bool print_only_additional_;
 
 }; //class DesignSilentStruct
 

@@ -95,9 +95,9 @@ get_hb_don_chem_type(
 {
 	using namespace chemical;
 	std::string const & aname(don_rsd.atom_name(datm)); // NEVER create a string when a string const & will do
-	if (don_rsd.atom_is_backbone(datm)){
-		if (don_rsd.is_protein()) {
-			if(don_rsd.is_lower_terminus()){
+	if ( don_rsd.atom_is_backbone(datm) ) {
+		if ( don_rsd.is_protein() ) {
+			if ( don_rsd.is_lower_terminus() ) {
 
 				/// WARNING this is set to hbdon_PBA for backwards compatibility only!!!!
 				/// but it should be hbdon_AMO because it is actually an amino group
@@ -112,30 +112,30 @@ get_hb_don_chem_type(
 		}
 	} else {
 		switch(don_rsd.aa()){
-		case aa_none: return hbdon_NONE;
-		case aa_asn: case aa_gln: case aa_dan: case aa_dgn: case aa_b3n: case aa_b3q: return hbdon_CXA; break;
-		case aa_his: case aa_dhi: case aa_b3h:
-			if (aname == " ND1"){
+		case aa_none : return hbdon_NONE;
+		case aa_asn: case aa_gln: case aa_dan: case aa_dgn: case aa_b3n: case aa_b3q : return hbdon_CXA; break;
+		case aa_his: case aa_dhi: case aa_b3h :
+			if ( aname == " ND1" ) {
 				return hbdon_IMD;
 			} else {
-			debug_assert( aname == " NE2");
+				debug_assert( aname == " NE2");
 				return hbdon_IME;
 			} break;
-		case aa_trp: case aa_dtr: case aa_b3w:
+		case aa_trp: case aa_dtr: case aa_b3w :
 			return hbdon_IND; break;
-		case aa_lys: case aa_dly: case aa_b3k:
+		case aa_lys: case aa_dly: case aa_b3k :
 			return hbdon_AMO; break;
-		case aa_arg: case aa_dar: case aa_b3r:
-			if (aname == " NE "){
+		case aa_arg: case aa_dar: case aa_b3r :
+			if ( aname == " NE " ) {
 				return hbdon_GDE;
 			} else {
-			debug_assert(aname == " NH1" || aname == " NH2");
+				debug_assert(aname == " NH1" || aname == " NH2");
 				return hbdon_GDH;
 			} break;
-		case aa_tyr: case aa_dty: case aa_b3y:
+		case aa_tyr: case aa_dty: case aa_b3y :
 			return hbdon_AHX; break;
 		case aa_ser: case aa_dse: case aa_b3s:
-		case aa_thr: case aa_dth: case aa_b3t:
+		case aa_thr: case aa_dth: case aa_b3t :
 			return hbdon_HXL; break;
 		case aa_ala: case aa_cys: case aa_asp: case aa_glu: case aa_phe:
 		case aa_gly: case aa_ile: case aa_leu: case aa_met: case aa_pro: case aa_val:
@@ -143,105 +143,105 @@ get_hb_don_chem_type(
 		case aa_dil: case aa_dle: case aa_dme: case aa_dpr: case aa_dva:
 		case aa_b3a: case aa_b3c: case aa_b3d: case aa_b3e: case aa_b3f:
 		case aa_b3g: case aa_b3i: case aa_b3l: case aa_b3m: case aa_b3p: case aa_b3v:
-		case aa_b3cisACPC: case aa_b3cisACHC: case aa_b3cisACPrC: //Common cyclic beta-3 amino acids
+		case aa_b3cisACPC: case aa_b3cisACHC: case aa_b3cisACPrC : //Common cyclic beta-3 amino acids
 			return hbdon_NONE; break;
-		case na_ade:
-			if (aname == " N6 ") {
+		case na_ade :
+			if ( aname == " N6 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_CXA.
 				return hbdon_CXA;
-			} else if (aname == "WN6" || aname == "WN7" || aname == "WN3") { // DNA_MAJOR_GROOVE_WATER ADDUCTS
+			} else if ( aname == "WN6" || aname == "WN7" || aname == "WN3" ) { // DNA_MAJOR_GROOVE_WATER ADDUCTS
 				return hbdon_H2O;
 			} break;
-		case na_cyt:
-			if (aname == " N4 ") {
+		case na_cyt :
+			if ( aname == " N4 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_CXA.
 				return hbdon_CXA;
-		//} else if ( aname == " N1 ") {  // while it is an Ntrp it is not protonated to it doesn't donate
-		//		return hbdon_IND;
+				//} else if ( aname == " N1 ") {  // while it is an Ntrp it is not protonated to it doesn't donate
+				//  return hbdon_IND;
 			} else if ( aname == "WN4" || aname == "WO2" ) {
 				return hbdon_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCTS
 			} break;
-		case na_gua:
-			if (aname == " N1 ") {
+		case na_gua :
+			if ( aname == " N1 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_IND.
 				return hbdon_IND;
-			} else if (aname == " N2 ") {
+			} else if ( aname == " N2 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_CXA.
 				return hbdon_CXA;
-			} else if ( aname == "WO6" || aname == "WN7" || aname == "WN3" ){
+			} else if ( aname == "WO6" || aname == "WN7" || aname == "WN3" ) {
 				return hbdon_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCT
 			} break;
-		case na_thy:
-			if (aname == " N3 ") {
+		case na_thy :
+			if ( aname == " N3 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_IND.
 				return hbdon_IND;
 			} else if ( aname == "WO4" || aname == "WO2" ) {
 				return hbdon_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCTS
 			} break;
-		case na_rad:
-			if (aname == " N6 ") {
+		case na_rad :
+			if ( aname == " N6 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_CXA.
 				return hbdon_GENERIC_SC;
-			} else if ( aname == "WN6" || aname == "WN7" ){
+			} else if ( aname == "WN6" || aname == "WN7" ) {
 				return hbdon_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCTS
-			} else if ( aname == " O2'" ){
+			} else if ( aname == " O2'" ) {
 				///. WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_HXL
 				return hbdon_GENERIC_SC;
 			} else if ( aname == " N1 " &&  don_rsd.has_variant_type( chemical::PROTONATED_H1_ADENOSINE ) ) { //Parin Sripakdeevong May 03, 2011.
 				return hbdon_GENERIC_SC;
 			} break;
-		case na_rgu:
-			if (aname == " N1 ") {
+		case na_rgu :
+			if ( aname == " N1 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_IND.
 				return hbdon_GENERIC_SC;
-			} else if (aname == " N2 ") {
+			} else if ( aname == " N2 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_CXA.
 				return hbdon_GENERIC_SC;
-			} else if ( aname == " O2'" ){
+			} else if ( aname == " O2'" ) {
 				///. WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_HXL
 				return hbdon_GENERIC_SC;
-			} else if ( aname == "WO6" || aname == "WN7"){
+			} else if ( aname == "WO6" || aname == "WN7" ) {
 				return hbdon_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCT
 			} break;
-		case na_rcy:
-			if (aname == " N4 ") {
+		case na_rcy :
+			if ( aname == " N4 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_CXA.
 				return hbdon_GENERIC_SC;
-			} else if ( aname == " O2'" ){
+			} else if ( aname == " O2'" ) {
 				///. WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_HXL
 				return hbdon_GENERIC_SC;
-			} else if ( aname == "WN4" ){
+			} else if ( aname == "WN4" ) {
 				return hbdon_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCT
 			} break;
-		case na_ura:
-			if (aname == " N3 ") {
+		case na_ura :
+			if ( aname == " N3 " ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_IND.
 				return hbdon_GENERIC_SC;
-			} else if ( aname == " O2'" ){
+			} else if ( aname == " O2'" ) {
 				///. WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_HXL
 				return hbdon_GENERIC_SC;
-			} else if ( aname == "WO4" ){
+			} else if ( aname == "WO4" ) {
 				return hbdon_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCT
 			} break;
-		case aa_h2o:
+		case aa_h2o :
 			return hbdon_H2O;
 		case aa_vrt:
 		case aa_unp:
-		case aa_unk:
+		case aa_unk :
 			//tr << "WARNING: Unknown Hydrogen Bond donor type for: " + don_rsd.name1() + I(3, don_rsd.seqpos()) + " " + don_rsd.atom_name( datm) + ".  Using hbdon_GENERIC_SC.";
 			return hbdon_GENERIC_SC; break;
 		}
@@ -260,9 +260,9 @@ get_hb_acc_chem_type(
 	using namespace chemical;
 	std::string const & aname(acc_rsd.atom_name(aatm)); // NEVER create a string when a string const & will do
 
-	if( acc_rsd.atom_is_backbone(aatm)){
-		if( acc_rsd.is_protein() ) {
-			if(acc_rsd.is_upper_terminus()){
+	if ( acc_rsd.atom_is_backbone(aatm) ) {
+		if ( acc_rsd.is_protein() ) {
+			if ( acc_rsd.is_upper_terminus() ) {
 
 				/// WARNING this is set to hbacc_PBA for backwards compatibility!!!!
 				/// but it should be hbacc_CXL because it is actually a carboxyl group
@@ -270,49 +270,49 @@ get_hb_acc_chem_type(
 			} else {
 				return hbacc_PBA;
 			}
-		} else if (acc_rsd.is_DNA()){
-			if (aname == " OP2" || aname == " OP1" ){
+		} else if ( acc_rsd.is_DNA() ) {
+			if ( aname == " OP2" || aname == " OP1" ) {
 				return hbacc_PCA_DNA;
-			} else if (aname == " O5'" || aname == " O3'"){
+			} else if ( aname == " O5'" || aname == " O3'" ) {
 				return hbacc_PES_DNA;
-			} else if (aname == " O4'"){
+			} else if ( aname == " O4'" ) {
 				return hbacc_RRI_DNA;
 			}
-		}else if ( acc_rsd.is_RNA() ){
-			if (aname == " OP2" || aname == " OP1" || aname == " O3P" ||
+		} else if ( acc_rsd.is_RNA() ) {
+			if ( aname == " OP2" || aname == " OP1" || aname == " O3P" ||
 					aname == "XOP2" || aname == "XOP1" ||
-					aname == "YOP2" || aname == "YOP1" ){
+					aname == "YOP2" || aname == "YOP1" ) {
 				return hbacc_PCA_RNA;
-			} else if (aname == " O5'" || aname == " O3'" ||
-								 aname == "YO5'" || aname == "XO3'" ){
+			} else if ( aname == " O5'" || aname == " O3'" ||
+					aname == "YO5'" || aname == "XO3'" ) {
 				return hbacc_PES_RNA;
-			} else if (aname == " O4'"){
+			} else if ( aname == " O4'" ) {
 				return hbacc_RRI_RNA;
 			}
 		} else {
 			// generic types; for backwards compatibility; prefer functional group based chem type
 			switch (acc_rsd.atom_type(aatm).hybridization()){
-			case SP2_HYBRID:
-				//				tr << "WARNING: Unknown hydrogen bond acceptor type for: " + acc_rsd.name1() + I(3, acc_rsd.seqpos()) + " " + acc_rsd.atom_name(aatm) + ".  Using hbdon_GENERIC_SP2BB.";
+			case SP2_HYBRID :
+				//    tr << "WARNING: Unknown hydrogen bond acceptor type for: " + acc_rsd.name1() + I(3, acc_rsd.seqpos()) + " " + acc_rsd.atom_name(aatm) + ".  Using hbdon_GENERIC_SP2BB.";
 				return hbacc_GENERIC_SP2BB; break;
-			case SP3_HYBRID:
+			case SP3_HYBRID :
 				//tr << "WARNING: Unknown hydrogen bond acceptor type for: " + acc_rsd.name1() + I(3, acc_rsd.seqpos()) + " " + acc_rsd.atom_name(aatm) + ".  Using hbdon_GENERIC_SP3BB.";
 				return hbacc_GENERIC_SP3BB; break;
-			case RING_HYBRID:
+			case RING_HYBRID :
 				//tr << "WARNING: Unknown hydrogen bond acceptor type for: " + acc_rsd.name1() + I(3, acc_rsd.seqpos()) + " " + acc_rsd.atom_name(aatm) + ".  Using hbdon_GENERIC_RINGBB.";
 				return hbacc_GENERIC_RINGBB; break;
-			case UNKNOWN_HYBRID:
+			case UNKNOWN_HYBRID :
 				//tr << "WARNING: Unknown hydrogen bond acceptor type for: " + acc_rsd.name1() + I(3, acc_rsd.seqpos()) + " " + acc_rsd.atom_name(aatm) + ".  Using hbdon_GENERIC_RINGBB.";
 				return hbacc_NONE; break;
 			}
 		}
 	} else {
 		switch(acc_rsd.aa()){
-		case aa_none: return hbacc_NONE; break;
-		case aa_asn: case aa_gln: case aa_dan: case aa_dgn: case aa_b3n: case aa_b3q: return hbacc_CXA; break;
-		case aa_asp: case aa_glu: case aa_das: case aa_dgu: case aa_b3d: case aa_b3e: return hbacc_CXL; break;
-		case aa_his: case aa_dhi: case aa_b3h:
-			if (aname == " ND1"){
+		case aa_none : return hbacc_NONE; break;
+		case aa_asn: case aa_gln: case aa_dan: case aa_dgn: case aa_b3n: case aa_b3q : return hbacc_CXA; break;
+		case aa_asp: case aa_glu: case aa_das: case aa_dgu: case aa_b3d: case aa_b3e : return hbacc_CXL; break;
+		case aa_his: case aa_dhi: case aa_b3h :
+			if ( aname == " ND1" ) {
 				return hbacc_IMD;
 			} else {
 				return hbacc_IME;
@@ -322,124 +322,124 @@ get_hb_acc_chem_type(
 		case aa_dal: case aa_dcs: case aa_dph: case aa_dil: case aa_dle:
 		case aa_dme: case aa_dpr: case aa_dva: case aa_dty:
 		case aa_b3a: case aa_b3c: case aa_b3f: case aa_b3g: case aa_b3i: case aa_b3l:
-		case aa_b3m: case aa_b3p: case aa_b3v: case aa_b3y:
+		case aa_b3m: case aa_b3p: case aa_b3v: case aa_b3y :
 			return hbacc_AHX; break;
-		case aa_ser: case aa_thr: case aa_dse: case aa_dth: case aa_b3s: case aa_b3t: return hbacc_HXL; break;
+		case aa_ser: case aa_thr: case aa_dse: case aa_dth: case aa_b3s: case aa_b3t : return hbacc_HXL; break;
 		case aa_lys: case aa_arg: case aa_trp: case aa_dly: case aa_dar: case aa_dtr: case aa_b3k: case aa_b3r: case aa_b3w:
-		case aa_b3cisACPC: case aa_b3cisACHC: case aa_b3cisACPrC: //Common cyclic beta-3 amino acids
+		case aa_b3cisACPC: case aa_b3cisACHC: case aa_b3cisACPrC : //Common cyclic beta-3 amino acids
 			return hbacc_NONE;
-		case na_ade:
-			if (aname == " N1 " || aname == " N3 " || aname == " N7 "){
+		case na_ade :
+			if ( aname == " N1 " || aname == " N3 " || aname == " N7 " ) {
 				/// WARNING this is set to hbacc_GENERIC_RINGSC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_IME.
 				return hbacc_IME;
-			} else if (aname == "WN6" || aname == "WN7" || aname == "WN3") {
+			} else if ( aname == "WN6" || aname == "WN7" || aname == "WN3" ) {
 				return hbacc_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCTS
 			} break;
-		case na_gua:
-			if (aname == " N3 " || aname == " N7 "){
+		case na_gua :
+			if ( aname == " N3 " || aname == " N7 " ) {
 				/// WARNING this is set to hbacc_GENERIC_RINGSC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_IME.
 				return hbacc_IME;
-			} else if ( aname == " O6 "){
+			} else if ( aname == " O6 " ) {
 				return hbacc_CXL;
 			} else if ( aname == "WO6" || aname == "WN7" || aname == "WN3" ) {
 				return hbacc_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCTS
 			} break;
-		case na_cyt:
-			if (aname == " O2 "){
+		case na_cyt :
+			if ( aname == " O2 " ) {
 				/// WARNING this is set to hbacc_GENERIC_SP2SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_CXA.
 				return hbacc_CXA;
-			} else if (aname == " N3 "){
+			} else if ( aname == " N3 " ) {
 				/// WARNING this is set to hbacc_GENERIC_RINGSC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_IME.
 				return hbacc_IME;
 			} else if ( aname == "WN4" || aname == "WO2" ) {
 				return hbacc_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCTS
 			} break;
-		case na_thy:
-			if (aname == " O2 " || aname == " O4 "){
+		case na_thy :
+			if ( aname == " O2 " || aname == " O4 " ) {
 				/// WARNING this is set to hbacc_GENERIC_SP2SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_CXA.
 				return hbacc_CXA;
 			} else if ( aname == "WO4" || aname == "WO2" ) {
 				return hbacc_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCTS
 			} break;
-		case na_rad:
-			if (aname == " N1 " || aname == " N3 " || aname == " N7 "){
-				if(aname == " N1 "){
-				 	if ( acc_rsd.has_variant_type( chemical::PROTONATED_H1_ADENOSINE ) ) {
-				 		utility_exit_with_message( "acc_rsd.aa()==na_rad, aname == \" N1 \" and acc_rsd.has_variant_type(\"PROTONATED_H1_ADENOSINE\")!");
-				 	}
+		case na_rad :
+			if ( aname == " N1 " || aname == " N3 " || aname == " N7 " ) {
+				if ( aname == " N1 " ) {
+					if ( acc_rsd.has_variant_type( chemical::PROTONATED_H1_ADENOSINE ) ) {
+						utility_exit_with_message( "acc_rsd.aa()==na_rad, aname == \" N1 \" and acc_rsd.has_variant_type(\"PROTONATED_H1_ADENOSINE\")!");
+					}
 				}
 				/// WARNING this is set to hbacc_GENERIC_RINGSC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_IME.
 				return hbacc_GENERIC_RINGSC;
-			} else if (aname == " O2'") {
+			} else if ( aname == " O2'" ) {
 				/// WARNING this is set to hbacc_GENERIC_SP3BB for backwards compatibility only!!!
 				/// it should actually be backbone hbacc_HXL.
 				return hbacc_GENERIC_SP3SC;
 			} break;
-		case na_rgu:
-			if (aname == " N3 " || aname == " N7 "){
+		case na_rgu :
+			if ( aname == " N3 " || aname == " N7 " ) {
 				/// WARNING this is set to hbacc_GENERIC_RINGSC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_IME.
 				return hbacc_GENERIC_RINGSC;
-			} else if (aname == " O6 "){
+			} else if ( aname == " O6 " ) {
 				/// WARNING this is set to hbacc_GENERIC_RINGSC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_CXA.
 				return hbacc_GENERIC_SP2SC;
-			} else if (aname == " O2'") {
+			} else if ( aname == " O2'" ) {
 				/// WARNING this is set to hbacc_GENERIC_SP3BB for backwards compatibility only!!!
 				/// it should actually be backbone hbacc_HXL.
 				return hbacc_GENERIC_SP3SC;
 			} break;
-		case na_rcy:
-			if (aname == " O2 "){
+		case na_rcy :
+			if ( aname == " O2 " ) {
 				/// WARNING this is set to hbacc_GENERIC_SP2SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_CXA.
 				return hbacc_GENERIC_SP2SC;
-			} else if (aname == " N3 "){
+			} else if ( aname == " N3 " ) {
 				/// WARNING this is set to hbacc_GENERIC_RINGSC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_IME.
 				return hbacc_GENERIC_RINGSC;
-			} else if (aname == " O2'") {
+			} else if ( aname == " O2'" ) {
 				/// WARNING this is set to hbacc_GENERIC_SP3BB for backwards compatibility only!!!
 				/// it should actually be backbone hbacc_HXL.
 				return hbacc_GENERIC_SP3SC;
 			} break;
-		case na_ura:
-			if (aname == " O2 " || aname == " O4 "){
+		case na_ura :
+			if ( aname == " O2 " || aname == " O4 " ) {
 				/// WARNING this is set to hbacc_GENERIC_SP2SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_CXA.
 				return hbacc_GENERIC_SP2SC;
-			} else if (aname == " O2'") {
+			} else if ( aname == " O2'" ) {
 				/// WARNING this is set to hbacc_GENERIC_SP3BB for backwards compatibility only!!!
 				/// it should actually be backbone hbacc_HXL.
 				return hbacc_GENERIC_SP3SC;
 			} break;
-		case aa_h2o:
+		case aa_h2o :
 			return hbacc_H2O;
 		case aa_vrt:
 		case aa_unp:
-		case aa_unk:
+		case aa_unk :
 			// generic types; for backwards compatibility; prefer functional group based chem type
 			switch(acc_rsd.atom_type(aatm).hybridization()){
-			case SP2_HYBRID:
+			case SP2_HYBRID :
 				return hbacc_GENERIC_SP2SC; break;
-			case SP3_HYBRID:
+			case SP3_HYBRID :
 				return hbacc_GENERIC_SP3SC; break;
-			case RING_HYBRID:
+			case RING_HYBRID :
 				return hbacc_GENERIC_RINGSC; break;
-			case UNKNOWN_HYBRID:
+			case UNKNOWN_HYBRID :
 				return hbacc_NONE; break;
 			}
 		}
-		if ( acc_rsd.is_RNA() ){
-			if (aname == "XOP2" || aname == "XOP1" || aname == "YOP1" || aname == "YOP2" ){
+		if ( acc_rsd.is_RNA() ) {
+			if ( aname == "XOP2" || aname == "XOP1" || aname == "YOP1" || aname == "YOP2" ) {
 				return hbacc_PCA_RNA;
-			} else if (aname == "XO5'" || aname == "XO3'" || aname == "YO5'" ){
+			} else if ( aname == "XO5'" || aname == "XO3'" || aname == "YO5'" ) {
 				return hbacc_PES_RNA;
 			}
 		}
@@ -478,27 +478,27 @@ get_seq_sep(
 
 	switch(don_chem_type){
 	case hbdon_NONE:
-	case hbdon_H2O:
+	case hbdon_H2O :
 		return seq_sep_other;
-	case hbdon_PBA:
+	case hbdon_PBA :
 		switch(acc_chem_type){
 		case hbacc_NONE:
-		case hbacc_H2O:
+		case hbacc_H2O :
 			return seq_sep_other;
-		case hbacc_PBA:
+		case hbacc_PBA :
 			switch(sep){
-			case -4: return seq_sep_M4; break;
-			case -3: return seq_sep_M3; break;
-			case -2: return seq_sep_M2; break;
+			case -4 : return seq_sep_M4; break;
+			case -3 : return seq_sep_M3; break;
+			case -2 : return seq_sep_M2; break;
 			case -1:
-			case 1: return seq_sep_PM1; break;
-			case 2: return seq_sep_P2; break;
-			case 3: return seq_sep_P3; break;
-			case 4: return seq_sep_P4; break;
-			default: return seq_sep_other; break;
+			case 1 : return seq_sep_PM1; break;
+			case 2 : return seq_sep_P2; break;
+			case 3 : return seq_sep_P3; break;
+			case 4 : return seq_sep_P4; break;
+			default : return seq_sep_other; break;
 			}
-		default:
-			if (sep == 1 || sep == -1) { return seq_sep_PM1;}
+		default :
+			if ( sep == 1 || sep == -1 ) { return seq_sep_PM1;}
 			else { return seq_sep_other; }
 			break;
 		} break;
@@ -510,7 +510,7 @@ get_seq_sep(
 	case hbdon_GDE:
 	case hbdon_GDH:
 	case hbdon_AHX:
-	case hbdon_HXL:
+	case hbdon_HXL :
 		switch(acc_chem_type){
 		case hbacc_NONE:
 		case hbacc_CXA:
@@ -522,21 +522,21 @@ get_seq_sep(
 		case hbacc_PCA_DNA:
 		case hbacc_PES_DNA:
 		case hbacc_RRI_DNA:
-		case hbacc_H2O:
+		case hbacc_H2O :
 			return seq_sep_other; break;
-		default:
-			if (sep == 1 || sep == -1) { return seq_sep_PM1;}
+		default :
+			if ( sep == 1 || sep == -1 ) { return seq_sep_PM1;}
 			else { return seq_sep_other; } break;
 		}break;
-	default:
-		if (sep == 1 || sep == -1) { return seq_sep_PM1;}
+	default :
+		if ( sep == 1 || sep == -1 ) { return seq_sep_PM1;}
 		else { return seq_sep_other; } break;
 	}
 	return seq_sep_other; // Make compilers happy.
 }
 
-	/// Warning if you use this interface you are responsible for
-	/// testing if the residues are on different chains!
+/// Warning if you use this interface you are responsible for
+/// testing if the residues are on different chains!
 hbonds::HBEvalTuple
 hbond_evaluation_type(
 	hbtrie::HBAtom const & datm,
@@ -587,7 +587,7 @@ hbond_compute_energy(
 )
 {
 	HBEvalType hbe = hbt.eval_type();
-	if( hbe == hbe_UNKNOWN ) {
+	if ( hbe == hbe_UNKNOWN ) {
 		tr.Error << "ERROR: Unknown HBEvalType for: " << hbt << std::endl;
 		utility_exit_with_message("Can't get energy for hbond interaction.");
 	}
@@ -598,14 +598,15 @@ hbond_compute_energy(
 
 	// These should throw an exection if fail_on_bad_hbond is true
 	if ( std::abs(xD) > 1.0 || std::abs(xH) > 1.0 ) {
-		if ( true )
+		if ( true ) {
 			tr << "WARNING:: invalid angle value in hbond_compute_energy:"
 				<< " xH = " << ObjexxFCL::format::SS( xH ) << " xD = " << ObjexxFCL::format::SS( xD ) << std::endl;
+		}
 		return;
 	}
 	//std::cout << " hb: " << AHdis << " " << xH << " " << xD << std::endl;
 	if ( AHdis > MAX_R || AHdis < MIN_R || xH < MIN_xH || xD < MIN_xD ||
-		xH > MAX_xH || xD > MAX_xD ) {
+			xH > MAX_xH || xD > MAX_xD ) {
 		return;
 	}
 
@@ -629,7 +630,7 @@ hbond_compute_energy(
 	if ( FSr == Real(0.0) && FLr == Real(0.0) ) {
 		// is dAHdis out of range for both its fade function and its polynnomials?  Then set energy > MAX_HB_ENERGY.
 		if ( dAHdis < database.AHdist_poly_lookup( hbe )->xmin() ||
-			dAHdis > database.AHdist_poly_lookup( hbe )->xmax() ) {
+				dAHdis > database.AHdist_poly_lookup( hbe )->xmax() ) {
 			energy = MAX_HB_ENERGY + Real(1.0);
 			return;
 		}
@@ -638,17 +639,17 @@ hbond_compute_energy(
 	if ( FxH == Real(0.0) ) {
 		// is xH out of range for both its fade function and its polynnomials?  Then set energy > MAX_HB_ENERGY.
 		if ( ( dxH < database.cosBAH_short_poly_lookup( hbe )->xmin() && dxH < database.cosBAH_long_poly_lookup( hbe )->xmin() ) ||
-			( dxH > database.cosBAH_short_poly_lookup( hbe )->xmax() && dxH > database.cosBAH_long_poly_lookup( hbe )->xmax() ) ) {
+				( dxH > database.cosBAH_short_poly_lookup( hbe )->xmax() && dxH > database.cosBAH_long_poly_lookup( hbe )->xmax() ) ) {
 			energy = MAX_HB_ENERGY + Real(1.0);
 			return;
 		}
 	}
 
 	// add these checks, of course, to the hbeval reading
-debug_assert( database.cosAHD_short_poly_lookup(hbe)->geometric_dimension() == database.cosAHD_long_poly_lookup(hbe)->geometric_dimension() );
+	debug_assert( database.cosAHD_short_poly_lookup(hbe)->geometric_dimension() == database.cosAHD_long_poly_lookup(hbe)->geometric_dimension() );
 	bool const use_cosAHD = database.cosAHD_short_poly_lookup(hbe)->geometric_dimension() == hbgd_cosAHD;
 	AHD_geometric_dimension = use_cosAHD ? hbgd_cosAHD : hbgd_AHD;
-debug_assert( use_cosAHD || database.cosAHD_short_poly_lookup(hbe)->geometric_dimension() == hbgd_AHD );
+	debug_assert( use_cosAHD || database.cosAHD_short_poly_lookup(hbe)->geometric_dimension() == hbgd_AHD );
 
 	Real AHD(-1234);
 	if ( ! use_cosAHD ) {
@@ -659,13 +660,13 @@ debug_assert( use_cosAHD || database.cosAHD_short_poly_lookup(hbe)->geometric_di
 		// is xD out of range for both its fade function and its polynnomials?  Then set energy > MAX_HB_ENERGY.
 		if ( use_cosAHD ) {
 			if ( ( dxD < database.cosAHD_short_poly_lookup( hbe )->xmin() && dxD < database.cosAHD_long_poly_lookup( hbe )->xmin() ) ||
-				( dxD > database.cosAHD_short_poly_lookup( hbe )->xmax() && dxD > database.cosAHD_long_poly_lookup( hbe )->xmax() ) ) {
+					( dxD > database.cosAHD_short_poly_lookup( hbe )->xmax() && dxD > database.cosAHD_long_poly_lookup( hbe )->xmax() ) ) {
 				energy = MAX_HB_ENERGY + Real(1.0);
 				return;
 			}
 		} else {
 			if ( ( AHD < database.cosAHD_short_poly_lookup( hbe )->xmin() && AHD < database.cosAHD_long_poly_lookup( hbe )->xmin() ) ||
-				( AHD > database.cosAHD_short_poly_lookup( hbe )->xmax() && AHD > database.cosAHD_long_poly_lookup( hbe )->xmax() ) ) {
+					( AHD > database.cosAHD_short_poly_lookup( hbe )->xmax() && AHD > database.cosAHD_long_poly_lookup( hbe )->xmax() ) ) {
 				energy = MAX_HB_ENERGY + Real(1.0);
 				return;
 			}
@@ -688,10 +689,10 @@ debug_assert( use_cosAHD || database.cosAHD_short_poly_lookup(hbe)->geometric_di
 	energy *= acc_don_scale;
 	energy += hbondoptions.hbond_energy_shift();
 
-	if(
-		hbondoptions.use_sp2_chi_penalty() &&
-		get_hbe_acc_hybrid(hbe) == chemical::SP2_HYBRID
-	){
+	if (
+			hbondoptions.use_sp2_chi_penalty() &&
+			get_hbe_acc_hybrid(hbe) == chemical::SP2_HYBRID
+			) {
 		bah_chi_compute_energy_sp2(
 			hbondoptions.sp2_BAH180_rise(),
 			hbondoptions.fade_energy() ? 1.6 : 1.5,
@@ -699,9 +700,9 @@ debug_assert( use_cosAHD || database.cosAHD_short_poly_lookup(hbe)->geometric_di
 			xH, chi, acc_don_scale, energy, dE_dBAH, dE_dchi);
 		apply_chi_torsion_penalty = true;
 	} else if (
-		hbondoptions.measure_sp3acc_BAH_from_hvy() &&
-		( hbt.acc_type() == hbacc_AHX || hbt.acc_type() == hbacc_HXL )
-	){
+			hbondoptions.measure_sp3acc_BAH_from_hvy() &&
+			( hbt.acc_type() == hbacc_AHX || hbt.acc_type() == hbacc_HXL )
+			) {
 		bah_chi_compute_energy_sp3(xH, chi, acc_don_scale, energy, dE_dBAH, dE_dchi);
 		apply_chi_torsion_penalty = true;
 	}
@@ -709,8 +710,8 @@ debug_assert( use_cosAHD || database.cosAHD_short_poly_lookup(hbe)->geometric_di
 	// dE_dchi *= acc_don_scale;
 
 	// NOTE: if any deriv parameter omitted, we don't compute derivatives.
-	if (&dE_dxH == &DUMMY_DERIV) {
-		if(hbondoptions.fade_energy()){
+	if ( &dE_dxH == &DUMMY_DERIV ) {
+		if ( hbondoptions.fade_energy() ) {
 			fade_energy(energy);
 		}
 		return;
@@ -719,7 +720,7 @@ debug_assert( use_cosAHD || database.cosAHD_short_poly_lookup(hbe)->geometric_di
 	dE_dr =  dPr*FxD*FxH + dFSr*(PSxD*FxH + FxD*PSxH) + dFLr*(PLxD*FxH + FxD*PLxH);
 	dE_dr *= acc_don_scale;
 
-	if(use_cosAHD){
+	if ( use_cosAHD ) {
 		dE_dxD = dFxD*(Pr*FxH + FLr*PLxH + FSr*PSxH) + FxH*(FSr*dPSxD + FLr*dPLxD);
 	} else {
 		/// the fade function is still evaluated in cosine space, so its derivatives have to
@@ -732,7 +733,7 @@ debug_assert( use_cosAHD || database.cosAHD_short_poly_lookup(hbe)->geometric_di
 	dE_dxH = dFxH*(Pr*FxD + FLr*PLxD + FSr*PSxD) + FxD*(FSr*dPSxH + FLr*dPLxH);
 	dE_dxH *= acc_don_scale;
 
-	if(hbondoptions.fade_energy()){
+	if ( hbondoptions.fade_energy() ) {
 		fade_energy(energy, dE_dr, dE_dxD, dE_dxH, dE_dBAH, dE_dchi);
 	}
 
@@ -882,12 +883,12 @@ hb_energy_deriv_u2(
 		chi = numeric::dihedral_radians( Hxyz, Axyz, Bxyz, B2xyz );
 	}
 	//std::cout << " hb_energy_deriv_u2" <<
-	//	" h  =(" << Hxyz.x() << " " << Hxyz.y() << " " << Hxyz.z() << ")\n" <<
-	//	" d  =(" << Dxyz.x() << " " << Dxyz.y() << " " << Dxyz.z() << ")\n" <<
-	//	" a  =(" << Axyz.x() << " " << Axyz.y() << " " << Axyz.z() << ")\n" <<
-	//	" ab =(" << Bxyz.x() << " " << Bxyz.y() << " " << Bxyz.z() << ")\n" <<
-	//	" ab2=(" << B2xyz.x() << " " << B2xyz.y() << " " << B2xyz.z() << ")" <<
-	//	std::endl;
+	// " h  =(" << Hxyz.x() << " " << Hxyz.y() << " " << Hxyz.z() << ")\n" <<
+	// " d  =(" << Dxyz.x() << " " << Dxyz.y() << " " << Dxyz.z() << ")\n" <<
+	// " a  =(" << Axyz.x() << " " << Axyz.y() << " " << Axyz.z() << ")\n" <<
+	// " ab =(" << Bxyz.x() << " " << Bxyz.y() << " " << Bxyz.z() << ")\n" <<
+	// " ab2=(" << B2xyz.x() << " " << B2xyz.y() << " " << B2xyz.z() << ")" <<
+	// std::endl;
 
 	if ( deriv_type == hbderiv_NONE ) {
 		// NOTE: early return with energy if no derivatives
@@ -917,7 +918,7 @@ hb_energy_deriv_u2(
 		dE_dBAH,
 		dE_dchi);
 
-	if (energy >= MAX_HB_ENERGY) return;
+	if ( energy >= MAX_HB_ENERGY ) return;
 
 	deriv.h_deriv.f1() = deriv.h_deriv.f2() = Vector(0.0);
 	deriv.acc_deriv.f1() = deriv.acc_deriv.f2() = Vector(0.0);
@@ -955,7 +956,7 @@ hb_energy_deriv_u2(
 
 	/// 2. theta derivatives (theta is the D-H-A angle)
 	if ( deriv_type != hbderiv_ABE_GO_GEOMSOL_OCC_ACC ) {
-		if(AHD_geometric_dimension == hbgd_cosAHD){
+		if ( AHD_geometric_dimension == hbgd_cosAHD ) {
 			Real theta;
 			angle_p1_deriv(  Axyz, Hxyz, Dxyz, theta, f1, f2);
 			Real const dE_dxD_sin_theta = dE_dxD*sin( theta );
@@ -969,7 +970,7 @@ hb_energy_deriv_u2(
 			angle_p2_deriv(  Dxyz, Hxyz, Axyz, theta, f1, f2);
 			deriv.h_deriv.f1() += dE_dxD_sin_theta * f1;
 			deriv.h_deriv.f2() += dE_dxD_sin_theta * f2;
-		} else if (AHD_geometric_dimension == hbgd_AHD){
+		} else if ( AHD_geometric_dimension == hbgd_AHD ) {
 			Real theta;
 			angle_p1_deriv(  Axyz, Hxyz, Dxyz, theta, f1, f2);
 			deriv.acc_deriv.f1() += dE_dxD * f1;
@@ -1097,20 +1098,20 @@ hb_energy_deriv(
 {
 	using namespace hbonds;
 
-//  angle definitions:  JSS the angle names are really bad. A-H-D = xD and B-A-H = xH
-//   cos(180-theta) = cos(thetaD) = xD    angle to donor
-//   cos(180-psi) = cos(thetaH) = xH      angle to proton
-//   raw angle in radians for ring nitrogen improper dihedral
+	//  angle definitions:  JSS the angle names are really bad. A-H-D = xD and B-A-H = xH
+	//   cos(180-theta) = cos(thetaD) = xD    angle to donor
+	//   cos(180-psi) = cos(thetaH) = xH      angle to proton
+	//   raw angle in radians for ring nitrogen improper dihedral
 
-//    energy  - total energy from this hbond
-//    dE_dr   - deriv w/respect to distance
-//    dE_dxD  - deriv w/respect to cos(thetaD)
-//    dE_dxH  - deriv w/respect to cos(thetaH)
+	//    energy  - total energy from this hbond
+	//    dE_dr   - deriv w/respect to distance
+	//    dE_dxD  - deriv w/respect to cos(thetaD)
+	//    dE_dxH  - deriv w/respect to cos(thetaH)
 
-//Objexx: Local arrays declared static for speed
-//JSS all early exits are in helper above, so this version of the function is deprecated.
-//These unit vectors are invariant for hbonded pairs and can be precalculated.
-//car  H->D unit vector, dis2
+	//Objexx: Local arrays declared static for speed
+	//JSS all early exits are in helper above, so this version of the function is deprecated.
+	//These unit vectors are invariant for hbonded pairs and can be precalculated.
+	//car  H->D unit vector, dis2
 	Vector HDunit;
 	HDunit = Dxyz - Hxyz;
 	Real const HDdis2( HDunit.length_squared() );
@@ -1137,10 +1138,11 @@ hb_energy_deriv(
 	if ( HDdis2 < 0.64 || HDdis2 > 1.5625 ) { // .8 to 1.25A
 		if ( true ) {
 			// this warning was runlevel dependent
-			if ( tr.visible() )
-			tr.Debug << "Warning: hb_energy_deriv has H(" << Hxyz(1) << ","
-				<< Hxyz(2)<< "," << Hxyz(3) << ") D(" << Dxyz(1) << "," << Dxyz(2)
-				<< "," << Dxyz(3) << ")  distance out of range " << std::sqrt( HDdis2 ) << std::endl;
+			if ( tr.visible() ) {
+				tr.Debug << "Warning: hb_energy_deriv has H(" << Hxyz(1) << ","
+					<< Hxyz(2)<< "," << Hxyz(3) << ") D(" << Dxyz(1) << "," << Dxyz(2)
+					<< "," << Dxyz(3) << ")  distance out of range " << std::sqrt( HDdis2 ) << std::endl;
+			}
 		}
 		energy = 0.0;
 		//deriv.first = Vector( 0.0 );
@@ -1157,7 +1159,7 @@ hb_energy_deriv(
 	// the pseudo-base xyz coordinate
 	Vector PBxyz;
 	HBEvalType eval_type( hbt.eval_type() );
-	if( eval_type == hbe_UNKNOWN ) {
+	if ( eval_type == hbe_UNKNOWN ) {
 		tr.Error << "ERROR: Unknown HBEvalType for " << hbt << std::endl;
 		utility_exit_with_message("Cannot compute derivative for hbond interaction");
 	}
@@ -1174,7 +1176,7 @@ create_acc_orientation_vector(
 	int atom_id
 )
 {
-debug_assert( residue.atom_type_set()[ residue.atom(atom_id).type() ].is_acceptor() );
+	debug_assert( residue.atom_type_set()[ residue.atom(atom_id).type() ].is_acceptor() );
 	chemical::Hybridization acc_hybrid(residue.atom_type(atom_id).hybridization());
 	Vector ovect, dummy;
 	make_hbBasetoAcc_unitvector(
@@ -1208,8 +1210,8 @@ make_hbBasetoAcc_unitvector(
 {
 	using namespace chemical;
 	switch(acc_hybrid){
-	case SP2_HYBRID:  PBxyz = Bxyz; break;
-	case SP3_HYBRID:
+	case SP2_HYBRID :  PBxyz = Bxyz; break;
+	case SP3_HYBRID :
 		/// If the heavy-atom base of an sp3 hybridized acceptor is to be used
 		/// to compute the BAH angle (i.e. CB on Ser/Thr), then give it Bxyz;
 		/// else, git it B2xyz (i.e. HG on Ser/Thr).
@@ -1219,8 +1221,8 @@ make_hbBasetoAcc_unitvector(
 			PBxyz = B2xyz;
 		}
 		break;
-	case RING_HYBRID: PBxyz = Real(0.5) * ( Bxyz + B2xyz ); break;
-	default:
+	case RING_HYBRID : PBxyz = Real(0.5) * ( Bxyz + B2xyz ); break;
+	default :
 		BAunit = 0.0;
 		tr << "Unrecognized Hybridization: " << acc_hybrid << std::endl;
 		utility_exit();
@@ -1247,29 +1249,29 @@ assign_abase_derivs(
 {
 	using namespace chemical;
 	switch( acc_hybrid ){
-		case SP2_HYBRID:  {
+	case SP2_HYBRID :  {
+		acc_atom_derivs[ acc_rsd.atom_base( acc_atom ) ].f1() += weighted_energy * abase_deriv.f1();
+		acc_atom_derivs[ acc_rsd.atom_base( acc_atom ) ].f2() += weighted_energy * abase_deriv.f2(); break;
+	}
+	case SP3_HYBRID :  {
+		if ( ! hbondoptions.measure_sp3acc_BAH_from_hvy() ) {
+			acc_atom_derivs[ acc_rsd.abase2( acc_atom ) ].f1() += weighted_energy * abase_deriv.f1();
+			acc_atom_derivs[ acc_rsd.abase2( acc_atom ) ].f2() += weighted_energy * abase_deriv.f2();
+		} else {
 			acc_atom_derivs[ acc_rsd.atom_base( acc_atom ) ].f1() += weighted_energy * abase_deriv.f1();
-			acc_atom_derivs[ acc_rsd.atom_base( acc_atom ) ].f2() += weighted_energy * abase_deriv.f2(); break;
+			acc_atom_derivs[ acc_rsd.atom_base( acc_atom ) ].f2() += weighted_energy * abase_deriv.f2();
 		}
-		case SP3_HYBRID:  {
-			if ( ! hbondoptions.measure_sp3acc_BAH_from_hvy() ) {
-				acc_atom_derivs[ acc_rsd.abase2( acc_atom ) ].f1() += weighted_energy * abase_deriv.f1();
-				acc_atom_derivs[ acc_rsd.abase2( acc_atom ) ].f2() += weighted_energy * abase_deriv.f2();
-			} else {
-				acc_atom_derivs[ acc_rsd.atom_base( acc_atom ) ].f1() += weighted_energy * abase_deriv.f1();
-				acc_atom_derivs[ acc_rsd.atom_base( acc_atom ) ].f2() += weighted_energy * abase_deriv.f2();
-			}
-			break;
-		}
-		case RING_HYBRID: {
-			acc_atom_derivs[ acc_rsd.atom_base( acc_atom ) ].f1() += 0.5 * weighted_energy * abase_deriv.f1();
-			acc_atom_derivs[ acc_rsd.atom_base( acc_atom ) ].f2() += 0.5 * weighted_energy * abase_deriv.f2();
-			acc_atom_derivs[ acc_rsd.abase2( acc_atom )    ].f1() += 0.5 * weighted_energy * abase_deriv.f1();
-			acc_atom_derivs[ acc_rsd.abase2( acc_atom )    ].f2() += 0.5 * weighted_energy * abase_deriv.f2(); break;
-		}
-		default:
-			tr << "Unrecognized Hybridization: " << acc_hybrid << std::endl;
-			utility_exit();
+		break;
+	}
+	case RING_HYBRID : {
+		acc_atom_derivs[ acc_rsd.atom_base( acc_atom ) ].f1() += 0.5 * weighted_energy * abase_deriv.f1();
+		acc_atom_derivs[ acc_rsd.atom_base( acc_atom ) ].f2() += 0.5 * weighted_energy * abase_deriv.f2();
+		acc_atom_derivs[ acc_rsd.abase2( acc_atom )    ].f1() += 0.5 * weighted_energy * abase_deriv.f1();
+		acc_atom_derivs[ acc_rsd.abase2( acc_atom )    ].f2() += 0.5 * weighted_energy * abase_deriv.f2(); break;
+	}
+	default :
+		tr << "Unrecognized Hybridization: " << acc_hybrid << std::endl;
+		utility_exit();
 	}
 
 }
@@ -1304,7 +1306,7 @@ create_don_orientation_vector(
 	int atom_id
 )
 {
-debug_assert( residue.atom_type_set()[ residue.atom( residue.atom_base(atom_id)).type() ].is_donor() );
+	debug_assert( residue.atom_type_set()[ residue.atom( residue.atom_base(atom_id)).type() ].is_donor() );
 
 	Vector HDunit;
 	HDunit = residue.atom( residue.atom_base( atom_id ) ).xyz() - residue.atom( atom_id ).xyz();

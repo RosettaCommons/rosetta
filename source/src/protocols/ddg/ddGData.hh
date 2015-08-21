@@ -26,8 +26,8 @@
 #include <map>
 
 
-namespace protocols{
-namespace ddG{
+namespace protocols {
+namespace ddG {
 
 using namespace core;
 using namespace scoring;

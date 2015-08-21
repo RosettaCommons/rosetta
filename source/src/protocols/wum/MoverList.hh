@@ -31,14 +31,14 @@ class MoverList;
 typedef  const MoverList* MoverListCAP;
 
 class MoverList{
- public:
- 		MoverList(){}
+public:
+	MoverList(){}
 
-		void register_mover( const std::string &name, moves::MoverCOP the_mover );
+	void register_mover( const std::string &name, moves::MoverCOP the_mover );
 
-		moves::MoverCOP get_mover( const std::string &name ) const;
- protected:
-		std::map< std::string, moves::MoverCOP > mover_list_;
+	moves::MoverCOP get_mover( const std::string &name ) const;
+protected:
+	std::map< std::string, moves::MoverCOP > mover_list_;
 };
 
 

@@ -50,19 +50,19 @@ namespace simple_moves {
 class BBGaussianMover : public protocols::canonical_sampling::ThermodynamicMover
 {
 public:
-    typedef core::Real Real;
-    typedef core::Size Size;
-    typedef core::pose::Pose Pose;
-    typedef core::pose::PoseOP PoseOP;
-    typedef core::pose::PoseCOP PoseCOP;
-    typedef core::conformation::Residue Residue;
+	typedef core::Real Real;
+	typedef core::Size Size;
+	typedef core::pose::Pose Pose;
+	typedef core::pose::PoseOP PoseOP;
+	typedef core::pose::PoseCOP PoseCOP;
+	typedef core::conformation::Residue Residue;
 
-    typedef utility::vector1< Real > Vector;
-    typedef numeric::xyzVector<Real> xyzVector;
-    typedef utility::vector1< xyzVector > VdRdPhi;
-    typedef utility::vector1< VdRdPhi > VMatrix;
-    //typedef numeric::MathMatrix<Real> Matrix;
-    typedef utility::vector1< Vector > Matrix;
+	typedef utility::vector1< Real > Vector;
+	typedef numeric::xyzVector<Real> xyzVector;
+	typedef utility::vector1< xyzVector > VdRdPhi;
+	typedef utility::vector1< VdRdPhi > VMatrix;
+	//typedef numeric::MathMatrix<Real> Matrix;
+	typedef utility::vector1< Vector > Matrix;
 
 
 public:
@@ -83,7 +83,7 @@ public:
 	void init();
 	void resize(Size, Size, Size);
 
- 	void factorA( Real const fA );
+	void factorA( Real const fA );
 	void factorB( Real const fB );
 
 	void get_G();
@@ -120,24 +120,24 @@ public:
 	void init_kic_loop(Size looplength, core::kinematics::MoveMapCOP mm);
 
 protected:
-    void setup_list(Pose const &);
+	void setup_list(Pose const &);
 
 	//r1, r2, r: r rotate around axis r1->r2
 	xyzVector get_dRdPhi(xyzVector const &r1, xyzVector const &r2, xyzVector const &r)
-    {
-        //dr/dphi = r x axis
-       xyzVector axis((r2-r1).normalize());
-       xyzVector r_local(r-r1);
-        return r_local.cross(axis);
-    }
+	{
+		//dr/dphi = r x axis
+		xyzVector axis((r2-r1).normalize());
+		xyzVector r_local(r-r1);
+		return r_local.cross(axis);
+	}
 
 	//r1, r2, r3, r: r rotate around axis (r3-r2)x(r2xr1)
 	xyzVector get_dRdTheta(xyzVector const &r1, xyzVector const &r2, xyzVector const &r3, xyzVector const &r)
-    {
-       xyzVector axis((r3-r2).cross(r2-r1).normalize());
-       xyzVector r_local(r-r2);
-        return r_local.cross(axis);
-    }
+	{
+		xyzVector axis((r3-r2).cross(r2-r1).normalize());
+		xyzVector r_local(r-r2);
+		return r_local.cross(axis);
+	}
 
 	// for rosetta_scripts
 	virtual void parse_my_tag(

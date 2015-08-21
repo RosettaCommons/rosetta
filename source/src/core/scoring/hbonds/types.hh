@@ -63,16 +63,16 @@ enum HBondWeightType {
 	hbw_MAX = hbw_SC
 };
 
-	///////////////////////////////////////////////////////////////////////////////
-	////// WARNING WARNING WARNING
-	//////
-	////// Changing the HBAccChemType or HBDonChemType will change the
-	////// sort order in hbonds::hbtrie::HBAtom::operator<(...) and
-	////// hbonds::hbtrie::HBAtom::operator==(...).	Changing the sort
-	////// order will __definitely__ cause trajectory changes.  So make
-	////// changes very carefully!
-	//////
-	//////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+////// WARNING WARNING WARNING
+//////
+////// Changing the HBAccChemType or HBDonChemType will change the
+////// sort order in hbonds::hbtrie::HBAtom::operator<(...) and
+////// hbonds::hbtrie::HBAtom::operator==(...). Changing the sort
+////// order will __definitely__ cause trajectory changes.  So make
+////// changes very carefully!
+//////
+//////////////////////////////////////////////////////////////////////////////
 
 
 enum HBAccChemType {

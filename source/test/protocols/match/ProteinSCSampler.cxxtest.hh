@@ -46,7 +46,7 @@ using namespace protocols::match::upstream;
 
 class ProteinSCSamplerTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 
 	// --------------- Fixtures --------------- //
@@ -83,14 +83,14 @@ class ProteinSCSamplerTests : public CxxTest::TestSuite {
 
 		/*Real prob_cummulative( 0.0 );
 		for ( Size ii = 1; ii <= samps1.size(); ++ii ) {
-			std::cout << ii << ": prob= " << samps1[ ii ].probability();
-			prob_cummulative +=  samps1[ ii ].probability();
-			std::cout << " probcummulative= " << prob_cummulative;
+		std::cout << ii << ": prob= " << samps1[ ii ].probability();
+		prob_cummulative +=  samps1[ ii ].probability();
+		std::cout << " probcummulative= " << prob_cummulative;
 
-			for ( Size jj = 1; jj <= samps1[ ii ].nchi(); ++jj ) {
-				std::cout << " ( " << samps1[ ii ].rot_well()[ jj ] << ", " <<  samps1[ ii ].chi_mean()[ jj ] << ", "  << samps1[ ii ].chi_sd()[ jj ] << " )";
-			}
-			std::cout << std::endl;
+		for ( Size jj = 1; jj <= samps1[ ii ].nchi(); ++jj ) {
+		std::cout << " ( " << samps1[ ii ].rot_well()[ jj ] << ", " <<  samps1[ ii ].chi_mean()[ jj ] << ", "  << samps1[ ii ].chi_sd()[ jj ] << " )";
+		}
+		std::cout << std::endl;
 		}*/
 
 
@@ -102,13 +102,13 @@ class ProteinSCSamplerTests : public CxxTest::TestSuite {
 
 		/*prob_cummulative = 0.0;
 		for ( Size ii = 1; ii <= samps2.size(); ++ii ) {
-			std::cout << ii << ": prob= " << samps2[ ii ].probability();
-			prob_cummulative +=  samps2[ ii ].probability();
-			std::cout << " probcummulative= " << prob_cummulative;
-			for ( Size jj = 1; jj <= samps2[ ii ].nchi(); ++jj ) {
-				std::cout << " ( " << samps2[ ii ].rot_well()[ jj ] << ", " <<  samps2[ ii ].chi_mean()[ jj ] << ", "  << samps2[ ii ].chi_sd()[ jj ] << " )";
-			}
-			std::cout << std::endl;
+		std::cout << ii << ": prob= " << samps2[ ii ].probability();
+		prob_cummulative +=  samps2[ ii ].probability();
+		std::cout << " probcummulative= " << prob_cummulative;
+		for ( Size jj = 1; jj <= samps2[ ii ].nchi(); ++jj ) {
+		std::cout << " ( " << samps2[ ii ].rot_well()[ jj ] << ", " <<  samps2[ ii ].chi_mean()[ jj ] << ", "  << samps2[ ii ].chi_sd()[ jj ] << " )";
+		}
+		std::cout << std::endl;
 		}*/
 
 
@@ -120,13 +120,13 @@ class ProteinSCSamplerTests : public CxxTest::TestSuite {
 
 		/*prob_cummulative = 0.0;
 		for ( Size ii = 1; ii <= samps3.size(); ++ii ) {
-			std::cout << ii << ": prob= " << samps3[ ii ].probability();
-			prob_cummulative +=  samps3[ ii ].probability();
-			std::cout << " probcummulative= " << prob_cummulative;
-			for ( Size jj = 1; jj <= samps3[ ii ].nchi(); ++jj ) {
-				std::cout << " ( " << samps3[ ii ].rot_well()[ jj ] << ", " <<  samps3[ ii ].chi_mean()[ jj ] << ", "  << samps3[ ii ].chi_sd()[ jj ] << " )";
-			}
-			std::cout << std::endl;
+		std::cout << ii << ": prob= " << samps3[ ii ].probability();
+		prob_cummulative +=  samps3[ ii ].probability();
+		std::cout << " probcummulative= " << prob_cummulative;
+		for ( Size jj = 1; jj <= samps3[ ii ].nchi(); ++jj ) {
+		std::cout << " ( " << samps3[ ii ].rot_well()[ jj ] << ", " <<  samps3[ ii ].chi_mean()[ jj ] << ", "  << samps3[ ii ].chi_sd()[ jj ] << " )";
+		}
+		std::cout << std::endl;
 		}*/
 
 	}

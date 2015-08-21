@@ -44,9 +44,9 @@ namespace rna {
 RNA_CentroidInfo::RNA_CentroidInfo( RNA_CentroidInfo const & src ) :
 	CacheableData()
 {
-  base_centroids_ = src.base_centroids_;
-  base_stubs_ = src.base_stubs_;
-  calculated_ = src.calculated_;
+	base_centroids_ = src.base_centroids_;
+	base_stubs_ = src.base_stubs_;
+	calculated_ = src.calculated_;
 }
 
 typedef  numeric::xyzMatrix< Real > Matrix;
@@ -66,14 +66,14 @@ kinematics::Stub
 RNA_CentroidInfo::get_base_coordinate_system( conformation::Residue const & rsd ) const
 {
 	Vector const centroid = get_base_centroid( rsd );
-  return kinematics::Stub( get_rna_base_coordinate_system( rsd, centroid ), centroid );
+	return kinematics::Stub( get_rna_base_coordinate_system( rsd, centroid ), centroid );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
 kinematics::Stub
 RNA_CentroidInfo::get_base_coordinate_system( conformation::Residue const & rsd, Vector const & centroid ) const
 {
-  return kinematics::Stub( get_rna_base_coordinate_system( rsd, centroid ), centroid );
+	return kinematics::Stub( get_rna_base_coordinate_system( rsd, centroid ), centroid );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -81,24 +81,24 @@ void
 RNA_CentroidInfo::initialize_base_centroids_and_stubs( pose::Pose const & pose )
 {
 
-  base_centroids_.clear();
-  base_stubs_.clear();
+	base_centroids_.clear();
+	base_stubs_.clear();
 
-  for ( Size i = 1; i <= pose.total_residue(); i++ ){
-    conformation::Residue const & res_i  ( pose.residue( i ) );
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		conformation::Residue const & res_i  ( pose.residue( i ) );
 
-    Vector centroid_i( 0.0  );
-    kinematics::Stub stub_i;
+		Vector centroid_i( 0.0  );
+		kinematics::Stub stub_i;
 
-    if ( res_i.is_RNA() ) {
-      centroid_i = get_base_centroid( res_i );
-      stub_i     = get_base_coordinate_system( res_i, centroid_i );
-    }
+		if ( res_i.is_RNA() ) {
+			centroid_i = get_base_centroid( res_i );
+			stub_i     = get_base_coordinate_system( res_i, centroid_i );
+		}
 
-    base_centroids_.push_back( centroid_i );
-    base_stubs_.push_back( stub_i );
+		base_centroids_.push_back( centroid_i );
+		base_stubs_.push_back( stub_i );
 
-  }
+	}
 
 }
 

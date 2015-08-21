@@ -11,9 +11,9 @@
 #define INCLUDED_core_chemical_orbitals_OrbitalType_fwd_hh
 
 
-namespace core{
-namespace chemical{
-namespace orbitals{
+namespace core {
+namespace chemical {
+namespace orbitals {
 
 class OrbitalType;
 

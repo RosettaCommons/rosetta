@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/screener/PhosphateScreener.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace stepwise {
 namespace screener {
-	
-	class PhosphateScreener;
-	typedef utility::pointer::shared_ptr< PhosphateScreener > PhosphateScreenerOP;
-	typedef utility::pointer::shared_ptr< PhosphateScreener const > PhosphateScreenerCOP;
-	
+
+class PhosphateScreener;
+typedef utility::pointer::shared_ptr< PhosphateScreener > PhosphateScreenerOP;
+typedef utility::pointer::shared_ptr< PhosphateScreener const > PhosphateScreenerCOP;
+
 } //screener
 } //stepwise
 } //protocols

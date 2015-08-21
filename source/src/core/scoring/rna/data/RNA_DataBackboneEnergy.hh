@@ -91,29 +91,29 @@ public:
 	virtual
 	void
 	eval_atom_derivative(
-											 id::AtomID const & atom_id,
-											 pose::Pose const & pose,
-											 kinematics::DomainMap const & domain_map,
-											 ScoreFunction const & scorefxn,
-											 EnergyMap const & weights,
-											 Vector & F1,
-											 Vector & F2
-											 ) const;
+		id::AtomID const & atom_id,
+		pose::Pose const & pose,
+		kinematics::DomainMap const & domain_map,
+		ScoreFunction const & scorefxn,
+		EnergyMap const & weights,
+		Vector & F1,
+		Vector & F2
+	) const;
 
 	virtual
 	bool
 	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return false; }
 
-	//	virtual
-	//	void
-	//	finalize_total_energy(
-	//		pose::Pose & pose,
-	//		ScoreFunction const &,
-	//		EnergyMap &// totals
-	//	) const;
+	// virtual
+	// void
+	// finalize_total_energy(
+	//  pose::Pose & pose,
+	//  ScoreFunction const &,
+	//  EnergyMap &// totals
+	// ) const;
 
 	virtual
- 	Distance
+	Distance
 	atomic_interaction_cutoff() const;
 
 	virtual
@@ -123,7 +123,7 @@ public:
 	initialize_atom_numbers_sugar();
 
 	//Vector
-	//	get_mean_sugar_pos( core::conformation::Residue const & rsd ) const;
+	// get_mean_sugar_pos( core::conformation::Residue const & rsd ) const;
 
 	Real
 	get_sugar_env_score( core::conformation::Residue const & rsd_buried, core::conformation::Residue const & rsd_other ) const;
@@ -144,8 +144,8 @@ private:
 	utility::vector1< Size > atom_numbers_sugar_;
 	utility::vector1< Size > atom_numbers_sugar_coarse_;
 	func::FuncOP burial_function_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

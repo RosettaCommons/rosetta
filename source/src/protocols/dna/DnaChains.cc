@@ -34,7 +34,7 @@ DnaChains::DnaChains() : utility::pointer::ReferenceCount() {}
 DnaChains::~DnaChains(){}
 
 DnaChains::DnaChains( DnaChains const & other )
-	: utility::pointer::ReferenceCount()
+: utility::pointer::ReferenceCount()
 {
 	positions_ = other.positions();
 }
@@ -53,7 +53,7 @@ DnaChains::contains( Size index ) const
 	}
 	// bottom strand check
 	for ( DnaPositions::const_iterator pos( positions_.begin() );
-				pos != positions_.end(); ++pos ) {
+			pos != positions_.end(); ++pos ) {
 		if ( index == pos->second.bottom() ) return true;
 	}
 	return false;
@@ -67,7 +67,7 @@ DnaChains::print(
 {
 	os << "There are " << positions_.size() << " dna positions:" << '\n';
 	for ( DnaPositions::const_iterator iter( positions_.begin() );
-				iter != positions_.end(); ++iter ) {
+			iter != positions_.end(); ++iter ) {
 
 		Size const top_i( iter->first );
 		DnaPosition const & pos( iter->second );
@@ -75,7 +75,7 @@ DnaChains::print(
 		os << I( 4, top_i );
 		if ( pose.pdb_info() ) {
 			os << " (pdb " << pose.pdb_info()->chain( top_i ) << " "
-			<< I( 4, pose.pdb_info()->number( top_i ) ) << ")";
+				<< I( 4, pose.pdb_info()->number( top_i ) ) << ")";
 		}
 		os << pose.residue_type( top_i ).name3();
 		if ( pos.paired() ) {
@@ -85,8 +85,7 @@ DnaChains::print(
 				os << " (pdb " << pose.pdb_info()->chain( bot_i ) << " "
 					<< I( 4, pose.pdb_info()->number( bot_i ) ) << ")";
 			}
-		}
-		else os << " (unpaired)";
+		} else os << " (unpaired)";
 		os << '\n';
 	}
 	os << std::endl;

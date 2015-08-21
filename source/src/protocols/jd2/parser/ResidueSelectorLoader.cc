@@ -59,11 +59,11 @@ void ResidueSelectorLoader::load_data(
 			datamap
 		);
 
-    // if "name" is specified, add it to the data map under that name. Otherwise use the type name.
-    bool const data_add_status = datamap.add( "ResidueSelector" ,
-                                              ii_tag->getOption( "name", ii_tag->getName() ),
-                                              selector );
-		if( !data_add_status ) {
+		// if "name" is specified, add it to the data map under that name. Otherwise use the type name.
+		bool const data_add_status = datamap.add( "ResidueSelector" ,
+			ii_tag->getOption( "name", ii_tag->getName() ),
+			selector );
+		if ( !data_add_status ) {
 			utility_exit_with_message( "ResidueSelector '" + ii_tag->getName() + "' already exists in the basic::datacache::DataMap. Please rename." );
 		}
 	}

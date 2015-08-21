@@ -34,37 +34,37 @@ namespace func {
 
 using namespace core::scoring::constraints;
 
-	void
-	GaussianFunc::read_data( std::istream& in ) {
-		in 	>> mean_ >> sd_;
+void
+GaussianFunc::read_data( std::istream& in ) {
+	in  >> mean_ >> sd_;
 
-		//I'm not sure what in.good() is meant to do here; it does NOT prevent GaussianFunc from chomping the next line of the constraint file as its tag if no tag is present.  SML 08.21.12
-		if ( in.good() ) {
-			std::string tag;
-			in >> tag;
+	//I'm not sure what in.good() is meant to do here; it does NOT prevent GaussianFunc from chomping the next line of the constraint file as its tag if no tag is present.  SML 08.21.12
+	if ( in.good() ) {
+		std::string tag;
+		in >> tag;
 
-			if (tag == "NOLOG") {
-				use_log_score_ = false;
-			}
+		if ( tag == "NOLOG" ) {
+			use_log_score_ = false;
 		}
-
 	}
 
-	Real
-	GaussianFunc::func( Real const x ) const	{
-		if ( use_log_score_ ) return - logdgaussian( x, mean_, sd_, 1 );
-		else                  return dgaussian( x, mean_, sd_, 1 );
-	} // func
+}
 
-	Real
-	GaussianFunc::dfunc( Real const x ) const {
-		if ( use_log_score_ ) return - logdgaussian_deriv( x, mean_, sd_, 1 );
-		else                  return gaussian_deriv( x, mean_, sd_, 1 );
-	} // dfunc
+Real
+GaussianFunc::func( Real const x ) const {
+	if ( use_log_score_ ) return - logdgaussian( x, mean_, sd_, 1 );
+	else                  return dgaussian( x, mean_, sd_, 1 );
+} // func
 
-	void GaussianFunc::show_definition( std::ostream& out ) const {
-		out << "GAUSSIANFUNC " << mean_ << ' ' << sd_ << "\n";
-	}
+Real
+GaussianFunc::dfunc( Real const x ) const {
+	if ( use_log_score_ ) return - logdgaussian_deriv( x, mean_, sd_, 1 );
+	else                  return gaussian_deriv( x, mean_, sd_, 1 );
+} // dfunc
+
+void GaussianFunc::show_definition( std::ostream& out ) const {
+	out << "GAUSSIANFUNC " << mean_ << ' ' << sd_ << "\n";
+}
 
 } // namespace constraints
 } // namespace scoring

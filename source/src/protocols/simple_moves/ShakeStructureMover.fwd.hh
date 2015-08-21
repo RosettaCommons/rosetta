@@ -20,9 +20,9 @@
 namespace protocols {
 namespace simple_moves {
 
-	class ShakeStructureMover;
-	typedef utility::pointer::shared_ptr< ShakeStructureMover > ShakeStructureMoverOP;
-	typedef utility::pointer::shared_ptr< ShakeStructureMover const > ShakeStructureMoverCOP;
+class ShakeStructureMover;
+typedef utility::pointer::shared_ptr< ShakeStructureMover > ShakeStructureMoverOP;
+typedef utility::pointer::shared_ptr< ShakeStructureMover const > ShakeStructureMoverCOP;
 
 } //simple_moves
 } //protocols

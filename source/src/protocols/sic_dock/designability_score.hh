@@ -14,8 +14,8 @@
 #include <core/types.hh>
 #include <protocols/sic_dock/types.hh>
 
-namespace protocols{
-namespace sic_dock{
+namespace protocols {
+namespace sic_dock {
 
 void
 get_xform_stats(
@@ -26,7 +26,7 @@ get_xform_stats(
 );
 
 struct
-XfoxmScore
+	XfoxmScore
 {
 	char *hh,*he,*hl,*ee,*el,*ll;
 

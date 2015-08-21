@@ -47,11 +47,11 @@ public:
 	/// @brief parse "task_operations" XML option (can be employed virtually by derived movers)
 	/*
 	virtual void parse_task_operations(
-									   TagCOP,
-									   basic::datacache::DataMap const &,
-									   Filters_map const &,
-									   moves::Movers_map const &,
-									   Pose const & );
+	TagCOP,
+	basic::datacache::DataMap const &,
+	Filters_map const &,
+	moves::Movers_map const &,
+	Pose const & );
 	*/
 
 private:

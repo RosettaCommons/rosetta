@@ -117,13 +117,13 @@ OmegaTetherEnergy::eval_residue_dof_derivative(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ){
-			return 0.0;
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) {
+		return 0.0;
 	}
 
 	Real deriv(0.0);
-	
-	// vkm: Changing this again to put all the mainchain torsion index logic in a single place.	
+
+	// vkm: Changing this again to put all the mainchain torsion index logic in a single place.
 	core::Size const index_phi( potential_.phi_index(rsd) );
 	core::Size const index_psi( potential_.psi_index(rsd) );
 	core::Size const index_omega( potential_.omega_index(rsd) );
@@ -131,10 +131,10 @@ OmegaTetherEnergy::eval_residue_dof_derivative(
 	// because some patches could give more mainchain torsions to a rsd...
 	// used to ask if it had 4 mainchain torsions and had a CM atom
 	if ( tor_id.valid() &&
-				tor_id.type() == id::BB &&
-				(tor_id.torsion() == index_phi || tor_id.torsion() == index_psi || tor_id.torsion() == index_omega) &&
-				rsd.is_protein()
-	) {
+			tor_id.type() == id::BB &&
+			(tor_id.torsion() == index_phi || tor_id.torsion() == index_psi || tor_id.torsion() == index_omega) &&
+			rsd.is_protein()
+			) {
 		Real omega_score, dscore_domega, dscore_dphi, dscore_dpsi;
 		// amw: This still doesn't truly do a good job with beta amino acids,
 		// since it only gives bb derivatives with respect to two torsions!
@@ -142,10 +142,10 @@ OmegaTetherEnergy::eval_residue_dof_derivative(
 		// same calculation once for each mainchain torsion.  I guess it doesn't matter so much for a one-body
 		// term, but it's still inelegant.
 		potential_.eval_omega_score_residue( rsd, omega_score, dscore_domega, dscore_dphi, dscore_dpsi );
-		if (tor_id.torsion() == index_phi) deriv = dscore_dphi;
-		if (tor_id.torsion() == index_psi) deriv = dscore_dpsi;
-		if (tor_id.torsion() == index_omega) deriv = dscore_domega; // Will be 3 by default (i.e. for alpha-aas or peptoids) and 4 for beta-aas.
-	
+		if ( tor_id.torsion() == index_phi ) deriv = dscore_dphi;
+		if ( tor_id.torsion() == index_psi ) deriv = dscore_dpsi;
+		if ( tor_id.torsion() == index_omega ) deriv = dscore_domega; // Will be 3 by default (i.e. for alpha-aas or peptoids) and 4 for beta-aas.
+
 	}
 	return numeric::conversions::degrees( weights[ omega ] * deriv );
 }
@@ -161,20 +161,20 @@ OmegaTetherEnergy::old_eval_dof_derivative(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( pose.residue( tor_id.rsd() ).has_variant_type( core::chemical::REPLONLY ) ){
-			return 0.0;
+	if ( pose.residue( tor_id.rsd() ).has_variant_type( core::chemical::REPLONLY ) ) {
+		return 0.0;
 	}
 
 	Real deriv(0.0);
 	if ( tor_id.valid() && tor_id.type() == id::BB ) {
 		conformation::Residue const & rsd( pose.residue( tor_id.rsd() ) );
 		if ( rsd.is_protein() &&
-				 tor_id.torsion() <= 3 ) {
+				tor_id.torsion() <= 3 ) {
 			Real omega_score, dscore_domega, dscore_dphi, dscore_dpsi;
 			potential_.eval_omega_score_residue( rsd, omega_score, dscore_domega, dscore_dphi, dscore_dpsi );
-			if (tor_id.torsion() == 1) deriv = dscore_dphi;
-			if (tor_id.torsion() == 2) deriv = dscore_dpsi;
-			if (tor_id.torsion() == 3) deriv = dscore_domega;
+			if ( tor_id.torsion() == 1 ) deriv = dscore_dphi;
+			if ( tor_id.torsion() == 2 ) deriv = dscore_dpsi;
+			if ( tor_id.torsion() == 3 ) deriv = dscore_domega;
 		}
 	}
 	// note that the atomtree Oomega dofs are in radians

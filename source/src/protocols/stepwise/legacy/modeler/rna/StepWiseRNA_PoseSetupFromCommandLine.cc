@@ -127,13 +127,13 @@
 #include <ctime>
 
 #ifdef WIN32
-	#include <direct.h>
-    #define GetCurrentDir _getcwd
+#include <direct.h>
+#define GetCurrentDir _getcwd
 
 #else
-	#define GetCurrentDir getcwd
-	#include <libgen.h>
-	#include <unistd.h>
+#define GetCurrentDir getcwd
+#include <libgen.h>
+#include <unistd.h>
 #endif
 
 #include <list>
@@ -203,9 +203,9 @@ get_working_directory(){
 	char cCurrentPath[FILENAME_MAX];
 	std::string current_directory_string;
 
- 	if ( !GetCurrentDir( cCurrentPath, sizeof( cCurrentPath ) ) ){
- 	 utility_exit_with_message( "!GetCurrentDir( cCurrentPath, sizeof( cCurrentPath ) )" );
- 	}
+	if ( !GetCurrentDir( cCurrentPath, sizeof( cCurrentPath ) ) ) {
+		utility_exit_with_message( "!GetCurrentDir( cCurrentPath, sizeof( cCurrentPath ) )" );
+	}
 
 	std::stringstream ss;
 	ss << cCurrentPath;
@@ -230,21 +230,21 @@ get_fixed_res( core::Size const nres ){
 	utility::vector1< core::Size > const fixed_res_list    = option[ OptionKeys::stepwise::fixed_res ]();
 	utility::vector1< core::Size > const minimize_res_list = option[ OptionKeys::stepwise::rna::minimize_res ]();
 
-	if ( fixed_res_list.size() != 0 && minimize_res_list.size() != 0 ){
+	if ( fixed_res_list.size() != 0 && minimize_res_list.size() != 0 ) {
 		utility_exit_with_message( "User Cannot specify both  fixed_res and minimize_res!" );
 	}
 
-	if ( fixed_res_list.size() != 0  ){
+	if ( fixed_res_list.size() != 0  ) {
 		actual_fixed_res_list = fixed_res_list;
 
-	} else if ( minimize_res_list.size() != 0 ){
+	} else if ( minimize_res_list.size() != 0 ) {
 
-		for ( Size seq_num = 1; seq_num <= nres; seq_num++ ){
+		for ( Size seq_num = 1; seq_num <= nres; seq_num++ ) {
 			if ( minimize_res_list.has_value( seq_num ) ) continue;
 			actual_fixed_res_list.push_back( seq_num );
 		}
 
-	} else{ //here I am being a little stringent and require user specify one of these option. Could just return empty list...
+	} else { //here I am being a little stringent and require user specify one of these option. Could just return empty list...
 		//utility_exit_with_message( "User did not specify both fixed res and minimize_res!" );
 		TR << " WARNING! User did not specify either fixed res and minimize_res!" << std::endl;
 		TR << " Assuming -input_res gives fixed_res" << std::endl;
@@ -263,9 +263,9 @@ is_nonempty_input_silent_file( std::string const & input_silent_file, std::strin
 	std::ifstream infile;
 	infile.open( input_silent_file.c_str() );
 
-	if ( infile.fail() ){
+	if ( infile.fail() ) {
 		utility_exit_with_message( "Error! \"" + input_silent_file + "\" could not be opened!" );
-	} else{
+	} else {
 		std::cout << "Open \"" << input_silent_file << "\" successful!" << std::endl;
 	}
 
@@ -277,7 +277,7 @@ is_nonempty_input_silent_file( std::string const & input_silent_file, std::strin
 
 	size_t found_substring = line.find( exit_key_string );
 
-	if ( found_substring != std::string::npos ){
+	if ( found_substring != std::string::npos ) {
 		std::cout << "input_silent_file: " << input_silent_file << " contain no silent struct" << std::endl;
 		std::cout << line << std::endl;
 
@@ -288,7 +288,7 @@ is_nonempty_input_silent_file( std::string const & input_silent_file, std::strin
 		if ( found_next_line ) std::cout << "input silent_file contain more than one line! next_line = " << next_line << std::endl;
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		return false;
-	} else{
+	} else {
 		return true;
 	}
 }
@@ -305,36 +305,36 @@ get_input_res( core::Size const nres, std::string const & pose_num ){
 	utility::vector1< core::Size > input_res_list;
 	utility::vector1< core::Size > missing_res_list;
 
-	if ( pose_num == "1" ){
+	if ( pose_num == "1" ) {
 		input_res_list = option[ in::file::input_res ]();
 		missing_res_list = option[ OptionKeys::stepwise::rna::missing_res ]();
-	} else if ( pose_num == "2" ){
+	} else if ( pose_num == "2" ) {
 		input_res_list = option[ OptionKeys::stepwise::input_res2 ]();
 		missing_res_list = option[ OptionKeys::stepwise::rna::missing_res2 ]();
-	} else{
+	} else {
 		utility_exit_with_message( "Invalid pose_num " + pose_num + ", must by either 1 or 2 !" );
 	}
 
 
-	if ( input_res_list.size() != 0 && missing_res_list.size() != 0 ){
+	if ( input_res_list.size() != 0 && missing_res_list.size() != 0 ) {
 		utility_exit_with_message( "User Cannot specify both input_res" + pose_num + " and missing_res" + pose_num + "!" );
 	}
 
 	utility::vector1< core::Size > actual_input_res_list;
 	actual_input_res_list.clear();
 
-	if ( input_res_list.size() != 0 ){
+	if ( input_res_list.size() != 0 ) {
 		actual_input_res_list = input_res_list;
 
-	} else if ( missing_res_list.size() != 0 ){
+	} else if ( missing_res_list.size() != 0 ) {
 
-		for ( Size seq_num = 1; seq_num <= nres; seq_num++ ){
+		for ( Size seq_num = 1; seq_num <= nres; seq_num++ ) {
 			if ( missing_res_list.has_value( seq_num ) ) continue;
 			actual_input_res_list.push_back( seq_num );
 		}
 
-	} else{ //did not specify both input_res and missing_res, return empty list
-	  TR.Debug << "user did not specify either input_res" << pose_num << " and missing_res" << pose_num << std::endl;
+	} else { //did not specify both input_res and missing_res, return empty list
+		TR.Debug << "user did not specify either input_res" << pose_num << " and missing_res" << pose_num << std::endl;
 	}
 
 	return actual_input_res_list;
@@ -353,12 +353,12 @@ get_silent_file_tags(){
 
 	utility::vector1< std::string > input_silent_file_tags;
 
-	if ( option[ in::file::tags ].user() ){
+	if ( option[ in::file::tags ].user() ) {
 		tags_from_command_line = true;
 		input_silent_file_tags = option[ in::file::tags ]();
 	}
 
-	if ( option[ OptionKeys::stepwise::rna::job_queue_ID ].user() && option[ OptionKeys::stepwise::rna::filter_output_filename ].user() ){
+	if ( option[ OptionKeys::stepwise::rna::job_queue_ID ].user() && option[ OptionKeys::stepwise::rna::filter_output_filename ].user() ) {
 
 		stepwise::modeler::rna::output_title_text( "importing tag from filter_outfile", TR );
 		bool combine_long_loop = option[ OptionKeys::stepwise::rna::combine_long_loop_mode ]();
@@ -370,11 +370,11 @@ get_silent_file_tags(){
 		std::string const filtered_tag_file = option[ OptionKeys::stepwise::rna::filter_output_filename ]();
 
 		std::ifstream infile;
-	 	infile.open( filtered_tag_file.c_str() );
+		infile.open( filtered_tag_file.c_str() );
 
-		if ( infile.fail() ){
-		 utility_exit_with_message( "Error! \"" + filtered_tag_file + "\" could not be opened!" );
-		} else{
+		if ( infile.fail() ) {
+			utility_exit_with_message( "Error! \"" + filtered_tag_file + "\" could not be opened!" );
+		} else {
 			TR << "Open \"" << filtered_tag_file << "\" successful!" << std::endl;
 		}
 
@@ -389,9 +389,9 @@ get_silent_file_tags(){
 
 		bool found_queue_ID = false;
 
-		while ( getline( infile, tag_pair_string ) ){
+		while ( getline( infile, tag_pair_string ) ) {
 
-			if ( queue_ID == ID ){
+			if ( queue_ID == ID ) {
 				found_queue_ID = true;
 				break;
 			}
@@ -418,11 +418,11 @@ get_silent_file_tags(){
 	}
 
 
-	if ( ( tags_from_command_line == false ) && ( tags_from_filterer_outfile == false ) ){
+	if ( ( tags_from_command_line == false ) && ( tags_from_filterer_outfile == false ) ) {
 		utility_exit_with_message( "( tags_from_command_line == false ) && ( tags_from_filterer_outfile == false )" );
 	}
 
-	if ( ( tags_from_command_line == true ) && ( tags_from_filterer_outfile == true ) ){
+	if ( ( tags_from_command_line == true ) && ( tags_from_filterer_outfile == true ) ) {
 		utility_exit_with_message( "( tags_from_command_line == true ) && ( tags_from_filterer_outfile == true )" );
 	}
 
@@ -452,7 +452,7 @@ create_scorefxn(){
 	}
 
 
-	if ( num_score_weight_file == 0 ){
+	if ( num_score_weight_file == 0 ) {
 		//rna_loop_hires_04092010.wts is same as 5X_linear_quarter_fa_stack_and_adjust_bulge_ss_benchmark.wts
 		//change default from single_strand_benchmark to 5X_linear_chainbreak_single_strand_benchmark on May 24, 2010
 		//change default to 5X_linear_quarter_fa_stack_and_adjust_bulge_ss_benchmark.wts" on April 9th, 2011
@@ -460,7 +460,7 @@ create_scorefxn(){
 		utility_exit_with_message( "User to need to pass in score:weights" ); //Remove the default weight on Sept 28, 2011 Parin S.
 	}
 
-	if ( num_score_weight_file > 1 ){
+	if ( num_score_weight_file > 1 ) {
 		TR << "num_score_weight_file ( inputted by user ) = " << num_score_weight_file << std::endl;
 		utility_exit_with_message( "num_score_weight_file > 1" );
 	}
@@ -468,13 +468,13 @@ create_scorefxn(){
 	core::scoring::ScoreFunctionOP scorefxn = get_score_function();
 
 
-	if ( ! option[ OptionKeys::stepwise::rna::minimize_and_score_sugar]() ){
+	if ( ! option[ OptionKeys::stepwise::rna::minimize_and_score_sugar]() ) {
 		TR << "WARNING minimize_and_score_sugar is false, SET rna_sugar_close weight to 0.0 " << std::endl;
-    scorefxn->set_weight( rna_sugar_close, 0 );
+		scorefxn->set_weight( rna_sugar_close, 0 );
 
 		//Sept 16, 2010. Thought about include a very small weight for rna_sugar_close so that column # will not change. HOWEVER this significant change the minimization results!
 		//scorefxn->set_weight( rna_sugar_close, 0.000000000001 );
- 	}
+	}
 
 	TR.Debug << "---------score function weights----------" << std::endl;
 	scorefxn->show( TR.Debug );
@@ -497,8 +497,8 @@ setup_simple_full_length_rna_working_parameters(){
 
 	using namespace protocols::stepwise::modeler::rna;
 	using namespace ObjexxFCL;
-  using namespace core::pose;
-  using namespace core::chemical;
+	using namespace core::pose;
+	using namespace core::chemical;
 
 	ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA ) );
 
@@ -532,15 +532,15 @@ setup_simple_full_length_rna_working_parameters(){
 	working_parameters->set_is_working_res( is_working_res );
 	working_parameters->set_full_sequence( full_sequence ); //working_sequence is automatical init after BOTH is_working_res and full_sequence is initialized
 
-	if ( option[ OptionKeys::stepwise::rna::rmsd_res ].user() ){
+	if ( option[ OptionKeys::stepwise::rna::rmsd_res ].user() ) {
 		working_parameters->set_calc_rms_res( option[ OptionKeys::stepwise::rna::rmsd_res ]() );
 	} else {
 		TR << "Warning! rmsd_res not specified. Assuming sample_res is rmsd_res" << std::endl;
 		working_parameters->set_calc_rms_res( option[ OptionKeys::full_model::sample_res ]() );
 	}
- 	working_parameters->set_gap_size( 0 );
+	working_parameters->set_gap_size( 0 );
 
-	if ( option[ OptionKeys::stepwise::rna::native_alignment_res ].user() ){
+	if ( option[ OptionKeys::stepwise::rna::native_alignment_res ].user() ) {
 		//If working_native_align_res is not specified that most function will internally default to using working_best_alignment_list in its place
 		working_parameters->set_native_alignment( option[ OptionKeys::stepwise::rna::native_alignment_res ]() );
 		working_parameters->set_working_native_alignment( option[ OptionKeys::stepwise::rna::native_alignment_res ]() );
@@ -557,7 +557,7 @@ setup_simple_full_length_rna_working_parameters(){
 	utility::vector1< Size > input_res;
 	utility::vector1< Size > input_res2;
 
-	for ( Size seq_num = 1; seq_num <= full_sequence.size(); seq_num++ ){
+	for ( Size seq_num = 1; seq_num <= full_sequence.size(); seq_num++ ) {
 		input_res.push_back( seq_num );
 		full_to_sub[ seq_num ] = seq_num;
 		is_prepend_map[seq_num] = false; //all append..arbitrary choice
@@ -582,12 +582,12 @@ setup_simple_full_length_rna_working_parameters(){
 	utility::vector1< std::string > alignment_res_string_list = option[ OptionKeys::stepwise::rna::alignment_res ]();
 	utility::vector1< core::Size > best_alignment_list;
 
-	for ( Size n = 1; n <= alignment_res_string_list.size(); n++ ){
+	for ( Size n = 1; n <= alignment_res_string_list.size(); n++ ) {
 
 		utility::vector1< std::string > alignments_res_string = tokenize( alignment_res_string_list[n], "-" );
 		utility::vector1< core::Size >  alignment_list;
 
-		for ( Size ii = 1; ii <= alignments_res_string.size(); ii++ ){
+		for ( Size ii = 1; ii <= alignments_res_string.size(); ii++ ) {
 			alignment_list.push_back( string_to_int( alignments_res_string[ii] ) );
 		}
 
@@ -607,14 +607,14 @@ setup_simple_full_length_rna_working_parameters(){
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
 	PoseOP native_pose_OP;
-	if ( option[ in::file::native ].user() ){
+	if ( option[ in::file::native ].user() ) {
 		native_pose_OP = PoseOP( new Pose );
 		import_pose::pose_from_pdb( *native_pose_OP, *rsd_set, option[ in::file::native ]() );
 		protocols::farna::make_phosphate_nomenclature_matches_mini( *native_pose_OP );
 
 		utility::vector1< core::Size > const native_virtual_res_list = option[ OptionKeys::stepwise::rna::native_virtual_res]();
 
-		for ( Size n = 1; n <= native_virtual_res_list.size(); n++ ){
+		for ( Size n = 1; n <= native_virtual_res_list.size(); n++ ) {
 			core::pose::rna::apply_virtual_rna_residue_variant_type( ( *native_pose_OP ), native_virtual_res_list[n], false /*apply_check*/ );
 		}
 
@@ -748,7 +748,7 @@ setup_rna_working_parameters( bool check_for_previously_closed_cutpoint_with_inp
 	stepwise_rna_working_parameters_setup.set_fixed_res( get_fixed_res( nres ) );
 	stepwise_rna_working_parameters_setup.set_terminal_res( option[ OptionKeys::full_model::rna::terminal_res ]() );
 
-	if ( option[ OptionKeys::stepwise::rna::rmsd_res ].user() ){
+	if ( option[ OptionKeys::stepwise::rna::rmsd_res ].user() ) {
 		stepwise_rna_working_parameters_setup.set_calc_rms_res( option[ OptionKeys::stepwise::rna::rmsd_res ]() );
 	} else {
 		TR << "Warning! rmsd_res not specified. Assuming sample_res is rmsd_res" << std::endl;
@@ -776,14 +776,14 @@ setup_rna_working_parameters( bool check_for_previously_closed_cutpoint_with_inp
 
 	stepwise_rna_working_parameters_setup.set_output_extra_RMSDs( option[ OptionKeys::stepwise::rna::output_extra_RMSDs ]() );
 	stepwise_rna_working_parameters_setup.set_floating_base( option[ OptionKeys::stepwise::rna::floating_base ]() ||
-																											 option[ OptionKeys::stepwise::rna::floating_base_anchor_res ].user() );
+		option[ OptionKeys::stepwise::rna::floating_base_anchor_res ].user() );
 	stepwise_rna_working_parameters_setup.set_floating_base_anchor_res( option[ OptionKeys::stepwise::rna::floating_base_anchor_res ]() );
 	if ( option[ OptionKeys::stepwise::rna::floating_base_anchor_res ]() ) runtime_assert( option[ OptionKeys::stepwise::rna::force_user_defined_jumps ]() );
 	stepwise_rna_working_parameters_setup.set_rebuild_bulge_mode( option[ basic::options::OptionKeys::stepwise::rna::rebuild_bulge_mode]() );
 	stepwise_rna_working_parameters_setup.set_sample_both_sugar_base_rotamer( option[ basic::options::OptionKeys::stepwise::rna::sample_both_sugar_base_rotamer]() );
 
 	/////////////////////////////Sept 1, 2010////////////
-	if ( check_for_previously_closed_cutpoint_with_input_pose ){
+	if ( check_for_previously_closed_cutpoint_with_input_pose ) {
 		utility::vector1< std::string > input_tags;
 		utility::vector1< std::string > silent_files_in;
 
@@ -793,8 +793,8 @@ setup_rna_working_parameters( bool check_for_previously_closed_cutpoint_with_inp
 			silent_files_in = option[ in::file::silent ]();
 			input_tags = get_silent_file_tags();
 
-			if ( silent_files_in.size() != input_tags.size() ){
-			 	utility_exit_with_message( "silent_files_in.size( " + string_of( silent_files_in.size() ) + " ) != input_tags.size( " + string_of( input_tags.size() ) + " )" );
+			if ( silent_files_in.size() != input_tags.size() ) {
+				utility_exit_with_message( "silent_files_in.size( " + string_of( silent_files_in.size() ) + " ) != input_tags.size( " + string_of( input_tags.size() ) + " )" );
 			}
 		}
 		stepwise_rna_working_parameters_setup.set_input_tags( input_tags );
@@ -825,28 +825,28 @@ setup_copy_DOF_input( StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup ){
 		silent_files_in = option[ in::file::silent ]();
 		input_tags = get_silent_file_tags();
 
-		if ( silent_files_in.size() != input_tags.size() ){
+		if ( silent_files_in.size() != input_tags.size() ) {
 			utility_exit_with_message( "silent_files_in.size() != input_tags.size()" );
 		}
 	}
 
 	if ( option[ in::file::s ].user() ) {
 		// Then any pdbs that need to be read in from disk.
-		utility::vector1< std::string > const	pdb_tags_from_disk( option[ in::file::s ]() );
+		utility::vector1< std::string > const pdb_tags_from_disk( option[ in::file::s ]() );
 		for ( Size n = 1; n <= pdb_tags_from_disk.size(); n++ ) {
 			input_tags.push_back( pdb_tags_from_disk[ n ] );
 		}
 	}
 
-	if ( input_tags.size() > 2 ){
+	if ( input_tags.size() > 2 ) {
 		utility_exit_with_message( "input_tags.size() > 2!!" );
 	}
 
 	TR << "Input structures for COPY DOF" << std::endl;
-	for ( Size n = 1; n <= input_tags.size(); n++ ){
-		if ( n <= silent_files_in.size() ){
+	for ( Size n = 1; n <= input_tags.size(); n++ ) {
+		if ( n <= silent_files_in.size() ) {
 			TR << "silent_file tag = " << input_tags[n] << " silent_file = " << silent_files_in[n] << std::endl;
-		} else{
+		} else {
 			TR << "input_tag = " << input_tags[n] << std::endl;
 		}
 	}
@@ -862,10 +862,10 @@ setup_copy_DOF_input( StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup ){
 StepWiseRNA_PoseSetupOP
 setup_pose_setup_class( stepwise::modeler::working_parameters::StepWiseWorkingParametersOP & working_parameters, bool const copy_DOF /*= true*/ ){
 
-  using namespace core::pose;
-  using namespace core::chemical;
-  using namespace core::kinematics;
-  using namespace core::scoring;
+	using namespace core::pose;
+	using namespace core::chemical;
+	using namespace core::kinematics;
+	using namespace core::scoring;
 	using namespace protocols::stepwise::modeler::rna;
 
 	ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA ) );
@@ -881,12 +881,12 @@ setup_pose_setup_class( stepwise::modeler::working_parameters::StepWiseWorkingPa
 	}
 
 
-//	StepWiseRNA_PoseSetup stepwise_rna_pose_setup( pdb_tags, silent_files_in, working_parameters);
+	// StepWiseRNA_PoseSetup stepwise_rna_pose_setup( pdb_tags, silent_files_in, working_parameters);
 
 	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup( new StepWiseRNA_PoseSetup( working_parameters ) );
 	stepwise_rna_pose_setup->set_copy_DOF( copy_DOF );
 
-	if ( copy_DOF == true ){
+	if ( copy_DOF == true ) {
 		setup_copy_DOF_input( stepwise_rna_pose_setup );
 	}
 
@@ -911,28 +911,28 @@ setup_pose_setup_class( stepwise::modeler::working_parameters::StepWiseWorkingPa
 //
 bool
 get_tag_and_silent_file_for_struct( std::string & swa_silent_file,
-									std::string & out_tag,
-									Size const & n,
-									bool const & multiple_shots,
-									std::string const & silent_file ){
+	std::string & out_tag,
+	Size const & n,
+	bool const & multiple_shots,
+	std::string const & silent_file ){
 
 	swa_silent_file = silent_file; // default
 
-	if ( multiple_shots ){
+	if ( multiple_shots ) {
 		runtime_assert( option[ OptionKeys::stepwise::choose_random ]() );
 
 		out_tag = "S_"+lead_zero_string_of( n, 6 );
-		//		swa_silent_file = out_tag + "_" + swa_silent_file;
+		//  swa_silent_file = out_tag + "_" + swa_silent_file;
 		swa_silent_file = "";
 
 		std::map< std::string, bool > tag_is_done;
 		static bool init_tag_is_done( false );
-		if ( !init_tag_is_done){
+		if ( !init_tag_is_done ) {
 			tag_is_done = core::io::silent::initialize_tag_is_done( silent_file );
 			init_tag_is_done = true;
 		}
 
-		if (tag_is_done[ out_tag ] ) {
+		if ( tag_is_done[ out_tag ] ) {
 			TR << "Already done: " << out_tag << std::endl;
 			return false;
 		}
@@ -944,32 +944,32 @@ get_tag_and_silent_file_for_struct( std::string & swa_silent_file,
 void
 ensure_directory_for_out_silent_file_exists(){
 
-	if ( option[ out::file::silent ].user() ){
+	if ( option[ out::file::silent ].user() ) {
 
 		std::string outfile =  option[ out::file::silent]();
 
 		std::ofstream outstream;
-	 	outstream.open( outfile.c_str() ); // for writing
+		outstream.open( outfile.c_str() ); // for writing
 
-		if ( outstream.fail() ){
+		if ( outstream.fail() ) {
 			// wow, this is tortuous -- libgen.h has dirname, but requires and output C-style char.
 			TR <<  "Could not create silent file output " << outfile << " so making the directory!" << std::endl;
-			#ifdef WIN32
-				//char * outdir; memory leak if we're just gonna exit right after?
-			 	utility_exit_with_message( "protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetupFromCommandLine.cc dirname is not implemented under Windows!" );
-			#else
-				char * outfile_char = strdup( outfile.c_str() );
-				char * outdir =  dirname( outfile_char );
+#ifdef WIN32
+			//char * outdir; memory leak if we're just gonna exit right after?
+			utility_exit_with_message( "protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetupFromCommandLine.cc dirname is not implemented under Windows!" );
+#else
+			char * outfile_char = strdup( outfile.c_str() );
+			char * outdir =  dirname( outfile_char );
 
-				std::stringstream mkdir_command;
-				mkdir_command << "mkdir -p " << outdir;
-				int return_code = system( mkdir_command.str().c_str() );
-				if ( return_code != 0 ) {
-					TR.Error << "Could not make directory! Error code: " << return_code << std::endl;
-				}
-				// AMW cppcheck: deleting outdir if we're not on win32
-				delete[] outdir;
-			#endif
+			std::stringstream mkdir_command;
+			mkdir_command << "mkdir -p " << outdir;
+			int return_code = system( mkdir_command.str().c_str() );
+			if ( return_code != 0 ) {
+				TR.Error << "Could not make directory! Error code: " << return_code << std::endl;
+			}
+			// AMW cppcheck: deleting outdir if we're not on win32
+			delete[] outdir;
+#endif
 		} else {
 			outstream.close();
 			std::remove( outfile.c_str() ); // note that this removes the prior outfile if it exists...

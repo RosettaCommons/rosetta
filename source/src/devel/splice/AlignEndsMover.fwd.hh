@@ -16,12 +16,12 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace devel{
-    namespace splice{
-        class AlignEndsMover;
-        typedef utility::pointer::shared_ptr< AlignEndsMover > AlignEndsMoverOP;
-        typedef utility::pointer::shared_ptr< AlignEndsMover const > AlignEndsMoverCOP;
-    } // simple_moves
+namespace devel {
+namespace splice {
+class AlignEndsMover;
+typedef utility::pointer::shared_ptr< AlignEndsMover > AlignEndsMoverOP;
+typedef utility::pointer::shared_ptr< AlignEndsMover const > AlignEndsMoverCOP;
+} // simple_moves
 } // protocols
 
 #endif // INCLUDED_protocols_simple_moves_AlignEndsMover_fwd_hh

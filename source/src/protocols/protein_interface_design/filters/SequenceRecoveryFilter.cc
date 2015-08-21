@@ -34,7 +34,7 @@
 #include <utility/vector1.hh>
 
 namespace protocols {
-namespace protein_interface_design{
+namespace protein_interface_design {
 namespace filters {
 
 static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.SequenceRecoveryFilter" );
@@ -147,28 +147,29 @@ SequenceRecoveryFilter::apply(core::pose::Pose const & pose ) const
 	if ( mutations_ ) {
 		core::Size const num_mutations( (core::Size) compute( pose, false ) );
 		TR<<"The designed pose possesses "<<num_mutations<<" compared to the reference pose. ";
-		if( num_mutations <= mutation_threshold_ ){
+		if ( num_mutations <= mutation_threshold_ ) {
 			TR<<"Success."<<std::endl;
 			return true;
 		} else {
 			TR<<"Failing."<<std::endl;
 			return false;
-		}		
+		}
 	} else {
 		core::Real const recovery_rate( compute( pose, false ) );
 		TR<<"Sequence recovery rate evaluates to "<<recovery_rate<<". ";
-		if( recovery_rate <= rate_threshold_ ){
+		if ( recovery_rate <= rate_threshold_ ) {
 			TR<<"Failing."<<std::endl;
 			return false;
 		} else {
-		TR<<"Success."<<std::endl;
+			TR<<"Success."<<std::endl;
 			return true;
 		}
 	}
 }
 void SequenceRecoveryFilter::apply( core::io::serialization::PipeMap & pmap ) {
-	if( pmap["reference"]->size() == 1 )
+	if ( pmap["reference"]->size() == 1 ) {
 		reference_pose( *(*pmap["reference"])[0] );
+	}
 	Filter::apply( pmap );
 }
 
@@ -178,65 +179,66 @@ SequenceRecoveryFilter::compute( core::pose::Pose const & pose, bool const & wri
 	runtime_assert( reference_pose() != 0 );
 	core::Size total_residue_ref;
 	core::pose::Pose asym_ref_pose;
-	if(core::pose::symmetry::is_symmetric( *reference_pose() )) { 
+	if ( core::pose::symmetry::is_symmetric( *reference_pose() ) ) {
 		core::pose::symmetry::extract_asymmetric_unit( *reference_pose(), asym_ref_pose);
-  	for (core::Size i = 1; i <= asym_ref_pose.total_residue(); ++i) {
-    	if (asym_ref_pose.residue_type(i).name() == "VRT") {
+		for ( core::Size i = 1; i <= asym_ref_pose.total_residue(); ++i ) {
+			if ( asym_ref_pose.residue_type(i).name() == "VRT" ) {
 				asym_ref_pose.conformation().delete_residue_slow(asym_ref_pose.total_residue());
 			}
 		}
-		total_residue_ref = asym_ref_pose.total_residue(); 
+		total_residue_ref = asym_ref_pose.total_residue();
 	} else {
-		total_residue_ref = reference_pose()->total_residue(); 
+		total_residue_ref = reference_pose()->total_residue();
 		asym_ref_pose = *reference_pose();
-	} 
+	}
 	core::Size total_residue;
 	core::pose::Pose asym_pose;
-	if (core::pose::symmetry::is_symmetric( pose )) { 
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		core::pose::symmetry::extract_asymmetric_unit(pose, asym_pose);
-  	for (core::Size i = 1; i <= asym_pose.total_residue(); ++i) {
-    	if (asym_pose.residue_type(i).name() == "VRT") {
+		for ( core::Size i = 1; i <= asym_pose.total_residue(); ++i ) {
+			if ( asym_pose.residue_type(i).name() == "VRT" ) {
 				asym_pose.conformation().delete_residue_slow(asym_pose.total_residue());
 			}
 		}
-		total_residue = asym_pose.total_residue(); 
+		total_residue = asym_pose.total_residue();
 	} else {
-		total_residue = pose.total_residue(); 
+		total_residue = pose.total_residue();
 		asym_pose = pose;
 	}
-	if( total_residue_ref != total_residue )
+	if ( total_residue_ref != total_residue ) {
 		utility_exit_with_message( "Reference pose and current pose have a different number of residues" );
+	}
 	core::pack::task::PackerTaskOP packer_task( task_factory_->create_task_and_apply_taskoperations( pose ) );
 	core::Size designable_count( 0 );
 	core::Size packable_count( 0 );
-	for( core::Size resi=1; resi<=total_residue; ++resi ) {
-		if( packer_task->being_designed( resi ) ) {
+	for ( core::Size resi=1; resi<=total_residue; ++resi ) {
+		if ( packer_task->being_designed( resi ) ) {
 			designable_count++;
 		}
-		if( packer_task->being_packed( resi ) ) {
+		if ( packer_task->being_packed( resi ) ) {
 			packable_count++;
 		}
 	}
-	if( !designable_count ) {
+	if ( !designable_count ) {
 		TR<<"Warning: No designable residues identified in pose. Are you sure you have set the correct task operations?"<<std::endl;
-		if( !packable_count ) {
+		if ( !packable_count ) {
 			utility_exit_with_message("No designable or packable residues identified in pose. Are you sure you have set the correct task operations?" );
 		}
 	}
 	using namespace core::scoring;
-  protocols::protein_interface_design::ReportSequenceDifferences rsd( get_score_function() );
-  rsd.calculate( asym_ref_pose, asym_pose );
-  std::map< core::Size, std::string > const res_names1( rsd.res_name1() );
-  std::map< core::Size, std::string > const res_names2( rsd.res_name2() );
-  core::Size const mutated( res_names1.size() );
-  // AMW: cppcheck notices that if there are packable residues but no designable residues
-  // we divide by zero here.
-  core::Real const rate( 1.0 - (core::Real) mutated / designable_count );
-  TR<<"Your design mover mutated "<<mutated<<" positions out of "<<designable_count<<" designable positions. Sequence recovery is: "<<rate<<std::endl;
+	protocols::protein_interface_design::ReportSequenceDifferences rsd( get_score_function() );
+	rsd.calculate( asym_ref_pose, asym_pose );
+	std::map< core::Size, std::string > const res_names1( rsd.res_name1() );
+	std::map< core::Size, std::string > const res_names2( rsd.res_name2() );
+	core::Size const mutated( res_names1.size() );
+	// AMW: cppcheck notices that if there are packable residues but no designable residues
+	// we divide by zero here.
+	core::Real const rate( 1.0 - (core::Real) mutated / designable_count );
+	TR<<"Your design mover mutated "<<mutated<<" positions out of "<<designable_count<<" designable positions. Sequence recovery is: "<<rate<<std::endl;
 	if ( verbose_ ) {
 		rsd.report( TR );
 		TR.flush();
-	}	
+	}
 	if ( write ) {
 		write_to_pdb( res_names1, res_names2 );
 	}
@@ -251,15 +253,15 @@ SequenceRecoveryFilter::compute( core::pose::Pose const & pose, bool const & wri
 void
 SequenceRecoveryFilter::write_to_pdb( std::map< core::Size, std::string > const & res_names1, std::map< core::Size, std::string > const & res_names2 ) const {
 
-  protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
-  std::string user_name = this->get_user_defined_name();
+	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
+	std::string user_name = this->get_user_defined_name();
 	std::map< Size, std::string >::const_iterator it_name1 = res_names1.begin();
 	std::map< Size, std::string >::const_iterator it_name2 = res_names2.begin();
-	while( it_name1 != res_names1.end() ) {
+	while ( it_name1 != res_names1.end() ) {
 		std::string output_string = "SequenceRecoveryFilter " + user_name + ": " + it_name2->second + ObjexxFCL::string_of( it_name1->first ) + it_name1->second;
 		job->add_string( output_string );
 		++it_name1; ++it_name2;
- 	}
+	}
 
 }
 
@@ -277,10 +279,10 @@ SequenceRecoveryFilter::report( std::ostream & out, core::pose::Pose const & pos
 
 void
 SequenceRecoveryFilter::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & pose )
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & pose )
 {
 	TR << "SequenceRecoveryFilter"<<std::endl;
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
@@ -293,14 +295,13 @@ SequenceRecoveryFilter::parse_my_tag( utility::tag::TagCOP tag,
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if( option[ in::file::native ].user() ){
+	if ( option[ in::file::native ].user() ) {
 		std::string const reference_pdb = option[ in::file::native ]();
 		core::pose::PoseOP temp_pose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb( *temp_pose, reference_pdb );
 		reference_pose( temp_pose );
 		TR<<"Using native pdb "<<reference_pdb<<" as reference.";
-	}
-	else{
+	} else {
 		TR<<"Using starting pdb as reference. You could use -in::file::native to specify a different pdb for reference";
 		reference_pose( pose );
 	}
@@ -308,8 +309,8 @@ SequenceRecoveryFilter::parse_my_tag( utility::tag::TagCOP tag,
 }
 
 void SequenceRecoveryFilter::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & ,
-				utility::lua::LuaObject const & tasks ) {
+	utility::lua::LuaObject const & ,
+	utility::lua::LuaObject const & tasks ) {
 	TR << "SequenceRecoveryFilter"<<std::endl;
 	task_factory( protocols::elscripts::parse_taskdef( def["tasks"], tasks ));
 	rate_threshold( def["rate_threshold"] ? def["rate_threshold"].to<core::Real>() : 0.0 );
@@ -321,7 +322,7 @@ void SequenceRecoveryFilter::parse_def( utility::lua::LuaObject const & def,
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if( option[ in::file::native ].user() ){
+	if ( option[ in::file::native ].user() ) {
 		std::string const reference_pdb = option[ in::file::native ]();
 		core::pose::PoseOP temp_pose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb( *temp_pose, reference_pdb );

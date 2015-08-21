@@ -158,33 +158,33 @@ public:
 class SiteConstraintCreator : public ConstraintCreator
 {
 public:
-    SiteConstraintCreator();
-    virtual ~SiteConstraintCreator();
-    
-    virtual ConstraintOP create_constraint() const;
-    virtual std::string keyname() const;
+	SiteConstraintCreator();
+	virtual ~SiteConstraintCreator();
+
+	virtual ConstraintOP create_constraint() const;
+	virtual std::string keyname() const;
 };
 
 /// @brief Mover creator for the SiteConstraintResidues constraint
 class SiteConstraintResiduesCreator : public ConstraintCreator
 {
 public:
-    SiteConstraintResiduesCreator();
-    virtual ~SiteConstraintResiduesCreator();
+	SiteConstraintResiduesCreator();
+	virtual ~SiteConstraintResiduesCreator();
 
-    virtual ConstraintOP create_constraint() const;
-    virtual std::string keyname() const;
+	virtual ConstraintOP create_constraint() const;
+	virtual std::string keyname() const;
 };
 
 /// @brief Mover creator for the FabConstraint constraint
 class FabConstraintCreator : public ConstraintCreator
 {
 public:
-    FabConstraintCreator();
-    virtual ~FabConstraintCreator();
+	FabConstraintCreator();
+	virtual ~FabConstraintCreator();
 
-    virtual ConstraintOP create_constraint() const;
-    virtual std::string keyname() const;
+	virtual ConstraintOP create_constraint() const;
+	virtual std::string keyname() const;
 };
 
 /// @brief Constraint creator for the NamedAngleConstraint

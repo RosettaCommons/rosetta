@@ -39,9 +39,9 @@ namespace saxs {
 class SAXSEnergyCEN : public SAXSEnergy  {
 public:
 
-    /// c-tor
-    SAXSEnergyCEN() : SAXSEnergy( cen_cfg_file_,
-    	    chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID),saxs_cen_score,methods::EnergyMethodCreatorOP( new SAXSEnergyCreatorCEN )) {}
+	/// c-tor
+	SAXSEnergyCEN() : SAXSEnergy( cen_cfg_file_,
+		chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID),saxs_cen_score,methods::EnergyMethodCreatorOP( new SAXSEnergyCreatorCEN )) {}
 
 };
 

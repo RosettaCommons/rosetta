@@ -87,8 +87,8 @@ void CartSCMinMinimizerMap::clear_active_dofs()
 /// @details This should be called at most once per residue between calls to "clear_active_chi"
 void CartSCMinMinimizerMap::activate_residue_dofs( Size resindex )
 {
-debug_assert( domain_map_( resindex ) == 1 ); // activate_residue_chi should not have already been called.
-debug_assert( active_residue_index_for_res_[ resindex ] == 0 ); // activate_residue_chi should not have already been called.
+	debug_assert( domain_map_( resindex ) == 1 ); // activate_residue_chi should not have already been called.
+	debug_assert( active_residue_index_for_res_[ resindex ] == 0 ); // activate_residue_chi should not have already been called.
 
 	domain_map_( resindex ) = 0;
 	active_residues_[ ++nactive_residues_ ] = resindex;
@@ -139,7 +139,7 @@ CartSCMinMinimizerMap::add_atom(
 )
 {
 	; // no op
- }
+}
 
 /// @brief Traverse the atom trees in preparation for minimization to tie together all the
 /// DOFs and the atoms they control.
@@ -148,7 +148,7 @@ CartSCMinMinimizerMap::setup( AtomTreeCollectionOP trees )
 {
 	reset_dof_nodes();
 	atom_tree_collection_ = trees;
- 
+
 	for ( Size ii = 1; ii <= nactive_residues_; ++ii ) {
 		Size iiresid = active_residues_[ ii ];
 		atcs_for_residues_[ iiresid ] = trees->residue_atomtree_collection_op( iiresid );
@@ -165,13 +165,13 @@ CartSCMinMinimizerMap::setup( AtomTreeCollectionOP trees )
 		int stop2  = (int)iires.natoms();
 		int natoms_to_add = (stop1-start1+1)+(stop2-start2+1);
 
-		if ((int)moving_atoms_[iiresid].size() < natoms_to_add) {
+		if ( (int)moving_atoms_[iiresid].size() < natoms_to_add ) {
 			moving_atoms_[iiresid].resize(natoms_to_add, id::AtomID( 0,0 ));
 		}
-		if ((int)dofid_to_atoms_.size() < (int)(nactive_moving_atoms_total_+natoms_to_add)) {
+		if ( (int)dofid_to_atoms_.size() < (int)(nactive_moving_atoms_total_+natoms_to_add) ) {
 			dofid_to_atoms_.resize( nactive_moving_atoms_total_+natoms_to_add );
 		}
-		if (atoms_to_dofid_[iiresid].size() < iires.natoms()) {
+		if ( atoms_to_dofid_[iiresid].size() < iires.natoms() ) {
 			atoms_to_dofid_[iiresid].resize( iires.natoms() );
 		}
 
@@ -210,13 +210,13 @@ CartSCMinMinimizerMap::starting_dofs( optimization::Multivec & dof ) const
 		}
 	}
 
-debug_assert ( ctr == dof.size() );
+	debug_assert ( ctr == dof.size() );
 }
 
 void
 CartSCMinMinimizerMap::assign_dofs_to_mobile_residues( optimization::Multivec const & dofs )
 {
-debug_assert( dofs.size() == 3*nactive_moving_atoms_total_ );
+	debug_assert( dofs.size() == 3*nactive_moving_atoms_total_ );
 
 	Size ctr = 0;
 	for ( Size ii = 1; ii <= nactive_residues_; ++ii ) {
@@ -234,7 +234,7 @@ debug_assert( dofs.size() == 3*nactive_moving_atoms_total_ );
 
 	//fpd -- set_rescoords() calls update_residue()
 	//for ( Size ii = 1; ii <= nactive_residues_; ++ii ) {
-	//	atcs_for_residues_[ active_residues_[ ii ] ]->update_residue();
+	// atcs_for_residues_[ active_residues_[ ii ] ]->update_residue();
 	//}
 }
 
@@ -252,7 +252,7 @@ CartSCMinMinimizerMap::dof_node_for_chi( Size /*resid*/, Size /*chiid*/ ) const
 id::TorsionID
 CartSCMinMinimizerMap::tor_for_dof( DOF_ID const & dofid ) const
 {
-	if (dofid.type() != core::id::PHI) return core::id::BOGUS_TORSION_ID;
+	if ( dofid.type() != core::id::PHI ) return core::id::BOGUS_TORSION_ID;
 
 	Size const rsd( dofid.rsd() );
 	Size const chi( residue( rsd ).type().last_controlling_chi( dofid.atomno() ) );

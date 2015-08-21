@@ -26,18 +26,18 @@ namespace func {
 Real
 KarplusFunc::func( Real const x ) const {
 	Real const cosine = cos( x + Dphi_ );
-  Real const j = A_ * cosine * cosine + B_ * cosine + C_;
-  Real const z = (j - x0_)  / sd_;
-  return z * z;
+	Real const j = A_ * cosine * cosine + B_ * cosine + C_;
+	Real const z = (j - x0_)  / sd_;
+	return z * z;
 
 }
 
 Real
 KarplusFunc::dfunc( Real const x ) const {
 	Real const sine = sin (x+Dphi_);
-  Real const cosine = cos (x+Dphi_);
-  Real const j = A_ * cosine * cosine + B_ * cosine + C_;
-  return  -2 *( (j -x0_ ) / (sd_ * sd_) ) * sine *(2*A_*cosine + B_ ) ;
+	Real const cosine = cos (x+Dphi_);
+	Real const j = A_ * cosine * cosine + B_ * cosine + C_;
+	return  -2 *( (j -x0_ ) / (sd_ * sd_) ) * sine *(2*A_*cosine + B_ ) ;
 }
 
 void

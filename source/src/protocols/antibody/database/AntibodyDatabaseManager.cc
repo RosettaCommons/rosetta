@@ -97,17 +97,14 @@ AntibodyDatabaseManager::AntibodyDatabaseManager(AntibodyInfoCOP ab_info, bool f
 	use_only_H3_kinked_ = basic::options::option[ basic::options::OptionKeys::antibody::design::use_only_H3_kinked]();
 	use_light_chain_type_ = option [OptionKeys::antibody::design::use_light_chain_type]();
 
-	if (use_north_paper_ab_db || force_north_paper_db){
+	if ( use_north_paper_ab_db || force_north_paper_db ) {
 		start_database_session(north_paper_path);
-	}
-	else if (utility::file::file_exists(default_path)){
+	} else if ( utility::file::file_exists(default_path) ) {
 		start_database_session(default_path);
-		
-	}
-	else if (utility::file::file_exists(north_paper_path)){
+
+	} else if ( utility::file::file_exists(north_paper_path) ) {
 		start_database_session(north_paper_path);
-	}
-	else {
+	} else {
 		utility_exit_with_message("Could not locate antibody database.  Please check paths, use the -paper_ab_db option, or pass the class constructor option to force the use of the paper database.");
 	}
 
@@ -146,11 +143,11 @@ AntibodyDatabaseManager::get_cluster_totals() const {
 
 	utility::vector1<core::Size> totals = get_cluster_totals(use_outliers_);
 
-	if (use_h3_graft_outliers_ && !use_outliers_ ){
+	if ( use_h3_graft_outliers_ && !use_outliers_ ) {
 		utility::vector1<core::Size> totals_w_outliers = get_cluster_totals(true);
-		for (core::Size i = 1; i <= core::Size(CDRClusterEnum_stop); ++i){
+		for ( core::Size i = 1; i <= core::Size(CDRClusterEnum_stop); ++i ) {
 			CDRClusterEnum cluster = static_cast<CDRClusterEnum>( i );
-			if (ab_info_->get_cdr_enum_for_cluster(cluster) == h3){
+			if ( ab_info_->get_cdr_enum_for_cluster(cluster) == h3 ) {
 				totals[ cluster ] = totals_w_outliers[ cluster ];
 			}
 		}
@@ -160,13 +157,12 @@ AntibodyDatabaseManager::get_cluster_totals() const {
 
 std::string
 AntibodyDatabaseManager::get_ands(std::string name, core::Size n) const {
-	if (n == 1){
+	if ( n == 1 ) {
 		std::string out = name+"=?";
 		return out;
-	}
-	else {
+	} else {
 		std::string out = "("+name+"=?";
-		for (core::Size i = 2; i <= n; ++i){
+		for ( core::Size i = 2; i <= n; ++i ) {
 			out = out +" OR "+name+"=?";
 		}
 		out = out+")";
@@ -185,10 +181,10 @@ AntibodyDatabaseManager::get_cluster_totals(bool use_outliers) const{
 	//Check to make sure cluster is present in antibody database
 	std::string base_statement =
 		"SELECT \n"
-		"	fullcluster, \n"
-		"	total_seq \n"
+		"\tfullcluster, \n"
+		"\ttotal_seq \n"
 		"FROM\n"
-			+ seq_table+"\n"
+		+ seq_table+"\n"
 		"order by fullcluster";
 
 	//TR << "Reading from: " << db_path_ << std::endl;
@@ -198,9 +194,9 @@ AntibodyDatabaseManager::get_cluster_totals(bool use_outliers) const{
 
 
 	//core::Size total_seq;
-	while(total_result.next()){
+	while ( total_result.next() ) {
 
-		if (total_result.empty()) {
+		if ( total_result.empty() ) {
 			break;
 		}
 
@@ -208,13 +204,12 @@ AntibodyDatabaseManager::get_cluster_totals(bool use_outliers) const{
 		std::string fullcluster;
 		total_result >> fullcluster >> total_seq;
 
-		if (manager->cdr_cluster_is_present(fullcluster)){
+		if ( manager->cdr_cluster_is_present(fullcluster) ) {
 
-				CDRClusterEnum cluster = ab_info_->get_cluster_enum(fullcluster);
-				totals[ cluster ] = total_seq;
+			CDRClusterEnum cluster = ab_info_->get_cluster_enum(fullcluster);
+			totals[ cluster ] = total_seq;
 
-		}
-		else {
+		} else {
 			utility_exit_with_message("Cluster "+fullcluster+" not present in Enums!!");
 		}
 	}
@@ -239,54 +234,53 @@ AntibodyDatabaseManager::load_cdr_poses(
 
 	CDRDBPoseSet cdr_set;
 
-	for (core::Size i=1; i<=CDRNameEnum_total; ++i){
+	for ( core::Size i=1; i<=CDRNameEnum_total; ++i ) {
 
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		CDRSetOptionsOP options = instructions[cdr]->clone();
 
-		if (!options->load()){continue;}
+		if ( !options->load() ) { continue;}
 
 		std::string base_statement =
 			"SELECT\n"
-			"	PDB,\n "
-			"	fullcluster,\n"
-			"	original_chain,\n"
-			"	dis,\n"
-			"	DistDegree,\n"
-			"	resolution,\n"
-			"	rama\n"
+			"\tPDB,\n "
+			"\tfullcluster,\n"
+			"\toriginal_chain,\n"
+			"\tdis,\n"
+			"\tDistDegree,\n"
+			"\tresolution,\n"
+			"\trama\n"
 			"FROM\n"
-			"	cdr_data \n"
+			"\tcdr_data \n"
 			"WHERE\n"
-			"	CDR = ? AND\n"
-			"	length >= ? AND\n"
-			"	length <= ? AND\n"
-			//"	cluster != ? AND\n"
-			"	datatag != ?";
+			"\tCDR = ? AND\n"
+			"\tlength >= ? AND\n"
+			"\tlength <= ? AND\n"
+			//" cluster != ? AND\n"
+			"\tdatatag != ?";
 
 
 		//Optional part of Query
 		bool use_outliers;
-		if (cdr == h3 ){
+		if ( cdr == h3 ) {
 			use_outliers = use_h3_graft_outliers_;
-		}
-		else {
+		} else {
 			use_outliers = use_outliers_;
 		}
 
-		if (! use_outliers && ! options->include_only_center_clusters()){
+		if ( ! use_outliers && ! options->include_only_center_clusters() ) {
 			base_statement = base_statement +"\n"+
-			"          AND (bb_rmsd_cdr_align < 1.5 OR DistDegree < 40)\n"
-			"          AND DistDegree != -1\n"
-			"          AND bb_rmsd_cdr_align != -1\n";
+				"          AND (bb_rmsd_cdr_align < 1.5 OR DistDegree < 40)\n"
+				"          AND DistDegree != -1\n"
+				"          AND bb_rmsd_cdr_align != -1\n";
 		}
 
 
-		if (options->include_only_current_cluster()){
+		if ( options->include_only_current_cluster() ) {
 
 			TR << ab_info_->get_CDR_name(cdr)<<
-					" Staying native cluster.  Ignoring CENTER, CLUSTER, LENGTH, LENGTH_TYPE, and CLUSTER_CUTOFF settings for this CDR.\n" <<
-					"If PDBID INCLUDEONLY is set, please check that these PDBs have CDRs that match your cluster\n"<<std::endl;
+				" Staying native cluster.  Ignoring CENTER, CLUSTER, LENGTH, LENGTH_TYPE, and CLUSTER_CUTOFF settings for this CDR.\n" <<
+				"If PDBID INCLUDEONLY is set, please check that these PDBs have CDRs that match your cluster\n"<<std::endl;
 
 			//Remove incompatible settings.
 			options->include_only_center_clusters(false);
@@ -297,7 +291,7 @@ AntibodyDatabaseManager::load_cdr_poses(
 			options->include_only_clusters_clear();
 			options->cluster_sampling_cutoff( 0 );
 
-			for (core::Size type = 1; type <=3 ; ++type){
+			for ( core::Size type = 1; type <=3 ; ++type ) {
 				options->length_type(type, true);
 			}
 
@@ -305,14 +299,13 @@ AntibodyDatabaseManager::load_cdr_poses(
 			// Load data from either the stored DataCache or AntibodyInfo.
 			CDRClusterEnum current_cluster;
 
-			if (pose.data().has(pose::datacache::CacheableDataType::CDR_CLUSTER_INFO)){
+			if ( pose.data().has(pose::datacache::CacheableDataType::CDR_CLUSTER_INFO) ) {
 				BasicCDRClusterSet const & cluster_cache = static_cast< BasicCDRClusterSet const & >(pose.data().get(pose::datacache::CacheableDataType::CDR_CLUSTER_INFO));
 				current_cluster = cluster_cache.get_cluster(cdr)->cluster();
-			}
-			else {
+			} else {
 				current_cluster = ab_info_->get_CDR_cluster(cdr)->cluster();
 			}
-			if(current_cluster  == NA){
+			if ( current_cluster  == NA ) {
 				utility_exit_with_message(ab_info_->get_CDR_name(cdr)+" : Unable to identify cluster.  Modify StayNativeCluster in instructions or download new AntibodyDatabase + update Rosetta for new definitions.");
 
 			}
@@ -322,14 +315,14 @@ AntibodyDatabaseManager::load_cdr_poses(
 		}
 
 		//H3 Currently has NO types.
-		if (cdr!=h3){
+		if ( cdr!=h3 ) {
 			base_statement += " AND length_type IN";
 
 			//I don't know how to do this more pretty
 
 			core::Size total_true=0;
-			for (core::Size type = 1; type<=3; ++type){
-				if (options->length_type()[type]){
+			for ( core::Size type = 1; type<=3; ++type ) {
+				if ( options->length_type()[type] ) {
 					total_true+=1;
 				}
 			}
@@ -340,56 +333,55 @@ AntibodyDatabaseManager::load_cdr_poses(
 		//Using the IN keyword, could have just as easily done OR
 
 		//Cluster
-		if (options->include_only_clusters().size() >= 1){
+		if ( options->include_only_clusters().size() >= 1 ) {
 			base_statement += " AND fullcluster IN";
 			base_statement += get_question_mark_string(options->include_only_clusters().size());
 		}
-		if (options->exclude_clusters().size() >= 1){
+		if ( options->exclude_clusters().size() >= 1 ) {
 			base_statement += " AND fullcluster NOT IN";
 			base_statement += get_question_mark_string(options->exclude_clusters().size());
 		}
 
 		//PDBID
-		if (options->include_only_pdbs().size() >= 1){
+		if ( options->include_only_pdbs().size() >= 1 ) {
 			base_statement += " AND PDB IN";
 			base_statement += get_question_mark_string(options->include_only_pdbs().size());
 			//base_statement += " AND ";
 			//base_statement += this->get_ands("PDB", options->include_only_pdbs().size());
 		}
-		if (options->exclude_pdbs().size() >= 1){
+		if ( options->exclude_pdbs().size() >= 1 ) {
 			base_statement += " AND PDB NOT IN";
 			base_statement += get_question_mark_string(options->exclude_pdbs().size());
 		}
 
 		//Species
-		if (options->include_only_species().size() >= 1){
+		if ( options->include_only_species().size() >= 1 ) {
 			base_statement += " AND GSpecies IN"; //IMGT Germline determined CDR species - two letter code in docs
 			base_statement += get_question_mark_string(options->include_only_species().size());
 		}
-		if (options->exclude_species().size() >= 1) {
+		if ( options->exclude_species().size() >= 1 ) {
 			base_statement += " AND GSpecies NOT IN ";
 			base_statement += get_question_mark_string(options->exclude_species().size());
 		}
 
 		//GermLine
-		if (options->include_only_germlines().size() >= 1) {
+		if ( options->include_only_germlines().size() >= 1 ) {
 			base_statement += " AND IG IN";
 			base_statement += get_question_mark_string(options->include_only_germlines().size());
 		}
-		if (options->exclude_germlines().size() >= 1){
+		if ( options->exclude_germlines().size() >= 1 ) {
 			base_statement += " AND IG IN";
 			base_statement += get_question_mark_string(options->exclude_germlines().size());
 		}
 		//Lambda vs Kappa
-		if (ab_info_->get_light_chain_type_enum() != unknown && use_light_chain_type_ && (ab_info_->get_light_chain_type_enum() != lambda)){
+		if ( ab_info_->get_light_chain_type_enum() != unknown && use_light_chain_type_ && (ab_info_->get_light_chain_type_enum() != lambda) ) {
 			base_statement += " AND (gene = 'heavy' OR gene = '"+ab_info_->get_light_chain_type()+"')";
-		}
-		else if( ab_info_->get_light_chain_type_enum() == lambda && use_light_chain_type_ ){
+		} else if ( ab_info_->get_light_chain_type_enum() == lambda && use_light_chain_type_ ) {
 			base_statement += " AND (gene = 'heavy' OR gene = 'lambda6' OR gene = 'lambda')";
 		}
-		if (options->include_only_center_clusters()){
+		if ( options->include_only_center_clusters() ) {
 			base_statement = base_statement +
-			"         AND center = 1";
+				"         AND center = 1";
 		}
 
 		//Add stuff from Instructions
@@ -408,9 +400,9 @@ AntibodyDatabaseManager::load_cdr_poses(
 
 		//Optional Binds + Cluster types
 		core::Size col = 4; //Keeps track of where we are.
-		if (cdr != h3){
-			for (core::Size t=1; t <= 3; ++t){
-				if (options->length_type()[t]){
+		if ( cdr != h3 ) {
+			for ( core::Size t=1; t <= 3; ++t ) {
+				if ( options->length_type()[t] ) {
 					col+=1;
 					select_statement.bind(col, t);
 				}
@@ -419,15 +411,15 @@ AntibodyDatabaseManager::load_cdr_poses(
 
 		//Bind optional string vector constraints
 
-		//This needs to happen or binding will not occur - strange thing with binding - the variable cannot be returned 
+		//This needs to happen or binding will not occur - strange thing with binding - the variable cannot be returned
 		// and put into sql in C++, needs to be stored somewhere first.  Thank you Rocco.
-		
+
 		utility::vector1<std::string> include_clusters = get_cluster_string_vec(options->include_only_clusters());
 		utility::vector1<std::string> exclude_clusters = get_cluster_string_vec(options->exclude_clusters());
-		
+
 		//TR << "include clusters" << utility::to_string(include_clusters) << std::endl;
 		//TR << "exclude clusters" << utility::to_string(exclude_clusters) << std::endl;
-		
+
 		bind_vec_constraint(include_clusters, select_statement, col);
 		bind_vec_constraint(exclude_clusters, select_statement, col);
 
@@ -453,13 +445,13 @@ AntibodyDatabaseManager::load_cdr_poses(
 		vector1< core::Size > clusters_removed(CDRClusterEnum_stop, 0);
 
 
-		if (options->cluster_sampling_cutoff() > 0){
+		if ( options->cluster_sampling_cutoff() > 0 ) {
 			TR << "Removing all CDRs with cluster size < " << options->cluster_sampling_cutoff() << std::endl;
 		}
 
 		CDRClusterEnumManagerCOP manager = ab_info_->get_cdr_cluster_enum_manager();
 
-		while(pdbid_result.next()){
+		while ( pdbid_result.next() ) {
 			std::string pdbid;
 			std::string cluster;
 			std::string original_chain;
@@ -471,7 +463,7 @@ AntibodyDatabaseManager::load_cdr_poses(
 			pdbid_result >> pdbid >> cluster >> original_chain >> dis >> normalized_dis >> resolution >> rama;
 
 			// Skip if not kinked and we only want kinked here!
-			if (cdr == h3 && use_only_H3_kinked_ && ! is_H3_rama_kinked(rama)) {
+			if ( cdr == h3 && use_only_H3_kinked_ && ! is_H3_rama_kinked(rama) ) {
 				non_kinked_removed+=1;
 				continue;
 			}
@@ -480,10 +472,10 @@ AntibodyDatabaseManager::load_cdr_poses(
 			boost::to_lower(pdbid); //Original structures are lower case to distinguish chain easily in filename.
 			std::string pdbid_in = pdbid+original_chain+"_"+ab_info_->get_CDR_name(cdr)+"_0001";
 
-			if (manager->cdr_cluster_is_present(cluster)){
+			if ( manager->cdr_cluster_is_present(cluster) ) {
 				CDRClusterEnum cluster_enum = ab_info_->get_cluster_enum(cluster);
-				if (options->cluster_sampling_cutoff() != 0){
-					if (totals[ cluster_enum ] < options->cluster_sampling_cutoff()){
+				if ( options->cluster_sampling_cutoff() != 0 ) {
+					if ( totals[ cluster_enum ] < options->cluster_sampling_cutoff() ) {
 						TR << "Removed "<< cluster << " at " << totals[ cluster_enum ] << std::endl;
 						clusters_removed[ cluster_enum ] = clusters_removed[ cluster_enum ] + 1;
 						continue;
@@ -493,14 +485,12 @@ AntibodyDatabaseManager::load_cdr_poses(
 				clusters.push_back(cluster_enum);
 
 				//TR.Debug << "PDBId: " << pdbid<<std::endl;
-			}
-			else if (cdr== h3){
+			} else if ( cdr== h3 ) {
 				//Increased H3 sampling
 				clusters.push_back(NA);
 				//TR.Debug << "PDBId: " << pdbid<<std::endl;
 
-			}
-			else {
+			} else {
 				TR<< cluster << " Not Present in enums! Skipping" << std::endl;
 				continue;
 			}
@@ -513,36 +503,36 @@ AntibodyDatabaseManager::load_cdr_poses(
 
 		// Print totals and counts of removed structures and clusters.
 		TR << "Total "<<ab_info_->get_CDR_name(cdr) << " poses: " << tags.size() << std::endl;
-		if (non_kinked_removed > 0){
+		if ( non_kinked_removed > 0 ) {
 			TR << "Removed "<< non_kinked_removed << " non-kinked H3 structures" << std::endl;
 		}
-		if (options->cluster_sampling_cutoff() != 0){
+		if ( options->cluster_sampling_cutoff() != 0 ) {
 			core::Size total_removed_clusters = 0;
 			core::Size total_removed_sequences = 0;
 
-			for (core::Size i = 1; i <= clusters_removed.size(); ++i){
-				if (clusters_removed[ i ] > 0){
+			for ( core::Size i = 1; i <= clusters_removed.size(); ++i ) {
+				if ( clusters_removed[ i ] > 0 ) {
 					total_removed_clusters+=1;
 					total_removed_sequences = total_removed_sequences + clusters_removed[ i ];
 				}
 			}
-			if (total_removed_clusters > 0 ){
+			if ( total_removed_clusters > 0 ) {
 				TR << "Removed " << total_removed_clusters << " small clusters" << std::endl;
 			}
-			if (total_removed_sequences > 0 ){
+			if ( total_removed_sequences > 0 ) {
 				TR << "Removed " << total_removed_sequences << " small cluster structures from CDRSet. " << std::endl;
 			}
 		}
 
 		//Get a single struct_id
-		for (core::Size k=1; k<=tags.size(); ++k){
+		for ( core::Size k=1; k<=tags.size(); ++k ) {
 			std::string statement =
 				"SELECT\n"
-				"	struct_id\n"
+				"\tstruct_id\n"
 				"FROM\n"
-				"	structures \n"
+				"\tstructures \n"
 				"WHERE\n"
-				"	tag = ?;";
+				"\ttag = ?;";
 
 			cppdb::statement select_statement(basic::database::safely_prepare_statement( statement, db_session_ ));
 			select_statement.bind(1, tags[ k ]);
@@ -550,8 +540,8 @@ AntibodyDatabaseManager::load_cdr_poses(
 			//if (uuid_result.empty()){continue;}
 			std::string tag = tags[ k ];
 			//Should only be one result.  But, this should protect us from non-matching info between data and structures for whatever reason.
-			while(uuid_result.next()){
-				if (uuid_result.empty()){ break; }
+			while ( uuid_result.next() ) {
+				if ( uuid_result.empty() ) { break; }
 				//TR.Debug << "Loading structure: " << tags[k] <<std::endl;
 				StructureID struct_id;
 				uuid_result >> struct_id;
@@ -559,7 +549,7 @@ AntibodyDatabaseManager::load_cdr_poses(
 				reporter.load_pose( db_session_, struct_id, *pose );
 				pose->conformation().detect_disulfides();
 
-				if (pose->total_residue() != ab_info_->get_cluster_length(clusters[ k ])+ overhang*2 ) {
+				if ( pose->total_residue() != ab_info_->get_cluster_length(clusters[ k ])+ overhang*2 ) {
 					TR << "Leaving out bad structure:  "<< tags[k] << " num residues in pose do not match cluster cdr length with overhang. " <<std::endl;
 					continue;
 				}
@@ -577,23 +567,22 @@ AntibodyDatabaseManager::load_cdr_poses(
 
 vector1< bool >
 AntibodyDatabaseManager::load_cdr_design_data(
-				AntibodyCDRSeqDesignOptions const & instructions,
-				core::pose::Pose const & pose,
-				std::map<core::Size,AAProbabilities>& prob_set,
-				core::Size const cutoff)
+	AntibodyCDRSeqDesignOptions const & instructions,
+	core::pose::Pose const & pose,
+	std::map<core::Size,AAProbabilities>& prob_set,
+	core::Size const cutoff)
 {
 	TR << "Loading CDR cluster statistics " << std::endl;
 	vector1<bool>cdrs_to_load(6, true);
 
-	for (core::Size i = 1; i<=CDRNameEnum_total; ++i){
+	for ( core::Size i = 1; i<=CDRNameEnum_total; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 
 		CDRSeqDesignOptionsCOP options = instructions[cdr];
 
-		if (! options->design()) {
+		if ( ! options->design() ) {
 			cdrs_to_load[ cdr ] = false;
-		}
-		else if (options->design() && options->design_strategy() != seq_design_profiles){
+		} else if ( options->design() && options->design_strategy() != seq_design_profiles ) {
 			cdrs_to_load[ cdr ] = false;
 		}
 	}
@@ -602,32 +591,31 @@ AntibodyDatabaseManager::load_cdr_design_data(
 
 vector1< bool >
 AntibodyDatabaseManager::load_cdr_design_data_for_cdrs(
-			utility::vector1<bool> cdrs,
-			const core::pose::Pose& pose,
-			std::map<core::Size,AAProbabilities>& prob_set,
-			const core::Size cutoff)
+	utility::vector1<bool> cdrs,
+	const core::pose::Pose& pose,
+	std::map<core::Size,AAProbabilities>& prob_set,
+	const core::Size cutoff)
 {
 
 	assert(cdrs.size() == 6);
 	vector1<bool> cdrs_with_no_data(6, false);
 
-	for (core::Size i = 1; i <= CDRNameEnum_total; ++i){
+	for ( core::Size i = 1; i <= CDRNameEnum_total; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
-		if (! cdrs[ cdr ] || ! ab_info_->has_CDR(cdr)) continue;
+		if ( ! cdrs[ cdr ] || ! ab_info_->has_CDR(cdr) ) continue;
 
 		// Load data from either the stored DataCache or AntibodyInfo.
 		CDRClusterEnum cluster;
 
-		if (pose.data().has(pose::datacache::CacheableDataType::CDR_CLUSTER_INFO)){
+		if ( pose.data().has(pose::datacache::CacheableDataType::CDR_CLUSTER_INFO) ) {
 			//TR <<"Setting up profile data for cluster from pose datacache "<< ab_info_->get_CDR_name( cdr ) << std::endl;
 			BasicCDRClusterSet const & cluster_cache = static_cast< BasicCDRClusterSet const & >(pose.data().get(pose::datacache::CacheableDataType::CDR_CLUSTER_INFO));
 			cluster = cluster_cache.get_cluster(cdr)->cluster();
-		}
-		else {
+		} else {
 			cluster = ab_info_->get_CDR_cluster(cdr)->cluster();
 		}
 
-		if (cluster == NA ){
+		if ( cluster == NA ) {
 			cdrs_with_no_data[ cdr] = true;
 			TR << ab_info_->get_CDR_name(cdr) << " is of unknown cluster.  No design probability data added."<< std::endl;
 			continue;
@@ -637,14 +625,14 @@ AntibodyDatabaseManager::load_cdr_design_data_for_cdrs(
 		//Check to make sure cluster is present in antibody database
 		std::string base_statement =
 			"SELECT \n"
-			"	position, \n"
-			"	probability, \n"
-			"	aa, \n"
-			"	total_seq \n"
+			"\tposition, \n"
+			"\tprobability, \n"
+			"\taa, \n"
+			"\ttotal_seq \n"
 			"FROM\n"
-				+ seq_table+"\n"
+			+ seq_table+"\n"
 			"WHERE \n"
-			"	fullcluster = ?";
+			"\tfullcluster = ?";
 
 		//TR << "Reading from: " << db_path_ << std::endl;
 
@@ -654,9 +642,9 @@ AntibodyDatabaseManager::load_cdr_design_data_for_cdrs(
 
 
 		core::Size total_seq;
-		while(prob_result.next()){
+		while ( prob_result.next() ) {
 
-			if (prob_result.empty()) {
+			if ( prob_result.empty() ) {
 				TR << ab_info_->get_CDR_name(cdr) << " has no design probability data." << std::endl;
 				break;
 			}
@@ -667,7 +655,7 @@ AntibodyDatabaseManager::load_cdr_design_data_for_cdrs(
 			prob_result >> position >> probability >> amino >> total_seq;
 
 
-			if (  total_seq < cutoff){
+			if (  total_seq < cutoff ) {
 				cdrs_with_no_data[ cdr ] = true;
 				TR << "Skipped " << ab_info_->get_cluster_name(cluster) <<" with "<< total_seq << " data point  "<< std::endl;
 				break;
@@ -677,7 +665,7 @@ AntibodyDatabaseManager::load_cdr_design_data_for_cdrs(
 			core::Size rosetta_resnum = ab_info_->get_CDR_start(cdr, pose, North) + position - 1;
 			prob_set[rosetta_resnum][core::chemical::aa_from_oneletter_code(amino[0])] = probability;
 		}
-		if (  total_seq >= cutoff){
+		if (  total_seq >= cutoff ) {
 			TR << "Loaded "<< ab_info_->get_cluster_name(cluster) << " with " << total_seq << " datapoints. " << std::endl;
 		}
 	}
@@ -687,46 +675,45 @@ AntibodyDatabaseManager::load_cdr_design_data_for_cdrs(
 
 CDRDBSequenceSet
 AntibodyDatabaseManager::load_cdr_sequences(
-			utility::vector1<bool> cdrs,
-			const core::pose::Pose& pose,
-			bool match_on_length)
+	utility::vector1<bool> cdrs,
+	const core::pose::Pose& pose,
+	bool match_on_length)
 {
 
 	CDRDBSequenceSet sequence_set;
 
-	for (core::Size i = 1; i <= core::Size(ab_info_->get_total_num_CDRs()); ++i){
-		if (! cdrs[ i ]){ continue; }
+	for ( core::Size i = 1; i <= core::Size(ab_info_->get_total_num_CDRs()); ++i ) {
+		if ( ! cdrs[ i ] ) { continue; }
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
 
 		// Load data from either the stored DataCache or AntibodyInfo.
 		CDRClusterEnum current_cluster;
 
-		if (pose.data().has(pose::datacache::CacheableDataType::CDR_CLUSTER_INFO)){
+		if ( pose.data().has(pose::datacache::CacheableDataType::CDR_CLUSTER_INFO) ) {
 			BasicCDRClusterSet const & cluster_cache = static_cast< BasicCDRClusterSet const & >(pose.data().get(pose::datacache::CacheableDataType::CDR_CLUSTER_INFO));
 			current_cluster = cluster_cache.get_cluster(cdr)->cluster();
-		}
-		else {
+		} else {
 			current_cluster = ab_info_->get_CDR_cluster(cdr)->cluster();
 		}
-		if(current_cluster  == NA){
+		if ( current_cluster  == NA ) {
 			TR<< ab_info_->get_CDR_name(cdr) << " : Unable to identify cluster for cdr.  Skipping..." << std::endl;
 			continue;
 
 		}
 
 		sequence_set[ cdr ] = load_cdr_sequences_for_cdr(
-				cdr,
-				ab_info_->get_CDR_length(cdr, pose, North),
-				current_cluster,
-				match_on_length);
+			cdr,
+			ab_info_->get_CDR_length(cdr, pose, North),
+			current_cluster,
+			match_on_length);
 	}
 	return sequence_set;
 }
 
 utility::vector1<CDRDBSequence>
 AntibodyDatabaseManager::load_cdr_sequences_for_cdr_length(
-			const CDRNameEnum cdr,
-			const core::Size length)
+	const CDRNameEnum cdr,
+	const core::Size length)
 {
 	//Use a bogus Cluster
 	return load_cdr_sequences_for_cdr(cdr, length, static_cast<CDRClusterEnum>(1), true);
@@ -734,8 +721,8 @@ AntibodyDatabaseManager::load_cdr_sequences_for_cdr_length(
 
 utility::vector1<CDRDBSequence>
 AntibodyDatabaseManager::load_cdr_sequences_for_cdr_cluster(
-			const CDRNameEnum cdr,
-			const clusters::CDRClusterEnum cluster)
+	const CDRNameEnum cdr,
+	const clusters::CDRClusterEnum cluster)
 {
 	//Use a bogus length
 	return load_cdr_sequences_for_cdr(cdr, 1, cluster, false);
@@ -743,60 +730,57 @@ AntibodyDatabaseManager::load_cdr_sequences_for_cdr_cluster(
 
 utility::vector1<CDRDBSequence>
 AntibodyDatabaseManager::load_cdr_sequences_for_cdr(
-		CDRNameEnum const cdr,
-		core::Size const length,
-		CDRClusterEnum const cluster,
-		bool load_on_length)
+	CDRNameEnum const cdr,
+	core::Size const length,
+	CDRClusterEnum const cluster,
+	bool load_on_length)
 {
 
 	utility::vector1<CDRDBSequence> sequence_set;
 
 	std::string base_statement =
-			"SELECT\n"
-			"	seq,\n "
-			"	PDB,\n"
-			"	fullcluster,\n"
-			"	original_chain,\n"
-			"	dis,\n"
-			"	DistDegree,\n"
-			"	resolution,\n"
-			"	rama\n"
-			"FROM\n"
-			"	cdr_data \n"
-			"WHERE\n"
-			"	datatag != ? AND"
-			"	CDR = ?";
+		"SELECT\n"
+		"\tseq,\n "
+		"\tPDB,\n"
+		"\tfullcluster,\n"
+		"\toriginal_chain,\n"
+		"\tdis,\n"
+		"\tDistDegree,\n"
+		"\tresolution,\n"
+		"\trama\n"
+		"FROM\n"
+		"\tcdr_data \n"
+		"WHERE\n"
+		"\tdatatag != ? AND"
+		"\tCDR = ?";
 
 	//Optional part of Query
 	bool use_outliers;
-	if (cdr == h3 ){
+	if ( cdr == h3 ) {
 		use_outliers = use_h3_graft_outliers_;
-	}
-	else {
+	} else {
 		use_outliers = use_outliers_;
 	}
 
-	if (! use_outliers){
+	if ( ! use_outliers ) {
 		base_statement = base_statement +"\n"+
-		"          AND (bb_rmsd_cdr_align < 1.5 OR DistDegree < 40)\n"
-		"          AND DistDegree != -1\n"
-		"          AND bb_rmsd_cdr_align != -1\n";
+			"          AND (bb_rmsd_cdr_align < 1.5 OR DistDegree < 40)\n"
+			"          AND DistDegree != -1\n"
+			"          AND bb_rmsd_cdr_align != -1\n";
 	}
 
-	if (load_on_length){
+	if ( load_on_length ) {
 		base_statement = base_statement + "\n"+
-		"	AND length = ?\n";
-	}
-	else {
+			"\tAND length = ?\n";
+	} else {
 		base_statement = base_statement +"\n" +
-		"	AND fullcluster = ?\n";
+			"\tAND fullcluster = ?\n";
 	}
 
 	//Lambda vs Kappa
-	if (use_light_chain_type_ && ab_info_->get_light_chain_type_enum() != unknown && (ab_info_->get_light_chain_type_enum() != lambda)){
+	if ( use_light_chain_type_ && ab_info_->get_light_chain_type_enum() != unknown && (ab_info_->get_light_chain_type_enum() != lambda) ) {
 		base_statement += " AND (gene = 'heavy' OR gene = '"+ab_info_->get_light_chain_type()+"')";
-	}
-	else if( use_light_chain_type_ && ab_info_->get_light_chain_type_enum() == lambda ){
+	} else if ( use_light_chain_type_ && ab_info_->get_light_chain_type_enum() == lambda ) {
 		base_statement += " AND (gene = 'heavy' OR gene = 'lambda6' OR gene = 'lambda')";
 	}
 
@@ -807,10 +791,9 @@ AntibodyDatabaseManager::load_cdr_sequences_for_cdr(
 	select_statement.bind(1, "loopKeyNotInPaper");
 	select_statement.bind(2, ab_info_->get_CDR_name(cdr));
 
-	if (load_on_length){
+	if ( load_on_length ) {
 		select_statement.bind(3, length);
-	}
-	else{
+	} else {
 		select_statement.bind(3, ab_info_->get_cluster_name(cluster));
 	}
 
@@ -823,7 +806,7 @@ AntibodyDatabaseManager::load_cdr_sequences_for_cdr(
 
 	core::Size non_kinked_removed = 0;
 
-	while(pdbid_result.next()){
+	while ( pdbid_result.next() ) {
 		std::string seq;
 		std::string pdbid;
 		std::string cluster;
@@ -837,7 +820,7 @@ AntibodyDatabaseManager::load_cdr_sequences_for_cdr(
 		//TR << seq << " " << pdbid << " "<< cluster << " " << original_chain << " "<<rama << std::endl;
 
 		// Skip if not kinked and we only want kinked here!
-		if (cdr == h3 && use_only_H3_kinked_ && ! is_H3_rama_kinked(rama)) {
+		if ( cdr == h3 && use_only_H3_kinked_ && ! is_H3_rama_kinked(rama) ) {
 			non_kinked_removed+=1;
 			continue;
 		}
@@ -847,14 +830,13 @@ AntibodyDatabaseManager::load_cdr_sequences_for_cdr(
 		boost::to_lower(pdbid); //Original structures are lower case to distinguish chain easily in filename.
 
 		CDRClusterEnum cluster_enum;
-		if (manager->cdr_cluster_is_present(cluster)){
+		if ( manager->cdr_cluster_is_present(cluster) ) {
 
 			cluster_enum = ab_info_->get_cluster_enum(cluster);
 
 
 			//TR.Debug << "PDBId: " << pdbid<<std::endl;
-		}
-		else {
+		} else {
 			TR<< cluster << " Not Present in enums! Skipping" << std::endl;
 			continue;
 		}
@@ -864,7 +846,7 @@ AntibodyDatabaseManager::load_cdr_sequences_for_cdr(
 		sequence_set.push_back( cdr_seq );
 	}
 
-	if (non_kinked_removed > 0 ){
+	if ( non_kinked_removed > 0 ) {
 		TR << "Removed "<< non_kinked_removed << " non-kinked H3 structures" << std::endl;
 	}
 
@@ -876,22 +858,22 @@ void
 AntibodyDatabaseManager::check_for_graft_instruction_inconsistencies(AntibodyCDRSetOptions const & instructions) {
 
 	//Double check to make sure everything is kosher before grabbing Poses.
-	for (core::Size i=1; i<=CDRNameEnum_total; ++i){
+	for ( core::Size i=1; i<=CDRNameEnum_total; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		CDRSetOptionsCOP options = instructions[cdr];
-		if (has_vec_inconsistency(options->include_only_clusters(), options->exclude_clusters())){
+		if ( has_vec_inconsistency(options->include_only_clusters(), options->exclude_clusters()) ) {
 			utility_exit_with_message("Inconsistency in CLUSTERs option. Cannot leave out and include option.");
 		}
 
-		if (has_vec_inconsistency(options->include_only_pdbs(), options->exclude_pdbs())){
+		if ( has_vec_inconsistency(options->include_only_pdbs(), options->exclude_pdbs()) ) {
 			utility_exit_with_message("Inconsistency in PDBID option. Cannot leave out and include option.");
 		}
 
-		if (has_vec_inconsistency(options->include_only_species(), options->exclude_species())){
+		if ( has_vec_inconsistency(options->include_only_species(), options->exclude_species()) ) {
 			utility_exit_with_message("Inconsistency in SPECIES option. Cannot leave out and include option.");
 		}
 
-		if (has_vec_inconsistency(options->include_only_germlines(), options->exclude_germlines() )){
+		if ( has_vec_inconsistency(options->include_only_germlines(), options->exclude_germlines() ) ) {
 			utility_exit_with_message("Inconsistency in GERMLINE option. Cannot leave out and include option.");
 		}
 	}
@@ -902,11 +884,11 @@ template < typename T >
 bool
 AntibodyDatabaseManager::has_vec_inconsistency(vector1<T> const &  include, vector1<T> const & exclude) const  {
 
-	if ((include.size() >= 1) && (exclude.size() >= 1)){
-		for(core::Size j=1; j<=include.size(); ++j){
-			for (core::Size k=1; k<=exclude.size(); ++k){
+	if ( (include.size() >= 1) && (exclude.size() >= 1) ) {
+		for ( core::Size j=1; j<=include.size(); ++j ) {
+			for ( core::Size k=1; k<=exclude.size(); ++k ) {
 
-				if (include[j]== exclude[k]){
+				if ( include[j]== exclude[k] ) {
 					return true;
 				}
 			}
@@ -921,8 +903,8 @@ AntibodyDatabaseManager::bind_vec_constraint(vector1<std::string> const & vec, c
 
 	//Could not get explicit template function specialization to work
 	//TR << "start col " << col << std::endl;
-	if (vec.size() >= 1) {
-		for (core::Size j = 1; j <= vec.size(); ++j){
+	if ( vec.size() >= 1 ) {
+		for ( core::Size j = 1; j <= vec.size(); ++j ) {
 			col +=1;
 			//TR << "col " << col << std::endl;
 			//TR << "Binding: " << vec[j] << std::endl;
@@ -935,7 +917,7 @@ AntibodyDatabaseManager::bind_vec_constraint(vector1<std::string> const & vec, c
 vector1<std::string>
 AntibodyDatabaseManager::get_cluster_string_vec(const vector1<CDRClusterEnum>& clusters){
 	vector1<std::string> clusters_str;
-	for (core::Size i = 1; i <= clusters.size(); ++i){
+	for ( core::Size i = 1; i <= clusters.size(); ++i ) {
 		clusters_str.push_back(ab_info_->get_cluster_name(clusters[i]));
 		//TR << ab_info_->get_cluster_name(clusters[i]) << std::endl;
 	}

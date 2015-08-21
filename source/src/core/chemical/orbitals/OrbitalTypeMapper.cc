@@ -18,9 +18,9 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-namespace core{
-namespace chemical{
-namespace orbitals{
+namespace core {
+namespace chemical {
+namespace orbitals {
 
 
 #if defined MULTI_THREADED && defined CXX11

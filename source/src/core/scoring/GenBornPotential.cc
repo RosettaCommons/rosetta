@@ -49,8 +49,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 /**
 
-	 This is a reimplementation of Jim Havranek's original rosetta++ Gen Born code.
-	 source files: rosetta++/gb_elec*
+This is a reimplementation of Jim Havranek's original rosetta++ Gen Born code.
+source files: rosetta++/gb_elec*
 
 **/
 //////////////////////////////////////////////////////////////////////////////////
@@ -99,10 +99,10 @@ GenBornPoseInfo::GenBornPoseInfo( GenBornPoseInfo const & src ):
 		residue_info_[i] = src.residue_info_[i]->clone();
 		if ( src.placeholder_residue_[i] ) {
 			placeholder_residue_[i] = src.placeholder_residue_[i]->clone();
- 			placeholder_info_[i] = src.placeholder_info_[i]->clone();
+			placeholder_info_[i] = src.placeholder_info_[i]->clone();
 		} else {
 			placeholder_residue_[i] = 0;
- 			placeholder_info_[i] = 0;
+			placeholder_info_[i] = 0;
 		}
 	}
 	being_packed_ = src.being_packed_;
@@ -170,11 +170,11 @@ GenBornPotential::res_res_burial(
 {
 	bool const same_res( rsd1.seqpos() == rsd2.seqpos() );
 
-//jjh local
+	//jjh local
 	utility::vector1< Real > atm_radii1( rsd1.natoms() );
 	utility::vector1< Real > atm_radii2( rsd2.natoms() );
 
-//jjh Fill the radii array - later will allow for overrides
+	//jjh Fill the radii array - later will allow for overrides
 	for ( int atm1 = 1, atm1e = rsd1.natoms(); atm1 <= atm1e; ++atm1 ) {
 		atm_radii1[ atm1 ] = gb1.atomic_radius( atm1 );
 	}
@@ -204,9 +204,9 @@ GenBornPotential::res_res_burial(
 				Real const dumbo = Param_TA+tmpsd*(Param_TB+tmpsd*(Param_TC+tmpsd*(Param_TD+tmpsd*Param_TDD)));
 				gb1.born_radius( atm1 ) -= rwork2_sq*rwork2*inv_dis2*inv_dis2*dumbo;
 
-			} else if ( dis > (rwork1 + rwork2)) {
+			} else if ( dis > (rwork1 + rwork2) ) {
 				gb1.born_radius( atm1 ) -= (0.5*(rwork2/(dis2 - rwork2_sq) +
-																				 0.5*inv_dis*std::log((dis-rwork2)/(dis+rwork2))));
+					0.5*inv_dis*std::log((dis-rwork2)/(dis+rwork2))));
 
 			} else if ( dis > std::abs( rwork1 - rwork2 ) ) {
 				Real const theta = 0.5*inv_r1*inv_dis*(dis2+rwork1*rwork1 - rwork2_sq);
@@ -215,7 +215,7 @@ GenBornPotential::res_res_burial(
 
 			} else if ( rwork1 < rwork2 ) {
 				gb1.born_radius( atm1 ) -= 0.5*(rwork2/(dis2-rwork2_sq) + 2.0*inv_r1 +
-																				0.5*inv_dis*std::log( (rwork2-dis)/(rwork2+dis)));
+					0.5*inv_dis*std::log( (rwork2-dis)/(rwork2+dis)));
 
 			}
 		}
@@ -237,7 +237,7 @@ GenBornPotential::finalize_born_radii( GenBornResidueInfo & gb_info ) const
 		Real const br_save = gb_info.born_radius( atm );
 		Real const integral = (-1.0)*factor*br_save;
 		Real const inv_brad = (1.0/factor) - std::tanh( ( ParamD - ParamB*integral +
-																											ParamG*integral*integral)*integral)/radius;
+			ParamG*integral*integral)*integral)/radius;
 		gb_info.born_radius( atm ) = 1.0 / inv_brad;
 	}
 }
@@ -275,17 +275,17 @@ GenBornPotential::get_all_born_radii(
 	gb_info->initialize( pose );
 
 
-//jjh get the residue-residue burial
+	//jjh get the residue-residue burial
 	for ( Size res1 = 1; res1 <= nres; ++res1 ) {
 		Residue const & rsd1( pose.residue( res1 ) );
 		GenBornResidueInfo & gb1( gb_info->residue_info( res1 ) );
-	debug_assert( std::abs( gb1.born_radius(1) ) < 1e-3 ); // ensure that this has been zeroed out
+		debug_assert( std::abs( gb1.born_radius(1) ) < 1e-3 ); // ensure that this has been zeroed out
 		for ( Size res2 = 1; res2 <= nres; ++res2 ) {
 			res_res_burial( rsd1, gb1, pose.residue( res2 ), gb_info->residue_info( res2 ) );
 		}
 	}
 
-//jjh convert to Born radius
+	//jjh convert to Born radius
 
 	for ( Size res1 = 1; res1 <= nres; ++res1 ) {
 		finalize_born_radii( gb_info->residue_info( res1 ) );
@@ -361,17 +361,17 @@ GenBornPotential::build_placeholders(
 				if ( existing_rsd.is_lower_terminus() ) {
 					protein_placeholder_residue_type = chemical::ResidueTypeCOP(
 						residue_set.get_residue_type_with_variant_added( *protein_placeholder_residue_type,
-																															 chemical::LOWER_TERMINUS_VARIANT ).get_self_ptr() );
+						chemical::LOWER_TERMINUS_VARIANT ).get_self_ptr() );
 				}
 				if ( existing_rsd.is_upper_terminus() ) {
 					protein_placeholder_residue_type = chemical::ResidueTypeCOP(
 						residue_set.get_residue_type_with_variant_added( *protein_placeholder_residue_type,
-																															 chemical::UPPER_TERMINUS_VARIANT ).get_self_ptr() );
+						chemical::UPPER_TERMINUS_VARIANT ).get_self_ptr() );
 				}
 
 				conformation::ResidueOP rsd
 					( conformation::ResidueFactory::create_residue( *protein_placeholder_residue_type, existing_rsd,
-																													pose.conformation() ) );
+					pose.conformation() ) );
 				GenBornResidueInfoOP rsd_info( new GenBornResidueInfo( *rsd ) );
 
 				Size const dummy_index( rsd->atom_index("DUMM") );
@@ -404,13 +404,13 @@ GenBornPotential::get_template_born_radii(
 {
 	Size const nres( pose.total_residue() );
 
-debug_assert( gb_info.size() == nres );
+	debug_assert( gb_info.size() == nres );
 
 	for ( Size i=1; i<= nres; ++i ) {
 		if ( gb_info.being_packed( i ) ) continue;
 		Residue const & rsd1( pose.residue( i ) );
 		GenBornResidueInfo & gb1( gb_info.residue_info( i ) );
-	debug_assert( rsd1.natoms()<1 || std::abs( gb1.born_radius(1) ) < 1e-3 ); // ensure radii have been initialized to 0
+		debug_assert( rsd1.natoms()<1 || std::abs( gb1.born_radius(1) ) < 1e-3 ); // ensure radii have been initialized to 0
 		for ( Size j=1; j<= nres; ++j ) {
 
 			if ( gb_info.being_packed( j ) ) {
@@ -463,7 +463,7 @@ GenBornPotential::get_single_rotamer_born_radii(
 ) const
 {
 
-debug_assert( rsd1.natoms()<1 || std::abs( gb1.born_radius(1) ) < 1e-3 ); // ensure radii have been initialized to 0
+	debug_assert( rsd1.natoms()<1 || std::abs( gb1.born_radius(1) ) < 1e-3 ); // ensure radii have been initialized to 0
 
 	for ( Size res2=1; res2<= pose.total_residue(); ++res2 ) {
 		if ( gb_info.being_packed( res2 ) ) {
@@ -523,11 +523,11 @@ GenBornPotential::get_res_res_elecE(
 	etable::count_pair::CountPairFunctionOP cpfxn( 0 );
 	if ( same_res ) {
 		cpfxn = CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_3 );
-	//} else if ( rsd1.is_bonded( rsd2 ) ) {
-	//	cpfxn = new etable::count_pair::CountPair1BC3( rsd1, rsd1.connect_atom( rsd2 ), rsd2, rsd2.connect_atom( rsd1 ) );
-	//} else {
-	//	cpfxn = new etable::count_pair::CountPairAll();
-	//}
+		//} else if ( rsd1.is_bonded( rsd2 ) ) {
+		// cpfxn = new etable::count_pair::CountPair1BC3( rsd1, rsd1.connect_atom( rsd2 ), rsd2, rsd2.connect_atom( rsd1 ) );
+		//} else {
+		// cpfxn = new etable::count_pair::CountPairAll();
+		//}
 	} else if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_3 );
 	}
@@ -536,7 +536,7 @@ GenBornPotential::get_res_res_elecE(
 	for ( int atm1 = 1; atm1 <= natoms1; ++atm1 ) {
 		Real const q1 = rsd1.atomic_charge( atm1 );
 
-		if( std::fabs( q1 ) < 0.00001 ) continue;
+		if ( std::fabs( q1 ) < 0.00001 ) continue;
 
 		Real const brad1( gb1.born_radius( atm1 ) );
 		Real const r1 = gb1.atomic_radius( atm1 );
@@ -544,7 +544,7 @@ GenBornPotential::get_res_res_elecE(
 
 		for ( int atm2 = 1; atm2 <= natoms2; ++atm2 ) {
 			Real const q2 = rsd2.atomic_charge( atm2 );
-			if( std::fabs( q2 ) < 0.0001 ) continue;
+			if ( std::fabs( q2 ) < 0.0001 ) continue;
 
 			Real const brad2( gb2.born_radius( atm2 ) );
 
@@ -569,7 +569,7 @@ GenBornPotential::get_res_res_elecE(
 				Real const dis = std::sqrt( dis2 );
 				Real const r2 = gb2.atomic_radius( atm2 );
 				this_intx = 166.0 * gb_shell_intxn( inv_Ep * q1, r1, q2, r2, dis);
-				if (!same_res) this_intx *= 2.0;
+				if ( !same_res ) this_intx *= 2.0;
 			}
 
 			elecE += this_intx;
@@ -598,17 +598,18 @@ GenBornPotential::gb_shell_intxn(
 ) const
 {
 
-	if (dist >= (rai+rbi))
+	if ( dist >= (rai+rbi) ) {
 		return (qai * qbi /dist);
+	}
 
-// Make sure rb is larger than ra
+	// Make sure rb is larger than ra
 
 	Real qa;
 	Real ra;
 	Real qb;
 	Real rb;
 
-	if (rai > rbi) {
+	if ( rai > rbi ) {
 		qa = qbi;
 		ra = rbi;
 		qb = qai;
@@ -620,9 +621,9 @@ GenBornPotential::gb_shell_intxn(
 		rb = rbi;
 	}
 
-	if (((ra+rb) > dist) && (dist > (rb - ra))) {
+	if ( ((ra+rb) > dist) && (dist > (rb - ra)) ) {
 		Real fout;
-		if (ra == rb) {
+		if ( ra == rb ) {
 			fout = 0.5 * (1.0+0.5*dist/ra);
 		} else {
 			fout = 0.5*(1.0 + 0.5*(ra*ra - rb*rb)/(ra*dist) + 0.5*dist/ra);
@@ -645,18 +646,19 @@ GenBornPotential::gb_shell_intxn_deriv(
 ) const
 {
 
-	if (dist >= (rai+rbi))
+	if ( dist >= (rai+rbi) ) {
 		return (-1.0 * qai * qbi / ( dist * dist ) );
+	}
 
 
-// Make sure rb is larger than ra
+	// Make sure rb is larger than ra
 
 	Real qa;
 	Real ra;
 	Real qb;
 	Real rb;
 
-	if (rai > rbi) {
+	if ( rai > rbi ) {
 		qa = qbi;
 		ra = rbi;
 		qb = qai;
@@ -668,10 +670,10 @@ GenBornPotential::gb_shell_intxn_deriv(
 		rb = rbi;
 	}
 
-	if (((ra+rb) > dist) && (dist > (rb - ra))) {
+	if ( ((ra+rb) > dist) && (dist > (rb - ra)) ) {
 		Real dfout;
 		Real fout;
-		if (ra == rb) {
+		if ( ra == rb ) {
 			fout = 0.5 * (1.0+0.5*dist/ra);
 			dfout = 0.25/ra;
 		} else {
@@ -680,8 +682,8 @@ GenBornPotential::gb_shell_intxn_deriv(
 		}
 		Real dfin = -1.0*dfout;
 		return qa*qb*(dfin/rb -
-									2.0*fout/( (dist+ra+rb)*(dist+ra+rb) ) +
-									2.0*dfout/( dist + ra + rb ) );
+			2.0*fout/( (dist+ra+rb)*(dist+ra+rb) ) +
+			2.0*dfout/( dist + ra + rb ) );
 	} else {
 		///jjh already fully buried
 		return 0.0;
@@ -746,7 +748,7 @@ GenBornPotential::eval_atom_derivative(
 			if ( cpfxn && !cpfxn->count( ii, jj, cp_weight, path_dist ) ) continue; // less than 3 bonds away
 
 			//bool const same_atom( j == i && jj == ii );
-		debug_assert( j != i || jj != ii );
+			debug_assert( j != i || jj != ii );
 
 			Vector const & xyzj( rsd2.xyz(jj) );
 			Vector const f2( xyzi - xyzj );

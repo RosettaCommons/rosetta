@@ -67,7 +67,7 @@ TemplateJumpClaimer::TemplateJumpClaimer() : templates_( /* NULL */ )
 }
 
 TemplateJumpClaimer::TemplateJumpClaimer( std::string config_file,  weights::AbinitioMoverWeightOP weight )
-	: FragmentJumpClaimer( NULL, "template-jumps", weight )
+: FragmentJumpClaimer( NULL, "template-jumps", weight )
 {
 	set_keep_jumps_from_input_pose( false );
 	read_config_file( config_file );
@@ -75,11 +75,11 @@ TemplateJumpClaimer::TemplateJumpClaimer( std::string config_file,  weights::Abi
 
 void TemplateJumpClaimer::read_config_file( std::string const& file ) {
 	templates_ = abinitio::TemplatesOP( new abinitio::Templates( file, NULL /* native_pose_*/ ) );
-	//	templates_->target_sequence() = sequence_; // a hack until class SequenceMapping works better
+	// templates_->target_sequence() = sequence_; // a hack until class SequenceMapping works better
 	// want to pick fragments from templates... make sure they are not initialized yet
 	//runtime_assert( !fragset_large_ );
 
-	if( !templates_->is_good() ){
+	if ( !templates_->is_good() ) {
 		utility_exit_with_message("ERRORS occured during template setup. check BAD_SEQUENCES file!");
 	}
 	set_jump_def( templates_->create_jump_def( NULL ) );
@@ -88,25 +88,25 @@ void TemplateJumpClaimer::read_config_file( std::string const& file ) {
 }
 
 void TemplateJumpClaimer::read_topol_file( std::string const& file ) {
-		utility::io::izstream is( file );
-		if ( !is.good() ) {
-			utility_exit_with_message(" did not find topology_file: " + file );
-		}
-		abinitio::PairingStatisticsOP ps( new abinitio::PairingStatistics );
-		is >> *ps;
-		tr.Info << *ps << std::endl;
-		core::scoring::dssp::PairingList helix_pairings; //empty for now
-		core::fragment::SecondaryStructureOP ss_def( new core::fragment::SecondaryStructure );
-		ss_def->extend( 1500 ); //HACK number of residues
-		set_jump_def( jumping::BaseJumpSetupOP( new abinitio::TemplateJumpSetup( NULL, ss_def, ps, helix_pairings ) ) );
+	utility::io::izstream is( file );
+	if ( !is.good() ) {
+		utility_exit_with_message(" did not find topology_file: " + file );
+	}
+	abinitio::PairingStatisticsOP ps( new abinitio::PairingStatistics );
+	is >> *ps;
+	tr.Info << *ps << std::endl;
+	core::scoring::dssp::PairingList helix_pairings; //empty for now
+	core::fragment::SecondaryStructureOP ss_def( new core::fragment::SecondaryStructure );
+	ss_def->extend( 1500 ); //HACK number of residues
+	set_jump_def( jumping::BaseJumpSetupOP( new abinitio::TemplateJumpSetup( NULL, ss_def, ps, helix_pairings ) ) );
 }
 
 bool TemplateJumpClaimer::read_tag( std::string tag, std::istream& is ) {
 	if ( tag == "file" ) {
-			std::string file;
-			is >> file;
-			if ( jump_def() ) EXCN_Input( "Define either template config-file or topology_file for " + type() );
-			read_config_file( file );
+		std::string file;
+		is >> file;
+		if ( jump_def() ) EXCN_Input( "Define either template config-file or topology_file for " + type() );
+		read_config_file( file );
 	} else if ( tag == "PAIRING_FILE" ) {
 		// get pairings file
 		std::string file;

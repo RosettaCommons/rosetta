@@ -41,8 +41,8 @@ namespace ccd {
 
 class RamaCheckBase : public utility::pointer::ReferenceCount {
 
-typedef utility::pointer::ReferenceCount Parent;
-typedef utility::vector1< core::Real > RamaScoreVector;
+	typedef utility::pointer::ReferenceCount Parent;
+	typedef utility::vector1< core::Real > RamaScoreVector;
 
 public:
 	/// @brief constructor
@@ -72,7 +72,7 @@ public:
 	/// @note  The clone method should be used to copy an instance of RamaCheck if the derived class type is unknown.
 	virtual RamaCheckBaseOP
 	clone() const =0;
-	
+
 public: // accessors and mutators
 	/// @brief  Get the "temperature" used for rama score-checking with the Metropolis criterion.
 	/// @note   This value will only be used if the option for checking the rama score is turned on.

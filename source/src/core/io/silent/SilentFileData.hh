@@ -197,7 +197,7 @@ public:
 
 	/// @brief Sets the filename that this SilentFileData object will
 	/// write to.
-	void set_verbose( bool const setting ) { verbose_ = setting;	}
+	void set_verbose( bool const setting ) { verbose_ = setting; }
 
 	SilentStructOP operator[] (std::string tag);
 
@@ -216,7 +216,7 @@ public:
 	) const;
 
 	bool setup_include_patches(
-	 std::string const & filename
+		std::string const & filename
 	) const;
 
 	/// @brief Function to access the vector of silent structure owning pointers
@@ -237,11 +237,11 @@ public:
 
 	/// @brief return mode=first,last,all matched tags -- currently matching 'expression*' to tags in file, boost::regexp possible later
 	bool matched_tags(
-    std::string const& expression,
+		std::string const& expression,
 		std::string const& mode,
 		utility::vector1< std::string >& tags_in_file
-		//		utility::vector1< SilentStructOP >& decoys_in_file,
-		//		bool ignore_decoys = false
+		//  utility::vector1< SilentStructOP >& decoys_in_file,
+		//  bool ignore_decoys = false
 	) const;
 
 	/// @brief Returns a boolean indicating whether or not the strict_column_mode
@@ -384,10 +384,10 @@ public:
 	bool has_shared_silent_data( SharedSilentDataType ssdt ) const;
 
 private:
-		//some utility function for the reading process --- returns bool if new type
+	//some utility function for the reading process --- returns bool if new type
 	bool read_silent_struct_type_from_remark( std::string const& line, bool const header = false /*make true if this is one of the first 3 lines*/ );
 
-	bool read_full_model_parameters_from_remark( std::string const& line,	bool const header = false );
+	bool read_full_model_parameters_from_remark( std::string const& line, bool const header = false );
 
 
 	bool check_if_rna_from_sequence_line( std::string const& sequence_line );
@@ -537,7 +537,7 @@ public:
 	}
 
 	//const_iterator begin_const() const { return ( const_iterator( structure_map_.begin() ) ); }
-	//	const_iterator end_const()   const { return ( const_iterator( structure_map_.end()   ) ); }
+	// const_iterator end_const()   const { return ( const_iterator( structure_map_.end()   ) ); }
 
 }; // class SilentFileData
 

@@ -29,10 +29,10 @@ namespace keys {
 
 /// @brief 4-tuple meta-key
 template<
-	typename K1,
-	typename K2,
-	typename K3,
-	typename K4
+typename K1,
+typename K2,
+typename K3,
+typename K4
 >
 class Key4Tuple
 {
@@ -220,10 +220,10 @@ private: // Fields
 
 /// @brief Key4Tuple == Key4Tuple
 template<
-	typename K1,
-	typename K2,
-	typename K3,
-	typename K4
+typename K1,
+typename K2,
+typename K3,
+typename K4
 >
 bool
 operator ==( Key4Tuple< K1, K2, K3, K4 > const & a, Key4Tuple< K1, K2, K3, K4 > const & b );
@@ -231,10 +231,10 @@ operator ==( Key4Tuple< K1, K2, K3, K4 > const & a, Key4Tuple< K1, K2, K3, K4 > 
 
 /// @brief Key4Tuple != Key4Tuple
 template<
-	typename K1,
-	typename K2,
-	typename K3,
-	typename K4
+typename K1,
+typename K2,
+typename K3,
+typename K4
 >
 bool
 operator !=( Key4Tuple< K1, K2, K3, K4 > const & a, Key4Tuple< K1, K2, K3, K4 > const & b );
@@ -242,10 +242,10 @@ operator !=( Key4Tuple< K1, K2, K3, K4 > const & a, Key4Tuple< K1, K2, K3, K4 > 
 
 /// @brief Key4Tuple < Key4Tuple
 template<
-	typename K1,
-	typename K2,
-	typename K3,
-	typename K4
+typename K1,
+typename K2,
+typename K3,
+typename K4
 >
 bool
 operator <( Key4Tuple< K1, K2, K3, K4 > const & a, Key4Tuple< K1, K2, K3, K4 > const & b );

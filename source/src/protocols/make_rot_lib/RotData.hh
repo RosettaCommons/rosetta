@@ -43,18 +43,18 @@ private:
 	core::Real omega_, min_omega_, epsilon_, min_epsilon_;
 	core::Real energy_;
 	core::Real probability_;
-	core::Size num_chi_;						// number of chi angles in AA
-	core::Size num_clusters_;			 // number of clusters
-	core::Size cluster_num_;				// cluster id
-	
+	core::Size num_chi_;      // number of chi angles in AA
+	core::Size num_clusters_;    // number of clusters
+	core::Size cluster_num_;    // cluster id
+
 	utility::vector1< core::Real > semi_energy_dist_;
 	utility::vector1< core::Real > semi_prob_dist_;
-	
-	utility::vector1< core::Real > inp_chi_;	// starting chi angles
-	utility::vector1< core::Real > min_chi_;	// minimized chi angles
+
+	utility::vector1< core::Real > inp_chi_; // starting chi angles
+	utility::vector1< core::Real > min_chi_; // minimized chi angles
 	utility::vector1< core::Size > lib_chi_val_; // rotamer number for dunbrack format
-	utility::vector1< core::Real > std_dev_;	// standard deviation of chi angles
-	utility::vector1< core::Real > cen_dst_;	// distance from each centroid
+	utility::vector1< core::Real > std_dev_; // standard deviation of chi angles
+	utility::vector1< core::Real > cen_dst_; // distance from each centroid
 
 	// for debuging
 	core::Real twist_;
@@ -63,24 +63,24 @@ private:
 	core::Real intra_rep_;
 	core::Real intra_atr_;
 	core::Real solvation_;
-	
+
 	bool semirotameric_;
 
 public:
-	
+
 	void set_semi_energy_dist( core::Size i, core::Real setting ) {
 		semi_energy_dist_[ i ] = setting;
 	}
-	
+
 	void set_semi_prob_dist( core::Size i, core::Real setting ) {
 		semi_prob_dist_[ i ] = setting;
 	}
-	
+
 	void resize_semi_vectors( core::Size i ) {
 		semi_energy_dist_.resize( i, 0 );
 		semi_prob_dist_.resize( i, 0 );
 	}
-	
+
 	void set_twist( core::Real twist ) {
 		twist_ = twist;
 	}
@@ -103,15 +103,15 @@ public:
 	bool get_semirotameric() {
 		return semirotameric_;
 	}
-	
+
 	core::Real get_semi_prob_dist( core::Size i ) {
 		return semi_prob_dist_[ i ];
 	}
-	
+
 	core::Real get_semi_energy_dist( core::Size i ) {
 		return semi_energy_dist_[ i ];
 	}
-	
+
 	core::Real get_twist() {
 		return twist_;
 	}
@@ -131,7 +131,7 @@ public:
 		return solvation_;
 	}
 
- public:
+public:
 	// ctor
 	RotData( core::Size NumChi, core::Size NumCluster );
 	RotData( core::Size NumChi, core::Size NumCluster, bool semirotameric );
@@ -139,28 +139,28 @@ public:
 	RotData( core::Size NumChi, core::Size NumBBs, core::Size NumCluster, bool semirotameric );
 
 	friend bool operator== ( RotData & r1, RotData & r2 );
-	
+
 	// setters and getters
 	void set_bb( core::Size i, core::Real BB ) {
 		bbs_[ i ] = BB;
 	}
-    
-    // setters and getters
+
+	// setters and getters
 	void set_bb_id( core::Size i, core::Size bbid ) {
 		bb_ids_[ i ] = bbid;
 	}
-    
-    /* deprecated - implemented for the MakeRotLib unit test */
+
+	/* deprecated - implemented for the MakeRotLib unit test */
 	void set_phi (core::Real Phi) {
 		bbs_[ 1 ] = Phi;
-    }
-    
+	}
+
 	void set_psi (core::Real Psi) {
 		bbs_[ 2 ] = Psi;
-    }
+	}
 	///////////////////////////////////////////////////////////
-    
-    void set_omg (core::Real Omega) {
+
+	void set_omg (core::Real Omega) {
 		omega_ = Omega;
 	}
 	void set_min_omg (core::Real MinOmega) {
@@ -172,7 +172,7 @@ public:
 	void set_min_eps (core::Real MinEpsilon) {
 		min_epsilon_ = MinEpsilon;
 	}
-    
+
 	void set_num_bbs(core::Size i) {
 		num_bbs_ = i;
 	}
@@ -194,18 +194,18 @@ public:
 	core::Size get_bb_id( core::Size i ) {
 		return bb_ids_[ i ];
 	}
-    
-    /* deprecated - implemented for the MakeRotLib unit test */
+
+	/* deprecated - implemented for the MakeRotLib unit test */
 	core::Real get_phi() {
 		return bbs_[1];
 	}
-    
+
 	core::Real get_psi() {
 		return bbs_[2];
 	}
-    ///////////////////////////////////////////////////////////
-    
-    
+	///////////////////////////////////////////////////////////
+
+
 	core::Real get_omg() {
 		return omega_;
 	}
@@ -260,7 +260,7 @@ public:
 	}
 
 	void set_inp_chi( core::Real angle, core::Size num ) {
-		inp_chi_[ num ] =	numeric::nonnegative_principal_angle_degrees( angle );
+		inp_chi_[ num ] = numeric::nonnegative_principal_angle_degrees( angle );
 	}
 
 	core::Real get_inp_chi( core::Size num ) {
@@ -268,7 +268,7 @@ public:
 	}
 
 	void set_min_chi ( core::Real angle, core::Size num) {
-		min_chi_[ num ] =	numeric::nonnegative_principal_angle_degrees( angle );
+		min_chi_[ num ] = numeric::nonnegative_principal_angle_degrees( angle );
 	}
 
 	core::Real get_min_chi( core::Size num ) {
@@ -276,7 +276,7 @@ public:
 	}
 
 	void set_lib_chi_val ( int val, core::Size num) {
-		lib_chi_val_[ num ] =	val;
+		lib_chi_val_[ num ] = val;
 	}
 
 	core::Real get_lib_chi_val( core::Size num ) {
@@ -300,7 +300,7 @@ public:
 	}
 
 	core::Size get_min_cent_dist(){
-		return arg_min( cen_dst_ );	//gets index of closest centroid
+		return arg_min( cen_dst_ ); //gets index of closest centroid
 	}
 
 	void show( std::ostream & out ) const;

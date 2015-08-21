@@ -69,9 +69,9 @@ comma_strings_to_vector_map(
 {
 	bool fail( false );
 	std::string tag0;
-	if( tag != "" ) {
+	if ( tag != "" ) {
 		is >> tag0;
-		if( tag0 != tag ) {
+		if ( tag0 != tag ) {
 			TR << "Input failed: tag mismatch " << tag << " " << tag0 << std::endl;
 			return;
 		}
@@ -120,9 +120,9 @@ comma_strings_to_pair_map(
 ) {
 	bool fail( false );
 	std::string tag0;
-	if( tag != "" ) {
+	if ( tag != "" ) {
 		is >> tag0;
-		if( tag0 != tag ) {
+		if ( tag0 != tag ) {
 			TR << "Input failed: tag mismatch " << tag << " " << tag0 << std::endl;
 			return;
 		}
@@ -163,9 +163,9 @@ comma_strings_to_map(
 ) {
 	bool fail( false );
 	std::string tag0;
-	if( tag != "" ) {
+	if ( tag != "" ) {
 		is >> tag0;
-		if( tag0 != tag ) {
+		if ( tag0 != tag ) {
 			TR << "Input failed: tag mismatch " << tag << " " << tag0 << std::endl;
 			return;
 		}
@@ -187,7 +187,7 @@ comma_strings_to_map(
 		}
 		l >> clones[ base_jump ];
 	}
-	if (clones.size() != nbase ) {
+	if ( clones.size() != nbase ) {
 		is.setstate( std::ios_base::failbit );
 	}
 }
@@ -205,9 +205,9 @@ comma_strings_to_vector(
 {
 	bool fail( false );
 	std::string tag0;
-	if( tag != "" ) {
+	if ( tag != "" ) {
 		is >> tag0;
-		if( tag0 != tag ) {
+		if ( tag0 != tag ) {
 			TR << "Input failed: tag mismatch " << tag << " " << tag0 << std::endl;
 			return;
 		}
@@ -243,9 +243,9 @@ comma_strings_to_map(
 {
 	bool fail( false );
 	std::string tag0;
-	if( tag != "" ) {
+	if ( tag != "" ) {
 		is >> tag0;
-		if( tag0 != tag ) {
+		if ( tag0 != tag ) {
 			TR << "Input failed: tag mismatch " << tag << " " << tag0 << std::endl;
 			return;
 		}
@@ -282,7 +282,7 @@ void vector_map_to_comma_strings(
 	std::string tag=""
 ) {
 	typename std::map< S,utility::vector1<T> >::const_iterator it;
-	if( tag != "" ) out << ' ' << tag ;
+	if ( tag != "" ) out << ' ' << tag ;
 	for ( it = clones.begin(); it != clones.end(); ++it ) {
 		out << ' ' << it->first;
 		utility::vector1< T > const & l( it->second );
@@ -301,7 +301,7 @@ void map_to_comma_strings(
 	std::string tag=""
 ) {
 	typename std::map< S, T >::const_iterator it;
-	if( tag != "" ) out << ' ' << tag ;
+	if ( tag != "" ) out << ' ' << tag ;
 	for ( it = clones.begin(); it != clones.end(); ++it ) {
 		out << ' ' << it->first << ',' << it->second ;
 	}
@@ -331,9 +331,9 @@ vector_to_comma_strings(
 	std::string tag=""
 )
 {
-	if( tag != "" ) out << ' ' << tag ;
+	if ( tag != "" ) out << ' ' << tag ;
 	for ( Size i=1; i<= clones.size(); ++i ) {
-		if( i == 1 ) {
+		if ( i == 1 ) {
 			out << " " << clones[i] ;
 		} else {
 			out << ',' << clones[i] ;
@@ -367,13 +367,13 @@ SymmetryInfo::init_defaults() {
 // fpd this is horribly out of date
 //bool SymmetryInfo::operator==( SymmetryInfo const & s )
 //{
-//	return ( npseudo_ == s.npseudo_ &&
+// return ( npseudo_ == s.npseudo_ &&
 //           bb_clones_ ==s.bb_clones_ &&
 //           chi_clones_ == s.chi_clones_ &&
 //           jump_clones_ == s.jump_clones_ );
 //}
 //bool SymmetryInfo::operator!=( SymmetryInfo const & s ) {
-//	return !( *this == s );
+// return !( *this == s );
 //}
 
 SymmetryInfo::SymmetryInfo( SymmData const & symm_data, Size const nres_subunit, Size const njump_subunit )
@@ -382,7 +382,7 @@ SymmetryInfo::SymmetryInfo( SymmData const & symm_data, Size const nres_subunit,
 
 	Size joff = njump_subunit*symm_data.get_subunits();
 	std::map<std::string,Size> const & name2num = symm_data.get_jump_string_to_jump_num();
-	for(std::map<std::string,Size>::const_iterator i = name2num.begin(); i != name2num.end(); ++i) {
+	for ( std::map<std::string,Size>::const_iterator i = name2num.begin(); i != name2num.end(); ++i ) {
 		dofname2jnum_[i->first] = i->second+joff;
 		jnum2dofname_[i->second+joff] = i->first;
 	}
@@ -423,7 +423,7 @@ SymmetryInfo::SymmetryInfo(
 SymmetryInfoOP
 SymmetryInfo::clone() const
 {
-  return SymmetryInfoOP( new SymmetryInfo( *this ) );
+	return SymmetryInfoOP( new SymmetryInfo( *this ) );
 }
 
 // Initialize from "de-novo-style" symmdef files (as from make_symmdef_denovo.py)
@@ -460,8 +460,8 @@ SymmetryInfo::initialize(
 
 	// check that score_monomer makes sense...
 	if ( score_subunit > n_subunits || score_subunit < 1 ) {
-      utility_exit_with_message("score_subunit must be in the range 1-N");
-   }
+		utility_exit_with_message("score_subunit must be in the range 1-N");
+	}
 
 	// special case of no symmetry
 	//fpd   is this used at all?
@@ -526,9 +526,11 @@ SymmetryInfo::initialize(
 	}
 
 	// last_independent_residue
-	for ( Size i=1; i <=num_total_residues_without_pseudo(); ++i )
-		if ( bb_is_independent(i) )
+	for ( Size i=1; i <=num_total_residues_without_pseudo(); ++i ) {
+		if ( bb_is_independent(i) ) {
 			last_indep_residue_ = i;
+		}
+	}
 
 	update_score_multiply_factor();
 }
@@ -559,8 +561,8 @@ SymmetryInfo::update_score_multiply_factor()
 {
 	// compute the score_multiply_factor
 	utility::vector1< bool > indep_res = independent_residues();
-	for (int i=1; i<=(int)indep_res.size(); ++i) {
-		if (indep_res[i]) {
+	for ( int i=1; i<=(int)indep_res.size(); ++i ) {
+		if ( indep_res[i] ) {
 			score_multiply_factor_ = score_multiply_[ i ];
 			break;
 		}
@@ -606,23 +608,24 @@ SymmetryInfo::initialize(
 
 	for ( Size i=1; i<= nres_monomer; ++i ) {
 		Clones clones;
-      int base ( i + ( score_subunit - 1 ) * nres_monomer );
-      for ( Size k=0; k<n_subunits; ++k ) {
-        if ( k+1 != score_subunit ) {
-          clones.push_back( i + k * nres_monomer );
-					add_bb_clone( base, i + k * nres_monomer );
-		      add_chi_clone( base, i + k * nres_monomer );
-        }
-      }
-      bb_clones_.insert( std::make_pair( base, clones ) );
-      chi_clones_.insert( std::make_pair( base, clones ) );
+		int base ( i + ( score_subunit - 1 ) * nres_monomer );
+		for ( Size k=0; k<n_subunits; ++k ) {
+			if ( k+1 != score_subunit ) {
+				clones.push_back( i + k * nres_monomer );
+				add_bb_clone( base, i + k * nres_monomer );
+				add_chi_clone( base, i + k * nres_monomer );
+			}
+		}
+		bb_clones_.insert( std::make_pair( base, clones ) );
+		chi_clones_.insert( std::make_pair( base, clones ) );
 	}
 
 	// the N*njump_monomer internal jumps
 	for ( Size i=1; i<= njump_monomer; ++i ) {
 		for ( Size k=0; k<n_subunits; ++k ) {
-			if (k != ( score_subunit - 1 ) )
+			if ( k != ( score_subunit - 1 ) ) {
 				add_jump_clone( i + (score_subunit-1)*njump_monomer, i + k*njump_monomer, 0.0 );
+			}
 		}
 	}
 
@@ -634,9 +637,11 @@ SymmetryInfo::initialize(
 	}
 
 	// last_independent_residue
-	for ( Size i=1; i <=num_total_residues_without_pseudo(); ++i )
-		if ( bb_is_independent(i) )
+	for ( Size i=1; i <=num_total_residues_without_pseudo(); ++i ) {
+		if ( bb_is_independent(i) ) {
 			last_indep_residue_ = i;
+		}
+	}
 
 	// compute the score_multiply_factor
 	update_score_multiply_factor();
@@ -663,136 +668,136 @@ std::istream& operator>> ( std::istream & s, SymmetryInfo & symminfo )
 		fail = true;
 	} else {
 		bool nres_monomer_set=false,
-				scoring_subunit_set=false,
-				njump_monomer_set=false,
-				npseudo_set=false,
-				nnamed_jumps_set=false,
-				interfaces_set=false,
-				type_set=false,
-				num_bb_indep_set=false,
-				num_chi_indep_set=false,
-				num_jump_indep_set=false,
-				num_bb_dep_set=false,
-				num_chi_dep_set=false,
-				num_jump_dep_set=false,
-				num_dof_set=false,
-				num_score_multiply_set=false,
-				bb_clones_set=false,
-				chi_clones_set=false,
-				jump_clones_set=false,
-				jump_clone_wts_set=false,
-				bb_follows_set=false,
-				chi_follows_set=false,
-				jump_follows_set=false,
-				dofs_set=false,
-				score_multiply_set=false,
-				num_components_set=false,
-				jnum2dofname_set=false,
-				dofname2jnum_set=false;
-			// unused:
-			//bool components_set=false,
-				//component_bounds_set=false,
-				//name2component_set=false,
-				//jname2components_set=false,
-				//jname2subunits_set=false;
+			scoring_subunit_set=false,
+			njump_monomer_set=false,
+			npseudo_set=false,
+			nnamed_jumps_set=false,
+			interfaces_set=false,
+			type_set=false,
+			num_bb_indep_set=false,
+			num_chi_indep_set=false,
+			num_jump_indep_set=false,
+			num_bb_dep_set=false,
+			num_chi_dep_set=false,
+			num_jump_dep_set=false,
+			num_dof_set=false,
+			num_score_multiply_set=false,
+			bb_clones_set=false,
+			chi_clones_set=false,
+			jump_clones_set=false,
+			jump_clone_wts_set=false,
+			bb_follows_set=false,
+			chi_follows_set=false,
+			jump_follows_set=false,
+			dofs_set=false,
+			score_multiply_set=false,
+			num_components_set=false,
+			jnum2dofname_set=false,
+			dofname2jnum_set=false;
+		// unused:
+		//bool components_set=false,
+		//component_bounds_set=false,
+		//name2component_set=false,
+		//jname2components_set=false,
+		//jname2subunits_set=false;
 
 		//fpd  skip first two fields
 		s >> tag >> tag;
-		while (s >> tag) {
-			if (tag == "N_RES_MONOMER") {
+		while ( s >> tag ) {
+			if ( tag == "N_RES_MONOMER" ) {
 				s >> symminfo.nres_monomer_;
 				nres_monomer_set=true;
-			} else if (tag == "SCORING_SUBUNIT") {
+			} else if ( tag == "SCORING_SUBUNIT" ) {
 				s >> symminfo.scoring_subunit_;
 				scoring_subunit_set=true;
-			} else if (tag == "N_JUMP_MONOMER") {
+			} else if ( tag == "N_JUMP_MONOMER" ) {
 				s >> symminfo.njump_monomer_;
 				njump_monomer_set=true;
-			} else if (tag == "N_VIRT") {
+			} else if ( tag == "N_VIRT" ) {
 				s >> symminfo.npseudo_;
 				npseudo_set=true;
-			} else if (tag == "N_NAMED_JUMPS") {
+			} else if ( tag == "N_NAMED_JUMPS" ) {
 				s >> nnamed_jumps;
 				nnamed_jumps_set=true;
-			} else if (tag == "N_INTERFACE") {
+			} else if ( tag == "N_INTERFACE" ) {
 				s >> symminfo.interfaces_;
 				interfaces_set=true;
-			} else if (tag == "TYPE") {
-			  s >> symminfo.type_;
+			} else if ( tag == "TYPE" ) {
+				s >> symminfo.type_;
 				type_set=true;
-			} else if (tag == "BB_CLONES_SIZE") {
-			  s >> num_bb_indep;
+			} else if ( tag == "BB_CLONES_SIZE" ) {
+				s >> num_bb_indep;
 				num_bb_indep_set=true;
-			} else if (tag == "CHI_CLONES_SIZE") {
-			  s >> num_chi_indep;
+			} else if ( tag == "CHI_CLONES_SIZE" ) {
+				s >> num_chi_indep;
 				num_chi_indep_set=true;
-			} else if (tag == "JUMP_CLONES_SIZE") {
-			  s >> num_jump_indep;
+			} else if ( tag == "JUMP_CLONES_SIZE" ) {
+				s >> num_jump_indep;
 				num_jump_indep_set=true;
-			} else if (tag == "BB_FOLLOWS_SIZE") {
-			  s >> num_bb_dep;
+			} else if ( tag == "BB_FOLLOWS_SIZE" ) {
+				s >> num_bb_dep;
 				num_bb_dep_set=true;
-			} else if (tag == "CHI_FOLLOWS_SIZE") {
-			  s >> num_chi_dep;
+			} else if ( tag == "CHI_FOLLOWS_SIZE" ) {
+				s >> num_chi_dep;
 				num_chi_dep_set=true;
-			} else if (tag == "JUMP_FOLLOWS_SIZE") {
-			  s >> num_jump_dep;
+			} else if ( tag == "JUMP_FOLLOWS_SIZE" ) {
+				s >> num_jump_dep;
 				num_jump_dep_set=true;
-			} else if (tag == "DOFS_SIZE") {
-			  s >> num_dof;
+			} else if ( tag == "DOFS_SIZE" ) {
+				s >> num_dof;
 				num_dof_set=true;
-			} else if (tag == "SCORE_MULTIPLY_SIZE") {
-			  s >> num_score_multiply;
+			} else if ( tag == "SCORE_MULTIPLY_SIZE" ) {
+				s >> num_score_multiply;
 				num_score_multiply_set=true;
-			} else if (tag == "BB_CLONES") {
+			} else if ( tag == "BB_CLONES" ) {
 				comma_strings_to_vector_map( s,   num_bb_indep,  symminfo.bb_clones_, "" );
 				bb_clones_set=true;
-			} else if (tag == "CHI_CLONES") {
+			} else if ( tag == "CHI_CLONES" ) {
 				comma_strings_to_vector_map( s,  num_chi_indep,  symminfo.chi_clones_, "" );
 				chi_clones_set=true;
-			} else if (tag == "JUMP_CLONES") {
+			} else if ( tag == "JUMP_CLONES" ) {
 				comma_strings_to_vector_map( s, num_jump_indep,  symminfo.jump_clones_, "" );
 				jump_clones_set=true;
-			} else if (tag == "JUMP_CLONE_WEIGHTS") {
+			} else if ( tag == "JUMP_CLONE_WEIGHTS" ) {
 				comma_strings_to_map( s, num_jump_dep-num_jump_indep,  symminfo.jump_clone_wts_, "" );
 				jump_clone_wts_set=true;
-			} else if (tag == "BB_FOLLOWS") {
+			} else if ( tag == "BB_FOLLOWS" ) {
 				comma_strings_to_map( s,   num_bb_dep,  symminfo.bb_follows_, "" );
 				bb_follows_set=true;
-			} else if (tag == "CHI_FOLLOWS") {
+			} else if ( tag == "CHI_FOLLOWS" ) {
 				comma_strings_to_map( s,  num_chi_dep,  symminfo.chi_follows_, "" );
 				chi_follows_set=true;
-			} else if (tag == "JUMP_FOLLOWS") {
+			} else if ( tag == "JUMP_FOLLOWS" ) {
 				comma_strings_to_map( s, num_jump_dep,  symminfo.jump_follows_, "" );
 				jump_follows_set=true;
-			} else if (tag == "DOFS") {
+			} else if ( tag == "DOFS" ) {
 				comma_strings_to_map( s, num_dof,  symminfo.dofs_, "" );
 				dofs_set=true;
-			} else if (tag == "SCORE_MULTIPLY") {
+			} else if ( tag == "SCORE_MULTIPLY" ) {
 				comma_strings_to_vector( s, num_score_multiply,  symminfo.score_multiply_, "" );
 				score_multiply_set = true;
-			} else if (tag == "N_COMPONENTS") {
+			} else if ( tag == "N_COMPONENTS" ) {
 				s >> symminfo.num_components_;
 				num_components_set = true;
-			} else if (tag == "JUMP2DOFNAME") {
+			} else if ( tag == "JUMP2DOFNAME" ) {
 				comma_strings_to_map( s, nnamed_jumps, symminfo.jnum2dofname_, "" );
 				jnum2dofname_set = true;
-			} else if (tag == "DOFNAME2JUMP") {
+			} else if ( tag == "DOFNAME2JUMP" ) {
 				comma_strings_to_map( s, nnamed_jumps, symminfo.dofname2jnum_, "" );
 				dofname2jnum_set = true;
-			} else if (tag == "COMPONENTS") {
+			} else if ( tag == "COMPONENTS" ) {
 				comma_strings_to_vector( s, symminfo.num_components_,  symminfo.components_, "" );
 				//components_set = true;
-			} else if (tag == "COMPONENT_BOUNDS") {
+			} else if ( tag == "COMPONENT_BOUNDS" ) {
 				comma_strings_to_pair_map( s, symminfo.num_components_,  symminfo.component_bounds_, "" );
 				//component_bounds_set = true;
-			} else if (tag == "NAME2COMPONENT") {
+			} else if ( tag == "NAME2COMPONENT" ) {
 				comma_strings_to_map( s, symminfo.num_components_,  symminfo.name2component_, "" );
 				//name2component_set = true;
-			} else if (tag == "JNAME2COMPS") {
+			} else if ( tag == "JNAME2COMPS" ) {
 				comma_strings_to_vector_map( s, nnamed_jumps,  symminfo.jname2components_, "" );
 				//jname2components_set = true;
-			} else if (tag == "JNAME2SUBS") {
+			} else if ( tag == "JNAME2SUBS" ) {
 				comma_strings_to_vector_map( s, nnamed_jumps,  symminfo.jname2subunits_, "" );
 				//jname2subunits_set = true;
 			} else {
@@ -808,91 +813,91 @@ std::istream& operator>> ( std::istream & s, SymmetryInfo & symminfo )
 
 		// try to recover from missing fields (that are not taken care of in the default constructor)
 		// fail if required field is missing
-		if (!npseudo_set || !interfaces_set || !type_set || !num_bb_indep_set || !num_chi_indep_set || !num_jump_indep_set ||
+		if ( !npseudo_set || !interfaces_set || !type_set || !num_bb_indep_set || !num_chi_indep_set || !num_jump_indep_set ||
 				!num_bb_dep_set || !num_chi_dep_set || !num_jump_dep_set || !num_dof_set || !num_score_multiply_set ||
 				!bb_clones_set || !chi_clones_set || !jump_clones_set  || !bb_follows_set ||
-				!chi_follows_set || !jump_follows_set || !dofs_set || !score_multiply_set) {
+				!chi_follows_set || !jump_follows_set || !dofs_set || !score_multiply_set ) {
 			TR.Error << "Failed to read the following fields: ";
-			if (!npseudo_set)  TR.Error << "npseudo ";
-			if (!interfaces_set)  TR.Error << "interfaces ";
-			if (!type_set)  TR.Error << "type ";
-			if (!num_bb_indep_set)  TR.Error << "num_bb_indep ";
-			if (!num_chi_indep_set)  TR.Error << "num_chi_indep ";
-			if (!num_jump_indep_set)  TR.Error << "num_jump_indep ";
-			if (!num_bb_dep_set)  TR.Error << "num_bb_dep ";
-			if (!num_chi_dep_set)  TR.Error << "num_chi_dep ";
-			if (!num_jump_dep_set)  TR.Error << "num_jump_dep ";
-			if (!num_dof_set)  TR.Error << "num_dof ";
-			if (!num_score_multiply_set)  TR.Error << "num_score_multiply ";
-			if (!bb_clones_set)  TR.Error << "bb_clones ";
-			if (!chi_clones_set)  TR.Error << "chi_clones ";
-			if (!jump_clones_set)  TR.Error << "jump_clones ";
-			if (!bb_follows_set)  TR.Error << "bb_follows ";
-			if (!chi_follows_set)  TR.Error << "chi_follows ";
-			if (!jump_follows_set)  TR.Error << "jump_follows ";
-			if (!dofs_set)  TR.Error << "dofs ";
-			if (!score_multiply_set)  TR.Error << "score_multiply ";
+			if ( !npseudo_set )  TR.Error << "npseudo ";
+			if ( !interfaces_set )  TR.Error << "interfaces ";
+			if ( !type_set )  TR.Error << "type ";
+			if ( !num_bb_indep_set )  TR.Error << "num_bb_indep ";
+			if ( !num_chi_indep_set )  TR.Error << "num_chi_indep ";
+			if ( !num_jump_indep_set )  TR.Error << "num_jump_indep ";
+			if ( !num_bb_dep_set )  TR.Error << "num_bb_dep ";
+			if ( !num_chi_dep_set )  TR.Error << "num_chi_dep ";
+			if ( !num_jump_dep_set )  TR.Error << "num_jump_dep ";
+			if ( !num_dof_set )  TR.Error << "num_dof ";
+			if ( !num_score_multiply_set )  TR.Error << "num_score_multiply ";
+			if ( !bb_clones_set )  TR.Error << "bb_clones ";
+			if ( !chi_clones_set )  TR.Error << "chi_clones ";
+			if ( !jump_clones_set )  TR.Error << "jump_clones ";
+			if ( !bb_follows_set )  TR.Error << "bb_follows ";
+			if ( !chi_follows_set )  TR.Error << "chi_follows ";
+			if ( !jump_follows_set )  TR.Error << "jump_follows ";
+			if ( !dofs_set )  TR.Error << "dofs ";
+			if ( !score_multiply_set )  TR.Error << "score_multiply ";
 			TR.Error << std::endl;
 			fail = true;
 		}
 
-		if (!fail) {
+		if ( !fail ) {
 			bool warned = false;
 
 			// now handle any missing fields
-			if (!jump_clone_wts_set) {
-				if (warned) {
+			if ( !jump_clone_wts_set ) {
+				if ( warned ) {
 					TR << "Warning: Symmetric silent file is missing fields; attempting automatic recovery." << std::endl;
 					//AMW: cppcheck correctly flags this line as being unreachable
 					// every time around the loop warned starts as false and can never reach places where it is made true
 					//warned = true;
 				}
 				// set master jumps to 1; clones to 0
-				for (std::map<Size,SymmetryInfo::Clones>::const_iterator map_it=symminfo.jump_clones_.begin(),
-						 map_end=symminfo.jump_clones_.end();
-						 map_it != map_end; ++map_it) {
-					for (Size i=1; i<=map_it->second.size(); ++i) {
+				for ( std::map<Size,SymmetryInfo::Clones>::const_iterator map_it=symminfo.jump_clones_.begin(),
+						map_end=symminfo.jump_clones_.end();
+						map_it != map_end; ++map_it ) {
+					for ( Size i=1; i<=map_it->second.size(); ++i ) {
 						symminfo.jump_clone_wts_[ map_it->second[i] ] = 0;
 					}
 				}
 			}
 
-			if (!nres_monomer_set) {
+			if ( !nres_monomer_set ) {
 				symminfo.nres_monomer_ = num_bb_indep;
 			}
 
-			if (!scoring_subunit_set) {
+			if ( !scoring_subunit_set ) {
 				std::map<Size,SymmetryInfo::Clones>::const_iterator first_bb_clone=symminfo.bb_clones_.begin();
 				symminfo.scoring_subunit_ = 1 + ((first_bb_clone->first-1) / symminfo.nres_monomer_);
 			}
 
 			//fpd this could almost certainly be smarter
-			if (!njump_monomer_set) {
+			if ( !njump_monomer_set ) {
 				symminfo.njump_monomer_ = 0;
 			}
 
 			// assume single comp
-			if (!num_components_set) {
+			if ( !num_components_set ) {
 				symminfo.num_components_ = 1;
 			}
 
 			// warn on anything else
-			if (!nnamed_jumps_set || !jnum2dofname_set || !dofname2jnum_set) {
-				if (warned) {
+			if ( !nnamed_jumps_set || !jnum2dofname_set || !dofname2jnum_set ) {
+				if ( warned ) {
 					TR << "Warning: Symmetric silent file is missing fields; attempting automatic recovery." << std::endl;
 					//warned = true;
 				}
 
-				for (std::map<Size,SymmetryInfo::Clones>::const_iterator map_it=symminfo.jump_clones_.begin(),
-						 map_end=symminfo.jump_clones_.end();
-						 map_it != map_end; ++map_it) {
+				for ( std::map<Size,SymmetryInfo::Clones>::const_iterator map_it=symminfo.jump_clones_.begin(),
+						map_end=symminfo.jump_clones_.end();
+						map_it != map_end; ++map_it ) {
 					// add master
 					std::ostringstream ossmaster;
 					ossmaster << "JUMP" << map_it->first;
 					symminfo.dofname2jnum_[ossmaster.str()] = map_it->first;
 					symminfo.jnum2dofname_[map_it->first] = ossmaster.str();
 
-					for (Size i=1; i<=map_it->second.size(); ++i) {
+					for ( Size i=1; i<=map_it->second.size(); ++i ) {
 						std::ostringstream ossclone;
 						ossclone << "JUMP" << map_it->second[i];
 						symminfo.dofname2jnum_[ossclone.str()] = map_it->second[i];
@@ -909,9 +914,11 @@ std::istream& operator>> ( std::istream & s, SymmetryInfo & symminfo )
 		}
 
 		// finally, update derived info
-		for ( Size i=1; i <=symminfo.num_total_residues_without_pseudo(); ++i )
-			if ( symminfo.bb_is_independent(i) )
+		for ( Size i=1; i <=symminfo.num_total_residues_without_pseudo(); ++i ) {
+			if ( symminfo.bb_is_independent(i) ) {
 				symminfo.last_indep_residue_ = i;
+			}
+		}
 	}
 
 	symminfo.update_score_multiply_factor();
@@ -962,7 +969,7 @@ std::ostream& operator<< ( std::ostream & s, const SymmetryInfo & symminfo )
 	map_to_comma_strings( s, symminfo.jnum2dofname_, "JUMP2DOFNAME" );
 	map_to_comma_strings( s, symminfo.dofname2jnum_, "DOFNAME2JUMP" );
 
-	if (symminfo.components_.size() > 0) {
+	if ( symminfo.components_.size() > 0 ) {
 		vector_to_comma_strings( s, symminfo.components_, "COMPONENTS" );
 		pair_map_to_comma_strings( s, symminfo.component_bounds_, "COMPONENT_BOUNDS" );
 		map_to_comma_strings( s, symminfo.name2component_, "NAME2COMPONENT" );
@@ -975,7 +982,7 @@ std::ostream& operator<< ( std::ostream & s, const SymmetryInfo & symminfo )
 
 bool
 SymmetryInfo::write_silent_struct(
-std::string const & filename
+	std::string const & filename
 )
 {
 	bool success = false;
@@ -998,7 +1005,7 @@ std::string const & filename
 
 bool
 SymmetryInfo::read_silent_struct(
-std::string const & filename
+	std::string const & filename
 )
 {
 	bool success = false;
@@ -1008,11 +1015,11 @@ std::string const & filename
 	std::string line("");
 	if ( !input ) {
 		std::cerr << "ERROR:: Unable to open symmetry info file: "
-					<< filename << std::endl;
+			<< filename << std::endl;
 		return success;
 	}
 
-	while( !input.eof() ) {
+	while ( !input.eof() ) {
 		getline(input,line);
 		line_stream.clear();
 		line_stream.str(line);
@@ -1058,16 +1065,17 @@ SymmetryInfo::map_symmetric_res_pairs( Size res1, Size res2 )
 	int delta ( res2 - res1 );
 	int mapped_res;
 	for ( std::vector< Size>::const_iterator
-        clone     = bb_clones( res1 ).begin(),
-        clone_end = bb_clones( res1 ).end();
-        clone != clone_end; ++clone ){
+			clone     = bb_clones( res1 ).begin(),
+			clone_end = bb_clones( res1 ).end();
+			clone != clone_end; ++clone ) {
 		if ( *clone + delta > num_total_residues() ) {
 			mapped_res = (*clone + delta)%num_total_residues();
 		} else {
 			mapped_res = *clone + delta;
 		}
-		if ( mapped_res < 0 )
+		if ( mapped_res < 0 ) {
 			mapped_res += num_independent_residues();
+		}
 		map.push_back( std::make_pair( *clone, mapped_res ) );
 	}
 	return map;
@@ -1082,7 +1090,7 @@ SymmetryInfo::bb_is_independent( Size const seqpos ) const
 bool
 SymmetryInfo::chi_is_independent( Size const seqpos ) const
 {
-  return chi_follows(seqpos) == 0;
+	return chi_follows(seqpos) == 0;
 }
 
 bool
@@ -1094,7 +1102,7 @@ SymmetryInfo::fa_is_independent( Size const seqpos ) const
 bool
 SymmetryInfo::jump_is_independent( Size const seqpos ) const
 {
-  return jump_follows(seqpos) == 0;
+	return jump_follows(seqpos) == 0;
 }
 
 Size
@@ -1107,13 +1115,14 @@ utility::vector1< bool >
 SymmetryInfo::independent_residues() const
 {
 	utility::vector1 < bool > residues;
-	for ( Size i=1; i <=num_total_residues_with_pseudo(); ++i ){
-		if ( bb_is_independent(i) )
+	for ( Size i=1; i <=num_total_residues_with_pseudo(); ++i ) {
+		if ( bb_is_independent(i) ) {
 			residues.push_back(true);
-		else
+		} else {
 			residues.push_back(false);
-  }
-  return residues;
+		}
+	}
+	return residues;
 }
 
 Size
@@ -1135,16 +1144,16 @@ SymmetryInfo::num_bb_clones() const
 Size
 SymmetryInfo::num_chi_clones() const
 {
-  // all these lists have the same size
-  return chi_clones_.begin()->second.size();
+	// all these lists have the same size
+	return chi_clones_.begin()->second.size();
 }
 
 
 Size
 SymmetryInfo::num_jump_clones() const
 {
-  // all these lists have the same size
-  return jump_clones_.begin()->second.size();
+	// all these lists have the same size
+	return jump_clones_.begin()->second.size();
 }
 
 Size
@@ -1168,7 +1177,7 @@ SymmetryInfo::num_total_residues_with_pseudo() const
 Size
 SymmetryInfo::num_total_residues_without_pseudo() const
 {
-  return num_independent_residues()*( num_bb_clones() + 1 );
+	return num_independent_residues()*( num_bb_clones() + 1 );
 }
 
 Size
@@ -1186,7 +1195,7 @@ SymmetryInfo::score_multiply_factor() const
 Size
 SymmetryInfo::num_virtuals() const
 {
-		return npseudo_;
+	return npseudo_;
 }
 
 void
@@ -1199,37 +1208,37 @@ SymmetryInfo::Clones const &
 SymmetryInfo::bb_clones( Size const seqpos ) const
 {
 	std::map< Size, Clones >::const_iterator it( bb_clones_.find( seqpos ) );
-  if ( it == bb_clones_.end() ) {
-  	return empty_list;
-  }
-  return it->second;
+	if ( it == bb_clones_.end() ) {
+		return empty_list;
+	}
+	return it->second;
 }
 
 SymmetryInfo::Clones const &
 SymmetryInfo::chi_clones( Size const seqpos ) const
 {
-  std::map< Size, Clones >::const_iterator it( chi_clones_.find( seqpos ) );
-  if ( it == chi_clones_.end() ) {
-    return empty_list;
-  }
-  return it->second;
+	std::map< Size, Clones >::const_iterator it( chi_clones_.find( seqpos ) );
+	if ( it == chi_clones_.end() ) {
+		return empty_list;
+	}
+	return it->second;
 }
 
 SymmetryInfo::Clones const &
 SymmetryInfo::jump_clones( Size const seqpos ) const
 {
-  std::map< Size, Clones >::const_iterator it( jump_clones_.find( seqpos ) );
-  if ( it == jump_clones_.end() ) {
-    return empty_list;
-  }
-  return it->second;
+	std::map< Size, Clones >::const_iterator it( jump_clones_.find( seqpos ) );
+	if ( it == jump_clones_.end() ) {
+		return empty_list;
+	}
+	return it->second;
 }
 
 //fpd remap bb_clones/chi_clones when the ASU size changes
 //fpd this recreates the arrays from scratch so it may be somewhat inefficient
 void
 SymmetryInfo::resize_asu( Size nres_new ) {
-	if (nres_new == nres_monomer_) return; // nothing to do
+	if ( nres_new == nres_monomer_ ) return; // nothing to do
 
 	Size N = subunits();
 
@@ -1266,7 +1275,7 @@ SymmetryInfo::resize_asu( Size nres_new ) {
 //fpd remap jump_clones when the number of monomer jumps changes
 void
 SymmetryInfo::update_nmonomer_jumps( Size njump_monomer ) {
-	if (njump_monomer == njump_monomer_) return; // nothing to do
+	if ( njump_monomer == njump_monomer_ ) return; // nothing to do
 
 	//std::cerr << "SymmetryInfo::update_nmonomer_jumps(" << njump_monomer << ")  [old=" << njump_monomer_ << "]\n";
 	Size N = subunits();
@@ -1287,8 +1296,9 @@ SymmetryInfo::update_nmonomer_jumps( Size njump_monomer ) {
 	// the N*njump_monomer internal jumps
 	for ( Size i=1; i<= njump_monomer; ++i ) {
 		for ( Size k=0; k<N; ++k ) {
-			if (k != ( scoring_subunit_ - 1 ) )
+			if ( k != ( scoring_subunit_ - 1 ) ) {
 				add_jump_clone( i + (scoring_subunit_-1)*njump_monomer_, i + k*njump_monomer_, 0.0 );
+			}
 		}
 		//jump_clones_.insert( std::make_pair( i, clones ) );
 	}
@@ -1297,14 +1307,14 @@ SymmetryInfo::update_nmonomer_jumps( Size njump_monomer ) {
 	// N*njump_monomer+1 --> N*njump_monomer+N: the pseudo-rsd--monomer jumps
 	// last N-1 jumps                         : jumps between pseudo-rsds
 	for ( std::map<Size,Clones>::const_iterator it=old_jump_clones.begin(), it_end = old_jump_clones.end();
-	      it != it_end; ++it ) {
+			it != it_end; ++it ) {
 		Size source = it->first;
 		Clones target = it->second;
 
-		if (source > N*old_njump_monomer) {
+		if ( source > N*old_njump_monomer ) {
 			// a symm jump
 			Size new_source = source + N*( njump_monomer - old_njump_monomer );
-			for (Size i=1; i<=target.size(); ++i) {
+			for ( Size i=1; i<=target.size(); ++i ) {
 				add_jump_clone( new_source, target[i] + N*(njump_monomer-old_njump_monomer), old_jump_clone_weights[target[i]] );
 				//std::cerr << "Map (" << source << " , " << target[i] << ") to (" << new_source << " , " << target[i] + N*(njump_monomer-old_njump_monomer) << ")\n";
 			}
@@ -1335,7 +1345,7 @@ SymmetryInfo::update_contiguous_monomers()
 	contiguous_monomers_ = ( last_indep - first_indep + 1 == n_indep );
 
 	// TR.Trace << "SymmetryInfo::update_contiguous_monomers: " << first_indep << ' ' << last_indep << ' '<< n_indep << ' ' <<
-	// 	contiguous_monomers_ << std::endl;
+	//  contiguous_monomers_ << std::endl;
 
 }
 
@@ -1348,7 +1358,7 @@ SymmetryInfo::add_bb_clone( Size const base_pos, Size const clone_pos )
 		utility_exit();
 	}
 	if ( bb_follows_[ clone_pos ] != 0 &&
-			 bb_follows_[ clone_pos ] != base_pos ) {
+			bb_follows_[ clone_pos ] != base_pos ) {
 		std::cerr << "Error: add_bb_clone: clone_pos already a follower: " <<
 			clone_pos << ' ' << bb_follows_[ clone_pos ] << ' ' << base_pos <<
 			std::endl;
@@ -1369,7 +1379,7 @@ SymmetryInfo::add_chi_clone( Size const base_pos, Size const clone_pos )
 		utility_exit();
 	}
 	if ( chi_follows_[ clone_pos ] != 0 &&
-			 chi_follows_[ clone_pos ] != base_pos ) {
+			chi_follows_[ clone_pos ] != base_pos ) {
 		std::cerr << "Error: add_chi_clone: clone_pos already a follower: " <<
 			clone_pos << ' ' << chi_follows_[ clone_pos ] << ' ' << base_pos <<
 			std::endl;
@@ -1389,7 +1399,7 @@ SymmetryInfo::add_jump_clone( Size const base_pos, Size const clone_pos, Real co
 		utility_exit();
 	}
 	if ( jump_follows_[ clone_pos ] != 0 &&
-			 jump_follows_[ clone_pos ] != base_pos ) {
+			jump_follows_[ clone_pos ] != base_pos ) {
 		std::cerr << "Error: add_jump_clone: clone_pos already a follower: " <<
 			clone_pos << ' ' << jump_follows_[ clone_pos ] << ' ' << base_pos <<
 			std::endl;
@@ -1420,11 +1430,11 @@ SymmetryInfo::score_multiply( Size const res1, Size const res2 ) const
 	bool bb2ind = bb_is_independent(res2);
 	if ( res1 > num_total_residues_without_pseudo() ) {
 		return ( bb2ind ) ? reweight_symm_interactions_*score_multiply_[res2] : 0;
-	} else if  (res2 > num_total_residues_without_pseudo() ) {
+	} else if  ( res2 > num_total_residues_without_pseudo() ) {
 		return ( bb1ind ) ? reweight_symm_interactions_*score_multiply_[res1] : 0;
-	} else if (bb1ind) {
+	} else if ( bb1ind ) {
 		return (bb2ind?1:reweight_symm_interactions_)*score_multiply_[res2];
-	} else if (bb2ind) {
+	} else if ( bb2ind ) {
 		return reweight_symm_interactions_*score_multiply_[res1];
 	} else {
 		return 0;
@@ -1466,14 +1476,14 @@ SymmetryInfo::set_score_multiply_from_subunit_factors( utility::vector1< Size > 
 		}
 	}
 	for ( Size i = n_subunits + 1 ; i <= score_multiply_vector_subunit.size() ; ++i ) {
-	    score_multiply_.push_back( score_multiply_vector_subunit[i] );
+		score_multiply_.push_back( score_multiply_vector_subunit[i] );
 	}
 }
 
 void
 SymmetryInfo::set_score_multiply( Size const res, Size const factor )
 {
-debug_assert ( res <= score_multiply_.size() );
+	debug_assert ( res <= score_multiply_.size() );
 	score_multiply_[ res ] = factor;
 }
 
@@ -1533,7 +1543,7 @@ SymmetryInfo::dependent_dofs( DOF_ID const & id, Conformation const & conf ) con
 	Size const atomno( id.atomno() );
 	id::TorsionType const type( guess_torsion_type_of_dof_id( id, conf ) );
 	Clones const & clones( type == id::JUMP ? jump_clones( conf.fold_tree().get_jump_that_builds_residue( id.rsd() ) ):
-												 ( type == id::BB ? bb_clones( seqpos ) : chi_clones( seqpos ) ) );
+		( type == id::BB ? bb_clones( seqpos ) : chi_clones( seqpos ) ) );
 
 	DOF_IDs dofs;
 	for ( Clones::const_iterator pos= clones.begin(), epos=clones.end(); pos != epos; ++pos ) {
@@ -1552,13 +1562,13 @@ SymmetryInfo::dof_is_independent( DOF_ID const & id, Conformation const & conf )
 	id::TorsionType const type( guess_torsion_type_of_dof_id( id, conf ) );
 
 	switch ( type ) {
-	case id::BB:
+	case id::BB :
 		return bb_is_independent( id.rsd() );
-	case id::CHI:
+	case id::CHI :
 		return chi_is_independent( id.rsd() );
-	case id::JUMP:
+	case id::JUMP :
 		return jump_is_independent( conf.fold_tree().get_jump_that_builds_residue( id.rsd() ) );
-	default:
+	default :
 		utility_exit_with_message("dof_is_independent: unrecognized TorsionType!");
 		return false;
 	}
@@ -1590,8 +1600,8 @@ bool
 SymmetryInfo::torsion_is_independent( TorsionID const & id ) const
 {
 	return ( ( id.type() == id::BB   &&   bb_is_independent( id.rsd() ) ) ||
-					 ( id.type() == id::CHI  &&  chi_is_independent( id.rsd() ) ) ||
-					 ( id.type() == id::JUMP && jump_is_independent( id.rsd() ) ) );
+		( id.type() == id::CHI  &&  chi_is_independent( id.rsd() ) ) ||
+		( id.type() == id::JUMP && jump_is_independent( id.rsd() ) ) );
 }
 
 bool
@@ -1611,7 +1621,7 @@ SymmetryInfo::dependent_torsions( TorsionID const & id ) const
 	Size const seqpos( id.rsd() );
 	Clones const & seqpos_clones( id.type() == id::BB ? bb_clones( seqpos ) : chi_clones( seqpos ) );
 
-//std::cerr << " dependent_torsions( TorsionID const & )  bb=" << (id.type() == id::BB) << "   chi=" << (id.type() == id::CHI) << "   jump=" << (id.type() == id::JUMP) << std::endl;
+	//std::cerr << " dependent_torsions( TorsionID const & )  bb=" << (id.type() == id::BB) << "   chi=" << (id.type() == id::CHI) << "   jump=" << (id.type() == id::JUMP) << std::endl;
 
 	TorsionIDs tors;
 	for ( Clones::const_iterator pos= seqpos_clones.begin(), epos=seqpos_clones.end(); pos != epos; ++pos ) {
@@ -1624,11 +1634,11 @@ SymmetryInfo::dependent_torsions( TorsionID const & id ) const
 SymmetryInfo::AtomIDs
 SymmetryInfo::dependent_atoms( AtomID const & id ) const
 {
-  if ( !atom_is_independent( id ) ) {
-    utility_exit_with_message( "SymmetryInfo::dependent_atoms: atom is not independent!" );
-  }
+	if ( !atom_is_independent( id ) ) {
+		utility_exit_with_message( "SymmetryInfo::dependent_atoms: atom is not independent!" );
+	}
 	Size const seqpos( id.rsd() );
-  Clones const & seqpos_clones( bb_clones( seqpos ) );
+	Clones const & seqpos_clones( bb_clones( seqpos ) );
 
 	AtomIDs atoms;
 	for ( Clones::const_iterator pos= seqpos_clones.begin(), epos=seqpos_clones.end(); pos != epos; ++pos ) {
@@ -1647,7 +1657,7 @@ SymmetryInfo::is_asymmetric_seqpos( Size const res ) const
 Size
 SymmetryInfo::get_asymmetric_seqpos( Size const res ) const
 {
-	if( res > 0 && get_use_symmetry() ) {
+	if ( res > 0 && get_use_symmetry() ) {
 		Size nres_monomer = num_independent_residues(), num_monomers = subunits() ;
 		return ( res > nres_monomer*num_monomers ? res - nres_monomer*(num_monomers-1) : (res-1)%nres_monomer + 1 );
 	} else {
@@ -1678,13 +1688,13 @@ SymmetryInfo::subunit_index( Size const seqpos ) const {
 
 std::string
 SymmetryInfo::get_jump_name(Size jnum) const {
-	if( 0 == jnum2dofname_.count(jnum) ) utility_exit_with_message("bad jump num");
+	if ( 0 == jnum2dofname_.count(jnum) ) utility_exit_with_message("bad jump num");
 	return jnum2dofname_.find(jnum)->second;
 }
 
 Size
 SymmetryInfo::get_jump_num(std::string jname) const {
-	if( 0 == dofname2jnum_.count(jname) ) utility_exit_with_message("bad jump name");
+	if ( 0 == dofname2jnum_.count(jname) ) utility_exit_with_message("bad jump name");
 	return dofname2jnum_.find(jname)->second;
 }
 
@@ -1697,8 +1707,8 @@ SymmetryInfo::set_jump_name(Size jnum, std::string jname) {
 Size
 SymmetryInfo::num_slidablejumps() const {
 	Size retval = 0;
-	for(std::map<Size,SymDof>::const_iterator i = dofs_.begin(), end = dofs_.end(); i != end; ++i ) {
-		if (i->second.allow_dof(1) || i->second.allow_dof(2) || i->second.allow_dof(3)) retval++;
+	for ( std::map<Size,SymDof>::const_iterator i = dofs_.begin(), end = dofs_.end(); i != end; ++i ) {
+		if ( i->second.allow_dof(1) || i->second.allow_dof(2) || i->second.allow_dof(3) ) retval++;
 	}
 	return retval;
 }
@@ -1710,101 +1720,101 @@ SymmetryInfo::get_num_components() const {
 
 utility::vector1<char> const &
 SymmetryInfo::get_components() const {
-	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
+	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
 	return components_;
 }
 
 char
 SymmetryInfo::get_component(Size i) const {
-	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
+	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
 	return components_[i];
 }
 
 std::map<char,std::pair<Size,Size> > const &
 SymmetryInfo::get_component_bounds() const {
-	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
+	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
 	return component_bounds_;
 }
 
 std::map<std::string,char> const &
 SymmetryInfo::get_subunit_name_to_component() const {
-	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
+	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
 	return name2component_;
 }
 
 std::map<std::string,utility::vector1<char> > const &
 SymmetryInfo::get_jump_name_to_components() const {
-	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
+	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
 	return jname2components_;
 }
 
 std::map<std::string,utility::vector1<Size> > const &
 SymmetryInfo::get_jump_name_to_subunits() const {
-	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
+	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
 	return jname2subunits_;
 }
 
 std::pair<Size,Size> const &
 SymmetryInfo::get_component_bounds(char c) const {
-	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
-	if( component_bounds_.find(c) == component_bounds_.end() ){
+	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
+	if ( component_bounds_.find(c) == component_bounds_.end() ) {
 		utility_exit_with_message(std::string("no symmetry component ")+c);
 	}
 	return component_bounds_.find(c)->second;
 }
 Size
 SymmetryInfo::get_component_lower_bound(char c) const {
-	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
-	if( component_bounds_.find(c) == component_bounds_.end() ){
+	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
+	if ( component_bounds_.find(c) == component_bounds_.end() ) {
 		utility_exit_with_message(std::string("no symmetry component ")+c);
 	}
 	return component_bounds_.find(c)->second.first;
 }
 Size
 SymmetryInfo::get_component_upper_bound(char c) const {
-	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
-	if( component_bounds_.find(c) == component_bounds_.end() ){
+	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
+	if ( component_bounds_.find(c) == component_bounds_.end() ) {
 		utility_exit_with_message(std::string("no symmetry component ")+c);
 	}
 	return component_bounds_.find(c)->second.second;
 }
 char
 SymmetryInfo::get_component_of_residue(Size ir) const {
-	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
-	if( ir > num_total_residues_without_pseudo() || ir < 1 ){
+	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
+	if ( ir > num_total_residues_without_pseudo() || ir < 1 ) {
 		utility_exit_with_message(std::string("no symmetry component for residue "));
 	}
 	Size irindep = (ir-1)%num_independent_residues()+1;
-	for(std::map<char,std::pair<Size,Size> >::const_iterator i = component_bounds_.begin(); i != component_bounds_.end(); ++i){
+	for ( std::map<char,std::pair<Size,Size> >::const_iterator i = component_bounds_.begin(); i != component_bounds_.end(); ++i ) {
 		char component = i->first;
 		Size lower = i->second.first;
 		Size upper = i->second.second;
 		// std::cerr << component << " " << lower << " " << upper << " " << irindep << std::endl;
-		if( lower <= irindep && irindep <= upper ) return component;
+		if ( lower <= irindep && irindep <= upper ) return component;
 	}
 	utility_exit_with_message(std::string("no symmetry component for residue "));
 	return ' ';
 }
 char
 SymmetryInfo::get_subunit_name_to_component(std::string const & vname) const {
-	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
-	if( name2component_.find(vname) == name2component_.end() ){
+	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
+	if ( name2component_.find(vname) == name2component_.end() ) {
 		utility_exit_with_message(std::string("no symmetry component for ")+vname);
 	}
 	return name2component_.find(vname)->second;
 }
 utility::vector1<char> const &
 SymmetryInfo::get_jump_name_to_components(std::string const & jname) const {
-	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
-	if( jname2components_.find(jname) == jname2components_.end() ){
+	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
+	if ( jname2components_.find(jname) == jname2components_.end() ) {
 		utility_exit_with_message(std::string("no symmetry component for ")+jname);
 	}
 	return jname2components_.find(jname)->second;
 }
 utility::vector1<Size> const &
 SymmetryInfo::get_jump_name_to_subunits(std::string const & jname) const {
-	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
-	if( jname2subunits_.find(jname) == jname2subunits_.end() ){
+	if ( components_.size()==0 ) utility_exit_with_message("function not for use in single component symmetry");
+	if ( jname2subunits_.find(jname) == jname2subunits_.end() ) {
 		utility_exit_with_message(std::string("no symmetry component for ")+jname);
 	}
 	return jname2subunits_.find(jname)->second;

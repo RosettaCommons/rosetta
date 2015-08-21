@@ -66,9 +66,9 @@
 
 namespace protocols {
 namespace simple_filters {
-	
+
 static thread_local basic::Tracer residues_in_interface_tracer( "protocols.simple_filters.ResiduesInInterfaceFilter" );
-	
+
 protocols::filters::FilterOP
 ResiduesInInterfaceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResiduesInInterfaceFilter ); }
 
@@ -92,9 +92,9 @@ core::Size ResiduesInInterfaceFilter::compute( core::pose::Pose const & pose ) c
 	protocols::scoring::Interface interface(rb_jump_);
 	interface.calculate( temp_pose );
 
-	for (Size i = 1; i <= temp_pose.total_residue(); i++) {
+	for ( Size i = 1; i <= temp_pose.total_residue(); i++ ) {
 		if ( !temp_pose.residue(i).is_protein() ) continue;
-		if( interface.is_interface( i ) ) interface_counter++;
+		if ( interface.is_interface( i ) ) interface_counter++;
 	}
 	return( interface_counter );
 }
@@ -112,12 +112,10 @@ bool
 ResiduesInInterfaceFilter::apply( core::pose::Pose const & pose ) const {
 	core::Size const interface_res( compute( pose ));
 	residues_in_interface_tracer<<"There are "<<interface_res<<" residues in the interface.";
-	if( interface_res <= residues_in_interface_threshold_ )
-	{
+	if ( interface_res <= residues_in_interface_threshold_ ) {
 		residues_in_interface_tracer<<" Breaking out."<<std::endl;
 		return( false );
-	}
-	else residues_in_interface_tracer<<std::endl;
+	} else residues_in_interface_tracer<<std::endl;
 	return( true );
 }
 
@@ -132,6 +130,6 @@ ResiduesInInterfaceFilter::report_sm( core::pose::Pose const & pose ) const {
 	core::Size const interface_res( compute( pose ));
 	return( (core::Real) interface_res );
 }
-	
+
 }
 }

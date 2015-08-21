@@ -10,7 +10,7 @@
 /// @file FragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 /// @author Oliver Lange
 /// @author James Thompson
@@ -112,8 +112,8 @@ bool contains_stageid( utility::vector1< abinitio::StageID > vec, abinitio::Stag
 /// small(stage2/stage3/stage4)
 /// smooth_small ( stage3/stage4)
 FragmentSampler::FragmentSampler( topology_broker::TopologyBrokerOP broker )
-	: topology_broker_( broker ),
-		checkpoints_("FragmentSampler")
+: topology_broker_( broker ),
+	checkpoints_("FragmentSampler")
 {
 	BaseClass::type( "FragmentSampler" );
 
@@ -130,9 +130,9 @@ FragmentSampler::clone() const
 }
 
 void FragmentSampler::checkpointed_cycle_block(
-			 core::pose::Pose& pose,
-			 StageID stage_id,
-			 void (FragmentSampler::*cycles)(core::pose::Pose& )
+	core::pose::Pose& pose,
+	StageID stage_id,
+	void (FragmentSampler::*cycles)(core::pose::Pose& )
 ) {
 
 	// part X ----------------------------------------
@@ -144,7 +144,7 @@ void FragmentSampler::checkpointed_cycle_block(
 	PROF_START( id2proftag( stage_id ) );
 	clock_t starttime = clock();
 	try {
-		if ( !get_checkpoints().recover_checkpoint( pose, get_current_tag(), id2string( stage_id ), false /* fullatom*/, true /*fold tree */ )) {
+		if ( !get_checkpoints().recover_checkpoint( pose, get_current_tag(), id2string( stage_id ), false /* fullatom*/, true /*fold tree */ ) ) {
 			scoring::constraints::ConstraintSetOP orig_constraints( pose.constraint_set()->clone() );
 
 			//run the fragment cycles
@@ -166,15 +166,15 @@ void FragmentSampler::checkpointed_cycle_block(
 		if ( option[ basic::options::OptionKeys::run::profile ] ) prof_show();
 
 	} catch ( moves::EXCN_Converged& excn ) {
-		//		Size last_stage( STAGE_4 );
-		//		while( contains_stageid( skip_stages_, last_stage ) ) --last_stage;
+		//  Size last_stage( STAGE_4 );
+		//  while( contains_stageid( skip_stages_, last_stage ) ) --last_stage;
 		mc().recover_low( pose );
 		get_checkpoints().flush_checkpoints();
 	};
 	clock_t endtime = clock();
 	if ( option[ basic::options::OptionKeys::abinitio::debug ]() ) {
 		tr.Info << "Timeperstep: " << (double(endtime) - starttime )/(CLOCKS_PER_SEC ) << std::endl;
-	  jd2::output_intermediate_pose( pose, id2string( stage_id ) );
+		jd2::output_intermediate_pose( pose, id2string( stage_id ) );
 	}
 }
 
@@ -188,7 +188,7 @@ void FragmentSampler::apply( pose::Pose & pose ) {
 	runtime_assert( topology_broker_ != 0 ); // really this protocol doesn't make much sense without it
 	mc().clear_poses(); // these two statements were only necessary after march 18 2009... something ALF did recently ?
 	mc().reset( pose );
-	//	current_scorefxn()( pose );
+	// current_scorefxn()( pose );
 	if ( option[ OptionKeys::run::dry_run ]() ) {
 		replace_scorefxn( pose, STAGE_4, 1.0 );
 		return;
@@ -196,21 +196,18 @@ void FragmentSampler::apply( pose::Pose & pose ) {
 
 	total_trials_ = 0;
 	current_scorefxn()(pose);
-	if(option[OptionKeys::abinitio::explicit_pdb_debug] || option[ basic::options::OptionKeys::abinitio::debug ]() )
-	{
+	if ( option[OptionKeys::abinitio::explicit_pdb_debug] || option[ basic::options::OptionKeys::abinitio::debug ]() ) {
 		jd2::output_intermediate_pose( pose, "stage0" );
 	}
-	
+
 	if ( !contains_stageid( skip_stages_, STAGE_1 ) ) {
 		prepare_stage1( pose );
 		checkpointed_cycle_block( pose, STAGE_1, &FragmentSampler::do_stage1_cycles );
 
 		//loophashing things
-		if(option[OptionKeys::abinitio::use_loophash_filter].user())
-		{
+		if ( option[OptionKeys::abinitio::use_loophash_filter].user() ) {
 			tr.Info << "calling check_loops(pose)!" << std::endl;
-				if(!check_loops(pose))
-			{
+			if ( !check_loops(pose) ) {
 				tr.Info << "loophash didn't find hits so returning!" << std::endl;
 				this->set_last_move_status(protocols::moves::FAIL_RETRY);
 				return;
@@ -259,7 +256,7 @@ void FragmentSampler::set_defaults() {
 
 //@detail sets Monto-Carlo object to default
 void FragmentSampler::set_default_mc(
- 	scoring::ScoreFunction const & scorefxn
+	scoring::ScoreFunction const & scorefxn
 ) {
 	set_mc( moves::MonteCarloOP( new moves::MonteCarlo( scorefxn, temperature_ ) ) );
 	canonical_sampling::mc_convergence_checks::setup_convergence_checks_from_cmdline( *mc_ );
@@ -293,21 +290,21 @@ topology_broker::TopologyBroker const& FragmentSampler::topology_broker() {
 //core::scoring::MembraneTopologyCOP
 //FragmentSampler::get_membrane_topology_from_pose(core::pose::Pose const& pose)
 //{
-//	core::scoring::MembraneTopologyCOP membrane_topology;
-//	if(option[ basic::options::OptionKeys::abinitio::TMH_topology].user() && option[basic::options::OptionKeys::abinitio::membrane].user())
-//	{
-//		//get the membrane_topology
-//		if (pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) )
-//		{
-//			membrane_topology = static_cast< core::scoring::MembraneTopology * >
-//			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY) () );
-//		}else{
-//			utility_exit_with_message("Must have MembraneTopology!");
-//		}
-//	}else{
-//		utility_exit_with_message("Must have MembraneTopology!");
-//	}
-//	return membrane_topology;
+// core::scoring::MembraneTopologyCOP membrane_topology;
+// if(option[ basic::options::OptionKeys::abinitio::TMH_topology].user() && option[basic::options::OptionKeys::abinitio::membrane].user())
+// {
+//  //get the membrane_topology
+//  if (pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) )
+//  {
+//   membrane_topology = static_cast< core::scoring::MembraneTopology * >
+//   ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY) () );
+//  }else{
+//   utility_exit_with_message("Must have MembraneTopology!");
+//  }
+// }else{
+//  utility_exit_with_message("Must have MembraneTopology!");
+// }
+// return membrane_topology;
 //}
 
 void FragmentSampler::set_default_scores() {
@@ -359,11 +356,11 @@ void FragmentSampler::set_score_weight( scoring::ScoreType type, Real setting, S
 	if ( stage == ALL_STAGES ) tr.Debug << "all stages ";
 	else tr.Debug << "stage " << (stage <= STAGE_3a ? stage : ( stage-1 ) ) << ( stage == STAGE_3b ? "b " : " " );
 	tr.Debug << scoring::name_from_score_type(type) << " " << setting << std::endl;
-	if (score_stage1_  && ( stage == STAGE_1  || stage == ALL_STAGES )) score_stage1_ ->set_weight(type, setting);
-	if (score_stage2_  && ( stage == STAGE_2  || stage == ALL_STAGES )) score_stage2_ ->set_weight(type, setting);
-	if (score_stage3a_ && ( stage == STAGE_3a || stage == ALL_STAGES )) score_stage3a_->set_weight(type, setting);
-	if (score_stage3b_ && ( stage == STAGE_3b || stage == ALL_STAGES )) score_stage3b_->set_weight(type, setting);
-	if (score_stage4_  && ( stage == STAGE_4  || stage == ALL_STAGES )) score_stage4_ ->set_weight(type, setting);
+	if ( score_stage1_  && ( stage == STAGE_1  || stage == ALL_STAGES ) ) score_stage1_ ->set_weight(type, setting);
+	if ( score_stage2_  && ( stage == STAGE_2  || stage == ALL_STAGES ) ) score_stage2_ ->set_weight(type, setting);
+	if ( score_stage3a_ && ( stage == STAGE_3a || stage == ALL_STAGES ) ) score_stage3a_->set_weight(type, setting);
+	if ( score_stage3b_ && ( stage == STAGE_3b || stage == ALL_STAGES ) ) score_stage3b_->set_weight(type, setting);
+	if ( score_stage4_  && ( stage == STAGE_4  || stage == ALL_STAGES ) ) score_stage4_ ->set_weight(type, setting);
 }
 
 //@brief currently used score function ( depends on stage )
@@ -402,7 +399,7 @@ void FragmentSampler::set_default_options() {
 	skip_stages_.clear();
 	if ( option[ OptionKeys::abinitio::skip_stages ].user() ) {
 		for ( IntegerVectorOption::const_iterator it = option[ OptionKeys::abinitio::skip_stages ]().begin(),
-					eit = option[ OptionKeys::abinitio::skip_stages ]().end(); it!=eit; ++it ) {
+				eit = option[ OptionKeys::abinitio::skip_stages ]().end(); it!=eit; ++it ) {
 			if ( *it == 1 ) skip_stages_.push_back( STAGE_1 );
 			else if ( *it == 2 ) skip_stages_.push_back( STAGE_2 );
 			else if ( *it == 3 ) skip_stages_.push_back( STAGE_3 );
@@ -412,14 +409,13 @@ void FragmentSampler::set_default_options() {
 
 	if ( option[ OptionKeys::abinitio::recover_low_in_stages ].user() ) {
 		for ( IntegerVectorOption::const_iterator it = option[ OptionKeys::abinitio::recover_low_in_stages ]().begin(),
-					eit = option[ OptionKeys::abinitio::recover_low_in_stages ]().end(); it!=eit; ++it ) {
+				eit = option[ OptionKeys::abinitio::recover_low_in_stages ]().end(); it!=eit; ++it ) {
 			if ( *it == 1 ) recover_low_stages_.push_back( STAGE_1 );
 			else if ( *it == 2 ) recover_low_stages_.push_back( STAGE_2 );
 			else if ( *it == 3 ) {
 				recover_low_stages_.push_back( STAGE_3a );
 				recover_low_stages_.push_back( STAGE_3b );
-			}
-			else if ( *it == 4 ) recover_low_stages_.push_back( STAGE_4 );
+			} else if ( *it == 4 ) recover_low_stages_.push_back( STAGE_4 );
 		}
 	} else {
 		recover_low_stages_.clear();
@@ -440,36 +436,34 @@ FragmentSampler::mover( pose::Pose const& pose, StageID stage_id, core::scoring:
 void FragmentSampler::do_stage1_cycles( pose::Pose &pose ) {
 	moves::RepeatMover( moves::MoverOP( new moves::TrialMover( mover( pose, STAGE_1, current_scorefxn() ), mc_ptr() ) ), stage1_cycles() ).apply( pose );
 	mc().reset( pose ); // make sure that we keep the final structure
-	if(option[OptionKeys::abinitio::explicit_pdb_debug])
-	{
+	if ( option[OptionKeys::abinitio::explicit_pdb_debug] ) {
 		jd2::output_intermediate_pose( pose, "stage1_cycles" );
 	}
 	//jd2::output_intermediate_pose( pose, "stage1_cycles" );
-  if ( option[ basic::options::OptionKeys::abinitio::debug ]() ) {
-	jd2::output_intermediate_pose( pose, "stage1_cycles" );
+	if ( option[ basic::options::OptionKeys::abinitio::debug ]() ) {
+		jd2::output_intermediate_pose( pose, "stage1_cycles" );
 	}
 }
 
 void FragmentSampler::do_stage2_cycles( pose::Pose &pose ) {
 	moves::RepeatMover( moves::MoverOP( new moves::TrialMover( mover( pose, STAGE_2, current_scorefxn() ), mc_ptr() ) ), stage2_cycles() ).apply( pose );
-	if(option[OptionKeys::abinitio::explicit_pdb_debug])
-	{
+	if ( option[OptionKeys::abinitio::explicit_pdb_debug] ) {
 		jd2::output_intermediate_pose( pose, "stage2_cycles" );
 	}
 }
 
 /*! @detail stage3 cycles:
-	nloop1 : outer iterations
-	nloop2 : inner iterations
-	stage3_cycle : trials per inner iteration
-	every inner iteration we switch between score_stage3a ( default: score2 ) and score_stage3b ( default: score 5 )
+nloop1 : outer iterations
+nloop2 : inner iterations
+stage3_cycle : trials per inner iteration
+every inner iteration we switch between score_stage3a ( default: score2 ) and score_stage3b ( default: score 5 )
 
-	prepare_loop_in_stage3() is called before the stage3_cycles() of trials are started.
+prepare_loop_in_stage3() is called before the stage3_cycles() of trials are started.
 
-	first outer loop-iteration is done with TrialMover trial_large()
-	all following iterations with trial_small()
+first outer loop-iteration is done with TrialMover trial_large()
+all following iterations with trial_small()
 
-	start each iteration with the lowest_score_pose. ( mc->recover_low() -- called in prepare_loop_in_stage3() )
+start each iteration with the lowest_score_pose. ( mc->recover_low() -- called in prepare_loop_in_stage3() )
 
 */
 void FragmentSampler::do_stage3_cycles( pose::Pose &pose ) {
@@ -488,7 +482,7 @@ void FragmentSampler::do_stage3_cycles( pose::Pose &pose ) {
 	Size const total_iterations ( nloop1*nloop2 );
 
 	int iteration = 1;
-	for ( int lct1 = 1; lct1 <= nloop1; lct1++) {
+	for ( int lct1 = 1; lct1 <= nloop1; lct1++ ) {
 		for ( int lct2 = 1; lct2 <= nloop2; lct2++, iteration++  ) {
 			tr.Debug << "Loop: " << lct1 << "   " << lct2 << std::endl;
 			StageID current_stage_id = ( numeric::mod( (int)iteration, 2 ) == 0 || iteration > 7 ) ? STAGE_3a : STAGE_3b;
@@ -496,11 +490,11 @@ void FragmentSampler::do_stage3_cycles( pose::Pose &pose ) {
 			core::Real progress( 1.0* iteration/total_iterations );
 
 			if ( !get_checkpoints().recover_checkpoint( pose, get_current_tag(), "stage_3_iter"+string_of( lct1)+"_"+string_of(lct2),
-			                                       false /*fullatom */, true /*fold tree */ )) {
+					false /*fullatom */, true /*fold tree */ ) ) {
 
 				tr.Debug << "  Score stage3 loop iteration " << lct1 << " " << lct2 << std::endl;
 				moves::TrialMoverOP stage3_trials( new moves::TrialMover( mover( pose, current_stage_id, current_scorefxn(), progress ), mc_ptr() ) );
-					moves::RepeatMover( stage3_trials, stage3_cycles() ).apply( pose );
+				moves::RepeatMover( stage3_trials, stage3_cycles() ).apply( pose );
 
 				recover_low( pose, current_stage_id );
 				get_checkpoints().checkpoint( pose, get_current_tag(), "stage_3_iter"+string_of( lct1)+"_"+string_of(lct2), true /*fold tree */ );
@@ -508,8 +502,7 @@ void FragmentSampler::do_stage3_cycles( pose::Pose &pose ) {
 			get_checkpoints().debug( get_current_tag(), "stage_3_iter"+string_of( lct1)+"_"+string_of(lct2), current_scorefxn()( pose ) );
 		} // loop 2
 	} // loop 1
-	if(option[OptionKeys::abinitio::explicit_pdb_debug])
-	{
+	if ( option[OptionKeys::abinitio::explicit_pdb_debug] ) {
 		jd2::output_intermediate_pose( pose, "stage3_cycles" );
 	}
 }
@@ -519,10 +512,10 @@ void FragmentSampler::do_stage4_cycles( pose::Pose &pose ) {
 	for ( Size kk = 1; kk <= nloop_stage4; ++kk ) {
 		prepare_loop_in_stage4( pose, kk, nloop_stage4 );
 
-		if (!get_checkpoints().recover_checkpoint( pose, get_current_tag(), "stage4_kk_" + ObjexxFCL::string_of(kk), false /* fullatom */, true /* fold_tree */ )) {
+		if ( !get_checkpoints().recover_checkpoint( pose, get_current_tag(), "stage4_kk_" + ObjexxFCL::string_of(kk), false /* fullatom */, true /* fold_tree */ ) ) {
 			tr.Debug << "start " << stage4_cycles() << " cycles" << std::endl;
 			moves::TrialMoverOP stage4_trials( new moves::TrialMover( mover( pose, STAGE_4, current_scorefxn(), 1.0*kk/nloop_stage4 ), mc_ptr() ) );
-				moves::RepeatMover( stage4_trials, stage4_cycles() ).apply( pose );
+			moves::RepeatMover( stage4_trials, stage4_cycles() ).apply( pose );
 			tr.Debug << "finished" << std::endl;
 
 			recover_low( pose, STAGE_4 );
@@ -532,8 +525,7 @@ void FragmentSampler::do_stage4_cycles( pose::Pose &pose ) {
 
 		//don't store last structure since it will be exactly the same as the final structure delivered back via apply
 	}  // loop kk
-	if(option[OptionKeys::abinitio::explicit_pdb_debug])
-	{
+	if ( option[OptionKeys::abinitio::explicit_pdb_debug] ) {
 		jd2::output_intermediate_pose( pose, "stage4_cycles" );
 	}
 }
@@ -556,11 +548,11 @@ void FragmentSampler::replace_scorefxn( core::pose::Pose& pose, StageID stage, c
 	// checkpointing to work correctly. --> that means no recover_low at this point! have to call it explicitly in stage3_loops
 
 	//intra_stage_progress = intra_stage_progress;
-	if (score_stage1_  && ( stage == STAGE_1 )) current_scorefxn( *score_stage1_ );
-	if (score_stage2_  && ( stage == STAGE_2 )) current_scorefxn( *score_stage2_ );
-	if (score_stage3a_ && ( stage == STAGE_3a || stage == STAGE_3 )) current_scorefxn( *score_stage3a_ );
-	if (score_stage3b_ && ( stage == STAGE_3b)) current_scorefxn( *score_stage3b_ );
-	if (score_stage4_  && ( stage == STAGE_4 )) current_scorefxn( *score_stage4_ );
+	if ( score_stage1_  && ( stage == STAGE_1 ) ) current_scorefxn( *score_stage1_ );
+	if ( score_stage2_  && ( stage == STAGE_2 ) ) current_scorefxn( *score_stage2_ );
+	if ( score_stage3a_ && ( stage == STAGE_3a || stage == STAGE_3 ) ) current_scorefxn( *score_stage3a_ );
+	if ( score_stage3b_ && ( stage == STAGE_3b) ) current_scorefxn( *score_stage3b_ );
+	if ( score_stage4_  && ( stage == STAGE_4 ) ) current_scorefxn( *score_stage4_ );
 	mc_->set_autotemp( true, temperature_ );
 	mc_->set_temperature( temperature_ ); // temperature might have changed due to autotemp..
 	mc_->reset( pose );
@@ -607,17 +599,15 @@ bool FragmentSampler::check_loops(core::pose::Pose& pose)
 	using basic::options::option;
 	utility::vector1 < core::Size > loop_sizes = option[lh::loopsizes]();
 	core::Real filter_acceptance_rate(0.0);
-	if(option[OptionKeys::abinitio::loophash_filter_acceptance_rate].user())
-	{
+	if ( option[OptionKeys::abinitio::loophash_filter_acceptance_rate].user() ) {
 		filter_acceptance_rate = option[OptionKeys::abinitio::loophash_filter_acceptance_rate].value();
-	}else{
+	} else {
 		filter_acceptance_rate = 0.5;
 	}
 	core::Size radius_size(0);
-	if(option[lh::radius_size].user())
-	{
+	if ( option[lh::radius_size].user() ) {
 		radius_size = (core::Size)(option[lh::radius_size].value());
-	}else{
+	} else {
 		radius_size = 2;
 	}
 
@@ -627,15 +617,14 @@ bool FragmentSampler::check_loops(core::pose::Pose& pose)
 
 	//get the membrane_topology
 	core::scoring::MembraneTopologyOP topology;
-	if (pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) )
-	{
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ) {
 		topology = utility::pointer::static_pointer_cast< core::scoring::MembraneTopology > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY)  );
-	}else{
+	} else {
 		utility_exit_with_message("Must have MembraneTopology!");
 	}
 
-//	core::scoring::MembraneTopologyOP topology = pose.data().get(core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY);
-//	pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, topology );
+	// core::scoring::MembraneTopologyOP topology = pose.data().get(core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY);
+	// pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, topology );
 	topology->initialize(spanfile);
 
 	//read in loophash database (DB made in a separate step before running Abinitio)
@@ -659,8 +648,7 @@ bool FragmentSampler::check_loops(core::pose::Pose& pose)
 	core::Size stop = 0;
 
 	//Loop through spans to figure out loop defs. For each loop, figure out loop hashing
-	for(span_index = 1; span_index <= nspan-1;++span_index)
-	{
+	for ( span_index = 1; span_index <= nspan-1; ++span_index ) {
 		//need to know the beginning and end of the TMs to determine where the loops are
 		previous_span_begin(span_index) = topology->span_begin(span_index);
 		previous_span_end(span_index) = topology->span_end(span_index);
@@ -671,15 +659,14 @@ bool FragmentSampler::check_loops(core::pose::Pose& pose)
 		loop_end(span_index) = span_begin(span_index);
 
 		//if the predicted loop (that is, not span) is shorter than 3 res
-		if(loop_end(span_index) - loop_begin(span_index) < 2)
-		{
+		if ( loop_end(span_index) - loop_begin(span_index) < 2 ) {
 			loop_begin(span_index) -= 1;
 			loop_end(span_index) += 1;
 		}
 
 		//Print loop begin and end
 		tr.Debug << "span_index:  " << span_index << " loop_begin:  " << loop_begin(span_index) << " loop_end: "
-				<< loop_end(span_index) << std::endl;
+			<< loop_end(span_index) << std::endl;
 
 		assert(loop_begin(span_index) != 0);
 		assert(loop_end(span_index) != 0);
@@ -688,8 +675,8 @@ bool FragmentSampler::check_loops(core::pose::Pose& pose)
 		start = loop_begin(span_index);
 		stop = loop_end(span_index);
 
-		if ( start > nres || start < 1 || stop > nres || stop < 1) {
-		    tr.Info << "ERROR!" << "residue range " << start << "," << stop << "unknown!" << std::endl;
+		if ( start > nres || start < 1 || stop > nres || stop < 1 ) {
+			tr.Info << "ERROR!" << "residue range " << start << "," << stop << "unknown!" << std::endl;
 		}
 	}
 
@@ -707,12 +694,11 @@ bool FragmentSampler::check_loops(core::pose::Pose& pose)
 	std::pair <core::Size,core::Size> loop_and_counts(0,0);
 
 	//Loop through loop library (hashes) and figure out, for the RT, does it return any hashes? (i.e., is there a loop in the DB that has this RT)
-	for( std::vector< core::Size >::const_iterator jt = library->hash_sizes().begin(); jt != library->hash_sizes().end(); ++jt ){
+	for ( std::vector< core::Size >::const_iterator jt = library->hash_sizes().begin(); jt != library->hash_sizes().end(); ++jt ) {
 		core::Size loop_size = *jt;
 		num_loop_sizes = library->hash_sizes().size();
 		tr.Info << "num_loop_sizes:  " << num_loop_sizes << "\tloop_size:  " << loop_size << std::endl;
-		if(rt_exists==true)
-		{
+		if ( rt_exists==true ) {
 			// Get the fragment bucket
 			// leap_index_bucket contains loophash hits (see pilot app to extract the backbone)
 			protocols::loophash::LoopHashMap &hashmap = library->gethash( loop_size );
@@ -729,34 +715,29 @@ bool FragmentSampler::check_loops(core::pose::Pose& pose)
 
 	//To maintain conformational sampling, implement tunable fuzzy filter.  If not all loop sizes have loophash DB hits (radial counts), want to use fuzzy filter
 	bool use_fuzzy_filter(false);
-	for(utility::vector1<std::pair<core::Size,core::Size> >::iterator it = loop_size_hits.begin(), end = loop_size_hits.end(); it != end; ++it )
-	{
+	for ( utility::vector1<std::pair<core::Size,core::Size> >::iterator it = loop_size_hits.begin(), end = loop_size_hits.end(); it != end; ++it ) {
 		tr.Info << "loop_size:  " << it->first << "  radial_counts:  " << it->second << std::endl;
 		//as long as, for this loop radial counts >= 0 (found hits in loophash DB), don't need the fuzzy filter
-		if(it->second > 0)
-		{
+		if ( it->second > 0 ) {
 			use_fuzzy_filter = false;
-		}else{ //however, if you run into a loop size where no hits are found, use fuzzy filter, default acceptance rate is 0.5
+		} else { //however, if you run into a loop size where no hits are found, use fuzzy filter, default acceptance rate is 0.5
 			use_fuzzy_filter = true;
 		}
 		tr.Info << "using fuzzy filter?  " << use_fuzzy_filter << "\tfilter_acceptance_rate?  " << filter_acceptance_rate << std::endl;
 	}
 
 	//not all loops had hits in loophash DB
-	if(use_fuzzy_filter == true)
-	{
+	if ( use_fuzzy_filter == true ) {
 		core::Real rg_value = numeric::random::rg().uniform();
 		//return filter=true (continue folding) at rate set by user or default rate of 0.5
-		if(rg_value <= filter_acceptance_rate)
-		{
+		if ( rg_value <= filter_acceptance_rate ) {
 			tr.Info << "rg_value:  " << rg_value << "\tfilter_acceptance_rate:  " << filter_acceptance_rate << "\treturning true!" << std::endl;
 			return true;
-		}else
-		{
+		} else {
 			tr.Info << "rg_value:  " << rg_value << "\tfilter_acceptance_rate:  " << filter_acceptance_rate << "\treturning false!" << std::endl;
 			return false;
 		}
-	}else{
+	} else {
 		tr.Info << "loophash_filter returning true!" << std::endl;
 		return true;
 	}

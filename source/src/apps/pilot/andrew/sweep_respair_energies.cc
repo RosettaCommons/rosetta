@@ -91,7 +91,7 @@ OPT_1GRP_KEY( Boolean, sweep_respair_energies, output_bestpose_only )
 OPT_1GRP_KEY( Boolean, sweep_respair_energies, find_local_minima )
 
 class hbgeom_to_measure {
-public:
+	public:
 	core::Size r1atind; // the acceptor
 	core::Size r2atind; // the donor
 	utility::vector1< std::string > hbgeoms_;
@@ -213,14 +213,14 @@ write_score_types_to_database(
 	std::string statement_string;
 
 	switch(db_session->get_db_mode()){
-	case utility::sql_database::DatabaseMode::sqlite3:
+	case utility::sql_database::DatabaseMode::sqlite3 :
 		statement_string = "INSERT OR IGNORE INTO score_types (score_name) VALUES (?);";
 		break;
 	case utility::sql_database::DatabaseMode::mysql:
-	case utility::sql_database::DatabaseMode::postgres:
+	case utility::sql_database::DatabaseMode::postgres :
 		statement_string = "INSERT IGNORE INTO score_tyeps (score_name) VALUES (?);";
 		break;
-	default:
+	default :
 		utility_exit_with_message(
 			"Unrecognized database mode: '" +
 			name_from_database_mode(db_session->get_db_mode()) + "'");
@@ -469,7 +469,7 @@ write_respair_scores_to_database(
 	stmt.bind(1,conf_id);
 
 	//std::cout << "ahdist: " << pose.residue( res1ind ).atom( "OG" ).xyz().distance(
-	//	pose.residue( res2ind ).atom( "1HD2" ).xyz() ) << " ";
+	// pose.residue( res2ind ).atom( "1HD2" ).xyz() ) << " ";
 
 	for ( core::Size ii = 1; ii <= n_score_types; ++ii ) {
 		ScoreType iist = ScoreType(ii);
@@ -654,33 +654,33 @@ populate_database_with_dummy_data(
 			}
 			///// 2. describe the atoms in the geometries
 			//{
-			//	std::string statement_string( "INSERT INTO geom_definitions (respair_id,geom_name,at1,res1,at2,res2,at3,res3,at4,res4) VALUES (?,?,?,?,?,?,?,?,?,?);" );
-			//	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
-			//	std::string geom_name,at1,at2,at3,at4;
-			//	core::Size res1(0),res2(0),res3(0),res4(0);
+			// std::string statement_string( "INSERT INTO geom_definitions (respair_id,geom_name,at1,res1,at2,res2,at3,res3,at4,res4) VALUES (?,?,?,?,?,?,?,?,?,?);" );
+			// statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+			// std::string geom_name,at1,at2,at3,at4;
+			// core::Size res1(0),res2(0),res3(0),res4(0);
 			//
-			//	stmt.bind(1,respair_id);
+			// stmt.bind(1,respair_id);
 			//
-			//	geom_name = "AHD";   stmt.bind(2,geom_name);
-			//	at1 = "OD1"; res1=1; stmt.bind( 3,at1); stmt.bind( 4,res1);
-			//	at2 = "HG";  res2=2; stmt.bind( 5,at2); stmt.bind( 6,res2);
-			//	at3 = "OG";  res3=2; stmt.bind( 7,at3); stmt.bind( 8,res3);
-			//	at4 = "";    res4=0; stmt.bind( 9,at4); stmt.bind(10,res4);
-			//	basic::database::safely_write_to_database(stmt);
+			// geom_name = "AHD";   stmt.bind(2,geom_name);
+			// at1 = "OD1"; res1=1; stmt.bind( 3,at1); stmt.bind( 4,res1);
+			// at2 = "HG";  res2=2; stmt.bind( 5,at2); stmt.bind( 6,res2);
+			// at3 = "OG";  res3=2; stmt.bind( 7,at3); stmt.bind( 8,res3);
+			// at4 = "";    res4=0; stmt.bind( 9,at4); stmt.bind(10,res4);
+			// basic::database::safely_write_to_database(stmt);
 			//
-			//	geom_name = "BAH";   stmt.bind(2,geom_name);
-			//	at1 = "CG";  res1=1; stmt.bind( 3,at1); stmt.bind( 4,res1);
-			//	at2 = "OD1"; res2=1; stmt.bind( 5,at2); stmt.bind( 6,res2);
-			//	at3 = "HG";  res3=2; stmt.bind( 7,at3); stmt.bind( 8,res3);
-			//	at4 = "";    res4=0; stmt.bind( 9,at4); stmt.bind(10,res4);
-			//	basic::database::safely_write_to_database(stmt);
+			// geom_name = "BAH";   stmt.bind(2,geom_name);
+			// at1 = "CG";  res1=1; stmt.bind( 3,at1); stmt.bind( 4,res1);
+			// at2 = "OD1"; res2=1; stmt.bind( 5,at2); stmt.bind( 6,res2);
+			// at3 = "HG";  res3=2; stmt.bind( 7,at3); stmt.bind( 8,res3);
+			// at4 = "";    res4=0; stmt.bind( 9,at4); stmt.bind(10,res4);
+			// basic::database::safely_write_to_database(stmt);
 			//
-			//	geom_name = "AHdist";   stmt.bind(2,geom_name);
-			//	at1 = "OD1"; res1=1; stmt.bind( 3,at1); stmt.bind( 4,res1);
-			//	at2 = "HG";  res2=2; stmt.bind( 5,at2); stmt.bind( 6,res2);
-			//	at3 = "";    res3=0; stmt.bind( 7,at3); stmt.bind( 8,res3);
-			//	at4 = "";    res4=0; stmt.bind( 9,at4); stmt.bind(10,res4);
-			//	basic::database::safely_write_to_database(stmt);
+			// geom_name = "AHdist";   stmt.bind(2,geom_name);
+			// at1 = "OD1"; res1=1; stmt.bind( 3,at1); stmt.bind( 4,res1);
+			// at2 = "HG";  res2=2; stmt.bind( 5,at2); stmt.bind( 6,res2);
+			// at3 = "";    res3=0; stmt.bind( 7,at3); stmt.bind( 8,res3);
+			// at4 = "";    res4=0; stmt.bind( 9,at4); stmt.bind(10,res4);
+			// basic::database::safely_write_to_database(stmt);
 			//}
 
 			/// 3. Let's iterate across a distance span
@@ -1065,7 +1065,7 @@ determine_if_at_local_minimum_analytic(
 
 
 struct
-sort_minima_by_scores{
+	sort_minima_by_scores{
 	bool operator() ( local_minimum const & a, local_minimum const & b ) { return a.score_ < b.score_; }
 };
 
@@ -1204,10 +1204,10 @@ sweep_params_from_match_constraint_file(
 	boost::uuids::uuid respair_id;
 	hbgeoms_to_measure geoms;
 	if ( ! no_database_output ) {
-	  /// Insert a new entry into the respairs table of the database
-	  /// representing the parameters that have been specified in the input match
-	  respair_id = write_new_respair_to_database( db_session, *mcfil.mcfi(1) );
-	  geoms = create_fullcoverage_hbgeoms_to_measure( pose, *mcfil.mcfi(1), res1_index, res2_index );
+		/// Insert a new entry into the respairs table of the database
+		/// representing the parameters that have been specified in the input match
+		respair_id = write_new_respair_to_database( db_session, *mcfil.mcfi(1) );
+		geoms = create_fullcoverage_hbgeoms_to_measure( pose, *mcfil.mcfi(1), res1_index, res2_index );
 	}
 
 	/// Set DOFs
@@ -1277,7 +1277,7 @@ sweep_params_from_match_constraint_file(
 	if ( find_local_minima ) {
 		create_mingraph_for_focused_residue_pair(
 			pose, sfxn, res1_index, res2_index,
-			minimizer_map,	mingraph );
+			minimizer_map, mingraph );
 	}
 
 
@@ -1288,7 +1288,7 @@ sweep_params_from_match_constraint_file(
 
 	std::list< local_minimum > local_minima;
 
-	for( lex.begin(); ! lex.at_end(); ++lex ) {
+	for ( lex.begin(); ! lex.at_end(); ++lex ) {
 		++count;
 
 		if ( find_local_minima ) {
@@ -1338,7 +1338,7 @@ sweep_params_from_match_constraint_file(
 			}
 
 			if ( count == lex.num_states_total() / 2 ) {
-			  pose.dump_pdb( acc3let + "_" + don3let + "_" + utility::to_string(count) + ".pdb" );
+				pose.dump_pdb( acc3let + "_" + don3let + "_" + utility::to_string(count) + ".pdb" );
 			}
 		}
 	}
@@ -1351,42 +1351,42 @@ sweep_params_from_match_constraint_file(
 	}
 
 	//{
-	//	utility::vector1< core::Size > const & template_atom_inds_1_1( mcfil.mcfi(1)->template_atom_inds(1,1,pose.residue_type(2) ));
-	//	for ( core::Size ii = 1; ii <= template_atom_inds_1_1.size(); ++ii ) {
-	//		std::cout << "Template atom1 for ASP: " << template_atom_inds_1_1[ ii ] << " " << pose.residue_type(2).atom_name( template_atom_inds_1_1[ii] ) << std::endl;
-	//	}
+	// utility::vector1< core::Size > const & template_atom_inds_1_1( mcfil.mcfi(1)->template_atom_inds(1,1,pose.residue_type(2) ));
+	// for ( core::Size ii = 1; ii <= template_atom_inds_1_1.size(); ++ii ) {
+	//  std::cout << "Template atom1 for ASP: " << template_atom_inds_1_1[ ii ] << " " << pose.residue_type(2).atom_name( template_atom_inds_1_1[ii] ) << std::endl;
+	// }
 	//}
 	//{
-	//	utility::vector1< core::Size > const & template_atom_inds_1_2( mcfil.mcfi(1)->template_atom_inds(1,2,pose.residue_type(2) ));
-	//	for ( core::Size ii = 1; ii <= template_atom_inds_1_2.size(); ++ii ) {
-	//		std::cout << "Template atom2 for ASP: " << template_atom_inds_1_2[ ii ] << " " << pose.residue_type(2).atom_name( template_atom_inds_1_2[ii] ) << std::endl;
-	//	}
+	// utility::vector1< core::Size > const & template_atom_inds_1_2( mcfil.mcfi(1)->template_atom_inds(1,2,pose.residue_type(2) ));
+	// for ( core::Size ii = 1; ii <= template_atom_inds_1_2.size(); ++ii ) {
+	//  std::cout << "Template atom2 for ASP: " << template_atom_inds_1_2[ ii ] << " " << pose.residue_type(2).atom_name( template_atom_inds_1_2[ii] ) << std::endl;
+	// }
 	//}
 	//{
-	//	utility::vector1< core::Size > const & template_atom_inds_1_3( mcfil.mcfi(1)->template_atom_inds(1,3,pose.residue_type(2) ));
-	//	for ( core::Size ii = 1; ii <= template_atom_inds_1_3.size(); ++ii ) {
-	//		std::cout << "Template atom3 for ASP: " << template_atom_inds_1_3[ ii ] << " " << pose.residue_type(2).atom_name( template_atom_inds_1_3[ii] ) << std::endl;
-	//	}
-	//}
-	//
-	//{
-	//	utility::vector1< core::Size > const & template_atom_inds_2_1( mcfil.mcfi(1)->template_atom_inds(2,1,pose.residue_type(8) ));
-	//	for ( core::Size ii = 1; ii <= template_atom_inds_2_1.size(); ++ii ) {
-	//		std::cout << "Template atom1 for SER: " << template_atom_inds_2_1[ ii ] << " " << pose.residue_type(8).atom_name( template_atom_inds_2_1[ii] ) << std::endl;
-	//	}
-	//}
-	//{
-	//	utility::vector1< core::Size > const & template_atom_inds_2_2( mcfil.mcfi(1)->template_atom_inds(2,2,pose.residue_type(8) ));
-	//	for ( core::Size ii = 1; ii <= template_atom_inds_2_2.size(); ++ii ) {
-	//		std::cout << "Template atom2 for SER: " << template_atom_inds_2_2[ ii ] << " " << pose.residue_type(8).atom_name( template_atom_inds_2_2[ii] ) << std::endl;
-	//	}
+	// utility::vector1< core::Size > const & template_atom_inds_1_3( mcfil.mcfi(1)->template_atom_inds(1,3,pose.residue_type(2) ));
+	// for ( core::Size ii = 1; ii <= template_atom_inds_1_3.size(); ++ii ) {
+	//  std::cout << "Template atom3 for ASP: " << template_atom_inds_1_3[ ii ] << " " << pose.residue_type(2).atom_name( template_atom_inds_1_3[ii] ) << std::endl;
+	// }
 	//}
 	//
 	//{
-	//	utility::vector1< core::Size > const & template_atom_inds_2_3( mcfil.mcfi(1)->template_atom_inds(2,3,pose.residue_type(8) ));
-	//	for ( core::Size ii = 1; ii <= template_atom_inds_2_3.size(); ++ii ) {
-	//		std::cout << "Template atom3 for SER: " << template_atom_inds_2_3[ ii ] << " " << pose.residue_type(8).atom_name( template_atom_inds_2_3[ii] ) << std::endl;
-	//	}
+	// utility::vector1< core::Size > const & template_atom_inds_2_1( mcfil.mcfi(1)->template_atom_inds(2,1,pose.residue_type(8) ));
+	// for ( core::Size ii = 1; ii <= template_atom_inds_2_1.size(); ++ii ) {
+	//  std::cout << "Template atom1 for SER: " << template_atom_inds_2_1[ ii ] << " " << pose.residue_type(8).atom_name( template_atom_inds_2_1[ii] ) << std::endl;
+	// }
+	//}
+	//{
+	// utility::vector1< core::Size > const & template_atom_inds_2_2( mcfil.mcfi(1)->template_atom_inds(2,2,pose.residue_type(8) ));
+	// for ( core::Size ii = 1; ii <= template_atom_inds_2_2.size(); ++ii ) {
+	//  std::cout << "Template atom2 for SER: " << template_atom_inds_2_2[ ii ] << " " << pose.residue_type(8).atom_name( template_atom_inds_2_2[ii] ) << std::endl;
+	// }
+	//}
+	//
+	//{
+	// utility::vector1< core::Size > const & template_atom_inds_2_3( mcfil.mcfi(1)->template_atom_inds(2,3,pose.residue_type(8) ));
+	// for ( core::Size ii = 1; ii <= template_atom_inds_2_3.size(); ++ii ) {
+	//  std::cout << "Template atom3 for SER: " << template_atom_inds_2_3[ ii ] << " " << pose.residue_type(8).atom_name( template_atom_inds_2_3[ii] ) << std::endl;
+	// }
 	//}
 
 }
@@ -1396,76 +1396,76 @@ int main( int argc, char * argv [] )
 {
 	try{
 
-	using namespace core;
-	using namespace core::chemical;
-	using namespace core::conformation;
-	using namespace core::id;
-	using namespace core::io::pdb;
-	using namespace core::graph;
-	using namespace core::pose;
-	using namespace core::scoring;
-	using namespace core::scoring::hbonds;
+		using namespace core;
+		using namespace core::chemical;
+		using namespace core::conformation;
+		using namespace core::id;
+		using namespace core::io::pdb;
+		using namespace core::graph;
+		using namespace core::pose;
+		using namespace core::scoring;
+		using namespace core::scoring::hbonds;
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace basic::database;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace basic::database;
 
-	NEW_OPT( sweep_respair_energies::output_bestpose_only, "write out the best geometries ", false );
-	NEW_OPT( sweep_respair_energies::find_local_minima, "step to the left and right from each conformation along all 6 DOFs and output multi-model PDBs for the structures at local minima", false );
+		NEW_OPT( sweep_respair_energies::output_bestpose_only, "write out the best geometries ", false );
+		NEW_OPT( sweep_respair_energies::find_local_minima, "step to the left and right from each conformation along all 6 DOFs and output multi-model PDBs for the structures at local minima", false );
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-	bool const no_database_output(
-		basic::options::option[ basic::options::OptionKeys::sweep_respair_energies::output_bestpose_only ] ||
-		basic::options::option[ basic::options::OptionKeys::sweep_respair_energies::find_local_minima ] );
+		bool const no_database_output(
+			basic::options::option[ basic::options::OptionKeys::sweep_respair_energies::output_bestpose_only ] ||
+			basic::options::option[ basic::options::OptionKeys::sweep_respair_energies::find_local_minima ] );
 
-	utility::sql_database::sessionOP db_session;
-	if ( ! no_database_output ) {
-		db_session = get_db_session( "test.db3" );
+		utility::sql_database::sessionOP db_session;
+		if ( ! no_database_output ) {
+			db_session = get_db_session( "test.db3" );
 
-		basic::database::set_cache_size( db_session, 1024 );
+			basic::database::set_cache_size( db_session, 1024 );
 
-		create_schema( db_session );
-		//populate_database_with_dummy_data( db_session );
+			create_schema( db_session );
+			//populate_database_with_dummy_data( db_session );
 
-		db_session->begin();
-		write_score_types_to_database( db_session );
-		write_hbgeom_types_to_database( db_session );
-	}
+			db_session->begin();
+			write_score_types_to_database( db_session );
+			write_hbgeom_types_to_database( db_session );
+		}
 
-	/// Read score fumction from the command line.
-	core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
-	using namespace core;
-	scoring::methods::EnergyMethodOptionsOP emopts( new scoring::methods::EnergyMethodOptions( sfxn->energy_method_options() ) );
-	emopts->hbond_options().decompose_bb_hb_into_pair_energies( true );
-	emopts->hbond_options().use_hb_env_dep( false );
-	sfxn->set_energy_method_options( *emopts );
+		/// Read score fumction from the command line.
+		core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
+		using namespace core;
+		scoring::methods::EnergyMethodOptionsOP emopts( new scoring::methods::EnergyMethodOptions( sfxn->energy_method_options() ) );
+		emopts->hbond_options().decompose_bb_hb_into_pair_energies( true );
+		emopts->hbond_options().use_hb_env_dep( false );
+		sfxn->set_energy_method_options( *emopts );
 
-	utility::vector1< utility::file::FileName > match_files( option[ in::file::l ] );
+		utility::vector1< utility::file::FileName > match_files( option[ in::file::l ] );
 
-	utility::vector1< std::string > fnames;
-	for ( core::Size ii = 1; ii <= match_files.size(); ++ii ) {
-		std::string iimatchfilelist = match_files[ii].name();
-		std::ifstream list_file( iimatchfilelist.c_str() );
-		while ( list_file ) {
-			std::string fname;
-			list_file >> fname;
-			if ( ! list_file.bad() && fname[0] != '#' && fname.size() != 0 ) {
-				fnames.push_back( fname );
+		utility::vector1< std::string > fnames;
+		for ( core::Size ii = 1; ii <= match_files.size(); ++ii ) {
+			std::string iimatchfilelist = match_files[ii].name();
+			std::ifstream list_file( iimatchfilelist.c_str() );
+			while ( list_file ) {
+				std::string fname;
+				list_file >> fname;
+				if ( ! list_file.bad() && fname[0] != '#' && fname.size() != 0 ) {
+					fnames.push_back( fname );
+				}
 			}
 		}
-	}
-	for ( core::Size ii = 1; ii <= fnames.size(); ++ii ) {
-		sweep_params_from_match_constraint_file( db_session, *sfxn, fnames[ ii ] );
-	}
+		for ( core::Size ii = 1; ii <= fnames.size(); ++ii ) {
+			sweep_params_from_match_constraint_file( db_session, *sfxn, fnames[ ii ] );
+		}
 
-	if ( ! no_database_output ) {
-		db_session->commit();
-	}
+		if ( ! no_database_output ) {
+			db_session->commit();
+		}
 
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 }
 

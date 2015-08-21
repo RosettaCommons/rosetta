@@ -22,9 +22,9 @@
 #include <sstream>
 #include <utility/exit.hh>
 
-namespace basic{
-namespace database{
-namespace schema_generator{
+namespace basic {
+namespace database {
+namespace schema_generator {
 
 /// @details Auto-generated virtual destructor
 Constraint::~Constraint() {}
@@ -70,8 +70,8 @@ UniqueConstraint::print(
 
 	constraint << "UNIQUE (";
 
-	for(Size i=1; i<=columns_.size(); ++i){
-		if(i!=1){
+	for ( Size i=1; i<=columns_.size(); ++i ) {
+		if ( i!=1 ) {
 			constraint << ", ";
 		}
 		constraint << columns_[i].name();

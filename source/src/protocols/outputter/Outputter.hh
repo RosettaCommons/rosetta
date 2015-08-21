@@ -31,18 +31,18 @@ namespace outputter {
 void lregister_Outputter( lua_State * lstate );
 #endif
 
-		using namespace core::io::serialization;
-		using core::pose::Pose;
+using namespace core::io::serialization;
+using core::pose::Pose;
 
 class Outputter {
 
-	public:
-		Outputter();
-		virtual ~Outputter();
+public:
+	Outputter();
+	virtual ~Outputter();
 
-		virtual void write( PipeMap & p )=0;
-		virtual void write( Pipe & p )=0;
-		virtual void write( Pose & p )=0;
+	virtual void write( PipeMap & p )=0;
+	virtual void write( Pipe & p )=0;
+	virtual void write( Pose & p )=0;
 
 #ifdef USELUA
 		virtual void parse_def( utility::lua::LuaObject const & def,
@@ -50,11 +50,11 @@ class Outputter {
 		virtual void lregister( lua_State * lstate )=0;
 #endif
 
-		// factory functions
-		virtual OutputterSP create() = 0;
-		static std::string name() {
-			return "UNDEFINED NAME";
-		}
+	// factory functions
+	virtual OutputterSP create() = 0;
+	static std::string name() {
+		return "UNDEFINED NAME";
+	}
 
 
 }; // end Outputter base class

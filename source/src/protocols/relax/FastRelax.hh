@@ -85,9 +85,9 @@ public:
 
 	/// @brief Initialize FastRelax with a specific script file, and allows fastrelax to only use a subset of the number of stages in the scriptfile.
 	FastRelax(
-	core::scoring::ScoreFunctionOP scorefxn_in,
-	core::Size                     standard_repeats,
-	const std::string &          script_file
+		core::scoring::ScoreFunctionOP scorefxn_in,
+		core::Size                     standard_repeats,
+		const std::string &          script_file
 	);
 	/// @brief Override the stored script with the default script for batchrelax
 	///        Ignores '-default_repeat' value
@@ -109,17 +109,17 @@ public:
 	/// Requires scorefunction setup for non-ideal minimization.
 	void dualspace( bool val );
 	bool dualspace();
-	
+
 	/// @brief virtual constructor to allow derivation
 	virtual ~FastRelax();
 
 	/// @brief Parses the FastRelaxTags
 	void parse_my_tag(
-	  utility::tag::TagCOP tag,
-	  basic::datacache::DataMap & data,
-	  protocols::filters::Filters_map const &,
-	  protocols::moves::Movers_map const &,
-	  core::pose::Pose const &
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
 	);
 
 	virtual void parse_def( utility::lua::LuaObject const & def,
@@ -172,9 +172,9 @@ protected:
 	/// TL - Derived classes which may want to scale more than coordinate constraints can override this without forking apply()
 	virtual void
 	set_constraint_weight( core::scoring::ScoreFunctionOP local_scorefxn,
-												 core::scoring::EnergyMap const & full_weights,
-												 core::Real const weight,
-												 core::pose::Pose & pose ) const;
+		core::scoring::EnergyMap const & full_weights,
+		core::Real const weight,
+		core::pose::Pose & pose ) const;
 
 	void do_md(
 		core::pose::Pose &pose,
@@ -182,12 +182,12 @@ protected:
 		core::Real temp0,
 		core::kinematics::MoveMapOP local_movemap,
 		core::scoring::ScoreFunctionOP local_scorefxn
-  );
+	);
 
 private:
 
 	void read_script_file( const std::string &script_file, core::Size standard_repeats = 5  );
-	
+
 	void check_nonideal_mintype();
 
 private:   // options
@@ -196,7 +196,7 @@ private:   // options
 	core::Size default_repeats_;
 
 
-	/// @brief If true, delete virtual residues at the end of FastRelax for smooth rmsd calculation later 
+	/// @brief If true, delete virtual residues at the end of FastRelax for smooth rmsd calculation later
 	bool delete_virtual_residues_after_FastRelax_;
 
 	/// @brief Apply Ramady(tm) fix to residues with bad rama scores ?

@@ -64,22 +64,22 @@ public:
 		return "SymmetryClaimer";
 	}
 
-    virtual void generate_symmetry_claims( claims::SymmetryClaims& );
-    
-    virtual void symmetry_duplicate( claims::DofClaims&, core::pose::Pose& );
+	virtual void generate_symmetry_claims( claims::SymmetryClaims& );
+
+	virtual void symmetry_duplicate( claims::DofClaims&, core::pose::Pose& );
 
 
 protected:
 	virtual bool read_tag( std::string tag, std::istream& );
 
-//    virtual void symmdup_sequence_claims( claims::DofClaims& );
-//    virtual void symmdup_pose_sequence( core::pose::Pose& );
-//    virtual void build_symm_virtual_residues( claims::DofClaims&, core::pose::Pose& );
-    
+	//    virtual void symmdup_sequence_claims( claims::DofClaims& );
+	//    virtual void symmdup_pose_sequence( core::pose::Pose& );
+	//    virtual void build_symm_virtual_residues( claims::DofClaims&, core::pose::Pose& );
+
 private:
 	core::conformation::symmetry::SymmDataOP symm_data_;
-    Size asymmetric_res_;
-    
+	Size asymmetric_res_;
+
 
 };
 

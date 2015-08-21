@@ -10,7 +10,7 @@
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -44,16 +44,16 @@ namespace abinitio {
 class Protocol : public moves::Mover {
 public:
 	typedef Mover BaseClass;
-	//	typedef utility::vector1 < core::pose::Pose > StructureStore;
+	// typedef utility::vector1 < core::pose::Pose > StructureStore;
 
 	Protocol();
 	~Protocol() {};
 
 	virtual
 	void init( core::pose::Pose const& ) {};
-		/*{
-		bInitialized_ = true;
-		};*/
+	/*{
+	bInitialized_ = true;
+	};*/
 
 	void
 	set_evaluation( evaluation::MetaPoseEvaluatorOP ev );
@@ -97,13 +97,13 @@ public:
 	virtual void apply( core::pose::Pose& );
 	virtual std::string get_name() const;
 
-	//	virtual StructureStore const& structure_store() const {
+	// virtual StructureStore const& structure_store() const {
 	//return structure_store_;
-	//	}
+	// }
 
-//	virtual StructureStore& structure_store() {
-//		return structure_store_;
-//	}
+	// virtual StructureStore& structure_store() {
+	//  return structure_store_;
+	// }
 
 	void set_fullatom_scorefxn( core::scoring::ScoreFunctionOP sfxn ) {
 		scorefxn_fa_ = sfxn;
@@ -138,9 +138,9 @@ private:
 	evaluation::MetaPoseEvaluatorOP evaluator_;
 	abinitio::KinematicControlOP kinematic_control_;
 	//@brief initialized_ is true if init() has been called, false otherwise.
-	//	bool bInitialized_;
+	// bool bInitialized_;
 
-	//	StructureStore structure_store_;
+	// StructureStore structure_store_;
 
 	core::scoring::ScoreFunctionOP scorefxn_fa_; //might be NULL
 	core::scoring::ScoreFunctionOP scorefxn_centroid_;

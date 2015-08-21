@@ -202,41 +202,41 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class JumpsFromAllPairings : public BaseJumpSetup {
-	public:
+public:
 
 	JumpsFromAllPairings( const core::Size total_residue, core::scoring::dssp::PairingsList const& jumps, ObjexxFCL::FArray1D_float const& cut_probability ) : total_residue_(total_residue), jumps_(jumps), cut_prob_(cut_probability) {
-		}
+	}
 
-		JumpSample create_jump_sample() const {
-			return JumpSample(total_residue_, jumps_, cut_prob_);
-		}
+	JumpSample create_jump_sample() const {
+		return JumpSample(total_residue_, jumps_, cut_prob_);
+	}
 
-	private:
-		core::Size total_residue_;
-		core::scoring::dssp::PairingsList jumps_;
-		ObjexxFCL::FArray1D_float cut_prob_;
+private:
+	core::Size total_residue_;
+	core::scoring::dssp::PairingsList jumps_;
+	ObjexxFCL::FArray1D_float cut_prob_;
 };
 
 
 //class JumpsFromConstraintForest : public BaseJumpSetup {
 //public:
 //
-//	JumpsFromConstraintForest(
-//		const core::Size total_residue,
-//		core::scoring::constraints::ConstraintForestOP forest,
-//		ObjexxFCL::FArray1D_float const& cut_probability );
+// JumpsFromConstraintForest(
+//  const core::Size total_residue,
+//  core::scoring::constraints::ConstraintForestOP forest,
+//  ObjexxFCL::FArray1D_float const& cut_probability );
 //
-//	JumpSample create_jump_sample() const;
-//	~JumpsFromConstraintForest();
+// JumpSample create_jump_sample() const;
+// ~JumpsFromConstraintForest();
 //
-//	/// @brief Unimplemented!
-//	JumpSample
-//	clean_jumps( JumpSample const& js ) const;
+// /// @brief Unimplemented!
+// JumpSample
+// clean_jumps( JumpSample const& js ) const;
 //
 //private:
-//	core::Size total_residue_;
-//	core::scoring::constraints::ConstraintForestOP forest_;
-//	ObjexxFCL::FArray1D_float cut_prob_;
+// core::Size total_residue_;
+// core::scoring::constraints::ConstraintForestOP forest_;
+// ObjexxFCL::FArray1D_float cut_prob_;
 //};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

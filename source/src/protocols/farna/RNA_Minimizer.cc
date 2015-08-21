@@ -84,32 +84,32 @@ namespace protocols {
 namespace farna {
 
 RNA_Minimizer::RNA_Minimizer():
-    Mover(),
-    deriv_check_( false ),
-    use_coordinate_constraints_( true ),
-    coord_sdev_( 10.0 * std::sqrt(10.0) ), // awkward, but matches an old setting.
-    coord_cst_weight_( 1.0 ),
-    rounds_( basic::options::option[ basic::options::OptionKeys::rna::minimize_rounds ] ),
-    skip_o2prime_trials_( false ),
-    perform_minimizer_run_( true ),
-    vary_bond_geometry_( false ),
-    include_default_linear_chainbreak_( true  ),
-    do_dump_pdb_( false ),
-    move_first_rigid_body_( false ),
-		close_loops_( true ),
-    min_type_( "dfpmin" ) //Parin S. Jan 12, 2012
+	Mover(),
+	deriv_check_( false ),
+	use_coordinate_constraints_( true ),
+	coord_sdev_( 10.0 * std::sqrt(10.0) ), // awkward, but matches an old setting.
+	coord_cst_weight_( 1.0 ),
+	rounds_( basic::options::option[ basic::options::OptionKeys::rna::minimize_rounds ] ),
+	skip_o2prime_trials_( false ),
+	perform_minimizer_run_( true ),
+	vary_bond_geometry_( false ),
+	include_default_linear_chainbreak_( true  ),
+	do_dump_pdb_( false ),
+	move_first_rigid_body_( false ),
+	close_loops_( true ),
+	min_type_( "dfpmin" ) //Parin S. Jan 12, 2012
 {
-    Mover::type("RNA_Minimizer");
-    if ( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
-        scorefxn_ = core::scoring::get_score_function();
-    } else {
-        scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::RNA_HIRES_WTS );
-    }
+	Mover::type("RNA_Minimizer");
+	if ( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
+		scorefxn_ = core::scoring::get_score_function();
+	} else {
+		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::RNA_HIRES_WTS );
+	}
 }
 
 /// @details  Apply the RNA full atom minimizer.
 ///
-void RNA_Minimizer::apply( core::pose::Pose & pose	)
+void RNA_Minimizer::apply( core::pose::Pose & pose )
 {
 
 	using namespace core::scoring;
@@ -120,12 +120,12 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 
 	time_t pdb_start_time = time(NULL);
 	scoring::constraints::ConstraintSetOP save_pose_constraints = pose.constraint_set()->clone();
-	if (pose.constraint_set()->has_constraints() ){
+	if ( pose.constraint_set()->has_constraints() ) {
 		if ( !scorefxn_->has_nonzero_weight( atom_pair_constraint ) )  scorefxn_->set_weight( atom_pair_constraint, 1.0 );
 		if ( !scorefxn_->has_nonzero_weight( coordinate_constraint ) ) scorefxn_->set_weight( coordinate_constraint, 1.0 );
 	}
 	if ( vary_bond_geometry_ ) scorefxn_->set_weight( rna_bond_geometry, 1.0 );
-	if( include_default_linear_chainbreak_ && !scorefxn_->has_nonzero_weight( linear_chainbreak ) )	scorefxn_->set_weight( linear_chainbreak, 5.0 );
+	if ( include_default_linear_chainbreak_ && !scorefxn_->has_nonzero_weight( linear_chainbreak ) ) scorefxn_->set_weight( linear_chainbreak, 5.0 );
 
 	AtomTreeMinimizer minimizer;
 	float const dummy_tol( 0.0000025);
@@ -135,12 +135,12 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 
 	/////////////////////////////////////////////////////
 	kinematics::MoveMap mm;
-	if (!allow_insert_) allow_insert_ = toolbox::AllowInsertOP( new toolbox::AllowInsert( pose ) ); // initialized to let all dofs move.
+	if ( !allow_insert_ ) allow_insert_ = toolbox::AllowInsertOP( new toolbox::AllowInsert( pose ) ); // initialized to let all dofs move.
 	update_allow_insert_with_extra_minimize_res( pose );
- 	setup_movemap( mm, pose );
+	setup_movemap( mm, pose );
 
 	scoring::constraints::ConstraintSetOP pose_constraints_without_coordinate_tethers = pose.constraint_set()->clone();
-	if (use_coordinate_constraints_) core::scoring::constraints::add_coordinate_constraints( pose, coord_sdev_ );
+	if ( use_coordinate_constraints_ ) core::scoring::constraints::add_coordinate_constraints( pose, coord_sdev_ );
 	scoring::constraints::ConstraintSetOP pose_constraints_with_coordinate_tethers = pose.constraint_set()->clone();
 
 	utility::vector1< Size > moving_chainbreaks = stepwise::modeler::figure_out_moving_chain_break_res( pose, mm );
@@ -148,18 +148,18 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 
 	Real const fa_rep_final( scorefxn_->get_weight( fa_rep ) );
 
-	for (Size r = 1; r <= rounds_; r++ ) {
+	for ( Size r = 1; r <= rounds_; r++ ) {
 
 		ScoreFunctionOP minimize_scorefxn_ = scorefxn_->clone();
 
 		Real const suppress = static_cast<Real>(r)/rounds_;
 		minimize_scorefxn_->set_weight( fa_rep, fa_rep_final * suppress  );
 
-		if (!skip_o2prime_trials_) o2prime_trials( pose, minimize_scorefxn_ );
+		if ( !skip_o2prime_trials_ ) o2prime_trials( pose, minimize_scorefxn_ );
 
 		//Prevent explosions on first minimize.
 		// this is silly. in first round, just make sure coordinate_constraint is one, and use constraints 'supplemented' with coordinate constraints.
-		if ( use_coordinate_constraints_) {
+		if ( use_coordinate_constraints_ ) {
 			if ( r == 1 ) {
 				if ( !minimize_scorefxn_->has_nonzero_weight( coordinate_constraint ) ) minimize_scorefxn_->set_weight( coordinate_constraint, coord_cst_weight_ );
 				pose.constraint_set( pose_constraints_with_coordinate_tethers );
@@ -169,9 +169,9 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 		}
 		TR << "Minimizing...round= " << r << std::endl;
 
-		if (perform_minimizer_run_) minimizer.run( pose, mm, *minimize_scorefxn_, options );
+		if ( perform_minimizer_run_ ) minimizer.run( pose, mm, *minimize_scorefxn_, options );
 
-		if (close_loops_)		rna_loop_closer.apply( pose, moving_chainbreaks );
+		if ( close_loops_ )  rna_loop_closer.apply( pose, moving_chainbreaks );
 
 	}
 
@@ -188,7 +188,7 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 
 
 ///////////////////////////////////////////////////////////////////////////////
-	////////////////////////
+////////////////////////
 std::string
 RNA_Minimizer::get_name() const {
 	return "RNA_Minimizer";
@@ -201,15 +201,15 @@ RNA_Minimizer::show(std::ostream & output) const
 {
 	Mover::show(output);
 	output <<   "Deriv check:              " << (deriv_check_ ? "True" : "False")  <<
-				"\nSkip o2prime trials:       " << (skip_o2prime_trials_ ? "True" : "False") <<
-				"\nPerform minimizer run:    " << (perform_minimizer_run_ ? "True" : "False") <<
-				"\nVary bond geometry:       " << (vary_bond_geometry_ ? "True" : "False") <<
-				"\nDump pdb:                 " << (do_dump_pdb_ ? "True" : "False") <<
-				"\nMove first rigid body:    " << (move_first_rigid_body_ ? "True" : "False") <<
-				"\nMin type:                 " << min_type_ <<
-				"\nScore function:           " << scorefxn_->get_name() <<
-				"\nUse coordinate constraints:        " << (use_coordinate_constraints_ ? "True" : "False")  <<
-				"\nInclude default linear chainbreak: " << (include_default_linear_chainbreak_ ? "True" : "False");
+		"\nSkip o2prime trials:       " << (skip_o2prime_trials_ ? "True" : "False") <<
+		"\nPerform minimizer run:    " << (perform_minimizer_run_ ? "True" : "False") <<
+		"\nVary bond geometry:       " << (vary_bond_geometry_ ? "True" : "False") <<
+		"\nDump pdb:                 " << (do_dump_pdb_ ? "True" : "False") <<
+		"\nMove first rigid body:    " << (move_first_rigid_body_ ? "True" : "False") <<
+		"\nMin type:                 " << min_type_ <<
+		"\nScore function:           " << scorefxn_->get_name() <<
+		"\nUse coordinate constraints:        " << (use_coordinate_constraints_ ? "True" : "False")  <<
+		"\nInclude default linear chainbreak: " << (include_default_linear_chainbreak_ ? "True" : "False");
 
 }
 
@@ -218,14 +218,14 @@ RNA_Minimizer::show(std::ostream & output) const
 // Make this its own Mover?
 void
 RNA_Minimizer::o2prime_trials(
-  core::pose::Pose & pose,
+	core::pose::Pose & pose,
 	core::scoring::ScoreFunctionCOP const & packer_scorefxn_ ) const
 {
 
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	//task->initialize_from_command_line(); //Jan 20, 2012 Testing.
 
-	for (Size i = 1; i <= pose.total_residue(); i++) {
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 		if ( !pose.residue(i).is_RNA() ) continue;
 
 		task->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
@@ -254,14 +254,14 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 	mm.set_jump( false );
 
 	// torsions
-	for  (Size i = 1; i <= nres; i++ )  {
+	for  ( Size i = 1; i <= nres; i++ )  {
 
 		if ( !pose.residue(i).is_RNA() ) continue;
 
-		for (Size j = 1; j <= ( NUM_RNA_MAINCHAIN_TORSIONS + pose.residue(i).type().nchi() ); j++) {
+		for ( Size j = 1; j <= ( NUM_RNA_MAINCHAIN_TORSIONS + pose.residue(i).type().nchi() ); j++ ) {
 
 			id::TorsionID rna_torsion_id( i, id::BB, j );
-			if ( j > NUM_RNA_MAINCHAIN_TORSIONS) rna_torsion_id = id::TorsionID( i, id::CHI, j - NUM_RNA_MAINCHAIN_TORSIONS );
+			if ( j > NUM_RNA_MAINCHAIN_TORSIONS ) rna_torsion_id = id::TorsionID( i, id::CHI, j - NUM_RNA_MAINCHAIN_TORSIONS );
 			if ( !allow_insert_->get( rna_torsion_id, pose.conformation() ) ) continue;
 
 			// this is not general. Sigh:
@@ -275,24 +275,24 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 	}
 
 	// jumps
-	for (Size n = 1; n <= pose.fold_tree().num_jump(); n++ ){
+	for ( Size n = 1; n <= pose.fold_tree().num_jump(); n++ ) {
 		Size const jump_pos1( pose.fold_tree().upstream_jump_residue( n ) );
 		std::string const jump_atom1( pose.fold_tree().upstream_atom( n ) );
 		AtomID jump_atom_id1( 1, jump_pos1 );
-		if (jump_atom1.size() > 0) jump_atom_id1 = named_atom_id_to_atom_id( NamedAtomID( jump_atom1, jump_pos1 ), pose );
+		if ( jump_atom1.size() > 0 ) jump_atom_id1 = named_atom_id_to_atom_id( NamedAtomID( jump_atom1, jump_pos1 ), pose );
 
 		Size const jump_pos2( pose.fold_tree().downstream_jump_residue( n ) );
 		std::string const jump_atom2( pose.fold_tree().downstream_atom( n ) );
 		AtomID jump_atom_id2( 1, jump_pos2 );
-		if (jump_atom2.size() > 0) jump_atom_id2 = named_atom_id_to_atom_id( NamedAtomID( jump_atom2, jump_pos2 ), pose );
+		if ( jump_atom2.size() > 0 ) jump_atom_id2 = named_atom_id_to_atom_id( NamedAtomID( jump_atom2, jump_pos2 ), pose );
 
-		if ( moveable_jump( jump_atom_id1, jump_atom_id2, *allow_insert_ ) ) 	mm.set_jump( n, true );
+		if ( moveable_jump( jump_atom_id1, jump_atom_id2, *allow_insert_ ) )  mm.set_jump( n, true );
 	}
 
 	// allow rigid body movements... check for virtual residue at end and at least two chunks with jumps to it.
 	protocols::farna::let_rigid_body_jumps_move( mm, pose, move_first_rigid_body_ );
 
-	for ( Size n = 1; n <= extra_minimize_chi_res_.size(); n++ )	mm.set( id::TorsionID( extra_minimize_chi_res_[n], id::CHI, 1 ), true );
+	for ( Size n = 1; n <= extra_minimize_chi_res_.size(); n++ ) mm.set( id::TorsionID( extra_minimize_chi_res_[n], id::CHI, 1 ), true );
 
 	// vary bond geometry
 	if ( vary_bond_geometry_ ) simple_moves::setup_vary_rna_bond_geometry( mm, pose, allow_insert_ );
@@ -307,12 +307,12 @@ RNA_Minimizer::update_allow_insert_with_extra_minimize_res( pose::Pose const & p
 
 	utility::vector1< id::AtomID > atom_ids_to_move;
 
-	for ( Size n = 1; n <= extra_minimize_res_.size(); n++ ){
+	for ( Size n = 1; n <= extra_minimize_res_.size(); n++ ) {
 
 		Size const i = extra_minimize_res_[n];
 		runtime_assert( pose.residue( i ).is_RNA() );
 
-		for ( Size j = 1; j <= pose.residue(i).natoms(); j++ ){
+		for ( Size j = 1; j <= pose.residue(i).natoms(); j++ ) {
 			if ( pose.residue(i).is_virtual( j ) ) continue;
 			atom_ids_to_move.push_back( id::AtomID( j, i ) );
 		}
@@ -329,7 +329,7 @@ RNA_Minimizer::update_allow_insert_with_extra_minimize_res( pose::Pose const & p
 
 	}
 
-	for ( Size n = 1; n <= atom_ids_to_move.size(); n++ ){
+	for ( Size n = 1; n <= atom_ids_to_move.size(); n++ ) {
 		if ( allow_insert_->has_domain( atom_ids_to_move[n] ) ) allow_insert_->set( atom_ids_to_move[n],  true );
 	}
 	// We should do a double check that we're not introducing movement that would mess up a domain?

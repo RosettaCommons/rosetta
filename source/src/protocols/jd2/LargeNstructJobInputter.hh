@@ -30,55 +30,55 @@
 //utility headers
 
 namespace protocols {
-	namespace jd2 {
+namespace jd2 {
 
-		/// @details This is an implementation of JobInputter for cases where it's not possible to list all jobs at once.
-		class LargeNstructJobInputter : public protocols::jd2::JobInputter
-		{
-		public:
-			LargeNstructJobInputter();
+/// @details This is an implementation of JobInputter for cases where it's not possible to list all jobs at once.
+class LargeNstructJobInputter : public protocols::jd2::JobInputter
+{
+public:
+	LargeNstructJobInputter();
 
-			/// @brief this function is responsible for filling the pose reference with
-			/// the pose indicated by the job.  The Job object (within its InnerJob)
-			/// contains a PoseCOP.  This function needs to either fill the pose
-			/// reference from the InnerJob or, on first demand of a pose from that
-			/// InnerJob, instantiate the pose, hand off a COP to the InnerJob, and fill
-			/// the reference.
-		 	virtual void pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP job );
+	/// @brief this function is responsible for filling the pose reference with
+	/// the pose indicated by the job.  The Job object (within its InnerJob)
+	/// contains a PoseCOP.  This function needs to either fill the pose
+	/// reference from the InnerJob or, on first demand of a pose from that
+	/// InnerJob, instantiate the pose, hand off a COP to the InnerJob, and fill
+	/// the reference.
+	virtual void pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP job );
 
-			/// @brief This function determines what jobs exist.
-			/// @details  Unlike the GenericJobInputter, this version only ever has a subset of total jobs in
-			/// memory at any given time.
-			virtual void fill_jobs( protocols::jd2::JobsContainer & jobs );
-	
-			/// @brief This function is only called by certain JobInputters to update the jobs list after it has already been created.
-			/// @details An example case would be the LargeNstructJobInputter, which uses this function to load additional jobs after
-			/// the first N have started to come back.
-			virtual void update_jobs_list( JobsContainerOP jobs );
+	/// @brief This function determines what jobs exist.
+	/// @details  Unlike the GenericJobInputter, this version only ever has a subset of total jobs in
+	/// memory at any given time.
+	virtual void fill_jobs( protocols::jd2::JobsContainer & jobs );
 
-			/// @brief Return the type of input source that the LargeNstructJobInputter is currently
-			///  using.
-			/// @return Always <em>POSE</em>.
-			virtual protocols::jd2::JobInputterInputSource::Enum input_source() const;
+	/// @brief This function is only called by certain JobInputters to update the jobs list after it has already been created.
+	/// @details An example case would be the LargeNstructJobInputter, which uses this function to load additional jobs after
+	/// the first N have started to come back.
+	virtual void update_jobs_list( JobsContainerOP jobs );
 
-			/// @brief Does this type of JobInputter update the jobs list?
-			/// @details False by default.  Override this function in derived classes to make it true.
-			/// The LargeNstructJobInputter overrides this, and returns true.	
-			virtual bool updates_jobs_list() const { return true; }
+	/// @brief Return the type of input source that the LargeNstructJobInputter is currently
+	///  using.
+	/// @return Always <em>POSE</em>.
+	virtual protocols::jd2::JobInputterInputSource::Enum input_source() const;
 
-		
-		private:
-			/// @brief Private function to add N jobs to the list of jobs.
-			///
-			void populate_next_n_jobs(
-				protocols::jd2::JobsContainer & jobs,
-				core::Size const first_job_index,
-				core::Size const number_of_jobs_to_add,
-				core::Size const total_jobs
-			);
-		}; // LargeNstructJobInputter class
+	/// @brief Does this type of JobInputter update the jobs list?
+	/// @details False by default.  Override this function in derived classes to make it true.
+	/// The LargeNstructJobInputter overrides this, and returns true.
+	virtual bool updates_jobs_list() const { return true; }
 
-	} // namespace jd2
+
+private:
+	/// @brief Private function to add N jobs to the list of jobs.
+	///
+	void populate_next_n_jobs(
+		protocols::jd2::JobsContainer & jobs,
+		core::Size const first_job_index,
+		core::Size const number_of_jobs_to_add,
+		core::Size const total_jobs
+	);
+}; // LargeNstructJobInputter class
+
+} // namespace jd2
 } // namespace protocols
 
 #endif //INCLUDED_protocols_jd2_LargeNstructJobInputter_hh

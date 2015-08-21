@@ -92,20 +92,20 @@ HotspotDisjointedFoldTreeMover::make_disjointed_foldtree( core::pose::Pose const
 	TR<<"Fold tree before disjointed foldtree:\n"<<pose.fold_tree()<<std::endl;
 	ft->clear();
 	runtime_assert( chain() == 2 );
-/// THIS will only work with chain==2, though reworking it should not be too difficult
+	/// THIS will only work with chain==2, though reworking it should not be too difficult
 	core::Size head( *get_residues().begin()-1 );
 	std::set< core::Size > residues_on_target;
 	residues_on_target.clear();
 	core::Size jump( 1 );
-	BOOST_FOREACH( core::Size const r, get_residues() ){
-/// Connect the nearest residues on chain1 to key residues on chain2 leaving breaks in chain2 around each key residue
-		if( head < r - 1 ){
-///connect segments intervening between hot spots
+	BOOST_FOREACH ( core::Size const r, get_residues() ) {
+		/// Connect the nearest residues on chain1 to key residues on chain2 leaving breaks in chain2 around each key residue
+		if ( head < r - 1 ) {
+			///connect segments intervening between hot spots
 			ft->add_edge( head, r-1, Edge::PEPTIDE );
 			ft->add_edge( r-1, r, jump );
 			jump++;
 		}
-/// connect anchor residue on target with hotspot residue
+		/// connect anchor residue on target with hotspot residue
 		core::Size const target_res( find_nearest_residue_to_coord( pose, pose.residue( r ).xyz( nearest_atom_for_constraint( pose.residue( r ) )), chain() == 2 ? 1 : 2 ) );
 		ft->add_edge( target_res, r, jump );
 		residues_on_target.insert( target_res );
@@ -113,24 +113,24 @@ HotspotDisjointedFoldTreeMover::make_disjointed_foldtree( core::pose::Pose const
 		head = r + 1;
 	}
 	core::Size target_head( pose.conformation().chain_begin( 1 ) );
-	BOOST_FOREACH( core::Size const r, residues_on_target ){
-/// connect chain1 with no breaks
+	BOOST_FOREACH ( core::Size const r, residues_on_target ) {
+		/// connect chain1 with no breaks
 		ft->add_edge( target_head, r, Edge::PEPTIDE );
 		target_head = r;
 	}
-/// connect the last anchor residue on the target chain with the last residue on the target chain
+	/// connect the last anchor residue on the target chain with the last residue on the target chain
 	core::Size const target_end( *residues_on_target.rbegin() );
 	ft->add_edge( target_end, pose.conformation().chain_end( 1 ), Edge::PEPTIDE );
 
-/// refold chain2 from the first key residue to the beginning of the chain and from the last key residue to its end
+	/// refold chain2 from the first key residue to the beginning of the chain and from the last key residue to its end
 	core::Size const begin( *get_residues().begin() );
 	core::Size const end( *get_residues().rbegin() );
-	if( begin - 1 >= pose.conformation().chain_begin( chain() ) ){
+	if ( begin - 1 >= pose.conformation().chain_begin( chain() ) ) {
 		ft->add_edge( begin, begin - 1, jump );
 		ft->add_edge( begin - 1, pose.conformation().chain_begin( chain() ), Edge::PEPTIDE );
 		jump++;
 	}
-	if( end + 1 <= pose.conformation().chain_end( chain() ) ){
+	if ( end + 1 <= pose.conformation().chain_end( chain() ) ) {
 		ft->add_edge( end, end + 1, jump );
 		ft->add_edge( end + 1, pose.conformation().chain_end( chain() ), Edge::PEPTIDE );
 	}
@@ -161,18 +161,19 @@ HotspotDisjointedFoldTreeMover::apply( core::pose::Pose & pose )
 	core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory );
 	tf->push_back( pido );
 
-	if( ddG_threshold() <= 100 ){
+	if ( ddG_threshold() <= 100 ) {
 		protocols::simple_filters::RotamerBoltzmannWeight rbw;
 		rbw.ddG_threshold( ddG_threshold() );
 		rbw.scorefxn( scorefxn() );
 		rbw.repacking_radius( interface_radius() );
 		rbw.task_factory( tf );
 		utility::vector1< core::Size > const ala_scan_res( rbw.first_pass_ala_scan( pose ) );
-		BOOST_FOREACH( core::Size const r, ala_scan_res ){ add_residue( r ); }
+		BOOST_FOREACH ( core::Size const r, ala_scan_res ) { add_residue( r ); }
 	}// fi ddG_threshold
 	TR<<"Making a disjointed fold tree for residues: ";
-	BOOST_FOREACH( core::Size const r, get_residues() )
+	BOOST_FOREACH ( core::Size const r, get_residues() ) {
 		TR<<r<<" ";
+	}
 	TR<<std::endl;
 	FoldTreeOP ft( make_disjointed_foldtree( pose ) );
 	pose.fold_tree( *ft );
@@ -183,17 +184,18 @@ void
 HotspotDisjointedFoldTreeMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
 	ddG_threshold( tag->getOption< core::Real >( "ddG_threshold", 1.0 ) );
-	if( ddG_threshold() >= 100.0 )
+	if ( ddG_threshold() >= 100.0 ) {
 		TR<<"Ala scan calculation will not be carried out. Only residues specifically chosen in the script will be selected"<<std::endl;
+	}
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	chain( tag->getOption< core::Size >( "chain", 2 ) );
 	interface_radius( tag->getOption< core::Real >( "radius", 8.0 ) );
 	utility::vector1< core::Size > v1 = core::pose::get_resnum_list( tag, "resnums", pose );
-	BOOST_FOREACH( core::Size const r, v1 ){ add_residue( r ); }
+	BOOST_FOREACH ( core::Size const r, v1 ) { add_residue( r ); }
 
 	runtime_assert( ddG_threshold() <= 100.0 || get_residues().size() );
 	TR<<"HotspotDisjointedFoldTreeMover with: chain "<<chain()<<" ddG_threshold "<<ddG_threshold()<<" and residues ";
-	BOOST_FOREACH( core::Size const r, get_residues() ){ TR<<r<<" "; }
+	BOOST_FOREACH ( core::Size const r, get_residues() ) { TR<<r<<" "; }
 	TR<<std::endl;
 }
 
@@ -229,24 +231,24 @@ HotspotDisjointedFoldTreeMover::ddG_threshold( core::Real const d ){
 
 void
 HotspotDisjointedFoldTreeMover::scorefxn( core::scoring::ScoreFunctionOP scorefxn ){
-  scorefxn_ = scorefxn;
+	scorefxn_ = scorefxn;
 }
 
 core::scoring::ScoreFunctionOP
 HotspotDisjointedFoldTreeMover::scorefxn() const{
-  return scorefxn_;
+	return scorefxn_;
 }
 
 void
 HotspotDisjointedFoldTreeMover::interface_radius( core::Real const rad )
 {
-  interface_radius_ = rad;
+	interface_radius_ = rad;
 }
 
 core::Real
 HotspotDisjointedFoldTreeMover::interface_radius() const
 {
-  return interface_radius_;
+	return interface_radius_;
 }
 }//movers
 }//protein_interface_design

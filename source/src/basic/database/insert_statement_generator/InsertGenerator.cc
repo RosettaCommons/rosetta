@@ -21,7 +21,7 @@
 
 namespace basic {
 namespace database {
-namespace insert_statement_generator{
+namespace insert_statement_generator {
 
 InsertGenerator::InsertGenerator(std::string const & table_name) : table_name_(table_name)
 {
@@ -30,9 +30,9 @@ InsertGenerator::InsertGenerator(std::string const & table_name) : table_name_(t
 
 void InsertGenerator::add_column(std::string const & column_name)
 {
-  column_list_.push_back(column_name);
+	column_list_.push_back(column_name);
 
-  // Index into prepared statement for bind method, 1-based index.
+	// Index into prepared statement for bind method, 1-based index.
 	platform::Size column_index = column_list_.size();
 	column_index_map_.insert(std::make_pair(column_name,column_index));
 }
@@ -47,16 +47,16 @@ InsertGenerator::write_to_database(
 	utility::sql_database::sessionOP db_session
 ) {
 	switch(db_session->get_db_mode()){
-	case utility::sql_database::DatabaseMode::sqlite3:
+	case utility::sql_database::DatabaseMode::sqlite3 :
 		write_to_database_sequential(db_session);
 		break;
-	case utility::sql_database::DatabaseMode::mysql:
+	case utility::sql_database::DatabaseMode::mysql :
 		write_to_database_chunked(db_session, 5000);
 		break;
-	case utility::sql_database::DatabaseMode::postgres:
+	case utility::sql_database::DatabaseMode::postgres :
 		write_to_database_chunked(db_session, 300);
 		break;
-	default:
+	default :
 		utility_exit_with_message(
 			"Unrecognized database mode: '" +
 			name_from_database_mode(db_session->get_db_mode()) + "'");
@@ -66,35 +66,33 @@ InsertGenerator::write_to_database(
 void
 InsertGenerator::write_to_database(
 	utility::sql_database::sessionOP db_session,
-  long long & last_insert_id,
+	long long & last_insert_id,
 	std::string const & sequence_name
 ){
-  if (row_list_.size() > 1)
-  {
+	if ( row_list_.size() > 1 ) {
 		utility_exit_with_message("Unable to write to database with more than 1 row when requesting auto-increment sequence id.");
-  }
+	}
 
-  std::string statement_string = make_compound_statement(table_name_, column_list_, 1);
+	std::string statement_string = make_compound_statement(table_name_, column_list_, 1);
 	cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
 
-  bind_row_data(statement, 0, 1);
-  basic::database::safely_write_to_database(statement);
+	bind_row_data(statement, 0, 1);
+	basic::database::safely_write_to_database(statement);
 
 	//Can't use cppdb::statement::last_insert_id() with postgres backend
-  //last_insert_id = statement.last_insert_id();
+	//last_insert_id = statement.last_insert_id();
 	last_insert_id = statement.sequence_last(sequence_name);
 }
 
 void InsertGenerator::write_to_database_sequential(utility::sql_database::sessionOP db_session)
 {
-  std::string statement_string = make_compound_statement(table_name_, column_list_, 1);
+	std::string statement_string = make_compound_statement(table_name_, column_list_, 1);
 	cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
 
-  for(platform::Size i = 0; i < row_list_.size(); ++i)
-  {
-    bind_row_data(statement, i, i+1);
+	for ( platform::Size i = 0; i < row_list_.size(); ++i ) {
+		bind_row_data(statement, i, i+1);
 		basic::database::safely_write_to_database(statement);
-  }
+	}
 }
 
 void
@@ -102,8 +100,8 @@ InsertGenerator::write_to_database_chunked(
 	utility::sql_database::sessionOP db_session,
 	platform::Size chunk_size)
 {
-  std::string statement_string;
-  cppdb::statement statement;
+	std::string statement_string;
+	cppdb::statement statement;
 
 	platform::Size total_rows = row_list_.size();
 	platform::Size row_start_index = 0;
@@ -111,27 +109,24 @@ InsertGenerator::write_to_database_chunked(
 	platform::Size remaining_rows = total_rows;
 	//platform::Size column_count = column_list_.size();
 
-	while(remaining_rows > 0)
-	{
-		if(!statement.empty())
-		{
+	while ( remaining_rows > 0 )
+			{
+		if ( !statement.empty() ) {
 			statement.reset();
 		}
 
 		platform::Size chunk = 0;
-		if(remaining_rows > chunk_size)
-		{
+		if ( remaining_rows > chunk_size ) {
 			chunk = chunk_size;
-		}else
-		{
+		} else {
 			chunk = remaining_rows;
 		}
 		row_end_index = row_start_index+chunk;
 
-    statement_string = basic::database::make_compound_statement(table_name_,column_list_,chunk);
-    statement = basic::database::safely_prepare_statement(statement_string,db_session);
+		statement_string = basic::database::make_compound_statement(table_name_,column_list_,chunk);
+		statement = basic::database::safely_prepare_statement(statement_string,db_session);
 
-    bind_row_data(statement, row_start_index, row_end_index);
+		bind_row_data(statement, row_start_index, row_end_index);
 
 		row_start_index = row_end_index;
 		basic::database::safely_write_to_database(statement);
@@ -140,27 +135,24 @@ InsertGenerator::write_to_database_chunked(
 }
 
 void InsertGenerator::bind_row_data(
-  cppdb::statement & statement,
+	cppdb::statement & statement,
 	platform::Size row_start_index,
 	platform::Size row_end_index)
 {
 	platform::Size column_count = column_list_.size();
 
-  for(platform::Size i = row_start_index; i < row_end_index;++i)
-  {
-    std::vector<RowDataBaseOP> current_row = row_list_[i];
-    for(std::vector<RowDataBaseOP>::iterator column_it = current_row.begin(); column_it != current_row.end();++column_it)
-    {
-      std::map<std::string,platform::Size>::const_iterator it(column_index_map_.find((*column_it)->get_column_name()));
-      if(it == column_index_map_.end())
-      {
-        utility_exit_with_message(table_name_ + " does not contain column " + (*column_it)->get_column_name() + " check for typos in your features reporter");
-      }
-      platform::Size base_column_index = it->second;
-      platform::Size column_index = column_count*(i-row_start_index)+base_column_index;
-      (*column_it)->bind_data(column_index,statement);
-    }
-  }
+	for ( platform::Size i = row_start_index; i < row_end_index; ++i ) {
+		std::vector<RowDataBaseOP> current_row = row_list_[i];
+		for ( std::vector<RowDataBaseOP>::iterator column_it = current_row.begin(); column_it != current_row.end(); ++column_it ) {
+			std::map<std::string,platform::Size>::const_iterator it(column_index_map_.find((*column_it)->get_column_name()));
+			if ( it == column_index_map_.end() ) {
+				utility_exit_with_message(table_name_ + " does not contain column " + (*column_it)->get_column_name() + " check for typos in your features reporter");
+			}
+			platform::Size base_column_index = it->second;
+			platform::Size column_index = column_count*(i-row_start_index)+base_column_index;
+			(*column_it)->bind_data(column_index,statement);
+		}
+	}
 }
 
 }

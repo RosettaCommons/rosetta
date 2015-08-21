@@ -192,12 +192,12 @@ public:
 	/*virtual
 	void
 	setup_for_derivatives_for_residue_pair(
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		ResSingleMinimizationData const & minsingle_data1,
-		ResSingleMinimizationData const & minsingle_data2,
-		pose::Pose const & pose,
-		ResPairMinimizationData & data_cache
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	ResSingleMinimizationData const & minsingle_data1,
+	ResSingleMinimizationData const & minsingle_data2,
+	pose::Pose const & pose,
+	ResPairMinimizationData & data_cache
 	) const;*/
 
 	/// @brief Retrieves the cached hbond data from the minpair_data object
@@ -208,18 +208,18 @@ public:
 	/*virtual
 	void
 	eval_atom_derivative_for_residue_pair(
-		Size const atom_index,
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		ResSingleMinimizationData const & minsingle_data1,
-		ResSingleMinimizationData const & minsingle_data2,
-		ResPairMinimizationData const & minpair_data,
-		pose::Pose const & pose, // provides context
-		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
-		Vector & F1,
-		Vector & F2
+	Size const atom_index,
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	ResSingleMinimizationData const & minsingle_data1,
+	ResSingleMinimizationData const & minsingle_data2,
+	ResPairMinimizationData const & minpair_data,
+	pose::Pose const & pose, // provides context
+	kinematics::DomainMap const & domain_map,
+	ScoreFunction const & sfxn,
+	EnergyMap const & weights,
+	Vector & F1,
+	Vector & F2
 	) const;*/
 
 	virtual
@@ -344,13 +344,13 @@ public:
 	/*virtual
 	void
 	eval_atom_derivative(
-		id::AtomID const & atom_id,
-		pose::Pose const & pose,
-		kinematics::DomainMap const &,
-		ScoreFunction const &,
-		EnergyMap const & weights,
-		Vector & F1,
-		Vector & F2
+	id::AtomID const & atom_id,
+	pose::Pose const & pose,
+	kinematics::DomainMap const &,
+	ScoreFunction const &,
+	EnergyMap const & weights,
+	Vector & F1,
+	Vector & F2
 	) const;*/
 
 
@@ -477,7 +477,7 @@ private:
 	mutable int res2_;
 	mutable int res1_nb_;
 	mutable int res2_nb_;
-	
+
 	// Keeps track of the number of hbonds formed by each residue in the pose for use in bulge bonus calculations
 	//mutable utility::vector1< core::Size > num_hbonds_;
 	mutable boost::unordered_map< core::Size, core::Size> num_hbonds_;

@@ -181,7 +181,7 @@ public:
 
 	/// @brief is atom type virtual?
 	bool is_virtual() const {
-	debug_assert( (name_ == "VIRT") ? atom_is_virtual_ : true ); // Raise an error if an atom type named VIRT is not virtual.
+		debug_assert( (name_ == "VIRT") ? atom_is_virtual_ : true ); // Raise an error if an atom type named VIRT is not virtual.
 		return atom_is_virtual_;
 	}
 
@@ -216,16 +216,16 @@ public:
 	/// @brief set LJ and LK solvation parameter for this atom type
 	void
 	set_parameter(
-			std::string const & param,
-			Real const setting
+		std::string const & param,
+		Real const setting
 	);
 
 
 	/// @brief set relevant properties for this atom type hh
 	void
 	set_property(
-			std::string const & property,
-			bool const setting
+		std::string const & property,
+		bool const setting
 	);
 
 	/// @brief retrieve an atom's hybridization status.

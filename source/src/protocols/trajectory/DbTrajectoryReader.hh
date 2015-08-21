@@ -33,10 +33,10 @@ using core::Size;
 using core::Real;
 using core::pose::Pose;
 
-class DbTrajectoryReader 
+class DbTrajectoryReader
 	: public utility::pointer::ReferenceCount, private boost::noncopyable {
 
-public: 
+public:
 
 	/// @brief Default constructor.
 	DbTrajectoryReader();

@@ -29,7 +29,7 @@
 //namespace loophash {
 namespace devel {
 namespace loop_creation {
-	
+
 class LoophashLoopInserter : public devel::loop_creation::LoopInserter
 {
 public:
@@ -37,28 +37,28 @@ public:
 	typedef std::map< core::Size, std::vector<core::Size> > HashBuckets;
 
 	LoophashLoopInserter();
-	
+
 	protocols::moves::MoverOP
 	clone() const;
-	
+
 	protocols::moves::MoverOP
 	fresh_instance() const;
-		
+
 	std::string
 	get_name() const;
-	
+
 	virtual void
 	apply(
 		core::pose::Pose & pose
 	);
-	
+
 	HashBuckets
 	find_fragments(
 		core::pose::Pose const & pose,
 		core::Size lh_fragment_begin,
 		core::Size lh_fragment_end
 	);
-	
+
 	/// @brief return all loophash fragments within the max_lh radius that also satisfy
 	///torsion rms to the flanking regions
 	HashBuckets
@@ -75,12 +75,12 @@ public:
 	get_random_fragment(
 		HashBuckets hash_buckets
 	);
-	
+
 	void
 	init(
 		core::pose::Pose & pose
 	);
-	
+
 	/// @brief build the specified loophash fragment into the pose. Return
 	///the deviation from an ideal bond across the cut
 	std::pair<core::Real, core::Real>
@@ -91,7 +91,7 @@ public:
 		core::Size lh_fragment_size,
 		core::Size retrieve_index
 	);
-	
+
 	virtual void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -100,26 +100,26 @@ public:
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/
 	);
-	
+
 protected:
 
 	protocols::loophash::LoopHashLibraryOP lh_library_;
-//	HashBuckets hash_buckets_;
-	
+	// HashBuckets hash_buckets_;
+
 	core::Real min_torsion_rms_;
 	core::Real max_torsion_rms_;
 	core::Real max_lh_radius_;
-	
+
 	core::Real max_closure_deviation_;
-	
+
 	utility::vector1<core::Size> loop_sizes_;
-	
+
 	//number of flanking residues for each segment that must match the
 	//torsions of the input pose (within loophash min and max rms)
 	core::Size num_flanking_residues_to_match_;
-	
+
 	bool modify_flanking_regions_;
-	
+
 	bool lh_initialized_;
 };
 

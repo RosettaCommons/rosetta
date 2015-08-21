@@ -57,13 +57,13 @@ DensityScoringClaimer::DensityScoringClaimer()
 {}
 
 /* void DensityScoringClaimer::initialize_residues( core::pose::Pose& pose, claims::SequenceClaimOP my_claim, claims::DofClaims& failed_to_init ) {
-	SequenceClaimer::initialize_residues( pose, my_claim, failed_to_init );
-	resolved_anchor_residue_ = broker().sequence_number_resolver().find_global_pose_number( anchor_chain_, anchor_residue_ );
-	//resolved_anchor_residue_ = broker().resolve_residue( anchor_chain_, anchor_residue_ );
-	vrt_id_ = broker().sequence_number_resolver().find_global_pose_number(my_claim->label());
-	//vrt_id_ = my_claim->offset(); // now that we know it, set vrt id here
-	tr.Debug << "Setting vrt_id_ to " << vrt_id_ << std::endl;
-	tr.Debug << "Setting resolved_anchor_residue_ to " << resolved_anchor_residue_ << std::endl;
+SequenceClaimer::initialize_residues( pose, my_claim, failed_to_init );
+resolved_anchor_residue_ = broker().sequence_number_resolver().find_global_pose_number( anchor_chain_, anchor_residue_ );
+//resolved_anchor_residue_ = broker().resolve_residue( anchor_chain_, anchor_residue_ );
+vrt_id_ = broker().sequence_number_resolver().find_global_pose_number(my_claim->label());
+//vrt_id_ = my_claim->offset(); // now that we know it, set vrt id here
+tr.Debug << "Setting vrt_id_ to " << vrt_id_ << std::endl;
+tr.Debug << "Setting resolved_anchor_residue_ to " << resolved_anchor_residue_ << std::endl;
 } */
 
 
@@ -95,7 +95,7 @@ void DensityScoringClaimer::add_constraints( core::pose::Pose& ) const {
 }
 
 void  DensityScoringClaimer::set_defaults() {
-	set_label( "ElectronDensityCenter" );	// Needed for SequenceClaim generated with generate_sequence_claims for Residue X.
+	set_label( "ElectronDensityCenter" ); // Needed for SequenceClaim generated with generate_sequence_claims for Residue X.
 	anchor_chain_ = ""; //usually anchored to DEFAULT chain
 	anchor_residue_ = 0;
 }
@@ -105,13 +105,13 @@ bool DensityScoringClaimer::read_tag( std::string tag, std::istream& is ) {
 	if ( tag == "anchor_residue" ) {
 		is >> anchor_residue_;
 		tr.Debug << "Read anchor res = " << anchor_residue_ << std::endl;
-	} else if ( tag == "anchor_chain" ){
+	} else if ( tag == "anchor_chain" ) {
 		is >> anchor_chain_;
 		tr.Debug << "Reading anchor chain: " << anchor_chain_ << std::endl;
-	}
+	} else return false;
 	/*else if ( SequenceClaimer::read_tag( tag, is ) ) {
-		//noop
-	} */ else return false;
+	//noop
+	} */
 	return true;
 }
 

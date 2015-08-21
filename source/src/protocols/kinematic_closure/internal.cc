@@ -33,9 +33,9 @@ Size num_bump_filter_fails = 0;
 
 
 // ChainedSolutionList::Iterator::Iterator() :
-// 	parent_( (ChainedSolutionList *)0 ),
-// 	bookmark_(0),
-// 	state_(FIRST)
+//  parent_( (ChainedSolutionList *)0 ),
+//  bookmark_(0),
+//  state_(FIRST)
 // {}
 
 ChainedSolutionList::Iterator::Iterator(ChainedSolutionList const *parent, SolutionList::const_iterator bookmark) :

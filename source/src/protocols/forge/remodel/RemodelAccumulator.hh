@@ -107,11 +107,11 @@ public: // accessors
 
 	bool cluster_switch();
 
-//ScoreFunction const & scorefunction() const;
+	//ScoreFunction const & scorefunction() const;
 
-//MoveMap const & movemap() const;
+	//MoveMap const & movemap() const;
 
-//PackerTask const & packertask() const;
+	//PackerTask const & packertask() const;
 
 	void run_cluster();
 	void shrink_cluster(core::Size num_top);

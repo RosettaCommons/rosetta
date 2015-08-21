@@ -53,7 +53,7 @@
 
 
 #ifdef WIN32
-	#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.hh>
 #endif
 
 
@@ -85,14 +85,14 @@ void AlignRmsdTargetEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvalua
 	if ( option[ OptionKeys::evaluation::align_rmsd_target ].user() ) {
 		using std::string;
 		using utility::vector1;
-    vector1< string > const & align_rmsd_target(
+		vector1< string > const & align_rmsd_target(
 			option[ OptionKeys::evaluation::align_rmsd_target ]()
 		);
-    vector1< string > const & align_rmsd_col_names(
+		vector1< string > const & align_rmsd_col_names(
 			option[ OptionKeys::evaluation::align_rmsd_column ]()
 		);
 
-    vector1< string > align_rmsd_fns;
+		vector1< string > align_rmsd_fns;
 		if ( option[ OptionKeys::evaluation::align_rmsd_fns ].user() ) {
 			align_rmsd_fns = option[ OptionKeys::evaluation::align_rmsd_fns ]();
 		}
@@ -102,15 +102,15 @@ void AlignRmsdTargetEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvalua
 		bool gdt_by_TM( option[ OptionKeys::evaluation::gdttm ]() );
 
 		for ( Size ii = 1; ii <= align_rmsd_target.size(); ++ii ) {
-      pose::PoseOP rmsd_pose( new pose::Pose );
-      core::import_pose::pose_from_pdb( *rmsd_pose, align_rmsd_target[ii] );
+			pose::PoseOP rmsd_pose( new pose::Pose );
+			core::import_pose::pose_from_pdb( *rmsd_pose, align_rmsd_target[ii] );
 			//string const tag( align_rmsd_target[ii] );
 			string const tag( align_rmsd_col_names[ii] );
 			core::sequence::SequenceAlignmentOP aln(0);
 			if ( align_rmsd_fns.size() >= ii ) {
 				*aln = core::sequence::read_aln(
 					align_rmsd_fns[ii], option[ OptionKeys::evaluation::align_rmsd_format ]()
-				).front();
+					).front();
 			}
 			eval.add_evaluation( PoseEvaluatorOP( new Align_RmsdEvaluator(rmsd_pose,tag,true,aln,gdt_by_TM) ) );
 			eval.add_evaluation( PoseEvaluatorOP( new Align_RotamerEvaluator(rmsd_pose,tag,true,aln) ) );

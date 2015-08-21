@@ -38,15 +38,15 @@ public:
 
 	/// @copydoc Perturber::perturb_subset
 	void perturb_subset(
-			Pose const & pose,
-			IndexList const & residues,
-			ClosureProblemOP problem);
+		Pose const & pose,
+		IndexList const & residues,
+		ClosureProblemOP problem);
 
 	/// @copydoc Perturber::perturb_subset_with_balance
 	void perturb_subset_with_balance(
-			Pose const & pose,
-			IndexList const & residues,
-			ClosureProblemOP problem);
+		Pose const & pose,
+		IndexList const & residues,
+		ClosureProblemOP problem);
 
 	/// @brief Add a new perturber to the set.  Any default perturbers are
 	/// removed.
@@ -59,10 +59,10 @@ public:
 	/// of default, and should be cleared if a new perturber is manually added.
 	void mark_as_default();
 
-	/// @brief Add the names of all the perturbers contained in this set to the 
+	/// @brief Add the names of all the perturbers contained in this set to the
 	/// given list.  Indentation is used to indicate hierarchy.
 	void get_perturber_names(
-			utility::vector1<std::string> & names, std::string indent="") const;
+		utility::vector1<std::string> & names, std::string indent="") const;
 
 private:
 	utility::vector1<PerturberOP> perturbers_;

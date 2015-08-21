@@ -50,7 +50,7 @@ public:
 	typedef protocols::moves::MoverOP MoverOP;
 
 
-public:	// constructor/destructor
+public: // constructor/destructor
 
 	/// @brief default constructor
 	MonteCarloRecover();

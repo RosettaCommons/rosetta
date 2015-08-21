@@ -28,9 +28,9 @@
 #include <string>
 #include <set>
 
-namespace basic{
-namespace database{
-namespace schema_generator{
+namespace basic {
+namespace database {
+namespace schema_generator {
 
 class Schema
 {
@@ -55,33 +55,33 @@ public:
 
 	void add_index(Index index);
 
-  //@brief Returns sql statements needed to fully initialize the given schema.
-  //
-  //See table_schema_statements and table_init_statements, statement blocks
-  //must be executed separately in sqlite.
+	//@brief Returns sql statements needed to fully initialize the given schema.
+	//
+	//See table_schema_statements and table_init_statements, statement blocks
+	//must be executed separately in sqlite.
 	std::string print(utility::sql_database::sessionOP db_session) const;
 
-  //@brief Write schema to database and initialize if needed.
-  //
-  //Retries write once to resolve transaction conflicts.
+	//@brief Write schema to database and initialize if needed.
+	//
+	//Retries write once to resolve transaction conflicts.
 	void write(utility::sql_database::sessionOP db_session);
 
 protected:
-  //@brief Returns sql statements to declare table, keys, and indices.
-  std::string table_schema_statements(utility::sql_database::sessionOP db_session) const;
+	//@brief Returns sql statements to declare table, keys, and indices.
+	std::string table_schema_statements(utility::sql_database::sessionOP db_session) const;
 
-  //@brief Returns sql to initialize table state.
-  //
-  //Currently limited to autoincrement starting values. Must be executed in separate statement
-  //when using sqlite3, as sqlite_sequence table isn't instantiated until the statement containing
-  //CREATE TABLE with autoincrement value is executed.
-  std::string table_init_statements(utility::sql_database::sessionOP db_session) const;
+	//@brief Returns sql to initialize table state.
+	//
+	//Currently limited to autoincrement starting values. Must be executed in separate statement
+	//when using sqlite3, as sqlite_sequence table isn't instantiated until the statement containing
+	//CREATE TABLE with autoincrement value is executed.
+	std::string table_init_statements(utility::sql_database::sessionOP db_session) const;
 
-  //@brief Write and initialize schema if not already declared.
-  void check_table_and_perform_write(
-    utility::sql_database::sessionOP db_session,
-    std::string schema_statement,
-    std::string init_statements) const;
+	//@brief Write and initialize schema if not already declared.
+	void check_table_and_perform_write(
+		utility::sql_database::sessionOP db_session,
+		std::string schema_statement,
+		std::string init_statements) const;
 
 private:
 

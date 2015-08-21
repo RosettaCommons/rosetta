@@ -72,7 +72,7 @@ MMBondAngleResidueTypeParamSet::get(
 {
 	std::map<std::string, MMBondAngleResidueTypeParam>::iterator iter(reside_type_param_map_.find(residue_type.name()));
 
-	if (iter == reside_type_param_map_.end()) {
+	if ( iter == reside_type_param_map_.end() ) {
 
 		MMBondAngleResidueTypeParam new_param;
 		new_param.init(residue_type, *mm_bondangle_library_, use_residue_type_theta0_, central_atoms_to_score_);
@@ -92,7 +92,7 @@ MMBondAngleResidueTypeParamSet::get(
 {
 	std::map<std::string, MMBondAngleResidueTypeParam>::const_iterator iter(reside_type_param_map_.find(residue_type.name()));
 
-	if (iter == reside_type_param_map_.end()) {
+	if ( iter == reside_type_param_map_.end() ) {
 
 		return NULL;
 	}
@@ -111,12 +111,12 @@ connection_indices(
 	core::Size & other_connection
 )
 {
-	for (core::Size i = 1; i <= residue.n_residue_connections(); ++i) {
-		if (residue.residue_connection(i).atomno() == (signed)my_atomno) {
-			if (residue.connect_map(i).resid() == other_residue.seqpos()) {
+	for ( core::Size i = 1; i <= residue.n_residue_connections(); ++i ) {
+		if ( residue.residue_connection(i).atomno() == (signed)my_atomno ) {
+			if ( residue.connect_map(i).resid() == other_residue.seqpos() ) {
 				my_connection = i;
 				other_connection = residue.connect_map(i).connid();
-				if (other_residue.residue_connection(other_connection).atomno() == (signed)other_atomno) {
+				if ( other_residue.residue_connection(other_connection).atomno() == (signed)other_atomno ) {
 					return true;
 				}
 			}
@@ -159,7 +159,7 @@ MMBondAngleResidueTypeParamSet::lookup(
 {
 	MMBondAngleResidueTypeParam const * residue_type_param(get(conformation.residue_type(atomid2.rsd())));
 
-	if (residue_type_param) {
+	if ( residue_type_param ) {
 		lookup(conformation, atomid1, atomid2, atomid3, *residue_type_param, Ktheta, theta0);
 	} else {
 		// this is slow, but shouln't be called after scoring caches all MMBondAngleResidueTypeParam objects
@@ -184,13 +184,13 @@ MMBondAngleResidueTypeParamSet::lookup(
 	Ktheta = 0;
 	theta0 = 0;
 
-	if (atomid1.rsd() == atomid2.rsd() && atomid1.rsd() == atomid3.rsd()) {
+	if ( atomid1.rsd() == atomid2.rsd() && atomid1.rsd() == atomid3.rsd() ) {
 
 		// simple case, all atoms are in the same residue
 		three_atom_set atom_set(atomid1.atomno(), atomid2.atomno(), atomid3.atomno());
 		core::Size bondangle_index(residue_type_param.bondangle_index(atom_set));
 
-		if (bondangle_index != 0) {
+		if ( bondangle_index != 0 ) {
 			// use residue_type_param data
 			Ktheta = residue_type_param.Ktheta(bondangle_index);
 			theta0 = residue_type_param.theta0(bondangle_index);
@@ -216,12 +216,12 @@ MMBondAngleResidueTypeParamSet::lookup(
 	core::Size atomno2(atomid2.atomno());
 	core::Size atomno3(0);
 
-	if (atomid1.rsd() == atomid2.rsd()) {
+	if ( atomid1.rsd() == atomid2.rsd() ) {
 		// more complicated case, an interresidue bond angle with atoms 1 & 2 in the same residue
 		secondary_rsd = atomid3.rsd();
 		atomno1 = atomid1.atomno();
 		atomno3 = atomid3.atomno();
-	} else if (atomid2.rsd() == atomid3.rsd()) {
+	} else if ( atomid2.rsd() == atomid3.rsd() ) {
 		// more complicated case, an interresidue bond angle with atoms 2 & 3 in the same residue
 		secondary_rsd = atomid1.rsd();
 		atomno1 = atomid3.atomno();
@@ -234,15 +234,15 @@ MMBondAngleResidueTypeParamSet::lookup(
 	core::Size primary_connection;
 	core::Size secondary_connection;
 	// lookup the residue connection ids
-	if (connection_indices(conformation.residue(primary_rsd), conformation.residue(secondary_rsd), atomno2, atomno3,
-	                       primary_connection, secondary_connection)) {
+	if ( connection_indices(conformation.residue(primary_rsd), conformation.residue(secondary_rsd), atomno2, atomno3,
+			primary_connection, secondary_connection) ) {
 		two_atom_set const primary_atom_set(atomno1, atomno2);
 		core::Size connection_index(residue_type_param.connection_index(primary_connection, primary_atom_set));
-		if (!connection_index) {
+		if ( !connection_index ) {
 			Ktheta = 0;
 			return;
 		}
-		if (residue_type_param.connection_use_theta0(primary_connection, connection_index)) {
+		if ( residue_type_param.connection_use_theta0(primary_connection, connection_index) ) {
 			theta0 = residue_type_param.connection_theta0(primary_connection, connection_index);
 		}
 	}
@@ -253,13 +253,13 @@ mm_bond_angle_residue_type_param_set(
 	core::scoring::ScoreFunction const & scorefxn
 )
 {
-	for (core::scoring::ScoreFunction::TWO_B_MethodIterator iter(scorefxn.ci_2b_intrares_begin());
-	     iter != scorefxn.ci_2b_intrares_end(); ++iter) {
+	for ( core::scoring::ScoreFunction::TWO_B_MethodIterator iter(scorefxn.ci_2b_intrares_begin());
+			iter != scorefxn.ci_2b_intrares_end(); ++iter ) {
 
 		core::scoring::methods::MMBondAngleEnergyCOP bond_angle_energy_method =
 			utility::pointer::dynamic_pointer_cast<core::scoring::methods::MMBondAngleEnergy const>( *iter );
 
-		if (bond_angle_energy_method) {
+		if ( bond_angle_energy_method ) {
 			return bond_angle_energy_method->residue_type_param_set();
 		}
 	}

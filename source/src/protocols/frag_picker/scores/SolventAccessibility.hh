@@ -42,17 +42,19 @@ public:
 
 	/// @brief  creates a predicted solvent accessibility based scoring function.
 	SolventAccessibility(Size priority, Real lowest_acceptable_value, bool use_lowest,
-				std::string & fastaQuerySequence, utility::vector1<core::Real> & predicted_sa) :
-			CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
-				"SolventAccessibility"),  query_(fastaQuerySequence) {
+		std::string & fastaQuerySequence, utility::vector1<core::Real> & predicted_sa) :
+		CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
+		"SolventAccessibility"),  query_(fastaQuerySequence) {
 
-				if (query_.length() != predicted_sa.size())
-					utility_exit_with_message("Query length does not match predicted solvent accessiblity");
+		if ( query_.length() != predicted_sa.size() ) {
+			utility_exit_with_message("Query length does not match predicted solvent accessiblity");
+		}
 
-				// get normalized ASA values
-				//   just divide by the maximum values from Faraggi et al. Proteins 2008 (Table II)
-				for (Size i=1;i<=predicted_sa.size();++i)
-					predicted_sa_norm_.push_back( predicted_sa[i]/protocols::frag_picker::sa_faraggi_max( query_[i-1] ) );
+		// get normalized ASA values
+		//   just divide by the maximum values from Faraggi et al. Proteins 2008 (Table II)
+		for ( Size i=1; i<=predicted_sa.size(); ++i ) {
+			predicted_sa_norm_.push_back( predicted_sa[i]/protocols::frag_picker::sa_faraggi_max( query_[i-1] ) );
+		}
 	}
 
 	~SolventAccessibility() {};
@@ -77,10 +79,10 @@ public:
 	}
 
 	FragmentScoringMethodOP make(Size priority, Real lowest_acceptable_value, bool use_lowest,
-				FragmentPickerOP picker, std::string) {
+		FragmentPickerOP picker, std::string) {
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new SolventAccessibility(priority,
-        lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), picker->get_query_sa_prediction()) );
-  }
+			lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), picker->get_query_sa_prediction()) );
+	}
 
 };
 

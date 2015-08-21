@@ -38,23 +38,23 @@ namespace protocols {
 namespace domain_assembly {
 
 void PostDockAssemblyScorer::apply( core::pose::Pose & pose ) {
-		using core::Real;
-		using std::string;
+	using core::Real;
+	using std::string;
 
-		char const first_chain( pose.pdb_info()->chain(1) );
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-			char const chain_ii( pose.pdb_info()->chain(ii) );
-			if ( first_chain != chain_ii ) {
-				Real const rebuild_dist(
-					pose.residue(ii-1).xyz("CA").distance(
-						pose.residue(ii).xyz("CA")
-					)
-				);
-				using core::pose::setPoseExtraScore;
-				setPoseExtraScore( pose, score_prefix_, rebuild_dist );
-				break;
-			}
+	char const first_chain( pose.pdb_info()->chain(1) );
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		char const chain_ii( pose.pdb_info()->chain(ii) );
+		if ( first_chain != chain_ii ) {
+			Real const rebuild_dist(
+				pose.residue(ii-1).xyz("CA").distance(
+				pose.residue(ii).xyz("CA")
+				)
+			);
+			using core::pose::setPoseExtraScore;
+			setPoseExtraScore( pose, score_prefix_, rebuild_dist );
+			break;
 		}
+	}
 } // apply
 
 

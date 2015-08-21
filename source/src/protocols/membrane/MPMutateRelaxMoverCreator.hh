@@ -22,13 +22,13 @@ namespace membrane {
 
 /// @brief Mover Creator
 class MPMutateRelaxMoverCreator : public protocols::moves::MoverCreator {
-	
+
 public:
-	
+
 	virtual protocols::moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
 	static std::string mover_name();
-	
+
 };
 
 } // membrane

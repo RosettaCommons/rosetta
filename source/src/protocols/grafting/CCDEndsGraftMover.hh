@@ -31,16 +31,16 @@
 
 namespace protocols {
 namespace grafting {
-	
-	using protocols::simple_moves::SmallMoverOP;
-	
+
+using protocols::simple_moves::SmallMoverOP;
+
 /// @brief General purpose Grafting class which:
 /// 1) superimposes the insert onto the scaffold using any overhang residues,
 /// 2) Inserts the pose piece into the scaffold pose, deleting any overhang residues or residues in the region the isertion will occur between.
 /// 3) Cycles of:
 ///      a) SmallMover for sampling (Can be disabled))
 ///      b) CCDs both terminal ends of the scaffold using flexibility settings or movemap
-///          To close the graft.  
+///          To close the graft.
 ///      c) MinMover to help close the graft through chainbreak terms
 ///      d) Closure check - will return if closed (Can be disabled)
 ///      d) MonteCarlo Boltzmann criterion
@@ -69,30 +69,30 @@ namespace grafting {
 ///
 ///
 class CCDEndsGraftMover : public protocols::grafting::AnchoredGraftMover {
-	
+
 public:
-    
+
 	CCDEndsGraftMover();
-	
+
 	/// @brief Start and end are the residue numbers you want your insert to go between.  start->Insert<-end
 	CCDEndsGraftMover(Size const start, Size const end, bool copy_pdbinfo = false);
 
 	CCDEndsGraftMover(
-		Size const start, Size const end, 
+		Size const start, Size const end,
 		core::pose::Pose const & piece, Size Nter_overhang=2, Size Cter_overhang=2, bool copy_pdbinfo = false);
-    
+
 	CCDEndsGraftMover(CCDEndsGraftMover const & src);
 
 	virtual ~CCDEndsGraftMover();
-    
-	
+
+
 	virtual void
 	apply(core::pose::Pose & pose);
-	
+
 public:
-	
+
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief Advanced way to set flexibility. 
+	/// @brief Advanced way to set flexibility.
 	/// @details Will combine the movemaps for apply, and renumber everything. Flexible residues in multiple chains not recommended.
 	/// One arm Will go from first flexible N terminal residue to after start_+any contiguous residues on in the movemap from there. Opposite for Cter side.
 	/// This way any loop regions within a chain on either side can be used as flexible residues to close full graft.
@@ -100,27 +100,27 @@ public:
 	/// Note: Will disregard flexibility settings, as the movemaps will be used as primary way to define flexibility.
 	/// May want to consider turning off the sampling step when passing crazy movemaps.
 	///
-	virtual void 
+	virtual void
 	set_movemaps(MoveMapCOP const scaffold_mm, MoveMapCOP const insert_mm);
-	
+
 
 public:
-	
+
 	std::string
 	get_name() const;
-	
+
 	protocols::moves::MoverOP
 	clone() const;
-	
+
 	protocols::moves::MoverOP
 	fresh_instance() const;
-	
+
 
 private:
-	
+
 	virtual SmallMoverOP
 	setup_default_small_mover();
-	
+
 }; //Class CCDEndsGraftMover
 
 

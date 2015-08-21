@@ -36,7 +36,7 @@ numeric::Real sq_vec_distance(
 			it1 = vec1.begin(), it2 = vec2.begin(),
 			end1 = vec1.end(), end2 = vec2.end();
 			it1 != end1 && it2 != end2; ++it1, ++it2
-	) {
+			) {
 		//std::cout << "comparing " << *it1 << " and " << *it2 << std::endl;
 		dist += ( *it1 - *it2 ) * ( *it1 - *it2 );
 	}

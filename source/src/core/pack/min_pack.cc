@@ -91,7 +91,7 @@ create_scmin_minimizer_map(
 	/// domain map that the scminmap provides to the ScoreFunction must state
 	/// that each of the molten residues have color 0.
 	scmin::SCMinMinimizerMapOP scminmap;
-	if (cartesian) {
+	if ( cartesian ) {
 		scminmap = scmin::SCMinMinimizerMapOP( new scmin::CartSCMinMinimizerMap() );
 	} else {
 		scminmap = scmin::SCMinMinimizerMapOP( new scmin::AtomTreeSCMinMinimizerMap() );
@@ -99,7 +99,7 @@ create_scmin_minimizer_map(
 
 	scminmap->set_total_residue( pose.total_residue() );
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-		if ( task->being_packed( ii )) {
+		if ( task->being_packed( ii ) ) {
 			scminmap->activate_residue_dofs( ii );
 		} else {
 			scminmap->set_natoms_for_residue( ii, pose.residue( ii ).natoms() );
@@ -125,7 +125,7 @@ create_minimization_graph(
 			eiter = packer_neighbor_graph.const_edge_list_begin(),
 			eiter_end = packer_neighbor_graph.const_edge_list_end();
 			eiter != eiter_end; ++eiter ) {
-		if ( task.being_packed( (*eiter)->get_first_node_ind() ) || task.being_packed( (*eiter)->get_second_node_ind() )) {
+		if ( task.being_packed( (*eiter)->get_first_node_ind() ) || task.being_packed( (*eiter)->get_second_node_ind() ) ) {
 			mingraph->add_edge( (*eiter)->get_first_node_ind(), (*eiter)->get_second_node_ind() );
 		}
 	}
@@ -195,16 +195,16 @@ create_minimization_graph(
 
 /*scmin::AtomTreeCollectionOP
 create_atom_tree_collections(
-	pose::Pose const & pose,
-	rotamer_set::RotamerSets const & rotsets
+pose::Pose const & pose,
+rotamer_set::RotamerSets const & rotsets
 )
 {
-	utility::vector1< scmin::AtomTreeCollectionOP > atcs( pose.total_residue() );
-	for ( Size ii = 1; ii <= rotsets->nmoltenres(); ++ii ) {
-		Size iiresid = rotsets->moltenres_2_resid( ii );
-		atcs[ ii ] = new scmin::AtomTreeCollection( rotsets->rotamer_set_for_residue( iiresid ) );
-	}
-	return atcs;
+utility::vector1< scmin::AtomTreeCollectionOP > atcs( pose.total_residue() );
+for ( Size ii = 1; ii <= rotsets->nmoltenres(); ++ii ) {
+Size iiresid = rotsets->moltenres_2_resid( ii );
+atcs[ ii ] = new scmin::AtomTreeCollection( rotsets->rotamer_set_for_residue( iiresid ) );
+}
+return atcs;
 }*/
 
 utility::vector1< conformation::ResidueCOP >
@@ -471,10 +471,10 @@ get_total_energy_for_state(
 	optimization::MultifuncOP scmin_func = scminmap.make_multifunc( pose, bgres, sfxn, mingraph );
 	utility::vector1< Real > allchi;
 	//for ( Size ii = 1; ii <= rotsets.nmoltenres(); ++ii ) {
-	//	Size iiresid = rotsets.moltenres_2_resid( ii );
-	//	scmin::ResidueAtomTreeCollection & iiratc = atc->residue_atomtree_collection( iiresid );
-	//	utility::vector1< Real > chi = iiratc.active_residue().chi();
-	//	for ( Size jj = 1; jj <= chi.size(); ++jj ) allchi.push_back( chi[ jj ] );
+	// Size iiresid = rotsets.moltenres_2_resid( ii );
+	// scmin::ResidueAtomTreeCollection & iiratc = atc->residue_atomtree_collection( iiresid );
+	// utility::vector1< Real > chi = iiratc.active_residue().chi();
+	// for ( Size jj = 1; jj <= chi.size(); ++jj ) allchi.push_back( chi[ jj ] );
 	//}
 	scminmap.starting_dofs( allchi );
 
@@ -785,7 +785,7 @@ min_pack(
 	scmin::SidechainStateAssignment best_state( rotsets->nmoltenres() );
 
 	min_pack_optimize(
-		pose,	sfxn,	task, rotsets, scminmap,
+		pose, sfxn, task, rotsets, scminmap,
 		mingraph, atc, *min_options, best_state );
 
 
@@ -834,9 +834,10 @@ min_pack_setup(
 	//optimization::MinimizerOptions min_options( "dfpmin", 0.1, true, false, false );
 	std::string minimizer = "dfpmin";
 	Size max_iter=200;
-	if (cartesian || nonideal) {
-		if ( !sfxn.ready_for_nonideal_scoring() )
-    	utility_exit_with_message( "scorefunction not set up for nonideal/Cartesian scoring" );
+	if ( cartesian || nonideal ) {
+		if ( !sfxn.ready_for_nonideal_scoring() ) {
+			utility_exit_with_message( "scorefunction not set up for nonideal/Cartesian scoring" );
+		}
 		minimizer = "lbfgs_armijo_atol";
 		//max_iter = 25;                  // PTC - this doesn't give Cartesian enough time to converge
 	}
@@ -879,7 +880,7 @@ min_pack_optimize(
 	);
 
 	/// 5.
-	utility::vector1< Real > temps =	initialize_temperatures();
+	utility::vector1< Real > temps = initialize_temperatures();
 
 	for ( Size ii = 1; ii <= temps.size(); ++ii ) {
 		Real ii_temperature = temps[ ii ];
@@ -1075,12 +1076,12 @@ void compare_simple_inteaction_graph_alt_state_and_energy_graph(
 	}
 
 	/*for ( Size kk = 1; kk <= total_score; ++kk ) {
-		ScoreType kkst = ScoreType(kk);
-		if ( sfxn.weights()[ kkst ] != 0.0 ) {
-			if ( std::abs( one_body_emap[ kkst ] - min_node_1b[ kkst ] ) > 1e-10 ) {
-				std::cout << "   one body discrepancy " << kkst << ": " << one_body_emap[ kkst ] << " " << min_node_1b[ kkst ] << std::endl;
-			}
-		}
+	ScoreType kkst = ScoreType(kk);
+	if ( sfxn.weights()[ kkst ] != 0.0 ) {
+	if ( std::abs( one_body_emap[ kkst ] - min_node_1b[ kkst ] ) > 1e-10 ) {
+	std::cout << "   one body discrepancy " << kkst << ": " << one_body_emap[ kkst ] << " " << min_node_1b[ kkst ] << std::endl;
+	}
+	}
 	}*/
 
 	EnergyGraph const & eg( pose.energies().energy_graph() );
@@ -1199,7 +1200,7 @@ off_rotamer_pack_setup(
 	ig->set_pose_no_initialize( pose );
 	graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, sfxn, task );
 	//for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-	//	ig.get_simple_node( ii )->set_current( pose.residue( ii ).clone() );
+	// ig.get_simple_node( ii )->set_current( pose.residue( ii ).clone() );
 	//}
 	ig->copy_connectivity( *packer_neighbor_graph );
 }
@@ -1220,7 +1221,7 @@ off_rotamer_pack_optimize(
 
 	/// 2.
 	Size const n_sample_rots = rotsets.n_sample_rotamers();
-	utility::vector1< Real > temps =	initialize_temperatures_off_rotamer_pack();
+	utility::vector1< Real > temps = initialize_temperatures_off_rotamer_pack();
 	scmin::SidechainStateAssignment curr_state( rotsets.nmoltenres() );
 
 	for ( Size ii = 1; ii <= temps.size(); ++ii ) {
@@ -1286,7 +1287,7 @@ off_rotamer_pack_optimize(
 
 					if ( curr_state.energy() < best_state.energy() ) {
 						Real totalE = ig.total_energy(); //get_total_energy_for_state( pose, bgres, sfxn, *mingraph, *scminmap, curr_state, atc, *rotsets );
-					debug_assert( std::abs( totalE - curr_state.energy() ) < 1e-5 ); // drift does accumulate, but it should be small!
+						debug_assert( std::abs( totalE - curr_state.energy() ) < 1e-5 ); // drift does accumulate, but it should be small!
 						curr_state.assign_energy( totalE );
 						if ( totalE < best_state.energy() ) {
 							best_state = curr_state;
@@ -1297,7 +1298,7 @@ off_rotamer_pack_optimize(
 				}
 				//Real totalE = ig.total_energy(); //get_total_energy_for_state( pose, bgres, sfxn, *mingraph, *scminmap, curr_state, atc, *rotsets );
 				//if( ! curr_state.any_unassigned() && std::abs( totalE - curr_state.energy() ) > 1e-5 ) {
-				//	std::cout << "Disagreement between totalE and curr_state.energy() " << totalE << " " << curr_state.energy() << " diff " << totalE - curr_state.energy() << std::endl;
+				// std::cout << "Disagreement between totalE and curr_state.energy() " << totalE << " " << curr_state.energy() << " diff " << totalE - curr_state.energy() << std::endl;
 				//}
 			} else {
 				// reject; restore the old residue
@@ -1309,7 +1310,7 @@ off_rotamer_pack_optimize(
 			}
 		}
 		//std::cout << "Finished temperature " << ii_temperature << " with energy " << curr_state.energy() << " and best energy " << best_state.energy()
-		//	<< " accept rate: " << ((double) naccepts )/ jj_end << " avg deltaE: " << accum_deltaE / ( naccepts == 0 ? 1 : naccepts ) << std::endl;
+		// << " accept rate: " << ((double) naccepts )/ jj_end << " avg deltaE: " << accum_deltaE / ( naccepts == 0 ? 1 : naccepts ) << std::endl;
 
 	}
 }

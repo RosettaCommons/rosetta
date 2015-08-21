@@ -15,10 +15,10 @@
 #include <basic/Tracer.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
-	#ifndef WIN_PYROSETTA
-	    #include <windows.h>
-	#endif
+#include <ctime>
+#ifndef WIN_PYROSETTA
+#include <windows.h>
+#endif
 #endif
 
 namespace protocols {
@@ -62,14 +62,14 @@ WorkUnit::WorkUnit
 ( core::Size master,
 	core::Size trajectory_idx ) :
 
-		master_(master),
-		trajectory_idx_(trajectory_idx)
+	master_(master),
+	trajectory_idx_(trajectory_idx)
 {
-		unixtime_creation_ = time(NULL);
-		unixtime_start_ = 0;
-		unixtime_stop_ = 0;
-		create_unique_id();
-		prioritize_ = false;
+	unixtime_creation_ = time(NULL);
+	unixtime_start_ = 0;
+	unixtime_stop_ = 0;
+	create_unique_id();
+	prioritize_ = false;
 }
 
 void
@@ -94,13 +94,13 @@ core::Size WorkUnit::get_run_time(){
 }
 
 void WorkUnit::create_unique_id() {
-		id_ = 0;
+	id_ = 0;
 }
 
 // ---------- WorkUnit_Wait --------------
 
-WorkUnit_Wait::WorkUnit_Wait 
-(	core::Size master,
+WorkUnit_Wait::WorkUnit_Wait
+( core::Size master,
 	core::Size trajectory_idx,
 	long wait_time ) :
 	WorkUnit( master, trajectory_idx ),
@@ -110,9 +110,9 @@ WorkUnit_Wait::WorkUnit_Wait
 void WorkUnit_Wait::run(){
 	//TR << "Waiting for " << header.extra_data_1_ << std::endl;
 #ifdef _WIN32
-	#ifndef WIN_PYROSETTA
-		Sleep( wait_time_  * 1000 );
-	#endif
+#ifndef WIN_PYROSETTA
+	Sleep( wait_time_  * 1000 );
+#endif
 #else
 	sleep( wait_time_ );
 #endif
@@ -127,7 +127,7 @@ WorkUnit_ElScripts::WorkUnit_ElScripts (
 	core::io::serialization::PipeMapSP p,
 	protocols::moves::SerializableStateSP state,
 	std::string name
-	) :
+) :
 	WorkUnit( master, trajectory_idx ),
 	name_(name),
 	pipemap_(p),

@@ -71,38 +71,38 @@ public:
 		first_(a), second_(b) {}
 
 	class Iterator : public boost::iterator_facade // {{{1
-			<Iterator, ClosureSolutionCOP,
-					boost::forward_traversal_tag, ClosureSolutionCOP> {
+		<Iterator, ClosureSolutionCOP,
+		boost::forward_traversal_tag, ClosureSolutionCOP> {
 
-		public:
+	public:
 		//Iterator();
 
 		Iterator(ChainedSolutionList const *parent, SolutionList::const_iterator bookmark);
 
-		private:
-			friend class boost::iterator_core_access;
+	private:
+		friend class boost::iterator_core_access;
 
-			void increment() {
+		void increment() {
 
-				bookmark_++;
+			bookmark_++;
 
-				if (state_ == FIRST && bookmark_ == parent_->first_.end()) {
-					bookmark_ = parent_->second_.begin();
-					state_ = SECOND;
-				}
+			if ( state_ == FIRST && bookmark_ == parent_->first_.end() ) {
+				bookmark_ = parent_->second_.begin();
+				state_ = SECOND;
 			}
+		}
 
-			bool equal (Iterator const &other) const {
-				return bookmark_ == other.bookmark_;
-			}
+		bool equal (Iterator const &other) const {
+			return bookmark_ == other.bookmark_;
+		}
 
-			ClosureSolutionCOP const dereference() const {
-				return *bookmark_;
-			}
+		ClosureSolutionCOP const dereference() const {
+			return *bookmark_;
+		}
 
-			ChainedSolutionList const *parent_;
-			SolutionList::const_iterator bookmark_;
-			enum {FIRST, SECOND} state_;
+		ChainedSolutionList const *parent_;
+		SolutionList::const_iterator bookmark_;
+		enum {FIRST, SECOND} state_;
 
 	}; // }}}1
 

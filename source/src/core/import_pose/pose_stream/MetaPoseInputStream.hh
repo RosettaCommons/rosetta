@@ -51,7 +51,7 @@ public:
 		core::pose::Pose & pose,
 		core::chemical::ResidueTypeSet const & residue_set
 	);
-	virtual void fill_pose(	core::pose::Pose&	);
+	virtual void fill_pose( core::pose::Pose& );
 
 private:
 	core::Size current_index_;

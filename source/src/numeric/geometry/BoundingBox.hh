@@ -19,8 +19,8 @@
 #include <numeric/geometry/BoundingBox.fwd.hh>
 
 
-namespace numeric{
-namespace geometry{
+namespace numeric {
+namespace geometry {
 
 
 /// @brief 3d axis aligned bounding box class
@@ -47,7 +47,7 @@ public: // construct/destruct
 	BoundingBox(
 		PointPosition const & pp
 	) : lower_( pp ),
-	    upper_( pp )
+		upper_( pp )
 	{}
 
 	/// @brief corner constructor
@@ -56,7 +56,7 @@ public: // construct/destruct
 		PointPosition const & lower,
 		PointPosition const & upper
 	) : lower_( lower ),
-	    upper_( upper )
+		upper_( upper )
 	{}
 
 	/// @brief copy constructor
@@ -64,7 +64,7 @@ public: // construct/destruct
 	BoundingBox(
 		BoundingBox const & bb
 	) : lower_( bb.lower_ ),
-	    upper_( bb.upper_ )
+		upper_( bb.upper_ )
 	{}
 
 	/// @brief default destructor
@@ -195,8 +195,8 @@ public: // box query
 	) const
 	{
 		return !( lower_.x() > bb.upper_.x() || bb.lower_.x() > upper_.x() ||
-		          lower_.y() > bb.upper_.y() || bb.lower_.y() > upper_.y() ||
-		          lower_.z() > bb.upper_.z() || bb.lower_.z() > upper_.z() );
+			lower_.y() > bb.upper_.y() || bb.lower_.y() > upper_.y() ||
+			lower_.z() > bb.upper_.z() || bb.lower_.z() > upper_.z() );
 	}
 
 	/// @brief is point contained within this bounding box?
@@ -210,7 +210,7 @@ public: // box query
 	) const
 	{
 		return lower_.x() <= x && lower_.y() <= y && lower_.z() <= z &&
-				       x <= upper_.x() && y <= upper_.y() && z <= upper_.z();
+			x <= upper_.x() && y <= upper_.y() && z <= upper_.z();
 	}
 
 	/// @brief is point contained within this bounding box?

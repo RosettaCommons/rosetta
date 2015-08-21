@@ -164,9 +164,9 @@ void FixbbSimAnnealer::run()
 	//std::cout << "Annealing begins" << std::endl;
 
 	//outer loop
-	for (int nn = 1; nn <= outeriterations; ++nn ){
+	for ( int nn = 1; nn <= outeriterations; ++nn ) {
 		setup_temperature(loopenergy,nn);
-		if ( quench() ){
+		if ( quench() ) {
 			currentenergy = bestenergy();
 			state_on_node = best_state_on_node;
 			ig_->set_network_state( state_on_node );
@@ -179,15 +179,15 @@ void FixbbSimAnnealer::run()
 		ig_->set_errorfull_deltaE_threshold( treshold_for_deltaE_inaccuracy );
 
 		//inner loop
-		for (int n = 1; n <= inneriterations; ++n ){
+		for ( int n = 1; n <= inneriterations; ++n ) {
 			int const ranrotamer = pick_a_rotamer( n );
-			if (ranrotamer == -1) continue;
+			if ( ranrotamer == -1 ) continue;
 
 			int const moltenres_id = rotamer_sets()->moltenres_for_rotamer( ranrotamer );
 			int const rotamer_state_on_moltenres = rotamer_sets()->rotid_on_moltenresidue( ranrotamer );
 			int const prevrotamer_state = state_on_node(moltenres_id);
 
-			if (rotamer_state_on_moltenres == prevrotamer_state ) continue; //skip iteration
+			if ( rotamer_state_on_moltenres == prevrotamer_state ) continue; //skip iteration
 
 			// initializing to zero but should be updated below.
 			core::PackerEnergy previous_energy_for_node( 0.0 ), delta_energy( 0.0 );
@@ -200,22 +200,20 @@ void FixbbSimAnnealer::run()
 			//bk keep new rotamer if it is lower in energy or accept it at some
 			//bk probability if it is higher in energy, if it is the first
 			//bk rotamer to be tried at this position automatically accept it.
-			if ( (prevrotamer_state == 0) || pass_metropolis(previous_energy_for_node,delta_energy) )
-			{
+			if ( (prevrotamer_state == 0) || pass_metropolis(previous_energy_for_node,delta_energy) ) {
 				//std::cout << " accepted\n";
 				currentenergy = ig_->commit_considered_substitution();
 				state_on_node(moltenres_id) = rotamer_state_on_moltenres;
-				if ((prevrotamer_state == 0)||(currentenergy < bestenergy() ))
-				{
+				if ( (prevrotamer_state == 0)||(currentenergy < bestenergy() ) ) {
 					best_state_on_node = state_on_node;
 
 					/*
 					//ronj - debugging output useful for seeing how the energy changes during the course of the simulation
 					for ( Size ii=0; ii < best_state_on_node.size(); ii++ ) {
-						if ( best_state_on_node[ii] != 0 )
-							TR << rotamer_sets()->rotamer_set_for_moltenresidue( ii+1 )->rotamer( best_state_on_node[ii] )->name1();
-						else
-							TR << '-';
+					if ( best_state_on_node[ii] != 0 )
+					TR << rotamer_sets()->rotamer_set_for_moltenresidue( ii+1 )->rotamer( best_state_on_node[ii] )->name1();
+					else
+					TR << '-';
 					}
 					TR << ", current_energy: " << currentenergy << ", best_energy: " << bestenergy() << std::endl;
 					*/
@@ -231,7 +229,7 @@ void FixbbSimAnnealer::run()
 				annealer_trajectory << moltenres_id << " " << rotamer_state_on_moltenres << " R\n";
 			}
 			//else {
-			//	std::cout << " rejected\n";
+			// std::cout << " rejected\n";
 			//}
 
 
@@ -240,11 +238,9 @@ void FixbbSimAnnealer::run()
 
 			if ( calc_rot_freq() && ( temperature <= calc_freq_temp ) ) {
 				++nsteps;
-				for (int ii = 1; ii <= nmoltenres; ++ii )
-				{
+				for ( int ii = 1; ii <= nmoltenres; ++ii ) {
 					int iistate = state_on_node(ii);
-					if (iistate != 0)
-					{
+					if ( iistate != 0 ) {
 						++nsteps_for_rot( rotamer_sets()->moltenres_rotid_2_rotid(ii, iistate) );
 					}
 				}
@@ -256,10 +252,11 @@ void FixbbSimAnnealer::run()
 #ifndef NDEBUG
 	TR << "pack_rotamers run final: ";
 	for ( Size ii=0; ii < best_state_on_node.size(); ii++ ) {
-		if ( best_state_on_node[ii] != 0 )
+		if ( best_state_on_node[ii] != 0 ) {
 			TR << rotamer_sets()->rotamer_set_for_moltenresidue( ii+1 )->rotamer( best_state_on_node[ii] )->name1();
-		else
+		} else {
 			TR << '-';
+		}
 	}
 	TR << ", best_energy: " << bestenergy() << std::endl;
 #endif
@@ -269,27 +266,24 @@ void FixbbSimAnnealer::run()
 		std::cerr << "Critical error -- assignment and energy of assignment meaningless" << std::endl;
 
 		FArray1D_int nstates_for_moltenres( rotamer_sets()->nmoltenres(), 0 );
-		for ( uint ii = 0; ii < num_rots_to_pack(); ++ii)
-		{
+		for ( uint ii = 0; ii < num_rots_to_pack(); ++ii ) {
 			++nstates_for_moltenres( rotamer_sets()->res_for_rotamer( rot_to_pack()[ ii ] ) );
 		}
 
-		for ( uint ii = 1; ii <= rotamer_sets()->nmoltenres(); ++ii)
-		{
-			if ( best_state_on_node( ii ) == 0 )
-			{
+		for ( uint ii = 1; ii <= rotamer_sets()->nmoltenres(); ++ii ) {
+			if ( best_state_on_node( ii ) == 0 ) {
 				std::cout << "Molten res " << ii << " (residue " << rotamer_sets()->moltenres_2_resid( ii );
 				std::cout << " ) assigned state 0 despite having " << nstates_for_moltenres( ii ) << " states to choose from" << std::endl;
 			}
 		}
-	debug_assert( ! ig_->any_vertex_state_unassigned() );
+		debug_assert( ! ig_->any_vertex_state_unassigned() );
 		utility_exit();
 
 
 	}
 
 	//convert best_state_on_node into best_rotamer_at_seqpos
-	for (int ii = 1; ii <= nmoltenres; ++ii){
+	for ( int ii = 1; ii <= nmoltenres; ++ii ) {
 		int const iiresid = rotamer_sets()->moltenres_2_resid( ii );
 		bestrotamer_at_seqpos()( iiresid ) = rotamer_sets()->moltenres_rotid_2_rotid( ii, best_state_on_node(ii));
 	}

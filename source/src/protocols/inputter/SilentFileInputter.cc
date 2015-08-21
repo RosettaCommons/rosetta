@@ -46,11 +46,11 @@ core::pose::PoseSP SilentFileInputter::get_nth_pose( int n ) {
 	offset_ = true;
 	core::chemical::ResidueTypeSetCOP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 	core::pose::PoseSP tmppose(new core::pose::Pose());
-	if( multiply_over_all_ ) {
+	if ( multiply_over_all_ ) {
 		// we go through all the filenames once, then more times according to multiplier
-		for( int i = 1; i<n; i++){
+		for ( int i = 1; i<n; i++ ) {
 			tags_[curr_idx_].first++;
-			if( tags_[curr_idx_].first >= multiplier_ )  {
+			if ( tags_[curr_idx_].first >= multiplier_ )  {
 				// this only can happen when curr_idx_ == 0
 				tags_.pop_front();
 			} else {
@@ -62,7 +62,7 @@ core::pose::PoseSP SilentFileInputter::get_nth_pose( int n ) {
 		tags_[curr_idx_].first++;
 		core::pose::add_comment( *tmppose, "inputfile", tags_[curr_idx_].second );
 		core::pose::add_comment( *tmppose, "filemultiplier", utility::to_string(tags_[curr_idx_].first) );
-		if( tags_[curr_idx_].first >= multiplier_ )  {
+		if ( tags_[curr_idx_].first >= multiplier_ )  {
 			// this only can happen when curr_idx_ == 0
 			tags_.pop_front();
 		} else {
@@ -72,27 +72,30 @@ core::pose::PoseSP SilentFileInputter::get_nth_pose( int n ) {
 		return tmppose;
 	} else {
 		// we go through each file name MULTIPLIER times, then pop it
-		for( int i = 1; i<n; i++){
+		for ( int i = 1; i<n; i++ ) {
 			tags_.front().first++;
-			if( tags_.front().first >= multiplier_ ) 
+			if ( tags_.front().first >= multiplier_ ) {
 				tags_.pop_front();
+			}
 		}
 		sfd_[ tags_.front().second ]->fill_pose( *tmppose, *residue_set );
 		tags_.front().first++;
 		core::pose::add_comment( *tmppose, "inputfile", tags_.front().second );
 		core::pose::add_comment( *tmppose, "file_multiplier", utility::to_string(tags_.front().first) );
-		if( tags_.front().first >= multiplier_ ) 
+		if ( tags_.front().first >= multiplier_ ) {
 			tags_.pop_front();
+		}
 		return tmppose;
 	}
 }
 
 bool SilentFileInputter::has_nth_pose( int n ) {
 	int sum = 0;
-	for( core::Size i = 0; i < tags_.size(); i++ ) {
-		sum += (multiplier_ - tags_[i].first	); 
-		if (sum >= n )
+	for ( core::Size i = 0; i < tags_.size(); i++ ) {
+		sum += (multiplier_ - tags_[i].first );
+		if ( sum >= n ) {
 			return true;
+		}
 	}
 	return false;
 }

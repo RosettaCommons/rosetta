@@ -61,14 +61,14 @@ namespace protocols {
 namespace protein_interface_design {
 namespace movers {
 
-	using utility::vector1;
-	using namespace core;
-	using namespace chemical;
-	using namespace basic::options;
-	using namespace pack;
-	using namespace task;
-	using namespace operation;
-	using namespace scoring;
+using utility::vector1;
+using namespace core;
+using namespace chemical;
+using namespace basic::options;
+using namespace pack;
+using namespace task;
+using namespace operation;
+using namespace scoring;
 
 using namespace ObjexxFCL::format;
 
@@ -146,7 +146,7 @@ part_complex( core::pose::PoseOP pose, core::Size const rb_jump ){
 
 void
 unfold_complex( core::pose::PoseOP pose ){
-	for( core::Size i( 1 ), end( pose->total_residue() ); i<=end; ++i ){
+	for ( core::Size i( 1 ), end( pose->total_residue() ); i<=end; ++i ) {
 		// unfold the unfolded protein
 		if ( !pose->residue_type(i).is_protein() ) continue;
 		std::string const restype( pose->residue(i).type().name() );
@@ -191,10 +191,11 @@ ProteinInterfaceMultiStateDesignMover::restrict_sequence_profile(
 
 	unsigned long const seq_space_before( sequence_space( ptask ) );
 	TR<<"Total number of sequence possibilites: "<<seq_space_before<<std::endl;
-	if( !use_unbound_for_sequence_profile_ )
+	if ( !use_unbound_for_sequence_profile_ ) {
 		return;
+	}
 	TR<<"Restricting the packer task to residues that would not clash in the unbound monomer..."<<std::endl;
-/// Turn all designable positions to ala. Freeze everything else
+	/// Turn all designable positions to ala. Freeze everything else
 	PoseOP ala_pose( new Pose( pose ) );
 	part_complex( ala_pose, rb_jump_ );
 	PackerTaskOP ala_task = ptask->clone();
@@ -202,36 +203,38 @@ ProteinInterfaceMultiStateDesignMover::restrict_sequence_profile(
 	allow_ala[ aa_ala ] = true;
 	vector< Size > designable; //which residues are designable? used below
 	designable.clear();
-	for( Size i( 1 ), end( ala_task->total_residue() ); i <= end; ++i ){
-		if( !pose.residue_type( i ).is_protein() ) continue;
+	for ( Size i( 1 ), end( ala_task->total_residue() ); i <= end; ++i ) {
+		if ( !pose.residue_type( i ).is_protein() ) continue;
 		ResidueLevelTask & rtask( ala_task->nonconst_residue_task(i) );
-		if( !rtask.being_designed() ) // undesignable
+		if ( !rtask.being_designed() ) { // undesignable
 			rtask.prevent_repacking();
-		else{ //designable
+		} else { //designable
 			rtask.restrict_absent_canonical_aas( allow_ala );
 			designable.push_back( i );
 		}
 	}
 	pack_rotamers( *ala_pose, *scorefxn_, ala_task );
 
-  // scorefxn for the bump check
-  core::scoring::ScoreFunctionOP bump_scorefxn( new core::scoring::ScoreFunction );
-  bump_scorefxn->reset();
-  bump_scorefxn->set_weight( fa_rep, 1.0 );
+	// scorefxn for the bump check
+	core::scoring::ScoreFunctionOP bump_scorefxn( new core::scoring::ScoreFunction );
+	bump_scorefxn->reset();
+	bump_scorefxn->set_weight( fa_rep, 1.0 );
 
-	BOOST_FOREACH( Size const pos, designable ){
+	BOOST_FOREACH ( Size const pos, designable ) {
 		EnergyPerResidueFilter const eprf( pos, bump_scorefxn, fa_rep, 0 );
 		core::Real const ref_bump_energy( eprf.compute( *ala_pose ) );
 		PackerTaskOP template_substitution_task( ptask->clone() ); //prevent repacking at all but positions but pos
-		for( Size i( 1 ); i<=pose.total_residue(); ++i )
-			if( i!=pos )
+		for ( Size i( 1 ); i<=pose.total_residue(); ++i ) {
+			if ( i!=pos ) {
 				template_substitution_task->nonconst_residue_task(i).prevent_repacking();
+			}
+		}
 
 		ResidueLevelTask & rtask( ptask->nonconst_residue_task( pos ) );
 		list< ResidueTypeCOP > const & allowed( rtask.allowed_residue_types() );
 		Pose ala_pose_and_single_residue( *ala_pose );
 		vector1< bool > allowed_aas_in_pos( num_canonical_aas, false );
-		BOOST_FOREACH( ResidueTypeCOP const t, allowed ){
+		BOOST_FOREACH ( ResidueTypeCOP const t, allowed ) {
 			AA const aa( t->aa() );
 			PackerTaskOP specific_substitution_task( template_substitution_task->clone() );
 			utility::vector1< bool > allow_aa( num_canonical_aas, false );
@@ -239,12 +242,13 @@ ProteinInterfaceMultiStateDesignMover::restrict_sequence_profile(
 			specific_substitution_task->nonconst_residue_task(pos).restrict_absent_canonical_aas( allow_aa );
 			rotamer_trials( ala_pose_and_single_residue, *bump_scorefxn, specific_substitution_task );
 			core::Real const bump_energy( eprf.compute( ala_pose_and_single_residue ) );
-			if( bump_energy - ref_bump_energy <= bump_threshold_ )
+			if ( bump_energy - ref_bump_energy <= bump_threshold_ ) {
 				allowed_aas_in_pos[ aa ] = true;
+			}
 		}///foreach ResidueTypeCOP const t
 		rtask.restrict_absent_canonical_aas( allowed_aas_in_pos );
 		AA const aa_in_pose( pose.residue( pos ).aa() );
-		if( !allowed_aas_in_pos[ aa_in_pose ] ){
+		if ( !allowed_aas_in_pos[ aa_in_pose ] ) {
 			TR<<"Native identity "<<pose.residue( pos ).name3()<<" at position "<<pos<<" in input pdb is not allowed by bump_test! Increase the bump_cutoff from the current "<<bump_threshold_<<std::endl;
 			utility_exit();
 		}//fi
@@ -260,9 +264,9 @@ ProteinInterfaceMultiStateDesignMover::sequence_space( core::pack::task::PackerT
 	using namespace core::pack::task;
 
 	unsigned long size( 1 );
-	for( core::Size i( 1 ); i<=ptask->total_residue(); ++i ){
+	for ( core::Size i( 1 ); i<=ptask->total_residue(); ++i ) {
 		ResidueLevelTask const & rtask( ptask->residue_task( i ) );
-		if( !rtask.being_designed() ) continue;
+		if ( !rtask.being_designed() ) continue;
 		core::Size const pos_allowed( rtask.allowed_residue_types().size() );
 		size *= pos_allowed;
 	}
@@ -291,11 +295,12 @@ ProteinInterfaceMultiStateDesignMover::initialize( Pose & pose )
 
 	TaskFactoryOP my_tf;
 	// if PackRotamerMover base class has no initialized TaskFactory, create default one here
-	if ( ! task_factory() )
+	if ( ! task_factory() ) {
 		// Protein-interface design-specific TaskFactory -> PackerTask -> figure out positions to design
 		my_tf = TaskFactoryOP( new TaskFactory );
-	else // TaskFactory already exists, add to it
+	} else { // TaskFactory already exists, add to it
 		my_tf = TaskFactoryOP( new TaskFactory( *task_factory() ) );
+	}
 
 	my_tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
 	if ( option[ OptionKeys::packing::resfile ].user() ) my_tf->push_back( TaskOperationCOP( new ReadResfile ) );
@@ -318,7 +323,7 @@ ProteinInterfaceMultiStateDesignMover::initialize( Pose & pose )
 			std::set< core::chemical::AA > aaset;
 			std::list< ResidueTypeCOP > const & allowed( rtask.allowed_residue_types() );
 			for ( std::list< ResidueTypeCOP >::const_iterator t( allowed.begin() ), end( allowed.end() );
-						t != end; ++t ) {
+					t != end; ++t ) {
 				core::chemical::AA aa( (*t)->aa() );
 				// avoid duplicate AA's (such as for multiple histidine ResidueTypes)
 				if ( aaset.find( aa ) != aaset.end() ) continue;
@@ -345,7 +350,7 @@ ProteinInterfaceMultiStateDesignMover::initialize( Pose & pose )
 	add_states( pose );
 
 	TR(t_info) << "There are " << multistate_packer_->num_positive_states() << " positive states and "
-	           << multistate_packer_->num_negative_states() << " negative states" << std::endl;
+		<< multistate_packer_->num_negative_states() << " negative states" << std::endl;
 
 	// do single-state designs to find best theoretical single-state energy
 	multistate_packer_->single_state_design( );
@@ -366,10 +371,10 @@ ProteinInterfaceMultiStateDesignMover::initialize( Pose & pose )
 		SingleStateCOPs states( multistate_packer_->positive_states() );
 		TR(t_info) << "Adding single-state design entities:" << std::endl;
 		for ( SingleStateCOPs::const_iterator s( states.begin() ), end( states.end() );
-					s != end; ++s ) {
+				s != end; ++s ) {
 			EntityElements traits;
 			for ( vector1<Size>::const_iterator i( design_positions.begin() ),
-						end( design_positions.end() ); i != end; ++i ) {
+					end( design_positions.end() ); i != end; ++i ) {
 				PosType pt( *i, (*s)->pose().residue_type(*i).aa() );
 				traits.push_back( protocols::genetic_algorithm::EntityElementOP( new PosType( pt ) ));
 				TR(t_info) << pt.to_string() << " ";
@@ -417,14 +422,14 @@ ProteinInterfaceMultiStateDesignMover::output_alternative_states( core::pose::Po
 	(*scorefxn_)(copy_pose );
 	copy_pose.dump_scored_pdb( output_pose_fname, *scorefxn_ );
 
-	if( saved_state_poses_.size() == 0 ) return;
+	if ( saved_state_poses_.size() == 0 ) return;
 	runtime_assert( saved_state_poses_.size() == state_positive_.size() );
-	for( core::Size count( 1 ); count<=saved_state_poses_.size(); ++count ){
+	for ( core::Size count( 1 ); count<=saved_state_poses_.size(); ++count ) {
 		core::pose::Pose state_i( *saved_state_poses_[ count ] );
 		(*scorefxn_)(state_i); // to set up the energy graph or else interface task operation will work well. arggg!
 		PackerTaskCOP unmodifed_ptask( task_factory()->create_task_and_apply_taskoperations( state_i ));
-		for( core::Size resi( 1 ); resi<=state_i.total_residue(); ++resi ){//thread output-pose's sequence on alternative state
-			if( !unmodifed_ptask->residue_task( resi ).being_designed() ) continue;
+		for ( core::Size resi( 1 ); resi<=state_i.total_residue(); ++resi ) {//thread output-pose's sequence on alternative state
+			if ( !unmodifed_ptask->residue_task( resi ).being_designed() ) continue;
 			state_i.replace_residue( resi, output_pose.residue( resi ), true );
 		}
 		state_i.update_residue_neighbors();
@@ -464,7 +469,7 @@ ProteinInterfaceMultiStateDesignMover::output_results( Pose & pose )
 	Size counter(0);
 
 	for ( vector1< Entity::OP >::const_iterator it( sortable.begin() ),
-				end( sortable.end() ); it != end; ++it ) {
+			end( sortable.end() ); it != end; ++it ) {
 		Entity & entity(**it);
 
 		// apply sequence to existing positive state(s)
@@ -480,7 +485,7 @@ ProteinInterfaceMultiStateDesignMover::output_results( Pose & pose )
 		ms_info.str(""); // funky way to 'empty' ostringstream
 		ms_info << "REMARK MultiState Sequence:";
 		for ( EntityElements::const_iterator pos( entity.traits().begin() ), end( entity.traits().end() );
-					pos != end; ++pos ) {
+				pos != end; ++pos ) {
 			ms_info << " " << (*pos)->to_string();
 			TR(t_info) << (*pos)->to_string() << " ";
 		}
@@ -517,26 +522,30 @@ void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 	if ( tag->hasOption("num_packs") ) num_packs_ = tag->getOption<Size>("num_packs");
 	if ( tag->hasOption("pop_from_ss") ) pop_from_ss_ = tag->getOption<Size>("pop_from_ss");
 	if ( tag->hasOption("numresults") ) numresults_ = tag->getOption<Size>("numresults");
-	if ( tag->hasOption("fraction_by_recombination") )
+	if ( tag->hasOption("fraction_by_recombination") ) {
 		fraction_by_recombination_ = tag->getOption<Real>("fraction_by_recombination");
+	}
 	if ( tag->hasOption("mutate_rate") ) mutate_rate_ = tag->getOption<Real>("mutate_rate");
 	if ( tag->hasOption("boltz_temp") ) boltz_temp_ = tag->getOption<Real>("boltz_temp");
 	if ( tag->hasOption("anchor_offset") ) anchor_offset_ = tag->getOption<Real>("anchor_offset");
-		// checkpointing options
-	if ( tag->hasOption("checkpoint_prefix") )
+	// checkpointing options
+	if ( tag->hasOption("checkpoint_prefix") ) {
 		checkpoint_prefix_ = tag->getOption<std::string>("checkpoint_prefix");
-	if ( tag->hasOption("checkpoint_interval") )
+	}
+	if ( tag->hasOption("checkpoint_interval") ) {
 		checkpoint_interval_ = tag->getOption<Size>("checkpoint_interval");
+	}
 	if ( tag->hasOption("checkpoint_gz") ) checkpoint_gz_ = tag->getOption<bool>("checkpoint_gz");
-	if ( tag->hasOption("checkpoint_rename") )
+	if ( tag->hasOption("checkpoint_rename") ) {
 		checkpoint_rename_ = tag->getOption<bool>("checkpoint_rename");
+	}
 
 	fname_prefix_ = tag->getOption< std::string >( "output_fname_prefix", "" );
 	// calls to PackRotamersMover base class methods
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, datamap );
 
 	TaskFactoryCOP tf = protocols::rosetta_scripts::parse_task_operations( tag, datamap );
-	if( tf ) task_factory( tf );
+	if ( tf ) task_factory( tf );
 	rb_jump_ = tag->getOption< core::Size >( "rb_jump", 1 );
 
 	unfolded_ = tag->getOption< bool >( "unfolded", 1 );
@@ -544,13 +553,13 @@ void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 	input_is_positive_ = tag->getOption< bool >( "input_is_positive", 1 );
 	use_unbound_for_sequence_profile_ = tag->getOption< bool >( "unbound_for_sequence_profile", unbound_ );
 	bump_threshold_ = tag->getOption< core::Real >( "profile_bump_threshold", 1.0 );
-/// Read additional positive and negative states
+	/// Read additional positive and negative states
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
 	bool at_least_one_negative_state( unfolded_ || unbound_ );
 	compare_energy_to_ground_state_ = tag->getOption< bool >( "compare_to_ground_state", branch_tags.size() );
 	TR<<"Compare energy to ground state set to: "<<compare_energy_to_ground_state_<<std::endl;
-	BOOST_FOREACH( TagCOP const btag, branch_tags ){
-		if( unfolded_ || unbound_ ){
+	BOOST_FOREACH ( TagCOP const btag, branch_tags ) {
+		if ( unfolded_ || unbound_ ) {
 			TR<<"ERROR: If you specify additional pdb files as states, it is assumed that those would have different energies than the starting pdb. As such, comparison of energies across different states is automatically done by grounding each pdb file to its starting 'best-score design' and comparing energy differences from that state. The energies of unbound and unfolded states then become tricky to interpret. You can use anchor_offset to get much of the effect of these additional states. Or, ask Sarel."<<std::endl;
 			throw utility::excn::EXCN_RosettaScriptsOption("");
 		}
@@ -568,14 +577,14 @@ void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 		TaskFactoryCOP state_tf = protocols::rosetta_scripts::parse_task_operations( btag, datamap );
 		state_task_factory_.push_back( state_tf );
 
-		if( btag->getName() == "Positive" )
+		if ( btag->getName() == "Positive" ) {
 			state_positive_.push_back( true );
-		else if( btag->getName() == "Negative" ){
+		} else if ( btag->getName() == "Negative" ) {
 			state_positive_.push_back( false );
 			at_least_one_negative_state = true;
-		}
-		else
+		} else {
 			throw utility::excn::EXCN_RosettaScriptsOption( "Name "+btag->getName()+" is not recognized in ProteinInterfaceMultistateDesign::parse_my_tag." );
+		}
 		compare_energy_to_ground_state_ = true;
 	}
 	runtime_assert( at_least_one_negative_state );
@@ -613,50 +622,54 @@ ProteinInterfaceMultiStateDesignMover::add_states(
 	PoseOP unbound( new core::pose::Pose( pose ) );
 	PoseOP unfolded( new core::pose::Pose( pose ) );
 
-	if( unbound_ ){
+	if ( unbound_ ) {
 		part_complex( unbound, rb_jump_ );
 		part_complex( unfolded, rb_jump_ );
 	}
-	if( unfolded_ )
+	if ( unfolded_ ) {
 		unfold_complex( unfolded );
+	}
 	PackingStateOP bound_state( new PackingState( bound, input_is_positive_ ) );
 	PackingStateOP unbound_state( new PackingState( *unbound, false ) );
 	PackingStateOP unfolded_state( new PackingState( *unfolded, false ) );
 
 	bound_state->create_packer_data( scorefxn_, ptask );
-/// Sharing data is only appropriate if the interaction graph is identical
-/// between the states (e.g., in specificity calculations), but that is
-/// clearly not the case here.
-//	unfolded_state->share_packer_data_from( *bound_state );
-//	unbound_state->share_packer_data_from( *bound_state );
-//	unfolded_state->create_packer_data( scorefxn_, ptask );
+	/// Sharing data is only appropriate if the interaction graph is identical
+	/// between the states (e.g., in specificity calculations), but that is
+	/// clearly not the case here.
+	// unfolded_state->share_packer_data_from( *bound_state );
+	// unbound_state->share_packer_data_from( *bound_state );
+	// unfolded_state->create_packer_data( scorefxn_, ptask );
 	unbound_state->create_packer_data( scorefxn_, ptask );
 	unfolded_state->create_packer_data( scorefxn_, ptask );
 
 	multistate_packer_->add_state( bound_state );
-	if( unbound_ )
+	if ( unbound_ ) {
 		multistate_packer_->add_state( unbound_state );
-	if( unfolded_ )
+	}
+	if ( unfolded_ ) {
 		multistate_packer_->add_state( unfolded_state );
+	}
 
 	runtime_assert( state_unbound_.size() == state_unfolded_.size() );
 	runtime_assert( state_unbound_.size() == state_positive_.size() );
 	runtime_assert( state_unbound_.size() == state_poses_.size() );
 	runtime_assert( state_unbound_.size() == state_task_factory_.size() );
 
-	for( core::Size i( 1 ); i<=state_poses_.size();++i ){
-		if( state_unbound_[ i ] || state_unfolded_[ i ] ){
+	for ( core::Size i( 1 ); i<=state_poses_.size(); ++i ) {
+		if ( state_unbound_[ i ] || state_unfolded_[ i ] ) {
 			part_complex( state_poses_[ i ], rb_jump_ );
 			part_complex( saved_state_poses_[ i ], rb_jump_ );
 		}
-		if( state_unfolded_[ i ] ){
+		if ( state_unfolded_[ i ] ) {
 			unfold_complex( state_poses_[ i ] );
 			unfold_complex( saved_state_poses_[ i ] );
 		}
 		PackingStateOP state( new PackingState( *state_poses_[ i ], state_positive_[ i ] ) );
 		PackerTaskOP state_ptask = task_factory()->create_task_and_apply_taskoperations( *state_poses_[ i ] );
-		if( state_task_factory_[ i ] )
+		if ( state_task_factory_[ i ] ) {
 			state_task_factory_[ i ]->modify_task( pose, state_ptask );
+		}
 		state->create_packer_data( scorefxn_, state_ptask );
 		multistate_packer_->add_state( state );
 	}

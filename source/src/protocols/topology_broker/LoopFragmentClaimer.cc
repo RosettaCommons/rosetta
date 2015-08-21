@@ -53,22 +53,22 @@ using namespace core;
 
 LoopFragmentClaimer::LoopFragmentClaimer( fragment::FragSetOP frags ) :
 	FragmentClaimer( simple_moves::FragmentMoverOP( new simple_moves::ClassicFragmentMover( frags, core::kinematics::MoveMapCOP( new kinematics::MoveMap ) ) ),
-		"Loops", weights::AbinitioMoverWeightOP( new weights::ConstAbinitioMoverWeight( 0.0 ) ) )
+	"Loops", weights::AbinitioMoverWeightOP( new weights::ConstAbinitioMoverWeight( 0.0 ) ) )
 {
- 	runtime_assert( frags != 0 );
+	runtime_assert( frags != 0 );
 }
 
 LoopFragmentClaimer::LoopFragmentClaimer( fragment::FragSetOP frags, std::string label ) :
 	FragmentClaimer( simple_moves::FragmentMoverOP( new simple_moves::ClassicFragmentMover( frags, core::kinematics::MoveMapCOP( new kinematics::MoveMap ) ) ),
-		"Loops", weights::AbinitioMoverWeightOP( new weights::ConstAbinitioMoverWeight( 0.0 ) ) )
+	"Loops", weights::AbinitioMoverWeightOP( new weights::ConstAbinitioMoverWeight( 0.0 ) ) )
 {
- 	runtime_assert( frags != 0 );
- 	set_label( label );
+	runtime_assert( frags != 0 );
+	set_label( label );
 }
 
 fragment::FragSetCOP LoopFragmentClaimer::loop_frags( kinematics::MoveMap& movemap) const {
 	//for now I allow only a single FragSet for loop-closing...
-	//	runtime_assert( frags.empty() );
+	// runtime_assert( frags.empty() );
 	//to change this we need to find a way to consolidate the movemaps of two different Movers.
 	// I guess correct behaviour would be to have a boolean AND for the maps.
 	movemap=*mover().movemap();

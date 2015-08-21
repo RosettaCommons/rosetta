@@ -44,8 +44,8 @@ template <> MessageListenerFactory * utility::SingletonBase< MessageListenerFact
 
 }
 
-namespace basic{
-namespace message_listening{
+namespace basic {
+namespace message_listening {
 
 static thread_local basic::Tracer TR( "basic.message_listening.MessageListenerFactory" );
 
@@ -66,21 +66,21 @@ MessageListenerFactory::get_listener(
 ){
 
 	//if we already made this listener then return it, otherwise create a new one
-	if(listeners_.count( tag )){
+	if ( listeners_.count( tag ) ) {
 		TR.Debug << "Found existing listener for tag, returning it" << std::endl;
 		return listeners_[tag];
 	}
 
 	MessageListenerOP listener;
 	switch ( tag ) {
-		case DATABASE_PROTOCOL_AND_BATCH_ID_TAG:
-			TR.Debug << "Creating a new DbMoverMessageListener" << std::endl;
-			listener = MessageListenerOP( new DbMoverMessageListener() );
-			break;
+	case DATABASE_PROTOCOL_AND_BATCH_ID_TAG :
+		TR.Debug << "Creating a new DbMoverMessageListener" << std::endl;
+		listener = MessageListenerOP( new DbMoverMessageListener() );
+		break;
 
-		default:
-			utility_exit_with_message("ERROR: you specified an invalid message listener");
-			break;
+	default :
+		utility_exit_with_message("ERROR: you specified an invalid message listener");
+		break;
 	}
 	listeners_[tag]=listener;
 	return listener;

@@ -67,7 +67,7 @@ using namespace core::chemical;
 
 class OrbitalTypeSetTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	// Shared data elements go here.
 	orbitals::OrbitalTypeSetOP orbitaltypeset;

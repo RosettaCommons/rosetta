@@ -17,14 +17,14 @@
 #ifdef USEMYSQL // for variables that are only used with mysql
 	#define MYSQL_ONLY(x) x
 #else
-	#define MYSQL_ONLY(x)
+#define MYSQL_ONLY(x)
 #endif
 
 
 #ifdef USEPOSTGRES // for variables that are only used with postgres
 	#define POSTGRES_ONLY(x) x
 #else
-	#define POSTGRES_ONLY(x)
+#define POSTGRES_ONLY(x)
 #endif
 
 #endif // INCLUDED_utility_sql_database_util_hh

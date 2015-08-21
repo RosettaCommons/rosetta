@@ -58,7 +58,7 @@ public:
 	static std::string _static_type_name();
 
 	virtual void add_mover(
-    moves::RandomMover& random_mover,
+		moves::RandomMover& random_mover,
 		core::pose::Pose const& pose,
 		abinitio::StageID stageID,
 		core::scoring::ScoreFunction const& scorefxn,
@@ -68,16 +68,16 @@ public:
 	virtual bool read_tag( std::string tag, std::istream& is );
 
 	virtual void initialize_dofs( core::pose::Pose&,
-																claims::DofClaims const& init_claims,
-																claims::DofClaims& /*failed_to_init*/ );
+		claims::DofClaims const& init_claims,
+		claims::DofClaims& /*failed_to_init*/ );
 
-  virtual void generate_claims( claims::DofClaims& new_claims );
+	virtual void generate_claims( claims::DofClaims& new_claims );
 
-core::Size docking_jump( core::pose::Pose& pose, core::Size chain_break_res );
+	core::Size docking_jump( core::pose::Pose& pose, core::Size chain_break_res );
 private:
 
 	/// @brief starting pose
-  core::pose::Pose input_pose_;
+	core::pose::Pose input_pose_;
 	protocols::loops::Loops moving_res_;
 	core::Size chain_break_res_, docking_jump_;
 	bool docking_local_refine_;

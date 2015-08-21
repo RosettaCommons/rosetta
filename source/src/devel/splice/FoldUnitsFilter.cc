@@ -32,7 +32,7 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/pose/PDBInfo.hh>
 
-namespace devel{
+namespace devel {
 namespace splice {
 
 using namespace core;
@@ -48,11 +48,11 @@ FoldUnitsFilterCreator::keyname() const { return "FoldUnits"; }
 
 //default ctor
 FoldUnitsFilter::FoldUnitsFilter() :
-protocols::filters::Filter( "FoldUnits" ),
-minimal_length_( 20 ),
-maximal_length_( 40 ),
-ends_distance_( 4.5 ),
-filename_( "FoldUnits.out" )
+	protocols::filters::Filter( "FoldUnits" ),
+	minimal_length_( 20 ),
+	maximal_length_( 40 ),
+	ends_distance_( 4.5 ),
+	filename_( "FoldUnits.out" )
 {
 }
 
@@ -88,9 +88,10 @@ std::string
 aa_sequence( pose::Pose const & pose ){
 	std::string seq( "" );
 
-	for( Size i = 1; i <= pose.total_residue(); ++i ){
-		if( !pose.conformation().residue( i ).is_protein() )
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( !pose.conformation().residue( i ).is_protein() ) {
 			continue;
+		}
 		seq += pose.conformation().residue( i ).name1();
 	}
 	return seq;
@@ -100,7 +101,7 @@ std::string
 input_file_name(){
 	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 	std::string const input_file_name( job->input_tag() );
-  core::Size const wheres_period( input_file_name.find_last_of( "." ) );
+	core::Size const wheres_period( input_file_name.find_last_of( "." ) );
 	std::string const pdb_name( input_file_name.substr(0, wheres_period ) );
 	return pdb_name;
 }
@@ -111,7 +112,7 @@ FoldUnitsFilter::write_to_file( std::string const pdb, core::Size const from_res
 	data.open( filename_.c_str(), std::ios::app );
 	runtime_assert( data.good() );
 	data<<pdb<<' '<<from_res<<' '<<to_res<<' '<<dssp<<' '<<sequence<<' ';
-	for( Size resi = from_res; resi <= to_res; ++resi ){
+	for ( Size resi = from_res; resi <= to_res; ++resi ) {
 		Real const phi = pose.phi( resi );
 		Real const psi = pose.psi( resi );
 		Real const omega  = pose.omega( resi );
@@ -124,16 +125,17 @@ FoldUnitsFilter::write_to_file( std::string const pdb, core::Size const from_res
 
 core::Real
 atom_distance( core::pose::Pose const & p1, core::Size const r1, std::string const & a1,
-               core::pose::Pose const & p2, core::Size const r2, std::string const & a2 ){
-	  return( p1.conformation().residue( r1 ).xyz( a1 ).distance( p2.conformation().residue( r2 ).xyz( a2 ) ) );
+	core::pose::Pose const & p2, core::Size const r2, std::string const & a2 ){
+	return( p1.conformation().residue( r1 ).xyz( a1 ).distance( p2.conformation().residue( r2 ).xyz( a2 ) ) );
 }
 
 
 bool
 find_cut_in_segment( core::pose::Pose const & pose, core::Size const from_res, core::Size const to_res ){
-	for( Size resi = from_res; resi < to_res; ++resi ){
-		if( atom_distance( pose, resi, "C", pose, resi + 1, "N" ) >= 1.5 )
+	for ( Size resi = from_res; resi < to_res; ++resi ) {
+		if ( atom_distance( pose, resi, "C", pose, resi + 1, "N" ) >= 1.5 ) {
 			return true;
+		}
 	}
 	return false;
 }
@@ -151,26 +153,33 @@ FoldUnitsFilter::compute(
 	pose::PDBInfoCOP pdb_info( pose.pdb_info() );
 	TR<<"secstruct: "<<sec_struct<<'\n'<<"sequence: "<<aa_seq<<std::endl;
 
-	for( Size resi = 2; resi <= pose.total_residue(); ++resi ){
+	for ( Size resi = 2; resi <= pose.total_residue(); ++resi ) {
 		TR<<"resi: "<<resi<<' ';
-		if( !pose.conformation().residue( resi ).is_protein() )
+		if ( !pose.conformation().residue( resi ).is_protein() ) {
 			continue;
-		if( !(sec_struct[ resi - 1 ] != 'L' && sec_struct[ resi - 2 ] == 'L' ) )
+		}
+		if ( !(sec_struct[ resi - 1 ] != 'L' && sec_struct[ resi - 2 ] == 'L' ) ) {
 			continue;
-		for( Size resj = resi + minimal_length(); resj <= resi + maximal_length() && resj < pose.total_residue(); ++resj ){
-			if( !pose.conformation().residue( resj ).is_protein() )
+		}
+		for ( Size resj = resi + minimal_length(); resj <= resi + maximal_length() && resj < pose.total_residue(); ++resj ) {
+			if ( !pose.conformation().residue( resj ).is_protein() ) {
 				continue;
-			if( pdb_info->chain( resi ) != pdb_info->chain( resj ) )
+			}
+			if ( pdb_info->chain( resi ) != pdb_info->chain( resj ) ) {
 				continue;
-			if( !(sec_struct[ resj - 1 ] != 'L' && sec_struct[ resj ] == 'L' ) )
+			}
+			if ( !(sec_struct[ resj - 1 ] != 'L' && sec_struct[ resj ] == 'L' ) ) {
 				continue;
+			}
 
 			Real const dist( protocols::simple_filters::res_res_min_distance( pose, resi, pose, resj ) );
-			if( dist >= ends_distance() )
+			if ( dist >= ends_distance() ) {
 				continue;
+			}
 
-			if( find_cut_in_segment( pose, resi, resj ) )
+			if ( find_cut_in_segment( pose, resi, resj ) ) {
 				continue;
+			}
 			write_to_file( pdb, resi, resj, sec_struct.substr( resi - 1, resj - resi + 1 ), aa_seq.substr( resi - 1, resj - resi + 1 ), pose );
 		}
 	}

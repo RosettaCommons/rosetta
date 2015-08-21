@@ -31,7 +31,7 @@ public:
 	/// @brief Instantiate a methods::EnergyMethodCreatorOP( new DFIRE_EnergyCreator )Energy
 	virtual
 	methods::EnergyMethodOP
-		create_energy_method(
+	create_energy_method(
 		methods::EnergyMethodOptions const &
 	) const;
 

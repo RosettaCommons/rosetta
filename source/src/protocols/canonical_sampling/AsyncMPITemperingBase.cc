@@ -189,12 +189,12 @@ void AsyncMPITemperingBase::deallocate_buffers() {
 #endif
 }
 
-	/// @brief callback executed before any Monte Carlo trials
+/// @brief callback executed before any Monte Carlo trials
 void
 AsyncMPITemperingBase::initialize_simulation(
-		core::pose::Pose & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
-		core::Size cycle   //non-zero if trajectory is restarted
+	core::pose::Pose & pose,
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
+	core::Size cycle   //non-zero if trajectory is restarted
 ) {
 	Parent::initialize_simulation( pose, metropolis_hastings_mover, cycle );
 #ifdef USEMPI
@@ -205,11 +205,11 @@ AsyncMPITemperingBase::initialize_simulation(
 }
 
 void AsyncMPITemperingBase::initialize_simulation(
-		core::pose::Pose & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
-		core::Size level,
-		core::Real temperature,
-		core::Size cycle
+	core::pose::Pose & pose,
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
+	core::Size level,
+	core::Real temperature,
+	core::Size cycle
 ) {
 	Parent::initialize_simulation( pose, metropolis_hastings_mover, level, temperature, cycle );
 #ifdef USEMPI
@@ -438,7 +438,7 @@ bool AsyncMPITemperingBase::time_for_temp_move() {
 
 	if ( rank() == 0 ) {
 		bool new_requests = receive_exchange_requests();
-		if ( new_requests )	process_matching_exchange_requests();
+		if ( new_requests ) process_matching_exchange_requests();
 	}
 
 	if ( !ready_for_exchange_ ) {

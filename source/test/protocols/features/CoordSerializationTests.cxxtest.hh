@@ -34,8 +34,7 @@ public:
 		utility::vector1< numeric::xyzVector<core::Real> > coord_data(protocols::features::deserialize_xyz_coords(serialized_data,original.natoms()));
 		TS_ASSERT_EQUALS(original.natoms(),coord_data.size());
 
-		for(core::Size atom_index = 1; atom_index <= original.natoms();++atom_index)
-		{
+		for ( core::Size atom_index = 1; atom_index <= original.natoms(); ++atom_index ) {
 			TS_ASSERT_EQUALS(original.xyz(atom_index),coord_data[atom_index]);
 		}
 	}

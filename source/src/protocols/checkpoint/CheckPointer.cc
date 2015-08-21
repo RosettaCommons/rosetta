@@ -84,7 +84,7 @@ using namespace core;
 void FileBuffer::dump(){
 
 	//std::cerr << "Dumped checkpoint. " << std::endl;
-	if( !gzipped_ ){
+	if ( !gzipped_ ) {
 		utility::io::ozstream output( filename_ );
 		if ( !output ) {
 			std::cout << "Cannot write checkpoint! open failed for file: " << filename_ << std::endl;
@@ -118,12 +118,12 @@ bool pose_from_binary_silent_file( const std::string &filename, const std::strin
 	using namespace core::chemical;
 	ResidueTypeSetCOP residue_set;
 	pose::Pose tmppose;
-	if( fullatom ) residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+	if ( fullatom ) residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 	else           residue_set = ChemicalManager::get_instance()->residue_type_set( CENTROID );
 	core::io::silent::SilentFileData sfd("", false, false, "binary" );
-	if(!sfd.read_file( filename ) ) return false;
+	if ( !sfd.read_file( filename ) ) return false;
 	for ( core::io::silent::SilentFileData::iterator iter = sfd.begin(), end = sfd.end(); iter != end; ++iter ) {
-		if( iter->decoy_tag() != tag ) continue;
+		if ( iter->decoy_tag() != tag ) continue;
 		iter->fill_pose( tmppose, *residue_set );
 		break;
 	}
@@ -134,21 +134,21 @@ bool pose_from_binary_silent_file( const std::string &filename, const std::strin
 }
 
 CheckPointer::CheckPointer( std::string const& type ):
-    type_ ( type ),
-		disabled_( false ),
-		count_checkpoint_recoveries_( 0 )
+	type_ ( type ),
+	disabled_( false ),
+	count_checkpoint_recoveries_( 0 )
 {
 	using namespace basic::options;
 	delete_checkpoints_ = option[ OptionKeys::run::delete_checkpoints ]();
-	if( option[ OptionKeys::run::suppress_checkpoints ]() ) disabled_ = true;
+	if ( option[ OptionKeys::run::suppress_checkpoints ]() ) disabled_ = true;
 }
 
 
 void CheckPointer::debug( const std::string &tag, const std::string &label, core::Real data1, core::Real data2, core::Real data3 ) const {
 	using namespace basic::options;
-	if( disabled_ ) return;
-	if( option[ OptionKeys::run::checkpoint ]() ||
-	    option[ OptionKeys::run::checkpoint_interval ].user() ){
+	if ( disabled_ ) return;
+	if ( option[ OptionKeys::run::checkpoint ]() ||
+			option[ OptionKeys::run::checkpoint_interval ].user() ) {
 
 		TR.Info << "CHECKDEBUG: " << tag << "_" << label << "  " << data1 << "  " << data2 << "  " << data3 << std::endl;
 	}
@@ -156,16 +156,16 @@ void CheckPointer::debug( const std::string &tag, const std::string &label, core
 
 void CheckPointer::flush_checkpoints()
 {
- for( core::Size i=0; i < file_buffer.size() ; i ++ ){
+	for ( core::Size i=0; i < file_buffer.size() ; i ++ ) {
 		file_buffer[i].dump();
- }
- file_buffer.clear();
+	}
+	file_buffer.clear();
 }
 
 core::Size CheckPointer::file_buffer_size()
 {
 	core::Size total_size = 0;
-	for( core::Size i=0; i < file_buffer.size() ; i ++ ){
+	for ( core::Size i=0; i < file_buffer.size() ; i ++ ) {
 		total_size += file_buffer[i].size();
 	}
 	return total_size;
@@ -183,14 +183,14 @@ void CheckPointer::checkpoint(
 
 	///////////// Is checkpointing on at all ?
 
-	if( disabled_ ) return;
-	if( !Timer::is_on() ) return;
+	if ( disabled_ ) return;
+	if ( !Timer::is_on() ) return;
 
-	if( pose.total_residue() <= 0 ) return;
+	if ( pose.total_residue() <= 0 ) return;
 
 	/////////////
 	// set global bailout structure - this is used by the watchdog to abort when the watchdog time
-	// has been 	global_bailout = new pose::Pose( pose );
+	// has been  global_bailout = new pose::Pose( pose );
 
 
 #ifdef BOINC
@@ -233,12 +233,12 @@ void CheckPointer::checkpoint(
 
 	/// Create the unique checkpoint ID
 	std::string mcstr( "_MC" );
-  if ( mc == 0 ) mcstr = "";
-  std::string checkpoint_id( "chk_" + current_tag + "_" + type() + "_" + mcstr + "_" + id );
-  if( pose.is_fullatom() ) checkpoint_id += "_fa";
+	if ( mc == 0 ) mcstr = "";
+	std::string checkpoint_id( "chk_" + current_tag + "_" + type() + "_" + mcstr + "_" + id );
+	if ( pose.is_fullatom() ) checkpoint_id += "_fa";
 
 	/// Make a note of it.
-  checkpoint_ids_.push_back( checkpoint_id );
+	checkpoint_ids_.push_back( checkpoint_id );
 
 	/// Save Random State
 
@@ -249,13 +249,13 @@ void CheckPointer::checkpoint(
 		new_file.set_contents( ss_stream.str() );
 		file_buffer.push_back( new_file );
 	}
-//  utility::io::ozstream ozs(checkpoint_id + ".rng.state.gz");
-//  numeric::random::RandomGenerator::saveAllStates(ozs);
-//  ozs.close();
+	//  utility::io::ozstream ozs(checkpoint_id + ".rng.state.gz");
+	//  numeric::random::RandomGenerator::saveAllStates(ozs);
+	//  ozs.close();
 
 
 	//std::string notag="";
-  if ( mc != 0 ) {
+	if ( mc != 0 ) {
 		{
 			FileBuffer new_file(  checkpoint_id + "mc_last.out"  );
 			std::stringstream ss_stream;
@@ -271,9 +271,9 @@ void CheckPointer::checkpoint(
 			new_file.set_contents( ss_stream.str() );
 			file_buffer.push_back( new_file );
 		}
-//		pose_to_binary_silent_file( checkpoint_id + "mc_last.out", checkpoint_id, mc->last_accepted_pose() );
-//		pose_to_binary_silent_file( checkpoint_id + "mc_low.out",  checkpoint_id, mc->lowest_score_pose() );
-  }
+		//  pose_to_binary_silent_file( checkpoint_id + "mc_last.out", checkpoint_id, mc->last_accepted_pose() );
+		//  pose_to_binary_silent_file( checkpoint_id + "mc_low.out",  checkpoint_id, mc->lowest_score_pose() );
+	}
 
 	{
 		FileBuffer new_file(  checkpoint_id + ".out"  );
@@ -291,22 +291,22 @@ void CheckPointer::checkpoint(
 	//// Is it time to flush the checkpoint ?
 
 
-	if (protocols::checkpoint::Timer::time_to_checkpoint()) {
+	if ( protocols::checkpoint::Timer::time_to_checkpoint() ) {
 		// ------ BOINC critical ------------------------------------
-		#ifdef BOINC
+#ifdef BOINC
 			boinc_begin_critical_section();
-		#endif
+#endif
 
 		flush_checkpoints();
 
 		// ------ endof BOINC critical (Timer::reset calls boinc_end_critical_section() )------------------------------------
 		protocols::checkpoint::Timer::reset(); // required for checkpoint
-	}else{
+	} else {
 
 		// WHatever the user says - never store more than 10 checkpoints - it takes too much memory. Allow 15MB
 		// but no more. if we exceed that then dump checkpoint contents whatever.
 
-		if( file_buffer_size() > 15000000 ){
+		if ( file_buffer_size() > 15000000 ) {
 			flush_checkpoints();
 		}
 
@@ -328,18 +328,18 @@ bool CheckPointer::recover_checkpoint(
 
 	bool debug = option[ OptionKeys::run::debug ]();
 
-	if( disabled_ ) return false;
-  if (!protocols::checkpoint::Timer::is_on()) return false; // required for checkpoint
+	if ( disabled_ ) return false;
+	if ( !protocols::checkpoint::Timer::is_on() ) return false; // required for checkpoint
 
 	TR.Error  << "recovering checkpoint of tag " << current_tag
-						<< " with id " << id
-						<< std::endl;
+		<< " with id " << id
+		<< std::endl;
 
-  std::string mcstr( "_MC" );
-  if ( mc == 0 ) mcstr = "";
-  // must be same as in checkpoint function
-  std::string checkpoint_id( "chk_" + current_tag + "_" + type() + "_" + mcstr + "_" + id );
-	if( fullatom ) checkpoint_id += "_fa";
+	std::string mcstr( "_MC" );
+	if ( mc == 0 ) mcstr = "";
+	// must be same as in checkpoint function
+	std::string checkpoint_id( "chk_" + current_tag + "_" + type() + "_" + mcstr + "_" + id );
+	if ( fullatom ) checkpoint_id += "_fa";
 
 
 	ResidueTypeSetCOP residue_set;
@@ -347,18 +347,18 @@ bool CheckPointer::recover_checkpoint(
 
 	// Make sure the check point exists - presence of the silent file indicates so.
 
-  TR << "CHECKING FOR CHECKPOINT" <<  " Id: " << checkpoint_id << " : ";
-	if (!utility::file::file_exists( checkpoint_id + ".out" )) {
+	TR << "CHECKING FOR CHECKPOINT" <<  " Id: " << checkpoint_id << " : ";
+	if ( !utility::file::file_exists( checkpoint_id + ".out" ) ) {
 		TR << " NOT PRESENT" << std::endl;
 		return false;
 	}
 
 	// Make an appropriate residue set.
-	if( fullatom ) residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+	if ( fullatom ) residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 	else           residue_set = ChemicalManager::get_instance()->residue_type_set( CENTROID );
 
 	// Restore random number state!
-	if (utility::file::file_exists( checkpoint_id + ".rng.state.gz" )) {
+	if ( utility::file::file_exists( checkpoint_id + ".rng.state.gz" ) ) {
 		TR.Info << "Read random number state. " << std::endl;
 		utility::io::izstream izs(checkpoint_id + ".rng.state.gz");
 		numeric::random::rg().restoreState(izs);
@@ -370,27 +370,27 @@ bool CheckPointer::recover_checkpoint(
 	// get the structure from the binary file
 	pose_from_binary_silent_file( checkpoint_id + ".out", checkpoint_id, pose, fullatom );
 
-	if( pose.is_fullatom() != fullatom ){
+	if ( pose.is_fullatom() != fullatom ) {
 		utility_exit_with_message("Fullatom mismatch in checkpointer.");
 	}
 
-	if( debug ) core::io::pdb::FileData::dump_pdb( pose, checkpoint_id + ".debug.pdb", "", foldtree );
+	if ( debug ) core::io::pdb::FileData::dump_pdb( pose, checkpoint_id + ".debug.pdb", "", foldtree );
 
 #ifdef BOINC_GRAPHICS
 	// attach boinc graphics pose observer
 	protocols::boinc::Boinc::attach_graphics_current_pose_observer( pose );
 #endif
-	if (utility::file::file_exists( checkpoint_id + ".mc_last.pdb" )) {
+	if ( utility::file::file_exists( checkpoint_id + ".mc_last.pdb" ) ) {
 		pose::Pose recovered_mc_last =  mc->last_accepted_pose();
 		pose_from_binary_silent_file( checkpoint_id + ".out", checkpoint_id, recovered_mc_last, fullatom );
 		mc->set_last_accepted_pose( recovered_mc_last );
-    if(debug) core::io::pdb::FileData::dump_pdb( mc->last_accepted_pose(), checkpoint_id + ".mc_last.debug.pdb" , "",  foldtree );
+		if ( debug ) core::io::pdb::FileData::dump_pdb( mc->last_accepted_pose(), checkpoint_id + ".mc_last.debug.pdb" , "",  foldtree );
 	}
-	if (utility::file::file_exists( checkpoint_id + ".mc_low.pdb" )) {
+	if ( utility::file::file_exists( checkpoint_id + ".mc_low.pdb" ) ) {
 		pose::Pose recovered_mc_low =  mc->lowest_score_pose();
 		pose_from_binary_silent_file( checkpoint_id + ".out", checkpoint_id, recovered_mc_low, fullatom );
 		mc->set_lowest_score_pose( recovered_mc_low );
-    if(debug) core::io::pdb::FileData::dump_pdb( mc->lowest_score_pose(), checkpoint_id + ".mc_low.debug.pdb" , "",  foldtree );
+		if ( debug ) core::io::pdb::FileData::dump_pdb( mc->lowest_score_pose(), checkpoint_id + ".mc_low.debug.pdb" , "",  foldtree );
 	}
 	checkpoint_ids_.push_back( checkpoint_id );
 	TR << " SUCCESS" << std::endl;
@@ -407,9 +407,9 @@ bool CheckPointer::recover_checkpoint(
 void CheckPointer::clear_checkpoints() {
 
 	TR.Info << "Deleting checkpoints of " << type() << std::endl;
-	if( disabled_ ) return;
+	if ( disabled_ ) return;
 	using namespace basic::options;
-	if( delete_checkpoints_ ){
+	if ( delete_checkpoints_ ) {
 		for ( core::Size i = 0; i < checkpoint_ids_.size(); i++ ) {
 			//std::cerr << "deleting checkpoint files with id: " << checkpoint_ids_[i] << std::endl;
 			utility::file::file_delete( checkpoint_ids_[i] + ".mc_last.out" );
@@ -417,7 +417,7 @@ void CheckPointer::clear_checkpoints() {
 			utility::file::file_delete( checkpoint_ids_[i] + ".out" );
 			utility::file::file_delete( checkpoint_ids_[i] + ".rng.state.gz" );
 		}
-	}else{
+	} else {
 		TR.Debug << "Checkpoint deletion disabled!" << std::endl;
 	}
 

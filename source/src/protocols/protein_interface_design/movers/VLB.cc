@@ -103,14 +103,14 @@ VLB::apply( pose::Pose & pose ) {
 	core::Size ntrials(1);
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	if( option[ jd2::ntrials ].user() ) ntrials = option[ jd2::ntrials ]() ;
-	while( ntrials > 0 ) {
+	if ( option[ jd2::ntrials ].user() ) ntrials = option[ jd2::ntrials ]() ;
+	while ( ntrials > 0 ) {
 		vlb.apply( pose );
 		if ( vlb.get_last_move_status() == MS_SUCCESS ) break;
 		else ntrials--;
 	}
 
-	if( vlb.get_last_move_status() == FAIL_DO_NOT_RETRY ) set_last_move_status( FAIL_RETRY );
+	if ( vlb.get_last_move_status() == FAIL_DO_NOT_RETRY ) set_last_move_status( FAIL_RETRY );
 	else if ( vlb.get_last_move_status() == MS_SUCCESS ) set_last_move_status( vlb.get_last_move_status() );
 	else {
 		TR << "VLB mover status was not properly set! Aborting.";
@@ -165,9 +165,9 @@ VLB::parse_my_tag(
 
 	BuildInstructionOP instruction;
 	utility::vector0< TagCOP > const & tags( tag->getTags() );
-	for( utility::vector0< TagCOP >::const_iterator it=tags.begin(); it!=tags.end(); ++it ) {
+	for ( utility::vector0< TagCOP >::const_iterator it=tags.begin(); it!=tags.end(); ++it ) {
 		TagCOP const tag = *it;
-		if( tag->getName() == "Bridge" ) {
+		if ( tag->getName() == "Bridge" ) {
 			// connect two contiguous but disjoint sections of a Pose into one continuous section
 			string const res1( tag->getOption< std::string >( "left" ) );
 			Size const left = core::pose::parse_resnum( res1, pose );
@@ -180,7 +180,7 @@ VLB::parse_my_tag(
 			Interval const ival( left, right);
 			instruction = BuildInstructionOP( new Bridge( ival, ss, aa ) );
 		}
-		if( tag->getName() == "ConnectRight" ) {
+		if ( tag->getName() == "ConnectRight" ) {
 			//instruction to jump-connect one Pose onto the right side of another
 			string const res1( tag->getOption< std::string >( "left" ) );
 			Size const left = core::pose::parse_resnum( res1, pose );
@@ -193,7 +193,7 @@ VLB::parse_my_tag(
 			core::import_pose::pose_from_pdb( connect_pose, pose_fname );
 			instruction = BuildInstructionOP( new ConnectRight( left, right, connect_pose ) );
 		}
-		if( tag->getName() == "GrowLeft" ) {
+		if ( tag->getName() == "GrowLeft" ) {
 			/// Use this for n-side insertions, but typically not n-terminal
 			///  extensions unless necessary.  It does not automatically cover the
 			///  additional residue on the right endpoint that needs to move during
@@ -209,7 +209,7 @@ VLB::parse_my_tag(
 
 			instruction = BuildInstructionOP( new GrowLeft( pos, ss, aa ) );
 		}
-		if( tag->getName() == "GrowRight" ) {
+		if ( tag->getName() == "GrowRight" ) {
 			/// instruction to create a c-side extension
 			string const res1( tag->getOption< std::string >( "pos" ) );
 			Size const pos = core::pose::parse_resnum( res1, pose );
@@ -221,7 +221,7 @@ VLB::parse_my_tag(
 		}
 
 
-		if( tag->getName() == "SegmentInsert" ) {
+		if ( tag->getName() == "SegmentInsert" ) {
 			/// interval: The interval between which the insert will span.
 			///  To perform a pure insertion without replacing any residues
 			///  within a region, use an interval with a zero as the left endpoint, e.g.
@@ -255,15 +255,15 @@ VLB::parse_my_tag(
 
 			string const side( tag->getOption< std::string >( "side", "" ) );
 			SegmentInsertConnectionScheme::Enum connect_side;
-			if( side == "N" ) connect_side = SegmentInsertConnectionScheme::N;
-			else if( side == "C" ) connect_side = SegmentInsertConnectionScheme::C;
+			if ( side == "N" ) connect_side = SegmentInsertConnectionScheme::N;
+			else if ( side == "C" ) connect_side = SegmentInsertConnectionScheme::C;
 			else connect_side = SegmentInsertConnectionScheme::RANDOM_SIDE;
 
 			instruction = BuildInstructionOP( new SegmentInsert( ival, ss, insert_pose, keep_bb_torsions, connect_side ) );
 		}
 
 
-		if( tag->getName() == "SegmentRebuild" ) {
+		if ( tag->getName() == "SegmentRebuild" ) {
 			/// @brief instruction to rebuild a segment
 			string const res1( tag->getOption< std::string >( "left" ) );
 			Size const left = core::pose::parse_resnum( res1, pose );
@@ -277,7 +277,7 @@ VLB::parse_my_tag(
 			instruction = BuildInstructionOP( new SegmentRebuild( ival, ss, aa ) );
 		}
 
-		if( tag->getName() == "SegmentSwap" ) {
+		if ( tag->getName() == "SegmentSwap" ) {
 			/// instruction to swap a segment with an external segment
 			/// interval: swap out this range of residues
 			/// move_map: fixed backbone residues in this movemap will be used for new jumps

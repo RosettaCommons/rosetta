@@ -67,13 +67,13 @@ random_rotation_angle(
 	RandomGenerator & RG
 )
 {
-  xyzMatrix< T > const mat(
+	xyzMatrix< T > const mat(
 		numeric::z_rotation_matrix_degrees( rot_mag * RG.gaussian() ) *
 		numeric::y_rotation_matrix_degrees( rot_mag * RG.gaussian() ) *
 		numeric::x_rotation_matrix_degrees( rot_mag * RG.gaussian() ) );
-  T theta;
-  rotation_axis( mat, theta );
-  return theta;
+	T theta;
+	rotation_axis( mat, theta );
+	return theta;
 }
 
 /// @brief produce a random translation in xyz space

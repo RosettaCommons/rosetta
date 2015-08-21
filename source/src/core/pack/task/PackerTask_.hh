@@ -147,10 +147,10 @@ public:
 	/// @brief Set the linear memory interaction graph's recent history size.  Default is 10.  It can be set
 	/// once to any value larger than 10, but any subsequent setting will only alter the size if it decreases
 	/// it.
-  virtual void decrease_linmem_ig_history_size( Size setting );
+	virtual void decrease_linmem_ig_history_size( Size setting );
 
 	/// @brief Return the linear memory interaction graph's recent history size.
-  virtual Size linmem_ig_history_size() const;
+	virtual Size linmem_ig_history_size() const;
 
 	/// @brief  if setting == true, turns on lazy interaction graph usage
 	/// NOTE: the linear memory interaction graph takes precedence over the LazyIG when

@@ -34,44 +34,44 @@
 
 
 namespace core {
-	namespace conformation {
-		namespace parametric {
+namespace conformation {
+namespace parametric {
 
-			static thread_local basic::Tracer TR( "core.conformation.parametric.Parameters" );
+static thread_local basic::Tracer TR( "core.conformation.parametric.Parameters" );
 
-			/// @brief Constructor.
-			///
-			Parameters::Parameters() :
-				residue_list_()
-			{
-			}
+/// @brief Constructor.
+///
+Parameters::Parameters() :
+	residue_list_()
+{
+}
 
-			Parameters::Parameters( Parameters const & src ) :
-				utility::pointer::ReferenceCount(),
-				utility::pointer::enable_shared_from_this< Parameters >()
-			{
-				residue_list_.clear();
-				if(src.residue_list_.size()>0) {
-					for(core::Size i=1, imax=src.residue_list_.size(); i<=imax; ++i) {
-						residue_list_.push_back( src.residue_list_[i]->clone() ); //This copies the residue that was being pointed at.
-						//Note that when copying a Conformation, I need to add logic that will ensure that the Parameters objects that result have owning pointers to the residues in the Conformation,
-						//rather than to residues that only exist in the Parameters object.
-					}
-				}
-			}
+Parameters::Parameters( Parameters const & src ) :
+	utility::pointer::ReferenceCount(),
+	utility::pointer::enable_shared_from_this< Parameters >()
+{
+	residue_list_.clear();
+	if ( src.residue_list_.size()>0 ) {
+		for ( core::Size i=1, imax=src.residue_list_.size(); i<=imax; ++i ) {
+			residue_list_.push_back( src.residue_list_[i]->clone() ); //This copies the residue that was being pointed at.
+			//Note that when copying a Conformation, I need to add logic that will ensure that the Parameters objects that result have owning pointers to the residues in the Conformation,
+			//rather than to residues that only exist in the Parameters object.
+		}
+	}
+}
 
-			Parameters::~Parameters() {}
+Parameters::~Parameters() {}
 
 
-			/// @brief make a copy of this residue( allocate actual memory for it )
-			///
-			ParametersOP
-			Parameters::clone() const
-			{
-				return ParametersOP( new Parameters( *this ) );
-			}
+/// @brief make a copy of this residue( allocate actual memory for it )
+///
+ParametersOP
+Parameters::clone() const
+{
+	return ParametersOP( new Parameters( *this ) );
+}
 
-		} // namespace parametric
-	} // namespace conformation
+} // namespace parametric
+} // namespace conformation
 } // namespace core
 

@@ -51,7 +51,7 @@ class PseudoBond : public utility::pointer::ReferenceCount
 {
 public:
 
-typedef chemical::ResConnID ResConnID;
+	typedef chemical::ResConnID ResConnID;
 
 public:
 	PseudoBond();

@@ -50,21 +50,21 @@ using namespace basic::options::OptionKeys;
 using namespace core::chemical;
 
 static thread_local basic::Tracer trProfScoreSubMatrix(
-		"protocols.frag_picker.scores.ProfileScoreSubMatrix");
+	"protocols.frag_picker.scores.ProfileScoreSubMatrix");
 
 ProfileScoreSubMatrix::~ProfileScoreSubMatrix() {}
 
 ProfileScoreSubMatrix::ProfileScoreSubMatrix(Size priority, Real lowest_acceptable_value, bool use_lowest,
-																						 std::string sequence,Size longest_vall_chunk,std::string subMatrixFile) :
-		CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
-				"ProfileScoreSubMatrix")
+	std::string sequence,Size longest_vall_chunk,std::string subMatrixFile) :
+	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
+	"ProfileScoreSubMatrix")
 {
 	// Store local copies
 	sequence_                = sequence;
 	subMatrixFile_           = subMatrixFile;
 
 	// Setup scores to be the proper size, each sequence position has an entry for each chunk position.
-	for (Size i = 1; i <= sequence.size(); ++i) {
+	for ( Size i = 1; i <= sequence.size(); ++i ) {
 		utility::vector1<Real> row(longest_vall_chunk);
 		scores_.push_back(row);
 	}
@@ -83,22 +83,23 @@ ProfileScoreSubMatrix::ProfileScoreSubMatrix(Size priority, Real lowest_acceptab
 void ProfileScoreSubMatrix::do_caching(VallChunkOP chunk) {
 
 	std::string & tmp = chunk->chunk_key();
-	if (tmp.compare(cached_scores_id_) == 0)
+	if ( tmp.compare(cached_scores_id_) == 0 ) {
 		return;
+	}
 	cached_scores_id_ = tmp;
 	Size size_q = sequence_.size();
 
 	trProfScoreSubMatrix.Debug << "caching profile score for " << chunk->get_pdb_id()
-			<< " of size " << chunk->size() << std::endl;
+		<< " of size " << chunk->size() << std::endl;
 	PROF_START( basic::FRAGMENTPICKING_PROFILE_CAHING );
 
 	// For each position in sequence
-	for (Size i = 1; i <= size_q; ++i) {
+	for ( Size i = 1; i <= size_q; ++i ) {
 
 		AA seqAA = aa_from_oneletter_code( sequence_[i-1] );
 
 		// For each position in chunk
-		for (Size j = 1; j <= chunk->size(); ++j) {
+		for ( Size j = 1; j <= chunk->size(); ++j ) {
 
 			AA chunkAA = aa_from_oneletter_code( chunk->at(j)->aa() );
 
@@ -110,18 +111,19 @@ void ProfileScoreSubMatrix::do_caching(VallChunkOP chunk) {
 
 	PROF_STOP( basic::FRAGMENTPICKING_PROFILE_CAHING );
 	trProfScoreSubMatrix.Debug << "precomputed matrix of scores " << scores_.size()
-			<< "x" << chunk->size() << std::endl;
+		<< "x" << chunk->size() << std::endl;
 }
 
 bool ProfileScoreSubMatrix::cached_score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) {
 
 	std::string & tmp = f->get_chunk()->chunk_key();
 
-	if (tmp.compare(cached_scores_id_) != 0)
+	if ( tmp.compare(cached_scores_id_) != 0 ) {
 		do_caching(f->get_chunk());
+	}
 
 	Real totalScore = 0.0;
-	for (Size i = 1; i <= f->get_length(); i++) {
+	for ( Size i = 1; i <= f->get_length(); i++ ) {
 
 		// Check sizes of fragment/chunk and scores
 		assert(f->get_first_index_in_query() + i - 1 <= scores_.size());
@@ -132,8 +134,9 @@ bool ProfileScoreSubMatrix::cached_score(FragmentCandidateOP f, FragmentScoreMap
 	totalScore /= (Real) f->get_length();
 	empty_map->set_score_component(totalScore, id_);
 
-	if ((totalScore > lowest_acceptable_value_) && (use_lowest_ == true))
+	if ( (totalScore > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;
+	}
 
 	return true;
 }
@@ -150,13 +153,13 @@ FragmentScoringMethodOP MakeProfileScoreSubMatrix::make(Size priority, Real lowe
 	trProfScoreSubMatrix << "Profile scoring method is: SubMatrix" << std::endl;
 
 	return (FragmentScoringMethodOP) FragmentScoringMethodOP( new ProfileScoreSubMatrix(
-																													 priority,
-																													 lowest_acceptable_value,
-																													 use_lowest,
-																													 picker->get_query_seq()->sequence(),
-																													 len,
-																													 misc  // is the substituion matrix file location
-																														 ) );
+		priority,
+		lowest_acceptable_value,
+		use_lowest,
+		picker->get_query_seq()->sequence(),
+		len,
+		misc  // is the substituion matrix file location
+		) );
 }
 
 } //scores

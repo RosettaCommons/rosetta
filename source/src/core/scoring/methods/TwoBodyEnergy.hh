@@ -272,18 +272,18 @@ public:
 	/*virtual
 	void
 	eval_atom_derivative_for_residue_pair(
-		Size const atom_index,
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		ResSingleMinimizationData const & minsingle_data1,
-		ResSingleMinimizationData const & minsingle_data2,
-		ResPairMinimizationData const & minpair_data,
-		pose::Pose const & pose, // provides context
-		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
-		Vector & F1,
-		Vector & F2
+	Size const atom_index,
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	ResSingleMinimizationData const & minsingle_data1,
+	ResSingleMinimizationData const & minsingle_data2,
+	ResPairMinimizationData const & minpair_data,
+	pose::Pose const & pose, // provides context
+	kinematics::DomainMap const & domain_map,
+	ScoreFunction const & sfxn,
+	EnergyMap const & weights,
+	Vector & F1,
+	Vector & F2
 	) const;*/
 
 	/// @brief Evaluate the derivatives for all atoms on rsd1 and rsd2 with respect
@@ -545,13 +545,13 @@ public:
 	virtual
 	Real
 	eval_residue_pair_dof_derivative(
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		id::DOF_ID const & dof_id,
-		id::TorsionID const & torsion_id,
-		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	id::DOF_ID const & dof_id,
+	id::TorsionID const & torsion_id,
+	pose::Pose const & pose,
+	ScoreFunction const & sfxn,
+	EnergyMap const & weights
 	) const;*/
 
 

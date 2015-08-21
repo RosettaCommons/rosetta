@@ -36,7 +36,7 @@ namespace loops {
 static thread_local basic::Tracer TR( "protocols.loops.FoldTreeFromLoopsWrapper" );
 
 FoldTreeFromLoops::FoldTreeFromLoops() :
-Mover( FoldTreeFromLoopsCreator::mover_name() ), loop_str_( "" )
+	Mover( FoldTreeFromLoopsCreator::mover_name() ), loop_str_( "" )
 {
 	loops_ = LoopsOP( new Loops );
 	loops_->clear();
@@ -58,7 +58,7 @@ protocols::moves::MoverOP FoldTreeFromLoops::fresh_instance() const
 void
 FoldTreeFromLoops::apply( core::pose::Pose & pose )
 {
-	if( loops()->empty() ) {
+	if ( loops()->empty() ) {
 		utility_exit_with_message( "No loops were specified");
 	}
 	core::kinematics::FoldTree f;
@@ -81,7 +81,7 @@ FoldTreeFromLoops::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & pose
 ) {
-	
+
 	loops_ = loops_definers::load_loop_definitions(tag, data, pose);
 }
 

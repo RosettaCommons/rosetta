@@ -69,10 +69,10 @@ numerical_derivative_check(
 
 // Real
 // calculate_direct_dof_derivatives(
-// 	DOF_Node const & tor,
-// 	pose::Pose const & pose,
-// 	scoring::ScoreFunction const & scorefxn,
-// 	ObjexxFCL::FArray2D< Real > const & dunbrack_deriv // currently this is pre-computed
+//  DOF_Node const & tor,
+//  pose::Pose const & pose,
+//  scoring::ScoreFunction const & scorefxn,
+//  ObjexxFCL::FArray2D< Real > const & dunbrack_deriv // currently this is pre-computed
 // );
 
 } // symmetry

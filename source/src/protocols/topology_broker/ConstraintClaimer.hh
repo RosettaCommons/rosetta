@@ -81,8 +81,8 @@ public:
 
 	virtual void add_constraints( core::pose::Pose& /*pose*/ ) const;
 
-	//	ConstraintSetCOP constraints() const { return constraints_; }
-	//	ConstraintSetCOP fa_constraints() const { return fa_constraints_; }
+	// ConstraintSetCOP constraints() const { return constraints_; }
+	// ConstraintSetCOP fa_constraints() const { return fa_constraints_; }
 	core::Real filter_weight() const { return filter_weight_; }
 	std::string const& filter_name() const { return filter_name_; }
 	core::Size combine_ratio() const { return combine_ratio_; }

@@ -119,7 +119,7 @@ TopEntitySet::update_entity_history(
 		} else if ( ent.fitness() == top_entities_.front().first->fitness() ) {
 			// b. tied with the worst element in the heap
 			++n_tied_for_worst_;
-		} else if (ent.fitness() > top_entities_.front().first->fitness() ) {
+		} else if ( ent.fitness() > top_entities_.front().first->fitness() ) {
 			// c. worse than the worst element in the heap -- a new low!
 			n_tied_for_worst_ = 1;
 		}
@@ -227,7 +227,7 @@ core::Real MultistateFitnessFunction::evaluate( Entity & entity )
 	update_entity_history( entity );
 
 	clock_t stop_time = clock();
-	if ( TR.visible( basic::t_debug )) {
+	if ( TR.visible( basic::t_debug ) ) {
 		TR.Debug << "evaluate() took " << ((double) stop_time - start_time ) / CLOCKS_PER_SEC << " seconds" << std::endl;
 	}
 	return score;
@@ -317,14 +317,14 @@ void MultistateFitnessFunction::compute_state_energies( Entity const & entity )
 	}
 
 	//for ( Size ii = 1; ii <= state_energies_.size(); ++ii ) {
-	//	if ( state_energies_[ ii ] == 1234 ) {
-	//		std::cout << "Weird: state_energies_[ " << ii << " ] was not eevaluated" << std::endl;
-	//	}
+	// if ( state_energies_[ ii ] == 1234 ) {
+	//  std::cout << "Weird: state_energies_[ " << ii << " ] was not eevaluated" << std::endl;
+	// }
 	//}
 	//for ( Size ii = 1; ii <= npd_properties_.size(); ++ii ) {
-	//	if ( npd_properties_[ ii ] == 1234 ) {
-	//		std::cout << "Weird: npd_properties_[ " << ii << " ] was not eevaluated" << std::endl;
-	//	}
+	// if ( npd_properties_[ ii ] == 1234 ) {
+	//  std::cout << "Weird: npd_properties_[ " << ii << " ] was not eevaluated" << std::endl;
+	// }
 	//}
 }
 

@@ -9,7 +9,7 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file protocols/antibody/task_operations/DisableAntibodyRegionOperation.hh
-/// @brief Task Operation to Disable a Region of Antibody 
+/// @brief Task Operation to Disable a Region of Antibody
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
@@ -41,60 +41,60 @@ public:
 
 	///@brief Default constructor.  Do not use this.
 	DisableAntibodyRegionOperation();
-	
+
 	///@brief Constructor setting only AntibodyInfo.
 	DisableAntibodyRegionOperation(AntibodyInfoCOP ab_info);
-	
+
 	///@brief Constructor setting AntibodyInfo and the region.
 	DisableAntibodyRegionOperation(AntibodyInfoCOP ab_info, AntibodyRegionEnum region);
-	
+
 	///@brief Constructor setting the region and to fully disable the region.
 	/// If disable_packing_and_design is set to False, will only disable design.
 	DisableAntibodyRegionOperation(AntibodyInfoCOP ab_info, AntibodyRegionEnum region, bool disable_packing_and_design);
-	
+
 	DisableAntibodyRegionOperation(DisableAntibodyRegionOperation const & src);
 
 	virtual ~DisableAntibodyRegionOperation();
 
 	core::pack::task::operation::TaskOperationOP
 	clone() const;
-	
+
 	/// @brief Configure from a RosettaScripts XML tag.
 	virtual void
 	parse_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & );
-	
-	
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & );
+
+
 	//////////////////////
-	
+
 	virtual
 	void
 	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
-	
+
 	void
 	set_region(AntibodyRegionEnum region);
-	
+
 	///@brief If disable_packing_and_design is set to False, will only disable design.
 	void
 	set_disable_packing_and_design(bool disable_packing_and_design);
-	
-	
+
+
 	void
 	set_defaults();
 
-	
+
 private:
-	
+
 	AntibodyInfoCOP ab_info_;
 	AntibodyRegionEnum region_;
-	
+
 	bool disable_packing_and_design_;
-	
+
 	///Needed for default and RS constructor.
 	AntibodyNumberingSchemeEnum numbering_scheme_;
 	CDRDefinitionEnum cdr_definition_;
-	
+
 };
 
 class DisableAntibodyRegionOperationCreator : public core::pack::task::operation::TaskOperationCreator {
@@ -108,7 +108,7 @@ public:
 } //antibody
 } //protocols
 
-#endif	//INCLUDED_protocols_antibody_task_operations_DisableAntibodyRegionOperation_hh
+#endif //INCLUDED_protocols_antibody_task_operations_DisableAntibodyRegionOperation_hh
 
 
 

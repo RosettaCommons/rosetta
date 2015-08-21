@@ -117,25 +117,25 @@ JobDistributorFactory::create_job_distributor() {
 #endif
 #endif
 
-	if ( option[  OptionKeys::run::shuffle ]() ){
-		 return new ShuffleFileSystemJobDistributor;
+	if ( option[  OptionKeys::run::shuffle ]() ) {
+		return new ShuffleFileSystemJobDistributor;
 	}
 
-	if ( option[ OptionKeys::run::msd_job_dist ]() ){
+	if ( option[ OptionKeys::run::msd_job_dist ]() ) {
 		return new MSDJobDistributor;
 	}
 
 	if ( option[ OptionKeys::run::proc_id ].user()
-		&& option [ OptionKeys::run::nproc ]() > 1 ) {
+			&& option [ OptionKeys::run::nproc ]() > 1 ) {
 		return new MPIWorkPartitionJobDistributor;
 	}
 
-// #else
-// 	if ( option[ n_worker_threads ].user() ) {
-// 		return new MultiThreadedJobDistributor;
-// 	} else {
-// 		return new FileSystemJobDistributor;
-// 	}
+	// #else
+	//  if ( option[ n_worker_threads ].user() ) {
+	//   return new MultiThreadedJobDistributor;
+	//  } else {
+	//   return new FileSystemJobDistributor;
+	//  }
 	return new FileSystemJobDistributor; //SML override until we have other child classes
 }
 
@@ -166,8 +166,9 @@ JobDistributorFactory::create_job_outputter( JobOutputterOP default_jobout ) {
 ParserOP
 JobDistributorFactory::create_parser()
 {
-	if ( option[ OptionKeys::jd2::dd_parser ].user() )
+	if ( option[ OptionKeys::jd2::dd_parser ].user() ) {
 		return ParserOP( new protocols::rosetta_scripts::RosettaScriptsParser );
+	}
 	return NULL;
 }
 

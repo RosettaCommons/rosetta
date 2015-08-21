@@ -45,7 +45,7 @@ HBondDonorFilter::apply( core::pose::Pose const & pose ) const {
 	core::Size const begin = pose.conformation().chain_begin(chain_id);
 	core::Size const end = pose.conformation().chain_end(chain_id);
 
-	if(	core::pose::num_hbond_donors(begin,end,pose) > hbond_donor_limit_ ){
+	if ( core::pose::num_hbond_donors(begin,end,pose) > hbond_donor_limit_ ) {
 		hbond_donor_tracer<< "Reached hbond donor limit"<< std::endl;
 		return false;
 	}
@@ -61,7 +61,7 @@ HBondDonorFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Data
 		assert(false);
 		return;
 	}
-	if ( ! (tag->hasOption("chain") && tag->hasOption("hbond_donor_limit") ) ){
+	if ( ! (tag->hasOption("chain") && tag->hasOption("hbond_donor_limit") ) ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("HBondDonor filter needs a 'chain' and an 'hbond_donor_limit' option");
 	}
 	chain_ = tag->getOption<std::string>("chain");

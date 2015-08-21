@@ -42,7 +42,7 @@ public:
 	RepackSidechainsMover();
 
 	/// @brief constructor with typename
-	//	protocols::simple_moves::RepackSidechainsMover( std::string const & );
+	// protocols::simple_moves::RepackSidechainsMover( std::string const & );
 
 	/// @brief Constructs a RepackSidechainsMover with PackerTask  <task>
 	/// evaluated using  <scorefxn>

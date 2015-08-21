@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file GridSearchIterator.hh
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890
- ///
- /// @authorv Christophe Schmitz , Kala Bharath Pilla
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file GridSearchIterator.hh
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890
+///
+/// @authorv Christophe Schmitz , Kala Bharath Pilla
+///
+////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcsTs4_GridSearchIterator_hh
 #define INCLUDED_protocols_scoring_methods_pcsTs4_GridSearchIterator_hh
@@ -48,10 +48,10 @@
 // C++ headers
 
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcsTs4{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcsTs4 {
 
 class GridSearchIterator_Ts4 : public utility::pointer::ReferenceCount {
 public:
@@ -65,23 +65,23 @@ public:
 	operator=(GridSearchIterator_Ts4 const & other);
 
 	GridSearchIterator_Ts4(numeric::xyzVector< core::Real > const coo1,
-										 numeric::xyzVector< core::Real > const coo2,
-										 core::Real const k,
-										 core::Real const edge_size,
-										 core::Real const step_size,
-										 core::Real const small_cutoff,
-										 core::Real const large_cutoff,
-										 core::Real const cone_angle);
+		numeric::xyzVector< core::Real > const coo2,
+		core::Real const k,
+		core::Real const edge_size,
+		core::Real const step_size,
+		core::Real const small_cutoff,
+		core::Real const large_cutoff,
+		core::Real const cone_angle);
 
 	bool
 	next(core::Real &x,
-			 core::Real &y,
-			 core::Real &z);
+		core::Real &y,
+		core::Real &z);
 
 	bool
 	next_center(core::Real &x,
-							core::Real &y,
-							core::Real &z);
+		core::Real &y,
+		core::Real &z);
 
 	void
 	reset();

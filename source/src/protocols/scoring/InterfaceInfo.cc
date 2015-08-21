@@ -10,7 +10,7 @@
 /// @file   protocols/scoring/InterfaceInfo.cc
 /// @brief  Statistically derived rotamer pair potentials
 /// @details For docking (or between chains) only those residues at the interface
-///						and between the two interfaces need to be evaluated
+///      and between the two interfaces need to be evaluated
 /// @author Monica Berrondo
 
 
@@ -60,23 +60,23 @@ InterfaceInfo::initialize()
 	interface_list_.resize(num_jump_);
 
 	//initialize interface objects for each interface in pose
-	for (core::Size i = 1; i <= num_jump_; i++){
+	for ( core::Size i = 1; i <= num_jump_; i++ ) {
 		interface_list_[i] = protocols::scoring::InterfaceOP( new protocols::scoring::Interface( rb_jump_[i] ) );
 		interface_list_[i]->distance(6.0);
-		}
+	}
 
 }
 
 bool
 InterfaceInfo::is_interface(
 	core::conformation::Residue rsd
-	) const
+) const
 {
 
 	bool is_interface(false);
-	for (core::Size i = 1; i <= num_jump_; i++){
-		if (interface_list_[i]->is_interface( rsd )) is_interface = true;
-		}
+	for ( core::Size i = 1; i <= num_jump_; i++ ) {
+		if ( interface_list_[i]->is_interface( rsd ) ) is_interface = true;
+	}
 
 	return is_interface;
 }
@@ -85,13 +85,13 @@ bool
 InterfaceInfo::is_pair(
 	core::conformation::Residue rsd1,
 	core::conformation::Residue rsd2
-	) const
+) const
 {
 
 	bool is_pair(false);
 
-	for(core::Size i = 1; i<= num_jump_; i++){
-		if (interface_list_[i]->is_pair(rsd1, rsd2)) is_pair = true;
+	for ( core::Size i = 1; i<= num_jump_; i++ ) {
+		if ( interface_list_[i]->is_pair(rsd1, rsd2) ) is_pair = true;
 	}
 
 	return is_pair;
@@ -111,9 +111,9 @@ InterfaceInfo::interface( core::Size interface_num ) const {
 void
 InterfaceInfo::calculate( core::pose::Pose const & pose )
 {
-	for (core::Size i = 1; i <= num_jump_; i++){
+	for ( core::Size i = 1; i <= num_jump_; i++ ) {
 		interface_list_[i]->calculate( pose );
-		}
+	}
 }
 
 core::Size
@@ -121,7 +121,7 @@ InterfaceInfo::closest_interface_residue( core::pose::Pose const & pose, core::S
 {
 	core::Size ret_rsd (0);
 	core::Real min_distance (100000.0), temp_dist (0.0);
-	for ( core::Size i = 1; i <= num_jump_; ++i ){
+	for ( core::Size i = 1; i <= num_jump_; ++i ) {
 		core::Size temp_rsd = interface_list_[i]->closest_interface_residue( pose, src_rsd, temp_dist );
 		if ( temp_dist < min_distance ) {
 			ret_rsd = temp_rsd;

@@ -35,17 +35,17 @@ static thread_local basic::Tracer trRescorePDDF( "RescorePDDF" );
 OPT_1GRP_KEY( Boolean, saxs, show_pddf )
 
 void register_options() {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-  OPT(in::file::native);
-  OPT(in::file::s);
-  OPT(in::file::residue_type_set);
-  OPT(out::nooutput);
-  OPT(score::saxs::ref_pddf);
-  OPT(score::saxs::custom_ff);
+	OPT(in::file::native);
+	OPT(in::file::s);
+	OPT(in::file::residue_type_set);
+	OPT(out::nooutput);
+	OPT(score::saxs::ref_pddf);
+	OPT(score::saxs::custom_ff);
 
-  NEW_OPT( saxs::show_pddf  , "prints PDDF on stdout", "" );
+	NEW_OPT( saxs::show_pddf  , "prints PDDF on stdout", "" );
 }
 
 
@@ -72,7 +72,7 @@ public:
 	virtual std::string get_name() const { return "RescorePDDF"; }
 
 private:
-    core::scoring::ScoreFunctionOP scorefxn_;
+	core::scoring::ScoreFunctionOP scorefxn_;
 };
 
 
@@ -93,41 +93,41 @@ public:
 		pddf_score_->compute_pddf_without_ff(pose);
 		utility::vector1<Real> & d = pddf_score_->get_dist_bins();
 		utility::vector1<Real> & pddf = pddf_score_->get_pddf();
-		for(Size i=1;i<=d.size();i++) {
+		for ( Size i=1; i<=d.size(); i++ ) {
 			std::cout << d[i]<<" "<<pddf[i]<<std::endl;
 		}
 	}
- 	virtual std::string get_name() const { return "PrintPDDF"; }
+	virtual std::string get_name() const { return "PrintPDDF"; }
 
 
 private:
-    protocols::scoring::methods::saxs::PDDFEnergy* pddf_score_;
+	protocols::scoring::methods::saxs::PDDFEnergy* pddf_score_;
 };
 
 int main( int argc, char * argv [] ) {
-    try {
-    using namespace protocols;
-    using namespace protocols::jobdist;
-    using namespace protocols::moves;
-    using namespace basic::options;
-    using namespace basic::options::OptionKeys;
+	try {
+		using namespace protocols;
+		using namespace protocols::jobdist;
+		using namespace protocols::moves;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-    register_options();
-    devel::init(argc, argv);
+		register_options();
+		devel::init(argc, argv);
 
-    // configure score function
+		// configure score function
 
 
-    if(option[saxs::show_pddf].user()) {
-      PrintPDDF printPddf;
-      not_universal_main( printPddf );
-    } else {
-      RescorePDDF rescore;
-      not_universal_main( rescore );
-    }
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+		if ( option[saxs::show_pddf].user() ) {
+			PrintPDDF printPddf;
+			not_universal_main( printPddf );
+		} else {
+			RescorePDDF rescore;
+			not_universal_main( rescore );
+		}
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                  }
-    return 0;
+	}
+	return 0;
 }

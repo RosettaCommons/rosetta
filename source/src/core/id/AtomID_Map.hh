@@ -40,8 +40,8 @@
 
 
 #ifdef WIN32
-	#include <vector>
-	#include <map>
+#include <vector>
+#include <map>
 #endif
 
 namespace core {
@@ -356,7 +356,7 @@ public: // Properties
 	has( AtomID const & id ) const
 	{
 		return ( ( id.rsd() >= 1 ) && ( id.atomno() >= 1 ) &&
-						 ( Size( id.rsd() ) <= res_map_.size() ) && ( Size( id.atomno() ) <= res_map_[ id.rsd() ].size() ) );
+			( Size( id.rsd() ) <= res_map_.size() ) && ( Size( id.atomno() ) <= res_map_[ id.rsd() ].size() ) );
 	}
 
 

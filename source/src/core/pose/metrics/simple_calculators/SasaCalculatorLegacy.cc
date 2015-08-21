@@ -33,7 +33,7 @@ using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
 
-namespace core{
+namespace core {
 namespace pose {
 namespace metrics {
 namespace simple_calculators {
@@ -51,9 +51,9 @@ void SasaCalculatorLegacy::lookup( std::string const & key, basic::MetricValueBa
 	} else if ( key == "residue_sasa" ) {
 		basic::check_cast( valptr, &residue_sasa_, "residue_sasa expects to return a utility::vector1< Real >" );
 		(static_cast<basic::MetricValue<utility::vector1< Real > > *>(valptr))->set( residue_sasa_ );
-	//} else if ( key == "residue_hsasa") {
-	//	basic::check_cast( valptr, &residue_sasa_h_, "residue_sasa_h expects to return a utility::vector1< Real >");
-	//	(static_cast<basic::MetricValue<utility::vector1< Real > > *>(valptr))->set( residue_sasa_h_);
+		//} else if ( key == "residue_hsasa") {
+		// basic::check_cast( valptr, &residue_sasa_h_, "residue_sasa_h expects to return a utility::vector1< Real >");
+		// (static_cast<basic::MetricValue<utility::vector1< Real > > *>(valptr))->set( residue_sasa_h_);
 	} else {
 		basic::Error() << "This Calculator cannot compute metric " << key << std::endl;
 		utility_exit();
@@ -71,8 +71,8 @@ std::string SasaCalculatorLegacy::print( std::string const & key ) const {
 		utility_exit();
 	} else if ( key == "residue_sasa" ) {
 		return utility::to_string( residue_sasa_ );
-	//} else if ( key == "residue_hsasa") {
-	//	return utility::to_string( residue_hsasa_);
+		//} else if ( key == "residue_hsasa") {
+		// return utility::to_string( residue_hsasa_);
 	}
 
 	basic::Error() << "This Calculator cannot compute metric " << key << std::endl;
@@ -83,7 +83,7 @@ std::string SasaCalculatorLegacy::print( std::string const & key ) const {
 
 
 void SasaCalculatorLegacy::recompute( Pose const & this_pose ) {
-		total_sasa_ = core::scoring::calc_per_atom_sasa( this_pose, atom_sasa_, residue_sasa_, probe_radius_);
+	total_sasa_ = core::scoring::calc_per_atom_sasa( this_pose, atom_sasa_, residue_sasa_, probe_radius_);
 }
 
 

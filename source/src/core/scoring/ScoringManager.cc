@@ -152,7 +152,7 @@ ScoringManager::ScoringManager() :
 	DNA_base_potential_( /* 0 */ ),
 	carbon_hbond_potential_( /* 0 */ ),
 	rna_low_resolution_potential_( /* 0 */ ),
-//	rna_torsion_potential_( /* 0 */ ),
+	// rna_torsion_potential_( /* 0 */ ),
 	rna_chemical_shift_potential_( /* 0 */ ),
 	rna_dms_potential_( /* 0 */ ),
 	rna_dms_low_resolution_potential_( /* 0 */ ),
@@ -180,8 +180,7 @@ ScoringManager::ScoringManager() :
 PairEPotential const &
 ScoringManager::get_PairEPotential() const
 {
-	if (pairE_potential_ == 0 )
-	{
+	if ( pairE_potential_ == 0 ) {
 		pairE_potential_ = PairEPotentialOP( new PairEPotential() );
 	}
 	return *pairE_potential_;
@@ -211,8 +210,7 @@ ScoringManager::factory_register( methods::EnergyMethodCreatorOP creator )
 dna::DNA_BasePotential const &
 ScoringManager::get_DNA_BasePotential() const
 {
-	if (DNA_base_potential_ == 0 )
-	{
+	if ( DNA_base_potential_ == 0 ) {
 		DNA_base_potential_ = dna::DNA_BasePotentialOP( new dna::DNA_BasePotential() );
 	}
 	return *DNA_base_potential_;
@@ -222,8 +220,7 @@ ScoringManager::get_DNA_BasePotential() const
 EnvPairPotential const &
 ScoringManager::get_EnvPairPotential() const
 {
-	if (env_pair_potential_ == 0 )
-	{
+	if ( env_pair_potential_ == 0 ) {
 		env_pair_potential_ = EnvPairPotentialOP( new EnvPairPotential() );
 	}
 	return *env_pair_potential_;
@@ -233,8 +230,7 @@ ScoringManager::get_EnvPairPotential() const
 SmoothEnvPairPotential const &
 ScoringManager::get_SmoothEnvPairPotential() const
 {
-	if (smooth_env_pair_potential_ == 0 )
-	{
+	if ( smooth_env_pair_potential_ == 0 ) {
 		smooth_env_pair_potential_ = SmoothEnvPairPotentialOP( new SmoothEnvPairPotential() );
 	}
 	return *smooth_env_pair_potential_;
@@ -244,8 +240,7 @@ ScoringManager::get_SmoothEnvPairPotential() const
 CenRotEnvPairPotential const &
 ScoringManager::get_CenRotEnvPairPotential() const
 {
-	if (cen_rot_pair_potential_ == 0 )
-	{
+	if ( cen_rot_pair_potential_ == 0 ) {
 		cen_rot_pair_potential_ = CenRotEnvPairPotentialOP( new CenRotEnvPairPotential() );
 	}
 	return *cen_rot_pair_potential_;
@@ -255,8 +250,7 @@ ScoringManager::get_CenRotEnvPairPotential() const
 CenHBPotential const &
 ScoringManager::get_CenHBPotential() const
 {
-	if (cen_hb_potential_ == 0 )
-	{
+	if ( cen_hb_potential_ == 0 ) {
 		cen_hb_potential_ = CenHBPotentialOP( new CenHBPotential() );
 	}
 	return *cen_hb_potential_;
@@ -266,8 +260,7 @@ ScoringManager::get_CenHBPotential() const
 MembranePotential const &
 ScoringManager::get_MembranePotential() const
 {
-	if (membrane_potential_ == 0 )
-	{
+	if ( membrane_potential_ == 0 ) {
 		membrane_potential_ = MembranePotentialOP( new MembranePotential() );
 	}
 	return *membrane_potential_;
@@ -277,8 +270,7 @@ ScoringManager::get_MembranePotential() const
 membrane::MembraneData const &
 ScoringManager::get_MembraneData() const
 {
-	if (mp_base_potential_ == 0 )
-	{
+	if ( mp_base_potential_ == 0 ) {
 		mp_base_potential_ = membrane::MembraneDataOP( new membrane::MembraneData() );
 	}
 	return *mp_base_potential_;
@@ -288,11 +280,10 @@ ScoringManager::get_MembraneData() const
 Membrane_FAPotential const &
 ScoringManager::get_Membrane_FAPotential() const //pba
 {
-  if (membrane_fapotential_ == 0 )
-  {
-    membrane_fapotential_ = Membrane_FAPotentialOP( new Membrane_FAPotential() );
-  }
-  return *membrane_fapotential_;
+	if ( membrane_fapotential_ == 0 ) {
+		membrane_fapotential_ = Membrane_FAPotentialOP( new Membrane_FAPotential() );
+	}
+	return *membrane_fapotential_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -301,8 +292,7 @@ ScoringManager::get_Membrane_FAPotential() const //pba
 ProQPotential const &
 ScoringManager::get_ProQPotential() const
 {
-	if (ProQ_potential_ == 0 )
-	{
+	if ( ProQ_potential_ == 0 ) {
 		ProQ_potential_ = ProQPotentialOP( new ProQPotential() );
 	}
 	return *ProQ_potential_;
@@ -314,8 +304,7 @@ ScoringManager::get_ProQPotential() const
 SecondaryStructurePotential const &
 ScoringManager::get_SecondaryStructurePotential() const
 {
-	if (secondary_structure_potential_ == 0 )
-	{
+	if ( secondary_structure_potential_ == 0 ) {
 		secondary_structure_potential_ = SecondaryStructurePotentialOP( new SecondaryStructurePotential() );
 	}
 	return *secondary_structure_potential_;
@@ -325,8 +314,7 @@ ScoringManager::get_SecondaryStructurePotential() const
 GenBornPotential const &
 ScoringManager::get_GenBornPotential() const
 {
-	if (gen_born_potential_ == 0 )
-	{
+	if ( gen_born_potential_ == 0 ) {
 		gen_born_potential_ = GenBornPotentialOP( new GenBornPotential() );
 	}
 	return *gen_born_potential_;
@@ -336,8 +324,7 @@ ScoringManager::get_GenBornPotential() const
 MultipoleElecPotential const &
 ScoringManager::get_MultipoleElecPotential( methods::EnergyMethodOptions const & options ) const
 {
-	if (multipole_elec_potential_ == 0 )
-	{
+	if ( multipole_elec_potential_ == 0 ) {
 		multipole_elec_potential_ = MultipoleElecPotentialOP( new MultipoleElecPotential() );
 		multipole_elec_potential_->use_polarization = options.use_polarization();
 		multipole_elec_potential_->use_gen_kirkwood = options.use_gen_kirkwood();
@@ -349,8 +336,7 @@ ScoringManager::get_MultipoleElecPotential( methods::EnergyMethodOptions const &
 FACTSPotential const &
 ScoringManager::get_FACTSPotential() const
 {
-	if (facts_potential_ == 0 )
-	{
+	if ( facts_potential_ == 0 ) {
 		facts_potential_ = FACTSPotentialOP( new FACTSPotential() );
 	}
 	return *facts_potential_;
@@ -360,8 +346,7 @@ ScoringManager::get_FACTSPotential() const
 PoissonBoltzmannPotential const &
 ScoringManager::get_PoissonBoltzmannPotential() const
 {
-	if ( PB_potential_ == 0 )
-	{
+	if ( PB_potential_ == 0 ) {
 		PB_potential_ = PoissonBoltzmannPotentialOP( new PoissonBoltzmannPotential );
 	}
 	return *PB_potential_;
@@ -381,8 +366,7 @@ ScoringManager::get_AtomVDW( std::string const & atom_type_set_name ) const
 carbon_hbonds::CarbonHBondPotential const &
 ScoringManager::get_CarbonHBondPotential() const
 {
-	if (carbon_hbond_potential_ == 0 )
-	{
+	if ( carbon_hbond_potential_ == 0 ) {
 		carbon_hbond_potential_ = carbon_hbonds::CarbonHBondPotentialOP( new carbon_hbonds::CarbonHBondPotential() );
 	}
 	return *carbon_hbond_potential_;
@@ -392,8 +376,7 @@ ScoringManager::get_CarbonHBondPotential() const
 rna::RNA_AtomVDW const &
 ScoringManager::get_RNA_AtomVDW() const
 {
-	if (rna_atom_vdw_ == 0 )
-	{
+	if ( rna_atom_vdw_ == 0 ) {
 		rna_atom_vdw_ = rna::RNA_AtomVDWOP( new rna::RNA_AtomVDW() );
 	}
 	return *rna_atom_vdw_;
@@ -403,8 +386,7 @@ ScoringManager::get_RNA_AtomVDW() const
 geometric_solvation::DatabaseOccSolEne const &
 ScoringManager::get_DatabaseOccSolEne( std::string const & atom_type_set_name, Real const & min_occ_energy ) const
 {
-	if (occ_hbond_sol_database_ == 0 )
-	{
+	if ( occ_hbond_sol_database_ == 0 ) {
 		occ_hbond_sol_database_ = geometric_solvation::DatabaseOccSolEneOP( new geometric_solvation::DatabaseOccSolEne( atom_type_set_name, min_occ_energy ) );
 	}
 	return *occ_hbond_sol_database_;
@@ -414,8 +396,7 @@ ScoringManager::get_DatabaseOccSolEne( std::string const & atom_type_set_name, R
 rna::RNA_LowResolutionPotential const &
 ScoringManager::get_RNA_LowResolutionPotential() const
 {
-	if (rna_low_resolution_potential_ == 0 )
-	{
+	if ( rna_low_resolution_potential_ == 0 ) {
 		rna_low_resolution_potential_ = rna::RNA_LowResolutionPotentialOP( new rna::RNA_LowResolutionPotential() );
 	}
 	return *rna_low_resolution_potential_;
@@ -425,38 +406,37 @@ ScoringManager::get_RNA_LowResolutionPotential() const
 // rna::RNA_TorsionPotential const &
 // ScoringManager::get_RNA_TorsionPotential() const
 // {
-// 	if (rna_torsion_potential_ == 0 )
-// 	{
-// 		rna_torsion_potential_ = rna::RNA_TorsionPotentialOP( new rna::RNA_TorsionPotential() );
-// 	}
-// 	return *rna_torsion_potential_;
+//  if (rna_torsion_potential_ == 0 )
+//  {
+//   rna_torsion_potential_ = rna::RNA_TorsionPotentialOP( new rna::RNA_TorsionPotential() );
+//  }
+//  return *rna_torsion_potential_;
 // }
 
 ///////////////////////////////////////////////////////////////////////////////
 // rna::RNA_SuitePotential const &
 // ScoringManager::get_RNA_SuitePotential( bool const calculate_suiteness_bonus /* = false */ ) const
 // {
-// 	if ( calculate_suiteness_bonus ){
-// 		if (rna_suite_potential_for_suiteness_bonus_ == 0 )
-// 			{
-// 				rna_suite_potential_for_suiteness_bonus_ = rna::RNA_SuitePotentialOP( new rna::RNA_SuitePotential( true ) );
-// 			}
-// 		return *rna_suite_potential_for_suiteness_bonus_;
-// 	}
+//  if ( calculate_suiteness_bonus ){
+//   if (rna_suite_potential_for_suiteness_bonus_ == 0 )
+//    {
+//     rna_suite_potential_for_suiteness_bonus_ = rna::RNA_SuitePotentialOP( new rna::RNA_SuitePotential( true ) );
+//    }
+//   return *rna_suite_potential_for_suiteness_bonus_;
+//  }
 
-// 	if (rna_suite_potential_ == 0 )
-// 		{
-// 			rna_suite_potential_ = rna::RNA_SuitePotentialOP( new rna::RNA_SuitePotential( false ) );
-// 		}
-// 	return *rna_suite_potential_;
+//  if (rna_suite_potential_ == 0 )
+//   {
+//    rna_suite_potential_ = rna::RNA_SuitePotentialOP( new rna::RNA_SuitePotential( false ) );
+//   }
+//  return *rna_suite_potential_;
 // }
 
 ///////////////////////////////////////////////////////////////////////////////
 rna::chemical_shift::RNA_ChemicalShiftPotential const &
 ScoringManager::get_RNA_ChemicalShiftPotential() const
 {
-	if (rna_chemical_shift_potential_ == 0 )
-	{
+	if ( rna_chemical_shift_potential_ == 0 ) {
 		rna_chemical_shift_potential_= rna::chemical_shift::RNA_ChemicalShiftPotentialOP( new rna::chemical_shift::RNA_ChemicalShiftPotential() );
 	}
 	return *rna_chemical_shift_potential_;
@@ -486,8 +466,7 @@ ScoringManager::get_RNA_DMS_LowResolutionPotential() const
 dna::DirectReadoutPotential const &
 ScoringManager::get_DirectReadoutPotential() const
 {
-	if (dna_dr_potential_ == 0 )
-	{
+	if ( dna_dr_potential_ == 0 ) {
 		dna_dr_potential_ = dna::DirectReadoutPotentialOP( new dna::DirectReadoutPotential() );
 	}
 	return *dna_dr_potential_;
@@ -516,8 +495,7 @@ ScoringManager::get_WaterAdductHBondPotential() const
 RamachandranCOP
 ScoringManager::get_Ramachandran_ptr() const
 {
-	if ( rama_ == 0 )
-	{
+	if ( rama_ == 0 ) {
 		rama_ = RamachandranOP( new Ramachandran );
 	}
 	return rama_;
@@ -533,8 +511,7 @@ ScoringManager::get_Ramachandran() const
 Ramachandran2BCOP
 ScoringManager::get_Ramachandran2B_ptr() const
 {
-	if ( rama2b_ == 0 )
-	{
+	if ( rama2b_ == 0 ) {
 		rama2b_ = Ramachandran2BOP( new Ramachandran2B );
 	}
 	return rama2b_;
@@ -550,8 +527,7 @@ ScoringManager::get_Ramachandran2B() const
 Rama2BOffset const &
 ScoringManager::get_Rama2BOffset() const
 {
-	if ( rama2bo_ == 0 )
-	{
+	if ( rama2bo_ == 0 ) {
 		rama2bo_ = Rama2BOffsetOP( new Rama2BOffset );
 	}
 	return *rama2bo_;
@@ -561,8 +537,7 @@ ScoringManager::get_Rama2BOffset() const
 OmegaTether const &
 ScoringManager::get_OmegaTether() const
 {
-	if ( omega_ == 0 )
-	{
+	if ( omega_ == 0 ) {
 		omega_ = OmegaTetherOP( new OmegaTether() );
 	}
 	return *omega_;
@@ -572,8 +547,7 @@ ScoringManager::get_OmegaTether() const
 dna::DNABFormPotential const &
 ScoringManager::get_DNABFormPotential() const
 {
-	if( dnabform_ == 0 )
-	{
+	if ( dnabform_ == 0 ) {
 		dnabform_ =  dna::DNABFormPotentialOP( new dna::DNABFormPotential );
 	}
 	return *dnabform_;
@@ -584,8 +558,7 @@ ScoringManager::get_DNABFormPotential() const
 dna::DNATorsionPotential const &
 ScoringManager::get_DNATorsionPotential() const
 {
-	if (dna_torsion_potential_ == 0 )
-	{
+	if ( dna_torsion_potential_ == 0 ) {
 		dna_torsion_potential_ = dna::DNATorsionPotentialOP( new dna::DNATorsionPotential() );
 	}
 	return *dna_torsion_potential_;
@@ -595,12 +568,11 @@ ScoringManager::get_DNATorsionPotential() const
 core::scoring::mm::MMTorsionLibrary const &
 ScoringManager::get_MMTorsionLibrary() const
 {
-	if ( mm_torsion_library_ == 0 )
-		{
-			mm_torsion_library_ = mm::MMTorsionLibraryOP( new mm::MMTorsionLibrary
-				( basic::database::full_name( "chemical/mm_atom_type_sets/fa_standard/mm_torsion_params.txt" ),
-					chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD ) ) );
-		}
+	if ( mm_torsion_library_ == 0 ) {
+		mm_torsion_library_ = mm::MMTorsionLibraryOP( new mm::MMTorsionLibrary
+			( basic::database::full_name( "chemical/mm_atom_type_sets/fa_standard/mm_torsion_params.txt" ),
+			chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD ) ) );
+	}
 	return *mm_torsion_library_;
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -608,11 +580,10 @@ ScoringManager::get_MMTorsionLibrary() const
 core::scoring::mm::MMLJLibrary const &
 ScoringManager::get_MMLJLibrary() const
 {
-	if ( mm_lj_library_ == 0 )
-		{
-			mm_lj_library_ = mm::MMLJLibraryOP( new mm::MMLJLibrary
-				( chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD ) ) );
-		}
+	if ( mm_lj_library_ == 0 ) {
+		mm_lj_library_ = mm::MMLJLibraryOP( new mm::MMLJLibrary
+			( chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD ) ) );
+	}
 	return *mm_lj_library_;
 }
 
@@ -621,10 +592,9 @@ ScoringManager::get_MMLJLibrary() const
 core::scoring::mm::MMLJEnergyTable const &
 ScoringManager::get_MMLJEnergyTable () const
 {
-	if ( mm_lj_energy_table_ == 0 )
-		{
-			mm_lj_energy_table_ = mm::MMLJEnergyTableOP( new mm::MMLJEnergyTable() );
-		}
+	if ( mm_lj_energy_table_ == 0 ) {
+		mm_lj_energy_table_ = mm::MMLJEnergyTableOP( new mm::MMLJEnergyTable() );
+	}
 	return *mm_lj_energy_table_;
 }
 
@@ -663,8 +633,7 @@ ScoringManager::get_DisulfideMatchingPotential() const
 nv::NVlookup const &
 ScoringManager::get_NVLookupTable() const
 {
-	if(NV_lookup_table_ == 0)
-	{
+	if ( NV_lookup_table_ == 0 ) {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		NV_lookup_table_ = nv::NVlookupOP( new nv::NVlookup(basic::database::full_name(option[score::NV_table]())) );
@@ -674,44 +643,43 @@ ScoringManager::get_NVLookupTable() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-	orbitals::OrbitalsLookup const &
-	ScoringManager::get_OrbitalsLookupTable() const
-	{
-		if(orbitals_lookup_table_ == 0){
-			using namespace basic::options;
-			using namespace basic::options::OptionKeys;
-			utility::vector1<std::string> DHO_energies;
-			utility::vector1< std::string > AOH_energies;
-			utility::vector1< std::string > AOO_orb_orb_energies;
-			utility::vector1< std::string > DOO_orb_orb_energies;
-			utility::vector1< std::string > ACO_energies;
+orbitals::OrbitalsLookup const &
+ScoringManager::get_OrbitalsLookupTable() const
+{
+	if ( orbitals_lookup_table_ == 0 ) {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		utility::vector1<std::string> DHO_energies;
+		utility::vector1< std::string > AOH_energies;
+		utility::vector1< std::string > AOO_orb_orb_energies;
+		utility::vector1< std::string > DOO_orb_orb_energies;
+		utility::vector1< std::string > ACO_energies;
 
-			DHO_energies.push_back("scoring/score_functions/orbitals/BiCubic_DHO_Hpol_scOrbH.txt");//DHO_energies[1]
-			DHO_energies.push_back("scoring/score_functions/orbitals/BiCubic_DHO_Hpol_bbOrbH.txt");//DHO_energies[2]
-			DHO_energies.push_back("scoring/score_functions/orbitals/BiCubic_DHO_Haro_scOrbH.txt");//DHO_energies[3]
+		DHO_energies.push_back("scoring/score_functions/orbitals/BiCubic_DHO_Hpol_scOrbH.txt");//DHO_energies[1]
+		DHO_energies.push_back("scoring/score_functions/orbitals/BiCubic_DHO_Hpol_bbOrbH.txt");//DHO_energies[2]
+		DHO_energies.push_back("scoring/score_functions/orbitals/BiCubic_DHO_Haro_scOrbH.txt");//DHO_energies[3]
 
-			AOH_energies.push_back("scoring/score_functions/orbitals/BiCubic_AOH_Hpol_scOrbH.txt");//AOH_energies[1]
-			AOH_energies.push_back("scoring/score_functions/orbitals/BiCubic_AOH_Hpol_bbOrbH.txt");//AOH_energies[2]
-			AOH_energies.push_back("scoring/score_functions/orbitals/BiCubic_AOH_Haro_scOrbH.txt");//AOH_energies[3]
+		AOH_energies.push_back("scoring/score_functions/orbitals/BiCubic_AOH_Hpol_scOrbH.txt");//AOH_energies[1]
+		AOH_energies.push_back("scoring/score_functions/orbitals/BiCubic_AOH_Hpol_bbOrbH.txt");//AOH_energies[2]
+		AOH_energies.push_back("scoring/score_functions/orbitals/BiCubic_AOH_Haro_scOrbH.txt");//AOH_energies[3]
 
-			AOO_orb_orb_energies.push_back("scoring/score_functions/orbitals/BiCubic_AOD_OrbOrb.txt");
-			DOO_orb_orb_energies.push_back("scoring/score_functions/orbitals/BiCubic_DOA_OrbOrb.txt");
+		AOO_orb_orb_energies.push_back("scoring/score_functions/orbitals/BiCubic_AOD_OrbOrb.txt");
+		DOO_orb_orb_energies.push_back("scoring/score_functions/orbitals/BiCubic_DOA_OrbOrb.txt");
 
 
-			ACO_energies.push_back("scoring/score_functions/orbitals/BiCubic_ACO.txt");
+		ACO_energies.push_back("scoring/score_functions/orbitals/BiCubic_ACO.txt");
 
-			orbitals_lookup_table_ = orbitals::OrbitalsLookupOP( new orbitals::OrbitalsLookup(
-					DHO_energies, AOH_energies, AOO_orb_orb_energies, DOO_orb_orb_energies,ACO_energies ) );
+		orbitals_lookup_table_ = orbitals::OrbitalsLookupOP( new orbitals::OrbitalsLookup(
+			DHO_energies, AOH_energies, AOO_orb_orb_energies, DOO_orb_orb_energies,ACO_energies ) );
 
-		}
-		return *orbitals_lookup_table_;
 	}
+	return *orbitals_lookup_table_;
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////
 methods::VallLookbackPotential const & ScoringManager::get_vallLookbackPotential() const{
-	if(vallLookbackPotential_ == 0)
-	{
+	if ( vallLookbackPotential_ == 0 ) {
 		vallLookbackPotential_ = methods::VallLookbackPotentialOP(new core::scoring::methods::VallLookbackPotential());
 	}
 	return *vallLookbackPotential_;
@@ -724,8 +692,7 @@ methods::VallLookbackPotential const & ScoringManager::get_vallLookbackPotential
 interface_::DDPlookup const &
 ScoringManager::get_DDPLookupTable() const
 {
-	if(DDP_lookup_table_ == 0)
-	{
+	if ( DDP_lookup_table_ == 0 ) {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		DDP_lookup_table_ = interface_::DDPlookupOP( new interface_::DDPlookup("scoring/score_functions/DDPscore/interface_ddp_score.txt") );
@@ -737,12 +704,11 @@ ScoringManager::get_DDPLookupTable() const
 core::scoring::mm::MMBondAngleLibrary const &
 ScoringManager::get_MMBondAngleLibrary() const
 {
-	if ( mm_bondangle_library_ == 0 )
-		{
-			mm_bondangle_library_ = mm::MMBondAngleLibraryOP( new mm::MMBondAngleLibrary
-				( basic::database::full_name( "chemical/mm_atom_type_sets/fa_standard/par_all27_prot_na.prm" ),
-					chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD ) ) );
-		}
+	if ( mm_bondangle_library_ == 0 ) {
+		mm_bondangle_library_ = mm::MMBondAngleLibraryOP( new mm::MMBondAngleLibrary
+			( basic::database::full_name( "chemical/mm_atom_type_sets/fa_standard/par_all27_prot_na.prm" ),
+			chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD ) ) );
+	}
 	return *mm_bondangle_library_;
 }
 
@@ -750,12 +716,11 @@ ScoringManager::get_MMBondAngleLibrary() const
 core::scoring::mm::MMBondLengthLibrary const &
 ScoringManager::get_MMBondLengthLibrary() const
 {
-	if ( mm_bondlength_library_ == 0 )
-		{
-			mm_bondlength_library_ = mm::MMBondLengthLibraryOP( new mm::MMBondLengthLibrary
-				( basic::database::full_name( "chemical/mm_atom_type_sets/fa_standard/par_all27_prot_na.prm" ),
-					chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD ) ) );
-		}
+	if ( mm_bondlength_library_ == 0 ) {
+		mm_bondlength_library_ = mm::MMBondLengthLibraryOP( new mm::MMBondLengthLibrary
+			( basic::database::full_name( "chemical/mm_atom_type_sets/fa_standard/par_all27_prot_na.prm" ),
+			chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD ) ) );
+	}
 	return *mm_bondlength_library_;
 }
 
@@ -763,8 +728,8 @@ ScoringManager::get_MMBondLengthLibrary() const
 UnfoldedStatePotential const &
 ScoringManager::get_UnfoldedStatePotential( std::string const & type ) const
 {
-using namespace basic::options;
-using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	if ( unf_state_ == 0 ) {
 		if ( type == UNFOLDED_SPLIT_USER_DEFINED || option[ unfolded_state::unfolded_energies_file ].user() ) {
@@ -791,17 +756,17 @@ using namespace basic::options::OptionKeys;
 SplitUnfoldedTwoBodyPotential const &
 ScoringManager::get_SplitUnfoldedTwoBodyPotential(std::string const & label_type,std::string const & value_type, std::string const & score_func_type) const
 {
-using namespace basic::options;
-using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-	if ( sutbp_ == 0 )	{
+	if ( sutbp_ == 0 ) {
 		std::string database_path = "";
 		std::string atom_label_type = "";
 
 		if ( label_type == SPLIT_UNFOLDED_USER_DEFINED || value_type == SPLIT_UNFOLDED_USER_DEFINED || option[ unfolded_state::split_unfolded_energies_file ].user() ) {
 			sutbp_ = SplitUnfoldedTwoBodyPotentialOP( new SplitUnfoldedTwoBodyPotential( option[ unfolded_state::split_unfolded_energies_file ].value(), option[ unfolded_state::split_unfolded_energies_atom_type ].value() ) );
 			std::cout << "Creating split unfolded state potential using file: " <<  option[ unfolded_state::split_unfolded_energies_file ].value()
-			          << " with an atom type of " << option[ unfolded_state::split_unfolded_energies_atom_type ].value() << std::endl;
+				<< " with an atom type of " << option[ unfolded_state::split_unfolded_energies_atom_type ].value() << std::endl;
 			return *sutbp_;
 		}
 
@@ -892,7 +857,7 @@ ScoringManager::make_partially_soft_etable( std::string const & table_id, etable
 		if ( weight < 1 && weight > 0 && ( string2int( table_value ) % 5 ==0 ) ) {
 			etable_options.lj_switch_dis2sigma = 0.6*(1.0-weight) + weight*0.91;
 			return etable::EtableOP(new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
-					etable_options, table_name ));
+				etable_options, table_name ));
 		} else {
 			std::string msg = "lj_radius is not given for partially soft " + trim(table_id, "FA_STANDARD_SOFT") + "%";
 			utility_exit_with_message( msg );
@@ -913,37 +878,37 @@ void
 ScoringManager::add_coarse_etable( std::string const &name, coarse::CoarseEtableOP etable )
 {
 debug_assert( coarse_etables_.count(name) == 0);
-	coarse_etables_ [name] = etable;
+coarse_etables_ [name] = etable;
 }
 */
- //XRW_E_T1
+//XRW_E_T1
 
 ///////////////////////////////////////////////////p////////////////////////////
 void
 ScoringManager::add_memb_etable( std::string const & name, etable::MembEtableOP etable ) //pba
 {
- debug_assert( memb_etables_.count(name) == 0 );
-  memb_etables_[ name ] = etable;
+	debug_assert( memb_etables_.count(name) == 0 );
+	memb_etables_[ name ] = etable;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 etable::MembEtableCAP
 ScoringManager::memb_etable( std::string const & table_id ) const //pba
 {
-  using namespace etable;
+	using namespace etable;
 
-  if ( memb_etables_.find( table_id ) == memb_etables_.end() ) {
-    // try to build if possible
-    if ( table_id == FA_STANDARD_DEFAULT ) {
-      MembEtableOP etable_ptr( new MembEtable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
-                      EtableOptions() ) );
-      memb_etables_[ table_id ] = etable_ptr;
-    } else {
-      std::string msg = "unrecognized etable: "+table_id;
-      utility_exit_with_message( msg );
-    }
-  }
-  return (memb_etables_.find( table_id )->second);
+	if ( memb_etables_.find( table_id ) == memb_etables_.end() ) {
+		// try to build if possible
+		if ( table_id == FA_STANDARD_DEFAULT ) {
+			MembEtableOP etable_ptr( new MembEtable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+				EtableOptions() ) );
+			memb_etables_[ table_id ] = etable_ptr;
+		} else {
+			std::string msg = "unrecognized etable: "+table_id;
+			utility_exit_with_message( msg );
+		}
+	}
+	return (memb_etables_.find( table_id )->second);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -965,7 +930,7 @@ ScoringManager::etable( etable::EtableOptions const & options_in ) const
 	std::map< EtableOptions, EtableOP >::const_iterator it = etables_by_options_.find( options_in );
 
 	// add if no matching EtableOption is found
-	if ( it == etables_by_options_.end() ){
+	if ( it == etables_by_options_.end() ) {
 		EtableOP etable_ptr;
 		std::string const & table_id = options_in.etable_type;
 		if ( table_id == FA_STANDARD_SOFT ) {
@@ -986,7 +951,7 @@ ScoringManager::etable( etable::EtableOptions const & options_in ) const
 			// radii are given in database/chemical/atom_type_sets/fa_standard/extras/extra_soft_rep_params.txt
 			EtableOptions options_loc( options_in );
 			etable_ptr = make_partially_soft_etable( table_id, options_loc );
-		}	else if ( table_id.substr(0, FA_STANDARD_DEFAULT.size() + 1 ) == FA_STANDARD_DEFAULT+"_" ) {
+		} else if ( table_id.substr(0, FA_STANDARD_DEFAULT.size() + 1 ) == FA_STANDARD_DEFAULT+"_" ) {
 			// original comments: note we check for soft rep 1st since that would match this as well -- confusing??
 			// apply a modification of the radii/wdepths
 			std::string const alternate_parameters( table_id.substr( FA_STANDARD_DEFAULT.size() + 1 ) );
@@ -1020,39 +985,39 @@ ScoringManager::etable( std::string const & etable_id ) const
 // etable::EtableCAP
 // ScoringManager::etable( std::string const & table_id ) const
 // {
-// 	using namespace etable;
+//  using namespace etable;
 //
-// 	if ( etables_by_string_.find( table_id ) == etables_by_string_.end() ) {
-// 		// try to build if possible
-// 		if ( table_id == FA_STANDARD_DEFAULT ) {
-// 			EtableOP etable_ptr( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
-// 											EtableOptions() ) );
-// 			etables_by_string_[ table_id ] = etable_ptr;
-// 		} else if ( table_id == FA_STANDARD_SOFT ) {
-// 			// soft rep etable: modified radii and also change to lj_switch_dis2sigma
-// 			EtableOptions options;
-// 			options.lj_switch_dis2sigma = 0.91;
-// 			EtableOP etable_ptr( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
-// 											options, "SOFT" ) );
-// 			etables_by_string_[ table_id ] = etable_ptr;
+//  if ( etables_by_string_.find( table_id ) == etables_by_string_.end() ) {
+//   // try to build if possible
+//   if ( table_id == FA_STANDARD_DEFAULT ) {
+//    EtableOP etable_ptr( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+//            EtableOptions() ) );
+//    etables_by_string_[ table_id ] = etable_ptr;
+//   } else if ( table_id == FA_STANDARD_SOFT ) {
+//    // soft rep etable: modified radii and also change to lj_switch_dis2sigma
+//    EtableOptions options;
+//    options.lj_switch_dis2sigma = 0.91;
+//    EtableOP etable_ptr( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+//            options, "SOFT" ) );
+//    etables_by_string_[ table_id ] = etable_ptr;
 //
-// 		} else if ( utility::startswith( table_id, "FA_STANDARD_SOFT" ) ) {
-// 			EtableOptions options;
-// 			EtableOP etable_ptr( make_partially_soft_etable( table_id, options ));
-// 			etables_by_string_[ table_id ] = etable_ptr;
-// 		} else if ( table_id.substr(0, FA_STANDARD_DEFAULT.size() + 1 ) == FA_STANDARD_DEFAULT+"_" ) {
-// 			// note we check for soft rep 1st since that would match this as well -- confusing??
-// 			// apply a modification of the radii/wdepths
-// 			std::string const alternate_parameters( table_id.substr( FA_STANDARD_DEFAULT.size() + 1 ) );
-// 			EtableOP etable_ptr( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
-// 											EtableOptions(), alternate_parameters ) );
-// 			etables_by_string_[ table_id ] = etable_ptr;
+//   } else if ( utility::startswith( table_id, "FA_STANDARD_SOFT" ) ) {
+//    EtableOptions options;
+//    EtableOP etable_ptr( make_partially_soft_etable( table_id, options ));
+//    etables_by_string_[ table_id ] = etable_ptr;
+//   } else if ( table_id.substr(0, FA_STANDARD_DEFAULT.size() + 1 ) == FA_STANDARD_DEFAULT+"_" ) {
+//    // note we check for soft rep 1st since that would match this as well -- confusing??
+//    // apply a modification of the radii/wdepths
+//    std::string const alternate_parameters( table_id.substr( FA_STANDARD_DEFAULT.size() + 1 ) );
+//    EtableOP etable_ptr( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+//            EtableOptions(), alternate_parameters ) );
+//    etables_by_string_[ table_id ] = etable_ptr;
 //
-// 		} else {
-// 			utility_exit_with_message("unrecognized etable: "+table_id );
-// 		}
-// 	}
-// 	return (etables_by_string_.find( table_id )->second);
+//   } else {
+//    utility_exit_with_message("unrecognized etable: "+table_id );
+//   }
+//  }
+//  return (etables_by_string_.find( table_id )->second);
 // }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1062,25 +1027,25 @@ ScoringManager::etable( std::string const & etable_id ) const
 coarse::CoarseEtableCAP
 ScoringManager::coarse_etable( std::string const & table_id ) const
 {
-	using namespace etable;
-	if ( coarse_etables_.find( table_id ) == coarse_etables_.end() ) {
-		// try to build if possible
-		if ( table_id == chemical::COARSE_TWO_BEAD ) {
-			coarse::CoarseEtableOP etable_ptr
-				( new coarse::CoarseEtable(
-							chemical::ChemicalManager::get_instance()->
-							atom_type_set( chemical::COARSE_TWO_BEAD ), chemical::COARSE_TWO_BEAD )
-				);
-			coarse_etables_[ table_id ] = etable_ptr;
-		} else {
-			std::string msg = "unrecognized etable: "+table_id;
-			utility_exit_with_message( msg );
-		}
-	}
-	return (coarse_etables_.find( table_id )->second)();
+using namespace etable;
+if ( coarse_etables_.find( table_id ) == coarse_etables_.end() ) {
+// try to build if possible
+if ( table_id == chemical::COARSE_TWO_BEAD ) {
+coarse::CoarseEtableOP etable_ptr
+( new coarse::CoarseEtable(
+chemical::ChemicalManager::get_instance()->
+atom_type_set( chemical::COARSE_TWO_BEAD ), chemical::COARSE_TWO_BEAD )
+);
+coarse_etables_[ table_id ] = etable_ptr;
+} else {
+std::string msg = "unrecognized etable: "+table_id;
+utility_exit_with_message( msg );
+}
+}
+return (coarse_etables_.find( table_id )->second)();
 }
 */
- //XRW_E_T1
+//XRW_E_T1
 
 /// @details Test if there is an EnergyMethod class defined for a
 /// given score type.

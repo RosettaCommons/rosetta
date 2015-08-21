@@ -92,7 +92,7 @@ public:
 	std::pair< core::Real, core::Real > measure_specificity( Pose & );
 	std::pair< SequenceScores, SequenceScores > measure_bp_specificities( Pose & );
 	std::pair< SequenceScores, SequenceScores >
-		measure_specificities( Pose &, ResTypeSequences const & );
+	measure_specificities( Pose &, ResTypeSequences const & );
 
 	void reversion_scan(
 		Pose &,

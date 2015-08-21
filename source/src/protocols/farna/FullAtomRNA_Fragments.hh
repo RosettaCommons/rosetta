@@ -49,163 +49,163 @@ namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 namespace protocols {
 namespace farna {
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////////
-	class TorsionSet {
-	public:
-		TorsionSet & operator =( TorsionSet const & src );
-		TorsionSet( core::Size const size );
+/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+class TorsionSet {
+public:
+	TorsionSet & operator =( TorsionSet const & src );
+	TorsionSet( core::Size const size );
 
-		//make this private?
-		FArray2D <core::Real>   torsions;  // dimensions: (NUM_RNA_TORSIONS, SRange(0, size) );
-		FArray1D <std::string> torsion_source_name;  // dimensions: ( SRange(0, size) );
-		FArray1D <char>   secstruct;
+	//make this private?
+	FArray2D <core::Real>   torsions;  // dimensions: (NUM_RNA_TORSIONS, SRange(0, size) );
+	FArray1D <std::string> torsion_source_name;  // dimensions: ( SRange(0, size) );
+	FArray1D <char>   secstruct;
 
-		 FArray3D <core::Real>   non_main_chain_sugar_coords;
-		 bool  non_main_chain_sugar_coords_defined;
+	FArray3D <core::Real>   non_main_chain_sugar_coords;
+	bool  non_main_chain_sugar_coords_defined;
 
-		 inline
-		 core::Size get_size() const { return size_; }
+	inline
+	core::Size get_size() const { return size_; }
 
-	 private:
-		 core::Size size_;
+private:
+	core::Size size_;
 
-	};
+};
 
 
-	class FullAtomRNA_Fragments; // defined below.
+class FullAtomRNA_Fragments; // defined below.
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////////
-	class FragmentLibrary : public utility::pointer::ReferenceCount  {
-	public:
+/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+class FragmentLibrary : public utility::pointer::ReferenceCount  {
+public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~FragmentLibrary();
 
-		//constructor!
-		//FragmentLibrary();
+	//constructor!
+	//FragmentLibrary();
 
-		//destructor -- necessary?
-		//~FragmentLibrary();
+	//destructor -- necessary?
+	//~FragmentLibrary();
 
-		core::Real get_fragment_torsion(
-																		core::Size const num_torsion,
-																		Size const which_frag,
-																		core::Size const offset );
+	core::Real get_fragment_torsion(
+		core::Size const num_torsion,
+		Size const which_frag,
+		core::Size const offset );
 
-		TorsionSet const get_fragment_torsion_set( core::Size const which_frag );
+	TorsionSet const get_fragment_torsion_set( core::Size const which_frag );
 
-		void  add_torsion( TorsionSet const torsion_set );
+	void  add_torsion( TorsionSet const torsion_set );
 
-		void  add_torsion(
-					FullAtomRNA_Fragments const & vall,
-					core::Size const position,
-					core::Size const size
-											);
+	void  add_torsion(
+		FullAtomRNA_Fragments const & vall,
+		core::Size const position,
+		core::Size const size
+	);
 
-		core::Size get_align_depth();
+	core::Size get_align_depth();
 
-	private:
-		std::vector< TorsionSet > align_torsions_;
+private:
+	std::vector< TorsionSet > align_torsions_;
 
-	};
+};
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////
-	typedef utility::pointer::shared_ptr< FragmentLibrary > FragmentLibraryOP;
-	typedef std::pair< std::string, std::string > SequenceSecStructPair;
-	typedef std::map< SequenceSecStructPair, FragmentLibraryOP >  FragmentLibraryPointerMap;
+/////////////////////////////////////////////////////////////////////////////////////////////////
+typedef utility::pointer::shared_ptr< FragmentLibrary > FragmentLibraryOP;
+typedef std::pair< std::string, std::string > SequenceSecStructPair;
+typedef std::map< SequenceSecStructPair, FragmentLibraryOP >  FragmentLibraryPointerMap;
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////
-	class FullAtomRNA_Fragments : public RNA_Fragments {
-	public:
-		//Constructor -- needs vall_torsions_file to get started.
-		// RNA_Fragments();
-		FullAtomRNA_Fragments( std::string const & filename );
+/////////////////////////////////////////////////////////////////////////////////////////////////
+class FullAtomRNA_Fragments : public RNA_Fragments {
+public:
+	//Constructor -- needs vall_torsions_file to get started.
+	// RNA_Fragments();
+	FullAtomRNA_Fragments( std::string const & filename );
 
-		~FullAtomRNA_Fragments(){}
+	~FullAtomRNA_Fragments(){}
 
-		//Probably the only thing that will actually get called publicly:
-		virtual void
-		apply_random_fragment(
-          core::pose::Pose & pose,
-					core::Size const position,
-					core::Size const size,
-					core::Size const type,
-				toolbox::AllowInsertOP allow_insert );
+	//Probably the only thing that will actually get called publicly:
+	virtual void
+	apply_random_fragment(
+		core::pose::Pose & pose,
+		core::Size const position,
+		core::Size const size,
+		core::Size const type,
+		toolbox::AllowInsertOP allow_insert );
 
-		virtual bool
-		is_fullatom();
+	virtual bool
+	is_fullatom();
 
-		void read_vall_torsions( std::string const filename );
+	void read_vall_torsions( std::string const filename );
 
 
-		core::Real
-		torsions( core::Size const & i, core::Size const & j ) const { return vall_torsions_( i, j ); }
+	core::Real
+	torsions( core::Size const & i, core::Size const & j ) const { return vall_torsions_( i, j ); }
 
-		std::string
-		name( core::Size const & i ) const { return vall_name_( i ); }
+	std::string
+	name( core::Size const & i ) const { return vall_name_( i ); }
 
-		char
-		secstruct( core::Size const & i ) const { return vall_secstruct_( i ); }
+	char
+	secstruct( core::Size const & i ) const { return vall_secstruct_( i ); }
 
-		bool
-		non_main_chain_sugar_coords_defined() const { return vall_non_main_chain_sugar_coords_defined_; }
+	bool
+	non_main_chain_sugar_coords_defined() const { return vall_non_main_chain_sugar_coords_defined_; }
 
-		core::Real
-		non_main_chain_sugar_coords( core::Size const & i, core::Size const & j, core::Size const & k ) const{ return vall_non_main_chain_sugar_coords_( i, j, k);}
+	core::Real
+	non_main_chain_sugar_coords( core::Size const & i, core::Size const & j, core::Size const & k ) const{ return vall_non_main_chain_sugar_coords_( i, j, k);}
 
-	private:
+private:
 
-		void
-		pick_random_fragment(
-					TorsionSet & torsion_set,
-					std::string const RNA_string,
-					std::string const RNA_secstruct_string,
-					core::Size const type = MATCH_YR );
+	void
+	pick_random_fragment(
+		TorsionSet & torsion_set,
+		std::string const RNA_string,
+		std::string const RNA_secstruct_string,
+		core::Size const type = MATCH_YR );
 
-		void
-		pick_random_fragment(
-					TorsionSet & torsion_set,
-          core::pose::Pose & pose,
-					core::Size const position,
-					core::Size const size,
-					core::Size const type = MATCH_YR );
+	void
+	pick_random_fragment(
+		TorsionSet & torsion_set,
+		core::pose::Pose & pose,
+		core::Size const position,
+		core::Size const size,
+		core::Size const type = MATCH_YR );
 
-		void
-		insert_fragment(
-										core::pose::Pose & pose,
-										Size const position,
-										protocols::farna::TorsionSet const & torsion_set,
-									toolbox::AllowInsertOP allow_insert );
+	void
+	insert_fragment(
+		core::pose::Pose & pose,
+		Size const position,
+		protocols::farna::TorsionSet const & torsion_set,
+		toolbox::AllowInsertOP allow_insert );
 
-	private:
+private:
 
-		// Probably should make following "vall" stuff a different object
-		// and, come on, these could be a vector to save memory!
-		FArray2D <core::Real> vall_torsions_;
-		FArray3D <core::Real> vall_non_main_chain_sugar_coords_;
-		FArray1D <char>  vall_sequence_;
-		FArray1D <bool>  vall_is_chainbreak_;
-		FArray2D <bool>  vall_edge_is_base_pairing_;
-		FArray1D <bool>  vall_makes_canonical_base_pair_;
-		FArray1D <char>  vall_secstruct_;
-		FArray1D <std::string>  vall_name_;
-		core::Size vall_size_;
-		bool vall_non_main_chain_sugar_coords_defined_;
+	// Probably should make following "vall" stuff a different object
+	// and, come on, these could be a vector to save memory!
+	FArray2D <core::Real> vall_torsions_;
+	FArray3D <core::Real> vall_non_main_chain_sugar_coords_;
+	FArray1D <char>  vall_sequence_;
+	FArray1D <bool>  vall_is_chainbreak_;
+	FArray2D <bool>  vall_edge_is_base_pairing_;
+	FArray1D <bool>  vall_makes_canonical_base_pair_;
+	FArray1D <char>  vall_secstruct_;
+	FArray1D <std::string>  vall_name_;
+	core::Size vall_size_;
+	bool vall_non_main_chain_sugar_coords_defined_;
 
-		// Need to hold on to some fragment libraries. These
-		// will be picked on the fly when the code requires them.
-		//   Indexed by sequence, e.g., AAA, AGA, GUA ... or even RYR ...  or even NNN (totally generic!)
-		FragmentLibraryPointerMap fragment_library_pointer_map;
+	// Need to hold on to some fragment libraries. These
+	// will be picked on the fly when the code requires them.
+	//   Indexed by sequence, e.g., AAA, AGA, GUA ... or even RYR ...  or even NNN (totally generic!)
+	FragmentLibraryPointerMap fragment_library_pointer_map;
 
-		void pick_fragment_library( SequenceSecStructPair const & key );
+	void pick_fragment_library( SequenceSecStructPair const & key );
 
-		void pick_random_fragment( FArray1D <core::Real> & RNA_torsions, std::string const RNA_string );
+	void pick_random_fragment( FArray1D <core::Real> & RNA_torsions, std::string const RNA_string );
 
-	};
+};
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 } //farna

@@ -102,7 +102,7 @@ void
 MMTReceiver::main_optimization_loop()
 {
 	bool keep_going = true;
-	while( keep_going ) {
+	while ( keep_going ) {
 		core::Size message = utility::receive_integer_from_node( 0 );
 		if ( message == new_generation ) {
 			keep_going = start_new_generation();
@@ -139,7 +139,7 @@ MMTReceiver::start_new_generation()
 	curr_gen_jobs_.clear();
 
 	bool generation_is_complete = false;
-	while( true ) {
+	while ( true ) {
 		bool something_happened = false;
 		if ( ! generation_is_complete && curr_njobs_running_ < max_capacity_ ) {
 			//TR << "Requesting new job" << std::endl;
@@ -329,7 +329,7 @@ MMTReceiver::initialize_state_data( StateInputData const & sid )
 	std::istringstream sec_resfile_stream( sid.sec_resfile );
 	sd.secondary_resfile_contents = core::pack::task::ResfileContentsOP( new core::pack::task::ResfileContents( *sd.pose, sec_resfile_stream ) );
 
-	sd.task =	initialize_packer_task( sd.pose, sd.ent_corr, *sd.secondary_resfile_contents );
+	sd.task = initialize_packer_task( sd.pose, sd.ent_corr, *sd.secondary_resfile_contents );
 	return sd;
 }
 

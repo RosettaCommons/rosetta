@@ -86,12 +86,12 @@ public:
 		bin_(bin)
 	{}
 
-  BigBinConstraint() :
+	BigBinConstraint() :
 		Constraint( dihedral_constraint ),
 		res_( 0 ),
 		bin_( 'A' ),
 		sdev_( 0.5 )
-  {}
+	{}
 
 	BigBinConstraint( Size const res, char const bin, core::Real const sdev ) :
 		Constraint( dihedral_constraint ),
@@ -111,20 +111,20 @@ public:
 	atom( Size const n ) const
 	{
 		switch( n ) {
-			case 1:
-				return C0_;
-			case 2:
-				return N1_;
-			case 3:
-				return CA1_;
-			case 4:
-				return C1_;
-			case 5:
-				return N2_;
-			case 6:
-				return CA2_;
-			default:
-				utility_exit_with_message( "BigBinConstraint::atom() bad argument" );
+		case 1 :
+			return C0_;
+		case 2 :
+			return N1_;
+		case 3 :
+			return CA1_;
+		case 4 :
+			return C1_;
+		case 5 :
+			return N2_;
+		case 6 :
+			return CA2_;
+		default :
+			utility_exit_with_message( "BigBinConstraint::atom() bad argument" );
 		}
 		return C0_;
 	}
@@ -148,8 +148,8 @@ public:
 private:
 	// data
 	AtomID C0_, N1_, CA1_, C1_, N2_, CA2_;
-  Size res_;
-  char bin_;
+	Size res_;
+	char bin_;
 	core::Real sdev_;
 
 	utility::vector1< ConstraintOP > my_csts_;

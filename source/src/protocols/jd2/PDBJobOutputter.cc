@@ -55,7 +55,7 @@ namespace protocols {
 namespace jd2 {
 
 protocols::jd2::PDBJobOutputter::PDBJobOutputter()
-	: parent(), extension_(".pdb")
+: parent(), extension_(".pdb")
 {
 	using namespace basic::options::OptionKeys;
 	using basic::options::option;
@@ -68,7 +68,7 @@ protocols::jd2::PDBJobOutputter::PDBJobOutputter()
 
 	if ( option[ out::path::pdb ].user() ) {
 		path_ = option[ out::path::pdb ]().path();
-	} else if (option[ out::path::all ].user() ) {
+	} else if ( option[ out::path::all ].user() ) {
 		path_ = option[ out::path::all ]().path();
 	} else {
 		path_ = "";
@@ -117,7 +117,7 @@ void protocols::jd2::PDBJobOutputter::other_pose(
 
 	//these are separate options because leaving the default on other_pose_scorefile is totally valid, but you can't both specify it on the command line and leave it blank
 	//THIS FUNCTIONALITY IS GOING TO BE DEPRECATED SOON
-	if( basic::options::option[ basic::options::OptionKeys::run::other_pose_to_scorefile ].value() ){
+	if ( basic::options::option[ basic::options::OptionKeys::run::other_pose_to_scorefile ].value() ) {
 		scorefile(job, pose, tag, "", basic::options::option[ basic::options::OptionKeys::run::other_pose_scorefile ].value());
 	}
 }
@@ -130,7 +130,7 @@ void protocols::jd2::PDBJobOutputter::dump_pose(
 )
 {
 	core::io::pdb::FileData::dump_pdb( pose, out );
-	if( !  basic::options::option[ basic::options::OptionKeys::out::file::no_scores_in_pdb ] ) {
+	if ( !  basic::options::option[ basic::options::OptionKeys::out::file::no_scores_in_pdb ] ) {
 		extract_scores(pose, out);
 		extract_extra_scores( pose, out );
 		extract_data_from_Job( job, out );
@@ -170,23 +170,23 @@ void protocols::jd2::PDBJobOutputter::extract_scores(
 void protocols::jd2::PDBJobOutputter::extract_data_from_Job( JobCOP job, utility::io::ozstream & out ){
 	//TR << "protocols::jd2::PDBJobOutputter::extract_data_from_Job" << std::endl;
 
-	for( Job::Strings::const_iterator it(job->output_strings_begin()), end(job->output_strings_end());
-			 it != end;
-			 ++it) {
+	for ( Job::Strings::const_iterator it(job->output_strings_begin()), end(job->output_strings_end());
+			it != end;
+			++it ) {
 		out << *it << std::endl;
 		//TR << *it << std::endl;
 	}
 
-	for( Job::StringStringPairs::const_iterator it(job->output_string_string_pairs_begin()), end(job->output_string_string_pairs_end());
-			 it != end;
-			 ++it) {
+	for ( Job::StringStringPairs::const_iterator it(job->output_string_string_pairs_begin()), end(job->output_string_string_pairs_end());
+			it != end;
+			++it ) {
 		out << it->first << " " << it->second << std::endl;
 		//TR << it->first << " " << it->second << std::endl;
 	}
 
-	for( Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin()), end(job->output_string_real_pairs_end());
-			 it != end;
-			 ++it) {
+	for ( Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin()), end(job->output_string_real_pairs_end());
+			it != end;
+			++it ) {
 		out << it->first << " " << it->second << std::endl;
 		//TR << it->first << " " << it->second << std::endl;
 	}
@@ -202,30 +202,30 @@ void protocols::jd2::PDBJobOutputter::extract_extra_scores(
 )
 {
 	// ARBITRARY_STRING_DATA
-	if( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) ) {
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) ) {
 		basic::datacache::CacheableStringMapCOP data
 			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringMap const >
-				( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
+			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
 		assert( data.get() != NULL );
 
-		for(std::map< std::string, std::string >::const_iterator it( data->map().begin() ), end( data->map().end() );
-		  it != end;
-		  ++it) {
+		for ( std::map< std::string, std::string >::const_iterator it( data->map().begin() ), end( data->map().end() );
+				it != end;
+				++it ) {
 			//TR << it->first << " " << it->second << std::endl;
 			out << it->first << " " << it->second << std::endl;
 		}
 	}
 
 	// ARBITRARY_FLOAT_DATA
-	if( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
 		basic::datacache::CacheableStringFloatMapCOP data
 			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringFloatMap const >
-				( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
+			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
 		assert( data.get() != NULL );
 
-		for(std::map< std::string, float >::const_iterator it( data->map().begin() ), end( data->map().end() );
-		  it != end;
-		  ++it) {
+		for ( std::map< std::string, float >::const_iterator it( data->map().begin() ), end( data->map().end() );
+				it != end;
+				++it ) {
 			//TR << it->first << " " << it->second << std::endl;
 			out << it->first << " " << it->second << std::endl;
 		}
@@ -236,12 +236,12 @@ void protocols::jd2::PDBJobOutputter::extract_extra_scores(
 std::string
 PDBJobOutputterCreator::keyname() const
 {
-        return "PDBJobOutputter";
+	return "PDBJobOutputter";
 }
 
 protocols::jd2::JobOutputterOP
 PDBJobOutputterCreator::create_JobOutputter() const {
-        return protocols::jd2::JobOutputterOP( new PDBJobOutputter );
+	return protocols::jd2::JobOutputterOP( new PDBJobOutputter );
 }
 
 }//jd2

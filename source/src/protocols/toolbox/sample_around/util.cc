@@ -110,7 +110,7 @@ add_virtual_res ( core::pose::Pose & pose, bool set_res_as_root /*= true */ ) {
 	}
 
 	// attach virt res there
-	//	bool fullatom = pose.is_fullatom();
+	// bool fullatom = pose.is_fullatom();
 	core::chemical::ResidueTypeSet const & residue_set = pose.residue_type ( 1 ).residue_type_set();
 	core::chemical::ResidueTypeCOP rsd_type( residue_set.get_representative_type_name3( "VRT" ) );
 	core::conformation::ResidueOP new_res ( core::conformation::ResidueFactory::create_residue ( *rsd_type ) );
@@ -126,9 +126,9 @@ add_virtual_res ( core::pose::Pose & pose, bool set_res_as_root /*= true */ ) {
 
 void
 add_another_virtual_res ( core::pose::Pose & pose ) {
-	//	int nres = pose.total_residue();
+	// int nres = pose.total_residue();
 	// attach virt res there
-	//	bool fullatom = pose.is_fullatom();
+	// bool fullatom = pose.is_fullatom();
 	core::chemical::ResidueTypeSet const & residue_set = pose.residue_type ( 1 ).residue_type_set();
 	core::chemical::ResidueTypeCOP rsd_type( residue_set.get_representative_type_name3( "VRT" ) );
 	core::conformation::ResidueOP new_res ( core::conformation::ResidueFactory::create_residue ( *rsd_type ) );
@@ -154,8 +154,8 @@ rotate_into_nucleobase_frame( core::pose::Pose & pose ){
 	Matrix M = get_rna_base_coordinate_system( rsd, centroid );
 	kinematics::Stub stub( M, centroid );
 
-	for ( Size n = 1; n <= pose.total_residue(); n++ ){
-		for (Size i = 1; i <= pose.residue(n).natoms(); i++ ){
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		for ( Size i = 1; i <= pose.residue(n).natoms(); i++ ) {
 			Vector xyz_new = stub.global2local( pose.residue(n).xyz( i ) ); // it is either this or M-inverse.
 			pose.set_xyz( AtomID( i, n ), xyz_new );
 		}
@@ -189,7 +189,7 @@ rotate_into_phosphate_frame( core::pose::Pose & pose, Size const n, bool const c
 		stub = kinematics::Stub( Matrix::cols(x,y,z), rsd.xyz( " P  " ) );
 	}
 
-	for (Size i = 1; i <= rsd.natoms(); i++ ){
+	for ( Size i = 1; i <= rsd.natoms(); i++ ) {
 		Vector xyz_new = stub.global2local( pose.residue(n).xyz( i ) );
 		pose.set_xyz( AtomID( i, n ), xyz_new );
 	}
@@ -199,7 +199,7 @@ rotate_into_phosphate_frame( core::pose::Pose & pose, Size const n, bool const c
 //Measure the centroid distance between two bases
 Real
 centroid_dist( core::pose::Pose & pose,
-							 bool const sample_another_adenosine_ ) {
+	bool const sample_another_adenosine_ ) {
 
 	using namespace core::conformation;
 	using namespace core::chemical::rna;
@@ -243,15 +243,15 @@ sample_all_rotations_at_jump( pose::Pose & pose, Size const num_jump, scoring::S
 	Real  score_min( 0.0 );
 	kinematics::Jump  best_jump;
 
-	for ( alpha_ = alpha_min_; alpha_ <= alpha_max_;  alpha_ += alpha_increment_ ){
+	for ( alpha_ = alpha_min_; alpha_ <= alpha_max_;  alpha_ += alpha_increment_ ) {
 
 		//std::cout << i++ << " out of " << N_SAMPLE_ALPHA << ". Current count: " << count_total_ <<
-		//			". num poses that pass cuts: " << count_good_ << std::endl;
+		//   ". num poses that pass cuts: " << count_good_ << std::endl;
 
-		for ( Real cosbeta = cosbeta_min_; cosbeta <= cosbeta_max_;  cosbeta += cosbeta_increment_ ){
-			if ( cosbeta < -1.0 ){
+		for ( Real cosbeta = cosbeta_min_; cosbeta <= cosbeta_max_;  cosbeta += cosbeta_increment_ ) {
+			if ( cosbeta < -1.0 ) {
 				beta_ = -1.0 * degrees( std::acos( -2.0 - cosbeta ) );
-			} else if ( cosbeta > 1.0 ){
+			} else if ( cosbeta > 1.0 ) {
 				beta_ = -1.0 * degrees( std::acos( 2.0 - cosbeta ) );
 			} else {
 				beta_ = degrees( std::acos( cosbeta ) );
@@ -263,13 +263,13 @@ sample_all_rotations_at_jump( pose::Pose & pose, Size const num_jump, scoring::S
 			Real gamma_min_local = gamma_min_;
 			Real gamma_max_local = gamma_max_;
 			Real gamma_increment_local = gamma_increment_;
-			if ( (beta_<-179.999 || beta_>179.999) ){
+			if ( (beta_<-179.999 || beta_>179.999) ) {
 				gamma_min_local = 0.0;
 				gamma_max_local = 0.0;
 				gamma_increment_local = 1.0;
 			}
 
-			for ( gamma_ = gamma_min_local; gamma_ <= gamma_max_local;  gamma_ += gamma_increment_local ){
+			for ( gamma_ = gamma_min_local; gamma_ <= gamma_max_local;  gamma_ += gamma_increment_local ) {
 
 				protocols::toolbox::rigid_body::create_euler_rotation( M, alpha_, beta_, gamma_, axis1, axis2, axis3 );
 
@@ -299,8 +299,8 @@ sample_all_rotations_at_jump( pose::Pose & pose, Size const num_jump, scoring::S
 
 	Real const free_E = - log( partition_function / count );
 
-//	std::cout << "Energies: " << free_E << ' ' << score_min << std::endl;
-//	return score_min;
+	// std::cout << "Energies: " << free_E << ' ' << score_min << std::endl;
+	// return score_min;
 	return free_E;
 
 }
@@ -309,11 +309,11 @@ sample_all_rotations_at_jump( pose::Pose & pose, Size const num_jump, scoring::S
 /////////////////////////////////////////////////////////////////////////////////
 Real
 do_scoring( pose::Pose & pose,
-						scoring::ScoreFunctionOP scorefxn,
-						bool const & sample_rotations,
-						Size const probe_jump_num ){
+	scoring::ScoreFunctionOP scorefxn,
+	bool const & sample_rotations,
+	Size const probe_jump_num ){
 
-	if ( sample_rotations ){
+	if ( sample_rotations ) {
 		return sample_all_rotations_at_jump( pose, probe_jump_num, scorefxn );
 	}
 
@@ -324,13 +324,13 @@ do_scoring( pose::Pose & pose,
 //////////////////////////////////////////////////////////
 void
 do_xy_scan( pose::Pose & pose,
-						scoring::ScoreFunctionOP scorefxn,
-						std::string const & outfile,
-						Real const z,
-						Size const probe_jump_num,
-						Real const box_bins,
-						Real const translation_increment,
-						bool const sample_rotations ){
+	scoring::ScoreFunctionOP scorefxn,
+	std::string const & outfile,
+	Real const z,
+	Size const probe_jump_num,
+	Real const box_bins,
+	Real const translation_increment,
+	bool const sample_rotations ){
 
 	kinematics::Jump jump = pose.jump( probe_jump_num );
 
@@ -341,8 +341,8 @@ do_xy_scan( pose::Pose & pose,
 	Real best_score( 0.0 );
 	Vector best_translation( 0.0, 0.0, 0.0 );
 
-	for (int i = -box_bins; i <= box_bins; ++i) {
-		for (int j = -box_bins; j <= box_bins; ++j) {
+	for ( int i = -box_bins; i <= box_bins; ++i ) {
+		for ( int j = -box_bins; j <= box_bins; ++j ) {
 			Real const x = j * translation_increment;
 			Real const y = i * translation_increment;
 			jump.set_translation( Vector( x, y, z ) ) ;
@@ -350,7 +350,7 @@ do_xy_scan( pose::Pose & pose,
 			Real score = do_scoring( pose, scorefxn, sample_rotations, probe_jump_num );
 			out << score << ' ' ;
 
-			if (score < best_score || count++ == 0 ){
+			if ( score < best_score || count++ == 0 ) {
 				best_translation = Vector( x, y, z );
 				best_score = score;
 			}

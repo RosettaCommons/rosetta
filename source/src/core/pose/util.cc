@@ -113,18 +113,16 @@ append_subpose_to_pose(
 	core::Size end_res,
 	bool new_chain
 ){
-	if(pose2.total_residue()>=start_res){
+	if ( pose2.total_residue()>=start_res ) {
 		pose1.append_residue_by_jump(pose2.residue(start_res), pose1.total_residue() , "", "", new_chain);
-		for(core::Size i=start_res+1; i<=end_res; ++i){
-			if(pose2.residue(i).is_lower_terminus()){
-				if(i > 1 && pose2.chain(i) == pose2.chain(i-1)){
+		for ( core::Size i=start_res+1; i<=end_res; ++i ) {
+			if ( pose2.residue(i).is_lower_terminus() ) {
+				if ( i > 1 && pose2.chain(i) == pose2.chain(i-1) ) {
 					pose1.append_residue_by_jump(pose2.residue(i), pose1.total_residue(), "","", false);
-				}
-				else{
+				} else {
 					pose1.append_residue_by_jump(pose2.residue(i), pose1.total_residue(), "","", true);
 				}
-			}
-			else{
+			} else {
 				pose1.append_residue_by_bond(pose2.residue(i));
 			}
 		}
@@ -132,75 +130,77 @@ append_subpose_to_pose(
 }
 
 void jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) {
-debug_assert(jumps);
-	for (Size i = 1; i <= pose.num_jump(); ++i) {
+	debug_assert(jumps);
+	for ( Size i = 1; i <= pose.num_jump(); ++i ) {
 		jumps->insert(i);
 	}
 }
 
 void remove_virtual_residues(core::pose::Pose* pose) {
- debug_assert(pose);
-  for (core::Size i = 1; i <= pose->total_residue(); ++i) {
-    if (pose->residue_type(i).name() == "VRT")
-      pose->conformation().delete_residue_slow(i);
-  }
+	debug_assert(pose);
+	for ( core::Size i = 1; i <= pose->total_residue(); ++i ) {
+		if ( pose->residue_type(i).name() == "VRT" ) {
+			pose->conformation().delete_residue_slow(i);
+		}
+	}
 }
 
 void swap_transform(Size jump_num, const kinematics::RT& xform, Pose* pose) {
- debug_assert(pose);
- debug_assert(jump_num <= pose->num_jump());
+	debug_assert(pose);
+	debug_assert(jump_num <= pose->num_jump());
 
-  const kinematics::FoldTree & tree = pose->fold_tree();
+	const kinematics::FoldTree & tree = pose->fold_tree();
 
-  int upstream = tree.upstream_jump_residue(jump_num);
-  int downstream = tree.downstream_jump_residue(jump_num);
-  const conformation::Residue& upstream_res = pose->residue(upstream);
-  const conformation::Residue& downstream_res = pose->residue(downstream);
+	int upstream = tree.upstream_jump_residue(jump_num);
+	int downstream = tree.downstream_jump_residue(jump_num);
+	const conformation::Residue& upstream_res = pose->residue(upstream);
+	const conformation::Residue& downstream_res = pose->residue(downstream);
 
-  if (upstream_res.natoms() < 3 || downstream_res.natoms() < 3) {
-    TR.Warning << "Insufficient number of atoms for stub creation on one or more"
-               << " jump residues-- " << upstream << ", " << downstream
-               << std::endl;
-    return;
-  }
+	if ( upstream_res.natoms() < 3 || downstream_res.natoms() < 3 ) {
+		TR.Warning << "Insufficient number of atoms for stub creation on one or more"
+			<< " jump residues-- " << upstream << ", " << downstream
+			<< std::endl;
+		return;
+	}
 
-  id::StubID upstream_stub(
-      id::AtomID(0, upstream_res.atom_index("N")),
-      id::AtomID(1, upstream_res.atom_index("CA")),
-      id::AtomID(2, upstream_res.atom_index("C")));
+	id::StubID upstream_stub(
+		id::AtomID(0, upstream_res.atom_index("N")),
+		id::AtomID(1, upstream_res.atom_index("CA")),
+		id::AtomID(2, upstream_res.atom_index("C")));
 
-  id::StubID downstream_stub(
-      id::AtomID(0, downstream_res.atom_index("N")),
-      id::AtomID(1, downstream_res.atom_index("CA")),
-      id::AtomID(2, downstream_res.atom_index("C")));
+	id::StubID downstream_stub(
+		id::AtomID(0, downstream_res.atom_index("N")),
+		id::AtomID(1, downstream_res.atom_index("CA")),
+		id::AtomID(2, downstream_res.atom_index("C")));
 
- debug_assert(upstream_stub.valid());
- debug_assert(downstream_stub.valid());
+	debug_assert(upstream_stub.valid());
+	debug_assert(downstream_stub.valid());
 
-  pose->conformation().set_stub_transform(
-      upstream_stub,
-      downstream_stub,
-      xform);
+	pose->conformation().set_stub_transform(
+		upstream_stub,
+		downstream_stub,
+		xform);
 }
 
 bool is_position_conserved_residue(const Pose& pose, core::Size residue) {
-  using basic::datacache::BasicDataCache;
-  using core::pose::datacache::PositionConservedResiduesStore;
-  using core::pose::datacache::PositionConservedResiduesStoreCOP;
+	using basic::datacache::BasicDataCache;
+	using core::pose::datacache::PositionConservedResiduesStore;
+	using core::pose::datacache::PositionConservedResiduesStoreCOP;
 
- debug_assert(residue > 0);
- debug_assert(residue <= pose.total_residue());
+	debug_assert(residue > 0);
+	debug_assert(residue <= pose.total_residue());
 
-  const BasicDataCache& cache = pose.data();
-  if (!cache.has(core::pose::datacache::CacheableDataType::POSITION_CONSERVED_RESIDUES))
-    return false;
+	const BasicDataCache& cache = pose.data();
+	if ( !cache.has(core::pose::datacache::CacheableDataType::POSITION_CONSERVED_RESIDUES) ) {
+		return false;
+	}
 
-  PositionConservedResiduesStoreCOP store =
-      utility::pointer::static_pointer_cast<PositionConservedResiduesStore const>(
-          cache.get_const_ptr(core::pose::datacache::CacheableDataType::POSITION_CONSERVED_RESIDUES));
+	PositionConservedResiduesStoreCOP store =
+		utility::pointer::static_pointer_cast<PositionConservedResiduesStore const>(
+		cache.get_const_ptr(core::pose::datacache::CacheableDataType::POSITION_CONSERVED_RESIDUES));
 
 
-  return store->is_conserved(residue);
+	return store->is_conserved(residue);
 }
 
 void
@@ -220,7 +220,7 @@ create_subpose(
 		Size const seqpos( positions[i] );
 		conformation::Residue const & rsd( src.residue( seqpos ) );
 		// If the residue and the previous residue are bonded in the source pose, they should be bonded in the new pose
-		if( i>1 && rsd.is_polymer_bonded( positions[ i-1 ] ) ) {
+		if ( i>1 && rsd.is_polymer_bonded( positions[ i-1 ] ) ) {
 			pose.append_residue_by_bond( rsd );
 		} else {
 			pose.append_residue_by_jump( rsd, 1 );
@@ -229,7 +229,7 @@ create_subpose(
 			// check if this residue should be in a new chain. not a perfect check...
 			conformation::Residue const & prev_rsd( src.residue( positions[i-1] ) );
 			if ( prev_rsd.is_upper_terminus() || rsd.is_lower_terminus() || prev_rsd.chain() != rsd.chain() ) {
-			debug_assert( pose.total_residue() == i );
+				debug_assert( pose.total_residue() == i );
 				pose.conformation().insert_chain_ending( i-1 );
 			}
 		}
@@ -246,71 +246,71 @@ create_subpose(
 // a little optimized to handle some weird terminal variants and RNA jumps.
 void
 pdbslice( core::pose::Pose & new_pose,
-					core::pose::Pose const & pose,
-					utility::vector1< core::Size > const & slice_res )
+	core::pose::Pose const & pose,
+	utility::vector1< core::Size > const & slice_res )
 {
-		using namespace core::pose;
-		using namespace core::chemical;
-		using namespace core::conformation;
-		using namespace core::chemical::rna;
+	using namespace core::pose;
+	using namespace core::chemical;
+	using namespace core::conformation;
+	using namespace core::chemical::rna;
 
-		new_pose.clear();
+	new_pose.clear();
 
-		for ( Size i = 1; i <= slice_res.size(); i++ ) {
+	for ( Size i = 1; i <= slice_res.size(); i++ ) {
 
-			ResidueOP residue_to_add = pose.residue( slice_res[ i ] ).clone() ;
+		ResidueOP residue_to_add = pose.residue( slice_res[ i ] ).clone() ;
 
-			if ( (i > 1 &&  ( slice_res[i] != slice_res[i-1] + 1 )) /*new segment*/ ||
-					 residue_to_add->is_lower_terminus() ||
-					 residue_to_add->has_variant_type( N_ACETYLATION ) ||
-					 (i>1 && pose.fold_tree().is_cutpoint( slice_res[i-1] ) ) ){
-				if( residue_to_add->is_RNA() && (i>1) && new_pose.residue_type(i-1).is_RNA() ){
+		if ( (i > 1 &&  ( slice_res[i] != slice_res[i-1] + 1 )) /*new segment*/ ||
+				residue_to_add->is_lower_terminus() ||
+				residue_to_add->has_variant_type( N_ACETYLATION ) ||
+				(i>1 && pose.fold_tree().is_cutpoint( slice_res[i-1] ) ) ) {
+			if ( residue_to_add->is_RNA() && (i>1) && new_pose.residue_type(i-1).is_RNA() ) {
 
-					new_pose.append_residue_by_jump(  *residue_to_add, i-1,
-																						chi1_torsion_atom( new_pose.residue(i-1) ),
-																						chi1_torsion_atom( *residue_to_add ), true /*new chain*/ );
-				} else {
-
-					new_pose.append_residue_by_jump(  *residue_to_add, i-1, "", "", true /*new chain*/ );
-				}
+				new_pose.append_residue_by_jump(  *residue_to_add, i-1,
+					chi1_torsion_atom( new_pose.residue(i-1) ),
+					chi1_torsion_atom( *residue_to_add ), true /*new chain*/ );
 			} else {
 
-				new_pose.append_residue_by_bond(  *residue_to_add  ) ;
+				new_pose.append_residue_by_jump(  *residue_to_add, i-1, "", "", true /*new chain*/ );
 			}
-		}
+		} else {
 
-		using namespace core::pose::full_model_info;
-		if ( full_model_info_defined( pose ) ){
-			FullModelInfoOP full_model_info = const_full_model_info( pose ).clone_info();
-			utility::vector1< Size > const & res_list = full_model_info->res_list();
-			utility::vector1< Size > new_res_list;
-			for ( Size n = 1; n <= new_pose.total_residue(); n++ ){
-				new_res_list.push_back( res_list[ slice_res[ n ] ] );
-			}
-			full_model_info->set_res_list( new_res_list );
-			set_full_model_info( new_pose, full_model_info );
+			new_pose.append_residue_by_bond(  *residue_to_add  ) ;
 		}
-
-		PDBInfoCOP pdb_info = pose.pdb_info();
-		if ( pdb_info != 0 ) {
-			utility::vector1< Size > new_numbering;
-			utility::vector1< char > new_chains;
-			for ( Size n = 1; n <= slice_res.size(); n++ ){
-				new_numbering.push_back( pdb_info->number( slice_res[ n ] ) );
-				new_chains.push_back( pdb_info->chain( slice_res[ n ] ) );
-			}
-			PDBInfoOP new_pdb_info( new PDBInfo( new_pose, true /*init*/ ) );
-			new_pdb_info->set_numbering( new_numbering );
-			new_pdb_info->set_chains( new_chains );
-			new_pose.pdb_info( new_pdb_info );
-		}
-
 	}
+
+	using namespace core::pose::full_model_info;
+	if ( full_model_info_defined( pose ) ) {
+		FullModelInfoOP full_model_info = const_full_model_info( pose ).clone_info();
+		utility::vector1< Size > const & res_list = full_model_info->res_list();
+		utility::vector1< Size > new_res_list;
+		for ( Size n = 1; n <= new_pose.total_residue(); n++ ) {
+			new_res_list.push_back( res_list[ slice_res[ n ] ] );
+		}
+		full_model_info->set_res_list( new_res_list );
+		set_full_model_info( new_pose, full_model_info );
+	}
+
+	PDBInfoCOP pdb_info = pose.pdb_info();
+	if ( pdb_info != 0 ) {
+		utility::vector1< Size > new_numbering;
+		utility::vector1< char > new_chains;
+		for ( Size n = 1; n <= slice_res.size(); n++ ) {
+			new_numbering.push_back( pdb_info->number( slice_res[ n ] ) );
+			new_chains.push_back( pdb_info->chain( slice_res[ n ] ) );
+		}
+		PDBInfoOP new_pdb_info( new PDBInfo( new_pose, true /*init*/ ) );
+		new_pdb_info->set_numbering( new_numbering );
+		new_pdb_info->set_chains( new_chains );
+		new_pose.pdb_info( new_pdb_info );
+	}
+
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 pdbslice( core::pose::Pose & pose,
-					utility::vector1< core::Size > const & slice_res ){
+	utility::vector1< core::Size > const & slice_res ){
 
 	pose::Pose mini_pose;
 	pdbslice( mini_pose, pose, slice_res );
@@ -372,11 +372,10 @@ set_ss_from_phipsi(
 
 	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 
-	// <murphp>
-		if( !pose.residue_type(i).is_protein() ) { // make sure we don't inquire about the phi/psi of a non-protein residue
+		// <murphp>
+		if ( !pose.residue_type(i).is_protein() ) { // make sure we don't inquire about the phi/psi of a non-protein residue
 			sstemp[sstemp_offset+i] = 3;
-		}
-		else {
+		} else {
 			// </murphp>
 
 			if ( pose.phi(i) < -20.0 && pose.psi(i) > -90.0 && pose.psi(i) < -10.0 ) {
@@ -440,7 +439,7 @@ void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::
 	}
 
 	// return if the pose is empty (otherwise will segfault)
-	if (nres == 0) {
+	if ( nres == 0 ) {
 		TR.Warning << "WARNING: addVirtualResAsRoot() called with empty pose!" << std::endl;
 		return;
 	}
@@ -448,7 +447,7 @@ void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::
 	// check for terminal ligands
 	int last_peptide_res = nres;
 	while ( !pose.residue( last_peptide_res ).is_polymer() )
-		last_peptide_res--;
+			last_peptide_res--;
 
 	// try to avoid putting the vrt too close to termini
 	int i_min = 1;
@@ -462,7 +461,7 @@ void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::
 #endif
 
 	// If less than three total residues, reset starting residue
-	if (r_start == 0) {
+	if ( r_start == 0 ) {
 		r_start = 1;
 	}
 
@@ -470,21 +469,21 @@ void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::
 	for ( int i=r_start; i<=r_end; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 
-		if (rsd.aa() == core::chemical::aa_vrt) continue;
-		if (!rsd.is_protein() ) continue;
+		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
+		if ( !rsd.is_protein() ) continue;
 
 		conformation::Atom const & atom( rsd.atom("CA") );
 		this_d = (atom.xyz() - xyz).length();
-		if (this_d < d_min) {
+		if ( this_d < d_min ) {
 			d_min = this_d;
 			i_min = i;
 		}
 	}
 	bool fullatom = pose.is_fullatom();
 	core::chemical::ResidueTypeSetCOP const &residue_set(
-								          core::chemical::ChemicalManager::get_instance()->residue_type_set
-	                            ( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
-	                                                    );
+		core::chemical::ChemicalManager::get_instance()->residue_type_set
+		( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
+	);
 	core::chemical::ResidueTypeCOP rsd_type( residue_set->get_representative_type_name3("VRT") );
 	if ( ! rsd_type ) {
 		utility_exit_with_message("Cannot find residue type VRT" );
@@ -499,7 +498,7 @@ void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::
 	pose.append_residue_by_jump( *new_res , i_min );
 
 	// update PDBinfo
-	if (pose.pdb_info()) {
+	if ( pose.pdb_info() ) {
 		pose.pdb_info()->chain( pose.total_residue(), 'z' );
 		pose.pdb_info()->number( pose.total_residue(), 1 );
 		pose.pdb_info()->obsolete( false );
@@ -521,7 +520,7 @@ get_center_of_mass( core::pose::Pose const & pose ){
 	Size nAtms=0;
 	for ( Size i=1; i<= nres; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
-		if (rsd.aa() == core::chemical::aa_vrt) continue;
+		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
 		for ( Size j=1; j<= rsd.nheavyatoms(); ++j ) {
 			conformation::Atom const & atom( rsd.atom(j) );
 			massSum += atom.xyz();
@@ -536,7 +535,7 @@ get_center_of_mass( core::pose::Pose const & pose ){
 void addVirtualResAsRoot( core::pose::Pose & pose ) {
 	int nres = pose.total_residue();
 	// return if the pose is empty (otherwise will segfault)
-	if (nres == 0) {
+	if ( nres == 0 ) {
 		TR.Warning << "WARNING: addVirtualResAsRoot() called with empty pose!" << std::endl;
 		return;
 	}
@@ -551,22 +550,23 @@ read_comment_pdb(
 	core::pose::Pose & pose
 ) {
 	utility::io::izstream data(file_name);
-  if ( !data ) {
+	if ( !data ) {
 		TR<<"ERROR! PDB SCAFOLD NAME NOT FOUND!!"<<std::endl;
 		utility_exit();
-  }
-  std::string line;
-  while( getline( data, line ) ) {
-  	if( line != "##Begin comments##")
+	}
+	std::string line;
+	while ( getline( data, line ) ) {
+		if ( line != "##Begin comments##" ) {
 			continue;
-			getline( data, line );
-		while (line != "##End comments##"){
+		}
+		getline( data, line );
+		while ( line != "##End comments##" ) {
 			//TR<<"Testing read comments! :"<<line<<std::endl;
 			utility::vector1<std::string> comment_line(utility::string_split(line,' '));
 			core::pose::add_comment(pose,comment_line[1],comment_line[2]);
 			getline( data, line );
+		}
 	}
-}
 }
 
 void
@@ -578,13 +578,13 @@ dump_comment_pdb(
 	pose.dump_pdb(out);
 	// verbose output
 	out << "END\n";
-	  out << "##Begin comments##" << std::endl;
-	 	                        using namespace std;
-	 	                        map< string, string > const comments = core::pose::get_all_comments(pose);
-	 	                        for( std::map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ){
-	 	                                out << i->first<<" "<<i->second << std::endl;
-	 	                        }
-	 	                        out << "##End comments##" << std::endl;
+	out << "##Begin comments##" << std::endl;
+	using namespace std;
+	map< string, string > const comments = core::pose::get_all_comments(pose);
+	for ( std::map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ) {
+		out << i->first<<" "<<i->second << std::endl;
+	}
+	out << "##End comments##" << std::endl;
 	out.close();
 }
 
@@ -598,13 +598,13 @@ hasPoseExtraScore(
 	using basic::datacache::CacheableStringFloatMapCOP;
 
 	// make sure that the pose has one of these.
-	if( !pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ){
+	if ( !pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
 		return false;
 	}
 
 	CacheableStringFloatMapCOP data
 		= utility::pointer::dynamic_pointer_cast< CacheableStringFloatMap const >
-			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
+		( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
 	assert( data.get() != NULL );
 
 	return (  data->map().find( name ) != data->map().end() );
@@ -621,14 +621,14 @@ bool getPoseExtraScore(
 	using basic::datacache::CacheableStringFloatMapCOP;
 
 	// make sure that the pose has one of these.
-	if( !pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ){
+	if ( !pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
 		return false;
 	}
 
 	CacheableStringFloatMapCOP data
 		= utility::pointer::dynamic_pointer_cast< CacheableStringFloatMap const >
-			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
-debug_assert( data.get() != NULL );
+		( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
+	debug_assert( data.get() != NULL );
 
 	std::map< std::string, float >::const_iterator it = data->map().find( name );
 	if ( it == data->map().end() ) {
@@ -658,14 +658,14 @@ bool getPoseExtraScore(
 	using basic::datacache::CacheableStringMapCOP;
 
 	// make sure that the pose has one of these.
-	if( !pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) ){
+	if ( !pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) ) {
 		return false;
 	}
 
 	CacheableStringMapCOP data
 		= utility::pointer::dynamic_pointer_cast< CacheableStringMap const >
-			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
-debug_assert( data.get() != NULL );
+		( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
+	debug_assert( data.get() != NULL );
 
 	std::map< std::string, std::string >::const_iterator it = data->map().find( name );
 	if ( it == data->map().end() ) {
@@ -697,7 +697,7 @@ void setPoseExtraScore(
 
 	CacheableStringFloatMapOP data
 		=  utility::pointer::dynamic_pointer_cast< CacheableStringFloatMap >
-			( pose.data().get_ptr(core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA) );
+		( pose.data().get_ptr(core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA) );
 
 	runtime_assert( data.get() != NULL );
 	data->map()[name] = value;
@@ -724,7 +724,7 @@ void setPoseExtraScore(
 
 	CacheableStringMapOP data
 		=  utility::pointer::dynamic_pointer_cast< CacheableStringMap >
-			( pose.data().get_ptr(core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA) );
+		( pose.data().get_ptr(core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA) );
 
 	runtime_assert( data.get() != NULL );
 	data->map()[name] = value;
@@ -751,7 +751,7 @@ void add_comment(
 
 	CacheableStringMapOP data
 		=  utility::pointer::dynamic_pointer_cast< CacheableStringMap >
-			( pose.data().get_ptr(core::pose::datacache::CacheableDataType::STRING_MAP) );
+		( pose.data().get_ptr(core::pose::datacache::CacheableDataType::STRING_MAP) );
 
 	runtime_assert( data.get() != NULL );
 	data->map()[key] = val;
@@ -777,7 +777,7 @@ void add_score_line_string(
 
 	CacheableStringMapOP data
 		=  utility::pointer::dynamic_pointer_cast< CacheableStringMap >
-			( pose.data().get_ptr(core::pose::datacache::CacheableDataType::SCORE_LINE_STRINGS) );
+		( pose.data().get_ptr(core::pose::datacache::CacheableDataType::SCORE_LINE_STRINGS) );
 
 	runtime_assert( data.get() != NULL );
 	data->map()[key] = val;
@@ -835,20 +835,20 @@ void clearPoseExtraScore(
 	using basic::datacache::CacheableStringMapOP;
 	using basic::datacache::DataCache_CacheableData;
 
-	if( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ){
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
 		CacheableStringFloatMapOP data
 			= utility::pointer::dynamic_pointer_cast< CacheableStringFloatMap >
-				( pose.data().get_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
-	debug_assert( data.get() != NULL );
+			( pose.data().get_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
+		debug_assert( data.get() != NULL );
 
 		if ( data->map().find( name ) != data->map().end() ) data->map().erase( name );
 	}
 
-	if( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) ){
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) ) {
 		CacheableStringMapOP data
 			= utility::pointer::dynamic_pointer_cast< CacheableStringMap >
-				( pose.data().get_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
-	debug_assert( data.get() != NULL );
+			( pose.data().get_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
+		debug_assert( data.get() != NULL );
 
 		if ( data->map().find( name ) != data->map().end() ) data->map().erase( name );
 	}
@@ -898,7 +898,7 @@ void delete_comment(
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::STRING_MAP ) ) {
 		CacheableStringMapOP data
 			=  utility::pointer::dynamic_pointer_cast< CacheableStringMap >
-				( pose.data().get_ptr(core::pose::datacache::CacheableDataType::STRING_MAP) );
+			( pose.data().get_ptr(core::pose::datacache::CacheableDataType::STRING_MAP) );
 		std::map< std::string, std::string >::iterator it;
 		it = data->map().find(key);
 		if ( it != data->map().end() ) {
@@ -919,7 +919,7 @@ get_all_score_line_strings(
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::SCORE_LINE_STRINGS ) ) {
 		CacheableStringMapCOP data
 			= utility::pointer::dynamic_pointer_cast< CacheableStringMap const >
-				( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::SCORE_LINE_STRINGS ) );
+			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::SCORE_LINE_STRINGS ) );
 		score_line_strings = data->map();
 		runtime_assert( data.get() != NULL );
 	}
@@ -938,7 +938,7 @@ get_all_comments(
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::STRING_MAP ) ) {
 		CacheableStringMapCOP data
 			= utility::pointer::dynamic_pointer_cast< CacheableStringMap const >
-				( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::STRING_MAP ) );
+			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::STRING_MAP ) );
 		comments = data->map();
 		runtime_assert( data.get() != NULL );
 	}
@@ -961,9 +961,10 @@ utility::vector1< char > read_psipred_ss2_file( pose::Pose const & pose ) {
 
 	std::string line;
 	Size count(0);
-	while( getline( data, line ) ) {
-		if( line[0] == '#' || line == "" )
+	while ( getline( data, line ) ) {
+		if ( line[0] == '#' || line == "" ) {
 			continue;
+		}
 		std::istringstream line_stream( line );
 		Size pos;
 		char aa, sec;
@@ -985,9 +986,10 @@ utility::vector1< char > read_psipred_ss2_file( pose::Pose const & pose ) {
 		if ( pose.residue(i).is_protein() ) nres++;
 	}
 
-debug_assert( secstructs.size() == nres);
-	if( secstructs.size() != nres )
+	debug_assert( secstructs.size() == nres);
+	if ( secstructs.size() != nres ) {
 		secstructs.clear();
+	}
 
 	return secstructs;
 }
@@ -997,9 +999,9 @@ debug_assert( secstructs.size() == nres);
 void conf2pdb_chain_default_map( core::pose::Pose const & pose, std::map<int,char> & chainmap ) {
 	chainmap.clear();
 	char letter = 'A';
-	for(core::Size i = 1; i <= pose.conformation().num_chains(); ++i){
+	for ( core::Size i = 1; i <= pose.conformation().num_chains(); ++i ) {
 		chainmap[i] = letter;
-		if('Z'==letter) utility_exit_with_message("too many chains to map to letters!!!");
+		if ( 'Z'==letter ) utility_exit_with_message("too many chains to map to letters!!!");
 		letter = static_cast<char>(letter + 1);
 	}
 }
@@ -1059,21 +1061,21 @@ std::map< int, char > conf2pdb_chain( core::pose::Pose const & pose ) {
 
 	} // foreach residue
 
-debug_assert( conf2pdb.size() == pose.conformation().num_chains() );
+	debug_assert( conf2pdb.size() == pose.conformation().num_chains() );
 	return conf2pdb;
 }
 
 /// @brief Get all the chains from conformation
 utility::vector1< int > get_chains( core::pose::Pose const & pose ) {
-	
+
 	// get map between conformation chain and PDB chainids
 	std::map< int, char > chain_map = conf2pdb_chain( pose );
-	
+
 	// create empty vector
 	utility::vector1< int > keys;
-	
+
 	// go through map and push back into vector
-	for ( std::map< int, char >::iterator it = chain_map.begin(); it != chain_map.end(); ++it) {
+	for ( std::map< int, char >::iterator it = chain_map.begin(); it != chain_map.end(); ++it ) {
 		keys.push_back( it->first );
 	}
 	return keys;
@@ -1181,7 +1183,7 @@ bool renumber_pdbinfo_based_on_conf_chains(
 
 		// find the corresponding pdb chain
 		Conf2PDB::const_iterator c2p = conf2pdb.find( pose.chain( chain_end ) );
-	debug_assert( ( fix_chains && c2p != conf2pdb.end() ) || !fix_chains ); // otherwise something's very wrong
+		debug_assert( ( fix_chains && c2p != conf2pdb.end() ) || !fix_chains ); // otherwise something's very wrong
 
 		for ( ; res <= chain_end; ++res ) {
 			// handle the pdb chain only if necessary
@@ -1213,7 +1215,7 @@ bool renumber_pdbinfo_based_on_conf_chains(
 	// no point updating pdb_info if it's just thrown away
 	pose.pdb_info()->obsolete( false );
 
-debug_assert( res == pose.n_residue() + 1 );
+	debug_assert( res == pose.n_residue() + 1 );
 
 	return true;
 }
@@ -1227,7 +1229,7 @@ bool is_ideal_pose(
 ) {
 	bool is_ideal=true;
 	for ( core::Size i=1 ; i < pose.total_residue(); i++ ) {//leaving out last residue which always returns non-ideal for some reason
-		if ( !is_ideal_position(i, pose) )	{
+		if ( !is_ideal_position(i, pose) ) {
 			is_ideal=false;
 			break;
 		}
@@ -1245,7 +1247,7 @@ bool is_ideal_position(
 )
 {
 	return conformation::is_ideal_position(
-		seqpos,	pose.conformation()	);
+		seqpos, pose.conformation() );
 }
 
 /// @brief this function removes all residues from the pose which are not protein residues.
@@ -1255,8 +1257,8 @@ bool is_ideal_position(
 void remove_nonprotein_residues( core::pose::Pose & pose )
 {
 	core::Size i(1);
-	while(i <= pose.total_residue()) {
-		if(!pose.residue_type(i).is_protein()) pose.conformation().delete_residue_slow(i);
+	while ( i <= pose.total_residue() ) {
+		if ( !pose.residue_type(i).is_protein() ) pose.conformation().delete_residue_slow(i);
 		else ++i;
 	}
 }
@@ -1265,15 +1267,15 @@ void remove_nonprotein_residues( core::pose::Pose & pose )
 /// This is intended for removing ligands that are canonical residues.
 void remove_ligand_canonical_residues( core::pose::Pose & pose )
 {
-	if(pose.total_residue() == 1) { //if we have only one residue, it cannot be removed, and this is going to crash
+	if ( pose.total_residue() == 1 ) { //if we have only one residue, it cannot be removed, and this is going to crash
 		throw utility::excn::EXCN_Msg_Exception("Pose utility remove_ligand_canonical_residues: I have received a pose with only one residue but cannot delete the last residue of the pose.");
 	}
 
 	core::Size i(1);
-	while(i <= pose.total_residue()) {
-		if(pose.residue_type(i).is_upper_terminus() && pose.residue_type(i).is_lower_terminus())
+	while ( i <= pose.total_residue() ) {
+		if ( pose.residue_type(i).is_upper_terminus() && pose.residue_type(i).is_lower_terminus() ) {
 			pose.conformation().delete_residue_slow(i);
-		else ++i;
+		} else ++i;
 	}
 }
 
@@ -1296,16 +1298,16 @@ bool compare_atom_coordinates(core::pose::Pose const & lhs, core::pose::Pose con
 	//first compare pose sizes; prerequisite to iterating through length
 	core::Size const lhssize(lhs.total_residue()), rhssize(rhs.total_residue());
 
-	if(lhssize != rhssize) {
+	if ( lhssize != rhssize ) {
 		TR.Warning << "poses of different length in compare_atom_coordinates; doomed to fail!" << std::endl;
 		return false;
 	}
 
 	//now iterate through residues and make comparisons
-	for( core::Size i(1); i<=lhssize; ++i){
+	for ( core::Size i(1); i<=lhssize; ++i ) {
 		//check equality of residue types
 		core::chemical::ResidueType const & lhstype(lhs.residue_type(i)), & rhstype(rhs.residue_type(i));
-		if(lhstype.name() != rhstype.name()) { //string matching is sufficient because ResidueType objects have unique names
+		if ( lhstype.name() != rhstype.name() ) { //string matching is sufficient because ResidueType objects have unique names
 			TR.Warning << "nonmatching ResidueTypes at " << i << " in compare_atom_coordinates" << std::endl;
 			return false;
 		}
@@ -1313,18 +1315,19 @@ bool compare_atom_coordinates(core::pose::Pose const & lhs, core::pose::Pose con
 		//get atoms vectors to compare
 		core::conformation::Atoms const & lhsatoms(lhs.residue(i).atoms()), rhsatoms(rhs.residue(i).atoms());
 		core::Size const lhsatmsize(lhsatoms.size()), rhsatmsize(rhsatoms.size());
-		if(lhsatmsize != rhsatmsize) { //check vector length equality
+		if ( lhsatmsize != rhsatmsize ) { //check vector length equality
 			TR.Warning << "nonmatching numbers of atoms at residue " << i << " in compare_atom_coordinates" << std::endl;
 			TR.Warning << "How did we even get here?  ResidueType comparison should have failed!" << std::endl;
 			return false;
 		}
 
 		//iterate through atoms vector
-		for( core::Size atm(1); atm <= lhsatmsize; ++atm){
-			if(  (std::floor(lhsatoms[atm].xyz().x()*n_dec) != std::floor(rhsatoms[atm].xyz().x()*n_dec))
-				|| (std::floor(lhsatoms[atm].xyz().y()*n_dec) != std::floor(rhsatoms[atm].xyz().y()*n_dec))
-				|| (std::floor(lhsatoms[atm].xyz().z()*n_dec) != std::floor(rhsatoms[atm].xyz().z()*n_dec)) )
+		for ( core::Size atm(1); atm <= lhsatmsize; ++atm ) {
+			if (  (std::floor(lhsatoms[atm].xyz().x()*n_dec) != std::floor(rhsatoms[atm].xyz().x()*n_dec))
+					|| (std::floor(lhsatoms[atm].xyz().y()*n_dec) != std::floor(rhsatoms[atm].xyz().y()*n_dec))
+					|| (std::floor(lhsatoms[atm].xyz().z()*n_dec) != std::floor(rhsatoms[atm].xyz().z()*n_dec)) ) {
 				return false; //no warning messages, this is the "expected" failure
+			}
 		}//iterate through atoms vector
 	}//over all residues
 
@@ -1379,18 +1382,18 @@ named_atom_id_to_atom_id(
 				return AtomID( rt.atom_index( named_atom_id.atom() ), named_atom_id.rsd() );
 			} else {
 				// tr.Error << "Error: can't find atom " << named_atom_id.atom() << " in residue "
-// 					<< rt.name() << ", residue has " << rt.nheavyatoms() << " heavy atoms." << std::endl;
-// 				tr.Error << "atom names are: " << std::endl;
+				//      << rt.name() << ", residue has " << rt.nheavyatoms() << " heavy atoms." << std::endl;
+				//     tr.Error << "atom names are: " << std::endl;
 				//rt.show_all_atom_names( tr.Error );
 				if ( raise_exception ) throw id::EXCN_AtomNotFound( named_atom_id );
 				return id::BOGUS_ATOM_ID;
 			}
 		} else {
-// 			tr.Error << "Error: can't find residue " << named_atom_id.rsd()
-// 				<< " in pose (pose.total_residue() = ) "
-// 				<< pose.total_residue() << std::endl;
+			//    tr.Error << "Error: can't find residue " << named_atom_id.rsd()
+			//     << " in pose (pose.total_residue() = ) "
+			//     << pose.total_residue() << std::endl;
 			if ( raise_exception ) throw id::EXCN_AtomNotFound( named_atom_id );
- 			return id::BOGUS_ATOM_ID;
+			return id::BOGUS_ATOM_ID;
 		}
 	} else {
 		if ( raise_exception ) throw id::EXCN_AtomNotFound( named_atom_id );
@@ -1491,19 +1494,19 @@ sort_pose_by_score( core::pose::PoseOP const & pose1, core::pose::PoseOP const &
 void
 transfer_phi_psi( const core::pose::Pose& srcpose, core::pose::Pose& tgtpose, core::Size ir, core::Size jr )
 {
-		core::Size tgtlength = tgtpose.total_residue();
-		core::Size srclength = srcpose.total_residue();
-		for( core::Size ires = ir; ires <= std::min( srclength, std::min( tgtlength, jr)) ; ires++){
-			if (!srcpose.residue_type( ires ).is_protein() || !tgtpose.residue_type( ires ).is_protein()) continue;
-			tgtpose.set_phi(   ires, srcpose.phi(ires) );
-			tgtpose.set_psi(   ires, srcpose.psi(ires) );
-			tgtpose.set_omega( ires, srcpose.omega(ires) );
-		}
+	core::Size tgtlength = tgtpose.total_residue();
+	core::Size srclength = srcpose.total_residue();
+	for ( core::Size ires = ir; ires <= std::min( srclength, std::min( tgtlength, jr)) ; ires++ ) {
+		if ( !srcpose.residue_type( ires ).is_protein() || !tgtpose.residue_type( ires ).is_protein() ) continue;
+		tgtpose.set_phi(   ires, srcpose.phi(ires) );
+		tgtpose.set_psi(   ires, srcpose.psi(ires) );
+		tgtpose.set_omega( ires, srcpose.omega(ires) );
+	}
 }
 
 void
 transfer_phi_psi( const core::pose::Pose& srcpose, core::pose::Pose& tgtpose ){
-    transfer_phi_psi( srcpose, tgtpose, 1, std::min( tgtpose.total_residue(), srcpose.total_residue() ) );
+	transfer_phi_psi( srcpose, tgtpose, 1, std::min( tgtpose.total_residue(), srcpose.total_residue() ) );
 }
 
 //fpd transfer the RB geometry from one pose to another
@@ -1514,13 +1517,14 @@ transfer_jumps( const core::pose::Pose& srcpose, core::pose::Pose& tgtpose )
 
 	// project fold tree
 	core::Size srcjmps = srcpose.num_jump();
-	for( core::Size ijmp = 1; ijmp <= srcjmps ; ijmp++){
+	for ( core::Size ijmp = 1; ijmp <= srcjmps ; ijmp++ ) {
 		core::kinematics::Edge srcedge_i = srcpose.fold_tree().jump_edge(ijmp);
 		core::Size jjmp = tgtpose.fold_tree().jump_nr( srcedge_i.start(), srcedge_i.stop() );
-		if (jjmp != 0)
+		if ( jjmp != 0 ) {
 			tgtpose.set_jump( jjmp, srcpose.jump(ijmp) );
-		else
+		} else {
 			TR.Debug << "In transfer_jumps() unable to map jump: " << srcedge_i.start() << " ,  " << srcedge_i.stop() << std::endl;
+		}
 	}
 }
 
@@ -1534,7 +1538,7 @@ replace_pose_residue_copying_existing_coordinates(
 	pose::Pose & pose,
 	Size const seqpos,
 	core::chemical::ResidueType const & new_rsd_type
-	)
+)
 {
 
 	core::conformation::Residue const & old_rsd( pose.residue( seqpos ) );
@@ -1547,9 +1551,9 @@ replace_pose_residue_copying_existing_coordinates(
 
 core::conformation::ResidueOP
 remove_variant_type_from_residue(
-		core::conformation::Residue const & old_rsd,
-		core::chemical::VariantType const variant_type,
-		pose::Pose const & pose )
+	core::conformation::Residue const & old_rsd,
+	core::chemical::VariantType const variant_type,
+	pose::Pose const & pose )
 {
 	if ( !old_rsd.has_variant_type( variant_type ) ) return old_rsd.clone();
 
@@ -1564,7 +1568,7 @@ remove_variant_type_from_residue(
 		}
 	} else {
 		TR << "The chi angles will not be updated and your dunbrack score for this rotamer will be huge; "
-				"this function is only meant to add a variant type to a residue of the same type" << std::endl;
+			"this function is only meant to add a variant type to a residue of the same type" << std::endl;
 	}
 
 	return new_rsd;
@@ -1573,9 +1577,9 @@ remove_variant_type_from_residue(
 
 conformation::ResidueOP
 add_variant_type_to_residue(
-		conformation::Residue const & old_rsd,
-		chemical::VariantType const variant_type,
-		pose::Pose const & pose )
+	conformation::Residue const & old_rsd,
+	chemical::VariantType const variant_type,
+	pose::Pose const & pose )
 {
 
 	if ( old_rsd.has_variant_type( variant_type ) ) return old_rsd.clone();
@@ -1591,7 +1595,7 @@ add_variant_type_to_residue(
 		}
 	} else {
 		TR << "The chi angles will not be updated and your dunbrack score for this rotamer will be huge; "
-				"this function is only meant to add a variant type to a residue of the same type" << std::endl;
+			"this function is only meant to add a variant type to a residue of the same type" << std::endl;
 	}
 
 	return new_rsd;
@@ -1602,9 +1606,9 @@ add_variant_type_to_residue(
 /// @note This copies any atoms in common between old and new residues, rebuilding the others.
 void
 add_variant_type_to_pose_residue(
-		pose::Pose & pose,
-		chemical::VariantType const variant_type,
-		Size const seqpos )
+	pose::Pose & pose,
+	chemical::VariantType const variant_type,
+	Size const seqpos )
 {
 	runtime_assert( seqpos != 0 );
 	if ( pose.residue( seqpos ).has_variant_type( variant_type ) ) return;
@@ -1617,14 +1621,14 @@ add_variant_type_to_pose_residue(
 
 	core::pose::replace_pose_residue_copying_existing_coordinates( pose, seqpos, new_rsd_type );
 
-    // update connections
-    for (Size i_con=1; i_con<=pose.conformation().residue_type(seqpos).n_residue_connections(); ++i_con) {
-        if (pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con) != 0) {
-            Size connected_seqpos = pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con);
-            Size connected_id = pose.residue(seqpos).connect_map(i_con).connid();
-            pose.conformation().update_noncanonical_connection(seqpos, i_con, connected_seqpos, connected_id);
-        }
-    }
+	// update connections
+	for ( Size i_con=1; i_con<=pose.conformation().residue_type(seqpos).n_residue_connections(); ++i_con ) {
+		if ( pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con) != 0 ) {
+			Size connected_seqpos = pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con);
+			Size connected_id = pose.residue(seqpos).connect_map(i_con).connid();
+			pose.conformation().update_noncanonical_connection(seqpos, i_con, connected_seqpos, connected_id);
+		}
+	}
 }
 
 
@@ -1632,9 +1636,9 @@ add_variant_type_to_pose_residue(
 /// @note This copies any atoms in common between old and new residues, rebuilding the others.
 void
 remove_variant_type_from_pose_residue(
-		pose::Pose & pose,
-		chemical::VariantType const variant_type,
-		Size const seqpos )
+	pose::Pose & pose,
+	chemical::VariantType const variant_type,
+	Size const seqpos )
 {
 	if ( !pose.residue( seqpos ).has_variant_type( variant_type ) ) return;
 
@@ -1646,21 +1650,21 @@ remove_variant_type_from_pose_residue(
 
 	core::pose::replace_pose_residue_copying_existing_coordinates( pose, seqpos, new_rsd_type );
 
-    // update connections
-    for (Size i_con=1; i_con<=pose.conformation().residue_type(seqpos).n_residue_connections(); ++i_con) {
-        if (pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con) != 0) {
-            Size connected_seqpos = pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con);
-            Size connected_id = pose.residue(seqpos).connect_map(i_con).connid();
-            pose.conformation().update_noncanonical_connection(seqpos, i_con, connected_seqpos, connected_id);
-        }
-    }
+	// update connections
+	for ( Size i_con=1; i_con<=pose.conformation().residue_type(seqpos).n_residue_connections(); ++i_con ) {
+		if ( pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con) != 0 ) {
+			Size connected_seqpos = pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con);
+			Size connected_id = pose.residue(seqpos).connect_map(i_con).connid();
+			pose.conformation().update_noncanonical_connection(seqpos, i_con, connected_seqpos, connected_id);
+		}
+	}
 }
 
 void
 add_lower_terminus_type_to_pose_residue(
 	pose::Pose & pose,
 	Size const seqpos
-	)
+)
 {
 	add_variant_type_to_pose_residue( pose, chemical::LOWER_TERMINUS_VARIANT, seqpos );
 }
@@ -1669,7 +1673,7 @@ void
 add_upper_terminus_type_to_pose_residue(
 	pose::Pose & pose,
 	Size const seqpos
-	)
+)
 {
 	add_variant_type_to_pose_residue( pose, chemical::UPPER_TERMINUS_VARIANT, seqpos );
 }
@@ -1678,7 +1682,7 @@ void
 remove_lower_terminus_type_from_pose_residue(
 	pose::Pose & pose,
 	Size const seqpos
-	)
+)
 {
 	core::pose::remove_variant_type_from_pose_residue( pose, chemical::LOWER_TERMINUS_VARIANT, seqpos );
 }
@@ -1687,7 +1691,7 @@ void
 remove_upper_terminus_type_from_pose_residue(
 	pose::Pose & pose,
 	Size const seqpos
-	)
+)
 {
 	core::pose::remove_variant_type_from_pose_residue( pose, chemical::UPPER_TERMINUS_VARIANT, seqpos );
 }
@@ -1697,7 +1701,7 @@ core::Real
 pose_max_nbr_radius( Pose const & pose )
 {
 	core::Real maxrad( 0.0 );
-	for ( 	core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for (  core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		if ( pose.residue( ii ).nbr_radius() > maxrad ) maxrad = pose.residue_type(ii).nbr_radius();
 	}
 	return maxrad;
@@ -1780,9 +1784,9 @@ setup_dof_to_torsion_map( pose::Pose const & pose, id::DOF_ID_Map< id::TorsionID
 // Convert from allow-bb/allow-chi MoveMap to simple DOF_ID boolean mask needed by the minimizer
 void
 setup_dof_mask_from_move_map(
-		kinematics::MoveMap const & mm,
-		pose::Pose const & pose,
-		id::DOF_ID_Mask & dof_mask
+	kinematics::MoveMap const & mm,
+	pose::Pose const & pose,
+	id::DOF_ID_Mask & dof_mask
 )
 {
 	using namespace id;
@@ -1858,7 +1862,7 @@ setup_dof_mask_from_move_map(
 				}
 			} else {
 				TR.Warning << "WARNING: Unable to find atom_tree atom for this " <<
-						"Rosetta chi angle: residue " << i << " CHI " << j << std::endl;
+					"Rosetta chi angle: residue " << i << " CHI " << j << std::endl;
 			}
 		} // j=1, n_chi_torsions
 
@@ -1873,7 +1877,7 @@ setup_dof_mask_from_move_map(
 				dof_mask[ id ] = mm_setting;
 			} else {
 				TR.Warning << "WARNING: Unable to find atom_tree atom for this " <<
-						"Rosetta nu angle: residue " << i << " NU " << j << std::endl;
+					"Rosetta nu angle: residue " << i << " NU " << j << std::endl;
 			}
 		} // j=1, n_nu_torsions
 
@@ -1888,7 +1892,7 @@ setup_dof_mask_from_move_map(
 				dof_mask[ id ] = mm_setting;
 			} else {
 				TR.Warning << "WARNING: Unable to find atom_tree atom for this " <<
-						"Rosetta branch connection angle: residue " << i << " BRANCH " << j << std::endl;
+					"Rosetta branch connection angle: residue " << i << " BRANCH " << j << std::endl;
 			}
 		} // j=1, n_branch_torsions
 	} // i=1, n_res
@@ -1914,16 +1918,16 @@ setup_dof_mask_from_move_map(
 
 bool
 has_chain(std::string const & chain, core::pose::Pose const & pose){
-debug_assert(chain.size()==1);// chain is one char
+	debug_assert(chain.size()==1);// chain is one char
 	char chain_char= chain[0];
 	return has_chain(chain_char, pose);
 }
 
 bool
 has_chain(char const & chain, core::pose::Pose const & pose){
-	for(core::Size i=1; i <= pose.conformation().num_chains(); ++i){
+	for ( core::Size i=1; i <= pose.conformation().num_chains(); ++i ) {
 		char this_char= get_chain_from_chain_id(i, pose);
-		if(this_char == chain){
+		if ( this_char == chain ) {
 			return true;
 		}
 	}
@@ -1932,8 +1936,8 @@ has_chain(char const & chain, core::pose::Pose const & pose){
 
 bool
 has_chain(core::Size chain_id, core::pose::Pose const & pose){
-	for(core::Size i=1; i <= pose.conformation().num_chains(); ++i){
-		if (i == chain_id){
+	for ( core::Size i=1; i <= pose.conformation().num_chains(); ++i ) {
+		if ( i == chain_id ) {
 			return true;
 		}
 	}
@@ -1944,7 +1948,7 @@ std::set<core::Size>
 get_jump_ids_from_chain_ids(std::set<core::Size> const & chain_ids, core::pose::Pose const & pose){
 	std::set<core::Size> jump_ids;
 	std::set<core::Size>::const_iterator chain_id= chain_ids.begin();
-	for(; chain_id != chain_ids.end(); ++chain_id){
+	for ( ; chain_id != chain_ids.end(); ++chain_id ) {
 		core::Size jump_id= get_jump_id_from_chain_id(*chain_id, pose);
 		jump_ids.insert(jump_id);
 	}
@@ -1953,10 +1957,10 @@ get_jump_ids_from_chain_ids(std::set<core::Size> const & chain_ids, core::pose::
 
 core::Size
 get_jump_id_from_chain_id(core::Size const & chain_id,const core::pose::Pose & pose){
-	for(core::Size jump_id=1; jump_id <= pose.num_jump(); jump_id++){
+	for ( core::Size jump_id=1; jump_id <= pose.num_jump(); jump_id++ ) {
 		core::Size ligand_residue_id= (core::Size) pose.fold_tree().downstream_jump_residue(jump_id);
 		core::Size ligand_chain_id= pose.chain(ligand_residue_id);
-		if(chain_id==ligand_chain_id){
+		if ( chain_id==ligand_chain_id ) {
 			return jump_id;
 		}
 	}
@@ -1966,8 +1970,8 @@ get_jump_id_from_chain_id(core::Size const & chain_id,const core::pose::Pose & p
 
 core::Size
 get_chain_id_from_chain(std::string const & chain, core::pose::Pose const & pose){
-debug_assert(chain.size()==1);// chain is one char
-	if( chain.size() > 1) utility_exit_with_message("Multiple chain_ids per chain! Are you using '-treat_residues_in_these_chains_as_separate_chemical_entities', and not using compatible movers?" );
+	debug_assert(chain.size()==1);// chain is one char
+	if ( chain.size() > 1 ) utility_exit_with_message("Multiple chain_ids per chain! Are you using '-treat_residues_in_these_chains_as_separate_chemical_entities', and not using compatible movers?" );
 	char chain_char= chain[0];
 	return get_chain_id_from_chain(chain_char, pose);
 }
@@ -1975,7 +1979,7 @@ debug_assert(chain.size()==1);// chain is one char
 core::Size
 get_chain_id_from_chain(char const & chain, core::pose::Pose const & pose){
 	utility::vector1<core::Size> chain_ids = get_chain_ids_from_chain(chain, pose);
-	if(chain_ids.size() == 0) {
+	if ( chain_ids.size() == 0 ) {
 		throw utility::excn::EXCN_RangeError(" chain_id "+utility::to_string(chain)+" does not exist");
 	} else if ( chain_ids.size() > 1 ) {
 		throw utility::excn::EXCN_RangeError("chain_id "+utility::to_string(chain)+" represents more than one chain!");
@@ -1985,7 +1989,7 @@ get_chain_id_from_chain(char const & chain, core::pose::Pose const & pose){
 
 utility::vector1<core::Size>
 get_chain_ids_from_chain(std::string const & chain, core::pose::Pose const & pose){
-debug_assert(chain.size()==1);// chain is one char
+	debug_assert(chain.size()==1);// chain is one char
 	char chain_char= chain[0];
 	return get_chain_ids_from_chain(chain_char, pose);
 
@@ -1994,9 +1998,9 @@ debug_assert(chain.size()==1);// chain is one char
 utility::vector1<core::Size>
 get_chain_ids_from_chain(char const & chain, core::pose::Pose const & pose){
 	utility::vector1<core::Size> chain_ids;
-	for(core::Size i=1; i <= pose.conformation().num_chains(); i++){
+	for ( core::Size i=1; i <= pose.conformation().num_chains(); i++ ) {
 		char this_char= get_chain_from_chain_id(i, pose);
-		if(this_char == chain){
+		if ( this_char == chain ) {
 			chain_ids.push_back(i);
 		}
 	}
@@ -2006,7 +2010,7 @@ get_chain_ids_from_chain(char const & chain, core::pose::Pose const & pose){
 utility::vector1<core::Size>
 get_chain_ids_from_chains(utility::vector1<std::string> const & chains, core::pose::Pose const & pose){
 	utility::vector1<core::Size> chain_ids;
-	for (Size i = 1; i <= chains.size(); ++i){
+	for ( Size i = 1; i <= chains.size(); ++i ) {
 		Size chain_id = get_chain_id_from_chain(chains[ i ], pose);
 		chain_ids.push_back(chain_id);
 	}
@@ -2029,7 +2033,7 @@ utility::vector1<core::Size>
 get_jump_ids_from_chain(char const & chain, core::pose::Pose const & pose){
 	utility::vector1<core::Size> jump_ids;
 	utility::vector1<core::Size> chain_ids = get_chain_ids_from_chain(chain, pose);
-	BOOST_FOREACH(core::Size chain_id, chain_ids){
+	BOOST_FOREACH ( core::Size chain_id, chain_ids ) {
 		jump_ids.push_back( get_jump_id_from_chain_id(chain_id, pose));
 	}
 	return jump_ids;
@@ -2037,7 +2041,7 @@ get_jump_ids_from_chain(char const & chain, core::pose::Pose const & pose){
 
 utility::vector1<core::Size>
 get_jump_ids_from_chain(std::string const & chain, core::pose::Pose const & pose){
-debug_assert(chain.size()==1);// chain is one char
+	debug_assert(chain.size()==1);// chain is one char
 	char chain_char= chain[0];
 	return get_jump_ids_from_chain(chain_char, pose);
 }
@@ -2058,7 +2062,7 @@ get_chain_residues(core::pose::Pose const & pose, core::Size const chain_id){
 	core::Size begin= pose.conformation().chain_begin(chain_id);
 	core::Size const end= pose.conformation().chain_end(chain_id);
 	core::conformation::ResidueCOPs residues;
-	for(; begin <= end; ++begin){
+	for ( ; begin <= end; ++begin ) {
 		residues.push_back( core::conformation::ResidueOP( new core::conformation::Residue(pose.residue(begin)) ) );
 	}
 	return residues;
@@ -2086,12 +2090,12 @@ get_chain_from_chain_id(core::Size const & chain_id, core::pose::Pose const & po
 }
 
 core::Size num_heavy_atoms(
-		core::Size begin,
-		core::Size const end,
-		core::pose::Pose const & pose
+	core::Size begin,
+	core::Size const end,
+	core::pose::Pose const & pose
 ) {
 	core::Size total_heavy_atoms = 0;
-	for (; begin <= end; ++begin) {
+	for ( ; begin <= end; ++begin ) {
 		total_heavy_atoms += pose.residue(begin).nheavyatoms();
 	}
 	TR.Debug << "# of heavy atoms: "<< total_heavy_atoms << std::endl;
@@ -2099,12 +2103,12 @@ core::Size num_heavy_atoms(
 }
 
 core::Size num_atoms(
-		core::Size begin,
-		core::Size const end,
-		core::pose::Pose const & pose
+	core::Size begin,
+	core::Size const end,
+	core::pose::Pose const & pose
 ) {
 	core::Size total_atoms = 0;
-	for (; begin <= end; ++begin) {
+	for ( ; begin <= end; ++begin ) {
 		total_atoms += pose.residue(begin).natoms();
 	}
 	TR.Debug << "# of heavy atoms: "<< total_atoms << std::endl;
@@ -2112,12 +2116,12 @@ core::Size num_atoms(
 }
 
 core::Size num_hbond_acceptors(
-		core::Size begin,
-		core::Size const end,
-		core::pose::Pose const & pose
+	core::Size begin,
+	core::Size const end,
+	core::pose::Pose const & pose
 ) {
 	core::Size total_hbond_acceptors = 0;
-	for (; begin <= end; ++begin) {
+	for ( ; begin <= end; ++begin ) {
 		total_hbond_acceptors += pose.residue(begin).n_hbond_acceptors();
 	}
 	TR.Debug << "# of heavy atoms: "<< total_hbond_acceptors << std::endl;
@@ -2125,12 +2129,12 @@ core::Size num_hbond_acceptors(
 }
 
 core::Size num_hbond_donors(
-		core::Size begin,
-		core::Size const end,
-		core::pose::Pose const & pose
+	core::Size begin,
+	core::Size const end,
+	core::pose::Pose const & pose
 ) {
 	core::Size total_hbond_donors = 0;
-	for (; begin <= end; ++begin) {
+	for ( ; begin <= end; ++begin ) {
 		total_hbond_donors += pose.residue(begin).n_hbond_donors();
 	}
 	TR.Debug << "# of heavy atoms: "<< total_hbond_donors << std::endl;
@@ -2143,7 +2147,7 @@ core::Size num_chi_angles(
 	core::pose::Pose const & pose
 ) {
 	core::Size total_chi_angles = 0;
-	for (; begin <= end; ++begin) {
+	for ( ; begin <= end; ++begin ) {
 		total_chi_angles += pose.residue(begin).nchi();
 	}
 	return total_chi_angles;
@@ -2151,12 +2155,12 @@ core::Size num_chi_angles(
 
 core::Real
 mass(
-		core::Size begin,
-		core::Size const end,
-		core::pose::Pose const & pose
+	core::Size begin,
+	core::Size const end,
+	core::pose::Pose const & pose
 ){
 	core::Real mass = 0;
-	for (; begin <= end; ++begin) {
+	for ( ; begin <= end; ++begin ) {
 		mass += pose.residue(begin).type().mass();
 	}
 	return mass;
@@ -2170,11 +2174,9 @@ core::Size get_hash_from_chain(char const & chain, core::pose::Pose const & pose
 	core::Size chain_id = get_chain_id_from_chain(chain,pose);
 	core::Size chain_begin = pose.conformation().chain_begin(chain_id);
 	core::Size chain_end = pose.conformation().chain_end(chain_id);
-	for(core::Size res_num = chain_begin; res_num <= chain_end; ++res_num)
-	{
+	for ( core::Size res_num = chain_begin; res_num <= chain_end; ++res_num ) {
 		core::Size natoms = pose.conformation().residue(res_num).natoms();
-		for(core::Size atom_num = 1; atom_num <= natoms; ++atom_num)
-		{
+		for ( core::Size atom_num = 1; atom_num <= natoms; ++atom_num ) {
 			id::AtomID atom_id(atom_num,res_num);
 			PointPosition current_xyz = pose.conformation().xyz(atom_id);
 			boost::hash_combine(hash,current_xyz);
@@ -2190,15 +2192,12 @@ core::Size get_hash_excluding_chain(char const & chain, core::pose::Pose const &
 
 	core::Size chain_id = get_chain_id_from_chain(chain,pose);
 
-	for(core::Size res_num = 1; res_num <= pose.n_residue(); ++res_num)
-	{
-		if((int)chain_id == pose.chain(res_num))
-		{
+	for ( core::Size res_num = 1; res_num <= pose.n_residue(); ++res_num ) {
+		if ( (int)chain_id == pose.chain(res_num) ) {
 			continue;
 		}
 		core::Size natoms = pose.conformation().residue(res_num).natoms();
-		for(core::Size atom_num = 1; atom_num <= natoms; ++atom_num)
-		{
+		for ( core::Size atom_num = 1; atom_num <= natoms; ++atom_num ) {
 			id::AtomID atom_id(atom_num,res_num);
 			PointPosition current_xyz = pose.conformation().xyz(atom_id);
 			boost::hash_combine(hash,current_xyz);
@@ -2215,16 +2214,13 @@ std::string get_sha1_hash_excluding_chain(char const & chain, core::pose::Pose c
 
 	core::Size chain_id = get_chain_id_from_chain(chain,pose);
 
-	for(core::Size res_num = 1; res_num <= pose.n_residue(); ++res_num)
-	{
-		if((int)chain_id == pose.chain(res_num))
-		{
+	for ( core::Size res_num = 1; res_num <= pose.n_residue(); ++res_num ) {
+		if ( (int)chain_id == pose.chain(res_num) ) {
 			continue;
 		}
 
 		core::Size natoms = pose.conformation().residue(res_num).natoms();
-		for(core::Size atom_num = 1; atom_num <= natoms; ++atom_num)
-		{
+		for ( core::Size atom_num = 1; atom_num <= natoms; ++atom_num ) {
 			id::AtomID atom_id(atom_num,res_num);
 			PointPosition current_xyz = pose.conformation().xyz(atom_id);
 			coord_stream << numeric::truncate_and_serialize_xyz_vector(current_xyz,3);
@@ -2250,7 +2246,7 @@ initialize_disulfide_bonds(
 		if ( option[ in::detect_disulf ].user() ?
 				option[ in::detect_disulf ]() : // detect_disulf true
 				pose.is_fullatom() // detect_disulf default but fa pose
-			) {
+				) {
 			pose.conformation().detect_disulfides();
 		}
 	}
@@ -2262,10 +2258,10 @@ std::string extract_tag_from_pose( core::pose::Pose &pose )
 	using basic::datacache::CacheableString;
 	using basic::datacache::CacheableStringOP;
 
-	if( pose.data().has( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ){
-			CacheableStringOP data =  utility::pointer::dynamic_pointer_cast< CacheableString > (  (pose.data().get_ptr( ( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG  )) ));
-			if( data.get() == NULL ) return std::string("UnknownTag");
-			else               return data->str();
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ) {
+		CacheableStringOP data =  utility::pointer::dynamic_pointer_cast< CacheableString > (  (pose.data().get_ptr( ( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG  )) ));
+		if ( data.get() == NULL ) return std::string("UnknownTag");
+		else               return data->str();
 	}
 
 	return std::string("UnknownTag");
@@ -2295,11 +2291,9 @@ core::id::SequenceMapping sequence_map_from_pdbinfo( Pose const & first, Pose co
 core::Size canonical_residue_count(core::pose::Pose const & pose)
 {
 	core::Size count = 0;
-	for(core::Size i = 1; i <= pose.total_residue();++i)
-	{
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		core::conformation::Residue const & resi(pose.residue(i));
-		if(resi.aa() <= core::chemical::num_canonical_aas)
-		{
+		if ( resi.aa() <= core::chemical::num_canonical_aas ) {
 			++count;
 		}
 	}
@@ -2309,11 +2303,9 @@ core::Size canonical_residue_count(core::pose::Pose const & pose)
 core::Size noncanonical_residue_count(core::pose::Pose const & pose)
 {
 	core::Size count = 0;
-	for(core::Size i = 1; i <= pose.total_residue();++i)
-	{
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		core::conformation::Residue const & resi(pose.residue(i));
-		if(resi.aa() > core::chemical::num_canonical_aas)
-		{
+		if ( resi.aa() > core::chemical::num_canonical_aas ) {
 			++count;
 		}
 	}
@@ -2323,11 +2315,9 @@ core::Size noncanonical_residue_count(core::pose::Pose const & pose)
 core::Size canonical_atom_count(core::pose::Pose const & pose)
 {
 	core::Size count = 0;
-	for(core::Size i = 1; i <= pose.total_residue();++i)
-	{
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		core::conformation::Residue const & resi(pose.residue(i));
-		if(resi.aa() <= core::chemical::num_canonical_aas)
-		{
+		if ( resi.aa() <= core::chemical::num_canonical_aas ) {
 			count += resi.natoms();
 		}
 	}
@@ -2337,11 +2327,9 @@ core::Size canonical_atom_count(core::pose::Pose const & pose)
 core::Size noncanonical_atom_count(core::pose::Pose const & pose)
 {
 	core::Size count = 0;
-	for(core::Size i = 1; i <= pose.total_residue();++i)
-	{
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		core::conformation::Residue const & resi(pose.residue(i));
-		if(resi.aa() > core::chemical::num_canonical_aas)
-		{
+		if ( resi.aa() > core::chemical::num_canonical_aas ) {
 			count += resi.natoms();
 		}
 	}
@@ -2351,11 +2339,9 @@ core::Size noncanonical_atom_count(core::pose::Pose const & pose)
 core::Size noncanonical_chi_count(core::pose::Pose const & pose)
 {
 	core::Size count = 0;
-	for(core::Size i = 1; i <= pose.total_residue();++i)
-	{
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		core::conformation::Residue const & resi(pose.residue(i));
-		if(resi.aa() > core::chemical::num_canonical_aas)
-		{
+		if ( resi.aa() > core::chemical::num_canonical_aas ) {
 			count += resi.nchi();
 		}
 	}
@@ -2389,19 +2375,19 @@ center_of_mass(
 	using namespace numeric;
 	using core::conformation::Residue;
 	assert( pose.total_residue() == residues.size() );
-	
+
 	utility::vector1< xyzVector< Real > > coords;
 
-	for( Size i = residues.l(); i <= residues.u(); ++i ){
-		if( residues[ i ] ){
+	for ( Size i = residues.l(); i <= residues.u(); ++i ) {
+		if ( residues[ i ] ) {
 			Residue const & rsd( pose.residue( i ) );
 			coords.push_back( rsd.is_protein() ? rsd.atom( "CA" ).xyz() : rsd.nbr_atom_xyz() );
 		}
 	}
 
-  if ( ! coords.size() ) { utility_exit_with_message( "Cannot compute center of mass of zero residues!" ); }
-	
-  return center_of_mass( coords );
+	if ( ! coords.size() ) { utility_exit_with_message( "Cannot compute center of mass of zero residues!" ); }
+
+	return center_of_mass( coords );
 }
 
 
@@ -2416,7 +2402,7 @@ generate_vector_from_bounds(
 	utility::vector1< bool > residues( pose.total_residue(), false );
 	assert( (Size) stop <= residues.size() );
 	assert( stop > start && start > 0 );
-	
+
 	for ( int i = start; i <= stop; ++i ) { residues[ i ] = true; }
 	return residues;
 }
@@ -2424,8 +2410,8 @@ generate_vector_from_bounds(
 ///
 /// @brief calculates the center of mass of a pose
 /// @details
-///				the start and stop positions (or residues) within the pose are used to
-///				find the starting and finishing locations
+///    the start and stop positions (or residues) within the pose are used to
+///    find the starting and finishing locations
 ///
 /// @author Monica Berrondo June 14 2007
 ///
@@ -2447,11 +2433,11 @@ residue_center_of_mass(
 )
 {
 	assert( pose.total_residue() == residues.size() );
-	
+
 	if ( ! ( residues.has( true ) && pose.total_residue() )  ) {
 		utility_exit_with_message( "Cannot compute center of mass of zero residues!" );
 	}
-	
+
 	Vector center = center_of_mass(pose, residues );
 	return core::pose::return_nearest_residue( pose, residues, center );
 }
@@ -2460,8 +2446,8 @@ residue_center_of_mass(
 ///
 /// @brief calculates the center of mass of a pose
 /// @details
-///				the start and stop positions (or residues) within the pose are used to
-///				find the starting and finishing locations
+///    the start and stop positions (or residues) within the pose are used to
+///    find the starting and finishing locations
 ///
 /// @author Monica Berrondo June 14 2007
 ///
@@ -2485,13 +2471,13 @@ return_nearest_residue(
 )
 {
 	using core::conformation::Residue;
-	
+
 	assert( pose.total_residue() == residues.size() );
-	
+
 	if ( ! ( residues.has( true ) && pose.total_residue() )  ) {
 		utility_exit_with_message( "Cannot find nearest residue in empty selection!" );
 	}
-	
+
 	Real min_dist = std::numeric_limits< Real >::infinity();
 	int res = 0;
 	for ( Size i = residues.l(); i <= residues.u(); ++i ) {
@@ -2512,10 +2498,10 @@ return_nearest_residue(
 ////////////////////////////////////////////////////////////////////////////////////
 ///
 /// @brief finds the residue nearest some position passed in (normally a
-///		center of mass)
+///  center of mass)
 /// @details
-///				the start and stop positions (or residues) within the pose are used to
-///				find the starting and finishing locations
+///    the start and stop positions (or residues) within the pose are used to
+///    find the starting and finishing locations
 ///
 /// @author Monica Berrondo June 14 2007
 ///
@@ -2551,10 +2537,10 @@ void lregister_util( lua_State * lstate ) {
 // silly conversion from std::map< AtomID, AtomID> to rosetta's silly AtomID_Map class.
 id::AtomID_Map< id::AtomID >
 convert_from_std_map( std::map< id::AtomID, id::AtomID > const & atom_map,
-											core::pose::Pose const & pose ){
+	core::pose::Pose const & pose ){
 	id::AtomID_Map< id::AtomID > atom_ID_map;
 	initialize_atomid_map( atom_ID_map, pose, id::BOGUS_ATOM_ID );
-	for ( std::map< id::AtomID, id::AtomID >::const_iterator it = atom_map.begin(), end = atom_map.end(); it != end; ++it ){
+	for ( std::map< id::AtomID, id::AtomID >::const_iterator it = atom_map.begin(), end = atom_map.end(); it != end; ++it ) {
 		atom_ID_map.set( it->first, it->second );
 	}
 	return atom_ID_map;
@@ -2564,7 +2550,7 @@ convert_from_std_map( std::map< id::AtomID, id::AtomID > const & atom_map,
 void
 correctly_add_cutpoint_variants( core::pose::Pose & pose ) {
 	const core::kinematics::FoldTree & tree(pose.fold_tree());
-	for (core::Size i = 1; i < pose.total_residue(); ++i) { // Less than because cutpoints are between i and i+1
+	for ( core::Size i = 1; i < pose.total_residue(); ++i ) { // Less than because cutpoints are between i and i+1
 		if ( tree.is_cutpoint(i) ) {
 			correctly_add_cutpoint_variants( pose, i, false );
 		}
@@ -2575,8 +2561,8 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose ) {
 // try to unify all cutpoint addition into this function.
 void
 correctly_add_cutpoint_variants( core::pose::Pose & pose,
-		Size const cutpoint_res,
-		bool const check_fold_tree /* = true*/ )
+	Size const cutpoint_res,
+	bool const check_fold_tree /* = true*/ )
 {
 	using namespace core::chemical;
 
@@ -2592,7 +2578,7 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose,
 	remove_variant_type_from_pose_residue( pose, FIVE_PRIME_PHOSPHATE, cutpoint_res + 1 );
 	remove_variant_type_from_pose_residue( pose, N_ACETYLATION, cutpoint_res + 1);
 
-	if ( pose.residue_type( cutpoint_res ).is_RNA() )	 rna::correctly_position_cutpoint_phosphate_torsions( pose, cutpoint_res );
+	if ( pose.residue_type( cutpoint_res ).is_RNA() )  rna::correctly_position_cutpoint_phosphate_torsions( pose, cutpoint_res );
 
 	add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, cutpoint_res   );
 	add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, cutpoint_res + 1 );
@@ -2601,7 +2587,7 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose,
 	if ( pose.residue_type( cutpoint_res ).is_NA() ) {
 		runtime_assert( pose.residue_type( cutpoint_res + 1 ).is_NA() );
 		pose.conformation().declare_chemical_bond( cutpoint_res, " O3'", cutpoint_res+1, " P  " );
-	}	else if ( pose.residue_type( cutpoint_res ).is_protein() ) {
+	} else if ( pose.residue_type( cutpoint_res ).is_protein() ) {
 		runtime_assert( pose.residue_type( cutpoint_res + 1 ).is_protein() );
 		pose.conformation().declare_chemical_bond( cutpoint_res, " C  ", cutpoint_res+1, " N  " );
 	}
@@ -2634,9 +2620,9 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::pdb::FileData fd
 			id::AtomID aidC( ELEC.atom_index( it->second[ii].name2 ), id2 );
 
 			scoring::func::HarmonicFuncOP harm_func( new scoring::func::HarmonicFunc( it->second[ii].length, 0.05 ) );
-			
+
 			scoring::constraints::ConstraintCOP atompair(
-					new scoring::constraints::AtomPairConstraint( aidNUC, aidC, harm_func ) );
+				new scoring::constraints::AtomPairConstraint( aidNUC, aidC, harm_func ) );
 			pose.add_constraint( atompair );
 			TR << "Adding harmonic constraint between residue " << id1 << " atom " << it->second[ii].name1;
 			TR << "and residue " << id2 << " atom " << it->second[ii].name2 << " with length " << it->second[ii].length << std::endl;
@@ -2714,62 +2700,61 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::pdb::FileData fd
 				id::AtomID aidCE2( ELEC.atom_index( "CE2" ), id2 );
 				id::AtomID aidO( ELEC.atom_index( "O" ), id2 );
 				scoring::constraints::ConstraintCOP ang(
-						new scoring::constraints::AngleConstraint( aidCB, aidNUC, aidC, ang90_func ) );
+					new scoring::constraints::AngleConstraint( aidCB, aidNUC, aidC, ang90_func ) );
 				pose.add_constraint( ang );
 				//scoring::constraints::ConstraintCOP dih(
-				//		new scoring::constraints::DihedralConstraint( aidCB, aidNUC, aidC, aidCE2, dih_func ) );
+				//  new scoring::constraints::DihedralConstraint( aidCB, aidNUC, aidC, aidCE2, dih_func ) );
 				//pose.add_constraint( dih );
 
 				TR << "Assuming thiol-ene, adding harmonic constraints to the angle formed by CB, SG, CZ ( 90 )" << std::endl;// and ";
 				//TR << "the dihedral CB, SG, CZ, CE2 ( 180 ) " << std::endl;
 
-			}
-			else if ( it->second[ii].name2 == " C  " ) {
+			} else if ( it->second[ii].name2 == " C  " ) {
 				// the C-terminal conjugation case:
 				id::AtomID aidCA( ELEC.atom_index( "CA" ), id2 );
 				id::AtomID aidO( ELEC.atom_index( "O" ), id2 );
 				scoring::constraints::ConstraintCOP ang(
-						new scoring::constraints::AngleConstraint( aidNUC, aidC, aidO, ang_func ) );
+					new scoring::constraints::AngleConstraint( aidNUC, aidC, aidO, ang_func ) );
 				pose.add_constraint( ang );
 				scoring::constraints::ConstraintCOP dih(
-						new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
+					new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
 				pose.add_constraint( dih );
 			} else if ( it->second[ii].name2 == " CD " ) {
 				// The sidechain conjugation to glx case
 				id::AtomID aidCA( ELEC.atom_index( "CG" ), id2 );
 				id::AtomID aidO( ELEC.atom_index( "OE1" ), id2 );
 				scoring::constraints::ConstraintCOP ang(
-						new scoring::constraints::AngleConstraint( aidNUC, aidC, aidO, ang_func ) );
+					new scoring::constraints::AngleConstraint( aidNUC, aidC, aidO, ang_func ) );
 				pose.add_constraint( ang );
 				scoring::constraints::ConstraintCOP dih(
-						new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
+					new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
 				pose.add_constraint( dih );
 			} else if ( it->second[ii].name2 == " CG " ) {
 				// The sidechain conjugation to asx case
 				id::AtomID aidCA( ELEC.atom_index( "CB" ), id2 );
 				id::AtomID aidO( ELEC.atom_index( "OD1" ), id2 );
 				scoring::constraints::ConstraintCOP ang(
-						new scoring::constraints::AngleConstraint( aidNUC, aidC, aidO, ang_func ) );
+					new scoring::constraints::AngleConstraint( aidNUC, aidC, aidO, ang_func ) );
 				pose.add_constraint( ang );
 				scoring::constraints::ConstraintCOP dih(
-						new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
+					new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
 				pose.add_constraint( dih );
 				if ( it->second[ii].name1 == " NE " ) {
 					// ornithine
 					id::AtomID aidH( NUC.atom_index( "1HE" ), id2 );
 					id::AtomID aidCG( NUC.atom_index( "CG" ), id2 );
-					
+
 					/*
-					 
-					 id::AtomID aidH( NUC.atom_index( "H" ), id1 );
-					 
-					 scoring::constraints::ConstraintCOP omg( new scoring::constraints::DihedralConstraint( aidCA2, aidNUC, aidC, aidCA, dih_func ) );
-					 pose.add_constraint( omg );
-					 scoring::constraints::ConstraintCOP omgH( new scoring::constraints::DihedralConstraint( aidO, aidC, aidNUC, aidH, dih_func ) );
-					 pose.add_constraint( omgH );
-					 scoring::constraints::ConstraintCOP omgimp( new scoring::constraints::DihedralConstraint( aidC, aidNUC, aidH, aidCA2, dih_func ) );
-					 pose.add_constraint( omgimp );
-					 */
+
+					id::AtomID aidH( NUC.atom_index( "H" ), id1 );
+
+					scoring::constraints::ConstraintCOP omg( new scoring::constraints::DihedralConstraint( aidCA2, aidNUC, aidC, aidCA, dih_func ) );
+					pose.add_constraint( omg );
+					scoring::constraints::ConstraintCOP omgH( new scoring::constraints::DihedralConstraint( aidO, aidC, aidNUC, aidH, dih_func ) );
+					pose.add_constraint( omgH );
+					scoring::constraints::ConstraintCOP omgimp( new scoring::constraints::DihedralConstraint( aidC, aidNUC, aidH, aidCA2, dih_func ) );
+					pose.add_constraint( omgimp );
+					*/
 
 					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::DihedralConstraint( aidCA, aidO, aidC, aidNUC, dih_func ) ) );
 					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::DihedralConstraint( aidO, aidC, aidNUC, aidH, dih_func ) ) );
@@ -2801,7 +2786,7 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::pdb::FileData fd
 /// @brief Convert PDB numbering to pose numbering. Must exist somewhere else, but I couldn't find it. -- rhiju
 utility::vector1< Size > pdb_to_pose( pose::Pose const & pose, utility::vector1< int > const & pdb_res ){
 	utility::vector1< Size > pose_res;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ){
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 		if ( pdb_res.has_value( pose.pdb_info()->number( n ) ) ) pose_res.push_back( n );
 	}
 	runtime_assert( pose_res.size() == pdb_res.size() );
@@ -2823,10 +2808,10 @@ Size
 pdb_to_pose( pose::Pose const & pose, int const res_num, char const chain /* = ' ' */ ) {
 	bool found_match( false );
 	Size res_num_in_full_numbering( 0 );
-	for ( Size n = 1; n <= pose.total_residue() ; n++ ){
+	for ( Size n = 1; n <= pose.total_residue() ; n++ ) {
 		if ( res_num != pose.pdb_info()->number( n ) ) continue;
 		if ( chain != ' ' && pose.pdb_info()->chain( n ) != ' ' &&
-				 pose.pdb_info()->chain( n ) != chain ) continue;
+				pose.pdb_info()->chain( n ) != chain ) continue;
 		res_num_in_full_numbering = n;
 		if ( found_match != 0 ) utility_exit_with_message( "Ambiguous match to pdb number " + ObjexxFCL::string_of(res_num ) + " and chain " + ObjexxFCL::string_of( chain ) );
 		found_match = true;
@@ -2838,7 +2823,7 @@ pdb_to_pose( pose::Pose const & pose, int const res_num, char const chain /* = '
 /// @brief Convert pose numbering to pdb numbering. Must exist somewhere else, but I couldn't find it. -- rhiju
 utility::vector1< Size > pose_to_pdb( pose::Pose const & pose, utility::vector1< Size > const & pose_res ){
 	utility::vector1< Size > pdb_res;
-	for ( Size i = 1; i <= pose_res.size(); i++ ){
+	for ( Size i = 1; i <= pose_res.size(); i++ ) {
 		runtime_assert( pose_res[ i ] <= pose.total_residue() );
 		pdb_res.push_back( pose.pdb_info()->number( pose_res[ i ] ) );
 	}
@@ -2857,10 +2842,10 @@ bool
 is_lower_terminus( pose::Pose const & pose, Size const resid )
 {
 	return ( ( resid == 1 ) || //loop starts at first residue
-					( ! pose.residue(resid).is_polymer() ) || // this residue isn't a polymer
-					( ! pose.residue( resid-1 ).is_protein() ) || //residue before start is not protein
-					( pose.chain( resid-1 ) != pose.chain( resid ) ) || // residues before start are on another chain
-					( pose.residue( resid ).is_lower_terminus() ) ); // start of residue is lower terminus
+		( ! pose.residue(resid).is_polymer() ) || // this residue isn't a polymer
+		( ! pose.residue( resid-1 ).is_protein() ) || //residue before start is not protein
+		( pose.chain( resid-1 ) != pose.chain( resid ) ) || // residues before start are on another chain
+		( pose.residue( resid ).is_lower_terminus() ) ); // start of residue is lower terminus
 }
 
 /// @brief checks to see if this is a lower chain ending more intelligently than just checking residue variants
@@ -2868,10 +2853,10 @@ bool
 is_upper_terminus( pose::Pose const & pose, Size const resid )
 {
 	return ( ( resid == pose.total_residue() ) || // loop end at last residue
-					( !pose.residue( resid ).is_polymer() ) || // this residue isn't a polymer
-					( !pose.residue( resid+1 ).is_protein() ) || // residue after end is not protein
-					( pose.chain( resid+1 ) != pose.chain( resid ) ) || // residues before start is other chain
-					( pose.residue( resid ).is_upper_terminus() ) ); // explicit terminus variant @ end of loop
+		( !pose.residue( resid ).is_polymer() ) || // this residue isn't a polymer
+		( !pose.residue( resid+1 ).is_protein() ) || // residue after end is not protein
+		( pose.chain( resid+1 ) != pose.chain( resid ) ) || // residues before start is other chain
+		( pose.residue( resid ).is_upper_terminus() ) ); // explicit terminus variant @ end of loop
 }
 
 } // pose

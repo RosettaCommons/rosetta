@@ -120,12 +120,12 @@ public:
 	) const;
 
 	/// @brief check compatibility with atomtypeset
- 	virtual
- 	void
- 	setup_for_scoring( pose::Pose &pose, ScoreFunction const &scfxn ) const;
+	virtual
+	void
+	setup_for_scoring( pose::Pose &pose, ScoreFunction const &scfxn ) const;
 
- 	virtual
- 	void
+	virtual
+	void
 	setup_for_derivatives(
 		pose::Pose &pose,
 		ScoreFunction const &scfxn
@@ -303,18 +303,18 @@ public:
 	/*virtual
 	void
 	eval_atom_derivative_for_residue_pair(
-		Size const atom_index,
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		ResSingleMinimizationData const & minsingle_data1,
-		ResSingleMinimizationData const & minsingle_data2,
-		ResPairMinimizationData const & min_data,
-		pose::Pose const & pose, // provides context
-		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
-		Vector & F1,
-		Vector & F2
+	Size const atom_index,
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	ResSingleMinimizationData const & minsingle_data1,
+	ResSingleMinimizationData const & minsingle_data2,
+	ResPairMinimizationData const & min_data,
+	pose::Pose const & pose, // provides context
+	kinematics::DomainMap const & domain_map,
+	ScoreFunction const & sfxn,
+	EnergyMap const & weights,
+	Vector & F1,
+	Vector & F2
 	) const;*/
 
 	virtual
@@ -462,8 +462,8 @@ public:
 
 	/// called during gradient-based minimization inside dfunc
 	/**
-		 F1 and F2 are not zeroed -- contributions from this atom are
-		 just summed in
+	F1 and F2 are not zeroed -- contributions from this atom are
+	just summed in
 	**/
 	virtual
 	void
@@ -524,7 +524,7 @@ public:
 		Energy & bb,
 		Real & dsq
 	) const  {
-		//		std::cerr << __FILE__<< ' ' << __LINE__ << std::endl;
+		//  std::cerr << __FILE__<< ' ' << __LINE__ << std::endl;
 		///static_cast< Derived const* > (this) -> atom_pair_energy_(atom1,atom2,weight,atr,rep,solv,bb,dsq);
 		bb = 0; /// <-- need to kill this parameter
 		static_cast< Derived const & > (*this).interres_evaluator().atom_pair_energy( atom1, atom2, weight, atr, rep, solv, dsq );
@@ -538,22 +538,22 @@ public:
 		Real const weight,
 		AtomPairEnergy & ape)
 	const {
-			atom_pair_energy(atom1, atom2, weight, ape.attractive, ape.repulsive, ape.solvation, ape.bead_bead_interaction, ape.distance_squared);
+		atom_pair_energy(atom1, atom2, weight, ape.attractive, ape.repulsive, ape.solvation, ape.bead_bead_interaction, ape.distance_squared);
 	}
 
 
 	//inline
 	//void
 	//pair_energy_H(
-	//	conformation::Atom const & atom1,
-	//	conformation::Atom const & atom2,
-	//	Real weight,
-	//	Energy & atr,
-	//	Energy & rep,
-	//	Energy & solv,
-	//	Energy & bb
+	// conformation::Atom const & atom1,
+	// conformation::Atom const & atom2,
+	// Real weight,
+	// Energy & atr,
+	// Energy & rep,
+	// Energy & solv,
+	// Energy & bb
 	//) const  {
-	//	return static_cast< Derived const* > (this) -> pair_energy_H_(atom1,atom2,weight,atr,rep,solv,bb);
+	// return static_cast< Derived const* > (this) -> pair_energy_H_(atom1,atom2,weight,atr,rep,solv,bb);
 	//};
 
 	/// APL -- Consider reinstating this function!
@@ -561,13 +561,13 @@ public:
 	// inline
 	// void
 	// pair_energy_H(
-	// 	conformation::Atom const & atom1,
-	// 	conformation::Atom const & atom2,
-	// 	Real weight,
-	// 	AtomPairEnergy & ape
+	//  conformation::Atom const & atom1,
+	//  conformation::Atom const & atom2,
+	//  Real weight,
+	//  AtomPairEnergy & ape
 	// ) const {
-	// 	ape.distance_squared = 0.0;
-	// 	pair_energy_H(atom1, atom2, weight, ape.attractive, ape.repulsive, ape.solvation, ape.bead_bead_interaction);
+	//  ape.distance_squared = 0.0;
+	//  pair_energy_H(atom1, atom2, weight, ape.attractive, ape.repulsive, ape.solvation, ape.bead_bead_interaction);
 	// }
 
 
@@ -610,28 +610,28 @@ public:
 	inline
 	EnergiesCacheableDataType::Enum
 	nblist_type() const {
-		return	( do_classic_intrares_ ?
-							EnergiesCacheableDataType::ETABLE_CLASSIC_INTRARES_NBLIST :
-							EnergiesCacheableDataType::ETABLE_NBLIST );
+		return ( do_classic_intrares_ ?
+			EnergiesCacheableDataType::ETABLE_CLASSIC_INTRARES_NBLIST :
+			EnergiesCacheableDataType::ETABLE_NBLIST );
 	}
 
 	inline
 	min_single_data
 	min_single_data_type() const {
-		return	( do_classic_intrares_ ? etab_classic_intrares_single_nblist : etab_single_nblist );
+		return ( do_classic_intrares_ ? etab_classic_intrares_single_nblist : etab_single_nblist );
 	}
 
 	inline
 	min_pair_data
 	min_pair_data_type() const {
-		return	( do_classic_intrares_ ? etab_classic_intrares_pair_nblist : etab_pair_nblist );
+		return ( do_classic_intrares_ ? etab_classic_intrares_pair_nblist : etab_pair_nblist );
 	}
 
 
 	inline
 	bool
 	calculate_interres( core::conformation::Residue const & rsd1,
-											core::conformation::Residue const & rsd2 ) const {
+		core::conformation::Residue const & rsd2 ) const {
 		if ( exclude_DNA_DNA_ && rsd1.is_DNA() && rsd2.is_DNA() ) return false;
 		if ( do_classic_intrares_ ) return false;
 		return true;
@@ -777,82 +777,82 @@ private:
 //inline
 //bool
 //BaseEtableEnergy< Derived >::interpolate_bins(
-//	conformation::Atom const & atom1,
-//	conformation::Atom const & atom2,
-//	Real &d2,
-//	int &disbin,
-//	Real &frac
+// conformation::Atom const & atom1,
+// conformation::Atom const & atom2,
+// Real &d2,
+// int &disbin,
+// Real &frac
 //) const
 //{
-//	d2 = atom1.xyz().distance_squared( atom2.xyz() );
+// d2 = atom1.xyz().distance_squared( atom2.xyz() );
 //
-//	if ( ( d2 >= safe_max_dis2 ) || ( d2 == Real(0.0) ) ) {
-//		return false;
-//	}
+// if ( ( d2 >= safe_max_dis2 ) || ( d2 == Real(0.0) ) ) {
+//  return false;
+// }
 //
-//	// bin by distance:
-//	Real const d2_bin = d2 * etable_bins_per_A2;
-//	disbin = static_cast< int >( d2_bin ) + 1;
-//	//	int const disbin2 = disbin + 1;
-//	frac = d2_bin - ( disbin - 1 );
-//	return true;
-//	//ctsa
-//	//ctsa  tables have been hacked so that if disbin2 = lastbin, all values = 0.
-//	//ctsa
+// // bin by distance:
+// Real const d2_bin = d2 * etable_bins_per_A2;
+// disbin = static_cast< int >( d2_bin ) + 1;
+// // int const disbin2 = disbin + 1;
+// frac = d2_bin - ( disbin - 1 );
+// return true;
+// //ctsa
+// //ctsa  tables have been hacked so that if disbin2 = lastbin, all values = 0.
+// //ctsa
 //}
 
 //template <class Derived>
 //inline
 //void
 //BaseEtableEnergy< Derived>::atom_pair_energy_(
-//	conformation::Atom const & atom1,
-//	conformation::Atom const & atom2,
-//	Real const weight,
-//	Real &atr,
-//	Real &rep,
-//	Real &solv,
-//	Real &bb,
-//	Real & d2
+// conformation::Atom const & atom1,
+// conformation::Atom const & atom2,
+// Real const weight,
+// Real &atr,
+// Real &rep,
+// Real &solv,
+// Real &bb,
+// Real & d2
 //) const
 //{
-//	bb = 0;
-//	etable_evaluator_->atom_pair_energy( atom1, atom2, weight, atr, rep, solv, d2 );
+// bb = 0;
+// etable_evaluator_->atom_pair_energy( atom1, atom2, weight, atr, rep, solv, d2 );
 //
 //debug_assert( ljatr_.active() );
-//	bb = 0.0; //bead-bead interaction energy only in CoarseTable
-//	int disbin; Real frac;
-//	atr = rep = solv = bb = 0.0;
+// bb = 0.0; //bead-bead interaction energy only in CoarseTable
+// int disbin; Real frac;
+// atr = rep = solv = bb = 0.0;
 //
-//	//etable_.interpolated_analytic_etable_evaluation( atom1, atom2, atr, rep, solv, d2 );
-//	etable_.analytic_etable_evaluation( atom1, atom2, atr, rep, solv, d2 );
-//	atr  *= weight;
-//	rep  *= weight;
-//	solv *= weight;
-//	return;
+// //etable_.interpolated_analytic_etable_evaluation( atom1, atom2, atr, rep, solv, d2 );
+// etable_.analytic_etable_evaluation( atom1, atom2, atr, rep, solv, d2 );
+// atr  *= weight;
+// rep  *= weight;
+// solv *= weight;
+// return;
 //
-//	if (interpolate_bins(atom1,atom2,d2,disbin,frac)) {
+// if (interpolate_bins(atom1,atom2,d2,disbin,frac)) {
 //
 //
-//			//		std::cerr << "atom_pair_energy... " << disbin << ' ' << d2 << ' ' << frac << ' ' << ljatr.size() << std::endl;
-//			// l1 and l2 are FArray LINEAR INDICES for fast lookup:
-//			// [ l1 ] == (disbin,attype2,attype1)
-//			// [ l2 ] == (disbin2,attype2,attype1)
+//   //  std::cerr << "atom_pair_energy... " << disbin << ' ' << d2 << ' ' << frac << ' ' << ljatr.size() << std::endl;
+//   // l1 and l2 are FArray LINEAR INDICES for fast lookup:
+//   // [ l1 ] == (disbin,attype2,attype1)
+//   // [ l2 ] == (disbin2,attype2,attype1)
 //
-//			int const l1 = ljatr_.index( disbin, atom1.type(), atom2.type()),
-//					l2 = l1 + 1;
+//   int const l1 = ljatr_.index( disbin, atom1.type(), atom2.type()),
+//     l2 = l1 + 1;
 //
-//			Real e1 = ljatr_[ l1 ];
-//			atr = weight * ( e1 + frac * ( ljatr_[ l2 ] - e1 ) );
+//   Real e1 = ljatr_[ l1 ];
+//   atr = weight * ( e1 + frac * ( ljatr_[ l2 ] - e1 ) );
 //
-//			e1 = ljrep_[ l1 ];
-//			rep = weight * ( e1 + frac * ( ljrep_[ l2 ] - e1 ) );
+//   e1 = ljrep_[ l1 ];
+//   rep = weight * ( e1 + frac * ( ljrep_[ l2 ] - e1 ) );
 //
-//			e1 = solv1_[ l1 ] + solv2_[ l1 ];
-//			solv = weight * ( e1 + frac * ( solv1_[ l2 ] + solv2_[l2] - e1 ) );
-//			//		std::cout << "solv " << solv << std::endl;
-//			//		std::cerr << "finished evaluating atom _pair energy " << std::endl;
+//   e1 = solv1_[ l1 ] + solv2_[ l1 ];
+//   solv = weight * ( e1 + frac * ( solv1_[ l2 ] + solv2_[l2] - e1 ) );
+//   //  std::cout << "solv " << solv << std::endl;
+//   //  std::cerr << "finished evaluating atom _pair energy " << std::endl;
 //
-//	} //if within cutoff
+// } //if within cutoff
 //}
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -860,126 +860,126 @@ private:
 //inline
 //Real
 //BaseEtableEnergy< Derived >::eval_dE_dR_over_r_(
-//	conformation::Atom const & atom1,
-//	conformation::Atom const & atom2,
-//	EnergyMap const & weights,
-//	Vector & f1,
-//	Vector & f2
+// conformation::Atom const & atom1,
+// conformation::Atom const & atom2,
+// EnergyMap const & weights,
+// Vector & f1,
+// Vector & f2
 //) const
 //{
-//	return etable_evaluator_->eval_dE_dR_over_r( atom1, atom2, weights, f1, f2 );
+// return etable_evaluator_->eval_dE_dR_over_r( atom1, atom2, weights, f1, f2 );
 //
-//	Real d2,frac;
-//	int disbin;
+// Real d2,frac;
+// int disbin;
 //
-//	if ( atom1.xyz().distance_squared( atom2.xyz() ) > safe_max_dis2 ) return 0.;
+// if ( atom1.xyz().distance_squared( atom2.xyz() ) > safe_max_dis2 ) return 0.;
 //
-//	f1 = atom1.xyz().cross( atom2.xyz() );
-//	f2 = atom1.xyz() - atom2.xyz();
+// f1 = atom1.xyz().cross( atom2.xyz() );
+// f2 = atom1.xyz() - atom2.xyz();
 //
-//	Real datr, drep, dsol, invd;
-//	etable_.analytic_etable_derivatives( atom1, atom2, datr, drep, dsol, invd );
-//	return ( weights[ fa_atr ] * datr + weights[ fa_rep ] * drep + weights[ fa_sol ] * dsol ) * invd;
-//
-//
-//	if ( interpolate_bins(atom1,atom2,d2,disbin,frac) ) {
+// Real datr, drep, dsol, invd;
+// etable_.analytic_etable_derivatives( atom1, atom2, datr, drep, dsol, invd );
+// return ( weights[ fa_atr ] * datr + weights[ fa_rep ] * drep + weights[ fa_sol ] * dsol ) * invd;
 //
 //
-//			f1 = atom1.xyz().cross( atom2.xyz() );
-//			f2 = atom1.xyz() - atom2.xyz();
-//
-//			// l1 and l2 are FArray LINEAR INDICES for fast lookup:
-//			// [ l1 ] == (disbin  ,attype2,attype1)
-//			// [ l2 ] == (disbin+1,attype2,attype1)
-//
-//			/// BEGIN DERIVATIVE INTERPOLATION
-//			Real deriv = 0.0;
-//
-//			int const l1 = dljatr_.index( disbin, atom1.type(), atom2.type()),
-//					l2 = l1 + 1;
-//
-//			Real e1 = dljatr_[ l1 ];
-//			deriv = weights[ st_atr_] * ( e1 + frac * ( dljatr_[ l2 ] - e1 ) );
-//
-//			e1 = dljrep_[ l1 ];
-//			deriv += weights[ st_rep_ ] * ( e1 + frac * ( dljrep_[ l2 ] - e1 ) );
-//
-//			e1 = dsolv_[ l1 ];
-//			deriv += weights[ st_sol_ ] * ( e1 + frac * ( dsolv_[ l2 ] - e1 ) );
-//
-//			return deriv / std::sqrt( d2 );
-//
-//			/// BEGIN EXACT DERIVATIVE CALCULATION
-//
-//			/*Real deriv( 0.0 );
-//		int const l1 = ljatr_.index( disbin, atom1.type(), atom2.type()),
-//			l2 = l1 + 1;
-//
-//		// d g(x) / dx with g(x) = x^2 ---> 2x;  x is the distance
-//		// we want to avoid the sqrt. Since at1-at2 (f2) already is the right length, consider it pre-multiplied by sqrt(d2).
-//		// so what we have below is 2x / ( d2step * x ) = 2 / d2step = 2 * inv(d2step).  This will be multiplied by the un-normalized f1 and f2 vectors.
-//		Real dxsquared_dx_times_x2step_over_x =  2 * etable_bins_per_A2;
-//
-//		Real const atr1 = ljatr_[ l1 ];
-//		Real const atr2 = ljatr_[ l2 ];
-//		Real const rep1 = ljrep_[ l1 ];
-//		Real const rep2 = ljrep_[ l2 ];
-//		Real const sol1 = solv1_[ l1 ] + solv2_[ l1 ];
-//		Real const sol2 = solv1_[ l2 ] + solv2_[ l2 ];
-//
-//		deriv = weights[ st_atr_ ] * ( atr2 - atr1 );
-//		deriv += weights[ st_rep_ ] * ( rep2 - rep1 );
-//		deriv += weights[ st_sol_ ] * ( sol2 - sol1 );
-//
-//		return deriv * dxsquared_dx_times_x2step_over_x;*/
-//
-//			/// TEMP
-//			/*
-//		std::cout << "Testing numerically: ";
-//		Real f11( 0.0 );
-//		Real step = 0.00001;
-//		{// scope
-//			Real altd = std::sqrt( d2 ) - step;
-//			Real altd2 = altd*altd;
-//			Real altfrac = ( altd2 * etable_bins_per_A2 - ( disbin - 1 ) );
-//			int const altl1 = ljatr_.index( disbin, atom1.type(), atom2.type()),
-//				altl2 = altl1 + 1;
+// if ( interpolate_bins(atom1,atom2,d2,disbin,frac) ) {
 //
 //
-//			Real e1 = ljatr_[ altl1 ];
-//			f11 = weights[ st_atr_ ] * ( e1 + altfrac * ( ljatr_[ altl2 ] - e1 ) );
+//   f1 = atom1.xyz().cross( atom2.xyz() );
+//   f2 = atom1.xyz() - atom2.xyz();
 //
-//			e1 = ljrep_[ altl1 ];
-//			f11 += weights[ st_rep_ ] * ( e1 + altfrac * ( ljrep_[ altl2 ] - e1 ) );
+//   // l1 and l2 are FArray LINEAR INDICES for fast lookup:
+//   // [ l1 ] == (disbin  ,attype2,attype1)
+//   // [ l2 ] == (disbin+1,attype2,attype1)
 //
-//			e1 = solv1_[ altl1 ] + solv2_[ altl1 ];
-//			f11 += weights[ st_sol_ ] * ( e1 + altfrac * ( solv1_[ altl2 ] + solv2_[altl2] - e1 ) );
-//		}
+//   /// BEGIN DERIVATIVE INTERPOLATION
+//   Real deriv = 0.0;
 //
-//		Real f22(0.0);
-//		{// scope
-//			Real altd = std::sqrt( d2 ) + step;
-//			Real altd2 = altd*altd;
-//			Real altfrac = ( altd2 * etable_bins_per_A2 - ( disbin - 1 ) );
-//			int const altl1 = ljatr_.index( disbin, atom1.type(), atom2.type()),
-//				altl2 = altl1 + 1;
+//   int const l1 = dljatr_.index( disbin, atom1.type(), atom2.type()),
+//     l2 = l1 + 1;
+//
+//   Real e1 = dljatr_[ l1 ];
+//   deriv = weights[ st_atr_] * ( e1 + frac * ( dljatr_[ l2 ] - e1 ) );
+//
+//   e1 = dljrep_[ l1 ];
+//   deriv += weights[ st_rep_ ] * ( e1 + frac * ( dljrep_[ l2 ] - e1 ) );
+//
+//   e1 = dsolv_[ l1 ];
+//   deriv += weights[ st_sol_ ] * ( e1 + frac * ( dsolv_[ l2 ] - e1 ) );
+//
+//   return deriv / std::sqrt( d2 );
+//
+//   /// BEGIN EXACT DERIVATIVE CALCULATION
+//
+//   /*Real deriv( 0.0 );
+//  int const l1 = ljatr_.index( disbin, atom1.type(), atom2.type()),
+//   l2 = l1 + 1;
+//
+//  // d g(x) / dx with g(x) = x^2 ---> 2x;  x is the distance
+//  // we want to avoid the sqrt. Since at1-at2 (f2) already is the right length, consider it pre-multiplied by sqrt(d2).
+//  // so what we have below is 2x / ( d2step * x ) = 2 / d2step = 2 * inv(d2step).  This will be multiplied by the un-normalized f1 and f2 vectors.
+//  Real dxsquared_dx_times_x2step_over_x =  2 * etable_bins_per_A2;
+//
+//  Real const atr1 = ljatr_[ l1 ];
+//  Real const atr2 = ljatr_[ l2 ];
+//  Real const rep1 = ljrep_[ l1 ];
+//  Real const rep2 = ljrep_[ l2 ];
+//  Real const sol1 = solv1_[ l1 ] + solv2_[ l1 ];
+//  Real const sol2 = solv1_[ l2 ] + solv2_[ l2 ];
+//
+//  deriv = weights[ st_atr_ ] * ( atr2 - atr1 );
+//  deriv += weights[ st_rep_ ] * ( rep2 - rep1 );
+//  deriv += weights[ st_sol_ ] * ( sol2 - sol1 );
+//
+//  return deriv * dxsquared_dx_times_x2step_over_x;*/
+//
+//   /// TEMP
+//   /*
+//  std::cout << "Testing numerically: ";
+//  Real f11( 0.0 );
+//  Real step = 0.00001;
+//  {// scope
+//   Real altd = std::sqrt( d2 ) - step;
+//   Real altd2 = altd*altd;
+//   Real altfrac = ( altd2 * etable_bins_per_A2 - ( disbin - 1 ) );
+//   int const altl1 = ljatr_.index( disbin, atom1.type(), atom2.type()),
+//    altl2 = altl1 + 1;
 //
 //
-//			Real e1 = ljatr_[ altl1 ];
-//			f22 = weights[ st_atr_ ] * ( e1 + altfrac * ( ljatr_[ altl2 ] - e1 ) );
+//   Real e1 = ljatr_[ altl1 ];
+//   f11 = weights[ st_atr_ ] * ( e1 + altfrac * ( ljatr_[ altl2 ] - e1 ) );
 //
-//			e1 = ljrep_[ altl1 ];
-//			f22 += weights[ st_rep_ ] * ( e1 + altfrac * ( ljrep_[ altl2 ] - e1 ) );
+//   e1 = ljrep_[ altl1 ];
+//   f11 += weights[ st_rep_ ] * ( e1 + altfrac * ( ljrep_[ altl2 ] - e1 ) );
 //
-//			e1 = solv1_[ altl1 ] + solv2_[ altl1 ];
-//			f22 += weights[ st_sol_ ] * ( e1 + altfrac * ( solv1_[ altl2 ] + solv2_[altl2] - e1 ) );
-//		}
-//		std::cout << "Deriv discrep: " << ( f22 - f11 ) / (2 * step ) << " vs " << deriv * dxsquared_dx_times_x2step_over_x * std::sqrt( d2 ) << std::endl;
-//			 */
+//   e1 = solv1_[ altl1 ] + solv2_[ altl1 ];
+//   f11 += weights[ st_sol_ ] * ( e1 + altfrac * ( solv1_[ altl2 ] + solv2_[altl2] - e1 ) );
+//  }
 //
-//	} else {
-//		return 0.0;
-//	}
+//  Real f22(0.0);
+//  {// scope
+//   Real altd = std::sqrt( d2 ) + step;
+//   Real altd2 = altd*altd;
+//   Real altfrac = ( altd2 * etable_bins_per_A2 - ( disbin - 1 ) );
+//   int const altl1 = ljatr_.index( disbin, atom1.type(), atom2.type()),
+//    altl2 = altl1 + 1;
+//
+//
+//   Real e1 = ljatr_[ altl1 ];
+//   f22 = weights[ st_atr_ ] * ( e1 + altfrac * ( ljatr_[ altl2 ] - e1 ) );
+//
+//   e1 = ljrep_[ altl1 ];
+//   f22 += weights[ st_rep_ ] * ( e1 + altfrac * ( ljrep_[ altl2 ] - e1 ) );
+//
+//   e1 = solv1_[ altl1 ] + solv2_[ altl1 ];
+//   f22 += weights[ st_sol_ ] * ( e1 + altfrac * ( solv1_[ altl2 ] + solv2_[altl2] - e1 ) );
+//  }
+//  std::cout << "Deriv discrep: " << ( f22 - f11 ) / (2 * step ) << " vs " << deriv * dxsquared_dx_times_x2step_over_x * std::sqrt( d2 ) << std::endl;
+//    */
+//
+// } else {
+//  return 0.0;
+// }
 //}
 
 
@@ -987,20 +987,20 @@ private:
 //inline
 //void
 //BaseEtableEnergy< Derived >::pair_energy_H(
-//	conformation::Atom const & atom1,
-//	conformation::Atom const & atom2,
-//	Real weight,
-//	EnergyMap &emap
+// conformation::Atom const & atom1,
+// conformation::Atom const & atom2,
+// Real weight,
+// EnergyMap &emap
 //) const {
-//	Energy atr(0.0);
-//	Energy rep(0.0);
-//	Energy solv(0.0);
-//	Energy bb(0.0);
-//	pair_energy_H(atom1,atom2,weight,atr,rep,solv,bb);
-//	emap[st_atr_]+=atr;
-//	emap[st_rep_]+=rep;
-//	emap[st_sol_]+=solv;
-//	emap[ coarse_beadlj ]+=bb;
+// Energy atr(0.0);
+// Energy rep(0.0);
+// Energy solv(0.0);
+// Energy bb(0.0);
+// pair_energy_H(atom1,atom2,weight,atr,rep,solv,bb);
+// emap[st_atr_]+=atr;
+// emap[st_rep_]+=rep;
+// emap[st_sol_]+=solv;
+// emap[ coarse_beadlj ]+=bb;
 //}
 
 
@@ -1009,51 +1009,51 @@ private:
 //inline
 //void
 //BaseEtableEnergy< Derived >::pair_energy_H_(
-//	conformation::Atom const & atom1,
-//	conformation::Atom const & atom2,
-//	Real const weight,
-//	Real &atr,
-//	Real &rep,
-//	Real &solv,
-//	Real &bb
+// conformation::Atom const & atom1,
+// conformation::Atom const & atom2,
+// Real const weight,
+// Real &atr,
+// Real &rep,
+// Real &solv,
+// Real &bb
 //) const
 //{
-//	bb = 0;
-//	Real dis2;
-//	return etable_evaluator_->atom_pair_energy( atom1, atom2, weight, atr, rep, solv, dis2 );
+// bb = 0;
+// Real dis2;
+// return etable_evaluator_->atom_pair_energy( atom1, atom2, weight, atr, rep, solv, dis2 );
 //debug_assert( ljrep_.active() );
-//	Real d2,frac;
-//	int disbin;
-//	atr = rep = solv = bb = 0.0;
-//	//etable_.interpolated_analytic_etable_evaluation( atom1, atom2, atr, rep, solv, d2 );
-//	etable_.analytic_etable_evaluation( atom1, atom2, atr, rep, solv, d2 );
-//	atr  *= weight;
-//	rep  *= weight;
-//	solv *= weight;
-//	return;
+// Real d2,frac;
+// int disbin;
+// atr = rep = solv = bb = 0.0;
+// //etable_.interpolated_analytic_etable_evaluation( atom1, atom2, atr, rep, solv, d2 );
+// etable_.analytic_etable_evaluation( atom1, atom2, atr, rep, solv, d2 );
+// atr  *= weight;
+// rep  *= weight;
+// solv *= weight;
+// return;
 //
-//	if (interpolate_bins(atom1,atom2,d2,disbin,frac)) {
+// if (interpolate_bins(atom1,atom2,d2,disbin,frac)) {
 //
 //
 //
-//			//ctsa
-//			//ctsa  tables have been hacked so that if disbin2 = lastbin, all values = 0.
-//			//ctsa
+//   //ctsa
+//   //ctsa  tables have been hacked so that if disbin2 = lastbin, all values = 0.
+//   //ctsa
 //
-//			// l is an FArray LINEAR INDICES for fast lookup:
-//			// [ ll ] == (disbin,attype2,attype1)
+//   // l is an FArray LINEAR INDICES for fast lookup:
+//   // [ ll ] == (disbin,attype2,attype1)
 //
-//			int l1 = ljrep_.index( disbin, atom1.type(), atom2.type() );
-//			int l2 = l1+1;
+//   int l1 = ljrep_.index( disbin, atom1.type(), atom2.type() );
+//   int l2 = l1+1;
 //
-//			Real const rep_e1( ljrep_[ l1 ] );
-//			rep =  weight * ( rep_e1 + frac * ( ljrep_[ l2 ] - rep_e1 ) );
+//   Real const rep_e1( ljrep_[ l1 ] );
+//   rep =  weight * ( rep_e1 + frac * ( ljrep_[ l2 ] - rep_e1 ) );
 //
-//			Real const atr_e1 = ljatr_[ l1 ];
-//			atr = weight * ( atr_e1 + frac * ( ljatr_[ l2 ] - atr_e1 ) );
-//			//		std::cerr << __FILE__<< ' ' << __LINE__ << std::endl;
+//   Real const atr_e1 = ljatr_[ l1 ];
+//   atr = weight * ( atr_e1 + frac * ( ljatr_[ l2 ] - atr_e1 ) );
+//   //  std::cerr << __FILE__<< ' ' << __LINE__ << std::endl;
 //
-//	}
+// }
 //}
 
 

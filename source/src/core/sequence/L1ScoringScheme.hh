@@ -45,7 +45,7 @@ public:
 		return ScoringSchemeOP( new L1ScoringScheme(
 			gap_open(),
 			gap_extend()
-		) );
+			) );
 	}
 
 	/// @brief dtor

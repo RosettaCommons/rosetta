@@ -144,11 +144,11 @@ public:
 
 		protocols::filters::IfThenFilter  testfilter;
 		TagCOP tag = tagptr_from_string("<IfThenFilter name=test threshold=0 >\n"
-				"    <IF testfilter=sfF1 valuefilter=sfT10 />\n"
-				"    <ELIF testfilter=sfF2 value=900 />\n"
-				"    <ELIF testfilter=sfT20 valuefilter=sfF3 />\n"
-				"    <ELSE valuefilter=sfT99 />\n"
-				" </IfThenFilter>\n");
+			"    <IF testfilter=sfF1 valuefilter=sfT10 />\n"
+			"    <ELIF testfilter=sfF2 value=900 />\n"
+			"    <ELIF testfilter=sfT20 valuefilter=sfF3 />\n"
+			"    <ELSE valuefilter=sfT99 />\n"
+			" </IfThenFilter>\n");
 
 		testfilter.parse_my_tag( tag, data, filters, movers, *testpose_ );
 
@@ -227,10 +227,10 @@ public:
 
 		protocols::filters::IfThenFilter  testfilter;
 		TagCOP tag = tagptr_from_string("<IfThenFilter name=test threshold=2 lower_threshold=1>\n"
-				"    <IF testfilter=sfF1 valuefilter=sfT10 weight=60/>\n"
-				"    <ELIF testfilter=sfF2 inverttest=1 valuefilter=sfF3 weight=2/>\n"
-				"    <ELSE valuefilter=sfT99 weight=5/>\n"
-				" </IfThenFilter>\n");
+			"    <IF testfilter=sfF1 valuefilter=sfT10 weight=60/>\n"
+			"    <ELIF testfilter=sfF2 inverttest=1 valuefilter=sfF3 weight=2/>\n"
+			"    <ELSE valuefilter=sfT99 weight=5/>\n"
+			" </IfThenFilter>\n");
 
 		testfilter.parse_my_tag( tag, data, filters, movers, *testpose_ );
 

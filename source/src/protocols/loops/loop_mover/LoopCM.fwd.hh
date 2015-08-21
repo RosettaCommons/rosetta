@@ -17,9 +17,9 @@
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace loops{
-namespace loop_mover{
+namespace protocols {
+namespace loops {
+namespace loop_mover {
 
 // Forward
 class LoopCM;

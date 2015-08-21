@@ -95,7 +95,7 @@ BranchAngleOptimizer::operator=(BranchAngleOptimizer const & /*src*/)
 {
 	runtime_assert(false)
 
-	return *this;
+		return *this;
 }
 
 core::scoring::mm::MMBondAngleResidueTypeParamSetOP
@@ -156,9 +156,9 @@ BranchAngleOptimizer::optimize_angles(
 	Size num_neighbors(pose.residue(center_atomid.rsd()).n_bonded_neighbor_all_res(center_atomid.atomno()));
 
 	Real m2_bond_angle(numeric::angle_radians(pose.xyz(main_atomid1), pose.xyz(center_atomid),
-	                                          pose.xyz(main_atomid2)));
+		pose.xyz(main_atomid2)));
 
-	if (num_neighbors == 3) {
+	if ( num_neighbors == 3 ) {
 
 		// lookup the branching atom
 		id::AtomID branch_atomid1;
@@ -169,7 +169,7 @@ BranchAngleOptimizer::optimize_angles(
 		kinematics::tree::AtomCOP const branch_atom1( pose.atom_tree().atom(branch_atomid1).get_self_ptr() );
 
 		// switch main atoms if necessary for having a working stub
-		if (branch_atom1->input_stub_atom2() == main_atom2) {
+		if ( branch_atom1->input_stub_atom2() == main_atom2 ) {
 			id::AtomID temp_atomid(main_atomid1);
 			kinematics::tree::AtomCOP temp_atom(main_atom1);
 			main_atomid1 = main_atomid2;
@@ -179,11 +179,11 @@ BranchAngleOptimizer::optimize_angles(
 		}
 
 		// make sure both branching atom builds off main_atom1 & center_atom
-		if (!(branch_atom1->input_stub_atom1() == center_atom && branch_atom1->input_stub_atom2() == main_atom1 &&
-		      branch_atom1->input_stub_atom3() == main_atom2)) {
+		if ( !(branch_atom1->input_stub_atom1() == center_atom && branch_atom1->input_stub_atom2() == main_atom1 &&
+				branch_atom1->input_stub_atom3() == main_atom2) ) {
 
 			TR.Warning << "Warning: Branching atom (" << branch_atomid1 << ") for segment" << main_atomid1 << center_atomid
-			           << main_atomid2 << "does not use segment atoms for input stub, ignoring" << std::endl;
+				<< main_atomid2 << "does not use segment atoms for input stub, ignoring" << std::endl;
 			return 0;
 		}
 
@@ -191,14 +191,14 @@ BranchAngleOptimizer::optimize_angles(
 		BranchParam1 const params(param1(pose, main_atomid1, center_atomid, main_atomid2, branch_atomid1));
 
 		std::map<BranchParam1, Size>::iterator coef_map_iter(coef_map1_.find(params));
-		if (coef_map_iter == coef_map1_.end()) {
+		if ( coef_map_iter == coef_map1_.end() ) {
 			undefined_coef1_.insert(params);
 			return 0;
 		} else {
 			coef_index = coef_map_iter->second;
 		}
 
-		if (optimize_for_minimum) m2_bond_angle = coef1_[coef_index].overall_theta0();
+		if ( optimize_for_minimum ) m2_bond_angle = coef1_[coef_index].overall_theta0();
 
 		// calculate the new torsion offsets and bond angles
 		Real b1_torsion_offset;
@@ -211,7 +211,7 @@ BranchAngleOptimizer::optimize_angles(
 		pose.set_dof(branch_atom1_PHI, b1_torsion_offset);
 		pose.set_dof(branch_atom1_THETA, pi - b1_bond_angle);
 
-	} else if (num_neighbors == 4) {
+	} else if ( num_neighbors == 4 ) {
 
 		// lookup the branching atoms
 		id::AtomID branch_atomid1;
@@ -224,7 +224,7 @@ BranchAngleOptimizer::optimize_angles(
 		kinematics::tree::AtomCOP branch_atom2( pose.atom_tree().atom(branch_atomid2).get_self_ptr() );
 
 		// switch main atoms (and branching atom chirality) if necessary for having a working stub
-		if (branch_atom1->input_stub_atom2() == main_atom2 && branch_atom2->input_stub_atom2() == main_atom2) {
+		if ( branch_atom1->input_stub_atom2() == main_atom2 && branch_atom2->input_stub_atom2() == main_atom2 ) {
 			id::AtomID temp_atomid(main_atomid1);
 			kinematics::tree::AtomCOP temp_atom(main_atom1);
 			main_atomid1 = main_atomid2;
@@ -240,11 +240,11 @@ BranchAngleOptimizer::optimize_angles(
 		}
 
 		// make sure both branching atom builds off main_atom1 & center_atom
-		if (!(branch_atom1->input_stub_atom1() == center_atom && branch_atom1->input_stub_atom2() == main_atom1 &&
-		      branch_atom2->input_stub_atom1() == center_atom && branch_atom2->input_stub_atom2() == main_atom1)) {
+		if ( !(branch_atom1->input_stub_atom1() == center_atom && branch_atom1->input_stub_atom2() == main_atom1 &&
+				branch_atom2->input_stub_atom1() == center_atom && branch_atom2->input_stub_atom2() == main_atom1) ) {
 
 			TR.Warning << "Warning: Branching atoms (" << branch_atomid1 << branch_atomid2 << ") for segment" << main_atomid1
-			           << center_atomid << main_atomid2 << "do not use segment atoms for input stub, ignoring" << std::endl;
+				<< center_atomid << main_atomid2 << "do not use segment atoms for input stub, ignoring" << std::endl;
 			return 0;
 		}
 
@@ -252,14 +252,14 @@ BranchAngleOptimizer::optimize_angles(
 		BranchParam2 const params(param2(pose, main_atomid1, center_atomid, main_atomid2, branch_atomid1, branch_atomid2));
 
 		std::map<BranchParam2, Size>::iterator coef_map_iter(coef_map2_.find(params));
-		if (coef_map_iter == coef_map2_.end()) {
+		if ( coef_map_iter == coef_map2_.end() ) {
 			undefined_coef2_.insert(params);
 			return 0;
 		} else {
 			coef_index = coef_map_iter->second;
 		}
 
-		if (optimize_for_minimum) m2_bond_angle = coef2_[coef_index].overall_theta0();
+		if ( optimize_for_minimum ) m2_bond_angle = coef2_[coef_index].overall_theta0();
 
 		// calculate the new torsion offsets and bond angles
 		Real b1_torsion_offset;
@@ -275,13 +275,13 @@ BranchAngleOptimizer::optimize_angles(
 		id::DOF_ID const branch_atom2_THETA(branch_atom2->id(), id::THETA);
 
 		// use slightly different behavior depending on how the torsion offsets are ordered
-		if (branch_atom1->input_stub_atom3() == main_atom2 && branch_atom2->input_stub_atom3() == branch_atom1) {
+		if ( branch_atom1->input_stub_atom3() == main_atom2 && branch_atom2->input_stub_atom3() == branch_atom1 ) {
 			pose.set_dof(branch_atom1_PHI, b1_torsion_offset);
 			pose.set_dof(branch_atom2_PHI, b2_torsion_offset - b1_torsion_offset);
 			// make sure there aren't any children after branch_atom2
 			// needs a const compatible next_child method
 			//runtime_assert(!center_atom->next_child(branch_atom2));
-		} else if (branch_atom1->input_stub_atom3() == branch_atom2 && branch_atom2->input_stub_atom3() == main_atom2) {
+		} else if ( branch_atom1->input_stub_atom3() == branch_atom2 && branch_atom2->input_stub_atom3() == main_atom2 ) {
 			pose.set_dof(branch_atom1_PHI, b1_torsion_offset - b2_torsion_offset);
 			pose.set_dof(branch_atom2_PHI, b2_torsion_offset);
 			// make sure there aren't any children after branch_atom1
@@ -289,8 +289,8 @@ BranchAngleOptimizer::optimize_angles(
 			//runtime_assert(!center_atom->next_child(branch_atom1));
 		} else {
 			TR.Warning << "Warning: Branching atoms (" << branch_atomid1 << branch_atomid2 << ") for segment" << main_atomid1
-			           << center_atomid << main_atomid2 << "do not have main atom 2 as their direct descendent, ignoring"
-				         << std::endl;
+				<< center_atomid << main_atomid2 << "do not have main atom 2 as their direct descendent, ignoring"
+				<< std::endl;
 			return 0;
 		}
 
@@ -300,7 +300,7 @@ BranchAngleOptimizer::optimize_angles(
 	} else {
 
 		TR << "Warning: Segment" << main_atomid1 << center_atomid << main_atomid2
-		   << "does not have 1 or 2 branching atoms, ignoring" << std::endl;
+			<< "does not have 1 or 2 branching atoms, ignoring" << std::endl;
 	}
 
 	return coef_index;
@@ -333,7 +333,7 @@ BranchAngleOptimizer::overall_params(
 	// count the number of atoms bonded to the central atom
 	Size num_neighbors(pose.residue(center_atomid.rsd()).n_bonded_neighbor_all_res(center_atomid.atomno()));
 
-	if (num_neighbors == 3) {
+	if ( num_neighbors == 3 ) {
 
 		// lookup the branching atom
 		id::AtomID branch_atomid1;
@@ -344,7 +344,7 @@ BranchAngleOptimizer::overall_params(
 		kinematics::tree::AtomCOP const branch_atom1( pose.atom_tree().atom(branch_atomid1).get_self_ptr() );
 
 		// switch main atoms if necessary for having a working stub
-		if (branch_atom1->input_stub_atom2() == main_atom2) {
+		if ( branch_atom1->input_stub_atom2() == main_atom2 ) {
 			id::AtomID temp_atomid(main_atomid1);
 			main_atomid1 = main_atomid2;
 			main_atomid2 = temp_atomid;
@@ -354,7 +354,7 @@ BranchAngleOptimizer::overall_params(
 		BranchParam1 const params(param1(pose, main_atomid1, center_atomid, main_atomid2, branch_atomid1));
 
 		std::map<BranchParam1, Size>::iterator coef_map_iter(coef_map1_.find(params));
-		if (coef_map_iter == coef_map1_.end()) {
+		if ( coef_map_iter == coef_map1_.end() ) {
 			undefined_coef1_.insert(params);
 			Ktheta = params.m1_m2_Ktheta();
 			theta0 = params.m1_m2_theta0();
@@ -366,7 +366,7 @@ BranchAngleOptimizer::overall_params(
 			energy0 = coef1_[coef_index].overall_energy0();
 		}
 
-	} else if (num_neighbors == 4) {
+	} else if ( num_neighbors == 4 ) {
 
 		// lookup the branching atoms
 		id::AtomID branch_atomid1;
@@ -379,7 +379,7 @@ BranchAngleOptimizer::overall_params(
 		kinematics::tree::AtomCOP branch_atom2( pose.atom_tree().atom(branch_atomid2).get_self_ptr() );
 
 		// switch main atoms (and branching atom chirality) if necessary for having a working stub
-		if (branch_atom1->input_stub_atom2() == main_atom2 && branch_atom2->input_stub_atom2() == main_atom2) {
+		if ( branch_atom1->input_stub_atom2() == main_atom2 && branch_atom2->input_stub_atom2() == main_atom2 ) {
 			id::AtomID temp_atomid(main_atomid1);
 			main_atomid1 = main_atomid2;
 			main_atomid2 = temp_atomid;
@@ -392,7 +392,7 @@ BranchAngleOptimizer::overall_params(
 		BranchParam2 const params(param2(pose, main_atomid1, center_atomid, main_atomid2, branch_atomid1, branch_atomid2));
 
 		std::map<BranchParam2, Size>::iterator coef_map_iter(coef_map2_.find(params));
-		if (coef_map_iter == coef_map2_.end()) {
+		if ( coef_map_iter == coef_map2_.end() ) {
 			undefined_coef2_.insert(params);
 			Ktheta = params.m1_m2_Ktheta();
 			theta0 = params.m1_m2_theta0();
@@ -407,7 +407,7 @@ BranchAngleOptimizer::overall_params(
 	} else {
 
 		TR << "Warning: Segment" << main_atomid1 << center_atomid << main_atomid2
-		   << "does not have 1 or 2 branching atoms, ignoring" << std::endl;
+			<< "does not have 1 or 2 branching atoms, ignoring" << std::endl;
 	}
 
 	return coef_index;
@@ -424,7 +424,7 @@ BranchAngleOptimizer::param1(
 	id::AtomID const & branch_atomid1
 ) const
 {
-	if (bond_angle_residue_type_param_set_) {
+	if ( bond_angle_residue_type_param_set_ ) {
 
 		Real m1_m2_Ktheta, m1_m2_theta0, m1_b1_Ktheta, m1_b1_theta0, m2_b1_Ktheta, m2_b1_theta0;
 
@@ -439,7 +439,7 @@ BranchAngleOptimizer::param1(
 		);
 
 		return BranchParam1(m1_m2_Ktheta, m1_m2_theta0, m1_b1_Ktheta, m1_b1_theta0, m2_b1_Ktheta, m2_b1_theta0,
-		                    tolerance_);
+			tolerance_);
 	}
 
 	int const main_mmtype1(pose.residue_type(main_atomid1.rsd()).atom(main_atomid1.atomno()).mm_atom_type_index());
@@ -452,9 +452,9 @@ BranchAngleOptimizer::param1(
 	mm_bondangle_library_citer_pair m2_b1(mm_bondangle_library_.lookup(main_mmtype2, center_mmtype, branch_mmtype1));
 
 	BranchParam1 const params((m1_m2.first->second).key1(), (m1_m2.first->second).key2(),
-	                          (m1_b1.first->second).key1(), (m1_b1.first->second).key2(),
-	                          (m2_b1.first->second).key1(), (m2_b1.first->second).key2(),
-														tolerance_);
+		(m1_b1.first->second).key1(), (m1_b1.first->second).key2(),
+		(m2_b1.first->second).key1(), (m2_b1.first->second).key2(),
+		tolerance_);
 
 	return params;
 }
@@ -471,10 +471,10 @@ BranchAngleOptimizer::param2(
 	id::AtomID const & branch_atomid2
 ) const
 {
-	if (bond_angle_residue_type_param_set_) {
+	if ( bond_angle_residue_type_param_set_ ) {
 
 		Real m1_m2_Ktheta, m1_m2_theta0, m1_b1_Ktheta, m1_b1_theta0, m2_b1_Ktheta, m2_b1_theta0,
-		     m1_b2_Ktheta, m1_b2_theta0, m2_b2_Ktheta, m2_b2_theta0, b1_b2_Ktheta, b1_b2_theta0;
+			m1_b2_Ktheta, m1_b2_theta0, m2_b2_Ktheta, m2_b2_theta0, b1_b2_Ktheta, b1_b2_theta0;
 
 		bond_angle_residue_type_param_set_->lookup(
 			pose.conformation(), main_atomid1, center_atomid, main_atomid2, m1_m2_Ktheta, m1_m2_theta0
@@ -496,8 +496,8 @@ BranchAngleOptimizer::param2(
 		);
 
 		return BranchParam2(m1_m2_Ktheta, m1_m2_theta0, m1_b1_Ktheta, m1_b1_theta0, m2_b1_Ktheta, m2_b1_theta0,
-		                    m1_b2_Ktheta, m1_b2_theta0, m2_b2_Ktheta, m2_b2_theta0, b1_b2_Ktheta, b1_b2_theta0,
-												tolerance_);
+			m1_b2_Ktheta, m1_b2_theta0, m2_b2_Ktheta, m2_b2_theta0, b1_b2_Ktheta, b1_b2_theta0,
+			tolerance_);
 	}
 
 	int const main_mmtype1(pose.residue_type(main_atomid1.rsd()).atom(main_atomid1.atomno()).mm_atom_type_index());
@@ -514,12 +514,12 @@ BranchAngleOptimizer::param2(
 	mm_bondangle_library_citer_pair b1_b2(mm_bondangle_library_.lookup(branch_mmtype1, center_mmtype, branch_mmtype2));
 
 	BranchParam2 const params((m1_m2.first->second).key1(), (m1_m2.first->second).key2(),
-	                          (m1_b1.first->second).key1(), (m1_b1.first->second).key2(),
-	                          (m2_b1.first->second).key1(), (m2_b1.first->second).key2(),
-														(m1_b2.first->second).key1(), (m1_b2.first->second).key2(),
-	                          (m2_b2.first->second).key1(), (m2_b2.first->second).key2(),
-	                          (b1_b2.first->second).key1(), (b1_b2.first->second).key2(),
-														tolerance_);
+		(m1_b1.first->second).key1(), (m1_b1.first->second).key2(),
+		(m2_b1.first->second).key1(), (m2_b1.first->second).key2(),
+		(m1_b2.first->second).key1(), (m1_b2.first->second).key2(),
+		(m2_b2.first->second).key1(), (m2_b2.first->second).key2(),
+		(b1_b2.first->second).key1(), (b1_b2.first->second).key2(),
+		tolerance_);
 
 	return params;
 }
@@ -573,11 +573,11 @@ BranchAngleOptimizer::read_database()
 void
 BranchAngleOptimizer::write_database() const
 {
-	if (undefined_coef1_.size()) {
+	if ( undefined_coef1_.size() ) {
 		write_undefined_coef1();
 		TR << "Wrote " << undefined_coef1_.size() << " undefined single branch parameters to the database" << std::endl;
 	}
-	if (undefined_coef2_.size()) {
+	if ( undefined_coef2_.size() ) {
 		write_undefined_coef2();
 		TR << "Wrote " << undefined_coef2_.size() << " undefined double branch parameters to the database" << std::endl;
 	}
@@ -616,12 +616,12 @@ BranchAngleOptimizer::read_coef1(
 	Real b1_bond_angle_B;
 	Real b1_bond_angle_C;
 
-	while (in >> m1_m2_Ktheta >> m1_m2_theta0
-		        >> m1_b1_Ktheta >> m1_b1_theta0
-		        >> m2_b1_Ktheta >> m2_b1_theta0
-		        >> overall_Ktheta >> overall_theta0 >> overall_energy0
-		        >> b1_torsion_offset_A >> b1_torsion_offset_B >> b1_torsion_offset_C
-		        >> b1_bond_angle_A >> b1_bond_angle_B >> b1_bond_angle_C) {
+	while ( in >> m1_m2_Ktheta >> m1_m2_theta0
+			>> m1_b1_Ktheta >> m1_b1_theta0
+			>> m2_b1_Ktheta >> m2_b1_theta0
+			>> overall_Ktheta >> overall_theta0 >> overall_energy0
+			>> b1_torsion_offset_A >> b1_torsion_offset_B >> b1_torsion_offset_C
+			>> b1_bond_angle_A >> b1_bond_angle_B >> b1_bond_angle_C ) {
 
 		numeric::conversions::to_radians(m1_m2_theta0);
 		numeric::conversions::to_radians(m1_b1_theta0);
@@ -629,17 +629,17 @@ BranchAngleOptimizer::read_coef1(
 		numeric::conversions::to_radians(overall_theta0);
 
 		BranchParam1 const params(m1_m2_Ktheta, m1_m2_theta0,
-															m1_b1_Ktheta, m1_b1_theta0,
-															m2_b1_Ktheta, m2_b1_theta0,
-															tolerance_);
+			m1_b1_Ktheta, m1_b1_theta0,
+			m2_b1_Ktheta, m2_b1_theta0,
+			tolerance_);
 
 		BranchCoef1 const coefs(overall_Ktheta, overall_theta0, overall_energy0,
-		                        b1_torsion_offset_A, b1_torsion_offset_B, b1_torsion_offset_C,
-		                        b1_bond_angle_A, b1_bond_angle_B, b1_bond_angle_C);
+			b1_torsion_offset_A, b1_torsion_offset_B, b1_torsion_offset_C,
+			b1_bond_angle_A, b1_bond_angle_B, b1_bond_angle_C);
 
 		std::map<BranchParam1, core::Size>::iterator iter(coef_map1_.find(params));
 
-		if (iter == coef_map1_.end()) {
+		if ( iter == coef_map1_.end() ) {
 			// if the parameter key doesn't exist, add a new coefficient record and map entry
 			coef1_.push_back(coefs);
 			coef_map1_[params] = coef1_.size();
@@ -659,7 +659,7 @@ BranchAngleOptimizer::read_coef1(
 {
 	utility::io::izstream infile(filename);
 
-	if (infile) {
+	if ( infile ) {
 		read_coef1(infile);
 		infile.close();
 		return true;
@@ -737,17 +737,17 @@ BranchAngleOptimizer::read_coef2(
 	Real b2_bond_angle_B;
 	Real b2_bond_angle_C;
 
-	while (in >> m1_m2_Ktheta >> m1_m2_theta0
-		        >> m1_b1_Ktheta >> m1_b1_theta0
-		        >> m2_b1_Ktheta >> m2_b1_theta0
-		        >> m1_b2_Ktheta >> m1_b2_theta0
-		        >> m2_b2_Ktheta >> m2_b2_theta0
-		        >> b1_b2_Ktheta >> b1_b2_theta0
-		        >> overall_Ktheta >> overall_theta0 >> overall_energy0
-		        >> b1_torsion_offset_A >> b1_torsion_offset_B >> b1_torsion_offset_C
-		        >> b1_bond_angle_A >> b1_bond_angle_B >> b1_bond_angle_C
-		        >> b2_torsion_offset_A >> b2_torsion_offset_B >> b2_torsion_offset_C
-		        >> b2_bond_angle_A >> b2_bond_angle_B >> b2_bond_angle_C) {
+	while ( in >> m1_m2_Ktheta >> m1_m2_theta0
+			>> m1_b1_Ktheta >> m1_b1_theta0
+			>> m2_b1_Ktheta >> m2_b1_theta0
+			>> m1_b2_Ktheta >> m1_b2_theta0
+			>> m2_b2_Ktheta >> m2_b2_theta0
+			>> b1_b2_Ktheta >> b1_b2_theta0
+			>> overall_Ktheta >> overall_theta0 >> overall_energy0
+			>> b1_torsion_offset_A >> b1_torsion_offset_B >> b1_torsion_offset_C
+			>> b1_bond_angle_A >> b1_bond_angle_B >> b1_bond_angle_C
+			>> b2_torsion_offset_A >> b2_torsion_offset_B >> b2_torsion_offset_C
+			>> b2_bond_angle_A >> b2_bond_angle_B >> b2_bond_angle_C ) {
 
 		numeric::conversions::to_radians(m1_m2_theta0);
 		numeric::conversions::to_radians(m1_b1_theta0);
@@ -758,22 +758,22 @@ BranchAngleOptimizer::read_coef2(
 		numeric::conversions::to_radians(overall_theta0);
 
 		BranchParam2 const params(m1_m2_Ktheta, m1_m2_theta0,
-															m1_b1_Ktheta, m1_b1_theta0,
-															m2_b1_Ktheta, m2_b1_theta0,
-															m1_b2_Ktheta, m1_b2_theta0,
-															m2_b2_Ktheta, m2_b2_theta0,
-															b1_b2_Ktheta, b1_b2_theta0,
-															tolerance_);
+			m1_b1_Ktheta, m1_b1_theta0,
+			m2_b1_Ktheta, m2_b1_theta0,
+			m1_b2_Ktheta, m1_b2_theta0,
+			m2_b2_Ktheta, m2_b2_theta0,
+			b1_b2_Ktheta, b1_b2_theta0,
+			tolerance_);
 
 		BranchCoef2 const coefs(overall_Ktheta, overall_theta0, overall_energy0,
-		                        b1_torsion_offset_A, b1_torsion_offset_B, b1_torsion_offset_C,
-		                        b1_bond_angle_A, b1_bond_angle_B, b1_bond_angle_C,
-		                        b2_torsion_offset_A, b2_torsion_offset_B, b2_torsion_offset_C,
-		                        b2_bond_angle_A, b2_bond_angle_B, b2_bond_angle_C);
+			b1_torsion_offset_A, b1_torsion_offset_B, b1_torsion_offset_C,
+			b1_bond_angle_A, b1_bond_angle_B, b1_bond_angle_C,
+			b2_torsion_offset_A, b2_torsion_offset_B, b2_torsion_offset_C,
+			b2_bond_angle_A, b2_bond_angle_B, b2_bond_angle_C);
 
 		std::map<BranchParam2, core::Size>::iterator iter(coef_map2_.find(params));
 
-		if (iter == coef_map2_.end()) {
+		if ( iter == coef_map2_.end() ) {
 			// if the parameter key doesn't exist, add a new coefficient record and map entry
 			coef2_.push_back(coefs);
 			coef_map2_[params] = coef2_.size();
@@ -793,7 +793,7 @@ BranchAngleOptimizer::read_coef2(
 {
 	utility::io::izstream infile(filename);
 
-	if (infile) {
+	if ( infile ) {
 		read_coef2(infile);
 		infile.close();
 		return true;
@@ -839,18 +839,18 @@ BranchAngleOptimizer::read_undefined_coef1(
 	Real m2_b1_Ktheta;
 	Real m2_b1_theta0;
 
-	while (in >> m1_m2_Ktheta >> m1_m2_theta0
-		        >> m1_b1_Ktheta >> m1_b1_theta0
-		        >> m2_b1_Ktheta >> m2_b1_theta0) {
+	while ( in >> m1_m2_Ktheta >> m1_m2_theta0
+			>> m1_b1_Ktheta >> m1_b1_theta0
+			>> m2_b1_Ktheta >> m2_b1_theta0 ) {
 
 		numeric::conversions::to_radians(m1_m2_theta0);
 		numeric::conversions::to_radians(m1_b1_theta0);
 		numeric::conversions::to_radians(m2_b1_theta0);
 
 		BranchParam1 const params(m1_m2_Ktheta, m1_m2_theta0,
-															m1_b1_Ktheta, m1_b1_theta0,
-															m2_b1_Ktheta, m2_b1_theta0,
-															tolerance_);
+			m1_b1_Ktheta, m1_b1_theta0,
+			m2_b1_Ktheta, m2_b1_theta0,
+			tolerance_);
 
 		undefined_coef1_.insert(params);
 	}
@@ -865,7 +865,7 @@ BranchAngleOptimizer::read_undefined_coef1(
 {
 	utility::io::izstream infile(filename);
 
-	if (infile) {
+	if ( infile ) {
 		read_undefined_coef1(infile);
 		infile.close();
 		return true;
@@ -897,7 +897,7 @@ BranchAngleOptimizer::write_undefined_coef1(
 {
 	std::streamsize oldprecision = out.precision();
 	out << std::setprecision(16);
-	for (std::set<BranchParam1>::const_iterator iter(undefined_coef1_.begin()); iter != undefined_coef1_.end(); ++iter) {
+	for ( std::set<BranchParam1>::const_iterator iter(undefined_coef1_.begin()); iter != undefined_coef1_.end(); ++iter ) {
 		BranchParam1 const & params(*iter);
 		out << params.m1_m2_Ktheta() << " " << numeric::conversions::degrees(params.m1_m2_theta0()) << std::endl;
 		out << params.m1_b1_Ktheta() << " " << numeric::conversions::degrees(params.m1_b1_theta0()) << std::endl;
@@ -916,7 +916,7 @@ BranchAngleOptimizer::write_undefined_coef1(
 {
 	utility::io::ozstream outfile(filename);
 
-	if (outfile) {
+	if ( outfile ) {
 		write_undefined_coef1(outfile);
 		outfile.close();
 		return true;
@@ -930,7 +930,7 @@ BranchAngleOptimizer::write_undefined_coef1(
 bool
 BranchAngleOptimizer::write_undefined_coef1() const
 {
-	if (undefined_coef1_.size()) {
+	if ( undefined_coef1_.size() ) {
 		return write_undefined_coef1(basic::database::full_name("branch_angle/branch_angle_1_undefined.txt", false));
 	}
 
@@ -964,12 +964,12 @@ BranchAngleOptimizer::read_undefined_coef2(
 	Real b1_b2_Ktheta;
 	Real b1_b2_theta0;
 
-	while (in >> m1_m2_Ktheta >> m1_m2_theta0
-		        >> m1_b1_Ktheta >> m1_b1_theta0
-		        >> m2_b1_Ktheta >> m2_b1_theta0
-		        >> m1_b2_Ktheta >> m1_b2_theta0
-		        >> m2_b2_Ktheta >> m2_b2_theta0
-		        >> b1_b2_Ktheta >> b1_b2_theta0) {
+	while ( in >> m1_m2_Ktheta >> m1_m2_theta0
+			>> m1_b1_Ktheta >> m1_b1_theta0
+			>> m2_b1_Ktheta >> m2_b1_theta0
+			>> m1_b2_Ktheta >> m1_b2_theta0
+			>> m2_b2_Ktheta >> m2_b2_theta0
+			>> b1_b2_Ktheta >> b1_b2_theta0 ) {
 
 		numeric::conversions::to_radians(m1_m2_theta0);
 		numeric::conversions::to_radians(m1_b1_theta0);
@@ -979,12 +979,12 @@ BranchAngleOptimizer::read_undefined_coef2(
 		numeric::conversions::to_radians(b1_b2_theta0);
 
 		BranchParam2 const params(m1_m2_Ktheta, m1_m2_theta0,
-															m1_b1_Ktheta, m1_b1_theta0,
-															m2_b1_Ktheta, m2_b1_theta0,
-															m1_b2_Ktheta, m1_b2_theta0,
-															m2_b2_Ktheta, m2_b2_theta0,
-															b1_b2_Ktheta, b1_b2_theta0,
-															tolerance_);
+			m1_b1_Ktheta, m1_b1_theta0,
+			m2_b1_Ktheta, m2_b1_theta0,
+			m1_b2_Ktheta, m1_b2_theta0,
+			m2_b2_Ktheta, m2_b2_theta0,
+			b1_b2_Ktheta, b1_b2_theta0,
+			tolerance_);
 
 		undefined_coef2_.insert(params);
 	}
@@ -999,7 +999,7 @@ BranchAngleOptimizer::read_undefined_coef2(
 {
 	utility::io::izstream infile(filename);
 
-	if (infile) {
+	if ( infile ) {
 		read_undefined_coef2(infile);
 		infile.close();
 		return true;
@@ -1034,7 +1034,7 @@ BranchAngleOptimizer::write_undefined_coef2(
 {
 	std::streamsize oldprecision = out.precision();
 	out << std::setprecision(16);
-	for (std::set<BranchParam2>::const_iterator iter(undefined_coef2_.begin()); iter != undefined_coef2_.end(); ++iter) {
+	for ( std::set<BranchParam2>::const_iterator iter(undefined_coef2_.begin()); iter != undefined_coef2_.end(); ++iter ) {
 		BranchParam2 const & params(*iter);
 		out << params.m1_m2_Ktheta() << " " << numeric::conversions::degrees(params.m1_m2_theta0()) << std::endl;
 		out << params.m1_b1_Ktheta() << " " << numeric::conversions::degrees(params.m1_b1_theta0()) << std::endl;
@@ -1056,7 +1056,7 @@ BranchAngleOptimizer::write_undefined_coef2(
 {
 	utility::io::ozstream outfile(filename);
 
-	if (outfile) {
+	if ( outfile ) {
 		write_undefined_coef2(outfile);
 		outfile.close();
 		return true;
@@ -1070,7 +1070,7 @@ BranchAngleOptimizer::write_undefined_coef2(
 bool
 BranchAngleOptimizer::write_undefined_coef2() const
 {
-	if (undefined_coef2_.size()) {
+	if ( undefined_coef2_.size() ) {
 		return write_undefined_coef2(basic::database::full_name("branch_angle/branch_angle_2_undefined.txt", false));
 	}
 
@@ -1095,11 +1095,11 @@ branching_atomid1(
 	bool found_main_atomid1(false);
 	bool found_main_atomid2(false);
 
-	for (Size i = 1; i <= 3; ++i) {
+	for ( Size i = 1; i <= 3; ++i ) {
 		id::AtomID & atomid(neighbors[i]);
-		if (atomid == main_atomid1) {
+		if ( atomid == main_atomid1 ) {
 			found_main_atomid1 = true;
-		} else if (atomid == main_atomid2) {
+		} else if ( atomid == main_atomid2 ) {
 			found_main_atomid2 = true;
 		} else {
 			branch_atomid1 = atomid;
@@ -1134,13 +1134,13 @@ branching_atomids2(
 	bool found_main_atomid2(false);
 	bool found_branch_atomid1(false);
 
-	for (Size i = 1; i <= 4; ++i) {
+	for ( Size i = 1; i <= 4; ++i ) {
 		id::AtomID & atomid(neighbors[i]);
-		if (atomid == main_atomid1) {
+		if ( atomid == main_atomid1 ) {
 			found_main_atomid1 = true;
-		} else if (atomid == main_atomid2) {
+		} else if ( atomid == main_atomid2 ) {
 			found_main_atomid2 = true;
-		} else if (!found_branch_atomid1) {
+		} else if ( !found_branch_atomid1 ) {
 			branch_atomid1 = atomid;
 			found_branch_atomid1 = true;
 		} else {
@@ -1152,14 +1152,14 @@ branching_atomids2(
 
 	// get dihedral offsets of the two branching atoms adjusted to [0, 2*pi)
 	Real dihedral1(numeric::dihedral_radians(pose.xyz(main_atomid2), pose.xyz(main_atomid1), pose.xyz(center_atomid),
-	                                         pose.xyz(branch_atomid1)));
-	if (dihedral1 < 0) dihedral1 += pi_2;
+		pose.xyz(branch_atomid1)));
+	if ( dihedral1 < 0 ) dihedral1 += pi_2;
 	Real dihedral2(numeric::dihedral_radians(pose.xyz(main_atomid2), pose.xyz(main_atomid1), pose.xyz(center_atomid),
-	                                         pose.xyz(branch_atomid2)));
-	if (dihedral2 < 0) dihedral2 += pi_2;
+		pose.xyz(branch_atomid2)));
+	if ( dihedral2 < 0 ) dihedral2 += pi_2;
 
 	// switch the atoms if their dihedral offsets are in the wrong order
-	if (dihedral2 < dihedral1) {
+	if ( dihedral2 < dihedral1 ) {
 		id::AtomID temp_atomid(branch_atomid1);
 		branch_atomid1 = branch_atomid2;
 		branch_atomid2 = temp_atomid;
@@ -1191,11 +1191,11 @@ get_branching_atoms2(
 	branch_atom2 = 0;
 
 	// iterate through the bonded atoms and find the two siblings
-	for (Size i = 1; i <= 3; ++i) {
+	for ( Size i = 1; i <= 3; ++i ) {
 		kinematics::tree::AtomCOP const sibling(parent->get_nonjump_atom(i));
 		TR << sibling->id() << std::endl;
-		if (sibling != main_atom2) {
-			if (!branch_atom1) {
+		if ( sibling != main_atom2 ) {
+			if ( !branch_atom1 ) {
 				branch_atom1 = sibling;
 			} else {
 				branch_atom2 = sibling;
@@ -1208,12 +1208,12 @@ get_branching_atoms2(
 
 	// get dihedral offsets of the two branching atoms adjusted to [0, 2*pi)
 	Real dihedral1(parent->dihedral_between_bonded_children(*main_atom2, *branch_atom1));
-	if (dihedral1 < 0) dihedral1 += pi_2;
+	if ( dihedral1 < 0 ) dihedral1 += pi_2;
 	Real dihedral2(parent->dihedral_between_bonded_children(*main_atom2, *branch_atom2));
-	if (dihedral2 < 0) dihedral2 += pi_2;
+	if ( dihedral2 < 0 ) dihedral2 += pi_2;
 
 	// switch the atoms if their dihedral offsets are in the wrong order
-	if (dihedral2 < dihedral1) {
+	if ( dihedral2 < dihedral1 ) {
 		kinematics::tree::AtomCOP const temp_atom(branch_atom1);
 		branch_atom1 = branch_atom2;
 		branch_atom2 = temp_atom;

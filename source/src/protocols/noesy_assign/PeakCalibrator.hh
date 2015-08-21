@@ -61,77 +61,77 @@ public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~PeakCalibrator();
 
-  typedef std::bitset< MAX_TYPE > TypeCumulator;
-  PeakCalibrator( int target_sign );
+	typedef std::bitset< MAX_TYPE > TypeCumulator;
+	PeakCalibrator( int target_sign );
 
-  virtual PeakCalibratorOP fresh_instance() = 0;
+	virtual PeakCalibratorOP fresh_instance() = 0;
 
-  void reset_statistics();
-  void collect_target_statistics( core::Real, TypeCumulator const& );
-  bool interpolate_on_statistics();
+	void reset_statistics();
+	void collect_target_statistics( core::Real, TypeCumulator const& );
+	bool interpolate_on_statistics();
 
-  virtual void collect_upperbound_statistics( core::Size /*peak*/, TypeCumulator const& /*types*/ ) = 0;
-  //  virtual void show_statistics( std::ostream& );
-  virtual void init_calibrator() {}; //to create constraints for example
+	virtual void collect_upperbound_statistics( core::Size /*peak*/, TypeCumulator const& /*types*/ ) = 0;
+	//  virtual void show_statistics( std::ostream& );
+	virtual void init_calibrator() {}; //to create constraints for example
 
-  core::Real operator() ( CALIBRATION_ATOM_TYPE atom ) const { return calibration_constant( atom ); }
-  core::Real calibration_constant( CALIBRATION_ATOM_TYPE type ) const { return calibration_constant_[ type ]; };
-  //  void interpolate( PeakCalibrator const& cal1, PeakCalibrator const& cal2 );
+	core::Real operator() ( CALIBRATION_ATOM_TYPE atom ) const { return calibration_constant( atom ); }
+	core::Real calibration_constant( CALIBRATION_ATOM_TYPE type ) const { return calibration_constant_[ type ]; };
+	//  void interpolate( PeakCalibrator const& cal1, PeakCalibrator const& cal2 );
 
-  void interpolate_too_small( core::Size type );
-  void interpolate_too_big( core::Size type );
+	void interpolate_too_small( core::Size type );
+	void interpolate_too_big( core::Size type );
 
-  void reset_calibration_constants();
+	void reset_calibration_constants();
 
-  void add_peak( CrossPeakOP peak );
-  void set_new_upper_bounds();
+	void add_peak( CrossPeakOP peak );
+	void set_new_upper_bounds();
 
-  void do_calibration();
+	void do_calibration();
 
-  void set_target_and_tolerance( core::Real target, core::Real tolerance );
+	void set_target_and_tolerance( core::Real target, core::Real tolerance );
 
-  static CALIBRATION_ATOM_TYPE atom_type( core::id::NamedAtomID const& atom, core::chemical::AA aa );
+	static CALIBRATION_ATOM_TYPE atom_type( core::id::NamedAtomID const& atom, core::chemical::AA aa );
 
-  virtual void eliminate_violated_constraints() {};
+	virtual void eliminate_violated_constraints() {};
 
 protected:
-  utility::vector1< CrossPeakOP > const& peaks() { return peaks_; }
+	utility::vector1< CrossPeakOP > const& peaks() { return peaks_; }
 
 private:
-  core::Size max_type_direct_;
-  core::Real accumulated_target_[ MAX_TYPE ];
-  typedef std::list< core::Real > TargetValues;
-  TargetValues target_values_[ MAX_TYPE ];
-  core::Size accumulated_count_[ MAX_TYPE ];
+	core::Size max_type_direct_;
+	core::Real accumulated_target_[ MAX_TYPE ];
+	typedef std::list< core::Real > TargetValues;
+	TargetValues target_values_[ MAX_TYPE ];
+	core::Size accumulated_count_[ MAX_TYPE ];
 
-  core::Real calibration_constant_[ MAX_TYPE ];
-  core::Real calibration_constant_lows_[ MAX_TYPE ];
-  core::Real calibration_constant_highs_[ MAX_TYPE ];
-  core::Size max_type_;
-  //  core::Real Q_backbone_;
-  //core::Real Q_methyl_;
-  //core::Real Q_nonmethyl_sidechain_;
-  //core::Real Q_nonmethyl_beta_;
-  utility::vector1< CrossPeakOP > peaks_;
+	core::Real calibration_constant_[ MAX_TYPE ];
+	core::Real calibration_constant_lows_[ MAX_TYPE ];
+	core::Real calibration_constant_highs_[ MAX_TYPE ];
+	core::Size max_type_;
+	//  core::Real Q_backbone_;
+	//core::Real Q_methyl_;
+	//core::Real Q_nonmethyl_sidechain_;
+	//core::Real Q_nonmethyl_beta_;
+	utility::vector1< CrossPeakOP > peaks_;
 
-  core::Real tolerance_;
-  core::Real target_;
-  int target_sign_; //false --> >tolerance constants too big  / true --> >tolerance if constants too small
+	core::Real tolerance_;
+	core::Real target_;
+	int target_sign_; //false --> >tolerance constants too big  / true --> >tolerance if constants too small
 };
 
 
 class PeakCalibratorMap : public utility::pointer::ReferenceCount {
-  typedef std::map < std::string, PeakCalibratorOP > CalibratorMap;
+	typedef std::map < std::string, PeakCalibratorOP > CalibratorMap;
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~PeakCalibratorMap();
-  PeakCalibratorMap( CrossPeakList&, PeakCalibratorOP );
-  void set_new_upper_bounds();
-  void do_calibration();
-  void set_target_and_tolerance( core::Real target, core::Real tolerance );
-  void eliminate_violated_constraints();
+	PeakCalibratorMap( CrossPeakList&, PeakCalibratorOP );
+	void set_new_upper_bounds();
+	void do_calibration();
+	void set_target_and_tolerance( core::Real target, core::Real tolerance );
+	void eliminate_violated_constraints();
 private:
-  CalibratorMap calibrators_;
+	CalibratorMap calibrators_;
 };
 
 

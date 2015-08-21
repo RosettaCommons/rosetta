@@ -26,26 +26,26 @@ namespace sparta {
 
 class GDB
 {
-  std::string ClassType;
-  bool plain_text; //only print the data matrix
-  char buf[5000];
+	std::string ClassType;
+	bool plain_text; //only print the data matrix
+	char buf[5000];
 
 public:
 
-  std::string GDBfileName;
+	std::string GDBfileName;
 
-  std::string FORMAT_str, VARS_str;
-  int VarsNumber;
-  int firstResID;
+	std::string FORMAT_str, VARS_str;
+	int VarsNumber;
+	int firstResID;
 	typedef boost::unordered_map< std::string, std::string > GDB_Entry;
-  GDB_Entry EMPTY;
+	GDB_Entry EMPTY;
 
 	typedef std::map<int, std::string> ResidueList;
 	ResidueList residList;
 
-  typedef utility::vector0< std::string > StringList;
+	typedef utility::vector0< std::string > StringList;
 	StringList REMARKS;
-  StringList DATA;
+	StringList DATA;
 	typedef std::map<int, std::string> VarList;
 	typedef std::map<int, std::string> FormatList;
 	VarList VARS;
@@ -54,55 +54,55 @@ public:
 	typedef std::map< int, GDB_Entry > EntryList;
 	EntryList Entries;
 
-  GDB();
-  GDB(const std::string& fileName);
+	GDB();
+	GDB(const std::string& fileName);
 
-  void loadGDB(const std::string &fileName);
-  void saveGDB(const std::string &fileName);
+	void loadGDB(const std::string &fileName);
+	void saveGDB(const std::string &fileName);
 
-  void showGDB(std::ostream& os);
+	void showGDB(std::ostream& os);
 
-  //add one VAR with given FORMAT
-  void addVAR(const std::string &VAR_Name, const std::string &FORMAT_Name);
-  //re-set one VAR with given FORMAT
-  void setVAR(int index, const std::string &VAR_Name, const std::string &FORMAT_Name);
+	//add one VAR with given FORMAT
+	void addVAR(const std::string &VAR_Name, const std::string &FORMAT_Name);
+	//re-set one VAR with given FORMAT
+	void setVAR(int index, const std::string &VAR_Name, const std::string &FORMAT_Name);
 
-  //set the DATA with 'DataVal'
-  void setData(const std::string &DataName, const std::string &DataVal);
-  //get the DATA value with 'DataName'
-  std::string getData(const std::string &DataName);
-
-
-  GDB_Entry getEntry(int number);
-  GDB_Entry getEntry(const std::string &VName, const std::string &VVal, int index);
-  GDB_Entry getEntry(const std::string &VName1, const std::string &VVal1, const std::string &VName2, const std::string &VVal2, int index);
-  //re-set the 'index'-th data entry with new 'VarVal' for given 'VarName'
-  void setEntry(int index, const std::string &VarName, const std::string &VarVal);
-  //add one data entry to the end of current Entries
-  void addEntry(const std::string &VarName, const std::string &VarVal);
+	//set the DATA with 'DataVal'
+	void setData(const std::string &DataName, const std::string &DataVal);
+	//get the DATA value with 'DataName'
+	std::string getData(const std::string &DataName);
 
 
-  void addRemark(const std::string &str); // add one REMARK
+	GDB_Entry getEntry(int number);
+	GDB_Entry getEntry(const std::string &VName, const std::string &VVal, int index);
+	GDB_Entry getEntry(const std::string &VName1, const std::string &VVal1, const std::string &VName2, const std::string &VVal2, int index);
+	//re-set the 'index'-th data entry with new 'VarVal' for given 'VarName'
+	void setEntry(int index, const std::string &VarName, const std::string &VarVal);
+	//add one data entry to the end of current Entries
+	void addEntry(const std::string &VarName, const std::string &VarVal);
 
-  std::string getResidName(int rNum);
-  int getEntryCount(); // return size of current entries
 
-  void presetClass(const std::string &ClassName); // pre-set the VARS and FORMAT
+	void addRemark(const std::string &str); // add one REMARK
 
-  bool checkFormat(const std::string& f); // check if f is a valid FORMAT
+	std::string getResidName(int rNum);
+	int getEntryCount(); // return size of current entries
 
-  bool isVarFloat(int index);
-  bool isVarInt(int index);
-  bool isVarString(int index);
+	void presetClass(const std::string &ClassName); // pre-set the VARS and FORMAT
 
-  bool isVarFloat(const std::string &VarName);
-  bool isVarInt(const std::string &VarName);
-  bool isVarString(const std::string &VarName);
+	bool checkFormat(const std::string& f); // check if f is a valid FORMAT
 
-  void VARS_str_parser(const std::string &str);
-  void FORMAT_str_parser(const std::string &str);
+	bool isVarFloat(int index);
+	bool isVarInt(int index);
+	bool isVarString(int index);
 
-  void set_plaintext();
+	bool isVarFloat(const std::string &VarName);
+	bool isVarInt(const std::string &VarName);
+	bool isVarString(const std::string &VarName);
+
+	void VARS_str_parser(const std::string &str);
+	void FORMAT_str_parser(const std::string &str);
+
+	void set_plaintext();
 
 
 };

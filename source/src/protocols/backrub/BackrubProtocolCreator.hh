@@ -9,7 +9,7 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file /BackrubProtocolCreator.hh
-/// @brief 
+/// @brief
 /// @author jadolfbr ()
 
 #ifndef INCLUDED_protocols_backrub_BackrubProtocolCreator_hh
@@ -18,8 +18,8 @@
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
-	namespace backrub {
-		
+namespace backrub {
+
 
 class BackrubProtocolCreator : public protocols::moves::MoverCreator {
 public:
@@ -32,7 +32,7 @@ public:
 
 };
 
-	}
+}
 }
 
 #endif

@@ -40,215 +40,215 @@ namespace modeler {
 namespace rna {
 
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-	class Combine_Tags_Info{
+/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+class Combine_Tags_Info{
 
-		public:
+public:
 
-		Combine_Tags_Info():
-			side_one_tag( "" ),
-			side_two_tag( "" ),
-			//combine_score( 999999999999.99 ) //Feb 12, 2012 This might lead to server-test error at R47200
-			combine_score( 999999.9 ) //Feb 12, 2012
-		{
-		}
+	Combine_Tags_Info():
+		side_one_tag( "" ),
+		side_two_tag( "" ),
+		//combine_score( 999999999999.99 ) //Feb 12, 2012 This might lead to server-test error at R47200
+		combine_score( 999999.9 ) //Feb 12, 2012
+	{
+	}
 
-		~Combine_Tags_Info(){};
+	~Combine_Tags_Info(){};
 
-		public:
+public:
 
-			std::string side_one_tag;
-			std::string side_two_tag;
-			core::Real combine_score;
-	};
-
-
-	class Filterer_Count{
-
-		public:
-
-			Filterer_Count():
-				total_count( 0 ),
-				score_cut_count( 0 ),
-				chain_closable_geometry_screen( 0 ),
-				filter_for_previous_contact( 0 ),
-				filter_for_previous_clash( 0 ),
-				filter_for_moving_res_contact( 0 )
-			{
-			}
-
-			~Filterer_Count(){};
-
-		public:
-
-			core::Size total_count;
-			core::Size score_cut_count;
-			core::Size chain_closable_geometry_screen;
-			core::Size filter_for_previous_contact;
-			core::Size filter_for_previous_clash;
-			core::Size filter_for_moving_res_contact;
-	};
+	std::string side_one_tag;
+	std::string side_two_tag;
+	core::Real combine_score;
+};
 
 
-  class StepWiseRNA_CombineLongLoopFilterer: public utility::pointer::ReferenceCount {
-  public:
+class Filterer_Count{
 
-    //constructor!
-		StepWiseRNA_CombineLongLoopFilterer( working_parameters::StepWiseWorkingParametersCOP const & working_parameters, bool const combine_helical_silent_file );
+public:
 
-    //destructor -- necessary?
-    virtual ~StepWiseRNA_CombineLongLoopFilterer();
+	Filterer_Count():
+		total_count( 0 ),
+		score_cut_count( 0 ),
+		chain_closable_geometry_screen( 0 ),
+		filter_for_previous_contact( 0 ),
+		filter_for_previous_clash( 0 ),
+		filter_for_moving_res_contact( 0 )
+	{
+	}
 
-		/////////////////////////////////////////////////////////////////////////
+	~Filterer_Count(){};
 
+public:
 
-		void
-		set_silent_files_in( utility::vector1< std::string > const & setting ){ silent_files_in_ = setting; } //Only called if COPY_DOF is true
-
-		void
-		set_parin_favorite_output( bool const setting ){ parin_favorite_output_ = setting; }
-
-		void
-		filter();
-
-		void
-		set_output_filename( std::string const setting ){ output_filename_ = setting; }
-
-		//void
-		//set_score_diff_cut(core::Real const setting){score_diff_cut_=setting;}
-
-		void
-		set_filter_for_previous_contact( core::Real const setting ){ filter_for_previous_contact_ = setting; }
-
-		void
-		set_filter_for_previous_clash( core::Real const setting ){ filter_for_previous_clash_ = setting; }
-
-		void
-		set_undercount_sugar_rotamers( bool const setting ){ undercount_sugar_rotamers_ = setting; }
-
-		void set_max_decoys( core::Size const & setting ){ max_decoys_ = setting; }
-
-  	private:
-
-		void
-		figure_out_appended_and_prepended_res_list();
-
-		void
-		figure_out_last_appended_and_last_prepended_res();
+	core::Size total_count;
+	core::Size score_cut_count;
+	core::Size chain_closable_geometry_screen;
+	core::Size filter_for_previous_contact;
+	core::Size filter_for_previous_clash;
+	core::Size filter_for_moving_res_contact;
+};
 
 
-		utility::vector1< PoseOP >
-		convert_silent_file_to_pose_data_list( core::import_pose::pose_stream::SilentFilePoseInputStreamOP & silent_file_stream, core::Size const pose_list_id );
+class StepWiseRNA_CombineLongLoopFilterer: public utility::pointer::ReferenceCount {
+public:
+
+	//constructor!
+	StepWiseRNA_CombineLongLoopFilterer( working_parameters::StepWiseWorkingParametersCOP const & working_parameters, bool const combine_helical_silent_file );
+
+	//destructor -- necessary?
+	virtual ~StepWiseRNA_CombineLongLoopFilterer();
+
+	/////////////////////////////////////////////////////////////////////////
 
 
-		bool
-		previously_builded_res_VDW_filter( PoseOP const & side_ONE_pose_data,
-																		PoseOP const & side_TWO_pose_data,
-																		core::Real const overlap_dist_cutoff,
-																		core::Size const num_atom_contacts_cutoff );
+	void
+	set_silent_files_in( utility::vector1< std::string > const & setting ){ silent_files_in_ = setting; } //Only called if COPY_DOF is true
 
-		bool
-		previously_builded_res_contact_filter( PoseOP const & side_ONE_pose_data, PoseOP const & side_TWO_pose_data );
+	void
+	set_parin_favorite_output( bool const setting ){ parin_favorite_output_ = setting; }
 
-		bool
-		previously_builded_res_clash_filter( PoseOP const & side_ONE_pose_data, PoseOP const & side_TWO_pose_data );
+	void
+	filter();
 
-		bool
-		moving_res_contact_filter( PoseOP const & side_ONE_pose_data, PoseOP const & side_TWO_pose_data );
+	void
+	set_output_filename( std::string const setting ){ output_filename_ = setting; }
 
-		void
-		align_all_pose( utility::vector1< PoseOP > const & side_ONE_pose_data_list,
-									 utility::vector1< PoseOP > const & side_TWO_pose_data_list );
+	//void
+	//set_score_diff_cut(core::Real const setting){score_diff_cut_=setting;}
 
+	void
+	set_filter_for_previous_contact( core::Real const setting ){ filter_for_previous_contact_ = setting; }
 
-		void
-		do_some_filtering();
+	void
+	set_filter_for_previous_clash( core::Real const setting ){ filter_for_previous_clash_ = setting; }
 
-		bool
-		pass_all_filters( PoseOP const & side_ONE_pose_data, PoseOP const & side_TWO_pose_data );
+	void
+	set_undercount_sugar_rotamers( bool const setting ){ undercount_sugar_rotamers_ = setting; }
 
-		void
-		setup_silent_file_stream();
+	void set_max_decoys( core::Size const & setting ){ max_decoys_ = setting; }
 
-		void
-		figure_out_NUM_pose_list();
+private:
 
-		void
-		setup_tag_to_source_map();
+	void
+	figure_out_appended_and_prepended_res_list();
 
-//		bool
-//		score_sort_criterion(Combine_Tags_Info tag_info_1, Combine_Tags_Info tag_info_2);
-
-		void
-		sort_Combine_Tags_Info( utility::vector1< Combine_Tags_Info > & combine_tags_info_list );
+	void
+	figure_out_last_appended_and_last_prepended_res();
 
 
-		std::string
-		get_parent_tag( utility::vector1< std::string > const & tag_token ) const;
-
-		bool
-		is_virt_sample_sugar_tag( std::string const & tag, utility::vector1< std::string > const & tag_token ) const;
-
-		bool
-		is_sibling_sugar_rotamer_pose( std::string const & curr_tag, std::string const & prev_tag, std::map< std::string, std::string > const & tag_to_source_map ) const;
+	utility::vector1< PoseOP >
+	convert_silent_file_to_pose_data_list( core::import_pose::pose_stream::SilentFilePoseInputStreamOP & silent_file_stream, core::Size const pose_list_id );
 
 
-	private:
+	bool
+	previously_builded_res_VDW_filter( PoseOP const & side_ONE_pose_data,
+		PoseOP const & side_TWO_pose_data,
+		core::Real const overlap_dist_cutoff,
+		core::Size const num_atom_contacts_cutoff );
 
-//		utility::vector1< utility::vector1< Size > > input_res_vectors_;
+	bool
+	previously_builded_res_contact_filter( PoseOP const & side_ONE_pose_data, PoseOP const & side_TWO_pose_data );
 
-		Filterer_Count filterer_count_;
+	bool
+	previously_builded_res_clash_filter( PoseOP const & side_ONE_pose_data, PoseOP const & side_TWO_pose_data );
 
-		core::chemical::ResidueTypeSetCAP rsd_set_;
-		utility::vector1< std::string > silent_files_in_;
-		core::import_pose::pose_stream::SilentFilePoseInputStreamOP silent_file_stream_ONE_;
-		core::import_pose::pose_stream::SilentFilePoseInputStreamOP silent_file_stream_TWO_;
-		working_parameters::StepWiseWorkingParametersCOP const working_parameters_;
-		// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
-		// bool verbose_;
-		bool parin_favorite_output_;
-		bool filter_for_previous_contact_;
-		bool filter_for_previous_clash_;
-		bool undercount_sugar_rotamers_;
-		bool const filter_for_chain_closable_geometry_;
-		bool const filter_for_moving_res_contact_;
-		bool const moving_res_to_base_contact_only_;
+	bool
+	moving_res_contact_filter( PoseOP const & side_ONE_pose_data, PoseOP const & side_TWO_pose_data );
 
-		core::Size total_input_struct_pair_;
-		core::Size pass_screen_struct_pair_;
-		core::Size input_pose_ONE_last_appended_res_;
-		core::Size input_pose_TWO_last_prepended_res_;
-		utility::vector1< core::Size > input_pose_ONE_appended_res_list_;
-		utility::vector1< core::Size > input_pose_TWO_prepended_res_list_;
-
-		std::map< core::Size, core::Size > full_to_input_res_map_ONE_;
-		std::map< core::Size, core::Size > full_to_input_res_map_TWO_;
-		std::string output_filename_;
-		core::Real best_combine_score_;
-		core::Real worst_combine_score_;
-		//core::Real score_diff_cut_;
-		core::Real const contact_dist_cutoff_;
-		core::Real const clash_dist_cutoff_;
-		core::Size const num_contact_cutoff_;
-		core::Size const num_clash_cutoff_;
-
-		core::Size const max_pose_data_list_size_;
-		core::Size side_ONE_NUM_pose_list_;
-		core::Size side_TWO_NUM_pose_list_;
-		core::Size side_ONE_pose_list_id_;
-		core::Size side_TWO_pose_list_id_;
-		core::Real moving_res_contact_dist_cutoff_;
-		utility::vector1< Combine_Tags_Info > filterered_combine_tag_info_list_;
-
-		Size max_decoys_;
-		bool combine_helical_silent_file_;
-
-		std::map< std::string, std::string > tag_to_source_map_ONE_;
-		std::map< std::string, std::string > tag_to_source_map_TWO_;
+	void
+	align_all_pose( utility::vector1< PoseOP > const & side_ONE_pose_data_list,
+		utility::vector1< PoseOP > const & side_TWO_pose_data_list );
 
 
-	};
+	void
+	do_some_filtering();
+
+	bool
+	pass_all_filters( PoseOP const & side_ONE_pose_data, PoseOP const & side_TWO_pose_data );
+
+	void
+	setup_silent_file_stream();
+
+	void
+	figure_out_NUM_pose_list();
+
+	void
+	setup_tag_to_source_map();
+
+	//  bool
+	//  score_sort_criterion(Combine_Tags_Info tag_info_1, Combine_Tags_Info tag_info_2);
+
+	void
+	sort_Combine_Tags_Info( utility::vector1< Combine_Tags_Info > & combine_tags_info_list );
+
+
+	std::string
+	get_parent_tag( utility::vector1< std::string > const & tag_token ) const;
+
+	bool
+	is_virt_sample_sugar_tag( std::string const & tag, utility::vector1< std::string > const & tag_token ) const;
+
+	bool
+	is_sibling_sugar_rotamer_pose( std::string const & curr_tag, std::string const & prev_tag, std::map< std::string, std::string > const & tag_to_source_map ) const;
+
+
+private:
+
+	//  utility::vector1< utility::vector1< Size > > input_res_vectors_;
+
+	Filterer_Count filterer_count_;
+
+	core::chemical::ResidueTypeSetCAP rsd_set_;
+	utility::vector1< std::string > silent_files_in_;
+	core::import_pose::pose_stream::SilentFilePoseInputStreamOP silent_file_stream_ONE_;
+	core::import_pose::pose_stream::SilentFilePoseInputStreamOP silent_file_stream_TWO_;
+	working_parameters::StepWiseWorkingParametersCOP const working_parameters_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// bool verbose_;
+	bool parin_favorite_output_;
+	bool filter_for_previous_contact_;
+	bool filter_for_previous_clash_;
+	bool undercount_sugar_rotamers_;
+	bool const filter_for_chain_closable_geometry_;
+	bool const filter_for_moving_res_contact_;
+	bool const moving_res_to_base_contact_only_;
+
+	core::Size total_input_struct_pair_;
+	core::Size pass_screen_struct_pair_;
+	core::Size input_pose_ONE_last_appended_res_;
+	core::Size input_pose_TWO_last_prepended_res_;
+	utility::vector1< core::Size > input_pose_ONE_appended_res_list_;
+	utility::vector1< core::Size > input_pose_TWO_prepended_res_list_;
+
+	std::map< core::Size, core::Size > full_to_input_res_map_ONE_;
+	std::map< core::Size, core::Size > full_to_input_res_map_TWO_;
+	std::string output_filename_;
+	core::Real best_combine_score_;
+	core::Real worst_combine_score_;
+	//core::Real score_diff_cut_;
+	core::Real const contact_dist_cutoff_;
+	core::Real const clash_dist_cutoff_;
+	core::Size const num_contact_cutoff_;
+	core::Size const num_clash_cutoff_;
+
+	core::Size const max_pose_data_list_size_;
+	core::Size side_ONE_NUM_pose_list_;
+	core::Size side_TWO_NUM_pose_list_;
+	core::Size side_ONE_pose_list_id_;
+	core::Size side_TWO_pose_list_id_;
+	core::Real moving_res_contact_dist_cutoff_;
+	utility::vector1< Combine_Tags_Info > filterered_combine_tag_info_list_;
+
+	Size max_decoys_;
+	bool combine_helical_silent_file_;
+
+	std::map< std::string, std::string > tag_to_source_map_ONE_;
+	std::map< std::string, std::string > tag_to_source_map_TWO_;
+
+
+};
 
 } //rna
 } //modeler

@@ -50,8 +50,8 @@ using basic::Error;
 using basic::Warning;
 
 #ifdef WIN32
-	#define _USE_MATH_DEFINES
-	#include <math.h>
+#define _USE_MATH_DEFINES
+#include <math.h>
 #endif
 // C++
 
@@ -117,7 +117,7 @@ ElecDensCenEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const
 	//if (!pose.is_fullatom()) return;
 
 	core::conformation::symmetry::SymmetryInfoCOP symminfo(0);
-	if (core::pose::symmetry::is_symmetric(pose)) {
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();
 	}
 	structure_score = core::scoring::electron_density::getDensityMap().matchCentroidPose( pose, symminfo , true );
@@ -132,7 +132,7 @@ ElecDensCenEnergy::setup_for_scoring(
 	ScoreFunction const &
 ) const {
 	// Do we have a map?
-	if (!	core::scoring::electron_density::getDensityMap().isMapLoaded()) {
+	if ( ! core::scoring::electron_density::getDensityMap().isMapLoaded() ) {
 		utility_exit_with_message("Density scoring function called but no map loaded.");
 	}
 
@@ -142,7 +142,7 @@ ElecDensCenEnergy::setup_for_scoring(
 	conformation::Residue const &root_res( pose.residue( virt_res_idx ) );
 
 	pose_is_proper = true;
-	if (root_res.type().name() != "VRT" || root_edge.label() < 0) {
+	if ( root_res.type().name() != "VRT" || root_edge.label() < 0 ) {
 		utility_exit_with_message("Fold tree is not set properly for density scoring!");
 		//pose_is_proper = false;
 	}
@@ -176,7 +176,7 @@ ElecDensCenEnergy::setup_for_scoring(
 	// grab symminfo (if defined) from the pose
 	// make a copy
 	core::conformation::symmetry::SymmetryInfoCOP symminfo=NULL;
-	if (core::pose::symmetry::is_symmetric(pose)) {
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation() ).Symmetry_Info();
 	}
 
@@ -187,11 +187,13 @@ ElecDensCenEnergy::setup_for_scoring(
 
 	// # of scoring residues
 	nreses = 0;
-	for (int i=1; i<=(int)pose.total_residue(); ++i)
-		if ( pose.residue(i).is_protein() && pose.residue(i).atom_name(2) == " CA " )
+	for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
+		if ( pose.residue(i).is_protein() && pose.residue(i).atom_name(2) == " CA " ) {
 			nreses++;
+		}
+	}
 
- 	core::scoring::electron_density::getDensityMap().compute_symm_rotations( pose, symminfo );
+	core::scoring::electron_density::getDensityMap().compute_symm_rotations( pose, symminfo );
 }
 
 
@@ -227,8 +229,8 @@ ElecDensCenEnergy::residue_pair_energy(
 {
 	using namespace numeric::statistics;
 
-	if (rsd1.aa() != core::chemical::aa_vrt && rsd2.aa() != core::chemical::aa_vrt) return;
-	if (rsd1.aa() == core::chemical::aa_vrt && rsd2.aa() == core::chemical::aa_vrt) return;
+	if ( rsd1.aa() != core::chemical::aa_vrt && rsd2.aa() != core::chemical::aa_vrt ) return;
+	if ( rsd1.aa() == core::chemical::aa_vrt && rsd2.aa() == core::chemical::aa_vrt ) return;
 
 	core::Real cc = structure_score;
 	Real z_CC = cc / 0.1;
@@ -252,7 +254,7 @@ ElecDensCenEnergy::eval_atom_derivative(
 ) const {
 	using namespace numeric::statistics;
 
-	if (!pose_is_proper) return;
+	if ( !pose_is_proper ) return;
 	//if (!pose.is_fullatom()) return;
 
 	// derivative
@@ -261,7 +263,7 @@ ElecDensCenEnergy::eval_atom_derivative(
 
 	// fn only defined for CA's
 	if ( pose.residue(resid).aa() != core::chemical::aa_vrt &&
-	     ( !pose.residue(resid).is_protein() || pose.residue(resid).atom_name(atmid) != " CA ") ) return;
+			( !pose.residue(resid).is_protein() || pose.residue(resid).atom_name(atmid) != " CA ") ) return;
 
 	numeric::xyzVector<core::Real> X = pose.xyz(id);
 	numeric::xyzVector< core::Real > dCCdx(0,0,0);
@@ -279,22 +281,23 @@ ElecDensCenEnergy::eval_atom_derivative(
 		core::Size nres_per = symminfo->num_independent_residues();
 		bool remapSymm = basic::options::option[ basic::options::OptionKeys::edensity::score_symm_complex ]();
 
-		if ( pose.residue(resid).aa() == core::chemical::aa_vrt && remapSymm)  {
+		if ( pose.residue(resid).aa() == core::chemical::aa_vrt && remapSymm )  {
 
 			// derivative is only defined for the 'ORIG' atom in the virtual
-			if (atmid != 2) return;
+			if ( atmid != 2 ) return;
 
 			// if not a branch node, we're done
 			utility::vector1< core::kinematics::Edge > edges_i = pose.fold_tree().get_outgoing_edges(resid), edges_j;
 			int nchildren = edges_i.size();
-			if (nchildren < 2) return;
+			if ( nchildren < 2 ) return;
 
 			// odd case ... if this vrt is controlled by a cloned jump then we dont have to compute derivs
 			//    for now we'll just check the parent, but perhaps we should trace root->here?
 			if ( !pose.fold_tree().is_root( resid ) ) {
 				core::kinematics::Edge edge_incoming = pose.fold_tree().get_residue_edge(resid);
-				if (! symminfo->jump_is_independent( edge_incoming.label() ) )
+				if ( ! symminfo->jump_is_independent( edge_incoming.label() ) ) {
 					return;
+				}
 			}
 
 			// if any child jumps are cloned such that the clone jump start is ALSO a branching vrt
@@ -303,36 +306,37 @@ ElecDensCenEnergy::eval_atom_derivative(
 			// This isn't a problem with symm files generated by the perl script, however,
 			//    it may be a problem in hand-coded ones
 			utility::vector1< core::Size > vrtclones;
-			for (int j=1; j<=nchildren; ++j) {
+			for ( int j=1; j<=nchildren; ++j ) {
 				int basejump = edges_i[j].label();
-				if (! symminfo->jump_is_independent( basejump ) )
+				if ( ! symminfo->jump_is_independent( basejump ) ) {
 					basejump = symminfo->jump_follows( basejump );
+				}
 				utility::vector1< core::Size > jumpclones = symminfo->jump_clones( basejump );
-				for (int k=0; k<=(int)jumpclones.size(); ++k) {
+				for ( int k=0; k<=(int)jumpclones.size(); ++k ) {
 					core::Size upstream = pose.fold_tree().jump_edge( k==0 ? basejump : jumpclones[k] ).start();
 					edges_j = pose.fold_tree().get_outgoing_edges(upstream);
-					if (edges_j.size() > 1 && std::find( vrtclones.begin(), vrtclones.end(), upstream ) == vrtclones.end() ) {
+					if ( edges_j.size() > 1 && std::find( vrtclones.begin(), vrtclones.end(), upstream ) == vrtclones.end() ) {
 						vrtclones.push_back( upstream );
 					}
 				}
 			}
 
 			// loop over all clones of this VRT
-			for (int i=1; i<=(int)vrtclones.size(); ++i) {
+			for ( int i=1; i<=(int)vrtclones.size(); ++i ) {
 				edges_i = pose.fold_tree().get_outgoing_edges(vrtclones[i]);
 
 				// STEP 1: subtract children's contribution
-				for (int j=1; j<=nchildren; ++j) {
+				for ( int j=1; j<=nchildren; ++j ) {
 					int downstream = edges_i[j].stop();
 					utility::vector1<int> mapping_j;
 					numeric::xyzMatrix< core::Real > R_j;
 					core::scoring::electron_density::getDensityMap().get_symmMap( downstream , mapping_j, R_j );
 
-					for (int k=1; k<=(int)nsubunits; ++k) {
-						if (mapping_j[k] == 0) continue;   // subunit k is not under child j
+					for ( int k=1; k<=(int)nsubunits; ++k ) {
+						if ( mapping_j[k] == 0 ) continue;   // subunit k is not under child j
 
 						// loop over all atms in reses in subunit k
-						for (int l=1, l_end=nres_per; l<=l_end; ++l) {
+						for ( int l=1, l_end=nres_per; l<=l_end; ++l ) {
 							// there is a mapping from k->mapping_j[k]
 							int source_res = (k-1)*nres_per+l;
 							int target_res = (mapping_j[k]-1)*nres_per+l;
@@ -367,11 +371,11 @@ ElecDensCenEnergy::eval_atom_derivative(
 				utility::vector1<int> mapping_i;
 				numeric::xyzMatrix< core::Real > R_i;
 				core::scoring::electron_density::getDensityMap().get_symmMap( vrtclones[i] , mapping_i, R_i );
-				for (int k=1; k<=(int)nsubunits; ++k) {
-					if (mapping_i[k] == 0) continue;   // subunit k is not under child j
+				for ( int k=1; k<=(int)nsubunits; ++k ) {
+					if ( mapping_i[k] == 0 ) continue;   // subunit k is not under child j
 
 					// loop over all atms in reses in subunit k
-					for (int l=1, l_end=nres_per; l<=l_end; ++l) {
+					for ( int l=1, l_end=nres_per; l<=l_end; ++l ) {
 						// there is a mapping from k->mapping_i[k]
 						int source_res = (k-1)*nres_per+l;
 						int target_res = (mapping_i[k]-1)*nres_per+l;
@@ -402,16 +406,16 @@ ElecDensCenEnergy::eval_atom_derivative(
 				}
 			}
 		} else { // NON-VRT
-			if (! symminfo->bb_is_independent( resid ) ) return;
+			if ( ! symminfo->bb_is_independent( resid ) ) return;
 
- 			if (remapSymm) {
+			if ( remapSymm ) {
 				utility::vector1< Size > myClones = symminfo->bb_clones(resid);
-				for (int i=0; i<=(int)myClones.size(); ++i) {
+				for ( int i=0; i<=(int)myClones.size(); ++i ) {
 					numeric::xyzVector<core::Real> X_i = (i==0) ? X : pose.xyz( id::AtomID( 2, myClones[i] ) );
 					core::scoring::electron_density::getDensityMap().dCCdx_cen( (i==0) ? resid : myClones[i], X_i, pose, dCCdx );
 
 					// get R
-						core::scoring::electron_density::getDensityMap().get_R( symminfo->subunit_index( (i==0) ? resid : myClones[i] ), R );
+					core::scoring::electron_density::getDensityMap().get_R( symminfo->subunit_index( (i==0) ? resid : myClones[i] ), R );
 
 					Real CC = structure_score;
 					Real z_CC = CC / 0.1;

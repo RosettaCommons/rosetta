@@ -23,14 +23,14 @@ namespace protocols {
 namespace fldsgn {
 namespace topology {
 
-	class Sheet;
-	class SheetSet;
+class Sheet;
+class SheetSet;
 
-	typedef utility::pointer::shared_ptr< Sheet > SheetOP;
-	typedef utility::pointer::shared_ptr< Sheet const > SheetCOP;
-	typedef utility::vector1< SheetOP > Sheets;
-	typedef utility::pointer::shared_ptr< SheetSet > SheetSetOP;
-	typedef utility::pointer::shared_ptr< SheetSet const > SheetSetCOP;
+typedef utility::pointer::shared_ptr< Sheet > SheetOP;
+typedef utility::pointer::shared_ptr< Sheet const > SheetCOP;
+typedef utility::vector1< SheetOP > Sheets;
+typedef utility::pointer::shared_ptr< SheetSet > SheetSetOP;
+typedef utility::pointer::shared_ptr< SheetSet const > SheetSetCOP;
 
 
 } // namespace topology

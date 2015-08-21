@@ -81,23 +81,23 @@ get_termini_from_pose(
 	TermInfo & lowers,
 	TermInfo & uppers
 ){
-	if( pose.residue(ir).is_upper_terminus() &&
-	    ir > 1 &&
-	   !pose.residue(ir  ).is_lower_terminus() &&
-	   // !pose.residue(ir-1).is_lower_terminus() &&
-	   !pose.residue(ir-1).is_upper_terminus() &&
-	    pose.residue(ir-1).is_protein()
-	){
+	if ( pose.residue(ir).is_upper_terminus() &&
+			ir > 1 &&
+			!pose.residue(ir  ).is_lower_terminus() &&
+			// !pose.residue(ir-1).is_lower_terminus() &&
+			!pose.residue(ir-1).is_upper_terminus() &&
+			pose.residue(ir-1).is_protein()
+			) {
 		lowers.push_back( std::make_pair(ir,get_leap_lower_stub(pose,ir)) );
 		TR << "add lower " << ir << "/" <<pose.n_residue() /*<<" "<< get_leap_lower_stub(pose,ir)*/ << endl;
 	}
-	if( pose.residue(ir).is_lower_terminus() &&
-	   !pose.residue(ir).is_upper_terminus() &&
-	    ir < pose.n_residue() &&
-	   !pose.residue(ir+1).is_lower_terminus() &&
-	   !pose.residue(ir+1).is_upper_terminus() &&
-	    pose.residue(ir+1).is_protein()
-	){
+	if ( pose.residue(ir).is_lower_terminus() &&
+			!pose.residue(ir).is_upper_terminus() &&
+			ir < pose.n_residue() &&
+			!pose.residue(ir+1).is_lower_terminus() &&
+			!pose.residue(ir+1).is_upper_terminus() &&
+			pose.residue(ir+1).is_protein()
+			) {
 		uppers.push_back( std::make_pair(ir,get_leap_upper_stub(pose,ir)) );
 		TR << "add upper " << ir << "/" <<pose.n_residue() /*<<" "<< get_leap_upper_stub(pose,ir)*/ << endl;
 	}
@@ -108,7 +108,7 @@ get_termini_from_pose(
 	TermInfo & lowers,
 	TermInfo & uppers
 ){
-	for(Size ir = 1; ir <= pose.n_residue(); ++ir){
+	for ( Size ir = 1; ir <= pose.n_residue(); ++ir ) {
 		get_termini_from_pose(pose,ir,uppers,lowers);
 	}
 }
@@ -139,16 +139,16 @@ count_linkers(
 	Sizes const & loopsizes,
 	core::Size radius
 ){
-	if( loopsizes.size() == 0 ) return 0;
+	if ( loopsizes.size() == 0 ) return 0;
 
 	Real dist2 = core::kinematics::RT(core::kinematics::Stub(lower.R,lower.t),core::kinematics::Stub(upper.R,upper.t)).get_translation().length_squared();
-	if( dist2 >= (10.0*Real(loopsizes.back())*Real(loopsizes.back())) ) return 0;
+	if ( dist2 >= (10.0*Real(loopsizes.back())*Real(loopsizes.back())) ) return 0;
 
 	numeric::geometry::hashing::Real6 rt_6 = get_leap_6dof(lower,upper);
 
 	Size count0=0;
-	for(Sizes::const_iterator i = loopsizes.begin(); i != loopsizes.end(); ++i){
-		if( dist2 < (10.0*Real(*i)*Real(*i)) ){
+	for ( Sizes::const_iterator i = loopsizes.begin(); i != loopsizes.end(); ++i ) {
+		if ( dist2 < (10.0*Real(*i)*Real(*i)) ) {
 			count0 += loop_hash_library->gethash(*i).radial_count(radius,rt_6);
 		} // else too far, don't bother lookup
 	}
@@ -174,18 +174,18 @@ dump_loophash_linkers(
 	protocols::loophash::BackboneDB const & bbdb_ = loop_hash_library->backbone_database();
 	protocols::loophash::BackboneSegment backbone_;
 	core::Size ndumped = 0;
-	for(Sizes::const_iterator ils = loopsizes.begin(); ils != loopsizes.end(); ++ils){
+	for ( Sizes::const_iterator ils = loopsizes.begin(); ils != loopsizes.end(); ++ils ) {
 		Size loopsize(*ils);
 
 		protocols::loophash::LoopHashMap & hashmap( loop_hash_library->gethash(loopsize) );
 
 		numeric::geometry::hashing::Real6 rt_6 = get_leap_6dof(lower,upper);
-		if( rt_6[1]*rt_6[1]+rt_6[2]*rt_6[2]+rt_6[3]*rt_6[3] > 10.0*Real(loopsize)*Real(loopsize) ) continue;
+		if ( rt_6[1]*rt_6[1]+rt_6[2]*rt_6[2]+rt_6[3]*rt_6[3] > 10.0*Real(loopsize)*Real(loopsize) ) continue;
 		std::vector < core::Size > leap_index_list;
 		hashmap.radial_lookup(radius,rt_6,leap_index_list);
 
 		std::vector< protocols::loophash::BackboneSegment > bs_vec_;
-		for( std::vector < core::Size >::const_iterator itx = leap_index_list.begin(); itx != leap_index_list.end(); ++itx ){
+		for ( std::vector < core::Size >::const_iterator itx = leap_index_list.begin(); itx != leap_index_list.end(); ++itx ) {
 			core::Size bb_index = *itx;
 			protocols::loophash::LeapIndex cp = hashmap.get_peptide( bb_index );
 			bbdb_.get_backbone_segment( cp.index, cp.offset , loopsize , backbone_ );
@@ -195,11 +195,11 @@ dump_loophash_linkers(
 		Pose tmp;
 		{
 			core::chemical::ResidueTypeSetCOP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
-			for(Size i = 1; i <= loopsize+1; ++i){
+			for ( Size i = 1; i <= loopsize+1; ++i ) {
 				core::conformation::ResidueOP new_rsd( NULL );
 				new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map("ALA") );
 				// cout << "apending residue " << new_rsd->name() << std::endl;
-				if(1==i) tmp.append_residue_by_jump( *new_rsd, 1 );
+				if ( 1==i ) tmp.append_residue_by_jump( *new_rsd, 1 );
 				else     tmp.append_residue_by_bond( *new_rsd, true );
 				tmp.set_phi  ( tmp.n_residue(), 180.0 );
 				tmp.set_psi  ( tmp.n_residue(), 180.0 );
@@ -209,14 +209,14 @@ dump_loophash_linkers(
 		}
 
 		int count = 0;
-		for ( std::vector<protocols::loophash::BackboneSegment>::const_iterator i = bs_vec_.begin(), ie = bs_vec_.end(); i != ie; ++i) {
+		for ( std::vector<protocols::loophash::BackboneSegment>::const_iterator i = bs_vec_.begin(), ie = bs_vec_.end(); i != ie; ++i ) {
 			std::vector<core::Real> phi   = i->phi();
 			std::vector<core::Real> psi   = i->psi();
 			std::vector<core::Real> omega = i->omega();
 			Size seg_length = (*i).length();
-			for ( Size i = 0; i < seg_length; i++){
+			for ( Size i = 0; i < seg_length; i++ ) {
 				Size ires = 2+i;  // this is terrible, due to the use of std:vector.  i has to start from 0, but positions offset by 1.
-				if (ires > tmp.total_residue() ) break;
+				if ( ires > tmp.total_residue() ) break;
 				tmp.set_phi  ( ires, phi[i]  );
 				tmp.set_psi  ( ires, psi[i]  );
 				tmp.set_omega( ires, omega[i]);

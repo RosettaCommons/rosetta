@@ -55,7 +55,7 @@ public:
 	virtual PoseMetricCalculatorOP clone() const = 0;
 
 	virtual void notify_structure_change() { return; };
-	//	virtual void notify_sequence_change() { return; };
+	// virtual void notify_sequence_change() { return; };
 	virtual void notify_energy_change() { return; };
 
 	virtual void get( std::string const & key, basic::MetricValueBase & val, Pose const & this_pose ) = 0;
@@ -98,24 +98,24 @@ private:
 /*
 class SequenceDependentCalculator : public PoseMetricCalculator {
 public:
-	SequenceDependentCalculator() : PoseMetricCalculator(), sequence_is_outdated_(true) {};
-	void notify_sequence_change() { sequence_is_outdated_ = true; };
-	void get( std::string const & key, basic::MetricValueBase & val, Pose const & this_pose ) {
-		if ( sequence_is_outdated_ ) recompute( this_pose );
-		sequence_is_outdated_ = false;
-		lookup( key, &val );
-	};
-	std::string get( std::string const & key, Pose const & this_pose ) {
-		if ( sequence_is_outdated_ ) recompute( this_pose );
-		sequence_is_outdated_ = false;
-		return print( key );
-	};
+SequenceDependentCalculator() : PoseMetricCalculator(), sequence_is_outdated_(true) {};
+void notify_sequence_change() { sequence_is_outdated_ = true; };
+void get( std::string const & key, basic::MetricValueBase & val, Pose const & this_pose ) {
+if ( sequence_is_outdated_ ) recompute( this_pose );
+sequence_is_outdated_ = false;
+lookup( key, &val );
+};
+std::string get( std::string const & key, Pose const & this_pose ) {
+if ( sequence_is_outdated_ ) recompute( this_pose );
+sequence_is_outdated_ = false;
+return print( key );
+};
 protected:
-	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const = 0;
-	virtual std::string print( std::string const & key ) const = 0;
-	virtual void recompute( Pose const & this_pose ) = 0;
+virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const = 0;
+virtual std::string print( std::string const & key ) const = 0;
+virtual void recompute( Pose const & this_pose ) = 0;
 private:
-	bool sequence_is_outdated_;
+bool sequence_is_outdated_;
 };
 */
 

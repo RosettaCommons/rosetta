@@ -54,11 +54,11 @@ public:
 
 	/// @brief Parses the DisulfidizerMoverTags
 	void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & data,
-			protocols::filters::Filters_map const & filters,
-			protocols::moves::Movers_map const & movers,
-			core::pose::Pose const & pose );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose );
 
 	/// @brief Return the name of this mover.
 	virtual std::string get_name() const;
@@ -73,58 +73,58 @@ public:
 
 	/// @brief mutates the given disulfides to ALA
 	void mutate_disulfides_to_ala(
-			core::pose::Pose & pose,
-			DisulfideList const & current_ds ) const;
+		core::pose::Pose & pose,
+		DisulfideList const & current_ds ) const;
 
 	/// @brief Function for recursively creating multiple disulfides
 	utility::vector1< DisulfideList >
-		recursive_multiple_disulfide_former(
-				DisulfideList const & disulfides_formed,
-				DisulfideList const & disulfides_possible ) const;
+	recursive_multiple_disulfide_former(
+		DisulfideList const & disulfides_formed,
+		DisulfideList const & disulfides_possible ) const;
 
 	/// @brief creates a residue tags on disulfides to inform users that this disulfide was created by disulfidize
 	void tag_disulfide(
-			core::pose::Pose & pose,
-			core::Size const res1,
-			core::Size const res2 ) const;
+		core::pose::Pose & pose,
+		core::Size const res1,
+		core::Size const res2 ) const;
 
 	/// @brief creates a residue tags on disulfides to inform users that this disulfide was created by disulfidize
 	void tag_disulfides(
-			core::pose::Pose & pose,
-			DisulfidizeMover::DisulfideList const & disulf ) const;
+		core::pose::Pose & pose,
+		DisulfidizeMover::DisulfideList const & disulf ) const;
 
 	/// @brief forms a disulfide between res1 and res2, optionally allowing backbone movement
 	void make_disulfide(
-			core::pose::Pose & pose,
-			core::Size const res1,
-			core::Size const res2,
-			bool const relax_bb ) const;
+		core::pose::Pose & pose,
+		core::Size const res1,
+		core::Size const res2,
+		bool const relax_bb ) const;
 
 	/// @brief creates disulfides given the list of pairs given
 	void make_disulfides(
-			core::pose::Pose & pose,
-			DisulfideList const & disulf,
-			bool const relax_bb ) const;
+		core::pose::Pose & pose,
+		DisulfideList const & disulf,
+		bool const relax_bb ) const;
 
 	/// @brief temporarily tries building a disulfide between the given positions, scores, and restores the pose
 	core::Real build_and_score_disulfide(
-			core::pose::Pose & blank_pose,
-			core::scoring::ScoreFunctionOP sfxn,
-			const bool relax_bb,
-			core::Size const res1,
-			core::Size const res2 ) const;
+		core::pose::Pose & blank_pose,
+		core::scoring::ScoreFunctionOP sfxn,
+		const bool relax_bb,
+		core::Size const res1,
+		core::Size const res2 ) const;
 
 	/// @brief find disulfides in the given neighborhood
 	DisulfideList find_possible_disulfides(
-			core::pose::Pose const & pose,
-			core::pack::task::residue_selector::ResidueSubset const & residueset1,
-			core::pack::task::residue_selector::ResidueSubset const & residueset2 ) const;
+		core::pose::Pose const & pose,
+		core::pack::task::residue_selector::ResidueSubset const & residueset1,
+		core::pack::task::residue_selector::ResidueSubset const & residueset2 ) const;
 
 	/// @brief find disulfides in the given neighborhood between residues in set 1 and residues in set 2
 	DisulfideList find_possible_disulfides(
-			core::pose::Pose const & pose,
-			std::set< core::Size > const & set1,
-			std::set< core::Size > const & set2 ) const;
+		core::pose::Pose const & pose,
+		std::set< core::Size > const & set1,
+		std::set< core::Size > const & set2 ) const;
 
 	/// @brief checks seqpos to ensure that min_loop is satisfied
 	bool check_residue_type( core::pose::Pose const & pose, core::Size const res ) const;
@@ -134,26 +134,26 @@ public:
 
 	/// @brief checks disulfide CB-CB distance
 	bool check_disulfide_cb_distance(
-			core::pose::Pose const & pose,
-			core::Size const res1,
-			core::Size const res2 ) const;
+		core::pose::Pose const & pose,
+		core::Size const res1,
+		core::Size const res2 ) const;
 
 	/// @brief checks disulfide rosetta score
 	bool check_disulfide_score(
-			core::pose::Pose & pose,
-			core::Size const res1,
-			core::Size const res2,
-			core::scoring::ScoreFunctionOP sfxn ) const;
+		core::pose::Pose & pose,
+		core::Size const res1,
+		core::Size const res2,
+		core::scoring::ScoreFunctionOP sfxn ) const;
 
 	/// @brief checks disulfide match rt
 	bool check_disulfide_match_rt(
-			core::pose::Pose const & pose,
-			core::Size const res1,
-			core::Size const res2,
-			core::scoring::disulfides::DisulfideMatchingPotential const & disulfPot,
-			bool const mirror
+		core::pose::Pose const & pose,
+		core::Size const res1,
+		core::Size const res2,
+		core::scoring::disulfides::DisulfideMatchingPotential const & disulfPot,
+		bool const mirror
 	) const;
-	
+
 	/// @brief Returns true if this is a mixed D/L disulfide, false otherwise.
 	///
 	bool mixed_disulfide (
@@ -187,8 +187,8 @@ public: //mutators
 protected:
 	/// @brief Identifies disulfides for a given input pose
 	virtual bool process_pose(
-			core::pose::Pose & pose,
-			utility::vector1 < core::pose::PoseOP > & additional_poses );
+		core::pose::Pose & pose,
+		utility::vector1 < core::pose::PoseOP > & additional_poses );
 
 private:   // options
 	core::Real match_rt_limit_;

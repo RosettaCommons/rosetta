@@ -31,31 +31,31 @@ public:
 
 	/// @brief default constructor
 	KICLoopCloser();
-	
+
 	/// @brief explicit constructor
-//	CCDLoopCloser(
-//		core::Size max_closure_attempts,
-//		bool prevent_nonloop_modifications,
-//		core::Size max_ccd_moves_per_closure_attempt,
-//		core::Real max_rama_score_increase,
-//		core::Real max_total_delta_helix,
-//		core::Real max_total_delta_strand,
-//		core::Real max_total_delta_loop,
-//		core::Real tolerance
-//	);
-	
+	// CCDLoopCloser(
+	//  core::Size max_closure_attempts,
+	//  bool prevent_nonloop_modifications,
+	//  core::Size max_ccd_moves_per_closure_attempt,
+	//  core::Real max_rama_score_increase,
+	//  core::Real max_total_delta_helix,
+	//  core::Real max_total_delta_strand,
+	//  core::Real max_total_delta_loop,
+	//  core::Real tolerance
+	// );
+
 	protocols::moves::MoverOP
 	clone() const;
 
 	protocols::moves::MoverOP
 	fresh_instance() const;
-		
+
 	std::string
 	get_name() const;
-	
+
 	void
 	apply ( core::pose::Pose & );
-	
+
 	/// @brief parse tag for use in RosettaScripts
 	void
 	parse_my_tag(
@@ -65,7 +65,7 @@ public:
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
 	);
-	
+
 	void
 	prepare_fold_tree(
 		core::pose::Pose & pose

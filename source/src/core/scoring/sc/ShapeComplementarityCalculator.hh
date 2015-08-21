@@ -68,7 +68,7 @@ public:
 	static core::Real CalcSc(core::pose::Pose const & pose, core::Size jump_id =1, int quick =0);
 
 protected:
-  // Surface generation configuration
+	// Surface generation configuration
 	virtual int AssignAttentionNumbers(std::vector<Atom>& atom);
 
 private:

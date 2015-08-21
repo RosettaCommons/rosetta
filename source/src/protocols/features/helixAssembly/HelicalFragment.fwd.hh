@@ -17,14 +17,14 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 namespace helixAssembly {
 
-	class HelicalFragment;
-	typedef utility::pointer::shared_ptr< HelicalFragment > HelicalFragmentOP;
-	typedef utility::pointer::shared_ptr< HelicalFragment const > HelicalFragmentCOP;
-			
+class HelicalFragment;
+typedef utility::pointer::shared_ptr< HelicalFragment > HelicalFragmentOP;
+typedef utility::pointer::shared_ptr< HelicalFragment const > HelicalFragmentCOP;
+
 } //namespace helixAssembly
 }// namespace features
 }// namespace protocols

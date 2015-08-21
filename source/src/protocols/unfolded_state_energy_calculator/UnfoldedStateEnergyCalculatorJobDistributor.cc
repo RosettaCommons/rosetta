@@ -42,7 +42,7 @@ using namespace basic::options::OptionKeys;
 
 /// @brief ctor
 UnfoldedStateEnergyCalculatorJobDistributor::UnfoldedStateEnergyCalculatorJobDistributor() :
-  FileSystemJobDistributor()
+	FileSystemJobDistributor()
 {}
 
 /// @brief dtor (don't put anything in here)

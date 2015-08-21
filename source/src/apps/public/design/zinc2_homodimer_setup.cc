@@ -15,13 +15,13 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
-   Chain1Chain1Chain1
-      H   H   H   H           H-H match1, H-H match2
-       \ /     \ /
-       Zn      Zn             -------------------  axis of symmetry, can rotate about this axis and maintain symmetry
-       / \     / \
-      H   H   H   H           H-H match2, H-H match1
-   Chain2Chain2Chain2
+Chain1Chain1Chain1
+H   H   H   H           H-H match1, H-H match2
+\ /     \ /
+Zn      Zn             -------------------  axis of symmetry, can rotate about this axis and maintain symmetry
+/ \     / \
+H   H   H   H           H-H match2, H-H match1
+Chain2Chain2Chain2
 **/
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -82,12 +82,12 @@ basic::options::RealOptionKey const tetrahedral_angle_sumsq_cutoff( "tetrahedral
 class zinc2_homodimer_setup : public protocols::moves::Mover {
 public:
 
-  zinc2_homodimer_setup() : 
-    msr_1_(5, protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue )),
-    msr_2_(5, protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ))
-  {
-    core::import_pose::pose_from_pdb( match1_, basic::options::option[match1].value() );
-    core::import_pose::pose_from_pdb( match2_, basic::options::option[match2].value() );
+	zinc2_homodimer_setup() :
+		msr_1_(5, protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue )),
+		msr_2_(5, protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ))
+	{
+		core::import_pose::pose_from_pdb( match1_, basic::options::option[match1].value() );
+		core::import_pose::pose_from_pdb( match2_, basic::options::option[match2].value() );
 
 		TR << "//////////////////////////////////////////////////////////////////////////////////////////////" << std::endl << std::endl;
 
@@ -114,214 +114,214 @@ public:
 		TR <<   " STEP 7: calculate dG_centroid.  If < 0.0, SUCCESS, output PDB to disk (note: no design!)" << std::endl;
 
 		TR << "//////////////////////////////////////////////////////////////////////////////////////////////" << std::endl << std::endl;
-  }
+	}
 
-  virtual ~zinc2_homodimer_setup(){};
+	virtual ~zinc2_homodimer_setup(){};
 
 
-  virtual void
-  apply( Pose & pose/*monomer*/ ){
+	virtual void
+	apply( Pose & pose/*monomer*/ ){
 
-    Pose grafted_monomer = setup_grafted_monomer( pose );
+		Pose grafted_monomer = setup_grafted_monomer( pose );
 
 		TR << "Duplicating the monomer (the two chains are overlayed, but fold tree is correct)" << std::endl;
-    Pose homodimer = setup_homodimer( grafted_monomer );
+		Pose homodimer = setup_homodimer( grafted_monomer );
 
 		TR << "ROLLMOVE TO INVERSE C2 SYMMETRY:  moves one chain into an inverted symmetric alignment" << std::endl;
-    rollmove_to_inverse_C2_symmetry( homodimer );
+		rollmove_to_inverse_C2_symmetry( homodimer );
 
 		TR << "SETUP METALSITES:  locates the two zinc binding sites" << std::endl;
-    setup_metalsites( homodimer );
+		setup_metalsites( homodimer );
 
 		TR << "SETUP FILTER CLASHES:  makes a scorefunction and an InterfaceAnalyzerMover" << std::endl;
-    setup_filter_clashes();
+		setup_filter_clashes();
 
 
 		TR << "GRIDSESARCH ALIGNMENTS:  this is the heart of the protocol, rotates one chain about the zinc-zinc axis and outputs a PDB if there are no serious clashes and the zinc geometry is good." << std::endl;
-    gridsearch_symmetric_alignments( homodimer );
+		gridsearch_symmetric_alignments( homodimer );
 
-    return;
-  }
-
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////// Setup  ///////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		return;
+	}
 
 
-  //setup
-  virtual Pose
-  setup_grafted_monomer( Pose & pose ) {
-
-    zinc1_res_ = pose.total_residue() + 1;
-    zinc2_res_ = pose.total_residue() + 2;
-
-    protocols::metal_interface::MatchGrafterOP match_grafter( new protocols::metal_interface::MatchGrafter );
-    Pose first_graft_pose = match_grafter->graft( match1_, pose );
-    //first_graft_pose.dump_pdb("first_graft_pose.pdb");
-
-    Pose monomer_grafted_twice = match_grafter->graft( match2_, first_graft_pose );
-    //monomer_grafted_twice.dump_pdb("monomer_grafted_twice.pdb");
-
-    utility::vector1<Size> metalsite_seqpos_1;
-    metalsite_seqpos_1.push_back(zinc1_res_);
-    metalsite_seqpos_1.push_back(match1_.pdb_info()->number(1) );
-    metalsite_seqpos_1.push_back(match1_.pdb_info()->number(2) );
-
-    utility::vector1<Size> metalsite_seqpos_2;
-    metalsite_seqpos_2.push_back(zinc2_res_);
-    metalsite_seqpos_2.push_back(match2_.pdb_info()->number(1) );
-    metalsite_seqpos_2.push_back(match2_.pdb_info()->number(2) );
-
-    match_grafter->ensure_proper_his_tautomers( monomer_grafted_twice, metalsite_seqpos_1 );
-    match_grafter->ensure_proper_his_tautomers( monomer_grafted_twice, metalsite_seqpos_2 );
-
-    TR << "FOLD TREE OF GRAFTED MONOMER: " << monomer_grafted_twice.fold_tree() << std::endl;
-
-    //monomer_grafted_twice.center(); // important for defining rollmove axes later?  can't remember why I included this
-
-    return monomer_grafted_twice;
-  }
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////// Setup  ///////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-  //setup
-  virtual Pose
-  setup_homodimer( Pose & grafted_monomer ) {
+	//setup
+	virtual Pose
+	setup_grafted_monomer( Pose & pose ) {
+
+		zinc1_res_ = pose.total_residue() + 1;
+		zinc2_res_ = pose.total_residue() + 2;
+
+		protocols::metal_interface::MatchGrafterOP match_grafter( new protocols::metal_interface::MatchGrafter );
+		Pose first_graft_pose = match_grafter->graft( match1_, pose );
+		//first_graft_pose.dump_pdb("first_graft_pose.pdb");
+
+		Pose monomer_grafted_twice = match_grafter->graft( match2_, first_graft_pose );
+		//monomer_grafted_twice.dump_pdb("monomer_grafted_twice.pdb");
+
+		utility::vector1<Size> metalsite_seqpos_1;
+		metalsite_seqpos_1.push_back(zinc1_res_);
+		metalsite_seqpos_1.push_back(match1_.pdb_info()->number(1) );
+		metalsite_seqpos_1.push_back(match1_.pdb_info()->number(2) );
+
+		utility::vector1<Size> metalsite_seqpos_2;
+		metalsite_seqpos_2.push_back(zinc2_res_);
+		metalsite_seqpos_2.push_back(match2_.pdb_info()->number(1) );
+		metalsite_seqpos_2.push_back(match2_.pdb_info()->number(2) );
+
+		match_grafter->ensure_proper_his_tautomers( monomer_grafted_twice, metalsite_seqpos_1 );
+		match_grafter->ensure_proper_his_tautomers( monomer_grafted_twice, metalsite_seqpos_2 );
+
+		TR << "FOLD TREE OF GRAFTED MONOMER: " << monomer_grafted_twice.fold_tree() << std::endl;
+
+		//monomer_grafted_twice.center(); // important for defining rollmove axes later?  can't remember why I included this
+
+		return monomer_grafted_twice;
+	}
+
+
+	//setup
+	virtual Pose
+	setup_homodimer( Pose & grafted_monomer ) {
 
 		//the homodimer will be the grafted_monomer duplicated and overlayed on itself, a proper dimer is formed later
-    Pose homodimer( grafted_monomer );
-    homodimer.append_residue_by_jump(grafted_monomer.residue(1), 1);
-    for (core::Size i=2; i<=zinc1_res_ - 1; ++i){
-      homodimer.append_residue_by_bond(grafted_monomer.residue(i)); // appending only protein residues, not duplicate zinc atoms
-    }
-    homodimer.conformation().insert_chain_ending( zinc2_res_ );
+		Pose homodimer( grafted_monomer );
+		homodimer.append_residue_by_jump(grafted_monomer.residue(1), 1);
+		for ( core::Size i=2; i<=zinc1_res_ - 1; ++i ) {
+			homodimer.append_residue_by_bond(grafted_monomer.residue(i)); // appending only protein residues, not duplicate zinc atoms
+		}
+		homodimer.conformation().insert_chain_ending( zinc2_res_ );
 
-    TR << "FOLD TREE HOMODIMER: " << homodimer.fold_tree() << std::endl;
+		TR << "FOLD TREE HOMODIMER: " << homodimer.fold_tree() << std::endl;
 
 		//homodimer.dump_pdb("homodimer.pdb");
-    return homodimer;
-  }
+		return homodimer;
+	}
 
 
-  //setup
-  virtual void
-  rollmove_to_inverse_C2_symmetry( Pose & homodimer ) {
+	//setup
+	virtual void
+	rollmove_to_inverse_C2_symmetry( Pose & homodimer ) {
 
-    //First rollmove is along the ZnZn axis
-    point zinc1 = homodimer.residue(zinc1_res_).atom(1).xyz();
-    point zinc2 = homodimer.residue(zinc2_res_).atom(1).xyz();
-    axis const ZnZn_axis = zinc1 - zinc2;
-    Size last_residue = homodimer.total_residue(); //((zinc1_res_ - 1) * 2) + 2;
-    protocols::rigid::RollMoverOP ZnZn_axis_rollmover( new protocols::rigid::RollMover( zinc2_res_+1, last_residue, 180, 180, ZnZn_axis, zinc1 ) );
-    ZnZn_axis_rollmover->apply( homodimer );
-    //homodimer.dump_pdb("homodimer_ZnZnaxis_rollmove.pdb");
-
-
-    //Second rollmove is orthogonal to the ZnZn axes, through the ZnZn midpoint
-    //note: center of mass of monomer is at the origin
-    point ZnZn_midpoint = midpoint(zinc1, zinc2); //#include<numeric/xyzVector.hh>
-    axis axis_normal_to_origZn1_origZn2 = cross_product(zinc1, zinc2);
-    axis orthogonal_axis = cross_product(zinc1 - zinc2, axis_normal_to_origZn1_origZn2);
-    protocols::rigid::RollMoverOP orthogonal_axis_rollmover( new protocols::rigid::RollMover( zinc2_res_+1, last_residue, 180, 180, orthogonal_axis, ZnZn_midpoint ) );
-    orthogonal_axis_rollmover->apply( homodimer );
-    //homodimer.dump_pdb("homodimer_orthaxis_rollmove.pdb");
-  }
+		//First rollmove is along the ZnZn axis
+		point zinc1 = homodimer.residue(zinc1_res_).atom(1).xyz();
+		point zinc2 = homodimer.residue(zinc2_res_).atom(1).xyz();
+		axis const ZnZn_axis = zinc1 - zinc2;
+		Size last_residue = homodimer.total_residue(); //((zinc1_res_ - 1) * 2) + 2;
+		protocols::rigid::RollMoverOP ZnZn_axis_rollmover( new protocols::rigid::RollMover( zinc2_res_+1, last_residue, 180, 180, ZnZn_axis, zinc1 ) );
+		ZnZn_axis_rollmover->apply( homodimer );
+		//homodimer.dump_pdb("homodimer_ZnZnaxis_rollmove.pdb");
 
 
-  //setup
-  virtual void
-  setup_metalsites( Pose & homodimer ) {
-    protocols::metal_interface::ZincSiteFinderOP find_zinc_1( new protocols::metal_interface::ZincSiteFinder( zinc1_res_ ) );
-    protocols::metal_interface::ZincSiteFinderOP find_zinc_2( new protocols::metal_interface::ZincSiteFinder( zinc2_res_ ) );
-
-    msr_1_ = find_zinc_1->find_zinc_site( homodimer );
-    msr_2_ = find_zinc_2->find_zinc_site( homodimer );
-
-    TR << "zinc1 " << msr_1_[1]->get_seqpos() << std::endl;
-    TR << "1_1:  " << msr_1_[2]->get_seqpos() << std::endl;
-    TR << "1_2:  " << msr_1_[3]->get_seqpos() << std::endl;
-    TR << "1_3:  " << msr_1_[4]->get_seqpos() << std::endl;
-    TR << "1_4:  " << msr_1_[5]->get_seqpos() << std::endl;
-
-    TR << "zinc2 " << msr_2_[1]->get_seqpos() << std::endl;
-    TR << "2_1:  " << msr_2_[2]->get_seqpos() << std::endl;
-    TR << "2_2:  " << msr_2_[3]->get_seqpos() << std::endl;
-    TR << "2_3:  " << msr_2_[4]->get_seqpos() << std::endl;
-    TR << "2_4:  " << msr_2_[5]->get_seqpos() << std::endl;
-
-  }
-
-  //setup
-  virtual void
-  setup_filter_clashes() {
-    using namespace core::scoring;
-    scorefunction_ = core::scoring::get_score_function();
-    interface_analyzer_ = protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover( 3, false, scorefunction_ ) ); // zinc1 and zinc2 get jumps 1 and 2, chain B gets jump 3
-  }
+		//Second rollmove is orthogonal to the ZnZn axes, through the ZnZn midpoint
+		//note: center of mass of monomer is at the origin
+		point ZnZn_midpoint = midpoint(zinc1, zinc2); //#include<numeric/xyzVector.hh>
+		axis axis_normal_to_origZn1_origZn2 = cross_product(zinc1, zinc2);
+		axis orthogonal_axis = cross_product(zinc1 - zinc2, axis_normal_to_origZn1_origZn2);
+		protocols::rigid::RollMoverOP orthogonal_axis_rollmover( new protocols::rigid::RollMover( zinc2_res_+1, last_residue, 180, 180, orthogonal_axis, ZnZn_midpoint ) );
+		orthogonal_axis_rollmover->apply( homodimer );
+		//homodimer.dump_pdb("homodimer_orthaxis_rollmove.pdb");
+	}
 
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////// End of Setup  ////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//setup
+	virtual void
+	setup_metalsites( Pose & homodimer ) {
+		protocols::metal_interface::ZincSiteFinderOP find_zinc_1( new protocols::metal_interface::ZincSiteFinder( zinc1_res_ ) );
+		protocols::metal_interface::ZincSiteFinderOP find_zinc_2( new protocols::metal_interface::ZincSiteFinder( zinc2_res_ ) );
+
+		msr_1_ = find_zinc_1->find_zinc_site( homodimer );
+		msr_2_ = find_zinc_2->find_zinc_site( homodimer );
+
+		TR << "zinc1 " << msr_1_[1]->get_seqpos() << std::endl;
+		TR << "1_1:  " << msr_1_[2]->get_seqpos() << std::endl;
+		TR << "1_2:  " << msr_1_[3]->get_seqpos() << std::endl;
+		TR << "1_3:  " << msr_1_[4]->get_seqpos() << std::endl;
+		TR << "1_4:  " << msr_1_[5]->get_seqpos() << std::endl;
+
+		TR << "zinc2 " << msr_2_[1]->get_seqpos() << std::endl;
+		TR << "2_1:  " << msr_2_[2]->get_seqpos() << std::endl;
+		TR << "2_2:  " << msr_2_[3]->get_seqpos() << std::endl;
+		TR << "2_3:  " << msr_2_[4]->get_seqpos() << std::endl;
+		TR << "2_4:  " << msr_2_[5]->get_seqpos() << std::endl;
+
+	}
+
+	//setup
+	virtual void
+	setup_filter_clashes() {
+		using namespace core::scoring;
+		scorefunction_ = core::scoring::get_score_function();
+		interface_analyzer_ = protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover( 3, false, scorefunction_ ) ); // zinc1 and zinc2 get jumps 1 and 2, chain B gets jump 3
+	}
 
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////// Protocol  ////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////// End of Setup  ////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-  //protocol
-  virtual void
-  gridsearch_symmetric_alignments( Pose & homodimer ) {
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////// Protocol  ////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //First rollmove is along the ZnZn axis
-    point zinc1 = homodimer.residue(zinc1_res_).atom(1).xyz();
-    point zinc2 = homodimer.residue(zinc2_res_).atom(1).xyz();
 
-    axis const ZnZn_axis = zinc1 - zinc2;
-    Size last_residue = homodimer.total_residue(); //((zinc1_res_ - 1) * 2) + 2;
-    Real grid_angle = basic::options::option[angle_rotation_increment].value();
+	//protocol
+	virtual void
+	gridsearch_symmetric_alignments( Pose & homodimer ) {
 
-    protocols::rigid::RollMoverOP ZnZn_axis_rollmover( new protocols::rigid::RollMover( zinc2_res_+1, last_residue, grid_angle, grid_angle, ZnZn_axis, zinc1 ) );
+		//First rollmove is along the ZnZn axis
+		point zinc1 = homodimer.residue(zinc1_res_).atom(1).xyz();
+		point zinc2 = homodimer.residue(zinc2_res_).atom(1).xyz();
 
-    for( Size i(1); i <= 360.0/grid_angle; i++ ) {
+		axis const ZnZn_axis = zinc1 - zinc2;
+		Size last_residue = homodimer.total_residue(); //((zinc1_res_ - 1) * 2) + 2;
+		Real grid_angle = basic::options::option[angle_rotation_increment].value();
 
-      ZnZn_axis_rollmover->apply( homodimer );
+		protocols::rigid::RollMoverOP ZnZn_axis_rollmover( new protocols::rigid::RollMover( zinc2_res_+1, last_residue, grid_angle, grid_angle, ZnZn_axis, zinc1 ) );
 
-      Size angle = core::Size(i*grid_angle);
-      std::stringstream ss_angle;
-      ss_angle << angle;
-      //std::string name = "homodimer_" + ss_angle.str() + ".pdb";
-      //homodimer.dump_pdb( name );
+		for ( Size i(1); i <= 360.0/grid_angle; i++ ) {
+
+			ZnZn_axis_rollmover->apply( homodimer );
+
+			Size angle = core::Size(i*grid_angle);
+			std::stringstream ss_angle;
+			ss_angle << angle;
+			//std::string name = "homodimer_" + ss_angle.str() + ".pdb";
+			//homodimer.dump_pdb( name );
 
 			//FILTER GEOMETRY
-      filter_metal_geom( homodimer, ss_angle.str() );
-    }
+			filter_metal_geom( homodimer, ss_angle.str() );
+		}
 
-  }
+	}
 
 
-  //protocol
-  virtual void
-  filter_metal_geom( Pose & homodimer, std::string angle_tag ) {
+	//protocol
+	virtual void
+	filter_metal_geom( Pose & homodimer, std::string angle_tag ) {
 
-    utility::vector1< core::Real > angles( 8, 0 );
-    utility::vector1< core::Real > anglediffs( 8, 0 );
-    core::Real const tetrahedral( 109.5 );
-    core::Real sumsq_angle( 0 );
+		utility::vector1< core::Real > angles( 8, 0 );
+		utility::vector1< core::Real > anglediffs( 8, 0 );
+		core::Real const tetrahedral( 109.5 );
+		core::Real sumsq_angle( 0 );
 
-    point zinc1 = msr_1_[1]->get_ligand_atom_xyz();
-    point zinc2 = msr_2_[1]->get_ligand_atom_xyz();
+		point zinc1 = msr_1_[1]->get_ligand_atom_xyz();
+		point zinc2 = msr_2_[1]->get_ligand_atom_xyz();
 
-    point p1_1 = homodimer.residue( msr_1_[2]->get_seqpos() ).atom( msr_1_[2]->get_ligand_atom_name() ).xyz();
-    point p1_2 = homodimer.residue( msr_1_[3]->get_seqpos() ).atom( msr_1_[3]->get_ligand_atom_name() ).xyz();
-    point p1_3 = homodimer.residue( msr_1_[4]->get_seqpos() ).atom( msr_1_[4]->get_ligand_atom_name() ).xyz();
-    point p1_4 = homodimer.residue( msr_1_[5]->get_seqpos() ).atom( msr_1_[5]->get_ligand_atom_name() ).xyz();
+		point p1_1 = homodimer.residue( msr_1_[2]->get_seqpos() ).atom( msr_1_[2]->get_ligand_atom_name() ).xyz();
+		point p1_2 = homodimer.residue( msr_1_[3]->get_seqpos() ).atom( msr_1_[3]->get_ligand_atom_name() ).xyz();
+		point p1_3 = homodimer.residue( msr_1_[4]->get_seqpos() ).atom( msr_1_[4]->get_ligand_atom_name() ).xyz();
+		point p1_4 = homodimer.residue( msr_1_[5]->get_seqpos() ).atom( msr_1_[5]->get_ligand_atom_name() ).xyz();
 
-    point p2_1 = homodimer.residue( msr_2_[2]->get_seqpos() ).atom( msr_2_[2]->get_ligand_atom_name() ).xyz();
-    point p2_2 = homodimer.residue( msr_2_[3]->get_seqpos() ).atom( msr_2_[3]->get_ligand_atom_name() ).xyz();
-    point p2_3 = homodimer.residue( msr_2_[4]->get_seqpos() ).atom( msr_2_[4]->get_ligand_atom_name() ).xyz();
-    point p2_4 = homodimer.residue( msr_2_[5]->get_seqpos() ).atom( msr_2_[5]->get_ligand_atom_name() ).xyz();
+		point p2_1 = homodimer.residue( msr_2_[2]->get_seqpos() ).atom( msr_2_[2]->get_ligand_atom_name() ).xyz();
+		point p2_2 = homodimer.residue( msr_2_[3]->get_seqpos() ).atom( msr_2_[3]->get_ligand_atom_name() ).xyz();
+		point p2_3 = homodimer.residue( msr_2_[4]->get_seqpos() ).atom( msr_2_[4]->get_ligand_atom_name() ).xyz();
+		point p2_4 = homodimer.residue( msr_2_[5]->get_seqpos() ).atom( msr_2_[5]->get_ligand_atom_name() ).xyz();
 
 
 		TR << "seqpos p1_1 " << msr_1_[2]->get_seqpos() << " " << msr_1_[2]->get_ligand_atom_name() << std::endl;
@@ -334,71 +334,71 @@ public:
 		TR << "seqpos p2_3 " << msr_2_[4]->get_seqpos() << " " << msr_2_[4]->get_ligand_atom_name() << std::endl;
 		TR << "seqpos p2_4 " << msr_2_[5]->get_seqpos() << " " << msr_2_[5]->get_ligand_atom_name() << std::endl;
 
-    // angle_of is a function in numeric::xyzVector
-    using numeric::conversions::degrees;
-    angles[1] = degrees(angle_of(p1_1, zinc1, p1_3));
-    angles[2] = degrees(angle_of(p1_1, zinc1, p1_4));
-    angles[3] = degrees(angle_of(p1_2, zinc1, p1_3));
-    angles[4] = degrees(angle_of(p1_2, zinc1, p1_4));
+		// angle_of is a function in numeric::xyzVector
+		using numeric::conversions::degrees;
+		angles[1] = degrees(angle_of(p1_1, zinc1, p1_3));
+		angles[2] = degrees(angle_of(p1_1, zinc1, p1_4));
+		angles[3] = degrees(angle_of(p1_2, zinc1, p1_3));
+		angles[4] = degrees(angle_of(p1_2, zinc1, p1_4));
 
-    angles[5] = degrees(angle_of(p2_1, zinc2, p2_3));
-    angles[6] = degrees(angle_of(p2_1, zinc2, p2_4));
-    angles[7] = degrees(angle_of(p2_2, zinc2, p2_3));
-    angles[8] = degrees(angle_of(p2_2, zinc2, p2_4));
+		angles[5] = degrees(angle_of(p2_1, zinc2, p2_3));
+		angles[6] = degrees(angle_of(p2_1, zinc2, p2_4));
+		angles[7] = degrees(angle_of(p2_2, zinc2, p2_3));
+		angles[8] = degrees(angle_of(p2_2, zinc2, p2_4));
 
 
-    for( core::Size j(1); j<= angles.size(); ++j){
-      anglediffs[j] = tetrahedral - angles[j];
-      sumsq_angle += anglediffs[j] * anglediffs[j];
-      TR << "tag " << angle_tag << "  angle " << j << " " << angles[j] << " diff from 109.5 " << anglediffs[j] << std::endl;
-    }
-    TR << "sumsq_angle: " << sumsq_angle << std::endl;
+		for ( core::Size j(1); j<= angles.size(); ++j ) {
+			anglediffs[j] = tetrahedral - angles[j];
+			sumsq_angle += anglediffs[j] * anglediffs[j];
+			TR << "tag " << angle_tag << "  angle " << j << " " << angles[j] << " diff from 109.5 " << anglediffs[j] << std::endl;
+		}
+		TR << "sumsq_angle: " << sumsq_angle << std::endl;
 
-    if( sumsq_angle < basic::options::option[tetrahedral_angle_sumsq_cutoff].value() ) { // 2*4*(15*15) = 1800
-      TR << "Match geometries made the cutoff" << std::endl;
+		if ( sumsq_angle < basic::options::option[tetrahedral_angle_sumsq_cutoff].value() ) { // 2*4*(15*15) = 1800
+			TR << "Match geometries made the cutoff" << std::endl;
 
 			//FILTER CLASHES
-      filter_clashes( homodimer, angle_tag );
-    }
-  }
+			filter_clashes( homodimer, angle_tag );
+		}
+	}
 
 
-  //protocol
-  virtual void
-  filter_clashes( Pose & homodimer, std::string angle_tag ) {
+	//protocol
+	virtual void
+	filter_clashes( Pose & homodimer, std::string angle_tag ) {
 
 		TR << "9" << std::endl;
-    //Filter Zn-Zn distance
-    point zinc1 = msr_1_[1]->get_ligand_atom_xyz();
-    point zinc2 = msr_2_[1]->get_ligand_atom_xyz();
-    if( zinc1.distance(zinc2) < basic::options::option[zn_zn_distance_cutoff].value() ) {
-      TR << "REJECTING, Zincs are too close!" << std::endl;
-      return;
-    }
-    TR << "Zincs are not too close!  Checking centroid ddG..." << std::endl;
+		//Filter Zn-Zn distance
+		point zinc1 = msr_1_[1]->get_ligand_atom_xyz();
+		point zinc2 = msr_2_[1]->get_ligand_atom_xyz();
+		if ( zinc1.distance(zinc2) < basic::options::option[zn_zn_distance_cutoff].value() ) {
+			TR << "REJECTING, Zincs are too close!" << std::endl;
+			return;
+		}
+		TR << "Zincs are not too close!  Checking centroid ddG..." << std::endl;
 
-    //Filter interchain clashes
-    interface_analyzer_->set_use_centroid_dG( true );
-    interface_analyzer_->apply( homodimer );
-    Real ddG_centroid = interface_analyzer_->get_centroid_dG();
-    TR << "ddG_centroid: " << ddG_centroid << std::endl;
+		//Filter interchain clashes
+		interface_analyzer_->set_use_centroid_dG( true );
+		interface_analyzer_->apply( homodimer );
+		Real ddG_centroid = interface_analyzer_->get_centroid_dG();
+		TR << "ddG_centroid: " << ddG_centroid << std::endl;
 
-    if (ddG_centroid < basic::options::option[ddG_centroid_cutoff].value() ) {
-      TR << "SUCCESS, interface clash detection also made the cutoff" << std::endl;
-      utility::file::FileName match1_name = match1_.pdb_info()->name();
-      utility::file::FileName match2_name = match2_.pdb_info()->name();
-      std::string name = match1_name.base() + "." + match2_name.base() + "_" + angle_tag + ".pdb";
+		if ( ddG_centroid < basic::options::option[ddG_centroid_cutoff].value() ) {
+			TR << "SUCCESS, interface clash detection also made the cutoff" << std::endl;
+			utility::file::FileName match1_name = match1_.pdb_info()->name();
+			utility::file::FileName match2_name = match2_.pdb_info()->name();
+			std::string name = match1_name.base() + "." + match2_name.base() + "_" + angle_tag + ".pdb";
 
 			// WE HAVE FOUND A GOOD DIMER STARTING STRUCTURE
-      homodimer.dump_pdb( name );
-    }
-    return;
-  }
+			homodimer.dump_pdb( name );
+		}
+		return;
+	}
 
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////// End of Protocol  //////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////// End of Protocol  //////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 	virtual
@@ -407,21 +407,21 @@ public:
 
 
 private:
-  //options
-  Pose match1_;
-  Pose match2_;
-  Pose homodimer_with_matches_;
-  // KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
-  // Size symmetric_packrot_iters_;
+	//options
+	Pose match1_;
+	Pose match2_;
+	Pose homodimer_with_matches_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// Size symmetric_packrot_iters_;
 
-  Size zinc1_res_;
-  Size zinc2_res_;
+	Size zinc1_res_;
+	Size zinc2_res_;
 
-  utility::vector1< protocols::metal_interface::MetalSiteResidueOP > msr_1_;
-  utility::vector1< protocols::metal_interface::MetalSiteResidueOP > msr_2_;
+	utility::vector1< protocols::metal_interface::MetalSiteResidueOP > msr_1_;
+	utility::vector1< protocols::metal_interface::MetalSiteResidueOP > msr_2_;
 
-  protocols::analysis::InterfaceAnalyzerMoverOP interface_analyzer_;
-  core::scoring::ScoreFunctionOP scorefunction_;
+	protocols::analysis::InterfaceAnalyzerMoverOP interface_analyzer_;
+	core::scoring::ScoreFunctionOP scorefunction_;
 
 };
 
@@ -432,24 +432,24 @@ int
 main( int argc, char* argv[] )
 {
 	try {
-  using basic::options::option;
-  option.add( match1, "match1" ).def("match1.pdb");
-  option.add( match2, "match2" ).def("match2.pdb");
-  option.add( angle_rotation_increment, "angle_rotation_increment" ).def(10.0);
-  option.add( ddG_centroid_cutoff, "ddG_centroid_cutoff" ).def(10.0);
-  option.add( zn_zn_distance_cutoff, "zn_zn_distance_cutoff" ).def(10.0);
-  option.add( tetrahedral_angle_sumsq_cutoff, "tetrahedral_angle_sumsq_cutoff" ).def(1800);
+		using basic::options::option;
+		option.add( match1, "match1" ).def("match1.pdb");
+		option.add( match2, "match2" ).def("match2.pdb");
+		option.add( angle_rotation_increment, "angle_rotation_increment" ).def(10.0);
+		option.add( ddG_centroid_cutoff, "ddG_centroid_cutoff" ).def(10.0);
+		option.add( zn_zn_distance_cutoff, "zn_zn_distance_cutoff" ).def(10.0);
+		option.add( tetrahedral_angle_sumsq_cutoff, "tetrahedral_angle_sumsq_cutoff" ).def(1800);
 
-  devel::init(argc, argv);
-  protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new zinc2_homodimer_setup() ) );
+		devel::init(argc, argv);
+		protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new zinc2_homodimer_setup() ) );
 
-  TR << "************************d**o**n**e**************************************" << std::endl;
+		TR << "************************d**o**n**e**************************************" << std::endl;
 
-  } catch ( utility::excn::EXCN_Base const & e ) {
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-  }
+	}
 
-  return 0;
+	return 0;
 }
 

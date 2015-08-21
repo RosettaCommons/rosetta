@@ -38,23 +38,23 @@ namespace sewing {
 
 class Node : public utility::pointer::ReferenceCount
 {
-	
+
 public:
-	
+
 	Node();
-	
+
 	Node(
-		 protocols::features::StructureID struct_id,
-		 core::Size bundle_id,
-		 core::Size pair_id,
-		 core::Size helix_1_id,
-		 core::Size helix_1_begin,
-		 core::Size helix_1_end,
-		 core::Size helix_2_id,
-		 core::Size helix_2_begin,
-		 core::Size helix_2_end
+		protocols::features::StructureID struct_id,
+		core::Size bundle_id,
+		core::Size pair_id,
+		core::Size helix_1_id,
+		core::Size helix_1_begin,
+		core::Size helix_1_end,
+		core::Size helix_2_id,
+		core::Size helix_2_begin,
+		core::Size helix_2_end
 	);
-	
+
 	protocols::features::StructureID struct_id() const;
 	core::Size bundle_id() const;
 	core::Size pair_id() const;
@@ -66,32 +66,32 @@ public:
 	core::Size helix_2_end() const;
 	core::Size addition_direction() const;
 	std::string print() const;
-	
+
 	core::Size reversed() const;
-	
+
 	bool operator<(const Node & rhs) const;
 	bool operator==(const Node & rhs) const;
-	
+
 private:
-	
+
 	protocols::features::StructureID struct_id_;
 	core::Size bundle_id_;
 	core::Size pair_id_;
-	
+
 	core::Size helix_1_id_;
 	core::Size helix_1_begin_;
 	core::Size helix_1_end_;
-	
+
 	core::Size helix_2_id_;
 	core::Size helix_2_begin_;
 	core::Size helix_2_end_;
-	
+
 	core::Size addition_direction_;//this doesn't work
-	
+
 public:
 	std::map<core::Size, core::Size> helix_1_positions_; //map residue numbers from this node to positions in final bundle
 	std::map<core::Size, core::Size> helix_2_positions_;
-	
+
 };
 
 } //sewing namespace

@@ -32,51 +32,51 @@ namespace core {
 namespace scoring {
 namespace packing {
 
-	struct SurfVol {
-		Real tot_surf, tot_vol;
-		core::id::AtomID_Map< core::Real> surf;
-		core::id::AtomID_Map< core::Real> vol;
-	};
+struct SurfVol {
+	Real tot_surf, tot_vol;
+	core::id::AtomID_Map< core::Real> surf;
+	core::id::AtomID_Map< core::Real> vol;
+};
 
-	struct SurfVolDeriv {
-		Real tot_surf, tot_vol;
-		core::id::AtomID_Map< core::Real > surf;
-		core::id::AtomID_Map< core::Real > vol;
-		core::id::AtomID_Map< numeric::xyzVector<core::Real> > dsurf;
-		core::id::AtomID_Map< numeric::xyzVector<core::Real> > dvol;
-	};
+struct SurfVolDeriv {
+	Real tot_surf, tot_vol;
+	core::id::AtomID_Map< core::Real > surf;
+	core::id::AtomID_Map< core::Real > vol;
+	core::id::AtomID_Map< numeric::xyzVector<core::Real> > dsurf;
+	core::id::AtomID_Map< numeric::xyzVector<core::Real> > dvol;
+};
 
-	Real
-	get_surf_tot(
-		pose::Pose const & pose,
-		core::Real const   probe_radius
-	);
+Real
+get_surf_tot(
+	pose::Pose const & pose,
+	core::Real const   probe_radius
+);
 
-	SurfVol
-	get_surf_vol(
-		pose::Pose const & pose,
-		core::Real const   probe_radius = 1.4
-	);
+SurfVol
+get_surf_vol(
+	pose::Pose const & pose,
+	core::Real const   probe_radius = 1.4
+);
 
-	SurfVol
-	get_surf_vol(
-		pose::Pose const & pose,
-		core::id::AtomID_Mask const & whichatoms,
-		core::Real const   probe_radius = 1.4
-	);
+SurfVol
+get_surf_vol(
+	pose::Pose const & pose,
+	core::id::AtomID_Mask const & whichatoms,
+	core::Real const   probe_radius = 1.4
+);
 
-	SurfVolDeriv
-	get_surf_vol_deriv(
-		pose::Pose const & pose,
-		core::Real const   probe_radius = 1.4
-	);
+SurfVolDeriv
+get_surf_vol_deriv(
+	pose::Pose const & pose,
+	core::Real const   probe_radius = 1.4
+);
 
-	SurfVolDeriv
-	get_surf_vol_deriv(
-		pose::Pose const & pose,
-		core::id::AtomID_Mask const & whichatoms,
-		core::Real const   probe_radius = 1.4
-	);
+SurfVolDeriv
+get_surf_vol_deriv(
+	pose::Pose const & pose,
+	core::id::AtomID_Mask const & whichatoms,
+	core::Real const   probe_radius = 1.4
+);
 
 
 }

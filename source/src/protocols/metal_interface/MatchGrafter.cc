@@ -53,7 +53,7 @@ namespace metal_interface {
 
 
 MatchGrafter::MatchGrafter() // default constructor
-//	: metalsite_atoms_ ( 5, 0 ), metalsite_residues_ ( 5, 0 )
+// : metalsite_atoms_ ( 5, 0 ), metalsite_residues_ ( 5, 0 )
 {
 }
 
@@ -65,13 +65,13 @@ MatchGrafter::~MatchGrafter()
 /// @brief Takes match pose (2 residues + zinc) and partner pose, grafts match onto partner, returns grafted partner
 Pose
 MatchGrafter::graft( Pose & match,
-						Pose & partner_ungrafted ) {
+	Pose & partner_ungrafted ) {
 
 	core::chemical::ResidueTypeSetCOP typeset(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD));
 	core::chemical::ResidueType const & CYZ(typeset->name_map("CYZ"));
 
 	//graft match, excluding zinc, onto target
-	for ( core::Size i = 1; i <= match.pdb_info()->nres() - 1; ++i ){
+	for ( core::Size i = 1; i <= match.pdb_info()->nres() - 1; ++i ) {
 
 		//int pdbnum = match.pdb_info()->number(i);
 		//core::Size chain_num = match.residue(i).chain();
@@ -90,14 +90,14 @@ MatchGrafter::graft( Pose & match,
 		partner_ungrafted.conformation().update_polymeric_connection(partner_resid-1, true);
 		partner_ungrafted.conformation().update_polymeric_connection(partner_resid, true);
 		partner_ungrafted.conformation().update_polymeric_connection(partner_resid+1, true);
-		if(partner_ungrafted.residue_type(partner_resid).aa() == core::chemical::aa_cys){
+		if ( partner_ungrafted.residue_type(partner_resid).aa() == core::chemical::aa_cys ) {
 			core::pose::replace_pose_residue_copying_existing_coordinates(partner_ungrafted, partner_resid, CYZ);
 		}
 	}
 	Pose partner(partner_ungrafted);
 
 	partner.append_residue_by_jump(match.residue(match.pdb_info()->nres()/*metal*/), partner.total_residue());
-	//	partner.dump_pdb("3UBQ_graft.pdb");
+	// partner.dump_pdb("3UBQ_graft.pdb");
 
 	return partner;
 }//graft
@@ -119,7 +119,7 @@ MatchGrafter::build_combined_pose_with_zinc_overlay( Pose & partner1, Pose & par
 	core::kinematics::FoldTree tree(partner2.total_residue());
 	tree.clear();
 	int const p2_zinc( partner2.total_residue() ); // zinc is last residue of partner2, after it's been grafted
-                                                 // note that 'partner2length' excludes the added zinc
+	// note that 'partner2length' excludes the added zinc
 
 	using core::kinematics::Edge;
 	//Edges: PEPTIDE = -1, CHEMICAL = -2, jump = 1, 2...
@@ -141,22 +141,22 @@ MatchGrafter::build_combined_pose_with_zinc_overlay( Pose & partner1, Pose & par
 	//replace zinc on (moving) scaffold with zinc on (stationary) target
 	partner2.replace_residue(p2_zinc, partner1.residue(metal_res_num/*zinc is last residue of partner 1*/), false);
 	core::pose::remove_variant_type_from_pose_residue(partner2, core::chemical::LOWER_TERMINUS_VARIANT, p2_zinc);
- 	core::pose::remove_variant_type_from_pose_residue(partner2, core::chemical::UPPER_TERMINUS_VARIANT, p2_zinc);
+	core::pose::remove_variant_type_from_pose_residue(partner2, core::chemical::UPPER_TERMINUS_VARIANT, p2_zinc);
 
 	//restore old jump transforms, which causes remainder of partner2 to align itself properly
- 	partner2.set_jump(1, j1);
+	partner2.set_jump(1, j1);
 
 	////////////////////////////////////////////////////////////////////////////////////
 	//build the combined pose
 	Pose combined(partner1);
 	combined.append_residue_by_jump(partner2.residue(1), 1);
-	for (core::Size i=2; i<=partner2length; ++i){
+	for ( core::Size i=2; i<=partner2length; ++i ) {
 		combined.append_residue_by_bond(partner2.residue(i));
 	}
 	//combined.dump_pdb("combined.pdb");
 
 	//fix the pose into three chains
-	//	combined.conformation().insert_chain_ending( partner1length ); // with this line, chains become A, B(zinc), C.  Without this line, chains become A, B
+	// combined.conformation().insert_chain_ending( partner1length ); // with this line, chains become A, B(zinc), C.  Without this line, chains become A, B
 	combined.conformation().insert_chain_ending( metal_res_num );
 
 	return combined;
@@ -175,13 +175,13 @@ MatchGrafter::ensure_proper_his_tautomers(
 	assert( combined.residue( metalsite_seqpos[1] ).is_ligand() );
 
 
-	for( core::Size i(2) /*metal is 1*/; i <= metalsite_seqpos.size(); ++i){
+	for ( core::Size i(2) /*metal is 1*/; i <= metalsite_seqpos.size(); ++i ) {
 
 		assert( combined.residue( metalsite_seqpos[i] ).is_protein() );
 
 		core::conformation::Residue const old_rsd(combined.residue(metalsite_seqpos[i]));
 
-		if( combined.residue_type(metalsite_seqpos[i]).aa() != core::chemical::aa_his) continue; //matters for HIS/HIS_D
+		if ( combined.residue_type(metalsite_seqpos[i]).aa() != core::chemical::aa_his ) continue; //matters for HIS/HIS_D
 
 
 		core::Vector const & metal_atom(combined.residue(metalsite_seqpos[1]).atom(1).xyz());
@@ -196,14 +196,14 @@ MatchGrafter::ensure_proper_his_tautomers(
 		TR << "line 5" << std::endl;
 
 		//if the two bools match, we have case 1 or 2 above
-		if( HIS_D == ND1 ){
+		if ( HIS_D == ND1 ) {
 
 			std::string const new_name(HIS_D ? "HIS" : "HIS_D");
 
 			//get type set from original residue; query it for a residue type of the other name
 			core::chemical::ResidueType const & new_type(old_rsd.residue_type_set().name_map(new_name));
 			TR << "mutating from " << old_rsd.name() << " to " << new_type.name() << " at combined position "
-				 << metalsite_seqpos[i] << std::endl;
+				<< metalsite_seqpos[i] << std::endl;
 			core::conformation::ResidueOP new_rsd(core::conformation::ResidueFactory::create_residue(new_type, old_rsd, combined.conformation()));
 			new_rsd->set_chi( 1, old_rsd.chi(1) );
 			new_rsd->set_chi( 2, old_rsd.chi(2) );

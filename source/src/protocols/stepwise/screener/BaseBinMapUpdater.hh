@@ -29,42 +29,42 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class BaseBinMapUpdater: public StepWiseScreener {
+class BaseBinMapUpdater: public StepWiseScreener {
 
-	public:
+public:
 
-		//constructor
-		BaseBinMapUpdater( BaseBinMap & base_bin_map );
+	//constructor
+	BaseBinMapUpdater( BaseBinMap & base_bin_map );
 
-		//destructor
-		~BaseBinMapUpdater();
+	//destructor
+	~BaseBinMapUpdater();
 
-	public:
+public:
 
-		virtual
-		void
-		get_update( sampler::StepWiseSamplerBaseOP sampler );
+	virtual
+	void
+	get_update( sampler::StepWiseSamplerBaseOP sampler );
 
-		virtual
-		std::string
-		name() const { return "BaseBinMapUpdater"; }
+	virtual
+	std::string
+	name() const { return "BaseBinMapUpdater"; }
 
-		virtual
-		StepWiseScreenerType
-		type() const { return BASE_BIN_MAP; }
+	virtual
+	StepWiseScreenerType
+	type() const { return BASE_BIN_MAP; }
 
-	private:
+private:
 
-		void
-		update_base_bin_map( BaseBin const & base_bin );
+	void
+	update_base_bin_map( BaseBin const & base_bin );
 
-		void
-		update_base_bin_map( utility::vector1< Real > const & rigid_body_values );
+	void
+	update_base_bin_map( utility::vector1< Real > const & rigid_body_values );
 
-	private:
+private:
 
-		BaseBinMap & base_bin_map_;
-	};
+	BaseBinMap & base_bin_map_;
+};
 
 } //screener
 } //stepwise

@@ -115,7 +115,7 @@ bool SmallMinCCDTrial::reinitialize_for_new_input() const
 void SmallMinCCDTrial::register_options()
 {
 	///  PUT THE LIST OF OPTIONS THAT ARE USED HERE  ///
-	
+
 	///  RECURSIVELY CALL REGISTER OPTIONS ON ALL MOVERS THAT THIS CLASS HAS AN OWNING_PTR TO  ///
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -138,7 +138,7 @@ void SmallMinCCDTrial::apply( Pose & pose )
 	using core::kinematics::MoveMapOP;
 	using core::pack::rotamer_trials;
 	using core::pack::task::PackerTaskOP;
-	
+
 	// TR << "Beginning apply function of " + get_name() + "." << std::endl;
 
 	setup_objects( pose );
@@ -153,20 +153,20 @@ void SmallMinCCDTrial::apply( Pose & pose )
 	LoopMover_Refine_CCDOP loop_mover_op( loop_mover() ); // lock AP
 	LoopsOP all_loops = loop_mover_op->loops();
 	Loops one_loop = get_one_random_loop();
-	
+
 	// set up movemap for one loop
 	MoveMapOP one_loop_movemap = movemap();
 	loop_mover_op->setup_movemap( pose, one_loop, task_before_bb_perturbation->repacking_residues(), one_loop_movemap );
 
 	debug_zero( pose );
-	
+
 	simple_moves::SmallMover small_moves( one_loop_movemap, mc()->temperature(), nmoves_ );
 	small_moves.apply( pose );
 
 	debug_one( pose );
 
 
-	if (! one_loop[ one_loop.size() ].is_terminal( pose ) ) ccd_close_loops( pose, one_loop, *one_loop_movemap);
+	if ( ! one_loop[ one_loop.size() ].is_terminal( pose ) ) ccd_close_loops( pose, one_loop, *one_loop_movemap);
 
 	debug_two( pose );
 
@@ -181,8 +181,7 @@ void SmallMinCCDTrial::apply( Pose & pose )
 	MoveMapOP all_loops_movemap = movemap();
 	loop_mover_op->setup_movemap( pose, *all_loops, task_after_bb_perturbation->repacking_residues(), all_loops_movemap );
 
-	if ( loop_mover_op->flank_residue_min() )
-	{
+	if ( loop_mover_op->flank_residue_min() ) {
 		add_loop_flank_residues_bb_to_movemap(*all_loops, *all_loops_movemap);
 	}
 
@@ -210,7 +209,7 @@ void SmallMinCCDTrial::init()
 {
 	using core::optimization::MinimizerOptions;
 	type( "SmallMinCCDTrial" );
-	
+
 	nmoves_ = 1;
 	minimizer_options_ = core::optimization::MinimizerOptionsOP( new MinimizerOptions( "dfpmin", 0.001, true /*use_nblist*/, false /*deriv_check*/ ) );
 	init_options();
@@ -237,7 +236,7 @@ void SmallMinCCDTrial::init_options()
 core::optimization::AtomTreeMinimizerOP SmallMinCCDTrial::minimizer( core::pose::Pose const & pose ) const
 {
 	// minimizer
-	if (! minimizer_){
+	if ( ! minimizer_ ) {
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
 			// minimizer_ = dynamic_cast<core::optimization::AtomTreeMinimizer>( new core::optimization::symmetry::SymAtomTreeMinimizer );
 			minimizer_ = core::optimization::AtomTreeMinimizerOP( new core::optimization::symmetry::SymAtomTreeMinimizer );
@@ -289,7 +288,7 @@ void SmallMinCCDTrial::debug_zero( Pose & pose )
 		LoopMover_Refine_CCDOP loop_mover_op( loop_mover() ); // lock AP
 		TR << "chutmp-debug small_move-0: " << "  " << (*scorefxn())(pose) << std::endl;
 		TR << "small_move-0: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() )
-		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *loop_mover_op->loops() )) << std::endl;
+			<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *loop_mover_op->loops() )) << std::endl;
 		pose.dump_pdb("small_move-0.pdb");
 	}
 
@@ -301,7 +300,7 @@ void SmallMinCCDTrial::debug_one( Pose & pose )
 		LoopMover_Refine_CCDOP loop_mover_op( loop_mover() ); // lock AP
 		TR << "chutmp-debug small_move-1: " << "  " << (*scorefxn())(pose) << std::endl;
 		TR << "small_move-1: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() )
-		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *(loop_mover_op->loops()) )) << std::endl;
+			<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *(loop_mover_op->loops()) )) << std::endl;
 		pose.dump_pdb("small_move-1.pdb");
 		std::ofstream out("score.small_move_1");
 		out << "scoring of input_pose " << (*scorefxn())(pose) << std::endl;
@@ -316,7 +315,7 @@ void SmallMinCCDTrial::debug_two( Pose & pose )
 		LoopMover_Refine_CCDOP loop_mover_op( loop_mover() ); // lock AP
 		TR << "chutmp-debug small_move-2: " << "  " << (*scorefxn())(pose) << std::endl;
 		TR << "small_move-2: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() )
-		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *(loop_mover_op->loops()) )) << std::endl;
+			<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *(loop_mover_op->loops()) )) << std::endl;
 		pose.dump_pdb("small_move-2.pdb");
 		std::ofstream out("score.small_move_2");
 		out << "scoring of input_pose " << (*scorefxn())(pose) << std::endl;
@@ -331,7 +330,7 @@ void SmallMinCCDTrial::debug_three( Pose & pose )
 		LoopMover_Refine_CCDOP loop_mover_op( loop_mover() ); // lock AP
 		TR << "chutmp-debug small_move-3: " << "  " << (*scorefxn())(pose) << std::endl;
 		TR << "small_move-3: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() )
-		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *(loop_mover_op->loops()) )) << std::endl;
+			<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *(loop_mover_op->loops()) )) << std::endl;
 		pose.dump_pdb("small_move-3.pdb");
 	}
 }
@@ -342,7 +341,7 @@ void SmallMinCCDTrial::debug_four( Pose & pose )
 		LoopMover_Refine_CCDOP loop_mover_op( loop_mover() ); // lock AP
 		TR << "chutmp-debug small_move-4: " << "  " << (*scorefxn())(pose) << std::endl;
 		TR << "small_move-4: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() )
-		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *(loop_mover_op->loops()) )) << std::endl;
+			<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *(loop_mover_op->loops()) )) << std::endl;
 		pose.dump_pdb("small_move-4.pdb");
 	}
 }
@@ -353,7 +352,7 @@ void SmallMinCCDTrial::debug_five( Pose & pose )
 		LoopMover_Refine_CCDOP loop_mover_op( loop_mover() ); // lock AP
 		TR << "chutmp-debug small_move-5: " << "  " << (*scorefxn())(pose) << std::endl;
 		TR << "small_move-5: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() )
-		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *(loop_mover_op->loops()) )) << std::endl;
+			<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *(loop_mover_op->loops()) )) << std::endl;
 		pose.dump_pdb("small_move-5.pdb");
 	}
 }
@@ -365,11 +364,11 @@ void SmallMinCCDTrial::debug_five( Pose & pose )
 SmallMinCCDTrialCreator::~SmallMinCCDTrialCreator() {}
 
 moves::MoverOP SmallMinCCDTrialCreator::create_mover() const {
-  return moves::MoverOP( new SmallMinCCDTrial() );
+	return moves::MoverOP( new SmallMinCCDTrial() );
 }
 
 std::string SmallMinCCDTrialCreator::keyname() const {
-  return "SmallMinCCDTrial";
+	return "SmallMinCCDTrial";
 }
 
 } // namespace refine

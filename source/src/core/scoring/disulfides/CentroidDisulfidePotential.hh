@@ -34,85 +34,85 @@ namespace scoring {
 namespace disulfides {
 
 /**
- * @details This class scores centroid disulfide bonds
- * It is intended to be a singleton with a single instance held by ScoringManager.
- *
- * The energy functions are derived from those present in Rosetta++
- */
+* @details This class scores centroid disulfide bonds
+* It is intended to be a singleton with a single instance held by ScoringManager.
+*
+* The energy functions are derived from those present in Rosetta++
+*/
 class CentroidDisulfidePotential : public utility::pointer::ReferenceCount {
 public:
 	CentroidDisulfidePotential();
 	virtual ~CentroidDisulfidePotential();
 
 	/**
-	 * @brief Calculates scoring terms for the disulfide bond specified
-	 */
+	* @brief Calculates scoring terms for the disulfide bond specified
+	*/
 	void
 	score_disulfide(core::conformation::Residue const & res1,
-			core::conformation::Residue const & res2,
-			core::Energy & cbcb_distance_score,
-			core::Energy & centroid_distance_score,
-			core::Energy & cacbcb_angle_1_score,
-			core::Energy & cacbcb_angle_2_score,
-			core::Energy & cacbcbca_dihedral_score,
-			core::Energy & backbone_dihedral_score
-			) const;
+		core::conformation::Residue const & res2,
+		core::Energy & cbcb_distance_score,
+		core::Energy & centroid_distance_score,
+		core::Energy & cacbcb_angle_1_score,
+		core::Energy & cacbcb_angle_2_score,
+		core::Energy & cacbcbca_dihedral_score,
+		core::Energy & backbone_dihedral_score
+	) const;
 
 	/**
-	 * @brief Calculates scoring terms and geometry
-	 */
+	* @brief Calculates scoring terms and geometry
+	*/
 	void score_disulfide(
-			core::conformation::Residue const & res1,
-			core::conformation::Residue const & res2,
-			core::Real & cbcb_distance_sq,
-			core::Real & centroid_distance_sq,
-			core::Real & cacbcb_angle_1,
-			core::Real & cacbcb_angle_2,
-			core::Real & cacbcbca_dihedral,
-			core::Real & backbone_dihedral,
-			core::Energy & cbcb_distance_score,
-			core::Energy & centroid_distance_score,
-			core::Energy & cacbcb_angle_1_score,
-			core::Energy & cacbcb_angle_2_score,
-			core::Energy & cacbcbca_dihedral_score,
-			core::Energy & backbone_dihedral_score,
-			core::Real & cb_score_factor
-			) const;
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		core::Real & cbcb_distance_sq,
+		core::Real & centroid_distance_sq,
+		core::Real & cacbcb_angle_1,
+		core::Real & cacbcb_angle_2,
+		core::Real & cacbcbca_dihedral,
+		core::Real & backbone_dihedral,
+		core::Energy & cbcb_distance_score,
+		core::Energy & centroid_distance_score,
+		core::Energy & cacbcb_angle_1_score,
+		core::Energy & cacbcb_angle_2_score,
+		core::Energy & cacbcbca_dihedral_score,
+		core::Energy & backbone_dihedral_score,
+		core::Real & cb_score_factor
+	) const;
 
 	/**
-	 * @brief Decide whether there is a disulfide bond between two residues.
-	 *
-	 * Does not require that the residues be cysteines, so if this is important
-	 * you should check for CYS first. (The relaxed requirements are useful for
-	 * design.)
-	 */
+	* @brief Decide whether there is a disulfide bond between two residues.
+	*
+	* Does not require that the residues be cysteines, so if this is important
+	* you should check for CYS first. (The relaxed requirements are useful for
+	* design.)
+	*/
 	bool is_disulfide(core::conformation::Residue const & res1,
-			core::conformation::Residue const & res2) const;
+		core::conformation::Residue const & res2) const;
 
 
 private:
 
 	/**
-	 * @brief calculates some degrees of freedom between two centroid cys residues
-	 *
-	 * @param cbcb_distance_sq      The distance between Cbetas squared
-	 * @param centroid_distance_sq  The distance between centroids squared
-	 * @param cacbcb_angle_1        The Ca1-Cb1-Cb2 planar angle, in degrees
-	 * @param cacbcb_angle_2        The Ca2-Cb2-Cb1 planar angle, in degrees
-	 * @param cacbcbca_dihedral     The Ca1-Cb1-Cb2-Ca2 dihedral angle
-	 * @param backbone_dihedral     The N-Ca1-Ca2-C2 dihedral angle
-	 */
+	* @brief calculates some degrees of freedom between two centroid cys residues
+	*
+	* @param cbcb_distance_sq      The distance between Cbetas squared
+	* @param centroid_distance_sq  The distance between centroids squared
+	* @param cacbcb_angle_1        The Ca1-Cb1-Cb2 planar angle, in degrees
+	* @param cacbcb_angle_2        The Ca2-Cb2-Cb1 planar angle, in degrees
+	* @param cacbcbca_dihedral     The Ca1-Cb1-Cb2-Ca2 dihedral angle
+	* @param backbone_dihedral     The N-Ca1-Ca2-C2 dihedral angle
+	*/
 	static
 	void
 	disulfide_params(
-			core::conformation::Residue const& res1,
-			core::conformation::Residue const& res2,
-			core::Real & cbcb_distance_sq,
-			core::Real & centroid_distance_sq,
-			core::Real & cacbcb_angle_1,
-			core::Real & cacbcb_angle_2,
-			core::Real & cacbcbca_dihedral,
-			core::Real & backbone_dihedral);
+		core::conformation::Residue const& res1,
+		core::conformation::Residue const& res2,
+		core::Real & cbcb_distance_sq,
+		core::Real & centroid_distance_sq,
+		core::Real & cacbcb_angle_1,
+		core::Real & cacbcb_angle_2,
+		core::Real & cacbcbca_dihedral,
+		core::Real & backbone_dihedral);
 
 private: //Scoring functions
 	static Cb_Distance_FuncCOP cb_distance_func_;
@@ -129,12 +129,12 @@ private: //Scoring functions
 
 
 /**
- * @brief Score based on the distance between Cb
- *
- * Based on the rosetta++ scores by Bill Schief in 2002.
- *
- * Uses a sum of three gaussians.
- */
+* @brief Score based on the distance between Cb
+*
+* Based on the rosetta++ scores by Bill Schief in 2002.
+*
+* Uses a sum of three gaussians.
+*/
 class Cb_Distance_Func : public func::Func
 {
 public:
@@ -155,8 +155,8 @@ private:
 };
 
 /**
- * Score based on the distance between the two residues' centroids
- */
+* Score based on the distance between the two residues' centroids
+*/
 class Cen_Distance_Func : public func::Func
 {
 public:
@@ -170,8 +170,8 @@ private:
 };
 
 /**
- * Score based on the angle Ca Cb Cb
- */
+* Score based on the angle Ca Cb Cb
+*/
 class CaCbCb_Angle_Func : public func::Func
 {
 public:
@@ -185,8 +185,8 @@ private:
 };
 
 /**
- * Score based on the dihedral formed by the two Ca and Cb
- */
+* Score based on the dihedral formed by the two Ca and Cb
+*/
 class NCaCaC_Dihedral_Func : public func::Func
 {
 public:
@@ -200,8 +200,8 @@ private:
 };
 
 /**
- * Score based on the dihedral formed by N Ca Ca C
- */
+* Score based on the dihedral formed by N Ca Ca C
+*/
 class CaCbCbCa_Dihedral_Func : public func::Func
 {
 public:

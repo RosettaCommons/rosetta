@@ -57,7 +57,7 @@ namespace protocols {
 namespace seeded_abinitio {
 
 /// for runtime parsing of seeds
-protocols::loops::Loops parse_seeds(	core::pose::Pose const & pose, utility::vector1 < std::pair < std::string, std::string > > seed_vector);
+protocols::loops::Loops parse_seeds( core::pose::Pose const & pose, utility::vector1 < std::pair < std::string, std::string > > seed_vector);
 
 /// to readjust the move map after length changes
 void adjust_mm_to_length( core::pose::Pose const & pose, core::kinematics::MoveMapOP & mm );

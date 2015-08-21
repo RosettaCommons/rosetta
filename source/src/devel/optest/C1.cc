@@ -7,15 +7,15 @@ namespace devel {
 namespace optest {
 
 void c1_func1() {
-   std::cout << "BEGIN c1_func1: standard constructor / destructor" << std::endl;
-   B1 b;
+	std::cout << "BEGIN c1_func1: standard constructor / destructor" << std::endl;
+	B1 b;
 	std::cout << "b: "; b.status();
 	std::cout << "END c1_func1" << std::endl << std::endl;
 }
 
 void c1_func2() {
-   std::cout << "BEGIN c1_func2: set A pointer" << std::endl;
-   B1 b;
+	std::cout << "BEGIN c1_func2: set A pointer" << std::endl;
+	B1 b;
 	//b.set_aptr( new A );
 	b.set_default_A();
 	std::cout << "b: "; b.status();
@@ -23,8 +23,8 @@ void c1_func2() {
 }
 
 void c1_func3() {
-   std::cout << "BEGIN c1_func3: copy constructor" << std::endl;
-   B1 b1;
+	std::cout << "BEGIN c1_func3: copy constructor" << std::endl;
+	B1 b1;
 	//b1.set_aptr( new A );
 	b1.set_default_A();
 	std::cout << "b1: "; b1.status();
@@ -35,8 +35,8 @@ void c1_func3() {
 }
 
 void c1_func4() {
-   std::cout << "BEGIN c1_func4: assignment operator" << std::endl;
-   B1 b1;
+	std::cout << "BEGIN c1_func4: assignment operator" << std::endl;
+	B1 b1;
 	//b1.set_aptr( new A );
 	b1.set_default_A();
 	std::cout << "b1: "; b1.status();
@@ -52,8 +52,8 @@ void c1_func4() {
 
 
 void c1_func5() {
-   std::cout << "BEGIN c1_func5: clone" << std::endl;
-   B1 b1;
+	std::cout << "BEGIN c1_func5: clone" << std::endl;
+	B1 b1;
 	//b1.set_aptr( new A );
 	b1.set_default_A();
 	std::cout << "b1: "; b1.status();

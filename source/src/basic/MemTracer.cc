@@ -92,16 +92,16 @@ namespace basic {
 
 // it turns out LINUX kernel do not support getrusage() ...
 void get_usage_from_procfilesystem( std::ostream& mem_report ) {
-#if defined(_WIN32) || defined( __native_client__ ) 
+#if defined(_WIN32) || defined( __native_client__ )
 	return;  // disabled on windows
 #else
 	char buf[30];
 	int page_sz = getpagesize()/1024; //this value doesn't seem to be correct on BG
 
-	#ifdef MPICH_IGNORE_CXX_SEEK
+#ifdef MPICH_IGNORE_CXX_SEEK
 	//now using MPICH_IGNORE_CXX_SEEK is a bit hacky, but this happens to be a flag active on BG/P
 	page_sz = 1;
-	#endif
+#endif
 
 	unsigned pid = (unsigned)getpid();
 	snprintf(buf, 30, "/proc/%u/statm", pid );
@@ -146,14 +146,14 @@ void MemTracer::t_flush( std::string const &str ) {
 #ifdef _WIN32
 	return;  // disabled on windows
 #else
-  if ( visible() ) {
+	if ( visible() ) {
 		std::stringstream mem_report;
 		get_usage_from_procfilesystem( mem_report );
 		mem_report << "   @ " << str;
 		Parent::t_flush( mem_report.str() );
-  } else {
-    Parent::t_flush( str );
-  }
+	} else {
+		Parent::t_flush( str );
+	}
 #endif
 }
 

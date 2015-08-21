@@ -43,7 +43,7 @@ namespace canonical_sampling {
 
 
 /// @brief
-/// @details The only way to set the temperature range used for simulated 
+/// @details The only way to set the temperature range used for simulated
 /// annealing is to use the command line.  The relevant options are:
 ///
 /// @code

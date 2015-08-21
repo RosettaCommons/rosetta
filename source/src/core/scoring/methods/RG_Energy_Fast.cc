@@ -71,7 +71,7 @@ RG_Energy_Fast::RG_Energy_Fast() :
 
 /// c-tor
 RG_Energy_Fast::RG_Energy_Fast( EnergyMethodCreatorOP CreatorOP ) :
-  parent( CreatorOP )
+	parent( CreatorOP )
 {}
 
 /// clone
@@ -161,7 +161,7 @@ RG_Energy_Fast::calculate_rg_score(
 	// calculate center of mass
 	Vector center_of_mass( 0, 0, 0 );
 	for ( Size i = 1; i <= nres; ++i ) {
-		if (!relevant_residues[i]) continue;
+		if ( !relevant_residues[i] ) continue;
 
 		// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
 		if ( pose.residue(i).has_variant_type( core::chemical::REPLONLY ) ) continue;
@@ -176,7 +176,7 @@ RG_Energy_Fast::calculate_rg_score(
 	// calculate RG based on distance from center of mass
 	Real rg_score = 0;
 	for ( Size i = 1; i <= nres; ++i ) {
-		if (!relevant_residues[i]) continue;
+		if ( !relevant_residues[i] ) continue;
 
 		// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
 		if ( pose.residue(i).has_variant_type( core::chemical::REPLONLY ) ) continue;
@@ -230,7 +230,7 @@ RG_Energy_Fast::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & 
 
 	// symmetry-specific code
 	// since it is a whole-structure energy, special treatment is needed to make sure this is computed correctly
-	if (core::pose::symmetry::is_symmetric(pose)) {
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetricConformation &symmconf =
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation & >( pose.conformation());
 		symmconf.recalculate_transforms(); // this is needed by deriv calcs
@@ -255,20 +255,20 @@ RG_Energy_Fast::eval_atom_derivative(
 	core::conformation::Residue const &rsd_i = pose.residue(resid);
 	numeric::xyzVector<core::Real> X = pose.xyz(id);
 
-	if (atmid != rsd_i.nbr_atom()) return;
+	if ( atmid != rsd_i.nbr_atom() ) return;
 
 	numeric::xyzVector<core::Real> drg_dx = (X-mindata.com) / (mindata.rg*(mindata.nres_scored - 1));
 
 	//fpd symmetry
 	core::conformation::symmetry::SymmetryInfoCOP symminfo=NULL;
 	Vector f1(0,0,0), f2(0,0,0);
-	if (core::pose::symmetry::is_symmetric(pose)) {
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetricConformation const &symmconf =
 			dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation());
 		symminfo = symmconf.Symmetry_Info();
-		if (symminfo->bb_is_independent( resid ) ) {
+		if ( symminfo->bb_is_independent( resid ) ) {
 			utility::vector1< core::Size > bbclones = symminfo->bb_clones( resid );
-			for (int i=1; i<=(int)bbclones.size(); ++i) {
+			for ( int i=1; i<=(int)bbclones.size(); ++i ) {
 				numeric::xyzVector<core::Real> Xsymm = pose.xyz(id::AtomID(atmid, bbclones[i]));
 				numeric::xyzVector<core::Real> drg_dxsymm = (Xsymm-mindata.com) / (mindata.rg*(mindata.nres_scored - 1));
 				drg_dx += symmconf.apply_transformation_norecompute( drg_dxsymm, bbclones[i] , resid,  true );

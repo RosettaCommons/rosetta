@@ -25,9 +25,9 @@
 #include <string>
 #include <platform/types.hh>
 
-namespace basic{
-namespace database{
-namespace schema_generator{
+namespace basic {
+namespace database {
+namespace schema_generator {
 
 class Constraint : public utility::pointer::ReferenceCount
 {
@@ -53,23 +53,23 @@ protected:
 //{
 //public:
 //
-//	enum ComparisonOperator{
-//		GREATER_THAN,
-//		LESS_THAN,
-//		EQUAL_TO,
-//		NOT_EQUAL_TO
-//	};
+// enum ComparisonOperator{
+//  GREATER_THAN,
+//  LESS_THAN,
+//  EQUAL_TO,
+//  NOT_EQUAL_TO
+// };
 //
-//	ComparisonConstraint(Column column1, int comparison_operator, Column column2);
+// ComparisonConstraint(Column column1, int comparison_operator, Column column2);
 //
-//	ComparisonConstraint(Column column, int comparator, std::string value);
+// ComparisonConstraint(Column column, int comparator, std::string value);
 //
-//	ComparisonConstraint(Column, Column);
+// ComparisonConstraint(Column, Column);
 //
-//	std::string print();
+// std::string print();
 //
 //private:
-//	std::string string_value;
+// std::string string_value;
 //
 //};
 
@@ -78,7 +78,7 @@ public:
 
 	UniqueConstraint(Column column);
 	UniqueConstraint(Columns columns);
-	
+
 	std::string
 	print(
 		utility::sql_database::sessionOP
@@ -96,7 +96,7 @@ public:
 	print(
 		utility::sql_database::sessionOP
 	) const;
-	
+
 private:
 	platform::Real value_;
 };

@@ -24,7 +24,7 @@ class ExcludedFilter {
 	// constellation (i=1,...,N, where N is the number of residues in the pose)
 	static ResidueMaskOP excluded;
 
-	public:
+public:
 	static bool hasnt_excluded(Pose const&, utility::vector1<Size> const& cnl);
 	static void init(Pose& ps, std::string const& ex_fname);
 };

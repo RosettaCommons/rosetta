@@ -63,12 +63,12 @@ namespace dna {
 using utility::vector1;
 using utility::string_split;
 using namespace core;
-	using namespace chemical;
-	using namespace basic::options;
-	using namespace pack;
-		using namespace task;
-			using namespace operation;
-	using namespace scoring;
+using namespace chemical;
+using namespace basic::options;
+using namespace pack;
+using namespace task;
+using namespace operation;
+using namespace scoring;
 
 using namespace ObjexxFCL::format;
 
@@ -99,25 +99,25 @@ DnaInterfaceMultiStateDesignCreator::mover_name()
 }
 
 DnaInterfaceMultiStateDesign::DnaInterfaceMultiStateDesign()
-	: protocols::simple_moves::PackRotamersMover( DnaInterfaceMultiStateDesignCreator::mover_name() ),
-		gen_alg_(/* 0 */),
-		multistate_packer_(/* 0 */),
-		dna_chains_(/* 0 */),
-		// option flags/parameters: default to command line options
-		// parse_my_tag method may change them
-		generations_(               option[ OptionKeys::ms::generations ]() ),
-		pop_size_(                  option[ OptionKeys::ms::pop_size ]() ),
-		num_packs_(                 option[ OptionKeys::ms::num_packs ]() ),
-		pop_from_ss_(               option[ OptionKeys::ms::pop_from_ss ]() ),
-		numresults_(                option[ OptionKeys::ms::numresults ]() ),
-		fraction_by_recombination_( option[ OptionKeys::ms::fraction_by_recombination ]() ),
-		mutate_rate_(               option[ OptionKeys::ms::mutate_rate ]() ),
-		boltz_temp_(                option[ OptionKeys::ms::Boltz_temp ]() ),
-		anchor_offset_(             option[ OptionKeys::ms::anchor_offset ]() ),
-		checkpoint_prefix_(         option[ OptionKeys::ms::checkpoint::prefix ]() ),
-		checkpoint_interval_(       option[ OptionKeys::ms::checkpoint::interval ]() ),
-		checkpoint_gz_(             option[ OptionKeys::ms::checkpoint::gz ]() ),
-		checkpoint_rename_(         option[ OptionKeys::ms::checkpoint::rename ]() )
+: protocols::simple_moves::PackRotamersMover( DnaInterfaceMultiStateDesignCreator::mover_name() ),
+	gen_alg_(/* 0 */),
+	multistate_packer_(/* 0 */),
+	dna_chains_(/* 0 */),
+	// option flags/parameters: default to command line options
+	// parse_my_tag method may change them
+	generations_(               option[ OptionKeys::ms::generations ]() ),
+	pop_size_(                  option[ OptionKeys::ms::pop_size ]() ),
+	num_packs_(                 option[ OptionKeys::ms::num_packs ]() ),
+	pop_from_ss_(               option[ OptionKeys::ms::pop_from_ss ]() ),
+	numresults_(                option[ OptionKeys::ms::numresults ]() ),
+	fraction_by_recombination_( option[ OptionKeys::ms::fraction_by_recombination ]() ),
+	mutate_rate_(               option[ OptionKeys::ms::mutate_rate ]() ),
+	boltz_temp_(                option[ OptionKeys::ms::Boltz_temp ]() ),
+	anchor_offset_(             option[ OptionKeys::ms::anchor_offset ]() ),
+	checkpoint_prefix_(         option[ OptionKeys::ms::checkpoint::prefix ]() ),
+	checkpoint_interval_(       option[ OptionKeys::ms::checkpoint::interval ]() ),
+	checkpoint_gz_(             option[ OptionKeys::ms::checkpoint::gz ]() ),
+	checkpoint_rename_(         option[ OptionKeys::ms::checkpoint::rename ]() )
 {}
 
 DnaInterfaceMultiStateDesign::~DnaInterfaceMultiStateDesign(){}
@@ -156,8 +156,9 @@ DnaInterfaceMultiStateDesign::initialize( Pose & pose )
 
 	if ( ! score_function() ) {
 		std::string weights_tag("dna");
-		if ( option[ OptionKeys::score::weights ].user() )
+		if ( option[ OptionKeys::score::weights ].user() ) {
 			weights_tag = option[ OptionKeys::score::weights ]();
+		}
 		score_function( ScoreFunctionFactory::create_score_function( weights_tag ) );
 	}
 
@@ -211,7 +212,7 @@ DnaInterfaceMultiStateDesign::initialize( Pose & pose )
 			std::set< core::chemical::AA > aaset;
 			std::list< ResidueTypeCOP > const & allowed( rtask.allowed_residue_types() );
 			for ( std::list< ResidueTypeCOP >::const_iterator t( allowed.begin() ), end( allowed.end() );
-						t != end; ++t ) {
+					t != end; ++t ) {
 				core::chemical::AA aa( (*t)->aa() );
 				// avoid duplicate AA's (such as for multiple histidine ResidueTypes)
 				if ( aaset.find( aa ) != aaset.end() ) continue;
@@ -238,7 +239,7 @@ DnaInterfaceMultiStateDesign::initialize( Pose & pose )
 	add_dna_states( pose, ptask );
 
 	TR(t_info) << "There are " << multistate_packer_->num_positive_states() << " positive states and "
-	           << multistate_packer_->num_negative_states() << " negative states" << std::endl;
+		<< multistate_packer_->num_negative_states() << " negative states" << std::endl;
 
 	// do single-state designs to find best theoretical single-state energy
 	multistate_packer_->single_state_design();
@@ -258,7 +259,7 @@ DnaInterfaceMultiStateDesign::initialize( Pose & pose )
 		SingleStateCOPs states( multistate_packer_->positive_states() );
 		TR(t_info) << "Adding single-state design entities:" << std::endl;
 		for ( SingleStateCOPs::const_iterator s( states.begin() ), end( states.end() );
-					s != end; ++s ) {
+				s != end; ++s ) {
 			EntityElements traits;
 			for ( vector1< Size >::const_iterator i( design_positions.begin() ),
 					end( design_positions.end() ); i != end; ++i ) {
@@ -306,9 +307,9 @@ DnaInterfaceMultiStateDesign::output_results( Pose & pose )
 	typedef GeneticAlgorithm::TraitEntityHashMap TraitEntityHashMap;
 	TraitEntityHashMap const & cache( gen_alg_->entity_cache() );
 	vector1< EntityOP > sortable;
-// 	std::copy( cache.begin(), cache.end(), sortable.begin() ); // FAIL(?)
+	//  std::copy( cache.begin(), cache.end(), sortable.begin() ); // FAIL(?)
 	for ( TraitEntityHashMap::const_iterator it( cache.begin() ), end( cache.end() );
-				it != end; ++it ) {
+			it != end; ++it ) {
 		sortable.push_back( it->second );
 	}
 	std::sort( sortable.begin(), sortable.end(), lt_OP_deref< Entity > );
@@ -318,7 +319,7 @@ DnaInterfaceMultiStateDesign::output_results( Pose & pose )
 	Size counter(0);
 
 	for ( vector1< EntityOP >::const_iterator it( sortable.begin() ),
-				end( sortable.end() ); it != end; ++it ) {
+			end( sortable.end() ); it != end; ++it ) {
 		Entity & entity(**it);
 		// apply sequence to existing positive state(s)
 		multistate_packer_->evaluate_positive_states( entity );
@@ -377,19 +378,23 @@ void DnaInterfaceMultiStateDesign::parse_my_tag(
 	if ( tag->hasOption("num_packs") ) num_packs_ = tag->getOption<Size>("num_packs");
 	if ( tag->hasOption("pop_from_ss") ) pop_from_ss_ = tag->getOption<Size>("pop_from_ss");
 	if ( tag->hasOption("numresults") ) numresults_ = tag->getOption<Size>("numresults");
-	if ( tag->hasOption("fraction_by_recombination") )
+	if ( tag->hasOption("fraction_by_recombination") ) {
 		fraction_by_recombination_ = tag->getOption<Real>("fraction_by_recombination");
+	}
 	if ( tag->hasOption("mutate_rate") ) mutate_rate_ = tag->getOption<Real>("mutate_rate");
 	if ( tag->hasOption("boltz_temp") ) boltz_temp_ = tag->getOption<Real>("boltz_temp");
 	if ( tag->hasOption("anchor_offset") ) anchor_offset_ = tag->getOption<Real>("anchor_offset");
-		// checkpointing options
-	if ( tag->hasOption("checkpoint_prefix") )
+	// checkpointing options
+	if ( tag->hasOption("checkpoint_prefix") ) {
 		checkpoint_prefix_ = tag->getOption<std::string>("checkpoint_prefix");
-	if ( tag->hasOption("checkpoint_interval") )
+	}
+	if ( tag->hasOption("checkpoint_interval") ) {
 		checkpoint_interval_ = tag->getOption<Size>("checkpoint_interval");
+	}
 	if ( tag->hasOption("checkpoint_gz") ) checkpoint_gz_ = tag->getOption<bool>("checkpoint_gz");
-	if ( tag->hasOption("checkpoint_rename") )
+	if ( tag->hasOption("checkpoint_rename") ) {
 		checkpoint_rename_ = tag->getOption<bool>("checkpoint_rename");
+	}
 
 	// calls to PackRotamersMover base class methods
 	parse_score_function( tag, datamap, filters, movers, pose );
@@ -429,7 +434,7 @@ DnaInterfaceMultiStateDesign::add_dna_states(
 
 	// construct and add the target state
 	for ( DnaPositions::const_iterator itr( dna_chains_->begin() );
-				itr != dna_chains_->end(); ++itr ) {
+			itr != dna_chains_->end(); ++itr ) {
 		// limit to dna design positions
 		DnaPosition const & pos( itr->second );
 		Size const index( pos.top() );
@@ -477,7 +482,7 @@ DnaInterfaceMultiStateDesign::add_dna_states(
 
 	// build competitor DNA negative states and add to the MultiStateDesign instance
 	for ( DnaPositions::const_iterator itr( dna_chains_->begin() );
-	      itr != dna_chains_->end(); ++itr ) {
+			itr != dna_chains_->end(); ++itr ) {
 		// limit to dna design positions
 		DnaPosition const & pos( itr->second );
 		Size const index( pos.top() );

@@ -55,14 +55,15 @@ SequenceProfileMover::~SequenceProfileMover() {}
 void
 SequenceProfileMover::apply( core::pose::Pose & pose )
 {
-    using namespace core::sequence;
+	using namespace core::sequence;
 
-    SequenceProfileOP profile( new SequenceProfile );
-    profile->read_from_checkpoint( cst_file_name_ );
-    for( core::Size seqpos( 1 ), end( pose.total_residue() ); seqpos <= end; ++seqpos )
-        pose.add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) ) ) );
+	SequenceProfileOP profile( new SequenceProfile );
+	profile->read_from_checkpoint( cst_file_name_ );
+	for ( core::Size seqpos( 1 ), end( pose.total_residue() ); seqpos <= end; ++seqpos ) {
+		pose.add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) ) ) );
+	}
 
-    TR << "Added sequence profile constraints specified in file " << cst_file_name_ << "." << std::endl;
+	TR << "Added sequence profile constraints specified in file " << cst_file_name_ << "." << std::endl;
 }
 
 std::string
@@ -85,25 +86,25 @@ SequenceProfileMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap 
 {
 	using namespace core::scoring;
 
-    //handle cst_file_name
-    protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-    std::string const input_file_name( job->input_tag() );
-    core::Size const wheres_period( input_file_name.find_first_of( "." ) );
-    std::string const dflt_cst_file_name( input_file_name.substr(0, wheres_period ) + ".cst" );
-    set_cst_file_name( tag->getOption< std::string >( "file_name", dflt_cst_file_name ) );
+	//handle cst_file_name
+	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
+	std::string const input_file_name( job->input_tag() );
+	core::Size const wheres_period( input_file_name.find_first_of( "." ) );
+	std::string const dflt_cst_file_name( input_file_name.substr(0, wheres_period ) + ".cst" );
+	set_cst_file_name( tag->getOption< std::string >( "file_name", dflt_cst_file_name ) );
 
-    //handle profile_wgt
-    set_profile_wgt( tag->getOption< core::Real >( "weight", 0.25 ) );
+	//handle profile_wgt
+	set_profile_wgt( tag->getOption< core::Real >( "weight", 0.25 ) );
 
-    if( profile_wgt_ ) {
-        using namespace utility::pointer;
-		for( std::map< std::string, ReferenceCountOP >::const_iterator it=data[ "scorefxns" ].begin(); it!=data[ "scorefxns" ].end(); ++it ){
+	if ( profile_wgt_ ) {
+		using namespace utility::pointer;
+		for ( std::map< std::string, ReferenceCountOP >::const_iterator it=data[ "scorefxns" ].begin(); it!=data[ "scorefxns" ].end(); ++it ) {
 			ScoreFunctionOP scorefxn( data.get_ptr< ScoreFunction >( "scorefxns", it->first ) );
 			scorefxn->set_weight( res_type_constraint, profile_wgt_ );
-            TR << "setting " << it->first << " res_type_constraint to " << profile_wgt_ << "\n";
+			TR << "setting " << it->first << " res_type_constraint to " << profile_wgt_ << "\n";
 		}
 	}
-  TR << "Changed all scorefxns to have profile weights of " << profile_wgt_ << std::endl;
+	TR << "Changed all scorefxns to have profile weights of " << profile_wgt_ << std::endl;
 } //end parse_my_tag
 
 std::string

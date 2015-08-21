@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/simple_filters/InterfaceBindingEnergyDensityFilter.fwd.hh
-/// @brief	Forward declaration and typedefs for InterfaceBindingEnergyDensityFilter
+/// @brief Forward declaration and typedefs for InterfaceBindingEnergyDensityFilter
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 #ifndef INCLUDED_protocols_simple_filters_InterfaceBindingEnergyDensityFilter_fwd_hh

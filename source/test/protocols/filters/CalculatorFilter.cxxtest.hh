@@ -74,11 +74,11 @@ public:
 
 		protocols::filters::CalculatorFilter  testfilter;
 		TagCOP tag = tagptr_from_string("<CalculatorFilter name=test threshold=0 equation=\"min(a, b, c)/(a*b*c-d)\" >\n "
-				"<VAR name=a filter=alpha />\n"
-				"<VAR name=b filter_name=beta />\n"
-				"<VAR name=c filter=delta />\n"
-				"<VAR name=d value=-4.0 />\n"
-				"</CalculatorFilter>\n" );
+			"<VAR name=a filter=alpha />\n"
+			"<VAR name=b filter_name=beta />\n"
+			"<VAR name=c filter=delta />\n"
+			"<VAR name=d value=-4.0 />\n"
+			"</CalculatorFilter>\n" );
 
 		testfilter.parse_my_tag( tag, data, filters, movers, *testpose_ );
 

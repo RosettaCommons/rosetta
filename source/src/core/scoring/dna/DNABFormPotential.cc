@@ -136,7 +136,7 @@ DNABFormPotential::eval_dna_bform_bb_torsion_score_residue(
 {
 	using namespace numeric;
 
-debug_assert( rsd.is_DNA() );
+	debug_assert( rsd.is_DNA() );
 
 	// Get the correct set of dihedral score components
 	utility::vector1< TorsionFourierComponentCOP > const & this_data( bb_fourier_data[ torsion_id ] );
@@ -145,7 +145,7 @@ debug_assert( rsd.is_DNA() );
 	Real total_deriv( 0.0 );
 
 	// This loop sums over all the Fourier components for a dihedral's total score
-	for( Size icomp( 1 ) ; icomp <= this_data.size() ; ++icomp ) {
+	for ( Size icomp( 1 ) ; icomp <= this_data.size() ; ++icomp ) {
 		Real this_deriv( 0.0 );
 		total_score += (this_data[icomp])->compute( rsd.mainchain_torsion( torsion_id ), this_deriv );
 		total_deriv += this_deriv;
@@ -167,30 +167,30 @@ DNABFormPotential::eval_dna_bform_chi_torsion_score_residue(
 {
 	using namespace numeric;
 
-debug_assert( rsd.is_DNA() );
+	debug_assert( rsd.is_DNA() );
 
 	Real chi = basic::unsigned_periodic_range( (rsd.chi())[1], 360.0 );
 
-//	tr << "Found chi of " << chi << " for " << rsd.seqpos() << std::endl;
+	// tr << "Found chi of " << chi << " for " << rsd.seqpos() << std::endl;
 
 	// Very hacky for now - decide whether syn or anti, then pick a value based
 	// on whether a purine or pyrimidine base.
 
 	bool syn( false );
-	if( chi > 0.0 && chi < 90.0 ) {
-//		tr << "Using syn data " << std::endl;
+	if ( chi > 0.0 && chi < 90.0 ) {
+		//  tr << "Using syn data " << std::endl;
 		syn = true;
 	} else {
-//		tr << "Using anti data " << std::endl;
+		//  tr << "Using anti data " << std::endl;
 		syn = false;
 	}
 
 	Real pot_min;
 	Real pot_width;
 	Real pot_depth( 1.0 );
-	if( rsd.aa() == core::chemical::na_ade || rsd.aa() == core::chemical::na_gua ) {
+	if ( rsd.aa() == core::chemical::na_ade || rsd.aa() == core::chemical::na_gua ) {
 		// purines
-		if( syn ) {
+		if ( syn ) {
 			pot_min = 45.0;
 			pot_width = 8.0;
 		} else {
@@ -199,7 +199,7 @@ debug_assert( rsd.is_DNA() );
 		}
 	} else {
 		// pyrimidines
-		if( syn ) {
+		if ( syn ) {
 			pot_min = 45.0;
 			pot_width = 8.0;
 		} else {

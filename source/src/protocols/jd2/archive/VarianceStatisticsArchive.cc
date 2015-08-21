@@ -37,14 +37,14 @@ namespace archive {
 
 
 VarianceStatisticsArchive::VarianceStatisticsArchive( std::string name )
-	: insertion_prob_( 0.1 )
+: insertion_prob_( 0.1 )
 {
 	set_name( name );
 }
 
 
 bool VarianceStatisticsArchive::add_evaluated_structure(
-  core::io::silent::SilentStructOP evaluated_decoy,
+	core::io::silent::SilentStructOP evaluated_decoy,
 	core::io::silent::SilentStructOP /*alternative_decoy*/,
 	Batch const&
 ) {

@@ -29,15 +29,15 @@ static thread_local basic::Tracer TR( "devel.constel.NeighTeller" );
 
 /// @brief NeighTeller's constructor
 ///
-/// @param[out] ref_pose pose containing the residues whose neighbors	are to be
-/// 	identified.
+/// @param[out] ref_pose pose containing the residues whose neighbors are to be
+///  identified.
 ///
 /// @remarks For speed, a scorefxn containing only fa_atr is used.
 ///
 NeighTeller::NeighTeller(Pose& ref_pose) :
 
-  scorefxn(core::scoring::get_score_function()),
-  fa_atr_weight(0.8), interaction_score_threshold(-0.3),
+	scorefxn(core::scoring::get_score_function()),
+	fa_atr_weight(0.8), interaction_score_threshold(-0.3),
 	nmap(MAXNGB, utility::vector1<bool>(MAXNGB, false)) {
 
 	(*scorefxn)(ref_pose);
@@ -53,8 +53,8 @@ NeighTeller::NeighTeller(Pose& ref_pose) :
 /// @return true if prb is a neighbor of tgt; false otherwise.
 ///
 bool NeighTeller::isneigh(core::conformation::Residue const & tgt,
-                          core::conformation::Residue const & prb,
-                          Pose const& ref_pose) {
+	core::conformation::Residue const & prb,
+	Pose const& ref_pose) {
 
 	unweighted_emap.clear();
 
@@ -77,7 +77,7 @@ bool NeighTeller::isneigh(core::conformation::Residue const & tgt,
 /// @param[in] ps the pose
 ///
 /// @return true if the set of residues form a tree of neighbors;
-/// 	false otherwise
+///  false otherwise
 ///
 bool NeighTeller::is_neigh_tree(utility::vector1<core::Size> const& set, Pose const& ps) {
 
@@ -87,9 +87,9 @@ bool NeighTeller::is_neigh_tree(utility::vector1<core::Size> const& set, Pose co
 
 	// initialize neighboring table: nmap[i][j] = true iff the ith residue in the set and
 	// the jth residue in the set are neighbors (i!=j, 1<=i,j<=N))
-	for(Size i=1; i<NRES; ++i) {
+	for ( Size i=1; i<NRES; ++i ) {
 		Residue const& a = ps.residue(set[i]);
-		for(Size j=i+1; j<=NRES; ++j) {
+		for ( Size j=i+1; j<=NRES; ++j ) {
 			Residue const& b = ps.residue(set[j]);
 			nmap[j][i] = nmap[i][j] = isneigh(a, b, ps);
 		}
@@ -100,25 +100,28 @@ bool NeighTeller::is_neigh_tree(utility::vector1<core::Size> const& set, Pose co
 	tree_in.push_back(1);
 
 	std::list<Size> tree_out;
-	for(Size i=2; i<=NRES; ++i)
+	for ( Size i=2; i<=NRES; ++i ) {
 		tree_out.push_back(i);
+	}
 
 	// grow tree until no other residues remain
-	for(Size i=1; i<NRES; ++i) {
+	for ( Size i=1; i<NRES; ++i ) {
 		bool found = false;
-		for(Size j=1; j<=i; ++j) {
+		for ( Size j=1; j<=i; ++j ) {
 			Size t = tree_in[j];
-			for(std::list<Size>::iterator p = tree_out.begin(), end = tree_out.end(); p!=end; ++p )
-				if(nmap[t][*p]) {
+			for ( std::list<Size>::iterator p = tree_out.begin(), end = tree_out.end(); p!=end; ++p ) {
+				if ( nmap[t][*p] ) {
 					tree_in.push_back(*p);
 					tree_out.erase(p);
 					found = true;
 					break;
 				}
-			if(found)	break;
+			}
+			if ( found ) break;
 		}
-		if(!found)
+		if ( !found ) {
 			return false;
+		}
 	}
 
 	return true;
@@ -134,21 +137,22 @@ bool NeighTeller::is_neigh_tree(utility::vector1<core::Size> const& set, Pose co
 ///
 void NeighTeller::print_nmap(Size const nres, std::ostream& os) const {
 
-	for(Size i=1; i<=nres; ++i) {
-		for(Size j=1; j<=nres; ++j)
+	for ( Size i=1; i<=nres; ++i ) {
+		for ( Size j=1; j<=nres; ++j ) {
 			os << std::setw(2) << nmap[i][j];
+		}
 		os << std::endl;
 	}
 }
 
 
 /// @brief Creates the list of residues that are neighbors of a given target
-/// 	residue.
+///  residue.
 ///
 /// @param[in] tgtnum residue number of the target residue in its pose.
 /// @param[out] neighs boolean mask filled in by this function to represent the
-/// 	list of neighbors. neighs[i] will be true if the ith residue in the pose
-/// 	is a neighbor of the target; otherwise neighs[i] will be false.
+///  list of neighbors. neighs[i] will be true if the ith residue in the pose
+///  is a neighbor of the target; otherwise neighs[i] will be false.
 /// @param[in] ps: pose that the target and its potential neighbors belong to.
 ///
 void mk_neigh_list(core::Size const tgtnum, utility::vector1<bool>& neighs,
@@ -158,10 +162,13 @@ void mk_neigh_list(core::Size const tgtnum, utility::vector1<bool>& neighs,
 
 	core::conformation::Residue tgtres = ps.residue(tgtnum);
 
-	for(Size i = 1; i <= ps.total_residue(); ++i)
-		if(i != tgtnum)
-			if(nt.isneigh(tgtres, ps.residue(i), ps))
+	for ( Size i = 1; i <= ps.total_residue(); ++i ) {
+		if ( i != tgtnum ) {
+			if ( nt.isneigh(tgtres, ps.residue(i), ps) ) {
 				neighs.at(i)=true;
+			}
+		}
+	}
 }
 
 } // constel

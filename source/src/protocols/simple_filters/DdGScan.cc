@@ -75,11 +75,11 @@ namespace simple_filters {
 
 /// @brief default constructor
 DdGScan::DdGScan():
-		task_factory_( /* NULL */ ),
-		repeats_( 3 ),
-		scorefxn_( /* NULL */ ),
-		report_diffs_( 1 ),
-		write2pdb_( false )
+	task_factory_( /* NULL */ ),
+	repeats_( 3 ),
+	scorefxn_( /* NULL */ ),
+	report_diffs_( 1 ),
+	write2pdb_( false )
 {
 	initialize();
 }
@@ -103,13 +103,13 @@ DdGScan::DdGScan(
 
 /// @brief copy constructor
 DdGScan::DdGScan( DdGScan const & rval ):
-		Filter( rval ),
-		task_factory_( rval.task_factory_ ),
-		repeats_( rval.repeats_ ),
-		scorefxn_( rval.scorefxn_ ),
-		report_diffs_( rval.report_diffs_ ),
-		write2pdb_( rval.write2pdb_ ),
-		ddG_mover_( rval.ddG_mover_ )
+	Filter( rval ),
+	task_factory_( rval.task_factory_ ),
+	repeats_( rval.repeats_ ),
+	scorefxn_( rval.scorefxn_ ),
+	report_diffs_( rval.report_diffs_ ),
+	write2pdb_( rval.write2pdb_ ),
+	ddG_mover_( rval.ddG_mover_ )
 {}
 
 /// @brief destructor
@@ -166,11 +166,11 @@ DdGScan::parse_my_tag(
 }
 
 void DdGScan::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & score_fxns,
-				utility::lua::LuaObject const & tasks ) {
+	utility::lua::LuaObject const & score_fxns,
+	utility::lua::LuaObject const & tasks ) {
 	task_factory( protocols::elscripts::parse_taskdef( def["tasks"], tasks ));
 	repeats( def["repeats"] ? def["repeats"].to<core::Size>() : 1 );
-	if( def["scorefxn"] ) {
+	if ( def["scorefxn"] ) {
 		scorefxn_ = protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns );
 	} else {
 		scorefxn_ = score_fxns["score12"].to<core::scoring::ScoreFunctionSP>()->clone();
@@ -187,9 +187,10 @@ DdGScan::ddG_for_single_residue( core::pose::Pose const & const_pose, core::Size
 	using namespace core::pack::task;
 	PackerTaskOP task = general_task->clone();
 	task->initialize_from_command_line().or_include_current( true );
-	for( core::Size resj=1; resj<=pose_to_mutate.total_residue(); ++resj ){
-		if( resi != resj )
+	for ( core::Size resj=1; resj<=pose_to_mutate.total_residue(); ++resj ) {
+		if ( resi != resj ) {
 			task->nonconst_residue_task( resj ).prevent_repacking();
+		}
 	}
 
 	core::scoring::ScoreFunctionOP symmetry_ready_scorefxn;
@@ -206,7 +207,7 @@ DdGScan::ddG_for_single_residue( core::pose::Pose const & const_pose, core::Size
 	ddG_mover_->scorefxn( symmetry_ready_scorefxn );
 
 	core::Real average( 0.0 );
-	for( core::Size i=1; i<=repeats(); ++i ) {
+	for ( core::Size i=1; i<=repeats(); ++i ) {
 		ddG_mover_->calculate( pose_to_mutate );
 		average += ddG_mover_->sum_ddG();
 		ddG_mover_->report_ddG( TR );
@@ -244,22 +245,22 @@ DdGScan::calculate( std::ostream & out, core::pose::Pose const & const_pose ) co
 	utility::vector1< ddG_data_tuple > ddg_saved_data;
 
 	// Apply TaskOperations from xml
-  core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
-  if ( task_factory_ != 0 ) {
-    task = task_factory_->create_task_and_apply_taskoperations( pose );
-  } else {
-    TR << "Warning: You have not provided any TaskOperations. A default will be used." << std::endl;
-  }
+	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
+	if ( task_factory_ != 0 ) {
+		task = task_factory_->create_task_and_apply_taskoperations( pose );
+	} else {
+		TR << "Warning: You have not provided any TaskOperations. A default will be used." << std::endl;
+	}
 
 	// Calculate wt ddG score of binding (by using special case of residue "0", handled by function called)
 	core::Real const wt_ddG = ddG_for_single_residue( const_pose, 0, task, pose );
 
 	// *** Entire loop goal: Calculate the binding ddG score upon mutation ***
 	// Loop through residues
-  for (core::Size resi = 1; resi <= pose.n_residue(); resi++) {
+	for ( core::Size resi = 1; resi <= pose.n_residue(); resi++ ) {
 		// Check for canonical protein residue and that position is designable to something
 		// Here we check only to see if the residue is set to at least be packable
-		if( pose.residue( resi ).is_protein() && task->pack_residue( resi ) ) {
+		if ( pose.residue( resi ).is_protein() && task->pack_residue( resi ) ) {
 
 			std::string const res_type( const_pose.residue( resi ).name3() );
 			core::pose::PDBInfoCOP pose_info( const_pose.pdb_info() );
@@ -271,11 +272,11 @@ DdGScan::calculate( std::ostream & out, core::pose::Pose const & const_pose ) co
 
 			// Loop through designable residues at this position (AKA make packer do each one one at a time instead of try all at once)
 			// allowed_residue_types only contain residues defined through PIKAA - so a NATRO-only residue that made it this far won't have nything else happen
-			for(
-				core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter aa_iter = task->nonconst_residue_task( resi ).allowed_residue_types_begin();
-				aa_iter != task->nonconst_residue_task( resi ).allowed_residue_types_end();
-				++aa_iter
-			) {
+			for (
+					core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter aa_iter = task->nonconst_residue_task( resi ).allowed_residue_types_begin();
+					aa_iter != task->nonconst_residue_task( resi ).allowed_residue_types_end();
+					++aa_iter
+					) {
 				pose = core::pose::Pose( const_pose );
 				core::pack::task::PackerTaskOP point_mutant_task( task->clone() );
 				utility::vector1<bool> restrict_to_aa(20, false);
@@ -314,12 +315,12 @@ void DdGScan::write_to_pdb(
 	core::Real const & ddG
 ) const {
 
-  protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
-  std::string filter_name = this->name();
-  std::string user_name = this->get_user_defined_name();
+	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
+	std::string filter_name = this->name();
+	std::string user_name = this->get_user_defined_name();
 
-  std::string output_string = filter_name + " " + user_name + ": " + residue_name + ObjexxFCL::string_of(output_resi) + pose.residue( residue ).name3() + " = " + ObjexxFCL::format::F (9,4,ddG);
-  job->add_string(output_string);
+	std::string output_string = filter_name + " " + user_name + ": " + residue_name + ObjexxFCL::string_of(output_resi) + pose.residue( residue ).name3() + " = " + ObjexxFCL::format::F (9,4,ddG);
+	job->add_string(output_string);
 
 }
 

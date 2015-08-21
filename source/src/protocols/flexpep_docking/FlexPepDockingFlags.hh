@@ -29,7 +29,7 @@ namespace flexpep_docking {
 
 
 class FlexPepDockingFlags
- : public utility::pointer::ReferenceCount
+	: public utility::pointer::ReferenceCount
 {
 public:
 
@@ -64,7 +64,7 @@ public:
 	{
 		return (valid_receptor_chain_ || pep_fold_only) && valid_peptide_chain_ && valid_chain_bounds_;
 	}
-	
+
 	bool valid_receptor_chain() const
 	{ return valid_receptor_chain_; }
 
@@ -76,8 +76,8 @@ public:
 	{
 		return
 			(peptide_anchors.size() > 0 &&
-				peptide_anchors.size() == peptide_cuts.size() + 1 &&
-			 (receptor_anchor_pos != -1 || pep_fold_only) );
+			peptide_anchors.size() == peptide_cuts.size() + 1 &&
+			(receptor_anchor_pos != -1 || pep_fold_only) );
 	}
 
 
@@ -95,11 +95,11 @@ public:
 	void set_receptor_chain(std::string ch){
 		receptor_chain_ = ch; valid_receptor_chain_ = true;
 	}
-	
+
 	void set_peptide_chain(char ch){
 		peptide_chain_ = ch; valid_peptide_chain_ = true;
 	}
-	
+
 	int receptor_first_res() const;
 
 	int receptor_last_res() const;
@@ -143,12 +143,12 @@ public:
 	bool pep_refine;
 	bool random_phi_psi_pert;
 	double random_phi_psi_pert_size;
-  bool extend;
-  bool place_peptide;
-  int sample_pc;
-  bool slideintocontact;
+	bool extend;
+	bool place_peptide;
+	int sample_pc;
+	bool slideintocontact;
 	bool randomRBstart;
-  bool recal_foldtree;
+	bool recal_foldtree;
 	bool rbMCM;
 	double rb_trans_size;
 	double rb_rot_size;
@@ -168,7 +168,7 @@ public:
 	bool ppk_only;
 	bool no_prepack1;
 	bool no_prepack2;
-  double score_filter;
+	double score_filter;
 	int    hb_filter;
 	int    hotspot_filter;
 	double frag3_weight;

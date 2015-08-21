@@ -45,7 +45,7 @@ core::Size
 TrialCounter::total_trials() const {
 	Size ntrials( 0 );
 	for ( std::map< std::string, int >::const_iterator
-					it=trial_counter_.begin(); it != trial_counter_.end(); ++it ) {
+			it=trial_counter_.begin(); it != trial_counter_.end(); ++it ) {
 		ntrials += it->second;
 	}
 	return ntrials;
@@ -61,10 +61,10 @@ TrialCounter::show( std::ostream& os, std::string line_header, bool endline ) co
 		line_header=line_header+" ";
 	}
 	for ( std::map< std::string, int >::const_iterator
-					it=trial_counter_.begin(); it != trial_counter_.end(); ++it ) {
+			it=trial_counter_.begin(); it != trial_counter_.end(); ++it ) {
 		std::string const & tag( it->first );
 		int const ntrials( it->second );
-		if ( accept_counter_.count( tag )) {
+		if ( accept_counter_.count( tag ) ) {
 			int const accepts( accept_counter_.find( tag )->second );
 			os << line_header << A( 16, tag ) <<
 				" trials= " << I( 6, ntrials ) << "; " <<
@@ -72,12 +72,12 @@ TrialCounter::show( std::ostream& os, std::string line_header, bool endline ) co
 			std::map< std::string, core::Real >::const_iterator edc_it = energy_drop_counter_.find( tag );
 			if ( edc_it != energy_drop_counter_.end() ) {
 				core::Real const energy_drop( edc_it->second );
-				os <<	" energy_drop/trial= " << F( 9, 5, core::Real( energy_drop ) / ntrials );
+				os << " energy_drop/trial= " << F( 9, 5, core::Real( energy_drop ) / ntrials );
 			}
 			if ( endline ) os << std::endl;
 			else os << " ";
 		} else { //no accepts
-			os << line_header << A( 16, tag ) << " trials= " << I( 6, ntrials ) <<	" NO ACCEPTS.";
+			os << line_header << A( 16, tag ) << " trials= " << I( 6, ntrials ) << " NO ACCEPTS.";
 			if ( endline ) os << std::endl;
 			else os << " ";
 		} // else
@@ -87,7 +87,7 @@ TrialCounter::show( std::ostream& os, std::string line_header, bool endline ) co
 utility::vector1< std::string > const TrialCounter::tags() const {
 	utility::vector1< std::string > tags;
 	std::map< std::string, int >::const_iterator it;
-	for (it = trial_counter_.begin(); it != trial_counter_.end(); ++it) {
+	for ( it = trial_counter_.begin(); it != trial_counter_.end(); ++it ) {
 		tags.push_back(it->first);
 	}
 	return tags;

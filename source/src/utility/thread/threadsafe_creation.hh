@@ -81,7 +81,7 @@ safely_create_singleton(
 	}
 #endif
 #else
-  // not multithreaded; standard singleton instantiation logic
+	// not multithreaded; standard singleton instantiation logic
 	if ( ! instance ) {
 		instance = creation_func();
 	}

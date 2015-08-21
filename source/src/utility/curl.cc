@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   utility/curl.cc
-/// @brief  Implements a OO interface to CURL wrapping and hiding the ugly C callbacks. 
+/// @brief  Implements a OO interface to CURL wrapping and hiding the ugly C callbacks.
 /// @author Mike Tyka (mike.tyka@gmail.com)
 
 #ifdef WITHCURL
@@ -18,7 +18,7 @@
 
 
 namespace utility {
-  
+
 // must include -lcurl during linking if you're using -dwithcurl
 
   CurlGet::CurlGet() 

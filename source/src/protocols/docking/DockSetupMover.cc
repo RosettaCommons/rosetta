@@ -78,7 +78,7 @@ DockSetupMover::DockSetupMover( DockSetupMover const & rhs ) : Mover(rhs) {
 /// @brief assignment operator
 DockSetupMover & DockSetupMover::operator=( DockSetupMover const & rhs ) {
 	//abort self-assignment
-	if (this == &rhs) return *this;
+	if ( this == &rhs ) return *this;
 	Mover::operator=(rhs);
 	copy(*this, rhs);
 	return *this;
@@ -97,21 +97,21 @@ DockSetupMover::apply( pose::Pose & pose ) {
 	docking::setup_foldtree( pose, partners_, movable_jumps_ );
 	protocols::scoring::InterfaceInfoOP docking_interface( new protocols::scoring::InterfaceInfo( movable_jumps_ ) );
 	pose.data().set(
-									core::pose::datacache::CacheableDataType::INTERFACE_INFO,
-									docking_interface);
-	//	runtime_assert( rb_mover_ );
-	//	rb_mover_->clear_jumps(); //this doesn't work because of cloning --- have to communicate via data-map !
-	//	for ( Size i=1; i<=pose.num_jump(); ++i ) {
-	  // should honor movemap or movable_jumps_ here...
+		core::pose::datacache::CacheableDataType::INTERFACE_INFO,
+		docking_interface);
+	// runtime_assert( rb_mover_ );
+	// rb_mover_->clear_jumps(); //this doesn't work because of cloning --- have to communicate via data-map !
+	// for ( Size i=1; i<=pose.num_jump(); ++i ) {
+	// should honor movemap or movable_jumps_ here...
 	for ( Size i=1; i<=movable_jumps_.size(); ++i ) {
 		rigid_body_info_->add_jump( movable_jumps_[i] );
 		if ( rb_mover_ ) {
 			rb_mover_->add_jump( movable_jumps_[i] );
 		}
 	}
- 	if ( rigid_body_info_->movable_jumps().empty() ) {
- 		utility_exit_with_message( "RigidBodyInfo was not correctly set!" );
- 	}
+	if ( rigid_body_info_->movable_jumps().empty() ) {
+		utility_exit_with_message( "RigidBodyInfo was not correctly set!" );
+	}
 }
 
 //// --------------------------------- Setters -------------------------------------------------
@@ -126,7 +126,7 @@ DockSetupMover::apply( pose::Pose & pose ) {
 void
 DockSetupMover::show( std::ostream & out ) const {
 	using namespace ObjexxFCL::format;
-// All output will be 80 characters - 80 is a nice number, don't you think?
+	// All output will be 80 characters - 80 is a nice number, don't you think?
 	std::string line_marker = "///";
 	out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
 	out << line_marker << A( 47, "Rosetta 3 DockSetupMover" ) << space( 27 ) << line_marker << std::endl;
@@ -156,7 +156,7 @@ DockSetupMover::set_defaults()
 
 void
 DockSetupMover::parse_my_tag(
-  TagCOP const tag,
+	TagCOP const tag,
 	basic::datacache::DataMap& data_map,
 	protocols::filters::Filters_map const&,
 	moves::Movers_map const& movers,
@@ -164,20 +164,20 @@ DockSetupMover::parse_my_tag(
 ) {
 	using namespace core::scoring;
 	//get through partners
-	if( tag->hasOption( "partners" ) ){
+	if ( tag->hasOption( "partners" ) ) {
 		std::string const partners( tag->getOption<std::string>( "partners") );
 		set_partners(partners);
 	}
 	moves::MoverOP mover = rosetta_scripts::parse_mover( tag->getOption< std::string >( "rb_mover", "null" ), movers );
 	rb_mover_ = utility::pointer::dynamic_pointer_cast< rigid::RigidBodyPerturbNoCenterMover > ( mover );
-// 	if ( !rb_mover_ ) {
-// 		throw utility::excn::EXCN_RosettaScriptsOption( "DockSetupMover requires an rb_mover argument" );
-// 	}
+	//  if ( !rb_mover_ ) {
+	//   throw utility::excn::EXCN_RosettaScriptsOption( "DockSetupMover requires an rb_mover argument" );
+	//  }
 	movable_jumps_.clear();
 	if ( tag->hasOption( "moveable_jump" ) ) {
 		movable_jumps_.push_back( tag->getOption< core::Size >( "moveable_jump" ));
 	}
-	if (partners_ == "_" && movable_jumps_.size()<1 ) {
+	if ( partners_ == "_" && movable_jumps_.size()<1 ) {
 		movable_jumps_.push_back( 1 );
 	}
 	// using RigidBodyInfo to store movable_jumps, then rb_mover is free from DockSetupMover

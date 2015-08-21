@@ -61,48 +61,48 @@ remove_all_variant_types( pose::Pose & pose );
 //  and and in use by CombineLongLoopFilterer, which again could be fixed soon.
 void
 setup_suite_atom_id_map( conformation::Residue const & rsd_1,
-												conformation::Residue const & rsd_2,
-												id::AtomID_Map < id::AtomID > & atom_ID_map,
-												bool const base_only = true );
+	conformation::Residue const & rsd_2,
+	id::AtomID_Map < id::AtomID > & atom_ID_map,
+	bool const base_only = true );
 
 // may be deprecatable soon -- in use by superimpose_pose, which may be replaced by StepWisePoseAligner,
 //  and and in use by CombineLongLoopFilterer, which again could be fixed soon.
 void
 setup_suite_atom_id_map( conformation::Residue const & rsd_1,
-                        conformation::Residue const & rsd_2,
-                        Size const res_num_1,
-											 Size const res_num_2, //allow for the possibility that two poses have different sizes Jun 9, 2010
-                        id::AtomID_Map < id::AtomID > & atom_ID_map,
-											 bool const base_only = true );
+	conformation::Residue const & rsd_2,
+	Size const res_num_1,
+	Size const res_num_2, //allow for the possibility that two poses have different sizes Jun 9, 2010
+	id::AtomID_Map < id::AtomID > & atom_ID_map,
+	bool const base_only = true );
 
 // may be deprecatable soon -- in use by superimpose_pose, which may be replaced by StepWisePoseAligner,
 //  and and in use by CombineLongLoopFilterer, which again could be fixed soon.
 void
 setup_suite_atom_id_map( pose::Pose const & pose_1,
-											 pose::Pose const & pose_2,
-											 Size const base_res,
-											 id::AtomID_Map < id::AtomID > & atom_ID_map,
-											 bool const base_only = true );
+	pose::Pose const & pose_2,
+	Size const base_res,
+	id::AtomID_Map < id::AtomID > & atom_ID_map,
+	bool const base_only = true );
 
 // may be deprecatable soon -- in use by superimpose_pose, which may be replaced by StepWisePoseAligner,
 //  and and in use by CombineLongLoopFilterer, which again could be fixed soon.
 void
 setup_suite_atom_id_map( pose::Pose const & pose_1,  ////Dec 23, 2011.
-											 pose::Pose const & pose_2,
-											 Size const base_res_1,
-											 Size const base_res_2,
-											 id::AtomID_Map < id::AtomID > & atom_ID_map,
-											 bool const base_only = true );
+	pose::Pose const & pose_2,
+	Size const base_res_1,
+	Size const base_res_2,
+	id::AtomID_Map < id::AtomID > & atom_ID_map,
+	bool const base_only = true );
 
 
 // may be deprecatable soon -- in use by superimpose_pose, which may be replaced by StepWisePoseAligner,
 void
 align_poses( pose::Pose & moving_pose,
-					  std::string const & moving_tag,
-						pose::Pose const & static_pose,
-						std::string const & static_tag,
-						utility::vector1< Size > const & working_best_alignment,
-						bool const base_only = true );
+	std::string const & moving_tag,
+	pose::Pose const & static_pose,
+	std::string const & static_tag,
+	utility::vector1< Size > const & working_best_alignment,
+	bool const base_only = true );
 
 utility::vector1< Size >
 apply_full_to_sub_mapping( utility::vector1< Size > const & res_vector, utility::vector1< Size > const & is_working_res, std::map< Size, Size > const & full_to_sub );
@@ -147,8 +147,8 @@ file_exists( std::string const & file_name );
 void
 remove_file( std::string const & file_name );
 
-	//void
-	//output_rotamer( utility::vector1 < Real > & rotamer );
+//void
+//output_rotamer( utility::vector1 < Real > & rotamer );
 
 void
 add_virtual_O2Prime_hydrogen( pose::Pose & pose );
@@ -168,11 +168,11 @@ rmsd_over_residue_list( pose::Pose const & pose1, pose::Pose const & pose2, util
 Real
 rmsd_over_residue_list( pose::Pose const & pose1, pose::Pose const & pose2, working_parameters::StepWiseWorkingParametersCOP working_parameters_, bool const ignore_virtual_atom = false );
 
-	//void
-	//print_heavy_atoms( Size const & suite_num_1, Size const & suite_num_2, pose::Pose const & pose1, pose::Pose const & pose2 );
+//void
+//print_heavy_atoms( Size const & suite_num_1, Size const & suite_num_2, pose::Pose const & pose1, pose::Pose const & pose2 );
 
-	//Size
-	//get_num_side_chain_atom_from_res_name( chemical::AA const & res_aa, bool const verbose );
+//Size
+//get_num_side_chain_atom_from_res_name( chemical::AA const & res_aa, bool const verbose );
 
 
 Real
@@ -207,15 +207,15 @@ get_surrounding_O2prime_hydrogen( pose::Pose const & pose, utility::vector1< Siz
 
 void
 o2prime_trials( pose::Pose& pose, scoring::ScoreFunctionCOP const & packer_scorefxn,
-								bool const pack_virtual_o2prime_hydrogen = false );
+	bool const pack_virtual_o2prime_hydrogen = false );
 
 void
 o2prime_trials( pose::Pose& pose, scoring::ScoreFunctionCOP const & packer_scorefxn, utility::vector1< Size > const & O2prime_seq_num_list,
-								bool const pack_virtual_o2prime_hydrogen = false );
+	bool const pack_virtual_o2prime_hydrogen = false );
 
 pack::task::PackerTaskOP
 create_standard_o2prime_pack_task( pose::Pose const & pose, utility::vector1< Size > const & O2prime_pack_seq_num,
-																	 bool const pack_virtual_o2prime_hydrogen = false );
+	bool const pack_virtual_o2prime_hydrogen = false );
 
 void
 setup_chain_break_variants( core::pose::Pose & pose,  Size const cutpoint );
@@ -237,18 +237,18 @@ check_for_messed_up_structure( pose::Pose const & pose, std::string const & tag 
 
 bool
 is_residues_in_contact(
-    Size const & res_ONE,
-    pose::Pose const & pose_ONE,
-    Size const & res_TWO,
-    pose::Pose const & pose_TWO,
-    Real const atom_atom_overlap_dist_cutoff,
-    Size const num_atom_contacts_cutoff,
-    bool const verbose = false );
+	Size const & res_ONE,
+	pose::Pose const & pose_ONE,
+	Size const & res_TWO,
+	pose::Pose const & pose_TWO,
+	Real const atom_atom_overlap_dist_cutoff,
+	Size const num_atom_contacts_cutoff,
+	bool const verbose = false );
 
 void
 set_CCD_torsions_to_zero(
-    pose::Pose & pose,
-    Size const five_prime_res );
+	pose::Pose & pose,
+	Size const five_prime_res );
 
 void
 print_base_state( std::string const & tag, Size const base_state, std::ostream & outstream = std::cout );
@@ -288,9 +288,9 @@ create_rotamer_string( core::pose::Pose const & pose, Size const moving_res, Siz
 
 void
 add_fade_chain_break_constraint_across_gap( pose::Pose & pose,
-																						Size const five_prime_res,
-																						Size const three_prime_res,
-																						Size const gap_size );
+	Size const five_prime_res,
+	Size const three_prime_res,
+	Size const gap_size );
 
 void
 add_harmonic_chain_break_constraint( pose::Pose & pose, Size const five_prime_res );
@@ -306,11 +306,11 @@ just_rna( utility::vector1< core::Size > const & res_list, core::pose::Pose cons
 
 void
 figure_out_moving_rna_chain_breaks( core::pose::Pose const & pose,
-																		utility::vector1< core::Size > const & moving_partition_res,
-																		utility::vector1< core::Size > & rna_cutpoints_closed,
-																		utility::vector1< core::Size > & rna_five_prime_chain_breaks,
-																		utility::vector1< core::Size > & rna_three_prime_chain_breaks,
-																		utility::vector1< core::Size > & rna_chain_break_gap_sizes );
+	utility::vector1< core::Size > const & moving_partition_res,
+	utility::vector1< core::Size > & rna_cutpoints_closed,
+	utility::vector1< core::Size > & rna_five_prime_chain_breaks,
+	utility::vector1< core::Size > & rna_three_prime_chain_breaks,
+	utility::vector1< core::Size > & rna_chain_break_gap_sizes );
 void
 virtualize_free_rna_moieties( pose::Pose & pose );
 

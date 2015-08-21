@@ -66,10 +66,10 @@ CDRsMinPackMin::CDRsMinPackMin(AntibodyInfoOP antibody_info) : Mover() {
 }
 
 CDRsMinPackMin::CDRsMinPackMin(
-    AntibodyInfoOP            antibody_info,
-    core::scoring::ScoreFunctionOP  scorefxn,
-    pack::task::TaskFactoryOP  tf,
-    kinematics::MoveMapOP      movemap
+	AntibodyInfoOP            antibody_info,
+	core::scoring::ScoreFunctionOP  scorefxn,
+	pack::task::TaskFactoryOP  tf,
+	kinematics::MoveMapOP      movemap
 ) : Mover() {
 	user_defined_ = true;
 
@@ -97,7 +97,7 @@ void CDRsMinPackMin::init() {
 	min_tolerance_ = 0.1;
 	update_rounds_ = 0;
 
-	if (!user_defined_) {
+	if ( !user_defined_ ) {
 		tf_ = NULL;
 		allcdr_map_ = NULL;
 
@@ -132,11 +132,11 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose ) {
 	( *loop_scorefxn_highres_ )( pose );
 
 	//**************** MoveMap ****************
-	if(!allcdr_map_) { // use this if, because sometimes a user may input a movemap at the beginning
+	if ( !allcdr_map_ ) { // use this if, because sometimes a user may input a movemap at the beginning
 		allcdr_map_ = core::kinematics::MoveMapOP( new kinematics::MoveMap() );
 		*allcdr_map_=ab_info_->get_MoveMap_for_Loops(pose, *ab_info_->get_AllCDRs_in_loopsop(), false, true, 10.0);
 	} else {
-		if(update_rounds_ > 0 ) {
+		if ( update_rounds_ > 0 ) {
 			allcdr_map_->clear();
 			*allcdr_map_=ab_info_->get_MoveMap_for_Loops(pose, *ab_info_->get_AllCDRs_in_loopsop(), false, true, 10.0);
 		}
@@ -144,13 +144,13 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose ) {
 
 
 	//**************** TaskFactory ****************
-	if(!tf_) { //use this if, because sometimes a user may input a taskfactory at the beginning
+	if ( !tf_ ) { //use this if, because sometimes a user may input a taskfactory at the beginning
 		tf_ = ab_info_->get_TaskFactory_AllCDRs(pose);
 
 		//core::pack::task::PackerTaskOP my_task2(tf_->create_task_and_apply_taskoperations(pose));
 		//TR<<*my_task2<<std::endl; //exit(-1);
 	} else {
-		if(update_rounds_ > 0) {
+		if ( update_rounds_ > 0 ) {
 			tf_->clear();
 			tf_ = ab_info_->get_TaskFactory_AllCDRs(pose);
 		}
@@ -162,7 +162,7 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose ) {
 
 	// 2. all_cdr_min_moves
 	simple_moves::MinMoverOP  all_cdr_min_moves( new simple_moves::MinMover( allcdr_map_,loop_scorefxn_highres_, min_type_, min_tolerance_, true ) );
-	if (!turnoff_minimization_ ) cdr_sequence_move_ -> add_mover(all_cdr_min_moves);
+	if ( !turnoff_minimization_ ) cdr_sequence_move_ -> add_mover(all_cdr_min_moves);
 
 
 	moves::MonteCarloOP mc( new moves::MonteCarlo(pose, *loop_scorefxn_highres_, Temperature_ ) );

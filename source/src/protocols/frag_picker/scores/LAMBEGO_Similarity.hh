@@ -44,8 +44,8 @@ public:
 		Size longest_vall_chunk
 	) :
 		CachingScoringMethod(
-			priority, lowest_acceptable_value, use_lowest,
-			"LAMBEGO"
+		priority, lowest_acceptable_value, use_lowest,
+		"LAMBEGO"
 		),
 		query_len_( sequence_length ),
 		query_bin_probs_( query_bin_probs )

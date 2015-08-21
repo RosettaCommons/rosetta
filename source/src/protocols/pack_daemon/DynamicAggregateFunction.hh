@@ -546,14 +546,14 @@ private:
 		utility::vector1< std::pair< std::string, std::string > > & strucvec_filenames
 	);
 
-   void
+	void
 	process_POSE_ENERGY_line(
 		std::string const & line,
 		Size line_number,
 		std::istream & input_line
 	);
 
-   void
+	void
 	process_POSE_ENERGY_VECTOR_line(
 		std::string const & line,
 		Size line_number,
@@ -715,7 +715,7 @@ private:
 	std::map< std::string, VariableVectorExpressionOP > state_vector_variables_;
 
 	// first = property, second = name of variable for that property
- 	std::map< std::string, std::list< std::pair< std::string, std::string > > > npd_properties_for_state_variables_;
+	std::map< std::string, std::list< std::pair< std::string, std::string > > > npd_properties_for_state_variables_;
 
 	std::map< std::string, ExpressionCOP > npd_property_expression_map_;
 	std::map< std::string, VariableVectorExpressionOP > npd_property_vector_expression_map_;

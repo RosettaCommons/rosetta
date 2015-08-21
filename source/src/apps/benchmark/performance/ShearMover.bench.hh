@@ -180,8 +180,8 @@ public:
 	virtual void run(core::Real scaleFactor) {
 		//protocols::simple_moves::ShearMover shear_mover(movemap, 300., 100);
 		core::Size reps( (core::Size)(5*scaleFactor) ); // amw 500 to 50
-		if( reps == 0 ) { reps = 1; } // Do at least one rep, regardless of scaling factor.
-		for(core::Size i=0; i<reps; i++) {
+		if ( reps == 0 ) { reps = 1; } // Do at least one rep, regardless of scaling factor.
+		for ( core::Size i=0; i<reps; i++ ) {
 			shear_mover.apply(*pose);
 		}
 	};

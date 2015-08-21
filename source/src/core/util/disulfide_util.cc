@@ -65,8 +65,8 @@ static thread_local basic::Tracer TR( "protocols.toolbox.disulfide_util" );
 ///  only a single disulfide bond
 void
 rebuild_disulfide( Pose & pose, Size lower_res, Size upper_res,
-		PackerTaskOP packer_task, ScoreFunctionOP packer_score,
-		MoveMapOP mm, ScoreFunctionOP minimizer_score )
+	PackerTaskOP packer_task, ScoreFunctionOP packer_score,
+	MoveMapOP mm, ScoreFunctionOP minimizer_score )
 {
 	vector1< pair<Size,Size> > disulfides;
 	disulfides.push_back(std::make_pair(lower_res,upper_res));
@@ -104,21 +104,20 @@ rebuild_disulfide( core::pose::Pose & pose,
 	core::kinematics::MoveMapOP mm,
 	core::scoring::ScoreFunctionOP minimizer_score )
 //void core::util:: rebuild_disulfide( Pose & pose, vector1<pair<Size, Size> > const& disulfides,
-//		PackerTaskOP packer_task, ScoreFunctionOP packer_score,
-//		MoveMapOP mm, ScoreFunctionOP minimizer_score )
+//  PackerTaskOP packer_task, ScoreFunctionOP packer_score,
+//  MoveMapOP mm, ScoreFunctionOP minimizer_score )
 {
 	// Quick lookup of whether a residue is a disulfide or not
 	vector1<bool> is_disulf(pose.total_residue(), false);
 
-	for(vector1<pair<Size, Size> >::const_iterator
+	for ( vector1<pair<Size, Size> >::const_iterator
 			disulf(disulfides.begin()), end_disulf(disulfides.end());
-			disulf != end_disulf; ++disulf)
-	{
+			disulf != end_disulf; ++disulf ) {
 		is_disulf[disulf->first] = true;
 		is_disulf[disulf->second] = true;
 
 		// Verify precondition
-		if( ! core::conformation::is_disulfide_bond(pose.conformation(), disulf->first, disulf->second) ) {
+		if ( ! core::conformation::is_disulfide_bond(pose.conformation(), disulf->first, disulf->second) ) {
 			TR.Error << "Disulfide bond required between " << disulf->first
 				<< " and " << disulf->second << "." << std::endl;
 			utility_exit();
@@ -126,36 +125,34 @@ rebuild_disulfide( core::pose::Pose & pose,
 	}
 
 	// Set up any NULL parameters
-	if( !packer_task ) {
+	if ( !packer_task ) {
 		packer_task = core::pack::task::TaskFactory::create_packer_task( pose );
 		packer_task->initialize_from_command_line().or_include_current( true );
 		packer_task->restrict_to_repacking();
 
 		// Restrict repacking to the targets
-		for( Size i(1); i <= pose.total_residue(); ++i )
-		{
-			if( !is_disulf[i] ) {
+		for ( Size i(1); i <= pose.total_residue(); ++i ) {
+			if ( !is_disulf[i] ) {
 				packer_task->nonconst_residue_task(i).prevent_repacking();
 			}
 		}
 	}
-	if( !packer_score ) {
+	if ( !packer_score ) {
 		packer_score = scoring::get_score_function();
 	}
-	if( !mm ) {
+	if ( !mm ) {
 		mm = MoveMapOP( new MoveMap );
 		mm->set_bb( true );
 		mm->set_chi( true );
 	}
-	if( !minimizer_score ) {
+	if ( !minimizer_score ) {
 		minimizer_score = packer_score;
 	}
 
 	// Extend rotamers for the disulfide
-	for(vector1<pair<Size, Size> >::const_iterator
-		disulf(disulfides.begin()), end_disulf(disulfides.end());
-		disulf != end_disulf; ++disulf)
-	{
+	for ( vector1<pair<Size, Size> >::const_iterator
+			disulf(disulfides.begin()), end_disulf(disulfides.end());
+			disulf != end_disulf; ++disulf ) {
 		packer_task->nonconst_residue_task(disulf->first).and_extrachi_cutoff( 0 );
 		packer_task->nonconst_residue_task(disulf->second).and_extrachi_cutoff( 0 );
 		packer_task->nonconst_residue_task(disulf->first).or_ex1_sample_level(
@@ -170,7 +167,7 @@ rebuild_disulfide( core::pose::Pose & pose,
 
 	using namespace core::optimization;
 	AtomTreeMinimizer().run( pose, *mm, *minimizer_score,
-			MinimizerOptions( "dfpmin_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/ ) );
+		MinimizerOptions( "dfpmin_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/ ) );
 
 	// update score
 	pose.update_residue_neighbors();

@@ -219,7 +219,7 @@ struct Helices {
 	/// @brief number of helices
 	int total_helices;
 
-/// PRIVATE: !
+	/// PRIVATE: !
 
 	// variables
 	int total_HH_dimer;

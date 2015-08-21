@@ -76,8 +76,8 @@ basic::options::IntegerOptionKey const nstruct_iterations("nstruct_iterations");
 /// @brief
 class zinc2_homodimer_design : public protocols::moves::Mover {
 public:
-  zinc2_homodimer_design()
-  {
+	zinc2_homodimer_design()
+	{
 
 		TR << "//////////////////////////////////////////////////////////////////////////////////////////////" << std::endl << std::endl;
 
@@ -101,18 +101,18 @@ public:
 
 		TR << "//////////////////////////////////////////////////////////////////////////////////////////////" << std::endl << std::endl;
 
-  }
-  virtual ~zinc2_homodimer_design(){};
+	}
+	virtual ~zinc2_homodimer_design(){};
 
-  virtual
-  void
-  apply( Pose & pose ){
+	virtual
+	void
+	apply( Pose & pose ){
 
 		setup( pose );
 		design_symmetric_homodimer_metal_interface( pose );
 
-    return;
-  }
+		return;
+	}
 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -149,20 +149,19 @@ public:
 		bool found_zn1( false );
 		bool found_zn2( false );
 
-		for( Size i=1; i<=pose.total_residue(); i++ ) {
-			if(pose.residue(i).name3() == " ZN") {
-				if( ! found_zn1 ) {
+		for ( Size i=1; i<=pose.total_residue(); i++ ) {
+			if ( pose.residue(i).name3() == " ZN" ) {
+				if ( ! found_zn1 ) {
 					zn1_res = i;
 					found_zn1 = true;
-				}
-				else if ( ! found_zn2 ) {
+				} else if ( ! found_zn2 ) {
 					zn2_res = i;
 					found_zn2 = true;
 				}
 			}
 		}
 
-		if(zn1_res == 0 || zn2_res == 0 ) {
+		if ( zn1_res == 0 || zn2_res == 0 ) {
 			set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
 			TR << "DID NOT FIND TWO ZINC's.  SET STATUS FAIL DO NOT RETRY." << std::endl;
 			return;
@@ -203,7 +202,7 @@ public:
 		//TASKFACTORY --> prevent repack
 		operation::PreventRepackingOP prevent_repack( new operation::PreventRepacking() );
 		TR << "Preventing repacking of residues ";
-		for(core::Size i(2); i <= 5; ++i) {
+		for ( core::Size i(2); i <= 5; ++i ) {
 			prevent_repack->include_residue( msr1_[i]->get_seqpos() );
 			prevent_repack->include_residue( msr2_[i]->get_seqpos() );
 		}
@@ -277,22 +276,22 @@ public:
 	void
 	design_symmetric_homodimer_metal_interface( Pose & pose ){ //i, j, k only needed for pdb naming
 
-    Pose const designable_start_pose( pose );
+		Pose const designable_start_pose( pose );
 
 		Size nstruct_it = (Size) basic::options::option[nstruct_iterations];
-    for (Size n(1); n <= nstruct_it; n++) { //home-made nstruct
-      std::stringstream ss;
-      ss << n;
-      std::string n_string;
-      if(n < 10) { n_string = "000" + ss.str(); }
-      else if (n < 100) { n_string = "00" + ss.str(); }
-      else if (n < 1000) { n_string = "0" + ss.str(); }
-      else { n_string = ss.str(); }
+		for ( Size n(1); n <= nstruct_it; n++ ) { //home-made nstruct
+			std::stringstream ss;
+			ss << n;
+			std::string n_string;
+			if ( n < 10 ) { n_string = "000" + ss.str(); }
+			else if ( n < 100 ) { n_string = "00" + ss.str(); }
+			else if ( n < 1000 ) { n_string = "0" + ss.str(); }
+			else { n_string = ss.str(); }
 
-      protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose , *fa_metal_sym_scorefxn_ , 0.6 ) );
+			protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose , *fa_metal_sym_scorefxn_ , 0.6 ) );
 
 			Size repackmin_it = (Size) basic::options::option[ repackmin_iterations ];
-      for( Size i(1); i <= repackmin_it; ++i ) {
+			for ( Size i(1); i <= repackmin_it; ++i ) {
 				TR << "Repackmin cycle " << i << " out of " << repackmin_it << std::endl;
 
 				//DESIGN
@@ -312,18 +311,18 @@ public:
 				TR << "Score after ALL minimization: " << fa_metal_sym_scorefxn_->score( pose ) << std::endl;
 				mc->boltzmann( pose );
 
-      }//repackmin_iterations
+			}//repackmin_iterations
 
-      mc->recover_low( pose );
+			mc->recover_low( pose );
 
-      std::string nstruct_dump_name = pdbname_base_ + "_" + n_string + ".pdb";
-      pose.dump_scored_pdb(nstruct_dump_name, *fa_metal_sym_scorefxn_);
+			std::string nstruct_dump_name = pdbname_base_ + "_" + n_string + ".pdb";
+			pose.dump_scored_pdb(nstruct_dump_name, *fa_metal_sym_scorefxn_);
 
-      TR << "FINISHED " << nstruct_dump_name << std::endl;
+			TR << "FINISHED " << nstruct_dump_name << std::endl;
 
-      pose = designable_start_pose;
+			pose = designable_start_pose;
 
-    }//nstruct
+		}//nstruct
 
 		return;
 	}//design_symmetric_homodimer_metal_interface
@@ -343,12 +342,12 @@ private:
 
 	core::pack::task::TaskFactoryOP taskfactory_;
 	core::scoring::ScoreFunctionOP fa_metal_scorefxn_;
-  core::scoring::symmetry::SymmetricScoreFunctionOP fa_metal_sym_scorefxn_;
+	core::scoring::symmetry::SymmetricScoreFunctionOP fa_metal_sym_scorefxn_;
 
-  protocols::simple_moves::symmetry::SymPackRotamersMoverOP sym_pack_mover_;
-  protocols::simple_moves::symmetry::SymMinMoverOP sym_minmover_;
-  protocols::simple_moves::symmetry::SymMinMoverOP sym_minmover_sc_;
-  protocols::simple_moves::symmetry::SymMinMoverOP sym_minmover_bb_;
+	protocols::simple_moves::symmetry::SymPackRotamersMoverOP sym_pack_mover_;
+	protocols::simple_moves::symmetry::SymMinMoverOP sym_minmover_;
+	protocols::simple_moves::symmetry::SymMinMoverOP sym_minmover_sc_;
+	protocols::simple_moves::symmetry::SymMinMoverOP sym_minmover_bb_;
 
 	core::kinematics::MoveMapOP movemap_;
 	core::kinematics::MoveMapOP movemap_sc_;
@@ -362,22 +361,22 @@ typedef utility::pointer::shared_ptr< zinc2_homodimer_design > zinc2_homodimer_d
 int main( int argc, char* argv[] )
 {
 	try {
-	using basic::options::option;
-	option.add( repackmin_iterations, "number of repack and minimization cycles" ).def(2);
-	option.add( fav_nat_bonus, "favor native residue" ).def(1.5);
-	option.add( nstruct_iterations, "home-made nstruct" ).def(3);
+		using basic::options::option;
+		option.add( repackmin_iterations, "number of repack and minimization cycles" ).def(2);
+		option.add( fav_nat_bonus, "favor native residue" ).def(1.5);
+		option.add( nstruct_iterations, "home-made nstruct" ).def(3);
 
 
-  devel::init(argc, argv);
-  protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new zinc2_homodimer_design ));
+		devel::init(argc, argv);
+		protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new zinc2_homodimer_design ));
 
-  TR << "************************d**o**n**e**************************************" << std::endl;
+		TR << "************************d**o**n**e**************************************" << std::endl;
 
-  } catch ( utility::excn::EXCN_Base const & e ) {
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-  }
+	}
 
-  return 0;
+	return 0;
 }
 

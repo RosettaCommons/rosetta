@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/setup/StepWiseCSA_JobDistributor.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,13 +21,13 @@
 namespace protocols {
 namespace stepwise {
 namespace setup {
-	
-	class StepWiseCSA_JobDistributor;
-	typedef utility::pointer::shared_ptr< StepWiseCSA_JobDistributor > StepWiseCSA_JobDistributorOP;
-	typedef utility::pointer::shared_ptr< StepWiseCSA_JobDistributor const > StepWiseCSA_JobDistributorCOP;
-	
-} //setup 
-} //stepwise 
-} //protocols 
+
+class StepWiseCSA_JobDistributor;
+typedef utility::pointer::shared_ptr< StepWiseCSA_JobDistributor > StepWiseCSA_JobDistributorOP;
+typedef utility::pointer::shared_ptr< StepWiseCSA_JobDistributor const > StepWiseCSA_JobDistributorCOP;
+
+} //setup
+} //stepwise
+} //protocols
 
 #endif

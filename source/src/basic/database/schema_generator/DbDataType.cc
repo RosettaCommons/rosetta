@@ -26,9 +26,9 @@
 //C++
 #include <string>
 
-namespace basic{
-namespace database{
-namespace schema_generator{
+namespace basic {
+namespace database {
+namespace schema_generator {
 
 /*********Base class*********/
 DbDataType::DbDataType():
@@ -41,11 +41,11 @@ DbDataType::DbDataType(int size):
 
 /*********Text based data types*********/
 DbText::DbText():
-DbDataType()
+	DbDataType()
 {}
 
 DbText::DbText(int size):
-DbDataType(size)
+	DbDataType(size)
 {}
 
 std::string
@@ -55,28 +55,26 @@ DbText::print(
 
 	std::string size_string = utility::to_string(size_);
 	switch(db_session->get_db_mode()){
-		case utility::sql_database::DatabaseMode::sqlite3:
+	case utility::sql_database::DatabaseMode::sqlite3 :
+		return "TEXT";
+		break;
+	case utility::sql_database::DatabaseMode::mysql :
+		if ( size_>0 ) {
+			return "VARCHAR(" + size_string + ")";
+		} else {
 			return "TEXT";
-			break;
-		case utility::sql_database::DatabaseMode::mysql:
-			if(size_>0){
-				return "VARCHAR(" + size_string + ")";
-			}
-			else{
-				return "TEXT";
-			}
-			break;
-		case utility::sql_database::DatabaseMode::postgres:
-			if(size_>0){
-				return "VARCHAR(" + size_string + ")";
-			}
-			else{
-				return "VARCHAR";
-			}
-			break;
-		default:
-			utility_exit_with_message(
-				"Unrecognized database mode: '" + name_from_database_mode(db_session->get_db_mode()) + "'");
+		}
+		break;
+	case utility::sql_database::DatabaseMode::postgres :
+		if ( size_>0 ) {
+			return "VARCHAR(" + size_string + ")";
+		} else {
+			return "VARCHAR";
+		}
+		break;
+	default :
+		utility_exit_with_message(
+			"Unrecognized database mode: '" + name_from_database_mode(db_session->get_db_mode()) + "'");
 	}
 	//appease the compiler
 	return "";
@@ -92,18 +90,18 @@ DbTextKey::print(
 	utility::sql_database::sessionOP db_session
 ) const {
 	switch(db_session->get_db_mode()){
-		case utility::sql_database::DatabaseMode::sqlite3:
-			return "TEXT";
-			break;
-		case utility::sql_database::DatabaseMode::postgres:
-			return "TEXT";
-			break;
-		case utility::sql_database::DatabaseMode::mysql:
-			return "VARCHAR(255)";
-			break;
-		default:
-			utility_exit_with_message(
-				"Unrecognized database mode: '" + name_from_database_mode(db_session->get_db_mode()) + "'");
+	case utility::sql_database::DatabaseMode::sqlite3 :
+		return "TEXT";
+		break;
+	case utility::sql_database::DatabaseMode::postgres :
+		return "TEXT";
+		break;
+	case utility::sql_database::DatabaseMode::mysql :
+		return "VARCHAR(255)";
+		break;
+	default :
+		utility_exit_with_message(
+			"Unrecognized database mode: '" + name_from_database_mode(db_session->get_db_mode()) + "'");
 	}
 }
 
@@ -128,18 +126,18 @@ DbBigInt::print(
 	utility::sql_database::sessionOP db_session
 ) const {
 	switch(db_session->get_db_mode()){
-		case utility::sql_database::DatabaseMode::sqlite3:
-			return "INTEGER";
-			break;
-		case utility::sql_database::DatabaseMode::postgres:
-			return "BIGINT";
-			break;
-		case utility::sql_database::DatabaseMode::mysql:
-			return "BIGINT";
-			break;
-		default:
-			utility_exit_with_message(
-				"Unrecognized database mode: '" + name_from_database_mode(db_session->get_db_mode()) + "'");
+	case utility::sql_database::DatabaseMode::sqlite3 :
+		return "INTEGER";
+		break;
+	case utility::sql_database::DatabaseMode::postgres :
+		return "BIGINT";
+		break;
+	case utility::sql_database::DatabaseMode::mysql :
+		return "BIGINT";
+		break;
+	default :
+		utility_exit_with_message(
+			"Unrecognized database mode: '" + name_from_database_mode(db_session->get_db_mode()) + "'");
 	}
 }
 
@@ -148,11 +146,11 @@ DbBigInt::print(
 //DbBoolean::DbBoolean():
 //DbDataType()
 //{
-//	return "BOOLEAN";
+// return "BOOLEAN";
 //}
 
 DbReal::DbReal():
-DbDataType()
+	DbDataType()
 {}
 
 std::string
@@ -160,45 +158,45 @@ DbReal::print(
 	utility::sql_database::sessionOP db_session
 ) const {
 	switch(db_session->get_db_mode()){
-		case utility::sql_database::DatabaseMode::sqlite3:
-			return "REAL";
-			break;
-		case utility::sql_database::DatabaseMode::postgres:
-			return "DOUBLE PRECISION";
-			break;
-		case utility::sql_database::DatabaseMode::mysql:
-			//I can't figure out how to write the 16byte UUID into a varbinary(16). I don't like mysql.
-			return "REAL";
-			break;
-		default:
-			utility_exit_with_message(
-				"Unrecognized database mode: '" + name_from_database_mode(db_session->get_db_mode()) + "'");
+	case utility::sql_database::DatabaseMode::sqlite3 :
+		return "REAL";
+		break;
+	case utility::sql_database::DatabaseMode::postgres :
+		return "DOUBLE PRECISION";
+		break;
+	case utility::sql_database::DatabaseMode::mysql :
+		//I can't figure out how to write the 16byte UUID into a varbinary(16). I don't like mysql.
+		return "REAL";
+		break;
+	default :
+		utility_exit_with_message(
+			"Unrecognized database mode: '" + name_from_database_mode(db_session->get_db_mode()) + "'");
 	}
 }
 
 DbDouble::DbDouble():
-DbDataType()
+	DbDataType()
 {}
 
 std::string
 DbDouble::print(
 	utility::sql_database::sessionOP db_session
 ) const {
-	
+
 	switch(db_session->get_db_mode()){
-		case utility::sql_database::DatabaseMode::sqlite3:
-			return "REAL";
-			break;
-		case utility::sql_database::DatabaseMode::postgres:
-			return "DOUBLE PRECISION";
-			break;
-		case utility::sql_database::DatabaseMode::mysql:
-			//I can't figure out how to write the 16byte UUID into a varbinary(16). I don't like mysql.
-			return "DOUBLE";
-			break;
-		default:
-			utility_exit_with_message(
-				"Unrecognized database mode: '" + name_from_database_mode(db_session->get_db_mode()) + "'");
+	case utility::sql_database::DatabaseMode::sqlite3 :
+		return "REAL";
+		break;
+	case utility::sql_database::DatabaseMode::postgres :
+		return "DOUBLE PRECISION";
+		break;
+	case utility::sql_database::DatabaseMode::mysql :
+		//I can't figure out how to write the 16byte UUID into a varbinary(16). I don't like mysql.
+		return "DOUBLE";
+		break;
+	default :
+		utility_exit_with_message(
+			"Unrecognized database mode: '" + name_from_database_mode(db_session->get_db_mode()) + "'");
 	}
 }
 /*********UUID data types*********/
@@ -210,21 +208,21 @@ std::string
 DbUUID::print(
 	utility::sql_database::sessionOP db_session
 ) const {
-	
+
 	switch(db_session->get_db_mode()){
-		case utility::sql_database::DatabaseMode::sqlite3:
-			return "BLOB";
-			break;
-		case utility::sql_database::DatabaseMode::postgres:
-			return "UUID";
-			break;
-		case utility::sql_database::DatabaseMode::mysql:
-			//I can't figure out how to write the 16byte UUID into a varbinary(16). I don't like mysql.
-			return "BINARY(16)";
-			break;
-		default:
-			utility_exit_with_message(
-				"Unrecognized database mode: '" + name_from_database_mode(db_session->get_db_mode()) + "'");
+	case utility::sql_database::DatabaseMode::sqlite3 :
+		return "BLOB";
+		break;
+	case utility::sql_database::DatabaseMode::postgres :
+		return "UUID";
+		break;
+	case utility::sql_database::DatabaseMode::mysql :
+		//I can't figure out how to write the 16byte UUID into a varbinary(16). I don't like mysql.
+		return "BINARY(16)";
+		break;
+	default :
+		utility_exit_with_message(
+			"Unrecognized database mode: '" + name_from_database_mode(db_session->get_db_mode()) + "'");
 	}
 }
 

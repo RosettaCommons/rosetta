@@ -27,38 +27,38 @@ namespace stepwise {
 namespace sampler {
 namespace protein {
 
-  //////////////////////////////////////////////////////////////////////////
-  //constructor!
-	ProteinMainChainStepWiseSampler::ProteinMainChainStepWiseSampler(
-														 utility::vector1< core::id::TorsionID > const & which_torsions,
-														 utility::vector1< utility::vector1< core::Real > > const & main_chain_torsion_set_lists,
-														 bool const choose_random /* = false */ ):
-		StepWiseSamplerSized(),
-		which_torsions_( which_torsions ),
-		main_chain_torsion_set_lists_( main_chain_torsion_set_lists )
-  {
-		set_random( choose_random );
-  }
+//////////////////////////////////////////////////////////////////////////
+//constructor!
+ProteinMainChainStepWiseSampler::ProteinMainChainStepWiseSampler(
+	utility::vector1< core::id::TorsionID > const & which_torsions,
+	utility::vector1< utility::vector1< core::Real > > const & main_chain_torsion_set_lists,
+	bool const choose_random /* = false */ ):
+	StepWiseSamplerSized(),
+	which_torsions_( which_torsions ),
+	main_chain_torsion_set_lists_( main_chain_torsion_set_lists )
+{
+	set_random( choose_random );
+}
 
-  //////////////////////////////////////////////////////////////////////////
-	ProteinMainChainStepWiseSampler::ProteinMainChainStepWiseSampler()
-	{}
+//////////////////////////////////////////////////////////////////////////
+ProteinMainChainStepWiseSampler::ProteinMainChainStepWiseSampler()
+{}
 
-  //////////////////////////////////////////////////////////////////////////
-	ProteinMainChainStepWiseSampler::~ProteinMainChainStepWiseSampler()
-	{}
+//////////////////////////////////////////////////////////////////////////
+ProteinMainChainStepWiseSampler::~ProteinMainChainStepWiseSampler()
+{}
 
-  //////////////////////////////////////////////////////////////////////////
-	void
-	ProteinMainChainStepWiseSampler::apply( core::pose::Pose & pose, Size const id )
-	{
-		if ( id > size() ) utility_exit_with_message( "Asked ProteinMainChainStepWiseSampler for another sample but it does not have one!" );
-		utility::vector1< Real > const & main_chain_torsion_set_list( main_chain_torsion_set_lists_[ id ] );
-		for ( Size i = 1; i <= which_torsions_.size(); i++ ) {
-			//std::cout << "SETTING TORSION " << which_torsions_[ i ] << "  to " << main_chain_torsion_set_list[ i ] << std::endl;
-			pose.set_torsion( which_torsions_[ i ], main_chain_torsion_set_list[ i ] );
-		}
+//////////////////////////////////////////////////////////////////////////
+void
+ProteinMainChainStepWiseSampler::apply( core::pose::Pose & pose, Size const id )
+{
+	if ( id > size() ) utility_exit_with_message( "Asked ProteinMainChainStepWiseSampler for another sample but it does not have one!" );
+	utility::vector1< Real > const & main_chain_torsion_set_list( main_chain_torsion_set_lists_[ id ] );
+	for ( Size i = 1; i <= which_torsions_.size(); i++ ) {
+		//std::cout << "SETTING TORSION " << which_torsions_[ i ] << "  to " << main_chain_torsion_set_list[ i ] << std::endl;
+		pose.set_torsion( which_torsions_[ i ], main_chain_torsion_set_list[ i ] );
 	}
+}
 
 
 } //protein

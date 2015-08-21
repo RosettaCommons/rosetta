@@ -42,9 +42,9 @@ namespace sampler {
 namespace rna {
 
 RNA_KIC_Sampler::RNA_KIC_Sampler(
-		core::pose::PoseOP const & ref_pose,
-		core::Size const moving_suite,
-		core::Size const chainbreak_suite
+	core::pose::PoseOP const & ref_pose,
+	core::Size const moving_suite,
+	core::Size const chainbreak_suite
 ):
 	StepWiseSamplerBase(),
 	ref_pose_( ref_pose ),
@@ -82,8 +82,9 @@ void RNA_KIC_Sampler::init() {
 	add_values_from_center( full_torsions, 0, 180, bin_size_ );
 	//Avoid modeler both -180 and 180 deg
 	Real const epsil =  0.001; //Arbitary small number
-	if ( 360 - ( full_torsions.back() - full_torsions.front() ) < epsil )
-			full_torsions.pop_back();
+	if ( 360 - ( full_torsions.back() - full_torsions.front() ) < epsil ) {
+		full_torsions.pop_back();
+	}
 
 	/////Epsilon1 rotamers/////
 	//default: center +- 20 deg
@@ -91,7 +92,7 @@ void RNA_KIC_Sampler::init() {
 	TorsionList epsilon_torsions;
 	Size const pucker1( assign_pucker( *ref_pose_, moving_suite_ ) );
 	Real center = ( pucker1 == NORTH ) ? torsion_info.epsilon_north() :
-			torsion_info.epsilon_south();
+		torsion_info.epsilon_south();
 	Real max_range = 20;
 	if ( extra_epsilon_ ) {
 		max_range = 60;
@@ -101,24 +102,24 @@ void RNA_KIC_Sampler::init() {
 	}
 	add_values_from_center( epsilon_torsions, center, max_range, bin_size_ );
 	StepWiseSamplerOneTorsionOP epsilon_rotamer( new StepWiseSamplerOneTorsion(
-			TorsionID( moving_suite_, BB, EPSILON ), epsilon_torsions ) );
+		TorsionID( moving_suite_, BB, EPSILON ), epsilon_torsions ) );
 	bb_rotamer_->add_external_loop_rotamer( epsilon_rotamer );
 	/////Zeta1 rotamers/////
 	StepWiseSamplerOneTorsionOP zeta_rotamer( new StepWiseSamplerOneTorsion(
-			TorsionID( moving_suite_, BB, ZETA ), full_torsions ) );
+		TorsionID( moving_suite_, BB, ZETA ), full_torsions ) );
 	bb_rotamer_->add_external_loop_rotamer( zeta_rotamer );
 	/////Alpha1 rotamers/////
 	StepWiseSamplerOneTorsionOP alpha1_rotamer( new StepWiseSamplerOneTorsion(
-			TorsionID( moving_suite_ + 1, BB, ALPHA ), full_torsions ) );
+		TorsionID( moving_suite_ + 1, BB, ALPHA ), full_torsions ) );
 	bb_rotamer_->add_external_loop_rotamer( alpha1_rotamer );
 	/////Alpha2 rotamers/////
 	StepWiseSamplerOneTorsionOP alpha2_rotamer( new StepWiseSamplerOneTorsion(
-			TorsionID( chainbreak_suite_ + 1, BB, ALPHA ), full_torsions ) );
+		TorsionID( chainbreak_suite_ + 1, BB, ALPHA ), full_torsions ) );
 	bb_rotamer_->add_external_loop_rotamer( alpha2_rotamer );
 	/////Pucker rotamers/////
 	if ( pucker_state_ != NO_PUCKER ) {
 		RNA_SugarStepWiseSamplerOP pucker_rotamer( new RNA_SugarStepWiseSampler(
-				sample_nucleoside_, pucker_state_ ) );
+			sample_nucleoside_, pucker_state_ ) );
 		pucker_rotamer->set_skip_same_pucker( skip_same_pucker_ );
 		pucker_rotamer->set_idealize_coord( idealize_coord_ );
 		bb_rotamer_->add_external_loop_rotamer( pucker_rotamer );
@@ -127,13 +128,13 @@ void RNA_KIC_Sampler::init() {
 
 	////////// Loop Closer //////////
 	loop_closer_ = RNA_KinematicCloserOP( new RNA_KinematicCloser(
-			ref_pose_, moving_suite_, chainbreak_suite_ ) );
+		ref_pose_, moving_suite_, chainbreak_suite_ ) );
 	loop_closer_->set_verbose( verbose_ );
 
 	////////// Chi StepWiseSampler //////////
-	if ( base_state_ != NO_CHI ){
+	if ( base_state_ != NO_CHI ) {
 		chi_rotamer_ = RNA_ChiStepWiseSamplerOP( new RNA_ChiStepWiseSampler(
-													sample_nucleoside_, NORTH/*arbitary*/, base_state_	) );
+			sample_nucleoside_, NORTH/*arbitary*/, base_state_ ) );
 		chi_rotamer_->set_extra_chi( extra_chi_ );
 		chi_rotamer_->set_bin_size( bin_size_ );
 		chi_rotamer_->init();
@@ -170,8 +171,9 @@ void RNA_KIC_Sampler::operator++() {
 			if ( torsion_screen_ ) {
 				loop_closer_->apply( *ref_pose_);
 				if ( !screener_->screen( *ref_pose_, chainbreak_suite_ ) ||
-					 !screener_->screen( *ref_pose_, moving_suite_ ) )
-						continue;
+						!screener_->screen( *ref_pose_, moving_suite_ ) ) {
+					continue;
+				}
 			}
 
 			if ( base_state_ != NO_CHI ) ++( *chi_rotamer_ );
@@ -192,7 +194,7 @@ void RNA_KIC_Sampler::operator++() {
 ///////////////////////////////////////////////////////////////////////////
 bool RNA_KIC_Sampler::not_end() const {
 	runtime_assert( is_init() );
-	//	if ( random() ) return random_chain_closed_;
+	// if ( random() ) return random_chain_closed_;
 	return bb_rotamer_->not_end();
 }
 ///////////////////////////////////////////////////////////////////////////
@@ -227,11 +229,12 @@ void RNA_KIC_Sampler::get_next_valid_bb() {
 			if ( torsion_screen_ ) {
 				loop_closer_->apply( *ref_pose_);
 				if ( !screener_->screen( *ref_pose_, chainbreak_suite_ ) ||
-						 !screener_->screen( *ref_pose_, moving_suite_ ) )
-						continue;
+						!screener_->screen( *ref_pose_, moving_suite_ ) ) {
+					continue;
+				}
 			}
 
-			if ( base_state_ != NO_CHI ){
+			if ( base_state_ != NO_CHI ) {
 				PuckerState const pucker_state( assign_pucker( *ref_pose_, moving_suite_ + 1 ) );
 				if ( chi_rotamer_->pucker_state() != pucker_state ) {
 					chi_rotamer_->set_pucker_state( pucker_state );

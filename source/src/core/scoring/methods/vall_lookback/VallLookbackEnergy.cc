@@ -74,9 +74,9 @@ VallLookbackEnergy::finalize_total_energy(
 	using namespace conformation;
 	Real maxRmsd = potential_.lookback(pose);
 	Real thresholdDistance = option[fragment_threshold_distance]();
-	if(maxRmsd <= thresholdDistance)
+	if ( maxRmsd <= thresholdDistance ) {
 		totals[vall_lb] = 0;
-	else{
+	} else {
 		totals[vall_lb] = maxRmsd -thresholdDistance;
 	}
 

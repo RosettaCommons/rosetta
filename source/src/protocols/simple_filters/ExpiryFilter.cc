@@ -19,7 +19,7 @@
 //Project Headers
 #include <basic/Tracer.hh>
 #include <time.h>
-namespace protocols{
+namespace protocols {
 namespace simple_filters {
 
 using namespace core;
@@ -35,8 +35,8 @@ ExpiryFilterCreator::keyname() const { return "Expiry"; }
 
 //default ctor
 ExpiryFilter::ExpiryFilter() :
-protocols::filters::Filter( "Expiry" ),
-seconds_( 0 )
+	protocols::filters::Filter( "Expiry" ),
+	seconds_( 0 )
 {
 	start_time_ = time( NULL );
 }

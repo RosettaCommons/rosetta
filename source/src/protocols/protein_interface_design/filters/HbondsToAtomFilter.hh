@@ -52,7 +52,7 @@ public:
 public :
 	HbondsToAtomFilter() : Filter( "HbondsToAtom" ) {}
 	HbondsToAtomFilter( Size const resnum, Size const partners, Real const energy_cutoff=-0.5,
-						   bool const backbone=false, bool const sidechain=true ) : Filter( "HbondsToAtom" ) {
+		bool const backbone=false, bool const sidechain=true ) : Filter( "HbondsToAtom" ) {
 		resnum_ = resnum; partners_ = partners; energy_cutoff_ = energy_cutoff; backbone_ = backbone;
 		sidechain_ = sidechain;
 		runtime_assert( backbone_ || sidechain_ );
@@ -75,7 +75,7 @@ public :
 private:
 	Size resnum_, partners_;
 	Real energy_cutoff_;
-  std::string atomdesg_;
+	std::string atomdesg_;
 	bool backbone_, sidechain_, bb_bb_;
 };
 

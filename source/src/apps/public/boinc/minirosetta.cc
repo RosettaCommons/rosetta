@@ -101,10 +101,10 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using std::string;
-	using utility::vector1;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using std::string;
+		using utility::vector1;
 
 #ifdef BOINC // BOINC STUFF
 
@@ -131,30 +131,30 @@ main( int argc, char * argv [] )
 
 #endif
 
-	// has to be called before core::init::init. Which is really stupid.
+		// has to be called before core::init::init. Which is really stupid.
 #ifdef BOINC // BOINC STUFF
 	std::cerr << "Registering options.. " << std::endl;std::cerr.flush();
 #endif
-	protocols::abinitio::AbrelaxApplication::register_options();
-	protocols::abinitio::IterativeAbrelax::register_options();
-	protocols::jd2::archive::ArchiveManager::register_options();
-	//protocols::canonical_sampling::register_options();
-	protocols::canonical_sampling::CanonicalSamplingMover::register_options();
+		protocols::abinitio::AbrelaxApplication::register_options();
+		protocols::abinitio::IterativeAbrelax::register_options();
+		protocols::jd2::archive::ArchiveManager::register_options();
+		//protocols::canonical_sampling::register_options();
+		protocols::canonical_sampling::CanonicalSamplingMover::register_options();
 
 
 #ifdef BOINC // BOINC STUFF
 	std::cerr << "Initializing broker options ..." << std::endl;std::cerr.flush();
 #endif
-	protocols::abinitio::register_options_broker();
-	// options, random initialization
+		protocols::abinitio::register_options_broker();
+		// options, random initialization
 #ifdef BOINC // BOINC STUFF
 	std::cerr << "Initializing core..." << std::endl;std::cerr.flush();
 #endif
 
 #ifndef BOINC
 #ifndef WIN32
-	// No devel in BOINC builds
-	devel::init( argc, argv );
+		// No devel in BOINC builds
+		devel::init( argc, argv );
 #endif
 #endif
 
@@ -162,7 +162,7 @@ main( int argc, char * argv [] )
 	protocols::init::init( argc, argv );
 #endif
 #ifdef WIN32
-	protocols::init::init( argc, argv );
+		protocols::init::init( argc, argv );
 #endif
 
 #ifdef BOINC // BOINC STUFF
@@ -222,83 +222,82 @@ main( int argc, char * argv [] )
 
 	std::cerr << "Setting up checkpointing ..." << std::endl;std::cerr.flush();
 #endif
-	if ( option[ run::checkpoint ] || option[ run::checkpoint_interval ].user() ) {
-		protocols::checkpoint::checkpoint_with_interval( option[ run::checkpoint_interval ] );
-	}
+		if ( option[ run::checkpoint ] || option[ run::checkpoint_interval ].user() ) {
+			protocols::checkpoint::checkpoint_with_interval( option[ run::checkpoint_interval ] );
+		}
 
 #ifdef BOINC_GRAPHICS
-	std::cerr << "Setting up graphics native ..." << std::endl;std::cerr.flush();
-	// set native for graphics
-	if ( option[ in::file::native ].user() ) {
-		core::pose::PoseOP native_pose_( new core::pose::Pose );
-		core::import_pose::pose_from_pdb( *native_pose_, option[ in::file::native ]() );
-		if (native_pose_->total_residue() <= protocols::boinc::MAX_NATIVE_POSE_RESIDUES) {
-			core::pose::set_ss_from_phipsi( *native_pose_ );
-			protocols::boinc::Boinc::set_graphics_native_pose( *native_pose_ );
+		std::cerr << "Setting up graphics native ..." << std::endl;std::cerr.flush();
+		// set native for graphics
+		if ( option[ in::file::native ].user() ) {
+			core::pose::PoseOP native_pose_( new core::pose::Pose );
+			core::import_pose::pose_from_pdb( *native_pose_, option[ in::file::native ]() );
+			if ( native_pose_->total_residue() <= protocols::boinc::MAX_NATIVE_POSE_RESIDUES ) {
+				core::pose::set_ss_from_phipsi( *native_pose_ );
+				protocols::boinc::Boinc::set_graphics_native_pose( *native_pose_ );
+			}
 		}
-	}
 #endif
 
-// RUN PROTOCOL
-	// catch *any* exception.
-	try{
-		if ( option[ run::protocol ]() == "abrelax" ) {
-			protocols::abinitio::AbrelaxApplication abrelax;
-			abrelax.run();
-		}	else if ( option[ run::protocol ]() == "symdock" ) {
-      protocols::symmetric_docking::SymDock_main();
-    }	else if ( option[ run::protocol ]() == "broker" ) {
-			protocols::abinitio::Broker_main();
-		}	else if ( option[ run::protocol ]() == "loophash" ) {
-			protocols::loophash::loophash_main();
-		}	else if ( option[ run::protocol ]() == "ligand_dock" ) {
-			ligand_dock_main();
-		} else if ( option[ run::protocol ]() == "relax" ) {
-			protocols::relax::Relax_main( true );
-		} else if ( option[ run::protocol ]() == "looprelax" ) {
-			protocols::loop_build::LoopBuild_main( true );
-		} else if ( option[ run::protocol ]() == "threading" ) {
-			protocols::comparative_modeling::cm_main();
-		} else if ( option[ run::protocol ]() == "medal" ) {
-			protocols::medal::Medal_main(NULL);
-		} else if ( option[ run::protocol ]() == "medal_exchange" ) {
-			protocols::medal::MedalExchange_main(NULL);
-		} else if ( option[ run::protocol ]() == "star" ) {
-			protocols::star::StarAbinitio_main(NULL);
-		} else if ( option[ run::protocol ]() == "rbsegmentrelax" ) {
-			protocols::RBSegmentRelax_main( );
-		} else if ( option[ run::protocol ]() == "boinc_debug" ) {
-			protocols::abinitio::run_boinc_debug();
-		} else if ( option[ run::protocol ]() == "flxbb" ) {
-			protocols::flxbb::FlxbbDesign_main();
-		} else if ( option[ run::protocol ]() == "jd2_scripting" ){
-			protocols::moves::MoverOP mover( new DummyMover );
-			option[ jd2::dd_parser ].value( true ); // This option MUST be set true if we're using rosetta_scripts.
-																							// To avoid accidental crashes, we'll do so programatically
-			protocols::jd2::BOINCJobDistributor::get_instance()->go( mover );
-		} else if ( option[run::protocol]() == "ddg"){
-			protocols::ddG_main();
-		} else if ( option[run::protocol]() == "canonical_sampling") {
-			protocols::canonical_sampling::canonical_sampling_main();
-		} else if ( option[run::protocol]() == "nonlocal_frags") {
-			protocols::frag_picker::nonlocal::NonlocalFrags_main();
-		}
-		else {
-			utility_exit_with_message(
-				"Invalid protocol requested: "+ option[ run::protocol ]()
-			);
-		return 0; // makes compiler happy
-		}
-	//---code to do a in spot score cut necessary for running centroid abinitio through boinc
+		// RUN PROTOCOL
+		// catch *any* exception.
+		try{
+			if ( option[ run::protocol ]() == "abrelax" ) {
+				protocols::abinitio::AbrelaxApplication abrelax;
+				abrelax.run();
+			} else if ( option[ run::protocol ]() == "symdock" ) {
+				protocols::symmetric_docking::SymDock_main();
+			} else if ( option[ run::protocol ]() == "broker" ) {
+				protocols::abinitio::Broker_main();
+			} else if ( option[ run::protocol ]() == "loophash" ) {
+				protocols::loophash::loophash_main();
+			} else if ( option[ run::protocol ]() == "ligand_dock" ) {
+				ligand_dock_main();
+			} else if ( option[ run::protocol ]() == "relax" ) {
+				protocols::relax::Relax_main( true );
+			} else if ( option[ run::protocol ]() == "looprelax" ) {
+				protocols::loop_build::LoopBuild_main( true );
+			} else if ( option[ run::protocol ]() == "threading" ) {
+				protocols::comparative_modeling::cm_main();
+			} else if ( option[ run::protocol ]() == "medal" ) {
+				protocols::medal::Medal_main(NULL);
+			} else if ( option[ run::protocol ]() == "medal_exchange" ) {
+				protocols::medal::MedalExchange_main(NULL);
+			} else if ( option[ run::protocol ]() == "star" ) {
+				protocols::star::StarAbinitio_main(NULL);
+			} else if ( option[ run::protocol ]() == "rbsegmentrelax" ) {
+				protocols::RBSegmentRelax_main( );
+			} else if ( option[ run::protocol ]() == "boinc_debug" ) {
+				protocols::abinitio::run_boinc_debug();
+			} else if ( option[ run::protocol ]() == "flxbb" ) {
+				protocols::flxbb::FlxbbDesign_main();
+			} else if ( option[ run::protocol ]() == "jd2_scripting" ) {
+				protocols::moves::MoverOP mover( new DummyMover );
+				option[ jd2::dd_parser ].value( true ); // This option MUST be set true if we're using rosetta_scripts.
+				// To avoid accidental crashes, we'll do so programatically
+				protocols::jd2::BOINCJobDistributor::get_instance()->go( mover );
+			} else if ( option[run::protocol]() == "ddg" ) {
+				protocols::ddG_main();
+			} else if ( option[run::protocol]() == "canonical_sampling" ) {
+				protocols::canonical_sampling::canonical_sampling_main();
+			} else if ( option[run::protocol]() == "nonlocal_frags" ) {
+				protocols::frag_picker::nonlocal::NonlocalFrags_main();
+			} else {
+				utility_exit_with_message(
+					"Invalid protocol requested: "+ option[ run::protocol ]()
+				);
+				return 0; // makes compiler happy
+			}
+			//---code to do a in spot score cut necessary for running centroid abinitio through boinc
 #ifdef BOINC
 	double runtime = protocols::boinc::Boinc::get_boinc_wu_cpu_time();
 #else
-	double runtime = -1; //-1 does not do filtering
+			double runtime = -1; //-1 does not do filtering
 #endif
-	if(option[boinc::score_cut_pct].user()) {
-		double minTimePerModel = 61;  //seconds per model min time for boinc.
-		protocols::boinc::boincOutputFilter(runtime,minTimePerModel); //ideally score cut alone, but an additional filter that allows only 1 structure every 61 seconds.
-	}
+			if ( option[boinc::score_cut_pct].user() ) {
+				double minTimePerModel = 61;  //seconds per model min time for boinc.
+				protocols::boinc::boincOutputFilter(runtime,minTimePerModel); //ideally score cut alone, but an additional filter that allows only 1 structure every 61 seconds.
+			}
 #ifdef BOINC
 
 	// gzip the output silent files.
@@ -311,18 +310,18 @@ main( int argc, char * argv [] )
 	protocols::boinc::Boinc::worker_shutdown(); // Does not return.
 	utility_exit_with_message( "reached end of minirosetta::main() after worker_shutdown(); " );
 #endif
-	} catch ( utility::excn::EXCN_Base& excn ) {
-		std::cerr << "std::cerr: Exception was thrown: " << std::endl;
-		excn.show( std::cerr );
-		std::cout << "std::cout: Exception was thrown: " << std::endl;
-		excn.show( std::cout ); //so its also seen in a >LOG file
-		#ifdef USEMPI
+		} catch ( utility::excn::EXCN_Base& excn ) {
+			std::cerr << "std::cerr: Exception was thrown: " << std::endl;
+			excn.show( std::cerr );
+			std::cout << "std::cout: Exception was thrown: " << std::endl;
+			excn.show( std::cout ); //so its also seen in a >LOG file
+#ifdef USEMPI
 		MPI_Abort( MPI_COMM_WORLD, 911 );
-		#endif
-		return 1;    // MUST return non-0 - otherwise BOINC does not abort!
-	}
+#endif
+			return 1;    // MUST return non-0 - otherwise BOINC does not abort!
+		}
 
-	 } catch ( utility::excn::EXCN_Base const & e ) {
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

@@ -88,7 +88,7 @@ public:
 	// lookup_name - Lookup name within store. See StructureStoreManager.
 	// mode - Filter mode, see LookupMode.
 	FragmentLookupFilter(std::string lookup_name,
-								LookupMode mode=First);
+		LookupMode mode=First);
 
 	/// @brief Construct targeting the given lookup in the given backend.
 	//
@@ -98,11 +98,11 @@ public:
 	//     support.
 	// mode - Filter mode, see LookupMode.
 	FragmentLookupFilter(std::string lookup_name,
-								std::string store_path,
-								LookupMode mode=First,
-								core::Size target_chain=0,
-								core::Size threshold=0,
-								bool b_target_chain=false);
+		std::string store_path,
+		LookupMode mode=First,
+		core::Size target_chain=0,
+		core::Size threshold=0,
+		bool b_target_chain=false);
 
 	// @brief copy constructor
 	FragmentLookupFilter( FragmentLookupFilter const & rval );
@@ -116,7 +116,7 @@ public:// virtual constructor
 	virtual FilterOP clone() const { return FilterOP( new FragmentLookupFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const {	return FilterOP( new FragmentLookupFilter() ); }
+	virtual FilterOP fresh_instance() const { return FilterOP( new FragmentLookupFilter() ); }
 
 public:
 
@@ -131,10 +131,10 @@ public:
 
 	// @brief Parse arguments from rosettascripts XML
 	virtual void parse_my_tag( utility::tag::TagCOP tag,
-		 DataMap &,
-		 Filters_map const &,
-		 Movers_map const &,
-		 Pose const & );
+		DataMap &,
+		Filters_map const &,
+		Movers_map const &,
+		Pose const & );
 
 	//Main Filter computation routine
 	core::Size compute( core::pose::Pose const & pose ) const;

@@ -45,7 +45,7 @@ using namespace core::pose::metrics;
 using namespace utility;
 using namespace ObjexxFCL::format;
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 
@@ -118,8 +118,8 @@ std::string DecomposeAndReweightEnergiesCalculator::print( std::string const & k
 		utility::vector1<core::Real> const master_weight_vector_copy(master_weight_vector());
 		std::ostringstream sstream;
 		sstream << "[";
-		for (core::Size i = 1; i <= master_weight_vector_copy.size(); ++i) {
-			if (i > 1) sstream << ", ";
+		for ( core::Size i = 1; i <= master_weight_vector_copy.size(); ++i ) {
+			if ( i > 1 ) sstream << ", ";
 			sstream << master_weight_vector_copy[i];
 		}
 		sstream << "]";
@@ -128,8 +128,8 @@ std::string DecomposeAndReweightEnergiesCalculator::print( std::string const & k
 		utility::vector1<core::Real> const weighted_total_vector_copy(weighted_total_vector());
 		std::ostringstream sstream;
 		sstream << "[";
-		for (core::Size i = 1; i <= weighted_total_vector_copy.size(); ++i) {
-			if (i > 1) sstream << ", ";
+		for ( core::Size i = 1; i <= weighted_total_vector_copy.size(); ++i ) {
+			if ( i > 1 ) sstream << ", ";
 			sstream << weighted_total_vector_copy[i];
 		}
 		sstream << "]";
@@ -138,8 +138,8 @@ std::string DecomposeAndReweightEnergiesCalculator::print( std::string const & k
 		utility::vector1<core::Real> const weighted_total_no_master_vector_copy(weighted_total_no_master_vector());
 		std::ostringstream sstream;
 		sstream << "[";
-		for (core::Size i = 1; i <= weighted_total_no_master_vector_copy.size(); ++i) {
-			if (i > 1) sstream << ", ";
+		for ( core::Size i = 1; i <= weighted_total_no_master_vector_copy.size(); ++i ) {
+			if ( i > 1 ) sstream << ", ";
 			sstream << weighted_total_no_master_vector_copy[i];
 		}
 		sstream << "]";
@@ -176,30 +176,30 @@ DecomposeAndReweightEnergiesCalculator::recompute(
 
 	core::Size num_sets_from_decomposition = residue_decomposition.size();
 	// if num_sets is 0, set num_sets to be the size of the decomposition
-	if (num_sets() == 0) num_sets(num_sets_from_decomposition);
+	if ( num_sets() == 0 ) num_sets(num_sets_from_decomposition);
 	// make sure the weight vector and weight graph are the right size
 	runtime_assert(onebody_energies_.size() == num_sets_from_decomposition &&
-	               twobody_energies_.num_vertices() == num_sets_from_decomposition);
+		twobody_energies_.num_vertices() == num_sets_from_decomposition);
 
 	clear_energies();
 
 	// add one body energies to the correct one body location
-	for (core::Size i = 1; i <= this_pose.total_residue(); ++i) {
+	for ( core::Size i = 1; i <= this_pose.total_residue(); ++i ) {
 		core::Size const set_num(residue_set_numbers[i]);
-		if (set_num) onebody_energies_[set_num].energy_map() += this_pose.energies().onebody_energies(i);
+		if ( set_num ) onebody_energies_[set_num].energy_map() += this_pose.energies().onebody_energies(i);
 	}
 
 	core::scoring::EnergyGraph const & energy_graph(this_pose.energies().energy_graph());
 
 	// add two body energies to the correct one body or two body locations
-	for (core::graph::Graph::EdgeListConstIter iter = energy_graph.const_edge_list_begin();
-			 iter != energy_graph.const_edge_list_end(); ++iter) {
+	for ( core::graph::Graph::EdgeListConstIter iter = energy_graph.const_edge_list_begin();
+			iter != energy_graph.const_edge_list_end(); ++iter ) {
 		core::scoring::EnergyEdge const * const energy_edge = static_cast<core::scoring::EnergyEdge const *>(*iter);
 		core::Size const first_set_num(residue_set_numbers[energy_edge->get_first_node_ind()]);
 		core::Size const second_set_num(residue_set_numbers[energy_edge->get_second_node_ind()]);
 		// only place the energies if both residues in a set
-		if (first_set_num && second_set_num) {
-			if (first_set_num == second_set_num) {
+		if ( first_set_num && second_set_num ) {
+			if ( first_set_num == second_set_num ) {
 				// add two body energies between residues in the same set to the one body energy for that set
 				energy_edge->add_to_energy_map( onebody_energies_[first_set_num].energy_map() );
 			} else {
@@ -210,23 +210,23 @@ DecomposeAndReweightEnergiesCalculator::recompute(
 	}
 
 	// add long range two body energies to the correct onebody or twobody locations
-	for( Size lr = 1; lr <= scoring::methods::n_long_range_types; lr++){
+	for ( Size lr = 1; lr <= scoring::methods::n_long_range_types; lr++ ) {
 		scoring::methods::LongRangeEnergyType lr_type = scoring::methods::LongRangeEnergyType( lr );
 		scoring::LREnergyContainerCOP lrec = this_pose.energies().long_range_container( lr_type );
-		if( !lrec ) continue;
-		if( lrec->empty() ) continue;
+		if ( !lrec ) continue;
+		if ( lrec->empty() ) continue;
 
 		// iterate over all residues
-		for (core::Size i = 1; i <= this_pose.total_residue(); ++i) {
+		for ( core::Size i = 1; i <= this_pose.total_residue(); ++i ) {
 			core::Size const first_set_num(residue_set_numbers[i]);
-			if (!first_set_num) continue;
+			if ( !first_set_num ) continue;
 			// iterate over all neighbors of the residue
-			for (core::scoring::ResidueNeighborConstIteratorOP rni = lrec->const_upper_neighbor_iterator_begin(i);
-					 *rni != *( lrec->const_upper_neighbor_iterator_end(i) ); ++(*rni) ) {
+			for ( core::scoring::ResidueNeighborConstIteratorOP rni = lrec->const_upper_neighbor_iterator_begin(i);
+					*rni != *( lrec->const_upper_neighbor_iterator_end(i) ); ++(*rni) ) {
 				core::Size const second_set_num(residue_set_numbers[rni->upper_neighbor_id()]);
 				// only place the energies if both residues both part of a set
-				if (!second_set_num) continue;
-				if (first_set_num == second_set_num) {
+				if ( !second_set_num ) continue;
+				if ( first_set_num == second_set_num ) {
 					// add two body energies between residues in the same set to the one body energy for that set
 					rni->accumulate_energy(onebody_energies_[first_set_num].energy_map());
 				} else {
@@ -241,7 +241,7 @@ DecomposeAndReweightEnergiesCalculator::recompute(
 
 	// subtract out the one body and two body energies from other_energies_
 	core::Size nc = num_components();
-	for (core::Size i = 2; i <= nc; ++i) {
+	for ( core::Size i = 2; i <= nc; ++i ) {
 		other_energies_.energy_map() -= component(i).energy_map();
 	}
 
@@ -263,11 +263,11 @@ DecomposeAndReweightEnergiesCalculator::num_sets(core::Size num_sets) {
 	onebody_energies_.resize(num_sets);
 
 	// avoid destruction of edges if the graphs are already the correct size
-	if (twobody_energies_.num_vertices() != num_sets) twobody_energies_.set_num_vertices(num_sets);
+	if ( twobody_energies_.num_vertices() != num_sets ) twobody_energies_.set_num_vertices(num_sets);
 
-	for (core::Size i = 1; i < twobody_energies_.num_vertices(); ++i) {
-		for (core::Size j = i+1; j <= twobody_energies_.num_vertices(); ++j) {
-			if (!twobody_energies_.edge_exists(i, j)) {
+	for ( core::Size i = 1; i < twobody_energies_.num_vertices(); ++i ) {
+		for ( core::Size j = i+1; j <= twobody_energies_.num_vertices(); ++j ) {
+			if ( !twobody_energies_.edge_exists(i, j) ) {
 				twobody_energies_.add_edge(i, j, EnergiesData());
 			}
 		}
@@ -287,14 +287,14 @@ DecomposeAndReweightEnergiesCalculator::component(
 {
 	runtime_assert(index >= 1 && index <= num_components());
 
-	if (index == 1) return other_energies_;
+	if ( index == 1 ) return other_energies_;
 	--index;
 
-	if (index <= onebody_energies_.size()) return onebody_energies_[index];
+	if ( index <= onebody_energies_.size() ) return onebody_energies_[index];
 	index -= onebody_energies_.size();
 
 	core::Size set1;
-	for (set1 = 1; index > num_sets() - set1; ++set1) {
+	for ( set1 = 1; index > num_sets() - set1; ++set1 ) {
 		index -= num_sets() - set1;
 	}
 	core::Size set2 = set1+index;
@@ -308,14 +308,14 @@ DecomposeAndReweightEnergiesCalculator::component(
 {
 	runtime_assert(index >= 1 && index <= num_components());
 
-	if (index == 1) return other_energies_;
+	if ( index == 1 ) return other_energies_;
 	--index;
 
-	if (index <= onebody_energies_.size()) return onebody_energies_[index];
+	if ( index <= onebody_energies_.size() ) return onebody_energies_[index];
 	index -= onebody_energies_.size();
 
 	core::Size set1;
-	for (set1 = 1; index > num_sets() - set1; ++set1) {
+	for ( set1 = 1; index > num_sets() - set1; ++set1 ) {
 		index -= num_sets() - set1;
 	}
 	core::Size set2 = set1+index;
@@ -327,7 +327,7 @@ DecomposeAndReweightEnergiesCalculator::master_weight_vector() const
 {
 	utility::vector1<core::Real> master_weight_vector(num_components());
 
-	for (core::Size i = 1; i <= master_weight_vector.size(); ++i) {
+	for ( core::Size i = 1; i <= master_weight_vector.size(); ++i ) {
 		master_weight_vector[i] = component(i).master_weight();
 	}
 
@@ -344,11 +344,11 @@ DecomposeAndReweightEnergiesCalculator::master_weight_vector(
 	// apply the reverse mapping to make sure it is the correct length
 	runtime_assert(master_weight_vector.size() == 1+(num_sets_for_vector+1)*num_sets_for_vector/2);
 	// if num_sets is 0, set num_sets to be the size of the vector
-	if (num_sets() == 0) num_sets(num_sets_for_vector);
+	if ( num_sets() == 0 ) num_sets(num_sets_for_vector);
 	// make sure that the vector and num_sets are are compatible
 	runtime_assert(num_sets() == num_sets_for_vector);
 
-	for (core::Size i = 1; i <= master_weight_vector.size(); ++i) {
+	for ( core::Size i = 1; i <= master_weight_vector.size(); ++i ) {
 		component(i).master_weight(master_weight_vector[i]);
 	}
 }
@@ -362,8 +362,8 @@ DecomposeAndReweightEnergiesCalculator::names_vector() const
 
 	names_vec.insert(names_vec.end(), set_names_.begin(), set_names_.end());
 
-	for (core::Size i = 1; i < set_names_.size(); ++i) {
-		for (core::Size j = i+1; j <= set_names_.size(); ++j) {
+	for ( core::Size i = 1; i < set_names_.size(); ++i ) {
+		for ( core::Size j = i+1; j <= set_names_.size(); ++j ) {
 			names_vec.push_back(set_names_[i]+"-"+set_names_[j]);
 		}
 	}
@@ -376,7 +376,7 @@ DecomposeAndReweightEnergiesCalculator::weighted_energy_map_vector() const
 {
 	utility::vector1<core::scoring::EnergyMap> weighted_energy_map_vector_result(num_components());
 
-	for (core::Size i = 1; i <= weighted_energy_map_vector_result.size(); ++i) {
+	for ( core::Size i = 1; i <= weighted_energy_map_vector_result.size(); ++i ) {
 		weighted_energy_map_vector_result[i] = component(i).weighted_energy_map();
 	}
 
@@ -388,7 +388,7 @@ DecomposeAndReweightEnergiesCalculator::weighted_total_no_master_vector() const
 {
 	utility::vector1<core::Real> weighted_total_vector_result(num_components());
 
-	for (core::Size i = 1; i <= weighted_total_vector_result.size(); ++i) {
+	for ( core::Size i = 1; i <= weighted_total_vector_result.size(); ++i ) {
 		weighted_total_vector_result[i] = component(i).weighted_total_no_master();
 	}
 
@@ -400,7 +400,7 @@ DecomposeAndReweightEnergiesCalculator::weighted_total_vector() const
 {
 	utility::vector1<core::Real> weighted_total_vector_result(num_components());
 
-	for (core::Size i = 1; i <= weighted_total_vector_result.size(); ++i) {
+	for ( core::Size i = 1; i <= weighted_total_vector_result.size(); ++i ) {
 		weighted_total_vector_result[i] = component(i).weighted_total();
 	}
 
@@ -412,15 +412,15 @@ DecomposeAndReweightEnergiesCalculator::nonzero_weight_score_types() const
 {
 	utility::vector1<core::scoring::EnergyMap> weight_map_vector(num_components());
 
-	for (core::Size i = 1; i <= weight_map_vector.size(); ++i) {
+	for ( core::Size i = 1; i <= weight_map_vector.size(); ++i ) {
 		weight_map_vector[i] = component(i).weight_map();
 	}
 
 	utility::vector1<core::scoring::ScoreType> score_types;
 
-	for (int i = 1; i < core::scoring::n_score_types; ++i) {
-		for (core::Size j = 1; j < weight_map_vector.size(); ++j) {
-			if (weight_map_vector[j][core::scoring::ScoreType(i)]) {
+	for ( int i = 1; i < core::scoring::n_score_types; ++i ) {
+		for ( core::Size j = 1; j < weight_map_vector.size(); ++j ) {
+			if ( weight_map_vector[j][core::scoring::ScoreType(i)] ) {
 				score_types.push_back(core::scoring::ScoreType(i));
 				break;
 			}
@@ -441,21 +441,21 @@ DecomposeAndReweightEnergiesCalculator::show(
 	utility::vector1<std::string> const names_vec(names_vector());
 
 	out << "------------------------";
-	for (core::Size i = 1; i <= names_vec.size(); ++i) out << "---------";
+	for ( core::Size i = 1; i <= names_vec.size(); ++i ) out << "---------";
 	out << "---------" << std::endl;
 
 	out << LJ(24,"Score Type");
-	for (core::Size i = 1; i <= names_vec.size(); ++i) out << RJ(9,names_vec[i]);
+	for ( core::Size i = 1; i <= names_vec.size(); ++i ) out << RJ(9,names_vec[i]);
 	out << RJ(9,"Total") << std::endl;
 
 	out << "------------------------";
-	for (core::Size i = 1; i <= names_vec.size(); ++i) out << "---------";
+	for ( core::Size i = 1; i <= names_vec.size(); ++i ) out << "---------";
 	out << "---------" << std::endl;
 
-	for (core::Size i = 1; i <= score_types.size(); ++i) {
+	for ( core::Size i = 1; i <= score_types.size(); ++i ) {
 		core::Real total = 0;
 		out << LJ(24,score_types[i]);
-		for (core::Size j = 1; j <= weighted_energy_map_vec.size(); ++j) {
+		for ( core::Size j = 1; j <= weighted_energy_map_vec.size(); ++j ) {
 			out << F(9,3, weighted_energy_map_vec[j][score_types[i]]);
 			total += weighted_energy_map_vec[j][score_types[i]];
 		}
@@ -463,11 +463,11 @@ DecomposeAndReweightEnergiesCalculator::show(
 	}
 
 	out << "------------------------";
-	for (core::Size i = 1; i <= names_vec.size(); ++i) out << "---------";
+	for ( core::Size i = 1; i <= names_vec.size(); ++i ) out << "---------";
 	out << "---------" << std::endl;
 
 	out << LJ(24,"Total");
-	for (core::Size i = 1; i <= weighted_total_vec.size(); ++i) out << F(9,3, weighted_total_vec[i]);
+	for ( core::Size i = 1; i <= weighted_total_vec.size(); ++i ) out << F(9,3, weighted_total_vec[i]);
 	out << F(9,3, weighted_total_) << std::endl;
 }
 
@@ -475,7 +475,7 @@ void
 DecomposeAndReweightEnergiesCalculator::clear_energies()
 {
 	core::Size nc = num_components();
-	for (core::Size i = 1; i <= nc; ++i) {
+	for ( core::Size i = 1; i <= nc; ++i ) {
 		component(i).energy_map().clear();
 	}
 
@@ -486,9 +486,9 @@ void
 DecomposeAndReweightEnergiesCalculator::update_original_weights()
 {
 	core::Size nc = num_components();
-	for (core::Size i = 1; i <= nc; ++i) {
+	for ( core::Size i = 1; i <= nc; ++i ) {
 		EnergiesData & this_component(component(i));
-		if (this_component.use_original_weights()) this_component.weight_map(original_weights_);
+		if ( this_component.use_original_weights() ) this_component.weight_map(original_weights_);
 	}
 }
 
@@ -498,7 +498,7 @@ DecomposeAndReweightEnergiesCalculator::update_weighted_total()
 	weighted_total_ = 0;
 
 	core::Size nc = num_components();
-	for (core::Size i = 1; i <= nc; ++i) {
+	for ( core::Size i = 1; i <= nc; ++i ) {
 		weighted_total_ += component(i).weighted_total();
 	}
 }

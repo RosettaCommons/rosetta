@@ -44,16 +44,16 @@ namespace scoring {
 namespace disulfides {
 
 /**
- * Constructor
- */
+* Constructor
+*/
 DisulfideMatchingDatabase::DisulfideMatchingDatabase()
 {
 	db_init_ = false;
 }
 
 /**
- * Deconstructor
- */
+* Deconstructor
+*/
 DisulfideMatchingDatabase::~DisulfideMatchingDatabase() {}
 
 void
@@ -90,11 +90,11 @@ DisulfideMatchingDatabase::read_disulfide_database() const{
 utility::vector1< core::kinematics::RT > &
 DisulfideMatchingDatabase::get_all_disulfides() const {
 
-	if (db_init_ == false) {
+	if ( db_init_ == false ) {
 		//std::cout << "READING DB " << std::endl;
 		read_disulfide_database();
 
-		if (db_disulfides_.size() == 0) {
+		if ( db_disulfides_.size() == 0 ) {
 			utility_exit_with_message("Failure to Read Disulfide Database");
 		}
 

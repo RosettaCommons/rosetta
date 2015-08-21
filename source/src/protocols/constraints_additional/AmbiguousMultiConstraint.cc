@@ -67,15 +67,15 @@ AmbiguousMultiConstraint::score(
 
 	typedef std::pair< ConstraintCOP, EnergyMap > cst_emap_pair;
 	typedef std::pair< core::Real, cst_emap_pair > score_cst_pair;
-  //std::cout << "scoring ambiguous constraint..." << std::endl;
+	//std::cout << "scoring ambiguous constraint..." << std::endl;
 
 	std::list< score_cst_pair > score_cst_pairs;
 
-  //low_total_cst_score_ = 1000000;
-  //low_EMap_.zero( cst_score_types_ );
+	//low_total_cst_score_ = 1000000;
+	//low_EMap_.zero( cst_score_types_ );
 
 	// first, we score every constraint and save the result in a list
-	for( ConstraintCOPs::const_iterator
+	for ( ConstraintCOPs::const_iterator
 			member_it = member_constraints().begin(), end = member_constraints().end(); member_it != end; ++member_it ) {
 		EnergyMap cur_emap;
 		(*member_it)->score(xyz_func, weights, cur_emap);
@@ -90,8 +90,8 @@ AmbiguousMultiConstraint::score(
 	//and go through and add the information of the relevant constraints to the emap,
 	//as well as note the active constraints
 	core::Size counter(1);
-	for( std::list< score_cst_pair >::iterator cst_it = score_cst_pairs.begin() ;
-			 counter <= num_active_constraints_; ++cst_it){
+	for ( std::list< score_cst_pair >::iterator cst_it = score_cst_pairs.begin() ;
+			counter <= num_active_constraints_; ++cst_it ) {
 
 
 		emap[constant_constraint] += cst_it->second.second[constant_constraint];
@@ -117,18 +117,17 @@ AmbiguousMultiConstraint::remap_resid( core::id::SequenceMapping const &seqmap )
 
 	ConstraintCOPs new_csts;
 
-	for( ConstraintCOPs::const_iterator cst_it = member_constraints_.begin(); cst_it != member_constraints_.end(); ++cst_it ){
+	for ( ConstraintCOPs::const_iterator cst_it = member_constraints_.begin(); cst_it != member_constraints_.end(); ++cst_it ) {
 
 		ConstraintOP new_cst = (*cst_it)->remap_resid( seqmap );
 
-		if( new_cst ) new_csts.push_back( new_cst );
+		if ( new_cst ) new_csts.push_back( new_cst );
 
 	}
 
-	if( new_csts.size() > 0 ){
+	if ( new_csts.size() > 0 ) {
 		return ConstraintOP( new AmbiguousMultiConstraint( num_active_constraints_, new_csts ) );
-	}
-	else return NULL;
+	} else return NULL;
 
 }
 
@@ -146,7 +145,7 @@ AmbiguousMultiConstraint::fill_f1_f2(
 	using namespace core::scoring::constraints;
 
 	runtime_assert( active_constraints_.size() == num_active_constraints_ );
-	for( ConstraintCOPs::const_iterator cst_it = active_constraints_.begin(); cst_it != active_constraints_.end(); ++cst_it ){
+	for ( ConstraintCOPs::const_iterator cst_it = active_constraints_.begin(); cst_it != active_constraints_.end(); ++cst_it ) {
 		assert( *cst_it ) ;
 		(*cst_it)->fill_f1_f2(atom, xyz, F1, F2, weights);
 	}
@@ -156,12 +155,12 @@ void
 AmbiguousMultiConstraint::show( std::ostream& out) const
 {
 	using namespace core::scoring::constraints;
-  out << "AmbiguousMultiConstraint containing the following " << member_constraints().size() << " constraints: " << std::endl;
-  for( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(), end = member_constraints().end(); cst_it != end; ++cst_it ) {
-    (*cst_it)->show(out);
-  }
+	out << "AmbiguousMultiConstraint containing the following " << member_constraints().size() << " constraints: " << std::endl;
+	for ( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(), end = member_constraints().end(); cst_it != end; ++cst_it ) {
+		(*cst_it)->show(out);
+	}
 
-  out << " ...all member constraints of this AmbiguousMultiConstraint shown." << std::endl;
+	out << " ...all member constraints of this AmbiguousMultiConstraint shown." << std::endl;
 }
 
 core::Size
@@ -170,14 +169,14 @@ AmbiguousMultiConstraint::show_violations( std::ostream& out, core::pose::Pose c
 	using namespace core::scoring::constraints;
 
 	if ( verbose_level >= 70 ) {
-	Size total_viol( 0 );
-	if ( verbose_level >=80 )	out << type() << " " << member_constraints().size() << " ";
-	for( ConstraintCOPs::const_iterator cst_it = active_constraints_.begin(), end = active_constraints_.end(); cst_it != end; ++cst_it ) {
+		Size total_viol( 0 );
+		if ( verbose_level >=80 ) out << type() << " " << member_constraints().size() << " ";
+		for ( ConstraintCOPs::const_iterator cst_it = active_constraints_.begin(), end = active_constraints_.end(); cst_it != end; ++cst_it ) {
 
-		//out << "active ";
-		total_viol += (*cst_it)->show_violations( out, pose, verbose_level,   threshold );
-	}
-	return total_viol;
+			//out << "active ";
+			total_viol += (*cst_it)->show_violations( out, pose, verbose_level,   threshold );
+		}
+		return total_viol;
 	}
 	return 0;
 }

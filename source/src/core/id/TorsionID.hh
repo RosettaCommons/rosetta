@@ -30,7 +30,7 @@ namespace id {
 
 
 /// @brief  Torsion identifier class
-/// @details Consider a few examples to get a better picture for how torsions 
+/// @details Consider a few examples to get a better picture for how torsions
 /// are uniquely identified:
 ///
 /// @code
@@ -42,7 +42,7 @@ namespace id {
 /// TorsionID(253, BB, 3)  // Omega backbone torsion of residue 253.
 /// @endcode
 ///
-/// Note the order of the elements in construction calls (residue, type, 
+/// Note the order of the elements in construction calls (residue, type,
 /// torsion) go from least to most specific.
 ///
 /// TorsionIDs are very different for JUMP TorsionTypes. In such a case, they are interpreted as follows:
@@ -121,13 +121,13 @@ public: // Properties
 
 public: // Friends
 
- 	friend
+	friend
 	inline
- 	std::ostream &
- 	operator <<(
- 		std::ostream & os,
- 		TorsionID const & a
- 	)
+	std::ostream &
+	operator <<(
+		std::ostream & os,
+		TorsionID const & a
+	)
 	{
 		os << "TorsionID " << a.rsd_ << ' ' << to_string( a.type_ ) << ' ' << a.torsion_;
 		return os;

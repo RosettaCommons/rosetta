@@ -133,10 +133,10 @@ ScoreFunction::clone_as_base_class() const
 void
 ScoreFunction::reset()
 {
-	#ifdef PYROSETTA
+#ifdef PYROSETTA
 		// Sanity check: check if core::init was called already and abort otherwise with helpful message...
 		if( !basic::was_init_called() ) utility_exit_with_message("Attempt to initialize ScoreFunction object before core::init was called detected… Have you forgot to call core::init?");
-	#endif
+#endif
 
 	score_function_info_current_ = true;
 	score_function_info_ = ScoreFunctionInfoOP( new ScoreFunctionInfo );
@@ -160,18 +160,18 @@ ScoreFunction::initialize_from_file( std::string const & filename )
 
 /// Format: { term : weight, ... }
 std::string ScoreFunction::serialize_weights() const {
-  using std::string;
-  using std::vector;
+	using std::string;
+	using std::vector;
 
-  vector<string> tokens;
-  ScoreTypes terms = get_nonzero_weighted_scoretypes();
-  for (ScoreTypes::const_iterator i = terms.begin(); i != terms.end(); ++i) {
-    const ScoreType& term = *i;
-    if (has_nonzero_weight(term)) {
-      tokens.push_back(str(boost::format("%1% : %2%") % term % get_weight(term)));
-    }
-  }
-  return "{" + boost::algorithm::join(tokens, ", ") + "}";
+	vector<string> tokens;
+	ScoreTypes terms = get_nonzero_weighted_scoretypes();
+	for ( ScoreTypes::const_iterator i = terms.begin(); i != terms.end(); ++i ) {
+		const ScoreType& term = *i;
+		if ( has_nonzero_weight(term) ) {
+			tokens.push_back(str(boost::format("%1% : %2%") % term % get_weight(term)));
+		}
+	}
+	return "{" + boost::algorithm::join(tokens, ", ") + "}";
 }
 
 /// @detail Perturbs each non-zero weight independently by adding a Gaussian
@@ -180,26 +180,26 @@ std::string ScoreFunction::serialize_weights() const {
 ///   - 26% of the time, percent change [12.5, 25)
 ///   -  4% of the time, percent change [25...
 void ScoreFunction::perturb_weights() {
-  using boost::math::normal;
-  using core::Real;
-  using numeric::random::DistributionSampler;
+	using boost::math::normal;
+	using core::Real;
+	using numeric::random::DistributionSampler;
 
-  // Perturb the weights of the non-zero score terms
-  ScoreTypes terms = get_nonzero_weighted_scoretypes();
-  for (ScoreTypes::const_iterator i = terms.begin(); i != terms.end(); ++i) {
-    const ScoreType& term = *i;
-    if (has_nonzero_weight(term)) {
-      Real weight = get_weight(term);
+	// Perturb the weights of the non-zero score terms
+	ScoreTypes terms = get_nonzero_weighted_scoretypes();
+	for ( ScoreTypes::const_iterator i = terms.begin(); i != terms.end(); ++i ) {
+		const ScoreType& term = *i;
+		if ( has_nonzero_weight(term) ) {
+			Real weight = get_weight(term);
 
-      normal dist(0, weight / 8);
-      DistributionSampler<normal> sampler(dist);
+			normal dist(0, weight / 8);
+			DistributionSampler<normal> sampler(dist);
 
-      Real perturbed_weight = weight + sampler.sample();
-      set_weight(term, std::max(perturbed_weight, 0.0));
-      tr.Debug << name_from_score_type(term) << ": "
-               << weight << " => " << perturbed_weight << std::endl;
-    }
-  }
+			Real perturbed_weight = weight + sampler.sample();
+			set_weight(term, std::max(perturbed_weight, 0.0));
+			tr.Debug << name_from_score_type(term) << ": "
+				<< weight << " => " << perturbed_weight << std::endl;
+		}
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -220,9 +220,9 @@ void
 ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/*=false*/ )
 {
 	utility::io::izstream data( filename );
-	if ( !data.good() ){
-	   if ( ! patch ) { utility_exit_with_message( "Unable to open weights file: "+filename ); }
-	   else { utility_exit_with_message( "Unable to open weights-patch file: "+filename ); }
+	if ( !data.good() ) {
+		if ( ! patch ) { utility_exit_with_message( "Unable to open weights file: "+filename ); }
+		else { utility_exit_with_message( "Unable to open weights-patch file: "+filename ); }
 	}
 
 	std::string line,tag,operation;
@@ -239,7 +239,7 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 		l >> tag;
 		if ( l.fail() || tag[0] == '#' ) continue;
 
-	// //////////// Property Setting Tags ///////////////////////
+		// //////////// Property Setting Tags ///////////////////////
 		if ( tag == "ETABLE" ) {
 			l >> tag;
 			set_etable( tag );
@@ -263,8 +263,9 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 				if ( l.fail() ) break;
 				values.push_back( value );
 			}
-			if ( values.size() != 2 )
+			if ( values.size() != 2 ) {
 				utility_exit_with_message( "incorrect number of arguments to STRAND_STRAND_WEIGHTS: " + line );
+			}
 			energy_method_options_->set_strand_strand_weights( values[1], values[2] );
 		} else if ( tag == "NO_PROTEIN_PROTEIN_FA_ELEC" ) {
 			energy_method_options_->exclude_protein_protein_fa_elec( true );
@@ -291,9 +292,9 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 			energy_method_options_->atom_vdw_atom_type_set_name( "centroid_rot:min" );
 		} else if ( tag == "INCLUDE_INTRA_RES_RNA_HB" ) {
 			utility_exit_with_message( "INCLUDE_INTRA_RES_RNA_HB no longer an option. Just use hbond_intra or hbond score term..." );
-		} else if ( tag == "EXCLUDE_INTRA_RES_RNA_HB" ){
+		} else if ( tag == "EXCLUDE_INTRA_RES_RNA_HB" ) {
 			energy_method_options_->hbond_options().exclude_intra_res_RNA( true );
-		} else if ( tag == "INCLUDE_INTRA_RES_PROTEIN" ){
+		} else if ( tag == "INCLUDE_INTRA_RES_PROTEIN" ) {
 			energy_method_options_->exclude_intra_res_protein( false );
 		} else if ( tag == "PUT_INTRA_INTO_TOTAL" ) {
 			energy_method_options_->put_intra_into_total( true ); // also updates hbond_options
@@ -382,16 +383,16 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 				if ( l.fail() ) break;
 				scale_sc_density.push_back( sc_i );
 			}
-			if (scale_sc_density.size() == 1) scale_sc_density.resize( core::chemical::num_canonical_aas, scale_sc_density[1] );
-			if (scale_sc_density.size() != core::chemical::num_canonical_aas) {
+			if ( scale_sc_density.size() == 1 ) scale_sc_density.resize( core::chemical::num_canonical_aas, scale_sc_density[1] );
+			if ( scale_sc_density.size() != core::chemical::num_canonical_aas ) {
 				utility_exit_with_message( "incorrect number of arguments to SCALE_SIDECHAIN_DENSITY_WEIGHTS: " + line );
 			}
-			for (int i=1; i<=(int) core::chemical::num_canonical_aas; ++i) {
+			for ( int i=1; i<=(int) core::chemical::num_canonical_aas; ++i ) {
 				energy_method_options_->set_density_sc_scale_byres( (core::chemical::AA)i, scale_sc_density[i] );
 			}
 		} else {
 
-	// //////////// Regular Weights ///////////////////////
+			// //////////// Regular Weights ///////////////////////
 			l.str( line );
 
 			if ( ! patch ) {
@@ -405,12 +406,12 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 
 			} else {
 
-			  // Patch file parsing
-			  l >> score_type >> operation >> wt;
-			  if ( l.fail() ) {
+				// Patch file parsing
+				l >> score_type >> operation >> wt;
+				if ( l.fail() ) {
 					tr.Error << "could not parse line in patch-file: " << line << std::endl;
 					continue;
-			  }
+				}
 				// will apply at end.
 				patches_from_file.push_back( std::make_pair( std::make_pair( score_type, wt ), operation ) );
 
@@ -424,7 +425,7 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 		set_weight( score_type, weight );
 	}
 	for ( Size n = 1; n <= patches_from_file.size(); n++ ) {
-	  ScoreType const & score_type = patches_from_file[n].first.first;
+		ScoreType const & score_type = patches_from_file[n].first.first;
 		Real const & weight     = patches_from_file[n].first.second;
 		std::string const & operation = patches_from_file[n].second;
 		if ( operation == "*=" ) {
@@ -433,8 +434,8 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 			set_weight( score_type, weight );
 		} else {
 			utility_exit_with_message(
-																"unrecognized scorefunction patch operation "+operation+" in file: "+filename
-																);
+				"unrecognized scorefunction patch operation "+operation+" in file: "+filename
+			);
 		}
 	}
 
@@ -445,16 +446,16 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 ///////////////////////////////////////////////////////////////////////////////
 void
 ScoreFunction::set_energy_method_options(
-	 methods::EnergyMethodOptions const &
-	 energy_method_options_in )
+	methods::EnergyMethodOptions const &
+	energy_method_options_in )
 {
 	energy_method_options_
 		= methods::EnergyMethodOptionsOP( new methods::EnergyMethodOptions( energy_method_options_in ) );
 	//*energy_method_options_ = energy_method_options_in;
 
-// Some of the energy methods only know about these options when
-// they are constructed. So the safest thing is to destroy them and
-// create them again.
+	// Some of the energy methods only know about these options when
+	// they are constructed. So the safest thing is to destroy them and
+	// create them again.
 	reset_energy_methods();
 
 	score_function_info_current_ = false;
@@ -533,7 +534,7 @@ ScoreFunction::assign( ScoreFunction const & src )
 		add_method( (*it)->clone() );
 	}
 	update_intrares_energy_status();
-debug_assert( check_methods() );
+	debug_assert( check_methods() );
 
 	/// SL: Fri Jun 29 12:51:25 EDT 2007 @744 /Internet Time/
 	score_function_info_current_ = src.score_function_info_current_;
@@ -583,9 +584,9 @@ ScoreFunction::show( std::ostream & out,  pose::Pose & pose ) const
 	for ( int i=1; i<= n_score_types; ++i ) {
 		if ( weights_[ ScoreType(i) ] != 0.0 ) {
 			out << ' ' << LJ(24,ScoreType(i)) << ' '<< F(9,3,weights_[ ScoreType(i) ]) << "   "
-					<<  	 F(9,3,pose.energies().total_energies()[ ScoreType(i) ] ) << "   "
-					<<  	 F(9,3, weights_[ ScoreType(i) ] * pose.energies().total_energies()[ ScoreType(i) ] )
-					<< '\n';
+				<<    F(9,3,pose.energies().total_energies()[ ScoreType(i) ] ) << "   "
+				<<    F(9,3, weights_[ ScoreType(i) ] * pose.energies().total_energies()[ ScoreType(i) ] )
+				<< '\n';
 			sum_weighted += weights_[ ScoreType(i) ] * pose.energies().total_energies()[ ScoreType(i) ];
 		}
 	}
@@ -603,7 +604,7 @@ ScoreFunction::show_pretty( std::ostream & out ) const {
 	for ( int i=1; i<= n_score_types; ++i ) {
 		if ( weights_[ ScoreType(i) ] != 0.0 ) {
 			out << ' ' << LJ(24,ScoreType(i)) << ' '<< F(9,3,weights_[ ScoreType(i) ]) << "   "
-					<< '\n';
+				<< '\n';
 		}
 	}
 	out << "---------------------------------------------------\n";
@@ -620,9 +621,9 @@ show_detail( std::ostream & out, EnergyMap & energies,  EnergyMap weights )
 	for ( int i=1; i<= n_score_types; ++i ) {
 		if ( weights[ ScoreType(i) ] != 0.0 ) {
 			out << ' ' << LJ(24,ScoreType(i)) << ' '<< F(9,3,weights[ ScoreType(i) ]) << "   "
-					<<  	 F(9,3,energies[ ScoreType(i) ] ) << "   "
-					<<  	 F(9,3, weights[ ScoreType(i) ] * energies[ ScoreType(i) ] )
-					<< '\n';
+				<<    F(9,3,energies[ ScoreType(i) ] ) << "   "
+				<<    F(9,3, weights[ ScoreType(i) ] * energies[ ScoreType(i) ] )
+				<< '\n';
 			sum_weighted += weights[ ScoreType(i) ] * energies[ ScoreType(i) ];
 		}
 	}
@@ -687,7 +688,7 @@ ScoreFunction::operator()( pose::Pose & pose ) const
 #endif
 
 	// completely unnecessary temporary hack to force refold if nec. for profiling
-	if(pose.total_residue() > 0) {
+	if ( pose.total_residue() > 0 ) {
 		pose.residue( pose.total_residue() );
 	}
 
@@ -802,7 +803,7 @@ ScoreFunction::score_by_scoretype(
 ) const {
 	(*this)(pose); //make sure scores are set
 	Real score = pose.energies().total_energies()[t];
-	if (weighted) score *= weights_[t];
+	if ( weighted ) score *= weights_[t];
 	return score;
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -811,18 +812,18 @@ ScoreFunction::get_sub_score(
 	pose::Pose const & pose,
 	utility::vector1< bool > const & residue_mask
 ) const {
-debug_assert(residue_mask.size() == pose.total_residue());
+	debug_assert(residue_mask.size() == pose.total_residue());
 
 	// retrieve cached energies object
 	Energies const & energies( pose.energies() );
-debug_assert(energies.energies_updated());
+	debug_assert(energies.energies_updated());
 	// the neighbor/energy links
 	EnergyGraph const & energy_graph( energies.energy_graph() );
 
 	// should be zeroed at the beginning of scoring
 	Real total( 0.0 ); //( energies.totals() );
 	for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
-		if(!residue_mask[i]) continue;
+		if ( !residue_mask[i] ) continue;
 
 		for ( graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
@@ -830,7 +831,7 @@ debug_assert(energies.energies_updated());
 				iru != irue; ++iru ) {
 			EnergyEdge const & edge( static_cast< EnergyEdge const &> (**iru) );
 			Size const j( edge.get_second_node_ind() );
-			if(!residue_mask[j]) continue;
+			if ( !residue_mask[j] ) continue;
 
 			total += edge.dot( weights_ );
 		} // nbrs of i
@@ -840,7 +841,7 @@ debug_assert(energies.energies_updated());
 	// context independent onebody energies
 
 	for ( Size i=1; i<= pose.total_residue(); ++i ) {
-		if(!residue_mask[i]) continue;
+		if ( !residue_mask[i] ) continue;
 		EnergyMap const & emap( energies.onebody_energies( i ) );
 
 		total += weights_.dot( emap, ci_1b_types() );
@@ -858,11 +859,11 @@ debug_assert(energies.energies_updated());
 	}
 
 	// add in hbonding
-	if ( pose.energies().data().has( EnergiesCacheableDataType::HBOND_SET )) {
+	if ( pose.energies().data().has( EnergiesCacheableDataType::HBOND_SET ) ) {
 
 		hbonds::HBondSet const & hbond_set
 			( static_cast< hbonds::HBondSet const & >
-				( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
+			( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
 
 		hbonds::HBondSet hbond_set_excl(hbond_set, residue_mask);
 		EnergyMap hbond_emap;
@@ -874,20 +875,20 @@ debug_assert(energies.energies_updated());
 	//////////////////////////////////////////////////
 	///  Context Independent Long Range 2Body methods
 
-	for(CI_LR_2B_Methods::const_iterator iter = ci_lr_2b_methods_.begin(),
-				iter_end = ci_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
+	for ( CI_LR_2B_Methods::const_iterator iter = ci_lr_2b_methods_.begin(),
+			iter_end = ci_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
 		LREnergyContainerCOP lrec = pose.energies().long_range_container( (*iter)->long_range_type() );
-		if( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
+		if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
 
 		// Potentially O(N^2) operation...
-		for( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			if ( ! residue_mask[ii] ) continue;
 			if ( ! lrec->any_upper_neighbors_for_residue( ii ) ) continue;
-			for( ResidueNeighborConstIteratorOP
-						 rni = lrec->const_upper_neighbor_iterator_begin( ii ),
-						 rniend = lrec->const_upper_neighbor_iterator_end( ii );
-					 (*rni) != (*rniend); ++(*rni) ) {
-				if(!residue_mask[rni->upper_neighbor_id()]) continue;
+			for ( ResidueNeighborConstIteratorOP
+					rni = lrec->const_upper_neighbor_iterator_begin( ii ),
+					rniend = lrec->const_upper_neighbor_iterator_end( ii );
+					(*rni) != (*rniend); ++(*rni) ) {
+				if ( !residue_mask[rni->upper_neighbor_id()] ) continue;
 
 				EnergyMap emap;
 				rni->retrieve_energy( emap ); // pbmod
@@ -898,22 +899,22 @@ debug_assert(energies.energies_updated());
 	/////////////////////////////////////////////////////
 	///  Context Independent Long Range twobody methods
 
-	for( CD_LR_2B_Methods::const_iterator iter = cd_lr_2b_methods_.begin(),
-				 iter_end = cd_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
+	for ( CD_LR_2B_Methods::const_iterator iter = cd_lr_2b_methods_.begin(),
+			iter_end = cd_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
 		LREnergyContainerCOP lrec =
 			pose.energies().long_range_container( (*iter)->long_range_type() );
 		// Potentially O(N^2) operation...
 		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-			if(!residue_mask[ii]) continue;
+			if ( !residue_mask[ii] ) continue;
 			for ( ResidueNeighborConstIteratorOP
-							rni = lrec->const_upper_neighbor_iterator_begin( ii ),
-							rniend = lrec->const_upper_neighbor_iterator_end( ii );
-						(*rni) != (*rniend); ++(*rni) ) {
-				if(!residue_mask[rni->upper_neighbor_id()]) continue;
+					rni = lrec->const_upper_neighbor_iterator_begin( ii ),
+					rniend = lrec->const_upper_neighbor_iterator_end( ii );
+					(*rni) != (*rniend); ++(*rni) ) {
+				if ( !residue_mask[rni->upper_neighbor_id()] ) continue;
 
 				EnergyMap emap;
-					rni->retrieve_energy( emap ); // pbmod
-					total += weights_.dot( emap, cd_lr_2b_types() );
+				rni->retrieve_energy( emap ); // pbmod
+				total += weights_.dot( emap, cd_lr_2b_types() );
 			}
 		}
 	}
@@ -927,7 +928,7 @@ ScoreFunction::get_sub_score(
 	utility::vector1< bool > const & residue_mask
 ) const {
 	//If the energies are not up-to-date score the pose
-	if(!pose.energies().energies_updated()) (*this)(pose);
+	if ( !pose.energies().energies_updated() ) ( *this)(pose);
 
 	return get_sub_score(const_cast<pose::Pose const &>(pose), residue_mask);
 }
@@ -940,18 +941,18 @@ ScoreFunction::get_sub_score(
 	utility::vector1< bool > const & residue_mask,
 	EnergyMap & emap
 ) const {
-debug_assert(residue_mask.size() == pose.total_residue());
+	debug_assert(residue_mask.size() == pose.total_residue());
 
 	// retrieve cached energies object
 	Energies const & energies( pose.energies() );
-debug_assert(energies.energies_updated());
+	debug_assert(energies.energies_updated());
 
 	// the neighbor/energy links
 	EnergyGraph const & energy_graph( energies.energy_graph() );
 
 	// should be zeroed at the beginning of scoring
 	for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
-		if(!residue_mask[i]) continue;
+		if ( !residue_mask[i] ) continue;
 
 		for ( graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
@@ -959,7 +960,7 @@ debug_assert(energies.energies_updated());
 				iru != irue; ++iru ) {
 			EnergyEdge const & edge( static_cast< EnergyEdge const &> (**iru) );
 			Size const j( edge.get_second_node_ind() );
-			if(!residue_mask[j]) continue;
+			if ( !residue_mask[j] ) continue;
 
 			EnergyMap edge_emap(edge.fill_energy_map());
 			edge_emap *= weights_;
@@ -972,7 +973,7 @@ debug_assert(energies.energies_updated());
 	// context independent onebody energies
 
 	for ( Size i=1; i<= pose.total_residue(); ++i ) {
-		if(!residue_mask[i]) continue;
+		if ( !residue_mask[i] ) continue;
 		EnergyMap onebody_emap(energies.onebody_energies(i));
 		onebody_emap *= weights_;
 
@@ -989,11 +990,11 @@ debug_assert(energies.energies_updated());
 	}
 
 	// add in backbone-backbone hbonding
-	if ( pose.energies().data().has( EnergiesCacheableDataType::HBOND_SET )) {
+	if ( pose.energies().data().has( EnergiesCacheableDataType::HBOND_SET ) ) {
 
 		hbonds::HBondSet const & hbond_set
 			( static_cast< hbonds::HBondSet const & >
-				( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
+			( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
 
 		hbonds::HBondSet hbond_set_excl(hbond_set, residue_mask);
 		EnergyMap hbond_emap;
@@ -1005,21 +1006,21 @@ debug_assert(energies.energies_updated());
 	//////////////////////////////////////////////////
 	///  Context Independent Long Range 2Body methods
 
-	for(CI_LR_2B_Methods::const_iterator iter = ci_lr_2b_methods_.begin(),
-				iter_end = ci_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
+	for ( CI_LR_2B_Methods::const_iterator iter = ci_lr_2b_methods_.begin(),
+			iter_end = ci_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
 		LREnergyContainerCOP lrec =
 			pose.energies().long_range_container((*iter)->long_range_type());
-		if( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
+		if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
 
 		// Potentially O(N^2) operation...
-		for( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-			if(!residue_mask[ii]) continue;
+		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			if ( !residue_mask[ii] ) continue;
 
-			for( ResidueNeighborConstIteratorOP
-						 rni = lrec->const_upper_neighbor_iterator_begin( ii ),
-						 rniend = lrec->const_upper_neighbor_iterator_end( ii );
-					 (*rni) != (*rniend); ++(*rni) ) {
-				if(!residue_mask[rni->upper_neighbor_id()]) continue;
+			for ( ResidueNeighborConstIteratorOP
+					rni = lrec->const_upper_neighbor_iterator_begin( ii ),
+					rniend = lrec->const_upper_neighbor_iterator_end( ii );
+					(*rni) != (*rniend); ++(*rni) ) {
+				if ( !residue_mask[rni->upper_neighbor_id()] ) continue;
 
 				EnergyMap lr_emap;
 				rni->retrieve_energy( lr_emap ); // pbmod
@@ -1030,18 +1031,18 @@ debug_assert(energies.energies_updated());
 		/////////////////////////////////////////////////////
 		///  Context Independent Long Range twobody methods
 
-		for( CD_LR_2B_Methods::const_iterator iter = cd_lr_2b_methods_.begin(),
-						iter_end = cd_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
+		for ( CD_LR_2B_Methods::const_iterator iter = cd_lr_2b_methods_.begin(),
+				iter_end = cd_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
 			LREnergyContainerCOP lrec =
 				pose.energies().long_range_container((*iter)->long_range_type());
 			// Potentially O(N^2) operation...
 			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-				if(!residue_mask[ii]) continue;
+				if ( !residue_mask[ii] ) continue;
 				for ( ResidueNeighborConstIteratorOP
-								rni = lrec->const_upper_neighbor_iterator_begin( ii ),
-								rniend = lrec->const_upper_neighbor_iterator_end( ii );
-							(*rni) != (*rniend); ++(*rni) ) {
-					if(!residue_mask[rni->upper_neighbor_id()]) continue;
+						rni = lrec->const_upper_neighbor_iterator_begin( ii ),
+						rniend = lrec->const_upper_neighbor_iterator_end( ii );
+						(*rni) != (*rniend); ++(*rni) ) {
+					if ( !residue_mask[rni->upper_neighbor_id()] ) continue;
 
 					EnergyMap lr_emap;
 					rni->retrieve_energy( lr_emap ); // pbmod
@@ -1060,7 +1061,7 @@ ScoreFunction::get_sub_score(
 	EnergyMap & emap
 ) const {
 	//If the energies are not up-to-date score the pose
-	if(!pose.energies().energies_updated()) (*this)(pose);
+	if ( !pose.energies().energies_updated() ) ( *this)(pose);
 	return get_sub_score(const_cast<pose::Pose const &>(pose), residue_mask, emap);
 }
 
@@ -1073,10 +1074,10 @@ ScoreFunction::get_sub_score_exclude_res(
 ) const {
 
 	utility::vector1< bool > residue_mask(pose.total_residue(), true);
-	for(
-		utility::vector1< Size >::const_iterator
+	for (
+			utility::vector1< Size >::const_iterator
 			ii = exclude_res.begin(), ie = exclude_res.end();
-		ii != ie; ++ii){
+			ii != ie; ++ii ) {
 		residue_mask[*ii] = false;
 	}
 	return get_sub_score(pose, residue_mask);
@@ -1090,13 +1091,13 @@ ScoreFunction::get_sub_score_exclude_res(
 ) const {
 
 	//If the energies are not up-to-date score the pose
-	if(!pose.energies().energies_updated()) (*this)(pose);
+	if ( !pose.energies().energies_updated() ) ( *this)(pose);
 
 	utility::vector1< bool > residue_mask(pose.total_residue(), true);
-	for(
-		utility::vector1< Size >::const_iterator
+	for (
+			utility::vector1< Size >::const_iterator
 			ii = exclude_res.begin(), ie = exclude_res.end();
-		ii != ie; ++ii){
+			ii != ie; ++ii ) {
 		residue_mask[*ii] = false;
 	}
 	return get_sub_score(const_cast<pose::Pose const &>(pose), residue_mask);
@@ -1111,10 +1112,10 @@ ScoreFunction::get_sub_score_exclude_res(
 	EnergyMap & emap
 ) const {
 	utility::vector1< bool > residue_mask(pose.total_residue(), true);
-	for(
-		utility::vector1< Size >::const_iterator
+	for (
+			utility::vector1< Size >::const_iterator
 			ii = exclude_res.begin(), ie = exclude_res.end();
-		ii != ie; ++ii){
+			ii != ie; ++ii ) {
 		residue_mask[*ii] = false;
 	}
 	get_sub_score(pose, residue_mask, emap);
@@ -1129,13 +1130,13 @@ ScoreFunction::get_sub_score_exclude_res(
 ) const {
 
 	//If the energies are not up-to-date score the pose
-	if(!pose.energies().energies_updated()) (*this)(pose);
+	if ( !pose.energies().energies_updated() ) ( *this)(pose);
 
 	utility::vector1< bool > residue_mask(pose.total_residue(), true);
-	for(
-		utility::vector1< Size >::const_iterator
+	for (
+			utility::vector1< Size >::const_iterator
 			ii = exclude_res.begin(), ie = exclude_res.end();
-		ii != ie; ++ii){
+			ii != ie; ++ii ) {
 		residue_mask[*ii] = false;
 	}
 	get_sub_score(const_cast<pose::Pose const &>(pose), residue_mask, emap);
@@ -1210,9 +1211,9 @@ ScoreFunction::eval_twobody_neighbor_energies(
 					if ( minimizing ) { // APL -- 5/18/2010 -- DEPRICATED
 						// confirm that this rsd-rsd interaction will be included
 						// in the atom pairs on the nblist:
-					//debug_assert( ( pose.energies().domain_map(i) !=
-						//					pose.energies().domain_map(j) ) ||
-						//				( pose.energies().res_moved(i) ) );
+						//debug_assert( ( pose.energies().domain_map(i) !=
+						//     pose.energies().domain_map(j) ) ||
+						//    ( pose.energies().res_moved(i) ) );
 						// ensure that these are zeroed, since we will hit them at the
 						// end inside the nblist calculation
 						// they almost certainly should be, since the energies have not
@@ -1328,7 +1329,7 @@ ScoreFunction::eval_onebody_energies( pose::Pose & pose ) const
 
 	if ( minimizing ) {
 		MinimizationGraphCOP mingraph = energies.minimization_graph();
-	debug_assert( mingraph );
+		debug_assert( mingraph );
 		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			conformation::Residue const & rsd = pose.residue( ii );
 
@@ -1700,8 +1701,8 @@ ScoreFunction::are_they_neighbors(
 	Real const intxn_radius( rsd1.nbr_radius() + rsd2.nbr_radius() + max_atomic_interaction_cutoff() );
 
 	return ( ( intxn_radius > 0 &&
-						 rsd1.nbr_atom_xyz().distance_squared( rsd2.nbr_atom_xyz() ) < intxn_radius * intxn_radius ) ||
-					 ( any_lr_residue_pair_energy( pose, pos1, pos2 ) ) );
+		rsd1.nbr_atom_xyz().distance_squared( rsd2.nbr_atom_xyz() ) < intxn_radius * intxn_radius ) ||
+		( any_lr_residue_pair_energy( pose, pos1, pos2 ) ) );
 }
 
 
@@ -1714,7 +1715,7 @@ ScoreFunction::any_lr_residue_pair_energy(
 {
 	for ( LR_2B_Methods::const_iterator iter = lr_2b_methods_.begin(),
 			iter_end = lr_2b_methods_.end(); iter != iter_end; ++iter ) {
-		if ( (*iter)->defines_residue_pair_energy( pose, res1, res2 )) {
+		if ( (*iter)->defines_residue_pair_energy( pose, res1, res2 ) ) {
 			return true;
 		}
 	}
@@ -1798,37 +1799,37 @@ ScoreFunction::cd_2b_end() const
 ScoreFunction::CI_LR_2B_MethodIterator
 ScoreFunction::ci_lr_2b_methods_begin() const
 {
-  return ci_lr_2b_methods_.begin();
+	return ci_lr_2b_methods_.begin();
 }
 
 ScoreFunction::CI_LR_2B_MethodIterator
 ScoreFunction::ci_lr_2b_methods_end() const
 {
-  return ci_lr_2b_methods_.end();
+	return ci_lr_2b_methods_.end();
 }
 
 ScoreFunction::CD_LR_2B_MethodIterator
 ScoreFunction::cd_lr_2b_methods_begin() const
 {
-  return cd_lr_2b_methods_.begin();
+	return cd_lr_2b_methods_.begin();
 }
 
 ScoreFunction::CD_LR_2B_MethodIterator
 ScoreFunction::cd_lr_2b_methods_end() const
 {
-  return cd_lr_2b_methods_.end();
+	return cd_lr_2b_methods_.end();
 }
 
 ScoreFunction::WS_MethodIterator
 ScoreFunction::ws_methods_begin() const
 {
-  return ws_methods_.begin();
+	return ws_methods_.begin();
 }
 
 ScoreFunction::WS_MethodIterator
 ScoreFunction::ws_methods_end() const
 {
-  return ws_methods_.end();
+	return ws_methods_.end();
 }
 
 /// @details Evaluate the energies between a set of rotamers and a single other (background) residue
@@ -1867,13 +1868,13 @@ ScoreFunction::set_weight( ScoreType const & t, Real const & setting )
 		if ( old_weight != Real(0.0) ) {
 
 			EnergyMethodCOP method( methods_by_score_type_[t] );
-		debug_assert( method );
+			debug_assert( method );
 
 			// check to see if there's a non-zero weight for this method
 			bool has_nonzero_weight( false );
 			for ( ScoreTypes::const_iterator
-							iter     = method->score_types().begin(),
-							iter_end = method->score_types().end(); iter != iter_end; ++iter ) {
+					iter     = method->score_types().begin(),
+					iter_end = method->score_types().end(); iter != iter_end; ++iter ) {
 				if ( weights_[ *iter ] != 0.0 ) {
 					has_nonzero_weight = true;
 					break;
@@ -1894,7 +1895,7 @@ ScoreFunction::set_weight( ScoreType const & t, Real const & setting )
 					( t != python ) )  { // sheffler
 
 				score_function_info_current_ = false; // cached score_function_info_ object no longer up-to-date
-			debug_assert( std::abs( old_weight ) < 1e-2 ); // sanity
+				debug_assert( std::abs( old_weight ) < 1e-2 ); // sanity
 
 				// get pointer to the energyfunction that evaluates this score
 				EnergyMethodOP method ( ScoringManager::get_instance()->energy_method( t, *energy_method_options_));
@@ -1905,24 +1906,24 @@ ScoreFunction::set_weight( ScoreType const & t, Real const & setting )
 		} else {
 			// only adjusted a weight that was already non-zero.  Nothing else needs doing.
 			// Early return.  Be careful of intrares status and check_methods() for early returns!!!
-		debug_assert( old_weight != Real( 0.0 ) || weights_[ t ] != Real( 0.0 ) );
+			debug_assert( old_weight != Real( 0.0 ) || weights_[ t ] != Real( 0.0 ) );
 			return;
 		}
 	}
 
 	// arriving here, we know that a weight went either to or from zero.
 	// perform some neccessary bookkeeping.
-debug_assert( old_weight == Real( 0.0 ) || weights_[ t ] == Real( 0.0 ) );
+	debug_assert( old_weight == Real( 0.0 ) || weights_[ t ] == Real( 0.0 ) );
 
 	update_intrares_energy_status();
-debug_assert( check_methods() );
+	debug_assert( check_methods() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @details set the weight if zero
 void
 ScoreFunction::set_weight_if_zero(const ScoreType& t, const Real& setting) {
-	if(get_weight(t) == 0){
+	if ( get_weight(t) == 0 ) {
 		set_weight(t, setting);
 	}
 }
@@ -1947,15 +1948,15 @@ ScoreFunction::check_methods() const
 	// counter indexes scoretypes to the number of energy methods. Each scoretype should only
 	// map to one energy method.
 	for ( AllMethods::const_iterator it=all_methods_.begin(),
-		it_end = all_methods_.end(); it != it_end; ++it ) {
+			it_end = all_methods_.end(); it != it_end; ++it ) {
 		for ( ScoreTypes::const_iterator t=(*it)->score_types().begin(),
-			t_end=(*it)->score_types().end(); t != t_end; ++t ) {
+				t_end=(*it)->score_types().end(); t != t_end; ++t ) {
 			//++counter[ *t ]; //++ not defined for floats, right?
 			counter[ *t ] += 1;
 		}
 	}
 	for ( EnergyMap::const_iterator it=counter.begin(), it_end=counter.end();
-		it != it_end; ++it ) {
+			it != it_end; ++it ) {
 		// total hack!!!
 		ScoreType const t( static_cast< ScoreType >( it - counter.begin() + 1));
 		Real const count( *it );
@@ -1978,14 +1979,14 @@ ScoreFunction::update_intrares_energy_status()
 	cd_2b_intrares_.clear();
 	for ( CD_2B_Methods::const_iterator iter = cd_2b_methods_.begin(),
 			iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
-		if ( (*iter)->defines_intrares_energy(weights())) {
+		if ( (*iter)->defines_intrares_energy(weights()) ) {
 			any_intrares_energies_ = true;
 			cd_2b_intrares_.push_back( (*iter) );
 		}
 	}
 	for ( CD_LR_2B_Methods::const_iterator iter = cd_lr_2b_methods_.begin(),
 			iter_end = cd_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
-		if ( (*iter)->defines_intrares_energy(weights())) {
+		if ( (*iter)->defines_intrares_energy(weights()) ) {
 			any_intrares_energies_ = true;
 			cd_2b_intrares_.push_back( (*iter) );
 		}
@@ -1993,14 +1994,14 @@ ScoreFunction::update_intrares_energy_status()
 
 	for ( CI_2B_Methods::const_iterator iter = ci_2b_methods_.begin(),
 			iter_end = ci_2b_methods_.end(); iter != iter_end; ++iter ) {
-		if ( (*iter)->defines_intrares_energy( weights() )) {
+		if ( (*iter)->defines_intrares_energy( weights() ) ) {
 			any_intrares_energies_ = true;
 			ci_2b_intrares_.push_back( (*iter) );
 		}
 	}
 	for ( CI_LR_2B_Methods::const_iterator iter = ci_lr_2b_methods_.begin(),
 			iter_end = ci_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
-		if ( (*iter)->defines_intrares_energy( weights() )) {
+		if ( (*iter)->defines_intrares_energy( weights() ) ) {
 			any_intrares_energies_ = true;
 			ci_2b_intrares_.push_back( (*iter) );
 		}
@@ -2019,7 +2020,7 @@ ScoreFunction::setup_for_scoring(
 			(*it)->setup_for_scoring( pose, *this );
 		}
 	} else {
-	debug_assert( pose.energies().minimization_graph() );
+		debug_assert( pose.energies().minimization_graph() );
 		MinimizationGraphOP mingraph = pose.energies().minimization_graph();
 
 		/// 1. setup_for_scoring for residue singles
@@ -2096,11 +2097,11 @@ ScoreFunction::setup_for_derivatives(
 {
 	//std::cout << "ScoreFunction::setup_for_derivatives" << std::endl;
 	//for ( AllMethods::const_iterator iter=all_methods_.begin(),
-	//		iter_end= all_methods_.end(); iter != iter_end; ++iter ) {
-	//	(*iter)->setup_for_derivatives( pose, *this );
+	//  iter_end= all_methods_.end(); iter != iter_end; ++iter ) {
+	// (*iter)->setup_for_derivatives( pose, *this );
 	//}
 
-debug_assert( pose.energies().minimization_graph() );
+	debug_assert( pose.energies().minimization_graph() );
 	MinimizationGraphOP mingraph = pose.energies().minimization_graph();
 
 	/// 1. setup_for_derivatives for residue singles
@@ -2171,8 +2172,9 @@ ScoreFunction::setup_for_minimizing(
 	std::list< methods::EnergyMethodCOP > eval_derivs_with_pose_enmeths;
 	for ( AllMethods::const_iterator iter=all_methods_.begin(),
 			iter_end= all_methods_.end(); iter != iter_end; ++iter ) {
-		if ((*iter)->defines_high_order_terms( pose ) || (*iter)->minimize_in_whole_structure_context( pose ) )
+		if ( (*iter)->defines_high_order_terms( pose ) || (*iter)->minimize_in_whole_structure_context( pose ) ) {
 			eval_derivs_with_pose_enmeths.push_back( *iter );
+		}
 	}
 
 	EnergyMap fixed_energies; // portions of the score function that will not change over the course of minimization.
@@ -2194,8 +2196,8 @@ ScoreFunction::setup_for_minimizing(
 			edge_iter != edge_iter_end; ++edge_iter, ++ee_edge_iter ) {
 		Size const node1 = (*edge_iter)->get_first_node_ind();
 		Size const node2 = (*edge_iter)->get_second_node_ind();
-	debug_assert( node1 == (*ee_edge_iter)->get_first_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
-	debug_assert( node2 == (*ee_edge_iter)->get_second_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
+		debug_assert( node1 == (*ee_edge_iter)->get_first_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
+		debug_assert( node2 == (*ee_edge_iter)->get_second_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
 
 		MinimizationEdge & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
 		// domain map check here?
@@ -2250,14 +2252,14 @@ ScoreFunction::setup_for_minimizing(
 
 	/// 4. Call setup_for_minimizing on each edge that has active twobody energies, and drop
 	/// all other edges.
-	for ( core::graph::Graph::EdgeListIter	edge_iter = g->edge_list_begin(),
+	for ( core::graph::Graph::EdgeListIter edge_iter = g->edge_list_begin(),
 			edge_iter_end = g->edge_list_end(); edge_iter != edge_iter_end; /* no increment */ ) {
 		Size const node1 = (*edge_iter)->get_first_node_ind();
 		Size const node2 = (*edge_iter)->get_second_node_ind();
 
 		MinimizationEdge & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
 
-		core::graph::Graph::EdgeListIter	edge_iter_next( edge_iter );
+		core::graph::Graph::EdgeListIter edge_iter_next( edge_iter );
 		++edge_iter_next;
 
 		if ( minedge.any_active_enmeths() ) {
@@ -2365,61 +2367,61 @@ ScoreFunction::reinitialize_minnode_for_residue(
 {
 	min_node.update_active_enmeths_for_residue( rsd, pose, weights_, min_map.domain_map()( rsd.seqpos() ) );
 	min_node.setup_for_minimizing( rsd, pose, *this, min_map );
-/*
+	/*
 	kinematics::DomainMap const & domain_map( min_map.domain_map() );
 	Size seqpos( rsd.seqpos() );
 	/// 1a: context-independent 1body energies
 	for ( CI_1B_Methods::const_iterator iter = ci_1b_methods_.begin(),
-			iter_end = ci_1b_methods_.end(); iter != iter_end; ++iter ) {
-		if ( domain_map( seqpos ) == 0 && ! (*iter)->minimize_in_whole_structure_context( pose ) ) {
-			if ( (*iter)->defines_score_for_residue( rsd )) {
-				(*iter)->setup_for_minimizing_for_residue(
-					rsd, pose, *this, min_map,
-					min_node.res_min_data() );
-			}
-		}
+	iter_end = ci_1b_methods_.end(); iter != iter_end; ++iter ) {
+	if ( domain_map( seqpos ) == 0 && ! (*iter)->minimize_in_whole_structure_context( pose ) ) {
+	if ( (*iter)->defines_score_for_residue( rsd )) {
+	(*iter)->setup_for_minimizing_for_residue(
+	rsd, pose, *this, min_map,
+	min_node.res_min_data() );
+	}
+	}
 	}
 	/// 1b: context-dependent 1body energies
 	for ( CD_1B_Methods::const_iterator iter = cd_1b_methods_.begin(),
-			iter_end = cd_1b_methods_.end(); iter != iter_end; ++iter ) {
-		// domain map check here?
-		if ( ! (*iter)->minimize_in_whole_structure_context( pose ) && (*iter)->defines_score_for_residue( rsd )) {
-			(*iter)->setup_for_minimizing_for_residue(
-				rsd, pose, *this, min_map,
-				min_node.res_min_data() );
-		}
+	iter_end = cd_1b_methods_.end(); iter != iter_end; ++iter ) {
+	// domain map check here?
+	if ( ! (*iter)->minimize_in_whole_structure_context( pose ) && (*iter)->defines_score_for_residue( rsd )) {
+	(*iter)->setup_for_minimizing_for_residue(
+	rsd, pose, *this, min_map,
+	min_node.res_min_data() );
+	}
 	}
 	/// 1c: context-independent 2body energies
 	for ( CI_2B_Methods::const_iterator iter = ci_2b_methods_.begin(),
-			iter_end = ci_2b_methods_.end(); iter != iter_end; ++iter ) {
-		if ( ! (*iter)->minimize_in_whole_structure_context( pose ) ) {
-			/// Only provide the setup opportunity to enmeths that are not relying on whole-structure
-			/// minimization logic
-			(*iter)->setup_for_minimizing_for_residue(
-				rsd, pose, *this, min_map,
-				min_node.res_min_data() );
-		}
+	iter_end = ci_2b_methods_.end(); iter != iter_end; ++iter ) {
+	if ( ! (*iter)->minimize_in_whole_structure_context( pose ) ) {
+	/// Only provide the setup opportunity to enmeths that are not relying on whole-structure
+	/// minimization logic
+	(*iter)->setup_for_minimizing_for_residue(
+	rsd, pose, *this, min_map,
+	min_node.res_min_data() );
+	}
 	}
 
 	/// 1d: context-dependent 2body energies
 	for ( CD_2B_Methods::const_iterator iter = cd_2b_methods_.begin(),
-			iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
-		// domain map check here?
-		if ( ! (*iter)->minimize_in_whole_structure_context( pose ) ) {
-			(*iter)->setup_for_minimizing_for_residue(
-				rsd, pose, *this, min_map,
-				min_node.res_min_data() );
-		}
+	iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
+	// domain map check here?
+	if ( ! (*iter)->minimize_in_whole_structure_context( pose ) ) {
+	(*iter)->setup_for_minimizing_for_residue(
+	rsd, pose, *this, min_map,
+	min_node.res_min_data() );
+	}
 	}
 	/// 1e: all long-range 2body energies -- maybe this should be divided into ci and cd loops?
 	for ( LR_2B_Methods::const_iterator iter = lr_2b_methods_.begin(),
-			iter_end = lr_2b_methods_.end(); iter != iter_end; ++iter ) {
-		// domain map check here? -- should separate CI and CD LR2B energies
-		if ( ! (*iter)->minimize_in_whole_structure_context( pose ) ) {
-			(*iter)->setup_for_minimizing_for_residue(
-				rsd, pose, *this, min_map,
-				min_node.res_min_data() );
-		}
+	iter_end = lr_2b_methods_.end(); iter != iter_end; ++iter ) {
+	// domain map check here? -- should separate CI and CD LR2B energies
+	if ( ! (*iter)->minimize_in_whole_structure_context( pose ) ) {
+	(*iter)->setup_for_minimizing_for_residue(
+	rsd, pose, *this, min_map,
+	min_node.res_min_data() );
+	}
 	}*/
 
 }
@@ -2439,7 +2441,7 @@ ScoreFunction::setup_for_minimizing_sr2b_enmeths_for_minedge(
 	Real const // apl -- remove this parameter edge_weight
 ) const
 {
-debug_assert( ! accumulate_fixed_energies || energy_edge );
+	debug_assert( ! accumulate_fixed_energies || energy_edge );
 
 	/// First, the context-independent 2body energies
 	if ( res_moving_wrt_eachother ) {
@@ -2481,7 +2483,7 @@ ScoreFunction::setup_for_lr2benmeth_minimization_for_respair(
 	Size const seqpos2( res2.seqpos() );
 
 	if ( res_moving_wrt_eachother &&
-			lr2benergy->defines_score_for_residue_pair( res1, res2, res_moving_wrt_eachother )) {
+			lr2benergy->defines_score_for_residue_pair( res1, res2, res_moving_wrt_eachother ) ) {
 
 		/// 3. iv Find the edge in the graph
 		MinimizationEdge * minedge( static_cast< MinimizationEdge * > (g.find_edge( seqpos1, seqpos2)) );
@@ -2512,11 +2514,11 @@ ScoreFunction::eval_npd_atom_derivative(
 ) const
 {
 	//for ( AllMethods::const_iterator iter=all_methods_.begin(),
-	//		iter_end= all_methods_.end(); iter != iter_end; ++iter ) {
-	//	(*iter)->eval_atom_derivative( atom_id, pose, domain_map, *this, weights_, F1, F2 );
+	//  iter_end= all_methods_.end(); iter != iter_end; ++iter ) {
+	// (*iter)->eval_atom_derivative( atom_id, pose, domain_map, *this, weights_, F1, F2 );
 	//}
 
-debug_assert( pose.energies().minimization_graph() );
+	debug_assert( pose.energies().minimization_graph() );
 	MinimizationGraphCOP mingraph = pose.energies().minimization_graph();
 
 	/// Whole-pose-context energies should have their contribution calculated here.
@@ -2539,13 +2541,13 @@ ScoreFunction::eval_dof_derivative(
 {
 
 	/*for ( AllMethods::const_iterator iter=all_methods_.begin(),
-			iter_end= all_methods_.end(); iter != iter_end; ++iter ) {
-// 	for ( CI_1B_Methods::const_iterator iter = ci_1b_methods_.begin(),
-// 			iter_end = ci_1b_methods_.end(); iter != iter_end; ++iter ) {
-		deriv += (*iter)->eval_dof_derivative( dof_id, torsion_id, pose, *this, weights_ );
+	iter_end= all_methods_.end(); iter != iter_end; ++iter ) {
+	//  for ( CI_1B_Methods::const_iterator iter = ci_1b_methods_.begin(),
+	//    iter_end = ci_1b_methods_.end(); iter != iter_end; ++iter ) {
+	deriv += (*iter)->eval_dof_derivative( dof_id, torsion_id, pose, *this, weights_ );
 	}*/
 
-debug_assert( pose.energies().minimization_graph() );
+	debug_assert( pose.energies().minimization_graph() );
 	MinimizationGraphCOP mingraph = pose.energies().minimization_graph();
 
 	Size const rsdno = torsion_id.valid() ? torsion_id.rsd() : dof_id.atom_id().rsd();
@@ -2594,47 +2596,47 @@ ScoreFunction::add_method( methods::EnergyMethodOP method )
 
 	// PHIL replace these with utility::down_cast when it's working
 	switch ( method->method_type() ) {
-	case ci_2b:
+	case ci_2b :
 		// there must be an easier way to cast these owning pointers!
 		ci_2b_methods_.push_back
 			( utility::pointer::static_pointer_cast< core::scoring::methods::ContextIndependentTwoBodyEnergy > ( method ) );
 		break;
 
-	case cd_2b:
+	case cd_2b :
 		cd_2b_methods_.push_back
 			( utility::pointer::static_pointer_cast< core::scoring::methods::ContextDependentTwoBodyEnergy > ( method ) );
 		break;
 
-	case ci_1b:
+	case ci_1b :
 		ci_1b_methods_.push_back
 			( utility::pointer::static_pointer_cast< core::scoring::methods::ContextIndependentOneBodyEnergy > ( method ) );
 		break;
 
-	case cd_1b:
+	case cd_1b :
 		cd_1b_methods_.push_back
 			( utility::pointer::static_pointer_cast< core::scoring::methods::ContextDependentOneBodyEnergy > ( method ) );
 		break;
 
-	case ci_lr_2b:
+	case ci_lr_2b :
 		ci_lr_2b_methods_.push_back(
 			utility::pointer::static_pointer_cast< core::scoring::methods::ContextIndependentLRTwoBodyEnergy > ( method ) );
 		lr_2b_methods_.push_back(
 			utility::pointer::static_pointer_cast< core::scoring::methods::LongRangeTwoBodyEnergy > ( method ) );
 		break;
 
-	case cd_lr_2b:
+	case cd_lr_2b :
 		cd_lr_2b_methods_.push_back(
 			utility::pointer::static_pointer_cast< core::scoring::methods::ContextDependentLRTwoBodyEnergy > ( method ) );
 		lr_2b_methods_.push_back(
 			utility::pointer::static_pointer_cast< core::scoring::methods::LongRangeTwoBodyEnergy > ( method ) );
 		break;
 
-	case ws:
+	case ws :
 		ws_methods_.push_back(
 			utility::pointer::static_pointer_cast< core::scoring::methods::WholeStructureEnergy > ( method ) );
 		break;
 
-	default:
+	default :
 		utility_exit_with_message( "unrecognized method type " );
 	} // switch
 }
@@ -2650,9 +2652,9 @@ ScoreFunction::add_extra_method(
 )
 {
 	if ( weights_[ new_type]  != Real( 0.0 ) ||
-			 new_weight == Real(0.0) ||
-			 new_method.score_types().size() != 1 ||
-			 new_method.score_types().front() != new_type ) {
+			new_weight == Real(0.0) ||
+			new_method.score_types().size() != 1 ||
+			new_method.score_types().front() != new_type ) {
 		utility_exit_with_message( "bad call to ScoreFunction::add_extra_method" );
 	}
 	weights_[ new_type ] = new_weight;
@@ -2672,8 +2674,8 @@ ScoreFunction::add_extra_method(
 		ScoreType const new_type( it->first );
 		Real const new_weight( it->second );
 		if ( ( weights_[ new_type ] != Real(0.0) ) ||
-				 ( std::find( new_method.score_types().begin(), new_method.score_types().end(), new_type ) ==
-					 new_method.score_types().end() ) ) {
+				( std::find( new_method.score_types().begin(), new_method.score_types().end(), new_type ) ==
+				new_method.score_types().end() ) ) {
 			utility_exit_with_message( "bad call to ScoreFunction::add_extra_method" );
 		}
 		weights_[ new_type ] = new_weight;
@@ -2691,7 +2693,7 @@ inline
 void
 vector1_remove( utility::vector1< T > & v, T const & t )
 {
-debug_assert( std::find( v.begin(), v.end(), t ) != v.end() );
+	debug_assert( std::find( v.begin(), v.end(), t ) != v.end() );
 	v.erase( std::find( v.begin(), v.end(), t ) );
 }
 
@@ -2712,45 +2714,45 @@ ScoreFunction::remove_method( methods::EnergyMethodOP method )
 	bool rebuild_lr_methods( false );
 	// PHIL replace these with utility::down_cast when it's working
 	switch ( method->method_type() ) {
-	case ci_2b:
+	case ci_2b :
 		// there must be an easier way to cast these owning pointers!
 		vector1_remove( ci_2b_methods_,
 			ContextIndependentTwoBodyEnergyOP(( utility::pointer::static_pointer_cast< core::scoring::methods::ContextIndependentTwoBodyEnergy > ( method ) )));
 		break;
 
-	case cd_2b:
+	case cd_2b :
 		vector1_remove( cd_2b_methods_,
 			ContextDependentTwoBodyEnergyOP(( utility::pointer::static_pointer_cast< core::scoring::methods::ContextDependentTwoBodyEnergy > ( method ) ) ));
 		break;
 
-	case ci_1b:
+	case ci_1b :
 		vector1_remove( ci_1b_methods_,
 			ContextIndependentOneBodyEnergyOP(( utility::pointer::static_pointer_cast< core::scoring::methods::ContextIndependentOneBodyEnergy > ( method ) )));
 		break;
 
-	case cd_1b:
+	case cd_1b :
 		vector1_remove( cd_1b_methods_,
 			ContextDependentOneBodyEnergyOP(( utility::pointer::static_pointer_cast< core::scoring::methods::ContextDependentOneBodyEnergy > ( method ) )));
 		break;
 
-	case ci_lr_2b:
+	case ci_lr_2b :
 		rebuild_lr_methods = true;
 		vector1_remove( ci_lr_2b_methods_,
 			ContextIndependentLRTwoBodyEnergyOP(utility::pointer::static_pointer_cast< core::scoring::methods::ContextIndependentLRTwoBodyEnergy > ( method )));
 		break;
 
-	case cd_lr_2b:
+	case cd_lr_2b :
 		rebuild_lr_methods = true;
 		vector1_remove( cd_lr_2b_methods_,
 			ContextDependentLRTwoBodyEnergyOP( utility::pointer::static_pointer_cast< core::scoring::methods::ContextDependentLRTwoBodyEnergy > ( method )));
 		break;
 
-	case ws:
+	case ws :
 		vector1_remove( ws_methods_,
 			WholeStructureEnergyOP( utility::pointer::static_pointer_cast< core::scoring::methods::WholeStructureEnergy > ( method )));
 		break;
 
-	default:
+	default :
 		utility_exit_with_message( "unrecognized method type " );
 	} // switch
 
@@ -2834,7 +2836,7 @@ ScoreFunction::indicate_required_context_graphs(
 	utility::vector1< bool > & context_graphs_required
 ) const
 {
-	 for ( AllMethods::const_iterator it=all_methods_.begin(),
+	for ( AllMethods::const_iterator it=all_methods_.begin(),
 			it_end = all_methods_.end(); it != it_end; ++it ) {
 		(*it)->indicate_required_context_graphs(context_graphs_required);
 	}
@@ -2880,11 +2882,11 @@ find_weights_file(std::string name, std::string extension/*=".wts"*/) {
 /// @brief check order of methods
 bool
 ScoreFunction::check_methods_in_right_order( ScoreType const & score_type_in_first_method,
-																						 ScoreType const & score_type_in_second_method ) const
+	ScoreType const & score_type_in_second_method ) const
 {
 	bool first_method_found( false );
 	for ( AllMethods::const_iterator it=all_methods_.begin(),
-					it_end = all_methods_.end(); it != it_end; ++it ) {
+			it_end = all_methods_.end(); it != it_end; ++it ) {
 
 		if ( ( (*it)->score_types() ).has_value( score_type_in_first_method ) ) first_method_found = true;
 
@@ -2899,26 +2901,29 @@ ScoreFunction::ready_for_nonideal_scoring() const
 {
 	// if any of cart_bonded terms are on and pro_close is off, return true
 	if ( (has_nonzero_weight( cart_bonded ) ||
-		has_nonzero_weight( cart_bonded_angle ) ||
-		has_nonzero_weight( cart_bonded_length ) ||
-		has_nonzero_weight( cart_bonded_torsion )) &&
-		has_zero_weight( pro_close ) )
-			return true;
+			has_nonzero_weight( cart_bonded_angle ) ||
+			has_nonzero_weight( cart_bonded_length ) ||
+			has_nonzero_weight( cart_bonded_torsion )) &&
+			has_zero_weight( pro_close ) ) {
+		return true;
+	}
 
 	// if any of the mm_ terms are on, return true
 	if ( has_nonzero_weight( mm_lj_intra_rep ) ||
-		has_nonzero_weight( mm_lj_intra_atr ) ||
-		has_nonzero_weight( mm_lj_inter_rep ) ||
-		has_nonzero_weight( mm_lj_inter_atr ) ||
-		has_nonzero_weight( mm_twist ) ||
-		has_nonzero_weight( mm_bend ) ||
-		has_nonzero_weight( mm_stretch ) )
-			return true;
+			has_nonzero_weight( mm_lj_intra_atr ) ||
+			has_nonzero_weight( mm_lj_inter_rep ) ||
+			has_nonzero_weight( mm_lj_inter_atr ) ||
+			has_nonzero_weight( mm_twist ) ||
+			has_nonzero_weight( mm_bend ) ||
+			has_nonzero_weight( mm_stretch ) ) {
+		return true;
+	}
 
 	// if any of the mm_ terms are on, return true
 	if ( has_nonzero_weight( bond_geometry ) ||
-			 has_nonzero_weight( rna_bond_geometry ) )
-			return true;
+			has_nonzero_weight( rna_bond_geometry ) ) {
+		return true;
+	}
 
 	return false;
 }

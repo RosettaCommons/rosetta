@@ -33,41 +33,41 @@ namespace modeler {
 namespace rna {
 namespace sugar {
 
-	class SugarModeling: public utility::pointer::ReferenceCount {
+class SugarModeling: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		SugarModeling( core::Size const input_moving_res, core::Size const input_reference_res );
+	SugarModeling( core::Size const input_moving_res, core::Size const input_reference_res );
 
-		SugarModeling();
+	SugarModeling();
 
-		~SugarModeling();
+	~SugarModeling();
 
-		void
-		check_compatibility( core::Size const nres ) const;
+	void
+	check_compatibility( core::Size const nres ) const;
 
-		void
-		set_base_and_pucker_state( core::pose::Pose const & pose, working_parameters::StepWiseWorkingParametersCOP const & WP );
+	void
+	set_base_and_pucker_state( core::pose::Pose const & pose, working_parameters::StepWiseWorkingParametersCOP const & WP );
 
-		SugarModeling &
-		operator = ( SugarModeling const & src );
+	SugarModeling &
+	operator = ( SugarModeling const & src );
 
-	public:
+public:
 
-		bool sample_sugar;
-		core::Size moving_res;
-		core::Size reference_res;
-		bool is_prepend;
-		core::Size bulge_res;
-		core::Size bulge_suite;
-		core::Size five_prime_chain_break;
-		PuckerState moving_res_pucker_state;
-		PuckerState bulge_res_pucker_state;
-		ChiState moving_res_base_state;
-		ChiState bulge_res_base_state;
-		utility::vector1< core::pose::PoseOP > pose_list; //pose_data_list of possible sugar conformations.
+	bool sample_sugar;
+	core::Size moving_res;
+	core::Size reference_res;
+	bool is_prepend;
+	core::Size bulge_res;
+	core::Size bulge_suite;
+	core::Size five_prime_chain_break;
+	PuckerState moving_res_pucker_state;
+	PuckerState bulge_res_pucker_state;
+	ChiState moving_res_base_state;
+	ChiState bulge_res_base_state;
+	utility::vector1< core::pose::PoseOP > pose_list; //pose_data_list of possible sugar conformations.
 
-	};
+};
 
 
 } //sugar

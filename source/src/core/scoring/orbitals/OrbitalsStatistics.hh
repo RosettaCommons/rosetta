@@ -52,9 +52,9 @@
 #include <fstream>
 
 //Auto Headers
-namespace core{
-namespace scoring{
-namespace orbitals{
+namespace core {
+namespace scoring {
+namespace orbitals {
 
 class OrbitalsStatistics {
 public:
@@ -78,13 +78,13 @@ public:
 	/// Undefined, commenting out to fix PyRosetta build  void bb_stats(core::pose::Pose & pose);
 
 	void increment_histogram_bin(
-			core::Real & distance,
-			core::Real & angle,
-			numeric::histograms::TwoDHistogram<core::Size, core::SSize> & histogram
+		core::Real & distance,
+		core::Real & angle,
+		numeric::histograms::TwoDHistogram<core::Size, core::SSize> & histogram
 	);
 
 	void bb_stats(
-			core::pose::Pose & pdb
+		core::pose::Pose & pdb
 	);
 
 	numeric::histograms::TwoDHistogram<core::Size, core::SSize> get_2D_histogram();
@@ -94,7 +94,7 @@ public:
 
 private:
 	OrbitalsStatistics(OrbitalsStatistics const & );  /// Non-copyable due to std::ofstream member, we need so PyRosetta builder
-	                                                  /// can figure out not to try to create copy constructor.
+	/// can figure out not to try to create copy constructor.
 
 	utility::vector1< numeric::histograms::TwoDHistogram<core::Size, core::SSize> > histogram_vector_;
 	numeric::histograms::TwoDHistogram<core::Size, core::SSize> twoD_histogram_;

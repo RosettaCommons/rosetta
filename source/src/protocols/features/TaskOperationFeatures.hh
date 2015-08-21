@@ -35,8 +35,8 @@
 // C++ Headers
 #include <string>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class TaskOperationFeatures : public protocols::features::FeaturesReporter {
 public:
@@ -111,7 +111,7 @@ private:
 			Size i,
 			std::string n,
 			core::pack::task::TaskFactoryCOP t
-								) : id(i), name(n), tf(t) {}
+		) : id(i), name(n), tf(t) {}
 		core::Size id;
 		std::string name;
 		core::pack::task::TaskFactoryCOP tf;

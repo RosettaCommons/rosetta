@@ -57,12 +57,12 @@ TempWeightedMetropolisHastingsMover::TempWeightedMetropolisHastingsMover() {
 
 TempWeightedMetropolisHastingsMover::TempWeightedMetropolisHastingsMover(
 	TempWeightedMetropolisHastingsMover const & other
-) :	Parent(other)
+) : Parent(other)
 {
 	std::copy( other.overall_weights_.begin(), other.overall_weights_.end(), std::back_inserter( overall_weights_ ) );
-	//	std::copy( other.weight_controllers_.begin(), other.weight_controllers_.end(), std::back_inserter( weight_controllers_ ) );
- 	std::copy( other.weight_contro_1_.begin(), other.weight_contro_1_.end(), std::back_inserter( weight_contro_1_ ) );
- 	std::copy( other.weight_contro_2_.begin(), other.weight_contro_2_.end(), std::back_inserter( weight_contro_2_ ) );
+	// std::copy( other.weight_controllers_.begin(), other.weight_controllers_.end(), std::back_inserter( weight_controllers_ ) );
+	std::copy( other.weight_contro_1_.begin(), other.weight_contro_1_.end(), std::back_inserter( weight_contro_1_ ) );
+	std::copy( other.weight_contro_2_.begin(), other.weight_contro_2_.end(), std::back_inserter( weight_contro_2_ ) );
 }
 
 std::string

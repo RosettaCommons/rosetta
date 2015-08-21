@@ -55,9 +55,9 @@ public:
 
 	/// ctor from a vector of atom positions (in lieu of a pose)
 	BindingSiteConstraint(
-	  utility::vector1< AtomID > const & atms,
-	  ObjexxFCL::FArray2D< core::Real >  tgt_pos,
-	  ObjexxFCL::FArray2D< core::Real >  tgt_pos_centroid,
+		utility::vector1< AtomID > const & atms,
+		ObjexxFCL::FArray2D< core::Real >  tgt_pos,
+		ObjexxFCL::FArray2D< core::Real >  tgt_pos_centroid,
 		core::scoring::ScoreType scoretype = core::scoring::atom_pair_constraint   /// ? TO DO -- give own scoretype
 	);
 
@@ -70,15 +70,15 @@ public:
 	score( core::scoring::func::XYZ_Func const & xyz, core::scoring::EnergyMap const &, core::scoring::EnergyMap & emap ) const;
 
 	// do some pre-scoring calculations
- 	void setup_for_scoring( core::scoring::func::XYZ_Func const & xyz, core::scoring::ScoreFunction const &scfxn ) const;
+	void setup_for_scoring( core::scoring::func::XYZ_Func const & xyz, core::scoring::ScoreFunction const &scfxn ) const;
 
 	// align the atoms
 	//   ... placing a vector  -- from each atom to the the rotated >target< atoms -- in the database
 	void pre_align( utility::vector1< numeric::xyzVector< core::Real > > const & templ_atms,
-                  utility::vector1< bool > const & ) const;
+		utility::vector1< bool > const & ) const;
 
 	// call the setup_for_derivatives for each constraint
- 	void setup_for_derivatives(  core::scoring::func::XYZ_Func const & xyz, core::scoring::ScoreFunction const &scfxn ) const;
+	void setup_for_derivatives(  core::scoring::func::XYZ_Func const & xyz, core::scoring::ScoreFunction const &scfxn ) const;
 
 	// atom deriv
 	virtual
@@ -87,7 +87,7 @@ public:
 		AtomID const & atom,
 		core::scoring::func::XYZ_Func const & xyz,
 		core::Vector & F1,
-	 	core::Vector & F2,
+		core::Vector & F2,
 		core::scoring::EnergyMap const & weights
 	) const;
 

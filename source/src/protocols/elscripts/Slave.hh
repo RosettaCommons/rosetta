@@ -48,7 +48,7 @@ class Slave : public BaseRole {
 		// this is me being sloppy and lazy
 		protocols::wum2::WUQueue & inq() { return master_comm_->inq(); }
 		protocols::wum2::WUQueue & outq() { return master_comm_->outq(); }
-		
+
   protected: 
     boost::uint64_t current_mem() {
       return master_comm_->current_mem() + mover_cache_mem();

@@ -81,58 +81,58 @@ void restore_hack( core::pose::Pose & pose ) {
 //public:
 //
 //void apply() {
-//		// make an alignment from the input pose to the full-length fasta
-//		ScoringSchemeOP ss( new SimpleScoringScheme( 6, 1, -4, -1 ) );
-//		SequenceOP full_length( new Sequence(
-//			sequence, "full_length", 1
-//		) );
-//		SequenceOP pdb_seq( new Sequence(
-//			start_pose.sequence(), "pdb", 1
-//		) );
-//		SequenceAlignment aln = sw_align.align( full_length, pdb_seq, ss );
-//		tr.Debug << "rebuilding pose with alignment: " << std::endl;
-//		tr.Debug << aln << std::endl;
-//		tr.flush();
+//  // make an alignment from the input pose to the full-length fasta
+//  ScoringSchemeOP ss( new SimpleScoringScheme( 6, 1, -4, -1 ) );
+//  SequenceOP full_length( new Sequence(
+//   sequence, "full_length", 1
+//  ) );
+//  SequenceOP pdb_seq( new Sequence(
+//   start_pose.sequence(), "pdb", 1
+//  ) );
+//  SequenceAlignment aln = sw_align.align( full_length, pdb_seq, ss );
+//  tr.Debug << "rebuilding pose with alignment: " << std::endl;
+//  tr.Debug << aln << std::endl;
+//  tr.flush();
 //
-//		// build a model using threading (close loops)
-//		ThreadingMover threader( aln, start_pose );
-//		threader.build_loops( true );
-//		if ( option[ cm::min_loop_size ]() ) {
-//			threader.min_loop_size( option[ cm::min_loop_size ]() );
-//		}
-//		core::pose::Pose full_length_pose;
-//		core::pose::make_pose_from_sequence( full_length_pose, sequence, *rsd_set );
-//		threader.frag_libs( frag_libs );
+//  // build a model using threading (close loops)
+//  ThreadingMover threader( aln, start_pose );
+//  threader.build_loops( true );
+//  if ( option[ cm::min_loop_size ]() ) {
+//   threader.min_loop_size( option[ cm::min_loop_size ]() );
+//  }
+//  core::pose::Pose full_length_pose;
+//  core::pose::make_pose_from_sequence( full_length_pose, sequence, *rsd_set );
+//  threader.frag_libs( frag_libs );
 //
-//		// repack rebuilt sidechains
-//		RecoverSideChainsMover mover( threader );
-//		mover.apply( full_length_pose );
-//		vector1< bool > residues_to_repack(
-//			full_length_pose.total_residue(), false
-//		);
-//		MoveMapOP mm( new MoveMap() );
-//		mm->set_bb (false);
-//		mm->set_chi(false);
-//		SequenceMapping map = aln.sequence_mapping(1,2);
-//		for ( core::Size ii = 1; ii <= full_length->length(); ++ii ) {
-//			if ( map[ii] == 0 ) {
-//				residues_to_repack[ii] = true;
-//				mm->set_bb ( ii, true );
-//				mm->set_chi( ii, true );
-//			}
-//		}
-//		StealSideChainsMover sc_mover( start_pose, map );
-//		sc_mover.apply( full_length_pose );
+//  // repack rebuilt sidechains
+//  RecoverSideChainsMover mover( threader );
+//  mover.apply( full_length_pose );
+//  vector1< bool > residues_to_repack(
+//   full_length_pose.total_residue(), false
+//  );
+//  MoveMapOP mm( new MoveMap() );
+//  mm->set_bb (false);
+//  mm->set_chi(false);
+//  SequenceMapping map = aln.sequence_mapping(1,2);
+//  for ( core::Size ii = 1; ii <= full_length->length(); ++ii ) {
+//   if ( map[ii] == 0 ) {
+//    residues_to_repack[ii] = true;
+//    mm->set_bb ( ii, true );
+//    mm->set_chi( ii, true );
+//   }
+//  }
+//  StealSideChainsMover sc_mover( start_pose, map );
+//  sc_mover.apply( full_length_pose );
 //
-//		task::PackerTaskOP task
-//			= task::TaskFactory::create_packer_task( full_length_pose );
-//		task->initialize_from_command_line();
-//		task->restrict_to_repacking();
-//		task->restrict_to_residues(residues_to_repack);
-//		ScoreFunctionOP scorefxn(
-//			get_score_function()
-//		);
-//		restore_hack( full_length_pose );
+//  task::PackerTaskOP task
+//   = task::TaskFactory::create_packer_task( full_length_pose );
+//  task->initialize_from_command_line();
+//  task->restrict_to_repacking();
+//  task->restrict_to_residues(residues_to_repack);
+//  ScoreFunctionOP scorefxn(
+//   get_score_function()
+//  );
+//  restore_hack( full_length_pose );
 //
 //};
 
@@ -140,122 +140,122 @@ int
 main( int argc, char* argv [] ) {
 	try {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::chemical;
-	using namespace core::sequence;
-	using namespace core::fragment;
-	using namespace core::import_pose::pose_stream;
-	using namespace protocols::comparative_modeling;
-	using namespace core::scoring;
-	using namespace core::pack;
-	using namespace core::kinematics;
-	using core::Size;
-	using utility::vector1;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::chemical;
+		using namespace core::sequence;
+		using namespace core::fragment;
+		using namespace core::import_pose::pose_stream;
+		using namespace protocols::comparative_modeling;
+		using namespace core::scoring;
+		using namespace core::pack;
+		using namespace core::kinematics;
+		using core::Size;
+		using utility::vector1;
 
-	basic::Tracer tr( "full_length_model" );
+		basic::Tracer tr( "full_length_model" );
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
-	MetaPoseInputStream input = streams_from_cmd_line();
-	std::string sequence = core::sequence::read_fasta_file(
-		option[ in::file::fasta ]()[1]
-	)[1]->sequence();
-	NWAligner sw_align;
+		ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
+		MetaPoseInputStream input = streams_from_cmd_line();
+		std::string sequence = core::sequence::read_fasta_file(
+			option[ in::file::fasta ]()[1]
+			)[1]->sequence();
+		NWAligner sw_align;
 
-	// initialize fragments
-	utility::vector1< core::fragment::FragSetOP > frag_libs;
-	protocols::loops::read_loop_fragments( frag_libs );
+		// initialize fragments
+		utility::vector1< core::fragment::FragSetOP > frag_libs;
+		protocols::loops::read_loop_fragments( frag_libs );
 
-	while ( input.has_another_pose() ) {
-		core::pose::Pose start_pose;
-		input.fill_pose( start_pose, *rsd_set );
+		while ( input.has_another_pose() ) {
+			core::pose::Pose start_pose;
+			input.fill_pose( start_pose, *rsd_set );
 
-		// make an alignment from the input pose to the full-length fasta
-		ScoringSchemeOP ss( new SimpleScoringScheme( 6, 1, -4, -1 ) );
-		SequenceOP full_length( new Sequence(
-			sequence, "full_length", 1
-		) );
-		SequenceOP pdb_seq( new Sequence(
-			start_pose.sequence(), "pdb", 1
-		) );
-		SequenceAlignment aln = sw_align.align( full_length, pdb_seq, ss );
-		tr.Debug << "rebuilding pose with alignment: " << std::endl;
-		tr.Debug << aln << std::endl;
-		tr.flush();
+			// make an alignment from the input pose to the full-length fasta
+			ScoringSchemeOP ss( new SimpleScoringScheme( 6, 1, -4, -1 ) );
+			SequenceOP full_length( new Sequence(
+				sequence, "full_length", 1
+				) );
+			SequenceOP pdb_seq( new Sequence(
+				start_pose.sequence(), "pdb", 1
+				) );
+			SequenceAlignment aln = sw_align.align( full_length, pdb_seq, ss );
+			tr.Debug << "rebuilding pose with alignment: " << std::endl;
+			tr.Debug << aln << std::endl;
+			tr.flush();
 
-		// build a model using threading (close loops)
-		ThreadingMover threader( aln, start_pose );
-		threader.build_loops( true );
-		if ( option[ cm::min_loop_size ]() ) {
-			threader.min_loop_size( option[ cm::min_loop_size ]() );
-		}
-		core::pose::Pose full_length_pose;
-		core::pose::make_pose_from_sequence( full_length_pose, sequence, *rsd_set );
-		threader.frag_libs( frag_libs );
-
-		// repack rebuilt sidechains
-		RecoverSideChainsMover mover( threader );
-		mover.apply( full_length_pose );
-		vector1< bool > residues_to_repack(
-			full_length_pose.total_residue(), false
-		);
-		MoveMapOP mm( new MoveMap() );
-		mm->set_bb (false);
-		mm->set_chi(false);
-		core::id::SequenceMapping map = aln.sequence_mapping(1,2);
-		for ( core::Size ii = 1; ii <= full_length->length(); ++ii ) {
-			if ( map[ii] == 0 ) {
-				residues_to_repack[ii] = true;
-				mm->set_bb ( ii, true );
-				mm->set_chi( ii, true );
+			// build a model using threading (close loops)
+			ThreadingMover threader( aln, start_pose );
+			threader.build_loops( true );
+			if ( option[ cm::min_loop_size ]() ) {
+				threader.min_loop_size( option[ cm::min_loop_size ]() );
 			}
-		}
-		StealSideChainsMover sc_mover( start_pose, map );
-		sc_mover.apply( full_length_pose );
+			core::pose::Pose full_length_pose;
+			core::pose::make_pose_from_sequence( full_length_pose, sequence, *rsd_set );
+			threader.frag_libs( frag_libs );
 
-		task::PackerTaskOP task
-			= task::TaskFactory::create_packer_task( full_length_pose );
-		task->initialize_from_command_line();
-		task->restrict_to_repacking();
-		task->restrict_to_residues(residues_to_repack);
-		ScoreFunctionOP scorefxn(
-			get_score_function()
-		);
-		restore_hack( full_length_pose );
-		//core::import_pose::pose_from_pdb( pose, *rsd_set, "debug.pdb" );
-
-		//(*scorefxn)(full_length_pose);
-		//pack_rotamers( full_length_pose, *scorefxn, task );
-		//full_length_pose.dump_pdb("debug.pdb");
-		alignment_into_pose( aln, full_length_pose );
-
-		if ( option[ relax::mini ]() ) {
-			protocols::relax::MiniRelax relax( scorefxn );
-			mm->show( std::cout, full_length_pose.total_residue() );
-			//relax.set_movemap(mm);
-			relax.apply(full_length_pose);
-		}
-
-		std::string output_prefix( core::pose::tag_from_pose(start_pose) );
-		// output PDB
-		utility::io::ozstream output( output_prefix + "_full_length.pdb" );
-		output << "REMARK REBUILT_RESIDUES";
-		for ( Size ii = 1; ii <= residues_to_repack.size(); ++ii ) {
-			if ( residues_to_repack[ii] ) {
-				output << " " << ii;
+			// repack rebuilt sidechains
+			RecoverSideChainsMover mover( threader );
+			mover.apply( full_length_pose );
+			vector1< bool > residues_to_repack(
+				full_length_pose.total_residue(), false
+			);
+			MoveMapOP mm( new MoveMap() );
+			mm->set_bb (false);
+			mm->set_chi(false);
+			core::id::SequenceMapping map = aln.sequence_mapping(1,2);
+			for ( core::Size ii = 1; ii <= full_length->length(); ++ii ) {
+				if ( map[ii] == 0 ) {
+					residues_to_repack[ii] = true;
+					mm->set_bb ( ii, true );
+					mm->set_chi( ii, true );
+				}
 			}
-		}
-		output << std::endl;
-		output << "REMARK query_aln    " << aln.sequence(1)->to_string() << std::endl;
-		output << "REMARK template_aln " << aln.sequence(2)->to_string()<< std::endl;
-		output << std::endl;
-		core::io::pdb::dump_pdb( full_length_pose, output );
-		output.close();
-		//full_length_pose.dump_pdb( output_prefix + "_full_length.pdb" );
-	} // has_another_pose()
+			StealSideChainsMover sc_mover( start_pose, map );
+			sc_mover.apply( full_length_pose );
+
+			task::PackerTaskOP task
+				= task::TaskFactory::create_packer_task( full_length_pose );
+			task->initialize_from_command_line();
+			task->restrict_to_repacking();
+			task->restrict_to_residues(residues_to_repack);
+			ScoreFunctionOP scorefxn(
+				get_score_function()
+			);
+			restore_hack( full_length_pose );
+			//core::import_pose::pose_from_pdb( pose, *rsd_set, "debug.pdb" );
+
+			//(*scorefxn)(full_length_pose);
+			//pack_rotamers( full_length_pose, *scorefxn, task );
+			//full_length_pose.dump_pdb("debug.pdb");
+			alignment_into_pose( aln, full_length_pose );
+
+			if ( option[ relax::mini ]() ) {
+				protocols::relax::MiniRelax relax( scorefxn );
+				mm->show( std::cout, full_length_pose.total_residue() );
+				//relax.set_movemap(mm);
+				relax.apply(full_length_pose);
+			}
+
+			std::string output_prefix( core::pose::tag_from_pose(start_pose) );
+			// output PDB
+			utility::io::ozstream output( output_prefix + "_full_length.pdb" );
+			output << "REMARK REBUILT_RESIDUES";
+			for ( Size ii = 1; ii <= residues_to_repack.size(); ++ii ) {
+				if ( residues_to_repack[ii] ) {
+					output << " " << ii;
+				}
+			}
+			output << std::endl;
+			output << "REMARK query_aln    " << aln.sequence(1)->to_string() << std::endl;
+			output << "REMARK template_aln " << aln.sequence(2)->to_string()<< std::endl;
+			output << std::endl;
+			core::io::pdb::dump_pdb( full_length_pose, output );
+			output.close();
+			//full_length_pose.dump_pdb( output_prefix + "_full_length.pdb" );
+		} // has_another_pose()
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

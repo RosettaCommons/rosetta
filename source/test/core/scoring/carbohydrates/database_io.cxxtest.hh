@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	 test/core/scoring/database_io.cxxtest.hh
+/// @file  test/core/scoring/database_io.cxxtest.hh
 /// @brief   Test suite for carbohydrate scoring database loading
 /// @author  Labonte <JWLabonte@jhu.edu>
 
@@ -52,7 +52,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_TRACE( "Testing read_Gaussian_parameters_from_database_file() method." );
 
 		map< char, vector1< core::Real > > parameters(
-				read_Gaussian_parameters_from_database_file( "core/scoring/carbohydrates/dummy_params.data" ) );
+			read_Gaussian_parameters_from_database_file( "core/scoring/carbohydrates/dummy_params.data" ) );
 
 		TS_ASSERT_EQUALS( parameters.size(), 6);
 		TS_ASSERT_EQUALS( parameters[ 'f' ].size(), 1 );

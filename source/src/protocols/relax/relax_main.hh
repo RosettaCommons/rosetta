@@ -10,7 +10,7 @@
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
 /// @details
-///	  Contains currently: Relax Baseclass, ClassicRelax Stage 1,2,3, ClassicRelax
+///   Contains currently: Relax Baseclass, ClassicRelax Stage 1,2,3, ClassicRelax
 ///
 ///
 /// @author Mike Tyka

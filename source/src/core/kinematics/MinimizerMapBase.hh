@@ -87,42 +87,42 @@ public:
 	const_iterator
 	begin() const
 	{
-		return dof_nodes_.begin();
+	return dof_nodes_.begin();
 	}
 
 
 	const_iterator
 	end() const
 	{
-		return dof_nodes_.end();
+	return dof_nodes_.end();
 	}
 
 
 	iterator
 	begin()
 	{
-		return dof_nodes_.begin();
+	return dof_nodes_.begin();
 	}
 
 
 	iterator
 	end()
 	{
-		return dof_nodes_.end();
+	return dof_nodes_.end();
 	}
 
 
 	DOF_Nodes const &
 	dof_nodes() const
 	{
-		return dof_nodes_;
+	return dof_nodes_;
 	}
 
 
 	DOF_Nodes &
 	dof_nodes()
 	{
-		return dof_nodes_;
+	return dof_nodes_;
 	}
 
 	/// this will only work if DOF_nodes are sorted!
@@ -140,15 +140,15 @@ public:
 
 	void
 	copy_dofs_from_pose(
-		pose::Pose const & pose,
-		Multivec & dofs
+	pose::Pose const & pose,
+	Multivec & dofs
 	) const;
 
 
 	void
 	copy_dofs_to_pose(
-		pose::Pose & pose,
-		Multivec const & dofs
+	pose::Pose & pose,
+	Multivec const & dofs
 	) const;
 
 
@@ -156,20 +156,20 @@ public:
 	int
 	nangles() const
 	{
-		return dof_nodes_.size();
+	return dof_nodes_.size();
 	}
 
 
 	void
 	reset_jump_rb_deltas(
-		pose::Pose & pose,
-		Multivec & dofs
+	pose::Pose & pose,
+	Multivec & dofs
 	) const;
 
 	// this is used in pack/unpack_phipsi and deriv calculation
 	Real
 	torsion_scale_factor(
-		DOF_Node const & tor
+	DOF_Node const & tor
 	) const; */
 
 
@@ -182,18 +182,18 @@ public:
 	DOF_Node*
 	dof_node_from_id( DOF_ID const &id )
 	{
-		DOF_Node* node = 0;
-		if ( id.valid() ) {
-			node = dof_node_pointer_[ id ];
-			if ( node == 0 ) {
-				std::cerr << "DOF_ID does not exist in map! torsion= " << id << std::endl;
-				utility_exit();
-			}
-		}
-		return node;
+	DOF_Node* node = 0;
+	if ( id.valid() ) {
+	node = dof_node_pointer_[ id ];
+	if ( node == 0 ) {
+	std::cerr << "DOF_ID does not exist in map! torsion= " << id << std::endl;
+	utility_exit();
+	}
+	}
+	return node;
 	}
 
-private:
+	private:
 
 	/// deletes and clears dof_nodes_
 	void
@@ -211,7 +211,7 @@ private:
 	void
 	assign_rosetta_torsions( pose::Pose const & pose ); // part of setup
 
-*/
+	*/
 }; // MinimizerMapBase
 
 

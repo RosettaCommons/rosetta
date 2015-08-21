@@ -41,7 +41,7 @@ typedef utility::pointer::shared_ptr< DomainAssemblyCommand const > DomainAssemb
 
 //pares_domain_file will need to take vector of domain objects
 //reaader function needs to pass one member of vector function to reader at a time
- ///////////////////////////////////////////////////
+///////////////////////////////////////////////////
 class DomainAssemblyCommand : public utility::pointer::ReferenceCount
 {
 public:
@@ -51,7 +51,7 @@ public:
 	virtual
 	void domain_action(
 		utility::vector1< std::string > const & tokens,
-	  Size & which_token,
+		Size & which_token,
 		DomainInfo & domain
 	) const = 0;
 
@@ -65,14 +65,14 @@ public:
 
 	virtual
 	void domain_action(
-	utility::vector1< std::string > const & tokens,
-	Size & which_token,
-	DomainInfo & domain
+		utility::vector1< std::string > const & tokens,
+		Size & which_token,
+		DomainInfo & domain
 	) const;
 
 	static std::string name() {return "PDB";}
 };
-	///////////////////////////////////////////////
+///////////////////////////////////////////////
 //NTermLinker class will input one letter amino acid
 ///linker sequence after specified N terminus
 class NTermLinker : public DomainAssemblyCommand
@@ -84,11 +84,11 @@ public:
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		DomainInfo & domain
-		) const;
+	) const;
 
 	static std::string name() {return "NTermLinker";}
 };
-	///////////////////////////////////////////////
+///////////////////////////////////////////////
 //CTermLinker class will input one letter amino acid
 ///linker sequence after specified C terminus
 class CTermLinker : public DomainAssemblyCommand
@@ -97,14 +97,14 @@ public:
 
 	virtual
 	void domain_action(
-	utility::vector1< std::string > const & tokens,
-	Size & which_token,
-	DomainInfo & domain
-) const;
+		utility::vector1< std::string > const & tokens,
+		Size & which_token,
+		DomainInfo & domain
+	) const;
 
 	static std::string name() {return "CTermLinker";}
 };
-	///////////////////////////////////////////////
+///////////////////////////////////////////////
 //NTrim class will remove specified number of amino
 //acids from specified N terminus
 class NTrim : public DomainAssemblyCommand
@@ -113,14 +113,14 @@ public:
 
 	virtual
 	void domain_action(
-	utility::vector1< std::string > const & tokens,
-	Size & which_token,
-	DomainInfo & domain
+		utility::vector1< std::string > const & tokens,
+		Size & which_token,
+		DomainInfo & domain
 	) const;
 
 	static std::string name() {return "NTrim";}
 };
-	///////////////////////////////////////////////
+///////////////////////////////////////////////
 //CTrim class will remove specified number of amino
 //acids from specified C terminus
 class CTrim : public DomainAssemblyCommand

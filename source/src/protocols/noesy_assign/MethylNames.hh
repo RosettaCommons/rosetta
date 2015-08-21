@@ -36,46 +36,46 @@ namespace noesy_assign {
 
 class MethylNames {
 public:
-  typedef utility::vector1< std::string > AtomList;
-  typedef std::map< std::string, AtomList > NameTable;
-  typedef NameTable::const_iterator const_iterator;
-  MethylNames( );
-  MethylNames( core::chemical::AA aa );
+	typedef utility::vector1< std::string > AtomList;
+	typedef std::map< std::string, AtomList > NameTable;
+	typedef NameTable::const_iterator const_iterator;
+	MethylNames( );
+	MethylNames( core::chemical::AA aa );
 
 	//which NMR proton name belongs to the ROSETTA proton ?
 	//1HG1 ---> return HG11
-  std::string const& rosetta2nmr( std::string const& proton ) const;
+	std::string const& rosetta2nmr( std::string const& proton ) const;
 
 	//return which NMR methyl name belongs to the Rosetta proton ?
 	//1HG1 --> returns  QG1, QQG
-  AtomList const& rosetta2methyl( std::string const& proton ) const;
+	AtomList const& rosetta2methyl( std::string const& proton ) const;
 
 	//return list of rosetta protons that belong to a proton or methyl NMR name
-  AtomList const& nmr2rosetta( std::string const& proton ) const;
+	AtomList const& nmr2rosetta( std::string const& proton ) const;
 
 	//iterate over protons/methyls
-  const_iterator begin() const { return nmr2rosetta_.begin(); }
-  const_iterator end() const { return nmr2rosetta_.end(); }
+	const_iterator begin() const { return nmr2rosetta_.begin(); }
+	const_iterator end() const { return nmr2rosetta_.end(); }
 
 	//the amino-acid type
-  core::chemical::AA aa() const { return aa_; }
+	core::chemical::AA aa() const { return aa_; }
 
 	//return the amino-acid name (as from chemical::name_from_aa(x) )
-  std::string aa_name() const;
+	std::string aa_name() const;
 
 	//return index of nmr-name (using the same sequence as begin()...end() implies
 	core::Size proton_index( std::string const& ) const;
 
 	//add a nmr / rosetta proton pair
-  void add_proton( std::string const& nmr, std::string const& rosetta );
+	void add_proton( std::string const& nmr, std::string const& rosetta );
 	//add a nmr-methyl / rosetta proton pair
-  void add_methyl( std::string const& rosetta, std::string const& methyl );
+	void add_methyl( std::string const& rosetta, std::string const& methyl );
 
 private:
-  core::chemical::AA aa_;
-  std::map< std::string, std::string > rosetta2nmr_;
-  NameTable rosetta2methyl_;
-  NameTable nmr2rosetta_;
+	core::chemical::AA aa_;
+	std::map< std::string, std::string > rosetta2nmr_;
+	NameTable rosetta2methyl_;
+	NameTable nmr2rosetta_;
 };
 
 class MethylNameLibrary : public utility::SingletonBase< MethylNameLibrary > {
@@ -83,8 +83,8 @@ public:
 	friend class utility::SingletonBase< MethylNameLibrary >;
 
 private:
-  //Singleton Class
-  MethylNameLibrary();
+	//Singleton Class
+	MethylNameLibrary();
 
 	/// @brief private singleton creation function to be used with
 	/// utility::thread::threadsafe_singleton
@@ -92,14 +92,14 @@ private:
 
 public:
 
-  MethylNames const& operator[]( core::chemical::AA ) const;
+	MethylNames const& operator[]( core::chemical::AA ) const;
 
 private:
-  void load_database_table();
+	void load_database_table();
 
-  typedef std::map< core::chemical::AA, MethylNames > MethylNameTable;
+	typedef std::map< core::chemical::AA, MethylNames > MethylNameTable;
 
-  MethylNameTable methyl_names_;
+	MethylNameTable methyl_names_;
 };
 
 }

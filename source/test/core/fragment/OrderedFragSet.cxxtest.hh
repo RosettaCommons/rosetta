@@ -64,107 +64,107 @@ using namespace ObjexxFCL;
 
 class OrderedFragSetTest : public CxxTest::TestSuite
 {
-  chemical::ResidueTypeSetCOP residue_set_;
-  pose::Pose pose_random_, pose_;
+	chemical::ResidueTypeSetCOP residue_set_;
+	pose::Pose pose_random_, pose_;
 public:
-  OrderedFragSetTest() {};
+	OrderedFragSetTest() {};
 
-  // Shared initialization goes here.
-  void setUp() {
+	// Shared initialization goes here.
+	void setUp() {
 		core_init();
 		residue_set_ = chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID );
 
 		//core::import_pose::pose_from_pdb( pose_, "core/pack/test_in.pdb" );
 		pose_ = create_test_in_pdb_pose();
 
-  }
-  //helpers
-  void generate_random_pose();
+	}
+	//helpers
+	void generate_random_pose();
 
-  // tests
-  void test_frag_iterator();
+	// tests
+	void test_frag_iterator();
 
-  // Shared finalization goes here.
-  void tearDown() {
-  }
+	// Shared finalization goes here.
+	void tearDown() {
+	}
 
 private:
 
 };
 
 void OrderedFragSetTest::generate_random_pose() {
-  using namespace chemical;
-  using namespace conformation;
-  std::string sequence = pose_.sequence();
-  //create extended pose from sequence
-  for ( Size pos = 1; pos <= sequence.size(); pos++ ) {
-    chemical::AA aa = aa_from_oneletter_code( sequence[ pos-1 ] );
-    ResidueTypeCOPs res_list = residue_set_->name3_map_DO_NOT_USE ( name_from_aa ( aa ) );
-    ResidueOP new_rsd( ResidueFactory::create_residue( * ( res_list[ 1 ] ) ) );
-    pose_random_.append_residue_by_bond( *new_rsd );
-  }
-  io::pdb::dump_pdb( pose_random_, "random_chain_pose" );
+	using namespace chemical;
+	using namespace conformation;
+	std::string sequence = pose_.sequence();
+	//create extended pose from sequence
+	for ( Size pos = 1; pos <= sequence.size(); pos++ ) {
+		chemical::AA aa = aa_from_oneletter_code( sequence[ pos-1 ] );
+		ResidueTypeCOPs res_list = residue_set_->name3_map_DO_NOT_USE ( name_from_aa ( aa ) );
+		ResidueOP new_rsd( ResidueFactory::create_residue( * ( res_list[ 1 ] ) ) );
+		pose_random_.append_residue_by_bond( *new_rsd );
+	}
+	io::pdb::dump_pdb( pose_random_, "random_chain_pose" );
 }
 
 
 void OrderedFragSetTest::test_frag_iterator() {
-  using namespace pose;
-  using namespace fragment;
-  kinematics::MoveMap movemap;
-  movemap.set_bb( true );
+	using namespace pose;
+	using namespace fragment;
+	kinematics::MoveMap movemap;
+	movemap.set_bb( true );
 
-  Size len9(9);
-  ConstantLengthFragSet fragset9( len9 );
-  steal_constant_length_frag_set_from_pose ( pose_, fragset9 );
+	Size len9(9);
+	ConstantLengthFragSet fragset9( len9 );
+	steal_constant_length_frag_set_from_pose ( pose_, fragset9 );
 
-  ConstantLengthFragSet fragset3( 3 );
-  steal_constant_length_frag_set_from_pose ( pose_, fragset3 );
+	ConstantLengthFragSet fragset3( 3 );
+	steal_constant_length_frag_set_from_pose ( pose_, fragset3 );
 
-  OrderedFragSet fragset;
+	OrderedFragSet fragset;
 
-  // consolidate both fragsets in new OrderedFragSet
-  for ( ConstFrameIterator it = fragset3.begin(), eit = fragset3.end();
-	it!=eit; ++it ) {
-    fragset.add( *it );
-  }
+	// consolidate both fragsets in new OrderedFragSet
+	for ( ConstFrameIterator it = fragset3.begin(), eit = fragset3.end();
+			it!=eit; ++it ) {
+		fragset.add( *it );
+	}
 
-  for ( ConstFrameIterator it = fragset9.begin(), eit = fragset9.end();
-	it!=eit; ++it ) {
-    fragset.add( *it );
-  }
+	for ( ConstFrameIterator it = fragset9.begin(), eit = fragset9.end();
+			it!=eit; ++it ) {
+		fragset.add( *it );
+	}
 
-  // now there should be two frames with the same starting positions until we run out of
-  // 9mers...  let's check this.
-  Size ct = 1;
-  for ( ConstFrameIterator it = fragset.begin(), eit = fragset.end();
-	it!=eit; ++it ) {
-    //    tr.Info << " ct: " << ct << " " << (*it)->start() << "\n";
-    TS_ASSERT( (*it)->start() == ct );
-    if ( ct <= pose_.total_residue() - 8 ) ++it;
-    TS_ASSERT( (*it)->start() == ct );
-    ct++;
-  }
+	// now there should be two frames with the same starting positions until we run out of
+	// 9mers...  let's check this.
+	Size ct = 1;
+	for ( ConstFrameIterator it = fragset.begin(), eit = fragset.end();
+			it!=eit; ++it ) {
+		//    tr.Info << " ct: " << ct << " " << (*it)->start() << "\n";
+		TS_ASSERT( (*it)->start() == ct );
+		if ( ct <= pose_.total_residue() - 8 ) ++it;
+		TS_ASSERT( (*it)->start() == ct );
+		ct++;
+	}
 
-  // a call to region should return us two Frames per position
-  FrameList frames;
-  fragset.region( movemap, 5, 5, 0, 0, frames);
-  TS_ASSERT_EQUALS( frames.size() , 2 );
+	// a call to region should return us two Frames per position
+	FrameList frames;
+	fragset.region( movemap, 5, 5, 0, 0, frames);
+	TS_ASSERT_EQUALS( frames.size() , 2 );
 
-  // a call to region should return us two Frames per position
-  frames.clear();
-  fragset.region( movemap, 5, 6, 0, 0, frames);
+	// a call to region should return us two Frames per position
+	frames.clear();
+	fragset.region( movemap, 5, 6, 0, 0, frames);
 
-  TS_ASSERT_EQUALS( frames.size(), 4 );
+	TS_ASSERT_EQUALS( frames.size(), 4 );
 
 	//let's check the clone function
 	FragSetOP cloned = fragset.clone();
 	ConstFrameIterator cit = cloned->begin();
 	ConstFrameIterator ecit = cloned->end();
-  for ( ConstFrameIterator it = fragset.begin(), eit = fragset.end();
-				it!=eit; ++it,++cit ) {
-    //    tr.Info << " ct: " << ct << " " << (*it)->start() << "\n";
-    TS_ASSERT( cit != ecit );
-		if (!( cit!=ecit )) break; //avoid run-time errors
+	for ( ConstFrameIterator it = fragset.begin(), eit = fragset.end();
+			it!=eit; ++it,++cit ) {
+		//    tr.Info << " ct: " << ct << " " << (*it)->start() << "\n";
+		TS_ASSERT( cit != ecit );
+		if ( !( cit!=ecit ) ) break; //avoid run-time errors
 		TS_ASSERT( (*it)->start() == (*cit)->start() );
-  }
+	}
 }

@@ -22,15 +22,15 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-  class GoapRsdType;
-  typedef utility::pointer::shared_ptr< GoapRsdType > GoapRsdTypeOP;
-  typedef utility::pointer::shared_ptr< GoapRsdType const > GoapRsdTypeCOP;
+class GoapRsdType;
+typedef utility::pointer::shared_ptr< GoapRsdType > GoapRsdTypeOP;
+typedef utility::pointer::shared_ptr< GoapRsdType const > GoapRsdTypeCOP;
 
-  class GoapEnergy;
-  typedef utility::pointer::shared_ptr< GoapEnergy > GoapEnergyOP;
+class GoapEnergy;
+typedef utility::pointer::shared_ptr< GoapEnergy > GoapEnergyOP;
 
-  //typedef std::map< chemical::AA const *, GoapRsdTypeOP > GoapRsdTypeMap;
-  typedef std::map< std::string, GoapRsdTypeOP > GoapRsdTypeMap;
+//typedef std::map< chemical::AA const *, GoapRsdTypeOP > GoapRsdTypeMap;
+typedef std::map< std::string, GoapRsdTypeOP > GoapRsdTypeMap;
 
 } // methods
 } // scoring

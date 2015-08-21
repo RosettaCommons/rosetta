@@ -36,7 +36,7 @@ public:
 	operator ()( core::optimization::Multivec const & phipsi ) const
 	{
 		core::Real sum = 0.0;
-		for(core::Size i = 1; i <= phipsi.size(); ++i) sum += phipsi[i];
+		for ( core::Size i = 1; i <= phipsi.size(); ++i ) sum += phipsi[i];
 		return std::abs( 1.0 - sum );
 	}
 
@@ -65,11 +65,11 @@ public:
 		Multivec p_min(num_dofs, 0.), p_max(num_dofs, 1.);
 		ParticleSwarmMinimizer pso(p_min, p_max);
 		ParticleOPs particles = pso.run(5000, f);
-		for(core::Size i = 1; i <= particles.size(); ++i) {
+		for ( core::Size i = 1; i <= particles.size(); ++i ) {
 			ParticleOP p = particles[i];
 			// Remember that fitness = -f() ...
 			TR << "Particle " << i << ": fitness=" << p->fitness_pbest() << " [";
-			for(core::Size j = 1; j <= p->pbest().size(); ++j) {
+			for ( core::Size j = 1; j <= p->pbest().size(); ++j ) {
 				TR << " " << p->pbest()[j];
 			}
 			TR << " ]" << std::endl;

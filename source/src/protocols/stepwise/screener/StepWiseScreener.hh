@@ -26,8 +26,8 @@
 
 
 #ifdef WIN32
-	#include <protocols/stepwise/sampler/StepWiseSamplerBase.hh>
-	#include <protocols/moves/CompositionMover.hh>
+#include <protocols/stepwise/sampler/StepWiseSamplerBase.hh>
+#include <protocols/moves/CompositionMover.hh>
 #endif
 
 
@@ -35,63 +35,63 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class StepWiseScreener: public utility::pointer::ReferenceCount {
+class StepWiseScreener: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//constructor
-		StepWiseScreener();
+	//constructor
+	StepWiseScreener();
 
-		//destructor
-		~StepWiseScreener();
+	//destructor
+	~StepWiseScreener();
 
-	public:
+public:
 
-		virtual
-		void
-		get_update( sampler::StepWiseSamplerBaseOP ){}
+	virtual
+	void
+	get_update( sampler::StepWiseSamplerBaseOP ){}
 
-		virtual
-		void
-		apply_mover( moves::CompositionMoverOP, Size const, Size const ){}
+	virtual
+	void
+	apply_mover( moves::CompositionMoverOP, Size const, Size const ){}
 
-		virtual
-		void
-		add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
+	virtual
+	void
+	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
 
-		virtual
-		bool
-		check_screen(){ return true;} // = 0;
+	virtual
+	bool
+	check_screen(){ return true;} // = 0;
 
-		virtual
-		std::string
-		name() const = 0;
+	virtual
+	std::string
+	name() const = 0;
 
-		virtual
-		StepWiseScreenerType
-		type() const = 0;
+	virtual
+	StepWiseScreenerType
+	type() const = 0;
 
-		virtual
-		void
-		fast_forward( sampler::StepWiseSamplerBaseOP ) {}
+	virtual
+	void
+	fast_forward( sampler::StepWiseSamplerBaseOP ) {}
 
-		Size const &
-		count() const { return count_; }
+	Size const &
+	count() const { return count_; }
 
-		void
-		increment_count();
+	void
+	increment_count();
 
-		void
-		reset(){ count_ = 0;	}
+	void
+	reset(){ count_ = 0; }
 
-		void
-		set_ok_to_increment( bool const setting ){ ok_to_increment_ = setting; }
+	void
+	set_ok_to_increment( bool const setting ){ ok_to_increment_ = setting; }
 
-	private:
+private:
 
-		Size count_;
-		bool ok_to_increment_;
-	};
+	Size count_;
+	bool ok_to_increment_;
+};
 
 } //screener
 } //stepwise

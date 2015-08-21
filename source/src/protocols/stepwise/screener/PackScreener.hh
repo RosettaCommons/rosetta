@@ -27,36 +27,36 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class PackScreener:  public SampleApplier {
+class PackScreener:  public SampleApplier {
 
-	public:
+public:
 
-		//constructor
-		PackScreener( pose::Pose & pose,
-												 modeler::packer::StepWisePackerOP stepwise_packer );
+	//constructor
+	PackScreener( pose::Pose & pose,
+		modeler::packer::StepWisePackerOP stepwise_packer );
 
-		//destructor
-		~PackScreener();
+	//destructor
+	~PackScreener();
 
-	public:
+public:
 
-		bool
-		check_screen();
+	bool
+	check_screen();
 
-		std::string
-		name() const { return "PackScreener"; }
+	std::string
+	name() const { return "PackScreener"; }
 
-		StepWiseScreenerType
-		type() const { return PACK; }
+	StepWiseScreenerType
+	type() const { return PACK; }
 
-		void
-		add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
+	void
+	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
 
-	private:
+private:
 
-		modeler::packer::StepWisePackerOP stepwise_packer_;
+	modeler::packer::StepWisePackerOP stepwise_packer_;
 
-	};
+};
 
 } //screener
 } //stepwise

@@ -46,9 +46,9 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace toolbox{
-namespace match_enzdes_util{
+namespace protocols {
+namespace toolbox {
+namespace match_enzdes_util {
 
 /// @brief function to go through a list of restypes and
 /// reduce them to chemically identical ones based on the same base_name
@@ -307,7 +307,7 @@ protected:
 		utility::io::izstream & data
 	);
 
-//data
+	//data
 private:
 
 	//the index of this mcfi in the mcfi list

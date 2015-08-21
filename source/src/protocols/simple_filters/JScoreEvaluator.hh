@@ -51,9 +51,9 @@ public:
 	}
 
 private:
-	 core::scoring::ScoreFunctionOP scorefxn_;
-	 std::string const type_set_name_;
-	 std::string const col_name_;
+	core::scoring::ScoreFunctionOP scorefxn_;
+	std::string const type_set_name_;
+	std::string const col_name_;
 };
 
 } // simple_filter

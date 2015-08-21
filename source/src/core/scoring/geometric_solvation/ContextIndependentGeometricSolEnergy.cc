@@ -85,7 +85,7 @@ ContextIndependentGeometricSolEnergy::ContextIndependentGeometricSolEnergy( meth
 	parent( methods::EnergyMethodCreatorOP( new ContextIndependentGeometricSolEnergyCreator ) ),
 	options_( opts ),
 	evaluator_( GeometricSolEnergyEvaluatorOP( new GeometricSolEnergyEvaluator( opts ) ) ),
-  precalculated_bb_bb_energy_(0.0f),
+	precalculated_bb_bb_energy_(0.0f),
 	using_extended_method_(false)
 {
 	if ( options_.hbond_options().use_hb_env_dep() ) {
@@ -113,28 +113,28 @@ ContextIndependentGeometricSolEnergy::clone() const
 
 void
 ContextIndependentGeometricSolEnergy::precalculate_bb_bb_energy_for_design(
- pose::Pose const &
+	pose::Pose const &
 ) const {
 }
 
 void
 ContextIndependentGeometricSolEnergy::setup_for_packing(
-  pose::Pose  & pose,
-  utility::vector1< bool > const &,
-  utility::vector1< bool > const & designing_residues
+	pose::Pose  & pose,
+	utility::vector1< bool > const &,
+	utility::vector1< bool > const & designing_residues
 ) const
 {
-  bool might_be_designing( false );
-	for ( Size n = 1; n <= designing_residues.size(); n++ ){
+	bool might_be_designing( false );
+	for ( Size n = 1; n <= designing_residues.size(); n++ ) {
 		if ( designing_residues[n] ) {
 			might_be_designing = true;
 			break;
 		}
 	}
-  precalculated_bb_bb_energy_ = 0.0f;
+	precalculated_bb_bb_energy_ = 0.0f;
 
-  //if nothing can be designed no reason to precalculate backbone/backbone geom_solv
-  if (!might_be_designing) return;
+	//if nothing can be designed no reason to precalculate backbone/backbone geom_solv
+	if ( !might_be_designing ) return;
 	precalculated_bb_bb_energy_ = evaluator_->precalculate_bb_bb_energy_for_design( pose );
 }
 
@@ -148,10 +148,10 @@ ContextIndependentGeometricSolEnergy::setup_for_scoring( pose::Pose & pose, Scor
 ///////////////////////////////////////////////////////////////////////////////
 bool
 ContextIndependentGeometricSolEnergy::defines_score_for_residue_pair(
-												   conformation::Residue const & rsd1,
-												   conformation::Residue const & rsd2,
-												   bool res_moving_wrt_eachother
-												   ) const
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	bool res_moving_wrt_eachother
+) const
 {
 	return evaluator_->defines_score_for_residue_pair( rsd1, rsd2, res_moving_wrt_eachother);
 }
@@ -159,11 +159,11 @@ ContextIndependentGeometricSolEnergy::defines_score_for_residue_pair(
 ///////////////////////////////////////////////////////////////////////////////
 etable::count_pair::CountPairFunctionCOP
 ContextIndependentGeometricSolEnergy::get_count_pair_function(
-											Size const res1,
-											Size const res2,
-											pose::Pose const & pose,
-											ScoreFunction const &
-											) const
+	Size const res1,
+	Size const res2,
+	pose::Pose const & pose,
+	ScoreFunction const &
+) const
 {
 	return evaluator_->get_count_pair_function( res1, res2, pose );
 }
@@ -171,9 +171,9 @@ ContextIndependentGeometricSolEnergy::get_count_pair_function(
 ///////////////////////////////////////////////////////////////////////////////
 etable::count_pair::CountPairFunctionCOP
 ContextIndependentGeometricSolEnergy::get_count_pair_function(
-											conformation::Residue const & rsd1,
-											conformation::Residue const & rsd2
-											) const
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2
+) const
 {
 	return evaluator_->get_count_pair_function( rsd1, rsd2 );
 }
@@ -181,10 +181,10 @@ ContextIndependentGeometricSolEnergy::get_count_pair_function(
 ///////////////////////////////////////////////////////////////////////////////
 etable::count_pair::CountPairFunctionCOP
 ContextIndependentGeometricSolEnergy::get_intrares_countpair(
-										   conformation::Residue const & res,
-										   pose::Pose const &,
-										   ScoreFunction const &
-										   ) const
+	conformation::Residue const & res,
+	pose::Pose const &,
+	ScoreFunction const &
+) const
 {
 	return evaluator_->get_intrares_countpair( res );
 }
@@ -211,14 +211,14 @@ ContextIndependentGeometricSolEnergy::setup_for_minimizing_for_residue(
 ////////////////////////////////////////////////////////////////////////////////
 void
 ContextIndependentGeometricSolEnergy::setup_for_minimizing_for_residue_pair(
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		pose::Pose const &,
-		ScoreFunction const &,
-		kinematics::MinimizerMapBase const &,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData & pair_data
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	pose::Pose const &,
+	ScoreFunction const &,
+	kinematics::MinimizerMapBase const &,
+	ResSingleMinimizationData const &,
+	ResSingleMinimizationData const &,
+	ResPairMinimizationData & pair_data
 ) const
 {
 	evaluator_->setup_for_minimizing_for_residue_pair( rsd1, rsd2, pair_data );
@@ -266,13 +266,13 @@ ContextIndependentGeometricSolEnergy::eval_residue_pair_derivatives(
 ////////////////////////////////////////////////////////////////////////////////
 void
 ContextIndependentGeometricSolEnergy::residue_pair_energy_ext(
-											conformation::Residue const & rsd1,
-											conformation::Residue const & rsd2,
-											ResPairMinimizationData const & min_data,
-											pose::Pose const & pose,
-											ScoreFunction const &,
-											EnergyMap & emap
-											) const
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	ResPairMinimizationData const & min_data,
+	pose::Pose const & pose,
+	ScoreFunction const &,
+	EnergyMap & emap
+) const
 {
 	using_extended_method_ = true;
 	emap[ geom_sol_fast ] += evaluator_->residue_pair_energy_ext( rsd1, rsd2, min_data, pose );
@@ -291,23 +291,23 @@ ContextIndependentGeometricSolEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
-  using_extended_method_ = false;
+	using_extended_method_ = false;
 
-  //if the backbone/backbone energy has already been calculated in setup_for_packing
-  //  this is done only if we are doing fix backbone design and the backbone/backbone
-  //  energy cannot change (Joseph Yesselman 9/11/13)
+	//if the backbone/backbone energy has already been calculated in setup_for_packing
+	//  this is done only if we are doing fix backbone design and the backbone/backbone
+	//  energy cannot change (Joseph Yesselman 9/11/13)
 	// note from rhiju -- this looks dangerous
-  if ( precalculated_bb_bb_energy_ > 0.0f) {
+	if ( precalculated_bb_bb_energy_ > 0.0f ) {
 
-    emap[ geom_sol_fast ] += evaluator_->geometric_sol_one_way_sc(rsd1, rsd2, pose) +
-                             evaluator_->geometric_sol_one_way_sc(rsd2, rsd1, pose);
-  }  else {
+		emap[ geom_sol_fast ] += evaluator_->geometric_sol_one_way_sc(rsd1, rsd2, pose) +
+			evaluator_->geometric_sol_one_way_sc(rsd2, rsd1, pose);
+	}  else {
 
-    EnergyMap emap_local;
-    evaluator_->residue_pair_energy( rsd1, rsd2, pose, scorefxn, emap_local );
-    emap[ geom_sol_fast ] += emap_local[ geom_sol ];
+		EnergyMap emap_local;
+		evaluator_->residue_pair_energy( rsd1, rsd2, pose, scorefxn, emap_local );
+		emap[ geom_sol_fast ] += emap_local[ geom_sol ];
 
-  }
+	}
 
 }
 
@@ -319,9 +319,9 @@ ContextIndependentGeometricSolEnergy::minimize_in_whole_structure_context( pose:
 
 void
 ContextIndependentGeometricSolEnergy::finalize_total_energy(
-  pose::Pose &,
-  ScoreFunction const &,
-  EnergyMap & totals
+	pose::Pose &,
+	ScoreFunction const &,
+	EnergyMap & totals
 ) const
 {
 	// note from rhiju -- this looks dangerous -- check and see how it is done elsewhere.
@@ -342,7 +342,7 @@ bool
 ContextIndependentGeometricSolEnergy::defines_intrares_energy( EnergyMap const &  ) const
 {
 	//Change to this on Feb 06, 2012. Ensure that the function returns false if weights[geom_sol_intra_RNA] == 0.0
-	//	return ( weights[geom_sol_fast_intra_RNA] > 0.0 || options_.include_intra() );
+	// return ( weights[geom_sol_fast_intra_RNA] > 0.0 || options_.include_intra() );
 	return true; // always calculate.
 }
 

@@ -132,36 +132,36 @@ pack_rotamers_run(
 
 void
 symmetric_pack_rotamers(
-  pose::Pose & pose,
-  scoring::ScoreFunction const & sfxn,
-  task::PackerTaskCOP task
+	pose::Pose & pose,
+	scoring::ScoreFunction const & sfxn,
+	task::PackerTaskCOP task
 );
 
 void
 symmetric_pack_rotamers_setup(
-  pose::Pose & pose,
-  scoring::ScoreFunction const & scfxn,
-  task::PackerTaskCOP task,
-  rotamer_set::symmetry::SymmetricRotamerSetsOP rotsets,
-  interaction_graph::InteractionGraphBaseOP & ig
+	pose::Pose & pose,
+	scoring::ScoreFunction const & scfxn,
+	task::PackerTaskCOP task,
+	rotamer_set::symmetry::SymmetricRotamerSetsOP rotsets,
+	interaction_graph::InteractionGraphBaseOP & ig
 );
 
 // PyRosetta compatible version
 interaction_graph::InteractionGraphBaseOP
 symmetric_pack_rotamers_setup(
-  pose::Pose & pose,
-  scoring::ScoreFunction const & scfxn,
-  task::PackerTaskCOP task,
-  rotamer_set::symmetry::SymmetricRotamerSetsOP rotsets
+	pose::Pose & pose,
+	scoring::ScoreFunction const & scfxn,
+	task::PackerTaskCOP task,
+	rotamer_set::symmetry::SymmetricRotamerSetsOP rotsets
 );
 
 Real
 symmetric_pack_rotamers_run(
-  pose::Pose & pose,
-  task::PackerTaskCOP task,
-  rotamer_set::symmetry::SymmetricRotamerSetsCOP rotsets,
-  interaction_graph::InteractionGraphBaseOP ig,
-  utility::vector0< int > rot_to_pack = utility::vector0< int >()
+	pose::Pose & pose,
+	task::PackerTaskCOP task,
+	rotamer_set::symmetry::SymmetricRotamerSetsCOP rotsets,
+	interaction_graph::InteractionGraphBaseOP ig,
+	utility::vector0< int > rot_to_pack = utility::vector0< int >()
 );
 
 

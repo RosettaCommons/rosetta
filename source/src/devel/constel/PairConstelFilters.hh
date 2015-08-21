@@ -25,46 +25,46 @@ namespace constel {
 
 
 /// @brief Class to filter out constellations that cannot (putatively) be rescued
-///		by compounds containing indole and a carboxylic group.
+///  by compounds containing indole and a carboxylic group.
 ///
 class FilterByIndoleCOO {
 
-  public:
-  static bool sat(Pose const& ps, utility::vector1<Size> const& cnl);
+public:
+	static bool sat(Pose const& ps, utility::vector1<Size> const& cnl);
 };
 
 
 /// @brief Class to filter out constellations that cannot (putatively) be rescued
-/// 	by tryptamine.
+///  by tryptamine.
 ///
 class FilterByTryptamine {
 
-  public:
-  static bool sat(Pose const& ps, utility::vector1<Size> const& cnl);
+public:
+	static bool sat(Pose const& ps, utility::vector1<Size> const& cnl);
 };
 
 
 /// @brief Class to filter out constellations that cannot (putatively) be rescued
-/// 	by amphetamine.
+///  by amphetamine.
 ///
 class FilterByAmphetamine {
 
-  public:
-  static bool sat(Pose const& ps, utility::vector1<Size> const& cnl);
+public:
+	static bool sat(Pose const& ps, utility::vector1<Size> const& cnl);
 };
 
 
 /// @brief Class to filter out constellations that cannot (putatively) be rescued
-/// 	by histamine.
+///  by histamine.
 ///
 class FilterByHistamine {
 
-  public:
-  static bool sat(Pose const& ps, utility::vector1<Size> const& cnl);
+public:
+	static bool sat(Pose const& ps, utility::vector1<Size> const& cnl);
 };
 
 
 } // constel
-} // devel 
+} // devel
 
 #endif

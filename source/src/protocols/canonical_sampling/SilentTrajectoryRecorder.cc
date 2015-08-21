@@ -55,10 +55,10 @@ static thread_local basic::Tracer tr( "protocols.canonical_sampling.SilentTrajec
 bool protocols::canonical_sampling::SilentTrajectoryRecorder::options_registered_( false );
 
 void protocols::canonical_sampling::SilentTrajectoryRecorder::register_options() {
-  using namespace basic::options;
-  using namespace OptionKeys;
-  if ( options_registered_ ) return;
-  options_registered_ = true;
+	using namespace basic::options;
+	using namespace OptionKeys;
+	if ( options_registered_ ) return;
+	options_registered_ = true;
 	Parent::register_options();
 	NEW_OPT( trajectory::score_stride, "write x-times score-only before a decoy is written", 1 );
 }
@@ -85,7 +85,7 @@ SilentTrajectoryRecorderCreator::mover_name() {
 
 SilentTrajectoryRecorder::SilentTrajectoryRecorder() {
 	using namespace basic::options;
-  using namespace OptionKeys;
+	using namespace OptionKeys;
 	if ( options_registered_ ) {
 		score_stride_ = option[ OptionKeys::trajectory::score_stride ]();
 	}
@@ -152,11 +152,11 @@ SilentTrajectoryRecorder::write_model(
 
 bool
 SilentTrajectoryRecorder::restart_simulation(
-			 core::pose::Pose & pose,
-			 protocols::canonical_sampling::MetropolisHastingsMover& metropolis_hastings_mover,
-			 core::Size& cycle,
-			 core::Size& temp_level,
-			 core::Real& temperature
+	core::pose::Pose & pose,
+	protocols::canonical_sampling::MetropolisHastingsMover& metropolis_hastings_mover,
+	core::Size& cycle,
+	core::Size& temp_level,
+	core::Real& temperature
 ) {
 	core::scoring::constraints::ConstraintCOPs csts = pose.constraint_set()->get_all_constraints(); // copy cst info before restart
 
@@ -189,13 +189,13 @@ SilentTrajectoryRecorder::restart_simulation(
 		std::string decoy_tag=matched_tags_in_file.front();
 		tr.Info << "decoy_tag matched: " << decoy_tag << std::endl;
 		Size ind=decoy_tag.find_last_of( '_' );
-		//		cycle = utility::string2int(decoy_tag.substr( ind+1 ) )*stride();
+		//  cycle = utility::string2int(decoy_tag.substr( ind+1 ) )*stride();
 		cycle = utility::string2int( decoy_tag.substr( ind+1 )); // the actual trial_number is stored in the decoy tag of the checkpoint file
 		tr.Info << "cycle number got from the decoy_tag: " << cycle << std::endl;
 		if ( sfd.begin()->has_energy( "temp_level" ) ) {
 			temp_level = (Size) sfd.begin()->get_energy( "temp_level" );
 		}
-		if ( sfd.begin()->has_energy( "temperature" )) {
+		if ( sfd.begin()->has_energy( "temperature" ) ) {
 			temperature = sfd.begin()->get_energy( "temperature" );
 		}
 		tr.Info << "temp_level: " << temp_level << std::endl;
@@ -206,7 +206,7 @@ SilentTrajectoryRecorder::restart_simulation(
 
 void
 SilentTrajectoryRecorder::initialize_simulation(
-  core::pose::Pose & pose,
+	core::pose::Pose & pose,
 	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 	core::Size cycle //default=0; non-zero if trajectory is restarted
 ) {
@@ -222,7 +222,7 @@ SilentTrajectoryRecorder::observe_after_metropolis(
 { ///this is only for tracer output !
 	protocols::moves::MonteCarlo const& mc( *(metropolis_hastings_mover.monte_carlo()) );
 	Pose const& pose( mc.last_accepted_pose() );
-	if (step_count() % std::max(stride(),(core::Size)500) == 0) {
+	if ( step_count() % std::max(stride(),(core::Size)500) == 0 ) {
 		jd2::JobOP job( jd2::get_current_job() ) ;
 		tr.Info << step_count() << " E=" << pose.energies().total_energy();
 		//output what is in job-object (e.g. temperature )

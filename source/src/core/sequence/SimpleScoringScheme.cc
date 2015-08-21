@@ -31,28 +31,28 @@
 namespace core {
 namespace sequence {
 
-	void SimpleScoringScheme::read_from_file( utility::file::FileName const & /*fn*/ ) {
-		utility_exit_with_message( "SimpleScoringScheme::read_from_file method stubbed out!");
-	}
+void SimpleScoringScheme::read_from_file( utility::file::FileName const & /*fn*/ ) {
+	utility_exit_with_message( "SimpleScoringScheme::read_from_file method stubbed out!");
+}
 
-	Real SimpleScoringScheme::match_score() const {
-		return match_score_;
-	}
+Real SimpleScoringScheme::match_score() const {
+	return match_score_;
+}
 
-	Real SimpleScoringScheme::mismatch_score() const {
-		return mismatch_score_;
-	}
+Real SimpleScoringScheme::mismatch_score() const {
+	return mismatch_score_;
+}
 
-	Real SimpleScoringScheme::score(
-		SequenceOP seq1, SequenceOP seq2,
-		core::Size pos1, core::Size pos2
-	) {
-		runtime_assert( pos1 <= seq1->length() );
-		runtime_assert( pos2 <= seq2->length() );
+Real SimpleScoringScheme::score(
+	SequenceOP seq1, SequenceOP seq2,
+	core::Size pos1, core::Size pos2
+) {
+	runtime_assert( pos1 <= seq1->length() );
+	runtime_assert( pos2 <= seq2->length() );
 
-		if ( (*seq1)[pos1] == (*seq2)[pos2] ) return match_score_;
-		else                                  return mismatch_score_;
-	}
+	if ( (*seq1)[pos1] == (*seq2)[pos2] ) return match_score_;
+	else                                  return mismatch_score_;
+}
 
 } // sequence
 } // core

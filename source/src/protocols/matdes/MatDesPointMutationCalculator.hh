@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/matdes/MatDesPointMutationCalculator.hh
-/// @brief	this is a modified version of chris king's PointMutationCalculator with additional functionality that is currently not compatible with all of the ParetoOpt functionality. please note that this has been checked into master in its current state in response to requests from others to use this modified version of chris king's GreedyOptMutationMover. although this is still a somewhat developmental piece of code, it has currently been left in src/protocols/matdes/ to avoid issues with intra-library level dependencies.  
+/// @brief this is a modified version of chris king's PointMutationCalculator with additional functionality that is currently not compatible with all of the ParetoOpt functionality. please note that this has been checked into master in its current state in response to requests from others to use this modified version of chris king's GreedyOptMutationMover. although this is still a somewhat developmental piece of code, it has currently been left in src/protocols/matdes/ to avoid issues with intra-library level dependencies.
 /// @author jacob bale (balej@uw.edu)
 
 #ifndef INCLUDED_protocols_matdes_MatDesPointMutationCalculator_hh
@@ -38,7 +38,7 @@
 
 
 namespace protocols {
-namespace matdes{
+namespace matdes {
 
 class MatDesPointMutationCalculator : public utility::pointer::ReferenceCount
 {
@@ -99,9 +99,9 @@ public:
 	);
 
 	void calc_point_mut_filters( Pose const & start_pose,
-			utility::vector1< std::pair< core::Size, utility::vector1< std::pair< core::chemical::AA, utility::vector1< core::Real > > > > > & seqpos_aa_vals_vec );
+		utility::vector1< std::pair< core::Size, utility::vector1< std::pair< core::chemical::AA, utility::vector1< core::Real > > > > > & seqpos_aa_vals_vec );
 	void calc_point_mut_filters( Pose const & start_pose,
-			utility::vector1< std::pair< core::Size, utility::vector1< std::pair< core::chemical::AA, core::Real > > > > & seqpos_aa_val_vec );
+		utility::vector1< std::pair< core::Size, utility::vector1< std::pair< core::chemical::AA, core::Real > > > > & seqpos_aa_val_vec );
 	protocols::matdes::MatDesPointMutationCalculatorOP clone() const;
 
 	core::pack::task::TaskFactoryOP task_factory() const;
@@ -132,9 +132,9 @@ public:
 	void stored_task_names( utility::vector1< std::string > stored_task_names );
 	utility::vector1< std::string > stored_task_names() const;
 	void new_tasks( utility::vector1< core::pack::task::PackerTaskOP > new_tasks);
-	utility::vector1< core::pack::task::PackerTaskOP > new_tasks() const;	
- 	core::pose::PoseOP reference_pose() const;
-  void reference_pose( core::pose::PoseOP const reference_pose );
+	utility::vector1< core::pack::task::PackerTaskOP > new_tasks() const;
+	core::pose::PoseOP reference_pose() const;
+	void reference_pose( core::pose::PoseOP const reference_pose );
 	//void set_stored_and_previous_tasks( core::pose::Pose & pose );
 
 private:

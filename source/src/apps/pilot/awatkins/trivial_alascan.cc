@@ -104,17 +104,17 @@ static basic::Tracer TR("TrivialAlascanMover");
 
 class TrivialAlascanMover : public Mover {
 
-	public:
+public:
 
-		//default ctor
-		TrivialAlascanMover(): Mover("TrivialAlascanMover"){}
+	//default ctor
+	TrivialAlascanMover(): Mover("TrivialAlascanMover"){}
 
-		//default dtor
-		virtual ~TrivialAlascanMover(){}
+	//default dtor
+	virtual ~TrivialAlascanMover(){}
 
-		//methods
-		virtual void apply( core::pose::Pose & pose );
-		virtual std::string get_name() const { return "TrivialAlascanMover"; }
+	//methods
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const { return "TrivialAlascanMover"; }
 
 };
 
@@ -127,18 +127,18 @@ main( int argc, char* argv[] )
 {
 	try {
 
-	//utility::vector1< core::Size > empty_vector(0);
+		//utility::vector1< core::Size > empty_vector(0);
 
-	// init command line options
-	devel::init(argc, argv);
+		// init command line options
+		devel::init(argc, argv);
 
-	//create mover instance
-	TrivialAlascanMoverOP TAM_mover( new TrivialAlascanMover() );
+		//create mover instance
+		TrivialAlascanMoverOP TAM_mover( new TrivialAlascanMover() );
 
-	protocols::ncbb::setup_filter_stats();
+		protocols::ncbb::setup_filter_stats();
 
-	//call job distributor
-	protocols::jd2::JobDistributor::get_instance()->go( TAM_mover );
+		//call job distributor
+		protocols::jd2::JobDistributor::get_instance()->go( TAM_mover );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
@@ -157,9 +157,8 @@ mutate_residue_to_ala( Pose & pose, Size i ) {
 
 	// Run through all possible new residue types.
 	for ( chemical::ResidueTypeCOPs::const_iterator
-		 type_iter = possible_types.begin(), type_end = possible_types.end();
-		 type_iter != type_end; ++type_iter )
-	{
+			type_iter = possible_types.begin(), type_end = possible_types.end();
+			type_iter != type_end; ++type_iter ) {
 		bool perfect_match( true ); // indicates this type has all the same variant types as the old residue
 
 		//TR << "contemplating " << (*type_iter)->name() << std::endl;

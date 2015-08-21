@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/scoring/membrane/MPNonHelixPenalty.fwd.hh
+/// @file  core/scoring/membrane/MPNonHelixPenalty.fwd.hh
 ///
-///	@brief		Membrane Protein Non helix in Mmebrane Penalty
-///	@details	Whole structure energy - penalty for helices not in the membrane?
-///				and uses mpframework data
-///				Last Modified: 3/31/14
+/// @brief  Membrane Protein Non helix in Mmebrane Penalty
+/// @details Whole structure energy - penalty for helices not in the membrane?
+///    and uses mpframework data
+///    Last Modified: 3/31/14
 ///
-///	@author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_scoring_membrane_MPNonHelixPenalty_fwd_hh
 #define INCLUDED_core_scoring_membrane_MPNonHelixPenalty_fwd_hh
@@ -25,7 +25,7 @@
 namespace core {
 namespace scoring {
 namespace membrane {
-	
+
 class MPNonHelixPenalty;
 typedef utility::pointer::shared_ptr< MPNonHelixPenalty > MPNonHelixPenaltyOP;
 typedef utility::pointer::shared_ptr< MPNonHelixPenalty const > MPNonHelixPenaltyCOP;

@@ -24,7 +24,7 @@
 #include <basic/MetricValue.fwd.hh>
 
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 

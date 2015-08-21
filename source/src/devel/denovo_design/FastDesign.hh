@@ -82,25 +82,25 @@ public:
 	/// @brief default constructor
 	FastDesign();
 
-  /// @brief virtual constructor to allow derivation
+	/// @brief virtual constructor to allow derivation
 	virtual ~FastDesign();
 
-  /// @brief Parses the FastDesignTags
+	/// @brief Parses the FastDesignTags
 	void parse_my_tag(
-	  utility::tag::TagCOP tag,
-	  basic::datacache::DataMap & data,
-	  protocols::filters::Filters_map const &,
-	  protocols::moves::Movers_map const &,
-	  core::pose::Pose const &
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
 	);
 
-  /// @brief Return the name of this mover.
-  virtual std::string get_name() const;
+	/// @brief Return the name of this mover.
+	virtual std::string get_name() const;
 
-  /// @brief return a fresh instance of this class in an owning pointer
+	/// @brief return a fresh instance of this class in an owning pointer
 	virtual protocols::moves::MoverOP clone() const;
 
-  /// @brief Apply the FastDesign. Overloaded apply function from mover base class.
+	/// @brief Apply the FastDesign. Overloaded apply function from mover base class.
 	virtual void apply( core::pose::Pose & pose );
 
 	/// @brief initializes cache of allowed amino acids
@@ -111,12 +111,12 @@ protected:
 	/// @brief sets constraint weights -- used with constraint ramping
 	virtual void
 	set_constraint_weight(
-			core::scoring::ScoreFunctionOP local_scorefxn,
-			core::scoring::EnergyMap const & full_weights,
-			core::Real const weight,
-			core::pose::Pose & pose ) const;
+		core::scoring::ScoreFunctionOP local_scorefxn,
+		core::scoring::EnergyMap const & full_weights,
+		core::Real const weight,
+		core::pose::Pose & pose ) const;
 
-/// @brief outputs a pdb file with sequential numbering, with the specified prefix
+	/// @brief outputs a pdb file with sequential numbering, with the specified prefix
 	void dump_pdb( core::pose::Pose const & pose, std::string const & prefix = "dump" );
 
 private:
@@ -141,7 +141,7 @@ private:   // options
 	/// @brief Allow design as well as repacking? default=false
 	bool allow_design_;
 
-		/// @brief Should we design only the worst-scoring 8A shell around a residue? default=false
+	/// @brief Should we design only the worst-scoring 8A shell around a residue? default=false
 	bool design_worst_;
 
 	/// @brief Should we design only the shell around the worst psipred residue? default=false

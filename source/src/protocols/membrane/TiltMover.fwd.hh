@@ -9,11 +9,11 @@
 
 /// @file       protocols/membrane/TiltMover.fwd.hh
 /// @brief      Tilts a protein in the membrane (Rosetta Scripts Hook)
-/// @details	Tilts a span, protein or part of a pose in the membrane,
-///				depending on the jump number. The tilt axis is the axis
-///				perpendicular to the axis connecting the embedding centers of the
-///				two partners;
-///				BEWARE: CANNOT USE MEMBRANE JUMP AS JUMP NUMBER!!!
+/// @details Tilts a span, protein or part of a pose in the membrane,
+///    depending on the jump number. The tilt axis is the axis
+///    perpendicular to the axis connecting the embedding centers of the
+///    two partners;
+///    BEWARE: CANNOT USE MEMBRANE JUMP AS JUMP NUMBER!!!
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_TiltMover_fwd_hh

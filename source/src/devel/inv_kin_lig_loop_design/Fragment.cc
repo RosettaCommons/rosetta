@@ -23,7 +23,7 @@
 #include <devel/inv_kin_lig_loop_design/std_extra.hh>
 
 #ifdef WIN32
-	#define _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
 #endif
 #include <cmath>
 
@@ -31,386 +31,386 @@
 #include <basic/database/open.hh>
 
 namespace {
-  using namespace std;
+using namespace std;
 
-  void open(ifstream& fin, const string& filename ) { // need to gzip stuff before I can use it...
-    fin . close();
-    fin.clear();
-    fin.open( filename.c_str() );
-    assert( fin );
-  }
+void open(ifstream& fin, const string& filename ) { // need to gzip stuff before I can use it...
+	fin . close();
+	fin.clear();
+	fin.open( filename.c_str() );
+	assert( fin );
+}
 
 }
 
 namespace devel {
 
-  namespace inv_kin_lig_loop_design {
+namespace inv_kin_lig_loop_design {
 
-    namespace Fragment {
+namespace Fragment {
 
 #define RAD2DEG (180.0/M_PI)
 #define DEG2RAD (M_PI/180.0)
 
-      // ____________________ ResEntry ____________________
-
-			//       void ResEntry::reportRama(ostream& out) const {
-			//	//	const double phi = RAD2DEG*this->phi;
-			//	//	const double psi = RAD2DEG*this->psi;
-			//	//	const double ohm = RAD2DEG*this->ohm;
-			//	//out << REPORT5(aa,ss,phi,psi,ohm) << "\n";
-			//       } // ResEntry::reportRama
-
-      istream& operator>>(istream& in, ResEntry& e) {
-				in >> e.pdbid >> e.aa >> e.ss >> e.phi >> e.psi >> e.ohm;
-				in.ignore(INT_MAX,'\n');
-				e.phi *= DEG2RAD;
-				e.psi *= DEG2RAD;
-				e.ohm *= DEG2RAD;
-				return in;
-      } // operator>>
-
-      ostream& operator<<(ostream& out, const ResEntry& e) {
-				out << e.pdbid << " " << e.aa << " " << e.ss << " " << RAD2DEG*e.phi << " " << RAD2DEG*e.psi << " " << RAD2DEG*e.ohm << "\n";
-				return out;
-      } // operator<<
-
-      // ____________________ Entry ____________________
-
-      istream& operator>>(istream& in, Entry& e) {
-				e.vResEntries.clear();
-				int n;
-				in >> n;
-				in.ignore(INT_MAX,'\n');
-				for( int i = 0; i < n; ++i ) {
-					ResEntry r;
-					in >> r;
-					e.vResEntries.push_back(r);
-				}
-				return in;
-      } // operator>>
-
-      ostream& operator<<(ostream& out, const Entry& e) {
-				int n = e.vResEntries.size();
-				out << n << "\n";
-				for( int i = 0; i < n; ++i ) {
-					out << e.vResEntries[i];
-				} // i
-				return out;
-      } // operator<<
+// ____________________ ResEntry ____________________
+
+//       void ResEntry::reportRama(ostream& out) const {
+// // const double phi = RAD2DEG*this->phi;
+// // const double psi = RAD2DEG*this->psi;
+// // const double ohm = RAD2DEG*this->ohm;
+// //out << REPORT5(aa,ss,phi,psi,ohm) << "\n";
+//       } // ResEntry::reportRama
+
+istream& operator>>(istream& in, ResEntry& e) {
+	in >> e.pdbid >> e.aa >> e.ss >> e.phi >> e.psi >> e.ohm;
+	in.ignore(INT_MAX,'\n');
+	e.phi *= DEG2RAD;
+	e.psi *= DEG2RAD;
+	e.ohm *= DEG2RAD;
+	return in;
+} // operator>>
+
+ostream& operator<<(ostream& out, const ResEntry& e) {
+	out << e.pdbid << " " << e.aa << " " << e.ss << " " << RAD2DEG*e.phi << " " << RAD2DEG*e.psi << " " << RAD2DEG*e.ohm << "\n";
+	return out;
+} // operator<<
+
+// ____________________ Entry ____________________
+
+istream& operator>>(istream& in, Entry& e) {
+	e.vResEntries.clear();
+	int n;
+	in >> n;
+	in.ignore(INT_MAX,'\n');
+	for ( int i = 0; i < n; ++i ) {
+		ResEntry r;
+		in >> r;
+		e.vResEntries.push_back(r);
+	}
+	return in;
+} // operator>>
+
+ostream& operator<<(ostream& out, const Entry& e) {
+	int n = e.vResEntries.size();
+	out << n << "\n";
+	for ( int i = 0; i < n; ++i ) {
+		out << e.vResEntries[i];
+	} // i
+	return out;
+} // operator<<
 
-      // ____________________ File ____________________
+// ____________________ File ____________________
 
-      File::File() {
-      } // File::File
+File::File() {
+} // File::File
 
-      File::File(const string& filename) {
-				ifstream fin;
-				open(fin, basic::database::full_name(filename) );
-				//basic::database::open(fin,filename);
-				fin >> *this;
-      } // File::File
+File::File(const string& filename) {
+	ifstream fin;
+	open(fin, basic::database::full_name(filename) );
+	//basic::database::open(fin,filename);
+	fin >> *this;
+} // File::File
 
-      istream& operator>>(istream& in, File& f) {
-				f.clear();
-				while( in.peek() != EOF ) {
-					Entry e;
-					in >> e;
-					f.addEntry(e);
+istream& operator>>(istream& in, File& f) {
+	f.clear();
+	while ( in.peek() != EOF ) {
+		Entry e;
+		in >> e;
+		f.addEntry(e);
 
-				}
-				return in;
-      } // operator>>
+	}
+	return in;
+} // operator>>
 
-      ostream& operator<<(ostream& out, const File& f) {
-				for( map<int,vector<Entry> >::const_iterator j = f.getEntries().begin(); j != f.getEntries().end(); ++j ) {
-					const vector<Entry>& vEntries = j->second;
-					for( size_t i = 0; i < vEntries.size(); ++i ) {
-						out << vEntries[i];
-					} // i
-				} // j
-				return out;
-      } // operator<<
+ostream& operator<<(ostream& out, const File& f) {
+	for ( map<int,vector<Entry> >::const_iterator j = f.getEntries().begin(); j != f.getEntries().end(); ++j ) {
+		const vector<Entry>& vEntries = j->second;
+		for ( size_t i = 0; i < vEntries.size(); ++i ) {
+			out << vEntries[i];
+		} // i
+	} // j
+	return out;
+} // operator<<
 
-      void File::clear() {
-				mEntries.clear();
-      } // File::clear
+void File::clear() {
+	mEntries.clear();
+} // File::clear
 
-      void File::addEntry(const Entry& e) {
-				mEntries[e.vResEntries.size()].push_back(e);
-      } // File::addEntry
+void File::addEntry(const Entry& e) {
+	mEntries[e.vResEntries.size()].push_back(e);
+} // File::addEntry
 
-      const Entry& File::getEntry(const int len) const {
+const Entry& File::getEntry(const int len) const {
 
-				map<int,vector<Entry> >::const_iterator i = mEntries.find(len);
+	map<int,vector<Entry> >::const_iterator i = mEntries.find(len);
 
-				if( i == mEntries.end() ) {
-					assert( false );
-				}
+	if ( i == mEntries.end() ) {
+		assert( false );
+	}
 
-				const vector<Entry>& vEntries = i->second;
-				return vEntries[ numeric::random::random_range(0,vEntries.size()-1) ];
+	const vector<Entry>& vEntries = i->second;
+	return vEntries[ numeric::random::random_range(0,vEntries.size()-1) ];
 
-      } // File::getEntry
+} // File::getEntry
 
-			//       void File::filter(const double max_rama, const int frag_len) {
+//       void File::filter(const double max_rama, const int frag_len) {
 
-			//	static double dEdphi,dEdpsi;
+// static double dEdphi,dEdpsi;
 
-			//	vector<Entry>& vEntries = mEntries[frag_len];
+// vector<Entry>& vEntries = mEntries[frag_len];
 
-			//	vector<Entry> vFiltered;
+// vector<Entry> vFiltered;
 
-			//	const Erg::RamaInfo::Reader* reader = Librarian::getErgRamaInfoReader();
+// const Erg::RamaInfo::Reader* reader = Librarian::getErgRamaInfoReader();
 
-			//	FORVC(i,Entry,vEntries) {
+// FORVC(i,Entry,vEntries) {
 
-			//	  const Entry& e = *i;
+//   const Entry& e = *i;
 
-			//	  bool good = true;
+//   bool good = true;
 
-			//	  FORVC(j,ResEntry,e.vResEntries) {
-			//	    const ResEntry& e = *j;
+//   FORVC(j,ResEntry,e.vResEntries) {
+//     const ResEntry& e = *j;
 
-			//	    double E_rama = reader->getEnergy(ResType::ALA.getAa(),Erg::RamaInfo::Reader::SS_L,e.phi,e.psi,dEdphi,dEdpsi);
-			//	    //cout << REPORT3(RAD2DEG*e.phi,RAD2DEG*e.psi,E_rama) << endl;
+//     double E_rama = reader->getEnergy(ResType::ALA.getAa(),Erg::RamaInfo::Reader::SS_L,e.phi,e.psi,dEdphi,dEdpsi);
+//     //cout << REPORT3(RAD2DEG*e.phi,RAD2DEG*e.psi,E_rama) << endl;
 
-			//	    if( E_rama > max_rama ) {
-			//	      good = false;
-			//	    }
+//     if( E_rama > max_rama ) {
+//       good = false;
+//     }
 
-			//	  } // j
+//   } // j
 
-			//	  if( good ) {
-			//	    vFiltered.push_back(e);
-			//	  }
+//   if( good ) {
+//     vFiltered.push_back(e);
+//   }
 
-			//	} // i
+// } // i
 
-			//	cout << REPORT2(vEntries.size(),vFiltered.size()) << endl;
-			//	vEntries = vFiltered;
+// cout << REPORT2(vEntries.size(),vFiltered.size()) << endl;
+// vEntries = vFiltered;
 
-			//       } // File::filter
+//       } // File::filter
 
-			//       void File::report(ostream& out) const {
-			// //	FORMC(i,int,vector<Entry>,mEntries) {
-			// //	  out << "Fragment::File: " << i->first << ": " << i->second.size() << "\n";
-			// //	} // i
-			//       } // File::report
+//       void File::report(ostream& out) const {
+// // FORMC(i,int,vector<Entry>,mEntries) {
+// //   out << "Fragment::File: " << i->first << ": " << i->second.size() << "\n";
+// // } // i
+//       } // File::report
 
-			//       void File::reportRama(ostream& out) const {
+//       void File::reportRama(ostream& out) const {
 
-			// //	FORMC(i,int,vector<Entry>,mEntries) {
-			// //	  const vector<Entry>& vEntries = i->second;
+// // FORMC(i,int,vector<Entry>,mEntries) {
+// //   const vector<Entry>& vEntries = i->second;
 
-			// //	  FORVC(j,Entry,vEntries) {
-			// //	    const Entry& e = *j;
-			// //	    FORVC(k,ResEntry,e.vResEntries) {
+// //   FORVC(j,Entry,vEntries) {
+// //     const Entry& e = *j;
+// //     FORVC(k,ResEntry,e.vResEntries) {
 
-			// //	      (*k).reportRama(out);
+// //       (*k).reportRama(out);
 
-			// //	    } // k
+// //     } // k
 
-			// //	  } // j
+// //   } // j
 
-			// //	} // i
+// // } // i
 
-			//       } // File::reportRama
+//       } // File::reportRama
 
-			//       void File::reportRama(const string& outfile) const {
-			// //	ofstream fout;
-			// //	open(fout,outfile);
-			// //	reportRama(fout);
-			// //	fout.close();
-			//       } // File::reportRama
+//       void File::reportRama(const string& outfile) const {
+// // ofstream fout;
+// // open(fout,outfile);
+// // reportRama(fout);
+// // fout.close();
+//       } // File::reportRama
 
 
-      const File File::getFile(const int frag_len) const {
+const File File::getFile(const int frag_len) const {
 
-				File rval;
-				rval.mEntries[frag_len] = find_or_throw(mEntries,frag_len);
-				return rval;
+	File rval;
+	rval.mEntries[frag_len] = find_or_throw(mEntries,frag_len);
+	return rval;
 
-      } // File::getFile
+} // File::getFile
 
-      void File::convertEntries(const int from, const int to) {
+void File::convertEntries(const int from, const int to) {
 
-				assert( to < from );
+	assert( to < from );
 
-				map<int,vector<Entry> >::iterator i = mEntries.find(from);
+	map<int,vector<Entry> >::iterator i = mEntries.find(from);
 
-				if( i == mEntries.end() ) {
-					return;
-				}
+	if ( i == mEntries.end() ) {
+		return;
+	}
 
-				const vector<Entry>& vEntries_from = i->second;
-				vector<Entry>& vEntries_to = mEntries[to];
+	const vector<Entry>& vEntries_from = i->second;
+	vector<Entry>& vEntries_to = mEntries[to];
 
-				// don't need to clear vEntries_to
+	// don't need to clear vEntries_to
 
-				//FORVC(k,Entry,vEntries_from) {
-				for( vector<Entry>::const_iterator k = vEntries_from.begin(); k != vEntries_from.end(); ++k ) {
+	//FORVC(k,Entry,vEntries_from) {
+	for ( vector<Entry>::const_iterator k = vEntries_from.begin(); k != vEntries_from.end(); ++k ) {
 
-					const Entry& entry_from = *k;
+		const Entry& entry_from = *k;
 
-					assert( static_cast<int>(entry_from.vResEntries.size()) == from );
+		assert( static_cast<int>(entry_from.vResEntries.size()) == from );
 
-					for( int i = 0; i < (from - to); i += to ) {
-						Entry entry_to;
-						for( int j = 0; j < to; ++j ) {
-							assert( i+j < static_cast<int>(entry_from.vResEntries.size()) );
-							entry_to.vResEntries.push_back( entry_from.vResEntries[i+j] );
-						} // j
-						assert( static_cast<int>(entry_to.vResEntries.size()) == to );
-						vEntries_to.push_back(entry_to);
-					} // i
+		for ( int i = 0; i < (from - to); i += to ) {
+			Entry entry_to;
+			for ( int j = 0; j < to; ++j ) {
+				assert( i+j < static_cast<int>(entry_from.vResEntries.size()) );
+				entry_to.vResEntries.push_back( entry_from.vResEntries[i+j] );
+			} // j
+			assert( static_cast<int>(entry_to.vResEntries.size()) == to );
+			vEntries_to.push_back(entry_to);
+		} // i
 
-				} // k
+	} // k
 
-      } // File::addFragLen
+} // File::addFragLen
 
 
-    }
+}
 
-    // ===========================================================
-    // ==================== get fragment file ====================
-    // ===========================================================
+// ===========================================================
+// ==================== get fragment file ====================
+// ===========================================================
 
-    const Fragment::File* Librarian::getFragmentFile_loop() {
-      if( frag_file_loop == 0 ) {
-				frag_file_loop = new Fragment::File(get("LLL"));
-				frag_file_loop->convertEntries(3,1);
-      }
-      return frag_file_loop;
-    } // Librarian::getFragmentFile_loop
+const Fragment::File* Librarian::getFragmentFile_loop() {
+	if ( frag_file_loop == 0 ) {
+		frag_file_loop = new Fragment::File(get("LLL"));
+		frag_file_loop->convertEntries(3,1);
+	}
+	return frag_file_loop;
+} // Librarian::getFragmentFile_loop
 
-    const Fragment::File* Librarian::getFragmentFile_sheet() {
-      if( frag_file_sheet == 0 ) {
-				frag_file_sheet = new Fragment::File(get("EEE"));
-				frag_file_sheet->convertEntries(3,1);
-      }
-      return frag_file_sheet;
-    } // Librarian::getFragmentFile_sheet
+const Fragment::File* Librarian::getFragmentFile_sheet() {
+	if ( frag_file_sheet == 0 ) {
+		frag_file_sheet = new Fragment::File(get("EEE"));
+		frag_file_sheet->convertEntries(3,1);
+	}
+	return frag_file_sheet;
+} // Librarian::getFragmentFile_sheet
 
-    const Fragment::File* Librarian::getFragmentFile_helix() {
-      if( frag_file_helix == 0 ) {
-				frag_file_helix = new Fragment::File(get("HHH"));
-				frag_file_helix->convertEntries(3,1);
-      }
-      return frag_file_helix;
-    } // Librarian::getFragmentFile_helix
+const Fragment::File* Librarian::getFragmentFile_helix() {
+	if ( frag_file_helix == 0 ) {
+		frag_file_helix = new Fragment::File(get("HHH"));
+		frag_file_helix->convertEntries(3,1);
+	}
+	return frag_file_helix;
+} // Librarian::getFragmentFile_helix
 
-    const Fragment::File* Librarian::getFragmentFile(const char ss) {
-      switch( ss ) {
-      case 'H':
-				return getFragmentFile_helix();
-      case 'E':
-				return getFragmentFile_sheet();
-      case 'L':
-      default:
-				return getFragmentFile_loop();
+const Fragment::File* Librarian::getFragmentFile(const char ss) {
+	switch( ss ) {
+	case 'H' :
+		return getFragmentFile_helix();
+	case 'E' :
+		return getFragmentFile_sheet();
+	case 'L':
+	default :
+		return getFragmentFile_loop();
 
-      } // switch
-    } // Librarian::getFragmentFile
+	} // switch
+} // Librarian::getFragmentFile
 
-    map<string,Fragment::File*> Librarian::mFragfiles_ss;
+map<string,Fragment::File*> Librarian::mFragfiles_ss;
 
-    Fragment::File* Librarian::frag_file_loop;
-    Fragment::File* Librarian::frag_file_sheet;
-    Fragment::File* Librarian::frag_file_helix;
+Fragment::File* Librarian::frag_file_loop;
+Fragment::File* Librarian::frag_file_sheet;
+Fragment::File* Librarian::frag_file_helix;
 
-    string Librarian::get( const string& s) {
-      //assert( false );
+string Librarian::get( const string& s) {
+	//assert( false );
 
-      return "sampling/ss_fragfiles/" + s + ".fragfile";
+	return "sampling/ss_fragfiles/" + s + ".fragfile";
 
-    }
+}
 
-    namespace {
+namespace {
 
-      const vector<string> get_acceptable_ss(const string& ss0) {
-				vector<string> rval;
-				rval.push_back(ss0);
+const vector<string> get_acceptable_ss(const string& ss0) {
+	vector<string> rval;
+	rval.push_back(ss0);
 
-				for( size_t i = 0; i < ss0.size(); ++i ) {
-					if( ss0[i] != 'L' ) {
-						string ss = ss0;
-						ss[i] = 'L';
-						rval.push_back(ss);
-					}
-				} // i
+	for ( size_t i = 0; i < ss0.size(); ++i ) {
+		if ( ss0[i] != 'L' ) {
+			string ss = ss0;
+			ss[i] = 'L';
+			rval.push_back(ss);
+		}
+	} // i
 
-				return rval;
-      } // get_acceptable_ss
+	return rval;
+} // get_acceptable_ss
 
 
-    } // namespace
+} // namespace
 
-    const Fragment::File* Librarian::getFragmentFile(const string& ss0) {
+const Fragment::File* Librarian::getFragmentFile(const string& ss0) {
 
-			map<string,Fragment::File*>::iterator iter = mFragfiles_ss.find(ss0);
+	map<string,Fragment::File*>::iterator iter = mFragfiles_ss.find(ss0);
 
-			if( iter == mFragfiles_ss.end() ) {
-				// try to read the fragment file from disc
+	if ( iter == mFragfiles_ss.end() ) {
+		// try to read the fragment file from disc
 
-				const vector<string> acceptable_ss = get_acceptable_ss(ss0); // XXX not correct to have to read in each one each time
+		const vector<string> acceptable_ss = get_acceptable_ss(ss0); // XXX not correct to have to read in each one each time
 
-				//       const string& dir    = get("fragment_file_dir");
-				//       const string& suffix = get("fragment_file_suffix");
+		//       const string& dir    = get("fragment_file_dir");
+		//       const string& suffix = get("fragment_file_suffix");
 
-				bool found = false;
+		bool found = false;
 
-				Fragment::File* fragfile = 0;
+		Fragment::File* fragfile = 0;
 
-				for( vector<string>::const_iterator i = acceptable_ss.begin(); i != acceptable_ss.end() && !found ; ++i ) {
+		for ( vector<string>::const_iterator i = acceptable_ss.begin(); i != acceptable_ss.end() && !found ; ++i ) {
 
-					const string& ss = i->substr(0,3);
+			const string& ss = i->substr(0,3);
 
-					// build the filename
-					string filename = get(ss);
-					//	filename.append(dir);
-					//	if( filename[filename.size()-1] != '/' ) {
-					//	  filename.append("/");
-					//	}
-					//	filename.append(ss);
-					//	if( suffix[0] != '.' ) {
-					//	  filename.append(".");
-					//	}
-					//	filename.append(suffix);
+			// build the filename
+			string filename = get(ss);
+			// filename.append(dir);
+			// if( filename[filename.size()-1] != '/' ) {
+			//   filename.append("/");
+			// }
+			// filename.append(ss);
+			// if( suffix[0] != '.' ) {
+			//   filename.append(".");
+			// }
+			// filename.append(suffix);
 
-					// test to see whether said file exists
-					//	ifstream fin;
-					//	fin.open(filename.c_str());
+			// test to see whether said file exists
+			// ifstream fin;
+			// fin.open(filename.c_str());
 
-					ifstream fin;
+			ifstream fin;
 
-					//basic::database::open(fin,filename);
+			//basic::database::open(fin,filename);
 
-					open(fin,basic::database::full_name(filename));
+			open(fin,basic::database::full_name(filename));
 
-					cout << "Fragment::getFragmentFile - trying to open '" << filename << "'" << endl;
+			cout << "Fragment::getFragmentFile - trying to open '" << filename << "'" << endl;
 
-					if( fin ) {
-						fragfile = new Fragment::File();
-						cout << "Fragment::getFragmentFile - successfully opened '" << filename << "'" << endl;
-						fin >> *fragfile;
-						found = true;
-					}
-
-				} // i
-
-				assert( fragfile != 0 );
-
-				mFragfiles_ss[ss0] = fragfile; // !!! NB: this is only going into the map for key ss0 (the original ss)
-				iter = mFragfiles_ss.find(ss0);
-
+			if ( fin ) {
+				fragfile = new Fragment::File();
+				cout << "Fragment::getFragmentFile - successfully opened '" << filename << "'" << endl;
+				fin >> *fragfile;
+				found = true;
 			}
 
-			assert( iter != mFragfiles_ss.end() );
+		} // i
 
-			return iter->second;
+		assert( fragfile != 0 );
 
-		} // Librarian::getFragmentFile
+		mFragfiles_ss[ss0] = fragfile; // !!! NB: this is only going into the map for key ss0 (the original ss)
+		iter = mFragfiles_ss.find(ss0);
 
-  } // namespace LoopDesign
+	}
+
+	assert( iter != mFragfiles_ss.end() );
+
+	return iter->second;
+
+} // Librarian::getFragmentFile
+
+} // namespace LoopDesign
 
 } // namespace devel

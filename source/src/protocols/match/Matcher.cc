@@ -355,7 +355,7 @@ void Matcher::add_secondary_upstream_match_geometry_for_constraint(
 	utility::vector1< Size > const & target_atids,
 	toolbox::match_enzdes_util::MatchConstraintFileInfoCOP mcfi,
 	std::string sec_match_str,
- 	core::pose::Pose const & upstream_pose
+	core::pose::Pose const & upstream_pose
 )
 {
 	using namespace downstream;
@@ -392,7 +392,7 @@ void Matcher::add_secondary_upstream_match_geometry_for_constraint(
 	/*
 	GeometrySecMatchRPEOP geom_evaluator = new GeometrySecMatchRPE( *mcfi, target_atids, candidate_atids );
 	for ( Size ii = 1; ii <= geom_evaluator->atom_geom_rpes().size(); ++ii ) {
-		TR << "    Upstream 2ndary Match: " << geom_evaluator->atom_geom_rpes()[ ii ]->print( candidate_restype, target_restype ) << std::endl;
+	TR << "    Upstream 2ndary Match: " << geom_evaluator->atom_geom_rpes()[ ii ]->print( candidate_restype, target_restype ) << std::endl;
 	}
 	algorithm.add_evaluator_for_target_restype( target_restype, geom_evaluator, mcfi->index() );
 	*/
@@ -400,8 +400,8 @@ void Matcher::add_secondary_upstream_match_geometry_for_constraint(
 	//Author:Kui Chan 101409
 	//Description: added score term evaluator and combine with geometrySecMatchRPE
 	SecMatchResiduePairEvaluatorOP secMatch_evaluator
-				= SecMatchEvaluatorFactory::create_SecMatchResiduePairEvaluatorOP( *mcfi, target_atids, candidate_atids,
-								sec_match_str, upstream_pose );
+		= SecMatchEvaluatorFactory::create_SecMatchResiduePairEvaluatorOP( *mcfi, target_atids, candidate_atids,
+		sec_match_str, upstream_pose );
 	algorithm.add_evaluator_for_target_restype( target_restype, secMatch_evaluator, mcfi->index() );
 	//END Kui
 }
@@ -415,8 +415,8 @@ Matcher::add_secondary_downstream_match_geometry_for_constraint(
 	utility::vector1< Size > const & target_atids,
 	toolbox::match_enzdes_util::MatchConstraintFileInfoCOP mcfi,
 	std::string sec_match_str,
- 	core::pose::Pose const & upstream_pose,
-  bool catalytic_bond
+	core::pose::Pose const & upstream_pose,
+	bool catalytic_bond
 )
 {
 	using namespace downstream;
@@ -443,11 +443,11 @@ Matcher::add_secondary_downstream_match_geometry_for_constraint(
 		all_downstream_algorithms_.push_back( secondary_match_algorithm );
 		if ( catalytic_bond ) {
 			utility::vector1< core::Size > catalytic_atoms(4,0);
-				catalytic_atoms[ 1 ] = candidate_atids[ 2 ];
-				catalytic_atoms[ 2 ] = candidate_atids[ 1 ];
-			 	//target = downstream
-				catalytic_atoms[ 3 ] = target_atids[ 1 ];
-				catalytic_atoms[ 4 ] = target_atids[ 2 ];
+			catalytic_atoms[ 1 ] = candidate_atids[ 2 ];
+			catalytic_atoms[ 2 ] = candidate_atids[ 1 ];
+			//target = downstream
+			catalytic_atoms[ 3 ] = target_atids[ 1 ];
+			catalytic_atoms[ 4 ] = target_atids[ 2 ];
 			secondary_match_algorithm->set_catalytic_atoms( catalytic_atoms );
 		}
 	}
@@ -455,19 +455,19 @@ Matcher::add_secondary_downstream_match_geometry_for_constraint(
 	runtime_assert( dynamic_cast< downstream::SecondaryMatcherToDownstreamResidue * > ( & build_set.algorithm() ) );
 	downstream::SecondaryMatcherToDownstreamResidue & algorithm( static_cast< downstream::SecondaryMatcherToDownstreamResidue & > (build_set.algorithm() ) );
 
-/*
+	/*
 	GeometrySecMatchRPEOP geom_evaluator = new GeometrySecMatchRPE( *mcfi, target_atids, candidate_atids );
 	for ( Size ii = 1; ii <= geom_evaluator->atom_geom_rpes().size(); ++ii ) {
-		TR << "    Downstream 2ndary Match: " << geom_evaluator->atom_geom_rpes()[ ii ]->print( candidate_restype, downstream_restype ) << std::endl;
+	TR << "    Downstream 2ndary Match: " << geom_evaluator->atom_geom_rpes()[ ii ]->print( candidate_restype, downstream_restype ) << std::endl;
 	}
 
 	algorithm.add_evaluator( geom_evaluator, mcfi->index() );
-*/
+	*/
 	//Author:Kui Chan 101409
 	//Description: added score term evaluator and combine with geometrySecMatchRPE
 	SecMatchResiduePairEvaluatorOP secMatch_evaluator
-				= SecMatchEvaluatorFactory::create_SecMatchResiduePairEvaluatorOP( *mcfi, target_atids, candidate_atids,
-							sec_match_str, upstream_pose );
+		= SecMatchEvaluatorFactory::create_SecMatchResiduePairEvaluatorOP( *mcfi, target_atids, candidate_atids,
+		sec_match_str, upstream_pose );
 	algorithm.add_evaluator( secMatch_evaluator, mcfi->index() );
 	//End Kui
 
@@ -541,7 +541,7 @@ Matcher::initialize_from_task(
 	}
 
 	downstream_atoms_required_inside_active_site_ = mtask.downstream_atoms_required_inside_active_site();
-	if( mtask.only_enumerate_non_match_redundant_ligand_rotamers() ){
+	if ( mtask.only_enumerate_non_match_redundant_ligand_rotamers() ) {
 		relevant_downstream_atoms_ = mtask.relevant_downstream_atoms();
 	}
 
@@ -557,7 +557,7 @@ Matcher::initialize_from_task(
 		//Kui Native 110809
 		runtime_assert( dynamic_cast< upstream::ProteinUpstreamBuilder * > ( upstream_builders_[ ii ].get() ) );
 		upstream::ProteinUpstreamBuilderOP prot_sc_builder(
-		utility::pointer::static_pointer_cast< upstream::ProteinUpstreamBuilder > ( upstream_builders_[ ii ] ));
+			utility::pointer::static_pointer_cast< upstream::ProteinUpstreamBuilder > ( upstream_builders_[ ii ] ));
 
 		toolbox::match_enzdes_util::MatchConstraintFileInfoListCOP constraint_list = (mtask.enz_input_data())->mcfi_list( ii );
 		utility::vector1< core::chemical::ResidueTypeCOP > const & upres( constraint_list->upstream_restypes() );
@@ -565,7 +565,7 @@ Matcher::initialize_from_task(
 		for ( Size jj = 1; jj <= upres.size(); ++jj ) {
 
 			utility::vector1< toolbox::match_enzdes_util::MatchConstraintFileInfoCOP > const & jj_mcfis(
-			constraint_list->mcfis_for_upstream_restype( upres[ jj ] ));
+				constraint_list->mcfis_for_upstream_restype( upres[ jj ] ));
 
 			for ( Size kk = 1; kk <= jj_mcfis.size(); ++kk ) {
 				//TR << "ii:" << ii << " jj:" << jj << " kk:" << kk << " native:" <<jj_mcfis[ kk ]->native() << std::endl;
@@ -724,7 +724,7 @@ void Matcher::initialize_from_file(
 						std::istringstream llstream( llstr );
 						std::string first;
 						llstream >> first;
-						if( first == "MAX_DUNBRACK_ENERGY" ){
+						if ( first == "MAX_DUNBRACK_ENERGY" ) {
 							core::Real cutoff;
 							llstream >> cutoff;
 							TR << "Setting dunbrack energy cutoff for restype " << upres[jj]->name() << " in constraint " << ii << " to " << cutoff << "." << std::endl;
@@ -737,7 +737,7 @@ void Matcher::initialize_from_file(
 								if ( chi_sample_data_in_file[ mmchi ] ) {
 									TR << "  WARNING:: Already encountered chi sampling strategy for proton chi " << mmchi << " and will NOT ignore this proton chi" << std::endl;
 								} else {
-									set_sample_startegy_for_constraint(	ii, upres[ jj ], mmchi, nosamps );
+									set_sample_startegy_for_constraint( ii, upres[ jj ], mmchi, nosamps );
 									TR << "  ALGORITHM_INFO:: match -- Ignoring proton chi for " << upres[ jj ]->name() << " chi # " << mmchi << std::endl;
 									chi_sample_data_in_file[ mmchi ] = true;
 								}
@@ -753,7 +753,7 @@ void Matcher::initialize_from_file(
 								llstream >> aa3;
 								//std::map< std::string, core::chemical::AA >::const_iterator iter = core::chemical::name2aa().find( aa3 );
 								//if ( iter == core::chemical::name2aa().end() ) {
-								//	utility_exit_with_message( "Expected amino acid 3-letter code following 'CHI_STRATEGY:: AA ' but read " + aa3 );
+								// utility_exit_with_message( "Expected amino acid 3-letter code following 'CHI_STRATEGY:: AA ' but read " + aa3 );
 								//}
 								//core::chemical::AA aa = *iter;
 								core::chemical::AA aa = core::chemical::aa_from_name( aa3 );
@@ -789,7 +789,7 @@ void Matcher::initialize_from_file(
 							if ( which_chi > upres[ jj ]->nchi() ) {
 								TR <<  "WARNING: Ignoring rotamer sampling strategy data for chi # "
 									<< which_chi
-									 << " for residue type " << upres[ jj ]->name() << " because it only has " << upres[ jj ]->nchi() << " chi angles." <<  std::endl;
+									<< " for residue type " << upres[ jj ]->name() << " because it only has " << upres[ jj ]->nchi() << " chi angles." <<  std::endl;
 								continue;
 							}
 							if ( chi_sample_data_in_file[ which_chi ] ) {
@@ -808,7 +808,7 @@ void Matcher::initialize_from_file(
 								core::pack::task::ExtraRotSample sample_level =  core::pack::task::rot_sample_from_name( strategy );
 								upstream::SampleStrategyData stratdat; stratdat.set_strategy( upstream::rotameric_chi_mimic_EX_flags );
 								stratdat.set_sample_level( sample_level );
-								set_sample_startegy_for_constraint(	ii, upres[ jj ], which_chi, stratdat );
+								set_sample_startegy_for_constraint( ii, upres[ jj ], which_chi, stratdat );
 
 								TR << "  ALGORITHM_INFO:: match -- chi sampling strategy " << strategy << " for chi # " << which_chi << std::endl;
 
@@ -857,7 +857,7 @@ void Matcher::initialize_from_file(
 								stratdat.set_strategy( upstream::rotameric_chi_step_wi_sd_range );
 								stratdat.set_step_size( step_size );
 								stratdat.set_sd_range( sd_range );
-								set_sample_startegy_for_constraint(	ii, upres[ jj ], which_chi, stratdat );
+								set_sample_startegy_for_constraint( ii, upres[ jj ], which_chi, stratdat );
 
 								TR << "  ALGORITHM_INFO:: match -- chi sampling strategy STEP_WITHIN_SD_RANGE with step_size= " << step_size << " degrees across " << sd_range << " standard deviations for chi # " << which_chi << std::endl;
 							} else if ( strategy == "NON_ROTAMERIC_CHI_EXPANSION" ) {
@@ -866,116 +866,116 @@ void Matcher::initialize_from_file(
 								/// 1st check to make sure that this chi is nonrotameric!
 								{/// SCOPE
 
-								using namespace core::scoring;
-								using namespace core::pack::dunbrack;
-								using namespace core::pack::rotamers;
-								SingleResidueRotamerLibraryFactory const & rotlibfact( *SingleResidueRotamerLibraryFactory::get_instance() );
-								SingleResidueRotamerLibraryCOP res_rotlib( rotlibfact.get( *upres[ jj ] ) );
+									using namespace core::scoring;
+									using namespace core::pack::dunbrack;
+									using namespace core::pack::rotamers;
+									SingleResidueRotamerLibraryFactory const & rotlibfact( *SingleResidueRotamerLibraryFactory::get_instance() );
+									SingleResidueRotamerLibraryCOP res_rotlib( rotlibfact.get( *upres[ jj ] ) );
 
-								if ( res_rotlib != 0 ) {
+									if ( res_rotlib != 0 ) {
 
-									SingleResidueDunbrackLibraryCOP dun_rotlib(
-										utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const > ( res_rotlib ));
+										SingleResidueDunbrackLibraryCOP dun_rotlib(
+											utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const > ( res_rotlib ));
 
-									if ( dun_rotlib == 0 ) {
-										utility_exit_with_message( "Failed to retrieve a Dunbrack rotamer library for AA: " +
-											utility::to_string( upres[ jj ]->aa() ) +  " named " +  upres[ jj ]->name() );
-									}
-									npossiblerots = dun_rotlib->n_rotamer_bins();
-									if ( npossiblerots == 0 ) {
-										std::cerr << "Error while reading line: " << llstr << std::endl;
-										utility_exit_with_message( "Rotamer library for " + upres[ jj ]->name() + " says it contains no rotamers" );
-									}
-									if ( which_chi != dun_rotlib->nchi() ) {
-										utility_exit_with_message( "Cannot treat chi " + utility::to_string( which_chi ) +
-											" on residue " + upres[ jj ]->name() +
-											" as non-rotameric since there are " + utility::to_string( dun_rotlib->nchi() ) +
-											" chi in the library, and the last chi is the only one that could be non-rotameric" );
-									}
-									bool failed_cast = false;
-									switch ( dun_rotlib->nchi() ) {
-										case 2: {
+										if ( dun_rotlib == 0 ) {
+											utility_exit_with_message( "Failed to retrieve a Dunbrack rotamer library for AA: " +
+												utility::to_string( upres[ jj ]->aa() ) +  " named " +  upres[ jj ]->name() );
+										}
+										npossiblerots = dun_rotlib->n_rotamer_bins();
+										if ( npossiblerots == 0 ) {
+											std::cerr << "Error while reading line: " << llstr << std::endl;
+											utility_exit_with_message( "Rotamer library for " + upres[ jj ]->name() + " says it contains no rotamers" );
+										}
+										if ( which_chi != dun_rotlib->nchi() ) {
+											utility_exit_with_message( "Cannot treat chi " + utility::to_string( which_chi ) +
+												" on residue " + upres[ jj ]->name() +
+												" as non-rotameric since there are " + utility::to_string( dun_rotlib->nchi() ) +
+												" chi in the library, and the last chi is the only one that could be non-rotameric" );
+										}
+										bool failed_cast = false;
+										switch ( dun_rotlib->nchi() ) {
+										case 2 : {
 											switch ( dun_rotlib->nbb() ) {
-												case 1: {
-													SemiRotamericSingleResidueDunbrackLibrary< ONE, ONE > const * sr2 =
+											case 1 : {
+												SemiRotamericSingleResidueDunbrackLibrary< ONE, ONE > const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< ONE, ONE > const * >
 													( dun_rotlib.get() );
-													failed_cast = sr2 == 0;
-												}
-												case 2: {
-													SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO > const * sr2 =
+												failed_cast = sr2 == 0;
+											}
+											case 2 : {
+												SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO > const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO > const * >
 													( dun_rotlib.get() );
-													failed_cast = sr2 == 0;
-												}
-												case 3: {
-													SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE > const * sr2 =
+												failed_cast = sr2 == 0;
+											}
+											case 3 : {
+												SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE > const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE > const * >
 													( dun_rotlib.get() );
-													failed_cast = sr2 == 0;
-												}
-												case 4: {
-													SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR > const * sr2 =
+												failed_cast = sr2 == 0;
+											}
+											case 4 : {
+												SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR > const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR > const * >
 													( dun_rotlib.get() );
-													failed_cast = sr2 == 0;
-												}
-												default: {
-													utility_exit_with_message( "While parsing CHI_STRATEGY::NON_ROTAMERIC_CHI_EXPANSION\n"
-																			  "All semi-rotameric libraries have 1 - 4 bb, but the library for "+
-																			  upres[ jj ]->name() + " has " + utility::to_string( dun_rotlib->nbb() ) + " bb." );
-												}
+												failed_cast = sr2 == 0;
+											}
+											default : {
+												utility_exit_with_message( "While parsing CHI_STRATEGY::NON_ROTAMERIC_CHI_EXPANSION\n"
+													"All semi-rotameric libraries have 1 - 4 bb, but the library for "+
+													upres[ jj ]->name() + " has " + utility::to_string( dun_rotlib->nbb() ) + " bb." );
+											}
 											}
 										} break;
-										case 3: {
+										case 3 : {
 											switch ( dun_rotlib->nbb() ) {
-												case 1: {
-													SemiRotamericSingleResidueDunbrackLibrary< TWO, ONE > const * sr2 =
+											case 1 : {
+												SemiRotamericSingleResidueDunbrackLibrary< TWO, ONE > const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< TWO, ONE > const * >
 													( dun_rotlib.get() );
-													failed_cast = sr2 == 0;
-												}
-												case 2: {
-													SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO > const * sr2 =
+												failed_cast = sr2 == 0;
+											}
+											case 2 : {
+												SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO > const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO > const * >
 													( dun_rotlib.get() );
-													failed_cast = sr2 == 0;
-												}
-												case 3: {
-													SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE > const * sr2 =
+												failed_cast = sr2 == 0;
+											}
+											case 3 : {
+												SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE > const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE > const * >
 													( dun_rotlib.get() );
-													failed_cast = sr2 == 0;
-												}
-												case 4: {
-													SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR > const * sr2 =
+												failed_cast = sr2 == 0;
+											}
+											case 4 : {
+												SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR > const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR > const * >
 													( dun_rotlib.get() );
-													failed_cast = sr2 == 0;
-												}
-												default: {
-													utility_exit_with_message( "While parsing CHI_STRATEGY::NON_ROTAMERIC_CHI_EXPANSION\n"
-																			  "All semi-rotameric libraries have 1 - 4 bb, but the library for "+
-																			  upres[ jj ]->name() + " has " + utility::to_string( dun_rotlib->nbb() ) + " bb." );
-												}
+												failed_cast = sr2 == 0;
+											}
+											default : {
+												utility_exit_with_message( "While parsing CHI_STRATEGY::NON_ROTAMERIC_CHI_EXPANSION\n"
+													"All semi-rotameric libraries have 1 - 4 bb, but the library for "+
+													upres[ jj ]->name() + " has " + utility::to_string( dun_rotlib->nbb() ) + " bb." );
+											}
 											}
 										} break;
-										default: {
+										default : {
 											utility_exit_with_message( "While parsing CHI_STRATEGY::NON_ROTAMERIC_CHI_EXPANSION\n"
 												"All semi-rotameric libraries have 2 or 3 chi, but the library for "+
 												upres[ jj ]->name() + " has " + utility::to_string( dun_rotlib->nchi() ) + " chi." );
 										}
-									}
-									if ( failed_cast ) {
+										}
+										if ( failed_cast ) {
+											utility_exit_with_message( "While parsing CHI_STRATEGY::NON_ROTAMERIC_CHI_EXPANSION\n"
+												"Failed to find a semi-rotameric rotamer library for " + upres[ jj ]->name() +
+												" (Did you forget the -dun10 flag?)\n"
+												"The following amino acids define semi-rotameric rotamer libraries: DEFHNQ" );
+										}
+									} else {
 										utility_exit_with_message( "While parsing CHI_STRATEGY::NON_ROTAMERIC_CHI_EXPANSION\n"
-											"Failed to find a semi-rotameric rotamer library for " + upres[ jj ]->name() +
-											" (Did you forget the -dun10 flag?)\n"
-											"The following amino acids define semi-rotameric rotamer libraries: DEFHNQ" );
+											"Failed to find a rotamer library for " + upres[ jj ]->name() );
 									}
-								} else {
-									utility_exit_with_message( "While parsing CHI_STRATEGY::NON_ROTAMERIC_CHI_EXPANSION\n"
-										"Failed to find a rotamer library for " + upres[ jj ]->name() );
-								}
 								} // scope to check we're looking at a semi-rotameric rotamer library.
 								std::string nsamps;
 								Size nsamples;
@@ -1022,7 +1022,7 @@ void Matcher::initialize_from_file(
 								stratdat.set_strategy( upstream::nonrotameric_chi_sample_wi_nrchi_bin );
 								stratdat.set_n_samples_per_side_of_nrchi_bin( nsamples );
 								stratdat.set_nrchi_prob_minimum_for_extra_samples( minprobability );
-								set_sample_startegy_for_constraint(	ii, upres[ jj ], which_chi, stratdat );
+								set_sample_startegy_for_constraint( ii, upres[ jj ], which_chi, stratdat );
 								TR << "  ALGORITHM_INFO:: match -- chi sampling strategy NON_ROTAMERIC_CHI_EXPANSION with nsteps= " << nsamples << " for rotamers with a probability better than " << minprobability << std::endl;
 							} else {
 								utility_exit_with_message( "While parsing CHI_STRATEGY:: unsupported sample strategy: " + strategy  + " for chi " + utility::to_string( which_chi ) );
@@ -1060,10 +1060,10 @@ void Matcher::initialize_from_file(
 							}
 							secondary_matching = true;
 
-						//Author: Kui Chan Date:101309
-						//Description: secondary scoring by score term(s).
-						} else if ( first == "SCORING_SECMATCH::" ){
-							if( !secondary_matching ){
+							//Author: Kui Chan Date:101309
+							//Description: secondary scoring by score term(s).
+						} else if ( first == "SCORING_SECMATCH::" ) {
+							if ( !secondary_matching ) {
 								utility_exit_with_message( "SCORING_SECMATCH line detected without previous SECONDARY_MATCH specifier.");
 							}
 							sec_match_str += llstr + "\n";
@@ -1177,7 +1177,7 @@ void Matcher::initialize_from_file(
 /// @brief Main worker function
 bool Matcher::find_hits()
 {
-	if( !initialize_scaffold_build_points() ) return false;
+	if ( !initialize_scaffold_build_points() ) return false;
 	//std::cout << "APL DEBUG Matcher.cc::find_hits 1" << std::endl;
 	initialize_bump_grids();
 	//std::cout << "APL DEBUG Matcher.cc::find_hits 2" << std::endl;
@@ -1199,16 +1199,16 @@ Matcher::process_matches( output::MatchProcessor & processor ) const
 	for ( Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
 		representative_downstream_algorithm_[ ii ]->prepare_for_match_enumeration( *this );
 	}
-	for( std::list< downstream::DownstreamBuilderOP >::const_iterator ds_it( all_downstream_builders_.begin() ),
-				 ds_end( all_downstream_builders_.end()); ds_it != ds_end; ++ds_it ){
-		if( (*ds_it)->hits_potentially_incompatible() ){
+	for ( std::list< downstream::DownstreamBuilderOP >::const_iterator ds_it( all_downstream_builders_.begin() ),
+			ds_end( all_downstream_builders_.end()); ds_it != ds_end; ++ds_it ) {
+		if ( (*ds_it)->hits_potentially_incompatible() ) {
 			check_potential_dsbuilder_incompatibility_ = true;
 			break;
 		}
 	}
 
 	if ( (! output_matches_as_singular_downstream_positioning_) || check_potential_dsbuilder_incompatibility_ ) {
-		if( output_matches_as_singular_downstream_positioning_ ){
+		if ( output_matches_as_singular_downstream_positioning_ ) {
 			TR << "Potential DownstreamBuilder hit incompatibilities have been detected. All possible hit combinations will be enumerated. This overrides the MatcherTask instruction to output matches with only a single downstream position." << std::endl;
 		}
 		process_matches_main_loop_enumerating_all_hit_combos( processor );
@@ -1221,7 +1221,7 @@ Matcher::process_matches( output::MatchProcessor & processor ) const
 /*utility::vector1< std::list< Hit > > const &
 Matcher::hits() const
 {
-	return hits_;
+return hits_;
 }
 */
 
@@ -1314,8 +1314,8 @@ Matcher::upstream_builder( Size cst_id )
 bool
 Matcher::has_upstream_only_geomcsts() const
 {
-	for( core::Size i =1; i<= n_geometric_constraints_; ++i){
-		if( geomcst_is_upstream_only_[i] ) return true;
+	for ( core::Size i =1; i<= n_geometric_constraints_; ++i ) {
+		if ( geomcst_is_upstream_only_[i] ) return true;
 	}
 	return false;
 }
@@ -1375,7 +1375,7 @@ Matcher::erase_hit(
 		// for geom_cst j deletes its own hits during a call to respond_to_peripheral_hitlist_change,
 		// as a result of round i hits disappearing; however, round i may not delete round j's hits
 		// directly.
- 		runtime_assert( dsalg.geom_cst_id() > geom_cst_id_for_hit );
+		runtime_assert( dsalg.geom_cst_id() > geom_cst_id_for_hit );
 
 		note_primary_change_to_geom_csts_hitlist( geom_cst_id_for_hit );
 	}
@@ -1388,7 +1388,7 @@ bool Matcher::generate_hits() {
 		//std::cout << "APL DEBUG Matcher.cc::generate_hits() ii=" << ii << std::endl;
 		prepare_for_hit_generation_for_constraint( ii );
 		generate_hits_for_constraint( ii );
-		if( !finish_hit_generation_for_constraint( ii ) ) {
+		if ( !finish_hit_generation_for_constraint( ii ) ) {
 			//std::cout << "APL DEBUG Matcher.cc::generate_hits() early exit ii=" << ii << std::endl;
 			return false;
 		}
@@ -1514,15 +1514,14 @@ bool
 Matcher::initialize_scaffold_build_points()
 {
 	runtime_assert( upstream_pose_.get() );
-	if( same_build_resids_for_all_csts_){
-		if( pose_build_resids_.size() == 0 ) {
+	if ( same_build_resids_for_all_csts_ ) {
+		if ( pose_build_resids_.size() == 0 ) {
 			TR << "WARNING: No build points were set in the matcher, could not initialize scaffold build points." << std::endl;
 			return false;
 		}
-	}
-	else{
-		for( core::Size i =1; i <= per_cst_build_resids_.size(); ++i ){
-			if( per_cst_build_resids_[i].size() == 0 ){
+	} else {
+		for ( core::Size i =1; i <= per_cst_build_resids_.size(); ++i ) {
+			if ( per_cst_build_resids_[i].size() == 0 ) {
 				TR << "WARNING: No build points for geomcst " << i << " were set in the matcher, could not initialize scaffold build points." << std::endl;
 				return false;
 			}
@@ -1532,7 +1531,7 @@ Matcher::initialize_scaffold_build_points()
 	all_build_points_.resize( pose_build_resids_.size() );
 	for ( Size ii = 1; ii <= pose_build_resids_.size(); ++ii ) {
 		runtime_assert_msg( pose_build_resids_[ ii ] <= upstream_pose_->n_residue(),
-		                    "pos file contains position outside of valid range.");
+			"pos file contains position outside of valid range.");
 		all_build_points_[ ii ] = protocols::match::upstream::ScaffoldBuildPointOP( new upstream::OriginalBackboneBuildPoint(
 			upstream_pose_->residue( pose_build_resids_[ ii ] ), ii ) );
 	}
@@ -1594,7 +1593,7 @@ Matcher::initialize_active_site_grid()
 	if ( downstream_atoms_required_inside_active_site_.empty() ) return;
 
 	if ( upstream_resids_and_radii_defining_active_site_.empty() ) {
-		utility_exit_with_message( "ERROR: Active site undefined, yet downstream atoms are required to be in active site" );
+	utility_exit_with_message( "ERROR: Active site undefined, yet downstream atoms are required to be in active site" );
 	}*/
 
 	if ( read_gridlig_file_ ) {
@@ -1773,10 +1772,10 @@ Matcher::create_ds_builder(
 		//note: if the relevant downstream atoms have been set,
 		//this means that the downsteam conformer builder should split
 		//up it's rotamer library accordingly
-		if( relevant_downstream_atoms_.size() != 0 ){
+		if ( relevant_downstream_atoms_.size() != 0 ) {
 			//std::cerr << "determining redundant conformers " << std::endl;
 			utility::vector1< core::Size > relevant_atom_indices;
-			for( core::Size i = 1; i <= relevant_downstream_atoms_.size(); ++i){
+			for ( core::Size i = 1; i <= relevant_downstream_atoms_.size(); ++i ) {
 				relevant_atom_indices.push_back( relevant_downstream_atoms_[i].atomno() );
 			}
 			ligand_rotamer_builder->determine_redundant_conformer_groups( relevant_atom_indices );
@@ -1836,16 +1835,15 @@ Matcher::select_hit_representatives(
 
 			std::map< upstream_hit, std::set< Size > > us_hit_map;
 
-			for( Size jj = 1; jj <= n_hits_per_geomcst[ ii ]; ++jj ) {
+			for ( Size jj = 1; jj <= n_hits_per_geomcst[ ii ]; ++jj ) {
 				upstream_hit this_us_hit( *hit_vectors[ii][jj] );
 
 				std::map< upstream_hit, std::set< Size > >::iterator hitmap_it(us_hit_map.find( this_us_hit ));
-				if( hitmap_it == us_hit_map.end() ){
+				if ( hitmap_it == us_hit_map.end() ) {
 					std::set< Size > hits_this_us_hit;
 					hits_this_us_hit.insert( jj );
 					us_hit_map.insert( std::pair< upstream_hit, std::set< Size > >( this_us_hit, hits_this_us_hit ) );
-				}
-				else{
+				} else {
 					hitmap_it->second.insert( jj );
 				}
 			} //loop over all hits
@@ -1853,15 +1851,15 @@ Matcher::select_hit_representatives(
 			//Size unique_us_hits = us_hit_map.size();
 			n_hits_per_geomcst[ ii ] = 0;
 			reps[ii].clear();
-			for( std::map< upstream_hit, std::set< Size> >::const_iterator map_it( us_hit_map.begin() ), map_end( us_hit_map.end() );
-						 map_it != map_end; ++map_it ){
+			for ( std::map< upstream_hit, std::set< Size> >::const_iterator map_it( us_hit_map.begin() ), map_end( us_hit_map.end() );
+					map_it != map_end; ++map_it ) {
 				Size counter(0);
-				for( std::set< Size >::const_iterator set_it( map_it->second.begin() ), set_end( map_it->second.end() );
-						 set_it != set_end; ++set_it ){
+				for ( std::set< Size >::const_iterator set_it( map_it->second.begin() ), set_end( map_it->second.end() );
+						set_it != set_end; ++set_it ) {
 					++counter;
 					++n_hits_per_geomcst[ ii ];
 					reps[ii].push_back( *set_it );
-					if( counter >= max_hits_per_us_hit ) break;
+					if ( counter >= max_hits_per_us_hit ) break;
 				}
 			}
 		} else { // n_hits_per_geomcst[ ii ] < 10
@@ -1907,12 +1905,12 @@ Matcher::check_non_upstream_only_hit_incompatibility(
 			}
 			if ( ! upstream_builders_[ ii ]->compatible( fake_hit( m1.upstream_hits[ ii ] ),
 					*all_build_points_[ ii_bp ], *upstream_builders_[ jj ],
-					fake_hit( m1.upstream_hits[ jj ] ), *all_build_points_[ jj_bp ] ))  {
+					fake_hit( m1.upstream_hits[ jj ] ), *all_build_points_[ jj_bp ] ) )  {
 				lex.continue_at_dimension( ii );
 				//std::cout << "Incompatible at 1159 " << ii << " " << jj << " " << ii_bp << " " << jj_bp << std::endl;
 				return true;
 			}
-			if( !processor.up_coll_filt()->passes_hardsphere_filter( ii, jj, fake_hit( m1.upstream_hits[ ii ] ), fake_hit( m1.upstream_hits[ jj ] ) ) ){
+			if ( !processor.up_coll_filt()->passes_hardsphere_filter( ii, jj, fake_hit( m1.upstream_hits[ ii ] ), fake_hit( m1.upstream_hits[ jj ] ) ) ) {
 				lex.continue_at_dimension( ii );
 				return true;
 			}
@@ -1943,14 +1941,14 @@ Matcher::check_downstream_hit_incompatibility(
 		if ( geomcst_is_upstream_only_[ ii ] ) continue; // ignore upstream-only hits
 
 		downstream::DownstreamBuilderCOP ii_dsbuilder( downstream_builders_[ii].size() == 0 ? representative_downstream_algorithm_[ ii ]->get_dsbuilder() : *(downstream_builders_[ii].begin()) );
-		if( !ii_dsbuilder) continue; // can't check compatibility if there are no downstream builders
+		if ( !ii_dsbuilder ) continue; // can't check compatibility if there are no downstream builders
 
 		for ( Size jj = 1; jj < ii; ++jj ) {
 			if ( geomcst_is_upstream_only_[ jj ] ) continue; // ignore upstream-only hits
 			downstream::DownstreamBuilderCOP jj_dsbuilder( downstream_builders_[jj].size() == 0 ? representative_downstream_algorithm_[ jj ]->get_dsbuilder() : *(downstream_builders_[jj].begin()) );
-			if( !jj_dsbuilder) continue; // can't check compatibility if there are no downstream builders
+			if ( !jj_dsbuilder ) continue; // can't check compatibility if there are no downstream builders
 
-			if( ! ii_dsbuilder->compatible( m[ii], *jj_dsbuilder ,m[jj] ) ){
+			if ( ! ii_dsbuilder->compatible( m[ii], *jj_dsbuilder ,m[jj] ) ) {
 				lex.continue_at_dimension( ii );
 				return true;
 			}
@@ -1992,23 +1990,23 @@ Matcher::test_upstream_only_hit_incompatibility(
 			/// We have already checked for compatibility between non-upstream-only matches.
 			if ( ! geomcst_is_upstream_only_[ ii ] && ! geomcst_is_upstream_only_[ jj ] ) continue;
 
-			if ( ! all_build_points_[ ii_bp ]->compatible( *all_build_points_[ jj_bp ] )) {
+			if ( ! all_build_points_[ ii_bp ]->compatible( *all_build_points_[ jj_bp ] ) ) {
 				incompatible = true;
 			}
 			if ( ! incompatible && ! upstream_builders_[ ii ]->compatible(
 					m[ ii ], *all_build_points_[ ii_bp ],
-					*upstream_builders_[ jj ],  m[ jj ], *all_build_points_[ jj_bp ] ))  {
+					*upstream_builders_[ jj ],  m[ jj ], *all_build_points_[ jj_bp ] ) )  {
 				incompatible = true;
 			}
 
 			//clash check
 			//better here than later to alleviate combinatorics
-			if( !incompatible && geomcst_is_upstream_only_[ii] && representative_downstream_algorithm_[jj]->generates_primary_hits() ){
-				if( !processor.up_down_filt()->passes_hardsphere_filter( ii, jj, m[ii], m[jj] ) ) incompatible = true;
+			if ( !incompatible && geomcst_is_upstream_only_[ii] && representative_downstream_algorithm_[jj]->generates_primary_hits() ) {
+				if ( !processor.up_down_filt()->passes_hardsphere_filter( ii, jj, m[ii], m[jj] ) ) incompatible = true;
 			}
 
-			if( !incompatible && ( geomcst_is_upstream_only_[ii] || geomcst_is_upstream_only_[jj] ) ){
-				if( !processor.up_coll_filt()->passes_hardsphere_filter( ii, jj, m[ii], m[jj] ) ) incompatible = true;
+			if ( !incompatible && ( geomcst_is_upstream_only_[ii] || geomcst_is_upstream_only_[jj] ) ) {
+				if ( !processor.up_coll_filt()->passes_hardsphere_filter( ii, jj, m[ii], m[jj] ) ) incompatible = true;
 			}
 			//clash check over
 
@@ -2048,7 +2046,7 @@ Matcher::test_upstream_only_hit_incompatibility(
 	utility::vector1< HitPtrListCOP > const & upstream_only_hits,
 	utility::vector1< std::list< Hit const * >::const_iterator > & upstream_only_hit_iterators,
 	Size & last_upstream_only_geomcst_advanced,
-  output::MatchProcessor const & processor
+	output::MatchProcessor const & processor
 ) const
 {
 	/// Determine if any of the secondary hits are incompatible and therefore
@@ -2064,23 +2062,23 @@ Matcher::test_upstream_only_hit_incompatibility(
 			/// We have already checked for compatibility between non-upstream-only matches.
 			if ( ! geomcst_is_upstream_only_[ ii ] && ! geomcst_is_upstream_only_[ jj ] ) continue;
 
-			if ( ! all_build_points_[ ii_bp ]->compatible( *all_build_points_[ jj_bp ] )) {
+			if ( ! all_build_points_[ ii_bp ]->compatible( *all_build_points_[ jj_bp ] ) ) {
 				incompatible = true;
 			}
 			if ( ! incompatible && ! upstream_builders_[ ii ]->compatible(
 					fake_hit( m1.upstream_hits[ ii ] ), *all_build_points_[ ii_bp ],
-					*upstream_builders_[ jj ], fake_hit( m1.upstream_hits[ jj ] ), *all_build_points_[ jj_bp ] ))  {
+					*upstream_builders_[ jj ], fake_hit( m1.upstream_hits[ jj ] ), *all_build_points_[ jj_bp ] ) )  {
 				incompatible = true;
 			}
 
-						//upstream downstream clash check
+			//upstream downstream clash check
 			//better here than later to alleviate combinatorics
-			if( !incompatible && geomcst_is_upstream_only_[ii] && (jj == m1.originating_geom_cst_for_dspos) ){
-				if( !processor.up_down_filt()->passes_hardsphere_filter( ii, jj, fake_hit(m1.upstream_hits[ii]), full_hit(m1) ) ) incompatible = true;
+			if ( !incompatible && geomcst_is_upstream_only_[ii] && (jj == m1.originating_geom_cst_for_dspos) ) {
+				if ( !processor.up_down_filt()->passes_hardsphere_filter( ii, jj, fake_hit(m1.upstream_hits[ii]), full_hit(m1) ) ) incompatible = true;
 			}
 
-			if( !incompatible && ( geomcst_is_upstream_only_[ii] || geomcst_is_upstream_only_[jj] ) ){
-				if( !processor.up_coll_filt()->passes_hardsphere_filter( ii, jj, fake_hit( m1.upstream_hits[ii]), fake_hit(m1.upstream_hits[jj]) ) ) incompatible = true;
+			if ( !incompatible && ( geomcst_is_upstream_only_[ii] || geomcst_is_upstream_only_[jj] ) ) {
+				if ( !processor.up_coll_filt()->passes_hardsphere_filter( ii, jj, fake_hit( m1.upstream_hits[ii]), fake_hit(m1.upstream_hits[jj]) ) ) incompatible = true;
 			}
 			//clash check over
 
@@ -2212,7 +2210,7 @@ Matcher::refine_grid_and_subsample_for_hit_subsets(
 	Size const take_it( 300000 );
 	Size const bare_minimum( 20 );
 
-	Size n_combos = predict_n_matches_for_hit_subsets(	euclidean_bin_widths_, euler_bin_widths_, neighbor_hits, take_it );
+	Size n_combos = predict_n_matches_for_hit_subsets( euclidean_bin_widths_, euler_bin_widths_, neighbor_hits, take_it );
 	Size const initial_n_combos = n_combos;
 
 	if ( n_combos > take_it ) {
@@ -2241,7 +2239,7 @@ Matcher::refine_grid_and_subsample_for_hit_subsets(
 				good_subsamples = subsamples;
 				last_n_combos = n_combos;
 				++count_refinement;
-				if ( n_combos < acceptable	) found_acceptible = true;
+				if ( n_combos < acceptable ) found_acceptible = true;
 			} else if ( ! found_acceptible && n_combos > bare_minimum ) {
 				// Imagine a case where we had 2 Billion matches from the last round, and 20 matches in this round.
 				// go ahead and take this refinement
@@ -2515,18 +2513,17 @@ Matcher::process_matches_all_hit_combos_for_hit_subsets(
 						mlite[ jj ] =   hit_vectors[ jj ][ reps[jj][lex[ jj ]] ];
 						m[ jj ]     = *(hit_vectors[ jj ][ reps[jj][lex[ jj ]] ] );
 						m1.upstream_hits[ jj ].copy_hit( m[ jj ] );
-					}
-					else mlite[jj] = NULL; //null pointer to ensure output tracking works
+					} else mlite[jj] = NULL; //null pointer to ensure output tracking works
 				}
 
 				/// if any of the non-upstream-only hits are incompatible, increment the lex
 				/// and proceed to the next combination of hits
-				if ( check_non_upstream_only_hit_incompatibility( m1, lex, processor ) ){
+				if ( check_non_upstream_only_hit_incompatibility( m1, lex, processor ) ) {
 					ostats.num_non_up_only_incompatible++;
 					continue;
 				}
-				if( check_potential_dsbuilder_incompatibility_ &&
-						check_downstream_hit_incompatibility( m, lex ) ){
+				if ( check_potential_dsbuilder_incompatibility_ &&
+						check_downstream_hit_incompatibility( m, lex ) ) {
 					ostats.num_ds_hit_incompatible++;
 					continue;
 				}
@@ -2554,9 +2551,9 @@ Matcher::process_matches_all_hit_combos_for_hit_subsets(
 				}
 
 				/*if( tracker.match_has_been_output( mlite ) ){
-					ostats.num_considered_muliple_origins++;
-					++lex;
-					continue;
+				ostats.num_considered_muliple_origins++;
+				++lex;
+				continue;
 				}
 				tracker.note_output_match( mlite );*/
 				/// Now descend into the upstream-only hits (and if there are none, output the singular
@@ -2589,14 +2586,14 @@ Matcher::process_matches_all_hit_combos_for_hit_subsets(
 					if ( empty_hitlist_id != 0 ) {
 						ostats.num_empty_uplist++;
 						// advance the upstream_only iterators;
-						if( ! increment_upstream_only_hit_combination( upstream_only_hits, empty_hitlist_id - 1,
+						if ( ! increment_upstream_only_hit_combination( upstream_only_hits, empty_hitlist_id - 1,
 								upstream_only_hit_iterators, last_upstream_only_geomcst_advanced ) ) break;
 						continue;
 					}
 
 					if ( test_upstream_only_hit_incompatibility(
-								m, upstream_only_hits, upstream_only_hit_iterators,
-								last_upstream_only_geomcst_advanced, processor ) ) {
+							m, upstream_only_hits, upstream_only_hit_iterators,
+							last_upstream_only_geomcst_advanced, processor ) ) {
 						// we have an incompatibility; break if we're at the end of the upstream-only hit combos
 						ostats.num_up_only_incompatible++;
 						if ( last_upstream_only_geomcst_advanced == 0 ) break;
@@ -2610,7 +2607,7 @@ Matcher::process_matches_all_hit_combos_for_hit_subsets(
 							upstream_only_hits,
 							n_geometric_constraints_,
 							upstream_only_hit_iterators,
-							last_upstream_only_geomcst_advanced )) {
+							last_upstream_only_geomcst_advanced ) ) {
 						break;
 					}
 				} //while (true ), iteration over upstream only hits
@@ -2841,7 +2838,7 @@ Matcher::process_matches_where_one_geomcst_defines_downstream_location(
 
 							if ( test_upstream_only_hit_incompatibility(
 									m1, upstream_only_hits, upstream_only_hit_iterators,
-										last_upstream_only_geomcst_advanced, processor ) ) {
+									last_upstream_only_geomcst_advanced, processor ) ) {
 								// we have an incompatibility; break if we're at the end of the upstream-only hit combos
 								if ( last_upstream_only_geomcst_advanced == 0 ) break;
 								continue;
@@ -2859,7 +2856,7 @@ Matcher::process_matches_where_one_geomcst_defines_downstream_location(
 									upstream_only_hits,
 									n_geometric_constraints_,
 									upstream_only_hit_iterators,
-									last_upstream_only_geomcst_advanced )) {
+									last_upstream_only_geomcst_advanced ) ) {
 								break;
 							}
 						}
@@ -2887,27 +2884,27 @@ Matcher::note_primary_change_to_geom_csts_hitlist( Size geomcst_id )
 }
 
 /*
-	core::pose::PoseOP upstream_pose_;
-	core::pose::PoseOP downstream_pose_;
+core::pose::PoseOP upstream_pose_;
+core::pose::PoseOP downstream_pose_;
 
-	utility::vector1< Size > pose_build_resids_;
-	utility::vector1< ScaffoldBuildPointOP > all_build_points_;
-	utility::vector1< utility::vector1< ScaffoldBuildPointOP > > per_constraint_build_points_;
+utility::vector1< Size > pose_build_resids_;
+utility::vector1< ScaffoldBuildPointOP > all_build_points_;
+utility::vector1< utility::vector1< ScaffoldBuildPointOP > > per_constraint_build_points_;
 
-	utility::vector1< std::list< Hit > > hits_;
+utility::vector1< std::list< Hit > > hits_;
 
-	Size n_geometric_constraints_;
-	utility::vector1< UpstreamBuilderOP   >                       upstream_builders_;
-	utility::vector1< std::map< std::string, Size > >             build_set_id_for_restype_;
-	utility::vector1< utility::vector1< DownstreamAlgorithmOP > > downstream_algorithms_;
+Size n_geometric_constraints_;
+utility::vector1< UpstreamBuilderOP   >                       upstream_builders_;
+utility::vector1< std::map< std::string, Size > >             build_set_id_for_restype_;
+utility::vector1< utility::vector1< DownstreamAlgorithmOP > > downstream_algorithms_;
 
-	utility::vector1< DownstreamBuilderOP >   all_downstream_builders_;
-	utility::vector1< DownstreamAlgorithmOP > all_downstream_algorithms_;
+utility::vector1< DownstreamBuilderOP >   all_downstream_builders_;
+utility::vector1< DownstreamAlgorithmOP > all_downstream_algorithms_;
 
-	BumpGridOP bb_grid_;
-	utility::vector1< BumpGridOP > original_scaffold_residue_bump_grids_;
+BumpGridOP bb_grid_;
+utility::vector1< BumpGridOP > original_scaffold_residue_bump_grids_;
 
-	OccupiedSpaceHashOP occ_space_hash_;
+OccupiedSpaceHashOP occ_space_hash_;
 
 */
 

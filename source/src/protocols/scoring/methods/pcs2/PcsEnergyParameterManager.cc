@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/PcsEnergyParameterManager.cc
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/PcsEnergyParameterManager.cc
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 
 // Unit headers
@@ -99,7 +99,7 @@ PcsEnergyParameterManager::re_init(){
 	vec_individual_weight_all_.clear();
 	std::cerr <<"CHECKING b 0 = " << vec_individual_weight_all_.size() << std::endl;
 
-	for (i = 1; i <= n; ++i){
+	for ( i = 1; i <= n; ++i ) {
 		pcs_e_p_all_.pop_back();
 	}
 
@@ -108,20 +108,20 @@ PcsEnergyParameterManager::re_init(){
 
 // singletons shouldn't have copy constructors PcsEnergyParameterManager::PcsEnergyParameterManager(PcsEnergyParameterManager const & other)
 // singletons shouldn't have copy constructors {
-// singletons shouldn't have copy constructors 	pcs_e_p_all_ = other.pcs_e_p_all_;
-// singletons shouldn't have copy constructors 	vec_filename_all_ = other.vec_filename_all_;
-// singletons shouldn't have copy constructors 	vec_individual_weight_all_ = other.vec_individual_weight_all_;
+// singletons shouldn't have copy constructors  pcs_e_p_all_ = other.pcs_e_p_all_;
+// singletons shouldn't have copy constructors  vec_filename_all_ = other.vec_filename_all_;
+// singletons shouldn't have copy constructors  vec_individual_weight_all_ = other.vec_individual_weight_all_;
 // singletons shouldn't have copy constructors }
 
 // singletons shouldn't have assignment operators PcsEnergyParameterManager&
 // singletons shouldn't have assignment operators PcsEnergyParameterManager::operator=( PcsEnergyParameterManager const & other ){
-// singletons shouldn't have assignment operators 	if ( this != &other ) {
-// singletons shouldn't have assignment operators 		instance_ = other.instance_;
-// singletons shouldn't have assignment operators 		pcs_e_p_all_ = other.pcs_e_p_all_;
-// singletons shouldn't have assignment operators 		vec_filename_all_ = other.vec_filename_all_;
-// singletons shouldn't have assignment operators 		vec_individual_weight_all_ = other.vec_individual_weight_all_;
-// singletons shouldn't have assignment operators 	}
-// singletons shouldn't have assignment operators 	return *this;
+// singletons shouldn't have assignment operators  if ( this != &other ) {
+// singletons shouldn't have assignment operators   instance_ = other.instance_;
+// singletons shouldn't have assignment operators   pcs_e_p_all_ = other.pcs_e_p_all_;
+// singletons shouldn't have assignment operators   vec_filename_all_ = other.vec_filename_all_;
+// singletons shouldn't have assignment operators   vec_individual_weight_all_ = other.vec_individual_weight_all_;
+// singletons shouldn't have assignment operators  }
+// singletons shouldn't have assignment operators  return *this;
 // singletons shouldn't have assignment operators }
 
 std::ostream &
@@ -131,19 +131,19 @@ operator << ( std::ostream& out, const PcsEnergyParameterManager &me ){
 	out << "************************ Printing PcsEnergyParameterManager" << std::endl;
 
 	out << "vec_filename_all_: ";
-	for (i = 1; i <= me.vec_filename_all_.size(); ++i){
+	for ( i = 1; i <= me.vec_filename_all_.size(); ++i ) {
 		out << me.vec_filename_all_[i]<< " ";
 	}
 	out << std::endl;
 
 	out << "vec_individual_weight_all_: ";
-	for (i = 1; i <= me.vec_individual_weight_all_.size(); ++i){
+	for ( i = 1; i <= me.vec_individual_weight_all_.size(); ++i ) {
 		out << me.vec_individual_weight_all_[i]<< " ";
 	}
 	out << std::endl;
 
 	out << "pcs_e_p_all_: ";
-	for (i = 1; i <= me.pcs_e_p_all_.size(); ++i){
+	for ( i = 1; i <= me.pcs_e_p_all_.size(); ++i ) {
 		out << me.pcs_e_p_all_[i] << std::endl;
 	}
 	out << std::endl;
@@ -166,7 +166,7 @@ PcsEnergyParameterManager::incremente_n_multi_data(){
 PcsEnergyParameter &
 PcsEnergyParameterManager::get_PcsEnergyParameter_for(core::Size i_multi_data){
 
-	if ( (i_multi_data > get_n_multi_data()) ){
+	if ( (i_multi_data > get_n_multi_data()) ) {
 		TR_PcsEnergyParameterManager << "Problem in get_PcsEnergyParameter_for: i_multi_data = "<<i_multi_data<<" and n_multi_data = "<< get_n_multi_data() << std::endl;
 		utility_exit_with_message("There is a coding problem in get_PcsEnergyParameter_for");
 	}

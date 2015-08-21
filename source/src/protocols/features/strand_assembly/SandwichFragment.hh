@@ -40,29 +40,29 @@ class SandwichFragment{
 
 public:
 	SandwichFragment(
-				   core::Size chain_B_resNum);
+		core::Size chain_B_resNum);
 
 	SandwichFragment(
-				   core::Size start,
-				   core::Size end);
+		core::Size start,
+		core::Size end);
 
 	SandwichFragment(
-				   core::Size sheet_id,
-				   core::Size start,
-				   core::Size end);
+		core::Size sheet_id,
+		core::Size start,
+		core::Size end);
 
 	SandwichFragment(
-				   core::Size sheet_id,
-				   core::Size strand_id,
-				   core::Size start,
-				   core::Size end);
+		core::Size sheet_id,
+		core::Size strand_id,
+		core::Size start,
+		core::Size end);
 
 	SandwichFragment(
-				   core::Size sw_can_by_sh_id,
-				   core::Size sheet_id,
-				   core::Size strand_id,
-				   core::Size start,
-				   core::Size end);
+		core::Size sw_can_by_sh_id,
+		core::Size sheet_id,
+		core::Size strand_id,
+		core::Size start,
+		core::Size end);
 
 	//This really shouldn't exist, but boost uses it for serialization (I couldn't figure out the way around this).
 	//Either way, start_ and end_ are read-only members, so a Fragment assembled in this way won't be very useful....
@@ -86,7 +86,7 @@ public:
 	// Undefined, commenting out to fix PyRosetta build  void set_pdb_source(std::string pdb_source_);
 
 private:
-	core::Size	sw_can_by_sh_id_;
+	core::Size sw_can_by_sh_id_;
 
 	core::Size sheet_id_;
 	core::Size strand_id_;

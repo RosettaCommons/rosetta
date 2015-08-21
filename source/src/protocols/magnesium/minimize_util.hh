@@ -27,16 +27,16 @@ namespace magnesium {
 
 void
 minimize_magnesium_and_hydration_shell( core::pose::Pose & pose,
-																				utility::vector1< core::Size > const mg_res,
-																				core::scoring::ScoreFunctionCOP minimize_scorefxn = 0,
-																				core::Distance const mg_coord_cst_dist = 0.2 );
+	utility::vector1< core::Size > const mg_res,
+	core::scoring::ScoreFunctionCOP minimize_scorefxn = 0,
+	core::Distance const mg_coord_cst_dist = 0.2 );
 
 void
 minimize_magnesium_and_hydration_shell( core::pose::Pose & pose /*for viewing*/,
-																					utility::vector1< core::pose::PoseOP > & pose_list,
-																					utility::vector1< core::Size > const mg_res,
-																					core::scoring::ScoreFunctionCOP minimize_scorefxn = 0,
-																					core::Distance const mg_coord_cst_dist = 0.2 );
+	utility::vector1< core::pose::PoseOP > & pose_list,
+	utility::vector1< core::Size > const mg_res,
+	core::scoring::ScoreFunctionCOP minimize_scorefxn = 0,
+	core::Distance const mg_coord_cst_dist = 0.2 );
 
 void
 update_mg_hoh_fold_tree( core::pose::Pose & pose );

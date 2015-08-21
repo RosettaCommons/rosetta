@@ -6,25 +6,25 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
- //////////////////////////////////////////////
- ///
- /// @file PseudocontactShiftData.hh
- ///
- /// @brief  Hold the PCS data on which the SVD will be applyed
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890
- ///
- /// @authorv Christophe Schmitz , Kala Bharath Pilla
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file PseudocontactShiftData.hh
+///
+/// @brief  Hold the PCS data on which the SVD will be applyed
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890
+///
+/// @authorv Christophe Schmitz , Kala Bharath Pilla
+///
+////////////////////////////////////////////////
 
 
 #ifndef INCLUDED_protocols_scoring_methods_pcsTs3_PseudocontactShiftData_hh
@@ -50,10 +50,10 @@
 // C++ headers
 #include <iostream>
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcsTs3{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcsTs3 {
 
 class PCS_data_per_lanthanides_Ts3{
 private:
@@ -62,7 +62,7 @@ private:
 
 	utility::vector1<core::Size> A_index_; //index on the giant matrix A to build all the smalls matrix A_
 
- 	ObjexxFCL::FArray2D< core::Real > fstyle_A_; //We are going to SVD Ax = b
+	ObjexxFCL::FArray2D< core::Real > fstyle_A_; //We are going to SVD Ax = b
 	ObjexxFCL::FArray1D< core::Real > fstyle_b_; //I should make this one const
 
 	basic::svd::SVD_Solver svd_s_;
@@ -191,8 +191,8 @@ public:
 
 	void
 	update_matrix_A_all(core::Real const X,
-											core::Real const Y,
-											core::Real const Z);
+		core::Real const Y,
+		core::Real const Z);
 
 	//void print_matrix_A_all() const;
 

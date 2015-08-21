@@ -40,57 +40,57 @@ namespace protocols {
 namespace rigid {
 
 class UniformRigidBodyCM : public environment::ClientMover {
-  typedef core::environment::LocalPosition LocalPosition;
-  typedef environment::claims::EnvClaims EnvClaims;
-  typedef int JumpNumber;
+	typedef core::environment::LocalPosition LocalPosition;
+	typedef environment::claims::EnvClaims EnvClaims;
+	typedef int JumpNumber;
 
 public:
-  UniformRigidBodyCM();
+	UniformRigidBodyCM();
 
-  UniformRigidBodyCM( std::string const& name,
-                      LocalPosition const& mobile,
-                      LocalPosition const& stationary,
-                      core::Real rotation_magnitude = 3.0,
-                      core::Real translation_magnitude = 8.0 );
+	UniformRigidBodyCM( std::string const& name,
+		LocalPosition const& mobile,
+		LocalPosition const& stationary,
+		core::Real rotation_magnitude = 3.0,
+		core::Real translation_magnitude = 8.0 );
 
-  virtual
-  ~UniformRigidBodyCM() {};
+	virtual
+	~UniformRigidBodyCM() {};
 
-  virtual
-  EnvClaims yield_claims( core::pose::Pose const&,
-                          basic::datacache::WriteableCacheableMapOP );
+	virtual
+	EnvClaims yield_claims( core::pose::Pose const&,
+		basic::datacache::WriteableCacheableMapOP );
 
-  virtual std::string get_name() const;
+	virtual std::string get_name() const;
 
-  virtual void initialize( core::pose::Pose& pose );
+	virtual void initialize( core::pose::Pose& pose );
 
-  virtual void apply( core::pose::Pose& );
+	virtual void apply( core::pose::Pose& );
 
-  virtual void
-  parse_my_tag( utility::tag::TagCOP tag,
-                basic::datacache::DataMap & data,
-                protocols::filters::Filters_map const & filters,
-                protocols::moves::Movers_map const & movers,
-                core::pose::Pose const & pose );
+	virtual void
+	parse_my_tag( utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose );
 
-  std::string const& name() const { return name_; }
+	std::string const& name() const { return name_; }
 
-  void name( std::string const& name ) { name_ = name; }
+	void name( std::string const& name ) { name_ = name; }
 
-  virtual
-  moves::MoverOP fresh_instance() const;
+	virtual
+	moves::MoverOP fresh_instance() const;
 
-  virtual
-  moves::MoverOP clone() const;
+	virtual
+	moves::MoverOP clone() const;
 
 protected:
-  virtual void passport_updated();
+	virtual void passport_updated();
 
 private:
 
-  std::string name_;
-  LocalPosition mobile_label_, stationary_label_;
-  UniformRigidBodyMoverOP mover_;
+	std::string name_;
+	LocalPosition mobile_label_, stationary_label_;
+	UniformRigidBodyMoverOP mover_;
 
 }; // end UniformRigidBodyCM base class
 

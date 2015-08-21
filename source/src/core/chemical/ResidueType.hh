@@ -105,14 +105,14 @@ typedef utility::keys::Key4Tuple< Size, Size, Size, Size > dihedral_atom_set;
 /// know, the name is kind of bad) are the atoms, while the edge descriptors (ED, yet another bad name) are the bonds.
 /// Initially, when a ResidueType is constructed, the following primary data are set:
 ///
-///	atom_base_;
-///	chi_atoms_;
-///	nu_atoms_;
-///	mainchain_atoms_;
-///	nbr_atom_;
-///	actcoord_atoms_;
-///	cut_bond_neighbor_;
-///	atom_shadowed_;
+/// atom_base_;
+/// chi_atoms_;
+/// nu_atoms_;
+/// mainchain_atoms_;
+/// nbr_atom_;
+/// actcoord_atoms_;
+/// cut_bond_neighbor_;
+/// atom_shadowed_;
 ///
 /// When this data is set, it is set based on vertex descriptors.  Because vertex descriptors never change, like atom
 /// indices, there is no need to reorder this primary data; however, because Rosetta relies heavily on atom indices
@@ -148,10 +148,10 @@ public:
 	/// @details We use the AtomTypeSet object to assign atom_types to atoms inside add_atom,
 	/// and to identify (polar) hydrogens, acceptors, etc.
 	ResidueType(
-			AtomTypeSetCOP atom_types,
-			ElementSetCOP element_types,
-			MMAtomTypeSetCOP mm_atom_types,
-			orbitals::OrbitalTypeSetCOP orbital_types//,
+		AtomTypeSetCOP atom_types,
+		ElementSetCOP element_types,
+		MMAtomTypeSetCOP mm_atom_types,
+		orbitals::OrbitalTypeSetCOP orbital_types//,
 	);
 
 	ResidueType( ResidueType const & residue_type );
@@ -228,7 +228,7 @@ public:
 	atom_type( Size const atomno ) const
 	{
 		PyAssert((atomno > 0) && (atomno <= ordered_atoms_.size()), "ResidueType::atom_type( Size const atomno ): atomno is not in this ResidueType!");
-	debug_assert( (atomno > 0) && (atomno <= ordered_atoms_.size()) );
+		debug_assert( (atomno > 0) && (atomno <= ordered_atoms_.size()) );
 		return ( *atom_types_ )[ graph_[ ordered_atoms_[atomno] ].atom_type_index() ];
 	}
 
@@ -344,7 +344,7 @@ public:
 	Size
 	number_bonded_hydrogens( Size const atomno ) const
 	{
-		if( attached_H_end_[ atomno ] == 0 ) return 0;
+		if ( attached_H_end_[ atomno ] == 0 ) return 0;
 		else return attached_H_end_[ atomno ] - attached_H_begin_[ atomno ] + 1;
 	}
 
@@ -385,7 +385,7 @@ public:
 	AtomIndices const &
 	chi_atoms( Size const chino ) const
 	{
-	debug_assert(chino <= chi_atoms_indices_.size());
+		debug_assert(chino <= chi_atoms_indices_.size());
 		return chi_atoms_indices_[ chino ];
 
 	}
@@ -394,7 +394,7 @@ public:
 	VDs const &
 	chi_atom_vds( Size const chino ) const
 	{
-	debug_assert(chino <= chi_atoms_.size());
+		debug_assert(chino <= chi_atoms_.size());
 		return chi_atoms_[ chino ];
 
 	}
@@ -410,7 +410,7 @@ public:
 	AtomIndices const &
 	nu_atoms(core::uint const nu_index) const
 	{
-	debug_assert(nu_index <= nu_atoms_indices_.size());
+		debug_assert(nu_index <= nu_atoms_indices_.size());
 		return nu_atoms_indices_[nu_index];
 	}
 
@@ -427,8 +427,8 @@ public:
 	get_metal_binding_atoms( AtomIndices &metal_binding_indices ) const {
 		metal_binding_indices.clear();
 
-		for(core::Size i=1, imax=metal_binding_atoms_.size(); i<=imax; ++i) {
-			if( has(metal_binding_atoms_[i]) ) {
+		for ( core::Size i=1, imax=metal_binding_atoms_.size(); i<=imax; ++i ) {
+			if ( has(metal_binding_atoms_[i]) ) {
 				metal_binding_indices.push_back( atom_index( metal_binding_atoms_[i] )  );
 			}
 		}
@@ -515,19 +515,19 @@ public:
 
 	bool
 	heavyatom_has_polar_hydrogens( Size atomno ) const {
-	debug_assert( finalized_ );
+		debug_assert( finalized_ );
 		return graph_[ordered_atoms_[atomno]].heavyatom_has_polar_hydrogens();
 	}
 
 	bool
 	heavyatom_is_an_acceptor( Size atomno ) const {
-	debug_assert( finalized_ );
+		debug_assert( finalized_ );
 		return graph_[ordered_atoms_[atomno]].is_acceptor();
 	}
 
 	bool
 	atom_is_polar_hydrogen( Size atomno ) const {
-	debug_assert( finalized_ );
+		debug_assert( finalized_ );
 		return graph_[ordered_atoms_[atomno]].is_polar_hydrogen();
 	}
 
@@ -556,12 +556,12 @@ public:
 		return atom_name_to_vd_.find(atom_name) != atom_name_to_vd_.end();
 	}
 
-	#ifdef WIN32  // Fixes incorrect cast on WIN32 where has("string") actually calls has( VD )
+#ifdef WIN32  // Fixes incorrect cast on WIN32 where has("string") actually calls has( VD )
 	inline bool has( const char *name ) const
 	{
 		return has( std::string(name) );
 	}
-	#endif
+#endif
 
 	/// @brief is this vertex descriptor present in this residue?
 	bool
@@ -643,7 +643,7 @@ public:
 	Size
 	first_sidechain_hydrogen() const
 	{
-	debug_assert( finalized_ );
+		debug_assert( finalized_ );
 		return first_sidechain_hydrogen_;
 	}
 
@@ -663,10 +663,10 @@ public:
 	bool
 	atom_is_backbone( Size const atomno ) const
 	{
-	debug_assert( finalized_ );
-	debug_assert( atomno <= natoms() );
+		debug_assert( finalized_ );
+		debug_assert( atomno <= natoms() );
 		return ( ( atomno <= n_backbone_heavyatoms_ ) ||
-				( atomno > nheavyatoms_ && atomno < first_sidechain_hydrogen_ ) );
+			( atomno > nheavyatoms_ && atomno < first_sidechain_hydrogen_ ) );
 	}
 
 	/// @brief quick lookup: is the atom with the given index a hydrogen or not?
@@ -674,8 +674,8 @@ public:
 	bool
 	atom_is_hydrogen( Size const atomno ) const
 	{
-	debug_assert( finalized_ );
-	debug_assert( atomno <= natoms() );
+		debug_assert( finalized_ );
+		debug_assert( atomno <= natoms() );
 		return atomno > nheavyatoms_;
 	}
 
@@ -752,8 +752,8 @@ public:
 	chemical::orbitals::OrbitalType const &
 	orbital_type(int const orbital_index) const;
 
-	//	core::Size
-	//	orbital_type_index( Size const orb_index ) const;
+	// core::Size
+	// orbital_type_index( Size const orb_index ) const;
 
 
 	/// @brief number of orbitals
@@ -954,7 +954,7 @@ public:
 	/// connection at this atom.
 	Size
 	residue_connection_id_for_atom( Size const atomid ) const {
-	debug_assert( atom_2_residue_connection_map_[ atomid ].size() == 1 );
+		debug_assert( atom_2_residue_connection_map_[ atomid ].size() == 1 );
 		return atom_2_residue_connection_map_[ atomid ][ 1 ];
 	}
 
@@ -989,10 +989,10 @@ public:
 	/// Will return the vertex descriptor of the added atom.
 	VD
 	add_atom(
-			std::string const & atom_name,
-			std::string const & atom_type_name,
-			std::string const & mm_atom_type_name,
-			Real const charge /*
+		std::string const & atom_name,
+		std::string const & atom_type_name,
+		std::string const & mm_atom_type_name,
+		Real const charge /*
 		std::string const & count_pair_lower_name,
 		std::string const & count_pair_upper_name,
 		std::string const & count_pair_special*/
@@ -1023,8 +1023,8 @@ public:
 	/// @brief set atom type
 	void
 	set_atom_type(
-			std::string const & atom_name,
-			std::string const & atom_type_name
+		std::string const & atom_name,
+		std::string const & atom_type_name
 	) { set_atom_type( atom_name_to_vd_[atom_name], atom_type_name); }
 
 	/// @brief set atom type
@@ -1035,8 +1035,8 @@ public:
 	/// @brief set mm atom type
 	void
 	set_mm_atom_type(
-			std::string const & atom_name,
-			std::string const & mm_atom_type_name
+		std::string const & atom_name,
+		std::string const & mm_atom_type_name
 	);
 
 	/// @brief Manually set the gasteiger typeset - will use the default set otherwise
@@ -1076,8 +1076,8 @@ public:
 	/// @brief add a bond between atom1 and atom2, if bond type is not specified, default to a SingleBond
 	void
 	add_cut_bond(
-			std::string const & atom_name1,
-			std::string const & atom_name2
+		std::string const & atom_name1,
+		std::string const & atom_name2
 	);
 
 	/// @brief get root_atom used as the base of the icoor tree.
@@ -1143,8 +1143,8 @@ public:
 	/// @brief sets atom_base[ atom1 ] = atom2
 	void
 	set_atom_base(
-			std::string const & atom_name1,
-			std::string const & atom_name2
+		std::string const & atom_name1,
+		std::string const & atom_name2
 	);
 
 	/// @brief sets atom_base[ atom1 ] = atom2, vertex descriptor version
@@ -1156,11 +1156,11 @@ public:
 
 	/// @brief set an atom as backbone heavy atom
 	/**
-			backbone stuff is a little tricky if we want to allow newly added atoms,
-			eg in patching, to be backbone atoms. We move any exsiting backbone heavy
-			atoms back into force_bb_ list and add the new one. Afterwards, the new
-			backbone heavy atom list will be generated in finalize() using info from
-			force_bb_.
+	backbone stuff is a little tricky if we want to allow newly added atoms,
+	eg in patching, to be backbone atoms. We move any exsiting backbone heavy
+	atoms back into force_bb_ list and add the new one. Afterwards, the new
+	backbone heavy atom list will be generated in finalize() using info from
+	force_bb_.
 	**/
 	void
 	set_backbone_heavyatom( std::string const & name );
@@ -1181,28 +1181,28 @@ public:
 	/// @details phi and theta are in radians
 	void
 	set_icoor(
-			std::string const & atm,
-			Real const phi,
-			Real const theta,
-			Real const d,
-			std::string const & stub_atom1,
-			std::string const & stub_atom2,
-			std::string const & stub_atom3,
-			bool const update_xyz = false
+		std::string const & atm,
+		Real const phi,
+		Real const theta,
+		Real const d,
+		std::string const & stub_atom1,
+		std::string const & stub_atom2,
+		std::string const & stub_atom3,
+		bool const update_xyz = false
 	);
 
 	/// @brief set AtomICoor for an atom, vertex descriptor version
 	/// @details phi and theta are in radians
 	void
 	set_icoor(
-			VD const & atm,
-			Real const phi,
-			Real const theta,
-			Real const d,
-			VD const & stub_atom1,
-			VD const & stub_atom2,
-			VD const & stub_atom3,
-			bool const update_xyz = false
+		VD const & atm,
+		Real const phi,
+		Real const theta,
+		Real const d,
+		VD const & stub_atom1,
+		VD const & stub_atom2,
+		VD const & stub_atom3,
+		bool const update_xyz = false
 	);
 
 	void assign_neighbor_atom();
@@ -1217,14 +1217,14 @@ public:
 
 	void
 	set_ideal_xyz(
-			std::string const & atm,
-			Vector const & xyz_in
+		std::string const & atm,
+		Vector const & xyz_in
 	);
 
 	void
 	set_ideal_xyz(
-			Size index,
-			Vector const & xyz_in
+		Size index,
+		Vector const & xyz_in
 	);
 
 	void
@@ -1238,8 +1238,8 @@ public:
 
 	void
 	set_shadowing_atom(
-			std::string const & atom,
-			std::string const & atom_being_shadowed
+		std::string const & atom,
+		std::string const & atom_being_shadowed
 	);
 
 	//////////////////////////////////////////////////////////////////////
@@ -1253,8 +1253,8 @@ public:
 	/// @brief add an orbital onto a residue based upon atom
 	void
 	add_orbital(
-			std::string & orbital_name,
-			std::string & orbital_type_name
+		std::string & orbital_name,
+		std::string & orbital_type_name
 	);
 
 	/// @brief add an orbital bond between an atom and an orbital.
@@ -1262,8 +1262,8 @@ public:
 	/// you must have the atom as the first and orbital as the second.
 	void
 	add_orbital_bond(
-			std::string const & atom_name1,
-			std::string const & orbital_name
+		std::string const & atom_name1,
+		std::string const & orbital_name
 	);
 
 	orbitals::ICoorOrbitalData const &
@@ -1275,13 +1275,13 @@ public:
 	/// @brief set OrbitalICoor for an orbital
 	void
 	set_orbital_icoor_id(
-			std::string const & orbital,
-			Real const phi,
-			Real const theta,
-			Real const d,
-			std::string const & stub_atom1,
-			std::string const & stub_atom2,
-			std::string const & stub_atom3
+		std::string const & orbital,
+		Real const phi,
+		Real const theta,
+		Real const d,
+		std::string const & stub_atom1,
+		std::string const & stub_atom2,
+		std::string const & stub_atom3
 	);
 
 	//////////////////////////////////////////////////////////////////////
@@ -1319,41 +1319,41 @@ public:
 	/// @brief Add a chi (side-chain) angle defined by four atoms.
 	void
 	add_chi(Size const chino,
-			VD atom1,
-			VD atom2,
-			VD atom3,
-			VD atom4);
+		VD atom1,
+		VD atom2,
+		VD atom3,
+		VD atom4);
 
 	/// @brief Add a chi (side-chain) angle defined by four atoms.
 	void
 	add_chi(VD atom1,
-			VD atom2,
-			VD atom3,
-			VD atom4);
+		VD atom2,
+		VD atom3,
+		VD atom4);
 
 
 	/// @brief Add a chi (side-chain) angle defined by four atoms.
 	void
 	add_chi(Size const chino,
-			std::string const & atom_name1,
-			std::string const & atom_name2,
-			std::string const & atom_name3,
-			std::string const & atom_name4);
+		std::string const & atom_name1,
+		std::string const & atom_name2,
+		std::string const & atom_name3,
+		std::string const & atom_name4);
 
 	/// @brief Add a chi (side-chain) angle defined by four atoms to the end of the list of chis.
 	void
 	add_chi(std::string const & atom_name1,
-			std::string const & atom_name2,
-			std::string const & atom_name3,
-			std::string const & atom_name4);
+		std::string const & atom_name2,
+		std::string const & atom_name3,
+		std::string const & atom_name4);
 
 	/// @brief Add a nu (internal cyclic) angle defined by four atoms.
 	void add_nu(
-			core::uint const nu_index,
-			std::string const & atom_name1,
-			std::string const & atom_name2,
-			std::string const & atom_name3,
-			std::string const & atom_name4);
+		core::uint const nu_index,
+		std::string const & atom_name1,
+		std::string const & atom_name2,
+		std::string const & atom_name3,
+		std::string const & atom_name4);
 
 
 	/// @brief  Set this cyclic residue's lowest-energy ring conformer by IUPAC name.
@@ -1368,11 +1368,11 @@ public:
 	//    This is needed for certain PTM's
 	void
 	redefine_chi(
-			Size const chino,
-			std::string const & atom_name1,
-			std::string const & atom_name2,
-			std::string const & atom_name3,
-			std::string const & atom_name4
+		Size const chino,
+		std::string const & atom_name1,
+		std::string const & atom_name2,
+		std::string const & atom_name3,
+		std::string const & atom_name4
 	);
 
 	/// @brief delete terminal chi angle
@@ -1391,9 +1391,9 @@ public:
 	/// @brief Add a rotamer bin for a given chi.
 	void
 	add_chi_rotamer(
-			Size const chino,
-			Real const mean,
-			Real const sdev
+		Size const chino,
+		Real const mean,
+		Real const sdev
 	);
 
 	/// @brief Adds a chi rotamer bin to the highest-indexed chi in the list of chis for this ResidueType.
@@ -1635,8 +1635,8 @@ public:
 
 	/// @brief get all the variant types for this ResidueType
 	///         -- rhiju (merging roccomoretti/restypeset_fiddle)
- 	utility::vector1< std::string >
- 	variant_types() const;
+	utility::vector1< std::string >
+	variant_types() const;
 
 	/// @brief set our aa-type (could be "UNK")
 	void
@@ -1781,7 +1781,7 @@ public:
 	AA const &
 	backbone_aa() const
 	{
-		if(backbone_aa_==aa_unk) return aa_;
+		if ( backbone_aa_==aa_unk ) return aa_;
 		return backbone_aa_;
 	}
 
@@ -1803,7 +1803,7 @@ public:
 		return dihedral_atom_sets_[ dihe ];
 	}
 
-    /// @brief Return the indices for the set of atoms that define a particular
+	/// @brief Return the indices for the set of atoms that define a particular
 	/// intraresidue improper dihedral
 	dihedral_atom_set const &
 	improper_dihedral( Size const dihe ) const
@@ -1820,7 +1820,7 @@ public:
 		return dihedrals_for_atom_[ atomno ];
 	}
 
-    /// @brief Returns the list of all of the indices of all the intraresidue
+	/// @brief Returns the list of all of the indices of all the intraresidue
 	/// dihedrals a particular atom is involved in.
 	/// Useful for calculating the derivatives for an atom.
 	utility::vector1< Size > const &
@@ -1929,7 +1929,7 @@ public:
 	}
 
 	///////////////////////////////////////////////////////////////
-	core::chemical::rna::RNA_ResidueType const &	RNA_type() const;
+	core::chemical::rna::RNA_ResidueType const & RNA_type() const;
 
 	/// @brief  Return the CarbohydrateInfo object containing sugar-specific properties for this residue.
 	core::chemical::carbohydrates::CarbohydrateInfoCOP carbohydrate_info() const;
@@ -1950,9 +1950,9 @@ public:
 	/// @brief Selects three atoms for orienting this residue type
 	void
 	select_orient_atoms(
-			Size & center,
-			Size & nbr1,
-			Size & nbr2
+		Size & center,
+		Size & nbr1,
+		Size & nbr2
 	) const;
 
 	/// @brief A graph-based function to determine the size of the smallest ring that involves a given atom.
@@ -2038,11 +2038,11 @@ private:
 	///
 	/// A ResidueType also has three stages of its existence:
 	/// * Mutable - In this stage only the Primary data and selected Derived data are valid.
-	///		All other Derived data may be in an inconsistent state with itself or the Primary data.
+	///  All other Derived data may be in an inconsistent state with itself or the Primary data.
 	///      If you're creating or modifying residue types, you'll be in this stage.
 	/// * Finalized - In this stage the all Derived data is self consistent with primary data.
 	///     To go from Building to Finalized, call the finalize() method.
-	///		You can go back to the Building stage by calling a function which modifies the ResidueType.
+	///  You can go back to the Building stage by calling a function which modifies the ResidueType.
 	/// * Fixed - A conceptual stage at this point. The ResidueType is completely finished.
 	///      Only Fixed ResidueTypes should be placed into ResidueTypeSets and be used to construct Residues.
 	///      Do not call any modification methods on Fixed ResidueTypes.
@@ -2064,8 +2064,8 @@ private:
 	/////////////////////////////////////////////////////////////////////////////
 
 	/// @brief The type set for Rosetta Atom types. -- Primary
-	///	used to define the set of allowed atomtypes for this residue and
-	///	their properties
+	/// used to define the set of allowed atomtypes for this residue and
+	/// their properties
 	/// Needs to be non-null by the time finalize() is called.
 	AtomTypeSetCOP atom_types_;
 

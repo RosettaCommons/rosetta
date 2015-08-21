@@ -47,7 +47,7 @@ namespace simple_filters {
 //@brief yields a column with the number of the batch decoy was evaluated in
 class BatchEvaluator : public evaluation::PoseEvaluator {
 public:
-  virtual void apply( core::pose::Pose& pose, std::string tag, core::io::silent::SilentStruct &pss ) const;
+	virtual void apply( core::pose::Pose& pose, std::string tag, core::io::silent::SilentStruct &pss ) const;
 
 	virtual core::Size size() const { return 1; };
 	virtual std::string name( core::Size ) const { return "batch"; };
@@ -58,8 +58,8 @@ private:
 //@brief yields a column with the number of the batch decoy was evaluated in
 class BatchNrEvaluator : public evaluation::SingleValuePoseEvaluator< core::Size > {
 public:
-  BatchNrEvaluator() : evaluation::SingleValuePoseEvaluator< core::Size >( "batch_nr" ) {};
-  virtual core::Size apply( core::pose::Pose& pose  ) const;
+	BatchNrEvaluator() : evaluation::SingleValuePoseEvaluator< core::Size >( "batch_nr" ) {};
+	virtual core::Size apply( core::pose::Pose& pose  ) const;
 private:
 };
 

@@ -83,7 +83,7 @@ public:
 	RNA_ReactivityType type() const { return type_; };
 	Real value() const { return value_; };
 
-	void set_position( 	Size const setting ) { position_ = setting; }
+	void set_position(  Size const setting ) { position_ = setting; }
 	void set_type( RNA_ReactivityType const setting ) { type_ = setting; }
 	void set_value( Real const setting ) { value_ = setting; }
 
@@ -103,27 +103,27 @@ public:
 
 	RNA_DataInfo(){}
 
-  RNA_DataInfo( RNA_DataInfo const & src );
+	RNA_DataInfo( RNA_DataInfo const & src );
 
 	~RNA_DataInfo(){}
 
-  RNA_DataInfoOP
-  clone() const
-  {
-    return RNA_DataInfoOP( new RNA_DataInfo( *this ) );
-  }
+	RNA_DataInfoOP
+	clone() const
+	{
+		return RNA_DataInfoOP( new RNA_DataInfo( *this ) );
+	}
 
 
 	RNA_DataInfo &
 	operator = ( RNA_DataInfo const & src );
 
-  Size
-  size() const {
-    return rna_data_.size();
-  }
+	Size
+	size() const {
+		return rna_data_.size();
+	}
 
-  void
-  zero();
+	void
+	zero();
 
 	RNA_Data const & rna_data() const { return rna_data_; }
 

@@ -104,7 +104,7 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 	using namespace rbsegment_relax;
 
 	core::Size nres = hybridization::get_num_residues_nonvirt( pose );
-	while (!pose.residue_type(nres).is_protein()) --nres;
+	while ( !pose.residue_type(nres).is_protein() ) --nres;
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_ );
 		scorefxn_sampling_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_sampling_ );
@@ -135,29 +135,29 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 
 	// penalize insertions/deletions in the middle of SSEs
 	utility::vector1< bool > sse_core(nres,false);
-	for (int j=1; j<=(int)SSEs.num_loop(); ++j) {
+	for ( int j=1; j<=(int)SSEs.num_loop(); ++j ) {
 		int jstart=SSEs[j].start(), jstop=SSEs[j].stop();
-		for (int k=jstart+4; k<=jstop-4; ++k) {
+		for ( int k=jstart+4; k<=jstop-4; ++k ) {
 			sse_core[ k ] = true;
 		}
 	}
 
 	utility::vector1< RBResidueRange > segments;
 	core::Size prevcut = 1;
-	for (int j=2; j<=(int)SSEs.num_loop(); ++j) {
+	for ( int j=2; j<=(int)SSEs.num_loop(); ++j ) {
 		core::Size j0stop = SSEs[j-1].stop();
 		core::Size j1start = SSEs[j].start();
 
 		char chain0 = pose.pdb_info()->chain(j0stop);
 		char chain1 = pose.pdb_info()->chain(j1start);
 
-		if (chains_.size()>0 && std::find(chains_.begin(), chains_.end(), chain0) == chains_.end() ) continue;
-		if (chains_.size()>0 && std::find(chains_.begin(), chains_.end(), chain1) == chains_.end() ) continue;
+		if ( chains_.size()>0 && std::find(chains_.begin(), chains_.end(), chain0) == chains_.end() ) continue;
+		if ( chains_.size()>0 && std::find(chains_.begin(), chains_.end(), chain1) == chains_.end() ) continue;
 
 		// see if there is a cut between the two and use that instead
 		bool found_cuts = false;
-		for (int k=(int)j0stop; k<(int)j1start; ++k) {
-			if (pose.fold_tree().is_cutpoint( k )) {
+		for ( int k=(int)j0stop; k<(int)j1start; ++k ) {
+			if ( pose.fold_tree().is_cutpoint( k ) ) {
 				segments.push_back( RBResidueRange( prevcut, k ) );
 				TR << "Add segment: " << prevcut << " , " << k << std::endl;
 				prevcut = k+1;
@@ -165,7 +165,7 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 			}
 		}
 
-		if (!found_cuts) {
+		if ( !found_cuts ) {
 			core::Size cutpoint = numeric::random::random_range(j0stop,j1start-1);
 			segments.push_back( RBResidueRange( prevcut, cutpoint-1 ) );
 			TR << "Add segment: " << prevcut << " , " << cutpoint-1 << std::endl;
@@ -177,14 +177,15 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 
 	// combine segments
 	core::Size nsegments=segments.size();
-	for (int i=1; i<=(int)nsegments; ++i) {
-		for (int j=i+1; j<=(int)nsegments; ++j) {
+	for ( int i=1; i<=(int)nsegments; ++i ) {
+		for ( int j=i+1; j<=(int)nsegments; ++j ) {
 			bool crosses_cut = false;
 
-			for (int k=i; k<j && !crosses_cut; ++k)
+			for ( int k=i; k<j && !crosses_cut; ++k ) {
 				crosses_cut = pose.fold_tree().is_cutpoint( segments[k].end() );
+			}
 
-			if (!crosses_cut) {
+			if ( !crosses_cut ) {
 				segments.push_back( RBResidueRange( segments[i].start(), segments[j].end() ) );
 				TR << "Add segment: " << segments[i].start() << " , " << segments[j].end() << std::endl;
 			}
@@ -200,30 +201,32 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 	core::pose::Pose best_pose=pose, acc_pose;
 	utility::vector1< int > offsets( nres, 0 );
 
-	if (greedy_) {
+	if ( greedy_ ) {
 		///
 		/// greedy
 		///
 		Size steps_eff = nsteps_; //std::ceil( nsteps_ / (2.0*max_shift_*segments.size()));
 		TR << "Greedy search for " << steps_eff << " steps" << std::endl;
-		for (int i=1; i<=(int)steps_eff; ++i) {
+		for ( int i=1; i<=(int)steps_eff; ++i ) {
 			acc_pose = pose;
 			core::Real score_cst = (*scorefxn_)(pose);
 			core::Real score_aln = sshift.score();
 			best_score = score_cst + weight_*score_aln;
 
 			int bestSeg=1, bestK=0;
-			for (core::Size seg_i = 1; seg_i<=segments.size(); ++seg_i ) {
+			for ( core::Size seg_i = 1; seg_i<=segments.size(); ++seg_i ) {
 				utility::vector1 < RBResidueRange > ncs_segments ( 1, segments[seg_i] );
-				if (ncs) {
-					for (core::uint j = 1; j <= ncs->ngroups(); ++j ) {
+				if ( ncs ) {
+					for ( core::uint j = 1; j <= ncs->ngroups(); ++j ) {
 						core::Size remap_start = ncs->get_equiv( j, segments[seg_i].start() );
 						core::Size remap_stop = ncs->get_equiv( j, segments[seg_i].end() );
-						for (core::uint k = segments[seg_i].start(); k <= segments[seg_i].end() && remap_start == 0; ++k)
+						for ( core::uint k = segments[seg_i].start(); k <= segments[seg_i].end() && remap_start == 0; ++k ) {
 							remap_start = ncs->get_equiv( j,k );
-						if (remap_start==0) continue;  // undefined
-						for (core::uint k = segments[seg_i].end(); k >= segments[seg_i].start() && remap_stop == 0; --k)
+						}
+						if ( remap_start==0 ) continue;  // undefined
+						for ( core::uint k = segments[seg_i].end(); k >= segments[seg_i].start() && remap_stop == 0; --k ) {
 							remap_stop = ncs->get_equiv( j,k );
+						}
 						//TR.Debug << "NCS: Add segment: " << remap_start << " , " << remap_stop << std::endl;
 						ncs_segments.push_back( RBResidueRange(remap_start, remap_stop) );
 					}
@@ -231,18 +234,18 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 				sshift.set_segment( RBSegment(ncs_segments) );
 
 				int k_start = -1*(int)max_shift_;
-				for (int k=k_start; k<=(int)max_shift_; ++k) {
+				for ( int k=k_start; k<=(int)max_shift_; ++k ) {
 					pose = acc_pose;
-					if (k!=0) {
+					if ( k!=0 ) {
 						sshift.apply( pose, k );
 						score_cst = (*scorefxn_)(pose);
 						score_aln = sshift.score();
 
 						// boltzmann
 						core::Real score = score_cst + weight_*score_aln;
-						if (score < best_score) {
+						if ( score < best_score ) {
 							TR << "New best!  Step " << i << "." << seg_i << "[" << segments[seg_i].start() << "-" << segments[seg_i].end()
-							   << "]." << k << " score = " << score_cst << " + " << weight_ << " * " << score_aln << " = " << score << std::endl;
+								<< "]." << k << " score = " << score_cst << " + " << weight_ << " * " << score_aln << " = " << score << std::endl;
 							best_score = score;
 							bestK=k;
 							bestSeg=seg_i;
@@ -254,21 +257,21 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 			// apply best shift we found
 			{
 				utility::vector1 < RBResidueRange > ncs_segments ( 1, segments[bestSeg] );
-				if (ncs) {
-					for (core::uint j=1; j <= ncs->ngroups(); ++j ) {
+				if ( ncs ) {
+					for ( core::uint j=1; j <= ncs->ngroups(); ++j ) {
 						core::Size remap_start = ncs->get_equiv( j, segments[bestSeg].start() ),
-								remap_stop = ncs->get_equiv( j, segments[bestSeg].end() );
-						for (core::uint k = segments[bestSeg].start(); k <= segments[bestSeg].end() && remap_start == 0; ++k) {
+							remap_stop = ncs->get_equiv( j, segments[bestSeg].end() );
+						for ( core::uint k = segments[bestSeg].start(); k <= segments[bestSeg].end() && remap_start == 0; ++k ) {
 							remap_start = ncs->get_equiv( j, k );
 						}
-						if (remap_start==0) continue;
-						for (core::uint k = segments[bestSeg].end(); k >= segments[bestSeg].start() && remap_stop == 0; --k) {
+						if ( remap_start==0 ) continue;
+						for ( core::uint k = segments[bestSeg].end(); k >= segments[bestSeg].start() && remap_stop == 0; --k ) {
 							remap_stop = ncs->get_equiv( j, k );
 						}
 						ncs_segments.push_back( RBResidueRange(remap_start,remap_stop) );
 					}
 				}
-				if (bestK==0) break;  // no move accepted last cycle
+				if ( bestK==0 ) break;  // no move accepted last cycle
 
 
 				pose = acc_pose;
@@ -283,22 +286,24 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 		///
 		/// non-greedy
 		///
-		for (int i=1; i<=(int)nsteps_; ++i) {
+		for ( int i=1; i<=(int)nsteps_; ++i ) {
 			// random segment
 			core::Size seg_i = numeric::random::random_range(1, segments.size() );
 
-			if (i>1) {
+			if ( i>1 ) {
 				// apply movement & score pose
 				utility::vector1 < RBResidueRange > ncs_segments ( 1, segments[seg_i] );
-				if (ncs) {
-					for (core::uint j = 1; j <= ncs->ngroups(); ++j ) {
+				if ( ncs ) {
+					for ( core::uint j = 1; j <= ncs->ngroups(); ++j ) {
 						core::Size remap_start = ncs->get_equiv( j, segments[seg_i].start() );
 						core::Size remap_stop = ncs->get_equiv( j, segments[seg_i].end() );
-						for (core::uint k = segments[seg_i].start(); k <= segments[seg_i].end() && remap_start == 0; ++k)
+						for ( core::uint k = segments[seg_i].start(); k <= segments[seg_i].end() && remap_start == 0; ++k ) {
 							remap_start = ncs->get_equiv( j,k );
-						if (remap_start==0) continue;  // undefined
-						for (core::uint k = segments[seg_i].end(); k >= segments[seg_i].start() && remap_stop == 0; --k)
+						}
+						if ( remap_start==0 ) continue;  // undefined
+						for ( core::uint k = segments[seg_i].end(); k >= segments[seg_i].start() && remap_stop == 0; --k ) {
 							remap_stop = ncs->get_equiv( j,k );
+						}
 						//TR.Debug << "NCS: Add segment: " << remap_start << " , " << remap_stop << std::endl;
 						ncs_segments.push_back( RBResidueRange(remap_start,remap_stop) );
 					}
@@ -310,7 +315,7 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 			core::Real score_cst = (*scorefxn_)(pose);
 			core::Real score_aln = sshift.score();
 
-			if (native_) {
+			if ( native_ ) {
 				score_cst = core::scoring::CA_rmsd( pose, *native_ );
 			}
 
@@ -327,7 +332,7 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 					acc_pose = pose;
 					acc_score = score;
 					sshift.trigger_accept();
-					if (!recover_low_) best_loops = sshift.get_residues_to_rebuild();
+					if ( !recover_low_ ) best_loops = sshift.get_residues_to_rebuild();
 					TR << "Accept!    Step " << i << " score = " << score_cst << " + " << weight_ << " * " << score_aln << " = " << score << std::endl;
 				}
 			} else {
@@ -335,19 +340,19 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 				acc_pose = pose;
 				acc_score = score;
 				sshift.trigger_accept();
-				if (score < best_score) {
+				if ( score < best_score ) {
 					TR << "New best!  Step " << i << " score = " << score_cst << " + " << weight_ << " * " << score_aln << " = " << score << std::endl;
 					best_pose = pose;
 					best_loops = sshift.get_residues_to_rebuild();
 					best_score = score;
 				} else {
 					TR << "Accept!    Step " << i << " score = " << score_cst << " + " << weight_ << " * " << score_aln << " = " << score << std::endl;
-					if (!recover_low_) best_loops = sshift.get_residues_to_rebuild();
+					if ( !recover_low_ ) best_loops = sshift.get_residues_to_rebuild();
 				}
 			}
 			*loops_ = *best_loops;
 		}
-		if (recover_low_) {
+		if ( recover_low_ ) {
 			pose = best_pose;
 		}
 	}
@@ -360,7 +365,7 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 
 void
 OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
-	if (loops_->size() != 0 && rebuild_cycles_!=0) {
+	if ( loops_->size() != 0 && rebuild_cycles_!=0 ) {
 		// see if the pose has NCS
 		simple_moves::symmetry::NCSResMappingOP ncs;
 		if ( pose.data().has( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ) {
@@ -370,14 +375,14 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 		core::kinematics::FoldTree f_in=pose.fold_tree(), f_new;
 
 		// set foldtree + variants
-		for( protocols::loops::Loops::iterator it=loops_->v_begin(), it_end=loops_->v_end(); it!=it_end; ++it ) {
+		for ( protocols::loops::Loops::iterator it=loops_->v_begin(), it_end=loops_->v_end(); it!=it_end; ++it ) {
 			// if loop crosses a cut maintain that cut
 			bool crosses_cut=false;
 			Size i = 0;
-			for( i=it->start(); i<=it->stop() && !crosses_cut; ++i ) {
+			for ( i=it->start(); i<=it->stop() && !crosses_cut; ++i ) {
 				crosses_cut |= f_in.is_cutpoint(i);
 			}
-			if (crosses_cut) {
+			if ( crosses_cut ) {
 				it->set_cut(i-1); //?
 			} else {
 				it->set_cut( it->midpoint() );  // be deterministic so ncs copies match up
@@ -393,8 +398,8 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 
 		// set movemap
 		core::kinematics::MoveMapOP mm_loop( new core::kinematics::MoveMap() );
-		for( protocols::loops::Loops::const_iterator it=loops_->begin(), it_end=loops_->end(); it!=it_end; ++it ) {
-			for( Size i=it->start(); i<=it->stop(); ++i ) {
+		for ( protocols::loops::Loops::const_iterator it=loops_->begin(), it_end=loops_->end(); it!=it_end; ++it ) {
+			for ( Size i=it->start(); i<=it->stop(); ++i ) {
 				mm_loop->set_bb(i, true);
 				mm_loop->set_chi(i, true);
 			}
@@ -406,8 +411,8 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 		// pick 3mers only in unaligned regions
 		std::string tgt_seq = pose.sequence();
 		core::fragment::FragSetOP frags3( new core::fragment::ConstantLengthFragSet( 3 ) );
-		for( protocols::loops::Loops::const_iterator it=loops_->begin(), it_end=loops_->end(); it!=it_end; ++it ) {
-			for( Size i=it->start(); i+2<=it->stop(); ++i ) {
+		for ( protocols::loops::Loops::const_iterator it=loops_->begin(), it_end=loops_->end(); it!=it_end; ++it ) {
+			for ( Size i=it->start(); i+2<=it->stop(); ++i ) {
 				core::fragment::FrameOP frame( new core::fragment::Frame( i, 3 ) );
 				frame->add_fragment(
 					core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa( "DDD", tgt_seq.substr( i-1, 3 ), 25, true, core::fragment::IndependentBBTorsionSRFD() ) );
@@ -420,19 +425,19 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 
 		// make a vector of fragments for random access (why does FragSet not have this?!?)
 		utility::vector1< core::fragment::FrameOP > frames1, frames3;
-		for (core::fragment::FrameIterator it = frags1->nonconst_begin(); it != frags1->nonconst_end(); ++it) frames1.push_back( *it );
-		for (core::fragment::FrameIterator it = frags3->nonconst_begin(); it != frags3->nonconst_end(); ++it) frames3.push_back( *it );
+		for ( core::fragment::FrameIterator it = frags1->nonconst_begin(); it != frags1->nonconst_end(); ++it ) frames1.push_back( *it );
+		for ( core::fragment::FrameIterator it = frags3->nonconst_begin(); it != frags3->nonconst_end(); ++it ) frames3.push_back( *it );
 
 		// setup MC
 		core::Size nouterCyc=4, ninnerCyc=rebuild_cycles_;
-		for (core::Size i=1; i<=nouterCyc; ++i) {
-			if (i==nouterCyc-1) scorefxn_sampling_->set_weight( core::scoring::linear_chainbreak, 0.5 );
-			if (i==nouterCyc)   scorefxn_sampling_->set_weight( core::scoring::linear_chainbreak, 2.0 );
+		for ( core::Size i=1; i<=nouterCyc; ++i ) {
+			if ( i==nouterCyc-1 ) scorefxn_sampling_->set_weight( core::scoring::linear_chainbreak, 0.5 );
+			if ( i==nouterCyc )   scorefxn_sampling_->set_weight( core::scoring::linear_chainbreak, 2.0 );
 
 			(*scorefxn_sampling_)(pose);
 			protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *scorefxn_sampling_, 2.0 ) );
 
-			for (Size n=1; n<=ninnerCyc; ++n) {
+			for ( Size n=1; n<=ninnerCyc; ++n ) {
 				utility::vector1< core::fragment::FrameOP > & working_frames = (n%2)?frames3:frames1;
 
 				//frag3mover->apply( pose );
@@ -443,21 +448,22 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 				to_insert->apply( pose, *frame_i );
 
 				// now apply to ncs copies
-				if (ncs) {
-					for (core::uint j = 1; j <= ncs->ngroups(); ++j ) {
+				if ( ncs ) {
+					for ( core::uint j = 1; j <= ncs->ngroups(); ++j ) {
 						bool all_are_mapped = true;
-						for ( Size k=frame_i->start(); k<=frame_i->stop() && all_are_mapped; ++k )
+						for ( Size k=frame_i->start(); k<=frame_i->stop() && all_are_mapped; ++k ) {
 							all_are_mapped &= (ncs->get_equiv( j,k )!=0 && loops_->is_loop_residue(ncs->get_equiv( j,k )) );
-						if (!all_are_mapped) continue;
+						}
+						if ( !all_are_mapped ) continue;
 						core::Size remap_start = ncs->get_equiv( j, frame_i->start() );
 						core::Size remap_stop = ncs->get_equiv( j, frame_i->stop() );
-						if (remap_stop-remap_start != frame_i->stop()-frame_i->start()) continue;
+						if ( remap_stop-remap_start != frame_i->stop()-frame_i->start() ) continue;
 						to_insert->apply( pose, remap_start, remap_stop );
 					}
 				}
 
 				(*scorefxn_sampling_)(pose);
-				if (mc->boltzmann( pose , (n%2)?"frag3":"frag1" )) {
+				if ( mc->boltzmann( pose , (n%2)?"frag3":"frag1" ) ) {
 					;
 
 					//std::ostringstream oss;
@@ -466,17 +472,17 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 
 					//std::cerr << "out " << i << "_" << n << ": " << frame_i->start() << std::endl;
 					//for (int j=1; j<=ncs->ngroups(); ++j ) {
-					//	bool all_are_mapped = true;
-					//	for ( Size k=frame_i->start(); k<=frame_i->stop() && all_are_mapped; ++k ) all_are_mapped &= (ncs->get_equiv( j,k )!=0);
-					//	if (!all_are_mapped) continue;
-					//	core::Size remap_start = ncs->get_equiv( j, frame_i->start() );
-					//	std::cerr << "  ---> " << remap_start << std::endl;
+					// bool all_are_mapped = true;
+					// for ( Size k=frame_i->start(); k<=frame_i->stop() && all_are_mapped; ++k ) all_are_mapped &= (ncs->get_equiv( j,k )!=0);
+					// if (!all_are_mapped) continue;
+					// core::Size remap_start = ncs->get_equiv( j, frame_i->start() );
+					// std::cerr << "  ---> " << remap_start << std::endl;
 					//}
 				}
 			}
 			mc->show_scores();
 			mc->show_counters();
-			if (recover_low_) mc->recover_low( pose );
+			if ( recover_low_ ) mc->recover_low( pose );
 		}
 
 		// restore input ft
@@ -487,31 +493,31 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 
 
 void OptimizeThreadingMover::parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & data,
-			filters::Filters_map const & /*filters*/,
-			moves::Movers_map const & /*movers*/,
-			core::pose::Pose const & /*pose*/ )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	filters::Filters_map const & /*filters*/,
+	moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/ )
 {
-	if( tag->hasOption( "scorefxn" ) ) {
+	if ( tag->hasOption( "scorefxn" ) ) {
 		std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn" ) );
 		scorefxn_ = (data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name ))->clone();
 	}
-	if( tag->hasOption( "scorefxn_sampling" ) ) {
+	if ( tag->hasOption( "scorefxn_sampling" ) ) {
 		std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn_sampling" ) );
 		scorefxn_sampling_ = (data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name ))->clone();
 	}
 
-	if( tag->hasOption( "native" ) ) {
+	if ( tag->hasOption( "native" ) ) {
 		std::string ref_model_pdb = tag->getOption<std::string>( "native" );
 		native_ = core::pose::PoseOP( new core::pose::Pose );
 		core::import_pose::pose_from_pdb( *native_, ref_model_pdb );
 	}
 
-	if( tag->hasOption( "chains" ) ) {
+	if ( tag->hasOption( "chains" ) ) {
 		std::string chain_str = tag->getOption<std::string>( "chains" );
 		utility::vector1< std::string > chns = utility::string_split(chain_str, ',');
-		for (int i=1; i<=(int)chns.size(); ++i) chains_.push_back( chns[i][0] );
+		for ( int i=1; i<=(int)chns.size(); ++i ) chains_.push_back( chns[i][0] );
 	}
 
 	nsteps_ = tag->getOption<core::Size>( "nsteps", 5000 );
@@ -524,10 +530,10 @@ void OptimizeThreadingMover::parse_my_tag(
 	max_shift_ = tag->getOption<core::Size>( "max_shift", 4 );
 
 	// different nstep default for greedy
-	if (greedy_ && !tag->hasOption("nsteps") ) nsteps_=2;
+	if ( greedy_ && !tag->hasOption("nsteps") ) nsteps_=2;
 
 	// add loopsOP to the DataMap
-	if (tag->hasOption( "loops_out" )) {
+	if ( tag->hasOption( "loops_out" ) ) {
 		std::string looptag = tag->getOption<std::string>( "loops_out" );
 		data.add( "loops", looptag, loops_ );
 	}

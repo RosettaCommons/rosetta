@@ -9,7 +9,7 @@
 
 /// @file   protocols/toolbox/task_operations/PreventResiduesFromRepackingOperation.hh
 /// @brief  TaskOperation class that prevents a vector of residues indices from repacking
-/// 	    parsed as a string that is comma delimited ","
+///      parsed as a string that is comma delimited ","
 /// @author Eva-Maria Strauch (evas01@uw.edu)
 
 #ifndef INCLUDED_protocols_toolbox_task_operations_PreventResiduesFromRepackingOperation_hh
@@ -47,7 +47,7 @@ public:
 
 	utility::vector1< core::Size > get_residues() const;
 
-  void set_residues( utility::vector1  < core::Size > residues_vec );
+	void set_residues( utility::vector1  < core::Size > residues_vec );
 
 	virtual ~PreventResiduesFromRepackingOperation();
 

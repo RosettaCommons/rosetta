@@ -30,8 +30,8 @@ namespace core {
 namespace scoring {
 namespace solid_surface {
 
-	/// A derived class from class Energies for efficiently representing the
-	/// interactions between a protein and a fixed surface
+/// A derived class from class Energies for efficiently representing the
+/// interactions between a protein and a fixed surface
 
 class SurfaceEnergies : public Energies
 {
@@ -72,7 +72,7 @@ public:
 	/// surface.  (Afterwards, all residues are going to be considered part of the surface).
 	void
 	reset_surface_residue_information();
-	
+
 	/// @brief Tell the SurfacEnergies that the following residues are considered not
 	/// part of the surface.
 	void
@@ -81,8 +81,8 @@ public:
 	/// @brief Does the SurfaceEnergies object consider a particular residue to be part of the surface?
 	bool
 	residue_is_surface( Size seqpos ) const;
-	
-	
+
+
 	/////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////
 	// private methods
@@ -100,7 +100,7 @@ private:
 	void fill_point_graph( pose::Pose const & pose, conformation::PointGraphOP pg ) const;
 
 	/// @brief Create a new surface grid, bounding box and dimension for the surface residues.
-	/// This might get called if the range on the score function changes or if the surface 
+	/// This might get called if the range on the score function changes or if the surface
 	/// moves.  (NOTE: currently not prepared to handle the case where the surface moves!)
 	//void
 	//prepare_surface_grid( conformation::PointGraphOP pg, Real neighbor_cutoff ) const;
@@ -111,7 +111,7 @@ private:
 	//reset_surface_grid() const;
 
 private:
-	Size total_residue_; // The total number of residues in the pose. NOTE: if this disagrees with parent::size(), we're in trouble 
+	Size total_residue_; // The total number of residues in the pose. NOTE: if this disagrees with parent::size(), we're in trouble
 	utility::vector1< std::pair< Size, Size > > non_surface_ranges_; // The residue beginning and ending indices which are considered not part of the surface
 	utility::vector1< bool > is_surface_; // The residues considered part of the surface
 
@@ -121,7 +121,7 @@ private:
 	//mutable std::map< core::conformation::CubeKey, utility::vector1< Size > > surface_grid_;
 	//mutable numeric::geometry::BoundingBox< numeric::xyzVector< Real > > surf_bb_;
 	//mutable core::conformation::CubeKey surf_dim_;
-	
+
 };
 
 

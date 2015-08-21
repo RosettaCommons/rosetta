@@ -18,8 +18,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace docking{
+namespace protocols {
+namespace docking {
 
 
 //Forwards and OP typedefs

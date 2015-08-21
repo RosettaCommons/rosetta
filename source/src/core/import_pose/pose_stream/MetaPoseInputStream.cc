@@ -46,10 +46,10 @@ bool MetaPoseInputStream::has_another_pose() {
 	if ( input_streams_[ current_index_ ]->has_another_pose() ) return true;
 
 	// move to next input_stream that has an available pose if necessary
-	while( current_index_ <= input_streams_.size() &&
-					!input_streams_[current_index_]->has_another_pose()
-	)
-		++current_index_;
+	while ( current_index_ <= input_streams_.size() &&
+			!input_streams_[current_index_]->has_another_pose()
+			)
+			++current_index_;
 
 	if ( current_index_ > input_streams_.size() ) return false;
 

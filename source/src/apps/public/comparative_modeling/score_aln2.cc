@@ -130,7 +130,7 @@ composite_sequences_from_cmd_line(
 
 	for ( Size ii = 1; ii <= fn_list.size() - 1; ii += 2 ) {
 		//std::cout << "making sequence from " << fn_list[ii] << " and " << fn_list[ii+1]
-		//	<< std::endl;
+		// << std::endl;
 		SequenceOP seq = SequenceFactory::get_instance()->seq_from_file(
 			fn_list[ii], fn_list[ii+1]
 		);
@@ -175,170 +175,170 @@ int
 main( int argc, char* argv [] ) {
 	try {
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	using std::map;
-	using std::string;
-	using core::Real;
-	using core::Size;
-	using core::pose::Pose;
-	using core::pose::PoseOP;
-	using utility::vector1;
-	using core::import_pose::pose_from_pdb;
-	using protocols::comparative_modeling::Align_RmsdEvaluator;
-	using core::pose::make_pose_from_sequence;
-	using protocols::comparative_modeling::PartialThreadingMover;
+		using std::map;
+		using std::string;
+		using core::Real;
+		using core::Size;
+		using core::pose::Pose;
+		using core::pose::PoseOP;
+		using utility::vector1;
+		using core::import_pose::pose_from_pdb;
+		using protocols::comparative_modeling::Align_RmsdEvaluator;
+		using core::pose::make_pose_from_sequence;
+		using protocols::comparative_modeling::PartialThreadingMover;
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::chemical;
-	using namespace core::io::silent;
-	using namespace core::sequence;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::chemical;
+		using namespace core::io::silent;
+		using namespace core::sequence;
 
-	basic::Tracer tr( "score_aln" );
-	//std::cout << "making sequence from " << option[in::file::seq]()[1] << " and "
-	//	<< option[ in::file::seq ]()[2] << std::endl;
+		basic::Tracer tr( "score_aln" );
+		//std::cout << "making sequence from " << option[in::file::seq]()[1] << " and "
+		// << option[ in::file::seq ]()[2] << std::endl;
 
-	SequenceOP qseq = SequenceFactory::get_instance()->seq_from_file(
-		option[ in::file::seq ]()[1], option[ in::file::seq ]()[2]
-	);
-	CompositeSequenceOP query_seq( new CompositeSequence );
-	query_seq->add_sequence(qseq);
-	map< string, CompositeSequenceOP > seqs = composite_sequences_from_cmd_line(
-		option[ in::file::seq ]()
-	);
-
-	vector1< std::string > align_fns = option[ in::file::alignment ]();
-
-	PoseOP native_pose( new Pose );
-	bool have_native( false );
-	if ( option[ in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb(
-			*native_pose, *(rsd_set_from_cmd_line().lock()), option[ in::file::native ]()
+		SequenceOP qseq = SequenceFactory::get_instance()->seq_from_file(
+			option[ in::file::seq ]()[1], option[ in::file::seq ]()[2]
 		);
-		have_native = true;
-	}
-
-	map< string, Pose > poses;
-	if ( have_native ) {
-		poses = poses_from_cmd_line(
-			option[ in::file::template_pdb ]()
+		CompositeSequenceOP query_seq( new CompositeSequence );
+		query_seq->add_sequence(qseq);
+		map< string, CompositeSequenceOP > seqs = composite_sequences_from_cmd_line(
+			option[ in::file::seq ]()
 		);
-	}
 
-	// scoring scheme for aligning profiles
-	//std::string const scoring_scheme_type( option[ cm::seq_score ]()[1] );
+		vector1< std::string > align_fns = option[ in::file::alignment ]();
 
-	CompositeScoringSchemeOP ss( new CompositeScoringScheme );
-	ScoringSchemeFactory ssf;
-	vector1< string > ss_names( option[ cm::seq_score ]() );
-	for ( Size ii = 1; ii <= ss_names.size(); ++ii ) {
-		ss->add_scoring_scheme( ssf.get_scoring_scheme( ss_names[ii] ) );
-	}
+		PoseOP native_pose( new Pose );
+		bool have_native( false );
+		if ( option[ in::file::native ].user() ) {
+			core::import_pose::pose_from_pdb(
+				*native_pose, *(rsd_set_from_cmd_line().lock()), option[ in::file::native ]()
+			);
+			have_native = true;
+		}
 
-	// for the ProfSim scoring scheme, the optimal opening and extension
-	// penalties were 2 and 0.2, with a scoring shift of -0.45 applied to
-	// all ungapped aligned pairs for database searches.
-	Real const gap_open  ( option[ cm::min_gap_open ]() );
-	Real const gap_extend( option[ cm::min_gap_extend ]() );
-	ss->gap_open  ( gap_open   );
-	ss->gap_extend( gap_extend );
+		map< string, Pose > poses;
+		if ( have_native ) {
+			poses = poses_from_cmd_line(
+				option[ in::file::template_pdb ]()
+			);
+		}
 
-	SilentFileData sfd;
+		// scoring scheme for aligning profiles
+		//std::string const scoring_scheme_type( option[ cm::seq_score ]()[1] );
 
-	typedef vector1< string >::const_iterator aln_iter;
-	for ( aln_iter aln_fn = align_fns.begin(), aln_end = align_fns.end();
+		CompositeScoringSchemeOP ss( new CompositeScoringScheme );
+		ScoringSchemeFactory ssf;
+		vector1< string > ss_names( option[ cm::seq_score ]() );
+		for ( Size ii = 1; ii <= ss_names.size(); ++ii ) {
+			ss->add_scoring_scheme( ssf.get_scoring_scheme( ss_names[ii] ) );
+		}
+
+		// for the ProfSim scoring scheme, the optimal opening and extension
+		// penalties were 2 and 0.2, with a scoring shift of -0.45 applied to
+		// all ungapped aligned pairs for database searches.
+		Real const gap_open  ( option[ cm::min_gap_open ]() );
+		Real const gap_extend( option[ cm::min_gap_extend ]() );
+		ss->gap_open  ( gap_open   );
+		ss->gap_extend( gap_extend );
+
+		SilentFileData sfd;
+
+		typedef vector1< string >::const_iterator aln_iter;
+		for ( aln_iter aln_fn = align_fns.begin(), aln_end = align_fns.end();
 				aln_fn != aln_end; ++aln_fn
-	) {
-		vector1< SequenceAlignment > alns = core::sequence::read_aln(
-			option[ cm::aln_format ](), *aln_fn
-		);
+				) {
+			vector1< SequenceAlignment > alns = core::sequence::read_aln(
+				option[ cm::aln_format ](), *aln_fn
+			);
 
-		for ( vector1< SequenceAlignment >::iterator it = alns.begin(),
-				end = alns.end();
-				it != end; ++it
-		) {
-			string const template_id( it->sequence(2)->id().substr(0,5) );
-			tr << *it << std::endl;
-			tr << "id " << it->sequence(2)->id() << " => " << template_id
-				<< std::endl;
-			string const ungapped_query( it->sequence(1)->ungapped_sequence() );
-
-			SilentStructOP ss_out( new ScoreFileSilentStruct );
-			map< string, CompositeSequenceOP >::iterator seq_it = seqs.find( template_id );
-			if ( seq_it == seqs.end() ) {
-				//print_seq_map( std::cerr, seqs );
-				string msg( "Error: can't find seq (id = " + template_id + ")" );
-				//utility_exit_with_message(msg);
-				tr.Error << msg << std::endl;
-			} else {
-				SequenceOP template_seq = seq_it->second;
-
-				utility::vector1< SequenceOP > my_seqs;
-				my_seqs.push_back( query_seq->clone() );
-				my_seqs.push_back( template_seq->clone() );
-				//std::cout << "query sequence " << std::endl;
-				//std::cout << query_seq->to_string() << std::endl;
-				//std::cout << std::endl;
-				//std::cout << "template sequence " << std::endl;
-				//std::cout << template_seq->to_string() << std::endl;
-				//std::cout << "template sequence length " << template_seq->sequence().length() << std::endl;
-				//std::cout << std::endl;
-
-				SequenceAlignment rescore_aln = steal_alignment( *it, my_seqs );
-				std::cout << "stolen alignment:" << std::endl;
-				std::cout << rescore_aln << std::endl;
-				rescore_aln.score( rescore_aln.calculate_score_sum_of_pairs( ss ) );
-				//string const ungapped_templ( it->sequence(2)->ungapped_sequence() );
-				if ( option[ run::debug ]() ) {
-					string const id_out( it->sequence(2)->id() );
-					save_per_residue_scores( id_out + ".dat", rescore_aln, ss, id_out );
-				}
-
-				ss_out->add_energy( "aln_score", rescore_aln.score() );
-				//ss_out->add_energy( "n_ali_templ", ungapped_templ.length() );
-				tr.Debug << "score(" << ss_out->decoy_tag() << ") = " << rescore_aln.score()
+			for ( vector1< SequenceAlignment >::iterator it = alns.begin(),
+					end = alns.end();
+					it != end; ++it
+					) {
+				string const template_id( it->sequence(2)->id().substr(0,5) );
+				tr << *it << std::endl;
+				tr << "id " << it->sequence(2)->id() << " => " << template_id
 					<< std::endl;
-			}
+				string const ungapped_query( it->sequence(1)->ungapped_sequence() );
 
-			if ( have_native ) {
-				// calc rmsd/gdt stats
-				map< string, Pose >::iterator pose_it = poses.find( template_id );
-				if ( pose_it == poses.end() ) {
-					string msg( "Error: can't find pose (id = "
-						+ template_id + ")"
-					);
+				SilentStructOP ss_out( new ScoreFileSilentStruct );
+				map< string, CompositeSequenceOP >::iterator seq_it = seqs.find( template_id );
+				if ( seq_it == seqs.end() ) {
+					//print_seq_map( std::cerr, seqs );
+					string msg( "Error: can't find seq (id = " + template_id + ")" );
 					//utility_exit_with_message(msg);
 					tr.Error << msg << std::endl;
 				} else {
-					Pose query_pose, template_pose;
-					make_pose_from_sequence(
-						query_pose,
-						ungapped_query,
-						*(rsd_set_from_cmd_line().lock())
-					);
-					template_pose = pose_it->second;
-					PartialThreadingMover mover(*it,template_pose);
-					Align_RmsdEvaluator eval( native_pose, "ali", true );
-					eval.apply(query_pose,"ali",*ss_out);
+					SequenceOP template_seq = seq_it->second;
+
+					utility::vector1< SequenceOP > my_seqs;
+					my_seqs.push_back( query_seq->clone() );
+					my_seqs.push_back( template_seq->clone() );
+					//std::cout << "query sequence " << std::endl;
+					//std::cout << query_seq->to_string() << std::endl;
+					//std::cout << std::endl;
+					//std::cout << "template sequence " << std::endl;
+					//std::cout << template_seq->to_string() << std::endl;
+					//std::cout << "template sequence length " << template_seq->sequence().length() << std::endl;
+					//std::cout << std::endl;
+
+					SequenceAlignment rescore_aln = steal_alignment( *it, my_seqs );
+					std::cout << "stolen alignment:" << std::endl;
+					std::cout << rescore_aln << std::endl;
+					rescore_aln.score( rescore_aln.calculate_score_sum_of_pairs( ss ) );
+					//string const ungapped_templ( it->sequence(2)->ungapped_sequence() );
 					if ( option[ run::debug ]() ) {
 						string const id_out( it->sequence(2)->id() );
-						query_pose.dump_pdb(id_out + ".pdb");
+						save_per_residue_scores( id_out + ".dat", rescore_aln, ss, id_out );
 					}
-				} // template pdb check
-			} // have native
-			ss_out->scoreline_prefix( "" );
-			ss_out->decoy_tag( it->sequence(2)->id() );
-			ss_out->add_energy( "n_ali_query", ungapped_query.length() );
-			ss_out->add_string_value( "template", template_id );
-			sfd.write_silent_struct( *ss_out, option[ out::file::silent ]() );
-		} // alns
-	} // for ( it in aligns )
 
-	tr.Debug << "finished rescoring alignments." << std::endl;
-	tr.flush_all_channels();
-	 } catch ( utility::excn::EXCN_Base const & e ) {
+					ss_out->add_energy( "aln_score", rescore_aln.score() );
+					//ss_out->add_energy( "n_ali_templ", ungapped_templ.length() );
+					tr.Debug << "score(" << ss_out->decoy_tag() << ") = " << rescore_aln.score()
+						<< std::endl;
+				}
+
+				if ( have_native ) {
+					// calc rmsd/gdt stats
+					map< string, Pose >::iterator pose_it = poses.find( template_id );
+					if ( pose_it == poses.end() ) {
+						string msg( "Error: can't find pose (id = "
+							+ template_id + ")"
+						);
+						//utility_exit_with_message(msg);
+						tr.Error << msg << std::endl;
+					} else {
+						Pose query_pose, template_pose;
+						make_pose_from_sequence(
+							query_pose,
+							ungapped_query,
+							*(rsd_set_from_cmd_line().lock())
+						);
+						template_pose = pose_it->second;
+						PartialThreadingMover mover(*it,template_pose);
+						Align_RmsdEvaluator eval( native_pose, "ali", true );
+						eval.apply(query_pose,"ali",*ss_out);
+						if ( option[ run::debug ]() ) {
+							string const id_out( it->sequence(2)->id() );
+							query_pose.dump_pdb(id_out + ".pdb");
+						}
+					} // template pdb check
+				} // have native
+				ss_out->scoreline_prefix( "" );
+				ss_out->decoy_tag( it->sequence(2)->id() );
+				ss_out->add_energy( "n_ali_query", ungapped_query.length() );
+				ss_out->add_string_value( "template", template_id );
+				sfd.write_silent_struct( *ss_out, option[ out::file::silent ]() );
+			} // alns
+		} // for ( it in aligns )
+
+		tr.Debug << "finished rescoring alignments." << std::endl;
+		tr.flush_all_channels();
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

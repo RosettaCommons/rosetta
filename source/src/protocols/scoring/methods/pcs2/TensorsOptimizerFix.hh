@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/TensorsOptimizerFix.hh
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/TensorsOptimizerFix.hh
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs2_TensorsOptimizerFix_hh
 #define INCLUDED_protocols_scoring_methods_pcs2_TensorsOptimizerFix_hh
@@ -45,10 +45,10 @@
 // C++ headers
 
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs2{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs2 {
 
 class TensorsOptimizerFix : public core::optimization::Multifunc {
 
@@ -72,44 +72,44 @@ private:
 
 	/// @brief No default constructor: You must provide a PcsDataCenter object when initializing.
 	// The unimplemented private default constructor inhibits autogeneration of a default constructor.
-  TensorsOptimizerFix();
+	TensorsOptimizerFix();
 
 public:
 
-  TensorsOptimizerFix(PcsDataCenter const & pcs_d_c/*,
-											core::Real xM,
-											core::Real yM,
-											core::Real zM*/);
+	TensorsOptimizerFix(PcsDataCenter const & pcs_d_c/*,
+		core::Real xM,
+		core::Real yM,
+		core::Real zM*/);
 
-  virtual
-  ~TensorsOptimizerFix();
+	virtual
+	~TensorsOptimizerFix();
 
-  // @brief OptE func
-  virtual
-  core::Real
-  operator ()( core::optimization::Multivec const & vars ) const;
+	// @brief OptE func
+	virtual
+	core::Real
+	operator ()( core::optimization::Multivec const & vars ) const;
 
-  core::Real
-  func( core::optimization::Multivec const & vars ) const;
+	core::Real
+	func( core::optimization::Multivec const & vars ) const;
 
 
-  /// @brief OptE dfunc
-  virtual
-  void
-  dfunc(core::optimization::Multivec const & vars,
-	core::optimization::Multivec & dE_dvars
+	/// @brief OptE dfunc
+	virtual
+	void
+	dfunc(core::optimization::Multivec const & vars,
+		core::optimization::Multivec & dE_dvars
 	) const;
 
 	/// @brief exact derivative (fast)
-  void
-  dfunc_exact(core::optimization::Multivec const & vars,
-	core::optimization::Multivec & dE_dvars
+	void
+	dfunc_exact(core::optimization::Multivec const & vars,
+		core::optimization::Multivec & dE_dvars
 	) const;
 
 	/// @brief numeric derivative (slow)
-  void
-  dfunc_numeric(core::optimization::Multivec const & vars,
-	core::optimization::Multivec & dE_dvars
+	void
+	dfunc_numeric(core::optimization::Multivec const & vars,
+		core::optimization::Multivec & dE_dvars
 	) const;
 
 private:

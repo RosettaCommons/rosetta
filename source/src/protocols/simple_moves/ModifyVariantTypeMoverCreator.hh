@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/moves/ModifyVariantTypeMoverModifyVariantTypeMoverCreator.hh
-/// @brief 
-/// @author 
+/// @brief
+/// @author
 
 #ifndef INCLUDED_protocols_simple_moves_ModifyVariantTypeMoverCreator_hh
 #define INCLUDED_protocols_simple_moves_ModifyVariantTypeMoverCreator_hh

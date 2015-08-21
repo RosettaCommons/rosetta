@@ -39,26 +39,26 @@ rotate_into_phosphate_frame( core::pose::Pose & pose, core::Size const n, bool c
 
 core::Real
 centroid_dist( core::pose::Pose & pose,
-							 bool const sample_another_adenosine = false );
+	bool const sample_another_adenosine = false );
 
 core::Real
 sample_all_rotations_at_jump( core::pose::Pose & pose, core::Size const num_jump, core::scoring::ScoreFunctionOP scorefxn = 0 );
 
 core::Real
 do_scoring( core::pose::Pose & pose,
-						core::scoring::ScoreFunctionOP scorefxn,
-						bool const & sample_rotations,
-						core::Size const probe_jump_num );
+	core::scoring::ScoreFunctionOP scorefxn,
+	bool const & sample_rotations,
+	core::Size const probe_jump_num );
 
 void
 do_xy_scan( core::pose::Pose & pose,
-						core::scoring::ScoreFunctionOP scorefxn,
-						std::string const & outfile,
-						core::Real const z,
-						core::Size const probe_jump_num,
-						core::Real const box_bins,
-						core::Real const translation_increment,
-						bool const sample_rotations );
+	core::scoring::ScoreFunctionOP scorefxn,
+	std::string const & outfile,
+	core::Real const z,
+	core::Size const probe_jump_num,
+	core::Real const box_bins,
+	core::Real const translation_increment,
+	bool const sample_rotations );
 
 } //sample_around
 } //toolbox

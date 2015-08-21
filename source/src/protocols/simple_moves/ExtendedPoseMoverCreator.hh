@@ -23,10 +23,10 @@ namespace protocols {
 namespace simple_moves {
 
 class ExtendedPoseMoverCreator : public protocols::moves::MoverCreator {
- public:
+public:
 	protocols::moves::MoverOP create_mover() const;
-  std::string keyname() const;
-  static std::string mover_name();
+	std::string keyname() const;
+	static std::string mover_name();
 };
 
 }  // namespace simple_moves

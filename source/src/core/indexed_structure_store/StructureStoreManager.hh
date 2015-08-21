@@ -41,11 +41,11 @@ public:
 	friend class utility::SingletonBase< StructureStoreManager >;
 
 public:
-  // @brief Load fragment lookup from the default structure store. Default store is defined
+	// @brief Load fragment lookup from the default structure store. Default store is defined
 	// via indexed_structure_store:fragment_store option.
 	FragmentLookupOP load_fragment_lookup(std::string lookup_name);
 
-  // @brief Load fragment lookup from the provided structure store.
+	// @brief Load fragment lookup from the provided structure store.
 	//
 	// store_path - Target store path. HDF5 file path (extension is optional) if
 	//     HDF5 support is enabled. Root directory of binary store if not HDF5

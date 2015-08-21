@@ -56,7 +56,7 @@ BurialEnergyCreator::score_types_for_method() const {
 
 void
 BurialEnergy::setup_for_scoring(
-	 pose::Pose & pose, ScoreFunction const &
+	pose::Pose & pose, ScoreFunction const &
 ) const {
 	pose.update_residue_neighbors();
 }
@@ -137,20 +137,20 @@ void BurialEnergy::init_from_file() {
 	using std::string;
 	string line;
 	getline(input,line); // header
-	while (getline(input,line) ) {
-			std::istringstream ss(line);
-			core::Size resi;
-			char aa;
-			ss >> resi >> aa;
-			string last_token;
-			while ( ss.good() ) ss >> last_token;
-			std::istringstream dbl_reader( last_token.substr(2,4) );
-			Real burial(0);
-			dbl_reader >> burial;
-			if ( last_token.substr(0,1) == "0" ) burial *= -1;
-			pred_burial_.push_back( burial );
-			//std::cout << "line = " << line << std::endl;
-			//std::cout << "burial = " << burial << std::endl;
+	while ( getline(input,line) ) {
+		std::istringstream ss(line);
+		core::Size resi;
+		char aa;
+		ss >> resi >> aa;
+		string last_token;
+		while ( ss.good() ) ss >> last_token;
+		std::istringstream dbl_reader( last_token.substr(2,4) );
+		Real burial(0);
+		dbl_reader >> burial;
+		if ( last_token.substr(0,1) == "0" ) burial *= -1;
+		pred_burial_.push_back( burial );
+		//std::cout << "line = " << line << std::endl;
+		//std::cout << "burial = " << burial << std::endl;
 	}
 }
 

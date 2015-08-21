@@ -35,8 +35,8 @@ StepWiseSamplerOneTorsion::StepWiseSamplerOneTorsion():
 {}
 
 StepWiseSamplerOneTorsion::StepWiseSamplerOneTorsion(
-		core::id::TorsionID const & tor_id,
-		TorsionList const & allowed_torsions
+	core::id::TorsionID const & tor_id,
+	TorsionList const & allowed_torsions
 ):
 	StepWiseSamplerOneValue( allowed_torsions ),
 	torsion_id_( tor_id )

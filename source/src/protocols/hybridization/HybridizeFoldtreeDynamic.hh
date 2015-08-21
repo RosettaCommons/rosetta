@@ -38,10 +38,10 @@ public:
 
 	// initialize pose ... add VRT if needed
 	void initialize(
-				core::pose::Pose & pose,
-				protocols::loops::Loops const & core_chunks,
-				utility::vector1< std::pair< core::Size, core::Size > > const & strand_pairs,
-				std::set<core::Size> const & strand_pair_library_positions
+		core::pose::Pose & pose,
+		protocols::loops::Loops const & core_chunks,
+		utility::vector1< std::pair< core::Size, core::Size > > const & strand_pairs,
+		std::set<core::Size> const & strand_pair_library_positions
 	);
 	void reset( core::pose::Pose & pose );
 
@@ -82,10 +82,10 @@ private:
 	void get_core_chunk_index_from_position( core::Size const position, core::Size & index );
 
 	void add_overlapping_pair_chunks(
-    core::Size const index,
-    utility::vector1<core::Size> & cuts,
-    utility::vector1<std::pair<core::Size, core::Size> > & jumps,
-    std::set<core::Size> & rooted_chunk_indices );
+		core::Size const index,
+		utility::vector1<core::Size> & cuts,
+		utility::vector1<std::pair<core::Size, core::Size> > & jumps,
+		std::set<core::Size> & rooted_chunk_indices );
 
 	void remove_cut( core::Size const cut, utility::vector1<core::Size> & cuts );
 

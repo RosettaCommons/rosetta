@@ -10,7 +10,7 @@
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -45,15 +45,15 @@ namespace evaluation {
 
 class TimeEvaluator : public evaluation::SingleValuePoseEvaluator< core::Real > {
 public:
-  TimeEvaluator( std::string const& tag = "");
+	TimeEvaluator( std::string const& tag = "");
 
-  /// @brief reset start_time
-  void reset();
+	/// @brief reset start_time
+	void reset();
 
-  /// @brief evaluate pose
-  virtual core::Real apply( core::pose::Pose& ) const;
+	/// @brief evaluate pose
+	virtual core::Real apply( core::pose::Pose& ) const;
 private:
-  time_t start_time_;
+	time_t start_time_;
 };
 
 

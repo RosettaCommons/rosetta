@@ -45,32 +45,33 @@ FormFactor::FormFactor(std::string atom_name,std::string file_name) {
 	trFormFactor.Debug << "Opening: "<<file_name<<std::endl;
 	utility::io::izstream input(file_name.c_str());
 	std::string line;
-        while( getline( input, line ) ) {
-	    if ( line.substr(0,1) == "#" ) continue;
-	    std::istringstream line_stream( line );
-	    trFormFactor.Trace << "line " << line << std::endl;
-	    line_stream >> tX >> tY;
-	    if(tX<minX) minX = tX;
-	    if(tY<minY) minY= tY;
-	    if(tX>maxX) maxX = tX;
-	    if(tY>maxY) maxY= tY;
-	    x.push_back(tX);
-	    y.push_back(tY);
+	while ( getline( input, line ) ) {
+		if ( line.substr(0,1) == "#" ) continue;
+		std::istringstream line_stream( line );
+		trFormFactor.Trace << "line " << line << std::endl;
+		line_stream >> tX >> tY;
+		if ( tX<minX ) minX = tX;
+		if ( tY<minY ) minY= tY;
+		if ( tX>maxX ) maxX = tX;
+		if ( tY>maxY ) maxY= tY;
+		x.push_back(tX);
+		y.push_back(tY);
 	}
 	trFormFactor.Debug << x.size() << " data points loaded for "<<atom_name<<" atomic form factor"<<std::endl;
 	Real delta = 0.1;
 	numeric::interpolation::spline::SplineGenerator gen( minX-delta, minY-delta, 0, maxX+delta, maxY+delta, 0 );
-	for (Size i = 1; i <= x.size(); ++i)
+	for ( Size i = 1; i <= x.size(); ++i ) {
 		gen.add_known_value( x[i],y[i] );
+	}
 	spline_interpolator_ = gen.get_interpolator();
 }
 
 void FormFactor::tabulate(const utility::vector1<Real> & q) {
-    
-    ff_values_.clear();
-    for(Size i_s=1;i_s<=q.size();++i_s) {
-	ff_values_.push_back(ff(q[i_s]));
-    }    
+
+	ff_values_.clear();
+	for ( Size i_s=1; i_s<=q.size(); ++i_s ) {
+		ff_values_.push_back(ff(q[i_s]));
+	}
 }
 
 } // saxs

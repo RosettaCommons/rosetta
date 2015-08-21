@@ -58,40 +58,40 @@ public:
 	}
 
 
-///////////////////////////////////////////////////////////////////////////////
-// ------------------------------------------ //
-/// @brief simple test minimization
-void test_symmetric_conformation()
-{
-	double rms_threshold = 1e-2;
+	///////////////////////////////////////////////////////////////////////////////
+	// ------------------------------------------ //
+	/// @brief simple test minimization
+	void test_symmetric_conformation()
+	{
+		double rms_threshold = 1e-2;
 
-	pose::Pose start_pose;
-	import_pose::pose_from_pdb( start_pose, "core/scoring/symmetry/test_in.pdb" );
-	pose::Pose pose = start_pose;
+		pose::Pose start_pose;
+		import_pose::pose_from_pdb( start_pose, "core/scoring/symmetry/test_in.pdb" );
+		pose::Pose pose = start_pose;
 
-	// test different symmetry data input files
-	core::conformation::symmetry::SymmData symmdata1(  pose.n_residue(),  pose.num_jump() );
-	std::string symm_def1 = "core/conformation/symmetry/symm_def1.dat";
-	symmdata1.read_symmetry_data_from_file(symm_def1);
-	core::pose::symmetry::make_symmetric_pose( pose, symmdata1 );
-	pose::Pose pose1_ref;
-	import_pose::pose_from_pdb( pose1_ref, "core/scoring/symmetry/symm_test.pdb" );
-	Real rms_to_restored = scoring::CA_rmsd( pose, pose1_ref );
-	TR << "RMS difference after symmetry reconstruction of test1 trimer from monomer : " << rms_to_restored << std::endl;
-	  TS_ASSERT( rms_to_restored < rms_threshold );
+		// test different symmetry data input files
+		core::conformation::symmetry::SymmData symmdata1(  pose.n_residue(),  pose.num_jump() );
+		std::string symm_def1 = "core/conformation/symmetry/symm_def1.dat";
+		symmdata1.read_symmetry_data_from_file(symm_def1);
+		core::pose::symmetry::make_symmetric_pose( pose, symmdata1 );
+		pose::Pose pose1_ref;
+		import_pose::pose_from_pdb( pose1_ref, "core/scoring/symmetry/symm_test.pdb" );
+		Real rms_to_restored = scoring::CA_rmsd( pose, pose1_ref );
+		TR << "RMS difference after symmetry reconstruction of test1 trimer from monomer : " << rms_to_restored << std::endl;
+		TS_ASSERT( rms_to_restored < rms_threshold );
 
-	import_pose::pose_from_pdb( pose, "core/conformation/symmetry/symm_test_in2.pdb" );;
-	core::conformation::symmetry::SymmData symmdata2(  pose.n_residue(),  pose.num_jump() );
-	std::string symm_def2 = "core/conformation/symmetry/symm_def2.dat";
-	symmdata2.read_symmetry_data_from_file(symm_def2);
-	core::pose::symmetry::make_symmetric_pose( pose, symmdata2 );
-	pose::Pose pose2_ref;
-	import_pose::pose_from_pdb( pose2_ref, "core/conformation/symmetry/symm_test2.pdb" );
-	rms_to_restored = scoring::CA_rmsd( pose, pose2_ref );
-	TR << "RMS difference after symmetry reconstruction of test2 D6 from monomer : " << rms_to_restored << std::endl;
-	  TS_ASSERT( rms_to_restored < rms_threshold );
+		import_pose::pose_from_pdb( pose, "core/conformation/symmetry/symm_test_in2.pdb" );;
+		core::conformation::symmetry::SymmData symmdata2(  pose.n_residue(),  pose.num_jump() );
+		std::string symm_def2 = "core/conformation/symmetry/symm_def2.dat";
+		symmdata2.read_symmetry_data_from_file(symm_def2);
+		core::pose::symmetry::make_symmetric_pose( pose, symmdata2 );
+		pose::Pose pose2_ref;
+		import_pose::pose_from_pdb( pose2_ref, "core/conformation/symmetry/symm_test2.pdb" );
+		rms_to_restored = scoring::CA_rmsd( pose, pose2_ref );
+		TR << "RMS difference after symmetry reconstruction of test2 D6 from monomer : " << rms_to_restored << std::endl;
+		TS_ASSERT( rms_to_restored < rms_threshold );
 
-};
+	};
 
 
 };

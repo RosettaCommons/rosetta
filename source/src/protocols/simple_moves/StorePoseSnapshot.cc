@@ -48,103 +48,103 @@
 
 
 namespace protocols {
-	namespace simple_moves {
+namespace simple_moves {
 
-		using namespace core;
-		using namespace core::chemical;
-		using namespace std;
-		using namespace numeric::conversions;
+using namespace core;
+using namespace core::chemical;
+using namespace std;
+using namespace numeric::conversions;
 
-		using core::pose::Pose;
-		using core::conformation::Residue;
+using core::pose::Pose;
+using core::conformation::Residue;
 
-		static thread_local basic::Tracer TR( "protocols.simple_moves.StorePoseSnapshot" );
+static thread_local basic::Tracer TR( "protocols.simple_moves.StorePoseSnapshot" );
 
-		std::string
-		StorePoseSnapshotCreator::keyname() const
-		{
-			return StorePoseSnapshotCreator::mover_name();
-		}
+std::string
+StorePoseSnapshotCreator::keyname() const
+{
+	return StorePoseSnapshotCreator::mover_name();
+}
 
-		protocols::moves::MoverOP
-		StorePoseSnapshotCreator::create_mover() const {
-			return protocols::moves::MoverOP( new StorePoseSnapshot );
-		}
+protocols::moves::MoverOP
+StorePoseSnapshotCreator::create_mover() const {
+	return protocols::moves::MoverOP( new StorePoseSnapshot );
+}
 
-		std::string
-		StorePoseSnapshotCreator::mover_name()
-		{
-			return "StorePoseSnapshot";
-		}
+std::string
+StorePoseSnapshotCreator::mover_name()
+{
+	return "StorePoseSnapshot";
+}
 
-		StorePoseSnapshot::~StorePoseSnapshot() {}
+StorePoseSnapshot::~StorePoseSnapshot() {}
 
-		/// @brief Default constructor
-		///
-		StorePoseSnapshot::StorePoseSnapshot() :
-			parent(),
-			reference_pose_name_( "" )
-		{}
+/// @brief Default constructor
+///
+StorePoseSnapshot::StorePoseSnapshot() :
+	parent(),
+	reference_pose_name_( "" )
+{}
 
-		/// @brief Copy constructor
-		///
-		StorePoseSnapshot::StorePoseSnapshot( StorePoseSnapshot const &src ) :
-			parent(src),
-			reference_pose_name_( src.reference_pose_name_ )
-		{}
+/// @brief Copy constructor
+///
+StorePoseSnapshot::StorePoseSnapshot( StorePoseSnapshot const &src ) :
+	parent(src),
+	reference_pose_name_( src.reference_pose_name_ )
+{}
 
-		/// @brief Apply function -- actually apply this mover to the pose, modifying the pose.
-		///
-		void StorePoseSnapshot::apply( Pose & pose ) {
-			runtime_assert_string_msg(
-				reference_pose_name()!="",
-				"Error in protocols::simple_moves::StorePoseSnapshot::apply(): The reference pose name is currently blank.  This must be set before the apply() function is called."
-			);
-			pose.reference_pose_from_current( reference_pose_name() ); //Yes, that's all this mover does.  It's that simple.
-			if (TR.visible()) {
-				TR << "Stored pose snapshot " << reference_pose_name() << "." << std::endl;
-				TR.flush();
-			}
-			return;
-		}
+/// @brief Apply function -- actually apply this mover to the pose, modifying the pose.
+///
+void StorePoseSnapshot::apply( Pose & pose ) {
+	runtime_assert_string_msg(
+		reference_pose_name()!="",
+		"Error in protocols::simple_moves::StorePoseSnapshot::apply(): The reference pose name is currently blank.  This must be set before the apply() function is called."
+	);
+	pose.reference_pose_from_current( reference_pose_name() ); //Yes, that's all this mover does.  It's that simple.
+	if ( TR.visible() ) {
+		TR << "Stored pose snapshot " << reference_pose_name() << "." << std::endl;
+		TR.flush();
+	}
+	return;
+}
 
-		/// @brief Get the mover name.
-		///
-		std::string
-		StorePoseSnapshot::get_name() const {
-			return StorePoseSnapshotCreator::mover_name();
-		}
+/// @brief Get the mover name.
+///
+std::string
+StorePoseSnapshot::get_name() const {
+	return StorePoseSnapshotCreator::mover_name();
+}
 
-		/// @brief Parse RosettaScripts XML to set up this mover.
-		/// @details This is called at script initialization, long before the apply()
-		/// function is called.
-		void StorePoseSnapshot::parse_my_tag( utility::tag::TagCOP tag,
-				basic::datacache::DataMap &,
-				protocols::filters::Filters_map const &,
-				protocols::moves::Movers_map const &,
-				Pose const & //pose
-		)
-		{
-			runtime_assert_string_msg( tag->hasOption("reference_pose_name"), "Error in protocols::simple_moves::StorePoseSnapshot::parse_my_tag():  When parsing options for the StorePoseSnapshot mover, no \"reference_pose_name\" option was found.  This is required." );
-			
-			set_reference_pose_name( tag->getOption< std::string >( "reference_pose_name", "" ) );
-			if (TR.visible()) TR << "Set reference pose name to " << reference_pose_name() << "." << std::endl;
+/// @brief Parse RosettaScripts XML to set up this mover.
+/// @details This is called at script initialization, long before the apply()
+/// function is called.
+void StorePoseSnapshot::parse_my_tag( utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	Pose const & //pose
+)
+{
+	runtime_assert_string_msg( tag->hasOption("reference_pose_name"), "Error in protocols::simple_moves::StorePoseSnapshot::parse_my_tag():  When parsing options for the StorePoseSnapshot mover, no \"reference_pose_name\" option was found.  This is required." );
 
-			if (TR.visible()) TR.flush();
-			return;
-		}
-		
-		/// @brief Set the name of the reference pose object that will be created and stored in the pose.
-		///
-		void StorePoseSnapshot::set_reference_pose_name( std::string const &name_in ) {
-			runtime_assert_string_msg( name_in!="", "Error in protocols::simple_moves::StorePoseSnapshot::set_reference_pose_name(): The name cannot be an empty string." );
-			reference_pose_name_ = name_in;
-			return;
-		}
-		
-		/// @brief Return the name of the reference pose object that will be created and stored in the pose.
-		///
-		std::string StorePoseSnapshot::reference_pose_name( ) const { return reference_pose_name_; }
+	set_reference_pose_name( tag->getOption< std::string >( "reference_pose_name", "" ) );
+	if ( TR.visible() ) TR << "Set reference pose name to " << reference_pose_name() << "." << std::endl;
 
-	} // simple_moves
+	if ( TR.visible() ) TR.flush();
+	return;
+}
+
+/// @brief Set the name of the reference pose object that will be created and stored in the pose.
+///
+void StorePoseSnapshot::set_reference_pose_name( std::string const &name_in ) {
+	runtime_assert_string_msg( name_in!="", "Error in protocols::simple_moves::StorePoseSnapshot::set_reference_pose_name(): The name cannot be an empty string." );
+	reference_pose_name_ = name_in;
+	return;
+}
+
+/// @brief Return the name of the reference pose object that will be created and stored in the pose.
+///
+std::string StorePoseSnapshot::reference_pose_name( ) const { return reference_pose_name_; }
+
+} // simple_moves
 } // protocols

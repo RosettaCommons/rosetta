@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	 test/core/io/pdb/NomenclatureManagerTests.cxxtest.hh
+/// @file  test/core/io/pdb/NomenclatureManagerTests.cxxtest.hh
 /// @brief   Test suite for the NomenclatureManager singleton
 /// @author  Labonte <JWLabonte@jhu.edu>
 
@@ -55,15 +55,15 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_TRACE( "Testing rosetta_names_from_pdb_code() static method with alternative 3-letter codes not provided." );
 
 		pair< string, string > residue_empty(
-				NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( "" ) );
+			NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( "" ) );
 		pair< string, string > residue_sentence_case(
-				NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( "Ala" ) );
+			NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( "Ala" ) );
 		pair< string, string > residue_all_caps(
-				NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( "ALA" ) );
+			NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( "ALA" ) );
 		pair< string, string > residue_special(
-				NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( "Hcy" ) );
+			NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( "Hcy" ) );
 		pair< string, string > residue_bogus(
-				NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( "WOO!" ) );
+			NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( "WOO!" ) );
 
 		TS_ASSERT_EQUALS( residue_empty.first, "" );
 		TS_ASSERT_EQUALS( residue_empty.second, "" );

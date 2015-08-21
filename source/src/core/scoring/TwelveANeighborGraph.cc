@@ -34,7 +34,7 @@ TwelveANeighborNode::TwelveANeighborNode( graph::Graph * owner, Size node_id )
 void
 TwelveANeighborNode::copy_from( Node const * /*source*/ )
 {
-//debug_assert( dynamic_cast< TwelveANeighborNode const * > (source) );
+	//debug_assert( dynamic_cast< TwelveANeighborNode const * > (source) );
 }
 
 Size
@@ -64,7 +64,7 @@ TwelveANeighborEdge::TwelveANeighborEdge(
 
 void TwelveANeighborEdge::copy_from( Edge const * /*source*/ )
 {
-//debug_assert( dynamic_cast< TwelveNeighborEdge const * > ( source ) );
+	//debug_assert( dynamic_cast< TwelveNeighborEdge const * > ( source ) );
 }
 
 Size TwelveANeighborEdge::count_static_memory() const

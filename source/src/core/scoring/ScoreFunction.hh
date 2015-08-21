@@ -140,7 +140,7 @@ private:
 	operator=( ScoreFunction const & );
 
 public:
-  /// @brief NOT FOR GENERAL USE
+	/// @brief NOT FOR GENERAL USE
 	/// Copy the information about src into the current score function.
 	/// There are deep interactions with subclasses,
 	/// (the subclass information doesn't necessarily get copied)
@@ -153,7 +153,7 @@ public:
 	/// Virtual to keep subclass information.
 	virtual ScoreFunctionOP clone() const;
 
-  /// @brief If you *want* to discard subclass information, the following function is availible
+	/// @brief If you *want* to discard subclass information, the following function is availible
 	ScoreFunctionOP clone_as_base_class() const;
 
 	/// @brief Resets the ScoreFunction to default values
@@ -204,11 +204,11 @@ public:
 
 	// NO LONGER IN USE! Users trying to take advantage of this saw some non-intuitive behavior.
 	// @brief Returns the EnergyMethodOptions object contained in this ScoreFunction.
-	//	methods::EnergyMethodOptions &
-	//	energy_method_options()
-	//	{
-	//		return *energy_method_options_;
-	//	}
+	// methods::EnergyMethodOptions &
+	// energy_method_options()
+	// {
+	//  return *energy_method_options_;
+	// }
 
 	/// @brief Sets the EnergyMethodOptions object contained in this ScoreFunction.
 	/// with appropriate update of all the energy methods.
@@ -441,7 +441,7 @@ public:
 	void
 	add_extra_method(
 		std::map< ScoreType, Real > const & new_weights,
- 		methods::EnergyMethod const & new_method
+		methods::EnergyMethod const & new_method
 	);
 
 	/// @brief Initializes a MinimizationGraph and caches it in
@@ -672,7 +672,7 @@ public:
 	/// @brief check order of methods
 	bool
 	check_methods_in_right_order( ScoreType const & score_type_in_first_method,
-																ScoreType const & score_type_in_second_method ) const;
+		ScoreType const & score_type_in_second_method ) const;
 
 	/// @brief
 	virtual

@@ -27,15 +27,15 @@ namespace protocols {
 namespace features {
 namespace helixAssembly {
 
-	ConcurrencyTestCreator::ConcurrencyTestCreator() {}
-	ConcurrencyTestCreator::~ConcurrencyTestCreator() {}
-	FeaturesReporterOP ConcurrencyTestCreator::create_features_reporter() const {
-		return FeaturesReporterOP( new ConcurrencyTest );
-	}
+ConcurrencyTestCreator::ConcurrencyTestCreator() {}
+ConcurrencyTestCreator::~ConcurrencyTestCreator() {}
+FeaturesReporterOP ConcurrencyTestCreator::create_features_reporter() const {
+	return FeaturesReporterOP( new ConcurrencyTest );
+}
 
-	std::string ConcurrencyTestCreator::type_name() const {
-		return "ConcurrencyTest";
-	}
+std::string ConcurrencyTestCreator::type_name() const {
+	return "ConcurrencyTest";
+}
 
 } //namespace helixAssembly
 } //namespace features

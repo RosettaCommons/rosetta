@@ -20,16 +20,16 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-    namespace scoring {
-        namespace constraints {
-            
-            class FabConstraint;
-            
-            typedef utility::pointer::shared_ptr< FabConstraint > FabConstraintOP;
-            typedef utility::pointer::shared_ptr< FabConstraint const > FabConstraintCOP;
-            
-        }
-    }
+namespace scoring {
+namespace constraints {
+
+class FabConstraint;
+
+typedef utility::pointer::shared_ptr< FabConstraint > FabConstraintOP;
+typedef utility::pointer::shared_ptr< FabConstraint const > FabConstraintCOP;
+
+}
+}
 }
 
 #endif

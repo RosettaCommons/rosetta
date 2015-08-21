@@ -27,39 +27,39 @@ namespace nonlocal {
 
 /// @class A continguous sequence of residues
 class Region : public utility::pointer::ReferenceCount {
-  typedef core::Size Size;
+	typedef core::Size Size;
 
- public:
+public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~Region();
-  /// @brief Creates a new region with the specified start/stop residues
-  Region(Size start_pos, Size stop_pos);
+	/// @brief Creates a new region with the specified start/stop residues
+	Region(Size start_pos, Size stop_pos);
 
-  /// @brief Returns the starting position of this region
-  /// O(1)
-  Size start() const;
+	/// @brief Returns the starting position of this region
+	/// O(1)
+	Size start() const;
 
-  /// @brief Returns the stopping position of this region
-  /// O(1)
-  Size stop() const;
+	/// @brief Returns the stopping position of this region
+	/// O(1)
+	Size stop() const;
 
-  /// @brief Returns the length of this region. Makes no assumption about
-  /// directionality. That is, Region(3,5).length() == Region(5,3).length().
-  /// O(1)
-  Size length() const;
+	/// @brief Returns the length of this region. Makes no assumption about
+	/// directionality. That is, Region(3,5).length() == Region(5,3).length().
+	/// O(1)
+	Size length() const;
 
-  /// @brief Returns true if start <= stop, false otherwise
-  bool increasing() const;
+	/// @brief Returns true if start <= stop, false otherwise
+	bool increasing() const;
 
-  /// @brief Returns true if stop <= start, false otherwise
-  bool decreasing() const;
+	/// @brief Returns true if stop <= start, false otherwise
+	bool decreasing() const;
 
- private:
-  /// @brief The starting position of the contiguous sequence
-  Size start_;
+private:
+	/// @brief The starting position of the contiguous sequence
+	Size start_;
 
-  /// @brief The ending position of the contiguous sequence
-  Size stop_;
+	/// @brief The ending position of the contiguous sequence
+	Size stop_;
 };
 
 }  // namespace nonlocal

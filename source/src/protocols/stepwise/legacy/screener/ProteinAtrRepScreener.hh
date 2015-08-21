@@ -28,32 +28,32 @@ namespace stepwise {
 namespace legacy {
 namespace screener {
 
-	class ProteinAtrRepScreener: public stepwise::screener::SampleApplier {
+class ProteinAtrRepScreener: public stepwise::screener::SampleApplier {
 
-	public:
-		//constructor
-		ProteinAtrRepScreener( pose::Pose & pose_atr_rep_screen,
-													 protocols::stepwise::modeler::protein::checker::ProteinAtrRepCheckerOP atr_rep_checker );
+public:
+	//constructor
+	ProteinAtrRepScreener( pose::Pose & pose_atr_rep_screen,
+		protocols::stepwise::modeler::protein::checker::ProteinAtrRepCheckerOP atr_rep_checker );
 
-		//destructor
-		~ProteinAtrRepScreener();
+	//destructor
+	~ProteinAtrRepScreener();
 
-	public:
+public:
 
-		std::string
-		name() const { return "ProteinAtrRepScreener"; }
+	std::string
+	name() const { return "ProteinAtrRepScreener"; }
 
-		stepwise::screener::StepWiseScreenerType
-		type() const { return stepwise::screener::PROTEIN_ATR_REP; }
+	stepwise::screener::StepWiseScreenerType
+	type() const { return stepwise::screener::PROTEIN_ATR_REP; }
 
-		bool
-		check_screen();
+	bool
+	check_screen();
 
-	private:
+private:
 
-		protocols::stepwise::modeler::protein::checker::ProteinAtrRepCheckerOP atr_rep_checker_;
+	protocols::stepwise::modeler::protein::checker::ProteinAtrRepCheckerOP atr_rep_checker_;
 
-	};
+};
 
 } //screener
 } //legacy

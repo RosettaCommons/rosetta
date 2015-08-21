@@ -47,7 +47,7 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-	#include <protocols/abinitio/Template.hh>
+#include <protocols/abinitio/Template.hh>
 #endif
 
 
@@ -57,7 +57,7 @@ namespace abinitio {
 class Templates : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Templates >
 {
 public:
-  typedef std::map< std::string, TemplateOP > TemplateMap;
+	typedef std::map< std::string, TemplateOP > TemplateMap;
 
 public:
 	typedef TemplateMap::const_iterator const_iterator;
@@ -67,7 +67,7 @@ public:
 
 	Templates( std::string const& config_file, core::pose::PoseCOP native = NULL );
 	virtual ~Templates();
-	
+
 	core::fragment::FragSetOP pick_frags( core::fragment::FragSetOP, core::fragment::FragDataCOP frag_type, Size min_nr_frags, Size ncopies = 1 ) const;
 	Size pick_frags( core::fragment::FragSet&, core::fragment::FragDataCOP frag_type, Size ncopies = 1 ) const;
 
@@ -127,9 +127,9 @@ public:
 
 
 	Size pick_large_frags(
-			core::fragment::FragSet& frag_set,
-			core::fragment::SingleResidueFragDataOP frag_type,
-			core::Size ncopies = 1
+		core::fragment::FragSet& frag_set,
+		core::fragment::SingleResidueFragDataOP frag_type,
+		core::Size ncopies = 1
 	) const;
 
 	void set_native( core::pose::PoseCOP native );

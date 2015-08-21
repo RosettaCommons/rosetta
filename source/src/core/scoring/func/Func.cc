@@ -60,16 +60,16 @@ void Func::show( std::ostream& out ) const {
 	Real res   = 0.5;
 	int width  = 10;
 	out << A( width, "r" )
-			<< A( width, "func" )
-			<< A( width, "dfunc")
-			<< A( width, "dfunc_est" )
-			<< std::endl;
+		<< A( width, "func" )
+		<< A( width, "dfunc")
+		<< A( width, "dfunc_est" )
+		<< std::endl;
 	for ( Real r = start; r <= end; r += res ) {
 		out << I( width, r )
-				<< F( width, 3, func(r)  )
-				<< F( width, 3, dfunc(r) )
-				<< F( width, 3, estimate_dfunc(r) )
-				<< std::endl;
+			<< F( width, 3, func(r)  )
+			<< F( width, 3, dfunc(r) )
+			<< F( width, 3, estimate_dfunc(r) )
+			<< std::endl;
 	}
 } // virtual void show( std::ostream& out )
 

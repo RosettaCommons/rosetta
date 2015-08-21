@@ -43,7 +43,7 @@ using namespace protocols::match;
 
 class BumpGridTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	// --------------- Fixtures --------------- //
 

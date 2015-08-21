@@ -31,11 +31,11 @@
 namespace core {
 namespace scoring {
 
-	
-// DO not use these functions/this file.  They are deprecated and will be removed soon. 
+
+// DO not use these functions/this file.  They are deprecated and will be removed soon.
 // Please use scoring/sasa/util for functions; and scoring/sasa/SasaCalc class for sasa calculation.
 // JAB 2/18/14
-	
+
 
 void input_sasa_dats();
 
@@ -48,12 +48,12 @@ Real calc_per_atom_sasa( pose::Pose const & pose, id::AtomID_Map< Real > & atom_
 
 //@brief Return total SASA for side chains
 Real calc_per_atom_sasa_sc( pose::Pose const & pose, utility::vector1< Real > & rsd_sasa, bool normalize);
-	Real normalizing_area(char const res);
+Real normalizing_area(char const res);
 
 /// returns total sasa
 //Real
 //calc_per_atom_sasa( pose::Pose const & pose, id::AtomID_Map< Real > & atom_sasa, utility::vector1< Real > & rsd_sasa,
-//	Real const probe_radius, bool const use_big_polar_H, id::AtomID_Map< bool > & atom_subset );
+// Real const probe_radius, bool const use_big_polar_H, id::AtomID_Map< bool > & atom_subset );
 
 Real
 calc_per_atom_sasa(
@@ -70,15 +70,15 @@ calc_per_atom_sasa(
 	bool const use_lj_radii = false
 );
 
-	void
-	calc_atom_masks(
-		core::conformation::Residue const & irsd,
-		core::conformation::Residue const & jrsd,
-		Real const probe_radius,
-		Real const cutoff_distance,
-		utility::vector1< Real > const & radii,
-		id::AtomID_Map< bool > const & atom_subset,
-		core::id::AtomID_Map< utility::vector1< ObjexxFCL::ubyte > > & atom_mask
+void
+calc_atom_masks(
+	core::conformation::Residue const & irsd,
+	core::conformation::Residue const & jrsd,
+	Real const probe_radius,
+	Real const cutoff_distance,
+	utility::vector1< Real > const & radii,
+	id::AtomID_Map< bool > const & atom_subset,
+	core::id::AtomID_Map< utility::vector1< ObjexxFCL::ubyte > > & atom_mask
 );
 
 
@@ -90,7 +90,7 @@ ObjexxFCL::FArray2D_int const & get_angles();
 ObjexxFCL::FArray2D_ubyte const & get_masks();
 
 Real calc_per_res_hydrophobic_sasa( pose::Pose const & pose,
-	utility::vector1< Real > & rsd_sasa, 
+	utility::vector1< Real > & rsd_sasa,
 	utility::vector1< Real > & rsd_hydrophobic_sasa,
 	Real const probe_radius,
 	bool use_naccess_sasa_radii = false);

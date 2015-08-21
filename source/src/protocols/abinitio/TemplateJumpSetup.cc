@@ -60,14 +60,14 @@ TemplateJumpSetup::~TemplateJumpSetup() {}
 FixTemplateJumpSetup::~FixTemplateJumpSetup() {}
 
 TemplateJumpSetup::TemplateJumpSetup(
-		 TemplatesCOP templates,
-		 core::fragment::SecondaryStructureCOP secstruct,
-		 PairingStatisticsCOP strand_stats,
-		 core::scoring::dssp::PairingsList const& helix_pairings
+	TemplatesCOP templates,
+	core::fragment::SecondaryStructureCOP secstruct,
+	PairingStatisticsCOP strand_stats,
+	core::scoring::dssp::PairingsList const& helix_pairings
 ) : templates_( templates ),
-		secstruct_( secstruct ),
-		strand_stats_( strand_stats ),
-		helix_pairings_( helix_pairings )
+	secstruct_( secstruct ),
+	strand_stats_( strand_stats ),
+	helix_pairings_( helix_pairings )
 {}
 
 JumpSample
@@ -102,8 +102,8 @@ TemplateJumpSetup::create_jump_sample() const {
 	numeric::random::random_permutation( strand_ids, numeric::random::rg() );
 	numeric::random::random_permutation( strand_ids, numeric::random::rg() ); //want it really random
 	tr.Debug << "total weight: " << total_weight << " size: " << target_strands.size() << "strand_ids.size(): "
-					 << strand_ids.size()
-					 << " permutated sequence: ";
+		<< strand_ids.size()
+		<< " permutated sequence: ";
 	utility::io::write_vector( tr.Debug, strand_ids );
 	tr.Debug << std::endl;
 
@@ -121,12 +121,12 @@ TemplateJumpSetup::create_jump_sample() const {
 		core::scoring::dssp::PairingList possible_pairings;
 		target_strands.strand_pairing( strand_ids[ i ] ).get_beta_pairs( possible_pairings );
 		tr.Debug << "pre-selected " << target_strands.strand_pairing( strand_ids[ i ] )
-						 << "provides: " << possible_pairings.size() << " pairings"<< std::endl;
+			<< "provides: " << possible_pairings.size() << " pairings"<< std::endl;
 		// bias selection of individual pairing to center of strand
 		// we do that now simply by adding the center pairings twice
 		if ( possible_pairings.size() > 2 ) {
 			Size const ori_size = possible_pairings.size();
-			for ( Size i=2; i<=ori_size - 1; i++) {
+			for ( Size i=2; i<=ori_size - 1; i++ ) {
 				possible_pairings.push_back( possible_pairings[ i ] );
 			}
 		}
@@ -136,7 +136,7 @@ TemplateJumpSetup::create_jump_sample() const {
 		bool found( false );
 		if ( templates_ ) {
 			for ( Templates::const_iterator it=templates_->begin(),
-							eit = templates_->end(); it!=eit && !found; ++it ) {
+					eit = templates_->end(); it!=eit && !found; ++it ) {
 				//check if at least 1 template has pairing .. we know all its pairings already aligned in targe-sequence...
 				// its in the strand_stats_
 				found = strand_stats_->topology( it->first ).has_pairing( possible_pairings[ rg_pairing ]);
@@ -150,7 +150,7 @@ TemplateJumpSetup::create_jump_sample() const {
 	// 2.) don't want to apply very local pairings very often ... use only 20% of time
 	core::scoring::dssp::PairingList final_selection;
 	for ( core::scoring::dssp::PairingList::iterator it = target_pairings.begin(), eit = target_pairings.end();
-				it!=eit; ++it ) {
+			it!=eit; ++it ) {
 
 		bool ignore( false );
 
@@ -167,12 +167,12 @@ TemplateJumpSetup::create_jump_sample() const {
 		Size const my_reg = it->get_register();
 
 		for ( core::scoring::dssp::PairingList::iterator fit = final_selection.begin(), efit = final_selection.end();
-					fit!=efit && !ignore; ++fit ) {
+				fit!=efit && !ignore; ++fit ) {
 			if ( my_reg == fit->get_register() ) {
 				if ( std::abs( (int) it->Pos1() - (int) fit->Pos1() ) < 15
-						 || std::abs( (int) it->Pos1() - (int) fit->Pos2() ) < 15
-						 || std::abs( (int) it->Pos2() - (int) fit->Pos1() ) < 15
-						 || std::abs( (int) it->Pos2() - (int) fit->Pos2() ) < 15 ) {
+						|| std::abs( (int) it->Pos1() - (int) fit->Pos2() ) < 15
+						|| std::abs( (int) it->Pos2() - (int) fit->Pos1() ) < 15
+						|| std::abs( (int) it->Pos2() - (int) fit->Pos2() ) < 15 ) {
 					ignore = true;
 				}
 			}
@@ -183,7 +183,7 @@ TemplateJumpSetup::create_jump_sample() const {
 
 	if ( helix_pairings_.size() ) {
 		Size const nr_helix_jumps(
-				std::min( static_cast< int >( (numeric::random::rg().uniform()+0.3) * ( helix_pairings_.size() ) + 1 ), (int) helix_pairings_.size() ) );
+			std::min( static_cast< int >( (numeric::random::rg().uniform()+0.3) * ( helix_pairings_.size() ) + 1 ), (int) helix_pairings_.size() ) );
 		core::scoring::dssp::PairingList perm = helix_pairings_;
 		numeric::random::random_permutation( perm , numeric::random::rg() );
 		for ( Size i = 1; i<= nr_helix_jumps; i++ ) {
@@ -211,11 +211,11 @@ TemplateJumpSetup::clean_jumps( JumpSample const& target_jumps ) const {
 	mm.set_bb( true );
 	mm.set_jump( true );
 
-  target_jumps.generate_jump_frames( jump_frames,mm );
+	target_jumps.generate_jump_frames( jump_frames,mm );
 
 	// treat each jump individually ---> want to select frags only from templates that have compatible pairings
 	for ( FrameList::iterator jump_frame = jump_frames.begin();
-				jump_frame != jump_frames.end(); ++jump_frame ) {
+			jump_frame != jump_frames.end(); ++jump_frame ) {
 		core::scoring::dssp::Pairing target_pairing( target_jumps.get_pairing( (*jump_frame)->start(), (*jump_frame)->stop() ) );
 		bool found( false );
 		for ( PairingStatistics::const_iterator it = strand_stats_->begin(); !found && it != strand_stats_->end(); ++it ) {
@@ -241,24 +241,24 @@ bool TemplateJumpSetup::is_helix_jump( core::scoring::dssp::Pairing const& p ) c
 /// default: generate jumps from ss-library according to JumpSample
 core::fragment::FragSetOP
 TemplateJumpSetup::generate_jump_frags( JumpSample const& target_jumps, kinematics::MoveMap const& mm ) const {
-  tr.Debug <<" generate jump fragments... " << std::endl;
-  FragSetOP jump_frags( new OrderedFragSet );
-  //generate fragments from all homologes
-  core::fragment::FrameList jump_frames;
+	tr.Debug <<" generate jump fragments... " << std::endl;
+	FragSetOP jump_frags( new OrderedFragSet );
+	//generate fragments from all homologes
+	core::fragment::FrameList jump_frames;
 	core::scoring::dssp::PairingsList library_pairings;
 
-  target_jumps.generate_jump_frames( jump_frames,mm );
+	target_jumps.generate_jump_frames( jump_frames,mm );
 
 	// treat each jump individually ---> want to select frags only from templates that have compatible pairings
 	for ( FrameList::iterator jump_frame = jump_frames.begin();
-				jump_frame != jump_frames.end(); ++jump_frame ) {
+			jump_frame != jump_frames.end(); ++jump_frame ) {
 		core::scoring::dssp::Pairing target_pairing( target_jumps.get_pairing( (*jump_frame)->start(), (*jump_frame)->stop() ) );
 		Size nr_frags( 0 );
 		tr.Debug << "get frags for pairing " << target_pairing << std::endl;
 		if ( templates_ ) {
 			if ( !is_helix_jump( target_pairing ) ) {
 				for ( Templates::const_iterator it=templates_->begin(),
-								eit = templates_->end(); it!=eit; ++it ) {
+						eit = templates_->end(); it!=eit; ++it ) {
 
 					//check if template has pairing .. we know all its pairings already aligned in targe-sequence...
 					// its in the strand_stats_
@@ -273,7 +273,7 @@ TemplateJumpSetup::generate_jump_frags( JumpSample const& target_jumps, kinemati
 				tr.Debug << "has been found in helix-list blindly collect all jump-geometries from models with an H" << std::endl;
 				FrameList aFrame; aFrame.push_back( *jump_frame );
 				for ( Templates::TemplateList::const_iterator it = templates_->helixjump_picks().begin(),
-								eit =  templates_->helixjump_picks().end(); it != eit; ++it ) {
+						eit =  templates_->helixjump_picks().end(); it != eit; ++it ) {
 					nr_frags++;
 					(*it)->steal_frags( aFrame, *jump_frags );
 				}
@@ -288,31 +288,31 @@ TemplateJumpSetup::generate_jump_frags( JumpSample const& target_jumps, kinemati
 		}
 	}
 
-		jumping::StandardPairingLibrary::get_instance()->generate_jump_frags(
-												library_pairings,
-												mm,
-												true /*with Torsion*/,
-												*jump_frags
-		);
+	jumping::StandardPairingLibrary::get_instance()->generate_jump_frags(
+		library_pairings,
+		mm,
+		true /*with Torsion*/,
+		*jump_frags
+	);
 
-  return jump_frags; //it is better to generate each time, since JumpingFoldConstraints might add other fragments ( steal native etc )
+	return jump_frags; //it is better to generate each time, since JumpingFoldConstraints might add other fragments ( steal native etc )
 }
 
 FixTemplateJumpSetup::FixTemplateJumpSetup(
-		 TemplatesCOP templates,
-		 core::fragment::SecondaryStructureCOP secstruct,
-		 PairingStatisticsCOP strand_stats,
-		 core::scoring::dssp::PairingsList const& helix_pairings,
-		 BaseJumpSetupOP jump_def
+	TemplatesCOP templates,
+	core::fragment::SecondaryStructureCOP secstruct,
+	PairingStatisticsCOP strand_stats,
+	core::scoring::dssp::PairingsList const& helix_pairings,
+	BaseJumpSetupOP jump_def
 ) : TemplateJumpSetup(  templates , secstruct, strand_stats, helix_pairings ),
-		jump_def_( jump_def )
+	jump_def_( jump_def )
 {}
 
 FixTemplateJumpSetup::FixTemplateJumpSetup(
-		 TemplateJumpSetup const& templ,
-		 BaseJumpSetupOP jump_def
+	TemplateJumpSetup const& templ,
+	BaseJumpSetupOP jump_def
 ) : TemplateJumpSetup( templ ),
-		jump_def_( jump_def )
+	jump_def_( jump_def )
 {}
 
 JumpSample
@@ -324,46 +324,46 @@ FixTemplateJumpSetup::create_jump_sample() const {
 } //protocols
 
 #if 0
-	// take first 2..nr_strands strand_ids
-	Size const rg_nrstrands( std::min( static_cast< int >( numeric::random::rg().uniform() * (target_strands.size()) ) + 2 , (int) target_strands.size() ) );
-	tr.Debug << "random choice:  aim for selection of " << rg_nrstrands << std::endl;
-	core::scoring::dssp::PairingList target_pairings;
-	Size nstrand_selected( 0 );
-	for ( Size i = 1; i<= target_strands.size(); i++ ) {
-		//decide if we pair this strand:
-		Real weight( strand_stats_->strand_weight( target_strands.strand_pairing( strand_ids[ i ] ) ) );
-		if ( total_weight > 0 && weight*rg_nrstrands / total_weight < numeric::random::rg().uniform() ) continue;
-		nstrand_selected++;
-		tr.Debug << "pre-selected " << target_strands.strand_pairing( strand_ids[ i ] ) << std::endl;
-		core::scoring::dssp::PairingList possible_pairings;
-		target_strands.strand_pairing( strand_ids[ i ] ).get_beta_pairs( possible_pairings );
-		tr.Debug << "pre-selected " << target_strands.strand_pairing( strand_ids[ i ] )
-						 << "provides: " << possible_pairings.size() << " pairings"<< std::endl;
-		// bias selection of individual pairing to center of strand
-		// we do that now simply by adding the center pairings twice
-		if ( possible_pairings.size() > 2 ) {
-			Size const ori_size = possible_pairings.size();
-			for ( Size i=2; i<=ori_size - 1; i++) {
-				possible_pairings.push_back( possible_pairings[ i ] );
-			}
+// take first 2..nr_strands strand_ids
+Size const rg_nrstrands( std::min( static_cast< int >( numeric::random::rg().uniform() * (target_strands.size()) ) + 2 , (int) target_strands.size() ) );
+tr.Debug << "random choice:  aim for selection of " << rg_nrstrands << std::endl;
+core::scoring::dssp::PairingList target_pairings;
+Size nstrand_selected( 0 );
+for ( Size i = 1; i<= target_strands.size(); i++ ) {
+	//decide if we pair this strand:
+	Real weight( strand_stats_->strand_weight( target_strands.strand_pairing( strand_ids[ i ] ) ) );
+	if ( total_weight > 0 && weight*rg_nrstrands / total_weight < numeric::random::rg().uniform() ) continue;
+	nstrand_selected++;
+	tr.Debug << "pre-selected " << target_strands.strand_pairing( strand_ids[ i ] ) << std::endl;
+	core::scoring::dssp::PairingList possible_pairings;
+	target_strands.strand_pairing( strand_ids[ i ] ).get_beta_pairs( possible_pairings );
+	tr.Debug << "pre-selected " << target_strands.strand_pairing( strand_ids[ i ] )
+		<< "provides: " << possible_pairings.size() << " pairings"<< std::endl;
+	// bias selection of individual pairing to center of strand
+	// we do that now simply by adding the center pairings twice
+	if ( possible_pairings.size() > 2 ) {
+		Size const ori_size = possible_pairings.size();
+		for ( Size i=2; i<=ori_size - 1; i++ ) {
+			possible_pairings.push_back( possible_pairings[ i ] );
 		}
-		Size const rg_pairing( static_cast< int > ( numeric::random::rg().uniform() * possible_pairings.size() ) + 1 );
-		tr.Debug << "RANDOM: choose pairing " << rg_pairing << std::endl;
-		//check if pairing is in templates...
-		bool found( false );
-		if ( templates_ ) {
-			for ( Templates::const_iterator it=templates_->begin(),
-							eit = templates_->end(); it!=eit && !found; ++it ) {
-				//check if at least 1 template has pairing .. we know all its pairings already aligned in targe-sequence...
-				// its in the strand_stats_
-				found = strand_stats_->topology( it->first ).has_pairing( possible_pairings[ rg_pairing ]);
-			}
+	}
+	Size const rg_pairing( static_cast< int > ( numeric::random::rg().uniform() * possible_pairings.size() ) + 1 );
+	tr.Debug << "RANDOM: choose pairing " << rg_pairing << std::endl;
+	//check if pairing is in templates...
+	bool found( false );
+	if ( templates_ ) {
+		for ( Templates::const_iterator it=templates_->begin(),
+				eit = templates_->end(); it!=eit && !found; ++it ) {
+			//check if at least 1 template has pairing .. we know all its pairings already aligned in targe-sequence...
+			// its in the strand_stats_
+			found = strand_stats_->topology( it->first ).has_pairing( possible_pairings[ rg_pairing ]);
 		}
-
-		if ( found || !templates_ ) target_pairings.push_back( possible_pairings[ rg_pairing ]);
 	}
 
-	// go throu selected pairings and throw out stupid stuff...
-	// 1.) don't want to have two pairings with same register in close vicinity...
-	// 2.) don't want to apply very local pairings very often ... use only 20% of time
+	if ( found || !templates_ ) target_pairings.push_back( possible_pairings[ rg_pairing ]);
+}
+
+// go throu selected pairings and throw out stupid stuff...
+// 1.) don't want to have two pairings with same register in close vicinity...
+// 2.) don't want to apply very local pairings very often ... use only 20% of time
 #endif

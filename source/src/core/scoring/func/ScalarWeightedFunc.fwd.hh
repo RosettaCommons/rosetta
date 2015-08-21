@@ -26,9 +26,9 @@ namespace core {
 namespace scoring {
 namespace func {
 
-	class ScalarWeightedFunc;
-	typedef utility::pointer::shared_ptr< ScalarWeightedFunc > ScalarWeightedFuncOP;
-	typedef utility::pointer::shared_ptr< ScalarWeightedFunc const > ScalarWeightedFuncCOP;
+class ScalarWeightedFunc;
+typedef utility::pointer::shared_ptr< ScalarWeightedFunc > ScalarWeightedFuncOP;
+typedef utility::pointer::shared_ptr< ScalarWeightedFunc const > ScalarWeightedFuncCOP;
 
 
 } // constraints

@@ -23,8 +23,8 @@ namespace protocols {
 namespace nonlocal {
 
 class TreeBuilderFactory {
- public:
-  static TreeBuilderOP get_builder(const std::string& builder_name);
+public:
+	static TreeBuilderOP get_builder(const std::string& builder_name);
 };
 
 }  // namespace nonlocal

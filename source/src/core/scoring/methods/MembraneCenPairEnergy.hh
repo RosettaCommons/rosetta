@@ -80,11 +80,11 @@ public:
 		EnergyMap &// totals
 	) const;
 
-//	/// This method *should* admit to defining intraresidue energies
+	// /// This method *should* admit to defining intraresidue energies
 	virtual
 	bool
 	defines_intrares_energy( EnergyMap const & ) const { return false; }
-//
+	//
 	void
 	eval_intrares_energy(
 		conformation::Residue const &,
@@ -112,8 +112,8 @@ private:
 
 	// const-ref to scoring database
 	MembranePotential const & potential_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

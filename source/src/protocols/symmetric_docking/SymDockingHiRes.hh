@@ -57,7 +57,7 @@ public:
 
 	/* // constructor with arguments
 	SymDockingHiRes(
-		core::scoring::ScoreFunctionOP scorefxn_in
+	core::scoring::ScoreFunctionOP scorefxn_in
 	); */
 
 	// constructor with arguments
@@ -97,11 +97,11 @@ public:
 	//void dock_mcm_protocol( core::pose::Pose & pose );
 
 	/*void classic_mcm_protocol(
-		core::pose::Pose & pose,
-		core::scoring::ScoreFunctionCOP scorefxn,
-		protocols::moves::MonteCarloOP monteCarlo,
-		core::Size num_cycles,
-		core::Size repack_every_Nth
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunctionCOP scorefxn,
+	protocols::moves::MonteCarloOP monteCarlo,
+	core::Size num_cycles,
+	core::Size repack_every_Nth
 	); */
 
 	void task_factory( core::pack::task::TaskFactoryOP task );

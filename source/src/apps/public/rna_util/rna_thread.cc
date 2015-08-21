@@ -99,31 +99,31 @@ OPT_KEY( String, sequence_mask_file )
 ///////////////////////////////////////////////////////////////////////
 void
 setup_mask(
-					 ObjexxFCL::FArray1D_bool & sequence_mask,
-					 utility::vector1< sequence::SequenceOP > const & sequences_from_alignment )
+ObjexxFCL::FArray1D_bool & sequence_mask,
+utility::vector1< sequence::SequenceOP > const & sequences_from_alignment )
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
 	utility::vector1< std::string > sequences;
-	for (Size n=1; n <= sequences_from_alignment.size(); n++ )		sequences.push_back( sequences_from_alignment[n]->sequence() );
+	for ( Size n=1; n <= sequences_from_alignment.size(); n++ )  sequences.push_back( sequences_from_alignment[n]->sequence() );
 
 	Size const alignment_length = sequences[1].size();
 	sequence_mask = ObjexxFCL::FArray1D_bool( alignment_length, false );
 
 	///////////////////////////////////////////////////////////////
 	// First pass -- rule out any part that is gapped in the alignment.
-	for (Size i = 1; i <= alignment_length; i++ ) {
+	for ( Size i = 1; i <= alignment_length; i++ ) {
 
 		bool found_a_gap( false );
-		for (Size n = 1; n <= sequences.size(); n++ ){
+		for ( Size n = 1; n <= sequences.size(); n++ ) {
 			if ( sequences[n][i-1] == '-' ) {
 				found_a_gap = true;
 				break;
 			}
 		}
 
-		if (!found_a_gap) {
+		if ( !found_a_gap ) {
 			sequence_mask( i ) = true;
 		}
 
@@ -133,28 +133,28 @@ setup_mask(
 	// Second pass -- look for ungapped part that are bracketed by gapped regions
 	bool look_for_fishy_gaps( false ); //this was from protein stuff, and is not actually in use for RNA.
 
-	if (look_for_fishy_gaps ){
+	if ( look_for_fishy_gaps ) {
 		Size const look_for_gap( 4 );
-		for (int i = 1; i <= int(alignment_length); i++ ) {
+		for ( int i = 1; i <= int(alignment_length); i++ ) {
 
 			if ( sequence_mask(i) == false ) continue; //Don't worry about it.
 
 			bool found_gap_before( false ), found_gap_after( false );
-			for (int offset = -1 * (int)look_for_gap; offset < 0; ++offset ) {
+			for ( int offset = -1 * (int)look_for_gap; offset < 0; ++offset ) {
 				if ( i+offset > 1 && sequence_mask( i+offset ) == false ) {
 					found_gap_before = true;
 					break;
 				}
 			}
-			if (!found_gap_before) continue;
+			if ( !found_gap_before ) continue;
 
-			for (int offset = 1; Size(offset) <= look_for_gap; offset ++ ) {
+			for ( int offset = 1; Size(offset) <= look_for_gap; offset ++ ) {
 				if ( i+offset <= int(alignment_length) && sequence_mask( i+offset ) == false ) {
 					found_gap_after = true;
 					break;
 				}
 			}
-			if (!found_gap_after) continue;
+			if ( !found_gap_after ) continue;
 
 			std::cout << "MASK: Region that is not nominally gapped but looks fishy: " << i << std::endl;
 			sequence_mask( i ) = false;
@@ -165,8 +165,8 @@ setup_mask(
 	Size count( 0 );
 	if ( option[ sequence_mask_file ].user() ) {
 		utility::io::ozstream out( option[ OptionKeys::sequence_mask_file ]() );
-		for (Size i = 1; i <= alignment_length; i++ ) {
-			if (sequences[1][i-1] == '-' ) continue; //Assume native numbering
+		for ( Size i = 1; i <= alignment_length; i++ ) {
+			if ( sequences[1][i-1] == '-' ) continue; //Assume native numbering
 			count++;
 			out << sequence_mask(i);
 		}
@@ -179,9 +179,9 @@ setup_mask(
 ////////////////////////////////////////////////////////////////////////////
 void
 setup_alignment_map( std::map< Size, Size > & mapping,
-										 std::string const & sequence_from_alignment ){
+	std::string const & sequence_from_alignment ){
 	Size count( 0 );
-	for (Size i = 1; i <= sequence_from_alignment.size(); i++ ) {
+	for ( Size i = 1; i <= sequence_from_alignment.size(); i++ ) {
 		if ( sequence_from_alignment[ i-1 ] != '-' ) {
 			count++;
 			mapping[ i ] = count;
@@ -195,8 +195,8 @@ setup_alignment_map( std::map< Size, Size > & mapping,
 std::string
 remove_dashes( std::string const & s ){
 	std::string s_out( "" );
-	for ( Size i = 0; i < s.size(); i++ ){
-		if (s[i] != '-') s_out += s[i];
+	for ( Size i = 0; i < s.size(); i++ ) {
+		if ( s[i] != '-' ) s_out += s[i];
 	}
 	return s_out;
 }
@@ -204,12 +204,12 @@ remove_dashes( std::string const & s ){
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 prepare_threaded_model(
-											 pose::Pose & pose,
-											 std::string const & target_sequence_from_alignment,
-											 std::string const & template_sequence_from_alignment,
-											 ObjexxFCL::FArray1D_bool & sequence_mask /* should make this optional! */,
-											 Size offset = 0
-											 )
+	pose::Pose & pose,
+	std::string const & target_sequence_from_alignment,
+	std::string const & template_sequence_from_alignment,
+	ObjexxFCL::FArray1D_bool & sequence_mask /* should make this optional! */,
+	Size offset = 0
+)
 {
 
 	using namespace core::chemical;
@@ -238,13 +238,13 @@ prepare_threaded_model(
 
 	std::string target_sequence;
 	utility::vector1< Size > working_res;
-	for (Size i = 1; i <= alignment_length; i++ ){
+	for ( Size i = 1; i <= alignment_length; i++ ) {
 
 		if ( !sequence_mask( i ) )  continue;
 
 		Size const pdb_number( template_alignment2sequence[i] );
 
-		if ( i == 1 ||  ( sequence_mask( i-1 ) && pdb_number > 1 && !template_pose.fold_tree().is_cutpoint( pdb_number-1 ) )  ){
+		if ( i == 1 ||  ( sequence_mask( i-1 ) && pdb_number > 1 && !template_pose.fold_tree().is_cutpoint( pdb_number-1 ) )  ) {
 			pose.append_residue_by_bond( template_pose.residue( pdb_number ) );
 		} else {
 			pose.append_residue_by_jump( template_pose.residue( pdb_number ), pose.total_residue() );
@@ -274,10 +274,10 @@ prepare_threaded_model(
 	//Mutate sequence
 	/////////////////////
 	utility::vector1< int> changed_pos_working;
-	for (Size i = 1; i <= target_sequence.size(); i++ ){
+	for ( Size i = 1; i <= target_sequence.size(); i++ ) {
 
 		char const new_seq = target_sequence[i-1];
-		if ( pose::rna::mutate_position( pose, i, new_seq ) ){
+		if ( pose::rna::mutate_position( pose, i, new_seq ) ) {
 			changed_pos.push_back( i );
 			changed_pos_working.push_back( working_res[i] );
 		}
@@ -294,12 +294,12 @@ prepare_threaded_model(
 // Find which template to use, based on input pdb name, or, if that fails, the template sequence.
 Size
 figure_out_which_sequence_is_template( utility::vector1< sequence::SequenceOP > const & sequences_from_alignment,
-																			 pose::Pose const & template_pose,
-																			 std::string const & template_file_name ){
+	pose::Pose const & template_pose,
+	std::string const & template_file_name ){
 
 	Size which_sequence( 0 );
 
-	for( Size n=1; n<=sequences_from_alignment.size(); n++ ){
+	for ( Size n=1; n<=sequences_from_alignment.size(); n++ ) {
 		if ( sequences_from_alignment[n]->id() == template_file_name ) {
 			which_sequence = n;
 			break;
@@ -309,8 +309,8 @@ figure_out_which_sequence_is_template( utility::vector1< sequence::SequenceOP > 
 	//////////////////////////////////////////////////////////////////
 	// If could not find template based on name, try based on sequence...
 	std::string const template_sequence = template_pose.sequence();
-	if ( which_sequence == 0 ){
-		for( Size n=1; n<=sequences_from_alignment.size(); n++ ){
+	if ( which_sequence == 0 ) {
+		for ( Size n=1; n<=sequences_from_alignment.size(); n++ ) {
 			if ( sequences_from_alignment[n]->ungapped_sequence() == template_sequence ) {
 				which_sequence = n;
 				break;
@@ -319,7 +319,7 @@ figure_out_which_sequence_is_template( utility::vector1< sequence::SequenceOP > 
 		if ( which_sequence > 0 )  std::cout  << "Using " << sequences_from_alignment[which_sequence]->id() << " from alignment FASTA file, as its sequence corresponds to input template PDB!" << std::endl;
 	}
 
-	if ( which_sequence == 0 )		utility_exit_with_message( "Could not figure out which sequence in fasta file was the template based on name or on sequence!!" );
+	if ( which_sequence == 0 )  utility_exit_with_message( "Could not figure out which sequence in fasta file was the template based on name or on sequence!!" );
 
 	if ( which_sequence == 1 ) std::cout << "WARNING! WARNING! Assuming template corresponds to first sequence in the alignment FASTA file " <<  sequences_from_alignment[which_sequence]->id() <<  ". But that first sequence should be the target sequence!" << std::endl;
 
@@ -378,8 +378,8 @@ rna_thread_test(){
 	}
 
 	prepare_threaded_model( pose, target_sequence_from_alignment,
-													template_sequence_from_alignment,
-													sequence_mask, option[ seq_offset ]() );
+		template_sequence_from_alignment,
+		sequence_mask, option[ seq_offset ]() );
 	core::pose::rna::virtualize_5prime_phosphates( pose );
 
 	std::string outfile( "threaded.pdb" );
@@ -407,26 +407,26 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-try {
-	using namespace basic::options;
+	try {
+		using namespace basic::options;
 
-	//Uh, options?
-	NEW_OPT( seq, "target sequence (can include dashes). Must specify either this or -fasta. Length of this sequence must exactly equal length of template pose specified by -s", "");
-	NEW_OPT( seq_offset, "Integer to add to all residue numbers in output PDB", 0 );
-	NEW_OPT( sequence_mask_file, "Output name for sequence mask file (not in use at the moment)", "sequence_mask.txt" );
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+		//Uh, options?
+		NEW_OPT( seq, "target sequence (can include dashes). Must specify either this or -fasta. Length of this sequence must exactly equal length of template pose specified by -s", "");
+		NEW_OPT( seq_offset, "Integer to add to all residue numbers in output PDB", 0 );
+		NEW_OPT( sequence_mask_file, "Output name for sequence mask file (not in use at the moment)", "sequence_mask.txt" );
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-	protocols::viewer::viewer_main( my_main );
-} catch ( utility::excn::EXCN_Base const & e ) {
-	std::cout << "caught exception " << e.msg() << std::endl;
-	return -1;
-}
+		protocols::viewer::viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 }

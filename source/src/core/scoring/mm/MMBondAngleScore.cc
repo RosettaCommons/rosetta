@@ -86,16 +86,16 @@ MMBondAngleScore::score( mm_bondangle_atom_tri mm_atomtype_set, Real angle ) con
 
 	/* Debug virtual atom scores
 	if ( mm_atomtype_set.key1() == 38
-			|| mm_atomtype_set.key2() == 38
-			|| mm_atomtype_set.key3() == 38 ) {
-		std::cout << "MM virtual score: " << score << std::endl;
-		if ( score != 0.0 ) {
-			for ( mm_bondangle_library_citer i = pair.first, e = pair.second; i != e; ++i ) {
-				std::cout << "(i->second).key1() " << (i->second).key1();
-				std::cout << " (i->second).key2() " << (i->second).key2() << std::endl;
-			}
+	|| mm_atomtype_set.key2() == 38
+	|| mm_atomtype_set.key3() == 38 ) {
+	std::cout << "MM virtual score: " << score << std::endl;
+	if ( score != 0.0 ) {
+	for ( mm_bondangle_library_citer i = pair.first, e = pair.second; i != e; ++i ) {
+	std::cout << "(i->second).key1() " << (i->second).key1();
+	std::cout << " (i->second).key2() " << (i->second).key2() << std::endl;
+	}
 
-		}
+	}
 	}
 	*/
 
@@ -129,8 +129,8 @@ MMBondAngleScore::dscore( mm_bondangle_atom_tri mm_atomtype_set, Real angle ) co
 	for ( mm_bondangle_library_citer i = pair.first, e = pair.second; i != e; ++i ) {
 		dscore_dang += dscore( (i->second).key1(), (i->second).key2(), angle );
 		//std::cout << "core.mm.MMBondAngleEnergy:     dscore_dang = " << dscore_dang <<
-			//" sc: " << score( mm_atomtype_set, angle ) << " +d " << score( mm_atomtype_set, angle + 1e-4 ) <<
-			//" -d " << score( mm_atomtype_set, angle - 1e-4 ) << " numderiv: " << (score( mm_atomtype_set, angle + 1e-4 ) - score( mm_atomtype_set, angle - 1e-4 ) ) / 2e-4 << std::endl;
+		//" sc: " << score( mm_atomtype_set, angle ) << " +d " << score( mm_atomtype_set, angle + 1e-4 ) <<
+		//" -d " << score( mm_atomtype_set, angle - 1e-4 ) << " numderiv: " << (score( mm_atomtype_set, angle + 1e-4 ) - score( mm_atomtype_set, angle - 1e-4 ) ) / 2e-4 << std::endl;
 	}
 
 	return dscore_dang;

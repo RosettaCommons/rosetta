@@ -8,11 +8,11 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/grafting/AnchoredGraftMover.fwd.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_grafting_AnchoredGraftMover_fwd_hh
-#define	INCLUDED_protocols_grafting_AnchoredGraftMover_fwd_hh
+#define INCLUDED_protocols_grafting_AnchoredGraftMover_fwd_hh
 
 // Utility headers
 #include <utility/pointer/access_ptr.fwd.hh>
@@ -36,5 +36,5 @@ typedef  utility::pointer::weak_ptr< AnchoredGraftMover const >  AnchoredGraftMo
 } // namespace grafting
 } // namespace protocols
 
-#endif	// #ifndef INCLUDED_protocols/grafting_AnchoredGraftMover_fwd_hh
+#endif // #ifndef INCLUDED_protocols/grafting_AnchoredGraftMover_fwd_hh
 

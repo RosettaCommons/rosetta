@@ -35,25 +35,25 @@ namespace stepwise {
 namespace legacy {
 namespace screener {
 
-	//Constructor
-	RNA_AtrRepScreener::RNA_AtrRepScreener( RNA_AtrRepCheckerOP atr_rep_checker,
-																	pose::Pose & screening_pose ):
-		atr_rep_checker_( atr_rep_checker ),
-		screening_pose_( screening_pose ),
-		exit_on_fail_( false )
-	{}
+//Constructor
+RNA_AtrRepScreener::RNA_AtrRepScreener( RNA_AtrRepCheckerOP atr_rep_checker,
+	pose::Pose & screening_pose ):
+	atr_rep_checker_( atr_rep_checker ),
+	screening_pose_( screening_pose ),
+	exit_on_fail_( false )
+{}
 
-	//Destructor
-	RNA_AtrRepScreener::~RNA_AtrRepScreener()
-	{}
+//Destructor
+RNA_AtrRepScreener::~RNA_AtrRepScreener()
+{}
 
-	////////////////////////////////////////////////////////////////////////////////////////
-	bool
-	RNA_AtrRepScreener::check_screen(){
-		bool const pass_screen = ( atr_rep_checker_->check_screen( screening_pose_ ) );
-		if ( !pass_screen && exit_on_fail_ ) exit( 0 ); // this was for debugging.
-		return pass_screen;
-	}
+////////////////////////////////////////////////////////////////////////////////////////
+bool
+RNA_AtrRepScreener::check_screen(){
+	bool const pass_screen = ( atr_rep_checker_->check_screen( screening_pose_ ) );
+	if ( !pass_screen && exit_on_fail_ ) exit( 0 ); // this was for debugging.
+	return pass_screen;
+}
 
 } //screener
 } //legacy

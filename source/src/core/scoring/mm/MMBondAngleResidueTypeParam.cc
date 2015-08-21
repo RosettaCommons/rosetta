@@ -54,7 +54,7 @@ score_atom_centrally(
 	if ( central_atoms_to_score.size() == 0 ) return true;
 
 	for ( Size ii = 1; ii <= central_atoms_to_score.size(); ++ii ) {
-		if ( utility::same_ignoring_spaces( restype.atom_name( atomno ), central_atoms_to_score[ ii ] )) {
+		if ( utility::same_ignoring_spaces( restype.atom_name( atomno ), central_atoms_to_score[ ii ] ) ) {
 			//std::cout << "Counting atom " << atomno << " " << restype.name() << " " << restype.atom_name( atomno ) << std::endl;
 			return true;
 		}
@@ -75,10 +75,10 @@ MMBondAngleResidueTypeParam::init(
 	Ktheta_.clear();
 	theta0_.clear();
 
-	for (core::Size i = 1; i <= residue_type.num_bondangles(); ++i) {
+	for ( core::Size i = 1; i <= residue_type.num_bondangles(); ++i ) {
 
 		three_atom_set const & atom_set(residue_type.bondangle(i));
-		if (!score_atom_centrally(residue_type, central_atoms_to_score, atom_set.key2())) continue;
+		if ( !score_atom_centrally(residue_type, central_atoms_to_score, atom_set.key2()) ) continue;
 
 		core::Real residue_type_theta0(numeric::angle_radians(residue_type.atom(atom_set.key1()).ideal_xyz(), residue_type.atom(atom_set.key2()).ideal_xyz(), residue_type.atom(atom_set.key3()).ideal_xyz()));
 
@@ -87,25 +87,25 @@ MMBondAngleResidueTypeParam::init(
 		std::string const & type3(residue_type.mm_atom_type(atom_set.key3()).name());
 
 		//TR << residue_type.atom_name(atom_set.key1()) << "-"
-		//	 << residue_type.atom_name(atom_set.key2()) << "-"
-		//	 << residue_type.atom_name(atom_set.key3())
+		//  << residue_type.atom_name(atom_set.key2()) << "-"
+		//  << residue_type.atom_name(atom_set.key3())
 		//   << " (" << type1 << "-" << type2 << "-" << type3 << ")";
 
 		core::scoring::mm::mm_bondangle_library_citer_pair mm_pair(mm_bondangle_library.lookup(type1, type2, type3));
 
 		// make sure there is at least one set of parameters defined
-	debug_assert(mm_pair.first != mm_pair.second);
+		debug_assert(mm_pair.first != mm_pair.second);
 
 		core::Real mm_Ktheta((mm_pair.first->second).key1());
 		core::Real mm_theta0((mm_pair.first->second).key2());
 
 		// make sure there was only one set of parameters defined
-	debug_assert(++mm_pair.first == mm_pair.second);
+		debug_assert(++mm_pair.first == mm_pair.second);
 
 		//TR << " mm_Ktheta: " << mm_Ktheta << " mm_theta0: " << numeric::conversions::degrees(mm_theta0)
 		//   << " rt_theta0: " << numeric::conversions::degrees(residue_type_theta0);
 
-		if (mm_Ktheta) {
+		if ( mm_Ktheta ) {
 			bondangle_atom_sets_.push_back(atom_set);
 			Ktheta_.push_back(mm_Ktheta);
 			theta0_.push_back(use_residue_type_theta0 ? residue_type_theta0 : mm_theta0);
@@ -121,7 +121,7 @@ MMBondAngleResidueTypeParam::init(
 	bondangles_for_atom_.resize( residue_type.natoms() );
 	bondangle_index_.clear();
 
-	for (core::Size i = 1; i <= bondangle_atom_sets_.size(); ++i) {
+	for ( core::Size i = 1; i <= bondangle_atom_sets_.size(); ++i ) {
 
 		three_atom_set const & bondangle_atom_set( bondangle_atom_sets_[i] );
 		bondangles_for_atom_[bondangle_atom_set.key1()].push_back(i);
@@ -144,17 +144,17 @@ MMBondAngleResidueTypeParam::init(
 	connection_use_theta0_.resize(residue_type.n_residue_connections());
 	connection_index_.resize(residue_type.n_residue_connections());
 
-	for (core::Size i = 1; i <= residue_type.n_residue_connections(); ++i) {
+	for ( core::Size i = 1; i <= residue_type.n_residue_connections(); ++i ) {
 
 		core::chemical::ResidueConnection const & residue_connection(residue_type.residue_connection(i));
 		core::Size const connection_atomno(residue_connection.atomno());
-		if (!score_atom_centrally(residue_type, central_atoms_to_score, connection_atomno)) {
+		if ( !score_atom_centrally(residue_type, central_atoms_to_score, connection_atomno) ) {
 			continue;
 		}
 		core::Vector external_xyz(residue_connection.icoor().build(residue_type));
 		core::chemical::AtomIndices const & bonded_neighbors(residue_type.bonded_neighbor(connection_atomno));
 
-		for (core::Size j = 1; j <= bonded_neighbors.size(); ++j) {
+		for ( core::Size j = 1; j <= bonded_neighbors.size(); ++j ) {
 
 			core::Real residue_type_theta0(numeric::angle_radians(residue_type.atom(bonded_neighbors[j]).ideal_xyz(), residue_type.atom(connection_atomno).ideal_xyz(), external_xyz));
 
@@ -162,7 +162,7 @@ MMBondAngleResidueTypeParam::init(
 			//std::string const & type2(residue_type.mm_atom_type(connection_atomno).name());
 
 			//TR << residue_type.atom_name(bonded_neighbors[j]) << "-"
-			//	 << residue_type.atom_name(connection_atomno) << "-?"
+			//  << residue_type.atom_name(connection_atomno) << "-?"
 			//   << " (" << type1 << "-" << type2 << "-?)"
 			//   << " rt_theta0: " << numeric::conversions::degrees(residue_type_theta0) << std::endl;
 
@@ -184,21 +184,21 @@ operator <<(
 )
 {
 	os << "Intraresidue Bond Angles:" << std::endl;
-	for (core::Size i = 1; i <= residue_type_param.bondangle_atom_sets_.size(); ++i) {
+	for ( core::Size i = 1; i <= residue_type_param.bondangle_atom_sets_.size(); ++i ) {
 		os << residue_type_param.bondangle_atom_sets_[i].key1() << "-"
-		   << residue_type_param.bondangle_atom_sets_[i].key2() << "-"
-		   << residue_type_param.bondangle_atom_sets_[i].key3()
-			 << " Ktheta: " << residue_type_param.Ktheta_[i]
-			 << " theta0: " << numeric::conversions::degrees(residue_type_param.theta0_[i]) << std::endl;
+			<< residue_type_param.bondangle_atom_sets_[i].key2() << "-"
+			<< residue_type_param.bondangle_atom_sets_[i].key3()
+			<< " Ktheta: " << residue_type_param.Ktheta_[i]
+			<< " theta0: " << numeric::conversions::degrees(residue_type_param.theta0_[i]) << std::endl;
 	}
 
-	for (core::Size i = 1; i <= residue_type_param.connection_atom_sets_.size(); ++i) {
+	for ( core::Size i = 1; i <= residue_type_param.connection_atom_sets_.size(); ++i ) {
 		os << "Connection " << i << " Bond Angles:" << std::endl;
-		for (core::Size j = 1; j <= residue_type_param.connection_atom_sets_[i].size(); ++j) {
+		for ( core::Size j = 1; j <= residue_type_param.connection_atom_sets_[i].size(); ++j ) {
 			os << residue_type_param.connection_atom_sets_[i][j].key1() << "-"
-			   << residue_type_param.connection_atom_sets_[i][j].key2() << "-?"
-				 << " rt_theta0: " << numeric::conversions::degrees(residue_type_param.connection_theta0_[i][j]) << " "
-				 << (residue_type_param.connection_use_theta0_[i][j] ? "use_residue_type_theta0" : "use_mm_theta0") << std::endl;
+				<< residue_type_param.connection_atom_sets_[i][j].key2() << "-?"
+				<< " rt_theta0: " << numeric::conversions::degrees(residue_type_param.connection_theta0_[i][j]) << " "
+				<< (residue_type_param.connection_use_theta0_[i][j] ? "use_residue_type_theta0" : "use_mm_theta0") << std::endl;
 		}
 	}
 

@@ -58,8 +58,8 @@ public:
 	apply(core::pose::Pose & pose){
 
 		//if (! protocols::antibody::clusters::check_if_pose_renumbered_for_clusters(pose)){
-		//	utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  "
-		//			                             "Please visit http://dunbrack2.fccc.edu/PyIgClassify/ for renumbering");
+		// utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  "
+		//                                "Please visit http://dunbrack2.fccc.edu/PyIgClassify/ for renumbering");
 		//}
 
 		AntibodyInfoOP ab_info( new AntibodyInfo(pose, North) );
@@ -67,7 +67,7 @@ public:
 		ab_info->setup_CDR_clusters(pose);
 
 
-		for (core::Size i = 1; i<= core::Size(ab_info->get_total_num_CDRs()); ++i){
+		for ( core::Size i = 1; i<= core::Size(ab_info->get_total_num_CDRs()); ++i ) {
 			CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
 			CDRClusterCOP result = ab_info->get_CDR_cluster(cdr_name);
 			std::string output = "REMARK CLUSTER "+ ab_info->get_cluster_name(result->cluster()) +" "+utility::to_string(result->normalized_distance_in_degrees());

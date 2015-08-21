@@ -28,7 +28,7 @@ namespace loop_closure {
 namespace ccd {
 
 std::pair< core::Real, core::Real > get_deviation(
-		core::pose::Pose const & pose, core::uint const cutpoint );
+	core::pose::Pose const & pose, core::uint const cutpoint );
 
 } // namespace ccd
 } // namespace loop_closure

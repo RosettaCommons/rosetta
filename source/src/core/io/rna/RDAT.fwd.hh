@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file core/io/rna/RDAT.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace core {
 namespace io {
 namespace rna {
-	
-	class RDAT;
-	typedef utility::pointer::shared_ptr< RDAT > RDATOP;
-	typedef utility::pointer::shared_ptr< RDAT const > RDATCOP;
-	
+
+class RDAT;
+typedef utility::pointer::shared_ptr< RDAT > RDATOP;
+typedef utility::pointer::shared_ptr< RDAT const > RDATCOP;
+
 } //rna
 } //io
 } //core

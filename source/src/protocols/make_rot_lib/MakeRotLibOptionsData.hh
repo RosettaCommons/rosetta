@@ -36,16 +36,16 @@ namespace make_rot_lib {
 
 // Describe range of torsion angle values
 struct TorsionRange {
-  core::Real low;
-  core::Real high;
-  core::Real step;
+	core::Real low;
+	core::Real high;
+	core::Real step;
 };
 
 typedef utility::vector1< TorsionRange > TorsionRangeVec;
 typedef utility::vector1< TorsionRangeVec > TorsionRangeVecVec;
 
 //AtomID aidCYH( pose.residue( hbs_pre_position ).atom_index("CYH"), hbs_pre_position );
-  
+
 // Hold a centoids starting value and rotamer bin number
 struct CentroidRotNum {
 	core::Real angle;
@@ -63,7 +63,7 @@ class MakeRotLibOptionsData : public utility::pointer::ReferenceCount
 public:
 
 	/// @brief ctor
-  MakeRotLibOptionsData( std::string filename );
+	MakeRotLibOptionsData( std::string filename );
 
 	/// @brief dtor
 	~MakeRotLibOptionsData() {}
@@ -100,7 +100,7 @@ private:
 	TorsionRangeVec bb_ranges_;
 	// bb_ranges_[ i ] refers to the residue torsion id bb_ids_[ i ]
 	utility::vector1< core::Size > bb_ids_;
-  
+
 	// store sets of torsion ranges for each chi torsion
 	TorsionRangeVec chi_ranges_;
 

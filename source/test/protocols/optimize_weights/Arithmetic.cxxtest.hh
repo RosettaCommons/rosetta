@@ -30,7 +30,7 @@ using namespace numeric::expression_parser;
 
 class ArithmeticTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	// --------------- Fixtures --------------- //
 
@@ -283,12 +283,12 @@ class ArithmeticTests : public CxxTest::TestSuite {
 	}
 
 	void test_precedence() {
- 		ExpressionCOP precidence = parse_string_to_expression( "12 + 5 * 3" );
+		ExpressionCOP precidence = parse_string_to_expression( "12 + 5 * 3" );
 		TS_ASSERT( 27 == (*precidence)() );
 	}
 
 	void test_parens() {
- 		ExpressionCOP parens = parse_string_to_expression( "(12 + 5) * 3" );
+		ExpressionCOP parens = parse_string_to_expression( "(12 + 5) * 3" );
 		TS_ASSERT( 51 == (*parens)() );
 	}
 

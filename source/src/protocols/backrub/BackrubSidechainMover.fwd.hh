@@ -17,8 +17,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace backrub{
+namespace protocols {
+namespace backrub {
 
 // Forwards and OP typedefs
 class BackrubSidechainMover;

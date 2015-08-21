@@ -39,23 +39,23 @@ namespace loop_modeling {
 /// @author Kale Kundert
 /// @author Roland A. Pache, PhD
 ///
-/// @details Building a loop from scratch is useful in two scenarios.  The 
-/// first is when there's missing density that needs to be modeled, and the 
-/// second is when the whole loop modeling algorithm needs to be benchmarked.  
-/// This mover uses kinematic closure (KIC) to build loops.  By default, the 
-/// loop are built by picking phi and psi values from a Ramachandran 
-/// distribution and setting all other DOFs to ideal values.  Phi and psi 
-/// values can also be picked using fragment libraries.  Loop building succeeds 
-/// when a model is found that passes a more-lenient-than-usual bump check.  If 
-/// no such model is found after 1000 iterations, the mover gives up and 
+/// @details Building a loop from scratch is useful in two scenarios.  The
+/// first is when there's missing density that needs to be modeled, and the
+/// second is when the whole loop modeling algorithm needs to be benchmarked.
+/// This mover uses kinematic closure (KIC) to build loops.  By default, the
+/// loop are built by picking phi and psi values from a Ramachandran
+/// distribution and setting all other DOFs to ideal values.  Phi and psi
+/// values can also be picked using fragment libraries.  Loop building succeeds
+/// when a model is found that passes a more-lenient-than-usual bump check.  If
+/// no such model is found after 1000 iterations, the mover gives up and
 /// reports failure.
 ///
-/// This process can be very slow for long loops, because there's nothing 
-/// guiding the algorithm towards the right solution.  By default, torsions are 
-/// just being randomly picked, and they often won't fit in the relatively 
-/// narrow space that's available.  The problem is worse for interior loops 
-/// than it is for surface loops, of course.  This algorithm seems to work well 
-/// enough on 12 residue loops, but beyond that it may be necessary to develop 
+/// This process can be very slow for long loops, because there's nothing
+/// guiding the algorithm towards the right solution.  By default, torsions are
+/// just being randomly picked, and they often won't fit in the relatively
+/// narrow space that's available.  The problem is worse for interior loops
+/// than it is for surface loops, of course.  This algorithm seems to work well
+/// enough on 12 residue loops, but beyond that it may be necessary to develop
 /// a smarter algorithm that preferentially builds into free space.
 
 class LoopBuilder : public LoopMover {
@@ -75,19 +75,19 @@ public:
 
 	/// @brief Configure from a RosettaScripts tag.
 	void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & data,
-			protocols::filters::Filters_map const & filters,
-			protocols::moves::Movers_map const & movers,
-			Pose const & pose);
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		Pose const & pose);
 
 public:
 
 	/// @brief Use the given fragment libraries when building the loop.
 	void use_fragments(
-			utility::vector1<core::fragment::FragSetCOP> const & frag_libs);
+		utility::vector1<core::fragment::FragSetCOP> const & frag_libs);
 
-	/// @brief Return the number of times KIC will be invoked before the 
+	/// @brief Return the number of times KIC will be invoked before the
 	/// LoopBuilder gives up.
 	Size get_max_attempts() const;
 
@@ -102,7 +102,7 @@ public:
 
 protected:
 
-	/// @brief Attempt to find a reasonable loop conformation without using any 
+	/// @brief Attempt to find a reasonable loop conformation without using any
 	/// information from the original coordinates.
 	bool do_apply(Pose & pose, Loop const & loop);
 

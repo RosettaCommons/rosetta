@@ -69,7 +69,7 @@ FreeDOF_EnergyCreator::score_types_for_method() const {
 }
 
 /// ctor
-	FreeDOF_Energy::FreeDOF_Energy( methods::EnergyMethodOptions const & energy_method_options ) :
+FreeDOF_Energy::FreeDOF_Energy( methods::EnergyMethodOptions const & energy_method_options ) :
 	parent( methods::EnergyMethodCreatorOP( new FreeDOF_EnergyCreator ) ),
 	energy_method_options_( energy_method_options ),
 	options_( energy_method_options.free_dof_options() ),
@@ -109,9 +109,9 @@ FreeDOF_Energy::residue_energy(
 
 	Real free_suite_energy( 0.0 ), free_2HOprime_energy( 0.0 ), free_side_chain_energy( 0.0 );
 
-	if ( rsd.has_variant_type( chemical::VIRTUAL_PHOSPHATE ) ){
+	if ( rsd.has_variant_type( chemical::VIRTUAL_PHOSPHATE ) ) {
 		Size const seqpos_in_full_model = res_list[ rsd.seqpos() ];
-		if ( seqpos_in_full_model > 1 && !cutpoint_open_in_full_model.has_value( seqpos_in_full_model - 1 ) ){
+		if ( seqpos_in_full_model > 1 && !cutpoint_open_in_full_model.has_value( seqpos_in_full_model - 1 ) ) {
 			free_suite_energy += options_.free_suite_bonus();
 		}
 	}
@@ -119,31 +119,31 @@ FreeDOF_Energy::residue_energy(
 	// Note: In following, bonus/penalties for phosphates & sugars were folded into free_suite_energy
 	// to have concise outfiles. That historical choice was confusing. Its now better to fold all into free_dof, and
 	// allowing separate bonuses to be set through tags like FREE_SUGAR_BONUS in .wts file, or set from command-line.
-	if ( rsd.has_variant_type( chemical::FIVE_PRIME_PACKABLE_PHOSPHATE ) ){ // this always comes with a virtual phosphate
+	if ( rsd.has_variant_type( chemical::FIVE_PRIME_PACKABLE_PHOSPHATE ) ) { // this always comes with a virtual phosphate
 		free_suite_energy += options_.pack_phosphate_penalty();
 	}
-	if ( rsd.has_variant_type( chemical::THREE_PRIME_PACKABLE_PHOSPHATE ) ){
+	if ( rsd.has_variant_type( chemical::THREE_PRIME_PACKABLE_PHOSPHATE ) ) {
 		free_suite_energy += options_.pack_phosphate_penalty();
 	}
-	if ( rsd.has_variant_type( chemical::FIVE_PRIME_PHOSPHATE ) ){
+	if ( rsd.has_variant_type( chemical::FIVE_PRIME_PHOSPHATE ) ) {
 		// weird, I know. these variants should go on as intermediates in stepwise assembly, replacing
 		// virtual phosphates. Ideally the bonus & the penalty should cancel, but somehow that is too stringent
 		// and would end up disallowing phosphates from ever being instantiated.
 		free_suite_energy += options_.free_suite_bonus() + options_.pack_phosphate_penalty();
 	}
-	if ( rsd.has_variant_type( chemical::THREE_PRIME_PHOSPHATE ) ){
+	if ( rsd.has_variant_type( chemical::THREE_PRIME_PHOSPHATE ) ) {
 		free_suite_energy += options_.pack_phosphate_penalty();
 	}
-	if ( rsd.has_variant_type( chemical::VIRTUAL_RIBOSE ) )	{
+	if ( rsd.has_variant_type( chemical::VIRTUAL_RIBOSE ) ) {
 		free_suite_energy += options_.free_sugar_bonus();
 	}
 	// end block of terms that historically were folded into free_suite score term.
 
-	if ( rsd.has_variant_type( chemical::VIRTUAL_O2PRIME_HYDROGEN ) )	free_2HOprime_energy += options_.free_2HOprime_bonus();
+	if ( rsd.has_variant_type( chemical::VIRTUAL_O2PRIME_HYDROGEN ) ) free_2HOprime_energy += options_.free_2HOprime_bonus();
 
 	// Following could be more fine-grained if we allow for virtualization of 'tips' of side chains. Currently
 	//  all-or-nothing, though.
-	if ( rsd.has_variant_type( chemical::VIRTUAL_SIDE_CHAIN ) ) 	free_side_chain_energy += options_.free_side_chain_bonus() * rsd.nchi() ;
+	if ( rsd.has_variant_type( chemical::VIRTUAL_SIDE_CHAIN ) )  free_side_chain_energy += options_.free_side_chain_bonus() * rsd.nchi() ;
 
 	emap[ free_suite      ] += free_suite_energy;
 	emap[ free_2HOprime   ] += free_2HOprime_energy;
@@ -168,12 +168,12 @@ FreeDOF_Energy::finalize_total_energy(
 	// this should only be computed once for a full_model run, and not for the other poses.
 	// (it looks over all the other_pose's). The good news is that when the other poses are scored
 	// by OtherPoseEnergy, the weight on free_res is set to zero, so it won't be included here.
-	if ( scorefxn.has_nonzero_weight( free_res ) ){
+	if ( scorefxn.has_nonzero_weight( free_res ) ) {
 		using namespace core::chemical;
 		utility::vector1< char > missing_residues;
 		pose::full_model_info::get_number_missing_residues_and_connections( pose, missing_residues );
 		Real free_res_energy( 0.0 );
-		for ( Size n = 1; n <= missing_residues.size(); n++ ){
+		for ( Size n = 1; n <= missing_residues.size(); n++ ) {
 			if ( !oneletter_code_specifies_aa( missing_residues[ n ] ) ) continue;
 			AA const aa = aa_from_oneletter_code( missing_residues[n] );
 			if ( Size( aa ) > free_res_weights_.size() ) continue;
@@ -197,20 +197,20 @@ FreeDOF_Energy::finalize_total_energy(
 	static Real const sugar_hbond_energy_cutoff_( -0.20 );
 
 	Real total_free_base_score( 0.0 );
-	for ( Size n = 1; n <= pose.total_residue(); n++ ){
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 		if ( !pose.residue( n ).is_RNA() ) continue;
 		Real free_base_score( 0.0 );
 		if ( base_hbond_energy[ n ] <= base_hbond_energy_cutoff_ ) {
 			// assume that a base hydrogen bond locks the residue into place.
 			continue;
 		} else {
-			if ( base_stack_energy[ n ] <= base_stack_energy_cutoff_ ){
+			if ( base_stack_energy[ n ] <= base_stack_energy_cutoff_ ) {
 				free_base_score += -1.0; // make this an option
 			} else {
 				// no stacks - big bonus!
 				free_base_score += -2.0; // make this an option
 			}
-			if ( sugar_hbond_energy[ n ] <= sugar_hbond_energy_cutoff_ ){
+			if ( sugar_hbond_energy[ n ] <= sugar_hbond_energy_cutoff_ ) {
 				free_base_score += 1.0;
 			}
 		}
@@ -227,10 +227,10 @@ void
 FreeDOF_Energy::do_fa_stack_scorefunction_checks( ScoreFunction const & scorefxn ) const {
 	EnergyMap const & weights( scorefxn.weights() );
 	runtime_assert( scorefxn.has_nonzero_weight( fa_stack ) ||
-									( scorefxn.has_nonzero_weight( fa_stack_lower ) &&
-										weights[ fa_stack_upper ] == weights[ fa_stack_lower ] ) );
+		( scorefxn.has_nonzero_weight( fa_stack_lower ) &&
+		weights[ fa_stack_upper ] == weights[ fa_stack_lower ] ) );
 
-	if ( !scorefxn.check_methods_in_right_order( fa_stack, free_base ) ){
+	if ( !scorefxn.check_methods_in_right_order( fa_stack, free_base ) ) {
 		utility_exit_with_message( "fa_stack should be before free_base/free_dof in .wts file!" );
 	}
 
@@ -262,9 +262,9 @@ FreeDOF_Energy::accumulate_stack_energy(
 	for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
 		if ( !pose.residue( i ).is_RNA() ) continue;
 		for ( graph::Graph::EdgeListConstIter
-						iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
-						irue = energy_graph.get_node(i)->const_upper_edge_list_end();
-					iru != irue; ++iru ) {
+				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
+				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
+				iru != irue; ++iru ) {
 			EnergyEdge const & edge( static_cast< EnergyEdge const & > (**iru) );
 			Size const j( edge.get_second_node_ind() );
 			runtime_assert( i < j );
@@ -291,8 +291,8 @@ FreeDOF_Energy::get_hbond_energy(
 	// unfortunately, HBondEnergy is not guaranteed to fill hbond_set.
 	// runtime_assert( scorefxn.has_nonzero_weight( hbond ) || scorefxn.has_nonzero_weight( hbond_sc ) );
 	// HBondSet const & hbond_set
-	// 	( static_cast< HBondSet const & >
-	// 		( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
+	//  ( static_cast< HBondSet const & >
+	//   ( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
 
 	// unclear whether we can avoid repeating work elsewhere through caching this.
 	HBondSet hbond_set;
@@ -301,9 +301,9 @@ FreeDOF_Energy::get_hbond_energy(
 	base_hbond_energy= utility::vector1< Real > ( pose.total_residue(), 0.0 );
 	sugar_hbond_energy= utility::vector1< Real > ( pose.total_residue(), 0.0 );
 
-	for (Size n = 1; n <= hbond_set.nhbonds(); ++n){
+	for ( Size n = 1; n <= hbond_set.nhbonds(); ++n ) {
 
-		if (!hbond_set.allow_hbond(n)) continue;
+		if ( !hbond_set.allow_hbond(n) ) continue;
 		HBond const & hbond_(hbond_set.hbond(n));
 		Size const i = hbond_.don_res();
 		Size const j = hbond_.acc_res();

@@ -32,24 +32,24 @@
 namespace core {
 namespace chemical {
 
-	typedef std::map< std::string, int > AdductMap;
+typedef std::map< std::string, int > AdductMap;
 
-	/// @brief Convert input string to map of adducts->max usage
-	AdductMap
-	parse_adduct_string(
-		utility::options::StringVectorOption & add_vec
-	);
+/// @brief Convert input string to map of adducts->max usage
+AdductMap
+parse_adduct_string(
+	utility::options::StringVectorOption & add_vec
+);
 
-	/// @brief Make sure requested adducts exist in some residue
-	void
-	error_check_requested_adducts( AdductMap const & add_map,
-		ResidueTypeCOPs const & rsd_types );
+/// @brief Make sure requested adducts exist in some residue
+void
+error_check_requested_adducts( AdductMap const & add_map,
+	ResidueTypeCOPs const & rsd_types );
 
-	/// @brief Apply adducts to residue using a boolean mask
-	ResidueTypeOP apply_adducts_to_residue(
-			ResidueType const & rsd,
-			utility::vector1< bool > & add_mask
-	);
+/// @brief Apply adducts to residue using a boolean mask
+ResidueTypeOP apply_adducts_to_residue(
+	ResidueType const & rsd,
+	utility::vector1< bool > & add_mask
+);
 
 } // chemical
 } // core

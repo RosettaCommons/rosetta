@@ -78,7 +78,7 @@ void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	//  Templates::register_options();
-  OPT( in::file::s ); //should have a Jobdistributor register_options..
+	OPT( in::file::s ); //should have a Jobdistributor register_options..
 	OPT( in::file::silent );
 	NEW_OPT( score_app::linmin, "Do a quick round of linmin before reporting the score", false );
 	NEW_OPT( dump_all, "show individual RDCs for each structure on screen", false );
@@ -119,10 +119,10 @@ void RDCToolMover::dump_averages() {
 	utility::io::ozstream ofs( option[ average ]() );
 	for ( Size d = 1; d<=data.size(); d++ ) {
 		ofs << RJ( 6, myRDCs_->get_RDC_data()[ d ].res1() ) << " "
-				<< RJ( 6, myRDCs_->get_RDC_data()[ d ].Jdipolar()) << " "
-				<< RJ( 6, average_RDCs_[ d ]*invn ) << " "
-				<< RJ( 6, sqrt( av_dev_RDCs_[ d ]*invn ) ) << " "
-				<< RJ( 6, sqrt(var_RDCs_[ d ]*invn - (average_RDCs_[ d ]*invn)*(average_RDCs_[ d ]*invn))) << std::endl;
+			<< RJ( 6, myRDCs_->get_RDC_data()[ d ].Jdipolar()) << " "
+			<< RJ( 6, average_RDCs_[ d ]*invn ) << " "
+			<< RJ( 6, sqrt( av_dev_RDCs_[ d ]*invn ) ) << " "
+			<< RJ( 6, sqrt(var_RDCs_[ d ]*invn - (average_RDCs_[ d ]*invn)*(average_RDCs_[ d ]*invn))) << std::endl;
 	}
 }
 
@@ -145,7 +145,7 @@ void RDCToolMover::apply( core::pose::Pose &pose ) {
 		if ( option[ residue_subset ].user() ) { //filter
 			std::ifstream is( option[ residue_subset ]().name().c_str() );
 
-			if (!is.good()) {
+			if ( !is.good() ) {
 				utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ residue_subset ]().name() + "'" );
 			}
 
@@ -195,8 +195,8 @@ void RDCToolMover::apply( core::pose::Pose &pose ) {
 		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 		movemap->set_bb( true ); movemap->set_chi( true );
 		protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover(
-					 movemap, score.clone(), "linmin", 1e-4,
-					 false /*use_nblist*/, true /*deriv_check*/, true /*verbose driv check*/ ) );
+			movemap, score.clone(), "linmin", 1e-4,
+			false /*use_nblist*/, true /*deriv_check*/, true /*verbose driv check*/ ) );
 		minmover->apply( pose );
 	}
 
@@ -228,14 +228,14 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	register_options();
-	devel::init( argc, argv );
+		register_options();
+		devel::init( argc, argv );
 
-	//	try{
+		// try{
 		run();
-		//	} catch ( utility::excn::EXCN_Base& anExcn ) {
-		//		anExcn.show( std::cerr );
-		//	}
+		// } catch ( utility::excn::EXCN_Base& anExcn ) {
+		//  anExcn.show( std::cerr );
+		// }
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

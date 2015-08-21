@@ -33,7 +33,7 @@
 namespace numeric {
 namespace random {
 
-	/// @brief
+/// @brief
 class WeightedSampler {
 
 public: // Creation
@@ -71,14 +71,14 @@ public: // Methods
 
 	// set weights
 	void
-	weights( utility::vector1<numeric::Real> const & weights	)	{
+	weights( utility::vector1<numeric::Real> const & weights ) {
 		weights_ = weights;
 		cumulative_distribution_valid_ = false;
 	}
 
 	// add a single weight to the end
 	void
-	add_weight(	numeric::Real weight )	{
+	add_weight( numeric::Real weight ) {
 		weights_.push_back(weight);
 		cumulative_distribution_valid_ = false;
 	}
@@ -88,7 +88,7 @@ public: // Methods
 	set_weight(
 		numeric::Size weight_num,
 		numeric::Real weight
-	)	{
+	) {
 		weights_[weight_num] = weight;
 		cumulative_distribution_valid_ = false;
 	}
@@ -111,7 +111,7 @@ public: // Methods
 	resize(
 		numeric::Size num_weights,
 		numeric::Real default_weight = 0
-	)	{
+	) {
 		weights_.resize(num_weights, default_weight);
 	}
 

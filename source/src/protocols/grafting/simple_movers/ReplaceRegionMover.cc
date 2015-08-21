@@ -139,7 +139,7 @@ ReplaceRegionMover::fresh_instance() const {
 void
 ReplaceRegionMover::apply(core::pose::Pose& pose) {
 
-	if (tag_){
+	if ( tag_ ) {
 		src_pose_start_ = core::pose::get_resnum(tag_, *src_pose_, "src_pose_start_");
 		target_pose_start_= core::pose::get_resnum(tag_, pose, "target_pose_start_");
 	}

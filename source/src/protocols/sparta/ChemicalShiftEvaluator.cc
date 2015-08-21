@@ -55,7 +55,7 @@ Real ChemicalShiftEvaluator::apply( pose::Pose& pose ) const {
 }
 
 bool ChemicalShiftEvaluator::applicable( pose::Pose const& pose ) const {
-  return pose.is_fullatom();
+	return pose.is_fullatom();
 }
 
 }

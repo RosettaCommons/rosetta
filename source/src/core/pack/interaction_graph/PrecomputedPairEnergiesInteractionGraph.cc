@@ -30,7 +30,7 @@ namespace interaction_graph {
 /// @param node1 - [in] - the index of the smaller-indexed node
 /// @param node2 - [in] - the index of the larger-indexed node
 /// @param oversized_res_res_energy_array - [in] - the large table
-/// 	of rotamer pair energies
+///  of rotamer pair energies
 void PrecomputedPairEnergiesInteractionGraph::add_to_two_body_energies_for_edge
 (
 	int node1,
@@ -40,7 +40,7 @@ void PrecomputedPairEnergiesInteractionGraph::add_to_two_body_energies_for_edge
 {
 	PrecomputedPairEnergiesEdge* edge =
 		(PrecomputedPairEnergiesEdge*) find_edge( node1, node2 );
-	if (edge == NULL){
+	if ( edge == NULL ) {
 		std::cerr << "WARNING:: you've input edge energies for an edge that does not exist" << std::endl;
 		return;
 	}
@@ -65,7 +65,7 @@ PrecomputedPairEnergiesInteractionGraph::add_to_two_body_energies_for_edge
 {
 	PrecomputedPairEnergiesEdge* edge =
 		(PrecomputedPairEnergiesEdge*) find_edge( node1, node2 );
-	if (edge == NULL) {
+	if ( edge == NULL ) {
 		std::cerr << "WARNING:: you've input edge energies for an edge that does not exist" << std::endl;
 		return;
 	}
@@ -88,7 +88,7 @@ void PrecomputedPairEnergiesInteractionGraph::set_two_body_energy_for_edge(
 {
 	PrecomputedPairEnergiesEdge* edge =
 		(PrecomputedPairEnergiesEdge*) find_edge( node1, node2 );
-	if (edge == NULL) {
+	if ( edge == NULL ) {
 		std::cerr << "WARNING:: you've input edge energies for an edge that does not exist" << std::endl;
 		return;
 	}
@@ -111,7 +111,7 @@ void PrecomputedPairEnergiesInteractionGraph::clear_two_body_energy_for_edge(
 {
 	PrecomputedPairEnergiesEdge* edge =
 		(PrecomputedPairEnergiesEdge*) find_edge( node1, node2 );
-	if (edge == NULL) return;
+	if ( edge == NULL ) return;
 	edge->set_two_body_energy( state_node1, state_node2, 0 );
 }
 
@@ -129,7 +129,7 @@ void PrecomputedPairEnergiesInteractionGraph::declare_edge_energies_final
 {
 	PrecomputedPairEnergiesEdge* edge =
 		(PrecomputedPairEnergiesEdge*) find_edge( node1, node2 );
-	if (edge == NULL) {
+	if ( edge == NULL ) {
 		return;
 	}
 	edge->declare_energies_final();

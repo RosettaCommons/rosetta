@@ -92,7 +92,7 @@ private: //data
 	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_o2prime_indirect_         ;
 
 	Real const v_angle_width_;
-	};
+};
 
 } //magnesium
 } //scoring

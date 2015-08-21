@@ -45,20 +45,20 @@ public:
 	RNA_DataReader( std::string const rna_data_file );
 
 	void
-	initialize(	std::string const rna_data_file	);
+	initialize( std::string const rna_data_file );
 
 	void
 	fill_rna_data_info( core::pose::Pose & pose );
 
 	bool
 	has_reactivities(){ return ( rna_data_info_with_conventional_numbering_ != 0 &&
-															 rna_data_info_with_conventional_numbering_->rna_reactivities().size() > 0 ); }
+		rna_data_info_with_conventional_numbering_->rna_reactivities().size() > 0 ); }
 
 private:
 
 	void
 	read_backbone_info( std::istringstream & line_stream,
-											utility::vector1< Size > & backbone_res );
+		utility::vector1< Size > & backbone_res );
 
 	void
 	read_data_info( std::istringstream & line_stream );
@@ -71,16 +71,16 @@ private:
 
 	void
 	get_reactivity_from_rdat( core::io::rna::RDAT const & rdat,
-														core::scoring::rna::data::RNA_ReactivityType const & type,
-														std::string const modifier_name );
+		core::scoring::rna::data::RNA_ReactivityType const & type,
+		std::string const modifier_name );
 	void
 	read_data_from_rdat( std::string const & filename );
 
 	ObjexxFCL::FArray1D< bool >
 	fill_backbone_array( utility::vector1< Size > const & backbone_res,
-											 core::pose::Pose const & pose );
+		core::pose::Pose const & pose );
 
-	private:
+private:
 
 	core::scoring::rna::data::RNA_DataInfoOP rna_data_info_with_conventional_numbering_;
 	utility::vector1< Size > backbone_burial_res_, backbone_exposed_res_;
@@ -89,7 +89,7 @@ private:
 
 core::scoring::rna::data::RNA_DataInfo const &
 get_rna_data_info( core::pose::Pose & pose, std::string const & rna_data_file,
-									 core::scoring::ScoreFunctionOP scorefxn = 0 );
+	core::scoring::ScoreFunctionOP scorefxn = 0 );
 
 
 } //rna

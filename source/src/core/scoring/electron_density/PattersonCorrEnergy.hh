@@ -51,26 +51,26 @@ public:
 	methods::LongRangeEnergyType
 	long_range_type() const;
 
-	virtual	bool
+	virtual bool
 	defines_residue_pair_energy(
 		pose::Pose const & pose,
 		Size res1,
 		Size res2
 	) const;
 
-	virtual	void
+	virtual void
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
 
-	virtual	void
+	virtual void
 	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sfxn ) const;
 
-	virtual	void
+	virtual void
 	finalize_after_derivatives( pose::Pose &, ScoreFunction const &  ) const;
 
-	virtual	bool
+	virtual bool
 	defines_intrares_energy( EnergyMap const & ) const { return false; }
 
-	virtual	void
+	virtual void
 	eval_intrares_energy(
 		conformation::Residue const & ,
 		pose::Pose const & ,
@@ -78,16 +78,16 @@ public:
 		EnergyMap &
 	) const { }
 
-	virtual	void
+	virtual void
 	setup_for_packing( pose::Pose &, utility::vector1< bool > const &, utility::vector1< bool > const & ) const { isRepacking=true; };
 
-	virtual	void
+	virtual void
 	update_residue_for_packing(
 		pose::Pose &,
 		Size resid
 	) const;
 
-	virtual	void
+	virtual void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
@@ -99,7 +99,7 @@ public:
 	using methods::ContextDependentLRTwoBodyEnergy::finalize_total_energy;
 
 	/// called at the end of energy evaluation
-	virtual	void
+	virtual void
 	finalize_total_energy(
 		pose::Pose const & pose,
 		ScoreFunction const &,
@@ -107,7 +107,7 @@ public:
 	) const;
 
 
-	virtual	void
+	virtual void
 	eval_atom_derivative(
 		id::AtomID const & id,
 		pose::Pose const & pose,
@@ -134,8 +134,8 @@ private:
 	mutable bool pose_is_proper;
 	mutable double pcc_structure;
 	mutable int nreses;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 };
 
 

@@ -31,18 +31,18 @@ typedef  utility::pointer::shared_ptr< FragmentSampler >  FragmentSamplerOP;
 typedef  utility::pointer::shared_ptr< FragmentSampler const >  FragmentSamplerCOP;
 
 enum StageID {
-		ALL_STAGES = 0, //don't change!
-		STAGE_1,
-		STAGE_2,
-		STAGE_3,
-		STAGE_3a,
-		STAGE_3b,
-		STAGE_4,
-		END_ABINITIO,
-		LOOP_CLOSURE,
-		SWITCH_TO_FULLATOM,
-		RELAX,
-		LAST_STAGE //keep last
+	ALL_STAGES = 0, //don't change!
+	STAGE_1,
+	STAGE_2,
+	STAGE_3,
+	STAGE_3a,
+	STAGE_3b,
+	STAGE_4,
+	END_ABINITIO,
+	LOOP_CLOSURE,
+	SWITCH_TO_FULLATOM,
+	RELAX,
+	LAST_STAGE //keep last
 };
 
 

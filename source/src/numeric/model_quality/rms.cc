@@ -267,8 +267,8 @@ findUU(
 			temp2 += YY(k,j) * WW(j);
 			temp3 += WW(j);
 		}
-		if (temp3 > 0.001) temp1 /= temp3;
-		if (temp3 > 0.001) temp2 /= temp3;
+		if ( temp3 > 0.001 ) temp1 /= temp3;
+		if ( temp3 > 0.001 ) temp2 /= temp3;
 
 		for ( int j = 1; j <= Npoints; ++j ) {
 			XX(k,j) -= temp1;
@@ -403,10 +403,10 @@ findUU(
 	//cems but in practice round off error makes them negative)
 	if ( sigma3 < 0.0 ) {
 		sigma3 = std::sqrt(std::abs(w_w(1))) + std::sqrt(std::abs(w_w(2))) -
-		 std::sqrt(std::abs(w_w(3)));
+			std::sqrt(std::abs(w_w(3)));
 	} else {
 		sigma3 = std::sqrt(std::abs(w_w(1))) + std::sqrt(std::abs(w_w(2))) +
-		 std::sqrt(std::abs(w_w(3)));
+			std::sqrt(std::abs(w_w(3)));
 	}
 
 } // findUU
@@ -428,8 +428,7 @@ findUU(
 	FArray1D< numeric::Real > WW_Farray(WW.size());
 	FArray2D< numeric::Real > UU_Farray(numeric::xyzmatrix_to_FArray<numeric::Real>(UU));
 
-	for(numeric::Size index = 1; index <= WW.size();++index)
-	{
+	for ( numeric::Size index = 1; index <= WW.size(); ++index ) {
 		WW_Farray(index) = WW[index];
 	}
 
@@ -486,7 +485,7 @@ BlankMatrixMult(
 	B.dimension( np, m );
 	AxB_out.dimension( m, n );
 
-// fills output matrix with zeros before calling matrix multiply
+	// fills output matrix with zeros before calling matrix multiply
 	AxB_out = 0.0;
 
 	MatrixMult(A,n,np,transposeA,B,m,transposeB,AxB_out);
@@ -615,9 +614,9 @@ fixEigenvector( FArray2A< numeric::Real > m_v )
 	numeric::Real const m_v_13 = m_v(2,1)*m_v(3,2) - m_v(3,1)*m_v(2,2);
 	numeric::Real const m_v_23 = m_v(3,1)*m_v(1,2) - m_v(1,1)*m_v(3,2);
 	numeric::Real const m_v_33 = m_v(1,1)*m_v(2,2) - m_v(2,1)*m_v(1,2);
-//     normalize it to 1 (should already be one but lets be safe)
+	//     normalize it to 1 (should already be one but lets be safe)
 	numeric::Real const norm = std::sqrt( 1 /
-	 ( ( m_v_13 * m_v_13 ) + ( m_v_23 * m_v_23 ) + ( m_v_33 * m_v_33 ) ) );
+		( ( m_v_13 * m_v_13 ) + ( m_v_23 * m_v_23 ) + ( m_v_33 * m_v_33 ) ) );
 
 	m_v(1,3) = m_v_13 * norm;
 	m_v(2,3) = m_v_23 * norm;
@@ -652,9 +651,9 @@ rmsfitca2(
 
 	FArray2D< double > R( 3, 3 );
 	double XPC, YPC, ZPC, XEC, YEC, ZEC;
-//       //COMMON /TRANSFORM/ XPC,YPC,ZPC,XEC,YEC,ZEC,R
+	//       //COMMON /TRANSFORM/ XPC,YPC,ZPC,XEC,YEC,ZEC,R
 
-// align center of mass to origin
+	// align center of mass to origin
 
 	COMAS(xx,ww,npoints,XPC,YPC,ZPC);
 	COMAS(yy,ww,npoints,XEC,YEC,ZEC);
@@ -667,7 +666,7 @@ rmsfitca2(
 		yy(3,i) += 1.0e-7;
 	}
 
-//       Make cross moments matrix   INCLUDE THE WEIGHTS HERE
+	//       Make cross moments matrix   INCLUDE THE WEIGHTS HERE
 	for ( k = 1; k <= 3; ++k ) {
 		for ( j = 1; j <= 3; ++j ) {
 			temp1 = 0.0;
@@ -680,32 +679,32 @@ rmsfitca2(
 	det = det3(m_moment); // will get handedness  of frame from determinant
 
 	if ( std::abs(det) <= 1.0E-24 ) {
-//     //  std::cerr << "Warning:degenerate cross moments: det=" << det << std::endl;
-//     // might think about returning a zero rms, to avoid any chance of Floating Point Errors?
+		//     //  std::cerr << "Warning:degenerate cross moments: det=" << det << std::endl;
+		//     // might think about returning a zero rms, to avoid any chance of Floating Point Errors?
 
 		esq = 0.0;
 		return;
 
 	}
 	handedness = numeric::sign_transfered(det, 1.0);
-//  // weird but documented fortran "feature" of sign(a,b) (but not SIGN) is that if fails if a < 0
+	//  // weird but documented fortran "feature" of sign(a,b) (but not SIGN) is that if fails if a < 0
 
-//  //  multiply cross moments by itself
+	//  //  multiply cross moments by itself
 
 	for ( i = 1; i <= 3; ++i ) {
 		for ( j = i; j <= 3; ++j ) {
 			rr_moment(j,i) = rr_moment(i,j) = // well it is symmetric afterall
-			 m_moment(1,i)*m_moment(1,j) +
-			 m_moment(2,i)*m_moment(2,j) +
-			 m_moment(3,i)*m_moment(3,j);
+				m_moment(1,i)*m_moment(1,j) +
+				m_moment(2,i)*m_moment(2,j) +
+				m_moment(3,i)*m_moment(3,j);
 		}
 	}
 
-//            //  compute eigen values of cross-cross moments
+	//            //  compute eigen values of cross-cross moments
 
 	rsym_eigenval(rr_moment,ev);
 
-//               // reorder eigen values  so that ev(3) is the smallest eigenvalue
+	//               // reorder eigen values  so that ev(3) is the smallest eigenvalue
 
 	if ( ev(2) > ev(3) ) {
 		if ( ev(3) > ev(1) ) {
@@ -725,24 +724,24 @@ rmsfitca2(
 		}
 	}
 
-//                 // ev(3) is now the smallest eigen value.  the other two are not
-//                 //  sorted.  this is prefered order for rotation matrix
+	//                 // ev(3) is now the smallest eigen value.  the other two are not
+	//                 //  sorted.  this is prefered order for rotation matrix
 
 
 	rsym_rotation(m_moment,rr_moment,ev,R);
 
-//$$$             for ( i = 1; i <= npoints; ++i ) {
-//$$$               for ( j = 1; j <= 3; ++j ) {
-//$$$                 temp1 = 0.0;
-//$$$                for ( k = 1; k <= 3; ++k ) {
-//$$$                  temp1 += R(j,k)*yy(k,i);
-//$$$                }
-//$$$                t(j) = temp1;
-//$$$               }
-//$$$               yy(1,i) = t(1);
-//$$$               yy(2,i) = t(2);
-//$$$               yy(3,i) = t(3);
-//$$$             }
+	//$$$             for ( i = 1; i <= npoints; ++i ) {
+	//$$$               for ( j = 1; j <= 3; ++j ) {
+	//$$$                 temp1 = 0.0;
+	//$$$                for ( k = 1; k <= 3; ++k ) {
+	//$$$                  temp1 += R(j,k)*yy(k,i);
+	//$$$                }
+	//$$$                t(j) = temp1;
+	//$$$               }
+	//$$$               yy(1,i) = t(1);
+	//$$$               yy(2,i) = t(2);
+	//$$$               yy(3,i) = t(3);
+	//$$$             }
 
 	for ( i = 1; i <= npoints; ++i ) {
 		for ( j = 1; j <= 3; ++j ) { // compute rotation
@@ -752,19 +751,19 @@ rmsfitca2(
 		yy(2,i) = t(2);
 		yy(3,i) = t(3);
 	}
-//   // now we must catch the special case of the rotation with inversion.
-//   // we cannot allow inversion rotations.
-//   // fortunatley, and curiously, the optimal non-inverted rotation matrix
-//   // will have the similar eigen values.
-//   // we just have to make a slight change in how we handle things depending on determinant
+	//   // now we must catch the special case of the rotation with inversion.
+	//   // we cannot allow inversion rotations.
+	//   // fortunatley, and curiously, the optimal non-inverted rotation matrix
+	//   // will have the similar eigen values.
+	//   // we just have to make a slight change in how we handle things depending on determinant
 
 	rms_ctx = std::sqrt(std::abs(ev(1))) + std::sqrt(std::abs(ev(2))) +
-	 handedness*std::sqrt(std::abs(ev(3)));
+		handedness*std::sqrt(std::abs(ev(3)));
 
 	rms_ctx *= temp3;
 
-//   // the std::abs() are theoretically unneccessary since the eigen values of a real symmetric
-//   // matrix are non-negative.  in practice sometimes small eigen vals end up just negative
+	//   // the std::abs() are theoretically unneccessary since the eigen values of a real symmetric
+	//   // matrix are non-negative.  in practice sometimes small eigen vals end up just negative
 	rms_sum = 0.0;
 	for ( i = 1; i <= npoints; ++i ) {
 		for ( j = 1; j <= 3; ++j ) {
@@ -773,8 +772,8 @@ rmsfitca2(
 	}
 	// rms_sum = rms_sum; //   /temp3   (will use natsel instead)
 
-//  // and combine the outer and cross terms into the final calculation.
-//  //  (the std::abs() just saves us a headache when the roundoff error accidantally makes the sum negative)
+	//  // and combine the outer and cross terms into the final calculation.
+	//  //  (the std::abs() just saves us a headache when the roundoff error accidantally makes the sum negative)
 
 	esq = std::sqrt( std::abs( rms_sum - ( 2.0 * rms_ctx ) ) / natsel );
 
@@ -812,7 +811,7 @@ rmsfitca3(
 	FArray1D< double > t( 3 );
 
 
-// compute center of mass
+	// compute center of mass
 	numeric::model_quality::RmsData* rmsdata = RmsData::instance(); // get a pointer to the singleton class
 
 	mass                   = rmsdata->count();
@@ -822,8 +821,8 @@ rmsfitca3(
 	FArray1D< double > xsp = rmsdata->xsp();
 	FArray2D< double > xm = rmsdata->xm();
 
-	//	std::cerr << mass << " " << xre << " " << xrp << " " << xse(1) << " " << xse(2) << " " << xse(3) << " "
-	//					<< xsp(1) << " " << xsp(2) << " " << xsp(3) << " " << xm(1,1) << " " << xm(1, 2) << std::endl;
+	// std::cerr << mass << " " << xre << " " << xrp << " " << xse(1) << " " << xse(2) << " " << xse(3) << " "
+	//     << xsp(1) << " " << xsp(2) << " " << xsp(3) << " " << xm(1,1) << " " << xm(1, 2) << std::endl;
 
 
 	come(1) = xse(1)/mass; // x_com
@@ -835,7 +834,7 @@ rmsfitca3(
 	comp(3) = xsp(3)/mass; // z_com
 
 
-//       Make cross moments matrix
+	//       Make cross moments matrix
 
 	for ( int k = 1; k <= 3; ++k ) {
 		for ( int j = 1; j <= 3; ++j ) {
@@ -846,9 +845,9 @@ rmsfitca3(
 	det = det3(m_moment); // get handedness  of frame from determinant
 
 	if ( std::abs(det) <= 1.0E-24 ) {
-//   //std::cerr << "Warning:degenerate cross moments: det=" << det << std::endl;
-//   // might think about returning a zero rms, to avoid any chance of
-//   // Floating Point Errors?
+		//   //std::cerr << "Warning:degenerate cross moments: det=" << det << std::endl;
+		//   // might think about returning a zero rms, to avoid any chance of
+		//   // Floating Point Errors?
 
 		esq = 0.0;
 		return;
@@ -857,27 +856,27 @@ rmsfitca3(
 	handedness = numeric::sign_transfered(det, 1.0); // changed name of call from sign to sign_transfered in mini!
 	/// OL and order of arguments -- damn
 
-	//	std::cerr << handedness << std::endl;
-//    // weird but documented "feature" of sign(a,b) (but not SIGN) is
-//    // that if fails if a < 0
+	// std::cerr << handedness << std::endl;
+	//    // weird but documented "feature" of sign(a,b) (but not SIGN) is
+	//    // that if fails if a < 0
 
-//    //  multiply cross moments by itself
+	//    //  multiply cross moments by itself
 
 	for ( int i = 1; i <= 3; ++i ) {
 		for ( int j = i; j <= 3; ++j ) {
 			rr_moment(j,i) = rr_moment(i,j) =
-			 m_moment(1,i)*m_moment(1,j) +
-			 m_moment(2,i)*m_moment(2,j) +
-			 m_moment(3,i)*m_moment(3,j);
+				m_moment(1,i)*m_moment(1,j) +
+				m_moment(2,i)*m_moment(2,j) +
+				m_moment(3,i)*m_moment(3,j);
 		}
 	}
 
-//    // compute eigen values of cross-cross moments
+	//    // compute eigen values of cross-cross moments
 
 	rsym_eigenval(rr_moment,ev);
 
 
-//    // reorder eigen values  so that ev(3) is the smallest eigenvalue
+	//    // reorder eigen values  so that ev(3) is the smallest eigenvalue
 
 	if ( ev(2) > ev(3) ) {
 		if ( ev(3) > ev(1) ) {
@@ -897,12 +896,12 @@ rmsfitca3(
 		}
 	}
 
-//     // ev(3) is now the smallest eigen value.  the other two are not
-//     //  sorted.  This is prefered order for computing the rotation matrix
+	//     // ev(3) is now the smallest eigen value.  the other two are not
+	//     //  sorted.  This is prefered order for computing the rotation matrix
 
 	rsym_rotation(m_moment,rr_moment,ev,r);
 
-//            // now we rotate and offset all npoints
+	//            // now we rotate and offset all npoints
 
 
 	for ( int i = 1; i <= npoints; ++i ) {
@@ -911,11 +910,11 @@ rmsfitca3(
 			xx(k,i) = xx0(k,i)-comp(k);
 		}
 		for ( int j = 1; j <= 3; ++j ) { // compute rotation
-//               // temp1 = 0.0;
-//               // for ( k = 1; k <= 3; ++k ) {
-//               //  temp1 += r(j,k)*yy(k,i);
-//               // }
-//               // t(j) = temp1;
+			//               // temp1 = 0.0;
+			//               // for ( k = 1; k <= 3; ++k ) {
+			//               //  temp1 += r(j,k)*yy(k,i);
+			//               // }
+			//               // t(j) = temp1;
 			t(j) = r(j,1)*yy(1,i) + r(j,2)*yy(2,i) + r(j,3)*yy(3,i);
 
 		}
@@ -924,27 +923,27 @@ rmsfitca3(
 		yy(3,i) = t(3);
 	}
 
-//            // now we must catch the special case of the rotation with inversion.
-//            // fortunatley, and curiously, the optimal non-inverted rotation
-//            // matrix will have a similar relation between rmsd and the eigen values.
-//            // we just have to make a slight change in how we handle things
-//            // depending on determinant
+	//            // now we must catch the special case of the rotation with inversion.
+	//            // fortunatley, and curiously, the optimal non-inverted rotation
+	//            // matrix will have a similar relation between rmsd and the eigen values.
+	//            // we just have to make a slight change in how we handle things
+	//            // depending on determinant
 
 	rms_ctx = std::sqrt(std::abs(ev(1))) + std::sqrt(std::abs(ev(2))) +
-	 handedness*std::sqrt(std::abs(ev(3)));
-	//	std::cerr << handedness << std::endl;
-//            // the std::abs() are theoretically unneccessary since the eigen values
-//            // of a real symmetric matrix are non-negative.
-//            // in practice sometimes small eigen vals end up as tiny negatives.
+		handedness*std::sqrt(std::abs(ev(3)));
+	// std::cerr << handedness << std::endl;
+	//            // the std::abs() are theoretically unneccessary since the eigen values
+	//            // of a real symmetric matrix are non-negative.
+	//            // in practice sometimes small eigen vals end up as tiny negatives.
 
 	temp1 = ( come(1) * come(1) ) + ( come(2) * come(2) ) + ( come(3) * come(3) ) +
-	 ( comp(1) * comp(1) ) + ( comp(2) * comp(2) ) + ( comp(3) * comp(3) );
+		( comp(1) * comp(1) ) + ( comp(2) * comp(2) ) + ( comp(3) * comp(3) );
 
 	rms2_sum = (xre + xrp)/mass - temp1;
 
-//            // and combine the outer and cross terms into the final calculation.
-//            //  (the std::abs() just saves us a headache when the roundoff error
-//            // accidantally makes the sum negative)
+	//            // and combine the outer and cross terms into the final calculation.
+	//            //  (the std::abs() just saves us a headache when the roundoff error
+	//            // accidantally makes the sum negative)
 
 	esq = std::sqrt(std::abs(rms2_sum-2.0*rms_ctx));
 
@@ -957,9 +956,9 @@ det3( FArray2A< double > m )
 	m.dimension( 3, 3 );
 
 	return
-	 m(1,3)*( m(2,1)*m(3,2) - m(2,2)*m(3,1) ) -
-	 m(2,3)*( m(1,1)*m(3,2) - m(1,2)*m(3,1) ) +
-	 m(3,3)*( m(1,1)*m(2,2) - m(1,2)*m(2,1) );
+		m(1,3)*( m(2,1)*m(3,2) - m(2,2)*m(3,1) ) -
+		m(2,3)*( m(1,1)*m(3,2) - m(1,2)*m(3,1) ) +
+		m(3,3)*( m(1,1)*m(2,2) - m(1,2)*m(2,1) );
 }
 
 
@@ -979,7 +978,7 @@ rsym_eigenval(
 
 	static std::complex< double > const unity = std::complex< double >(1.0,0.0);
 	static std::complex< double > const sqrt_3i =
-	 std::sqrt( 3.0 ) * std::complex< double >(0.0,1.0);
+		std::sqrt( 3.0 ) * std::complex< double >(0.0,1.0);
 
 	// first, for lexical sanity, name some temporary variables
 	xx = m(1,1);
@@ -1022,8 +1021,8 @@ rsym_eigenval(
 	// factorization of the formulas for cubic equation roots.
 
 	s0 = ( -12.0 * ( b * b * b ) ) - ( 3.0 * ( b * b ) * a2 ) +
-	 ( 54.0 * c * b * a ) + ( 81.0 * ( c * c ) ) + ( 12.0 * c * a3 );
-	 // butt ugly term
+		( 54.0 * c * b * a ) + ( 81.0 * ( c * c ) ) + ( 12.0 * c * a3 );
+	// butt ugly term
 
 	f1 = b*a/6.0 + c/2.0 + a3/27.0 + std::sqrt(s0*unity)/18.0;
 
@@ -1037,9 +1036,9 @@ rsym_eigenval(
 
 	s0 = a/3.0;
 	ev(1) = f4.real();
-	 // note implicitly take real part, imag part "should" be zero
+	// note implicitly take real part, imag part "should" be zero
 	ev(1) = norm*(ev(1)+s0 );
-	 // do addition after type conversion in previous line.
+	// do addition after type conversion in previous line.
 	ev(2) = (-f4+f5).real(); // note real part, imag part is zero
 	ev(2) = norm*(ev(2)*0.5 + s0 );
 	ev(3) = (-f4-f5).real(); // note real part, imag part is zero
@@ -1119,7 +1118,7 @@ rsym_evector(
 	if ( ev(1) != ev(2) ) {  // test for degenerate eigen values
 
 		for ( int i = 1; i <= 2; ++i ) {
-		 // only computer first two eigen vectors using this method
+			// only computer first two eigen vectors using this method
 			// note you could compute all three this way if you wanted to,
 			// but you would run into problems with degenerate eigen values.
 
@@ -1153,7 +1152,7 @@ rsym_evector(
 			std::cerr << " hey is this the right thing to be doing??? " << std::endl;
 
 			for ( int i = 2; i <= 3; ++i ) {
-			 // Okay, since 1 and 2 are degenerate we will use 2 and 3 instead.
+				// Okay, since 1 and 2 are degenerate we will use 2 and 3 instead.
 
 				xx = m(1,1)-ev(i);
 				yy = m(2,2)-ev(i);
@@ -1161,7 +1160,7 @@ rsym_evector(
 				e1 = xy*yz-zx*yy;
 				e2 = xy*zx-yz*xx;
 				e3 = xx*yy-xy*xy;
-				 // yes you sharp eyed person, its not quite symmetric here too.
+				// yes you sharp eyed person, its not quite symmetric here too.
 				//                   life is odd.
 
 				znorm = std::sqrt( ( e1 * e1 ) + ( e2 * e2 ) + ( e3 * e3 ) );

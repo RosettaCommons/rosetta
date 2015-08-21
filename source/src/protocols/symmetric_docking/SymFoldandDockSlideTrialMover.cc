@@ -47,7 +47,7 @@ namespace symmetric_docking {
 static thread_local basic::Tracer TR( "protocols.moves.symmetry.SymFoldandDockSlideTrialMover" );
 
 SymFoldandDockSlideTrialMover::SymFoldandDockSlideTrialMover()
-		: Mover("SymFoldandDockSlideTrialMover") {
+: Mover("SymFoldandDockSlideTrialMover") {
 	using namespace basic::options;
 	rotate_anchor_to_x_ = option[ OptionKeys::fold_and_dock::rotate_anchor_to_x ]();
 }
@@ -65,7 +65,7 @@ SymFoldandDockSlideTrialMover::apply( core::pose::Pose & pose ) {
 
 	assert( core::pose::symmetry::is_symmetric( pose ));
 	SymmetricConformation & symm_conf (
-        dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
+		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
 	SymSlideInfo const & slide_info( symm_conf.Symmetry_Info()->get_slide_info() );
 
@@ -77,22 +77,22 @@ SymFoldandDockSlideTrialMover::apply( core::pose::Pose & pose ) {
 
 	//fpd -- make these parsable
 	if ( slide_info.get_slide_type() == SEQUENTIAL ) {
-		simple_moves::symmetry::SequentialSymmetrySlider symm_slider 
-			= simple_moves::symmetry::SequentialSymmetrySlider( 
-					pose,	slide_info.get_SlideCriteriaType(), slide_info.get_SlideCriteriaVal() );
+		simple_moves::symmetry::SequentialSymmetrySlider symm_slider
+			= simple_moves::symmetry::SequentialSymmetrySlider(
+			pose, slide_info.get_SlideCriteriaType(), slide_info.get_SlideCriteriaVal() );
 		symm_slider.apply( pose );
 	}
 	if ( slide_info.get_slide_type() == ORDERED_SEQUENTIAL ) {
 		simple_moves::symmetry::OrderedSequentialSymmetrySlider symm_slider
 			= simple_moves::symmetry::OrderedSequentialSymmetrySlider(
-					pose, slide_info.get_SlideCriteriaType(), 
-					slide_info.get_SlideCriteriaVal(), slide_info.get_slide_order() );
+			pose, slide_info.get_SlideCriteriaType(),
+			slide_info.get_SlideCriteriaVal(), slide_info.get_slide_order() );
 		symm_slider.apply( pose );
 	}
 	if ( slide_info.get_slide_type() == RANDOM ) {
-		simple_moves::symmetry::RandomSymmetrySlider symm_slider 
-			= simple_moves::symmetry::RandomSymmetrySlider( 
-					pose, slide_info.get_SlideCriteriaType(), slide_info.get_SlideCriteriaVal() );
+		simple_moves::symmetry::RandomSymmetrySlider symm_slider
+			= simple_moves::symmetry::RandomSymmetrySlider(
+			pose, slide_info.get_SlideCriteriaType(), slide_info.get_SlideCriteriaVal() );
 		symm_slider.apply( pose );
 	}
 
@@ -104,16 +104,16 @@ SymFoldandDockSlideTrialMover::get_name() const {
 }
 
 void
-SymFoldandDockSlideTrialMover::parse_my_tag( 
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & ,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & )
+SymFoldandDockSlideTrialMover::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & ,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & )
 {
 	using namespace core::scoring;
 
-	if( tag->hasOption( "rotate_anchor_to_x" ) ){
+	if ( tag->hasOption( "rotate_anchor_to_x" ) ) {
 		rotate_anchor_to_x_ = tag->getOption<bool>( "rotate_anchor_to_x" );
 	}
 }
@@ -121,17 +121,17 @@ SymFoldandDockSlideTrialMover::parse_my_tag(
 
 std::string
 SymFoldandDockSlideTrialMoverCreator::keyname() const {
-    return SymFoldandDockSlideTrialMoverCreator::mover_name();
+	return SymFoldandDockSlideTrialMoverCreator::mover_name();
 }
 
 protocols::moves::MoverOP
 SymFoldandDockSlideTrialMoverCreator::create_mover() const {
-    return protocols::moves::MoverOP( new SymFoldandDockSlideTrialMover() );
+	return protocols::moves::MoverOP( new SymFoldandDockSlideTrialMover() );
 }
 
 std::string
 SymFoldandDockSlideTrialMoverCreator::mover_name() {
-    return "SymFoldandDockSlideTrialMover";
+	return "SymFoldandDockSlideTrialMover";
 }
 
 } // symmetric_docking

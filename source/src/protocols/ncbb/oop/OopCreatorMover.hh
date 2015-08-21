@@ -71,47 +71,47 @@ namespace oop {
 class OopCreatorMover : public moves::Mover
 {
 
-	public:
+public:
 
-		//default ctor
-		//OopCreatorMover(): Mover("OopCreatorMover"){}
-		OopCreatorMover();
-		OopCreatorMover(
-                                 utility::vector1<core::Size> oop_plus_positions,
-                                 utility::vector1<core::Size> oop_minus_positions,
-                                 utility::vector1<core::Size> oop_d_plus_positions,
-                                 utility::vector1<core::Size> oop_d_minus_positions,
-                                 utility::vector1<core::Size> oop_low_e_puck_positions,
-                                 core::Size prepend_n_residues,
-                                 core::Size append_n_residues,
-                                 bool final_repack,
-                                 bool final_minimize,
-                                 bool final_mc,
-                                 bool final_correct_oop_post
-                                 );
+	//default ctor
+	//OopCreatorMover(): Mover("OopCreatorMover"){}
+	OopCreatorMover();
+	OopCreatorMover(
+		utility::vector1<core::Size> oop_plus_positions,
+		utility::vector1<core::Size> oop_minus_positions,
+		utility::vector1<core::Size> oop_d_plus_positions,
+		utility::vector1<core::Size> oop_d_minus_positions,
+		utility::vector1<core::Size> oop_low_e_puck_positions,
+		core::Size prepend_n_residues,
+		core::Size append_n_residues,
+		bool final_repack,
+		bool final_minimize,
+		bool final_mc,
+		bool final_correct_oop_post
+	);
 
-		//default dtor
-		virtual ~OopCreatorMover(){}
+	//default dtor
+	virtual ~OopCreatorMover(){}
 
-		//methods
-		virtual void apply( core::pose::Pose & pose );
-		virtual std::string get_name() const { return "OopCreatorMover"; }
-    protocols::moves::MoverOP fresh_instance() const { return OopCreatorMoverOP( new OopCreatorMover ); }
-    protocols::moves::MoverOP clone() const;
-        void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	//methods
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const { return "OopCreatorMover"; }
+	protocols::moves::MoverOP fresh_instance() const { return OopCreatorMoverOP( new OopCreatorMover ); }
+	protocols::moves::MoverOP clone() const;
+	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
-    private:
-        utility::vector1<core::Size> oop_plus_positions_;
-        utility::vector1<core::Size> oop_minus_positions_;
-        utility::vector1<core::Size> oop_d_plus_positions_;
-        utility::vector1<core::Size> oop_d_minus_positions_;
-        utility::vector1<core::Size> oop_low_e_puck_positions_;
-        core::Size prepend_n_residues_;
-        core::Size append_n_residues_;
-        bool final_repack_;
-        bool final_minimize_;
-        bool final_mc_;
-        bool final_correct_oop_post_;
+private:
+	utility::vector1<core::Size> oop_plus_positions_;
+	utility::vector1<core::Size> oop_minus_positions_;
+	utility::vector1<core::Size> oop_d_plus_positions_;
+	utility::vector1<core::Size> oop_d_minus_positions_;
+	utility::vector1<core::Size> oop_low_e_puck_positions_;
+	core::Size prepend_n_residues_;
+	core::Size append_n_residues_;
+	bool final_repack_;
+	bool final_minimize_;
+	bool final_mc_;
+	bool final_correct_oop_post_;
 
 };
 

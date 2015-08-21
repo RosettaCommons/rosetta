@@ -48,8 +48,8 @@ public:
 	// Undefined, commenting out to fix PyRosetta build  void set_pose( const std::string& energy_state, const core::pose::Pose& pose );
 	// Undefined, commenting out to fix PyRosetta build  void set_pbp( const std::string& energy_state, core::scoring::PoissonBoltzmannPotentialOP pb );
 	void set_conformational_data( const std::string& energy_state,
-																const core::pose::Pose& pose,
-																core::scoring::PoissonBoltzmannPotentialOP pb );
+		const core::pose::Pose& pose,
+		core::scoring::PoissonBoltzmannPotentialOP pb );
 
 	bool has_cache( const std::string& energy_state ) const;
 
@@ -92,57 +92,57 @@ public:
 	virtual bool defines_intrares_energy( EnergyMap const &  ) const { return true; }
 
 	virtual bool defines_residue_pair_energy(
-											 pose::Pose const & pose,
-											 Size res1,
-											 Size res2
-											 ) const;
+		pose::Pose const & pose,
+		Size res1,
+		Size res2
+	) const;
 
 	virtual void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
 
 	Real
 	revamp_weight_by_burial(
-						conformation::Residue const & rsd,
-						pose::Pose const & pose
-						) const ;
+		conformation::Residue const & rsd,
+		pose::Pose const & pose
+	) const ;
 	bool
 	residue_in_chains(
-	conformation::Residue const & rsd,
-	utility::vector1 <Size> chains
+		conformation::Residue const & rsd,
+		utility::vector1 <Size> chains
 	) const ;
 
 	virtual
 	void
 	eval_intrares_energy(
-						 conformation::Residue const & rsd,
-						 pose::Pose const & pose,
-						 ScoreFunction const & sfxn,
-						 EnergyMap & emap
-						 ) const ;
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn,
+		EnergyMap & emap
+	) const ;
 
 
 	virtual void residue_pair_energy(
-									 conformation::Residue const & rsd1,
-									 conformation::Residue const & rsd2,
-									 pose::Pose const & pose,
-									 ScoreFunction const & sfxn,
-									 EnergyMap & emap
-									 ) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn,
+		EnergyMap & emap
+	) const;
 
 	/// virtual
 	/// void
 	/// residue_energy(
-	/// 	conformation::Residue const & rsd,
-	/// 	pose::Pose const & pose,
-	/// 	EnergyMap & emap
+	///  conformation::Residue const & rsd,
+	///  pose::Pose const & pose,
+	///  EnergyMap & emap
 	/// ) const;
 
 
 	//virtual
 	//void
 	//finalize_total_energy(
-	//	pose::Pose & pose,
-	//	ScoreFunction const &,
-	//	EnergyMap &
+	// pose::Pose & pose,
+	// ScoreFunction const &,
+	// EnergyMap &
 	//) const;
 
 	/// @brief PB Energy is context independent and thus indicates that no context graphs need to
@@ -150,9 +150,9 @@ public:
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const;
 
-/////////////////////////////////////////////////////////////////////////////
-// data
-/////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////
+	// data
+	/////////////////////////////////////////////////////////////////////////////
 
 private:
 
@@ -168,22 +168,22 @@ private:
 	/// @param tol   Tolerable distance in Angstrom, >= 0.A
 	///
 	bool protein_position_equal_within( pose::Pose const & pose1,
-																			pose::Pose const & pose2,
-																			Size atom_num,
-																			Real tolA) const;
+		pose::Pose const & pose2,
+		Size atom_num,
+		Real tolA) const;
 
 	// const-ref to scoring database
 	core::Size fixed_residue_;
 	core::Real epsilon_;
-  mutable scoring::PoissonBoltzmannPotentialOP poisson_boltzmann_potential_;
+	mutable scoring::PoissonBoltzmannPotentialOP poisson_boltzmann_potential_;
 
 	// Cached objects for speed
 	mutable std::map<std::string, pose::PoseCAP> cached_pose_by_state_;
 	mutable std::map<std::string, bool> charged_residues_;
 	mutable utility::vector1<Size> charged_chains_;
 
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

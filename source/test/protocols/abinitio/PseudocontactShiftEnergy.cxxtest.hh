@@ -187,7 +187,7 @@ static basic::Tracer Tracer_PCS("protocols.abinitio.PseudocontactShiftEnergy.cxx
 
 class PseudocontactShiftTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	// Shared data elements go here.
 	PoseOP the_pose_;
@@ -207,17 +207,17 @@ class PseudocontactShiftTests : public CxxTest::TestSuite {
 
 		//core_init_with_additional_options("-broker:setup protocols/abinitio/pcs_broker_setup.txt -mute all");
 		core_init_with_additional_options("-broker:setup protocols/abinitio/pcs_broker_setup.txt "
- "-in:file:fasta protocols/abinitio/pose_funcs_test.fasta");
+			"-in:file:fasta protocols/abinitio/pose_funcs_test.fasta");
 
 		//We read the setup file with the topologyclaimer framework
 		top_bro_OP_ = protocols::topology_broker::TopologyBrokerOP( new  protocols::topology_broker::TopologyBroker() );
 		try {
 			add_cmdline_claims(*top_bro_OP_, false);
 		}
-		catch ( utility::excn::EXCN_Exception &excn )  {
-			excn.show( std::cerr );
-			utility_exit();
-		}
+catch ( utility::excn::EXCN_Exception &excn )  {
+	excn.show( std::cerr );
+	utility_exit();
+}
 
 		the_pose_ = create_test_in_pdb_poseop();
 		pcs_energy_ = PCS_EnergyOP( new PCS_Energy() );
@@ -243,22 +243,22 @@ class PseudocontactShiftTests : public CxxTest::TestSuite {
 
 
 		core_init_with_additional_options(
- "-abinitio::increase_cycles 0.01 "
- "-nstruct 1 "
- "-frag9 protocols/abinitio/frag9_for_pcs_test.tab.gz "
- "-frag3 protocols/abinitio/frag3_for_pcs_test.tab.gz "
- "-native protocols/abinitio/pdb_idealized_for_pcs_test.pdb "
- "-run:protocol broker "
- "-run::constant_seed "
- "-run::jran 123456 "
- "-abinitio::stage1_patch protocols/abinitio/score0_pcs_only.wts_patch "
- "-abinitio::stage2_patch protocols/abinitio/score1_pcs_only.wts_patch "
- "-abinitio::stage3a_patch protocols/abinitio/score2_pcs_only.wts_patch "
- "-abinitio::stage3b_patch protocols/abinitio/score5_pcs_only.wts_patch "
- "-abinitio::stage4_patch protocols/abinitio/score3_pcs_only.wts_patch "
- "-overwrite "
- "-out:prefix PCS_"
- );
+			"-abinitio::increase_cycles 0.01 "
+			"-nstruct 1 "
+			"-frag9 protocols/abinitio/frag9_for_pcs_test.tab.gz "
+			"-frag3 protocols/abinitio/frag3_for_pcs_test.tab.gz "
+			"-native protocols/abinitio/pdb_idealized_for_pcs_test.pdb "
+			"-run:protocol broker "
+			"-run::constant_seed "
+			"-run::jran 123456 "
+			"-abinitio::stage1_patch protocols/abinitio/score0_pcs_only.wts_patch "
+			"-abinitio::stage2_patch protocols/abinitio/score1_pcs_only.wts_patch "
+			"-abinitio::stage3a_patch protocols/abinitio/score2_pcs_only.wts_patch "
+			"-abinitio::stage3b_patch protocols/abinitio/score5_pcs_only.wts_patch "
+			"-abinitio::stage4_patch protocols/abinitio/score3_pcs_only.wts_patch "
+			"-overwrite "
+			"-out:prefix PCS_"
+		);
 
 		protocols::abinitio::AbrelaxMoverOP abrelax( new protocols::abinitio::AbrelaxMover );
 		protocols::jd2::JobDistributor::get_instance()->go( abrelax);
@@ -278,7 +278,7 @@ class PseudocontactShiftTests : public CxxTest::TestSuite {
 		core::Real tolerance(0.001);
 		Tracer_PCS << std::setprecision(10) << "Expected: "  << expected_value << " Calculated: " << pcs_score_total << "Tolerance: " << tolerance  << std::endl;
 		Tracer_PCS << std::setprecision(10) << "Comparison of 2 values desactivated. The test is not that deterministic, different values on 32 and 64 bit machines?" << std::endl;
-		//		TS_ASSERT_DELTA( pcs_score_total, expected_value, tolerance);
+		//  TS_ASSERT_DELTA( pcs_score_total, expected_value, tolerance);
 	}
 
 

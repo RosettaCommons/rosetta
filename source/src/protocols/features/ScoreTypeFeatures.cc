@@ -48,8 +48,8 @@
 #include <sstream>
 #include <string>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::string;
 using std::stringstream;
@@ -172,7 +172,7 @@ ScoreTypeFeatures::insert_score_type_rows(
 	switch(db_session->get_db_mode()){
 	case utility::sql_database::DatabaseMode::sqlite3:
 	case utility::sql_database::DatabaseMode::mysql:
-	case utility::sql_database::DatabaseMode::postgres:{
+	case utility::sql_database::DatabaseMode::postgres : {
 		using namespace basic::database;
 
 		string const table_name("score_types");
@@ -184,7 +184,7 @@ ScoreTypeFeatures::insert_score_type_rows(
 
 		std::string protocol_id_s = utility::to_string (protocol_id);
 
-		for(Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id)	{
+		for ( Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id ) {
 
 			std::string score_type_id_s = utility::to_string (score_type_id);
 
@@ -196,17 +196,17 @@ ScoreTypeFeatures::insert_score_type_rows(
 			values.push_back(score_type_id_s);
 			values.push_back(score_type);
 
-			insert_or_ignore(table_name, column_names,	values,	db_session);
+			insert_or_ignore(table_name, column_names, values, db_session);
 		}
 	}
 		break;
 
-	default:
+	default :
 		utility_exit_with_message(
-		  "Unrecognized database mode: '" +
-		  name_from_database_mode(db_session->get_db_mode()) + "'");
+			"Unrecognized database mode: '" +
+			name_from_database_mode(db_session->get_db_mode()) + "'");
 		break;
-  }
+	}
 }
 
 } // namesapce

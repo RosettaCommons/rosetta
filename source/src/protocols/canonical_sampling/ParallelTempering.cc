@@ -115,7 +115,7 @@ ParallelTempering::ParallelTempering() :
 	set_defaults();
 }
 
-ParallelTempering::ParallelTempering(	ParallelTempering const & other ) :
+ParallelTempering::ParallelTempering( ParallelTempering const & other ) :
 	Parent( other ),
 	exchange_schedules_( other.exchange_schedules_ ),
 	last_exchange_schedule_( other.last_exchange_schedule_ ),
@@ -189,7 +189,7 @@ ParallelTempering::finalize_simulation(
 	MPI_Barrier( mpi_comm() );
 #endif
 
-	if (rank() == 0) {
+	if ( rank() == 0 ) {
 		tr << "Temperature Exchange Frequencies:" << std::endl;
 		std::streamsize oldwidth( tr.width() );
 		std::streamsize oldprecision( tr.precision() );
@@ -197,7 +197,7 @@ ParallelTempering::finalize_simulation(
 		tr.width(5);
 		tr.precision(3);
 		tr.setf(std::ios_base::fixed);
-		for (core::Size i=0; i<n_temp_levels()-1; ++i) {
+		for ( core::Size i=0; i<n_temp_levels()-1; ++i ) {
 			std::pair<int, int> elem(i, i+1);
 			//Original code (line below) fails on some versions of GCC (4.4.3 and 4.3.4 reported by users)
 			//core::Real frequency(core::Real(exchange_accepts_[elem])/core::Real(exchange_attempts_[elem]));
@@ -206,7 +206,7 @@ ParallelTempering::finalize_simulation(
 			core::Real const b = exchange_attempts_[elem];
 			core::Real const frequency(a/b);
 			tr << temperature(i+1) << " <-> " << temperature(i+2) << ": " << frequency
-				 << " (" << exchange_accepts_[elem] << " of " << exchange_attempts_[elem] << ")" << std::endl;
+				<< " (" << exchange_accepts_[elem] << " of " << exchange_attempts_[elem] << ")" << std::endl;
 		}
 		tr.width(oldwidth);
 		tr.precision(oldprecision);
@@ -217,7 +217,7 @@ ParallelTempering::finalize_simulation(
 	clock_t total_time(clock()/basic::SHRINK_FACTOR - start_time_);
 	core::Real fraction_waiting = total_mpi_wait_time_*clock_factor / ( total_time*clock_factor );
 	tr << "Spent " << fraction_waiting*100 << "% time waiting for MPI temperature exchange ("
-	   << total_mpi_wait_time_*clock_factor << " seconds out of " << total_time*clock_factor << " total)" << std::endl;
+		<< total_mpi_wait_time_*clock_factor << " seconds out of " << total_time*clock_factor << " total)" << std::endl;
 }
 
 void ParallelTempering::setup_exchange_schedule( Size nlevels ) {
@@ -227,10 +227,10 @@ void ParallelTempering::setup_exchange_schedule( Size nlevels ) {
 
 	//0<->1, 2<->3...
 	list.clear();
-	for (int i=0; i < (int)nlevels-1; i+=2) {
+	for ( int i=0; i < (int)nlevels-1; i+=2 ) {
 		std::pair<int, int> elem(i, i+1);
 		list.push_back(elem);
-		if (rank() == 0) {
+		if ( rank() == 0 ) {
 			exchange_attempts_[elem] = 0;
 			exchange_accepts_[elem] = 0;
 		}
@@ -239,10 +239,10 @@ void ParallelTempering::setup_exchange_schedule( Size nlevels ) {
 
 	//1<->2, 3<->4...
 	list.clear();
-	for (int i=1; i<(int)nlevels-1; i+=2) {
+	for ( int i=1; i<(int)nlevels-1; i+=2 ) {
 		std::pair<int, int> elem(i, i+1);
 		list.push_back(elem);
-		if (rank() == 0) {
+		if ( rank() == 0 ) {
 			exchange_attempts_[elem] = 0;
 			exchange_accepts_[elem] = 0;
 		}
@@ -278,7 +278,7 @@ ParallelTempering::temperature_move( core::Real MPI_ONLY( score ) ) {
 	check_temp_consistency();
 	if ( !time_for_temp_move() ) return temperature();
 
-	//	Size const nlevels( n_temp_levels() );
+	// Size const nlevels( n_temp_levels() );
 #ifdef USEMPI
 	//get infomation
 	double last_energy = score;

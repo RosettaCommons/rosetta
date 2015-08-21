@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/PcsEnergy.hh
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/PcsEnergy.hh
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs2_PcsEnergy_hh
@@ -77,7 +77,7 @@ public:
 
 	PcsEnergy(PcsEnergy const & other); //copy
 
-	virtual	core::scoring::methods::EnergyMethodOP
+	virtual core::scoring::methods::EnergyMethodOP
 	clone() const; // Clone
 
 	void
@@ -94,10 +94,10 @@ public:
 	/// @brief Return the PCS score given the pose, the given PcsDataCenter, and the lanthanide number
 	core::Real
 	calculate_pcs_score_on_PCS_data_center_CA( core::pose::Pose & pose,
-																						 bool print_to_tracer,
-																						 PcsDataCenter & pcs_d,
-																						 core::Size i_multi_data,
-																						 GridSearchIteratorCA & grid_it ) const;
+		bool print_to_tracer,
+		PcsDataCenter & pcs_d,
+		core::Size i_multi_data,
+		GridSearchIteratorCA & grid_it ) const;
 
 
 	/// @brief Return the PCS score given the pose, the given PcsDataCenter, and the lanthanide number,
@@ -115,12 +115,12 @@ public:
 
 	core::Real
 	CA_search_scores_and_tensors_with_svd(utility::vector1<core::Real> & vec_best_score,
-																				utility::vector1<PcsTensor> & vec_best_tensor,
-																				numeric::xyzVector< core::Real > & best_coo,
-																				core::pose::Pose const & /* pdb*/,
-																				PcsDataCenter & pcs_d_c,
-																				core::Size,
-																				GridSearchIteratorCA & grid_it) const;
+		utility::vector1<PcsTensor> & vec_best_tensor,
+		numeric::xyzVector< core::Real > & best_coo,
+		core::pose::Pose const & /* pdb*/,
+		PcsDataCenter & pcs_d_c,
+		core::Size,
+		GridSearchIteratorCA & grid_it) const;
 
 
 	core::Real
@@ -133,12 +133,12 @@ public:
 	) const;
 
 	core::Real
-	minimize_tensors_from_PCS_data_with_svd(	utility::vector1<PcsTensor> & vec_best_tensor,
-																						numeric::xyzVector< core::Real > & best_coo,
-																						PcsDataCenter const & /*pcs_d_c*/,
-																						core::optimization::Minimizer & minimizer,
-																						utility::vector1<core::Real> & vect_to_opti
-																						) const;
+	minimize_tensors_from_PCS_data_with_svd( utility::vector1<PcsTensor> & vec_best_tensor,
+		numeric::xyzVector< core::Real > & best_coo,
+		PcsDataCenter const & /*pcs_d_c*/,
+		core::optimization::Minimizer & minimizer,
+		utility::vector1<core::Real> & vect_to_opti
+	) const;
 
 	core::Real
 	minimize_tensors_fix_from_PCS_data(
@@ -152,8 +152,8 @@ public:
 
 	/* core::Real
 	calculate_single_score_and_tensor_from_PCS_data_per_lanthanides(
-		PcsTensor & PCS_t,
-		PcsDataLanthanide & pcs_d_p_l
+	PcsTensor & PCS_t,
+	PcsDataLanthanide & pcs_d_p_l
 	) const; */
 
 
@@ -169,8 +169,8 @@ public:
 		numeric::xyzVector< core::Real > const & best_coo,
 		PcsDataCenter const &pcs_d
 	) const;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 };
 
 } //PCS

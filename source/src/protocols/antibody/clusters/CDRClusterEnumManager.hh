@@ -62,4 +62,4 @@ private:
 } //antibody
 } //protocols
 
-#endif	//#ifndef INCLUDED_protocols/antibody_design_CDRCLUSTERENUMMANAGER_HH
+#endif //#ifndef INCLUDED_protocols/antibody_design_CDRCLUSTERENUMMANAGER_HH

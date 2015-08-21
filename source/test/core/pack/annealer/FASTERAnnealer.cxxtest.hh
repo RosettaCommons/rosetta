@@ -96,7 +96,7 @@ public:
 		rotsets->compute_energies( *trpcage, *sfxn, packer_neighbor_graph, faster_ig );
 
 		/*for ( Size ii = 1; ii <= rotsets->nmoltenres(); ++ii ) {
-			std::cout << "Rotset " << ii << " with " << rotsets->rotamer_set_for_moltenresidue(ii)->num_rotamers() << " rotamers" << std::endl;
+		std::cout << "Rotset " << ii << " with " << rotsets->rotamer_set_for_moltenresidue(ii)->num_rotamers() << " rotamers" << std::endl;
 		}*/
 
 		//std::cout.precision( 8 );
@@ -122,7 +122,7 @@ public:
 		faster_ig->get_current_network_state( netstate );
 		/*std::cout << "FASTERAnnealer final state:";
 		for ( Size ii = 1; ii <= 4; ++ii ) {
-			std::cout << " " << netstate( ii );
+		std::cout << " " << netstate( ii );
 		}
 		std::cout << std::endl;*/
 

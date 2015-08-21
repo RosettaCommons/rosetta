@@ -543,12 +543,12 @@ public:
 		TS_ASSERT_EQUALS( pdhig->get_network_state(), correct_state_a );
 
 		/*for ( Size ii=1; ii <= (Size)pdhig->get_num_nodes(); ++ii ) {
-			TR << "node " << I(2,ii) << ": " << std::endl;
-			((pdhig->get_hpatch_node(ii))->get_current_state_rotamer_dots()).print( std::cout );
+		TR << "node " << I(2,ii) << ": " << std::endl;
+		((pdhig->get_hpatch_node(ii))->get_current_state_rotamer_dots()).print( std::cout );
 		}
 		for ( Size ii=1; ii <= (Size)pdhig->get_num_background_nodes(); ++ii ) {
-			TR << "bgnode " << I(2,ii) << ": " << std::endl;
-			((pdhig->get_hpatch_bg_node(ii))->get_current_state_rotamer_dots()).print( std::cout );
+		TR << "bgnode " << I(2,ii) << ": " << std::endl;
+		((pdhig->get_hpatch_bg_node(ii))->get_current_state_rotamer_dots()).print( std::cout );
 		}*/
 
 		// need to also test here that the nodes have updated their hASAs correctly!
@@ -738,7 +738,7 @@ public:
 	/// blanket_reset is implicitly tested in the unit tests above...
 	///
 	//void x_test_blanket_reset_alt_state_counts() {
-	//	TR << "Running test_blanket_reset_alt_state_counts..." << std::endl;
+	// TR << "Running test_blanket_reset_alt_state_counts..." << std::endl;
 	//}
 
 	/// @details

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/legacy/screener/SimpleRMSD_Screener.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -22,11 +22,11 @@ namespace protocols {
 namespace stepwise {
 namespace legacy {
 namespace screener {
-	
-	class SimpleRMSD_Screener;
-	typedef utility::pointer::shared_ptr< SimpleRMSD_Screener > SimpleRMSD_ScreenerOP;
-	typedef utility::pointer::shared_ptr< SimpleRMSD_Screener const > SimpleRMSD_ScreenerCOP;
-	
+
+class SimpleRMSD_Screener;
+typedef utility::pointer::shared_ptr< SimpleRMSD_Screener > SimpleRMSD_ScreenerOP;
+typedef utility::pointer::shared_ptr< SimpleRMSD_Screener const > SimpleRMSD_ScreenerCOP;
+
 } //screener
 } //legacy
 } //stepwise

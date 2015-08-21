@@ -143,7 +143,7 @@ public: // Creation
 		Value const & x_a,
 		Value const & y_a,
 		Value const & z_a
-	 ) :
+	) :
 		x_( x_a ),
 		y_( y_a ),
 		z_( z_a )
@@ -359,9 +359,9 @@ public: // Assignment
 
 
 public: // Methods
-	
-    
-    /// @brief to_string, useful for utility exits
+
+
+	/// @brief to_string, useful for utility exits
 	inline
 	std::string
 	to_string() const
@@ -369,7 +369,7 @@ public: // Methods
 		return "(" + utility::to_string(x_) + ", " + utility::to_string(y_) + ", " + utility::to_string(z_) + ")";
 	}
 
-	
+
 	/// @brief Show
 	inline
 	void
@@ -673,9 +673,9 @@ public: // Methods
 	min( xyzVector const & a, xyzVector const & b )
 	{
 		return xyzVector(
-		 ( a.x_ <= b.x_ ? a.x_ : b.x_ ),
-		 ( a.y_ <= b.y_ ? a.y_ : b.y_ ),
-		 ( a.z_ <= b.z_ ? a.z_ : b.z_ )
+			( a.x_ <= b.x_ ? a.x_ : b.x_ ),
+			( a.y_ <= b.y_ ? a.y_ : b.y_ ),
+			( a.z_ <= b.z_ ? a.z_ : b.z_ )
 		);
 	}
 
@@ -687,9 +687,9 @@ public: // Methods
 	max( xyzVector const & a, xyzVector const & b )
 	{
 		return xyzVector(
-		 ( a.x_ >= b.x_ ? a.x_ : b.x_ ),
-		 ( a.y_ >= b.y_ ? a.y_ : b.y_ ),
-		 ( a.z_ >= b.z_ ? a.z_ : b.z_ )
+			( a.x_ >= b.x_ ? a.x_ : b.x_ ),
+			( a.y_ >= b.y_ ? a.y_ : b.y_ ),
+			( a.z_ >= b.z_ ? a.z_ : b.z_ )
 		);
 	}
 
@@ -701,10 +701,10 @@ public: // Methods
 	{
 		Value const length_ = length();
 		//assert ( length_ != Value ( 0 ));
-		if ( length_ == Value ( 0 )){
+		if ( length_ == Value ( 0 ) ) {
 			throw utility::excn::EXCN_BadInput("Cannot normalize xyzVector of length() zero");
 		}
-		
+
 		Value const inv_length( Value( 1 ) / length_ );
 		x_ *= inv_length;
 		y_ *= inv_length;
@@ -1110,13 +1110,13 @@ public: // Methods
 
 
 	/// @brief Distance
-//Commented out 8/9/11 SML; xyzVector friend functions cause problems for some versions of GCC.  Read the mailing list logs for 2/17/09 for further information.
+	//Commented out 8/9/11 SML; xyzVector friend functions cause problems for some versions of GCC.  Read the mailing list logs for 2/17/09 for further information.
 	// friend
 	// inline
 	// Value
 	// distance( xyzVector const & a, xyzVector const & b )
 	// {
-	// 	return std::sqrt( square( a.x_ - b.x_ ) + square( a.y_ - b.y_ ) + square( a.z_ - b.z_ ) );
+	//  return std::sqrt( square( a.x_ - b.x_ ) + square( a.y_ - b.y_ ) + square( a.z_ - b.z_ ) );
 	// }
 
 
@@ -1130,13 +1130,13 @@ public: // Methods
 
 
 	/// @brief Distance squared
-//Commented out 8/9/11 SML; xyzVector friend functions cause problems for some versions of GCC.  Read the mailing list logs for 2/17/09 for further information.
+	//Commented out 8/9/11 SML; xyzVector friend functions cause problems for some versions of GCC.  Read the mailing list logs for 2/17/09 for further information.
 	// friend
 	// inline
 	// Value
 	// distance_squared( xyzVector const & a, xyzVector const & b )
 	// {
-	// 	return square( a.x_ - b.x_ ) + square( a.y_ - b.y_ ) + square( a.z_ - b.z_ );
+	//  return square( a.x_ - b.x_ ) + square( a.y_ - b.y_ ) + square( a.z_ - b.z_ );
 	// }
 
 
@@ -1221,7 +1221,7 @@ public: // Methods
 			( x_ * v.y_ ) - ( y_ * v.x_ )
 		);
 	}
-	
+
 	/// @brief Cross product
 	friend
 	inline
@@ -1455,24 +1455,24 @@ public: // Methods
 	update_operation( xyzVector const & a, xyzVector const & b )
 	{
 		return xyzVector(
-						   a.y_ * a.y_ * b.x_
-						 + a.z_ * a.z_ * b.x_
-						 - a.x_ * a.y_ * b.y_
-						 - a.x_ * a.z_ * b.z_,
-						 
-						   a.z_ * a.z_ * b.y_
-						 + a.x_ * a.x_ * b.y_
-						 - a.y_ * a.z_ * b.z_
-						 - a.y_ * a.x_ * b.x_,
-						 
-						   a.x_ * a.x_ * b.z_
-						 + a.y_ * a.y_ * b.z_
-						 - a.z_ * a.x_ * b.x_
-						 - a.z_ * a.y_ * b.y_
-						 
-						 );
+			a.y_ * a.y_ * b.x_
+			+ a.z_ * a.z_ * b.x_
+			- a.x_ * a.y_ * b.y_
+			- a.x_ * a.z_ * b.z_,
+
+			a.z_ * a.z_ * b.y_
+			+ a.x_ * a.x_ * b.y_
+			- a.y_ * a.z_ * b.z_
+			- a.y_ * a.x_ * b.x_,
+
+			a.x_ * a.x_ * b.z_
+			+ a.y_ * a.y_ * b.z_
+			- a.z_ * a.x_ * b.x_
+			- a.z_ * a.y_ * b.y_
+
+		);
 	}
-	
+
 	// AMW: for md code
 	// TODO: figure out what this is in fundamental vector operations
 	friend
@@ -1486,40 +1486,40 @@ public: // Methods
 		xyzVector const & e
 	) {
 		return xyzVector(
-						 - a.y_ * b.y_ * c.x_
-						 - a.z_ * b.z_ * c.x_
-						 + a.x_ * b.y_ * c.y_
-						 + a.x_ * b.y_ * c.y_
-						 - b.x_ * a.y_ * c.y_
-						 + a.x_ * b.z_ * c.z_
-						 + a.x_ * b.z_ * c.z_
-						 - b.x_ * a.z_ * c.z_
-						 + d.z_ * e.y_
-						 - d.y_ * e.z_,
-						 
-						 - a.z_ * b.z_ * c.y_
-						 - a.x_ * b.x_ * c.y_
-						 + a.y_ * b.z_ * c.z_
-						 + a.y_ * b.z_ * c.z_
-						 - b.y_ * a.z_ * c.z_
-						 + a.y_ * b.x_ * c.x_
-						 + a.y_ * b.x_ * c.x_
-						 - b.y_ * a.x_ * c.x_
-						 + d.x_ * e.z_
-						 - d.z_ * e.x_,
-						 
-						 - a.x_ * b.x_ * c.z_
-						 - a.y_ * b.y_ * c.z_
-						 + a.z_ * b.x_ * c.x_
-						 + a.z_ * b.x_ * c.x_
-						 - b.z_ * a.x_ * c.x_
-						 + a.z_ * b.x_ * c.y_
-						 + a.z_ * b.x_ * c.y_
-						 - b.z_ * a.y_ * c.y_
-						 + d.y_ * e.x_
-						 - d.x_ * e.y_
-						 
-						 );
+			- a.y_ * b.y_ * c.x_
+			- a.z_ * b.z_ * c.x_
+			+ a.x_ * b.y_ * c.y_
+			+ a.x_ * b.y_ * c.y_
+			- b.x_ * a.y_ * c.y_
+			+ a.x_ * b.z_ * c.z_
+			+ a.x_ * b.z_ * c.z_
+			- b.x_ * a.z_ * c.z_
+			+ d.z_ * e.y_
+			- d.y_ * e.z_,
+
+			- a.z_ * b.z_ * c.y_
+			- a.x_ * b.x_ * c.y_
+			+ a.y_ * b.z_ * c.z_
+			+ a.y_ * b.z_ * c.z_
+			- b.y_ * a.z_ * c.z_
+			+ a.y_ * b.x_ * c.x_
+			+ a.y_ * b.x_ * c.x_
+			- b.y_ * a.x_ * c.x_
+			+ d.x_ * e.z_
+			- d.z_ * e.x_,
+
+			- a.x_ * b.x_ * c.z_
+			- a.y_ * b.y_ * c.z_
+			+ a.z_ * b.x_ * c.x_
+			+ a.z_ * b.x_ * c.x_
+			- b.z_ * a.x_ * c.x_
+			+ a.z_ * b.x_ * c.y_
+			+ a.z_ * b.x_ * c.y_
+			- b.z_ * a.y_ * c.y_
+			+ d.y_ * e.x_
+			- d.x_ * e.y_
+
+		);
 	}
 
 public: // Properties: predicates
@@ -1723,8 +1723,7 @@ public: // Indexers
 	Value const &
 	at(int const i) const
 	{
-		if(!((i >= 0) && (i < 3)))
-		{
+		if ( !((i >= 0) && (i < 3)) ) {
 			throw std::out_of_range ("numeric::xyzVector::at");
 		}
 
@@ -1736,8 +1735,7 @@ public: // Indexers
 	Value &
 	at(int const i)
 	{
-		if(!((i >= 0) && (i < 3)))
-		{
+		if ( !((i >= 0) && (i < 3)) ) {
 			throw std::out_of_range ("numeric::xyzVector::at");
 		}
 
@@ -2484,7 +2482,7 @@ struct FArrayTraits < numeric::xyzVector< T > >
 	traits_type
 	initial_value()
 	{
-	        return numeric::xyzVector< T >(0,0,0); // Use all zeros
+		return numeric::xyzVector< T >(0,0,0); // Use all zeros
 	}
 }; // FArrayTraits
 

@@ -49,8 +49,8 @@ class VarSolDRotamerDots : public utility::pointer::ReferenceCount {
 public:
 	/*
 	VarSolDRotamerDots( core::conformation::ResidueCOP rotamer, bool allatoms = false,
-			core::Real probe_radius=1.4, core::Real wobble=0.0);
-	 */
+	core::Real probe_radius=1.4, core::Real wobble=0.0);
+	*/
 
 	VarSolDRotamerDots(
 		core::conformation::ResidueCOP rotamer,
@@ -174,7 +174,7 @@ private:
 
 
 class VarSolDistSasaCalculator : public core::pose::metrics::StructureDependentCalculator {
-friend class VarSolDRotamerDots;
+	friend class VarSolDRotamerDots;
 public:
 	VarSolDistSasaCalculator();
 

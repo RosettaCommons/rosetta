@@ -34,8 +34,8 @@
 #include <fstream>
 
 #if  !defined(WINDOWS) && !defined(WIN32)
-	#include <sys/time.h>
-	#include <sys/resource.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 #endif
 
 
@@ -129,25 +129,25 @@ double PerformanceBenchmark::execute(Real scaleFactor)
 
 	/*double t;
 
-	#if  !defined(WINDOWS) && !defined(WIN32)
-		TR << "Running(U) " << name() << "..." << std::endl;
-		struct rusage R0, R1;
+#if  !defined(WINDOWS) && !defined(WIN32)
+	TR << "Running(U) " << name() << "..." << std::endl;
+	struct rusage R0, R1;
 
-		getrusage(RUSAGE_SELF, &R0);
-		run(scaleFactor);
+	getrusage(RUSAGE_SELF, &R0);
+	run(scaleFactor);
 
-		getrusage(RUSAGE_SELF, &R1);
+	getrusage(RUSAGE_SELF, &R1);
 
-		t = R1.ru_utime.tv_sec + R1.ru_utime.tv_usec*1e-6 - R0.ru_utime.tv_sec - R0.ru_utime.tv_usec*1e-6;
-		TR << "Running(U) " << name() << "... Done. Time:" << t << std::endl;
-	#else
-		TR << "Running(W) " << name() << "..." << std::endl;
-		t = clock();
-		run(scaleFactor);
-		t = clock() - t;
-		t = t / CLOCKS_PER_SEC;
-		TR << "Running(W) " << name() << "... Done. Time:" << t << std::endl;
-	#endif
+	t = R1.ru_utime.tv_sec + R1.ru_utime.tv_usec*1e-6 - R0.ru_utime.tv_sec - R0.ru_utime.tv_usec*1e-6;
+	TR << "Running(U) " << name() << "... Done. Time:" << t << std::endl;
+#else
+	TR << "Running(W) " << name() << "..." << std::endl;
+	t = clock();
+	run(scaleFactor);
+	t = clock() - t;
+	t = t / CLOCKS_PER_SEC;
+	TR << "Running(W) " << name() << "... Done. Time:" << t << std::endl;
+#endif
 
 
 	TR << "Tear down "<< name() << "..." << std::endl;
@@ -199,72 +199,72 @@ double PerformanceBenchmark::execute(Real scaleFactor)
 }
 
 /*void PerformanceBenchmark::perform_until_set_found (
-	PerformanceBenchmark * B,
-	Real scaleFactor
+PerformanceBenchmark * B,
+Real scaleFactor
 ) {
-	// We need to run the benchmark repeatedly until we're happy with the distribution of results
-	// I actually want a set of results, not a vector, so that I can compare the middle 3 and their spread
-	// ACTUALLY I need a multiset in case results are the same
-	std::multiset< Real > results;
-	Real average = 0;
-	bool average_found = false;
+// We need to run the benchmark repeatedly until we're happy with the distribution of results
+// I actually want a set of results, not a vector, so that I can compare the middle 3 and their spread
+// ACTUALLY I need a multiset in case results are the same
+std::multiset< Real > results;
+Real average = 0;
+bool average_found = false;
 
-	while ( ! average_found ) {
+while ( ! average_found ) {
 
-		TR << "Running test again " << std::endl;
-		B->execute( scaleFactor );
+TR << "Running test again " << std::endl;
+B->execute( scaleFactor );
 
-		results.insert( B->result_ );
+results.insert( B->result_ );
 
-		// we have "found our average" if we have scaleFactor of values
-		// within 5% of their mutual mean
-		// clearly need only consider adjacent values in the set
-		Size size = results.size();
-		if ( size < scaleFactor ) {
-			B->result_ = 0;
-			continue;
-		}
+// we have "found our average" if we have scaleFactor of values
+// within 5% of their mutual mean
+// clearly need only consider adjacent values in the set
+Size size = results.size();
+if ( size < scaleFactor ) {
+B->result_ = 0;
+continue;
+}
 
-		Size counter = 0;
-		for ( std::multiset< Real >::iterator it( results.begin() ),
-			 end( results.end() );
-			 it != end;
-			 ++it, ++counter ) {
+Size counter = 0;
+for ( std::multiset< Real >::iterator it( results.begin() ),
+end( results.end() );
+it != end;
+++it, ++counter ) {
 
-			TR << "Evaluating elements " << counter << " to " << (counter + scaleFactor-1) << std::endl;
-			if ( counter == size - scaleFactor+1 ) break;
+TR << "Evaluating elements " << counter << " to " << (counter + scaleFactor-1) << std::endl;
+if ( counter == size - scaleFactor+1 ) break;
 
-			std::multiset< Real >::iterator avg_iter = it;
+std::multiset< Real >::iterator avg_iter = it;
 
-			average = 0;
-			TR << "Values are ";
+average = 0;
+TR << "Values are ";
 
-			Real final_value = 0;
-			for ( Size i = 1; i <= scaleFactor; ++i, ++avg_iter ) {
-				final_value = (*avg_iter);
-				average += final_value;
-				TR << final_value << " ";
-			}
-			TR << std::endl;
-			average /= scaleFactor;
+Real final_value = 0;
+for ( Size i = 1; i <= scaleFactor; ++i, ++avg_iter ) {
+final_value = (*avg_iter);
+average += final_value;
+TR << final_value << " ";
+}
+TR << std::endl;
+average /= scaleFactor;
 
-			Real spread = final_value - *it;
-			TR << " spread is " << spread << " and average is " << average << std::endl;
+Real spread = final_value - *it;
+TR << " spread is " << spread << " and average is " << average << std::endl;
 
-			if ( spread < 0.1 * average ) {
-				//TR << "Acceptable; we're done!" << std::endl;
-				average_found = true;
-				break;
-			}
-		}
+if ( spread < 0.1 * average ) {
+//TR << "Acceptable; we're done!" << std::endl;
+average_found = true;
+break;
+}
+}
 
-		// not done, so it's safe to zero out the result
-		B->result_ = 0;
-	}
+// not done, so it's safe to zero out the result
+B->result_ = 0;
+}
 
-	// done, so set result to average of the tight results
-	// amw: no, set it to the minimum because we are trying this out.
-	B->result_ = *results.begin();
+// done, so set result to average of the tight results
+// amw: no, set it to the minimum because we are trying this out.
+B->result_ = *results.begin();
 }*/
 
 void PerformanceBenchmark::executeOneBenchmark(
@@ -283,7 +283,7 @@ void PerformanceBenchmark::executeOneBenchmark(
 		if ( B->name() == name ) {
 
 			B->execute( scaleFactor );
-			//	perform_until_set_found( B, scaleFactor );
+			// perform_until_set_found( B, scaleFactor );
 
 			found_benchmark = true;
 			break;
@@ -294,7 +294,7 @@ void PerformanceBenchmark::executeOneBenchmark(
 	} else {
 		TR << std::endl << "Unable to locate benchmark '" << name << "'" << std::endl;
 		TR << "The available benchmarks are:" << std::endl;
-		for(Size i=0; i<all.size(); i++){
+		for ( Size i=0; i<all.size(); i++ ) {
 			PerformanceBenchmark * B = all[i];
 			TR << "    name: '" << B->name() << "'" << std::endl;
 		}
@@ -317,11 +317,11 @@ void PerformanceBenchmark::executeAllBenchmarks(Real scaleFactor)
 
 	std::vector< double > prev_results( all.size(), 0 );
 	//for ( Size j = 0; j < 3; ++j ) {
-		for ( Size i = 0; i < all.size(); ++i ) {
-			PerformanceBenchmark * B = all[ i ];
-			//perform_until_set_found( B, scaleFactor );
-			B->execute( scaleFactor );
-		}
+	for ( Size i = 0; i < all.size(); ++i ) {
+		PerformanceBenchmark * B = all[ i ];
+		//perform_until_set_found( B, scaleFactor );
+		B->execute( scaleFactor );
+	}
 	//}
 	TR << std::endl << "Executing all benchmarks... Done." << std::endl;
 }
@@ -336,8 +336,8 @@ std::string PerformanceBenchmark::getReport()
 	char buf[1024];
 
 	std::string res = "{\n";
-	for (Size i = 0; i < all.size(); i++ ) {
-		if( i != 0 ) res += ",\n"; // special first case
+	for ( Size i = 0; i < all.size(); i++ ) {
+		if ( i != 0 ) res += ",\n"; // special first case
 		PerformanceBenchmark * B = all[i];
 		sprintf(buf, "{\"run_time\":%f, \"cycles\":%i}", B->time_, B->result_ );
 		res += "    \"" + B->name_ + "\":" + std::string(buf);
@@ -357,9 +357,9 @@ std::string PerformanceBenchmark::getOneReport(std::string const & name)
 
 	std::string res = "{\n";
 
-	for(Size i=0; i<all.size(); i++) {
+	for ( Size i=0; i<all.size(); i++ ) {
 		PerformanceBenchmark * B = all[i];
-		if(B->name() == name){
+		if ( B->name() == name ) {
 			sprintf(buf, "[%i, %f]", B->result_, B->time_ );
 			res += "    \"" + B->name_ + "\":" + std::string(buf);
 		}
@@ -409,7 +409,7 @@ int main( int argc, char *argv[])
 		//TR << "CLOCKS_PER_SEC:" << CLOCKS_PER_SEC << "\n";
 
 		std::string report;
-		if(basic::options::option[ run::run_one_benchmark ].user()){
+		if ( basic::options::option[ run::run_one_benchmark ].user() ) {
 			std::string const & name(basic::options::option[ run::run_one_benchmark ]());
 			PerformanceBenchmark::executeOneBenchmark(name, scale);
 			report = PerformanceBenchmark::getOneReport(name);
@@ -421,15 +421,15 @@ int main( int argc, char *argv[])
 		TR << "Results:" << std::endl << report;  TR.flush();
 
 		/// Now, saving report to a file
-		if(utility::file::file_exists(std::string(results_filename))){
+		if ( utility::file::file_exists(std::string(results_filename)) ) {
 			int i = rename( results_filename, old_results_filename);
-			if( i != 0 ){
+			if ( i != 0 ) {
 				Error() << "PerformanceBenchmark:: Unable to rename "<< results_filename << " to " << old_results_filename << std::endl;
 				utility_exit();
 			}
 		}
 		std::ofstream file(results_filename, std::ios::out | std::ios::binary);
-		if(!file) {
+		if ( !file ) {
 			Error() << "PerformanceBenchmark:: Unable to open file:" << results_filename << " for writing!!!" << std::endl;
 			return 1;
 		}

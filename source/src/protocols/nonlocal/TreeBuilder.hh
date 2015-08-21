@@ -30,14 +30,14 @@ namespace protocols {
 namespace nonlocal {
 
 class TreeBuilder : public utility::pointer::ReferenceCount {
- public:
-  /// @brief Programmatically constructs a FoldTree, updating <pose>.
-  virtual void set_up(const protocols::loops::Loops& chunks, core::pose::Pose* pose) = 0;
+public:
+	/// @brief Programmatically constructs a FoldTree, updating <pose>.
+	virtual void set_up(const protocols::loops::Loops& chunks, core::pose::Pose* pose) = 0;
 
-  /// @brief Reverts any modifications to <pose> introduced in preceding calls
-  /// to set_up(). Only subclasses that introduce modifications are responsible
-  /// for overriding this method.
-  virtual void tear_down(core::pose::Pose*) {}
+	/// @brief Reverts any modifications to <pose> introduced in preceding calls
+	/// to set_up(). Only subclasses that introduce modifications are responsible
+	/// for overriding this method.
+	virtual void tear_down(core::pose::Pose*) {}
 };
 
 }  // namespace nonlocal

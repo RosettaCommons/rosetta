@@ -24,33 +24,33 @@
 namespace protocols {
 namespace moves {
 
-	class MoverForPoseList: public Mover {
+class MoverForPoseList: public Mover {
 
-	public:
+public:
 
-		//constructor
-		MoverForPoseList();
+	//constructor
+	MoverForPoseList();
 
-		//destructor
-		~MoverForPoseList();
+	//destructor
+	~MoverForPoseList();
 
-	public:
+public:
 
-		using protocols::moves::Mover::apply;
+	using protocols::moves::Mover::apply;
 
-		virtual void apply( Pose & ) = 0;
+	virtual void apply( Pose & ) = 0;
 
-		// just apply to each member of the pose_list.
-		virtual void apply( utility::vector1< core::pose::PoseOP > & pose_list );
+	// just apply to each member of the pose_list.
+	virtual void apply( utility::vector1< core::pose::PoseOP > & pose_list );
 
-		// goes through pose_list, copies into the viewer_pose (useful for graphics),
-		// and then returns output pose_list.
-		virtual void apply( utility::vector1< core::pose::PoseOP > & pose_list,
-												core::pose::Pose & viewer_pose );
+	// goes through pose_list, copies into the viewer_pose (useful for graphics),
+	// and then returns output pose_list.
+	virtual void apply( utility::vector1< core::pose::PoseOP > & pose_list,
+		core::pose::Pose & viewer_pose );
 
-	private:
+private:
 
-	};
+};
 
 } //moves
 } //protocols

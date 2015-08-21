@@ -18,47 +18,47 @@ namespace core {
 namespace scoring {
 namespace loop_graph {
 
-	//Constructor
-	Loop::Loop( Size const takeoff_pos,
-							Size const landing_pos,
-							Size const takeoff_domain,
-							Size const landing_domain ):
-		takeoff_pos_( takeoff_pos ),
-		landing_pos_( landing_pos ),
-		takeoff_domain_( takeoff_domain ),
-		landing_domain_( landing_domain )
-	{}
+//Constructor
+Loop::Loop( Size const takeoff_pos,
+	Size const landing_pos,
+	Size const takeoff_domain,
+	Size const landing_domain ):
+	takeoff_pos_( takeoff_pos ),
+	landing_pos_( landing_pos ),
+	takeoff_domain_( takeoff_domain ),
+	landing_domain_( landing_domain )
+{}
 
-	//Constructor
-	Loop::Loop():
-		takeoff_pos_( 0 ),
-		landing_pos_( 0 ),
-		takeoff_domain_( 0 ),
-		landing_domain_( 0 )
-	{}
+//Constructor
+Loop::Loop():
+	takeoff_pos_( 0 ),
+	landing_pos_( 0 ),
+	takeoff_domain_( 0 ),
+	landing_domain_( 0 )
+{}
 
 
-	//Destructor
-	Loop::~Loop()
-	{}
+//Destructor
+Loop::~Loop()
+{}
 
-	/// @brief copy constructor
-	Loop::Loop( Loop const & src ):
-		ReferenceCount( src )
-	{
-		*this = src;
-	}
+/// @brief copy constructor
+Loop::Loop( Loop const & src ):
+	ReferenceCount( src )
+{
+	*this = src;
+}
 
-	Loop &
-	Loop::operator=( Loop const & src ){
+Loop &
+Loop::operator=( Loop const & src ){
 
-		takeoff_pos_ = src.takeoff_pos_;
-		landing_pos_ = src.landing_pos_;
-		takeoff_domain_ = src.takeoff_domain_;
-		landing_domain_ = src.landing_domain_;
+	takeoff_pos_ = src.takeoff_pos_;
+	landing_pos_ = src.landing_pos_;
+	takeoff_domain_ = src.takeoff_domain_;
+	landing_domain_ = src.landing_domain_;
 
-		return *this;
-	}
+	return *this;
+}
 
 } //loop_graph
 } //scoring

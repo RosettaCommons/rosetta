@@ -46,23 +46,23 @@ RestrictToNeighborhoodOperation::RestrictToNeighborhoodOperation() {}
 
 /// @details this ctor assumes a pregenerated Neighborhood and Neighbors calculators - if you want a particular non-default cutoff distance, assemble those calculators separately then pass them to this operation.
 RestrictToNeighborhoodOperation::RestrictToNeighborhoodOperation( std::string const & calculator )
-	: parent(), calculator_name_(calculator)
+: parent(), calculator_name_(calculator)
 {
 	//I suppose you could reasonably create this object BEFORE the calculator was generated/registered
-// 	if( !core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( calculator_name_ ) ){
-// 		utility_exit_with_message("In RestrictToNeighborhoodOperation, calculator " + calculator + " does not exist.");
-// 	}
+	//  if( !core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( calculator_name_ ) ){
+	//   utility_exit_with_message("In RestrictToNeighborhoodOperation, calculator " + calculator + " does not exist.");
+	//  }
 }
 
 /// @details this ctor generates calculators (easier to use but will rely on defaults, including default distance cutoff)
 RestrictToNeighborhoodOperation::RestrictToNeighborhoodOperation( std::set< core::Size > const & central_residues )
-	: parent(), calculator_name_("")
+: parent(), calculator_name_("")
 {
 	make_calculator( central_residues );
 }
 
 RestrictToNeighborhoodOperation::RestrictToNeighborhoodOperation( std::set< core::Size > const & central_residues, core::Real const dist_cutoff )
-	: parent(), calculator_name_("")
+: parent(), calculator_name_("")
 {
 	make_calculator( central_residues, dist_cutoff );
 }
@@ -86,7 +86,7 @@ RestrictToNeighborhoodOperation & RestrictToNeighborhoodOperation::operator=(
 	RestrictToNeighborhoodOperation const & rhs ){
 
 	//abort self-assignment
-	if (this == &rhs) return *this;
+	if ( this == &rhs ) return *this;
 
 	calculator_name_ = rhs.get_calculator_name();
 
@@ -101,12 +101,12 @@ void RestrictToNeighborhoodOperation::make_calculator(
 	make_name( central_residues );
 
 	using namespace core::pose::metrics;
-	if( CalculatorFactory::Instance().check_calculator_exists( calculator_name_ ) ){
+	if ( CalculatorFactory::Instance().check_calculator_exists( calculator_name_ ) ) {
 		Warning() << "In RestrictToNeighborhoodOperation, calculator " << calculator_name_
-							<< " already exists, this is hopefully correct for your purposes" << std::endl;
+			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
-	using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator;
-	CalculatorFactory::Instance().register_calculator( calculator_name_, PoseMetricCalculatorOP( new NeighborhoodByDistanceCalculator( central_residues, dist_cutoff ) ) );
+		using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator;
+		CalculatorFactory::Instance().register_calculator( calculator_name_, PoseMetricCalculatorOP( new NeighborhoodByDistanceCalculator( central_residues, dist_cutoff ) ) );
 	}
 }
 
@@ -115,12 +115,12 @@ void RestrictToNeighborhoodOperation::make_calculator( std::set< core::Size > co
 	make_name( central_residues );
 
 	using namespace core::pose::metrics;
-	if( CalculatorFactory::Instance().check_calculator_exists( calculator_name_ ) ){
+	if ( CalculatorFactory::Instance().check_calculator_exists( calculator_name_ ) ) {
 		Warning() << "In RestrictToNeighborhoodOperation, calculator " << calculator_name_
-							<< " already exists, this is hopefully correct for your purposes" << std::endl;
+			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
-	using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator;
-	CalculatorFactory::Instance().register_calculator( calculator_name_, PoseMetricCalculatorOP( new NeighborhoodByDistanceCalculator( central_residues ) ) );
+		using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator;
+		CalculatorFactory::Instance().register_calculator( calculator_name_, PoseMetricCalculatorOP( new NeighborhoodByDistanceCalculator( central_residues ) ) );
 	}
 }
 
@@ -128,7 +128,7 @@ void RestrictToNeighborhoodOperation::make_calculator( std::set< core::Size > co
 void RestrictToNeighborhoodOperation::make_name( std::set< core::Size > const & central_residues ) {
 	calculator_name_ = "RTNhO_calculator";
 
-	for(SizeSet::const_iterator it(central_residues.begin()), end(central_residues.end()) ; it != end; ++it){
+	for ( SizeSet::const_iterator it(central_residues.begin()), end(central_residues.end()) ; it != end; ++it ) {
 		calculator_name_ += '_' + utility::to_string( *it );
 	}
 
@@ -138,13 +138,13 @@ void
 RestrictToNeighborhoodOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {
 
- 	//vector for filling packertask
- 	utility::vector1_bool repack(pose.total_residue(), false);
+	//vector for filling packertask
+	utility::vector1_bool repack(pose.total_residue(), false);
 
 	//this is in the parent class, RestrictOperationsBase
 	run_calculator(pose, calculator_name_, "neighbors", repack);
 
- 	task.restrict_to_residues(repack);
+	task.restrict_to_residues(repack);
 
 	return;
 }
@@ -153,7 +153,7 @@ RestrictToNeighborhoodOperation::apply( core::pose::Pose const & pose, core::pac
 protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculatorCOP
 RestrictToNeighborhoodOperation::get_calculator() const {
 	using namespace core::pose::metrics;
-	if( !CalculatorFactory::Instance().check_calculator_exists( calculator_name_ ) ){
+	if ( !CalculatorFactory::Instance().check_calculator_exists( calculator_name_ ) ) {
 		throw utility::excn::EXCN_Msg_Exception("In RestrictToNeighborhoodOperation get_calculator, calculator " + calculator_name_ + " does not exist");
 	}
 

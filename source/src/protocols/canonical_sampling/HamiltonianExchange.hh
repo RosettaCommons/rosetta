@@ -35,7 +35,7 @@ namespace canonical_sampling {
 /// @details
 class HamiltonianExchange : public protocols::canonical_sampling::AsyncMPITemperingBase {
 	typedef AsyncMPITemperingBase Parent;
-	//	typedef utility::vector1< core::Size > GridCoord; // moving to base class TemperatureController
+	// typedef utility::vector1< core::Size > GridCoord; // moving to base class TemperatureController
 	typedef utility::vector1< GridCoord > Grid;
 
 public:
@@ -87,8 +87,8 @@ public:
 	/// @brief callback executed before any Monte Carlo trials
 	virtual void
 	initialize_simulation(
-  	 core::pose::Pose& pose,
-		 MetropolisHastingsMover const& metropolis_hastings_mover,
+		core::pose::Pose& pose,
+		MetropolisHastingsMover const& metropolis_hastings_mover,
 		core::Size cycle   //non-zero if trajectory is restarted
 	);
 
@@ -108,7 +108,7 @@ public:
 
 	virtual void
 	set_monte_carlo(
-	   protocols::moves::MonteCarloOP monte_carlo
+		protocols::moves::MonteCarloOP monte_carlo
 	);
 
 	virtual GridCoord
@@ -145,11 +145,11 @@ private:
 	void setup_exchange_schedule();
 	/// @brief small helper function; compute unique key out of (z1, z2, ... , zN) excluding zD
 	core::Size coord2key(
-    GridCoord const& coord,
+		GridCoord const& coord,
 		GridCoord const& max_coord,
 		Size exclude_dim = 0
 	);
-/// ------------------ register cmdline options ---------------------------
+	/// ------------------ register cmdline options ---------------------------
 
 private:
 	static bool options_registered_;
@@ -157,7 +157,7 @@ private:
 public:
 	static void register_options();
 
-/// ---------------- member variables --------------------------
+	/// ---------------- member variables --------------------------
 
 private:
 

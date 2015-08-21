@@ -98,8 +98,8 @@
 #include <iostream>
 #include <fstream>
 
-namespace devel{
-namespace domain_assembly{
+namespace devel {
+namespace domain_assembly {
 
 DomainAssemblyMover::DomainAssemblyMover() :
 	movemap_set_( false )
@@ -114,19 +114,23 @@ DomainAssemblyMover::apply( core::pose::Pose & pose )
 {
 	initialize();
 
-	if( basic::options::option[ basic::options::OptionKeys::DomainAssembly::run_centroid ]() )
+	if ( basic::options::option[ basic::options::OptionKeys::DomainAssembly::run_centroid ]() ) {
 		run_centroid_stage( pose );
+	}
 
-	if( get_last_move_status() != protocols::moves::MS_SUCCESS ) return;
+	if ( get_last_move_status() != protocols::moves::MS_SUCCESS ) return;
 
-	if( basic::options::option[ basic::options::OptionKeys::DomainAssembly::run_centroid_abinitio ]() )
+	if ( basic::options::option[ basic::options::OptionKeys::DomainAssembly::run_centroid_abinitio ]() ) {
 		run_abinitio_centroid_stage( pose );
+	}
 
-	if( basic::options::option[ basic::options::OptionKeys::DomainAssembly::run_fullatom ]() )
+	if ( basic::options::option[ basic::options::OptionKeys::DomainAssembly::run_fullatom ]() ) {
 		run_fullatom_relax( pose );
+	}
 
-	if( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() )
+	if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 		evaluate_pose( pose );
+	}
 }
 
 void
@@ -137,18 +141,18 @@ DomainAssemblyMover::evaluate_pose( core::pose::Pose const & pose) const {
 
 	TR << "input, job, env, pair, cbeta, vdw, rg, cenpack, hs_pair, sheet, total, rms" << std::endl;
 	TR << pose.pdb_info()->name() << ", "  << protocols::jd2::get_current_job()->nstruct_index()
-	<< ", " << pose.energies().total_energies()[core::scoring::env]
-	<< ", " << pose.energies().total_energies()[core::scoring::pair]
-	<< ", " << pose.energies().total_energies()[core::scoring::cbeta]
-	<< ", " << pose.energies().total_energies()[core::scoring::vdw]
-	<< ", " << pose.energies().total_energies()[core::scoring::rg]
-	<< ", " << pose.energies().total_energies()[core::scoring::cenpack]
-	<< ", " << pose.energies().total_energies()[core::scoring::hs_pair]
-//	<< ", " << pose.energies().total_energies()[core::scoring::ss_pair]
-//	<< ", " << pose.energies().total_energies()[core::scoring::rsigma]
-	<< ", " << pose.energies().total_energies()[core::scoring::sheet]
-	<< ", " <<  pose.energies().total_energies()[core::scoring::total_score]
-	<< ", " << sum_sq << std::endl;
+		<< ", " << pose.energies().total_energies()[core::scoring::env]
+		<< ", " << pose.energies().total_energies()[core::scoring::pair]
+		<< ", " << pose.energies().total_energies()[core::scoring::cbeta]
+		<< ", " << pose.energies().total_energies()[core::scoring::vdw]
+		<< ", " << pose.energies().total_energies()[core::scoring::rg]
+		<< ", " << pose.energies().total_energies()[core::scoring::cenpack]
+		<< ", " << pose.energies().total_energies()[core::scoring::hs_pair]
+		// << ", " << pose.energies().total_energies()[core::scoring::ss_pair]
+		// << ", " << pose.energies().total_energies()[core::scoring::rsigma]
+		<< ", " << pose.energies().total_energies()[core::scoring::sheet]
+		<< ", " <<  pose.energies().total_energies()[core::scoring::total_score]
+		<< ", " << sum_sq << std::endl;
 
 	// interface analyzer
 	// hard-coded split point!
@@ -244,8 +248,8 @@ DomainAssemblyMover::run_centroid_stage( core::pose::Pose & pose )
 	mc -> recover_low( pose );
 
 	//////// STAGE 3: FILTERING ////////
-	if( !buried_residues_.empty() ) {
-  		std::vector< std::string > domain_definitions;
+	if ( !buried_residues_.empty() ) {
+		std::vector< std::string > domain_definitions;
 		get_domain_definition( pose, domain_definitions );
 		std::set< core::Size > want_buried( core::pose::get_resnum_list( buried_residues_, pose ) );
 
@@ -256,37 +260,37 @@ DomainAssemblyMover::run_centroid_stage( core::pose::Pose & pose )
 		// step 2: find all residues requested to be buried
 		// step 3: add a filter with that potential interface
 		// step 4: or-combine the filters, at least one of the domains should bury any
-		for( std::set< core::Size >::const_iterator buried_it = want_buried.begin();
-			buried_it != want_buried.end();
-			++buried_it )
-		{
+		for ( std::set< core::Size >::const_iterator buried_it = want_buried.begin();
+				buried_it != want_buried.end();
+				++buried_it ) {
 			std::set< core::Size > residues_in_other_domains;
-			for( std::vector< std::string >::const_iterator domain_it = domain_definitions.begin();
-			domain_it != domain_definitions.end();
-			++domain_it )
-			{
+			for ( std::vector< std::string >::const_iterator domain_it = domain_definitions.begin();
+					domain_it != domain_definitions.end();
+					++domain_it ) {
 				std::set< core::Size > domain_set( core::pose::get_resnum_list( *domain_it, pose ) );
-				if( domain_set.find( *buried_it ) == domain_set.end() ) // residue not contained in domain! Add!
+				if ( domain_set.find( *buried_it ) == domain_set.end() ) { // residue not contained in domain! Add!
 					residues_in_other_domains.insert( domain_set.begin(), domain_set.end() );
+				}
 			}
-			if( !residues_in_other_domains.empty() ) { // this can only happen if we're looking at exactly one domain...
+			if ( !residues_in_other_domains.empty() ) { // this can only happen if we're looking at exactly one domain...
 				protocols::simple_filters::DomainInterfaceFilterOP di_filter( new protocols::simple_filters::DomainInterfaceFilter );
 				std::set< core::Size > one_residue_dummy_set;
 				one_residue_dummy_set.insert( *buried_it );
 				di_filter->query_region( one_residue_dummy_set );
 				di_filter->target_region( residues_in_other_domains );
-				if( di_filter->apply( pose ) ) num_true++;
-//				compound_filter_input.push_back( std::make_pair( di_filter, protocols::filters::AND ) );
+				if ( di_filter->apply( pose ) ) num_true++;
+				//    compound_filter_input.push_back( std::make_pair( di_filter, protocols::filters::AND ) );
 			}
 		}
 
-//		protocols::filters::CompoundFilter all_and_filter( compound_filter_input );
+		//  protocols::filters::CompoundFilter all_and_filter( compound_filter_input );
 
-//		if( !all_and_filter.apply( pose ) ) {
-//			set_last_move_status( protocols::moves::FAIL_RETRY );
-//		}
-		if( (core::Real)num_true / want_buried.size() < 0.5 )
+		//  if( !all_and_filter.apply( pose ) ) {
+		//   set_last_move_status( protocols::moves::FAIL_RETRY );
+		//  }
+		if ( (core::Real)num_true / want_buried.size() < 0.5 ) {
 			set_last_move_status( protocols::moves::FAIL_RETRY );
+		}
 
 	}
 	//////// END STAGE 3 ////////
@@ -294,7 +298,7 @@ DomainAssemblyMover::run_centroid_stage( core::pose::Pose & pose )
 }
 void DomainAssemblyMover::run_abinitio_centroid_stage( core::pose::Pose & pose ) {
 
-	if( !fragsets_set() ) {
+	if ( !fragsets_set() ) {
 		throw utility::excn::EXCN_Msg_Exception( "No FragmentSet specified - exiting!\n" );
 	}
 
@@ -307,11 +311,11 @@ void DomainAssemblyMover::run_abinitio_centroid_stage( core::pose::Pose & pose )
 		abinit.apply( pose );
 	} while( !abrelax_app.check_filters( pose ) );
 
-// re-score although we should be up to date.
+	// re-score although we should be up to date.
 	scorefxn_wts3->score(pose);
-		//recover sidechains from starting structures
-//	to_fullatom.apply( pose );
-//	recover_sidechains.apply( pose );
+	//recover sidechains from starting structures
+	// to_fullatom.apply( pose );
+	// recover_sidechains.apply( pose );
 
 }
 
@@ -322,11 +326,12 @@ DomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 	using namespace core::pack::task::operation;
 	using residue_selector::ResidueSelectorOP;
 	using residue_selector::ResidueSelectorCOP;
-	
+
 	// recover sidechains if pose has been loaded from centriod PDB...
 	// FIX THIS to get wanted behavior
-	if( basic::options::option[ basic::options::OptionKeys::DomainAssembly::da_start_pdb ].user() )
-			  recover_sidechains( pose );
+	if ( basic::options::option[ basic::options::OptionKeys::DomainAssembly::da_start_pdb ].user() ) {
+		recover_sidechains( pose );
+	}
 
 	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 
@@ -337,8 +342,8 @@ DomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 	residue_selector::OrResidueSelectorOP or_rs( new core::pack::task::residue_selector::OrResidueSelector );
 
 	// add all possible interdomain interfaces to the ORResidueSelector for repacking
-	for( core::Size ii = 0; ii < domain_definitions.size(); ++ii ) {
-		for( core::Size jj = ii+1; jj < domain_definitions.size(); ++jj ) {
+	for ( core::Size ii = 0; ii < domain_definitions.size(); ++ii ) {
+		for ( core::Size jj = ii+1; jj < domain_definitions.size(); ++jj ) {
 			residue_selector::InterGroupInterfaceByVectorSelectorOP vector_rs( new residue_selector::InterGroupInterfaceByVectorSelector );
 			vector_rs->group1_resstring( domain_definitions[ii] );
 			vector_rs->group2_resstring( domain_definitions[jj] );
@@ -364,10 +369,10 @@ DomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 	protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *scorefxn, 0.8 /*temperature*/ ) );
 
 	// MOVER: small moves
-  protocols::simple_moves::SmallMoverOP small_mover( new protocols::simple_moves::SmallMover( movemap_, 0.8/*temp*/, 1 ) );
-  small_mover->angle_max( 'H', 2.0 );
-  small_mover->angle_max( 'E', 3.0 );
-  small_mover->angle_max( 'L', 4.0 );
+	protocols::simple_moves::SmallMoverOP small_mover( new protocols::simple_moves::SmallMover( movemap_, 0.8/*temp*/, 1 ) );
+	small_mover->angle_max( 'H', 2.0 );
+	small_mover->angle_max( 'E', 3.0 );
+	small_mover->angle_max( 'L', 4.0 );
 
 	// MOVER: rotamer trials
 	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn, *base_packer_task, mc, 0.01 /*energycut*/ ) );
@@ -407,8 +412,8 @@ DomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 	for ( Size i = 1; i <= 20; ++i ) {
 		stage2_inner_loop -> apply( pose );
 		std::cout << i << "  " << mc->last_accepted_score() << "  " << mc->lowest_score() << std::endl;
-	//	utility::vector1<bool> repack_residues( pose.total_residue(), false );
-	//	da_residues_to_repack( movemap_, nearest_movable_residues, pose, repack_residues );
+		// utility::vector1<bool> repack_residues( pose.total_residue(), false );
+		// da_residues_to_repack( movemap_, nearest_movable_residues, pose, repack_residues );
 		core::pack::task::PackerTaskOP this_packer_task( base_packer_task->clone() );
 		rsOperation->apply( pose, *this_packer_task );
 		core::pack::pack_rotamers( pose, *scorefxn, this_packer_task );
@@ -424,11 +429,12 @@ void DomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) {
 	using namespace core::pack::task::operation;
 	using residue_selector::ResidueSelectorOP;
 	using residue_selector::ResidueSelectorCOP;
-	
+
 	// recover sidechains if pose has been loaded from centriod PDB...
 	// FIX THIS to get wanted behavior
-	if( basic::options::option[ basic::options::OptionKeys::DomainAssembly::da_start_pdb ].user() )
-			  recover_sidechains( pose );
+	if ( basic::options::option[ basic::options::OptionKeys::DomainAssembly::da_start_pdb ].user() ) {
+		recover_sidechains( pose );
+	}
 
 	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 
@@ -439,8 +445,8 @@ void DomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) {
 	residue_selector::OrResidueSelectorOP or_rs( new core::pack::task::residue_selector::OrResidueSelector );
 
 	// add all possible interdomain interfaces to the ORResidueSelector for repacking
-	for( core::Size ii = 0; ii < domain_definitions.size(); ++ii ) {
-		for( core::Size jj = ii+1; jj < domain_definitions.size(); ++jj ) {
+	for ( core::Size ii = 0; ii < domain_definitions.size(); ++ii ) {
+		for ( core::Size jj = ii+1; jj < domain_definitions.size(); ++jj ) {
 			residue_selector::InterGroupInterfaceByVectorSelectorOP vector_rs( new residue_selector::InterGroupInterfaceByVectorSelector );
 			vector_rs->group1_resstring( domain_definitions[ii] );
 			vector_rs->group2_resstring( domain_definitions[jj] );
@@ -469,20 +475,20 @@ void DomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) {
 
 	// allow minimazion of residues in the linker and the interdomain interface
 	movemap_->set_chi( to_repack );
-//	movemap_->set_bb ( to_repack ); // seems like a fun idea, didnt give good results though.
+	// movemap_->set_bb ( to_repack ); // seems like a fun idea, didnt give good results though.
 
-// almost in all cases very similar to fa_rep ramp x {min,repack}
-//	protocols::relax::FastRelaxOP frlx = new protocols::relax::FastRelax( scorefxn, 5);
-//	frlx->set_movemap( movemap_ );
-//	frlx->apply( pose );
+	// almost in all cases very similar to fa_rep ramp x {min,repack}
+	// protocols::relax::FastRelaxOP frlx = new protocols::relax::FastRelax( scorefxn, 5);
+	// frlx->set_movemap( movemap_ );
+	// frlx->apply( pose );
 
- // Poor man's relax: Minimization, pack_rotamers, while ramping up fa_rep energy term
+	// Poor man's relax: Minimization, pack_rotamers, while ramping up fa_rep energy term
 	core::Size outer_iterations = 5;
 	core::Size inner_iterations = 10;
 	core::Real final_fa_rep = 0.44;
 
-	for( Size i_outer = 1; i_outer <= outer_iterations; ++i_outer ) {
-		for( Size i_inner = 1; i_inner <= inner_iterations; ++i_inner ) {
+	for ( Size i_outer = 1; i_outer <= outer_iterations; ++i_outer ) {
+		for ( Size i_inner = 1; i_inner <= inner_iterations; ++i_inner ) {
 			core::Real fa_rep_weight = (0.1 + 0.9/(inner_iterations-1) * (i_inner-1)) * final_fa_rep;
 			scorefxn->set_weight( core::scoring::fa_rep , fa_rep_weight );
 			to_repack = or_rs->apply( pose );
@@ -521,18 +527,18 @@ void DomainAssemblyMover::get_domain_definition( core::pose::Pose const & pose, 
 	core::Size last_domain_start = 1;
 	domains.clear();
 	bool in_linker = movemap_->get_bb( 1 );
-	for( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-		if( movemap_->get_bb( ii ) && !in_linker) { // first residue of a linker
-			 in_linker = true;
-			 std::stringstream current_domain;
-			 current_domain << last_domain_start << "-" << ii-1;
-			 domains.push_back( current_domain.str() );
+	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		if ( movemap_->get_bb( ii ) && !in_linker ) { // first residue of a linker
+			in_linker = true;
+			std::stringstream current_domain;
+			current_domain << last_domain_start << "-" << ii-1;
+			domains.push_back( current_domain.str() );
 		} else if ( !movemap_->get_bb( ii ) && in_linker ) { // first residue after a linker
 			in_linker = false;
 			last_domain_start = ii-1;
 		}
 	}
-	if(!in_linker) {
+	if ( !in_linker ) {
 		std::stringstream current_domain;
 		current_domain << last_domain_start << "-" << pose.total_residue();
 		domains.push_back( current_domain.str() );
@@ -543,30 +549,31 @@ std::string DomainAssemblyMover::get_linker_definition( core::pose::Pose const &
 	std::stringstream linker_str;
 	core::Size last_linker_start = 1;
 	bool in_linker = movemap_->get_bb( 1 );
-	for( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-		if( movemap_->get_bb( ii ) && !in_linker ) {
-			 in_linker = true;
-			 last_linker_start = ii;
+	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		if ( movemap_->get_bb( ii ) && !in_linker ) {
+			in_linker = true;
+			last_linker_start = ii;
 		} else if ( !movemap_->get_bb( ii ) && in_linker ) {
 			in_linker = false;
 			linker_str << last_linker_start << "-" << ii-1 << ",";
 		}
 	}
-	if(in_linker)
+	if ( in_linker ) {
 		linker_str << last_linker_start << "-" << pose.total_residue();
+	}
 
 	return linker_str.str();
 }
 
 core::Real DomainAssemblyMover::target_rmsd( core::pose::Pose const & pose ) const {
-	if( target_pose_map_.empty() ) {
+	if ( target_pose_map_.empty() ) {
 		// define corresponding residues to be compared
 		// this is only useful for LOV-RAC and I should get rid of this asap.
 		std::map< core::Size, core::Size > correspondence;
 		int offset = pose.total_residue() - target_pose_.total_residue() - 1; // !!!!! -1 is a 2wkp vs 1mh1 specific hack because 2wkp is shorter by 1
-		for( core::Size ii = 1; ii <= pose.total_residue(); ++ii) {
-			if( (int)ii > offset && (ii - offset) <= target_pose_.total_residue()) {
-				if( pose.residue( ii ).name3() == target_pose_.residue( ii - offset ).name3() ) {
+		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			if ( (int)ii > offset && (ii - offset) <= target_pose_.total_residue() ) {
+				if ( pose.residue( ii ).name3() == target_pose_.residue( ii - offset ).name3() ) {
 					correspondence.insert( std::make_pair( ii, ii-offset ) );
 				}
 			}
@@ -581,13 +588,13 @@ core::Real DomainAssemblyMover::target_rmsd( core::pose::Pose const & pose ) con
 core::Real DomainAssemblyMover::target_rmsd_no_align( core::pose::Pose const & pose ) const {
 	core::Size num_match = 0;
 	core::Real sum_sq = 0;
-	if( target_pose_map_.empty() ) {
+	if ( target_pose_map_.empty() ) {
 		// define corresponding residues to be compared
 		// get rid of this asap
 		int offset = pose.total_residue() - target_pose_.total_residue()  - 1; // !!!!! -1 is a 2wkp vs 1mh1 specific hack because 2wkp is shorter by 1
-		for( core::Size ii = 1; ii <= pose.total_residue(); ++ii) {
-			if( (int)ii > offset && (ii - offset) <= target_pose_.total_residue()) {
-				if( pose.residue( ii ).name3() == target_pose_.residue( ii - offset ).name3() ) {
+		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			if ( (int)ii > offset && (ii - offset) <= target_pose_.total_residue() ) {
+				if ( pose.residue( ii ).name3() == target_pose_.residue( ii - offset ).name3() ) {
 					sum_sq += pose.residue( ii ).xyz( "CA" ).distance_squared( target_pose_.residue( ii-offset  ).xyz( "CA" ) );
 					num_match++;
 				}
@@ -596,16 +603,16 @@ core::Real DomainAssemblyMover::target_rmsd_no_align( core::pose::Pose const & p
 	} else {
 		core::Size num_match = 0;
 		core::Real sum_sq = 0;
-		for( core::Size ii = 1; ii <= pose.total_residue(); ++ii) {
+		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			std::map< core::Size, core::Size >::const_iterator map_pair = target_pose_map_.find( ii );
-			if( map_pair != target_pose_map_.end() && map_pair->second <= target_pose_.total_residue() ) {
-					sum_sq += pose.residue( ii ).xyz( "CA" ).distance_squared( target_pose_.residue( map_pair->second ).xyz( "CA" ) );
-					num_match++;
+			if ( map_pair != target_pose_map_.end() && map_pair->second <= target_pose_.total_residue() ) {
+				sum_sq += pose.residue( ii ).xyz( "CA" ).distance_squared( target_pose_.residue( map_pair->second ).xyz( "CA" ) );
+				num_match++;
 			}
 		}
 	}
 
-	if(num_match > 0) {
+	if ( num_match > 0 ) {
 		sum_sq = std::sqrt( sum_sq/num_match );
 	}
 
@@ -619,17 +626,20 @@ DomainAssemblyMover::initialize()
 {
 	if ( ! movemap_set() ) initialize_movemap_from_commandline();
 	if ( ! fragsets_set() ) initialize_fragments_from_commandline();
-	if ( basic::options::option [ basic::options::OptionKeys::DomainAssembly::da_eval_pose_map ].user() )
-			  initialize_pose_map_from_commandline();
+	if ( basic::options::option [ basic::options::OptionKeys::DomainAssembly::da_eval_pose_map ].user() ) {
+		initialize_pose_map_from_commandline();
+	}
 	if ( target_pose_.empty() && basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) initialize_target_pose();
-	if ( starting_pose_.empty() && basic::options::option[ basic::options::OptionKeys::DomainAssembly::da_start_pdb ].user() )
-			  initialize_start_pose_from_commandline();
-	if( buried_residues_.empty() && basic::options::option[ basic::options::OptionKeys::DomainAssembly::da_require_buried ].user() )
+	if ( starting_pose_.empty() && basic::options::option[ basic::options::OptionKeys::DomainAssembly::da_start_pdb ].user() ) {
+		initialize_start_pose_from_commandline();
+	}
+	if ( buried_residues_.empty() && basic::options::option[ basic::options::OptionKeys::DomainAssembly::da_require_buried ].user() ) {
 		initialize_buried_from_commandline();
+	}
 }
 
 void DomainAssemblyMover::initialize_target_pose() {
-	if( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
+	if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 		core::import_pose::pose_from_pdb( target_pose_,
 			*(core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )),
 			basic::options::option[ basic::options::OptionKeys::in::file::native ]() );
@@ -703,12 +713,12 @@ DomainAssemblyMover::initialize_fragments_from_commandline()
 	// read fragments file
 	core::fragment::ConstantLengthFragSetOP fragset3mer = NULL;
 	core::fragment::ConstantLengthFragSetOP fragset9mer = NULL;
-	if (basic::options::option[ basic::options::OptionKeys::in::file::frag3].user()){
+	if ( basic::options::option[ basic::options::OptionKeys::in::file::frag3].user() ) {
 		fragset3mer = core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( 3 ) );
 		fragset3mer->read_fragment_file( basic::options::option[ basic::options::OptionKeys::in::file::frag3 ]() );
 		fragset3mer_ = fragset3mer;
 	}
-	if (basic::options::option[ basic::options::OptionKeys::in::file::frag9].user()){
+	if ( basic::options::option[ basic::options::OptionKeys::in::file::frag9].user() ) {
 		fragset9mer = core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( 9 ) );
 		fragset9mer->read_fragment_file( basic::options::option[ basic::options::OptionKeys::in::file::frag9 ]() );
 		fragset9mer_ = fragset9mer;
@@ -717,7 +727,7 @@ DomainAssemblyMover::initialize_fragments_from_commandline()
 
 void DomainAssemblyMover::recover_sidechains( core::pose::Pose & pose ) const
 {
-	if( starting_pose_.empty() ) {
+	if ( starting_pose_.empty() ) {
 		throw utility::excn::EXCN_Msg_Exception( "No starting pose specified! Use -da_start_pdb\n" );
 	}
 	protocols::simple_moves::ReturnSidechainMover return_sidechains( starting_pose_ );

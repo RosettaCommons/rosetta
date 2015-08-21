@@ -63,8 +63,8 @@ static thread_local basic::Tracer TR( "core.mm.MMBondAngleLibrary" );
 
 /// @details Construct a MMBondAngleLibrary instant from a filename string and constant access pointer to an MMAtomTypeSet
 MMBondAngleLibrary::MMBondAngleLibrary(
-	 std::string filename,
-	 core::chemical::MMAtomTypeSetCAP mm_atom_set_ap
+	std::string filename,
+	core::chemical::MMAtomTypeSetCAP mm_atom_set_ap
 )
 {
 	mm_atom_set_ = mm_atom_set_ap;
@@ -77,15 +77,15 @@ MMBondAngleLibrary::MMBondAngleLibrary(
 	std::ifstream data( filename.c_str() );
 
 	bool in_bonds_section = false;
-	while( getline( data, line ) ) {
-		if( line.size() < 1 || line[0] == '!' || line[0] == ' ' ) continue; // comment or blank lines
-		if (line == "DIHEDRALS") in_bonds_section = false;
-		if (in_bonds_section) lines.push_back( line );
-		if (line == "ANGLES") in_bonds_section = true;
+	while ( getline( data, line ) ) {
+		if ( line.size() < 1 || line[0] == '!' || line[0] == ' ' ) continue; // comment or blank lines
+		if ( line == "DIHEDRALS" ) in_bonds_section = false;
+		if ( in_bonds_section ) lines.push_back( line );
+		if ( line == "ANGLES" ) in_bonds_section = true;
 	}
 
 	// add the torsion params
-	for( Size i = 1; i <= lines.size(); ++i ) {
+	for ( Size i = 1; i <= lines.size(); ++i ) {
 
 		std::istringstream l( lines[i] );
 
@@ -114,17 +114,14 @@ MMBondAngleLibrary::MMBondAngleLibrary(
 		//   << minimum << std::endl;
 
 		// add to correct library
-		if( atom_type_string_1 == "X" && atom_type_string_3 == "X" )
-			{
-				wildcard_mm_bondangle_library_.insert( std::make_pair(
-					mm_bondangle_atom_tri( atom_type_int1, atom_type_int2,	atom_type_int3 ),
-					mm_bondangle_param_set( k_theta, minimum )	)	);
-			}
-		else
-			{
-				fully_assigned_mm_bondangle_library_.insert( std::make_pair(
-					mm_bondangle_atom_tri( atom_type_int1, atom_type_int2, atom_type_int3 ),
-					mm_bondangle_param_set( k_theta, minimum )	)	);
+		if ( atom_type_string_1 == "X" && atom_type_string_3 == "X" ) {
+			wildcard_mm_bondangle_library_.insert( std::make_pair(
+				mm_bondangle_atom_tri( atom_type_int1, atom_type_int2, atom_type_int3 ),
+				mm_bondangle_param_set( k_theta, minimum ) ) );
+		} else {
+			fully_assigned_mm_bondangle_library_.insert( std::make_pair(
+				mm_bondangle_atom_tri( atom_type_int1, atom_type_int2, atom_type_int3 ),
+				mm_bondangle_param_set( k_theta, minimum ) ) );
 		}
 	}
 
@@ -139,25 +136,25 @@ MMBondAngleLibrary::MMBondAngleLibrary(
 
 	// print number torsion params added
 	TR << "MM bond angle sets added fully assigned: " << fully_assigned_mm_bondangle_library_.size()
-		 << "; wildcard: " << wildcard_mm_bondangle_library_.size() << " and 1 virtual parameter."
-		 << std::endl;
+		<< "; wildcard: " << wildcard_mm_bondangle_library_.size() << " and 1 virtual parameter."
+		<< std::endl;
 }
 
 mm_bondangle_library_citer_pair
 MMBondAngleLibrary::lookup (
-		int atom1,
-		int atom2,
-		int atom3) const
+	int atom1,
+	int atom2,
+	int atom3) const
 {
 	static std::string const x_string = "X";
 	static std::string const virt_string = "VIRT";
 
-	if( fully_assigned_mm_bondangle_library_.count(
+	if ( fully_assigned_mm_bondangle_library_.count(
 			mm_bondangle_atom_tri( atom1, atom2, atom3 ) ) ) {
 		// forward
 		return fully_assigned_mm_bondangle_library_.equal_range(
 			mm_bondangle_atom_tri( atom1, atom2, atom3 ) );
-	} else if( fully_assigned_mm_bondangle_library_.count(
+	} else if ( fully_assigned_mm_bondangle_library_.count(
 			mm_bondangle_atom_tri( atom3, atom2, atom1 ) ) ) {
 		// backward
 		return fully_assigned_mm_bondangle_library_.equal_range(
@@ -178,7 +175,7 @@ MMBondAngleLibrary::lookup (
 
 	int const wild_atom_type = mm_atom_set->atom_type_index( x_string );
 
-	if( wildcard_mm_bondangle_library_.count(
+	if ( wildcard_mm_bondangle_library_.count(
 			mm_bondangle_atom_tri( wild_atom_type, atom2, wild_atom_type ) ) ) {
 		// wildcard 1 & 3
 		return wildcard_mm_bondangle_library_.equal_range(
@@ -186,14 +183,15 @@ MMBondAngleLibrary::lookup (
 	}
 
 	TR << "No parameters for " << (*mm_atom_set)[atom1].name() << "-" << (*mm_atom_set)[atom2].name() << "-"
-	   << (*mm_atom_set)[atom3].name() << std::endl;
+		<< (*mm_atom_set)[atom3].name() << std::endl;
 	//return fully_assigned_mm_bondangle_library_.equal_range(
 	//  mm_bondangle_atom_tri( virt_atom_type, virt_atom_type, virt_atom_type ));
-	if ( ! basic::options::option[ basic::options::OptionKeys::MM::ignore_missing_bondangle_params ]() )
+	if ( ! basic::options::option[ basic::options::OptionKeys::MM::ignore_missing_bondangle_params ]() ) {
 		utility_exit_with_message("COULD NOT FIND BOND ANGLE PARAMS FOR " +
-				boost::lexical_cast<std::string>(atom1) + " " +
-				boost::lexical_cast<std::string>(atom2) + " " +
-				boost::lexical_cast<std::string>(atom3) );
+			boost::lexical_cast<std::string>(atom1) + " " +
+			boost::lexical_cast<std::string>(atom2) + " " +
+			boost::lexical_cast<std::string>(atom3) );
+	}
 
 	return mm_bondangle_library_citer_pair();  //< meaningless, just for removing gcc warning.
 }
@@ -201,9 +199,9 @@ MMBondAngleLibrary::lookup (
 mm_bondangle_library_citer_pair
 MMBondAngleLibrary::lookup
 (
- std::string atom1,
- std::string atom2,
- std::string atom3
+	std::string atom1,
+	std::string atom2,
+	std::string atom3
 ) const
 {
 	core::chemical::MMAtomTypeSetCOP mm_atom_set( mm_atom_set_ );
@@ -216,24 +214,24 @@ void
 MMBondAngleLibrary::pretty_print() const
 {
 	// for each key print out its value
-	for( mm_bondangle_library_citer i = fully_assigned_mm_bondangle_library_.begin(),
-				 e = fully_assigned_mm_bondangle_library_.end(); i != e; ++i ) {
+	for ( mm_bondangle_library_citer i = fully_assigned_mm_bondangle_library_.begin(),
+			e = fully_assigned_mm_bondangle_library_.end(); i != e; ++i ) {
 		TR << (i->first).key1() << "\t"
-			 << (i->first).key2() << "\t"
-			 << (i->first).key3() << "\t"
-			 << (i->second).key1() << "\t"
-			 << (i->second).key2() << "\t"
-			 << std::endl;
+			<< (i->first).key2() << "\t"
+			<< (i->first).key3() << "\t"
+			<< (i->second).key1() << "\t"
+			<< (i->second).key2() << "\t"
+			<< std::endl;
 	}
 
-	for( mm_bondangle_library_citer i = wildcard_mm_bondangle_library_.begin(),
-				 e = wildcard_mm_bondangle_library_.end(); i != e; ++i ) {
+	for ( mm_bondangle_library_citer i = wildcard_mm_bondangle_library_.begin(),
+			e = wildcard_mm_bondangle_library_.end(); i != e; ++i ) {
 		TR << (i->first).key1() << "\t"
-			 << (i->first).key2() << "\t"
-			 << (i->first).key3() << "\t"
-			 << (i->second).key1() << "\t"
-			 << (i->second).key2() << "\t"
-			 << std::endl;
+			<< (i->first).key2() << "\t"
+			<< (i->first).key3() << "\t"
+			<< (i->second).key1() << "\t"
+			<< (i->second).key2() << "\t"
+			<< std::endl;
 	}
 }
 
@@ -241,13 +239,13 @@ void
 MMBondAngleLibrary::pretty_print(  int atom1, int atom2, int atom3 ) const
 {
 	mm_bondangle_library_citer_pair temppair = (*this).lookup(atom1, atom2, atom3);
-	for( mm_bondangle_library_citer i = temppair.first, e = temppair.second; i != e; ++i ) {
+	for ( mm_bondangle_library_citer i = temppair.first, e = temppair.second; i != e; ++i ) {
 		TR << (i->first).key1() << "\t"
-			 << (i->first).key2() << "\t"
-			 << (i->first).key3() << "\t"
-			 << (i->second).key1() << "\t"
-			 << (i->second).key2() << "\t"
-			 << std::endl;
+			<< (i->first).key2() << "\t"
+			<< (i->first).key3() << "\t"
+			<< (i->second).key1() << "\t"
+			<< (i->second).key2() << "\t"
+			<< std::endl;
 	}
 }
 
@@ -255,13 +253,13 @@ void
 MMBondAngleLibrary::pretty_print( std::string atom1, std::string atom2, std::string atom3 ) const
 {
 	mm_bondangle_library_citer_pair temppair = (*this).lookup(atom1, atom2, atom3);
-	for( mm_bondangle_library_citer i = temppair.first, e = temppair.second; i != e; ++i ) {
+	for ( mm_bondangle_library_citer i = temppair.first, e = temppair.second; i != e; ++i ) {
 		TR << (i->first).key1() << "\t"
-			 << (i->first).key2() << "\t"
-			 << (i->first).key3() << "\t"
-			 << (i->second).key1() << "\t"
-			 << (i->second).key2() << "\t"
-			 << std::endl;
+			<< (i->first).key2() << "\t"
+			<< (i->first).key3() << "\t"
+			<< (i->second).key1() << "\t"
+			<< (i->second).key2() << "\t"
+			<< std::endl;
 	}
 }
 

@@ -92,7 +92,7 @@ static thread_local basic::Tracer tt( "core.pack.rotamer_set.rotamer_building_fu
 // DNA-specific methods
 void
 read_DNA_rotlib(
-  utility::io::izstream & lib_stream,
+	utility::io::izstream & lib_stream,
 	utility::vector1< DihedralSet* > & library
 )
 {
@@ -124,10 +124,11 @@ read_DNA_rotlib(
 			pos = line.find_first_of( delimiters, last_pos );
 		}
 
-		if ( dihedrals->size() < 7)
+		if ( dihedrals->size() < 7 ) {
 			delete dihedrals;
-		else
+		} else {
 			library.push_back( dihedrals );
+		}
 	}
 }
 
@@ -161,7 +162,7 @@ build_lib_dna_rotamers(
 	Real const rad2deg   ( 180/pi );
 
 	Residue const & existing_residue( pose.residue( resid ) );
-debug_assert( existing_residue.is_NA() && concrete_residue->is_NA() );
+	debug_assert( existing_residue.is_NA() && concrete_residue->is_NA() );
 
 	bool const simple_way( existing_residue.is_terminus() );
 
@@ -169,9 +170,9 @@ debug_assert( existing_residue.is_NA() && concrete_residue->is_NA() );
 	ResidueOP rot = ResidueFactory::create_residue( *concrete_residue, existing_residue, pose.conformation() );
 	rot->set_chi( 1, existing_residue.chi(1) );
 
-	if ( simple_way )
+	if ( simple_way ) {
 		rotamers.push_back( rot );
-	else {
+	} else {
 		pose::Pose mini_pose;
 		mini_pose.append_residue_by_bond( pose.residue( resid-1 ) );
 		mini_pose.append_residue_by_bond( *rot );
@@ -180,7 +181,7 @@ debug_assert( existing_residue.is_NA() && concrete_residue->is_NA() );
 		Size const seqpos(2);
 		Residue const & rsd( mini_pose.residue(seqpos  ) ), next_rsd( mini_pose.residue(seqpos+1) );
 
-	debug_assert( rsd.is_NA() && mini_pose.residue(seqpos-1).is_NA() );
+		debug_assert( rsd.is_NA() && mini_pose.residue(seqpos-1).is_NA() );
 
 		Vector const P_O3( ( next_rsd.xyz("P") - rsd.xyz("O3'") ) );
 		Real const target_distance( P_O3.length() );
@@ -193,30 +194,30 @@ debug_assert( existing_residue.is_NA() && concrete_residue->is_NA() );
 		ConstraintSetOP cst_set( new ConstraintSet() );
 		func::FuncOP f_target_distance_std_length( new func::HarmonicFunc( target_distance, std_length ) );
 		cst_set->add_constraint(
-			ConstraintCOP( ConstraintOP( new AtomPairConstraint( 
-				AtomID(rsd.atom_index("O3'"),seqpos),
-				AtomID(next_rsd.atom_index("P"),seqpos+1),
-				f_target_distance_std_length
+			ConstraintCOP( ConstraintOP( new AtomPairConstraint(
+			AtomID(rsd.atom_index("O3'"),seqpos),
+			AtomID(next_rsd.atom_index("P"),seqpos+1),
+			f_target_distance_std_length
 			) ) )
 		);
 
 		func::FuncOP f_P_bond_angle_std_angle( new func::HarmonicFunc( P_bond_angle, std_angle ) );
 		cst_set->add_constraint(
 			ConstraintCOP( ConstraintOP( new AngleConstraint(
-				AtomID(next_rsd.atom_index("O5'"),seqpos+1),
-				AtomID(next_rsd.atom_index("P"),seqpos+1),
-				AtomID(rsd.atom_index("O3'"),seqpos),
-				f_P_bond_angle_std_angle
+			AtomID(next_rsd.atom_index("O5'"),seqpos+1),
+			AtomID(next_rsd.atom_index("P"),seqpos+1),
+			AtomID(rsd.atom_index("O3'"),seqpos),
+			f_P_bond_angle_std_angle
 			) ) )
 		);
-		
+
 		func::FuncOP f_O3_bond_angle_std_angle( new func::HarmonicFunc( O3_bond_angle, std_angle ) );
 		cst_set->add_constraint(
 			ConstraintCOP( ConstraintOP( new AngleConstraint(
-				AtomID(next_rsd.atom_index("P"),seqpos+1),
-				AtomID(next_rsd.atom_index("O3'"),seqpos),
-				AtomID(rsd.atom_index("C3'"),seqpos),
-				f_O3_bond_angle_std_angle
+			AtomID(next_rsd.atom_index("P"),seqpos+1),
+			AtomID(next_rsd.atom_index("O3'"),seqpos),
+			AtomID(rsd.atom_index("C3'"),seqpos),
+			f_O3_bond_angle_std_angle
 			) ) )
 		);
 
@@ -260,40 +261,42 @@ debug_assert( existing_residue.is_NA() && concrete_residue->is_NA() );
 				bool accept_rotamer = true;
 
 				if ( minimize_rotamers ) {
-// 					mini_pose.dump_pdb( "before_"+string_of(rotamers.size())+".pdb" );
+					//      mini_pose.dump_pdb( "before_"+string_of(rotamers.size())+".pdb" );
 
-// 					PROF_START( TEST1 );
- 					AtomTreeMinimizer().run( mini_pose, mm, sf, options );
-// 					PROF_STOP ( TEST1 );
+					//      PROF_START( TEST1 );
+					AtomTreeMinimizer().run( mini_pose, mm, sf, options );
+					//      PROF_STOP ( TEST1 );
 
-// 					tt << "LIBR.: ";
-// 					for ( int i=1; i<=5; ++i ) {
-// 						tt << F(10,3,(*dihedrals)[i]);
-// 					}
+					//      tt << "LIBR.: ";
+					//      for ( int i=1; i<=5; ++i ) {
+					//       tt << F(10,3,(*dihedrals)[i]);
+					//      }
 
-// 					tt << std::endl << "AFTER: ";
-// 					for (Size i=1; i <= 5; ++i) {
-// 						TorsionID const id ( ( i==1 ) ? ( TorsionID( seqpos-1, BB, nbb ) ) : ( TorsionID( seqpos, BB, i-1 ) ) );
-// 						tt << F(10,3, mini_pose.torsion( id ) );
-// 					}
+					//      tt << std::endl << "AFTER: ";
+					//      for (Size i=1; i <= 5; ++i) {
+					//       TorsionID const id ( ( i==1 ) ? ( TorsionID( seqpos-1, BB, nbb ) ) : ( TorsionID( seqpos, BB, i-1 ) ) );
+					//       tt << F(10,3, mini_pose.torsion( id ) );
+					//      }
 
-// 					tt << std::endl << "DIFF : ";
+					//      tt << std::endl << "DIFF : ";
 					for ( int i=1; i<=5; ++i ) {
 						TorsionID const id ( ( i==1 ) ? ( TorsionID( seqpos-1, BB, nbb ) ) : ( TorsionID( seqpos, BB, i-1 ) ) );
 						Real diff_i = fabs( mini_pose.torsion( id ) - (*dihedrals)[i] );
 
-						if ( diff_i>180 )
+						if ( diff_i>180 ) {
 							diff_i = 360-diff_i;
+						}
 
-						if ( diff_i > angle_tol )
+						if ( diff_i > angle_tol ) {
 							accept_rotamer = false;
+						}
 
-// 						tt << F(10,3,diff_i);
+						//       tt << F(10,3,diff_i);
 					}
-// 					tt << std::endl << std::endl;
+					//      tt << std::endl << std::endl;
 				}
 
-				if (accept_rotamer) {
+				if ( accept_rotamer ) {
 					Residue const &
 						cur_rsd( mini_pose.residue( seqpos ) ),
 						cur_next_rsd( mini_pose.residue(seqpos+1) );
@@ -305,20 +308,23 @@ debug_assert( existing_residue.is_NA() && concrete_residue->is_NA() );
 
 					Real diff_P_angle ( rad2deg * fabs( cur_P_bond_angle  -  P_bond_angle ) );
 					Real diff_O3_angle( rad2deg * fabs( cur_O3_bond_angle - O3_bond_angle ) );
-					if ( diff_P_angle > 180 )
+					if ( diff_P_angle > 180 ) {
 						diff_P_angle = 360 - diff_P_angle;
-					if ( diff_O3_angle > 180 )
+					}
+					if ( diff_O3_angle > 180 ) {
 						diff_O3_angle = 360 - diff_O3_angle;
+					}
 
-					if ( ( diff_P_angle > angle_tol ) || ( diff_O3_angle > angle_tol ) || ( diff_length > dist_tol ) )
+					if ( ( diff_P_angle > angle_tol ) || ( diff_O3_angle > angle_tol ) || ( diff_length > dist_tol ) ) {
 						accept_rotamer = false;
+					}
 
-// 					if ( accept_rotamer )
-// 						tt << "ACCEPTED: Opt. diff: P-O3="  << diff_length << ", P_bond diff="  << diff_P_angle << ", O3_bond diff=" << diff_O3_angle << std::endl;
-// 					else
-// 						tt << "REJECTED: Opt. diff: P-O3="  << diff_length << ", P_bond diff="  << diff_P_angle << ", O3_bond diff=" << diff_O3_angle << std::endl;
+					//      if ( accept_rotamer )
+					//       tt << "ACCEPTED: Opt. diff: P-O3="  << diff_length << ", P_bond diff="  << diff_P_angle << ", O3_bond diff=" << diff_O3_angle << std::endl;
+					//      else
+					//       tt << "REJECTED: Opt. diff: P-O3="  << diff_length << ", P_bond diff="  << diff_P_angle << ", O3_bond diff=" << diff_O3_angle << std::endl;
 
-					// 					mini_pose.dump_pdb( "after_"+string_of(rotamers.size())+".pdb" );
+					//      mini_pose.dump_pdb( "after_"+string_of(rotamers.size())+".pdb" );
 				}
 
 				if ( accept_rotamer ) {
@@ -392,25 +398,25 @@ build_random_dna_rotamers(
 	}
 
 	Residue const & existing_residue( pose.residue( resid ) );
-debug_assert( existing_residue.is_NA() && concrete_residue->is_NA() );
+	debug_assert( existing_residue.is_NA() && concrete_residue->is_NA() );
 
 	if ( existing_residue.is_terminus() ) nrot_to_build = 1;
 
-// 	basic::T( "core.pack.rotamer_set", basic::t_info ) << "Building " << nrot_to_build << " DNA rotamers for " << resid <<
-//		" " << concrete_residue->name() << '\n';
+	//  basic::T( "core.pack.rotamer_set", basic::t_info ) << "Building " << nrot_to_build << " DNA rotamers for " << resid <<
+	//  " " << concrete_residue->name() << '\n';
 
 	// a residue of the correct type aligned to the existing backbone
 	ResidueOP rot = ResidueFactory::create_residue( *concrete_residue, existing_residue, pose.conformation() );
 	rot->set_chi( 1, existing_residue.chi(1) );
 
-//	tt << "Pushing DNA rotamer " << std::endl;
-//	for( Size ii = 1 ; ii <= concrete_residue->natoms() ; ++ii) {
-//		Vector coords( rot->xyz(ii) );
-//		tt << "Atom " << concrete_residue->atom_name( ii ) <<
-//			"  " << coords[0] <<
-//			"  " << coords[1] <<
-//			"  " << coords[2] << std::endl;
-//	}
+	// tt << "Pushing DNA rotamer " << std::endl;
+	// for( Size ii = 1 ; ii <= concrete_residue->natoms() ; ++ii) {
+	//  Vector coords( rot->xyz(ii) );
+	//  tt << "Atom " << concrete_residue->atom_name( ii ) <<
+	//   "  " << coords[0] <<
+	//   "  " << coords[1] <<
+	//   "  " << coords[2] << std::endl;
+	// }
 
 	rotamers.push_back( rot );
 
@@ -427,10 +433,10 @@ debug_assert( existing_residue.is_NA() && concrete_residue->is_NA() );
 		Size const seqpos(2);
 		Residue const &
 			prev_rsd( mini_pose.residue(seqpos-1) ),
-					 rsd( mini_pose.residue(seqpos  ) ),
+			rsd( mini_pose.residue(seqpos  ) ),
 			next_rsd( mini_pose.residue(seqpos+1) );
 
-	debug_assert( rsd.is_DNA() && prev_rsd.is_DNA() );
+		debug_assert( rsd.is_DNA() && prev_rsd.is_DNA() );
 
 		utility::vector1< Vector > bonds, atoms;
 
@@ -490,7 +496,7 @@ debug_assert( existing_residue.is_NA() && concrete_residue->is_NA() );
 			tmp2  += v2[i] * v2[i];
 			tmp12 += v1[i] * v2[i];
 		}
-	debug_assert( std::abs(tmp1-1)<1e-3 && std::abs(tmp2-1)<1e-3 && std::abs(tmp12)<1e-3 );
+		debug_assert( std::abs(tmp1-1)<1e-3 && std::abs(tmp2-1)<1e-3 && std::abs(tmp12)<1e-3 );
 
 
 		// now try a bunch of moves:
@@ -517,8 +523,8 @@ debug_assert( existing_residue.is_NA() && concrete_residue->is_NA() );
 					dot1 += e[i] * v1[i];
 					dot2 += e[i] * v2[i];
 				}
-				if ( tether_bond_distance )debug_assert( std::abs( dot1 ) < 1e-3 );
-				if ( tether_bond_angle    )debug_assert( tether_bond_distance && std::abs( dot2 ) < 1e-3 );
+				if ( tether_bond_distance ) debug_assert( std::abs( dot1 ) < 1e-3 );
+				if ( tether_bond_angle    ) debug_assert( tether_bond_distance && std::abs( dot2 ) < 1e-3 );
 			}
 
 
@@ -542,7 +548,7 @@ debug_assert( existing_residue.is_NA() && concrete_residue->is_NA() );
 
 			// this is a little tricky... maybe have to do more initialization here to match the "rotamer-constructor"
 			// behavior??
-		debug_assert( Size(rot->seqpos()) == resid );
+			debug_assert( Size(rot->seqpos()) == resid );
 			rotamers[ rotamers.size() ]->seqpos( resid );
 			rotamers[ rotamers.size() ]->chain( rot->chain() );
 			rotamers[ rotamers.size() ]->copy_residue_connections( existing_residue );
@@ -553,8 +559,8 @@ debug_assert( existing_residue.is_NA() && concrete_residue->is_NA() );
 			//tt << "r: " << tag << F(9,3,r.length()) << F(9,3,r.dot( n1 )) << F(9,3,r.dot( n2 ) ) << std::endl;
 
 			// confirm that phosphate is in the same place
-		debug_assert( mini_pose.residue(seqpos  ).xyz("P").distance( pose.residue(resid  ).xyz("P")) < 1e-2 &&
-							mini_pose.residue(seqpos+1).xyz("P").distance( pose.residue(resid+1).xyz("P")) < 1e-2 );
+			debug_assert( mini_pose.residue(seqpos  ).xyz("P").distance( pose.residue(resid  ).xyz("P")) < 1e-2 &&
+				mini_pose.residue(seqpos+1).xyz("P").distance( pose.residue(resid+1).xyz("P")) < 1e-2 );
 
 		} // r =1,nrot_to_build
 	}
@@ -579,19 +585,20 @@ build_dna_rotamers(
 	// need to improve this logic:
 	if ( level == task::EX_SIX_QUARTER_STEP_STDDEVS ) {
 
-			utility::io::izstream lib_stream;
-			basic::database::open( lib_stream, "rotamer/dna/VQ-DNA-64.rotlib" );
+		utility::io::izstream lib_stream;
+		basic::database::open( lib_stream, "rotamer/dna/VQ-DNA-64.rotlib" );
 
-			// Read rotamers from rotamer library
-			utility::vector1< DihedralSet* > library;
-			read_DNA_rotlib( lib_stream, library );
+		// Read rotamers from rotamer library
+		utility::vector1< DihedralSet* > library;
+		read_DNA_rotlib( lib_stream, library );
 
-			build_lib_dna_rotamers( library, resid, pose, concrete_residue, new_rotamers );
+		build_lib_dna_rotamers( library, resid, pose, concrete_residue, new_rotamers );
 
-			// Close stream and free library memory
-			lib_stream.close();
-			for ( utility::vector1< DihedralSet* >::iterator lib_iter = library.begin(), end = library.end(); lib_iter!=end; ++lib_iter )
-				delete( *lib_iter );
+		// Close stream and free library memory
+		lib_stream.close();
+		for ( utility::vector1< DihedralSet* >::iterator lib_iter = library.begin(), end = library.end(); lib_iter!=end; ++lib_iter ) {
+			delete( *lib_iter );
+		}
 
 	} else {
 		build_random_dna_rotamers( resid, pose, concrete_residue, level, new_rotamers );
@@ -601,12 +608,12 @@ build_dna_rotamers(
 	for ( Size ii=1; ii<= new_rotamers.size(); ++ii ) {
 		ResidueOP rot( new_rotamers[ii] );
 
-//    for( Size i = 1 ; i <= rot->natoms() ; ++i ) {
-//      tt << "precompat " << rot->atom_name(i) <<
-//          " x " << rot->xyz(i)[0] <<
-//          " y " << rot->xyz(i)[1] <<
-//          " z " << rot->xyz(i)[2] << std::endl;
-//    }
+		//    for( Size i = 1 ; i <= rot->natoms() ; ++i ) {
+		//      tt << "precompat " << rot->atom_name(i) <<
+		//          " x " << rot->xyz(i)[0] <<
+		//          " y " << rot->xyz(i)[1] <<
+		//          " z " << rot->xyz(i)[2] << std::endl;
+		//    }
 
 
 		if ( task.rotamer_couplings_exist() ) {
@@ -624,7 +631,7 @@ build_dna_rotamers(
 			}
 		} else {
 			//tt << "added dna rotamer: " << existing_residue.seqpos() << ' ' << existing_residue.name() << ' '<<
-			//	concrete_residue->name() << std::endl;
+			// concrete_residue->name() << std::endl;
 			rotamers.push_back( rot );
 		} // do rotamer couplings exist?
 	}
@@ -643,51 +650,51 @@ build_dna_rotamers(
 /// carbohydrate rotamers.  Ideally, we will find an alternative method for handling carbohydrate rotamer libraries....
 void
 build_rotamers_from_rotamer_bins(conformation::Residue const & residue,
-		utility::vector1<conformation::ResidueOP> & rotamers,
-		uint current_chi_index,
-		utility::vector1<uint> *current_bin_indices)
+	utility::vector1<conformation::ResidueOP> & rotamers,
+	uint current_chi_index,
+	utility::vector1<uint> *current_bin_indices)
 {
 	using namespace std;
 
 	Size n_chis = residue.type().nchi();
 
 	// On 1st (and only 1st) call per residue; create list of bin indices, one index for each side-chain torsion.
-	if (!current_bin_indices) {
+	if ( !current_bin_indices ) {
 		tt.Debug << "Creating list of indices; ";
 		current_bin_indices = new utility::vector1<uint>;  // empty vector
 		tt.Debug << "nesting " << n_chis << " levels deep." << endl;
-		for (uint i = 1; i <= n_chis; ++i) {
+		for ( uint i = 1; i <= n_chis; ++i ) {
 			current_bin_indices->push_back(0);  // Initialize with zeroes.
 		}
 	}
 
-	if (current_chi_index <= n_chis) {
+	if ( current_chi_index <= n_chis ) {
 		RotamerBins bins_for_current_chi = residue.chi_rotamers(current_chi_index);
 		Size n_bins_for_current_chi = bins_for_current_chi.size();
-		if (n_bins_for_current_chi != 0) {
-			for (uint i = 1; i <= n_bins_for_current_chi; ++i) {
+		if ( n_bins_for_current_chi != 0 ) {
+			for ( uint i = 1; i <= n_bins_for_current_chi; ++i ) {
 				current_bin_indices->at(current_chi_index) = i;
 				build_rotamers_from_rotamer_bins(residue, rotamers, current_chi_index + 1, current_bin_indices); // Recurse.
 			}
 		} else {  // Leave the bin index at 0 and drop to next level.
 			build_rotamers_from_rotamer_bins(residue, rotamers, current_chi_index + 1, current_bin_indices); // Recurse
 		}
-	// If the current chi index is greater than the number of chis, every index has been changed, and it is time to
-	// cease recursing and make a rotamer from the current state of the bin indices.
+		// If the current chi index is greater than the number of chis, every index has been changed, and it is time to
+		// cease recursing and make a rotamer from the current state of the bin indices.
 	} else {
 		//tt.Debug << *current_bin_indices << endl;
 		rotamers.push_back(residue.create_rotamer());  // Clone current residue.
 		// Set the torsions of the new rotamer to values indexed by current_bin_indices.
 		tt.Debug << "Selecting ";
-		for (uint i = 1; i <= n_chis; ++i) {
+		for ( uint i = 1; i <= n_chis; ++i ) {
 			RotamerBins bins = residue.chi_rotamers(i);  // Get bins for ith torsion angle.
 			uint bin_index = current_bin_indices->at(i);  // Get the appropriate bin for this rotamer by index.
-			if (bin_index != 0) {  // If index is 0, there are no bins: skip setting this torsion.
+			if ( bin_index != 0 ) {  // If index is 0, there are no bins: skip setting this torsion.
 				RotamerBin bin = bins[bin_index];
 				Angle torsion = bin.first;  // first is the setting; second is the SD.
 				tt.Debug << "bin #" << current_bin_indices->at(i) <<
-						" from torsion angle chi" << i <<
-						" (" << torsion << ")  ";
+					" from torsion angle chi" << i <<
+					" (" << torsion << ")  ";
 				rotamers[rotamers.size()]->set_chi(i, torsion);  // Set the rotamer's torsion angle.
 			}
 		}
@@ -710,7 +717,7 @@ debug_dump_rotamers(
 		tt << "Rotamer at position " << rot->seqpos() << std::endl;
 		tt << "  of type " << rot->type().name() << std::endl;
 
-		for( Size jj=1; jj <= rot->natoms() ; ++jj ){
+		for ( Size jj=1; jj <= rot->natoms() ; ++jj ) {
 			conformation::Atom const & atm = rot->atom( jj );
 			tt << "Atom " << rot->atom_name( jj ) << " at " << atm.xyz()[0] << "  " << atm.xyz()[1] << "  " << atm.xyz()[2] << std::endl;
 		}
@@ -742,7 +749,7 @@ create_oriented_water_rotamer(
 	kinematics::Stub const tp5_stub( tp5_O, tp5_midpoint, tp5_atom1 );
 
 	conformation::ResidueOP rot( conformation::ResidueFactory::create_residue( h2o_type ) );
-debug_assert( rot->natoms() == 3 );
+	debug_assert( rot->natoms() == 3 );
 	rot->set_xyz(  "O", xyz_O );
 	rot->set_xyz( "H1", xyz_stub.local2global( tp5_stub.global2local( tp5.xyz("H1") ) ) );
 	rot->set_xyz( "H2", xyz_stub.local2global( tp5_stub.global2local( tp5.xyz("H2") ) ) );
@@ -767,7 +774,7 @@ build_fixed_O_water_rotamers_independent(
 	Real const max_theta( 180.0 );
 
 
-debug_assert( h2o_type.natoms() == 3 ); // only works for this guy now
+	debug_assert( h2o_type.natoms() == 3 ); // only works for this guy now
 
 	Residue const & existing_rsd( pose.residue(seqpos) );
 	Vector const & xyz_O( existing_rsd.nbr_atom_xyz() );
@@ -783,17 +790,17 @@ debug_assert( h2o_type.natoms() == 3 ); // only works for this guy now
 	utility::vector1< Vector > acceptors, donors;
 
 	for ( graph::Graph::EdgeListConstIter
-					ir  = packer_neighbor_graph->get_node( seqpos )->const_edge_list_begin(),
-					ire = packer_neighbor_graph->get_node( seqpos )->const_edge_list_end();
-				ir != ire; ++ir ) {
+			ir  = packer_neighbor_graph->get_node( seqpos )->const_edge_list_begin(),
+			ire = packer_neighbor_graph->get_node( seqpos )->const_edge_list_end();
+			ir != ire; ++ir ) {
 		Size const i( (*ir)->get_other_ind( seqpos ) );
-	debug_assert( i != seqpos );
+		debug_assert( i != seqpos );
 		Residue const & rsd( pose.residue(i) );
 
 		// donors
 		for ( chemical::AtomIndices::const_iterator
-						hnum  = rsd.Hpos_polar().begin(),
-						hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
+				hnum  = rsd.Hpos_polar().begin(),
+				hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 			Vector const & xyz( rsd.xyz( rsd.atom_base( *hnum ) ) );
 			if ( xyz_O.distance_squared( xyz ) < heavy_atom_cutoff2 ) {
 				donors.push_back( xyz );
@@ -802,8 +809,8 @@ debug_assert( h2o_type.natoms() == 3 ); // only works for this guy now
 
 		// acceptors
 		for ( chemical::AtomIndices::const_iterator
-						anum  = rsd.accpt_pos().begin(),
-						anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
+				anum  = rsd.accpt_pos().begin(),
+				anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
 			Vector const & xyz( rsd.xyz( *anum ) );
 			if ( xyz_O.distance_squared( xyz ) < heavy_atom_cutoff2 ) {
 				acceptors.push_back( xyz );
@@ -909,19 +916,19 @@ build_optimal_water_Os_on_acceptor(
 	phi_steps.push_back(  4 );
 
 	switch( hybrid ) {
-	case SP2_HYBRID:
+	case SP2_HYBRID :
 		theta = 180.0 - 120.0;
 		step_size = 15.0;
 		phi_list.push_back(   0.0 );
 		phi_list.push_back( 180.0 );
 		break;
-	case SP3_HYBRID:
+	case SP3_HYBRID :
 		theta = 180.0 - 109.0;
 		step_size = 10.0;
 		phi_list.push_back( 120.0 );
 		phi_list.push_back( 240.0 );
 		break;
-	case RING_HYBRID:
+	case RING_HYBRID :
 		b1_xyz = 0.5 * ( b1_xyz + b2_xyz );
 		theta = 0.0;
 		phi_steps.clear();
@@ -929,7 +936,7 @@ build_optimal_water_Os_on_acceptor(
 		phi_list.push_back( 0.0 ); // doesnt matter
 		step_size = 0.0; // doesnt matter
 		break;
-	default:
+	default :
 		tt << "Bad hybridization type for acceptor " << hybrid << '\n';
 		utility_exit();
 	}
@@ -972,7 +979,7 @@ build_donor_donor_waters(
 	Real const o12_dis2( o1.distance_squared( o2 ) );
 	if ( o1.distance_squared( o2 ) > o12_dis2_cutoff ) return;
 
-debug_assert( nstep >= 2 && nstep%2 == 0 );
+	debug_assert( nstep >= 2 && nstep%2 == 0 );
 	for ( Size step=0; step<= nstep; ++step ) {
 
 		// calculate an intermediate water position
@@ -1048,7 +1055,7 @@ build_donor_acceptor_waters(
 		Real const o12_dis2( o1.distance_squared( o2 ) );
 		if ( o1.distance_squared( o2 ) > o12_dis2_cutoff ) continue;
 
-	debug_assert( nstep>= 2 && nstep%2 == 0 );
+		debug_assert( nstep>= 2 && nstep%2 == 0 );
 
 		for ( Size step=0; step<= nstep; ++step ) {
 
@@ -1088,23 +1095,23 @@ build_donor_acceptor_waters(
 			// accept this rotamer
 			new_waters.push_back( rot );
 			new_waters.push_back( create_oriented_water_rotamer( h2o_type, hatm1_xyz, xyz_O, aatm2_xyz,
-																													 "EP1", "H2", tp5 ) );
-// 			{
-// 				using namespace ObjexxFCL;
-// 				using namespace ObjexxFCL::format;
+				"EP1", "H2", tp5 ) );
+			//    {
+			//     using namespace ObjexxFCL;
+			//     using namespace ObjexxFCL::format;
 
-// 				std::string const filename( "donor_acceptor_test_"+lead_zero_string_of(counter,4)+"_"+
-// 																		lead_zero_string_of(step,4)+".pdb" );
+			//     std::string const filename( "donor_acceptor_test_"+lead_zero_string_of(counter,4)+"_"+
+			//                   lead_zero_string_of(step,4)+".pdb" );
 
-// 				tt << "hbenergy_da: step " << I(4,step) << F(9,3,energy1) << F(9,3,energy2) <<
-// 					F(9,3,std::sqrt(o12_dis2)) << ' '<< filename << '\n';
+			//     tt << "hbenergy_da: step " << I(4,step) << F(9,3,energy1) << F(9,3,energy2) <<
+			//      F(9,3,std::sqrt(o12_dis2)) << ' '<< filename << '\n';
 
-// 				pose::Pose pose;
-// 				pose.append_residue_by_jump( rsd1, 1 );
-// 				pose.append_residue_by_jump( rsd2, 1 );
-// 				pose.append_residue_by_jump( *rot, 1 );
-// 				pose.dump_pdb( filename );
-// 			}
+			//     pose::Pose pose;
+			//     pose.append_residue_by_jump( rsd1, 1 );
+			//     pose.append_residue_by_jump( rsd2, 1 );
+			//     pose.append_residue_by_jump( *rot, 1 );
+			//     pose.dump_pdb( filename );
+			//    }
 
 		}
 	}
@@ -1154,7 +1161,7 @@ build_acceptor_acceptor_waters(
 			Real const o12_dis2( o1.distance_squared( o2 ) );
 			if ( o1.distance_squared( o2 ) > o12_dis2_cutoff ) continue;
 
-		debug_assert( nstep>= 2 && nstep%2 == 0 );
+			debug_assert( nstep>= 2 && nstep%2 == 0 );
 
 			for ( Size step=0; step<= nstep; ++step ) {
 
@@ -1206,7 +1213,7 @@ build_moving_O_bridge_waters(
 	chemical::ResidueType const & h2o_type,
 	conformation::Residue const & tp5,
 	Size const nstep,
-// 	utility::vector1< id::AtomID > & atom_ids,
+	//  utility::vector1< id::AtomID > & atom_ids,
 	utility::vector1< conformation::ResidueOP > & new_rotamers
 )
 {
@@ -1225,8 +1232,8 @@ build_moving_O_bridge_waters(
 	//
 	// donors
 	for ( chemical::AtomIndices::const_iterator
-					hnum  = rsd2.Hpos_polar().begin(),
-					hnume = rsd2.Hpos_polar().end(); hnum != hnume; ++hnum ) {
+			hnum  = rsd2.Hpos_polar().begin(),
+			hnume = rsd2.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 		Size const hatm( *hnum );
 
 		if ( rsd2.xyz( hatm ).distance_squared( anchor_xyz ) > dis2_cutoff ) continue;
@@ -1249,8 +1256,8 @@ build_moving_O_bridge_waters(
 
 	// acceptors
 	for ( chemical::AtomIndices::const_iterator
-					anum  = rsd2.accpt_pos().begin(),
-					anume = rsd2.accpt_pos().end(); anum != anume; ++anum ) {
+			anum  = rsd2.accpt_pos().begin(),
+			anume = rsd2.accpt_pos().end(); anum != anume; ++anum ) {
 		Size const aatm( *anum );
 
 		if ( rsd2.xyz( aatm ).distance_squared( anchor_xyz ) > dis2_cutoff ) continue;
@@ -1288,7 +1295,7 @@ build_moving_O_water_rotamers_dependent(
 	using conformation::ResidueOP;
 	using numeric::conversions::degrees;
 
-debug_assert( h2o_type.natoms() == 3 ); // only works for this guy now
+	debug_assert( h2o_type.natoms() == 3 ); // only works for this guy now
 
 	Size nstep( water_info.nstep() );
 	if ( nstep < 2 ) nstep = 2;
@@ -1322,11 +1329,11 @@ debug_assert( h2o_type.natoms() == 3 ); // only works for this guy now
 	// may want to refine this
 
 	for ( graph::Graph::EdgeListConstIter
-					jr  = packer_neighbor_graph->get_node( i )->const_edge_list_begin(),
-					jre = packer_neighbor_graph->get_node( i )->const_edge_list_end();
-				jr != jre; ++jr ) {
+			jr  = packer_neighbor_graph->get_node( i )->const_edge_list_begin(),
+			jre = packer_neighbor_graph->get_node( i )->const_edge_list_end();
+			jr != jre; ++jr ) {
 		Size const j( (*jr)->get_other_ind( i ) );
-	debug_assert( i != j );
+		debug_assert( i != j );
 
 		//if ( !pose.residue(j).is_protein() ) continue; // first just protein-DNA bridges
 		if ( pose.residue(j).name() == "TP3" ) continue;
@@ -1375,7 +1382,7 @@ build_moving_O_water_rotamers_independent(
 	using conformation::ResidueOP;
 	using numeric::conversions::degrees;
 
-debug_assert( h2o_type.natoms() == 3 ); // only works for this guy now
+	debug_assert( h2o_type.natoms() == 3 ); // only works for this guy now
 
 	Size nstep( water_info.nstep() );
 	if ( nstep < 2 ) nstep = 2;
@@ -1400,11 +1407,11 @@ debug_assert( h2o_type.natoms() == 3 ); // only works for this guy now
 	// may want to refine this
 
 	for ( graph::Graph::EdgeListConstIter
-					jr  = packer_neighbor_graph->get_node( i )->const_edge_list_begin(),
-					jre = packer_neighbor_graph->get_node( i )->const_edge_list_end();
-				jr != jre; ++jr ) {
+			jr  = packer_neighbor_graph->get_node( i )->const_edge_list_begin(),
+			jre = packer_neighbor_graph->get_node( i )->const_edge_list_end();
+			jr != jre; ++jr ) {
 		Size const j( (*jr)->get_other_ind( i ) );
-	debug_assert( i != j );
+		debug_assert( i != j );
 
 		//if ( !pose.residue(j).is_protein() ) continue; // first just protein-DNA bridges
 		if ( pose.residue(j).name() == "TP3" ) continue;
@@ -1431,9 +1438,9 @@ build_independent_water_rotamers(
 	{
 		tt << "water " << seqpos_water << " nbrs:";
 		for ( graph::Graph::EdgeListConstIter
-						jr  = packer_neighbor_graph->get_node( seqpos_water )->const_edge_list_begin(),
-						jre = packer_neighbor_graph->get_node( seqpos_water )->const_edge_list_end();
-					jr != jre; ++jr ) {
+				jr  = packer_neighbor_graph->get_node( seqpos_water )->const_edge_list_begin(),
+				jre = packer_neighbor_graph->get_node( seqpos_water )->const_edge_list_end();
+				jr != jre; ++jr ) {
 			tt << ' ' << (*jr)->get_other_ind( seqpos_water );
 		}
 		tt << '\n';
@@ -1445,7 +1452,7 @@ build_independent_water_rotamers(
 			( static_cast< WaterPackingInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::WATER_PACKING_INFO ) ) );
 
 		build_moving_O_water_rotamers_independent( water_info[ seqpos_water], h2o_type, task, pose,
-																							 packer_neighbor_graph, new_rotamers );
+			packer_neighbor_graph, new_rotamers );
 	} else {
 
 		build_fixed_O_water_rotamers_independent( seqpos_water, h2o_type, pose, packer_neighbor_graph, new_rotamers );
@@ -1471,7 +1478,7 @@ build_dependent_water_rotamers(
 			( static_cast< WaterPackingInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::WATER_PACKING_INFO ) ) );
 
 		build_moving_O_water_rotamers_dependent( rotsets, /*seqpos_water,*/ water_info[ seqpos_water], h2o_type, task, pose,
-																						 packer_neighbor_graph, new_rotamers );
+			packer_neighbor_graph, new_rotamers );
 	} else {
 
 		// doesnt exist yet

@@ -49,10 +49,10 @@ bool get_rt_over_leap_fast( core::pose::Pose& pose, core::Size ir, core::Size jr
 // sheffler
 bool
 get_rt_over_leap_without_foldtree_bs(
-    core::pose::Pose const & pose,
-    core::Size ir,
-    core::Size jr,
-    numeric::geometry::hashing::Real6 &rt_6
+	core::pose::Pose const & pose,
+	core::Size ir,
+	core::Size jr,
+	numeric::geometry::hashing::Real6 &rt_6
 );
 
 
@@ -71,128 +71,128 @@ struct LeapIndex{
 	boost::uint64_t key;
 };
 struct LegacyLeapIndex{
-  float vecx;
-  float vecy;
-  float vecz;
-  float rotx;
-  float roty;
-  float rotz;
-  unsigned int ba;
+	float vecx;
+	float vecy;
+	float vecz;
+	float rotx;
+	float roty;
+	float rotz;
+	unsigned int ba;
 };
 
 /// @brief the loop hash map stores LeapIndexes and a hashmap to access those LeapIndexes quickly by their 6D coordinates.
 
 
 class LoopHashMap{
-	public:
-    /// @brief Constructor - must give loop_size
-		LoopHashMap( core::Size loop_size = 10);
+public:
+	/// @brief Constructor - must give loop_size
+	LoopHashMap( core::Size loop_size = 10);
 
-		LoopHashMap(LoopHashMap const & other);
+	LoopHashMap(LoopHashMap const & other);
 
-		LoopHashMap operator=(LoopHashMap const & other);
+	LoopHashMap operator=(LoopHashMap const & other);
 
-	private:
-    /// @brief Setup this class give a loop_size
-		void setup( core::Size loop_size);
+private:
+	/// @brief Setup this class give a loop_size
+	void setup( core::Size loop_size);
 
-    /// @brief Add a given piece of data to the hash
-		void hash_index( numeric::geometry::hashing::Real6 transform, core::Size data );
+	/// @brief Add a given piece of data to the hash
+	void hash_index( numeric::geometry::hashing::Real6 transform, core::Size data );
 public:
 
-    /// @brief Add a leap/loop to the HashMap
-		void add_leap( const LeapIndex &leap_index, numeric::geometry::hashing::Real6 & transform );
+	/// @brief Add a leap/loop to the HashMap
+	void add_leap( const LeapIndex &leap_index, numeric::geometry::hashing::Real6 & transform );
 
-    /// @brief Add a leap/loop to the HashMap with a key, skipping hashing
-		void add_leap( const LeapIndex &leap_index, boost::uint64_t key );
+	/// @brief Add a leap/loop to the HashMap with a key, skipping hashing
+	void add_leap( const LeapIndex &leap_index, boost::uint64_t key );
 
-    /// @brief Add an legacy leap/loop to the HashMap
-		void add_legacyleap( const LegacyLeapIndex &legacyleap_index );
+	/// @brief Add an legacy leap/loop to the HashMap
+	void add_legacyleap( const LegacyLeapIndex &legacyleap_index );
 
-    /// @brief Obtain an index to a given peptide saved
-		inline const LeapIndex & get_peptide( core::Size index ){
-			runtime_assert( index < loopdb_.size() );
-			return loopdb_[ index ];
+	/// @brief Obtain an index to a given peptide saved
+	inline const LeapIndex & get_peptide( core::Size index ){
+		runtime_assert( index < loopdb_.size() );
+		return loopdb_[ index ];
+	}
+
+	inline core::Size n_loops() const {
+		return loopdb_.size();
+	}
+
+	/// @brief Return a vector of loops with equal keys  given a key
+	//  And any keys within a radius around the original key
+	void radial_lookup_withkey( boost::uint64_t key, core::Size radius, std::vector < core::Size > &result );
+
+	/// @brief Return a vector of loops with equal keys  given a key
+	//  Identical to radial_lookup_withkey(radius=0), but faster
+	void lookup_withkey( boost::uint64_t key, std::vector < core::Size > &result );
+
+	/// @brief Append to a bucket of vectors in the appropriate bin, lookup by transform
+	void lookup(  numeric::geometry::hashing::Real6 transform, std::vector < core::Size > &result );
+
+	/// @brief Append to a bucket of vectors in the appropriate bin, radial lookup by transform
+	void radial_lookup( core::Size radius,  numeric::geometry::hashing::Real6 transform, std::vector < core::Size > &result );
+
+	/// @brief count hits in the appropriate bin, radial lookup by transform
+	core::Size radial_count( core::Size radius, numeric::geometry::hashing::Real6 center ) const;
+
+	/// @brief Append to a bucket of vectors in the appropriate bin, lookup by bin index
+	/// Using core::Size instead of boost::uinst64_t
+	void lookup( core::Size index, std::vector < core::Size > &result );
+
+	/// @brief Returns begin() and end() of backbone_index_map_
+	void  bbdb_range( std::pair< BackboneIndexMap::iterator, BackboneIndexMap::iterator > & range );
+
+	/// @brief Returns a hashmap key given a member of a bucket
+	/// Don't think boost implements this, have to manually look it up
+	boost::uint64_t return_key( core::Size bb_index );
+
+	/// @brief Query the loopsize of this LoopHashMap
+	inline core::Size get_loop_size() const { return loop_size_; }
+
+	/// @brief Reads legacy binary dbs
+	void read_legacydb( std::string filename );
+
+	/// @brief Basic IO functionality - allows reading and writing text states to/from disk
+	void write_db( std::string filename );
+
+	/// @brief Basic IO functionality - allows reading and writing text states to/from disk
+	void read_db( std::string filename, std::pair< core::Size, core::Size > loopdb_range,
+		std::map< core::Size, bool > & homolog_index );
+	// hack to set loopdb_range default value
+	inline void read_db( std::string filename ) {
+		std::pair< core::Size, core::Size > range( 0, 0 );
+		std::map< core::Size, bool > homolog_index;
+		read_db( filename, range, homolog_index );
+	}
+
+	/// @brief Return the memory usage of this class
+	void mem_foot_print();
+
+	/// @brief Sorts the loopdb_ by leap_index.index
+	void sort();
+
+private:  // Private data
+
+	/// @brief  A class that will take a 6D rigid body transform and turn it into a serial hashbin
+	/// number for hashing. THis is the actual hash so to speak.
+	numeric::geometry::hashing::SixDCoordinateBinnerOP  hash_;
+
+	/// @brief The actual Boost-based hashmap
+	BackboneIndexMap                          backbone_index_map_;
+
+	/// @brief List of LeadIndexes
+	std::vector< LeapIndex>                   loopdb_;
+
+	/// @brief The length of the the loops in number of residues
+	core::Size                                loop_size_;
+
+	/// @brief A functor for sort()
+	struct by_index {
+		bool operator()( LeapIndex const &a, LeapIndex const &b ) const {
+			return a.index < b.index;
 		}
-
-		inline core::Size n_loops() const {
-			return loopdb_.size();
-		}
-
-    /// @brief Return a vector of loops with equal keys  given a key
-		//  And any keys within a radius around the original key
-        void radial_lookup_withkey( boost::uint64_t key, core::Size radius, std::vector < core::Size > &result );
-
-    /// @brief Return a vector of loops with equal keys  given a key
-		//  Identical to radial_lookup_withkey(radius=0), but faster
-        void lookup_withkey( boost::uint64_t key, std::vector < core::Size > &result );
-
-		/// @brief Append to a bucket of vectors in the appropriate bin, lookup by transform
-		void lookup(  numeric::geometry::hashing::Real6 transform, std::vector < core::Size > &result );
-
-		/// @brief Append to a bucket of vectors in the appropriate bin, radial lookup by transform
-		void radial_lookup( core::Size radius,  numeric::geometry::hashing::Real6 transform, std::vector < core::Size > &result );
-
-        /// @brief count hits in the appropriate bin, radial lookup by transform
-        core::Size radial_count( core::Size radius, numeric::geometry::hashing::Real6 center ) const;
-
-		/// @brief Append to a bucket of vectors in the appropriate bin, lookup by bin index
-        /// Using core::Size instead of boost::uinst64_t
-		void lookup( core::Size index, std::vector < core::Size > &result );
-
-    /// @brief Returns begin() and end() of backbone_index_map_
-         void  bbdb_range( std::pair< BackboneIndexMap::iterator, BackboneIndexMap::iterator > & range );
-
-    /// @brief Returns a hashmap key given a member of a bucket
-    /// Don't think boost implements this, have to manually look it up
-        boost::uint64_t return_key( core::Size bb_index );
-
-    /// @brief Query the loopsize of this LoopHashMap
-		inline core::Size get_loop_size() const { return loop_size_; }
-
-    /// @brief Reads legacy binary dbs
-		void read_legacydb( std::string filename );
-
-    /// @brief Basic IO functionality - allows reading and writing text states to/from disk
-		void write_db( std::string filename );
-
-    /// @brief Basic IO functionality - allows reading and writing text states to/from disk
-		void read_db( std::string filename, std::pair< core::Size, core::Size > loopdb_range,
-            std::map< core::Size, bool > & homolog_index );
-        // hack to set loopdb_range default value
-        inline void read_db( std::string filename ) {
-            std::pair< core::Size, core::Size > range( 0, 0 );
-            std::map< core::Size, bool > homolog_index;
-            read_db( filename, range, homolog_index );
-        }
-
-    /// @brief Return the memory usage of this class
-		void mem_foot_print();
-
-    /// @brief Sorts the loopdb_ by leap_index.index
-        void sort();
-
-	private:  // Private data
-
-    /// @brief  A class that will take a 6D rigid body transform and turn it into a serial hashbin
-    /// number for hashing. THis is the actual hash so to speak.
-	  numeric::geometry::hashing::SixDCoordinateBinnerOP  hash_;
-
-    /// @brief The actual Boost-based hashmap
-    BackboneIndexMap                          backbone_index_map_;
-
-    /// @brief List of LeadIndexes
-    std::vector< LeapIndex>                   loopdb_;
-
-    /// @brief The length of the the loops in number of residues
-    core::Size                                loop_size_;
-
-    /// @brief A functor for sort()
-    struct by_index {
-        bool operator()( LeapIndex const &a, LeapIndex const &b ) const {
-            return a.index < b.index;
-        }
-    };
+	};
 
 
 };

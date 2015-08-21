@@ -9,18 +9,18 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file protocols//ParatopeSiteConstraintMoverCreator.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_antibody_constraints_ParatopeSiteConstraintMoverCreator_hh
-#define	INCLUDED_protocols_antibody_constraints_ParatopeSiteConstraintMoverCreator_hh
+#define INCLUDED_protocols_antibody_constraints_ParatopeSiteConstraintMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
 namespace antibody {
 namespace constraints {
-	
+
 class ParatopeSiteConstraintMoverCreator : public protocols::moves::MoverCreator {
 public:
 

@@ -26,9 +26,9 @@
 #include <core/id/AtomID.fwd.hh>
 
 
-namespace core{
-namespace scoring{
-namespace orbitals{
+namespace core {
+namespace scoring {
+namespace orbitals {
 
 
 class OrbitalsScore : public methods::ContextDependentTwoBodyEnergy {
@@ -36,7 +36,7 @@ public:
 	typedef methods::ContextDependentTwoBodyEnergy parent;
 
 
-//virtual functions from score functions
+	//virtual functions from score functions
 public:
 
 	OrbitalsScore();
@@ -106,17 +106,17 @@ public:
 		core::scoring::EnergyMap &
 	) const;
 
-	 virtual
-	 bool defines_intrares_energy(const core::scoring::EnergyMap&) const; //false
+	virtual
+	bool defines_intrares_energy(const core::scoring::EnergyMap&) const; //false
 
-	 virtual
-	 void residue_pair_energy(
-		 core::conformation::Residue const & res1,
-		 core::conformation::Residue const & res2,
-		 core::pose::Pose const &,
-		 core::scoring::ScoreFunction const &,
-		 EnergyMap & emap
-	 ) const;
+	virtual
+	void residue_pair_energy(
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		core::pose::Pose const &,
+		core::scoring::ScoreFunction const &,
+		EnergyMap & emap
+	) const;
 
 	/// @brief The OrbitalsScore term requires the opportunity to update the Residue's orbital coordinates
 	/// at the beginning of scoring and derivative evaluation.
@@ -200,103 +200,103 @@ public:
 
 	//@brief compute the various energies for a pair of atoms.  used for RDF generation
 	void get_E_haro_one_way(
-			core::pose::Pose const & pose,
-			core::id::AtomID const & atom1,
-			core::id::AtomID const & atom2,
-			EnergyMap & emap
+		core::pose::Pose const & pose,
+		core::id::AtomID const & atom1,
+		core::id::AtomID const & atom2,
+		EnergyMap & emap
 	) const;
-	
+
 	void get_E_haro_one_way(
-			core::conformation::Residue const & res1,
-			core::conformation::Residue const & res2,
-			EnergyMap & emap
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		EnergyMap & emap
 	) const;
 
 
 	void get_E_hpol_one_way(
-			core::pose::Pose const & pose,
-			core::id::AtomID const & atom1,
-			core::id::AtomID const & atom2,
-			EnergyMap & emap
+		core::pose::Pose const & pose,
+		core::id::AtomID const & atom1,
+		core::id::AtomID const & atom2,
+		EnergyMap & emap
 	) const;
 
 	void get_E_hpol_one_way(
-			core::conformation::Residue const & res1,
-			core::conformation::Residue const & res2,
-			EnergyMap & emap
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		EnergyMap & emap
 	) const;
 
 	void get_orb_orb_E(
-			core::pose::Pose const & pose,
-			core::id::AtomID const & atom1,
-			core::id::AtomID const & atom2,
-			EnergyMap & emap
+		core::pose::Pose const & pose,
+		core::id::AtomID const & atom1,
+		core::id::AtomID const & atom2,
+		EnergyMap & emap
 	)const;
 
 	void get_orb_orb_E(
-			core::conformation::Residue const & res1,
-			core::conformation::Residue const & res2,
-			EnergyMap & emap
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		EnergyMap & emap
 	)const;
 
 	void get_orb_H_distance_and_energy(
-			core::conformation::Residue const & res1,
-			core::Size const & Aindex,
-			numeric::xyzVector<core::Real> const & Axyz, //acceptor xyz
-			numeric::xyzVector<core::Real> const & Hxyz,//hydrogen xyz
-			numeric::xyzVector<core::Real> const & Dxyz, //donor xyz
-			core::Real & sc_energy,
-			core::Real & bb_h_energy,
-			OrbitalsLookup::h_type htype,
-			bool bb_h_flag,
-			EnergyMap & emap
+		core::conformation::Residue const & res1,
+		core::Size const & Aindex,
+		numeric::xyzVector<core::Real> const & Axyz, //acceptor xyz
+		numeric::xyzVector<core::Real> const & Hxyz,//hydrogen xyz
+		numeric::xyzVector<core::Real> const & Dxyz, //donor xyz
+		core::Real & sc_energy,
+		core::Real & bb_h_energy,
+		OrbitalsLookup::h_type htype,
+		bool bb_h_flag,
+		EnergyMap & emap
 	) const;
 
 	void assign_haro_derivs_one_way(
-			core::conformation::Residue const & res1,
-			core::conformation::Residue const & res2,
-			EnergyMap const & weights,
-			utility::vector1< DerivVectorPair > & r1_atom_derivs,
-			utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	) const;
 
 	void assign_hpol_derivs_one_way(
-			core::conformation::Residue const & res1,
-			core::conformation::Residue const & res2,
-			EnergyMap const & weights,
-			utility::vector1< DerivVectorPair > & r1_atom_derivs,
-			utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs
 
 	) const;
 
 	bool orb_orb_rules(
-			const core::Size orb_type_name1,
-			const core::Size orb_type_name2
+		const core::Size orb_type_name1,
+		const core::Size orb_type_name2
 	)const;
 
 
 	void assign_orb_H_derivs(
-			core::conformation::Residue const & res1,
-			core::conformation::Residue const & res2,
-			core::Size  & atom_index,
-			numeric::xyzVector<core::Real> const & atom_xyz,
-			core::Size const & H_index,
-			numeric::xyzVector<core::Real> const & H_xyz,
-			OrbitalsLookup::h_type htype,
-			EnergyMap const & weights,
-			utility::vector1< DerivVectorPair > & r1_atom_derivs,
-			utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		core::Size  & atom_index,
+		numeric::xyzVector<core::Real> const & atom_xyz,
+		core::Size const & H_index,
+		numeric::xyzVector<core::Real> const & H_xyz,
+		OrbitalsLookup::h_type htype,
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	)const;
 	void
 	assign_orb_orb_derivs(
-			core::conformation::Residue const & res1,
-			core::conformation::Residue const & res2,
-			EnergyMap const & weights,
-			utility::vector1< DerivVectorPair > & r1_atom_derivs,
-			utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	)const;
 
-//virtual private functions
+	//virtual private functions
 private:
 	virtual core::Size version() const;
 

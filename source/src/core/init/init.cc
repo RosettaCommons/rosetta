@@ -263,7 +263,7 @@
 
 #ifndef __native_client__
 #ifndef WIN_PYROSETTA
-	#include <platform/types.hh>
+#include <platform/types.hh>
 #endif
 
 #if defined(MAC) || defined(__APPLE__)  ||  defined(__OSX__)
@@ -747,13 +747,13 @@ init_tracers(){
 	// set Tracer options
 	basic::TracerOptions & TO( basic::Tracer::tracer_options() );
 
-	if( option[ out::mute ].active() )   TO.muted = option[ out::mute ]();
+	if ( option[ out::mute ].active() )   TO.muted = option[ out::mute ]();
 
-	if( option[ out::unmute ].active() ) TO.unmuted = option[ out::unmute ]();
-	if( option[ out::level  ].active() ) TO.level   = option[ out::level ]();
-	if( option[ out::levels ].active() ) TO.levels  = option[ out::levels ]();
-	if( option[ out::chname ].active() ) TO.print_channel_name = option[ out::chname ]();
-	if( option[ out::chtimestamp ].active() ) TO.timestamp = option[ out::chtimestamp ]();
+	if ( option[ out::unmute ].active() ) TO.unmuted = option[ out::unmute ]();
+	if ( option[ out::level  ].active() ) TO.level   = option[ out::level ]();
+	if ( option[ out::levels ].active() ) TO.levels  = option[ out::levels ]();
+	if ( option[ out::chname ].active() ) TO.print_channel_name = option[ out::chname ]();
+	if ( option[ out::chtimestamp ].active() ) TO.timestamp = option[ out::chtimestamp ]();
 
 	// Adding Tracer::flush_all_tracers to list of exit-callbacks so all tracer output got flush out when utility_exit is used.
 	utility::add_exit_callback(basic::Tracer::flush_all_tracers);
@@ -770,14 +770,14 @@ init_tracers(){
 
 void
 init_source_revision(){
-	if( option[ run::version ]() ) {
+	if ( option[ run::version ]() ) {
 		TR << "Rosetta version " << core::minirosetta_svn_version() << " from " << core::minirosetta_svn_url() << std::endl;
 	}
 }
 
 void
 init_paths(){
-	if( option[ in::path::path ].user() ){
+	if ( option[ in::path::path ].user() ) {
 		utility::io::izstream::set_alternative_search_paths(
 			option[ in::path::path ]());
 	}
@@ -791,15 +791,14 @@ void check_deprecated_flags(){
 
 	// Add deprecated flags and corresponding helpful error messages here.
 	// This is the only thing you need to do to deprecate a flag.
-	if(option[LoopModel::input_pdb].user())
+	if ( option[LoopModel::input_pdb].user() ) {
 		error_messages.push_back("-LoopModel:input_pdb is no longer used.  Please use -s to input pdb files.");
+	}
 
 
-	if(error_messages.size() > 0)
-	{
+	if ( error_messages.size() > 0 ) {
 		utility::vector1<std::string>::const_iterator error_it;
-		for(error_it = error_messages.begin();error_it != error_messages.end();++error_it)
-		{
+		for ( error_it = error_messages.begin(); error_it != error_messages.end(); ++error_it ) {
 			TR.Fatal << "ERROR: You have specified one or more deprecated flags:" <<std::endl;
 			TR.Fatal << *error_it <<std::endl;
 		}
@@ -824,16 +823,16 @@ init_random_number_generators(){
 	int seed_offset = 0;
 	bool const_seed = false;
 	bool use_time_as_seed = false;
-	if( option[ run::constant_seed ].active() )  const_seed = option[ run::constant_seed ]();
-	if( option[ run::jran ].active() )  seed = option[ run::jran ]();
-	if( option[ run::seed_offset ].active() )  seed_offset = option[ run::seed_offset ]();
-	if( option[ run::use_time_as_seed ].active() )  use_time_as_seed = option[ run::use_time_as_seed ]();
+	if ( option[ run::constant_seed ].active() )  const_seed = option[ run::constant_seed ]();
+	if ( option[ run::jran ].active() )  seed = option[ run::jran ]();
+	if ( option[ run::seed_offset ].active() )  seed_offset = option[ run::seed_offset ]();
+	if ( option[ run::use_time_as_seed ].active() )  use_time_as_seed = option[ run::use_time_as_seed ]();
 
 	std::string random_device_name( option[ run::rng_seed_device ]() ); // typically /dev/urandom or /dev/random
 
 	int real_seed;
 
-	if( const_seed ) {
+	if ( const_seed ) {
 		real_seed = seed + seed_offset;
 #ifdef USEMPI
 		{ // scope
@@ -845,8 +844,7 @@ init_random_number_generators(){
 #endif
 		T("core.init") << "Constant seed mode, seed=" << seed << " seed_offset=" << seed_offset
 			<< " real_seed=" << real_seed << std::endl;
-	}
-	else {
+	} else {
 #if (defined WIN32) && (!defined WIN_PYROSETTA)
 		bool const on_windows_platform = true;
 #else
@@ -960,15 +958,15 @@ init_random_number_generators(){
 
 			// log seeds
 			T("core.init") << "'RNG device' seed mode, using '" << random_device_name << "', seed=" << seed << " seed_offset=" << seed_offset
-			    << " real_seed=" << real_seed << std::endl;
+				<< " real_seed=" << real_seed << std::endl;
 		}
 
 	}
 
 	/*numeric::random::RandomGenerator::initializeRandomGenerators(
-		 real_seed, numeric::random::_RND_ConstantSeed_,
-		 option[ run::rng ]  );
-	 */
+	real_seed, numeric::random::_RND_ConstantSeed_,
+	option[ run::rng ]  );
+	*/
 #ifdef BOINC
 	std::cerr << "Initializing random generators... ok " << std::endl; std::cerr.flush();
 #endif
@@ -992,9 +990,9 @@ void init_random_generators(int const start_seed, std::string const & RGtype)
 
 void
 random_delay(){
-	if( !option[ run::nodelay ]() ){
-	// no silly waiting in DEBUG or BOINC builds
-	// Test inside if statement so that nodelay option gets touched even in debug mode.
+	if ( !option[ run::nodelay ]() ) {
+		// no silly waiting in DEBUG or BOINC builds
+		// Test inside if statement so that nodelay option gets touched even in debug mode.
 #ifdef NDEBUG
 #ifndef BOINC
 		if( option[ run::delay ]() > 0 ) {
@@ -1021,7 +1019,7 @@ void
 locate_rosetta_database(){
 
 #ifndef __native_client__
-  if ( !option[ in::path::database ].user() ) {
+	if ( !option[ in::path::database ].user() ) {
 		std::string database_path;
 		char * descr = getenv("ROSETTA3_DB");
 		if ( descr ) {
@@ -1039,8 +1037,7 @@ locate_rosetta_database(){
 
 			// _NSGetExecutablePath returns 0 if the path was successfully copied.
 			// Copies a null-terminated string
-			if (result == 0)
-			{
+			if ( result == 0 ) {
 				path_string = std::string( path );
 			}
 #endif
@@ -1050,8 +1047,7 @@ locate_rosetta_database(){
 
 			// readlink returns -1 on error, otherwise number of bytes written.
 			// Does not append null to string
-			if (path_size > 0)
-			{
+			if ( path_size > 0 ) {
 				path_string = std::string( path, path_size );
 			}
 #endif
@@ -1068,18 +1064,14 @@ locate_rosetta_database(){
 			// or ../database if not.
 
 			// Logic must be updated for windows paths if windows executable resolution is added.
-			if (path_string.length() > 0)
-			{
+			if ( path_string.length() > 0 ) {
 				Size found = std::string::npos;
 
-				if ((found = path_string.find("source/")) && (found != std::string::npos))
-				{
+				if ( (found = path_string.find("source/")) && (found != std::string::npos) ) {
 					std::string rosetta_exe_dir = path_string.substr(0,found);
 					database_path = rosetta_exe_dir + "database/";
 					TR << "Looking for database based on location of executable: " << database_path << std::endl;
-				}
-				else if ((found = path_string.rfind("/")) && (found != std::string::npos))
-				{
+				} else if ( (found = path_string.rfind("/")) && (found != std::string::npos) ) {
 					std::string rosetta_exe_dir = path_string.substr(0,found);
 					database_path = rosetta_exe_dir + "/../database/";
 					TR << "Looking for database based on location of executable: " << database_path << std::endl;
@@ -1089,7 +1081,7 @@ locate_rosetta_database(){
 			}
 		}
 
-		if ( database_path.size() > 0 ){
+		if ( database_path.size() > 0 ) {
 			option[ in::path::database ].value( database_path );
 		} else {
 			TR << "Could not find database. Either specify -database or set environment variable ROSETTA3_DB." << std::endl;
@@ -1122,65 +1114,65 @@ void init(int argc, char * argv [])
 	basic::init();
 
 	try{
-    //Initialize MPI
-    init_mpi(argc, argv);
+		//Initialize MPI
+		init_mpi(argc, argv);
 
-    //The options system manages command line options
-    init_options(argc, argv);
+		//The options system manages command line options
+		init_options(argc, argv);
 
-    //Tracers control output to std::cout and std::cerr
-    init_tracers();
+		//Tracers control output to std::cout and std::cerr
+		init_tracers();
 
-	// Invoke basic::options::process() which holds a set of complex logic
-	// for option system modifications; this function requires that the
-	// tracers first be initialized.
-	init_complex_options();
+		// Invoke basic::options::process() which holds a set of complex logic
+		// for option system modifications; this function requires that the
+		// tracers first be initialized.
+		init_complex_options();
 
-    //Initialize the latest and greatest score function parameters
-	init_score_function_corrections();
+		//Initialize the latest and greatest score function parameters
+		init_score_function_corrections();
 
-    //Choose to output source version control information?
-    init_source_revision();
+		//Choose to output source version control information?
+		init_source_revision();
 
-    //Setup basic search paths
-    init_paths();
+		//Setup basic search paths
+		init_paths();
 
-    //Check for deprecated flags specified by the user and output error messages if necessary
-    check_deprecated_flags();
+		//Check for deprecated flags specified by the user and output error messages if necessary
+		check_deprecated_flags();
 
-    //Describe the application execution command
-    report_application_command(argc, argv);
+		//Describe the application execution command
+		report_application_command(argc, argv);
 
-    //Initalize random number generators
-    init_random_number_generators();
+		//Initalize random number generators
+		init_random_number_generators();
 
-    //Choose to randomly delay execution to desyncronize parallel execution
-    random_delay();
+		//Choose to randomly delay execution to desyncronize parallel execution
+		random_delay();
 
-    //Locate rosetta_database
-    locate_rosetta_database();
+		//Locate rosetta_database
+		locate_rosetta_database();
 
 #ifdef BOINC
     std::cerr << "Initialization complete. " << std::endl;
 #endif
 
-    //Profiling measures execution performance
-    init_profiling();
+		//Profiling measures execution performance
+		init_profiling();
 
-	//Set up system resources
-	init_resources();
+		//Set up system resources
+		init_resources();
 
-    // help out user...
-    if  ( argc == 1 )  TR << std::endl << "USEFUL TIP: Type -help to get the options for this Rosetta executable." << std::endl << std::endl;
+		// help out user...
+		if  ( argc == 1 )  TR << std::endl << "USEFUL TIP: Type -help to get the options for this Rosetta executable." << std::endl << std::endl;
 
-  }
-  // Catch any Rosetta exceptions
-  catch( utility::excn::EXCN_Msg_Exception &e){
-    // print the error message to standard error
-    e.show( std::cerr );
-    // and rethrow to make sure we quit (or give caller opportunity to clean up or catch)
-    throw;
-  }
+	}
+// Catch any Rosetta exceptions
+catch( utility::excn::EXCN_Msg_Exception &e){
+	// print the error message to standard error
+	e.show( std::cerr );
+	// and rethrow to make sure we quit (or give caller opportunity to clean up or catch)
+	throw;
+}
 }
 
 
@@ -1190,7 +1182,7 @@ void init( utility::vector1<std::string> const & args )
 	// create arguments in argc/argv format
 	int argc = args.size();
 	char **argv = new char*[ argc ];
-	for( int ii = 0; ii < argc; ++ii ) {
+	for ( int ii = 0; ii < argc; ++ii ) {
 		argv[ ii ] = new char[ args[ii+1].size()+1 ];
 		strncpy( argv[ii], args[ii+1].c_str(), args[ii+1].size() );
 		argv[ ii ][ args[ii+1].size() ] = 0; // ensure null termination

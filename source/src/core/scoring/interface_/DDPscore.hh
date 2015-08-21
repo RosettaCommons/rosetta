@@ -24,9 +24,9 @@
 #include <utility/vector1.hh>
 
 
-namespace core{
-namespace scoring{
-namespace interface_{
+namespace core {
+namespace scoring {
+namespace interface_ {
 
 class DDPscore : public methods::ContextDependentTwoBodyEnergy {
 
@@ -57,22 +57,22 @@ public:
 	bool defines_intrares_energy(core::scoring::EnergyMap const &) const;
 
 	virtual void eval_intrares_energy(
-	                        const core::conformation::Residue &,
-	                        const core::pose::Pose &,
-	                        const core::scoring::ScoreFunction &,
-	                        core::scoring::EnergyMap &
-	                        ) const;
+		const core::conformation::Residue &,
+		const core::pose::Pose &,
+		const core::scoring::ScoreFunction &,
+		core::scoring::EnergyMap &
+	) const;
 
 	virtual void indicate_required_context_graphs(
-			utility::vector1< bool > & context_graphs_required
-			) const;
+		utility::vector1< bool > & context_graphs_required
+	) const;
 
 	core::Distance atomic_interaction_cutoff() const;
 
 private:
 	DDPlookup const lookup_table_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 }; // DDP
 } // Interface_
 } // scoring

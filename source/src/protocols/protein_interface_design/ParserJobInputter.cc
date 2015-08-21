@@ -56,9 +56,9 @@ ParserJobInputter::pose_from_job( core::pose::Pose & pose, JobOP job){
 
 	TR << "ParserJobInputter::pose_from_job" << std::endl;
 
-/// normally the job would contain the saved pose, but here, the saved pose
-/// would be transformed according to patchdock reading. So, we're letting
-/// the static patchdock reader take care of saving the pose in memory
+	/// normally the job would contain the saved pose, but here, the saved pose
+	/// would be transformed according to patchdock reading. So, we're letting
+	/// the static patchdock reader take care of saving the pose in memory
 
 	std::string input_tag( job->input_tag() );
 	pd_reader.read_poses( pose, input_tag );
@@ -69,12 +69,12 @@ ParserJobInputter::pose_from_job( core::pose::Pose & pose, JobOP job){
 std::string
 ParserJobInputterCreator::keyname() const
 {
-        return "ParserJobInputter";
+	return "ParserJobInputter";
 }
 
 protocols::jd2::JobInputterOP
 ParserJobInputterCreator::create_JobInputter() const {
-        return protocols::jd2::JobInputterOP( new ParserJobInputter );
+	return protocols::jd2::JobInputterOP( new ParserJobInputter );
 }
 
 }//protein_interface_design

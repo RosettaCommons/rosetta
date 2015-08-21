@@ -67,7 +67,7 @@ public: // typedefs
 	typedef protocols::jd2::parser::BluePrint BluePrint;
 	typedef protocols::jd2::parser::BluePrintOP BluePrintOP;
 
-  typedef core::conformation::symmetry::SymmetryInfoOP SymmetryInfoOP;
+	typedef core::conformation::symmetry::SymmetryInfoOP SymmetryInfoOP;
 
 	typedef protocols::fldsgn::potentials::sspot::NatbiasHelixPairPotential NatbiasHelixPairPotential;
 	typedef protocols::fldsgn::potentials::sspot::NatbiasHelixPairPotentialOP NatbiasHelixPairPotentialOP;
@@ -96,7 +96,7 @@ public: // construct/destruct
 	SetSecStructEnergies( SetSecStructEnergies const & rval );
 
 	/// @brief default destructor
-	virtual	~SetSecStructEnergies();
+	virtual ~SetSecStructEnergies();
 
 
 private: // disallow assignment
@@ -123,7 +123,7 @@ public: // mutators
 
 
 	/// @brief define secondary structrue by blueprint
-	inline void ss_from_blueprint( bool const flag ){ ss_from_blueprint_ = flag;	}
+	inline void ss_from_blueprint( bool const flag ){ ss_from_blueprint_ = flag; }
 
 	/// @brief set the centroid level score function
 	void scorefunction( ScoreFunction const & sfx );
@@ -154,10 +154,10 @@ public: //parser
 
 	/// @brief parse xml file
 	void parse_my_tag( TagCOP tag,
-										 basic::datacache::DataMap & data,
-										 Filters_map const &,
-										 Movers_map const &,
-										 Pose const & );
+		basic::datacache::DataMap & data,
+		Filters_map const &,
+		Movers_map const &,
+		Pose const & );
 
 
 private: // helper functions

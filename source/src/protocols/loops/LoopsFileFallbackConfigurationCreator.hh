@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   basic/resource_manager/LoopsFileFallbackConfigurationCreator.hh
-/// @brief  
+/// @brief
 /// @author Brian D. Weitzner brian.weitzner@gmail.com
 
 #ifndef INCLUDED_protocols_loops_loops_file_fallback_configuration_creator_HH

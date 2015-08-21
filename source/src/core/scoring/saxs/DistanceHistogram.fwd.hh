@@ -25,9 +25,9 @@ namespace saxs {
 class DistanceHistogram;
 
 typedef utility::pointer::shared_ptr<DistanceHistogram>
-		DistanceHistogramOP;
+	DistanceHistogramOP;
 typedef utility::pointer::shared_ptr<DistanceHistogram const>
-		DistanceHistogramCOP;
+	DistanceHistogramCOP;
 
 } // saxs
 } // scoring

@@ -55,7 +55,7 @@ public:
 	typedef core::pose::Pose Pose;
 	typedef protocols::dna::DnaDesignDefOP DnaDesignDefOP;
 	typedef protocols::dna::DnaDesignDefOPs DnaDesignDefOPs;
-  typedef core::pack::task::PackerTask PackerTask;
+	typedef core::pack::task::PackerTask PackerTask;
 
 	// Constructor
 	LigandMotifSearch();
@@ -76,18 +76,18 @@ public:
 
 	void run(
 		Pose const & pose,
-	  utility::vector1< Size > & input_BPs
+		utility::vector1< Size > & input_BPs
 	);
 
 	void run(
 		Pose const & pose,
-	PackerTask & task
+		PackerTask & task
 	);
 
-void run(
-        Pose const & pose,
-        core::Real & ligand_motif_sphere
-);
+	void run(
+		Pose const & pose,
+		core::Real & ligand_motif_sphere
+	);
 
 	void initialize(
 		Pose const & pose
@@ -95,7 +95,7 @@ void run(
 
 	void initialize(
 		Pose const & pose,
-		  utility::vector1< Size > & input_BPs
+		utility::vector1< Size > & input_BPs
 	);
 
 	void
@@ -128,14 +128,14 @@ void run(
 	utility::vector1< Size >
 	get_sphere_aa(
 		Pose const & pose,
-  core::Real cut1
+		core::Real cut1
 	);
 
 	/*void
 	fill_bp_allowed_types(
-		Pose const & pose,
-		Size const spos,
-		std::set< std::string > & allowed_types
+	Pose const & pose,
+	Size const spos,
+	std::set< std::string > & allowed_types
 	);*/
 
 	void identify_motif_BuildPositions(

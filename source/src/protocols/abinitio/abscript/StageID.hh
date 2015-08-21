@@ -27,14 +27,14 @@
 
 namespace protocols {
 namespace abinitio {
-namespace abscript{
+namespace abscript {
 
 enum StageID {
-  I = 1,
-  II,
-  IIIa, IIIb,
-  IVa, IVb,
-  END
+	I = 1,
+	II,
+	IIIa, IIIb,
+	IVa, IVb,
+	END
 };
 
 typedef utility::vector1< StageID > StageIDs;

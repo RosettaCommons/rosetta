@@ -60,7 +60,7 @@ class UEVertex : public utility::pointer::ReferenceCount
 {
 public:
 	typedef UEVertex< V, E >                VertexClass;
- 	typedef UEEdge< V, E >                  EdgeClass;
+	typedef UEEdge< V, E >                  EdgeClass;
 	typedef UpperEdgeGraph< V, E >          GraphClass;
 	typedef typename utility::vector1< EdgeClass >   UpperEdgeVector;
 	typedef typename utility::vector1< EdgeClass >::iterator       UpperEdgeListIter;
@@ -113,7 +113,7 @@ private:
 		GraphClass * owner
 	)
 	{
-	debug_assert( index_ == 0 && owner_ == 0 ); // this can be called at most once
+		debug_assert( index_ == 0 && owner_ == 0 ); // this can be called at most once
 		index_ = index;
 		owner_ = owner;
 	}
@@ -135,10 +135,8 @@ public:
 	EdgeClass * get_edge( platform::Size upper_vertex_id )
 	{
 		make_edge_vector_current();
-		for ( platform::Size ii = 1; ii <= upper_edges_.size(); ++ii )
-		{
-			if ( upper_edges_[ ii ].upper_vertex() == upper_vertex_id )
-			{
+		for ( platform::Size ii = 1; ii <= upper_edges_.size(); ++ii ) {
+			if ( upper_edges_[ ii ].upper_vertex() == upper_vertex_id ) {
 				return & upper_edges_[ ii ];
 			}
 		}
@@ -154,10 +152,8 @@ public:
 	bool edge_exists( platform::Size upper_vertex_id )
 	{
 		make_edge_vector_current();
-		for ( platform::Size ii = 1; ii <= upper_edges_.size(); ++ii )
-		{
-			if ( upper_edges_[ ii ].upper_vertex() == upper_vertex_id )
-			{
+		for ( platform::Size ii = 1; ii <= upper_edges_.size(); ++ii ) {
+			if ( upper_edges_[ ii ].upper_vertex() == upper_vertex_id ) {
 				return true;
 			}
 		}
@@ -221,7 +217,7 @@ private:
 	add_edge( platform::Size upper_vertex_index ) // called by UpperEdgeGraph
 	{
 		//if ( upper_edges_.capacity() == upper_edges_.size() ) {
-		//	std::cout << this << " " << index_  << " About to resize edge vector on vertex " <<  index_ << " adding edge to " << upper_vertex_index << " upper_edges_.size() " << upper_edges_.size()  << std::endl;
+		// std::cout << this << " " << index_  << " About to resize edge vector on vertex " <<  index_ << " adding edge to " << upper_vertex_index << " upper_edges_.size() " << upper_edges_.size()  << std::endl;
 		//}
 		upper_edges_.push_back( EdgeClass( owner_, index_, upper_vertex_index ) );
 		add_edge_common();
@@ -231,7 +227,7 @@ private:
 	add_edge( platform::Size upper_vertex_index, E const & edge_data ) // called by UpperEdgeGraph
 	{
 		//if ( upper_edges_.capacity() == upper_edges_.size() ) {
-		//	std::cout << this << " " << index_ << " About to resize edge vector on vertex " <<  index_ << " adding edge to " << upper_vertex_index << " upper_edges_.size() " << upper_edges_.size()  << std::endl;
+		// std::cout << this << " " << index_ << " About to resize edge vector on vertex " <<  index_ << " adding edge to " << upper_vertex_index << " upper_edges_.size() " << upper_edges_.size()  << std::endl;
 		//}
 		upper_edges_.push_back( EdgeClass( owner_, index_, upper_vertex_index, edge_data ) );
 		add_edge_common();
@@ -249,7 +245,7 @@ private:
 	void note_lower_edge_deleted() { --num_lower_edges_; }
 
 	// called by UEEdge
- 	void note_lower_edge_added() { ++num_lower_edges_; }
+	void note_lower_edge_added() { ++num_lower_edges_; }
 
 
 	void make_edge_vector_current() const
@@ -257,21 +253,16 @@ private:
 		if ( ! lazily_deleted_edges_present_ ) return;
 
 		platform::Size shift( 0 );
-		for ( platform::Size ii = 1; ii <= upper_edges_.size(); ++ii )
-		{
-			if ( upper_edges_[ii].deleted() )
-			{
+		for ( platform::Size ii = 1; ii <= upper_edges_.size(); ++ii ) {
+			if ( upper_edges_[ii].deleted() ) {
 				++shift;
-			}
-			else
-			{
-				if ( shift > 0 )
-				{
+			} else {
+				if ( shift > 0 ) {
 					upper_edges_[ ii - shift ] = upper_edges_[ ii ];
 				}
 			}
 
-		debug_assert ( ii != upper_edges_.size() || (ii - shift == num_upper_edges_) );
+			debug_assert ( ii != upper_edges_.size() || (ii - shift == num_upper_edges_) );
 		}
 		upper_edges_.resize( num_upper_edges_ );
 		lazily_deleted_edges_present_ = false;
@@ -437,8 +428,8 @@ public:
 	void add_edge( platform::Size lower_vertex, platform::Size upper_vertex )
 	{
 		//debug_assert( lower_vertex < upper_vertex );
-	debug_assert( ! edge_exists( lower_vertex, upper_vertex ));
-	debug_assert( ! edge_exists( upper_vertex, lower_vertex ));  //fpd
+		debug_assert( ! edge_exists( lower_vertex, upper_vertex ));
+		debug_assert( ! edge_exists( upper_vertex, lower_vertex ));  //fpd
 		vertices_[ lower_vertex ]->add_edge( upper_vertex );
 		++num_edges_;
 	}
@@ -448,8 +439,8 @@ public:
 	add_edge( platform::Size lower_vertex, platform::Size upper_vertex, E const & edge_data )
 	{
 		//debug_assert( lower_vertex < upper_vertex );
-	debug_assert( ! edge_exists( lower_vertex, upper_vertex ));
-	debug_assert( ! edge_exists( upper_vertex, lower_vertex ));  //fpd
+		debug_assert( ! edge_exists( lower_vertex, upper_vertex ));
+		debug_assert( ! edge_exists( upper_vertex, lower_vertex ));  //fpd
 		vertices_[ lower_vertex ]->add_edge( upper_vertex, edge_data );
 		++num_edges_;
 	}
@@ -484,8 +475,7 @@ private:
 	{
 		if ( vertices_.size() != 0 ) vertices_.clear();
 		if ( vertices_.size() != num_vertices_ ) vertices_.resize( num_vertices_ );
-		for ( platform::Size ii = 1; ii <= num_vertices_; ++ii )
-		{
+		for ( platform::Size ii = 1; ii <= num_vertices_; ++ii ) {
 			vertices_[ ii ] = utility::pointer::shared_ptr< UEVertex< V, E > >( new UEVertex< V, E >( this, ii ));
 			//vertices_[ ii ]->set_index_and_owner( ii, this );
 			//vertices_[ ii ]->reserve_edge_space();
@@ -498,8 +488,7 @@ private:
 	{
 		num_vertices_ = other.num_vertices_;
 		create_vertices();
-		for ( platform::Size ii = 1; ii <= other.num_vertices_; ++ii )
-		{
+		for ( platform::Size ii = 1; ii <= other.num_vertices_; ++ii ) {
 			//std::cout << "vertices_.size() " << vertices_.size() << std::endl;
 			//std::cout << "vertices_[ ii ].index_ " << vertices_[ ii ].index_ << std::endl;
 			vertices_[ ii ]->data() = other.vertices_[ ii ]->data();
@@ -507,10 +496,9 @@ private:
 
 			//std::cout << "vertices_[ ii ].index_ " << vertices_[ ii ].index_ << std::endl;
 			for ( UpperEdgeListConstIter
-				iter = other.get_vertex( ii ).const_upper_edge_list_begin(),
-				eiter = other.get_vertex( ii ).const_upper_edge_list_end();
-				iter != eiter; ++iter )
-			{
+					iter = other.get_vertex( ii ).const_upper_edge_list_begin(),
+					eiter = other.get_vertex( ii ).const_upper_edge_list_end();
+					iter != eiter; ++iter ) {
 				//std::cout << "Adding edge.vertices_.size() " << vertices_.size() << std::endl;
 				add_edge( ii, iter->upper_vertex(), iter->data() );
 			}

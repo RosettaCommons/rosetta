@@ -48,7 +48,7 @@ using namespace core::scoring::methods;
 
 class RamachandranEnergyTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	PoseOP the_pose;
 	RamachandranEnergyOP rama_energy;
@@ -117,7 +117,7 @@ class RamachandranEnergyTests : public CxxTest::TestSuite {
 			0.917562, 0.952441, -1.39607, -0.412053,
 			-0.410412, 20, 0 };
 
-	float const TOLERATED_ERROR = 0.001;
+		float const TOLERATED_ERROR = 0.001;
 
 		EnergyMap emap;
 		for ( int ii = 1; ii <= 116; ++ii ) {
@@ -165,7 +165,7 @@ class RamachandranEnergyTests : public CxxTest::TestSuite {
 			-0.0458183, 0.100521, 0.312332, 0.168934,
 			-0.0735353, 0.0835779, 0.111229, 0.0600239,
 			-0.0116661, -0.0187792, 0.00339337, 0, 0
-		};
+			};
 
 		// correct answers taken from rosetta++ v17084
 		Real correct_dE_dpsi[] = { 0,
@@ -198,7 +198,7 @@ class RamachandranEnergyTests : public CxxTest::TestSuite {
 			-0.148481, -0.0702754, 0.0344602, 0.0743334,
 			-0.055903, -0.0526745, 0.0203157, -0.0291913,
 			0.0194366, 0, 0
-		};
+			};
 
 		float const TOLERATED_ERROR = 0.0001;
 

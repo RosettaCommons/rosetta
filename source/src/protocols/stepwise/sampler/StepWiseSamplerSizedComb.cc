@@ -151,7 +151,7 @@ StepWiseSamplerSizedComb::list2id( utility::vector1<core::Size> const & id_list 
 
 	Size id( 1 );
 	Size block_size_( 1 );
-	for ( Size i = 1; i <= id_list.size(); ++i ){
+	for ( Size i = 1; i <= id_list.size(); ++i ) {
 		id += block_size_ * ( id_list[ i ] - 1);
 		block_size_ *= size_list_[ i ];
 	}
@@ -163,7 +163,7 @@ StepWiseSamplerSizedComb::list2id( utility::vector1<core::Size> const & id_list 
 void
 StepWiseSamplerSizedComb::fast_forward( Size const sampler_number ){
 	runtime_assert( sampler_number <= rotamer_list_.size() );
-	for ( Size n = 1; n <= sampler_number; n++ ){
+	for ( Size n = 1; n <= sampler_number; n++ ) {
 		id_list_[ n ] = rotamer_list_[ n ]->size();
 	}
 	id_ = list2id( id_list_ );
@@ -173,7 +173,7 @@ StepWiseSamplerSizedComb::fast_forward( Size const sampler_number ){
 void
 StepWiseSamplerSizedComb::set_random( bool const setting ){
 	StepWiseSamplerBase::set_random( setting );
-	for ( Size n = 1; n <= rotamer_list_.size(); n++ )		rotamer_list_[ n ]->set_random( setting );
+	for ( Size n = 1; n <= rotamer_list_.size(); n++ )  rotamer_list_[ n ]->set_random( setting );
 }
 
 ///////////////////////////////////////////////////////////////////////////

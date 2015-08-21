@@ -42,14 +42,14 @@ namespace task_operations {
 RestrictByCalculatorsOperation::RestrictByCalculatorsOperation() {}
 
 RestrictByCalculatorsOperation::RestrictByCalculatorsOperation(utility::vector1< calc_calcn > const & calcs_and_calcns)
-	: parent(), calcs_and_calcns_(calcs_and_calcns)
+: parent(), calcs_and_calcns_(calcs_and_calcns)
 {
 	//I suppose you could reasonably create this object BEFORE the calculator was generated/registered
-// 	for( core::Size i(1); i <= calcs_and_calcns_.size(); ++i){
-// 		if( !core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( calcs_and_calcns_[i].first ) ){
-// 			utility_exit_with_message("In RestrictByCalculatorsOperation, calculator " + calcs_and_calcns_[i].first + " does not exist.");
-// 		}
-// 	}
+	//  for( core::Size i(1); i <= calcs_and_calcns_.size(); ++i){
+	//   if( !core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( calcs_and_calcns_[i].first ) ){
+	//    utility_exit_with_message("In RestrictByCalculatorsOperation, calculator " + calcs_and_calcns_[i].first + " does not exist.");
+	//   }
+	//  }
 }
 
 RestrictByCalculatorsOperation::~RestrictByCalculatorsOperation() {}
@@ -69,13 +69,14 @@ core::pack::task::operation::TaskOperationOP RestrictByCalculatorsOperation::clo
 void
 RestrictByCalculatorsOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {
- 	//vector for filling packertask
- 	utility::vector1_bool repack(pose.total_residue(), false);
+	//vector for filling packertask
+	utility::vector1_bool repack(pose.total_residue(), false);
 
- 	for( core::Size i(1); i <= calcs_and_calcns_.size(); ++i)
+	for ( core::Size i(1); i <= calcs_and_calcns_.size(); ++i ) {
 		run_calculator(pose, calcs_and_calcns_[i].first, calcs_and_calcns_[i].second, repack);
+	}
 
- 	task.restrict_to_residues(repack);
+	task.restrict_to_residues(repack);
 	return;
 }
 

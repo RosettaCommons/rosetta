@@ -27,9 +27,9 @@ namespace scores {
 class InterbondAngleScore;
 
 typedef utility::pointer::shared_ptr<InterbondAngleScore>
-		InterbondAngleScoreOP;
+	InterbondAngleScoreOP;
 typedef utility::pointer::shared_ptr<InterbondAngleScore const>
-		InterbondAngleScoreCOP;
+	InterbondAngleScoreCOP;
 
 } // scores
 } // frag_picker

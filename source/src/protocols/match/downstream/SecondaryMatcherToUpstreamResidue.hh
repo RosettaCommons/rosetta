@@ -229,7 +229,7 @@ private:
 	utility::vector1< core::chemical::ResidueTypeCOP >  target_restypes_;
 	utility::vector1< EvaluatorSet > respair_evaluators_;
 
-//  std::map < std::string, DownstreamBuilderCOP > dsbuilders_;
+	//  std::map < std::string, DownstreamBuilderCOP > dsbuilders_;
 
 	bool count_rotamers_per_target_restype_;
 	core::chemical::ResidueTypeCOP last_seen_restype_;
@@ -333,26 +333,26 @@ public:
 		build_coords_for_clash_checking_[ rotamer_index ] = true;
 	}
 
-  bool
-  get_clash_checking( Size rotamer_index) {
-    return build_coords_for_clash_checking_[ rotamer_index ];
-  }
+	bool
+	get_clash_checking( Size rotamer_index) {
+		return build_coords_for_clash_checking_[ rotamer_index ];
+	}
 
 	void
 	set_coords_for_clash_check(
-   Size rotamer_index,
-	 utility::vector1< Vector > & coords
+		Size rotamer_index,
+		utility::vector1< Vector > & coords
 	) {
 		coords_for_clash_checking_[ rotamer_index ].resize( coords.size() );
 		coords_for_clash_checking_[ rotamer_index ] = coords;
 	}
 
-  utility::vector1< Vector >
-  get_coords_for_clash_check(
-  	Size rotamer_index
-  ) {
-    return coords_for_clash_checking_[ rotamer_index ];
-  }
+	utility::vector1< Vector >
+	get_coords_for_clash_check(
+		Size rotamer_index
+	) {
+		return coords_for_clash_checking_[ rotamer_index ];
+	}
 
 	void
 	set_clash_check_types(
@@ -369,11 +369,11 @@ public:
 		ds_atom_ids_needed_ = atom_ids;
 	}
 
-  utility::vector1 < core::id::AtomID  >
-  get_ds_atom_ids_needed(
-  ){
-    return ds_atom_ids_needed_;
-  }
+	utility::vector1 < core::id::AtomID  >
+	get_ds_atom_ids_needed(
+	){
+		return ds_atom_ids_needed_;
+	}
 
 
 private:
@@ -388,7 +388,7 @@ private:
 
 	utility::vector1< bool > build_coords_for_clash_checking_;
 	utility::vector1< core::id::AtomID  > ds_atom_ids_needed_;
-  utility::vector1< utility::vector1< Vector > > coords_for_clash_checking_;
+	utility::vector1< utility::vector1< Vector > > coords_for_clash_checking_;
 };
 
 /// @brief A simple class to respond to the UpstreamBuilder's

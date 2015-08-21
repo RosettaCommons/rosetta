@@ -34,11 +34,11 @@ namespace numeric {
 // min functions: Specializations for built-in types pass by value for speed
 
 #if (defined min) && (defined WIN32)  // Workaround for MSVC and windows.h include which used #define min
-	#undef min
+#undef min
 #endif
 
 #if (defined max) && (defined WIN32) // Workaround for MSVC and windows.h include which used #define max
-	#undef max
+#undef max
 #endif
 
 /// @brief min( short int, short int )
@@ -714,7 +714,7 @@ gt_tol( T const & x, T const & y, T const & r_tol, T const & a_tol )
 inline
 bool
 is_a_finitenumber( double s, double  a, double b ){
-	if ((a*s) != (s*cos(b)) )       return false; //  NAN!
+	if ( (a*s) != (s*cos(b)) )       return false; //  NAN!
 	if ( s * 100.0 == s * 1000.00 ) return false; //  INF!
 	return true;
 }

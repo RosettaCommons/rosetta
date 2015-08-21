@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/scoring/membrane/FaMPEnvEnergy.hh
+/// @file  core/scoring/membrane/FaMPEnvEnergy.hh
 ///
-/// @brief		LK-Type Membrane Environment Energy
-/// @details	Last Modified: 5/13/14
+/// @brief  LK-Type Membrane Environment Energy
+/// @details Last Modified: 5/13/14
 ///
-/// @author		Patrick Barth (Original)
-/// @author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Patrick Barth (Original)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_scoring_membrane_FaMPEnvEnergy_hh
 #define INCLUDED_core_scoring_membrane_FaMPEnvEnergy_hh
@@ -30,7 +30,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <core/conformation/Atom.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh> 
+#include <core/conformation/Conformation.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 
@@ -48,19 +48,19 @@ namespace membrane {
 
 /// @brief Fullatom Membrane Environment Energy
 class FaMPEnvEnergy : public methods::ContextDependentOneBodyEnergy {
-	
+
 public:
 
 	typedef ContextDependentOneBodyEnergy parent;
-	
+
 	/// @brief Construct Energy Method from Etable
 	FaMPEnvEnergy( etable::MembEtableCAP memb_etable_in );
-	
+
 	/// @brief Clone Energy Method
 	virtual
 	methods::EnergyMethodOP
 	clone() const;
-	
+
 	/// @brief Compute Per-Residue Energies
 	virtual
 	void
@@ -68,8 +68,8 @@ public:
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		EnergyMap & emap
-		) const;
-	
+	) const;
+
 	/// @brief Fianlzie Total Per-Residue Energies
 	virtual
 	void
@@ -77,7 +77,7 @@ public:
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-		) const;
+	) const;
 
 	/// @brief Setup for Computing Derivatives
 	virtual
@@ -85,7 +85,7 @@ public:
 	setup_for_derivatives(
 		pose::Pose & pose,
 		ScoreFunction const & scfxn
-		) const;
+	) const;
 
 	/// @brief Evaluate Per-Atom Derivatives
 	virtual
@@ -98,53 +98,53 @@ public:
 		EnergyMap const & emap,
 		Vector & F1,
 		Vector & F2
-		) const;
-	
+	) const;
+
 	/// @brief Fa_MbenvEnergy is context independent
 	virtual
 	void
 	indicate_required_context_graphs( utility::vector1< bool > & ) const;
-	
+
 	/// @brief Setup Method for initial scoring
 	void
 	setup_for_scoring(
 		pose::Pose & pose,
 		ScoreFunction const &
-		) const;
-	
+	) const;
+
 private: // helper methods
-	
+
 	/// @brief Evaluate Per-Atom Env term
 	Real
 	eval_fa_mbenv(
-				  conformation::Atom const & atom1,
-				  Real const & f1
-				  ) const;
-			
+		conformation::Atom const & atom1,
+		Real const & f1
+	) const;
+
 	/// @brief Versioning
 	virtual
 	core::Size version() const;
-	
+
 	/// @brief Initialize Energy Method data for derivatives
 	void
 	init( pose::Pose & pose ) const;
-	
+
 	/// @brief Helper Method - Compute Fa Proj
 	core::Real
 	compute_fa_proj(
 		core::Real z_position,
 		core::Real thickness,
 		core::Real steepness
-		) const;
-	
+	) const;
+
 	/// @brief Helper Method - Compute Fa Derivatives
 	core::Real
 	compute_fa_deriv(
 		core::Real z_position,
 		core::Real thickness,
 		core::Real steepness
-		) const;
-	
+	) const;
+
 	/// @brief Helper Method - Compute Fa Proj coordinate
 	core::Vector
 	compute_fa_proj_coord(
@@ -152,31 +152,31 @@ private: // helper methods
 		core::Vector xyz,
 		core::Vector center,
 		core::Vector normal
-		) const;
-		
+	) const;
+
 	/// @brief Allocate memory for derivatives
 	void setup_for_fullatom( pose::Pose & pose ) const;
-	
+
 private:
-	
+
 	// Store a copy of the etable in construction
 	etable::MembEtableCAP memb_etable_;
-	
+
 	// Make copies from the etable
 	ObjexxFCL::FArray1< Real > const & lk_dgrefce_;
 	ObjexxFCL::FArray1< Real > const & memb_lk_dgrefce_;
-	
+
 	// Store mbenv weight when computing derivatives
 	mutable Real fa_mbenv_weight_;
-	
+
 	// Arrays used for computing derivatives
 	mutable utility::vector1 < utility::vector1 < Real > > fa_proj_;
 	mutable utility::vector1 < utility::vector1 < Real > > fa_z_position_;
 	mutable utility::vector1 < utility::vector1 < Vector > > fa_proj_coord_;
 	mutable utility::vector1 < utility::vector1 < Real > > fa_proj_deriv_;
-	
+
 };
-	
+
 } // membrane
 } // scoring
 } // core

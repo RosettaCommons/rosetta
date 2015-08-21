@@ -46,37 +46,37 @@ namespace constraints {
 class FabConstraint : public MultiConstraint {
 public:
 
-    /// @brief Constructor
-    FabConstraint();
+	/// @brief Constructor
+	FabConstraint();
 
-    /// @brief Constructor
-    FabConstraint(ConstraintCOPs & cst_in) ;
+	/// @brief Constructor
+	FabConstraint(ConstraintCOPs & cst_in) ;
 
 
-    virtual
-    ConstraintOP clone() const {
-        return ConstraintOP( new FabConstraint(*this) );
-    }
+	virtual
+	ConstraintOP clone() const {
+		return ConstraintOP( new FabConstraint(*this) );
+	}
 
-    std::string type() const {
-        return "FabConstraint";
-    }
+	std::string type() const {
+		return "FabConstraint";
+	}
 
-    void
-    show(std::ostream& out) const;
+	void
+	show(std::ostream& out) const;
 
-    /// @brief read in constraint definition
-    void
-    read_def(std::istream& data, pose::Pose const& pose,func::FuncFactory const& func_factory);
+	/// @brief read in constraint definition
+	void
+	read_def(std::istream& data, pose::Pose const& pose,func::FuncFactory const& func_factory);
 
-    Size
-    pose_res_no(core::pose::Pose const & pose, std::string tempres);
+	Size
+	pose_res_no(core::pose::Pose const & pose, std::string tempres);
 
-    utility::vector1<Real>
-    calc_penalty_vec(Size start_res, Size stop_res, utility::vector1<Size> res1, utility::vector1<Size> res2);
+	utility::vector1<Real>
+	calc_penalty_vec(Size start_res, Size stop_res, utility::vector1<Size> res1, utility::vector1<Size> res2);
 
-    void
-    setup_csts(core::pose::Pose const & pose, utility::vector1<Size> res1, utility::vector1<Size> res2, std::string antchains);
+	void
+	setup_csts(core::pose::Pose const & pose, utility::vector1<Size> res1, utility::vector1<Size> res2, std::string antchains);
 
 private:
 

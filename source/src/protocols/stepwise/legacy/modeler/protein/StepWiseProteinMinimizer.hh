@@ -35,83 +35,83 @@ namespace legacy {
 namespace modeler {
 namespace protein {
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  class StepWiseProteinMinimizer: public protocols::moves::Mover {
-  public:
+/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+class StepWiseProteinMinimizer: public protocols::moves::Mover {
+public:
 
-    StepWiseProteinMinimizer( utility::vector1< pose::PoseOP > const & pose_list,
-																	utility::vector1< Size > const & moving_residues );
+	StepWiseProteinMinimizer( utility::vector1< pose::PoseOP > const & pose_list,
+		utility::vector1< Size > const & moving_residues );
 
-    //destructor -- necessary?
-    ~StepWiseProteinMinimizer();
+	//destructor -- necessary?
+	~StepWiseProteinMinimizer();
 
-    /// @brief Apply the minimizer to one pose
-    virtual void apply( core::pose::Pose & pose_to_visualize );
+	/// @brief Apply the minimizer to one pose
+	virtual void apply( core::pose::Pose & pose_to_visualize );
 
-		virtual std::string get_name() const;
+	virtual std::string get_name() const;
 
-    void set_min_tolerance( core::Real const & setting );
-    void set_min_type( std::string const & setting );
-    void set_fixed_res( utility::vector1< core::Size > const & fixed_res );
-    void set_calc_rms_res( utility::vector1< core::Size > const & calc_rms_res );
+	void set_min_tolerance( core::Real const & setting );
+	void set_min_type( std::string const & setting );
+	void set_fixed_res( utility::vector1< core::Size > const & fixed_res );
+	void set_calc_rms_res( utility::vector1< core::Size > const & calc_rms_res );
 
-		core::Size const & num_pose_minimize() const { return num_pose_minimize_; }
-		void set_num_pose_minimize( core::Size const & setting ){ num_pose_minimize_ = setting; }
+	core::Size const & num_pose_minimize() const { return num_pose_minimize_; }
+	void set_num_pose_minimize( core::Size const & setting ){ num_pose_minimize_ = setting; }
 
-		void
-		set_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn );
+	void
+	set_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn );
 
-		void
-		set_move_takeoff_torsions( bool const value ){ move_takeoff_torsions_ = value; }
+	void
+	set_move_takeoff_torsions( bool const value ){ move_takeoff_torsions_ = value; }
 
-    void
-		set_rescore_only( bool const & setting ){ rescore_only_ = setting; }
+	void
+	set_rescore_only( bool const & setting ){ rescore_only_ = setting; }
 
-    void
-		set_move_jumps_between_chains( bool const & setting ){ move_jumps_between_chains_ = setting; }
+	void
+	set_move_jumps_between_chains( bool const & setting ){ move_jumps_between_chains_ = setting; }
 
-    void
-		set_cartesian( bool const setting );
-		//		void
-		//		set_constraint_set( core::scoring::constraints::ConstraintSetOP const & cst_set );
+	void
+	set_cartesian( bool const setting );
+	//  void
+	//  set_constraint_set( core::scoring::constraints::ConstraintSetOP const & cst_set );
 
-		void set_use_coordinate_constraints( bool const & setting ){ use_coordinate_constraints_ = setting; }
-		bool use_coordinate_constraints() const{ return use_coordinate_constraints_; }
+	void set_use_coordinate_constraints( bool const & setting ){ use_coordinate_constraints_ = setting; }
+	bool use_coordinate_constraints() const{ return use_coordinate_constraints_; }
 
-		utility::vector1< pose::PoseOP >
-		pose_list() const { return pose_list_; }
+	utility::vector1< pose::PoseOP >
+	pose_list() const { return pose_list_; }
 
-  private:
+private:
 
-		void
-		initialize_parameters();
+	void
+	initialize_parameters();
 
-		void
-		let_neighboring_chis_minimize(
-																	core::kinematics::MoveMap & mm,
-																	core::pose::Pose & pose );
+	void
+	let_neighboring_chis_minimize(
+		core::kinematics::MoveMap & mm,
+		core::pose::Pose & pose );
 
-		bool
-		pose_has_chainbreak( core::pose::Pose const & pose );
+	bool
+	pose_has_chainbreak( core::pose::Pose const & pose );
 
-    utility::vector1< core::Size > const & moving_residues_;
-    utility::vector1< core::Size > fixed_res_;
-    utility::vector1< core::Size > calc_rms_res_;
-		bool move_takeoff_torsions_;
-		bool rescore_only_;
-		bool move_jumps_between_chains_;
-		bool cartesian_;
+	utility::vector1< core::Size > const & moving_residues_;
+	utility::vector1< core::Size > fixed_res_;
+	utility::vector1< core::Size > calc_rms_res_;
+	bool move_takeoff_torsions_;
+	bool rescore_only_;
+	bool move_jumps_between_chains_;
+	bool cartesian_;
 
-		core::scoring::ScoreFunctionOP fa_scorefxn_;
+	core::scoring::ScoreFunctionOP fa_scorefxn_;
 
-		utility::vector1< pose::PoseOP > pose_list_;
+	utility::vector1< pose::PoseOP > pose_list_;
 
-		std::string min_type_;
-		core::Real min_tolerance_;
-		bool use_coordinate_constraints_;
-		Size num_pose_minimize_;
-  };
+	std::string min_type_;
+	core::Real min_tolerance_;
+	bool use_coordinate_constraints_;
+	Size num_pose_minimize_;
+};
 
 } //protein
 } //modeler

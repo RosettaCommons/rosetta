@@ -48,7 +48,7 @@
 #include <sstream>
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 // option key includes
@@ -73,13 +73,13 @@ static thread_local basic::Tracer TR( "protocols.rna.RNA_Relaxer" );
 namespace protocols {
 namespace farna {
 
- /////////////////////////////////////////////////////
- // BASIC IDEA -- relax consists of fragment moves
- //  that aren't too perturbing, followed by minimization
- // So we need a fragment mover and a minimizer.
+/////////////////////////////////////////////////////
+// BASIC IDEA -- relax consists of fragment moves
+//  that aren't too perturbing, followed by minimization
+// So we need a fragment mover and a minimizer.
 
 RNA_Relaxer::RNA_Relaxer( RNA_FragmentMoverOP & rna_fragment_mover, RNA_MinimizerOP & rna_minimizer ):
-  Mover(),
+	Mover(),
 	rna_fragment_mover_( rna_fragment_mover ),
 	rna_minimizer_( rna_minimizer ),
 	relax_cycles_( 50 ),
@@ -98,7 +98,7 @@ RNA_Relaxer::~RNA_Relaxer()
 
 /// @details  Apply the RNA full atom relaxer.
 ///
-void RNA_Relaxer::apply( core::pose::Pose & pose	)
+void RNA_Relaxer::apply( core::pose::Pose & pose )
 {
 
 	using namespace core::scoring;
@@ -108,7 +108,7 @@ void RNA_Relaxer::apply( core::pose::Pose & pose	)
 
 
 	//COMMENT THIS OUT!!!
-	//	rna_minimizer_->use_coordinate_constraints( false );
+	// rna_minimizer_->use_coordinate_constraints( false );
 	//rna_minimizer_->skip_o2prime_trials( true );
 
 	time_t pdb_start_time = time(NULL);
@@ -121,14 +121,14 @@ void RNA_Relaxer::apply( core::pose::Pose & pose	)
 		scorefxn = ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS );
 	}
 
-	if (pose.constraint_set()->has_constraints() ){
+	if ( pose.constraint_set()->has_constraints() ) {
 		scorefxn->set_weight( atom_pair_constraint, 1.0 );
 		scorefxn->set_weight( angle_constraint, 1.0 );
 	}
 
 	protocols::moves::MonteCarloOP monte_carlo_( new protocols::moves::MonteCarlo( pose, *scorefxn, 2.0 ) );
 
-	for (Size r = 1; r <= relax_cycles_; r++ ) {
+	for ( Size r = 1; r <= relax_cycles_; r++ ) {
 
 		TR << "RNA relaxer ROUND " << r << " of " << relax_cycles_ << std::endl;
 
@@ -177,7 +177,7 @@ RNA_Relaxer::find_fragment_by_simple_rmsd_cutoff( pose::Pose & pose )
 
 	Size const frag_size = static_cast <int> ( numeric::random::rg().uniform() * max_frag_size_ ) + 1;
 
-	for (Size n = 1; n <= num_find_fragment_tries_ ; n++ ) {
+	for ( Size n = 1; n <= num_find_fragment_tries_ ; n++ ) {
 
 		pose = start_pose;
 
@@ -201,7 +201,7 @@ RNA_Relaxer::lores_monte_carlo( pose::Pose & pose )
 	pose::Pose start_pose = pose;
 
 	static ScoreFunctionOP lores_scorefxn = ScoreFunctionFactory::create_score_function( RNA_LORES_WTS );
-	if (pose.constraint_set()->has_constraints() ){
+	if ( pose.constraint_set()->has_constraints() ) {
 		lores_scorefxn->set_weight( atom_pair_constraint, 1.0 );
 		lores_scorefxn->set_weight( angle_constraint, 1.0 );
 	}
@@ -209,7 +209,7 @@ RNA_Relaxer::lores_monte_carlo( pose::Pose & pose )
 	Size const lores_monte_carlo_rounds( 1000 );
 	protocols::moves::MonteCarloOP lores_monte_carlo_( new protocols::moves::MonteCarlo( pose, *lores_scorefxn, 2.0 ) );
 
-	for( Size i=1; i <= lores_monte_carlo_rounds ; ++i ) {
+	for ( Size i=1; i <= lores_monte_carlo_rounds ; ++i ) {
 
 		Size const frag_size = static_cast <int> ( numeric::random::rg().uniform() * max_frag_size_ ) + 1;
 		rna_fragment_mover_->random_fragment_insertion( pose, frag_size );
@@ -220,7 +220,7 @@ RNA_Relaxer::lores_monte_carlo( pose::Pose & pose )
 	lores_monte_carlo_->show_counters();
 
 	// Want some variety? Don't use the lowest score pose...
-	//	pose = lores_monte_carlo_->lowest_score_pose();
+	// pose = lores_monte_carlo_->lowest_score_pose();
 
 	Real const rmsd_to_start = scoring::all_atom_rmsd( pose, start_pose );
 	TR << " LoRes MonteCarlo -->  rmsd: " << rmsd_to_start << std::endl;

@@ -32,149 +32,149 @@ namespace protocols {
 namespace kinmatch {
 
 enum KRSQueryType {
-    CEN,
-    CEN_ANG,
-    CEN_AXS,
-    CEN_AXS_ORI
+	CEN,
+	CEN_ANG,
+	CEN_AXS,
+	CEN_AXS_ORI
 };
 
 struct KRSQuery {
-    KRSQueryType type;
-    numeric::xyzVector<core::Real> cen;
-    numeric::xyzVector<core::Real> axs;
-    numeric::xyzVector<core::Real> ori;
-    core::Real disth;
-    core::Real angth;
-    core::Real clash;
-    KRSQuery(
-        KRSQueryType typ
-        );
-    KRSQuery(
-        KRSQueryType typ,
-        numeric::xyzVector<core::Real> c,
-        numeric::xyzVector<core::Real> a,
-        numeric::xyzVector<core::Real> o,
-        core::Real dt=0.5,
-        core::Real at=0.175,
-        core::Real clsh = 2.8*2.8
-        );
-    KRSQuery(
-        KRSQueryType typ,
-        numeric::xyzVector<core::Real> c,
-        numeric::xyzVector<core::Real> a,
-        core::Real dt=0.5,
-        core::Real at=0.175,
-        core::Real clsh = 2.8*2.8
-        );
+	KRSQueryType type;
+	numeric::xyzVector<core::Real> cen;
+	numeric::xyzVector<core::Real> axs;
+	numeric::xyzVector<core::Real> ori;
+	core::Real disth;
+	core::Real angth;
+	core::Real clash;
+	KRSQuery(
+		KRSQueryType typ
+	);
+	KRSQuery(
+		KRSQueryType typ,
+		numeric::xyzVector<core::Real> c,
+		numeric::xyzVector<core::Real> a,
+		numeric::xyzVector<core::Real> o,
+		core::Real dt=0.5,
+		core::Real at=0.175,
+		core::Real clsh = 2.8*2.8
+	);
+	KRSQuery(
+		KRSQueryType typ,
+		numeric::xyzVector<core::Real> c,
+		numeric::xyzVector<core::Real> a,
+		core::Real dt=0.5,
+		core::Real at=0.175,
+		core::Real clsh = 2.8*2.8
+	);
 };
 
 class FunGroupTK : public utility::pointer::ReferenceCount {
 protected:
-    core::pose::PoseCOP pose_;
-    utility::vector1<Size> const pos_;
-    protocols::scoring::ImplicitFastClashCheckCOP ifc_;
-    std::map<std::string,utility::vector1<core::kinematics::Stub> > stb_;
-    std::map<std::string,utility::vector1<core::conformation::ResidueOP> > rsd_;
-    core::chemical::ResidueTypeSetCAP frs_;
+	core::pose::PoseCOP pose_;
+	utility::vector1<Size> const pos_;
+	protocols::scoring::ImplicitFastClashCheckCOP ifc_;
+	std::map<std::string,utility::vector1<core::kinematics::Stub> > stb_;
+	std::map<std::string,utility::vector1<core::conformation::ResidueOP> > rsd_;
+	core::chemical::ResidueTypeSetCAP frs_;
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~FunGroupTK();
-    FunGroupTK(
-        core::pose::Pose & p_in,
-        utility::vector1<Size> & pos
-        );
+	FunGroupTK(
+		core::pose::Pose & p_in,
+		utility::vector1<Size> & pos
+	);
 
-    protocols::scoring::ImplicitFastClashCheck const &
-    ifc() const;
+	protocols::scoring::ImplicitFastClashCheck const &
+	ifc() const;
 
-    virtual
-    void
-    place_c(
-        KRSQuery const & q,
-        core::conformation::Residue const & qrsd,
-        utility::vector1<core::conformation::ResidueOP> & hits
-        ) const = 0;
+	virtual
+	void
+	place_c(
+		KRSQuery const & q,
+		core::conformation::Residue const & qrsd,
+		utility::vector1<core::conformation::ResidueOP> & hits
+	) const = 0;
 
-    virtual
-    void
-    place_h(
-        KRSQuery const & q,
-        core::conformation::Residue const & qrsd,
-        utility::vector1<core::conformation::ResidueOP> & hits
-        ) const = 0;
-    virtual
-    void
-    place_d(
-        KRSQuery const & q,
-        core::conformation::Residue const & qrsd,
-        utility::vector1<core::conformation::ResidueOP> & hits
-        ) const = 0;
+	virtual
+	void
+	place_h(
+		KRSQuery const & q,
+		core::conformation::Residue const & qrsd,
+		utility::vector1<core::conformation::ResidueOP> & hits
+	) const = 0;
+	virtual
+	void
+	place_d(
+		KRSQuery const & q,
+		core::conformation::Residue const & qrsd,
+		utility::vector1<core::conformation::ResidueOP> & hits
+	) const = 0;
 };
 
 class BruteFunGroupTK : public FunGroupTK {
 public:
-    BruteFunGroupTK(
-        core::pose::Pose & p_in,
-        utility::vector1<Size> pos=utility::vector1<Size>()
-        );
+	BruteFunGroupTK(
+		core::pose::Pose & p_in,
+		utility::vector1<Size> pos=utility::vector1<Size>()
+	);
 
-    virtual
-    void
-    place_c(
-        KRSQuery const & q,
-        core::conformation::Residue const & qrsd,
-        utility::vector1<core::conformation::ResidueOP> & hits
-        ) const;
+	virtual
+	void
+	place_c(
+		KRSQuery const & q,
+		core::conformation::Residue const & qrsd,
+		utility::vector1<core::conformation::ResidueOP> & hits
+	) const;
 
-    virtual
-    void
-    place_h(
-        KRSQuery const & q,
-        core::conformation::Residue const & qrsd,
-        utility::vector1<core::conformation::ResidueOP> & hits
-        ) const;
+	virtual
+	void
+	place_h(
+		KRSQuery const & q,
+		core::conformation::Residue const & qrsd,
+		utility::vector1<core::conformation::ResidueOP> & hits
+	) const;
 
-    virtual
-    void
-    place_d(
-        KRSQuery const & q,
-        core::conformation::Residue const & qrsd,
-        utility::vector1<core::conformation::ResidueOP> & hits
-        ) const;
+	virtual
+	void
+	place_d(
+		KRSQuery const & q,
+		core::conformation::Residue const & qrsd,
+		utility::vector1<core::conformation::ResidueOP> & hits
+	) const;
 
 };
 
 class KinFunGroupTK : public FunGroupTK {
 public:
-    KinFunGroupTK(
-        core::pose::Pose & p_in,
-        utility::vector1<Size> pos=utility::vector1<Size>()
-        );
+	KinFunGroupTK(
+		core::pose::Pose & p_in,
+		utility::vector1<Size> pos=utility::vector1<Size>()
+	);
 
 
-    virtual
-    void
-    place_c(
-        KRSQuery const & q,
-        core::conformation::Residue const & qrsd,
-        utility::vector1<core::conformation::ResidueOP> & hits_out
-        ) const;
+	virtual
+	void
+	place_c(
+		KRSQuery const & q,
+		core::conformation::Residue const & qrsd,
+		utility::vector1<core::conformation::ResidueOP> & hits_out
+	) const;
 
-    virtual
-    void
-    place_h(
-        KRSQuery const & q,
-        core::conformation::Residue const & qrsd,
-        utility::vector1<core::conformation::ResidueOP> & hits
-        ) const;
+	virtual
+	void
+	place_h(
+		KRSQuery const & q,
+		core::conformation::Residue const & qrsd,
+		utility::vector1<core::conformation::ResidueOP> & hits
+	) const;
 
-    virtual
-    void
-    place_d(
-        KRSQuery const & q,
-        core::conformation::Residue const & qrsd,
-        utility::vector1<core::conformation::ResidueOP> & hits
-        ) const;
+	virtual
+	void
+	place_d(
+		KRSQuery const & q,
+		core::conformation::Residue const & qrsd,
+		utility::vector1<core::conformation::ResidueOP> & hits
+	) const;
 
 };
 

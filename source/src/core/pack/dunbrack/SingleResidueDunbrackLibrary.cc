@@ -84,7 +84,7 @@ SingleResidueDunbrackLibrary::SingleResidueDunbrackLibrary(
 	// since NCAAs are aa_unk we cannot hard code the information
 	// alternativly it is added to the residue type paramater files
 	read_options();
-	if (aa_ != chemical::aa_unk) {
+	if ( aa_ != chemical::aa_unk ) {
 		n_rotameric_bins_for_aa( aa_, n_chi_bins_, dun02 );
 		for ( Size ii = n_rotameric_chi_; ii > 1; --ii ) {
 			n_chi_products_[ ii - 1 ] = n_chi_products_[ ii ] * n_chi_bins_[ ii ];
@@ -122,10 +122,12 @@ void
 SingleResidueDunbrackLibrary::read_options()
 {
 	using namespace basic::options;
-	if ( option[ OptionKeys::packing::dunbrack_prob_buried ].user() )
+	if ( option[ OptionKeys::packing::dunbrack_prob_buried ].user() ) {
 		prob_to_accumulate_buried( option[ OptionKeys::packing::dunbrack_prob_buried ]() );
-	if ( option[ OptionKeys::packing::dunbrack_prob_nonburied ].user() )
+	}
+	if ( option[ OptionKeys::packing::dunbrack_prob_nonburied ].user() ) {
 		prob_to_accumulate_nonburied( option[ OptionKeys::packing::dunbrack_prob_nonburied ]() );
+	}
 }
 
 /// @details the number of wells defined for the 08 library; includes
@@ -139,28 +141,28 @@ SingleResidueDunbrackLibrary::n_rotamer_bins_for_aa(
 	/// HARD CODED HACK -- SHOULD MOVE THIS TO BECOME A VIRTUAL FUNCTION CALL
 	using namespace chemical;
 	switch ( aa ) {
-		case aa_ala: rot.resize( 0 ); break;
-		case aa_cys: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_asp: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 6; break;
-		case aa_glu: rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = 6; break;
-		case aa_phe: rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 6; break;
-		case aa_gly: rot.resize( 0 ); break;
-		case aa_his: rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 12; break;
-		case aa_ile: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
-		case aa_lys: rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
-		case aa_leu: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
-		case aa_met: rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = 3; break;
-		case aa_asn: rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 12; break;
-		case aa_pro: rot.resize( 3 ); rot[ 1 ] = 2; rot[ 2 ] = rot[ 3 ] = 1; break;
-		case aa_gln: rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = 3; rot[ 3 ] = 12; break;
-		case aa_arg: rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
-		case aa_ser: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_thr: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_val: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_trp: rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 12; break;
-		case aa_tyr: rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 6; break;
-		default:
-			rot.resize( 0 );
+	case aa_ala : rot.resize( 0 ); break;
+	case aa_cys : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_asp : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 6; break;
+	case aa_glu : rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = 6; break;
+	case aa_phe : rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 6; break;
+	case aa_gly : rot.resize( 0 ); break;
+	case aa_his : rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 12; break;
+	case aa_ile : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
+	case aa_lys : rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
+	case aa_leu : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
+	case aa_met : rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = 3; break;
+	case aa_asn : rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 12; break;
+	case aa_pro : rot.resize( 3 ); rot[ 1 ] = 2; rot[ 2 ] = rot[ 3 ] = 1; break;
+	case aa_gln : rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = 3; rot[ 3 ] = 12; break;
+	case aa_arg : rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
+	case aa_ser : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_thr : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_val : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_trp : rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 12; break;
+	case aa_tyr : rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 6; break;
+	default :
+		rot.resize( 0 );
 	}
 }
 
@@ -180,28 +182,28 @@ SingleResidueDunbrackLibrary::n_rotameric_bins_for_aa(
 
 	using namespace chemical;
 	switch ( aa ) {
-		case aa_ala: rot.resize( 0 ); break;
-		case aa_cys: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_asp: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_glu: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
-		case aa_phe: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_gly: rot.resize( 0 ); break;
-		case aa_his: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_ile: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
-		case aa_lys: rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
-		case aa_leu: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
-		case aa_met: rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = 3; break;
-		case aa_asn: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_pro: rot.resize( 3 ); rot[ 1 ] = 2; rot[ 2 ] = rot[ 3 ] = 1; break;
-		case aa_gln: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
-		case aa_arg: rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
-		case aa_ser: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_thr: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_val: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_trp: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_tyr: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		default:
-			rot.resize( 0 );
+	case aa_ala : rot.resize( 0 ); break;
+	case aa_cys : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_asp : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_glu : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
+	case aa_phe : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_gly : rot.resize( 0 ); break;
+	case aa_his : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_ile : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
+	case aa_lys : rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
+	case aa_leu : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
+	case aa_met : rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = 3; break;
+	case aa_asn : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_pro : rot.resize( 3 ); rot[ 1 ] = 2; rot[ 2 ] = rot[ 3 ] = 1; break;
+	case aa_gln : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
+	case aa_arg : rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
+	case aa_ser : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_thr : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_val : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_trp : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_tyr : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	default :
+		rot.resize( 0 );
 	}
 }
 
@@ -215,28 +217,28 @@ SingleResidueDunbrackLibrary::n_rotamer_bins_for_aa_02(
 {
 	using namespace chemical;
 	switch ( aa ) {
-		case aa_ala: rot.resize( 0 ); break;
-		case aa_cys: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_asp: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
-		case aa_glu: rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = 3; break;
-		case aa_phe: rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 2; break;
-		case aa_gly: rot.resize( 0 ); break;
-		case aa_his: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
-		case aa_ile: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
-		case aa_lys: rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
-		case aa_leu: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
-		case aa_met: rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = 3; break;
-		case aa_asn: rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 6; break;
-		case aa_pro: rot.resize( 3 ); rot[ 1 ] = 2; rot[ 2 ] = rot[ 3 ] = 1; break;
-		case aa_gln: rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = 3; rot[ 3 ] = 4; break;
-		case aa_arg: rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
-		case aa_ser: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_thr: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_val: rot.resize( 1 ); rot[ 1 ] = 3; break;
-		case aa_trp: rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
-		case aa_tyr: rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 2; break;
-		default:
-			rot.resize( 0 );
+	case aa_ala : rot.resize( 0 ); break;
+	case aa_cys : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_asp : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
+	case aa_glu : rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = 3; break;
+	case aa_phe : rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 2; break;
+	case aa_gly : rot.resize( 0 ); break;
+	case aa_his : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
+	case aa_ile : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
+	case aa_lys : rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
+	case aa_leu : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
+	case aa_met : rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = 3; break;
+	case aa_asn : rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 6; break;
+	case aa_pro : rot.resize( 3 ); rot[ 1 ] = 2; rot[ 2 ] = rot[ 3 ] = 1; break;
+	case aa_gln : rot.resize( 3 ); rot[ 1 ] = rot[ 2 ] = 3; rot[ 3 ] = 4; break;
+	case aa_arg : rot.resize( 4 ); rot[ 1 ] = rot[ 2 ] = rot[ 3 ] = rot[ 4 ] = 3; break;
+	case aa_ser : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_thr : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_val : rot.resize( 1 ); rot[ 1 ] = 3; break;
+	case aa_trp : rot.resize( 2 ); rot[ 1 ] = rot[ 2 ] = 3; break;
+	case aa_tyr : rot.resize( 2 ); rot[ 1 ] = 3; rot[ 2 ] = 2; break;
+	default :
+		rot.resize( 0 );
 	}
 }
 
@@ -278,7 +280,7 @@ SingleResidueDunbrackLibrary::mark_rotwell_exists(
 	utility::vector1< Size > const & rotwell
 )
 {
-debug_assert( ! packed_rotno_conversion_data_current_ );
+	debug_assert( ! packed_rotno_conversion_data_current_ );
 	Size const rotno( rotwell_2_rotno( rotwell ) );
 	rotwell_exists_[ rotno ] = true;
 }
@@ -326,7 +328,7 @@ SingleResidueDunbrackLibrary::rotwell_2_rotno(
 	utility::vector1< Size > const & rotwell
 ) const
 {
-debug_assert( n_chi_products_.size() <= rotwell.size() );
+	debug_assert( n_chi_products_.size() <= rotwell.size() );
 	Size runsum = 1;
 	for ( Size ii = 1; ii <= n_chi_products_.size(); ++ii ) {
 		runsum += n_chi_products_[ ii ]*( rotwell[ ii ] - 1 );
@@ -339,7 +341,7 @@ debug_assert( n_chi_products_.size() <= rotwell.size() );
 Size
 SingleResidueDunbrackLibrary::rotwell_2_rotno( Size4 const & rotwell ) const
 {
-debug_assert( n_chi_products_.size() <= rotwell.size() );
+	debug_assert( n_chi_products_.size() <= rotwell.size() );
 	Size runsum = 1;
 	for ( Size ii = 1; ii <= n_chi_products_.size(); ++ii ) {
 		runsum += n_chi_products_[ ii ]*( rotwell[ ii ] - 1 );
@@ -354,8 +356,8 @@ debug_assert( n_chi_products_.size() <= rotwell.size() );
 Size
 SingleResidueDunbrackLibrary::rotno_2_packed_rotno( Size const rotno ) const
 {
-debug_assert( packed_rotno_conversion_data_current_ );
-	if (rotno < 1 || rotno > rotno_2_packed_rotno_.size() ) return 0;
+	debug_assert( packed_rotno_conversion_data_current_ );
+	if ( rotno < 1 || rotno > rotno_2_packed_rotno_.size() ) return 0;
 	return rotno_2_packed_rotno_[ rotno ];
 }
 
@@ -365,7 +367,7 @@ SingleResidueDunbrackLibrary::rotwell_2_packed_rotno(
 	utility::vector1< Size > const & rotwell
 ) const
 {
-debug_assert( packed_rotno_conversion_data_current_ );
+	debug_assert( packed_rotno_conversion_data_current_ );
 	return rotno_2_packed_rotno( rotwell_2_rotno( rotwell ) );
 }
 
@@ -374,7 +376,7 @@ debug_assert( packed_rotno_conversion_data_current_ );
 Size
 SingleResidueDunbrackLibrary::rotwell_2_packed_rotno( Size4 const & rotwell ) const
 {
-debug_assert( packed_rotno_conversion_data_current_ );
+	debug_assert( packed_rotno_conversion_data_current_ );
 	return rotno_2_packed_rotno( rotwell_2_rotno( rotwell ) );
 }
 
@@ -394,7 +396,7 @@ SingleResidueDunbrackLibrary::packed_rotno_2_rotwell(
 	Size4 & rotwell
 ) const
 {
-debug_assert( packed_rotno_2_rotwell_[ packed_rotno ].size() <= rotwell.size() );
+	debug_assert( packed_rotno_2_rotwell_[ packed_rotno ].size() <= rotwell.size() );
 	std::copy( packed_rotno_2_rotwell_[ packed_rotno ].begin(), packed_rotno_2_rotwell_[ packed_rotno ].end(), rotwell.begin() );
 }
 
@@ -411,39 +413,39 @@ SingleResidueDunbrackLibrary::write_to_binary( utility::io::ozstream & out ) con
 	using namespace boost;
 	/// 1. n_packed_rots_
 	{
-	boost::int32_t n_packed_rots( n_packed_rots_ );
-	out.write( (char*) & n_packed_rots, sizeof( boost::int32_t ));
+		boost::int32_t n_packed_rots( n_packed_rots_ );
+		out.write( (char*) & n_packed_rots, sizeof( boost::int32_t ));
 	}
 
 
 	/// 2. rotno_2_packed_rotno_
 	{
-	boost::int32_t * rotno_2_packed_rotno = new boost::int32_t[ n_possible_rots_ ];
-	for ( Size ii = 1; ii <= n_possible_rots_; ++ii ) rotno_2_packed_rotno[ ii - 1 ] = rotno_2_packed_rotno_[ ii ];
-	out.write( (char*) rotno_2_packed_rotno, n_possible_rots_ * sizeof( boost::int32_t ) );
-	delete [] rotno_2_packed_rotno; rotno_2_packed_rotno = 0;
+		boost::int32_t * rotno_2_packed_rotno = new boost::int32_t[ n_possible_rots_ ];
+		for ( Size ii = 1; ii <= n_possible_rots_; ++ii ) rotno_2_packed_rotno[ ii - 1 ] = rotno_2_packed_rotno_[ ii ];
+		out.write( (char*) rotno_2_packed_rotno, n_possible_rots_ * sizeof( boost::int32_t ) );
+		delete [] rotno_2_packed_rotno; rotno_2_packed_rotno = 0;
 	}
 
 	/// 3. packed_rotno_2_rotno_
 	{
-	boost::int32_t * packed_rotno_2_rotno = new boost::int32_t[ n_packed_rots_ ];
-	for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) packed_rotno_2_rotno[ ii - 1 ] = packed_rotno_2_rotno_[ ii ];
-	out.write( (char*) packed_rotno_2_rotno, n_packed_rots_ * sizeof( boost::int32_t ) );
-	delete [] packed_rotno_2_rotno; packed_rotno_2_rotno = 0;
+		boost::int32_t * packed_rotno_2_rotno = new boost::int32_t[ n_packed_rots_ ];
+		for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) packed_rotno_2_rotno[ ii - 1 ] = packed_rotno_2_rotno_[ ii ];
+		out.write( (char*) packed_rotno_2_rotno, n_packed_rots_ * sizeof( boost::int32_t ) );
+		delete [] packed_rotno_2_rotno; packed_rotno_2_rotno = 0;
 	}
 
 	/// 4. packed_rotno_2_rotwell_
 	{
-	boost::int32_t * packed_rotno_2_rotwell = new boost::int32_t[ n_packed_rots_ * n_rotameric_chi_ ];
-	Size count( 0 );
-	for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) {
-		for ( Size jj = 1; jj <= n_rotameric_chi_; ++jj ) {
-			packed_rotno_2_rotwell[ count ] = packed_rotno_2_rotwell_[ ii ][ jj ];
-			++count;
+		boost::int32_t * packed_rotno_2_rotwell = new boost::int32_t[ n_packed_rots_ * n_rotameric_chi_ ];
+		Size count( 0 );
+		for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) {
+			for ( Size jj = 1; jj <= n_rotameric_chi_; ++jj ) {
+				packed_rotno_2_rotwell[ count ] = packed_rotno_2_rotwell_[ ii ][ jj ];
+				++count;
+			}
 		}
-	}
-	out.write( (char*) packed_rotno_2_rotwell, n_packed_rots_ * n_rotameric_chi_ * sizeof( boost::int32_t ) );
-	delete [] packed_rotno_2_rotwell; packed_rotno_2_rotwell = 0;
+		out.write( (char*) packed_rotno_2_rotwell, n_packed_rots_ * n_rotameric_chi_ * sizeof( boost::int32_t ) );
+		delete [] packed_rotno_2_rotwell; packed_rotno_2_rotwell = 0;
 	}
 
 }
@@ -454,42 +456,42 @@ SingleResidueDunbrackLibrary::read_from_binary( utility::io::izstream & in )
 
 	/// 1. n_packed_rots_
 	{
-	boost::int32_t n_packed_rots( 0 );
-	in.read( (char*) & n_packed_rots, sizeof( boost::int32_t ));
-	n_packed_rots_ = n_packed_rots;
+		boost::int32_t n_packed_rots( 0 );
+		in.read( (char*) & n_packed_rots, sizeof( boost::int32_t ));
+		n_packed_rots_ = n_packed_rots;
 	}
 
 	/// 2. rotno_2_packed_rotno_
 	{
-	boost::int32_t * rotno_2_packed_rotno = new boost::int32_t[ n_possible_rots_ ];
-	in.read( (char*) rotno_2_packed_rotno, n_possible_rots_ * sizeof( boost::int32_t ) );
-	for ( Size ii = 1; ii <= n_possible_rots_; ++ii ) rotno_2_packed_rotno_[ ii ] = rotno_2_packed_rotno[ ii - 1 ];
-	delete [] rotno_2_packed_rotno; rotno_2_packed_rotno = 0;
+		boost::int32_t * rotno_2_packed_rotno = new boost::int32_t[ n_possible_rots_ ];
+		in.read( (char*) rotno_2_packed_rotno, n_possible_rots_ * sizeof( boost::int32_t ) );
+		for ( Size ii = 1; ii <= n_possible_rots_; ++ii ) rotno_2_packed_rotno_[ ii ] = rotno_2_packed_rotno[ ii - 1 ];
+		delete [] rotno_2_packed_rotno; rotno_2_packed_rotno = 0;
 	}
 
 	/// 3. packed_rotno_2_rotno_
 	{
-	boost::int32_t * packed_rotno_2_rotno = new boost::int32_t[ n_packed_rots_ ];
-	in.read( (char*) packed_rotno_2_rotno, n_packed_rots_ * sizeof( boost::int32_t ) );
-	packed_rotno_2_rotno_.resize( n_packed_rots_ );
-	for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) packed_rotno_2_rotno_[ ii ] = packed_rotno_2_rotno[ ii - 1 ];
-	delete [] packed_rotno_2_rotno; packed_rotno_2_rotno = 0;
+		boost::int32_t * packed_rotno_2_rotno = new boost::int32_t[ n_packed_rots_ ];
+		in.read( (char*) packed_rotno_2_rotno, n_packed_rots_ * sizeof( boost::int32_t ) );
+		packed_rotno_2_rotno_.resize( n_packed_rots_ );
+		for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) packed_rotno_2_rotno_[ ii ] = packed_rotno_2_rotno[ ii - 1 ];
+		delete [] packed_rotno_2_rotno; packed_rotno_2_rotno = 0;
 	}
 
 	/// 4. packed_rotno_2_rotwell_
 	{
-	boost::int32_t * packed_rotno_2_rotwell = new boost::int32_t[ n_packed_rots_ * n_rotameric_chi_ ];
-	in.read( (char*) packed_rotno_2_rotwell, n_packed_rots_ * n_rotameric_chi_ * sizeof( boost::int32_t ) );
-	packed_rotno_2_rotwell_.resize( n_packed_rots_ );
-	Size count( 0 );
-	for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) {
-		packed_rotno_2_rotwell_[ ii ].resize( n_rotameric_chi_ );
-		for ( Size jj = 1; jj <= n_rotameric_chi_; ++jj ) {
-			packed_rotno_2_rotwell_[ ii ][ jj ] = packed_rotno_2_rotwell[ count ];
-			++count;
+		boost::int32_t * packed_rotno_2_rotwell = new boost::int32_t[ n_packed_rots_ * n_rotameric_chi_ ];
+		in.read( (char*) packed_rotno_2_rotwell, n_packed_rots_ * n_rotameric_chi_ * sizeof( boost::int32_t ) );
+		packed_rotno_2_rotwell_.resize( n_packed_rots_ );
+		Size count( 0 );
+		for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) {
+			packed_rotno_2_rotwell_[ ii ].resize( n_rotameric_chi_ );
+			for ( Size jj = 1; jj <= n_rotameric_chi_; ++jj ) {
+				packed_rotno_2_rotwell_[ ii ][ jj ] = packed_rotno_2_rotwell[ count ];
+				++count;
+			}
 		}
-	}
-	delete [] packed_rotno_2_rotwell;
+		delete [] packed_rotno_2_rotwell;
 	}
 	packed_rotno_conversion_data_current_ = true;
 }
@@ -500,7 +502,7 @@ bool
 SingleResidueDunbrackLibrary::operator ==( SingleResidueRotamerLibrary const & rhs) const {
 	// Raw pointer okay, we're just using it to check for conversion
 	SingleResidueDunbrackLibrary const * ptr( dynamic_cast< SingleResidueDunbrackLibrary const * > ( &rhs ) );
-	if( ptr == 0 ) {
+	if ( ptr == 0 ) {
 		TR << "In comparison operator: right-hand side is not a SingleResidueDunbrackLibrary." << std::endl;
 		return false;
 	}
@@ -510,55 +512,55 @@ SingleResidueDunbrackLibrary::operator ==( SingleResidueRotamerLibrary const & r
 	// We don't call the parent == operator, as there's no meaningful data there to compare.
 	bool equal( true );
 
-	if( aa_ != other.aa_ ) {
+	if ( aa_ != other.aa_ ) {
 		TR.Debug << "Comparison failure: " << core::chemical::name_from_aa(aa_)
-				<< " does not match " << core::chemical::name_from_aa(other.aa_) << std::endl;
+			<< " does not match " << core::chemical::name_from_aa(other.aa_) << std::endl;
 		return false; // Major data mismatch - don't bother reporting others.
 	}
-	if( dun02_ != other.dun02_ ) {
+	if ( dun02_ != other.dun02_ ) {
 		TR.Debug << "Comparison failure: Dun02 setting mismatch: " << dun02_ << " vs. " << other.dun02_ << std::endl;
 		return false; // Major data mismatch - don't bother reporting others.
 	}
 
 	/// Non-binary loaded data - check for equality for sanity purposes
-	if( n_rotameric_chi_ != other.n_rotameric_chi_ ) {
+	if ( n_rotameric_chi_ != other.n_rotameric_chi_ ) {
 		TR.Debug << "Comparison failure: n_rotameric_chi: " << n_rotameric_chi_ << " vs. " << other.n_rotameric_chi_ << std::endl;
 		equal = false;
 	}
-	if( n_possible_rots_ != other.n_possible_rots_ ) {
+	if ( n_possible_rots_ != other.n_possible_rots_ ) {
 		TR.Debug << "Comparison failure: n_possible_rots: " << n_possible_rots_ << " vs. " << other.n_possible_rots_ << std::endl;
 		equal = false;
 	}
-	if( packed_rotno_conversion_data_current_ != other.packed_rotno_conversion_data_current_ ) {
+	if ( packed_rotno_conversion_data_current_ != other.packed_rotno_conversion_data_current_ ) {
 		TR.Debug << "Comparison failure: packed_rotno_conversion_data_current: " << packed_rotno_conversion_data_current_ << " vs. " << other.packed_rotno_conversion_data_current_ << std::endl;
 		equal = false;
 	}
-	if( ! numeric::equal_by_epsilon( prob_to_accumulate_buried_, other.prob_to_accumulate_buried_, PROB_DELTA) ) {
+	if ( ! numeric::equal_by_epsilon( prob_to_accumulate_buried_, other.prob_to_accumulate_buried_, PROB_DELTA) ) {
 		TR.Debug << "Comparison failure: prob_to_accumulate_buried: " << prob_to_accumulate_buried_ << " vs. " << other.prob_to_accumulate_buried_ << std::endl;
 		equal = false;
 	}
-	if( ! numeric::equal_by_epsilon( prob_to_accumulate_nonburied_, other.prob_to_accumulate_nonburied_, PROB_DELTA) ) {
+	if ( ! numeric::equal_by_epsilon( prob_to_accumulate_nonburied_, other.prob_to_accumulate_nonburied_, PROB_DELTA) ) {
 		TR.Debug << "Comparison failure: prob_to_accumulate_nonburied: " << prob_to_accumulate_nonburied_ << " vs. " << other.prob_to_accumulate_nonburied_ << std::endl;
 		equal = false;
 	}
 
-	if( n_chi_bins_.size() != other.n_chi_bins_.size() ) {
-			TR.Debug << "Comparison failure: n_chi_bins vector length: " << n_chi_bins_.size() << " vs. " << other.n_chi_bins_.size() << std::endl;
-			equal = false;
+	if ( n_chi_bins_.size() != other.n_chi_bins_.size() ) {
+		TR.Debug << "Comparison failure: n_chi_bins vector length: " << n_chi_bins_.size() << " vs. " << other.n_chi_bins_.size() << std::endl;
+		equal = false;
 	} else {
-		for( core::Size ii(1); ii <= n_chi_bins_.size(); ++ii ) {
-			if( n_chi_bins_[ii] != other.n_chi_bins_[ii] ) {
+		for ( core::Size ii(1); ii <= n_chi_bins_.size(); ++ii ) {
+			if ( n_chi_bins_[ii] != other.n_chi_bins_[ii] ) {
 				TR.Debug << "Comparison failure: n_chi_bins: " << n_chi_bins_[ii] << " vs. " << other.n_chi_bins_[ii] << std::endl;
 				equal = false;
 			}
 		}
 	}
-	if( n_chi_products_.size() != other.n_chi_products_.size() ) {
-			TR.Debug << "Comparison failure: n_chi_products vector length: " << n_chi_products_.size() << " vs. " << other.n_chi_products_.size() << std::endl;
-			equal = false;
+	if ( n_chi_products_.size() != other.n_chi_products_.size() ) {
+		TR.Debug << "Comparison failure: n_chi_products vector length: " << n_chi_products_.size() << " vs. " << other.n_chi_products_.size() << std::endl;
+		equal = false;
 	} else {
-		for( core::Size ii(1); ii <= n_chi_products_.size(); ++ii ) {
-			if( n_chi_products_[ii] != other.n_chi_products_[ii] ) {
+		for ( core::Size ii(1); ii <= n_chi_products_.size(); ++ii ) {
+			if ( n_chi_products_[ii] != other.n_chi_products_[ii] ) {
 				TR.Debug << "Comparison failure: n_chi_products: " << n_chi_products_[ii] << " vs. " << other.n_chi_products_[ii] << std::endl;
 				equal = false;
 			}
@@ -566,44 +568,44 @@ SingleResidueDunbrackLibrary::operator ==( SingleResidueRotamerLibrary const & r
 	}
 	// // For some reason, rotwell_exists_ is not matching on direct re-load comparison (empty vector on ASCII reload ?)
 	//if( rotwell_exists_.size() != other.rotwell_exists_.size() ) {
-	//		TR.Debug << "Comparison failure: rotwell_exists vector length: " << rotwell_exists_.size() << " vs. " << other.rotwell_exists_.size() << std::endl;
-	//		equal = false;
+	//  TR.Debug << "Comparison failure: rotwell_exists vector length: " << rotwell_exists_.size() << " vs. " << other.rotwell_exists_.size() << std::endl;
+	//  equal = false;
 	//} else {
-	//	for( core::Size ii(1); ii <= rotwell_exists_.size(); ++ii ) {
-	//		if( rotwell_exists_[ii] != other.rotwell_exists_[ii] ) {
-	//			TR.Debug << "Comparison failure: rotwell_exists: " << rotwell_exists_[ii] << " vs. " << other.rotwell_exists_[ii] << std::endl;
-	//			equal = false;
-	//		}
-	//	}
+	// for( core::Size ii(1); ii <= rotwell_exists_.size(); ++ii ) {
+	//  if( rotwell_exists_[ii] != other.rotwell_exists_[ii] ) {
+	//   TR.Debug << "Comparison failure: rotwell_exists: " << rotwell_exists_[ii] << " vs. " << other.rotwell_exists_[ii] << std::endl;
+	//   equal = false;
+	//  }
+	// }
 	//}
 
 	/// Binary-loaded data.
 
 	/// 1. n_packed_rots_
-	if( n_packed_rots_ != other.n_packed_rots_ ) {
+	if ( n_packed_rots_ != other.n_packed_rots_ ) {
 		TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa(aa_ )
-				<< ": n_packed_rots is unequal. " << n_packed_rots_ << " vs. " << other.n_packed_rots_ << std::endl;
+			<< ": n_packed_rots is unequal. " << n_packed_rots_ << " vs. " << other.n_packed_rots_ << std::endl;
 		equal = false;
 	}
 
 	/// 2. rotno_2_packed_rotno_
 	assert( n_possible_rots_ == other.n_possible_rots_ ); // This doesn't vary?
 	for ( Size ii = 1; ii <= n_possible_rots_; ++ii ) {
-		if( rotno_2_packed_rotno_[ ii ] != other.rotno_2_packed_rotno_[ ii ] ) {
+		if ( rotno_2_packed_rotno_[ ii ] != other.rotno_2_packed_rotno_[ ii ] ) {
 			TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa(aa_ )
-					<< ": rotno_2_packed_rotno " << ii << " - "
-					<< rotno_2_packed_rotno_[ ii ] << " vs. " << other.rotno_2_packed_rotno_[ ii ] << std::endl;
+				<< ": rotno_2_packed_rotno " << ii << " - "
+				<< rotno_2_packed_rotno_[ ii ] << " vs. " << other.rotno_2_packed_rotno_[ ii ] << std::endl;
 			equal = false;
 		}
 	}
 
 	/// 3. packed_rotno_2_rotno_
-	if( n_packed_rots_ == other.n_packed_rots_ ) {
+	if ( n_packed_rots_ == other.n_packed_rots_ ) {
 		for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) {
-			if( packed_rotno_2_rotno_[ ii ] != other.packed_rotno_2_rotno_[ ii ] ) {
+			if ( packed_rotno_2_rotno_[ ii ] != other.packed_rotno_2_rotno_[ ii ] ) {
 				TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa(aa_ )
-						<< ": packed_rotno_2_rotno " << ii << " - "
-						<< packed_rotno_2_rotno_[ ii ] << " vs. " << other.packed_rotno_2_rotno_[ ii ] << std::endl;
+					<< ": packed_rotno_2_rotno " << ii << " - "
+					<< packed_rotno_2_rotno_[ ii ] << " vs. " << other.packed_rotno_2_rotno_[ ii ] << std::endl;
 				equal = false;
 			}
 		}
@@ -611,13 +613,13 @@ SingleResidueDunbrackLibrary::operator ==( SingleResidueRotamerLibrary const & r
 
 	/// 4. packed_rotno_2_rotwell_
 	assert( n_rotameric_chi_ == other.n_rotameric_chi_ );
-	if( n_packed_rots_ == other.n_packed_rots_ ) {
+	if ( n_packed_rots_ == other.n_packed_rots_ ) {
 		for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) {
 			for ( Size jj = 1; jj <= n_rotameric_chi_; ++jj ) {
-				if( packed_rotno_2_rotwell_[ ii ][ jj ] != other.packed_rotno_2_rotwell_[ ii ][ jj ] ) {
+				if ( packed_rotno_2_rotwell_[ ii ][ jj ] != other.packed_rotno_2_rotwell_[ ii ][ jj ] ) {
 					TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa(aa_)
-							<< ": packed_rotno_2_rotwell " << ii << " " << jj << " - "
-							<< packed_rotno_2_rotwell_[ ii ][ jj ] << " vs. " << other.packed_rotno_2_rotwell_[ ii ][ jj ] << std::endl;
+						<< ": packed_rotno_2_rotwell " << ii << " " << jj << " - "
+						<< packed_rotno_2_rotwell_[ ii ][ jj ] << " vs. " << other.packed_rotno_2_rotwell_[ ii ][ jj ] << std::endl;
 					equal = false;
 				}
 			}
@@ -707,9 +709,9 @@ Size SingleResidueDunbrackLibrary::memory_usage_dynamic() const
 void
 SingleResidueDunbrackLibrary::hokey_template_workaround()
 {
-debug_assert( false );
+	debug_assert( false );
 	utility_exit_with_message(
-	"ERROR: SingleResidueDunbrackLibrary::hokey_template_workaround should never be called!");
+		"ERROR: SingleResidueDunbrackLibrary::hokey_template_workaround should never be called!");
 
 	RotamericSingleResidueDunbrackLibrary< ONE, ONE >   rsrdl_11( chemical::aa_ala, false );
 	RotamericSingleResidueDunbrackLibrary< ONE, TWO >   rsrdl_12( chemical::aa_ala, false );
@@ -1284,7 +1286,7 @@ debug_assert( false );
 	srsrdl_42.get_all_rotamer_samples( bb4 );
 	srsrdl_51.get_all_rotamer_samples( bb5 );
 	srsrdl_52.get_all_rotamer_samples( bb5 );
-*/
+	*/
 	rsrdl_11.get_all_rotamer_samples( bb5 );
 	rsrdl_12.get_all_rotamer_samples( bb5 );
 	rsrdl_13.get_all_rotamer_samples( bb5 );
@@ -1422,7 +1424,7 @@ debug_assert( false );
 	utility::fixedsizearray1< Size, 5 > sizevec5;
 	utility::fixedsizearray1< Real, 5 > realvec5;
 	utility::vector1< Real > realvec( 5 );
-	
+
 	srsrdl_11.interpolate_nrchi_values( sizevec1, sizevec1, realvec1, 1, realvec );
 	srsrdl_12.interpolate_nrchi_values( sizevec1, sizevec1, realvec1, 1, realvec );
 	srsrdl_21.interpolate_nrchi_values( sizevec2, sizevec2, realvec2, 1, realvec );
@@ -1433,7 +1435,7 @@ debug_assert( false );
 	srsrdl_42.interpolate_nrchi_values( sizevec4, sizevec4, realvec4, 1, realvec );
 	srsrdl_51.interpolate_nrchi_values( sizevec5, sizevec5, realvec5, 1, realvec );
 	srsrdl_52.interpolate_nrchi_values( sizevec5, sizevec5, realvec5, 1, realvec );
-	
+
 }
 
 

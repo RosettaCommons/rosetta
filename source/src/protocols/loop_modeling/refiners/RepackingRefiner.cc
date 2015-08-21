@@ -43,15 +43,15 @@ std::string RepackingRefinerCreator::keyname() const {
 }
 
 RepackingRefiner::RepackingRefiner(Size repack_period)
-	: repack_period_(repack_period),
-	  iteration_counter_(0) {}
+: repack_period_(repack_period),
+	iteration_counter_(0) {}
 
 void RepackingRefiner::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose) {
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const & pose) {
 
 	LoopMover::parse_my_tag(tag, data, filters, movers, pose);
 	utilities::set_scorefxn_from_tag(*this, tag, data);
@@ -60,7 +60,7 @@ void RepackingRefiner::parse_my_tag(
 }
 
 bool RepackingRefiner::do_apply(Pose & pose) {
-	if (iteration_counter_++ % repack_period_ == 0) {
+	if ( iteration_counter_++ % repack_period_ == 0 ) {
 		return packing_helper(pose, this, core::pack::pack_rotamers);
 	} else {
 		return true;

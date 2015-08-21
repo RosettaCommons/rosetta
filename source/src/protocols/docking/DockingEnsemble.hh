@@ -92,7 +92,7 @@ public:
 
 	// @brief return a pose from the ensemble (Either fullatom or centroid)
 	core::pose::Pose & get_conformer( core::Size conf_num ) { return ensemble_list_[conf_num]; }
-	core::pose::Pose & get_conformer_cen( core::Size conf_num ) { return ensemble_list_cen_[conf_num]; }	// Add by DK
+	core::pose::Pose & get_conformer_cen( core::Size conf_num ) { return ensemble_list_cen_[conf_num]; } // Add by DK
 
 	// @brief simple getters
 	core::Size size() { return ensemble_size_; }

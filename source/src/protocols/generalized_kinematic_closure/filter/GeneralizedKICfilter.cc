@@ -56,32 +56,32 @@ static thread_local basic::Tracer TR( "protocols.generalized_kinematic_closure.f
 /// @brief Constructor for GeneralizedKICfilter.
 ///
 GeneralizedKICfilter::GeneralizedKICfilter():
-		filtertype_(no_filter),
-		filter_params_real_(),
-		filter_params_size_(),
-		filter_params_bool_(),
-		filter_params_string_(),
-		bin_transition_calculator_(),
-		bin_(""),
-		resnum_(0)
-		//TODO -- make sure above data are copied properly when duplicating this mover.
+	filtertype_(no_filter),
+	filter_params_real_(),
+	filter_params_size_(),
+	filter_params_bool_(),
+	filter_params_string_(),
+	bin_transition_calculator_(),
+	bin_(""),
+	resnum_(0)
+	//TODO -- make sure above data are copied properly when duplicating this mover.
 {}
 
 /// @brief Copy constructor for GeneralizedKICfilter.
 ///
 GeneralizedKICfilter::GeneralizedKICfilter( GeneralizedKICfilter const &src ):
-		utility::pointer::ReferenceCount(),
-		filtertype_(src.filtertype_),
-		filter_params_real_( src.filter_params_real_ ),
-		filter_params_size_( src.filter_params_size_ ),
-		filter_params_bool_( src.filter_params_bool_ ),
-		filter_params_string_( src.filter_params_string_ ),
-		bin_transition_calculator_( ), //CLONE this, below
-		bin_( src.bin_ ),
-		resnum_( src.resnum_ )
-		//TODO -- make sure above data are copied properly when duplicating this mover.
+	utility::pointer::ReferenceCount(),
+	filtertype_(src.filtertype_),
+	filter_params_real_( src.filter_params_real_ ),
+	filter_params_size_( src.filter_params_size_ ),
+	filter_params_bool_( src.filter_params_bool_ ),
+	filter_params_string_( src.filter_params_string_ ),
+	bin_transition_calculator_( ), //CLONE this, below
+	bin_( src.bin_ ),
+	resnum_( src.resnum_ )
+	//TODO -- make sure above data are copied properly when duplicating this mover.
 {
-	if(src.bin_transition_calculator_) bin_transition_calculator_ = utility::pointer::dynamic_pointer_cast< core::scoring::bin_transitions::BinTransitionCalculator >(src.bin_transition_calculator_->clone());
+	if ( src.bin_transition_calculator_ ) bin_transition_calculator_ = utility::pointer::dynamic_pointer_cast< core::scoring::bin_transitions::BinTransitionCalculator >(src.bin_transition_calculator_->clone());
 }
 
 /// @brief Destructor for GeneralizedKICfilter mover.
@@ -104,21 +104,21 @@ std::string GeneralizedKICfilter::get_name() const{
 std::string GeneralizedKICfilter::get_filter_type_name( core::Size const filter_type ) const {
 	std::string returnstring = "";
 	switch(filter_type) {
-		case no_filter:
-			returnstring = "no_filter";
-			break;
-		case loop_bump_check:
-			returnstring = "loop_bump_check";
-			break;
-		case atom_pair_distance:
-			returnstring = "atom_pair_distance";
-			break;
-		case backbone_bin:
-			returnstring = "backbone_bin";
-			break;
-		default:
-			returnstring = "unknown_filter";
-			break;
+	case no_filter :
+		returnstring = "no_filter";
+		break;
+	case loop_bump_check :
+		returnstring = "loop_bump_check";
+		break;
+	case atom_pair_distance :
+		returnstring = "atom_pair_distance";
+		break;
+	case backbone_bin :
+		returnstring = "backbone_bin";
+		break;
+	default :
+		returnstring = "unknown_filter";
+		break;
 	}
 	return returnstring;
 }
@@ -126,8 +126,8 @@ std::string GeneralizedKICfilter::get_filter_type_name( core::Size const filter_
 
 /// @brief Given the name of a filter type, return the filter type enum.  Returns unknown_filter if not recognized.
 filter_type GeneralizedKICfilter::get_filter_type_by_name( std::string const &filtername ) const {
-	for(core::Size i=1, imax=end_of_filter_list; i<imax; ++i) {
-		if(get_filter_type_name(i)==filtername) return (filter_type)i;
+	for ( core::Size i=1, imax=end_of_filter_list; i<imax; ++i ) {
+		if ( get_filter_type_name(i)==filtername ) return (filter_type)i;
 	}
 	return unknown_filter;
 }
@@ -200,9 +200,9 @@ bool GeneralizedKICfilter::get_filter_param( std::string const &param_name, core
 	outvalue = 0.0; // Dummy value to suppress uninitialize warning (-Werror=maybe-uninitialized)
 
 	core::Size const listsize = filter_params_real_.size();
-	if(!listsize) return false;
-	for(core::Size i=1; i<=listsize; ++i) {
-		if(filter_params_real_[i].first==param_name) {
+	if ( !listsize ) return false;
+	for ( core::Size i=1; i<=listsize; ++i ) {
+		if ( filter_params_real_[i].first==param_name ) {
 			outvalue=filter_params_real_[i].second;
 			return true;
 		}
@@ -218,9 +218,9 @@ bool GeneralizedKICfilter::get_filter_param( std::string const &param_name, core
 	outvalue = 0; // Dummy value to suppress uninitialize warning (-Werror=maybe-uninitialized)
 
 	core::Size const listsize = filter_params_size_.size();
-	if(!listsize) return false;
-	for(core::Size i=1; i<=listsize; ++i) {
-		if(filter_params_size_[i].first==param_name) {
+	if ( !listsize ) return false;
+	for ( core::Size i=1; i<=listsize; ++i ) {
+		if ( filter_params_size_[i].first==param_name ) {
 			outvalue=filter_params_size_[i].second;
 			return true;
 		}
@@ -236,9 +236,9 @@ bool GeneralizedKICfilter::get_filter_param( std::string const &param_name, bool
 	outvalue = false; // Dummy value to suppress uninitialize warning (-Werror=maybe-uninitialized)
 
 	core::Size const listsize = filter_params_bool_.size();
-	if(!listsize) return false;
-	for(core::Size i=1; i<=listsize; ++i) {
-		if(filter_params_bool_[i].first==param_name) {
+	if ( !listsize ) return false;
+	for ( core::Size i=1; i<=listsize; ++i ) {
+		if ( filter_params_bool_[i].first==param_name ) {
 			outvalue=filter_params_bool_[i].second;
 			return true;
 		}
@@ -252,9 +252,9 @@ bool GeneralizedKICfilter::get_filter_param( std::string const &param_name, bool
 bool GeneralizedKICfilter::get_filter_param( std::string const &param_name, std::string &outvalue ) const
 {
 	core::Size const listsize = filter_params_string_.size();
-	if(!listsize) return false;
-	for(core::Size i=1; i<=listsize; ++i) {
-		if(filter_params_string_[i].first==param_name) {
+	if ( !listsize ) return false;
+	for ( core::Size i=1; i<=listsize; ++i ) {
+		if ( filter_params_string_[i].first==param_name ) {
 			outvalue=filter_params_string_[i].second;
 			return true;
 		}
@@ -265,22 +265,22 @@ bool GeneralizedKICfilter::get_filter_param( std::string const &param_name, std:
 
 /// @brief Initializes the BinTransitionCalculator object and loads a bin_params file.
 ///
-void GeneralizedKICfilter::load_bin_params( 
+void GeneralizedKICfilter::load_bin_params(
 	std::string const &bin_params_file
 ) {
 	using namespace core::scoring::bin_transitions;
-	
+
 	//Create the object, if it doesn't exist.
-	if(!bin_transition_calculator_) {
-		if(TR.visible()) TR << "Creating BinTransitionCalculator." << std::endl;
+	if ( !bin_transition_calculator_ ) {
+		if ( TR.visible() ) TR << "Creating BinTransitionCalculator." << std::endl;
 		bin_transition_calculator_=BinTransitionCalculatorOP( new BinTransitionCalculator );
 	}
 
-	if(TR.visible()) TR << "Loading bin_params file " << bin_params_file << "." << std::endl;
+	if ( TR.visible() ) TR << "Loading bin_params file " << bin_params_file << "." << std::endl;
 	bin_transition_calculator_->load_bin_params(bin_params_file);
 
-	if(TR.visible()) TR.flush();
-	
+	if ( TR.visible() ) TR.flush();
+
 	return;
 }
 
@@ -309,17 +309,17 @@ bool GeneralizedKICfilter::apply (
 	utility::vector1 < utility::vector1 < core::id::AtomID > > AtomIDs_loopindexed; //The list of lists of AtomIDs, with indices based on loop_pose.  If necessary, will be generated.
 
 	switch(filtertype_) {
-		case loop_bump_check:
-			return apply_loop_bump_check( original_pose, loop_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths);
-			break;
-		case atom_pair_distance:
-			return apply_atom_pair_distance( original_pose, loop_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths);
-			break;
-		case backbone_bin:
-			return apply_backbone_bin( original_pose, loop_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths);
-			break;
-		default:
-			break;
+	case loop_bump_check :
+		return apply_loop_bump_check( original_pose, loop_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths);
+		break;
+	case atom_pair_distance :
+		return apply_atom_pair_distance( original_pose, loop_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths);
+		break;
+	case backbone_bin :
+		return apply_backbone_bin( original_pose, loop_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths);
+		break;
+	default :
+		break;
 	}
 	return true;
 }
@@ -334,10 +334,10 @@ core::Size GeneralizedKICfilter::get_loop_index (
 	core::Size const original_pose_index,
 	utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map
 ) const {
-	for(core::Size i=1, imax=residue_map.size(); i<=imax; ++i) {
-		if(residue_map[i].second == original_pose_index) return residue_map[i].first;
+	for ( core::Size i=1, imax=residue_map.size(); i<=imax; ++i ) {
+		if ( residue_map[i].second == original_pose_index ) return residue_map[i].first;
 	}
-	
+
 	utility_exit_with_message("Residue does not exist in loop.  Exiting from GeneralizedKICperturber::get_loop_index with error status.");
 
 	return 0;
@@ -382,33 +382,33 @@ bool GeneralizedKICfilter::apply_loop_bump_check(
 	//Make a copy of the list of atoms in the chain to be closed:
 	utility::vector1 < std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > atomlist_prime = atomlist;
 	//Remove the first three and last three entries in atomlist_prime.  These are atoms outside of the loop used to establish frame:
-	for(core::Size i=1; i<=3; ++i) {
+	for ( core::Size i=1; i<=3; ++i ) {
 		atomlist_prime.erase(atomlist_prime.end()-1);
 		atomlist_prime.erase(atomlist_prime.begin());
 	}
 	//Loop through atomlist_prime and find alpha- or beta-amino acids with carbonyl carbons in the list.  Add the carbonyl oxygens.
 	//Also find alpha- or beta-amino acids with CA carbons and one of (N, CM/C, CB).  Add the missing one of (N, CM/C, CB) to the list.
-	for(core::Size ia=1, iamax=atomlist_prime.size(); ia<=iamax; ++ia) {
+	for ( core::Size ia=1, iamax=atomlist_prime.size(); ia<=iamax; ++ia ) {
 		core::Size const ia_res = atomlist_prime[ia].first.rsd();
 		core::Size const ia_atomno = atomlist_prime[ia].first.atomno();
-		if(pose.residue(ia_res).type().is_alpha_aa() || pose.residue(ia_res).type().is_beta_aa()) { //if alpha or beta amino acid
-			if(pose.residue(ia_res).atom_name(ia_atomno)=="C" && pose.residue(ia_res).has("O")) {
+		if ( pose.residue(ia_res).type().is_alpha_aa() || pose.residue(ia_res).type().is_beta_aa() ) { //if alpha or beta amino acid
+			if ( pose.residue(ia_res).atom_name(ia_atomno)=="C" && pose.residue(ia_res).has("O") ) {
 				atomlist_prime.push_back( std::pair<AtomID, numeric::xyzVector<core::Real> > (AtomID( pose.residue(ia_res).atom_index("O"), ia_res), loop_pose.residue(ia_res).xyz("O")  ) );
-			} else if(pose.residue(ia_res).atom_name(ia_atomno)=="CA") { //Adding whatever's missing from the (N, CM/C, CB) atoms surrounding a CA.
+			} else if ( pose.residue(ia_res).atom_name(ia_atomno)=="CA" ) { //Adding whatever's missing from the (N, CM/C, CB) atoms surrounding a CA.
 				utility::vector1 <bool> atsfound;
 				atsfound.resize(3,false);
 				utility::vector1 <std::string> ats;
 				ats.resize(3, "");
 				ats[1]="N"; ats[2]=(pose.residue(ia_res).type().is_beta_aa()?"CM":"C"); ats[3]="C";
-				for(core::Size i=1; i<=3; ++i) {
-					if(ia>1 && atomlist_prime[ia-1].first.rsd()==ia_res && pose.residue(ia_res).atom_name(atomlist_prime[ia-1].first.atomno()) == ats[i]) atsfound[i]=true;
-					if(ia<iamax && atomlist_prime[ia+1].first.rsd()==ia_res && pose.residue(ia_res).atom_name(atomlist_prime[ia+1].first.atomno()) == ats[i]) atsfound[i]=true;
+				for ( core::Size i=1; i<=3; ++i ) {
+					if ( ia>1 && atomlist_prime[ia-1].first.rsd()==ia_res && pose.residue(ia_res).atom_name(atomlist_prime[ia-1].first.atomno()) == ats[i] ) atsfound[i]=true;
+					if ( ia<iamax && atomlist_prime[ia+1].first.rsd()==ia_res && pose.residue(ia_res).atom_name(atomlist_prime[ia+1].first.atomno()) == ats[i] ) atsfound[i]=true;
 				}
 				core::Size numfound = 0;
-				for(core::Size i=1; i<=3; ++i) { if(atsfound[i]) ++numfound; } //Confirm that two of the three were found
-				if(numfound==2) {
-					for(core::Size i=1; i<=3; ++i) {
-						if(!atsfound[i] && pose.residue(ia_res).has(ats[i])) {
+				for ( core::Size i=1; i<=3; ++i ) { if ( atsfound[i] ) ++numfound; } //Confirm that two of the three were found
+				if ( numfound==2 ) {
+					for ( core::Size i=1; i<=3; ++i ) {
+						if ( !atsfound[i] && pose.residue(ia_res).has(ats[i]) ) {
 							atomlist_prime.push_back( std::pair<AtomID, numeric::xyzVector<core::Real> > (AtomID( pose.residue(ia_res).atom_index(ats[i]), ia_res ), loop_pose.residue(ia_res).xyz(ats[i])) ); //Add the missing one of the three to the atom list
 							//TR.Debug << "Adding the " << ats[i] << " atom for residue number " << ia_res << " in the chain of residues to be closed to the bump check." << std::endl; //DELETE ME
 							break;
@@ -422,19 +422,19 @@ bool GeneralizedKICfilter::apply_loop_bump_check(
 
 
 	//Loop through atoms in atomlist_prime list:
-	for(core::Size ia=1, iamax=atomlist_prime.size(); ia<=iamax; ++ia) {
+	for ( core::Size ia=1, iamax=atomlist_prime.size(); ia<=iamax; ++ia ) {
 		core::Size const ia_res=atomlist_prime[ia].first.rsd();
 		core::Size const ia_atomno=atomlist_prime[ia].first.atomno();
 		core::Real const ia_radius = pose.residue(ia_res).type().atom_type(ia_atomno).lj_radius();
 
 		//First, check internal clashes:
-		for(core::Size ja=4; ja<ia-1; ++ja) {
+		for ( core::Size ja=4; ja<ia-1; ++ja ) {
 			core::Size const ja_res=atomlist_prime[ja].first.rsd();
-			if(ja_res==ia_res || ja_res+1==ia_res || ja_res==ia_res+1) continue; //Don't bother checking for intra-residue clashes, or clashes between adjacent residues.
+			if ( ja_res==ia_res || ja_res+1==ia_res || ja_res==ia_res+1 ) continue; //Don't bother checking for intra-residue clashes, or clashes between adjacent residues.
 			core::Size const ja_atomno=atomlist_prime[ja].first.atomno();
 			core::Real const ja_radius = pose.residue(ja_res).type().atom_type(ja_atomno).lj_radius();
-			if(pose.residue(ja_res).xyz(ja_atomno).distance_squared( pose.residue(ia_res).xyz(ia_atomno) )  < pow((ja_radius+ia_radius)*multiplier, 2) ) {
-				if(TR.Debug.visible()) {
+			if ( pose.residue(ja_res).xyz(ja_atomno).distance_squared( pose.residue(ia_res).xyz(ia_atomno) )  < pow((ja_radius+ia_radius)*multiplier, 2) ) {
+				if ( TR.Debug.visible() ) {
 					TR.Debug << "GeneralizedKICfilter::apply_loop_bump_check filter failed due to internal clash within loop that was closed." << std::endl;
 				}
 				return false;
@@ -442,29 +442,29 @@ bool GeneralizedKICfilter::apply_loop_bump_check(
 		}
 
 		//Next, check external clashes:
-		for(core::Size jr=1; jr<=nres; ++jr) { //Loop through all residues of the main chain.
-			if(original_pose_residue_is_in_residue_map(jr, residue_map)) continue; //If this is a loop residue, we're already considering clashes to it, so skip loop residues.
-			if(original_pose_residue_is_in_residue_map(jr, tail_residue_map)) continue; //We won't consider clashes with tail residues.
+		for ( core::Size jr=1; jr<=nres; ++jr ) { //Loop through all residues of the main chain.
+			if ( original_pose_residue_is_in_residue_map(jr, residue_map) ) continue; //If this is a loop residue, we're already considering clashes to it, so skip loop residues.
+			if ( original_pose_residue_is_in_residue_map(jr, tail_residue_map) ) continue; //We won't consider clashes with tail residues.
 
 			//If this residue is connected to the residue containing the current loop atom, skip it.
 			core::Size const ia_original_res = get_original_pose_rsd(ia_res, residue_map);
 			bool is_connected_to_loop_rsd = false;
-			for(core::Size i=1, imax=original_pose.residue(jr).n_residue_connections(); i<=imax; ++i) {
-				if( original_pose.residue(jr).connected_residue_at_resconn(i)==ia_original_res ) {
+			for ( core::Size i=1, imax=original_pose.residue(jr).n_residue_connections(); i<=imax; ++i ) {
+				if ( original_pose.residue(jr).connected_residue_at_resconn(i)==ia_original_res ) {
 					is_connected_to_loop_rsd=true;
 					break;
 				}
 			}
-			if(is_connected_to_loop_rsd) continue;
+			if ( is_connected_to_loop_rsd ) continue;
 
 			utility::vector1<core::Size> atoms_to_consider = original_pose.residue(jr).mainchain_atoms();
-			if( (original_pose.residue(jr).type().is_alpha_aa() || original_pose.residue(jr).type().is_beta_aa()) && original_pose.residue(jr).has("CB")) {
+			if ( (original_pose.residue(jr).type().is_alpha_aa() || original_pose.residue(jr).type().is_beta_aa()) && original_pose.residue(jr).has("CB") ) {
 				atoms_to_consider.push_back( original_pose.residue(jr).atom_index("CB") ); //Also consider clashes with the beta carbon, if present.
 			}
-			for(core::Size ja=1, jamax=atoms_to_consider.size(); ja<=jamax; ++ja) { //Loop through the mainchain atoms.
+			for ( core::Size ja=1, jamax=atoms_to_consider.size(); ja<=jamax; ++ja ) { //Loop through the mainchain atoms.
 				core::Real const ja_radius = original_pose.residue(jr).type().atom_type( atoms_to_consider[ja] ).lj_radius();
-				if( original_pose.residue(jr).xyz( atoms_to_consider[ja] ).distance_squared( pose.residue(ia_res).xyz(ia_atomno) ) < pow((ja_radius+ia_radius)*multiplier, 2) ) {
-					if(TR.Debug.visible()) {
+				if ( original_pose.residue(jr).xyz( atoms_to_consider[ja] ).distance_squared( pose.residue(ia_res).xyz(ia_atomno) ) < pow((ja_radius+ia_radius)*multiplier, 2) ) {
+					if ( TR.Debug.visible() ) {
 						TR.Debug << "GeneralizedKICfilter::apply_loop_bump_check filter failed due to external clash between loop that was closed and the rest of the structure." << std::endl;
 					}
 					return false;
@@ -473,7 +473,7 @@ bool GeneralizedKICfilter::apply_loop_bump_check(
 		}
 	}
 
-	if(TR.Debug.visible()) {
+	if ( TR.Debug.visible() ) {
 		TR.Debug << "GeneralizedKICfilter::apply_loop_bump_check() filter passed." << std::endl;
 		TR.Debug.flush();
 	}
@@ -536,17 +536,17 @@ bool GeneralizedKICfilter::apply_atom_pair_distance(
 	set_loop_pose (looppose, atomlist, torsions, bondangles, bondlengths); //Set the loop conformation using the torsions, bondangles, and bondlengths vectors.
 	copy_loop_pose_to_original( fullpose, looppose, residue_map, tail_residue_map); //Copy the loop conformation to the full pose.
 
-	if(fullpose.residue(res1).xyz(at1).distance_squared( fullpose.residue(res2).xyz(at2) ) > dist_cutoff_sq) {
-		if(!greaterthan) {
-			if(TR.Debug.visible()) {
+	if ( fullpose.residue(res1).xyz(at1).distance_squared( fullpose.residue(res2).xyz(at2) ) > dist_cutoff_sq ) {
+		if ( !greaterthan ) {
+			if ( TR.Debug.visible() ) {
 				TR.Debug << "GeneralizedKICfilter::apply_atom_pair_distance filter() failed." << std::endl;
 				TR.Debug.flush();
 			}
 			return false;
 		}
 	} else {
-		if(greaterthan) {
-			if(TR.Debug.visible()) {
+		if ( greaterthan ) {
+			if ( TR.Debug.visible() ) {
 				TR.Debug << "GeneralizedKICfilter::apply_atom_pair_distance filter() failed." << std::endl;
 				TR.Debug.flush();
 			}
@@ -554,7 +554,7 @@ bool GeneralizedKICfilter::apply_atom_pair_distance(
 		}
 	}
 
-	if(TR.Debug.visible()) {
+	if ( TR.Debug.visible() ) {
 		TR.Debug << "GeneralizedKICfilter::apply_atom_pair_distance filter() passed." << std::endl;
 		TR.Debug.flush();
 	}
@@ -584,26 +584,30 @@ bool GeneralizedKICfilter::apply_backbone_bin(
 	utility::vector1 < core::Real > const &bondlengths
 ) const {
 	//Initial checks:
-	if(resnum() < 1 || resnum() > original_pose.n_residue())
+	if ( resnum() < 1 || resnum() > original_pose.n_residue() ) {
 		utility_exit_with_message( "In GeneralizedKICfilter::apply_backbone_bin(): Could not apply filter.  The residue was not specified, or is out of range." );
-	if( !original_pose_residue_is_in_residue_map(resnum(), residue_map) )
+	}
+	if ( !original_pose_residue_is_in_residue_map(resnum(), residue_map) ) {
 		utility_exit_with_message( "In GeneralizedKICfilter::apply_backbone_bin(): The residue must be part of the loop being closed." );
-	if( !bin_transition_calculator_ )
+	}
+	if ( !bin_transition_calculator_ ) {
 		utility_exit_with_message( "In GeneralizedKICfilter::apply_backbone_bin(): No bin transition calculator object was set up." );
-	if( bin_=="" )
+	}
+	if ( bin_=="" ) {
 		utility_exit_with_message( "In GeneralizedKICfilter::apply_backbone_bin(): No bin was specified." );
-	
+	}
+
 	core::Size const curres( get_loop_index( resnum(), residue_map ) );
-	
+
 	core::pose::Pose pose(loop_pose); //Make a copy of the loop pose
 	set_loop_pose (pose, atomlist, torsions, bondangles, bondlengths); //Set the loop pose to the current solution
 
 	bool const inbin (bin_transition_calculator_->is_in_bin( pose.residue(curres), bin_ ));
-	if(TR.visible()) {
-		if(inbin) TR << "The backbone_bin filter reports that residue " << resnum() << " is in bin " << bin_ << ".  Passing." << std::endl;
+	if ( TR.visible() ) {
+		if ( inbin ) TR << "The backbone_bin filter reports that residue " << resnum() << " is in bin " << bin_ << ".  Passing." << std::endl;
 		else  {
 			TR << "The backbone_bin filter reports that residue " << resnum() << " is not in bin " << bin_ << ".  Failing and rejecting solution." << std::endl;
-			for(core::Size j=1, jmax=pose.residue(curres).mainchain_torsions().size(); j<=jmax; ++j) {
+			for ( core::Size j=1, jmax=pose.residue(curres).mainchain_torsions().size(); j<=jmax; ++j ) {
 				TR << "\tMainchain torsion " << j << ":\t" << pose.residue(curres).mainchain_torsion(j) << std::endl;
 			}
 		}

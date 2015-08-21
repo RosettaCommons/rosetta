@@ -42,12 +42,12 @@ namespace constraints_additional {
 class AmbiguousMultiConstraint : public core::scoring::constraints::AmbiguousConstraint {
 public:
 
-  /// @brief Constructor
+	/// @brief Constructor
 	AmbiguousMultiConstraint(
 		core::Size num_act_csts);
 
 	/// @brief Constructor
-  AmbiguousMultiConstraint(
+	AmbiguousMultiConstraint(
 		core::Size num_act_csts,
 		core::scoring::constraints::ConstraintCOPs & cst_in ) ;
 
@@ -65,9 +65,9 @@ public:
 	//void
 	//read_def( std::istream& data, pose::Pose const& pose, FuncFactory const& func_factory );
 
-  /// @brief compute score
-  void
-  score(
+	/// @brief compute score
+	void
+	score(
 		core::scoring::func::XYZ_Func const & xyz_func,
 		core::scoring::EnergyMap const & weights,
 		core::scoring::EnergyMap & emap ) const;
@@ -87,11 +87,11 @@ public:
 		core::scoring::EnergyMap const & weights
 	) const;
 
-  void show( std::ostream& out) const;
+	void show( std::ostream& out) const;
 
-	//	void read_def( std::istream& in, pose::Pose const& pose, FuncFactory const& func_factory );
+	// void read_def( std::istream& in, pose::Pose const& pose, FuncFactory const& func_factory );
 
-  Size show_violations( std::ostream& out, core::pose::Pose const& pose, core::Size verbose_level, core::Real threshold = 1.0 ) const;
+	Size show_violations( std::ostream& out, core::pose::Pose const& pose, core::Size verbose_level, core::Real threshold = 1.0 ) const;
 
 
 private:

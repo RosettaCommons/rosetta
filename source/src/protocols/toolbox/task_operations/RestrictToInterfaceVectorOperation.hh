@@ -50,21 +50,21 @@ public:
 	RestrictToInterfaceVectorOperation( core::Size const lower_chain_id, core::Size const upper_chain_id );
 
 	//full constructor
-	RestrictToInterfaceVectorOperation( core::Size const lower_chain,	core::Size const upper_chain,
-																			core::Real CB_dist_cutoff,
-																			core::Real nearby_atom_cutoff,
-																			core::Real vector_angle_cutoff,
-																			core::Real vector_dist_cutoff);
+	RestrictToInterfaceVectorOperation( core::Size const lower_chain, core::Size const upper_chain,
+		core::Real CB_dist_cutoff,
+		core::Real nearby_atom_cutoff,
+		core::Real vector_angle_cutoff,
+		core::Real vector_dist_cutoff);
 
 	//basic jump constructor
 	RestrictToInterfaceVectorOperation( utility::vector1_int const movable_jumps );
 
 	//full constructor for jumps
 	RestrictToInterfaceVectorOperation( utility::vector1_int const movable_jumps ,
-																			core::Real CB_dist_cutoff,
-																			core::Real nearby_atom_cutoff,
-																			core::Real vector_angle_cutoff,
-																			core::Real vector_dist_cutoff);
+		core::Real CB_dist_cutoff,
+		core::Real nearby_atom_cutoff,
+		core::Real vector_angle_cutoff,
+		core::Real vector_dist_cutoff);
 
 
 	// //if you want to use chain characters this is probably the best way, define the calculator separately
@@ -93,11 +93,11 @@ public:
 	/// @brief parse_tag function for rosetta scripts
 	void parse_tag( TagCOP tag , DataMap & );
 
-    /*
-    // Used to make the eventual inheritance frodm protocols::toolbox::task_operations::InterfaceTaskOperation easier.
-    void
-    setup_interface_chains_from_jumps( core::pose::Pose const & pose );
-    */
+	/*
+	// Used to make the eventual inheritance frodm protocols::toolbox::task_operations::InterfaceTaskOperation easier.
+	void
+	setup_interface_chains_from_jumps( core::pose::Pose const & pose );
+	*/
 
 private:
 

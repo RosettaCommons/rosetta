@@ -63,13 +63,13 @@ MetalloClaimer::MetalloClaimer() : residue_pair_jump_( /* NULL */ )
 {}
 
 //bool MetalloClaimer::allow_claim( DofClaim const& foreign_claim ) {
-// 	if ( foreign_claim.owner() == this ) return true; // always allow your own claims!
-// 	if ( foreign_claim.type() == DofClaim::SEQUENCE ) {
-// 		if ( foreign_claim.pos( 1 ) == 1  && foreing_claim.right() == DofClaim::EXCLUSIVE ) {
-// 			return false; // don't accept any other fixed positions right now --- maybe never ?!
-// 		}
-// 	}
-//	return true;
+//  if ( foreign_claim.owner() == this ) return true; // always allow your own claims!
+//  if ( foreign_claim.type() == DofClaim::SEQUENCE ) {
+//   if ( foreign_claim.pos( 1 ) == 1  && foreing_claim.right() == DofClaim::EXCLUSIVE ) {
+//    return false; // don't accept any other fixed positions right now --- maybe never ?!
+//   }
+//  }
+// return true;
 //} // MetalloClaimer::allow_claim()
 
 //void MetalloClaimer::initialize_residues( core::pose::Pose& pose, claims::SequenceClaimOP my_claim, claims::DofClaims& failed_to_init ) {
@@ -96,11 +96,11 @@ void MetalloClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	std::pair<core::Size, std::string> terminal_label = broker().sequence_number_resolver().terminal_pair();
 	core::Size seq_length = terminal_label.first + broker().resolve_sequence_label( terminal_label.second ).length();
 
-	if (cut_interval_low < 1) {
+	if ( cut_interval_low < 1 ) {
 		cut_interval_low = 1; // no cut in front of first element of sequence possible
 	}
-	if (cut_interval_high >= seq_length ) {
-		cut_interval_high = seq_length -1;	// no cut possible behind the last residue
+	if ( cut_interval_high >= seq_length ) {
+		cut_interval_high = seq_length -1; // no cut possible behind the last residue
 	}
 
 
@@ -120,8 +120,8 @@ void MetalloClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	}
 
 	jump_setup_->add_jump(
-			jumping::Interval( jump_start, jump_end ), //jump
-			jumping::Interval( cut_interval_low, cut_interval_high ) //cutpoint interval
+		jumping::Interval( jump_start, jump_end ), //jump
+		jumping::Interval( cut_interval_low, cut_interval_high ) //cutpoint interval
 	);
 	new_decoy();
 
@@ -150,10 +150,11 @@ bool MetalloClaimer::read_tag( std::string tag, std::istream& is ) {
 		for ( int i = 1; i <= 2; ++i ) {
 			std::string name;
 			core::chemical::ResidueTypeSetCOP residue_type_set(
-					core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
+				core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
 			is >> name;
-			if ( residue_type_set->name_map(name).is_protein() )
+			if ( residue_type_set->name_map(name).is_protein() ) {
 				name = name + ":CtermProteinFull:NtermProteinFull";
+			}
 			core::chemical::ResidueType const & res_type( residue_type_set->name_map(name) );
 			residue_pair_jump_->add_residue_single( res_type );
 		}
@@ -182,27 +183,27 @@ bool MetalloClaimer::read_tag( std::string tag, std::istream& is ) {
 		std::istringstream in( line );
 		Real value;
 		if ( tag == "disAB" ) {
-			while (in >> value) {
+			while ( in >> value ) {
 				residue_pair_jump_->set_cstInfo( disAB, value );
 			}
 		} else if ( tag == "angleA" ) {
-			while (in >> value) {
+			while ( in >> value ) {
 				residue_pair_jump_->set_cstInfo( angleA, value );
 			}
 		} else if ( tag == "angleB" ) {
-			while (in >> value) {
+			while ( in >> value ) {
 				residue_pair_jump_->set_cstInfo( angleB, value );
 			}
 		} else if ( tag == "dihedralA" ) {
-			while (in >> value) {
+			while ( in >> value ) {
 				residue_pair_jump_->set_cstInfo( dihedralA, value );
 			}
 		} else if ( tag == "dihedralB" ) {
-			while (in >> value) {
+			while ( in >> value ) {
 				residue_pair_jump_->set_cstInfo( dihedralB, value );
 			}
 		} else if ( tag == "dihedralAB" ) {
-			while (in >> value) {
+			while ( in >> value ) {
 				residue_pair_jump_->set_cstInfo( dihedralAB, value );
 			}
 		} else runtime_assert( 0 ); //if you are here you missed a tag in the statement above.
@@ -219,7 +220,7 @@ void MetalloClaimer::init_after_reading() {
 		throw EXCN_Input( "need to specify anchor residue for MetalloLigand "+ligand_ );
 	}
 
-	if (anchor_chain_ == ""){
+	if ( anchor_chain_ == "" ) {
 		tr.Info << "anchor chain has not been specified. DEFAULT chain will be used." << std::endl;
 		anchor_chain_ = "DEFAULT";
 	}

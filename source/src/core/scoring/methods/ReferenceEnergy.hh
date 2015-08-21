@@ -103,8 +103,8 @@ public:
 
 private:
 	utility::vector1< Real > aa_weights_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

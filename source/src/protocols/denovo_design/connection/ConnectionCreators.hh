@@ -25,26 +25,26 @@ namespace connection {
 
 class StapleTomponentsCreator : public protocols::moves::MoverCreator
 {
-	public:
-		virtual protocols::moves::MoverOP create_mover() const;
-		virtual std::string keyname() const;
-		static  std::string mover_name();
+public:
+	virtual protocols::moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
+	static  std::string mover_name();
 };
 
 class BridgeTomponentsCreator : public protocols::moves::MoverCreator
 {
-	public:
-		virtual protocols::moves::MoverOP create_mover() const;
-		virtual std::string keyname() const;
-		static  std::string mover_name();
+public:
+	virtual protocols::moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
+	static  std::string mover_name();
 };
 
 class ConnectTerminiWithDisulfideCreator : public protocols::moves::MoverCreator
 {
-	public:
-		virtual protocols::moves::MoverOP create_mover() const;
-		virtual std::string keyname() const;
-		static  std::string mover_name();
+public:
+	virtual protocols::moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
+	static  std::string mover_name();
 };
 
 }

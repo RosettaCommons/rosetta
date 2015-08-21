@@ -73,7 +73,7 @@ public:
 	) const;
 
 	virtual void indicate_required_context_graphs(utility::vector1< bool > & /*context_graphs_required*/
-    ) const {}
+	) const {}
 
 private:
 	//////

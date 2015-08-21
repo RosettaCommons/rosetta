@@ -236,7 +236,7 @@ public:
 	int
 	polymer_direction() const
 	{
-	debug_assert( label_ == PEPTIDE );
+		debug_assert( label_ == PEPTIDE );
 		return ( start_ < stop_ ? 1 : -1 );
 	}
 
@@ -316,7 +316,7 @@ public:
 	friend bool operator !=( Edge const & a, Edge const & b );
 
 private:
-	
+
 	///////
 	// data
 

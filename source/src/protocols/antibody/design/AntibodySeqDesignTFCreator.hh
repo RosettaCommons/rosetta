@@ -127,17 +127,17 @@ public:
 	/// It will ignore the CDRs set to design in the SeqDesign options.
 	//core::pack::task::TaskFactoryOP
 	//generate_tf_seq_design_graft_design_framework_only(
-	//	core::pose::Pose const & pose,
-	//	CDRNameEnum cdr,
-	//	utility::vector1<bool> neighbor_cdr_min);
+	// core::pose::Pose const & pose,
+	// CDRNameEnum cdr,
+	// utility::vector1<bool> neighbor_cdr_min);
 
-	///@brief Setup the CDRProfilesOperation and conservative/basic design 
+	///@brief Setup the CDRProfilesOperation and conservative/basic design
 	///  according to primary and fallback strategies and which CDRs are set to design.
 	///  Pre-load the data
 	///
 	task_operations::AddCDRProfilesOperationOP
 	generate_task_op_cdr_profiles(core::pose::Pose const & pose);
-	
+
 	///@brief Create a TaskOp to limit Packing and Design to only CDR loops with design on.  Use neighbor distance.
 	protocols::toolbox::task_operations::RestrictToLoopsAndNeighborsOP
 	generate_task_op_cdr_design(core::pose::Pose const & pose, bool design_neighbors = true) const;
@@ -150,7 +150,7 @@ public:
 	protocols::toolbox::task_operations::RestrictToLoopsAndNeighborsOP
 	generate_task_op_all_cdr_design( core::pose::Pose const & pose, bool design_neighbors = true ) const;
 
-	
+
 	///Some helper functions
 
 	///@brief Turns off CDRs for design that are set to off.
@@ -167,9 +167,9 @@ public:
 	///@brief Create a TaskOp for conservative-based design of CDRs according to SeqDesign options.
 	//toolbox::task_operations::ConservativeDesignOperationOP
 	//generate_task_op_cdr_conservative(core::pose::Pose const & pose);
-	
 
-	
+
+
 public:
 
 	///////// General Options to create TF //////////////
@@ -182,7 +182,7 @@ public:
 	void
 	design_proline( bool const setting );
 
-	
+
 	///@brief Use the Conservative Design TaskOP if designing Framework residues.
 	/// Default true. Recommended.
 	void
@@ -202,12 +202,12 @@ public:
 	/// if the number of sequences in the particular CDR's cluster probability data is lower than this cutoff. Default is 10.  This is why we try and stay in type 1 lengths during graft.
 	void
 	set_probability_data_cutoff(core::Size const cutoff);
-	
+
 	///@brief Enable design of the first 2 and last 3 residues of the H3 loop.  These are off by default as to help hinder the transition from extended
-	/// to kinked and vice versa during sequence design.  
+	/// to kinked and vice versa during sequence design.
 	void
 	set_design_H3_stem(bool design_H3_stem);
-	
+
 private:
 
 	void
@@ -230,31 +230,31 @@ private:
 
 	toolbox::task_operations::ConservativeDesignOperationOP
 	get_framework_conservative_op(core::pose::Pose const & pose);
-	
+
 	protocols::toolbox::task_operations::RestrictToLoopsAndNeighborsOP
 	get_general_loop_task_op(protocols::loops::LoopsOP loops, bool design_neighbors = true ) const;
-	
+
 	///@brief Add restrictions for non-CDR positions and residue types according to options.
 	void
 	add_extra_restrict_operations(core::pack::task::TaskFactoryOP tf, const core::pose::Pose & pose) const;
-	
-	
+
+
 	///@brief Removes  residues from prob_set from instruction settings.  Used so that we speed task generation instead of overwriting these residues.
 	//void
 	//remove_conservative_design_residues_from_prob_set(
-		//utility::vector1<core::Size> const & positions,
-		//std::map< core::Size, std::map< core::chemical::AA, core::Real > > & prob_set);
+	//utility::vector1<core::Size> const & positions,
+	//std::map< core::Size, std::map< core::chemical::AA, core::Real > > & prob_set);
 
 	///@brief Get a list of residues where conservative design will be used.
 	//utility::vector1<core::Size>
 	//get_conservative_design_residues(const core::pose::Pose & pose);
 
 
-	
-	///@brief If profile stats are less then cutoff and fallback is set to false, we do not touch this CDR. 
+
+	///@brief If profile stats are less then cutoff and fallback is set to false, we do not touch this CDR.
 	//void
-	//disable_design_for_no_fallback_cdrs(	core::pack::task::TaskFactoryOP tf, const core::pose::Pose& pose) const;
-	
+	//disable_design_for_no_fallback_cdrs( core::pack::task::TaskFactoryOP tf, const core::pose::Pose& pose) const;
+
 private:
 
 	AntibodyInfoCOP ab_info_;
@@ -272,17 +272,17 @@ private:
 
 	bool design_antigen_;
 	bool design_framework_;
-	
+
 	bool design_framework_conservative_;
 	bool design_framework_conserved_res_;
-	
+
 	bool design_h3_stem_;
-	
+
 	bool force_north_paper_db_;
 
 	utility::vector1<bool> no_data_cdrs_; //CDRs that were unable to load profile-based data.
 	bool use_outliers_;
-	
+
 };
 
 
@@ -291,4 +291,4 @@ private:
 }
 
 
-#endif	//INCLUDED_ AntibodySeqDesignTFCreator.hh
+#endif //INCLUDED_ AntibodySeqDesignTFCreator.hh

@@ -24,17 +24,17 @@ namespace utility {
 /// lesser is returned.
 template <typename BidirectionalIterator, typename T>
 BidirectionalIterator find_closest(BidirectionalIterator first,
-                                   BidirectionalIterator last,
-                                   const T& value) {
-  BidirectionalIterator before = std::lower_bound(first, last, value);
+	BidirectionalIterator last,
+	const T& value) {
+	BidirectionalIterator before = std::lower_bound(first, last, value);
 
-  if (before == first) return first;
-  if (before == last)  return --last; // iterator must be bidirectional
+	if ( before == first ) return first;
+	if ( before == last )  return --last; // iterator must be bidirectional
 
-  BidirectionalIterator after = before;
-  --before;
+	BidirectionalIterator after = before;
+	--before;
 
-  return (*after - value) < (value - *before) ? after : before;
+	return (*after - value) < (value - *before) ? after : before;
 }
 
 }  // namespace utility

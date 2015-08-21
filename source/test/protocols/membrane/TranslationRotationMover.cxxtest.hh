@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		protocols/membrane/TranslationRotationMover.cxxtest.hh
-/// @brief		Unit Test for translating and rotating pose into membrane
-/// @details	Testing for correct translation and rotation of the
-///				pose into the membrane coordinate frame
-/// @author		JKLeman (julia.koehler1982@gmail.com)
+/// @file  protocols/membrane/TranslationRotationMover.cxxtest.hh
+/// @brief  Unit Test for translating and rotating pose into membrane
+/// @details Testing for correct translation and rotation of the
+///    pose into the membrane coordinate frame
+/// @author  JKLeman (julia.koehler1982@gmail.com)
 
 // Test Headers
 #include <cxxtest/TestSuite.h>
@@ -55,16 +55,16 @@ class TranslationRotationMoverTest : public CxxTest::TestSuite {
 
 public:
 
-    /// @brief Setup
-    void setUp()
-    {
+	/// @brief Setup
+	void setUp()
+	{
 		using namespace basic::options;
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
 
 		// Initialize Rosetta
-        protocols_init();
+		protocols_init();
 
 		// load pose
 		pose_ = core::import_pose::pose_from_pdb( "protocols/membrane/1AFO_AB.pdb" );
@@ -83,11 +83,11 @@ public:
 		TS_TRACE( "mem jump: " + to_string(pose_->conformation().membrane_info()->membrane_jump()));
 		pose_->fold_tree().show( std::cout );
 
-    }
+	}
 
-    /// @brief teardown
-    void tearDown()
-    {}
+	/// @brief teardown
+	void tearDown()
+	{}
 
 	/// @brief test translation of membrane pose
 	void test_translation() {
@@ -173,7 +173,7 @@ public:
 		TS_ASSERT( position_equal_within_delta( m_normal, pose_->conformation().membrane_info()->membrane_normal(), 0.001 ) );
 	}
 
-		/// @brief test rotation and translation of membrane pose
+	/// @brief test rotation and translation of membrane pose
 	void test_rotation_translation() {
 
 		TS_TRACE( "TESTING TRANSLATION AND ROTATION MOVES" );
@@ -230,8 +230,8 @@ public:
 
 private: // data
 
-    // store data
-    core::pose::PoseOP pose_;
+	// store data
+	core::pose::PoseOP pose_;
 	Size memjump_;
 
 }; // class TranslationRotationMoverTest

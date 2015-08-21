@@ -65,7 +65,7 @@ void PocketConstraint::init(core::pose::Pose const & pose){
 	weight_ = option[ OptionKeys::constraints::pocket_constraint_weight ]();
 	dumppdb_=option[ OptionKeys::pocket_grid::pocket_dump_pdbs ]();
 	totalres_=pose.total_residue();
-	if (option[ OptionKeys::pocket_grid::pocket_num_angles ] <1){
+	if ( option[ OptionKeys::pocket_grid::pocket_num_angles ] <1 ) {
 		std::cout<<"PocketConstraint: invalid number of angles specified.  Exiting."<<std::endl;
 		exit(999);
 	} else {
@@ -75,21 +75,20 @@ void PocketConstraint::init(core::pose::Pose const & pose){
 }
 
 void PocketConstraint::read_def(
-  std::istream & line_stream,
-  core::pose::Pose const & pose,
-  core::scoring::func::FuncFactory const & /* func_factory */)
+	std::istream & line_stream,
+	core::pose::Pose const & pose,
+	core::scoring::func::FuncFactory const & /* func_factory */)
 {
 	init(pose);
 	//std::string tmp;
 	std::string resid("");
-	if ((line_stream >> weight_>>resid )){
+	if ( (line_stream >> weight_>>resid ) ) {
 		residues_ = protocols::pockets::PocketGrid::getRelaxResidues(pose, resid);
 		if ( residues_.size() == 0 ) {
 			std::cout << "ERROR!! Invalid residue to backrub around" << std::endl;
 			exit(1);
 		}
-	}
-	else{
+	} else {
 		std::cout << "ERROR!! Invalid PocketConstraint specification" << std::endl;
 		exit(1);
 	}
@@ -122,7 +121,7 @@ PocketConstraint::PocketConstraint(
 	std::size_t fpos( resid.find(':') );
 	if ( fpos != std::string::npos ) {
 		central_relax_pdb_number = ObjexxFCL::int_of( resid.substr(0,fpos) );
-		if (fpos != resid.size()-1 ) {
+		if ( fpos != resid.size()-1 ) {
 			chain = resid[ fpos+1 ];
 		}
 	} else {
@@ -132,11 +131,11 @@ PocketConstraint::PocketConstraint(
 	for ( int j = 1, resnum = pose.total_residue(); j <= resnum; ++j ) {
 		if ( pose.pdb_info()->number(j) == central_relax_pdb_number ) {
 			//seqpos_ = j;
-			if (chain != ' '){
+			if ( chain != ' ' ) {
 				if ( pose.pdb_info()->chain(j) == chain ) {
 					seqpos_ = j;
 				}
-			}else{
+			} else {
 				seqpos_ = j;
 			}
 		}
@@ -170,14 +169,14 @@ PocketConstraint::~PocketConstraint() {}
 
 
 void PocketConstraint::set_target_res( core::pose::Pose const & pose, Size new_seqpos ){
-	if (new_seqpos>pose.total_residue()){
+	if ( new_seqpos>pose.total_residue() ) {
 		std::cout << "ERROR!! Invalid residue to backrub around" << std::endl;
 		exit(1);
 	}
 	if ( seqpos_ != 0 ) {
 		seqpos_=new_seqpos;
 		pocketgrid_ = protocols::pockets::PocketGridOP( new protocols::pockets::PocketGrid( pose.conformation().residue(seqpos_) ) );
-	}else{
+	} else {
 		std::cout << "ERROR!! Invalid residue to backrub around" << std::endl;
 		exit(1);
 	}
@@ -191,7 +190,7 @@ void PocketConstraint::set_target_res_pdb( core::pose::Pose const & pose, std::s
 	std::size_t fpos( resid.find(':') );
 	if ( fpos != std::string::npos ) {
 		central_relax_pdb_number = ObjexxFCL::int_of( resid.substr(0,fpos) );
-		if (fpos != resid.size()-1 ) {
+		if ( fpos != resid.size()-1 ) {
 			chain = resid[ fpos+1 ];
 		}
 	} else {
@@ -202,11 +201,11 @@ void PocketConstraint::set_target_res_pdb( core::pose::Pose const & pose, std::s
 	for ( int j = 1, resnum = pose.total_residue(); j <= resnum; ++j ) {
 		if ( pose.pdb_info()->number(j) == central_relax_pdb_number ) {
 			//seqpos_ = j;
-			if (chain != ' '){
+			if ( chain != ' ' ) {
 				if ( pose.pdb_info()->chain(j) == chain ) {
 					seqpos_ = j;
 				}
-			}else{
+			} else {
 				seqpos_ = j;
 			}
 		}
@@ -228,12 +227,12 @@ void PocketConstraint::set_target_res_pdb( core::pose::Pose const & pose, std::s
 void
 PocketConstraint::score( core::scoring::func::XYZ_Func const & xyz_func, core::scoring::EnergyMap const & weights, core::scoring::EnergyMap & emap ) const
 {
-  using namespace basic::options;
-  bool debug = option[ OptionKeys::pocket_grid::pocket_dump_pdbs ]();
+	using namespace basic::options;
+	bool debug = option[ OptionKeys::pocket_grid::pocket_dump_pdbs ]();
 	//std::cout<< "hi\n";
 	//TR<<"hi\n";
 	if ( weights[ this->score_type() ] == 0 ) return;
-	if (seqpos_==0 && residues_.size()==0){
+	if ( seqpos_==0 && residues_.size()==0 ) {
 		std::cout << "ERROR!! Invalid residue to backrub around" << std::endl;
 		exit(1);
 	}
@@ -242,49 +241,49 @@ PocketConstraint::score( core::scoring::func::XYZ_Func const & xyz_func, core::s
 	core::Real cst_avg = 0;
 	core::Real largestPocketVol;
 
-  if (debug)  TR<<"Pocket Volumes: ";
+	if ( debug )  TR<<"Pocket Volumes: ";
 
-	for (core::Size angleCount=0; angleCount < (angles_ - 1); ++angleCount){
+	for ( core::Size angleCount=0; angleCount < (angles_ - 1); ++angleCount ) {
 		pocketgrid_ -> randomAngle();
-		if (seqpos_ != 0){
+		if ( seqpos_ != 0 ) {
 			core::conformation::Residue const & curr_rsd ( xyz_func.residue(seqpos_) );
 			pocketgrid_->autoexpanding_pocket_eval( curr_rsd, xyz_func, totalres_ );
-		}else{
+		} else {
 			pocketgrid_->autoexpanding_pocket_eval( residues_, xyz_func, totalres_ );
 		}
 		core::Real largestPocketVol=pocketgrid_->netTargetPocketVolume();
 		cst_avg += largestPocketVol;
-    if (debug) TR<<largestPocketVol<<" ";
+		if ( debug ) TR<<largestPocketVol<<" ";
 	}
 
 	pocketgrid_ -> zeroAngle();
-	if (seqpos_ != 0){
+	if ( seqpos_ != 0 ) {
 		core::conformation::Residue const & curr_rsd ( xyz_func.residue(seqpos_) );
 		pocketgrid_->autoexpanding_pocket_eval( curr_rsd, xyz_func, totalres_ );
-	}else{
+	} else {
 		pocketgrid_->autoexpanding_pocket_eval( residues_, xyz_func, totalres_ );
 	}
 	core::Real cst_val = -1.;
 
 	//  core::Real largestPocketVol=pocketgrid_->netTargetPocketVolume();
 
-	if (dumppdb_) pocketgrid_->dumpGridToFile();
+	if ( dumppdb_ ) pocketgrid_->dumpGridToFile();
 
-	//	core::Real vol=pocketgrid_->targetPocketVolume(surf_score, bur_score);
-	//	core::Real sa=pocketgrid_->targetPocketSolventSurface();
-	//	core::Real psa=pocketgrid_->targetPocketProteinSurface();
-	//	core::Real hpsa=pocketgrid_->targetPocketHydrophobicProteinSurface();
-	//	core::Real ppsa=pocketgrid_->targetPocketPolarProteinSurface();
-	//	core::Real nps=pocketgrid_->targetPocketHeuristicScore();
+	// core::Real vol=pocketgrid_->targetPocketVolume(surf_score, bur_score);
+	// core::Real sa=pocketgrid_->targetPocketSolventSurface();
+	// core::Real psa=pocketgrid_->targetPocketProteinSurface();
+	// core::Real hpsa=pocketgrid_->targetPocketHydrophobicProteinSurface();
+	// core::Real ppsa=pocketgrid_->targetPocketPolarProteinSurface();
+	// core::Real nps=pocketgrid_->targetPocketHeuristicScore();
 
 	//core::Real largestPocketVol=pocketgrid_->largestTargetPocketVolume();
 	largestPocketVol=pocketgrid_->netTargetPocketVolume();
 	//core::Real largestPocketVol=0;
 
 	cst_avg += largestPocketVol;
-	if (debug) TR<<largestPocketVol<<" ";
-  cst_avg /= angles_;
-  if (debug) TR<<"Average: "<<cst_avg<<std::endl;
+	if ( debug ) TR<<largestPocketVol<<" ";
+	cst_avg /= angles_;
+	if ( debug ) TR<<"Average: "<<cst_avg<<std::endl;
 	cst_val *= (cst_avg);
 	//cst_val *= (vol);
 	//cst_val *= (vol*vol/sa);
@@ -310,7 +309,7 @@ PocketConstraint::fill_f1_f2(
 	if ( weights[ this->score_type() ] == 0 ) return;
 
 	using namespace basic::options;
-	if (!option[ OptionKeys::constraints::pocket_zero_derivatives ]()){
+	if ( !option[ OptionKeys::constraints::pocket_zero_derivatives ]() ) {
 		TR << "ERROR - derivatives not yet implemented for PocketConstraints." << std::endl;
 		std::exit(1);
 	}

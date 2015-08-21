@@ -29,7 +29,7 @@
 
 namespace protocols {
 namespace antibody {
-			
+
 
 ///@brief Parses CDRSetOptions for a single CDR at a time from a simple instruction file
 class CDRSetOptionsParser : public utility::pointer::ReferenceCount {
@@ -38,65 +38,65 @@ public:
 	CDRSetOptionsParser();
 
 	virtual ~CDRSetOptionsParser();
-	
+
 	CDRSetOptionsOP
 	parse_options(CDRNameEnum cdr, std::string filename);
-	
+
 	///@brief Parse default instructions (mainly used for AbDesign) then parse user file
 	CDRSetOptionsOP
 	parse_default_and_user_options(CDRNameEnum cdr, std::string filename);
-	
+
 	//CDRSetOptionsOP
 	//parse_default_and_user_options(CDRNameEnum cdr);
-	
-	
+
+
 	/////////////Parse Options for all CDRs////////////////
-	
+
 	utility::vector1<CDRSetOptionsOP>
 	parse_options(std::string filename);
-	
+
 	utility::vector1<CDRSetOptionsOP>
 	parse_default_and_user_options(std::string filename);
 
 	//utility::vector1<CDRSetOptionsOP>
 	//parse_default_and_user_options();
-	
-	
+
+
 private:
-	
+
 	///@brief Tries to find the path in either database, relative, or absolute, sets it.
 	void
 	check_path();
-	
+
 	void
 	check_line_len(const utility::vector1<std::string> & lineSP, const core::Size len_check) const;
-	
+
 	void
 	parse_cdr_option(std::string const mode, utility::vector1< std::string> & lineSP);
-	
+
 	void
 	parse_cdr_set_option(std::string const adjective, utility::vector1<std::string> & lineSP) ;
-	
+
 	void
 	set_cdr_set_exclude_options(std::string const type, utility::vector1<std::string> & lineSP);
-	
+
 	void
 	clear_cdr_set_exclude_options(std::string const type);
-	
+
 	void
 	set_cdr_set_include_options(std::string const type, utility::vector1<std::string> & lineSP);
-	
+
 	void
 	clear_cdr_set_include_options(std::string const type);
-	
+
 	void
 	set_cdr_set_mintype_options(std::string const mintype);
-	
+
 	void
 	set_cdr_set_general_option(std::string const option);
-	
+
 private:
-	
+
 	std::string instructions_path_;
 	CDRSetOptionsOP cdr_options_;
 	AntibodyEnumManagerCOP ab_manager_;
@@ -110,7 +110,7 @@ private:
 
 
 
-#endif	
+#endif
 
 
 

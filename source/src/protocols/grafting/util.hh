@@ -14,7 +14,7 @@
 
 
 #ifndef INCLUDED_protocols_grafting_util_hh
-#define	INCLUDED_protocols_grafting_util_hh
+#define INCLUDED_protocols_grafting_util_hh
 
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -27,13 +27,13 @@ namespace grafting {
 
 
 /// @brief Deletes a region of the pose. Starting from and including 'start' and 'end' residue.
-void 
+void
 delete_region(core::pose::Pose & pose, core::Size const start, core::Size const end);
-        
+
 /// @brief Returns a region of the pose including start and end as a new pose. Has a simple foldtree.
-core::pose::Pose 
+core::pose::Pose
 return_region(core::pose::Pose & pose, core::Size const start, core::Size const end);
-    
+
 /// @brief replaces residues from from_pose to to_pose into pose where insertion region is defined. Returns product as a new value.
 core::pose::Pose
 replace_region(
@@ -45,7 +45,7 @@ replace_region(
 	bool copy_pdbinfo = false);
 
 /// @author Steven Lewis smlewi@gmail.com, Jared Adolf-Bryfogle
-/// @brief inserts one pose into another pose, returning the product as a new value. 
+/// @brief inserts one pose into another pose, returning the product as a new value.
 /// @details Nter->Cter. Coordinates and dihedrals of insert are unchanged.
 /// @details Begins insertion AFTER insert point.
 core::pose::Pose
@@ -56,7 +56,7 @@ insert_pose_into_pose(
 	core::Size const insert_point_end,
 	bool copy_pdbinfo = false);
 
-/// @brief inserts one pose into another pose, returning the product as a new value. 
+/// @brief inserts one pose into another pose, returning the product as a new value.
 /// @details Nter->Cter. Coordinates and dihedrals of insert are unchanged.
 /// @details Begins insertion AFTER insert point. insert_point_end is assumed to be insert_point+1.
 core::pose::Pose
@@ -75,7 +75,7 @@ insert_pose_into_pose(
 void
 repack_connection_and_residues_in_movemap(
 	core::pose::Pose & pose,
-	core::scoring::ScoreFunctionCOP fa_scorefxn, 
+	core::scoring::ScoreFunctionCOP fa_scorefxn,
 	core::Size const start,
 	core::Size const end,
 	core::kinematics::MoveMapCOP movemap);
@@ -85,7 +85,7 @@ repack_connection_and_residues_in_movemap(
 void
 repack_connection_and_residues_in_movemap_and_piece(
 	core::pose::Pose & pose,
-	core::scoring::ScoreFunctionCOP fa_scorefxn, 
+	core::scoring::ScoreFunctionCOP fa_scorefxn,
 	core::Size const start,
 	core::Size const end,
 	core::kinematics::MoveMapCOP movemap);
@@ -95,30 +95,30 @@ repack_connection_and_residues_in_movemap_and_piece(
 void
 repack_connection_and_residues_in_movemap_and_piece_and_neighbors(
 	core::pose::Pose & pose,
-	core::scoring::ScoreFunctionCOP fa_scorefxn, 
+	core::scoring::ScoreFunctionCOP fa_scorefxn,
 	core::Size const start,
 	core::Size const end,
 	core::kinematics::MoveMapCOP movemap,
 	core::Real neighbor_dis = 4.0);
 
 /// @brief uses rms_util to superimpose overhang residues of piece onto pose.
-/// @details Start + End denote residue number before and after the insert will be.  
+/// @details Start + End denote residue number before and after the insert will be.
 /// For example, start = 10, end = 11 for a scaffold where the previous residues are already deleted
-/// or a scaffold where you are superposimposing a linker between two domains - 
+/// or a scaffold where you are superposimposing a linker between two domains -
 /// one that ends at start and the other that begins at end
-void 
+void
 superimpose_overhangs_heavy(
 	core::pose::Pose const & pose,
-	core::pose::Pose & piece, 
+	core::pose::Pose & piece,
 	bool ca_only,
 	core::Size start,
 	core::Size end,
-	core::Size Nter_overhang_len=2, 
+	core::Size Nter_overhang_len=2,
 	core::Size Cter_overhang_length_len=2);
 
 /// @brief deletes overhang residues of the pose piece.
 /// Recommended use is within apply method
-void 
+void
 delete_overhang_residues(
 	core::pose::Pose & piece,
 	core::Size Nter_overhang_len,
@@ -126,9 +126,9 @@ delete_overhang_residues(
 
 
 /// @brief combines the two main movemaps to use after the insertion.
-/// @details Start + End denote residue number before and after the insert. 
+/// @details Start + End denote residue number before and after the insert.
 /// original_end denotes the end residue number before insertion occurred
-core::kinematics::MoveMapOP 
+core::kinematics::MoveMapOP
 combine_movemaps_post_insertion(
 	core::kinematics::MoveMapCOP scaffold_mm,
 	core::kinematics::MoveMapCOP insert_mm,
@@ -139,7 +139,7 @@ combine_movemaps_post_insertion(
 
 /// @brief Uses a small mover at high KT to perturb residues in the movemap for testing.
 ///  Returns bb_RMS_including_o
-core::Real 
+core::Real
 perturb_backbone_for_test(core::pose::Pose & pose, core::kinematics::MoveMapOP mm);
 
 /// @brief Idealize loop residues and residues in movemap.
@@ -167,7 +167,7 @@ remove_cutpoint_variants_for_ccd(
 	core::pose::Pose & pose,
 	protocols::loops::Loops const & loops);
 
-/// @brief Uses has_severe_peptide_bond_issues with stringent geometry values to 
+/// @brief Uses has_severe_peptide_bond_issues with stringent geometry values to
 /// determine graft closure at cutpoint.
 bool
 graft_closed(
@@ -183,10 +183,10 @@ graft_closed(
 
 /////////////////////////////////////////////////////////////////
 /// @brief ****Nter_loop_start---->Piece----> | Cter_loop_end****
-///  Default FoldTree used by AnchoredGraftMover.  
+///  Default FoldTree used by AnchoredGraftMover.
 /// @params lower_cutpoint for CCD and loops is Cter_loop_end-1
 ///
-void 
+void
 setup_single_loop_single_arm_remodeling_foldtree(
 	core::pose::Pose & pose,
 	core::Size const Nter_loop_start,
@@ -198,7 +198,7 @@ setup_single_loop_single_arm_remodeling_foldtree(
 /// Insert will move in cartesian space
 /// @params lower_cutpoint for CCD and loops is end_-1
 ///
-void 
+void
 setup_single_loop_double_arm_remodeling_foldtree(
 	core::pose::Pose & pose,
 	core::Size const Nter_loop_start,
@@ -209,5 +209,5 @@ setup_single_loop_double_arm_remodeling_foldtree(
 }//namespace grafting
 }//namespace protocols
 
-#endif	//INCLUDED_protocols_grafting_util_hh
+#endif //INCLUDED_protocols_grafting_util_hh
 

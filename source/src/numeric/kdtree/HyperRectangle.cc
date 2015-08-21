@@ -44,7 +44,7 @@ HyperRectangle::HyperRectangle(
 	utility::vector1< numeric::Real > upper,
 	utility::vector1< numeric::Real > lower
 )
-	: upper_( upper ), lower_( lower )
+: upper_( upper ), lower_( lower )
 {
 	//std::cout << "made bounds: ";
 	//show( std::cout );
@@ -84,7 +84,7 @@ void HyperRectangle::extend(
 			u_it = upper_.begin(), u_end = upper_.end();
 			p_it != p_end && l_it != l_end && u_it != u_end;
 			++p_it, ++l_it, ++u_it
-	) {
+			) {
 		*l_it = std::min( *l_it, *p_it );
 		*u_it = std::max( *u_it, *p_it );
 	}

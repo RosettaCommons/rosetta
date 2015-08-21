@@ -50,8 +50,8 @@ MinimizerOptions::MinimizerOptions(
 	deriv_check_verbose_( deriv_check_verbose_in ),
 	deriv_check_to_stdout_( true ), // by default, send the result of a deriv-check call to the screen.
 	// should make these configurable of course
-  silent_( false ),
-  gmax_cutoff_for_convergence_( 1.0 ),
+	silent_( false ),
+	gmax_cutoff_for_convergence_( 1.0 ),
 	ax_init_( 0.0 ),
 	xx_init_( 0.1 ),
 	bx_init_( 0.2 ),
@@ -75,7 +75,7 @@ MinimizerOptions::clone() const
 		min_type_, minimize_tolerance_, use_nblist_,
 		deriv_check_, deriv_check_verbose_ ) );
 	if ( nblist_auto_update_ ) minoptop->nblist_auto_update_ = true;
-	if ( 	deriv_check_to_stdout_ ) minoptop->deriv_check_to_stdout_ = true;
+	if (  deriv_check_to_stdout_ ) minoptop->deriv_check_to_stdout_ = true;
 
 	return minoptop;
 }

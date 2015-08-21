@@ -10,7 +10,7 @@
 /// @file utility/lua/LuaIterator.fwd.hh
 /// @brief A wrapper around a luabind::iterator
 /// has skey() and ikey() functions that return a string or int conversion of the key
-// 
+//
 // this is really just a convenience class
 /// @author Ken Jung
 
@@ -19,7 +19,7 @@
 
 namespace utility {
 namespace lua {
-		class LuaIterator;
+class LuaIterator;
 }
 }
 #endif

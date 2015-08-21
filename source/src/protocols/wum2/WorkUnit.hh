@@ -46,7 +46,7 @@ public:
 	WorkUnit(){}
 	// mpi rank of master node, index of trajectory on that master node
 	WorkUnit( core::Size master,
-			core::Size trajectory_idx );
+		core::Size trajectory_idx );
 
 	virtual ~WorkUnit (){}
 
@@ -84,28 +84,28 @@ public:
 
 protected:
 
-		// whether the WU gets pushed onto the front vs back of the queue
-		bool prioritize_;
+	// whether the WU gets pushed onto the front vs back of the queue
+	bool prioritize_;
 
-		// Generates unique id for this WU, from rank and unix timestamp
-		void create_unique_id();
+	// Generates unique id for this WU, from rank and unix timestamp
+	void create_unique_id();
 
-		// Unique id for this WU, from rank and unix timestamp
-		int id_;
+	// Unique id for this WU, from rank and unix timestamp
+	int id_;
 
-		// For MPI, what master and what trajectory on that master created this WU
-		// master = mpi rank of node where WU was created
-		int master_;
-		int trajectory_idx_;
+	// For MPI, what master and what trajectory on that master created this WU
+	// master = mpi rank of node where WU was created
+	int master_;
+	int trajectory_idx_;
 
-		/// Important unixtimes
-		core::Size  unixtime_creation_;
-		core::Size  unixtime_start_;
-		core::Size  unixtime_stop_;
+	/// Important unixtimes
+	core::Size  unixtime_creation_;
+	core::Size  unixtime_start_;
+	core::Size  unixtime_stop_;
 
-		// Cache pointer, is only valid after link_cache() is called
-		// is not serialized, is not sent with WU
-		protocols::moves::MoverCacheSP cache_;
+	// Cache pointer, is only valid after link_cache() is called
+	// is not serialized, is not sent with WU
+	protocols::moves::MoverCacheSP cache_;
 };  // class WorkUnit
 
 
@@ -114,13 +114,13 @@ class WorkUnit_Wait: public WorkUnit {
 public:
 	// boost serialize requires empty constructor
 	WorkUnit_Wait(){}
-    WorkUnit_Wait( core::Size master,
-			core::Size trajectory_idx,
-			long wait_time);
+	WorkUnit_Wait( core::Size master,
+		core::Size trajectory_idx,
+		long wait_time);
 
 	~WorkUnit_Wait(){}
 
-    void run();
+	void run();
 
 	void wait_time( long wait_time ) { wait_time_ = wait_time; }
 	long wait_time() { return wait_time_; }
@@ -137,26 +137,26 @@ public:
 	// boost serialize requires empty constructor
 	WorkUnit_ElScripts(){}
 	WorkUnit_ElScripts( core::Size master,
-			core::Size trajectory_idx,
-			core::io::serialization::PipeMapSP p,
-			protocols::moves::SerializableStateSP state,
-			std::string name );
+		core::Size trajectory_idx,
+		core::io::serialization::PipeMapSP p,
+		protocols::moves::SerializableStateSP state,
+		std::string name );
 
 	~WorkUnit_ElScripts(){}
-    virtual void run();
+	virtual void run();
 
 	// no copy constructor needed, shallow copy is fine for current use
 
-    core::io::serialization::PipeMapWP pipemap() {
+	core::io::serialization::PipeMapWP pipemap() {
 		return core::io::serialization::PipeMapWP(pipemap_);
 	}
 
-    protocols::moves::SerializableStateWP state() {
+	protocols::moves::SerializableStateWP state() {
 		return protocols::moves::SerializableStateWP(state_);
 	}
 
 	// cpp doesnt let you overload by return type boohoo
-    protocols::moves::SerializableStateCWP const_state() {
+	protocols::moves::SerializableStateCWP const_state() {
 		return protocols::moves::SerializableStateCWP(state_);
 	}
 

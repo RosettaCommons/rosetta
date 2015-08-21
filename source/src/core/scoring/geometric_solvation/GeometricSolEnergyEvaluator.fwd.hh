@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file core/scoring/geometric_solvation/GeometricSolEnergyEvaluator.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,13 +21,13 @@
 namespace core {
 namespace scoring {
 namespace geometric_solvation {
-	
-	class GeometricSolEnergyEvaluator;
-	typedef utility::pointer::shared_ptr< GeometricSolEnergyEvaluator > GeometricSolEnergyEvaluatorOP;
-	typedef utility::pointer::shared_ptr< GeometricSolEnergyEvaluator const > GeometricSolEnergyEvaluatorCOP;
-	
-} //geometric_solvation 
-} //scoring 
-} //core 
+
+class GeometricSolEnergyEvaluator;
+typedef utility::pointer::shared_ptr< GeometricSolEnergyEvaluator > GeometricSolEnergyEvaluatorOP;
+typedef utility::pointer::shared_ptr< GeometricSolEnergyEvaluator const > GeometricSolEnergyEvaluatorCOP;
+
+} //geometric_solvation
+} //scoring
+} //core
 
 #endif

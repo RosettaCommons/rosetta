@@ -32,16 +32,16 @@ namespace rotamer_set_operations {
 static thread_local basic::Tracer tr( "protocols.toolbox.RotamerSetOperations.SpecialRotamerRotSetOps" );
 
 SpecialRotamerRSO::SpecialRotamerRSO( core::Size seqpos )
-	: parent(),
-		seqpos_(seqpos)
+: parent(),
+	seqpos_(seqpos)
 {
 	new_rots_.clear();
 }
 
 SpecialRotamerRSO::SpecialRotamerRSO( SpecialRotamerRSO const & src )
-	: parent( src ),
-		seqpos_(src.seqpos_),
-		new_rots_(src.new_rots_)
+: parent( src ),
+	seqpos_(src.seqpos_),
+	new_rots_(src.new_rots_)
 {}
 
 
@@ -61,11 +61,11 @@ SpecialRotamerRSO::clone() const{
 void
 SpecialRotamerRSO::alter_rotamer_set(
 	core::pose::Pose const & pose,
-//mjo commenting out 'sfxn' because it is unused and causes a warning
+	//mjo commenting out 'sfxn' because it is unused and causes a warning
 	core::scoring::ScoreFunction const & /*sfxn*/,
-//mjo commenting out 'ptask' because it is unused and causes a warning
+	//mjo commenting out 'ptask' because it is unused and causes a warning
 	core::pack::task::PackerTask const & /*ptask*/,
-//mjo commenting out 'packer_neighbor_graph' because it is unused and causes a warning
+	//mjo commenting out 'packer_neighbor_graph' because it is unused and causes a warning
 	core::graph::GraphCOP /*packer_neighbor_graph*/,
 	core::pack::rotamer_set::RotamerSet & rotamer_set
 )
@@ -79,8 +79,8 @@ SpecialRotamerRSO::alter_rotamer_set(
 		// make sure to remove any rotamers from original set that were already set as variant pink
 		core::pack::rotamer_set::Rotamers variant_rotamers;
 		utility::vector1< bool > rotamers2dropb( rotamer_set.num_rotamers(), false );
-		for( core::Size r(1); r<=rotamer_set.num_rotamers(); ++r ) {
-			if( ! rotamer_set.rotamer(r)->has_variant_type( core::chemical::SPECIAL_ROT ) ) continue;
+		for ( core::Size r(1); r<=rotamer_set.num_rotamers(); ++r ) {
+			if ( ! rotamer_set.rotamer(r)->has_variant_type( core::chemical::SPECIAL_ROT ) ) continue;
 			rotamers2dropb[r] = true;
 			core::conformation::ResidueOP variant_rot( core::pose::remove_variant_type_from_residue( *rotamer_set.rotamer(r), core::chemical::SPECIAL_ROT, pose ) );
 			variant_rotamers.push_back( variant_rot );
@@ -90,7 +90,7 @@ SpecialRotamerRSO::alter_rotamer_set(
 		rotamer_set.drop_rotamers( rotamers2dropb );
 
 		// add the new rotamers
-		for( core::Size i(1); i <= new_rots_.size(); ++i ) {
+		for ( core::Size i(1); i <= new_rots_.size(); ++i ) {
 			rotamer_set.add_rotamer( *new_rots_[i] );
 
 		}
@@ -104,7 +104,7 @@ SpecialRotamerRSO::set_new_rots(
 	core::pack::rotamer_set::Rotamers & new_rots
 )
 {
-	for( core::Size i(1); i <= new_rots.size(); ++i ) {
+	for ( core::Size i(1); i <= new_rots.size(); ++i ) {
 		new_rots_.push_back( new_rots[i] );
 	}
 }

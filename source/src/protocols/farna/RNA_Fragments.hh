@@ -23,37 +23,37 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-	#include <protocols/toolbox/AllowInsert.hh>
+#include <protocols/toolbox/AllowInsert.hh>
 #endif
 
 
 namespace protocols {
 namespace farna {
 
-	class RNA_Fragments : public utility::pointer::ReferenceCount {
-	public:
+class RNA_Fragments : public utility::pointer::ReferenceCount {
+public:
 
-		//Constructor -- needs vall_torsions_file to get started.
-		RNA_Fragments();
+	//Constructor -- needs vall_torsions_file to get started.
+	RNA_Fragments();
 
-		virtual ~RNA_Fragments();
+	virtual ~RNA_Fragments();
 
-	public:
+public:
 
-		//Probably the only thing that will actually get called publicly:
-		virtual void
-		apply_random_fragment(
-													core::pose::Pose & pose,
-													core::Size const position,
-													core::Size const size,
-													core::Size const type,
-													toolbox::AllowInsertOP allow_insert 	);
+	//Probably the only thing that will actually get called publicly:
+	virtual void
+	apply_random_fragment(
+		core::pose::Pose & pose,
+		core::Size const position,
+		core::Size const size,
+		core::Size const type,
+		toolbox::AllowInsertOP allow_insert  );
 
 
-		virtual bool
-		is_fullatom();
+	virtual bool
+	is_fullatom();
 
-	};
+};
 
 } //farna
 } //protocols

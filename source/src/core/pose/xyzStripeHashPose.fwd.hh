@@ -16,27 +16,27 @@
 namespace core {
 namespace pose {
 
-	enum PoseCoordPickMode {
-		PoseCoordPickMode_NBR,
-		PoseCoordPickMode_CA,
-		PoseCoordPickMode_CB,
-		PoseCoordPickMode_CB_else_CA,
-		PoseCoordPickMode_BB,
-		PoseCoordPickMode_N_CA_C,
-		PoseCoordPickMode_N_CA_C_CB,
-		PoseCoordPickMode_N_C_O,
-		PoseCoordPickMode_BNP,
-		PoseCoordPickMode_HVY,
-		PoseCoordPickMode_HVY_IF_NP,
-		PoseCoordPickMode_ALL,
-		PoseCoordPickMode_CBorCA,
-		PoseCoordPickMode_NUL
-	};
+enum PoseCoordPickMode {
+	PoseCoordPickMode_NBR,
+	PoseCoordPickMode_CA,
+	PoseCoordPickMode_CB,
+	PoseCoordPickMode_CB_else_CA,
+	PoseCoordPickMode_BB,
+	PoseCoordPickMode_N_CA_C,
+	PoseCoordPickMode_N_CA_C_CB,
+	PoseCoordPickMode_N_C_O,
+	PoseCoordPickMode_BNP,
+	PoseCoordPickMode_HVY,
+	PoseCoordPickMode_HVY_IF_NP,
+	PoseCoordPickMode_ALL,
+	PoseCoordPickMode_CBorCA,
+	PoseCoordPickMode_NUL
+};
 
-	class xyzStripeHashPose;
-    typedef utility::pointer::shared_ptr< xyzStripeHashPose > xyzStripeHashPoseOP;
-	typedef utility::pointer::shared_ptr< xyzStripeHashPose const > xyzStripeHashPoseCOP;
-	typedef utility::pointer::weak_ptr< xyzStripeHashPose const > xyzStripeHashPoseCAP;
+class xyzStripeHashPose;
+typedef utility::pointer::shared_ptr< xyzStripeHashPose > xyzStripeHashPoseOP;
+typedef utility::pointer::shared_ptr< xyzStripeHashPose const > xyzStripeHashPoseCOP;
+typedef utility::pointer::weak_ptr< xyzStripeHashPose const > xyzStripeHashPoseCAP;
 
 
 }

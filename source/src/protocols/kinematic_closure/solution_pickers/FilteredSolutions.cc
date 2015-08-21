@@ -31,7 +31,7 @@ namespace solution_pickers {
 using namespace std;
 
 FilteredSolutions::FilteredSolutions(
-		bool check_rama, bool check_overlap, bool be_lenient) {
+	bool check_rama, bool check_overlap, bool be_lenient) {
 
 	check_rama_ = check_rama;
 	check_overlap_ = check_overlap;
@@ -39,14 +39,14 @@ FilteredSolutions::FilteredSolutions(
 }
 
 bool FilteredSolutions::pick_and_apply(
-		Pose & pose, SolutionList const & solutions) {
+	Pose & pose, SolutionList const & solutions) {
 
-	BOOST_FOREACH(ClosureSolutionCOP solution, solutions) {
+	BOOST_FOREACH ( ClosureSolutionCOP solution, solutions ) {
 		bool reasonable_solution =
 			solution->apply_if_reasonable(
-					pose, check_rama_, check_overlap_, be_lenient_);
+			pose, check_rama_, check_overlap_, be_lenient_);
 
-		if (reasonable_solution) return true;
+		if ( reasonable_solution ) return true;
 	}
 
 	return false;

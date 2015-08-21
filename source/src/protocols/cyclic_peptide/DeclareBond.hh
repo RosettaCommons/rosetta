@@ -35,30 +35,30 @@ public:
 
 	void
 	set( core::Size const res1,
-			 std::string const atom1,
-			 core::Size const res2,
-			 std::string const atom2,
-			 bool const add_termini,
-			 bool const run_kic = false,
-			 core::Size const kic_res1 = 0,
-			 core::Size const kic_res2 = 0,
-			 bool const rebuild_fold_tree = false
-			 );
+		std::string const atom1,
+		core::Size const res2,
+		std::string const atom2,
+		bool const add_termini,
+		bool const run_kic = false,
+		core::Size const kic_res1 = 0,
+		core::Size const kic_res2 = 0,
+		bool const rebuild_fold_tree = false
+	);
 
 private:
-    Size res1_;
-    std::string atom1_;
-    Size res2_;
-    std::string atom2_;
-    
-	  bool add_termini_;
-	  bool run_kic_;
-    Size kic_res1_;
-    Size kic_res2_;
+	Size res1_;
+	std::string atom1_;
+	Size res2_;
+	std::string atom2_;
+
+	bool add_termini_;
+	bool run_kic_;
+	Size kic_res1_;
+	Size kic_res2_;
 
 
-		/// @brief Should the foldtree be rebuilt?
-		bool rebuild_fold_tree_;
+	/// @brief Should the foldtree be rebuilt?
+	bool rebuild_fold_tree_;
 };
 
 } // moves

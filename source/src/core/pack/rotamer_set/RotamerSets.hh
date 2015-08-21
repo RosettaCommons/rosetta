@@ -252,7 +252,7 @@ private:
 	utility::vector1< uint > moltenres_2_resid_;
 	utility::vector1< uint > nrotamer_offsets_;
 
-	 // originating moltenres for a particular rotamer in the enumeration of all rotamers
+	// originating moltenres for a particular rotamer in the enumeration of all rotamers
 	utility::vector1< uint > moltenres_for_rotamer_;
 	utility::vector1< uint > nrotamers_for_moltenres_;
 

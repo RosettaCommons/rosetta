@@ -7,26 +7,26 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/PcsInputFile.hh
- ///
- /// @brief Read all input from a .npc input file, and hold the data in the class.
- /// One file per lanthanide data.
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/PcsInputFile.hh
+///
+/// @brief Read all input from a .npc input file, and hold the data in the class.
+/// One file per lanthanide data.
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs2_PcsInputFile_hh
 #define INCLUDED_protocols_scoring_methods_pcs2_PcsInputFile_hh
@@ -45,10 +45,10 @@
 
 // C++ headers
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs2{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs2 {
 
 //////////////////////////////////////////////////////////
 /// @brief PcsInputFile contain all the information of a .npc file

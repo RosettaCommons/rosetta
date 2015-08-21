@@ -325,8 +325,7 @@ public: // Methods
 	{
 		if ( std::find( begin(), end(), t ) == end() ) {
 			return false;
-		}
-		else {
+		} else {
 			return true;
 		}
 	}
@@ -341,8 +340,7 @@ public: // Methods
 		index_type const loc( std::find( begin(), end() , t ) - begin() );
 		if ( loc < size() ) {
 			return loc + l_;
-		}
-		else {
+		} else {
 			utility_exit_with_message( "vectorL:index_of: element not found" );
 		}
 	}
@@ -419,7 +417,7 @@ public: // Indexers
 	u() const
 	{
 		debug_assert( ! super::empty() ); // Upper index only meaningful for non-empty vectors
-	//	debug_assert( static_cast< index_type >( super::size() ) >= 0 ); // Catch size range error
+		// debug_assert( static_cast< index_type >( super::size() ) >= 0 ); // Catch size range error
 		return l_ + static_cast< index_type >( super::size() ) - 1;
 	}
 

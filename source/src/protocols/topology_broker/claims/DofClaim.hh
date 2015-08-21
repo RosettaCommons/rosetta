@@ -95,15 +95,15 @@ public:
 
 	//make things compile... for now
 	/*core::Size offset() const {
-		runtime_assert( false );
-		return 0;
+	runtime_assert( false );
+	return 0;
 	}*/
 
 	core::Size last_residue() const {
 		runtime_assert( false );
 		return 0;
 	}
-    //virtual std::string to_string() const = 0;
+	//virtual std::string to_string() const = 0;
 	virtual std::string str_type() const = 0;
 	virtual void show( std::ostream& os ) const;
 

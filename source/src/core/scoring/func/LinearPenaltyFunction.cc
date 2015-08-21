@@ -47,13 +47,13 @@ LinearPenaltyFunction::read_data( std::istream& in ) {
 void
 LinearPenaltyFunction::show_definition( std::ostream &out ) const {
 	out << "LINEAR_PENALTY " << x_middle_ << " " << well_depth_ <<  " " << half_width_ <<
-	    " " << slope_ << std::endl;
+		" " << slope_ << std::endl;
 }
 
 Size
 LinearPenaltyFunction::show_violations( std::ostream& out, Real x, Size verbose_level, Real threshold) const {
 
-	if (verbose_level > 100 ) {
+	if ( verbose_level > 100 ) {
 		out << "LINEAR_PENALTY " <<  ( x < x_middle_ ) << std::endl;
 	}
 	return Func::show_violations( out, x, verbose_level, threshold);

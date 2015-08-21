@@ -34,60 +34,60 @@ namespace stepwise {
 namespace modeler {
 namespace options {
 
-	//Constructor
-	StepWiseBasicModelerOptions::StepWiseBasicModelerOptions():
-		StepWiseBasicOptions()
-	{
-		initialize_variables();
-	}
+//Constructor
+StepWiseBasicModelerOptions::StepWiseBasicModelerOptions():
+	StepWiseBasicOptions()
+{
+	initialize_variables();
+}
 
-	//Destructor
-	StepWiseBasicModelerOptions::~StepWiseBasicModelerOptions()
-	{}
+//Destructor
+StepWiseBasicModelerOptions::~StepWiseBasicModelerOptions()
+{}
 
-	/// @brief copy constructor
-	StepWiseBasicModelerOptions::StepWiseBasicModelerOptions( StepWiseBasicModelerOptions const & src ) :
-		ResourceOptions( src ),
-		StepWiseBasicOptions( src )
-	{
-		*this = src;
-	}
+/// @brief copy constructor
+StepWiseBasicModelerOptions::StepWiseBasicModelerOptions( StepWiseBasicModelerOptions const & src ) :
+	ResourceOptions( src ),
+	StepWiseBasicOptions( src )
+{
+	*this = src;
+}
 
-	/////////////////////////////////////////////////////////////////////////////////////
-	void
-	StepWiseBasicModelerOptions::initialize_variables(){
-		StepWiseBasicOptions::initialize_variables();
-		use_green_packer_ = false; // perhaps deprecate
-		verbose_ = false; // perhaps deprecate
-		choose_random_ = false;
-		dump_ = false;
-		skip_minimize_ = false;
-		disallow_realign_ = false;
-		virtualize_packable_moieties_in_screening_pose_ = false;
-	}
+/////////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseBasicModelerOptions::initialize_variables(){
+	StepWiseBasicOptions::initialize_variables();
+	use_green_packer_ = false; // perhaps deprecate
+	verbose_ = false; // perhaps deprecate
+	choose_random_ = false;
+	dump_ = false;
+	skip_minimize_ = false;
+	disallow_realign_ = false;
+	virtualize_packable_moieties_in_screening_pose_ = false;
+}
 
-	/// @brief clone the options
-	StepWiseBasicModelerOptionsOP
-	StepWiseBasicModelerOptions::clone() const
-	{
-		return StepWiseBasicModelerOptionsOP( new StepWiseBasicModelerOptions( *this ) );
-	}
+/// @brief clone the options
+StepWiseBasicModelerOptionsOP
+StepWiseBasicModelerOptions::clone() const
+{
+	return StepWiseBasicModelerOptionsOP( new StepWiseBasicModelerOptions( *this ) );
+}
 
-	/////////////////////////////////////////////////////////////////////////////////////
-	void
-	StepWiseBasicModelerOptions::initialize_from_command_line(){
+/////////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseBasicModelerOptions::initialize_from_command_line(){
 
-		StepWiseBasicOptions::initialize_from_command_line();
+	StepWiseBasicOptions::initialize_from_command_line();
 
-		choose_random_ = option[ basic::options::OptionKeys::stepwise::choose_random ]() ;
-		if ( choose_random_ && num_pose_minimize() == 0 ) set_num_pose_minimize( 1 );
-		verbose_ = option[ OptionKeys::stepwise::VERBOSE ]();
-		use_green_packer_ = option[ basic::options::OptionKeys::stepwise::use_green_packer ]();
-		choose_random_ = option[ basic::options::OptionKeys::stepwise::choose_random ]() ;
-		dump_ = option[ basic::options::OptionKeys::stepwise::dump ]();
-		skip_minimize_ = option[ basic::options::OptionKeys::stepwise::skip_minimize ]();
-		virtualize_packable_moieties_in_screening_pose_ = option[ basic::options::OptionKeys::stepwise::virtualize_packable_moieties_in_screening_pose ]();
-	}
+	choose_random_ = option[ basic::options::OptionKeys::stepwise::choose_random ]() ;
+	if ( choose_random_ && num_pose_minimize() == 0 ) set_num_pose_minimize( 1 );
+	verbose_ = option[ OptionKeys::stepwise::VERBOSE ]();
+	use_green_packer_ = option[ basic::options::OptionKeys::stepwise::use_green_packer ]();
+	choose_random_ = option[ basic::options::OptionKeys::stepwise::choose_random ]() ;
+	dump_ = option[ basic::options::OptionKeys::stepwise::dump ]();
+	skip_minimize_ = option[ basic::options::OptionKeys::stepwise::skip_minimize ]();
+	virtualize_packable_moieties_in_screening_pose_ = option[ basic::options::OptionKeys::stepwise::virtualize_packable_moieties_in_screening_pose ]();
+}
 
 } //options
 } //modeler

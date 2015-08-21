@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/antibody_design/LeGrandSasa.fwd.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_core_scoring_sasa_LEGRANDSASA_FWD_HH
@@ -22,11 +22,11 @@ namespace sasa {
 
 class LeGrandSasa;
 
-	typedef utility::pointer::shared_ptr< LeGrandSasa> LeGrandSasaOP;
-	typedef utility::pointer::shared_ptr< LeGrandSasa const> LeGrandSasaCOP; 
+typedef utility::pointer::shared_ptr< LeGrandSasa> LeGrandSasaOP;
+typedef utility::pointer::shared_ptr< LeGrandSasa const> LeGrandSasaCOP;
 }
 }
 }
 
-#endif	//#ifndef INCLUDED_protocols/antibody_design_LEGRANDSASA_FWD_HH
+#endif //#ifndef INCLUDED_protocols/antibody_design_LEGRANDSASA_FWD_HH
 

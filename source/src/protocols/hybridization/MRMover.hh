@@ -56,7 +56,7 @@ public:
 	}
 
 	void set_fullatom_density_weight( core::Real newval, bool fast ) {
-		if (fast) {
+		if ( fast ) {
 			fa_scorefxn_->set_weight( core::scoring::elec_dens_fast, 10*newval );
 			fa_scorefxn_->set_weight( core::scoring::elec_dens_window, 0 );
 		} else {

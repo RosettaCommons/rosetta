@@ -20,32 +20,32 @@ namespace helix_capper {
 class HelixNCapperMover
 {
 
-	public:
-		HelixNCapperMover();
-		HelixNCapperMover(
-			core::pose::Pose start_pose
-		);
-		virtual ~HelixNCapperMover();
+public:
+	HelixNCapperMover();
+	HelixNCapperMover(
+		core::pose::Pose start_pose
+	);
+	virtual ~HelixNCapperMover();
 
-		//void set_initial_pose( core::pose::Pose );
-		void dump_pdb_to_file( core::pose::Pose &, std::string );
-		// Undefined, commenting out to fix PyRosetta build  void print_favorable_mutations();
+	//void set_initial_pose( core::pose::Pose );
+	void dump_pdb_to_file( core::pose::Pose &, std::string );
+	// Undefined, commenting out to fix PyRosetta build  void print_favorable_mutations();
 
-		void set_excluded_positions();
+	void set_excluded_positions();
 
-		void setup_svm();
-		void get_start_positions();
-		void get_Ncap_scores();
-		core::Real ncap_prob_from_svm( utility::vector1< core::Real > & );
+	void setup_svm();
+	void get_start_positions();
+	void get_Ncap_scores();
+	core::Real ncap_prob_from_svm( utility::vector1< core::Real > & );
 
-		void apply();
+	void apply();
 
-	private:
-		core::pose::Pose start_pose_;
-		utility::libsvm::Svm_rosettaOP ncap_model_;
-		utility::vector1<core::Size> excluded_positions_;
-		utility::vector1<core::Size> helix_start_positions_;
-		utility::vector1<core::Real> ncap_scores_;
+private:
+	core::pose::Pose start_pose_;
+	utility::libsvm::Svm_rosettaOP ncap_model_;
+	utility::vector1<core::Size> excluded_positions_;
+	utility::vector1<core::Size> helix_start_positions_;
+	utility::vector1<core::Real> ncap_scores_;
 
 };
 

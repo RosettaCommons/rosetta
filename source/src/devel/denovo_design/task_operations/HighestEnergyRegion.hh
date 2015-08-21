@@ -38,20 +38,20 @@ namespace task_operations {
 
 class HighestEnergyRegionOperation : public core::pack::task::operation::TaskOperation {
 public:
-  /// @brief default constructor
-  HighestEnergyRegionOperation();
+	/// @brief default constructor
+	HighestEnergyRegionOperation();
 
-  /// @brief copy constructor
-  HighestEnergyRegionOperation( HighestEnergyRegionOperation const & rval );
+	/// @brief copy constructor
+	HighestEnergyRegionOperation( HighestEnergyRegionOperation const & rval );
 
-  /// @brief destructor
-  virtual ~HighestEnergyRegionOperation();
+	/// @brief destructor
+	virtual ~HighestEnergyRegionOperation();
 
-  /// @brief make clone
-  virtual core::pack::task::operation::TaskOperationOP clone() const;
+	/// @brief make clone
+	virtual core::pack::task::operation::TaskOperationOP clone() const;
 
-  /// @brief apply
-  virtual void apply( Pose const & pose, core::pack::task::PackerTask & task ) const;
+	/// @brief apply
+	virtual void apply( Pose const & pose, core::pack::task::PackerTask & task ) const;
 
 	/// @brief Runs the calculation and caches residues to design
 	virtual void cache_result( core::pose::Pose const & pose );
@@ -145,8 +145,8 @@ public:
 	/// @brief virtual destructor
 	virtual ~DesignByPackStatOperation();
 
-  /// @brief make clone
-  virtual core::pack::task::operation::TaskOperationOP clone() const;
+	/// @brief make clone
+	virtual core::pack::task::operation::TaskOperationOP clone() const;
 
 	/// @brief Gets a list of residues for design
 	virtual utility::vector1< core::Size >
@@ -167,8 +167,8 @@ public:
 	/// @brief virtual destructor
 	virtual ~DesignRandomRegionOperation();
 
-  /// @brief make clone
-  virtual core::pack::task::operation::TaskOperationOP clone() const;
+	/// @brief make clone
+	virtual core::pack::task::operation::TaskOperationOP clone() const;
 
 	/// @brief Gets a list of residues for design
 	virtual utility::vector1< core::Size >
@@ -189,8 +189,8 @@ public:
 	/// @brief virtual destructor
 	virtual ~DesignByResidueCentralityOperation();
 
-  /// @brief make clone
-  virtual core::pack::task::operation::TaskOperationOP clone() const;
+	/// @brief make clone
+	virtual core::pack::task::operation::TaskOperationOP clone() const;
 
 	/// @brief Gets a list of residues for design
 	virtual utility::vector1< core::Size >
@@ -211,8 +211,8 @@ public:
 	/// @brief virtual destructor
 	virtual ~DesignCatalyticResiduesOperation();
 
-  /// @brief make clone
-  virtual core::pack::task::operation::TaskOperationOP clone() const;
+	/// @brief make clone
+	virtual core::pack::task::operation::TaskOperationOP clone() const;
 
 	/// @brief Gets a list of residues for design
 	virtual utility::vector1< core::Size >
@@ -233,8 +233,8 @@ public:
 	/// @brief virtual destructor
 	virtual ~DesignByCavityProximityOperation();
 
-  /// @brief make clone
-  virtual core::pack::task::operation::TaskOperationOP clone() const;
+	/// @brief make clone
+	virtual core::pack::task::operation::TaskOperationOP clone() const;
 
 	/// @brief Gets a list of residues for design
 	virtual utility::vector1< core::Size >
@@ -248,7 +248,7 @@ private:
 	/// @brief given a cavity and a residue, tells how far Cb of the residue is from the edge of the cavity. Normalizes distance by cavity volume, such that residues around larger cavities should be preferred
 	core::Real
 	proximity_to_cavity( core::conformation::Residue const & res,
-											 core::scoring::packstat::CavityBallCluster const & cluster ) const;
+		core::scoring::packstat::CavityBallCluster const & cluster ) const;
 };
 
 

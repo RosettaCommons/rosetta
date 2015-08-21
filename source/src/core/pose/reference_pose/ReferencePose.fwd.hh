@@ -31,22 +31,22 @@
 // C++ headers
 
 namespace core {
-	namespace pose {
-		namespace reference_pose {
+namespace pose {
+namespace reference_pose {
 
-			class ReferencePose;
+class ReferencePose;
 
-			typedef  utility::pointer::weak_ptr< ReferencePose >  ReferencePoseAP;
-			typedef  utility::pointer::weak_ptr< ReferencePose const >  ReferencePoseCAP;
-			typedef  utility::pointer::shared_ptr< ReferencePose >  ReferencePoseOP;
-			typedef  utility::pointer::shared_ptr< ReferencePose const >  ReferencePoseCOP;
+typedef  utility::pointer::weak_ptr< ReferencePose >  ReferencePoseAP;
+typedef  utility::pointer::weak_ptr< ReferencePose const >  ReferencePoseCAP;
+typedef  utility::pointer::shared_ptr< ReferencePose >  ReferencePoseOP;
+typedef  utility::pointer::shared_ptr< ReferencePose const >  ReferencePoseCOP;
 
-			typedef  utility::vector1< ReferencePoseOP >  ReferencePoseOPs;
-			typedef  utility::vector1< ReferencePoseCOP >  ReferencePoseCOPs;
-			typedef  utility::vector1< ReferencePoseCAP >  ReferencePoseCAPs;
+typedef  utility::vector1< ReferencePoseOP >  ReferencePoseOPs;
+typedef  utility::vector1< ReferencePoseCOP >  ReferencePoseCOPs;
+typedef  utility::vector1< ReferencePoseCAP >  ReferencePoseCAPs;
 
-		} // namespace reference_pose
-	} // namespace pose
+} // namespace reference_pose
+} // namespace pose
 } // namespace core
 
 #endif // INCLUDED_core_pose_reference_pose_ReferencePose_fwd_hh

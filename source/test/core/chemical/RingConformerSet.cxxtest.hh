@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	 RingConformerSet.cxxtest.hh
+/// @file  RingConformerSet.cxxtest.hh
 /// @brief   Test suite for ring conformer set building and associated methods
 /// @author  Labonte <JWLabonte@jhu.edu>
 
@@ -56,7 +56,7 @@ public:
 	void test_get_all_nondegenerate_conformers()
 	{
 		TS_TRACE(
-				"Testing get_all_nondegenerate_conformers() method of RingConformerSet for 5- and 6-membered rings." );
+			"Testing get_all_nondegenerate_conformers() method of RingConformerSet for 5- and 6-membered rings." );
 		TS_ASSERT_EQUALS( set5_->get_all_nondegenerate_conformers().size(), 20 );
 		TS_ASSERT_EQUALS( set6_->size(), 38 );
 	}
@@ -70,7 +70,7 @@ public:
 		using namespace utility;
 
 		TS_TRACE( "Testing get_ideal_conformer_by_name(), get_ideal_conformer_by_CP_parameters(), and "
-				" get_ideal_conformer_from_nus() methods of RingConformerSet for 5- and 6-membered rings." );
+			" get_ideal_conformer_from_nus() methods of RingConformerSet for 5- and 6-membered rings." );
 
 		// Set up variables.
 		vector1< Real > params5, params6, params_bad;
@@ -101,14 +101,14 @@ public:
 		nus6[ 5 ] = -60.0;
 
 		TS_ASSERT_EQUALS( set5_->get_ideal_conformer_by_name( "EO" ).specific_name,
-				set5_->get_ideal_conformer_by_CP_parameters( params5 ).specific_name );
+			set5_->get_ideal_conformer_by_CP_parameters( params5 ).specific_name );
 		TS_ASSERT_EQUALS( set6_->get_ideal_conformer_by_name( "BO,3" ).specific_name,
-				set6_->get_ideal_conformer_by_CP_parameters( params6 ).specific_name );
+			set6_->get_ideal_conformer_by_CP_parameters( params6 ).specific_name );
 
 		TS_ASSERT_EQUALS( set5_->get_ideal_conformer_by_name( "EO" ).specific_name,
-						set5_->get_ideal_conformer_from_nus( nus5 ).specific_name );
+			set5_->get_ideal_conformer_from_nus( nus5 ).specific_name );
 		TS_ASSERT_EQUALS( set6_->get_ideal_conformer_by_name( "BO,3" ).specific_name,
-				set6_->get_ideal_conformer_from_nus( nus6 ).specific_name );
+			set6_->get_ideal_conformer_from_nus( nus6 ).specific_name );
 
 		// Test that rounding is handled properly.
 		params5[ PHI ] = 43.2;  // should round to 36.0
@@ -119,9 +119,9 @@ public:
 		nus5[ 4 ] = 34.5;  // ideal is -30.0
 
 		TS_ASSERT_EQUALS( set5_->get_ideal_conformer_by_name( "E1" ).specific_name,
-				set5_->get_ideal_conformer_by_CP_parameters( params5 ).specific_name );
+			set5_->get_ideal_conformer_by_CP_parameters( params5 ).specific_name );
 		TS_ASSERT_EQUALS( set5_->get_ideal_conformer_by_name( "E1" ).specific_name,
-				set5_->get_ideal_conformer_from_nus( nus5 ).specific_name );
+			set5_->get_ideal_conformer_from_nus( nus5 ).specific_name );
 
 		params6[ PHI ] = 123.4;  // should round to 120.0
 		params6[ THETA ] = 123.4;  // should round to 135.0
@@ -133,9 +133,9 @@ public:
 		nus6[ 5 ] = -67.8;  // ideal is -60.0
 
 		TS_ASSERT_EQUALS( set6_->get_ideal_conformer_by_name( "5E" ).specific_name,
-				set6_->get_ideal_conformer_by_CP_parameters( params6 ).specific_name );
+			set6_->get_ideal_conformer_by_CP_parameters( params6 ).specific_name );
 		TS_ASSERT_EQUALS( set6_->get_ideal_conformer_by_name( "5E" ).specific_name,
-				set6_->get_ideal_conformer_from_nus( nus6 ).specific_name );
+			set6_->get_ideal_conformer_from_nus( nus6 ).specific_name );
 
 		// Test non-principal angles.
 		nus6[ 1 ] = -300.0;
@@ -143,15 +143,15 @@ public:
 		nus6[ 3 ] = 420.0;
 		nus6[ 4 ] = -420.0;
 		nus6[ 5 ] = 60.0;
-		
+
 		TS_ASSERT_EQUALS( set6_->get_ideal_conformer_by_name( "4C1" ).specific_name,
-				set6_->get_ideal_conformer_from_nus( nus6 ).specific_name );
-		
+			set6_->get_ideal_conformer_from_nus( nus6 ).specific_name );
+
 		// Test that chairs are handled correctly, as they reside at the poles where phi is meaningless.
 		params6[ THETA ] = 0.0;
 
 		TS_ASSERT_EQUALS( set6_->get_ideal_conformer_by_name( "4C1" ).specific_name,
-				set6_->get_ideal_conformer_by_CP_parameters( params6 ).specific_name );
+			set6_->get_ideal_conformer_by_CP_parameters( params6 ).specific_name );
 
 		// Test for bad input.
 		TS_TRACE( "A not-found error should follow:" );
@@ -160,7 +160,7 @@ public:
 			TS_ASSERT( false );  // Exception was not thrown!
 		} catch ( utility::excn::EXCN_Base const & e) {
 			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ) ),
-					"ERROR: No conformer with given name found in this set; exiting.\n\n" );
+				"ERROR: No conformer with given name found in this set; exiting.\n\n" );
 			TS_TRACE( "The above error message was expected." );
 		}
 
@@ -170,8 +170,8 @@ public:
 			TS_ASSERT( false );  // Exception was not thrown!
 		} catch ( utility::excn::EXCN_Base const & e) {
 			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ) ),
-					"ERROR: An N-membered ring is described by exactly N-3 Cremer-Pople parameters, "
-					"yet a different number was provided; exiting.\n\n" );
+				"ERROR: An N-membered ring is described by exactly N-3 Cremer-Pople parameters, "
+				"yet a different number was provided; exiting.\n\n" );
 			TS_TRACE( "The above error message was expected." );
 		}
 		params_bad.push_back( 0.0 );  // still bad because not enough params for a 6-membered ring
@@ -180,8 +180,8 @@ public:
 			TS_ASSERT( false );  // Exception was not thrown!
 		} catch ( utility::excn::EXCN_Base const & e) {
 			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ) ),
-					"ERROR: An N-membered ring is described by exactly N-3 Cremer-Pople parameters, "
-					"yet a different number was provided; exiting.\n\n" );
+				"ERROR: An N-membered ring is described by exactly N-3 Cremer-Pople parameters, "
+				"yet a different number was provided; exiting.\n\n" );
 			TS_TRACE( "The above error message was expected." );
 		}
 		params_bad.push_back( 180.0 );
@@ -191,8 +191,8 @@ public:
 			TS_ASSERT( false );  // Exception was not thrown!
 		} catch ( utility::excn::EXCN_Base const & e) {
 			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ) ),
-					"ERROR: Planar ring conformations are not handled by Rosetta; "
-					"please specify a non-zero q value; exiting.\n\n" );
+				"ERROR: Planar ring conformations are not handled by Rosetta; "
+				"please specify a non-zero q value; exiting.\n\n" );
 			TS_TRACE( "The above error message was expected." );
 		}
 		params_bad.push_back( 90.0 );  // still bad because too many params
@@ -201,8 +201,8 @@ public:
 			TS_ASSERT( false );  // Exception was not thrown!
 		} catch ( utility::excn::EXCN_Base const & e) {
 			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ) ),
-					"ERROR: An N-membered ring is described by exactly N-3 Cremer-Pople parameters, "
-					"yet a different number was provided; exiting.\n\n" );
+				"ERROR: An N-membered ring is described by exactly N-3 Cremer-Pople parameters, "
+				"yet a different number was provided; exiting.\n\n" );
 			TS_TRACE( "The above error message was expected." );
 		}
 
@@ -217,7 +217,7 @@ public:
 			TS_ASSERT( false );  // Exception was not thrown!
 		} catch ( utility::excn::EXCN_Base const & e) {
 			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ) ),
-					"ERROR: No conformer with given nu angles found in this set; exiting.\n\n" );
+				"ERROR: No conformer with given nu angles found in this set; exiting.\n\n" );
 			TS_TRACE( "The above error message was expected." );
 		}
 	}

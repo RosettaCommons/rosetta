@@ -25,7 +25,7 @@
 
 namespace devel {
 namespace loop_creation {
-	
+
 class LoopCloser : public protocols::moves::Mover
 {
 public:
@@ -38,29 +38,29 @@ public:
 
 	/// @brief Was the most recent loop-closure attempt successful?
 	virtual bool success() const;
-	
+
 	void
 	loop(protocols::loops::Loop loop);
-	
+
 	protocols::loops::Loop
 	loop() const;
-	
+
 	void
 	prevent_nonloop_modifications(bool prevent_nonloop_modifications);
-	
+
 	bool
 	prevent_nonloop_modifications() const;
-	
+
 protected:
 
 	//Was the most recent loop-closure attempt successful?
 	bool success_;
-	
+
 private:
 
 	//The loop to close
 	protocols::loops::Loop loop_;
-	
+
 	//Should this mover be allowed to make modifications outside of the loop region?
 	bool prevent_nonloop_modifications_;
 

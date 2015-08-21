@@ -34,9 +34,9 @@ public:
 
 	/// @brief makes a new object
 	FourAtomsConstraintData(core::scoring::func::FuncOP function,
-			Size first_atom, Size second_offset, Size second_atom,
-			Size third_offset, Size third_atom, Size fourth_offset,
-			Size fourth_atom);
+		Size first_atom, Size second_offset, Size second_atom,
+		Size third_offset, Size third_atom, Size fourth_offset,
+		Size fourth_atom);
 
 	inline Size get_first_atom() {
 		return first_atom_;

@@ -59,7 +59,7 @@ bool RNA_IdealCoord::is_torsion_exists(
 	Size res_index = torsion_id.rsd();
 	if ( res_index < 1 || res_index > pose.total_residue() ) return false;
 	if ( torsion_id.type() == id::BB &&
-			 ( torsion_id.torsion() > pose.residue(res_index).mainchain_atoms().size() ) ) return false;
+			( torsion_id.torsion() > pose.residue(res_index).mainchain_atoms().size() ) ) return false;
 
 	AtomID id1,id2,id3,id4;
 	bool fail = pose.conformation().get_torsion_angle_atom_ids( torsion_id, id1, id2, id3, id4 );
@@ -84,7 +84,7 @@ void RNA_IdealCoord::init() {
 	//Initialize the reference poses
 	chemical::ResidueTypeSetCOP rsd_set;
 	// FA_STANDARD now includes rna_phenix by default.
-	if ( chemical::ChemicalManager::get_instance()->has_residue_type_set( chemical::FA_STANDARD ) ){
+	if ( chemical::ChemicalManager::get_instance()->has_residue_type_set( chemical::FA_STANDARD ) ) {
 		rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set(chemical::FA_STANDARD);
 	} else {
 		rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set(chemical::FA_RNA);
@@ -99,11 +99,11 @@ void RNA_IdealCoord::init() {
 
 //////////////////////////
 void RNA_IdealCoord::apply_coords(
-		Pose & pose,
-		Size const seqpos,
-		Size const res_class,
-		bool const ignore_base,
-		bool const keep_backbone_torsion
+	Pose & pose,
+	Size const seqpos,
+	Size const res_class,
+	bool const ignore_base,
+	bool const keep_backbone_torsion
 ) const {
 	using namespace id;
 	using namespace chemical;
@@ -128,7 +128,7 @@ void RNA_IdealCoord::apply_coords(
 		saved_torsion_id.push_back( TorsionID( seqpos+1, id::BB,  ALPHA   ) );
 		for ( Size i = 1; i <= saved_torsion_id.size(); ++i ) {
 			bool const is_exists = is_torsion_exists( pose, saved_torsion_id[i] );
-			if (is_exists) {
+			if ( is_exists ) {
 				saved_torsions.push_back( pose.torsion( saved_torsion_id[i] ) );
 			} else {
 				saved_torsions.push_back( -9999 );
@@ -141,15 +141,15 @@ void RNA_IdealCoord::apply_coords(
 	if ( ignore_base ) {
 		std::map < core::id::AtomID , core::id::AtomID > atom_id_map;
 		utility::vector1< std::string > const & ref_atom_names(
-				ref_mini_pose->atom_names_list()[2] );
+			ref_mini_pose->atom_names_list()[2] );
 		utility::vector1< std::string > const & non_base_atoms(
-				chemical::rna::non_base_atoms );
+			chemical::rna::non_base_atoms );
 		chemical::ResidueType const & rsd_type1( pose.residue_type( seqpos ) );
 		for ( Size i = 1; i <= non_base_atoms.size(); ++i ) {
 			std::string const & atom_name( non_base_atoms[i] );
 			Size const index2 =
-					std::find( ref_atom_names.begin(), ref_atom_names.end(), atom_name ) -
-					ref_atom_names.begin() + 1;
+				std::find( ref_atom_names.begin(), ref_atom_names.end(), atom_name ) -
+				ref_atom_names.begin() + 1;
 			if ( index2 <= ref_atom_names.size() ) {
 				Size index1( 0 );
 				for ( Size j = 1; j <= rsd_type1.natoms(); ++j ) {
@@ -158,8 +158,9 @@ void RNA_IdealCoord::apply_coords(
 						break;
 					}
 				}
-				if ( index1 != 1 )
-						atom_id_map[AtomID( index1, seqpos )] = AtomID( index2, 2 );
+				if ( index1 != 1 ) {
+					atom_id_map[AtomID( index1, seqpos )] = AtomID( index2, 2 );
+				}
 			}
 		}
 		copy_dofs( pose, *ref_mini_pose, atom_id_map );
@@ -178,10 +179,10 @@ void RNA_IdealCoord::apply_coords(
 }
 //////////////////////////
 void RNA_IdealCoord::apply(
-		Pose & pose,
-		Size const seqpos,
-		PuckerState pucker,
-		bool const keep_backbone_torsion
+	Pose & pose,
+	Size const seqpos,
+	PuckerState pucker,
+	bool const keep_backbone_torsion
 ) const {
 	using namespace id;
 	using namespace chemical;
@@ -203,28 +204,28 @@ void RNA_IdealCoord::apply(
 	//Figure out the residue_type.
 	Size res_class = 0;
 	switch ( res.aa() ) {
-		case na_rad:
-			res_class = 1; break;
-		case na_rgu:
-			res_class = 3; break;
-		case na_rcy:
-			res_class = 5; break;
-		case na_ura:
-			res_class = 7; break;
-		default:
-			utility_exit_with_message( "Invalid res.aa()!" );
+	case na_rad :
+		res_class = 1; break;
+	case na_rgu :
+		res_class = 3; break;
+	case na_rcy :
+		res_class = 5; break;
+	case na_ura :
+		res_class = 7; break;
+	default :
+		utility_exit_with_message( "Invalid res.aa()!" );
 	}
 
 	if ( pucker == SOUTH ) ++res_class;
 	apply_coords( pose, seqpos,
-			res_class, false /*ignore_base*/, keep_backbone_torsion );
+		res_class, false /*ignore_base*/, keep_backbone_torsion );
 }
 /////////////////////////////////////////////////////
 void RNA_IdealCoord::apply_pucker(
-		Pose & pose,
-		Size const seqpos,
-		PuckerState pucker,
-		bool const keep_backbone_torsion
+	Pose & pose,
+	Size const seqpos,
+	PuckerState pucker,
+	bool const keep_backbone_torsion
 ) const {
 	using namespace id;
 	using namespace chemical;
@@ -233,7 +234,7 @@ void RNA_IdealCoord::apply_pucker(
 
 	Residue const & res = pose.residue( seqpos );
 	if ( !res.is_RNA() ) return;
-debug_assert( pucker <= 2 );
+	debug_assert( pucker <= 2 );
 
 	if ( pucker == ANY_PUCKER ) {
 		Real const delta  = pose.torsion( TorsionID(seqpos, id::BB, DELTA) );
@@ -248,7 +249,7 @@ debug_assert( pucker <= 2 );
 	Size res_class = 1;
 	if ( pucker == SOUTH ) ++res_class;
 	apply_coords( pose, seqpos,
-			res_class, true /*ignore_base*/, keep_backbone_torsion );
+		res_class, true /*ignore_base*/, keep_backbone_torsion );
 }
 /////////////////////////////////////////////////////
 //Apply ideal coords to whole pose.
@@ -258,9 +259,10 @@ void RNA_IdealCoord::apply(
 	utility::vector1 < PuckerState > const & puckers,
 	bool const keep_backbone_torsion
 ) const {
-debug_assert ( pose.total_residue() == puckers.size() );
-	for ( Size i = 1; i <= pose.total_residue(); ++i )
-			apply( pose, i, puckers[i], keep_backbone_torsion );
+	debug_assert ( pose.total_residue() == puckers.size() );
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		apply( pose, i, puckers[i], keep_backbone_torsion );
+	}
 }
 /////////////////////////////////////////////////////
 //Apply ideal coords to whole pose, maintain current pucker state.
@@ -268,8 +270,9 @@ void RNA_IdealCoord::apply(
 	Pose & pose,
 	bool const keep_backbone_torsion
 ) const {
-	for ( Size i = 1; i <= pose.total_residue(); ++i )
-			apply( pose, i, ANY_PUCKER, keep_backbone_torsion );
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		apply( pose, i, ANY_PUCKER, keep_backbone_torsion );
+	}
 }
 /////////////////////////////////////////////////
 

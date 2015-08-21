@@ -132,10 +132,10 @@ do_color_by_score( core::pose::Pose & pose ) {
 		Residue const & res1 = pose.residue( m );
 
 		// get hydrogen interaction cutoff
-		 Real const Hydrogen_interaction_cutoff2
-			  	( eval.hydrogen_interaction_cutoff2() );
+		Real const Hydrogen_interaction_cutoff2
+			( eval.hydrogen_interaction_cutoff2() );
 
-		for (Size i = 1; i <= res1.natoms(); i++ ){
+		for ( Size i = 1; i <= res1.natoms(); i++ ) {
 			pose.pdb_info()->temperature( m, i, 0.0 );
 		}
 
@@ -168,31 +168,31 @@ do_color_by_score( core::pose::Pose & pose ) {
 
 					Atom const & atom2( res2.atom(j) );
 
-					//					if ( ! count_pair( i, j, weight, path_dist ) ) continue;
-					//					eval.atom_pair_energy( atom1, atom2, weight, emap, dsq );
+					//     if ( ! count_pair( i, j, weight, path_dist ) ) continue;
+					//     eval.atom_pair_energy( atom1, atom2, weight, emap, dsq );
 
-					//					if ( dsq < 16.0 ) std::cout << dsq << " " << weight << " " << emap[ fa_atr ] << std::endl;
+					//     if ( dsq < 16.0 ) std::cout << dsq << " " << weight << " " << emap[ fa_atr ] << std::endl;
 					//check if virtual
 					bool atom2_virtual(res2.atom_type(j).is_virtual());
 					weight = 1.0;
 					path_dist = 0;
-					if(atom1_virtual || atom2_virtual){
-					 	// NOOP! etable_energy.virtual_atom_pair_energy(emap);
-					}else{
+					if ( atom1_virtual || atom2_virtual ) {
+						// NOOP! etable_energy.virtual_atom_pair_energy(emap);
+					} else {
 						if ( count_pair( i, j, weight, path_dist ) ) {
-					 		eval.atom_pair_energy( atom1, atom2, weight, emap, dsq );
+							eval.atom_pair_energy( atom1, atom2, weight, emap, dsq );
 						} else {
-					 		dsq = atom1.xyz().distance_squared( atom2.xyz() );
-					 	}
-					 	if ( dsq < Hydrogen_interaction_cutoff2 ) {
-					 		residue_fast_pair_energy_attached_H(
-					 																				res1, i, res2, j,
-					 																				r1hbegin[ i ], r1hend[ i ],
-					 																				r2hbegin[ j ], r2hend[ j ],
-					 																				count_pair, eval , emap);
+							dsq = atom1.xyz().distance_squared( atom2.xyz() );
+						}
+						if ( dsq < Hydrogen_interaction_cutoff2 ) {
+							residue_fast_pair_energy_attached_H(
+								res1, i, res2, j,
+								r1hbegin[ i ], r1hend[ i ],
+								r2hbegin[ j ], r2hend[ j ],
+								count_pair, eval , emap);
 
-					 	}
-					 } // virtual
+						}
+					} // virtual
 				} // j
 			} // n
 
@@ -210,7 +210,7 @@ do_color_by_score( core::pose::Pose & pose ) {
 	( scorefxn )( pose );
 	for ( Size n = 1; n <= n_score_types; n++ ) {
 		ScoreType st( static_cast< ScoreType >( n ) );
-		if ( scorefxn.has_nonzero_weight( st ) ){
+		if ( scorefxn.has_nonzero_weight( st ) ) {
 			std::cout << st << ":   conventional score function " << pose.energies().total_energies()[ st ] << "   atomwise " << emap_total[ st ] << std::endl;
 		}
 	}
@@ -241,9 +241,9 @@ rna_score_test()
 	if ( option[ in::file::silent ].user() ) {
 		if ( option[ in::file::tags ].user() ) {
 			input = PoseInputStreamOP( new SilentFilePoseInputStream(
-																						option[ in::file::silent ](),
-																						option[ in::file::tags ]()
-																						) );
+				option[ in::file::silent ](),
+				option[ in::file::tags ]()
+				) );
 		} else {
 			input = PoseInputStreamOP( new SilentFilePoseInputStream( option[ in::file::silent ]() ) );
 		}
@@ -300,9 +300,9 @@ rna_score_test()
 
 	Size i( 0 );
 
-	if ( native_exists ) (*scorefxn)( *native_pose );
+	if ( native_exists ) ( *scorefxn)( *native_pose );
 
-	while ( input->has_another_pose() ){
+	while ( input->has_another_pose() ) {
 
 		input->fill_pose( pose, *rsd_set );
 		i++;
@@ -311,14 +311,14 @@ rna_score_test()
 
 		if ( !option[ in::file::silent ].user() ) cleanup( pose );
 
-		if ( !full_model_info_defined( pose ) || option[ in::file::fasta ].user() ){
+		if ( !full_model_info_defined( pose ) || option[ in::file::fasta ].user() ) {
 			if ( ! option[ original_input ].user() ) {
 				fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
 			} else {
 				// allows for scoring of PDB along with 'other_poses' supplied from command line. Was used to test loop_close score term.
 				utility::vector1< Size > resnum;
 				core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
-				if ( pdb_info )	{
+				if ( pdb_info ) {
 					//std::cout << std::endl << "PDB Info available for this pose..." << std::endl << std::endl;
 					for ( Size n = 1; n <= pose.total_residue(); n++ ) resnum.push_back( pdb_info->number( n ) );
 				} else {
@@ -332,13 +332,13 @@ rna_score_test()
 
 		if ( option[params_file].user() ) {
 			parameters.initialize(pose, option[params_file],
-														basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat"),
-														false /*ignore_secstruct*/ );
+				basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat"),
+				false /*ignore_secstruct*/ );
 			parameters.setup_base_pair_constraints( pose );
 		}
 
 		// do it
-		if ( ! option[ score::just_calc_rmsd]() && !rna_data_reader.has_reactivities() ){
+		if ( ! option[ score::just_calc_rmsd]() && !rna_data_reader.has_reactivities() ) {
 			(*scorefxn)( pose );
 		}
 
@@ -346,7 +346,7 @@ rna_score_test()
 		std::string tag = tag_from_pose( pose );
 		BinarySilentStruct s( pose, tag );
 
-		if ( native_exists ){
+		if ( native_exists ) {
 			//Real const rmsd      = all_atom_rmsd( *native_pose, pose );
 			Real const rmsd = protocols::stepwise::modeler::align::superimpose_with_stepwise_aligner( pose, *native_pose, option[ OptionKeys::stepwise::superimpose_over_all ]() );
 			std::cout << "All atom rmsd over moving residues: " << tag << " " << rmsd << std::endl;
@@ -364,7 +364,7 @@ rna_score_test()
 		}
 
 		// for data_file, don't actually re-score, just compute rna_chem_map score for now.
-		if ( rna_data_reader.has_reactivities() ){
+		if ( rna_data_reader.has_reactivities() ) {
 			if ( rna_chemical_mapping_energy == 0 ) rna_chemical_mapping_energy = RNA_ChemicalMappingEnergyOP( new RNA_ChemicalMappingEnergy );
 			rna_data_reader.fill_rna_data_info( pose );
 			pose.update_residue_neighbors();
@@ -375,7 +375,7 @@ rna_score_test()
 		std::cout << "Outputting " << tag << " to silent file: " << silent_file << std::endl;
 		silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
 
-		if ( option[ color_by_score ]() ){
+		if ( option[ color_by_score ]() ) {
 			do_color_by_score( pose );
 			pose.dump_pdb( "COLOR_BY_SCORE.pdb" );
 		}
@@ -400,46 +400,46 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-    try {
-        using namespace basic::options;
+	try {
+		using namespace basic::options;
 
-        std::cout << std::endl << "Basic usage:  " << argv[0] << "  -s <pdb file> " << std::endl;
-        std::cout              << "              " << argv[0] << "  -in:file:silent <silent file> " << std::endl;
-        std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
+		std::cout << std::endl << "Basic usage:  " << argv[0] << "  -s <pdb file> " << std::endl;
+		std::cout              << "              " << argv[0] << "  -in:file:silent <silent file> " << std::endl;
+		std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
 
-				utility::vector1< Size > blank_size_vector;
-				utility::vector1< std::string > blank_string_vector;
-				option.add_relevant( score::weights );
-				option.add_relevant( in::file::s );
-				option.add_relevant( in::file::silent );
-				option.add_relevant( in::file::tags );
-				option.add_relevant( in::file::native );
-				option.add_relevant( in::file::fasta );
-				option.add_relevant( in::file::input_res );
-				option.add_relevant( full_model::cutpoint_open );
-				option.add_relevant( score::weights );
-				option.add_relevant( score::just_calc_rmsd );
-				option.add_relevant( OptionKeys::rna::data_file );
-				NEW_OPT( original_input, "If you want to rescore the poses using the original FullModelInfo from a SWM run, input those original PDBs here", blank_string_vector );
-				NEW_OPT( virtualize_free, "virtualize no-contact bases (and attached no-contact sugars/phosphates)", false );
-				NEW_OPT( params_file, "Input file for pairings", "" );
-				NEW_OPT( color_by_score, "color PDB by score (currently handles fa_atr & fa_rep)", false );
-				NEW_OPT( soft_rep, "use soft_rep params for color_by_score", false ); // how about for actual scoring?
+		utility::vector1< Size > blank_size_vector;
+		utility::vector1< std::string > blank_string_vector;
+		option.add_relevant( score::weights );
+		option.add_relevant( in::file::s );
+		option.add_relevant( in::file::silent );
+		option.add_relevant( in::file::tags );
+		option.add_relevant( in::file::native );
+		option.add_relevant( in::file::fasta );
+		option.add_relevant( in::file::input_res );
+		option.add_relevant( full_model::cutpoint_open );
+		option.add_relevant( score::weights );
+		option.add_relevant( score::just_calc_rmsd );
+		option.add_relevant( OptionKeys::rna::data_file );
+		NEW_OPT( original_input, "If you want to rescore the poses using the original FullModelInfo from a SWM run, input those original PDBs here", blank_string_vector );
+		NEW_OPT( virtualize_free, "virtualize no-contact bases (and attached no-contact sugars/phosphates)", false );
+		NEW_OPT( params_file, "Input file for pairings", "" );
+		NEW_OPT( color_by_score, "color PDB by score (currently handles fa_atr & fa_rep)", false );
+		NEW_OPT( soft_rep, "use soft_rep params for color_by_score", false ); // how about for actual scoring?
 
-        ////////////////////////////////////////////////////////////////////////////
-        // setup
-        ////////////////////////////////////////////////////////////////////////////
-        core::init::init(argc, argv);
-				option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" );
-				option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" );
-				option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RNA_RESIDUE" );
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		core::init::init(argc, argv);
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" );
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" );
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RNA_RESIDUE" );
 
-        ////////////////////////////////////////////////////////////////////////////
-        // end of setup
-        ////////////////////////////////////////////////////////////////////////////
-        protocols::viewer::viewer_main( my_main );
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cout << "caught exception " << e.msg() << std::endl;
-				return -1;
-    }
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
+		protocols::viewer::viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 }

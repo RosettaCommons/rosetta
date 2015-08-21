@@ -33,17 +33,17 @@ RepeatMover::RepeatMover() : Mover(), nmoves_(1) {}
 /// Mover    mover_in    /object defining what move to make
 /// int      nmoves_in   /how many times to apply mover_in
 RepeatMover::RepeatMover(
-		MoverOP mover_in,
-		int nmoves_in
+	MoverOP mover_in,
+	int nmoves_in
 ) : Mover("RepeatMover"),
-		mover_(mover_in),
-		nmoves_(nmoves_in)
+	mover_(mover_in),
+	nmoves_(nmoves_in)
 {}
 
 // Copy constructor
 RepeatMover::RepeatMover(RepeatMover const & object_to_copy) : Mover(object_to_copy),
-		mover_(object_to_copy.mover_),
-		nmoves_(object_to_copy.nmoves_)
+	mover_(object_to_copy.mover_),
+	nmoves_(object_to_copy.nmoves_)
 {}
 
 RepeatMover::~RepeatMover() {}
@@ -60,7 +60,7 @@ RepeatMover::~RepeatMover() {}
 void
 RepeatMover::apply( core::pose::Pose & pose ) {
 	for ( int i=1; i<=nmoves_; ++i ) {
-//		T("protocols.moves.RepeatMover") << "Move: " << i << "/" << nmoves_ << std::endl;
+		//  T("protocols.moves.RepeatMover") << "Move: " << i << "/" << nmoves_ << std::endl;
 		mover_->apply( pose );
 	}
 }
@@ -86,23 +86,21 @@ core::Size
 RepeatMover::get_nmoves() const {
 	if ( mover_ != 0 ) {
 		return nmoves_;
-	}
-	else { return 0; }
+	} else { return 0; }
 }
 
 std::string
 RepeatMover::get_mover() const {
 	if ( mover_ != 0 ) {
 		return mover_->get_name();
-	}
-	else { return "none";}
+	} else { return "none"; }
 }
 
 std::ostream &operator<< (std::ostream &os, RepeatMover const &mover)
 {
 
 	os << "Mover name: " << mover.get_name() << ", Mover type: " << mover.get_type() << ", Mover current tag: " << mover.get_current_tag() << "\n" <<
-			"Mover being repeated: " << mover.get_mover() << ", nmoves: " << mover.get_nmoves() << "\n";
+		"Mover being repeated: " << mover.get_mover() << ", nmoves: " << mover.get_nmoves() << "\n";
 	return os;
 }
 

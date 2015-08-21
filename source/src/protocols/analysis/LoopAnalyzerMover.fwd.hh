@@ -18,8 +18,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace analysis{
+namespace protocols {
+namespace analysis {
 
 //Forwards and OP typedefs
 class LoopAnalyzerMover;

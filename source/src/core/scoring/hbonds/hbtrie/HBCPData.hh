@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/hbonds/hbtrie/HBCPData.hh
-/// @brief  This class enforces the sc/bb hbond exclusion rule for use in the trie 
+/// @brief  This class enforces the sc/bb hbond exclusion rule for use in the trie
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 #ifndef INCLUDED_core_scoring_hbonds_hbtrie_HBCPData_hh

@@ -141,37 +141,50 @@ void GraftCDRLoopsProtocol::init_from_options() {
 	using namespace basic::options::OptionKeys;
 	TR <<  "Reading Options" << std::endl;
 
-	if ( option[ OptionKeys::antibody::graft_l1 ].user() )
+	if ( option[ OptionKeys::antibody::graft_l1 ].user() ) {
 		set_graft_l1( option[ OptionKeys::antibody::graft_l1 ]() );
-	if ( option[ OptionKeys::antibody::graft_l2 ].user() )
+	}
+	if ( option[ OptionKeys::antibody::graft_l2 ].user() ) {
 		set_graft_l2( option[ OptionKeys::antibody::graft_l2 ]() );
-	if ( option[ OptionKeys::antibody::graft_l3 ].user() )
+	}
+	if ( option[ OptionKeys::antibody::graft_l3 ].user() ) {
 		set_graft_l3( option[ OptionKeys::antibody::graft_l3 ]() );
-	if ( option[ OptionKeys::antibody::graft_h1 ].user() )
+	}
+	if ( option[ OptionKeys::antibody::graft_h1 ].user() ) {
 		set_graft_h1( option[ OptionKeys::antibody::graft_h1 ]() );
-	if ( option[ OptionKeys::antibody::graft_h2 ].user() )
+	}
+	if ( option[ OptionKeys::antibody::graft_h2 ].user() ) {
 		set_graft_h2( option[ OptionKeys::antibody::graft_h2 ]() );
-	if ( option[ OptionKeys::antibody::graft_h3 ].user() )
+	}
+	if ( option[ OptionKeys::antibody::graft_h3 ].user() ) {
 		set_graft_h3( option[ OptionKeys::antibody::graft_h3 ]() );
-	if ( option[ OptionKeys::antibody::h3_no_stem_graft ].user()  )
+	}
+	if ( option[ OptionKeys::antibody::h3_no_stem_graft ].user()  ) {
 		set_h3_stem_graft( option[ OptionKeys::antibody::h3_no_stem_graft ]()  );
-	if ( option[ OptionKeys::antibody::packonly_after_graft ].user()  )
+	}
+	if ( option[ OptionKeys::antibody::packonly_after_graft ].user()  ) {
 		set_packonly_after_graft( option[ OptionKeys::antibody::packonly_after_graft ]()  );
-	if ( option[ OptionKeys::antibody::stem_optimize ].user()  )
+	}
+	if ( option[ OptionKeys::antibody::stem_optimize ].user()  ) {
 		set_stem_optimize( option[ OptionKeys::antibody::stem_optimize ]()  );
-	if ( option[ OptionKeys::antibody::camelid ].user() )
+	}
+	if ( option[ OptionKeys::antibody::camelid ].user() ) {
 		set_camelid( option[ OptionKeys::antibody::camelid ]() );
-	if ( option[ OptionKeys::antibody::camelid_constraints ].user() )
+	}
+	if ( option[ OptionKeys::antibody::camelid_constraints ].user() ) {
 		set_camelid_constraints( option[ OptionKeys::antibody::camelid_constraints ]() );
-	if ( option[ OptionKeys::run::benchmark ].user() )
+	}
+	if ( option[ OptionKeys::run::benchmark ].user() ) {
 		set_benchmark( option[ OptionKeys::run::benchmark ]() );
-	if ( option[ OptionKeys::constraints::cst_weight ].user() )
+	}
+	if ( option[ OptionKeys::constraints::cst_weight ].user() ) {
 		set_cst_weight( option[ OptionKeys::constraints::cst_weight ]() );
+	}
 	//if ( option[ OptionKeys::antibody::sc_min_ ].user() ) {
-	//	set_sc_min( option[ OptionKeys::antibody::sc_min_ ]() );
+	// set_sc_min( option[ OptionKeys::antibody::sc_min_ ]() );
 	//}
 	//if ( option[ OptionKeys::antibody::rt_min_ ].user() ) {
-	//	set_rt_min( option[ OptionKeys::antibody::rt_min_ ]() );
+	// set_rt_min( option[ OptionKeys::antibody::rt_min_ ]() );
 	//}
 
 
@@ -185,7 +198,7 @@ void GraftCDRLoopsProtocol::init_from_options() {
 	}
 
 
-	if( camelid_ ) {
+	if ( camelid_ ) {
 		graft_l1_ = false;
 		graft_l2_ = false;
 		graft_l3_ = false;
@@ -240,7 +253,7 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
 
 	ab_info_ = AntibodyInfoOP( new AntibodyInfo(frame_pose) );
 	ab_t_info_ = Ab_TemplateInfoOP( new Ab_TemplateInfo(graft_l1_, graft_l2_, graft_l3_,
-	                                  graft_h1_, graft_h2_, graft_h3_, camelid_) );
+		graft_h1_, graft_h2_, graft_h3_, camelid_) );
 
 	graft_sequence_ = protocols::moves::SequenceMoverOP( new moves::SequenceMover() );
 
@@ -248,13 +261,13 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
 	TR<<" Checking AntibodyInfo object: "<<std::endl<<*ab_info_<<std::endl<<std::endl;
 	TR<<" Checking Ab_TemplateInfo object: "<<std::endl<<*ab_t_info_<<std::endl<<std::endl;
 
-	for (CDRNameEnum it = start_cdr_loop; it <= ab_info_->get_total_num_CDRs(); it=CDRNameEnum(it+1) ) {
+	for ( CDRNameEnum it = start_cdr_loop; it <= ab_info_->get_total_num_CDRs(); it=CDRNameEnum(it+1) ) {
 		TR << "Creating movers for " << ab_info_->get_CDR_name(it) << std::endl;
 		TR << "                  start (chothia): "<<ab_info_->get_CDR_loop(it).start()<<std::endl;
 		TR << "                   stop (chothia): "<<ab_info_->get_CDR_loop(it).stop()<<std::endl;
 
 		GraftOneCDRLoopOP graft_one_cdr( new GraftOneCDRLoop( it, ab_info_, ab_t_info_) ) ;
-		if(it == h3 && h3_no_stem_graft_) {
+		if ( it == h3 && h3_no_stem_graft_ ) {
 			graft_one_cdr->set_no_stem_copy(true);
 		}
 
@@ -264,14 +277,14 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
 
 
 		/*
-		 CloseOneCDRLoopOP closeone( new Clos eOneCDRLoop( ab_info.get_loop(it->first)->start(),
-		 ab_info.get_loop(it->first)->stop()   )     );
-		 closeone->enable_benchmark_mode( benchmark_ );
-		 graft_sequence_->add_mover( closeone );
-		 */
+		CloseOneCDRLoopOP closeone( new Clos eOneCDRLoop( ab_info.get_loop(it->first)->start(),
+		ab_info.get_loop(it->first)->stop()   )     );
+		closeone->enable_benchmark_mode( benchmark_ );
+		graft_sequence_->add_mover( closeone );
+		*/
 	}
 
-//	TR<<" frame_pose.total_residue()  =  "<< frame_pose.total_residue()<<std::endl;
+	// TR<<" frame_pose.total_residue()  =  "<< frame_pose.total_residue()<<std::endl;
 
 
 	// Exact match Aroop's old code in Rosetta 2:
@@ -290,7 +303,7 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
 
 	optimize_sequence_ = protocols::moves::SequenceMoverOP( new moves::SequenceMover() );
 
-	for(CDRNameEnum it = start_cdr_loop; it <= ab_info_->get_total_num_CDRs(); it=CDRNameEnum(it+1) ) {
+	for ( CDRNameEnum it = start_cdr_loop; it <= ab_info_->get_total_num_CDRs(); it=CDRNameEnum(it+1) ) {
 		if (  !(it == h3 && h3_no_stem_graft_)   ) {
 			GraftedStemOptimizerOP optimize_oneCDR_stems( new GraftedStemOptimizer(it, ab_info_) );
 			optimize_oneCDR_stems->enable_benchmark_mode( benchmark_ );
@@ -325,7 +338,7 @@ void GraftCDRLoopsProtocol::apply( pose::Pose & frame_pose ) {
 	pose::set_ss_from_phipsi( frame_pose );
 
 	// display constraints and return
-	if( camelid_constraints_ ) {
+	if ( camelid_constraints_ ) {
 		display_constraint_residues( frame_pose );
 		return;
 	}
@@ -335,7 +348,7 @@ void GraftCDRLoopsProtocol::apply( pose::Pose & frame_pose ) {
 
 	// Storing secondary structure
 	utility::vector1<char> secondary_struct_storage;
-	for( Size i = 1; i <= nres; i++ ) {
+	for ( Size i = 1; i <= nres; i++ ) {
 		secondary_struct_storage.push_back( frame_pose.secstruct( i ) );
 		//        TR<<"JQX:   residue: "<<i<<"       secstruct: "<<frame_pose.secstruct(i)<<std::endl;
 	}
@@ -347,7 +360,7 @@ void GraftCDRLoopsProtocol::apply( pose::Pose & frame_pose ) {
 	cdrs_min_pack_min_->apply(frame_pose);
 	frame_pose.dump_pdb("grafted_minimized.pdb");
 
-	if(stem_optimize_) {
+	if ( stem_optimize_ ) {
 		optimize_sequence_->apply(frame_pose);
 		frame_pose.dump_pdb("grafted_minimized_stem-optimized.pdb");
 
@@ -357,11 +370,11 @@ void GraftCDRLoopsProtocol::apply( pose::Pose & frame_pose ) {
 
 
 	// Recover secondary structures
-	for( Size i = 1; i <= nres; i++ ) frame_pose.set_secstruct( i, secondary_struct_storage[ i ] );
+	for ( Size i = 1; i <= nres; i++ ) frame_pose.set_secstruct( i, secondary_struct_storage[ i ] );
 
 	// align pose to native pose
 	pose::Pose native_pose;
-	if( get_native_pose() ) native_pose = *get_native_pose();
+	if ( get_native_pose() ) native_pose = *get_native_pose();
 	else                    native_pose = frame_pose;
 
 	AntibodyInfoOP native_ab_info( new AntibodyInfo( native_pose ) );
@@ -385,27 +398,31 @@ void GraftCDRLoopsProtocol::display_constraint_residues( core::pose::Pose & pose
 
 	Size H1_Cys(0), H3_Cys(0);
 
-	if(      pose.residue( pose.pdb_info()->pdb2pose('H',32 ) ).name3() == "CYS" )
+	if (      pose.residue( pose.pdb_info()->pdb2pose('H',32 ) ).name3() == "CYS" ) {
 		H1_Cys = pose.pdb_info()->pdb2pose( 'H', 32 );
-	else if( pose.residue( pose.pdb_info()->pdb2pose('H',33 ) ).name3() == "CYS" )
+	} else if ( pose.residue( pose.pdb_info()->pdb2pose('H',33 ) ).name3() == "CYS" ) {
 		H1_Cys = pose.pdb_info()->pdb2pose( 'H', 33 );
+	}
 
-	for( Size ii = ab_info_->get_CDR_loop(h3).start(); ii <= ab_info_->get_CDR_loop(h3).stop(); ii++ )
+	for ( Size ii = ab_info_->get_CDR_loop(h3).start(); ii <= ab_info_->get_CDR_loop(h3).stop(); ii++ ) {
 
-		if( pose.residue(ii).name3() == "CYS" ) H3_Cys = ii;
+		if ( pose.residue(ii).name3() == "CYS" ) H3_Cys = ii;
+	}
 
-	if( ( H1_Cys != 0 ) && ( H3_Cys != 0 ) )
+	if ( ( H1_Cys != 0 ) && ( H3_Cys != 0 ) ) {
 		TR << "CONSTRAINTS: "<< "AtomPair CA " << H1_Cys << " CA " << H3_Cys
-		   << " BOUNDED 4.0 6.1 0.6 BOND; mean 5.6 sd 0.6" << std::endl;
+			<< " BOUNDED 4.0 6.1 0.6 BOND; mean 5.6 sd 0.6" << std::endl;
+	}
 
 	// Specifying extended kink
 
 	Size hfr_46(0), h3_closest(0);
 	hfr_46 = pose.pdb_info()->pdb2pose( 'H', 46 );
-	if( ab_info_->get_H3_kink_type() == Extended ) h3_closest = ab_info_->get_CDR_loop(h3).stop() - 5;
-	if( h3_closest != 0 )
+	if ( ab_info_->get_H3_kink_type() == Extended ) h3_closest = ab_info_->get_CDR_loop(h3).stop() - 5;
+	if ( h3_closest != 0 ) {
 		TR << "CONSTRAINTS: " << "AtomPair CA " << hfr_46 << " CA " << h3_closest
-		   << " BOUNDED 6.5 9.1 0.7 DISTANCE; mean 8.0 sd 0.7" << std::endl;
+			<< " BOUNDED 6.5 9.1 0.7 DISTANCE; mean 8.0 sd 0.7" << std::endl;
+	}
 
 	return;
 } // display_constraint_residues

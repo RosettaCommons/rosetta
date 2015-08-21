@@ -33,8 +33,8 @@ namespace protocols {
 namespace canonical_sampling {
 
 /// @brief Record the acceptance rate for every type of move attempted.
-/// @details Most of the work is done by observe_after_metropolis().  Separate 
-/// statistics are recorded for moves made at different temperature levels.  
+/// @details Most of the work is done by observe_after_metropolis().  Separate
+/// statistics are recorded for moves made at different temperature levels.
 class TrialCounterObserver : public protocols::canonical_sampling::ThermodynamicObserver {
 
 public:
@@ -48,15 +48,15 @@ public:
 
 	virtual std::string get_name() const;
 
-	virtual protocols::moves::MoverOP	clone() const;
+	virtual protocols::moves::MoverOP clone() const;
 
-  void
+	void
 	parse_my_tag(
-		 utility::tag::TagCOP tag,
-     basic::datacache::DataMap & data,
-     protocols::filters::Filters_map const & filters,
-     protocols::moves::Movers_map const & movers,
-     core::pose::Pose const & pose
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose
 	);
 
 	virtual

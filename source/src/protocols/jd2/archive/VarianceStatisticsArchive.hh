@@ -53,7 +53,7 @@ public:
 		Batch const&
 	);
 
-  virtual void generate_batch() {};
+	virtual void generate_batch() {};
 	/// @brief overloaded to make input decoys appear the same as decoys coming from batches
 	virtual void init_from_decoy_set( core::io::silent::SilentFileData const& ) {};
 

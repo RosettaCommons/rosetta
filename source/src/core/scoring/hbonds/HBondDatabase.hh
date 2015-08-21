@@ -33,8 +33,8 @@
 #include <core/scoring/hbonds/FadeInterval.fwd.hh>
 
 #ifdef WIN32
-	#include <core/scoring/hbonds/polynomial.hh>
-	#include <core/scoring/hbonds/FadeInterval.hh>
+#include <core/scoring/hbonds/polynomial.hh>
+#include <core/scoring/hbonds/FadeInterval.hh>
 #endif
 
 namespace core {

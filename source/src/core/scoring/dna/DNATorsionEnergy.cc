@@ -82,7 +82,7 @@ DNATorsionEnergy::clone() const
 void
 DNATorsionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
-	//	if ( constraints_ready_) return;
+	// if ( constraints_ready_) return;
 
 	dna_torsion_potential_.setup_constraints( pose, dna_torsion_constraints_, dna_sugar_close_constraints_, dna_base_distance_constraints_ );
 
@@ -93,7 +93,7 @@ DNATorsionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) 
 void
 DNATorsionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
 {
-	//	if ( constraints_ready_) return;
+	// if ( constraints_ready_) return;
 	dna_torsion_potential_.setup_constraints( pose, dna_torsion_constraints_, dna_sugar_close_constraints_, dna_base_distance_constraints_ );
 	constraints_ready_ = true;
 }
@@ -102,25 +102,25 @@ DNATorsionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const 
 /*
 void
 DNATorsionEnergy::setup_for_packing( pose::Pose & pose, pack::task::PackerTask const & task ) const{
-	//	if ( constraints_ready_) return;
-	dna_torsion_potential_.setup_constraints( pose, dna_torsion_constraints_, dna_sugar_close_constraints_, dna_base_distance_constraints_ );
+// if ( constraints_ready_) return;
+dna_torsion_potential_.setup_constraints( pose, dna_torsion_constraints_, dna_sugar_close_constraints_, dna_base_distance_constraints_ );
 
-	//If designing, can't implement sugar closure constraints, because one of them depends on the first base atom ...
-	// whose name and location differ between bases! Luckily, sugar atoms and first base atom should not vary during design.
-	// So clear these constraints...
-	if ( task.design_any() ) dna_sugar_close_constraints_ = constraints::ConstraintSetOP( new constraints::ConstraintSet );
+//If designing, can't implement sugar closure constraints, because one of them depends on the first base atom ...
+// whose name and location differ between bases! Luckily, sugar atoms and first base atom should not vary during design.
+// So clear these constraints...
+if ( task.design_any() ) dna_sugar_close_constraints_ = constraints::ConstraintSetOP( new constraints::ConstraintSet );
 
-	constraints_ready_ = true;
+constraints_ready_ = true;
 }
 */
 ///////////////////////////////////////////////////////////////////////////////
 void
 DNATorsionEnergy::residue_pair_energy(
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap ) const {
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	pose::Pose const & pose,
+	ScoreFunction const & sfxn,
+	EnergyMap & emap ) const {
 
 	if ( dna_torsion_constraints_ == 0 ) return;
 	if ( !constraints_ready_ ) return;
@@ -132,7 +132,7 @@ DNATorsionEnergy::residue_pair_energy(
 	EnergyMap emap_2nd;
 	dna_base_distance_constraints_->residue_pair_energy( rsd1, rsd2, pose, sfxn, emap_2nd );
 	emap[ dna_base_distance ] += emap_2nd[ dna_base_distance ];
-//	std::cout << "respair_energy" << rsd1.seqpos() << " " << rsd2.seqpos() <<  " " <<  emap_2nd[ dna_base_distance ] << std::endl;
+	// std::cout << "respair_energy" << rsd1.seqpos() << " " << rsd2.seqpos() <<  " " <<  emap_2nd[ dna_base_distance ] << std::endl;
 
 }
 
@@ -140,10 +140,10 @@ DNATorsionEnergy::residue_pair_energy(
 ///////////////////////////////////////////////////////////////////////////////
 void
 DNATorsionEnergy::eval_intrares_energy(
-		conformation::Residue const & rsd,
-		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap 	) const {
+	conformation::Residue const & rsd,
+	pose::Pose const & pose,
+	ScoreFunction const & sfxn,
+	EnergyMap & emap  ) const {
 
 	if ( dna_torsion_constraints_ == 0 ) return;
 	if ( !constraints_ready_ ) return;
@@ -167,9 +167,9 @@ DNATorsionEnergy::eval_intrares_energy(
 ///////////////////////////////////////////////////////////////////////////////
 void
 DNATorsionEnergy::finalize_total_energy(
-		pose::Pose & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & totals
+	pose::Pose & pose,
+	ScoreFunction const & sfxn,
+	EnergyMap & totals
 ) const
 {
 
@@ -216,13 +216,13 @@ DNATorsionEnergy::eval_dof_derivative(
 	EnergyMap const &
 ) const
 {
-	//	if ( dna_torsion_constraints_ == 0 ) return 0.0;
-	//	if ( dna_side_chain_torsion_tethers_ == 0 ) return 0.0;
+	// if ( dna_torsion_constraints_ == 0 ) return 0.0;
+	// if ( dna_side_chain_torsion_tethers_ == 0 ) return 0.0;
 	if ( !constraints_ready_ ) return 0.0;
 
 	// DOF_constraint machinery ... should remove this call, and perhaps all
 	// calls to dof_constraint!!
-	//	Real result ( dna_torsion_constraints_->eval_dof_derivative( id, tor, pose, scorefxn, weights ) );
+	// Real result ( dna_torsion_constraints_->eval_dof_derivative( id, tor, pose, scorefxn, weights ) );
 
 	Real result( 0.0 );
 
@@ -233,8 +233,8 @@ DNATorsionEnergy::eval_dof_derivative(
 ///////////////////////////////////////////////////////////////////////////////
 void
 DNATorsionEnergy::finalize_after_derivatives(
-		pose::Pose &,
-		ScoreFunction const &
+	pose::Pose &,
+	ScoreFunction const &
 ) const
 {
 

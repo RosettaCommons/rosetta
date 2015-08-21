@@ -73,12 +73,12 @@ void BalancedKicMover::apply(Pose & pose) { // {{{1
 	ClosureSolutionCOP solution;
 	SolutionList unperturbed_solutions, perturbed_solutions;
 
-	if (loop_.start() == 0 && loop_.stop() == 0) {
+	if ( loop_.start() == 0 && loop_.stop() == 0 ) {
 		utility_exit_with_message(
-				"Before calling BalancedKicMover.apply(), you must provide a loop "
-				"via BalancedKicMover.set_loop().");
+			"Before calling BalancedKicMover.apply(), you must provide a loop "
+			"via BalancedKicMover.set_loop().");
 	}
-	if (is_fold_tree_stale_) {
+	if ( is_fold_tree_stale_ ) {
 		protocols::loops::set_single_loop_fold_tree(pose, loop_);
 	}
 
@@ -96,7 +96,7 @@ void BalancedKicMover::apply(Pose & pose) { // {{{1
 
 	// Decide if a real move was made.
 	bool is_trivial = is_solution_trivial(
-			problem, solution, unperturbed_solutions, perturbed_solutions);
+		problem, solution, unperturbed_solutions, perturbed_solutions);
 	type(is_trivial ? "balanced-kic-no-op" : "balanced-kic");
 }
 
@@ -119,7 +119,7 @@ vector1<TorsionID_Range> BalancedKicMover::torsion_id_ranges(Pose &) { // {{{1
 	vector1<TorsionID_Range> results;
 	Real static const pi = numeric::constants::r::pi;
 
-	for (Size residue = loop_.start(); residue <= loop_.stop(); residue++) {
+	for ( Size residue = loop_.start(); residue <= loop_.stop(); residue++ ) {
 		TorsionID phi(residue, BB, 1);
 		TorsionID psi(residue, BB, 2);
 		TorsionID omega(residue, BB, 3);
@@ -144,14 +144,14 @@ vector1<TorsionID_Range> BalancedKicMover::torsion_id_ranges(Pose &) { // {{{1
 /// example of how this method is used.
 
 ClosureSolutionCOP BalancedKicMover::pick_solution(
-		SolutionList const & unperturbed_solutions,
-		SolutionList const & perturbed_solutions) {
+	SolutionList const & unperturbed_solutions,
+	SolutionList const & perturbed_solutions) {
 
 	Real total_jacobian = 0;
 	Real selection_chance = 0;
 	Real random_threshold = numeric::random::uniform();
 	ChainedSolutionList all_solutions(
-			unperturbed_solutions, perturbed_solutions);
+		unperturbed_solutions, perturbed_solutions);
 
 	runtime_assert(! all_solutions.empty());
 
@@ -159,7 +159,7 @@ ClosureSolutionCOP BalancedKicMover::pick_solution(
 	// relates to the probability that a certain set of pivot torsions will lead
 	// to a closed solution.
 
-	BOOST_FOREACH(ClosureSolutionCOP solution, all_solutions) {
+	BOOST_FOREACH ( ClosureSolutionCOP solution, all_solutions ) {
 		total_jacobian += solution->get_jacobian();
 	}
 
@@ -167,9 +167,9 @@ ClosureSolutionCOP BalancedKicMover::pick_solution(
 	// made from both the perturbed and unperturbed pools of solutions, otherwise
 	// the forward and reverse move probabilities won't be equivalent.
 
-	BOOST_FOREACH(ClosureSolutionCOP solution, all_solutions) {
+	BOOST_FOREACH ( ClosureSolutionCOP solution, all_solutions ) {
 		selection_chance += solution->get_jacobian() / total_jacobian;
-		if (selection_chance >= random_threshold) return solution;
+		if ( selection_chance >= random_threshold ) return solution;
 	}
 
 	// Execution will only get this far if random_threshold is very close to one
@@ -191,19 +191,19 @@ ClosureSolutionCOP BalancedKicMover::pick_solution(
 /// input pose conformation is inferred from the given problem.
 
 bool BalancedKicMover::is_solution_trivial(
-		ClosureProblemCOP problem,
-		ClosureSolutionCOP picked_solution,
-		SolutionList const & unperturbed_solutions,
-		SolutionList const & perturbed_solutions)
+	ClosureProblemCOP problem,
+	ClosureSolutionCOP picked_solution,
+	SolutionList const & unperturbed_solutions,
+	SolutionList const & perturbed_solutions)
 {
 	Real distance, closest_distance = numeric_limits<Real>::infinity();
 	ClosureSolutionCOP closest_solution = NULL;
 	ChainedSolutionList all_solutions(
-			unperturbed_solutions, perturbed_solutions);
+		unperturbed_solutions, perturbed_solutions);
 
-	BOOST_FOREACH(ClosureSolutionCOP solution, all_solutions) {
+	BOOST_FOREACH ( ClosureSolutionCOP solution, all_solutions ) {
 		distance = solution->get_distance(problem.get());
-		if (distance < closest_distance) {
+		if ( distance < closest_distance ) {
 			closest_distance = distance;
 			closest_solution = solution;
 		}

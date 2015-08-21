@@ -64,10 +64,10 @@ public:
 		numeric::xyzVector<Real> coords,
 		Real temp
 	) : res_num_(res_num),
-		 res_name_(res_name),
-		 atom_name_(atom_name),
-	 	 coords_(coords),
-		 temp_(temp)
+		res_name_(res_name),
+		atom_name_(atom_name),
+		coords_(coords),
+		temp_(temp)
 	{}
 
 	inline core::Size               const & res_num()   const { return res_num_; }
@@ -622,9 +622,9 @@ public: // single residue accessors
 	inline
 	Size
 	pdb2pose(
-			char const chain,
-			int const res,
-			char const icode = ' '
+		char const chain,
+		int const res,
+		char const icode = ' '
 	) const
 	{
 		return pdb2pose_.find( chain, res, icode );
@@ -963,7 +963,7 @@ public: // residue mutators en masse
 
 		for ( CharIterator i = begin; i < end; ++i, ++rr ) {
 			rr->chainID = *i;
-		debug_assert( rr < residue_rec_.end() );
+			debug_assert( rr < residue_rec_.end() );
 		}
 
 		rebuild_pdb2pose();
@@ -981,7 +981,7 @@ public: // residue mutators en masse
 	void
 	set_chains( CharContainer const & c )
 	{
-	debug_assert( residue_rec_.size() == c.size() );
+		debug_assert( residue_rec_.size() == c.size() );
 		check_residue_records_size( c.size() ); // run-time check
 
 		set_chains( c.begin(), c.end() );
@@ -1004,7 +1004,7 @@ public: // residue mutators en masse
 
 		for ( IntIterator i = begin; i < end; ++i, ++rr ) {
 			rr->resSeq = *i;
-		debug_assert( rr < residue_rec_.end() );
+			debug_assert( rr < residue_rec_.end() );
 		}
 
 		rebuild_pdb2pose();
@@ -1022,7 +1022,7 @@ public: // residue mutators en masse
 	void
 	set_numbering( IntContainer const & c )
 	{
-	debug_assert( residue_rec_.size() == c.size() );
+		debug_assert( residue_rec_.size() == c.size() );
 		check_residue_records_size( c.size() ); // run-time check
 
 		set_numbering( c.begin(), c.end() );
@@ -1045,7 +1045,7 @@ public: // residue mutators en masse
 
 		for ( CharIterator i = begin; i < end; ++i, ++rr ) {
 			rr->iCode = *i;
-		debug_assert( rr < residue_rec_.end() );
+			debug_assert( rr < residue_rec_.end() );
 		}
 
 		rebuild_pdb2pose();
@@ -1063,7 +1063,7 @@ public: // residue mutators en masse
 	void
 	set_icodes( CharContainer const & c )
 	{
-	debug_assert( residue_rec_.size() == c.size() );
+		debug_assert( residue_rec_.size() == c.size() );
 		check_residue_records_size( c.size() ); // run-time check
 
 		set_icodes( c.begin(), c.end() );

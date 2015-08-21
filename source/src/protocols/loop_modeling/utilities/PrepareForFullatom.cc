@@ -86,14 +86,14 @@ string PrepareForFullatomCreator::keyname() const { // {{{1
 // }}}1
 
 PrepareForFullatom::PrepareForFullatom() // {{{1
-	: force_repack_(false) {}
+: force_repack_(false) {}
 
 void PrepareForFullatom::parse_my_tag( // {{{1
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose) {
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const & pose) {
 
 	LoopMover::parse_my_tag(tag, data, filters, movers, pose);
 	utilities::set_scorefxn_from_tag(*this, tag, data);
@@ -106,15 +106,15 @@ bool PrepareForFullatom::do_apply(Pose & pose) { // {{{1
 	using namespace core::pack::task::operation;
 	using protocols::simple_moves::ReturnSidechainMover;
 
-	if (original_pose_.total_residue() == 0 && ! force_repack_) {
+	if ( original_pose_.total_residue() == 0 && ! force_repack_ ) {
 		utility_exit_with_message("<PrepareForFullatom> cannot copy sidechains because no original pose was specified.");
 	}
 
-	// If the pose is already fullatom, this means that the centroid stages were 
-	// skipped and that the pose has been fullatom the whole time.  So we don't 
+	// If the pose is already fullatom, this means that the centroid stages were
+	// skipped and that the pose has been fullatom the whole time.  So we don't
 	// need to do anything unless a full repack has been requested.
 
-	if (pose.is_fullatom() && ! force_repack_) { return true; }
+	if ( pose.is_fullatom() && ! force_repack_ ) { return true; }
 
 	// Convert the pose to fullatom mode.
 
@@ -122,19 +122,19 @@ bool PrepareForFullatom::do_apply(Pose & pose) { // {{{1
 
 	// Copy sidechains from the original pose.
 
-	if (original_pose_.is_fullatom()) {
+	if ( original_pose_.is_fullatom() ) {
 		ReturnSidechainMover return_sidechains(original_pose_);
 		return_sidechains.apply(pose);
 	}
 
-	// Decide which sidechains to repack.  Every sidechain will be repacked if 
-	// the original pose is in centroid mode or if a full repack was requested.  
+	// Decide which sidechains to repack.  Every sidechain will be repacked if
+	// the original pose is in centroid mode or if a full repack was requested.
 	// Otherwise only sidechains within the loop are repacked.
 
 	vector1<bool> residues_to_repack(pose.total_residue(), false);
 
-	for (Size i = 1; i < pose.total_residue(); i++) {
-		residues_to_repack[i] = 
+	for ( Size i = 1; i < pose.total_residue(); i++ ) {
+		residues_to_repack[i] =
 			force_repack_ ||
 			original_pose_.is_centroid() ||
 			get_loops()->is_loop_residue(i);
@@ -156,15 +156,15 @@ bool PrepareForFullatom::do_apply(Pose & pose) { // {{{1
 	make_residue_mask_symmetric(pose, residues_to_repack);
 	task->restrict_to_residues(residues_to_repack);
 
-	// Setup a move map for the minimizer that will allow only sidechain DOFs to 
+	// Setup a move map for the minimizer that will allow only sidechain DOFs to
 	// move.  Again, disulfides are explicitly left in place.
 
 	MoveMap move_map;
 	move_map.set_bb(false);
 	move_map.set_chi(true);
 
-	for (Size i = 1; i <= pose.total_residue(); i++) {
-		if (pose.residue(i).has_variant_type(DISULFIDE)) {
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		if ( pose.residue(i).has_variant_type(DISULFIDE) ) {
 			move_map.set_chi(i, false);
 		}
 	}
@@ -176,7 +176,7 @@ bool PrepareForFullatom::do_apply(Pose & pose) { // {{{1
 	MinimizerOptions min_options("dfpmin_armijo_nonmonotone", 1e-5, true, false);
 	ScoreFunctionCOP fa_score_function = get_score_function();
 
-	if (is_symmetric(pose)) {
+	if ( is_symmetric(pose) ) {
 		packer = PackRotamersMoverOP( new SymPackRotamersMover(fa_score_function, task) );
 		minimizer = AtomTreeMinimizerOP( new SymAtomTreeMinimizer );
 		make_symmetric_movemap(pose, move_map);

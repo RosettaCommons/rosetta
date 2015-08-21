@@ -7,19 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		protocols/membrane/SetMembranePositionMover.cc
+/// @file  protocols/membrane/SetMembranePositionMover.cc
 ///
-/// @brief		Sets the membrane position normal and center
-///				Last Modified: 7/4/15
+/// @brief  Sets the membrane position normal and center
+///    Last Modified: 7/4/15
 ///
-/// @author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 // Unit Headers
 #include <protocols/membrane/SetMembranePositionMover.hh>
 #include <protocols/membrane/SetMembranePositionMoverCreator.hh>
 
 // Project Headers
-#include <protocols/membrane/util.hh> 
+#include <protocols/membrane/util.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <protocols/simple_moves/UniformPositionMover.hh>
@@ -68,11 +68,11 @@ SetMembranePositionMover::SetMembranePositionMover() :
 
 /// @brief Custom Constructor
 /// @details Specify a new membrane center and normal
-///	to move this position to
+/// to move this position to
 SetMembranePositionMover::SetMembranePositionMover( Vector center, Vector normal ) :
-	 Mover(),
-	 center_( center ),
-	 normal_( normal )
+	Mover(),
+	center_( center ),
+	normal_( normal )
 {}
 
 /// @brief Copy Constructor
@@ -88,15 +88,15 @@ SetMembranePositionMover::SetMembranePositionMover( SetMembranePositionMover con
 SetMembranePositionMover &
 SetMembranePositionMover::operator=( SetMembranePositionMover const & src )
 {
-	
+
 	// Abort self-assignment.
-	if (this == &src) {
+	if ( this == &src ) {
 		return *this;
 	}
-	
+
 	// Otherwise, create a new object
 	return *( new SetMembranePositionMover( *this ) );
-	
+
 }
 
 /// @brief Destructor
@@ -117,11 +117,11 @@ SetMembranePositionMover::get_name() const {
 /// to the new center position, and rotate to new normal
 void
 SetMembranePositionMover::apply( Pose & pose ) {
-	
+
 	using namespace numeric;
 	using namespace core::kinematics;
 	using namespace protocols::membrane;
-	
+
 	TR << "Calling SetMembranePositionMover" << std::endl;
 
 	// starting foldtree
@@ -130,13 +130,13 @@ SetMembranePositionMover::apply( Pose & pose ) {
 	core::kinematics::FoldTree orig_ft = pose.fold_tree();
 
 	// Check the pose is ==a membrane protein
-	if (! pose.conformation().is_membrane() ) {
+	if ( ! pose.conformation().is_membrane() ) {
 		utility_exit_with_message( "Cannot apply membrane move to a non-membrane pose!" );
 	}
-	
+
 	// Update coordinates
 	pose.conformation().update_membrane_position( center_, normal_ );
-	
+
 	// reset foldtree and show final one
 	pose.fold_tree( orig_ft );
 	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
@@ -168,9 +168,9 @@ SetMembranePositionMover::parse_my_tag(
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
-	) {
+) {
 
-    read_center_normal_from_tag( center_, normal_, tag );
+	read_center_normal_from_tag( center_, normal_, tag );
 }
 
 /// @brief Create a new copy of this mover
@@ -205,7 +205,7 @@ SetMembraneNormalMover::SetMembraneNormalMover() :
 
 /// @brief Custom Constructor
 /// @details Specify a new membrane normal
-///	to move this position to
+/// to move this position to
 SetMembraneNormalMover::SetMembraneNormalMover( Vector normal ) :
 	Mover(),
 	normal_( normal )
@@ -223,15 +223,15 @@ SetMembraneNormalMover::SetMembraneNormalMover( SetMembraneNormalMover const & s
 SetMembraneNormalMover &
 SetMembraneNormalMover::operator=( SetMembraneNormalMover const & src )
 {
-	
+
 	// Abort self-assignment.
-	if (this == &src) {
+	if ( this == &src ) {
 		return *this;
 	}
-	
+
 	// Otherwise, create a new object
 	return *( new SetMembraneNormalMover( *this ) );
-	
+
 }
 
 /// @brief Destructor
@@ -251,20 +251,20 @@ SetMembraneNormalMover::get_name() const {
 /// @brief Rotate membrane position to new normal
 void
 SetMembraneNormalMover::apply( Pose & pose ) {
-	
+
 	using namespace numeric;
 	using namespace core::kinematics;
 	using namespace protocols::membrane;
-	
+
 	// Check the pose is a membrane protein
-	if (! pose.conformation().is_membrane() ) {
+	if ( ! pose.conformation().is_membrane() ) {
 		utility_exit_with_message( "Cannot apply membrane move to a non-membrane pose!" );
 	}
-	
+
 	// Compute Rotation Axis - CrossProd between Current & New Normal axis
 	Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
 	Vector current_center( pose.conformation().membrane_info()->membrane_center() );
-	
+
 	pose.conformation().update_membrane_position( current_center, normal_ );
 
 }
@@ -293,11 +293,11 @@ SetMembraneNormalMover::parse_my_tag(
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
-	) {
-    
-    Vector center_dummy(0,0,0);
-    read_center_normal_from_tag( center_dummy, normal_, tag );
-	
+) {
+
+	Vector center_dummy(0,0,0);
+	read_center_normal_from_tag( center_dummy, normal_, tag );
+
 }
 
 /// @brief Create a new copy of this mover
@@ -349,15 +349,15 @@ SetMembraneCenterMover::SetMembraneCenterMover( SetMembraneCenterMover const & s
 SetMembraneCenterMover &
 SetMembraneCenterMover::operator=( SetMembraneCenterMover const & src )
 {
-	
+
 	// Abort self-assignment.
-	if (this == &src) {
+	if ( this == &src ) {
 		return *this;
 	}
-	
+
 	// Otherwise, create a new object
 	return *( new SetMembraneCenterMover( *this ) );
-	
+
 }
 
 /// @brief Destructor
@@ -378,19 +378,19 @@ SetMembraneCenterMover::get_name() const {
 /// to the new center position, and rotate to new normal
 void
 SetMembraneCenterMover::apply( Pose & pose ) {
-	
+
 	using namespace numeric;
 	using namespace core::kinematics;
 	using namespace protocols::membrane;
-	
+
 	// Check the pose is a membrane protein
-	if (! pose.conformation().is_membrane() ) {
+	if ( ! pose.conformation().is_membrane() ) {
 		utility_exit_with_message( "Cannot apply membrane move to a non-membrane pose!" );
 	}
-	
+
 	// Get current normal
 	Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
-	
+
 	// Apply translation
 	pose.conformation().update_membrane_position( center_, current_normal );
 
@@ -415,16 +415,16 @@ SetMembraneCenterMover::fresh_instance() const {
 /// @brief Pase Rosetta Scripts Options for this Mover
 void
 SetMembraneCenterMover::parse_my_tag(
-   utility::tag::TagCOP tag,
-   basic::datacache::DataMap &,
-   protocols::filters::Filters_map const &,
-   protocols::moves::Movers_map const &,
-   core::pose::Pose const &
-   ) {
-	
-    Vector normal_dummy(0,0,0);
-    read_center_normal_from_tag( center_, normal_dummy, tag );
-    
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
+) {
+
+	Vector normal_dummy(0,0,0);
+	read_center_normal_from_tag( center_, normal_dummy, tag );
+
 }
 
 /// @brief Create a new copy of this mover

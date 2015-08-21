@@ -30,8 +30,8 @@ namespace constel {
 ///
 void ChainTerm::print(basic::Tracer& t) const {
 
-        t << setw(4) << cid_ << setw(8) << n_ps_ << setw(8) << c_ps_
-                << setw(8) << n_pdb_ << setw(8) << c_pdb_ << std::endl;
+	t << setw(4) << cid_ << setw(8) << n_ps_ << setw(8) << c_ps_
+		<< setw(8) << n_pdb_ << setw(8) << c_pdb_ << std::endl;
 }
 
 
@@ -39,10 +39,10 @@ void ChainTerm::print(basic::Tracer& t) const {
 ///
 /// @param[in] ps the pose.
 /// @param[out] chains vector to be filled with ChainTerm items for the chains
-/// 	in the pose.
+///  in the pose.
 ///
 /// @details chains[i] represents the ith chain in the pose (i=1,...,N, where N
-/// 	is the number of chains in the pose).
+///  is the number of chains in the pose).
 ///
 void get_chain_terms(core::pose::Pose const &ps, utility::vector1<ChainTerm> &chains) {
 
@@ -51,9 +51,9 @@ void get_chain_terms(core::pose::Pose const &ps, utility::vector1<ChainTerm> &ch
 	Size nps = 1;
 	int npdb = ps.pdb_info()->number(nps);
 	char cid = ps.pdb_info()->chain(nps);
-	for(Size i=2; i<=TOTRES; ++i) {
+	for ( Size i=2; i<=TOTRES; ++i ) {
 		char rcid = ps.pdb_info()->chain(i);
-		if(rcid != cid) {
+		if ( rcid != cid ) {
 			chains.push_back(ChainTerm(cid, nps, i-1, // add chain
 				npdb, ps.pdb_info()->number(i-1)));
 			cid = rcid;
@@ -80,8 +80,9 @@ void print_chains(utility::vector1<ChainTerm> const &chains, basic::Tracer &t) {
 	t << setw(4) << "cid_" << setw(8) << "n_ps_" << setw(8) << "c_ps_" <<
 		setw(8) << "n_pdb_" << setw(8) << "c_pdb_" << std::endl;
 
-	for(Size i=1; i<=chains.size(); ++i)
+	for ( Size i=1; i<=chains.size(); ++i ) {
 		chains[i].print(t);
+	}
 }
 
 

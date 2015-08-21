@@ -90,15 +90,15 @@ atom_id_from_icoor_line(
 	ICoorAtomID id( name, rsd );
 
 	switch ( id.type() ) {
-	case ICoorAtomID::INTERNAL:
+	case ICoorAtomID::INTERNAL :
 		return AtomID( id.atomno(), 1 );
-	case ICoorAtomID::CONNECT:
+	case ICoorAtomID::CONNECT :
 		return AtomID( id.atomno(), 2 );
-	case ICoorAtomID::POLYMER_LOWER:
+	case ICoorAtomID::POLYMER_LOWER :
 		return AtomID( 1, 3 );
-	case ICoorAtomID::POLYMER_UPPER:
+	case ICoorAtomID::POLYMER_UPPER :
 		return AtomID( 2, 3 );
-	default:
+	default :
 		utility_exit_with_message( "unrecognized stub atom id type!" );
 	}
 	return id::BOGUS_ATOM_ID;
@@ -133,14 +133,14 @@ define_mainchain_atoms( ResidueTypeOP rsd )
 						next_atom = nbr;
 					}
 				}
-			debug_assert( next_atom != atom );
+				debug_assert( next_atom != atom );
 				atom = next_atom;
 			}
 			mainchain.push_back( upper_connect );
 		} else {
 			tr.Warning << "WARNING: Residue " << rsd->name() << " claims it's a polymer, " <<
-					"but it doesn't have the appropriate UPPER and LOWER connection points specified.  " <<
-					"Set MAINCHAIN_ATOMS in the topology file to remove this warning." << std::endl;
+				"but it doesn't have the appropriate UPPER and LOWER connection points specified.  " <<
+				"Set MAINCHAIN_ATOMS in the topology file to remove this warning." << std::endl;
 		}
 	}
 	return mainchain;
@@ -154,14 +154,14 @@ read_topology_file(
 	chemical::ElementSetCAP elements,
 	chemical::MMAtomTypeSetCAP mm_atom_types,
 	chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types,
-//	chemical::CSDAtomTypeSetCAP csd_atom_types kwk commenting out csd_atom_types until I have a chance to fully implement them.
+	// chemical::CSDAtomTypeSetCAP csd_atom_types kwk commenting out csd_atom_types until I have a chance to fully implement them.
 	chemical::ResidueTypeSetCAP rsd_type_set
 )
 {
 	std::string full_filename = filename;
-	if( ! utility::file::file_exists( full_filename ) ) {
+	if ( ! utility::file::file_exists( full_filename ) ) {
 		full_filename =  basic::database::full_name( "chemical/residue_type_sets/fa_standard/residue_types/"+filename );
-		if( ! utility::file::file_exists( full_filename ) ) {
+		if ( ! utility::file::file_exists( full_filename ) ) {
 			utility_exit_with_message("Cannot find file '"+filename+" or "+full_filename+"'");
 		}
 	}
@@ -535,13 +535,13 @@ read_topology_file(
 /// that enforce this.
 ResidueTypeOP
 read_topology_file(
-		utility::io::izstream & data,
-		chemical::AtomTypeSetCAP atom_types,
-		chemical::ElementSetCAP elements,
-		chemical::MMAtomTypeSetCAP mm_atom_types,
-		chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types,
-		//chemical::CSDAtomTypeSetCAP csd_atom_types kwk commenting out until they have been fully implemented
-		chemical::ResidueTypeSetCAP rsd_type_set_ap )
+	utility::io::izstream & data,
+	chemical::AtomTypeSetCAP atom_types,
+	chemical::ElementSetCAP elements,
+	chemical::MMAtomTypeSetCAP mm_atom_types,
+	chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types,
+	//chemical::CSDAtomTypeSetCAP csd_atom_types kwk commenting out until they have been fully implemented
+	chemical::ResidueTypeSetCAP rsd_type_set_ap )
 {
 
 	using id::AtomID;
@@ -562,7 +562,7 @@ read_topology_file(
 		//if ( line.size() < 1 || line[0] == '#' ) continue;
 		if ( line.size() < 1 ) continue;
 		std::string::size_type pound = line.find('#', 0);
-		if( pound == std::string::npos ) {
+		if ( pound == std::string::npos ) {
 			lines.push_back( line );
 		} else {
 			std::string no_comment_line= line.substr(0, pound);
@@ -579,7 +579,7 @@ read_topology_file(
 
 	std::map< std::string, std::string > atom_type_reassignments;
 	std::map< std::string, Real > atomic_charge_reassignments;
-	if( rsd_type_set_ap.lock() ) {
+	if ( rsd_type_set_ap.lock() ) {
 		setup_atom_type_reassignments_from_commandline( myname, rsd_type_set_ap.lock()->name(), atom_type_reassignments );
 		setup_atomic_charge_reassignments_from_commandline( myname, rsd_type_set_ap.lock()->name(), atomic_charge_reassignments );
 	}
@@ -597,19 +597,19 @@ read_topology_file(
 	// of stub atoms, etc., etc.
 
 	ResidueTypeOP rsd( new ResidueType( atom_types.lock(), elements.lock(), mm_atom_types.lock(), orbital_atom_types.lock() ) ); //kwk commenting out until atom types are fully implemented , csd_atom_types ) );
-	if( ! rsd_type_set_ap.expired() ) {
+	if ( ! rsd_type_set_ap.expired() ) {
 		rsd->residue_type_set( rsd_type_set_ap );  // Give this rsd_type a backpointer to its set.
 	}
 
 	// Add the atoms.
 	Size const nlines( lines.size() );
 	Size natoms(0);//, norbitals(0);
-	for (Size i=1; i<= nlines; ++i) {
+	for ( Size i=1; i<= nlines; ++i ) {
 		std::string line( lines[i] );
-		if (line.size() > 0) {
-			while (line.substr(line.size()-1) == " ") {
+		if ( line.size() > 0 ) {
+			while ( line.substr(line.size()-1) == " " ) {
 				line = line.substr(0, line.size()-1);
-				if (line.size() == 0) break;
+				if ( line.size() == 0 ) break;
 			}
 		}
 
@@ -638,7 +638,7 @@ read_topology_file(
 		// std::istringstream l( line.substr(20) );
 		l >> charge;
 		float parse_charge(charge);
-		if (!l.eof()) {
+		if ( !l.eof() ) {
 			l >> parse_charge;
 		}
 
@@ -657,8 +657,7 @@ read_topology_file(
 
 		if ( ! basic::options::option[ basic::options::OptionKeys::corrections::chemical::parse_charge ]() ) {
 			rsd->add_atom( atom_name, atom_type_name, mm_atom_type_name, charge );
-		}
-		else {
+		} else {
 			rsd->add_atom( atom_name, atom_type_name, mm_atom_type_name, parse_charge );
 		}
 
@@ -667,19 +666,19 @@ read_topology_file(
 
 	// No ATOM lines probably means an invalid file.  Perhaps someone made a mistake with an -extra_res_fa flag.
 	// Fail gracefully now, versus a segfault later.
-	if (natoms == 0) {
+	if ( natoms == 0 ) {
 		utility_exit_with_message("Residue topology file '" + filename + "' does not contain valid ATOM records.");
 	}
 
 	// Add the bonds; parse the rest of file.
 	bool found_AA_record = false;
 	AtomIndices mainchain_atoms;
-	
+
 	// Set disulfide atom name to "NONE"
 	// So that's the default
 	rsd->set_disulfide_atom_name( "NONE" );
 
-	for (Size i=1; i<= nlines; ++i) {
+	for ( Size i=1; i<= nlines; ++i ) {
 		std::string const & line( lines[i] );
 		std::istringstream l( line );
 		std::string tag,atom1,atom2,atom3,atom4, rotate, /*orbitals_tag, orbital,*/ bond_type;
@@ -709,12 +708,12 @@ read_topology_file(
 			l >> tag;
 			rsd->set_disulfide_atom_name( tag );
 		} else if ( tag == "ATOM_ALIAS" ) {
-			if( line.size() < 20 ) {
+			if ( line.size() < 20 ) {
 				utility_exit_with_message("ATOM_ALIAS line too short");
 			}
 			atom1 = line.substr( 11, 4 ); // Rosetta atom
 			core::Size pos(16);
-			while( line.size() >= pos+4 ) {
+			while ( line.size() >= pos+4 ) {
 				atom2 = line.substr(pos, 4);
 				rsd->add_atom_alias( atom1, atom2 );
 				pos += 5;
@@ -729,7 +728,7 @@ read_topology_file(
 			l >> atom1;
 			// We should allow multiple charges on one line, but since we now just have the one, hold off.
 			l >> tag;
-			if( tag == "FORMAL" ) {
+			if ( tag == "FORMAL" ) {
 				l >> value;
 				rsd->atom( atom1 ).formal_charge( int(value) );
 			} else {
@@ -758,7 +757,7 @@ read_topology_file(
 				l >> tag;
 			}
 			rsd->set_low_energy_ring_conformers( conformers );
-		} else if ( tag == "PROTON_CHI") {
+		} else if ( tag == "PROTON_CHI" ) {
 			Size chino, nsamples, nextra_samples;
 			std::string dummy;
 			l >> chino;
@@ -812,12 +811,12 @@ read_topology_file(
 				rsd->add_property( tag );
 				l >> tag;
 			}
-		} else if (tag == "NUMERIC_PROPERTY"){
+		} else if ( tag == "NUMERIC_PROPERTY" ) {
 			core::Real value = 0.0;
 			l >> tag >> value;
 			rsd->add_numeric_property(tag,value);
 
-		} else if (tag == "STRING_PROPERTY" ) {
+		} else if ( tag == "STRING_PROPERTY" ) {
 			std::string value;
 			l >> tag >> value;
 			rsd->add_string_property(tag,value);
@@ -860,9 +859,9 @@ read_topology_file(
 			}
 
 		} else if ( tag == "IO_STRING" ) {
-		debug_assert( line.size() >= 15 );
+			debug_assert( line.size() >= 15 );
 			std::string const three_letter_code( line.substr(10,3) ),
-							one_letter_code( line.substr(14,1) );
+				one_letter_code( line.substr(14,1) );
 			rsd->name3( three_letter_code );
 			rsd->name1( one_letter_code[0] );
 			// Default behavior for interchangeability_group is to take name3
@@ -901,7 +900,7 @@ read_topology_file(
 		} else if ( tag == "ACT_COORD_ATOMS" ) {
 			while ( l ) {
 				l >> atom1;
-				if ( atom1 == "END") break;
+				if ( atom1 == "END" ) break;
 				rsd->add_actcoord_atom( atom1 );
 			}
 		} else if ( tag == "LOWER_CONNECT" ) {
@@ -929,17 +928,17 @@ read_topology_file(
 			rsd->chiral_equivalent_name( cen );
 		} else if ( tag == "ROTAMERS" ) {
 			using namespace core::chemical::rotamers;
-			if( rsd->rotamer_library_specification() ) {
+			if ( rsd->rotamer_library_specification() ) {
 				tr.Error << "Found existing rotamer specification " << rsd->rotamer_library_specification()->keyname() << " when attempting to set ROTAMERS specification" << std::endl;
 				utility_exit_with_message("Cannot have multiple rotamer specifications in params file.");
 			}
 			l >> tag;
-			if( ! l ) { utility_exit_with_message("Must provide rotamer library type in ROTAMERS line."); }
+			if ( ! l ) { utility_exit_with_message("Must provide rotamer library type in ROTAMERS line."); }
 			RotamerLibrarySpecificationOP rls( RotamerLibrarySpecificationFactory::get_instance()->get( tag, l ) ); // Create with remainder of line.
 			rsd->rotamer_library_specification( rls );
 		} else if ( tag == "ROTAMER_AA" ) {
 			using namespace core::chemical::rotamers;
-			if( rsd->rotamer_library_specification() ) {
+			if ( rsd->rotamer_library_specification() ) {
 				tr.Error << "Found existing rotamer specification " << rsd->rotamer_library_specification()->keyname() << " when attempting to set ROTAMERS specification" << std::endl;
 				utility_exit_with_message("Cannot have multiple rotamer specifications in params file.");
 			}
@@ -956,7 +955,7 @@ read_topology_file(
 			rot_file.vol( this_file.vol() );
 			rot_file.path( this_file.path() );
 
-			if( rsd->rotamer_library_specification() ) {
+			if ( rsd->rotamer_library_specification() ) {
 				tr.Error << "Found existing rotamer specification " << rsd->rotamer_library_specification()->keyname() << " when attempting to set PDB_ROTAMERS parameters." << std::endl;
 				utility_exit_with_message("Cannot have multiple rotamer specifications in params file.");
 			}
@@ -964,13 +963,13 @@ read_topology_file(
 
 			tr.Debug << "Setting up conformer library for " << rsd->name() << std::endl;
 		} else if ( tag == "NCAA_ROTLIB_PATH" || tag == "NCAA_SEMIROTAMERIC" || tag == "NCAA_ROTLIB_NUM_ROTAMER_BINS" ||
-					tag == "NRCHI_SYMMETRIC" || tag == "NRCHI_START_ANGLE") {
+				tag == "NRCHI_SYMMETRIC" || tag == "NRCHI_START_ANGLE" ) {
 
 			using namespace core::chemical::rotamers;
 			NCAARotamerLibrarySpecificationOP ncaa_libspec;
-			if( rsd->rotamer_library_specification() ) {
+			if ( rsd->rotamer_library_specification() ) {
 				NCAARotamerLibrarySpecificationCOP old_libspec( utility::pointer::dynamic_pointer_cast< NCAARotamerLibrarySpecification const >( rsd->rotamer_library_specification() ) );
-				if( ! old_libspec ) {
+				if ( ! old_libspec ) {
 					tr.Error << "Found existing rotamer specification " << rsd->rotamer_library_specification()->keyname();
 					tr.Error << " when attempting to set " << tag << " parameter for NCAA rotamer libraries." << std::endl;
 					utility_exit_with_message("Cannot have multiple rotamer specifications in params file.");
@@ -980,7 +979,7 @@ read_topology_file(
 				ncaa_libspec = NCAARotamerLibrarySpecificationOP( new core::chemical::rotamers::NCAARotamerLibrarySpecification );
 			}
 
-			if( tag == "NCAA_ROTLIB_PATH" ) {
+			if ( tag == "NCAA_ROTLIB_PATH" ) {
 				std::string path;
 				l >> path;
 
@@ -992,7 +991,7 @@ read_topology_file(
 				utility::vector1<Size> n_bins_per_rot;
 				l >> n_rots;
 				n_bins_per_rot.resize( n_rots );
-				for( Size i = 1; i <= n_rots; ++i ) {
+				for ( Size i = 1; i <= n_rots; ++i ) {
 					Size bin_size(0);
 					l >> bin_size;
 					n_bins_per_rot[i] = bin_size;
@@ -1012,13 +1011,13 @@ read_topology_file(
 
 			rsd->rotamer_library_specification( ncaa_libspec );
 
-		// End of NCAA library entries.
-		}	else if ( tag == "PEPTOID_ROTLIB_PATH" || tag == "PEPTOID_ROTLIB_NUM_ROTAMER_BINS" ) {
+			// End of NCAA library entries.
+		} else if ( tag == "PEPTOID_ROTLIB_PATH" || tag == "PEPTOID_ROTLIB_NUM_ROTAMER_BINS" ) {
 			using namespace core::chemical::rotamers;
 			PeptoidRotamerLibrarySpecificationOP peptoid_libspec;
-			if( rsd->rotamer_library_specification() ) {
+			if ( rsd->rotamer_library_specification() ) {
 				PeptoidRotamerLibrarySpecificationCOP old_libspec( utility::pointer::dynamic_pointer_cast< PeptoidRotamerLibrarySpecification const >( rsd->rotamer_library_specification() ) );
-				if( ! old_libspec ) {
+				if ( ! old_libspec ) {
 					tr.Error << "Found existing rotamer specification " << rsd->rotamer_library_specification()->keyname();
 					tr.Error << " when attempting to set " << tag << " parameter for peptoid rotamer libraries." << std::endl;
 					utility_exit_with_message("Cannot have multiple rotamer specifications in params file.");
@@ -1037,7 +1036,7 @@ read_topology_file(
 				utility::vector1<Size> n_bins_per_rot;
 				l >> n_rots;
 				n_bins_per_rot.resize( n_rots );
-				for( Size i = 1; i <= n_rots; ++i ) {
+				for ( Size i = 1; i <= n_rots; ++i ) {
 					Size bin_size(0);
 					l >> bin_size;
 					n_bins_per_rot[i] = bin_size;
@@ -1049,12 +1048,12 @@ read_topology_file(
 			}
 
 			rsd->rotamer_library_specification( peptoid_libspec );
-		// End of peptoid library entries.
+			// End of peptoid library entries.
 		} else if ( tag == "VIRTUAL_SHADOW" ) {
 			std::string shadower, shadowee;
 			l >> shadower >> shadowee;
 			rsd->set_shadowing_atom( shadower, shadowee );
-		} else if ( tag == "ATOM" || tag == "ICOOR_INTERNAL" ){
+		} else if ( tag == "ATOM" || tag == "ICOOR_INTERNAL" ) {
 			; // ATOM lines handled above, ICOOR_INTERNAL lines handled below
 		} else {
 			tr.Warning << "WARNING: Ignoring line starting with '" << tag << "' when parsing topology file." << std::endl;
@@ -1065,7 +1064,7 @@ read_topology_file(
 
 	if ( !found_AA_record ) {
 		tr.Warning << "No AA record found for " << rsd->name()
-				<< "; assuming " << name_from_aa( rsd->aa() ) << std::endl;
+			<< "; assuming " << name_from_aa( rsd->aa() ) << std::endl;
 	}
 
 
@@ -1073,7 +1072,7 @@ read_topology_file(
 	// also sets up base_atom
 	{
 		std::map< std::string, utility::vector1< std::string > > icoor_reassignments;
-		if( rsd_type_set_ap.lock() ) {
+		if ( rsd_type_set_ap.lock() ) {
 			setup_icoor_reassignments_from_commandline( myname, rsd_type_set_ap.lock()->name(), icoor_reassignments );
 		}
 
@@ -1111,35 +1110,35 @@ read_topology_file(
 			if ( natoms > 1 ) {
 				// build the Cartesian coords for the new atom:
 				if ( child_atom == parent_atom ) {
-					if( ! rsd_xyz.empty() ) {
+					if ( ! rsd_xyz.empty() ) {
 						utility_exit_with_message("Only the first ICOOR atom in a topology file should list itself as its own parent atom.");
 					}
 					rsd_xyz[ child_atom ] = Vector( 0.0 );
 
 				} else if ( child_atom == angle_atom ) {
-					if( rsd_xyz.size() != 1 ) {
+					if ( rsd_xyz.size() != 1 ) {
 						utility_exit_with_message("Only the second ICOOR atom in a topology file should list itself as its own angle atom.");
 					}
-					if( ! rsd_xyz.count( parent_atom ) ) {
+					if ( ! rsd_xyz.count( parent_atom ) ) {
 						utility_exit_with_message("In second ICOOR atom in topology file - parent atom not found.");
 					}
 					rsd_xyz[ child_atom ] = Vector( d, 0.0, 0.0 );
 				} else {
 					Vector torsion_xyz;
 					if ( child_atom == torsion_atom ) {
-						if( rsd_xyz.size() != 2 ) {
+						if ( rsd_xyz.size() != 2 ) {
 							utility_exit_with_message("Only the third ICOOR atom in a topology file should list itself as its own dihedral atom.");
 						}
-						if( ! rsd_xyz.count( parent_atom ) || ! rsd_xyz.count( angle_atom ) ) {
+						if ( ! rsd_xyz.count( parent_atom ) || ! rsd_xyz.count( angle_atom ) ) {
 							utility_exit_with_message("In third ICOOR atom in topology file - parent and/or angle atom not found.");
 						}
 						torsion_xyz = Vector( 1.0, 1.0, 0.0 );
 					} else {
-						if( ! ( rsd_xyz.count( parent_atom ) && rsd_xyz.count( angle_atom ) &&
+						if ( ! ( rsd_xyz.count( parent_atom ) && rsd_xyz.count( angle_atom ) &&
 								rsd_xyz.count( torsion_atom ) ) ) {
 							utility_exit_with_message("In ICOOR atom line in topology file:"
-									"reference atoms must be specified in earlier line.  Missing " +
-									parent_atom + " or " + angle_atom + " or " + torsion_atom);
+								"reference atoms must be specified in earlier line.  Missing " +
+								parent_atom + " or " + angle_atom + " or " + torsion_atom);
 						}
 						torsion_xyz = rsd_xyz[ torsion_atom ];
 					}
@@ -1179,7 +1178,7 @@ read_topology_file(
 			for ( Size i=1; i<= natoms; ++i ) {
 				std::string name( rsd->atom_name(i) );
 				strip_whitespace( name );
-			debug_assert( rsd_xyz.count( name ) );
+				debug_assert( rsd_xyz.count( name ) );
 				rsd->set_ideal_xyz( name, rsd_xyz[ name ] );
 				//rsd->set_xyz( rsd->atom_name(i), atom_tree.xyz( id::AtomID(i,1) ) );
 				//rsd->atom(i).xyz( atom_tree.xyz( id::AtomID(i,1) ) );
@@ -1218,7 +1217,7 @@ write_topology_file(
 	using numeric::conversions::radians;
 	using numeric::conversions::degrees;
 
-	if( ! filename.size() ) {
+	if ( ! filename.size() ) {
 		filename = rsd.name() + ".params";
 	}
 
@@ -1237,7 +1236,7 @@ write_topology_file(
 	out << "AA " << rsd.aa() << " \n";
 
 	// then write out the atoms
-	for (Size i=1; i <= rsd.natoms(); ++i){
+	for ( Size i=1; i <= rsd.natoms(); ++i ) {
 
 		std::string atom_out = "ATOM " + rsd.atom_name( i ) + " " + rsd.atom_type( i ).name() + "  ";
 		atom_out = atom_out + rsd.mm_atom_type(i).name();
@@ -1251,9 +1250,9 @@ write_topology_file(
 	}
 
 	// then all the bonds
-	for (Size i=1; i <= rsd.natoms(); ++i){
-		BOOST_FOREACH(Size atom_index, rsd.nbrs(i)){// bond_this_atom
-			if( atom_index > i ) {  //don't write out bonds more than once
+	for ( Size i=1; i <= rsd.natoms(); ++i ) {
+		BOOST_FOREACH ( Size atom_index, rsd.nbrs(i) ) {// bond_this_atom
+			if ( atom_index > i ) {  //don't write out bonds more than once
 				out << "BOND  " << rsd.atom_name( i ) << "    " << rsd.atom_name( atom_index ) << " \n";
 			}
 		}
@@ -1261,10 +1260,10 @@ write_topology_file(
 
 
 	// now the chis
-	for (Size i=1; i <= rsd.nchi(); ++i){
+	for ( Size i=1; i <= rsd.nchi(); ++i ) {
 		out << "CHI " << i ;
 		AtomIndices atoms_this_chi = rsd.chi_atoms( i );
-		for (AtomIndices::iterator at_it = atoms_this_chi.begin(); at_it != atoms_this_chi.end(); ++at_it){
+		for ( AtomIndices::iterator at_it = atoms_this_chi.begin(); at_it != atoms_this_chi.end(); ++at_it ) {
 			out << "   " << rsd.atom_name( *at_it );
 		}
 		out << " \n";
@@ -1272,27 +1271,27 @@ write_topology_file(
 
 	// and now the proton chis
 	Size n_proton_chi(0);
-	for(Size i=1; i <= rsd.nchi(); i++){
-		if( rsd.is_proton_chi( i ) ){
+	for ( Size i=1; i <= rsd.nchi(); i++ ) {
+		if ( rsd.is_proton_chi( i ) ) {
 
 			n_proton_chi++;
 			out << "PROTON_CHI " << i << " SAMPLES ";
 			utility::vector1< Real > pchi_samples = rsd.proton_chi_samples( n_proton_chi );
 			utility::vector1< Real > pchi_extra = rsd.proton_chi_extra_samples( n_proton_chi );
 			out << pchi_samples.size() ;
-			for( Size j = 1; j <= pchi_samples.size(); j++) { out << " " << pchi_samples[j]; }
+			for ( Size j = 1; j <= pchi_samples.size(); j++ ) { out << " " << pchi_samples[j]; }
 			out << " EXTRA " << pchi_extra.size();
-			for( Size j = 1; j <= pchi_extra.size(); j++) { out << " " << pchi_extra[j]; }
+			for ( Size j = 1; j <= pchi_extra.size(); j++ ) { out << " " << pchi_extra[j]; }
 			out << " \n";
 
 		}
 	}//proton chi write out
 
 	// Now the nus...
-	for (Size i = 1, n_nus = rsd.n_nus(); i <= n_nus; ++i){
+	for ( Size i = 1, n_nus = rsd.n_nus(); i <= n_nus; ++i ) {
 		out << "NU " << i;
 		AtomIndices atoms_for_this_nu = rsd.nu_atoms(i);
-		for (AtomIndices::iterator at_it = atoms_for_this_nu.begin(); at_it != atoms_for_this_nu.end(); ++at_it) {
+		for ( AtomIndices::iterator at_it = atoms_for_this_nu.begin(); at_it != atoms_for_this_nu.end(); ++at_it ) {
 			out << "   " << rsd.atom_name(*at_it);
 		}
 		out << std::endl;
@@ -1309,20 +1308,20 @@ write_topology_file(
 
 	out << "NBR_ATOM " << rsd.atom_name( rsd.nbr_atom() ) << " \n";
 	out << "NBR_RADIUS " << rsd.nbr_radius() << " \n";
-	if (rsd.force_nbr_atom_orient()) { out << "ORIENT_ATOM NBR\n"; }
+	if ( rsd.force_nbr_atom_orient() ) { out << "ORIENT_ATOM NBR\n"; }
 
 	// Charges
-	for (Size i=1; i <= rsd.natoms(); ++i){
-		if( rsd.atom(i).formal_charge() != 0 ) {
+	for ( Size i=1; i <= rsd.natoms(); ++i ) {
+		if ( rsd.atom(i).formal_charge() != 0 ) {
 			out << "CHARGE " << rsd.atom_name( i ) << " FORMAL  " << rsd.atom(i).formal_charge() << " \n";
 		}
 	}
 
 	// actcoord atoms
-	if ( rsd.actcoord_atoms().size() > 0 ){
+	if ( rsd.actcoord_atoms().size() > 0 ) {
 		out << "ACT_COORD_ATOMS ";
 		AtomIndices act_atoms = rsd.actcoord_atoms();
-		for(AtomIndices::iterator at_it = act_atoms.begin(); at_it != act_atoms.end(); ++at_it ){
+		for ( AtomIndices::iterator at_it = act_atoms.begin(); at_it != act_atoms.end(); ++at_it ) {
 			out << rsd.atom_name( *at_it ) << " ";
 		}
 		out << "END \n";
@@ -1330,24 +1329,21 @@ write_topology_file(
 
 
 	// last but not least the internal coordinates
-	for (Size i=1; i <= rsd.natoms(); i++){
+	for ( Size i=1; i <= rsd.natoms(); i++ ) {
 		AtomICoor cur_icoor = rsd.icoor( i );
 		out << "ICOOR_INTERNAL   " << rsd.atom_name( i ) << "  " << degrees( cur_icoor.phi() ) << "  ";
 		out << degrees( cur_icoor.theta() ) << "  " << cur_icoor.d();
-		if( ( cur_icoor.stub_atom1().atomno() <= rsd.natoms() ) && ( cur_icoor.stub_atom1().atomno() > 0 ) ) {
+		if ( ( cur_icoor.stub_atom1().atomno() <= rsd.natoms() ) && ( cur_icoor.stub_atom1().atomno() > 0 ) ) {
 			out << "   " << rsd.atom_name( cur_icoor.stub_atom1().atomno() );
-		}
-		else{ out << "   " << cur_icoor.stub_atom1().type(); }
+		} else { out << "   " << cur_icoor.stub_atom1().type(); }
 
-		if( ( cur_icoor.stub_atom2().atomno() <= rsd.natoms()  ) && ( cur_icoor.stub_atom2().atomno() > 0 )){
+		if ( ( cur_icoor.stub_atom2().atomno() <= rsd.natoms()  ) && ( cur_icoor.stub_atom2().atomno() > 0 ) ) {
 			out << "   " << rsd.atom_name( cur_icoor.stub_atom2().atomno() );
-		}
-		else{ out << "  "  << cur_icoor.stub_atom2().type();}
+		} else { out << "  "  << cur_icoor.stub_atom2().type(); }
 
-		if( ( cur_icoor.stub_atom3().atomno() <= rsd.natoms()  ) && ( cur_icoor.stub_atom3().atomno() > 0 )){
+		if ( ( cur_icoor.stub_atom3().atomno() <= rsd.natoms()  ) && ( cur_icoor.stub_atom3().atomno() > 0 ) ) {
 			out << "   " << rsd.atom_name( cur_icoor.stub_atom3().atomno() );
-		}
-		else{ out << "  "  << cur_icoor.stub_atom3().type() ;}
+		} else { out << "  "  << cur_icoor.stub_atom3().type() ; }
 
 		out << " \n";
 
@@ -1362,10 +1358,10 @@ write_topology_file(
 ////////////////////////////////////////////////////////
 void
 setup_atom_type_reassignments_from_commandline(
-																							 std::string const & rsd_type_name,
-																							 std::string const & rsd_type_set_name,
-																							 std::map< std::string, std::string > & atom_type_reassignments
-																							 )
+	std::string const & rsd_type_name,
+	std::string const & rsd_type_set_name,
+	std::map< std::string, std::string > & atom_type_reassignments
+)
 {
 	if ( !basic::options::option[ basic::options::OptionKeys::chemical::reassign_atom_types ].user() ) return;
 
@@ -1410,10 +1406,10 @@ setup_atom_type_reassignments_from_commandline(
 ////////////////////////////////////////////////////////
 void
 setup_atomic_charge_reassignments_from_commandline(
-																									 std::string const & rsd_type_name,
-																									 std::string const & rsd_type_set_name,
-																									 std::map< std::string, Real > & atomic_charge_reassignments
-																									 )
+	std::string const & rsd_type_name,
+	std::string const & rsd_type_set_name,
+	std::map< std::string, Real > & atomic_charge_reassignments
+)
 {
 	if ( !basic::options::option[ basic::options::OptionKeys::chemical::set_atomic_charge ].user() ) return;
 
@@ -1461,10 +1457,10 @@ setup_atomic_charge_reassignments_from_commandline(
 ////////////////////////////////////////////////////////
 void
 setup_icoor_reassignments_from_commandline(
-																					 std::string const & rsd_type_name,
-																					 std::string const & rsd_type_set_name,
-																					 std::map< std::string, utility::vector1< std::string > > & icoor_reassignments
-																					 )
+	std::string const & rsd_type_name,
+	std::string const & rsd_type_set_name,
+	std::map< std::string, utility::vector1< std::string > > & icoor_reassignments
+)
 {
 	if ( !basic::options::option[ basic::options::OptionKeys::chemical::reassign_icoor ].user() ) return;
 

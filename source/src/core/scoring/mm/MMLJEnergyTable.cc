@@ -44,49 +44,49 @@ MMLJEnergyTable::~MMLJEnergyTable() {}
 static thread_local basic::Tracer TR( "core.scoring.mm.MMLJEnergyTable" );
 
 MMLJEnergyTable::MMLJEnergyTable() :
-  max_dist_(49.0),
-  bin_dist_(0.05),
-  bins_per_angstrom_squared_(20),
+	max_dist_(49.0),
+	bin_dist_(0.05),
+	bins_per_angstrom_squared_(20),
 	linear_switch_point(0.6) // 60% of distance at minimum
 {
-  using namespace core;
-  using namespace chemical;
+	using namespace core;
+	using namespace chemical;
 
-  // get MMAtomTypeSet associated with the library
-  MMAtomTypeSetCOP mm_atom_set( mm_lj_score_.mm_lj_library().mm_atom_set() );
-  Size natomtypes( mm_atom_set->n_atomtypes() );
+	// get MMAtomTypeSet associated with the library
+	MMAtomTypeSetCOP mm_atom_set( mm_lj_score_.mm_lj_library().mm_atom_set() );
+	Size natomtypes( mm_atom_set->n_atomtypes() );
 
-  TR << "Initializing MM LJ Energy Tables with " << natomtypes << " atom types" << std::endl;
+	TR << "Initializing MM LJ Energy Tables with " << natomtypes << " atom types" << std::endl;
 
-  // init both table dimentions for all the tables based on the size of the library
-  mm_atom_pair_rep_energy_table_.resize( natomtypes );
-  mm_atom_pair_atr_energy_table_.resize( natomtypes );
-  mm_atom_pair_rep_deriv_table_.resize( natomtypes );
-  mm_atom_pair_atr_deriv_table_.resize( natomtypes );
-  mm_atom_pair_rep_three_bond_energy_table_.resize( natomtypes );
-  mm_atom_pair_atr_three_bond_energy_table_.resize( natomtypes );
-  mm_atom_pair_rep_three_bond_deriv_table_.resize( natomtypes );
-  mm_atom_pair_atr_three_bond_deriv_table_.resize( natomtypes );
+	// init both table dimentions for all the tables based on the size of the library
+	mm_atom_pair_rep_energy_table_.resize( natomtypes );
+	mm_atom_pair_atr_energy_table_.resize( natomtypes );
+	mm_atom_pair_rep_deriv_table_.resize( natomtypes );
+	mm_atom_pair_atr_deriv_table_.resize( natomtypes );
+	mm_atom_pair_rep_three_bond_energy_table_.resize( natomtypes );
+	mm_atom_pair_atr_three_bond_energy_table_.resize( natomtypes );
+	mm_atom_pair_rep_three_bond_deriv_table_.resize( natomtypes );
+	mm_atom_pair_atr_three_bond_deriv_table_.resize( natomtypes );
 
-  for ( Size i = 1; i <= natomtypes; ++i ) {
-    mm_atom_pair_rep_energy_table_[i].resize( natomtypes, NULL );
-    mm_atom_pair_atr_energy_table_[i].resize( natomtypes, NULL );
-    mm_atom_pair_rep_deriv_table_[i].resize( natomtypes, NULL );
-    mm_atom_pair_atr_deriv_table_[i].resize( natomtypes, NULL );
-    mm_atom_pair_rep_three_bond_energy_table_[i].resize( natomtypes, NULL );
-    mm_atom_pair_atr_three_bond_energy_table_[i].resize( natomtypes, NULL );
-    mm_atom_pair_rep_three_bond_deriv_table_[i].resize( natomtypes, NULL );
-    mm_atom_pair_atr_three_bond_deriv_table_[i].resize( natomtypes, NULL );
-  }
+	for ( Size i = 1; i <= natomtypes; ++i ) {
+		mm_atom_pair_rep_energy_table_[i].resize( natomtypes, NULL );
+		mm_atom_pair_atr_energy_table_[i].resize( natomtypes, NULL );
+		mm_atom_pair_rep_deriv_table_[i].resize( natomtypes, NULL );
+		mm_atom_pair_atr_deriv_table_[i].resize( natomtypes, NULL );
+		mm_atom_pair_rep_three_bond_energy_table_[i].resize( natomtypes, NULL );
+		mm_atom_pair_atr_three_bond_energy_table_[i].resize( natomtypes, NULL );
+		mm_atom_pair_rep_three_bond_deriv_table_[i].resize( natomtypes, NULL );
+		mm_atom_pair_atr_three_bond_deriv_table_[i].resize( natomtypes, NULL );
+	}
 
 	// create MM atom pair energy tables for greater than three bonds
 	TR << "Precomputing >=4 bond energy values" << std::endl;
 	for ( Size i = 1; i <= natomtypes; ++i ) {
-    for ( Size j = 1; j <= natomtypes; ++j ) {
-      // if the energy vector at position i,j is not defined check to see if the one at j,i is
-      // since they shouold be the same. If the energy vector at j,i is not defined, create it at i,j
-      if ( mm_atom_pair_rep_energy_table_[i][j] == NULL ) {
-				if( mm_atom_pair_rep_energy_table_[j][i] == NULL ) {
+		for ( Size j = 1; j <= natomtypes; ++j ) {
+			// if the energy vector at position i,j is not defined check to see if the one at j,i is
+			// since they shouold be the same. If the energy vector at j,i is not defined, create it at i,j
+			if ( mm_atom_pair_rep_energy_table_[i][j] == NULL ) {
+				if ( mm_atom_pair_rep_energy_table_[j][i] == NULL ) {
 					// create the vector
 					mm_atom_pair_rep_energy_table_[i][j] = new EnergyVector;
 					mm_atom_pair_atr_energy_table_[i][j] = new EnergyVector;
@@ -108,7 +108,7 @@ MMLJEnergyTable::MMLJEnergyTable() :
 					Real prev_score( switch_intercept );
 					for ( Real k = 0; k <= max_dist_; k += bin_dist_ ) {
 						Real temp_score(0), temp_deriv(0);
-						if( k <= switch_dist_squared ){ // in switch region
+						if ( k <= switch_dist_squared ) { // in switch region
 							temp_score = switch_slope * sqrt(k) + switch_intercept;
 							temp_deriv = switch_slope;
 						} else { // not in switch region
@@ -134,18 +134,18 @@ MMLJEnergyTable::MMLJEnergyTable() :
 					mm_atom_pair_rep_deriv_table_[i][j] = mm_atom_pair_rep_deriv_table_[j][i];
 					mm_atom_pair_atr_deriv_table_[i][j] = mm_atom_pair_atr_deriv_table_[j][i];
 				}
-      }
-    } // foreach i
-  } // foreach j
+			}
+		} // foreach i
+	} // foreach j
 
-  // create the atom pair three bond energy tables
+	// create the atom pair three bond energy tables
 	TR << "Precomputing 3 bond energy values" << std::endl;
-  for ( Size i = 1; i <= natomtypes; ++i ) {
-    for ( Size j = 1; j <= natomtypes; ++j ) {
-      // if the energy vector at position i,j is not defined check to see if the one at j,i is
-      // since they shouold be the same. If the energy vector at j,i is not defined, create it at i,j
-      if ( mm_atom_pair_rep_three_bond_energy_table_[i][j] == NULL ) {
-				if( mm_atom_pair_rep_three_bond_energy_table_[j][i] == NULL ) {
+	for ( Size i = 1; i <= natomtypes; ++i ) {
+		for ( Size j = 1; j <= natomtypes; ++j ) {
+			// if the energy vector at position i,j is not defined check to see if the one at j,i is
+			// since they shouold be the same. If the energy vector at j,i is not defined, create it at i,j
+			if ( mm_atom_pair_rep_three_bond_energy_table_[i][j] == NULL ) {
+				if ( mm_atom_pair_rep_three_bond_energy_table_[j][i] == NULL ) {
 					// create the vector
 					mm_atom_pair_rep_three_bond_energy_table_[i][j] = new EnergyVector;
 					mm_atom_pair_atr_three_bond_energy_table_[i][j] = new EnergyVector;
@@ -167,7 +167,7 @@ MMLJEnergyTable::MMLJEnergyTable() :
 					Real prev_score( switch_intercept );
 					for ( Real k = 0; k <= max_dist_; k += bin_dist_ ) {
 						Real temp_score(0), temp_deriv(0);
-						if( k <= switch_dist_squared ){ // in switch region
+						if ( k <= switch_dist_squared ) { // in switch region
 							temp_score = switch_slope * sqrt(k) + switch_intercept;
 							temp_deriv = switch_slope;
 						} else {
@@ -193,57 +193,57 @@ MMLJEnergyTable::MMLJEnergyTable() :
 					mm_atom_pair_rep_three_bond_deriv_table_[i][j] = mm_atom_pair_rep_three_bond_deriv_table_[j][i];
 					mm_atom_pair_atr_three_bond_deriv_table_[i][j] = mm_atom_pair_atr_three_bond_deriv_table_[j][i];
 				}
-      }
-    } // foreach i
-  } // foreach j
+			}
+		} // foreach i
+	} // foreach j
 }
 
 void
 MMLJEnergyTable::score( Size atom1, Size atom2, Size & path_distance, Real & squared_distance, Real & rep, Real & atr  ) const
 {
-  // init values
-  rep = atr = 0;
+	// init values
+	rep = atr = 0;
 
-  if ( squared_distance <= max_dist_ ) {
+	if ( squared_distance <= max_dist_ ) {
 
-    // calc distance bins and frac
-    Real bin( squared_distance * bins_per_angstrom_squared_ );
-    Size l_bin( static_cast< Size >( bin ) + 1 );
-    Size u_bin( l_bin + 1 );
-    Real frac( bin - ( l_bin - 1 ) );
+		// calc distance bins and frac
+		Real bin( squared_distance * bins_per_angstrom_squared_ );
+		Size l_bin( static_cast< Size >( bin ) + 1 );
+		Size u_bin( l_bin + 1 );
+		Real frac( bin - ( l_bin - 1 ) );
 
 		// get correct vectors
 		EnergyVector & rep_vec = ( path_distance == 3 ? *mm_atom_pair_rep_three_bond_energy_table_[ atom1][ atom2] : *mm_atom_pair_rep_energy_table_[ atom1][ atom2 ] );
 		EnergyVector & atr_vec = ( path_distance == 3 ? *mm_atom_pair_atr_three_bond_energy_table_[ atom1][ atom2] : *mm_atom_pair_atr_energy_table_[ atom1][ atom2 ] );
 
-    // linear interpolate between upper and lower bins
-    rep = rep_vec[l_bin] + frac * ( rep_vec[u_bin] - rep_vec[l_bin] );
-    atr = atr_vec[l_bin] + frac * ( atr_vec[u_bin] - atr_vec[l_bin] );
-  }
+		// linear interpolate between upper and lower bins
+		rep = rep_vec[l_bin] + frac * ( rep_vec[u_bin] - rep_vec[l_bin] );
+		atr = atr_vec[l_bin] + frac * ( atr_vec[u_bin] - atr_vec[l_bin] );
+	}
 }
 
 void
 MMLJEnergyTable::deriv_score( Size atom1, Size atom2, Size & path_distance, Real & squared_distance, Real & drep, Real & datr ) const
 {
-  // init values
-  drep = datr = 0;
+	// init values
+	drep = datr = 0;
 
-  if ( squared_distance <= max_dist_ ) {
+	if ( squared_distance <= max_dist_ ) {
 
-    // calc distance bins and frac
-    Real bin( squared_distance * bins_per_angstrom_squared_ );
-    Size l_bin( static_cast< Size >( bin ) + 1 );
-    Size u_bin( l_bin + 1 );
-    Real frac( bin - ( l_bin - 1 ) );
+		// calc distance bins and frac
+		Real bin( squared_distance * bins_per_angstrom_squared_ );
+		Size l_bin( static_cast< Size >( bin ) + 1 );
+		Size u_bin( l_bin + 1 );
+		Real frac( bin - ( l_bin - 1 ) );
 
 		// get correct vectors
 		EnergyVector & drep_vec = ( path_distance == 3 ? *mm_atom_pair_rep_three_bond_deriv_table_[ atom1][ atom2] : *mm_atom_pair_rep_deriv_table_[ atom1][ atom2 ] );
 		EnergyVector & datr_vec = ( path_distance == 3 ? *mm_atom_pair_atr_three_bond_deriv_table_[ atom1][ atom2] : *mm_atom_pair_atr_deriv_table_[ atom1][ atom2 ] );
 
-    // linear interpolate between upper and lower bins
-    drep = drep_vec[l_bin] + frac * ( drep_vec[u_bin] - drep_vec[l_bin] );
-    datr = datr_vec[l_bin] + frac * ( datr_vec[u_bin] - datr_vec[l_bin] );
-  }
+		// linear interpolate between upper and lower bins
+		drep = drep_vec[l_bin] + frac * ( drep_vec[u_bin] - drep_vec[l_bin] );
+		datr = datr_vec[l_bin] + frac * ( datr_vec[u_bin] - datr_vec[l_bin] );
+	}
 }
 
 } // namespace mm
@@ -256,7 +256,7 @@ MMLJEnergyTable::deriv_score( Size atom1, Size atom2, Size & path_distance, Real
 //     for ( Size j = 1; j <= natomtypes; ++j ) {
 //       std::cout << "REP_SCORE " << i << ":" << j << "\t" << mm_atom_pair_rep_energy_table_[i][j] << "\t";
 //       for ( Size k = 1; k <= mm_atom_pair_rep_energy_table_[i][j]->size(); ++k ) {
-// 	std::cout << mm_atom_pair_rep_energy_table_[i][j]->at(k) << " ";
+//  std::cout << mm_atom_pair_rep_energy_table_[i][j]->at(k) << " ";
 //       }
 //       std::cout << std::endl;
 //     }
@@ -266,7 +266,7 @@ MMLJEnergyTable::deriv_score( Size atom1, Size atom2, Size & path_distance, Real
 //     for ( Size j = 1; j <= natomtypes; ++j ) {
 //       std::cout << "ATR_SCORE " << i << ":" << j << "\t" << mm_atom_pair_atr_energy_table_[i][j] << "\t";
 //       for ( Size k = 1; k <= mm_atom_pair_atr_energy_table_[i][j]->size(); ++k ) {
-// 	std::cout << mm_atom_pair_atr_energy_table_[i][j]->at(k) << " ";
+//  std::cout << mm_atom_pair_atr_energy_table_[i][j]->at(k) << " ";
 //       }
 //       std::cout << std::endl;
 //     }
@@ -276,7 +276,7 @@ MMLJEnergyTable::deriv_score( Size atom1, Size atom2, Size & path_distance, Real
 //     for ( Size j = 1; j <= natomtypes; ++j ) {
 //       std::cout << "REP_DERIV " << i << ":" << j << "\t" << mm_atom_pair_rep_deriv_table_[i][j] << "\t";
 //       for ( Size k = 1; k <= mm_atom_pair_rep_deriv_table_[i][j]->size(); ++k ) {
-// 	std::cout << mm_atom_pair_rep_deriv_table_[i][j]->at(k) << " ";
+//  std::cout << mm_atom_pair_rep_deriv_table_[i][j]->at(k) << " ";
 //       }
 //       std::cout << std::endl;
 //     }
@@ -286,7 +286,7 @@ MMLJEnergyTable::deriv_score( Size atom1, Size atom2, Size & path_distance, Real
 //     for ( Size j = 1; j <= natomtypes; ++j ) {
 //       std::cout << "ATR_DERIV " << i << ":" << j << "\t" << mm_atom_pair_atr_deriv_table_[i][j] << "\t";
 //       for ( Size k = 1; k <= mm_atom_pair_atr_deriv_table_[i][j]->size(); ++k ) {
-// 	std::cout << mm_atom_pair_atr_deriv_table_[i][j]->at(k) << " ";
+//  std::cout << mm_atom_pair_atr_deriv_table_[i][j]->at(k) << " ";
 //       }
 //       std::cout << std::endl;
 //     }

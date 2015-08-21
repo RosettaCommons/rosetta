@@ -16,14 +16,14 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace core{
-namespace scoring{
+namespace core {
+namespace scoring {
 namespace orbitals {
-	
+
 class OrbitalsScore;
-	
+
 typedef  utility::pointer::shared_ptr< OrbitalsScore > OrbitalsScoreOP;
-	
+
 }
 }
 }

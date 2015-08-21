@@ -38,15 +38,16 @@ static thread_local basic::Tracer tr(
 void TorsionBinSimilarity::do_caching( VallChunkOP chunk ) {
 
 	std::string tmp = chunk->chunk_key();
-	if ( tmp.compare(cached_scores_id_) == 0 )
+	if ( tmp.compare(cached_scores_id_) == 0 ) {
 		return;
+	}
 	cached_scores_id_ = tmp;
 
 	tr.Debug << "caching score for " << chunk->get_pdb_id()
-			<< " of size " << chunk->size() << std::endl;
+		<< " of size " << chunk->size() << std::endl;
 
-	for (Size i = 1; i <= query_len_; ++i) {
-		for (Size j = 1; j <= chunk->size(); ++j) {
+	for ( Size i = 1; i <= query_len_; ++i ) {
+		for ( Size j = 1; j <= chunk->size(); ++j ) {
 			Real const phi  ( chunk->at(j)->phi()   );
 			Real const psi  ( chunk->at(j)->psi()   );
 			Real const omega( chunk->at(j)->omega() );
@@ -57,7 +58,7 @@ void TorsionBinSimilarity::do_caching( VallChunkOP chunk ) {
 	}
 
 	tr.Debug << "precomputed matrix of scores " << scores_.size()
-			<< "x" << chunk->size() << std::endl;
+		<< "x" << chunk->size() << std::endl;
 }
 
 bool TorsionBinSimilarity::cached_score(
@@ -67,13 +68,14 @@ bool TorsionBinSimilarity::cached_score(
 
 
 	std::string tmp = f->get_chunk()->chunk_key();
-	if (tmp.compare(cached_scores_id_) != 0)
+	if ( tmp.compare(cached_scores_id_) != 0 ) {
 		do_caching(f->get_chunk());
+	}
 
 	Real total_score = 0;
-	for (Size i = 1; i <= f->get_length(); ++i) {
+	for ( Size i = 1; i <= f->get_length(); ++i ) {
 		assert( f->get_first_index_in_query() + i - 1 <= scores_.size()    );
-		assert( f->get_first_index_in_vall()	+ i - 1 <= scores_[1].size() );
+		assert( f->get_first_index_in_vall() + i - 1 <= scores_[1].size() );
 		total_score += scores_[f->get_first_index_in_query() + i - 1][f->get_first_index_in_vall() + i - 1];
 	}
 	//std::cout << "total_score = " << total_score << std::endl;
@@ -81,48 +83,49 @@ bool TorsionBinSimilarity::cached_score(
 	total_score /= (Real) f->get_length();
 
 	empty_map->set_score_component(total_score, id_);
-	if ((total_score > lowest_acceptable_value_) && (use_lowest_ == true))
+	if ( (total_score > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;
+	}
 	return true;
 }
 
 char
 TorsionBinSimilarity::torsion2big_bin_(
-  core::Real const phi,
-  core::Real const psi,
-  core::Real const omega
+	core::Real const phi,
+	core::Real const psi,
+	core::Real const omega
 ) const {
-   if ( std::abs( omega ) < 90 ) {
-      return 'O'; // cis-omega
-   } else if ( phi >= 0.0 ) {
-      if ( -100 < psi && psi <= 100 ) {
-         return 'G'; // alpha-L
-      } else {
-         return 'E'; // E
-      }
-   } else {
-      if ( -125 < psi && psi <= 50 ) {
-         return 'A'; // helical
-      } else {
-         return 'B'; // extended
-      }
-   }
-   return 'X';
+	if ( std::abs( omega ) < 90 ) {
+		return 'O'; // cis-omega
+	} else if ( phi >= 0.0 ) {
+		if ( -100 < psi && psi <= 100 ) {
+			return 'G'; // alpha-L
+		} else {
+			return 'E'; // E
+		}
+	} else {
+		if ( -125 < psi && psi <= 50 ) {
+			return 'A'; // helical
+		} else {
+			return 'B'; // extended
+		}
+	}
+	return 'X';
 }
 
 core::Size
 TorsionBinSimilarity::bin_index_( char const bin_name ) const
 {
 	switch( bin_name ) {
-		case 'A': return 1; break;
-		case 'B': return 2; break;
-		case 'E': return 3; break;
-		case 'G': return 4; break;
-		case 'O': return 5; break;
-		default:
-			std::string const msg( "Error: don't recognize bin" + std::string(1, bin_name) );
-			utility_exit_with_message(msg);
-			break;
+	case 'A' : return 1; break;
+	case 'B' : return 2; break;
+	case 'E' : return 3; break;
+	case 'G' : return 4; break;
+	case 'O' : return 5; break;
+	default :
+		std::string const msg( "Error: don't recognize bin" + std::string(1, bin_name) );
+		utility_exit_with_message(msg);
+		break;
 	}
 
 	return 'X'; // satisfy compiler
@@ -157,12 +160,12 @@ FragmentScoringMethodOP MakeTorsionBinSimilarity::make(
 
 	return (
 		FragmentScoringMethodOP( new TorsionBinSimilarity(
-			priority,
-			lowest_acceptable_value,
-			use_lowest,
-			probs,
-			sequence_length,
-			vall_max_len
+		priority,
+		lowest_acceptable_value,
+		use_lowest,
+		probs,
+		sequence_length,
+		vall_max_len
 		) )
 	);
 }

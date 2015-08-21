@@ -25,15 +25,15 @@ namespace elscripts {
 void lregister_MPI_Slave( lua_State * lstate );
 
 class MPI_Slave : public Slave {
-  public:
-    // default memory limit is 2GB
-    // default reserved mem size is 100MB as recommended by fpd
-    MPI_Slave( boost::mpi::communicator world, int master, boost::uint64_t mem_limit=2147483648, boost::uint64_t reserved_mem=104857600, boost::uint64_t reserved_mem_multiplier=10 );
-    ~MPI_Slave(){}
-    void go();
+public:
+	// default memory limit is 2GB
+	// default reserved mem size is 100MB as recommended by fpd
+	MPI_Slave( boost::mpi::communicator world, int master, boost::uint64_t mem_limit=2147483648, boost::uint64_t reserved_mem=104857600, boost::uint64_t reserved_mem_multiplier=10 );
+	~MPI_Slave(){}
+	void go();
 
-  private:
-	  boost::mpi::communicator world_;
+private:
+	boost::mpi::communicator world_;
 };
 
 } //elscripts

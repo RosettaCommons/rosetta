@@ -57,13 +57,13 @@ public:
 	methods::EnergyMethodOP
 	clone() const;
 
-  /// attempt to precalculate backbone/backbone energies in advance
-  virtual
+	/// attempt to precalculate backbone/backbone energies in advance
+	virtual
 	void
 	setup_for_packing(
-    pose::Pose & pose,
-    utility::vector1< bool > const &,
-    utility::vector1< bool > const & ) const;
+		pose::Pose & pose,
+		utility::vector1< bool > const &,
+		utility::vector1< bool > const & ) const;
 
 
 	virtual
@@ -74,10 +74,10 @@ public:
 	virtual
 	bool
 	defines_score_for_residue_pair(
-																 conformation::Residue const & rsd1,
-																 conformation::Residue const & rsd2,
-																 bool res_moving_wrt_eachother
-    ) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		bool res_moving_wrt_eachother
+	) const;
 
 	virtual
 	bool
@@ -108,69 +108,69 @@ public:
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	) const;
 
-    virtual
-    etable::count_pair::CountPairFunctionCOP
-    get_count_pair_function(
-        Size const res1,
-        Size const res2,
-        pose::Pose const & pose,
-        ScoreFunction const &
-    ) const;
+	virtual
+	etable::count_pair::CountPairFunctionCOP
+	get_count_pair_function(
+		Size const res1,
+		Size const res2,
+		pose::Pose const & pose,
+		ScoreFunction const &
+	) const;
 
-    virtual
-    etable::count_pair::CountPairFunctionCOP
-    get_count_pair_function(
-        conformation::Residue const & rsd1,
-        conformation::Residue const & rsd2
-    ) const;
+	virtual
+	etable::count_pair::CountPairFunctionCOP
+	get_count_pair_function(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2
+	) const;
 
-    virtual
-    etable::count_pair::CountPairFunctionCOP
-    get_intrares_countpair(
-        conformation::Residue const &,
-        pose::Pose const &,
-        ScoreFunction const &
-    ) const;
+	virtual
+	etable::count_pair::CountPairFunctionCOP
+	get_intrares_countpair(
+		conformation::Residue const &,
+		pose::Pose const &,
+		ScoreFunction const &
+	) const;
 
-    virtual
-    bool
-    use_extended_residue_pair_energy_interface() const;
+	virtual
+	bool
+	use_extended_residue_pair_energy_interface() const;
 
-    virtual
-    void
-    setup_for_minimizing_for_residue_pair(
-        conformation::Residue const & rsd1,
-        conformation::Residue const & rsd2,
-        pose::Pose const & pose,
-        ScoreFunction const &,
-        kinematics::MinimizerMapBase const &,
-        ResSingleMinimizationData const &,
-        ResSingleMinimizationData const &,
-        ResPairMinimizationData & pair_data
-    ) const;
+	virtual
+	void
+	setup_for_minimizing_for_residue_pair(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		ScoreFunction const &,
+		kinematics::MinimizerMapBase const &,
+		ResSingleMinimizationData const &,
+		ResSingleMinimizationData const &,
+		ResPairMinimizationData & pair_data
+	) const;
 
 	virtual
 	bool
 	requires_a_setup_for_derivatives_for_residue_pair_opportunity( pose::Pose const & ) const;
 
-    virtual
-    void
-    residue_pair_energy_ext(
-        conformation::Residue const & rsd1,
-        conformation::Residue const & rsd2,
-        ResPairMinimizationData const & min_data,
-        pose::Pose const & pose,
-        ScoreFunction const &,
-        EnergyMap & emap
-    ) const;
+	virtual
+	void
+	residue_pair_energy_ext(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		ResPairMinimizationData const & min_data,
+		pose::Pose const & pose,
+		ScoreFunction const &,
+		EnergyMap & emap
+	) const;
 
-    virtual
-    void
-    finalize_total_energy(
-        pose::Pose & pose,
-        ScoreFunction const &,
-        EnergyMap & totals
-    ) const;
+	virtual
+	void
+	finalize_total_energy(
+		pose::Pose & pose,
+		ScoreFunction const &,
+		EnergyMap & totals
+	) const;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
@@ -230,7 +230,7 @@ private:
 
 	GeometricSolEnergyEvaluatorOP evaluator_;
 
-  mutable Real precalculated_bb_bb_energy_;
+	mutable Real precalculated_bb_bb_energy_;
 
 	mutable bool using_extended_method_;
 

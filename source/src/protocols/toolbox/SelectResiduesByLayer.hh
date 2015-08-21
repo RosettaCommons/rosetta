@@ -178,10 +178,10 @@ protected:
 	/// @brief selected residues in core
 	utility::vector1< Size > selected_core_residues_;
 
-  /// @brief selected residues at boundary
+	/// @brief selected residues at boundary
 	utility::vector1< Size > selected_boundary_residues_;
 
-  /// @brief selected residues on surface
+	/// @brief selected residues on surface
 	utility::vector1< Size > selected_surface_residues_;
 
 	/// @brief create rasmol format script for selected residues; red: surface, blue: core, green: boundary
@@ -189,7 +189,7 @@ protected:
 
 	bool use_sidechain_neighbors_;
 
- 	/// @brief output in rasmol format
+	/// @brief output in rasmol format
 
 
 	/// @brief asa for each residue

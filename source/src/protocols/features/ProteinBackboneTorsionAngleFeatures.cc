@@ -31,8 +31,8 @@
 // External Headers
 #include <cppdb/frontend.h>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::string;
 using cppdb::statement;
@@ -113,11 +113,11 @@ ProteinBackboneTorsionAngleFeatures::report_features(
 ){
 	std::string statement_string ="INSERT INTO protein_backbone_torsion_angles (struct_id, resNum, phi, psi, omega) VALUES (?,?,?,?,?)";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
-	for (Size i = 1; i <= pose.total_residue(); ++i) {
-		if(!check_relevant_residues( relevant_residues, i )) continue;
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( !check_relevant_residues( relevant_residues, i ) ) continue;
 
 		Residue const & resi = pose.residue(i);
-		if(!resi.is_protein()) continue;
+		if ( !resi.is_protein() ) continue;
 
 
 		Real phi  (resi.mainchain_torsion(1));

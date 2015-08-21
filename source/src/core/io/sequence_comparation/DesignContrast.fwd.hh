@@ -29,7 +29,7 @@ namespace core {
 namespace io {
 namespace sequence_comparation {
 
-   class DesignContrast;
+class DesignContrast;
 
 
 } // namespace sequence_comparation

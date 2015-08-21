@@ -42,7 +42,7 @@ class RNA_SuitePotential : public utility::pointer::ReferenceCount {
 public:
 
 	RNA_SuitePotential( RNA_EnergyMethodOptions const & options,
-											bool const calculate_suiteness_bonus = false );
+		bool const calculate_suiteness_bonus = false );
 
 	virtual ~RNA_SuitePotential();
 
@@ -63,18 +63,18 @@ public:
 private:
 
 	void eval_score(
-			utility::vector1<Real> const & torsions ) const;
+		utility::vector1<Real> const & torsions ) const;
 
 	void eval_suiteness_bonus(
-		  utility::vector1<Real> const & torsions ) const;
+		utility::vector1<Real> const & torsions ) const;
 
 	void eval_likelihood_potential(
-		  utility::vector1<Real> const & torsions ) const;
+		utility::vector1<Real> const & torsions ) const;
 
 	void regularize_torsions(
-			boost::numeric::ublas::vector<Real> & torsions ) const;
+		boost::numeric::ublas::vector<Real> & torsions ) const;
 
-void figure_out_offset();
+	void figure_out_offset();
 
 private:
 	Size const n_torsions_;

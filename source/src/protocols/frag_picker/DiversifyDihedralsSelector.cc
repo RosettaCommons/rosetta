@@ -27,59 +27,59 @@ namespace frag_picker {
 using namespace core;
 
 static thread_local basic::Tracer trDiversifyDihedralsSelector(
-                "protocols.frag_picker.DiversifyDihedralsSelector");
+	"protocols.frag_picker.DiversifyDihedralsSelector");
 
 
 /// @brief  Selects desired number of fragments from a given set of candidates
 void DiversifyDihedralsSelector::select_fragments(
-   ScoredCandidatesVector1 const& in,
-	 ScoredCandidatesVector1& out )
+	ScoredCandidatesVector1 const& in,
+	ScoredCandidatesVector1& out )
 {
 
-	if(in.size()==0) return;
+	if ( in.size()==0 ) return;
 
 	Size len = in[1].first->get_length();
 
-	if (phi_.size() < len) {
-	    phi_.resize(len);
-	    psi_.resize(len);
+	if ( phi_.size() < len ) {
+		phi_.resize(len);
+		psi_.resize(len);
 	}
 
 	out.push_back( in[1] );
-	for(Size i=2;i<=in.size();i++) {
-		if(out.size() >= frags_per_pos() ) break;
+	for ( Size i=2; i<=in.size(); i++ ) {
+		if ( out.size() >= frags_per_pos() ) break;
 		bool is_ok = true;
-		for(Size j=1;j<=out.size();j++) {
-		    Real rms = dihedral_rmsd(in[i].first, out[j].first);
-		    if(rms<cutoff_) {
-			is_ok = false;
-			trDiversifyDihedralsSelector.Trace<<"Phi-Psi rmsd is "<<rms<<" fragment "<< *in[i].first<<" denied"<<std::endl;;
-			break;
-		    }
+		for ( Size j=1; j<=out.size(); j++ ) {
+			Real rms = dihedral_rmsd(in[i].first, out[j].first);
+			if ( rms<cutoff_ ) {
+				is_ok = false;
+				trDiversifyDihedralsSelector.Trace<<"Phi-Psi rmsd is "<<rms<<" fragment "<< *in[i].first<<" denied"<<std::endl;;
+				break;
+			}
 		}
-		if(is_ok) {
-		    out.push_back( in[i] );
-		    trDiversifyDihedralsSelector.Trace<<"Fragment "<< *in[i].first<<" passed"<<std::endl;;
+		if ( is_ok ) {
+			out.push_back( in[i] );
+			trDiversifyDihedralsSelector.Trace<<"Fragment "<< *in[i].first<<" passed"<<std::endl;;
 		}
 	}
 	trDiversifyDihedralsSelector<<out.size()<<" fragments passed through DiversifyDihedralsSelector at query position "
-	    << in[1].first->get_first_index_in_query()<<std::endl;
+		<< in[1].first->get_first_index_in_query()<<std::endl;
 }
 
 Real DiversifyDihedralsSelector::dihedral_rmsd(FragmentCandidateOP f1,FragmentCandidateOP f2) {
 
-    Real rms = 0.0;
-   debug_assert ( f1->get_length() == f2->get_length() );
-    for(Size k=1;k<=f1->get_length();k++) {
-	Real d = f1->get_residue(k)->phi() - f2->get_residue(k)->phi();
-	rms += d*d;
-	d = f1->get_residue(k)->psi() - f2->get_residue(k)->psi();
-	rms += d*d;
-	d = f1->get_residue(k)->omega() - f2->get_residue(k)->omega();
-	rms += d*d;
-    }
+	Real rms = 0.0;
+	debug_assert ( f1->get_length() == f2->get_length() );
+	for ( Size k=1; k<=f1->get_length(); k++ ) {
+		Real d = f1->get_residue(k)->phi() - f2->get_residue(k)->phi();
+		rms += d*d;
+		d = f1->get_residue(k)->psi() - f2->get_residue(k)->psi();
+		rms += d*d;
+		d = f1->get_residue(k)->omega() - f2->get_residue(k)->omega();
+		rms += d*d;
+	}
 
-    return sqrt(rms) / (3.0 * f1->get_length());
+	return sqrt(rms) / (3.0 * f1->get_length());
 }
 
 } // frag_picker

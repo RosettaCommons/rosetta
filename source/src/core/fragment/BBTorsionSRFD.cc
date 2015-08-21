@@ -69,7 +69,7 @@ bool BBTorsionSRFD::apply( pose::Pose& pose, Size seqpos ) const {
 ///  are moveable in MoveMap -- use <tt>is_applicable()</tt> for this
 ///  purpose prior to calling <tt>apply()</tt>.
 bool BBTorsionSRFD::apply( kinematics::MoveMap const & movemap, pose::Pose & pose, Size const seqpos ) const {
-	 // parent apply() successful?
+	// parent apply() successful?
 	bool const success = Parent::apply( movemap, pose, seqpos );
 
 	// only move forward with changes if prior ops successful
@@ -108,13 +108,13 @@ bool BBTorsionSRFD::is_applicable( kinematics::MoveMap const& move_map, Size seq
 	for ( Size j=1; j<= nbb(); ++j ) {
 		// catch a user-error that is otherwise difficult to find:
 		if ( j == 3 ) { //omega
-			if ( !( move_map.get( id::TorsionID( seqpos, id::BB, j )) )) {
+			if ( !( move_map.get( id::TorsionID( seqpos, id::BB, j )) ) ) {
 				tr.Warning << "MoveMap allows phi/psi motion but not omega motion --> "
-									 << "Fragment cannot be applied --> is this intended ?"
-									 << std::endl;
+					<< "Fragment cannot be applied --> is this intended ?"
+					<< std::endl;
 			}
 		}
-		if ( !( move_map.get( id::TorsionID( seqpos, id::BB, j )) )) return false;
+		if ( !( move_map.get( id::TorsionID( seqpos, id::BB, j )) ) ) return false;
 	}
 	return true;
 }
@@ -130,10 +130,10 @@ void BBTorsionSRFD::show( std::ostream &out ) const {
 	}
 
 	// print cartesian coordinates
-	if (has_coordinates()) {
+	if ( has_coordinates() ) {
 		out << F(10, 3, x())
-				<< F(10, 3, y())
-				<< F(10, 3, z());
+			<< F(10, 3, y())
+			<< F(10, 3, z());
 	}
 }
 

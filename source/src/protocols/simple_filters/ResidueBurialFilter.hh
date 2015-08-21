@@ -29,7 +29,7 @@ class ResidueBurialFilter : public filters::Filter
 {
 public:
 	ResidueBurialFilter();
-// SJF 3Sep13	ResidueBurialFilter( core::Size const target_residue, core::Size const neighbors, core::Real const distance_threshold );
+	// SJF 3Sep13 ResidueBurialFilter( core::Size const target_residue, core::Size const neighbors, core::Real const distance_threshold );
 	bool apply( core::pose::Pose const & pose ) const;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	core::Real report_sm( core::pose::Pose const & pose ) const;
@@ -55,7 +55,7 @@ public:
 
 private:
 	std::string residue_; // dflt ""; save as string, parse the actual residue number at apply
-//SJF 3Sep13	core::Size target_residue_;
+	//SJF 3Sep13 core::Size target_residue_;
 	core::Size neighbors_;
 	core::Real distance_threshold_;
 	core::pack::task::TaskFactoryOP task_factory_; /// used to determine which residues to check for burial dynamically. All designable residues will be checked, and if any of them is buried, returns true

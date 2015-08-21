@@ -51,7 +51,7 @@
 
 
 #ifdef WIN32
-	#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.hh>
 #endif
 
 
@@ -78,23 +78,23 @@ void CamShiftEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & e
 	using protocols::evaluation::PoseEvaluatorOP;
 
 
-  if ( option[ OptionKeys::evaluation::cam_shifts ].user() ) {
-    typedef utility::vector1< std::string > CSVector;
-    CSVector const& cs_shifts( option[ OptionKeys::evaluation::cam_shifts ]() );
+	if ( option[ OptionKeys::evaluation::cam_shifts ].user() ) {
+		typedef utility::vector1< std::string > CSVector;
+		CSVector const& cs_shifts( option[ OptionKeys::evaluation::cam_shifts ]() );
 
-    for ( CSVector::const_iterator it=cs_shifts.begin(); it!=cs_shifts.end(); ++it ) {
-      std::string fname( *it );
-      std::string column;
-      ++it;
-      if ( it != cs_shifts.end() ) {
-        column = *it;
-      } else {
-        utility_exit_with_message(
-               "need to specify dupletss <cs_shifts> <column> with option -evaluation:cam_shifts   last read: "+fname );
-      }
-      eval.add_evaluation( PoseEvaluatorOP( new CamShiftEvaluator( column, fname ) ) );
-    }
-  }
+		for ( CSVector::const_iterator it=cs_shifts.begin(); it!=cs_shifts.end(); ++it ) {
+			std::string fname( *it );
+			std::string column;
+			++it;
+			if ( it != cs_shifts.end() ) {
+				column = *it;
+			} else {
+				utility_exit_with_message(
+					"need to specify dupletss <cs_shifts> <column> with option -evaluation:cam_shifts   last read: "+fname );
+			}
+			eval.add_evaluation( PoseEvaluatorOP( new CamShiftEvaluator( column, fname ) ) );
+		}
+	}
 
 }
 

@@ -35,7 +35,7 @@ public:
 	virtual bool apply( core::pose::Pose const & pose ) const;
 	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-  core::Real compute( core::pose::Pose const & pose ) const;
+	core::Real compute( core::pose::Pose const & pose ) const;
 
 	virtual protocols::filters::FilterOP clone() const {
 		return protocols::filters::FilterOP( new ReplicateFilter( *this ) );
@@ -59,7 +59,7 @@ private:
 	core::Size replicates_;
 	core::Size upper_trim_;
 	core::Size lower_trim_;
-  bool median_;
+	bool median_;
 	core::Real threshold_;
 
 };

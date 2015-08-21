@@ -35,21 +35,21 @@ public:
 	typedef utility::factory::WidgetRegistrator< ScoringManager, T > parent;
 public:
 	EnergyMethodRegistrator() : parent() {}
-/*
+	/*
 	{
-		register_with_scoring_manager();
+	register_with_scoring_manager();
 	}
 
-private:
+	private:
 
 	static bool registered_;
-   static void register_with_scoring_manager() {
-		if ( registered_ ) return;
-		/// NOT THREADSAFE!
-		registered_ = true;
-		ScoringManager::get_instance()->factory_register( new T );
+	static void register_with_scoring_manager() {
+	if ( registered_ ) return;
+	/// NOT THREADSAFE!
+	registered_ = true;
+	ScoringManager::get_instance()->factory_register( new T );
 	}
-*/
+	*/
 };
 
 /*template < class T >

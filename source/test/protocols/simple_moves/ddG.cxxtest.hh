@@ -69,28 +69,28 @@ public:
 		ddg_mover.repack_bound( false );
 		ddg_mover.relax_bound( false );
 		ddg_mover.apply( *test_dimer_pose_ );
-    TS_ASSERT_EQUALS( ddg_mover.sum_ddG(), 111 );
+		TS_ASSERT_EQUALS( ddg_mover.sum_ddG(), 111 );
 	}
 
-  void test_filter_parsing_dimer() {
-    basic::datacache::DataMap data;
-    Filters_map filters;
-    Movers_map movers;
+	void test_filter_parsing_dimer() {
+		basic::datacache::DataMap data;
+		Filters_map filters;
+		Movers_map movers;
 
 		prime_Data( data );
 		StubMultiFilterOP sf( new StubMultiFilter( false ) );
 		sf->push_back( 199.0 ); // Bound
 		sf->push_back( 100 ); // Unbound
-    filters["sfT99"] = sf;
+		filters["sfT99"] = sf;
 
-    protocols::simple_moves::ddG testmover;
-    TagCOP tag = tagptr_from_string("<ddG name=test filter=sfT99 />\n");
-    testmover.parse_my_tag( tag, data, filters, movers, *test_dimer_pose_ );
+		protocols::simple_moves::ddG testmover;
+		TagCOP tag = tagptr_from_string("<ddG name=test filter=sfT99 />\n");
+		testmover.parse_my_tag( tag, data, filters, movers, *test_dimer_pose_ );
 
 		testmover.apply( *test_dimer_pose_ );
 
-    TS_ASSERT_EQUALS( testmover.sum_ddG(), 99 );
-  }
+		TS_ASSERT_EQUALS( testmover.sum_ddG(), 99 );
+	}
 
 	void test_use_filter_monomer() {
 		StubMultiFilterOP sf( new StubMultiFilter( false ) );
@@ -104,25 +104,25 @@ public:
 		ddg_mover.repack_bound( false );
 		ddg_mover.relax_bound( false );
 		ddg_mover.apply( *test_monomer_pose_ );
-    TS_ASSERT_EQUALS( ddg_mover.sum_ddG(), 211 );
+		TS_ASSERT_EQUALS( ddg_mover.sum_ddG(), 211 );
 	}
 
-  void test_filter_parsing_monomer() {
-    basic::datacache::DataMap data;
-    Filters_map filters;
-    Movers_map movers;
+	void test_filter_parsing_monomer() {
+		basic::datacache::DataMap data;
+		Filters_map filters;
+		Movers_map movers;
 
 		prime_Data( data );
 		StubMultiFilterOP sf( new StubMultiFilter( false ) );
 		sf->push_back( 199.0 ); // Bound
 		sf->push_back( 100 ); // Unbound
-    filters["sfT99"] = sf;
+		filters["sfT99"] = sf;
 
-    protocols::simple_moves::ddG testmover;
-    TagCOP tag = tagptr_from_string("<ddG name=test filter=sfT99 />\n");
-    testmover.parse_my_tag( tag, data, filters, movers, *test_monomer_pose_ );
+		protocols::simple_moves::ddG testmover;
+		TagCOP tag = tagptr_from_string("<ddG name=test filter=sfT99 />\n");
+		testmover.parse_my_tag( tag, data, filters, movers, *test_monomer_pose_ );
 		testmover.apply( *test_monomer_pose_ );
 
-    TS_ASSERT_EQUALS( testmover.sum_ddG(), 199 );
-  }
+		TS_ASSERT_EQUALS( testmover.sum_ddG(), 199 );
+	}
 };

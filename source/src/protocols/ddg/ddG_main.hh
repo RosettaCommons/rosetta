@@ -12,7 +12,7 @@
 
 
 namespace protocols {
-	int ddG_main();
+int ddG_main();
 }
 
 #endif

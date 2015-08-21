@@ -97,9 +97,9 @@ CenRotPairEnergy::residue_pair_energy(
 	Real const cendist = cen1.xyz().distance( cen2.xyz() );
 
 	// important: the real cutoff is: atomic_interaction_cutoff + nbr_rad1 + nbr_rad2 !!!
-	// maybe not ... use bigger cutoff to be safe 
+	// maybe not ... use bigger cutoff to be safe
 	// check the boundary directly
-	if (cendist<1e-4 || cendist>12.0) return;
+	if ( cendist<1e-4 || cendist>12.0 ) return;
 
 	// accumulate total energies
 	Real pair_score( 0.0 );
@@ -107,7 +107,7 @@ CenRotPairEnergy::residue_pair_energy(
 	Real pair_ang1_score( 0.0 );
 	Real pair_ang2_score( 0.0 );
 	Real pair_dih_score( 0.0 );
-	potential_.evaluate_cen_rot_pair_orientation_score( rsd1, rsd2, cendist, 
+	potential_.evaluate_cen_rot_pair_orientation_score( rsd1, rsd2, cendist,
 		pair_ang1_score, pair_ang2_score, pair_dih_score );
 
 	emap[ cen_rot_pair ] += pair_score;
@@ -117,16 +117,16 @@ CenRotPairEnergy::residue_pair_energy(
 
 void
 CenRotPairEnergy::eval_residue_pair_derivatives(
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData const &,
-		pose::Pose const &,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
-	) const {
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	ResSingleMinimizationData const &,
+	ResSingleMinimizationData const &,
+	ResPairMinimizationData const &,
+	pose::Pose const &,
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< DerivVectorPair > & r2_atom_derivs
+) const {
 	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ) return;
 	if ( rsd1.aa() > core::chemical::num_canonical_aas || rsd2.aa() > core::chemical::num_canonical_aas ) return;
 
@@ -137,7 +137,7 @@ CenRotPairEnergy::eval_residue_pair_derivatives(
 	Vector const atom_y = rsd2.atom(rsd2.nbr_atom()+1).xyz();
 	Real const cendist = atom_x.distance( atom_y );
 
-	if (cendist<1e-4 || cendist>12.0) return;
+	if ( cendist<1e-4 || cendist>12.0 ) return;
 
 	Real dpair_dr(0.0);
 	potential_.evaluate_cen_rot_pair_deriv( rsd1, rsd2, cendist, dpair_dr );
@@ -155,7 +155,7 @@ CenRotPairEnergy::eval_residue_pair_derivatives(
 	r2_atom_derivs[ rsd2.nbr_atom()+1 ].f2() -= f2;
 
 	//orient
-	if (rsd1.aa()==chemical::aa_gly || rsd1.aa()==chemical::aa_ala || rsd2.aa()==chemical::aa_gly || rsd2.aa()==chemical::aa_ala) return;
+	if ( rsd1.aa()==chemical::aa_gly || rsd1.aa()==chemical::aa_ala || rsd2.aa()==chemical::aa_gly || rsd2.aa()==chemical::aa_ala ) return;
 
 	using namespace numeric::deriv;
 
@@ -178,7 +178,7 @@ CenRotPairEnergy::eval_residue_pair_derivatives(
 	r2_atom_derivs[rsd2.nbr_atom()+1].f2() += f2 * dE_dtheta1;
 	Real dis;
 	distance_f1_f2_deriv(atom_x, atom_y, dis, f1, f2);
-debug_assert( dis==cendist );
+	debug_assert( dis==cendist );
 	dE_dr *= weight;
 	r1_atom_derivs[rsd1.nbr_atom()+1].f1() += f1 * dE_dr;
 	r1_atom_derivs[rsd1.nbr_atom()+1].f2() += f2 * dE_dr;
@@ -200,7 +200,7 @@ debug_assert( dis==cendist );
 	r2_atom_derivs[rsd2.nbr_atom()+1].f2() += f2 * dE_dtheta2;
 
 	distance_f1_f2_deriv(atom_x, atom_y, dis, f1, f2);
-debug_assert( dis==cendist );
+	debug_assert( dis==cendist );
 	dE_dr *= weight;
 	r1_atom_derivs[rsd1.nbr_atom()+1].f1() += f1 * dE_dr;
 	r1_atom_derivs[rsd1.nbr_atom()+1].f2() += f2 * dE_dr;

@@ -29,23 +29,24 @@ namespace quota {
 using namespace core;
 
 static thread_local basic::Tracer trQuotaConfig(
-		"protocols.frag_picker.quota.QuotaConfig");
+	"protocols.frag_picker.quota.QuotaConfig");
 
 QuotaConfig::QuotaConfig(std::string file_name) {
 
 	utility::io::izstream data(file_name.c_str());
 	trQuotaConfig.Info << "reading quota config from " << file_name << std::endl;
-	if (!data)
+	if ( !data ) {
 		utility_exit_with_message("[ERROR] Unable to open quota config file: "
-				+ file_name);
+			+ file_name);
+	}
 	std::string line;
 	Size pool_id;
 	Real fraction;
 	std::string pool_name;
-	while (data) {
+	while ( data ) {
 		getline(data, line);
-		if(line[0]=='#') continue;
-		if (line.length() > 7) {
+		if ( line[0]=='#' ) continue;
+		if ( line.length() > 7 ) {
 			std::istringstream line_stream(line);
 			line_stream >> pool_id >> pool_name >> fraction;
 			pool_names_.push_back( pool_name );

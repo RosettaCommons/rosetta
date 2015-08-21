@@ -95,22 +95,22 @@ CHIEnergyFunction::init()
 		string const filepath( "scoring/score_functions/carbohydrates/" );
 		string filename;
 		switch ( type ) {
-			case ALPHA_LINKS:
-				filename = "CHI_energy_function_for_alpha_linkages.params";
-				break;
-			case BETA_LINKS:
-				filename = "CHI_energy_function_for_beta_linkages.params";
-				break;
-			case _2AX_3EQ_4AX_LINKS:
-				filename = "CHI_energy_function_for_2ax_3eq_4ax_linkages.params";
-				break;
-			case _2EQ_3AX_4EQ_LINKS:
-				filename = "CHI_energy_function_for_2eq_3ax_4eq_linkages.params";
-				break;
+		case ALPHA_LINKS :
+			filename = "CHI_energy_function_for_alpha_linkages.params";
+			break;
+		case BETA_LINKS :
+			filename = "CHI_energy_function_for_beta_linkages.params";
+			break;
+		case _2AX_3EQ_4AX_LINKS :
+			filename = "CHI_energy_function_for_2ax_3eq_4ax_linkages.params";
+			break;
+		case _2EQ_3AX_4EQ_LINKS :
+			filename = "CHI_energy_function_for_2eq_3ax_4eq_linkages.params";
+			break;
 		}
 
 		map< char, vector1< Real > > params( read_Gaussian_parameters_from_database_file(
-				basic::database::full_name( filepath + filename ) ) );
+			basic::database::full_name( filepath + filename ) ) );
 		a_[ type ] = params[ 'a' ];
 		b_[ type ] = params[ 'b' ];
 		c_[ type ] = params[ 'c' ];

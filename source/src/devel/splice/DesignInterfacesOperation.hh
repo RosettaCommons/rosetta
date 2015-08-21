@@ -37,7 +37,7 @@ namespace devel {
 namespace splice {
 
 /// @details this class is a TaskOperation to prevent repacking of residues not near an interface.
-    class DesignInterfacesOperation : public protocols::toolbox::task_operations::RestrictOperationsBase
+class DesignInterfacesOperation : public protocols::toolbox::task_operations::RestrictOperationsBase
 {
 public:
 	typedef RestrictOperationsBase parent;
@@ -59,8 +59,9 @@ public:
 
 	void repack_shell( core::Real const repack_shell) {
 		repack_shell_ = repack_shell;
-		if( repack_shell <= design_shell() )
+		if ( repack_shell <= design_shell() ) {
 			design_shell_ = repack_shell;
+		}
 	}
 	core::Real repack_shell() const{ return repack_shell_; }
 

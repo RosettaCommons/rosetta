@@ -100,7 +100,7 @@ public: // Conversion
 	inline
 	operator Key const &() const
 	{
-	debug_assert( key_p_ );
+		debug_assert( key_p_ );
 		return *key_p_;
 	}
 
@@ -109,7 +109,7 @@ public: // Conversion
 	inline
 	operator Key &()
 	{
-	debug_assert( key_p_ );
+		debug_assert( key_p_ );
 		return *key_p_;
 	}
 
@@ -122,7 +122,7 @@ public: // Properties
 	std::string const &
 	id() const
 	{
-	debug_assert( key_p_ );
+		debug_assert( key_p_ );
 		return key_p_->id();
 	}
 
@@ -132,7 +132,7 @@ public: // Properties
 	std::string &
 	id()
 	{
-	debug_assert( key_p_ );
+		debug_assert( key_p_ );
 		return key_p_->id();
 	}
 
@@ -142,7 +142,7 @@ public: // Properties
 	VariantKey &
 	id( std::string const & id_a )
 	{
-	debug_assert( key_p_ );
+		debug_assert( key_p_ );
 		key_p_->id( id_a );
 		return *this;
 	}
@@ -153,7 +153,7 @@ public: // Properties
 	std::string const &
 	identifier() const
 	{
-	debug_assert( key_p_ );
+		debug_assert( key_p_ );
 		return key_p_->identifier();
 	}
 
@@ -163,7 +163,7 @@ public: // Properties
 	std::string &
 	identifier()
 	{
-	debug_assert( key_p_ );
+		debug_assert( key_p_ );
 		return key_p_->identifier();
 	}
 
@@ -173,7 +173,7 @@ public: // Properties
 	VariantKey &
 	identifier( std::string const & identifier_a )
 	{
-	debug_assert( key_p_ );
+		debug_assert( key_p_ );
 		key_p_->identifier( identifier_a );
 		return *this;
 	}
@@ -184,7 +184,7 @@ public: // Properties
 	std::string const &
 	code() const
 	{
-	debug_assert( key_p_ );
+		debug_assert( key_p_ );
 		return key_p_->code();
 	}
 
@@ -194,7 +194,7 @@ public: // Properties
 	std::string &
 	code()
 	{
-	debug_assert( key_p_ );
+		debug_assert( key_p_ );
 		return key_p_->code();
 	}
 
@@ -204,7 +204,7 @@ public: // Properties
 	VariantKey &
 	code( std::string const & code_a )
 	{
-	debug_assert( key_p_ );
+		debug_assert( key_p_ );
 		key_p_->code( code_a );
 		return *this;
 	}
@@ -216,7 +216,7 @@ public: // Properties
 	Index
 	private_index() const
 	{
-	debug_assert( key_p_ );
+		debug_assert( key_p_ );
 		return key_p_->private_index();
 	}
 
@@ -226,7 +226,7 @@ public: // Properties
 	Key const &
 	operator ()() const
 	{
-	debug_assert( key_p_ );
+		debug_assert( key_p_ );
 		return *key_p_;
 	}
 
@@ -236,7 +236,7 @@ public: // Properties
 	Key &
 	operator ()()
 	{
-	debug_assert( key_p_ );
+		debug_assert( key_p_ );
 		return *key_p_;
 	}
 
@@ -283,7 +283,7 @@ private: // Conversion
 	inline
 	operator Index() const
 	{
-	debug_assert( key_p_ );
+		debug_assert( key_p_ );
 		return key_p_->index();
 	}
 

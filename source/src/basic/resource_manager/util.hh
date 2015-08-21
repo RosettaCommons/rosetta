@@ -42,7 +42,7 @@ get_resource(
 	utility::pointer::shared_ptr< ResourceType > resource(
 		utility::pointer::dynamic_pointer_cast< ResourceType > ( ResourceManager::get_instance()->get_resource(resource_description) ));
 
-	if(!resource){
+	if ( !resource ) {
 		stringstream err_msg;
 		err_msg
 			<< "The '" << resource_description << "' "

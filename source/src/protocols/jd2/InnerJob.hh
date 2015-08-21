@@ -57,13 +57,13 @@ public:
 	/// @brief ctor.  Note that it takes only the input tag and max nstruct,
 	/// pose instantiation is deferred until the pose is needed
 	InnerJob( core::pose::PoseCOP, std::string const & input_tag, core::Size nstruct_max );
-	
+
 	/// @brief Copy constructor.
 	///
 	InnerJob( InnerJob const &src );
 
 	virtual ~InnerJob();
-	
+
 	/// @brief Return an owning pointer to a copy of this object.
 	///
 	InnerJobOP clone() const;

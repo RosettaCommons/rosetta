@@ -30,66 +30,66 @@
 
 static thread_local basic::Tracer TR( "DatabaseEntryWorkUnit" );
 
-namespace protocols{
-namespace wum{
+namespace protocols {
+namespace wum {
 
 using namespace std;
 
 DatabaseEntryWorkUnit::DatabaseEntryWorkUnit(utility::sql_database::sessionOP db_session):
-db_session_(db_session)
+	db_session_(db_session)
 {}
 
 DatabaseEntryWorkUnit::DatabaseEntryWorkUnit( std::map<std::string,std::string> row_map ):
-WorkUnitBase(),
-row_map_(row_map)
+	WorkUnitBase(),
+	row_map_(row_map)
 {}
 
 void
 DatabaseEntryWorkUnit::serialize(){
-    
-    TR << "Serializing db entry data" << endl;
-    
-    //serialize the row map using commas to separate column name and value and a forward slash to separate columns
-    string data("");
-    for( map<string,string>::const_iterator it = row_map_.begin();
-        it != row_map_.end(); ++it){
-                
-        data += it->first + "," + it->second + "/";
-    }
-    
-    //Add the results_query_string_ data to the end of the serial data separate by a pipe
-    data+="|" + result_query_string_;
-    serial_data() = data;
+
+	TR << "Serializing db entry data" << endl;
+
+	//serialize the row map using commas to separate column name and value and a forward slash to separate columns
+	string data("");
+	for ( map<string,string>::const_iterator it = row_map_.begin();
+			it != row_map_.end(); ++it ) {
+
+		data += it->first + "," + it->second + "/";
+	}
+
+	//Add the results_query_string_ data to the end of the serial data separate by a pipe
+	data+="|" + result_query_string_;
+	serial_data() = data;
 }
 
 void
 DatabaseEntryWorkUnit::deserialize(){
-    const std::string data(serial_data());
-    
-    TR << "De-serializing db entry data" << endl;
-    
-    //split between the serialized row map data and the query string
-    utility::vector1< std::string > tokens = utility::string_split(data, '|');
-    if(tokens.size() != 2){
-        utility_exit_with_message("Error: DatabaseEntryWorkUnit failed to deserialize");
-    }
-    result_query_string_=tokens[2];
-    
-    //deserialize the map
-    utility::vector1< std::string > entries = utility::string_split(tokens[1], '/');
-    
-    TR << "Total columns: " << entries.size() << endl;
-    
-    for(Size i=0; i<entries.size(); ++i){
-        if(!entries[i].empty()){
-        	utility::vector1< std::string > key_values = utility::string_split(entries[i], ',');
-            if(key_values.size() != 2){
-                utility_exit_with_message("Error: DatabaseEntryWorkUnit failed to deserialize the results map");
-            }
-            row_map_[key_values[0]] = key_values[1];
-        }
-    }
+	const std::string data(serial_data());
+
+	TR << "De-serializing db entry data" << endl;
+
+	//split between the serialized row map data and the query string
+	utility::vector1< std::string > tokens = utility::string_split(data, '|');
+	if ( tokens.size() != 2 ) {
+		utility_exit_with_message("Error: DatabaseEntryWorkUnit failed to deserialize");
+	}
+	result_query_string_=tokens[2];
+
+	//deserialize the map
+	utility::vector1< std::string > entries = utility::string_split(tokens[1], '/');
+
+	TR << "Total columns: " << entries.size() << endl;
+
+	for ( Size i=0; i<entries.size(); ++i ) {
+		if ( !entries[i].empty() ) {
+			utility::vector1< std::string > key_values = utility::string_split(entries[i], ',');
+			if ( key_values.size() != 2 ) {
+				utility_exit_with_message("Error: DatabaseEntryWorkUnit failed to deserialize the results map");
+			}
+			row_map_[key_values[0]] = key_values[1];
+		}
+	}
 }
-    
+
 }//namespace wum
 }//namespace protocols

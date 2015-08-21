@@ -84,12 +84,12 @@ AngleConstraint::read_def(
 	ConstraintIO::parse_residue( pose, tempres2, res2 );
 	ConstraintIO::parse_residue( pose, tempres3, res3 );
 
-	TRACER.Debug 	<< "read: " << name1 << " " << name2 << " " << name3 << " "
-								<< res1 << " " << res2 << " " << res3 << " func: " << func_type
-								<< std::endl;
+	TRACER.Debug  << "read: " << name1 << " " << name2 << " " << name3 << " "
+		<< res1 << " " << res2 << " " << res3 << " func: " << func_type
+		<< std::endl;
 	if ( res1 > pose.total_residue() || res2 > pose.total_residue() || res3 > pose.total_residue() ) {
-		TRACER.Warning 	<< "ignored constraint (no such atom in pose!)"
-										<< name1 << " " << name2 << " " << res1 << " " << res2 << std::endl;
+		TRACER.Warning  << "ignored constraint (no such atom in pose!)"
+			<< name1 << " " << name2 << " " << res1 << " " << res2 << std::endl;
 		data.setstate( std::ios_base::failbit );
 		return;
 	}
@@ -99,9 +99,9 @@ AngleConstraint::read_def(
 	atom3_ = id::AtomID( pose.residue(res3).atom_index(name3), res3 );
 	if ( atom1_.atomno() == 0 || atom2_.atomno() == 0 || atom3_.atomno() == 0 ) {
 		TRACER.Warning << "Error reading atoms: read in atom names("
-									 << name1 << "," << name2 << "," << name3 << "), "
-									 << "and found AtomIDs (" << atom1_ << "," << atom2_ << "," << atom3_ << ")"
-									 << std::endl;
+			<< name1 << "," << name2 << "," << name3 << "), "
+			<< "and found AtomIDs (" << atom1_ << "," << atom2_ << "," << atom3_ << ")"
+			<< std::endl;
 		data.setstate( std::ios_base::failbit );
 		return;
 	}
@@ -110,7 +110,7 @@ AngleConstraint::read_def(
 	func_->read_data( data );
 
 	//chu skip the rest of line since this is a single line defintion.
-	while( data.good() && (data.get() != '\n') ) {}
+	while ( data.good() && (data.get() != '\n') ) {}
 
 	if ( TRACER.Debug.visible() ) {
 		func_->show_definition( std::cout );
@@ -150,15 +150,15 @@ AngleConstraint::remapped_clone( pose::Pose const& src, pose::Pose const& dest, 
 bool
 AngleConstraint::operator == ( Constraint const & other_cst ) const
 {
-	if( !dynamic_cast< AngleConstraint const * > ( &other_cst ) ) return false;
+	if ( !dynamic_cast< AngleConstraint const * > ( &other_cst ) ) return false;
 
 	AngleConstraint const & other( static_cast< AngleConstraint const & > (other_cst) );
 
-	if( atom1_ != other.atom1_ ) return false;
-	if( atom2_ != other.atom2_ ) return false;
-	if( atom3_ != other.atom3_ ) return false;
-	if( func_ != other.func_ ) return false;
-	if( this->score_type() != other.score_type() ) return false;
+	if ( atom1_ != other.atom1_ ) return false;
+	if ( atom2_ != other.atom2_ ) return false;
+	if ( atom3_ != other.atom3_ ) return false;
+	if ( func_ != other.func_ ) return false;
+	if ( this->score_type() != other.score_type() ) return false;
 
 	return true;
 }
@@ -275,22 +275,22 @@ AngleConstraint::p1_theta_deriv(
 	f2 *= dtheta_dx;
 
 	// translation of p1 along v1 or perpendicular to v1 and v2 ==> deriv=0
-debug_assert( f1.distance( cross(f2,p1) ) < 1e-3 && // see helper fcn
-					std::abs( dot( f2, v1 ) ) < 1e-3 &&
-					std::abs( dot( f2, cross( v1, v2 ) ) ) < 1e-3 );
+	debug_assert( f1.distance( cross(f2,p1) ) < 1e-3 && // see helper fcn
+		std::abs( dot( f2, v1 ) ) < 1e-3 &&
+		std::abs( dot( f2, cross( v1, v2 ) ) ) < 1e-3 );
 
 
 	{ // more debugging
 		// pretend axis = u2, R_phi = p2
 		ASSERT_ONLY(Vector const u_phi( v2.normalized() );)
-		ASSERT_ONLY(Vector const R_phi( p2 );)
-		ASSERT_ONLY(Real const deriv = - dot( u_phi, f1 ) - dot( cross( u_phi, R_phi ), f2);)
-	debug_assert( std::abs( deriv ) < 1e-3 );
+			ASSERT_ONLY(Vector const R_phi( p2 );)
+			ASSERT_ONLY(Real const deriv = - dot( u_phi, f1 ) - dot( cross( u_phi, R_phi ), f2);)
+			debug_assert( std::abs( deriv ) < 1e-3 );
 		//std::cout << "deriv: " << deriv<< ' ' <<
-		//	F(9,3,u_phi(1)) << F(9,3,u_phi(2)) << F(9,3,u_phi(3)) << ' ' <<
-		//	F(9,3,R_phi(1)) << F(9,3,R_phi(2)) << F(9,3,R_phi(3)) << "\nF1,F2: " <<
-		//	F(9,3,f1(1)) << F(9,3,f1(2)) << F(9,3,f1(3)) << ' ' <<
-		//	F(9,3,f2(1)) << F(9,3,f2(2)) << F(9,3,f2(3)) << std::endl;
+		// F(9,3,u_phi(1)) << F(9,3,u_phi(2)) << F(9,3,u_phi(3)) << ' ' <<
+		// F(9,3,R_phi(1)) << F(9,3,R_phi(2)) << F(9,3,R_phi(3)) << "\nF1,F2: " <<
+		// F(9,3,f1(1)) << F(9,3,f1(2)) << F(9,3,f1(3)) << ' ' <<
+		// F(9,3,f2(1)) << F(9,3,f2(2)) << F(9,3,f2(3)) << std::endl;
 	}
 
 
@@ -335,7 +335,7 @@ AngleConstraint::p1_deriv(
 	Real const dE_dtheta = dfunc( theta );
 
 	//std::cout << "dE_dtheta_p1_deriv: " << dE_dtheta << ' ' <<
-	//	f1(1) << ' ' << f1(2) << ' ' << f1(3) << std::endl;
+	// f1(1) << ' ' << f1(2) << ' ' << f1(3) << std::endl;
 
 	F1 += dE_dtheta * f1;
 	F2 += dE_dtheta * f2;
@@ -369,7 +369,7 @@ AngleConstraint::p2_deriv(
 
 	// translation of p2 atom perpendicular to plane ==> deriv = 0
 	//std::cout << "p2 deriv check: " << std::endl;
-debug_assert( std::abs( dot( f2, cross( v1,v2) ) ) < 1e-3 );
+	debug_assert( std::abs( dot( f2, cross( v1,v2) ) ) < 1e-3 );
 
 	Real d( dot(v1,v2) / v12 );
 	Real const tol(0.001);
@@ -386,7 +386,7 @@ debug_assert( std::abs( dot( f2, cross( v1,v2) ) ) < 1e-3 );
 
 
 	//std::cout << "dE_dtheta_p2_deriv: " << dE_dtheta << ' ' <<
-	//	f1(1) << ' ' << f1(2) << ' ' << f1(3) << std::endl;
+	// f1(1) << ' ' << f1(2) << ' ' << f1(3) << std::endl;
 
 	F1 += -1.0f * dE_dtheta * f1;
 	F2 += -1.0f * dE_dtheta * f2;
@@ -406,7 +406,7 @@ AngleConstraint::fill_f1_f2(
 	func::XYZ_Func const & xyz,
 	Vector & F1,
 	Vector & F2,
- 	EnergyMap const & weights
+	EnergyMap const & weights
 ) const {
 
 	Vector unweighted_F1(0.);
@@ -434,27 +434,27 @@ ConstraintOP
 AngleConstraint::remap_resid(
 	core::id::SequenceMapping const & seqmap
 ) const {
-  if ( seqmap[atom1_.rsd()] != 0 && seqmap[atom2_.rsd()] != 0 && seqmap[atom3_.rsd()] != 0 ) {
-    AtomID remap_a1( atom1_.atomno(), seqmap[atom1_.rsd()] ),
-      remap_a2( atom2_.atomno(), seqmap[atom2_.rsd()] ),
+	if ( seqmap[atom1_.rsd()] != 0 && seqmap[atom2_.rsd()] != 0 && seqmap[atom3_.rsd()] != 0 ) {
+		AtomID remap_a1( atom1_.atomno(), seqmap[atom1_.rsd()] ),
+			remap_a2( atom2_.atomno(), seqmap[atom2_.rsd()] ),
 			remap_a3( atom3_.atomno(), seqmap[atom3_.rsd()] );
-    return ConstraintOP( new AngleConstraint( remap_a1, remap_a2, remap_a3, this->func_ ) );
-  } else {
-    return NULL;
-  }
+		return ConstraintOP( new AngleConstraint( remap_a1, remap_a2, remap_a3, this->func_ ) );
+	} else {
+		return NULL;
+	}
 }
 
 id::AtomID const &
 AngleConstraint::atom( Size const n ) const
 {
 	switch( n ) {
-	case 1:
+	case 1 :
 		return atom1_;
-	case 2:
+	case 2 :
 		return atom2_;
-	case 3:
+	case 3 :
 		return atom3_;
-	default:
+	default :
 		utility_exit_with_message( "AngleConstraint::atom() bad argument" );
 	}
 	return atom1_;
@@ -470,11 +470,11 @@ Size AngleConstraint::show_violations(
 	Real threshold
 ) const {
 	conformation::Conformation const & conformation( pose.conformation() );
-	if (verbose_level > 80) {
+	if ( verbose_level > 80 ) {
 		out << "AngleConstraint ("
-				<< pose.residue_type(atom1_.rsd() ).atom_name( atom1_.atomno() ) << ":" << atom1_.atomno() << "," << atom1_.rsd() << "-"
-				<< pose.residue_type(atom2_.rsd() ).atom_name( atom2_.atomno() ) << ":" << atom2_.atomno() << "," << atom2_.rsd() << "-"
-				<< pose.residue_type(atom3_.rsd() ).atom_name( atom3_.atomno() ) << ":" << atom3_.atomno() << "," << atom3_.rsd() << ") ";
+			<< pose.residue_type(atom1_.rsd() ).atom_name( atom1_.atomno() ) << ":" << atom1_.atomno() << "," << atom1_.rsd() << "-"
+			<< pose.residue_type(atom2_.rsd() ).atom_name( atom2_.atomno() ) << ":" << atom2_.atomno() << "," << atom2_.rsd() << "-"
+			<< pose.residue_type(atom3_.rsd() ).atom_name( atom3_.atomno() ) << ":" << atom3_.atomno() << "," << atom3_.rsd() << ") ";
 	};
 
 	// compute angle

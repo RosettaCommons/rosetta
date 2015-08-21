@@ -82,12 +82,12 @@
 #include <iostream>
 #include <fstream>
 
-namespace devel{
-namespace domain_assembly{
+namespace devel {
+namespace domain_assembly {
 
 RedesignDomainAssemblyMover::RedesignDomainAssemblyMover()
 {
-// basic initialization here
+	// basic initialization here
 }
 
 RedesignDomainAssemblyMover::~RedesignDomainAssemblyMover() {}
@@ -96,20 +96,24 @@ RedesignDomainAssemblyMover::apply( core::pose::Pose & pose )
 {
 	initialize();
 
-	if( basic::options::option[ basic::options::OptionKeys::DomainAssembly::run_centroid ]() )
+	if ( basic::options::option[ basic::options::OptionKeys::DomainAssembly::run_centroid ]() ) {
 		run_centroid_stage( pose );
+	}
 
-	if( get_last_move_status() != protocols::moves::MS_SUCCESS ) return;
+	if ( get_last_move_status() != protocols::moves::MS_SUCCESS ) return;
 
-	if( basic::options::option[ basic::options::OptionKeys::DomainAssembly::run_centroid_abinitio ]() )
+	if ( basic::options::option[ basic::options::OptionKeys::DomainAssembly::run_centroid_abinitio ]() ) {
 		run_abinitio_centroid_stage( pose );
+	}
 
-	if( basic::options::option[ basic::options::OptionKeys::DomainAssembly::run_fullatom ]() )
+	if ( basic::options::option[ basic::options::OptionKeys::DomainAssembly::run_fullatom ]() ) {
 		run_fullatom_relax( pose );
+	}
 
-	if( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() )
+	if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 		evaluate_pose( pose );
 	}
+}
 
 protocols::moves::MoverOP
 RedesignDomainAssemblyMover::clone() const
@@ -133,15 +137,16 @@ RedesignDomainAssemblyMover::get_name() const
 void
 RedesignDomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 {
-// This is a part of Oana's original protocol refactored to use the ResidueSelector Framework and to
-// redesign residues in the interface. However, the newly implemented version using FastRelax
-// or side chain minimization while ramping up fa_rep
+	// This is a part of Oana's original protocol refactored to use the ResidueSelector Framework and to
+	// redesign residues in the interface. However, the newly implemented version using FastRelax
+	// or side chain minimization while ramping up fa_rep
 
 	// recover sidechains if pose has been loaded from centriod PDB...
 	// rather check if pose is in centroid mode and try recovering sidechains.
-	if( basic::options::option[ basic::options::OptionKeys::DomainAssembly::da_start_pdb ].user() )
+	if ( basic::options::option[ basic::options::OptionKeys::DomainAssembly::da_start_pdb ].user() ) {
 		recover_sidechains( pose );
- 	// otherwise warn about inserting random sidechains
+	}
+	// otherwise warn about inserting random sidechains
 
 	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 
@@ -152,13 +157,13 @@ RedesignDomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 	using namespace core::pack::task::operation;
 	using residue_selector::ResidueSelectorOP;
 	using residue_selector::ResidueSelectorCOP;
-	
+
 	residue_selector::NotResidueSelectorOP not_rs( new core::pack::task::residue_selector::NotResidueSelector );
 	residue_selector::OrResidueSelectorOP or_rs( new core::pack::task::residue_selector::OrResidueSelector );
 
-	 // add all possible interdomain interfaces to the ORResidueSelector for repacking
-	for( core::Size ii = 0; ii < domain_definitions.size(); ++ii ) {
-		for( core::Size jj = ii+1; jj < domain_definitions.size(); ++jj ) {
+	// add all possible interdomain interfaces to the ORResidueSelector for repacking
+	for ( core::Size ii = 0; ii < domain_definitions.size(); ++ii ) {
+		for ( core::Size jj = ii+1; jj < domain_definitions.size(); ++jj ) {
 			residue_selector::InterGroupInterfaceByVectorSelectorOP vector_rs( new residue_selector::InterGroupInterfaceByVectorSelector );
 			vector_rs->group1_resstring( domain_definitions[ii] );
 			vector_rs->group2_resstring( domain_definitions[jj] );
@@ -247,9 +252,10 @@ void RedesignDomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) 
 
 	// recover sidechains if pose has been loaded from centriod PDB...
 	// rather check if pose is in centroid mode and try recovering sidechains.
-	if( basic::options::option[ basic::options::OptionKeys::DomainAssembly::da_start_pdb ].user() )
+	if ( basic::options::option[ basic::options::OptionKeys::DomainAssembly::da_start_pdb ].user() ) {
 		recover_sidechains( pose );
- 	// otherwise warn about inserting random sidechains
+	}
+	// otherwise warn about inserting random sidechains
 
 	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 
@@ -260,8 +266,8 @@ void RedesignDomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) 
 	residue_selector::OrResidueSelectorOP interface_or_linker_rs( new core::pack::task::residue_selector::OrResidueSelector );
 
 	// add all possible interdomain interfaces to the ORResidueSelector for repacking
-	for( core::Size ii = 0; ii < domain_definitions.size(); ++ii ) {
-		for( core::Size jj = ii+1; jj < domain_definitions.size(); ++jj ) {
+	for ( core::Size ii = 0; ii < domain_definitions.size(); ++ii ) {
+		for ( core::Size jj = ii+1; jj < domain_definitions.size(); ++jj ) {
 			residue_selector::InterGroupInterfaceByVectorSelectorOP vector_rs( new residue_selector::InterGroupInterfaceByVectorSelector );
 			vector_rs->group1_resstring( domain_definitions[ii] );
 			vector_rs->group2_resstring( domain_definitions[jj] );
@@ -292,17 +298,17 @@ void RedesignDomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) 
 	// allow minimazion of residues in the linker and the interdomain interface
 	core::kinematics::MoveMapOP movemap_local( new core::kinematics::MoveMap( move_map() ) );
 	movemap_local->set_chi( to_repack );
-//	protocols::relax::FastRelaxOP frlx = new protocols::relax::FastRelax( scorefxn, 5);
-//	frlx->set_movemap( movemap_local );
-//	frlx->apply( pose );
+	// protocols::relax::FastRelaxOP frlx = new protocols::relax::FastRelax( scorefxn, 5);
+	// frlx->set_movemap( movemap_local );
+	// frlx->apply( pose );
 
- // Poor man's relax: Minimization, pack_rotamers, while ramping up fa_rep energy term
+	// Poor man's relax: Minimization, pack_rotamers, while ramping up fa_rep energy term
 	core::Size outer_iterations = 4;
 	core::Size inner_iterations = 10;
 	core::Real final_fa_rep = 0.44;
 
-	for( Size i_outer = 1; i_outer <= outer_iterations; ++i_outer ) {
-		for( Size i_inner = 1; i_inner <= inner_iterations; ++i_inner ) {
+	for ( Size i_outer = 1; i_outer <= outer_iterations; ++i_outer ) {
+		for ( Size i_inner = 1; i_inner <= inner_iterations; ++i_inner ) {
 			core::Real fa_rep_weight = ( 0.1 + 0.9/(inner_iterations-1) * (i_inner-1) ) * final_fa_rep;
 			scorefxn->set_weight( core::scoring::fa_rep , fa_rep_weight );
 			to_repack = interface_or_linker_rs->apply( pose );
@@ -335,26 +341,33 @@ void RedesignDomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) 
 void
 RedesignDomainAssemblyMover::initialize()
 {
-	if ( ! movemap_set() )
+	if ( ! movemap_set() ) {
 		initialize_movemap_from_commandline();
+	}
 
-	if ( ! fragsets_set() )
+	if ( ! fragsets_set() ) {
 		initialize_fragments_from_commandline();
+	}
 
-	if ( basic::options::option [ basic::options::OptionKeys::DomainAssembly::da_eval_pose_map ].user() )
+	if ( basic::options::option [ basic::options::OptionKeys::DomainAssembly::da_eval_pose_map ].user() ) {
 		initialize_pose_map_from_commandline();
+	}
 
-	if ( target_pose().empty() && basic::options::option[ basic::options::OptionKeys::in::file::native ].user() )
+	if ( target_pose().empty() && basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 		initialize_target_pose();
+	}
 
-	if ( starting_pose().empty() && basic::options::option[ basic::options::OptionKeys::DomainAssembly::da_start_pdb ].user() )
+	if ( starting_pose().empty() && basic::options::option[ basic::options::OptionKeys::DomainAssembly::da_start_pdb ].user() ) {
 		initialize_start_pose_from_commandline();
+	}
 
-	if( buried_residues().empty() && basic::options::option[ basic::options::OptionKeys::DomainAssembly::da_require_buried ].user() )
+	if ( buried_residues().empty() && basic::options::option[ basic::options::OptionKeys::DomainAssembly::da_require_buried ].user() ) {
 		initialize_buried_from_commandline();
+	}
 
-	if( residues_to_repack_only_.empty() && basic::options::option[ basic::options::OptionKeys::DomainAssembly::residues_repack_only ].user() )
+	if ( residues_to_repack_only_.empty() && basic::options::option[ basic::options::OptionKeys::DomainAssembly::residues_repack_only ].user() ) {
 		residues_to_repack_only_ = basic::options::option[ basic::options::OptionKeys::DomainAssembly::residues_repack_only ]();
+	}
 }
 
 } // namespace domain_assembly

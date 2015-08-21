@@ -252,7 +252,7 @@ send_doubles_to_node(
 
 int
 mpi_rank() {
-	if(SimulateMPI::simulate_mpi()){
+	if ( SimulateMPI::simulate_mpi() ) {
 		return SimulateMPI::mpi_rank();
 	} else {
 		int return_val( 0 );
@@ -264,7 +264,7 @@ mpi_rank() {
 int
 mpi_nprocs()
 {
-	if (SimulateMPI::simulate_mpi()){
+	if ( SimulateMPI::simulate_mpi() ) {
 		return SimulateMPI::mpi_nprocs();
 	} else {
 		int return_val( 0 );
@@ -275,7 +275,7 @@ mpi_nprocs()
 int
 receive_integer_from_anyone()
 {
-	if(SimulateMPI::simulate_mpi()){
+	if ( SimulateMPI::simulate_mpi() ) {
 		return SimulateMPI::receive_integer_from_anyone();
 	} else {
 		int return_val = 0;
@@ -288,7 +288,7 @@ std::string
 receive_string_from_node(
 	int source
 ) {
-	if(SimulateMPI::simulate_mpi()){
+	if ( SimulateMPI::simulate_mpi() ) {
 		return SimulateMPI::receive_string_from_node(source);
 	} else {
 		std::string return_val;
@@ -301,7 +301,7 @@ send_string_to_node(
 	int destination,
 	std::string const & message)
 {
-	if(SimulateMPI::simulate_mpi()){
+	if ( SimulateMPI::simulate_mpi() ) {
 		SimulateMPI::send_string_to_node(destination, message);
 	} else {
 		return;
@@ -312,7 +312,7 @@ char
 receive_char_from_node(
 	int source
 ) {
-	if(SimulateMPI::simulate_mpi()){
+	if ( SimulateMPI::simulate_mpi() ) {
 		return SimulateMPI::receive_char_from_node(source);
 	} else {
 		char return_val = 0;
@@ -325,7 +325,7 @@ send_char_to_node(
 	int destination,
 	char message)
 {
-	if(SimulateMPI::simulate_mpi()){
+	if ( SimulateMPI::simulate_mpi() ) {
 		SimulateMPI::send_char_to_node(destination, message);
 	} else {
 		return;
@@ -336,7 +336,7 @@ int
 receive_integer_from_node(
 	int source
 ) {
-	if(SimulateMPI::simulate_mpi()){
+	if ( SimulateMPI::simulate_mpi() ) {
 		return SimulateMPI::receive_integer_from_node(source);
 	} else {
 		int return_val = 0;
@@ -349,7 +349,7 @@ send_integer_to_node(
 	int destination,
 	int message)
 {
-	if(SimulateMPI::simulate_mpi()){
+	if ( SimulateMPI::simulate_mpi() ) {
 		SimulateMPI::send_integer_to_node(destination, message);
 	} else {
 		return;
@@ -360,7 +360,7 @@ utility::vector1< int >
 receive_integers_from_node(
 	int source
 ) {
-	if(SimulateMPI::simulate_mpi()){
+	if ( SimulateMPI::simulate_mpi() ) {
 		return SimulateMPI::receive_integers_from_node(source);
 	} else {
 		utility::vector1< int > return_val;
@@ -373,7 +373,7 @@ send_integers_to_node(
 	int destination,
 	utility::vector1< int > const & message)
 {
-	if(SimulateMPI::simulate_mpi()){
+	if ( SimulateMPI::simulate_mpi() ) {
 		SimulateMPI::send_integers_to_node(destination, message);
 	} else {
 		return;
@@ -385,7 +385,7 @@ double
 receive_double_from_node(
 	int source
 ) {
-	if(SimulateMPI::simulate_mpi()){
+	if ( SimulateMPI::simulate_mpi() ) {
 		return SimulateMPI::receive_double_from_node(source);
 	} else {
 		double return_val = 0;
@@ -398,7 +398,7 @@ send_double_to_node(
 	int destination,
 	double message)
 {
-	if(SimulateMPI::simulate_mpi()){
+	if ( SimulateMPI::simulate_mpi() ) {
 		SimulateMPI::send_double_to_node(destination, message);
 	} else {
 		return;
@@ -409,7 +409,7 @@ utility::vector1< double >
 receive_doubles_from_node(
 	int source
 ) {
-	if(SimulateMPI::simulate_mpi()){
+	if ( SimulateMPI::simulate_mpi() ) {
 		return SimulateMPI::receive_doubles_from_node(source);
 	} else {
 		utility::vector1< double > return_val;
@@ -422,7 +422,7 @@ send_doubles_to_node(
 	int destination,
 	utility::vector1< double > const & message)
 {
-	if(SimulateMPI::simulate_mpi()){
+	if ( SimulateMPI::simulate_mpi() ) {
 		SimulateMPI::send_doubles_to_node(destination, message);
 	} else {
 		return;

@@ -88,7 +88,7 @@ public: // typedefs
 	typedef std::pair< Interval, String > OriginalInterval2DesignString;
 	typedef utility::vector1< OriginalInterval2DesignString > DesignInfo;
 
-//parser fabio
+	//parser fabio
 	typedef utility::tag::TagCOP TagCOP;
 	typedef protocols::filters::Filters_map Filters_map;
 	typedef basic::datacache::DataMap DataMap;
@@ -142,25 +142,25 @@ public: // virtual constructors
 
 public: // accessors
 
-/*
+	/*
 	/// @brief use full-mer fragments when building the loop? (default false)
 	inline
 	bool use_fullmer() const {
-		return use_fullmer_;
+	return use_fullmer_;
 	}
 
 
 	/// @brief use sequence biased fragments when building the loop? (default false)
 	inline
 	bool use_sequence_bias() const {
-		return use_sequence_bias_;
+	return use_sequence_bias_;
 	}
 
 
 	/// @brief the maximum allowed linear chainbreak (default 0.07)
 	inline
 	Real max_linear_chainbreak() const {
-		return max_linear_chainbreak_;
+	return max_linear_chainbreak_;
 	}
 
 
@@ -170,7 +170,7 @@ public: // accessors
 	///  recognizes or the "RemodelLoopMover"
 	inline
 	String const & centroid_loop_mover_str() const {
-		return centroid_loop_mover_str_;
+	return centroid_loop_mover_str_;
 	}
 
 
@@ -178,7 +178,7 @@ public: // accessors
 	///  repacks during the design phase (default true)
 	inline
 	bool redesign_loop_neighborhood() const {
-		return redesign_loop_neighborhood_;
+	return redesign_loop_neighborhood_;
 	}
 
 
@@ -186,16 +186,16 @@ public: // accessors
 	///  implies no resfile
 	inline
 	String const & resfile() const {
-		return resfile_;
+	return resfile_;
 	}
 
 
 	/// @brief the number of design-refine cycles to perform, default 3
 	inline
 	Size dr_cycles() const {
-		return dr_cycles_;
+	return dr_cycles_;
 	}
-*/
+	*/
 
 	/// @brief the centroid level score function, default "remodel_cen"
 	ScoreFunction const & centroid_scorefunction() const;
@@ -217,31 +217,31 @@ public: // mutators
 	///  e.g. the insertion character for SegmentInsert
 	/*
 	void add_instruction(
-		BuildInstructionOP bi,
-		String const & aa_during_design_refine = String()
+	BuildInstructionOP bi,
+	String const & aa_during_design_refine = String()
 	);
 
 
 	/// @brief create directed dependency between two instructions
 	void create_directed_dependency(
-		BuildInstructionOP u,
-		BuildInstructionOP v
+	BuildInstructionOP u,
+	BuildInstructionOP v
 	);
-*/
-/*
+	*/
+	/*
 	/// @brief use full-mer fragments when building the loop?
 	inline
 	void use_fullmer( bool const flag ) {
-		use_fullmer_ = flag;
+	use_fullmer_ = flag;
 	}
 
 
 	/// @brief use sequence biased fragments when building the loop? (default false)
 	inline
 	void use_sequence_bias( bool const flag ) {
-		use_sequence_bias_ = flag;
+	use_sequence_bias_ = flag;
 	}
-*/
+	*/
 
 	/// @brief the maximum allowed linear chainbreak
 	inline
@@ -266,14 +266,14 @@ public: // mutators
 		redesign_loop_neighborhood_ = flag;
 	}
 
-/*
+	/*
 	/// @brief name of the resfile to use during design-refine; empty string
 	///  implies no resfile
 	inline
 	void resfile( String const & filename ) {
-		resfile_ = filename;
+	resfile_ = filename;
 	}
-*/
+	*/
 	/// @brief set the number of design-refine cycles to perform
 	/// @remarks set this to 0 to skip design-refine
 	inline
@@ -358,12 +358,12 @@ private: // protocol methods
 
 	bool design_refine_seq_relax(
 		Pose & pose,
-	  RemodelDesignMover & designMover
+		RemodelDesignMover & designMover
 	);
 
 	bool design_refine_cart_relax(
 		Pose & pose,
-	  RemodelDesignMover & designMover
+		RemodelDesignMover & designMover
 	);
 
 
@@ -475,21 +475,21 @@ private: // data
 	String blueprint_;
 
 
-    //For parsing rosetta scripts input
-    bool rosetta_scripts_quick_and_dirty_ ;
-    bool rosetta_scripts_build_disulfide_ ;
-    bool rosetta_scripts_fast_disulfide_ ;
-    bool rosetta_scripts_bypass_fragments_ ;
-    core::Real rosetta_scripts_match_rt_limit_ ;
-    Size rosetta_scripts_min_disulfides_ ;
+	//For parsing rosetta scripts input
+	bool rosetta_scripts_quick_and_dirty_ ;
+	bool rosetta_scripts_build_disulfide_ ;
+	bool rosetta_scripts_fast_disulfide_ ;
+	bool rosetta_scripts_bypass_fragments_ ;
+	core::Real rosetta_scripts_match_rt_limit_ ;
+	Size rosetta_scripts_min_disulfides_ ;
 	Size rosetta_scripts_max_disulfides_ ;
-    bool rosetta_scripts_include_current_ds_ ;
-    bool rosetta_scripts_keep_current_ds_ ;
+	bool rosetta_scripts_include_current_ds_ ;
+	bool rosetta_scripts_keep_current_ds_ ;
 	Size rosetta_scripts_min_loop_ ;
 	bool rosetta_scripts_ ;
 	//for saving results from multiple runs
 	core::pose::PoseOP last_input_pose_;
-	
+
 	forge::remodel::RemodelAccumulator accumulator_;
 	bool relax_bb_for_disulf_;
 	bool use_match_rt_ ;
@@ -497,51 +497,51 @@ private: // data
 	core::Real disulf_fa_max_ ;
 
 
-struct instruction_flags {
-	Size num_trajectory;
-	Size num_report ;
-	Size num_frag_moves;
-	bool nojumps_;
-	bool automatic_;
-	bool use_bp_seq_; // use blueprint sequence for fragment picking
-	bool randomize_equiv_frag_; // randomize identical scoring fragments, otherwise will get the same top 'n' fragments each time
-	bool has_ligand_;
-	bool no_repack_;
-	bool fast_build_;
-	bool backrub_;
-	bool help_;
-	bool checkpoint_;
-	bool rigid_min_;
-	bool no_design_;
-	bool no_frags_;
-	bool matchingFrags_;
-	bool use_ccd_refine_;
-	bool pose_relax_;
-	bool allow_chi_during_relax_;
-	bool pose_frag_moves_;
-	bool dsspSS_;
-	bool inserting_pdb_;
-	bool neighbor_design_;
-	bool rank_by_bsasa_;
-	bool neighbor_repack_;
-	bool skip_ccd_moves_;
-	bool rigid_segment_in_refinement_;
-	bool staged_manual_design_;
-	bool use_ccd_trim_;
-	Real ccd_cutoff_;
+	struct instruction_flags {
+		Size num_trajectory;
+		Size num_report ;
+		Size num_frag_moves;
+		bool nojumps_;
+		bool automatic_;
+		bool use_bp_seq_; // use blueprint sequence for fragment picking
+		bool randomize_equiv_frag_; // randomize identical scoring fragments, otherwise will get the same top 'n' fragments each time
+		bool has_ligand_;
+		bool no_repack_;
+		bool fast_build_;
+		bool backrub_;
+		bool help_;
+		bool checkpoint_;
+		bool rigid_min_;
+		bool no_design_;
+		bool no_frags_;
+		bool matchingFrags_;
+		bool use_ccd_refine_;
+		bool pose_relax_;
+		bool allow_chi_during_relax_;
+		bool pose_frag_moves_;
+		bool dsspSS_;
+		bool inserting_pdb_;
+		bool neighbor_design_;
+		bool rank_by_bsasa_;
+		bool neighbor_repack_;
+		bool skip_ccd_moves_;
+		bool rigid_segment_in_refinement_;
+		bool staged_manual_design_;
+		bool use_ccd_trim_;
+		Real ccd_cutoff_;
 
-	/// @brief use full-mer fragments when building the loop? (default false)
-	bool use_fullmer_;
+		/// @brief use full-mer fragments when building the loop? (default false)
+		bool use_fullmer_;
 
-	// added by Nobu
-	bool silent_;
-	bool output_fragfiles_;
-	bool read_fragfiles_;
+		// added by Nobu
+		bool silent_;
+		bool output_fragfiles_;
+		bool read_fragfiles_;
 
-	String cstfile_;
-	String insert_pdb_;
-	String prefix_;
-};
+		String cstfile_;
+		String insert_pdb_;
+		String prefix_;
+	};
 
 private: // per-stage movers
 

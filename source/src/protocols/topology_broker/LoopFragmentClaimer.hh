@@ -69,12 +69,12 @@ public:
 		return "LoopFragmentClaimer";
 	}
 
-	virtual moves::MoverOP get_mover(	core::pose::Pose const& /*pose*/ ) const {
+	virtual moves::MoverOP get_mover( core::pose::Pose const& /*pose*/ ) const {
 		return NULL; //override FragmentClaimer functionality
 	}
 
 	core::fragment::FragSetCOP loop_frags( core::kinematics::MoveMap& movemap) const;
-	// {	virtual void loop_frags( core::fragment::FragSet& ) const;
+	// { virtual void loop_frags( core::fragment::FragSet& ) const;
 
 }; //class LoopFragmentClaimer
 

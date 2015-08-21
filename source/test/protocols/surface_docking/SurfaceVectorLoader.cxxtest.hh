@@ -44,13 +44,13 @@ public:
 		std::string surf_vec_file2( "-28.188  33.809   3.201\n-46.450  30.380   6.325\n-31.129  24.953   4.699\n" );
 		std::istringstream lstream( surf_vec_file );
 		std::istringstream lstream2( surf_vec_file2);
-		
+
 		protocols::loops::LoopsFileOptions opts;
-		
+
 
 		utility::pointer::ReferenceCountOP resource = loader.create_resource( opts, "unit_test", lstream );
 		utility::pointer::ReferenceCountOP resource2 = loader.create_resource( opts, "unit_test", lstream2 );
-		
+
 		TS_ASSERT( resource ); // make sure a resource was returned
 
 		SurfaceParametersOP spptr = utility::pointer::dynamic_pointer_cast< protocols::surface_docking::SurfaceParameters > ( resource );
@@ -63,7 +63,7 @@ public:
 		TS_ASSERT( lfd[ 1 ].end_res().pose_index() == 4 );
 		TS_ASSERT( lfd[ 2 ].start_res().pose_index() == 5 );
 		TS_ASSERT( lfd[ 2 ].end_res().pose_index() == 7 );
-		 */
+		*/
 	}
 
 

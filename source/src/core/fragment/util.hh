@@ -36,57 +36,57 @@ namespace core {
 namespace fragment {
 
 core::kinematics::Stub getxform(numeric::xyzVector<core::Real> m1,
-                                numeric::xyzVector<core::Real> m2,
-                                numeric::xyzVector<core::Real> m3,
-                                numeric::xyzVector<core::Real> f1,
-                                numeric::xyzVector<core::Real> f2,
-                                numeric::xyzVector<core::Real> f3);
+	numeric::xyzVector<core::Real> m2,
+	numeric::xyzVector<core::Real> m3,
+	numeric::xyzVector<core::Real> f1,
+	numeric::xyzVector<core::Real> f2,
+	numeric::xyzVector<core::Real> f3);
 
 void xform_pose(core::pose::Pose& pose,
-                const core::kinematics::Stub& s,
-                core::Size sres = 1,
-                core::Size eres = 0);
+	const core::kinematics::Stub& s,
+	core::Size sres = 1,
+	core::Size eres = 0);
 
 /// @brief Removes all but the top <k> fragments from <fragments>
 void retain_top(core::Size k, FragSetOP fragments);
 
 void steal_constant_length_frag_set_from_pose (
-  core::pose::Pose const & pose, core::fragment::ConstantLengthFragSet & fragset
+	core::pose::Pose const & pose, core::fragment::ConstantLengthFragSet & fragset
 );
 
 void steal_frag_set_from_pose(
-  pose::Pose const & pose_in,
-  FragSet & fragset,
-  core::fragment::FragDataCOP frag_type
+	pose::Pose const & pose_in,
+	FragSet & fragset,
+	core::fragment::FragDataCOP frag_type
 );
 
 void steal_frag_set_from_pose (
-  pose::Pose const& pose_in,
-  Size const begin,
-  Size const end,
-  FragSet& fragset,
-  core::fragment::FragDataCOP frag_type
+	pose::Pose const& pose_in,
+	Size const begin,
+	Size const end,
+	FragSet& fragset,
+	core::fragment::FragDataCOP frag_type
 );
 
 void steal_frag_set_from_pose(
-  pose::Pose const & pose_in,
-  FragSet & fragset,
-  core::fragment::FragDataCOP frag_type,
-  std::set< core::Size > const& active_residues
+	pose::Pose const & pose_in,
+	FragSet & fragset,
+	core::fragment::FragDataCOP frag_type,
+	std::set< core::Size > const& active_residues
 );
 
 /// @brief Function for chopping the X-sized fragments in source into fragments that
 /// go into N-sized fragments in dest. Sizes are encoded by the value of
 /// max_frag_length() in both source and dest.
 void chop_fragments(
-  core::fragment::FragSet & source, core::fragment::FragSet & dest
+	core::fragment::FragSet & source, core::fragment::FragSet & dest
 );
 
 // undocumented function which passes variables around by reference for no obviou
 // reason. Awesome.
 void compute_per_residue_coverage(
-  core::fragment::FragSet const & frags,
-  utility::vector1< core::Size > & nr_frags
+	core::fragment::FragSet const & frags,
+	utility::vector1< core::Size > & nr_frags
 );
 
 // create new FragSet ( same type as good_frags ) and fill up with frags from
@@ -100,27 +100,27 @@ void flatten_list( FrameList & frames, FragID_List& frag_ids );
 /// best scoring one into the pose, i.e. quenches the frame
 void
 apply_best_scoring_fragdata(
-  pose::Pose & pose,
-  Frame const & frame,
-  scoring::ScoreFunction const & sfxn
+	pose::Pose & pose,
+	Frame const & frame,
+	scoring::ScoreFunction const & sfxn
 );
 
 /// @brief writes FragData in multimodel pdb format
 /// start_tag can be used to only write a subset
 /// of the contained frag data
 void dump_frames_as_pdb(
-  pose::Pose const & pose,
-  utility::vector1< FrameOP > const & frames,
-  std::string const & filename,
-  core::Size start_frag = 1
+	pose::Pose const & pose,
+	utility::vector1< FrameOP > const & frames,
+	std::string const & filename,
+	core::Size start_frag = 1
 );
 
 /// @brief filling a frameset from a multimodel pdb file
 /// @brief returns true if no error occured
 bool fill_template_frames_from_pdb(
-  pose::Pose const & pose,
-  utility::vector1< FrameOP > const & template_frames,
-  std::string const & filename
+	pose::Pose const & pose,
+	utility::vector1< FrameOP > const & template_frames,
+	std::string const & filename
 );
 
 void read_std_frags_from_cmd( FragSetOP& fragset_large, FragSetOP& fragset_small );
@@ -136,7 +136,7 @@ fragment_set_slice ( ConstantLengthFragSetOP & fragset, Size const & min_res, Si
 
 void
 fragment_set_slice( core::fragment::ConstantLengthFragSetOP & fragset,
-										utility::vector1< core::Size > const & slice_res );
+	utility::vector1< core::Size > const & slice_res );
 
 void
 make_pose_from_frags( pose::Pose & pose, std::string sequence, utility::vector1<FragDataCOP> frags, bool chains = false );

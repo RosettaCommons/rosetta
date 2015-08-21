@@ -100,7 +100,7 @@ public: // mutator
 	void set_angle_sigma2( Real const r ) { angle_sigma2_ = r; }
 
 	/// @brief set bend angle
-	void set_bendangle( Real r ) {	bend_angle_ = r; }
+	void set_bendangle( Real r ) { bend_angle_ = r; }
 
 
 public: // useful functions

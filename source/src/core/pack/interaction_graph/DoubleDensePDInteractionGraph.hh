@@ -74,12 +74,12 @@ public:
 	// <directed_design>
 	/* void project_deltaE_for_substitution
 	(
-		int alternate_state,
-		core::PackerEnergy & deltaE_unweighted,
-		core::PackerEnergy & prevE_unweighted,
-		core::PackerEnergy & deltaE_weighted,
-		core::PackerEnergy & prevE_weighted,
-		ObjexxFCL::FArray2D< core::PackerEnergy > const& weights
+	int alternate_state,
+	core::PackerEnergy & deltaE_unweighted,
+	core::PackerEnergy & prevE_unweighted,
+	core::PackerEnergy & deltaE_weighted,
+	core::PackerEnergy & prevE_weighted,
+	ObjexxFCL::FArray2D< core::PackerEnergy > const& weights
 	); */
 
 	//core::PackerEnergy get_weighted_energy_with_higher_indexed_nodes(ObjexxFCL::FArray2D< core::PackerEnergy > const& weights) const;
@@ -117,7 +117,7 @@ public:
 	int & get_file_states_2_instance_states_array();
 
 	bool get_node_corresponded_to_file_node();
-	 */
+	*/
 
 	virtual unsigned int count_static_memory() const;
 	virtual unsigned int count_dynamic_memory() const;
@@ -198,9 +198,9 @@ public:
 	core::PackerEnergy get_current_two_body_energy();
 
 	void acknowledge_state_change(
-			int node_ind,
-			int new_state,
-			core::PackerEnergy & new_energy
+		int node_ind,
+		int new_state,
+		core::PackerEnergy & new_energy
 	);
 	void acknowledge_state_zeroed( int node_ind );
 
@@ -361,16 +361,16 @@ DoubleDensePDNode::project_deltaE_for_substitution(
 	}
 	int const altstate_offset = rotamer_energies_.index( 1, alternate_state_ ) - 1;
 
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii) {
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		alternate_state_two_body_energies_[ ii ] = rotamer_energies_[
 			altstate_offset + neighbors_curr_state_plus_offset_[ ii ] ];
 		//alternate_state_total_energy_ += alternate_state_two_body_energies_[ ii ];
 		//std::cerr << " edge " << ii << " E= " << alternate_state_two_body_energies_[ ii ];
 	}
 
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii) {
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		//alternate_state_two_body_energies_[ ii ] = rotamer_energies_[
-		//	altstate_offset + neighbors_curr_state_plus_offset_[ ii ] ];
+		// altstate_offset + neighbors_curr_state_plus_offset_[ ii ] ];
 		alternate_state_total_energy_ += alternate_state_two_body_energies_[ ii ];
 		//std::cerr << " edge " << ii << " E= " << alternate_state_two_body_energies_[ ii ];
 	}
@@ -384,9 +384,9 @@ DoubleDensePDNode::project_deltaE_for_substitution(
 /// @brief updates bookkeeping arrays for when a neighbor has changed its state
 ///
 /// @param edge_to_altered_neighbor - [in] - the index for the edge that connects
-/// 	this node to the node that just changed its state
+///  this node to the node that just changed its state
 /// @param new_edge_energ - [in] - the pair energy between this node in its current
-///	state and the new state of the node that just changed its state
+/// state and the new state of the node that just changed its state
 /// @param other_node_new_state - [in] - the state the neighbor just adopted
 inline
 void DoubleDensePDNode::acknowledge_neighbors_state_substitution(
@@ -410,7 +410,7 @@ void DoubleDensePDNode::acknowledge_neighbors_state_substitution(
 /// @param first_node_alt_state - [in] - the alternate state for the lower-indexed node
 /// @param second_node_orig_state - [in] - the current state for the higher-indexed node
 /// @param edge_energy_table - [in] - the proxy FArray pointing at the edge table
-/// 	connecting the two nodes.
+///  connecting the two nodes.
 inline
 core::PackerEnergy
 DoubleDensePDEdge::get_alternate_state_energy(
@@ -419,7 +419,7 @@ DoubleDensePDEdge::get_alternate_state_energy(
 	ObjexxFCL::FArray2< core::PackerEnergy > & edge_energy_table
 )
 {
-	if (first_node_state == 0 || second_node_state == 0) {
+	if ( first_node_state == 0 || second_node_state == 0 ) {
 		return 0.0f;
 	} else {
 		return edge_energy_table( second_node_state, first_node_state );
@@ -448,8 +448,8 @@ DoubleDensePDEdge::acknowledge_substitution(
 	curr_state_energy_ = curr_state_energy;
 
 	get_dpd_node( node_not_substituted )->
-	acknowledge_neighbors_state_substitution
-	(
+		acknowledge_neighbors_state_substitution
+		(
 		get_edges_position_in_nodes_edge_vector( node_not_substituted ),
 		curr_state_energy_,
 		nodes_new_state

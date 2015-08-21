@@ -79,7 +79,7 @@ get_max_centroid_to_atom_distance( utility::vector1 < core::conformation::Residu
 	runtime_assert( rsd_at_origin_list.size() >= 1 );
 
 	Real max_distance = 0;
-	for ( Size n = 1; n <= rsd_at_origin_list.size(); n++ ){
+	for ( Size n = 1; n <= rsd_at_origin_list.size(); n++ ) {
 		Residue const & rsd_at_origin = ( *rsd_at_origin_list[n] );
 		numeric::xyzVector< core::Real > const centroid = core::chemical::rna::get_rna_base_centroid( rsd_at_origin, false ); //optimize by returning this by reference? Apr 10, 2010
 
@@ -99,11 +99,11 @@ get_max_centroid_to_atom_distance( utility::vector1 < core::conformation::Residu
 // hope to be able to deprecate this soon.
 void
 initialize_xyz_parameters( Distance & max_distance,
-													 Distance & max_distance_squared,
-													 int & centroid_bin_min,
-													 int & centroid_bin_max,
-													 utility::vector1< core::conformation::ResidueOP > const & moving_rsd_at_origin_list,
-													 Size const gap_size_to_anchor ){
+	Distance & max_distance_squared,
+	int & centroid_bin_min,
+	int & centroid_bin_max,
+	utility::vector1< core::conformation::ResidueOP > const & moving_rsd_at_origin_list,
+	Size const gap_size_to_anchor ){
 
 	// Wait, this really should depend on identities of bases. Hmm.
 	// Anyway will soon be replaced with a 'fixed' max_distance. -- rhiju, feb. 2014
@@ -112,7 +112,7 @@ initialize_xyz_parameters( Distance & max_distance,
 	Distance const Max_O3_to_C5_DIST = ( gap_size_to_anchor == 0 ) ? O3I_C5I_PLUS_ONE_MAX_DIST : O3I_C5I_PLUS_TWO_MAX_DIST;
 
 	// If not user specified, give theoretical maximum dist between the two base's centroid, +1 is to be lenient
-	if ( max_distance == 0.0 )	max_distance = Max_O3_to_C5_DIST + C5_centroid_dist + O5_centroid_dist + 1.0;
+	if ( max_distance == 0.0 ) max_distance = Max_O3_to_C5_DIST + C5_centroid_dist + O5_centroid_dist + 1.0;
 	max_distance_squared = max_distance * max_distance;
 
 	centroid_bin_min = int(  - max_distance/STANDARD_CENTROID_BIN_SIZE );
@@ -150,7 +150,7 @@ setup_pose_with_moving_residue_alternative_list(
 		PoseOP pose_clone = pose.clone();
 		sampler.apply( *pose_clone );
 		pose_clone_list.push_back( pose_clone );
-		//		break; // DO NOT CHECK IN! Used to check performance hit with > 1 moving_rsd
+		//  break; // DO NOT CHECK IN! Used to check performance hit with > 1 moving_rsd
 	}
 	return pose_clone_list;
 }
@@ -159,19 +159,19 @@ setup_pose_with_moving_residue_alternative_list(
 int
 DOF_bin_value( std::map< BaseBin, int, compare_base_bin > ::const_iterator const & base_bin_it, std::string const & DOF ){
 
-	if ( DOF == "x" ){
+	if ( DOF == "x" ) {
 		return base_bin_it->first.centroid_x;
-	} else if ( DOF == "y" ){
+	} else if ( DOF == "y" ) {
 		return base_bin_it->first.centroid_y;
-	} else if ( DOF == "z" ){
+	} else if ( DOF == "z" ) {
 		return base_bin_it->first.centroid_z;
-	} else if ( DOF == "alpha" ){
+	} else if ( DOF == "alpha" ) {
 		return base_bin_it->first.euler_alpha;
-	} else if ( DOF == "euler_z" ){
+	} else if ( DOF == "euler_z" ) {
 		return base_bin_it->first.euler_z;
-	} else if ( DOF == "gamma" ){
+	} else if ( DOF == "gamma" ) {
 		return base_bin_it->first.euler_gamma;
-	} else{
+	} else {
 		utility_exit_with_message( "Invalid DOF = " + DOF );
 		exit( 1 ); //prevent compiler warning
 	}
@@ -181,13 +181,13 @@ DOF_bin_value( std::map< BaseBin, int, compare_base_bin > ::const_iterator const
 Real
 DOF_bin_size( std::string const & DOF ){
 
-	if ( DOF == "x" || DOF == "y" || DOF == "z" ){
+	if ( DOF == "x" || DOF == "y" || DOF == "z" ) {
 		return STANDARD_CENTROID_BIN_SIZE;
-	} else if ( DOF == "alpha" || DOF == "gamma" ){
+	} else if ( DOF == "alpha" || DOF == "gamma" ) {
 		return STANDARD_EULER_ANGLE_BIN_SIZE;
-	} else if ( DOF == "euler_z" ){
+	} else if ( DOF == "euler_z" ) {
 		return STANDARD_EULER_Z_BIN_SIZE;
-	} else{
+	} else {
 		utility_exit_with_message( "Invalid DOF = " + DOF );
 		exit( 1 ); //prevent compiler warning
 	}
@@ -206,7 +206,7 @@ analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bi
 	int total_count = 0;
 	int total_occupied_bin = 0;
 
-	for ( base_bin_it = base_bin_map.begin(), end = base_bin_map.end(); base_bin_it != end; ++base_bin_it ){
+	for ( base_bin_it = base_bin_map.begin(), end = base_bin_map.end(); base_bin_it != end; ++base_bin_it ) {
 
 		total_occupied_bin++;
 		total_count = total_count + base_bin_it->second;
@@ -215,9 +215,9 @@ analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bi
 
 		count_density_it = count_density_map.find( DOF_pair );
 
-		if ( count_density_it == count_density_map.end() ){
+		if ( count_density_it == count_density_map.end() ) {
 			count_density_map[DOF_pair] = 1;
-		} else{
+		} else {
 			count_density_it->second++;
 		}
 	}
@@ -238,7 +238,7 @@ analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bi
 	int DOF_two_bin_max = 0;
 	int DOF_two_bin_min = 0;
 
-	for ( count_density_it = count_density_map.begin(), cdend = count_density_map.end(); count_density_it != cdend; ++count_density_it ){
+	for ( count_density_it = count_density_map.begin(), cdend = count_density_map.end(); count_density_it != cdend; ++count_density_it ) {
 		int const & DOF_one_bin_value = count_density_it->first.first;
 		int const & DOF_two_bin_value = count_density_it->first.second;
 
@@ -249,8 +249,8 @@ analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bi
 
 	}
 
-	for ( int DOF_one_bin_value = ( DOF_one_bin_min - 5 ); DOF_one_bin_value < ( DOF_one_bin_max + 5 ); DOF_one_bin_value++ ){
-		for ( int DOF_two_bin_value = ( DOF_two_bin_min - 5 ); DOF_two_bin_value < ( DOF_two_bin_max + 5 ); DOF_two_bin_value++ ){
+	for ( int DOF_one_bin_value = ( DOF_one_bin_min - 5 ); DOF_one_bin_value < ( DOF_one_bin_max + 5 ); DOF_one_bin_value++ ) {
+		for ( int DOF_two_bin_value = ( DOF_two_bin_min - 5 ); DOF_two_bin_value < ( DOF_two_bin_max + 5 ); DOF_two_bin_value++ ) {
 
 			Real const DOF_one_value = DOF_one_bin_value * DOF_bin_size( DOF_one );
 			Real const DOF_two_value = DOF_two_bin_value * DOF_bin_size( DOF_two );
@@ -259,9 +259,9 @@ analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bi
 			std::pair < int, int > const & DOF_pair = std::make_pair( DOF_one_bin_value, DOF_two_bin_value );
 			count_density_it = count_density_map.find( DOF_pair );
 
-			if ( count_density_it == count_density_map.end() ){
+			if ( count_density_it == count_density_map.end() ) {
 				occupied_bin_count = 0;
-			} else{
+			} else {
 				occupied_bin_count = count_density_it->second;
 			}
 

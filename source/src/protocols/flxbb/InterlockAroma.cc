@@ -47,8 +47,8 @@
 #include <core/graph/Graph.hh>
 static thread_local basic::Tracer TR( "protocols.flxbb.InterlockAroma" );
 
-namespace protocols{
-namespace flxbb{
+namespace protocols {
+namespace flxbb {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 std::string
@@ -83,9 +83,9 @@ InterlockAroma::InterlockAroma() :
 
 /// @brief copy constructor
 InterlockAroma::InterlockAroma( InterlockAroma const & rval ) :
-  Super( rval ),
+	Super( rval ),
 	scorefxn_( rval.scorefxn_ ),
- 	input_ss_ ( rval.input_ss_ ),
+	input_ss_ ( rval.input_ss_ ),
 	max_repulsion_energy_( rval.max_repulsion_energy_ ),
 	min_env_energy_( rval.min_env_energy_ ),
 	limit_aroma_chi2_( rval.limit_aroma_chi2_ ),
@@ -134,7 +134,7 @@ InterlockAroma::apply( Pose & pose )
 
 	// set secondary structure
 	String ss("");
-	if( ! input_ss_.empty() ) {
+	if ( ! input_ss_.empty() ) {
 		ss = input_ss_;
 		runtime_assert( input_ss_.length() == pose.total_residue() );
 	} else {
@@ -145,7 +145,7 @@ InterlockAroma::apply( Pose & pose )
 
 	// create packer task
 	TaskFactory taskf;
-	if( limit_aroma_chi2_ ) {  // default is true
+	if ( limit_aroma_chi2_ ) {  // default is true
 		taskf.push_back( core::pack::task::operation::TaskOperationOP( new LimitAromaChi2Operation ) );
 	}
 	PackerTaskOP ptask( taskf.create_task_and_apply_taskoperations( pose ) );
@@ -168,10 +168,10 @@ InterlockAroma::apply( Pose & pose )
 
 	// set search residue types to packer task
 	InterlockingAromaFilter ilfilter;
-	for( Size ii=1; ii<=polyala_pose.total_residue(); ++ii ) {
+	for ( Size ii=1; ii<=polyala_pose.total_residue(); ++ii ) {
 
 		// skip residues of strands
-		if( ss.at( ii-1 ) != 'L' && ss.at( ii-1 ) != 'H' ) continue;
+		if ( ss.at( ii-1 ) != 'L' && ss.at( ii-1 ) != 'H' ) continue;
 
 		// set packer task
 		utility::vector1<bool> restrict_to_aa( core::chemical::num_canonical_aas, false );
@@ -186,7 +186,7 @@ InterlockAroma::apply( Pose & pose )
 		rotset->build_rotamers( polyala_pose, *scorefxn_, *ptask, core::graph::GraphCOP( core::graph::GraphOP( new core::graph::Graph( polyala_pose.total_residue() ) ) ), false );
 
 		Size rotnum( 0 );
-		for( Rotamers::const_iterator rotamer = rotset->begin(); rotamer != rotset->end(); ++rotamer ) {
+		for ( Rotamers::const_iterator rotamer = rotset->begin(); rotamer != rotset->end(); ++rotamer ) {
 
 			rotnum++;
 			Pose work_pose( polyala_pose );
@@ -201,25 +201,25 @@ InterlockAroma::apply( Pose & pose )
 
 			// evaluate clash
 			Real dfarep = farepE_mut - farepE_ref;
-			if( dfarep > max_repulsion_energy_ ) continue;
+			if ( dfarep > max_repulsion_energy_ ) continue;
 
 			// evaluate buriedness
 			Real denvE = envE_mut - envE_ref;
-			if( denvE > min_env_energy_ ) continue;
+			if ( denvE > min_env_energy_ ) continue;
 
 			// evaluate vdw attraction
 			Real dfaatrE = faatrE_mut - faatrE_ref;
 
-			if( ilfilter.compute( ii, work_pose, ssinfo ) ) {
+			if ( ilfilter.compute( ii, work_pose, ssinfo ) ) {
 
-				if( output_pdbs_ ) {
+				if ( output_pdbs_ ) {
 					filename.str("");
 					filename << "interlock_" << ii << "." << rotnum << ".pdb";
 					work_pose.dump_pdb( filename.str() );
 				}
 
-				if( verbose_ ) {
-					 TR << ii << " " << rotnum << " " << dfarep << " " << denvE << " " << dfaatrE << std::endl;
+				if ( verbose_ ) {
+					TR << ii << " " << rotnum << " " << dfarep << " " << denvE << " " << dfaatrE << std::endl;
 				}
 
 			}
@@ -252,8 +252,8 @@ InterlockAroma::parse_my_tag(
 	TR << "max_repulsion_energy: " << max_repulsion_energy_ << ", min_env_energy: " << min_env_energy_ <<  std::endl;
 
 	// read secondary structure info through blueprint
- 	std::string const blueprint( tag->getOption<std::string>( "blueprint", "" ) );
-	if( blueprint != "" ){
+	std::string const blueprint( tag->getOption<std::string>( "blueprint", "" ) );
+	if ( blueprint != "" ) {
 		protocols::jd2::parser::BluePrintOP bop( new protocols::jd2::parser::BluePrint( blueprint ) );
 		input_ss_ = bop->secstruct();
 	}

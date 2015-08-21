@@ -115,16 +115,16 @@ give_dihedral_index(
 ) {
 	// for all characters from uniqs that are earlier than this residue's
 	// add 2 or 3 depending on if those uniqs are for alphas or betas
-	
+
 	Size index = 1;
-	
+
 	for ( Size i = 1; i < n; ++i ) {
 		for ( Size j = 0; j < dihedral_pattern.length(); ++j ) {
 			if ( dihedral_pattern[j] == uniqs[i] ) {
-				if (alpha_beta_pattern[j] == 'A' || alpha_beta_pattern[j]=='P' ) {
+				if ( alpha_beta_pattern[j] == 'A' || alpha_beta_pattern[j]=='P' ) {
 					// it's an alpha
 					index += 2;
-				} else if (alpha_beta_pattern[j] == 'B' ) {
+				} else if ( alpha_beta_pattern[j] == 'B' ) {
 					index += 3;
 				}
 				j = dihedral_pattern.length();
@@ -163,7 +163,7 @@ ncbb_design_main_loop( Size loop_num, Size pert_num, core::pose::Pose pose, Tria
 		mc->reset(pose);
 
 		// pert loop
-		for( Size j = 1; j <= pert_num; ++j ) {
+		for ( Size j = 1; j <= pert_num; ++j ) {
 			TR << "PERTURB: " << k << " / "  << j << std::endl;
 			pert_trial->apply( pose );
 		}
@@ -180,7 +180,7 @@ ncbb_design_main_loop( Size loop_num, Size pert_num, core::pose::Pose pose, Tria
 		allowed_aas[aa_gly] = false;
 		allowed_aas[aa_pro] = false;
 
-		for (Size i=1; i<=pep_start-1; i++) {
+		for ( Size i=1; i<=pep_start-1; i++ ) {
 			//TR << "  not designed" << std::endl;
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			task->nonconst_residue_task(i).initialize_from_command_line();
@@ -189,15 +189,14 @@ ncbb_design_main_loop( Size loop_num, Size pert_num, core::pose::Pose pose, Tria
 		//kdrew: internal indexing for chain
 		Size pos = 0;
 		// Set which residues can be designed
-		for (Size i=pep_start; i<=pep_end; i++) {
+		for ( Size i=pep_start; i<=pep_end; i++ ) {
 			pos++;
 			TR << "position " << pos << std::endl;
-			if ( designable_positions.end() == find(designable_positions.begin(), designable_positions.end(), pos )) {
+			if ( designable_positions.end() == find(designable_positions.begin(), designable_positions.end(), pos ) ) {
 				TR << "  not designed" << std::endl;
 				task->nonconst_residue_task(i).restrict_to_repacking();
 				task->nonconst_residue_task(i).initialize_from_command_line();
-			}
-			else {
+			} else {
 				TR << "  designed" << std::endl;
 				bool temp = allowed_aas[pose.residue(i).aa()];
 				allowed_aas[pose.residue(i).aa()] = true;
@@ -232,35 +231,35 @@ void
 final_design_min( core::pose::Pose & pose, ScoreFunctionOP score_fxn_, core::pack::task::TaskFactoryOP desn_tf ) {
 	// get packer task from task factory
 	PackerTaskOP final_desn_pt( desn_tf->create_task_and_apply_taskoperations( pose ) );
-	
+
 	// add extra chi and extra chi cut off to pt
 	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 		final_desn_pt->nonconst_residue_task( i ).or_ex1( true );
 		final_desn_pt->nonconst_residue_task( i ).or_ex2( true );
 		final_desn_pt->nonconst_residue_task( i ).and_extrachi_cutoff( 0 );
 	}
-	
+
 	// create a pack rotamers mover for the final design
 	simple_moves::PackRotamersMoverOP final_desn_pr( new simple_moves::PackRotamersMover(score_fxn_, final_desn_pt, 10 ) );
 	//final_desn_pr->packer_task( final_desn_pt );
 	//final_desn_pr->score_function( score_fxn );
 	//final_desn_pr->nloop( 10 );
-	
+
 	// design with final pr mover
 	final_desn_pr->apply( pose );
-	
+
 	// create move map for minimization
 	kinematics::MoveMapOP final_min_mm( new kinematics::MoveMap() );
 	final_min_mm->set_bb( true );
 	final_min_mm->set_chi( true );
 	final_min_mm->set_jump( 1, true );
-	
+
 	// create minimization mover
-	simple_moves::MinMoverOP final_min( new simple_moves::MinMover( final_min_mm, score_fxn_, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
+	simple_moves::MinMoverOP final_min( new simple_moves::MinMover( final_min_mm, score_fxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 	// final min (okay to use ta min here)
 	final_min->apply( pose );
 }
-	
+
 void
 calculate_statistics( protocols::jd2::JobOP curr_job, core::pose::Pose pose, core::scoring::ScoreFunctionOP score_fxn ) {
 
@@ -324,7 +323,7 @@ calculate_statistics( protocols::jd2::JobOP curr_job, core::pose::Pose pose, cor
 	separate_min_mm->set_jump( 1, true );
 
 	// create minimization mover
-	simple_moves::MinMoverOP separate_min( new simple_moves::MinMover( separate_min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
+	simple_moves::MinMoverOP separate_min( new simple_moves::MinMover( separate_min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 	// final min (okay to use ta min here)
 	separate_min->apply( repack_stats_pose );
 
@@ -413,7 +412,7 @@ setup_pert_foldtree(
 void
 setup_filter_stats() {
 	/*********************************************************************************************************************
-		 Filter / Stats Setup
+	Filter / Stats Setup
 	*********************************************************************************************************************/
 
 	// create and register sasa calculator
@@ -439,115 +438,137 @@ init_common_options( utility::tag::TagCOP tag, basic::datacache::DataMap &data, 
 
 	if ( tag->hasOption( "scorefxn" ) ) {
 		std::string const scorefxn_key( tag->getOption< std::string >( "scorefxn" ) );
-		if ( ! data.has( "scorefxns", scorefxn_key ) )
+		if ( ! data.has( "scorefxns", scorefxn_key ) ) {
 			throw utility::excn::EXCN_RosettaScriptsOption( "ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap.");
+		}
 		score_fxn_ = data.get_ptr< ScoreFunction >( "scorefxns", scorefxn_key );
 	}
 
-	if ( tag->hasOption( "mc_temp" ) )
+	if ( tag->hasOption( "mc_temp" ) ) {
 		mc_temp_ = tag->getOption< Real >( "mc_temp", mc_temp_ );
-	else
+	} else {
 		mc_temp_ = 1.0;
+	}
 
-	if ( tag->hasOption( "pert_mc_temp" ) )
+	if ( tag->hasOption( "pert_mc_temp" ) ) {
 		pert_mc_temp_ = tag->getOption< Real >( "pert_mc_temp", pert_mc_temp_ );
-	else
+	} else {
 		pert_mc_temp_ = 0.8;
+	}
 
-	if ( tag->hasOption( "pert_dock_rot_mag" ) )
+	if ( tag->hasOption( "pert_dock_rot_mag" ) ) {
 		pert_dock_rot_mag_ = tag->getOption< Real >( "pert_dock_rot_mag", pert_dock_rot_mag_ );
-	else
+	} else {
 		pert_dock_rot_mag_ = 1.0;
+	}
 
-	if ( tag->hasOption( "pert_dock_trans_mag" ) )
+	if ( tag->hasOption( "pert_dock_trans_mag" ) ) {
 		pert_dock_trans_mag_ = tag->getOption< Real >( "pert_dock_trans_mag", pert_dock_trans_mag_ );
-	else
+	} else {
 		pert_dock_trans_mag_ = 0.5;
+	}
 
-	if ( tag->hasOption( "pert_pep_small_temp" ) )
+	if ( tag->hasOption( "pert_pep_small_temp" ) ) {
 		pert_pep_small_temp_ = tag->getOption< Real >( "pert_pep_small_temp", pert_pep_small_temp_ );
-	else
+	} else {
 		pert_pep_small_temp_ = 0.8;
+	}
 
-	if ( tag->hasOption( "pert_pep_small_H" ) )
+	if ( tag->hasOption( "pert_pep_small_H" ) ) {
 		pert_pep_small_H_ = tag->getOption< Real >( "pert_pep_small_H", pert_pep_small_H_ );
-	else
+	} else {
 		pert_pep_small_H_ = 2.0;
+	}
 
-	if ( tag->hasOption( "pert_pep_small_L" ) )
+	if ( tag->hasOption( "pert_pep_small_L" ) ) {
 		pert_pep_small_L_ = tag->getOption< Real >( "pert_pep_small_L", pert_pep_small_L_ );
-	else
+	} else {
 		pert_pep_small_L_ = 2.0;
+	}
 
-	if ( tag->hasOption( "pert_pep_small_E" ) )
+	if ( tag->hasOption( "pert_pep_small_E" ) ) {
 		pert_pep_small_E_ = tag->getOption< Real >( "pert_pep_small_E", pert_pep_small_E_ );
-	else
+	} else {
 		pert_pep_small_E_ = 2.0;
+	}
 
-	if ( tag->hasOption( "pert_pep_shear_temp" ) )
+	if ( tag->hasOption( "pert_pep_shear_temp" ) ) {
 		pert_pep_shear_temp_ = tag->getOption< Real >( "pert_pep_shear_temp", pert_pep_shear_temp_ );
-	else
+	} else {
 		pert_pep_shear_temp_ = 0.8;
+	}
 
-	if ( tag->hasOption( "pert_pep_shear_H" ) )
+	if ( tag->hasOption( "pert_pep_shear_H" ) ) {
 		pert_pep_shear_H_ = tag->getOption< Real >( "pert_pep_shear_H", pert_pep_shear_H_ );
-	else
+	} else {
 		pert_pep_shear_H_ = 2.0;
+	}
 
-	if ( tag->hasOption( "pert_pep_shear_L" ) )
+	if ( tag->hasOption( "pert_pep_shear_L" ) ) {
 		pert_pep_shear_L_ = tag->getOption< Real >( "pert_pep_shear_L", pert_pep_shear_L_ );
-	else
+	} else {
 		pert_pep_shear_L_ = 2.0;
+	}
 
-	if ( tag->hasOption( "pert_pep_shear_E" ) )
+	if ( tag->hasOption( "pert_pep_shear_E" ) ) {
 		pert_pep_shear_E_ = tag->getOption< Real >( "pert_pep_shear_E", pert_pep_shear_E_ );
-	else
+	} else {
 		pert_pep_shear_E_ = 2.0;
+	}
 
-	if ( tag->hasOption( "pert_pep_num_rep" ) )
+	if ( tag->hasOption( "pert_pep_num_rep" ) ) {
 		pert_pep_num_rep_ = tag->getOption< Size >("pert_pep_num_rep", pert_pep_num_rep_);
-	else
+	} else {
 		pert_pep_num_rep_ = 100;
+	}
 
-	if ( tag->hasOption( "pert_num" ) )
+	if ( tag->hasOption( "pert_num" ) ) {
 		pert_num_ = tag->getOption< Size >( "pert_num", pert_num_ );
-	else
+	} else {
 		pert_num_ = 10;
+	}
 
-	if ( tag->hasOption( "dock_design_loop_num" ) )
+	if ( tag->hasOption( "dock_design_loop_num" ) ) {
 		dock_design_loop_num_ = tag->getOption< Size >( "dock_design_loop_num", dock_design_loop_num_ );
-	else
+	} else {
 		dock_design_loop_num_ = 10;
-	
-	if ( tag->hasOption( "no_design" ) )
+	}
+
+	if ( tag->hasOption( "no_design" ) ) {
 		no_design_ = tag->getOption< bool >( "no_design", no_design_ );
-	else
+	} else {
 		no_design_ = false;
-	
-	if ( tag->hasOption( "final_design_min" ) )
+	}
+
+	if ( tag->hasOption( "final_design_min" ) ) {
 		final_design_min_ = tag->getOption< bool >( "final_design_min", final_design_min_ );
-	else
+	} else {
 		final_design_min_ = true;
+	}
 
-	if ( tag->hasOption( "use_soft_rep" ) )
+	if ( tag->hasOption( "use_soft_rep" ) ) {
 		use_soft_rep_ = tag->getOption< bool >("use_soft_rep", use_soft_rep_);
-	else
+	} else {
 		use_soft_rep_ = false;
+	}
 
-	if ( tag->hasOption( "mc_initial_pose" ) )
+	if ( tag->hasOption( "mc_initial_pose" ) ) {
 		mc_initial_pose_ = tag->getOption< bool >( "mc_initial_pose", mc_initial_pose_ );
-	else
+	} else {
 		mc_initial_pose_ = false;
+	}
 
-	if ( tag->hasOption( "pymol" ) )
+	if ( tag->hasOption( "pymol" ) ) {
 		pymol_ = tag->getOption< bool >( "pymol", pymol_ );
-	else
+	} else {
 		pymol_ = false;
+	}
 
-	if ( tag->hasOption( "keep_history" ) )
+	if ( tag->hasOption( "keep_history" ) ) {
 		keep_history_ = tag->getOption< bool >( "keep_history", keep_history_ );
-	else
+	} else {
 		keep_history_ = false;
+	}
 }
 
 }

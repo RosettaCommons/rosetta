@@ -60,8 +60,8 @@
 #include <iostream>
 
 #ifdef WIN32
-  #define _USE_MATH_DEFINES
-  #include <math.h>
+#define _USE_MATH_DEFINES
+#include <math.h>
 #endif
 
 static basic::Tracer TR("core.scoring.elec.FA_GrpElecEnergy");
@@ -94,9 +94,9 @@ void
 FAElecContextData::initialize( Size const nres )
 {
 	n_.resize( nres );
-	for( Size i = 1; i <= nres; ++i ) n_[i] = 0;
+	for ( Size i = 1; i <= nres; ++i ) n_[i] = 0;
 	dw_dr_.resize( nres );
-	for( Size i = 1; i <= nres; ++i ) dw_dr_[i] = Vector( 0.0 );
+	for ( Size i = 1; i <= nres; ++i ) dw_dr_[i] = Vector( 0.0 );
 	boundary_neighs_.resize( nres );
 }
 
@@ -200,7 +200,7 @@ FA_GrpElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & sc
 	//TR.Debug << "setup_for_scoring" << std::endl;
 
 	// turn off for now
-  //Eres_.resize( pose.total_residue(), 0.0 ); // temporary array
+	//Eres_.resize( pose.total_residue(), 0.0 ); // temporary array
 
 	set_nres_mono(pose);
 	pose.update_residue_neighbors();
@@ -211,7 +211,7 @@ FA_GrpElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & sc
 	}
 
 	FAElecContextDataOP data;
-	if( pose.data().has( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) ){
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) ) {
 		//data = static_cast< FAElecContextData * >
 		//( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA )() );
 		data = utility::pointer::static_pointer_cast< FAElecContextData >
@@ -222,20 +222,20 @@ FA_GrpElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & sc
 
 	precalc_context( pose, data );
 
-  pose.data().set( pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA, data );
+	pose.data().set( pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA, data );
 }
 
 void
 FA_GrpElecEnergy::setup_for_derivatives( pose::Pose & pose,
-																			 ScoreFunction const &scfxn
-																			 ) const
+	ScoreFunction const &scfxn
+) const
 {
 	//TR.Debug << "setup_for_deriv" << std::endl;
 
 	set_nres_mono(pose);
 	pose.update_residue_neighbors();
 
-  //Eres_.resize( pose.total_residue(), 0.0 ); // temporary array
+	//Eres_.resize( pose.total_residue(), 0.0 ); // temporary array
 	setup_for_scoring( pose, scfxn );
 
 	//TR.Debug << "done: setup_for_deriv" << std::endl;
@@ -299,8 +299,8 @@ FA_GrpElecEnergy::residue_pair_energy(
 	// use to avoid double counting with hbond_set
 	/*
 	hbonds::HBondSet const & hbond_set
-		( static_cast< hbonds::HBondSet const & >
-			( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
+	( static_cast< hbonds::HBondSet const & >
+	( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
 	*/
 
 	FAElecContextDataCOP data = utility::pointer::static_pointer_cast< FAElecContextData const >
@@ -308,18 +308,18 @@ FA_GrpElecEnergy::residue_pair_energy(
 
 	Size res1( rsd1.seqpos()  );
 	Size res2( rsd2.seqpos()  );
-  Real const nb1 = data->get_n( res1 );
-  Real const nb2 = data->get_n( res2 );
+	Real const nb1 = data->get_n( res1 );
+	Real const nb2 = data->get_n( res2 );
 
 	score = groupelec().eval_respair_group_coulomb( rsd1, rsd2 );
-	if( context_dependent_ ){
+	if ( context_dependent_ ) {
 		Real w( burial_weight( nb1 ) +  burial_weight( nb2 ) );
 		score *= w;
 	}
 
 	/*
 	TR << rsd1.seqpos() << " " << rsd2.seqpos() << " "
-		 << burial_weight( nb1 ) << " " << burial_weight( nb2 ) << " " << score << std::endl;
+	<< burial_weight( nb1 ) << " " << burial_weight( nb2 ) << " " << score << std::endl;
 	*/
 
 	emap[ fa_grpelec ] += score;
@@ -383,8 +383,8 @@ FA_GrpElecEnergy::residue_pair_energy_ext(
 	// use to avoid double counting with hbond_set
 	/*
 	hbonds::HBondSet const & hbond_set
-		( static_cast< hbonds::HBondSet const & >
-			( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
+	( static_cast< hbonds::HBondSet const & >
+	( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
 	*/
 
 	FAElecContextDataCOP data = utility::pointer::static_pointer_cast< FAElecContextData const >
@@ -392,20 +392,21 @@ FA_GrpElecEnergy::residue_pair_energy_ext(
 
 	Size res1 = rsd1.seqpos();
 	Size res2 = rsd2.seqpos();
-  Real const &nb1 = data->get_n( res1 );
-  Real const &nb2 = data->get_n( res2 );
+	Real const &nb1 = data->get_n( res1 );
+	Real const &nb2 = data->get_n( res2 );
 
 	Real w( 1.0 );
-	if( context_dependent_ )
+	if ( context_dependent_ ) {
 		w = burial_weight( nb1 ) + burial_weight( nb2 );
+	}
 
-	if( intrares ) w *= intrares_scale_;
+	if ( intrares ) w *= intrares_scale_;
 
 	score = w*groupelec().eval_respair_group_coulomb( rsd1, rsd2 );
 
 	/*
 	TR << rsd1.seqpos() << " " << rsd2.seqpos() << " "
-		 << burial_weight( nb1 ) << " " << burial_weight( nb2 ) << " " << score << std::endl;
+	<< burial_weight( nb1 ) << " " << burial_weight( nb2 ) << " " << score << std::endl;
 	*/
 
 	emap[ fa_grpelec ] += score;
@@ -464,11 +465,11 @@ FA_GrpElecEnergy::eval_residue_pair_derivatives(
 
 	//TR.Debug << "eval residue pair deriv" << std::endl;
 
-debug_assert( utility::pointer::static_pointer_cast< FAElecContextData const >
-					( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) ));
+	debug_assert( utility::pointer::static_pointer_cast< FAElecContextData const >
+		( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) ));
 
 	FAElecContextDataCOP data = utility::pointer::static_pointer_cast< FAElecContextData const >
-	( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) );
+		( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) );
 
 	Size res1( rsd1.seqpos() );
 	Size res2( rsd2.seqpos() );
@@ -476,23 +477,24 @@ debug_assert( utility::pointer::static_pointer_cast< FAElecContextData const >
 	// use to avoid double counting with hbond_set
 	/*
 	hbonds::HBondSet const & hbond_set
-		( static_cast< hbonds::HBondSet const & >
-			( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
+	( static_cast< hbonds::HBondSet const & >
+	( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
 	*/
 
 	Real elec_weight = weights[ fa_grpelec ];
 	Real Erespair( 0.0 );
 
 	Real w( 1.0 );
-	if( context_dependent_ )
+	if ( context_dependent_ ) {
 		w = burial_weight( data->get_n( res1 ) ) + burial_weight( data->get_n( res2 ) );
-	if( intrares ) w *= intrares_scale_;
+	}
+	if ( intrares ) w *= intrares_scale_;
 
 	Real total_weight = elec_weight*w;
 
 	groupelec().eval_respair_group_derivatives( rsd1, rsd2,
-																							r1_atom_derivs, r2_atom_derivs,
-																							total_weight, Erespair );
+		r1_atom_derivs, r2_atom_derivs,
+		total_weight, Erespair );
 
 	// mutable; turn off for now
 	//Eres_[ rsd1.seqpos() ] += 0.5*Erespair;
@@ -501,11 +503,11 @@ debug_assert( utility::pointer::static_pointer_cast< FAElecContextData const >
 
 void
 FA_GrpElecEnergy::eval_intrares_energy(
-		conformation::Residue const & rsd,
-		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
- ) const
+	conformation::Residue const & rsd,
+	pose::Pose const & pose,
+	ScoreFunction const &,
+	EnergyMap & emap
+) const
 {
 	if ( pose.energies().use_nblist() ) return;
 
@@ -519,25 +521,25 @@ FA_GrpElecEnergy::eval_intrares_energy(
 	// use to avoid double counting with hbond_set
 	/*
 	hbonds::HBondSet const & hbond_set
-		( static_cast< hbonds::HBondSet const & >
-			( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
+	( static_cast< hbonds::HBondSet const & >
+	( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
 	*/
 
 	FAElecContextDataCOP data = utility::pointer::static_pointer_cast< FAElecContextData const >
 		( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) );
 
 	Size res( rsd.seqpos() );
-  Real const nb = data->get_n( res );
+	Real const nb = data->get_n( res );
 
 	score = groupelec().eval_respair_group_coulomb( rsd, rsd );
 	Real w( 1.0 );
-	if( context_dependent_ ) w = 2.0*burial_weight( nb );
+	if ( context_dependent_ ) w = 2.0*burial_weight( nb );
 	w *= intrares_scale_;
 	score *= w;
 
 	/*
 	TR << rsd.seqpos() << " "
-		 << 2.0*burial_weight( nb ) << " " << intrares_scale_ << " " << score << std::endl;
+	<< 2.0*burial_weight( nb ) << " " << intrares_scale_ << " " << score << std::endl;
 	*/
 
 	emap[ fa_grpelec ] += score;
@@ -558,36 +560,36 @@ FA_GrpElecEnergy::eval_intrares_derivatives(
 
 	//TR.Debug << "eval residue pair deriv" << std::endl;
 
-debug_assert( utility::pointer::static_pointer_cast< FAElecContextData const >
-					( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) ));
+	debug_assert( utility::pointer::static_pointer_cast< FAElecContextData const >
+		( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) ));
 
 	FAElecContextDataCOP data = utility::pointer::static_pointer_cast< FAElecContextData const >
-	( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) );
+		( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) );
 
 	Size res( rsd.seqpos() );
 
-  // get deriv on context
+	// get deriv on context
 	// turn off for now
 	//eval_context_derivatives( rsd, data, weights, r1_atom_derivs );
 
 	// use to avoid double counting with hbond_set
 	/*
 	hbonds::HBondSet const & hbond_set
-		( static_cast< hbonds::HBondSet const & >
-			( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
+	( static_cast< hbonds::HBondSet const & >
+	( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
 	*/
 
 	Real elec_weight = weights[ fa_grpelec ];
 	Real Erespair( 0.0 );
 	Real w( 1.0 );
-	if( context_dependent_ ) w = 2.0*burial_weight( data->get_n( res ) );
+	if ( context_dependent_ ) w = 2.0*burial_weight( data->get_n( res ) );
 	w *= intrares_scale_;
 	Real total_weight = elec_weight*w;
 
 	// TODO
 	groupelec().eval_respair_group_derivatives( rsd, rsd,
-																							r1_atom_derivs, r1_atom_derivs,
-																							total_weight, Erespair );
+		r1_atom_derivs, r1_atom_derivs,
+		total_weight, Erespair );
 
 	// mutable
 	//Eres_[ rsd.seqpos() ] += Erespair;
@@ -626,32 +628,33 @@ FA_GrpElecEnergy::evaluate_rotamer_pair_energies(
 	ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 ) const
 {
-debug_assert( set1.resid() != set2.resid() );
+	debug_assert( set1.resid() != set2.resid() );
 
 	// Since a rotamer set may include multiple residue types,
 	// we'll make our decision based on what's currently in the Pose.
 	if ( !defines_score_for_residue_pair( pose.residue(set1.resid()),
-																				pose.residue(set2.resid()), true) ) return;
+			pose.residue(set2.resid()), true) ) return;
 
 	FAElecContextDataCOP data = utility::pointer::static_pointer_cast< FAElecContextData const >
-	( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) );
+		( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) );
 
 	/*
 	hbonds::HBondSet const & hbond_set
-		( static_cast< hbonds::HBondSet const & >
-			( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
+	( static_cast< hbonds::HBondSet const & >
+	( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
 	*/
 
-	for( Size ii = 1; ii <= set1.num_rotamers(); ++ii ){
+	for ( Size ii = 1; ii <= set1.num_rotamers(); ++ii ) {
 		conformation::Residue const &rot1 = *set1.rotamer(ii);
-		for( Size jj = 1; jj <= set2.num_rotamers(); ++jj ){
+		for ( Size jj = 1; jj <= set2.num_rotamers(); ++jj ) {
 			conformation::Residue const &rot2 = *set2.rotamer(jj);
 
 			Real res_energy = groupelec().eval_respair_group_coulomb( rot1, rot2 );
 			Real w( 1.0 );
-			if( context_dependent_ )
+			if ( context_dependent_ ) {
 				w = burial_weight( data->get_n( rot1.seqpos() ) )
 					+ burial_weight( data->get_n( rot2.seqpos() ) );
+			}
 
 			energy_table( jj, ii ) += w*res_energy;
 		}
@@ -674,15 +677,15 @@ FA_GrpElecEnergy::evaluate_rotamer_background_energies(
 	if ( ! defines_score_for_residue_pair( pose.residue(set.resid()), residue, true) ) return;
 
 	FAElecContextDataCOP data = utility::pointer::static_pointer_cast< FAElecContextData const >
-	( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) );
+		( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) );
 
 	/*
 	hbonds::HBondSet const & hbond_set
-		( static_cast< hbonds::HBondSet const & >
-			( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
+	( static_cast< hbonds::HBondSet const & >
+	( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
 	*/
 
-	for( Size ii = 1; ii <= set.get_n_residue_types(); ++ii ){ // restype
+	for ( Size ii = 1; ii <= set.get_n_residue_types(); ++ii ) { // restype
 
 		Size const ii_offset = set.get_residue_type_begin( ii );
 		conformation::Residue const & ii_example_rotamer( *set.rotamer( ii_offset ));
@@ -696,7 +699,7 @@ FA_GrpElecEnergy::evaluate_rotamer_background_energies(
 
 		Real dcut = ii_radius+jj_radius+5.5;
 
-		if ( ii_coord.distance_squared( jj_coord ) < dcut*dcut ){
+		if ( ii_coord.distance_squared( jj_coord ) < dcut*dcut ) {
 
 			Size const n = set.get_n_rotamers_for_residue_type( ii );
 			for ( Size kk = 1; kk <= n; ++kk ) {
@@ -706,11 +709,12 @@ FA_GrpElecEnergy::evaluate_rotamer_background_energies(
 
 				Real const res_energy =
 					groupelec().eval_respair_group_coulomb( *set.rotamer( kk_rot_id ),
-																									residue );
+					residue );
 				Real w( 1.0 );
-				if( context_dependent_ )
+				if ( context_dependent_ ) {
 					w = burial_weight( data->get_n( residue.seqpos() ) )
 						+ burial_weight( data->get_n( res2 ) );
+				}
 				energy_vector[ kk_rot_id ] += w*res_energy;
 			}
 		}
@@ -719,8 +723,8 @@ FA_GrpElecEnergy::evaluate_rotamer_background_energies(
 }
 
 /// @brief FA_GrpElecEnergy distance cutoff
- ///
- /// Reports the maximum heavy atom/heavy atom distance at which two residues have a non-zero fa_elec interaction energy.
+///
+/// Reports the maximum heavy atom/heavy atom distance at which two residues have a non-zero fa_elec interaction energy.
 Distance
 FA_GrpElecEnergy::atomic_interaction_cutoff() const
 {
@@ -781,22 +785,22 @@ FA_GrpElecEnergy::indicate_required_context_graphs( utility::vector1< bool > & /
 
 void
 FA_GrpElecEnergy::precalc_context( pose::Pose & pose,
-																	FAElecContextDataOP data
-																	) const
+	FAElecContextDataOP data
+) const
 {
 
 	//TR.Debug << "precalc_context" << std::endl;
 
 	TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
 
-  Real cen_dist_cut2 = 10.0*10.0;
+	Real cen_dist_cut2 = 10.0*10.0;
 
 	//if( data->) TR.Debug << "?" << data->get_n( 1 ) << std::endl;
 
 	data->initialize( pose.total_residue() );
 	//TR.Debug << "??" << data->get_n( 1 ) << std::endl;
 
-  // First get boundary neighs feeling context-dependent derivatives
+	// First get boundary neighs feeling context-dependent derivatives
 	utility::vector1< Vector > dn_dr( pose.total_residue() );
 	for ( Size i = 1; i <= pose.total_residue(); ++i ) dn_dr[i] = Vector( 0.0 );
 
@@ -805,9 +809,9 @@ FA_GrpElecEnergy::precalc_context( pose::Pose & pose,
 		if ( !rsd1.is_protein() ) continue;
 
 		for ( graph::Graph::EdgeListConstIter
-						iru  = tenA_neighbor_graph.get_node(i)->const_upper_edge_list_begin(),
-						irue = tenA_neighbor_graph.get_node(i)->const_upper_edge_list_end();
-					iru != irue; ++iru ) {
+				iru  = tenA_neighbor_graph.get_node(i)->const_upper_edge_list_begin(),
+				irue = tenA_neighbor_graph.get_node(i)->const_upper_edge_list_end();
+				iru != irue; ++iru ) {
 
 			Size const j = (*iru)->get_second_node_ind();
 
@@ -830,7 +834,7 @@ FA_GrpElecEnergy::precalc_context( pose::Pose & pose,
 
 			//TR << "Context: " << i << " " << j << " " << n_ij << " " << ni << " " << nj << std::endl;
 
-			if( dn_drij > 0.0 ){
+			if ( dn_drij > 0.0 ) {
 				data->boundary_neighs( i ).push_back( j );
 				data->boundary_neighs( j ).push_back( i );
 				dn_dr[ i ] += dn_drij*cenvec/cendist;
@@ -839,9 +843,9 @@ FA_GrpElecEnergy::precalc_context( pose::Pose & pose,
 		}
 	}
 
-  for ( Size res1 = 1; res1 <= pose.total_residue(); ++res1 ){
+	for ( Size res1 = 1; res1 <= pose.total_residue(); ++res1 ) {
 		Real dw_dn( 0.0 );
-		if( context_dependent_ ) dw_dn = burial_deriv( data->get_n( res1 ) );
+		if ( context_dependent_ ) dw_dn = burial_deriv( data->get_n( res1 ) );
 		data->dw_dr( res1 ) = dw_dn*dn_dr[ res1 ];
 	}
 
@@ -850,20 +854,20 @@ FA_GrpElecEnergy::precalc_context( pose::Pose & pose,
 
 Real
 FA_GrpElecEnergy::eval_n( Real const cendist,
-												 Real &dn_drij,
-												 bool const eval_deriv ) const
+	Real &dn_drij,
+	bool const eval_deriv ) const
 {
 	Real interp( 0.0 );
 	dn_drij = 0.0;
-	if ( cendist < 9.0 ){ // < 9ang
+	if ( cendist < 9.0 ) { // < 9ang
 		interp = 1.0;
-	}	else if( cendist > 10.0 ){
+	} else if ( cendist > 10.0 ) {
 		interp = 0;
 	} else {
 		//interp = 0.5 + cos( M_PI*(cendist-9.0) ); // "pi" that works on all flatform?
 		interp = 0.5 + cos( 3.14159265358979323846*(cendist-9.0) );
 
-		if( eval_deriv ){
+		if ( eval_deriv ) {
 			dn_drij = 0.5*std::sqrt(1.0 - interp*interp ); // just sin
 		}
 	}
@@ -888,8 +892,8 @@ FA_GrpElecEnergy::eval_context_derivatives(
 	utility::vector1< Size > neighs = data->get_boundary_neighs( rsd1.seqpos() );
 	/*
 	for( Size jres = 1; jres <= neighs.size(); ++jres ){
-		Size res2 = neighs[ jres ];
-		f2 += Eres_[ res2 ]*(data->get_dw_dr( res2 ));
+	Size res2 = neighs[ jres ];
+	f2 += Eres_[ res2 ]*(data->get_dw_dr( res2 ));
 	}
 	*/
 	r1_atom_derivs[ atm1 ].f1() += f1;
@@ -932,7 +936,7 @@ FA_GrpElecEnergy::monomer_test(
 	Size jrsd
 ) const {
 	return (irsd <= nres_monomer_ && jrsd <= nres_monomer_ ) ||
-	       (irsd >  nres_monomer_ && jrsd >  nres_monomer_ );
+		(irsd >  nres_monomer_ && jrsd >  nres_monomer_ );
 
 }
 
@@ -940,8 +944,8 @@ void
 FA_GrpElecEnergy::set_nres_mono(
 	core::pose::Pose const & pose
 ) const {
-	for(Size i = 1; i <= pose.n_residue(); ++i) {
-		if(pose.residue(i).is_upper_terminus()) {
+	for ( Size i = 1; i <= pose.n_residue(); ++i ) {
+		if ( pose.residue(i).is_upper_terminus() ) {
 			nres_monomer_ = i;
 			//std::cerr << "nres_monomer_ " << i << std::endl;
 			return;

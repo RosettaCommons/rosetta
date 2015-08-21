@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/PcsTensor.cc
- ///
- /// @brief Hold chi-tensor information of PCS
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references JBNMR 2008  41:179-189 schmitz et all will explains the tensor convention used
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/PcsTensor.cc
+///
+/// @brief Hold chi-tensor information of PCS
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references JBNMR 2008  41:179-189 schmitz et all will explains the tensor convention used
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 
 // Unit headers
@@ -45,10 +45,10 @@
 // C++ headers
 #include <iostream>
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs2{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs2 {
 
 PcsTensor::PcsTensor(){
 	utility_exit_with_message( "You shouldn't call the empty constructor for PcsTensor" );
@@ -94,11 +94,11 @@ PcsTensor::operator=(PcsTensor const & other){
 /// @brief The constructeur use the chi matrix parameters (not the alpha beta gamma Ax and Rh component...)
 ///////////////////////////////////////////////
 PcsTensor::PcsTensor(core::Real const chi_xx,
-										 core::Real const chi_xy,
-										 core::Real const chi_xz,
-										 core::Real const chi_yy,
-										 core::Real const chi_yz,
-										 std::string const label)
+	core::Real const chi_xy,
+	core::Real const chi_xz,
+	core::Real const chi_yy,
+	core::Real const chi_yz,
+	std::string const label)
 {
 	chi_xx_ = chi_xx;
 	chi_yy_ = chi_yy;
@@ -112,10 +112,10 @@ PcsTensor::PcsTensor(core::Real const chi_xx,
 
 void
 PcsTensor::reset_tensor(core::Real const chi_xx,
-												core::Real const chi_xy,
-												core::Real const chi_xz,
-												core::Real const chi_yy,
-												core::Real const chi_yz){
+	core::Real const chi_xy,
+	core::Real const chi_xz,
+	core::Real const chi_yy,
+	core::Real const chi_yz){
 	chi_xx_ = chi_xx;
 	chi_yy_ = chi_yy;
 	chi_xy_ = chi_xy;
@@ -153,16 +153,16 @@ operator<<(std::ostream& out, const PcsTensor &me ){
 void
 PcsTensor::reset_from_ref(PcsTensor & other){
 	a_ = other.a_;
-  b_ = other.b_;
-  g_ = other.g_;
-  ax_ = other.ax_;
-  rh_ = other.rh_;
+	b_ = other.b_;
+	g_ = other.g_;
+	ax_ = other.ax_;
+	rh_ = other.rh_;
 
-  chi_xx_ = other.chi_xx_;
-  chi_yy_ = other.chi_yy_;
-  chi_xy_ = other.chi_xy_;
-  chi_xz_ = other.chi_xz_;
-  chi_yz_ = other.chi_yz_;
+	chi_xx_ = other.chi_xx_;
+	chi_yy_ = other.chi_yy_;
+	chi_xy_ = other.chi_xy_;
+	chi_xz_ = other.chi_xz_;
+	chi_yz_ = other.chi_yz_;
 
 	label_ = other.label_;
 }

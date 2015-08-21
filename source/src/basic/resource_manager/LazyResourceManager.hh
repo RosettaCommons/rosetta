@@ -138,7 +138,7 @@ public:
 	void
 	free_resource_by_tag(
 		ResourceTag const & resource_tag
-		);
+	);
 
 	/// @brief wipe out all data; useful for unit testing, but hard to fathom how it would be useful
 	/// otherwise.
@@ -170,7 +170,7 @@ public: // Set resource configuration for each resource
 	void
 	add_resource_configuration(
 		ResourceTag const & resource_tag,
-	  ResourceConfiguration const & resource_configuration);
+		ResourceConfiguration const & resource_configuration);
 
 	virtual
 	void
@@ -253,7 +253,7 @@ public:
 
 private: // Data members
 
-	typedef std::map< std::pair< ResourceDescription, JobTag >,	ResourceTag > ResourceTagsMap;
+	typedef std::map< std::pair< ResourceDescription, JobTag >, ResourceTag > ResourceTagsMap;
 	ResourceTagsMap resource_tags_;
 
 	typedef std::map<JobTag,std::list<ResourceTag> > JobResourceMap;

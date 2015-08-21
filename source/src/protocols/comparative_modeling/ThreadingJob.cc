@@ -39,7 +39,7 @@ ThreadingJob::ThreadingJob(
 	core::sequence::SequenceAlignmentCOP alignment,
 	std::string const & input_tag,
 	core::Size nstruct_max
-) :	InnerJob( template_pdb, input_tag, nstruct_max ) {
+) : InnerJob( template_pdb, input_tag, nstruct_max ) {
 	alignment_ = alignment;  // the alignment from the input file
 
 	//fpd  Make a transitve map from the template alignment to the template pdb seq
@@ -48,9 +48,9 @@ ThreadingJob::ThreadingJob(
 	using namespace core::sequence;
 
 	SequenceOP query_sequence( new Sequence(
-			alignment->sequence( 1 )->ungapped_sequence(),
-			alignment->sequence( 1 )->id(),
-			alignment->sequence( 1 )->start()
+		alignment->sequence( 1 )->ungapped_sequence(),
+		alignment->sequence( 1 )->id(),
+		alignment->sequence( 1 )->start()
 		) );
 
 	SequenceOP aligned_template(
@@ -58,16 +58,16 @@ ThreadingJob::ThreadingJob(
 	);
 
 	SequenceOP t_align_seq( new Sequence(
-			aligned_template->ungapped_sequence(),
-			aligned_template->id(),
-			aligned_template->start()
+		aligned_template->ungapped_sequence(),
+		aligned_template->id(),
+		aligned_template->start()
 		) );
 
 
 	SequenceOP t_pdb_seq( new Sequence (
-			template_pdb->sequence(),
-			alignment->sequence( 2 )->id(),
-			1
+		template_pdb->sequence(),
+		alignment->sequence( 2 )->id(),
+		1
 		) );
 
 	// construct an intermediate alignment of the sequence from the alignment
@@ -92,7 +92,7 @@ protocols::loops::Loops ThreadingJob::loops( core::Size nres ) const {
 
 	// remove loops that overlap stolen residues
 	Loops valid_loops;
-    for ( loops::Loops::const_iterator it = loops->begin(), it_end = loops->end(); it != it_end; ++it ) {
+	for ( loops::Loops::const_iterator it = loops->begin(), it_end = loops->end(); it != it_end; ++it ) {
 		bool valid(true);
 		for ( Size ii = 1; ii <= extra_residues_to_steal_.size(); ++ii ) {
 			Size const extra_res( extra_residues_to_steal_[ii] );

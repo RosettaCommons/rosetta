@@ -77,8 +77,8 @@ public:
 	/// context graphs are required
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 	// data
 private:

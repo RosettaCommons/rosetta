@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief      Mover partners apart and relax them separately
-/// @details	Run quick relax on separated partners; this emulates unbound docking
+/// @details Run quick relax on separated partners; this emulates unbound docking
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 
 #ifndef INCLUDED_protocols_docking_membrane_QuickRelaxPartnersSeparatelyCreator_hh
@@ -23,13 +23,13 @@ namespace membrane {
 
 /// @brief Mover Creator
 class QuickRelaxPartnersSeparatelyCreator : public protocols::moves::MoverCreator {
-	
+
 public:
-	
+
 	virtual protocols::moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
 	static std::string mover_name();
-	
+
 };
 
 } // membrane

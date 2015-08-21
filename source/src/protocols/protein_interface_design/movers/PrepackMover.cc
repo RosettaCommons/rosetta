@@ -112,7 +112,7 @@ void PrepackMover::apply( pose::Pose & pose )
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 	TaskFactoryOP tf;
-	if( task_factory() ) tf = TaskFactoryOP( new TaskFactory( *task_factory() ) );
+	if ( task_factory() ) tf = TaskFactoryOP( new TaskFactory( *task_factory() ) );
 	else tf = TaskFactoryOP( new TaskFactory );
 	tf->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
 	tf->push_back( TaskOperationCOP( new operation::IncludeCurrent ) );
@@ -128,57 +128,55 @@ void PrepackMover::apply( pose::Pose & pose )
 	core::pack::dunbrack::load_unboundrot(pose); // adds scoring bonuses for the "unbound" rotamers, if any
 
 	using namespace protocols::toolbox::task_operations;
-	if (basic::options::option[ basic::options::OptionKeys::docking::norepack1 ]()) tf->push_back( TaskOperationCOP( new DockingNoRepack1( jump_num_) ) );
-	if (basic::options::option[ basic::options::OptionKeys::docking::norepack2 ]()) tf->push_back( TaskOperationCOP( new DockingNoRepack2( jump_num_) ) );
+	if ( basic::options::option[ basic::options::OptionKeys::docking::norepack1 ]() ) tf->push_back( TaskOperationCOP( new DockingNoRepack1( jump_num_) ) );
+	if ( basic::options::option[ basic::options::OptionKeys::docking::norepack2 ]() ) tf->push_back( TaskOperationCOP( new DockingNoRepack2( jump_num_) ) );
 
 	//in case there is a resfile, information in this resfile overrides the computed task
-	if( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
+	if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
 		tf->push_back( TaskOperationCOP( new operation::ReadResfile ) );
 	}
 	PackerTaskOP task = tf->create_task_and_apply_taskoperations( pose );
 
 	TR << "Pre-minimizing structure..." << std::endl;
 	core::kinematics::MoveMapOP mm_general;
-	if( min_bb() && mm() ){
+	if ( min_bb() && mm() ) {
 		mm_general = mm()->clone();
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i) {
+		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 			if ( !pose.residue(i).is_protein() ) {
 				mm_general->set_chi( i, false );
 				continue;
 			}
 			// Check for disulfide bonded cysteines
-			if( pose.residue(i).type().is_disulfide_bonded() ) mm_general->set_chi( i, false );
+			if ( pose.residue(i).type().is_disulfide_bonded() ) mm_general->set_chi( i, false );
 		}
-  }
-	else{
+	} else {
 		mm_general = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 		mm_general->clear();
 	}
-	if( min_bb() ){ //premin bb+sc
-		if( !mm() ) mm_general->set_bb( true );
+	if ( min_bb() ) { //premin bb+sc
+		if ( !mm() ) mm_general->set_bb( true );
 		protocols::simple_moves::MinMover min_bb_mover( mm_general, scorefxn_, "dfpmin_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  );
 		min_bb_mover.apply( pose );
 	}
 
 	// separate any bound partners
 	protocols::rigid::RigidBodyTransMoverOP translate;
-	if( (jump_num_ > 0) && (pose.conformation().num_chains() > 1) ) {
+	if ( (jump_num_ > 0) && (pose.conformation().num_chains() > 1) ) {
 		TR<<"Translating along jump #"<<jump_num_<<std::endl;
 		translate = protocols::rigid::RigidBodyTransMoverOP( new protocols::rigid::RigidBodyTransMover( pose, jump_num_ ) ) ;
 		translate->step_size( 1000.0 );
 		translate->apply( pose );
 	}
-  mm_general->set_bb( false );
+	mm_general->set_bb( false );
 	mm_general->set_jump( false );
 	protocols::simple_moves::MinMover min_mover( mm_general, scorefxn_, "dfpmin_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  );
 	// pre-minimize sidechains
 	min_mover.apply( pose );
 
-	if( basic::options::option[basic::options::OptionKeys::docking::dock_rtmin].user() ) {
+	if ( basic::options::option[basic::options::OptionKeys::docking::dock_rtmin].user() ) {
 		protocols::simple_moves::RotamerTrialsMinMover rtmin( scorefxn_, tf );
 		rtmin.apply( pose );
-	}
-	else {
+	} else {
 		protocols::simple_moves::PackRotamersMover pack( scorefxn_, task );
 		pack.apply( pose );
 	}
@@ -190,7 +188,7 @@ void PrepackMover::apply( pose::Pose & pose )
 	TR << "Done!\n";
 
 	// move back together
-	if( (jump_num_ > 0) && (pose.conformation().num_chains() > 1) ) {
+	if ( (jump_num_ > 0) && (pose.conformation().num_chains() > 1) ) {
 		translate->trans_axis().negate();
 		translate->apply( pose );
 	}
@@ -212,7 +210,7 @@ PrepackMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, 
 	jump_num_ = tag->getOption<core::Size>("jump_number", 1 );
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	min_bb( tag->getOption< bool >( "min_bb", 0 ));
-	if( min_bb() ) {
+	if ( min_bb() ) {
 		mm_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 		mm()->clear();
 		protocols::rosetta_scripts::parse_movemap( tag, pose, mm_, data );
@@ -232,7 +230,7 @@ PrepackMover::min_bb() const{
 
 core::kinematics::MoveMapOP
 PrepackMover::mm() const{
-	if( !min_bb() ) TR<<"Warning: movemap requested but min_bb is set to false. This is probably wrong!"<<std::endl;
+	if ( !min_bb() ) TR<<"Warning: movemap requested but min_bb is set to false. This is probably wrong!"<<std::endl;
 	return mm_;
 }
 

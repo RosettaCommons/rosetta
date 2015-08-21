@@ -59,8 +59,8 @@ InteractionScoreFilter::InteractionScoreFilter( std::string const scorefxn_name,
 	upper_threshold_(upper_threshold),
 	jump_( rb_jump )
 {
-	//	scorefxn_->initialize_from_file( scorefxn_name );
- 	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( scorefxn_name );
+	// scorefxn_->initialize_from_file( scorefxn_name );
+	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( scorefxn_name );
 }
 
 InteractionScoreFilter::InteractionScoreFilter( core::scoring::ScoreFunctionCOP scorefxn, core::Size const rb_jump, core::Real const lower_threshold, core::Real const upper_threshold ) :
@@ -87,19 +87,20 @@ InteractionScoreFilter::fresh_instance() const{
 void
 InteractionScoreFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
 {
- 	std::string const scorefxn_name(
+	std::string const scorefxn_name(
 		protocols::rosetta_scripts::get_score_function_name(tag) );
 	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( scorefxn_name );
-// 	scorefxn_ = new core::scoring::ScoreFunction( *(data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name )) );
+	//  scorefxn_ = new core::scoring::ScoreFunction( *(data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name )) );
 
-//	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
+	// scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 
 	lower_threshold_ = tag->getOption<core::Real>( "threshold", -30 );
 	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 0);
 	jump( tag->getOption< core::Size >( "jump", 1 ));
 
-	if( !pose.is_fullatom() )
+	if ( !pose.is_fullatom() ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "ERROR: it doesn't make sense to calculate the interaction score on low-res pose since in I_sc=bound-A-B, A&B are constant.\n It is totally a waste of time" );
+	}
 
 	TR<<"InterfaceScoreFilter with lower threshold of "<<lower_threshold_<<" and jump "<<jump()<<'\n';
 	TR.flush();
@@ -110,11 +111,10 @@ InteractionScoreFilter::apply( core::pose::Pose const & pose ) const {
 	core::Real const I_sc( compute( pose ) );
 
 	TR<<"I_sc is "<<I_sc<<". ";
-	if( I_sc >= lower_threshold_ && I_sc <= upper_threshold_ ){
+	if ( I_sc >= lower_threshold_ && I_sc <= upper_threshold_ ) {
 		TR<<"passing." <<std::endl;
 		return true;
-	}
-	else {
+	} else {
 		TR<<"failing."<<std::endl;
 		return false;
 	}

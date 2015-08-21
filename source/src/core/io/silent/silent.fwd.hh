@@ -53,7 +53,7 @@ typedef utility::pointer::shared_ptr< ProteinSilentStruct > ProteinSilentStructO
 typedef utility::pointer::shared_ptr< BinarySilentStruct > BinarySilentStructOP;
 typedef utility::pointer::shared_ptr< RNA_SilentStruct > RNA_SilentStructOP;
 
-	// data types
+// data types
 typedef std::map< std::string, SilentStructOP > Structure_Map;
 typedef utility::vector1< SilentStructOP > SilentStructOPs;
 

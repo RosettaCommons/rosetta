@@ -26,49 +26,49 @@ namespace stepwise {
 namespace sampler {
 namespace input_streams {
 
-	class InputStreamStepWiseSampler: public sampler::StepWiseSamplerSized {
+class InputStreamStepWiseSampler: public sampler::StepWiseSamplerSized {
 
-	public:
+public:
 
-		//constructor
-		InputStreamStepWiseSampler( stepwise::modeler::protein::InputStreamWithResidueInfoOP input_stream );
+	//constructor
+	InputStreamStepWiseSampler( stepwise::modeler::protein::InputStreamWithResidueInfoOP input_stream );
 
-		InputStreamStepWiseSampler( stepwise::modeler::protein::InputStreamWithResidueInfoOP input_stream,
-												stepwise::legacy::modeler::protein::StepWiseProteinPoseSetupCOP stepwise_pose_setup );
+	InputStreamStepWiseSampler( stepwise::modeler::protein::InputStreamWithResidueInfoOP input_stream,
+		stepwise::legacy::modeler::protein::StepWiseProteinPoseSetupCOP stepwise_pose_setup );
 
-		//destructor
-		~InputStreamStepWiseSampler();
+	//destructor
+	~InputStreamStepWiseSampler();
 
-	public:
+public:
 
-		/// @brief Reset to the first (or random if random()) rotamer.
-		virtual void reset();
+	/// @brief Reset to the first (or random if random()) rotamer.
+	virtual void reset();
 
-		/// @brief Get the total number of rotamers in sampler
-		virtual core::Size size() const{ return size_;}
+	/// @brief Get the total number of rotamers in sampler
+	virtual core::Size size() const{ return size_;}
 
-		/// @brief set ID -- how StepWiseSamplerSizedComb controls StepWiseSamplerSized. Need some extra work here with InputStreamStepWiseSampler.
-		virtual void set_id( Size const setting );
+	/// @brief set ID -- how StepWiseSamplerSizedComb controls StepWiseSamplerSized. Need some extra work here with InputStreamStepWiseSampler.
+	virtual void set_id( Size const setting );
 
-		/// @brief Move to next rotamer
-		virtual void operator++();
+	/// @brief Move to next rotamer
+	virtual void operator++();
 
-		/// @brief Apply the i-th rotamer to pose
-		virtual void apply( core::pose::Pose&, core::Size const );
+	/// @brief Apply the i-th rotamer to pose
+	virtual void apply( core::pose::Pose&, core::Size const );
 
-		/// @brief Name of the class
-		virtual std::string get_name() const { return "InputStreamStepWiseSampler"; }
+	/// @brief Name of the class
+	virtual std::string get_name() const { return "InputStreamStepWiseSampler"; }
 
-		/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-		virtual StepWiseSamplerType type() const { return INPUT_STREAM; }
+	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
+	virtual StepWiseSamplerType type() const { return INPUT_STREAM; }
 
-	private:
+private:
 
-		stepwise::modeler::protein::InputStreamWithResidueInfoOP input_stream_;
-		stepwise::legacy::modeler::protein::StepWiseProteinPoseSetupCOP stepwise_pose_setup_; // this is really a legacy of SWA protein code.
-		Size size_;
+	stepwise::modeler::protein::InputStreamWithResidueInfoOP input_stream_;
+	stepwise::legacy::modeler::protein::StepWiseProteinPoseSetupCOP stepwise_pose_setup_; // this is really a legacy of SWA protein code.
+	Size size_;
 
-	};
+};
 
 } //input_streams
 } //sampler

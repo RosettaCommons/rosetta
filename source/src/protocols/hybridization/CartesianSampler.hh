@@ -74,7 +74,7 @@ public:
 	// set the fullatom scorefunction (only used for some option sets)
 	void set_fa_scorefunction(core::scoring::ScoreFunctionOP scorefxn_in) { fa_scorefxn_=scorefxn_in; }
 
-	std::string	get_name() const { return "CartesianSampler"; }
+	std::string get_name() const { return "CartesianSampler"; }
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -124,7 +124,7 @@ protected:
 	void apply_transform( core::pose::Pose &frag, core::Vector const &preT, core::Vector const &postT, numeric::xyzMatrix< core::Real > const &R);
 
 	// apply endpoint constraints to fragment
-	void apply_fragcsts( core::pose::Pose &working_frag,	core::pose::Pose const &pose, core::Size start );
+	void apply_fragcsts( core::pose::Pose &working_frag, core::pose::Pose const &pose, core::Size start );
 
 private:
 	// parameters
@@ -148,7 +148,7 @@ private:
 	std::set<core::Size> user_pos_;
 	std::set<core::Size> residues_to_exclude_;
 
- 	// dump pdb right before changing anything
+	// dump pdb right before changing anything
 	bool dump_pdb_;
 	std::string dump_pdb_tag_;
 

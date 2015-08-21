@@ -10,7 +10,7 @@
 /// @file FragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -59,7 +59,7 @@ void StructureDependentPeakCalibrator::generate_constraints() {
 	core::pose::Pose dummy_pose;
 	core::Size ct( 1 );
 	runtime_assert( structures_.size() )
-	core::pose::Pose const& pose( **(structures_.begin()) );
+		core::pose::Pose const& pose( **(structures_.begin()) );
 	for ( utility::vector1< CrossPeakOP >::const_iterator it = peaks().begin(); it != peaks().end(); ++it, ++ct ) {
 		(*it)->create_fa_and_cen_constraint( constraints_[ ct ], dummy, pose, dummy_pose, 1, 0.0 /*padding*/, true /*only fa cst*/ );
 	}
@@ -75,26 +75,26 @@ void StructureDependentPeakCalibrator::collect_upperbound_statistics( core::Size
 	Real mean( 0.0 );
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	if ( constraints_[ peak ] &&
-		!( params.calibration_ignore_eliminated_peaks_  && peaks()[ peak ]->eliminated() ) ) {
+			!( params.calibration_ignore_eliminated_peaks_  && peaks()[ peak ]->eliminated() ) ) {
 		for ( PoseVector::const_iterator pose_it = structures_.begin(); pose_it != structures_.end(); ++pose_it, ++pose_ct ) {
 			Real dist( constraints_[ peak ]->dist( **pose_it ) );
 			stddev += dist*dist;
 			mean += dist;
 			violated += ( dist - peaks()[ peak ]->distance_bound() ) > dcalibrate_;
-			//			if ( pose_ct == 1 && tr.Trace.visible() ) tr.Trace << peaks()[ peak ]->peak_id() << " " << peaks()[ peak ]->filename() << " sum_dist " << constraints_[ peak ]->dist( **pose_it ) << std::endl;
+			//   if ( pose_ct == 1 && tr.Trace.visible() ) tr.Trace << peaks()[ peak ]->peak_id() << " " << peaks()[ peak ]->filename() << " sum_dist " << constraints_[ peak ]->dist( **pose_it ) << std::endl;
 		}
 		mean *= inv_n_struct;
 		stddev = stddev*inv_n_struct - mean*mean;
-		//	tr.Debug << "peak: " << peaks()[ peak ]->peak_id() << " " << peaks()[ peak ]->filename() << " violated: " << violated << " " << 1.0/inv_n_struct << " " << std::endl;
+		// tr.Debug << "peak: " << peaks()[ peak ]->peak_id() << " " << peaks()[ peak ]->filename() << " violated: " << violated << " " << 1.0/inv_n_struct << " " << std::endl;
 		if ( stddev < params.calibration_convergence_ || params.calibration_convergence_ < 0.01 ) {
 			collect_target_statistics( violated*inv_n_struct, types );
 		}
-// 		for ( core::Size type = BACKBONE; type < MAX_TYPE; ++type ) {
-// 			if ( types.test( type ) ) {
-// 				accumulated_count_[ type ] += 1;
-// 				accumulated_target_[ type ] += violated * inv_n_struct;
-// 			}
-// 		}
+		//   for ( core::Size type = BACKBONE; type < MAX_TYPE; ++type ) {
+		//    if ( types.test( type ) ) {
+		//     accumulated_count_[ type ] += 1;
+		//     accumulated_target_[ type ] += violated * inv_n_struct;
+		//    }
+		//   }
 	}
 }
 
@@ -137,11 +137,11 @@ void StructureDependentPeakCalibrator::eliminate_violated_constraints() {
 						distance_deltas[ pose_ct ] -= correction;
 					}
 					tr.Debug << "peak: " << (*it)->peak_id() <<" " << (*it)->filename()
-									 << " original violations: " << old_violated
-									 << std::setprecision(2) << " new distance: " << peaks()[ ct ]->distance_bound()
-									 << " nudged by: " << correction
-									 << std::setprecision(2) << " of max " << max_correction
-									 << " new violations: " << violated << std::endl;
+						<< " original violations: " << old_violated
+						<< std::setprecision(2) << " new distance: " << peaks()[ ct ]->distance_bound()
+						<< " nudged by: " << correction
+						<< std::setprecision(2) << " of max " << max_correction
+						<< " new violations: " << violated << std::endl;
 					break;
 				}
 				violated=old_violated;
@@ -182,12 +182,12 @@ void StructureDependentPeakCalibrator::eliminate_violated_constraints() {
 
 				tr.Debug << num_element_cluster << " distances are in an interval of only " << max_extension << " with a Q1 dist of " << low_quartil_dist << std::endl;
 				//get extension between high and low.
-				//			Size const ind_low_5( 1+utility::round( params.local_distviol_range_*distance_deltas.size() ) );   //lower 5% -
-				//			Size const ind_high_5( utility::round( 1.0*distance_deltas.size()*(1-params.local_distviol_range_) ) ); //upper 5%
-				//			Real max_extension( distance_deltas[ ind_high_5 ] - distance_deltas[ ind_low_5 ] );
+				//   Size const ind_low_5( 1+utility::round( params.local_distviol_range_*distance_deltas.size() ) );   //lower 5% -
+				//   Size const ind_high_5( utility::round( 1.0*distance_deltas.size()*(1-params.local_distviol_range_) ) ); //upper 5%
+				//   Real max_extension( distance_deltas[ ind_high_5 ] - distance_deltas[ ind_low_5 ] );
 
-				//			tr.Debug << "ind_low_5 " << ind_low_5 << " ind_high_5 " << ind_high_5 << " min_delta: "
-				//							 << distance_deltas[ 1 ] << " max_delta "
+				//   tr.Debug << "ind_low_5 " << ind_low_5 << " ind_high_5 " << ind_high_5 << " min_delta: "
+				//        << distance_deltas[ 1 ] << " max_delta "
 				//<< distance_deltas.back() << std::endl;
 
 				Size viol_count( 0 );
@@ -200,8 +200,8 @@ void StructureDependentPeakCalibrator::eliminate_violated_constraints() {
 				tr.Trace << std::endl;
 
 				tr.Debug << "peak: " << (*it)->peak_id() <<" " << (*it)->filename() << " dist: " << (*it)->distance_bound()
-								 << " max_extension " << max_extension << " viol_count " << viol_count
-								 <<  ( viol_count > (params.nr_conformers_violatable_*distance_deltas.size() ) ? " REMOVED " : "" ) << std::endl;
+					<< " max_extension " << max_extension << " viol_count " << viol_count
+					<<  ( viol_count > (params.nr_conformers_violatable_*distance_deltas.size() ) ? " REMOVED " : "" ) << std::endl;
 
 				(*it)->set_eliminated_due_to_dist_violations( viol_count > ( params.nr_conformers_violatable_*distance_deltas.size() ) );
 				std::ostringstream elim_msg;

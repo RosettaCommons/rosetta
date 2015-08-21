@@ -9,7 +9,7 @@
 
 /// @file protocols/toolbox/task_operations/StoreCompoundTaskMover.cc
 /// @brief  Combine tasks using boolean logic for residues that are packable or designable,
-/// assign new packing behavior to residues that match or do not match the specified criteria, 
+/// assign new packing behavior to residues that match or do not match the specified criteria,
 /// and store the resulting task in the pose's cacheable data.
 /// TODO (Jacob): Add option to combine allowed amino acid sets.
 /// @author Jacob Bale (balej@uw.edu) (Much of this code was adapted from the CompoundStatementFilter, StoreTaskMover, and rosetta_scripts/util.cc)
@@ -73,133 +73,133 @@ void StoreCompoundTaskMover::verbose( bool const verb ) { verbose_ = verb; }
 void StoreCompoundTaskMover::overwrite( bool const ow ) { overwrite_ = ow; }
 void StoreCompoundTaskMover::task_name( std::string const tn ) { task_name_ = tn; }
 void StoreCompoundTaskMover::mode( std::string const md ) { mode_ = md; }
-void StoreCompoundTaskMover::true_behavior( std::string const tb ) { true_behavior_ = tb; } 
+void StoreCompoundTaskMover::true_behavior( std::string const tb ) { true_behavior_ = tb; }
 void StoreCompoundTaskMover::false_behavior( std::string const fb ) { false_behavior_ = fb; }
 
 void
 StoreCompoundTaskMover::CompoundPackableTask( core::pose::Pose const & pose, core::Size & total_residue, core::pack::task::PackerTaskOP & task)
 {
 	std::string select_true_pos(task_name_+": select true_positions, resi ");
-	for( core::Size resi=1; resi<=total_residue; ++resi ){
+	for ( core::Size resi=1; resi<=total_residue; ++resi ) {
 
 		bool value( true );
 
-		for( StoreCompoundTaskMover::const_task_iterator it=compound_task_.begin(); it!=compound_task_.end(); ++it ) {
-			if( it - compound_task_.begin() == 0 ){
+		for ( StoreCompoundTaskMover::const_task_iterator it=compound_task_.begin(); it!=compound_task_.end(); ++it ) {
+			if ( it - compound_task_.begin() == 0 ) {
 				// first logical op may only be NOT
 				// ANDNOT and ORNOT are also treated as NOT (with a warning)
 				value = it->first->being_packed( resi );
-				if (it->second == NOT) value = !value;
-				if (it->second == ORNOT) {
+				if ( it->second == NOT ) value = !value;
+				if ( it->second == ORNOT ) {
 					TR << "WARNING: StoreCompoundTaskMover treating operator ORNOT as NOT" << std::endl;
 					value = !value;
 				}
-				if (it->second == ANDNOT) {
+				if ( it->second == ANDNOT ) {
 					TR << "WARNING: StoreCompoundTaskMover treating operator ANDNOT as NOT" << std::endl;
 					value = !value;
 				}
 			} else {
 				switch( it->second  ) {
-					case ( AND ) : value = value && it->first->being_packed( resi ); break;
-					case ( OR  ) : value = value || it->first->being_packed( resi ); break;
-					case ( XOR ) : value = value ^ it->first->being_packed( resi ); break;
-					case ( ORNOT ) : value = value || !it->first->being_packed( resi ); break;
-					case ( ANDNOT ) : value = value && !it->first->being_packed( resi ); break;
-					case ( NOR ) : value = !( value || it->first->being_packed( resi ) ); break;
-					case (NAND ) : value = !( value && it->first->being_packed( resi ) ); break;
-					case (NOT ) :
-						TR << "WARNING: StoreCompoundTaskMover treating operator NOT as ANDNOT" << std::endl;
-						value = value && !it->first->being_packed( resi );
-						break;
+				case ( AND ) : value = value && it->first->being_packed( resi ); break;
+				case ( OR  ) : value = value || it->first->being_packed( resi ); break;
+				case ( XOR ) : value = value ^ it->first->being_packed( resi ); break;
+				case ( ORNOT ) : value = value || !it->first->being_packed( resi ); break;
+				case ( ANDNOT ) : value = value && !it->first->being_packed( resi ); break;
+				case ( NOR ) : value = !( value || it->first->being_packed( resi ) ); break;
+				case (NAND ) : value = !( value && it->first->being_packed( resi ) ); break;
+				case (NOT ) :
+					TR << "WARNING: StoreCompoundTaskMover treating operator NOT as ANDNOT" << std::endl;
+					value = value && !it->first->being_packed( resi );
+					break;
 				}
 			}
 		}
-		if( invert_ ) value = !value;
-		if( !value ) { 
-			if( false_behavior_ == "prevent_repacking" ) {
+		if ( invert_ ) value = !value;
+		if ( !value ) {
+			if ( false_behavior_ == "prevent_repacking" ) {
 				task->nonconst_residue_task(resi).prevent_repacking();
-			} else if( false_behavior_ == "restrict_to_repacking" ) { 
+			} else if ( false_behavior_ == "restrict_to_repacking" ) {
 				task->nonconst_residue_task(resi).restrict_to_repacking();
 			}
-		} else { 
-			if( true_behavior_ == "prevent_repacking" ) {
+		} else {
+			if ( true_behavior_ == "prevent_repacking" ) {
 				task->nonconst_residue_task(resi).prevent_repacking();
-			} else if( true_behavior_ == "restrict_to_repacking" ) { 
+			} else if ( true_behavior_ == "restrict_to_repacking" ) {
 				task->nonconst_residue_task(resi).restrict_to_repacking();
 			}
 			core::Size output_resi = resi;
 			if ( !basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {
 				output_resi = pose.pdb_info()->number( resi );
 			}
-			select_true_pos.append(ObjexxFCL::string_of(output_resi) + "+");   
+			select_true_pos.append(ObjexxFCL::string_of(output_resi) + "+");
 		}
 	}
-	if( verbose_ ) {
+	if ( verbose_ ) {
 		TR << select_true_pos << std::endl;
-	}	
+	}
 }
 
 void
 StoreCompoundTaskMover::CompoundDesignableTask( core::pose::Pose const & pose, core::Size & total_residue, core::pack::task::PackerTaskOP & task)
 {
 	std::string select_true_pos(task_name_+": select true_positions, resi ");
-	for( core::Size resi=1; resi<=total_residue; ++resi ){
+	for ( core::Size resi=1; resi<=total_residue; ++resi ) {
 
 		bool value( true );
 
-		for( StoreCompoundTaskMover::const_task_iterator it=compound_task_.begin(); it!=compound_task_.end(); ++it ) {
-			if( it - compound_task_.begin() == 0 ){
+		for ( StoreCompoundTaskMover::const_task_iterator it=compound_task_.begin(); it!=compound_task_.end(); ++it ) {
+			if ( it - compound_task_.begin() == 0 ) {
 				// first logical op may only be NOT
 				// ANDNOT and ORNOT are also treated as NOT (with a warning)
 				value = it->first->being_designed( resi );
-				if (it->second == NOT) value = !value;
-				if (it->second == ORNOT) {
+				if ( it->second == NOT ) value = !value;
+				if ( it->second == ORNOT ) {
 					TR << "WARNING: StoreCompoundTaskMover treating operator ORNOT as NOT" << std::endl;
 					value = !value;
 				}
-				if (it->second == ANDNOT) {
+				if ( it->second == ANDNOT ) {
 					TR << "WARNING: StoreCompoundTaskMover treating operator ANDNOT as NOT" << std::endl;
 					value = !value;
 				}
 			} else {
 				switch( it->second  ) {
-					case ( AND ) : value = value && it->first->being_designed( resi ); break;
-					case ( OR  ) : value = value || it->first->being_designed( resi ); break;
-					case ( XOR ) : value = value ^ it->first->being_designed( resi ); break;
-					case ( ORNOT ) : value = value || !it->first->being_designed( resi ); break;
-					case ( ANDNOT ) : value = value && !it->first->being_designed( resi ); break;
-					case ( NOR ) : value = !( value || it->first->being_designed( resi ) ); break;
-					case (NAND ) : value = !( value && it->first->being_designed( resi ) ); break;
-					case (NOT ) :
-						TR << "WARNING: StoreCompoundTaskMover treating operator NOT as ANDNOT" << std::endl;
-						value = value && !it->first->being_designed( resi );
-						break;
+				case ( AND ) : value = value && it->first->being_designed( resi ); break;
+				case ( OR  ) : value = value || it->first->being_designed( resi ); break;
+				case ( XOR ) : value = value ^ it->first->being_designed( resi ); break;
+				case ( ORNOT ) : value = value || !it->first->being_designed( resi ); break;
+				case ( ANDNOT ) : value = value && !it->first->being_designed( resi ); break;
+				case ( NOR ) : value = !( value || it->first->being_designed( resi ) ); break;
+				case (NAND ) : value = !( value && it->first->being_designed( resi ) ); break;
+				case (NOT ) :
+					TR << "WARNING: StoreCompoundTaskMover treating operator NOT as ANDNOT" << std::endl;
+					value = value && !it->first->being_designed( resi );
+					break;
 				}
 			}
 		}
-		if( invert_ ) value = !value;
-		if( !value ) { 
-			if( false_behavior_ == "prevent_repacking" ) {
+		if ( invert_ ) value = !value;
+		if ( !value ) {
+			if ( false_behavior_ == "prevent_repacking" ) {
 				task->nonconst_residue_task(resi).prevent_repacking();
-			} else if( false_behavior_ == "restrict_to_repacking" ) { 
+			} else if ( false_behavior_ == "restrict_to_repacking" ) {
 				task->nonconst_residue_task(resi).restrict_to_repacking();
 			}
-		} else { 
-			if( true_behavior_ == "prevent_repacking" ) {
+		} else {
+			if ( true_behavior_ == "prevent_repacking" ) {
 				task->nonconst_residue_task(resi).prevent_repacking();
-			} else if( true_behavior_ == "restrict_to_repacking" ) { 
+			} else if ( true_behavior_ == "restrict_to_repacking" ) {
 				task->nonconst_residue_task(resi).restrict_to_repacking();
 			}
 			core::Size output_resi = resi;
 			if ( !basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {
 				output_resi = pose.pdb_info()->number( resi );
 			}
-			select_true_pos.append(ObjexxFCL::string_of(output_resi) + "+");   
+			select_true_pos.append(ObjexxFCL::string_of(output_resi) + "+");
 		}
 	}
-	if( verbose_ ) {
+	if ( verbose_ ) {
 		TR << select_true_pos << std::endl;
-	}	
+	}
 }
 
 void
@@ -208,17 +208,17 @@ StoreCompoundTaskMover::apply( core::pose::Pose & pose )
 
 	// Only consider the residues in the asymmetric unit if the pose is symmetric
 	core::Size total_residue;
-	if(core::pose::symmetry::is_symmetric( pose )) { 
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
-		total_residue = symm_info->num_independent_residues();		
+		total_residue = symm_info->num_independent_residues();
 	} else {
-		total_residue = pose.total_residue(); 
+		total_residue = pose.total_residue();
 	}
 
 	// Loop over the task factory, boolean operation pairs, apply the task operations to the pose, and store these new task, operator pairs
 	// Note: This is performed here rather than in the parse_my_tag function so that the PackerTask is created using the pose present at
 	// runtime rather than during parsing.
-	for( StoreCompoundTaskMover::const_factory_iterator it=compound_factory_.begin(); it!=compound_factory_.end(); ++it ) {
+	for ( StoreCompoundTaskMover::const_factory_iterator it=compound_factory_.begin(); it!=compound_factory_.end(); ++it ) {
 		std::pair< core::pack::task::PackerTaskOP, boolean_operations > task_pair;
 		task_pair.second = it->second;
 		core::pack::task::PackerTaskOP new_packer_task = it->first->create_task_and_apply_taskoperations( pose );
@@ -231,21 +231,21 @@ StoreCompoundTaskMover::apply( core::pose::Pose & pose )
 	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
-	/// For each of the possible modes: 
+	/// For each of the possible modes:
 	/// 1) loop over all of the independent residues
 	/// 2) for each residue
-	///		1) loop through the task/boolean_operation pairs
-	///		2) determine the final state of each residue (ie, packable, designable, designable with amino acids TWER... etc)
-	///		3) apply this state to the new compound task
+	///  1) loop through the task/boolean_operation pairs
+	///  2) determine the final state of each residue (ie, packable, designable, designable with amino acids TWER... etc)
+	///  3) apply this state to the new compound task
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
-	if( mode_ == "packable" ) {
+	if ( mode_ == "packable" ) {
 		CompoundPackableTask( pose, total_residue, task );
-	} else if( mode_ == "designable" ) {
+	} else if ( mode_ == "designable" ) {
 		CompoundDesignableTask( pose, total_residue, task );
 	}
 
-/* TODO (Jacob): Add option to combine aa_sets. 
+	/* TODO (Jacob): Add option to combine aa_sets.
 	Does a getter function exist to get a length-20 vector of bools for allowed_aas for a given residue?
 	Does a function exist to check if an amino acid (given by either one or three letter aa code) is allowed at a given position?
 	Add addition loop over allowed_aa vector for each residue, storing value in a vector of bools, which is then used to set
@@ -258,12 +258,13 @@ StoreCompoundTaskMover::apply( core::pose::Pose & pose )
 	// residues_to_mutate[i]=((*aa_iter)->aa());
 
 	}
-*/
+	*/
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	/// Store the new compound task in the pose's cacheable data.
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	if (core::pose::symmetry::is_symmetric(pose))
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::pack::make_symmetric_PackerTask_by_truncation(pose, task); // Does this need to be fixed or omitted?
+	}
 	// If the pose doesn't have STM_STORED_TASK data, put a blank STMStoredTask in there.
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) ) {
 		protocols::toolbox::task_operations::STMStoredTaskOP blank_tasks( new protocols::toolbox::task_operations::STMStoredTask() );
@@ -281,27 +282,27 @@ StoreCompoundTaskMover::apply( core::pose::Pose & pose )
 
 void
 StoreCompoundTaskMover::parse_my_tag(
-		TagCOP const tag,
-		basic::datacache::DataMap & data_map,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & /*pose*/ )
+	TagCOP const tag,
+	basic::datacache::DataMap & data_map,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & /*pose*/ )
 {
 
-  typedef utility::vector1< std::string > StringVec;
+	typedef utility::vector1< std::string > StringVec;
 
 	TR<<"StoreCompoundTask: "<<tag->getName()<<std::endl;
 	task_name_ = tag->getOption< std::string >( "task_name", "" );
 	true_behavior_ = tag->getOption<std::string>( "true_behavior", "" );
-	if( !( (true_behavior_ == "prevent_repacking") || (true_behavior_ == "restrict_to_repacking") || (true_behavior_ == "") ) ) { 
+	if ( !( (true_behavior_ == "prevent_repacking") || (true_behavior_ == "restrict_to_repacking") || (true_behavior_ == "") ) ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Error: true_behavior in tag is undefined." );
 	}
 	false_behavior_ = tag->getOption<std::string>( "false_behavior", "prevent_repacking" );
-	if( !( (false_behavior_ == "prevent_repacking") || (false_behavior_ == "restrict_to_repacking") || (false_behavior_ == "") ) ) { 
+	if ( !( (false_behavior_ == "prevent_repacking") || (false_behavior_ == "restrict_to_repacking") || (false_behavior_ == "") ) ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Error: false_behavior in tag is undefined." );
 	}
 	mode_ = tag->getOption<std::string>( "mode", "packable" );
-	if( !( (mode_ == "packable") || (mode_ == "designable") ) ) { 
+	if ( !( (mode_ == "packable") || (mode_ == "designable") ) ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Error: mode in tag is undefined." );
 	}
 	invert_ = tag->getOption<bool>( "invert", false );
@@ -309,39 +310,39 @@ StoreCompoundTaskMover::parse_my_tag(
 	overwrite_ = tag->getOption< bool >( "overwrite", false );
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Loop through all user-provided subtags (ex. < AND task_name="bbi" />) and put these into a 
+	/// Loop through all user-provided subtags (ex. < AND task_name="bbi" />) and put these into a
 	/// vector of (TaskFactoryOP, boolean_operation) pairs.
 	/// Note: Do not apply tasks to pose until runtime
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	BOOST_FOREACH(TagCOP cmp_tag_ptr, tag->getTags() ){
+	BOOST_FOREACH ( TagCOP cmp_tag_ptr, tag->getTags() ) {
 		std::string const operation( cmp_tag_ptr->getName() );
 		std::pair< core::pack::task::TaskFactoryOP, boolean_operations > factory_pair;
-		if( operation == "AND" ) factory_pair.second = AND;
-		else if( operation == "OR" ) factory_pair.second = OR;
-		else if( operation == "XOR" ) factory_pair.second = XOR;
-		else if( operation == "NOR" ) factory_pair.second = NOR;
-		else if( operation == "NAND" ) factory_pair.second = NAND;
-		else if( operation == "ORNOT" ) factory_pair.second = ORNOT;
-		else if( operation == "ANDNOT" ) factory_pair.second = ANDNOT;
-		else if( operation == "NOT" ) factory_pair.second = NOT;
+		if ( operation == "AND" ) factory_pair.second = AND;
+		else if ( operation == "OR" ) factory_pair.second = OR;
+		else if ( operation == "XOR" ) factory_pair.second = XOR;
+		else if ( operation == "NOR" ) factory_pair.second = NOR;
+		else if ( operation == "NAND" ) factory_pair.second = NAND;
+		else if ( operation == "ORNOT" ) factory_pair.second = ORNOT;
+		else if ( operation == "ANDNOT" ) factory_pair.second = ANDNOT;
+		else if ( operation == "NOT" ) factory_pair.second = NOT;
 		else {
 			throw utility::excn::EXCN_RosettaScriptsOption( "Error: Boolean operation in tag is undefined." );
 		}
 
-  	core::pack::task::TaskFactoryOP new_task_factory( new core::pack::task::TaskFactory );
-  	std::string const t_o_val( cmp_tag_ptr->getOption<std::string>("task_operations") );
- 
-	 	TR<<"Defined with operator: "<<operation<<" and tasks: "<<t_o_val<<std::endl;
+		core::pack::task::TaskFactoryOP new_task_factory( new core::pack::task::TaskFactory );
+		std::string const t_o_val( cmp_tag_ptr->getOption<std::string>("task_operations") );
 
-  	StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
-  	for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
-  	      t_o_key != end; ++t_o_key ) {
-    	if ( data_map.has( "task_operations", *t_o_key ) ) {
-      	new_task_factory->push_back( data_map.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", *t_o_key ) );
-    	} else {
-      	utility_exit_with_message("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
-    	}
-  	}
+		TR<<"Defined with operator: "<<operation<<" and tasks: "<<t_o_val<<std::endl;
+
+		StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
+		for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
+				t_o_key != end; ++t_o_key ) {
+			if ( data_map.has( "task_operations", *t_o_key ) ) {
+				new_task_factory->push_back( data_map.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", *t_o_key ) );
+			} else {
+				utility_exit_with_message("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
+			}
+		}
 		factory_pair.first = new_task_factory->clone(); //clone?
 		runtime_assert( new_task_factory != 0 );
 		compound_factory_.push_back( factory_pair );

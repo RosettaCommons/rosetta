@@ -35,8 +35,8 @@ public:
 
 	/// @brief Debug printing, serialazing to Tracer like object.
 	friend std::ostream& operator <<(std::ostream &os, CrystInfo const & ci) {
-	os << "<CrystInfo>{" << ci.A() << "," << ci.B() << "," << ci.C() << ","
-	   << ci.alpha() << "," << ci.beta() << "," << ci.gamma() << " : " << ci.spacegroup() << "}";
+		os << "<CrystInfo>{" << ci.A() << "," << ci.B() << "," << ci.C() << ","
+			<< ci.alpha() << "," << ci.beta() << "," << ci.gamma() << " : " << ci.spacegroup() << "}";
 		return os;
 	}
 

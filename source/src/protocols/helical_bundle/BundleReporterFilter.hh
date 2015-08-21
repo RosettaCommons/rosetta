@@ -50,7 +50,7 @@ public:
 	/// @brief Constructor
 	///
 	BundleReporterFilter();
-	
+
 	/// @brief Copy constructor
 	///
 	BundleReporterFilter( BundleReporterFilter const &src );
@@ -64,13 +64,13 @@ public:
 	filters::FilterOP clone() const {
 		return filters::FilterOP( new BundleReporterFilter( *this ) );
 	}
-	
+
 	/// @brief Returns an owning pointer to a new instance of this filter, with default
 	/// initialization (NOT a copy).
 	filters::FilterOP fresh_instance() const{
 		return filters::FilterOP( new BundleReporterFilter() );
 	}
-	
+
 	/// @brief Set the score threshold.
 	///
 	void set_score_type_threshold( core::Real const &val ) { score_type_threshold_ = val; return; }
@@ -78,7 +78,7 @@ public:
 	/// @brief Get the score threshold.
 	///
 	inline core::Real score_type_threshold( ) const { return score_type_threshold_; }
-	
+
 	/// @brief Set the score type.
 	///
 	void set_score_type( core::scoring::ScoreType const &type ) { score_type_=type; return; }
@@ -95,11 +95,11 @@ public:
 		scorefxn_ = scorefxn_in;
 		return;
 	}
-	
+
 	/// @brief Get the scorefunction (by owning pointer).
 	/// @details Non-const access.
 	inline core::scoring::ScoreFunctionOP scorefxn() { return scorefxn_; }
-	
+
 	/// @brief Set the behaviour by string.
 	/// @details Options are "ALWAYS_TRUE", "ALWAYS_FALSE", or "FILTER".
 	void set_filter_behaviour( std::string const &behaviour_string );
@@ -112,7 +112,7 @@ public:
 		behaviour_ = behaviour_in;
 		return;
 	}
-	
+
 	/// @brief Get the filter behaviour.
 	///
 	inline BundleReporterFilterBehaviour filter_behaviour() const { return behaviour_; }
@@ -123,10 +123,10 @@ public:
 	/// of the filter (always true, always false, or actually filtering by score).
 	bool apply( core::pose::Pose const & pose ) const;
 
-  /// @brief Allows reporting of filter values to a stream.
-  ///
+	/// @brief Allows reporting of filter values to a stream.
+	///
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	
+
 	/// @brief Allows reporting of the filter value to a float.
 	///
 	core::Real report_sm( core::pose::Pose const & pose ) const;
@@ -137,13 +137,13 @@ public:
 		core::Size const jobno,
 		core::Real const &score,
 		core::pose::Pose const &pose
-	) const; 
+	) const;
 
 	/// @brief Computes the energy of the pose.
 	/// @details the energy function must be suitable for residue type set of the pose,
 	/// and must be symmetric if this is a symmetric pose.
 	core::Real compute( core::pose::Pose const &pose ) const;
-	
+
 	/// @brief Parse XML (RosettaScripts) setup.
 	///
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
@@ -155,7 +155,7 @@ public:
 	/// @brief Set whether we report three-letter codes.
 	///
 	void set_use_threeletter( bool const val=true ) { report_three_letter_codes_=val; return; }
-	
+
 	/// @brief Get whether we report sequences.
 	///
 	inline bool report_sequence( ) const { return report_sequence_; }
@@ -170,22 +170,22 @@ private:
 	/// @brief If the score is used to filter, what's the cutoff threshold above which the filter returns false?
 	/// @details 0.0 by default.
 	core::Real score_type_threshold_;
-	
+
 	/// @brief What score term should be reported/used to filter?
 	/// @details Set to total_score by default.
 	core::scoring::ScoreType score_type_;
-	
+
 	/// @brief What scorefunction should be reported/used to filter?
 	/// @details Must be specified by the user or in the code prior to invoking the filter; defaults to a null pointer.
 	core::scoring::ScoreFunctionOP scorefxn_;
-	
+
 	/// @brief The behaviour of this filter.
 	/// @details Defaults to always returning true, but can be set to always return false or to filter by energy.
 	BundleReporterFilterBehaviour behaviour_;
-	
+
 	/// @brief Report sequence?  False by default.
 	bool report_sequence_;
-	
+
 	/// @brief Report one- or three-letter codes?  False (one-letter codes) by default.
 	bool report_three_letter_codes_;
 

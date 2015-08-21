@@ -196,7 +196,7 @@ std::string
 residue_type_all_patches_name( ResidueType const & rsd_type )
 {
 	Size spos = rsd_type.name().find( PATCH_LINKER );
-	if( spos < rsd_type.name().length() ) return rsd_type.name().substr( spos );
+	if ( spos < rsd_type.name().length() ) return rsd_type.name().substr( spos );
 	else return "";
 }
 
@@ -217,7 +217,7 @@ tag_from_line( std::string const & line )
 /// add operations_ from each input line containing a single operation
 PatchCaseOP
 case_from_lines(
-		utility::vector1< std::string > const & lines
+	utility::vector1< std::string > const & lines
 )
 {
 	PatchCaseOP pcase( new PatchCase() );
@@ -227,7 +227,7 @@ case_from_lines(
 		std::string const tag( tag_from_line( lines[i] ) );
 
 		if ( tag == "BEGIN_SELECTOR" ) {
-		debug_assert( !in_selector );
+			debug_assert( !in_selector );
 			in_selector = true;
 		} else if ( tag == "END_SELECTOR" ) {
 			in_selector = false;
@@ -257,7 +257,7 @@ PatchCase::apply( ResidueType const & rsd_in, bool const instantiate /* = true *
 	}
 
 	for ( utility::vector1< PatchOperationOP >::const_iterator iter = operations_.begin(),
-					iter_end = operations_.end(); iter != iter_end; ++iter ) {
+			iter_end = operations_.end(); iter != iter_end; ++iter ) {
 		if ( !instantiate && !( *iter )->applies_to_placeholder() ) { continue; }
 		bool const fail( ( *iter )->apply( *rsd ) );
 		if ( fail ) {
@@ -336,10 +336,10 @@ PatchCase::deletes_variants() const
 }
 
 
-/// @details	- first read in all lines from the file, discarding # comment lines
+/// @details - first read in all lines from the file, discarding # comment lines
 /// - parse input lines for Patch name and variant types (NAME, TYPES)
-///	- parse input lines for general ResidueTypeSelector defined for this Patch (BEGIN_SELECTOR, END_SELECTOR)
-///	- parse input lines to create each case accordingly (BEGIN_CASE, END_CASE)
+/// - parse input lines for general ResidueTypeSelector defined for this Patch (BEGIN_SELECTOR, END_SELECTOR)
+/// - parse input lines to create each case accordingly (BEGIN_CASE, END_CASE)
 /// @note keep the order to avoid triggering parsing errors
 void
 Patch::read_file( std::string const & filename )
@@ -356,7 +356,7 @@ Patch::read_file( std::string const & filename )
 	utility::vector1< std::string > lines;
 	{ // read the lines file
 		utility::io::izstream data( filename.c_str() );
-		if( !data.good() ){
+		if ( !data.good() ) {
 			utility_exit_with_message("Cannot find patch file: "+filename);
 		}
 		std::string line;
@@ -393,10 +393,10 @@ Patch::read_file( std::string const & filename )
 			if ( tag == "BEGIN_CASE" ) {
 				break;
 			} else if ( tag == "BEGIN_SELECTOR" ) {
-			debug_assert( !in_selector );
+				debug_assert( !in_selector );
 				in_selector = true;
 			} else if ( tag == "END_SELECTOR" ) {
-			debug_assert( in_selector );
+				debug_assert( in_selector );
 				in_selector = false;
 			} else if ( in_selector ) {
 				selector_.add_line( lines[i] );
@@ -411,8 +411,8 @@ Patch::read_file( std::string const & filename )
 		// look for a case
 		std::string tag( tag_from_line( lines[1] ) );
 		if ( tag == "BEGIN_CASE" ) {
-		debug_assert( case_lines.empty() );
-		debug_assert( !in_case );
+			debug_assert( case_lines.empty() );
+			debug_assert( !in_case );
 			in_case = true;
 		} else if ( tag == "END_CASE" ) {
 			PatchCaseOP new_case( case_from_lines( case_lines ) );

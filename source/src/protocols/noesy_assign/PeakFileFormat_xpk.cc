@@ -10,7 +10,7 @@
 /// @file FragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -62,47 +62,47 @@ using namespace core;
 //{}
 
 void PeakFileFormat_xpk::write_peak( std::ostream& os, Size ct, CrossPeak const& cp ) const {
-  std::ostringstream line_end;
-  line_end << " #d " << ObjexxFCL::format::F( 6, 3, cp.distance_bound() );
-  if ( cp.eliminated( false /*recompute*/, true /*do_not_compute*/) ) line_end << " #eliminated: " << cp.elimination_reason();
+	std::ostringstream line_end;
+	line_end << " #d " << ObjexxFCL::format::F( 6, 3, cp.distance_bound() );
+	if ( cp.eliminated( false /*recompute*/, true /*do_not_compute*/) ) line_end << " #eliminated: " << cp.elimination_reason();
 
 
-  // cp.write_to_stream( os );
-  write_assignments( os, cp, "" );
-  write_resonances( os, cp );
-  os << "# Peak " << ObjexxFCL::format::RJ( 6, ct ) << " ";
-  //  write_strength( os, cp );
+	// cp.write_to_stream( os );
+	write_assignments( os, cp, "" );
+	write_resonances( os, cp );
+	os << "# Peak " << ObjexxFCL::format::RJ( 6, ct ) << " ";
+	//  write_strength( os, cp );
 
-  os << line_end.str();
+	os << line_end.str();
 
 
 }
 
 void PeakFileFormat_xpk::set_format_from_peak( CrossPeak const& cp ) {
-  info1_ = CrossPeakInfoOP( new CrossPeakInfo( cp.info( 1 ) ) );
-  info2_ = CrossPeakInfoOP( new CrossPeakInfo( cp.info( 2 ) ) );
-  col2proton_.clear();
-  col2islabel_.clear();
+	info1_ = CrossPeakInfoOP( new CrossPeakInfo( cp.info( 1 ) ) );
+	info2_ = CrossPeakInfoOP( new CrossPeakInfo( cp.info( 2 ) ) );
+	col2proton_.clear();
+	col2islabel_.clear();
 
-  //dimension 2 - label
-  if ( info2_->has_label() ) {
-    col2proton_.push_back( 2 );
-    col2islabel_.push_back( true );
-  }
+	//dimension 2 - label
+	if ( info2_->has_label() ) {
+		col2proton_.push_back( 2 );
+		col2islabel_.push_back( true );
+	}
 
-  //dimension 2
-  col2proton_.push_back( 2 );
-  col2islabel_.push_back( false );
+	//dimension 2
+	col2proton_.push_back( 2 );
+	col2islabel_.push_back( false );
 
-  //dimension 1 - label
-  if ( info1_->has_label() ) {
-    col2proton_.push_back( 1 );
-    col2islabel_.push_back( true );
-  }
+	//dimension 1 - label
+	if ( info1_->has_label() ) {
+		col2proton_.push_back( 1 );
+		col2islabel_.push_back( true );
+	}
 
-  //dimension 1
-  col2proton_.push_back( 1 );
-  col2islabel_.push_back( false );
+	//dimension 1
+	col2proton_.push_back( 1 );
+	col2islabel_.push_back( false );
 
 }
 
@@ -132,41 +132,41 @@ void PeakFileFormat_xpk::write_header( std::ostream& ) {}
 // }
 
 void PeakFileFormat_xpk::write_assignment_indent( std::ostream& os, CrossPeak const&) const {
-  os << std::endl;// << "                                                        ";
-  //	if ( cp.has_label( 1 ) && cp.has_label( 2 ) ) os << "         ";
+	os << std::endl;// << "                                                        ";
+	// if ( cp.has_label( 1 ) && cp.has_label( 2 ) ) os << "         ";
 }
 
 void PeakFileFormat_xpk::write_nil_assignment( std::ostream& os ) const {
-  os << ObjexxFCL::format::RJ( 25, "?-?-?" ) << " ";
+	os << ObjexxFCL::format::RJ( 25, "?-?-?" ) << " ";
 }
 
 void PeakFileFormat_xpk::write_assignment( std::ostream& os, PeakAssignment const& pa ) const {
-  Size resid( 0 );
-  std::ostringstream buf;
-  for ( Size icol=1; icol<=ncol(); ++icol ) {
-    Size val;
-    Size iproton( col2proton_[ icol ] );
-    bool is_label( col2islabel_[ icol ] );
-    if ( write_atom_names() ) {
-      core::id::NamedAtomID atom;
-      if ( !is_label ) atom = pa.atom( iproton );
-      else atom = pa.label_atom( iproton );
-      if ( resid != atom.rsd() ) {
-	resid = atom.rsd();
-	core::chemical::AA aa( pa.resonances().aa_from_resid( atom.rsd() ));
-	buf << oneletter_code_from_aa(aa) << resid;
-      }
-      buf << atom.atom();
-    } else {
-      if ( !is_label ) val = pa.resonance_id( iproton );
-      else {
-	val = pa.label_resonance_id( iproton );
-      }
-      buf << ObjexxFCL::format::RJ( 6, val );
-    }
-    if ( icol < ncol() ) buf << "-";
-  }
-  os << ObjexxFCL::format::RJ( 25, buf.str() ) << " ";
+	Size resid( 0 );
+	std::ostringstream buf;
+	for ( Size icol=1; icol<=ncol(); ++icol ) {
+		Size val;
+		Size iproton( col2proton_[ icol ] );
+		bool is_label( col2islabel_[ icol ] );
+		if ( write_atom_names() ) {
+			core::id::NamedAtomID atom;
+			if ( !is_label ) atom = pa.atom( iproton );
+			else atom = pa.label_atom( iproton );
+			if ( resid != atom.rsd() ) {
+				resid = atom.rsd();
+				core::chemical::AA aa( pa.resonances().aa_from_resid( atom.rsd() ));
+				buf << oneletter_code_from_aa(aa) << resid;
+			}
+			buf << atom.atom();
+		} else {
+			if ( !is_label ) val = pa.resonance_id( iproton );
+			else {
+				val = pa.label_resonance_id( iproton );
+			}
+			buf << ObjexxFCL::format::RJ( 6, val );
+		}
+		if ( icol < ncol() ) buf << "-";
+	}
+	os << ObjexxFCL::format::RJ( 25, buf.str() ) << " ";
 }
 
 

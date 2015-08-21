@@ -43,8 +43,8 @@ namespace sequence {
 static thread_local basic::Tracer tr( "core.sequence.SequenceProfile" );
 
 void SequenceProfile::read_from_checkpoint(
-		utility::file::FileName const & fn,
-		bool negative_better
+	utility::file::FileName const & fn,
+	bool negative_better
 ) {
 	utility::io::izstream input( fn );
 	negative_better_ = negative_better;
@@ -85,27 +85,27 @@ void SequenceProfile::read_from_checkpoint(
 	getline( input, line );
 
 	utility::vector1< std::string > header( utility::split_whitespace( line ) );
-	if( header.size() == order.size() || header.size() == order.size()+1 ) { // Skip header if it doesn't match the expected number of columns.
+	if ( header.size() == order.size() || header.size() == order.size()+1 ) { // Skip header if it doesn't match the expected number of columns.
 		core::Size offset(0);
-		if( header.size() == order.size()+1 ) { offset = 1; }
-		for( core::Size ii=1+offset; ii <= header.size(); ++ii) {
-			if( header[ii].size() != 1 ) { break; } // Not a single letter code
-			if( core::chemical::oneletter_code_from_aa(order[ii-offset]) != header[ii][0] ) {
+		if ( header.size() == order.size()+1 ) { offset = 1; }
+		for ( core::Size ii=1+offset; ii <= header.size(); ++ii ) {
+			if ( header[ii].size() != 1 ) { break; } // Not a single letter code
+			if ( core::chemical::oneletter_code_from_aa(order[ii-offset]) != header[ii][0] ) {
 				tr.Warning << "WARNING: Potential badly formatted sequence profile file '" << std::string(fn) << "'. " <<
-						"Columns should be in ACDEFGHIKLMNPQRSTVWY order. " <<
-						"Saw '" << header[ii] << "' as column header at position " << utility::to_string(ii) << ". " <<
-						"Expected '" << core::chemical::oneletter_code_from_aa(order[ii-offset]) << "'." << std::endl;
+					"Columns should be in ACDEFGHIKLMNPQRSTVWY order. " <<
+					"Saw '" << header[ii] << "' as column header at position " << utility::to_string(ii) << ". " <<
+					"Expected '" << core::chemical::oneletter_code_from_aa(order[ii-offset]) << "'." << std::endl;
 				break;
 			}
 			alphabet_.push_back( header[ii] );
 		}
 	}
-	if( alphabet_.size() != order.size() ) {
-			tr.Debug << "No header for sequence profile checkpoint file '" << fn << "'. Assuming ACDEFGHIKLMNPQRSTVWY order." << std::endl;
+	if ( alphabet_.size() != order.size() ) {
+		tr.Debug << "No header for sequence profile checkpoint file '" << fn << "'. Assuming ACDEFGHIKLMNPQRSTVWY order." << std::endl;
 	}
 
 	//Get data in body of file
-	while( getline( input, line ) ) {
+	while ( getline( input, line ) ) {
 		if ( line.substr(0,3) == "END" ) break; // end of profile
 		std::string aa;
 		utility::vector1< core::Real > prof_row;
@@ -125,7 +125,7 @@ void SequenceProfile::read_from_checkpoint(
 			++index;
 		}
 
-		if( index != order.size() + 1 ) {
+		if ( index != order.size() + 1 ) {
 			tr.Warning << "WARNING: Potentially incomplete profile row in '" << std::string(fn) << "'. " << std::endl;
 		}
 		aa_seq += aa;
@@ -138,17 +138,17 @@ void SequenceProfile::read_from_checkpoint(
 
 void SequenceProfile::read_from_binary_chk(utility::file::FileName const & fn) {
 
-    double x = 0;
-    char bb4[4];
-    std::ifstream myfile (fn.name().c_str(), std::ios::in|std::ios::binary);
-    if ( !myfile ) {
+	double x = 0;
+	char bb4[4];
+	std::ifstream myfile (fn.name().c_str(), std::ios::in|std::ios::binary);
+	if ( !myfile ) {
 		std::string msg(
 			"ERROR: Unable to open file " +
 			static_cast< std::string > (fn) +
 			"!"
 		);
 		utility_exit_with_message( msg );
-    }
+	}
 
 	static utility::vector1< core::chemical::AA > order;
 	order.resize( 20 );
@@ -174,36 +174,36 @@ void SequenceProfile::read_from_binary_chk(utility::file::FileName const & fn) {
 	order[20] = core::chemical::aa_from_oneletter_code( 'V' );
 
 
-    myfile.read(bb4,4);
+	myfile.read(bb4,4);
 
-    int seqLength = bb4[0];
-    int b2 = ((int) bb4[1]) << 8;
-    int b3 = ((int) bb4[2]) << 16;
-    int b4 = ((int) bb4[3]) << 24;
-    seqLength = (seqLength < 0) ? 256 + seqLength + b2 + b3 + b4 : seqLength + b2 + b3 + b4;
-    std::cout << seqLength<<" "<<(int)bb4[0]<<" "<<(int)bb4[1] << "\n";
+	int seqLength = bb4[0];
+	int b2 = ((int) bb4[1]) << 8;
+	int b3 = ((int) bb4[2]) << 16;
+	int b4 = ((int) bb4[3]) << 24;
+	seqLength = (seqLength < 0) ? 256 + seqLength + b2 + b3 + b4 : seqLength + b2 + b3 + b4;
+	std::cout << seqLength<<" "<<(int)bb4[0]<<" "<<(int)bb4[1] << "\n";
 
-    utility::vector1<char> seq;
-    for(int i=0;i<seqLength;++i) {
-      seq.push_back( myfile.get() );
-    }
-    string strSeq(seq.begin(),seq.end());
-    tr.Debug << "Read sequence " << strSeq << " from  " << fn << std::endl;
+	utility::vector1<char> seq;
+	for ( int i=0; i<seqLength; ++i ) {
+		seq.push_back( myfile.get() );
+	}
+	string strSeq(seq.begin(),seq.end());
+	tr.Debug << "Read sequence " << strSeq << " from  " << fn << std::endl;
 
-    char bb8[8];
-    //double row[20]; /// @ralford werror catches as an unused var 3/26/14
-    for(int i = 0;i < seqLength;i++) {
-      utility::vector1< Real > prof_row;
-      for(int j = 0;j < 20;j++) {
-        myfile.read(bb8,8);
-        std::copy(bb8, bb8 + sizeof(double), reinterpret_cast<char*>(&x));
-//        x = swap(x);
-        std::cout << std::fixed<<std::setw(7)<<std::setprecision(4)<<x<<" ";
-        prof_row.push_back(x);
-      }
-      profile_.push_back( prof_row );
-      std::cout<<std::endl;
-    }
+	char bb8[8];
+	//double row[20]; /// @ralford werror catches as an unused var 3/26/14
+	for ( int i = 0; i < seqLength; i++ ) {
+		utility::vector1< Real > prof_row;
+		for ( int j = 0; j < 20; j++ ) {
+			myfile.read(bb8,8);
+			std::copy(bb8, bb8 + sizeof(double), reinterpret_cast<char*>(&x));
+			//        x = swap(x);
+			std::cout << std::fixed<<std::setw(7)<<std::setprecision(4)<<x<<" ";
+			prof_row.push_back(x);
+		}
+		profile_.push_back( prof_row );
+		std::cout<<std::endl;
+	}
 }
 
 void SequenceProfile::read_from_file(
@@ -262,23 +262,23 @@ void SequenceProfile::read_from_file(
 
 		alphabet_.push_back( aa );
 
-		if( core::chemical::oneletter_code_from_aa(order[alphabet_.size()]) != aa[0] ) {
+		if ( core::chemical::oneletter_code_from_aa(order[alphabet_.size()]) != aa[0] ) {
 			utility_exit_with_message("Badly formatted pssm file. Expected ARNDCQEGHILKMFPSTWYV order in third line of file '"+
-					std::string(fn)+"'. Saw '"+aa+"' at position "+utility::to_string(alphabet_.size())+". "
-					"Expected '"+core::chemical::oneletter_code_from_aa(order[alphabet_.size()])+"'.");
+				std::string(fn)+"'. Saw '"+aa+"' at position "+utility::to_string(alphabet_.size())+". "
+				"Expected '"+core::chemical::oneletter_code_from_aa(order[alphabet_.size()])+"'.");
 		}
 		if ( alphabet_.size() >= 20 ) break; // super-hack for pssm file format! bad james, bad!
 	}
 
 	std::string seq;
-	while( getline( input, line ) ) {
+	while ( getline( input, line ) ) {
 		std::istringstream line_stream( line );
 		//std::cout << "line = " << line << std::endl;
 		Size pos;
 		string aa;
 
 		line_stream >> pos >> aa;
-	//	tr <<"pos: "<<pos<<"aa: "<<aa<<std::endl;
+		// tr <<"pos: "<<pos<<"aa: "<<aa<<std::endl;
 		if ( line_stream.fail() ) continue;
 
 		utility::vector1< Real > prof_row;
@@ -299,20 +299,20 @@ void SequenceProfile::read_from_file(
 
 		//using the same while loop to read % matrix in the pssm file. All the numbers after index 20 are stored in the percentage matrix. I am doing it this way
 		// So I don't have to change anything in the existing code , gideonla 120214
-		if (basic::options::option[ basic::options::OptionKeys::out::file::use_occurrence_data ].value()){
-		index=1;
-		while ( !line_stream.fail() && index <= order.size() ) {
-		//	tr <<"Percentage :"<<score<<std::endl;
-			probability_row[ order[index] ] = score;
-			line_stream >> score;
-			++index;
-		}// end of the while loop
-		if (index<order.size()){//if the probability matrix is missing or corrupt we fill the the % matrix with zeros
-			for (core::Size i(1), end(order.size()); i <= end; ++i) {
-				probability_row[order[i]] = 0;
+		if ( basic::options::option[ basic::options::OptionKeys::out::file::use_occurrence_data ].value() ) {
+			index=1;
+			while ( !line_stream.fail() && index <= order.size() ) {
+				// tr <<"Percentage :"<<score<<std::endl;
+				probability_row[ order[index] ] = score;
+				line_stream >> score;
+				++index;
+			}// end of the while loop
+			if ( index<order.size() ) { //if the probability matrix is missing or corrupt we fill the the % matrix with zeros
+				for ( core::Size i(1), end(order.size()); i <= end; ++i ) {
+					probability_row[order[i]] = 0;
+				}
 			}
-		}
-		occurrence_data_.push_back( probability_row );
+			occurrence_data_.push_back( probability_row );
 		}
 
 		profile_.push_back( prof_row );
@@ -321,7 +321,7 @@ void SequenceProfile::read_from_file(
 		seq += aa;
 	} // while( getline( input, line ) )
 
-	if( profile_.size() == 0 ) {
+	if ( profile_.size() == 0 ) {
 		utility_exit_with_message("Profile file '"+std::string(fn)+"' does not appear to contain any data.");
 	}
 
@@ -339,7 +339,7 @@ void SequenceProfile::generate_from_sequence( Sequence const & seq, std::string 
 	mat.read_from_database(matrix);
 
 	utility::vector1< utility::vector1< core::Real > > new_prof;
-	for (core::Size ii(1), end(seq.length()); ii <= end; ++ii) {
+	for ( core::Size ii(1), end(seq.length()); ii <= end; ++ii ) {
 		utility::vector1< Real > prof_row( mat.values_for_aa( seq[ii] ) );
 		prof_row.resize( core::chemical::num_canonical_aas, -10000 );
 		new_prof.push_back(prof_row);
@@ -365,7 +365,7 @@ SequenceProfile::occurrence_data() const {
 void SequenceProfile::rescale(core::Real factor) {
 	for ( Size ii = 1; ii <= profile().size(); ++ii ) {
 		for ( utility::vector1< core::Real >::iterator
-						it = profile_[ii].begin(), end = profile_[ii].end(); it != end; ++it ) {
+				it = profile_[ii].begin(), end = profile_[ii].end(); it != end; ++it ) {
 			*it *= factor;
 		}
 	}
@@ -412,14 +412,16 @@ void SequenceProfile::occurrence_data(
 }
 
 void SequenceProfile::prof_row( utility::vector1< Real > const & new_prof_row, core::Size pos ) {
-	if( profile_.size() <= pos )
+	if ( profile_.size() <= pos ) {
 		profile_.resize(pos+1);
+	}
 	profile_[pos] = new_prof_row;
 }
 
 void SequenceProfile::probabilty_row( utility::vector1< Real > const & new_prob_row, core::Size pos ) {
-	if( occurrence_data_.size() <= pos )
+	if ( occurrence_data_.size() <= pos ) {
 		occurrence_data_.resize(pos+1);
+	}
 	occurrence_data_[pos] = new_prob_row;
 }
 
@@ -465,7 +467,7 @@ void SequenceProfile::delete_position(
 
 /// @brief Returns the number of distinct values at each position in this profile.
 Size SequenceProfile::width() const {
-debug_assert( check_internals_() );
+	debug_assert( check_internals_() );
 	return profile_[1].size();
 }
 
@@ -495,8 +497,8 @@ void SequenceProfile::scores_to_probs_(
 	// Z = sum( exp( score / kT ) )
 	core::Real partition( 0.0 );
 	for ( vector1< core::Real >::iterator
-				it = scores.begin(), end = scores.end(); it != end; ++it
-	) {
+			it = scores.begin(), end = scores.end(); it != end; ++it
+			) {
 		if ( negative_better ) {
 			*it = exp( -1 * *it / kT );
 		} else {
@@ -508,8 +510,8 @@ void SequenceProfile::scores_to_probs_(
 	// transform scores using the partition calculated above:
 	// P(s) = exp( -1  * score / kT ) ) / Z
 	for ( utility::vector1< core::Real >::iterator
-				it = scores.begin(), end = scores.end(); it != end; ++it
-	) {
+			it = scores.begin(), end = scores.end(); it != end; ++it
+			) {
 		*it = *it / partition;
 	}
 } // scores_to_probs_

@@ -17,8 +17,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace topology_broker{
+namespace protocols {
+namespace topology_broker {
 
 class RigidBodyRandomTMHMover;
 typedef utility::pointer::shared_ptr<RigidBodyRandomTMHMover> RigidBodyRandomTMHMoverOP;

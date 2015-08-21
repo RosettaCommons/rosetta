@@ -38,13 +38,13 @@
 
 static thread_local basic::Tracer TR( "protocols.antibody.cluster.CDRClusterMatcher" );
 
-namespace protocols{
+namespace protocols {
 namespace antibody {
 namespace clusters {
-	using namespace protocols::antibody;
-	using utility::vector1;
-	using core::Real;
-	
+using namespace protocols::antibody;
+using utility::vector1;
+using core::Real;
+
 CDRClusterMatcher::CDRClusterMatcher(){
 	center_cluster_db_path_="sampling/antibodies/cluster_center_dihedrals.txt";
 	load_center_data();
@@ -54,13 +54,13 @@ CDRClusterMatcher::~CDRClusterMatcher(){}
 
 void
 CDRClusterMatcher::load_center_data(){
-	
+
 	//I need to turn this text file into a database soon.
 	CDRClusterEnumManagerOP cluster_man( new CDRClusterEnumManager() );
 	AntibodyEnumManagerCOP ab_man( AntibodyEnumManagerOP( new AntibodyEnumManager() ) );
 
-	
-	
+
+
 	std::string cdr_name;
 	std::string cluster;
 	std::string fullcluster_name;
@@ -70,7 +70,7 @@ CDRClusterMatcher::load_center_data(){
 	std::string cis_trans_conf;
 	core::Size length;
 	std::string type;
-	
+
 	utility::io::izstream clus_stream;
 	basic::database::open(clus_stream, center_cluster_db_path_);
 	Size line_count = 0;
@@ -84,11 +84,11 @@ CDRClusterMatcher::load_center_data(){
 		single_cluster_data.cluster = cluster_man->cdr_cluster_string_to_enum(fullcluster_name);
 		single_cluster_data.length = length;
 		single_cluster_data.cis_trans_conf = cis_trans_conf;
-		
+
 		boost::split(phiSP, phis, boost::is_any_of(","));
 		boost::split(psiSP, psis, boost::is_any_of(","));
-		
-		for (core::Size i = 1; i <= phiSP.size(); ++i){
+
+		for ( core::Size i = 1; i <= phiSP.size(); ++i ) {
 			std::istringstream phi_stream(phiSP[i]);
 			std::istringstream psi_stream(psiSP[i]);
 			Real phi; phi_stream >> phi;
@@ -104,102 +104,100 @@ CDRClusterMatcher::load_center_data(){
 CDRClusterOP
 CDRClusterMatcher::get_cdr_cluster(core::pose::Pose const & pose, CDRNameEnum const cdr, core::Size const start, core::Size const end) const {
 	std::string cis_trans_conf= get_pose_cis_trans_conformation(pose, start, end);
-	
+
 	std::map< std::string, vector1< Real > > pose_angles = get_pose_angles(pose, start, end);
 	std::map <Real, ClusterData > k_distances_to_cluster;
 	vector1< Real > k_distances;
-	
+
 	core::Size length = end - start +1;
 	bool cluster_found = false;
 	TR << length << " "<< cis_trans_conf << std::endl;
 	bool cis_trans_match = false;
-	
-	for (core::Size i = 1; i <= cluster_data_.size(); ++i){
+
+	for ( core::Size i = 1; i <= cluster_data_.size(); ++i ) {
 		ClusterData data = cluster_data_[i];
-		
-		if ((data.cdr ==  cdr) && (data.length ==  length) && (data.cis_trans_conf == cis_trans_conf )){
+
+		if ( (data.cdr ==  cdr) && (data.length ==  length) && (data.cis_trans_conf == cis_trans_conf ) ) {
 			cluster_found = true;
 			cis_trans_match = true;
 			core::Real k_distance_to_cluster = calculate_dihedral_distance(data.phis, pose_angles["phi"], data.psis, pose_angles["psi"]);
 			k_distances_to_cluster[k_distance_to_cluster] = data;
 			k_distances.push_back(k_distance_to_cluster);
-		}
-		else{ continue; }
+		} else { continue; }
 	}
-	
-	
+
+
 	///Take the minimum distance as the cluster.
-	
+
 	CDRClusterEnum cluster;
 	core::Real distance;
-	if (! cluster_found) {
+	if ( ! cluster_found ) {
 		cluster = NA;
 		distance = 1000;
 	} else {
-		
+
 		//Get minimum and set cluster.
 		distance = utility::min(k_distances);
 		cluster = k_distances_to_cluster[distance].cluster;
 
 	}
-	
+
 	CDRClusterOP cdr_cluster( new CDRCluster(pose, cdr, length, cluster, start, distance, cis_trans_match) );
 	return cdr_cluster;
-	
-	
+
+
 }
 
 CDRClusterOP
 CDRClusterMatcher::get_closest_cluster(core::pose::Pose const & pose, core::Size const start, core::Size const end) const {
 	std::string cis_trans_conf= get_pose_cis_trans_conformation(pose, start, end);
-	
+
 	std::map< std::string, vector1< Real > > pose_angles = get_pose_angles(pose, start, end);
 	std::map <Real, ClusterData> k_distances_to_cluster;
 	vector1< Real > k_distances;
-	
+
 	core::Size length = end - start +1;
 	bool cluster_found = false;
-	for (core::Size i = 1; i <= cluster_data_.size(); ++i){
+	for ( core::Size i = 1; i <= cluster_data_.size(); ++i ) {
 		ClusterData data = cluster_data_[i];
-		if (data.length ==  length && data.cis_trans_conf == cis_trans_conf ){
+		if ( data.length ==  length && data.cis_trans_conf == cis_trans_conf ) {
 			cluster_found = true;
-			
+
 			core::Real k_distance_to_cluster = calculate_dihedral_distance(data.phis, pose_angles["phi"], data.psis, pose_angles["psi"]);
 			k_distances_to_cluster[k_distance_to_cluster] = data;
 			k_distances.push_back(k_distance_to_cluster);
-		}
-		else{ continue; }
+		} else { continue; }
 	}
 
 	///Take the minimum distance as the cluster.
-	
+
 	CDRClusterEnum cluster;
 	core::Real distance;
 	CDRNameEnum cdr;
-	if (! cluster_found) {
+	if ( ! cluster_found ) {
 		cluster = NA;
 		distance = 1000;
 		cdr = l1;
-		
+
 	} else {
-		
+
 		//Get minimum and set cluster.
 		distance = utility::min(k_distances);
 		cluster = k_distances_to_cluster[distance].cluster;
 		cdr = k_distances_to_cluster[distance].cdr;
 
 	}
-	
+
 	CDRClusterOP cdr_cluster( new CDRCluster(pose, cdr, length, cluster, start, distance) );
 	return cdr_cluster;
-	
+
 }
 
 std::map< std::string, vector1< core::Real > >
 CDRClusterMatcher::get_pose_angles(core::pose::Pose const & pose, core::Size const start, core::Size const end) const {
-	
+
 	std::map< std::string, vector1< core::Real > > pose_angles;
-	for (Size resnum = start; resnum<=end; resnum++) {
+	for ( Size resnum = start; resnum<=end; resnum++ ) {
 		pose_angles["phi"].push_back(pose.phi(resnum));
 		pose_angles["psi"].push_back(pose.psi(resnum));
 	}

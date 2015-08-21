@@ -58,12 +58,12 @@ public:
 	void
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn ) const;
 
-    void
-    setup_for_minimizing(
-        pose::Pose & pose,
-        ScoreFunction const & sfxn,
-        kinematics::MinimizerMapBase const & min_map
-    ) const;
+	void
+	setup_for_minimizing(
+		pose::Pose & pose,
+		ScoreFunction const & sfxn,
+		kinematics::MinimizerMapBase const & min_map
+	) const;
 
 	virtual
 	void
@@ -89,17 +89,17 @@ public:
 	) const {}
 
 
- 	virtual
- 	void
- 	eval_atom_derivative(
- 		id::AtomID const & atom_id,
- 		pose::Pose const & pose,
+	virtual
+	void
+	eval_atom_derivative(
+		id::AtomID const & atom_id,
+		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
- 		ScoreFunction const &,
- 		EnergyMap const & weights,
- 		Vector & F1,
- 		Vector & F2
- 	) const;
+		ScoreFunction const &,
+		EnergyMap const & weights,
+		Vector & F1,
+		Vector & F2
+	) const;
 
 	virtual
 	bool
@@ -149,48 +149,48 @@ public:
 
 private:
 
-	//	Real
-	//	get_fa_stack_score( Distance const dist, Real const cos_kappa ) const;
+	// Real
+	// get_fa_stack_score( Distance const dist, Real const cos_kappa ) const;
 
 	Real
 	get_fa_stack_score( Vector const r_vec, Matrix const M_i,
-											Real const prefactor,
-											Distance const stack_cutoff, Distance const dist_cutoff) const;
+		Real const prefactor,
+		Distance const stack_cutoff, Distance const dist_cutoff) const;
 
 	Vector
 	get_fa_stack_deriv( Vector const r_vec, Matrix const M_i ) const;
 
 	Real
 	residue_pair_energy_one_way(
-															conformation::Residue const & rsd1,
-															conformation::Residue const & rsd2,
-															pose::Pose const & pose,
-															Real & score_aro,
-															Real     const & prefactor,
-															Distance const & stack_cutoff,
-															Distance const & dist_cutoff
-															) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		Real & score_aro,
+		Real     const & prefactor,
+		Distance const & stack_cutoff,
+		Distance const & dist_cutoff
+	) const;
 
 	bool
 	check_base_base_OK(
-	   conformation::Residue const & rsd1,
-		 conformation::Residue const & rsd2,
-		 Size const & m, Size const & n ) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		Size const & m, Size const & n ) const;
 
 	virtual
 	core::Size version() const;
 
-  Real const prefactor_;
-  Distance const stack_cutoff_;
-  Distance const dist_cutoff_;
+	Real const prefactor_;
+	Distance const stack_cutoff_;
+	Distance const dist_cutoff_;
 
-  Real const sol_prefactor_;
-  Distance const sol_stack_cutoff_;
-  Distance const sol_dist_cutoff_;
+	Real const sol_prefactor_;
+	Distance const sol_stack_cutoff_;
+	Distance const sol_dist_cutoff_;
 
-  Real const lr_prefactor_;
-  Distance const lr_stack_cutoff_;
-  Distance const lr_dist_cutoff_;
+	Real const lr_prefactor_;
+	Distance const lr_stack_cutoff_;
+	Distance const lr_dist_cutoff_;
 
 	bool const base_base_only_;
 

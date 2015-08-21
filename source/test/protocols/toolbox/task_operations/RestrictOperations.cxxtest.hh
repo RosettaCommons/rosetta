@@ -86,8 +86,8 @@ public:
 	void test_RestrictToInterfaceOperation() {
 
 		/* if you are debugging this test, I suggest passing the flag -print_pymol_selection for ease of use.
-			 The flag -pose_metrics::interface_cutoff 8 will cause the results to match core/conformation/Interface.cxxtest
-			 although the flag actually defaults to 10 (thus a larger interface)
+		The flag -pose_metrics::interface_cutoff 8 will cause the results to match core/conformation/Interface.cxxtest
+		although the flag actually defaults to 10 (thus a larger interface)
 		*/
 
 		//set up test
@@ -121,7 +121,7 @@ public:
 
 	void test_RestrictByCalculatorsOperation() {
 		using core::pose::metrics::PoseMetricCalculatorOP;
-		
+
 		//first we set up the calculators that the Operation will use
 		std::string const interface_calc("interface"), neighborhood_calc("neighborhood");
 		std::set< core::Size > crset_RBC;
@@ -183,10 +183,12 @@ public:
 		//std::pair< std::set< core::Size >, std::set< core::Size > > interface, otherparts;
 		utility::vector1< std::pair< std::set< core::Size >, std::set< core::Size > > > full_vec;
 		//for loops to add residues to sets
-		for(core::Size ii=1 ; ii<= 245; ++ii){
-			side1.insert(ii);	}
-		for(core::Size ii=246 ; ii<= 301; ++ii){
-			side2.insert(ii);	}
+		for ( core::Size ii=1 ; ii<= 245; ++ii ) {
+			side1.insert(ii);
+		}
+		for ( core::Size ii=246 ; ii<= 301; ++ii ) {
+			side2.insert(ii);
+		}
 		//make other parts by hand
 		partA.insert(105);
 		partA.insert(107);
@@ -206,35 +208,35 @@ public:
 
 
 	}//end RestrictInterGroupVectorOperation
-	
+
 	void test_RestrictToMoveMapChiOperation() {
 		using namespace core::pack::task;
 		using namespace core::kinematics;
 		using namespace protocols::toolbox::task_operations;
 		using core::pack::task::operation::TaskOperationCOP;
 		using utility::vector1;
-		
+
 		MoveMapOP mm( new MoveMap() );
-		for (core::Size i = 1; i <=10; ++i){
+		for ( core::Size i = 1; i <=10; ++i ) {
 			mm->set_chi(i, true);
 		}
 		mm->show(std::cout);
-		
+
 		TaskFactory tf;
-		
+
 		RestrictToMoveMapChiOperationOP mm_op( new RestrictToMoveMapChiOperation(mm) );
 		tf.push_back(mm_op);
 		PackerTaskOP task = tf.create_task_and_apply_taskoperations(pose);
 		task->show(std::cout);
-		
+
 		vector1<bool> repacking_residues(pose.total_residue(), false);
-		for (core::Size i = 1; i <=10; ++i){
+		for ( core::Size i = 1; i <=10; ++i ) {
 			repacking_residues[i] = true;
 		}
 		TS_ASSERT(repacking_residues == task->repacking_residues());
-		
+
 		//Testing neighbor detection.
-		
+
 		tf.clear();
 		mm_op->set_include_neighbors(true);
 		mm_op->set_cutoff_distance(10.0);
@@ -242,9 +244,9 @@ public:
 		task = tf.create_task_and_apply_taskoperations(pose);
 		task->show(std::cout);
 		test::UTracer UT_MMNEI("protocols/toolbox/task_operations/RestrictToMoveMapChiWNeighbors.u");
-		
+
 		UT_MMNEI << *task << std::endl;
-		
+
 		//Testing design.
 		tf.clear();
 		mm_op->set_include_neighbors(false);
@@ -252,7 +254,7 @@ public:
 		tf.push_back(mm_op);
 		task = tf.create_task_and_apply_taskoperations(pose);
 		TS_ASSERT(repacking_residues == task->designing_residues());
-		
+
 	}
-	
+
 };//end class

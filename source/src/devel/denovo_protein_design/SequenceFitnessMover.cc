@@ -74,32 +74,32 @@ void SequenceFitnessMover::apply( core::pose::Pose & pose ){
 
 	// set phi, psi, omega of pose to test pose
 
-	for ( core::Size seqpos = 1; seqpos <= testpose.n_residue(); ++seqpos ){
+	for ( core::Size seqpos = 1; seqpos <= testpose.n_residue(); ++seqpos ) {
 		testpose.set_phi   ( seqpos, pose.phi(seqpos) );
 		testpose.set_psi   ( seqpos, pose.psi(seqpos) );
 		testpose.set_omega ( seqpos, pose.omega(seqpos) );
 	}
 
 	protocols::relax::FastRelax fast_relax( fullfxn );
-    fast_relax.apply( testpose );
+	fast_relax.apply( testpose );
 
-		float RMSD_testpose_opose = core::scoring::native_CA_rmsd ( testpose, opose );
-		//		float RMSD_pose_opose = protocols::evaluation::native_CA_rmsd ( pose, opose );
-
-
-   	PosePackData pd = pose_to_pack_data( pose, false );
-
-  	core::Real packing_score = compute_packing_score( pd, 0 );
+	float RMSD_testpose_opose = core::scoring::native_CA_rmsd ( testpose, opose );
+	//  float RMSD_pose_opose = protocols::evaluation::native_CA_rmsd ( pose, opose );
 
 
-		Energy score = (*fullfxn)( testpose );
-		/// Now handled automatically.  fullfxn->accumulate_residue_total_energies( testpose );
+	PosePackData pd = pose_to_pack_data( pose, false );
 
-		std::cout << " Grant Scores "<< score <<" "<< RMSD_testpose_opose << " " << packing_score << std::endl;
+	core::Real packing_score = compute_packing_score( pd, 0 );
 
 
-  //		protocols::analysis::PackStatMover packstats();
-	//		packstats.apply( testpose  );
+	Energy score = (*fullfxn)( testpose );
+	/// Now handled automatically.  fullfxn->accumulate_residue_total_energies( testpose );
+
+	std::cout << " Grant Scores "<< score <<" "<< RMSD_testpose_opose << " " << packing_score << std::endl;
+
+
+	//  protocols::analysis::PackStatMover packstats();
+	//  packstats.apply( testpose  );
 
 
 }//apply

@@ -6,25 +6,25 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/PcsDataCenter.hh
- ///
- /// @brief Hold the PCS data on which the SVD will be applyed
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/PcsDataCenter.hh
+///
+/// @brief Hold the PCS data on which the SVD will be applyed
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs2_PcsDataCenter_hh
 #define INCLUDED_protocols_scoring_methods_pcs2_PcsDataCenter_hh
@@ -49,14 +49,14 @@
 // c++ headers
 
 #ifdef WIN32
-	#include <protocols/scoring/methods/pcs2/PcsInputLine.hh>
+#include <protocols/scoring/methods/pcs2/PcsInputLine.hh>
 #endif
 
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs2{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs2 {
 
 class PcsDataCenter : public utility::pointer::ReferenceCount{
 private:
@@ -117,21 +117,21 @@ public:
 	/// X Y Z are the new coordinate of the center
 	void
 	update_matrix_A_all(core::Real const X,
-											core::Real const Y,
-											core::Real const Z);
+		core::Real const Y,
+		core::Real const Z);
 
 	/// @brief Call update_my_A_matrix for all lanthanide data.
 	/// X Y Z are the new coordinate of the center
 	/// It also update individual smaller matrice for svd
 	void
 	update_matrix_A_all_for_svd(core::Real const X,
-															core::Real const Y,
-															core::Real const Z);
+		core::Real const Y,
+		core::Real const Z);
 
 	void
 	update_matrix_A_all_for_cstyle(core::Real const X,
-																 core::Real const Y,
-																 core::Real const Z);
+		core::Real const Y,
+		core::Real const Z);
 
 
 	/// @brief Give me the vector PCS_data_per_lanthanides_all_
@@ -163,22 +163,22 @@ private:
 
 core::Real
 fill_A_line_fast(utility::vector1<core::Real> & A_line,
-								 core::Real const xM,
-								 core::Real const yM,
-								 core::Real const zM,
-								 core::Real const x,
-								 core::Real const y,
-								 core::Real const z
+	core::Real const xM,
+	core::Real const yM,
+	core::Real const zM,
+	core::Real const x,
+	core::Real const y,
+	core::Real const z
 );
 
 void
 fill_A_line_slow(utility::vector1<core::Real> & A_line,
-								 core::Real const xM,
-								 core::Real const yM,
-								 core::Real const zM,
-								 core::Real const x,
-								 core::Real const y,
-								 core::Real const z
+	core::Real const xM,
+	core::Real const yM,
+	core::Real const zM,
+	core::Real const x,
+	core::Real const y,
+	core::Real const z
 );
 
 

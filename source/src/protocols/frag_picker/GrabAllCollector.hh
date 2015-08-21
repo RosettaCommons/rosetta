@@ -47,9 +47,9 @@ public:
 	GrabAllCollector(Size query_size)
 	{
 		storage_.resize(query_size);
-		for (Size i = 1; i <= query_size; i++) {
+		for ( Size i = 1; i <= query_size; i++ ) {
 			utility::vector1<std::pair<FragmentCandidateOP,
-					scores::FragmentScoreMapOP> > vec;
+				scores::FragmentScoreMapOP> > vec;
 			storage_[i] = vec;
 		}
 	}
@@ -58,14 +58,15 @@ public:
 	inline bool add( ScoredCandidate new_canditate )
 	{
 		storage_[new_canditate.first->get_first_index_in_query()].push_back(
-				new_canditate);
+			new_canditate);
 		return true;
 	}
 
 	inline void clear()
 	{
-	    for(Size i=1;i<storage_.size();++i)
-	      storage_[i].clear();
+		for ( Size i=1; i<storage_.size(); ++i ) {
+			storage_[i].clear();
+		}
 	}
 
 	/// @brief prints how many fragments have been collected for each position
@@ -74,10 +75,11 @@ public:
 		scores::FragmentScoreManagerOP
 	) const {
 		output << "\n pos  | count |  pos  | count | pos  | count |\n";
-		for (Size i = 1; i <= storage_.size(); ++i) {
+		for ( Size i = 1; i <= storage_.size(); ++i ) {
 			output << I(5, i) << " |" << I(6, storage_[i].size()) << " |";
-			if (i % 3 == 0)
+			if ( i % 3 == 0 ) {
 				output << '\n';
+			}
 		}
 	}
 
@@ -90,8 +92,9 @@ public:
 	inline Size count_candidates() const {
 
 		Size response = 0;
-		for(Size i=1;i<=storage_.size();++i)
+		for ( Size i=1; i<=storage_.size(); ++i ) {
 			response += storage_[i].size();
+		}
 		return response;
 	}
 
@@ -105,11 +108,12 @@ public:
 	/// @brief Inserts candidates from another Collector for a give position in the query
 	inline void insert(Size pos, CandidatesCollectorOP collector) {
 		GrabAllCollectorOP c = utility::pointer::dynamic_pointer_cast< protocols::frag_picker::GrabAllCollector > ( collector );
-		if (c == 0)
+		if ( c == 0 ) {
 			utility_exit_with_message("Cant' cast candidates' collector to GrabAllCollector.");
-		for(Size j=1;j<=storage_[pos].size();++j) {
+		}
+		for ( Size j=1; j<=storage_[pos].size(); ++j ) {
 			ScoredCandidatesVector1 & content = c->get_candidates(pos);
-			for(Size l=1;l<=content.size();l++) storage_[pos].push_back( content[l] );
+			for ( Size l=1; l<=content.size(); l++ ) storage_[pos].push_back( content[l] );
 		}
 	}
 

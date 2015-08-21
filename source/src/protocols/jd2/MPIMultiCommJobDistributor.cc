@@ -109,9 +109,9 @@ void MPIMultiCommJobDistributor::setup_sub_communicators( Size sub_size ) {
 /// all processes within a single communication context work on the same job-id. ( Bcast )
 core::Size
 MPIMultiCommJobDistributor::get_new_job_id() {
-  if ( rank() < min_client_rank() ) {
-    return Parent::get_new_job_id();
-  } else {
+	if ( rank() < min_client_rank() ) {
+		return Parent::get_new_job_id();
+	} else {
 #ifdef USEMPI
 		int new_job_id( -1 );
 		if ( sub_rank_ == 0 ) {
@@ -138,16 +138,16 @@ MPIMultiCommJobDistributor::get_new_job_id() {
 void
 MPIMultiCommJobDistributor::job_succeeded(core::pose::Pose &pose, core::Real run_time, std::string const & tag) {
 	if ( sub_rank() <= 0 ) {
-			Parent::job_succeeded( pose, run_time, tag);
-  }
+		Parent::job_succeeded( pose, run_time, tag);
+	}
 }
 
 /// @brief dummy for master/slave version
 void
 MPIMultiCommJobDistributor::job_failed(core::pose::Pose &pose, bool retry ) {
 	if ( sub_rank() <= 0 ) {
-			Parent::job_failed( pose, retry);
-  }
+		Parent::job_failed( pose, retry);
+	}
 }
 
 #ifdef USEMPI

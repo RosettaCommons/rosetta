@@ -36,8 +36,8 @@ class SymFoldandDockRbTrialMover : public moves::Mover
 {
 public:
 
-typedef core::conformation::symmetry::SymmetricConformation SymmetricConformation;
-typedef core::conformation::symmetry::SymmetryInfo SymmetryInfo;
+	typedef core::conformation::symmetry::SymmetricConformation SymmetricConformation;
+	typedef core::conformation::symmetry::SymmetryInfo SymmetryInfo;
 
 public:
 
@@ -64,11 +64,11 @@ public:
 	virtual std::string get_name() const;
 
 	void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap &,
-			protocols::filters::Filters_map const &,
-			protocols::moves::Movers_map const &,
-			core::pose::Pose const & );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & );
 
 private:
 	core::scoring::ScoreFunctionCOP scorefxn_;

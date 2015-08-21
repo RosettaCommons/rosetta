@@ -37,8 +37,8 @@
 
 
 namespace protocols {
-namespace antibody{
-namespace design{
+namespace antibody {
+namespace design {
 
 
 ///@brief Get default options
@@ -160,7 +160,7 @@ get_all_graft_permutations(
 AntibodyDesignProtocolEnum
 design_protocol_to_enum(std::string const & design_type);
 
-std::string 
+std::string
 design_protocol_to_string(AntibodyDesignProtocolEnum const design_type);
 
 SeqDesignStrategyEnum
@@ -184,37 +184,37 @@ struct PDBNumbering {
 
 ///These all need better names and they need to be moved to a general place.  Make the ResidueKey of PDBInfo a public class:
 
-///@brief Get the PDBNumbering from strings such as: 1A, 1A:I, 1:A:~, 1:A:I with A being chain A and I being an insertion code. 
+///@brief Get the PDBNumbering from strings such as: 1A, 1A:I, 1:A:~, 1:A:I with A being chain A and I being an insertion code.
 PDBNumbering
 get_pdb_numbering_from_single_string( std::string const & pdb_residue);
 
-///@brief Get a resnum from strings such as: 1A, 1A:I, 1:A:~, 1:A:I with A being chain A and I being an insertion code. 
+///@brief Get a resnum from strings such as: 1A, 1A:I, 1:A:~, 1:A:I with A being chain A and I being an insertion code.
 core::Size
 get_resnum_from_single_string(core::pose::Pose const & pose, std::string const & pdb_residue);
 
-///@brief Get a resnum using the PDBLandmark from strings such as: 1A, 1A:I, 1:A:~, 1:A:I with A being chain A and I being an insertion code. 
+///@brief Get a resnum using the PDBLandmark from strings such as: 1A, 1A:I, 1:A:~, 1:A:I with A being chain A and I being an insertion code.
 core::Size
-get_resnum_from_single_string_w_landmark(	
+get_resnum_from_single_string_w_landmark(
 	AntibodyInfoCOP ab_info,
 	core::pose::Pose const & pose,
 	std::string const & pdb_residue,
 	AntibodyNumberingSchemeEnum const & scheme);
 
 ///@brief Get a boolean vector of resnums with ranges, where a - indicates range.
-/// Parses strings for PDB resnums such as 1A, 1A:I, 1:A:~, 1:A:I with A being chain A and I being an insertion code. 
+/// Parses strings for PDB resnums such as 1A, 1A:I, 1:A:~, 1:A:I with A being chain A and I being an insertion code.
 /// Example: 1A-10A or 1A-10A:I
 ///
 utility::vector1<bool>
 get_resnums_from_strings_with_ranges(core::pose::Pose const & pose, utility::vector1<std::string> const & pdb_residues);
-	
+
 ///@brief Get PDBNumbering from a vector of strings:
-///  Example: 1A, 1A:I, 1:A:~, 1:A:I with A being chain A and I being an insertion code. 
+///  Example: 1A, 1A:I, 1:A:~, 1:A:I with A being chain A and I being an insertion code.
 ///
 utility::vector1<PDBNumbering>
 get_pdb_numbering_from_strings(utility::vector1<std::string> const & pdb_residues);
 
 ///@brief get a boolean vector from a vector of strings:
-///  Example: 1A, 1A:I, 1:A:~, 1:A:I with A being chain A and I being an insertion code. 
+///  Example: 1A, 1A:I, 1:A:~, 1:A:I with A being chain A and I being an insertion code.
 ///
 utility::vector1<bool>
 get_resnum_from_strings(core::pose::Pose const & pose, utility::vector1<std::string> const & pdb_residues);
@@ -236,7 +236,7 @@ add_loops_from_bool_vector(loops::Loops & loops, utility::vector1< bool > residu
 
 ///@brief Get probability data for a given set of CDRs.  Will fill in the no_data_cdrs;
 std::map< core::Size, std::map< core::chemical::AA, core::Real > >
-get_cluster_profile_probability_data( 
+get_cluster_profile_probability_data(
 	AntibodyInfoCOP ab_info,
 	const core::pose::Pose& pose,
 	utility::vector1<bool> const & cdrs,
@@ -247,7 +247,7 @@ get_cluster_profile_probability_data(
 
 //@brief Get probability data for a given set of CDRs.  Will fill in the no_data_cdrs;
 std::map< core::Size, std::map< core::chemical::AA, core::Real > >
-get_cluster_profile_probability_data( 
+get_cluster_profile_probability_data(
 	AntibodyInfoCOP ab_info,
 	const core::pose::Pose& pose,
 	AntibodyCDRSeqDesignOptions const & seq_design_options,
@@ -271,4 +271,4 @@ transform_sequence_to_mutation_set(
 } //protocols
 
 
-#endif	//#ifndef INCLUDED_protocols/antibody/design_UTIL_HH
+#endif //#ifndef INCLUDED_protocols/antibody/design_UTIL_HH

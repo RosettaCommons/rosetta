@@ -51,16 +51,16 @@ calc_delta_sasa(
 /// @brief check kink of helix, return number of loosen hydrogen
 core::Size
 check_kink_helix(
-	 core::pose::Pose const & pose,
-	 core::Size const begin,
-	 core::Size const end );
+	core::pose::Pose const & pose,
+	core::Size const begin,
+	core::Size const end );
 
 
 utility::vector1< core::scoring::hbonds::HBond >
 check_internal_hbonds(
 	core::pose::Pose const & pose,
-    core::Size const begin,
-    core::Size const end );
+	core::Size const begin,
+	core::Size const end );
 
 } // namespace topology
 } // namespace fldsgn

@@ -36,7 +36,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-	
+
 class ComputeLigandRDF : public protocols::moves::Mover{
 
 public:
@@ -58,7 +58,7 @@ public:
 	);
 
 private:
-	
+
 	/// @brief compute the RDF between pairs of protein and ligand atoms
 	std::map<std::string, utility::vector1<core::Real> > ligand_protein_rdf(core::pose::Pose & pose);
 	/// @brief compute the RDF between pairs of protein protein atoms

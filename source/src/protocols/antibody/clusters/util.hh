@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/antibody/clusters/util.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_antibody_clusters_UTIL_HH
@@ -26,12 +26,12 @@
 namespace protocols {
 namespace antibody {
 namespace clusters {
-	using utility::vector1;
-	using core::Real;
+using utility::vector1;
+using core::Real;
 
 void
 add_cluster_comments_to_pose(core::pose::Pose& pose, AntibodyInfoCOP ab_info);
-		
+
 std::string
 get_pose_cis_trans_conformation(core::pose::Pose const & pose, core::Size const start, core::Size const end);
 
@@ -52,5 +52,5 @@ get_cluster_from_cache_or_ab_info(AntibodyInfoCOP ab_info, core::pose::Pose cons
 } //protocols
 
 
-#endif	//#ifndef INCLUDED_protocols/antibody/clusters/UTIL_HH
+#endif //#ifndef INCLUDED_protocols/antibody/clusters/UTIL_HH
 

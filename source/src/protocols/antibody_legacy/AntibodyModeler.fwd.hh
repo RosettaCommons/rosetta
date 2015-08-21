@@ -22,7 +22,7 @@ namespace protocols {
 class AntibodyModeler;
 typedef utility::pointer::shared_ptr< AntibodyModeler > AntibodyModelerOP;
 typedef utility::pointer::shared_ptr< AntibodyModeler const >
-AntibodyModelerCOP;
+	AntibodyModelerCOP;
 
 }
 

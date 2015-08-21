@@ -98,14 +98,14 @@ public:
 	/// @brief [] operator for getting a non-const reference to the energy for a ScoreType
 	Real & operator[] ( ScoreType st )
 	{
-	debug_assert( st > 0 && st <= n_score_types );
+		debug_assert( st > 0 && st <= n_score_types );
 		return map_[ st-1 ];
 	}
 
 	/// @brief [] operator for getting the value for a ScoreType
 	Real operator[] ( ScoreType st ) const
 	{
-	debug_assert( st > 0 && st <= n_score_types );
+		debug_assert( st > 0 && st <= n_score_types );
 		return map_[ st-1 ];
 	}
 
@@ -114,7 +114,7 @@ public:
 	zero( ScoreTypes const & l )
 	{
 		for ( ScoreTypes::const_iterator iter=l.begin(), iter_end=l.end();
-					iter != iter_end; ++iter ) {
+				iter != iter_end; ++iter ) {
 			operator[]( *iter ) = 0.0;
 		}
 	}
@@ -148,7 +148,7 @@ public:
 	void
 	clear()
 	{
-		for (int ii = 0; ii < n_score_types; ++ii ) {
+		for ( int ii = 0; ii < n_score_types; ++ii ) {
 			map_[ ii ] = 0;
 		}
 		//memset( map_, 0.0, n_score_types );
@@ -184,7 +184,7 @@ public:
 	{
 		Real total(0.0);
 		for ( ScoreTypes::const_iterator iter=l.begin(), iter_end=l.end();
-					iter != iter_end; ++iter ) {
+				iter != iter_end; ++iter ) {
 			total += operator[]( *iter ) * src[ *iter ];
 		}
 		return total;
@@ -253,7 +253,7 @@ public:
 	operator == ( EMapVector const & src ) const
 	{
 		for ( int ii = 0; ii < n_score_types; ++ii ) {
-			if( map_[ii] != src.map_[ii] ) return false;
+			if ( map_[ii] != src.map_[ii] ) return false;
 		}
 		return true;
 	}
@@ -264,7 +264,7 @@ public:
 	operator != ( EMapVector const & src ) const
 	{
 		for ( int ii = 0; ii < n_score_types; ++ii ) {
-			if( map_[ii] != src.map_[ii] ) return true;
+			if ( map_[ii] != src.map_[ii] ) return true;
 		}
 		return false;
 	}
@@ -279,7 +279,7 @@ public:
 	accumulate( EMapVector const & src, ScoreTypes const & l )
 	{
 		for ( ScoreTypes::const_iterator iter=l.begin(), iter_end=l.end();
-					iter != iter_end; ++iter ) {
+				iter != iter_end; ++iter ) {
 			operator[]( *iter ) += src[ *iter ];
 		}
 	}
@@ -290,7 +290,7 @@ public:
 	accumulate( EMapVector const & src, ScoreTypes const & l, Real const wt )
 	{
 		for ( ScoreTypes::const_iterator iter=l.begin(), iter_end=l.end();
-					iter != iter_end; ++iter ) {
+				iter != iter_end; ++iter ) {
 			operator[]( *iter ) += wt * src[ *iter ];
 		}
 	}
@@ -321,7 +321,7 @@ public:
 	{
 		Real total( 0.0 );
 		for ( ScoreTypes::const_iterator iter=l.begin(), iter_end=l.end();
-					iter != iter_end; ++iter ) {
+				iter != iter_end; ++iter ) {
 			// could use numeric::square
 			Real const val( operator[]( *iter ) );
 			total += val * val;
@@ -391,10 +391,9 @@ inline
 std::ostream &
 operator << ( std::ostream & ost, EMapVector const &  emap )
 {
-	for ( int ii = 1; ii <= n_score_types; ++ii )
-		{
-			ost << "( " << ScoreType(ii) << "; " << emap[ ScoreType (ii) ] << ") ";
-		}
+	for ( int ii = 1; ii <= n_score_types; ++ii ) {
+		ost << "( " << ScoreType(ii) << "; " << emap[ ScoreType (ii) ] << ") ";
+	}
 	return ost;
 }
 

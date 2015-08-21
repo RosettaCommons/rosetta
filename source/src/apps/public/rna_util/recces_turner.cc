@@ -63,46 +63,47 @@ OPT_KEY( Integer, n_intermediate_dump )
 //////////////////////////////////////////////////////////////////////////////
 // Histogram class for accumulating samples
 class Histogram {
-public:
+	public:
 	Histogram( Real const min, Real const max, Real const spacing ):
-		min_( min ),
+	min_( min ),
 		max_( max ),
 		spacing_( spacing )
-	{
+		{
 		runtime_assert( max > min );
-		n_elem_ = static_cast<Size>( ( max - min ) / spacing ) + 1;
-		for ( Size i = 1; i <= n_elem_; ++i ) hist_.push_back( 0 );
-	}
+	n_elem_ = static_cast<Size>( ( max - min ) / spacing ) + 1;
+	for ( Size i = 1; i <= n_elem_; ++i ) hist_.push_back( 0 );
+}
 
-	void add( float const value, Size const n_items ) {
-		Size bin_index;
-		if ( value <= min_ ) {
-			bin_index = 1;
-		} else if ( value >= max_ ) {
-			bin_index = n_elem_;
-		} else {
-			bin_index = static_cast<Size>( ( value - min_ ) / spacing_ ) + 1;
-		}
-		hist_[bin_index] += n_items;
+void add( float const value, Size const n_items ) {
+	Size bin_index;
+	if ( value <= min_ ) {
+		bin_index = 1;
+	} else if ( value >= max_ ) {
+		bin_index = n_elem_;
+	} else {
+		bin_index = static_cast<Size>( ( value - min_ ) / spacing_ ) + 1;
 	}
+	hist_[bin_index] += n_items;
+}
 
-	void clear() {
-		for ( Size i = 0; i <= n_elem_; ++i ) hist_[i] = 0;
+void clear() {
+	for ( Size i = 0; i <= n_elem_; ++i ) hist_[i] = 0;
+}
+
+utility::vector1<Real> get_scores() const {
+	utility::vector1<Real> scores;
+	for ( Size i = 1; i <= n_elem_; ++i ) {
+		scores.push_back( min_ + spacing_ * ( i - 0.5 ) );
 	}
+	return scores;
+}
 
-	utility::vector1<Real> get_scores() const {
-		utility::vector1<Real> scores;
-		for ( Size i = 1; i <= n_elem_; ++i )
-			scores.push_back( min_ + spacing_ * ( i - 0.5 ) );
-		return scores;
-	}
-
-	utility::vector1<Size> get_hist() const { return hist_;	}
+utility::vector1<Size> get_hist() const { return hist_; }
 
 private:
-	Real const min_, max_, spacing_;
-	Size n_elem_;
-	utility::vector1<Size> hist_;
+Real const min_, max_, spacing_;
+Size n_elem_;
+utility::vector1<Size> hist_;
 };
 //////////////////////////////////////////////////////////////////////////////
 // score types to be recorded
@@ -134,9 +135,10 @@ void update_scores(
 	scores.clear();
 	scores.push_back( ( *scorefxn )( pose ) );
 	utility::vector1<ScoreType> const & score_types( get_scoretypes() );
-	for ( Size i = 1; i<= score_types.size(); ++i )
-			scores.push_back( scorefxn->score_by_scoretype(
-						pose, score_types[i], false /*weighted*/ ) );
+	for ( Size i = 1; i<= score_types.size(); ++i ) {
+		scores.push_back( scorefxn->score_by_scoretype(
+			pose, score_types[i], false /*weighted*/ ) );
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 void fill_data(
@@ -162,10 +164,10 @@ void vector2disk_in1d(
 	std::string const & out_filename,
 	utility::vector1<T> const & out_vector
 ) {
-		utility::io::ozstream out (
-				out_filename.c_str(), std::ios::out | std::ios::binary );
-		out.write( (const char*) &out_vector[1], sizeof(T) * out_vector.size() );
-		out.close();
+	utility::io::ozstream out (
+		out_filename.c_str(), std::ios::out | std::ios::binary );
+	out.write( (const char*) &out_vector[1], sizeof(T) * out_vector.size() );
+	out.close();
 }
 //////////////////////////////////////////////////////////////////////////////
 template<typename T>
@@ -175,13 +177,13 @@ void vector2disk_in2d(
 	Size const dim2,
 	utility::vector1<T> const & out_vector
 ) {
-		utility::io::ozstream out (
-				out_filename.c_str(), std::ios::out | std::ios::binary );
-		runtime_assert( dim1 * dim2 == out_vector.size() );
-		out.write( (const char*) &dim1, sizeof(Size) );
-		out.write( (const char*) &dim2, sizeof(Size) );
-		out.write( (const char*) &out_vector[1], sizeof(T) * out_vector.size() );
-		out.close();
+	utility::io::ozstream out (
+		out_filename.c_str(), std::ios::out | std::ios::binary );
+	runtime_assert( dim1 * dim2 == out_vector.size() );
+	out.write( (const char*) &dim1, sizeof(Size) );
+	out.write( (const char*) &dim2, sizeof(Size) );
+	out.write( (const char*) &out_vector[1], sizeof(T) * out_vector.size() );
+	out.close();
 }
 //////////////////////////////////////////////////////////////////////////////
 
@@ -195,10 +197,12 @@ void set_gaussian_stdev(
 	Real const temp( tempering.temperature() );
 	Real const bp_stdev( gaussian_stdev( n_rsd, temp, true ) );
 	Real const dangling_stdev( gaussian_stdev( n_rsd, temp, false ) );
-	for ( Size i = 1; i <= bp_rsd.size(); ++ i )
-			sampler.set_gaussian_stdev( bp_stdev, bp_rsd[i] );
-	for ( Size i = 1; i <= dangling_rsd.size(); ++ i )
-			sampler.set_gaussian_stdev( dangling_stdev, dangling_rsd[i] );
+	for ( Size i = 1; i <= bp_rsd.size(); ++ i ) {
+		sampler.set_gaussian_stdev( bp_stdev, bp_rsd[i] );
+	}
+	for ( Size i = 1; i <= dangling_rsd.size(); ++ i ) {
+		sampler.set_gaussian_stdev( dangling_stdev, dangling_rsd[i] );
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 PoseOP pose_setup(
@@ -210,8 +214,10 @@ PoseOP pose_setup(
 	assembler.use_phenix_geo( true );
 	PoseOP pose( assembler.build_init_pose( seq1, seq2 ) );
 	add_variant_type_to_pose_residue( *pose, chemical::VIRTUAL_PHOSPHATE, 1 );
-	if ( seq1 != "" && seq2 != "" )	add_variant_type_to_pose_residue(
+	if ( seq1 != "" && seq2 != "" ) {
+		add_variant_type_to_pose_residue(
 			*pose, chemical::VIRTUAL_PHOSPHATE, len1 + 1 );
+	}
 	return pose;
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -234,10 +240,11 @@ MC_run () {
 
 	utility::vector1<Real> weights_;
 	utility::vector1<Real> const & orig_weights( option[ st_weights ]() );
-	if ( temps_.size() != orig_weights.size() )
-			weights_.push_back( 0 );
+	if ( temps_.size() != orig_weights.size() ) {
+		weights_.push_back( 0 );
+	}
 	weights_.insert( weights_.end(), orig_weights.begin(),
-			orig_weights.end() );
+		orig_weights.end() );
 	runtime_assert( temps_.size() == weights_.size() );
 
 	Size const n_cycle_( option[n_cycle]() );
@@ -295,7 +302,7 @@ MC_run () {
 	sampler.apply( pose );
 
 	// Simulated Tempering setup
-	SimulatedTempering tempering(	pose,	scorefxn,	temps_,	weights_ );
+	SimulatedTempering tempering( pose, scorefxn, temps_, weights_ );
 	// tempering.set_rep_cutoff( 100 );
 	set_gaussian_stdev( sampler, tempering, bp_rsd, dangling_rsd );
 
@@ -305,7 +312,7 @@ MC_run () {
 	update_scores( scores, pose, scorefxn );
 	utility::vector1<float> const null_arr_;
 	utility::vector1<utility::vector1<float> > data(
-			temps_.size(), null_arr_ );
+		temps_.size(), null_arr_ );
 
 	Real const min( -100.05 ), max( 800.05 ), spacing( 0.1 );
 	Histogram null_hist( min, max, spacing);
@@ -357,7 +364,7 @@ MC_run () {
 
 		if ( n % t_jump_interval == 0 && tempering.t_jump() ) {
 			++n_t_jumps_accept;
-			if ( is_save_scores )	fill_data( data[temp_id], curr_counts, scores );
+			if ( is_save_scores ) fill_data( data[temp_id], curr_counts, scores );
 			hist_list[temp_id].add( scores[1], curr_counts );
 			curr_counts = 1;
 			set_gaussian_stdev( sampler, tempering, bp_rsd, dangling_rsd );
@@ -375,25 +382,25 @@ MC_run () {
 
 	std::cout << "n_cycles: " << n_cycle_ << std::endl;
 	std::cout << "Accept rate: " << double( n_accept_total ) / n_cycle_
-			<< std::endl;
+		<< std::endl;
 	std::cout << "T_jump accept rate: " << double( n_t_jumps_accept ) / n_t_jumps
-			<< std::endl;
+		<< std::endl;
 	Real const time_in_test = static_cast<Real>( clock() - time_start )
-			/ CLOCKS_PER_SEC;
+		/ CLOCKS_PER_SEC;
 	std::cout << "Time in sampler: " <<  time_in_test << std::endl;
 
-	for (Size i = 1; i <= temps_.size(); ++i) {
+	for ( Size i = 1; i <= temps_.size(); ++i ) {
 		if ( is_save_scores ) {
 			std::ostringstream oss;
 			oss << option[out_prefix]() << '_' << std::fixed << std::setprecision(2)
-					<< temps_[i] << ".bin.gz";
+				<< temps_[i] << ".bin.gz";
 			Size const data_dim2( data_dim() );
 			Size const data_dim1( data[i].size() / data_dim2 );
 			vector2disk_in2d( oss.str(), data_dim1, data_dim2, data[i] );
 		}
 		std::ostringstream oss;
 		oss << option[out_prefix]() << '_' << std::fixed << std::setprecision(2)
-				<< temps_[i] << ".hist.gz";
+			<< temps_[i] << ".hist.gz";
 		utility::vector1<Size> const & hist( hist_list[i].get_hist() );
 		utility::vector1<Real> const & scores( hist_list[i].get_scores() );
 		vector2disk_in1d( oss.str(), hist );
@@ -424,11 +431,11 @@ main( int argc, char * argv [] )
 	NEW_OPT( st_weights, "Simulated tempering weights", null_real_vector );
 	NEW_OPT( out_prefix, "prefix for the out file", "turner" );
 	NEW_OPT( save_score_terms,
-			"Save scores and individual score terms"
-			" of all sampled conformers", false );
+		"Save scores and individual score terms"
+		" of all sampled conformers", false );
 	NEW_OPT( dump_pdb, "Dump pdb files", false );
 	NEW_OPT( n_intermediate_dump,
-			     "Number of intermediate conformations to be dumped", 0 );
+		"Number of intermediate conformations to be dumped", 0 );
 
 	try {
 		core::init::init ( argc, argv );
@@ -436,7 +443,7 @@ main( int argc, char * argv [] )
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-  }
-  return 0;
+	}
+	return 0;
 }
 

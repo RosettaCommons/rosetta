@@ -42,7 +42,7 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-	#include <protocols/toolbox/match_enzdes_util/LigandConformer.hh>
+#include <protocols/toolbox/match_enzdes_util/LigandConformer.hh>
 #endif
 
 
@@ -213,26 +213,26 @@ public:
 
 	void set_rmsd_unique_cutoff( core::Real setting );
 
-  virtual
-  toolbox::match_enzdes_util::LigandConformerOP
+	virtual
+	toolbox::match_enzdes_util::LigandConformerOP
 	get_lig_conformers(core::Size conf_id) const;
 
-//  virtual
-//  utility::vector1< utility::vector1< std::pair< core::Size, core::Real > > >
-//  get_min_sep_d2_from_upstream_atoms() const;
+	//  virtual
+	//  utility::vector1< utility::vector1< std::pair< core::Size, core::Real > > >
+	//  get_min_sep_d2_from_upstream_atoms() const;
 
 	virtual
-  core::chemical::ResidueTypeCOP
+	core::chemical::ResidueTypeCOP
 	get_upstream_restype() const;
 
 	/*Real6
 	global_orientation_from_frame3(
-		HTReal const & frame3
+	HTReal const & frame3
 	) const;
 
 	HTReal
 	frame_from_global_orientation(
-		Real6 orientation
+	Real6 orientation
 	) const;*/
 
 private:

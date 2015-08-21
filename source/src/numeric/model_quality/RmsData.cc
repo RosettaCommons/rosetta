@@ -25,79 +25,78 @@
 namespace numeric {
 namespace model_quality {
 
-	// begin singleton class stuff!
-	RmsData* RmsData::pinstance_ = 0;// initialize pointer
-	RmsData* RmsData::instance ()
-	{
-		if (pinstance_ == 0)  // is it the first call?
-		{
-			pinstance_ = new RmsData; // create sole instance
+// begin singleton class stuff!
+RmsData* RmsData::pinstance_ = 0;// initialize pointer
+RmsData* RmsData::instance ()
+{
+	if ( pinstance_ == 0 ) {  // is it the first call?
+		pinstance_ = new RmsData; // create sole instance
+	}
+	return pinstance_; // address of sole instance
+}
+
+/// @brief set up RmsData with default values
+RmsData::RmsData()
+{
+	clear_rms();
+}
+
+void RmsData::add_rms(
+	int i,
+	ObjexxFCL::FArray2A< double > xp,
+	ObjexxFCL::FArray2A< double > xe
+) {
+
+	xp.dimension( 3, i );
+	xe.dimension( 3, i );
+
+
+	++count_;
+	for ( int j = 1; j <= 3; ++j ) {
+		for ( int k = 1; k <= 3; ++k ) {
+			xm_(k,j) += xp(j,i) * xe(k,i); // flopped
 		}
-		return pinstance_; // address of sole instance
 	}
 
-	/// @brief set up RmsData with default values
-	RmsData::RmsData()
-	{
-		clear_rms();
-	}
+	xre_ += ( xe(1,i) * xe(1,i) ) + ( xe(2,i) * xe(2,i) ) + ( xe(3,i) * xe(3,i) );
+	xrp_ += ( xp(1,i) * xp(1,i) ) + ( xp(2,i) * xp(2,i) ) + ( xp(3,i) * xp(3,i) );
 
-	void RmsData::add_rms(
-		int i,
-		ObjexxFCL::FArray2A< double > xp,
-		ObjexxFCL::FArray2A< double > xe
-	) {
-
-		xp.dimension( 3, i );
-		xe.dimension( 3, i );
+	xse_(1) += xe(1,i);
+	xse_(2) += xe(2,i);
+	xse_(3) += xe(3,i);
+	xsp_(1) += xp(1,i);
+	xsp_(2) += xp(2,i);
+	xsp_(3) += xp(3,i);
 
 
-		++count_;
-		for ( int j = 1; j <= 3; ++j ) {
-			for ( int k = 1; k <= 3; ++k ) {
-				xm_(k,j) += xp(j,i) * xe(k,i); // flopped
-			}
+} // add_rms
+
+void
+RmsData::clear_rms()
+{
+
+	xm_ .dimension( 3, 3 ); // note zero origin
+	xse_.dimension( 3 );
+	xsp_.dimension( 3 );
+
+
+	// init array we will making into a running sum
+	for ( int j = 1; j <= 3; ++j ) {
+		for ( int k = 1; k <= 3; ++k ) {
+			xm_(j,k) = 0.0;
 		}
-
-		xre_ += ( xe(1,i) * xe(1,i) ) + ( xe(2,i) * xe(2,i) ) + ( xe(3,i) * xe(3,i) );
-		xrp_ += ( xp(1,i) * xp(1,i) ) + ( xp(2,i) * xp(2,i) ) + ( xp(3,i) * xp(3,i) );
-
-		xse_(1) += xe(1,i);
-		xse_(2) += xe(2,i);
-		xse_(3) += xe(3,i);
-		xsp_(1) += xp(1,i);
-		xsp_(2) += xp(2,i);
-		xsp_(3) += xp(3,i);
-
-
-	} // add_rms
-
-	void
-	RmsData::clear_rms()
-	{
-
-		xm_ .dimension( 3, 3 ); // note zero origin
-		xse_.dimension( 3 );
-		xsp_.dimension( 3 );
-
-
-		// init array we will making into a running sum
-		for ( int j = 1; j <= 3; ++j ) {
-			for ( int k = 1; k <= 3; ++k ) {
-				xm_(j,k) = 0.0;
-			}
-		}
-		xre_ = 0.0;
-		xrp_ = 0.0;
-
-		xse_(1) = 0.0;
-		xse_(2) = 0.0;
-		xse_(3) = 0.0;
-		xsp_(1) = 0.0;
-		xsp_(2) = 0.0;
-		xsp_(3) = 0.0;
-		count_  = 0;
 	}
+	xre_ = 0.0;
+	xrp_ = 0.0;
+
+	xse_(1) = 0.0;
+	xse_(2) = 0.0;
+	xse_(3) = 0.0;
+	xsp_(1) = 0.0;
+	xsp_(2) = 0.0;
+	xsp_(3) = 0.0;
+	count_  = 0;
+}
 
 } // end namespace model_quality
 } // end namespace numeric

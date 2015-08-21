@@ -55,13 +55,13 @@ public:
 
 	/// @brief Called during gradient-based minimization inside dfunc.
 	virtual void eval_atom_derivative(
-			id::AtomID const & id,
-			pose::Pose const & pose,
-			kinematics::DomainMap const & domain_map,
-			ScoreFunction const & sfxn,
-			EnergyMap const & weights,
-			Vector & F1,
-			Vector & F2
+		id::AtomID const & id,
+		pose::Pose const & pose,
+		kinematics::DomainMap const & domain_map,
+		ScoreFunction const & sfxn,
+		EnergyMap const & weights,
+		Vector & F1,
+		Vector & F2
 	) const;
 
 	virtual void indicate_required_context_graphs( utility::vector1< bool > & ) const;

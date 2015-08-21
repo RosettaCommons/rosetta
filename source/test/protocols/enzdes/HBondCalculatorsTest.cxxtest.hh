@@ -74,35 +74,35 @@ class HBondCalculatorsTest : public CxxTest::TestSuite
 {
 
 public:
-  HBondCalculatorsTest() {};
+	HBondCalculatorsTest() {};
 
 
 	// Shared initialization goes here.
-  void setUp() {
-	  core_init();
+	void setUp() {
+		core_init();
 		// Residue definitions can't be supplied on the command line b/c
 		// the ResidueTypeSet is already initialized.
 		using namespace core::chemical;
 		utility::vector1< std::string > params_files;
 		ResidueTypeSetCOP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
-		if(!residue_set.has_name("D2N")) params_files.push_back("protocols/enzdes/D2N.params");
+		if ( !residue_set.has_name("D2N") ) params_files.push_back("protocols/enzdes/D2N.params");
 		residue_set.read_files(params_files);
 		basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
 
 		//enz_io = new protocols::enzdes::EnzConstraintIO(& residue_set);
 
 
-  }
+	}
 
-  // Shared finalization goes here.
-  void tearDown() {
-  }
+	// Shared finalization goes here.
+	void tearDown() {
+	}
 
-  void test_hb_calculators()
-  {
-    using namespace core::scoring::constraints;
-    //typedef core::id::AtomID AtomID;
+	void test_hb_calculators()
+	{
+		using namespace core::scoring::constraints;
+		//typedef core::id::AtomID AtomID;
 
 		core::pose::Pose test_pose;
 		core::import_pose::pose_from_pdb( test_pose, "protocols/enzdes/ligtest_it.pdb");
@@ -145,8 +145,8 @@ public:
 		core::pack::task::PackerTaskOP test_task;
 		test_task = core::pack::task::TaskFactory::create_packer_task( test_pose );
 
-		for( core::Size i = 1; i <= test_pose.total_residue(); ++i){
-			if( (i==22) || (i==37) || (i==59) ) test_task->nonconst_residue_task(i).restrict_to_repacking();
+		for ( core::Size i = 1; i <= test_pose.total_residue(); ++i ) {
+			if ( (i==22) || (i==37) || (i==59) ) test_task->nonconst_residue_task(i).restrict_to_repacking();
 			else test_task->nonconst_residue_task(i).prevent_repacking();
 		}
 
@@ -166,8 +166,8 @@ public:
 		utility::vector1< core::Size > res2_hb = mval.value();
 
 		//after this repack step, all hbonds should still be intact
-		for( core::Size i = 1; i <= test_pose.total_residue(); ++i){
-			//			std::cerr << "res " << i <<", hbbef " << res_hb[i] <<", hbaft " << res2_hb[i] << std::endl;
+		for ( core::Size i = 1; i <= test_pose.total_residue(); ++i ) {
+			//   std::cerr << "res " << i <<", hbbef " << res_hb[i] <<", hbaft " << res2_hb[i] << std::endl;
 			TS_ASSERT_DELTA( res_hb[i],res2_hb[i],1e-3);
 		}
 
@@ -178,7 +178,7 @@ public:
 		TR << "residue 6 has " << res_bur_mval.value()[6] << " buried unsatisfied polars." << std::endl;
 
 		//for( core::Size i = 1; i <= test_pose.total_residue(); ++i){
-		//	TR << "residue " << i << " has " <<  res_bur_mval.value()[i] << " bur unsat polars." << std::endl;
+		// TR << "residue " << i << " has " <<  res_bur_mval.value()[i] << " bur unsat polars." << std::endl;
 		//}
 
 		TS_ASSERT_DELTA( res_bur_mval.value()[6],2,1e-3);
@@ -209,7 +209,7 @@ public:
 		utility::vector1< core::Real > residue_packstat = residue_packstat_mval.value();
 
 		core::Real respackstat_sum(0.0);
-		for( core::Size i = 1; i <= residue_packstat.size(); ++i){
+		for ( core::Size i = 1; i <= residue_packstat.size(); ++i ) {
 			respackstat_sum = respackstat_sum + residue_packstat[i];
 		}
 
@@ -221,7 +221,7 @@ public:
 		utility::vector1< core::Real > nolig_residue_packstat = nolig_residue_packstat_mval.value();
 
 		core::Real noligrespackstat_sum(0.0);
-		for( core::Size i = 1; i <= residue_packstat.size(); ++i){
+		for ( core::Size i = 1; i <= residue_packstat.size(); ++i ) {
 			noligrespackstat_sum = noligrespackstat_sum + nolig_residue_packstat[i];
 		}
 
@@ -229,7 +229,7 @@ public:
 
 		TR << "nolig total packstat is " << nolig_tot_packstat_mval.value() << ", average nolig respackstat is " << nolig_av_respackstat <<  std::endl;
 
-  }
+	}
 
 
 };

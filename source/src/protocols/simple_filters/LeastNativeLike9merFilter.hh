@@ -42,75 +42,75 @@ namespace simple_filters {
 class LeastNativeLike9merFilter : public protocols::filters::Filter{
 public:
 
-    typedef protocols::filters::Filter Super;
-    typedef protocols::filters::Filter Filter;
-    typedef protocols::filters::FilterOP FilterOP;
-    typedef core::Real Real;
-    typedef core::pose::Pose Pose;
-    typedef std::string String;
+	typedef protocols::filters::Filter Super;
+	typedef protocols::filters::Filter Filter;
+	typedef protocols::filters::FilterOP FilterOP;
+	typedef core::Real Real;
+	typedef core::pose::Pose Pose;
+	typedef std::string String;
 
-    typedef utility::tag::TagCOP TagCOP;
-    typedef protocols::filters::Filters_map Filters_map;
-    typedef basic::datacache::DataMap DataMap;
-    typedef protocols::moves::Movers_map Movers_map;
+	typedef utility::tag::TagCOP TagCOP;
+	typedef protocols::filters::Filters_map Filters_map;
+	typedef basic::datacache::DataMap DataMap;
+	typedef protocols::moves::Movers_map Movers_map;
 
 
 public:// constructor/destructor
 
 
-    // @brief default constructor
-    LeastNativeLike9merFilter();
+	// @brief default constructor
+	LeastNativeLike9merFilter();
 
-    // @brief copy constructor
-    LeastNativeLike9merFilter( LeastNativeLike9merFilter const & rval );
+	// @brief copy constructor
+	LeastNativeLike9merFilter( LeastNativeLike9merFilter const & rval );
 
-    virtual ~LeastNativeLike9merFilter();
+	virtual ~LeastNativeLike9merFilter();
 
 
 public:// virtual constructor
 
 
-    // @brief make clone
-    filters::FilterOP clone() const { return filters::FilterOP(new LeastNativeLike9merFilter(*this));}
-    // @brief make fresh instance
-    filters::FilterOP fresh_instance() const { return filters::FilterOP(new LeastNativeLike9merFilter());}
+	// @brief make clone
+	filters::FilterOP clone() const { return filters::FilterOP(new LeastNativeLike9merFilter(*this));}
+	// @brief make fresh instance
+	filters::FilterOP fresh_instance() const { return filters::FilterOP(new LeastNativeLike9merFilter());}
 
 
 public:// mutator
 
 
-    // @brief
-    void filtered_value( Real const & value );
+	// @brief
+	void filtered_value( Real const & value );
 
 
 public:// accessor
 
 
-    // @brief get name of this filter
-    virtual std::string name() const { return "LeastNativeLike9merFilter"; }
+	// @brief get name of this filter
+	virtual std::string name() const { return "LeastNativeLike9merFilter"; }
 
 
 public:// virtual main operation
 
 
-		Real report_sm(const Pose & pose ) const;
-    void report( std::ostream & out,const Pose & pose ) const;
-    Real compute( const Pose & pose ) const;
-    virtual bool apply(const Pose & pose ) const;
+	Real report_sm(const Pose & pose ) const;
+	void report( std::ostream & out,const Pose & pose ) const;
+	Real compute( const Pose & pose ) const;
+	virtual bool apply(const Pose & pose ) const;
 
 
 public:// parser
 
-    void parse_my_tag( TagCOP tag,
-        basic::datacache::DataMap &,
-        filters::Filters_map const &,
-        Movers_map const &,
-        Pose const & );
+	void parse_my_tag( TagCOP tag,
+		basic::datacache::DataMap &,
+		filters::Filters_map const &,
+		Movers_map const &,
+		Pose const & );
 
 
 private:
 
-    Real filtered_value_;
+	Real filtered_value_;
 
 };
 

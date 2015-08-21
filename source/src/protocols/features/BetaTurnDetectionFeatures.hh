@@ -28,8 +28,8 @@
 // C++ Headers
 #include <string>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class BetaTurnDetectionFeatures : public FeaturesReporter {
 public:

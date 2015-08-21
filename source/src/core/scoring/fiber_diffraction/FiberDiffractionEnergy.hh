@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/fiber_diffraction/FiberDiffractionEnergy.hh
-/// @brief  FiberDiffraction scoring and derivatives (all-atom) 
+/// @brief  FiberDiffraction scoring and derivatives (all-atom)
 /// @author Wojciech Potrzebowski and Ingemar Andre
 
 
@@ -75,7 +75,7 @@ public:
 	) const;
 
 	virtual void indicate_required_context_graphs(utility::vector1< bool > & /*context_graphs_required*/
-    ) const {}
+	) const {}
 
 private:
 	//////
@@ -83,7 +83,7 @@ private:
 	// store calculated intensities
 	mutable utility::vector0 < utility::vector1 < core::Real > > I;
 	// precomputed derivatives
-	mutable utility::vector1< numeric::xyzVector< core::Real > > dchi2_d; 
+	mutable utility::vector1< numeric::xyzVector< core::Real > > dchi2_d;
 	mutable utility::vector1< numeric::xyzVector< core::Real > > dchi2_d_cross_R;
 	mutable std::map<  core::id::AtomID, core::Size > AtomID_to_atomnbr_;
 	// saved chi2, c scaling factor

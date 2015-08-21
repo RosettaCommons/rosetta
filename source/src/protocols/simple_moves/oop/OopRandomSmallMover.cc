@@ -61,13 +61,12 @@ void OopRandomSmallMover::apply( core::pose::Pose & pose ){
 
 	using numeric::conversions::radians;
 	using numeric::conversions::degrees;
-	
+
 	TR<< "in OopRandomSmallMover::apply" << std::endl;
 	//kdrew: for all positions in oop_seq_positions_, input assertion check
-	for(Size i = 1; i <= oop_seq_positions_.size(); i++)
-	{
+	for ( Size i = 1; i <= oop_seq_positions_.size(); i++ ) {
 		Size oop_pre_pos = oop_seq_positions_[i];
-		Size oop_post_pos = oop_pre_pos+1;                   
+		Size oop_post_pos = oop_pre_pos+1;
 		TR<< "oop_pre_pos:" << oop_pre_pos << " oop_post_pos:" << oop_post_pos << std::endl;
 
 		runtime_assert ( pose.residue(oop_pre_pos).has_variant_type(chemical::OOP_PRE) == 1) ;
@@ -87,15 +86,14 @@ void OopRandomSmallMover::apply( core::pose::Pose & pose ){
 	Real small_angle = max_small_angle_/2.0; ///< this is max_angle/2, which is the deviation from the angle input
 	Real phi_angle = basic::periodic_range( pose.phi( random_pos ) - small_angle + numeric::random::rg().uniform() * max_small_angle_, 360.0 );
 	//kdrew: no phi angle for n-terms, angle that gets changed is CYP-N-Ca-C
-	if( pose.residue_type( random_pos ).is_lower_terminus() )
-	{ 
+	if ( pose.residue_type( random_pos ).is_lower_terminus() ) {
 		AtomID aidCYP( pose.residue(random_pos).atom_index("CYP"), random_pos );
 		AtomID aidN( pose.residue(random_pos).atom_index("N"), random_pos );
 		AtomID aidCA( pose.residue(random_pos).atom_index("CA"), random_pos );
 		AtomID aidC( pose.residue(random_pos).atom_index("C"), random_pos );
 
-		Real CYP_N_Ca_C_angle = degrees( pose.conformation().torsion_angle( aidCYP, aidN, aidCA, aidC ) ); 
-        phi_angle = basic::periodic_range( CYP_N_Ca_C_angle - small_angle + numeric::random::rg().uniform() * max_small_angle_, 360.0 ) - 180.0; 
+		Real CYP_N_Ca_C_angle = degrees( pose.conformation().torsion_angle( aidCYP, aidN, aidCA, aidC ) );
+		phi_angle = basic::periodic_range( CYP_N_Ca_C_angle - small_angle + numeric::random::rg().uniform() * max_small_angle_, 360.0 ) - 180.0;
 	}
 
 	Real psi_angle = basic::periodic_range( pose.psi( random_pos ) - small_angle + numeric::random::rg().uniform() * max_small_angle_, 360.0 );

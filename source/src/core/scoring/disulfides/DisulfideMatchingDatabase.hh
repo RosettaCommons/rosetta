@@ -35,12 +35,12 @@ public:
 	DisulfideMatchingDatabase();
 	~DisulfideMatchingDatabase();
 
-void
-read_disulfide_database() const;
+	void
+	read_disulfide_database() const;
 	//shouldn't really be const... move to setup for scoring later
 
-utility::vector1< core::kinematics::RT > &
-get_all_disulfides() const;
+	utility::vector1< core::kinematics::RT > &
+	get_all_disulfides() const;
 
 private:
 

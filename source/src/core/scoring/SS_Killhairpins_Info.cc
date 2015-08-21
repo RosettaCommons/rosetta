@@ -89,7 +89,7 @@ operator<< ( std::ostream & out, Hairpin const & s )
 {
 	using ObjexxFCL::format::I;
 	out << "Hairpin - Strand1: " << I(5,s.s1_start()) << "-" << I(5,s.s1_end()) << "  Strand2: "
-			<< I(5,s.s2_start()) << "-" << I(5,s.s2_end()) << "\n";
+		<< I(5,s.s2_start()) << "-" << I(5,s.s2_end()) << "\n";
 	return out;
 }
 
@@ -99,9 +99,9 @@ Hairpins::Hairpins()
 {}
 
 /// @brief copy constructor
- Hairpins::Hairpins(
- 	Hairpins const & s
- ) : hairpin_list_( s.hairpin_list_ )
+Hairpins::Hairpins(
+	Hairpins const & s
+) : hairpin_list_( s.hairpin_list_ )
 {}
 
 /// @brief default destructor
@@ -147,16 +147,16 @@ Hairpins::size() const
 std::ostream &
 operator<< ( std::ostream & out, Hairpins const & s )
 {
- 	using ObjexxFCL::format::I;
+	using ObjexxFCL::format::I;
 
 	utility::vector1< Hairpin > temp_list( s.list() );
 	core::Size count(0);
 
- 	for ( utility::vector1< Hairpin >::iterator it= temp_list.begin(),
-					ite= temp_list.end(); it != ite; ++it ) {
+	for ( utility::vector1< Hairpin >::iterator it= temp_list.begin(),
+			ite= temp_list.end(); it != ite; ++it ) {
 		count++;
- 	}
- 	return out;
+	}
+	return out;
 }
 
 SS_Killhairpins_Info::SS_Killhairpins_Info() :
@@ -176,9 +176,9 @@ SS_Killhairpins_Info::SS_Killhairpins_Info( SS_Killhairpins_Info const & src ) :
 bool
 SS_Killhairpins_Info::check_hairpin( core::Size const & strand1_res, core::Size const & strand2_res )
 {
-	for ( core::Size i = 1; i <= hairpins_.list().size(); ++i) {
+	for ( core::Size i = 1; i <= hairpins_.list().size(); ++i ) {
 		if ( (strand1_res >= hairpins_.list()[i].s1_start()) && (strand1_res <= hairpins_.list()[i].s1_end())
-				 && (strand2_res >= hairpins_.list()[i].s2_start()) && (strand2_res <= hairpins_.list()[i].s2_end()) ) {
+				&& (strand2_res >= hairpins_.list()[i].s2_start()) && (strand2_res <= hairpins_.list()[i].s2_end()) ) {
 			return true;
 		}
 	}
@@ -196,9 +196,9 @@ SS_Killhairpins_Info::setup_from_psipred(utility::io::izstream & input_file)
 	utility::vector1< core::Real > helix_prob;
 	utility::vector1< core::Real > loop_prob;
 
-	while (!input_file.eof()) {
+	while ( !input_file.eof() ) {
 		getline(input_file, line);
-		if (line.length() > 5) {
+		if ( line.length() > 5 ) {
 			std::istringstream line_stream(line);
 
 			char aa, ss;
@@ -211,8 +211,8 @@ SS_Killhairpins_Info::setup_from_psipred(utility::io::izstream & input_file)
 			helix_prob.push_back(H_freq);
 			loop_prob.push_back(L_freq);
 
-			if ((strand_prob.size() != res) || (strand_prob.size() != helix_prob.size())
-				|| (loop_prob.size() != helix_prob.size())) {
+			if ( (strand_prob.size() != res) || (strand_prob.size() != helix_prob.size())
+					|| (loop_prob.size() != helix_prob.size()) ) {
 				utility_exit_with_message("[ERROR] -kill_hairpins can't parse psipred_ss2 file");
 			}
 		}
@@ -234,21 +234,21 @@ SS_Killhairpins_Info::setup_from_psipred(utility::io::izstream & input_file)
 	bool has_helix(false), on_strand(false), has_strand(false);
 	std::pair< core::Size, core::Size > working_strand;
 	std::pair< core::Size, core::Size > last_strand;
-	for (core::Size i=1; i <= strand_prob.size(); ++i) {
+	for ( core::Size i=1; i <= strand_prob.size(); ++i ) {
 
-		if (!on_strand) {
+		if ( !on_strand ) {
 
 			if ( i <= strand_prob.size() - 2 ) {
 
-				if (( strand_prob[i] >= 0.5 ) &&
+				if ( ( strand_prob[i] >= 0.5 ) &&
 						( strand_prob[i+1] >= 0.5 ) &&
-						( strand_prob[i+2] >= 0.5) ){
+						( strand_prob[i+2] >= 0.5) ) {
 
 					on_strand = true;
 
 					working_strand.first = i;
 
-					if( kill_parallel_ ) {
+					if ( kill_parallel_ ) {
 						has_strand = true;
 					} else {
 						if ( !has_helix ) {
@@ -272,18 +272,18 @@ SS_Killhairpins_Info::setup_from_psipred(utility::io::izstream & input_file)
 			}
 		} else {
 
-			if (( strand_prob[i] < 0.5 ) || ( i == strand_prob.size())) {
+			if ( ( strand_prob[i] < 0.5 ) || ( i == strand_prob.size()) ) {
 				working_strand.second = i-1;
 
 				if ( ( has_strand == true ) && ( last_strand.first != last_strand.second ) ) {
 					runtime_assert( last_strand != working_strand );
 
 					runtime_assert(   (last_strand.first<=last_strand.second)
-												 && (last_strand.second<=working_strand.first)
-												 && (working_strand.first<=working_strand.second));
+						&& (last_strand.second<=working_strand.first)
+						&& (working_strand.first<=working_strand.second));
 
 					Hairpin new_hairpin( last_strand.first, last_strand.second,
-															 working_strand.first, working_strand.second );
+						working_strand.first, working_strand.second );
 					all_hairpins.push_back( new_hairpin );
 				}
 
@@ -298,16 +298,16 @@ SS_Killhairpins_Info::setup_from_psipred(utility::io::izstream & input_file)
 
 	core::Real freq_limit( basic::options::option[ basic::options::OptionKeys::abinitio::kill_hairpins_frequency ] );
 
-	for (core::Size i=1; i<= all_hairpins.size(); ++i) {
+	for ( core::Size i=1; i<= all_hairpins.size(); ++i ) {
 
 		core::Real freq_attempt(numeric::random::uniform());
 
 		trKillHairpinsIO.Info << "KHP: Hairpin Detected in Psipred File: " << all_hairpins[i].s1_start() << "-" << all_hairpins[i].s1_end() << " " << all_hairpins[i].s2_start() << "-" << all_hairpins[i].s2_end();
 		if ( freq_attempt <= freq_limit ) {
 			hairpins_.append_hairpin(all_hairpins[i].s1_start(),
-															 all_hairpins[i].s1_end(),
-															 all_hairpins[i].s2_start(),
-															 all_hairpins[i].s2_end());
+				all_hairpins[i].s1_end(),
+				all_hairpins[i].s2_start(),
+				all_hairpins[i].s2_end());
 
 			trKillHairpinsIO.Info << " KILLED!";
 		}
@@ -320,10 +320,10 @@ SS_Killhairpins_Info::setup_from_kill_hairpins_file(utility::io::izstream & inpu
 {
 	std::string line;
 
-	while (!input_file.eof()) {
+	while ( !input_file.eof() ) {
 		getline(input_file, line);
 
-		if (line.length() > 5) {
+		if ( line.length() > 5 ) {
 			std::istringstream line_stream(line);
 
 			core::Real frequency;
@@ -337,7 +337,7 @@ SS_Killhairpins_Info::setup_from_kill_hairpins_file(utility::io::izstream & inpu
 
 			trKillHairpinsIO.Info << "KHP: Hairpin Read from Kill Hairpins File: " << res1 << "-" << res2 << " " << res3 << "-" << res4;
 
-			if (freq_attempt <= frequency) {
+			if ( freq_attempt <= frequency ) {
 				hairpins_.append_hairpin( res1, res2, res3, res4 );
 				trKillHairpinsIO.Info << " KILLED!";
 			}
@@ -354,7 +354,7 @@ SS_Killhairpins_Info::setup_killhairpins()
 	if ( basic::options::option[ basic::options::OptionKeys::abinitio::kill_hairpins ].user() ) {
 		utility::io::izstream input_file( basic::options::option[ basic::options::OptionKeys::abinitio::kill_hairpins ] );
 
-		if (!input_file) {
+		if ( !input_file ) {
 			utility_exit_with_message("[ERROR] Unable to open kill_hairpins file");
 		}
 
@@ -366,15 +366,15 @@ SS_Killhairpins_Info::setup_killhairpins()
 			b = tokens[ 4 ];
 		} else if ( tokens.size() == 3 ) {
 			a = tokens[ 3 ];
-		} else if ( tokens.size() == 2 ) {
-		} else {
+		} else if ( tokens.size() == 2 ) {}
+		else {
 			utility_exit_with_message("[ERROR] invalid header input for kill_hairpins file. ");
 		}
 
-		if( a != "ANTI" && a != "PARA" && a != "" ) {
+		if ( a != "ANTI" && a != "PARA" && a != "" ) {
 			utility_exit_with_message("[ERROR] invalid kill type for kill_hairpins. ANTI or PARA, is required. ");
 		}
-		if( b != "ANTI" && b != "PARA" && b != "" ) {
+		if ( b != "ANTI" && b != "PARA" && b != "" ) {
 			utility_exit_with_message("[ERROR] invalid kill type for kill_hairpins. ANTI or PARA, is required. ");
 		}
 

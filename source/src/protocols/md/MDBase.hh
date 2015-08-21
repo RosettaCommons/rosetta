@@ -48,7 +48,7 @@ struct MDscheduleData
 	std::string scorename;
 };
 
-class MDBase : public protocols::moves::Mover 
+class MDBase : public protocols::moves::Mover
 {
 public:
 
@@ -73,11 +73,11 @@ public:
 	}
 
 	// Undefinded commenting out to fix PyRostta build. void set_scorefxn( core::scoring::ScoreFunctionOP score );
-	
+
 	core::scoring::ScoreFunctionOP scorefxn(){ return scorefxn_; }
-	
+
 	core::scoring::ScoreFunctionCOP scorefxn() const { return scorefxn_; }
-	
+
 	virtual
 	void set_movemap(
 		core::pose::Pose const & pose,
@@ -95,8 +95,8 @@ public:
 
 	void set_constraint( Real const sdev );
 	void cst_on_pose( pose::Pose &pose );
-	void set_nstep( core::Size const nstep ){ nstep_ = nstep;	}
-	void set_temperature( core::Real const temp0 ){ temp0_ = temp0;	}
+	void set_nstep( core::Size const nstep ){ nstep_ = nstep; }
+	void set_temperature( core::Real const temp0 ){ temp0_ = temp0; }
 	void set_reportstep( core::Size const nstep ){ md_report_stepsize_ = nstep; }
 	void set_energy_reportstep( core::Size const nstep ){ md_energy_report_stepsize_ = nstep; }
 	void set_rsr_update_step( core::Size const nstep ){ md_rsr_update_stepsize_ = nstep; }
@@ -117,9 +117,9 @@ public:
 	bool store_trj() const { return store_trj_; }
 
 	void report_silent( pose::Pose &pose,
-											core::Real rmsd = -1.0, core::Real gdttm = -1.0, core::Real gdtha = -1.0 );
-	void report_as_silent( std::string const filename, 
-												 bool const scoreonly );
+		core::Real rmsd = -1.0, core::Real gdttm = -1.0, core::Real gdtha = -1.0 );
+	void report_as_silent( std::string const filename,
+		bool const scoreonly );
 
 	void set_Kappa( core::Real const value ){ Kappa_ = value; }
 	void set_Gamma( core::Real const value ){ Gamma_ = value; }
@@ -175,9 +175,9 @@ protected:
 	Real kinetic_energy_;
 	Real potential_energy_;
 
-  Multivec xyz_;
-  Multivec vel_;
-  Multivec acc_;
+	Multivec xyz_;
+	Multivec vel_;
+	Multivec acc_;
 
 	// Trj
 	bool report_as_silent_;

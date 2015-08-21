@@ -32,33 +32,33 @@ namespace scoring {
 namespace packing {
 
 
-	Real
-	compute_holes_score_res(
-		pose::Pose const & pose,
-		HolesParamsRes const & params
-	);
+Real
+compute_holes_score_res(
+	pose::Pose const & pose,
+	HolesParamsRes const & params
+);
 
-	Real
-	compute_holes_deriv_res(
-		pose::Pose const & pose,
-		HolesParamsRes const & params,
-		core::id::AtomID_Map< numeric::xyzVector<core::Real> > & derivs
-	);
+Real
+compute_holes_deriv_res(
+	pose::Pose const & pose,
+	HolesParamsRes const & params,
+	core::id::AtomID_Map< numeric::xyzVector<core::Real> > & derivs
+);
 
-	Real
-	compute_holes_score_res(
-		pose::Pose const & pose,
-		PoseBalls const & pb,
-		HolesParamsRes const & params
-	);
+Real
+compute_holes_score_res(
+	pose::Pose const & pose,
+	PoseBalls const & pb,
+	HolesParamsRes const & params
+);
 
-	Real
-	compute_holes_deriv_res(
-		pose::Pose const & pose,
-		PoseBalls const & pb,
-		HolesParamsRes const & params,
-		core::id::AtomID_Map< numeric::xyzVector<core::Real> > & derivs
-	);
+Real
+compute_holes_deriv_res(
+	pose::Pose const & pose,
+	PoseBalls const & pb,
+	HolesParamsRes const & params,
+	core::id::AtomID_Map< numeric::xyzVector<core::Real> > & derivs
+);
 
 
 }

@@ -29,10 +29,10 @@ namespace protocols {
 namespace canonical_sampling {
 
 /// @brief Print an progress bar that updated on each iteration.
-/// @details The progress bar is currently written to stdout, which of course 
-/// is not a tracer.  I'm not really sure if this is a good idea or not.  I 
-/// think it'd be cool to detect whether or not rosetta is attached to a TTY 
-/// and change how the progress bar is drawn depending.  For example, when 
+/// @details The progress bar is currently written to stdout, which of course
+/// is not a tracer.  I'm not really sure if this is a good idea or not.  I
+/// think it'd be cool to detect whether or not rosetta is attached to a TTY
+/// and change how the progress bar is drawn depending.  For example, when
 /// writing to files it's nicer to not write carriage return '\r' characters.
 class ProgressBarObserver : public ThermodynamicObserver {
 
@@ -51,12 +51,12 @@ public:
 		return "ProgressBarObserver";
 	}
 
-	protocols::moves::MoverOP	clone() const;
+	protocols::moves::MoverOP clone() const;
 
 	void observe_after_metropolis(
 		MetropolisHastingsMover const & metropolis_hastings_mover);
 
-	/// @brief Return false, as a valid pose is not required for printing a 
+	/// @brief Return false, as a valid pose is not required for printing a
 	/// progress bar.
 	bool requires_pose() { return false; }
 

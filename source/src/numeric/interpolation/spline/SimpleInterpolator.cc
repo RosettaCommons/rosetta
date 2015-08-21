@@ -22,10 +22,10 @@ namespace interpolation {
 namespace spline {
 
 SimpleInterpolator::SimpleInterpolator(
-	 utility::vector1<Real> const & x,
-	 utility::vector1<Real> const & y,
-	 Real lbdy,
-	 Real ubdy
+	utility::vector1<Real> const & x,
+	utility::vector1<Real> const & y,
+	Real lbdy,
+	Real ubdy
 ) :
 	Interpolator(),
 	x_(x),
@@ -42,12 +42,10 @@ SimpleInterpolator::SimpleInterpolator() :Interpolator()
 
 void
 SimpleInterpolator::interpolate( Real x, Real & y, Real & dy ) {
-	if(has_lb_function() && x < get_lb_function_cutoff())
-	{
+	if ( has_lb_function() && x < get_lb_function_cutoff() ) {
 		return compute_lb_function_solution(x,y);
 	}
-	if(has_ub_function() && x > get_ub_function_cutoff())
-	{
+	if ( has_ub_function() && x > get_ub_function_cutoff() ) {
 		return compute_ub_function_solution(x,y);
 	}
 	return spline_interpolate(x_,y_,ddy_,x,y,dy);
@@ -60,18 +58,15 @@ utility::json_spirit::Value SimpleInterpolator::serialize()
 
 	std::vector<Value> x_values,y_values,ddy_values;
 
-	for(utility::vector1<Real>::iterator it = x_.begin(); it != x_.end();++it)
-	{
+	for ( utility::vector1<Real>::iterator it = x_.begin(); it != x_.end(); ++it ) {
 		x_values.push_back(Value(*it));
 	}
 
-	for(utility::vector1<Real>::iterator it = y_.begin(); it != y_.end();++it)
-	{
+	for ( utility::vector1<Real>::iterator it = y_.begin(); it != y_.end(); ++it ) {
 		y_values.push_back(Value(*it));
 	}
 
-	for(utility::vector1<Real>::iterator it = ddy_.begin(); it != ddy_.end();++it)
-	{
+	for ( utility::vector1<Real>::iterator it = ddy_.begin(); it != ddy_.end(); ++it ) {
 		ddy_values.push_back(Value(*it));
 	}
 
@@ -95,18 +90,15 @@ void SimpleInterpolator::deserialize(utility::json_spirit::mObject data)
 	y_.clear();
 	ddy_.clear();
 
-	for(utility::json_spirit::mArray::iterator it = x_data.begin();it != x_data.end();++it)
-	{
+	for ( utility::json_spirit::mArray::iterator it = x_data.begin(); it != x_data.end(); ++it ) {
 		x_.push_back(it->get_real());
 	}
 
-	for(utility::json_spirit::mArray::iterator it = y_data.begin();it != y_data.end();++it)
-	{
+	for ( utility::json_spirit::mArray::iterator it = y_data.begin(); it != y_data.end(); ++it ) {
 		y_.push_back(it->get_real());
 	}
 
-	for(utility::json_spirit::mArray::iterator it = ddy_data.begin();it != ddy_data.end();++it)
-	{
+	for ( utility::json_spirit::mArray::iterator it = ddy_data.begin(); it != ddy_data.end(); ++it ) {
 		ddy_.push_back(it->get_real());
 	}
 

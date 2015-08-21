@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //
-/// @file 
-/// @brief 
+/// @file
+/// @brief
 /// @author Neil King ( neilking@uw.edu )
 /// @author Javier Castellanos ( javiercv@uw.edu )
 
@@ -47,13 +47,13 @@ class Symmetrizer : public protocols::moves::Mover {
 	typedef utility::tag::TagCOP TagCOP;
 
 public:
-  Symmetrizer();
+	Symmetrizer();
 
-  // --- virtual functions from mover ---
-  virtual std::string get_name() const { return "Symmetrizer"; }
-  virtual void apply(Pose& pose);
+	// --- virtual functions from mover ---
+	virtual std::string get_name() const { return "Symmetrizer"; }
+	virtual void apply(Pose& pose);
 
-	// --- virtual copy constructors 
+	// --- virtual copy constructors
 	virtual MoverOP clone() const;
 
 
@@ -62,27 +62,27 @@ public:
 
 
 	virtual void parse_my_tag( TagCOP tag,
-														 basic::datacache::DataMap & data,
-														 Filters_map const &,
-														 Movers_map const &,
-														 Pose const & );
+		basic::datacache::DataMap & data,
+		Filters_map const &,
+		Movers_map const &,
+		Pose const & );
 
 	void parse_def( utility::lua::LuaObject const & def,
-					utility::lua::LuaObject const & score_fxns,
-					utility::lua::LuaObject const & tasks,
-					protocols::moves::MoverCacheSP cache );
+		utility::lua::LuaObject const & score_fxns,
+		utility::lua::LuaObject const & tasks,
+		protocols::moves::MoverCacheSP cache );
 
 private:
 	Real get_radial_disp();
 	Real get_angle();
-	
+
 private:
 	std::string symm_file_;
 	Real radial_disp_, radial_disp_min_, radial_disp_max_;
 	Real angle_, angle_min_, angle_max_;
 	Real radial_disp_delta_, angle_delta_;
 	char symmetry_axis_;
-	
+
 	bool explore_grid_;
 	std::string sampling_mode_;
 };

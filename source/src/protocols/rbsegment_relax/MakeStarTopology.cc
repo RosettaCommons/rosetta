@@ -79,26 +79,27 @@ MakeStarTopologyMoverCreator::mover_name() {
 void MakeStarTopologyMover::apply( core::pose::Pose & pose ) {
 	using namespace protocols::rbsegment_relax;
 
-	if (restore_) {
+	if ( restore_ ) {
 		pose.fold_tree( *ft_restore_ );
 		// ??? cutpoint variants
 		protocols::loops::remove_cutpoint_variants( pose );
 	} else {
 		*ft_restore_ = pose.fold_tree();
-		if (mode_ == "disconnected")
+		if ( mode_ == "disconnected" ) {
 			setup_disconnected( pose );
-		else
+		} else {
 			//default
 			setup_star_topology( pose );
+		}
 	}
 }
 
-void MakeStarTopologyMover::parse_my_tag( 
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & data,
-			filters::Filters_map const & /*filters*/,
-			moves::Movers_map const & /*movers*/,
-			core::pose::Pose const & pose )
+void MakeStarTopologyMover::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	filters::Filters_map const & /*filters*/,
+	moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & pose )
 {
 	mode_ = tag->getOption<std::string>("mode", "default");
 
@@ -107,12 +108,12 @@ void MakeStarTopologyMover::parse_my_tag(
 	tag_ = tag->getOption<std::string>("tag", "nulltag");
 
 	// look for tag on datamap
-	if( data.has( "foldtrees", tag_ ) ){
+	if ( data.has( "foldtrees", tag_ ) ) {
 		ft_restore_ = data.get_ptr<core::kinematics::FoldTree>( "foldtrees", tag_ );
 		TR << "Found foldtree " << tag_ << " on datamap" << std::endl;
 	} else {
 		ft_restore_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree( pose.fold_tree() ) );
-			// make a copy of current pose ... if restore is called before 'set' this could be oddly behaved
+		// make a copy of current pose ... if restore is called before 'set' this could be oddly behaved
 		data.add( "foldtrees", tag_, ft_restore_ );
 		TR << "Adding foldtrees " << tag_ << " to datamap" << std::endl;
 	}

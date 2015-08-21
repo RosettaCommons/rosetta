@@ -74,81 +74,81 @@ class CubicSpline
 {
 public:
 
-    //////////////////////////////////
-    // construction and destruction //
-    //////////////////////////////////
+	//////////////////////////////////
+	// construction and destruction //
+	//////////////////////////////////
 
-      //! @brief construct generic CubicSpline
-      CubicSpline()
-      {
-      }
+	//! @brief construct generic CubicSpline
+	CubicSpline()
+	{
+	}
 
-      //! @brief copy constructor
-      CubicSpline* clone() const
-      {
-        return new CubicSpline( *this);
-      }
+	//! @brief copy constructor
+	CubicSpline* clone() const
+	{
+		return new CubicSpline( *this);
+	}
 
 
 	CubicSpline & train
-	      (
-	        const BorderFlag BORDER,
-	        const Real START,
-	        const Real DELTA,
-	        const MathVector< Real> &RESULTS,
-	        const std::pair< Real, Real> &FIRSTBE
-	      );
+	(
+		const BorderFlag BORDER,
+		const Real START,
+		const Real DELTA,
+		const MathVector< Real> &RESULTS,
+		const std::pair< Real, Real> &FIRSTBE
+	);
 
 
 	Real F( const Real &ARGUMENT) const;
 
-    inline  Real sqr ( const Real x ) const{
-    	return x*x;
-    }
+	inline  Real sqr ( const Real x ) const{
+		return x*x;
+	}
 
 
-    //! @brief return derivative at ARGUMENT
-    //! @param ARGUMENT x value
-    //! @return derivative at ARGUMENT
-    Real dF( const Real &ARGUMENT) const;
+	//! @brief return derivative at ARGUMENT
+	//! @param ARGUMENT x value
+	//! @return derivative at ARGUMENT
+	Real dF( const Real &ARGUMENT) const;
 
-    //! @brief return value and derivative at ARGUMENT
-    //! @param ARGUMENT x value
-    //! @return value and derivative at ARGUMENT
-    std::pair< Real, Real> FdF( const double &ARGUMENT) const;
+	//! @brief return value and derivative at ARGUMENT
+	//! @param ARGUMENT x value
+	//! @return value and derivative at ARGUMENT
+	std::pair< Real, Real> FdF( const double &ARGUMENT) const;
 
 	//////////////////
 	////data access/////
 	////////////////////
 
 
-    //! @brief get the second order derivatives of the spline
-    //! @return the second order derivatives at the support points of the spline
-    MathVector< Real> const & get_dsecox() const
-    {
-      return dsecox_;
-    }
+	//! @brief get the second order derivatives of the spline
+	//! @return the second order derivatives at the support points of the spline
+	MathVector< Real> const & get_dsecox() const
+	{
+		return dsecox_;
+	}
 
-    //! @brief access to the start value
-    //! @return the start of the interval the spline is defined on
-    Real get_start() const
-    {
-      return start_;
-    }
+	//! @brief access to the start value
+	//! @return the start of the interval the spline is defined on
+	Real get_start() const
+	{
+		return start_;
+	}
 
-    //! @brief access to the delta value
-    //! @return the distance between two support points of the spline
-    Real get_delta() const
-    {
-      return delta_;
-    }
+	//! @brief access to the delta value
+	//! @return the distance between two support points of the spline
+	Real get_delta() const
+	{
+		return delta_;
+	}
 
-    //! @brief access to the values
-    //! @return the function values at the support points of the spline
-    const MathVector< Real> & get_values() const
-    {
-      return values_;
-    }
+	//! @brief access to the values
+	//! @return the function values at the support points of the spline
+	const MathVector< Real> & get_values() const
+	{
+		return values_;
+	}
 
 
 private:
@@ -158,20 +158,20 @@ private:
 	MathVector<Real> dsecox_; //!< second order derivatives
 
 
-    //! @brief calculate function between two cells
-    //! @param INDEX_LEFT index of left grid point
-    //! @param INDEX_RIGHT index of right grid point
-    //! @param DXP relative distance from left grid point, must be element [0, 1]
-    //! @return function depending on relative distance DXP
-    Real Function( const int INDEX_LEFT, const int INDEX_RIGHT, const Real DXP) const;
+	//! @brief calculate function between two cells
+	//! @param INDEX_LEFT index of left grid point
+	//! @param INDEX_RIGHT index of right grid point
+	//! @param DXP relative distance from left grid point, must be element [0, 1]
+	//! @return function depending on relative distance DXP
+	Real Function( const int INDEX_LEFT, const int INDEX_RIGHT, const Real DXP) const;
 
 
-    //! @brief calculate derivative between two cells
-    //! @param INDEX_LEFT index of left grid point
-    //! @param INDEX_RIGHT index of right grid point
-    //! @param DXP relative distance from left grid point, must be element [0, 1]
-    //! @return derivative depending on relative distance DXP
-    Real Derivative( const int INDEX_LEFT, const int INDEX_RIGHT, const Real DXP) const;
+	//! @brief calculate derivative between two cells
+	//! @param INDEX_LEFT index of left grid point
+	//! @param INDEX_RIGHT index of right grid point
+	//! @param DXP relative distance from left grid point, must be element [0, 1]
+	//! @return derivative depending on relative distance DXP
+	Real Derivative( const int INDEX_LEFT, const int INDEX_RIGHT, const Real DXP) const;
 
 
 };

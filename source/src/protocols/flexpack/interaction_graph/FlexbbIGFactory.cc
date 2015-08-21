@@ -24,7 +24,7 @@
 
 namespace protocols {
 namespace flexpack {
-namespace interaction_graph{
+namespace interaction_graph {
 
 
 FlexbbInteractionGraphOP

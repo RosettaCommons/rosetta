@@ -60,7 +60,7 @@ public:// construct/destruct
 	// SS_Base( Size const & begin, Size const & end, Vector const & v );
 
 	/// @brief copy constructor
-	SS_Base(	SS_Base const & s );
+	SS_Base( SS_Base const & s );
 
 	/// @brief destructor
 	virtual ~SS_Base();
@@ -69,9 +69,9 @@ public:// construct/destruct
 public:// accessors
 
 
-	inline Size begin() const {	return begin_; }
+	inline Size begin() const { return begin_; }
 
-	inline Size end() const {	return end_; }
+	inline Size end() const { return end_; }
 
 	inline Size length() const { return end_ - begin_ + 1; }
 
@@ -166,12 +166,12 @@ public:// construct/destruct
 	Strand( Size const & begin, Size const & end );
 
 	/// @brief copy constructor
-	Strand(	Strand const & s );
+	Strand( Strand const & s );
 
 	/// @brief destructor
 	~Strand();
 
-  /// @brief
+	/// @brief
 	friend std::ostream & operator<<(std::ostream & out, const Strand & st );
 
 
@@ -210,7 +210,7 @@ public: // constructor/destructor
 	/// @brief
 	Real bend() const { return bend_; }
 
-  /// @brief
+	/// @brief
 	friend std::ostream & operator<<( std::ostream & out, const Helix & hx );
 
 
@@ -252,7 +252,7 @@ public: // constructor/destructor
 	/// @brief destructor
 	~Loop();
 
-  /// @brief
+	/// @brief
 	friend std::ostream & operator<<( std::ostream & out, const Loop & hx );
 
 
@@ -281,7 +281,7 @@ class SS_Info2 : public basic::datacache::CacheableData {
 public: // constructor/destructor
 
 
- 	/// @brief default constructor
+	/// @brief default constructor
 	SS_Info2();
 
 	/// @brief value constructor
@@ -303,7 +303,7 @@ public:
 	/// @brief make clone
 	basic::datacache::CacheableDataOP clone() const;
 
-  /// @brief output info of SS_Info2
+	/// @brief output info of SS_Info2
 	friend
 	std::ostream & operator<<(std::ostream & out, const SS_Info2 & ssinfo );
 

@@ -43,7 +43,7 @@
 #include <ctime>
 
 #ifdef WIN32
-	#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/Job.hh>
 #endif
 
 namespace protocols {
@@ -54,11 +54,11 @@ namespace jd2 {
 // simple class to ensure that JobDistributor objects are destroyed at program exit.
 // class JobDistributorDestroyer {
 // public:
-// 	JobDistributorDestroyer(JobDistributor* = 0);
-// 	~JobDistributorDestroyer();
-// 	void set_job_distributor(JobDistributor* s);
+//  JobDistributorDestroyer(JobDistributor* = 0);
+//  ~JobDistributorDestroyer();
+//  void set_job_distributor(JobDistributor* s);
 
-// 	JobDistributor* jd_;
+//  JobDistributor* jd_;
 // };
 
 class JobDistributor {
@@ -165,8 +165,8 @@ protected:
 
 	/// @brief Jobs is the container of Job objects
 	/// need non-const to mark Jobs as completed on Master in MPI-JobDistributor
-	//	Jobs&
-	//	get_jobs(); //get dedicated accessor instead
+	// Jobs&
+	// get_jobs(); //get dedicated accessor instead
 	void mark_job_as_completed( core::Size job_id, core::Real run_time );
 
 	void mark_job_as_bad( core::Size job_id );
@@ -282,7 +282,7 @@ protected:
 		core::Size jobtime,
 		core::Size & retries_this_job
 	);
-	
+
 	/// @brief Increment the number of failed jobs.
 	///
 	void increment_failed_jobs() { ++number_failed_jobs_; return; };
@@ -346,7 +346,7 @@ public:
 
 	/// @brief what is the current batch number ? --- refers to position in batches_
 	core::Size current_batch_id() const {
-				return current_batch_id_;
+		return current_batch_id_;
 	}
 
 protected:
@@ -376,7 +376,7 @@ protected:
 
 protected:
 	/// @brief Setting up callback function that will be call when our process is about to terminate.
-    ///         This will allow us to exit propely (clean up in_progress_files/tmp files if any).
+	///         This will allow us to exit propely (clean up in_progress_files/tmp files if any).
 	static void setup_system_signal_handler( void (*prev_fn)(int) = jd2_signal_handler);
 
 	/// @brief Set signal handler back to default state.

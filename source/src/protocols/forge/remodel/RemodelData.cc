@@ -81,7 +81,7 @@ void RemodelData::splitString( std::string str, std::string delim, std::vector< 
 /// @brief
 /// Parses the blueprint text
 void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
-  using namespace ObjexxFCL;  
+	using namespace ObjexxFCL;
 	if ( text_blueprint == "" ) {
 		TR_REMODEL << "No blueprint data given!" << std::endl;
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__ );
@@ -181,7 +181,7 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 				if ( (*it).substr(0,3) == "DM_" ) {
 					disulfMobileRange.push_back(line.index);
 					TR_REMODEL << "Added line " << line.index << " to disulfMobileRange while reading blueprint file." << std::endl;
-					if (disulfMobileRange.size() > 2){
+					if ( disulfMobileRange.size() > 2 ) {
 						std::ostringstream err_message;
 						err_message << "ERROR: Disulfide mobile range assigment contains " <<  disulfMobileRange.size() << " elements." << std::endl;
 						utility::exit( __FILE__, __LINE__, err_message.str() );
@@ -189,7 +189,7 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 				}
 				if ( (*it).substr(0,3) == "DS_" ) {
 					disulfLandingRange.push_back(line.index);
-					if (disulfLandingRange.size() > 2){
+					if ( disulfLandingRange.size() > 2 ) {
 						std::ostringstream err_message;
 						err_message << "ERROR: Disulfide landing range assigment contains " <<  disulfLandingRange.size() << " elements." << std::endl;
 						utility::exit( __FILE__, __LINE__, err_message.str() );
@@ -217,7 +217,7 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 
 			// for the output resfile, chain is defined by command-line option. no chain by default.
 			if ( design_info ) {
-				if (option[OptionKeys::run::chain].user()) {
+				if ( option[OptionKeys::run::chain].user() ) {
 					std::string const chain(option[OptionKeys::run::chain] );
 					oss << line.index << " " << chain << " " ;
 				} else {
@@ -238,7 +238,7 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 					continue;
 				}
 				if ( pickaa ) { // the column following PIKAA
-					for ( int j=0; j < (int)split_info[i].size();++j ) { // only find string element size
+					for ( int j=0; j < (int)split_info[i].size(); ++j ) { // only find string element size
 
 						//char one_letter_name(core::chemical::aa_from_oneletter_code(aa));
 						char one_letter_name = split_info[i].substr(j,1).c_str()[0];
@@ -263,18 +263,17 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 
 			// process repeats, pretty dangerous, as this only hacks the resfile string
 			// but not making duplicates in the blueprint held by RemodelData
-			if (option[OptionKeys::remodel::repeat_structure].user() ) {
+			if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 				for ( Size rep = 1; rep <(Size)option[OptionKeys::remodel::repeat_structure]; rep++ ) {
-								//chain defined by option, no chain by default
-								if(option[OptionKeys::run::chain].user()) {
-									std::string const chain(option[OptionKeys::run::chain]);
-									oss << line.index + length*rep << " " << chain << " " ;
-								}
-								else {
-													oss << line.index + length*rep << " _ " ;
-								}
+					//chain defined by option, no chain by default
+					if ( option[OptionKeys::run::chain].user() ) {
+						std::string const chain(option[OptionKeys::run::chain]);
+						oss << line.index + length*rep << " " << chain << " " ;
+					} else {
+						oss << line.index + length*rep << " _ " ;
+					}
 					for ( Size i = 3; i< split_info.size(); i++ ) {
-						if (split_info[i].substr(0,3) != "CST"){
+						if ( split_info[i].substr(0,3) != "CST" ) {
 							oss << split_info[i] << " " ;
 						}
 					}
@@ -294,12 +293,12 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 			//TR_REMODEL << "manual design overwrite position: " << line.index << std::endl;
 			//this->design_mode = 3; //default manual mode
 			/*if (option[OptionKeys::Design::design_neighbors] ) {
-				// fully manual design mode automatically switched on when you assign residues by hand
-				this->design_mode = 4;
+			// fully manual design mode automatically switched on when you assign residues by hand
+			this->design_mode = 4;
 			}
 			if(option[OptionKeys::Design::neighbor_repack] ) {
-				// bc repack neigbors
-				this->design_mode = 5;
+			// bc repack neigbors
+			this->design_mode = 5;
 			}
 			*/
 			line.isDesignable = true;
@@ -333,26 +332,31 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 	for ( iter = this->blueprint.begin(), end = this->blueprint.end(); iter != end; ++iter ) {
 		// sequence and ss are class member variables
 		sequence.append( iter->resname );
-		if(iter->sstype.size()==1)
+		if ( iter->sstype.size()==1 ) {
 			ss.append( iter->sstype ); //std case
-		else if(iter->sstype.size()==2){
-				hle_abego_mode=true;
-				char tmp_ss = iter->sstype[0];
-				char tmp_abego = iter->sstype[1];
-				ss.append(1,tmp_ss);
-				abego.append(1,tmp_abego);
-				if(!(tmp_ss=='H'||tmp_ss=='L'||tmp_ss=='E'||tmp_ss=='D'))
-							utility_exit_with_message("First SS-term is:" + string_of(tmp_ss)+ " but must be either H,L,E or D if you want it ignored");
-				if(!(tmp_abego=='A'||tmp_abego=='B'||tmp_abego=='E'||tmp_abego=='G'||tmp_abego=='O'||tmp_abego=='D'))
-						utility_exit_with_message("Second SS-term is:" +string_of(tmp_abego)+" but must be either A,B,E,G,O or D if you want it ignored");
+		} else if ( iter->sstype.size()==2 ) {
+			hle_abego_mode=true;
+			char tmp_ss = iter->sstype[0];
+			char tmp_abego = iter->sstype[1];
+			ss.append(1,tmp_ss);
+			abego.append(1,tmp_abego);
+			if ( !(tmp_ss=='H'||tmp_ss=='L'||tmp_ss=='E'||tmp_ss=='D') ) {
+				utility_exit_with_message("First SS-term is:" + string_of(tmp_ss)+ " but must be either H,L,E or D if you want it ignored");
+			}
+			if ( !(tmp_abego=='A'||tmp_abego=='B'||tmp_abego=='E'||tmp_abego=='G'||tmp_abego=='O'||tmp_abego=='D') ) {
+				utility_exit_with_message("Second SS-term is:" +string_of(tmp_abego)+" but must be either A,B,E,G,O or D if you want it ignored");
+			}
 		}
-		if(iter->sstype.size()==1 && hle_abego_mode==true)
-				utility_exit_with_message("Blueprint style must be either all abego,HLE or HLE followed by ABEGO but not both");
-		if(iter->sstype.size()==3)
-				utility_exit_with_message("Blueprint must have no more than 2 ssTYPES. Ex. HA");
+		if ( iter->sstype.size()==1 && hle_abego_mode==true ) {
+			utility_exit_with_message("Blueprint style must be either all abego,HLE or HLE followed by ABEGO but not both");
+		}
+		if ( iter->sstype.size()==3 ) {
+			utility_exit_with_message("Blueprint must have no more than 2 ssTYPES. Ex. HA");
+		}
 	}
-	if(hle_abego_mode==false)
+	if ( hle_abego_mode==false ) {
 		translateDSSP_ABEGO(this->ss, this->abego);
+	}
 
 	TR_REMODEL << " sequence (based on blueprint): " << std::endl << " " << sequence << std::endl;
 	TR_REMODEL << " ss (based on blueprint): " << std::endl << " " << ss << std::endl;
@@ -363,31 +367,31 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 
 /// @brief Reads in the blueprint file and passes the text data to the blueprint file parser
 void RemodelData::getLoopsToBuildFromFile( std::string filename) {
-	using namespace ObjexxFCL;  
-		if ( filename == "" ) {
-			TR_REMODEL << "No blueprint file given!" << std::endl;
-			utility::exit( EXIT_FAILURE, __FILE__, __LINE__ );
-		}
+	using namespace ObjexxFCL;
+	if ( filename == "" ) {
+		TR_REMODEL << "No blueprint file given!" << std::endl;
+		utility::exit( EXIT_FAILURE, __FILE__, __LINE__ );
+	}
 
-		std::stringstream data;
-		std::string line;
+	std::stringstream data;
+	std::string line;
 
-		utility::io::izstream file_data( filename.c_str() );
-		while ( getline( file_data, line ) ) {
-			data << line << std::endl;
-		}
+	utility::io::izstream file_data( filename.c_str() );
+	while ( getline( file_data, line ) ) {
+		data << line << std::endl;
+	}
 
-		if (!data) {
-			TR_REMODEL << "Can't open blueprint file " << filename << std::endl;
-			utility::exit(EXIT_FAILURE, __FILE__, __LINE__);
-		}
+	if ( !data ) {
+		TR_REMODEL << "Can't open blueprint file " << filename << std::endl;
+		utility::exit(EXIT_FAILURE, __FILE__, __LINE__);
+	}
 
-		getLoopsToBuildFromBlueprint(data.str());
+	getLoopsToBuildFromBlueprint(data.str());
 }
 
 ///
 /// @brief
-/// Updates the dssp_updated_ss vector with secondary structure information. Uses the information obtained from 
+/// Updates the dssp_updated_ss vector with secondary structure information. Uses the information obtained from
 /// DSSP unless the secondary structure was specified in the blueprint file.
 ///
 void RemodelData::updateWithDsspAssignment( ObjexxFCL::FArray1D_char & dsspSS ) {
@@ -410,39 +414,33 @@ void RemodelData::updateWithDsspAssignment( ObjexxFCL::FArray1D_char & dsspSS ) 
 void RemodelData::translateDSSP_ABEGO( std::string & ss, std::string & abego ) {
 
 	size_t found_idx;
-	bool abego_switch = false; 
+	bool abego_switch = false;
 	found_idx = ss.find_first_of("abgoABGO"); // E is shared so only ABGO for mapping
-	if (found_idx == std::string::npos){
+	if ( found_idx == std::string::npos ) {
 		TR_REMODEL << "SS based assignment found" << std::endl; // in case of only E assignment, treat it as DSSP
-	} else if (found_idx != std::string::npos){
+	} else if ( found_idx != std::string::npos ) {
 		abego_switch = true;
 		TR_REMODEL << "ABEGO based assignment found" << std::endl;
 	}
 	std::string trans_ss;
-	
-	if (abego_switch){ //need to make a new string with DSSP assignment and swap
+
+	if ( abego_switch ) { //need to make a new string with DSSP assignment and swap
 		//found_idx = ss.find_first_of("abegoABEGO"); // this substitution use all 5 regions
-		for (core::Size idx = 0; idx < ss.length(); idx++){
-			if (ss[idx] == 'A' || ss[idx] == 'a'){
+		for ( core::Size idx = 0; idx < ss.length(); idx++ ) {
+			if ( ss[idx] == 'A' || ss[idx] == 'a' ) {
 				trans_ss.push_back('D');
-			}
-			else if (ss[idx] == 'B' || ss[idx] == 'b'){
+			} else if ( ss[idx] == 'B' || ss[idx] == 'b' ) {
 				trans_ss.push_back('D');
-			}
-			else if (ss[idx] == 'E' || ss[idx] == 'e'){
+			} else if ( ss[idx] == 'E' || ss[idx] == 'e' ) {
 				trans_ss.push_back('D');
-			}
-			else if (ss[idx] == 'G' || ss[idx] == 'g'){
+			} else if ( ss[idx] == 'G' || ss[idx] == 'g' ) {
 				trans_ss.push_back('D');
-			}
-			else if (ss[idx] == 'O' || ss[idx] == 'o'){
+			} else if ( ss[idx] == 'O' || ss[idx] == 'o' ) {
 				trans_ss.push_back('D');
-			}
-			else if (ss[idx] == '.'){
+			} else if ( ss[idx] == '.' ) {
 				trans_ss.push_back('.');
 				ss[idx]= 'X';
-			}
-			else{ // could have other characters like I, or D so leave them alone
+			} else { // could have other characters like I, or D so leave them alone
 				trans_ss.push_back(ss[idx]);
 			}
 		}

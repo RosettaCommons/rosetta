@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 		core/conformation/membrane/LipidAccInfo.fwd.hh
+/// @file   core/conformation/membrane/LipidAccInfo.fwd.hh
 ///
 /// @brief      Membrane Lipid Accessibility Data
 /// @details    Object for storing per-residue lipid exposed and buried surface
-///				area values. Predicted from sequence, transmembrane spans, and psiblast
-///				prediction using server called from the run_lips.pl script.
-///				Last Modified: 7/7/14
+///    area values. Predicted from sequence, transmembrane spans, and psiblast
+///    prediction using server called from the run_lips.pl script.
+///    Last Modified: 7/7/14
 ///
-/// @author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_conformation_membrane_LipidAccInfo_fwd_hh
 #define INCLUDED_core_conformation_membrane_LipidAccInfo_fwd_hh
@@ -26,7 +26,7 @@
 namespace core {
 namespace conformation {
 namespace membrane {
-            
+
 class LipidAccInfo;
 typedef utility::pointer::shared_ptr< LipidAccInfo > LipidAccInfoOP;
 typedef utility::pointer::shared_ptr< LipidAccInfo const > LipidAccInfoCOP;

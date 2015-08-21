@@ -63,7 +63,7 @@ public:
 	Real lj_three_bond_wdepth() const { return lj_three_bond_wdepth_; }
 
 	/// @brief set LJ and LK solvation parameter for this atom type
-	void set_parameter(	std::string const & param, Real const setting	);
+	void set_parameter( std::string const & param, Real const setting );
 
 private:
 

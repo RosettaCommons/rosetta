@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/antibody_design/ParatopeSiteConstraintMover.fwd.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_antibody_constraints_PARATOPESITECONSTRAINTMOVER_FWD_HH
@@ -22,7 +22,7 @@
 namespace protocols {
 namespace antibody {
 namespace constraints {
-	
+
 
 // Forward
 class ParatopeSiteConstraintMover;
@@ -35,5 +35,5 @@ typedef utility::pointer::shared_ptr< ParatopeSiteConstraintMover const > Parato
 } //namespace antibody
 } //namespace protocols
 
-#endif	//#ifndef INCLUDED_protocols/antibody_design_PARATOPESITECONSTRAINTMOVER_FWD_HH
+#endif //#ifndef INCLUDED_protocols/antibody_design_PARATOPESITECONSTRAINTMOVER_FWD_HH
 

@@ -15,7 +15,7 @@
 #ifndef INCLUDED_protocols_toolbox_pose_metric_calculators_MetricValueGetter_fwd_hh
 #define INCLUDED_protocols_toolbox_pose_metric_calculators_MetricValueGetter_fwd_hh
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 

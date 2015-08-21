@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/magnesium/MgMinimizer.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -20,12 +20,12 @@
 
 namespace protocols {
 namespace magnesium {
-	
-	class MgMinimizer;
-	typedef utility::pointer::shared_ptr< MgMinimizer > MgMinimizerOP;
-	typedef utility::pointer::shared_ptr< MgMinimizer const > MgMinimizerCOP;
-	
-} //magnesium 
-} //protocols 
+
+class MgMinimizer;
+typedef utility::pointer::shared_ptr< MgMinimizer > MgMinimizerOP;
+typedef utility::pointer::shared_ptr< MgMinimizer const > MgMinimizerCOP;
+
+} //magnesium
+} //protocols
 
 #endif

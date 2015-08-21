@@ -31,36 +31,36 @@
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
-	
-	using namespace core::pack::task::operation;
-	using core::kinematics::MoveMapCOP;
-	using core::pose::Pose;
-	using core::pack::task::PackerTask;
-	
-	
+
+using namespace core::pack::task::operation;
+using core::kinematics::MoveMapCOP;
+using core::pose::Pose;
+using core::pack::task::PackerTask;
+
+
 /// @brief A TaskOperation that accepts a movemap and restricts chi that are false to either packing or design.
 /// Does not turn anything on, just like the rest of the RestrictTo operations.
 class RestrictToMoveMapChiOperation : public core::pack::task::operation::TaskOperation {
 
 public:
-	
+
 	typedef core::pack::task::operation::TaskOperation parent;
-	
+
 public:
-	
+
 	RestrictToMoveMapChiOperation();
-	
+
 	RestrictToMoveMapChiOperation( MoveMapCOP movemap );
 
 	virtual ~RestrictToMoveMapChiOperation();
-	
+
 	RestrictToMoveMapChiOperation(RestrictToMoveMapChiOperation const & src);
 
 public:
-	
+
 	void
 	set_movemap( MoveMapCOP movemap );
-	 
+
 	/// @brief Set residues from movemap to designable.  Default false.
 	void
 	set_design( bool setting );
@@ -68,47 +68,47 @@ public:
 	/// @brief Set to use neighbor residues in vacinity of movemap chi residues for packing.  Default False.
 	void
 	set_include_neighbors( bool setting );
-	
+
 	/// @brief Cutoff distance for neighbor detection. Default is 10 A.
 	void
 	set_cutoff_distance( core::Real cutoff );
-	
-	
+
+
 public:
-	
+
 	//@brief.  Yes, I don't know wtf I'm doing with RosettaScripts yet.
 	//virtual void parse_tag( TagCOP, basic::datacache::DataMap & data, core);
-	
+
 	virtual TaskOperationOP clone() const;
-	
+
 	virtual
 	void
 	apply( Pose const & pose, PackerTask & task ) const;
-	
-	
+
+
 private:
-	
+
 	void
 	init();
-	
+
 	void
 	init_for_equal_operator_and_copy_constructor( RestrictToMoveMapChiOperation & lhs, RestrictToMoveMapChiOperation const & rhs);
-	
+
 	MoveMapCOP movemap_;
 	bool design_;
 	bool include_neighbors_;
 	bool movemap_set_; //Since I can't assign a COP to null it seems.
 	core::Real cutoff_;
-	
+
 };
-	
-	
-	
-	
-	
+
+
+
+
+
 }
 }
 }
-#endif	//INCLUDED_protocols_toolbox_task_operations_RestrictToMoveMapChiOperation_hh
+#endif //INCLUDED_protocols_toolbox_task_operations_RestrictToMoveMapChiOperation_hh
 
 

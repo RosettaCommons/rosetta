@@ -23,7 +23,7 @@
 #include <string>
 
 namespace protocols {
-namespace init{
+namespace init {
 
 /// @brief Command line init() version
 void init( int argc, char * argv [] );

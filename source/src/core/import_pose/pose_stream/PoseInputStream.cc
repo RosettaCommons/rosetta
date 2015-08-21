@@ -50,11 +50,11 @@ void PoseInputStream::preprocess_pose( core::pose::Pose & pose ) {
 	// do this in a mover instead!
 	//using namespace core::scoring::constraints;
 	//if ( option[ constraints::cst_file ].user() ) {
-	//	core::scoring::constraints::ConstraintSetOP
-	//	cstset_ = ConstraintIO::get_instance()->read_constraints(
-	//		get_cst_file_option(), new ConstraintSet, pose
-	//	);
-	//	pose.constraint_set( cstset_ );
+	// core::scoring::constraints::ConstraintSetOP
+	// cstset_ = ConstraintIO::get_instance()->read_constraints(
+	//  get_cst_file_option(), new ConstraintSet, pose
+	// );
+	// pose.constraint_set( cstset_ );
 	//}
 } // PoseInputStream::preprocess_pose
 

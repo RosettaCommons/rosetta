@@ -39,7 +39,7 @@ class BinaryFragmentStoreBackend
 public:
 	// Structure database contains structure data and structure geometry indices for a collection
 	// of target structures. The data is stored in the following tables:
-  //    TODO alexford document
+	//    TODO alexford document
 	//
 	// Opens file handle
 	BinaryFragmentStoreBackend(std::string target_path);
@@ -48,7 +48,7 @@ public:
 	FragmentStoreOP get_fragment_store(std::string store_name);
 
 private:
-  std::string target_path_;
+	std::string target_path_;
 };
 
 }

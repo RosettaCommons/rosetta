@@ -49,8 +49,8 @@ public:
 	/// doesn't make any sense in this case.
 	virtual bool score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) {
 
-	    empty_map->set_score_component((Real) f->get_length() * CONST_SCORE, id_);
-	    return true;
+		empty_map->set_score_component((Real) f->get_length() * CONST_SCORE, id_);
+		return true;
 	}
 };
 
@@ -63,9 +63,9 @@ public:
 	}
 
 	FragmentScoringMethodOP make(Size priority, Real lowest_acceptable_value,
-			bool use_lowest, FragmentPickerOP, std::string /* params */) {
+		bool use_lowest, FragmentPickerOP, std::string /* params */) {
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new ConstScore(priority,
-				lowest_acceptable_value, use_lowest) );
+			lowest_acceptable_value, use_lowest) );
 	}
 };
 

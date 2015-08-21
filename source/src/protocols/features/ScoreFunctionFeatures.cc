@@ -54,8 +54,8 @@
 #include <string>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::string;
 using std::stringstream;
@@ -174,7 +174,7 @@ ScoreFunctionFeatures::parse_my_tag(
 	protocols::moves::Movers_map const & /*movers*/,
 	Pose const & /*pose*/
 ) {
-	if(tag->hasOption("scorefxn")){
+	if ( tag->hasOption("scorefxn") ) {
 		scfxn_name_ = tag->getOption<string>("scorefxn");
 		scfxn_ = data.get_ptr<ScoreFunction>("scorefxns", scfxn_name_);
 	} else {
@@ -216,14 +216,14 @@ ScoreFunctionFeatures::insert_score_function_weights_rows(
 
 	string statement_string;
 	switch(db_session->get_db_mode()){
-	case utility::sql_database::DatabaseMode::sqlite3:
+	case utility::sql_database::DatabaseMode::sqlite3 :
 		statement_string = "INSERT OR IGNORE INTO score_function_weights (batch_id, score_function_name, score_type_id, weight) VALUES (?,?,?,?);";
 		break;
 	case utility::sql_database::DatabaseMode::mysql:
-	case utility::sql_database::DatabaseMode::postgres:
+	case utility::sql_database::DatabaseMode::postgres :
 		statement_string = "INSERT IGNORE INTO score_function_weights (batch_id, score_function_name, score_type_id, weight) VALUES (?,?,?,?);";
 		break;
-	default:
+	default :
 		utility_exit_with_message(
 			"Unrecognized database mode: '" +
 			name_from_database_mode(db_session->get_db_mode()) + "'");
@@ -231,11 +231,11 @@ ScoreFunctionFeatures::insert_score_function_weights_rows(
 
 	statement stmt(safely_prepare_statement(statement_string, db_session));
 
-	for(Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id){
+	for ( Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id ) {
 		ScoreType type(static_cast<ScoreType>(score_type_id));
 
 		Real const weight( scfxn_->weights()[type] );
-		if(!weight) continue;
+		if ( !weight ) continue;
 
 		string const score_type( ScoreTypeManager::name_from_score_type(type) );
 		stmt.bind(1, batch_id);

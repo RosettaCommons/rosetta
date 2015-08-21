@@ -27,49 +27,49 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class BaseCentroidScreener: public StepWiseScreener {
+class BaseCentroidScreener: public StepWiseScreener {
 
-	public:
+public:
 
-		//constructor
-		BaseCentroidScreener( modeler::rna::checker::RNA_BaseCentroidCheckerOP base_centroid_checker,
-													core::pose::PoseOP screening_pose,
-													bool const force_centroid_interaction = true );
+	//constructor
+	BaseCentroidScreener( modeler::rna::checker::RNA_BaseCentroidCheckerOP base_centroid_checker,
+		core::pose::PoseOP screening_pose,
+		bool const force_centroid_interaction = true );
 
-		//constructor
-		BaseCentroidScreener( modeler::rna::checker::RNA_BaseCentroidCheckerOP base_centroid_checker,
-													core::kinematics::Stub const & moving_res_base_stub );
+	//constructor
+	BaseCentroidScreener( modeler::rna::checker::RNA_BaseCentroidCheckerOP base_centroid_checker,
+		core::kinematics::Stub const & moving_res_base_stub );
 
-		//destructor
-		~BaseCentroidScreener();
+	//destructor
+	~BaseCentroidScreener();
 
-	public:
+public:
 
-		std::string
-		name() const { return "BaseCentroidScreener"; }
+	std::string
+	name() const { return "BaseCentroidScreener"; }
 
-		StepWiseScreenerType
-		type() const { return BASE_CENTROID; }
+	StepWiseScreenerType
+	type() const { return BASE_CENTROID; }
 
-		virtual
-		bool
-		check_screen();
+	virtual
+	bool
+	check_screen();
 
-		void
-		fast_forward( sampler::StepWiseSamplerBaseOP sampler );
+	void
+	fast_forward( sampler::StepWiseSamplerBaseOP sampler );
 
-	private:
+private:
 
-		modeler::rna::checker::RNA_BaseCentroidCheckerOP base_centroid_checker_;
-		core::pose::PoseOP screening_pose_;
-		bool const force_centroid_interaction_;
+	modeler::rna::checker::RNA_BaseCentroidCheckerOP base_centroid_checker_;
+	core::pose::PoseOP screening_pose_;
+	bool const force_centroid_interaction_;
 
-		bool const using_stub_;
-		core::kinematics::Stub const & moving_res_base_stub_;
+	bool const using_stub_;
+	core::kinematics::Stub const & moving_res_base_stub_;
 
-		modeler::rna::StepWiseRNA_CountStruct count_data_;
+	modeler::rna::StepWiseRNA_CountStruct count_data_;
 
-	};
+};
 
 } //screener
 } //stepwise

@@ -53,7 +53,7 @@ public:
 	typedef core::conformation::Residue Residue;
 	typedef core::Size            Size;
 	typedef core::Vector          Vector;
-	typedef core::Real				Real;
+	typedef core::Real    Real;
 
 public:
 	MinimalRotamer( Residue const & );

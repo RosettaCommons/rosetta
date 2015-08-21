@@ -68,7 +68,7 @@ NMerSVMEnergyCreator::score_types_for_method() const {
 void
 NMerSVMEnergy::nmer_length( Size const nmer_length ){
 	nmer_length_ = nmer_length;
-  //nmer residue energy is attributed to position 1
+	//nmer residue energy is attributed to position 1
 	nmer_cterm_ = nmer_length_ - 1 ;
 }
 
@@ -114,17 +114,19 @@ void
 NMerSVMEnergy::initialize_from_options()
 {
 	using namespace basic::options;
-	NMerSVMEnergy::nmer_length( option[ OptionKeys::score::nmer_ref_seq_length ]() ); 
-	NMerSVMEnergy::gate_svm_scores( option[ OptionKeys::score::nmer_svm_scorecut ].user() ); 
-	NMerSVMEnergy::term_length( option[ OptionKeys::score::nmer_svm_term_length ]() ); 
-	NMerSVMEnergy::use_pssm_features( option[ OptionKeys::score::nmer_svm_pssm_feat ]() ); 
-	NMerSVMEnergy::nmer_svm_scorecut( option[ OptionKeys::score::nmer_svm_scorecut ]() ); 
+	NMerSVMEnergy::nmer_length( option[ OptionKeys::score::nmer_ref_seq_length ]() );
+	NMerSVMEnergy::gate_svm_scores( option[ OptionKeys::score::nmer_svm_scorecut ].user() );
+	NMerSVMEnergy::term_length( option[ OptionKeys::score::nmer_svm_term_length ]() );
+	NMerSVMEnergy::use_pssm_features( option[ OptionKeys::score::nmer_svm_pssm_feat ]() );
+	NMerSVMEnergy::nmer_svm_scorecut( option[ OptionKeys::score::nmer_svm_scorecut ]() );
 	//load user-defined encoding?
-	if( option[ OptionKeys::score::nmer_svm_aa_matrix ].user() )
-		NMerSVMEnergy::read_aa_encoding_matrix( option[ OptionKeys::score::nmer_svm_aa_matrix ]() ); 
-	//or default to database BLOSUM62
-	else NMerSVMEnergy::read_aa_encoding_matrix(
+	if ( option[ OptionKeys::score::nmer_svm_aa_matrix ].user() ) {
+		NMerSVMEnergy::read_aa_encoding_matrix( option[ OptionKeys::score::nmer_svm_aa_matrix ]() );
+	} else {
+		NMerSVMEnergy::read_aa_encoding_matrix(
+			//or default to database BLOSUM62
 			basic::database::full_name( "sequence/substitution_matrix/BLOSUM62.prob.rescale" ) );
+	}
 }
 
 NMerSVMEnergy::NMerSVMEnergy() :
@@ -141,7 +143,7 @@ NMerSVMEnergy::NMerSVMEnergy( utility::vector1< std::string > const & svm_fnames
 	NMerSVMEnergy::initialize_from_options();
 
 	all_nmer_svms_.clear();
-	for( Size isvm = 1; isvm <= svm_fnames.size(); ++isvm ){
+	for ( Size isvm = 1; isvm <= svm_fnames.size(); ++isvm ) {
 		NMerSVMEnergy::read_nmer_svm( svm_fnames[ isvm ] );
 	}
 }
@@ -161,7 +163,7 @@ NMerSVMEnergy::read_nmer_svms_from_options() {
 		NMerSVMEnergy::read_nmer_svm_list( svm_list_fname );
 	}
 	//use single svm file
-	if( option[ OptionKeys::score::nmer_svm ].user() ){
+	if ( option[ OptionKeys::score::nmer_svm ].user() ) {
 		std::string const svm_fname( option[ OptionKeys::score::nmer_svm ] );
 		NMerSVMEnergy::read_nmer_svm( svm_fname );
 	}
@@ -170,20 +172,20 @@ NMerSVMEnergy::read_nmer_svms_from_options() {
 //load svms from a list file
 void
 NMerSVMEnergy::read_nmer_svm_list( std::string svm_list_fname ) {
-  if ( !utility::file::file_exists( svm_list_fname ) ) {
-    svm_list_fname = basic::database::full_name( svm_list_fname, false );
-  }
+	if ( !utility::file::file_exists( svm_list_fname ) ) {
+		svm_list_fname = basic::database::full_name( svm_list_fname, false );
+	}
 	TR << "reading NMerSVMEnergy list from " << svm_list_fname << std::endl;
 	utility::io::izstream in_stream( svm_list_fname );
-	if (!in_stream.good()) {
+	if ( !in_stream.good() ) {
 		utility_exit_with_message( "Error opening NMerSVMEnergy list file" );
 	}
 	//now loop over all names in list
 	std::string svm_fname;
-	while( getline( in_stream, svm_fname ) ){
+	while ( getline( in_stream, svm_fname ) ) {
 		utility::vector1< std::string > const tokens( utility::split( svm_fname ) );
 		//skip comments
-		if( tokens[ 1 ][ 0 ] == '#' ) continue;
+		if ( tokens[ 1 ][ 0 ] == '#' ) continue;
 		NMerSVMEnergy::read_nmer_svm( svm_fname );
 	}
 }
@@ -191,9 +193,9 @@ NMerSVMEnergy::read_nmer_svm_list( std::string svm_list_fname ) {
 void
 NMerSVMEnergy::read_nmer_svm( std::string svm_fname ) {
 
-  if ( !utility::file::file_exists( svm_fname ) ) {
-    svm_fname = basic::database::full_name( svm_fname, false );
-  }
+	if ( !utility::file::file_exists( svm_fname ) ) {
+		svm_fname = basic::database::full_name( svm_fname, false );
+	}
 	TR << "reading NMerSVMEnergy scores from " << svm_fname << std::endl;
 	const char* svm_fname_ch( svm_fname.c_str() );
 	Svm_rosettaOP nmer_svm( new Svm_rosetta( svm_fname_ch ) );
@@ -210,26 +212,28 @@ NMerSVMEnergy::read_aa_encoding_matrix( std::string const fname ){
 	aa_encoder_.clear();
 
 	//and load the data
-  TR << "reading NMerSVM encoding matrix " << fname << std::endl;
-  utility::io::izstream in_stream( fname );
-  if (!in_stream.good()) {
-    utility_exit_with_message( "[ERROR] Error opening NMerSVM encoding matrix file" );
-  }
-  std::string line;
-  while( getline( in_stream, line) ) { 
-    utility::vector1< std::string > const tokens( utility::string_split_multi_delim( line, " \t" ) );
-    //skip comments
-    if( tokens[ 1 ][ 0 ] == '#' ) continue;
-    char const aa( tokens[ 1 ][ 0 ] );
-    if( aa_encoder_.count( aa ) ) utility_exit_with_message( "[ERROR] NMer SVM encoding matrix file "
-        + fname + " has double entry for aa " + aa );
-    utility::vector1< Real > aa_vals;
-    for( Size ival = 2; ival <= tokens.size(); ++ival ){
-      Real const val( atof( tokens[ ival ].c_str() ) );
-      aa_vals.push_back( val );
-    }   
-    aa_encoder_[ aa ] = aa_vals; 
-  }
+	TR << "reading NMerSVM encoding matrix " << fname << std::endl;
+	utility::io::izstream in_stream( fname );
+	if ( !in_stream.good() ) {
+		utility_exit_with_message( "[ERROR] Error opening NMerSVM encoding matrix file" );
+	}
+	std::string line;
+	while ( getline( in_stream, line) ) {
+		utility::vector1< std::string > const tokens( utility::string_split_multi_delim( line, " \t" ) );
+		//skip comments
+		if ( tokens[ 1 ][ 0 ] == '#' ) continue;
+		char const aa( tokens[ 1 ][ 0 ] );
+		if ( aa_encoder_.count( aa ) ) {
+			utility_exit_with_message( "[ERROR] NMer SVM encoding matrix file "
+				+ fname + " has double entry for aa " + aa );
+		}
+		utility::vector1< Real > aa_vals;
+		for ( Size ival = 2; ival <= tokens.size(); ++ival ) {
+			Real const val( atof( tokens[ ival ].c_str() ) );
+			aa_vals.push_back( val );
+		}
+		aa_encoder_[ aa ] = aa_vals;
+	}
 }
 
 //transform score matrix vals to probabilities, rescale to [-1,1]
@@ -246,7 +250,7 @@ NMerSVMEnergy::get_svm_nodes( vector1< Real > const feature_vals ) const
 {
 	vector1< Svm_node_rosettaOP > features;
 	Size feature_idx( 1 );
-	for( Size ival = 1; ival <= feature_vals.size(); ++ival ){
+	for ( Size ival = 1; ival <= feature_vals.size(); ++ival ) {
 		features.push_back( Svm_node_rosettaOP( new Svm_node_rosetta( feature_idx, feature_vals[ ival ] ) ) );
 		++feature_idx;
 	}
@@ -258,15 +262,15 @@ vector1< Real >
 NMerSVMEnergy::encode_aa_string( std::string const seq ) const
 {
 	vector1< Real > feature_vals;
-	for( Size iseq = 0; iseq <= seq.size() - 1; ++iseq ){
+	for ( Size iseq = 0; iseq <= seq.size() - 1; ++iseq ) {
 		//iter through encoding vector for each char of seq
 		char aa( seq[ iseq ] );
 		//check for aa in encoder, else aa = 'X'
 		//dont use map[] for access cuz [] can change map, and this is a const funxn!
 		vector1< Real > aa_feature_vals;
-		if( aa_encoder_.find( aa ) != aa_encoder_.end() ) aa_feature_vals = aa_encoder_.find( aa )->second; 
-		else aa_feature_vals = aa_encoder_.find( 'X' )->second; 
-		for( Size ival = 1; ival <= aa_feature_vals.size(); ++ival ){
+		if ( aa_encoder_.find( aa ) != aa_encoder_.end() ) aa_feature_vals = aa_encoder_.find( aa )->second;
+		else aa_feature_vals = aa_encoder_.find( 'X' )->second;
+		for ( Size ival = 1; ival <= aa_feature_vals.size(); ++ival ) {
 			feature_vals.push_back( aa_feature_vals[ ival ] );
 		}
 	}
@@ -277,21 +281,21 @@ NMerSVMEnergy::encode_aa_string( std::string const seq ) const
 vector1< Real >
 NMerSVMEnergy::encode_wtd_avg_aa_string( std::string const seq, vector1< Real > const wts ) const
 {
-debug_assert( seq.length() == wts.size() );
+	debug_assert( seq.length() == wts.size() );
 	//get scale factors from relative wts, must sum to one!
 	Real wtsum = 0;
-	for( Size iwt = 1; iwt <= wts.size(); ++iwt ) wtsum += wts[ iwt ];
+	for ( Size iwt = 1; iwt <= wts.size(); ++iwt ) wtsum += wts[ iwt ];
 	vector1< Real > wts_norm( wts );
-	for( Size iwt = 1; iwt <= wts_norm.size(); ++iwt ) wts_norm[ iwt ] /= wtsum;
+	for ( Size iwt = 1; iwt <= wts_norm.size(); ++iwt ) wts_norm[ iwt ] /= wtsum;
 
 	vector1< Real > feature_vals;
-	for( Size iseq = 0; iseq <= seq.size() - 1; ++iseq ){
+	for ( Size iseq = 0; iseq <= seq.size() - 1; ++iseq ) {
 		std::string aa( seq.substr( iseq, 1 ) );
 		vector1< Real > aa_feature_vals( encode_aa_string( aa ) );
-		for( Size ival = 1; ival <= aa_feature_vals.size(); ++ival ){
+		for ( Size ival = 1; ival <= aa_feature_vals.size(); ++ival ) {
 			Real val_norm( wts_norm[ iseq + 1 ] * aa_feature_vals[ ival ] );
 			//if vector element DNE, add wtd feature value
-			if( ival > feature_vals.size() ) feature_vals.push_back( val_norm );
+			if ( ival > feature_vals.size() ) feature_vals.push_back( val_norm );
 			//else sum it into the correct vector element
 			else feature_vals[ ival ] += val_norm;
 		}
@@ -305,10 +309,10 @@ NMerSVMEnergy::encode_nmer( std::string const chain_sequence, Size const chain_s
 {
 	std::string const nmer_seq( chain_sequence.substr( chain_seqpos - 1, nmer_length_ ) );
 	vector1< Real > feature_vals( encode_aa_string( nmer_seq ) );
-	if( term_length_ > 0 ){
+	if ( term_length_ > 0 ) {
 		add_encoded_termini( chain_sequence, chain_seqpos, feature_vals );
 	}
-	if( use_pssm_features_ ){
+	if ( use_pssm_features_ ) {
 		add_pssm_features( nmer_seq, isvm, feature_vals );
 	}
 	return feature_vals;
@@ -320,20 +324,20 @@ NMerSVMEnergy::add_encoded_termini( std::string const chain_sequence, Size const
 {
 	//get term nmers upstream and downstrem of core, use dummy - for missing res
 	std::string nterm_seq, cterm_seq;
-	for( Size offset = 1; offset <= term_length_; ++offset ){
-		if( chain_seqpos - offset >= 1 )
-				nterm_seq = chain_sequence[ ( chain_seqpos - 1 ) - offset ] + nterm_seq;
+	for ( Size offset = 1; offset <= term_length_; ++offset ) {
+		if ( chain_seqpos - offset >= 1 ) {
+			nterm_seq = chain_sequence[ ( chain_seqpos - 1 ) - offset ] + nterm_seq;
+		} else nterm_seq = "X" + nterm_seq;
 		//else nterm_seq = '-' + nterm_seq;
-		else nterm_seq = "X" + nterm_seq;
-		if( chain_seqpos + offset <= chain_sequence.length() )
-				cterm_seq = cterm_seq + chain_sequence[ ( chain_seqpos - 1 ) + ( nmer_length_ - 1 ) + offset ];
+		if ( chain_seqpos + offset <= chain_sequence.length() ) {
+			cterm_seq = cterm_seq + chain_sequence[ ( chain_seqpos - 1 ) + ( nmer_length_ - 1 ) + offset ];
+		} else cterm_seq = cterm_seq + "X";
 		//else cterm_seq = cterm_seq + '-';
-		else cterm_seq = cterm_seq + "X";
 	}
 	//construct wts
 	vector1< Real > nterm_wts( term_length_, 1.0 ), cterm_wts( term_length_, 1.0 );
 	//currently hardcoded to weight linearly down as we go away from central core sequence
-	for( Size iterm = 1; iterm <= term_length_; ++iterm ){
+	for ( Size iterm = 1; iterm <= term_length_; ++iterm ) {
 		nterm_wts[ iterm ] = static_cast< Real >( iterm );
 		cterm_wts[ term_length_ - iterm + 1 ] = static_cast< Real >( iterm );
 	}
@@ -341,7 +345,7 @@ NMerSVMEnergy::add_encoded_termini( std::string const chain_sequence, Size const
 	vector1< Real > feat_vals_nterm( encode_wtd_avg_aa_string( nterm_seq, nterm_wts ) );
 	vector1< Real > feat_vals_cterm( encode_wtd_avg_aa_string( cterm_seq, cterm_wts ) );
 	//add to term feature vals to begin and end of feature vals
-	for( Size ival_term = 1; ival_term <= feat_vals_nterm.size(); ++ival_term ){
+	for ( Size ival_term = 1; ival_term <= feat_vals_nterm.size(); ++ival_term ) {
 		feature_vals.insert( feature_vals.begin() + ival_term - 1, feat_vals_nterm[ ival_term ] );
 		feature_vals.push_back( feat_vals_cterm[ ival_term ] );
 	}
@@ -352,9 +356,11 @@ NMerSVMEnergy::add_encoded_termini( std::string const chain_sequence, Size const
 void
 NMerSVMEnergy::add_pssm_features( std::string const seq, Size const isvm, vector1< Real > & feature_vals ) const
 {
-	if( isvm > nmer_pssm_.n_pssms() ) utility_exit_with_message(
+	if ( isvm > nmer_pssm_.n_pssms() ) {
+		utility_exit_with_message(
 			"NMerSVMEnergy pssm features require one pssm per svm model. Check your svm and pssm lists for same length!\n" );
-	for( Size iseq = 0; iseq <= seq.size() - 1; ++iseq ){
+	}
+	for ( Size iseq = 0; iseq <= seq.size() - 1; ++iseq ) {
 		//iter through encoding vector for each char of seq
 		core::chemical::AA aa( core::chemical::aa_from_oneletter_code( seq[ iseq ] ) );
 		Real pssm_energy( nmer_pssm_.pssm_energy_at_frame_seqpos( iseq + 1, aa, isvm ) );
@@ -370,7 +376,7 @@ NMerSVMEnergy::get_residue_energy_by_svm(
 	vector1< Real > & rsd_svm_energies
 ) const
 {
-debug_assert( rsd_svm_energies.size() == n_svms() );
+	debug_assert( rsd_svm_energies.size() == n_svms() );
 	//for now, just assign all of the p1=seqpos frame's nmer_svm energy to this residue
 	//TODO: distribute frame's nmer_svm energy evenly across the nmer
 	//TODO: avoid wasting calc time by storing nmer_value, nmer_val_out_of_date in pose cacheable data
@@ -380,22 +386,22 @@ debug_assert( rsd_svm_energies.size() == n_svms() );
 	//TODO: how deal w/ sequences shorter than nmer_length_?
 	// this matters at both termini… maybe take max of all overlapping frames w/ missing res as 'X'?
 	// go ahead and bail if we fall off the end of the chain
-	if( p1_seqpos + nmer_length_ - 1 <= pose.conformation().chain_end( pose.chain( p1_seqpos ) ) ){
+	if ( p1_seqpos + nmer_length_ - 1 <= pose.conformation().chain_end( pose.chain( p1_seqpos ) ) ) {
 		//need p1 position in this chain's sequence, offset with index of first res
 		Size chain_p1_seqpos( p1_seqpos - pose.conformation().chain_begin( pose.chain( p1_seqpos ) ) + 1 );
 		std::string chain_sequence( pose.chain_sequence( pose.chain( p1_seqpos ) ) );
 
 		rsd_energy_avg = 0.;
 		//encode nmer string --> feature(Svm_node) vector
-		for( Size isvm = 1; isvm <= n_svms(); ++isvm ){
+		for ( Size isvm = 1; isvm <= n_svms(); ++isvm ) {
 			vector1< Svm_node_rosettaOP > p1_seqpos_nmer_features(
-					get_svm_nodes( encode_nmer( chain_sequence, chain_p1_seqpos, isvm ) ) );
+				get_svm_nodes( encode_nmer( chain_sequence, chain_p1_seqpos, isvm ) ) );
 			//get this svm model
 			Svm_rosettaOP nmer_svm_model( all_nmer_svms_[ isvm ] );
-			//Svm_rosetta funxn to wrap svm_predict, see Svm_rosetta::predict_probability for template, 
+			//Svm_rosetta funxn to wrap svm_predict, see Svm_rosetta::predict_probability for template,
 			Real rsd_svm_energy( nmer_svm_model->predict( p1_seqpos_nmer_features ) );
 			//gate energy at svm_scorecut, thus ignoring low-scoring nmers
-			if( gate_svm_scores_ && rsd_svm_energy < nmer_svm_scorecut_ ) rsd_svm_energy = nmer_svm_scorecut_;
+			if ( gate_svm_scores_ && rsd_svm_energy < nmer_svm_scorecut_ ) rsd_svm_energy = nmer_svm_scorecut_;
 			//store this svms rsd energy
 			rsd_svm_energies[ isvm ] = rsd_svm_energy;
 			//normalize energy by number of svms used
@@ -413,7 +419,7 @@ NMerSVMEnergy::residue_energy(
 	EnergyMap & emap
 ) const
 {
-	if( all_nmer_svms_.empty() ) return;
+	if ( all_nmer_svms_.empty() ) return;
 	Size const seqpos( rsd.seqpos() );
 
 	Real rsd_energy( 0. );

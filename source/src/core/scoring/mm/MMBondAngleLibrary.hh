@@ -60,13 +60,13 @@ public:
 	/// @brief lookup by atom type strings
 	mm_bondangle_library_citer_pair
 	lookup( std::string atom1, std::string atom2,
-					std::string atom3 ) const;
+		std::string atom3 ) const;
 
 	/// @brief pretty print / debug
 	void pretty_print() const;
 	void pretty_print( int atom1, int atom2, int atom3 ) const;
 	void pretty_print(  std::string atom1, std::string atom2,
-											std::string atom3 ) const;
+		std::string atom3 ) const;
 
 private:
 

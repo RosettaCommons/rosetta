@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file core/scoring/methods/FreeDOF_Options.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,13 +21,13 @@
 namespace core {
 namespace scoring {
 namespace methods {
-	
-	class FreeDOF_Options;
-	typedef utility::pointer::shared_ptr< FreeDOF_Options > FreeDOF_OptionsOP;
-	typedef utility::pointer::shared_ptr< FreeDOF_Options const > FreeDOF_OptionsCOP;
-	
-} //methods 
-} //scoring 
-} //core 
+
+class FreeDOF_Options;
+typedef utility::pointer::shared_ptr< FreeDOF_Options > FreeDOF_OptionsOP;
+typedef utility::pointer::shared_ptr< FreeDOF_Options const > FreeDOF_OptionsCOP;
+
+} //methods
+} //scoring
+} //core
 
 #endif

@@ -48,7 +48,7 @@ NotResidueSelector::NotResidueSelector( ResidueSelectorCOP selector )
 ResidueSubset
 NotResidueSelector::apply( core::pose::Pose const & pose ) const
 {
-debug_assert( selector_ );
+	debug_assert( selector_ );
 
 	ResidueSubset subset = selector_->apply( pose );
 	subset.flip();
@@ -60,9 +60,9 @@ void NotResidueSelector::parse_my_tag(
 	basic::datacache::DataMap & datamap
 )
 {
-	if( tag->hasOption( "selector" ) ) { // fetch selector from datamap
+	if ( tag->hasOption( "selector" ) ) { // fetch selector from datamap
 
-		if( tag->size() > 1 ) { // has subtags
+		if ( tag->size() > 1 ) { // has subtags
 			throw utility::excn::EXCN_Msg_Exception( "NotResidueSelector can negate ONE ResidueSelector! Either specify 'selector' option or provide subtags but not BOTH\n" );
 		}
 		// grab the ResidueSelector to be negated from the selector option
@@ -76,7 +76,7 @@ void NotResidueSelector::parse_my_tag(
 			error_msg << e.msg();
 			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
 		}
-	
+
 		try {
 			ResidueSelectorCOP selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_str );
 			set_residue_selector(selector);
@@ -86,20 +86,20 @@ void NotResidueSelector::parse_my_tag(
 			error_msg << e.msg();
 			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
 		}
-	} else if( tag->size() > 1 ) { // attempt reading subtag
+	} else if ( tag->size() > 1 ) { // attempt reading subtag
 		utility::vector0< utility::tag::TagCOP > const & tags = tag->getTags();
-		if( tags.size() > 1) {
+		if ( tags.size() > 1 ) {
 			throw utility::excn::EXCN_Msg_Exception( "NotResidueSelector takes exactly ONE ResidueSelector! Multiple selectors were specified.\n" );
 		}
 		ResidueSelectorCOP rs = ResidueSelectorFactory::get_instance()->new_residue_selector(
-				tags.front()->getName(),
-				tags.front(),
-				datamap
-			);
+			tags.front()->getName(),
+			tags.front(),
+			datamap
+		);
 		set_residue_selector( rs );
 	}
-	
-	if ( !selector_ ) { 
+
+	if ( !selector_ ) {
 		std::stringstream error_msg;
 		error_msg << "No ResidueSelector given to the NotResidueSelector; NotResidueSelector requires a ResidueSelector as input\n";
 		throw utility::excn::EXCN_Msg_Exception( error_msg.str() );

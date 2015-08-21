@@ -58,9 +58,9 @@ public:
 	core::pack::task::operation::TaskOperationOP clone() const;
 
 	/// @brief Configure from a RosettaScripts XML tag.
-  void parse_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & );
+	void parse_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & );
 
 protected:
 
@@ -69,13 +69,13 @@ protected:
 
 	/// @brief Help copy instances of this class.
 	virtual void copy( RestrictToLoops & lhs, RestrictToLoops const & rhs );
-	
+
 public:
 
 	/// @brief Apply this operation to the packer task.
 	void apply(
-			core::pose::Pose const & pose,
-			core::pack::task::PackerTask & task ) const;
+		core::pose::Pose const & pose,
+		core::pack::task::PackerTask & task ) const;
 
 	/// @brief Return true if design is allowed.
 	bool design_loop() const;
@@ -91,25 +91,25 @@ public:
 
 	/// @brief Specify the loops that will be allowed to pack.
 	void set_loops_from_file( std::string loops_file );
-	
-	/// @brief Return true if we are restricting to only design. 
+
+	/// @brief Return true if we are restricting to only design.
 	///  AKA RestrictDesignToLoops.
 	bool restrict_only_design_to_loops() const;
-	
+
 	/// @brief Specify whether to restrict only design to loops/neighbors
 	///  AKA RestrictDesignToLoops.  Does not disable packing for any residue.
 	///  Implies and sets design_loop to true.
 	void set_restrict_only_design_to_loops( bool restrict_only_design );
-	
+
 protected:
 
 	/// @brief Helper function to prevent code duplication in subclasses.
 	void apply_helper(
-			core::pose::Pose const & pose,
-			core::pack::task::PackerTask & task,
-			bool include_neighbors,
-			core::Real cutoff_distance,
-			bool design_neighbors ) const;
+		core::pose::Pose const & pose,
+		core::pack::task::PackerTask & task,
+		bool include_neighbors,
+		core::Real cutoff_distance,
+		bool design_neighbors ) const;
 
 private:
 	bool design_loops_;

@@ -55,8 +55,8 @@ bool Rose::clashes(RCR o) const {
 	RCR s( h->natom() <= o.h->natom() ? *this : o );
 	// XC s2b( b.h->translation() + ( (s.x-s.h->translation()) / b.x ) );
 	XC s2b( b.h->translation() + ( ~b.x * (s.x-s.h->translation()) ) );
-	for(Hash::const_iterator i = s.h->begin(); i != s.h->end(); ++i){
-		if( b.h->clash_raw( s2b * *i ) ) return true;
+	for ( Hash::const_iterator i = s.h->begin(); i != s.h->end(); ++i ) {
+		if ( b.h->clash_raw( s2b * *i ) ) return true;
 	}
 	return false;
 }
@@ -69,7 +69,7 @@ Size Rose::contacts(RCR o) const {
 	// (~d)*n
 	// XC s2b( b.h->translation() + ( (s.x-s.h->translation()) / b.x ) );
 	XC s2b( b.h->translation() + ( ~b.x * (s.x-s.h->translation()) ) );
-	for(Hash::const_iterator i = s.h->begin(); i != s.h->end(); ++i){
+	for ( Hash::const_iterator i = s.h->begin(); i != s.h->end(); ++i ) {
 		count += b.h->nbcount_raw( s2b * *i );
 	}
 	return count;
@@ -77,8 +77,8 @@ Size Rose::contacts(RCR o) const {
 
 core::pose::PoseCOP Rose::pose() const {
 	core::pose::PoseOP pose( new core::pose::Pose(*p) );
-	for(Size ir = 1; ir <= pose->n_residue(); ++ir) {
-		for(Size ia = 1; ia <= pose->residue_type(ir).natoms(); ++ia) {
+	for ( Size ir = 1; ir <= pose->n_residue(); ++ir ) {
+		for ( Size ia = 1; ia <= pose->residue_type(ir).natoms(); ++ia ) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose->set_xyz( aid, x.xform(pose->xyz(aid)) );
 		}
@@ -95,7 +95,7 @@ void Rose::dump_pdb(std::string const & fname) const {
 }
 
 void Rose::dump_minimal_pdb(std::ostream & out, char chain){
-	for(Size ir = 1; ir <= p->n_residue(); ++ir){
+	for ( Size ir = 1; ir <= p->n_residue(); ++ir ) {
 		V v;
 		v = x * p->xyz(AID(1,ir)); out<<"ATOM  "<<I(5,3*ir-2)<<' '<<"  N "<<' '<<"GLY"<<' '<<chain<<I(4,ir)<<"    "<<F(8,3,v.x())<<F(8,3,v.y())<<F(8,3,v.z())<<F(6,2,1.0)<<F(6,2,1.0)<<endl;
 		v = x * p->xyz(AID(2,ir)); out<<"ATOM  "<<I(5,3*ir-1)<<' '<<" CA "<<' '<<"GLY"<<' '<<chain<<I(4,ir)<<"    "<<F(8,3,v.x())<<F(8,3,v.y())<<F(8,3,v.z())<<F(6,2,1.0)<<F(6,2,1.0)<<endl;
@@ -108,11 +108,11 @@ void Rose::dump_minimal_pdb(std::ostream & out, char chain){
 
 bool Rose::clashes_naive(RCR o) const {
 	Real const thresh_2 = h->grid_size2();
-	for(Hash::const_iterator i = o.h->begin(); i != o.h->end(); ++i){
+	for ( Hash::const_iterator i = o.h->begin(); i != o.h->end(); ++i ) {
 		VC u( o.x.xform(*i-o.h->translation()) );
-		for(Hash::const_iterator j = h->begin(); j != h->end(); ++j){
+		for ( Hash::const_iterator j = h->begin(); j != h->end(); ++j ) {
 			VC v( x.xform(*j-h->translation()) );
-			if( u.distance_squared(v) < thresh_2 ) return true;
+			if ( u.distance_squared(v) < thresh_2 ) return true;
 		}
 	}
 	return false;
@@ -121,11 +121,11 @@ bool Rose::clashes_naive(RCR o) const {
 Size Rose::contacts_naive(RCR o) const {
 	Size count = 0;
 	Real const thresh_2 = h->grid_size2();
-	for(Hash::const_iterator i = o.h->begin(); i != o.h->end(); ++i){
+	for ( Hash::const_iterator i = o.h->begin(); i != o.h->end(); ++i ) {
 		VC u( o.x.xform(*i-o.h->translation()) );
-		for(Hash::const_iterator j = h->begin(); j != h->end(); ++j){
+		for ( Hash::const_iterator j = h->begin(); j != h->end(); ++j ) {
 			VC v( x.xform(*j-h->translation()) );
-			if( u.distance_squared(v) <= thresh_2 ) count++;
+			if ( u.distance_squared(v) <= thresh_2 ) count++;
 		}
 	}
 	return count;

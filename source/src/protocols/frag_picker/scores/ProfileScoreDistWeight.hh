@@ -52,14 +52,14 @@ public:
 		std::string query_sequence, Size longest_vall_chunk
 	) :
 		CachingScoringMethod(
-			priority, lowest_acceptable_value, use_lowest, "ProfileScoreDistWeight"
-	) {
+		priority, lowest_acceptable_value, use_lowest, "ProfileScoreDistWeight"
+		) {
 
 		query_profile_ = query_profile;
 		query_ss_ = query_ss_prediction;
 		query_sequence_ = query_sequence;
 
-		for (Size i = 1; i <= query_profile->length(); ++i) {
+		for ( Size i = 1; i <= query_profile->length(); ++i ) {
 			utility::vector1<Real> row(longest_vall_chunk);
 			scores_.push_back(row);
 		}
@@ -67,17 +67,18 @@ public:
 
 		utility::vector1< utility::vector1< utility::vector1 <Real> > > temp(
 			3, utility::vector1< utility::vector1 <Real> > (
-				20, utility::vector1<Real> (
-					20, 0.0
-				)
+			20, utility::vector1<Real> (
+			20, 0.0
+			)
 			)
 		);
 		distance_weights_ = temp;
 
 		utility::io::izstream data("distances.txt");
 
-		if (!data)
+		if ( !data ) {
 			utility_exit_with_message("[ERROR] Unable to open distances.txt");
+		}
 
 		std::string line;
 		char res1;
@@ -117,13 +118,13 @@ public:
 
 		aa_order_map_ = aa_order_tmp;
 
-		while (getline(data, line)) {
+		while ( getline(data, line) ) {
 			std::istringstream line_stream(line);
 			line_stream >> res1 >> ss1 >> res2 >> ss2 >> dist;
 
 
 			Size res_type( 0 );
-			if (ss1 == ss2) {
+			if ( ss1 == ss2 ) {
 				res_type = ss_type_map_.find(ss1)->second;
 			}
 

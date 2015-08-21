@@ -62,9 +62,9 @@ public:
 
 	void
 	add_base_pair(
-								std::string const & bp,
-								CartesianFragment const & frag
-								)
+		std::string const & bp,
+		CartesianFragment const & frag
+	)
 	{
 		if ( !base_pairs_.count( bp ) ) base_pairs_[ bp ];
 		base_pairs_.find( bp )->second.push_back( frag );
@@ -72,9 +72,9 @@ public:
 
 	void
 	add_base_step(
-								std::string const & bs,
-								CartesianFragment const & frag
-								)
+		std::string const & bs,
+		CartesianFragment const & frag
+	)
 	{
 		if ( !base_steps_.count( bs ) ) base_steps_[ bs ];
 		base_steps_.find( bs )->second.push_back( frag );

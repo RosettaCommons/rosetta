@@ -101,7 +101,7 @@ FileListResourceLocator::locate_resource_stream(std::string const & locator_tag)
 	for ( utility::vector1<std::string>::const_iterator
 			path_it = path_vector.begin();
 			path_it != path_vector.end();
-			++path_it) {
+			++path_it ) {
 		FileStream new_file( *path_it, open_mode_ );
 		while ( new_file.stream().good() ) {
 			std::string line;

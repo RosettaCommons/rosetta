@@ -31,8 +31,8 @@ public:
 	/// @brief Instantiate a new PcsEnergy
 	virtual
 	core::scoring::methods::EnergyMethodOP
-		create_energy_method(
-			core::scoring::methods::EnergyMethodOptions const &
+	create_energy_method(
+		core::scoring::methods::EnergyMethodOptions const &
 	) const;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod

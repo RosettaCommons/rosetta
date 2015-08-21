@@ -18,8 +18,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace rotamer_recovery{
+namespace protocols {
+namespace rotamer_recovery {
 
 class PerNativeRRReporterHuman;
 typedef utility::pointer::shared_ptr< PerNativeRRReporterHuman > PerNativeRRReporterHumanOP;

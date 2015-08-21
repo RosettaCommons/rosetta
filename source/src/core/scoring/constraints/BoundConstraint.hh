@@ -39,7 +39,7 @@ class BoundFunc : public func::Func {
 public:
 	BoundFunc( Real const lb, Real const ub, Real sd, std::string type ): lb_( lb ), ub_( ub ), sd_ ( sd ), rswitch_( 0.5 ), type_( type ) {}
 	BoundFunc( Real const lb, Real const ub, Real sd, Real rswitch, std::string type )
-	  : lb_( lb ), ub_( ub ), sd_ ( sd ), rswitch_( rswitch ), type_( type ) {}
+	: lb_( lb ), ub_( ub ), sd_ ( sd ), rswitch_( rswitch ), type_( type ) {}
 
 	virtual
 	func::FuncOP clone() const { return func::FuncOP( new BoundFunc( *this ) ); };
@@ -86,12 +86,12 @@ public:
 	PeriodicBoundFunc(
 		Real const lb, Real const ub, Real sd, std::string type, Real const periodicity_in
 	) :
-	BoundFunc(
+		BoundFunc(
 		basic::periodic_range(lb, periodicity_in),
 		basic::periodic_range(ub,periodicity_in),
 		sd, type
-	),
-	periodicity_( periodicity_in )
+		),
+		periodicity_( periodicity_in )
 	{}
 
 	func::FuncOP clone() const { return func::FuncOP( new PeriodicBoundFunc( *this ) ); };
@@ -103,7 +103,7 @@ public:
 		return parent::func( basic::periodic_range(x , periodicity_ ) );
 	}
 
-  Real dfunc( Real const x ) const
+	Real dfunc( Real const x ) const
 	{
 		return parent::dfunc( basic::periodic_range(x , periodicity_ ) );
 	}
@@ -131,12 +131,12 @@ public:
 	OffsetPeriodicBoundFunc(
 		Real const lb, Real const ub, Real sd, std::string type, Real const periodicity_in, Real const offset_in
 	) :
-	BoundFunc(
+		BoundFunc(
 		lb,ub,
 		sd, type
-	),
-	periodicity_( periodicity_in ),
-	offset_( offset_in )
+		),
+		periodicity_( periodicity_in ),
+		offset_( offset_in )
 	{}
 
 	func::FuncOP clone() const { return func::FuncOP( new OffsetPeriodicBoundFunc( *this ) ); };

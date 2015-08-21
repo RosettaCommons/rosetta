@@ -92,7 +92,7 @@ bool
 is_ideal_position( // Barak 6/30/09
 	Size const seqpos,
 	Conformation const& conformation,
- 	Real theta_epsilon = 0.005, // ~0.29 degrees
+	Real theta_epsilon = 0.005, // ~0.29 degrees
 	Real D_epsilon = 0.02
 );
 
@@ -133,15 +133,15 @@ replace_conformation_residue_copying_existing_coordinates(
 
 /// @brief Construct a variant of an existing conformation residue.
 void add_variant_type_to_conformation_residue(
-		conformation::Conformation & conformation,
-		chemical::VariantType const variant_type,
-		Size const seqpos );
+	conformation::Conformation & conformation,
+	chemical::VariantType const variant_type,
+	Size const seqpos );
 
 /// @brief Construct a non-variant of an existing conformation residue.
 void remove_variant_type_from_conformation_residue(
-		conformation::Conformation & conformation,
-		chemical::VariantType const variant_type,
-		Size const seqpos );
+	conformation::Conformation & conformation,
+	chemical::VariantType const variant_type,
+	Size const seqpos );
 
 
 void
@@ -173,10 +173,10 @@ remove_upper_terminus_type_from_conformation_residue(
 
 void
 build_tree(
-    kinematics::FoldTree const & fold_tree,
+	kinematics::FoldTree const & fold_tree,
 	conformation::ResidueCOPs const & residues,
 	kinematics::AtomPointer2D & atom_pointer
-	);
+);
 
 /// @brief build a sub atom-tree for a jump edge and attach it to main atom-tree
 void
@@ -184,7 +184,7 @@ build_jump_edge(
 	kinematics::Edge const & edge,
 	conformation::ResidueCOPs const & residues,
 	kinematics::AtomPointer2D & atom_pointer
-	);
+);
 
 /// @brief build a sub atom-tree for a polymer edge and attach it to main atom-tree
 void
@@ -192,7 +192,7 @@ build_polymer_edge(
 	kinematics::Edge const & edge,
 	conformation::ResidueCOPs const & residues,
 	kinematics::AtomPointer2D & atom_pointer
-	);
+);
 
 /// @brief build a sub atom-tree for a chemical edge and attach it to main atom-tree
 void
@@ -200,7 +200,7 @@ build_chemical_edge(
 	kinematics::Edge const & edge,
 	conformation::ResidueCOPs const & residues,
 	kinematics::AtomPointer2D & atom_pointer
-	);
+);
 
 
 /// @brief  build the tree of atoms for this residue, anchored at root_atomno
@@ -211,7 +211,7 @@ build_residue_tree(
 	kinematics::AtomPointer1D & atom_ptr,
 	bool const root_atom_is_jump_atom
 	//bool const keep_1st_child_position = false
-	);
+);
 
 /// @brief  build_residue_tree function that uses the foldtree info
 /// @brief  also used in build_tree to build the residue tree for the root residue
@@ -221,7 +221,7 @@ build_residue_tree(
 	conformation::Residue const & rsd,
 	kinematics::FoldTree const & fold_tree,
 	kinematics::AtomPointer1D & atom_ptr
-	);
+);
 
 /// @brief  Helper function for conformation routines
 void
@@ -230,7 +230,7 @@ replace_residue_in_atom_tree(
 	kinematics::FoldTree const & fold_tree,
 	conformation::ResidueCOPs const & residues,
 	kinematics::AtomTree & atom_tree
-	);
+);
 
 /// @brief  Inserts/ appends new residue subtree into an existing atomtree
 /// @note  The foldtree must already have been changed to reflect the new residue
@@ -242,19 +242,19 @@ insert_residue_into_atom_tree(
 	kinematics::FoldTree const & fold_tree,
 	conformation::ResidueCOPs const & residues,
 	kinematics::AtomTree & atom_tree
-	);
+);
 
 int
 get_root_atomno(
 	conformation::Residue const & rsd,
 	int const dir // +1, -1, or "dir_jump"
-	);
+);
 
 Size
 get_root_residue_root_atomno(
 	conformation::Residue const & rsd,
 	kinematics::FoldTree const & fold_tree
-	);
+);
 
 /// @brief  Get the atom-index of the atom to which the residue at position seqpos should be anchored.
 int
@@ -262,7 +262,7 @@ get_anchor_atomno(
 	conformation::Residue const & anchor_rsd,
 	Size const seqpos,
 	kinematics::FoldTree const & fold_tree
-	);
+);
 
 
 /// @brief get anchor atom to which the atom-tree of next residue in the edge is attached.
@@ -270,7 +270,7 @@ int
 get_anchor_atomno(
 	conformation::Residue const & rsd,
 	int const dir // forward(1), backward(-1), or "dir_jump"
-	);
+);
 
 /// @brief  Use this routine to deduce atom indices of connect atoms in the tree
 void
@@ -280,7 +280,7 @@ get_anchor_and_root_atoms(
 	kinematics::Edge const & edge,
 	Size & anchor_atomno,
 	Size & root_atomno
-	);
+);
 
 /// @brief  Moves the first same-residue child of the jump atom corresponding to edge into first place in the child list
 void
@@ -288,7 +288,7 @@ promote_sameresidue_child_of_jump_atom(
 	kinematics::Edge const & edge,
 	conformation::ResidueCOPs const & residues,
 	kinematics::AtomPointer2D const & atom_pointer
-	);
+);
 
 
 /// @brief  Moves the first same-residue child of the jump atom corresponding to edge into first place in the child list
@@ -297,7 +297,7 @@ promote_sameresidue_child_of_jump_atom(
 	kinematics::Edge const & edge,
 	conformation::ResidueCOPs const & residues,
 	kinematics::AtomTree & atom_tree
-	);
+);
 
 void
 get_chemical_root_and_anchor_atomnos(
@@ -305,7 +305,7 @@ get_chemical_root_and_anchor_atomnos(
 	conformation::Residue const & rsd_root,
 	Size & anchor_atom_no,
 	Size & root_atom_no
-	);
+);
 
 /// @brief set up a map to match mainchain atoms from residue1 to residue2
 void
@@ -365,8 +365,8 @@ atom_id_to_named_atom_id(
 /* - undefinded, commenting out to make PyRosetta compile...
 id::AtomID
 named_atom_id_to_atom_id(
-	id::AtomID const & atom_id,
-	conformation::Residue const & rsd
+id::AtomID const & atom_id,
+conformation::Residue const & rsd
 );
 */
 

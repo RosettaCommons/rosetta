@@ -46,9 +46,9 @@
 #include <core/pose/Pose.fwd.hh>
 
 
-namespace protocols{
-namespace toolbox{
-namespace pose_metric_calculators{
+namespace protocols {
+namespace toolbox {
+namespace pose_metric_calculators {
 
 class SequenceComparison{
 public:

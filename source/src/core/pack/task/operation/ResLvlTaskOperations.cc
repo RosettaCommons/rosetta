@@ -48,7 +48,7 @@ void RestrictToRepackingRLT::apply( ResidueLevelTask & rlt ) const
 }
 
 RestrictAbsentCanonicalAASRLT::RestrictAbsentCanonicalAASRLT()
-	: canonical_aas_to_keep_( chemical::num_canonical_aas, false )
+: canonical_aas_to_keep_( chemical::num_canonical_aas, false )
 {}
 
 RestrictAbsentCanonicalAASRLT::~RestrictAbsentCanonicalAASRLT() {}
@@ -78,7 +78,7 @@ void RestrictAbsentCanonicalAASRLT::aas_to_keep( std::string const & aastring )
 	using namespace chemical;
 	runtime_assert( canonical_aas_to_keep_.size() == num_canonical_aas );
 	for ( std::string::const_iterator it( aastring.begin() ), end( aastring.end() );
-		it != end; ++it ) {
+			it != end; ++it ) {
 		if ( oneletter_code_specifies_aa( *it ) ) {
 			canonical_aas_to_keep_[ aa_from_oneletter_code( *it ) ] = true;
 		} else {
@@ -126,7 +126,7 @@ void DisallowIfNonnativeRLT::clear(){
 utility::vector1< bool >
 DisallowIfNonnativeRLT::invert_vector( utility::vector1< bool > disallowed_aas){
 	utility::vector1< bool > inverted_vec;
-	for(core::Size ii=1; ii<=disallowed_aas_.size(); ii++ ){
+	for ( core::Size ii=1; ii<=disallowed_aas_.size(); ii++ ) {
 		inverted_vec.push_back( ! disallowed_aas[ii] );
 	}
 	return inverted_vec;
@@ -147,7 +147,7 @@ void DisallowIfNonnativeRLT::disallow_aas( std::string const & aa_string ){
 	using namespace chemical;
 	utility::vector1< bool > aa_vector ( chemical::num_canonical_aas, false );
 	for ( std::string::const_iterator it( aa_string.begin() ), end( aa_string.end() );
-				it != end; ++it ) {
+			it != end; ++it ) {
 		if ( oneletter_code_specifies_aa( *it ) ) {
 			aa_vector[ aa_from_oneletter_code( *it ) ] = true;
 		} else {
@@ -163,12 +163,12 @@ void DisallowIfNonnativeRLT::disallow_aas( std::string const & aa_string ){
 void DisallowIfNonnativeRLT::parse_tag( TagCOP tag )
 {
 	runtime_assert( tag != 0 );
-	if ( tag->hasOption("disallow_aas") )
+	if ( tag->hasOption("disallow_aas") ) {
 		disallow_aas( tag->getOption< std::string >( "disallow_aas" ) );
-	else utility_exit_with_message("no aas tag option by which restrict absent canonical aas.");
+	} else utility_exit_with_message("no aas tag option by which restrict absent canonical aas.");
 }
 
-	//Begin PreventRepackingRLT
+//Begin PreventRepackingRLT
 PreventRepackingRLT::~PreventRepackingRLT() {}
 
 ResLvlTaskOperationOP
@@ -187,8 +187,8 @@ void PreventRepackingRLT::apply( ResidueLevelTask & rlt ) const
 AddBehaviorRLT::AddBehaviorRLT() : parent() {}
 
 AddBehaviorRLT::AddBehaviorRLT( std::string const & behavior )
-	: parent(),
-		behavior_( behavior )
+: parent(),
+	behavior_( behavior )
 {}
 
 AddBehaviorRLT::~AddBehaviorRLT() {}

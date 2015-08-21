@@ -85,7 +85,7 @@ inline void core_init_from_string( std::string const & commandline )
 
 	int pseudo_argc;
 	char** pseudo_argv = create_pseudo_commandline( std::string(command_line_argv[0]) + " "
-													 + commandline, pseudo_argc );
+		+ commandline, pseudo_argc );
 	devel::init( pseudo_argc, pseudo_argv );
 	destroy_pseudo_commandline( pseudo_argc, pseudo_argv );
 }
@@ -97,7 +97,7 @@ inline void core_init_with_additional_options( std::string const & commandline_i
 	extern int command_line_argc; extern char ** command_line_argv;
 
 	std::string commandline(" ");
-	for(int i=1; i<command_line_argc; i++) {
+	for ( int i=1; i<command_line_argc; i++ ) {
 		commandline = commandline + command_line_argv[i] + " ";
 	}
 	commandline = commandline + commandline_in;

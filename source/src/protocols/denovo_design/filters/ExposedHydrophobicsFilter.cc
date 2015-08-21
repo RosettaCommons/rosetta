@@ -38,7 +38,7 @@
 #endif
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 #ifdef BOINC_GRAPHICS
@@ -148,7 +148,7 @@ ExposedHydrophobicsFilter::compute( core::pose::Pose const & pose ) const
 	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
 		//check to see if this residue is a protein residue, and if it's found in the hydrophobic residue list
 		if ( pose.residue( i ).is_protein() &&
-				 hydrophobic_residues_.find( pose.residue( i ).name1() ) != std::string::npos ) {
+				hydrophobic_residues_.find( pose.residue( i ).name1() ) != std::string::npos ) {
 			++residue_count;
 			// a residue only counts as exposed if it has SASA >= sasa_cutoff_
 			if ( srbl.rsd_sasa( i ) >= sasa_cutoff_ ) {

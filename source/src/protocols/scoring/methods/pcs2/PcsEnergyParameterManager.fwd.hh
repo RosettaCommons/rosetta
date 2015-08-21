@@ -8,13 +8,13 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/PcsEnergyParameterManager.fwd.hh
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/PcsEnergyParameterManager.fwd.hh
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs2_PcsEnergyParameterManager_fwd_hh
 #define INCLUDED_protocols_scoring_methods_pcs2_PcsEnergyParameterManager_fwd_hh

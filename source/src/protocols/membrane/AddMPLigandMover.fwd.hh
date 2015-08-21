@@ -7,29 +7,29 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 		src/protocols/membrane/AddMPLigandMover.fwd.hh
+/// @file   src/protocols/membrane/AddMPLigandMover.fwd.hh
 ///
-/// @brief		Add "single" ligand to to membrane pose
-/// @details 	Accommodate membrane protein ligand in the membrane framework by
-///				reorganizing the current foldtree. Resulting foldtree will 
-///				keep the membrane attached to the COM and ligand to the closest
-///				binding pocket residue, provided in the constructor. 
+/// @brief  Add "single" ligand to to membrane pose
+/// @details  Accommodate membrane protein ligand in the membrane framework by
+///    reorganizing the current foldtree. Resulting foldtree will
+///    keep the membrane attached to the COM and ligand to the closest
+///    binding pocket residue, provided in the constructor.
 ///
-/// @author 	Rebecca Faye Alford (rfalford12@gmail.com)
+/// @author  Rebecca Faye Alford (rfalford12@gmail.com)
 /// #RosettaMPMover
 
 #ifndef INCLUDED_protocols_membrane_AddMPLigandMover_fwd_hh
 #define INCLUDED_protocols_membrane_AddMPLigandMover_fwd_hh
 
 // Utility Headers
-#include <utility/pointer/owning_ptr.hh> 
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace membrane {
 
 /// @brief Add Membrane protein ligand mover
 /// @details Accommodate membrane protein ligand in the membrane foldtree
-class AddMPLigandMover; 
+class AddMPLigandMover;
 typedef utility::pointer::shared_ptr< AddMPLigandMover > AddMPLigandMoverOP;
 typedef utility::pointer::shared_ptr< AddMPLigandMover const > AddMPLigandMoverCOP;
 

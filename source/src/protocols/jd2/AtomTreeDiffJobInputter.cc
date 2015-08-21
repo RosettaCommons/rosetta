@@ -44,7 +44,7 @@ namespace protocols {
 namespace jd2 {
 
 protocols::jd2::AtomTreeDiffJobInputter::AtomTreeDiffJobInputter()
-	//	silent_files_( option[ in::file::silent ]() ) {
+// silent_files_( option[ in::file::silent ]() ) {
 {
 	tr.Debug << "Instantiate AtomTreeDiffJobInputter" << std::endl;
 }
@@ -63,13 +63,13 @@ void protocols::jd2::AtomTreeDiffJobInputter::pose_from_job(
 
 	if ( !job->inner_job()->get_pose() ) {
 		//core::import_pose::pose_from_pdb( pose, job->inner_job()->input_tag() );
-		//		core::io::silent::SilentStructOP ss = atom_tree_diff_[ job->inner_job()->input_tag() ];
+		//  core::io::silent::SilentStructOP ss = atom_tree_diff_[ job->inner_job()->input_tag() ];
 		tr.Debug << "filling pose from AtomTree (tag = " << job->input_tag() << ")" << std::endl;
 		pose.clear();
 
 		if ( atom_tree_diff_.has_ref_tag( job->input_tag() ) ) {
 			atom_tree_diff_.read_pose(job->input_tag(), pose);
-		} else if( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
+		} else if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 			// A "native" pose for the diff reference point.
 			// This used to be required but will be rarely used now.
 			tr << "Using -in:file:native for reference pose with AtomTreeDiff input format.";
@@ -105,7 +105,7 @@ void protocols::jd2::AtomTreeDiffJobInputter::fill_jobs( JobsContainer & jobs ){
 
 	runtime_assert( atom_tree_diff_files.size() > 0 );// getting here should be impossible
 
-	if( atom_tree_diff_files.size() != 1 ){
+	if ( atom_tree_diff_files.size() != 1 ) {
 		utility_exit_with_message( "Code currently deals with only one input atom_tree_diff file" );
 	}
 	FileName file_name= atom_tree_diff_files.at(1);
@@ -113,40 +113,40 @@ void protocols::jd2::AtomTreeDiffJobInputter::fill_jobs( JobsContainer & jobs ){
 
 	atom_tree_diff_.read_file( file_name );
 
-	core::Size const nstruct(	get_nstruct()	);
+	core::Size const nstruct( get_nstruct() );
 
 	core::import_pose::atom_tree_diffs::TagScoreMap tags;
 
 	if ( option[ in::file::tags ].user() ) {
 		core::import_pose::atom_tree_diffs::TagScoreMap const & atd_tsm= atom_tree_diff_.get_tag_score_map();
-		BOOST_FOREACH(string tag, option[ in::file::tags ]()){
+		BOOST_FOREACH ( string tag, option[ in::file::tags ]() ) {
 			if ( ! atom_tree_diff_.has_tag(tag) ) {
 				utility_exit_with_message("Input AtomTreeDiff file does not have tag "+tag);
- 			}
+			}
 			core::import_pose::atom_tree_diffs::TagScoreMap::const_iterator tag_score_iter(atd_tsm.find(tag));
 			assert( tag_score_iter != atd_tsm.end() ); // Shouldn't happen - we've checked it was present
 			tags[tag] = tag_score_iter->second;
 		}
 	} else {
 		tags = atom_tree_diff_.get_tag_score_map();
- 	}
+	}
 
 	if ( ! tags.size() ) {
 		utility_exit_with_message("No valid input structures found for AtomTreeDiff file.");
 	}
 
 	core::import_pose::atom_tree_diffs::ScoresPairList const & all_scores( atom_tree_diff_.scores() );
-	BOOST_FOREACH(core::import_pose::atom_tree_diffs::TagScorePair tag_score, tags){
+	BOOST_FOREACH ( core::import_pose::atom_tree_diffs::TagScorePair tag_score, tags ) {
 		InnerJobOP ijob( new InnerJob( tag_score.first, nstruct ) );
 
 		//second entry in tag_score is index to entry in ScoresPairList
 		assert( tag_score.first == all_scores[tag_score.second].first );
 		core::import_pose::atom_tree_diffs::Scores scores= all_scores[tag_score.second].second;
 
-		for(core::Size j=1; j<=nstruct; ++j){
+		for ( core::Size j=1; j<=nstruct; ++j ) {
 			JobOP job( new Job( ijob, j) );
-			if( basic::options::option[ basic::options::OptionKeys::in::file::keep_input_scores ] ) {
-				BOOST_FOREACH(core::import_pose::atom_tree_diffs::ScorePair score, scores){
+			if ( basic::options::option[ basic::options::OptionKeys::in::file::keep_input_scores ] ) {
+				BOOST_FOREACH ( core::import_pose::atom_tree_diffs::ScorePair score, scores ) {
 					job->add_string_real_pair(score.first, score.second);
 				}
 			}

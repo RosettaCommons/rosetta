@@ -28,49 +28,49 @@ enum Operation { SUM, PRODUCT, NORMALIZED_SUM, MAX, MIN, SUBTRACT, ABS, BOOLEAN_
 /// @brief simply take a list of filters and combine them using the operation above
 class Operator : public filters::Filter
 {
-  public:
-    Operator();
-    virtual ~Operator();
-		filters::FilterOP clone() const {
-			return filters::FilterOP( new Operator( *this ) );
-		}
-		filters::FilterOP fresh_instance() const{
-			return filters::FilterOP( new Operator() );
-		}
+public:
+	Operator();
+	virtual ~Operator();
+	filters::FilterOP clone() const {
+		return filters::FilterOP( new Operator( *this ) );
+	}
+	filters::FilterOP fresh_instance() const{
+		return filters::FilterOP( new Operator() );
+	}
 
-		virtual bool apply( core::pose::Pose const & pose ) const;
-		virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
-		virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-		void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & );
-		core::Real compute( core::pose::Pose const & pose ) const;
-    utility::vector1< protocols::filters::FilterOP > filters() const;
-    void add_filter( protocols::filters::FilterOP f );
-		void reset_baseline( core::pose::Pose const & pose, bool const attempt_read_from_checkpoint/* see Sigmoid for details*/ ); /// goes over Sigmoid filters and resets them. Note that this is nonconst, and cannot be called from apply
-  	core::Real threshold() const{ return threshold_; }
-  	void threshold( core::Real const t ){ threshold_ = t; }
-		Operation operation() const{ return operation_; }
-		void operation( Operation const o ){ operation_ = o; }
-		void negate( bool const b ){ negate_ = b; }
-		bool negate() const{ return negate_; }
-		utility::vector1< std::string > relative_pose_names() { return relative_pose_names_; }
-		void relative_pose_names( utility::vector1< std::string > const s ){ relative_pose_names_ = s; }
-		bool multi_relative() const { return multi_relative_; }
-		void multi_relative( bool const m ){ multi_relative_ = m; }
-		void modify_relative_filters_pdb_names();
-		bool logarithm() const{ return logarithm_; } //getter
-		void logarithm( bool const b ){ logarithm_ = b; } //setter
+	virtual bool apply( core::pose::Pose const & pose ) const;
+	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
+	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & );
+	core::Real compute( core::pose::Pose const & pose ) const;
+	utility::vector1< protocols::filters::FilterOP > filters() const;
+	void add_filter( protocols::filters::FilterOP f );
+	void reset_baseline( core::pose::Pose const & pose, bool const attempt_read_from_checkpoint/* see Sigmoid for details*/ ); /// goes over Sigmoid filters and resets them. Note that this is nonconst, and cannot be called from apply
+	core::Real threshold() const{ return threshold_; }
+	void threshold( core::Real const t ){ threshold_ = t; }
+	Operation operation() const{ return operation_; }
+	void operation( Operation const o ){ operation_ = o; }
+	void negate( bool const b ){ negate_ = b; }
+	bool negate() const{ return negate_; }
+	utility::vector1< std::string > relative_pose_names() { return relative_pose_names_; }
+	void relative_pose_names( utility::vector1< std::string > const s ){ relative_pose_names_ = s; }
+	bool multi_relative() const { return multi_relative_; }
+	void multi_relative( bool const m ){ multi_relative_ = m; }
+	void modify_relative_filters_pdb_names();
+	bool logarithm() const{ return logarithm_; } //getter
+	void logarithm( bool const b ){ logarithm_ = b; } //setter
 
-		void report_subvalues( bool const report ){ report_subvalues_ = report; }
-		bool report_subvalues() const { return report_subvalues_; }
-  private:
-    utility::vector1< protocols::filters::FilterOP > filters_;
-		Operation operation_; // dflt PRODUCT
-		core::Real threshold_; // dflt 0
-		bool negate_; // dflt false; in optimization, useful to get values between -1 - 0 rather than 0-1
-		utility::vector1< std::string > relative_pose_names_; // dflt ""; see below
-		bool multi_relative_; //dflt false; if true, searches all of the filters for RelativePoseFilters, replicates them to as many different file names as are listed in relative_pose_names_. Useful in case there are many different states that are all taken into consideration using the same operator
-		bool logarithm_; //dflt false; if true, computes the logarithm of the operator's value (10^-9 = -9)
-		bool report_subvalues_; //dflt false; report each of the subfilters
+	void report_subvalues( bool const report ){ report_subvalues_ = report; }
+	bool report_subvalues() const { return report_subvalues_; }
+private:
+	utility::vector1< protocols::filters::FilterOP > filters_;
+	Operation operation_; // dflt PRODUCT
+	core::Real threshold_; // dflt 0
+	bool negate_; // dflt false; in optimization, useful to get values between -1 - 0 rather than 0-1
+	utility::vector1< std::string > relative_pose_names_; // dflt ""; see below
+	bool multi_relative_; //dflt false; if true, searches all of the filters for RelativePoseFilters, replicates them to as many different file names as are listed in relative_pose_names_. Useful in case there are many different states that are all taken into consideration using the same operator
+	bool logarithm_; //dflt false; if true, computes the logarithm of the operator's value (10^-9 = -9)
+	bool report_subvalues_; //dflt false; report each of the subfilters
 };
 }
 }

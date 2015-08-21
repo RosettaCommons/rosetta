@@ -49,23 +49,23 @@ figure_out_secstruct( core::pose::Pose & pose );
 
 void
 get_base_pairing_info( core::pose::Pose const & pose,
-											 core::Size const & seqpos,
-											 char & secstruct,
-											 ObjexxFCL::FArray1D <bool> & edge_is_base_pairing );
+	core::Size const & seqpos,
+	char & secstruct,
+	ObjexxFCL::FArray1D <bool> & edge_is_base_pairing );
 
 void
 get_base_pairing_list( core::pose::Pose & pose,
-											 utility::vector1< std::pair< core::Size, core::Size> > & base_pairing_list );
+	utility::vector1< std::pair< core::Size, core::Size> > & base_pairing_list );
 
 void
 create_rna_vall_torsions( core::pose::Pose & pose,
-													utility::io::ozstream & torsions_out,
-													utility::vector1 <core::Size> const & exclude_res_list );
+	utility::io::ozstream & torsions_out,
+	utility::vector1 <core::Size> const & exclude_res_list );
 
 void
 create_rna_vall_torsions( core::pose::Pose & pose,
-													std::string const & outfile,
-													utility::vector1 <core::Size> const & exclude_res_list );
+	std::string const & outfile,
+	utility::vector1 <core::Size> const & exclude_res_list );
 
 core::Real
 get_op2_op1_sign( core::pose::Pose const & pose );
@@ -95,9 +95,9 @@ check_base_pair( core::pose::Pose & pose, ObjexxFCL::FArray1D_int & struct_type 
 
 void
 setup_base_pair_constraints(
-														core::pose::Pose & pose,
-														utility::vector1< std::pair< core::Size, core::Size > > const &  pairings,
-														core::Real const suppress_factor = 1.0 );
+	core::pose::Pose & pose,
+	utility::vector1< std::pair< core::Size, core::Size > > const &  pairings,
+	core::Real const suppress_factor = 1.0 );
 
 void
 setup_coarse_chainbreak_constraints( core::pose::Pose & pose, core::Size const & n );
@@ -133,7 +133,7 @@ bool
 possible_root( core::kinematics::FoldTree const & f, core::Size const & n );
 
 inline bool is_num_in_list ( core::Size const i,
-														 utility::vector1 <core::Size> const & list )
+	utility::vector1 <core::Size> const & list )
 {
 	return std::find(list.begin(), list.end(), i)!=list.end();
 }
@@ -143,8 +143,8 @@ get_rigid_body_jumps( core::pose::Pose const & pose );
 
 bool
 let_rigid_body_jumps_move( core::kinematics::MoveMap & movemap,
-													 core::pose::Pose const & pose,
-													 bool const move_first_rigid_body  = false );
+	core::pose::Pose const & pose,
+	bool const move_first_rigid_body  = false );
 
 void
 translate_virtual_anchor_to_first_rigid_body( core::pose::Pose & pose );
@@ -155,39 +155,39 @@ involved_in_phosphate_torsion( std::string atomname );
 
 void
 set_output_res_num( core::pose::Pose & extended_pose,
-										utility::vector1< core::Size > const & output_res_num );
+	utility::vector1< core::Size > const & output_res_num );
 
 void
 figure_out_base_pair_partner( core::pose::Pose & pose, std::map< core::Size, core::Size > & partner,
-															bool const strict = true );
+	bool const strict = true );
 
 void
 process_input_file( std::string const & silent_file,
-										utility::vector1< core::pose::PoseOP > & pose_list,
-										bool is_pdb = false,
-										bool coarse_rna  = false );
+	utility::vector1< core::pose::PoseOP > & pose_list,
+	bool is_pdb = false,
+	bool coarse_rna  = false );
 
 void
 print_hbonds( core::pose::Pose & pose );
 
 bool
 moveable_jump( core::id::AtomID const & jump_atom_id1,
-							 core::id::AtomID const & jump_atom_id2,
-							 protocols::toolbox::AllowInsert const & allow_insert);
+	core::id::AtomID const & jump_atom_id2,
+	protocols::toolbox::AllowInsert const & allow_insert);
 
 bool
 moveable_jump( core::Size const jump_pos1,
-							 core::Size const jump_pos2,
-							 protocols::toolbox::AllowInsert const & allow_insert);
+	core::Size const jump_pos2,
+	protocols::toolbox::AllowInsert const & allow_insert);
 
 core::Size
 virtualize_bulges( core::pose::Pose & input_pose,
-									 utility::vector1< core::Size > const & in_allow_bulge_res_list,
-									 core::scoring::ScoreFunctionCOP const & scorefxn,
-									 std::string const & tag,
-									 bool const allow_pre_virtualize,
-									 bool const allow_consecutive_bulges,
-									 bool const verbose );
+	utility::vector1< core::Size > const & in_allow_bulge_res_list,
+	core::scoring::ScoreFunctionCOP const & scorefxn,
+	std::string const & tag,
+	bool const allow_pre_virtualize,
+	bool const allow_consecutive_bulges,
+	bool const verbose );
 
 
 } //farna

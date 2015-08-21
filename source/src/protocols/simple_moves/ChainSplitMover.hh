@@ -37,7 +37,7 @@ public:
 	~ChainSplitMover();
 	virtual void apply( core::pose::Pose & pose );
 	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP	fresh_instance() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 	virtual std::string get_name() const;
 
 	/// @brief Retrieve the cutpoint at which the pose will be split

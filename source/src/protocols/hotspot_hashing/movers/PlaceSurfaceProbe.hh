@@ -45,54 +45,54 @@ namespace movers
 
 class PlaceSurfaceProbe : public protocols::hotspot_hashing::movers::PlaceProbeMover, virtual public protocols::moves::Mover
 {
-  public:
-    PlaceSurfaceProbe();
+public:
+	PlaceSurfaceProbe();
 
-    PlaceSurfaceProbe(
-			std::string residue_name,
-			core::Real search_density,
-			core::Real x_angle_sampling,
-			core::Real y_angle_sampling,
-			core::Real refinement_distance_sampling,
-			core::Real refinement_distance,
-			core::Real refinement_translation_sampling,
-			core::conformation::ResidueCOP target_residue,
-			core::pack::task::TaskFactoryOP surface_selection = NULL,
-      core::Size search_partition = 1,
-      core::Size total_search_partition = 1);
+	PlaceSurfaceProbe(
+		std::string residue_name,
+		core::Real search_density,
+		core::Real x_angle_sampling,
+		core::Real y_angle_sampling,
+		core::Real refinement_distance_sampling,
+		core::Real refinement_distance,
+		core::Real refinement_translation_sampling,
+		core::conformation::ResidueCOP target_residue,
+		core::pack::task::TaskFactoryOP surface_selection = NULL,
+		core::Size search_partition = 1,
+		core::Size total_search_partition = 1);
 
-    virtual std::string get_name() const { return "PlaceSurfaceProbe"; }
+	virtual std::string get_name() const { return "PlaceSurfaceProbe"; }
 
-		virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP clone() const;
 
-    void parse_my_tag(
-         utility::tag::TagCOP tag,
-         basic::datacache::DataMap &,
-         protocols::filters::Filters_map const &,
-         protocols::moves::Movers_map const &,
-         core::pose::Pose const &);
+	void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &);
 
-    virtual bool reinitialize_for_new_input() const { return false; }
+	virtual bool reinitialize_for_new_input() const { return false; }
 
-  protected:
-    virtual SearchPatternOP create_search_pattern(core::pose::Pose const & target_pose);
-    virtual SearchPatternOP create_partitioned_search_pattern(core::pose::Pose const & target_pose);
-		virtual SearchPatternOP create_refinement_pattern(core::pose::Pose const & target_pose, core::Size target_residue);
+protected:
+	virtual SearchPatternOP create_search_pattern(core::pose::Pose const & target_pose);
+	virtual SearchPatternOP create_partitioned_search_pattern(core::pose::Pose const & target_pose);
+	virtual SearchPatternOP create_refinement_pattern(core::pose::Pose const & target_pose, core::Size target_residue);
 
-  private:
+private:
 
-		core::pack::task::TaskFactoryOP surface_selection_;
+	core::pack::task::TaskFactoryOP surface_selection_;
 
-		core::Real search_density_;
-		core::Real coarse_angle_sampling_;
-		core::Real coarse_sampling_;
+	core::Real search_density_;
+	core::Real coarse_angle_sampling_;
+	core::Real coarse_sampling_;
 
-		core::Real refinement_distance_;
-		core::Real refinement_angle_sampling_;
-		core::Real refinement_sampling_;
+	core::Real refinement_distance_;
+	core::Real refinement_angle_sampling_;
+	core::Real refinement_sampling_;
 
-		SearchPatternOP initialize_refinement_pattern();
-		SearchPatternOP refinement_pattern_;
+	SearchPatternOP initialize_refinement_pattern();
+	SearchPatternOP refinement_pattern_;
 };
 
 }

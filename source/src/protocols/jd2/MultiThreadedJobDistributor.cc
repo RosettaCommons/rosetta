@@ -290,7 +290,7 @@ void MultiThreadedJobDistributor::go( protocols::moves::MoverOP mover )
 }
 
 void MultiThreadedJobDistributor::restart() {
-	//	next_job_to_try_assigning_ = 1;
+	// next_job_to_try_assigning_ = 1;
 	mt_jobs_queue_.clear();
 	//all_mt_jobs_.clear();
 	mt_jobs_queue_.clear();
@@ -349,7 +349,7 @@ MultiThreadedJobDistributor::remove_bad_inputs_from_job_list()
 void MultiThreadedJobDistributor::preliminaries()
 {
 	// Permanently set the cout.e
-	if (basic::options::option[basic::options::OptionKeys::out::std_IO_exit_error_code]()	> 0) {
+	if ( basic::options::option[basic::options::OptionKeys::out::std_IO_exit_error_code]() > 0 ) {
 		std::cout.exceptions(std::ios_base::badbit);
 	}
 }
@@ -491,7 +491,7 @@ void MultiThreadedJobDistributor::check_for_completed_jobs()
 				mt_jobs_queue_.push_front( mtjob );
 			}
 			//else {
-			//	all_mt_jobs_[ mtjob->index() ] = 0; // Ensure this job will be deleted when mtjob goes out of scope.
+			// all_mt_jobs_[ mtjob->index() ] = 0; // Ensure this job will be deleted when mtjob goes out of scope.
 			//}
 
 			if ( curr_job_has_bad_inputs_ ) {

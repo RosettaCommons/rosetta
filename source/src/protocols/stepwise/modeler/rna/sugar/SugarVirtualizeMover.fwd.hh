@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/modeler/rna/sugar/SugarVirtualizeMover.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -23,11 +23,11 @@ namespace stepwise {
 namespace modeler {
 namespace rna {
 namespace sugar {
-	
-	class SugarVirtualizeMover;
-	typedef utility::pointer::shared_ptr< SugarVirtualizeMover > SugarVirtualizeMoverOP;
-	typedef utility::pointer::shared_ptr< SugarVirtualizeMover const > SugarVirtualizeMoverCOP;
-	
+
+class SugarVirtualizeMover;
+typedef utility::pointer::shared_ptr< SugarVirtualizeMover > SugarVirtualizeMoverOP;
+typedef utility::pointer::shared_ptr< SugarVirtualizeMover const > SugarVirtualizeMoverCOP;
+
 } //sugar
 } //rna
 } //modeler

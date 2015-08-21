@@ -152,9 +152,9 @@ std::string const &
 Adduct::stub_atom( int const atm ) const
 {
 	switch( atm ) {
-	case 1: return stub_atom1_;
-	case 2: return stub_atom2_;
-	case 3: return stub_atom3_;
+	case 1 : return stub_atom1_;
+	case 2 : return stub_atom2_;
+	case 3 : return stub_atom3_;
 	}
 	utility_exit_with_message( "ICoorAtomID::stub_atom should be 1--3" );
 	return stub_atom1_;

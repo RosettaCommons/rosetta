@@ -47,23 +47,23 @@ public:
 
 
 	ResidueTypeLinkingConstraint(
-	  pose::Pose const & pose,
-	  Size seqpos1,
-	  Size seqpos2,
-	  std::string AA1name,
-	  std::string AA2name,
-	  Real bonus
-	);
-/*
-	ResidueTypeLinkingConstraint(
+		pose::Pose const & pose,
 		Size seqpos1,
 		Size seqpos2,
-		std::string aa_in,
-		std::string name3_in,
-		core::Real bonus_in,
-		utility::vector1< AtomID > const & atoms_in
+		std::string AA1name,
+		std::string AA2name,
+		Real bonus
 	);
-*/
+	/*
+	ResidueTypeLinkingConstraint(
+	Size seqpos1,
+	Size seqpos2,
+	std::string aa_in,
+	std::string name3_in,
+	core::Real bonus_in,
+	utility::vector1< AtomID > const & atoms_in
+	);
+	*/
 	virtual ~ResidueTypeLinkingConstraint();
 
 	virtual
@@ -83,22 +83,22 @@ public:
 
 	void
 	show( std::ostream & out ) const;
-/*
+	/*
 	virtual
 	ConstraintOP
 	remap_resid( core::id::SequenceMapping const &seqmap ) const;
-*/
+	*/
 
 	/// @brief possibility to compare constraint according to data
 	/// and not just pointers
 	bool operator == ( Constraint const & other ) const;
-/*
+	/*
 	virtual ConstraintOP remapped_clone(
-		pose::Pose const & src,
-		pose::Pose const & dest,
-		id::SequenceMappingCOP map = NULL
+	pose::Pose const & src,
+	pose::Pose const & dest,
+	id::SequenceMappingCOP map = NULL
 	) const;
-*/
+	*/
 	virtual
 	void
 	score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;

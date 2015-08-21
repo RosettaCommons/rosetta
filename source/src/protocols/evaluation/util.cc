@@ -10,7 +10,7 @@
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -70,7 +70,7 @@
 #include <utility/vector0.hh>
 
 #ifdef WIN32
-	#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.hh>
 #endif
 
 
@@ -131,7 +131,7 @@ void find_existing_residues(  core::pose::PoseCOP pose, std::string tag, core::s
 	if ( tr.Trace.visible() ) {
 		tr.Trace << "selection of residues for rmsd of " << tag << std::endl;
 		for ( std::list< core::Size >::const_iterator it = selection.begin(), eit = selection.end();
-					it != eit; ++it ) {
+				it != eit; ++it ) {
 			tr.Trace << " " << *it;
 		}
 		tr.Trace << std::endl;
@@ -139,15 +139,15 @@ void find_existing_residues(  core::pose::PoseCOP pose, std::string tag, core::s
 }
 
 void evaluate_pose( core::pose::Pose& pose, PoseEvaluator& eval, std::ostream& os ) {
-		//		ProteinSilentStruct pss;
-		io::silent::SilentStructOP pss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
-		pss->fill_struct( pose, "eval" );
-		eval.apply( pose, "eval", *pss );
-		os << "\n";
-		pss->print_score_header( os );
-		os << "\n";
-		pss->print_scores( os );
-		os << std::endl;
+	//  ProteinSilentStruct pss;
+	io::silent::SilentStructOP pss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+	pss->fill_struct( pose, "eval" );
+	eval.apply( pose, "eval", *pss );
+	os << "\n";
+	pss->print_score_header( os );
+	os << "\n";
+	pss->print_scores( os );
+	os << std::endl;
 }
 
 

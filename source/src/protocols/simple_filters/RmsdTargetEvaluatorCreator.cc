@@ -61,7 +61,7 @@
 
 
 #ifdef WIN32
-	#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.hh>
 #endif
 
 
@@ -92,34 +92,34 @@ void RmsdTargetEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 	using protocols::evaluation::PoseEvaluatorOP;
 
 
-  if ( option[ OptionKeys::evaluation::rmsd_target ].user() ) {
-    /*
-      this creates Evaluators to get RMSD and GDTMM for as many structures as you specify in this FileVector option.
-      pls: provide also as many column-names to match your rmsd-targets.
-      ---
-      missing density in the input file will be ignored, e.g., this is your way to signal on which residues the rmsd should be computed
-    */
-    utility::vector1< std::string > const & rmsd_target  ( option[ OptionKeys::evaluation::rmsd_target ]() );
+	if ( option[ OptionKeys::evaluation::rmsd_target ].user() ) {
+		/*
+		this creates Evaluators to get RMSD and GDTMM for as many structures as you specify in this FileVector option.
+		pls: provide also as many column-names to match your rmsd-targets.
+		---
+		missing density in the input file will be ignored, e.g., this is your way to signal on which residues the rmsd should be computed
+		*/
+		utility::vector1< std::string > const & rmsd_target  ( option[ OptionKeys::evaluation::rmsd_target ]() );
 		utility::vector1< std::string >         rmsd_col_name;
 
-		if ( option[ OptionKeys::evaluation::rmsd_column ].user() ){
+		if ( option[ OptionKeys::evaluation::rmsd_column ].user() ) {
 			rmsd_col_name = option[ OptionKeys::evaluation::rmsd_column ]();
-		}else{
+		} else {
 			// make up default names: firone is just empty, leading to the columns being correctly named "rms", "gdtmm" etc.. the
 			// subsequent columns then become "_2", "_3" etc..
 			rmsd_col_name.push_back("");
-			for( core::Size j=2; j<=rmsd_target.size(); ++j){
+			for ( core::Size j=2; j<=rmsd_target.size(); ++j ) {
 				rmsd_col_name.push_back("_" + ObjexxFCL::string_of(j));
 			}
 		}
-    for ( Size ct = 1; ct <= rmsd_target.size(); ct ++ ) {
-      pose::PoseOP rmsd_pose( new pose::Pose );
-      core::import_pose::pose_from_pdb( *rmsd_pose, rmsd_target[ ct ] );
-      std::string tag( ObjexxFCL::string_of( ct ) );
-      if ( rmsd_col_name.size() >= ct ) tag = rmsd_col_name[ ct ];
-      eval.add_evaluation( PoseEvaluatorOP( new simple_filters::SelectRmsdEvaluator( rmsd_pose, tag ) ) );
-      if ( option[ OptionKeys::evaluation::gdtmm ]() ) eval.add_evaluation( PoseEvaluatorOP( new simple_filters::SelectGdtEvaluator( rmsd_pose, tag ) ) );
-			if ( option[ OptionKeys::evaluation::score_with_rmsd ]() ){
+		for ( Size ct = 1; ct <= rmsd_target.size(); ct ++ ) {
+			pose::PoseOP rmsd_pose( new pose::Pose );
+			core::import_pose::pose_from_pdb( *rmsd_pose, rmsd_target[ ct ] );
+			std::string tag( ObjexxFCL::string_of( ct ) );
+			if ( rmsd_col_name.size() >= ct ) tag = rmsd_col_name[ ct ];
+			eval.add_evaluation( PoseEvaluatorOP( new simple_filters::SelectRmsdEvaluator( rmsd_pose, tag ) ) );
+			if ( option[ OptionKeys::evaluation::gdtmm ]() ) eval.add_evaluation( PoseEvaluatorOP( new simple_filters::SelectGdtEvaluator( rmsd_pose, tag ) ) );
+			if ( option[ OptionKeys::evaluation::score_with_rmsd ]() ) {
 				core::scoring::ResidueSelection selection;
 				evaluation::find_existing_residues( rmsd_pose, tag, selection );
 				core::scoring::ResidueSelectionVector vector;
@@ -129,8 +129,8 @@ void RmsdTargetEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 			if ( option[ OptionKeys::evaluation::symmetric_rmsd ]() ) {
 				eval.add_evaluation( PoseEvaluatorOP( new simple_filters::SymmetricRmsdEvaluator( rmsd_pose, tag ) ) );
 			}
-    }
-  }
+		}
+	}
 
 
 }

@@ -34,20 +34,20 @@ namespace excn {
 *********************                                                                  *********************
 ************************************************************************************************************
 ************************************************************************************************************
-          Please wait until this note is gone before you start using this interface
-					so far it is very experimental and should remain fluid.
-					We will have something definite soon. bug us per email if you need to know details
-					Oliver <olange@u.washington.edu>
-					Matthew O'Meara <mattjomeara@gmail.com>
+Please wait until this note is gone before you start using this interface
+so far it is very experimental and should remain fluid.
+We will have something definite soon. bug us per email if you need to know details
+Oliver <olange@u.washington.edu>
+Matthew O'Meara <mattjomeara@gmail.com>
 
 
-					generally:
-					include files will be found in
-					/<namespace>/Exceptions.hh
-					for specialized Exceptions e.g. a EXCN_InvalidFoldTree
+generally:
+include files will be found in
+/<namespace>/Exceptions.hh
+for specialized Exceptions e.g. a EXCN_InvalidFoldTree
 
-					all-purpose exceptions are all bundled together in this header.
-					if this gets to big we will have extra forward declarations in Exceptions.fwd.hh
+all-purpose exceptions are all bundled together in this header.
+if this gets to big we will have extra forward declarations in Exceptions.fwd.hh
 
 ************************************************************************************************************
 ************************************************************************************************************

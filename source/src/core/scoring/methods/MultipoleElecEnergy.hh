@@ -158,7 +158,7 @@ public:
 		pose::Pose const &,// pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-		) const;
+	) const;
 
 	virtual
 	bool
@@ -308,9 +308,9 @@ public:
 	) const;
 #endif
 
-// 	virtual
-// 	Distance
-// 	atomic_interaction_cutoff() const;
+	//  virtual
+	//  Distance
+	//  atomic_interaction_cutoff() const;
 
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
@@ -346,8 +346,8 @@ private:
 
 	///
 	bool const exclude_DNA_DNA_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

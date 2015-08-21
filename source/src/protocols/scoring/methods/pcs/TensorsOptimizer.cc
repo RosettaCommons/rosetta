@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/TensorsOptimizer.cc
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/TensorsOptimizer.cc
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 
 // Unit headers
@@ -50,10 +50,10 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs {
 
 static thread_local basic::Tracer TR_tsr_opt( "protocols.scoring.methods.pcs.TensorsOptimizer" );
 
@@ -76,7 +76,7 @@ TensorsOptimizer::operator ()( core::optimization::Multivec const & vars ) const
 	score = 0;
 	n_la = pcs_d_.get_n_lanthanides();
 
-	if(n_la != (vars.size() - 3) / 5){
+	if ( n_la != (vars.size() - 3) / 5 ) {
 		TR_tsr_opt << "n_la: " << n_la << " (vars.size() - 3) / 5):" << (vars.size() - 3) / 5 << " vars.size(): " << vars.size() <<std::endl;
 		utility_exit_with_message("The number of lanthanides is inconsistent with the derivatives size of vars");
 	}
@@ -88,15 +88,15 @@ TensorsOptimizer::operator ()( core::optimization::Multivec const & vars ) const
 
 	const utility::vector1<PCS_data_per_lanthanides> & pcs_d_p_l_a(pcs_d_.get_pcs_data_per_lanthanides_all());
 
-  const utility::vector1<core::Real> & X_all(pcs_d_.get_X_all());
-  const utility::vector1<core::Real> & Y_all(pcs_d_.get_Y_all());
-  const utility::vector1<core::Real> & Z_all(pcs_d_.get_Z_all());
+	const utility::vector1<core::Real> & X_all(pcs_d_.get_X_all());
+	const utility::vector1<core::Real> & Y_all(pcs_d_.get_Y_all());
+	const utility::vector1<core::Real> & Z_all(pcs_d_.get_Z_all());
 
-	if(n_la != pcs_d_p_l_a.size()){
+	if ( n_la != pcs_d_p_l_a.size() ) {
 		utility_exit_with_message("The number of lanthanides is inconsistent");
 	}
 
-	for (i = 1; i <= n_la; i++){
+	for ( i = 1; i <= n_la; i++ ) {
 		core::Real Xxx(vars[3 + 5*(i-1) + 1]);
 		core::Real Xxy(vars[3 + 5*(i-1) + 2]);
 		core::Real Xxz(vars[3 + 5*(i-1) + 3]);
@@ -110,9 +110,9 @@ TensorsOptimizer::operator ()( core::optimization::Multivec const & vars ) const
 		core::Real weight(pcs_d_p_l.get_weight());
 		n_pcs = pcs_d_p_l.get_n_pcs();
 
-		//		std::cerr << weight << " applyed to minimization" << std::endl;
+		//  std::cerr << weight << " applyed to minimization" << std::endl;
 		score_la = 0;
-		for (j = 1; j <= n_pcs; j++){
+		for ( j = 1; j <= n_pcs; j++ ) {
 			idx = A_index[j]; //index on the vector X_all_, Y_all_, Z_all_
 			x = X_all[idx];
 			y = Y_all[idx];
@@ -127,18 +127,18 @@ TensorsOptimizer::operator ()( core::optimization::Multivec const & vars ) const
 	/*
 	std::cerr << "current: ";
 	for (i = 1; i<= vars.size(); i++){
-		std::cerr << vars[i] << " ";
+	std::cerr << vars[i] << " ";
 	}
 	std::cerr << std::endl;
 	*/
 
-  return(sqrt(score));
+	return(sqrt(score));
 }
 
 void
 TensorsOptimizer::dfunc(core::optimization::Multivec const & vars,
-												core::optimization::Multivec & dE_dvars
-												) const{
+	core::optimization::Multivec & dE_dvars
+) const{
 	core::Size i, j, k, idx;
 	core::Size n_la, n_pcs;
 	core::Real x, y, z, xS, yS, zS;
@@ -149,12 +149,12 @@ TensorsOptimizer::dfunc(core::optimization::Multivec const & vars,
 
 	n_la = pcs_d_.get_n_lanthanides();
 
-	if(n_la != (dE_dvars.size() - 3) / 5){
+	if ( n_la != (dE_dvars.size() - 3) / 5 ) {
 		utility_exit_with_message("The number of lanthanides is inconsistent with the derivativessize of dE_dvars");
 	}
 
 	//lets' init everyone to zero because we are going to use +=
-	for (i = 1; i <= dE_dvars.size(); i++){
+	for ( i = 1; i <= dE_dvars.size(); i++ ) {
 		dE_dvars[i] = 0;
 	}
 
@@ -165,15 +165,15 @@ TensorsOptimizer::dfunc(core::optimization::Multivec const & vars,
 
 	const utility::vector1<PCS_data_per_lanthanides> & pcs_d_p_l_a(pcs_d_.get_pcs_data_per_lanthanides_all());
 
-  const utility::vector1<core::Real> & X_all(pcs_d_.get_X_all());
-  const utility::vector1<core::Real> & Y_all(pcs_d_.get_Y_all());
-  const utility::vector1<core::Real> & Z_all(pcs_d_.get_Z_all());
+	const utility::vector1<core::Real> & X_all(pcs_d_.get_X_all());
+	const utility::vector1<core::Real> & Y_all(pcs_d_.get_Y_all());
+	const utility::vector1<core::Real> & Z_all(pcs_d_.get_Z_all());
 
-	if(n_la != pcs_d_p_l_a.size()){
+	if ( n_la != pcs_d_p_l_a.size() ) {
 		utility_exit_with_message("The number of lanthanides is inconsistent");
 	}
 
-	for (i = 1; i <= n_la; i++){
+	for ( i = 1; i <= n_la; i++ ) {
 		core::Real Xxx(vars[3 + 5*(i-1) + 1]);
 		core::Real Xxy(vars[3 + 5*(i-1) + 2]);
 		core::Real Xxz(vars[3 + 5*(i-1) + 3]);
@@ -186,7 +186,7 @@ TensorsOptimizer::dfunc(core::optimization::Multivec const & vars,
 
 		core::Real weight(pcs_d_p_l.get_weight());
 		n_pcs = pcs_d_p_l.get_n_pcs();
-		for (j = 1; j <= n_pcs; j++){
+		for ( j = 1; j <= n_pcs; j++ ) {
 			idx = A_index[j]; //index on the vector X_all_, Y_all_, Z_all_
 			xS = X_all[idx];
 			yS = Y_all[idx];
@@ -197,7 +197,7 @@ TensorsOptimizer::dfunc(core::optimization::Multivec const & vars,
 			common = 2 * (PCS_calc - PCS_exp) * weight;
 
 			//This is for the derivatve of Xxx, Xxy, Xxz, Xyy, Xyz
-			for (k = 1; k <= 5; k++){
+			for ( k = 1; k <= 5; k++ ) {
 				dE_dvars[3 + 5*(i-1) + k] += common * A[k];
 			}
 
@@ -221,7 +221,7 @@ TensorsOptimizer::dfunc(core::optimization::Multivec const & vars,
 
 	/*
 	for (i = 1; i<= dE_dvars.size(); i++){
-		std::cerr << dE_dvars[i] << " ";
+	std::cerr << dE_dvars[i] << " ";
 	}
 
 	std::cerr <<" should be equalt to:" << std::endl;
@@ -229,7 +229,7 @@ TensorsOptimizer::dfunc(core::optimization::Multivec const & vars,
 	std::cerr <<" current: ";
 
 	for (i = 1; i<= dE_dvars.size(); i++){
-		std::cerr << vars[i] << " ";
+	std::cerr << vars[i] << " ";
 	}
 	std::cerr << std::endl;
 	*/
@@ -241,116 +241,116 @@ TensorsOptimizer::dfunc(core::optimization::Multivec const & vars,
 void
 TensorsOptimizer::dfunc_test(optimization::Multivec const & vars) const{
 
-	core::Size i, j, k, idx;
-	core::Size n_la, n_pcs;
-	core::Real x, y, z, xS, yS, zS;
-	core::Real PCS_calc, PCS_exp, common, common2, common3, PCS_calc_p_d, PCS_calc_m_d;
-	core::Real r5, r2, r3;
-	core::Real delta(0.00001);
+core::Size i, j, k, idx;
+core::Size n_la, n_pcs;
+core::Real x, y, z, xS, yS, zS;
+core::Real PCS_calc, PCS_exp, common, common2, common3, PCS_calc_p_d, PCS_calc_m_d;
+core::Real r5, r2, r3;
+core::Real delta(0.00001);
 
-	utility::vector1<core::Real> A(5, 0);
+utility::vector1<core::Real> A(5, 0);
 
-	utility::vector1<core::Real> A_p_d(5, 0);
-	utility::vector1<core::Real> A_m_d(5, 0);
+utility::vector1<core::Real> A_p_d(5, 0);
+utility::vector1<core::Real> A_m_d(5, 0);
 
-	n_la = pcs_d_.get_n_lanthanides();
+n_la = pcs_d_.get_n_lanthanides();
 
-	optimization::Multivec dE_dvars(3+5*n_la);
+optimization::Multivec dE_dvars(3+5*n_la);
 
-	if(n_la != (dE_dvars.size() - 3) / 5){
-		utility_exit_with_message("The number of lanthanides is inconsistent with the derivativessize of dE_dvars");
-	}
+if(n_la != (dE_dvars.size() - 3) / 5){
+utility_exit_with_message("The number of lanthanides is inconsistent with the derivativessize of dE_dvars");
+}
 
-	//lets' init everyone to zero because we are going to use +=
-	for (i = 1; i <= dE_dvars.size(); i++){
-		dE_dvars[i] = 0;
-	}
+//lets' init everyone to zero because we are going to use +=
+for (i = 1; i <= dE_dvars.size(); i++){
+dE_dvars[i] = 0;
+}
 
-	//those are the lanthanides current coordinates.
-	core::Real xM(vars[1]);
-	core::Real yM(vars[2]);
-	core::Real zM(vars[3]);
+//those are the lanthanides current coordinates.
+core::Real xM(vars[1]);
+core::Real yM(vars[2]);
+core::Real zM(vars[3]);
 
-	const utility::vector1<PCS_data_per_lanthanides> & pcs_d_p_l_a(pcs_d_.get_pcs_data_per_lanthanides_all());
+const utility::vector1<PCS_data_per_lanthanides> & pcs_d_p_l_a(pcs_d_.get_pcs_data_per_lanthanides_all());
 
-  const utility::vector1<core::Real> & X_all(pcs_d_.get_X_all());
-  const utility::vector1<core::Real> & Y_all(pcs_d_.get_Y_all());
-  const utility::vector1<core::Real> & Z_all(pcs_d_.get_Z_all());
+const utility::vector1<core::Real> & X_all(pcs_d_.get_X_all());
+const utility::vector1<core::Real> & Y_all(pcs_d_.get_Y_all());
+const utility::vector1<core::Real> & Z_all(pcs_d_.get_Z_all());
 
-	if(n_la != pcs_d_p_l_a.size()){
-		utility_exit_with_message("The number of lanthanides is inconsistent");
-	}
+if(n_la != pcs_d_p_l_a.size()){
+utility_exit_with_message("The number of lanthanides is inconsistent");
+}
 
-	for (i = 1; i <= n_la; i++){
-		core::Real Xxx(vars[3 + 5*(i-1) + 1]);
-		core::Real Xxy(vars[3 + 5*(i-1) + 2]);
-		core::Real Xxz(vars[3 + 5*(i-1) + 3]);
-		core::Real Xyy(vars[3 + 5*(i-1) + 4]);
-		core::Real Xyz(vars[3 + 5*(i-1) + 5]);
-		const PCS_data_per_lanthanides & pcs_d_p_l(pcs_d_p_l_a[i]);
-		const utility::vector1<core::Size> & A_index( pcs_d_p_l.get_A_index());
-		const FArray1D< core::Real > & fstyle_b(pcs_d_p_l.get_fstyle_b());
-		core::Real weight(pcs_d_p_l.get_weight());
-		n_pcs = pcs_d_p_l.get_n_pcs();
-		for (j = 1; j <= n_pcs; j++){
-			idx = A_index[j]; //index on the vector X_all_, Y_all_, Z_all_
-			xS = X_all[idx];
-			yS = Y_all[idx];
-			zS = Z_all[idx];
-			fill_A_line(A, xM, yM, zM, xS, yS, zS);
-			PCS_calc = A[1]*Xxx + A[2]*Xxy + A[3]*Xxz + A[4]*Xyy + A[5]*Xyz;
-			PCS_exp = fstyle_b(j);
-			common = 2.0 * (PCS_calc - PCS_exp) * weight;
-
-
-			PCS_calc_p_d = A[1]*(Xxx+delta) + A[2]*Xxy + A[3]*Xxz + A[4]*Xyy + A[5]*Xyz;
-			PCS_calc_m_d = A[1]*(Xxx-delta) + A[2]*Xxy + A[3]*Xxz + A[4]*Xyy + A[5]*Xyz;
-			dE_dvars[3 + 5*(i-1) + 1] += common * (PCS_calc_p_d - PCS_calc_m_d) / (2.0*delta);
-
-			PCS_calc_p_d = A[1]*Xxx + A[2]*(Xxy+delta) + A[3]*Xxz + A[4]*Xyy + A[5]*Xyz;
-			PCS_calc_m_d = A[1]*Xxx + A[2]*(Xxy-delta) + A[3]*Xxz + A[4]*Xyy + A[5]*Xyz;
-			dE_dvars[3 + 5*(i-1) + 2] += common * (PCS_calc_p_d - PCS_calc_m_d) / (2.0*delta);
-
-			PCS_calc_p_d = A[1]*Xxx + A[2]*Xxy + A[3]*(Xxz+delta) + A[4]*Xyy + A[5]*Xyz;
-			PCS_calc_m_d = A[1]*Xxx + A[2]*Xxy + A[3]*(Xxz-delta) + A[4]*Xyy + A[5]*Xyz;
-			dE_dvars[3 + 5*(i-1) + 3] += common * (PCS_calc_p_d - PCS_calc_m_d) / (2.0*delta);
-
-			PCS_calc_p_d = A[1]*Xxx + A[2]*Xxy + A[3]*Xxz + A[4]*(Xyy+delta) + A[5]*Xyz;
-			PCS_calc_m_d = A[1]*Xxx + A[2]*Xxy + A[3]*Xxz + A[4]*(Xyy-delta) + A[5]*Xyz;
-			dE_dvars[3 + 5*(i-1) + 4] += common * (PCS_calc_p_d - PCS_calc_m_d) / (2.0*delta);
-
-			PCS_calc_p_d = A[1]*Xxx + A[2]*Xxy + A[3]*Xxz + A[4]*Xyy + A[5]*(Xyz+delta);
-			PCS_calc_m_d = A[1]*Xxx + A[2]*Xxy + A[3]*Xxz + A[4]*Xyy + A[5]*(Xyz-delta);
-			dE_dvars[3 + 5*(i-1) + 5] += common * (PCS_calc_p_d - PCS_calc_m_d) / (2.0*delta);
+for (i = 1; i <= n_la; i++){
+core::Real Xxx(vars[3 + 5*(i-1) + 1]);
+core::Real Xxy(vars[3 + 5*(i-1) + 2]);
+core::Real Xxz(vars[3 + 5*(i-1) + 3]);
+core::Real Xyy(vars[3 + 5*(i-1) + 4]);
+core::Real Xyz(vars[3 + 5*(i-1) + 5]);
+const PCS_data_per_lanthanides & pcs_d_p_l(pcs_d_p_l_a[i]);
+const utility::vector1<core::Size> & A_index( pcs_d_p_l.get_A_index());
+const FArray1D< core::Real > & fstyle_b(pcs_d_p_l.get_fstyle_b());
+core::Real weight(pcs_d_p_l.get_weight());
+n_pcs = pcs_d_p_l.get_n_pcs();
+for (j = 1; j <= n_pcs; j++){
+idx = A_index[j]; //index on the vector X_all_, Y_all_, Z_all_
+xS = X_all[idx];
+yS = Y_all[idx];
+zS = Z_all[idx];
+fill_A_line(A, xM, yM, zM, xS, yS, zS);
+PCS_calc = A[1]*Xxx + A[2]*Xxy + A[3]*Xxz + A[4]*Xyy + A[5]*Xyz;
+PCS_exp = fstyle_b(j);
+common = 2.0 * (PCS_calc - PCS_exp) * weight;
 
 
-			fill_A_line(A_p_d, xM + delta, yM, zM, xS, yS, zS);
-			PCS_calc_p_d = A_p_d[1]*Xxx + A_p_d[2]*Xxy + A_p_d[3]*Xxz + A_p_d[4]*Xyy + A_p_d[5]*Xyz;
-			fill_A_line(A_m_d, xM - delta, yM, zM, xS, yS, zS);
-			PCS_calc_m_d = A_m_d[1]*Xxx + A_m_d[2]*Xxy + A_m_d[3]*Xxz + A_m_d[4]*Xyy + A_m_d[5]*Xyz;
-			dE_dvars[1] += common * (PCS_calc_p_d - PCS_calc_m_d) / (2.0*delta);
+PCS_calc_p_d = A[1]*(Xxx+delta) + A[2]*Xxy + A[3]*Xxz + A[4]*Xyy + A[5]*Xyz;
+PCS_calc_m_d = A[1]*(Xxx-delta) + A[2]*Xxy + A[3]*Xxz + A[4]*Xyy + A[5]*Xyz;
+dE_dvars[3 + 5*(i-1) + 1] += common * (PCS_calc_p_d - PCS_calc_m_d) / (2.0*delta);
 
-			fill_A_line(A_p_d, xM, yM + delta, zM, xS, yS, zS);
-			PCS_calc_p_d = A_p_d[1]*Xxx + A_p_d[2]*Xxy + A_p_d[3]*Xxz + A_p_d[4]*Xyy + A_p_d[5]*Xyz;
-			fill_A_line(A_m_d, xM, yM - delta, zM, xS, yS, zS);
-			PCS_calc_m_d = A_m_d[1]*Xxx + A_m_d[2]*Xxy + A_m_d[3]*Xxz + A_m_d[4]*Xyy + A_m_d[5]*Xyz;
-			dE_dvars[2] += common * (PCS_calc_p_d - PCS_calc_m_d) / (2.0*delta);
+PCS_calc_p_d = A[1]*Xxx + A[2]*(Xxy+delta) + A[3]*Xxz + A[4]*Xyy + A[5]*Xyz;
+PCS_calc_m_d = A[1]*Xxx + A[2]*(Xxy-delta) + A[3]*Xxz + A[4]*Xyy + A[5]*Xyz;
+dE_dvars[3 + 5*(i-1) + 2] += common * (PCS_calc_p_d - PCS_calc_m_d) / (2.0*delta);
 
+PCS_calc_p_d = A[1]*Xxx + A[2]*Xxy + A[3]*(Xxz+delta) + A[4]*Xyy + A[5]*Xyz;
+PCS_calc_m_d = A[1]*Xxx + A[2]*Xxy + A[3]*(Xxz-delta) + A[4]*Xyy + A[5]*Xyz;
+dE_dvars[3 + 5*(i-1) + 3] += common * (PCS_calc_p_d - PCS_calc_m_d) / (2.0*delta);
 
-			fill_A_line(A_p_d, xM, yM, zM + delta, xS, yS, zS);
-			PCS_calc_p_d = A_p_d[1]*Xxx + A_p_d[2]*Xxy + A_p_d[3]*Xxz + A_p_d[4]*Xyy + A_p_d[5]*Xyz;
-			fill_A_line(A_m_d, xM, yM, zM - delta, xS, yS, zS);
-			PCS_calc_m_d = A_m_d[1]*Xxx + A_m_d[2]*Xxy + A_m_d[3]*Xxz + A_m_d[4]*Xyy + A_m_d[5]*Xyz;
-			dE_dvars[3] += common * (PCS_calc_p_d - PCS_calc_m_d) / (2.0*delta);
+PCS_calc_p_d = A[1]*Xxx + A[2]*Xxy + A[3]*Xxz + A[4]*(Xyy+delta) + A[5]*Xyz;
+PCS_calc_m_d = A[1]*Xxx + A[2]*Xxy + A[3]*Xxz + A[4]*(Xyy-delta) + A[5]*Xyz;
+dE_dvars[3 + 5*(i-1) + 4] += common * (PCS_calc_p_d - PCS_calc_m_d) / (2.0*delta);
 
-		}
-	}
+PCS_calc_p_d = A[1]*Xxx + A[2]*Xxy + A[3]*Xxz + A[4]*Xyy + A[5]*(Xyz+delta);
+PCS_calc_m_d = A[1]*Xxx + A[2]*Xxy + A[3]*Xxz + A[4]*Xyy + A[5]*(Xyz-delta);
+dE_dvars[3 + 5*(i-1) + 5] += common * (PCS_calc_p_d - PCS_calc_m_d) / (2.0*delta);
 
 
-	for (i = 1; i<= dE_dvars.size(); i++){
-		std::cerr << dE_dvars[i] << " ";
-	}
-	std::cerr << std::endl;
+fill_A_line(A_p_d, xM + delta, yM, zM, xS, yS, zS);
+PCS_calc_p_d = A_p_d[1]*Xxx + A_p_d[2]*Xxy + A_p_d[3]*Xxz + A_p_d[4]*Xyy + A_p_d[5]*Xyz;
+fill_A_line(A_m_d, xM - delta, yM, zM, xS, yS, zS);
+PCS_calc_m_d = A_m_d[1]*Xxx + A_m_d[2]*Xxy + A_m_d[3]*Xxz + A_m_d[4]*Xyy + A_m_d[5]*Xyz;
+dE_dvars[1] += common * (PCS_calc_p_d - PCS_calc_m_d) / (2.0*delta);
+
+fill_A_line(A_p_d, xM, yM + delta, zM, xS, yS, zS);
+PCS_calc_p_d = A_p_d[1]*Xxx + A_p_d[2]*Xxy + A_p_d[3]*Xxz + A_p_d[4]*Xyy + A_p_d[5]*Xyz;
+fill_A_line(A_m_d, xM, yM - delta, zM, xS, yS, zS);
+PCS_calc_m_d = A_m_d[1]*Xxx + A_m_d[2]*Xxy + A_m_d[3]*Xxz + A_m_d[4]*Xyy + A_m_d[5]*Xyz;
+dE_dvars[2] += common * (PCS_calc_p_d - PCS_calc_m_d) / (2.0*delta);
+
+
+fill_A_line(A_p_d, xM, yM, zM + delta, xS, yS, zS);
+PCS_calc_p_d = A_p_d[1]*Xxx + A_p_d[2]*Xxy + A_p_d[3]*Xxz + A_p_d[4]*Xyy + A_p_d[5]*Xyz;
+fill_A_line(A_m_d, xM, yM, zM - delta, xS, yS, zS);
+PCS_calc_m_d = A_m_d[1]*Xxx + A_m_d[2]*Xxy + A_m_d[3]*Xxz + A_m_d[4]*Xyy + A_m_d[5]*Xyz;
+dE_dvars[3] += common * (PCS_calc_p_d - PCS_calc_m_d) / (2.0*delta);
+
+}
+}
+
+
+for (i = 1; i<= dE_dvars.size(); i++){
+std::cerr << dE_dvars[i] << " ";
+}
+std::cerr << std::endl;
 
 }
 */

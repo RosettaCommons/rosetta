@@ -65,8 +65,8 @@ public:
 	);
 
 	// Constructor for loading motifs from a file with coordinates for ligands
-MotifLibrary(
-  std::istream & motif_info, core::Size ligand_marker
+	MotifLibrary(
+		std::istream & motif_info, core::Size ligand_marker
 	);
 
 	// Add ligand motif from a PDB file

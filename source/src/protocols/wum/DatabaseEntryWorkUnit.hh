@@ -30,44 +30,44 @@
 #include <string>
 #include <map>
 
-namespace protocols{
-namespace wum{
+namespace protocols {
+namespace wum {
 
 class DatabaseEntryWorkUnit : public protocols::wum::WorkUnitBase {
 public:
 
-    DatabaseEntryWorkUnit(utility::sql_database::sessionOP db_session);
+	DatabaseEntryWorkUnit(utility::sql_database::sessionOP db_session);
 
-    DatabaseEntryWorkUnit( std::map<std::string,std::string> row_map );
+	DatabaseEntryWorkUnit( std::map<std::string,std::string> row_map );
 
-    virtual ~DatabaseEntryWorkUnit(){}
+	virtual ~DatabaseEntryWorkUnit(){}
 
-    virtual protocols::wum::WorkUnitBaseOP clone() const {
-        return protocols::wum::WorkUnitBaseOP( new DatabaseEntryWorkUnit( *this ) );
-    }
+	virtual protocols::wum::WorkUnitBaseOP clone() const {
+		return protocols::wum::WorkUnitBaseOP( new DatabaseEntryWorkUnit( *this ) );
+	}
 
-    /// @brief Accessor for database query string
-    std::string result_query_string(){return result_query_string_;}
-
-protected:
-//    void set_defaults();
-
-    /// @brief Serialize the row_map_
-    virtual void serialize();
-
-    /// @brief Deserialize the row_map_
-    virtual void deserialize();
+	/// @brief Accessor for database query string
+	std::string result_query_string(){return result_query_string_;}
 
 protected:
+	//    void set_defaults();
 
-    /// @brief The database connection
-    utility::sql_database::sessionOP db_session_;
+	/// @brief Serialize the row_map_
+	virtual void serialize();
 
-    /// @brief map that represents a database row - keys are columns, values are values
-    std::map<std::string,std::string> row_map_;
+	/// @brief Deserialize the row_map_
+	virtual void deserialize();
 
-    /// @brief A string that stores the database query you want to run when finished with the work unit
-    std::string result_query_string_;
+protected:
+
+	/// @brief The database connection
+	utility::sql_database::sessionOP db_session_;
+
+	/// @brief map that represents a database row - keys are columns, values are values
+	std::map<std::string,std::string> row_map_;
+
+	/// @brief A string that stores the database query you want to run when finished with the work unit
+	std::string result_query_string_;
 
 };
 

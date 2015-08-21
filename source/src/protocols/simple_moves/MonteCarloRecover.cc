@@ -61,7 +61,7 @@ MonteCarloRecoverCreator::mover_name()
 
 std::string
 MonteCarloRecover::get_name() const {
-	  return MonteCarloRecoverCreator::mover_name();
+	return MonteCarloRecoverCreator::mover_name();
 }
 
 
@@ -104,8 +104,9 @@ void
 MonteCarloRecover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, Movers_map const &movers, Pose const & pose ){
 	std::string const mc_name( tag->getOption< std::string >( "MC_name" ) );
 	Movers_map::const_iterator find_mover( movers.find( mc_name ) );
-	if( find_mover == movers.end() )
+	if ( find_mover == movers.end() ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "MC mover not found by MonteCarloRecover" );
+	}
 
 	set_MC( utility::pointer::dynamic_pointer_cast< protocols::simple_moves::GenericMonteCarloMover > ( find_mover->second ) );
 	recover_low( tag->getOption< bool >( "recover_low", true ) );
@@ -117,10 +118,11 @@ MonteCarloRecover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, 
 
 void
 MonteCarloRecover::apply( core::pose::Pose & pose ){
-	if( recover_low() )
+	if ( recover_low() ) {
 		MC_mover_->recover_low( pose );
-	else
+	} else {
 		pose = *(MC_mover_->last_accepted_pose());
+	}
 }
 
 bool

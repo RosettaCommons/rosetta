@@ -133,7 +133,7 @@ void ExtraThreadingMover::apply(
 	// Iterate over residue selection, copy relevant residues.
 	// Make sure that fold-tree is coherent by checking for bonded_partners
 	using core::conformation::Residue;
- 	typedef vector1< Size >::const_iterator iter;
+	typedef vector1< Size >::const_iterator iter;
 	std::map< Size, Size > template_to_query_res; // keeps track of residues that we've added to query_pose.
 	Size const query_jump_anchor( query_pose.total_residue() ); // maybe do this with a VRT residue later.
 	//Size current_chain( query_pose.residue(query_jump_anchor).chain() );

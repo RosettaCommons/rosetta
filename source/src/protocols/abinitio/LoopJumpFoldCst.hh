@@ -61,69 +61,69 @@ namespace abinitio {
 
 class LoopJumpFoldCst : public KinematicTaskControl {
 public:
-  LoopJumpFoldCst(
-		  jumping::BaseJumpSetupOP jump_def,
-		  loops::Loops loops,
-		  ProtocolOP sampler,
-		  core::fragment::SecondaryStructureOP ss_def,
-		  core::Real coord_cst_weight,
-		  bool bCstAllAtom = false //false = CA atoms only
-  ) :
-    KinematicTaskControl( sampler ),
-    jump_def_ ( jump_def ),
-    loops_( loops ),
-    ss_def_( ss_def ),
-    coordinate_constraint_weight_( coord_cst_weight ),
-    bCstAllAtom_( bCstAllAtom )
-  {
-    dump_weights_file_ = "NO_DUMP";
-  };
+	LoopJumpFoldCst(
+		jumping::BaseJumpSetupOP jump_def,
+		loops::Loops loops,
+		ProtocolOP sampler,
+		core::fragment::SecondaryStructureOP ss_def,
+		core::Real coord_cst_weight,
+		bool bCstAllAtom = false //false = CA atoms only
+	) :
+		KinematicTaskControl( sampler ),
+		jump_def_ ( jump_def ),
+		loops_( loops ),
+		ss_def_( ss_def ),
+		coordinate_constraint_weight_( coord_cst_weight ),
+		bCstAllAtom_( bCstAllAtom )
+	{
+		dump_weights_file_ = "NO_DUMP";
+	};
 
-  ~LoopJumpFoldCst();
-  //@brief make a new KinematicControl...
-  virtual KinematicControlOP new_kinematics( core::pose::Pose &pose );
+	~LoopJumpFoldCst();
+	//@brief make a new KinematicControl...
+	virtual KinematicControlOP new_kinematics( core::pose::Pose &pose );
 
-  void set_coord_cst_weight_array( utility::vector1< core::Real > const& vec ) {
-    coordinate_constraint_weights_ = vec;
-  }
+	void set_coord_cst_weight_array( utility::vector1< core::Real > const& vec ) {
+		coordinate_constraint_weights_ = vec;
+	}
 
-  void set_dump_weights_file( std::string const& str ) {
-    dump_weights_file_ = str;
-  }
+	void set_dump_weights_file( std::string const& str ) {
+		dump_weights_file_ = str;
+	}
 
 	virtual std::string get_name() const;
 
 protected:
-  /// @brief heuristic to select subset of loops from loops_
-  virtual void select_loops( loops::Loops& loops_select ) const;
+	/// @brief heuristic to select subset of loops from loops_
+	virtual void select_loops( loops::Loops& loops_select ) const;
 
-  //@brief change fold-tree such that only loop regions move. keep jumps if they are not within the same rigid-region
-  virtual bool add_rigidity_jumps( loops::Loops const& rigid, KinematicControlOP current_kinematics );
+	//@brief change fold-tree such that only loop regions move. keep jumps if they are not within the same rigid-region
+	virtual bool add_rigidity_jumps( loops::Loops const& rigid, KinematicControlOP current_kinematics );
 
 
-  virtual bool add_coord_cst(  loops::Loops const& loops, core::pose::Pose &pose );
-  //	virtual bool apply( core::pose::Pose &pose );
+	virtual bool add_coord_cst(  loops::Loops const& loops, core::pose::Pose &pose );
+	// virtual bool apply( core::pose::Pose &pose );
 
 	virtual bool parse_jump_def( KinematicControlOP current_kinematics, core::kinematics::MoveMapOP );
 
 
 private:
-  jumping::BaseJumpSetupOP jump_def_;
-  loops::Loops loops_; //if empty rebuild whole structure
-  core::fragment::SecondaryStructureOP ss_def_;
+	jumping::BaseJumpSetupOP jump_def_;
+	loops::Loops loops_; //if empty rebuild whole structure
+	core::fragment::SecondaryStructureOP ss_def_;
 
 protected:
-  // a global weight
-  core::Real coordinate_constraint_weight_;
+	// a global weight
+	core::Real coordinate_constraint_weight_;
 
-  // a weight for each residue: if empty weight will be computed by heuristic
-  utility::vector1< core::Real > coordinate_constraint_weights_;
+	// a weight for each residue: if empty weight will be computed by heuristic
+	utility::vector1< core::Real > coordinate_constraint_weights_;
 
 private:
-  // dump_weights to this file
-  std::string dump_weights_file_;
+	// dump_weights to this file
+	std::string dump_weights_file_;
 
-  bool bCstAllAtom_;
+	bool bCstAllAtom_;
 
 
 };

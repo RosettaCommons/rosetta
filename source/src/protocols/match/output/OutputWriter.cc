@@ -31,16 +31,16 @@ namespace match {
 namespace output {
 
 OutputWriter::OutputWriter()
-	: cst_io_(/* NULL */)
+: cst_io_(/* NULL */)
 {}
 
 OutputWriter::~OutputWriter() {}
 
 protocols::toolbox::match_enzdes_util::EnzConstraintIOCOP
 OutputWriter::cst_io() const
- {
-		return cst_io_;
- }
+{
+	return cst_io_;
+}
 
 
 void

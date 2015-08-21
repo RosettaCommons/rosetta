@@ -20,16 +20,16 @@
 #include <utility/pointer/owning_ptr.fwd.hh>
 
 namespace protocols {
-    namespace simple_filters {
+namespace simple_filters {
 
-        // Forward
-        class RepeatParameterFilter;
+// Forward
+class RepeatParameterFilter;
 
-        // Types
-        typedef utility::pointer::shared_ptr< RepeatParameterFilter >  RepeatParameterFilterOP;
-        typedef utility::pointer::shared_ptr< RepeatParameterFilter const >  RepeatParameterFilterCOP;
+// Types
+typedef utility::pointer::shared_ptr< RepeatParameterFilter >  RepeatParameterFilterOP;
+typedef utility::pointer::shared_ptr< RepeatParameterFilter const >  RepeatParameterFilterCOP;
 
-    } // namespace simple_filters
+} // namespace simple_filters
 } // namespace protocols
 
 #endif

@@ -63,8 +63,8 @@ rsd_set_from_cmd_line()
 /// @details Called by ChemicalManager at time of AtomTypeSet creation.
 void
 add_atom_type_set_parameters_from_command_line(
-		std::string const & atom_type_set_tag,
-		AtomTypeSet & atom_type_set )
+	std::string const & atom_type_set_tag,
+	AtomTypeSet & atom_type_set )
 {
 	using namespace std;
 	using namespace basic::options;
@@ -76,19 +76,19 @@ add_atom_type_set_parameters_from_command_line(
 	utility::vector1< std::string > paramstring( option[ add_atom_type_set_parameters ]() );
 	if ( paramstring.size() % 2 != 0 ) {
 		utility_exit_with_message( "bad format for -add_atom_type_set_parameters; "
-				"should be: -add_atom_type_set_parameters <tag1> <filename1> <tag2> <filename2> ...");
+			"should be: -add_atom_type_set_parameters <tag1> <filename1> <tag2> <filename2> ...");
 	}
 	Size const nparams( paramstring.size() / 2 );
 	for ( core::uint i = 0; i < nparams; ++i ) {
 		string const tag( paramstring[ 2 * i + 1 ] ), filename( paramstring[ 2 * i + 2 ] );
 		TR.Trace << "add_atom_type_set_parameters_from_command_line: desired_tag= " << atom_type_set_tag <<
-				" cmdline-tag= " << tag << " filename= " << filename << endl;
+			" cmdline-tag= " << tag << " filename= " << filename << endl;
 		if ( tag == atom_type_set_tag ) {
 			if ( ! utility::file::file_exists( filename ) ) {
 				utility_exit_with_message( "unable to locate/open file: " + filename );
 			}
 			TR.Trace << "add_atom_type_set_parameters_from_command_line: tag= " << tag << " filename= " << filename <<
-					endl;
+				endl;
 			atom_type_set.add_parameters_from_file( filename );
 		}
 	}
@@ -99,8 +99,8 @@ add_atom_type_set_parameters_from_command_line(
 /// @details  Called by ChemicalManager at time of AtomTypeSet creation.
 void
 modify_atom_properties_from_command_line(
-		std::string const & atom_type_set_tag,
-		AtomTypeSet & atom_type_set )
+	std::string const & atom_type_set_tag,
+	AtomTypeSet & atom_type_set )
 {
 	using namespace std;
 	using namespace basic::options;
@@ -111,8 +111,8 @@ modify_atom_properties_from_command_line(
 		utility::vector1< std::string > const & mods( option[ set_atom_properties ] );
 
 		string const errmsg( "-set_atom_properties format should be:: -set_atom_properties <set1>:<atom1>:<param1>:"
-				"<setting1> <set2>:<atom2>:<param2>:<setting2> ...; for example: '-chemical:set_atom_properties "
-				"fa_standard:OOC:LK_DGFREE:-5 fa_standard:ONH2:LJ_RADIUS:0.5' ");
+			"<setting1> <set2>:<atom2>:<param2>:<setting2> ...; for example: '-chemical:set_atom_properties "
+			"fa_standard:OOC:LK_DGFREE:-5 fa_standard:ONH2:LJ_RADIUS:0.5' ");
 
 		for ( core::uint i = 1; i <= mods.size(); ++i ) {
 			// mod should look like (for example):  "fa_standard:OOC:LK_RADIUS:4.5"
@@ -139,7 +139,7 @@ modify_atom_properties_from_command_line(
 			Real const setting( double_of( stringsetting ) );
 
 			TR.Trace << "modify_atom_properties_from_command_line: setting " << atomset_tag << ' ' << atom_name <<
-					' ' << param << ' ' << setting << endl;
+				' ' << param << ' ' << setting << endl;
 
 			Size const atom_index( atom_type_set.atom_type_index( atom_name ) );
 
@@ -147,8 +147,8 @@ modify_atom_properties_from_command_line(
 			// that defines a parameter with the name LK_DGFREE (memb_fa_params.txt). That's kind of confusing...
 			//
 			// if ( atom_type_set.has_extra_parameter( param ) ) {
-			// 	Size const param_index( atom_type_set.extra_parameter_index( param ) );
-			// 	atom_type_set[ atom_index ].set_extra_parameter( param_index, setting );
+			//  Size const param_index( atom_type_set.extra_parameter_index( param ) );
+			//  atom_type_set[ atom_index ].set_extra_parameter( param_index, setting );
 			// } else {
 			atom_type_set[ atom_index ].set_parameter( param, setting );
 		}
@@ -173,7 +173,7 @@ formatted_icoord_tree( core::chemical::ResidueType const & restype )
 	vector1< bool > placed( restype.natoms(), false );
 	vector1< AtomICoor > icoords;
 	vector1< core::Size > deferred;
-	for( core::uint ii( 1 ); ii <= restype.natoms(); ++ii ) {
+	for ( core::uint ii( 1 ); ii <= restype.natoms(); ++ii ) {
 		icoords.push_back( restype.icoor( ii ) );
 	}
 
@@ -188,8 +188,8 @@ formatted_icoord_tree( core::chemical::ResidueType const & restype )
 		placed[ curres ] = true;
 
 		vector1< Size > possibles;
-		for( core::uint ii( 1 ); ii <= icoords.size(); ++ii ) {
-			if( icoords[ ii ].stub_atom1().atomno() == curres && ! placed[ ii ] ) {
+		for ( core::uint ii( 1 ); ii <= icoords.size(); ++ii ) {
+			if ( icoords[ ii ].stub_atom1().atomno() == curres && ! placed[ ii ] ) {
 				possibles.push_back( ii );
 			}
 		}
@@ -200,7 +200,7 @@ formatted_icoord_tree( core::chemical::ResidueType const & restype )
 			output += " (";
 			curres = possibles.back();
 			possibles.pop_back();
-			if( deferred.size() ) {
+			if ( deferred.size() ) {
 				deferred.push_back( 0 ); // Sentinel, but not needed for first
 			}
 			deferred.insert( deferred.end() , possibles.begin(), possibles.end() );
@@ -237,10 +237,10 @@ print_chis( std::ostream & out, ResidueType const & res )
 
 	out << "Residue: " << res.name() << endl;
 	out << formatted_icoord_tree(res) << endl;
-	for( core::uint ii( 1 ); ii <= res.nchi(); ++ii ) {
+	for ( core::uint ii( 1 ); ii <= res.nchi(); ++ii ) {
 		AtomIndices const & indexes( res.chi_atoms( ii ) );
 		out << "Chi " << ii << ": " << res.atom_name( indexes[ 1 ] ) << " " << res.atom_name( indexes[ 2 ] ) << " "
-				<< res.atom_name( indexes[ 3 ] ) << " " << res.atom_name( indexes[ 4 ] ) << " ";
+			<< res.atom_name( indexes[ 3 ] ) << " " << res.atom_name( indexes[ 4 ] ) << " ";
 		if ( res.is_proton_chi( ii ) ) { out << " PROTON"; }
 		out << endl;
 	}
@@ -267,9 +267,9 @@ fixup_patches( std::string string_in )
 /// @author  Labonte <JWLabonte@jhu.edu>
 bool
 variants_match_with_exceptions(
-		ResidueType const & res1,
-		ResidueType const & res2,
-		utility::vector1< VariantType > list_of_variants_to_ignore )
+	ResidueType const & res1,
+	ResidueType const & res2,
+	utility::vector1< VariantType > list_of_variants_to_ignore )
 {
 	using namespace std;
 	using namespace utility;
@@ -284,9 +284,9 @@ variants_match_with_exceptions(
 	// Now check for "custom" VariantTypes, which are stored as strings.
 	if ( res1.properties().has_custom_variant_types() || res2.properties().has_custom_variant_types() ) {
 		vector1 < string > const & list1( res1.properties().get_list_of_custom_variants() ),
-				list2( res2.properties().get_list_of_custom_variants() );
+			list2( res2.properties().get_list_of_custom_variants() );
 		Size const n_variants_in_list1( list1.size() ),
-				n_variants_in_list2( list2.size() );
+			n_variants_in_list2( list2.size() );
 		if ( n_variants_in_list1 != n_variants_in_list2 ) {
 			return false;
 		} else {
@@ -343,8 +343,8 @@ nonadduct_variants_match( ResidueType const & res1, ResidueType const & res2 )
 ///  try to minimize atoms missing from xyz
 ResidueTypeCOP
 find_best_match( ResidueTypeCOPs const & rsd_type_list,
-								 utility::vector1< std::string > const & atom_names,
-								 bool const ignore_atom_named_H /* = false */ )
+	utility::vector1< std::string > const & atom_names,
+	bool const ignore_atom_named_H /* = false */ )
 {
 
 	using namespace core::chemical;
@@ -359,7 +359,7 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 			bool found_match( false );
 			for ( Size m = 1; m <= atom_names.size(); ++m ) {
 				if ( ObjexxFCL::stripped_whitespace( atom_names[m] ) == ObjexxFCL::stripped_whitespace( rsd_type.atom_name(k) ) ) {
-					found_match = true;	break;
+					found_match = true; break;
 				}
 			}
 			if ( !found_match ) ++xyz_missing;
@@ -368,13 +368,13 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 		for ( Size n = 1; n <= atom_names.size(); n++ ) {
 			std::string const & atom_name = atom_names[ n ];
 			if ( !rsd_type.has( ObjexxFCL::stripped_whitespace( atom_name ) ) &&
-					 !( atom_name == " H  " && ignore_atom_named_H ) ) { // don't worry about missing BB H if Nterm
+					!( atom_name == " H  " && ignore_atom_named_H ) ) { // don't worry about missing BB H if Nterm
 				++rsd_missing;
-				}
 			}
+		}
 
 		if ( ( rsd_missing < best_rsd_missing ) ||
-				 ( rsd_missing == best_rsd_missing && xyz_missing < best_xyz_missing ) ) {
+				( rsd_missing == best_rsd_missing && xyz_missing < best_xyz_missing ) ) {
 			best_rsd_missing = rsd_missing;
 			best_xyz_missing = xyz_missing;
 			best_index = j;
@@ -392,7 +392,7 @@ enlarge_h_lj_wdepth( utility::vector1< Real > & lj_wdepth, AtomTypeSet const & a
 	// why not just look at element type? Anyway...
 	utility::vector1< std::string > const H_names = utility::tools::make_vector1( "Hpol", "Hapo", "Haro", "HNbb", "HOH" );
 	runtime_assert( lj_wdepth.size() == atom_type_set.n_atomtypes() );
-	for (Size i = 1; i <= H_names.size(); ++i) {
+	for ( Size i = 1; i <= H_names.size(); ++i ) {
 		Size const index = atom_type_set.atom_type_index( H_names[i] );
 		lj_wdepth[ index ] = enlarged_lj_wdepth;
 	}
@@ -405,9 +405,9 @@ enlarge_h_lj_wdepth( utility::vector1< Real > & lj_wdepth, AtomTypeSet const & a
 void
 enlarge_h_lj_wdepth( AtomTypeSet & atom_type_set ) {
 	utility::vector1< Real > lj_wdepth;
-	for ( Size n = 1; n <= atom_type_set.n_atomtypes(); n++ )	lj_wdepth.push_back( atom_type_set[n].lj_wdepth() );
+	for ( Size n = 1; n <= atom_type_set.n_atomtypes(); n++ ) lj_wdepth.push_back( atom_type_set[n].lj_wdepth() );
 	enlarge_h_lj_wdepth( lj_wdepth, atom_type_set );
-	for ( Size n = 1; n <= atom_type_set.n_atomtypes(); n++ )	atom_type_set[n].set_parameter( "LJ_WDEPTH", lj_wdepth[n] );
+	for ( Size n = 1; n <= atom_type_set.n_atomtypes(); n++ ) atom_type_set[n].set_parameter( "LJ_WDEPTH", lj_wdepth[n] );
 }
 
 
@@ -420,10 +420,10 @@ turn_off_hbonds_to_ester_oxygens( AtomTypeSet & atom_type_set ) {
 	utility::vector1< Real > lj_wdepth;
 	utility::vector1< std::string > const Oet_names = utility::tools::make_vector1( "Oet2", "Oet3" );
 	std::string property; // have to set through a string since set_property() accepts property by reference.
-	for (Size i = 1; i <= Oet_names.size(); ++i) {
+	for ( Size i = 1; i <= Oet_names.size(); ++i ) {
 		Size const index = atom_type_set.atom_type_index( Oet_names[i] );
-		property = "ACCEPTOR";		atom_type_set[ index ].set_property( property, false );
-		property = "DONOR"   ;		atom_type_set[ index ].set_property( property, false );
+		property = "ACCEPTOR";  atom_type_set[ index ].set_property( property, false );
+		property = "DONOR"   ;  atom_type_set[ index ].set_property( property, false );
 	}
 }
 

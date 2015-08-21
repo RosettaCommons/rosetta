@@ -75,13 +75,13 @@ namespace hbonds {
 static thread_local basic::Tracer tr( "core.scoring.hbonds.hbonds" );
 
 /**
-	This routine fills an hbond-set with hbonds. All hbonds are included,
-	even ones which might be excluded later based on the backbone-hbond
-	exclusion.
+This routine fills an hbond-set with hbonds. All hbonds are included,
+even ones which might be excluded later based on the backbone-hbond
+exclusion.
 
-	WARNING WARNING WARNING
-	The pose must have an update energies object, eg it must be scored.
-	WARNING WARNING WARNING
+WARNING WARNING WARNING
+The pose must have an update energies object, eg it must be scored.
+WARNING WARNING WARNING
 **/
 
 
@@ -112,7 +112,7 @@ fill_hbond_set(
 	bool const exclude_sc  /* default false */
 )
 {
-    debug_assert( pose.energies().residue_neighbors_updated() );
+	debug_assert( pose.energies().residue_neighbors_updated() );
 
 	// clear old data
 	hbond_set.clear();
@@ -153,21 +153,21 @@ fill_hbond_set(
 					rsd2, rsd1, nb2, nb1, calculate_derivative,
 					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set, pose);
 			} else {
-			  core::Real ssdep_weight = get_ssdep_weight(rsd1, rsd2, pose, sswt);
+				core::Real ssdep_weight = get_ssdep_weight(rsd1, rsd2, pose, sswt);
 
-			  identify_hbonds_1way(
+				identify_hbonds_1way(
 					database,
 					rsd1, rsd2, nb1, nb2, calculate_derivative,
 					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set, ssdep_weight);
 
-			  identify_hbonds_1way(
+				identify_hbonds_1way(
 					database,
 					rsd2, rsd1, nb2, nb1, calculate_derivative,
 					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set, ssdep_weight);
 
 			}
 		} // nbrs of res1
-		if(!hbond_set.hbond_options().exclude_self_hbonds() && hbond_set.hbond_options().exclude_DNA_DNA() && rsd1.is_DNA() ){
+		if ( !hbond_set.hbond_options().exclude_self_hbonds() && hbond_set.hbond_options().exclude_DNA_DNA() && rsd1.is_DNA() ) {
 			//pba membrane specific hbond
 			if ( pose.conformation().is_membrane() || hbond_set.hbond_options().Mbhbond() ) {
 				identify_hbonds_1way_membrane(
@@ -175,7 +175,7 @@ fill_hbond_set(
 					rsd1, rsd1, nb1, nb1, calculate_derivative,
 					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set, pose);
 			} else {
-			   identify_hbonds_1way(
+				identify_hbonds_1way(
 					database,
 					rsd1, rsd1, nb1, nb1, calculate_derivative,
 					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set);
@@ -184,13 +184,13 @@ fill_hbond_set(
 	} // res1
 
 	fill_intra_res_hbond_set( pose, calculate_derivative, hbond_set,
-														exclude_bb, exclude_bsc, exclude_scb, exclude_sc ); // don't worry, will skip proteins.
+		exclude_bb, exclude_bsc, exclude_scb, exclude_sc ); // don't worry, will skip proteins.
 }
 
 ///////////////////////////////////////////////////
 bool
 calculate_intra_res_hbonds( conformation::Residue const & rsd,
-														HBondOptions const & options ) {
+	HBondOptions const & options ) {
 	if ( rsd.is_protein() && options.exclude_intra_res_protein() /* default true */ ) return false;
 	if ( rsd.is_DNA() && options.exclude_DNA_DNA() /* default true */ ) return false;
 	if ( rsd.is_RNA() && options.exclude_intra_res_RNA() /* default false */ ) return false;
@@ -218,7 +218,7 @@ fill_intra_res_hbond_set(
 		if ( !calculate_intra_res_hbonds( rsd1, hbond_set.hbond_options() ) ) continue;
 		Size const rsd_nb = tenA_neighbor_graph.get_node( rsd1.seqpos() )->num_neighbors_counting_self_static();
 		identify_intra_res_hbonds( database, rsd1, rsd_nb, calculate_derivative, hbond_set,
-															 exclude_bb, exclude_bsc, exclude_scb, exclude_sc );
+			exclude_bb, exclude_bsc, exclude_scb, exclude_sc );
 	}
 
 }
@@ -234,23 +234,23 @@ get_ssdep_weight(
 
 	Real ss_len_scalefactor = 1.0;
 
-	if (ssdep.ssdep_) {
+	if ( ssdep.ssdep_ ) {
 		// check if they are in same helix
 		bool connected=true;
 		Size hstart = std::min( rsd1.seqpos(), rsd2.seqpos()), hend=std::max( rsd1.seqpos(), rsd2.seqpos());
-		for (Size i=hstart; i<=hend && connected; ++i) {
+		for ( Size i=hstart; i<=hend && connected; ++i ) {
 			connected = (pose.secstruct(i) == 'H');
 		}
-		if (connected) {
-			while (hstart >= 1 && pose.secstruct(hstart) == 'H') hstart--;
-			while (hend <= pose.total_residue() && pose.secstruct(hend) == 'H') hend++;
+		if ( connected ) {
+			while ( hstart >= 1 && pose.secstruct(hstart) == 'H' ) hstart--;
+			while ( hend <= pose.total_residue() && pose.secstruct(hend) == 'H' ) hend++;
 
 			Size hlen = hend-hstart-1;
-			if (pose.secstruct(hstart) == 'H') hlen++;
-			if (pose.secstruct(hend) == 'H') hlen++;
+			if ( pose.secstruct(hstart) == 'H' ) hlen++;
+			if ( pose.secstruct(hend) == 'H' ) hlen++;
 
-			if (hlen<=ssdep.len_l_) ss_len_scalefactor = ssdep.l_;
-			else if (hlen>=ssdep.len_h_) ss_len_scalefactor = ssdep.h_;
+			if ( hlen<=ssdep.len_l_ ) ss_len_scalefactor = ssdep.l_;
+			else if ( hlen>=ssdep.len_h_ ) ss_len_scalefactor = ssdep.h_;
 			else {
 				Real m = (ssdep.h_-ssdep.l_)/(ssdep.len_h_-ssdep.len_l_);
 				Real b = ssdep.l_-ssdep.len_l_*m;
@@ -298,8 +298,8 @@ fill_hbond_set_by_AHdist_threshold(
 			int const nb2 = tenA_neighbor_graph.get_node(res2)->num_neighbors_counting_self_static();
 
 
-			if (hbond_set.hbond_options().exclude_DNA_DNA() &&
-				rsd1.is_DNA() && rsd2.is_DNA() ) continue;
+			if ( hbond_set.hbond_options().exclude_DNA_DNA() &&
+					rsd1.is_DNA() && rsd2.is_DNA() ) continue;
 
 			identify_hbonds_1way_AHdist(database, rsd1, rsd2, nb1, nb2, AHdist_threshold, hbond_set);
 			identify_hbonds_1way_AHdist(database, rsd2, rsd1, nb1, nb2, AHdist_threshold, hbond_set);
@@ -330,22 +330,22 @@ identify_hbonds_1way(
 	Real ssdep_weight_factor
 )
 {
-debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
+	debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 
 	// <f1,f2> -- derivative vectors
 	//std::pair< Vector, Vector > deriv( Vector(0.0), Vector(0.0 ) );
 	HBondDerivs derivs;
 
 	for ( chemical::AtomIndices::const_iterator
-			hnum  = don_rsd.Hpos_polar().begin(),	hnume = don_rsd.Hpos_polar().end();
+			hnum  = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end();
 			hnum != hnume; ++hnum ) {
 		Size const hatm( *hnum );
 		Size const datm(don_rsd.atom_base(hatm));
 		bool datm_is_bb = don_rsd.atom_is_backbone(datm);
-		if (datm_is_bb){
-			if (exclude_bb && exclude_scb) continue;
+		if ( datm_is_bb ) {
+			if ( exclude_bb && exclude_scb ) continue;
 		} else {
-			if (exclude_sc && exclude_bsc) continue;
+			if ( exclude_sc && exclude_bsc ) continue;
 		}
 		Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
 		Vector const & datm_xyz(don_rsd.atom(datm).xyz());
@@ -354,17 +354,17 @@ debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 				anum  = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
 				anum != anume; ++anum ) {
 			Size const aatm( *anum );
-			if (acc_rsd.atom_is_backbone(aatm)){
-				if (datm_is_bb){
-					if (exclude_bb) continue;
+			if ( acc_rsd.atom_is_backbone(aatm) ) {
+				if ( datm_is_bb ) {
+					if ( exclude_bb ) continue;
 				} else {
-					if (exclude_bsc) continue;
+					if ( exclude_bsc ) continue;
 				}
 			} else {
-				if (datm_is_bb){
-					if (exclude_scb) continue;
+				if ( datm_is_bb ) {
+					if ( exclude_scb ) continue;
 				} else {
-					if (exclude_sc) continue;
+					if ( exclude_sc ) continue;
 				}
 			}
 
@@ -377,7 +377,7 @@ debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
-		debug_assert( base2 > 0 && base != base2 );
+			debug_assert( base2 > 0 && base != base2 );
 
 			hb_energy_deriv( database, hbond_set.hbond_options(),
 				hbe_type, datm_xyz, hatm_xyz,
@@ -386,7 +386,7 @@ debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 				acc_rsd.atom(base2).xyz(),
 				unweighted_energy, evaluate_derivative, derivs);
 
-			if (unweighted_energy >= MAX_HB_ENERGY) continue;
+			if ( unweighted_energy >= MAX_HB_ENERGY ) continue;
 
 			Real environmental_weight
 				(!hbond_set.hbond_options().use_hb_env_dep() ? 1 :
@@ -423,7 +423,7 @@ identify_hbonds_1way(
 	Real ssdep_weight_factor
 )
 {
-debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
+	debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 
 	// <f1,f2> -- derivative vectors
 	//std::pair< Vector, Vector > deriv( Vector(0.0), Vector(0.0 ) );
@@ -435,10 +435,10 @@ debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 		Size const hatm( *hnum );
 		Size const datm(don_rsd.atom_base(hatm));
 		bool datm_is_bb = don_rsd.atom_is_backbone(datm);
-		if (datm_is_bb){
-			if (exclude_bb && exclude_scb) continue;
+		if ( datm_is_bb ) {
+			if ( exclude_bb && exclude_scb ) continue;
 		} else {
-			if (exclude_sc && exclude_bsc) continue;
+			if ( exclude_sc && exclude_bsc ) continue;
 		}
 		Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
 		Vector const & datm_xyz(don_rsd.atom(datm).xyz());
@@ -447,17 +447,17 @@ debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 				anum = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
 				anum != anume; ++anum ) {
 			Size const aatm( *anum );
-			if (acc_rsd.atom_is_backbone(aatm)){
-				if (datm_is_bb){
-					if (exclude_bb) continue;
+			if ( acc_rsd.atom_is_backbone(aatm) ) {
+				if ( datm_is_bb ) {
+					if ( exclude_bb ) continue;
 				} else {
-					if (exclude_bsc) continue;
+					if ( exclude_bsc ) continue;
 				}
 			} else {
-				if (datm_is_bb){
-					if (exclude_scb) continue;
+				if ( datm_is_bb ) {
+					if ( exclude_scb ) continue;
 				} else {
-					if (exclude_sc) continue;
+					if ( exclude_sc ) continue;
 				}
 			}
 
@@ -470,7 +470,7 @@ debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
-		debug_assert( base2 > 0 && base != base2 );
+			debug_assert( base2 > 0 && base != base2 );
 
 			hb_energy_deriv( database, options, hbe_type, datm_xyz, hatm_xyz,
 				acc_rsd.atom(aatm ).xyz(),
@@ -478,7 +478,7 @@ debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 				acc_rsd.atom(base2).xyz(),
 				unweighted_energy, evaluate_derivative, derivs);
 
-			if (unweighted_energy >= MAX_HB_ENERGY) continue;
+			if ( unweighted_energy >= MAX_HB_ENERGY ) continue;
 
 			Real environmental_weight
 				(!options.use_hb_env_dep() ? 1 :
@@ -491,21 +491,21 @@ debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 			emap[hbond] += hbE;
 			switch(get_hbond_weight_type(hbe_type.eval_type())){
 			case hbw_NONE:
-			case hbw_SR_BB:
+			case hbw_SR_BB :
 				emap[hbond_sr_bb] += ssdep_weight_factor*hbE; break;
-			case hbw_LR_BB:
+			case hbw_LR_BB :
 				emap[hbond_lr_bb] += hbE; break;
-			case hbw_SR_BB_SC:
+			case hbw_SR_BB_SC :
 				//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
 				emap[hbond_bb_sc] += hbE;
 				emap[hbond_sr_bb_sc] += hbE; break;
-			case hbw_LR_BB_SC:
+			case hbw_LR_BB_SC :
 				//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
 				emap[hbond_bb_sc] += hbE;
 				emap[hbond_lr_bb_sc] += hbE; break;
-			case hbw_SC:
+			case hbw_SC :
 				emap[hbond_sc] += hbE; break;
-			default:
+			default :
 				tr << "Warning: energy from unexpected HB type ignored "
 					<< hbe_type.eval_type() << std::endl;
 				runtime_assert(false);
@@ -519,59 +519,59 @@ debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 
 void
 identify_hbonds_1way(
-					 HBondDatabase const & database,
-					 conformation::Residue const & don_rsd,
-					 conformation::Residue const & acc_rsd,
-					 Size const don_nb,
-					 Size const acc_nb,
-					 bool const evaluate_derivative,
-					 bool const exclude_bb,  /* exclude if acc=bb and don=bb */
-					 bool const exclude_bsc, /* exclude if acc=bb and don=sc */
-					 bool const exclude_scb, /* exclude if acc=sc and don=bb */
-					 bool const exclude_sc,  /* exclude if acc=sc and don=sc */
-					 HBondOptions const & options,
-					 // output
-					 EnergyMap & emap,
-					 boost::unordered_map<core::Size, core::Size> & num_hbonds,
-					 Real ssdep_weight_factor
-					 )
+	HBondDatabase const & database,
+	conformation::Residue const & don_rsd,
+	conformation::Residue const & acc_rsd,
+	Size const don_nb,
+	Size const acc_nb,
+	bool const evaluate_derivative,
+	bool const exclude_bb,  /* exclude if acc=bb and don=bb */
+	bool const exclude_bsc, /* exclude if acc=bb and don=sc */
+	bool const exclude_scb, /* exclude if acc=sc and don=bb */
+	bool const exclude_sc,  /* exclude if acc=sc and don=sc */
+	HBondOptions const & options,
+	// output
+	EnergyMap & emap,
+	boost::unordered_map<core::Size, core::Size> & num_hbonds,
+	Real ssdep_weight_factor
+)
 {
-debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
+	debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 
 	// <f1,f2> -- derivative vectors
 	//std::pair< Vector, Vector > deriv( Vector(0.0), Vector(0.0 ) );
 	HBondDerivs derivs;
 
 	for ( chemical::AtomIndices::const_iterator
-		 hnum = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end();
-		 hnum != hnume; ++hnum ) {
+			hnum = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end();
+			hnum != hnume; ++hnum ) {
 		Size const hatm( *hnum );
 		Size const datm(don_rsd.atom_base(hatm));
 		bool datm_is_bb = don_rsd.atom_is_backbone(datm);
 
-		if (datm_is_bb){
-			if (exclude_bb && exclude_scb) continue;
+		if ( datm_is_bb ) {
+			if ( exclude_bb && exclude_scb ) continue;
 		} else {
-			if (exclude_sc && exclude_bsc) continue;
+			if ( exclude_sc && exclude_bsc ) continue;
 		}
 		Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
 		Vector const & datm_xyz(don_rsd.atom(datm).xyz());
 
 		for ( chemical::AtomIndices::const_iterator
-			 anum = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
-			 anum != anume; ++anum ) {
+				anum = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
+				anum != anume; ++anum ) {
 			Size const aatm( *anum );
-			if (acc_rsd.atom_is_backbone(aatm)){
-				if (datm_is_bb){
-					if (exclude_bb) continue;
+			if ( acc_rsd.atom_is_backbone(aatm) ) {
+				if ( datm_is_bb ) {
+					if ( exclude_bb ) continue;
 				} else {
-					if (exclude_bsc) continue;
+					if ( exclude_bsc ) continue;
 				}
 			} else {
-				if (datm_is_bb){
-					if (exclude_scb) continue;
+				if ( datm_is_bb ) {
+					if ( exclude_scb ) continue;
 				} else {
-					if (exclude_sc) continue;
+					if ( exclude_sc ) continue;
 				}
 			}
 
@@ -584,22 +584,22 @@ debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
-		debug_assert( base2 > 0 && base != base2 );
+			debug_assert( base2 > 0 && base != base2 );
 
 			hb_energy_deriv( database, options, hbe_type, datm_xyz, hatm_xyz,
-							acc_rsd.atom(aatm ).xyz(),
-							acc_rsd.atom(base ).xyz(),
-							acc_rsd.atom(base2).xyz(),
-							unweighted_energy, evaluate_derivative, derivs);
+				acc_rsd.atom(aatm ).xyz(),
+				acc_rsd.atom(base ).xyz(),
+				acc_rsd.atom(base2).xyz(),
+				unweighted_energy, evaluate_derivative, derivs);
 
-			if (unweighted_energy >= MAX_HB_ENERGY) continue;
+			if ( unweighted_energy >= MAX_HB_ENERGY ) continue;
 			//std::cout << std::endl << "Found a hydrogen bond" << std::endl;
 			num_hbonds[don_rsd.seqpos()]++;
 			num_hbonds[acc_rsd.seqpos()]++;
 
 			Real environmental_weight
-			(!options.use_hb_env_dep() ? 1 :
-			 get_environment_dependent_weight(hbe_type, don_nb, acc_nb, options));
+				(!options.use_hb_env_dep() ? 1 :
+				get_environment_dependent_weight(hbe_type, don_nb, acc_nb, options));
 
 			////////
 			// now we have identified an hbond -> accumulate its energy
@@ -607,26 +607,26 @@ debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 			Real hbE = unweighted_energy /*raw energy*/ * environmental_weight /*env-dep-wt*/;
 			emap[hbond] += hbE;
 			switch(get_hbond_weight_type(hbe_type.eval_type())){
-				case hbw_NONE:
-				case hbw_SR_BB:
-					emap[hbond_sr_bb] += ssdep_weight_factor*hbE; break;
-				case hbw_LR_BB:
-					emap[hbond_lr_bb] += hbE; break;
-				case hbw_SR_BB_SC:
-					//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
-					emap[hbond_bb_sc] += hbE;
-					emap[hbond_sr_bb_sc] += hbE; break;
-				case hbw_LR_BB_SC:
-					//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
-					emap[hbond_bb_sc] += hbE;
-					emap[hbond_lr_bb_sc] += hbE; break;
-				case hbw_SC:
-					emap[hbond_sc] += hbE; break;
-				default:
-					tr << "Warning: energy from unexpected HB type ignored "
+			case hbw_NONE:
+			case hbw_SR_BB :
+				emap[hbond_sr_bb] += ssdep_weight_factor*hbE; break;
+			case hbw_LR_BB :
+				emap[hbond_lr_bb] += hbE; break;
+			case hbw_SR_BB_SC :
+				//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
+				emap[hbond_bb_sc] += hbE;
+				emap[hbond_sr_bb_sc] += hbE; break;
+			case hbw_LR_BB_SC :
+				//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
+				emap[hbond_bb_sc] += hbE;
+				emap[hbond_lr_bb_sc] += hbE; break;
+			case hbw_SC :
+				emap[hbond_sc] += hbE; break;
+			default :
+				tr << "Warning: energy from unexpected HB type ignored "
 					<< hbe_type.eval_type() << std::endl;
-					runtime_assert(false);
-					break;
+				runtime_assert(false);
+				break;
 			}
 			/////////
 
@@ -646,13 +646,13 @@ identify_hbonds_1way_AHdist(
 	HBondSet & hbond_set
 )
 {
-	BOOST_FOREACH(Size const hatm, don_rsd.Hpos_polar()){
+	BOOST_FOREACH ( Size const hatm, don_rsd.Hpos_polar() ) {
 		Size const datm(don_rsd.atom_base(hatm));
 		Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
 		Vector const & datm_xyz(don_rsd.atom(datm).xyz());
 
-		BOOST_FOREACH(Size const aatm, acc_rsd.accpt_pos()){
-			if(hatm_xyz.distance( acc_rsd.xyz( aatm )) > AHdist_threshold) continue;
+		BOOST_FOREACH ( Size const aatm, acc_rsd.accpt_pos() ) {
+			if ( hatm_xyz.distance( acc_rsd.xyz( aatm )) > AHdist_threshold ) continue;
 
 			HBEvalTuple hbe_type(datm, don_rsd, aatm, acc_rsd);
 			int const base ( acc_rsd.atom_base( aatm ) );
@@ -668,7 +668,7 @@ identify_hbonds_1way_AHdist(
 
 			Real environmental_weight
 				(!hbond_set.hbond_options().use_hb_env_dep() ? 1 :
-					get_environment_dependent_weight(hbe_type, don_nb, acc_nb, hbond_set.hbond_options()));
+				get_environment_dependent_weight(hbe_type, don_nb, acc_nb, hbond_set.hbond_options()));
 
 			hbond_set.append_hbond(
 				hatm, don_rsd, aatm, acc_rsd, hbe_type, unweighted_energy, environmental_weight, DUMMY_DERIVS );
@@ -696,14 +696,14 @@ identify_intra_res_hbonds(
 	// <f1,f2> -- derivative vectors
 	HBondDerivs derivs;
 
-	for ( chemical::AtomIndices::const_iterator hnum  = rsd.Hpos_polar().begin(),	hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
+	for ( chemical::AtomIndices::const_iterator hnum  = rsd.Hpos_polar().begin(), hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 		Size const hatm( *hnum );
 		Size const datm(rsd.atom_base(hatm));
 		bool datm_is_bb = rsd.atom_is_backbone(datm);
-		if (datm_is_bb){
-			if (exclude_bb && exclude_scb) continue;
+		if ( datm_is_bb ) {
+			if ( exclude_bb && exclude_scb ) continue;
 		} else {
-			if (exclude_sc && exclude_bsc) continue;
+			if ( exclude_sc && exclude_bsc ) continue;
 		}
 
 		for ( chemical::AtomIndices::const_iterator anum  = rsd.accpt_pos().begin(), anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
@@ -713,21 +713,21 @@ identify_intra_res_hbonds(
 			int const base2( rsd.abase2( aatm ) );
 			runtime_assert( base2 > 0 && base != base2 );
 
-			if (rsd.atom_is_backbone(aatm)){
-				if (datm_is_bb){
-					if (exclude_bb) continue;
+			if ( rsd.atom_is_backbone(aatm) ) {
+				if ( datm_is_bb ) {
+					if ( exclude_bb ) continue;
 				} else {
-					if (exclude_bsc) continue;
+					if ( exclude_bsc ) continue;
 				}
 			} else {
-				if (datm_is_bb){
-					if (exclude_scb) continue;
+				if ( datm_is_bb ) {
+					if ( exclude_scb ) continue;
 				} else {
-					if (exclude_sc) continue;
+					if ( exclude_sc ) continue;
 				}
 			}
 
-			if( rsd.path_distance( aatm, datm ) < 4) continue; //utility_exit_with_message("rsd.path_distance(aatm, datm) < 4"); //consistency check
+			if ( rsd.path_distance( aatm, datm ) < 4 ) continue; //utility_exit_with_message("rsd.path_distance(aatm, datm) < 4"); //consistency check
 
 			Vector const & hatm_xyz( rsd.atom(hatm).xyz());
 			Vector const & datm_xyz( rsd.atom(datm).xyz());
@@ -740,17 +740,17 @@ identify_intra_res_hbonds(
 			HBEvalTuple hbe_type( datm, rsd, aatm, rsd);
 
 			hb_energy_deriv( database, hbond_set.hbond_options(),
-			hbe_type, datm_xyz, hatm_xyz,
-			rsd.atom(aatm ).xyz(),
-			rsd.atom(base ).xyz(),
-			rsd.atom(base2).xyz(),
-			unweighted_energy, evaluate_derivative, derivs);
+				hbe_type, datm_xyz, hatm_xyz,
+				rsd.atom(aatm ).xyz(),
+				rsd.atom(base ).xyz(),
+				rsd.atom(base2).xyz(),
+				unweighted_energy, evaluate_derivative, derivs);
 
-			if (unweighted_energy >= MAX_HB_ENERGY) continue;
+			if ( unweighted_energy >= MAX_HB_ENERGY ) continue;
 
 			Real environmental_weight
 				(!hbond_set.hbond_options().use_hb_env_dep() ? 1 :
-					get_environment_dependent_weight(hbe_type, rsd_nb, rsd_nb, hbond_set.hbond_options()));
+				get_environment_dependent_weight(hbe_type, rsd_nb, rsd_nb, hbond_set.hbond_options()));
 
 			// now we have identified a hbond -> put it into the hbond_set//////
 			hbond_set.append_hbond( hatm, rsd, aatm, rsd, hbe_type, unweighted_energy, environmental_weight, derivs );
@@ -775,8 +775,8 @@ identify_intra_res_hbonds(
 	runtime_assert( calculate_intra_res_hbonds( rsd, options ) );
 	HBondSet hbond_set( options );
 	identify_intra_res_hbonds( database, rsd, rsd_nb, false /*evaluate_derivative*/, hbond_set );
-	for ( Size n = 1; n <= hbond_set.nhbonds(); n++ ){
-		HBond const & hbond_ =	hbond_set.hbond( n );
+	for ( Size n = 1; n <= hbond_set.nhbonds(); n++ ) {
+		HBond const & hbond_ = hbond_set.hbond( n );
 		Real const weighted_energy = hbond_.energy() * hbond_.weight();
 		if ( options.put_intra_into_total() ) {
 			emap[ hbond ]       += weighted_energy;
@@ -798,16 +798,16 @@ identify_intra_res_hbonds(
 
 void
 get_hbond_energies(
-  HBondSet const & hbond_set,
-  EnergyMap & emap
+	HBondSet const & hbond_set,
+	EnergyMap & emap
 )
 {
-	for (Size i = 1; i <= hbond_set.nhbonds(); ++i){
-		if (!hbond_set.allow_hbond(i)) continue;
+	for ( Size i = 1; i <= hbond_set.nhbonds(); ++i ) {
+		if ( !hbond_set.allow_hbond(i) ) continue;
 
 		HBond const & hbond_(hbond_set.hbond(i));
 		HBEvalType const hbe_type = hbond_.eval_type();
-		if( hbe_type == hbe_UNKNOWN ) {
+		if ( hbe_type == hbe_UNKNOWN ) {
 			tr.Error << "ERROR: Unknown HBEvalType for " << hbond_.eval_tuple() << std::endl;
 			utility_exit_with_message("Can't get energy for hbond interactions.");
 		}
@@ -816,21 +816,21 @@ get_hbond_energies(
 		emap[hbond] += hbE;
 		switch(get_hbond_weight_type(hbe_type)){
 		case hbw_NONE:
-		case hbw_SR_BB:
+		case hbw_SR_BB :
 			emap[hbond_sr_bb] += hbE; break;
-		case hbw_LR_BB:
+		case hbw_LR_BB :
 			emap[hbond_lr_bb] += hbE; break;
-		case hbw_SR_BB_SC:
+		case hbw_SR_BB_SC :
 			//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
 			emap[hbond_bb_sc] += hbE;
 			emap[hbond_sr_bb_sc] += hbE; break;
-		case hbw_LR_BB_SC:
+		case hbw_LR_BB_SC :
 			//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
 			emap[hbond_bb_sc] += hbE;
 			emap[hbond_lr_bb_sc] += hbE; break;
-		case hbw_SC:
+		case hbw_SC :
 			emap[hbond_sc] += hbE; break;
-		default:
+		default :
 			tr << "Warning: energy from unexpected HB type ignored "
 				<< hbond << std::endl;
 			runtime_assert(false);
@@ -848,8 +848,8 @@ hb_eval_type_weight(
 {
 	Real weight(0.0);
 
-	if (intra_res) {
-		if ( put_intra_into_total ){
+	if ( intra_res ) {
+		if ( put_intra_into_total ) {
 			weight += weights[hbond]; // typically zero if other weights are non-zero.
 		} else {
 			weight += weights[hbond_intra];
@@ -860,21 +860,21 @@ hb_eval_type_weight(
 
 		switch(get_hbond_weight_type(hbe_type)){
 		case hbw_NONE:
-		case hbw_SR_BB:
+		case hbw_SR_BB :
 			weight += weights[hbond_sr_bb]; break;
-		case hbw_LR_BB:
+		case hbw_LR_BB :
 			weight += weights[hbond_lr_bb]; break;
-		case hbw_SR_BB_SC:
+		case hbw_SR_BB_SC :
 			//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
 			weight += weights[hbond_bb_sc];
 			weight += weights[hbond_sr_bb_sc]; break;
-		case hbw_LR_BB_SC:
+		case hbw_LR_BB_SC :
 			//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
 			weight += weights[hbond_bb_sc];
 			weight += weights[hbond_lr_bb_sc]; break;
-		case hbw_SC:
+		case hbw_SC :
 			weight += weights[hbond_sc]; break;
-		default:
+		default :
 			tr << "Warning: Unexpected HBondWeightType " << get_hbond_weight_type(hbe_type) << std::endl;
 			runtime_assert(false);
 			break;
@@ -933,8 +933,7 @@ get_burial_3(
 	if ( neighbors > threshold_1 ) {
 		if ( neighbors >= threshold_3 ) return 3;
 		else return 2;
-	}
-	else return 1;
+	} else return 1;
 }
 
 core::Real
@@ -960,8 +959,8 @@ hb_env_dep_burial_fd(int const nb1, int const nb2, core::Real low_scale, core::R
 	core::Real frac1 = (nb1-low_nb)/(high_nb-low_nb);
 	core::Real frac2 = (nb2-low_nb)/(high_nb-low_nb);
 
-	if (frac1<0.0) { frac1=0.0; } if (frac1>1.0) { frac1=1.0;}
-	if (frac2<0.0) { frac2=0.0; } if (frac2>1.0) { frac2=1.0;}
+	if ( frac1<0.0 ) { frac1=0.0; } if ( frac1>1.0 ) { frac1=1.0;}
+	if ( frac2<0.0 ) { frac2=0.0; } if ( frac2>1.0 ) { frac2=1.0;}
 
 	core::Real scale1 = (1-frac1)*low_scale + frac1;
 	core::Real scale2 = (1-frac1)*low_scale + frac1;
@@ -982,7 +981,7 @@ get_environment_dependent_weight(
 {
 	Real weight( 1.0 );
 
-	if (options.use_hb_env_dep_new()) {
+	if ( options.use_hb_env_dep_new() ) {
 		///fpd alternate env dependence
 		weight = hb_env_dep_burial_fd(
 			acc_nb, don_nb, options.hb_env_dep_new_low_scale(), options.hb_env_dep_new_low_nneigh(), options.hb_env_dep_new_high_nneigh()
@@ -1007,313 +1006,313 @@ bool
 nonzero_hbond_weight( ScoreFunction const & scorefxn )
 {
 	return ( scorefxn.has_nonzero_weight( hbond_lr_bb ) ||
-					 scorefxn.has_nonzero_weight( hbond_sr_bb ) ||
-					 scorefxn.has_nonzero_weight( hbond_bb_sc ) ||
-					 scorefxn.has_nonzero_weight( hbond_sr_bb_sc ) ||
-					 scorefxn.has_nonzero_weight( hbond_lr_bb_sc ) ||
-					 scorefxn.has_nonzero_weight( hbond_sc ) ||
-					 scorefxn.has_nonzero_weight( hbond_intra ) ||
-					 scorefxn.has_nonzero_weight( hbond ) );
+		scorefxn.has_nonzero_weight( hbond_sr_bb ) ||
+		scorefxn.has_nonzero_weight( hbond_bb_sc ) ||
+		scorefxn.has_nonzero_weight( hbond_sr_bb_sc ) ||
+		scorefxn.has_nonzero_weight( hbond_lr_bb_sc ) ||
+		scorefxn.has_nonzero_weight( hbond_sc ) ||
+		scorefxn.has_nonzero_weight( hbond_intra ) ||
+		scorefxn.has_nonzero_weight( hbond ) );
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 void
 identify_hbonds_1way_membrane(
-    HBondDatabase const & database,
-    conformation::Residue const & don_rsd,
-    conformation::Residue const & acc_rsd,
-    Size const don_nb,
-    Size const acc_nb,
-    bool const evaluate_derivative,
-    bool const exclude_bb,  /* exclude if acc=bb and don=bb */
-    bool const exclude_bsc, /* exclude if acc=bb and don=sc */
-    bool const exclude_scb, /* exclude if acc=sc and don=bb */
-    bool const exclude_sc,  /* exclude if acc=sc and don=sc */
-    // output
-    HBondSet & hbond_set,
-    pose::Pose const & pose
+	HBondDatabase const & database,
+	conformation::Residue const & don_rsd,
+	conformation::Residue const & acc_rsd,
+	Size const don_nb,
+	Size const acc_nb,
+	bool const evaluate_derivative,
+	bool const exclude_bb,  /* exclude if acc=bb and don=bb */
+	bool const exclude_bsc, /* exclude if acc=bb and don=sc */
+	bool const exclude_scb, /* exclude if acc=sc and don=bb */
+	bool const exclude_sc,  /* exclude if acc=sc and don=sc */
+	// output
+	HBondSet & hbond_set,
+	pose::Pose const & pose
 ){
-    assert( don_rsd.seqpos() != acc_rsd.seqpos() );
+	assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 
-    HBondDerivs derivs;
+	HBondDerivs derivs;
 
-    for ( chemical::AtomIndices::const_iterator
-         hnum = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end();
-         hnum != hnume; ++hnum ) {
-        Size const hatm( *hnum );
-        Size const datm(don_rsd.atom_base(hatm));
-        bool datm_is_bb = don_rsd.atom_is_backbone(datm);
+	for ( chemical::AtomIndices::const_iterator
+			hnum = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end();
+			hnum != hnume; ++hnum ) {
+		Size const hatm( *hnum );
+		Size const datm(don_rsd.atom_base(hatm));
+		bool datm_is_bb = don_rsd.atom_is_backbone(datm);
 
-        if (datm_is_bb){
-            if (exclude_bb && exclude_scb) continue;
-        } else {
-            if (exclude_sc && exclude_bsc) continue;
-        }
-        Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
-        Vector const & datm_xyz(don_rsd.atom(datm).xyz());
+		if ( datm_is_bb ) {
+			if ( exclude_bb && exclude_scb ) continue;
+		} else {
+			if ( exclude_sc && exclude_bsc ) continue;
+		}
+		Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
+		Vector const & datm_xyz(don_rsd.atom(datm).xyz());
 
-        for ( chemical::AtomIndices::const_iterator
-             anum = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
-             anum != anume; ++anum ) {
-            Size const aatm( *anum );
-            if (acc_rsd.atom_is_backbone(aatm)){
-                if (datm_is_bb){
-                    if (exclude_bb) continue;
-                } else {
-                    if (exclude_bsc) continue;
-                }
-            } else {
-                if (datm_is_bb){
-                    if (exclude_scb) continue;
-                } else {
-                    if (exclude_sc) continue;
-                }
-            }
+		for ( chemical::AtomIndices::const_iterator
+				anum = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
+				anum != anume; ++anum ) {
+			Size const aatm( *anum );
+			if ( acc_rsd.atom_is_backbone(aatm) ) {
+				if ( datm_is_bb ) {
+					if ( exclude_bb ) continue;
+				} else {
+					if ( exclude_bsc ) continue;
+				}
+			} else {
+				if ( datm_is_bb ) {
+					if ( exclude_scb ) continue;
+				} else {
+					if ( exclude_sc ) continue;
+				}
+			}
 
-            // rough filter for existance of hydrogen bond
-            if ( hatm_xyz.distance_squared( acc_rsd.xyz( aatm ) ) > MAX_R2 ) continue;
+			// rough filter for existance of hydrogen bond
+			if ( hatm_xyz.distance_squared( acc_rsd.xyz( aatm ) ) > MAX_R2 ) continue;
 
-            Real unweighted_energy( 0.0 );
+			Real unweighted_energy( 0.0 );
 
-            HBEvalTuple hbe_type( datm, don_rsd, aatm, acc_rsd);
+			HBEvalTuple hbe_type( datm, don_rsd, aatm, acc_rsd);
 
-            int const base ( acc_rsd.atom_base( aatm ) );
-            int const base2( acc_rsd.abase2( aatm ) );
-            assert( base2 > 0 && base != base2 );
+			int const base ( acc_rsd.atom_base( aatm ) );
+			int const base2( acc_rsd.abase2( aatm ) );
+			assert( base2 > 0 && base != base2 );
 
-            hb_energy_deriv( database, hbond_set.hbond_options(),
-                            hbe_type, datm_xyz, hatm_xyz,
-                            acc_rsd.atom(aatm ).xyz(),
-                            acc_rsd.atom(base ).xyz(),
-                            acc_rsd.atom(base2).xyz(),
-                            unweighted_energy, evaluate_derivative, derivs);
+			hb_energy_deriv( database, hbond_set.hbond_options(),
+				hbe_type, datm_xyz, hatm_xyz,
+				acc_rsd.atom(aatm ).xyz(),
+				acc_rsd.atom(base ).xyz(),
+				acc_rsd.atom(base2).xyz(),
+				unweighted_energy, evaluate_derivative, derivs);
 
-            if ( unweighted_energy >= MAX_HB_ENERGY ) continue;
+			if ( unweighted_energy >= MAX_HB_ENERGY ) continue;
 
-            //pba membrane depth dependent correction to the environmental_weight
-            Real environmental_weight(
-                                      get_membrane_depth_dependent_weight(pose, don_nb, acc_nb, hatm_xyz,
-                                                                          acc_rsd.atom(aatm ).xyz()));
+			//pba membrane depth dependent correction to the environmental_weight
+			Real environmental_weight(
+				get_membrane_depth_dependent_weight(pose, don_nb, acc_nb, hatm_xyz,
+				acc_rsd.atom(aatm ).xyz()));
 
-            /// Add Membrane hbonds to the hydrogen bonds set
-            hbond_set.append_hbond( hatm, don_rsd, aatm, acc_rsd,
-                                   hbe_type, unweighted_energy, environmental_weight, derivs );
+			/// Add Membrane hbonds to the hydrogen bonds set
+			hbond_set.append_hbond( hatm, don_rsd, aatm, acc_rsd,
+				hbe_type, unweighted_energy, environmental_weight, derivs );
 
-        } // loop over acceptors
-    } // loop over donors
+		} // loop over acceptors
+	} // loop over donors
 }
 
 void
 identify_hbonds_1way_membrane(
-    HBondDatabase const & database,
-    conformation::Residue const & don_rsd,
-    conformation::Residue const & acc_rsd,
-    Size const don_nb,
-    Size const acc_nb,
-    bool const evaluate_derivative,
-    bool const exclude_bb,  /* exclude if acc=bb and don=bb */
-    bool const exclude_bsc, /* exclude if acc=bb and don=sc */
-    bool const exclude_scb, /* exclude if acc=sc and don=bb */
-    bool const exclude_sc,  /* exclude if acc=sc and don=sc */
-    HBondOptions const & options,
-    EnergyMap & emap,
-    pose::Pose const & pose
-    )
+	HBondDatabase const & database,
+	conformation::Residue const & don_rsd,
+	conformation::Residue const & acc_rsd,
+	Size const don_nb,
+	Size const acc_nb,
+	bool const evaluate_derivative,
+	bool const exclude_bb,  /* exclude if acc=bb and don=bb */
+	bool const exclude_bsc, /* exclude if acc=bb and don=sc */
+	bool const exclude_scb, /* exclude if acc=sc and don=bb */
+	bool const exclude_sc,  /* exclude if acc=sc and don=sc */
+	HBondOptions const & options,
+	EnergyMap & emap,
+	pose::Pose const & pose
+)
 {
-    assert( don_rsd.seqpos() != acc_rsd.seqpos() );
+	assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 
-    HBondDerivs derivs;
+	HBondDerivs derivs;
 
-    for ( chemical::AtomIndices::const_iterator
-         hnum = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end();
-         hnum != hnume; ++hnum ) {
-        Size const hatm( *hnum );
-        Size const datm(don_rsd.atom_base(hatm));
-        bool datm_is_bb = don_rsd.atom_is_backbone(datm);
+	for ( chemical::AtomIndices::const_iterator
+			hnum = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end();
+			hnum != hnume; ++hnum ) {
+		Size const hatm( *hnum );
+		Size const datm(don_rsd.atom_base(hatm));
+		bool datm_is_bb = don_rsd.atom_is_backbone(datm);
 
-        if (datm_is_bb){
-            if (exclude_bb && exclude_scb) continue;
-        } else {
-            if (exclude_sc && exclude_bsc) continue;
-        }
-        Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
-        Vector const & datm_xyz(don_rsd.atom(datm).xyz());
+		if ( datm_is_bb ) {
+			if ( exclude_bb && exclude_scb ) continue;
+		} else {
+			if ( exclude_sc && exclude_bsc ) continue;
+		}
+		Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
+		Vector const & datm_xyz(don_rsd.atom(datm).xyz());
 
-        for ( chemical::AtomIndices::const_iterator
-             anum = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
-             anum != anume; ++anum ) {
-            Size const aatm( *anum );
-            if (acc_rsd.atom_is_backbone(aatm)){
-                if (datm_is_bb){
-                    if (exclude_bb) continue;
-                } else {
-                    if (exclude_bsc) continue;
-                }
-            } else {
-                if (datm_is_bb){
-                    if (exclude_scb) continue;
-                } else {
-                    if (exclude_sc) continue;
-                }
-            }
+		for ( chemical::AtomIndices::const_iterator
+				anum = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
+				anum != anume; ++anum ) {
+			Size const aatm( *anum );
+			if ( acc_rsd.atom_is_backbone(aatm) ) {
+				if ( datm_is_bb ) {
+					if ( exclude_bb ) continue;
+				} else {
+					if ( exclude_bsc ) continue;
+				}
+			} else {
+				if ( datm_is_bb ) {
+					if ( exclude_scb ) continue;
+				} else {
+					if ( exclude_sc ) continue;
+				}
+			}
 
-            // rough filter for existance of hydrogen bond
-            if ( hatm_xyz.distance_squared( acc_rsd.xyz( aatm ) ) > MAX_R2 ) continue;
+			// rough filter for existance of hydrogen bond
+			if ( hatm_xyz.distance_squared( acc_rsd.xyz( aatm ) ) > MAX_R2 ) continue;
 
-            Real unweighted_energy( 0.0 );
+			Real unweighted_energy( 0.0 );
 
-            HBEvalTuple hbe_type( datm, don_rsd, aatm, acc_rsd);
+			HBEvalTuple hbe_type( datm, don_rsd, aatm, acc_rsd);
 
-            int const base ( acc_rsd.atom_base( aatm ) );
-            int const base2( acc_rsd.abase2( aatm ) );
-            assert( base2 > 0 && base != base2 );
+			int const base ( acc_rsd.atom_base( aatm ) );
+			int const base2( acc_rsd.abase2( aatm ) );
+			assert( base2 > 0 && base != base2 );
 
-            hb_energy_deriv( database, options,
-                            hbe_type, datm_xyz, hatm_xyz,
-                            acc_rsd.atom(aatm ).xyz(),
-                            acc_rsd.atom(base ).xyz(),
-                            acc_rsd.atom(base2).xyz(),
-                            unweighted_energy, evaluate_derivative, derivs);
+			hb_energy_deriv( database, options,
+				hbe_type, datm_xyz, hatm_xyz,
+				acc_rsd.atom(aatm ).xyz(),
+				acc_rsd.atom(base ).xyz(),
+				acc_rsd.atom(base2).xyz(),
+				unweighted_energy, evaluate_derivative, derivs);
 
-            if (unweighted_energy >= MAX_HB_ENERGY) continue;
+			if ( unweighted_energy >= MAX_HB_ENERGY ) continue;
 
-            //pba membrane depth dependent weight
+			//pba membrane depth dependent weight
 
-            Real environmental_weight(
-                                      get_membrane_depth_dependent_weight(pose, don_nb, acc_nb, hatm_xyz,
-                                                                          acc_rsd.atom(aatm ).xyz()));
+			Real environmental_weight(
+				get_membrane_depth_dependent_weight(pose, don_nb, acc_nb, hatm_xyz,
+				acc_rsd.atom(aatm ).xyz()));
 
-            ////////
-            // now we have identified an hbond -> accumulate its energy
+			////////
+			// now we have identified an hbond -> accumulate its energy
 
-            Real hbE = unweighted_energy /*raw energy*/ * environmental_weight /*env-dep-wt*/;
-            emap[hbond] += hbE;
-            switch(get_hbond_weight_type(hbe_type.eval_type())){
-                case hbw_NONE:
-                case hbw_SR_BB:
-                    emap[hbond_sr_bb] += hbE; break;
-                case hbw_LR_BB:
-                    emap[hbond_lr_bb] += hbE; break;
-                case hbw_SR_BB_SC:
-                    //Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
-                    emap[hbond_bb_sc] += hbE;
-                    emap[hbond_sr_bb_sc] += hbE; break;
-                case hbw_LR_BB_SC:
-                    //Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
-                    emap[hbond_bb_sc] += hbE;
-                    emap[hbond_lr_bb_sc] += hbE; break;
-                case hbw_SC:
-                    emap[hbond_sc] += hbE; break;
-                default:
-                    tr << "Warning: energy from unexpected HB type ignored "
-                    << hbe_type.eval_type() << std::endl;
-                    runtime_assert(false);
-                    break;
-            }
-            /////////
+			Real hbE = unweighted_energy /*raw energy*/ * environmental_weight /*env-dep-wt*/;
+			emap[hbond] += hbE;
+			switch(get_hbond_weight_type(hbe_type.eval_type())){
+			case hbw_NONE:
+			case hbw_SR_BB :
+				emap[hbond_sr_bb] += hbE; break;
+			case hbw_LR_BB :
+				emap[hbond_lr_bb] += hbE; break;
+			case hbw_SR_BB_SC :
+				//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
+				emap[hbond_bb_sc] += hbE;
+				emap[hbond_sr_bb_sc] += hbE; break;
+			case hbw_LR_BB_SC :
+				//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
+				emap[hbond_bb_sc] += hbE;
+				emap[hbond_lr_bb_sc] += hbE; break;
+			case hbw_SC :
+				emap[hbond_sc] += hbE; break;
+			default :
+				tr << "Warning: energy from unexpected HB type ignored "
+					<< hbe_type.eval_type() << std::endl;
+				runtime_assert(false);
+				break;
+			}
+			/////////
 
-        } // loop over acceptors
-    } // loop over donors
+		} // loop over acceptors
+	} // loop over donors
 }
 
 Real
 get_membrane_depth_dependent_weight(
-    pose::Pose const & pose,
-    int const don_nb,
-    int const acc_nb,
-    Vector const & Hxyz, // proton
-    Vector const & Axyz  // acceptor
+	pose::Pose const & pose,
+	int const don_nb,
+	int const acc_nb,
+	Vector const & Hxyz, // proton
+	Vector const & Axyz  // acceptor
 )
 {
-    Real wat_weight(1.0), memb_weight(1.0), total_weight(1.0);
+	Real wat_weight(1.0), memb_weight(1.0), total_weight(1.0);
 
-    // water phase smooth_hb_env_dep
-    wat_weight = hb_env_dep_burial_lin( acc_nb, don_nb );
-
-
-    // Initialize to defaults (taken from Barth, 2007)
-    Vector normal( 0, 0, 1 );
-    Vector center( 0, 0, 0 );
-    Real thickness( 15.0 );
-    Real steepness( 10.0 );
+	// water phase smooth_hb_env_dep
+	wat_weight = hb_env_dep_burial_lin( acc_nb, don_nb );
 
 
-    if ( pose.conformation().is_membrane() ) {
+	// Initialize to defaults (taken from Barth, 2007)
+	Vector normal( 0, 0, 1 );
+	Vector center( 0, 0, 0 );
+	Real thickness( 15.0 );
+	Real steepness( 10.0 );
 
-        center = pose.conformation().membrane_info()->membrane_center();
-        normal = pose.conformation().membrane_info()->membrane_normal();
-        thickness = pose.conformation().membrane_info()->membrane_thickness();
-        steepness = pose.conformation().membrane_info()->membrane_steepness();
 
-    } else {
+	if ( pose.conformation().is_membrane() ) {
 
-        normal = MembraneEmbed_from_pose( pose ).normal();
-        center = MembraneEmbed_from_pose( pose ).center();
-        thickness = Membrane_FAEmbed_from_pose( pose ).thickness();
-        steepness = Membrane_FAEmbed_from_pose( pose ).steepness();
-    }
+		center = pose.conformation().membrane_info()->membrane_center();
+		normal = pose.conformation().membrane_info()->membrane_normal();
+		thickness = pose.conformation().membrane_info()->membrane_thickness();
+		steepness = pose.conformation().membrane_info()->membrane_steepness();
 
-    // Hdonor depth
-    Real fa_depth_H = dot(Hxyz-center, normal); // non consistent z_position
-    Real internal_product = std::abs(fa_depth_H);
-    Real z = internal_product;
-    z /= thickness;
-    Real zn = std::pow( z, steepness );
-    Real fa_proj_H = zn/(1 + zn);
+	} else {
 
-    // Acc depth
-    Real fa_depth_A = dot(Axyz-center, normal);
-    internal_product = std::abs(fa_depth_A);
-    z = internal_product;
-    z /= thickness;
-    zn = std::pow( z, steepness );
-    Real fa_proj_A = zn/(1 + zn);
+		normal = MembraneEmbed_from_pose( pose ).normal();
+		center = MembraneEmbed_from_pose( pose ).center();
+		thickness = Membrane_FAEmbed_from_pose( pose ).thickness();
+		steepness = Membrane_FAEmbed_from_pose( pose ).steepness();
+	}
 
-    Real fa_proj_AH = 0.5*(fa_proj_H+fa_proj_A);
-    total_weight = fa_proj_AH * wat_weight + (1-fa_proj_AH) * memb_weight;
+	// Hdonor depth
+	Real fa_depth_H = dot(Hxyz-center, normal); // non consistent z_position
+	Real internal_product = std::abs(fa_depth_H);
+	Real z = internal_product;
+	z /= thickness;
+	Real zn = std::pow( z, steepness );
+	Real fa_proj_H = zn/(1 + zn);
 
-    return total_weight;
+	// Acc depth
+	Real fa_depth_A = dot(Axyz-center, normal);
+	internal_product = std::abs(fa_depth_A);
+	z = internal_product;
+	z /= thickness;
+	zn = std::pow( z, steepness );
+	Real fa_proj_A = zn/(1 + zn);
+
+	Real fa_proj_AH = 0.5*(fa_proj_H+fa_proj_A);
+	total_weight = fa_proj_AH * wat_weight + (1-fa_proj_AH) * memb_weight;
+
+	return total_weight;
 }
 
 Real
 get_membrane_depth_dependent_weight(
-    Vector const & normal,
-    Vector const & center,
-    Real const & thickness,
-    Real const & steepness,
-    int const don_nb,
-    int const acc_nb,
-    Vector const & Hxyz, // proton
-    Vector const & Axyz  // acceptor
+	Vector const & normal,
+	Vector const & center,
+	Real const & thickness,
+	Real const & steepness,
+	int const don_nb,
+	int const acc_nb,
+	Vector const & Hxyz, // proton
+	Vector const & Axyz  // acceptor
 )
 {
-    Real wat_weight(1.0), memb_weight(1.0), total_weight(1.0);
+	Real wat_weight(1.0), memb_weight(1.0), total_weight(1.0);
 
-    // water phase smooth_hb_env_dep
-    wat_weight = hb_env_dep_burial_lin( acc_nb, don_nb );
+	// water phase smooth_hb_env_dep
+	wat_weight = hb_env_dep_burial_lin( acc_nb, don_nb );
 
-    // membrane phase dependent weight
-    // Hdonor depth
-    Real fa_depth_H = dot(Hxyz-center, normal);
-    Real internal_product = std::abs(fa_depth_H);
-    Real z = internal_product;
-    z /= thickness;
-    Real zn = std::pow( z, steepness );
-    Real fa_proj_H = zn/(1 + zn);
+	// membrane phase dependent weight
+	// Hdonor depth
+	Real fa_depth_H = dot(Hxyz-center, normal);
+	Real internal_product = std::abs(fa_depth_H);
+	Real z = internal_product;
+	z /= thickness;
+	Real zn = std::pow( z, steepness );
+	Real fa_proj_H = zn/(1 + zn);
 
-    // Acc depth
-    Real fa_depth_A = dot(Axyz-center, normal);
-    internal_product = std::abs(fa_depth_A);
-    z = internal_product;
-    z /= thickness;
-    zn = std::pow( z, steepness );
-    Real fa_proj_A = zn/(1 + zn);
+	// Acc depth
+	Real fa_depth_A = dot(Axyz-center, normal);
+	internal_product = std::abs(fa_depth_A);
+	z = internal_product;
+	z /= thickness;
+	zn = std::pow( z, steepness );
+	Real fa_proj_A = zn/(1 + zn);
 
-    Real fa_proj_AH = 0.5*(fa_proj_H+fa_proj_A);
-    total_weight = fa_proj_AH * wat_weight + (1-fa_proj_AH) * memb_weight;
+	Real fa_proj_AH = 0.5*(fa_proj_H+fa_proj_A);
+	total_weight = fa_proj_AH * wat_weight + (1-fa_proj_AH) * memb_weight;
 
-    return total_weight;
+	return total_weight;
 }
 
 } // hbonds

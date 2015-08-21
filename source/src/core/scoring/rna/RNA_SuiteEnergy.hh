@@ -40,13 +40,13 @@ public:
 	RNA_SuiteEnergy( RNA_EnergyMethodOptions const & options );
 
 	// clone
-	virtual	methods::EnergyMethodOP	clone() const { return methods::EnergyMethodOP( new RNA_SuiteEnergy( options_ ) ); }
+	virtual methods::EnergyMethodOP clone() const { return methods::EnergyMethodOP( new RNA_SuiteEnergy( options_ ) ); }
 
-	virtual	void
+	virtual void
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
 
 	// scoring
-	virtual	void
+	virtual void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
@@ -55,7 +55,7 @@ public:
 		EnergyMap & emap
 	) const;
 
-	virtual	void
+	virtual void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
@@ -63,7 +63,7 @@ public:
 		EnergyMap &
 	) const {}
 
-	virtual	void
+	virtual void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
@@ -76,32 +76,32 @@ public:
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	) const;
 
-	virtual	bool
+	virtual bool
 	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return false; }
 
-	virtual	bool
+	virtual bool
 	defines_intrares_dof_derivatives( pose::Pose const & ) const { return false; }
 
-	virtual	bool
+	virtual bool
 	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
 
-	virtual	bool
+	virtual bool
 	defines_residue_pair_energy(
 		pose::Pose const &,
 		Size res1,
 		Size res2
-	) const {	return ( res1 == (res2+1) || res1 == (res2-1) ); }
+	) const { return ( res1 == (res2+1) || res1 == (res2-1) ); }
 
-	virtual	Distance atomic_interaction_cutoff() const { return 0; }
+	virtual Distance atomic_interaction_cutoff() const { return 0; }
 
-	virtual	void
+	virtual void
 	indicate_required_context_graphs( utility::vector1< bool > & ) const {};
 
 	virtual methods::LongRangeEnergyType
 	long_range_type() const { return methods::rna_suite_lr; }
 
 private:
-	virtual	Size version() const { return 1; }
+	virtual Size version() const { return 1; }
 
 	bool get_f1_f2(
 		id::TorsionID const & torsion_id,
@@ -113,19 +113,19 @@ private:
 
 	void
 	eval_residue_pair_derivatives(
-																conformation::Residue const & rsd1,
-																conformation::Residue const & rsd2,
-																pose::Pose const & pose,
-																Real const & weights,
-																utility::vector1<DerivVectorPair> & r1_atom_derivs,
-																utility::vector1<DerivVectorPair> & r2_atom_derivs,
-																RNA_SuitePotentialCOP rna_suite_potential ) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		Real const & weights,
+		utility::vector1<DerivVectorPair> & r1_atom_derivs,
+		utility::vector1<DerivVectorPair> & r2_atom_derivs,
+		RNA_SuitePotentialCOP rna_suite_potential ) const;
 
 private:
 
 	RNA_EnergyMethodOptions const & options_;
 	RNA_SuitePotentialOP rna_suite_potential_;
-  RNA_SuitePotentialOP rna_suite_potential_for_suiteness_bonus_;
+	RNA_SuitePotentialOP rna_suite_potential_for_suiteness_bonus_;
 
 };
 

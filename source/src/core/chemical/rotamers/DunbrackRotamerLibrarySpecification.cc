@@ -42,7 +42,7 @@ DunbrackRotamerLibrarySpecificationCreator::keyname() const {
 // Specification Functions
 
 DunbrackRotamerLibrarySpecification::DunbrackRotamerLibrarySpecification():
-		aa_(aa_unk)
+	aa_(aa_unk)
 {}
 
 DunbrackRotamerLibrarySpecification::DunbrackRotamerLibrarySpecification( AA aa_setting )
@@ -54,7 +54,7 @@ DunbrackRotamerLibrarySpecification::DunbrackRotamerLibrarySpecification( std::i
 {
 	std::string tag;
 	input >> tag;
-	if( ! input ) {
+	if ( ! input ) {
 		utility_exit_with_message("Cannot find AA parameter on Dunbrack rotamer input line.");
 	}
 	aa( aa_from_name( tag ) );
@@ -64,9 +64,9 @@ DunbrackRotamerLibrarySpecification::~DunbrackRotamerLibrarySpecification() {}
 
 void
 DunbrackRotamerLibrarySpecification::aa( AA aa_setting ) {
-  if( aa_setting > num_canonical_aas && ! core::chemical::is_canonical_D_aa(aa_setting) ) {
-    utility_exit_with_message("Cannot have a Dunbrack rotamer library with a non-cannonical amino acid." );
-  }
+	if ( aa_setting > num_canonical_aas && ! core::chemical::is_canonical_D_aa(aa_setting) ) {
+		utility_exit_with_message("Cannot have a Dunbrack rotamer library with a non-cannonical amino acid." );
+	}
 	aa_ = aa_setting;
 }
 std::string

@@ -136,7 +136,7 @@ public:
 		return 1;
 	}
 
- 	virtual GridCoord level_2_grid_coord( core::Size level ) const {
+	virtual GridCoord level_2_grid_coord( core::Size level ) const {
 		GridCoord simple_coord( 1, level );
 		return simple_coord;
 	}

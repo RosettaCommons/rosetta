@@ -25,73 +25,73 @@ namespace protocols {
 namespace stepwise {
 namespace setup {
 
-	class StepWiseCSA_JobDistributor: public StepWiseJobDistributor {
+class StepWiseCSA_JobDistributor: public StepWiseJobDistributor {
 
-	public:
+public:
 
-		StepWiseCSA_JobDistributor( stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo,
-																std::string const silent_file,
-																core::Size const nstruct,
-																core::Size const csa_bank_size,
-																core::Real const csa_rmsd,
-																bool const output_round_silent_files );
+	StepWiseCSA_JobDistributor( stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo,
+		std::string const silent_file,
+		core::Size const nstruct,
+		core::Size const csa_bank_size,
+		core::Real const csa_rmsd,
+		bool const output_round_silent_files );
 
-		//destructor
-		~StepWiseCSA_JobDistributor();
+	//destructor
+	~StepWiseCSA_JobDistributor();
 
-	public:
+public:
 
-		virtual
-		void
-		apply( core::pose::Pose & pose );
+	virtual
+	void
+	apply( core::pose::Pose & pose );
 
-		virtual
-		void
-		initialize( core::pose::Pose const & pose );
+	virtual
+	void
+	initialize( core::pose::Pose const & pose );
 
-		virtual
-		bool
-		has_another_job();
+	virtual
+	bool
+	has_another_job();
 
-	private:
+private:
 
-		Size get_updates( core::io::silent::SilentStructCOP s ) const;
-		void set_updates( core::io::silent::SilentStructOP s, Size const updates ) const;
+	Size get_updates( core::io::silent::SilentStructCOP s ) const;
+	void set_updates( core::io::silent::SilentStructOP s, Size const updates ) const;
 
-		void
-		update_bank( core::pose::Pose & pose );
+	void
+	update_bank( core::pose::Pose & pose );
 
-		void
-		read_in_silent_file();
+	void
+	read_in_silent_file();
 
-		void
-		write_out_silent_file( std::string const silent_file = "" );
+	void
+	write_out_silent_file( std::string const silent_file = "" );
 
-		void
-		write_out_round_silent_file();
+	void
+	write_out_round_silent_file();
 
-		void
-		put_lock_on_silent_file();
+	void
+	put_lock_on_silent_file();
 
-		void
-		free_lock_on_silent_file();
+	void
+	free_lock_on_silent_file();
 
-		bool
-		check_for_closeness( core::pose::Pose & pose_test,
-												 core::pose::Pose const & full_model_pose ) const;
+	bool
+	check_for_closeness( core::pose::Pose & pose_test,
+		core::pose::Pose const & full_model_pose ) const;
 
-	private:
+private:
 
-		std::string const lock_file;
-		core::Size const csa_bank_size_;
-		core::Size const total_updates_;
-		core::Real const csa_rmsd_;
-		bool const output_round_silent_files_;
-		core::Size total_updates_so_far_;
-		core::io::silent::SilentFileDataOP sfd_;
+	std::string const lock_file;
+	core::Size const csa_bank_size_;
+	core::Size const total_updates_;
+	core::Real const csa_rmsd_;
+	bool const output_round_silent_files_;
+	core::Size total_updates_so_far_;
+	core::io::silent::SilentFileDataOP sfd_;
 
 
-	};
+};
 
 } //setup
 } //stepwise

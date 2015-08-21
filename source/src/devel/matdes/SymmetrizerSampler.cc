@@ -71,14 +71,14 @@ SymmetrizerSampler::SymmetrizerSampler():
 	radial_disp_step_(0),
 	current_angle_(0),
 	current_radial_disp_(0)
-	{ }
+{ }
 
 void
 SymmetrizerSampler::set_angle_range(Real angle_min, Real angle_max, Real angle_step) {
 	runtime_assert_msg(angle_step < angle_max - angle_min, "angle_step has to be smaller than (angle_max - angle_min)");
 	angle_min_ = angle_min;
 	angle_max_ = angle_max;
-	angle_step_	=	angle_step;
+	angle_step_ = angle_step;
 	current_angle_ = angle_min;
 	TR << "angle range set to [" << angle_min << ", " << angle_max << "]" << std::endl;
 }
@@ -88,7 +88,7 @@ SymmetrizerSampler::set_radial_disp_range(Real radial_disp_min, Real radial_disp
 	runtime_assert_msg(radial_disp_step < radial_disp_max - radial_disp_min, "radial_disp_step has to be smaller than (radial_disp_max - radial_disp_min");
 	radial_disp_min_ = radial_disp_min;
 	radial_disp_max_ = radial_disp_max;
-	radial_disp_step_	=	-1*radial_disp_step;
+	radial_disp_step_ = -1*radial_disp_step;
 	current_radial_disp_ = radial_disp_min;
 	TR << "radial_disp range set to [" << radial_disp_min << ", " << radial_disp_max << "]" << std::endl;
 }
@@ -102,14 +102,15 @@ SymmetrizerSampler::step() {
 	Real new_angle = current_angle_ + angle_step_;
 	Real new_radial_disp = current_radial_disp_ + radial_disp_step_;
 
-	if(new_angle < angle_max_) {
+	if ( new_angle < angle_max_ ) {
 		current_angle_ = new_angle;
-  }	else {
+	} else {
 		current_angle_ = angle_min_;
-		if( new_radial_disp < radial_disp_max_)
+		if ( new_radial_disp < radial_disp_max_ ) {
 			current_radial_disp_ = new_radial_disp;
-		else
+		} else {
 			current_radial_disp_ = radial_disp_min_;
+		}
 	}
 	TR << "\tafter : radial_disp = " << current_radial_disp_ << " angle = " << current_angle_ << std::endl;
 }

@@ -19,18 +19,18 @@
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
-    namespace motif_grafting {
-        namespace movers {
-            class MotifGraftCreator : public moves::MoverCreator
-            {
-                public:
-            	    virtual moves::MoverOP create_mover() const;
-            	    virtual std::string keyname() const;
-            	    static  std::string mover_name();
-            };
+namespace motif_grafting {
+namespace movers {
+class MotifGraftCreator : public moves::MoverCreator
+{
+public:
+	virtual moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
+	static  std::string mover_name();
+};
 
-        }
-    }
+}
+}
 }
 
 #endif

@@ -49,18 +49,18 @@ namespace etrie {
 class GenericResidueConnectionData
 {
 private:
-   utility::vector1< Size > path_distances_to_connection_points_;
+	utility::vector1< Size > path_distances_to_connection_points_;
 
 public:
 
 	GenericResidueConnectionData();
 
-   GenericResidueConnectionData( Size n_connections );
+	GenericResidueConnectionData( Size n_connections );
 
 	inline
 	bool operator < ( GenericResidueConnectionData const & other ) const
 	{
-	debug_assert( size() == other.size() );
+		debug_assert( size() == other.size() );
 		for ( Size ii = 1; ii <= path_distances_to_connection_points_.size(); ++ii ) {
 			if ( path_distances_to_connection_points_[ ii ] < other.path_distances_to_connection_points_[ ii ] ) {
 				return true;
@@ -74,7 +74,7 @@ public:
 	inline
 	bool operator == ( GenericResidueConnectionData const & other ) const
 	{
-	debug_assert( size() == other.size() );
+		debug_assert( size() == other.size() );
 		for ( Size ii = 1; ii <= path_distances_to_connection_points_.size(); ++ii ) {
 			if ( path_distances_to_connection_points_[ ii ] != other.path_distances_to_connection_points_[ ii ] ) {
 				return false;
@@ -125,7 +125,7 @@ public:
 	inline
 	bool operator < ( CountPairDataGeneric const & other ) const
 	{
-		for( Size ii = 1; ii <= residue_connection_data_.size(); ++ii ) {
+		for ( Size ii = 1; ii <= residue_connection_data_.size(); ++ii ) {
 			if ( residue_connection_data_[ ii ] < other.residue_connection_data_[ ii ] ) {
 				return true;
 			} else if ( other.residue_connection_data_[ ii ] != residue_connection_data_[ ii ] ) {
@@ -139,9 +139,10 @@ public:
 	bool operator == ( CountPairDataGeneric const & other ) const
 	{
 
-		for (Size ii = 1; ii <= residue_connection_data_.size(); ++ii ) {
-			if (residue_connection_data_[ ii ] != other.residue_connection_data_[ ii ])
+		for ( Size ii = 1; ii <= residue_connection_data_.size(); ++ii ) {
+			if ( residue_connection_data_[ ii ] != other.residue_connection_data_[ ii ] ) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -155,7 +156,7 @@ public:
 	Size
 	conn_dist( Size which_connection ) const
 	{
-	debug_assert ( residue_connection_data_[ which_connection+1 ].size() == 1 );
+		debug_assert ( residue_connection_data_[ which_connection+1 ].size() == 1 );
 		return residue_connection_data_[ which_connection+1 ][1];
 	}
 

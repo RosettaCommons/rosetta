@@ -43,8 +43,8 @@
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 HelixCapFeatures::HelixCapFeatures()
 {}
@@ -167,75 +167,76 @@ HelixCapFeatures::report_features(
 	using namespace basic::database;
 
 	std::string sec_structure_statement_string=
-	"INSERT INTO secondary_structure_punctuation (struct_id, resnum, dssp, type, im4, im3, im2, im1, ip1, ip2, ip3, ip4 ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+		"INSERT INTO secondary_structure_punctuation (struct_id, resnum, dssp, type, im4, im3, im2, im1, ip1, ip2, ip3, ip4 ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 
-        cppdb::statement stmt(basic::database::safely_prepare_statement(sec_structure_statement_string,db_session));
+	cppdb::statement stmt(basic::database::safely_prepare_statement(sec_structure_statement_string,db_session));
 
-        core::scoring::dssp::Dssp all_dssp(pose);
+	core::scoring::dssp::Dssp all_dssp(pose);
 
-        for (Size i = 5; i <= pose.total_residue()-5; ++i) {
+	for ( Size i = 5; i <= pose.total_residue()-5; ++i ) {
 
-                core::conformation::Residue const & resi = pose.residue(i);
-                if(!resi.is_protein()) continue;
+		core::conformation::Residue const & resi = pose.residue(i);
+		if ( !resi.is_protein() ) continue;
 
-                std::string ss (1, all_dssp.get_dssp_secstruct(i));
-                std::string ssC (1, all_dssp.get_dssp_secstruct(i+1));
-                std::string ssN (1, all_dssp.get_dssp_secstruct(i-1));
+		std::string ss (1, all_dssp.get_dssp_secstruct(i));
+		std::string ssC (1, all_dssp.get_dssp_secstruct(i+1));
+		std::string ssN (1, all_dssp.get_dssp_secstruct(i-1));
 
-                if( (ss == "G") || (ss == "I") ){
-                  ss = "H";}
-                if( (ssC == "G") || (ssC == "I") ){
-                  ssC = "H";}
-                if( (ssN == "G") || (ssN == "I") ){
-                  ssN = "H";}
+		if ( (ss == "G") || (ss == "I") ) {
+			ss = "H";
+		}
+		if ( (ssC == "G") || (ssC == "I") ) {
+			ssC = "H";
+		}
+		if ( (ssN == "G") || (ssN == "I") ) {
+			ssN = "H";
+		}
 
-                if( (ss != ssC) && ((ss == "H") || (ss == "E")) ){
-                        std::string ct = "cterm";
+		if ( (ss != ssC) && ((ss == "H") || (ss == "E")) ) {
+			std::string ct = "cterm";
 
-                        stmt.bind(1,struct_id);
-                        stmt.bind(2,i);
-                        stmt.bind(3,ss);
-                        stmt.bind(4,ct);
-                        stmt.bind(5,i-4);
-                        stmt.bind(6,i-3);
-                        stmt.bind(7,i-2);
-                        stmt.bind(8,i-1);
-                        stmt.bind(9,i+1);
-                        stmt.bind(10,i+2);
-                        stmt.bind(11,i+3);
-                        stmt.bind(12,i+4);
-												basic::database::safely_write_to_database(stmt);
-												}
+			stmt.bind(1,struct_id);
+			stmt.bind(2,i);
+			stmt.bind(3,ss);
+			stmt.bind(4,ct);
+			stmt.bind(5,i-4);
+			stmt.bind(6,i-3);
+			stmt.bind(7,i-2);
+			stmt.bind(8,i-1);
+			stmt.bind(9,i+1);
+			stmt.bind(10,i+2);
+			stmt.bind(11,i+3);
+			stmt.bind(12,i+4);
+			basic::database::safely_write_to_database(stmt);
+		} else if ( (ss != ssN) && ((ss == "H") || (ss == "E")) ) {
+			// Get the helix length
+			Size work_resid( i+1 );
+			Size helix_length( 1 );
+			while ( work_resid <= pose.total_residue() && all_dssp.get_dssp_secstruct(work_resid) == 'H' ) {
+				helix_length++;
+				work_resid++;
+			}
+			if ( helix_length < 7 ) continue;
 
-                else if( (ss != ssN) && ((ss == "H") || (ss == "E")) ){
-									// Get the helix length
-									Size work_resid( i+1 );
-									Size helix_length( 1 );
-									while( work_resid <= pose.total_residue() && all_dssp.get_dssp_secstruct(work_resid) == 'H' ) {
-										helix_length++;
-										work_resid++;
-									}
-									if( helix_length < 7 ) continue;
+			std::string nt = "nterm";
 
-									std::string nt = "nterm";
-
-									stmt.bind(1,struct_id);
-									stmt.bind(2,i);
-									stmt.bind(3,ss);
-									stmt.bind(4,nt);
-									stmt.bind(5,i-4);
-									stmt.bind(6,i-3);
-									stmt.bind(7,i-2);
-									stmt.bind(8,i-1);
-									stmt.bind(9,i+1);
-									stmt.bind(10,i+2);
-									stmt.bind(11,i+3);
-									stmt.bind(12,i+4);
-									basic::database::safely_write_to_database(stmt);
-								} else {
-									continue;
-								}
-				}
+			stmt.bind(1,struct_id);
+			stmt.bind(2,i);
+			stmt.bind(3,ss);
+			stmt.bind(4,nt);
+			stmt.bind(5,i-4);
+			stmt.bind(6,i-3);
+			stmt.bind(7,i-2);
+			stmt.bind(8,i-1);
+			stmt.bind(9,i+1);
+			stmt.bind(10,i+2);
+			stmt.bind(11,i+3);
+			stmt.bind(12,i+4);
+			basic::database::safely_write_to_database(stmt);
+		} else {
+			continue;
+		}
+	}
 
 
 	return 0;

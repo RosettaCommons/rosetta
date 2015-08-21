@@ -32,6 +32,6 @@ typedef utility::pointer::shared_ptr< KeepRegionMover const > KeepRegionMoverCOP
 }
 }
 
-#endif	
+#endif
 
 

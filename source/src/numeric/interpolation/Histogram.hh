@@ -40,60 +40,60 @@ namespace interpolation {
 using numeric::Real;
 
 /**
- * @brief A histogram with fixed-width bins
- *
- * @details Histograms are commonly used to approximate arbitrary functions.
- * At their most basic level they just map X values to f(X) for discrete, regularly
- * spaced values of X. Usually you then interpolate between the stored Y values
- * so that all values of X can be evaluated.
- *
- * When creating a histogram the range and bin width must be given. Several
- * parameters can also be specified to set how the interpolation will work.
- * After that the function can be approximated for arbitrary X values by calling
- * interpolate(). The important parameters describing how to interpolate are:
- *
- *  - Periodicity:
- *      - nonperiodic - Only X values within the range of the function are strictly
- *          legal. See interpolate(X,Y&) for the behavior when out of this range.
- *      - periodic - All X values are taken modulus the length of the range of
- *          the function.
- *  - Bin Placement:\n
- *      Since bins span a range of X, it is ambiguous exactly what X value the
- *      bin gives the value of. The choice for BinPlacement should depend on
- *      the source of the data for the histogram.\n
- *      If bin[x] spans a range [x1,x2],
- *      - left - bin[x] corresponds to f(x1). This is streightforward, but you
- *          tend to over-estimate f(x) for areas with positive slope and
- *          under-estimate for areas with negative slope due to the stair-step
- *          shape of the histogram
- *      - center - bin[x] corresponds to f( (x1+x2)/2 )
- *      - right - bin[x] corresponds to f(x2). Equivalent to left with bin[x+1]
- *  - Interpolator:\n
- *      Specifies the algorithm used for interpolating between bins
- *      - flat - No interpolation. Gives a discontinuous function, but faithful
- *          to the raw data.
- *      - linear - Perform linear interpolation between the two adjacent bins.
- *      .
- *      Other (unimplemented) methods give functions which have continuous
- *      derivatives, etc.
- *
- * Bins can be visualized as follows:
- * w is the bin width; n is the number of bins; X_0 is the value of the first bin
- *  - left histograms go from [ X0 to (X0 + w*n) )
- *      X = X0 +            0         w        2w      ...     (n-1)w    n*w
- *      bin number          |    1    |    2    |      ...       |    n    |
- *  - center histograms go from [ (X0 - w/2) to (X0 + (n-1)w/2)) )
- *      X = X0 +          -w/2     (1/2)w    (3/2)w    ...   (n-3/2)w   (n-1/2)w
- *      bin number          |    1    |    2    |      ...       |    n    |
- *  - right histograms go from ( (X0 - w) to (X0 + (n-1)w) ]
- *      X = X0 +           -w         0         w      ...    (n-2)w    (n-1)w
- *      bin number          |    1    |    2    |      ...       |    n    |
- *
- * @tparam X The range of the function. Should support the operations expected
- *           of real types. Examples: numeric::Real, float, double
- * @tparam Y The domain of the function. Should support the operations expected
- *           of real types.
- */
+* @brief A histogram with fixed-width bins
+*
+* @details Histograms are commonly used to approximate arbitrary functions.
+* At their most basic level they just map X values to f(X) for discrete, regularly
+* spaced values of X. Usually you then interpolate between the stored Y values
+* so that all values of X can be evaluated.
+*
+* When creating a histogram the range and bin width must be given. Several
+* parameters can also be specified to set how the interpolation will work.
+* After that the function can be approximated for arbitrary X values by calling
+* interpolate(). The important parameters describing how to interpolate are:
+*
+*  - Periodicity:
+*      - nonperiodic - Only X values within the range of the function are strictly
+*          legal. See interpolate(X,Y&) for the behavior when out of this range.
+*      - periodic - All X values are taken modulus the length of the range of
+*          the function.
+*  - Bin Placement:\n
+*      Since bins span a range of X, it is ambiguous exactly what X value the
+*      bin gives the value of. The choice for BinPlacement should depend on
+*      the source of the data for the histogram.\n
+*      If bin[x] spans a range [x1,x2],
+*      - left - bin[x] corresponds to f(x1). This is streightforward, but you
+*          tend to over-estimate f(x) for areas with positive slope and
+*          under-estimate for areas with negative slope due to the stair-step
+*          shape of the histogram
+*      - center - bin[x] corresponds to f( (x1+x2)/2 )
+*      - right - bin[x] corresponds to f(x2). Equivalent to left with bin[x+1]
+*  - Interpolator:\n
+*      Specifies the algorithm used for interpolating between bins
+*      - flat - No interpolation. Gives a discontinuous function, but faithful
+*          to the raw data.
+*      - linear - Perform linear interpolation between the two adjacent bins.
+*      .
+*      Other (unimplemented) methods give functions which have continuous
+*      derivatives, etc.
+*
+* Bins can be visualized as follows:
+* w is the bin width; n is the number of bins; X_0 is the value of the first bin
+*  - left histograms go from [ X0 to (X0 + w*n) )
+*      X = X0 +            0         w        2w      ...     (n-1)w    n*w
+*      bin number          |    1    |    2    |      ...       |    n    |
+*  - center histograms go from [ (X0 - w/2) to (X0 + (n-1)w/2)) )
+*      X = X0 +          -w/2     (1/2)w    (3/2)w    ...   (n-3/2)w   (n-1/2)w
+*      bin number          |    1    |    2    |      ...       |    n    |
+*  - right histograms go from ( (X0 - w) to (X0 + (n-1)w) ]
+*      X = X0 +           -w         0         w      ...    (n-2)w    (n-1)w
+*      bin number          |    1    |    2    |      ...       |    n    |
+*
+* @tparam X The range of the function. Should support the operations expected
+*           of real types. Examples: numeric::Real, float, double
+* @tparam Y The domain of the function. Should support the operations expected
+*           of real types.
+*/
 template<typename X, typename Y>
 class Histogram : public utility::pointer::ReferenceCount {
 public:
@@ -120,77 +120,77 @@ public:
 
 protected:
 	/**
-	 * @brief Read a score function from the minirosetta_database into an array
-	 *
-	 * @details The scoring function should be represented as a list of Energies,
-	 * one number per line. Lines begining with '\#' are ignored as comments.
-	 *
-	 * Files can contain parameter settings such as the range and step size.
-	 * These are given by directives beginning with '\@'.
-	 *
-	 * @note The database files should be ASCII. Unicode is not supported.
-	 */
+	* @brief Read a score function from the minirosetta_database into an array
+	*
+	* @details The scoring function should be represented as a list of Energies,
+	* one number per line. Lines begining with '\#' are ignored as comments.
+	*
+	* Files can contain parameter settings such as the range and step size.
+	* These are given by directives beginning with '\@'.
+	*
+	* @note The database files should be ASCII. Unicode is not supported.
+	*/
 	static void read_from_db(std::istream & db_file, utility::vector1<Y> /*out*/& energies,
-			std::map<std::string, std::string> /*out*/& params)
+		std::map<std::string, std::string> /*out*/& params)
 	{
 		using namespace std;
 
 		db_file >> skipws;
 
-		while(! db_file.eof() && db_file.good() ) {
+		while ( ! db_file.eof() && db_file.good() ) {
 			int nextchar = db_file.peek();
 
 			switch (nextchar) {
-				case '#': { // Ignore comments
-					string line;
-					getline(db_file,line);
-					continue;
+			case '#' : { // Ignore comments
+				string line;
+				getline(db_file,line);
+				continue;
+			}
+			case ' ' : //ignore leading whitespace
+			case '\t':
+			case '\r':
+			case '\n' :
+				db_file.ignore();
+				continue;
+			case EOF : //error or end of file
+				if ( ! db_file.good() && ! db_file.eof() ) { // error
+					cerr << __FILE__ << ":" << __LINE__ << " [ERROR] "
+						<< "IO Error" << endl;
 				}
-				case ' ': //ignore leading whitespace
-				case '\t':
-				case '\r':
-				case '\n':
-					db_file.ignore();
-					continue;
-				case EOF: //error or end of file
-					if( ! db_file.good() && ! db_file.eof()) { // error
-						cerr << __FILE__ << ":" << __LINE__ << " [ERROR] "
-							<< "IO Error" << endl;
-					}
-					db_file.ignore(); //Make progress to avoid hanging
-					break;
-				case '@': { //parameter
-					string key, value;
-					db_file.ignore(); // '@'
-					db_file >> key >> ws;
-					getline(db_file, value);
-					params[key] = value;
-					break;
-				}
-				default: //Energies
-					Y y;
-					db_file >> y;
-					energies.push_back(y);
-					continue;
+				db_file.ignore(); //Make progress to avoid hanging
+				break;
+			case '@' : { //parameter
+				string key, value;
+				db_file.ignore(); // '@'
+				db_file >> key >> ws;
+				getline(db_file, value);
+				params[key] = value;
+				break;
+			}
+			default : //Energies
+				Y y;
+				db_file >> y;
+				energies.push_back(y);
+				continue;
 			}
 		}
 	}
 
 	/**
-	 * @brief Set properties of this histogram from a map of strings.
-	 *
-	 * Input is validated before being stored. Invalid input results in a
-	 * printed warning and the previous (probably default) value being used
-	 * instead.
-	 *
-	 * Parameters currently recognised:
-	 *  - \@minimum	<X>
-	 *  - \@maximum	<X>
-	 *  - \@step	<X>
-	 *  - \@periodic	<bool>
-	 *  - \@bins	<BinPlacement>
-	 *  - \@interpolator	<Interpolator>
-	 */
+	* @brief Set properties of this histogram from a map of strings.
+	*
+	* Input is validated before being stored. Invalid input results in a
+	* printed warning and the previous (probably default) value being used
+	* instead.
+	*
+	* Parameters currently recognised:
+	*  - \@minimum <X>
+	*  - \@maximum <X>
+	*  - \@step <X>
+	*  - \@periodic <bool>
+	*  - \@bins <BinPlacement>
+	*  - \@interpolator <Interpolator>
+	*/
 	void set_params(std::map<std::string, std::string> const& params)
 	{
 		using namespace std;
@@ -200,18 +200,17 @@ protected:
 		pair<X,bool> max( maximum(), false);
 		pair<X,bool> step( step_, false);
 
-		for( map<string,string>::const_iterator param = params.begin();
-				param != params.end(); ++param )
-		{
+		for ( map<string,string>::const_iterator param = params.begin();
+				param != params.end(); ++param ) {
 			string key( param->first);
 			string value(param->second);
 			//to lowercase
 			transform(key.begin(), key.end(), key.begin(), ::tolower );
 
-			if( "minimum" == key ) {
+			if ( "minimum" == key ) {
 				istringstream value_strm(value);
 				value_strm >> min.first;
-				if(value_strm.fail() ) {
+				if ( value_strm.fail() ) {
 					cerr << __FILE__ << ":" << __LINE__ << " [WARNING] "
 						<< "Unrecognized value for @minimum: "
 						<< value << endl;
@@ -219,79 +218,66 @@ protected:
 				} else {
 					min.second=true;
 				}
-			}
-			else if( "maximum" == key ) {
+			} else if ( "maximum" == key ) {
 				istringstream value_strm(value);
 				value_strm >> max.first;
-				if(value_strm.fail() ) {
+				if ( value_strm.fail() ) {
 					cerr << __FILE__ << ":" << __LINE__ << " [WARNING] "
 						<< "Unrecognized value for @maximum: "
 						<< value << endl;
 					max.second = false;
-				}
-				else
+				} else {
 					max.second = true;
-			}
-			else if( "step" == key ) {
+				}
+			} else if ( "step" == key ) {
 				istringstream value_strm(value);
 				value_strm >> step.first;
-				if(value_strm.fail() ) {
+				if ( value_strm.fail() ) {
 					cerr << __FILE__ << ":" << __LINE__ << " [WARNING] "
 						<< "Unrecognized value for @minimum: "
 						<< value << endl;
 					step.second = false;
-				}
-				else
+				} else {
 					step.second = true;
-			}
-			else if( "periodic" == key ) {
+				}
+			} else if ( "periodic" == key ) {
 				//lowercase
 				transform(value.begin(), value.end(), value.begin(), ::tolower );
-				if( "true" == value ) {
+				if ( "true" == value ) {
 					periodic_ = true;
-				}
-				else if( "false" == value ) {
+				} else if ( "false" == value ) {
 					periodic_ = false;
-				}
-				else {
+				} else {
 					cerr << __FILE__ << ":" << __LINE__ << " [WARNING] "
 						<< "Unrecognized value for @periodic: "
 						<< value << endl;
 				}
-			}
-			else if( "bins" == key ) {
+			} else if ( "bins" == key ) {
 				//lowercase
 				transform(value.begin(), value.end(), value.begin(), ::tolower );
-				if( "left" == value ) {
+				if ( "left" == value ) {
 					bin_placement_ = left;
-				}
-				else if( "center" == value ) {
+				} else if ( "center" == value ) {
 					bin_placement_ = center;
-				}
-				else {
+				} else {
 					cerr << __FILE__ << ":" << __LINE__ << " [WARNING] "
 						<< "Unrecognized value for @bins: "
 						<< value << endl;
 				}
-			}
-			else if( "interpolator" == key ) {
+			} else if ( "interpolator" == key ) {
 				transform(value.begin(), value.end(), value.begin(), ::tolower );
-				if( "flat" == value ) {
+				if ( "flat" == value ) {
 					interpolator_ = flat;
-				}
-				else if( "linear" == value ) {
+				} else if ( "linear" == value ) {
 					interpolator_ = linear;
-				}
-				else if( "spline" == value ) {
+				} else if ( "spline" == value ) {
 					interpolator_ = spline;
-				}
-				else {
+				} else {
 					cerr << __FILE__ << ":" << __LINE__ << " [WARNING] "
 						<< "Unrecognized value for @interpolator: "
 						<< value << endl;
 				}
-			}
-			else {
+			} else {
 				cerr << __FILE__ << ":" << __LINE__ << " [WARNING] "
 					<< "Ignoring unrecognized parameter @" << key << endl;
 			}
@@ -300,27 +286,27 @@ protected:
 		//Done parsing parameters.
 
 		// Set step first
-		if( step.second )
+		if ( step.second ) {
 			step_ = step.first;
+		}
 		// Next min
-		if( min.second ) {
+		if ( min.second ) {
 			switch (bin_placement_) {
-			case left:
+			case left :
 				min_ = min.first;
 				break;
-			case center:
+			case center :
 				min_ = min.first + step_/2.0;
 				break;
-			default:
+			default :
 				utility_exit_with_message("Internal Error: Unrecognized BinPlacement");
 			}
 		}
 		// Finally, validate range against max
-		if( max.second &&
+		if ( max.second &&
 				! eq_tol(max.first, last_bin_right(),
-					numeric::NumericTraits<X>::tolerance()*1000,
-					numeric::NumericTraits<X>::tolerance()*1000  ) )
-		{
+				numeric::NumericTraits<X>::tolerance()*1000,
+				numeric::NumericTraits<X>::tolerance()*1000  ) ) {
 			cerr << __FILE__ << ":" << __LINE__ << " [WARNING] "
 				<< "Range missmatch. Expected range of ["
 				<< min_ << ", " << max.first
@@ -330,7 +316,7 @@ protected:
 		}
 
 		// create spline interpolator
-		if (interpolator_ == spline) {
+		if ( interpolator_ == spline ) {
 			Real lx  = minimum();
 			Real ly  = densities_[1];
 			Real ldy = (densities_[2]-densities_[1])/step_;
@@ -339,7 +325,7 @@ protected:
 			Real udy = 0.0;
 			numeric::interpolation::spline::SplineGenerator gen( lx, ly, ldy, ux, uy, udy );
 			// add values skipping minimum and maximum
-			for (Size i = 2; i < densities_.size(); ++i) {
+			for ( Size i = 2; i < densities_.size(); ++i ) {
 				Real modx = minimum() + (step_*(i-1));
 				Real mody = densities_[i];
 				gen.add_known_value( modx, mody );
@@ -351,19 +337,19 @@ protected:
 
 public:
 	/**
-	 * @brief Initialize a histogram with the given density distribution.
-	 * @param densities A vector giving the densities of each bin
-	 * @param first_bin The x-value of the first bin
-	 * @param step_size The width of each bin
-	 * @param bin_placement Indicate what x-value the bins are mapped to:
-	 *        the left corner, the center of the bin, or the right corner
-	 */
+	* @brief Initialize a histogram with the given density distribution.
+	* @param densities A vector giving the densities of each bin
+	* @param first_bin The x-value of the first bin
+	* @param step_size The width of each bin
+	* @param bin_placement Indicate what x-value the bins are mapped to:
+	*        the left corner, the center of the bin, or the right corner
+	*/
 	inline Histogram(utility::vector1<Y> const& densities,
-			const X first_bin,
-			const X step_size,
-			const bool periodic=false,
-			const BinPlacement bin_placement=left,
-			const Interpolator interp=linear) :
+		const X first_bin,
+		const X step_size,
+		const bool periodic=false,
+		const BinPlacement bin_placement=left,
+		const Interpolator interp=linear) :
 		densities_(densities),
 		min_(first_bin),
 		step_(step_size),
@@ -384,14 +370,14 @@ public:
 	{ }
 
 	/**
-	 * @brief Generate Histogram from a file.
-	 *
-	 * The parameters for the histogram (eg range, step size, etc) are read from
-	 * any @param fields in the file header present, otherwise they are set to
-	 * default values and can be changed after instantiation.
-	 *
-	 * @note See Histogram::read_from_db() for more information about the file format.
-	 */
+	* @brief Generate Histogram from a file.
+	*
+	* The parameters for the histogram (eg range, step size, etc) are read from
+	* any @param fields in the file header present, otherwise they are set to
+	* default values and can be changed after instantiation.
+	*
+	* @note See Histogram::read_from_db() for more information about the file format.
+	*/
 	inline Histogram(std::istream & file) :
 		densities_(),
 		min_(0.0),
@@ -444,21 +430,21 @@ public:
 	/// @details All values of x where minimum()<=x<maximum() can be interpolated.
 	inline X minimum() const {
 		switch( interpolator_ ) {
-		case flat:
+		case flat :
 			return min_;
-		case linear:
+		case linear :
 			switch (bin_placement_) {
-				case left:
-					return min_;
-				case center:
-					return X(min_ + step_*0.5);
-				default:
-					utility_exit_with_message("Internal Error: Unrecognized BinPlacement");
-					return X(-1.);
+			case left :
+				return min_;
+			case center :
+				return X(min_ + step_*0.5);
+			default :
+				utility_exit_with_message("Internal Error: Unrecognized BinPlacement");
+				return X(-1.);
 			}
-		case spline:
+		case spline :
 			return min_;
-		default:
+		default :
 			utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+to_string(interpolator_));
 			return X(-1);
 		}
@@ -469,21 +455,21 @@ public:
 	/// @details All values of x where minimum()<=x<maximum() can be interpolated.
 	inline X maximum() const {
 		switch( interpolator_ ) {
-		case flat:
+		case flat :
 			return min_ + step_*nbins();
-		case linear:
+		case linear :
 			switch (bin_placement_) {
-			case left:
-					return X(min_ + step_*(nbins()-1.0) );
-			case center:
+			case left :
+				return X(min_ + step_*(nbins()-1.0) );
+			case center :
 				return X(min_ + step_*(nbins()-0.5) );
-			default:
+			default :
 				utility_exit_with_message("Internal Error: Unrecognized BinPlacement");
 				return X(-1.);
 			}
-		case spline:
+		case spline :
 			return X(min_ + step_*(nbins()-1.0) );
-		default:
+		default :
 			utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+to_string(interpolator_));
 			return X(-1);
 		}
@@ -497,70 +483,70 @@ public:
 
 
 	/**
-	 * @brief Interpolates a density for a given x-value from the histogram
-	 * @details Takes the periodicity and bin placement into account.
-	 * @param[in]  x The independant axis value to be interpolated
-	 * @param[out] y An approximation of f(x), as specified by the Interpolator
-	 * @return Whether the interpolated value was within the bounds or not.
-	 *         Periodic functions always return true.
-	 */
+	* @brief Interpolates a density for a given x-value from the histogram
+	* @details Takes the periodicity and bin placement into account.
+	* @param[in]  x The independant axis value to be interpolated
+	* @param[out] y An approximation of f(x), as specified by the Interpolator
+	* @return Whether the interpolated value was within the bounds or not.
+	*         Periodic functions always return true.
+	*/
 	inline bool interpolate(X const& x, Y & y) const {
 		switch(interpolator_) {
-			case flat:
-				return interpolate_flat(x, y);
-			case linear:
-				return interpolate_linear(x, y);
-			case spline:
-				Real dy;
-				return interpolate_spline(x, y, dy);
-			default:
-				utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+to_string(interpolator_));
-				return false;
+		case flat :
+			return interpolate_flat(x, y);
+		case linear :
+			return interpolate_linear(x, y);
+		case spline :
+			Real dy;
+			return interpolate_spline(x, y, dy);
+		default :
+			utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+to_string(interpolator_));
+			return false;
 		}
 	}
 
 	/**
-	 * @brief Interpolates a density for a given x-value from the histogram
-	 * @details Takes the periodicity and bin placement into account.
-	 * @param[in]  x The independant axis value to be interpolated
-	 * @param[out] y An approximation of f(x), as specified by the Interpolator
-	 * @param[out] dy derivative of f(x). Note: only with spline interpolator for now
-	 * @return Whether the interpolated value was within the bounds or not.
-	 *         Periodic functions always return true.
-	 */
+	* @brief Interpolates a density for a given x-value from the histogram
+	* @details Takes the periodicity and bin placement into account.
+	* @param[in]  x The independant axis value to be interpolated
+	* @param[out] y An approximation of f(x), as specified by the Interpolator
+	* @param[out] dy derivative of f(x). Note: only with spline interpolator for now
+	* @return Whether the interpolated value was within the bounds or not.
+	*         Periodic functions always return true.
+	*/
 	inline bool interpolate(X const& x, Y & y, Real & dy) const {
 		switch(interpolator_) {
-			case spline:
-				return interpolate_spline(x, y, dy);
-			default:
-				utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+to_string(interpolator_));
-				return false;
+		case spline :
+			return interpolate_spline(x, y, dy);
+		default :
+			utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+to_string(interpolator_));
+			return false;
 		}
 	}
 
 
 	/**
-	 * @brief The derivative of f(x), linearly interpolated.
-	 * @details For x between bins, this is just the slope of the interpolation
-	 *  line. For x on a bin the slope of the line to the right is used.
-	 * @param[in]  x  The point on the independant axis for which to get the derivative
-	 * @param[out] dy An approximation of df/dx, cast to a Y.
-	 */
+	* @brief The derivative of f(x), linearly interpolated.
+	* @details For x between bins, this is just the slope of the interpolation
+	*  line. For x on a bin the slope of the line to the right is used.
+	* @param[in]  x  The point on the independant axis for which to get the derivative
+	* @param[out] dy An approximation of df/dx, cast to a Y.
+	*/
 	inline bool derivative(X const& x, Y & dy) const {
 		switch(interpolator_) {
-			case flat: // Technically 0, but we'll just linearly interpolate
-			case linear:
-				return derivative_linear(x, dy);
-			case spline: {
-				Y y;
-				Real dY;
-				bool retval = interpolate_spline(x, y, dY);
-				dy = static_cast< Y >(dY);
-				return retval;
-			}
-			default:
-				utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+to_string(interpolator_));
-				return false;
+		case flat : // Technically 0, but we'll just linearly interpolate
+		case linear :
+			return derivative_linear(x, dy);
+		case spline : {
+			Y y;
+			Real dY;
+			bool retval = interpolate_spline(x, y, dY);
+			dy = static_cast< Y >(dY);
+			return retval;
+		}
+		default :
+			utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+to_string(interpolator_));
+			return false;
 		}
 	}
 
@@ -572,23 +558,23 @@ public:
 protected: // Interpolation methods
 
 	/**
-	 * @brief get the number of the bin to the left of X.
-	 *
-	 * @details Takes periodicity and bin alignment into account.
-	 * A periodic histogram will always return a number in [1,nbins]
-	 * A nonperiodic histogram makes no guarentees that its return value will
-	 * fall within the allowed bounds of 1 through nbins.
-	 * <i>You should do bounds checking elsewhere to assert that x is within the
-	 * allowed range.</i>
-	 *
-	 * @param x[in]  The independent axis value
-	 * @param a[out] The alpha fraction: (x-x_l)/(x_u-x_l) for bin [x_l,x_u]
-	 *
-	 * @precondition x is in the domain of the histogram. For nonperiodic histograms,
-	 * this means minimum() <= x < maximum()
-	 *
-	 * @return The index of bin x_l
-	 */
+	* @brief get the number of the bin to the left of X.
+	*
+	* @details Takes periodicity and bin alignment into account.
+	* A periodic histogram will always return a number in [1,nbins]
+	* A nonperiodic histogram makes no guarentees that its return value will
+	* fall within the allowed bounds of 1 through nbins.
+	* <i>You should do bounds checking elsewhere to assert that x is within the
+	* allowed range.</i>
+	*
+	* @param x[in]  The independent axis value
+	* @param a[out] The alpha fraction: (x-x_l)/(x_u-x_l) for bin [x_l,x_u]
+	*
+	* @precondition x is in the domain of the histogram. For nonperiodic histograms,
+	* this means minimum() <= x < maximum()
+	*
+	* @return The index of bin x_l
+	*/
 	inline platform::SSize bin_number(X const& x, X & a) const{
 		X const x_normalized(numeric::modulo( (x-first_bin())/step_, X(nbins()) )); //Real [0, nbins)
 
@@ -598,17 +584,17 @@ protected: // Interpolation methods
 	}
 
 	/**
-	 * @brief Returns the density of the bin which x belongs to
-	 * @details If x is outside of the range of bins, returns zero.
-	 */
+	* @brief Returns the density of the bin which x belongs to
+	* @details If x is outside of the range of bins, returns zero.
+	*/
 	inline bool interpolate_flat(X const& x, Y &y) const {
 		//check bounds
-		if( !periodic_ ) {
-			if( minimum() > x ){ //too small; take the minimum
+		if ( !periodic_ ) {
+			if ( minimum() > x ) { //too small; take the minimum
 				y = densities_[1];
 				return false;
 			}
-			if( x >= maximum() ) { //too big; take the maximum
+			if ( x >= maximum() ) { //too big; take the maximum
 				y = densities_[nbins()];
 				return false;
 			}
@@ -623,12 +609,12 @@ protected: // Interpolation methods
 
 	inline bool interpolate_linear(X const& x, Y &y) const {
 		//check bounds
-		if( !periodic_ ) {
-			if( minimum() > x ){ //too small; take the minimum
+		if ( !periodic_ ) {
+			if ( minimum() > x ) { //too small; take the minimum
 				y = densities_[1];
 				return false;
 			}
-			if( x >= maximum() ) { //too big; take the maximum
+			if ( x >= maximum() ) { //too big; take the maximum
 				y = densities_[nbins()];
 				return false;
 			}
@@ -637,13 +623,13 @@ protected: // Interpolation methods
 		X alpha(0); //(x-x_l)/(x_u-x_l)
 		size_type lower(0), upper(0);
 		switch( bin_placement_ ) {
-		case left:
+		case left :
 			lower = static_cast<size_type>(bin_number(x, alpha));
 			break;
-		case center:
+		case center :
 			lower = static_cast<size_type>(bin_number(x-step_*0.5, alpha));
 			break;
-		default:
+		default :
 			utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+to_string(interpolator_));
 		}
 		// lower is [1,nbins]
@@ -655,16 +641,16 @@ protected: // Interpolation methods
 	}
 
 	/**
-	 * @brief The derivative of f(x), linearly interpolated.
-	 * @details For x between bins, this is just the slope of the interpolation
-	 *  line. For x on a bin the slope of the line to the right is used.
-	 *
-	 *  Note that the derivative will not be continuous when calculated in this way.
-	 */
+	* @brief The derivative of f(x), linearly interpolated.
+	* @details For x between bins, this is just the slope of the interpolation
+	*  line. For x on a bin the slope of the line to the right is used.
+	*
+	*  Note that the derivative will not be continuous when calculated in this way.
+	*/
 	inline bool derivative_linear(X const& x, Y & y) const {
 		//check bounds
-		if( !periodic_ ) {
-			if( minimum() > x || x >= maximum() ) { //too big; take the maximum
+		if ( !periodic_ ) {
+			if ( minimum() > x || x >= maximum() ) { //too big; take the maximum
 				y = Y(0); //Consistant with interpolate's return value here
 				return false;
 			}
@@ -673,13 +659,13 @@ protected: // Interpolation methods
 		X alpha(0); //(x-x_l)/(x_u-x_l)
 		size_type lower(0), upper(0);
 		switch( bin_placement_ ) {
-		case left:
+		case left :
 			lower = static_cast<size_type>(bin_number(x, alpha));
 			break;
-		case center:
+		case center :
 			lower = static_cast<size_type>(bin_number(x-step_*0.5, alpha));
 			break;
-		default:
+		default :
 			utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+to_string(interpolator_));
 		}
 		// lower is [1,nbins]

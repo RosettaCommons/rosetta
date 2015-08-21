@@ -121,15 +121,15 @@ public:
 	/*
 	void
 	output_eval_results(
-		core::Size const insert_pos,
-		core::Real const insert_pos_sasa,
-		core::Real const diffsco_raw_start,
-		core::Real const diffsco_relax_start,
-		core::Real const diffsco_anchor,
-		core::Real const rms_neighbors,
-		core::Real const rms_anchors,
-		core::Real const insert_sasa,
-		core::Real const insert_burial
+	core::Size const insert_pos,
+	core::Real const insert_pos_sasa,
+	core::Real const diffsco_raw_start,
+	core::Real const diffsco_relax_start,
+	core::Real const diffsco_anchor,
+	core::Real const rms_neighbors,
+	core::Real const rms_anchors,
+	core::Real const insert_sasa,
+	core::Real const insert_burial
 	);
 	*/
 

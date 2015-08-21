@@ -72,14 +72,14 @@ private:
 
 	void
 	set_all_chi(
-			core::pose::Pose const & pose,
-			core::kinematics::MoveMapOP movemap
+		core::pose::Pose const & pose,
+		core::kinematics::MoveMapOP movemap
 	)const;
 
 	void
 	set_all_bb(
-			core::pose::Pose const & pose,
-			core::kinematics::MoveMapOP movemap
+		core::pose::Pose const & pose,
+		core::kinematics::MoveMapOP movemap
 	)const;
 
 };

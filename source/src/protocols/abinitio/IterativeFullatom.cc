@@ -82,7 +82,7 @@ namespace abinitio {
 using namespace jd2::archive;
 
 IterativeFullatom::IterativeFullatom()
-	: IterativeBase( "fullatom_pool" )
+: IterativeBase( "fullatom_pool" )
 {
 	perturb_start_structures_ = option[ iterative::perturb_fa_resampling ];
 }
@@ -135,9 +135,9 @@ void IterativeFullatom::initialize() {
 	}
 }
 
- bool IterativeFullatom::ready_for_batch() const {
- 	return ( stage() > LAST_CENTROID_START );
- }
+bool IterativeFullatom::ready_for_batch() const {
+	return ( stage() > LAST_CENTROID_START );
+}
 
 /// @details generate new batch...
 /// type of batch depends on stage_. we switch to next stage based on some convergence criteria:
@@ -187,14 +187,14 @@ void IterativeFullatom::gen_resample_core( Batch& batch, bool flex ) {
 	if ( most_jumps ) {
 		core( most_jumps ).write_loops_to_file( batch.dir()+"core.rigid", "RIGID" );
 		broker << "\nCLAIMER RigidChunkClaimer \n"
-					 << "REGION_FILE "<< batch.dir() << "core.rigid\n"
-					 << ( flex ? "KEEP_FLEXIBLE\n" : "" )
-					 << "END_CLAIMER\n\n" << std::endl;
+			<< "REGION_FILE "<< batch.dir() << "core.rigid\n"
+			<< ( flex ? "KEEP_FLEXIBLE\n" : "" )
+			<< "END_CLAIMER\n\n" << std::endl;
 	}
 
 	broker << "\nCLAIMER StartStructClaimer\n"
-				 << "PERTURB " << perturb_start_structures_ << "\n"
-				 << "END_CLAIMER\n\n" << std::endl;
+		<< "PERTURB " << perturb_start_structures_ << "\n"
+		<< "END_CLAIMER\n\n" << std::endl;
 
 	broker.close();
 

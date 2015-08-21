@@ -53,7 +53,7 @@ public:
 			mismatch_score(),
 			gap_open(),
 			gap_extend()
-		) );
+			) );
 	}
 
 	/// @brief dtor

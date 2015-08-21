@@ -39,59 +39,59 @@ namespace scoring {
 class FACTSPoseInfo : public basic::datacache::CacheableData {
 
 public:
-  typedef conformation::Residue   Residue;
-  typedef conformation::ResidueOP ResidueOP;
+	typedef conformation::Residue   Residue;
+	typedef conformation::ResidueOP ResidueOP;
 
 public:
 
-  FACTSPoseInfo();
-  FACTSPoseInfo( FACTSPoseInfo const & src );
-  
-  basic::datacache::CacheableDataOP	clone() const
-  {	return basic::datacache::CacheableDataOP( new FACTSPoseInfo( *this ) );}
-  
-  Size size() const	{	return residue_info_.size(); }
-  
-  FACTSResidueInfo & residue_info( Size const i )
-  { return *residue_info_[i];	}
-  
-  FACTSResidueInfo const & residue_info( Size const i ) const
-  {	return *residue_info_[i];	}
-  
-  bool being_packed( Size const seqpos ) const
-  {	return being_packed_[ seqpos ];	}
-  
-  void set_placeholder( Size const i, ResidueOP rsd, FACTSResidueInfoOP info );
-  
-  FACTSResidueInfo const & placeholder_info( Size const seqpos ) const
-  {
-   debug_assert( placeholder_info_[ seqpos ] );
-    return *placeholder_info_[ seqpos ];
-  }
-  
-  Residue const & placeholder_residue( Size const seqpos ) const
-  {
-   debug_assert( placeholder_residue_[ seqpos ] );
-    return *placeholder_residue_[ seqpos ];
-  }
-  
-  void initialize( pose::Pose const & pose, FACTSRsdTypeMap &rsdtypemap );
-  
-  void set_repack_list( utility::vector1< bool > const & repacking_residues );
-  
-  bool is_changed( pose::Pose const &pose );
-  
-  void update_enumeration_shell( pose::Pose const &pose,
-				 bool const enumerate_second_shell = false );
-  
-  inline bool context_derivative_empty() { return context_derivative_empty_; }
+	FACTSPoseInfo();
+	FACTSPoseInfo( FACTSPoseInfo const & src );
+
+	basic::datacache::CacheableDataOP clone() const
+	{ return basic::datacache::CacheableDataOP( new FACTSPoseInfo( *this ) );}
+
+	Size size() const { return residue_info_.size(); }
+
+	FACTSResidueInfo & residue_info( Size const i )
+	{ return *residue_info_[i]; }
+
+	FACTSResidueInfo const & residue_info( Size const i ) const
+	{ return *residue_info_[i]; }
+
+	bool being_packed( Size const seqpos ) const
+	{ return being_packed_[ seqpos ]; }
+
+	void set_placeholder( Size const i, ResidueOP rsd, FACTSResidueInfoOP info );
+
+	FACTSResidueInfo const & placeholder_info( Size const seqpos ) const
+	{
+		debug_assert( placeholder_info_[ seqpos ] );
+		return *placeholder_info_[ seqpos ];
+	}
+
+	Residue const & placeholder_residue( Size const seqpos ) const
+	{
+		debug_assert( placeholder_residue_[ seqpos ] );
+		return *placeholder_residue_[ seqpos ];
+	}
+
+	void initialize( pose::Pose const & pose, FACTSRsdTypeMap &rsdtypemap );
+
+	void set_repack_list( utility::vector1< bool > const & repacking_residues );
+
+	bool is_changed( pose::Pose const &pose );
+
+	void update_enumeration_shell( pose::Pose const &pose,
+		bool const enumerate_second_shell = false );
+
+	inline bool context_derivative_empty() { return context_derivative_empty_; }
 
 public:
-  utility::vector1< FACTSResidueInfoOP > residue_info_; // these are allocated in initialize
-  utility::vector1< ResidueOP > placeholder_residue_; // these may be null pointers
-  utility::vector1< FACTSResidueInfoOP > placeholder_info_;
-  utility::vector1< bool > being_packed_; // stores info from the packertask when setup_for_packing calls set_repack_list
-  bool context_derivative_empty_;
+	utility::vector1< FACTSResidueInfoOP > residue_info_; // these are allocated in initialize
+	utility::vector1< ResidueOP > placeholder_residue_; // these may be null pointers
+	utility::vector1< FACTSResidueInfoOP > placeholder_info_;
+	utility::vector1< bool > being_packed_; // stores info from the packertask when setup_for_packing calls set_repack_list
+	bool context_derivative_empty_;
 };
 
 } // scoring

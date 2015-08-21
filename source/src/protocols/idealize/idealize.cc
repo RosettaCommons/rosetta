@@ -103,12 +103,12 @@ dihedral_distance(
 		// first the bb dev's
 		for ( Size i=1; i<= nbb; ++i ) {
 			if ( ( i ==     1 && rsd1.is_lower_terminus() ) ||
-					 ( i >= nbb-1 && rsd1.is_upper_terminus() ) ) {
+					( i >= nbb-1 && rsd1.is_upper_terminus() ) ) {
 				continue;
 			}
 			Real const dev( std::abs( subtract_degree_angles( rsd1.mainchain_torsion( i ), rsd2.mainchain_torsion(i) ) ) );
 			//if ( dev > 0.01 ) std::cout << "bbdev: " << pos << ' ' << pose1.residue(pos).name1() << ' ' << i << ' ' <<
-			//										dev << ' ' << rsd1.mainchain_torsion( i ) << ' ' <<  rsd2.mainchain_torsion(i) << std::endl;
+			//          dev << ' ' << rsd1.mainchain_torsion( i ) << ' ' <<  rsd2.mainchain_torsion(i) << std::endl;
 			avg_bb_angle_dev += dev;
 			++nbb_dihedrals;
 			max_bb_angle_dev = std::max( max_bb_angle_dev, dev );
@@ -149,7 +149,7 @@ basic_idealize(
 	Size const nres ( pose.total_residue() );
 
 	// keep chainbreaks if they exist
-	if (chainbreaks) {
+	if ( chainbreaks ) {
 
 		// squared distance at which bond is considered discontinuous
 		Real const chain_break_cutoff = { 4.0 };
@@ -165,23 +165,23 @@ basic_idealize(
 			if ( pdbinfo->number(i)+1 != pdbinfo->number(j) ) {
 				TR.Info << "non-sequential at res nums " << i << '-' << j << std::endl;
 				TR.Info << "non-sequential pdb res nums " << pdbinfo->number(i) << pdbinfo->chain(i) <<
-						'-' << pdbinfo->number(j) << pdbinfo->chain(j) << std::endl;
+					'-' << pdbinfo->number(j) << pdbinfo->chain(j) << std::endl;
 				chain_break = true;
 			} else {
 				conformation::Residue const & rsd = pose.residue(i);
 				conformation::Residue const & next_rsd = pose.residue(j);
-				if (rsd.is_polymer() && next_rsd.is_polymer()) {
+				if ( rsd.is_polymer() && next_rsd.is_polymer() ) {
 					Real dist_squared = rsd.atom( rsd.upper_connect_atom() ).xyz().distance_squared(next_rsd.atom( next_rsd.lower_connect_atom() ).xyz());
-					if (dist_squared > chain_break_cutoff) {
-							TR.Info << "chain break at res nums: " << i << '-' << j << ' ' << std::sqrt(dist_squared) << std::endl;
-							TR.Info << "chain break pdb res nums: " << pdbinfo->number(i) << pdbinfo->chain(i) <<
-									'-' << pdbinfo->number(j) << pdbinfo->chain(j) << std::endl;
-							chain_break = true;
+					if ( dist_squared > chain_break_cutoff ) {
+						TR.Info << "chain break at res nums: " << i << '-' << j << ' ' << std::sqrt(dist_squared) << std::endl;
+						TR.Info << "chain break pdb res nums: " << pdbinfo->number(i) << pdbinfo->chain(i) <<
+							'-' << pdbinfo->number(j) << pdbinfo->chain(j) << std::endl;
+						chain_break = true;
 					} else if ( dist_squared < 0.1 ) {
-							TR.Info << "zero length bond at res nums: " << i << '-' << j << std::endl;
-							TR.Info << "zero length bond pdb res nums: " << pdbinfo->number(i) << pdbinfo->chain(i) <<
-								'-' << pdbinfo->number(j) << pdbinfo->chain(j) << std::endl;
-							chain_break = true;
+						TR.Info << "zero length bond at res nums: " << i << '-' << j << std::endl;
+						TR.Info << "zero length bond pdb res nums: " << pdbinfo->number(i) << pdbinfo->chain(i) <<
+							'-' << pdbinfo->number(j) << pdbinfo->chain(j) << std::endl;
+						chain_break = true;
 					}
 				}
 			}
@@ -194,7 +194,7 @@ basic_idealize(
 				TR.Info << "added cutpoint at: " << i << std::endl;
 			}
 		}
-		if (new_cutpoint) pose.fold_tree( f );
+		if ( new_cutpoint ) pose.fold_tree( f );
 	}
 
 	Size const njump( pose.num_jump() );
@@ -227,7 +227,7 @@ basic_idealize(
 
 		// idealize the mainchain + sidechain
 		//pose.dump_pdb( "pre_idl_"+right_string_of(seqpos,4,'0')+".pdb" );
-		if( seqpos > (Size)pose.conformation().size() ){ continue; }
+		if ( seqpos > (Size)pose.conformation().size() ) { continue; }
 		conformation::idealize_position( seqpos, pose.conformation() );
 		//pose.dump_pdb( "post_idl_"+right_string_of(seqpos,4,'0')+".pdb" );
 		idealized[ seqpos ] = true;
@@ -262,7 +262,7 @@ basic_idealize(
 		// special case for symmetry
 		//    - make mm symmetric
 		//    - allow symmjumps to minimize
-		if (symm_info) {
+		if ( symm_info ) {
 			local_mm.set_jump( true );
 			core::pose::symmetry::make_symmetric_movemap( pose, local_mm );
 		}
@@ -276,7 +276,7 @@ basic_idealize(
 		Real max_bb_angle_dev, avg_bb_angle_dev, max_chi_angle_dev, avg_chi_angle_dev;
 
 		dihedral_distance( pose, start_pose, idealized, avg_bb_angle_dev, max_bb_angle_dev,
-											 avg_chi_angle_dev, max_chi_angle_dev );
+			avg_chi_angle_dev, max_chi_angle_dev );
 
 		TR.Info << "premin:  (pos,rmsd,avg-bb,max-bb,avg-chi,max-chi,score) " <<
 			I( 4, seqpos ) << ' ' << pose.residue(seqpos).name1() << F( 9, 3, all_atom_rmsd( pose, start_pose ) ) <<
@@ -284,14 +284,15 @@ basic_idealize(
 			F(9,3,avg_chi_angle_dev) << F(9,3,max_chi_angle_dev) <<
 			F(12,3,scorefxn( pose ) ) << std::endl;
 
-		if (symm_info)
+		if ( symm_info ) {
 			SymAtomTreeMinimizer().run( pose, local_mm, scorefxn, options );
-		else
+		} else {
 			AtomTreeMinimizer().run( pose, local_mm, scorefxn, options );
+		}
 		//pose.dump_pdb( "post_min_"+right_string_of(seqpos,4,'0')+".pdb" );
 
 		dihedral_distance( pose, start_pose, idealized, avg_bb_angle_dev, max_bb_angle_dev,
-											 avg_chi_angle_dev, max_chi_angle_dev );
+			avg_chi_angle_dev, max_chi_angle_dev );
 
 		TR.Info << "postmin: (pos,rmsd,avg-bb,max-bb,avg-chi,max-chi,score) " <<
 			I(4,seqpos) << ' ' << pose.residue(seqpos).name1() << F(9,3,all_atom_rmsd(pose,start_pose)) <<
@@ -306,7 +307,7 @@ basic_idealize(
 	// special case for symmetry
 	//    - make mm symmetric
 	//    - allow symmjumps to minimize
-	if (symm_info) {
+	if ( symm_info ) {
 		final_mm.set_jump( true );
 		core::pose::symmetry::make_symmetric_movemap( pose, final_mm );
 	}
@@ -314,7 +315,7 @@ basic_idealize(
 	// final minimize
 	Real max_bb_angle_dev, avg_bb_angle_dev, max_chi_angle_dev, avg_chi_angle_dev;
 	dihedral_distance( pose, start_pose, idealized, avg_bb_angle_dev, max_bb_angle_dev,
-										 avg_chi_angle_dev, max_chi_angle_dev );
+		avg_chi_angle_dev, max_chi_angle_dev );
 
 	TR.Info << "pre-finalmin: (pos,rmsd,avg-bb,max-bb,avg-chi,max-chi,score) " <<
 		F(9,3,all_atom_rmsd(pose,start_pose)) <<
@@ -322,13 +323,14 @@ basic_idealize(
 		F(9,3,avg_chi_angle_dev) << F(9,3,max_chi_angle_dev) <<
 		F(12,3,scorefxn( pose ) ) << std::endl;
 
-	if (symm_info)
+	if ( symm_info ) {
 		SymAtomTreeMinimizer().run( pose, final_mm, scorefxn, options );
-	else
+	} else {
 		AtomTreeMinimizer().run( pose, final_mm, scorefxn, options );
+	}
 
 	dihedral_distance( pose, start_pose, idealized, avg_bb_angle_dev, max_bb_angle_dev,
-										 avg_chi_angle_dev, max_chi_angle_dev );
+		avg_chi_angle_dev, max_chi_angle_dev );
 
 	TR.Info << "post-finalmin: (pos,rmsd,avg-bb,max-bb,avg-chi,max-chi,score) " <<
 		F(9,3,all_atom_rmsd(pose,start_pose)) <<

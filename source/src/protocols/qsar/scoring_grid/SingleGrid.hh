@@ -32,7 +32,7 @@
 #include <list>
 
 #ifdef WIN32
-	#include <protocols/qsar/qsarMap.hh>
+#include <protocols/qsar/qsarMap.hh>
 #endif
 
 
@@ -100,8 +100,8 @@ public:
 	//void grid_rotamer_trials(core::pose::Pose &  pose, core::Size residue_id, int const min_score);
 	/// @brief check to see if residue is in grid
 	virtual bool is_in_grid(core::conformation::UltraLightResidue const & residue);
-    /// @brief check to see if residue is in grid
-    virtual bool is_in_grid(core::conformation::Residue const & residue);
+	/// @brief check to see if residue is in grid
+	virtual bool is_in_grid(core::conformation::Residue const & residue);
 
 	std::list<std::pair<core::Vector, core::Real> > get_point_value_list_within_range(core::Real lower_bound, core::Real upper_bound,core::Size stride);
 
@@ -110,10 +110,10 @@ public:
 	//Various mathematical functions for assigning values to the grid go here
 	void set_sphere(core::Vector const & coords, core::Real radius, core::Real value);
 	void set_ring(
-			core::Vector const & coords,
-			core::Real inner_radius,
-			core::Real outer_radius,
-			core::Real value
+		core::Vector const & coords,
+		core::Real inner_radius,
+		core::Real outer_radius,
+		core::Real value
 	);
 	void diffuse_ring(core::Vector const & coords, core::Real radius, core::Real width, core::Real magnitude);
 	void set_distance_sphere( core::Vector const & coords,core::Real cutoff);

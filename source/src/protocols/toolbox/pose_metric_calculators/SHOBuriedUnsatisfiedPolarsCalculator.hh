@@ -36,7 +36,7 @@ class SHOBuriedUnsatisfiedPolarsCalculator :
 public:
 
 	/// @brief constructs the calculator for a target atom in residues of a target
-	/// 	amino acid type
+	///  amino acid type
 	SHOBuriedUnsatisfiedPolarsCalculator(Real sho_cutoff, std::string tgt_amino,
 		std::string tgt_atom, core::scoring::ScoreFunctionCOP sfxn);
 
@@ -69,11 +69,11 @@ protected:
 	void lookup(std::string const &key, basic::MetricValueBase* valptr) const;
 
 	/// @brief returns the string representation of a quantity's value that is
-	/// 	cached in the calculator
+	///  cached in the calculator
 	std::string print(std::string const& key) const;
 
 	/// @brief finds buried unsatisfied atoms by building all needed data structures
-	/// 	from scratch
+	///  from scratch
 	void recompute(core::pose::Pose const& ps);
 
 private:
@@ -85,14 +85,14 @@ private:
 	void partition(core::pose::Pose const& ps);
 
 	/// @brief partitions a target residue's atoms into "buried unsatisfied"
-	/// 	and "other"
+	///  and "other"
 	void residue_partition(core::pose::Pose const& ps, Size tgtidx);
 
 	/// @brief prints on screen the SHO energies of all atoms in a pose
 	void print_sho_energies(core::pose::Pose const& ps);
 
 	/// @brief assigns an atom to either the "buried unsatisfied" class or the
-	/// 	"other" class
+	///  "other" class
 	void assign_atom(AtomID aid);
 
 	/// @brief is aid buried?
@@ -108,8 +108,8 @@ private:
 
 	/// @brief returns the average SHO energy of a subset of atoms
 	Real get_average_energy(
-  	utility::vector1<AtomID> const& subset,
-  	std::map<AtomID, Real> & sho_energies) const;
+		utility::vector1<AtomID> const& subset,
+		std::map<AtomID, Real> & sho_energies) const;
 
 	/// @brief prints an atom's identifier on screen
 	void print_atom_info(AtomID aid, core::pose::Pose const& ps) const;
@@ -121,7 +121,7 @@ private:
 	core::scoring::geometric_solvation::ExactOccludedHbondSolEnergyOP sho_meth_;
 
 	/// @brief maximum SHO energy value for a polar group to be considered as
-	/// 	exposed (i.e., not buried)
+	///  exposed (i.e., not buried)
 	core::Real sho_cutoff_;
 
 	/// @brief target residue indexes

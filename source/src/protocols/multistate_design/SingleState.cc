@@ -24,8 +24,8 @@ namespace multistate_design {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 SingleState::SingleState()
-	: utility::pointer::ReferenceCount(),
-		pose_p_(/* 0 */), is_positive_state_(false), best_score_(0.), fitness_function_(NULL)
+: utility::pointer::ReferenceCount(),
+	pose_p_(/* 0 */), is_positive_state_(false), best_score_(0.), fitness_function_(NULL)
 {
 	fitness_function_ = SingleStateFitnessFunctionCOP( SingleStateFitnessFunctionOP( new SingleStateFitnessFunction() ) );
 }
@@ -33,8 +33,8 @@ SingleState::SingleState()
 SingleState::~SingleState(){}
 
 SingleState::SingleState( core::pose::Pose const & pose, bool is_positive )
-	: utility::pointer::ReferenceCount(),
-		pose_p_(/* 0 */), is_positive_state_( is_positive ), best_score_(0.), fitness_function_(NULL)
+: utility::pointer::ReferenceCount(),
+	pose_p_(/* 0 */), is_positive_state_( is_positive ), best_score_(0.), fitness_function_(NULL)
 {
 	pose_p_ = core::pose::PoseOP( new core::pose::Pose );
 	*pose_p_ = pose;
@@ -42,7 +42,7 @@ SingleState::SingleState( core::pose::Pose const & pose, bool is_positive )
 }
 
 SingleState::SingleState( SingleState const & other )
-	: utility::pointer::ReferenceCount(), pose_p_(/* 0 */), is_positive_state_(false), best_score_(0.), fitness_function_(NULL)
+: utility::pointer::ReferenceCount(), pose_p_(/* 0 */), is_positive_state_(false), best_score_(0.), fitness_function_(NULL)
 {
 	pose_p_ = core::pose::PoseOP( new core::pose::Pose );
 	*pose_p_ = other.pose();

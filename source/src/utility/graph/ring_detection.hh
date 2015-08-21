@@ -55,7 +55,7 @@ public:
 		boost::put(labels_,source,0);
 		typename boost::graph_traits<Graph>::adjacency_iterator iter, end;
 		platform::Size index=1;
-		for( boost::tie(iter,end) = boost::adjacent_vertices(source,graph); iter != end; ++iter, ++index) {
+		for ( boost::tie(iter,end) = boost::adjacent_vertices(source,graph); iter != end; ++iter, ++index ) {
 			boost::put(labels_,*iter,index);
 			boost::put(distances_,*iter,1);
 		}
@@ -67,8 +67,8 @@ public:
 		VD const & parent( boost::source(e,g) );
 		VD const & child( boost::target(e,g) );
 		platform::Size distance( boost::get(distances_,parent)+1 );
-		if( distance == 1 ) { return false; } // We've already processed the node in the constructor.
-		if( distance >= stop_level_ ) { return true; }
+		if ( distance == 1 ) { return false; } // We've already processed the node in the constructor.
+		if ( distance >= stop_level_ ) { return true; }
 
 		//Set Distance and label
 		boost::put(distances_, child, distance);
@@ -81,7 +81,7 @@ public:
 		// We can be assured that both nodes have been initialized on the data maps.
 		VD const & left( boost::source(e,g) );
 		VD const & right( boost::target(e,g) );
-		if( boost::get(labels_,left) ==  boost::get(labels_,right) ) {
+		if ( boost::get(labels_,left) ==  boost::get(labels_,right) ) {
 			// We're closing a ring that can bypass the start vertex. Ignore.
 			return false;
 		}
@@ -92,7 +92,7 @@ public:
 		// E.g. if we're working on the second level, we may close a six member ring first,
 		// but then close a five member one later while finishing up the second level.
 		// Finish this level, but don't bother working on the next level.
-		if( ringsize < size_ ) {
+		if ( ringsize < size_ ) {
 			size_ = ringsize;
 			stop_level_ = dleft + 1; // Don't follow any nodes to next level
 		}
@@ -109,25 +109,25 @@ smallest_ring_size( typename boost::graph_traits< Graph>::vertex_descriptor cons
 
 	typedef typename boost::graph_traits< Graph>::vertex_descriptor VD;
 
-/*	typedef typename boost::property_map<Graph, boost::vertex_index_t>::type VertexIDMap;
+	/* typedef typename boost::property_map<Graph, boost::vertex_index_t>::type VertexIDMap;
 	//vector0 as the VertexIDMap is zero-based.
 	typedef utility::vector0< platform::Size > DistanceMapStore;
 	typedef boost::iterator_property_map<DistanceMapStore::iterator, VertexIDMap,
-			std::iterator_traits<DistanceMapStore::iterator>::value_type,
-			std::iterator_traits<DistanceMapStore::iterator>::reference
-			> DistanceMap;
+	std::iterator_traits<DistanceMapStore::iterator>::value_type,
+	std::iterator_traits<DistanceMapStore::iterator>::reference
+	> DistanceMap;
 	typedef utility::vector0< platform::Size > LabelMapStore;
 	typedef boost::iterator_property_map<LabelMapStore::iterator, VertexIDMap,
-			std::iterator_traits<LabelMapStore::iterator>::value_type,
-			std::iterator_traits<LabelMapStore::iterator>::reference
-			> LabelMap;
+	std::iterator_traits<LabelMapStore::iterator>::value_type,
+	std::iterator_traits<LabelMapStore::iterator>::reference
+	> LabelMap;
 
 	VertexIDMap vertex_id( boost::get(boost::vertex_index, graph) );
-	DistanceMapStore	distancestore( boost::num_vertices(graph), 999999 );
-	DistanceMap	distances( boost::make_iterator_property_map(distancestore.begin(), vertex_id) );
-	LabelMapStore	labelstore( boost::num_vertices(graph), 999999 );
-	LabelMap	labels( boost::make_iterator_property_map(labelstore.begin(), vertex_id) );
-*/
+	DistanceMapStore distancestore( boost::num_vertices(graph), 999999 );
+	DistanceMap distances( boost::make_iterator_property_map(distancestore.begin(), vertex_id) );
+	LabelMapStore labelstore( boost::num_vertices(graph), 999999 );
+	LabelMap labels( boost::make_iterator_property_map(labelstore.begin(), vertex_id) );
+	*/
 
 	typedef typename std::map<VD,platform::Size> DataStore;
 	typedef typename boost::associative_property_map< DataStore > DataStoreMap;
@@ -180,8 +180,8 @@ public:
 		edgemap_[boost::source(u,g)][boost::target(u,g)] = true; //The back edge is always part of the cycle.
 		edgemap_[boost::target(u,g)][boost::source(u,g)] = true;
 		typename PathMap::mapped_type::const_iterator iter, iter_end;
-		for( iter = path.begin(), iter_end = path.end(); iter != iter_end; ++iter ) {
-			if( path2.count( *iter ) == 0 ) {
+		for ( iter = path.begin(), iter_end = path.end(); iter != iter_end; ++iter ) {
+			if ( path2.count( *iter ) == 0 ) {
 				// If we have an edge in the longer path, but it isn't on the "stem"
 				// to the node we're going back to, it's part of a cycle.
 				//std::cout << "Marking Ring " << boost::source(*iter,g) << "---" << boost::target(*iter,g) << std::endl;

@@ -18,8 +18,8 @@
 #include <devel/domain_assembly/RedesignDomainAssemblyMover.fwd.hh>
 #include <devel/domain_assembly/DomainAssemblyMover.hh>
 
-namespace devel{
-namespace domain_assembly{
+namespace devel {
+namespace domain_assembly {
 
 class RedesignDomainAssemblyMover : public DomainAssemblyMover
 {
@@ -29,7 +29,7 @@ public:
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP	fresh_instance() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 private: // protocol stages
 	virtual void run_fullatom_stage( core::pose::Pose & pose );
 	virtual void run_fullatom_relax( core::pose::Pose & pose );

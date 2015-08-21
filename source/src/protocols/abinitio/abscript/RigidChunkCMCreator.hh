@@ -22,9 +22,9 @@ namespace abscript {
 
 class RigidChunkCMCreator : public protocols::moves::MoverCreator {
 public:
-  virtual moves::MoverOP create_mover() const;
-  virtual std::string keyname() const;
-  static std::string mover_name();
+	virtual moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
+	static std::string mover_name();
 };
 
 }

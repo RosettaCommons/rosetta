@@ -37,50 +37,50 @@ namespace topology {
 class StrandPairing : public utility::pointer::ReferenceCount {
 public:
 
-  typedef std::string String;
-  typedef core::Size Size;
-  typedef core::Real Real;
+	typedef std::string String;
+	typedef core::Size Size;
+	typedef core::Real Real;
 	typedef protocols::fldsgn::topology::SS_Info2_OP SS_Info2_OP;
 	typedef protocols::fldsgn::topology::SS_Info2_COP SS_Info2_COP;
 
 public:// construct/destruct
 
 
-  /// @brief default constructor
-  StrandPairing();
+	/// @brief default constructor
+	StrandPairing();
 
-  /// @brief value constructor
-  StrandPairing(
-     Size const s1,
-     Size const s2,
-     Size const b1,
-     Size const b2,
-     Size const p,
-     Real const rs,
-     char const o
-								);
+	/// @brief value constructor
+	StrandPairing(
+		Size const s1,
+		Size const s2,
+		Size const b1,
+		Size const b2,
+		Size const p,
+		Real const rs,
+		char const o
+	);
 
-  /// @brief value constructor
-  StrandPairing(
-     Size const s1,
-     Size const s2,
-     Real const rs,
-     char const o
-								);
-
-	/// @brief copy constructor
-  StrandPairing( String const & spair);
+	/// @brief value constructor
+	StrandPairing(
+		Size const s1,
+		Size const s2,
+		Real const rs,
+		char const o
+	);
 
 	/// @brief copy constructor
-  StrandPairing( StrandPairing const & sp );
+	StrandPairing( String const & spair);
 
-  /// @brief default destructor
-  virtual ~StrandPairing();
+	/// @brief copy constructor
+	StrandPairing( StrandPairing const & sp );
+
+	/// @brief default destructor
+	virtual ~StrandPairing();
 
 	/// @brief clone this object
 	StrandPairingOP clone();
 
-  /// @brief return strand pairing
+	/// @brief return strand pairing
 	friend
 	std::ostream & operator<<(std::ostream & out, const StrandPairing &sp);
 
@@ -89,10 +89,10 @@ public: //accessors
 
 
 	/// @brief the strand number of the 1st strand in strand pairing
-	inline Size s1() const	{	return s1_;	}
+	inline Size s1() const { return s1_; }
 
 	/// @brief the strand number of the 2nd strand in strand pairing
-	inline Size s2() const	{	return s2_; }
+	inline Size s2() const { return s2_; }
 
 	/// @brief the residue number of the beginning of 1st strand
 	inline Size begin1() const { return begin1_; }
@@ -107,7 +107,7 @@ public: //accessors
 	inline Size end2() const { return end2_; }
 
 	/// @brief the number of register shift between the strands
-	inline Real rgstr_shift() const {	return rgstr_shift_; }
+	inline Real rgstr_shift() const { return rgstr_shift_; }
 
 	/// @brief the pleating at the begining of strand_pairing
 	inline utility::vector1< Size > pleats1() const { return pleats1_; }
@@ -119,7 +119,7 @@ public: //accessors
 	inline char orient() const { return orient_; }
 
 	/// @brief whether the strand pairing have bulge or not
-	inline bool has_bulge() const	{	return has_bulge_; }
+	inline bool has_bulge() const { return has_bulge_; }
 
 	/// @brief StrandPairing is descripbed as s1()-s2().orient().rgstr_shift()
 	/// For example, 2-3.A.1 means 2nd and 3rd strands make anti-parallel strand_pairing with register shift 1
@@ -127,7 +127,7 @@ public: //accessors
 
 	/// @brief return residue pairing
 	bool has_paired_residue( Size const res ) const;
-	
+
 	/// @brief residue pair
 	Size residue_pair( Size const res );
 
@@ -166,11 +166,11 @@ private: // initialize
 private:  // data
 
 
-  /// @brief Strand number of first strand in the strand pair
-  Size s1_;
+	/// @brief Strand number of first strand in the strand pair
+	Size s1_;
 
-  /// @brief Strand number of second strand in the strand pair
-  Size s2_;
+	/// @brief Strand number of second strand in the strand pair
+	Size s2_;
 
 	/// @brief end resides of first and second strands
 	Size begin1_, end1_, begin2_, end2_;
@@ -178,12 +178,12 @@ private:  // data
 	/// @brief pleats of end residues
 	utility::vector1< Size > pleats1_, pleats2_;
 
-  /// @brief register shift between two strands
-  Real rgstr_shift_;
+	/// @brief register shift between two strands
+	Real rgstr_shift_;
 
-  /// @brief two strands make a sheet by parallel, "P", anti parallel, "A", and
-  /// if not defined, "N"
-  char orient_;
+	/// @brief two strands make a sheet by parallel, "P", anti parallel, "A", and
+	/// if not defined, "N"
+	char orient_;
 
 	/// @brief
 	bool has_bulge_;
@@ -215,28 +215,28 @@ public: // typedef
 public:// construct/destruct
 
 
-  /// @brief default constructor
-  StrandPairingSet();
+	/// @brief default constructor
+	StrandPairingSet();
 
-  /// @brief value constructor
-  StrandPairingSet( StrandPairings const & strand_pairings );
+	/// @brief value constructor
+	StrandPairingSet( StrandPairings const & strand_pairings );
 
-  /// @brief value constructor
+	/// @brief value constructor
 	StrandPairingSet( SS_Info2 const & ssinfo, DimerPairings const & dimer_pairs );
 
-  /// @brief value constructor
+	/// @brief value constructor
 	StrandPairingSet( String const & spairstring, SS_Info2_COP const ssinfo = NULL );
 
 	/// @brief copy constructor
-  StrandPairingSet( StrandPairingSet const & s );
+	StrandPairingSet( StrandPairingSet const & s );
 
-  /// @brief default destructor
-  virtual ~StrandPairingSet();
+	/// @brief default destructor
+	virtual ~StrandPairingSet();
 
 	/// @brief clone this object
 	StrandPairingSetOP clone() const;
 
-  /// @brief return strand pairing
+	/// @brief return strand pairing
 	friend std::ostream & operator<<( std::ostream & out, const StrandPairingSet &s );
 
 
@@ -275,7 +275,7 @@ public: //  accessors
 	Size num_strands() const { return num_strands_; };
 
 	/// @brief return all strand pairings
-	StrandPairings const &	strand_pairings() const;
+	StrandPairings const & strand_pairings() const;
 
 	/// @brief return one of the strand_pairings given a number
 	StrandPairingOP strand_pairing( Size const s ) const;
@@ -309,7 +309,7 @@ public:
 	/// @brief remove a set of strand pairings from datay
 	void drop_strand_pairs( StrandPairings const & drop_spairs );
 
-  /// @brief finalize this and create_map_strand_pairings
+	/// @brief finalize this and create_map_strand_pairings
 	void finalize();
 
 

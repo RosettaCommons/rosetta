@@ -44,18 +44,18 @@ namespace denovo_design {
 std::string
 GenericSimulatedAnnealerCreator::keyname() const
 {
-  return GenericSimulatedAnnealerCreator::mover_name();
+	return GenericSimulatedAnnealerCreator::mover_name();
 }
 
 protocols::moves::MoverOP
 GenericSimulatedAnnealerCreator::create_mover() const {
-  return protocols::moves::MoverOP( new GenericSimulatedAnnealer );
+	return protocols::moves::MoverOP( new GenericSimulatedAnnealer );
 }
 
 std::string
 GenericSimulatedAnnealerCreator::mover_name()
 {
-  return "GenericSimulatedAnnealer";
+	return "GenericSimulatedAnnealer";
 }
 
 /// @brief default constructor
@@ -81,14 +81,14 @@ GenericSimulatedAnnealer::~GenericSimulatedAnnealer(){}
 protocols::moves::MoverOP
 GenericSimulatedAnnealer::clone() const
 {
-  return protocols::moves::MoverOP( new GenericSimulatedAnnealer( *this ) );
+	return protocols::moves::MoverOP( new GenericSimulatedAnnealer( *this ) );
 }
 
 /// @brief create this type of object
 protocols::moves::MoverOP
 GenericSimulatedAnnealer::fresh_instance() const
 {
-  return protocols::moves::MoverOP( new GenericSimulatedAnnealer() );
+	return protocols::moves::MoverOP( new GenericSimulatedAnnealer() );
 }
 
 core::Real
@@ -112,7 +112,7 @@ GenericSimulatedAnnealer::scale_temperatures( core::Real const temp_factor )
 		newtemps[i] *= temp_factor;
 	}
 	TR << "Factor=" << temp_factor << "; Setting temperatures to:";
-	for( core::Size j=1; j<=newtemps.size(); ++j ) TR << " " << newtemps[j];
+	for ( core::Size j=1; j<=newtemps.size(); ++j ) TR << " " << newtemps[j];
 	TR << std::endl;
 	temperatures( newtemps );
 
@@ -160,10 +160,10 @@ core::Real calc_sum( utility::vector1< core::Real > const & vec );
 core::Real calc_mean( utility::vector1< core::Real > const & vec );
 core::Real calc_sum_squares( utility::vector1< core::Real > const & vec );
 core::Real calc_sum_xy( utility::vector1< core::Real > const & x,
-												utility::vector1< core::Real > const & y );
+	utility::vector1< core::Real > const & y );
 utility::vector1< core::Real >
 linear_regression( utility::vector1< core::Real > const & x,
-									 utility::vector1< core::Real > const & y );
+	utility::vector1< core::Real > const & y );
 
 core::Real
 calc_sum( utility::vector1< core::Real > const & vec )
@@ -193,7 +193,7 @@ calc_sum_squares( utility::vector1< core::Real > const & vec )
 
 core::Real
 calc_sum_xy( utility::vector1< core::Real > const & x,
-						 utility::vector1< core::Real > const & y )
+	utility::vector1< core::Real > const & y )
 {
 	core::Real sum( 0.0 );
 	runtime_assert( x.size() == y.size() );
@@ -209,7 +209,7 @@ calc_sum_xy( utility::vector1< core::Real > const & x,
 /// @brief the third is the sum of squares error
 utility::vector1< core::Real >
 linear_regression( utility::vector1< core::Real > const & x,
-									 utility::vector1< core::Real > const & y )
+	utility::vector1< core::Real > const & y )
 {
 	runtime_assert( x.size() == y.size() );
 	core::Size const n( x.size() );
@@ -438,16 +438,16 @@ void replace_file( std::string const & origfile, std::string const & newfile )
 	f.close();
 
 	if ( newfile_exists &&
-			 ( rename( newfile.c_str(), std::string( newfile + "_tmp" ).c_str() ) != 0 ) ) {
+			( rename( newfile.c_str(), std::string( newfile + "_tmp" ).c_str() ) != 0 ) ) {
 		utility_exit_with_message( "Error renaming " + newfile + " to " + newfile + "_tmp" );
 	}
 	if ( ( ! origfile_exists ) ||
-			 ( rename( std::string( origfile ).c_str(), newfile.c_str() ) != 0 ) ) {
+			( rename( std::string( origfile ).c_str(), newfile.c_str() ) != 0 ) ) {
 		TR.Error << "Error moving " << origfile << " to " << newfile << std::endl;
 		utility_exit();
 	}
 	if ( newfile_exists &&
-			 ( remove( std::string( newfile + "_tmp" ).c_str() ) != 0 ) ) {
+			( remove( std::string( newfile + "_tmp" ).c_str() ) != 0 ) ) {
 		utility_exit_with_message( "Error removing " + newfile + "_tmp" );
 	}
 }
@@ -506,26 +506,27 @@ GenericSimulatedAnnealer::reset( Pose & pose )
 void
 GenericSimulatedAnnealer::apply( Pose & pose )
 {
-  if( !mover() ){
-    TR.Warning << "Mover is empty ! " << std::endl;
-    return;
-  }
-  if( !filters().size() && !scorefxn() ){
-    TR.Warning << "Both ScorefunctionOP and FilterOP are empty ! " << std::endl;
-    return;
-  }
+	if ( !mover() ) {
+		TR.Warning << "Mover is empty ! " << std::endl;
+		return;
+	}
+	if ( !filters().size() && !scorefxn() ) {
+		TR.Warning << "Both ScorefunctionOP and FilterOP are empty ! " << std::endl;
+		return;
+	}
 
 	bool const stop_at_start( ( mover_stopping_condition() && mover_stopping_condition()->obj )
-														|| ( stopping_condition() && stopping_condition()->apply( pose ) ) );
-	if( stop_at_start ){
+		|| ( stopping_condition() && stopping_condition()->apply( pose ) ) );
+	if ( stop_at_start ) {
 		TR << "MC stopping condition met at the start, so failing without retrying " << std::endl;
 		set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
 		return;
 	}
 
-  //fpd
-  if (mover()->get_additional_output())
-      utility_exit_with_message("Movers returning multiple poses are unsupported by GenericSimulatedAnnealer.");
+	//fpd
+	if ( mover()->get_additional_output() ) {
+		utility_exit_with_message("Movers returning multiple poses are unsupported by GenericSimulatedAnnealer.");
+	}
 
 	core::Size trials = maxtrials();
 	core::pack::task::TaskFactoryOP tf( task_factory() );
@@ -544,7 +545,7 @@ GenericSimulatedAnnealer::apply( Pose & pose )
 	} else {
 		// otherwise, reset to the beginning
 		TR.Info << "Checkpoint does not exist! Starting from the beginning" << std::endl;
-		if( checkpoint_file_ != "" ){
+		if ( checkpoint_file_ != "" ) {
 			TR.Info << "Saving initial state entering the MC trajectory, for use in checkpoint recovery. Checkpointing filename: " << checkpoint_file_ << std::endl;
 			save_checkpoint_file();
 		}
@@ -586,7 +587,7 @@ GenericSimulatedAnnealer::apply( Pose & pose )
 	show_counters(TR);
 	TR << "Finished MC. Out of " << trials << ", " << accept_count << " accepted " << " and " << reject_count << " rejected." << std::endl;
 
-  // Recover pose that have the lowest score, or the last accepted pose, as appropriate
+	// Recover pose that have the lowest score, or the last accepted pose, as appropriate
 	if ( recover_low() ) {
 		recover_low( pose );
 	} else {
@@ -615,7 +616,7 @@ utility::vector1< core::Real >
 GenericSimulatedAnnealer::score_pose( core::pose::Pose const & pose ) const
 {
 	utility::vector1< core::Real > provisional_scores;
-	for( core::Size index( 1 ); index <= filters().size(); ++index ){
+	for ( core::Size index( 1 ); index <= filters().size(); ++index ) {
 		TR.Debug <<"Filter #"<<index<<std::endl;
 		protocols::filters::FilterCOP filter( filters()[ index ] );
 		Real const flip( sample_types()[ index ] == "high" ? -1 : 1 );
@@ -641,7 +642,7 @@ GenericSimulatedAnnealer::boltzmann_result( core::pose::Pose & pose )
 /// @brief given a modified pose, determines whether we should accept or not, and updates internal class data accordingly
 TrialResult
 GenericSimulatedAnnealer::boltzmann_result( core::pose::Pose & pose,
-																						utility::vector1< core::Real > const & random_nums )
+	utility::vector1< core::Real > const & random_nums )
 {
 	TR << "Randoms=";
 	for ( core::Size i=1; i<=random_nums.size(); ++i ) {
@@ -658,7 +659,7 @@ GenericSimulatedAnnealer::boltzmann_result( core::pose::Pose & pose,
 		accepted_scores_.push_back( last_accepted_scores() );
 		// check to see if the stopping condition is satisfied.
 		bool const stop( ( mover_stopping_condition() && mover_stopping_condition()->obj )
-										 || ( stopping_condition() && stopping_condition()->apply( pose ) ) );
+			|| ( stopping_condition() && stopping_condition()->apply( pose ) ) );
 		if ( stop ) {
 			return FINISHED;
 		}
@@ -687,16 +688,16 @@ GenericSimulatedAnnealer::apply_mover( core::pose::Pose & pose ) {
 
 std::string
 GenericSimulatedAnnealer::get_name() const {
-  return GenericSimulatedAnnealerCreator::mover_name();
+	return GenericSimulatedAnnealerCreator::mover_name();
 }
 
 /// @brief parse xml file
 void
 GenericSimulatedAnnealer::parse_my_tag( TagCOP const tag,
-																				 basic::datacache::DataMap & data,
-																				 protocols::filters::Filters_map const & filters,
-																				 protocols::moves::Movers_map const & movers,
-																				 core::pose::Pose const & pose )
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const & pose )
 {
 	GenericMonteCarloMover::parse_my_tag( tag, data, filters, movers, pose );
 	history_ = tag->getOption< core::Size >( "history", history_ );

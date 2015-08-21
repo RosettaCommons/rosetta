@@ -42,7 +42,7 @@ core::uint find_seqpos_of_saccharides_parent_residue( conformation::Residue cons
 
 /// @brief  Return pointers to the two residues of the glycosidic bond.
 std::pair< conformation::ResidueCOP, conformation::ResidueCOP > get_glycosidic_bond_residues( Pose const & pose,
-		uint const sequence_position );
+	uint const sequence_position );
 
 
 /// @brief  Return the AtomIDs of the four phi torsion reference atoms.
@@ -56,8 +56,8 @@ utility::vector1< id::AtomID > get_reference_atoms_for_1st_omega( Pose const & p
 
 /// @brief  Return the AtomIDs of the four reference atoms for the requested torsion.
 utility::vector1< id::AtomID > get_reference_atoms( uint const torsion_id,
-		Pose const & pose,
-		uint const sequence_position );
+	Pose const & pose,
+	uint const sequence_position );
 
 
 // Virtual Atom Alignment
@@ -90,9 +90,9 @@ core::Angle get_glycosidic_torsion( uint const torsion_id, Pose const & pose, ui
 // Setters
 /// @brief  Set the requested torsion angle between a saccharide residue of the given pose and the previous residue.
 void set_glycosidic_torsion( uint const torsion_id,
-		Pose & pose,
-		uint const sequence_position,
-		core::Angle const setting );
+	Pose & pose,
+	uint const sequence_position,
+	core::Angle const setting );
 
 }  // namespace carbohydrates
 }  // namespace pose

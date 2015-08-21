@@ -40,9 +40,9 @@
 
 static thread_local basic::Tracer TR( "protocols.toolbox.task_operations.RestrictNativeResiduesOperation" );
 
-namespace protocols{
-namespace toolbox{
-namespace task_operations{
+namespace protocols {
+namespace toolbox {
+namespace task_operations {
 
 core::pack::task::operation::TaskOperationOP
 RestrictNativeResiduesOperationCreator::create_task_operation() const
@@ -118,10 +118,10 @@ RestrictNativeResiduesOperation::apply( Pose const & pose, PackerTask & task ) c
 	runtime_assert( reference_pose() != 0 );
 	core::Size total_residue_ref;
 	core::pose::Pose asym_ref_pose;
-	if(core::pose::symmetry::is_symmetric( *reference_pose() )) {
+	if ( core::pose::symmetry::is_symmetric( *reference_pose() ) ) {
 		core::pose::symmetry::extract_asymmetric_unit( *reference_pose(), asym_ref_pose);
-  	for (core::Size i = 1; i <= asym_ref_pose.total_residue(); ++i) {
-    	if (asym_ref_pose.residue_type(i).name() == "VRT") {
+		for ( core::Size i = 1; i <= asym_ref_pose.total_residue(); ++i ) {
+			if ( asym_ref_pose.residue_type(i).name() == "VRT" ) {
 				asym_ref_pose.conformation().delete_residue_slow(asym_ref_pose.total_residue());
 			}
 		}
@@ -132,10 +132,10 @@ RestrictNativeResiduesOperation::apply( Pose const & pose, PackerTask & task ) c
 	}
 	core::Size total_residue;
 	core::pose::Pose asym_pose;
-	if (core::pose::symmetry::is_symmetric( pose )) {
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		core::pose::symmetry::extract_asymmetric_unit(pose, asym_pose);
-  	for (core::Size i = 1; i <= asym_pose.total_residue(); ++i) {
-    	if (asym_pose.residue_type(i).name() == "VRT") {
+		for ( core::Size i = 1; i <= asym_pose.total_residue(); ++i ) {
+			if ( asym_pose.residue_type(i).name() == "VRT" ) {
 				asym_pose.conformation().delete_residue_slow(asym_pose.total_residue());
 			}
 		}
@@ -144,12 +144,13 @@ RestrictNativeResiduesOperation::apply( Pose const & pose, PackerTask & task ) c
 		total_residue = pose.total_residue();
 		asym_pose = pose;
 	}
-	if( total_residue_ref != total_residue )
+	if ( total_residue_ref != total_residue ) {
 		utility_exit_with_message( "Reference pose and current pose have a different number of residues" );
+	}
 	std::string select_non_native_resis("select non_native_resis, resi ");
 	core::Size designable_resis = 0;
-	if( !invert_ ){
-		for( core::Size resi=1; resi<=total_residue; ++resi ) {
+	if ( !invert_ ) {
+		for ( core::Size resi=1; resi<=total_residue; ++resi ) {
 			if ( asym_ref_pose.residue(resi).name3() == asym_pose.residue(resi).name3() ) {
 				if ( prevent_repacking_ ) task.nonconst_residue_task(resi).prevent_repacking();
 				else task.nonconst_residue_task(resi).restrict_to_repacking();
@@ -164,9 +165,8 @@ RestrictNativeResiduesOperation::apply( Pose const & pose, PackerTask & task ) c
 				designable_resis++;
 			}
 		}
-	}
-	else {
-		for( core::Size resi=1; resi<=total_residue; ++resi ) {
+	} else {
+		for ( core::Size resi=1; resi<=total_residue; ++resi ) {
 			if ( asym_ref_pose.residue(resi).name3() != asym_pose.residue(resi).name3() ) {
 				if ( prevent_repacking_ ) task.nonconst_residue_task(resi).prevent_repacking();
 				else task.nonconst_residue_task(resi).restrict_to_repacking();
@@ -183,11 +183,11 @@ RestrictNativeResiduesOperation::apply( Pose const & pose, PackerTask & task ) c
 		}
 	}
 	// turn off everything in symmetric copies
-	for( core::Size ir = total_residue+1; ir <= pose.total_residue(); ++ir){
-		 task.nonconst_residue_task(ir).prevent_repacking();
+	for ( core::Size ir = total_residue+1; ir <= pose.total_residue(); ++ir ) {
+		task.nonconst_residue_task(ir).prevent_repacking();
 	}
 
-	if( designable_resis == 0 ) {
+	if ( designable_resis == 0 ) {
 		TR<<"Warning: No designable residues identified in pose."<<std::endl;
 	} else {
 		TR<<designable_resis<<" non-native, designable residues found in pose"<<std::endl;
@@ -207,7 +207,7 @@ RestrictNativeResiduesOperation::parse_tag( TagCOP tag , DataMap & )
 	using namespace basic::options::OptionKeys;
 	std::string reference_pdb = "";
 
-	if( option[ in::file::native ].user() ){
+	if ( option[ in::file::native ].user() ) {
 		reference_pdb = option[ in::file::native ]();
 	} else if ( tag->hasOption("pdbname") ) {
 		reference_pdb = tag->getOption< std::string >("pdbname");
@@ -217,7 +217,7 @@ RestrictNativeResiduesOperation::parse_tag( TagCOP tag , DataMap & )
 		core::import_pose::pose_from_pdb( *temp_pose, reference_pdb );
 		reference_pose( temp_pose );
 		TR<<"Using pdb "<<reference_pdb<<" as reference."<<std::endl;
-	}	else {
+	} else {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Native PDB not specified." );
 	}
 	if ( tag->hasOption("invert") ) {

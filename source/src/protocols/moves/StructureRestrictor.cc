@@ -41,33 +41,33 @@
 using namespace std;
 using namespace boost;
 using namespace core;
-  using namespace pose;
-  using namespace protocols::jd2;
+using namespace pose;
+using namespace protocols::jd2;
 
 static thread_local basic::Tracer TR_SR( "protocols.moves.StructureRestrictor" );
 
-namespace protocols{
-namespace moves{
+namespace protocols {
+namespace moves {
 
 StructureRestrictor::StructureRestrictor():
-  Mover("StructureRestrictor"),
-  //		relevant_chains_fname( basic::options::option[ basic::options::OptionKeys::StructureRestrictor::relevant_chains].value() ),
-  initialized( false )
+	Mover("StructureRestrictor"),
+	//  relevant_chains_fname( basic::options::option[ basic::options::OptionKeys::StructureRestrictor::relevant_chains].value() ),
+	initialized( false )
 {}
 
 StructureRestrictor::StructureRestrictor( string const & name):
-  Mover(name),
-  //		relevant_chains_fname( basic::options::option[ basic::options::OptionKeys::StructureRestrictor::relevant_chains].value() ),
-  initialized( false )
+	Mover(name),
+	//  relevant_chains_fname( basic::options::option[ basic::options::OptionKeys::StructureRestrictor::relevant_chains].value() ),
+	initialized( false )
 {}
 
 StructureRestrictor::StructureRestrictor( StructureRestrictor const & src):
 	//utility::pointer::ReferenceCount(),
 	Mover(src)
 {
-  chain_map = std::map< std::string const, std::string const >( src.chain_map );
-  relevant_chains_fname = src.relevant_chains_fname;
-  initialized = src.initialized;
+	chain_map = std::map< std::string const, std::string const >( src.chain_map );
+	relevant_chains_fname = src.relevant_chains_fname;
+	initialized = src.initialized;
 }
 
 StructureRestrictor::~StructureRestrictor(){}
@@ -83,93 +83,93 @@ MoverOP StructureRestrictor::clone() const
 // So this this can be called from RosettaScripts
 void
 StructureRestrictor::parse_my_tag(
-  TagCOP const tag,
-  basic::datacache::DataMap & /*data*/,
-  Filters_map const & /*filters*/,
-  protocols::moves::Movers_map const & /*movers*/,
-  Pose const & /*pose*/ )
+	TagCOP const tag,
+	basic::datacache::DataMap & /*data*/,
+	Filters_map const & /*filters*/,
+	protocols::moves::Movers_map const & /*movers*/,
+	Pose const & /*pose*/ )
 {
-  if( tag->hasOption("relevant_chains") ){
-    relevant_chains_fname = tag->getOption<string>("relevant_chains");
-  }
+	if ( tag->hasOption("relevant_chains") ) {
+		relevant_chains_fname = tag->getOption<string>("relevant_chains");
+	}
 }
 
 void
 StructureRestrictor::setup_relevant_chains(
-					   string const & relevant_chains_fname,
-					   map<string const, string const> & chain_map
-					   ){
-  if(relevant_chains_fname.length() == 0){
-    TR_SR.Error << " Cannot open relevant_chains_file '"<< relevant_chains_fname << "'" << endl;
-    return;
-  }
-  utility::io::izstream relevant_chains_file( relevant_chains_fname );
-  if ( !relevant_chains_file ){
-    TR_SR.Error << " Cannot open relevant_chains_file '"<< relevant_chains_fname << "'" << endl;
-    return;
-  } else {
-    TR_SR << "Reading in relevant chains from file '"<< relevant_chains_fname << "'" << endl;
-  }
-  string line;
-  //string chains = "*";
-  vector<string> tokens;
-  getline(relevant_chains_file,line); // header
-  while( getline( relevant_chains_file, line ) ){
+	string const & relevant_chains_fname,
+	map<string const, string const> & chain_map
+){
+	if ( relevant_chains_fname.length() == 0 ) {
+		TR_SR.Error << " Cannot open relevant_chains_file '"<< relevant_chains_fname << "'" << endl;
+		return;
+	}
+	utility::io::izstream relevant_chains_file( relevant_chains_fname );
+	if ( !relevant_chains_file ) {
+		TR_SR.Error << " Cannot open relevant_chains_file '"<< relevant_chains_fname << "'" << endl;
+		return;
+	} else {
+		TR_SR << "Reading in relevant chains from file '"<< relevant_chains_fname << "'" << endl;
+	}
+	string line;
+	//string chains = "*";
+	vector<string> tokens;
+	getline(relevant_chains_file,line); // header
+	while ( getline( relevant_chains_file, line ) ) {
 		string tab("\t");
-    split(tokens, line, is_any_of(tab) );
-    chain_map.insert(std::pair<string const, string const>(tokens[0], tokens[1]));
-  }
-  initialized = true;
+		split(tokens, line, is_any_of(tab) );
+		chain_map.insert(std::pair<string const, string const>(tokens[0], tokens[1]));
+	}
+	initialized = true;
 }
 
 // this is a hack because poses do not have canonical names!
 string
 StructureRestrictor::pose_name(Pose const & pose){
-  //silent files and pdbs set the name of the pose differently
-  string name = "No_Name_Found";
-  if (pose.pdb_info()){
-    name = pose.pdb_info()->name();
-  } else if ( pose.data().has( datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ) {
-    name = static_cast< basic::datacache::CacheableString const & >
-      ( pose.data().get( datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ).str();
-  } else {
-    name = JobDistributor::get_instance()->current_job()->input_tag();
-  }
-  return name;
+	//silent files and pdbs set the name of the pose differently
+	string name = "No_Name_Found";
+	if ( pose.pdb_info() ) {
+		name = pose.pdb_info()->name();
+	} else if ( pose.data().has( datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ) {
+		name = static_cast< basic::datacache::CacheableString const & >
+			( pose.data().get( datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ).str();
+	} else {
+		name = JobDistributor::get_instance()->current_job()->input_tag();
+	}
+	return name;
 }
 
 
 void
 StructureRestrictor::apply( Pose& pose ){
-  if( !initialized){
-    setup_relevant_chains(relevant_chains_fname, chain_map);
-  }
+	if ( !initialized ) {
+		setup_relevant_chains(relevant_chains_fname, chain_map);
+	}
 
 
-  string const & name = pose_name(pose);
-  map<string const, string const>::iterator i(chain_map.find(name));
-  if (i == chain_map.end()){
-    TR_SR << "No chain information found for structure " << name << "." << endl;
-    return;
-  }
-  string chains = i->second;
-  TR_SR << "Restricting structure " << name << " to chains " << chains << "." << endl;
-  Size res_begin_delete = 1;
-  for(Size i=1; i <= pose.total_residue(); ++i){
-    //INVARIANT: if we're in a stretch to delete then res_begin_delete
-    //indicates the first residue in this stretch to delete
-    if(chains.find( pose.pdb_info()->chain(i), 0) != string::npos){
-      //keep this position
-      if (res_begin_delete != i){
-	pose.conformation().delete_residue_range_slow(res_begin_delete, i-1);
-      }
-      res_begin_delete = i+1;
-    }
-  }
-  // don't for get the last section to delete
-  if(res_begin_delete <= pose.total_residue()){
-    pose.conformation().delete_residue_range_slow(res_begin_delete, pose.total_residue());
-  }
+	string const & name = pose_name(pose);
+	map<string const, string const>::iterator i(chain_map.find(name));
+	if ( i == chain_map.end() ) {
+		TR_SR << "No chain information found for structure " << name << "." << endl;
+		return;
+	}
+	string chains = i->second;
+	TR_SR << "Restricting structure " << name << " to chains " << chains << "." << endl;
+	Size res_begin_delete = 1;
+	for ( Size i=1; i <= pose.total_residue(); ++i ) {
+		//INVARIANT: if we're in a stretch to delete then res_begin_delete
+		//indicates the first residue in this stretch to delete
+		if ( chains.find( pose.pdb_info()->chain(i), 0) != string::npos ) {
+			//keep this position
+			if ( res_begin_delete != i ) {
+				pose.conformation().delete_residue_range_slow(res_begin_delete, i-1);
+			}
+			res_begin_delete = i+1;
+		}
+	}
+	// don't for get the last section to delete
+	if ( res_begin_delete <= pose.total_residue() ) {
+		pose.conformation().delete_residue_range_slow(res_begin_delete, pose.total_residue());
+	}
 }
 
 

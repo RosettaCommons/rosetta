@@ -53,70 +53,70 @@ namespace environment {
 namespace claims {
 
 class EnvClaim : public utility::pointer::ReferenceCount {
-  typedef core::pack::task::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
-  typedef core::environment::FoldTreeSketch FoldTreeSketch;
-  typedef std::map< std::string, ResidueSelectorCOP > AnnotatingSelectors;
+	typedef core::pack::task::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
+	typedef core::environment::FoldTreeSketch FoldTreeSketch;
+	typedef std::map< std::string, ResidueSelectorCOP > AnnotatingSelectors;
 
 public:
-  /// @brief factory method for claims.
-  /// @note I chose not to make a full-on factory implementation with registrators and creators and a factory
-  ///       because there aren't that many different kinds of claims, I think, and that level of complexity is
-  ///       likely superfluous.
-  static
-  EnvClaimOP make_claim( std::string const& name,
-                         ClientMoverOP owner,
-                         utility::tag::TagCOP tag,
-                         basic::datacache::DataMap& datamap );
+	/// @brief factory method for claims.
+	/// @note I chose not to make a full-on factory implementation with registrators and creators and a factory
+	///       because there aren't that many different kinds of claims, I think, and that level of complexity is
+	///       likely superfluous.
+	static
+	EnvClaimOP make_claim( std::string const& name,
+		ClientMoverOP owner,
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap& datamap );
 
-  static
-  bool is_claim( std::string const& name );
+	static
+	bool is_claim( std::string const& name );
 
-  /// @brief Virtual destructor
-  virtual ~EnvClaim();
+	/// @brief Virtual destructor
+	virtual ~EnvClaim();
 
-  EnvClaim( ClientMoverOP );
+	EnvClaim( ClientMoverOP );
 
-  virtual EnvClaimOP clone() const = 0;
+	virtual EnvClaimOP clone() const = 0;
 
-  /// @brief A clone used by the EnvClaimFactory to instantiate new EnvClaims using an XML tag.
-  ClientMoverOP owner() const;
+	/// @brief A clone used by the EnvClaimFactory to instantiate new EnvClaims using an XML tag.
+	ClientMoverOP owner() const;
 
-  void set_owner( ClientMoverOP owner ) { claim_source_ = owner; }
+	void set_owner( ClientMoverOP owner ) { claim_source_ = owner; }
 
-  /// @brief allow the claim to use any internally queued ResidueSelectors to create sequence annotations.
-  void annotate( core::pose::Pose const&, core::environment::SequenceAnnotationOP ) const;
+	/// @brief allow the claim to use any internally queued ResidueSelectors to create sequence annotations.
+	void annotate( core::pose::Pose const&, core::environment::SequenceAnnotationOP ) const;
 
-  /// @brief build ResidueElements that indicate the introduction of a new peptide edge into the fold tree.
-  virtual void yield_elements( FoldTreeSketch const&, ResidueElements& ) const {};
+	/// @brief build ResidueElements that indicate the introduction of a new peptide edge into the fold tree.
+	virtual void yield_elements( FoldTreeSketch const&, ResidueElements& ) const {};
 
-  /// @brief build the JumpElements that represent the inclusion of a jump in the nascent FoldTree
-  virtual void yield_elements( FoldTreeSketch const&, JumpElements& ) const {};
+	/// @brief build the JumpElements that represent the inclusion of a jump in the nascent FoldTree
+	virtual void yield_elements( FoldTreeSketch const&, JumpElements& ) const {};
 
-  /// @brief build and export the CutElements that represent the inclusion of a cut in the tree.
-  virtual void yield_elements( FoldTreeSketch const&, CutElements& ) const {};
+	/// @brief build and export the CutElements that represent the inclusion of a cut in the tree.
+	virtual void yield_elements( FoldTreeSketch const&, CutElements& ) const {};
 
-  /// @brief build and export the CutElements that represent the inclusion of a cut in the tree.
-  virtual void yield_elements( FoldTreeSketch const&, CutBiasElements& ) const {};
+	/// @brief build and export the CutElements that represent the inclusion of a cut in the tree.
+	virtual void yield_elements( FoldTreeSketch const&, CutBiasElements& ) const {};
 
-  /// @brief build and export DOFElements, which represent control over non-jump dofs (torsions, bond lengths, angles) final conformation.
-  virtual void yield_elements( core::pose::Pose const&, DOFElements& ) const {};
+	/// @brief build and export DOFElements, which represent control over non-jump dofs (torsions, bond lengths, angles) final conformation.
+	virtual void yield_elements( core::pose::Pose const&, DOFElements& ) const {};
 
-  virtual void show( std::ostream& os ) const;
+	virtual void show( std::ostream& os ) const;
 
-  virtual std::string type() const = 0;
+	virtual std::string type() const = 0;
 
 protected:
-  virtual
-  DOFElement wrap_dof_id( core::id::DOF_ID const& id ) const;
+	virtual
+	DOFElement wrap_dof_id( core::id::DOF_ID const& id ) const;
 
-  ControlStrength parse_ctrl_str( std::string const& str ) const;
+	ControlStrength parse_ctrl_str( std::string const& str ) const;
 
-  void queue_for_annotation( std::string const& label, ResidueSelectorCOP selector );
+	void queue_for_annotation( std::string const& label, ResidueSelectorCOP selector );
 
 private:
 
-  AnnotatingSelectors selector_list_;
-  ClientMoverOP claim_source_;
+	AnnotatingSelectors selector_list_;
+	ClientMoverOP claim_source_;
 
 }; //class EnvClaim
 

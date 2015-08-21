@@ -96,8 +96,8 @@ public:
 
 		//std::cout << "Rotsets built: " << rotsets->nrotamers() << " rotamers.";
 		//for ( Size ii = 1; ii <= rotsets->nrotamers(); ++ii ) {
-		//	std::cout << "Rotamer " << ii << " mr#: " << rotsets->moltenres_for_rotamer( ii ) << " rot#: "
-		//		<< rotsets->rotid_on_moltenresidue( ii ) << std::endl;
+		// std::cout << "Rotamer " << ii << " mr#: " << rotsets->moltenres_for_rotamer( ii ) << " rot#: "
+		//  << rotsets->rotid_on_moltenresidue( ii ) << std::endl;
 		//}
 
 		utility::vector0< Size > rs;
@@ -111,10 +111,10 @@ public:
 		RotamerSubsetsOP rsubset( new RotamerSubsets( *rotsets, rs ) );
 		/*std::cout << "Rotsubset with " << rsubset->nrotamers() << " rotamers" << std::endl;
 		for ( Size ii = 1; ii <= rsubset->nrotamers(); ++ii ) {
-			std::cout << "Rotamer " << ii << " mr#: " << rsubset->moltenres_for_rotamer( ii ) << " rot#: "
-				<< rsubset->rotid_on_moltenresidue( ii ) << std::endl;
-			std::cout << "TS_ASSERT( rsubset->moltenres_for_rotamer( " << ii << " ) = " << rsubset->moltenres_for_rotamer( ii ) << ");" << std::endl;
-			std::cout << "TS_ASSERT( rsubset->rotid_on_moltenresidue( " << ii << " ) = " << rsubset->rotid_on_moltenresidue( ii ) << ");" << std::endl;
+		std::cout << "Rotamer " << ii << " mr#: " << rsubset->moltenres_for_rotamer( ii ) << " rot#: "
+		<< rsubset->rotid_on_moltenresidue( ii ) << std::endl;
+		std::cout << "TS_ASSERT( rsubset->moltenres_for_rotamer( " << ii << " ) = " << rsubset->moltenres_for_rotamer( ii ) << ");" << std::endl;
+		std::cout << "TS_ASSERT( rsubset->rotid_on_moltenresidue( " << ii << " ) = " << rsubset->rotid_on_moltenresidue( ii ) << ");" << std::endl;
 		}*/
 
 		TS_ASSERT( rsubset->moltenres_for_rotamer( 1 ) == 2);

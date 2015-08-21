@@ -18,9 +18,9 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
 
-namespace basic{
-namespace database{
-namespace schema_generator{
+namespace basic {
+namespace database {
+namespace schema_generator {
 
 class Column;
 typedef utility::vector1< Column > Columns;

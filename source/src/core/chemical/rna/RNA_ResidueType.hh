@@ -47,7 +47,7 @@ public:
 
 	virtual ~RNA_ResidueType();
 
-///////////////////////////Implemented for fast lookup! Parin Sripakdeevong, June 25th, 2011//////////////////
+	///////////////////////////Implemented for fast lookup! Parin Sripakdeevong, June 25th, 2011//////////////////
 private:
 
 	utility::vector1< Size > const
@@ -55,18 +55,18 @@ private:
 
 	void
 	rna_note_chi_controls_atom( core::Size const chi, core::Size const atomno,
-															utility::vector1< core::Size > & last_controlling_chi,
-															utility::vector1< core::Size > const & chi_order );
+		utility::vector1< core::Size > & last_controlling_chi,
+		utility::vector1< core::Size > const & chi_order );
 
-	public:
+public:
 
 	void
 	update_derived_rna_data( ResidueTypeCAP residue_type_in );
 
 	void
 	rna_update_last_controlling_chi( ResidueTypeCAP residue_type_in,
-																utility::vector1< core::Size > & last_controlling_chi,
-																utility::vector1< AtomIndices >  &  atoms_last_controlled_by_chi );
+		utility::vector1< core::Size > & last_controlling_chi,
+		utility::vector1< AtomIndices >  &  atoms_last_controlled_by_chi );
 
 	////////////Fast lookup functions///////
 
@@ -122,7 +122,7 @@ private:
 	Size
 	c2prime_atom_index() const;
 
- 	Size
+	Size
 	c4prime_atom_index() const;
 
 	Size chi_number_pseudoalpha() const { return chi_number_pseudoalpha_;}
@@ -131,7 +131,7 @@ private:
 	Size chi_number_pseudoepsilon() const { return chi_number_pseudoepsilon_;}
 	Size chi_number_pseudozeta() const { return chi_number_pseudozeta_;}
 
-///////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////
 
 public:
 

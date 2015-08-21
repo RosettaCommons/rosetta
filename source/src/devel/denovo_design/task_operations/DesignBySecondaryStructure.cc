@@ -40,7 +40,7 @@ static thread_local basic::Tracer TR( "devel.denovo_design.task_operations.Desig
 namespace devel {
 namespace denovo_design {
 namespace task_operations {
-	// helper functions
+// helper functions
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Looks for unknown amino acids in the pose and returns their indices
@@ -49,7 +49,7 @@ find_ligands( core::pose::Pose const & pose )
 {
 	utility::vector1<core::Size> retval;
 	// look at each amino acid to see if it is of unknown type
-	for( core::Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
 		if ( ! pose.residue( i ).is_protein() ) {
 			TR << "Residue " << i << " (type=" << pose.residue(i).name3() << ") is probably a ligand" << std::endl;
 			retval.push_back( i );
@@ -69,7 +69,7 @@ secstruct_with_ligand( std::string const & secstruct, utility::vector1<core::Siz
 	std::string newstr = secstruct;
 	// sorting the ligand list before this operation is mandatory
 	sort( ligands.begin(), ligands.end() );
-	for( core::Size i = 1; i <= ligands.size(); i++ ) {
+	for ( core::Size i = 1; i <= ligands.size(); i++ ) {
 		//tr << "Trying to add ligand at position " << ligands[i] << " into " << newstr << std::endl;
 		runtime_assert( ligands[i] <= newstr.size() + 1 );
 		runtime_assert( ligands[i] >= 1 );
@@ -79,37 +79,37 @@ secstruct_with_ligand( std::string const & secstruct, utility::vector1<core::Siz
 	return newstr;
 }
 
-  // default constructor
+// default constructor
 DesignBySecondaryStructureOperation::DesignBySecondaryStructureOperation()
-	: HighestEnergyRegionOperation(),
-		blueprint_ss_( "" ),
-		pred_ss_( "" ),
-		prevent_native_aa_( false ),
-		prevent_bad_point_mutants_( false ),
-		psipred_interface_( /* NULL */ ),
-		ss_predictor_( /* NULL */ )
+: HighestEnergyRegionOperation(),
+	blueprint_ss_( "" ),
+	pred_ss_( "" ),
+	prevent_native_aa_( false ),
+	prevent_bad_point_mutants_( false ),
+	psipred_interface_( /* NULL */ ),
+	ss_predictor_( /* NULL */ )
 {}
 
 // copy constructor
 DesignBySecondaryStructureOperation::DesignBySecondaryStructureOperation( DesignBySecondaryStructureOperation const & rval )
-  : HighestEnergyRegionOperation( rval ),
-		blueprint_ss_( rval.blueprint_ss_ ),
-		pred_ss_( "" ),
-		prevent_native_aa_( rval.prevent_native_aa_ ),
-		prevent_bad_point_mutants_( rval.prevent_bad_point_mutants_ ),
-		psipred_interface_( rval.psipred_interface_ )
+: HighestEnergyRegionOperation( rval ),
+	blueprint_ss_( rval.blueprint_ss_ ),
+	pred_ss_( "" ),
+	prevent_native_aa_( rval.prevent_native_aa_ ),
+	prevent_bad_point_mutants_( rval.prevent_bad_point_mutants_ ),
+	psipred_interface_( rval.psipred_interface_ )
 {}
 
 // value constructor
 DesignBySecondaryStructureOperation::DesignBySecondaryStructureOperation( std::string const bp_file,
-																																					std::string const cmd,
-																																					bool const prevent_native,
-																																					bool const prevent_bad_point_mutants )
-	: HighestEnergyRegionOperation(),
-		pred_ss_( "" ),
-		prevent_native_aa_( prevent_native ),
-  	prevent_bad_point_mutants_( prevent_bad_point_mutants ),
-	  psipred_interface_( /* NULL */ )
+	std::string const cmd,
+	bool const prevent_native,
+	bool const prevent_bad_point_mutants )
+: HighestEnergyRegionOperation(),
+	pred_ss_( "" ),
+	prevent_native_aa_( prevent_native ),
+	prevent_bad_point_mutants_( prevent_bad_point_mutants ),
+	psipred_interface_( /* NULL */ )
 {
 	if ( cmd != "" ) {
 		psipred_interface_ = protocols::denovo_design::filters::PsiPredInterfaceOP( new protocols::denovo_design::filters::PsiPredInterface( cmd ) );
@@ -126,12 +126,12 @@ DesignBySecondaryStructureOperation::~DesignBySecondaryStructureOperation()
 /// @brief make clone
 core::pack::task::operation::TaskOperationOP
 DesignBySecondaryStructureOperation::clone() const {
-  return core::pack::task::operation::TaskOperationOP( new DesignBySecondaryStructureOperation( *this ) );
+	return core::pack::task::operation::TaskOperationOP( new DesignBySecondaryStructureOperation( *this ) );
 }
 
 /// @brief utility function that compares two resid-probability pairs and returns true of the probability of the first is greater than probability of the second
 bool compare_prob( std::pair< core::Size, core::Real > const & p1,
-									 std::pair< core::Size, core::Real > const & p2 ) {
+	std::pair< core::Size, core::Real > const & p2 ) {
 	return ( p1.second < p2.second );
 }
 
@@ -166,8 +166,9 @@ DesignBySecondaryStructureOperation::get_residues_to_design( core::pose::Pose co
 		runtime_assert( ss_predictor_ != 0 );
 		std::string sequence( "" );
 		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
-			if ( pose.residue( i ).is_protein() )
+			if ( pose.residue( i ).is_protein() ) {
 				sequence += pose.residue( i ).name1();
+			}
 		}
 		utility::vector1< utility::vector1< core::Real > > svm_pred( ss_predictor_->predict_ss( sequence ) );
 		for ( core::Size i=1; i<=wanted_ss.size(); ++i ) {
@@ -218,7 +219,7 @@ DesignBySecondaryStructureOperation::apply( Pose const & pose, core::pack::task:
 				TR << "Using cached pose amino acid for pos " << resids_to_design[i] << " - " << cached_pose()->residue( resids_to_design[i] ).name1() << std::endl;
 				aa = cached_pose()->residue( resids_to_design[i] ).name1();
 			} else {
-			  aa = pose.residue( resids_to_design[i] ).name1();
+				aa = pose.residue( resids_to_design[i] ).name1();
 			}
 			// retrieve restriction map
 			restrict_to_aa[core::chemical::aa_from_oneletter_code( aa )] = false;
@@ -235,9 +236,9 @@ DesignBySecondaryStructureOperation::apply( Pose const & pose, core::pack::task:
 		std::string dssp_ss( posecopy.secstruct() );
 		// look for ligands and don't include them in the SS
 		for ( core::Size i=0; i<dssp_ss.size(); ++i ) {
-				if ( pose.residue(i+1).is_protein() ) {
-						wanted_ss += dssp_ss[i];
-				}
+			if ( pose.residue(i+1).is_protein() ) {
+				wanted_ss += dssp_ss[i];
+			}
 		}
 	}
 
@@ -276,27 +277,27 @@ DesignBySecondaryStructureOperation::apply( Pose const & pose, core::pack::task:
 					//TR << "successfully restricted aas" << std::endl;
 					restrict_to_aa[core::chemical::aa_from_oneletter_code( aa )] = true;
 				} else {
-						TR << " Allowed." << std::endl;
+					TR << " Allowed." << std::endl;
 				}
 			}
 		}
 	}
 
-  // now we can just apply a DesignAround operation using the residues that don't match
-  protocols::toolbox::task_operations::DesignAroundOperation design_around;
-  design_around.design_shell( region_shell() );
+	// now we can just apply a DesignAround operation using the residues that don't match
+	protocols::toolbox::task_operations::DesignAroundOperation design_around;
+	design_around.design_shell( region_shell() );
 	if ( repack_non_selected() ) {
 		design_around.repack_shell( 1000.0 );
 	} else {
 		design_around.repack_shell( region_shell() );
 	}
-  TR << "Residues to design are: ";
-  for ( core::Size i=1; i<=resids_to_design.size(); i++) {
-    TR << resids_to_design[i] << " ";
-    design_around.include_residue( resids_to_design[i] );
-  }
-  TR << std::endl;
-  design_around.apply( pose, task );
+	TR << "Residues to design are: ";
+	for ( core::Size i=1; i<=resids_to_design.size(); i++ ) {
+		TR << resids_to_design[i] << " ";
+		design_around.include_residue( resids_to_design[i] );
+	}
+	TR << std::endl;
+	design_around.apply( pose, task );
 }
 
 void

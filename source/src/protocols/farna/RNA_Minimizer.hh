@@ -85,8 +85,8 @@ public:
 	core::scoring::ScoreFunctionOP const &
 	score_function() const{ return scorefxn_; }
 
-    core::scoring::ScoreFunctionOP
-    clone_scorefxn() const{ return scorefxn_->clone(); }
+	core::scoring::ScoreFunctionOP
+	clone_scorefxn() const{ return scorefxn_->clone(); }
 
 
 private:

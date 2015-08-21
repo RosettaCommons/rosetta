@@ -54,7 +54,7 @@ add_atom(
 	// create new atom
 	AtomOP const atom_p( add_jump_atom ? static_cast< Atom* >( new JumpAtom() ) : static_cast< Atom* >( new BondedAtom() ) );
 	// fill in the atom_ptr data
-debug_assert( atom_ptr[ atomno ] == 0 );
+	debug_assert( atom_ptr[ atomno ] == 0 );
 	atom_ptr[ atomno ] = atom_p;
 	// set the atom_id information
 	atom_p->id( AtomID( atomno, seqpos ) );
@@ -108,10 +108,10 @@ setup_cloned_atom(
 	new_atom->xyz( old_atom->xyz() );
 	// add old_atom's (non-exclude-) children
 	for ( Size i=0; i< Size(old_atom->n_children()); ++i ) { // 0-indexing AAARRGGHHH!!!
-		AtomID const & child_id( old_atom->child(i)->id() );
-		if ( std::find( exclude.begin(), exclude.end(), child_id ) == exclude.end() ) {
-			new_atom->append_atom( old_atom->child(i)->clone(0) ); // recursively copies child's children
-		}
+	AtomID const & child_id( old_atom->child(i)->id() );
+	if ( std::find( exclude.begin(), exclude.end(), child_id ) == exclude.end() ) {
+	new_atom->append_atom( old_atom->child(i)->clone(0) ); // recursively copies child's children
+	}
 	}
 	*/
 	return new_atom;
@@ -121,13 +121,13 @@ setup_cloned_atom(
 ///
 // void
 // fold_tree_from_atom_tree(
-// 	conformation::ResidueCAPs const & residues
-// 	AtomTree const & atom_tree,
-// 	FoldTree & fold_tree
+//  conformation::ResidueCAPs const & residues
+//  AtomTree const & atom_tree,
+//  FoldTree & fold_tree
 // )
 // {
-// 	/// get all inter-residue connections
-// 	utility::vector1< Edge
+//  /// get all inter-residue connections
+//  utility::vector1< Edge
 tree::AtomOP
 setup_backrub_atom_tree(
 	utility::vector1< AtomID >, // mainchain, // make our own local copy
@@ -142,7 +142,7 @@ setup_backrub_atom_tree(
 	/*
 	using utility::vector1;
 	Vector const pseudo_offset( 0,0,0 );
-// 	Vector const pseudo_offset( 0.25, 0.25, 0.25 );
+	//  Vector const pseudo_offset( 0.25, 0.25, 0.25 );
 	// constraints on the edge list (note that edges are ordered, ie i,j means edge *from* i *to* j (i-->j)
 	//
 	// -- 1,nbb is the first edge
@@ -160,7 +160,7 @@ setup_backrub_atom_tree(
 	//
 	Size const nbb( mainchain.size() );
 	mainchain.push_back( downstream_id ); // so that we dont clone this guy
-debug_assert( edges[1].first == 1 && edges[1].second == nbb );
+	debug_assert( edges[1].first == 1 && edges[1].second == nbb );
 	/// we're going to add pseudo residues, one for each edge in the edges vector
 	Size n(0);
 	// book-keeping
@@ -174,81 +174,81 @@ debug_assert( edges[1].first == 1 && edges[1].second == nbb );
 	mainchain_atom_pointer[ 1 ] = root;
 	seen[ 1 ] = true;
 	while ( n < edges.size() ) {
-		++n;
-		std::pair< Size, Size > const & edge( edges[n] );
-		Size const a( edge.first );
-		Size const b( edge.second );
+	++n;
+	std::pair< Size, Size > const & edge( edges[n] );
+	Size const a( edge.first );
+	Size const b( edge.second );
 	debug_assert( seen[a] );
-		// what should our anchor atom be?
-		// look at all pseudo rsds associated to a
-		AtomOP anchor_atom;
-		Size anchor(0);
-		vector1< Size > const & pseudo_a( mainchain_to_pseudo[a] );
-		for ( Size i=1; i<= pseudo_a.size(); ++i ) {
-			Size const nn( pseudo_a[i] );
-		debug_assert( edges[nn].second == a );
-			if ( ( edges[nn].first < b && b < a ) || ( edges[nn].first > b && b > a ) ) {
-				anchor = nn; // dont break -- want the smallest segment containing a,b
-			}
-		}
-		if ( anchor ) {
-			anchor_atom = pseudo_atom_pointer[ anchor ];
-		} else {
-			// connect to the authentic a
-			anchor_atom = mainchain_atom_pointer[ a ];
-		}
-		// has b been seen before?
-		AtomCOP old_b_atom( old_atom_pointer[ mainchain[b] ] );
-		if ( !seen[ b ] ) {
-			seen[b] = true;
-			// add b and b's non-mainchain children
-			Atom* b_atom( setup_cloned_atom( old_b_atom, mainchain ) );
-			anchor_atom->insert_atom( b_atom ); // NOTE: insert atom
-			mainchain_atom_pointer[ b ] = b_atom;
-		}
-		// add a new pseudo rsd at b's position
-		mainchain_to_pseudo[ b ].push_back( n );
-		Size const pseudo_b_seqpos( first_new_pseudo_residue + n - 1 );
-		AtomID const pseudo_b_id( AtomID( 1, pseudo_b_seqpos ) );
-		// delete the old one
-		Atom* old_pseudo_b_atom( old_atom_pointer[ pseudo_b_id ] );
-		old_pseudo_b_atom->parent()->delete_atom( old_pseudo_b_atom );
-		delete old_pseudo_b_atom;
-		// create a new one
-		Atom* pseudo_b_atom( new BondedAtom() );
-		pseudo_b_atom->id( pseudo_b_id );
-		pseudo_b_atom->xyz( old_b_atom->xyz() + pseudo_offset );
-		anchor_atom->append_atom( pseudo_b_atom );
-		pseudo_atom_pointer[ n ] = pseudo_b_atom;
-		std::cout << "new pseudo! " << n << ' ' << a << ' ' << b << ' ' << mainchain[a] << ' ' << mainchain[b] << ' ' <<
-			pseudo_b_seqpos << ' ' << old_b_atom->id() << ' ' <<
-			old_b_atom->xyz()[0] << ' ' <<
-			old_b_atom->xyz()[1] << ' ' <<
-			old_b_atom->xyz()[2] << std::endl;
-		// check if this edge is terminal, if so add all intervening mainchain atoms and their children
-		{
-			bool terminal( true );
-			for ( Size n2=n+1; n2<= edges.size(); ++n2 ) {
-				if ( ( edges[n2].first == b ) &&
-						 ( a < b && edges[n2].second < b || a > b && edges[n2].second > b ) ) {
-					terminal = false;
-				}
-			}
-			if ( terminal ) {
-				int const dir( b<a ? 1 : -1 );
-				AtomOP parent_atom( pseudo_b_atom );
-				for ( int c=b+dir; c != (int)a; c += dir ) {
-				debug_assert( !seen[c] );
-					// add c and c's non-mainchain children
-					AtomCOP old_c_atom( old_atom_pointer[ mainchain[c] ] );
-					Atom* c_atom( setup_cloned_atom( old_c_atom, mainchain ) );
-					parent_atom->insert_atom( c_atom ); // at front of list since this is mainchain. may have already added kids
-					mainchain_atom_pointer[ c ] = c_atom;
-					seen[c] = true;
-					parent_atom = c_atom;
-				} // walk from b->a adding the mainchain atoms and their children to the tree
-			} // if terminal
-		} // scope
+	// what should our anchor atom be?
+	// look at all pseudo rsds associated to a
+	AtomOP anchor_atom;
+	Size anchor(0);
+	vector1< Size > const & pseudo_a( mainchain_to_pseudo[a] );
+	for ( Size i=1; i<= pseudo_a.size(); ++i ) {
+	Size const nn( pseudo_a[i] );
+	debug_assert( edges[nn].second == a );
+	if ( ( edges[nn].first < b && b < a ) || ( edges[nn].first > b && b > a ) ) {
+	anchor = nn; // dont break -- want the smallest segment containing a,b
+	}
+	}
+	if ( anchor ) {
+	anchor_atom = pseudo_atom_pointer[ anchor ];
+	} else {
+	// connect to the authentic a
+	anchor_atom = mainchain_atom_pointer[ a ];
+	}
+	// has b been seen before?
+	AtomCOP old_b_atom( old_atom_pointer[ mainchain[b] ] );
+	if ( !seen[ b ] ) {
+	seen[b] = true;
+	// add b and b's non-mainchain children
+	Atom* b_atom( setup_cloned_atom( old_b_atom, mainchain ) );
+	anchor_atom->insert_atom( b_atom ); // NOTE: insert atom
+	mainchain_atom_pointer[ b ] = b_atom;
+	}
+	// add a new pseudo rsd at b's position
+	mainchain_to_pseudo[ b ].push_back( n );
+	Size const pseudo_b_seqpos( first_new_pseudo_residue + n - 1 );
+	AtomID const pseudo_b_id( AtomID( 1, pseudo_b_seqpos ) );
+	// delete the old one
+	Atom* old_pseudo_b_atom( old_atom_pointer[ pseudo_b_id ] );
+	old_pseudo_b_atom->parent()->delete_atom( old_pseudo_b_atom );
+	delete old_pseudo_b_atom;
+	// create a new one
+	Atom* pseudo_b_atom( new BondedAtom() );
+	pseudo_b_atom->id( pseudo_b_id );
+	pseudo_b_atom->xyz( old_b_atom->xyz() + pseudo_offset );
+	anchor_atom->append_atom( pseudo_b_atom );
+	pseudo_atom_pointer[ n ] = pseudo_b_atom;
+	std::cout << "new pseudo! " << n << ' ' << a << ' ' << b << ' ' << mainchain[a] << ' ' << mainchain[b] << ' ' <<
+	pseudo_b_seqpos << ' ' << old_b_atom->id() << ' ' <<
+	old_b_atom->xyz()[0] << ' ' <<
+	old_b_atom->xyz()[1] << ' ' <<
+	old_b_atom->xyz()[2] << std::endl;
+	// check if this edge is terminal, if so add all intervening mainchain atoms and their children
+	{
+	bool terminal( true );
+	for ( Size n2=n+1; n2<= edges.size(); ++n2 ) {
+	if ( ( edges[n2].first == b ) &&
+	( a < b && edges[n2].second < b || a > b && edges[n2].second > b ) ) {
+	terminal = false;
+	}
+	}
+	if ( terminal ) {
+	int const dir( b<a ? 1 : -1 );
+	AtomOP parent_atom( pseudo_b_atom );
+	for ( int c=b+dir; c != (int)a; c += dir ) {
+	debug_assert( !seen[c] );
+	// add c and c's non-mainchain children
+	AtomCOP old_c_atom( old_atom_pointer[ mainchain[c] ] );
+	Atom* c_atom( setup_cloned_atom( old_c_atom, mainchain ) );
+	parent_atom->insert_atom( c_atom ); // at front of list since this is mainchain. may have already added kids
+	mainchain_atom_pointer[ c ] = c_atom;
+	seen[c] = true;
+	parent_atom = c_atom;
+	} // walk from b->a adding the mainchain atoms and their children to the tree
+	} // if terminal
+	} // scope
 	} // loop over edges, add one pseudo rsd for each edge
 	// confirm that all mainchain atoms have been seen
 	for ( Size i=1; i<= nbb; ++i ) {
@@ -278,7 +278,7 @@ simple_visualize_fold_tree( FoldTree const & fold_tree, std::ostream& out ) {
 			out << "C";
 			special = true;
 		}
-		if (!special ) out << "*";
+		if ( !special ) out << "*";
 	}
 	out << std::endl;
 }
@@ -313,7 +313,7 @@ simple_visualize_fold_tree_and_movemap( FoldTree const & fold_tree, MoveMap cons
 			move.push_back( mm.get_bb( pos ) ? '*' : 'x' );
 			special = true;
 		}
-		if (!special ) {
+		if ( !special ) {
 			out << "*";
 			move.push_back( mm.get_bb( pos ) ? '*' : 'x' );
 		}
@@ -356,7 +356,7 @@ simple_visualize_fold_tree_and_movemap_bb_chi( FoldTree const & fold_tree, MoveM
 			move_chi.push_back( mm.get_chi( pos ) ? '*' : 'x' );
 			special = true;
 		}
-		if (!special ) {
+		if ( !special ) {
 			out << "*";
 			move_chi.push_back( mm.get_chi( pos ) ? '*' : 'x' );
 			move.push_back( mm.get_bb( pos ) ? '*' : 'x' );
@@ -372,9 +372,9 @@ simple_visualize_fold_tree_and_movemap_bb_chi( FoldTree const & fold_tree, MoveM
 core::kinematics::FoldTree
 linearize_fold_tree( core::kinematics::FoldTree const & tree ) {
 	core::kinematics::FoldTree newtree;
-	for( core::kinematics::FoldTree::const_iterator it(tree.begin()), end(tree.end()); it != end; ++it){
+	for ( core::kinematics::FoldTree::const_iterator it(tree.begin()), end(tree.end()); it != end; ++it ) {
 		//if it is not a jump, we don't modify it
-		if( !it->is_jump() ) newtree.add_edge(*it);
+		if ( !it->is_jump() ) newtree.add_edge(*it);
 		//if it is a jump, we move start() to stop-1.  This is naive but works for the intended case.
 		else newtree.add_edge(core::kinematics::Edge(it->stop()-1, it->stop(), it->label()));
 	}
@@ -384,19 +384,19 @@ linearize_fold_tree( core::kinematics::FoldTree const & tree ) {
 ////////////////////////// sheffler visualize FT ////////////////////////////////////
 void
 replace_substr( std::string& str, const std::string & from, const std::string & to ) {
-    size_t start_pos = 0;
-    while ( ( start_pos = str.find( from, start_pos ) ) != std::string::npos ) {
-        str.replace( start_pos, from.length(), to );
-        start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
-    }
+	size_t start_pos = 0;
+	while ( ( start_pos = str.find( from, start_pos ) ) != std::string::npos ) {
+		str.replace( start_pos, from.length(), to );
+		start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+	}
 }
 
 std::string
 operator*( std::string const & s, size_t n ) {
-    std::string r; // empty string
-    r.reserve( n * s.size() );
-    for ( size_t i = 0; i < n; i++ ) r += s;
-    return r;
+	std::string r; // empty string
+	r.reserve( n * s.size() );
+	for ( size_t i = 0; i < n; i++ ) r += s;
+	return r;
 }
 
 std::string
@@ -412,7 +412,7 @@ std::string
 pad_dash_left ( Size npad, std::string s ) {
 	// return s;
 	int topad = npad - s.size();
-	if( topad > 0 ) return s + std::string( "-" ) * topad;
+	if ( topad > 0 ) return s + std::string( "-" ) * topad;
 	else return s;
 }
 
@@ -420,29 +420,29 @@ std::string
 pad_dash_right ( Size npad, std::string s ) {
 	// return s;
 	int topad = npad - s.size();
-	if( topad > 0 ) return std::string( "-" ) * topad + s;
+	if ( topad > 0 ) return std::string( "-" ) * topad + s;
 	else return s;
 }
 
 struct Node {
 	Node( std::string _name, Size _jnum, Size _jumpfrom, Size _jumpto, char _jumpmark = ( char )NULL, Size _follows = 0 )
-		: name( _name ), jnum( _jnum ), jumpfrom( _jumpfrom ), jumpto( _jumpto ), prefix_len( 8 ), follows( _follows ), jumpmark( _jumpmark ), parent( NULL ) {}
-	
+	: name( _name ), jnum( _jnum ), jumpfrom( _jumpfrom ), jumpto( _jumpto ), prefix_len( 8 ), follows( _follows ), jumpmark( _jumpmark ), parent( NULL ) {}
+
 	~Node() {
 		for ( utility::vector1< Node* >::iterator i = children.begin(); i != children.end(); ++i ) delete *i;
 	}
-	
+
 	void
 	setparent( Node *p ) {
 		parent = p;
 		parent->children.push_back( this );
 	}
-	
+
 	Node*
 	root() {
 		return parent == NULL ? this : parent->root();
 	}
-	
+
 	std::string
 	str() {
 		using ObjexxFCL::string_of;
@@ -462,8 +462,8 @@ struct Node {
 			}
 			std::string prefix = schar + uprsd + "--" + pad_dash( prefix_len, jstr ) + "--" + dnrsd;
 			string news = ( *ic )->str();
- 			string pad = string( " " ) * ( prefix.size() - 1 );
- 			if ( children.size() == 1 ) pad += string( " " ) * ( name.size() + 1 );
+			string pad = string( " " ) * ( prefix.size() - 1 );
+			if ( children.size() == 1 ) pad += string( " " ) * ( name.size() + 1 );
 			replace_substr( news, "\n", "\n" + vchar + pad );
 			if ( children.size() == 1 ) s +=        prefix + news;
 			else                        s += "\n" + prefix + news;
@@ -481,12 +481,12 @@ struct Node {
 struct TreeVizBuilder {
 	utility::vector1< Size > lb_, ub_;
 	FoldTree const & ft;
-	
+
 	TreeVizBuilder( core::kinematics::FoldTree const & _ft ) : ft( _ft ) {
 		lb_.resize( ft.nres(), 0 );
 		ub_.resize( ft.nres(), 0 );
 	}
-	
+
 	void
 	get_ft_node_bounds( Size res, Size & out_lb, Size & out_ub ) {
 		if ( lb_[ res ] == 0 ) {
@@ -500,21 +500,21 @@ struct TreeVizBuilder {
 		out_lb = lb_[ res ];
 		out_ub = ub_[ res ];
 	}
-	
+
 	Size
 	get_ft_node_lower_bound( Size res ) {
 		Size lb, ub;
 		get_ft_node_bounds( res, lb, ub );
 		return lb;
 	}
-	
+
 	Size
 	is_single( Size res ) {
 		Size lb, ub;
 		get_ft_node_bounds( res, lb, ub );
 		return lb == ub;
 	}
-	
+
 	Size
 	get_ft_node_subroot( Size res ) {
 		Size lb, ub;
@@ -525,7 +525,7 @@ struct TreeVizBuilder {
 		}
 		return lb; // default subroot is first res
 	}
-	
+
 	void
 	expand_node_labels_partial_by_contig( std::map< Size, std::string > & node_labels_partial ) {
 		utility::vector1< Size > tocheck;
@@ -549,7 +549,7 @@ struct TreeVizBuilder {
 			}
 		}
 	}
-		
+
 	utility::vector1<std::string>
 	get_res_nodenames( std::map< Size, std::string > node_labels_partial ) {
 		using ObjexxFCL::format::I;
@@ -564,13 +564,13 @@ struct TreeVizBuilder {
 			Size lb, ub;
 			get_ft_node_bounds( i, lb, ub );
 			std::string lbl = node_labels_partial.count( lb ) ? node_labels_partial[ lb ] : "Contig";
-			
+
 			std::string resrange = I( npad, lb ) + ( ( ub == lb ) ? "" : "-" + I( npad, ub ) );
 			names[ i ] = lbl + "(" + resrange + ")";
 		}
 		return names;
 	}
-	
+
 	Size
 	get_jump_num_to_contig_of_resi( Size resi ) {
 		Size lb, ub;
@@ -620,7 +620,7 @@ visualize_fold_tree(
 	// sanity check: make sure tree is connected
 	for ( std::map< std::string,Node* >::const_iterator i = nodemap.begin(); i != nodemap.end(); ++i ) {
 		std::string rootname0 = nodemap.begin()->second->root()->name;
-		if( rootname0 != i->second->root()->name ) utility_exit_with_message( "Nodes not connected!!!" );
+		if ( rootname0 != i->second->root()->name ) utility_exit_with_message( "Nodes not connected!!!" );
 		// std::cerr << "=========================== " << i->second->name << " ===========================" << std::endl;
 		// std::cerr << i->second->str() << std::endl;
 		// std::cerr << "========================================================================" << std::endl;
@@ -659,17 +659,17 @@ remodel_fold_tree_to_account_for_insertion(
 	core::kinematics::FoldTree const & input_tree, //return a remodeled version of this tree
 	core::Size insert_after, //add insert_size to points after this in primary sequence in the tree
 	core::Size insert_size){
-	if(input_tree.is_jump_point(insert_after)){
+	if ( input_tree.is_jump_point(insert_after) ) {
 		throw utility::excn::EXCN_Msg_Exception("FoldTree utility remodel_fold_tree_to_account_for_insertion: I do not know how to handle insertion points that are also jump points - does the jump stay where it was or move to the end of the insert?");
 	}
 	core::kinematics::FoldTree return_tree;
 	typedef std::vector< core::kinematics::Edge > EdgeList; //I am not responsible for the std::vector!
 	typedef EdgeList::const_iterator ELconst_iterator;
-	for( ELconst_iterator it(input_tree.begin()), end(input_tree.end()); it!=end; ++it){
+	for ( ELconst_iterator it(input_tree.begin()), end(input_tree.end()); it!=end; ++it ) {
 		//get a copy of the old Edge's start/stop, and update them as necessary
 		core::Size start(it->start()), stop(it->stop());
-		if(start>insert_after) start = start+insert_size;
-		if(stop>insert_after)  stop  = stop+insert_size;
+		if ( start>insert_after ) start = start+insert_size;
+		if ( stop>insert_after )  stop  = stop+insert_size;
 		//copy old edge to new edge
 		core::kinematics::Edge const new_edge(
 			start,

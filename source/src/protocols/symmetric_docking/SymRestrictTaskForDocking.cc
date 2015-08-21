@@ -32,9 +32,9 @@ using namespace scoring;
 using namespace pack;
 
 SymRestrictTaskForDocking::SymRestrictTaskForDocking()
-	: scorefxn_( /* 0 */ ),
-		include_current_( true ),
-		distance_( 0 )
+: scorefxn_( /* 0 */ ),
+	include_current_( true ),
+	distance_( 0 )
 {}
 
 SymRestrictTaskForDocking::SymRestrictTaskForDocking(
@@ -42,8 +42,8 @@ SymRestrictTaskForDocking::SymRestrictTaskForDocking(
 	bool include_current,
 	core::Real distance
 ) : scorefxn_( scorefxn ),
-		include_current_( include_current ),
-		distance_( distance )
+	include_current_( include_current ),
+	distance_( distance )
 {}
 
 SymRestrictTaskForDocking::~SymRestrictTaskForDocking(){}
@@ -64,8 +64,8 @@ SymRestrictTaskForDocking::apply(
 
 	assert( scorefxn_ != 0 );
 	// (existing comment) /// why is this still necessary???
-//	(*scorefxn_)(pose);
-//	scorefxn_->accumulate_residue_total_energies( pose );
+	// (*scorefxn_)(pose);
+	// scorefxn_->accumulate_residue_total_energies( pose );
 
 	runtime_assert( scorefxn_ != 0 );
 	runtime_assert( distance_ );
@@ -73,7 +73,7 @@ SymRestrictTaskForDocking::apply(
 	protocols::scoring::Interface interface( 1 );
 	interface.distance( distance_ );
 	interface.calculate( pose );
-	
+
 	core::pack::task::PackerTaskOP task_copy = task.get_self_ptr();
 	interface.set_symmetric_pack( pose, task_copy );
 }

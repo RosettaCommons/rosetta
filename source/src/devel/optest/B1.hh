@@ -47,14 +47,14 @@ public:
 
 	void set_default_A();
 	void set_aptr( AOP );
-   void status();
+	void status();
 
 	B1OP clone() const { return B1OP( new B1( *this ) ); }
 
-   AOP get();// { return a_pointer_; }
+	AOP get();// { return a_pointer_; }
 
 private:
-   AOP a_pointer_;
+	AOP a_pointer_;
 
 };
 

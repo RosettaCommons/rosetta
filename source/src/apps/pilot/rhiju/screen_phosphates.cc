@@ -89,17 +89,17 @@ OPT_KEY( IntegerVector, three_prime_phosphate_screen_res )
 void
 screen_phosphates()
 {
-  using namespace core::pose;
-  using namespace core::scoring;
-  using namespace core::id;
-  using namespace core::chemical;
-  using namespace core::chemical::rna;
-  using namespace core::pose::full_model_info;
-  using namespace protocols::stepwise::modeler;
-  using namespace protocols::stepwise::monte_carlo;
-  using namespace protocols::stepwise::modeler::rna::phosphate;
-  using namespace protocols::stepwise::setup;
-  using namespace utility::file;
+	using namespace core::pose;
+	using namespace core::scoring;
+	using namespace core::id;
+	using namespace core::chemical;
+	using namespace core::chemical::rna;
+	using namespace core::pose::full_model_info;
+	using namespace protocols::stepwise::modeler;
+	using namespace protocols::stepwise::monte_carlo;
+	using namespace protocols::stepwise::modeler::rna::phosphate;
+	using namespace protocols::stepwise::setup;
+	using namespace utility::file;
 
 	// Following could be generalized to fa_standard, after recent unification, but
 	// probably should wait for on-the-fly residue type generation.
@@ -113,9 +113,9 @@ screen_phosphates()
 	utility::vector1< std::string > const & input_files = option[ in::file::s ]();
 	utility::vector1< pose::PoseOP > input_poses;
 	if ( input_files.size() == 0 ) input_poses.push_back( core::pose::PoseOP( new Pose ) ); // just a blank pose for now.
-	for ( Size n = 1; n <= input_files.size(); n++ ) 	input_poses.push_back( get_pdb_and_cleanup( input_files[ n ], rsd_set ) );
+	for ( Size n = 1; n <= input_files.size(); n++ )  input_poses.push_back( get_pdb_and_cleanup( input_files[ n ], rsd_set ) );
 	if ( option[ full_model::other_poses ].user() ) get_other_poses( input_poses, option[ full_model::other_poses ](), rsd_set );
-	fill_full_model_info_from_command_line( input_poses ); 	//FullModelInfo (minimal object needed for add/delete)
+	fill_full_model_info_from_command_line( input_poses );  //FullModelInfo (minimal object needed for add/delete)
 
 	// scorefunction
 	core::scoring::ScoreFunctionOP scorefxn;
@@ -130,7 +130,7 @@ screen_phosphates()
 
 	fix_up_residue_type_variants( pose );
 
-	//	scorefxn->show( pose );
+	// scorefxn->show( pose );
 
 	Pose pose_copy = pose;
 
@@ -143,14 +143,14 @@ screen_phosphates()
 	phosphate_sampler.sample_phosphates( pose_op );
 
 	TR << "WITHOUT SCREEN PHOS (CONTROL) " << ( *scorefxn )( pose_copy ) << std::endl;
-	//	scorefxn->show( pose_copy );
+	// scorefxn->show( pose_copy );
 
 	TR << "WITH SCREEN PHOS " << ( *scorefxn )( pose ) << std::endl;
 	// scorefxn->show( pose );
-	//	protocols::farna::print_hbonds( pose );
+	// protocols::farna::print_hbonds( pose );
 	pose.dump_pdb( "SCREEN_POSE.pdb" );
 
-	if ( false ){
+	if ( false ) {
 		// do minimizing
 		protocols::farna::RNA_Minimizer rna_minimizer;
 		rna_minimizer.deriv_check( option[ OptionKeys::rna::deriv_check ]() );
@@ -173,7 +173,7 @@ my_main( void* )
 
 	protocols::viewer::clear_conformation_viewers();
 	std::cout << "Total time to run " << static_cast<Real>( clock() - my_main_time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
-  exit( 0 );
+	exit( 0 );
 }
 
 

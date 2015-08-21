@@ -440,23 +440,23 @@ protected:
 	// /// @brief returns if the omega angle is in the range defined by the cis omega part of the rotlib
 	// bool
 	// is_trans_omg(
-	// 	Real omg_angle
+	//  Real omg_angle
 	// ) const
 	// {
-	// 	Real angle( numeric::principal_angle_degrees( omg_angle ) ); // returns angle ( -180.0, 180.0 ]
-	// 	if ( angle >= TRANS_OMG_LOWER_RANGE && angle <= TRANS_OMG_UPPER_RANGE ) return true;
-	// 	return false;
+	//  Real angle( numeric::principal_angle_degrees( omg_angle ) ); // returns angle ( -180.0, 180.0 ]
+	//  if ( angle >= TRANS_OMG_LOWER_RANGE && angle <= TRANS_OMG_UPPER_RANGE ) return true;
+	//  return false;
 	// }
 
 	// /// @brief returns true if the omega angle is in the range defined by the trans omega part of the rotlib
 	// bool
 	// is_cis_omg(
-	// 	Real omg_angle
+	//  Real omg_angle
 	// ) const
 	// {
-	// 	Real angle( numeric::principal_angle_degrees( omg_angle ) ); // returns angle ( -180.0, 180.0 ]
-	// 	if ( angle >= CIS_OMG_LOWER_RANGE && angle <= CIS_OMG_UPPER_RANGE) return true;
-	// 	return false;
+	//  Real angle( numeric::principal_angle_degrees( omg_angle ) ); // returns angle ( -180.0, 180.0 ]
+	//  if ( angle >= CIS_OMG_LOWER_RANGE && angle <= CIS_OMG_UPPER_RANGE) return true;
+	//  return false;
 	// }
 
 	/// @brief returns if the omega angle is in the range defined by the cis omega part of the rotlib

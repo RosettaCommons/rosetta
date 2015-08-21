@@ -48,67 +48,67 @@ namespace environment {
 
 class DofPassport : public utility::pointer::ReferenceCount {
 
-  //make EnvCore a friend so that we can call the constructor of DofPassport
-  friend class core::environment::EnvCore;
+	//make EnvCore a friend so that we can call the constructor of DofPassport
+	friend class core::environment::EnvCore;
 
 public:
-  virtual ~DofPassport();
+	virtual ~DofPassport();
 
-  void show( std::ostream& ) const;
+	void show( std::ostream& ) const;
 
-  core::kinematics::MoveMapOP render_movemap() const;
+	core::kinematics::MoveMapOP render_movemap() const;
 
-  void render_movemap( core::kinematics::MoveMapOP ) const;
+	void render_movemap( core::kinematics::MoveMapOP ) const;
 
-  // typedef to make iteration through availiable dofs easy for client movers
-  typedef std::set< core::id::DOF_ID >::const_iterator const_iterator;
+	// typedef to make iteration through availiable dofs easy for client movers
+	typedef std::set< core::id::DOF_ID >::const_iterator const_iterator;
 
-  std::set< core::id::DOF_ID >::const_iterator begin() const;
+	std::set< core::id::DOF_ID >::const_iterator begin() const;
 
-  std::set< core::id::DOF_ID >::const_iterator end() const { return accessible_dofs_.end(); }
+	std::set< core::id::DOF_ID >::const_iterator end() const { return accessible_dofs_.end(); }
 
-  /// @brief configure passport to allow access to a bond length or angle dof_id
-  /// @param id the DOF_ID to allow access to
-  void add_dof_access( id::DOF_ID const& id );
+	/// @brief configure passport to allow access to a bond length or angle dof_id
+	/// @param id the DOF_ID to allow access to
+	void add_dof_access( id::DOF_ID const& id );
 
-  void revoke_all_access();
+	void revoke_all_access();
 
-  bool has_jump_access( int jump_num ) const;
+	bool has_jump_access( int jump_num ) const;
 
-  std::set< core::id::DOF_ID > const& active_dofs() const;
+	std::set< core::id::DOF_ID > const& active_dofs() const;
 
-  utility::vector1< int > active_jumps() const;
+	utility::vector1< int > active_jumps() const;
 
-  //@brief Check access in this passport for an id
-  bool dof_access( core::id::DOF_ID const& id ) const;
+	//@brief Check access in this passport for an id
+	bool dof_access( core::id::DOF_ID const& id ) const;
 
-  //@brief Check access in this passport for both correct environment and correct id.
-  bool dof_access( EnvCore const&, core::id::DOF_ID const& id ) const;
+	//@brief Check access in this passport for both correct environment and correct id.
+	bool dof_access( EnvCore const&, core::id::DOF_ID const& id ) const;
 
-  std::string const& mover() const;
+	std::string const& mover() const;
 
-  core::Size const& env_id() const { return env_id_; }
+	core::Size const& env_id() const { return env_id_; }
 
-  conformation::ConformationCOP reference_conformation() const;
+	conformation::ConformationCOP reference_conformation() const;
 
-  void reference_conformation( conformation::ConformationCOP conf );
+	void reference_conformation( conformation::ConformationCOP conf );
 
 private:
 
-  DofPassport( std::string const& mover, Size env_id);
+	DofPassport( std::string const& mover, Size env_id);
 
-  DofPassport( DofPassport const& );
+	DofPassport( DofPassport const& );
 
-  //General code used by most (all?) access checks.
-  bool access_check( EnvCore const& env, bool type_specific_check ) const;
+	//General code used by most (all?) access checks.
+	bool access_check( EnvCore const& env, bool type_specific_check ) const;
 
-  std::string mover_;
-  core::Size env_id_;
+	std::string mover_;
+	core::Size env_id_;
 
-  // Capable of storing all movable dofs.
-  std::set< core::id::DOF_ID > accessible_dofs_;
+	// Capable of storing all movable dofs.
+	std::set< core::id::DOF_ID > accessible_dofs_;
 
-  conformation::ConformationCOP conf_;
+	conformation::ConformationCOP conf_;
 
 }; // end DofPassport base class
 

@@ -62,7 +62,7 @@ AsymFoldandDockClaimer::AsymFoldandDockClaimer( pose::Pose const& input_pose ) :
 	chain_break_res_ = 0;
 }
 
-	//clone
+//clone
 TopologyClaimerOP
 AsymFoldandDockClaimer::clone() const {
 	return TopologyClaimerOP( new AsymFoldandDockClaimer( *this ) );
@@ -81,11 +81,11 @@ AsymFoldandDockClaimer::_static_type_name() {
 
 void
 AsymFoldandDockClaimer::add_mover(
-    moves::RandomMover& random_mover,
-		core::pose::Pose const& /*pose*/,
-		abinitio::StageID stageID,  /*abinitio sampler stage */
-		core::scoring::ScoreFunction const& scorefxn,
-		core::Real /*progress  progress within stage */
+	moves::RandomMover& random_mover,
+	core::pose::Pose const& /*pose*/,
+	abinitio::StageID stageID,  /*abinitio sampler stage */
+	core::scoring::ScoreFunction const& scorefxn,
+	core::Real /*progress  progress within stage */
 )
 {
 	using namespace basic::options;
@@ -100,8 +100,8 @@ AsymFoldandDockClaimer::add_mover(
 	);
 	moves::MoverOP slide_mover( new protocols::docking::DockingSlideIntoContact( docking_jump_ ) );
 	core::Real move_anchor_weight(1.0),
-	           rb_weight(option[ OptionKeys::fold_and_dock::rigid_body_frequency ]()),
-	           slide_weight(option[ OptionKeys::fold_and_dock::slide_contact_frequency ]());
+		rb_weight(option[ OptionKeys::fold_and_dock::rigid_body_frequency ]()),
+		slide_weight(option[ OptionKeys::fold_and_dock::slide_contact_frequency ]());
 
 	random_mover.add_mover( move_anchor_mover, move_anchor_weight );
 	random_mover.add_mover( rb_trial_mover, rb_weight );
@@ -114,16 +114,16 @@ bool AsymFoldandDockClaimer::read_tag( std::string tag, std::istream& is ) {
 		is >> file;
 		std::ifstream infile( file.c_str() );
 
-		if (!infile.good()) {
+		if ( !infile.good() ) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
 		}
 		loops::PoseNumberedLoopFileReader loop_file_reader;
 		loops::SerializedLoopList loops = loop_file_reader.read_pose_numbered_loops_file(infile, file, false );
 		loops::Loops loop_defs = loops::Loops( loops ); // <==
-//		loop_defs = loop_defs.invert( input_pose_.total_residue() );
+		//  loop_defs = loop_defs.invert( input_pose_.total_residue() );
 		tr << "Flexible residues: " << loop_defs << std::endl;
 		moving_res_ = loop_defs;
-	} else if (tag == "CHAIN_BREAK_ASSYM_FND"  || tag == "chain_break_assym_fnd" ) {
+	} else if ( tag == "CHAIN_BREAK_ASSYM_FND"  || tag == "chain_break_assym_fnd" ) {
 		is >> chain_break_res_;
 	} else  {
 		throw utility::excn::EXCN_BadInput( " Unknown tag, only LOOP, CHAIN_BREAK_ASSYM_FND definition is allowed at this stage");
@@ -143,13 +143,13 @@ void AsymFoldandDockClaimer::initialize_dofs(
 	if ( moving_res_.size() > 1 ) throw utility::excn::EXCN_BadInput( " Only one movable region possible at this stage ");
 	if ( chain_break_res_ == 0 ) throw utility::excn::EXCN_BadInput( " No chainbreak defined... ");
 
-/*
+	/*
 	Size moving_end( 1 );
 	for ( Loops::const_iterator loop_it = moving_res_.begin(); loop_it != moving_res_.end(); ++loop_it ) {
-		moving_start_ = loop_it->start();
-		moving_end = loop_it->stop();
+	moving_start_ = loop_it->start();
+	moving_end = loop_it->stop();
 	}
-*/
+	*/
 
 	// make a PDBInfo for the pose...
 	pose::PDBInfoOP pdb_info( new pose::PDBInfo( pose, true ) );
@@ -157,9 +157,9 @@ void AsymFoldandDockClaimer::initialize_dofs(
 	utility::vector1< char > chain;
 	for ( Size i=1; i<= pdb_info->nres(); ++i ) {
 		if ( i <= chain_break_res_ ) {
-		chain.push_back( 'A' );
+			chain.push_back( 'A' );
 		} else {
-		chain.push_back( 'B' );
+			chain.push_back( 'B' );
 		}
 	}
 
@@ -176,7 +176,7 @@ void AsymFoldandDockClaimer::initialize_dofs(
 	if ( pose.fold_tree().num_jump() == 0 ) {
 		FoldTree f(pose.fold_tree());
 		f.clear();
-    f.simple_tree( pose.total_residue() );
+		f.simple_tree( pose.total_residue() );
 		f.new_jump( 1, pose.total_residue() , chain_break_res_ );
 		pose.fold_tree( f );
 	}
@@ -189,7 +189,7 @@ void AsymFoldandDockClaimer::initialize_dofs(
 	movemap->set_jump( true );
 
 	for ( claims::DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
-          it != eit; ++it ) {
+			it != eit; ++it ) {
 		if ( (*it)->owner().lock().get() == this ) {
 			(*it)->toggle( *movemap, true );
 		}
@@ -207,8 +207,8 @@ void AsymFoldandDockClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	for ( Size i = 1; i <= cuts.size(); ++i ) {
 
 		new_claims.push_back( claims::DofClaimOP( new claims::CutClaim( get_self_weak_ptr(), std::make_pair( Parent::label(), cuts[i]),
-																								claims::DofClaim::INIT // for now... eventually CAN_INIT ?
-																								) ) );
+			claims::DofClaim::INIT // for now... eventually CAN_INIT ?
+			) ) );
 	}
 }
 

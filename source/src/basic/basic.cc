@@ -76,14 +76,14 @@ calc_quadratic(
 	double & n2
 )
 {
-//cj
+	//cj
 
 	double bsq = b*b;
 	double ac4 = 4*a*c;
 	double st = std::sqrt( bsq - ac4 );
 
-//cj    std::cout << F( 8, 3, a ) << ' ' << F( 8, 3, b ) << ' ' << F( 8, 3, c ) << std::endl;
-//cj    std::cout << F( 8, 3, bsq ) << ' ' << F( 8, 3, ac4 ) << ' ' << F( 8, 3, st ) << std::endl;
+	//cj    std::cout << F( 8, 3, a ) << ' ' << F( 8, 3, b ) << ' ' << F( 8, 3, c ) << std::endl;
+	//cj    std::cout << F( 8, 3, bsq ) << ' ' << F( 8, 3, ac4 ) << ' ' << F( 8, 3, st ) << std::endl;
 
 	n1 = ((-b)+st)/(2*a);
 	n2 = ((-b)-st)/(2*a);

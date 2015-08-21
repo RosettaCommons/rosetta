@@ -85,18 +85,18 @@ FileStream::FileStream(
 ) :
 	stream_(filename, open_mode)
 {
-	if(!stream_){
+	if ( !stream_ ) {
 		vector1<string> alternative_search_paths(
 			izstream::get_alternative_search_paths());
 
 		TR << "Unable to open file '" << filename << "' at any of the following paths:" << endl;
 		TR << "\t" << filename << endl;
-		for(
-			vector1<string>::const_iterator
+		for (
+				vector1<string>::const_iterator
 				p=alternative_search_paths.begin(), pe=alternative_search_paths.end();
-			p != pe; ++p){
+				p != pe; ++p ) {
 			TR << "\t" << *p << platform::file::PATH_SEPARATOR << filename << endl;
-			if(utility::file::file_extension( filename) != "gz") {
+			if ( utility::file::file_extension( filename) != "gz" ) {
 				TR << "\t" << *p << filename << ".gz" << endl;
 			}
 		}
@@ -112,7 +112,7 @@ FileStream::open(
 	std::ios_base::openmode open_mode
 ) {
 	stream_.open(filename, open_mode);
-	if(!stream_){
+	if ( !stream_ ) {
 		throw utility::excn::EXCN_FileNotFound(filename);
 	}
 
@@ -136,7 +136,7 @@ FileSystemResourceLocator::FileSystemResourceLocator(
 
 
 FileSystemResourceLocator::FileSystemResourceLocator(
-		FileSystemResourceLocator const & src
+	FileSystemResourceLocator const & src
 ) :
 	basic::resource_manager::ResourceLocator(),
 	open_mode_(src.open_mode_),
@@ -163,11 +163,11 @@ FileSystemResourceLocator::show(
 
 //std::ostream &
 //FileSystemResourceLocator::operator<< (
-//	std::ostream & out,
-//	const FileSystemResourceLocator & file_system_resource_locator
+// std::ostream & out,
+// const FileSystemResourceLocator & file_system_resource_locator
 //) {
-//	file_system_resource_locator.show(out);
-//	return out;
+// file_system_resource_locator.show(out);
+// return out;
 //}
 
 std::string
@@ -208,7 +208,7 @@ FileSystemResourceLocator::parse_my_tag(
 	TagCOP tag
 )
 {
-	if (tag && tag->hasOption("base_path")) {
+	if ( tag && tag->hasOption("base_path") ) {
 		std::stringstream base_path_with_trailing_space;
 		base_path_with_trailing_space << tag->getOption<string>("base_path") << "/";
 		base_path_ = base_path_with_trailing_space.str();

@@ -57,70 +57,70 @@ class BackboneTorsionSampler: public protocols::moves::Mover
 {
 public:
 	/// @brief
-	/// 	empty constructor fills values with the expected defaults
+	///  empty constructor fills values with the expected defaults
 	BackboneTorsionSampler();
 
 	//destructor
 	~BackboneTorsionSampler();
 
-    void init();
+	void init();
 
 	inline void set_scorefunction(core::scoring::ScoreFunctionOP const scorefxn) { scorefxn_ = scorefxn; }
 
-    void local_perturb(core::pose::Pose pose, core::Real max_delta_torsion);
-    
-    void perturb(core::pose::Pose & pose,
-                 core::Size level,
-                 core::Real max_delta_torsion,
-                 core::Size local,
-                 bool rama_biased,
-                 bool repack,
-                 bool minimize);
+	void local_perturb(core::pose::Pose pose, core::Real max_delta_torsion);
 
-    void apply( core::pose::Pose & pose );
+	void perturb(core::pose::Pose & pose,
+		core::Size level,
+		core::Real max_delta_torsion,
+		core::Size local,
+		bool rama_biased,
+		bool repack,
+		bool minimize);
 
-    void task_factory( core::pack::task::TaskFactoryCOP tf );
+	void apply( core::pose::Pose & pose );
 
-    void
-    parse_my_tag(
-                 TagCOP tag,
-                 basic::datacache::DataMap & datamap,
-                 Filters_map const & filters,
-                 moves::Movers_map const & movers,
-                 Pose const & pose
-                 );
+	void task_factory( core::pack::task::TaskFactoryCOP tf );
+
+	void
+	parse_my_tag(
+		TagCOP tag,
+		basic::datacache::DataMap & datamap,
+		Filters_map const & filters,
+		moves::Movers_map const & movers,
+		Pose const & pose
+	);
 
 	virtual protocols::moves::MoverOP clone() const;
 
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
-    std::string get_name() const;
+	std::string get_name() const;
 
 
 private:
-    core::scoring::ScoreFunctionOP scorefxn_;
-    core::Real increase_cycles_;
-    core::Real temperature_;
-    bool recover_low_;
-    core::Size local_;
-    bool dump_snapshots_;
-    std::string snapshot_prefix_;
-    core::Size snapshot_interval_;
+	core::scoring::ScoreFunctionOP scorefxn_;
+	core::Real increase_cycles_;
+	core::Real temperature_;
+	bool recover_low_;
+	core::Size local_;
+	bool dump_snapshots_;
+	std::string snapshot_prefix_;
+	core::Size snapshot_interval_;
 
-    core::Size n_nested_;
-    core::Size perturbed_res_;
-    utility::vector1< core::Size > residue_list_;
-    protocols::simple_moves::PackRotamersMoverOP pack_full_repack_;
-    core::optimization::AtomTreeMinimizerOP minimizer_;
-    //core::optimization::CartesianMinimizerOP minimizer_;
-    
-    core::pose::PoseOP native_;
-    
-    //AtomTreeMinimizerOP minimizer_;
-    core::optimization::MinimizerOptionsOP options_;
-    core::kinematics::MoveMap mm_;
-    
-    core::pack::task::TaskFactoryCOP task_factory_;
+	core::Size n_nested_;
+	core::Size perturbed_res_;
+	utility::vector1< core::Size > residue_list_;
+	protocols::simple_moves::PackRotamersMoverOP pack_full_repack_;
+	core::optimization::AtomTreeMinimizerOP minimizer_;
+	//core::optimization::CartesianMinimizerOP minimizer_;
+
+	core::pose::PoseOP native_;
+
+	//AtomTreeMinimizerOP minimizer_;
+	core::optimization::MinimizerOptionsOP options_;
+	core::kinematics::MoveMap mm_;
+
+	core::pack::task::TaskFactoryCOP task_factory_;
 };
 } // hybridization
 } // protocols

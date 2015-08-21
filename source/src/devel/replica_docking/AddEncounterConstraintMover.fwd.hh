@@ -4,8 +4,8 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace devel{
-namespace replica_docking{
+namespace devel {
+namespace replica_docking {
 
 class AddEncounterConstraintMover;
 typedef utility::pointer::shared_ptr< AddEncounterConstraintMover > AddEncounterConstraintMoverOP;

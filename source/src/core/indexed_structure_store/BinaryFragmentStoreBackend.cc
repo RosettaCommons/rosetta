@@ -37,7 +37,7 @@ namespace indexed_structure_store
 static thread_local basic::Tracer TR( "core.indexed_structure_store.BinaryFragmentStoreBackend" );
 
 BinaryFragmentStoreBackend::BinaryFragmentStoreBackend(std::string target_path) :
-  target_path_(target_path)
+	target_path_(target_path)
 {
 	TR.Info << "Loading backend: " << target_path << std::endl;
 }
@@ -51,7 +51,7 @@ FragmentStoreOP BinaryFragmentStoreBackend::get_fragment_store(std::string store
 
 	std::string metadata_path = store_path + "/metadata.json";
 	utility::json_spirit::mValue md_doc;
-  std::ifstream md_stream(metadata_path.c_str(), std::ios::in | std::ios::binary);
+	std::ifstream md_stream(metadata_path.c_str(), std::ios::in | std::ios::binary);
 	std::string md_string( (std::istreambuf_iterator<char>(md_stream)), std::istreambuf_iterator<char>() );
 	TR.Debug << "Read store metadata: " << metadata_path << "\n" << md_string << std::endl;
 
@@ -60,52 +60,49 @@ FragmentStoreOP BinaryFragmentStoreBackend::get_fragment_store(std::string store
 	FragmentSpecification fragment_spec;
 
 	utility::json_spirit::mArray atoms_src = utility::json_spirit::get_mArray(md_object, "fragment_atoms");
-  fragment_spec.fragment_atoms.resize(atoms_src.size());
-	for (numeric::Size i = 0; i < atoms_src.size(); i++) 
-	{
+	fragment_spec.fragment_atoms.resize(atoms_src.size());
+	for ( numeric::Size i = 0; i < atoms_src.size(); i++ ) {
 		fragment_spec.fragment_atoms[i] = atoms_src[i].get_str();
 	}
 
-  fragment_spec.fragment_length = utility::json_spirit::get_int(md_object, "fragment_length");
+	fragment_spec.fragment_length = utility::json_spirit::get_int(md_object, "fragment_length");
 
 	TR.Debug << "Loaded fragment specification: " << fragment_spec << std::endl;
 
 	numeric::Size num_entries = utility::json_spirit::get_int(md_object, "num_entries");
 	TR.Debug << "Loading: " << store_path << " size:" << num_entries << std::endl;
 
-  FragmentStoreOP fragment_store( new FragmentStore(fragment_spec, num_entries) );
+	FragmentStoreOP fragment_store( new FragmentStore(fragment_spec, num_entries) );
 
 	std::string coordinates_path = store_path + "/" + utility::json_spirit::get_string(md_object, "coordinates_file");
-  std::fstream coordinates_file;
+	std::fstream coordinates_file;
 	coordinates_file.exceptions(std::ifstream::failbit | std::ifstream::badbit | std::ifstream::eofbit);
-  coordinates_file.open(coordinates_path.c_str(),std::ios::in|std::ios::binary);
+	coordinates_file.open(coordinates_path.c_str(),std::ios::in|std::ios::binary);
 
-  for (numeric::Size i = 0; i < fragment_store->fragment_coordinates.size(); i++)
-  {
-    // Stored precision may not be double
-    double read_coordinate[3];
-    coordinates_file.read((char*)&read_coordinate[0], sizeof(double) * 3);
+	for ( numeric::Size i = 0; i < fragment_store->fragment_coordinates.size(); i++ ) {
+		// Stored precision may not be double
+		double read_coordinate[3];
+		coordinates_file.read((char*)&read_coordinate[0], sizeof(double) * 3);
 
-    fragment_store->fragment_coordinates[i].x() = read_coordinate[0];
-    fragment_store->fragment_coordinates[i].y() = read_coordinate[1];
-    fragment_store->fragment_coordinates[i].z() = read_coordinate[2];
-  }
-  coordinates_file.close();
+		fragment_store->fragment_coordinates[i].x() = read_coordinate[0];
+		fragment_store->fragment_coordinates[i].y() = read_coordinate[1];
+		fragment_store->fragment_coordinates[i].z() = read_coordinate[2];
+	}
+	coordinates_file.close();
 
 	std::string threshold_distance_path = store_path + "/" + utility::json_spirit::get_string(md_object, "threshold_distance_file");
-  std::fstream threshold_distance_file;
+	std::fstream threshold_distance_file;
 	threshold_distance_file.exceptions(std::ifstream::failbit | std::ifstream::badbit | std::ifstream::eofbit);
-  threshold_distance_file.open(threshold_distance_path.c_str(),std::ios::in|std::ios::binary);
+	threshold_distance_file.open(threshold_distance_path.c_str(),std::ios::in|std::ios::binary);
 
-  for (numeric::Size i = 0; i < fragment_store->fragment_threshold_distances.size(); i++)
-  {
-    // Stored precision may not be double
-    double read_coordinate;
-    threshold_distance_file.read((char*)&read_coordinate, sizeof(double));
+	for ( numeric::Size i = 0; i < fragment_store->fragment_threshold_distances.size(); i++ ) {
+		// Stored precision may not be double
+		double read_coordinate;
+		threshold_distance_file.read((char*)&read_coordinate, sizeof(double));
 
-    fragment_store->fragment_threshold_distances[i] = read_coordinate;
-  }
-  threshold_distance_file.close();
+		fragment_store->fragment_threshold_distances[i] = read_coordinate;
+	}
+	threshold_distance_file.close();
 
 	return fragment_store;
 }

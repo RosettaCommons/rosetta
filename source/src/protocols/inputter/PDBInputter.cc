@@ -47,11 +47,11 @@ core::pose::PoseSP PDBInputter::get_nth_pose( int n ) {
 	offset_ = true;
 	core::chemical::ResidueTypeSetCOP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 	core::pose::PoseSP tmppose(new core::pose::Pose());
-	if( multiply_over_all_ ) {
+	if ( multiply_over_all_ ) {
 		// we go through all the filenames once, then more times according to multiplier
-		for( int i = 1; i<n; i++){
+		for ( int i = 1; i<n; i++ ) {
 			file_names_[curr_idx_].first++;
-			if( file_names_[curr_idx_].first >= multiplier_ )  {
+			if ( file_names_[curr_idx_].first >= multiplier_ )  {
 				// this only can happen when curr_idx_ == 0
 				file_names_.pop_front();
 			} else {
@@ -63,7 +63,7 @@ core::pose::PoseSP PDBInputter::get_nth_pose( int n ) {
 		file_names_[curr_idx_].first++;
 		core::pose::add_comment( *tmppose, "inputfile", file_names_[curr_idx_].second );
 		core::pose::add_comment( *tmppose, "filemultiplier", utility::to_string(file_names_[curr_idx_].first) );
-		if( file_names_[curr_idx_].first >= multiplier_ )  {
+		if ( file_names_[curr_idx_].first >= multiplier_ )  {
 			// this only can happen when curr_idx_ == 0
 			file_names_.pop_front();
 		} else {
@@ -73,27 +73,30 @@ core::pose::PoseSP PDBInputter::get_nth_pose( int n ) {
 		return tmppose;
 	} else {
 		// we go through each file name MULTIPLIER times, then pop it
-		for( int i = 1; i<n; i++){
+		for ( int i = 1; i<n; i++ ) {
 			file_names_.front().first++;
-			if( file_names_.front().first >= multiplier_ ) 
+			if ( file_names_.front().first >= multiplier_ ) {
 				file_names_.pop_front();
+			}
 		}
 		core::import_pose::pose_from_pdb( *tmppose, *residue_set, file_names_.front().second );
 		file_names_.front().first++;
 		core::pose::add_comment( *tmppose, "inputfile", file_names_.front().second );
 		core::pose::add_comment( *tmppose, "file_multiplier", utility::to_string(file_names_.front().first) );
-		if( file_names_.front().first >= multiplier_ ) 
+		if ( file_names_.front().first >= multiplier_ ) {
 			file_names_.pop_front();
+		}
 		return tmppose;
 	}
 }
 
 bool PDBInputter::has_nth_pose( int n ) {
 	int sum = 0;
-	for( core::Size i = 0; i < file_names_.size(); i++ ) {
-		sum += (multiplier_ - file_names_[i].first	); 
-		if (sum >= n )
+	for ( core::Size i = 0; i < file_names_.size(); i++ ) {
+		sum += (multiplier_ - file_names_[i].first );
+		if ( sum >= n ) {
 			return true;
+		}
 	}
 	return false;
 }

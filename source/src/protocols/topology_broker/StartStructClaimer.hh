@@ -91,7 +91,7 @@ public:
 	virtual void new_decoy( );
 	virtual bool read_tag( std::string tag, std::istream & );
 
-	virtual moves::MoverOP get_mover(	core::pose::Pose const& /*pose*/ ) const
+	virtual moves::MoverOP get_mover( core::pose::Pose const& /*pose*/ ) const
 	{ return NULL; }; /*does not provide mover*/
 
 protected:

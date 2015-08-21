@@ -97,17 +97,17 @@ RingClosureEnergy::residue_energy(
 	EnergyMap &emap
 ) const
 {
-	if( rsd.is_virtual_residue() ) return; //Skip virtual residues.
-	if( !rsd.has_shadow_atoms() ) return; //Skip residues without shadow atoms.
+	if ( rsd.is_virtual_residue() ) return; //Skip virtual residues.
+	if ( !rsd.has_shadow_atoms() ) return; //Skip residues without shadow atoms.
 
-	for(core::Size ia=1, iamax=rsd.natoms(); ia<=iamax; ++ia) { //Loop through all atoms in the residue.
+	for ( core::Size ia=1, iamax=rsd.natoms(); ia<=iamax; ++ia ) { //Loop through all atoms in the residue.
 		core::Size const ia2( rsd.type().atom_being_shadowed( ia ) );
-		if(ia2==0) continue; //If this atom doesn't shadow anything, continue.
-		
-		Distance const distsq ( rsd.xyz( ia ).distance_squared( rsd.xyz( ia2 ) ) ); //Measure the square of the distance between the atom that shadows and the atom being shadowed.		
-		emap[ ring_close ] += distsq / ( std_dev_sq_ ); //Note that std_dev_sq_ is actually the SQUARE of the standard deviation.  This is a harmonic potential.	
-	}	
-	
+		if ( ia2==0 ) continue; //If this atom doesn't shadow anything, continue.
+
+		Distance const distsq ( rsd.xyz( ia ).distance_squared( rsd.xyz( ia2 ) ) ); //Measure the square of the distance between the atom that shadows and the atom being shadowed.
+		emap[ ring_close ] += distsq / ( std_dev_sq_ ); //Note that std_dev_sq_ is actually the SQUARE of the standard deviation.  This is a harmonic potential.
+	}
+
 	return;
 }
 
@@ -122,43 +122,43 @@ RingClosureEnergy::eval_residue_derivatives(
 	utility::vector1< DerivVectorPair > &atom_derivs
 ) const {
 
-	if( rsd.is_virtual_residue() ) return; //Skip virtual residues.
-	if( !rsd.has_shadow_atoms() ) return; //Skip residues without shadow atoms.
+	if ( rsd.is_virtual_residue() ) return; //Skip virtual residues.
+	if ( !rsd.has_shadow_atoms() ) return; //Skip residues without shadow atoms.
 
-	for(core::Size ia=1, iamax=rsd.natoms(); ia<=iamax; ++ia) { //Loop through all atoms in the residue.
+	for ( core::Size ia=1, iamax=rsd.natoms(); ia<=iamax; ++ia ) { //Loop through all atoms in the residue.
 		core::Size const ia2( rsd.type().atom_being_shadowed( ia ) );
-		if(ia2==0) continue; //If this atom doesn't shadow anything, continue.
-		
+		if ( ia2==0 ) continue; //If this atom doesn't shadow anything, continue.
+
 		//Positions of atom 1 and atom 2:
 		Vector const atom1_pos( rsd.xyz( ia  ) );
 		Vector const atom2_pos( rsd.xyz( ia2 ) );
 
 		//Storage for f1 and f2 components of the atomic derivatives:
 		Vector f1( 0.0 ), f2( 0.0 );
-	
+
 		//Storage for the interatomic distance:
 		Distance dist( 0.0 );
-		
+
 		//Calculate dist, f1, and f2 given atom1_pos and atom2_pos.  Note that f1 and f2 must subsequently be multiplied by the derivative of
 		//f(dist) with respect to distance:
-		numeric::deriv::distance_f1_f2_deriv( atom1_pos, atom2_pos, dist, f1, f2 );		
-		
+		numeric::deriv::distance_f1_f2_deriv( atom1_pos, atom2_pos, dist, f1, f2 );
+
 		//Calculate df(dist)/d_dist.
 		//Since f = dist^2/stdev^2, df/d_dist = 2*dist/stdev^2, which must be premultiplied by the ring_close weight:
 		core::Real const deriv( weights[ ring_close ] * 2 * dist / std_dev_sq_ );
-		
+
 		//Multiply the f1 and f2 vectors by the derivative:
 		f1 *= deriv;
 		f2 *= deriv;
-		
+
 		//Add the f1 and f2 vectors to the accumulators for the respective atoms.
 		atom_derivs[ ia  ].f1() += f1;
 		atom_derivs[ ia  ].f2() += f2;
 		atom_derivs[ ia2 ].f1() -= f1;
 		atom_derivs[ ia2 ].f2() -= f2;
-		
-	} //End loop through atoms.	
-	
+
+	} //End loop through atoms.
+
 	return;
 }
 

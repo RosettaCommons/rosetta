@@ -81,13 +81,13 @@ public:
 	/// @brief is called after all round1 claims have been approved or retracted -- additional claims can be issued in this round
 	//virtual DofClaims finalize_claims( DofClaims& );
 
- 	virtual void initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init ) {
- 		claims::DofClaims my_failures;
+	virtual void initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init ) {
+		claims::DofClaims my_failures;
 		FragmentJumpClaimer::initialize_dofs( pose, init_claims, my_failures );
- 		SequenceClaimer::initialize_dofs( pose, my_failures, failed_to_init );
- 	};
+		SequenceClaimer::initialize_dofs( pose, my_failures, failed_to_init );
+	};
 
-	//	virtual bool accept_declined_claim( DofClaim const& was_declined );
+	// virtual bool accept_declined_claim( DofClaim const& was_declined );
 
 	/// @brief type() is specifying the output name of the TopologyClaimer
 	virtual std::string type() const {
@@ -101,19 +101,19 @@ public:
 	virtual void add_constraints( core::pose::Pose& /*pose*/ ) const;
 
 	//void set_mover( simple_moves::FragmentMoverOP mover ) {
-	//		mover_ = mover;
-	//	}
+	//  mover_ = mover;
+	// }
 
-// 	void set_mover_tag( std::string const& str ) {
-// 		mover_tag_ = str;
-// 		if ( mover_ ) mover_->type( str );
-// 	}
+	//  void set_mover_tag( std::string const& str ) {
+	//   mover_tag_ = str;
+	//   if ( mover_ ) mover_->type( str );
+	//  }
 
-// 	std::string const& mover_tag() const {
-// 		return mover_tag_;
-// 	}
+	//  std::string const& mover_tag() const {
+	//   return mover_tag_;
+	//  }
 
-//	virtual moves::MoverOP get_mover(	core::pose::Pose const& /*pose*/ ) const;
+	// virtual moves::MoverOP get_mover( core::pose::Pose const& /*pose*/ ) const;
 
 protected:
 
@@ -121,11 +121,11 @@ protected:
 	virtual bool read_tag( std::string tag, std::istream& );
 	virtual void init_after_reading();
 
-// 	simple_moves::FragmentMover const& mover() const {
-// 		return *mover_;
-// 	}
+	//  simple_moves::FragmentMover const& mover() const {
+	//   return *mover_;
+	//  }
 
-//	kinematics::MoveMapOP movemap_;
+	// kinematics::MoveMapOP movemap_;
 
 private:
 	jumping::ResiduePairJumpSetupOP jump_setup_;

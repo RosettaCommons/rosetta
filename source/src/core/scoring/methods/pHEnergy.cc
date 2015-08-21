@@ -95,57 +95,57 @@ pHEnergy::residue_energy(
 	EnergyMap & emap
 ) const
 {
-  core::Real ipKa_, pH_score_, fprot_, score1_, score2_;
+	core::Real ipKa_, pH_score_, fprot_, score1_, score2_;
 
-  switch ( rsd.type().aa() ) {
+	switch ( rsd.type().aa() ) {
 
-    case chemical::aa_asp:
-      ipKa_ = 4.0;
-      fprot_ = 1.0/((pow (10.0,(pH_ - ipKa_))) + 1.0);                        //protonation probability
-      score1_ = -0.59 * log (fprot_);                                        //if residue is protonated
-      score2_ = -0.59 * log (1.0 - fprot_);                                  //if residue is not protonated
-      pH_score_ = (rsd.type().has_variant_type( chemical::PROTONATED )) ? score1_ : score2_;
-      break;
+	case chemical::aa_asp :
+		ipKa_ = 4.0;
+		fprot_ = 1.0/((pow (10.0,(pH_ - ipKa_))) + 1.0);                        //protonation probability
+		score1_ = -0.59 * log (fprot_);                                        //if residue is protonated
+		score2_ = -0.59 * log (1.0 - fprot_);                                  //if residue is not protonated
+		pH_score_ = (rsd.type().has_variant_type( chemical::PROTONATED )) ? score1_ : score2_;
+		break;
 
-    case chemical::aa_glu:
-      ipKa_ = 4.4;
-      fprot_ = 1.0/((pow (10.0,(pH_ - ipKa_))) + 1.0);
-      score1_ = -0.59 * log (fprot_);
-      score2_ = -0.59 * log (1.0 - fprot_);
-      pH_score_ = (rsd.type().has_variant_type( chemical::PROTONATED )) ? score1_ : score2_;
-      break;
+	case chemical::aa_glu :
+		ipKa_ = 4.4;
+		fprot_ = 1.0/((pow (10.0,(pH_ - ipKa_))) + 1.0);
+		score1_ = -0.59 * log (fprot_);
+		score2_ = -0.59 * log (1.0 - fprot_);
+		pH_score_ = (rsd.type().has_variant_type( chemical::PROTONATED )) ? score1_ : score2_;
+		break;
 
-    case chemical::aa_his:
-      ipKa_ = 6.3;
-      fprot_ = 1.0/((pow (10.0,(pH_ - ipKa_))) + 1.0);
-      score1_ = -0.59 * log (fprot_);
-      score2_ = -0.59 * log (1.0 - fprot_);
-      pH_score_ = (rsd.type().has_variant_type( chemical::PROTONATED )) ? score1_ : score2_;
-      break;
+	case chemical::aa_his :
+		ipKa_ = 6.3;
+		fprot_ = 1.0/((pow (10.0,(pH_ - ipKa_))) + 1.0);
+		score1_ = -0.59 * log (fprot_);
+		score2_ = -0.59 * log (1.0 - fprot_);
+		pH_score_ = (rsd.type().has_variant_type( chemical::PROTONATED )) ? score1_ : score2_;
+		break;
 
-    case chemical::aa_lys:
-      ipKa_ = 10.4;
-      fprot_ = 1.0/((pow (10.0,(pH_ - ipKa_))) + 1.0);
-      score1_ = -0.59 * log (fprot_);
-      score2_ = -0.59 * log (1.0 - fprot_);
-      pH_score_ = (rsd.type().has_variant_type( chemical::DEPROTONATED )) ? score2_ : score1_;
-      break;
+	case chemical::aa_lys :
+		ipKa_ = 10.4;
+		fprot_ = 1.0/((pow (10.0,(pH_ - ipKa_))) + 1.0);
+		score1_ = -0.59 * log (fprot_);
+		score2_ = -0.59 * log (1.0 - fprot_);
+		pH_score_ = (rsd.type().has_variant_type( chemical::DEPROTONATED )) ? score2_ : score1_;
+		break;
 
-    case chemical::aa_tyr:
-      ipKa_ = 10.0;
-      fprot_ = 1.0/((pow (10.0,(pH_ - ipKa_))) + 1.0);
-      score1_ = -0.59 * log (fprot_);
-      score2_ = -0.59 * log (1.0 - fprot_);
-      pH_score_ = (rsd.type().has_variant_type( chemical::DEPROTONATED )) ? score2_ : score1_;
-      break;
+	case chemical::aa_tyr :
+		ipKa_ = 10.0;
+		fprot_ = 1.0/((pow (10.0,(pH_ - ipKa_))) + 1.0);
+		score1_ = -0.59 * log (fprot_);
+		score2_ = -0.59 * log (1.0 - fprot_);
+		pH_score_ = (rsd.type().has_variant_type( chemical::DEPROTONATED )) ? score2_ : score1_;
+		break;
 
-    default:
-      pH_score_ = 0.0;
-      break;
+	default :
+		pH_score_ = 0.0;
+		break;
 
-  }//end switch
+	}//end switch
 
-  emap[ e_pH ] += pH_score_; //add pHEnergy to the EmapVector
+	emap[ e_pH ] += pH_score_; //add pHEnergy to the EmapVector
 
 } // residue_energy
 

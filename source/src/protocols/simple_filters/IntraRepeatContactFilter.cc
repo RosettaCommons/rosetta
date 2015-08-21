@@ -41,61 +41,61 @@ namespace simple_filters {
 
 // @brief default constructor
 IntraRepeatContactFilter::IntraRepeatContactFilter():
-    Filter( "IntraRepeatContactsPerResidue"),
-    filtered_value_( -1.0 ),
-    numbRepeats_(4),
-    sequenceSep_(6),
-    distThresh_(10)
+	Filter( "IntraRepeatContactsPerResidue"),
+	filtered_value_( -1.0 ),
+	numbRepeats_(4),
+	sequenceSep_(6),
+	distThresh_(10)
 {}
 
 // @brief copy constructor
 IntraRepeatContactFilter::IntraRepeatContactFilter( IntraRepeatContactFilter const & rval ):
-    Super( rval ),
-    filtered_value_( rval.filtered_value_ ),
-    numbRepeats_(rval.numbRepeats_),
-    sequenceSep_(rval.sequenceSep_),
-    distThresh_(rval.distThresh_)
+	Super( rval ),
+	filtered_value_( rval.filtered_value_ ),
+	numbRepeats_(rval.numbRepeats_),
+	sequenceSep_(rval.sequenceSep_),
+	distThresh_(rval.distThresh_)
 {}
 
 // @brief set filtered value
 void IntraRepeatContactFilter::filtered_value( Real const & value )
 {
-    filtered_value_ = value;
+	filtered_value_ = value;
 }
 
 /// @brief
 IntraRepeatContactFilter::Real
 IntraRepeatContactFilter::report_sm( Pose const & pose ) const
 {
-    return  compute( pose );
+	return  compute( pose );
 }
 
 /// @brief
 void
 IntraRepeatContactFilter::report( std::ostream & out, Pose const & pose ) const
 {
-    out << "IntraRepeatContacts: " <<  compute( pose ) << std::endl;
+	out << "IntraRepeatContacts: " <<  compute( pose ) << std::endl;
 }
 
 /// @brief
 IntraRepeatContactFilter::Real
 IntraRepeatContactFilter::compute( Pose const & pose ) const
 {
-    using numeric::xyzVector;
-    Size repeatLength = pose.total_residue()/numbRepeats_;
-    Size resStart = 1;
-    Size resEnd = repeatLength;
-    Size contactCt = 0;
-    for(Size ii=resStart; ii<=resEnd; ++ii){
-        for(Size jj=ii+sequenceSep_; jj<=resEnd; ++jj){
-            xyzVector<double> a = pose.xyz(core::id::NamedAtomID("CA", ii));
-            xyzVector<double> b = pose.xyz(core::id::NamedAtomID("CA", jj));
-            if(a.distance(b)<distThresh_){
-                contactCt+=1;
-            }
-        }
-    }
-  return((Real(contactCt))/Real(repeatLength));
+	using numeric::xyzVector;
+	Size repeatLength = pose.total_residue()/numbRepeats_;
+	Size resStart = 1;
+	Size resEnd = repeatLength;
+	Size contactCt = 0;
+	for ( Size ii=resStart; ii<=resEnd; ++ii ) {
+		for ( Size jj=ii+sequenceSep_; jj<=resEnd; ++jj ) {
+			xyzVector<double> a = pose.xyz(core::id::NamedAtomID("CA", ii));
+			xyzVector<double> b = pose.xyz(core::id::NamedAtomID("CA", jj));
+			if ( a.distance(b)<distThresh_ ) {
+				contactCt+=1;
+			}
+		}
+	}
+	return((Real(contactCt))/Real(repeatLength));
 }
 
 
@@ -103,31 +103,31 @@ IntraRepeatContactFilter::compute( Pose const & pose ) const
 // In this case, the test is whether the give pose is the topology we want.
 bool IntraRepeatContactFilter::apply( Pose const & pose ) const
 {
-    Real value = compute( pose );
-    if( value > filtered_value_ ){
-        tr << "Successfully filtered: " << value << std::endl;
-        return true;
-    }else{
-        tr << "Filter failed current/threshold=" << value << "/" << filtered_value_ << std::endl;
-        return false;
-    }
+	Real value = compute( pose );
+	if ( value > filtered_value_ ) {
+		tr << "Successfully filtered: " << value << std::endl;
+		return true;
+	} else {
+		tr << "Filter failed current/threshold=" << value << "/" << filtered_value_ << std::endl;
+		return false;
+	}
 } // apply_filter
 
 /// @brief parse xml
 void
 IntraRepeatContactFilter::parse_my_tag(
-    TagCOP const tag,
-    basic::datacache::DataMap &,
-    filters::Filters_map const &,
-    Movers_map const &,
-    Pose const & )
+	TagCOP const tag,
+	basic::datacache::DataMap &,
+	filters::Filters_map const &,
+	Movers_map const &,
+	Pose const & )
 {
-    // set threshold
-    filtered_value_ = tag->getOption<Real>( "threshold", 0.0 );
-    numbRepeats_ = tag->getOption<Size>("numb_repeats",4);
-    sequenceSep_ = tag->getOption<Size>("sequenceSeperation",6);
-    distThresh_ = tag->getOption<Size>("distanceThreshold",10.0);
-    tr << "Structures which have IntraRepeatContacts less than " << filtered_value_ << " will be filtered." << std::endl;
+	// set threshold
+	filtered_value_ = tag->getOption<Real>( "threshold", 0.0 );
+	numbRepeats_ = tag->getOption<Size>("numb_repeats",4);
+	sequenceSep_ = tag->getOption<Size>("sequenceSeperation",6);
+	distThresh_ = tag->getOption<Size>("distanceThreshold",10.0);
+	tr << "Structures which have IntraRepeatContacts less than " << filtered_value_ << " will be filtered." << std::endl;
 }
 
 filters::FilterOP

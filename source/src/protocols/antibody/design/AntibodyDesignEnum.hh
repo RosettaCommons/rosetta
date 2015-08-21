@@ -19,7 +19,7 @@ namespace antibody {
 namespace design {
 
 enum MinTypeEnum{
-	
+
 	relax = 1,
 	centroid_relax,
 	minimize,
@@ -29,7 +29,7 @@ enum MinTypeEnum{
 	backrub_protocol,
 	no_min,
 	MinTypeEnum_total = no_min
-			
+
 };
 
 
@@ -41,14 +41,14 @@ enum SeqDesignStrategyEnum {
 	seq_design_profile_sets_combined,
 	seq_design_basic,
 	seq_design_none,
-	
+
 	SeqDesignStrategyEnum_total = seq_design_none
 };
 
 enum AntibodyDesignProtocolEnum {
 	generalized_monte_carlo = 1,
 	deterministic_graft,
-	
+
 	DesignProtocolEnum_total = deterministic_graft
 };
 
@@ -58,5 +58,5 @@ enum AntibodyDesignProtocolEnum {
 }
 
 
-#endif	//#ifndef INCLUDED_protocols/antibody_design_ANTIBODYDESIGNENUM_HH
+#endif //#ifndef INCLUDED_protocols/antibody_design_ANTIBODYDESIGNENUM_HH
 

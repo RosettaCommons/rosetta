@@ -33,13 +33,13 @@ namespace symmetry {
 
 /// @brief Mover Creator
 class SymmetricAddMembraneMoverCreator : public protocols::moves::MoverCreator {
-    
+
 public:
-    
-    virtual protocols::moves::MoverOP create_mover() const;
-    virtual std::string keyname() const;
-    static std::string mover_name();
-    
+
+	virtual protocols::moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
+	static std::string mover_name();
+
 };
 
 } // symmetry

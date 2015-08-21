@@ -42,7 +42,7 @@ using namespace core::scoring::methods;
 
 class CartesianBondedEnergyBBDepTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	// Shared initialization goes here.
 	void setUp() {
@@ -67,14 +67,14 @@ class CartesianBondedEnergyBBDepTests : public CxxTest::TestSuite {
 		std::cout.precision( 16 );
 		for ( Size ii = 2; ii <= trpcage.total_residue(); ++ii ) {
 
-			EnergyMap emap;
-			std::cout << "{\n"
-			"EnergyMap emap;\n";
+		EnergyMap emap;
+		std::cout << "{\n"
+		"EnergyMap emap;\n";
 
-			cartbond_energy.residue_pair_energy( trpcage.residue( ii-1 ), trpcage.residue( ii ), trpcage, sfxn, emap );
-			std::cout << "cartbond_energy.residue_pair_energy( trpcage.residue( " << ii-1 << " ), trpcage.residue( " << ii << " ), trpcage, sfxn, emap );\n";
-			std::cout << "TS_ASSERT_DELTA( emap[ cart_bonded ], " << emap[ cart_bonded ] << ", 1e-12 );\n";
-			std::cout << "}\n";
+		cartbond_energy.residue_pair_energy( trpcage.residue( ii-1 ), trpcage.residue( ii ), trpcage, sfxn, emap );
+		std::cout << "cartbond_energy.residue_pair_energy( trpcage.residue( " << ii-1 << " ), trpcage.residue( " << ii << " ), trpcage, sfxn, emap );\n";
+		std::cout << "TS_ASSERT_DELTA( emap[ cart_bonded ], " << emap[ cart_bonded ] << ", 1e-12 );\n";
+		std::cout << "}\n";
 		}
 		std::cout.precision( before_precision );*/
 

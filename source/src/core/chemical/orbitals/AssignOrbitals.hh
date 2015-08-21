@@ -18,16 +18,16 @@
 #include <core/chemical/AtomType.fwd.hh>
 
 
-namespace core{
-namespace chemical{
-namespace orbitals{
+namespace core {
+namespace chemical {
+namespace orbitals {
 
 /*struct OrbInfo{
-	core::Size atom_index;
-	core::Size hybridization;
-	core::Size orbitaltypes;
-	core::Real dist;
-	utility::vector1<core::Size> bondedatoms;
+core::Size atom_index;
+core::Size hybridization;
+core::Size orbitaltypes;
+core::Real dist;
+utility::vector1<core::Size> bondedatoms;
 
 };*/
 
@@ -42,48 +42,48 @@ public:
 
 	void assign_sp2_sp_orbitals_to_one_bonded_atom(/*OrbInfo const & orbital_info*/ core::chemical::AtomType const & atmtype);
 	void add_orbitals_to_restype(
-			core::Size const atm_index2,
-			core::Size const atm_index3,
-			//OrbInfo const & orbital_info,
-			core::chemical::AtomType const & atmtype,
-			std::string const & atom_hybridization,
-			utility::vector1< numeric::xyzVector<core::Real> > const & orbital_xyz_vectors
+		core::Size const atm_index2,
+		core::Size const atm_index3,
+		//OrbInfo const & orbital_info,
+		core::chemical::AtomType const & atmtype,
+		std::string const & atom_hybridization,
+		utility::vector1< numeric::xyzVector<core::Real> > const & orbital_xyz_vectors
 	);
 
 	void assign_sp2_orbitals_to_one_bonded_atom(/*OrbInfo const & orbital_info,*/ core::chemical::AtomType const & atmtype);
 
 
 	utility::vector1< numeric::xyzVector<core::Real> > cross_product_helper(
-			core::Size const atm_index1,
-			core::Size const atm_index2,
-			core::Size const atm_index3,
-			core::Real const dist
+		core::Size const atm_index1,
+		core::Size const atm_index2,
+		core::Size const atm_index3,
+		core::Real const dist
 	);
 
 	void calculate_orbital_icoor(
-			numeric::xyzVector<core::Real> const & orbital_xyz,
-			core::Size const atm_index1,
-			core::Size const atm_index2,
-			core::Size const atm_index3,
-			std::string const & orbital_element_name
+		numeric::xyzVector<core::Real> const & orbital_xyz,
+		core::Size const atm_index1,
+		core::Size const atm_index2,
+		core::Size const atm_index3,
+		std::string const & orbital_element_name
 	);
 
 	utility::vector1< numeric::xyzVector<core::Real> >  Coordinates_TriganolPlanar_bondedto1atom_helper(
-			core::Size const atm_index1,
-			core::Size const atm_index2,
-			core::Size const atm_index3,
-			core::Real const dist
+		core::Size const atm_index1,
+		core::Size const atm_index2,
+		core::Size const atm_index3,
+		core::Real const dist
 
 	);
 
 	utility::vector1< numeric::xyzVector<core::Real> >  Coordinates_Tetrahedral_bondedto3atoms_helper(
-			core::Size const atm_index1,
-			core::Size const atm_index2,
-			core::Size const atm_index3,
-			core::Size const atm_index4,
-			core::Real const dist
+		core::Size const atm_index1,
+		core::Size const atm_index2,
+		core::Size const atm_index3,
+		core::Size const atm_index4,
+		core::Real const dist
 
-	 );
+	);
 
 private:
 

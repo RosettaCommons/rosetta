@@ -26,11 +26,11 @@ namespace loop_build {
 LoopMover_SlidingWindowCreator::~LoopMover_SlidingWindowCreator() {}
 
 moves::MoverOP LoopMover_SlidingWindowCreator::create_mover() const {
-  return moves::MoverOP( new loop_build::LoopMover_SlidingWindow() );
+	return moves::MoverOP( new loop_build::LoopMover_SlidingWindow() );
 }
 
 std::string LoopMover_SlidingWindowCreator::keyname() const {
-  return "LoopMover_SlidingWindow";
+	return "LoopMover_SlidingWindow";
 }
 
 } //namespace

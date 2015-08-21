@@ -31,7 +31,7 @@
 namespace protocols {
 namespace simple_moves {
 
-	// no using in .hh files !
+// no using in .hh files !
 
 class ShakeStructureMover: public protocols::moves::Mover{
 public:
@@ -107,28 +107,28 @@ private:
 	bool testing_phase;
 
 protected:
-		void
-		reduce_fa_rep(float fraction_fa_rep, core::scoring::ScoreFunction & s);
+	void
+	reduce_fa_rep(float fraction_fa_rep, core::scoring::ScoreFunction & s);
 
 	virtual void
-		setup_for_run(core::pose::Pose & p);
+	setup_for_run(core::pose::Pose & p);
 
 	virtual void
-		minimize_with_constraints(core::pose::Pose & p,
+	minimize_with_constraints(core::pose::Pose & p,
 		core::scoring::ScoreFunction & s);
 
 	virtual void
-		setup_ca_constraints(core::pose::Pose & pose,
+	setup_ca_constraints(core::pose::Pose & pose,
 		core::scoring::ScoreFunction & s,
 		float const CA_cutoff,
 		float const cst_tol);
 
 	virtual void
-		run_mc(core::pose::Pose & p, core::scoring::ScoreFunction & s,
+	run_mc(core::pose::Pose & p, core::scoring::ScoreFunction & s,
 		core::Real temperature);
 
 	core::Real
-		set_temp_based_on_ens_diversity(core::pose::Pose & p,
+	set_temp_based_on_ens_diversity(core::pose::Pose & p,
 		core::scoring::ScoreFunction & s);
 
 	void
@@ -139,7 +139,7 @@ protected:
 		core::Real shear_H_angle_max, core::Real shear_E_angle_max, core::Real shear_L_angle_max);
 
 	void
-		create_ensemble(core::pose::Pose & p,
+	create_ensemble(core::pose::Pose & p,
 		core::scoring::ScoreFunction & s);
 
 };

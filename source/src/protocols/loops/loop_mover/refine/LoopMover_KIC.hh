@@ -42,8 +42,8 @@ class LoopMover_Refine_KIC: public loop_mover::LoopMover {
 public:
 	//constructors
 	LoopMover_Refine_KIC();
-    
-    LoopMover_Refine_KIC(
+
+	LoopMover_Refine_KIC(
 		protocols::loops::LoopsOP  loops_in
 	);
 
@@ -54,8 +54,8 @@ public:
 
 	//destructor
 	~LoopMover_Refine_KIC();
-    
-    void init( core::scoring::ScoreFunctionCOP  scorefxn );
+
+	void init( core::scoring::ScoreFunctionCOP  scorefxn );
 	void set_default_settings();
 
 	void set_redesign_loop( bool value = true ){ redesign_loop_ = value; }
@@ -102,7 +102,7 @@ protected:
 
 	core::pack::task::TaskFactoryOP task_factory;
 	bool redesign_loop_;
-    virtual basic::Tracer & tr() const;
+	virtual basic::Tracer & tr() const;
 
 private:
 
@@ -112,7 +112,7 @@ private:
 	bool min_after_repack_; // should inner cycle repacking steps be followed by minimization
 	bool fix_natsc_; // should side-chains neighboring the loop be fixed
 	bool optimize_only_kic_region_sidechains_after_move_; // Should we perform rotamer trials and minimization after every
-													      // KIC move but only within the neighbor_dist of the KIC segment
+	// KIC move but only within the neighbor_dist of the KIC segment
 	bool flank_residue_min_; //JQX
 };
 

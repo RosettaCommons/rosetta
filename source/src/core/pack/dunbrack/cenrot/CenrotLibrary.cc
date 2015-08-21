@@ -92,11 +92,11 @@ CenrotLibrary::add_cenrot_residue_library(
 	SingleResidueCenrotLibraryCOP rot_lib
 )
 {
-	if( aa > chemical::num_canonical_aas ) {
+	if ( aa > chemical::num_canonical_aas ) {
 		TR.Error << "ERROR: Cannot add centroid Dunbrack rotamer library of type " << aa << " not a canonical amino acid." << std::endl;
 		utility_exit_with_message("Cannot add a non-canonical centroid Dunbrack library.");
 	}
-	if( cenrot_libraries_[ aa ] != 0 ) {
+	if ( cenrot_libraries_[ aa ] != 0 ) {
 		TR.Error << "ERROR: Cannot add cenroid Dunbrack rotamer library of type " << aa << ": library already loaded." << std::endl;
 		utility_exit_with_message("Can't add centroid rsd library twice");
 	}
@@ -117,53 +117,53 @@ CenrotLibrary::get_cenrot_library_by_aa( chemical::AA const & aa ) const
 
 void CenrotLibrary::create_centroid_rotamer_libraries_from_ASCII()
 {
-    using namespace chemical;
-    using namespace core::pack::dunbrack::cenrot;
+	using namespace chemical;
+	using namespace core::pack::dunbrack::cenrot;
 
-    /// Now read in the cenrot library
-    clock_t starttime = clock();
-    utility::io::izstream libstream(basic::database::full_name("rotamer/cenrot_dunbrack.lib"));
-    //std::cout << basic::database::full_name("rotamer/centroid_rotlibs") << std::endl;
-    ResidueTypeSetCAP rsd_set=ChemicalManager::get_instance()->residue_type_set( "centroid_rot" );
+	/// Now read in the cenrot library
+	clock_t starttime = clock();
+	utility::io::izstream libstream(basic::database::full_name("rotamer/cenrot_dunbrack.lib"));
+	//std::cout << basic::database::full_name("rotamer/centroid_rotlibs") << std::endl;
+	ResidueTypeSetCAP rsd_set=ChemicalManager::get_instance()->residue_type_set( "centroid_rot" );
 
-    chemical::AA aan = chemical::aa_unk;
-    std::string nextaa;
-    std::string thisaa;
-    libstream >> nextaa;
+	chemical::AA aan = chemical::aa_unk;
+	std::string nextaa;
+	std::string thisaa;
+	libstream >> nextaa;
 
-    Size count_libraries_read( 0 );
-    while ( nextaa != "" ) {
-        aan = chemical::aa_from_name( nextaa );
-        SingleResidueCenrotLibraryOP newlib( new SingleResidueCenrotLibrary(aan) );
-        /// read the rotlib for current aa and save the name of the next one
-        //thisaa = nextaa;
-        nextaa = newlib->read_from_file( libstream, true );
-        ++count_libraries_read;
+	Size count_libraries_read( 0 );
+	while ( nextaa != "" ) {
+		aan = chemical::aa_from_name( nextaa );
+		SingleResidueCenrotLibraryOP newlib( new SingleResidueCenrotLibrary(aan) );
+		/// read the rotlib for current aa and save the name of the next one
+		//thisaa = nextaa;
+		nextaa = newlib->read_from_file( libstream, true );
+		++count_libraries_read;
 
-				// We put the test here so that we eat the remaining portion of the block.
-				if( aan > chemical::num_canonical_aas ) {
-					TR.Warning << "Skipping cenrot library for non-canonical amino acid " << nextaa << " (" << aan << ")" << std::endl;
-					continue;
-				}
-				add_cenrot_residue_library( aan, newlib );
+		// We put the test here so that we eat the remaining portion of the block.
+		if ( aan > chemical::num_canonical_aas ) {
+			TR.Warning << "Skipping cenrot library for non-canonical amino acid " << nextaa << " (" << aan << ")" << std::endl;
+			continue;
+		}
+		add_cenrot_residue_library( aan, newlib );
 
-        //fullatom lib way
-        //libraries_[ aan ] = newlib();
-        //aa_libraries_[ aan ] = newlib();
-        //if( cenrot_libraries_[ aan ] != 0 ) {
-				//	TR.Warning << "Already read centroid rotamer library for " << aan << " replacing. " << std::endl;
-				//}
-				//cenrot_libraries_[ aan ] = newlib;
-        //libraries_ops_.push_back( newlib );
+		//fullatom lib way
+		//libraries_[ aan ] = newlib();
+		//aa_libraries_[ aan ] = newlib();
+		//if( cenrot_libraries_[ aan ] != 0 ) {
+		// TR.Warning << "Already read centroid rotamer library for " << aan << " replacing. " << std::endl;
+		//}
+		//cenrot_libraries_[ aan ] = newlib;
+		//libraries_ops_.push_back( newlib );
 
-        //SingleResidueCenrotLibraryCOP dunlib( static_cast< SingleResidueCenrotLibraryCOP> ( newlib ));
-				//add_residue_library(rsd_set->name_map(thisaa), dunlib);
-    }
+		//SingleResidueCenrotLibraryCOP dunlib( static_cast< SingleResidueCenrotLibraryCOP> ( newlib ));
+		//add_residue_library(rsd_set->name_map(thisaa), dunlib);
+	}
 
-    libstream.close();
+	libstream.close();
 
-    clock_t stoptime = clock();
-    TR << "Cenrot library took " << ((double)stoptime-starttime)/CLOCKS_PER_SEC << " seconds to load from ASCII" << std::endl;
+	clock_t stoptime = clock();
+	TR << "Cenrot library took " << ((double)stoptime-starttime)/CLOCKS_PER_SEC << " seconds to load from ASCII" << std::endl;
 }
 
 } // cenrot

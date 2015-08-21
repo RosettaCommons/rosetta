@@ -9,10 +9,10 @@
 
 /// @file       protocols/membrane/SpinAroundPartnerMover.fwd.hh
 /// @brief      Spins the downstream partner around the upstream partner
-/// @details	Spins the downstream partner around the upstream partner in the
-///				membrane to probe all kinds of interfaces. Both embedding normals
-///				are approximately conserved, i.e. the partners aren't flipped
-///				in the membrane.
+/// @details Spins the downstream partner around the upstream partner in the
+///    membrane to probe all kinds of interfaces. Both embedding normals
+///    are approximately conserved, i.e. the partners aren't flipped
+///    in the membrane.
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_SpinAroundPartnerMover_fwd_hh

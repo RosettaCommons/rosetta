@@ -27,46 +27,46 @@ namespace simple_filters {
 
 class AngleToVector : public filters::Filter
 {
-  public:
-    AngleToVector();
-    virtual ~AngleToVector();
-		filters::FilterOP clone() const {
-			return filters::FilterOP( new AngleToVector( *this ) );
-		}
-		filters::FilterOP fresh_instance() const{
-			return filters::FilterOP( new AngleToVector() );
-		}
+public:
+	AngleToVector();
+	virtual ~AngleToVector();
+	filters::FilterOP clone() const {
+		return filters::FilterOP( new AngleToVector( *this ) );
+	}
+	filters::FilterOP fresh_instance() const{
+		return filters::FilterOP( new AngleToVector() );
+	}
 
-		virtual bool apply( core::pose::Pose const & pose ) const;
-		virtual core::Real compute( core::pose::Pose const & pose ) const;
-		virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
-		virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-		void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & );
+	virtual bool apply( core::pose::Pose const & pose ) const;
+	virtual core::Real compute( core::pose::Pose const & pose ) const;
+	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
+	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & );
 
-		core::Size chain() const{ return chain_; }
-		void chain( core::Size const r ){ chain_ = r; }
-		core::Real min_angle() const{ return min_angle_; }
-		void min_angle( core::Real const r ){ min_angle_ = r; }
-		core::Real max_angle() const{ return max_angle_; }
-		void max_angle( core::Real const r ){ max_angle_ = r; }
+	core::Size chain() const{ return chain_; }
+	void chain( core::Size const r ){ chain_ = r; }
+	core::Real min_angle() const{ return min_angle_; }
+	void min_angle( core::Real const r ){ min_angle_ = r; }
+	core::Real max_angle() const{ return max_angle_; }
+	void max_angle( core::Real const r ){ max_angle_ = r; }
 
-		core::Real refx() const{ return refx_; }
-		void refx( core::Real const r ){ refx_ = r; }
-		core::Real refy() const{ return refy_; }
-		void refy( core::Real const r ){ refy_ = r; }
-		core::Real refz() const{ return refz_; }
-		void refz( core::Real const r ){ refz_ = r; }
+	core::Real refx() const{ return refx_; }
+	void refx( core::Real const r ){ refx_ = r; }
+	core::Real refy() const{ return refy_; }
+	void refy( core::Real const r ){ refy_ = r; }
+	core::Real refz() const{ return refz_; }
+	void refz( core::Real const r ){ refz_ = r; }
 
-		std::string atm1() const{ return atm1_; }
-		void atm1( std::string const a ){ atm1_ = a; }
-		std::string atm2() const{ return atm2_; }
-		void atm2( std::string const a ){ atm2_ = a; }
+	std::string atm1() const{ return atm1_; }
+	void atm1( std::string const a ){ atm1_ = a; }
+	std::string atm2() const{ return atm2_; }
+	void atm2( std::string const a ){ atm2_ = a; }
 
-	private:
-		core::Real min_angle_, max_angle_; //dflt 0, +90
-		core::Real refx_,refy_,refz_;// a reference vector for calculation
-		core::Size chain_;//dflt 2; which chain to compute
-		std::string atm1_, atm2_; //atoms for which to compute the vectors
+private:
+	core::Real min_angle_, max_angle_; //dflt 0, +90
+	core::Real refx_,refy_,refz_;// a reference vector for calculation
+	core::Size chain_;//dflt 2; which chain to compute
+	std::string atm1_, atm2_; //atoms for which to compute the vectors
 };
 
 }

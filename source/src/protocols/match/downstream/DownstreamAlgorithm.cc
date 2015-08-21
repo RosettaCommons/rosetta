@@ -117,9 +117,9 @@ void
 DownstreamAlgorithm::set_dsbuilder(
 	DownstreamBuilderOP dsbuilder )
 {
-  if (dsbuilder_) {
+	if ( dsbuilder_ ) {
 		dsbuilder_.reset(); // to NULL
-  }
+	}
 	dsbuilder_ = dsbuilder;
 }
 
@@ -143,30 +143,30 @@ DownstreamAlgorithm::are_colliding(
 	//      "CAT 3: " << ds_res.atom_name( catalytic_atoms[3] ) <<
 	//      "CAT 4: " << ds_res.atom_name( catalytic_atoms[4] ) << std::endl;
 
-  for ( Size atomid_ds = 1; atomid_ds <= ds_atoms.size(); ++atomid_ds ) {
-     ProbeRadius ds_rad = probe_radius_for_atom_type( ds_res.atom_type_index( ds_atoms[ atomid_ds ].atomno() ) );
-		 if ( ! ( catalytic_atoms[3] == ds_atoms[ atomid_ds ].atomno() ||
-							catalytic_atoms[4] ==	ds_atoms[ atomid_ds ].atomno() ) ){
-  		 //TR << " x "<< ds_res.xyz( ds_atoms[ atomid_ds ].atomno() )[0] << " y " << ds_res.xyz( ds_atoms[ atomid_ds ].atomno()  )[1] << " z " << ds_res.xyz( ds_atoms[ atomid_ds ].atomno()  )[2] << std::endl;
+	for ( Size atomid_ds = 1; atomid_ds <= ds_atoms.size(); ++atomid_ds ) {
+		ProbeRadius ds_rad = probe_radius_for_atom_type( ds_res.atom_type_index( ds_atoms[ atomid_ds ].atomno() ) );
+		if ( ! ( catalytic_atoms[3] == ds_atoms[ atomid_ds ].atomno() ||
+				catalytic_atoms[4] == ds_atoms[ atomid_ds ].atomno() ) ) {
+			//TR << " x "<< ds_res.xyz( ds_atoms[ atomid_ds ].atomno() )[0] << " y " << ds_res.xyz( ds_atoms[ atomid_ds ].atomno()  )[1] << " z " << ds_res.xyz( ds_atoms[ atomid_ds ].atomno()  )[2] << std::endl;
 
-    		for (Size atomid_us = us_res.first_sidechain_atom(); atomid_us <= us_res.nheavyatoms(); ++atomid_us ) {
-		    	if ( ! ( catalytic_atoms[1] == atomid_us ||
-              		 catalytic_atoms[2] == atomid_us ) ){
+			for ( Size atomid_us = us_res.first_sidechain_atom(); atomid_us <= us_res.nheavyatoms(); ++atomid_us ) {
+				if ( ! ( catalytic_atoms[1] == atomid_us ||
+						catalytic_atoms[2] == atomid_us ) ) {
 
-						//TR << "RES ds: " << ds_res.atom_name( ds_atoms[ atomid_ds ].atomno() ) << " RES us: " << us_res.atom_name(atomid_us) << std::endl;
-      			core::Real dist2( ds_res.xyz( ds_atoms[ atomid_ds ].atomno() ).distance_squared( us_res.xyz( atomid_us ) ) );
-      			ProbeRadius us_rad = probe_radius_for_atom_type( us_res.atom_type_index( atomid_us ) );
-						core::Real dis = bbgrid().required_separation_distance( us_rad, ds_rad );
-						dis = dis*dis;
-						//TR << "griddis "  << dis << " dist2 " << dist2 << std::endl;
-      		if ( dist2 < dis ) {
+					//TR << "RES ds: " << ds_res.atom_name( ds_atoms[ atomid_ds ].atomno() ) << " RES us: " << us_res.atom_name(atomid_us) << std::endl;
+					core::Real dist2( ds_res.xyz( ds_atoms[ atomid_ds ].atomno() ).distance_squared( us_res.xyz( atomid_us ) ) );
+					ProbeRadius us_rad = probe_radius_for_atom_type( us_res.atom_type_index( atomid_us ) );
+					core::Real dis = bbgrid().required_separation_distance( us_rad, ds_rad );
+					dis = dis*dis;
+					//TR << "griddis "  << dis << " dist2 " << dist2 << std::endl;
+					if ( dist2 < dis ) {
 						//TR << "Colliding" << std::endl;
-  					return true;
-      		}
+						return true;
+					}
 				}
 			}
 		}
-  }
+	}
 	return false;
 }
 

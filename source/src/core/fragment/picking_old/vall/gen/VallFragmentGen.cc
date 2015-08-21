@@ -43,8 +43,7 @@ VallFragmentGen::~VallFragmentGen()
 
 /// @brief copy assignment
 VallFragmentGen & VallFragmentGen::operator =( VallFragmentGen const & rval ) {
-	if ( this != &rval ) {
-	}
+	if ( this != &rval ) {}
 	return *this;
 }
 

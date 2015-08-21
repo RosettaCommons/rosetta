@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/scoring/membrane/MPPairEnergyCreator.hh
+/// @file  core/scoring/membrane/MPPairEnergyCreator.hh
 ///
-///	@brief		Membrane Residue Pair Energy Term Creator
-///	@details	Two Body Term - score residue-residue interactions in the membrane. Derived from Membrane
-///				base potential and uses mpframework data
-///				Last Modified: 3/28/14
+/// @brief  Membrane Residue Pair Energy Term Creator
+/// @details Two Body Term - score residue-residue interactions in the membrane. Derived from Membrane
+///    base potential and uses mpframework data
+///    Last Modified: 3/28/14
 ///
-///	@author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_scoring_membrane_MPPairEnergyCreator_hh
 #define INCLUDED_core_scoring_membrane_MPPairEnergyCreator_hh
@@ -35,25 +35,25 @@ using namespace core::scoring::methods;
 namespace core {
 namespace scoring {
 namespace membrane {
-	
+
 /// @brief Creator Class for Membrane Residue Pair Energy Method
 class MPPairEnergyCreator : public EnergyMethodCreator {
-	
+
 public:
-	
+
 	/// @brief Instantiate a new MPPairEnergy
 	virtual
 	methods::EnergyMethodOP
 	create_energy_method(
-						 methods::EnergyMethodOptions const &
-						 ) const;
-	
+		methods::EnergyMethodOptions const &
+	) const;
+
 	/// @brief Return the Set of Score Types claimed by EnergyMethod
 	virtual
 	ScoreTypes
 	score_types_for_method() const;
 };
-	
+
 } // membrane
 } // scoring
 } // core

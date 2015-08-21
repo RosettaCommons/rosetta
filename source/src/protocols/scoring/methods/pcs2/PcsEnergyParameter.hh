@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/PcsEnergyParameter.hh
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/PcsEnergyParameter.hh
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs2_PcsEnergyParameter_hh
@@ -78,17 +78,17 @@ public:
 	/// @Set the vector an weight name for this PcsEnergyParameter
 	void
 	set_vector_name_and_weight(utility::vector1<std::string> const vec_filename,
-														 utility::vector1<core::Real> const vec_individual_weight);
+		utility::vector1<core::Real> const vec_individual_weight);
 
 	/// @Set the grid parameter for this PcsEnergyParameter
 	void
 	set_grid_param(
-								 core::Size const include_only_start,
-								 core::Size const include_only_end,
-								 core::Size const n_trial_min,
-								 core::Real const pcs_weight,
-								 core::Real const individual_scale
-								 );
+		core::Size const include_only_start,
+		core::Size const include_only_end,
+		core::Size const n_trial_min,
+		core::Real const pcs_weight,
+		core::Real const individual_scale
+	);
 
 
 	/// @brief Output myself on the stream

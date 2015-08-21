@@ -25,86 +25,86 @@ namespace residue_selector {
 
 class AndResidueSelectorCreator : public ResidueSelectorCreator {
 public:
-  virtual ResidueSelectorOP create_residue_selector() const;
-  virtual std::string keyname() const;
+	virtual ResidueSelectorOP create_residue_selector() const;
+	virtual std::string keyname() const;
 };
 
 class ChainSelectorCreator : public ResidueSelectorCreator {
 public:
-  virtual ResidueSelectorOP create_residue_selector() const;
-  virtual std::string keyname() const;
+	virtual ResidueSelectorOP create_residue_selector() const;
+	virtual std::string keyname() const;
 };
 
 class ClashBasedRepackShellSelectorCreator : public ResidueSelectorCreator {
 public:
-  virtual ResidueSelectorOP create_residue_selector() const;
-  virtual std::string keyname() const;
+	virtual ResidueSelectorOP create_residue_selector() const;
+	virtual std::string keyname() const;
 };
 
 class InterGroupInterfaceByVectorSelectorCreator : public ResidueSelectorCreator {
 public:
-  virtual ResidueSelectorOP create_residue_selector() const;
-  virtual std::string keyname() const;
+	virtual ResidueSelectorOP create_residue_selector() const;
+	virtual std::string keyname() const;
 };
 
 class NotResidueSelectorCreator : public ResidueSelectorCreator {
 public:
-  virtual ResidueSelectorOP create_residue_selector() const;
-  virtual std::string keyname() const;
+	virtual ResidueSelectorOP create_residue_selector() const;
+	virtual std::string keyname() const;
 };
 
 class ResidueIndexSelectorCreator : public ResidueSelectorCreator {
 public:
-  virtual ResidueSelectorOP create_residue_selector() const;
-  virtual std::string keyname() const;
+	virtual ResidueSelectorOP create_residue_selector() const;
+	virtual std::string keyname() const;
 };
 
 class ResidueNameSelectorCreator : public ResidueSelectorCreator {
 public:
-  virtual ResidueSelectorOP create_residue_selector() const;
-  virtual std::string keyname() const;
+	virtual ResidueSelectorOP create_residue_selector() const;
+	virtual std::string keyname() const;
 };
 
 class NeighborhoodResidueSelectorCreator : public ResidueSelectorCreator {
 public:
-  virtual ResidueSelectorOP create_residue_selector() const;
-  virtual std::string keyname() const;
+	virtual ResidueSelectorOP create_residue_selector() const;
+	virtual std::string keyname() const;
 };
 
 class NumNeighborsSelectorCreator : public ResidueSelectorCreator {
 public:
-  virtual ResidueSelectorOP create_residue_selector() const;
-  virtual std::string keyname() const;
+	virtual ResidueSelectorOP create_residue_selector() const;
+	virtual std::string keyname() const;
 };
 
 class OrResidueSelectorCreator : public ResidueSelectorCreator {
 public:
-  virtual ResidueSelectorOP create_residue_selector() const;
-  virtual std::string keyname() const;
+	virtual ResidueSelectorOP create_residue_selector() const;
+	virtual std::string keyname() const;
 };
 
 class JumpUpstreamSelectorCreator : public ResidueSelectorCreator {
 public:
-  virtual ResidueSelectorOP create_residue_selector() const;
-  virtual std::string keyname() const;
+	virtual ResidueSelectorOP create_residue_selector() const;
+	virtual std::string keyname() const;
 };
 
 class JumpDownstreamSelectorCreator : public ResidueSelectorCreator {
 public:
-  virtual ResidueSelectorOP create_residue_selector() const;
-  virtual std::string keyname() const;
+	virtual ResidueSelectorOP create_residue_selector() const;
+	virtual std::string keyname() const;
 };
 
 class SecondaryStructureSelectorCreator : public ResidueSelectorCreator {
 public:
-  virtual ResidueSelectorOP create_residue_selector() const;
-  virtual std::string keyname() const;
+	virtual ResidueSelectorOP create_residue_selector() const;
+	virtual std::string keyname() const;
 };
 
 class TrueResidueSelectorCreator : public ResidueSelectorCreator {
 public:
-  virtual ResidueSelectorOP create_residue_selector() const;
-  virtual std::string keyname() const;
+	virtual ResidueSelectorOP create_residue_selector() const;
+	virtual std::string keyname() const;
 };
 
 } //namespace residue_selector

@@ -29,7 +29,7 @@
 #include <core/sequence/ScoringScheme.fwd.hh>
 
 #ifdef WIN32
-	#include <core/sequence/ScoringScheme.hh>
+#include <core/sequence/ScoringScheme.hh>
 #endif
 
 
@@ -60,7 +60,7 @@ SequenceAlignment Aligner::traceback(
 	CellOP current_cell = start;
 	std::string aligned_seq_x(""), aligned_seq_y("");
 
-	while( 1 ) {
+	while ( 1 ) {
 		Size current_x = current_cell->x();
 		Size current_y = current_cell->y();
 
@@ -83,10 +83,10 @@ SequenceAlignment Aligner::traceback(
 			seq_x->insert_gap( current_x + 1 );
 		} else {
 			//std::string const msg(
-			//	"Unhandled case in traceback, not pointing to anything (" +
-			//	"\n"
-			//	//string_of(current_x) + "," +
-			//	//string_of(current_y) + ")!\n"
+			// "Unhandled case in traceback, not pointing to anything (" +
+			// "\n"
+			// //string_of(current_x) + "," +
+			// //string_of(current_y) + ")!\n"
 			//);
 			//utility_exit_with_message( msg );
 			utility_exit_with_message( "Error in traceback: pointer doesn't go anywhere!\n" );

@@ -41,11 +41,11 @@
 ///  ran3 - old generator from previos version of rosetta
 
 #if (defined min) && (defined WIN32)  // Workaround for MSVC and windows.h include which used #define min
-	#undef min
+#undef min
 #endif
 
 #if (defined max) && (defined WIN32)  // Workaround for MSVC and windows.h include which used #define max
-	#undef max
+#undef max
 #endif
 
 
@@ -114,7 +114,7 @@ public:
 
 	void restoreState(std::istream & in);
 
-  /// @brief return a random element from a utility::vector1.  What is
+	/// @brief return a random element from a utility::vector1.  What is
 	/// this function doing inside the RandomGenerator class?
 	template< class T >
 	T const &

@@ -62,7 +62,7 @@
 #include <string>
 #include <sstream>
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 // option key includes
@@ -96,17 +96,17 @@ using io::pdb::dump_pdb;
 
 using namespace protocols::loops;
 
-	LoopRebuild::LoopRebuild(
-		core::scoring::ScoreFunctionOP scorefxn,
-		protocols::loops::Loops Loops_in
-	) : Mover(),
-		scorefxn_( scorefxn ),
-		Loops_in_( Loops_in )
-	{
-		protocols::loops::read_loop_fragments( frag_libs_ );
-		Mover::type("LoopRebuild");
-		set_default_settings();
-	}
+LoopRebuild::LoopRebuild(
+	core::scoring::ScoreFunctionOP scorefxn,
+	protocols::loops::Loops Loops_in
+) : Mover(),
+	scorefxn_( scorefxn ),
+	Loops_in_( Loops_in )
+{
+	protocols::loops::read_loop_fragments( frag_libs_ );
+	Mover::type("LoopRebuild");
+	set_default_settings();
+}
 
 LoopRebuild::~LoopRebuild() {}
 
@@ -132,14 +132,15 @@ void LoopRebuild::apply( core::pose::Pose & pose ) {
 	success = false;
 
 	//setting mc object
-	if( !mc_created )
+	if ( !mc_created ) {
 		set_default_mc( pose );
+	}
 
 	//initialize fragments
-	//		std::map< Size, protocols::frags::TorsionFragmentLibraryOP > frag_libs;
-	//		initialize_fragments( frag_libs );
+	//  std::map< Size, protocols::frags::TorsionFragmentLibraryOP > frag_libs;
+	//  initialize_fragments( frag_libs );
 
-	//		found_loops = read_loop_file( ori_loops_begin, ori_loops_end );
+	//  found_loops = read_loop_file( ori_loops_begin, ori_loops_end );
 	TR.Debug << "Loop file size : " << Loops_in_.size() << std::endl;
 	//read_coord_cst(); //include this function later !
 
@@ -153,7 +154,7 @@ void LoopRebuild::apply( core::pose::Pose & pose ) {
 	init_pose_obj = pose;
 
 	bool loop_done( false );
-	while( !passed_score_filter && n_score_filter_fail < n_score_filter_fail_tol ){
+	while ( !passed_score_filter && n_score_filter_fail < n_score_filter_fail_tol ) {
 		n_score_filter_fail++;
 
 		//reset pose
@@ -162,20 +163,20 @@ void LoopRebuild::apply( core::pose::Pose & pose ) {
 
 		int loop_nfail( 0 );
 		loop_done = false;
-		while( !loop_done && loop_nfail <= n_loop_fail_tol ) {
+		while ( !loop_done && loop_nfail <= n_loop_fail_tol ) {
 			loop_nfail++;
-			for( int i = 0; i < loop_build_round; ++i ) {
+			for ( int i = 0; i < loop_build_round; ++i ) {
 				loop_done = build_random_loops( pose );
 			}
 		}
 
-		if (!loop_done) TR.Error << "build_random_loops() returned failure." << std::endl;
+		if ( !loop_done ) TR.Error << "build_random_loops() returned failure." << std::endl;
 
 		passed_score_filter = true; //change this to a call to score_filter function, once it is written
 	}
 
 	success = (loop_done && passed_score_filter);
-	if (!success) TR.Error << "LoopRebuild::apply() returned false" << std::endl;
+	if ( !success ) TR.Error << "LoopRebuild::apply() returned false" << std::endl;
 }
 
 std::string
@@ -194,7 +195,7 @@ core::Real LoopRebuild::get_rmsd_tolerance() {
 
 	if ( !init ) {
 		rmsd_tol = option[ OptionKeys::loops::rmsd_tol ]();
-		if( rmsd_tol <= 0 ) rmsd_tol = 10000.0;
+		if ( rmsd_tol <= 0 ) rmsd_tol = 10000.0;
 		init = true;
 	}
 	return rmsd_tol;
@@ -220,16 +221,17 @@ core::Real LoopRebuild::get_chain_break_tolerance() {
 
 ///////////////////////////////////////////////////////////////////////
 /// @details  Rebuild all the loops in the pose, one at a time, choosing each in random order.
-bool LoopRebuild::build_random_loops(	core::pose::Pose & pose ) {
+bool LoopRebuild::build_random_loops( core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	int const nres( pose.total_residue() );
 
 	std::vector< int > free_res; // stores residue numbers in real loops
-  for( Loops::const_iterator it=Loops_in_.begin(), it_end=Loops_in_.end(); it != it_end; ++it ) {
+	for ( Loops::const_iterator it=Loops_in_.begin(), it_end=Loops_in_.end(); it != it_end; ++it ) {
 		TR.Debug << "Loop res " <<  it->start() << " " <<  it->stop() << std::endl;
-		for ( int k = (int)it->start(); k <= (int)it->stop(); ++k )
+		for ( int k = (int)it->start(); k <= (int)it->stop(); ++k ) {
 			free_res.push_back(k);
+		}
 	}
 
 	std::vector<int> inter_res; // residues in-between loop_file defined loops
@@ -243,7 +245,7 @@ bool LoopRebuild::build_random_loops(	core::pose::Pose & pose ) {
 	if ( loop_model() ) num_desired_loops = Loops_in_.size(); // build all obligate loops
 
 
-	for ( int loop_counter = 0; loop_counter < num_desired_loops; ++loop_counter ){
+	for ( int loop_counter = 0; loop_counter < num_desired_loops; ++loop_counter ) {
 
 		// save the original pose at this stage
 		stage_pose = pose;
@@ -255,8 +257,8 @@ bool LoopRebuild::build_random_loops(	core::pose::Pose & pose ) {
 		bool extend_this_loop = option[ OptionKeys::loops::extended ].user();
 		bool use_selected_loop =
 			select_one_loop( nres, selected_loop, folded_loops,
-											 inter_res, def_loop_begin, def_loop_end, cutpoint, extend_this_loop,
-											 loops_combined, combine_number, loop_counter );
+			inter_res, def_loop_begin, def_loop_end, cutpoint, extend_this_loop,
+			loops_combined, combine_number, loop_counter );
 
 		if ( !use_selected_loop ) continue; // skip this loop
 
@@ -272,13 +274,13 @@ bool LoopRebuild::build_random_loops(	core::pose::Pose & pose ) {
 		int backward_combine( 0 );
 
 		// select further random stems which will be constrainted by barcode cst
-		if ( get_random_loop_flag() ){
+		if ( get_random_loop_flag() ) {
 			barcst_extend_begin = static_cast <int> ( numeric::random::uniform() * 2 );
 			barcst_extend_end   = static_cast <int> ( numeric::random::uniform() * 2 );
 		}
 
 		// store starting fold tree
-	 	kinematics::FoldTree f_orig=pose.fold_tree();
+		kinematics::FoldTree f_orig=pose.fold_tree();
 
 		int final_loop_begin=0;
 		int final_loop_end=0;
@@ -287,40 +289,41 @@ bool LoopRebuild::build_random_loops(	core::pose::Pose & pose ) {
 		int nclosurefail = 0;
 		int nrmsfail = 0;
 
-		while( is_chain_break || !rmsd_acceptable ) {
+		while ( is_chain_break || !rmsd_acceptable ) {
 			// epic fail
-			if( nfail++ > get_allowed_failure_before_stop() ) {
+			if ( nfail++ > get_allowed_failure_before_stop() ) {
 				// restore simple fold tree
 				TR.Error << "Failed to rebuild loop " << nfail << " times!  Aborting." << std::endl;
 				remove_cutpoint_variants( pose );
 				pose.fold_tree( f_orig );
 
-				if( get_abort_on_failed_loop() ) return false;
-				else                             	break;
+				if ( get_abort_on_failed_loop() ) return false;
+				else                              break;
 			}
 
 			// refresh pose
 			pose = stage_pose;
 
 			// combine next loop if this loop can't be closed after 20 iterations
-			if ( get_random_loop_flag() && get_combine_if_fail_exist() ){
-				if ( n_chain_break_fail % get_allowed_failure_before_extend() == 0 ){
-					if ( core::Size(selected_loop + total_combine + 1) < Loops_in_.size() ){
+			if ( get_random_loop_flag() && get_combine_if_fail_exist() ) {
+				if ( n_chain_break_fail % get_allowed_failure_before_extend() == 0 ) {
+					if ( core::Size(selected_loop + total_combine + 1) < Loops_in_.size() ) {
 						def_loop_end = Loops_in_[ selected_loop + total_combine + 1 ].stop();
 						extend_this_loop |= Loops_in_[ selected_loop + total_combine + 1 ].is_extended();
-						if( !loop_model() ) folded_loops.push_back( selected_loop + total_combine + 1);
+						if ( !loop_model() ) folded_loops.push_back( selected_loop + total_combine + 1);
 						total_combine++; // one more combined loop
-					} else if ( selected_loop - backward_combine > 1 ){
+					} else if ( selected_loop - backward_combine > 1 ) {
 						def_loop_begin = Loops_in_[ selected_loop - backward_combine - 1 ].start();
 						extend_this_loop |= Loops_in_[ selected_loop - backward_combine - 1 ].is_extended();
-						if( !loop_model() ) folded_loops.push_back( selected_loop - backward_combine - 1 );
+						if ( !loop_model() ) folded_loops.push_back( selected_loop - backward_combine - 1 );
 						backward_combine++;
-					}
-					else
+					} else {
 						break;// return false; // give up if no loop to combine
+					}
 
-					if( !loop_model() )
+					if ( !loop_model() ) {
 						loop_counter++;
+					}
 
 					barcst_extend_begin = static_cast <int> ( numeric::random::uniform() * 2 );
 					barcst_extend_end = static_cast <int> ( numeric::random::uniform() * 2 );
@@ -331,17 +334,17 @@ bool LoopRebuild::build_random_loops(	core::pose::Pose & pose ) {
 			// extended regions
 			int loop_begin = def_loop_begin - 1;
 			int loop_end = def_loop_end;
-			if( loop_begin < 1 ) loop_begin = 1;
-			if( loop_end > nres ) loop_end = nres;
+			if ( loop_begin < 1 ) loop_begin = 1;
+			if ( loop_end > nres ) loop_end = nres;
 
-			if( get_random_loop_flag() ){
+			if ( get_random_loop_flag() ) {
 				barcode_extend_stems( pose, barcst_extend_begin, barcst_extend_end,
-			 												loop_begin, loop_end, def_loop_begin, def_loop_end,
-			 												nres, selected_loop, total_combine,
-			 												backward_combine );
+					loop_begin, loop_end, def_loop_begin, def_loop_end,
+					nres, selected_loop, total_combine,
+					backward_combine );
 			}
 
-			if( option[ OptionKeys::loops::extended_beta ].user()  ){
+			if ( option[ OptionKeys::loops::extended_beta ].user()  ) {
 				Real expfactor =  exp( - option[ OptionKeys::loops::extended_beta ]() * fabs( (double) loop_begin - loop_end ) );
 				bool stochastic_extend_this_loop = ( numeric::random::uniform() < expfactor );
 				extend_this_loop = extend_this_loop || stochastic_extend_this_loop;
@@ -351,12 +354,12 @@ bool LoopRebuild::build_random_loops(	core::pose::Pose & pose ) {
 
 			// extend more barcode regions
 			extend_barcode_regions_if_chain_break( pose, loop_begin, loop_end,
-			                                       n_chain_break_fail, is_chain_break,
-			                                       barcst_extend_begin, barcst_extend_end );
+				n_chain_break_fail, is_chain_break,
+				barcst_extend_begin, barcst_extend_end );
 			rmsd_acceptable = acceptable_rmsd_change( stage_pose, pose  );
 
-			if( ! rmsd_acceptable ){ nclosurefail++; TR.Info << "WARNING: Loop Built, rms not acceptable - trying again" << std::endl; }
-			if(   is_chain_break  ){ nrmsfail++;     TR.Info << "WARNING: Chain_break_remains - tryign again" << std::endl; }
+			if ( ! rmsd_acceptable ) { nclosurefail++; TR.Info << "WARNING: Loop Built, rms not acceptable - trying again" << std::endl; }
+			if (   is_chain_break  ) { nrmsfail++;     TR.Info << "WARNING: Chain_break_remains - tryign again" << std::endl; }
 
 			final_loop_begin = loop_begin;
 			final_loop_end   = loop_end;
@@ -367,16 +370,16 @@ bool LoopRebuild::build_random_loops(	core::pose::Pose & pose ) {
 
 		using namespace ObjexxFCL::format;
 		TR  << "Loopstat: "
-		    << "  " << I(3,def_loop_begin)
-		    << "  " << I(3,def_loop_end    )
-		    << "  " << I(3,final_loop_begin )
-		    << "  " << I(3,final_loop_end    )
-				<< "  " << I(3,final_loop_end - final_loop_begin )
-				<< "  time " << F(5,1,time_per_build )
-				<< "  " << I(3,nfail)
-				<< "  " << I(3,nclosurefail )
-				<< "  " << I(3,nrmsfail)
-				<< "  " << (extend_this_loop  ? std::string(" ext ") : std::string(" noext " ))  << std::endl;
+			<< "  " << I(3,def_loop_begin)
+			<< "  " << I(3,def_loop_end    )
+			<< "  " << I(3,final_loop_begin )
+			<< "  " << I(3,final_loop_end    )
+			<< "  " << I(3,final_loop_end - final_loop_begin )
+			<< "  time " << F(5,1,time_per_build )
+			<< "  " << I(3,nfail)
+			<< "  " << I(3,nclosurefail )
+			<< "  " << I(3,nrmsfail)
+			<< "  " << (extend_this_loop  ? std::string(" ext ") : std::string(" noext " ))  << std::endl;
 
 
 		remove_cutpoint_variants( pose ); // remove cutpoint variants
@@ -390,10 +393,10 @@ bool LoopRebuild::build_random_loops(	core::pose::Pose & pose ) {
 
 ////////////////////////////////////////////////////////////////////////////////
 void LoopRebuild::set_looprlx_allow_move_map(
-																					 int const & loop_begin,
-																					 int const & loop_end,
-																					 core::kinematics::MoveMap & mm
-																					 ) {
+	int const & loop_begin,
+	int const & loop_end,
+	core::kinematics::MoveMap & mm
+) {
 	using namespace core::id;
 
 	mm.set_bb( false );
@@ -429,23 +432,23 @@ void LoopRebuild::build_loop_with_ccd_closure(
 
 	kinematics::MoveMap mm_one_loop;
 	set_looprlx_allow_move_map( loop_begin, loop_end, mm_one_loop );
-	if ( cutpoint== 0 ){
+	if ( cutpoint== 0 ) {
 		Loop myloop( loop_begin+1, loop_end, 0 );
 		myloop.choose_cutpoint( pose );
 		cutpoint = myloop.cut();
 	}
 	int cut_orig = cutpoint;
 	TR.Info << "Loop and cutpoint: " << loop_begin
-													 << "  " << cutpoint
-													 << "  " << loop_end
-													 << (extend_this_loop ? " extended " : " nonextended" ) << std::endl;
+		<< "  " << cutpoint
+		<< "  " << loop_end
+		<< (extend_this_loop ? " extended " : " nonextended" ) << std::endl;
 
 	/////
 	// ensure (cutpoint+1) is not a proline (this is a horrible hack -fpd)
 	int ntries = 0;
-	while (cutpoint != nres &&
-	       pose.residue(cutpoint+1).aa() == core::chemical::aa_pro &&
-	       ntries < 100) {
+	while ( cutpoint != nres &&
+			pose.residue(cutpoint+1).aa() == core::chemical::aa_pro &&
+			ntries < 100 ) {
 		Loop myloop( loop_begin, loop_end );
 		myloop.choose_cutpoint( pose );
 		cutpoint = myloop.cut();
@@ -454,18 +457,19 @@ void LoopRebuild::build_loop_with_ccd_closure(
 	// if not sussessfully chosen cutpoint, just chose whatever is not a
 	// profile in the loop !
 	ntries = 0;
-	while (cutpoint != nres &&
-	       pose.residue(cutpoint+1).aa() == core::chemical::aa_pro &&
-	       ntries < 100) {
+	while ( cutpoint != nres &&
+			pose.residue(cutpoint+1).aa() == core::chemical::aa_pro &&
+			ntries < 100 ) {
 		cutpoint = loop_begin + int( float(loop_end - loop_begin) * uniform() );
 		ntries++;
 	}
-	if (cutpoint != nres && pose.residue(cutpoint+1).aa() == core::chemical::aa_pro ) {
+	if ( cutpoint != nres && pose.residue(cutpoint+1).aa() == core::chemical::aa_pro ) {
 		TR << "  Unable to rebuild loop [" << loop_begin << ", " << loop_end << "] " << std::endl;
 		return;
 	}
-	if (cutpoint != cut_orig)
+	if ( cutpoint != cut_orig ) {
 		TR << "  Changing cutpoint to " << cutpoint << "" << std::endl;
+	}
 
 
 	int const loop_size( loop_end - loop_begin + 1 );
@@ -473,7 +477,7 @@ void LoopRebuild::build_loop_with_ccd_closure(
 	int cycles2;
 	int cycles3;
 
-	if( get_ccd_closure_exist() ) {
+	if ( get_ccd_closure_exist() ) {
 		cycles2 = loop_model() ? 3:2 ;
 		int base_cycles( std::max( 15, static_cast<int>( 5*loop_size*cycle_ratio )));
 		cycles3 = loop_model() ? 2*base_cycles:base_cycles;
@@ -489,8 +493,9 @@ void LoopRebuild::build_loop_with_ccd_closure(
 	pack::task::PackerTaskOP base_packer_task( pack::task::TaskFactory::create_packer_task( pose ));
 	pack::task::PackerTaskOP this_packer_task( base_packer_task->clone() );
 	utility::vector1< bool > allow_repack( nres, false );
-	for ( int i = loop_begin; i <= loop_end; ++i )
+	for ( int i = loop_begin; i <= loop_end; ++i ) {
 		allow_repack[ i ] = true;
+	}
 	this_packer_task->restrict_to_residues( allow_repack );
 
 	set_single_loop_fold_tree( pose, Loop(loop_begin, loop_end, cutpoint ) );
@@ -501,7 +506,7 @@ void LoopRebuild::build_loop_with_ccd_closure(
 	chainbreak_present &= (loop_end != nres-1 || pose.residue( nres ).aa() != core::chemical::aa_vrt );
 
 	// set cutpoint variant residue for chainbreak score if chanbreak is present
-	if( chainbreak_present ){
+	if ( chainbreak_present ) {
 		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpoint );
 		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cutpoint+1 );
 	}
@@ -512,7 +517,7 @@ void LoopRebuild::build_loop_with_ccd_closure(
 
 
 	// either extend or at least idealize the loop (just in case).
-	if( extended_loop() || extend_this_loop)   set_extended_torsions( pose, Loop( loop_begin, loop_end ) );
+	if ( extended_loop() || extend_this_loop )   set_extended_torsions( pose, Loop( loop_begin, loop_end ) );
 	else                                       idealize_loop(  pose, Loop( loop_begin, loop_end ) );
 
 
@@ -522,19 +527,19 @@ void LoopRebuild::build_loop_with_ccd_closure(
 
 	std::vector< FragmentMoverOP > fragmover;
 	for ( std::vector< core::fragment::FragSetOP >::const_iterator
-				it = frag_libs_.begin(), it_end = frag_libs_.end();
-				it != it_end; ++it ) {
+			it = frag_libs_.begin(), it_end = frag_libs_.end();
+			it != it_end; ++it ) {
 		ClassicFragmentMoverOP cfm( new ClassicFragmentMover( *it, movemap ) );
 		cfm->set_check_ss( false );
 		cfm->enable_end_bias_check( false );
 		fragmover.push_back( cfm );
 	}
 
-	if( !option[OptionKeys::loops::no_randomize_loop] ){
+	if ( !option[OptionKeys::loops::no_randomize_loop] ) {
 		// insert random fragment as many times as the loop is long (not quite the exact same as the old code)
 		for ( int i = loop_begin; i <= loop_end; ++i ) {
 			for ( std::vector< FragmentMoverOP >::const_iterator
-						it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it ) {
+					it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it ) {
 				(*it)->apply( pose );
 			}
 		}
@@ -567,27 +572,27 @@ void LoopRebuild::build_loop_with_ccd_closure(
 	// Set up MonteCarlo Object
 	core::Real const init_temp = 2.0;
 	core::Real temperature = init_temp;
- 	mc_->reset( pose );
+	mc_->reset( pose );
 	mc_->set_temperature( temperature );
 
 
-	// --- Figure out constraints (ConstraintSet)	  ------
-	core::scoring::constraints::ConstraintSetOP pose_cst( new core::scoring::constraints::ConstraintSet(	*pose.constraint_set() ) );
+	// --- Figure out constraints (ConstraintSet)   ------
+	core::scoring::constraints::ConstraintSetOP pose_cst( new core::scoring::constraints::ConstraintSet( *pose.constraint_set() ) );
 
 
-	// --- Figure out constraints (ConstraintSet)	  ------
-	if(  option[OptionKeys::loops::coord_cst ]()  > 0.0 ){
+	// --- Figure out constraints (ConstraintSet)   ------
+	if (  option[OptionKeys::loops::coord_cst ]()  > 0.0 ) {
 		core::scoring::constraints::ConstraintSetOP new_csts( new core::scoring::constraints::ConstraintSet );
-		for( int ir=loop_begin; ir <= loop_end; ir++ ){
+		for ( int ir=loop_begin; ir <= loop_end; ir++ ) {
 			Real middlefactor = 1.0 - (float(std::min( std::abs(ir - loop_begin), std::abs(loop_end - ir) ))/ float(std::abs(loop_end-loop_begin))) * 2 * 0.8;
 
 			core::scoring::func::FuncOP CA_cst( new core::scoring::func::HarmonicFunc( 0, option[OptionKeys::loops::coord_cst ]() * middlefactor ) );
 			core::scoring::constraints::ConstraintOP newcst( new core::scoring::constraints::CoordinateConstraint(
-								core::id::AtomID( pose.residue_type(ir).atom_index("CA") , ir ),
-								core::id::AtomID( pose.residue_type( 1).atom_index("CA") , 1  ),
-								start_pose.residue(ir).xyz( "CA" ),
-								CA_cst
-							) );
+				core::id::AtomID( pose.residue_type(ir).atom_index("CA") , ir ),
+				core::id::AtomID( pose.residue_type( 1).atom_index("CA") , 1  ),
+				start_pose.residue(ir).xyz( "CA" ),
+				CA_cst
+				) );
 			new_csts->add_constraint( newcst );
 		}
 		pose.constraint_set( new_csts );
@@ -595,14 +600,14 @@ void LoopRebuild::build_loop_with_ccd_closure(
 
 	float final_constraint_weight          = option[ basic::options::OptionKeys::constraints::cst_weight ]();
 
-	//bool 	has_residue_pair_constraints     = pose.constraint_set()->has_residue_pair_constraints();
-	//bool	has_intra_residue_constraints    = pose.constraint_set()->has_intra_residue_constraints();
-	//bool 	has_non_residue_pair_constraints = pose.constraint_set()->has_non_residue_pair_constraints();
-	bool 	has_constraints                  = pose.constraint_set()->has_constraints();
+	//bool  has_residue_pair_constraints     = pose.constraint_set()->has_residue_pair_constraints();
+	//bool has_intra_residue_constraints    = pose.constraint_set()->has_intra_residue_constraints();
+	//bool  has_non_residue_pair_constraints = pose.constraint_set()->has_non_residue_pair_constraints();
+	bool  has_constraints                  = pose.constraint_set()->has_constraints();
 
 	core::scoring::constraints::ConstraintSetCOP full_cst =  pose.constraint_set(); // pose.constraint_set()
 
-	if( has_constraints ){
+	if ( has_constraints ) {
 		// do we want to disable all constraints that are not part of the loop for speed
 		// reasons ? (Constraints are really quite slow!)
 
@@ -625,13 +630,13 @@ void LoopRebuild::build_loop_with_ccd_closure(
 		core::Real const final_temp( 1.0 );
 		core::Real const gamma = std::pow( (final_temp/init_temp), (1.0/(cycles2*cycles3)) );
 
-		for( int c2 = 1; c2 <= cycles2; ++c2 ) {
+		for ( int c2 = 1; c2 <= cycles2; ++c2 ) {
 			mc_->recover_low( pose );
 			(*scorefxn_)(pose);
 
 			// ramp up constraints
-			if( has_constraints ) {
-				if( c2 != cycles2 ) {
+			if ( has_constraints ) {
+				if ( c2 != cycles2 ) {
 					scorefxn_->set_weight( core::scoring::atom_pair_constraint, final_constraint_weight*float(c2)/float( cycles2 ) );
 				} else {
 					scorefxn_->set_weight( core::scoring::atom_pair_constraint, final_constraint_weight * 0.2 );
@@ -642,13 +647,13 @@ void LoopRebuild::build_loop_with_ccd_closure(
 			TR << std::endl;
 			mc_->score_function( *scorefxn_ );
 
-			for( int c3 = 1; c3 <= cycles3; ++c3 ){
+			for ( int c3 = 1; c3 <= cycles3; ++c3 ) {
 				temperature *= gamma;
 				mc_->set_temperature( temperature );
 				for ( std::vector< FragmentMoverOP >::const_iterator
-							it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it ) {
+						it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it ) {
 					(*it)->apply( pose );
-					if( chainbreak_present ) fast_ccd_close_loops( pose, loop_begin, loop_end, cutpoint, mm_one_loop );
+					if ( chainbreak_present ) fast_ccd_close_loops( pose, loop_begin, loop_end, cutpoint, mm_one_loop );
 					mzr.run( pose, mm_one_loop, *scorefxn_, options );
 					mc_->boltzmann( pose, "ccd_closure" );
 					frag_count++;
@@ -657,7 +662,7 @@ void LoopRebuild::build_loop_with_ccd_closure(
 		}
 
 		// now ensure the loop is properly closed!
-		if( false && chainbreak_present ){
+		if ( false && chainbreak_present ) {
 			mc_->recover_low( pose );
 			TR << "--" << std::endl;
 			(*scorefxn_)(pose);
@@ -684,8 +689,8 @@ void LoopRebuild::build_loop_with_ccd_closure(
 			mc_->recover_low( pose );
 
 			// ramp up constraints
-			if( has_constraints ) {
-				if( c2 != cycles2 ) {
+			if ( has_constraints ) {
+				if ( c2 != cycles2 ) {
 					scorefxn_->set_weight( core::scoring::atom_pair_constraint, final_constraint_weight*float(c2)/float( cycles2 ) );
 				} else {
 					scorefxn_->set_weight( core::scoring::atom_pair_constraint, final_constraint_weight * 0.2 );
@@ -704,32 +709,31 @@ void LoopRebuild::build_loop_with_ccd_closure(
 			for ( int c3 = 1; c3 <= cycles3; ++c3 ) {
 				//temperature *= gamma;
 				//mc_->set_temperature( temperature );
-				if(( !chainbreak_present || uniform()*cycles2 > c2 ))
-				{
+				if ( ( !chainbreak_present || uniform()*cycles2 > c2 ) ) {
 					//do fragment moves here
 
-					if( !option[OptionKeys::loops::refine_only ]() ){
+					if ( !option[OptionKeys::loops::refine_only ]() ) {
 						for ( std::vector< FragmentMoverOP >::const_iterator
-									it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it ) {
+								it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it ) {
 
 
-							if( ((*it)->fragments()->max_frag_length() == 1 ) && (uniform() < option[OptionKeys::loops::skip_1mers ]() ) ) continue;
-							if( ((*it)->fragments()->max_frag_length() == 3 ) && (uniform() < option[OptionKeys::loops::skip_3mers ]() ) ) continue;
-							if( ((*it)->fragments()->max_frag_length() == 9 ) && (uniform() < option[OptionKeys::loops::skip_9mers ]() ) ) continue;
+							if ( ((*it)->fragments()->max_frag_length() == 1 ) && (uniform() < option[OptionKeys::loops::skip_1mers ]() ) ) continue;
+							if ( ((*it)->fragments()->max_frag_length() == 3 ) && (uniform() < option[OptionKeys::loops::skip_3mers ]() ) ) continue;
+							if ( ((*it)->fragments()->max_frag_length() == 9 ) && (uniform() < option[OptionKeys::loops::skip_9mers ]() ) ) continue;
 
 							(*it)->apply( pose );
 							frag_count++;
 						}
-					}else{
+					} else {
 						refine_mover->apply( pose );
 					}
 
 				} else {
 					//do ccd_moves here
-					if( ! option[OptionKeys::loops::skip_ccd_moves ]() ){
+					if ( ! option[OptionKeys::loops::skip_ccd_moves ]() ) {
 						loop_closure::ccd::CCDLoopClosureMover ccd_mover(
-								Loop( loop_begin, loop_end, cutpoint ),
-								MoveMapCOP( MoveMapOP( new MoveMap( mm_one_loop ) ) ) );
+							Loop( loop_begin, loop_end, cutpoint ),
+							MoveMapCOP( MoveMapOP( new MoveMap( mm_one_loop ) ) ) );
 						ccd_mover.max_cycles( 25 );  // Used to be 5 moves, which would result in 25 "tries" in the old code. ~Labonte
 						ccd_mover.apply( pose );
 					}
@@ -740,7 +744,7 @@ void LoopRebuild::build_loop_with_ccd_closure(
 		} //cycles2
 
 		// now ensure the loop is properly closed!
-		if( false && chainbreak_present ){
+		if ( false && chainbreak_present ) {
 			mc_->recover_low( pose );
 			TR << "--" << std::endl;
 			(*scorefxn_)(pose);
@@ -758,7 +762,7 @@ void LoopRebuild::build_loop_with_ccd_closure(
 	TR << "FragCount: " << frag_count << std::endl;
 	TR << "Looptime " << looptime << std::endl;
 
-	//v	pose = mc.lowest_score_pose();
+	//v pose = mc.lowest_score_pose();
 	pose = mc_->lowest_score_pose();
 	scorefxn_->show(  TR , pose );
 	TR << "-------------------------" << std::endl;
@@ -774,40 +778,41 @@ void LoopRebuild::build_loop_with_ccd_closure(
 /// rama scores are not checked, however, and the secondary structure is "fixed" afterward.
 /// @remark   This is a misnomer; it actually closes a single loop only. ~Labonte
 void LoopRebuild::fast_ccd_close_loops(
-		core::pose::Pose & pose,
-		int const & loop_begin,
-		int const & loop_end,
-		int const & cutpoint,
-		kinematics::MoveMap & mm )
+	core::pose::Pose & pose,
+	int const & loop_begin,
+	int const & loop_end,
+	int const & cutpoint,
+	kinematics::MoveMap & mm )
 {
 	loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover(
-			Loop( loop_begin, loop_end, cutpoint ), kinematics::MoveMapCOP( kinematics::MoveMapOP( new kinematics::MoveMap( mm ) ) ) );
+		Loop( loop_begin, loop_end, cutpoint ), kinematics::MoveMapCOP( kinematics::MoveMapOP( new kinematics::MoveMap( mm ) ) ) );
 	ccd_loop_closure_mover.check_rama_scores( false );
 	ccd_loop_closure_mover.apply( pose );
 
 	// fix secondary structure??
-	for (int i=loop_begin; i<=loop_end; ++i) {
+	for ( int i=loop_begin; i<=loop_end; ++i ) {
 		char ss_i = pose.conformation().secstruct( i );
-		if ( ss_i != 'L' && ss_i != 'H' && ss_i != 'E')
+		if ( ss_i != 'L' && ss_i != 'H' && ss_i != 'E' ) {
 			pose.set_secstruct( i , 'L' );
+		}
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////
 bool LoopRebuild::select_one_loop(
-																int nres,
-																int & selected_loop,
-																std::vector< int > & folded_loops,
-																std::vector< int > & inter_res,
-																int & loop_begin,
-																int & loop_end,
-																int & cutpoint,
-																bool & extend_this_loop,
-																bool & are_loops_combined,
-																int & combine_interval,
-																int & loop_counter
-																) {
+	int nres,
+	int & selected_loop,
+	std::vector< int > & folded_loops,
+	std::vector< int > & inter_res,
+	int & loop_begin,
+	int & loop_end,
+	int & cutpoint,
+	bool & extend_this_loop,
+	bool & are_loops_combined,
+	int & combine_interval,
+	int & loop_counter
+) {
 	int const num_loops = (int)(Loops_in_.size() );
 
 	// make how many loop combination(s) per structure on average
@@ -819,13 +824,13 @@ bool LoopRebuild::select_one_loop(
 	selected_loop = 0;
 	do{
 		// do loops in order if random_loop is not set !
-		if ( !get_random_loop_flag() ){
+		if ( !get_random_loop_flag() ) {
 			selected_loop += 1;
-		}else{
+		} else {
 			selected_loop = (int)( numeric::random::uniform()*num_loops + 1);
 		}
 	}while( std::find( folded_loops.begin(), folded_loops.end(), selected_loop ) !=
-				 folded_loops.end() );
+			folded_loops.end() );
 	folded_loops.push_back(selected_loop);
 
 	loop_begin  = Loops_in_[selected_loop].start();
@@ -833,27 +838,27 @@ bool LoopRebuild::select_one_loop(
 	cutpoint = Loops_in_[selected_loop].cut();
 	extend_this_loop |= Loops_in_[selected_loop].is_extended();
 
-	if (loop_begin <= 0) loop_begin = 1;
-	if (loop_end >= nres) loop_end = nres;
+	if ( loop_begin <= 0 ) loop_begin = 1;
+	if ( loop_end >= nres ) loop_end = nres;
 
 	if ( !get_random_loop_flag() ) return true;
 
 	// LOOPSETS APPLIED OUTSIDE THE PROTOCOL
 	//if ( numeric::random::uniform() < get_loop_skip_rate() )
-	//			return false;
+	//   return false;
 
 	combine_interval = 1;
 	// combine consecutive loop regions
 	if ( selected_loop < num_loops - combine_interval && num_of_loops_to_combine > 0 ) {
 		int const longer_loop_size ( Loops_in_[ selected_loop + combine_interval ].stop() -
-																 Loops_in_[ selected_loop ].start());
+			Loops_in_[ selected_loop ].start());
 		int loop_limit;
 		int const terminal_loop(12);
 		int const internal_loop(25);
-		if( (int)Loops_in_[ selected_loop + combine_interval ].stop() >= nres ||
-				(int)Loops_in_[ selected_loop ].start() <= 1 )
+		if ( (int)Loops_in_[ selected_loop + combine_interval ].stop() >= nres ||
+				(int)Loops_in_[ selected_loop ].start() <= 1 ) {
 			loop_limit = terminal_loop;
-		else  loop_limit = internal_loop;
+		} else  loop_limit = internal_loop;
 		// don't merge internal loops longer than 25,
 		// or terminal loops longer than 12
 
@@ -864,19 +869,20 @@ bool LoopRebuild::select_one_loop(
 			loop_end   = Loops_in_[selected_loop].stop() + combine_interval;
 			TR.Info << "Combining loops: " << loop_begin << "  " <<  loop_end <<  std::endl;
 			// if loop exceeds maximum length - truncate it randomly on either side
-			if( longer_loop_size > loop_limit ){
-				if(  numeric::random::uniform() < 0.5 ){
+			if ( longer_loop_size > loop_limit ) {
+				if (  numeric::random::uniform() < 0.5 ) {
 					loop_begin = loop_end - (loop_limit - 1);
-				}else{
+				} else {
 					loop_end = loop_begin + (loop_limit - 1);
 				}
 			}
 
-			for ( int ll = 0; ll < combine_interval; ++ll ){
+			for ( int ll = 0; ll < combine_interval; ++ll ) {
 				for ( int k  = (int)Loops_in_[ selected_loop +ll ].stop();
-									k <= (int)Loops_in_[ selected_loop +ll + 1 ].start(); ++k )
+						k <= (int)Loops_in_[ selected_loop +ll + 1 ].start(); ++k ) {
 					inter_res.push_back(k);
-				if( !loop_model() ) {
+				}
+				if ( !loop_model() ) {
 					folded_loops.push_back(selected_loop+ll+1);
 					loop_counter++;
 				}
@@ -891,22 +897,24 @@ bool LoopRebuild::select_one_loop(
 	//int const old_loop_end( loop_end );
 	int rand_extension = 0;  //fpd 1->0
 	int rand_limit = 4;
-	if ( loop_model() || extended_loop() || extend_this_loop ){
+	if ( loop_model() || extended_loop() || extend_this_loop ) {
 		rand_extension = 0;
 		rand_limit = 3;
 	}
 
 	do {
-		if ( loop_begin > 1 )
+		if ( loop_begin > 1 ) {
 			loop_begin = loop_begin - static_cast <int> ( numeric::random::uniform() * rand_limit )
 				+ rand_extension;
-		if ( loop_end != nres )
+		}
+		if ( loop_end != nres ) {
 			loop_end = loop_end + static_cast <int> ( numeric::random::uniform() * rand_limit )
 				- rand_extension;
-	//	TR << "Fraying" << loop_begin << "  " << loop_end << std::endl;
+		}
+		// TR << "Fraying" << loop_begin << "  " << loop_end << std::endl;
 	} while (  numeric::random::uniform() < 0.3 );
 
-	if ( loop_end - loop_begin < 0 ){
+	if ( loop_end - loop_begin < 0 ) {
 		loop_end++;
 		loop_begin--;
 	}
@@ -1051,46 +1059,51 @@ void LoopRebuild::barcode_extend_stems(
 
 	barcst_extend_begin = std::min( 5, barcst_extend_begin );// extend 5 res at most
 	barcst_extend_end   = std::min( 5, barcst_extend_end );// extend 5 res at most
-	//		loop_update_active_cst_list ( barcst_begin, barcst_end, free_res,
-	//														barcst_extend_begin, barcst_extend_end );
+	//  loop_update_active_cst_list ( barcst_begin, barcst_end, free_res,
+	//              barcst_extend_begin, barcst_extend_end );
 	barcst_begin -= barcst_extend_begin;
 	barcst_end   += barcst_extend_end;
 	while ( barcst_begin < 1    ) barcst_begin++;
 	while ( barcst_end   > nres ) barcst_end--;
 
 	// make sure not to extend the stems to loop regions
-	if ( selected_loop - backward_combine > 1 )
+	if ( selected_loop - backward_combine > 1 ) {
 		while ( barcst_begin <= (int) Loops_in_[ selected_loop - backward_combine -1 ].stop() + 1 )
-			barcst_begin++;
-	if ( selected_loop + total_combine != num_loop )
+				barcst_begin++;
+	}
+	if ( selected_loop + total_combine != num_loop ) {
 		while ( barcst_end >= (int) Loops_in_[ selected_loop + total_combine +1 ].start() - 1 )
-			barcst_end--;
+				barcst_end--;
+	}
 
 	// shorten loops when do looprlx ( loop_modeling)
-	if( !loop_model() && shorten_long_terminal_loop() ){
-		if( barcst_end == nres && barcst_end - barcst_begin > 10 )
+	if ( !loop_model() && shorten_long_terminal_loop() ) {
+		if ( barcst_end == nres && barcst_end - barcst_begin > 10 ) {
 			barcst_begin = barcst_end - 10;
-		if( barcst_begin == 1 && barcst_end - barcst_begin > 10 )
+		}
+		if ( barcst_begin == 1 && barcst_end - barcst_begin > 10 ) {
 			barcst_end = barcst_begin + 10;
+		}
 	}
 
 	// make sure loop length is greater than 3
-	if ( barcst_end - barcst_begin < 2 && barcst_begin != 1 && barcst_end != nres ){
+	if ( barcst_end - barcst_begin < 2 && barcst_begin != 1 && barcst_end != nres ) {
 		barcst_begin -= 1;
 		barcst_end   += 1;
 	}
 	//vats hack REMOVE THIS
 	loop_begin = barcst_begin;
 	loop_end   = barcst_end;
-	//	loop_begin = loops_begin.at( 0 );
-	//	loop_end = loops_end.at( 0 );
+	// loop_begin = loops_begin.at( 0 );
+	// loop_end = loops_end.at( 0 );
 
 	// show the loop sequence for sanity-checking
 	TR.Debug << "barcode_extend_stems():  loop_begin = " << loop_begin <<
-							" loop_end =" << loop_end   <<
-							" loop_sequence =";
-	for ( int i=loop_begin; i<= loop_end; ++i )
+		" loop_end =" << loop_end   <<
+		" loop_sequence =";
+	for ( int i=loop_begin; i<= loop_end; ++i ) {
 		TR.Debug << " " << pose.residue( i ).name3();
+	}
 	TR.Debug << std::endl;
 }
 
@@ -1134,10 +1147,10 @@ void LoopRebuild::extend_barcode_regions_if_chain_break(
 	int const nres = pose.total_residue();
 
 	(*scorefxn_)( pose );
-	if ( loop_begin != 1 && loop_end != nres ){
+	if ( loop_begin != 1 && loop_end != nres ) {
 		chain_break_score = std::max( (float)pose.energies().total_energies()[ scoring::chainbreak ],
-		                              (float)pose.energies().total_energies()[ scoring::linear_chainbreak ] );
-		//			chain_break_score = pose.get_0D_score( pose_ns::CHAINBREAK );
+			(float)pose.energies().total_energies()[ scoring::linear_chainbreak ] );
+		//   chain_break_score = pose.get_0D_score( pose_ns::CHAINBREAK );
 	}
 
 	TR.Debug << "loop_begin and loop_end  " << loop_begin << " " << loop_end << " " << chain_break_score << std::endl;
@@ -1148,28 +1161,28 @@ void LoopRebuild::extend_barcode_regions_if_chain_break(
 
 	// extend more barcode regionsi
 	TR.Info << "Chainbreak: " << chain_break_score << " Max: " << chain_break_tol << std::endl;
-	if ( chain_break_score > chain_break_tol ){
+	if ( chain_break_score > chain_break_tol ) {
 		is_chain_break = true;
 		n_chain_break_fail++;
 
-		if( chain_break_score <= 10* chain_break_tol )
+		if ( chain_break_score <= 10* chain_break_tol ) {
 			n_small_chain_break_fail++;
+		}
 
-		if ( get_random_loop_flag() ){
+		if ( get_random_loop_flag() ) {
 			if ( chain_break_score > 10* chain_break_tol ) {
-				if( barcst_flip_flop ){
-					//					if (loop_begin != 1 && loop_end != nres &&
-					//							pose.secstruct( loop_begin - 1) != 'H' &&
-					//							pose.secstruct( loop_begin - 1) != 'E' )
+				if ( barcst_flip_flop ) {
+					//     if (loop_begin != 1 && loop_end != nres &&
+					//       pose.secstruct( loop_begin - 1) != 'H' &&
+					//       pose.secstruct( loop_begin - 1) != 'E' )
 					barcst_extend_begin++;
 					barcst_flip_flop = false;
 				} else {
 					barcst_extend_end++;
 					barcst_flip_flop = true;
 				}
-			}
-			else if ( n_small_chain_break_fail % 3 == 0 ) {
-				if( barcst_small_flip_flop ){
+			} else if ( n_small_chain_break_fail % 3 == 0 ) {
+				if ( barcst_small_flip_flop ) {
 					barcst_extend_begin++;
 					barcst_small_flip_flop = false;
 				} else {
@@ -1184,9 +1197,9 @@ void LoopRebuild::extend_barcode_regions_if_chain_break(
 
 //////////////////////////////////////////////////////////////////////////////////
 bool LoopRebuild::acceptable_rmsd_change(
-																			 core::pose::Pose & pose1,
-																			 core::pose::Pose & pose2
-																			 ) {
+	core::pose::Pose & pose1,
+	core::pose::Pose & pose2
+) {
 	runtime_assert( pose1.total_residue() == pose2.total_residue() );
 	int natoms( pose1.total_residue() );
 	using ObjexxFCL::FArray2D;
@@ -1197,11 +1210,11 @@ bool LoopRebuild::acceptable_rmsd_change(
 	core::Real rmsd_tol ( get_rmsd_tolerance() );
 
 	int atom_count( 0 );
-	for( int i = 1; i <= int( pose1.total_residue() ); ++i ) {
+	for ( int i = 1; i <= int( pose1.total_residue() ); ++i ) {
 		const numeric::xyzVector< Real > & vec1( pose1.residue( i ).xyz( CA_pos ) );
 		const numeric::xyzVector< Real > & vec2( pose2.residue( i ).xyz( CA_pos ) );
 		atom_count++;
-		for( int k = 0; k < 3; ++k ){
+		for ( int k = 0; k < 3; ++k ) {
 			p1a( k+1, atom_count ) = vec1[ k ];
 			p2a( k+1, atom_count ) = vec2[ k ];
 		}
@@ -1255,17 +1268,17 @@ void LoopRebuild::set_extended_loop( bool val ) {
 // don't use use string_util.hh:split or string_split instead
 //
 void Tokenize(const std::string              &str,
-              utility::vector1<std::string>  &tokens,
-              const std::string              &delimiters=" ") {
+	utility::vector1<std::string>  &tokens,
+	const std::string              &delimiters=" ") {
 	tokens.clear();
-    std::string::size_type lastPos = str.find_first_not_of(delimiters, 0);
-    std::string::size_type pos     = str.find_first_of(delimiters, lastPos);
+	std::string::size_type lastPos = str.find_first_not_of(delimiters, 0);
+	std::string::size_type pos     = str.find_first_of(delimiters, lastPos);
 
-    while (std::string::npos != pos || std::string::npos != lastPos) {
-        tokens.push_back(str.substr(lastPos, pos - lastPos));
-        lastPos = str.find_first_not_of(delimiters, pos);
-        pos = str.find_first_of(delimiters, lastPos);
-    }
+	while ( std::string::npos != pos || std::string::npos != lastPos ) {
+		tokens.push_back(str.substr(lastPos, pos - lastPos));
+		lastPos = str.find_first_not_of(delimiters, pos);
+		pos = str.find_first_of(delimiters, lastPos);
+	}
 }
 
 
@@ -1306,15 +1319,15 @@ void LoopRefine::apply(
 
 	TR << "***** Starting full-atom loop refinement protocol  ****" << std::endl;
 
-    protocols::loops::LoopsOP LoopsToRefine( new protocols::loops::Loops() );
+	protocols::loops::LoopsOP LoopsToRefine( new protocols::loops::Loops() );
 
-    for( Loops::const_iterator it=Loops_in_.begin(), it_end=Loops_in_.end(); it != it_end; ++it ) {
+	for ( Loops::const_iterator it=Loops_in_.begin(), it_end=Loops_in_.end(); it != it_end; ++it ) {
 		Loop refine_loop( *it );
 		refine_loop.choose_cutpoint( pose );
 		LoopsToRefine->add_loop( refine_loop );
 	}
 
- 	core::kinematics::FoldTree f;
+	core::kinematics::FoldTree f;
 	protocols::loops::fold_tree_from_loops( pose, *LoopsToRefine, f );
 	pose.fold_tree( f );
 

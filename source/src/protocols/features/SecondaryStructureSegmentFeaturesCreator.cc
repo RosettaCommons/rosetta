@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/feature/SecondaryStructureSegmentFeaturesCreator.cc
-/// @brief  
+/// @brief
 /// @author Tim Jacobs
 
 // Unit Headers
@@ -23,7 +23,7 @@
 
 namespace protocols {
 namespace features {
-	
+
 SecondaryStructureSegmentFeaturesCreator::SecondaryStructureSegmentFeaturesCreator() {}
 SecondaryStructureSegmentFeaturesCreator::~SecondaryStructureSegmentFeaturesCreator() {}
 FeaturesReporterOP SecondaryStructureSegmentFeaturesCreator::create_features_reporter() const {
@@ -33,6 +33,6 @@ FeaturesReporterOP SecondaryStructureSegmentFeaturesCreator::create_features_rep
 std::string SecondaryStructureSegmentFeaturesCreator::type_name() const {
 	return "SecondaryStructureSegmentFeatures";
 }
-	
+
 } //namespace features
 } //namespace protocols

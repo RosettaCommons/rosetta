@@ -120,28 +120,28 @@ public:// parser
 		Pose const & );
 
 	void parse_def( utility::lua::LuaObject const & def,
-					utility::lua::LuaObject const & score_fxns,
-					utility::lua::LuaObject const & tasks );
+		utility::lua::LuaObject const & score_fxns,
+		utility::lua::LuaObject const & tasks );
 
 public:// virtual main operation
 
 	// @brief returns true if the given pose passes the filter, false otherwise.
-  virtual bool apply( core::pose::Pose const & pose ) const;
+	virtual bool apply( core::pose::Pose const & pose ) const;
 
 	/// @brief
-  virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-  virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
+	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
+	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
 
 	/// @brief calc oligomeric AverageDegree
-  core::Real compute( core::pose::Pose const & pose, bool const & verbose, bool const & write ) const;
+	core::Real compute( core::pose::Pose const & pose, bool const & verbose, bool const & write ) const;
 	void write_to_pdb( core::pose::Pose const & pose, core::Size const residue, std::string const residue_name, core::Size const neighbors ) const;
 
 
 private:
 
-  core::pack::task::TaskFactoryOP task_factory_;
-  core::Real threshold_;
-  core::Real distance_threshold_;
+	core::pack::task::TaskFactoryOP task_factory_;
+	core::Real threshold_;
+	core::Real distance_threshold_;
 	bool jump_set_;
 	core::Size jump_id_;
 	std::string sym_dof_names_;

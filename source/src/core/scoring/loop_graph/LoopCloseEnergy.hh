@@ -70,10 +70,10 @@ public:
 		EnergyMap & totals
 	) const;
 
-/////////////////////////////////
+	/////////////////////////////////
 	void
 	eval_atom_derivative(
-	  id::AtomID const & atom_id,
+		id::AtomID const & atom_id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
 		ScoreFunction const &,

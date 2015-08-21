@@ -64,16 +64,17 @@ main( int argc, char * argv [] )
 
 		bool const view( option[ parser::view ] );
 		protocols::moves::MoverOP mover;//note that this is not instantiated and will crash if the job distributor actually tries to use it.
-																		//That means that this can only be used with parser=true
+		//That means that this can only be used with parser=true
 		option[ jd2::dd_parser ].value( true ); // So here we fix that. jd2_parser app makes no sense without this option=true
-		if( !option[ jd2::ntrials ].user() )
-	// when using rosteta_scripts we want ntrials to be set to 1 if the user forgot to specify. o/w infinite loops might
-	// occur. We don't want ntrials to be set as default to 1, b/c other protocols might want it to behave differently
+		if ( !option[ jd2::ntrials ].user() ) {
+			// when using rosteta_scripts we want ntrials to be set to 1 if the user forgot to specify. o/w infinite loops might
+			// occur. We don't want ntrials to be set as default to 1, b/c other protocols might want it to behave differently
 			option[ jd2::ntrials ].value( 1 );
+		}
 
-		if( view )
+		if ( view ) {
 			protocols::viewer::viewer_main( my_main );
-		else{
+		} else {
 #ifdef BOINC
 			protocols::jd2::BOINCJobDistributor::get_instance()->go( mover );
 #else

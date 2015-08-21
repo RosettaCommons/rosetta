@@ -75,46 +75,46 @@ class MatchConstraintFileInfoTest : public CxxTest::TestSuite
 {
 
 public:
-  MatchConstraintFileInfoTest() {};
+	MatchConstraintFileInfoTest() {};
 	protocols::toolbox::match_enzdes_util::EnzConstraintIOOP enz_io;
 
 
 	// Shared initialization goes here.
-  void setUp() {
-	  core_init();
+	void setUp() {
+		core_init();
 		// Residue definitions can't be supplied on the command line b/c
 		// the ResidueTypeSet is already initialized.
 		using namespace core::chemical;
 		utility::vector1< std::string > params_files;
 		ResidueTypeSetCOP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
-		if(!residue_set.has_name("D2MX")) params_files.push_back("protocols/enzdes/D2MX.params");
+		if ( !residue_set.has_name("D2MX") ) params_files.push_back("protocols/enzdes/D2MX.params");
 		residue_set.read_files(params_files);
 		basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
 
 		enz_io = protocols::toolbox::match_enzdes_util::EnzConstraintIOOP( new protocols::toolbox::match_enzdes_util::EnzConstraintIO(residue_set.get_self_weak_ptr()) );
 
 
-  }
+	}
 
-  // Shared finalization goes here.
-  void tearDown() {
-  }
+	// Shared finalization goes here.
+	void tearDown() {
+	}
 
-  void test_interface_constraints()
-  {
+	void test_interface_constraints()
+	{
 		using namespace protocols::toolbox::match_enzdes_util;
 
 		core::chemical::ResidueTypeSetCOP const_residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-	  //typedef core::id::AtomID AtomID;
+		//typedef core::id::AtomID AtomID;
 
-	  //now let's use the enzdes machinery to read in a cstfile and generate
-	  //the constraint set, results should be identical to manually created constraints
-	  enz_io->read_enzyme_cstfile("protocols/enzdes/mcfi_test.cst");
+		//now let's use the enzdes machinery to read in a cstfile and generate
+		//the constraint set, results should be identical to manually created constraints
+		enz_io->read_enzyme_cstfile("protocols/enzdes/mcfi_test.cst");
 
-	  //enz_io->clear_pdb_specific_data();
-	  //enz_io->process_pdb_header(compare_pose, catalytic_res);
-	  //enz_io->check_data_consistency(compare_pose);
+		//enz_io->clear_pdb_specific_data();
+		//enz_io->process_pdb_header(compare_pose, catalytic_res);
+		//enz_io->check_data_consistency(compare_pose);
 
 		//1. asserting stuff for residue 1
 		MatchConstraintFileInfoListCOP mcfil1 = enz_io->mcfi_list( 1 );
@@ -134,10 +134,10 @@ public:
 		// any which way.  Changing this so that we require either HIS - HIS_D
 		// or HIS_D - HIS.
 		bool const found_his = ( up_res1[ 1 ]->name() == const_residue_set->name_map( "HIS" ).name() ) ||
-		                       ( up_res1[ 2 ]->name() == const_residue_set->name_map( "HIS" ).name() );
+			( up_res1[ 2 ]->name() == const_residue_set->name_map( "HIS" ).name() );
 
 		bool const found_his_d = ( up_res1[ 1 ]->name() == const_residue_set->name_map( "HIS_D" ).name() ) ||
-		                         ( up_res1[ 2 ]->name() == const_residue_set->name_map( "HIS_D" ).name() );
+			( up_res1[ 2 ]->name() == const_residue_set->name_map( "HIS_D" ).name() );
 
 		TS_ASSERT( found_his && found_his_d );
 
@@ -197,11 +197,11 @@ public:
 
 		//done w stuff for residue 4
 
-	  //TS_ASSERT_DELTA( compare_pose.energies().total_energies()[ scoring::angle_constraint ] , test_pose.energies().total_energies()[ scoring::angle_constraint ], 1e-5 );
-	  //TS_ASSERT_DELTA( compare_pose.energies().total_energies()[ scoring::dihedral_constraint ], test_pose.energies().total_energies()[ scoring::dihedral_constraint ], 1e-5 );
+		//TS_ASSERT_DELTA( compare_pose.energies().total_energies()[ scoring::angle_constraint ] , test_pose.energies().total_energies()[ scoring::angle_constraint ], 1e-5 );
+		//TS_ASSERT_DELTA( compare_pose.energies().total_energies()[ scoring::dihedral_constraint ], test_pose.energies().total_energies()[ scoring::dihedral_constraint ], 1e-5 );
 
 
-  }
+	}
 
 
 };

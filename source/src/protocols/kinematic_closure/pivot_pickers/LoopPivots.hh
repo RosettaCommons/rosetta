@@ -20,9 +20,9 @@ namespace kinematic_closure {
 namespace pivot_pickers {
 
 /// @brief Use the start, stop, and cut points of the given loop as pivots.
-/// @details This algorithm is meant to be simple and intuitive.  The pick() 
-/// method will be passed a loop, and the pivots will be taken from the 
-/// parameters of that loop.  If the cut point is outside the loop (e.g. if it 
+/// @details This algorithm is meant to be simple and intuitive.  The pick()
+/// method will be passed a loop, and the pivots will be taken from the
+/// parameters of that loop.  If the cut point is outside the loop (e.g. if it
 /// hasn't been set), the midpoint of the loop will be used instead.
 class LoopPivots : public PivotPicker {
 

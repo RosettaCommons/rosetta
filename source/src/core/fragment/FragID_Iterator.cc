@@ -37,9 +37,9 @@
 
 
 /* Just a mad thought: with fragments becoming ever more "Residue" like one might want to use the
-	 packer to choose a combination of good fragments instead of makeing independent choices.
-	 I guess, it is only a question of keeping the combinatorics in control...
-	 maybe it makes sense to pack with only "unconfident" regions of the backbone flexible ..
+packer to choose a combination of good fragments instead of makeing independent choices.
+I guess, it is only a question of keeping the combinatorics in control...
+maybe it makes sense to pack with only "unconfident" regions of the backbone flexible ..
 */
 
 namespace core {
@@ -63,17 +63,17 @@ bool FragID_Iterator::operator == ( FragID_Iterator const& fi) const {
 }
 
 FragID_Iterator& FragID_Iterator::operator++ () {
-	//		std::cout << "it - nr_frags " << (*it_)->nr_frags() << std::endl;
-	//		std::cout << "ipos_ " << ipos_ << std::endl;
+	//  std::cout << "it - nr_frags " << (*it_)->nr_frags() << std::endl;
+	//  std::cout << "ipos_ " << ipos_ << std::endl;
 	if ( (*it_)->nr_frags() > ipos_ ) {
 		++ipos_;
 	} else {
 		// if we assume that NEVER an empty frame is in the fragset we can avoid the use of eit
 		// this assumption is TRUE now: we require the FrameIterator to always show to a valid frame
-		//			while ( ++it != eit ) {
-		//				if (it_->nr_frags() ) break;
-		//			}
-		//			ipos_ = 1;
+		//   while ( ++it != eit ) {
+		//    if (it_->nr_frags() ) break;
+		//   }
+		//   ipos_ = 1;
 		++(*it_);
 		ipos_ = 1;
 	}
@@ -81,7 +81,7 @@ FragID_Iterator& FragID_Iterator::operator++ () {
 }
 
 FragID_Iterator& FragID_Iterator::operator+ ( Size offset ) {
-	for ( Size i = 1; i<=offset ; i++ )	operator++();
+	for ( Size i = 1; i<=offset ; i++ ) operator++();
 	return *this;
 }
 
@@ -102,8 +102,8 @@ FragID FragID_Iterator::operator* () {
 // can't provide that operator, can I ? Could point to a member instance of FragID
 // normally this operator is never used to actually asked for the pointer to something...
 FragID* FragID_Iterator::operator-> () {
-		my_frag_id_ = frag_id();
-		return &my_frag_id_;
+	my_frag_id_ = frag_id();
+	return &my_frag_id_;
 }
 
 

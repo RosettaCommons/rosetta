@@ -55,7 +55,7 @@ public:
 	typedef std::multimap< core::Real, HotspotStubOP > Hotspots;
 	typedef std::map< std::string, Hotspots > Hs_map;
 	typedef std::pair< std::string, std::pair< core::Real, HotspotStubOP > > Hs_data;
-// for iterator type access of stubs
+	// for iterator type access of stubs
 	typedef std::vector< Hs_data > Hs_vec;
 	typedef Hs_vec::iterator iterator;
 	typedef Hs_vec::const_iterator const_iterator;
@@ -66,8 +66,8 @@ public:
 	virtual ~HotspotStubSet();
 	void clear();
 
-//iterator functions
-// iterators
+	//iterator functions
+	// iterators
 	inline HotspotStubSet::const_iterator begin() const {
 		runtime_assert( stub_set_vec_.size() == size() );
 		return stub_set_vec_.begin();
@@ -138,7 +138,7 @@ public:
 	void write_stub( utility::io::ozstream & outstream, HotspotStubCOP stub, std::string const & tag ) const;
 
 	/// @brief associate all stubs in the set with a scaffold partner
-//SJF does it make sense to associate the entire stubset with a filter? The filter is going to change ALL the time.
+	//SJF does it make sense to associate the entire stubset with a filter? The filter is going to change ALL the time.
 	void pair_with_scaffold( core::pose::Pose const & pose, core::Size const partner, protocols::filters::FilterCOP filter  ) ;
 	/// @brief set the filter to use for scaffold matching within this set
 	void filter( protocols::filters::FilterCOP filter );
@@ -171,20 +171,20 @@ public:
 		bool const apply_ambiguous_constraints = false
 	);
 
-  void add_hotspot_constraints_to_wholepose(
-    core::pose::Pose & pose,
-    core::Size const partner,
-    HotspotStubSetOP hotspot_stub_set,
-    core::Real const & CB_force_constant,
-    core::Real const & worst_allowed_stub_bonus,
-    bool const apply_self_energies,
-    core::Real const & bump_cutoff,
-    bool const apply_ambiguous_constraints = false
-  );
+	void add_hotspot_constraints_to_wholepose(
+		core::pose::Pose & pose,
+		core::Size const partner,
+		HotspotStubSetOP hotspot_stub_set,
+		core::Real const & CB_force_constant,
+		core::Real const & worst_allowed_stub_bonus,
+		bool const apply_self_energies,
+		core::Real const & bump_cutoff,
+		bool const apply_ambiguous_constraints = false
+	);
 
 	/// @brief Sets up constraints with user-supplied packer task and fixed reference atom
 	void add_hotspot_constraints_to_pose(
-	  core::pose::Pose & pose,
+		core::pose::Pose & pose,
 		core::id::AtomID const & fixed_atom,
 		core::pack::task::PackerTaskCOP const packer_task,
 		HotspotStubSetOP hotspot_stub_set,
@@ -195,18 +195,18 @@ public:
 		bool const apply_ambiguous_constraints = false
 	);
 
-  /// @brief Sets up constraints with user-supplied packer task and fixed reference atom
-  void add_hotspot_constraints_to_wholepose(
-    core::pose::Pose & pose,
-    core::id::AtomID const & fixed_atom,
-    core::pack::task::PackerTaskCOP const packer_task,
-    HotspotStubSetOP hotspot_stub_set,
-    core::Real const & CB_force_constant,
-    core::Real const & worst_allowed_stub_bonus, // = 0.
-    bool const apply_self_energies,
-    core::Real const & bump_cutoff,
-    bool const apply_ambiguous_constraints = false
-  );
+	/// @brief Sets up constraints with user-supplied packer task and fixed reference atom
+	void add_hotspot_constraints_to_wholepose(
+		core::pose::Pose & pose,
+		core::id::AtomID const & fixed_atom,
+		core::pack::task::PackerTaskCOP const packer_task,
+		HotspotStubSetOP hotspot_stub_set,
+		core::Real const & CB_force_constant,
+		core::Real const & worst_allowed_stub_bonus, // = 0.
+		bool const apply_self_energies,
+		core::Real const & bump_cutoff,
+		bool const apply_ambiguous_constraints = false
+	);
 
 	/// @brief remove all ambiguous constraints that contain backbone_stub_constraints from the supplied pose
 	bool remove_all_hotspot_constraints( core::pose::Pose & pose ) const;
@@ -241,7 +241,7 @@ private:
 	Size hotspot_length_; // length of peptide to use for hotspot searching (polyAla, except for central hotspot). only hotspot itself is scored/stored in the set.
 
 
-/// @brief clears stub_set_vec_ and inserts all the elements in stub_set_ to it.
+	/// @brief clears stub_set_vec_ and inserts all the elements in stub_set_ to it.
 	void handshake_stub_sets( void );
 
 	core::scoring::constraints::ConstraintCOPs constraints_;
@@ -249,14 +249,14 @@ private:
 
 	// predicate for keeping the multiset sorted by bonus value
 	// obsolete, since we're now using a multimap
-/*	struct stubsort_pred_
+	/* struct stubsort_pred_
 	{
-		bool operator () ( HotspotStub const & left, HotspotStub const & right )
-		{
-			return left.bonus_value() < right.bonus_value();
-		}
+	bool operator () ( HotspotStub const & left, HotspotStub const & right )
+	{
+	return left.bonus_value() < right.bonus_value();
+	}
 	};
-*/
+	*/
 	// Stub creation methods
 	//void dock_residue_lowres_ ( core::pose::Pose & pose, platform::Size const jump_number ) ;
 	//void dock_residue_highres_ ( core::pose::Pose & pose, core::scoring::ScoreFunctionOP scorefxn, Size const jump_number ) ;

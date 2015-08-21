@@ -13,8 +13,8 @@
 namespace protocols {
 namespace canonical_sampling {
 
-  int
-  canonical_sampling_main();
+int
+canonical_sampling_main();
 }
 }
 

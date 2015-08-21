@@ -61,13 +61,13 @@ MSDJobDistributor::current_job() const {
 void
 MSDJobDistributor::mark_current_job_id_for_repetition() {
 	// do nothing - increment nstruct and continue
-//	current_nstruct_++;
+	// current_nstruct_++;
 }
 
 void
 MSDJobDistributor::job_failed( core::pose::Pose & /*pose*/,
-		bool /*will_retry*/ ) {
-//		current_nstruct_++;
+	bool /*will_retry*/ ) {
+	//  current_nstruct_++;
 }
 
 void
@@ -126,11 +126,11 @@ MSDJobDistributor::go( protocols::moves::MoverOP mover ) {
 			utility::vector1<protocols::rosetta_scripts::ParsedProtocolOP> protocols;
 
 
-			for (core::Size ii = 1; ii <= working_poses.size(); ++ii) {
+			for ( core::Size ii = 1; ii <= working_poses.size(); ++ii ) {
 				parser.generate_mover_from_pose( jobs[ ii ], *working_poses[ ii ], mover, 1,
-						option[ parser::protocol ]() );
+					option[ parser::protocol ]() );
 				protocols::rosetta_scripts::ParsedProtocolOP parsed_protocol =
-						utility::pointer::dynamic_pointer_cast< protocols::rosetta_scripts::ParsedProtocol > ( mover );
+					utility::pointer::dynamic_pointer_cast< protocols::rosetta_scripts::ParsedProtocol > ( mover );
 				protocols.push_back( parsed_protocol );
 			}
 
@@ -161,8 +161,8 @@ MSDJobDistributor::go( protocols::moves::MoverOP mover ) {
 }
 
 bool MSDJobDistributor::apply_parsed_protocol( utility::vector1< core::pose::PoseOP > & working_poses,
-		utility::vector1<protocols::rosetta_scripts::ParsedProtocolOP> & protocols,
-		utility::vector1< core::Size > & pose_order ) {
+	utility::vector1<protocols::rosetta_scripts::ParsedProtocolOP> & protocols,
+	utility::vector1< core::Size > & pose_order ) {
 
 	for ( core::Size mover_it = 1; mover_it <= protocols[ 1 ]->size(); ++mover_it ) {
 
@@ -177,12 +177,12 @@ bool MSDJobDistributor::apply_parsed_protocol( utility::vector1< core::pose::Pos
 			current_pose_ = pose_order[ i ];
 
 			protocols::moves::MoverOP current_mover = protocols[ current_pose_ ]->
-					get_mover_filter_pair( mover_it ).first.first;
+				get_mover_filter_pair( mover_it ).first.first;
 			protocols::filters::FilterOP current_filter = protocols[ current_pose_ ]->
-					get_mover_filter_pair( mover_it ).second;
+				get_mover_filter_pair( mover_it ).second;
 			TR << "=================running mover " << current_mover->get_name() << " - "
-					<< protocols[ current_pose_ ]->get_mover_filter_pair( mover_it ).first.second
-					<< "======================" << std::endl;
+				<< protocols[ current_pose_ ]->get_mover_filter_pair( mover_it ).first.second
+				<< "======================" << std::endl;
 
 			// i refers to mover type -> j refers to each pose
 

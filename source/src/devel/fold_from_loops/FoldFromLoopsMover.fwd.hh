@@ -1,9 +1,9 @@
 /*
- * FoldFromLoopsMover.fwd.hh
- *
- *  Created on: May 1, 2009
- *      Author: bcorreia
- */
+* FoldFromLoopsMover.fwd.hh
+*
+*  Created on: May 1, 2009
+*      Author: bcorreia
+*/
 
 #ifndef FoldFromLoopsMover_FWD_HH_
 #define FoldFromLoopsMover_FWD_HH_

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/modeler/StepWiseConnectionSampler.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace stepwise {
 namespace modeler {
-	
-	class StepWiseConnectionSampler;
-	typedef utility::pointer::shared_ptr< StepWiseConnectionSampler > StepWiseConnectionSamplerOP;
-	typedef utility::pointer::shared_ptr< StepWiseConnectionSampler const > StepWiseConnectionSamplerCOP;
-	
+
+class StepWiseConnectionSampler;
+typedef utility::pointer::shared_ptr< StepWiseConnectionSampler > StepWiseConnectionSamplerOP;
+typedef utility::pointer::shared_ptr< StepWiseConnectionSampler const > StepWiseConnectionSamplerCOP;
+
 } //modeler
 } //stepwise
 } //protocols

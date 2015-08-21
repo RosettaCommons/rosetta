@@ -47,49 +47,48 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 struct word_info {
-    int tag;
-    explicit word_info(int t = 0) : tag(t) {}
+	int tag;
+	explicit word_info(int t = 0) : tag(t) {}
 };
 
 namespace hash_examples
 {
-    struct iequal_to
-        : std::binary_function<std::string, std::string, bool>
-    {
-        iequal_to() {}
-        explicit iequal_to(std::locale const& l) : locale_(l) {}
+struct iequal_to
+	: std::binary_function<std::string, std::string, bool>
+{
+	iequal_to() {}
+	explicit iequal_to(std::locale const& l) : locale_(l) {}
 
-        template <typename String1, typename String2>
-        bool operator()(String1 const& x1, String2 const& x2) const
-        {
-            return boost::algorithm::iequals(x1, x2, locale_);
-        }
-    private:
-        std::locale locale_;
-    };
+	template <typename String1, typename String2>
+	bool operator()(String1 const& x1, String2 const& x2) const
+	{
+		return boost::algorithm::iequals(x1, x2, locale_);
+	}
+private:
+	std::locale locale_;
+};
 
-    struct ihash
-        : std::unary_function<std::string, std::size_t>
-    {
-        ihash() {}
-        explicit ihash(std::locale const& l) : locale_(l) {}
+struct ihash
+	: std::unary_function<std::string, std::size_t>
+{
+	ihash() {}
+	explicit ihash(std::locale const& l) : locale_(l) {}
 
-        template <typename String>
-        std::size_t operator()(String const& x) const
-        {
-            std::size_t seed = 0;
+	template <typename String>
+	std::size_t operator()(String const& x) const
+	{
+		std::size_t seed = 0;
 
-            for(typename String::const_iterator it = x.begin();
-                it != x.end(); ++it)
-            {
-                boost::hash_combine(seed, std::toupper(*it, locale_));
-            }
+		for ( typename String::const_iterator it = x.begin();
+				it != x.end(); ++it ) {
+			boost::hash_combine(seed, std::toupper(*it, locale_));
+		}
 
-            return seed;
-        }
-    private:
-        std::locale locale_;
-    };
+		return seed;
+	}
+private:
+	std::locale locale_;
+};
 }
 
 
@@ -97,13 +96,13 @@ namespace hash_examples
 
 class HasherTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
-		typedef core::Vector Vector;
-		typedef core::Size   Size;
-		typedef core::Real   Real;
-		typedef numeric::geometry::BoundingBox< Vector > BoundingBox;
-		typedef numeric::HomogeneousTransform< Real >    HTReal;
+	typedef core::Vector Vector;
+	typedef core::Size   Size;
+	typedef core::Real   Real;
+	typedef numeric::geometry::BoundingBox< Vector > BoundingBox;
+	typedef numeric::HomogeneousTransform< Real >    HTReal;
 
 
 	// --------------- Fixtures --------------- //
@@ -121,7 +120,7 @@ class HasherTests : public CxxTest::TestSuite {
 	void tearDown() {
 	}
 
-  //FIX THIS ASAP
+	//FIX THIS ASAP
 
 	// --------------- Test Cases --------------- //
 	void test_boost_unordered_map() {
@@ -134,25 +133,25 @@ class HasherTests : public CxxTest::TestSuite {
 		idictionary["one"] = word_info(1);
 		TS_ASSERT(idictionary.size() == 1);
 		TS_ASSERT(idictionary.find("ONE") != idictionary.end() &&
-		idictionary.find("ONE") == idictionary.find("one"));
+			idictionary.find("ONE") == idictionary.find("one"));
 
 		idictionary.insert(std::make_pair("ONE", word_info(2)));
 		TS_ASSERT(idictionary.size() == 1);
 		TS_ASSERT(idictionary.find("ONE") != idictionary.end() &&
-		idictionary.find("ONE")->first == "one" &&
-		idictionary.find("ONE")->second.tag == 1);
+			idictionary.find("ONE")->first == "one" &&
+			idictionary.find("ONE")->second.tag == 1);
 
 		idictionary["One"] = word_info(3);
 		TS_ASSERT(idictionary.size() == 1);
 		TS_ASSERT(idictionary.find("ONE") != idictionary.end() &&
-		idictionary.find("ONE")->first == "one" &&
-		idictionary.find("ONE")->second.tag == 3);
+			idictionary.find("ONE")->first == "one" &&
+			idictionary.find("ONE")->second.tag == 3);
 
 		idictionary["two"] = word_info(4);
 		TS_ASSERT(idictionary.size() == 2);
 		TS_ASSERT(idictionary.find("two") != idictionary.end() &&
-		idictionary.find("TWO")->first == "two" &&
-		idictionary.find("Two")->second.tag == 4);
+			idictionary.find("TWO")->first == "two" &&
+			idictionary.find("Two")->second.tag == 4);
 
 	}
 
@@ -307,14 +306,14 @@ class HasherTests : public CxxTest::TestSuite {
 		//for ( Size ii = 1; ii <= 3; ++ii ) std::cout << eulerC( ii ) << " ";
 		//std::cout << std::endl;
 
-	/* FIX THIS ASAP
+		/* FIX THIS ASAP
 		using namespace core;
 
 		xyzbin_hash hash_12_15_10( 12, 15, 10 );
 		xyzbin_equals equals;
 
 		boost::unordered_map< xyzbin, std::string, xyzbin_hash, xyzbin_equals >
-			volume_hash( 100, hash_12_15_10 );
+		volume_hash( 100, hash_12_15_10 );
 
 		xyzbin bin;
 		bin[ 1 ] = 3; bin[ 2 ] = 4; bin[ 3 ] = 8;

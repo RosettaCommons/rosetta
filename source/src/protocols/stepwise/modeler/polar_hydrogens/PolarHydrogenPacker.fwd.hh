@@ -23,9 +23,9 @@ namespace stepwise {
 namespace modeler {
 namespace polar_hydrogens {
 
-	class PolarHydrogenPacker;
-	typedef utility::pointer::shared_ptr< PolarHydrogenPacker > PolarHydrogenPackerOP;
-	typedef utility::pointer::shared_ptr< PolarHydrogenPacker const > PolarHydrogenPackerCOP;
+class PolarHydrogenPacker;
+typedef utility::pointer::shared_ptr< PolarHydrogenPacker > PolarHydrogenPackerOP;
+typedef utility::pointer::shared_ptr< PolarHydrogenPacker const > PolarHydrogenPackerCOP;
 
 } //polar_hydrogens
 } //modeler

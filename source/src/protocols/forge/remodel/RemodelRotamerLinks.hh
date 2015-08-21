@@ -34,7 +34,7 @@ public:
 	RemodelRotamerLinks();
 	virtual ~RemodelRotamerLinks();
 	virtual TaskOperationOP clone() const;
-	virtual	void apply( Pose const & pose, PackerTask & ptask ) const;
+	virtual void apply( Pose const & pose, PackerTask & ptask ) const;
 	virtual void parse_tag( TagCOP, DataMap & );
 
 };

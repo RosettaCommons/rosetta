@@ -54,8 +54,9 @@ void
 TaskFactory::modify_task( core::pose::Pose const & pose, PackerTaskOP task ) const
 {
 	runtime_assert( task != 0 );
-	BOOST_FOREACH( TaskOperationOP const taskop, *this )
+	BOOST_FOREACH ( TaskOperationOP const taskop, *this ) {
 		taskop->apply( pose, *task );
+	}
 }
 
 // Non static version.

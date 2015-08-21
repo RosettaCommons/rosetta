@@ -42,14 +42,14 @@ WaterAnchorInfo::anchor_residue( Size const rsd ) {
 
 bool
 WaterAnchorInfo::attaches_to_residue_type( ResidueType
-const & type ) const {
+	const & type ) const {
 	return type.aa() == aa_ && type.has( anchor_atom_name_ );
 }
 
 Size
 WaterAnchorInfo::anchor_atom( ResidueType const & type
 ) const {
-debug_assert( attaches_to_residue_type( type ) );
+	debug_assert( attaches_to_residue_type( type ) );
 	return type.atom_index( anchor_atom_name_ );
 }
 

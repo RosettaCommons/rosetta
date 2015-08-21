@@ -48,7 +48,7 @@ public:
 	AmbiguousNMRDistanceConstraint(
 		Atoms const & a1,
 		Atoms const & a2,
-	 	func::FuncOP func,
+		func::FuncOP func,
 		ScoreType scoretype = atom_pair_constraint
 	):
 		Constraint( scoretype ),
@@ -61,7 +61,7 @@ public:
 		id::NamedAtomID const & a1, //digests names like "QG1"
 		id::NamedAtomID const & a2,
 		core::pose::Pose const&,
-	 	func::FuncOP func,
+		func::FuncOP func,
 		ScoreType scoretype = atom_pair_constraint
 	);
 
@@ -105,7 +105,7 @@ public:
 		AtomID const & atom,
 		func::XYZ_Func const & xyz,
 		Vector & F1,
-	 	Vector & F2,
+		Vector & F2,
 		EnergyMap const & weights
 	) const;
 
@@ -158,8 +158,8 @@ public:
 	void show_def( std::ostream& out, pose::Pose const& pose ) const;
 
 	void read_def( std::istream& in, pose::Pose const& pose,func::FuncFactory const& func_factory );
-	//	//@brief set constraint such that the pose doesn't violate it.
-	//	virtual void steal( pose::Pose& );
+	// //@brief set constraint such that the pose doesn't violate it.
+	// virtual void steal( pose::Pose& );
 
 	Real dist( pose::Pose const & pose ) const;
 	Real dist( func::XYZ_Func const & xyz ) const;

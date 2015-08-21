@@ -119,20 +119,20 @@ SegmentHybridizerCreator::mover_name()
 
 SegmentHybridizer::SegmentHybridizer() :
 	Mover( SegmentHybridizerCreator::mover_name() ),
-	  cartfrag_overlap_(2)
-	  /*big_( 9 ),
-	  small_( 3 ),
-	  nfrags_( 50 ),
-	  cartfrag_overlap_( 2 ),
-	  use_seq_( 0 ),
-	  rms_( 0.5 ),
-	  auto_mm_( 1 ),
-	  tries_( 100 ),
-	  mc_cycles_( 4 ),
-	  temp_(2.0),
-	  use_frags_(1),
-	  min_cycles_(2)
-	  */
+	cartfrag_overlap_(2)
+	/*big_( 9 ),
+	small_( 3 ),
+	nfrags_( 50 ),
+	cartfrag_overlap_( 2 ),
+	use_seq_( 0 ),
+	rms_( 0.5 ),
+	auto_mm_( 1 ),
+	tries_( 100 ),
+	mc_cycles_( 4 ),
+	temp_(2.0),
+	use_frags_(1),
+	min_cycles_(2)
+	*/
 {
 	//torsion_database_.clear();
 	//delta_lengths_.clear();
@@ -185,7 +185,7 @@ SegmentHybridizer::apply_frame( core::pose::Pose & pose, core::fragment::Frame &
 	runtime_assert( cartfrag_overlap_>=1 &&  cartfrag_overlap_<= len/2 + 1);//cartfrag_overlap_<=len/2);
 	core::Size nres = pose.total_residue();
 
-	if (pose.residue(nres).aa() == core::chemical::aa_vrt) nres--;
+	if ( pose.residue(nres).aa() == core::chemical::aa_vrt ) nres--;
 	bool nterm = (start == 1);
 	bool cterm = (start == nres- len -1 );
 
@@ -197,10 +197,10 @@ SegmentHybridizer::apply_frame( core::pose::Pose & pose, core::fragment::Frame &
 	ObjexxFCL::FArray2D< numeric::Real > uu( 3, 3, 0.0 );
 	numeric::xyzVector< core::Real > com1(0,0,0), com2(0,0,0);
 
-	for (int i=0; i<(int)len; ++i) {
+	for ( int i=0; i<(int)len; ++i ) {
 		core::conformation::idealize_position(start+i, pose_copy.conformation());
 	}
-	for (int tries = 0; tries< tries_; ++tries) {
+	for ( int tries = 0; tries< tries_; ++tries ) {
 		ww = 1.0;
 		uu = 0.0;
 		com1 = numeric::xyzVector< core::Real >(0,0,0);
@@ -208,14 +208,14 @@ SegmentHybridizer::apply_frame( core::pose::Pose & pose, core::fragment::Frame &
 
 		// grab coords
 		ObjexxFCL::FArray2D< core::Real > init_coords( 3, 2*4*aln_len );
-		for (int ii=-aln_len; ii<aln_len; ++ii) {
+		for ( int ii=-aln_len; ii<aln_len; ++ii ) {
 			int i = (ii>=0) ? (nterm?len-ii-1:ii) : (cterm?-ii-1:len+ii);
 			numeric::xyzVector< core::Real > x_1 = pose.residue(start+i).atom(" C  ").xyz();
 			numeric::xyzVector< core::Real > x_2 = pose.residue(start+i).atom(" O  ").xyz();
 			numeric::xyzVector< core::Real > x_3 = pose.residue(start+i).atom(" CA ").xyz();
 			numeric::xyzVector< core::Real > x_4 = pose.residue(start+i).atom(" N  ").xyz();
 			com1 += x_1+x_2+x_3+x_4;
-			for (int j=0; j<3; ++j) {
+			for ( int j=0; j<3; ++j ) {
 				init_coords(j+1,4*(ii+aln_len)+1) = x_1[j];
 				init_coords(j+1,4*(ii+aln_len)+2) = x_2[j];
 				init_coords(j+1,4*(ii+aln_len)+3) = x_3[j];
@@ -223,7 +223,7 @@ SegmentHybridizer::apply_frame( core::pose::Pose & pose, core::fragment::Frame &
 			}
 		}
 		com1 /= 2.0*4.0*aln_len;
-		for (int ii=0; ii<2*4*aln_len; ++ii) {
+		for ( int ii=0; ii<2*4*aln_len; ++ii ) {
 			for ( int j=0; j<3; ++j ) init_coords(j+1,ii+1) -= com1[j];
 		}
 
@@ -232,14 +232,14 @@ SegmentHybridizer::apply_frame( core::pose::Pose & pose, core::fragment::Frame &
 
 		// grab new coords
 		ObjexxFCL::FArray2D< core::Real > final_coords( 3, 2*4*aln_len );
-		for (int ii=-aln_len; ii<aln_len; ++ii) {
+		for ( int ii=-aln_len; ii<aln_len; ++ii ) {
 			int i = (ii>=0) ? (nterm?len-ii-1:ii) : (cterm?-ii-1:len+ii);
 			numeric::xyzVector< core::Real > x_1 = pose_copy.residue(start+i).atom(" C  ").xyz();
 			numeric::xyzVector< core::Real > x_2 = pose_copy.residue(start+i).atom(" O  ").xyz();
 			numeric::xyzVector< core::Real > x_3 = pose_copy.residue(start+i).atom(" CA ").xyz();
 			numeric::xyzVector< core::Real > x_4 = pose_copy.residue(start+i).atom(" N  ").xyz();
 			com2 += x_1+x_2+x_3+x_4;
-			for (int j=0; j<3; ++j) {
+			for ( int j=0; j<3; ++j ) {
 				final_coords(j+1,4*(ii+aln_len)+1) = x_1[j];
 				final_coords(j+1,4*(ii+aln_len)+2) = x_2[j];
 				final_coords(j+1,4*(ii+aln_len)+3) = x_3[j];
@@ -247,7 +247,7 @@ SegmentHybridizer::apply_frame( core::pose::Pose & pose, core::fragment::Frame &
 			}
 		}
 		com2 /= 2.0*4.0*aln_len;
-		for (int ii=0; ii<2*4*aln_len; ++ii) {
+		for ( int ii=0; ii<2*4*aln_len; ++ii ) {
 			for ( int j=0; j<3; ++j ) final_coords(j+1,ii+1) -= com2[j];
 		}
 
@@ -257,12 +257,12 @@ SegmentHybridizer::apply_frame( core::pose::Pose & pose, core::fragment::Frame &
 		numeric::model_quality::findUU( final_coords, init_coords, ww, 2*4*aln_len, uu, ctx );
 		numeric::model_quality::calc_rms_fast( rms, final_coords, init_coords, ww, 2*4*aln_len, ctx );
 
-		TR.Debug  << "fragments rms:	" << rms << std::endl;
+		TR.Debug  << "fragments rms:\t" << rms << std::endl;
 
-		if (rms < rms_) break;
-		if (tries >= 50 && rms < 1) break; //20
-		if (tries >= 70 && rms < 2) break; //40
-		if (tries >= 100 && rms < 4) break; //60
+		if ( rms < rms_ ) break;
+		if ( tries >= 50 && rms < 1 ) break; //20
+		if ( tries >= 70 && rms < 2 ) break; //40
+		if ( tries >= 100 && rms < 4 ) break; //60
 	}
 
 	numeric::xyzMatrix< core::Real > R;
@@ -282,44 +282,43 @@ SegmentHybridizer::apply_frame( core::pose::Pose & pose, core::fragment::Frame &
 void
 SegmentHybridizer::check_and_create_fragments( core::pose::Pose & pose, core::Size insert_start, core::Size insert_stop ) {
 	//if (fragments_big_ && fragments_small_) return;
-		// how do I reset the fragments best?
+	// how do I reset the fragments best?
 
 	//if (!fragments_big_present) {
-		/// want to use the native ss here!
+	/// want to use the native ss here!
 
-		std::string tgt_seq = pose.sequence();
-		core::scoring::dssp::Dssp dssp( pose );
-		dssp.insert_ss_into_pose( pose );
-		std::string tgt_ss = pose.secstruct();
-		//std::cout << "fragment picking start position " << insert_start << " and stop: " << insert_stop <<std::endl;
+	std::string tgt_seq = pose.sequence();
+	core::scoring::dssp::Dssp dssp( pose );
+	dssp.insert_ss_into_pose( pose );
+	std::string tgt_ss = pose.secstruct();
+	//std::cout << "fragment picking start position " << insert_start << " and stop: " << insert_stop <<std::endl;
 
-		// pick from vall based on template SS or target sequence
-		for ( core::Size j=insert_start; j<= insert_stop - big_-1 ; ++j ) {
-			std::string ss_sub = tgt_ss.substr( j-1, big_ );
-			std::string aa_sub = tgt_seq.substr( j-1, big_ );
+	// pick from vall based on template SS or target sequence
+	for ( core::Size j=insert_start; j<= insert_stop - big_-1 ; ++j ) {
+		std::string ss_sub = tgt_ss.substr( j-1, big_ );
+		std::string aa_sub = tgt_seq.substr( j-1, big_ );
 
-			core::fragment::FrameOP frame( new core::fragment::Frame( j, big_ ) );
-			if( use_seq_ ){
-				frame->add_fragment( core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa( ss_sub, aa_sub,
-														nfrags_, true, core::fragment::IndependentBBTorsionSRFD() ) );
-				//std::cout << "picking " << nfrags_ << " fragments based on ss and sequence" <<  std::cout;
-			}
-			else {
-				frame->add_fragment( core::fragment::picking_old::vall::pick_fragments_by_ss( ss_sub, nfrags_, true,
-																		core::fragment::IndependentBBTorsionSRFD() ) );
-				//std::cout << "picking " << nfrags_ << " fragments based on ss only " <<  std::endl;
-			}
-
-			fragments_big_->add( frame );
+		core::fragment::FrameOP frame( new core::fragment::Frame( j, big_ ) );
+		if ( use_seq_ ) {
+			frame->add_fragment( core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa( ss_sub, aa_sub,
+				nfrags_, true, core::fragment::IndependentBBTorsionSRFD() ) );
+			//std::cout << "picking " << nfrags_ << " fragments based on ss and sequence" <<  std::cout;
+		} else {
+			frame->add_fragment( core::fragment::picking_old::vall::pick_fragments_by_ss( ss_sub, nfrags_, true,
+				core::fragment::IndependentBBTorsionSRFD() ) );
+			//std::cout << "picking " << nfrags_ << " fragments based on ss only " <<  std::endl;
 		}
+
+		fragments_big_->add( frame );
+	}
 }
 
 void
-	SegmentHybridizer::hybridize( core::pose::Pose & pose , core::Size insert_pos_start, core::Size insert_pos_stop){
+SegmentHybridizer::hybridize( core::pose::Pose & pose , core::Size insert_pos_start, core::Size insert_pos_stop){
 
 	Pose pose_in = pose;
 	core::Size nres = pose.total_residue();
-	if (pose.residue(nres).aa() == core::chemical::aa_vrt) nres--;
+	if ( pose.residue(nres).aa() == core::chemical::aa_vrt ) nres--;
 
 	// pick an insert position based on gap
 	utility::vector1<core::Real> residuals( nres , 0.0 );
@@ -327,8 +326,8 @@ void
 	utility::vector1<int> max_poses(4,-1);
 
 
-	for (Size /*int*/ i=1; i<nres; ++i) {
-		if (pose.fold_tree().is_cutpoint(i+1)) {
+	for ( Size /*int*/ i=1; i<nres; ++i ) {
+		if ( pose.fold_tree().is_cutpoint(i+1) ) {
 			residuals[i] = -1;
 		} else {
 			numeric::xyzVector< core::Real > c0 , n1;
@@ -336,13 +335,13 @@ void
 			n1 = pose.residue(i+1).atom(" N  ").xyz();
 			core::Real d2 = c0.distance( n1 );
 			residuals[i] = (d2-1.328685)*(d2-1.328685);
-			if ( residuals[i] > max_residuals[1]) {
+			if ( residuals[i] > max_residuals[1] ) {
 				max_residuals[3] = max_residuals[2]; max_residuals[2] = max_residuals[1]; max_residuals[1] = residuals[i];
 				max_poses[3] = max_poses[2]; max_poses[2] = max_poses[1]; max_poses[1] = i;
-			} else if ( residuals[i] > max_residuals[2]) {
+			} else if ( residuals[i] > max_residuals[2] ) {
 				max_residuals[3] = max_residuals[2]; max_residuals[2] = residuals[i];
 				max_poses[3] = max_poses[2]; max_poses[2] = i;
-			} else if ( residuals[i] > max_residuals[3]) {
+			} else if ( residuals[i] > max_residuals[3] ) {
 				max_residuals[3] = residuals[i];
 				max_poses[3] = i;
 			}
@@ -365,10 +364,10 @@ void
 
 	// for debugging of frames
 	//for (boost::unordered_map<core::Size, core::fragment::Frame>::iterator iter = library_.begin() ; iter != library_.end() ; ++iter){
-		//std::cout << " frame 	" << (*iter).first << " len: " << library_[insert_pos].length() << std::endl;
+	//std::cout << " frame  " << (*iter).first << " len: " << library_[insert_pos].length() << std::endl;
 	//}
 
-	if (library_.find(insert_pos) != library_.end()){
+	if ( library_.find(insert_pos) != library_.end() ) {
 		apply_frame (pose, library_[insert_pos]);
 		//TR<< "applying fragments on position: " << insert_pos << std::endl;
 	}
@@ -422,7 +421,7 @@ SegmentHybridizer::apply( core::pose::Pose & pose ){
 
 	//// 3. iterate through segments of interest
 
-	for( Size iter = 1 ; iter <= seg_vector_.size() ; ++ iter ){
+	for ( Size iter = 1 ; iter <= seg_vector_.size() ; ++ iter ) {
 
 		///  runtime parsing of input information
 		//core::Size insert_pos_start = protocols::rosetta_scripts::parse_resnum( seg_vector_[iter].first, pose ) - extend_outside_ ;
@@ -445,47 +444,48 @@ SegmentHybridizer::apply( core::pose::Pose & pose ){
 
 
 		//if there is more than 1 chain, use only the last one
-		if ( all_movable_ ){
+		if ( all_movable_ ) {
 			TR<< "allowing all elements to move, if there is more than 1 chain, it will be the last chain that is allowed to move  " <<std::endl;
 			core::Size chain_start  = 1 ;
 			core::Size chain_num = pose.conformation().num_chains();
-			if (chain_num > 1)
+			if ( chain_num > 1 ) {
 				chain_start = pose.conformation().chain_begin( chain_num );
-			for (core::Size i = chain_start; i <= pose.total_residue(); i++ ){
+			}
+			for ( core::Size i = chain_start; i <= pose.total_residue(); i++ ) {
 				extended_mm_->set_bb(i, true);
 				extended_mm_->set_chi(i,true);
 			}
 		}
 
-		if ( !all_movable_ ){
-		if ( auto_mm_ ){
-			 core::scoring::dssp::Dssp dssp( pose );
-			 dssp.insert_ss_into_pose( pose );
-    	     std::string tgt_ss = pose.secstruct();
-			 //extend the movemap on both sides until it hits a loop
-			 for (core::Size it = insert_pos_start - 2 ; it > 0 ; it-- ){ //2 instead of 1 because it is typically misassigned as loop
-				//std::cout << "ss: " << tgt_ss[it-1] << std::endl;
-				if ( tgt_ss[it-1] == 'L' ) break;
-				else {
-					nterm_mm = it;
+		if ( !all_movable_ ) {
+			if ( auto_mm_ ) {
+				core::scoring::dssp::Dssp dssp( pose );
+				dssp.insert_ss_into_pose( pose );
+				std::string tgt_ss = pose.secstruct();
+				//extend the movemap on both sides until it hits a loop
+				for ( core::Size it = insert_pos_start - 2 ; it > 0 ; it-- ) { //2 instead of 1 because it is typically misassigned as loop
 					//std::cout << "ss: " << tgt_ss[it-1] << std::endl;
+					if ( tgt_ss[it-1] == 'L' ) break;
+					else {
+						nterm_mm = it;
+						//std::cout << "ss: " << tgt_ss[it-1] << std::endl;
+					}
 				}
-			 }
-			 for (Size it = insert_pos_stop + 1  ; it <= pose.total_residue() ; it++){ // 1 off because ss is typically misassigned
-				//std::cout << "ss: " << tgt_ss[it-1] << std::endl;
-         		if ( tgt_ss[it-1] == 'L' ) break;
-         		else {
-					cterm_mm = it;
+				for ( Size it = insert_pos_stop + 1  ; it <= pose.total_residue() ; it++ ) { // 1 off because ss is typically misassigned
 					//std::cout << "ss: " << tgt_ss[it-1] << std::endl;
+					if ( tgt_ss[it-1] == 'L' ) break;
+					else {
+						cterm_mm = it;
+						//std::cout << "ss: " << tgt_ss[it-1] << std::endl;
+					}
 				}
-			 }
-		}
+			}
 
-		for (core::Size i = 1; i <= pose.total_residue(); ++i ){
-			if ( i >= nterm_mm  && i <= cterm_mm ){
-				extended_mm_->set_bb( i, true );
-				extended_mm_->set_chi( i, true );
-					if( i >= insert_pos_start + extend_outside_ + extend_inside_ && i <= insert_pos_stop - extend_outside_ ){
+			for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+				if ( i >= nterm_mm  && i <= cterm_mm ) {
+					extended_mm_->set_bb( i, true );
+					extended_mm_->set_chi( i, true );
+					if ( i >= insert_pos_start + extend_outside_ + extend_inside_ && i <= insert_pos_stop - extend_outside_ ) {
 						//reset to false
 						extended_mm_->set_bb( i, false );
 						extended_mm_->set_chi( i, false );
@@ -496,41 +496,41 @@ SegmentHybridizer::apply( core::pose::Pose & pose ){
 
 		/// 3.b fragment hybridize
 
-			if( use_frags_ ){
-				///  get fragments -- should sample more than 1
-				// TODO check that the insert position does not go into the first chain!
-				check_and_create_fragments( pose, insert_pos_start, insert_pos_stop );
+		if ( use_frags_ ) {
+			///  get fragments -- should sample more than 1
+			// TODO check that the insert position does not go into the first chain!
+			check_and_create_fragments( pose, insert_pos_start, insert_pos_stop );
 
 
-				///  map resids to frames, keeping track of positions
-				core::Size insert_frags_pos = fragments_big_->min_pos();
-				//std::cout << "start frags = fragments->min_pos:"<< insert_frags_pos <<
-				//"\nmax_pos " << fragments_big_->max_pos() <<
-				//"\nfragset for positions = nr_frames " << fragments_big_->nr_frames() << std::endl;
+			///  map resids to frames, keeping track of positions
+			core::Size insert_frags_pos = fragments_big_->min_pos();
+			//std::cout << "start frags = fragments->min_pos:"<< insert_frags_pos <<
+			//"\nmax_pos " << fragments_big_->max_pos() <<
+			//"\nfragset for positions = nr_frames " << fragments_big_->nr_frames() << std::endl;
 
-				for (core::fragment::ConstFrameIterator i = fragments_big_->begin(); i != fragments_big_->end(); ++i){
-					core::Size position = (*i)->start();
-					//std::cout << "position after iterator: " << position << std::endl;
-					library_[position] =  **i;
-					//library_[insert_frags_pos]= **i;
-					//adjust position counter (for debugging stuff)
-					//std::cout<< "position counter: " << insert_frags_pos << std::endl;
-					insert_frags_pos++;
+			for ( core::fragment::ConstFrameIterator i = fragments_big_->begin(); i != fragments_big_->end(); ++i ) {
+				core::Size position = (*i)->start();
+				//std::cout << "position after iterator: " << position << std::endl;
+				library_[position] =  **i;
+				//library_[insert_frags_pos]= **i;
+				//adjust position counter (for debugging stuff)
+				//std::cout<< "position counter: " << insert_frags_pos << std::endl;
+				insert_frags_pos++;
 
-				}
-
-				(*lowres_scorefxn_)(pose);
-				protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *lowres_scorefxn_, temp_ ) );
-
-				for (core::Size i=1; i <= mc_cycles_; ++i) {
-					hybridize(pose, insert_pos_start, insert_pos_stop);
-					(*lowres_scorefxn_)(pose);
-					mc->boltzmann(pose);
-				}
-				mc->show_scores();
-				mc->show_counters();
-				mc->recover_low(pose);
 			}
+
+			(*lowres_scorefxn_)(pose);
+			protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *lowres_scorefxn_, temp_ ) );
+
+			for ( core::Size i=1; i <= mc_cycles_; ++i ) {
+				hybridize(pose, insert_pos_start, insert_pos_stop);
+				(*lowres_scorefxn_)(pose);
+				mc->boltzmann(pose);
+			}
+			mc->show_scores();
+			mc->show_counters();
+			mc->recover_low(pose);
+		}
 
 		TR.Debug << "final rms for fragment align: " << rms_ << std::endl;
 
@@ -541,7 +541,7 @@ SegmentHybridizer::apply( core::pose::Pose & pose ){
 
 	/// 4. final minimization (optional)
 
-	if( extra_min_ ){
+	if ( extra_min_ ) {
 		TR<< "final minimization" << std::endl;
 		(*min_scorefxn_)(pose);   minimizer.run( pose, *extended_mm_, *min_scorefxn_, options_lbfgs );
 	}
@@ -555,10 +555,10 @@ SegmentHybridizer::get_name() const {
 
 void
 SegmentHybridizer::parse_my_tag( TagCOP const tag,
-								basic::datacache::DataMap &data,
-								protocols::filters::Filters_map const &,
-								protocols::moves::Movers_map const &,
-								core::pose::Pose const & /*pose*/ ){
+	basic::datacache::DataMap &data,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & /*pose*/ ){
 
 	TR << "initialized SegmentHybridizer mover " << std::endl;
 
@@ -585,22 +585,22 @@ SegmentHybridizer::parse_my_tag( TagCOP const tag,
 
 	/// read areas that are supposed to be remodeled
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
-	BOOST_FOREACH( TagCOP const btag, branch_tags ){
+	BOOST_FOREACH ( TagCOP const btag, branch_tags ) {
 
-		if( btag->getName() == "Span" ) { //need an assertion for the presence of these or at least for the option file
+		if ( btag->getName() == "Span" ) { //need an assertion for the presence of these or at least for the option file
 			std::string const beginS( btag->getOption<std::string>( "begin" ) );
 			std::string const endS( btag->getOption<std::string>( "end" ) );
 
 			extend_outside_ = btag->getOption<core::Size>( "extend_outside", 5);
 			extend_inside_  =  btag->getOption<core::Size>( "extend_inside" , 1 );
-//			N_mm_ = btag->getOption<core::Size>( "N_mm", 2 );
-//			C_mm_ = btag->getOption<core::Size>( "C_mm", 2 );
+			//   N_mm_ = btag->getOption<core::Size>( "N_mm", 2 );
+			//   C_mm_ = btag->getOption<core::Size>( "C_mm", 2 );
 
 			std::pair <std::string,std::string> segpair;
-			segpair.first 	= beginS;
+			segpair.first  = beginS;
 			//std::cout  <<"parsing spans: " << beginS << " " <<endS << " and remdoel "<< std::endl;
 			segpair.second = endS;
-			seg_vector_.push_back( segpair );	// parse at runtime for possible length changes
+			seg_vector_.push_back( segpair ); // parse at runtime for possible length changes
 
 		}//end seeds
 	}//end b-tags

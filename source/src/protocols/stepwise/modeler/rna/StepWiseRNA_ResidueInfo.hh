@@ -30,58 +30,58 @@ namespace stepwise {
 namespace modeler {
 namespace rna {
 
-	struct Residue_info{
- 	  std::string name;
-  	core::Size seq_num; //Full_pose_sequence_num
-	};
+struct Residue_info{
+	std::string name;
+	core::Size seq_num; //Full_pose_sequence_num
+};
 
-	void
-	print_torsion_info( core::pose::Pose const & pose, core::Size const seq_num, core::Size const rna_torsion_number, std::string const & type );
+void
+print_torsion_info( core::pose::Pose const & pose, core::Size const seq_num, core::Size const rna_torsion_number, std::string const & type );
 
-	utility::vector1 < Residue_info >
-	Convert_rebuild_residue_string_to_list( std::string const & rebuild_residue_string );
+utility::vector1 < Residue_info >
+Convert_rebuild_residue_string_to_list( std::string const & rebuild_residue_string );
 
-	void
-	output_residue_struct( Residue_info const & residue );
+void
+output_residue_struct( Residue_info const & residue );
 
-	std::string
-	get_one_letter_name( std::string const & three_letter_name );
+std::string
+get_one_letter_name( std::string const & three_letter_name );
 
-	std::string
-	get_three_letter_name( std::string const & one_letter_name );
+std::string
+get_three_letter_name( std::string const & one_letter_name );
 
-	core::Size
-	get_max_seq_num_from_res_map( std::map< core::Size, core::Size > const & my_map );
+core::Size
+get_max_seq_num_from_res_map( std::map< core::Size, core::Size > const & my_map );
 
-	void
-	output_res_map( std::map< core::Size, core::Size > const & my_map, core::Size const max_seq_num );
+void
+output_res_map( std::map< core::Size, core::Size > const & my_map, core::Size const max_seq_num );
 
-	void
-	output_copy_dofs( utility::vector1< Residue_info > copy_dofs );
+void
+output_copy_dofs( utility::vector1< Residue_info > copy_dofs );
 
-	utility::vector1< Residue_info >
-	get_copy_dofs_from_fasta( std::string const & full_fasta_sequence );
+utility::vector1< Residue_info >
+get_copy_dofs_from_fasta( std::string const & full_fasta_sequence );
 
-	Residue_info
-	get_residue_from_seq_num( core::Size const & seq_num, utility::vector1 < Residue_info > const & copy_dofs );
+Residue_info
+get_residue_from_seq_num( core::Size const & seq_num, utility::vector1 < Residue_info > const & copy_dofs );
 
-	bool
-	contain_residue_at_seq_num( core::Size seq_num, utility::vector1 < Residue_info > const & copy_dofs );
+bool
+contain_residue_at_seq_num( core::Size seq_num, utility::vector1 < Residue_info > const & copy_dofs );
 
-	utility::vector1 < utility::vector1 < Residue_info > >
-	create_strand_list( utility::vector1 < Residue_info > const & copy_dofs );
+utility::vector1 < utility::vector1 < Residue_info > >
+create_strand_list( utility::vector1 < Residue_info > const & copy_dofs );
 
-	utility::vector1 < Residue_info >
-	set_difference( utility::vector1 < Residue_info > const & copy_dofs_1, utility::vector1 < Residue_info > const & copy_dofs_2 );
+utility::vector1 < Residue_info >
+set_difference( utility::vector1 < Residue_info > const & copy_dofs_1, utility::vector1 < Residue_info > const & copy_dofs_2 );
 
-	utility::vector1 < Residue_info >
-	set_union( utility::vector1 < Residue_info > const & copy_dofs_1, utility::vector1 < Residue_info > const & copy_dofs_2 );
+utility::vector1 < Residue_info >
+set_union( utility::vector1 < Residue_info > const & copy_dofs_1, utility::vector1 < Residue_info > const & copy_dofs_2 );
 
-	bool
-	copy_dofs_sort_criterion( Residue_info residue_info_1, Residue_info residue_info_2 );
+bool
+copy_dofs_sort_criterion( Residue_info residue_info_1, Residue_info residue_info_2 );
 
-	void
-	sort_copy_dofs( utility::vector1< Residue_info > & copy_dofs );
+void
+sort_copy_dofs( utility::vector1< Residue_info > & copy_dofs );
 
 
 } //rna

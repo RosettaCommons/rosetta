@@ -7,23 +7,23 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @brief Hold chi- tensor information for the Pseudocontact Shift calculation
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890 JBNMR 2008  41:179-189 schmitz et all will explains the tensor convention used
- ///
- /// @authorv Christophe Schmitz , Kala Bharath Pilla
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @brief Hold chi- tensor information for the Pseudocontact Shift calculation
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890 JBNMR 2008  41:179-189 schmitz et all will explains the tensor convention used
+///
+/// @authorv Christophe Schmitz , Kala Bharath Pilla
+///
+////////////////////////////////////////////////
 
 
 #ifndef INCLUDED_protocols_scoring_methods_pcsTs4_PseudocontactShiftTensor_hh
@@ -44,27 +44,27 @@
 #include <string>
 
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcsTs4{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcsTs4 {
 
 class PCS_tensor_Ts4 {
 private:
 
-  core::Real a_; //alpha
-  core::Real b_; //beta
-  core::Real g_; //gamma
-  core::Real ax_; //axial component
-  core::Real rh_; //rhombic component
+	core::Real a_; //alpha
+	core::Real b_; //beta
+	core::Real g_; //gamma
+	core::Real ax_; //axial component
+	core::Real rh_; //rhombic component
 	//ideally, alpha beta gamma ax and rh will follow the UTR convention
 	//see numbat paper JBNMR 2008  41:179-189 schmitz et all
 
-  core::Real chi_xx_;
-  core::Real chi_yy_;
-  core::Real chi_xy_;
-  core::Real chi_xz_;
-  core::Real chi_yz_;
+	core::Real chi_xx_;
+	core::Real chi_yy_;
+	core::Real chi_xy_;
+	core::Real chi_xz_;
+	core::Real chi_yz_;
 
 	std::string label_; //most likely the filename of the pcs exepriment
 	//Used to identify which data has been used in case of multiple lanthanides
@@ -84,12 +84,12 @@ public:
 	PCS_tensor_Ts4 &
 	operator=(PCS_tensor_Ts4 const & other);
 
-  PCS_tensor_Ts4(  core::Real const chi_xx,
-							 core::Real const chi_yy,
-							 core::Real const chi_xy,
-							 core::Real const chi_xz,
-							 core::Real const chi_yz,
-							 std::string const label);
+	PCS_tensor_Ts4(  core::Real const chi_xx,
+		core::Real const chi_yy,
+		core::Real const chi_xy,
+		core::Real const chi_xz,
+		core::Real const chi_yz,
+		std::string const label);
 
 	core::Real
 	delta_X_xx() const;
@@ -103,19 +103,19 @@ public:
 	core::Real
 	delta_chi_zz() const;
 
-  core::Real
+	core::Real
 	chi_xx() const;
 
-  core::Real
+	core::Real
 	chi_yy() const;
 
-  core::Real
+	core::Real
 	chi_xy() const;
 
-  core::Real
+	core::Real
 	chi_xz() const;
 
-  core::Real
+	core::Real
 	chi_yz() const;
 
 	void
@@ -126,13 +126,13 @@ public:
 
 	void
 	reset_tensor(core::Real const chi_xx,
-							 core::Real const chi_yy,
-							 core::Real const chi_xy,
-							 core::Real const chi_xz,
-							 core::Real const chi_yz);
+		core::Real const chi_yy,
+		core::Real const chi_xy,
+		core::Real const chi_xz,
+		core::Real const chi_yz);
 
-	 friend std::ostream &
-	 operator<<(std::ostream& out, const PCS_tensor_Ts4 &PCS_t);
+	friend std::ostream &
+	operator<<(std::ostream& out, const PCS_tensor_Ts4 &PCS_t);
 };
 
 

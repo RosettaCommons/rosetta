@@ -76,7 +76,7 @@ PoseSelectorFactory::factory_register( PoseSelectorCreatorOP creator )
 
 /// @brief return new PoseSelector by key lookup in poseselector_creator_map_ (new PoseSelector parses Tag if provided)
 PoseSelectorOP
-PoseSelectorFactory::newPoseSelector(	std::string const & pose_selector_type )
+PoseSelectorFactory::newPoseSelector( std::string const & pose_selector_type )
 {
 	PoseSelectorMap::const_iterator iter( poseselector_creator_map_.find( pose_selector_type ) );
 	if ( iter != poseselector_creator_map_.end() ) {
@@ -84,11 +84,11 @@ PoseSelectorFactory::newPoseSelector(	std::string const & pose_selector_type )
 			throw utility::excn::EXCN_RosettaScriptsOption( "Error: PoseSelectorCreatorOP prototype for " + pose_selector_type + " is NULL!" );
 		}
 		return iter->second->create_selector();
-	}
-	else {
+	} else {
 		TR<<"Available pose selectors: ";
-		for( PoseSelectorMap::const_iterator it = poseselector_creator_map_.begin(); it != poseselector_creator_map_.end(); ++it )
+		for ( PoseSelectorMap::const_iterator it = poseselector_creator_map_.begin(); it != poseselector_creator_map_.end(); ++it ) {
 			TR<<it->first<<", ";
+		}
 		TR<<std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption( pose_selector_type + " is not known to the PoseSelectorFactory. Was it registered via a PoseSelectorRegistrator in one of the init.cc files?" );
 		return NULL;
@@ -102,7 +102,7 @@ PoseSelectorFactory::newPoseSelector(
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map & filters,
 	protocols::moves::Movers_map const & movers,
-	core::pose::Pose const & pose	
+	core::pose::Pose const & pose
 ) {
 	PoseSelectorOP selector( newPoseSelector( tag->getName() ) );
 	runtime_assert( selector != 0 );

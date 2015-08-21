@@ -176,16 +176,16 @@ LigandBaseProtocol::make_tweaked_scorefxn(
 	// enough to get new "bonds" in PyMol (though no more interpenetrating rings even at 0.004).
 	// However, using 0.04 meant total fa_intra_rep ~ 20 in most structures, which I'm concerned
 	// biased the selection of ligand conformers too much.  Needs more rigorous testing.
-	if( sfxn->has_zero_weight( fa_intra_rep ) ) sfxn->set_weight( fa_intra_rep, 0.004 ); // from standard.wts
+	if ( sfxn->has_zero_weight( fa_intra_rep ) ) sfxn->set_weight( fa_intra_rep, 0.004 ); // from standard.wts
 
 	// For some reason, electrostatics is not in the .wts files...
 	// fa_elec has a different dielectric constant than Rosetta++ (10r vs. 6r in ++)
 	// It also includes all atom pairs instead of only ligand-protein interactions.
-	if( sfxn->has_zero_weight( fa_elec ) ) sfxn->set_weight( fa_elec, 0.25 ); // from Meiler & Baker 2006
+	if ( sfxn->has_zero_weight( fa_elec ) ) sfxn->set_weight( fa_elec, 0.25 ); // from Meiler & Baker 2006
 
-	if( estat_upweight ) sfxn->set_weight( fa_elec, (10./6.) * sfxn->get_weight( fa_elec ) ); // make like Rosetta++
+	if ( estat_upweight ) sfxn->set_weight( fa_elec, (10./6.) * sfxn->get_weight( fa_elec ) ); // make like Rosetta++
 
-	if( hbonds_downweight ) {
+	if ( hbonds_downweight ) {
 		sfxn->set_weight( hbond_sc, 1.30 ); // from Lin Jiang
 		sfxn->set_weight( hbond_bb_sc, 1.30 ); // from Lin Jiang
 	}
@@ -193,13 +193,13 @@ LigandBaseProtocol::make_tweaked_scorefxn(
 	// You can adjust later, but at least make sure it's enabled!
 	// Shouldn't cause problems when no constraints are present.
 	// Need atom_pair_constraint and angle_constraint to work with EnzDes constraints.
-	if( sfxn->has_zero_weight( coordinate_constraint ) ) sfxn->set_weight( coordinate_constraint, 1.0 );
-	if( sfxn->has_zero_weight( atom_pair_constraint ) )  sfxn->set_weight( atom_pair_constraint, 1.0 );
-	if( sfxn->has_zero_weight( angle_constraint ) )      sfxn->set_weight( angle_constraint, 1.0 );
-	if( sfxn->has_zero_weight( dihedral_constraint ) )   sfxn->set_weight( dihedral_constraint, 1.0 );
-	if( sfxn->has_zero_weight( chainbreak ) )            sfxn->set_weight( chainbreak, 1.0 );
-	if( sfxn->has_zero_weight( omega ) )                 sfxn->set_weight( omega, 0.5 );
-	if( sfxn->has_zero_weight( rama ) )                  sfxn->set_weight( rama, 0.2 );
+	if ( sfxn->has_zero_weight( coordinate_constraint ) ) sfxn->set_weight( coordinate_constraint, 1.0 );
+	if ( sfxn->has_zero_weight( atom_pair_constraint ) )  sfxn->set_weight( atom_pair_constraint, 1.0 );
+	if ( sfxn->has_zero_weight( angle_constraint ) )      sfxn->set_weight( angle_constraint, 1.0 );
+	if ( sfxn->has_zero_weight( dihedral_constraint ) )   sfxn->set_weight( dihedral_constraint, 1.0 );
+	if ( sfxn->has_zero_weight( chainbreak ) )            sfxn->set_weight( chainbreak, 1.0 );
+	if ( sfxn->has_zero_weight( omega ) )                 sfxn->set_weight( omega, 0.5 );
+	if ( sfxn->has_zero_weight( rama ) )                  sfxn->set_weight( rama, 0.2 );
 
 	return sfxn;
 }
@@ -216,20 +216,20 @@ void select_best_poses(
 	//scores_out.reserve( scores_in.size() );
 	//std::cout << "scores_in.size() = " << scores_in.size() << "\n";
 	//std::cout << "scores_out.size() = " << scores_out.size() << " (0)\n";
-	for(core::Size ii = 1; ii <= scores_in.size(); ++ii) {
+	for ( core::Size ii = 1; ii <= scores_in.size(); ++ii ) {
 		// Drop out cases where the ligand isn't touching the protein
 		core::import_pose::atom_tree_diffs::Scores scores = scores_in[ii].second;
-		if( scores.find("ligand_is_touching") == scores.end()
-		||  scores["ligand_is_touching"] != 0 ) {
+		if ( scores.find("ligand_is_touching") == scores.end()
+				||  scores["ligand_is_touching"] != 0 ) {
 			scores_out.push_back( scores_in[ii] );
 		}
 	}
 	//std::cout << "scores_out.size() = " << scores_out.size() << " (1)\n";
 	core::import_pose::atom_tree_diffs::AtomTreeDiff::sort_by("total_score", scores_out);
 	//std::cout << "scores_out.size() = " << scores_out.size() << " (2)\n";
-	if( to_keep <= 1.0  && to_keep >= 0.0 ) {
+	if ( to_keep <= 1.0  && to_keep >= 0.0 ) {
 		scores_out.resize( (core::Size) std::ceil(to_keep * scores_out.size()) );
-	} else if ( to_keep > 1.0 && scores_out.size() > to_keep ){
+	} else if ( to_keep > 1.0 && scores_out.size() > to_keep ) {
 		scores_out.resize( (core::Size) std::ceil(to_keep) );
 	} else {
 		utility_exit_with_message("Cannot select a negative quantity of poses.");
@@ -238,7 +238,7 @@ void select_best_poses(
 	// Although not everyone will care, this is useful for some applications.
 	core::import_pose::atom_tree_diffs::AtomTreeDiff::sort_by("interface_delta", scores_out);
 	//for(core::Size jj = 1; jj <= 3; ++jj)
-	//	std::cout << "Best structure: " << scores_out[jj].first << '\n';
+	// std::cout << "Best structure: " << scores_out[jj].first << '\n';
 }
 
 void select_best_poses(
@@ -259,7 +259,7 @@ void select_best_poses(
 	core::import_pose::atom_tree_diffs::ScoresPairList scores_list2;
 	scores_list2.reserve( atdiff.scores().size() );
 	select_best_poses(atdiff, scores_list2);
-	for(core::Size ii = 1; ii <= scores_list2.size(); ++ii) {
+	for ( core::Size ii = 1; ii <= scores_list2.size(); ++ii ) {
 		tags_out.insert( scores_list2[ii].first );
 	}
 }
@@ -276,15 +276,15 @@ void frac_atoms_within(
 	using namespace core::chemical;
 	using namespace core::conformation;
 	// name() and total number of atoms may actually be different, if we're comparing e.g. tautomers
-	if( rsd1.type().name3() != rsd2.type().name3() ) utility_exit_with_message("Residue type name3 mismatch");
-	if( rsd1.nheavyatoms()  != rsd2.nheavyatoms()  ) utility_exit_with_message("Residue number-of-heavy-atoms mismatch");
+	if ( rsd1.type().name3() != rsd2.type().name3() ) utility_exit_with_message("Residue type name3 mismatch");
+	if ( rsd1.nheavyatoms()  != rsd2.nheavyatoms()  ) utility_exit_with_message("Residue number-of-heavy-atoms mismatch");
 	fractions_out.resize(cutoffs.size(), 0);
 	int counter = 0;
 	// Make atom-number translation table
 	AutomorphismIterator ai( rsd1.type() );
 	AtomIndices old2new( ai.next() );
 	// For each permutation of automorphisms...
-	while( old2new.size() > 0 ) {
+	while ( old2new.size() > 0 ) {
 		counter++;
 		//if( counter%10000 == 0 ) tr.Info << counter << " so far..." << std::endl;
 
@@ -296,7 +296,7 @@ void frac_atoms_within(
 
 		// Each cutoff might find its maximum fraction from a different automorphism (?)
 		// I'm not sure what this means, if anything, for the validity of this measure...
-		for(core::Size i = 1; i <= cutoffs.size(); ++i) {
+		for ( core::Size i = 1; i <= cutoffs.size(); ++i ) {
 			core::Real const cutoff2 = cutoffs[i] * cutoffs[i];
 			core::Real nwithin( 0 );
 			core::Real natoms( 0 );
@@ -306,11 +306,11 @@ void frac_atoms_within(
 					// This is the step where we effectively re-assign atom names
 					// in hopes of reducing RMS (e.g. by "flipping" a phenyl ring).
 					core::Vector diff = rsd1.xyz( j ) - rsd2.xyz( old2new[j] );
-					if( diff.length_squared() <= cutoff2 ) nwithin += 1;
+					if ( diff.length_squared() <= cutoff2 ) nwithin += 1;
 				}
 			}
 			core::Real fracwithin = (natoms > 0 ? nwithin / natoms : 0);
-			if( fracwithin > fractions_out[i] ) {
+			if ( fracwithin > fractions_out[i] ) {
 				//tr.Debug << "New rms of " << curr_rms << " beats previous best of " << best_rms << std::endl;
 				fractions_out[i] = fracwithin;
 			}
@@ -322,11 +322,11 @@ void frac_atoms_within(
 
 core::Size
 LigandBaseProtocol::get_ligand_jump_id(
-		core::pose::Pose const & pose
+	core::pose::Pose const & pose
 )const{
 	int jump_id = pose.num_jump(); // assume ligand attached by last jump
 	if ( jump_id == 0 ) {
-			utility_exit_with_message("Pose has no jumps!");
+		utility_exit_with_message("Pose has no jumps!");
 	}
 	return jump_id;
 }
@@ -357,8 +357,8 @@ LigandBaseProtocol::get_ligand_id(
 	FArray1D_bool is_upstream ( pose.total_residue(), false );
 	pose.fold_tree().partition_by_jump( jump_id, is_upstream );
 	core::Size num_downstream = 0;
-	for(core::Size i = 1; i <= pose.total_residue(); ++i) if(!is_upstream(i)) num_downstream += 1;
-	if(lig_id != pose.total_residue() || num_downstream != 1 || is_upstream(lig_id) || pose.residue(lig_id).is_polymer()) {
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) if ( !is_upstream(i) ) num_downstream += 1;
+	if ( lig_id != pose.total_residue() || num_downstream != 1 || is_upstream(lig_id) || pose.residue(lig_id).is_polymer() ) {
 		utility_exit_with_message("Expected ligand to be last residue in pose and only one downstream of the jump");
 	}
 
@@ -366,13 +366,13 @@ LigandBaseProtocol::get_ligand_id(
 }
 
 core::Vector LigandBaseProtocol::choose_desired_centroid(
-		core::pose::Pose const & pose,
-		core::Size jump_id,
-		utility::vector1< core::Vector >  start_from_pts
+	core::pose::Pose const & pose,
+	core::Size jump_id,
+	utility::vector1< core::Vector >  start_from_pts
 ){
 	// Choose desired centroid:  either -start_from or the current position.
 	core::Vector desired_centroid;
-	if( !start_from_pts.empty() ) {
+	if ( !start_from_pts.empty() ) {
 		int const which_triple = numeric::random::rg().random_range(1, start_from_pts.size());
 		desired_centroid = start_from_pts[ which_triple ];
 	} else {
@@ -400,7 +400,7 @@ void LigandBaseProtocol::move_ligand_to_desired_centroid(
 	//std::cout << "Centroid before: " << ligand_centroid << std::endl;
 	core::Vector const trans_vec = desired_centroid - ligand_centroid;
 	core::Real const trans_len = trans_vec.length();
-	if(trans_len > 1e-3) { // otherwise we get NaNs
+	if ( trans_len > 1e-3 ) { // otherwise we get NaNs
 		protocols::rigid::RigidBodyTransMover mover( pose, jump_id);
 		mover.step_size(trans_len);
 		mover.trans_axis(trans_vec);
@@ -430,27 +430,27 @@ LigandBaseProtocol::make_movemap(
 	utility::vector1< bool > allow_min_bb( pose.total_residue(), false );
 	if ( !include_all_rsds ) {
 		find_interface_rsds(pose, jump_id, sc_padding, allow_min);
-		if( include_backbone ) {
+		if ( include_backbone ) {
 			find_interface_backbone(pose, jump_id, bb_interface_cutoff_, dont_care, allow_min_bb);
 		}
 	}
 	if ( !include_ligands ) {
-		for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i) {
+		for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
 			if ( !pose.residue(i).is_polymer() ) allow_min(i) = false;
 		}
 	}
-	for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i) {
+	for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
 		if ( allow_min(i) ) {
 			//std::cout << "Allow residue to minimize: " << i << "\n";
 			movemap->set_chi(i, true);
 			if ( include_backbone && allow_min_bb[i] ) movemap->set_bb(i, true);
 		}
 	}
-	if( include_water ) {
-		for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i) {
-			if( ! pose.residue(i).has_property("WATER") ) continue;
+	if ( include_water ) {
+		for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+			if ( ! pose.residue(i).has_property("WATER") ) continue;
 			core::kinematics::Edge const & e = pose.fold_tree().get_residue_edge(i);
-			if( ! e.is_jump() ) continue;
+			if ( ! e.is_jump() ) continue;
 			movemap->set_jump( e.label(), true );
 			TR << "Minimize water jump " << e.label() << " to residue " << i << " " << pose.residue_type(i).name3() << std::endl;
 		}
@@ -482,26 +482,27 @@ LigandBaseProtocol::make_packer_task(
 	// Meiler and Baker points out that in some cases you want this off for honesty's sake.
 	//pack_task->or_include_current(true);
 
-	for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i) {
+	for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
 		core::conformation::Residue const & this_rsd = pose.residue(i);
-		if( !this_rsd.is_polymer() && ligand_protonation ) {
+		if ( !this_rsd.is_polymer() && ligand_protonation ) {
 			using namespace core::chemical;
 			ResidueTypeSet const & rsd_type_set = this_rsd.residue_type_set();
 			ResidueTypeCOPs allowed_types = rsd_type_set.name3_map_DO_NOT_USE( this_rsd.name3() ); // a vector1
-			for( core::Size j = 1; j <= allowed_types.size(); ++j ) {
-				if( allowed_types[j]->name() == this_rsd.name() ) continue; // already in the task's list
+			for ( core::Size j = 1; j <= allowed_types.size(); ++j ) {
+				if ( allowed_types[j]->name() == this_rsd.name() ) continue; // already in the task's list
 				pack_task->nonconst_residue_task( i ).allow_noncanonical_aa( allowed_types[j]->name() );
 			}
 			TR << "Allowed residues at position " << i << ":" << std::endl;
-			for(ResidueLevelTask::ResidueTypeCOPListConstIter rt = pack_task->nonconst_residue_task( i ).allowed_residue_types_begin();
-				rt != pack_task->nonconst_residue_task( i ).allowed_residue_types_end(); ++rt) {
+			for ( ResidueLevelTask::ResidueTypeCOPListConstIter rt = pack_task->nonconst_residue_task( i ).allowed_residue_types_begin();
+					rt != pack_task->nonconst_residue_task( i ).allowed_residue_types_end(); ++rt ) {
 				TR << "  " << (*rt)->name() << std::endl;
 			}
 		} else {
 			pack_task->nonconst_residue_task( i ).restrict_to_repacking();
 		}
-		if ( !allow_repack(i) /*|| !pose.residue(i).is_polymer()*/ )
+		if ( !allow_repack(i) /*|| !pose.residue(i).is_polymer()*/ ) {
 			pack_task->nonconst_residue_task( i ).prevent_repacking();
+		}
 	}
 
 	return pack_task;
@@ -530,8 +531,8 @@ LigandBaseProtocol::make_packer_task_ligand_only(
 ) const
 {
 	FArray1D_bool allow_repack( pose.total_residue(), false );
-	for(core::Size i = 1; i <= pose.total_residue(); ++i) {
-		if( !pose.residue(i).is_polymer() ) allow_repack(i) = true;
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( !pose.residue(i).is_polymer() ) allow_repack(i) = true;
 	}
 	return make_packer_task(pose, allow_repack, ligand_protonation);
 }
@@ -560,7 +561,7 @@ LigandBaseProtocol::find_interface_rsds(
 	is_interface.dimension( pose.total_residue(), false ); // init all positions to false
 	FArray1D_bool is_upstream ( pose.total_residue(), false );
 	pose.fold_tree().partition_by_jump( jump_id, is_upstream );
-	for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i) {
+	for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
 		// all residues on ligand side can move
 		if ( ! is_upstream(i) ) {
 			is_interface(i) = true;
@@ -569,10 +570,10 @@ LigandBaseProtocol::find_interface_rsds(
 		}
 		// on protein side, have to do distance check
 		core::conformation::Residue const & prot_rsd = pose.residue(i);
-		for(core::Size j = 1, j_end = pose.total_residue(); j <= j_end; ++j) {
+		for ( core::Size j = 1, j_end = pose.total_residue(); j <= j_end; ++j ) {
 			if ( is_upstream(j) ) continue; // compare against only ligand residues
 			core::conformation::Residue const & lig_rsd = pose.residue(j);
-			for(core::Size k = 1, k_end = lig_rsd.nheavyatoms(); k <= k_end; ++k) {
+			for ( core::Size k = 1, k_end = lig_rsd.nheavyatoms(); k <= k_end; ++k ) {
 				double dist2 = lig_rsd.xyz(k).distance_squared( prot_rsd.xyz(prot_rsd.nbr_atom()) );
 				double cutoff = prot_rsd.nbr_radius() + 6.0 + padding;
 				if ( dist2 <= cutoff * cutoff ) {
@@ -610,7 +611,7 @@ LigandBaseProtocol::find_interface_backbone(
 
 	FArray1D_bool is_upstream ( pose.total_residue(), false );
 	pose.fold_tree().partition_by_jump( jump_id, is_upstream );
-	for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i) {
+	for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
 		// all residues on ligand side can move
 		if ( ! is_upstream(i) ) {
 			is_interface[i] = true;
@@ -619,23 +620,23 @@ LigandBaseProtocol::find_interface_backbone(
 		}
 		// on protein side, have to do distance check
 		core::conformation::Residue const & prot_rsd = pose.residue(i);
-		if( !prot_rsd.is_protein() ) continue; // only minimize protein backbone, not other stuff.  Maybe also DNA/RNA in the future?
+		if ( !prot_rsd.is_protein() ) continue; // only minimize protein backbone, not other stuff.  Maybe also DNA/RNA in the future?
 		core::Vector prot_cb;
-		if( prot_rsd.has("CB") ) prot_cb = prot_rsd.xyz("CB");
-		else if( prot_rsd.has("CA") ) prot_cb = prot_rsd.xyz("CA"); // GLY
+		if ( prot_rsd.has("CB") ) prot_cb = prot_rsd.xyz("CB");
+		else if ( prot_rsd.has("CA") ) prot_cb = prot_rsd.xyz("CA"); // GLY
 		else {
 			TR << "Can't find CA/CB for residue " << i << std::endl;
 			continue; // non-protein residues not part of the interface
 		}
-		for(core::Size j = 1, j_end = pose.total_residue(); j <= j_end; ++j) {
+		for ( core::Size j = 1, j_end = pose.total_residue(); j <= j_end; ++j ) {
 			if ( is_upstream(j) ) continue; // compare against only ligand residues
 			core::conformation::Residue const & lig_rsd = pose.residue(j);
-			for(core::Size k = 1, k_end = lig_rsd.nheavyatoms(); k <= k_end; ++k) {
+			for ( core::Size k = 1, k_end = lig_rsd.nheavyatoms(); k <= k_end; ++k ) {
 				double dist2 = lig_rsd.xyz(k).distance_squared( prot_cb );
 				if ( dist2 <= cutoff2 ) {
 					is_interface[i] = true;
 					//std::cout << "{bb iface " << prot_rsd.name3() << " " << i << "} "
-					//	<< prot_cb.x() << " " << prot_cb.y() << " " << prot_cb.z() << "\n";
+					// << prot_cb.x() << " " << prot_cb.y() << " " << prot_cb.z() << "\n";
 					num_in_interface += 1;
 					goto END_LIGRES_LOOP; // C++ lacks multi-level break  :(
 				}
@@ -647,19 +648,19 @@ LigandBaseProtocol::find_interface_backbone(
 		<< " residues (" << 100*(double(num_in_interface) / double(pose.total_residue())) << "%)" << std::endl;
 
 	int const window = 3; // how many residues on either side of the truly mobile ones?
-	for(Size i = 1, nres = pose.total_residue(); i <= nres; ++i) {
-		if( pose.residue_type(i).is_polymer() ) {
+	for ( Size i = 1, nres = pose.total_residue(); i <= nres; ++i ) {
+		if ( pose.residue_type(i).is_polymer() ) {
 			// Track backwards
-			for(Size j = i; j >= Size(std::max(1,int(i)-window)); --j) {
-				if( !pose.residue_type(j).is_polymer() || pose.residue(j).is_upper_terminus() ) break;
+			for ( Size j = i; j >= Size(std::max(1,int(i)-window)); --j ) {
+				if ( !pose.residue_type(j).is_polymer() || pose.residue(j).is_upper_terminus() ) break;
 				is_around_interface[i] = is_around_interface[i] | is_interface[j];
-				if( pose.residue(j).is_lower_terminus() ) break;
+				if ( pose.residue(j).is_lower_terminus() ) break;
 			}
 			// Track forwards
-			for(Size j = i; j <= std::min(nres,i+window); ++j) {
-				if( !pose.residue_type(j).is_polymer() || pose.residue(j).is_lower_terminus() ) break;
+			for ( Size j = i; j <= std::min(nres,i+window); ++j ) {
+				if ( !pose.residue_type(j).is_polymer() || pose.residue(j).is_lower_terminus() ) break;
 				is_around_interface[i] = is_around_interface[i] | is_interface[j];
-				if( pose.residue(j).is_upper_terminus() ) break;
+				if ( pose.residue(j).is_upper_terminus() ) break;
 			}
 		}
 		//std::cout << i << " unrestr " << is_interface[i] << " mobile " << is_around_interface[i] << std::endl;
@@ -671,7 +672,7 @@ void
 LigandBaseProtocol::restrain_protein_Calphas(
 	core::pose::Pose & pose,
 	utility::vector1< bool > const & is_restrained,
-		//core::Real stddev_Angstroms,
+	//core::Real stddev_Angstroms,
 	core::scoring::func::FuncOP restr_func
 ) const
 {
@@ -688,7 +689,7 @@ LigandBaseProtocol::restrain_protein_Calphas(
 	// translation-invariant.  So it's a "two-body" energy with this fixed atom.
 	AtomID fixed_pt( pose.atom_tree().root()->atom_id() );
 
-	for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i) {
+	for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
 		if ( pose.residue(i).is_protein() && is_restrained[i] ) { // protein residues
 			Residue const & rsd = pose.residue(i);
 			ResidueType const & rsd_type = pose.residue_type(i);
@@ -697,14 +698,14 @@ LigandBaseProtocol::restrain_protein_Calphas(
 				fixed_pt,
 				rsd.xyz("CA"),
 				restr_func
-			) );
+				) );
 			TR.Debug << "Restraining C-alpha of residue " << i << std::endl;
 			pose.add_constraint( constraint );
 		}
 	}
 
 	// You can adjust later, but at least make sure it's enabled!
-	if( scorefxn_->has_zero_weight(core::scoring::coordinate_constraint) ) {
+	if ( scorefxn_->has_zero_weight(core::scoring::coordinate_constraint) ) {
 		scorefxn_->set_weight( core::scoring::coordinate_constraint, 1.0 );
 	}
 }
@@ -736,12 +737,12 @@ LigandBaseProtocol::restrain_ligand_nbr_atom(
 		fixed_pt,
 		rsd.nbr_atom_xyz(),
 		restr_func
-	) );
+		) );
 	TR << "Restraining ligand residue " << lig_id << std::endl;
 	pose.add_constraint( constraint );
 
 	// You can adjust later, but at least make sure it's enabled!
-	if( scorefxn_->has_zero_weight(core::scoring::coordinate_constraint) ) {
+	if ( scorefxn_->has_zero_weight(core::scoring::coordinate_constraint) ) {
 		scorefxn_->set_weight( core::scoring::coordinate_constraint, 1.0 );
 	}
 	return constraint;
@@ -775,7 +776,7 @@ LigandBaseProtocol::setup_bbmin_foldtree(
 
 	// Set allow_move_bb to only restrain mobile residues
 	utility::vector1< bool >  allow_move_bb( nres, true );
-	for(core::Size i = 1; i <= nres; ++i) {
+	for ( core::Size i = 1; i <= nres; ++i ) {
 		//allow_move_bb[i] = mobile_bb[i] & !unrestr_bb[i];
 		allow_move_bb[i] = mobile_bb[i];
 	}
@@ -797,8 +798,8 @@ void
 LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 	core::pose::Pose & pose,
 	core::Size const & jump_id,
- 	utility::vector1< bool > const & mobile_bb,
- 	core::Size const & lig_id
+	utility::vector1< bool > const & mobile_bb,
+	core::Size const & lig_id
 ) const
 {
 
@@ -807,24 +808,24 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 	core::Size const nres = pose.total_residue();
 
 	//sanity check
-	if(mobile_bb.size() != nres){
+	if ( mobile_bb.size() != nres ) {
 		std::cerr << "Error: vector containing mobile residue information doesn't have the same number of residues as the pose." << std::endl;
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 	}
 
 	// Attach ligand to nearest CA that is not mobile!
 	// This used to be activated by the -shorten_jump flag, but now is the default
-	if( lig_id != 0 ){ //flo sept '12this function now can also  be used to modify fold trees for poses that contain new ligands
+	if ( lig_id != 0 ) { //flo sept '12this function now can also  be used to modify fold trees for poses that contain new ligands
 		Size attach_pt = 1; // for now, attach ligand to residue 1
 		core::Real shortest_dist2 = 1e99;
 		core::Vector lig_nbr_atom = pose.residue(lig_id).nbr_atom_xyz();
-		for(core::Size i = 1; i <= nres; ++i) {
-			if( !pose.residue(i).is_polymer() ) continue;
-			if( i == lig_id ) continue; // should be unneccessary
-			if( !pose.residue(i).has("CA") ) continue;
-			if( mobile_bb[i] ) continue;
+		for ( core::Size i = 1; i <= nres; ++i ) {
+			if ( !pose.residue(i).is_polymer() ) continue;
+			if ( i == lig_id ) continue; // should be unneccessary
+			if ( !pose.residue(i).has("CA") ) continue;
+			if ( mobile_bb[i] ) continue;
 			core::Real const new_dist2 = lig_nbr_atom.distance_squared( pose.residue(i).xyz("CA") );
-			if( new_dist2 < shortest_dist2 ) {
+			if ( new_dist2 < shortest_dist2 ) {
 				shortest_dist2 = new_dist2;
 				attach_pt = i;
 			}
@@ -834,12 +835,12 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 		FoldTree f_new;
 		// Without the stupid cast-to-const, GCC tries to use the private, non-const version.
 		FoldTree const & f_const = f;
-		for( FoldTree::const_iterator e = f_const.begin(), edge_end = f_const.end(); e != edge_end; ++e ) {
+		for ( FoldTree::const_iterator e = f_const.begin(), edge_end = f_const.end(); e != edge_end; ++e ) {
 			bool contains_attach_pt = (( e->start() < int(attach_pt) && int(attach_pt) < e->stop() )
 				|| ( e->stop() < int(attach_pt) && int(attach_pt) < e->start() ));
-			if( e->label() == (int) jump_id ) {
+			if ( e->label() == (int) jump_id ) {
 				f_new.add_edge( attach_pt, lig_id, jump_id );
-			} else if( e->label() == Edge::PEPTIDE && contains_attach_pt ) {
+			} else if ( e->label() == Edge::PEPTIDE && contains_attach_pt ) {
 				f_new.add_edge( e->start(), attach_pt, Edge::PEPTIDE );
 				f_new.add_edge( attach_pt,  e->stop(), Edge::PEPTIDE );
 			} else {
@@ -848,11 +849,11 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 		}
 		f = f_new;
 		TR << "Moved ligand " << f << std::endl;
-		if( !f.connected() ) utility_exit_with_message("Fold tree not connected?!");
-		if( !f.check_fold_tree() ) utility_exit_with_message("Fold tree did not pass check!");
-		if( old_njump != f.num_jump() ) utility_exit_with_message("Number of jumps changed?!");
-		if( old_nres != f.nres() ) utility_exit_with_message("Number of residues changed?!");
-		if( lig_id != (Size) f.downstream_jump_residue(jump_id) ) utility_exit_with_message("Ligand no longer at end of last jump!");
+		if ( !f.connected() ) utility_exit_with_message("Fold tree not connected?!");
+		if ( !f.check_fold_tree() ) utility_exit_with_message("Fold tree did not pass check!");
+		if ( old_njump != f.num_jump() ) utility_exit_with_message("Number of jumps changed?!");
+		if ( old_nres != f.nres() ) utility_exit_with_message("Number of residues changed?!");
+		if ( lig_id != (Size) f.downstream_jump_residue(jump_id) ) utility_exit_with_message("Ligand no longer at end of last jump!");
 	}
 
 	{
@@ -862,12 +863,12 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 		int new_jump = f.num_jump();
 		// Without the stupid cast-to-const, GCC tries to use the private, non-const version.
 		FoldTree const & f_const = f;
-		for( FoldTree::const_iterator edge_itr = f_const.begin(), edge_end = f_const.end(); edge_itr != edge_end; ++edge_itr ) {
+		for ( FoldTree::const_iterator edge_itr = f_const.begin(), edge_end = f_const.end(); edge_itr != edge_end; ++edge_itr ) {
 			Size const e_start = edge_itr->start();
 			Size const e_stop = edge_itr->stop();
-			if( e_stop < e_start ) utility_exit_with_message("Not prepared to deal with backwards fold tree edges!");
+			if ( e_stop < e_start ) utility_exit_with_message("Not prepared to deal with backwards fold tree edges!");
 			//std::cout << "Considering edge from " << e_start << " to " << e_stop << ", label " << edge_itr->label() << std::endl;
-			if( !edge_itr->is_polymer() ) {
+			if ( !edge_itr->is_polymer() ) {
 				f_new.add_edge( *edge_itr );
 				continue; // only subdivide "peptide" edges of the fold tree
 			}
@@ -875,18 +876,18 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 			using std::max; using std::min;
 			using namespace protocols::loops;
 			utility::vector1< Loop > loops;
-			for(Size i = e_start; i <= e_stop; ++i) {
-				while( i <= e_stop && !mobile_bb[i] ) ++i; // find the start of a mobile region
-				if( i > e_stop ) break; // no more mobile regions
+			for ( Size i = e_start; i <= e_stop; ++i ) {
+				while ( i <= e_stop && !mobile_bb[i] ) ++i; // find the start of a mobile region
+				if ( i > e_stop ) break; // no more mobile regions
 				Size const start = i; // first mobile residue
 				//std::cout << "  Start from " << start << std::endl;
-				while( i <= e_stop && mobile_bb[i] ) ++i; // find the end of the mobile region
-				if( i > e_stop ) i = e_stop;
-				if( !mobile_bb[i] ) --i; // back up one unless the end is flexible
+				while ( i <= e_stop && mobile_bb[i] ) ++i; // find the end of the mobile region
+				if ( i > e_stop ) i = e_stop;
+				if ( !mobile_bb[i] ) --i; // back up one unless the end is flexible
 				Size const stop = i; // last mobile residue
 				//std::cout << "  Stop at " << stop << std::endl;
 
-				if( (stop-start+1) < 4 ){
+				if ( (stop-start+1) < 4 ) {
 					// This kind of thing can come up at chain terminii, and should not cause a fatal error.
 					//for(Size k = 1; k <= nres; ++k) std::cerr << k << ' ' << mobile_bb[k] << std::endl;
 					TR.Warning << "WARNING: for backbone minimization to work properly, a stretch of at least 4 residues needs to be allowed to move. Stretch between " << start << " and " << stop << " is too short." << std::endl;
@@ -910,11 +911,11 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 				core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_UPPER, cutpt+1 );
 			}
 			int last_rigid = e_start;
-			for(Size i = 1; i <= loops.size(); ++i) {
+			for ( Size i = 1; i <= loops.size(); ++i ) {
 				Loop const & l = loops[i];
 				int first = max(int(e_start), int(l.start()-1) );
 				int last = min(int(e_stop), int(l.stop()+1) );
-				if( first != last_rigid ) {
+				if ( first != last_rigid ) {
 					f_new.add_edge( last_rigid, first, Edge::PEPTIDE );
 				}
 				f_new.add_edge( first, l.cut(), Edge::PEPTIDE );
@@ -924,7 +925,7 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 				f_new.add_edge( last, l.cut()+1, Edge::PEPTIDE );
 				last_rigid = last;
 			}
-			if( last_rigid != int(e_stop) ) {
+			if ( last_rigid != int(e_stop) ) {
 				f_new.add_edge( last_rigid, e_stop, Edge::PEPTIDE );
 			}
 		}
@@ -933,15 +934,15 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 
 	f.delete_extra_vertices();
 	// Find the first non-mobile residue to be the root
-	for( Size i = 1; i <= nres; ++i ) {
-		if( pose.residue(i).is_polymer() && !mobile_bb[i] ) {
+	for ( Size i = 1; i <= nres; ++i ) {
+		if ( pose.residue(i).is_polymer() && !mobile_bb[i] ) {
 			f.reorder( i );
 			break;
 		}
 	}
 
 	TR << "Final loops foldtree " << f << std::endl;
-	if( !f.check_fold_tree() ) {
+	if ( !f.check_fold_tree() ) {
 		utility_exit_with_message("Invalid fold tree after trying to set up for minimization!");
 	}
 
@@ -950,7 +951,7 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 	pose.fold_tree( f );
 
 	//core::kinematics::dump_pose_kinemage("final_foldtree.kin", pose);
-	if( lig_id != 0 ) runtime_assert( lig_id == get_ligand_id(pose, jump_id) ); // runtime_assert ligand ID hasn't changed
+	if ( lig_id != 0 ) runtime_assert( lig_id == get_ligand_id(pose, jump_id) ); // runtime_assert ligand ID hasn't changed
 
 
 } // reorder_foldtree_around_mobile_regions
@@ -970,8 +971,8 @@ LigandBaseProtocol::get_non_bb_clashing_rotamers(
 	Real bb_bump_cutoff = basic::options::option[ basic::options::OptionKeys::enzdes::bb_bump_cutoff ];
 
 	pack::task::PackerTaskOP help_task = pack::task::TaskFactory::create_packer_task( pose );
-	for( core::Size i = 1; i <= pose.total_residue(); ++i ){
-		if( i == seqpos ) help_task->nonconst_residue_task( i ).restrict_to_repacking();
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( i == seqpos ) help_task->nonconst_residue_task( i ).restrict_to_repacking();
 		else help_task->nonconst_residue_task( i ).prevent_repacking();
 	}
 
@@ -986,10 +987,9 @@ LigandBaseProtocol::get_non_bb_clashing_rotamers(
 
 	pack::rotamers::SingleResidueRotamerLibraryCOP rotlib( core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( *res_type ) );
 
-	if( rotlib ){
+	if ( rotlib ) {
 		rotlib->fill_rotamer_vector( pose, *scofx, *help_task, neighbor_graph, res_type, existing_residue, extra_chi_steps, true /*buried*/, suggested_rotamers );
-	}
-	else return;
+	} else return;
 
 
 	//now that we have the suggested rotamers, let's do the bump_check
@@ -997,14 +997,13 @@ LigandBaseProtocol::get_non_bb_clashing_rotamers(
 	core::conformation::ResidueOP best_rot;
 	core::Real bestE(1000000.0);
 
-	for( utility::vector1< conformation::ResidueOP >::iterator rot_it = suggested_rotamers.begin(); rot_it != suggested_rotamers.end(); ++rot_it )
-	{
+	for ( utility::vector1< conformation::ResidueOP >::iterator rot_it = suggested_rotamers.begin(); rot_it != suggested_rotamers.end(); ++rot_it ) {
 
 		scoring::EnergyMap emap;
 		for ( graph::Graph::EdgeListConstIter
-						ir  = neighbor_graph->get_node( seqpos )->const_edge_list_begin(),
-						ire = neighbor_graph->get_node( seqpos )->const_edge_list_end();
-					ir != ire; ++ir ) {
+				ir  = neighbor_graph->get_node( seqpos )->const_edge_list_begin(),
+				ire = neighbor_graph->get_node( seqpos )->const_edge_list_end();
+				ir != ire; ++ir ) {
 
 			int const neighbor_id( (*ir)->get_other_ind( seqpos ) );
 			conformation::Residue const & neighbor( pose.residue( neighbor_id ) );
@@ -1013,12 +1012,12 @@ LigandBaseProtocol::get_non_bb_clashing_rotamers(
 		}
 		core::Real thisrotE = scofx->weights().dot( emap ) ;
 
-		if(  thisrotE < bb_bump_cutoff ){
-				temp_accepted_rotamers.push_back( *rot_it );
-				if( thisrotE < bestE ){
-					best_rot = *rot_it;
-					bestE = thisrotE;
-				}
+		if (  thisrotE < bb_bump_cutoff ) {
+			temp_accepted_rotamers.push_back( *rot_it );
+			if ( thisrotE < bestE ) {
+				best_rot = *rot_it;
+				bestE = thisrotE;
+			}
 		}
 		//debug
 		//std::cerr << "rotamer has energy " << (scofx->weights().dot( emap )) << " ... " << std::endl;
@@ -1026,11 +1025,11 @@ LigandBaseProtocol::get_non_bb_clashing_rotamers(
 	}
 
 	//we half-sort the output array such that the lowest energy rotamer is the first one in the output array
-	if( temp_accepted_rotamers.size() > 0 ){
+	if ( temp_accepted_rotamers.size() > 0 ) {
 		accepted_rotamers.push_back( best_rot );
-		for( utility::vector1< conformation::ResidueOP >::iterator rot_it = temp_accepted_rotamers.begin(); rot_it != temp_accepted_rotamers.end(); ++rot_it ){
+		for ( utility::vector1< conformation::ResidueOP >::iterator rot_it = temp_accepted_rotamers.begin(); rot_it != temp_accepted_rotamers.end(); ++rot_it ) {
 
-			if( *rot_it != best_rot ) accepted_rotamers.push_back( *rot_it );
+			if ( *rot_it != best_rot ) accepted_rotamers.push_back( *rot_it );
 		}
 
 	}

@@ -19,17 +19,17 @@
 #define INCLUDED_protocols_membrane_symmetry_util_hh
 
 // Package Headers
-#include <core/conformation/membrane/SpanningTopology.hh> 
+#include <core/conformation/membrane/SpanningTopology.hh>
 #include <protocols/membrane/util.hh>
 
 // Project Headers
-#include <core/pose/Pose.hh> 
+#include <core/pose/Pose.hh>
 #include <core/types.hh>
 
 namespace protocols {
 namespace membrane {
 namespace symmetry {
-    
+
 using namespace core;
 using namespace core::conformation::membrane;
 using namespace core::pose;
@@ -39,7 +39,7 @@ using namespace core::pose;
 /// complex instead of just the asymmetric unit
 SpanningTopologyOP
 symmetrize_spans( Pose & pose, SpanningTopology & topology );
-    
+
 } // symmetry
 } // membrane
 } // protocols

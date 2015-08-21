@@ -26,9 +26,9 @@ namespace scores {
 class AtomBasedConstraintsScore;
 
 typedef utility::pointer::shared_ptr<AtomBasedConstraintsScore>
-		AtomBasedConstraintsScoreOP;
+	AtomBasedConstraintsScoreOP;
 typedef utility::pointer::shared_ptr<AtomBasedConstraintsScore const>
-		AtomBasedConstraintsScoreCOP;
+	AtomBasedConstraintsScoreCOP;
 
 } // scores
 } // frag_picker

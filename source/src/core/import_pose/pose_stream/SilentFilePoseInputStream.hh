@@ -40,25 +40,25 @@ class SilentFilePoseInputStream : public PoseInputStream {
 	typedef std::string string;
 	typedef utility::file::FileName FileName;
 
-// constructors
+	// constructors
 public:
 	SilentFilePoseInputStream()
-		: renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( false ), record_source_( false )
+	: renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( false ), record_source_( false )
 	{
-		//		utility::vector1< FileName > empty;
-		//		filenames(empty);
+		//  utility::vector1< FileName > empty;
+		//  filenames(empty);
 		sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData );
 	}
 
 	SilentFilePoseInputStream( utility::vector1< FileName > fns )
-		: renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( false ), record_source_( false )
+	: renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( false ), record_source_( false )
 	{
 		sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData );
 		filenames(fns);
 	}
 
 	SilentFilePoseInputStream( std::string const & fn )
-		: renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( false ), record_source_( false )
+	: renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( false ), record_source_( false )
 	{
 		sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData );
 		utility::vector1< FileName > fns;
@@ -70,7 +70,7 @@ public:
 		utility::vector1< FileName > fns,
 		bool order_by_energy
 	)
-		: renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( order_by_energy ), record_source_( false )
+	: renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( order_by_energy ), record_source_( false )
 	{
 		sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData );
 		filenames(fns);
@@ -80,7 +80,7 @@ public:
 		utility::vector1< FileName > fns,
 		core::Real energy_cut
 	)
-		: renumber_decoys_( false ), energy_cut_( energy_cut ), order_by_energy_( false ), record_source_( false )
+	: renumber_decoys_( false ), energy_cut_( energy_cut ), order_by_energy_( false ), record_source_( false )
 	{
 		sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData );
 		filenames(fns);
@@ -142,7 +142,7 @@ public: // class-wide methods
 		core::pose::Pose & pose,
 		core::chemical::ResidueTypeSet const & residue_set
 	);
-	virtual void fill_pose(	core::pose::Pose&	);
+	virtual void fill_pose( core::pose::Pose& );
 
 	core::io::silent::SilentStructOP next_struct();
 

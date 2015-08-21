@@ -70,13 +70,13 @@ public: // boiler plate / virtuals
 
 	/// @brief Associates relevant options with the LoopRefineInnerCycle class
 	static void register_options();
-	
+
 public: // printing methods
 	virtual void show( std::ostream & out=std::cout ) const;
 	friend std::ostream & operator<<(std::ostream& out, RepackTrial const & repack_trial );
 
 public: // class-specific public methods
-	
+
 private: // methods
 	void setup_objects( Pose const & pose );
 	void init();

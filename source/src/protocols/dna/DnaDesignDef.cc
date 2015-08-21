@@ -30,7 +30,7 @@ using namespace core;
 DnaDesignDef::~DnaDesignDef(){}
 
 DnaDesignDef::DnaDesignDef( std::string const & strdef )
-	: utility::pointer::ReferenceCount()
+: utility::pointer::ReferenceCount()
 {
 	// command-line dna_defs are of the format "C.501.ADE"
 	// split on '.'
@@ -52,7 +52,7 @@ std::ostream & operator << ( std::ostream & os, DnaDesignDef const & def )
 std::ostream & operator << ( std::ostream & os, DnaDesignDefs const & defs )
 {
 	for ( DnaDesignDefs::const_iterator def( defs.begin() ), end( defs.end() );
-				def != end; ++def ) {
+			def != end; ++def ) {
 		if ( def != defs.begin() ) os << " ";
 		os << *def;
 	}
@@ -62,7 +62,7 @@ std::ostream & operator << ( std::ostream & os, DnaDesignDefs const & defs )
 std::ostream & operator << ( std::ostream & os, DnaDesignDefOPs const & defs )
 {
 	for ( DnaDesignDefOPs::const_iterator def( defs.begin() ), end( defs.end() );
-				def != end; ++def ) {
+			def != end; ++def ) {
 		if ( def != defs.begin() ) os << " ";
 		os << **def;
 	}

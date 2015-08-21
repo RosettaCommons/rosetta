@@ -56,16 +56,16 @@ void protocols::jd2::PDBJobInputter::pose_from_job( core::pose::Pose & pose, Job
 
 	TR << "PDBJobInputter::pose_from_job" << std::endl;
 
-	if( !job->inner_job()->get_pose() ){
+	if ( !job->inner_job()->get_pose() ) {
 		TR << "filling pose from PDB " << job->input_tag() << std::endl;
 		core::import_pose::pose_from_pdb( pose, job->input_tag() );
 		load_pose_into_job(pose, job);
 	} else {
 		TR << "filling pose from saved copy " << job->input_tag() << std::endl;
 		pose = *(job->inner_job()->get_pose());
-		if(option[in::auto_setup_metals].user()	
-					&& (option[in::metals_distance_constraint_multiplier]() > 1.0e-10 || option[in::metals_angle_constraint_multiplier]() > 1.0e-10)
-		) { //If the user has specified the auto_setup_metals option, we need to add back the metal constraints.
+		if ( option[in::auto_setup_metals].user()
+				&& (option[in::metals_distance_constraint_multiplier]() > 1.0e-10 || option[in::metals_angle_constraint_multiplier]() > 1.0e-10)
+				) { //If the user has specified the auto_setup_metals option, we need to add back the metal constraints.
 			TR << "setting up metal constraints for saved pose copy " << job->input_tag() << std::endl;
 			core::util::auto_setup_all_metal_constraints( pose, option[in::metals_distance_constraint_multiplier](), option[in::metals_angle_constraint_multiplier]() );
 		}
@@ -81,18 +81,18 @@ void protocols::jd2::PDBJobInputter::fill_jobs( JobsContainer & jobs ){
 	utility::vector1< std::string > const inputs( basic::options::start_files() );
 	core::Size const nstruct( get_nstruct() );
 
-	for( core::Size i(1); i <= inputs.size(); ++i){
+	for ( core::Size i(1); i <= inputs.size(); ++i ) {
 		//protocols::jobdist::BasicJob = protocols::jd2::InnerJob
 		//note that we are not really using the second and third fields in this implementation
 		InnerJobOP ijob( new InnerJob( inputs[i], nstruct ) );
 
-		for( core::Size index(1); index <= nstruct; ++index){
+		for ( core::Size index(1); index <= nstruct; ++index ) {
 			jobs.push_back( JobOP( new Job( ijob, index ) ) );
 			TR.Debug << "pushing " << inputs[i] << " nstruct index " << index << std::endl;
 		}//loop over nstruct
 		TR << "pushed " << inputs[i] << " nstruct "
-		   << ( ( int(nstruct)==1 ) ? "index " : "indices 1 - ")
-			 << nstruct << std::endl;
+			<< ( ( int(nstruct)==1 ) ? "index " : "indices 1 - ")
+			<< nstruct << std::endl;
 	}//loop over inputs
 }//fill_jobs
 

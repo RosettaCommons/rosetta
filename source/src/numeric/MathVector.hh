@@ -48,7 +48,7 @@
 #include <algorithm> //needed for std::transform, std::find_if
 #include <functional>
 
-namespace numeric{
+namespace numeric {
 
 template<typename T>
 class MathVector
@@ -76,8 +76,8 @@ public:
 	/// @param SIZE number fo elements in Vector
 	/// @param FILL_VALUE assign every element to that value
 	explicit MathVector< T>( const Size SIZE, const T &FILL_VALUE= T( 0)) :
-		size_( SIZE),
-		data_( new T[ SIZE])
+	size_( SIZE),
+	data_( new T[ SIZE])
 	{
 
 		// set all values to FILL_VALUE
@@ -86,8 +86,8 @@ public:
 
 	/// @brief construct from length and pointer to data
 	MathVector< T>( const Size SIZE, const T *DATA) :
-		size_( SIZE),
-		data_( new T[ SIZE])
+	size_( SIZE),
+	data_( new T[ SIZE])
 	{
 		std::copy( DATA, DATA + SIZE, data_);
 	}
@@ -95,8 +95,8 @@ public:
 	/// @brief copy constructor
 	/// @param VECTOR copy the given Vector
 	MathVector< T>( const MathVector< T> &VECTOR) :
-		size_( VECTOR.size_),
-		data_( new T[ size_])
+	size_( VECTOR.size_),
+	data_( new T[ size_])
 	{
 		std::copy( VECTOR.data_, VECTOR.data_ + size_, data_);
 	}
@@ -156,10 +156,10 @@ public:
 	}
 
 	/*     /// return number of elements
-Size size() const
-{
-return size_;
-}*/
+	Size size() const
+	{
+	return size_;
+	}*/
 
 	////////////////
 	// operations //
@@ -209,7 +209,7 @@ return size_;
 	}
 
 	/// construct vector from three elements
-	inline	MathVector< T> MakeVector( const T &X, const T &Y, const T &Z)
+	inline MathVector< T> MakeVector( const T &X, const T &Y, const T &Z)
 	{
 		MathVector< T> newvector( 3);
 		newvector( 0) = X;
@@ -243,11 +243,9 @@ return size_;
 	MathVector< T> &operator =( const MathVector< T> &VECTOR)
 	{
 		// check that data is different
-		if( data_ != VECTOR.data_)
-		{
+		if ( data_ != VECTOR.data_ ) {
 			// compare sizes
-			if( size_ != VECTOR.size_)
-			{
+			if ( size_ != VECTOR.size_ ) {
 				// delete data
 				delete[] data_;
 
@@ -283,10 +281,10 @@ return size_;
 	{
 		// transform all elements
 		std::transform
-		(
-				data_, data_ + size_, // input
-				data_,                  // output
-				std::binder2nd<  std::plus< T> >( std::plus< T>(), VALUE)
+			(
+			data_, data_ + size_, // input
+			data_,                  // output
+			std::binder2nd<  std::plus< T> >( std::plus< T>(), VALUE)
 		);
 
 		//end
@@ -298,10 +296,10 @@ return size_;
 	{
 		// transform all elements
 		std::transform
-		(
-				data_, data_ + size_, // input
-				data_,                  // output
-				std::binder2nd< std::minus< T> >( std::minus< T>(), VALUE)
+			(
+			data_, data_ + size_, // input
+			data_,                  // output
+			std::binder2nd< std::minus< T> >( std::minus< T>(), VALUE)
 		);
 
 		//end
@@ -313,10 +311,10 @@ return size_;
 	{
 		// transform all elements
 		std::transform
-		(
-				data_, data_ + size_, // input
-				data_,                  // output
-				std::binder2nd<  std::multiplies< T> >( std::multiplies< T>(), VALUE)
+			(
+			data_, data_ + size_, // input
+			data_,                  // output
+			std::binder2nd<  std::multiplies< T> >( std::multiplies< T>(), VALUE)
 		);
 
 		//end
@@ -328,10 +326,10 @@ return size_;
 	{
 		// transform all elements
 		std::transform
-		(
-				data_, data_ + size_, // input
-				data_,                  // output
-				std::binder2nd<  std::divides< T> >( std::divides< T>(), VALUE)
+			(
+			data_, data_ + size_, // input
+			data_,                  // output
+			std::binder2nd<  std::divides< T> >( std::divides< T>(), VALUE)
 		);
 
 		//end
@@ -368,11 +366,10 @@ protected:
 	/// check whether position is valid
 	bool assert_valid_position( const Size POS) const
 	{
-		if(POS > size_){
+		if ( POS > size_ ) {
 			utility_exit_with_message("cannot access element outside of range!");
 			return false;
-		}
-		else return true;
+		} else return true;
 
 	}
 

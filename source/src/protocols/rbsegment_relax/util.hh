@@ -63,12 +63,12 @@ void setup_disconnected( core::pose::Pose & pose );
 
 /// @brief remove loops from pose
 void setup_pose_from_rbsegs(
-             utility::vector1< protocols::rbsegment_relax::RBSegment > const &rbsegs ,
-             core::pose::Pose const &pose_in ,
-             core::pose::Pose &pose_out ,
-             core::id::SequenceMapping &resmap,
-             core::kinematics::MoveMap &mm ,
-             bool fixligs=false );
+	utility::vector1< protocols::rbsegment_relax::RBSegment > const &rbsegs ,
+	core::pose::Pose const &pose_in ,
+	core::pose::Pose &pose_out ,
+	core::id::SequenceMapping &resmap,
+	core::kinematics::MoveMap &mm ,
+	bool fixligs=false );
 
 
 /// @brief use DSSP and simple rules to guess the asignment of rigid-body segments
@@ -81,22 +81,22 @@ void guess_rbsegs_from_pose(
 
 /// @brief
 utility::vector1<core::Size> setup_pose_rbsegs_keep_loops(
-              core::pose::Pose &pose,
-              utility::vector1< protocols::rbsegment_relax::RBSegment > const &rbsegs ,
-              protocols::loops::Loops const &loops,
-              core::kinematics::MoveMapOP mm );
+	core::pose::Pose &pose,
+	utility::vector1< protocols::rbsegment_relax::RBSegment > const &rbsegs ,
+	protocols::loops::Loops const &loops,
+	core::kinematics::MoveMapOP mm );
 
 /// @brief restore loops from pose
 void restore_pose_from_rbsegs(
-             utility::vector1< protocols::rbsegment_relax::RBSegment > const &rbsegs ,
-             core::pose::Pose const &pose_in ,
-             core::pose::Pose &pose_out /* input/output */ );
+	utility::vector1< protocols::rbsegment_relax::RBSegment > const &rbsegs ,
+	core::pose::Pose const &pose_in ,
+	core::pose::Pose &pose_out /* input/output */ );
 
 /// @apply res mapping to rbsegments
 void remap_rb_segments(
-            utility::vector1< RBSegment > const &rbsegs,
-            utility::vector1< RBSegment > &rbsegs_remap,
-            core::id::SequenceMapping const &resmap);
+	utility::vector1< RBSegment > const &rbsegs,
+	utility::vector1< RBSegment > &rbsegs_remap,
+	core::id::SequenceMapping const &resmap);
 
 
 }

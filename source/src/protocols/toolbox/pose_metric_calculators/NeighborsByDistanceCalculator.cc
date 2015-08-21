@@ -41,17 +41,17 @@
 
 static thread_local basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.NeighborsByDistanceCalculator" );
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 
 NeighborsByDistanceCalculator::NeighborsByDistanceCalculator( core::Size central_residue, core::Real dist_cutoff )
-	: parent(), central_residue_(central_residue), dist_cutoff_(dist_cutoff), num_neighbors_(0)
-		//not doing anything to std::set<core::Size> - should initialize empty
+: parent(), central_residue_(central_residue), dist_cutoff_(dist_cutoff), num_neighbors_(0)
+	//not doing anything to std::set<core::Size> - should initialize empty
 {}
 
 NeighborsByDistanceCalculator::NeighborsByDistanceCalculator( NeighborsByDistanceCalculator const & calculator )
-	: parent(), central_residue_(calculator.central_residue()), dist_cutoff_(calculator.dist_cutoff())
+: parent(), central_residue_(calculator.central_residue()), dist_cutoff_(calculator.dist_cutoff())
 {}
 
 core::pose::metrics::PoseMetricCalculatorOP NeighborsByDistanceCalculator::clone() const
@@ -59,8 +59,8 @@ core::pose::metrics::PoseMetricCalculatorOP NeighborsByDistanceCalculator::clone
 
 void
 NeighborsByDistanceCalculator::lookup(
-  std::string const & key,
-  basic::MetricValueBase * valptr
+	std::string const & key,
+	basic::MetricValueBase * valptr
 ) const
 {
 	if ( key == "central_residue" ) {
@@ -89,27 +89,28 @@ NeighborsByDistanceCalculator::lookup(
 std::string
 NeighborsByDistanceCalculator::print( std::string const & key ) const
 {
-  if ( key == "central_residue" ) {
-    return utility::to_string( central_residue_ );
+	if ( key == "central_residue" ) {
+		return utility::to_string( central_residue_ );
 
-  } else if ( key == "dist_cutoff" ) {
-    return utility::to_string( dist_cutoff_ );
+	} else if ( key == "dist_cutoff" ) {
+		return utility::to_string( dist_cutoff_ );
 
-  } else if ( key == "num_neighbors" ) {
-    return utility::to_string( num_neighbors_ );
+	} else if ( key == "num_neighbors" ) {
+		return utility::to_string( num_neighbors_ );
 
-  } else if ( key == "neighbors" ) {
+	} else if ( key == "neighbors" ) {
 		using namespace basic::options; //this lets you get + or (space) as spacer
 		std::string const spacer( option[ OptionKeys::packing::print_pymol_selection].value() ? "+" : " ");
 		std::string nbrs_string("");
-		for( std::set< core::Size >::const_iterator it(neighbors_.begin()), end(neighbors_.end()); it != end; ++it)
+		for ( std::set< core::Size >::const_iterator it(neighbors_.begin()), end(neighbors_.end()); it != end; ++it ) {
 			nbrs_string += utility::to_string(*it) + spacer;
-    return nbrs_string;
+		}
+		return nbrs_string;
 
-  }//else
-  basic::Error() << "NeighborsByDistanceCalculator cannot compute metric " << key << std::endl;
-  utility_exit();
-  return "";
+	}//else
+	basic::Error() << "NeighborsByDistanceCalculator cannot compute metric " << key << std::endl;
+	utility_exit();
+	return "";
 } //print
 
 void
@@ -120,27 +121,26 @@ NeighborsByDistanceCalculator::recompute( core::pose::Pose const & pose )
 	num_neighbors_ = 0;
 
 	//if the central residue was never set, or was set outside the pose, this will cause problems!
-	if( (central_residue_ < 1) || (central_residue_ > pose.total_residue())) {
+	if ( (central_residue_ < 1) || (central_residue_ > pose.total_residue()) ) {
 		TR.Error << "central residue " << central_residue_ << " outside of pose; NBDC reporting empty set!" << std::endl;
 		return;
 	}
 
-///This is not necessarily the best implementation of this - this code's real utility is that it patches cleanly into the Calculator and TaskOperation hierarchies.  If you have a better/faster implementation, replace this and feel no guilt.
+	///This is not necessarily the best implementation of this - this code's real utility is that it patches cleanly into the Calculator and TaskOperation hierarchies.  If you have a better/faster implementation, replace this and feel no guilt.
 
 	core::conformation::PointGraphOP pg( new core::conformation::PointGraph ); //create graph
 	core::conformation::residue_point_graph_from_conformation( pose.conformation(), *pg ); //create vertices
 	core::conformation::find_neighbors<core::conformation::PointGraphVertexData,core::conformation::PointGraphEdgeData>( pg, dist_cutoff_ ); //create edges
 
-	for ( core::Size r(1); r <= central_residue_; ++r){
+	for ( core::Size r(1); r <= central_residue_; ++r ) {
 		for ( core::conformation::PointGraph::UpperEdgeListConstIter edge_iter = pg->get_vertex(r).upper_edge_list_begin(),
-						edge_end_iter = pg->get_vertex(r).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
+				edge_end_iter = pg->get_vertex(r).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
 			core::Size const other = edge_iter->upper_vertex();
 
 			//we know the two nodes connected to this edge.  We want to remember the one that is NOT central_residue_, if one of them IS central_residue_.  if neither is central_residue_, do nothing.
-			if (other == central_residue_) {
+			if ( other == central_residue_ ) {
 				neighbors_.insert(r);
-			}
-			else if ( r == central_residue_ ){
+			} else if ( r == central_residue_ ) {
 				neighbors_.insert(other);
 			}
 		}

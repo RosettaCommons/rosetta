@@ -19,14 +19,14 @@
 int main(int argc, char* argv[])
 {
 	try {
-	    devel::init(argc,argv);
-	    core::chemical::ResidueTypeSetCAP residue_types =
-	    	core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
+		devel::init(argc,argv);
+		core::chemical::ResidueTypeSetCAP residue_types =
+			core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 
 	}catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
 
-    return 0;
+	return 0;
 }

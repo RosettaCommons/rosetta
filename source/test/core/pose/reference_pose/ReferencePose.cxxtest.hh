@@ -65,22 +65,22 @@ public:
 		TR << "Importing 1AFO_AB.pdb." << std::endl;
 		core::pose::PoseOP pose(new core::pose::Pose);
 		core::import_pose::pose_from_pdb( *pose, "core/pose/reference_pose/1AFO_AB.pdb" );
-		
+
 		TR << "Setting up reference pose from imported pose." << std::endl;
 		pose->reference_pose_from_current("refpose1");
-		
+
 		TR << "Checking ReferencePose inital state. We expect there to be an entry for each residue, mapping that residue index onto itself." << std::endl;
 		TR << "Residue\tMap value" << std::endl;
-		for(core::Size ir=1, irmax=pose->n_residue(); ir<=irmax; ++ir) { //Loop through all residues in the pose.
+		for ( core::Size ir=1, irmax=pose->n_residue(); ir<=irmax; ++ir ) { //Loop through all residues in the pose.
 			core::Size const cor_ir( pose->corresponding_residue_in_current( ir, "refpose1" ) );
 			TR << ir << "\t" << cor_ir << std::endl;
 			TS_ASSERT( cor_ir==ir );
 		}
-		
+
 		TR.flush();
 		return;
 	}
-	
+
 	void test_ReferencePoseSet_deleting() {
 		TR << "Starting ReferencePoseSet_deleting()." << std::endl;
 		TR << "This test is intended to test whether a ReferencePose properly maintains residue" << std::endl;
@@ -89,36 +89,34 @@ public:
 		TR << "Importing 1AFO_AB.pdb." << std::endl;
 		core::pose::PoseOP pose(new core::pose::Pose);
 		core::import_pose::pose_from_pdb( *pose, "core/pose/reference_pose/1AFO_AB.pdb" );
-		
+
 		core::Size const nres_original( pose->n_residue() );
 		TR << "There are " << nres_original << " residues in the original pose." << std::endl;
-		
+
 		TR << "Setting up reference pose from imported pose." << std::endl;
 		pose->reference_pose_from_current("refpose2");
-		
+
 		TR << "Deleting residue 7." << std::endl;
 		pose->delete_polymer_residue(7);
-		
+
 		TR << "Checking ReferencePose state after deletion. We expect there to be an entry for each residue in the original pose, mapping that residue index onto itself for residues prior to 7, onto 0 for residue 7, and onto residue n-1 for residues past 7." << std::endl;
 		TR << "Residue\tMap value" << std::endl;
-		for(core::Size ir=1; ir<=nres_original; ++ir) { //Loop through all residues in the pose.
+		for ( core::Size ir=1; ir<=nres_original; ++ir ) { //Loop through all residues in the pose.
 			core::Size const cor_ir( pose->corresponding_residue_in_current( ir, "refpose2" ) );
 			TR << ir << "\t" << cor_ir << std::endl;
-			if(ir<7) {
+			if ( ir<7 ) {
 				TS_ASSERT( cor_ir==ir );
-			}
-			else if (ir==7) {
+			} else if ( ir==7 ) {
 				TS_ASSERT( cor_ir==0 );
-			}
-			else if (ir>7) {
+			} else if ( ir>7 ) {
 				TS_ASSERT( cor_ir==ir-1 );
 			}
 		}
-		
+
 		TR.flush();
 		return;
 	}
-	
+
 	void test_ReferencePose_string_parsing() {
 		TR << "Starting ReferencePose_string_parsing()." << std::endl;
 		TR << "This test tests whether a string referring to a stored ReferencePose can be parsed" << std::endl;
@@ -140,14 +138,13 @@ public:
 		str.push_back( "refpose(refpose2,9)" ); //Good string
 		str.push_back( "refpose(,10)" ); //Bad string
 		str.push_back( "refpose(refpose3,11)-3" ); //Good string
-		
+
 		TR << "Input_string\tGood_string?\tRefpose_name\tRef_number\tRef_offset" << std::endl;
-		for(core::Size i=1; i<=6; ++i)
-		{
+		for ( core::Size i=1; i<=6; ++i ) {
 			result.push_back( core::pose::is_referencepose_number( str[i], result_refpose_name[i], result_resnum[i], result_offset[i] ) );
 			TR << str[i] << "\t" << (result[i]?"true":"false") << "\t" << (result_refpose_name[i]==""?"NONE":result_refpose_name[i]) << "\t" << result_resnum[i] << "\t" << result_offset[i] << std::endl;
 		}
-		
+
 		//Check that the expected failures occurred:
 		TS_ASSERT( result[1]==false );
 		TS_ASSERT( result[2]==false );
@@ -165,7 +162,7 @@ public:
 		TS_ASSERT( result_resnum[6]==11 );
 		TS_ASSERT( result_offset[4]==0 );
 		TS_ASSERT( result_offset[6]==-3 );
-		
+
 		TR.flush();
 		return;
 	}

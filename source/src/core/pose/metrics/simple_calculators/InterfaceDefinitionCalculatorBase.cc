@@ -27,7 +27,7 @@ using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
 
-namespace core{
+namespace core {
 namespace pose {
 namespace metrics {
 namespace simple_calculators {
@@ -68,10 +68,9 @@ Size InterfaceDefinitionCalculator::chain_letter_to_number( pose::Pose const & p
 	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 		if ( pose.pdb_info()->chain( i ) == temp_letter_ ) {
 			return pose.chain( i );
-		}
-		else continue;
+		} else continue;
 	}
-	return 0;	// if this happens, we haven't found our chain letter in the pose
+	return 0; // if this happens, we haven't found our chain letter in the pose
 }
 
 

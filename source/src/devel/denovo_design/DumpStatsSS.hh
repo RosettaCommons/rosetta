@@ -24,8 +24,8 @@
 #include <basic/datacache/DataMap.fwd.hh>
 
 
-#include <protocols/denovo_design/filters/PsiPredInterface.fwd.hh>    
-#include <protocols/ss_prediction/SS_predictor.fwd.hh> 
+#include <protocols/denovo_design/filters/PsiPredInterface.fwd.hh>
+#include <protocols/ss_prediction/SS_predictor.fwd.hh>
 #include <protocols/jd2/parser/BluePrint.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -33,7 +33,7 @@
 
 namespace devel {
 namespace denovo_design {
-	
+
 
 /// @brief what you think
 /// this can now be assimilated into DumpPdbMover
@@ -50,7 +50,7 @@ public:
 	}
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new DumpStatsSS ); }
 	core::Real compute_boltz_sum( utility::vector1< core::Real > const & probabilities ) const;
-	core::Real compute_svm_prob(std::string sequence, std::string wanted_ss); 
+	core::Real compute_svm_prob(std::string sequence, std::string wanted_ss);
 	core::Real compute_psipred_prob(core::pose::Pose & pose , std::string wanted_ss);
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn);
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
@@ -66,8 +66,8 @@ private:
 	core::Real start_time_;
 };
 
-}//devel 
-}//denovo_design 
+}//devel
+}//denovo_design
 
 
 #endif /*INCLUDED_protocols_moves_DumpStatsSS_HH*/

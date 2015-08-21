@@ -28,67 +28,67 @@ namespace protocols {
 namespace seeded_abinitio {
 
 class SwapSegment : public protocols::moves::Mover {
- public:
-  typedef core::pose::Pose Pose;
+public:
+	typedef core::pose::Pose Pose;
 
-  SwapSegment();
+	SwapSegment();
 
-  void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose );
 
-  virtual std::string get_name() const;
-  virtual protocols::moves::MoverOP clone() const;
-  virtual protocols::moves::MoverOP fresh_instance() const;
+	virtual std::string get_name() const;
+	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 
-  void parse_my_tag( utility::tag::TagCOP tag,
-                     basic::datacache::DataMap &,
-                     protocols::filters::Filters_map const &,
-                     protocols::moves::Movers_map const &,
-                     core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & );
 
 
-  virtual ~SwapSegment();
+	virtual ~SwapSegment();
 
- private:
-  void copying_side_chains(
-      core::pose::Pose & pose,
-      core::pose::PoseOP & swap_segment,
-      protocols::loops::Loops & seeds);
+private:
+	void copying_side_chains(
+		core::pose::Pose & pose,
+		core::pose::PoseOP & swap_segment,
+		protocols::loops::Loops & seeds);
 
-  void swap_segment(
-      core::pose::Pose & pose,
-      core::pose::PoseOP & swap_segment,
-      protocols::loops::Loops & seeds);
+	void swap_segment(
+		core::pose::Pose & pose,
+		core::pose::PoseOP & swap_segment,
+		protocols::loops::Loops & seeds);
 
-  void swap_chain(
-                core::pose::Pose & pose,
-                core::pose::PoseOP & target_chain,
-                core::Size chain_to_swap);
+	void swap_chain(
+		core::pose::Pose & pose,
+		core::pose::PoseOP & target_chain,
+		core::Size chain_to_swap);
 
-  bool copy_sidechains_;
+	bool copy_sidechains_;
 
-  bool swap_segment_;
+	bool swap_segment_;
 
-  core::Size swap_chain_;
+	core::Size swap_chain_;
 
-  ///input pdb that contains the segments that should be swapped
-  core::pose::PoseOP seeds_pdb_;
+	///input pdb that contains the segments that should be swapped
+	core::pose::PoseOP seeds_pdb_;
 
-  ///check for the segments
-  bool seeds_presence_;
+	///check for the segments
+	bool seeds_presence_;
 
-  protocols::loops::Loops all_seeds_;
+	protocols::loops::Loops all_seeds_;
 
-  ///chain that contains the seed in the seed_pdb
-  core::Size from_chain_;
+	///chain that contains the seed in the seed_pdb
+	core::Size from_chain_;
 
-  ///chain in which the segments should be swapped/side chain replaced
-  core::Size to_chain_;
+	///chain in which the segments should be swapped/side chain replaced
+	core::Size to_chain_;
 
-  core::scoring::ScoreFunctionOP scorefxn_;
+	core::scoring::ScoreFunctionOP scorefxn_;
 
-  ///switch to determine what numbering needs to be used since
-  ///parse time is different from computing time and if the pose has changed, numbering will be off
-  bool previously_grown_;
+	///switch to determine what numbering needs to be used since
+	///parse time is different from computing time and if the pose has changed, numbering will be off
+	bool previously_grown_;
 };
 
 }

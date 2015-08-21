@@ -42,42 +42,42 @@ namespace scoring {
 namespace constraints {
 
 /* this helper class may have become obsoleted by the remapped_clone() method of ConstraintSet
-	 but since it is still in use by abinitio::Template I haven't removed it.
+but since it is still in use by abinitio::Template I haven't removed it.
 */
 class Obsolet_NamedAtomPairConstraint : public utility::pointer::ReferenceCount {
-  typedef core::scoring::constraints::AtomPairConstraintOP AtomPairConstraintOP;
-  typedef core::id::NamedAtomID NamedAtomID;
-  typedef core::id::SequenceMapping SequenceMapping;
+	typedef core::scoring::constraints::AtomPairConstraintOP AtomPairConstraintOP;
+	typedef core::id::NamedAtomID NamedAtomID;
+	typedef core::id::SequenceMapping SequenceMapping;
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~Obsolet_NamedAtomPairConstraint();
-  Obsolet_NamedAtomPairConstraint( AtomPairConstraintOP, core::pose::Pose const& );
-  Obsolet_NamedAtomPairConstraint( NamedAtomID const& atom1, NamedAtomID const& atom2, AtomPairConstraintOP cst );
-  AtomPairConstraintOP mapto( SequenceMapping const&, core::pose::Pose const& ) const;
-  Obsolet_NamedAtomPairConstraintOP mapto( SequenceMapping const& ) const;
-  AtomPairConstraintOP mapto( core::pose::Pose const& ) const;
+	Obsolet_NamedAtomPairConstraint( AtomPairConstraintOP, core::pose::Pose const& );
+	Obsolet_NamedAtomPairConstraint( NamedAtomID const& atom1, NamedAtomID const& atom2, AtomPairConstraintOP cst );
+	AtomPairConstraintOP mapto( SequenceMapping const&, core::pose::Pose const& ) const;
+	Obsolet_NamedAtomPairConstraintOP mapto( SequenceMapping const& ) const;
+	AtomPairConstraintOP mapto( core::pose::Pose const& ) const;
 
-  friend std::ostream& operator<< ( std::ostream& out, Obsolet_NamedAtomPairConstraint const& cst );
+	friend std::ostream& operator<< ( std::ostream& out, Obsolet_NamedAtomPairConstraint const& cst );
 
 	id::NamedAtomID const& atom1() {
-    return atom1_;
-  }
+		return atom1_;
+	}
 
 	id::NamedAtomID const& atom2() {
-    return atom2_;
-  }
+		return atom2_;
+	}
 
 private:
 
 	id::NamedAtomID atom1_;
 	id::NamedAtomID atom2_;
-  AtomPairConstraintOP cst_;
+	AtomPairConstraintOP cst_;
 };
 
 class NamedAtomPairConstraint : public AtomPairConstraint {
 public:
 	NamedAtomPairConstraint(
-   	id::NamedAtomID const& a1,
+		id::NamedAtomID const& a1,
 		id::NamedAtomID const& a2,
 		func::FuncOP func,
 		ScoreType scoretype = atom_pair_constraint
@@ -107,8 +107,8 @@ public:
 	void show_def_nopose( std::ostream& out ) const;
 
 	virtual void read_def( std::istream& in, pose::Pose const& pose,func::FuncFactory const& func_factory );
-	//	//@brief set constraint such that the pose doesn't violate it.
-	//	virtual void steal( pose::Pose& );
+	// //@brief set constraint such that the pose doesn't violate it.
+	// virtual void steal( pose::Pose& );
 
 private:
 	id::NamedAtomID named_atom1_;

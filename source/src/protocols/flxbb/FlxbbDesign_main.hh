@@ -15,9 +15,9 @@
 #define INCLUDED_protocols_flxbb_FlxbbDesign_main_hh
 
 namespace protocols {
-namespace flxbb{
+namespace flxbb {
 
-	void FlxbbDesign_main();
+void FlxbbDesign_main();
 }
 }
 

@@ -24,13 +24,13 @@ namespace loop_build {
 /// @brief creator for the LoopMover_SlidingWindowCreator class
 class LoopMover_SlidingWindowCreator : public moves::MoverCreator {
 public:
-  LoopMover_SlidingWindowCreator() {}
+	LoopMover_SlidingWindowCreator() {}
 
-  virtual ~LoopMover_SlidingWindowCreator();
+	virtual ~LoopMover_SlidingWindowCreator();
 
 	moves::MoverOP create_mover() const;
 
-  virtual std::string keyname() const;
+	virtual std::string keyname() const;
 
 };
 

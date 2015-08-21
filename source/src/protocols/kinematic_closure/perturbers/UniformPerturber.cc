@@ -30,12 +30,12 @@ namespace kinematic_closure {
 namespace perturbers {
 
 void UniformPerturber::perturb_subset(
-		Pose const &, IndexList const & residues, ClosureProblemOP problem) {
+	Pose const &, IndexList const & residues, ClosureProblemOP problem) {
 
 	using numeric::random::uniform;
 	using numeric::conversions::DEGREES;
 
-	BOOST_FOREACH(Real residue, residues) {
+	BOOST_FOREACH ( Real residue, residues ) {
 		problem->perturb_phi(residue, 360 * uniform(), DEGREES);
 		problem->perturb_psi(residue, 360 * uniform(), DEGREES);
 		problem->perturb_omega(residue, 360 * uniform(), DEGREES);
@@ -43,10 +43,10 @@ void UniformPerturber::perturb_subset(
 }
 
 void UniformPerturber::perturb_subset_with_balance(
-		Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
+	Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
 
-	// Uniform moves are always balanced.  To put it more technically, the 
-	// forward and reverse proposal probabilities are equal a priori when moves 
+	// Uniform moves are always balanced.  To put it more technically, the
+	// forward and reverse proposal probabilities are equal a priori when moves
 	// are being picked from a uniform distribution.
 
 	perturb_subset(pose, residues, problem);

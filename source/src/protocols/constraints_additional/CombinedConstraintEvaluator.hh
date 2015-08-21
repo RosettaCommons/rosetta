@@ -32,7 +32,7 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 
-#ifdef WIN32	// for visual studio
+#ifdef WIN32 // for visual studio
 #else
 #endif
 

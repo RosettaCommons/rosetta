@@ -34,8 +34,8 @@ namespace canonical_sampling {
 
 /// @brief Base class for recording a simulation trajectory.
 ///
-/// @details This class seems a little too geared towards file IO, which will 
-/// make it awkward to create the database trajectory subclass that I want.  
+/// @details This class seems a little too geared towards file IO, which will
+/// make it awkward to create the database trajectory subclass that I want.
 /// But I'll get it to work one way or another.
 
 class TrajectoryRecorder : public protocols::canonical_sampling::ThermodynamicObserver {
@@ -62,10 +62,10 @@ private:
 public:
 
 	/// @brief Return the name of this mover.
-	virtual	std::string	get_name() const;
+	virtual std::string get_name() const;
 
 	/// @brief Configure this mover from a RosettaScripts tag.
-	virtual	void parse_my_tag(
+	virtual void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
@@ -74,12 +74,12 @@ public:
 	);
 
 	/// @brief Return the file name for the trajectory.
-	std::string const &	file_name() const {
+	std::string const & file_name() const {
 		return file_name_;
 	}
 
 	/// @brief Set the file name for the trajectory.
-	void file_name( std::string const & file_name )	{
+	void file_name( std::string const & file_name ) {
 		file_name_ = file_name;
 	}
 
@@ -97,9 +97,9 @@ public:
 	core::Size stride() const {
 		return stride_;
 	}
-	
+
 	/// @brief Set how often models should be written to the trajectory.
-	/// @details This option can also be specified on the command line using the 
+	/// @details This option can also be specified on the command line using the
 	/// <tt> -trajectory:stride </tt> flag.
 	void stride( core::Size stride ) {
 		stride_ = stride;
@@ -111,23 +111,23 @@ public:
 	}
 
 	/// @brief Specify the maximum number of poses that can be cached.
-	/// @details This option can also be specified on the command line using the 
-	/// <tt> -trajectory:cache_limit </tt> flag.  Note that some recorders don't 
-	/// use a cache at all, and will therefore ignore this option.  
+	/// @details This option can also be specified on the command line using the
+	/// <tt> -trajectory:cache_limit </tt> flag.  Note that some recorders don't
+	/// use a cache at all, and will therefore ignore this option.
 	void cache_limit( core::Size limit ) {
 		cache_limit_ = limit;
 	}
 
-	/// @brief Return true if poses from different jobs will be written to the 
+	/// @brief Return true if poses from different jobs will be written to the
 	/// same trajectory file.
-	/// @details I suspect this is only meant to be used in the context of jd2.  
+	/// @details I suspect this is only meant to be used in the context of jd2.
 	/// This option can only be set from the command line using the <tt>
 	/// -trajectory:cumulate_jobs </tt> flag.
 	bool cumulate_jobs() const {
 		return cumulate_jobs_;
 	}
 
-	/// @brief Return true if poses from different replicas will be written to 
+	/// @brief Return true if poses from different replicas will be written to
 	/// the same trajectory file.
 	/// @details I suspect this is only meant to be used in the context of jd2.
 	/// This option can only be set from the command line using the <tt>
@@ -164,14 +164,14 @@ public:
 	);
 
 	/// @copydoc ThermodynamicObserver::observe_after_metropolis
-	virtual	void observe_after_metropolis(
+	virtual void observe_after_metropolis(
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
 protected:
 
 	/// @brief Pure virtual method called to write a model to the output file.
-	virtual void 	write_model(
+	virtual void  write_model(
 		core::pose::Pose const & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = 0
 	) = 0;

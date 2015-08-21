@@ -83,13 +83,13 @@ public:
 	void set_default_settings(){}
 	virtual protocols::loops::LoopsCOP get_loops() const;
 	virtual core::scoring::ScoreFunctionOP get_scorefxn() const;
-	
+
 
 protected:
 	std::vector< core::fragment::FragSetOP > frag_libs_;
 
 	virtual loop_mover::LoopResult model_loop( core::pose::Pose & pose,
-			protocols::loops::Loop const & loop );
+		protocols::loops::Loop const & loop );
 
 	virtual basic::Tracer & tr() const;
 };

@@ -115,11 +115,11 @@ SingleChainStructureData::SingleChainStructureData( std::string const & id_val )
 }
 
 SingleChainStructureData::SingleChainStructureData(
-		std::string const & id_val,
-		core::Size const length_val,
-		core::Size const pose_len_val,
-		std::string const & ss_val,
-		utility::vector1< std::string > const & abego_val ) :
+	std::string const & id_val,
+	core::Size const length_val,
+	core::Size const pose_len_val,
+	std::string const & ss_val,
+	utility::vector1< std::string > const & abego_val ) :
 	StructureData( id_val )
 {
 	bool nterm_included = false;
@@ -141,17 +141,17 @@ SingleChainStructureData::SingleChainStructureData(
 	assert( c_anchor_res <= pose_len_val );
 
 	Segment resis(
-			pose_len_val,                         // length
-			( n_anchor_res + c_anchor_res ) / 2,  // safe residue
-			0,                                    // cutpoint
-			1,                                    // movable group
-			false,                                // is_loop
-			nterm_included,                       // n terminus included in segment
-			cterm_included,                       // c terminus included in segment
-			"",                                   // lower connected segment
-			"",                                   // upper connected segment
-			ss_val,                               // secondary structure
-			abego_val );                          // abego
+		pose_len_val,                         // length
+		( n_anchor_res + c_anchor_res ) / 2,  // safe residue
+		0,                                    // cutpoint
+		1,                                    // movable group
+		false,                                // is_loop
+		nterm_included,                       // n terminus included in segment
+		cterm_included,                       // c terminus included in segment
+		"",                                   // lower connected segment
+		"",                                   // upper connected segment
+		ss_val,                               // secondary structure
+		abego_val );                          // abego
 	add_segment( id(), resis, "" );
 
 	assert( segment(id()).nterm_resi() == 1 );
@@ -250,17 +250,17 @@ StructureData::infer_from_pose( core::pose::Pose const & pose, std::string const
 			<< std::endl;
 
 		Segment new_segment(
-				chain_length,                         // length
-				local_saferes,                        // safe residue
-				0,                                    // cutpoint
-				movable_group,                        // movable group
-				false,                                // is_loop
-				nterm_included,                       // n terminus included in segment
-				cterm_included,                       // c terminus included in segment
-				"",                                   // lower connected segment
-				"",                                   // upper connected segment
-				chain_ss,                             // secondary structure
-				chain_abego );                        // abego
+			chain_length,                         // length
+			local_saferes,                        // safe residue
+			0,                                    // cutpoint
+			movable_group,                        // movable group
+			false,                                // is_loop
+			nterm_included,                       // n terminus included in segment
+			cterm_included,                       // c terminus included in segment
+			"",                                   // lower connected segment
+			"",                                   // upper connected segment
+			chain_ss,                             // secondary structure
+			chain_abego );                        // abego
 		sd->add_segment( segname.str(), new_segment );
 		chain_start = *r + 1;
 	}
@@ -414,8 +414,8 @@ StructureData::create_from_xml( std::stringstream & xmltag, std::string const & 
 				assert( subtag->hasOption( "segment" ) );
 				assert( subtag->hasOption( "res" ) );
 				newperm->set_resnum_alias( subtag->getOption< std::string >( "name" ),
-						subtag->getOption< std::string >( "segment" ),
-						subtag->getOption< core::Size >( "res" ) );
+					subtag->getOption< std::string >( "segment" ),
+					subtag->getOption< core::Size >( "res" ) );
 			} else {
 				subtag->write( TR.Error );
 				throw utility::excn::EXCN_RosettaScriptsOption( "Unknown tag in permutation: " + subtag->getName() );
@@ -432,8 +432,9 @@ StructureData::save_remarks_to_datacache( core::pose::Remarks const & remarks )
 	assert( pose_ );
 	core::Size remcount = 1;
 	for ( core::pose::Remarks::const_iterator r=remarks.begin(), endr=remarks.end(); r != endr; ++r ) {
-		if ( r->num == REMARK_NUM )
+		if ( r->num == REMARK_NUM ) {
 			continue;
+		}
 
 		if ( r->num == 666 ) {
 			TR << "Processing enzdes header " << r->value << std::endl;
@@ -457,12 +458,12 @@ StructureData::save_remarks_to_datacache( core::pose::Remarks const & remarks )
 			ss << "%%" << seg2 << DATA_DELIMETER << localres2 << "%% ";
 			ss << fields[11] << " " << fields[12];
 			set_cached_string( *pose_,
-					boost::lexical_cast< std::string >(r->num) + ' ' + ss.str(),
-					DATA_NAME + '.' + boost::lexical_cast< std::string >(remcount) );
+				boost::lexical_cast< std::string >(r->num) + ' ' + ss.str(),
+				DATA_NAME + '.' + boost::lexical_cast< std::string >(remcount) );
 		} else {
 			set_cached_string( *pose_,
-					boost::lexical_cast< std::string >(r->num) + ' ' + r->value,
-					DATA_NAME + '.' + boost::lexical_cast< std::string >(remcount) );
+				boost::lexical_cast< std::string >(r->num) + ' ' + r->value,
+				DATA_NAME + '.' + boost::lexical_cast< std::string >(remcount) );
 		}
 		++remcount;
 	}
@@ -471,8 +472,8 @@ StructureData::save_remarks_to_datacache( core::pose::Remarks const & remarks )
 /// @brief loads data from pdb remarks into this permutation
 void
 StructureData::load_pdb_info_old(
-		core::pose::Remarks const & rem,
-		std::string const & prefix )
+	core::pose::Remarks const & rem,
+	std::string const & prefix )
 {
 	for ( core::pose::Remarks::const_iterator it_rem=rem.begin(); it_rem!=rem.end(); ++it_rem ) {
 		if ( it_rem->num != 991 ) {
@@ -580,7 +581,7 @@ StructureData::load_pdb_info_old(
 			core::Size const resi = boost::lexical_cast< core::Size >( fields[5] );
 			set_resnum_alias( field_name, fields[4], resi );
 			TR << "Set alias " << field_name << " --> " << fields[4] << ":" << resi << std::endl;
-		}	else {
+		} else {
 			TR << "Unknown type: " << type << std::endl;
 			assert( false );
 		}
@@ -787,7 +788,7 @@ StructureData::set_cached_string( core::pose::Pose & pose, std::string const & s
 	clean_for_storage( ss );
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::STRING_MAP ) ) {
 		pose.data().set( core::pose::datacache::CacheableDataType::STRING_MAP,
-				basic::datacache::CacheableDataOP( new basic::datacache::CacheableStringMap() ) );
+			basic::datacache::CacheableDataOP( new basic::datacache::CacheableStringMap() ) );
 	}
 	assert( pose.data().has( core::pose::datacache::CacheableDataType::STRING_MAP ) );
 	basic::datacache::CacheableData & cached = pose.data().get( core::pose::datacache::CacheableDataType::STRING_MAP );
@@ -873,8 +874,9 @@ StructureData::find_segment( std::string const & segname )
 {
 	StringList::iterator c = segment_order_.begin(), end = segment_order_.end();
 	while ( c != end ) {
-		if ( *c == segname )
+		if ( *c == segname ) {
 			break;
+		}
 		++c;
 	}
 	return c;
@@ -886,8 +888,9 @@ StructureData::find_segment( std::string const & segname ) const
 {
 	StringList::const_iterator c = segments_begin(), end = segments_end();
 	while ( c != end ) {
-		if ( *c == segname )
+		if ( *c == segname ) {
 			break;
+		}
 		++c;
 	}
 	return c;
@@ -910,21 +913,25 @@ StructureData::connected_segments( std::string const & seg ) const
 		Segment const & res = segment(cur);
 		if ( !res.has_free_lower_terminus() ) {
 			if ( pose_ ) {
-				if ( pose_->chain(res.safe()) == pose_->chain(segment(res.lower_segment()).safe()) )
+				if ( pose_->chain(res.safe()) == pose_->chain(segment(res.lower_segment()).safe()) ) {
 					nodes.push( res.lower_segment() );
+				}
 			} else {
 				// guess at same chain by looking at cterm_included and nterm_included
-				if ( res.nterm_included() )
+				if ( res.nterm_included() ) {
 					nodes.push( res.lower_segment() );
+				}
 			}
 		}
 		if ( !res.has_free_upper_terminus() ) {
 			if ( pose_ ) {
-				if ( pose_->chain(res.safe()) == pose_->chain(segment(res.upper_segment()).safe()) )
+				if ( pose_->chain(res.safe()) == pose_->chain(segment(res.upper_segment()).safe()) ) {
 					nodes.push( res.upper_segment() );
+				}
 			} else {
-				if ( res.cterm_included() )
+				if ( res.cterm_included() ) {
 					nodes.push( res.upper_segment() );
+				}
 			}
 		}
 	}
@@ -934,8 +941,8 @@ StructureData::connected_segments( std::string const & seg ) const
 /// @brief marks the given segments as covanlently connected
 void
 StructureData::mark_connected(
-		std::string const & lower_seg,
-		std::string const & upper_seg )
+	std::string const & lower_seg,
+	std::string const & upper_seg )
 {
 	SegmentMap::iterator low = segments_.find( lower_seg );
 	debug_assert( low != segments_.end() );
@@ -950,12 +957,12 @@ StructureData::mark_connected(
 /// @brief inserts an extended loop (phi/psi/omega=180) before segment x
 void
 StructureData::prepend_extended_loop(
-		std::string const & seg,
-		std::string const & loop_name,
-		core::Size const num_residues,
-		std::string const & insert_ss,
-		utility::vector1< std::string > const & insert_abego,
-		core::conformation::ResidueCOP template_res )
+	std::string const & seg,
+	std::string const & loop_name,
+	core::Size const num_residues,
+	std::string const & insert_ss,
+	utility::vector1< std::string > const & insert_abego,
+	core::conformation::ResidueCOP template_res )
 {
 	debug_assert( num_residues == insert_ss.size() );
 	debug_assert( (!insert_abego.size()) || ( num_residues == insert_abego.size() ) );
@@ -1008,16 +1015,16 @@ StructureData::prepend_extended_loop(
 	StringList::iterator insert_before_me = find_segment( seg );
 	assert( insert_before_me != segment_order_.end() );
 	add_segment(
-			loop_name,
-			insert_before_me,
-			num_residues+pad, // the +1 is for the terminal "dummy" residue
-			loop_safe,
-			0,
-			group,
-			true,
-			nterm_inc, true,
-			cached_lower_segment, "",
-			tmp_ss, tmp_abego );
+		loop_name,
+		insert_before_me,
+		num_residues+pad, // the +1 is for the terminal "dummy" residue
+		loop_safe,
+		0,
+		group,
+		true,
+		nterm_inc, true,
+		cached_lower_segment, "",
+		tmp_ss, tmp_abego );
 	// update connected partner
 	if ( cached_lower_segment != "" ) {
 		SegmentMap::iterator r2 = segments_.find( cached_lower_segment );
@@ -1031,12 +1038,12 @@ StructureData::prepend_extended_loop(
 /// @brief inserts an extended loop (phi/psi/omega=180) after segment x
 void
 StructureData::append_extended_loop(
-		std::string const & seg,
-		std::string const & loop_name,
-		core::Size const num_residues,
-		std::string const & insert_ss,
-		utility::vector1< std::string > const & insert_abego,
-		core::conformation::ResidueCOP template_res )
+	std::string const & seg,
+	std::string const & loop_name,
+	core::Size const num_residues,
+	std::string const & insert_ss,
+	utility::vector1< std::string > const & insert_abego,
+	core::conformation::ResidueCOP template_res )
 {
 	assert( num_residues == insert_ss.size() );
 	assert( (!insert_abego.size()) || ( num_residues == insert_abego.size() ) );
@@ -1093,16 +1100,16 @@ StructureData::append_extended_loop(
 	assert( insert_pos != segment_order_.end() );
 	++insert_pos;
 	add_segment(
-			loop_name,
-			insert_pos,
-			num_residues+pad, // the +pad is for the terminal dummy residue
-			loop_safe,
-			0,
-			group,
-			true,
-			true, cterm_inc,
-			"", cached_upper_segment,
-			tmp_ss, tmp_abego );
+		loop_name,
+		insert_pos,
+		num_residues+pad, // the +pad is for the terminal dummy residue
+		loop_safe,
+		0,
+		group,
+		true,
+		true, cterm_inc,
+		"", cached_upper_segment,
+		tmp_ss, tmp_abego );
 	// update connected partner
 	if ( cached_upper_segment != "" ) {
 		SegmentMap::iterator r2 = segments_.find( cached_upper_segment );
@@ -1185,9 +1192,9 @@ StructureData::delete_jump_and_intervening_cutpoint( std::string const & segment
 /// @brief given a jump and a cutpoint residue, move the jump around the cut residue and delete to form a single edge
 void
 StructureData::delete_jump_and_intervening_cutpoint(
-		int const jnum,
-		core::Size const cut_resi1,
-		core::Size const cut_resi2 )
+	int const jnum,
+	core::Size const cut_resi1,
+	core::Size const cut_resi2 )
 {
 	assert( pose_ );
 
@@ -1226,8 +1233,8 @@ StructureData::switch_residue_type_set( std::string const & typeset )
 /// @brief aligns the upper-terminal residue of segment1 to the start "anchor" residue of segment2
 void
 StructureData::align_segments(
-		std::string const & segment1,
-		std::string const & segment2 )
+	std::string const & segment1,
+	std::string const & segment2 )
 {
 	core::Size const align_res_target( segment(segment1).cterm_resi() );
 	core::Size const align_res_movable( segment(segment2).start() );
@@ -1242,10 +1249,10 @@ StructureData::align_segments(
 /// re-arranges fold tree if necessary
 void
 StructureData::align_residues(
-		std::string const & template_seg,
-		core::Size const template_res,
-		std::string const & movable_seg,
-		core::Size const movable_res )
+	std::string const & template_seg,
+	core::Size const template_res,
+	std::string const & movable_seg,
+	core::Size const movable_res )
 {
 	assert( template_res );
 	assert( template_res <= segment(template_seg).length() );
@@ -1270,9 +1277,9 @@ StructureData::align_residues(
 /// @brief replaces one residue with another
 void
 StructureData::replace_residue(
-		std::string const & target_segment,
-		core::Size const target_res,
-		core::conformation::Residue const & res_in )
+	std::string const & target_segment,
+	core::Size const target_res,
+	core::conformation::Residue const & res_in )
 {
 	core::Size const resnum = segment(target_segment).resid(target_res);
 	replace_residue( resnum, res_in, true );
@@ -1281,9 +1288,9 @@ StructureData::replace_residue(
 /// @brief replaces one residue with another
 void
 StructureData::replace_residue(
-		core::Size const resnum,
-		core::conformation::Residue const & res_in,
-		bool const orient_bb = true )
+	core::Size const resnum,
+	core::conformation::Residue const & res_in,
+	bool const orient_bb = true )
 {
 	assert( pose_ );
 	bool is_upper_term = pose_->residue(resnum).is_upper_terminus();
@@ -1303,8 +1310,8 @@ StructureData::replace_residue(
 /// @brief moves jump pointing to the first segment so that it will move with the second segment
 void
 StructureData::slide_jump(
-		std::string const & child_segment,
-		std::string const & parent_segment )
+	std::string const & child_segment,
+	std::string const & parent_segment )
 {
 	if ( !pose_ ) {
 		return;
@@ -1350,14 +1357,14 @@ StructureData::align_residues(
 	}
 
 	core::id::StubID stub1(
-			core::id::AtomID(pose_->residue(align_res_target).type().atom_index("CA"), align_res_target),
-			core::id::AtomID(pose_->residue(align_res_target).type().atom_index("N"), align_res_target),
-			core::id::AtomID(pose_->residue(align_res_target).type().atom_index("C"), align_res_target) );
+		core::id::AtomID(pose_->residue(align_res_target).type().atom_index("CA"), align_res_target),
+		core::id::AtomID(pose_->residue(align_res_target).type().atom_index("N"), align_res_target),
+		core::id::AtomID(pose_->residue(align_res_target).type().atom_index("C"), align_res_target) );
 
 	core::id::StubID stub2(
-			core::id::AtomID(pose_->residue(align_res_movable).type().atom_index("CA"), align_res_movable),
-			core::id::AtomID(pose_->residue(align_res_movable).type().atom_index("N"), align_res_movable),
-			core::id::AtomID(pose_->residue(align_res_movable).type().atom_index("C"), align_res_movable) );
+		core::id::AtomID(pose_->residue(align_res_movable).type().atom_index("CA"), align_res_movable),
+		core::id::AtomID(pose_->residue(align_res_movable).type().atom_index("N"), align_res_movable),
+		core::id::AtomID(pose_->residue(align_res_movable).type().atom_index("C"), align_res_movable) );
 
 	pose_->conformation().set_stub_transform( stub1, stub2, core::kinematics::RT() );
 	assert( ft_backup.check_fold_tree() );
@@ -1369,10 +1376,10 @@ StructureData::align_residues(
 /// original segment 2 is then deleted.
 void
 StructureData::move_segment(
-		std::string const & segment1_n,
-		std::string const & segment1_c,
-		std::string const & segment2_n,
-		std::string const & segment2_c )
+	std::string const & segment1_n,
+	std::string const & segment1_c,
+	std::string const & segment2_n,
+	std::string const & segment2_c )
 {
 	if ( segment(segment1_c).cterm_resi()+1 != segment(segment2_n).nterm_resi() ) {
 		core::Size s1 = segment(segment1_n).nterm_resi();
@@ -1411,10 +1418,10 @@ StructureData::move_segment(
 /// returns the jump number that is to be ignored in fold tree searches
 void
 StructureData::move_segment_in_pose(
-		core::Size start1,
-		core::Size end1,
-		core::Size start2,
-		core::Size end2 )
+	core::Size start1,
+	core::Size end1,
+	core::Size start2,
+	core::Size end2 )
 {
 	TR << "moving segment " << start2 << "->" << end2 << " to after residues " << start1 << "->" << end1 << std::endl;
 
@@ -1433,10 +1440,10 @@ StructureData::move_segment_in_pose(
 /// @brief copies and inserts a segment into the permutation after the given segment
 void
 StructureData::insert_after_residue_in_pose(
-		core::Size segment1_start,
-		core::Size segment1_end,
-		core::Size segment2_start,
-		core::Size segment2_end )
+	core::Size segment1_start,
+	core::Size segment1_end,
+	core::Size segment2_start,
+	core::Size segment2_end )
 {
 	assert( pose_ );
 	TR.Debug << "Inserting segment -- original segment2: " << segment2_start << "-->" << segment2_end << ", segment1_end=" << segment1_end << std::endl;
@@ -1617,10 +1624,12 @@ StructureData::delete_segment( std::string const & seg_val )
 
 	if ( pose_ ) {
 		// add terminal variants
-		if ( segment1_c != "" )
+		if ( segment1_c != "" ) {
 			add_upper_terminus_variant_type( segment(segment1_c).cterm_resi() );
-		if ( segment2_n != "" )
+		}
+		if ( segment2_n != "" ) {
 			add_lower_terminus_variant_type( segment(segment2_n).nterm_resi() );
+		}
 		chains_from_termini();
 	}
 	TR << "Deleted segment " << seg << std::endl;
@@ -1629,8 +1638,8 @@ StructureData::delete_segment( std::string const & seg_val )
 /// @brief deletes the given residues from the pose
 void
 StructureData::delete_residues_in_pose(
-		core::Size const start,
-		core::Size const end )
+	core::Size const start,
+	core::Size const end )
 {
 	assert( pose_ );
 	pose_->conformation().buffer_signals();
@@ -1673,11 +1682,11 @@ StructureData::set_omega( core::Size const seqpos, core::Real const omega_val )
 /// @brief sets bond length in pose
 void
 StructureData::set_bond_length(
-		std::string const & segmentname,
-		core::Size const resid,
-		std::string const & atom1,
-		std::string const & atom2,
-		core::Real const newlength )
+	std::string const & segmentname,
+	core::Size const resid,
+	std::string const & atom1,
+	std::string const & atom2,
+	core::Real const newlength )
 {
 	assert( pose_ );
 	assert( newlength >= 0 );
@@ -1705,8 +1714,7 @@ StructureData::detect_disulfides( core::scoring::ScoreFunctionOP sfx )
 	if ( basic::options::option[ basic::options::OptionKeys::in::detect_disulf ].user() ?
 			basic::options::option[ basic::options::OptionKeys::in::detect_disulf ]() : // detect_disulf true
 			pose_->is_fullatom() // detect_disulf default but fa pose
-		)
-	{
+			) {
 		pose_->conformation().detect_disulfides();
 	}
 
@@ -1794,14 +1802,14 @@ StructureData::available_upper_termini() const
 /// pose_ MUST BE SET if use_distance=true!!
 bool
 StructureData::are_connectable(
-		std::string const & id1,
-		std::string const & id2,
-		core::Size const nres,
-		bool const use_distance,
-		bool const connection_performs_orientation,
-		bool const allow_cyclic = false,
-		core::Real const bond_dist = 1.5,
-		core::Real const max_dist_per_res = 3.8 ) const
+	std::string const & id1,
+	std::string const & id2,
+	core::Size const nres,
+	bool const use_distance,
+	bool const connection_performs_orientation,
+	bool const allow_cyclic = false,
+	core::Real const bond_dist = 1.5,
+	core::Real const max_dist_per_res = 3.8 ) const
 {
 	// if one id or the other is already connected to something, this isn't connectable
 	if ( ! segment(id1).has_free_upper_terminus() ) {
@@ -1848,7 +1856,7 @@ StructureData::are_connectable(
 	core::Size const atom2 = pose()->residue(res2).type().atom_index( aname2 );
 	assert( atom2 );
 	core::Real const dist( pose()->residue(res1).xyz( atom1 ).distance(
-				pose()->residue(res2).xyz( atom2 ) ) );
+		pose()->residue(res2).xyz( atom2 ) ) );
 	// max 3.8 angstroms per residue, plus ~1.5 angstroms for N-C bond
 	assert( bond_dist >= -0.0000001 );
 	if ( dist > (max_dist_per_res*nres + bond_dist) ) {
@@ -1861,19 +1869,19 @@ StructureData::are_connectable(
 /// @brief names a set of residues -- start_resid MUST be an nterm_resi() for a segment
 void
 StructureData::add_segment(
-		std::string const & id_val,
-		StringList::iterator insert_before_pos,
-		core::Size const segment_length,
-		core::Size const local_safe_residue,
-		core::Size const local_cutpoint,
-		core::Size const movable_group,
-		bool const is_loop,
-		bool const nterm_included,
-		bool const cterm_included,
-		std::string const & lower_conn,
-		std::string const & upper_conn,
-		std::string const & ss,
-		utility::vector1< std::string > const & abego	)
+	std::string const & id_val,
+	StringList::iterator insert_before_pos,
+	core::Size const segment_length,
+	core::Size const local_safe_residue,
+	core::Size const local_cutpoint,
+	core::Size const movable_group,
+	bool const is_loop,
+	bool const nterm_included,
+	bool const cterm_included,
+	std::string const & lower_conn,
+	std::string const & upper_conn,
+	std::string const & ss,
+	utility::vector1< std::string > const & abego )
 {
 	Segment res( segment_length, local_safe_residue, local_cutpoint, movable_group, is_loop, nterm_included, cterm_included, lower_conn, upper_conn, ss, abego );
 
@@ -1962,9 +1970,9 @@ StructureData::find_upper_terminus( std::set< std::string > & visited, std::stri
 /// @brief sets an "alias" for a particular residue inside a segment which allows for it to be easily accessed
 void
 StructureData::set_resnum_alias(
-		std::string const & alias_name,
-		std::string const & segment_name,
-		core::Size const resi )
+	std::string const & alias_name,
+	std::string const & segment_name,
+	core::Size const resi )
 {
 	if ( has_segment( segment_name ) ) {
 		assert( resi );
@@ -1984,8 +1992,8 @@ StructureData::set_resnum_alias(
 /// @brief sets an "alias" for a particular residue which allows for it to be easily accessed
 void
 StructureData::set_resnum_alias(
-		std::string const & alias_name,
-		core::Size const resi )
+	std::string const & alias_name,
+	core::Size const resi )
 {
 	debug_assert( resi );
 	debug_assert( resi <= pose_length() );
@@ -2092,7 +2100,7 @@ bool
 StructureData::has_segment( std::string const & seg ) const
 {
 	return ( ( segments_.find(seg) != segments_.end() ) ||
-			( segments_.find( id() + PARENT_DELIMETER + seg ) != segments_.end() ) );
+		( segments_.find( id() + PARENT_DELIMETER + seg ) != segments_.end() ) );
 }
 
 /// @brief merge all data and segments from "other" into this StructureData
@@ -2123,23 +2131,23 @@ StructureData::merge( StructureData const & other )
 void
 StructureData::add_subperm( StructureDataCOP perm )
 {
-	// this should only be called on multi-chain permutations
-	runtime_assert( is_multi() );
+// this should only be called on multi-chain permutations
+runtime_assert( is_multi() );
 
-	sub_perms_.push_back( perm->clone() );
+sub_perms_.push_back( perm->clone() );
 
-	// set residue ranges
-	core::Size const movable_group_num = count_movable_groups() + 1;
-	for ( StringList::const_iterator c = perm->segments_begin(), end = perm->segments_end(); c != end; ++c ) {
-		Segment newresi = perm->segment(*c);
-		newresi.movable_group = movable_group_num;
-		add_segment( *c, newresi, segment_order_.end() );
-	}
+// set residue ranges
+core::Size const movable_group_num = count_movable_groups() + 1;
+for ( StringList::const_iterator c = perm->segments_begin(), end = perm->segments_end(); c != end; ++c ) {
+Segment newresi = perm->segment(*c);
+newresi.movable_group = movable_group_num;
+add_segment( *c, newresi, segment_order_.end() );
+}
 
-	// add data from subperm
-	copy_data( *perm, true );
+// add data from subperm
+copy_data( *perm, true );
 
-	TR.Debug << "successfully added subperm " << perm->id() << ", pose_length=" << pose_length() << " length=" << length() << " ss=" << ss() << std::endl;
+TR.Debug << "successfully added subperm " << perm->id() << ", pose_length=" << pose_length() << " length=" << length() << " ss=" << ss() << std::endl;
 }
 */
 
@@ -2203,8 +2211,8 @@ StructureData::consolidate_movable_groups( utility::vector1< std::string > const
 /// @brief moves around jumps so that movable groups will all move together during folding
 void
 StructureData::consolidate_movable_groups(
-		core::pose::PoseOP pose,
-		utility::vector1< std::string > const & root_segments )
+	core::pose::PoseOP pose,
+	utility::vector1< std::string > const & root_segments )
 {
 	assert( pose );
 
@@ -2223,8 +2231,8 @@ StructureData::consolidate_movable_groups(
 /// @brief declares a covalent bond between the specified atoms
 void
 StructureData::declare_covalent_bond(
-		std::string const & seg1, core::Size const res1, std::string const & atom1,
-		std::string const & seg2, core::Size const res2, std::string const & atom2 )
+	std::string const & seg1, core::Size const res1, std::string const & atom1,
+	std::string const & seg2, core::Size const res2, std::string const & atom2 )
 {
 	declare_covalent_bond( pose_residue( seg1, res1 ), atom1, pose_residue( seg2, res2 ), atom2 );
 }
@@ -2232,12 +2240,12 @@ StructureData::declare_covalent_bond(
 /// @brief declares a covalent bond using pose residues
 void
 StructureData::declare_covalent_bond(
-		core::Size const res1, std::string const & atom1,
-		core::Size const res2, std::string const & atom2 )
+	core::Size const res1, std::string const & atom1,
+	core::Size const res2, std::string const & atom2 )
 {
 	TR.Debug << "Creating covalent bond between " << res1 << " and " << res2 << std::endl;
 	assert( pose_ );
-	pose_->conformation().declare_chemical_bond( res1,	atom1, res2, atom2 );
+	pose_->conformation().declare_chemical_bond( res1, atom1, res2, atom2 );
 
 	//Rebuild the connection atoms:
 	for ( core::Size i=1, endi=pose_->conformation().residue(res1).n_residue_connections(); i<=endi; ++i ) {
@@ -2262,7 +2270,7 @@ StructureData::declare_polymer_bond( std::string const & segment1, std::string c
 	assert( ! pose_->residue(pos1).is_polymer_bonded( pos2 ) );
 
 	declare_covalent_bond( pos1, pose_->residue(pos1).atom_name( pose_->residue(pos1).upper_connect_atom() ),
-			pos2, pose_->residue(pos2).atom_name( pose_->residue(pos2).lower_connect_atom() ) );
+		pos2, pose_->residue(pos2).atom_name( pose_->residue(pos2).lower_connect_atom() ) );
 
 	assert( pose_->residue(pos1).is_polymer_bonded( pos2 ) );
 }
@@ -2281,8 +2289,8 @@ StructureData::set_cutpoint( std::string const & seg, core::Size const resi )
 /// @brief connects the given chains together, doesn't update anything -- don't call this on its own unless you know what you're doing.
 void
 StructureData::connect_segments(
-		std::string const & segment1_c,
-		std::string const & segment2_n )
+	std::string const & segment1_c,
+	std::string const & segment2_n )
 {
 	// connected segments
 	if ( has_free_upper_terminus( segment1_c ) && has_free_lower_terminus( segment2_n ) ) {
@@ -2302,9 +2310,9 @@ StructureData::connect_segments(
 /// @brief merges two segments into one that has the name new_name. They must be next to each other in sequence.
 void
 StructureData::merge_segments(
-		std::string const & segment1,
-		std::string const & segment2,
-		std::string const & new_name )
+	std::string const & segment1,
+	std::string const & segment2,
+	std::string const & new_name )
 {
 	Segment c1 = segment(segment1);
 	Segment c2 = segment(segment2);
@@ -2431,8 +2439,9 @@ StructureData::set_pose( core::pose::PoseOP new_pose )
 	}
 	pose_ = new_pose;
 
-	if ( pose_ )
+	if ( pose_ ) {
 		save_into_pose();
+	}
 }
 
 /// @brief based on the pose, determines the jump number for the jump pointing to the segment specified
@@ -3110,10 +3119,12 @@ operator<<( std::ostream & os, std::pair< std::string, Segment > const & res )
 		<< "\" ss=\"" << res.second.ss()
 		<< "\" abego=\"" << ab_str;
 
-	if ( res.second.lower_segment() != "" )
+	if ( res.second.lower_segment() != "" ) {
 		os << "\" lower_segment=\"" << res.second.lower_segment();
-	if ( res.second.upper_segment() != "" )
+	}
+	if ( res.second.upper_segment() != "" ) {
 		os << "\" upper_segment=\"" << res.second.upper_segment();
+	}
 
 	os << "\" />";
 	return os;

@@ -9,7 +9,7 @@
 
 /// @file protocols/rosetta_scripts/MultipleOutputWrapperCreator.hh
 /// @brief This class will create instances of Mover MultipleOutputWrapper for the MoverFactory
-/// @author Luki Goldschmidt 
+/// @author Luki Goldschmidt
 
 #ifndef INCLUDED_protocols_rosetta_scripts_MultipleOutputWrapperCreator_hh
 #define INCLUDED_protocols_rosetta_scripts_MultipleOutputWrapperCreator_hh

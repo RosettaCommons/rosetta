@@ -33,14 +33,14 @@ public:
 		sorted_capacity_ = sorted_capacity;
 		last_ = 1;
 		data_.resize( max_capacity );
-	        n_inserts_ = 0;
+		n_inserts_ = 0;
 		n_denied_ = 0;
 		n_sorts_ = 0;
 	}
 
 	~LazySortedVector1() {
 
-//	    std::cerr<<n_inserts_<<" "<<n_denied_<<" "<<n_sorts_<<'\n';
+		//     std::cerr<<n_inserts_<<" "<<n_denied_<<" "<<n_sorts_<<'\n';
 	}
 
 	void resize(Size sorted_capacity,Size max_capacity) {
@@ -52,24 +52,25 @@ public:
 
 	inline const T& top() {
 
-		if(!sorted_)
-		    std::sort(data_.begin(), data_.begin() + last_ - 1, comp);
+		if ( !sorted_ ) {
+			std::sort(data_.begin(), data_.begin() + last_ - 1, comp);
+		}
 		return data_[1];
 	}
 
 	inline bool push(const T& x) {
 
-		if(comp(worst_,x)) {
-		    n_denied_++;
-		    return false;
+		if ( comp(worst_,x) ) {
+			n_denied_++;
+			return false;
 		}
 
-		if(last_ > max_capacity_) {
-		    std::sort(data_.begin(), data_.begin() + last_ - 1, comp);
-		    last_ = sorted_capacity_ + 1;
-		    worst_ = data_[sorted_capacity_];
+		if ( last_ > max_capacity_ ) {
+			std::sort(data_.begin(), data_.begin() + last_ - 1, comp);
+			last_ = sorted_capacity_ + 1;
+			worst_ = data_[sorted_capacity_];
 
-		    n_sorts_++;
+			n_sorts_++;
 		}
 		n_inserts_++;
 		data_[last_] = x;
@@ -90,14 +91,16 @@ public:
 	}
 
 	inline T& at(Size index) {
-		if(!sorted_)
-		    std::sort(data_.begin(), data_.begin() + last_ - 1, comp);
+		if ( !sorted_ ) {
+			std::sort(data_.begin(), data_.begin() + last_ - 1, comp);
+		}
 		return data_.at(index);
 	}
 
 	inline T& operator[](Size index) {
-		if(!sorted_)
-		    std::sort(data_.begin(), data_.begin() + last_ - 1, comp);
+		if ( !sorted_ ) {
+			std::sort(data_.begin(), data_.begin() + last_ - 1, comp);
+		}
 		return data_[index];
 	}
 
@@ -108,15 +111,18 @@ public:
 	utility::vector1<T>& expose_data() {
 
 		good_data_.clear();
-		if(last_<=2)
-		    return good_data_;
+		if ( last_<=2 ) {
+			return good_data_;
+		}
 		good_data_.reserve(size());
-		if(!sorted_)
-		    std::sort(data_.begin(), data_.begin() + last_ - 1, comp);
+		if ( !sorted_ ) {
+			std::sort(data_.begin(), data_.begin() + last_ - 1, comp);
+		}
 
-//		std::copy(data_.begin(), data_.begin() + size() - 1, good_data_.begin() );
-		for(Size i=1;i<=size();i++)
-		    good_data_.push_back(data_[i]);
+		//  std::copy(data_.begin(), data_.begin() + size() - 1, good_data_.begin() );
+		for ( Size i=1; i<=size(); i++ ) {
+			good_data_.push_back(data_[i]);
+		}
 
 		return good_data_;
 	}

@@ -32,44 +32,44 @@
 #include <Eigen/Dense>
 
 namespace protocols {
-    namespace simple_filters {
-        using namespace core;
+namespace simple_filters {
+using namespace core;
 
-        class RepeatParameterFilter : public filters::Filter
-        {
-        public:
-            RepeatParameterFilter();
-            bool apply( core::pose::Pose const & pose ) const;
-            //Real score( core::pose::Pose & pose);
-            core::Real report_sm( core::pose::Pose const & pose ) const;
-            void report( std::ostream & out,const core::pose::Pose & pose ) const;
-            void calculate_helical_parameters( core::pose::Pose const & pose, std::string & handedness, Real & rise_out, Real & radius_out, Real & omega_out) const;
-            //void align_to_frame(core::pose::Pose & pose) const; //This seems to have been prototyped but never used.  Removing -- VKM, 19 March 2015.
-            void apply_transformation(core::pose::Pose & mod_pose, std::list <core::Size> const & residue_list, numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT) const;
-            void matrix3f_to_xyzMatrix( Eigen::Matrix3f const & Re, numeric::xyzMatrix< core::Real> & R  ) const;
-            void identity_matrix( numeric::xyzMatrix< core::Real> & R ) const;
-            void calculate_helical_parameters_helper( core::pose::Pose const & pose, std::string & handedness, Real & rise_out, Real & radius_out, Real & omega_out) const;
-            filters::FilterOP clone() const {
-                return filters::FilterOP( new RepeatParameterFilter( *this ) );
-            }
-            filters::FilterOP fresh_instance() const{
-                return filters::FilterOP( new RepeatParameterFilter() );
-            }
+class RepeatParameterFilter : public filters::Filter
+{
+public:
+	RepeatParameterFilter();
+	bool apply( core::pose::Pose const & pose ) const;
+	//Real score( core::pose::Pose & pose);
+	core::Real report_sm( core::pose::Pose const & pose ) const;
+	void report( std::ostream & out,const core::pose::Pose & pose ) const;
+	void calculate_helical_parameters( core::pose::Pose const & pose, std::string & handedness, Real & rise_out, Real & radius_out, Real & omega_out) const;
+	//void align_to_frame(core::pose::Pose & pose) const; //This seems to have been prototyped but never used.  Removing -- VKM, 19 March 2015.
+	void apply_transformation(core::pose::Pose & mod_pose, std::list <core::Size> const & residue_list, numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT) const;
+	void matrix3f_to_xyzMatrix( Eigen::Matrix3f const & Re, numeric::xyzMatrix< core::Real> & R  ) const;
+	void identity_matrix( numeric::xyzMatrix< core::Real> & R ) const;
+	void calculate_helical_parameters_helper( core::pose::Pose const & pose, std::string & handedness, Real & rise_out, Real & radius_out, Real & omega_out) const;
+	filters::FilterOP clone() const {
+		return filters::FilterOP( new RepeatParameterFilter( *this ) );
+	}
+	filters::FilterOP fresh_instance() const{
+		return filters::FilterOP( new RepeatParameterFilter() );
+	}
 
-            virtual ~RepeatParameterFilter();
+	virtual ~RepeatParameterFilter();
 
-            void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
-        private:
-            Size numb_repeats_;
-						Size startAtRepeat_;
-            std::string param_type_;
-						Real min_;
-            Real max_;
-            bool r_handed_;
-            bool filter_;
-        };
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+private:
+	Size numb_repeats_;
+	Size startAtRepeat_;
+	std::string param_type_;
+	Real min_;
+	Real max_;
+	bool r_handed_;
+	bool filter_;
+};
 
-    }
+}
 }
 
 #endif

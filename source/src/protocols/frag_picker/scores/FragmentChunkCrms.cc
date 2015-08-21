@@ -64,184 +64,185 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 static thread_local basic::Tracer trTmScore(
-		"protocols.frag_picker.scores.FragmentChunkCrms");
+	"protocols.frag_picker.scores.FragmentChunkCrms");
 
 FragmentChunkCrms::~FragmentChunkCrms() {}
 
 FragmentChunkCrms::FragmentChunkCrms(Size priority, Real lowest_acceptable_value,
-		bool use_lowest, std::string query_sequence, core::pose::PoseOP reference_pose, FArray1D_int& seqmapping) :
+	bool use_lowest, std::string query_sequence, core::pose::PoseOP reference_pose, FArray1D_int& seqmapping) :
 	FragmentScoringMethod(priority, lowest_acceptable_value, use_lowest, "FragmentChunkCrms") {
 	reference_pose_ = reference_pose;
-  fragment_pose_ = pose::PoseOP( new core::pose::Pose );
+	fragment_pose_ = pose::PoseOP( new core::pose::Pose );
 	n_atoms_ = reference_pose_->total_residue();
 	reference_coordinates_.redimension(3, 4*n_atoms_, 0.0);
 	fill_bb_coords(*reference_pose_, reference_coordinates_, n_atoms_);
 	weights_.redimension(reference_pose_->total_residue()*4, 1.0);
 	seqmapping_=seqmapping;
-  core::pose::make_pose_from_sequence(*fragment_pose_, query_sequence, *(chemical::ChemicalManager::get_instance()->residue_type_set("centroid")));
+	core::pose::make_pose_from_sequence(*fragment_pose_, query_sequence, *(chemical::ChemicalManager::get_instance()->residue_type_set("centroid")));
 
-  //seqmapping_.redimension(query_sequence.length(), 0);
+	//seqmapping_.redimension(query_sequence.length(), 0);
 }
 
 void FragmentChunkCrms::fill_bb_coords(core::pose::Pose const& pose, FArray2_double& coords, Size n_atoms) {
 
 	trTmScore.Debug << "Copying coordinates from ... The first residues are: "
-			<< pose.residue(1).name3() << " " << pose.residue(2).name3() << " "
-			<< pose.residue(3).name3() << std::endl;
+		<< pose.residue(1).name3() << " " << pose.residue(2).name3() << " "
+		<< pose.residue(3).name3() << std::endl;
 
-  core::Size n_at = 1;
-	for (core::Size i = 1; i <= n_atoms; i++) {
-    id::NamedAtomID idN("N", i);
-    PointPosition const& xyzN = pose.xyz(idN);
-    for (core::Size d = 1; d <= 3; ++d) {
-      coords(d, n_at) = xyzN[d - 1];
-    }
-    n_at++;
+	core::Size n_at = 1;
+	for ( core::Size i = 1; i <= n_atoms; i++ ) {
+		id::NamedAtomID idN("N", i);
+		PointPosition const& xyzN = pose.xyz(idN);
+		for ( core::Size d = 1; d <= 3; ++d ) {
+			coords(d, n_at) = xyzN[d - 1];
+		}
+		n_at++;
 
-    id::NamedAtomID idCA("CA", i);
-    PointPosition const& xyzCA = pose.xyz(idCA);
-    for (core::Size d = 1; d <= 3; ++d) {
-      coords(d, n_at) = xyzCA[d - 1];
-    }
-    n_at++;
+		id::NamedAtomID idCA("CA", i);
+		PointPosition const& xyzCA = pose.xyz(idCA);
+		for ( core::Size d = 1; d <= 3; ++d ) {
+			coords(d, n_at) = xyzCA[d - 1];
+		}
+		n_at++;
 
-    id::NamedAtomID idC("C", i);
-    PointPosition const& xyzC = pose.xyz(idC);
-    for (core::Size d = 1; d <= 3; ++d) {
-      coords(d, n_at) = xyzC[d - 1];
-    }
-    n_at++;
+		id::NamedAtomID idC("C", i);
+		PointPosition const& xyzC = pose.xyz(idC);
+		for ( core::Size d = 1; d <= 3; ++d ) {
+			coords(d, n_at) = xyzC[d - 1];
+		}
+		n_at++;
 
-    id::NamedAtomID idO("O", i);
-    PointPosition const& xyzO = pose.xyz(idO);
-    for (core::Size d = 1; d <= 3; ++d) {
-      coords(d, n_at) = xyzO[d - 1];
-    }
-    n_at++;
+		id::NamedAtomID idO("O", i);
+		PointPosition const& xyzO = pose.xyz(idO);
+		for ( core::Size d = 1; d <= 3; ++d ) {
+			coords(d, n_at) = xyzO[d - 1];
+		}
+		n_at++;
 	}
 }
 
 void FragmentChunkCrms::fill_bb_coords(core::pose::Pose const& pose, FArray2_double& coords, FArray1D_int& seqmapping) {
 
-  trTmScore.Debug << "Copying coordinates from according to seqmapping " << std::endl;
+	trTmScore.Debug << "Copying coordinates from according to seqmapping " << std::endl;
 
-  core::Size n_at = 1;
-  for (core::Size i = 1; i <= pose.total_residue(); i++) {
-		if (seqmapping(i)==1) {
-    id::NamedAtomID idN("N", i);
-    PointPosition const& xyzN = pose.xyz(idN);
-    for (core::Size d = 1; d <= 3; ++d) {
-      coords(d, n_at) = xyzN[d - 1];
-    }
-    n_at++;
+	core::Size n_at = 1;
+	for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
+		if ( seqmapping(i)==1 ) {
+			id::NamedAtomID idN("N", i);
+			PointPosition const& xyzN = pose.xyz(idN);
+			for ( core::Size d = 1; d <= 3; ++d ) {
+				coords(d, n_at) = xyzN[d - 1];
+			}
+			n_at++;
 
-    id::NamedAtomID idCA("CA", i);
-    PointPosition const& xyzCA = pose.xyz(idCA);
-    for (core::Size d = 1; d <= 3; ++d) {
-      coords(d, n_at) = xyzCA[d - 1];
-    }
-    n_at++;
+			id::NamedAtomID idCA("CA", i);
+			PointPosition const& xyzCA = pose.xyz(idCA);
+			for ( core::Size d = 1; d <= 3; ++d ) {
+				coords(d, n_at) = xyzCA[d - 1];
+			}
+			n_at++;
 
-    id::NamedAtomID idC("C", i);
-    PointPosition const& xyzC = pose.xyz(idC);
-    for (core::Size d = 1; d <= 3; ++d) {
-      coords(d, n_at) = xyzC[d - 1];
-    }
-    n_at++;
+			id::NamedAtomID idC("C", i);
+			PointPosition const& xyzC = pose.xyz(idC);
+			for ( core::Size d = 1; d <= 3; ++d ) {
+				coords(d, n_at) = xyzC[d - 1];
+			}
+			n_at++;
 
-    id::NamedAtomID idO("O", i);
-    PointPosition const& xyzO = pose.xyz(idO);
-    for (core::Size d = 1; d <= 3; ++d) {
-      coords(d, n_at) = xyzO[d - 1];
-    }
-    n_at++;
-  }
+			id::NamedAtomID idO("O", i);
+			PointPosition const& xyzO = pose.xyz(idO);
+			for ( core::Size d = 1; d <= 3; ++d ) {
+				coords(d, n_at) = xyzO[d - 1];
+			}
+			n_at++;
+		}
 	}
 }
 
 bool FragmentChunkCrms::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) {
 
-	if ((Size) fragment_coordinates_.size2() < n_atoms_*4) {
+	if ( (Size) fragment_coordinates_.size2() < n_atoms_*4 ) {
 		fragment_coordinates_.redimension(3, n_atoms_*4, 0.0);
 	}
 
-  for (Size i = 1; i <= f->get_length(); i++) {
-      fragment_pose_->set_phi( i, f->get_residue(i)->phi() );
-      fragment_pose_->set_psi( i, f->get_residue(i)->psi() );
-      fragment_pose_->set_omega( i, f->get_residue(i)->omega() );
-  }
+	for ( Size i = 1; i <= f->get_length(); i++ ) {
+		fragment_pose_->set_phi( i, f->get_residue(i)->phi() );
+		fragment_pose_->set_psi( i, f->get_residue(i)->psi() );
+		fragment_pose_->set_omega( i, f->get_residue(i)->omega() );
+	}
 
-  fill_bb_coords(*fragment_pose_, fragment_coordinates_, seqmapping_);
+	fill_bb_coords(*fragment_pose_, fragment_coordinates_, seqmapping_);
 
 	Real chunkrms = numeric::model_quality::rms_wrapper(4*n_atoms_, fragment_coordinates_, reference_coordinates_);
 
 	empty_map->set_score_component(chunkrms, id_);
-	if ((chunkrms > lowest_acceptable_value_) && (use_lowest_ == true))
+	if ( (chunkrms > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;
+	}
 
 	return true;
 }
 
 void sequencealign(core::sequence::SequenceOP seq1, core::sequence::SequenceOP seq2, FArray1D_int& seqmapping) {
 
-  seqmapping.redimension(std::max(seq1->length(),seq2->length()), 0);
+	seqmapping.redimension(std::max(seq1->length(),seq2->length()), 0);
 	std::cout << "map min size: " << std::min(seq1->length(),seq2->length()) << std::endl;
 	std::cout << "map max size: " << std::max(seq1->length(),seq2->length()) << std::endl;
-  //utility::file::FileName blosum62( basic::database::full_name("sequence/substitution_matrix/BLOSUM62"));
-  //core::sequence::ScoringSchemeOP ss( new core::sequence::MatrixScoringScheme( -11, -1, blosum62 ) );
-  core::sequence::ScoringSchemeOP ss( new core::sequence::SimpleScoringScheme( 120, 0, -100, 0 ) );
+	//utility::file::FileName blosum62( basic::database::full_name("sequence/substitution_matrix/BLOSUM62"));
+	//core::sequence::ScoringSchemeOP ss( new core::sequence::MatrixScoringScheme( -11, -1, blosum62 ) );
+	core::sequence::ScoringSchemeOP ss( new core::sequence::SimpleScoringScheme( 120, 0, -100, 0 ) );
 
 	//alignment
 	core::sequence::NWAligner nw_aligner;
-  std::cout << "seq1: " << *seq1 << std::endl;
-  std::cout << "seq2: " << *seq2 << std::endl;
+	std::cout << "seq1: " << *seq1 << std::endl;
+	std::cout << "seq2: " << *seq2 << std::endl;
 	core::sequence::SequenceAlignment global_align = nw_aligner.align( seq1, seq2, ss) ;
 	core::id::SequenceMapping mapping = global_align.sequence_mapping(1, 2);
 	//std::cout << "mapping: " << std::endl;
-  //std::cout << mapping;
-  //std::cout << std::endl;
+	//std::cout << mapping;
+	//std::cout << std::endl;
 
-  for (core::Size i = 1; i <= std::max(seq1->length(),seq2->length()); ++i) {
-           if (mapping[i]) {
-							seqmapping(i)=1;
-							std::cout << "seqmapping("<<i<<")="<< seqmapping(i) << std::endl;
-           } else {
-							seqmapping(i)=0;
-							std::cout << "seqmapping("<<i<<")="<< seqmapping(i) << std::endl;
-					}
-   }
+	for ( core::Size i = 1; i <= std::max(seq1->length(),seq2->length()); ++i ) {
+		if ( mapping[i] ) {
+			seqmapping(i)=1;
+			std::cout << "seqmapping("<<i<<")="<< seqmapping(i) << std::endl;
+		} else {
+			seqmapping(i)=0;
+			std::cout << "seqmapping("<<i<<")="<< seqmapping(i) << std::endl;
+		}
+	}
 
 }
 
 FragmentScoringMethodOP MakeFragmentChunkCrms::make(Size priority,
-		Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker
-		, std::string) {
+	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker
+	, std::string) {
 
-  //trTmScore << "QUERY_SEQUENCE " << picker->get_query_seq_string() << std::endl;
-  //Initialized an array and align to each other
-  core::sequence::SequenceOP seq1( new core::sequence::Sequence(picker->get_query_seq_string(),"blank",1) );
+	//trTmScore << "QUERY_SEQUENCE " << picker->get_query_seq_string() << std::endl;
+	//Initialized an array and align to each other
+	core::sequence::SequenceOP seq1( new core::sequence::Sequence(picker->get_query_seq_string(),"blank",1) );
 	core::sequence::SequenceOP seq2;
 	FArray1D_int seqmapping;
 
-	if (option[in::file::native].user()) {
+	if ( option[in::file::native].user() ) {
 		trTmScore
-				<< "Reference structure to score fragments by chunkrms loaded from: "
-				<< option[in::file::native]() << std::endl;
+			<< "Reference structure to score fragments by chunkrms loaded from: "
+			<< option[in::file::native]() << std::endl;
 		core::pose::PoseOP nativePose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*nativePose, option[in::file::native]());
-    seq2 = core::sequence::SequenceOP( new core::sequence::Sequence(*nativePose) );
+		seq2 = core::sequence::SequenceOP( new core::sequence::Sequence(*nativePose) );
 		seqmapping.redimension(std::max(seq1->length(),seq2->length()), 0);
 		sequencealign(seq1,seq2,seqmapping);
 
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new FragmentChunkCrms(priority, lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), nativePose, seqmapping) );
 
-	} else if (option[in::file::s].user()) {
+	} else if ( option[in::file::s].user() ) {
 		trTmScore
-				<< "Reference structure to score fragments by chunkrms loaded from: "
-				<< option[in::file::s]()[1] << std::endl;
+			<< "Reference structure to score fragments by chunkrms loaded from: "
+			<< option[in::file::s]()[1] << std::endl;
 		core::pose::PoseOP nativePose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*nativePose, option[in::file::s]()[1]);
-    seq2 = core::sequence::SequenceOP( new core::sequence::Sequence(*nativePose) );
+		seq2 = core::sequence::SequenceOP( new core::sequence::Sequence(*nativePose) );
 		seqmapping.redimension(std::max(seq1->length(),seq2->length()), 0);
 		sequencealign(seq1,seq2,seqmapping);
 
@@ -250,7 +251,7 @@ FragmentScoringMethodOP MakeFragmentChunkCrms::make(Size priority,
 	} else {
 		utility_exit_with_message("Can't read a reference structure. Provide it with in::file::s or in:file:native flag");
 
-	return NULL;
+		return NULL;
 	}
 }
 

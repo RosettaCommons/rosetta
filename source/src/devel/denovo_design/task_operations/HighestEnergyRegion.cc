@@ -52,25 +52,25 @@ namespace task_operations {
 
 // default constructor
 HighestEnergyRegionOperation::HighestEnergyRegionOperation()
-	: TaskOperation(),
-	  region_shell_( 8.0 ),
-		regions_to_design_( 1 ),
-		repack_non_selected_( false ),
-		use_cache_( false ),
-		scorefxn_( /* NULL */ ),
-		cached_pose_( /* NULL */ )
+: TaskOperation(),
+	region_shell_( 8.0 ),
+	regions_to_design_( 1 ),
+	repack_non_selected_( false ),
+	use_cache_( false ),
+	scorefxn_( /* NULL */ ),
+	cached_pose_( /* NULL */ )
 {}
 
 // copy constructor
 HighestEnergyRegionOperation::HighestEnergyRegionOperation( HighestEnergyRegionOperation const & rval )
-	: TaskOperation( rval ),
-	  region_shell_( rval.region_shell_ ),
-		regions_to_design_( rval.regions_to_design_ ),
-		repack_non_selected_( rval.repack_non_selected_ ),
-		use_cache_( rval.use_cache_ ),
-		scorefxn_( rval.scorefxn_ ),
-		residues_to_design_( rval.residues_to_design_ ),
-		cached_pose_( rval.cached_pose_ )
+: TaskOperation( rval ),
+	region_shell_( rval.region_shell_ ),
+	regions_to_design_( rval.regions_to_design_ ),
+	repack_non_selected_( rval.repack_non_selected_ ),
+	use_cache_( rval.use_cache_ ),
+	scorefxn_( rval.scorefxn_ ),
+	residues_to_design_( rval.residues_to_design_ ),
+	cached_pose_( rval.cached_pose_ )
 {}
 
 // destructor
@@ -80,18 +80,18 @@ HighestEnergyRegionOperation::~HighestEnergyRegionOperation()
 /// @brief make clone
 core::pack::task::operation::TaskOperationOP
 HighestEnergyRegionOperation::clone() const {
-  return core::pack::task::operation::TaskOperationOP( new HighestEnergyRegionOperation( *this ) );
+	return core::pack::task::operation::TaskOperationOP( new HighestEnergyRegionOperation( *this ) );
 }
 
 /// @brief utility function that compares two resid-probability pairs and returns true of the probability of the first is greater than probability of the second
 bool compare_prob_energy( std::pair< core::Size, core::Real > const & p1,
-									 std::pair< core::Size, core::Real > const & p2 ) {
+	std::pair< core::Size, core::Real > const & p2 ) {
 	return ( p1.second > p2.second );
 }
 
 /// @brief same as teh function above, only for packstat
 bool compare_pack_energy( std::pair< core::Size, core::Real > const & p1,
-													std::pair< core::Size, core::Real > const & p2 ) {
+	std::pair< core::Size, core::Real > const & p2 ) {
 	return ( p1.second <= p2.second );
 }
 
@@ -99,12 +99,12 @@ bool compare_pack_energy( std::pair< core::Size, core::Real > const & p1,
 void
 HighestEnergyRegionOperation::apply( Pose const & pose, core::pack::task::PackerTask & task ) const
 {
- 	utility::vector1< core::Size > res_list( residues_to_design( pose ) );
+	utility::vector1< core::Size > res_list( residues_to_design( pose ) );
 
-  // now we can just apply a DesignAround operation using the residues that don't match
-  protocols::toolbox::task_operations::DesignAroundOperation design_around;
+	// now we can just apply a DesignAround operation using the residues that don't match
+	protocols::toolbox::task_operations::DesignAroundOperation design_around;
 	runtime_assert( region_shell_ >= -0.000001 );
-  design_around.design_shell( region_shell_ );
+	design_around.design_shell( region_shell_ );
 	// if we want to repack the whole protein, a huge repack shell is specified.
 	if ( repack_non_selected_ ) {
 		design_around.repack_shell( 1000.0 );
@@ -112,13 +112,13 @@ HighestEnergyRegionOperation::apply( Pose const & pose, core::pack::task::Packer
 		design_around.repack_shell( region_shell_ );
 	}
 
-  TR << "Residues to design are: ";
-  for ( core::Size i=1; i<=res_list.size(); i++) {
-    TR << res_list[i] << " ";
-    design_around.include_residue( res_list[i] );
-  }
-  TR << std::endl;
-  design_around.apply( pose, task );
+	TR << "Residues to design are: ";
+	for ( core::Size i=1; i<=res_list.size(); i++ ) {
+		TR << res_list[i] << " ";
+		design_around.include_residue( res_list[i] );
+	}
+	TR << std::endl;
+	design_around.apply( pose, task );
 }
 
 void
@@ -129,7 +129,7 @@ HighestEnergyRegionOperation::parse_tag( utility::tag::TagCOP tag, basic::dataca
 	repack_non_selected_ = tag->getOption< core::Size >( "repack_non_selected", repack_non_selected_ );
 	/*
 	std::string const scorefxn_name(
-		protocols::rosetta_scripts::get_score_function_name(tag))
+	protocols::rosetta_scripts::get_score_function_name(tag))
 	scorefxn_ = new core::scoring::ScoreFunction();
 	scorefxn_->initialize_from_file("sp2_correction.wts");
 	scorefxn_->set_weight( core::scoring::fa_elec, 0.5 );
@@ -156,7 +156,7 @@ utility::vector1< core::Size >
 HighestEnergyRegionOperation::get_residues_to_design( core::pose::Pose const & pose ) const
 {
 	utility::vector1< core::Size > residues_to_design;
-	//	TR << "Size of residues_to_design_ = " << residues_to_design_.size() << std::endl;
+	// TR << "Size of residues_to_design_ = " << residues_to_design_.size() << std::endl;
 	if ( use_cache_ && ( residues_to_design_.size() >= 1 ) ) {
 		for ( core::Size i=1; i<=residues_to_design_.size(); ++i ) {
 			residues_to_design.push_back( residues_to_design_[i] );
@@ -370,7 +370,7 @@ DesignByPackStatOperation::get_residues_to_design( core::pose::Pose const & pose
 	// sort the vector based on the psipred probability
 	std::sort( res_to_score.begin(), res_to_score.end(), compare_pack_energy );
 
-	for ( core::Size j=1; ( j<=res_to_score.size() &&	j<=regions_to_design() ); ++j ) {
+	for ( core::Size j=1; ( j<=res_to_score.size() && j<=regions_to_design() ); ++j ) {
 		if ( srbl.rsd_sasa( res_to_score[j].first ) <= 40 ) {
 			TR.Debug << "Res=" << res_to_score[j].first << ", Packstat=" << res_to_score[j].second << " (SASA=" << srbl.rsd_sasa( res_to_score[j].first ) << ")" <<std::endl;
 			residues_to_design.push_back( res_to_score[j].first );
@@ -434,7 +434,7 @@ DesignRandomRegionOperation::get_residues_to_design( core::pose::Pose const & po
 	}
 	utility::vector1< core::Size > retval;
 	//TR.Debug << "Random array=" << residues_to_design << std::endl;
-	for ( core::Size j=1; ( j<=residues_to_design.size() &&	j<=regions_to_design() ); ++j ) {
+	for ( core::Size j=1; ( j<=residues_to_design.size() && j<=regions_to_design() ); ++j ) {
 		retval.push_back( residues_to_design[j] );
 	}
 	return retval;
@@ -497,7 +497,7 @@ DesignByResidueCentralityOperation::get_residues_to_design( core::pose::Pose con
 	// sort the vector based on the psipred probability
 	std::sort( res_to_score.begin(), res_to_score.end(), compare_prob_energy );
 
-	for ( core::Size j=1; ( j<=res_to_score.size() &&	j<=regions_to_design() ); ++j ) {
+	for ( core::Size j=1; ( j<=res_to_score.size() && j<=regions_to_design() ); ++j ) {
 		residues_to_design.push_back( res_to_score[j].first );
 		TR << "Going to design " << pose.residue( res_to_score[j].first ).name3() << res_to_score[j].first << ", value=" << res_to_score[j].second << std::endl;
 	}
@@ -608,7 +608,7 @@ DesignByCavityProximityOperation::get_residues_to_design( core::pose::Pose const
 	// secondary ranking: by how big the cavity is
 	utility::vector1< std::pair< core::Size, core::Real > > res_to_score;
 
-  for( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
 		// search for nearest cavity to this residue
 		core::Real best_score( -1 );
 		for ( core::Size ic=1; ic<=clusters.value().size(); ++ic ) {
@@ -627,7 +627,7 @@ DesignByCavityProximityOperation::get_residues_to_design( core::pose::Pose const
 	std::sort( res_to_score.begin(), res_to_score.end(), compare_pack_energy );
 
 	utility::vector1< core::Size > residues_to_design;
-	for ( core::Size j=1; ( j<=res_to_score.size() &&	j<=regions_to_design() ); ++j ) {
+	for ( core::Size j=1; ( j<=res_to_score.size() && j<=regions_to_design() ); ++j ) {
 		residues_to_design.push_back( res_to_score[j].first );
 		TR << "Going to design " << pose.residue( res_to_score[j].first ).name3() << res_to_score[j].first << ", value=" << res_to_score[j].second << std::endl;
 	}
@@ -638,7 +638,7 @@ DesignByCavityProximityOperation::get_residues_to_design( core::pose::Pose const
 /// @brief given a cavity and a residue, tells how far Cb of the residue is from the edge of the cavity. Normalizes distance by cavity volume, such that residues around larger cavities should be preferred
 core::Real
 DesignByCavityProximityOperation::proximity_to_cavity( core::conformation::Residue const & res,
-																											 core::scoring::packstat::CavityBallCluster const & cluster ) const
+	core::scoring::packstat::CavityBallCluster const & cluster ) const
 {
 	return res.nbr_atom_xyz().distance( cluster.center ) / cluster.volume;
 }

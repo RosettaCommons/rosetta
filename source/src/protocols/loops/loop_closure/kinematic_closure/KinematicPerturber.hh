@@ -302,11 +302,11 @@ public:
 
 	void
 	set_pose_after_closure(
-	  core::pose::Pose & pose,
-	  utility::vector1< core::Real> const & torsions,
-	  utility::vector1< core::Real> const & bond_ang,
-	  utility::vector1< core::Real> const & bond_len,
-	  bool closure_successful
+		core::pose::Pose & pose,
+		utility::vector1< core::Real> const & torsions,
+		utility::vector1< core::Real> const & bond_ang,
+		utility::vector1< core::Real> const & bond_len,
+		bool closure_successful
 	) const;
 
 	void
@@ -343,21 +343,21 @@ public:
 
 	void
 	perturb_chain(
-				  core::pose::Pose const & pose,
-				  utility::vector1< core::Real> & torsions,
-				  utility::vector1< core::Real> & bond_ang,
-				  utility::vector1< core::Real> & //bond_len
-				  ) ;
+		core::pose::Pose const & pose,
+		utility::vector1< core::Real> & torsions,
+		utility::vector1< core::Real> & bond_ang,
+		utility::vector1< core::Real> & //bond_len
+	) ;
 
 
 	void
 	set_pose_after_closure(
-						   core::pose::Pose & pose,
-						   utility::vector1< core::Real> const & torsions,
-						   utility::vector1< core::Real> const & bond_ang,
-						   utility::vector1< core::Real> const & bond_len,
-						   bool closure_successful
-						   ) const;
+		core::pose::Pose & pose,
+		utility::vector1< core::Real> const & torsions,
+		utility::vector1< core::Real> const & bond_ang,
+		utility::vector1< core::Real> const & bond_len,
+		bool closure_successful
+	) const;
 
 	void
 	set_vary_ca_bond_angles( bool vary_ca_bond_angles ) {

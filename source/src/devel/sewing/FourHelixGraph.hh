@@ -43,16 +43,16 @@ namespace sewing {
 class FourHelixGraph : public ProteinAssemblyGraph
 {
 public:
-	
+
 	FourHelixGraph(
 		utility::sql_database::sessionOP db_session
 	);
-	
+
 	virtual core::Size
 	get_path_size(
 		core::Size num_desired_helices
 	);
-	
+
 	virtual void
 	tree_finder(
 		EdgeList visited_edges,
@@ -63,13 +63,13 @@ public:
 		EdgeSet possible_inter_edges,
 		EdgeSet possible_intra_edges
 	);
-	
+
 	void
 	populate_graph(
 		core::Real max_rmsd,
 		core::Real min_clash_score
 	);
-	
+
 };
 
 } //sewing namespace

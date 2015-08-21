@@ -62,12 +62,12 @@ public:
 	Constraints const & operator = ( Constraints const & );
 
 	// call the setup_for_derivatives for each constraint
- 	void
- 	setup_for_scoring( core::scoring::func::XYZ_Func const & xyz_func, ScoreFunction const &scfxn ) const;
+	void
+	setup_for_scoring( core::scoring::func::XYZ_Func const & xyz_func, ScoreFunction const &scfxn ) const;
 
 	// call the setup_for_derivatives for each constraint
- 	void
- 	setup_for_derivatives( core::scoring::func::XYZ_Func const & xyz_func, ScoreFunction const &scfxn ) const;
+	void
+	setup_for_derivatives( core::scoring::func::XYZ_Func const & xyz_func, ScoreFunction const &scfxn ) const;
 
 	/// will fail if Residues dont contain all the necessary atoms
 	void
@@ -75,7 +75,7 @@ public:
 		Residue const & rsd1,
 		Residue const & rsd2,
 		EnergyMap const & weights,
- 		EnergyMap & emap
+		EnergyMap & emap
 	) const;
 
 	/// will fail if Residue doesnt contain all the necessary atoms
@@ -122,14 +122,14 @@ public:
 
 	/// @brief Evaluate derivatives giving the Constraint objects held within this object
 	/// the entire Conformation (a whole structure, ws) with which to work.
- 	void
- 	eval_ws_atom_derivative(
- 		AtomID const & atom_id,
- 		Conformation const & conformation,
- 		EnergyMap const & weights,
- 		Vector & F1,
- 		Vector & F2
- 	) const;
+	void
+	eval_ws_atom_derivative(
+		AtomID const & atom_id,
+		Conformation const & conformation,
+		EnergyMap const & weights,
+		Vector & F1,
+		Vector & F2
+	) const;
 
 
 	void

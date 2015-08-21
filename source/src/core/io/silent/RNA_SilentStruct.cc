@@ -81,16 +81,16 @@ RNA_SilentStruct::RNA_SilentStruct(
 
 // RNA_SilentStruct::RNA_SilentStruct( core::io::silent::RNA_SilentStruct const & src )
 // {
-// 	nres( src.nres_ );
-// 	fullatom_    = src.fullatom_;
-// 	non_main_chain_sugar_coords_defined_ = src.non_main_chain_sugar_coords_defined_;
-// 	resize( nres );
-// 	for (Size n = 1; n <= nres; n++ ) {
-// 		secstruct_[ n ] = src.secstruct_[ n ];
-// 		for (Size k = 1; k <= src.mainchain_torsions_[n].size();k++ ) {
-// 			mainchain_torsions_[n][k] = src.mainchain_torsions_[n][k];
-// 		}
-// 	}
+//  nres( src.nres_ );
+//  fullatom_    = src.fullatom_;
+//  non_main_chain_sugar_coords_defined_ = src.non_main_chain_sugar_coords_defined_;
+//  resize( nres );
+//  for (Size n = 1; n <= nres; n++ ) {
+//   secstruct_[ n ] = src.secstruct_[ n ];
+//   for (Size k = 1; k <= src.mainchain_torsions_[n].size();k++ ) {
+//    mainchain_torsions_[n][k] = src.mainchain_torsions_[n][k];
+//   }
+//  }
 // }
 
 void
@@ -121,7 +121,7 @@ RNA_SilentStruct::fill_struct( core::pose::Pose const & pose, std::string tag ) 
 			non_main_chain_sugar_coords_defined_ = true;
 			kinematics::Stub const input_stub( resi.xyz( " C3'" ), resi.xyz( " C3'" ), resi.xyz( " C4'" ), resi.xyz( " C5'" ) );
 			utility::vector1< Vector > vecs;
-			for (Size n = 1; n <= chemical::rna::non_main_chain_sugar_atoms.size(); n++  ) {
+			for ( Size n = 1; n <= chemical::rna::non_main_chain_sugar_atoms.size(); n++  ) {
 				Vector v = input_stub.global2local( resi.xyz( chemical::rna::non_main_chain_sugar_atoms[ n ] ) );
 				vecs.push_back( v );
 			}
@@ -132,7 +132,7 @@ RNA_SilentStruct::fill_struct( core::pose::Pose const & pose, std::string tag ) 
 
 	fold_tree_ = pose.fold_tree();
 	jumps_.clear();
-	for ( Size nr = 1; nr <= fold_tree().num_jump(); nr++)  {
+	for ( Size nr = 1; nr <= fold_tree().num_jump(); nr++ )  {
 		add_jump( pose.jump(nr) );
 	}
 
@@ -140,7 +140,7 @@ RNA_SilentStruct::fill_struct( core::pose::Pose const & pose, std::string tag ) 
 
 } // RNA_SilentStruct
 
-	//Following should be easy to generalize for protein vs. RNA.
+//Following should be easy to generalize for protein vs. RNA.
 
 bool RNA_SilentStruct::init_from_lines(
 	utility::vector1< std::string > const & lines,
@@ -213,7 +213,7 @@ bool RNA_SilentStruct::init_from_lines(
 	// resize myself appropriately, according to length of sequence
 	resize( sequence().length() );
 
-	for ( utility::vector1< std::string >::const_iterator end = lines.end(); iter != end;	++iter ) {
+	for ( utility::vector1< std::string >::const_iterator end = lines.end(); iter != end; ++iter ) {
 		std::string tag;
 		std::istringstream line_stream( *iter );
 
@@ -284,13 +284,13 @@ bool RNA_SilentStruct::init_from_lines(
 			//  since we'll eventually need to use RNA (or protein) .params files
 			//  to create the pose, couldn't we look up the residue
 			//  and figure out how many torsions are required?
-			for ( Size n = 1; n <= chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; n++ ){
-				line_stream	>> torsion_value;
+			for ( Size n = 1; n <= chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; n++ ) {
+				line_stream >> torsion_value;
 				temp_mainchain_torsions.push_back( torsion_value  );
 			}
-			if (fullatom_) {
-				for ( Size n = 1; n <= chemical::rna::NUM_RNA_CHI_TORSIONS; n++ ){
-					line_stream	>> torsion_value;
+			if ( fullatom_ ) {
+				for ( Size n = 1; n <= chemical::rna::NUM_RNA_CHI_TORSIONS; n++ ) {
+					line_stream >> torsion_value;
 					temp_chi_torsions.push_back( torsion_value  );
 				}
 			}
@@ -302,7 +302,7 @@ bool RNA_SilentStruct::init_from_lines(
 
 			line_stream >> tag;
 
-			if ( is_float( tag )  /* New silent format with extra info on sugar atoms*/){
+			if ( is_float( tag )  /* New silent format with extra info on sugar atoms*/ ) {
 				utility::vector1< Vector> vecs ;
 				vecs.push_back( temp_vec );
 
@@ -330,7 +330,7 @@ bool RNA_SilentStruct::init_from_lines(
 
 
 			if ( tag != decoy_tag() ) { // decoy_tag should be last tag.
-				tr.Warning 	<< "parse error(" << *iter << ") " << tag << " != " << decoy_tag() << std::endl;
+				tr.Warning  << "parse error(" << *iter << ") " << tag << " != " << decoy_tag() << std::endl;
 				success = false;
 				break;
 			}
@@ -379,9 +379,9 @@ void RNA_SilentStruct::fill_pose(
 	using namespace core::chemical;
 
 	bool const use_input_pose( false ); // tex hack for refactoring!
-	if (use_input_pose)	{
+	if ( use_input_pose ) {
 		tr.Info << "Using bond lengths and angles from an input pose." << std::endl;
-	}	else {
+	} else {
 		tr.Info << "Using ideal geometry from params files..." << std::endl;
 		//RHIJU HACK!
 		//tr.Info << "USING RNA PARAMS FILES " << std::endl;
@@ -395,11 +395,11 @@ void RNA_SilentStruct::fill_pose(
 	pose.fold_tree( fold_tree() );
 
 	// set jumps
-	for ( Size nr = 1; nr <= fold_tree().num_jump(); nr++)  {
+	for ( Size nr = 1; nr <= fold_tree().num_jump(); nr++ )  {
 		pose.set_jump( nr, jump( nr ) );
 	}
 
-debug_assert( nres() == sequence().length() );
+	debug_assert( nres() == sequence().length() );
 
 	for ( Size seqpos = 1; seqpos <= nres(); ++seqpos ) {
 
@@ -407,19 +407,19 @@ debug_assert( nres() == sequence().length() );
 		//  since we'll eventually need to use RNA (or protein) .params files
 		//  to create the pose, couldn't we look up the residue
 		//  and figure out how many torsions are required?
-		for ( Size n = 1; n <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; n++ ){
+		for ( Size n = 1; n <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; n++ ) {
 			id::TorsionID rna_torsion_id( seqpos, id::BB, n );
-			//			std::cout << rna_torsion_id << " " << mainchain_torsions_[ seqpos ][n ] << std::endl;
+			//   std::cout << rna_torsion_id << " " << mainchain_torsions_[ seqpos ][n ] << std::endl;
 			pose.set_torsion( rna_torsion_id,
-												mainchain_torsions_[seqpos][n] );
+				mainchain_torsions_[seqpos][n] );
 		}
 
 
-		if (fullatom_) {
-			for ( Size n = 1; n <= core::chemical::rna::NUM_RNA_CHI_TORSIONS; n++ ){
+		if ( fullatom_ ) {
+			for ( Size n = 1; n <= core::chemical::rna::NUM_RNA_CHI_TORSIONS; n++ ) {
 				id::TorsionID rna_torsion_id( seqpos, id::CHI, n );
 				pose.set_torsion( rna_torsion_id,
-													chi_torsions_[seqpos][n] );
+					chi_torsions_[seqpos][n] );
 			}
 		}
 
@@ -462,33 +462,34 @@ void RNA_SilentStruct::print_conformation( std::ostream & output ) const {
 	for ( Size i = 1; i <= nres(); ++i ) {
 		// make sure secstruct is valid
 		char this_secstr = secstruct_[i];
-		if (this_secstr < 'A' || this_secstr > 'Z')
+		if ( this_secstr < 'A' || this_secstr > 'Z' ) {
 			this_secstr = 'L';
+		}
 
 		output << I( 4, i ) << ' '
-					 << this_secstr << ' ';
+			<< this_secstr << ' ';
 
-		for ( Size n = 1; n <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; n++ ){
+		for ( Size n = 1; n <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; n++ ) {
 			output << F( 9, 3, mainchain_torsions_[i][n] );
 		}
 		if ( fullatom_ ) {
-			for ( Size n = 1; n <= core::chemical::rna::NUM_RNA_CHI_TORSIONS; n++ ){
+			for ( Size n = 1; n <= core::chemical::rna::NUM_RNA_CHI_TORSIONS; n++ ) {
 				output << F( 9, 3, chi_torsions_[i][n] );
 			}
 		}
 
 		//New, Feb. 2009
 		if ( non_main_chain_sugar_coords_defined_ ) {
-			for (Size n = 1; n <= non_main_chain_sugar_coords_[i].size(); n++ ) {
+			for ( Size n = 1; n <= non_main_chain_sugar_coords_[i].size(); n++ ) {
 				output << F( 12, 6, non_main_chain_sugar_coords_[i][n].x() )
-							 << F( 12, 6, non_main_chain_sugar_coords_[i][n].y() )
-							 << F( 12, 6, non_main_chain_sugar_coords_[i][n].z() );
+					<< F( 12, 6, non_main_chain_sugar_coords_[i][n].y() )
+					<< F( 12, 6, non_main_chain_sugar_coords_[i][n].z() );
 			}
 		}
 
 		output << F( 9, 3, coords_[i].x() )
-					 << F( 9, 3, coords_[i].y() )
-					 << F( 9, 3, coords_[i].z() );
+			<< F( 9, 3, coords_[i].y() )
+			<< F( 9, 3, coords_[i].z() );
 
 		output << ' ' << decoy_tag();
 		output << "\n";

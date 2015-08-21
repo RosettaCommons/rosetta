@@ -81,7 +81,7 @@ public:
 
 	virtual std::string get_name() const;
 
-	//	 void apply( core::pose::Pose & );
+	//  void apply( core::pose::Pose & );
 protected:
 	SmoothFragmentMover(
 		core::fragment::FragSetCOP fragset,

@@ -9,9 +9,9 @@
 
 // TODO: Get rid of this class
 
-/// @file		core/conformation/membrane/util.fwd.hh
-/// @brief		utility functions for membrane things
-/// @author		JKLeman (julia.koehler1982@gmail.com)
+/// @file  core/conformation/membrane/util.fwd.hh
+/// @brief  utility functions for membrane things
+/// @author  JKLeman (julia.koehler1982@gmail.com)
 
 // Unit headers
 #include <core/conformation/membrane/util.hh>
@@ -39,17 +39,17 @@ using namespace core;
 
 // read spanfiles
 utility::vector1< std::string > spanfile_names(){
-	
+
 	using namespace basic;
 	using namespace basic::options;
-	
-	if ( ! option[OptionKeys::mp::setup::spanfiles].user() ){
+
+	if ( ! option[OptionKeys::mp::setup::spanfiles].user() ) {
 		utility_exit_with_message("Please provide spanfile(s)!");
 	}
-	
+
 	// get filenames from Optionsystem
 	utility::vector1< std::string > spanfiles = option[OptionKeys::mp::setup::spanfiles]();
-	
+
 	return spanfiles;
 
 }// read spanfiles

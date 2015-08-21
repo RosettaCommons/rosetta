@@ -28,48 +28,48 @@
 namespace core {
 namespace sequence {
 
-	Real CompassScoringScheme::score(
-		SequenceOP seq1,
-		SequenceOP seq2,
-		Size pos1,
-		Size pos2
-	) {
-		SequenceProfileOP prof1 = SequenceProfileOP( utility::pointer::static_pointer_cast< core::sequence::SequenceProfile > ( seq1 ) );
-		SequenceProfileOP prof2 = SequenceProfileOP( utility::pointer::static_pointer_cast< core::sequence::SequenceProfile > ( seq2 ) );
+Real CompassScoringScheme::score(
+	SequenceOP seq1,
+	SequenceOP seq2,
+	Size pos1,
+	Size pos2
+) {
+	SequenceProfileOP prof1 = SequenceProfileOP( utility::pointer::static_pointer_cast< core::sequence::SequenceProfile > ( seq1 ) );
+	SequenceProfileOP prof2 = SequenceProfileOP( utility::pointer::static_pointer_cast< core::sequence::SequenceProfile > ( seq2 ) );
 
-		runtime_assert( pos1 <= prof1->length() );
-		runtime_assert( pos2 <= prof2->length() );
-		runtime_assert( prof1->prof_row(pos1).size() == prof2->prof_row(pos2).size() );
+	runtime_assert( pos1 <= prof1->length() );
+	runtime_assert( pos2 <= prof2->length() );
+	runtime_assert( prof1->prof_row(pos1).size() == prof2->prof_row(pos2).size() );
 
-		// compare the two profiles using Compass metric, which is defined as:
-		// S =   c1 * sum( n(1,i) * log( Q(2,i) / p(i) ) )
-		//     + c2 * sum( n(2,i) * log( Q(1,i) / p(i) ) )
-		// the terms are defined as such:
-		// i - column of the profile to be evaluated, represents a residue
-		// p(i) - prior probability of residue i in all sequences
-		// n(1,i) - the effective number of sequences from profile 1 with residue i
-		// Q(2,i) - the estimated frequency of residue i in sequence 2
-		// n(2,i) - the effective number of sequences from profile 2 with residue i
-		// Q(1,i) - the estimated frequency of residue i in sequence 1
-		// c1     - normalization constant for profile 1
-		// c2     - normalization constant for profile 2
+	// compare the two profiles using Compass metric, which is defined as:
+	// S =   c1 * sum( n(1,i) * log( Q(2,i) / p(i) ) )
+	//     + c2 * sum( n(2,i) * log( Q(1,i) / p(i) ) )
+	// the terms are defined as such:
+	// i - column of the profile to be evaluated, represents a residue
+	// p(i) - prior probability of residue i in all sequences
+	// n(1,i) - the effective number of sequences from profile 1 with residue i
+	// Q(2,i) - the estimated frequency of residue i in sequence 2
+	// n(2,i) - the effective number of sequences from profile 2 with residue i
+	// Q(1,i) - the estimated frequency of residue i in sequence 1
+	// c1     - normalization constant for profile 1
+	// c2     - normalization constant for profile 2
 
-		// naive. better to calculate using Neff from PSIC weighting.
-		//Real const c1(0.5), c2(0.5);
-		//c1 = 0.5;
-		//c2 = 0.5;
+	// naive. better to calculate using Neff from PSIC weighting.
+	//Real const c1(0.5), c2(0.5);
+	//c1 = 0.5;
+	//c2 = 0.5;
 
-		// calculate normalization constants c1 and c2
-		Size n_aa1( prof1->prof_row(pos1).size() );
-		Size n_aa2( prof2->prof_row(pos2).size() );
-		Real score( 0.0 );
-		runtime_assert( n_aa1 == n_aa2 );
-		//for ( Size i = 1; i <= n_aa; ++i ) {
+	// calculate normalization constants c1 and c2
+	Size n_aa1( prof1->prof_row(pos1).size() );
+	Size n_aa2( prof2->prof_row(pos2).size() );
+	Real score( 0.0 );
+	runtime_assert( n_aa1 == n_aa2 );
+	//for ( Size i = 1; i <= n_aa; ++i ) {
 
-		//}
+	//}
 
-		return score;
-	} // score
+	return score;
+} // score
 
 
 } // sequence

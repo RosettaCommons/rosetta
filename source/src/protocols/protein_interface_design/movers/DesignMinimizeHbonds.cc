@@ -122,17 +122,17 @@ DesignMinimizeHbonds::DesignMinimizeHbonds(
 ) :
 	simple_moves::DesignRepackMover( DesignMinimizeHbondsCreator::mover_name() )
 {
-	  scorefxn_repack_ = scorefxn_repack;
-	  scorefxn_minimize_ = scorefxn_minimize;
-	  target_residues_.push_back( target_residue );
-	  bb_hbond_ = bb_hbond;
-	  sc_hbond_ = sc_hbond;
-	  hbond_energy_threshold_ = hbond_energy_threshold;
-	  repack_partner1_ = repack_partner1;
-	  repack_partner2_ = repack_partner2;
-	  interface_distance_cutoff_ = interface_distance_cutoff;
-	  donors_ = donors; acceptors_ = acceptors;
-		repack_non_ala_ = repack_non_ala;
+	scorefxn_repack_ = scorefxn_repack;
+	scorefxn_minimize_ = scorefxn_minimize;
+	target_residues_.push_back( target_residue );
+	bb_hbond_ = bb_hbond;
+	sc_hbond_ = sc_hbond;
+	hbond_energy_threshold_ = hbond_energy_threshold;
+	repack_partner1_ = repack_partner1;
+	repack_partner2_ = repack_partner2;
+	interface_distance_cutoff_ = interface_distance_cutoff;
+	donors_ = donors; acceptors_ = acceptors;
+	repack_non_ala_ = repack_non_ala;
 }
 
 DesignMinimizeHbonds::~DesignMinimizeHbonds() {}
@@ -151,7 +151,7 @@ DesignMinimizeHbonds::apply( pose::Pose & pose )
 {
 	allowed_aas_.assign( chemical::num_canonical_aas, false );
 
-	if ( bb_hbond_ && !sc_hbond_ ){
+	if ( bb_hbond_ && !sc_hbond_ ) {
 		allowed_aas_[ chemical::aa_ala ] = true;
 		allowed_aas_[ chemical::aa_arg ] = true;
 		allowed_aas_[ chemical::aa_asn ] = true;
@@ -169,9 +169,8 @@ DesignMinimizeHbonds::apply( pose::Pose & pose )
 		allowed_aas_[ chemical::aa_trp ] = true;
 		allowed_aas_[ chemical::aa_tyr ] = true;
 		allowed_aas_[ chemical::aa_val ] = true;
-	}
-	else{
-		if( donors_ ) {
+	} else {
+		if ( donors_ ) {
 			allowed_aas_[ chemical::aa_lys ] = true;
 			allowed_aas_[ chemical::aa_asn ] = true;
 			allowed_aas_[ chemical::aa_gln ] = true;
@@ -181,7 +180,7 @@ DesignMinimizeHbonds::apply( pose::Pose & pose )
 			allowed_aas_[ chemical::aa_tyr ] = true;
 			allowed_aas_[ chemical::aa_his ] = true;
 		}
-		if( acceptors_ ) {
+		if ( acceptors_ ) {
 			allowed_aas_[ chemical::aa_asp ] = true;
 			allowed_aas_[ chemical::aa_glu ] = true;
 			allowed_aas_[ chemical::aa_asn ] = true;
@@ -197,35 +196,36 @@ DesignMinimizeHbonds::apply( pose::Pose & pose )
 	core::pose::Pose const saved_pose( pose );
 
 	using ObjexxFCL::FArray1D_bool;
- 	FArray1D_bool partner1( pose.total_residue() );
+	FArray1D_bool partner1( pose.total_residue() );
 	pose.fold_tree().partition_by_jump( rb_jump, partner1 ); // partner1 is true for all residues in partner1; false o/w
 
-  protocols::scoring::Interface interface_obj(rb_jump);
-  interface_obj.distance( interface_distance_cutoff_ ); // to encourage longish residues
-  pose.update_residue_neighbors(); // o/w fails assertion `graph_state_ == GOOD`
-  interface_obj.calculate( pose );
+	protocols::scoring::Interface interface_obj(rb_jump);
+	interface_obj.distance( interface_distance_cutoff_ ); // to encourage longish residues
+	pose.update_residue_neighbors(); // o/w fails assertion `graph_state_ == GOOD`
+	interface_obj.calculate( pose );
 
 	setup_packer_and_movemap( pose );
 	// potential hbond partners will later on be reverted if they do not form hbonds
 	std::set< core::Size > potential_hbond_partners;
-	for( core::Size i = 1; i <= pose.total_residue(); ++i ){
-		if( !pose.residue(i).is_protein() ) continue;
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( !pose.residue(i).is_protein() ) continue;
 		core::Size const restype( pose.residue(i).aa() );
-		if( (interface_obj.is_interface( i ) && // in interface
+		if ( (interface_obj.is_interface( i ) && // in interface
 				(partner1( i ) && repack_partner1_ )) || ((!partner1(i) && repack_partner2_) && //designable
-				( !( !repack_non_ala_ && (restype != chemical::aa_ala) ) || (restype == chemical::aa_pro) || (restype == chemical::aa_gly) || pose.residue(i).has_variant_type( chemical::DISULFIDE ) ))) { // design-allowed residues
-	        core::conformation::Residue const resi( pose.residue( i ) );
-	        for( utility::vector1< Size >::const_iterator target_it = target_residues_.begin();
-	           target_it!=target_residues_.end(); ++target_it ) {
-	          core::conformation::Residue const res_target( pose.residue( *target_it ) );
+				( !( !repack_non_ala_ && (restype != chemical::aa_ala) ) || (restype == chemical::aa_pro) || (restype == chemical::aa_gly) || pose.residue(i).has_variant_type( chemical::DISULFIDE ) )) ) { // design-allowed residues
+			core::conformation::Residue const resi( pose.residue( i ) );
+			for ( utility::vector1< Size >::const_iterator target_it = target_residues_.begin();
+					target_it!=target_residues_.end(); ++target_it ) {
+				core::conformation::Residue const res_target( pose.residue( *target_it ) );
 
-	          Real const distance( resi.xyz( resi.nbr_atom() ).distance( res_target.xyz( res_target.nbr_atom() ) ) );
-	          Real const distance_cutoff( interface_distance_cutoff_ );
-	          if ( distance <= distance_cutoff && automatic_repacking_definition_ )
-	            potential_hbond_partners.insert( i );
-					}
+				Real const distance( resi.xyz( resi.nbr_atom() ).distance( res_target.xyz( res_target.nbr_atom() ) ) );
+				Real const distance_cutoff( interface_distance_cutoff_ );
+				if ( distance <= distance_cutoff && automatic_repacking_definition_ ) {
+					potential_hbond_partners.insert( i );
 				}
+			}
 		}
+	}
 
 	pack::pack_rotamers( pose, *scorefxn_repack_, task_ );
 	MinimizeInterface( pose, scorefxn_minimize_, curr_min_bb_, curr_min_sc_, curr_min_rb_, optimize_foldtree_, target_residues_ );
@@ -233,27 +233,27 @@ DesignMinimizeHbonds::apply( pose::Pose & pose )
 
 	{ // replace any positions that were mutated but did not hbond with their previous identities
 		std::set< core::Size > hbonded_residues;
-		for( utility::vector1< core::Size >::const_iterator target_it = target_residues_.begin();
-			 target_it!=target_residues_.end(); ++target_it ) {
+		for ( utility::vector1< core::Size >::const_iterator target_it = target_residues_.begin();
+				target_it!=target_residues_.end(); ++target_it ) {
 			std::list< core::Size > new_list( hbonded( pose, *target_it, potential_hbond_partners, bb_hbond_, sc_hbond_,
-													   hbond_energy_threshold_ ));
+				hbond_energy_threshold_ ));
 			hbonded_residues.insert( new_list.begin(), new_list.end() );
 		}
 
 		pack::task::PackerTaskOP to_Ala_task( pack::task::TaskFactory::create_packer_task( pose ));
-		for( Size i=1; i<=pose.total_residue(); ++i ) {
-			if( potential_hbond_partners.find( i ) == potential_hbond_partners.end() ) {
+		for ( Size i=1; i<=pose.total_residue(); ++i ) {
+			if ( potential_hbond_partners.find( i ) == potential_hbond_partners.end() ) {
 				to_Ala_task->nonconst_residue_task(i).prevent_repacking();
 				continue;
 			}
-			if( hbonded_residues.find( i ) == hbonded_residues.end() ) { // revert
+			if ( hbonded_residues.find( i ) == hbonded_residues.end() ) { // revert
 				TR<<"reverting "<< i <<'\n';
 				utility::vector1< bool > revert_type( chemical::num_canonical_aas, false );
 				revert_type[ saved_pose.residue( i ).aa() ] = true;
 				to_Ala_task->nonconst_residue_task( i ).restrict_absent_canonical_aas( revert_type );
-			}
-			else
+			} else {
 				to_Ala_task->nonconst_residue_task(i).prevent_repacking();
+			}
 		}
 		pack::pack_rotamers( pose, *scorefxn_repack_, to_Ala_task );
 	} // end of replace non-hbonded residues scope
@@ -283,7 +283,7 @@ DesignMinimizeHbonds::parse_my_tag( TagCOP const tag, basic::datacache::DataMap 
 	simple_moves::DesignRepackMover::parse_my_tag( tag, data, filters, movers, pose );
 	using namespace core::scoring;
 
-  // change the weights on the hbonding terms
+	// change the weights on the hbonding terms
 	scorefxn_repack_->set_weight( hbond_lr_bb, hbond_weight );
 	scorefxn_repack_->set_weight( hbond_sr_bb, hbond_weight );
 	scorefxn_repack_->set_weight( hbond_bb_sc, hbond_weight );
@@ -300,8 +300,9 @@ DesignMinimizeHbonds::parse_my_tag( TagCOP const tag, basic::datacache::DataMap 
 	runtime_assert(interface_distance_cutoff_ >= 0 );
 	runtime_assert( target_residues_.size() );
 
-	if( target_residues_.size() == 0 )
+	if ( target_residues_.size() == 0 ) {
 		TR<<"WARNING WARNING: no target residue defined for hbond design minimize"<<std::endl;
+	}
 }
 
 } //movers

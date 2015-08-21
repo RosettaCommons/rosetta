@@ -50,7 +50,7 @@ namespace simple_moves {
 ///     MinMover.movemap
 ///     MinMover.score_function
 class MinMover : public protocols::moves::MoveMapMover {
-  typedef protocols::moves::MoveMapMover Parent;
+	typedef protocols::moves::MoveMapMover Parent;
 public:
 
 	typedef core::scoring::ScoreFunctionCOP ScoreFunctionCOP;
@@ -63,8 +63,8 @@ private:
 	// backbone torsion angles and bond angles and bond lengths.
 	typedef
 		std::map<
-			std::pair< core::id::DOF_Type, core::id::TorsionType >,
-			core::pack::task::TaskFactoryOP >
+		std::pair< core::id::DOF_Type, core::id::TorsionType >,
+		core::pack::task::TaskFactoryOP >
 		DOF_TaskMap;
 
 public:

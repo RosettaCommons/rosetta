@@ -104,15 +104,14 @@ public:
 
 		ScoreFunction sfxn; // unused
 		EnergyMap emap;
-		for ( int i = 1; i <=116; ++i )
-			{
-			if((i+1) <= 116){
+		for ( int i = 1; i <=116; ++i ) {
+			if ( (i+1) <= 116 ) {
 				emap.zero();
 				mmtorsionenergy->residue_pair_energy( pose->residue(i), pose->residue(i+1), *pose, sfxn, emap);
 				//std::cout <<   std::setprecision(4) << std::fixed << std::setw(8) << emap[ mm_twist ] << ",";
 				TS_ASSERT_DELTA( emap[ mm_twist ], scores[i], delta );
 			}
-			}
+		}
 	}
 
 	void test_eval_intrares_energy() {
@@ -131,12 +130,11 @@ public:
 
 		ScoreFunction sfxn; // unused
 		EnergyMap emap;
-		for ( int i = 1; i <=116; ++i )
-			{
+		for ( int i = 1; i <=116; ++i ) {
 			emap.zero();
 			mmtorsionenergy->eval_intrares_energy( pose->residue(i), *pose, sfxn, emap);
 			//std::cout <<   std::setprecision(4) << std::fixed << std::setw(8) << emap[ mm_twist ] << ",";
 			TS_ASSERT_DELTA( emap[ mm_twist ], scores[i], delta );
-			}
+		}
 	}
 };

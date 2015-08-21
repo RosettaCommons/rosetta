@@ -41,8 +41,8 @@
 #include <protocols/rotamer_recovery/RRProtocol.hh>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class RotamerRecoveryFeatures : public protocols::features::FeaturesReporter {
 public:

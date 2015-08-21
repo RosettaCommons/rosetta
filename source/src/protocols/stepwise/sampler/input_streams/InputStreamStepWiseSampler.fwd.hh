@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/sampler/input_streams/InputStreamStepWiseSampler.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -22,11 +22,11 @@ namespace protocols {
 namespace stepwise {
 namespace sampler {
 namespace input_streams {
-	
-	class InputStreamStepWiseSampler;
-	typedef utility::pointer::shared_ptr< InputStreamStepWiseSampler > InputStreamStepWiseSamplerOP;
-	typedef utility::pointer::shared_ptr< InputStreamStepWiseSampler const > InputStreamStepWiseSamplerCOP;
-	
+
+class InputStreamStepWiseSampler;
+typedef utility::pointer::shared_ptr< InputStreamStepWiseSampler > InputStreamStepWiseSamplerOP;
+typedef utility::pointer::shared_ptr< InputStreamStepWiseSampler const > InputStreamStepWiseSamplerCOP;
+
 } //input_streams
 } //sampler
 } //stepwise

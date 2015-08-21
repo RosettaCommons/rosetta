@@ -45,7 +45,7 @@ public:
 	RTMin(
 		bool minimize_ligand_chis,
 		bool minimize_ligand_jumps
- 	);
+	);
 
 	~RTMin();
 
@@ -56,9 +56,9 @@ public:
 	void
 	rtmin(
 		pose::Pose & pose,
-	 	scoring::ScoreFunction const & sfxn,
-	 	task::PackerTaskOP input_task
- 	) const;
+		scoring::ScoreFunction const & sfxn,
+		task::PackerTaskOP input_task
+	) const;
 
 private:
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11

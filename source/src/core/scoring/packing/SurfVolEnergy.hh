@@ -51,7 +51,7 @@ public:
 	virtual
 	methods::EnergyMethodOP
 	clone() const {
-	  return methods::EnergyMethodOP( new SurfVolEnergy() );
+		return methods::EnergyMethodOP( new SurfVolEnergy() );
 	}
 
 
@@ -83,8 +83,8 @@ public:
 		Vector &,// F1,
 		Vector & // F2
 	) const;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 	void
 	indicate_required_context_graphs(

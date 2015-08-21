@@ -23,31 +23,31 @@ namespace protocols {
 namespace stepwise {
 namespace sampler {
 
-	class NoOpStepWiseSampler: public sampler::StepWiseSamplerSized {
+class NoOpStepWiseSampler: public sampler::StepWiseSamplerSized {
 
-	public:
+public:
 
-		//constructor
-		NoOpStepWiseSampler();
+	//constructor
+	NoOpStepWiseSampler();
 
-		//destructor
-		~NoOpStepWiseSampler();
+	//destructor
+	~NoOpStepWiseSampler();
 
-	public:
+public:
 
-		/// @brief Get the total number of rotamers in sampler
-		virtual core::Size size() const{ return 1;}
+	/// @brief Get the total number of rotamers in sampler
+	virtual core::Size size() const{ return 1;}
 
-		/// @brief Apply the i-th rotamer to pose
-		virtual void apply( core::pose::Pose&, core::Size const ){}
+	/// @brief Apply the i-th rotamer to pose
+	virtual void apply( core::pose::Pose&, core::Size const ){}
 
-		/// @brief Name of the class
-		virtual std::string get_name() const { return "NoOpStepWiseSampler"; }
+	/// @brief Name of the class
+	virtual std::string get_name() const { return "NoOpStepWiseSampler"; }
 
-		/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-		virtual StepWiseSamplerType type() const { return NO_OP; }
+	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
+	virtual StepWiseSamplerType type() const { return NO_OP; }
 
-	};
+};
 
 } //sampler
 } //stepwise

@@ -88,7 +88,7 @@ private: //data
 	Size const num_carbon_donor_atoms_;
 	Size const num_bins_;
 	utility::vector1<  ObjexxFCL::FArray1D <Real>  > carbon_hbond_parameter_;
-	//	ObjexxFCL::FArray2D < Real > carbon_hbond_deriv_ /*(5, 45)*/;
+	// ObjexxFCL::FArray2D < Real > carbon_hbond_deriv_ /*(5, 45)*/;
 
 	utility::vector1< std::string > carbon_donors_;
 	ObjexxFCL::FArray1D < Size > standard_atomtype_to_carbon_donor_index_;
@@ -97,7 +97,7 @@ private: //data
 	Real const rna_cos_theta_fade_zone_;
 	Real const rna_ch_o_bond_distance_;
 
-	};
+};
 
 }
 }

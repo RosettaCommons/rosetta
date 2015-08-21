@@ -50,23 +50,23 @@ protocols::moves::MoverOP LoopmodelWrapper::clone() const {
 }
 
 void LoopmodelWrapper::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const &) {
-	
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &) {
+
 	using namespace basic::options;
 	using utility::options::StringVectorOption;
 	using utility::options::BooleanOption;
 
-	// The loopmodel application makes it impossible to specify which loop file 
-	// to use without setting a user-specified command-line option.  (Really 
-	// impossible; there's no quick hack that would loosen this restriction.)  
-	// Since I need to be able to specify a loops file from an XML script, I had 
-	// to hack the options system.  This is a pretty brutal hack for a number of 
-	// reasons, not least of which because it breaks the "don't modify the 
-	// options data structure" convention.  The consolation is that loopmodel 
+	// The loopmodel application makes it impossible to specify which loop file
+	// to use without setting a user-specified command-line option.  (Really
+	// impossible; there's no quick hack that would loosen this restriction.)
+	// Since I need to be able to specify a loops file from an XML script, I had
+	// to hack the options system.  This is a pretty brutal hack for a number of
+	// reasons, not least of which because it breaks the "don't modify the
+	// options data structure" convention.  The consolation is that loopmodel
 	// will be obsolete soon.
 
 	string loops_file = tag->getOption<string>("loops_file");
@@ -74,7 +74,7 @@ void LoopmodelWrapper::parse_my_tag(
 	loop_files.clear();
 	loop_files.value(loops_file);
 
-	// I also want to be able to set run:test_cycles from a rosetta script.  This 
+	// I also want to be able to set run:test_cycles from a rosetta script.  This
 	// is not as critical, but still useful.
 
 	bool go_fast = tag->getOption<bool>("fast");
@@ -83,8 +83,8 @@ void LoopmodelWrapper::parse_my_tag(
 }
 
 void LoopmodelWrapper::apply(core::pose::Pose & pose) {
-	// This entire method was copied from LoopBuild_main.  The only difference is 
-	// that this method calls apply() at the end, while LoopBuild_main calls 
+	// This entire method was copied from LoopBuild_main.  The only difference is
+	// that this method calls apply() at the end, while LoopBuild_main calls
 	// jd2::go().  I couldn't think of any way to avoid copying this code.
 
 	basic::Tracer TR("protocols.loop_build.LoopBuild");
@@ -96,7 +96,7 @@ void LoopmodelWrapper::apply(core::pose::Pose & pose) {
 	using namespace core::chemical;
 	using namespace core::id;
 	using namespace jobdist;
-	
+
 	std::string remodel            ( option[ OptionKeys::loops::remodel ]() );
 	std::string const intermedrelax( option[ OptionKeys::loops::intermedrelax ]() );
 	std::string const refine       ( option[ OptionKeys::loops::refine ]() );
@@ -110,8 +110,8 @@ void LoopmodelWrapper::apply(core::pose::Pose & pose) {
 	TR << " relax          " << relax          << std::endl;
 
 	utility::vector1< core::fragment::FragSetOP > frag_libs;
-	if ( option[ OptionKeys::loops::frag_files ].user()) {
-        loops::read_loop_fragments( frag_libs );
+	if ( option[ OptionKeys::loops::frag_files ].user() ) {
+		loops::read_loop_fragments( frag_libs );
 	}
 
 	comparative_modeling::LoopRelaxMover looprelax_mover;

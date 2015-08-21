@@ -39,7 +39,7 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-	#include <protocols/fldsgn/topology/HSSTriplet.hh>
+#include <protocols/fldsgn/topology/HSSTriplet.hh>
 #endif
 
 
@@ -90,13 +90,13 @@ HelixKinkFilter::apply( Pose const & pose ) const
 
 	// set SS_Info
 	String secstruct( pose.secstruct() );
-	if( secstruct_ != "" ) {
+	if ( secstruct_ != "" ) {
 		secstruct = secstruct_;
 	}
 	SS_Info2_OP  ss_info( new SS_Info2( pose, secstruct ) );
 	Helices const & helices( ss_info->helices() );
 
-	if( helices.size() < 1 ) {
+	if ( helices.size() < 1 ) {
 		TR << "There is no helix definition in pose. " << std::endl;
 		return true;
 	}
@@ -106,63 +106,64 @@ HelixKinkFilter::apply( Pose const & pose ) const
 	}
 
 
-	//vector to help quickly identify if a helix contains residues of interest 
+	//vector to help quickly identify if a helix contains residues of interest
 	utility::vector1<bool> residues_to_check;
 	if ( select_resnums_ ) {
-	  utility::vector1< core::Size > const res_set_vec (core::pose::get_resnum_list_ordered( string_resnums_, pose ));
-  	residues_to_check.resize(pose.total_residue(),false);
-			TR << "filter residues contain: ";
-		for( core::Size i_res_vec = 1; i_res_vec <= res_set_vec.size(); ++i_res_vec ){
+		utility::vector1< core::Size > const res_set_vec (core::pose::get_resnum_list_ordered( string_resnums_, pose ));
+		residues_to_check.resize(pose.total_residue(),false);
+		TR << "filter residues contain: ";
+		for ( core::Size i_res_vec = 1; i_res_vec <= res_set_vec.size(); ++i_res_vec ) {
 			residues_to_check[res_set_vec[ i_res_vec ]]=true;
 			TR << res_set_vec[ i_res_vec ] << " ";
 		}
-	   TR << std::endl;
+		TR << std::endl;
 	} else {
-  	residues_to_check.resize(pose.total_residue(),true);
+		residues_to_check.resize(pose.total_residue(),true);
 	}
 
 
 	//This checks if there is broken helix in the range already
-  if ( select_range_ ) {
-			for( Size ii=1; ii<=helices.size(); ++ii ) {
-					for ( Size it=helices[ ii ]->begin(), ite=helices[ ii ]->end(); it <= ite; ++it ) {
-						residues_to_check[it]=false;
-					}
+	if ( select_range_ ) {
+		for ( Size ii=1; ii<=helices.size(); ++ii ) {
+			for ( Size it=helices[ ii ]->begin(), ite=helices[ ii ]->end(); it <= ite; ++it ) {
+				residues_to_check[it]=false;
 			}
+		}
 
-		for (Size i=helix_start_;i<=helix_end_; ++i)
-				if (residues_to_check[i]==true) {
-				  TR << "In range " << helix_start_ <<"-"<<helix_end_ << " contains broken helix at " << i << " already! Skip Kink" << std::endl;
-					return false;
+		for ( Size i=helix_start_; i<=helix_end_; ++i ) {
+			if ( residues_to_check[i]==true ) {
+				TR << "In range " << helix_start_ <<"-"<<helix_end_ << " contains broken helix at " << i << " already! Skip Kink" << std::endl;
+				return false;
 			}
+		}
 	}
 
 	// check kink
-	for( Size ii=1; ii<=helices.size(); ++ii ) {
+	for ( Size ii=1; ii<=helices.size(); ++ii ) {
 		bool check = false;
 		if ( select_resnums_ ) {
-				for ( Size it=helices[ ii ]->begin(), ite=helices[ ii ]->end(); it != ite; ++it ) {
-		    		if (residues_to_check[it]) {
-							check=true;
-							//TR << "Helix " << ii << ", " << helices[ ii ]->begin() << "-" << helices[ ii ]->end() << ", is considered" << std::endl;
-		    			break;
-						}
-							//TR << "Helix " << ii << ", " << helices[ ii ]->begin() << "-" << helices[ ii ]->end() << ", NOT considered" << std::endl;
-	      }
+			for ( Size it=helices[ ii ]->begin(), ite=helices[ ii ]->end(); it != ite; ++it ) {
+				if ( residues_to_check[it] ) {
+					check=true;
+					//TR << "Helix " << ii << ", " << helices[ ii ]->begin() << "-" << helices[ ii ]->end() << ", is considered" << std::endl;
+					break;
+				}
+				//TR << "Helix " << ii << ", " << helices[ ii ]->begin() << "-" << helices[ ii ]->end() << ", NOT considered" << std::endl;
+			}
 		} else {
 			check = true; // TL: we always want to check if no residue numbers are specified
 		}
 
-   if ( select_range_ ) {
-		//This will check if the select_range_ is not broken into multiple helix
+		if ( select_range_ ) {
+			//This will check if the select_range_ is not broken into multiple helix
 			if ( helices[ ii ]->begin() <= helix_start_ && helices[ ii ]->end() >= helix_end_ ) {
-		 		TR << "Helix " << ii << ", res " << helices[ ii ]->begin() << "-" << helices[ ii ]->end() << "contains specified range: " << helix_start_ <<"-" << helix_end_ << std::endl;
+				TR << "Helix " << ii << ", res " << helices[ ii ]->begin() << "-" << helices[ ii ]->end() << "contains specified range: " << helix_start_ <<"-" << helix_end_ << std::endl;
 				check=true;
 			}
 
 		}
 
-		if (!check ) continue;
+		if ( !check ) continue;
 
 		TR << "Helix " << ii << ", res " << helices[ ii ]->begin() << "-" << helices[ ii ]->end() << ", ";
 		// check helix bend
@@ -189,7 +190,7 @@ HelixKinkFilter::apply( Pose const & pose ) const
 				hbond_end = hbond_start;
 			}
 			Size broken_hbonds( check_kink_helix( pose, hbond_start, hbond_end ) );
-			if( broken_hbonds > 0 ) {
+			if ( broken_hbonds > 0 ) {
 				TR << "is kinked, hbonds are broken. " << std::endl;
 				return false;
 			}
@@ -218,31 +219,31 @@ HelixKinkFilter::parse_my_tag(
 	bend_angle_  = tag->getOption<Real>( "bend",  20 );
 	// secondary strucuture info
 	String const blueprint = tag->getOption<String>( "blueprint", "" );
-	if( blueprint != "" ) {
+	if ( blueprint != "" ) {
 		protocols::jd2::parser::BluePrint blue( blueprint );
 		secstruct_ = blue.secstruct();
 	}
 
-  // residues that need to contained in helix
+	// residues that need to contained in helix
 	if ( tag->hasOption( "resnums" ) ) {
 		TR << "Only filter helix that contains residues specified in resnums" << std::endl;
-    select_resnums_=true;
-    string_resnums_ = tag->getOption< std::string >( "resnums" );
-  } else {
-    select_resnums_=false;
-  }
+		select_resnums_=true;
+		string_resnums_ = tag->getOption< std::string >( "resnums" );
+	} else {
+		select_resnums_=false;
+	}
 
-  // residues that need to contained in a single helix
+	// residues that need to contained in a single helix
 	if ( tag->hasOption( "helix_start" ) && tag->hasOption( "helix_end" ) ) {
 		TR << "Only filter helix that contains range specified by helix_start to helix_end" << std::endl;
-    select_range_=true;
-    helix_start_ = tag->getOption< core::Size >( "helix_start" );
-    helix_end_ = tag->getOption< core::Size >( "helix_end" );
-	  if (helix_start_>=helix_end_)  {
-				utility_exit_with_message("helix_start_ is greater than or equal to helix_end_");
-			}
-  } else {
-    select_range_=false;
+		select_range_=true;
+		helix_start_ = tag->getOption< core::Size >( "helix_start" );
+		helix_end_ = tag->getOption< core::Size >( "helix_end" );
+		if ( helix_start_>=helix_end_ )  {
+			utility_exit_with_message("helix_start_ is greater than or equal to helix_end_");
+		}
+	} else {
+		select_range_=false;
 	}
 
 }

@@ -102,8 +102,8 @@ public:
 		//(*scorefxn)(pose);
 
 		//for ( Size ii=1; ii <= pose.total_residue(); ++ii ) {
-		//	std::cout << "resid: " << I(3,ii)
-		//			<< ", nbs: " << pose.energies().tenA_neighbor_graph().get_node( ii )->num_neighbors_counting_self() << std::endl;
+		// std::cout << "resid: " << I(3,ii)
+		//   << ", nbs: " << pose.energies().tenA_neighbor_graph().get_node( ii )->num_neighbors_counting_self() << std::endl;
 		//}
 
 		// The first 5 residues of the util/test_in.pdb file have the following neighbor counts. By default, the task operation uses

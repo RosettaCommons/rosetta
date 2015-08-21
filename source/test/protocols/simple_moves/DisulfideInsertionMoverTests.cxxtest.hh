@@ -59,10 +59,10 @@ public:
 			TS_ASSERT_DELTA(mover->get_constraint_weight(), 0.1, 1e-6);
 
 		}
-		catch ( utility::excn::EXCN_Msg_Exception e ) {
-			std::cerr << "Raised exception: " << e.msg() << std::endl;
-			TS_ASSERT( false );
-		}
+catch ( utility::excn::EXCN_Msg_Exception e ) {
+	std::cerr << "Raised exception: " << e.msg() << std::endl;
+	TS_ASSERT( false );
+}
 
 	}
 

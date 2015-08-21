@@ -22,46 +22,46 @@
 namespace protocols {
 namespace magnesium {
 
-	class MgMonteCarlo: public moves::Mover {
+class MgMonteCarlo: public moves::Mover {
 
-	public:
+public:
 
-		//constructor
-		MgMonteCarlo();
+	//constructor
+	MgMonteCarlo();
 
-		//destructor
-		~MgMonteCarlo();
+	//destructor
+	~MgMonteCarlo();
 
-		void set_temperature( core::Real const & setting ){ temperature_ = setting; }
-		core::Real temperature() const { return temperature_; }
+	void set_temperature( core::Real const & setting ){ temperature_ = setting; }
+	core::Real temperature() const { return temperature_; }
 
-		void set_add_delete_frequency( core::Real const & setting ){ add_delete_frequency_ = setting; }
-		core::Real add_delete_frequency() const { return add_delete_frequency_; }
+	void set_add_delete_frequency( core::Real const & setting ){ add_delete_frequency_ = setting; }
+	core::Real add_delete_frequency() const { return add_delete_frequency_; }
 
-		void set_cycles( core::Size const & setting ){ cycles_ = setting; }
-		core::Size cycles() const { return cycles_; }
+	void set_cycles( core::Size const & setting ){ cycles_ = setting; }
+	core::Size cycles() const { return cycles_; }
 
-		void set_output_pdb( bool const & setting ){ output_pdb_ = setting; }
-		bool output_pdb() const { return output_pdb_; }
+	void set_output_pdb( bool const & setting ){ output_pdb_ = setting; }
+	bool output_pdb() const { return output_pdb_; }
 
-	public:
+public:
 
-		virtual void apply( core::pose::Pose & pose );
-		virtual std::string get_name() const{ return "MgMonteCarlo"; }
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const{ return "MgMonteCarlo"; }
 
-	private:
+private:
 
-		void
-		setup_mg_water_fold_tree( core::pose::Pose & pose ) const;
+	void
+	setup_mg_water_fold_tree( core::pose::Pose & pose ) const;
 
-	private:
+private:
 
-		core::Size cycles_;
-		core::Real temperature_;
-		core::Real add_delete_frequency_;
-		bool output_pdb_;
+	core::Size cycles_;
+	core::Real temperature_;
+	core::Real add_delete_frequency_;
+	bool output_pdb_;
 
-	};
+};
 
 } //magnesium
 } //protocols

@@ -56,10 +56,10 @@ class AntibodyConstraintTests : public CxxTest::TestSuite {
 	ParatopeSiteConstraintMoverOP paratope_mover;
 	ParatopeEpitopeSiteConstraintMoverOP para_epitope_mover;
 	CDRDihedralConstraintMoverOP cdr_dihedral_cst_mover;
-	
+
 
 public:
-	
+
 	void setUp(){
 		core_init();
 		core::import_pose::pose_from_pdb(pose, "protocols/antibody/1bln_AB_aho.pdb"); //AHO renumbered pose
@@ -67,30 +67,30 @@ public:
 		paratope_mover = ParatopeSiteConstraintMoverOP( new constraints::ParatopeSiteConstraintMover(ab_info) );
 		para_epitope_mover = ParatopeEpitopeSiteConstraintMoverOP( new constraints::ParatopeEpitopeSiteConstraintMover(ab_info) );
 		cdr_dihedral_cst_mover = CDRDihedralConstraintMoverOP( new CDRDihedralConstraintMover(ab_info));
-		
+
 	}
-	
+
 	void test_constraints(){
 		cdr_dihedral_cst_mover->set_cdr(l1);
 		TS_ASSERT_THROWS_NOTHING(cdr_dihedral_cst_mover->apply(pose));
-		
+
 		core::scoring::constraints::ConstraintSetCOP  csts = pose.constraint_set();
 		TS_ASSERT(csts->has_constraints());
 		TS_ASSERT(protocols::antibody::constraints::cdr_has_res_constraints(ab_info, pose, l1, "Dihedral"))
-		utility::vector1<core::scoring::constraints::ConstraintCOP> cst_list = csts->get_all_constraints();
+			utility::vector1<core::scoring::constraints::ConstraintCOP> cst_list = csts->get_all_constraints();
 		TS_ASSERT(cst_list.size() == 32); //16 residues, one constraint for each dihedral on the CDR.
 		TS_ASSERT(cst_list[1]->type() == "Dihedral");
 		pose.remove_constraints();
-		
+
 		TS_ASSERT_THROWS_NOTHING(protocols::antibody::constraints::add_harmonic_dihedral_cst_general(ab_info, pose, l1, 23.0, 43.0));
-		
+
 		csts = pose.constraint_set();
 		TS_ASSERT(csts->has_constraints());
 		cst_list = csts->get_all_constraints();
 		TS_ASSERT(cst_list.size() == 32); //16 residues, one constraint for each dihedral on the CDR.
 		TS_ASSERT(cst_list[1]->type() == "Dihedral");
 		pose.remove_constraints();
-		
+
 		//protocols::antibody::constraints::ParatopeEpitopeSiteConstraintMoverOP
 	}
 };

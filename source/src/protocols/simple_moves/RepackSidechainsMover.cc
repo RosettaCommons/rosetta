@@ -69,16 +69,16 @@ RepackSidechainsMoverCreator::mover_name()
 }
 
 RepackSidechainsMover::RepackSidechainsMover() :
- 	protocols::moves::Mover("RepackSidechainsMover"),
+	protocols::moves::Mover("RepackSidechainsMover"),
 	scorefxn_(/* 0 */)
 {}
 
 // RepackSidechainsMover::RepackSidechainsMover( std::string const & type_name ) :
-// 	protocols::moves::Mover( type_name ),
-// 	scorefxn_(0)
+//  protocols::moves::Mover( type_name ),
+//  scorefxn_(0)
 // {}
 
-	// constructors with arguments
+// constructors with arguments
 RepackSidechainsMover::RepackSidechainsMover(
 	ScoreFunctionCOP scorefxn
 ) :
@@ -96,7 +96,7 @@ RepackSidechainsMover::RepackSidechainsMover( RepackSidechainsMover const & othe
 void
 RepackSidechainsMover::apply( Pose & pose )
 {
-// repack missing sidechains
+	// repack missing sidechains
 	core::id::AtomID_Mask all_atoms( true );
 	core::pose::initialize_atomid_map( all_atoms, pose );
 
@@ -107,7 +107,7 @@ RepackSidechainsMover::apply( Pose & pose )
 
 	utility::vector1_bool repackable;
 	bool something_to_pack = core::pack::figure_out_repackable_residues( pose, all_atoms, repackable );
-	if (!something_to_pack) return;
+	if ( !something_to_pack ) return;
 
 	//task is set up
 	task->restrict_to_residues(repackable);
@@ -132,7 +132,7 @@ RepackSidechainsMover::parse_my_tag(
 )
 {
 	parse_score_function( tag, datamap, filters, movers, pose );
-	//	parse_task_operations( tag, datamap, filters, movers, pose );
+	// parse_task_operations( tag, datamap, filters, movers, pose );
 }
 
 /// @brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)

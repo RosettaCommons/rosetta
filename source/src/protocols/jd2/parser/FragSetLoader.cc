@@ -59,7 +59,7 @@ void FragSetLoader::load_data(
 
 	FragmentReaderMap frag_readers_map;
 	if ( tag->hasTag( "FRAGMENTS" ) ) {
-		BOOST_FOREACH(TagCOP tag, tag->getTag( "FRAGMENTS" )->getTags()){
+		BOOST_FOREACH ( TagCOP tag, tag->getTag( "FRAGMENTS" )->getTags() ) {
 			std::string const name ( tag->getName() ); // this name is used when fragsets are defined later.
 			runtime_assert( !name.empty() );
 			FragmentReaderOP frop( new FragmentReader( tag ) );
@@ -70,9 +70,9 @@ void FragSetLoader::load_data(
 		runtime_assert( false );
 	}
 
-	BOOST_FOREACH( TagCOP tag, tag->getTags() ){
+	BOOST_FOREACH ( TagCOP tag, tag->getTags() ) {
 		std::string const name ( tag->getName() );
-		if( name == "FRAGMENTS" ) continue;
+		if ( name == "FRAGMENTS" ) continue;
 
 		std::string const frag_name ( tag->getOption<std::string>( "frag_name", "" ) );
 		std::string const output ( tag->getOption<std::string>( "output", "" ) );
@@ -80,13 +80,13 @@ void FragSetLoader::load_data(
 
 		core::fragment::FragSetOP fragset( new core::fragment::OrderedFragSet );
 		utility::vector1< std::string > fnames ( utility::string_split( frag_name, ',' ) );
-		BOOST_FOREACH(std::string fname, fnames){
+		BOOST_FOREACH ( std::string fname, fnames ) {
 			std::map< std::string, FragmentReaderOP >::const_iterator itr;
 			itr = frag_readers_map.find( fname );
-			if ( itr != frag_readers_map.end() ){
+			if ( itr != frag_readers_map.end() ) {
 				FragmentReaderOP frop ( frag_readers_map[ fname ] );
 				frop->apply( fragset );
-			}else{
+			} else {
 				TR << "frag_name " << fname << " does not exist." << std::endl;
 				runtime_assert( false );
 			}
@@ -94,7 +94,7 @@ void FragSetLoader::load_data(
 		runtime_assert( fragset->nr_frames() != 0 );
 		data.add( "fragsets", name,  fragset );
 		// output flagments to fyile
-		if( !output.empty() ){
+		if ( !output.empty() ) {
 			core::fragment::FragmentIO().write_data( output, *fragset );
 		}
 	}

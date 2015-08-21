@@ -37,29 +37,29 @@ using namespace basic::options::OptionKeys;
 using namespace core;
 
 namespace protocols {
-namespace flxbb{
+namespace flxbb {
 
-	void FlxbbDesign_main(){
+void FlxbbDesign_main(){
 
-		using namespace protocols::jobdist;
-		using namespace protocols::moves;
-		using protocols::jd2::JobDistributor;
+	using namespace protocols::jobdist;
+	using namespace protocols::moves;
+	using protocols::jd2::JobDistributor;
 
-		scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
-		scoring::ScoreFunctionOP scorefxn_design = scorefxn;
-		scoring::ScoreFunctionOP scorefxn_relax = scorefxn;
+	scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
+	scoring::ScoreFunctionOP scorefxn_design = scorefxn;
+	scoring::ScoreFunctionOP scorefxn_relax = scorefxn;
 
-		if( option[ in::file::fullatom ]() ) {
-			scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *scorefxn_relax );
-		} else{
-			scoring::constraints::add_constraints_from_cmdline_to_scorefxn( *scorefxn_relax );
-		}
-
-		MoverOP protocol;
-		protocol = MoverOP( new FlxbbDesign( scorefxn_design, scorefxn_relax ) );
-		JobDistributor::get_instance()->go( protocol );
-
+	if ( option[ in::file::fullatom ]() ) {
+		scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *scorefxn_relax );
+	} else {
+		scoring::constraints::add_constraints_from_cmdline_to_scorefxn( *scorefxn_relax );
 	}
+
+	MoverOP protocol;
+	protocol = MoverOP( new FlxbbDesign( scorefxn_design, scorefxn_relax ) );
+	JobDistributor::get_instance()->go( protocol );
+
+}
 
 } // namespace flxbb
 } // namespace protocols

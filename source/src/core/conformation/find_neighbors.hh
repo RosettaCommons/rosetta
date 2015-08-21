@@ -64,17 +64,17 @@ namespace conformation {
 // add the following to top of file:
 /// @brief uses default boost::hash combine to hash Cubes
 struct DefaultCubeHash : std::unary_function< CubeKey, std::size_t > {
-       // use std::size_t instead of core::Size just to be
-       // consistent with boost::hash types
+	// use std::size_t instead of core::Size just to be
+	// consistent with boost::hash types
 
-       /// @brief return hash value given CubeKey
-       std::size_t operator()( CubeKey const & key ) const {
-               std::size_t seed = 0;
-               boost::hash_combine( seed, key.x() );
-               boost::hash_combine( seed, key.y() );
-               boost::hash_combine( seed, key.z() );
-               return seed;
-       }
+	/// @brief return hash value given CubeKey
+	std::size_t operator()( CubeKey const & key ) const {
+		std::size_t seed = 0;
+		boost::hash_combine( seed, key.x() );
+		boost::hash_combine( seed, key.y() );
+		boost::hash_combine( seed, key.z() );
+		return seed;
+	}
 };
 
 
@@ -91,18 +91,18 @@ find_neighbors(
 	// when detecting neighbors for 150 points.
 	core::Size const N_POINTS_BREAK_EVEN = 150;
 
-	//	PROF_START( basic::TEST2 );
+	// PROF_START( basic::TEST2 );
 
-	if ( strategy == STRIPEHASH || ( strategy == AUTOMATIC && basic::options::option[ basic::options::OptionKeys::score::find_neighbors_stripehash ]() )) {
+	if ( strategy == STRIPEHASH || ( strategy == AUTOMATIC && basic::options::option[ basic::options::OptionKeys::score::find_neighbors_stripehash ]() ) ) {
 		find_neighbors_stripe( point_graph, neighbor_cutoff );
-	} else if ( strategy == THREEDGRID || ( strategy == AUTOMATIC && basic::options::option[ basic::options::OptionKeys::score::find_neighbors_3dgrid ]() )) {
+	} else if ( strategy == THREEDGRID || ( strategy == AUTOMATIC && basic::options::option[ basic::options::OptionKeys::score::find_neighbors_3dgrid ]() ) ) {
 		find_neighbors_3dgrid( point_graph, neighbor_cutoff );
 	} else if ( strategy == NAIVE || point_graph->num_vertices() < N_POINTS_BREAK_EVEN ) {
 		find_neighbors_naive( point_graph, neighbor_cutoff );
 	} else { // Use automatic or an octree strategy
 		find_neighbors_octree( point_graph, neighbor_cutoff, strategy );
 	}
-	//	PROF_STOP( basic::TEST2 );
+	// PROF_STOP( basic::TEST2 );
 
 }
 
@@ -144,7 +144,7 @@ struct AddEdgeVisitor{
 		numeric::xyzVector<Real> const & /*v*/, Real  const & vm,
 		numeric::xyzVector<Real> const & /*c*/, Real  const & cm, Real const & d_sq
 	){
-		if( vm < cm ) point_graph.add_edge( Size(vm), Size(cm), Edge( d_sq ) );
+		if ( vm < cm ) point_graph.add_edge( Size(vm), Size(cm), Edge( d_sq ) );
 	}
 };
 
@@ -158,11 +158,11 @@ find_neighbors_stripe(
 	if ( n_points <= 1 ) return; // Nothing to do
 	std::cout << n_points << std::endl;
 	utility::vector1<PointPosition> pts(n_points);
-	for( core::Size ii = 1; ii <= n_points; ++ii ) pts[ii] = point_graph->get_vertex(ii).data().xyz();
+	for ( core::Size ii = 1; ii <= n_points; ++ii ) pts[ii] = point_graph->get_vertex(ii).data().xyz();
 	utility::vector1<core::Real> dummy;
 	numeric::geometry::hashing::xyzStripeHashWithMeta<Real> hash(neighbor_cutoff,pts,dummy);
 	AddEdgeVisitor<Vertex,Edge> visitor(*point_graph);
-	for( core::Size ii = 1; ii <= n_points; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_points; ++ii ) {
 		hash.visit(pts[ii],ii,visitor);
 	}
 }
@@ -241,7 +241,7 @@ find_neighbors_octree(
 	core::Size const side_factor( 1 ); // 1 factor => Check <= 27 adjacent cubes // 2 factor => Check <= 8 adjacent cubes
 	// Might gain some speed by replacing max_residue_pair_cutoff below with the max cutoff for pairs present
 	core::Real const side( side_factor * neighbor_cutoff );
-debug_assert( side > core::Real( 0 ) );
+	debug_assert( side > core::Real( 0 ) );
 	core::Real const side_inv( core::Real( 1 ) / side );
 	CubeDim const cube_dim( // Cube dimensions
 		core::Size( std::ceil( ( bbu.x() - bbl.x() ) * side_inv ) ),             // Test that ceil values == core::Size values
@@ -260,8 +260,8 @@ debug_assert( side > core::Real( 0 ) );
 	// Find upper Residue neighbors of each residue
 	if ( ( n_cube < core::Size( 27 ) ) && ( strategy < OCTREE ) ) { // Naive strategy //! Tune the n_cube threshold based on more real-world trials
 
-			// Naive method: O( R^2 ) for R residues but faster for small, compact conformations
-			find_neighbors_naive<Vertex, Edge>( point_graph, neighbor_cutoff );
+		// Naive method: O( R^2 ) for R residues but faster for small, compact conformations
+		find_neighbors_naive<Vertex, Edge>( point_graph, neighbor_cutoff );
 
 	} else { // Octree O( R log R ) strategy
 
@@ -290,9 +290,9 @@ debug_assert( side > core::Real( 0 ) );
 			);
 
 			// Check that it is within the expanded bounding box
-		debug_assert( cube_key.x() < cube_dim.x() );
-		debug_assert( cube_key.y() < cube_dim.y() );
-		debug_assert( cube_key.z() < cube_dim.z() );
+			debug_assert( cube_key.x() < cube_dim.x() );
+			debug_assert( cube_key.y() < cube_dim.y() );
+			debug_assert( cube_key.z() < cube_dim.z() );
 
 			// Add the point's position to the cube's collection
 			cubes[ cube_key ].push_back( i ); // Creates the cube if it doesn't exist yet
@@ -323,22 +323,21 @@ debug_assert( side > core::Real( 0 ) );
 						Cubes::iterator const ic( cubes.find( CubeKey( ix,iy, iz ) ) );
 						if ( ic != cubes.end() ) { // Cube exists
 							if ( // This test gave a ~10% speedup in trials
-								( ix != icx ? square( cx - ( ix > icx ? side : D_ZERO ) ) : D_ZERO ) +
-								( iy != icy ? square( cy - ( iy > icy ? side : D_ZERO ) ) : D_ZERO ) +
-								( iz != icz ? square( cz - ( iz > icz ? side : D_ZERO ) ) : D_ZERO )
-								<= neighbor_cutoff_sq )
-							{ // Max cutoff sphere intersects this cube so check each residue in it
+									( ix != icx ? square( cx - ( ix > icx ? side : D_ZERO ) ) : D_ZERO ) +
+									( iy != icy ? square( cy - ( iy > icy ? side : D_ZERO ) ) : D_ZERO ) +
+									( iz != icz ? square( cz - ( iz > icz ? side : D_ZERO ) ) : D_ZERO )
+									<= neighbor_cutoff_sq ) {
+								// Max cutoff sphere intersects this cube so check each residue in it
 								for ( PointIDs::iterator ia = ic->second.begin(), iae = ic->second.end(); ia != iae; ++ia ) {
 									core::Size const j( *ia );
 									if ( i < j ) { // It is an upper neighbor
 										core::Real const d_sq( pp.distance_squared( points[ j ] ) );
-										if ( d_sq <= neighbor_cutoff_sq )
-										{
+										if ( d_sq <= neighbor_cutoff_sq ) {
 											point_graph->add_edge( i, j, Edge( d_sq ) );
 										}
 										//if ( d_sq < residue_neighbor_count_cutoff_sq ) { // Add to neighbor counts
-										//	res.increment_n_neighbor();
-										//	resu.increment_n_neighbor();
+										// res.increment_n_neighbor();
+										// resu.increment_n_neighbor();
 										//}
 									}
 								}
@@ -410,7 +409,7 @@ find_neighbors_3dgrid(
 	core::Size const side_factor( 1 ); // 1 factor => Check <= 27 adjacent cubes // 2 factor => Check <= 8 adjacent cubes
 	// Might gain some speed by replacing max_residue_pair_cutoff below with the max cutoff for pairs present
 	core::Real const side( side_factor * neighbor_cutoff );
-debug_assert( side > core::Real( 0 ) );
+	debug_assert( side > core::Real( 0 ) );
 	core::Real const side_inv( core::Real( 1 ) / side );
 	CubeDim const cube_dim( // Cube dimensions
 		core::Size( std::ceil( ( bbu.x() - bbl.x() ) * side_inv ) ),             // Test that ceil values == core::Size values
@@ -449,9 +448,9 @@ debug_assert( side > core::Real( 0 ) );
 		);
 
 		// Check that it is within the expanded bounding box
-	debug_assert( cube_key.x() <= cube_dim.x() );
-	debug_assert( cube_key.y() <= cube_dim.y() );
-	debug_assert( cube_key.z() <= cube_dim.z() );
+		debug_assert( cube_key.x() <= cube_dim.x() );
+		debug_assert( cube_key.y() <= cube_dim.y() );
+		debug_assert( cube_key.z() <= cube_dim.z() );
 
 		// Add the point's position to the cube's collection
 		//cubes[ cube_key ].push_back( i ); // Creates the cube if it doesn't exist yet
@@ -499,13 +498,12 @@ debug_assert( side > core::Real( 0 ) );
 							///std::cout << "point " << j << " found " << std::endl;
 							if ( i < j ) { // It is an upper neighbor
 								core::Real const d_sq( pp.distance_squared( points[ j ] ) );
-								if ( d_sq <= neighbor_cutoff_sq )
-								{
+								if ( d_sq <= neighbor_cutoff_sq ) {
 									point_graph->add_edge( i, j, Edge( d_sq ) );
 								}
 								//if ( d_sq < residue_neighbor_count_cutoff_sq ) { // Add to neighbor counts
-								//	res.increment_n_neighbor();
-								//	resu.increment_n_neighbor();
+								// res.increment_n_neighbor();
+								// resu.increment_n_neighbor();
 								//}
 							}
 						}
@@ -519,7 +517,7 @@ debug_assert( side > core::Real( 0 ) );
 	/// Only necessary in the non-thread-safe version
 	/// before returning, empty the cubes array so it's ready for the next round
 	//for ( core::Size ii = 1; ii <= nonempty_cube_indices.size(); ++ii ) {
-	//	cubes[ nonempty_cube_indices[ ii ] ].clear();
+	// cubes[ nonempty_cube_indices[ ii ] ].clear();
 	//}
 }
 
@@ -536,16 +534,16 @@ find_neighbors_restricted(
 	// when detecting neighbors for 150 points.
 	core::Size const N_POINTS_BREAK_EVEN = 150;
 
-	//	PROF_START( basic::TEST2 );
+	// PROF_START( basic::TEST2 );
 
-	if ( strategy == THREEDGRID || ( strategy == AUTOMATIC && basic::options::option[ basic::options::OptionKeys::score::find_neighbors_3dgrid ] )) {
+	if ( strategy == THREEDGRID || ( strategy == AUTOMATIC && basic::options::option[ basic::options::OptionKeys::score::find_neighbors_3dgrid ] ) ) {
 		find_neighbors_3dgrid_restricted<Vertex,Edge>( point_graph, neighbor_cutoff, residue_selection );
 	} else if ( strategy == NAIVE || point_graph->num_vertices() < N_POINTS_BREAK_EVEN ) {
 		find_neighbors_naive_restricted<Vertex,Edge>( point_graph, neighbor_cutoff, residue_selection );
 	} else { // Use automatic or an octree strategy
 		find_neighbors_octree_restricted<Vertex,Edge>( point_graph, neighbor_cutoff, residue_selection, strategy );
 	}
-	//	PROF_STOP( basic::TEST2 );
+	// PROF_STOP( basic::TEST2 );
 }
 
 template <class Vertex, class Edge>
@@ -638,7 +636,7 @@ find_neighbors_octree_restricted(
 	core::Size const side_factor( 1 ); // 1 factor => Check <= 27 adjacent cubes // 2 factor => Check <= 8 adjacent cubes
 	// Might gain some speed by replacing max_residue_pair_cutoff below with the max cutoff for pairs present
 	core::Real const side( side_factor * neighbor_cutoff );
-debug_assert( side > core::Real( 0 ) );
+	debug_assert( side > core::Real( 0 ) );
 	core::Real const side_inv( core::Real( 1 ) / side );
 	CubeDim const cube_dim( // Cube dimensions
 		core::Size( std::ceil( ( bbu.x() - bbl.x() ) * side_inv ) ),             // Test that ceil values == core::Size values
@@ -657,8 +655,8 @@ debug_assert( side > core::Real( 0 ) );
 	// Find upper Residue neighbors of each residue
 	if ( ( n_cube < core::Size( 27 ) ) && ( strategy < OCTREE ) ) { // Naive strategy //! Tune the n_cube threshold based on more real-world trials
 
-			// Naive method: O( R^2 ) for R residues but faster for small, compact conformations
-			find_neighbors_naive_restricted<Vertex, Edge>( point_graph, neighbor_cutoff,residue_selection );
+		// Naive method: O( R^2 ) for R residues but faster for small, compact conformations
+		find_neighbors_naive_restricted<Vertex, Edge>( point_graph, neighbor_cutoff,residue_selection );
 
 	} else { // Octree O( R log R ) strategy
 
@@ -687,9 +685,9 @@ debug_assert( side > core::Real( 0 ) );
 			);
 
 			// Check that it is within the expanded bounding box
-		debug_assert( cube_key.x() < cube_dim.x() );
-		debug_assert( cube_key.y() < cube_dim.y() );
-		debug_assert( cube_key.z() < cube_dim.z() );
+			debug_assert( cube_key.x() < cube_dim.x() );
+			debug_assert( cube_key.y() < cube_dim.y() );
+			debug_assert( cube_key.z() < cube_dim.z() );
 
 			// Add the point's position to the cube's collection
 			cubes[ cube_key ].push_back( i ); // Creates the cube if it doesn't exist yet
@@ -721,22 +719,21 @@ debug_assert( side > core::Real( 0 ) );
 						Cubes::iterator const ic( cubes.find( CubeKey( ix,iy, iz ) ) );
 						if ( ic != cubes.end() ) { // Cube exists
 							if ( // This test gave a ~10% speedup in trials
-								( ix != icx ? square( cx - ( ix > icx ? side : D_ZERO ) ) : D_ZERO ) +
-								( iy != icy ? square( cy - ( iy > icy ? side : D_ZERO ) ) : D_ZERO ) +
-								( iz != icz ? square( cz - ( iz > icz ? side : D_ZERO ) ) : D_ZERO )
-								<= neighbor_cutoff_sq )
-							{ // Max cutoff sphere intersects this cube so check each residue in it
+									( ix != icx ? square( cx - ( ix > icx ? side : D_ZERO ) ) : D_ZERO ) +
+									( iy != icy ? square( cy - ( iy > icy ? side : D_ZERO ) ) : D_ZERO ) +
+									( iz != icz ? square( cz - ( iz > icz ? side : D_ZERO ) ) : D_ZERO )
+									<= neighbor_cutoff_sq ) {
+								// Max cutoff sphere intersects this cube so check each residue in it
 								for ( PointIDs::iterator ia = ic->second.begin(), iae = ic->second.end(); ia != iae; ++ia ) {
 									core::Size const j( *ia );
 									if ( i < j || !residue_selection[ j ] ) { // It is an upper neighbor
 										core::Real const d_sq( pp.distance_squared( points[ j ] ) );
-										if ( d_sq <= neighbor_cutoff_sq )
-										{
+										if ( d_sq <= neighbor_cutoff_sq ) {
 											point_graph->add_edge( i, j, Edge( d_sq ) );
 										}
 										//if ( d_sq < residue_neighbor_count_cutoff_sq ) { // Add to neighbor counts
-										//	res.increment_n_neighbor();
-										//	resu.increment_n_neighbor();
+										// res.increment_n_neighbor();
+										// resu.increment_n_neighbor();
 										//}
 									}
 								}
@@ -805,7 +802,7 @@ find_neighbors_3dgrid_restricted(
 	core::Size const side_factor( 1 ); // 1 factor => Check <= 27 adjacent cubes // 2 factor => Check <= 8 adjacent cubes
 	// Might gain some speed by replacing max_residue_pair_cutoff below with the max cutoff for pairs present
 	core::Real const side( side_factor * neighbor_cutoff );
-debug_assert( side > core::Real( 0 ) );
+	debug_assert( side > core::Real( 0 ) );
 	core::Real const side_inv( core::Real( 1 ) / side );
 	CubeDim const cube_dim( // Cube dimensions
 		core::Size( std::ceil( ( bbu.x() - bbl.x() ) * side_inv ) ),             // Test that ceil values == core::Size values
@@ -844,9 +841,9 @@ debug_assert( side > core::Real( 0 ) );
 		);
 
 		// Check that it is within the expanded bounding box
-	debug_assert( cube_key.x() <= cube_dim.x() );
-	debug_assert( cube_key.y() <= cube_dim.y() );
-	debug_assert( cube_key.z() <= cube_dim.z() );
+		debug_assert( cube_key.x() <= cube_dim.x() );
+		debug_assert( cube_key.y() <= cube_dim.y() );
+		debug_assert( cube_key.z() <= cube_dim.z() );
 
 		// Add the point's position to the cube's collection
 		//cubes[ cube_key ].push_back( i ); // Creates the cube if it doesn't exist yet
@@ -893,15 +890,14 @@ debug_assert( side > core::Real( 0 ) );
 						for ( PointIDs::iterator ia = cubes[ cube_index ].begin(), iae = cubes[ cube_index ].end(); ia != iae; ++ia ) {
 							core::Size const j( *ia );
 							///std::cout << "point " << j << " found " << std::endl;
-							if ( i < j || !residue_selection[ j ]) { // It is an upper neighbor
+							if ( i < j || !residue_selection[ j ] ) { // It is an upper neighbor
 								core::Real const d_sq( pp.distance_squared( points[ j ] ) );
-								if ( d_sq <= neighbor_cutoff_sq )
-								{
+								if ( d_sq <= neighbor_cutoff_sq ) {
 									point_graph->add_edge( i, j, Edge( d_sq ) );
 								}
 								//if ( d_sq < residue_neighbor_count_cutoff_sq ) { // Add to neighbor counts
-								//	res.increment_n_neighbor();
-								//	resu.increment_n_neighbor();
+								// res.increment_n_neighbor();
+								// resu.increment_n_neighbor();
 								//}
 							}
 						}
@@ -914,7 +910,7 @@ debug_assert( side > core::Real( 0 ) );
 	/// Only necessary in the non-thread-safe version
 	/// before returning, empty the cubes array so it's ready for the next round
 	//for ( core::Size ii = 1; ii <= nonempty_cube_indices.size(); ++ii ) {
-	//	cubes[ nonempty_cube_indices[ ii ] ].clear();
+	// cubes[ nonempty_cube_indices[ ii ] ].clear();
 	//}
 
 }
@@ -922,10 +918,10 @@ debug_assert( side > core::Real( 0 ) );
 template <class Vertex, class Edge>
 core::Size
 get_nearest_neighbor(
-		utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
-		core::Size node_id,
-		core::Real neighbor_cutoff,
-		Strategy strategy
+	utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+	core::Size node_id,
+	core::Real neighbor_cutoff,
+	Strategy strategy
 )
 {
 	find_neighbors<Vertex,Edge>(point_graph,neighbor_cutoff,strategy);
@@ -933,11 +929,9 @@ get_nearest_neighbor(
 	typename graph::UEVertex<Vertex,Edge>::UpperEdgeListIter query_it; //sometimes I really don't like C++...
 	core::Real min_d_squared = 99999999.9;
 	core::Size min_node_index = node_id;
-	for(query_it = query_vertex.upper_edge_list_begin(); query_it != query_vertex.upper_edge_list_end(); ++query_it)
-	{
+	for ( query_it = query_vertex.upper_edge_list_begin(); query_it != query_vertex.upper_edge_list_end(); ++query_it ) {
 		core::Real d_squared = query_it->data().dsq();
-		if(d_squared < min_d_squared)
-		{
+		if ( d_squared < min_d_squared ) {
 			min_d_squared = d_squared;
 			min_node_index = query_it->upper_vertex();
 		}

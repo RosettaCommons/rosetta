@@ -33,7 +33,7 @@ using namespace core::chemical::gasteiger;
 
 class BondLengthsTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	GasteigerAtomTypeSetCOP atom_type_set_;
 
@@ -84,7 +84,7 @@ class BondLengthsTests : public CxxTest::TestSuite {
 		//std::cout << core::chemical::create_bond_length( *(atom_type_set_->atom_type( "N_TrTrTrPi2" )), *(atom_type_set_->atom_type( "H_S" )), core::chemical::SingleBond) << std::endl;
 		//std::cout << core::chemical::create_bond_length( *(atom_type_set_->atom_type( "C_TeTeTeTe" )), *(atom_type_set_->atom_type( "H_S" )), core::chemical::SingleBond) << std::endl;
 
-/*		TS_ASSERT_EQUALS( atom_type_set_->atom_type( "C_TeTeTeTe" )->get_name(), "C_TeTeTeTe" );
+		/*  TS_ASSERT_EQUALS( atom_type_set_->atom_type( "C_TeTeTeTe" )->get_name(), "C_TeTeTeTe" );
 		TS_ASSERT_EQUALS( atom_type_set_->atom_type( "C_TeTeTeTe" )->get_number_hybrid_orbitals(), 4 );
 		TS_ASSERT_EQUALS( atom_type_set_->atom_type( "N_TrTrTrPi2" )->get_name(), "N_TrTrTrPi2" );
 		TS_ASSERT_EQUALS( atom_type_set_->atom_type( "N_TrTrTrPi2" )->get_number_hybrid_orbitals(), 3 );

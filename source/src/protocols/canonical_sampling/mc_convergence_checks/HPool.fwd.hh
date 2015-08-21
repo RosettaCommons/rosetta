@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	protocols/canonical_sampling/mc_convergence_checks/HPool.fwd.hh
-/// @brief	hierarchical pool
+/// @file protocols/canonical_sampling/mc_convergence_checks/HPool.fwd.hh
+/// @brief hierarchical pool
 /// @author Yuan Liu (wendao@u.washington.edu)
 
 #ifndef INCLUDED_protocols_canonical_sampling_mc_convergence_checks_HPool_fwd_hh

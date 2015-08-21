@@ -25,41 +25,41 @@ namespace core {
 namespace scoring {
 namespace loop_graph {
 
-	class Loop: public utility::pointer::ReferenceCount {
+class Loop: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		Loop();
-		Loop( Size const takeoff_pos,
-					Size const landing_pos,
-					Size const takeoff_domain,
-					Size const landing_domain );
+	Loop();
+	Loop( Size const takeoff_pos,
+		Size const landing_pos,
+		Size const takeoff_domain,
+		Size const landing_domain );
 
-		//constructor
-		// Undefined, commenting out to fix PyRosetta build  Loop();
+	//constructor
+	// Undefined, commenting out to fix PyRosetta build  Loop();
 
-		//destructor
-		~Loop();
+	//destructor
+	~Loop();
 
-		/// @brief copy constructor
-		Loop( Loop const & src );
+	/// @brief copy constructor
+	Loop( Loop const & src );
 
-		Loop &
-		operator=( Loop const & src );
+	Loop &
+	operator=( Loop const & src );
 
-	public:
+public:
 
-		void set_takeoff_pos( core::Size const & setting ){ takeoff_pos_ = setting; }
-		core::Size takeoff_pos() const{ return takeoff_pos_; }
+	void set_takeoff_pos( core::Size const & setting ){ takeoff_pos_ = setting; }
+	core::Size takeoff_pos() const{ return takeoff_pos_; }
 
-		void set_landing_pos( core::Size const & setting ){ landing_pos_ = setting; }
-		core::Size landing_pos() const{ return landing_pos_; }
+	void set_landing_pos( core::Size const & setting ){ landing_pos_ = setting; }
+	core::Size landing_pos() const{ return landing_pos_; }
 
-		void set_takeoff_domain( core::Size const & setting ){ takeoff_domain_ = setting; }
-		core::Size takeoff_domain() const{ return takeoff_domain_; }
+	void set_takeoff_domain( core::Size const & setting ){ takeoff_domain_ = setting; }
+	core::Size takeoff_domain() const{ return takeoff_domain_; }
 
-		void set_landing_domain( core::Size const & setting ){ landing_domain_ = setting; }
-		core::Size landing_domain() const{ return landing_domain_; }
+	void set_landing_domain( core::Size const & setting ){ landing_domain_ = setting; }
+	core::Size landing_domain() const{ return landing_domain_; }
 
 	/// @brief a and b are the same atom
 	friend
@@ -69,9 +69,9 @@ namespace loop_graph {
 		Loop const & a,
 		Loop const & b ){
 		return ( ( a.takeoff_pos_ == b.takeoff_pos_ ) &&
-						 ( a.landing_pos_ == b.landing_pos_ ) &&
-						 ( a.takeoff_domain_ == b.takeoff_domain_ ) &&
-						 ( a.landing_domain_ == b.landing_domain_ ) );
+			( a.landing_pos_ == b.landing_pos_ ) &&
+			( a.takeoff_domain_ == b.takeoff_domain_ ) &&
+			( a.landing_domain_ == b.landing_domain_ ) );
 	}
 
 
@@ -86,14 +86,14 @@ namespace loop_graph {
 		return os;
 	}
 
-	private:
+private:
 
-		core::Size takeoff_pos_;
-		core::Size landing_pos_;
-		core::Size takeoff_domain_;
-		core::Size landing_domain_;
+	core::Size takeoff_pos_;
+	core::Size landing_pos_;
+	core::Size takeoff_domain_;
+	core::Size landing_domain_;
 
-	};
+};
 
 
 } //loop_graph

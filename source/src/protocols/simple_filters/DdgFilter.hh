@@ -33,9 +33,9 @@ class DdgFilter : public filters::Filter
 public:
 	DdgFilter();
 	DdgFilter( core::Real const ddg_threshold,
-						 core::scoring::ScoreFunctionCOP scorefxn,
-						 core::Size const rb_jump=1,
-						 core::Size const repeats=1);
+		core::scoring::ScoreFunctionCOP scorefxn,
+		core::Size const rb_jump=1,
+		core::Size const repeats=1);
 	bool apply( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const;
 	filters::FilterOP fresh_instance() const;
@@ -44,24 +44,24 @@ public:
 	void repeats( core::Size const repeats );
 	void repack( bool const repack );
 	bool repack() const;
-  void repack_bound( bool rpb ) { repack_bound_ = rpb; }
-  bool repack_bound() const { return repack_bound_; }
-  void relax_bound( bool rlb ) { relax_bound_ = rlb; }
-  bool relax_bound() const { return relax_bound_; }
-  void translate_by( core::Real const translate_by );
-  core::Real translate_by() const;
-  void task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
-  core::pack::task::TaskFactoryOP task_factory() const { return task_factory_; }
-  void use_custom_task( bool uct ) { use_custom_task_ = uct; }
-  bool use_custom_task() const { return use_custom_task_; }
+	void repack_bound( bool rpb ) { repack_bound_ = rpb; }
+	bool repack_bound() const { return repack_bound_; }
+	void relax_bound( bool rlb ) { relax_bound_ = rlb; }
+	bool relax_bound() const { return relax_bound_; }
+	void translate_by( core::Real const translate_by );
+	core::Real translate_by() const;
+	void task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
+	core::pack::task::TaskFactoryOP task_factory() const { return task_factory_; }
+	void use_custom_task( bool uct ) { use_custom_task_ = uct; }
+	bool use_custom_task() const { return use_custom_task_; }
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	virtual ~DdgFilter();
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	void parse_def( utility::lua::LuaObject const & def,
-					utility::lua::LuaObject const & score_fxns,
-					utility::lua::LuaObject const & tasks );
+		utility::lua::LuaObject const & score_fxns,
+		utility::lua::LuaObject const & tasks );
 	void relax_mover( protocols::moves::MoverOP m );
 	protocols::moves::MoverOP relax_mover() const;
 	void filter( protocols::filters::FilterOP m );

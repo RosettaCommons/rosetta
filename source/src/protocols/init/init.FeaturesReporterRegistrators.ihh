@@ -67,7 +67,7 @@ static FeaturesReporterRegistrator< TrajectoryMapFeaturesCreator > TrajectoryMap
 static FeaturesReporterRegistrator< UnrecognizedAtomFeaturesCreator > UnrecognizedAtomFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< helixAssembly::HelixBundleFeaturesCreator > HelixBundleFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< helixAssembly::ConcurrencyTestCreator > ConcurrencyTestCreator_registrator;
-	//static FeaturesReporterRegistrator< strand_assembly::ReportAADistributionFromDBCreator > ReportAADistributionFromDBCreator_registrator;
+//static FeaturesReporterRegistrator< strand_assembly::ReportAADistributionFromDBCreator > ReportAADistributionFromDBCreator_registrator;
 static FeaturesReporterRegistrator< strand_assembly::SandwichFeaturesCreator > SandwichFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< strand_assembly::StrandBundleFeaturesCreator > StrandBundleFeaturesCreator_registrator;
 //static FeaturesReporterRegistrator< BatchFeaturesCreator > BatchFeaturesCreator_registrator;

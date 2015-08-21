@@ -45,99 +45,99 @@ using namespace protocols::environment;
 // creator
 std::string
 UniformRigidBodyMoverCreator::keyname() const {
-  return UniformRigidBodyMoverCreator::mover_name();
+	return UniformRigidBodyMoverCreator::mover_name();
 }
 
 protocols::moves::MoverOP
 UniformRigidBodyMoverCreator::create_mover() const {
-  return protocols::moves::MoverOP( new UniformRigidBodyMover );
+	return protocols::moves::MoverOP( new UniformRigidBodyMover );
 }
 
 std::string
 UniformRigidBodyMoverCreator::mover_name() {
-  return "UniformRigidBodyMover";
+	return "UniformRigidBodyMover";
 }
 
 UniformRigidBodyMover::UniformRigidBodyMover():
-  ThermodynamicMover(),
-  target_jump_( NO_JUMP ),
-  rotation_mag_( 3.0 ),
-  translation_mag_( 8.0 )
+	ThermodynamicMover(),
+	target_jump_( NO_JUMP ),
+	rotation_mag_( 3.0 ),
+	translation_mag_( 8.0 )
 {}
 
 UniformRigidBodyMover::UniformRigidBodyMover( JumpNumber target_jump,
-                                              core::Real rotation_mag,
-                                              core::Real translation_mag ):
-  ThermodynamicMover(),
-  target_jump_( target_jump ),
-  rotation_mag_( rotation_mag ),
-  translation_mag_( translation_mag )
+	core::Real rotation_mag,
+	core::Real translation_mag ):
+	ThermodynamicMover(),
+	target_jump_( target_jump ),
+	rotation_mag_( rotation_mag ),
+	translation_mag_( translation_mag )
 {}
 
 void UniformRigidBodyMover::apply( core::pose::Pose& pose ){
-  using namespace numeric;
-  using namespace numeric::random;
+	using namespace numeric;
+	using namespace numeric::random;
 
-  if( target_jump_ == NO_JUMP ){
-    std::ostringstream ss;
-    ss << "The target jump number of " << this->get_name()
-       << " was " << NO_JUMP << ", which probably means this value wasn't set properly.  "
-       << "If you're using RosettaScripts, try using the 'target_jump' option." << std::endl;
-    throw utility::excn::EXCN_BadInput( ss.str() );
-  }
+	if ( target_jump_ == NO_JUMP ) {
+		std::ostringstream ss;
+		ss << "The target jump number of " << this->get_name()
+			<< " was " << NO_JUMP << ", which probably means this value wasn't set properly.  "
+			<< "If you're using RosettaScripts, try using the 'target_jump' option." << std::endl;
+		throw utility::excn::EXCN_BadInput( ss.str() );
+	}
 
-  core::kinematics::Jump flexible_jump = pose.jump( target_jump_ );
+	core::kinematics::Jump flexible_jump = pose.jump( target_jump_ );
 
-  xyzMatrix< core::Real> const rot=flexible_jump.get_rotation();
-  xyzVector< core::Real> const trans=flexible_jump.get_translation();
+	xyzMatrix< core::Real> const rot=flexible_jump.get_rotation();
+	xyzVector< core::Real> const trans=flexible_jump.get_translation();
 
-  xyzVector<core::Real> delta_trans = random_translation( translation_mag_, numeric::random::rg() );
+	xyzVector<core::Real> delta_trans = random_translation( translation_mag_, numeric::random::rg() );
 
-  core::Real theta = random_rotation_angle<core::Real>( rotation_mag_, numeric::random::rg() );
+	core::Real theta = random_rotation_angle<core::Real>( rotation_mag_, numeric::random::rg() );
 
-  xyzVector<core::Real> axis = random_point_on_unit_sphere<core::Real>( numeric::random::rg() );
+	xyzVector<core::Real> axis = random_point_on_unit_sphere<core::Real>( numeric::random::rg() );
 
-  xyzMatrix<core::Real> delta_rot = rotation_matrix_radians( axis, theta );
+	xyzMatrix<core::Real> delta_rot = rotation_matrix_radians( axis, theta );
 
-  flexible_jump.set_translation( delta_trans + trans );
-  flexible_jump.set_rotation( delta_rot*rot );
+	flexible_jump.set_translation( delta_trans + trans );
+	flexible_jump.set_rotation( delta_rot*rot );
 
-  pose.set_jump( (int) target_jump_, flexible_jump );
+	pose.set_jump( (int) target_jump_, flexible_jump );
 }
 
 void UniformRigidBodyMover::jump_number( JumpNumber jnum ) {
-  target_jump_ = jnum;
+	target_jump_ = jnum;
 }
 
 UniformRigidBodyMover::JumpNumber UniformRigidBodyMover::jump_number() const {
-  return target_jump_;
+	return target_jump_;
 }
 
 void UniformRigidBodyMover::parse_my_tag( utility::tag::TagCOP tag,
-                                          basic::datacache::DataMap&,
-                                          protocols::filters::Filters_map const&,
-                                          protocols::moves::Movers_map const&,
-                                          core::pose::Pose const& ) {
-  rotation_mag_ = tag->getOption< core::Real >( "rotation_magnitude", 8.0 );
-  translation_mag_ = tag->getOption< core::Real >( "translation_magnitude", 3.0 );
-  target_jump_ = tag->getOption< JumpNumber >("target_jump", NO_JUMP );
+	basic::datacache::DataMap&,
+	protocols::filters::Filters_map const&,
+	protocols::moves::Movers_map const&,
+	core::pose::Pose const& ) {
+	rotation_mag_ = tag->getOption< core::Real >( "rotation_magnitude", 8.0 );
+	translation_mag_ = tag->getOption< core::Real >( "translation_magnitude", 3.0 );
+	target_jump_ = tag->getOption< JumpNumber >("target_jump", NO_JUMP );
 }
 
 std::string UniformRigidBodyMover::get_name() const {
-    return "UniformRigidBodyMover";
+	return "UniformRigidBodyMover";
 }
 
 utility::vector1<core::id::TorsionID_Range>
 UniformRigidBodyMover::torsion_id_ranges( core::pose::Pose & ) {
-  return utility::vector1<core::id::TorsionID_Range>();
+	return utility::vector1<core::id::TorsionID_Range>();
 }
 
 moves::MoverOP UniformRigidBodyMover::fresh_instance() const {
-  return moves::MoverOP( new UniformRigidBodyMover() );
+	return moves::MoverOP( new UniformRigidBodyMover() );
 }
 
 moves::MoverOP UniformRigidBodyMover::clone() const{
-  return moves::MoverOP( new UniformRigidBodyMover( *this ) );
+	return moves::MoverOP( new UniformRigidBodyMover( *this ) );
 }
 
 } // rigid

@@ -119,13 +119,13 @@ public:
 
 	/*void
 	deprecated_eval_atom_derivative(
-		 id::AtomID const & atom_id,
-		 pose::Pose const & pose,
-		 kinematics::DomainMap const &,
-		 ScoreFunction const &,
-		 EnergyMap const & weights,
-		 Vector & F1,
-		 Vector & F2
+	id::AtomID const & atom_id,
+	pose::Pose const & pose,
+	kinematics::DomainMap const &,
+	ScoreFunction const &,
+	EnergyMap const & weights,
+	Vector & F1,
+	Vector & F2
 	) const;*/
 
 	// Note: This could change - see notes in the .cc re double-counting. If it does,
@@ -160,7 +160,7 @@ private:
 
 	void
 	get_atom_atom_occ_solvation(
-	  Size const don_h_atom,
+		Size const don_h_atom,
 		Size const don_base_atom,
 		conformation::Residue const & don_rsd,
 		Size const occ_atom,
@@ -200,8 +200,8 @@ private:
 	DatabaseOccSolEne const & occ_hbond_sol_database_;
 
 	bool const verbose_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

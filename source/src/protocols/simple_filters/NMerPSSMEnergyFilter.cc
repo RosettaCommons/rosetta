@@ -40,7 +40,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <core/pose/selection.hh>
 
-namespace protocols{
+namespace protocols {
 namespace simple_filters {
 
 using namespace core;
@@ -57,7 +57,7 @@ NMerPSSMEnergyFilterCreator::keyname() const { return "NMerPSSMEnergy"; }
 
 //default ctor
 NMerPSSMEnergyFilter::NMerPSSMEnergyFilter() :
-protocols::filters::Filter( "NMerPSSMEnergy" )
+	protocols::filters::Filter( "NMerPSSMEnergy" )
 {}
 
 //full ctor, default ctor defined in header file
@@ -66,7 +66,7 @@ NMerPSSMEnergyFilter::NMerPSSMEnergyFilter(
 	core::Real const score_type_threshold,
 	std::string const string_resnums
 ) :
-protocols::filters::Filter( "NMerPSSMEnergy" )
+	protocols::filters::Filter( "NMerPSSMEnergy" )
 {
 	score_type_threshold_ = score_type_threshold;
 	string_resnums_ = string_resnums;
@@ -77,11 +77,11 @@ NMerPSSMEnergyFilter::~NMerPSSMEnergyFilter() {}
 void
 NMerPSSMEnergyFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & /*data*/, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
-	if( ! tag->hasOption( "threshold" ) ) throw utility::excn::EXCN_RosettaScriptsOption("Must specify 'threshold' for NMerPSSMEnergyFilter.");
+	if ( ! tag->hasOption( "threshold" ) ) throw utility::excn::EXCN_RosettaScriptsOption("Must specify 'threshold' for NMerPSSMEnergyFilter.");
 	score_type_threshold_ = tag->getOption< core::Real >( "threshold" );
 
-	if( tag->hasOption( "pssm_fname" ) ) energy_method_.read_nmer_pssm( tag->getOption< std::string >( "pssm_fname" ) );
-	if( tag->hasOption( "pssm_list_fname" ) ) energy_method_.read_nmer_pssm_list( tag->getOption< std::string >( "pssm_list_fname" ) );
+	if ( tag->hasOption( "pssm_fname" ) ) energy_method_.read_nmer_pssm( tag->getOption< std::string >( "pssm_fname" ) );
+	if ( tag->hasOption( "pssm_list_fname" ) ) energy_method_.read_nmer_pssm_list( tag->getOption< std::string >( "pssm_list_fname" ) );
 	//default blank string --> empty res_set_vec --> incl all residues
 	string_resnums_ = tag->getOption< std::string >( "resnums", "" );// these are kept in memory until the pose is available (at apply time)
 	energy_method_.nmer_length( tag->getOption< core::Size >( "nmer_length", 9 ) );
@@ -93,11 +93,10 @@ bool
 NMerPSSMEnergyFilter::apply( core::pose::Pose const & pose ) const {
 	core::Real const score( compute( pose ) );
 	TR << "NMerPSSM score is " << score << ". ";
-	if( score <= score_type_threshold_ ) {
+	if ( score <= score_type_threshold_ ) {
 		TR<<"passing." << std::endl;
 		return true;
-	}
-	else {
+	} else {
 		TR<<"failing."<<std::endl;
 		return false;
 	}
@@ -135,13 +134,13 @@ NMerPSSMEnergyFilter::compute(
 
 	// sum over all res pos
 	core::Real score( 0. );
-	if( res_set_vec.size() > 0 ){
-		for( core::Size i_res_vec = 1; i_res_vec <= res_set_vec.size(); ++i_res_vec ){
+	if ( res_set_vec.size() > 0 ) {
+		for ( core::Size i_res_vec = 1; i_res_vec <= res_set_vec.size(); ++i_res_vec ) {
 			Size const seqpos( res_set_vec[ i_res_vec ] );
 			score += NMerPSSMEnergyFilter::compute_residue( pose, seqpos );
 		}
-	} else{
-		for( Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ){
+	} else {
+		for ( Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ) {
 			score += NMerPSSMEnergyFilter::compute_residue( pose, seqpos );
 		}
 	}

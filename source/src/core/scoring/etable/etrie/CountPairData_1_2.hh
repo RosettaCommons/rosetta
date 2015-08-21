@@ -49,7 +49,7 @@ public:
 	bool operator == ( CountPairData_1_2 const & other ) const
 	{
 		if ( connection_distances_[ 0 ] == other.connection_distances_[ 0 ] &&
-			other.connection_distances_[ 1 ] == connection_distances_[ 1 ] ) {
+				other.connection_distances_[ 1 ] == connection_distances_[ 1 ] ) {
 			return true;
 		} else {
 			return false;
@@ -66,7 +66,7 @@ public:
 	Size
 	conn_dist( Size which_connection ) const
 	{
-	debug_assert( which_connection == 0 || which_connection == 1 );
+		debug_assert( which_connection == 0 || which_connection == 1 );
 		return connection_distances_[ which_connection ];
 	}
 

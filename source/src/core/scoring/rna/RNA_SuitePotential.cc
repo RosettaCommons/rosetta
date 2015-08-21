@@ -74,7 +74,7 @@ namespace rna {
 RNA_SuitePotential::~RNA_SuitePotential() {}
 
 RNA_SuitePotential::RNA_SuitePotential( RNA_EnergyMethodOptions const & options,
-																			  bool const calculate_suiteness_bonus /* = false */ ):
+	bool const calculate_suiteness_bonus /* = false */ ):
 	n_torsions_( 7 ),
 	inv_cov_( n_torsions_, n_torsions_ ),
 	offset_( 0.0 ),
@@ -86,9 +86,9 @@ RNA_SuitePotential::RNA_SuitePotential( RNA_EnergyMethodOptions const & options,
 
 	std::string path;
 	if ( calculate_suiteness_bonus_ ) {
-		path = "scoring/rna/suiteness_bonus/" +	options.suiteness_bonus();
+		path = "scoring/rna/suiteness_bonus/" + options.suiteness_bonus();
 	} else {
-		path = "scoring/rna/suite_potentials/" +	option[ OptionKeys::score::rna_suite_potential ]() /* default is Richardson*/;
+		path = "scoring/rna/suite_potentials/" + option[ OptionKeys::score::rna_suite_potential ]() /* default is Richardson*/;
 	}
 	utility::io::izstream stream;
 	std::string line;
@@ -96,7 +96,7 @@ RNA_SuitePotential::RNA_SuitePotential( RNA_EnergyMethodOptions const & options,
 
 	// Load the suite centers and the corresponding weights
 	std::string const filename_centers =
-			basic::database::full_name( path + "/centers.txt" );
+		basic::database::full_name( path + "/centers.txt" );
 	stream.open( filename_centers );
 	if ( !stream.good() ) utility_exit_with_message( "Trouble with path: " + path + "/centers.txt" );
 
@@ -115,7 +115,7 @@ RNA_SuitePotential::RNA_SuitePotential( RNA_EnergyMethodOptions const & options,
 		centers_.push_back( center );
 
 		std::string tag( "" );
-		if ( !line_stream.fail() ){
+		if ( !line_stream.fail() ) {
 			line_stream >> tag;
 		}
 		if ( tag.size() == 0 ) tag = "new"+ObjexxFCL::string_of( ++new_rotamer);
@@ -127,7 +127,7 @@ RNA_SuitePotential::RNA_SuitePotential( RNA_EnergyMethodOptions const & options,
 	//figure_out_offset();
 
 	// Load information on how 'wide' the basins are.
-	if (calculate_suiteness_bonus_ ) {
+	if ( calculate_suiteness_bonus_ ) {
 		// RNA_SuiteName contains info on half_widths for regular, dominant, and satellite half widths.
 		// It will be used to actually calculate suiteness.
 		rna_suite_name_ = pose::rna::RNA_SuiteNameOP( new pose::rna::RNA_SuiteName );
@@ -135,9 +135,9 @@ RNA_SuitePotential::RNA_SuitePotential( RNA_EnergyMethodOptions const & options,
 		// But need to update Suite centers if user has specified differently in suite_bonus file. Do this based on *tags*.
 		// have to convert from ublas::vector to utility::vector1
 		utility::vector1< utility::vector1< Real > >  centers_vector1;
-		for ( Size n = 1; n <= centers_.size(); n++ ){
+		for ( Size n = 1; n <= centers_.size(); n++ ) {
 			utility::vector1< Real > center_vector1;
-			for ( Size k = 1; k <= n_torsions_; k++ )	center_vector1.push_back( centers_[n](k-1) );
+			for ( Size k = 1; k <= n_torsions_; k++ ) center_vector1.push_back( centers_[n](k-1) );
 			centers_vector1.push_back( center_vector1 );
 		}
 		rna_suite_name_->update_centers( centers_vector1, tags_); // could relax this. just need some way to input information.
@@ -210,7 +210,7 @@ bool RNA_SuitePotential::eval_score(
 
 
 	eval_score( torsions );
-	//	TR << rsdnum1 << "--" << rsdnum2 << ": " << score_ << std::endl;
+	// TR << rsdnum1 << "--" << rsdnum2 << ": " << score_ << std::endl;
 	return true;
 }
 
@@ -267,7 +267,7 @@ void RNA_SuitePotential::eval_likelihood_potential(
 
 	Real weighted_sum_likelihood( 0 );
 	for ( Size i = 1; i <= unweight_likelihood.size(); ++i ) {
-		//		TR << "comp: " << i << " " << weights_[i] << " " << unweight_likelihood[i] << std::endl;
+		//  TR << "comp: " << i << " " << weights_[i] << " " << unweight_likelihood[i] << std::endl;
 		weighted_sum_likelihood += weights_[i] * unweight_likelihood[i];
 	}
 	score_ = -log( weighted_sum_likelihood ) + offset_;

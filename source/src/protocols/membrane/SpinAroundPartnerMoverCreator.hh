@@ -9,10 +9,10 @@
 
 /// @file       protocols/membrane/SpinAroundPartnerMoverCreator.hh
 /// @brief      Spins the downstream partner around the upstream partner
-/// @details	Spins the downstream partner around the upstream partner in the
-///				membrane to probe all kinds of interfaces. Both embedding normals
-///				are approximately conserved, i.e. the partners aren't flipped
-///				in the membrane.
+/// @details Spins the downstream partner around the upstream partner in the
+///    membrane to probe all kinds of interfaces. Both embedding normals
+///    are approximately conserved, i.e. the partners aren't flipped
+///    in the membrane.
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_SpinAroundPartnerMoverCreator_hh
@@ -26,13 +26,13 @@ namespace membrane {
 
 /// @brief Mover Creator
 class SpinAroundPartnerMoverCreator : public protocols::moves::MoverCreator {
-	
+
 public:
-	
+
 	virtual protocols::moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
 	static std::string mover_name();
-	
+
 };
 
 } // membrane

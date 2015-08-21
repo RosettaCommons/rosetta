@@ -25,46 +25,46 @@
 namespace protocols {
 namespace magnesium {
 
-	class MgOrbitalFrameFinder: public moves::Mover {
+class MgOrbitalFrameFinder: public moves::Mover {
 
-	public:
-		//constructor
-		MgOrbitalFrameFinder();
+public:
+	//constructor
+	MgOrbitalFrameFinder();
 
-		//destructor
-		~MgOrbitalFrameFinder();
+	//destructor
+	~MgOrbitalFrameFinder();
 
-	public:
+public:
 
-		virtual void apply( core::pose::Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
-		virtual std::string get_name() const{ return "MgOrbitalFrameFinder"; }
+	virtual std::string get_name() const{ return "MgOrbitalFrameFinder"; }
 
-	private:
+private:
 
-		void
-		determine_mg_orbital_frame( core::pose::Pose & pose,
-																core::Size const i /* mg2+ res number*/ );
+	void
+	determine_mg_orbital_frame( core::pose::Pose & pose,
+		core::Size const i /* mg2+ res number*/ );
 
-		void
-		point_orbitals_to_closest_ligands( core::pose::Pose & pose,
-																			 core::Size const i /* mg2+ res number*/,
-																			 utility::vector1< core::id::AtomID > const & ligands );
+	void
+	point_orbitals_to_closest_ligands( core::pose::Pose & pose,
+		core::Size const i /* mg2+ res number*/,
+		utility::vector1< core::id::AtomID > const & ligands );
 
-		core::Real
-		get_orbital_frame_score_upon_rotation( utility::vector1< core::Vector > const & r_lig,
-																					 utility::vector1< core::Vector > const & v_lig,
-																					 numeric::xyzMatrix< core::Real > const & R );
-		void
-		sample_orbital_frame( core::pose::Pose & pose,
-													core::Size const i /* mg2+ res number*/,
-													utility::vector1< core::id::AtomID > const & ligands );
+	core::Real
+	get_orbital_frame_score_upon_rotation( utility::vector1< core::Vector > const & r_lig,
+		utility::vector1< core::Vector > const & v_lig,
+		numeric::xyzMatrix< core::Real > const & R );
+	void
+	sample_orbital_frame( core::pose::Pose & pose,
+		core::Size const i /* mg2+ res number*/,
+		utility::vector1< core::id::AtomID > const & ligands );
 
-	private:
+private:
 
-		//bool legacy_mode_;
-		numeric::UniformRotationSamplerCOP urs_;
-	};
+	//bool legacy_mode_;
+	numeric::UniformRotationSamplerCOP urs_;
+};
 
 } //magnesium
 } //protocols

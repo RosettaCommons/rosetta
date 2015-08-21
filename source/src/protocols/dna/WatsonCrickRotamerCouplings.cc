@@ -28,7 +28,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 
 #ifdef WIN32
-	#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.hh>
 #endif
 
 
@@ -36,13 +36,13 @@ namespace protocols {
 namespace dna {
 
 using namespace core;
-	using namespace chemical;
-	using namespace conformation;
-	using namespace basic::options;
-	using namespace pack;
-		using namespace rotamer_set;
-		using namespace task;
-			using namespace operation;
+using namespace chemical;
+using namespace conformation;
+using namespace basic::options;
+using namespace pack;
+using namespace rotamer_set;
+using namespace task;
+using namespace operation;
 
 using basic::t_info;
 using basic::t_debug;

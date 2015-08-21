@@ -56,7 +56,7 @@ public:
 
 	Size size() const { return fcen6_.size();}
 
-	T fcen6( Size const seqpos ) const { return fcen6_[ seqpos ]; 	}
+	T fcen6( Size const seqpos ) const { return fcen6_[ seqpos ];  }
 	T & fcen6( Size const seqpos ) { return fcen6_[ seqpos ]; }
 
 	T fcen10( Size const seqpos ) const { return fcen10_[ seqpos ]; }
@@ -77,18 +77,18 @@ public:
 		std::fill( fcen10_.begin(), fcen10_.end(), val );
 	}
 
-  // Setter functions
-  void set_fcen6( Size const seqpos, T value ) {
-    fcen6_[ seqpos ] = value;
-  }
+	// Setter functions
+	void set_fcen6( Size const seqpos, T value ) {
+		fcen6_[ seqpos ] = value;
+	}
 
-  void set_fcen10( Size const seqpos, T value ) {
-    fcen10_[ seqpos ] = value;
-  }
+	void set_fcen10( Size const seqpos, T value ) {
+		fcen10_[ seqpos ] = value;
+	}
 
-  void set_fcen12( Size const seqpos, T value ) {
-    fcen12_[ seqpos ] = value;
-  }
+	void set_fcen12( Size const seqpos, T value ) {
+		fcen12_[ seqpos ] = value;
+	}
 
 private:
 	utility::vector1< T > fcen6_;

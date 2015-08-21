@@ -36,14 +36,14 @@ namespace modeler {
 /////////////////////////////////////////////////////////
 core::scoring::ScoreFunctionOP
 get_minimize_scorefxn( core::pose::Pose const & pose,
-											 core::scoring::ScoreFunctionCOP scorefxn,
-											 options::StepWiseModelerOptionsCOP options ){
+	core::scoring::ScoreFunctionCOP scorefxn,
+	options::StepWiseModelerOptionsCOP options ){
 	using namespace core::scoring;
 	ScoreFunctionOP minimize_scorefxn = scorefxn->clone();
-	if (minimize_scorefxn->get_weight( atom_pair_constraint ) == 0.0) minimize_scorefxn->set_weight( atom_pair_constraint, 1.0 ); //go ahead and turn these on
-	if (minimize_scorefxn->get_weight( coordinate_constraint) == 0.0) minimize_scorefxn->set_weight( coordinate_constraint, 1.0 ); // go ahead and turn these on
+	if ( minimize_scorefxn->get_weight( atom_pair_constraint ) == 0.0 ) minimize_scorefxn->set_weight( atom_pair_constraint, 1.0 ); //go ahead and turn these on
+	if ( minimize_scorefxn->get_weight( coordinate_constraint) == 0.0 ) minimize_scorefxn->set_weight( coordinate_constraint, 1.0 ); // go ahead and turn these on
 	check_scorefxn_has_constraint_terms_if_pose_has_constraints( pose, minimize_scorefxn );
-	//	minimize_scorefxn->set_weight( linear_chainbreak, 150.0 ); // original SWA protein value.
+	// minimize_scorefxn->set_weight( linear_chainbreak, 150.0 ); // original SWA protein value.
 	minimize_scorefxn->set_weight( linear_chainbreak, 5.0 ); // unify with RNA.
 	if ( options->turn_off_rna_chem_map_during_optimize() )  minimize_scorefxn->set_weight( rna_chem_map, 0.0 ); // Just for now...
 	if ( options->cart_min() && ( minimize_scorefxn->get_weight( cart_bonded ) == 0.0 ) ) minimize_scorefxn->set_weight( cart_bonded, 1.0 );
@@ -55,8 +55,8 @@ get_minimize_scorefxn( core::pose::Pose const & pose,
 ////////////////////////////////////////////////////////////////////////////////////
 core::scoring::ScoreFunctionCOP
 initialize_sample_scorefxn( core::scoring::ScoreFunctionCOP scorefxn,
-														pose::Pose const & pose,
-														options::StepWiseModelerOptionsCOP options ){
+	pose::Pose const & pose,
+	options::StepWiseModelerOptionsCOP options ){
 
 	using namespace core::scoring;
 
@@ -74,7 +74,7 @@ initialize_sample_scorefxn( core::scoring::ScoreFunctionCOP scorefxn,
 		sample_scorefxn = ScoreFunctionFactory::create_score_function( sample_weights );
 		check_scorefxn_has_constraint_terms_if_pose_has_constraints( pose, sample_scorefxn );
 		sample_scorefxn->set_weight( linear_chainbreak, 0.2 /*arbitrary*/ ); // will cause problem with RNA?!
-		if ( options->mapfile_activated()  && sample_scorefxn->get_weight( elec_dens_atomwise ) == 0.0 ){
+		if ( options->mapfile_activated()  && sample_scorefxn->get_weight( elec_dens_atomwise ) == 0.0 ) {
 			sample_scorefxn->set_weight( elec_dens_atomwise, 10.0 );
 		}
 	}
@@ -86,11 +86,11 @@ initialize_sample_scorefxn( core::scoring::ScoreFunctionCOP scorefxn,
 ////////////////////////////////////////////////////////////////////////////////////
 core::scoring::ScoreFunctionCOP
 initialize_pack_scorefxn( core::scoring::ScoreFunctionCOP sample_scorefxn,
-													pose::Pose const & /* put back in if we want to try contains_protein hack*/ ){
+	pose::Pose const & /* put back in if we want to try contains_protein hack*/ ){
 
 	using namespace core::scoring;
 
-	//	if ( !contains_protein( pose ) ) return initialize_o2prime_pack_scorefxn( sample_scorefxn );
+	// if ( !contains_protein( pose ) ) return initialize_o2prime_pack_scorefxn( sample_scorefxn );
 
 	ScoreFunctionOP pack_scorefxn = sample_scorefxn->clone();
 	methods::EnergyMethodOptions const & energy_method_options = sample_scorefxn->energy_method_options();
@@ -98,10 +98,10 @@ initialize_pack_scorefxn( core::scoring::ScoreFunctionCOP sample_scorefxn,
 	// hack for speed -- geom_sol & lk_nonpolar are too slow right now.
 	// [see also: O2PrimePacker]
 	if ( sample_scorefxn->has_nonzero_weight( geom_sol ) ||
-			 sample_scorefxn->has_nonzero_weight( geom_sol_fast ) ){
+			sample_scorefxn->has_nonzero_weight( geom_sol_fast ) ) {
 
 		Real lk_weight(  sample_scorefxn->get_weight( lk_nonpolar ) );
-		if ( sample_scorefxn->has_nonzero_weight( lk_nonpolar ) ){
+		if ( sample_scorefxn->has_nonzero_weight( lk_nonpolar ) ) {
 			runtime_assert( !energy_method_options.etable_options().no_lk_polar_desolvation );
 			runtime_assert( !sample_scorefxn->has_nonzero_weight( fa_sol ) );
 		} else { // new -- not using lk_nonpolar -- instead using fa_sol with no_lk_polar_desolvation flags
@@ -126,7 +126,7 @@ initialize_pack_scorefxn( core::scoring::ScoreFunctionCOP sample_scorefxn,
 		runtime_assert( !pack_scorefxn->has_nonzero_weight( lk_nonpolar ) ); // only allow lk_nonpolar if with geom_sol.
 	}
 
-	if ( pack_scorefxn->has_nonzero_weight( free_dof ) ){
+	if ( pack_scorefxn->has_nonzero_weight( free_dof ) ) {
 		Real const free_dof_weight = pack_scorefxn->get_weight( free_dof );
 		pack_scorefxn->set_weight( free_suite, free_dof_weight );
 		pack_scorefxn->set_weight( free_2HOprime, free_dof_weight );

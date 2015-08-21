@@ -37,18 +37,18 @@
 namespace protocols {
 namespace ddg {
 
-	using namespace core;
-	using namespace scoring;
+using namespace core;
+using namespace scoring;
 
-	typedef std::vector<double> ddGs;
+typedef std::vector<double> ddGs;
 
 class ddGMover: public moves::Mover{
 public:
 	ddGMover();
 
 	ddGMover(
-		core::scoring::ScoreFunctionOP s,	// for scoring the pose?
-		core::scoring::ScoreFunctionOP m,	// for minimizing the pose?
+		core::scoring::ScoreFunctionOP s, // for scoring the pose?
+		core::scoring::ScoreFunctionOP m, // for minimizing the pose?
 		utility::vector1<core::chemical::AA> res_to_mutate
 	);
 

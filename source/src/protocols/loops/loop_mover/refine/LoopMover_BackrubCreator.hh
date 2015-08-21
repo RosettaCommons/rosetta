@@ -25,10 +25,10 @@ namespace refine {
 class LoopMover_Refine_BackrubCreator : public moves::MoverCreator
 {
 public:
-  virtual ~LoopMover_Refine_BackrubCreator();
+	virtual ~LoopMover_Refine_BackrubCreator();
 
-  virtual moves::MoverOP create_mover() const;
-  virtual std::string keyname() const;
+	virtual moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
 
 };
 

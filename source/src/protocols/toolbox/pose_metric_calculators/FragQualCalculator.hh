@@ -47,7 +47,7 @@ public:
 	typedef core::Real Real;
 	typedef core::pose::Pose Pose;
 	typedef core::pose::metrics::PoseMetricCalculatorOP PoseMetricCalculatorOP;
-  typedef basic::MetricValueBase MetricValueBase;
+	typedef basic::MetricValueBase MetricValueBase;
 	typedef core::fragment::FragSet FragSet;
 	typedef core::fragment::FragSetOP FragSetOP;
 
@@ -77,7 +77,7 @@ public:// virtual constructor
 
 
 	/// @brief make clone
-  PoseMetricCalculatorOP clone() const { return PoseMetricCalculatorOP( new FragQualCalculator( *this ) ); }
+	PoseMetricCalculatorOP clone() const { return PoseMetricCalculatorOP( new FragQualCalculator( *this ) ); }
 
 
 public:// mutator
@@ -106,18 +106,18 @@ public:
 
 
 	void parse_my_tag( TagCOP tag,
-										 basic::datacache::DataMap & data,
-										 Filters_map const &,
-										 Movers_map const &,
-										 Pose const & pose );
+		basic::datacache::DataMap & data,
+		Filters_map const &,
+		Movers_map const &,
+		Pose const & pose );
 
 
 protected:
 
 
-  virtual void lookup( String const & key, MetricValueBase * valptr ) const;
-  virtual std::string print( String const & key ) const;
-  virtual void recompute( Pose const & this_pose );
+	virtual void lookup( String const & key, MetricValueBase * valptr ) const;
+	virtual std::string print( String const & key ) const;
+	virtual void recompute( Pose const & this_pose );
 
 
 private:

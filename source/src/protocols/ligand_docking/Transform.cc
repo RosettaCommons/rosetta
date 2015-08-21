@@ -125,16 +125,15 @@ void Transform::parse_my_tag
 	core::pose::Pose const & /*pose*/
 )
 {
-	if ( tag->getName() != "Transform" )
-	{
+	if ( tag->getName() != "Transform" ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
 	}
 	if ( ! tag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires chain tag");
 	if ( ! tag->hasOption("move_distance") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires move_distance tag");
-	if (! tag->hasOption("box_size") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires box_size tag");
+	if ( ! tag->hasOption("box_size") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires box_size tag");
 	if ( ! tag->hasOption("angle") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires angle tag");
 	if ( ! tag->hasOption("cycles") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires cycles tag");
-	if (!tag->hasOption("temperature")) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires temperature tag");
+	if ( !tag->hasOption("temperature") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires temperature tag");
 
 	transform_info_.chain = tag->getOption<std::string>("chain");
 	transform_info_.move_distance = tag->getOption<core::Real>("move_distance");
@@ -147,14 +146,12 @@ void Transform::parse_my_tag
 	initial_perturb_ = tag->getOption<core::Real>("initial_perturb",0.0);
 
 
-	if(tag->hasOption("rmsd"))
-	{
+	if ( tag->hasOption("rmsd") ) {
 		check_rmsd_ = true;
 		transform_info_.rmsd = tag->getOption<core::Real>("rmsd");
 	}
 
-	if(tag->hasOption("sampled_space_file"))
-	{
+	if ( tag->hasOption("sampled_space_file") ) {
 		output_sampled_space_ = true;
 		sampled_space_file_ = tag->getOption<std::string>("sampled_space_file");
 	}
@@ -181,10 +178,10 @@ void Transform::apply(core::pose::Pose & pose)
 
 	core::Real last_score(10000.0);
 
-    core::Real best_score(last_score);
-    core::pose::Pose best_pose(pose);
-    core::pose::Pose starting_pose(pose);
-    core::conformation::UltraLightResidue best_ligand(pose.residue(begin).get_self_ptr());
+	core::Real best_score(last_score);
+	core::pose::Pose best_pose(pose);
+	core::pose::Pose starting_pose(pose);
+	core::conformation::UltraLightResidue best_ligand(pose.residue(begin).get_self_ptr());
 	core::conformation::UltraLightResidue original_ligand(best_ligand);
 
 	core::Real temperature = transform_info_.temperature;
@@ -199,14 +196,12 @@ void Transform::apply(core::pose::Pose & pose)
 
 
 	utility::io::ozstream sampled_space;
-	if(output_sampled_space_)
-	{
+	if ( output_sampled_space_ ) {
 		sampled_space.open(sampled_space_file_);
 	}
 
 
-	for(core::Size repeat = 1; repeat <= transform_info_.repeats; ++repeat)
-	{
+	for ( core::Size repeat = 1; repeat <= transform_info_.repeats; ++repeat ) {
 		pose = starting_pose;
 		core::Size cycle = 1;
 		bool not_converged = true;
@@ -214,26 +209,21 @@ void Transform::apply(core::pose::Pose & pose)
 
 		//For benchmarking purposes it is sometimes desirable to translate the ligand
 		//away from the starting point before beginning a trajectory.
-		if(initial_perturb_ > 0.0)
-		{
+		if ( initial_perturb_ > 0.0 ) {
 			translate_ligand(ligand_residue,initial_perturb_ );
 		}
 		last_score = grid_manager->total_score(ligand_residue);
 		core::conformation::UltraLightResidue last_accepted_ligand_residue(ligand_residue);
-		while(not_converged)
-		{
-
-
-			if(optimize_until_score_is_negative_)
-			{
-				if(cycle >= transform_info_.cycles && last_score <= 0.0)
+		while ( not_converged )
 				{
+
+
+			if ( optimize_until_score_is_negative_ ) {
+				if ( cycle >= transform_info_.cycles && last_score <= 0.0 ) {
 					not_converged= false;
 				}
-			}else
-			{
-				if(cycle >= transform_info_.cycles)
-				{
+			} else {
+				if ( cycle >= transform_info_.cycles ) {
 					not_converged= false;
 				}
 			}
@@ -241,22 +231,17 @@ void Transform::apply(core::pose::Pose & pose)
 			cycle++;
 
 			//during each move either move the ligand or try a new conformer (if there is more than one conformer)
-			if(ligand_conformers_.size() > 1)
-			{
-				if(numeric::random::rg().uniform() >= 0.5)
-				{
+			if ( ligand_conformers_.size() > 1 ) {
+				if ( numeric::random::rg().uniform() >= 0.5 ) {
 					transform_ligand(ligand_residue);
-				}else
-				{
+				} else {
 					change_conformer(ligand_residue);
 				}
-			}else
-			{
+			} else {
 				transform_ligand(ligand_residue);
 			}
 			//The score is meaningless if any atoms are outside of the grid
-			if(!grid_manager->is_in_grid(ligand_residue)) //Reject the pose
-			{
+			if ( !grid_manager->is_in_grid(ligand_residue) ) { //Reject the pose
 				ligand_residue = last_accepted_ligand_residue;
 				rejected_moves++;
 				outside_grid_moves++;
@@ -264,8 +249,7 @@ void Transform::apply(core::pose::Pose & pose)
 				continue;
 			}
 
-			if(output_sampled_space_)
-			{
+			if ( output_sampled_space_ ) {
 				dump_conformer(ligand_residue,sampled_space);
 			}
 
@@ -274,47 +258,40 @@ void Transform::apply(core::pose::Pose & pose)
 			core::Real const probability = std::exp( boltz_factor ) ;
 			core::Vector new_center(ligand_residue.center());
 
-			if(new_center.distance(original_center) > transform_info_.box_size) //Reject the new pose
-			{
+			if ( new_center.distance(original_center) > transform_info_.box_size ) { //Reject the new pose
 				ligand_residue = last_accepted_ligand_residue;
 				rejected_moves++;
 
-			}else if(check_rmsd_ && !check_rmsd(original_ligand, ligand_residue)) //reject the new pose
-			{
+			} else if ( check_rmsd_ && !check_rmsd(original_ligand, ligand_residue) ) { //reject the new pose
 				ligand_residue = last_accepted_ligand_residue;
 				rejected_moves++;
-			}else if(probability < 1 && numeric::random::rg().uniform() >= probability)  //reject the new pose
-			{
+			} else if ( probability < 1 && numeric::random::rg().uniform() >= probability ) {  //reject the new pose
 				ligand_residue = last_accepted_ligand_residue;
 				rejected_moves++;
 
-			}else if(probability < 1)  // Accept the new pose
-			{
+			} else if ( probability < 1 ) {  // Accept the new pose
 				last_score = current_score;
 				last_accepted_ligand_residue = ligand_residue;
 				accepted_moves++;
 
-			}else  //Accept the new pose
-			{
+			} else {  //Accept the new pose
 				last_score = current_score;
 				last_accepted_ligand_residue = ligand_residue;
 				accepted_moves++;
 
 			}
-			if(last_score <= best_score)
-			{
+			if ( last_score <= best_score ) {
 				best_score = last_score;
 				best_ligand = last_accepted_ligand_residue;
 				//transform_tracer << "accepting new pose" << std::endl;
-			}else
-			{
+			} else {
 				//transform_tracer << "not accepting new pose" << std::endl;
 			}
 
 		}
 		core::Real accept_ratio =(core::Real)accepted_moves/((core::Real)accepted_moves+(core::Real)rejected_moves);
 		transform_tracer <<"percent acceptance: "<< accepted_moves << " " << accept_ratio<<" " << rejected_moves <<std::endl;
-		if( outside_grid_moves > 0 ) {
+		if ( outside_grid_moves > 0 ) {
 			core::Real outside_grid_ratio = (core::Real)outside_grid_moves/((core::Real)accepted_moves+(core::Real)rejected_moves);
 			transform_tracer << "Moves rejected for being outside of grid: " << outside_grid_moves << "  " << outside_grid_ratio << std::endl;
 		}
@@ -323,8 +300,7 @@ void Transform::apply(core::pose::Pose & pose)
 		best_ligand.update_conformation(best_pose.conformation());
 	}
 
-	if(output_sampled_space_)
-	{
+	if ( output_sampled_space_ ) {
 		sampled_space.close();
 	}
 	pose = best_pose;
@@ -352,8 +328,7 @@ void Transform::translate_ligand(core::conformation::UltraLightResidue & residue
 }
 void Transform::transform_ligand(core::conformation::UltraLightResidue & residue)
 {
-	if(transform_info_.angle ==0 && transform_info_.move_distance == 0)
-	{
+	if ( transform_info_.angle ==0 && transform_info_.move_distance == 0 ) {
 		transform_tracer <<"WARNING: angle and distance are both 0.  Transform will do nothing" <<std::endl;
 		return;
 	}
@@ -384,13 +359,12 @@ void Transform::change_conformer(core::conformation::UltraLightResidue & residue
 void Transform::dump_conformer(core::conformation::UltraLightResidue & residue, utility::io::ozstream & output)
 {
 	using namespace ObjexxFCL::format;
-	for(core::Size atom_index = 1; atom_index <= residue.natoms();++atom_index)
-	{
+	for ( core::Size atom_index = 1; atom_index <= residue.natoms(); ++atom_index ) {
 		core::PointPosition coords = residue[atom_index];
 		std::string outline( "HETATM" + I( 5,  1 ) + "  V   AAA A"
-		+ I( 4, 1 ) + "    "
-		+ F( 8, 3, coords.x() ) + F( 8, 3, coords.y() ) + F( 8, 3, coords.z() )
-		+ F( 6, 2, 1.0 ) + ' ' + F( 5, 2, 1.0 ));
+			+ I( 4, 1 ) + "    "
+			+ F( 8, 3, coords.x() ) + F( 8, 3, coords.y() ) + F( 8, 3, coords.z() )
+			+ F( 6, 2, 1.0 ) + ' ' + F( 5, 2, 1.0 ));
 		output <<outline <<std::endl;
 	}
 }
@@ -400,18 +374,15 @@ bool Transform::check_rmsd(core::conformation::UltraLightResidue const & start, 
 	assert(start.natoms() == current.natoms());
 
 	core::Real total_distance =0.0;
-	for(core::Size atomno = 1; atomno <= start.natoms();++atomno)
-	{
+	for ( core::Size atomno = 1; atomno <= start.natoms(); ++atomno ) {
 		total_distance += start[atomno].distance(current[atomno]);
 	}
 
 	core::Real rmsd = sqrt(total_distance/start.natoms());
 
-	if(rmsd <= transform_info_.rmsd)
-	{
+	if ( rmsd <= transform_info_.rmsd ) {
 		return true;
-	}else
-	{
+	} else {
 		return false;
 	}
 

@@ -10,7 +10,7 @@
 /// @file   test/protocols/simple_filters/TotalSasaFilter.cxxtest.hh
 /// @brief
 /// @author Rocco Moretti (rmoretti@u.washington.edu)
-///					(Based on code by Ron Jacak)
+///     (Based on code by Ron Jacak)
 
 // Test headers
 #include <cxxtest/TestSuite.h>
@@ -40,7 +40,7 @@ using namespace core;
 
 class TotalSasaFilterTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	Real TOLERATED_ERROR;
 	pose::Pose pose;
@@ -54,7 +54,7 @@ class TotalSasaFilterTests : public CxxTest::TestSuite {
 		TOLERATED_ERROR = 0.1;
 
 		using namespace core::pose::metrics;
-		if( !CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ){
+		if ( !CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ) {
 			PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy() );
 			CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 		}
@@ -97,8 +97,8 @@ class TotalSasaFilterTests : public CxxTest::TestSuite {
 
 		core::pack::task::TaskFactoryOP factory( new core::pack::task::TaskFactory );
 		core::pack::task::operation::PreventRepackingOP prt( new core::pack::task::operation::PreventRepacking );
-		for( core::Size ii(1); ii <= pose.total_residue(); ++ii ) {
-			if( ii != 1 && ii != 11 && ii != 33 ) {
+		for ( core::Size ii(1); ii <= pose.total_residue(); ++ii ) {
+			if ( ii != 1 && ii != 11 && ii != 33 ) {
 				prt->include_residue(ii);
 			}
 		}
@@ -125,8 +125,8 @@ class TotalSasaFilterTests : public CxxTest::TestSuite {
 
 		core::pack::task::TaskFactoryOP factory( new core::pack::task::TaskFactory );
 		core::pack::task::operation::PreventRepackingOP prt( new core::pack::task::operation::PreventRepacking );
-		for( core::Size ii(1); ii <= pose.total_residue(); ++ii ) {
-			if( ii != 1 && ii != 11 && ii != 33 ) {
+		for ( core::Size ii(1); ii <= pose.total_residue(); ++ii ) {
+			if ( ii != 1 && ii != 11 && ii != 33 ) {
 				prt->include_residue(ii);
 			}
 		}

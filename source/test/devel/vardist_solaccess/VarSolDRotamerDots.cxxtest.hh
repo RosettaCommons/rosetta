@@ -212,7 +212,7 @@ public:
 		utility::vector1< core::Vector > res1coords( res1natoms );
 
 		for ( core::Size ii = 1; ii <= res1natoms ; ++ii ) {
-			if (dots1.nshells_for_atom(ii) < 2) continue;
+			if ( dots1.nshells_for_atom(ii) < 2 ) continue;
 			for ( core::Size jj = 1; jj <= dots1.nshells_for_atom(ii) - 1; ++jj ) {
 				core::Real jjradius = dots1.shell_radius_for_atom(ii,jj);
 				core::Real kkradius = dots1.shell_radius_for_atom(ii, jj + 1);
@@ -222,73 +222,73 @@ public:
 	}
 
 	// void test_wobble_decreases_collision_radius() {
-	// 	core::pose::Pose trpcage = create_trpcage_ideal_pose();
-	// 	ResidueOP res10 = new core::conformation::Residue( trpcage.residue( 10 ) );
-	// 	ResidueOP res11 = new core::conformation::Residue( trpcage.residue( 11 ) );
-	// 	core::Real probe_radius(1.4);
-	// 	core::Real wobble_0p0(0.0);
-	// 	core::Real wobble_0p3(0.3);
-	// 	VarSolDRotamerDots dots10_wb0p0( res10, true, probe_radius, wobble_0p0 );
-	// 	VarSolDRotamerDots dots10_wb0p3( res10, true, probe_radius, wobble_0p3 );
-    //
-	// 	core::Size res10natoms = res10->natoms();
-    //
-	// 	TR << "wb0p0 wobble = " << dots10_wb0p0.get_wobble() << std::endl;
-	// 	TR << "wb0p3 wobble = " << dots10_wb0p3.get_wobble() << std::endl;
-	// 	for ( core::Size ii = 1; ii <= res10natoms ; ++ii ) {
-	// 		core::Real wb0p0_c_radius = dots10_wb0p0.get_atom_collision_radius(ii);
-	// 		core::Real wb0p3_c_radius = dots10_wb0p3.get_atom_collision_radius(ii);
-	// 		TR << "wb0p0 collision radius = " << wb0p0_c_radius << std::endl;
-	// 		TR << "wb0p3 collision radius = " << wb0p3_c_radius << std::endl;
-	// 		TS_ASSERT(
-	// 				wb0p3_c_radius < wb0p0_c_radius || 
-	// 				wb0p0_c_radius == 0.0
-	// 				);
-	// 	}
+	//  core::pose::Pose trpcage = create_trpcage_ideal_pose();
+	//  ResidueOP res10 = new core::conformation::Residue( trpcage.residue( 10 ) );
+	//  ResidueOP res11 = new core::conformation::Residue( trpcage.residue( 11 ) );
+	//  core::Real probe_radius(1.4);
+	//  core::Real wobble_0p0(0.0);
+	//  core::Real wobble_0p3(0.3);
+	//  VarSolDRotamerDots dots10_wb0p0( res10, true, probe_radius, wobble_0p0 );
+	//  VarSolDRotamerDots dots10_wb0p3( res10, true, probe_radius, wobble_0p3 );
+	//
+	//  core::Size res10natoms = res10->natoms();
+	//
+	//  TR << "wb0p0 wobble = " << dots10_wb0p0.get_wobble() << std::endl;
+	//  TR << "wb0p3 wobble = " << dots10_wb0p3.get_wobble() << std::endl;
+	//  for ( core::Size ii = 1; ii <= res10natoms ; ++ii ) {
+	//   core::Real wb0p0_c_radius = dots10_wb0p0.get_atom_collision_radius(ii);
+	//   core::Real wb0p3_c_radius = dots10_wb0p3.get_atom_collision_radius(ii);
+	//   TR << "wb0p0 collision radius = " << wb0p0_c_radius << std::endl;
+	//   TR << "wb0p3 collision radius = " << wb0p3_c_radius << std::endl;
+	//   TS_ASSERT(
+	//     wb0p3_c_radius < wb0p0_c_radius ||
+	//     wb0p0_c_radius == 0.0
+	//     );
+	//  }
 	// }
-    //
+	//
 	// void test_wobble_increases_hbond_radius() {
-	// 	core::pose::Pose trpcage = create_trpcage_ideal_pose();
-	// 	ResidueOP res10 = new core::conformation::Residue( trpcage.residue( 10 ) );
-	// 	core::Real probe_radius(1.4);
-	// 	core::Real wobble_0p0(0.0);
-	// 	core::Real wobble_0p3(0.3);
-	// 	VarSolDRotamerDots dots10_wb0p0( res10, true, probe_radius, wobble_0p0 );
-	// 	VarSolDRotamerDots dots10_wb0p3( res10, true, probe_radius, wobble_0p3 );
-    //
-	// 	core::Size res10natoms = res10->natoms();
-    //
-	// 	for ( core::Size ii = 1; ii <= res10natoms ; ++ii ) {
-	// 		core::Real wb0p0_i_radius = dots10_wb0p0.get_atom_interaction_radius(ii);
-	// 		core::Real wb0p3_i_radius = dots10_wb0p3.get_atom_interaction_radius(ii);
-	// 		TR << "wb0p0 interaction radius = " << wb0p0_i_radius << std::endl;
-	// 		TR << "wb0p3 interaction radius = " << wb0p3_i_radius << std::endl;
-	// 		TS_ASSERT(
-	// 				wb0p3_i_radius > wb0p0_i_radius || 
-	// 				wb0p3_i_radius == 0.0
-	// 				);
-	// 	}
+	//  core::pose::Pose trpcage = create_trpcage_ideal_pose();
+	//  ResidueOP res10 = new core::conformation::Residue( trpcage.residue( 10 ) );
+	//  core::Real probe_radius(1.4);
+	//  core::Real wobble_0p0(0.0);
+	//  core::Real wobble_0p3(0.3);
+	//  VarSolDRotamerDots dots10_wb0p0( res10, true, probe_radius, wobble_0p0 );
+	//  VarSolDRotamerDots dots10_wb0p3( res10, true, probe_radius, wobble_0p3 );
+	//
+	//  core::Size res10natoms = res10->natoms();
+	//
+	//  for ( core::Size ii = 1; ii <= res10natoms ; ++ii ) {
+	//   core::Real wb0p0_i_radius = dots10_wb0p0.get_atom_interaction_radius(ii);
+	//   core::Real wb0p3_i_radius = dots10_wb0p3.get_atom_interaction_radius(ii);
+	//   TR << "wb0p0 interaction radius = " << wb0p0_i_radius << std::endl;
+	//   TR << "wb0p3 interaction radius = " << wb0p3_i_radius << std::endl;
+	//   TS_ASSERT(
+	//     wb0p3_i_radius > wb0p0_i_radius ||
+	//     wb0p3_i_radius == 0.0
+	//     );
+	//  }
 	// }
 
 	// void test_probe_radius_increases_collision_radius() {
-	// 	core::pose::Pose trpcage = create_trpcage_ideal_pose();
-	// 	ResidueOP res10 = new core::conformation::Residue( trpcage.residue( 10 ) );
-	// 	core::Real probe_radius_pr1p4(1.4);
-	// 	core::Real probe_radius_pr1p2(1.2);
-	// 	core::Real wobble_0p0(0.0);
-	// 	VarSolDRotamerDots dots10_pr1p4( res10, true, probe_radius_pr1p4, wobble_0p0 );
-	// 	VarSolDRotamerDots dots10_pr1p2( res10, true, probe_radius_pr1p2, wobble_0p0 );
-    //
-	// 	core::Size res10natoms = res10->natoms();
-    //
-	// 	for ( core::Size ii = 1; ii <= res10natoms ; ++ii ) {
-	// 		TS_ASSERT(
-	// 				dots10_pr1p4.get_atom_collision_radius(ii) > dots10_pr1p2.get_atom_collision_radius(ii)
-	// 				);
-	// 		TS_ASSERT(
-	// 				dots10_pr1p2.get_atom_collision_radius(ii) > 0
-	// 				);
-	// 	}
+	//  core::pose::Pose trpcage = create_trpcage_ideal_pose();
+	//  ResidueOP res10 = new core::conformation::Residue( trpcage.residue( 10 ) );
+	//  core::Real probe_radius_pr1p4(1.4);
+	//  core::Real probe_radius_pr1p2(1.2);
+	//  core::Real wobble_0p0(0.0);
+	//  VarSolDRotamerDots dots10_pr1p4( res10, true, probe_radius_pr1p4, wobble_0p0 );
+	//  VarSolDRotamerDots dots10_pr1p2( res10, true, probe_radius_pr1p2, wobble_0p0 );
+	//
+	//  core::Size res10natoms = res10->natoms();
+	//
+	//  for ( core::Size ii = 1; ii <= res10natoms ; ++ii ) {
+	//   TS_ASSERT(
+	//     dots10_pr1p4.get_atom_collision_radius(ii) > dots10_pr1p2.get_atom_collision_radius(ii)
+	//     );
+	//   TS_ASSERT(
+	//     dots10_pr1p2.get_atom_collision_radius(ii) > 0
+	//     );
+	//  }
 	// }
 
 	void test_shells_evenly_spaced() {
@@ -300,7 +300,7 @@ public:
 
 		core::Real fudge = 1e-5;
 		for ( core::Size ii = 1; ii <= res1natoms ; ++ii ) {
-			if (dots1.nshells_for_atom(ii) < 3) continue;
+			if ( dots1.nshells_for_atom(ii) < 3 ) continue;
 			for ( core::Size jj = 1; jj <= dots1.nshells_for_atom(ii) - 2; ++jj ) {
 				core::Real jjradius = dots1.shell_radius_for_atom(ii,jj);
 				core::Real kkradius = dots1.shell_radius_for_atom(ii, jj + 1);

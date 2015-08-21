@@ -89,7 +89,7 @@ FragmentScoreManager::~FragmentScoreManager() {}
 /// what is the correct size of the map i.e. how many scoring terms have been registered.
 FragmentScoreMapOP FragmentScoreManager::create_empty_map() {
 
-	    return FragmentScoreMapOP( new FragmentScoreMap(score_weights_.size()) );
+	return FragmentScoreMapOP( new FragmentScoreMap(score_weights_.size()) );
 }
 
 
@@ -98,42 +98,44 @@ bool sort_scores(FragmentScoringMethodOP elem1, FragmentScoringMethodOP elem2) {
 }
 
 void FragmentScoreManager::add_scoring_method(
-		FragmentScoringMethodOP scoring_term,
-		Real weight) {
+	FragmentScoringMethodOP scoring_term,
+	Real weight) {
 
 	std::map<FragmentScoringMethodOP, Real> weights;
 	scores_.push_back(scoring_term);
 	score_weights_.push_back(weight);
 
-	for (Size i = 1; i <= scores_.size(); i++) {
+	for ( Size i = 1; i <= scores_.size(); i++ ) {
 		std::pair<FragmentScoringMethodOP, Real> p(scores_[i],
-				score_weights_[i]);
+			score_weights_[i]);
 		weights.insert(p);
 	}
 
 	sort(scores_.begin(), scores_.end(), sort_scores);
 
-	for (Size i = 1; i <= scores_.size(); i++) {
+	for ( Size i = 1; i <= scores_.size(); i++ ) {
 		scores_[i]->set_id(i);
 		score_weights_[i] = weights.find(scores_[i])->second;
 	}
 	width_.insert(std::pair<FragmentScoringMethodOP, Size>(scoring_term,
-			default_width_));
+		default_width_));
 	precision_.insert(std::pair<FragmentScoringMethodOP, Size>(scoring_term,
-			default_precision_));
+		default_precision_));
 }
 
 Real FragmentScoreManager::total_score(FragmentScoreMapOP f) {
 
-	if (!f->was_modified())
+	if ( !f->was_modified() ) {
 		return f->get_most_recent_total_score();
+	}
 
 	Real total = 0;
 	utility::vector1<Real> &s = f->get_score_components();
 
-debug_assert (s.size() == score_weights_.size());
-	for (Size i = 1; i <= score_weights_.size(); i++)
+	debug_assert (s.size() == score_weights_.size());
+	for ( Size i = 1; i <= score_weights_.size(); i++ ) {
 		total += score_weights_[i] * s[i];
+	}
 	f->recent_total_ = total;
 	f->was_modified_ = false;
 
@@ -142,66 +144,70 @@ debug_assert (s.size() == score_weights_.size());
 
 void FragmentScoreManager::do_caching(VallChunkOP chunk) {
 
-	for (Size iScore = 1; iScore <= scores_.size(); ++iScore) {
-		if (( zeros_score_later_ ) && ( fabs(score_weights_[iScore]) < 0.000001 ))	continue;
+	for ( Size iScore = 1; iScore <= scores_.size(); ++iScore ) {
+		if ( ( zeros_score_later_ ) && ( fabs(score_weights_[iScore]) < 0.000001 ) ) continue;
 		CachingScoringMethodOP score =
-				utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::CachingScoringMethod > ( scores_[iScore] );
-		if (score != 0)
+			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::CachingScoringMethod > ( scores_[iScore] );
+		if ( score != 0 ) {
 			score->do_caching(chunk);
+		}
 	}
 }
 
 void FragmentScoreManager::clean_up() {
 
-	for (Size iScore = 1; iScore <= scores_.size(); ++iScore) {
+	for ( Size iScore = 1; iScore <= scores_.size(); ++iScore ) {
 		CachingScoringMethodOP score =
-				utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::CachingScoringMethod > ( scores_[iScore] );
-		if (score != 0)
+			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::CachingScoringMethod > ( scores_[iScore] );
+		if ( score != 0 ) {
 			score->clean_up();
+		}
 	}
 }
 
 void FragmentScoreManager::show_scoring_methods(std::ostream& out) {
 
 	out
-			<< "Fragment scoring scheme used:\n-----------------------------------------\n";
+		<< "Fragment scoring scheme used:\n-----------------------------------------\n";
 	out << "id    fragment score method name   weight\n";
-	for (Size i = 1; i <= scores_.size(); i++)
+	for ( Size i = 1; i <= scores_.size(); i++ ) {
 		out << std::setw(3) << scores_[i]->get_id() << " " << std::setw(30)
-				<< scores_[i]->get_score_name() << std::setw(5)
-				<< score_weights_[i] << "\n";
+			<< scores_[i]->get_score_name() << std::setw(5)
+			<< score_weights_[i] << "\n";
+	}
 	out << "-----------------------------------------\n" << std::endl;
 }
 
 void FragmentScoreManager::describe_fragments(utility::vector1<std::pair<
-		FragmentCandidateOP, FragmentScoreMapOP> > const& pairs,
-		std::ostream& out) {
+	FragmentCandidateOP, FragmentScoreMapOP> > const& pairs,
+	std::ostream& out) {
 
 	using namespace ObjexxFCL::format;
 	if ( pairs.size() == 0 ) return;
 	bool if_quota = false;
-	if( pairs[1].second->get_quota_score() < 999.98 ) if_quota = true;
+	if ( pairs[1].second->get_quota_score() < 999.98 ) if_quota = true;
 	out << "#" << RJ(10, "query_pos ");
 	out << RJ(10, "vall_pos ");
 	out << RJ(6, "pdbid");
 	out << " c ss ";
 	utility::vector1<Size> w(scores_.size()+4);
-	for (Size i = 1; i <= scores_.size(); i++) {
+	for ( Size i = 1; i <= scores_.size(); i++ ) {
 		w[i] = width_.find(scores_[i])->second;
 		out << " " << scores_[i]->get_score_name();
-		if (scores_[i]->get_score_name().length() > w[i])
+		if ( scores_[i]->get_score_name().length() > w[i] ) {
 			w[i] = scores_[i]->get_score_name().length();
+		}
 	}
-	if(if_quota) {
-	    w[scores_.size()+1] = 10; // 10 characters for the total quota score
-	    w[scores_.size()+2] = 9; // 9 characters for the total score
-	    w[scores_.size()+3] = 10; // 10 characters for the pool name
-	    out << " QUOTA_TOT TOTAL POOL_NAME FRAG_ID"<<std::endl;
+	if ( if_quota ) {
+		w[scores_.size()+1] = 10; // 10 characters for the total quota score
+		w[scores_.size()+2] = 9; // 9 characters for the total score
+		w[scores_.size()+3] = 10; // 10 characters for the pool name
+		out << " QUOTA_TOT TOTAL POOL_NAME FRAG_ID"<<std::endl;
 	} else {
-	    w[scores_.size()+1] = 9; // 9 characters for the total score
-	    out << "  TOTAL  FRAG_ID"<<std::endl;
+		w[scores_.size()+1] = 9; // 9 characters for the total score
+		out << "  TOTAL  FRAG_ID"<<std::endl;
 	}
-	for (Size iF = 1; iF <= pairs.size(); ++iF) {
+	for ( Size iF = 1; iF <= pairs.size(); ++iF ) {
 		if ( !pairs[iF].first || !pairs[iF].second ) {
 			tr.Warning << "final_frag candidate " << iF << " is corrupted. skipping... " << std::endl;
 			continue;
@@ -210,25 +216,26 @@ void FragmentScoreManager::describe_fragments(utility::vector1<std::pair<
 		FragmentScoreMapOP sc = pairs[iF].second;
 		VallResidueOP r = fr->get_residue(1);
 		out << " " << I(10, fr->get_first_index_in_query());
-//		out << " " << I(10, fr->get_first_index_in_vall());
+		//  out << " " << I(10, fr->get_first_index_in_vall());
 		out << " " << I(10, r->resi());
 		out << " " << RJ(5, fr->get_pdb_id());
 		out << " " << fr->get_chain_id();
 		out << " " << fr->get_middle_ss();
 
-		for (Size i = 1; i <= scores_.size(); i++) {
+		for ( Size i = 1; i <= scores_.size(); i++ ) {
 			Size p = precision_.find(scores_[i])->second;
 			out << " " << F(w[i], p, sc->get_score_components()[i]);
 		}
-		if(if_quota) {
-		    out << " " << F(w[scores_.size()+1],TOTAL_PRECISION,sc->get_quota_score());
-		    out << " " << F(w[scores_.size()+1],TOTAL_PRECISION,total_score(sc));
-		    out << " " << std::setw(w[scores_.size()+3])<<fr->get_pool_name();
-		} else
-		    out << F(w[scores_.size()+1],TOTAL_PRECISION,total_score(sc));
+		if ( if_quota ) {
+			out << " " << F(w[scores_.size()+1],TOTAL_PRECISION,sc->get_quota_score());
+			out << " " << F(w[scores_.size()+1],TOTAL_PRECISION,total_score(sc));
+			out << " " << std::setw(w[scores_.size()+3])<<fr->get_pool_name();
+		} else {
+			out << F(w[scores_.size()+1],TOTAL_PRECISION,total_score(sc));
+		}
 
-	debug_assert ( fr->key() > 0 );
-	debug_assert ( fr->key() < 4000000 ); // Put your Vall's size here
+		debug_assert ( fr->key() > 0 );
+		debug_assert ( fr->key() < 4000000 ); // Put your Vall's size here
 
 		out << I(10, fr->key() ) << std::endl;
 
@@ -236,53 +243,59 @@ void FragmentScoreManager::describe_fragments(utility::vector1<std::pair<
 }
 
 bool FragmentScoreManager::score_fragment(FragmentCandidateOP candidate,
-		FragmentScoreMapOP empty_map) {
+	FragmentScoreMapOP empty_map) {
 
-	for (Size iScore = 1; iScore <= scores_.size(); iScore++) {
-	    if (( zeros_score_later_ ) && ( fabs(score_weights_[iScore]) < 0.000001 ))
-    		continue;
-	    if (!scores_[iScore]->score(candidate, empty_map))
-				return false;
+	for ( Size iScore = 1; iScore <= scores_.size(); iScore++ ) {
+		if ( ( zeros_score_later_ ) && ( fabs(score_weights_[iScore]) < 0.000001 ) ) {
+			continue;
+		}
+		if ( !scores_[iScore]->score(candidate, empty_map) ) {
+			return false;
+		}
 	}
 	return true;
 }
 
 bool FragmentScoreManager::score_zero_scores(
-					 FragmentCandidateOP candidate,
-					 FragmentScoreMapOP empty_map)
+	FragmentCandidateOP candidate,
+	FragmentScoreMapOP empty_map)
 {
 	for ( Size iScore = 1; iScore <= scores_.size(); iScore++ ) {
-		if ( fabs(score_weights_[iScore]) < 0.000001 )
+		if ( fabs(score_weights_[iScore]) < 0.000001 ) {
 			scores_[iScore]->score(candidate, empty_map);
+		}
 	}
 	return true;
 }
 
 
 bool FragmentScoreManager::score_fragment_from_cache(
-    FragmentCandidateOP candidate,
-		FragmentScoreMapOP empty_map)
+	FragmentCandidateOP candidate,
+	FragmentScoreMapOP empty_map)
 {
 	for ( Size iScore = 1; iScore <= scores_.size(); iScore++ ) {
-		if (( zeros_score_later_ ) && ( fabs(score_weights_[iScore]) < 0.000001 ))
-		    continue;
+		if ( ( zeros_score_later_ ) && ( fabs(score_weights_[iScore]) < 0.000001 ) ) {
+			continue;
+		}
 		CachingScoringMethodOP s =
 			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::CachingScoringMethod > ( scores_[iScore] );
 		if ( s != 0 ) {
-			if ( !s->cached_score(candidate, empty_map) )
+			if ( !s->cached_score(candidate, empty_map) ) {
 				return false;
+			}
 		} else {
-			if ( !scores_[iScore]->score(candidate, empty_map) )
+			if ( !scores_[iScore]->score(candidate, empty_map) ) {
 				return false;
+			}
 		}
 	}
 	return true;
 }
 
 void FragmentScoreManager::register_score_maker(
-		MakeFragmentScoringMethodOP scoring_term_maker) {
+	MakeFragmentScoringMethodOP scoring_term_maker) {
 	registered_makers_[scoring_term_maker->get_score_name()]
-			= scoring_term_maker;
+		= scoring_term_maker;
 }
 
 FragmentScoreManager::FragmentScoreManager() {
@@ -338,25 +351,25 @@ FragmentScoreManager::FragmentScoreManager() {
 }
 
 void FragmentScoreManager::create_scoring_method(
-		std::string const & score_name, Size priority, Real weight,
-		Real lowest, bool use_lowest, FragmentPickerOP picker, std::string config_line) {
+	std::string const & score_name, Size priority, Real weight,
+	Real lowest, bool use_lowest, FragmentPickerOP picker, std::string config_line) {
 
 	std::map<std::string, MakeFragmentScoringMethodOP>::iterator m =
-			registered_makers_.find(score_name);
-	if (m == registered_makers_.end()) {
+		registered_makers_.find(score_name);
+	if ( m == registered_makers_.end() ) {
 		utility_exit_with_message("[ERROR]: unknown score type " + score_name
-				+ "!");
+			+ "!");
 	}
 
 	add_scoring_method(m->second->make(priority, lowest, use_lowest, picker, config_line),
-			weight);
+		weight);
 }
 
 void FragmentScoreManager::create_scores(std::string const & file_name,
-		FragmentPickerOP picker) {
+	FragmentPickerOP picker) {
 
 	utility::io::izstream input(file_name.c_str());
-	if (!input) {
+	if ( !input ) {
 		utility_exit_with_message("[ERROR]: can't open file " + file_name + "!");
 	}
 
@@ -369,14 +382,15 @@ void FragmentScoreManager::create_scores(std::string const & file_name,
 	bool use_lowest;
 	std::string remark("");
 
-	while (getline(input, line)) {
-		if (line[0] == '#')
+	while ( getline(input, line) ) {
+		if ( line[0] == '#' ) {
 			continue;
+		}
 
 		std::istringstream line_stream(line);
 		line_stream >> score_name >> priority >> weight >> low_string;
 
-		if (low_string == "-") {
+		if ( low_string == "-" ) {
 			lowest = 0.0;
 			use_lowest = false;
 		} else {
@@ -387,12 +401,12 @@ void FragmentScoreManager::create_scores(std::string const & file_name,
 		}
 
 		remark = "";
-		if (line_stream.good()) {
+		if ( line_stream.good() ) {
 			line_stream >> remark;
 		}
 
-//		std::cout << line << std::endl;
-//		std::cout << score_name << " " << priority << " " << weight << " " << low_string << " " << use_lowest << " " << remark << std::endl;
+		//  std::cout << line << std::endl;
+		//  std::cout << score_name << " " << priority << " " << weight << " " << low_string << " " << use_lowest << " " << remark << std::endl;
 
 		create_scoring_method(score_name, priority, weight, lowest, use_lowest, picker, remark);
 	}

@@ -80,12 +80,12 @@ MMLJEnergyIntra::MMLJEnergyIntra() :
 EnergyMethodOP
 MMLJEnergyIntra::clone() const
 {
-  return EnergyMethodOP( new MMLJEnergyIntra() );
+	return EnergyMethodOP( new MMLJEnergyIntra() );
 }
 
 void
 MMLJEnergyIntra::setup_for_minimizing(
-  pose::Pose & pose,
+	pose::Pose & pose,
 	ScoreFunction const & sfxn,
 	kinematics::MinimizerMapBase const & min_map
 ) const
@@ -123,78 +123,78 @@ MMLJEnergyIntra::setup_for_minimizing(
 bool
 MMLJEnergyIntra::defines_intrares_energy( EnergyMap const & /*weights*/ ) const
 {
-  return true;
+	return true;
 }
 
 void
 MMLJEnergyIntra::residue_pair_energy(
-	 conformation::Residue const & /*rsd1*/,
-   conformation::Residue const & /*rsd2*/,
-   pose::Pose const & ,
-   ScoreFunction const & ,
-   EnergyMap & /*emap*/
+	conformation::Residue const & /*rsd1*/,
+	conformation::Residue const & /*rsd2*/,
+	pose::Pose const & ,
+	ScoreFunction const & ,
+	EnergyMap & /*emap*/
 ) const
 {}
 
 
 void
 MMLJEnergyIntra::eval_intrares_energy(
-   conformation::Residue const & rsd,
-   pose::Pose const & pose,
-   ScoreFunction const & scrfxn,
-   EnergyMap & emap
+	conformation::Residue const & rsd,
+	pose::Pose const & pose,
+	ScoreFunction const & scrfxn,
+	EnergyMap & emap
 ) const
 {
-  using namespace chemical;
-  using namespace conformation;
-  using namespace etable;
-  using namespace count_pair;
+	using namespace chemical;
+	using namespace conformation;
+	using namespace etable;
+	using namespace count_pair;
 
-  Real total_rep(0.0), total_atr(0.0);
+	Real total_rep(0.0), total_atr(0.0);
 
-  // get residue info
-  ResidueType const & rsdtype( rsd.type() );
-  Size const & rsdnatom = rsdtype.natoms();
+	// get residue info
+	ResidueType const & rsdtype( rsd.type() );
+	Size const & rsdnatom = rsdtype.natoms();
 
-  // get count pair function
-  //CountPairFunctionOP cpfxn =	CountPairFactory::create_intrares_count_pair_function( rsd, CP_CROSSOVER_3 );
+	// get count pair function
+	//CountPairFunctionOP cpfxn = CountPairFactory::create_intrares_count_pair_function( rsd, CP_CROSSOVER_3 );
 	CountPairFunctionOP cpfxn( (*this).get_intrares_countpair( rsd, pose, scrfxn ) );
 
-  // iterate over all pairs of atom in the residue
-  for ( int i = 1, i_end = rsdnatom; i <= i_end; ++i ) {
-    conformation::Atom const & atom1( rsd.atom(i) );
-    for ( int j = i + 1, j_end = rsdnatom; j <= j_end; ++j ) {
-    	conformation::Atom const & atom2( rsd.atom(j) );
+	// iterate over all pairs of atom in the residue
+	for ( int i = 1, i_end = rsdnatom; i <= i_end; ++i ) {
+		conformation::Atom const & atom1( rsd.atom(i) );
+		for ( int j = i + 1, j_end = rsdnatom; j <= j_end; ++j ) {
+			conformation::Atom const & atom2( rsd.atom(j) );
 
-      Real weight(1.0); // unused
-      Size path_dist(0);
+			Real weight(1.0); // unused
+			Size path_dist(0);
 
-      // ask count pair if we should score it
-      if ( cpfxn->count( i, j, weight, path_dist ) ) {
+			// ask count pair if we should score it
+			if ( cpfxn->count( i, j, weight, path_dist ) ) {
 				// calc dist
 				Real dist_squared( atom1.xyz().distance_squared( atom2.xyz() ) );
 				// calc energy
 				Real rep(0), atr(0);
-				potential_.score( rsdtype.atom( i ).mm_atom_type_index(), rsdtype.atom( j ).mm_atom_type_index(),	path_dist, dist_squared, rep, atr );
+				potential_.score( rsdtype.atom( i ).mm_atom_type_index(), rsdtype.atom( j ).mm_atom_type_index(), path_dist, dist_squared, rep, atr );
 				total_rep += rep;
 				total_atr += atr;
-// 		  	std::cout << "INTRA"
-// 									<< " RSD: "  << std::setw(22) << rsdtype.name()
-// 									<< " ATM1: " << std::setw(4)  << rsdtype.mm_atom_name(i)
-// 									<< " ATM2: " << std::setw(4)  << rsdtype.mm_atom_name(j)
-// 									<< " PDST: " << std::setw(4)  << path_dist
-// 									<< " DIST: " << std::setw(8)  << atom1.xyz().distance( atom2.xyz() )
-// 									<< " WGHT: " << std::setw(4)  << weight
-// 									<< " ENER: " << std::setw(8)  << energy
-// 									<< std::endl;
+				//      std::cout << "INTRA"
+				//          << " RSD: "  << std::setw(22) << rsdtype.name()
+				//          << " ATM1: " << std::setw(4)  << rsdtype.mm_atom_name(i)
+				//          << " ATM2: " << std::setw(4)  << rsdtype.mm_atom_name(j)
+				//          << " PDST: " << std::setw(4)  << path_dist
+				//          << " DIST: " << std::setw(8)  << atom1.xyz().distance( atom2.xyz() )
+				//          << " WGHT: " << std::setw(4)  << weight
+				//          << " ENER: " << std::setw(8)  << energy
+				//          << std::endl;
 
-      }
-    }
-  }
+			}
+		}
+	}
 
-  // add energies to emap
-  emap[ mm_lj_intra_rep ] += total_rep;
-  emap[ mm_lj_intra_atr ] += total_atr;
+	// add energies to emap
+	emap[ mm_lj_intra_rep ] += total_rep;
+	emap[ mm_lj_intra_atr ] += total_atr;
 }
 
 void
@@ -247,7 +247,7 @@ MMLJEnergyIntra::eval_atom_derivative(
 				F2 += deriv * f2;
 			}
 		}
-	}	else {
+	} else {
 		utility_exit_with_message("non-nblist minimize!");
 	}
 }
@@ -256,8 +256,8 @@ MMLJEnergyIntra::eval_atom_derivative(
 Distance
 MMLJEnergyIntra::atomic_interaction_cutoff() const
 {
-  // this will probably screw up other stuff, but it might not since etable goes to zero at 5.5
-  return 7.0;
+	// this will probably screw up other stuff, but it might not since etable goes to zero at 5.5
+	return 7.0;
 }
 
 /// @brief MMLJEnergy is context independent; indicates that no context graphs are required
@@ -268,7 +268,7 @@ MMLJEnergyIntra::indicate_required_context_graphs(utility::vector1< bool > & ) c
 /// @brief required for neighbor list and to be more lke the ETable
 etable::count_pair::CountPairFunctionCOP
 MMLJEnergyIntra::get_count_pair_function(
-  Size res1,
+	Size res1,
 	Size res2,
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn
@@ -286,8 +286,8 @@ MMLJEnergyIntra::get_count_pair_function(
 	ScoreFunction const & /*sfxn*/
 ) const
 {
-  using namespace etable;
-  using namespace count_pair;
+	using namespace etable;
+	using namespace count_pair;
 
 	return CountPairFunctionOP( CountPairFactory::create_count_pair_function( res1, res2, CP_CROSSOVER_3 ) );
 }
@@ -300,8 +300,8 @@ MMLJEnergyIntra::get_intrares_countpair(
 	ScoreFunction const & /*sfxn*/
 ) const
 {
-  using namespace etable;
-  using namespace count_pair;
+	using namespace etable;
+	using namespace count_pair;
 
 	return CountPairFunctionOP( CountPairFactory::create_intrares_count_pair_function( res, CP_CROSSOVER_3 ) );
 }

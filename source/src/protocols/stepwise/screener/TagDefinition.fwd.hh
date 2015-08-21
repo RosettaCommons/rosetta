@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/screener/TagDefinition.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace stepwise {
 namespace screener {
-	
-	class TagDefinition;
-	typedef utility::pointer::shared_ptr< TagDefinition > TagDefinitionOP;
-	typedef utility::pointer::shared_ptr< TagDefinition const > TagDefinitionCOP;
-	
+
+class TagDefinition;
+typedef utility::pointer::shared_ptr< TagDefinition > TagDefinitionOP;
+typedef utility::pointer::shared_ptr< TagDefinition const > TagDefinitionCOP;
+
 } //screener
 } //stepwise
 } //protocols

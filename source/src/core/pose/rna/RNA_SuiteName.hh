@@ -96,13 +96,13 @@ public:
 	RNA_SuiteAssignment assign(utility::vector1<Real> const & torsions_in) const;
 
 	RNA_SuiteAssignment assign(utility::vector1<Real> const & torsions_in,
-														 utility::vector1<Real> & deriv )	const;
+		utility::vector1<Real> & deriv ) const;
 
 	RNA_SuiteAssignment assign(Pose const & pose, Size const res) const;
 
 	void
 	update_centers( utility::vector1< utility::vector1< Real > > const & centers,
-									utility::vector1< std::string > const & tags );
+		utility::vector1< std::string > const & tags );
 
 	Real const
 		epsilonmin, epsilonmax,
@@ -119,8 +119,8 @@ public:
 
 private:
 	//Disable copy constructor and assignment
-  RNA_SuiteName( const RNA_SuiteName & );
-  void operator=( const RNA_SuiteName & );
+	RNA_SuiteName( const RNA_SuiteName & );
+	void operator=( const RNA_SuiteName & );
 
 	void init();
 
@@ -131,17 +131,17 @@ private:
 	get_classifier( utility::vector1< Real > const & torsions ) const;
 
 	Real distance_4d(utility::vector1<Real> const &torsion1, utility::vector1<Real> const &torsion2,
-			utility::vector1<Size> const & half_width) const;
+		utility::vector1<Size> const & half_width) const;
 
 	Real distance_7d(utility::vector1<Real> const &torsion1, utility::vector1 <Real> const &torsion2,
-									 utility::vector1<Size> const & half_width) const;
+		utility::vector1<Size> const & half_width) const;
 
 	Real distance_7d(
-									 utility::vector1<Real> const & torsion1,
-									 utility::vector1<Real> const & torsion2,
-									 utility::vector1<Size> const & half_width,
-									 utility::vector1<Real> & deriv // fill if non-empty
-									 ) const;
+		utility::vector1<Real> const & torsion1,
+		utility::vector1<Real> const & torsion2,
+		utility::vector1<Size> const & half_width,
+		utility::vector1<Real> & deriv // fill if non-empty
+	) const;
 
 	Real
 	get_suiteness( Real const & dist_7d ) const;
@@ -151,14 +151,14 @@ private:
 
 	void
 	fill_suiteness_derivative_7d (
-		 utility::vector1< Real  > & deriv,
-		 utility::vector1< Real > const & torsions,
-		 utility::vector1< Real > const & torsions_center,
-		 utility::vector1< Real > const & half_width ) const;
+		utility::vector1< Real  > & deriv,
+		utility::vector1< Real > const & torsions,
+		utility::vector1< Real > const & torsions_center,
+		utility::vector1< Real > const & half_width ) const;
 
 	bool is_in_between( utility::vector1<Real> const & target,
-			utility::vector1<Real> const & dominant,
-			utility::vector1<Real> const & satellite ) const;
+		utility::vector1<Real> const & dominant,
+		utility::vector1<Real> const & satellite ) const;
 
 	//////////////////////////////////
 	RNA_SuiteAssignment const suite_undefined;

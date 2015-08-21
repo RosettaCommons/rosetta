@@ -104,7 +104,7 @@ namespace ncbb {
 
 void
 count_uniq_char( std::string pattern, Size & num, utility::vector1<char> & uniqs );
-	
+
 Size
 give_dihedral_index(
 	Size n,

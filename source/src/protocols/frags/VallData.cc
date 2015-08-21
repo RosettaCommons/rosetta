@@ -178,10 +178,10 @@ VallData::get_frags(
 			char const seq  ( sequence_ [ vall_pos+k ] );
 			char const ss   ( secstruct_[ vall_pos+k ] );
 			if ( ( std::fabs( phi ) < 0.001 ) ||
-					 ( std::fabs( psi ) + std::fabs( omega ) < 0.001 ) ||
-					 ( seq == 'G' && exclude_gly && seq != target_seq[k] ) ||
-					 ( seq == 'P' && exclude_pro && seq != target_seq[k] ) ||
-					 ( std::abs( omega ) < 90.0 && exclude_cis_peptides && ( k == frag_size-1 || target_seq[k+1] != 'P' ) ) ) {
+					( std::fabs( psi ) + std::fabs( omega ) < 0.001 ) ||
+					( seq == 'G' && exclude_gly && seq != target_seq[k] ) ||
+					( seq == 'P' && exclude_pro && seq != target_seq[k] ) ||
+					( std::abs( omega ) < 90.0 && exclude_cis_peptides && ( k == frag_size-1 || target_seq[k+1] != 'P' ) ) ) {
 				bad_frag = true;
 				break;
 			}
@@ -297,7 +297,7 @@ VallData::get_frags(
 	if (  ss_weight > 1e-6 ) min_nonzero_weight = std::min( min_nonzero_weight,  ss_weight * 0.01 );
 
 	// Real const min_nonzero_weight
-	// 	( ss_weight == 0.0 ? seq_weight : ( seq_weight == 0.0 ? ss_weight : std::min( ss_weight, seq_weight ) ) );
+	//  ( ss_weight == 0.0 ? seq_weight : ( seq_weight == 0.0 ? ss_weight : std::min( ss_weight, seq_weight ) ) );
 
 	// reset heaps
 	ObjexxFCL::FArray1D_int heap( nfrags + 2 );
@@ -328,8 +328,8 @@ VallData::get_frags(
 			char const seq  ( sequence_ [ vall_pos+k ] );
 			char const ss   ( secstruct_[ vall_pos+k ] );
 			if ( ( seq == 'G' && exclude_gly && seq != target_seq[k] ) ||
-					 ( seq == 'P' && exclude_pro && seq != target_seq[k] ) ||
-					 ( std::abs( omega ) < 90.0 && exclude_cis_peptides && ( k == frag_size-1 || target_seq[k+1] != 'P' ) ) ) {
+					( seq == 'P' && exclude_pro && seq != target_seq[k] ) ||
+					( std::abs( omega ) < 90.0 && exclude_cis_peptides && ( k == frag_size-1 || target_seq[k+1] != 'P' ) ) ) {
 				bad_frag = true;
 				break;
 			}
@@ -395,11 +395,11 @@ VallData::get_frags(
 
 Real
 torsion_dev_score(
-									Real const frag_angle,
-									Real const target_angle,
-									Real const min_dev,
-									Real const max_dev
-									)
+	Real const frag_angle,
+	Real const target_angle,
+	Real const min_dev,
+	Real const max_dev
+)
 {
 	if ( std::abs( target_angle )< 1e-3 ) return 0.0; // don't score terminal angles
 	Real const dev( basic::subtract_degree_angles( frag_angle, target_angle ) );
@@ -472,8 +472,8 @@ VallData::get_cheating_frags(
 				++n_seq_mismatches;
 			}
 			score += torsion_weight * ( torsion_dev_score( phi  , target_phi  [k+1], min_torsion_dev, max_torsion_dev ) +
-																	torsion_dev_score( psi  , target_psi  [k+1], min_torsion_dev, max_torsion_dev ) +
-																	torsion_dev_score( omega, target_omega[k+1], min_torsion_dev, max_torsion_dev ) );
+				torsion_dev_score( psi  , target_psi  [k+1], min_torsion_dev, max_torsion_dev ) +
+				torsion_dev_score( omega, target_omega[k+1], min_torsion_dev, max_torsion_dev ) );
 		}
 
 		if ( bad_frag ) continue;
@@ -552,12 +552,12 @@ get_frags(
 	static VallData vall( basic::options::option[ basic::options::OptionKeys::loops::vall_file ] );
 
 	vall.get_frags( nfrags,
-									target_seq, target_ss,
-									seq_weight, ss_weight,
-									exclude_gly, exclude_pro, exclude_cis_peptides,
-									homs_to_exclude,
-									library,
-									bb_weight, target_bb );
+		target_seq, target_ss,
+		seq_weight, ss_weight,
+		exclude_gly, exclude_pro, exclude_cis_peptides,
+		homs_to_exclude,
+		library,
+		bb_weight, target_bb );
 }
 
 /// @details  Handles loading default vall, then calls above routine
@@ -581,12 +581,12 @@ get_frags(
 	static VallData vall( basic::options::option[ basic::options::OptionKeys::loops::vall_file ] );
 
 	vall.get_frags( nfrags,
-									target_seq, target_ss,
-									seq_weight, ss_weight,
-									exclude_gly, exclude_pro, exclude_cis_peptides,
-									homs_to_exclude,
-									library,
-									bb_weight, target_bb );
+		target_seq, target_ss,
+		seq_weight, ss_weight,
+		exclude_gly, exclude_pro, exclude_cis_peptides,
+		homs_to_exclude,
+		library,
+		bb_weight, target_bb );
 }
 
 
@@ -611,11 +611,11 @@ get_cheating_frags(
 	static VallData vall( basic::options::option[ basic::options::OptionKeys::loops::vall_file ] );
 
 	vall.get_cheating_frags( nfrags,
-													 target_seq, target_ss, target_phi, target_psi, target_omega,
-													 seq_weight, ss_weight, torsion_weight,
-													 min_torsion_dev, max_torsion_dev,
-													 homs_to_exclude,
-													 library );
+		target_seq, target_ss, target_phi, target_psi, target_omega,
+		seq_weight, ss_weight, torsion_weight,
+		min_torsion_dev, max_torsion_dev,
+		homs_to_exclude,
+		library );
 }
 
 
@@ -625,9 +625,9 @@ dump_vall_fasta( std::string const & fasta_filename )
 	VallData const vall( basic::options::option[ basic::options::OptionKeys::loops::vall_file ] );
 	utility::vector1< char > const & vall_sequence( vall.sequence() );
 
-// 	utility::vector1< Real > const & vall_phi  ( vall.phi  () );
-// 	utility::vector1< Real > const & vall_psi  ( vall.psi  () );
-// 	utility::vector1< Real > const & vall_omega( vall.omega() );
+	//  utility::vector1< Real > const & vall_phi  ( vall.phi  () );
+	//  utility::vector1< Real > const & vall_psi  ( vall.psi  () );
+	//  utility::vector1< Real > const & vall_omega( vall.omega() );
 
 	utility::vector1< Size > const & vall_chain( vall.chain() );
 

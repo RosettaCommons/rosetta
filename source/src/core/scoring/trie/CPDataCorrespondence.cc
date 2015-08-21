@@ -46,14 +46,14 @@ void CPDataCorrespondence::n_entries( Size nentries )
 
 void CPDataCorrespondence::resid_for_entry( Size entry, Size resid )
 {
-debug_assert( entry > 0 && entry <= n_entries_ );
+	debug_assert( entry > 0 && entry <= n_entries_ );
 	entry_2_resid_[ entry ] = resid;
 }
 
 void CPDataCorrespondence::n_connpoints_for_entry( Size entry, Size nconnections )
 {
-debug_assert( entry > 0 && entry <= n_entries_ );
-debug_assert( nconnections_for_entry_[ entry ] == 0 );// call this function at most once for input value of entry
+	debug_assert( entry > 0 && entry <= n_entries_ );
+	debug_assert( nconnections_for_entry_[ entry ] == 0 );// call this function at most once for input value of entry
 	nconnections_for_entry_[ entry ] = nconnections;
 	residue_connid_for_entry_connid_[ entry ].resize( nconnections );
 	std::fill(
@@ -68,8 +68,8 @@ debug_assert( nconnections_for_entry_[ entry ] == 0 );// call this function at m
 
 void CPDataCorrespondence::connid_for_entry_connpoint( Size entry, Size connpoint, Size residue_connid )
 {
-debug_assert( entry > 0 && entry <= n_entries_ );
-debug_assert( connpoint > 0 && connpoint <= nconnections_for_entry_[ entry ] );
+	debug_assert( entry > 0 && entry <= n_entries_ );
+	debug_assert( connpoint > 0 && connpoint <= nconnections_for_entry_[ entry ] );
 	residue_connid_for_entry_connid_[ entry ][ connpoint ] = residue_connid;
 }
 
@@ -81,22 +81,22 @@ Size CPDataCorrespondence::n_entries() const
 
 Size CPDataCorrespondence::resid_for_entry( Size entry ) const
 {
-debug_assert( entry > 0 && entry <= n_entries_ );
-debug_assert( entry_2_resid_[ entry ] != 0 );
+	debug_assert( entry > 0 && entry <= n_entries_ );
+	debug_assert( entry_2_resid_[ entry ] != 0 );
 	return entry_2_resid_[ entry ];
 }
 
 Size CPDataCorrespondence::n_connpoints_for_entry( Size entry ) const
 {
-debug_assert( entry > 0 && entry <= n_entries_ );
-debug_assert( nconnections_for_entry_[ entry ] != 0 );
+	debug_assert( entry > 0 && entry <= n_entries_ );
+	debug_assert( nconnections_for_entry_[ entry ] != 0 );
 	return nconnections_for_entry_[ entry ];
 }
 
 Size CPDataCorrespondence::connid_for_entry_connpoint( Size entry, Size connpoint ) const
 {
-debug_assert( entry > 0 && entry <= n_entries_ );
-debug_assert( connpoint > 0 && connpoint <= nconnections_for_entry_[ entry ] );
+	debug_assert( entry > 0 && entry <= n_entries_ );
+	debug_assert( connpoint > 0 && connpoint <= nconnections_for_entry_[ entry ] );
 	return residue_connid_for_entry_connid_[ entry ][ connpoint ];
 }
 
@@ -179,20 +179,20 @@ create_cpdata_correspondence_for_rotamer(
 		pseudobonds_to_residues[ other_resid ] = pseudobond_connection_points;
 	}
 
-/*
+	/*
 	CPDataCorrespondence cpdata_map;
 	cpdata_map.n_entries( connections_to_residues_.size() );
 	for ( Size ii = 1; ii <= n_connection_partners; ++ii ) {
-		cpdata_map.resid_for_entry( ii, found_connections_other_resid[ ii ] );
-		cpdata_map.n_connpoints_for_entry( ii, n_connections_for_resid[ ii ] );
+	cpdata_map.resid_for_entry( ii, found_connections_other_resid[ ii ] );
+	cpdata_map.n_connpoints_for_entry( ii, n_connections_for_resid[ ii ] );
 
-		utility::vector1< Size > const & ii_conns(
-			rotset.rotamer( found_connections_examplerots[ ii ] )->
-			connections_to_residue( found_connections_other_resid[ ii ]  ) );
+	utility::vector1< Size > const & ii_conns(
+	rotset.rotamer( found_connections_examplerots[ ii ] )->
+	connections_to_residue( found_connections_other_resid[ ii ]  ) );
 
-		for ( Size jj = 1; jj <= n_connections_for_resid[ ii ]; ++jj ) {
-			cpdata_map.connid_for_entry_connpoint( ii, jj, ii_conns[ jj ] );
-		}
+	for ( Size jj = 1; jj <= n_connections_for_resid[ ii ]; ++jj ) {
+	cpdata_map.connid_for_entry_connpoint( ii, jj, ii_conns[ jj ] );
+	}
 	}
 	return cpdata_map;
 	*/

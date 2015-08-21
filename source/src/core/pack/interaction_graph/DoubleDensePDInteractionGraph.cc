@@ -67,8 +67,7 @@ void DoubleDensePDNode::print() const
 {
 	std::cerr << "NODE: " << get_node_index() << " with " <<
 		get_num_states() << " states" << std::endl;
-	for (int ii = 1; ii <= get_num_states(); ++ii)
-	{
+	for ( int ii = 1; ii <= get_num_states(); ++ii ) {
 		std::cerr << "(" << ii << ", ";
 		std::cerr << one_body_energies_[ ii ] << ") ";
 		if ( ii % 3 == 0 ) std::cerr << std::endl;
@@ -92,9 +91,8 @@ void DoubleDensePDNode::update_one_body_energy( int state, core::PackerEnergy en
 /// @param energies - [in] - the array of energies. Must hold num_states_ entries
 void DoubleDensePDNode::update_one_body_energies( FArray1< core::PackerEnergy > & energies )
 {
-debug_assert( energies.size() == (unsigned int) get_num_states() );
-	for (int ii = 1; ii <= get_num_states(); ++ii)
-	{
+	debug_assert( energies.size() == (unsigned int) get_num_states() );
+	for ( int ii = 1; ii <= get_num_states(); ++ii ) {
 		one_body_energies_[ ii ] = energies( ii );
 	}
 	return;
@@ -115,9 +113,8 @@ void DoubleDensePDNode::add_to_one_body_energy( int state, core::PackerEnergy en
 /// @param energies - [in] - the array of energies. Must hold num_states_ entries
 void DoubleDensePDNode::add_to_one_body_energies( FArray1< core::PackerEnergy > & energies )
 {
-debug_assert( energies.size() == (unsigned int) get_num_states() );
-	for (int ii = 1; ii <= get_num_states(); ++ii)
-	{
+	debug_assert( energies.size() == (unsigned int) get_num_states() );
+	for ( int ii = 1; ii <= get_num_states(); ++ii ) {
 		one_body_energies_[ ii ] += energies( ii );
 	}
 	return;
@@ -126,8 +123,7 @@ debug_assert( energies.size() == (unsigned int) get_num_states() );
 /// @brief sets all of the one-body energies for this node to zero
 void DoubleDensePDNode::zero_one_body_energies()
 {
-	for (int ii = 1; ii <= get_num_states(); ++ii)
-	{
+	for ( int ii = 1; ii <= get_num_states(); ++ii ) {
 		one_body_energies_[ ii ] = 0;
 	}
 }
@@ -145,7 +141,7 @@ core::PackerEnergy DoubleDensePDNode::get_one_body_energy( int state )
 /// updates internal edge vector + other vectorized edge information
 void DoubleDensePDNode::prepare_for_simulated_annealing()
 {
-	if (! get_edge_vector_up_to_date() ) update_internal_vectors();
+	if ( ! get_edge_vector_up_to_date() ) update_internal_vectors();
 	return;
 }
 
@@ -157,7 +153,7 @@ void DoubleDensePDNode::assign_zero_state()
 {
 
 	//std::cerr << "assign_state: node -  " << get_node_index() <<
-	//	" new state " << 0 << "...";
+	// " new state " << 0 << "...";
 
 	current_state_ = 0;
 	alternate_state_ = 0;
@@ -172,8 +168,7 @@ void DoubleDensePDNode::assign_zero_state()
 		0.0f);
 	curr_state_total_energy_ = 0.0f;
 
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii )
-	{
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		get_incident_dpd_edge(ii)->
 			acknowledge_state_zeroed( get_node_index() );
 	}
@@ -189,11 +184,10 @@ void DoubleDensePDNode::assign_zero_state()
 /// @param new_state - [in] - the new state the node should be assigned
 void DoubleDensePDNode::assign_state(int new_state)
 {
-debug_assert( new_state >= 0 && new_state <= get_num_states());
+	debug_assert( new_state >= 0 && new_state <= get_num_states());
 
-	if (new_state == 0) assign_zero_state();
-	else
-	{
+	if ( new_state == 0 ) assign_zero_state();
+	else {
 		//std::cerr << "assign_state: node -  " << get_node_index() <<
 		// " new state " << new_state << "...";
 		current_state_ = new_state;
@@ -201,8 +195,7 @@ debug_assert( new_state >= 0 && new_state <= get_num_states());
 		curr_state_total_energy_ = curr_state_one_body_energy_;
 		alternate_state_is_being_considered_ = false;
 
-		for (int ii = 1; ii <= get_num_incident_edges(); ++ii )
-		{
+		for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 			get_incident_dpd_edge(ii)->acknowledge_state_change(
 				get_node_index(),
 				current_state_,
@@ -223,7 +216,7 @@ int DoubleDensePDNode::get_current_state() const
 
 /// @brief returns the one body energy for the state the node is currently assigned
 core::PackerEnergy DoubleDensePDNode::get_one_body_energy_current_state()
-{	return curr_state_one_body_energy_;}
+{ return curr_state_one_body_energy_;}
 
 
 /// @brief tells the node that it should change its state to the last state it was
@@ -234,7 +227,7 @@ core::PackerEnergy DoubleDensePDNode::get_one_body_energy_current_state()
 /// leaving energy2b structure
 void DoubleDensePDNode::commit_considered_substitution()
 {
-debug_assert( alternate_state_is_being_considered_ );
+	debug_assert( alternate_state_is_being_considered_ );
 
 	current_state_ = alternate_state_;
 	curr_state_one_body_energy_ = alternate_state_one_body_energy_;
@@ -248,10 +241,9 @@ debug_assert( alternate_state_is_being_considered_ );
 
 	std::copy( alt_position1,
 		alternate_state_two_body_energies_.end(),
-		 curr_position1 );
+		curr_position1 );
 
-	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii )
-	{
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		get_incident_dpd_edge(ii)->acknowledge_substitution(
 			get_node_index(),
 			alternate_state_two_body_energies_[ii],
@@ -277,7 +269,7 @@ void DoubleDensePDNode::update_internal_vectors()
 	neighbors_num_states_.resize( get_num_incident_edges() + 1);
 	neighbors_rotindex_offset_.resize( get_num_incident_edges() + 1, 0);
 
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii) {
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		neighbors_num_states_[ ii ] = get_adjacent_dpd_node( ii )->get_num_states();
 		if ( ii > 1 ) {
 			neighbors_rotindex_offset_[ ii ] = neighbors_rotindex_offset_[ ii - 1 ] + neighbors_num_states_[ ii - 1 ];
@@ -289,7 +281,7 @@ void DoubleDensePDNode::update_internal_vectors()
 	int n_neighboring_rotamers = neighbors_rotindex_offset_[ get_num_incident_edges() ] + neighbors_num_states_[  get_num_incident_edges() ];
 
 	rotamer_energies_.dimension( n_neighboring_rotamers, get_num_states() );
-	for ( int ii = 1; ii <= get_num_edges_to_smaller_indexed_nodes(); ++ii) {
+	for ( int ii = 1; ii <= get_num_edges_to_smaller_indexed_nodes(); ++ii ) {
 		int const ii_roff = neighbors_rotindex_offset_[ ii ];
 		for ( int jj = 1; jj <= get_num_states(); ++jj ) {
 			for ( int kk = 1; kk <= neighbors_num_states_[ ii ]; ++kk ) {
@@ -298,7 +290,7 @@ void DoubleDensePDNode::update_internal_vectors()
 		}
 	}
 
-	for ( int ii = get_num_edges_to_smaller_indexed_nodes() + 1; ii <= get_num_incident_edges(); ++ii) {
+	for ( int ii = get_num_edges_to_smaller_indexed_nodes() + 1; ii <= get_num_incident_edges(); ++ii ) {
 		int const ii_roff = neighbors_rotindex_offset_[ ii ];
 		for ( int jj = 1; jj <= get_num_states(); ++jj ) {
 			for ( int kk = 1; kk <= neighbors_num_states_[ ii ]; ++kk ) {
@@ -320,8 +312,7 @@ void DoubleDensePDNode::print_internal_energies() const
 	std::cerr << "curr_state_one_body_energy_ ";
 	std::cerr << curr_state_one_body_energy_ << " ";
 	std::cerr << "curr_state_total_energy_" << curr_state_total_energy_ << " ";
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii)
-	{
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		std::cerr << "(" << get_index_of_adjacent_node( ii ) << ": " <<
 			curr_state_two_body_energies_[ ii ] << ") ";
 	}
@@ -332,10 +323,9 @@ void DoubleDensePDNode::print_internal_energies() const
 /// produces
 void DoubleDensePDNode::update_internal_energy_sums()
 {
-debug_assert( get_edge_vector_up_to_date() );
+	debug_assert( get_edge_vector_up_to_date() );
 	curr_state_total_energy_ = 0;
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii)
-	{
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		curr_state_total_energy_ +=
 			get_incident_dpd_edge(ii)->get_current_two_body_energy();
 	}
@@ -382,15 +372,15 @@ DoubleDensePDNode::count_dynamic_memory() const
 /// @param first_node_ind - [in] - the index of the smaller-indexed node
 /// @param second_node_ind - [in] - the index of the larger-indexed node
 DoubleDensePDEdge::DoubleDensePDEdge
-(	InteractionGraphBase* owner,
+( InteractionGraphBase* owner,
 	int first_node_ind,
 	int second_node_ind
 ) :
 	PrecomputedPairEnergiesEdge( owner, first_node_ind, second_node_ind),
 	two_body_energies_(
-		get_dpd_node(1)->get_num_states(),
-		get_dpd_node(0)->get_num_states(),
-		0.0f
+	get_dpd_node(1)->get_num_states(),
+	get_dpd_node(0)->get_num_states(),
+	0.0f
 	),
 	energies_updated_since_last_prep_for_simA_( true )
 {
@@ -426,8 +416,8 @@ void DoubleDensePDEdge::add_to_two_body_energies
 	FArray2< core::PackerEnergy > const & res_res_energy_array
 )
 {
-debug_assert( res_res_energy_array.size1() == two_body_energies_.size1() );
-debug_assert( res_res_energy_array.size2() == two_body_energies_.size2() );
+	debug_assert( res_res_energy_array.size1() == two_body_energies_.size1() );
+	debug_assert( res_res_energy_array.size2() == two_body_energies_.size2() );
 	for ( Size ii = 1, iie = two_body_energies_.size1(); ii <= iie; ++ii ) {
 		for ( Size jj = 1, jje = two_body_energies_.size2(); jj <= jje; ++jj ) {
 			two_body_energies_( ii, jj ) += edge_weight() * res_res_energy_array( ii, jj );
@@ -501,8 +491,7 @@ void DoubleDensePDEdge::prepare_for_simulated_annealing()
 
 	bool any_non_zero = false;
 	unsigned int const num_energies = two_body_energies_.size();
-	for (unsigned int ii = 0; ii < num_energies; ++ii)
-	{
+	for ( unsigned int ii = 0; ii < num_energies; ++ii ) {
 		if ( two_body_energies_[ ii ] != 0.0f ) { any_non_zero = true; break;}
 	}
 
@@ -521,7 +510,7 @@ core::PackerEnergy DoubleDensePDEdge::get_current_two_body_energy()
 /// @param node_ind - [in] - the index of the node that changed its state
 /// @param node_state - [in] - the index of the new state it assumed
 /// @param new_energy - [out] - the two body energy produced  by the new state and
-/// 	the current state on the other node
+///  the current state on the other node
 void
 DoubleDensePDEdge::acknowledge_state_change
 (
@@ -582,9 +571,9 @@ void DoubleDensePDEdge::acknowledge_state_zeroed( int node_ind )
 /// table.  Used to create a proxy array on the nodes for cache efficiency.
 /*
 FArray2Da< core::PackerEnergy > DoubleDensePDEdge::get_edge_table_ptr() {
-	return FArray2Da< core::PackerEnergy >( two_body_energies_( 1, 1 ),
-		get_num_states_for_node( 1 ),
-		get_num_states_for_node( 0 ) );
+return FArray2Da< core::PackerEnergy >( two_body_energies_( 1, 1 ),
+get_num_states_for_node( 1 ),
+get_num_states_for_node( 0 ) );
 }*/
 
 
@@ -673,7 +662,7 @@ DoubleDensePDInteractionGraph::get_one_body_energy_for_node_state( int node, int
 void DoubleDensePDInteractionGraph::blanket_assign_state_0()
 {
 	//a state assignment of 0 means "unassigned".
-	for (int ii = 1; ii <= get_num_nodes(); ++ii ) {
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		get_dpd_node(ii)->assign_zero_state();
 	}
 	total_energy_current_state_assignment_ = 0;
@@ -700,7 +689,7 @@ core::PackerEnergy DoubleDensePDInteractionGraph::set_state_for_node(int node_in
 /// @param node_states - [in] - array of states, one for each node.
 core::PackerEnergy DoubleDensePDInteractionGraph::set_network_state( FArray1_int & node_states)
 {
-	for (int ii = 1; ii <= get_num_nodes(); ++ii ) {
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		get_dpd_node( ii )->assign_state( node_states(ii) );
 	}
 	update_internal_energy_totals();
@@ -716,10 +705,10 @@ core::PackerEnergy DoubleDensePDInteractionGraph::set_network_state( FArray1_int
 /// @param node_ind - [in] - the index of the node considering a state change
 /// @param new_state - [in] - the new state that node is considering
 /// @param alt_total_energy - [out] - the total network energy produced under the
-///	new state
+/// new state
 /// @param delta_energy - [out] - the change in energy produced under the substitution
 /// @param prev_energy_for_node - [out] - the sum of the one and two body energies
-/// 	for this node under the current state assignment
+///  for this node under the current state assignment
 void
 DoubleDensePDInteractionGraph::consider_substitution
 (
@@ -752,7 +741,7 @@ DoubleDensePDInteractionGraph::commit_considered_substitution()
 		total_energy_alternate_state_assignment_;
 
 	++num_commits_since_last_update_;
-	if (num_commits_since_last_update_ == COMMIT_LIMIT_BETWEEN_UPDATES) {
+	if ( num_commits_since_last_update_ == COMMIT_LIMIT_BETWEEN_UPDATES ) {
 		update_internal_energy_totals();
 	}
 
@@ -774,17 +763,17 @@ void DoubleDensePDInteractionGraph::update_internal_energy_totals()
 	total_energy_current_state_assignment_ = 0;
 
 	//std::cerr << "updating internal energy totals: " << std::endl;
-	for (int ii = 1; ii <= get_num_nodes(); ++ii) {
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		//std::cerr << " ig_node " << ii << " = " << ((DoubleDensePDNode *) ig_nodes_[ ii ])
-		//	->get_one_body_energy_current_state();
+		// ->get_one_body_energy_current_state();
 
 		total_energy_current_state_assignment_ += get_dpd_node( ii )->
 			get_one_body_energy_current_state();
 	}
 
 	//int counter = 0;
-	for (std::list<EdgeBase*>::iterator iter = get_edge_list_begin();
-			iter != get_edge_list_end(); ++iter) {
+	for ( std::list<EdgeBase*>::iterator iter = get_edge_list_begin();
+			iter != get_edge_list_end(); ++iter ) {
 		//std::cerr << " ig_edge " << ++counter  << " =" <<
 		//((DoubleDensePDEdge*) *iter)->get_current_two_body_energy();
 		total_energy_current_state_assignment_ +=
@@ -801,8 +790,8 @@ void DoubleDensePDInteractionGraph::update_internal_energy_totals()
 int DoubleDensePDInteractionGraph::get_edge_memory_usage() const
 {
 	int sum = 0;
-	for (std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
-			iter != get_edge_list_end(); ++iter) {
+	for ( std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
+			iter != get_edge_list_end(); ++iter ) {
 		sum += ((DoubleDensePDEdge*) *iter)->get_two_body_table_size();
 	}
 	return sum;
@@ -830,7 +819,7 @@ DoubleDensePDInteractionGraph::count_dynamic_memory() const
 void DoubleDensePDInteractionGraph::print_current_state_assignment() const
 {
 	std::cerr << "Curr States: ";
-	for (int ii = 1; ii <= get_num_nodes(); ++ii) {
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		std::cerr << "(" << ii << ", ";
 		std::cerr << get_dpd_node(ii)->get_current_state() << ") ";
 		get_dpd_node(ii)->print_internal_energies();
@@ -856,19 +845,19 @@ core::PackerEnergy
 DoubleDensePDInteractionGraph::get_energy_sum_for_vertex_group( int group_id )
 {
 	core::PackerEnergy esum = 0;
-	for (int ii = 1; ii <= get_num_nodes(); ++ii) {
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		if ( get_vertex_member_of_energy_sum_group( ii, group_id ) ) {
 			esum += get_dpd_node( ii )->get_one_body_energy_current_state();
 		}
 	}
 
 	for ( std::list< EdgeBase* >::iterator edge_iter = get_edge_list_begin();
-			edge_iter != get_edge_list_end(); ++edge_iter) {
+			edge_iter != get_edge_list_end(); ++edge_iter ) {
 		int first_node_ind = (*edge_iter)->get_first_node_ind();
 		int second_node_ind = (*edge_iter)->get_second_node_ind();
 
 		if ( get_vertex_member_of_energy_sum_group( first_node_ind, group_id )
-			&& get_vertex_member_of_energy_sum_group( second_node_ind, group_id )) {
+				&& get_vertex_member_of_energy_sum_group( second_node_ind, group_id ) ) {
 			esum += ((DoubleDensePDEdge*) (*edge_iter))->get_current_two_body_energy();
 		}
 	}
@@ -883,7 +872,7 @@ DoubleDensePDInteractionGraph::get_energy_sum_for_vertex_group( int group_id )
 NodeBase* DoubleDensePDInteractionGraph::create_new_node( int node_index, int num_states)
 {
 	DoubleDensePDNode* new_node = new DoubleDensePDNode(this, node_index, num_states);
-debug_assert( new_node != NULL );
+	debug_assert( new_node != NULL );
 	return new_node;
 }
 

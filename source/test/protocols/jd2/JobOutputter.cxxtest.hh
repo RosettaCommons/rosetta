@@ -61,7 +61,7 @@ public:
 	}
 
 	mutable core::Size call_counter_;
-	
+
 	// Dummy for OP
 	void apply( Pose & ) {}
 	virtual std::string get_name() const { return "DummyObserver"; }

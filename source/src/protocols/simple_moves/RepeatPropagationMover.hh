@@ -35,28 +35,28 @@ namespace simple_moves {
 using namespace core;
 using namespace std;
 using namespace protocols::moves;
-    
+
 class RepeatPropagationMover : public protocols::moves::Mover
 {
 public:
-    RepeatPropagationMover();
-    virtual void apply( Pose & pose );
+	RepeatPropagationMover();
+	virtual void apply( Pose & pose );
 	std::string get_name() const;
-    moves::MoverOP clone() const { return moves::MoverOP( new RepeatPropagationMover( *this ) ); }
-    virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
-  private:
-    void initialize_repeat_pose( core::pose::Pose & pose, core::pose::Pose & repeat_pose);
-    void duplicate_residues_by_type(core::pose::Pose & pose, core::pose::Pose & repeat_pose);
-    void copy_phi_psi_omega(core::pose::Pose & pose, core::pose::Pose & repeat_pose);
-    Size first_res_;
-    Size last_res_;
-    Size numb_repeats_;
-    bool repeat_without_replacing_pose_;
-    bool maintain_cap_seq_and_structure_;
-    bool maintain_cap_sequence_alone_;
-    Size nTerm_cap_size_;
-    Size cTerm_cap_size_;
-    };
+	moves::MoverOP clone() const { return moves::MoverOP( new RepeatPropagationMover( *this ) ); }
+	virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+private:
+	void initialize_repeat_pose( core::pose::Pose & pose, core::pose::Pose & repeat_pose);
+	void duplicate_residues_by_type(core::pose::Pose & pose, core::pose::Pose & repeat_pose);
+	void copy_phi_psi_omega(core::pose::Pose & pose, core::pose::Pose & repeat_pose);
+	Size first_res_;
+	Size last_res_;
+	Size numb_repeats_;
+	bool repeat_without_replacing_pose_;
+	bool maintain_cap_seq_and_structure_;
+	bool maintain_cap_sequence_alone_;
+	Size nTerm_cap_size_;
+	Size cTerm_cap_size_;
+};
 } //protocols
 } //moves
 #endif

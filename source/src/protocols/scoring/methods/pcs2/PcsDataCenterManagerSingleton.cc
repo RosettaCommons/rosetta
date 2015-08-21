@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/PcsDataCenterManagerSingleton.cc
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/PcsDataCenterManagerSingleton.cc
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 // Unit headers
 #include <protocols/scoring/methods/pcs2/PcsDataCenterManagerSingleton.hh>
@@ -47,10 +47,10 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs2{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs2 {
 
 static thread_local basic::Tracer TR_PcsDataCenterManagerSingleton( "protocols.scoring.methods.pcs.PcsDataCenterManagerSingleton" );
 
@@ -61,10 +61,10 @@ PcsDataCenterManagerSingleton::PcsDataCenterManagerSingleton(PcsEnergyParameterM
 
 	n_multi_data = pcs_e_p_m.get_n_multi_data();
 
-	//	using namespace basic::options;
-	//	using namespace basic::options::OptionKeys;
+	// using namespace basic::options;
+	// using namespace basic::options::OptionKeys;
 
-	for(i_multi_data = 1; i_multi_data <= n_multi_data; ++i_multi_data ){
+	for ( i_multi_data = 1; i_multi_data <= n_multi_data; ++i_multi_data ) {
 
 		utility::vector1<std::string> vec_filename;
 		utility::vector1<core::Real> vec_weight;
@@ -75,7 +75,7 @@ PcsDataCenterManagerSingleton::PcsDataCenterManagerSingleton(PcsEnergyParameterM
 		core::Size end(pcs_e_p_m.get_PcsEnergyParameter_for(i_multi_data).get_include_only_end());
 		core::Real individual_scale(pcs_e_p_m.get_PcsEnergyParameter_for(i_multi_data).get_individual_scale());
 
-		if(vec_filename.size() == 0){
+		if ( vec_filename.size() == 0 ) {
 			utility_exit_with_message("Missing input file for PCS. Review your setup file");
 		}
 		PcsInputCenter pcs_i_c = PcsInputCenterManager::get_instance()->get_PcsInputCenter_for(vec_filename, vec_weight);
@@ -95,7 +95,7 @@ operator<<(std::ostream& out, const PcsDataCenterManagerSingleton & m){
 	core::Size i;
 
 	out << "n paramagnetic center: " << m.get_n_multi_data() << std::endl;
-	for (i = 1 ; i <= m.get_n_multi_data(); ++i){
+	for ( i = 1 ; i <= m.get_n_multi_data(); ++i ) {
 		out << m.PCS_data_all_[i] << std::endl;
 	}
 	return out;

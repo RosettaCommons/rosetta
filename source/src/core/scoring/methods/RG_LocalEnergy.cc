@@ -62,24 +62,27 @@ RG_LocalEnergyCreator::score_types_for_method() const {
 /// was going to have this read in the blueprint. But core can't relly on something in protocols.
 //RG_LocalEnergy::RG_LocalEnergy():RG_Energy_Fast()
 RG_LocalEnergy::RG_LocalEnergy():
-		RG_Energy_Fast( EnergyMethodCreatorOP( new RG_LocalEnergyCreator ) ) 
+	RG_Energy_Fast( EnergyMethodCreatorOP( new RG_LocalEnergyCreator ) )
 {
-using namespace basic::options;
-using namespace basic::options::OptionKeys;
-firstRes_= 0;
-lastRes_=0;
-utility::vector1<core::Size> res;
-if(!option[OptionKeys::score::rg_local_span].user())
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	firstRes_= 0;
+	lastRes_=0;
+	utility::vector1<core::Size> res;
+	if ( !option[OptionKeys::score::rg_local_span].user() ) {
 		utility_exit_with_message("must set rg_local_res <first_res> <last_res> when using rg_local");
-res = option[OptionKeys::score::rg_local_span]();
-if(res.size() != 2)
-		utility_exit_with_message("wrong format for rg_local_res. Please use <first_res> <last_res> when using rg_local");	
-firstRes_ = res[1];
-lastRes_ = res[2];
-if(firstRes_ == lastRes_)
-		utility_exit_with_message("<first_res> should not equal <last_res> when using rg_local");	
-assert(firstRes_ > 0);
-assert(lastRes_ > 0);
+	}
+	res = option[OptionKeys::score::rg_local_span]();
+	if ( res.size() != 2 ) {
+		utility_exit_with_message("wrong format for rg_local_res. Please use <first_res> <last_res> when using rg_local");
+	}
+	firstRes_ = res[1];
+	lastRes_ = res[2];
+	if ( firstRes_ == lastRes_ ) {
+		utility_exit_with_message("<first_res> should not equal <last_res> when using rg_local");
+	}
+	assert(firstRes_ > 0);
+	assert(lastRes_ > 0);
 }
 
 
@@ -110,13 +113,14 @@ void RG_LocalEnergy::finalize_total_energy(
 
 core::Real
 RG_LocalEnergy::calculate_rg_score( core::pose::Pose const & pose ) const
-{	
+{
 	utility::vector1< bool > relevant_residues;
-	for (uint ii = 1; ii <= pose.total_residue(); ++ii){
-		if ((ii >= firstRes_) && (ii <= lastRes_))
+	for ( uint ii = 1; ii <= pose.total_residue(); ++ii ) {
+		if ( (ii >= firstRes_) && (ii <= lastRes_) ) {
 			relevant_residues.push_back(false);
-		else
+		} else {
 			relevant_residues.push_back(true);
+		}
 	}
 	return(RG_Energy_Fast::calculate_rg_score(pose,relevant_residues));
 }
@@ -127,11 +131,12 @@ RG_LocalEnergy::calculate_rg_score(
 	utility::vector1< bool > const & relevant_residues) const
 {
 	utility::vector1< bool > updated_relevant_residues;
-	for (uint ii = 1; ii <= pose.total_residue(); ++ii){
-		if (((ii >= firstRes_) && (ii <= lastRes_)) || (relevant_residues [ii] == false))
+	for ( uint ii = 1; ii <= pose.total_residue(); ++ii ) {
+		if ( ((ii >= firstRes_) && (ii <= lastRes_)) || (relevant_residues [ii] == false) ) {
 			updated_relevant_residues.push_back(false);
-		else
+		} else {
 			updated_relevant_residues.push_back(true);
+		}
 	}
 	return(RG_Energy_Fast::calculate_rg_score(pose,updated_relevant_residues));
 }
@@ -167,7 +172,7 @@ RG_LocalEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & 
 	mindata.rg = sqrt( mindata.rg / (mindata.nres_scored - 1) );
 }
 
-//not inherited bc data is stored in RG_Local_MinData 
+//not inherited bc data is stored in RG_Local_MinData
 void
 RG_LocalEnergy::eval_atom_derivative(
 	id::AtomID const & id,
@@ -185,8 +190,9 @@ RG_LocalEnergy::eval_atom_derivative(
 	core::conformation::Residue const &rsd_i = pose.residue(resid);
 	numeric::xyzVector<core::Real> X = pose.xyz(id);
 
-	if (atmid != rsd_i.nbr_atom())
+	if ( atmid != rsd_i.nbr_atom() ) {
 		return;
+	}
 
 	numeric::xyzVector<core::Real> drg_dx = (X-mindata.com) / (mindata.rg*(mindata.nres_scored - 1));
 

@@ -37,18 +37,18 @@ namespace scoring {
 namespace disulfides {
 
 DisulfResNeighbIterator::DisulfResNeighbIterator(
-		FullatomDisulfideEnergyContainer * owner,
-		Size focused_residue,
-		Size disulfide_index
-		) :
+	FullatomDisulfideEnergyContainer * owner,
+	Size focused_residue,
+	Size disulfide_index
+) :
 	owner_( owner ),
 	focused_residue_( focused_residue ),
 	disulfide_index_( disulfide_index )
 {}
 
 DisulfResNeighbIterator::DisulfResNeighbIterator(
-		FullatomDisulfideEnergyContainer * owner
-		) :
+	FullatomDisulfideEnergyContainer * owner
+) :
 	owner_( owner ),
 	focused_residue_( FullatomDisulfideEnergyContainer::NO_DISULFIDE ),
 	disulfide_index_( FullatomDisulfideEnergyContainer::NO_DISULFIDE )
@@ -60,7 +60,7 @@ DisulfResNeighbIterator::~DisulfResNeighbIterator()
 ResidueNeighborIterator const &
 DisulfResNeighbIterator::operator = ( ResidueNeighborIterator const & rhs)
 {
-debug_assert( &(dynamic_cast< DisulfResNeighbIterator const & > ( rhs )) );
+	debug_assert( &(dynamic_cast< DisulfResNeighbIterator const & > ( rhs )) );
 	DisulfResNeighbIterator const & drni_rhs = static_cast< DisulfResNeighbIterator const & > ( rhs );
 
 	owner_ = drni_rhs.owner_;
@@ -74,7 +74,7 @@ debug_assert( &(dynamic_cast< DisulfResNeighbIterator const & > ( rhs )) );
 ResidueNeighborIterator const &
 DisulfResNeighbIterator::operator ++ ()
 {
-debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
+	debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
 	focused_residue_ = FullatomDisulfideEnergyContainer::NO_DISULFIDE;
 	disulfide_index_ = FullatomDisulfideEnergyContainer::NO_DISULFIDE;
 	return *this;
@@ -83,36 +83,36 @@ debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE
 bool
 DisulfResNeighbIterator::operator == ( ResidueNeighborIterator const & rhs ) const
 {
-debug_assert( &( dynamic_cast< DisulfResNeighbIterator const & > ( rhs )) );
+	debug_assert( &( dynamic_cast< DisulfResNeighbIterator const & > ( rhs )) );
 	DisulfResNeighbIterator const & drni_rhs = static_cast< DisulfResNeighbIterator const & > ( rhs );
 
 	return ( owner_ == drni_rhs.owner_ &&
-			focused_residue_ == drni_rhs.focused_residue_ &&
-			disulfide_index_ == drni_rhs.disulfide_index_ );
+		focused_residue_ == drni_rhs.focused_residue_ &&
+		disulfide_index_ == drni_rhs.disulfide_index_ );
 }
 
 bool
 DisulfResNeighbIterator::operator != ( ResidueNeighborIterator const & rhs ) const
 {
-debug_assert( &( dynamic_cast< DisulfResNeighbIterator const & > ( rhs )) );
+	debug_assert( &( dynamic_cast< DisulfResNeighbIterator const & > ( rhs )) );
 	DisulfResNeighbIterator const & drni_rhs = static_cast< DisulfResNeighbIterator const & > ( rhs );
 	return ( owner_ != drni_rhs.owner_ ||
-			focused_residue_ != drni_rhs.focused_residue_ ||
-			disulfide_index_ != drni_rhs.disulfide_index_ );
+		focused_residue_ != drni_rhs.focused_residue_ ||
+		disulfide_index_ != drni_rhs.disulfide_index_ );
 }
 
 
 Size
 DisulfResNeighbIterator::upper_neighbor_id() const
 {
-debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
+	debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
 	return owner_->upper_neighbor_id( disulfide_index_ );
 }
 
 Size
 DisulfResNeighbIterator::lower_neighbor_id() const
 {
-debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
+	debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
 	return owner_->lower_neighbor_id( disulfide_index_ );
 }
 
@@ -133,14 +133,14 @@ void
 DisulfResNeighbIterator::save_energy( EnergyMap const & emap )
 {
 	debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
-    owner_->save_energy( disulfide_index_, emap );
+	owner_->save_energy( disulfide_index_, emap );
 }
 
 
 void
 DisulfResNeighbIterator::retrieve_energy( EnergyMap & emap ) const
 {
-debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
+	debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
 	owner_->retrieve_energy( disulfide_index_, emap );
 }
 
@@ -148,19 +148,19 @@ debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE
 void
 DisulfResNeighbIterator::accumulate_energy( EnergyMap & emap ) const
 {
-debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
+	debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
 	owner_->accumulate_energy( disulfide_index_, emap );
 }
 
 void DisulfResNeighbIterator::mark_energy_computed()
 {
-debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
+	debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
 	owner_->mark_energy_computed( disulfide_index_ );
 }
 
 void DisulfResNeighbIterator::mark_energy_uncomputed()
 {
-debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
+	debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
 	owner_->mark_energy_uncomputed( disulfide_index_ );
 }
 
@@ -168,7 +168,7 @@ debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE
 bool
 DisulfResNeighbIterator::energy_computed() const
 {
-debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
+	debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
 	return owner_->energy_computed( disulfide_index_ );
 }
 
@@ -177,18 +177,18 @@ debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE
 ////////////////////////////////////////////////////////////////////////
 
 DisulfResNeighbConstIterator::DisulfResNeighbConstIterator(
-		FullatomDisulfideEnergyContainer const * owner,
-		Size focused_residue,
-		Size disulfide_index
-		) :
+	FullatomDisulfideEnergyContainer const * owner,
+	Size focused_residue,
+	Size disulfide_index
+) :
 	owner_( owner ),
 	focused_residue_( focused_residue ),
 	disulfide_index_( disulfide_index )
 {}
 
 DisulfResNeighbConstIterator::DisulfResNeighbConstIterator(
-		FullatomDisulfideEnergyContainer const * owner
-		) :
+	FullatomDisulfideEnergyContainer const * owner
+) :
 	owner_( owner ),
 	focused_residue_( FullatomDisulfideEnergyContainer::NO_DISULFIDE ),
 	disulfide_index_( FullatomDisulfideEnergyContainer::NO_DISULFIDE )
@@ -200,7 +200,7 @@ DisulfResNeighbConstIterator::~DisulfResNeighbConstIterator()
 ResidueNeighborConstIterator const &
 DisulfResNeighbConstIterator::operator = ( ResidueNeighborConstIterator const & rhs )
 {
-debug_assert( &(dynamic_cast< DisulfResNeighbConstIterator const & > ( rhs )) );
+	debug_assert( &(dynamic_cast< DisulfResNeighbConstIterator const & > ( rhs )) );
 	DisulfResNeighbConstIterator const & drni_rhs = static_cast< DisulfResNeighbConstIterator const & > ( rhs );
 
 	owner_ = drni_rhs.owner_;
@@ -213,7 +213,7 @@ debug_assert( &(dynamic_cast< DisulfResNeighbConstIterator const & > ( rhs )) );
 ResidueNeighborConstIterator const &
 DisulfResNeighbConstIterator::operator ++ ()
 {
-debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
+	debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
 	focused_residue_ = FullatomDisulfideEnergyContainer::NO_DISULFIDE;
 	disulfide_index_ = FullatomDisulfideEnergyContainer::NO_DISULFIDE;
 	return *this;
@@ -223,12 +223,12 @@ debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE
 bool
 DisulfResNeighbConstIterator::operator == ( ResidueNeighborConstIterator const & rhs ) const
 {
-debug_assert( &( dynamic_cast< DisulfResNeighbConstIterator const & > ( rhs )) );
+	debug_assert( &( dynamic_cast< DisulfResNeighbConstIterator const & > ( rhs )) );
 	DisulfResNeighbConstIterator const & drni_rhs = static_cast< DisulfResNeighbConstIterator const & > ( rhs );
 
 	return ( owner_ == drni_rhs.owner_ &&
-			focused_residue_ == drni_rhs.focused_residue_ &&
-			disulfide_index_ == drni_rhs.disulfide_index_ );
+		focused_residue_ == drni_rhs.focused_residue_ &&
+		disulfide_index_ == drni_rhs.disulfide_index_ );
 }
 
 
@@ -236,24 +236,24 @@ debug_assert( &( dynamic_cast< DisulfResNeighbConstIterator const & > ( rhs )) )
 bool
 DisulfResNeighbConstIterator::operator != ( ResidueNeighborConstIterator const & rhs ) const
 {
-debug_assert( &( dynamic_cast< DisulfResNeighbConstIterator const & > ( rhs )) );
+	debug_assert( &( dynamic_cast< DisulfResNeighbConstIterator const & > ( rhs )) );
 	DisulfResNeighbConstIterator const & drni_rhs = static_cast< DisulfResNeighbConstIterator const & > ( rhs );
 	return ( owner_ != drni_rhs.owner_ ||
-			focused_residue_ != drni_rhs.focused_residue_ ||
-			disulfide_index_ != drni_rhs.disulfide_index_ );
+		focused_residue_ != drni_rhs.focused_residue_ ||
+		disulfide_index_ != drni_rhs.disulfide_index_ );
 }
 
 Size
 DisulfResNeighbConstIterator::upper_neighbor_id() const
 {
-debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
+	debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
 	return owner_->upper_neighbor_id( disulfide_index_ );
 }
 
 Size
 DisulfResNeighbConstIterator::lower_neighbor_id() const
 {
-debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
+	debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
 	return owner_->lower_neighbor_id( disulfide_index_ );
 }
 
@@ -276,7 +276,7 @@ DisulfResNeighbConstIterator::neighbor_id() const
 void
 DisulfResNeighbConstIterator::retrieve_energy( EnergyMap & emap ) const
 {
-debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
+	debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
 	owner_->retrieve_energy( disulfide_index_, emap );
 }
 
@@ -286,14 +286,14 @@ debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE
 void
 DisulfResNeighbConstIterator::accumulate_energy( EnergyMap & emap ) const
 {
-debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
+	debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
 	owner_->accumulate_energy( disulfide_index_, emap );
 }
 
 bool
 DisulfResNeighbConstIterator::energy_computed() const
 {
-debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
+	debug_assert( disulfide_index_ != FullatomDisulfideEnergyContainer::NO_DISULFIDE );
 	return owner_->energy_computed( disulfide_index_ );
 }
 
@@ -320,7 +320,7 @@ FullatomDisulfideEnergyContainer::FullatomDisulfideEnergyContainer( pose::Pose c
 	find_disulfides( pose );
 }
 
-	void
+void
 FullatomDisulfideEnergyContainer::update( pose::Pose const & pose )
 {
 	if ( disulfides_changed( pose ) ) find_disulfides( pose );
@@ -374,11 +374,10 @@ FullatomDisulfideEnergyContainer::any_upper_neighbors_for_residue( int resid ) c
 ResidueNeighborConstIteratorOP
 FullatomDisulfideEnergyContainer::const_neighbor_iterator_begin( int resid ) const
 {
-debug_assert( !empty() );
-  if ( resid <= (int) resid_2_disulfide_index_.size() && resid_2_disulfide_index_[ resid ] != NO_DISULFIDE ) {
+	debug_assert( !empty() );
+	if ( resid <= (int) resid_2_disulfide_index_.size() && resid_2_disulfide_index_[ resid ] != NO_DISULFIDE ) {
 		return ResidueNeighborConstIteratorOP( new DisulfResNeighbConstIterator( this, resid, resid_2_disulfide_index_[ resid ]  ) );
-	}
-	else {
+	} else {
 		return ResidueNeighborConstIteratorOP( new DisulfResNeighbConstIterator( this ) );
 	}
 }
@@ -386,7 +385,7 @@ debug_assert( !empty() );
 ResidueNeighborConstIteratorOP
 FullatomDisulfideEnergyContainer::const_neighbor_iterator_end( int ) const
 {
-debug_assert( !empty() );
+	debug_assert( !empty() );
 	return ResidueNeighborConstIteratorOP( new DisulfResNeighbConstIterator( this ) );
 }
 
@@ -396,11 +395,10 @@ FullatomDisulfideEnergyContainer::const_upper_neighbor_iterator_begin( int resid
 	debug_assert( !empty() );
 	// cppcheck flags this but it is fine -- the limits check is happening in the right order!
 	if ( resid <= (int)resid_2_disulfide_index_.size() &&
-			 resid_2_disulfide_index_[ resid ] != NO_DISULFIDE &&
+			resid_2_disulfide_index_[ resid ] != NO_DISULFIDE &&
 			(Size) resid < other_neighbor_id( resid_2_disulfide_index_[ resid ], resid ) ) {
 		return ResidueNeighborConstIteratorOP( new DisulfResNeighbConstIterator( this, resid, resid_2_disulfide_index_[ resid ]  ) );
-	}
-	else {
+	} else {
 		return ResidueNeighborConstIteratorOP( new DisulfResNeighbConstIterator( this ) );
 	}
 }
@@ -408,48 +406,46 @@ FullatomDisulfideEnergyContainer::const_upper_neighbor_iterator_begin( int resid
 ResidueNeighborConstIteratorOP
 FullatomDisulfideEnergyContainer::const_upper_neighbor_iterator_end( int ) const
 {
-debug_assert( !empty() );
+	debug_assert( !empty() );
 	return ResidueNeighborConstIteratorOP( new DisulfResNeighbConstIterator( this ) );
 }
 
-	ResidueNeighborIteratorOP
+ResidueNeighborIteratorOP
 FullatomDisulfideEnergyContainer::neighbor_iterator_begin( int resid )
 {
-debug_assert( !empty() );
+	debug_assert( !empty() );
 	if ( resid_2_disulfide_index_[ resid ] != NO_DISULFIDE ) {
 		return ResidueNeighborIteratorOP( new DisulfResNeighbIterator( this, resid, resid_2_disulfide_index_[ resid ]  ) );
-	}
-	else {
+	} else {
 		return ResidueNeighborIteratorOP( new DisulfResNeighbIterator( this ) );
 	}
 }
 
-	ResidueNeighborIteratorOP
+ResidueNeighborIteratorOP
 FullatomDisulfideEnergyContainer::neighbor_iterator_end( int )
 {
-debug_assert( !empty() );
+	debug_assert( !empty() );
 	return ResidueNeighborIteratorOP( new DisulfResNeighbIterator( this ) );
 }
 
 ResidueNeighborIteratorOP
 FullatomDisulfideEnergyContainer::upper_neighbor_iterator_begin( int resid )
 {
-	
+
 	// cppcheck flags this but it is fine -- the limits check is happening in the right order!
 	if ( resid <= (int)resid_2_disulfide_index_.size() &&
-			 resid_2_disulfide_index_[ resid ] != NO_DISULFIDE &&
+			resid_2_disulfide_index_[ resid ] != NO_DISULFIDE &&
 			(Size) resid < other_neighbor_id( resid_2_disulfide_index_[ resid ], resid ) ) {
 		return ResidueNeighborIteratorOP( new DisulfResNeighbIterator( this, resid, resid_2_disulfide_index_[ resid ]  ) );
-	}
-	else {
+	} else {
 		return ResidueNeighborIteratorOP( new DisulfResNeighbIterator( this ) );
 	}
 }
 
-	ResidueNeighborIteratorOP
+ResidueNeighborIteratorOP
 FullatomDisulfideEnergyContainer::upper_neighbor_iterator_end( int )
 {
-debug_assert( !empty() );
+	debug_assert( !empty() );
 	return ResidueNeighborIteratorOP( new DisulfResNeighbIterator( this ) );
 }
 
@@ -477,10 +473,10 @@ FullatomDisulfideEnergyContainer::other_neighbor_id( Size resid ) const
 
 
 // Mutators
-	void
+void
 FullatomDisulfideEnergyContainer::save_energy( Size disulfide_index, EnergyMap const & emap )
 {
-    disulfide_info_[ disulfide_index ].first.dslf_ss_dst() = emap[ dslf_ss_dst ];
+	disulfide_info_[ disulfide_index ].first.dslf_ss_dst() = emap[ dslf_ss_dst ];
 	disulfide_info_[ disulfide_index ].first.dslf_cs_ang() = emap[ dslf_cs_ang ];
 	disulfide_info_[ disulfide_index ].first.dslf_ss_dih() = emap[ dslf_ss_dih ];
 	disulfide_info_[ disulfide_index ].first.dslf_ca_dih() = emap[ dslf_ca_dih ];
@@ -488,13 +484,13 @@ FullatomDisulfideEnergyContainer::save_energy( Size disulfide_index, EnergyMap c
 	disulfide_info_[ disulfide_index ].first.dslf_fa13()   = emap[ dslf_fa13 ];
 }
 
-	void
+void
 FullatomDisulfideEnergyContainer::mark_energy_computed( Size disulfide_index )
 {
 	disulfide_info_[ disulfide_index ].second = true;
 }
 
-	void
+void
 FullatomDisulfideEnergyContainer::mark_energy_uncomputed( Size disulfide_index )
 {
 	disulfide_info_[ disulfide_index ].second = false;
@@ -513,23 +509,23 @@ Size FullatomDisulfideEnergyContainer::upper_neighbor_id( Size disulfide_index )
 
 Size FullatomDisulfideEnergyContainer::other_neighbor_id( Size disulfide_index, Size resid ) const
 {
-debug_assert( disulfide_partners_[ disulfide_index ].first == resid ||
-			disulfide_partners_[ disulfide_index ].second == resid );
+	debug_assert( disulfide_partners_[ disulfide_index ].first == resid ||
+		disulfide_partners_[ disulfide_index ].second == resid );
 	return ( resid == disulfide_partners_[ disulfide_index ].first ?
-			disulfide_partners_[ disulfide_index ].second :
-			disulfide_partners_[ disulfide_index ].first );
+		disulfide_partners_[ disulfide_index ].second :
+		disulfide_partners_[ disulfide_index ].first );
 }
 
 DisulfideAtomIndices const &
 FullatomDisulfideEnergyContainer::disulfide_atom_indices( Size resid ) const
 {
 	Size const disulfide_index( resid_2_disulfide_index_[ resid ] );
-debug_assert( disulfide_index != NO_DISULFIDE );
-debug_assert( disulfide_partners_[ disulfide_index ].first == resid ||
-			disulfide_partners_[ disulfide_index ].second == resid );
+	debug_assert( disulfide_index != NO_DISULFIDE );
+	debug_assert( disulfide_partners_[ disulfide_index ].first == resid ||
+		disulfide_partners_[ disulfide_index ].second == resid );
 	return ( resid == disulfide_partners_[ disulfide_index ].first ?
-			disulfide_atom_indices_[ disulfide_index ].first :
-			disulfide_atom_indices_[ disulfide_index ].second );
+		disulfide_atom_indices_[ disulfide_index ].first :
+		disulfide_atom_indices_[ disulfide_index ].second );
 }
 
 
@@ -537,12 +533,12 @@ DisulfideAtomIndices const &
 FullatomDisulfideEnergyContainer::other_neighbor_atom_indices( Size resid ) const
 {
 	Size const disulfide_index( resid_2_disulfide_index_[ resid ] );
-debug_assert( disulfide_index != NO_DISULFIDE );
-debug_assert( disulfide_partners_[ disulfide_index ].first == resid ||
-			disulfide_partners_[ disulfide_index ].second == resid );
+	debug_assert( disulfide_index != NO_DISULFIDE );
+	debug_assert( disulfide_partners_[ disulfide_index ].first == resid ||
+		disulfide_partners_[ disulfide_index ].second == resid );
 	return ( resid == disulfide_partners_[ disulfide_index ].first ?
-			disulfide_atom_indices_[ disulfide_index ].second :
-			disulfide_atom_indices_[ disulfide_index ].first );
+		disulfide_atom_indices_[ disulfide_index ].second :
+		disulfide_atom_indices_[ disulfide_index ].first );
 }
 
 
@@ -558,7 +554,7 @@ void FullatomDisulfideEnergyContainer::accumulate_energy( Size disulfide_index, 
 
 void FullatomDisulfideEnergyContainer::retrieve_energy( Size disulfide_index, EnergyMap & emap ) const
 {
-    emap[ dslf_ss_dst ] = disulfide_info_[ disulfide_index ].first.dslf_ss_dst();
+	emap[ dslf_ss_dst ] = disulfide_info_[ disulfide_index ].first.dslf_ss_dst();
 	emap[ dslf_cs_ang ] = disulfide_info_[ disulfide_index ].first.dslf_cs_ang();
 	emap[ dslf_ss_dih ] = disulfide_info_[ disulfide_index ].first.dslf_ss_dih();
 	emap[ dslf_ca_dih ] = disulfide_info_[ disulfide_index ].first.dslf_ca_dih();
@@ -576,7 +572,7 @@ void
 FullatomDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 {
 	Size nres = pose.total_residue(), indep_res = pose.total_residue();
-	if( core::pose::symmetry::is_symmetric(pose) ) {
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		indep_res = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 		nres = core::pose::symmetry::symmetry_info(pose)->num_total_residues_without_pseudo();
 	}
@@ -593,15 +589,15 @@ FullatomDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 	Size count_disulfides( 0 );
 	for ( Size ii = 1; ii <= indep_res; ++ii ) {
 		if ( ( pose.residue( ii ).aa() == chemical::aa_cys || pose.residue( ii ).aa() == chemical::aa_unk ) &&
-               pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) &&
-               resid_2_disulfide_index_[ ii ] == NO_DISULFIDE &&
-             ( pose.residue_type( ii ).has( "SG" ) || pose.residue_type( ii ).has( "SD" ) ) // full atom residue
-           ) {
-            //amw std::cout << "We are identifying a disulfide for scoring purposes at " << ii << std::endl;
+				pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) &&
+				resid_2_disulfide_index_[ ii ] == NO_DISULFIDE &&
+				( pose.residue_type( ii ).has( "SG" ) || pose.residue_type( ii ).has( "SD" ) ) // full atom residue
+				) {
+			//amw std::cout << "We are identifying a disulfide for scoring purposes at " << ii << std::endl;
 			++count_disulfides;
-            Size const ii_connect_atom( pose.residue_type( ii ).has( "SD" ) ?
-                pose.residue( ii ).atom_index( "SD" ) :
-                pose.residue( ii ).atom_index( "SG" ) );
+			Size const ii_connect_atom( pose.residue_type( ii ).has( "SD" ) ?
+				pose.residue( ii ).atom_index( "SD" ) :
+				pose.residue( ii ).atom_index( "SG" ) );
 			Size other_res( 0 );
 			for ( Size jj = pose.residue( ii ).type().n_residue_connections(); jj >= 1; --jj ) {
 				if ( (Size) pose.residue( ii ).type().residue_connection( jj ).atomno() == ii_connect_atom ) {
@@ -613,7 +609,7 @@ FullatomDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 				std::cerr << "ERROR: Could not find disulfide partner for residue " << ii << std::endl;
 				utility_exit();
 			}
-		debug_assert( other_res > ii );
+			debug_assert( other_res > ii );
 
 			resid_2_disulfide_index_[ ii ] = count_disulfides;
 			resid_2_disulfide_index_[ other_res ] = count_disulfides;
@@ -621,9 +617,9 @@ FullatomDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 			disulfide_residue_types_[ other_res ] = pose.residue_type( other_res ).get_self_ptr();
 			disulfide_partners_.push_back( std::pair< Size, Size >( ii, other_res ) );
 			disulfide_atom_indices_.push_back(
-                std::pair< DisulfideAtomIndices, DisulfideAtomIndices > (
-                    DisulfideAtomIndices( pose.residue( ii ) ),
-                    DisulfideAtomIndices( pose.residue( other_res ) ) ));
+				std::pair< DisulfideAtomIndices, DisulfideAtomIndices > (
+				DisulfideAtomIndices( pose.residue( ii ) ),
+				DisulfideAtomIndices( pose.residue( other_res ) ) ));
 			FullatomDisulfideEnergyComponents temp;
 			disulfide_info_.push_back( std::pair< FullatomDisulfideEnergyComponents, bool > ( temp, false ) );
 		}
@@ -633,7 +629,7 @@ FullatomDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 
 // we could do something like keep a flag for when minimization is occurring and assume that
 // disulfide connectivity information does not change during the course of minimization...
-	bool
+bool
 FullatomDisulfideEnergyContainer::disulfides_changed( pose::Pose const & pose )
 {
 	Size nres = pose.total_residue(), indep_res = pose.total_residue();
@@ -647,21 +643,21 @@ FullatomDisulfideEnergyContainer::disulfides_changed( pose::Pose const & pose )
 	for ( Size ii = 1; ii <= total_residue; ++ii ) {
 		if ( resid_2_disulfide_index_[ ii ] != NO_DISULFIDE ) {
 			if ( pose.residue( ii ).aa() != chemical::aa_cys
-              || disulfide_residue_types_[ ii ].get() != & ( pose.residue_type( ii ) )
-              || ! pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) /// subsumed by residue type check amw but reactivating
-              || ! ( pose.residue_type( ii ).has( "SG" ) || pose.residue_type( ii ).has( "SD" ) ) //no longer full atom
-              || ! ( pose.residue( ii ).connect_map(
-                        pose.residue( ii ).type().residue_connection_id_for_atom(
-                            pose.residue( ii ).atom_index(
-                                 pose.residue_type( ii ).has( "SG" ) ? "SG" : "SD" ) ) ).resid()
-                              == other_neighbor_id( resid_2_disulfide_index_[ ii ], ii ) )
-                     ) {
-                return true;
+					|| disulfide_residue_types_[ ii ].get() != & ( pose.residue_type( ii ) )
+					|| ! pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) /// subsumed by residue type check amw but reactivating
+					|| ! ( pose.residue_type( ii ).has( "SG" ) || pose.residue_type( ii ).has( "SD" ) ) //no longer full atom
+					|| ! ( pose.residue( ii ).connect_map(
+					pose.residue( ii ).type().residue_connection_id_for_atom(
+					pose.residue( ii ).atom_index(
+					pose.residue_type( ii ).has( "SG" ) ? "SG" : "SD" ) ) ).resid()
+					== other_neighbor_id( resid_2_disulfide_index_[ ii ], ii ) )
+					) {
+				return true;
 			}
 		} else if ( ( pose.residue( ii ).aa() == chemical::aa_cys
-                   || pose.residue( ii ).aa() == chemical::aa_unk )
-                   && pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) ) {
-            return true;
+				|| pose.residue( ii ).aa() == chemical::aa_unk )
+				&& pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) ) {
+			return true;
 		}
 	}
 	return false;

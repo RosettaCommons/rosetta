@@ -91,20 +91,20 @@ InterGroupInterfaceByVectorSelector::parse_my_tag(
 	// add selectors from tags if any are present
 	utility::vector0< utility::tag::TagCOP > const & subtags = tag->getTags();
 
-	if( subtags.size() == 2 ) {
+	if ( subtags.size() == 2 ) {
 		ResidueSelectorCOP rs1 = ResidueSelectorFactory::get_instance()->new_residue_selector(
-					subtags[0]->getName(),
-					subtags[0],
-					datamap
-				);
+			subtags[0]->getName(),
+			subtags[0],
+			datamap
+		);
 		ResidueSelectorCOP rs2 = ResidueSelectorFactory::get_instance()->new_residue_selector(
-					subtags[1]->getName(),
-					subtags[1],
-					datamap
-				);
-		 group1_selector( rs1 );
-		 group2_selector( rs2 );
-	} else if( subtags.size() == 0 ) { // all needs to be parsed from options
+			subtags[1]->getName(),
+			subtags[1],
+			datamap
+		);
+		group1_selector( rs1 );
+		group2_selector( rs2 );
+	} else if ( subtags.size() == 0 ) { // all needs to be parsed from options
 		std::string grp1_selector_name, grp2_selector_name;
 		std::string grp1resstring, grp2resstring;
 		if ( tag->hasOption( "grp1_selector" ) ) {
@@ -116,7 +116,7 @@ InterGroupInterfaceByVectorSelector::parse_my_tag(
 			throw utility::excn::EXCN_Msg_Exception( error_message );
 		}
 
-		if ( tag->hasOption( "grp2_selector" )) {
+		if ( tag->hasOption( "grp2_selector" ) ) {
 			grp2_selector_name = tag->getOption< std::string >( "grp2_selector" );
 		} else if ( tag->hasOption( "grp2_residues" ) ) {
 			grp2resstring = tag->getOption< std::string >( "grp2_residues" );

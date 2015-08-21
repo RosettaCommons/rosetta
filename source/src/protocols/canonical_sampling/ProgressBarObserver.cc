@@ -48,11 +48,11 @@ string ProgressBarObserverCreator::mover_name() { // {{{1
 // }}}1
 
 ProgressBarObserver::ProgressBarObserver() // {{{1
-		: ThermodynamicObserver(), progress_(0) {}
+: ThermodynamicObserver(), progress_(0) {}
 
 ProgressBarObserver::ProgressBarObserver( // {{{1
-		ProgressBarObserver const & other)
-		: ThermodynamicObserver(other), progress_(other.progress_) {}
+	ProgressBarObserver const & other)
+: ThermodynamicObserver(other), progress_(other.progress_) {}
 
 ProgressBarObserver::~ProgressBarObserver() {} // {{{1
 
@@ -61,10 +61,10 @@ MoverOP ProgressBarObserver::clone() const { // {{{1
 }
 
 void ProgressBarObserver::observe_after_metropolis( // {{{1
-		MetropolisHastingsMover const & mover) {
+	MetropolisHastingsMover const & mover) {
 
 	cout << "\r[" << ++progress_ << "/" << mover.ntrials() << "]" << flush;
-	if (progress_ == mover.ntrials()) cout << endl;
+	if ( progress_ == mover.ntrials() ) cout << endl;
 }
 // }}}1
 

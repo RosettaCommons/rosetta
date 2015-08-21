@@ -22,22 +22,22 @@
 namespace protocols {
 namespace farna {
 
-	RNA_Fragments::RNA_Fragments(){}
-	RNA_Fragments::~RNA_Fragments(){}
+RNA_Fragments::RNA_Fragments(){}
+RNA_Fragments::~RNA_Fragments(){}
 
-	// empty shell.
-	void
-	RNA_Fragments::apply_random_fragment(
-												core::pose::Pose & /*pose*/,
-												core::Size const /*position*/,
-												core::Size const /*size*/,
-												core::Size const /*type = MATCH_YR*/,
-											toolbox::AllowInsertOP  /*allow_insert*/ ){
-		std::cout << "Should not be in here! " << std::endl;
-	}
+// empty shell.
+void
+RNA_Fragments::apply_random_fragment(
+	core::pose::Pose & /*pose*/,
+	core::Size const /*position*/,
+	core::Size const /*size*/,
+	core::Size const /*type = MATCH_YR*/,
+	toolbox::AllowInsertOP  /*allow_insert*/ ){
+	std::cout << "Should not be in here! " << std::endl;
+}
 
-	bool
-	RNA_Fragments::is_fullatom(){ return false; }
+bool
+RNA_Fragments::is_fullatom(){ return false; }
 
 } //farna
 } //protocols

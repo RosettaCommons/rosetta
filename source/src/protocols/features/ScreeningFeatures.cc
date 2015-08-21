@@ -50,8 +50,8 @@ ScreeningFeatures::ScreeningFeatures()
 }
 
 ScreeningFeatures::ScreeningFeatures(ScreeningFeatures const & src) : protocols::features::FeaturesReporter(src),
-		chain_(src.chain_),
-		descriptors_(src.descriptors_)
+	chain_(src.chain_),
+	descriptors_(src.descriptors_)
 {
 }
 
@@ -118,24 +118,22 @@ ScreeningFeatures::report_features(
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 	RowDataBaseOP chain_id_data( new RowData<std::string>("chain_id",chain_) );
-	
+
 	std::vector<utility::json_spirit::Pair>  descriptor_json_data(get_desriptor_data());
-	
+
 
 	std::string descriptor_string(utility::json_spirit::write(utility::json_spirit::Value(descriptor_json_data)));
 	RowDataBaseOP descriptor_data_column( new RowData<std::string>("descriptor_data",descriptor_string) );
-	
+
 	jd2::JobDistributor* job_distributor = jd2::JobDistributor::get_instance();
 	jd2::JobCOP current_job = job_distributor->current_job();
 	std::string group_name;
 
 	jd2::Job::StringStringPairs::const_iterator string_string_begin = current_job->output_string_string_pairs_begin();
 	jd2::Job::StringStringPairs::const_iterator string_string_end = current_job->output_string_string_pairs_end();
-	
-	for(jd2::Job::StringStringPairs::const_iterator it = string_string_begin; it != string_string_end;++it)
-	{
-		if(it->first == "input_group_name")
-		{
+
+	for ( jd2::Job::StringStringPairs::const_iterator it = string_string_begin; it != string_string_end; ++it ) {
+		if ( it->first == "input_group_name" ) {
 			group_name = it->second;
 		}
 	}
@@ -144,8 +142,7 @@ ScreeningFeatures::report_features(
 
 	core::Size chain_id = core::pose::get_chain_id_from_chain(chain_,pose);
 
-	for(core::Size resnum= pose.conformation().chain_begin(chain_id); resnum <= pose.conformation().chain_end(chain_id); ++resnum)
-	{
+	for ( core::Size resnum= pose.conformation().chain_begin(chain_id); resnum <= pose.conformation().chain_end(chain_id); ++resnum ) {
 		RowDataBaseOP resnum_data( new RowData<core::Size>("residue_number",resnum) );
 		RowDataBaseOP name3_data( new RowData<std::string>("name3",pose.residue_type(resnum).name3()) );
 
@@ -157,7 +154,7 @@ ScreeningFeatures::report_features(
 
 
 }
-	
+
 
 void
 ScreeningFeatures::parse_my_tag(
@@ -168,28 +165,23 @@ ScreeningFeatures::parse_my_tag(
 	core::pose::Pose const & /*pose*/)
 {
 
-	if(!basic::options::option[basic::options::OptionKeys::in::file::screening_job_file].user())
-	{
+	if ( !basic::options::option[basic::options::OptionKeys::in::file::screening_job_file].user() ) {
 		throw utility::excn::EXCN_BadInput("The ScreeningFeatures reporter is only usable with the ScreeningJobInputter. specify input using -in:file:screening_job_inputter");
 	}
 
-	if(!tag->hasOption("chain"))
-	{
+	if ( !tag->hasOption("chain") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("ScreeningFeatures requires the 'chain' tag");
 	}
 
 	chain_ = tag->getOption<std::string>("chain");
 
 	core::Size descriptor_count = 0;
-	BOOST_FOREACH( utility::tag::TagCOP const sub_tag, tag->getTags() )
-	{
-		if(sub_tag->getName() != "descriptor")
-		{
+	BOOST_FOREACH ( utility::tag::TagCOP const sub_tag, tag->getTags() ) {
+		if ( sub_tag->getName() != "descriptor" ) {
 			throw utility::excn::EXCN_RosettaScriptsOption("ScreeningFeatures only supports subtags with the name 'descriptor");
 		}
 
-		if(!sub_tag->hasOption("type"))
-		{
+		if ( !sub_tag->hasOption("type") ) {
 			throw utility::excn::EXCN_RosettaScriptsOption("ScreeningFeatures descriptor subtags require a 'type' option");
 		}
 
@@ -197,8 +189,7 @@ ScreeningFeatures::parse_my_tag(
 		descriptors_.push_back(descriptor_type);
 		descriptor_count++;
 	}
-	if(descriptor_count == 0)
-	{
+	if ( descriptor_count == 0 ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("ScreeningFeatures requires at least one 'descriptor' subtag");
 	}
 
@@ -207,40 +198,36 @@ ScreeningFeatures::parse_my_tag(
 std::vector<utility::json_spirit::Pair>  ScreeningFeatures::get_desriptor_data() const
 {
 	using jd2::Job;
-	
+
 	jd2::JobDistributor* job_distributor = jd2::JobDistributor::get_instance();
 	jd2::JobCOP current_job = job_distributor->current_job();
 
 	Job::StringStringPairs::const_iterator string_string_begin = current_job->output_string_string_pairs_begin();
 	Job::StringStringPairs::const_iterator string_string_end = current_job->output_string_string_pairs_end();
-	
+
 	Job::StringRealPairs::const_iterator string_real_begin = current_job->output_string_real_pairs_begin();
 	Job::StringRealPairs::const_iterator string_real_end = current_job->output_string_real_pairs_end();
-	
+
 	std::vector<utility::json_spirit::Pair>  descriptor_data;
-	
-	for(Job::StringStringPairs::const_iterator it = string_string_begin; it != string_string_end;++it)
-	{
-		if(std::find(descriptors_.begin(),descriptors_.end(),it->first) != descriptors_.end())
-		{
+
+	for ( Job::StringStringPairs::const_iterator it = string_string_begin; it != string_string_end; ++it ) {
+		if ( std::find(descriptors_.begin(),descriptors_.end(),it->first) != descriptors_.end() ) {
 			utility::json_spirit::Pair data_pair(it->first,it->second);
 			descriptor_data.push_back(data_pair);
 		}
 	}
-	
-	for(Job::StringRealPairs::const_iterator it = string_real_begin; it != string_real_end;++it)
-	{
-		if(std::find(descriptors_.begin(),descriptors_.end(),it->first) != descriptors_.end())
-		{
+
+	for ( Job::StringRealPairs::const_iterator it = string_real_begin; it != string_real_end; ++it ) {
+		if ( std::find(descriptors_.begin(),descriptors_.end(),it->first) != descriptors_.end() ) {
 			utility::json_spirit::Pair data_pair(it->first,it->second);
 			descriptor_data.push_back(data_pair);
 		}
 	}
-	
+
 	return descriptor_data;
-	
-	
-	
+
+
+
 }
 
 

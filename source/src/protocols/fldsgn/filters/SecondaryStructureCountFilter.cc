@@ -55,39 +55,44 @@ bool SecondaryStructureCountFilter::apply( core::pose::Pose const & pose ) const
 	bool sheet_filter=false;
 	bool loop_filter=false;
 	bool helix_sheet_filter=false;
-	
+
 	if ( filter_helix_ ) {
-			if  ( num_helix_pose_ >= num_helix_ )
-					helix_filter=true;			
-	} else {
+		if  ( num_helix_pose_ >= num_helix_ ) {
 			helix_filter=true;
+		}
+	} else {
+		helix_filter=true;
 	}
 
-  if ( filter_sheet_ ) {
-      if  ( num_sheet_pose_ >= num_sheet_ )
-          sheet_filter=true;
-  } else {
-      sheet_filter=true;
-  }
+	if ( filter_sheet_ ) {
+		if  ( num_sheet_pose_ >= num_sheet_ ) {
+			sheet_filter=true;
+		}
+	} else {
+		sheet_filter=true;
+	}
 
-  if ( filter_helix_sheet_ ) {
-      if  ( num_helix_pose_ + num_sheet_pose_ >= num_helix_sheet_ )
-          helix_sheet_filter=true;
-  } else {
-      helix_sheet_filter=true;
-  }
+	if ( filter_helix_sheet_ ) {
+		if  ( num_helix_pose_ + num_sheet_pose_ >= num_helix_sheet_ ) {
+			helix_sheet_filter=true;
+		}
+	} else {
+		helix_sheet_filter=true;
+	}
 
-  if ( filter_loop_ ) {
-      if  ( num_loop_pose_ >= num_loop_ )
-          loop_filter=true;
-  } else {
-      loop_filter=true;
-  }
+	if ( filter_loop_ ) {
+		if  ( num_loop_pose_ >= num_loop_ ) {
+			loop_filter=true;
+		}
+	} else {
+		loop_filter=true;
+	}
 
-	if ( helix_filter && sheet_filter && helix_sheet_filter && loop_filter )
-		  return true;
-	else
-			return false;
+	if ( helix_filter && sheet_filter && helix_sheet_filter && loop_filter ) {
+		return true;
+	} else {
+		return false;
+	}
 } // apply_filter
 
 /// @brief parse xml
@@ -115,22 +120,22 @@ SecondaryStructureCountFilter::parse_my_tag(
 	filter_loop_ = tag->getOption<bool>( "filter_loop", 0 );
 	filter_helix_sheet_ = tag->getOption<bool>( "filter_helix_sheet", 1 );
 
-	if (filter_helix_) {
+	if ( filter_helix_ ) {
 		tr << "filter on "<< num_helix_ << " helix with length: "<<min_helix_length_<<"-"<< max_helix_length_ << std::endl;
 		runtime_assert( num_helix_ > 0 );
 	}
 
-  if (filter_sheet_) {
-    tr << "filter on "<< num_sheet_ << " sheet with length: "<<min_sheet_length_<<"-"<< max_sheet_length_ << std::endl;
-    runtime_assert( num_sheet_ > 0 );
-  }
+	if ( filter_sheet_ ) {
+		tr << "filter on "<< num_sheet_ << " sheet with length: "<<min_sheet_length_<<"-"<< max_sheet_length_ << std::endl;
+		runtime_assert( num_sheet_ > 0 );
+	}
 
-  if (filter_loop_) {
-    tr << "filter on "<< num_loop_ << " loop with length: "<<min_loop_length_<<"-"<< max_loop_length_ << std::endl;
-    runtime_assert( num_loop_ > 0 );
-  }
+	if ( filter_loop_ ) {
+		tr << "filter on "<< num_loop_ << " loop with length: "<<min_loop_length_<<"-"<< max_loop_length_ << std::endl;
+		runtime_assert( num_loop_ > 0 );
+	}
 
-  if (filter_helix_sheet_) {
+	if ( filter_helix_sheet_ ) {
 		tr << "filter on Sum of"<< num_helix_sheet_ << " helix with length: "<<min_helix_length_<<"-"<< max_helix_length_ << " AND sheet with length: "<<min_sheet_length_<<"-"<< max_sheet_length_ << std::endl;
 		runtime_assert( num_helix_sheet_ > 0 );
 	}
@@ -149,40 +154,40 @@ core::Size SecondaryStructureCountFilter::compute( core::pose::Pose const & pose
 
 	core::Size tmp_count=0;
 	std::string::const_iterator iter=dssp_ss.begin();
-	while (iter< dssp_ss.end()) {
-		if (*iter=='H') {
-				tmp_count=0;
-				while (*iter=='H' && iter< dssp_ss.end() ) {
-						++tmp_count;
-						++iter;
-				}
+	while ( iter< dssp_ss.end() ) {
+		if ( *iter=='H' ) {
+			tmp_count=0;
+			while ( *iter=='H' && iter< dssp_ss.end() ) {
+				++tmp_count;
+				++iter;
+			}
 
-        if (tmp_count >= min_helix_length_ && tmp_count <= max_helix_length_) {
-						num_helix_pose_+=1;
-				}
-				
-		} else if ( *iter=='E') {
-        tmp_count=0;
-        while (*iter=='E' && iter< dssp_ss.end() ) {
-            ++tmp_count;
-            ++iter;
-        }   
-        
-        if (tmp_count >= min_sheet_length_ && tmp_count <= max_sheet_length_) {
-            num_sheet_pose_+=1;
-        } 
+			if ( tmp_count >= min_helix_length_ && tmp_count <= max_helix_length_ ) {
+				num_helix_pose_+=1;
+			}
+
+		} else if ( *iter=='E' ) {
+			tmp_count=0;
+			while ( *iter=='E' && iter< dssp_ss.end() ) {
+				++tmp_count;
+				++iter;
+			}
+
+			if ( tmp_count >= min_sheet_length_ && tmp_count <= max_sheet_length_ ) {
+				num_sheet_pose_+=1;
+			}
 
 		} else {
-        tmp_count=0;
-        while (*iter=='L' && iter< dssp_ss.end() ) {
-            ++tmp_count;
-            ++iter;
-        }
-
-        if (tmp_count >= min_loop_length_ && tmp_count <= max_loop_length_) {
-            num_loop_pose_+=1;
-        }
+			tmp_count=0;
+			while ( *iter=='L' && iter< dssp_ss.end() ) {
+				++tmp_count;
 				++iter;
+			}
+
+			if ( tmp_count >= min_loop_length_ && tmp_count <= max_loop_length_ ) {
+				num_loop_pose_+=1;
+			}
+			++iter;
 		}
 	}
 

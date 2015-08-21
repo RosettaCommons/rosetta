@@ -59,7 +59,7 @@
 
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 using namespace core::scoring;
@@ -77,16 +77,16 @@ static thread_local basic::Tracer TR( "LoopHashLibrary" );
 
 
 LoopHashLibrary::LoopHashLibrary( const utility::vector1< core::Size > &init_sizes, const core::Size num_partitions,
-		const core::Size assigned_num) :
-		scorefxn_rama_cst( core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction ) ),
-		scorefxn_cen_cst( core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction ) ),
-		options( "dfpmin", 0.2, true , false ),
-		options2( "dfpmin", 0.02, true , false )
+	const core::Size assigned_num) :
+	scorefxn_rama_cst( core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction ) ),
+	scorefxn_cen_cst( core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction ) ),
+	options( "dfpmin", 0.2, true , false ),
+	options2( "dfpmin", 0.02, true , false )
 {
 	// create the score functions needed for the grafting process
 	set_default_score_functions();
 	do_sanity_check_ = true ;
-	for ( core::Size i = 1; i <= init_sizes.size(); ++i) {
+	for ( core::Size i = 1; i <= init_sizes.size(); ++i ) {
 		hash_sizes_.push_back( init_sizes[i] );
 	}
 	setup_hash_maps();
@@ -96,18 +96,18 @@ LoopHashLibrary::LoopHashLibrary( const utility::vector1< core::Size > &init_siz
 	loopdb_range_.first = 0;
 	loopdb_range_.second = 0;
 	db_path_ = basic::options::option[basic::options::OptionKeys::lh::db_path]();
-	assigned_string_ = "";	// This is because I don't know if an initialized string is null or empty
+	assigned_string_ = ""; // This is because I don't know if an initialized string is null or empty
 	// we don't want db names like "part0of20" so we increment assigned_num by one to get "part1of20"
 	if ( num_partitions_ > 1 ) {
 		assigned_string_ =
-				".part" + utility::to_string( assigned_num + 1 ) + "of" + utility::to_string( num_partitions_);
+			".part" + utility::to_string( assigned_num + 1 ) + "of" + utility::to_string( num_partitions_);
 	}
 }
 
 
 void
 LoopHashLibrary::mem_foot_print(){
-	for( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ){
+	for ( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ) {
 		TR << "Hash: " << *it << std::endl;
 		hash_[ *it ].mem_foot_print();
 	}
@@ -118,7 +118,7 @@ LoopHashLibrary::mem_foot_print(){
 void
 LoopHashLibrary::setup_hash_maps()
 {
-	for( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ){
+	for ( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ) {
 		TR.Info << "HASHSIZE: " << *it << std::endl;
 		LoopHashMap newhashmap( *it );
 		hash_[ *it ] = newhashmap;
@@ -128,7 +128,7 @@ LoopHashLibrary::setup_hash_maps()
 LoopHashMap &
 LoopHashLibrary::gethash( core::Size size )
 {
-	if( hash_.count( size ) == 1 ) return hash_[ size ];
+	if ( hash_.count( size ) == 1 ) return hash_[ size ];
 	// and if that's not true something is wrong
 	throw EXCN_Invalid_Hashmap( size );
 
@@ -138,7 +138,7 @@ LoopHashLibrary::gethash( core::Size size )
 
 void
 LoopHashLibrary::sort() {
-	for( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ){
+	for ( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ) {
 		hash_[ *it ].sort();
 	}
 }
@@ -149,9 +149,9 @@ LoopHashLibrary::save_db()
 	long starttime = time(NULL);
 	TR.Info << "Saving bbdb_ (BackboneDatabase) " << assigned_string_ << " with extras" << std::endl;
 	bbdb_.write_db( db_path_ + "backbone" + assigned_string_ + ".db" );
-	for( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ){
-		TR.Info << "Saving loopdb (LoopHashDatabase) " <<	assigned_string_ << " with loop size " << *it << std::endl;
-		hash_[ *it ].write_db(db_path_ + "loopdb." + utility::to_string( *it ) + assigned_string_ +	".db" );
+	for ( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ) {
+		TR.Info << "Saving loopdb (LoopHashDatabase) " << assigned_string_ << " with loop size " << *it << std::endl;
+		hash_[ *it ].write_db(db_path_ + "loopdb." + utility::to_string( *it ) + assigned_string_ + ".db" );
 	}
 	long endtime = time(NULL);
 	TR << "Save LoopHash Library: " << endtime - starttime << " seconds " << std::endl;
@@ -161,14 +161,14 @@ void
 LoopHashLibrary::delete_db()
 {
 	long starttime = time(NULL);
-	TR.Info << "Deleting database files " << assigned_string_	<< std::endl;
+	TR.Info << "Deleting database files " << assigned_string_ << std::endl;
 	std::string dbstring = db_path_ + "backbone" + assigned_string_ + ".db";
 	if ( remove( dbstring.c_str() ) != 0 ) throw EXCN_DB_IO_Failed( dbstring , "delete" );
 	TR.Info << "bbdb deletion successful" << std::endl;
-	for( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ){
-		std::string dbstring = db_path_ + "loopdb." + utility::to_string( *it ) + assigned_string_ +	".db" ;
-		if( remove( dbstring.c_str() ) != 0 ) throw EXCN_DB_IO_Failed( dbstring, "delete" );
-		TR.Info << "loopdb size " <<	utility::to_string( *it ) << " deletion successful" << std::endl;
+	for ( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ) {
+		std::string dbstring = db_path_ + "loopdb." + utility::to_string( *it ) + assigned_string_ + ".db" ;
+		if ( remove( dbstring.c_str() ) != 0 ) throw EXCN_DB_IO_Failed( dbstring, "delete" );
+		TR.Info << "loopdb size " << utility::to_string( *it ) << " deletion successful" << std::endl;
 	}
 	long endtime = time(NULL);
 	TR << "Deleted LoopHash Library: " << endtime - starttime << " seconds " << std::endl;
@@ -179,9 +179,9 @@ LoopHashLibrary::load_db()
 {
 	long starttime = time(NULL);
 	TR.Info << "Reading bbdb_ (BackboneDatabase) " << assigned_string_ << " with extras" << std::endl;
-	bbdb_.read_db( db_path_ + "backbone" + assigned_string_	+ ".db", extra_ );
-	for( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ){
-		TR.Info << "Reading loopdb (LoopHashDatabase) " <<	assigned_string_ << " with loop size " << *it << std::endl;
+	bbdb_.read_db( db_path_ + "backbone" + assigned_string_ + ".db", extra_ );
+	for ( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ) {
+		TR.Info << "Reading loopdb (LoopHashDatabase) " << assigned_string_ << " with loop size " << *it << std::endl;
 		hash_[ *it ].read_db( db_path_ + "loopdb." + utility::to_string( *it ) + assigned_string_ + ".db" );
 	}
 	long endtime = time(NULL);
@@ -196,15 +196,15 @@ LoopHashLibrary::load_mergeddb()
 	long starttime = time(NULL);
 
 	TR.Info << "Reading merged bbdb_ (BackboneDatabase) " << assigned_string_;
-	if( extra_ ) TR.Info << " with extras";
+	if ( extra_ ) TR.Info << " with extras";
 	TR.Info << std::endl;
 	// Indices of homologs is returned in homolog_map
 	std::map< core::Size, bool > homolog_map;
 	std::string db_filename = db_path_ + "backbone.db";
-	TR.Info << "Reading " <<	db_filename << std::endl;
+	TR.Info << "Reading " << db_filename << std::endl;
 	bbdb_.read_db( db_filename, extra_, num_partitions_, assigned_num_, loopdb_range_, homolog_map );
-	for( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ){
-		TR.Info << "Reading loopdb (LoopHashDatabase) " <<	assigned_string_ << " with loop size " << *it << std::endl;
+	for ( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ) {
+		TR.Info << "Reading loopdb (LoopHashDatabase) " << assigned_string_ << " with loop size " << *it << std::endl;
 		// pass the range to the loophashmap so it knows which loops to read
 		// also pass the map of homologs
 		db_filename = db_path_ + "loopdb." + utility::to_string( *it ) + ".db";
@@ -227,7 +227,7 @@ LoopHashLibrary::merge(
 	// Concat the entire second_bbdb to the master one
 	// Can later add a removal step, where proteins who aren't referenced can be removed
 	core::Size index_offset;
-	if( extra_ != second_lib->get_extra() ) {
+	if ( extra_ != second_lib->get_extra() ) {
 		throw EXCN_bbdb_Merge_Failed( extra_, second_lib->get_extra() );
 	}
 	if ( ! merge_bbdb( second_lib->backbone_database(), index_offset ) ) {
@@ -235,8 +235,8 @@ LoopHashLibrary::merge(
 	}
 
 	TR.Debug << "BBDB concated" << std::endl;
-	core::Size rms_cutoff_counter = 1;	// Because hash_sizes is using an iterator instead of an index
-	for( std::vector< core::Size >::const_iterator jt = hash_sizes_.begin(); jt != hash_sizes_.end(); ++jt ){
+	core::Size rms_cutoff_counter = 1; // Because hash_sizes is using an iterator instead of an index
+	for ( std::vector< core::Size >::const_iterator jt = hash_sizes_.begin(); jt != hash_sizes_.end(); ++jt ) {
 
 		core::Size loop_size = *jt;
 		core::Real rms_cutoff = rms_cutoffs[ rms_cutoff_counter++ ];
@@ -253,7 +253,7 @@ LoopHashLibrary::merge(
 		std::vector < BackboneSegment > bs_vec_;
 		std::vector < LeapIndex > leap_vec_;
 		boost::uint64_t key = 0;
-		for( BackboneIndexMap::iterator it = range.first; it != range.second; ++it ) {
+		for ( BackboneIndexMap::iterator it = range.first; it != range.second; ++it ) {
 			bool same_as_last = false;
 			bool add_this_ = true;
 
@@ -261,15 +261,15 @@ LoopHashLibrary::merge(
 			core::Size bb_index = it->second; //technically it->first == cp.key
 			LeapIndex cp = second_hashmap.get_peptide( bb_index );
 			// if the key is the same as the last checked loop, keep bs_vec
-			if( key == cp.key ) same_as_last = true;
+			if ( key == cp.key ) same_as_last = true;
 			key = cp.key;
 
 			// lookup the seconddb loop bs
 			BackboneSegment bs_;
 			second_lib->backbone_database().get_backbone_segment( cp.index, cp.offset, loop_size , bs_ );
 
-			if( rms_cutoff != 0 ) {
-				if( !same_as_last ) {
+			if ( rms_cutoff != 0 ) {
+				if ( !same_as_last ) {
 					//Grab loops from the main loopdb that correspond to that key
 					std::vector < core::Size > leap_index_equals;
 					//hashmap.lookup_withkey( key, leap_index_equals );
@@ -278,9 +278,9 @@ LoopHashLibrary::merge(
 					bs_vec_.clear();
 					leap_vec_.clear();
 					//Need to generate vector of equal backbone segments of the master lib for the RMS check
-					for( std::vector < core::Size >::const_iterator itx = leap_index_equals.begin();
+					for ( std::vector < core::Size >::const_iterator itx = leap_index_equals.begin();
 							itx != leap_index_equals.end();
-							++itx ){
+							++itx ) {
 						core::Size bb_index_equals = *itx;
 						LeapIndex cp_equals = hashmap.get_peptide( bb_index_equals );
 						BackboneSegment bs_equals;
@@ -291,7 +291,7 @@ LoopHashLibrary::merge(
 					}
 				}
 				// Now do an RMS check against every bs in the master lib bucket
-				for( core::Size j = 0; j < bs_vec_.size(); j++ ) {
+				for ( core::Size j = 0; j < bs_vec_.size(); j++ ) {
 					core::Real BBrms = get_rmsd( bs_vec_[j], bs_ );
 					if ( BBrms < rms_cutoff ) {
 						// If any bs is within rms_cutoff RMS, then we don't add it
@@ -303,13 +303,13 @@ LoopHashLibrary::merge(
 					}
 				}
 			}
-			if( add_this_ ) {
+			if ( add_this_ ) {
 				LeapIndex leap_index;
 				// Since the second bbdb was just concatenated onto the end of the master bbdb
 				// new index is just the size of the master bbdb + the original ba of the loop
-				leap_index.index	 = index_offset + cp.index;
-				leap_index.offset	= cp.offset;
-				leap_index.key		 = key;
+				leap_index.index  = index_offset + cp.index;
+				leap_index.offset = cp.offset;
+				leap_index.key   = key;
 				hashmap.add_leap( leap_index, key );
 				// Might be better to have the slaves do RMS checks when they do their partitions
 				// then the following line won't be needed
@@ -326,7 +326,7 @@ bool LoopHashLibrary::merge_bbdb( const BackboneDB & second_bbdb, core::Size & i
 	index_offset = bbdb_.size();
 	core::Size extra_key_offset = bbdb_.extra_size();
 	BBData tmp;
-	for(core::Size i = 0; i < second_bbdb.size(); i++ ) {
+	for ( core::Size i = 0; i < second_bbdb.size(); i++ ) {
 		second_bbdb.get_protein( i, tmp );
 		if ( extra_ ) {
 			BBExtraData tmp_extra;
@@ -347,7 +347,7 @@ LoopHashLibrary::create_db()
 	using namespace basic::options::OptionKeys;
 
 	// Either obtain structural data from a vall file
-	if ( option[in::file::vall].user() ){
+	if ( option[in::file::vall].user() ) {
 
 		// by default read extra data from Vall
 		extra_ = true;
@@ -359,14 +359,14 @@ LoopHashLibrary::create_db()
 		core::Size endline = vall_nlines;
 
 		//Use an overlap of one to avoid off-by-one errors
-		if (assigned_num_ != 0 ) startline = vall_nlines * assigned_num_ / num_partitions_ - 1;
-		if (assigned_num_ != (num_partitions_ - 1) ) endline = vall_nlines * ( assigned_num_ + 1 ) / num_partitions_ + 1;
+		if ( assigned_num_ != 0 ) startline = vall_nlines * assigned_num_ / num_partitions_ - 1;
+		if ( assigned_num_ != (num_partitions_ - 1) ) endline = vall_nlines * ( assigned_num_ + 1 ) / num_partitions_ + 1;
 
 		// Read Vall
 		chunks->vallChunksFromLibrary(option[in::file::vall]()[1], startline, endline );
 
 		core::Size nchunks = chunks->size();
-		for( core::Size i=1; i <= nchunks; ++i ){
+		for ( core::Size i=1; i <= nchunks; ++i ) {
 			// Now the total number refers to within in partition
 			TR.Info << i << "/" << nchunks << " in " << assigned_string_ << std::endl;
 			VallChunkOP chunk = chunks->at(i);
@@ -384,11 +384,11 @@ LoopHashLibrary::create_db()
 	}
 	core::import_pose::pose_stream::MetaPoseInputStream input = core::import_pose::pose_stream::streams_from_cmd_line();
 	core::Size counter = 0;
-	while( input.has_another_pose() ) {
+	while ( input.has_another_pose() ) {
 		core::pose::Pose pose;
 		input.fill_pose( pose, *rsd_set ); // no other way to increment the inputstream
 		if ( (num_partitions_ > 1) && (counter++ % num_partitions_ != assigned_num_) ) continue;
-		extract_data_from_pose(	pose	);
+		extract_data_from_pose( pose );
 	}
 }
 
@@ -403,16 +403,16 @@ LoopHashLibrary::set_default_score_functions()
 
 
 	scorefxn_cen_cst->set_weight( coordinate_constraint, 0.05 );
-	scorefxn_cen_cst->set_weight( env			, 1.0);
-	scorefxn_cen_cst->set_weight( pair		 , 1.0);
-	scorefxn_cen_cst->set_weight( cbeta		, 1.0);
-	scorefxn_cen_cst->set_weight( vdw			, 1.0);
-	scorefxn_cen_cst->set_weight( rg			 , 3.0);
-	scorefxn_cen_cst->set_weight( cenpack	, 1.0);
-	scorefxn_cen_cst->set_weight( hs_pair	, 1.0);
-	scorefxn_cen_cst->set_weight( ss_pair	, 1.0);
-	scorefxn_cen_cst->set_weight( rsigma	 , 1.0);
-	scorefxn_cen_cst->set_weight( sheet		, 1.0);
+	scorefxn_cen_cst->set_weight( env   , 1.0);
+	scorefxn_cen_cst->set_weight( pair   , 1.0);
+	scorefxn_cen_cst->set_weight( cbeta  , 1.0);
+	scorefxn_cen_cst->set_weight( vdw   , 1.0);
+	scorefxn_cen_cst->set_weight( rg    , 3.0);
+	scorefxn_cen_cst->set_weight( cenpack , 1.0);
+	scorefxn_cen_cst->set_weight( hs_pair , 1.0);
+	scorefxn_cen_cst->set_weight( ss_pair , 1.0);
+	scorefxn_cen_cst->set_weight( rsigma  , 1.0);
+	scorefxn_cen_cst->set_weight( sheet  , 1.0);
 }
 
 
@@ -463,7 +463,7 @@ LoopHashLibrary::apply( core::pose::Pose& pose )
 	///std::string prefix = option[ out::prefix ]();
 	core::Size skim_size = option[ lh::skim_size ]();
 
-	for(int round = 0; round < 100; round ++ ){
+	for ( int round = 0; round < 100; round ++ ) {
 		//core::Size count;
 		static int casecount = 0;
 		core::pose::Pose opose = pose;
@@ -476,14 +476,14 @@ LoopHashLibrary::apply( core::pose::Pose& pose )
 		// Set up contraints
 		ScoreFunctionOP fascorefxn = core::scoring::get_score_function();
 		//protocols::relax::FastRelax *qrelax = new protocols::relax::FastRelax( fascorefxn, 1 );
-		protocols::relax::FastRelaxOP relax( new protocols::relax::FastRelax( fascorefxn,	option[ OptionKeys::relax::sequence_file ]() ) );
+		protocols::relax::FastRelaxOP relax( new protocols::relax::FastRelax( fascorefxn, option[ OptionKeys::relax::sequence_file ]() ) );
 
 		// convert pose to centroid pose:
 		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID);
 		core::pose::set_ss_from_phipsi( pose );
 
 		core::Size starttime2 = time(NULL);
-		get_all( pose, lib_structs, 1, 0, 20,1400.0, 0.5, 4.0	);
+		get_all( pose, lib_structs, 1, 0, 20,1400.0, 0.5, 4.0 );
 		core::Size endtime2 = time(NULL);
 		TR.Info << "FOUND " << lib_structs.size() << " alternative states in time: " << endtime2 - starttime2 << std::endl;
 
@@ -492,7 +492,7 @@ LoopHashLibrary::apply( core::pose::Pose& pose )
 
 		std::vector< core::io::silent::SilentStructOP > select_lib_structs;
 
-		for( core::Size k=0;k< std::min<core::Size>(skim_size, lib_structs.size() ) ;k++){
+		for ( core::Size k=0; k< std::min<core::Size>(skim_size, lib_structs.size() ) ; k++ ) {
 			select_lib_structs.push_back( lib_structs[k] );
 		}
 
@@ -502,13 +502,13 @@ LoopHashLibrary::apply( core::pose::Pose& pose )
 		{ // Save centorids
 			core::io::silent::SilentFileData sfd;
 			std::string silent_file_ = option[ OptionKeys::out::file::silent ]() + ".centroid.out" ;
-			for( core::Size h = 0; h < select_lib_structs.size(); h++){
+			for ( core::Size h = 0; h < select_lib_structs.size(); h++ ) {
 				core::pose::Pose rpose;
 				select_lib_structs[h]->fill_pose( rpose );
 				core::Real rms = scoring::CA_rmsd( native_pose, rpose );
 				select_lib_structs[h]->add_energy( "round", round, 1.0 );
 				select_lib_structs[h]->add_energy( "rms", rms, 1.0 );
-				select_lib_structs[h]->set_decoy_tag( "S_" + ObjexxFCL::string_of( round ) + "_" + ObjexxFCL::string_of(	h )	);
+				select_lib_structs[h]->set_decoy_tag( "S_" + ObjexxFCL::string_of( round ) + "_" + ObjexxFCL::string_of( h ) );
 				sfd.write_silent_struct( *(select_lib_structs[h]) , silent_file_ );
 			}
 
@@ -525,7 +525,7 @@ LoopHashLibrary::apply( core::pose::Pose& pose )
 		TR.Info << "Batchrelax time: " << endtime - starttime << " for " << select_lib_structs.size() << " structures " << std::endl;
 
 
-		for( core::Size h = 0; h < select_lib_structs.size(); h++){
+		for ( core::Size h = 0; h < select_lib_structs.size(); h++ ) {
 			TR.Info << "DOING: " << h << " / " << select_lib_structs.size() << std::endl;
 			core::pose::Pose rpose;
 
@@ -533,9 +533,9 @@ LoopHashLibrary::apply( core::pose::Pose& pose )
 
 			//core::Real score = scoring::CA_rmsd( native_pose, rpose );
 			core::Real score = (*fascorefxn)(rpose);
-			TR.Info << "score: " << h << "	" << score << std::endl;
+			TR.Info << "score: " << h << "\t" << score << std::endl;
 
-			if( score < bestscore ){
+			if ( score < bestscore ) {
 				bestscore = score;
 				bestindex = h;
 				pose = rpose;
@@ -551,15 +551,15 @@ LoopHashLibrary::apply( core::pose::Pose& pose )
 
 		core::io::silent::SilentFileData sfd;
 		std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
-		for( core::Size h = 0; h < select_lib_structs.size(); h++){
+		for ( core::Size h = 0; h < select_lib_structs.size(); h++ ) {
 
-			if( h == bestindex ) {
+			if ( h == bestindex ) {
 				core::pose::Pose rpose;
 				select_lib_structs[h]->fill_pose( rpose );
 				core::Real rms = scoring::CA_rmsd( native_pose, rpose );
 				select_lib_structs[h]->add_energy( "round", round, 1.0 );
 				select_lib_structs[h]->add_energy( "rms", rms, 1.0 );
-				select_lib_structs[h]->set_decoy_tag( "S_" + ObjexxFCL::string_of( round ) + "_" + ObjexxFCL::string_of(	h )	);
+				select_lib_structs[h]->set_decoy_tag( "S_" + ObjexxFCL::string_of( round ) + "_" + ObjexxFCL::string_of( h ) );
 				sfd.write_silent_struct( *(select_lib_structs[h]) , silent_file_ );
 			}
 		}
@@ -571,11 +571,11 @@ LoopHashLibrary::apply( core::pose::Pose& pose )
 
 void
 LoopHashLibrary::apply_random(
-		core::pose::Pose& pose,
-		core::Size &fir,
-		core::Size &fjr,
-		core::Real min_rms,
-		core::Real max_rms
+	core::pose::Pose& pose,
+	core::Size &fir,
+	core::Size &fjr,
+	core::Real min_rms,
+	core::Real max_rms
 )
 {
 	using namespace core;
@@ -599,7 +599,7 @@ LoopHashLibrary::apply_random(
 	fir = 0;
 	fjr = 0;
 
-	while( runcount++ < 1000 ){
+	while ( runcount++ < 1000 ) {
 
 		// pick a random loop length
 		// Note that hash_sizes_ is a std::vector, not a vector1
@@ -617,21 +617,21 @@ LoopHashLibrary::apply_random(
 		pose_bs.read_from_pose( pose, ir, loop_size );
 
 		Real6 t;
-		if(!get_rt_over_leap( original_pose, ir, jr, t )) continue;
+		if ( !get_rt_over_leap( original_pose, ir, jr, t ) ) continue;
 
 		LoopHashMap &hashmap = gethash( loop_size );
 		std::vector < core::Size > leap_index_bucket;
 		hashmap.lookup( t, leap_index_bucket );
 
 		TR.Info << "G: " << runcount << ' ' << ir << "   " << jr << ' ' << leap_index_bucket.size() << "  " << t[1] <<
-				"  " << t[2] << "  " << t[3] << "  " << t[4] << "  " << t[5] << "  " << t[6] << std::endl;
+			"  " << t[2] << "  " << t[3] << "  " << t[4] << "  " << t[5] << "  " << t[6] << std::endl;
 
-		if( leap_index_bucket.size() == 0) continue;
+		if ( leap_index_bucket.size() == 0 ) continue;
 		TR.Info << "B: " << leap_index_bucket.size() << std::endl;
 		std::vector < core::Size > filter_leap_index_bucket;
-		for(	std::vector < core::Size >::const_iterator it = leap_index_bucket.begin();
+		for ( std::vector < core::Size >::const_iterator it = leap_index_bucket.begin();
 				it != leap_index_bucket.end();
-				++it ){
+				++it ) {
 
 			//LeapIndex *cp = (LeapIndex*)(*it);
 			core::Size retrieve_index = (core::Size) (*it);
@@ -642,12 +642,12 @@ LoopHashLibrary::apply_random(
 			bbdb_.get_backbone_segment( cp.index, cp.offset, hashmap.get_loop_size() , new_bs );
 
 			core::Real BBrms = get_rmsd( pose_bs, new_bs );
-			if( ( BBrms > min_rms ) && ( BBrms < max_rms ) ){
+			if ( ( BBrms > min_rms ) && ( BBrms < max_rms ) ) {
 				filter_leap_index_bucket.push_back( *it );
 			}
 		}
 
-		if( filter_leap_index_bucket.size() == 0) continue;
+		if ( filter_leap_index_bucket.size() == 0 ) continue;
 
 		core::Size loop_choice = numeric::random::random_range(0, filter_leap_index_bucket.size() - 1);
 
@@ -668,7 +668,7 @@ LoopHashLibrary::apply_random(
 
 
 		core::Real BBrms = get_rmsd( pose_bs, new_bs );
-		TR.Info << "Applying: " << ir << "	" << jr << "	" << BBrms << nres << loop_size << std::endl;;
+		TR.Info << "Applying: " << ir << "\t" << jr << "\t" << BBrms << nres << loop_size << std::endl;;
 		pose_bs.print();
 
 		new_bs.apply_to_pose( pose, ir );
@@ -679,15 +679,15 @@ LoopHashLibrary::apply_random(
 
 void
 LoopHashLibrary::get_all(
-		core::pose::Pose& start_pose,
-		std::vector< core::io::silent::SilentStructOP > &lib_structs,
-		core::Size start_res,
-		core::Size stop_res,
+	core::pose::Pose& start_pose,
+	std::vector< core::io::silent::SilentStructOP > &lib_structs,
+	core::Size start_res,
+	core::Size stop_res,
 
-		core::Real min_bbrms,
-		core::Real max_bbrms,
-		core::Real min_rms,
-		core::Real max_rms
+	core::Real min_bbrms,
+	core::Real max_bbrms,
+	core::Real min_rms,
+	core::Real max_rms
 )
 {
 	using namespace core;
@@ -706,10 +706,10 @@ LoopHashLibrary::get_all(
 	final_mm.set_bb(true);
 	// setup movemap & minimisation
 
-	//				for ( Size ii=ir; ii<= jr; ++ii ) {
-	//					final_mm.set_bb( ii, true );
-	//					if ( newpose->residue(ii).aa() == chemical::aa_pro ) final_mm.set( TorsionID( phi_torsion, BB, ii ), false );
-	//				}
+	//    for ( Size ii=ir; ii<= jr; ++ii ) {
+	//     final_mm.set_bb( ii, true );
+	//     if ( newpose->residue(ii).aa() == chemical::aa_pro ) final_mm.set( TorsionID( phi_torsion, BB, ii ), false );
+	//    }
 
 	Size nres = start_pose.total_residue();
 	Size ir, jr;
@@ -722,11 +722,11 @@ LoopHashLibrary::get_all(
 	runcount++;
 
 	// figure out start and stop residues
-	if ( stop_res == 0 ) stop_res = nres;	// to do the whole protein just set stop_res to 0
-	start_res = std::min( start_res, (core::Size)2 ); // dont start before 2	- WHY ?
+	if ( stop_res == 0 ) stop_res = nres; // to do the whole protein just set stop_res to 0
+	start_res = std::min( start_res, (core::Size)2 ); // dont start before 2 - WHY ?
 
-	for( ir = 2; ir < nres; ir ++ ){
-		for( core::Size k = 0; k < hash_sizes_.size(); k ++ ){
+	for ( ir = 2; ir < nres; ir ++ ) {
+		for ( core::Size k = 0; k < hash_sizes_.size(); k ++ ) {
 			core::Size loop_size = hash_sizes_[ k ];
 
 			jr = ir + loop_size;
@@ -737,24 +737,24 @@ LoopHashLibrary::get_all(
 			BackboneSegment pose_bs;
 			pose_bs.read_from_pose( start_pose, ir, loop_size );
 			Real6 t;
-			if(!get_rt_over_leap( original_pose, ir, jr, t )) continue;
+			if ( !get_rt_over_leap( original_pose, ir, jr, t ) ) continue;
 
 			// Look up the bin index of that transform in the hash map
 			LoopHashMap &hashmap = gethash( loop_size );
 			std::vector < core::Size > leap_index_bucket;
 			hashmap.lookup( t, leap_index_bucket );
 
-			TR.Info << "G: " << runcount << " " << ir << "	" << jr << " " << leap_index_bucket.size() << "	" << t[1] << "	" << t[2] << "	" << t[3] << "	" << t[4] << "	" << t[5] << "	" << t[6] << std::endl;
+			TR.Info << "G: " << runcount << " " << ir << "\t" << jr << " " << leap_index_bucket.size() << "\t" << t[1] << "\t" << t[2] << "\t" << t[3] << "\t" << t[4] << "\t" << t[5] << "\t" << t[6] << std::endl;
 
 
 			// Now for every hit, get the internal coordinates and make a short list of replacement loops
 			// according to the RMS criteria
 
-			if( leap_index_bucket.size() == 0) continue;
+			if ( leap_index_bucket.size() == 0 ) continue;
 			std::vector < core::Size > filter_leap_index_bucket;
-			for(	std::vector < core::Size >::const_iterator it = leap_index_bucket.begin();
+			for ( std::vector < core::Size >::const_iterator it = leap_index_bucket.begin();
 					it != leap_index_bucket.end();
-					++it ){
+					++it ) {
 
 				// Get the actual strucure index (not just the bin index)
 				core::Size retrieve_index = (core::Size) (*it);
@@ -766,22 +766,22 @@ LoopHashLibrary::get_all(
 
 				// Check the values against against any RMS limitations imposed by the caller
 				core::Real BBrms = get_rmsd( pose_bs, new_bs );
-				if( ( BBrms > min_bbrms ) && ( BBrms < max_bbrms ) ){
+				if ( ( BBrms > min_bbrms ) && ( BBrms < max_bbrms ) ) {
 					filter_leap_index_bucket.push_back( *it );
 				}
 			}
 
 			// If no loops pass the previous filter - abort
-			if( filter_leap_index_bucket.size() == 0) continue;
+			if ( filter_leap_index_bucket.size() == 0 ) continue;
 
 			// Now go through the chosen loops in random order
 			core::Size explore_count = 0;
 			//std::random__shuffle( filter_leap_index_bucket.begin(), filter_leap_index_bucket.end());
 			numeric::random::random_permutation( filter_leap_index_bucket.begin(), filter_leap_index_bucket.end(), numeric::random::rg() );
 
-			for(	std::vector < core::Size >::const_iterator it = filter_leap_index_bucket.begin();
+			for ( std::vector < core::Size >::const_iterator it = filter_leap_index_bucket.begin();
 					it != filter_leap_index_bucket.end();
-					++it ){
+					++it ) {
 
 				explore_count ++;
 
@@ -798,14 +798,14 @@ LoopHashLibrary::get_all(
 				// Distance measures of end point
 
 				/* no longer applicable since leapindex doesnt have transform info
-					 if( TR.Debug.visible() ){
-					 core::Real xyzdist = sqrt(sqr(t[1] - cp.vecx) + sqr(t[2] - cp.vecy) + sqr(t[3] - cp.vecz));
-					 core::Real ang1 = t[4] - cp.rotx; while( ang1 > 180 ) ang1 -= 360.0; while( ang1 < -180.0 ) ang1 += 360.0;
-					 core::Real ang2 = t[5] - cp.roty; while( ang2 > 180 ) ang2 -= 360.0; while( ang2 < -180.0 ) ang2 += 360.0;
-					 core::Real ang3 = t[6] - cp.rotz; while( ang3 > 180 ) ang3 -= 360.0; while( ang3 < -180.0 ) ang3 += 360.0;
-					 core::Real angdist = sqrt(sqr(ang1)+sqr(ang2)+sqr(ang3) );
-					 TR.Info << "	X: " << xyzdist << "	" << angdist << "	" << cp.rotx << "	" << cp.roty << "	" << cp.rotz << std::endl;
-					 }*/
+				if( TR.Debug.visible() ){
+				core::Real xyzdist = sqrt(sqr(t[1] - cp.vecx) + sqr(t[2] - cp.vecy) + sqr(t[3] - cp.vecz));
+				core::Real ang1 = t[4] - cp.rotx; while( ang1 > 180 ) ang1 -= 360.0; while( ang1 < -180.0 ) ang1 += 360.0;
+				core::Real ang2 = t[5] - cp.roty; while( ang2 > 180 ) ang2 -= 360.0; while( ang2 < -180.0 ) ang2 += 360.0;
+				core::Real ang3 = t[6] - cp.rotz; while( ang3 > 180 ) ang3 -= 360.0; while( ang3 < -180.0 ) ang3 += 360.0;
+				core::Real angdist = sqrt(sqr(ang1)+sqr(ang2)+sqr(ang3) );
+				TR.Info << " X: " << xyzdist << " " << angdist << " " << cp.rotx << " " << cp.roty << " " << cp.rotz << std::endl;
+				}*/
 
 				// set newpose
 				protocols::loops::Loops exclude_region;
@@ -841,7 +841,7 @@ LoopHashLibrary::get_all(
 
 				core::Real final_rms = core::scoring::CA_rmsd( newpose, original_pose );
 				TR.Info << "Final RMS: " << final_rms << std::endl;
-				if ( ( final_rms < max_rms ) && ( final_rms > min_rms ) ){
+				if ( ( final_rms < max_rms ) && ( final_rms > min_rms ) ) {
 
 					core::pose::Pose mynewpose( start_pose );
 
@@ -852,7 +852,7 @@ LoopHashLibrary::get_all(
 					lib_structs.push_back( new_struct );
 				}
 
-				//if ( lib_structs.size() > 2	) return;
+				//if ( lib_structs.size() > 2 ) return;
 
 				clock_t endtime = clock();
 
@@ -887,32 +887,32 @@ LoopHashLibrary::extract_data_from_pose( core::pose::Pose& pose, core::Size nres
 	static int runcount=0;
 	runcount++;
 
-	for( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ){
+	for ( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ) {
 		TR.Info << "Setting up hash: Size:  " << *it << std::endl;
 		Size loop_size = *it;
 
 		LoopHashMap &hashmap = gethash( loop_size );
-		if( loop_size + 2 > nres ) continue;
-		for( ir = 2; ir < ( nres - loop_size ); ir ++ ){
+		if ( loop_size + 2 > nres ) continue;
+		for ( ir = 2; ir < ( nres - loop_size ); ir ++ ) {
 
 			jr = ir+loop_size;
 
 			Real6 t;
-			if(!get_rt_over_leap_fast( pose, ir, jr, t )) return;
+			if ( !get_rt_over_leap_fast( pose, ir, jr, t ) ) return;
 			LeapIndex leap_index;
-			leap_index.index	 = index;
+			leap_index.index  = index;
 			leap_index.offset = (ir-1)*3;
 
 
 			TR.Debug << "ADD: "
-				<< runcount	<< " "
-				<< ir	<< " "
-				<< jr	<< " "
-				<< t[1]	<<	 " "
-				<< t[2]	<<	 " "
-				<< t[3]	<<	 " "
-				<< t[4]	<<	 " "
-				<< t[5]	<<	 " "
+				<< runcount << " "
+				<< ir << " "
+				<< jr << " "
+				<< t[1] <<  " "
+				<< t[2] <<  " "
+				<< t[3] <<  " "
+				<< t[4] <<  " "
+				<< t[5] <<  " "
 				<< t[6] << " "
 				<< leap_index.index << " "
 				<< leap_index.offset;
@@ -928,7 +928,7 @@ LoopHashLibrary::extract_data_from_pose( core::pose::Pose& pose, core::Size nres
 	// reset the fold tree
 	FoldTree f;
 	f.add_edge( 1, pose.total_residue() , Edge::PEPTIDE );
-	if( f.reorder(1) == false ){
+	if ( f.reorder(1) == false ) {
 		TR.Error << "ERROR During resetting reordering of fold tree - am ignoring this LOOP ! Cannot continue " << std::endl;
 		return; // continuing leads to a segfault - instead ignore this loop !
 	}
@@ -950,20 +950,20 @@ bool LoopHashLibrary::test_saving_library( core::pose::Pose pose, core::Size ir,
 	jr = ir+loop_size;
 	Real6 t;
 	LeapIndex leap_index;
-	if(!get_rt_over_leap_fast( pose, ir, jr, t )) return false;
-	leap_index.index	 = index;
+	if ( !get_rt_over_leap_fast( pose, ir, jr, t ) ) return false;
+	leap_index.index  = index;
 	leap_index.offset = (ir-1)*3;
 	LoopHashMap &hashmap = gethash( loop_size );
 
 	BackboneSegment pose_bs;
 	pose_bs.read_from_pose( pose, ir, loop_size );
 
-	if( deposit ){
+	if ( deposit ) {
 		bbdb_.add_pose( pose, pose.total_residue(), index, NULL );
 
 		TR << "ADD: "
-			<< ir	<< " " << jr	<< " "
-			<< t[1]	<<	 " " << t[2]	<<	 " " << t[3]	<<	 " " << t[4]	<<	 " " << t[5]	<<	 " " << t[6] << " "
+			<< ir << " " << jr << " "
+			<< t[1] <<  " " << t[2] <<  " " << t[3] <<  " " << t[4] <<  " " << t[5] <<  " " << t[6] << " "
 			<< leap_index.index << " "
 			<< leap_index.offset
 			<< std::endl;
@@ -990,7 +990,7 @@ bool LoopHashLibrary::test_saving_library( core::pose::Pose pose, core::Size ir,
 
 	bool result = new_bs.compare(pose_bs,0.1);
 
-	if(result) TR << "TEST OK " << std::endl; else TR << "TEST FAIL" << std::endl;
+	if ( result ) TR << "TEST OK " << std::endl; else TR << "TEST FAIL" << std::endl;
 	TR << "Done testing!" << std::endl;
 	return result;
 }
@@ -1014,31 +1014,31 @@ void LoopHashLibrary::test_loop_sample( core::pose::Pose& pose, core::Size nres 
 	static int runcount=0;
 	runcount++;
 
-	for( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ){
-		TR.Info << "Setting up hash: Size:	" << *it << std::endl;
+	for ( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ) {
+		TR.Info << "Setting up hash: Size:\t" << *it << std::endl;
 		Size loop_size = *it;
 
 		LoopHashMap &hashmap = gethash( loop_size );
 
-		for( ir = 2; ir < ( nres - loop_size ); ir ++ ){
+		for ( ir = 2; ir < ( nres - loop_size ); ir ++ ) {
 			jr = ir+loop_size;
 
 			Real6 t;
-			if(!get_rt_over_leap( original_pose, ir, jr, t )) continue;
+			if ( !get_rt_over_leap( original_pose, ir, jr, t ) ) continue;
 			LeapIndex leap_index;
 			leap_index.index = index;
 			leap_index.offset = (ir-1)*3;
 
 
 			TR.Info << "ADD: "
-				<< runcount	<< " "
-				<< ir	<< " "
-				<< jr	<< " "
-				<< t[1]	<<	 " "
-				<< t[2]	<<	 " "
-				<< t[3]	<<	 " "
-				<< t[4]	<<	 " "
-				<< t[5]	<<	 " "
+				<< runcount << " "
+				<< ir << " "
+				<< jr << " "
+				<< t[1] <<  " "
+				<< t[2] <<  " "
+				<< t[3] <<  " "
+				<< t[4] <<  " "
+				<< t[5] <<  " "
 				<< t[6] << " "
 				<< leap_index.index << " "
 				<< leap_index.offset;
@@ -1062,7 +1062,7 @@ void LoopHashLibrary::test_loop_sample( core::pose::Pose& pose, core::Size nres 
 			}
 
 
-			if( do_sanity_check_ ){
+			if ( do_sanity_check_ ) {
 				// Now retrieve everything in that bin: - sanity check:
 
 				std::vector < core::Size > leap_index_bucket;
@@ -1072,9 +1072,9 @@ void LoopHashLibrary::test_loop_sample( core::pose::Pose& pose, core::Size nres 
 
 				core::Size sani_count = 0;
 
-				for(	std::vector < core::Size >::const_iterator it = leap_index_bucket.begin();
+				for ( std::vector < core::Size >::const_iterator it = leap_index_bucket.begin();
 						it != leap_index_bucket.end();
-						++it ){
+						++it ) {
 					sani_count++;
 
 					core::Size retrieve_index = (core::Size) (*it);
@@ -1085,16 +1085,16 @@ void LoopHashLibrary::test_loop_sample( core::pose::Pose& pose, core::Size nres 
 					bbdb_.get_backbone_segment( cp.index, cp.offset, hashmap.get_loop_size() , new_bs );
 
 					core::Real BBrms = get_rmsd( pose_bs, new_bs );
-					if( BBrms > 10.0 && leap_index_bucket.size() >= 2 ){
+					if ( BBrms > 10.0 && leap_index_bucket.size() >= 2 ) {
 
 						TR.Info << "RMS: " << BBrms << std::endl;
 						TR.Info << "SANI: "
-							<< runcount	<< " "
-							<< ir	<< " "
-							<< jr	<< " "
-							<< cp.index				 << "	"
-							<< cp.offset				 << "	"
-							<< cp.key				 << "	"
+							<< runcount << " "
+							<< ir << " "
+							<< jr << " "
+							<< cp.index     << "\t"
+							<< cp.offset     << "\t"
+							<< cp.key     << "\t"
 							<< std::endl;
 
 						new_bs.print();
@@ -1108,19 +1108,19 @@ void LoopHashLibrary::test_loop_sample( core::pose::Pose& pose, core::Size nres 
 						TR.Info << "R6CHECKHERE: " << t[1] << " " << t[2] << " " <<t[3] << " " <<t[4] << " " <<t[5] << " " <<t[6] << std::endl;
 
 					}
-					}
 				}
 			}
 		}
+	}
 
-		// reset the fold tree
-		FoldTree f;
-		f.add_edge( 1, pose.total_residue() , Edge::PEPTIDE );
-		if( f.reorder(1) == false ){
-			TR.Error << "ERROR During reordering of fold tree - am ignoring this LOOP ! I am done. " << std::endl;
-			return; // continuing leads to a segfault - instead ignore this loop !
-		}
-		pose.fold_tree( f );
+	// reset the fold tree
+	FoldTree f;
+	f.add_edge( 1, pose.total_residue() , Edge::PEPTIDE );
+	if ( f.reorder(1) == false ) {
+		TR.Error << "ERROR During reordering of fold tree - am ignoring this LOOP ! I am done. " << std::endl;
+		return; // continuing leads to a segfault - instead ignore this loop !
+	}
+	pose.fold_tree( f );
 
 }
 

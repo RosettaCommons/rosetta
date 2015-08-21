@@ -65,40 +65,40 @@ namespace model_quality {
 /////////////////////////////////////////////////////////////////////////////////
 // void
 // maxsub_native(
-// 	FArray3_float const & x,
-// 	int & nali,
-// 	float & rms,
-// 	float & logeval
+//  FArray3_float const & x,
+//  int & nali,
+//  float & rms,
+//  float & logeval
 // )
 // {
-// 	using namespace misc;
-// 	using namespace native;
+//  using namespace misc;
+//  using namespace native;
 //
 // // local
-// 	FArray2D_double xp( 3, total_residue );
-// 	FArray2D_double xe( 3, total_residue );
-// 	double mxrms,mxpsi,mxzscore,mxscore,mxeval;
+//  FArray2D_double xp( 3, total_residue );
+//  FArray2D_double xe( 3, total_residue );
+//  double mxrms,mxpsi,mxzscore,mxscore,mxeval;
 //
-// 	if ( !get_native_exists() || ( files_paths::multi_chain && !design::dna_interface ) ) {
-// 		rms = 0.0;
-// 		logeval = 0.0;
-// 		nali = 0;
-// 		return;
-// 	}
+//  if ( !get_native_exists() || ( files_paths::multi_chain && !design::dna_interface ) ) {
+//   rms = 0.0;
+//   logeval = 0.0;
+//   nali = 0;
+//   return;
+//  }
 //
-// 	int n_points = 0;
-// 	for ( int i = 1; i <= total_residue; ++i ) {
-// 		if ( native_occupancy( 2, i ) <= 0.0 ) continue;
-// 		n_points++;
-// 		for ( int k = 1; k <= 3; ++k ) {
-// 			xe(k,n_points) = native_ca(k,i);
-// 			xp(k,n_points) = x(k,2,i); // calphas
-// 		}
-// 	}
-// 	maxsub(n_points,xe,xp,mxrms,mxpsi,nali,mxzscore,mxeval,mxscore);
+//  int n_points = 0;
+//  for ( int i = 1; i <= total_residue; ++i ) {
+//   if ( native_occupancy( 2, i ) <= 0.0 ) continue;
+//   n_points++;
+//   for ( int k = 1; k <= 3; ++k ) {
+//    xe(k,n_points) = native_ca(k,i);
+//    xp(k,n_points) = x(k,2,i); // calphas
+//   }
+//  }
+//  maxsub(n_points,xe,xp,mxrms,mxpsi,nali,mxzscore,mxeval,mxscore);
 //
-// 	rms = mxrms; // double to float conversion
-// 	logeval = std::log(mxeval);
+//  rms = mxrms; // double to float conversion
+//  logeval = std::log(mxeval);
 //
 // }
 
@@ -174,15 +174,16 @@ maxsub(
 	xp.dimension( 3*nsup );
 
 
-//     --- Vector alignment
+	//     --- Vector alignment
 
 	//int const maxres = { 3000 };
 	//int const maxlen = { 2 * maxres };
 	//int const maxfrag = { 100 };
 	//double const angmax = { 60.0 };
 
-	if( distance_tolerance == -1.0 )
+	if ( distance_tolerance == -1.0 ) {
 		distance_tolerance = ( rmstol * 7.0 ) / 4.0; // first guess, extrapolating from 4 -> 7
+	}
 
 	double distance_increment = distance_tolerance / 7.0; // maintain same number of cycles
 
@@ -197,9 +198,9 @@ maxsub(
 
 	numeric::model_quality::RmsData* rmsdata = RmsData::instance(); // get a pointer to the singleton class
 
-//------------------------------------------------------------------------------
-//     First selects the residues allowed to be superimposed
-//------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------
+	//     First selects the residues allowed to be superimposed
+	//------------------------------------------------------------------------------
 	// need to pass in xp and xe, nsup = total_res
 
 	int nr = nsup;
@@ -209,12 +210,12 @@ maxsub(
 		xe0(i) = xe(i);
 		xp0(i) = xp(i);
 	}
-//------------------------------------------------------------------------------
-//     Now apply Fishers's maxsub algorithm. An heptapeptide is used.
-//     The algorithm is modified in that only pairs of residues with
-//     similar local secondary structures are allowed to be used as
-//     seed residues to superimpose.
-//------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------
+	//     Now apply Fishers's maxsub algorithm. An heptapeptide is used.
+	//     The algorithm is modified in that only pairs of residues with
+	//     similar local secondary structures are allowed to be used as
+	//     seed residues to superimpose.
+	//------------------------------------------------------------------------------
 	int smax = 0;
 	for ( int i = 1; i <= nsup; ++i ) { // should this not be <=3*nsup?
 		//w(i) = 0.0;
@@ -260,16 +261,16 @@ maxsub(
 			}
 			rmsmax = rms;
 		} else if ( (lmax == smax) && (rms < rmsmax) ) {
-				smax = lmax;
-				for ( int n = 1; n <= nsup; ++n ) {
-					if ( logical_w(n) ) {
-						wmax(n) = 1.0;
-					} else {
-						wmax(n) = 0.0;
-					}
-					//wmax(n) = w(n);
+			smax = lmax;
+			for ( int n = 1; n <= nsup; ++n ) {
+				if ( logical_w(n) ) {
+					wmax(n) = 1.0;
+				} else {
+					wmax(n) = 0.0;
 				}
-				rmsmax = rms;
+				//wmax(n) = w(n);
+			}
+			rmsmax = rms;
 		}
 		// next we iterate the following algorithm
 		//  1) using current alignment find all atoms within a threshold t of being superimposed
@@ -280,24 +281,24 @@ maxsub(
 		double t = 0.0;
 		int const last = lmax;
 		double min_d2 = square ( distance_tolerance + 1.0 );
-		//		std::cout << min_d2 << std::endl;
+		//  std::cout << min_d2 << std::endl;
 		while ( t < distance_tolerance ) {  // for ( m = 1; m <= 7; ++m ) {
 			t += distance_increment;
-			//			std::cout << "maxsub: t = "<< t << " distance_tolerance = " << distance_tolerance << "\n";
-			 // increment threshold by one angstrom. (note this is ties to int(min_d))
+			//   std::cout << "maxsub: t = "<< t << " distance_tolerance = " << distance_tolerance << "\n";
+			// increment threshold by one angstrom. (note this is ties to int(min_d))
 			double t2 = t*t; // t squared
 
 
 			// t = float(m);  // *7.0/float(7);  // huh? must be a relic???
 			for ( int n = 1; n <= nsup; ++n ) {
-				if ( !logical_w(n)) { // if ( w(n) == 0.0} ) {
+				if ( !logical_w(n) ) { // if ( w(n) == 0.0} ) {
 					int k = 3*(n-1);
 					double const xpek1 = xp(k+1) - xe(k+1);
 					double const xpek2 = xp(k+2) - xe(k+2);
 					double const xpek3 = xp(k+3) - xe(k+3);
 					double const d2 =
-					 ( xpek1 * xpek1 ) + ( xpek2 * xpek2 ) + ( xpek3 * xpek3 );
-					 // squared distancne
+						( xpek1 * xpek1 ) + ( xpek2 * xpek2 ) + ( xpek3 * xpek3 );
+					// squared distancne
 					if ( d2 <= t2 ) { // is this atom within threshold?
 						rmsdata->add_rms(n,xp0,xe0); // if so, add to list
 						logical_w(n) = true; //w(n) = 1.0  // set membership flag
@@ -314,10 +315,10 @@ maxsub(
 				rmsfitca3(nsup,xp0,xp,xe0,xe,rms);
 			} else {
 				t = std::sqrt( min_d2 ); //advance the threshold
-				//				t = static_cast< int >(std::sqrt(min_d2)); // advance the threshold
+				//    t = static_cast< int >(std::sqrt(min_d2)); // advance the threshold
 
-				//			std::cout << i << " skipping " << t << ' ' <<
-				//	static_cast< int >(min_d2) << ' ' << lmax << ' ' << min_d2 << " new t = " << t<< std::endl;
+				//   std::cout << i << " skipping " << t << ' ' <<
+				// static_cast< int >(min_d2) << ' ' << lmax << ' ' << min_d2 << " new t = " << t<< std::endl;
 
 			}
 
@@ -355,14 +356,14 @@ maxsub(
 		} // while( t< distance_tolerance) -- chu 2009/10 bugfix
 	}
 
-//------------------------------------------------------------------------------
-//     --- Confirm final superimposition.
-//     --- first, compile regions without indels. Report rms
-//------------------------------------------------------------------------------
-//	std::cout << "maxsub: next step " << std::endl;
+	//------------------------------------------------------------------------------
+	//     --- Confirm final superimposition.
+	//     --- first, compile regions without indels. Report rms
+	//------------------------------------------------------------------------------
+	// std::cout << "maxsub: next step " << std::endl;
 	if ( smax > 1 ) {
 		rmsfitca2(nr,xp,xe,wmax,smax,rms);
-		 // side effect sets xpc,zpc etc... via common
+		// side effect sets xpc,zpc etc... via common
 	} else {
 		// if smax is less than 2 then basically we failed to find an alignement
 		//  to make the best of a bad situation we simply revert to aligning all of the residue
@@ -370,19 +371,19 @@ maxsub(
 			wmax(i) = 1.0;
 		}
 		rmsfitca2(nr,xp,xe,wmax,nr,rms);
-		 // side effect sets xpc,zpc etc... via common
+		// side effect sets xpc,zpc etc... via common
 	}
 
-//	std::cout << std::endl << "RMS = " << F( 7, 3, rms ) <<
-//	 " SMAX = " << I( 5, smax ) << std::endl << std::endl;
+	// std::cout << std::endl << "RMS = " << F( 7, 3, rms ) <<
+	//  " SMAX = " << I( 5, smax ) << std::endl << std::endl;
 	psi = ( static_cast< double >( smax ) / nsup ) * 100.0;
 
-//------------------------------------------------------------------------------
-//     --- Transform PSI to Levitt & Gerstein Sstr
-//     --- NEED TO BE REMOVED
-//------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------
+	//     --- Transform PSI to Levitt & Gerstein Sstr
+	//     --- NEED TO BE REMOVED
+	//------------------------------------------------------------------------------
 
-//     compute score without gaps
+	//     compute score without gaps
 
 	score = 0.0;
 	nali  = 0;
@@ -401,33 +402,33 @@ maxsub(
 		}
 	}
 	//chu 2009/10 if no alignment is found, return nali as zero
-	if (smax <=1 ) nali=smax;
-//------------------------------------------------------------------------------
-//     --- All done. Report match statistics
-//------------------------------------------------------------------------------
+	if ( smax <=1 ) nali=smax;
+	//------------------------------------------------------------------------------
+	//     --- All done. Report match statistics
+	//------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-//     --- Report probabilities for random matches.
-//     --- These are preliminary values for the average and standard deviation
-//     --- of PSI as a function of NORM. These values are:
-//     --- m(L) = 759.31 * L**(-0.7545)
-//     --- s(L) = 393.32 * L**(-0.9009)
-//------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------
+	//     --- Report probabilities for random matches.
+	//     --- These are preliminary values for the average and standard deviation
+	//     --- of PSI as a function of NORM. These values are:
+	//     --- m(L) = 759.31 * L**(-0.7545)
+	//     --- s(L) = 393.32 * L**(-0.9009)
+	//------------------------------------------------------------------------------
 
-//     am = 759.31 * std::pow( norm, -0.7545 );
-//     as = 393.32 * std::pow( norm, -0.9009 );
-//     am = 695.41 * std::pow( norm, -0.7278 );
-//     as = 340.00 * std::pow( norm, -0.9045 );
-//     EV fitting, using N > 70
+	//     am = 759.31 * std::pow( norm, -0.7545 );
+	//     as = 393.32 * std::pow( norm, -0.9009 );
+	//     am = 695.41 * std::pow( norm, -0.7278 );
+	//     as = 340.00 * std::pow( norm, -0.9045 );
+	//     EV fitting, using N > 70
 	am = 747.29 * std::pow( static_cast< double >( nr ), -0.7971 );
 	as = 124.99 * std::pow( static_cast< double >( nr ), -0.6882 );
 	zscore = (psi-am)/as;
-//     this is the gaussian approach. Actually, extreme-value is more adequate
+	//     this is the gaussian approach. Actually, extreme-value is more adequate
 	evalue = 0.5 * erfcc(zscore/std::sqrt(2.0));
-//     here it is the EV approach
+	//     here it is the EV approach
 	znew   = 0.730*((1.2825755*zscore)+0.5772);
 	evalue = 1.0-std::exp(-std::exp(-znew));
-//     due to numerical errors, the e-value is cutoff at 2.650E-14
+	//     due to numerical errors, the e-value is cutoff at 2.650E-14
 	if ( evalue < 2.650E-14 ) evalue = 2.650E-14;
 
 }
@@ -462,8 +463,8 @@ erfcc( double x )
 	z = std::abs(x);
 	t = 1.0/(1.0+0.5*z);
 	double erfcc = t*std::exp(-z*z-1.26551223+t*(1.00002368+t*(.37409196+
-	 t*(.09678418+t*(-.18628806+t*(.27886807+t*(-1.13520398+t*(1.48851587+
-	 t*(-.82215223+t*.17087277)))))))));
+		t*(.09678418+t*(-.18628806+t*(.27886807+t*(-1.13520398+t*(1.48851587+
+		t*(-.82215223+t*.17087277)))))))));
 	if ( x < 0.0 ) erfcc = 2.0 - erfcc;
 	return erfcc;
 }
@@ -506,7 +507,7 @@ COMAS(
 	C.dimension( star );
 	WT.dimension( star );
 
-//     local
+	//     local
 	static double const ZERO = { 0.0 };
 
 	double SUMX = ZERO;
@@ -543,8 +544,8 @@ COMAS(
 		i3 += 3;
 	}
 
-//	std::cout << "CENTER OF MASS:" << space( 19 ) <<
-//	 F( 10, 4, XC ) << F( 10, 4, YC ) << F( 10, 4, ZC ) << std::endl;
+	// std::cout << "CENTER OF MASS:" << space( 19 ) <<
+	//  F( 10, 4, XC ) << F( 10, 4, YC ) << F( 10, 4, ZC ) << std::endl;
 } // COMAS
 
 } // namespace model_quality

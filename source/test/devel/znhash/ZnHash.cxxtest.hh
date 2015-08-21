@@ -137,9 +137,9 @@ public:
 			core::id::AtomID iiatid = reporter.constrained_nonligand_atoms()[ ii ];
 			TS_ASSERT( iiatid.rsd() == 1 || iiatid.rsd() == 2 );
 			//std::cout << "Constraint to ligand #" << ii << " Res " <<
-			//	iiatid.rsd() << " atom " <<
-			//	match1.residue( iiatid.rsd() ).atom_name( iiatid.atomno() ) <<
-			//	std::endl;
+			// iiatid.rsd() << " atom " <<
+			// match1.residue( iiatid.rsd() ).atom_name( iiatid.atomno() ) <<
+			// std::endl;
 			core::Real const d2 = match1.xyz(zn_atom_id).distance_squared( match1.xyz( iiatid ) );
 			if ( closest_atoms[ iiatid.rsd() ].second < 0 || d2 < closest_atoms[ iiatid.rsd() ].second ) {
 				closest_atoms[ iiatid.rsd() ].first = iiatid;
@@ -148,8 +148,8 @@ public:
 		}
 		for ( core::Size ii = 1; ii <= 2; ++ii ) {
 			//std::cout << "Closest atom rsd: " << closest_atoms[ii].first.rsd() << " " <<
-			//	match1.residue( closest_atoms[ii].first.rsd() ).atom_name( closest_atoms[ii].first.atomno() ) <<
-			//	" with distance " << std::sqrt( closest_atoms[ii].second ) << std::endl;
+			// match1.residue( closest_atoms[ii].first.rsd() ).atom_name( closest_atoms[ii].first.atomno() ) <<
+			// " with distance " << std::sqrt( closest_atoms[ii].second ) << std::endl;
 		}
 
 
@@ -190,9 +190,9 @@ public:
 			core::Vector iipos = actual_frame * znx_ideal_coords[ ii ];
 			znx_match_coords[ ii ] = iipos;
 			//std::cout << " ZNX coordinates " << znx_restype.atom_name( ii ) << " "
-			//	<< iipos.x() << " "
-			//	<< iipos.y() << " "
-			//	<< iipos.z() << std::endl;
+			// << iipos.x() << " "
+			// << iipos.y() << " "
+			// << iipos.z() << std::endl;
 		}
 
 		/// Now lets consider the transformation to place these coordinates into the frame of the original
@@ -273,17 +273,17 @@ public:
 		znscore.set_reference_pdb( "devel/znhash/1EER_A.pdb" );
 
 		std::ifstream match_cst_pairs( "devel/znhash/match_cst_pairs.txt" );
-		if (! match_cst_pairs.good() ) {
+		if ( ! match_cst_pairs.good() ) {
 			std::cerr << "Error opening devel/znhash/match_cst_pairs.txt" << std::endl;
 			TS_ASSERT( match_cst_pairs.good() );
 			return;
 		}
 		//while ( match_cst_pairs ) {
-		//	std::string fname1, fname2;
-		//	match_cst_pairs >> fname1 >> fname2;
-		//	if ( fname1 == "" || fname2 == "" ) break;
-		//	//std::cout << "reading " << fname1 << " and " << fname2 << std::endl;
-		//	znscore.add_match_from_file( fname1, fname2 );
+		// std::string fname1, fname2;
+		// match_cst_pairs >> fname1 >> fname2;
+		// if ( fname1 == "" || fname2 == "" ) break;
+		// //std::cout << "reading " << fname1 << " and " << fname2 << std::endl;
+		// znscore.add_match_from_file( fname1, fname2 );
 		//}
 		znscore.set_matcher_constraint_file_name( "devel/znhash/ZNX.cst" );
 
@@ -296,7 +296,7 @@ public:
 		znscore.finalize_after_all_matches_added();
 		//clock_t starttime = clock();
 		//for ( Size ii = 1; ii <= 10000; ++ii ) {
-		//	znscore.score( c4_centroid_pose );
+		// znscore.score( c4_centroid_pose );
 		//}
 		//clock_t stoptime = clock();
 		//std::cout << "timing: " << ((double) stoptime-starttime ) / ( CLOCKS_PER_SEC * 10000 ) << std::endl;

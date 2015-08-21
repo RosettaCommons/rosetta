@@ -146,7 +146,7 @@ void ThisApplication::register_options() {
 	NEW_OPT( ss_content, "write ss_content to file","");
 	NEW_OPT( min_chop_in_quality_check, "just ignore less than 9mers for the final quality check",5 );
 	NEW_OPT( write_big_cluster,"write big cluster fragments to file","");
-	//	NEW_OPT( cluster_check, "write analysis of big cluster frags to this file", "
+	// NEW_OPT( cluster_check, "write analysis of big cluster frags to this file", "
 	NEW_OPT( cluster_size,"complement frags from largest cluster with frags from fill_frags until this number is reached",30);
 	NEW_OPT( fill_frags,"fill with these fragmenTs where no big cluster is found","");
 	NEW_OPT( cluster::out, "file to write cluster definitions to", "" );
@@ -175,7 +175,7 @@ Real compare_cartesian_rmsd( Pose const &orig_frag, Pose const &pred_frag ) {
 		total += scoring::CA_rmsd( orig_frag, pred_frag, i, i+cmp-1);
 	}
 	return total/ncmp;
-	//	return scoring::rmsd_with_super( orig_frag, pred_frag, scoring::is_protein_backbone );
+	// return scoring::rmsd_with_super( orig_frag, pred_frag, scoring::is_protein_backbone );
 }
 
 inline Real sqr ( Real x ) {
@@ -188,8 +188,8 @@ Real compare_torsion_rmsd( Pose const &orig_frag, Pose const &pred_frag ) {
 		for ( Size dof = 1; dof <= 2; ++dof ) { //check phi and psi
 			Real orig = orig_frag.torsion( id::TorsionID( pos, id::BB, dof ) );
 			Real pred = pred_frag.torsion( id::TorsionID( pos, id::BB, dof ) );
-			//	std::cout << orig << ' ' << pred << ' ' << orig-pred << " "
-			//					<< numeric::nearest_angle_degrees(orig-pred,0.0)  << std::endl;
+			// std::cout << orig << ' ' << pred << ' ' << orig-pred << " "
+			//     << numeric::nearest_angle_degrees(orig-pred,0.0)  << std::endl;
 			err += sqr( numeric::nearest_angle_degrees(orig-pred,0.0) );
 		}
 	}
@@ -212,7 +212,7 @@ Real compare_frags_pose( Pose const &native, Pose const &test_pose, Frame const&
 		total += scoring::CA_rmsd( native, test_pose, start, start+cmp-1, excl);
 	}
 	return total/ncmp;
-	//	return scoring::rmsd_with_super( orig_frag, pred_frag, scoring::is_protein_backbone );
+	// return scoring::rmsd_with_super( orig_frag, pred_frag, scoring::is_protein_backbone );
 }
 
 
@@ -244,7 +244,7 @@ bool compute_min_mean_rmsd_frag( FrameList& frames, Pose const& native_pose, Rea
 void check_quality_of_cluster_frags( Pose const& native_pose, FragSetOP decoy_frags, FragSetOP fill_frags, FragSetOP new_frags ) {
 
 	utility::io::ozstream os( std::string( static_cast<std::string>(option[ write_big_cluster]()))+".quality" ); //I had to do a static_cast here to stop gcc 4.4 from complaining about option being an array of pointers
-	//	std::ostream& os( std::cout );
+	// std::ostream& os( std::cout );
 	for ( Size pos = 1; pos <= new_frags->max_pos(); pos++ ) {
 		os << RJ(6,pos) << " ";
 		FrameList frames;
@@ -296,7 +296,7 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 
 	//iterate over frames to read all clusters
 	for ( ConstFrameIterator itframe = predicted_frags->begin(), eitframe=predicted_frags->end();
-				itframe != eitframe; ++itframe ) {
+			itframe != eitframe; ++itframe ) {
 		Frame const& frame ( **itframe );
 
 		if ( frame.nr_frags() == 0 ) continue;
@@ -320,7 +320,7 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 		//compute cluster sum for this position
 		Size sum( 0 );
 		for ( ClusterBase::ClusterIterator it = cluster.begin(), eit =cluster.end();
-					it!=eit; ++it ) {
+				it!=eit; ++it ) {
 			sum += it->size();
 		}
 		clust_sum[ pos ] = sum;
@@ -331,7 +331,7 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 		tr.Info << "pos: " << pos << " min_cluster_size: " << min_cluster_size << " cluster_sum "<< clust_sum_value << std::endl;
 
 		//decide whether to use these fragments
-		if ( sum >= clust_sum_value && cluster.begin()->size() >= min_cluster_size) mm.set_bb( pos, false );
+		if ( sum >= clust_sum_value && cluster.begin()->size() >= min_cluster_size ) mm.set_bb( pos, false );
 	} // read clusters
 
 	//create insert_map -- > fast and painfree access to the fragments we like
@@ -340,13 +340,13 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 	pose::Pose pose; //empty pose --> jump-frags won't be applicable: pose(s) no problem here.
 	fill_frags->generate_insert_map( mm, insert_map, insert_size );
 
-// 	// we need complete numbering:
-// 	InsertMap insert_map( nres, 0 );
-// 	InsertSize insert_size( nres, 0 );
-// 	for ( Size i = 1; i <= _insert_map.size(); i++ ) {
-// 		insert_map[ _insert_map[ pos ] ] = i;
-// 		insert_size[ _insert_map[ pos ] ] = _insert_size[ i ];
-// 	}
+	//  // we need complete numbering:
+	//  InsertMap insert_map( nres, 0 );
+	//  InsertSize insert_size( nres, 0 );
+	//  for ( Size i = 1; i <= _insert_map.size(); i++ ) {
+	//   insert_map[ _insert_map[ pos ] ] = i;
+	//   insert_size[ _insert_map[ pos ] ] = _insert_size[ i ];
+	//  }
 	//DEBUG output
 	Size const total_insert = insert_map.size();
 	tr.Trace << "size of insertmap: " << total_insert << " -- ";
@@ -358,11 +358,11 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 	tr.Trace << std::endl;
 
 	//if insert_size is 9 take all fragments ( decoys and fill_frags )
-	//	in insert_size smaller 9 take fragments that are taken in positions to the right ( clusters ) and add chopped std_frags
-	//	if insert_size 0 take cluster frags
+	// in insert_size smaller 9 take fragments that are taken in positions to the right ( clusters ) and add chopped std_frags
+	// if insert_size 0 take cluster frags
 
 	for ( ConstFrameIterator itframe = predicted_frags->begin(), eitframe=predicted_frags->end();
-				itframe != eitframe; ++itframe ) {
+			itframe != eitframe; ++itframe ) {
 		Size pos = (*itframe)->start();
 		ClusterList cluster = clusters[ pos ];
 
@@ -379,7 +379,7 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 			for ( ClusterBase::IntraClusterIterator fit = it->begin(); fit != it->end(); ++fit ) {
 				if ( *fit > (*itframe)->nr_frags() ) {
 					tr.Warning << "IGNORE: more elements in cluster than in frame... frame:" << (*itframe)->nr_frags()
-										 << " in cluster: " << *fit << std::endl;
+						<< " in cluster: " << *fit << std::endl;
 					tr.Warning << " position: " << pos << std::endl;
 				} else {
 					FragID frag( *itframe, *fit );
@@ -425,7 +425,7 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 					if ( it->size() > min_cluster_size ) {
 						//keep only fragments from cluster
 						for ( ClusterBase::IntraClusterIterator fit = it->begin(), efit = it->end();
-									fit != efit; ++fit ) {
+								fit != efit; ++fit ) {
 							insert_set[ *fit ] = true;
 						}
 					}
@@ -466,7 +466,7 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 		fill_frags->frames( pos, fill_frames );
 		if ( tr.Trace.visible() ) {
 			tr.Trace << " fill_frames have " << fill_frames.size() << " frames with: ";
-			for ( FrameList::iterator it = fill_frames.begin(), eit = fill_frames.end(); it != eit; ++it ) 	tr.Trace << (*it)->nr_frags() << " ";
+			for ( FrameList::iterator it = fill_frames.begin(), eit = fill_frames.end(); it != eit; ++it )  tr.Trace << (*it)->nr_frags() << " ";
 			tr.Trace << "number of fragments" << std::endl;
 		}
 
@@ -535,12 +535,12 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 void compute_intrinsic_deviation( Pose& test_pose, FragSetOP predicted_frags, Pose const& native_pose ) {
 	/* ---            how to read output CLUSTER  ----
 
-		 pos iRMSD(all_frames)  CLUSTER_1 CLUSTER_2 ... CLUSTER_20
+	pos iRMSD(all_frames)  CLUSTER_1 CLUSTER_2 ... CLUSTER_20
 
-		 each CLUSTER_i has 4 numbers
-		 		 nr_elem meanRMSD(to native) minRMSD( to native) intrinsicRMSD(in_cluster)
+	each CLUSTER_i has 4 numbers
+	nr_elem meanRMSD(to native) minRMSD( to native) intrinsicRMSD(in_cluster)
 
- 	 */
+	*/
 	utility::io::ozstream cluster_out;
 	if ( option[ cluster::out ].user() ) {
 		cluster_out.open( option[ cluster::out ]() );
@@ -553,11 +553,11 @@ void compute_intrinsic_deviation( Pose& test_pose, FragSetOP predicted_frags, Po
 	}
 
 	for ( ConstFrameIterator itframe = predicted_frags->begin(), eitframe=predicted_frags->end();
-				itframe != eitframe; ++itframe ) {
+			itframe != eitframe; ++itframe ) {
 		Frame const& frame ( **itframe );
 
 		//testing
-		//		if ( frame.start() != 100 ) continue;
+		//  if ( frame.start() != 100 ) continue;
 
 		if ( frame.nr_frags() == 0 ) continue;
 		if ( option[ cluster::range ].user() ) {
@@ -626,13 +626,13 @@ void compute_intrinsic_deviation( Pose& test_pose, FragSetOP predicted_frags, Po
 			};
 
 			if ( cluster_out.good() ) cluster_out << frame.start() << " " << cluster << std::endl;
-			//		cluster.print_cluster_assignment( tr.Info );
+			//  cluster.print_cluster_assignment( tr.Info );
 			Size const nout( option[ cluster::nmax ] );
 			for ( Size ncl = 1; ncl <= (Size) std::min( (int) nout, (int) cluster.size() ); ncl ++ ) {
 				Real total( 0 );
 				Real min_rms( 1000 );
 				for ( ClusterPhilStyle::IntraClusterIterator it = cluster.cluster( ncl ).begin(), eit = cluster.cluster( ncl ).end();
-							it != eit; ++it ) {
+						it != eit; ++it ) {
 					Size frag_nr = *it;
 					frame.apply( frag_nr, test_pose );
 					utility::vector1< Size > excl;
@@ -688,7 +688,7 @@ FragSetOP filter_frags( FragSet const& frags_in, std::string const& filter_file 
 
 		// find right size
 		FrameList::iterator it = frames.begin(), eit = frames.end();
-		while( it != eit ) {
+		while ( it != eit ) {
 			if ( (*it)->length() == size ) break;
 			++it;
 		}
@@ -711,285 +711,285 @@ FragSetOP filter_frags( FragSet const& frags_in, std::string const& filter_file 
 
 int main( int argc, char** argv ) {
 	try{
-	ThisApplication::register_options();
-	devel::init( argc, argv );
+		ThisApplication::register_options();
+		devel::init( argc, argv );
 
-	//NEW_OPT( cluster::radius, "radius for clustering", 1.0);
-	if ( !basic::options::option[ basic::options::OptionKeys::cluster::radius ].user() ) {
-		basic::options::option[ basic::options::OptionKeys::cluster::radius ].def( 1.0 );
-	}
-
-	if ( option[ out::file::torsions ].user() && option[ in::file::s ].user() ) {
-		utility::io::ozstream out_phi;
-		utility::io::ozstream out_psi;
-		out_phi.open( option[out::file::torsions ]()[1] );
-		out_psi.open( option[out::file::torsions ]()[2] );
-		for ( Size ct=1; ct <= option[ in::file::s ]().size(); ct++ ) {
-			Pose pose;
-			//read it
-			core::import_pose::pose_from_pdb( pose, option[ in::file::s ]()[ ct ] );
-			for ( Size pos=1; pos <= pose.total_residue(); pos++ ) {
-				out_phi << RJ( 6, pos ) <<  RJ(6, ct) << F(10,4, pose.phi( pos ) ) << std::endl;
-				out_psi << RJ( 6, pos ) <<  RJ(6, ct) << F(10,4, pose.psi( pos ) ) << std::endl;
-			}
-		}
-	}
-
-	kinematics::MoveMap move_all;
-
-	std::string const native_pdb ( option[ in::file::native ]() );
-
-	utility::vector1< Size > excl;
-	if ( option[ exclude ].user() ) {
-		utility::io::izstream file( option[ exclude ] );
-		Size pos;
-		while ( file >> pos ) {
-			excl.push_back( pos );
-		}
-	}
-
-	Pose native;
-	//read it
-	core::import_pose::pose_from_pdb( native, native_pdb );
-	core::util::switch_to_residue_type_set( native, chemical::CENTROID );
-
-	Pose test_pose;
-	core::pose::make_pose_from_sequence(
-		test_pose,
-		native.sequence(),
-		*( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID ))
-	);
-
-	bool const bJumps ( option[ jumpss ].user() || option[ fold_tree ].user() );
-
-	if ( !bJumps ) {
-
-		FragSetOP orig_frags;
-		orig_frags = FragmentIO().read_data( option[ f ]() );
-
-		if ( option[ filter ].user() ) {
-			orig_frags = filter_frags( *orig_frags, option[ filter ] );
-			FragmentIO().write_data( option[ OptionKeys::write ](), *orig_frags );
+		//NEW_OPT( cluster::radius, "radius for clustering", 1.0);
+		if ( !basic::options::option[ basic::options::OptionKeys::cluster::radius ].user() ) {
+			basic::options::option[ basic::options::OptionKeys::cluster::radius ].def( 1.0 );
 		}
 
-		if ( option[ ss_content ].user() ) {
-			core::fragment::SecondaryStructure ss_def( *orig_frags, true /*no JustUseCentralResidue */ );
-			utility::io::ozstream out( option[ ss_content ]() );
-			ss_def.write_psipred_ss2( out, native.sequence() ); // << ss_def << std::endl;
-		}
-
-
-		FragSetOP predicted_frags = NULL;
-		if ( ( option[ intrinsic ] && option[ torsion ] ) || option[ chop ].user() ) {
-			ConstantLengthFragSetOP short_frags( new ConstantLengthFragSet( option[ chop ] ) );
-			chop_fragments( *orig_frags, *short_frags );
-			predicted_frags = short_frags;
-			FragmentIO().write_data( "dump_chop.dat", *short_frags);
-		} else {
-			predicted_frags = orig_frags;
-		}
-
-			Size max_pdb( 0 );
-		typedef std::map< std::string, Size > PDB_IDS;
-		PDB_IDS pdb_code;
-
-		if ( option [ intrinsic ] ) {
-			compute_intrinsic_deviation( test_pose, predicted_frags, native );
-		}
-		if ( option [ write_big_cluster ].user() ) {
-
-			FragSetOP fill_frags( FragmentIO( 25 ).read_data( option[ OptionKeys::fill_frags ]() ) );
-			FragSetOP new_frags( new OrderedFragSet );
-
-			write_cluster_frags( predicted_frags, fill_frags, new_frags );
-
-			check_quality_of_cluster_frags( native, predicted_frags, fill_frags, new_frags );
-
-			return 0;
-
-		}
-		utility::io::ozstream out_phi;
-		utility::io::ozstream out_psi;
-		if ( option[ out::file::torsions ].user() ) {
+		if ( option[ out::file::torsions ].user() && option[ in::file::s ].user() ) {
+			utility::io::ozstream out_phi;
+			utility::io::ozstream out_psi;
 			out_phi.open( option[out::file::torsions ]()[1] );
 			out_psi.open( option[out::file::torsions ]()[2] );
-			if ( option[ in::file::native ].user() ) {
-				for ( Size pos=1; pos <= native.total_residue(); pos++ ) {
-					out_phi << RJ( 6, pos ) <<  RJ(6, 0) << F(10,4, native.phi( pos ) ) << std::endl;
-					out_psi << RJ( 6, pos ) <<  RJ(6, 0) << F(10,4, native.psi( pos ) ) << std::endl;
+			for ( Size ct=1; ct <= option[ in::file::s ]().size(); ct++ ) {
+				Pose pose;
+				//read it
+				core::import_pose::pose_from_pdb( pose, option[ in::file::s ]()[ ct ] );
+				for ( Size pos=1; pos <= pose.total_residue(); pos++ ) {
+					out_phi << RJ( 6, pos ) <<  RJ(6, ct) << F(10,4, pose.phi( pos ) ) << std::endl;
+					out_psi << RJ( 6, pos ) <<  RJ(6, ct) << F(10,4, pose.psi( pos ) ) << std::endl;
 				}
 			}
 		}
-		if ( !option [ intrinsic ] ) {
-			utility::io::ozstream out( option[ out::qual ] );
-			for ( ConstFrameIterator frame = predicted_frags->begin(), eframe=predicted_frags->end();
-						frame != eframe; ++frame ) {
-				for ( Size i=1; i<=frame->nr_frags(); i++ ) {
-					Size len = frame->length();
-					//					if ( len < 9 ) continue;
-					std::string const pdb (frame->fragment( i ).pdbid() );
-					Size pdb_id;
-					if ( pdb.size() > 4 ) {
-						if ( !pdb_code[ pdb ] ) pdb_code[ pdb ] = ++max_pdb;
-						pdb_id = pdb_code[ pdb ] ;
-					} else pdb_id = 0;
-					frame->apply( i, test_pose );
-					if ( option[ out::file::torsions ].user() ) {
-						for ( Size pos = frame->start(); pos <= frame->end(); pos ++ ) {
-							out_phi << RJ( 6, pos ) <<  RJ(6,i) << F(10,4, test_pose.phi( pos ) ) << std::endl;
-							out_psi << RJ( 6, pos ) <<  RJ(6,i) << F(10,4, test_pose.psi( pos ) ) << std::endl;
-						}
-					} else {
-						out << RJ(6, len) << RJ(6,frame->start()) << RJ(6,i) << F(10,4,compare_frags_pose( native, test_pose, **frame, excl))
-								<< RJ(6, pdb_id ) << RJ( 6, frame->fragment( i ).pdbpos() )
-								<< std::endl;
+
+		kinematics::MoveMap move_all;
+
+		std::string const native_pdb ( option[ in::file::native ]() );
+
+		utility::vector1< Size > excl;
+		if ( option[ exclude ].user() ) {
+			utility::io::izstream file( option[ exclude ] );
+			Size pos;
+			while ( file >> pos ) {
+				excl.push_back( pos );
+			}
+		}
+
+		Pose native;
+		//read it
+		core::import_pose::pose_from_pdb( native, native_pdb );
+		core::util::switch_to_residue_type_set( native, chemical::CENTROID );
+
+		Pose test_pose;
+		core::pose::make_pose_from_sequence(
+			test_pose,
+			native.sequence(),
+			*( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID ))
+		);
+
+		bool const bJumps ( option[ jumpss ].user() || option[ fold_tree ].user() );
+
+		if ( !bJumps ) {
+
+			FragSetOP orig_frags;
+			orig_frags = FragmentIO().read_data( option[ f ]() );
+
+			if ( option[ filter ].user() ) {
+				orig_frags = filter_frags( *orig_frags, option[ filter ] );
+				FragmentIO().write_data( option[ OptionKeys::write ](), *orig_frags );
+			}
+
+			if ( option[ ss_content ].user() ) {
+				core::fragment::SecondaryStructure ss_def( *orig_frags, true /*no JustUseCentralResidue */ );
+				utility::io::ozstream out( option[ ss_content ]() );
+				ss_def.write_psipred_ss2( out, native.sequence() ); // << ss_def << std::endl;
+			}
+
+
+			FragSetOP predicted_frags = NULL;
+			if ( ( option[ intrinsic ] && option[ torsion ] ) || option[ chop ].user() ) {
+				ConstantLengthFragSetOP short_frags( new ConstantLengthFragSet( option[ chop ] ) );
+				chop_fragments( *orig_frags, *short_frags );
+				predicted_frags = short_frags;
+				FragmentIO().write_data( "dump_chop.dat", *short_frags);
+			} else {
+				predicted_frags = orig_frags;
+			}
+
+			Size max_pdb( 0 );
+			typedef std::map< std::string, Size > PDB_IDS;
+			PDB_IDS pdb_code;
+
+			if ( option [ intrinsic ] ) {
+				compute_intrinsic_deviation( test_pose, predicted_frags, native );
+			}
+			if ( option [ write_big_cluster ].user() ) {
+
+				FragSetOP fill_frags( FragmentIO( 25 ).read_data( option[ OptionKeys::fill_frags ]() ) );
+				FragSetOP new_frags( new OrderedFragSet );
+
+				write_cluster_frags( predicted_frags, fill_frags, new_frags );
+
+				check_quality_of_cluster_frags( native, predicted_frags, fill_frags, new_frags );
+
+				return 0;
+
+			}
+			utility::io::ozstream out_phi;
+			utility::io::ozstream out_psi;
+			if ( option[ out::file::torsions ].user() ) {
+				out_phi.open( option[out::file::torsions ]()[1] );
+				out_psi.open( option[out::file::torsions ]()[2] );
+				if ( option[ in::file::native ].user() ) {
+					for ( Size pos=1; pos <= native.total_residue(); pos++ ) {
+						out_phi << RJ( 6, pos ) <<  RJ(6, 0) << F(10,4, native.phi( pos ) ) << std::endl;
+						out_psi << RJ( 6, pos ) <<  RJ(6, 0) << F(10,4, native.psi( pos ) ) << std::endl;
 					}
 				}
 			}
-		}
-		for ( PDB_IDS::const_iterator it= pdb_code.begin(), eit = pdb_code.end(); it!=eit; ++it ) {
-			std::cout << "MAPPING: " << it->second << " " << it->first << std::endl;
-		}
-
-
-// 	Size max_pdb( 0 );
-// 		typedef std::map< std::string, Size > PDB_IDS;
-// 		PDB_IDS pdb_code;
-// 		for ( FrameIterator frame = predicted_frags->begin(), eframe=predicted_frags->end();
-// 					frame != eframe; ++frame ) {
-// 			Pose orig_frag;
-// 			Pose pred_frag;
-// 			//			frame->fragment_as_pose( 1, orig_frag);
-// 			frame->fragment_as_pose( 1, pred_frag);
-// 			FrameOP native_frame = frame->clone_with_template();
-// 			native_frame->steal( native );
-// 			native_frame->fragment_as_pose( 1, orig_frag );
-
-// 			for ( Size i=1; i<=frame->nr_frags(); i++ ) {
-// 				Size len = frame->fragment( i ).apply( pred_frag, 1, frame->length() );
-// 				if ( len < 9 ) continue;
-// 				std::string const pdb (frame->fragment( i ).pdbid() );
-// 				Size pdb_id;
-// 				if ( pdb.size() > 4 ) {
-// 					if ( !pdb_code[ pdb ] ) pdb_code[ pdb ] = ++max_pdb;
-// 					pdb_id = pdb_code[ pdb ] ;
-// 				} else pdb_id = 0;
-// 				std::cout << RJ(6, len) << RJ(6,frame->start()) << RJ(6,i) << RJ(10,compare_frags( orig_frag, pred_frag))
-// 									<< RJ(6, pdb_id ) << RJ( 6, frame->fragment( i ).pdbpos() )
-// 									<< std::endl;
-// 			}
-// 		}
-// 		for ( PDB_IDS::const_iterator it= pdb_code.begin(), eit = pdb_code.end(); it!=eit; ++it ) {
-// 			std::cout << "MAPPING: " << it->second << " " << it->first << std::endl;
-// 		}
-// //
-
-
-// 		ConstantLengthFragSet native_frags( predicted_frags->max_frag_length() );
-// 		steal_constant_length_frag_set_from_pose( native , native_frags );
-
-// 		Pose orig_frag; //an original fragment
-// 		Pose pred_frag; //a predicted fragment
-
-// 		FrameIterator fr_nat = native_frags.begin();
-
-// 		//initialize poses
-// 		fr_nat->fragment_as_pose( 1, orig_frag);
-// 		fr_nat->fragment_as_pose( 1, pred_frag);
-
-// 		for ( FrameIterator
-// 						efr_nat=native_frags.end(),
-// 						fr_pred=predicted_frags->begin(),
-// 						efr_pred=predicted_frags->end();
-// 					fr_nat!=efr_nat && fr_pred!=efr_pred;
-// 					++fr_pred, ++fr_nat
-// 		) {
-// 			fr_nat->fragment( 1 ).apply( orig_frag, 1, fr_nat->length() );
-// 			for ( Size i=1; i<=fr_pred->nr_frags(); i++ ) {
-// 				Size len = fr_pred->fragment( i ).apply( pred_frag, 1, fr_nat->length() );
-// 				std::cout << RJ(6, len) << RJ(6,fr_pred->start()) << RJ(6,i) << RJ(10,compare_frags( orig_frag, pred_frag)) << std::endl;
-// 			}
-// 		}
-	} else { //bJumps
-		JumpSetup jump_def( native.total_residue() );
-		JumpSample jump_setup;
-		if ( option[ jumpss ].user() ) {
-			jump_def.read_file( option[ jumpss ] );
-			//if ( jump_def.size() != 1 ) { //don't deal with other cases
-			//			utility_exit_with_message("give me a single jump each time you run this: found "+string_of( jump_def.size() ) + " jumps");
-			//		}
-			jump_setup = JumpSample ( jump_def );
-		}	else if ( option[ fold_tree ].user() ) {
-			utility::io::izstream file( option[ fold_tree ]() );
-			core::kinematics::FoldTree f;
-			file >> f;
-			jump_setup = JumpSample( f );
-		}
-
-		jump_setup.set_fold_tree_in_pose( native );
-		assert( native.fold_tree().num_jump() == jump_setup.size() );
-		FrameList jumps;
-		jump_setup.steal_orientation_and_pleating( native );
-		kinematics::MoveMap mm;
-		mm.set_bb( true );
-		jump_setup.generate_jump_frags( *StandardPairingLibrary::get_instance(), mm, false /* bWithTorsion */, jumps );
-		tr.Info << "JUMPS: " << jump_setup << std::endl;
-		int nrj = 1;
-		for ( FrameList::const_iterator it = jumps.begin(), eit = jumps.end(); it!=eit; ++it, ++nrj ) {
-			pose::Pose pose( native );
-			for ( Size i=1; i<=(*it)->nr_frags(); ++i ) { // (*it)->nr_frags(); i++) {
-				(*it )->fragment( i ).apply( pose, **it );
-				kinematics::Edge jump_edge = pose.fold_tree().get_residue_edge( (*it)->end() );
-				tr.Info << "jump: " << jump_edge.label() << " " << (*it)->start() << " " << (*it)->end() << " jump_frag " << RJ(3,i) << " ";
-				check_jump( pose, native, jump_setup, (*it)->end() ); //);
+			if ( !option [ intrinsic ] ) {
+				utility::io::ozstream out( option[ out::qual ] );
+				for ( ConstFrameIterator frame = predicted_frags->begin(), eframe=predicted_frags->end();
+						frame != eframe; ++frame ) {
+					for ( Size i=1; i<=frame->nr_frags(); i++ ) {
+						Size len = frame->length();
+						//     if ( len < 9 ) continue;
+						std::string const pdb (frame->fragment( i ).pdbid() );
+						Size pdb_id;
+						if ( pdb.size() > 4 ) {
+							if ( !pdb_code[ pdb ] ) pdb_code[ pdb ] = ++max_pdb;
+							pdb_id = pdb_code[ pdb ] ;
+						} else pdb_id = 0;
+						frame->apply( i, test_pose );
+						if ( option[ out::file::torsions ].user() ) {
+							for ( Size pos = frame->start(); pos <= frame->end(); pos ++ ) {
+								out_phi << RJ( 6, pos ) <<  RJ(6,i) << F(10,4, test_pose.phi( pos ) ) << std::endl;
+								out_psi << RJ( 6, pos ) <<  RJ(6,i) << F(10,4, test_pose.psi( pos ) ) << std::endl;
+							}
+						} else {
+							out << RJ(6, len) << RJ(6,frame->start()) << RJ(6,i) << F(10,4,compare_frags_pose( native, test_pose, **frame, excl))
+								<< RJ(6, pdb_id ) << RJ( 6, frame->fragment( i ).pdbpos() )
+								<< std::endl;
+						}
+					}
+				}
 			}
+			for ( PDB_IDS::const_iterator it= pdb_code.begin(), eit = pdb_code.end(); it!=eit; ++it ) {
+				std::cout << "MAPPING: " << it->second << " " << it->first << std::endl;
+			}
+
+
+			//  Size max_pdb( 0 );
+			//   typedef std::map< std::string, Size > PDB_IDS;
+			//   PDB_IDS pdb_code;
+			//   for ( FrameIterator frame = predicted_frags->begin(), eframe=predicted_frags->end();
+			//      frame != eframe; ++frame ) {
+			//    Pose orig_frag;
+			//    Pose pred_frag;
+			//    //   frame->fragment_as_pose( 1, orig_frag);
+			//    frame->fragment_as_pose( 1, pred_frag);
+			//    FrameOP native_frame = frame->clone_with_template();
+			//    native_frame->steal( native );
+			//    native_frame->fragment_as_pose( 1, orig_frag );
+
+			//    for ( Size i=1; i<=frame->nr_frags(); i++ ) {
+			//     Size len = frame->fragment( i ).apply( pred_frag, 1, frame->length() );
+			//     if ( len < 9 ) continue;
+			//     std::string const pdb (frame->fragment( i ).pdbid() );
+			//     Size pdb_id;
+			//     if ( pdb.size() > 4 ) {
+			//      if ( !pdb_code[ pdb ] ) pdb_code[ pdb ] = ++max_pdb;
+			//      pdb_id = pdb_code[ pdb ] ;
+			//     } else pdb_id = 0;
+			//     std::cout << RJ(6, len) << RJ(6,frame->start()) << RJ(6,i) << RJ(10,compare_frags( orig_frag, pred_frag))
+			//          << RJ(6, pdb_id ) << RJ( 6, frame->fragment( i ).pdbpos() )
+			//          << std::endl;
+			//    }
+			//   }
+			//   for ( PDB_IDS::const_iterator it= pdb_code.begin(), eit = pdb_code.end(); it!=eit; ++it ) {
+			//    std::cout << "MAPPING: " << it->second << " " << it->first << std::endl;
+			//   }
+			// //
+
+
+			//   ConstantLengthFragSet native_frags( predicted_frags->max_frag_length() );
+			//   steal_constant_length_frag_set_from_pose( native , native_frags );
+
+			//   Pose orig_frag; //an original fragment
+			//   Pose pred_frag; //a predicted fragment
+
+			//   FrameIterator fr_nat = native_frags.begin();
+
+			//   //initialize poses
+			//   fr_nat->fragment_as_pose( 1, orig_frag);
+			//   fr_nat->fragment_as_pose( 1, pred_frag);
+
+			//   for ( FrameIterator
+			//       efr_nat=native_frags.end(),
+			//       fr_pred=predicted_frags->begin(),
+			//       efr_pred=predicted_frags->end();
+			//      fr_nat!=efr_nat && fr_pred!=efr_pred;
+			//      ++fr_pred, ++fr_nat
+			//   ) {
+			//    fr_nat->fragment( 1 ).apply( orig_frag, 1, fr_nat->length() );
+			//    for ( Size i=1; i<=fr_pred->nr_frags(); i++ ) {
+			//     Size len = fr_pred->fragment( i ).apply( pred_frag, 1, fr_nat->length() );
+			//     std::cout << RJ(6, len) << RJ(6,fr_pred->start()) << RJ(6,i) << RJ(10,compare_frags( orig_frag, pred_frag)) << std::endl;
+			//    }
+			//   }
+		} else { //bJumps
+			JumpSetup jump_def( native.total_residue() );
+			JumpSample jump_setup;
+			if ( option[ jumpss ].user() ) {
+				jump_def.read_file( option[ jumpss ] );
+				//if ( jump_def.size() != 1 ) { //don't deal with other cases
+				//   utility_exit_with_message("give me a single jump each time you run this: found "+string_of( jump_def.size() ) + " jumps");
+				//  }
+				jump_setup = JumpSample ( jump_def );
+			} else if ( option[ fold_tree ].user() ) {
+				utility::io::izstream file( option[ fold_tree ]() );
+				core::kinematics::FoldTree f;
+				file >> f;
+				jump_setup = JumpSample( f );
+			}
+
+			jump_setup.set_fold_tree_in_pose( native );
+			assert( native.fold_tree().num_jump() == jump_setup.size() );
+			FrameList jumps;
+			jump_setup.steal_orientation_and_pleating( native );
+			kinematics::MoveMap mm;
+			mm.set_bb( true );
+			jump_setup.generate_jump_frags( *StandardPairingLibrary::get_instance(), mm, false /* bWithTorsion */, jumps );
+			tr.Info << "JUMPS: " << jump_setup << std::endl;
+			int nrj = 1;
+			for ( FrameList::const_iterator it = jumps.begin(), eit = jumps.end(); it!=eit; ++it, ++nrj ) {
+				pose::Pose pose( native );
+				for ( Size i=1; i<=(*it)->nr_frags(); ++i ) { // (*it)->nr_frags(); i++) {
+					(*it )->fragment( i ).apply( pose, **it );
+					kinematics::Edge jump_edge = pose.fold_tree().get_residue_edge( (*it)->end() );
+					tr.Info << "jump: " << jump_edge.label() << " " << (*it)->start() << " " << (*it)->end() << " jump_frag " << RJ(3,i) << " ";
+					check_jump( pose, native, jump_setup, (*it)->end() ); //);
+				}
+			}
+			{
+				// pose::Pose pose( native );
+				//    for ( FrameList::const_iterator it = jumps.begin(), eit = jumps.end(); it!=eit; ++it ) {
+				//     (*it )->fragment( 123 ).apply( pose, **it );
+				//     //    int ii = nr_jumps;
+				//    }
+				//torsion frag setup
+				//   ConstantLengthFragSetOP orig_frags = new ConstantLengthFragSet;
+				//   orig_frags->read_fragment_file( frag_file );
+				//   kinematics::MoveMapOP mm = new kinematics::MoveMap;
+				//   mm ->set_bb( true );
+
+				//   ClassicFragmentMover mover( orig_frags, mm );
+
+				//   for ( Size pos = 1; pos<=15; pos++) {
+				//     mm->set_bb( pos, false );
+				//   }
+
+				//   pose.set_psi( 1, -45 );
+
+				// native = pose;
+				//    for ( Size ii = 1; ii<=jump_setup.size();  ii++ ) {
+				//     tr.Info << "START " <<  " jump: " << ii <<" ";
+				//     check_jump( pose, native, jump_setup, ii ); );
+				//    }
+
+
+				//    for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
+				//         if ( pos == 21 || pos == 20 || pos == 22 ) continue;
+				//     pose.set_phi( 128, -45 );
+				//     pose.set_psi( pos, -45 );
+				//     pose.set_omega( pos, 180 );
+				//    }
+
+
+				//    for ( int cycl = 1; cycl <= 5000; cycl++ ) {
+				//     for ( Size ii = 1; ii<=jump_setup.size();  ii++ ) {
+				//      tr.Info << "MOVED " << cycl << " jump: " << ii <<" ";
+				//      check_jump( pose, native, jump_setup, ii ); );
+				//     }
+				//     torsion-frag apply
+				//     mover.apply( pose );
+				//    }
+			}
+			// now try some frag insertion and look if jump-qual stays invariant
 		}
-		{
-			// pose::Pose pose( native );
-// 			for ( FrameList::const_iterator it = jumps.begin(), eit = jumps.end(); it!=eit; ++it ) {
-// 				(*it )->fragment( 123 ).apply( pose, **it );
-// 				//				int ii = nr_jumps;
-// 			}
-			//torsion frag setup
-			//			ConstantLengthFragSetOP orig_frags = new ConstantLengthFragSet;
-			//			orig_frags->read_fragment_file( frag_file );
-			//			kinematics::MoveMapOP mm = new kinematics::MoveMap;
-			//			mm ->set_bb( true );
-
-			//			ClassicFragmentMover mover( orig_frags, mm );
-
-			//			for ( Size pos = 1; pos<=15; pos++) {
-			//					mm->set_bb( pos, false );
-			//			}
-
-			//			pose.set_psi( 1, -45 );
-
-			// native = pose;
-// 			for ( Size ii = 1; ii<=jump_setup.size();  ii++ ) {
-// 				tr.Info << "START " <<  " jump: " << ii <<" ";
-// 				check_jump( pose, native, jump_setup, ii ); );
-// 			}
-
-
-// 			for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
-// 								if ( pos == 21 || pos == 20 || pos == 22 ) continue;
-// 				pose.set_phi( 128, -45 );
-// 				pose.set_psi( pos, -45 );
-// 				pose.set_omega( pos, 180 );
-// 			}
-
-
-// 			for ( int cycl = 1; cycl <= 5000; cycl++ ) {
-// 				for ( Size ii = 1; ii<=jump_setup.size();  ii++ ) {
-// 					tr.Info << "MOVED " << cycl << " jump: " << ii <<" ";
-// 					check_jump( pose, native, jump_setup, ii ); );
-// 				}
-// 				torsion-frag apply
-// 				mover.apply( pose );
-// 			}
-		}
-		// now try some frag insertion and look if jump-qual stays invariant
-	}
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
@@ -1002,85 +1002,85 @@ Real check_jump( pose::Pose const& pose, pose::Pose const& native, JumpSample co
 
 	/*
 	{
-		kinematics::Jump nat_jump = native.jump( 1 );
-		kinematics::Jump pred_jump = pose.jump( 1 );
-		Real dist, theta;
-		jump_distance( nat_jump, pred_jump, dist, theta );
-		tr.Info << F(10,4,dist) << F( 10,4,numeric::conversions::degrees( theta )) ;
-		//	return -1;
+	kinematics::Jump nat_jump = native.jump( 1 );
+	kinematics::Jump pred_jump = pose.jump( 1 );
+	Real dist, theta;
+	jump_distance( nat_jump, pred_jump, dist, theta );
+	tr.Info << F(10,4,dist) << F( 10,4,numeric::conversions::degrees( theta )) ;
+	// return -1;
 	}
 	*/
-	//		kinematics::Edge jump_edge = pose.fold_tree().jump_edge( jump_nr );
+	//  kinematics::Edge jump_edge = pose.fold_tree().jump_edge( jump_nr );
 	kinematics::Edge jump_edge = pose.fold_tree().get_residue_edge( downstream_res_nr );
-		//work out upstream and downstream residue
-		Size res1=jump_edge.start();
-		Size res2=jump_edge.stop();
-		tr.Info << RJ(5,res1) << RJ(5,res2)<<" ";
-		// work out the stubID
-		chemical::ResidueType const& rt1 ( pose.residue_type ( res1 ) );
-		chemical::ResidueType const& rt2 ( pose.residue_type ( res2 ) );
+	//work out upstream and downstream residue
+	Size res1=jump_edge.start();
+	Size res2=jump_edge.stop();
+	tr.Info << RJ(5,res1) << RJ(5,res2)<<" ";
+	// work out the stubID
+	chemical::ResidueType const& rt1 ( pose.residue_type ( res1 ) );
+	chemical::ResidueType const& rt2 ( pose.residue_type ( res2 ) );
 
-		id::AtomID a1( rt1.atom_index ("N") , res1 );
-		id::AtomID a2( rt1.atom_index ("CA") , res1 );
-		id::AtomID a3( rt1.atom_index ("C") , res1 );
-		id::StubID down_stub( a1, a2, a3 );
+	id::AtomID a1( rt1.atom_index ("N") , res1 );
+	id::AtomID a2( rt1.atom_index ("CA") , res1 );
+	id::AtomID a3( rt1.atom_index ("C") , res1 );
+	id::StubID down_stub( a1, a2, a3 );
 
-		id::AtomID b1( rt2.atom_index ("N") , res2 );
-		id::AtomID b2( rt2.atom_index ("CA") , res2 );
-		id::AtomID b3( rt2.atom_index ("C") , res2 );
-		id::StubID up_stub( b1, b2, b3 );
+	id::AtomID b1( rt2.atom_index ("N") , res2 );
+	id::AtomID b2( rt2.atom_index ("CA") , res2 );
+	id::AtomID b3( rt2.atom_index ("C") , res2 );
+	id::StubID up_stub( b1, b2, b3 );
 
-	// 	Real dist = distance( pose.xyz( a1 ), pose.xyz( b3 ));
-// 		Real nat_dist = distance( native.xyz( a1 ), native.xyz( b3 ));
-// 		tr.Info <<  " dist: " << F( 10, 4, dist-nat_dist );
+	//  Real dist = distance( pose.xyz( a1 ), pose.xyz( b3 ));
+	//   Real nat_dist = distance( native.xyz( a1 ), native.xyz( b3 ));
+	//   tr.Info <<  " dist: " << F( 10, 4, dist-nat_dist );
 
-// 		dist = distance( pose.xyz( a3 ), pose.xyz( b3 ));
-// 		nat_dist = distance( native.xyz( a3 ), native.xyz( b3 ));
-// 		tr.Info <<  " dist: " << F( 10, 4, dist-nat_dist );
+	//   dist = distance( pose.xyz( a3 ), pose.xyz( b3 ));
+	//   nat_dist = distance( native.xyz( a3 ), native.xyz( b3 ));
+	//   tr.Info <<  " dist: " << F( 10, 4, dist-nat_dist );
 
-// 		dist = distance( pose.xyz( b1 ), pose.xyz( a3 ));
-// 		nat_dist = distance( native.xyz( b1 ), native.xyz( a3 ));
-// 		tr.Info <<  " dist: " << F( 10, 4, dist-nat_dist );
+	//   dist = distance( pose.xyz( b1 ), pose.xyz( a3 ));
+	//   nat_dist = distance( native.xyz( b1 ), native.xyz( a3 ));
+	//   tr.Info <<  " dist: " << F( 10, 4, dist-nat_dist );
 
-// 		dist = distance( pose.xyz( b1 ), pose.xyz( b3 ));
-// 		nat_dist = distance( native.xyz( b1 ), native.xyz( b3 ));
-// 		tr.Info <<  " dist: " << F( 10, 4, dist-nat_dist );
+	//   dist = distance( pose.xyz( b1 ), pose.xyz( b3 ));
+	//   nat_dist = distance( native.xyz( b1 ), native.xyz( b3 ));
+	//   tr.Info <<  " dist: " << F( 10, 4, dist-nat_dist );
 
-		Stub up = pose.conformation().atom_tree().stub_from_id( up_stub );
-		Stub down = pose.conformation().atom_tree().stub_from_id( down_stub );
-		RT rt(up, down);
+	Stub up = pose.conformation().atom_tree().stub_from_id( up_stub );
+	Stub down = pose.conformation().atom_tree().stub_from_id( down_stub );
+	RT rt(up, down);
 
-		Stub native_up = native.conformation().atom_tree().stub_from_id( up_stub );
-		Stub native_down = native.conformation().atom_tree().stub_from_id( down_stub );
-		RT rt_native(  native_up,native_down );
-	// 	tr.Info << " rtdist " << F(10, 4, distance(rt, rt_native) );
-// 		kinematics::Jump nat_jump ( rt_native );
-// 		kinematics::Jump pred_jump ( rt );
-		//		Real dist, theta;
-		//		jump_distance( nat_jump, pred_jump, dist, theta );
-		//		tr.Info << F(10,4,dist) << F( 10,4,numeric::conversions::degrees( theta )) ;
-		//		return -1;
+	Stub native_up = native.conformation().atom_tree().stub_from_id( up_stub );
+	Stub native_down = native.conformation().atom_tree().stub_from_id( down_stub );
+	RT rt_native(  native_up,native_down );
+	//  tr.Info << " rtdist " << F(10, 4, distance(rt, rt_native) );
+	//   kinematics::Jump nat_jump ( rt_native );
+	//   kinematics::Jump pred_jump ( rt );
+	//  Real dist, theta;
+	//  jump_distance( nat_jump, pred_jump, dist, theta );
+	//  tr.Info << F(10,4,dist) << F( 10,4,numeric::conversions::degrees( theta )) ;
+	//  return -1;
 
 
-		//apply rt to native_up
-		Stub zero_test_down;
-		rt_native.make_jump( native_up, zero_test_down );
-		//	tr.Info << distance(native_down, zero_test_down );
-		Stub test_down;
-		rt.make_jump( native_up, test_down );
+	//apply rt to native_up
+	Stub zero_test_down;
+	rt_native.make_jump( native_up, zero_test_down );
+	// tr.Info << distance(native_down, zero_test_down );
+	Stub test_down;
+	rt.make_jump( native_up, test_down );
 
-		Real zero_rms ( 0.0 );
-		Real rms ( 0.0 );
+	Real zero_rms ( 0.0 );
+	Real rms ( 0.0 );
 
-		for ( Size i=1; i<=3; i++ ) {
-			Vector tv = test_down.build_fake_xyz( i );
-			Vector ztv = zero_test_down.build_fake_xyz( i );
-			Vector nv = native_down.build_fake_xyz( i );
-			Vector d = nv-tv;
-			Vector zd = nv-ztv;
-			rms += d.length();
-			zero_rms += zd.length();
-		}
-		tr.Info << " : " << F(10,3,rms) <<  std::endl;
-		return rms;
+	for ( Size i=1; i<=3; i++ ) {
+		Vector tv = test_down.build_fake_xyz( i );
+		Vector ztv = zero_test_down.build_fake_xyz( i );
+		Vector nv = native_down.build_fake_xyz( i );
+		Vector d = nv-tv;
+		Vector zd = nv-ztv;
+		rms += d.length();
+		zero_rms += zd.length();
+	}
+	tr.Info << " : " << F(10,3,rms) <<  std::endl;
+	return rms;
 }

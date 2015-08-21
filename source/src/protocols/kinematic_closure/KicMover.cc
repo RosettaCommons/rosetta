@@ -84,10 +84,10 @@ bool KicMover::do_apply(Pose & pose, Loop const & loop) { // {{{1
 	bool problem_solved = false;
 	Size const max_attempts = option[OptionKeys::loops::max_kic_perturber_samples]();
 
-	// Attempt to find a closure solution which passes both rama and bump checks.  
+	// Attempt to find a closure solution which passes both rama and bump checks.
 	// If no solution is found, give up.
 
-	for (Size i = 1; i <= max_attempts && !problem_solved; i++) {
+	for ( Size i = 1; i <= max_attempts && !problem_solved; i++ ) {
 		perturbers_->perturb(pose, problem);
 		SolutionList solutions = problem->solve();
 		problem_solved = solution_picker_->pick_and_apply(pose, solutions);
@@ -100,7 +100,7 @@ bool KicMover::do_apply(Pose & pose, Loop const & loop) { // {{{1
 }
 
 void KicMover::get_children_names( // {{{1
-		utility::vector1<string> & names, string indent) const {
+	utility::vector1<string> & names, string indent) const {
 
 	names.push_back(indent + get_name());
 	names.push_back(indent + "  " + pivot_picker_->get_name());

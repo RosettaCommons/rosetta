@@ -21,12 +21,12 @@ namespace protocols {
 namespace denovo_design {
 namespace task_operations {
 
-	// Forward declaration
-	class ConsensusLoopDesignOperation;
+// Forward declaration
+class ConsensusLoopDesignOperation;
 
-	// Types
-	typedef utility::pointer::shared_ptr< ConsensusLoopDesignOperation > ConsensusLoopDesignOperationOP;
-	typedef utility::pointer::shared_ptr< ConsensusLoopDesignOperation const > ConsensusLoopDesignOperationCOP;
+// Types
+typedef utility::pointer::shared_ptr< ConsensusLoopDesignOperation > ConsensusLoopDesignOperationOP;
+typedef utility::pointer::shared_ptr< ConsensusLoopDesignOperation const > ConsensusLoopDesignOperationCOP;
 
 }
 }

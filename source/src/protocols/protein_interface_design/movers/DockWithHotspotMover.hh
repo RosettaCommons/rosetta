@@ -67,8 +67,8 @@ public:
 		core::pose::Pose const & );
 
 private:
-  utility::vector1< std::string > hotspot_filenames_;
-  utility::vector1< core::Real > hotspot_distcb_weight_;
+	utility::vector1< std::string > hotspot_filenames_;
+	utility::vector1< core::Real > hotspot_distcb_weight_;
 	core::Real hotspot_score_weight_;
 	core::Real centroidscore_filter_;
 	core::Real hotspotcst_filter_;

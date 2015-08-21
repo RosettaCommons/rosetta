@@ -44,9 +44,9 @@ rotamer_trials(
 
 void
 symmetric_rotamer_trials(
-  pose::Pose & pose,
-  scoring::ScoreFunction const & sfxn,
-  task::PackerTaskCOP input_task
+	pose::Pose & pose,
+	scoring::ScoreFunction const & sfxn,
+	task::PackerTaskCOP input_task
 );
 
 }

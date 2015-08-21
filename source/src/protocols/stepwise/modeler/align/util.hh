@@ -28,52 +28,52 @@ namespace stepwise {
 namespace modeler {
 namespace align {
 
-	core::Real
-	get_rmsd( core::pose::Pose const & pose1, core::pose::Pose const & pose2,
-						utility::vector1< core::Size > const & calc_rms_res,
-						bool const check_align_at_superimpose_res = false,
-						bool const check_switch = false );
+core::Real
+get_rmsd( core::pose::Pose const & pose1, core::pose::Pose const & pose2,
+	utility::vector1< core::Size > const & calc_rms_res,
+	bool const check_align_at_superimpose_res = false,
+	bool const check_switch = false );
 
-	core::Real
-	get_rmsd( core::pose::Pose const & pose1, core::pose::Pose const & pose2,
-						bool const check_align_at_superimpose_res = false,
-						bool const check_switch = false );
+core::Real
+get_rmsd( core::pose::Pose const & pose1, core::pose::Pose const & pose2,
+	bool const check_align_at_superimpose_res = false,
+	bool const check_switch = false );
 
 
-	void
-	align_pose_and_add_rmsd_constraints( core::pose::Pose & pose,
-																			 core::pose::PoseCOP align_pose,
-																			 utility::vector1< core::Size > const & moving_res_list,
-																			 core::Real const rmsd_screen );
+void
+align_pose_and_add_rmsd_constraints( core::pose::Pose & pose,
+	core::pose::PoseCOP align_pose,
+	utility::vector1< core::Size > const & moving_res_list,
+	core::Real const rmsd_screen );
 
-	core::Real
-	superimpose_with_stepwise_aligner( core::pose::Pose & pose, core::pose::Pose const & align_pose,
-																		 bool superimpose_over_all_instantiated = false );
+core::Real
+superimpose_with_stepwise_aligner( core::pose::Pose & pose, core::pose::Pose const & align_pose,
+	bool superimpose_over_all_instantiated = false );
 
-	///////////////////////////////////////////////////////////////////////////////////////////
-	// Following functions (superimpose_pose, creat_alignment_id_map) use legacy code
-	// for choosing which atoms to superimpose on -- but are called by InputStreamWithResidueInfo
-	// and a couple other classes that should probably ALL BE DEPRECATED. -- rhiju, 2014
-	///////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief  Superimpose mod_pose onto ref_pose using the mapping of residues from
-	/// mod_pose to ref_pose given by res_map
-	core::Real
-	superimpose_pose_legacy(
-									 core::pose::Pose & mod_pose,
-									 core::pose::Pose const & ref_pose,
-									 std::map< core::Size, core::Size > const & res_map
-									 );
+///////////////////////////////////////////////////////////////////////////////////////////
+// Following functions (superimpose_pose, creat_alignment_id_map) use legacy code
+// for choosing which atoms to superimpose on -- but are called by InputStreamWithResidueInfo
+// and a couple other classes that should probably ALL BE DEPRECATED. -- rhiju, 2014
+///////////////////////////////////////////////////////////////////////////////////////////
+/// @brief  Superimpose mod_pose onto ref_pose using the mapping of residues from
+/// mod_pose to ref_pose given by res_map
+core::Real
+superimpose_pose_legacy(
+	core::pose::Pose & mod_pose,
+	core::pose::Pose const & ref_pose,
+	std::map< core::Size, core::Size > const & res_map
+);
 
-	// This should be deprecated in favor of StepWisePoseAligner
-	core::id::AtomID_Map< core::id::AtomID >
- 	create_aligment_id_map_legacy(	core::pose::Pose const & mod_pose, core::pose::Pose const & ref_pose,
-														utility::vector1< core::Size > const & superimpose_res );
+// This should be deprecated in favor of StepWisePoseAligner
+core::id::AtomID_Map< core::id::AtomID >
+create_aligment_id_map_legacy( core::pose::Pose const & mod_pose, core::pose::Pose const & ref_pose,
+	utility::vector1< core::Size > const & superimpose_res );
 
-	// This should be deprecated in favor of StepWisePoseAligner
- 	core::id::AtomID_Map< core::id::AtomID >
- 	create_aligment_id_map_legacy(	core::pose::Pose const & mod_pose,
-														core::pose::Pose const & ref_pose,
-														std::map< core::Size, core::Size > res_map );
+// This should be deprecated in favor of StepWisePoseAligner
+core::id::AtomID_Map< core::id::AtomID >
+create_aligment_id_map_legacy( core::pose::Pose const & mod_pose,
+	core::pose::Pose const & ref_pose,
+	std::map< core::Size, core::Size > res_map );
 
 
 } //align

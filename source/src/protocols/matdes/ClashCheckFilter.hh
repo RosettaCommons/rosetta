@@ -113,22 +113,22 @@ public:// parser
 public:// virtual main operation
 
 	// @brief returns true if the given pose passes the filter, false otherwise.
-  virtual bool apply( core::pose::Pose const & pose ) const;
+	virtual bool apply( core::pose::Pose const & pose ) const;
 
 	/// @brief
-  virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-  virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
+	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
+	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
 
 	/// @brief calc oligomeric AverageDegree
-  core::Size compute( core::pose::Pose const & pose, bool const & v, bool const & w ) const;
+	core::Size compute( core::pose::Pose const & pose, bool const & v, bool const & w ) const;
 
 	void write_to_pdb( core::pose::Pose const & pose, std::string const residue_name, core::Size const residue, std::string const atom_name ) const;
 	void write_pymol_string_to_pdb( std::string const pymol_selection ) const;
 
 private:
 
-  core::pack::task::TaskFactoryOP task_factory_;
-  core::Real clash_dist_;
+	core::pack::task::TaskFactoryOP task_factory_;
+	core::Real clash_dist_;
 	std::string sym_dof_names_;
 	core::Size nsub_bblock_;
 	core::Size threshold_;

@@ -18,17 +18,17 @@
 #include <utility/vector1.hh>
 
 namespace core {
-	namespace scoring {
-		namespace bin_transitions {
+namespace scoring {
+namespace bin_transitions {
 
-			class BinTransitionCalculator; // fwd declaration
-			typedef utility::pointer::shared_ptr< BinTransitionCalculator > BinTransitionCalculatorOP;
-			typedef utility::pointer::shared_ptr< BinTransitionCalculator const > BinTransitionCalculatorCOP;
-			typedef utility::vector1<BinTransitionCalculatorOP> BinTransitionCalculatorOPs;
-			typedef utility::vector1<BinTransitionCalculatorCOP> BinTransitionCalculatorCOPs;
+class BinTransitionCalculator; // fwd declaration
+typedef utility::pointer::shared_ptr< BinTransitionCalculator > BinTransitionCalculatorOP;
+typedef utility::pointer::shared_ptr< BinTransitionCalculator const > BinTransitionCalculatorCOP;
+typedef utility::vector1<BinTransitionCalculatorOP> BinTransitionCalculatorOPs;
+typedef utility::vector1<BinTransitionCalculatorCOP> BinTransitionCalculatorCOPs;
 
-		} //namespare bin_transitions
-	} //namespace scoring
+} //namespare bin_transitions
+} //namespace scoring
 } //namespace core
 
 #endif //INCLUDED_core_scoring_bin_transitions_BinTransitionCalculator_fwd_hh

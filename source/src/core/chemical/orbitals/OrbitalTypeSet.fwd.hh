@@ -15,7 +15,7 @@
 
 namespace core {
 namespace chemical {
-namespace orbitals{
+namespace orbitals {
 
 class OrbitalTypeSet;
 

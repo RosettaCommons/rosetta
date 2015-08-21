@@ -114,10 +114,10 @@ public:
 protected:
 
 	void
-	add_constraint(	core::scoring::constraints::ConstraintCOP cst );
+	add_constraint( core::scoring::constraints::ConstraintCOP cst );
 
 	void
-	add_constraints(	core::scoring::constraints::ConstraintCOPs csts );
+	add_constraints( core::scoring::constraints::ConstraintCOPs csts );
 
 	void
 	clear_constraints();

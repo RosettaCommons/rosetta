@@ -34,36 +34,36 @@ namespace protocols {
 namespace star {
 
 class StarAbinitio : public protocols::moves::Mover {
- public:
-  StarAbinitio();
-  void apply(core::pose::Pose& pose);
+public:
+	StarAbinitio();
+	void apply(core::pose::Pose& pose);
 
-  /// @detail Uses the copy constructor to create a new instance
-  protocols::moves::MoverOP clone() const;
+	/// @detail Uses the copy constructor to create a new instance
+	protocols::moves::MoverOP clone() const;
 
-  /// @detail Uses the no-argument constructor to create a new instance
-  protocols::moves::MoverOP fresh_instance() const;
+	/// @detail Uses the no-argument constructor to create a new instance
+	protocols::moves::MoverOP fresh_instance() const;
 
-  /// @detail Returns the name of this mover
-  std::string get_name() const;
+	/// @detail Returns the name of this mover
+	std::string get_name() const;
 
- private:
-  /// @detail Sets up kinematics to keep the orientation of the aligned regions
-  /// fixed with respect to one another. A virtual residue is placed at the
-  /// aligned regions' center of mass. A jump from the virtual residue to the
-  /// midpoint of each region is added. Interior cutpoints (i.e. those between
-  /// consecutive aligned regions) are retrieved from the input parameter.
-  void setup_kinematics(const protocols::loops::Loops& aligned,
-                        const utility::vector1<unsigned>& interior_cuts,
-                        core::pose::Pose & pose) const;
+private:
+	/// @detail Sets up kinematics to keep the orientation of the aligned regions
+	/// fixed with respect to one another. A virtual residue is placed at the
+	/// aligned regions' center of mass. A jump from the virtual residue to the
+	/// midpoint of each region is added. Interior cutpoints (i.e. those between
+	/// consecutive aligned regions) are retrieved from the input parameter.
+	void setup_kinematics(const protocols::loops::Loops& aligned,
+		const utility::vector1<unsigned>& interior_cuts,
+		core::pose::Pose & pose) const;
 
-  /// @detail Removes virtual residue, cutpoint variants and restores simple kinematics
-  void tear_down_kinematics(core::pose::Pose & pose) const;
+	/// @detail Removes virtual residue, cutpoint variants and restores simple kinematics
+	void tear_down_kinematics(core::pose::Pose & pose) const;
 
-  core::fragment::FragSetOP fragments_lg_;
-  core::fragment::FragSetOP fragments_sm_;
-  core::fragment::SecondaryStructureOP pred_ss_;
-  protocols::simple_moves::SaneMinMoverOP minimizer_;
+	core::fragment::FragSetOP fragments_lg_;
+	core::fragment::FragSetOP fragments_sm_;
+	core::fragment::SecondaryStructureOP pred_ss_;
+	protocols::simple_moves::SaneMinMoverOP minimizer_;
 };
 
 }  // namespace star

@@ -52,7 +52,7 @@ bool is_upper_cutpoint(
 	const bool is_cutpoint_in_tree_upper  = pose.fold_tree().is_cutpoint(residue - 1);
 	const bool use_pose_cutpoint_variants = option[OptionKeys::score::score_pose_cutpoint_variants]();
 	const bool has_upper_variant_type     = pose.residue(residue).has_variant_type(chemical::CUTPOINT_UPPER);
-	if (residue <= 1) return false;
+	if ( residue <= 1 ) return false;
 	return (has_upper_variant_type && (is_cutpoint_in_tree_upper || use_pose_cutpoint_variants));
 }
 
@@ -61,24 +61,24 @@ void find_cutpoint_variants(
 	const core::kinematics::FoldTree&,
 	utility::vector1<int>* cutpoints
 ) {
-  using core::Size;
-  using boost::unordered_set;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using core::Size;
+	using boost::unordered_set;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
- debug_assert(cutpoints);
-  unordered_set<int> unique_cutpoints;
+	debug_assert(cutpoints);
+	unordered_set<int> unique_cutpoints;
 
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		if ( is_lower_cutpoint(ii,pose) ) unique_cutpoints.insert(ii);
 	}
 
-  // Update output parameter
-  std::copy(unique_cutpoints.begin(),
-            unique_cutpoints.end(),
-            std::back_inserter(*cutpoints));
+	// Update output parameter
+	std::copy(unique_cutpoints.begin(),
+		unique_cutpoints.end(),
+		std::back_inserter(*cutpoints));
 
-  std::sort(cutpoints->begin(), cutpoints->end());
+	std::sort(cutpoints->begin(), cutpoints->end());
 }
 
 } // namespace methods

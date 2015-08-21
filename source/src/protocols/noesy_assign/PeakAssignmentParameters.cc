@@ -10,7 +10,7 @@
 /// @file FragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -70,8 +70,8 @@ PeakAssignmentParameters *
 PeakAssignmentParameters::create_singleton_instance()
 {
 	PeakAssignmentParameters * inst = new PeakAssignmentParameters;
-  inst->set_options_from_cmdline();
-  return inst;
+	inst->set_options_from_cmdline();
+	return inst;
 }
 
 bool PeakAssignmentParameters::options_registered_( false );
@@ -92,14 +92,14 @@ PeakAssignmentParameters::reset() {
 /// @details DANGER DANGER DANGER! NOT IN ANY WAY THREADSAFE!!!
 PeakAssignmentParameters*
 PeakAssignmentParameters::get_nonconst_instance() {
-  if ( instance_ ) return instance_;
-  instance_ = new PeakAssignmentParameters;
+	if ( instance_ ) return instance_;
+	instance_ = new PeakAssignmentParameters;
 #if defined CXX11 && defined MULTI_THREADED
-  instance_.load()->set_options_from_cmdline();
+	instance_.load()->set_options_from_cmdline();
 #else
   instance_->set_options_from_cmdline();
 #endif
-  return instance_;
+	return instance_;
 }
 
 /// @details DANGER DANGER DNAGER: Completely thread unsafe.
@@ -107,53 +107,53 @@ void PeakAssignmentParameters::set_cycle( core::Size cycle ) {
 	if ( instance_ ) delete instance_;
 	instance_ = new PeakAssignmentParameters;
 #if defined CXX11 && defined MULTI_THREADED
-  instance_.load()->set_options_from_cmdline( cycle );
+	instance_.load()->set_options_from_cmdline( cycle );
 #else
   instance_->set_options_from_cmdline( cycle );
 #endif
 }
 
 void PeakAssignmentParameters::register_options() {
-  using namespace basic::options;
-  using namespace OptionKeys;
-  if ( options_registered_ ) return;
+	using namespace basic::options;
+	using namespace OptionKeys;
+	if ( options_registered_ ) return;
 
 	//cycle independent
-  NEW_OPT( noesy_weights::chemshift, "contribution of chem. shift overlap to peak volume", 0.5 );
-	//	NEW_OPT( noesy_weights::network_high, "contribution of network anchoring to peak volume", 10.0 );
+	NEW_OPT( noesy_weights::chemshift, "contribution of chem. shift overlap to peak volume", 0.5 );
+	// NEW_OPT( noesy_weights::network_high, "contribution of network anchoring to peak volume", 10.0 );
 	NEW_OPT( noesy::ignore_resonancefile_tolerances, "ignore the tolerances in the resonance file", false );
 	NEW_OPT( noesy::ignore_resonancefile_intensities, "ignore the tolerances in the resonance file", false );
 
-//cycle dependent -- cycle defaults
+	//cycle dependent -- cycle defaults
 	NEW_OPT7( noesy_weights::defaults::Vmin, "acceptable minimial volume contribution per assignment", 0.01, 0.001, 0.005, 0.01, 0.025, 0.05, 0.501 );
 	NEW_OPT7( noesy_weights::defaults::symmetry, "contribution of symmetry compliance to peak volume", 10.0, 10.0, 10.0, 10.0, 1.0, 1.0, 1.0 );
-  NEW_OPT7( noesy_weights::defaults::covalent, "contribution of local covalent compliance to peak volume", 10.0, 10.0, 10.0, 1.0, 1.0, 1.0, 1.0 );
+	NEW_OPT7( noesy_weights::defaults::covalent, "contribution of local covalent compliance to peak volume", 10.0, 10.0, 10.0, 1.0, 1.0, 1.0, 1.0 );
 	//  NEW_OPT7( noesy_weights::defaults::decoys, "exponent controlling contribution of decoy compliance to peak volume", 3, 3, 6, 6, 6, 6, 6 );
 	NEW_OPT7( noesy_weights::defaults::Smax,"maximum cumulative contribution of symmetry, covalent and network to peak volume", 20, 20, 20, 20, 10, 10, 10 );
-  NEW_OPT7( noesy_weights::defaults::dcut, "upper limit on acceptable distance violation for elimination of spurious NOESY cross peaks (A)", -1, 1.5, 0.9, 0.6, 0.3, 0.1, 0.1 );
-	//	NEW_OPT7( noesy_weights::defaults::reswise_min, "Threshold for acceptable lower limit of network-anchoring per residue", 1.0, 0.75, 0.5, 0.5, 0.5, 0.5, 0.5 );
+	NEW_OPT7( noesy_weights::defaults::dcut, "upper limit on acceptable distance violation for elimination of spurious NOESY cross peaks (A)", -1, 1.5, 0.9, 0.6, 0.3, 0.1, 0.1 );
+	// NEW_OPT7( noesy_weights::defaults::reswise_min, "Threshold for acceptable lower limit of network-anchoring per residue", 1.0, 0.75, 0.5, 0.5, 0.5, 0.5, 0.5 );
 	//  NEW_OPT7( noesy_weights::defaults::atomwise_min, "contribution of network anchoring to peak volume", 0.25, 0.25, 0.4, 0.4, 0.4, 0.4, 0.4 );
-  NEW_OPT7( noesy_weights::defaults::dcalibrate, "upper limit on acceptable distance violation for structure dependent calibration (A)", -1, 1.5, 0.9, 0.6, 0.3, 0.1, 0.1 );
-  NEW_OPT7( noesy_weights::defaults::calibration_target, "target for NOE calibration > 1 -- (A) (structure independent ) <1 (%) of models violated", 3.8, 0.15, 0.15, 0.1, 0.1, 0.1, 0.1 );
+	NEW_OPT7( noesy_weights::defaults::dcalibrate, "upper limit on acceptable distance violation for structure dependent calibration (A)", -1, 1.5, 0.9, 0.6, 0.3, 0.1, 0.1 );
+	NEW_OPT7( noesy_weights::defaults::calibration_target, "target for NOE calibration > 1 -- (A) (structure independent ) <1 (%) of models violated", 3.8, 0.15, 0.15, 0.1, 0.1, 0.1, 0.1 );
 
 	//cycle dependent
 
 	NEW_OPT( noesy_weights::symmetry, "contribution of symmetry compliance to peak volume", 10.0 );
-  NEW_OPT( noesy_weights::covalent, "contribution of local covalent compliance to peak volume", 10.0 );
+	NEW_OPT( noesy_weights::covalent, "contribution of local covalent compliance to peak volume", 10.0 );
 	//  NEW_OPT( noesy_weights::decoys, "exponent controlling contribution of decoy compliance to peak volume", 3 );
 	NEW_OPT( noesy_weights::Smax,"maximum cumulative contribution of symmetry, covalent and network to peak volume", 20 );
 
 
-	//	NEW_OPT( noesy_weights::network_min, "Threshold for acceptable lower limit of network-anchoring per residue", 1.0 );
-  //NEW_OPT( noesy_weights::network_atom_min, "contribution of network anchoring to peak volume", 0.25 );
-  NEW_OPT( noesy_weights::dcalibrate, "upper limit on acceptable distance violation for structure dependent calibration (A)", -1 );
-  NEW_OPT( noesy_weights::calibration_target, "target for NOE calibration > 1 -- (A) (structure independent ) <1 (%) of models violated", 5 );
+	// NEW_OPT( noesy_weights::network_min, "Threshold for acceptable lower limit of network-anchoring per residue", 1.0 );
+	//NEW_OPT( noesy_weights::network_atom_min, "contribution of network anchoring to peak volume", 0.25 );
+	NEW_OPT( noesy_weights::dcalibrate, "upper limit on acceptable distance violation for structure dependent calibration (A)", -1 );
+	NEW_OPT( noesy_weights::calibration_target, "target for NOE calibration > 1 -- (A) (structure independent ) <1 (%) of models violated", 5 );
 	NEW_OPT( noesy::atom_dependent_calibration, "individual calibration constants per atom-group: backbone, side-chain, methyl", false );
 
 	NEW_OPT( noesy::elim::max_assign, "maximum number of assignments to a peak before it is eliminated", 20 );
 	NEW_OPT( noesy::elim::vmin, "acceptable minimial volume contribution per assignment", 0.01 );
 	NEW_OPT( noesy::elim::dist_viol, "percentage of decoys that can be violated by distance constraints before it is eliminated ->set to 1 to switch this feature off", 0.5 );
-  NEW_OPT( noesy::elim::dcut, "upper limit on acceptable distance violation for elimination of spurious NOESY cross peaks (A)", -1 );
+	NEW_OPT( noesy::elim::dcut, "upper limit on acceptable distance violation for elimination of spurious NOESY cross peaks (A)", -1 );
 
 	NEW_OPT( noesy::map_to_cen_atom,"map the centroid restraints to CEN atom", false );
 
@@ -161,7 +161,7 @@ void PeakAssignmentParameters::register_options() {
 	NEW_OPT( noesy_weights::cycle, "set to cycle 1-7 to select a set of cycle-dependent options", 1 );
 	NEW_OPT( noesy_weights::centroid_padding, "if sidechain NOESY are mapped to CB add some padding", 0.5 );
 	NEW_OPT( noesy_weights::min_symmetry_reinforcement, "minimum contribution to symmetry score from a symmetric peak", 0.0 );
-  NEW_OPT( noesy::no_network, "skip network analysis", false );
+	NEW_OPT( noesy::no_network, "skip network analysis", false );
 	NEW_OPT( noesy::network::reswise_min, "Threshold for acceptable lower limit of network-anchoring per residue",  1.0 );
 	NEW_OPT( noesy::network::reswise_high, "Threshold for always accepted (disregard atomwise_min) network anchoring per residue", 4.0 );
 	NEW_OPT( noesy::network::atomwise_min, "Threshold for acceptable network-anchoring per assignment", 0.25 );
@@ -192,7 +192,7 @@ void PeakAssignmentParameters::register_options() {
 	NEW_OPT5( noesy::prob::sigmoid::m, "tau and m parameter for sigmoids in crosspeak-probability score", 0.5, 2, .4, 0.5, 4);
 	NEW_OPT2( noesy::prob::level, "selection levels for HI, MED, LOW probability cross-peaks", 0.7, 0.45 );
 	NEW_OPT5( noesy::prob::sigmoid::w, "sigmoid contribution", 0.2000, 0.6000, 0.2000, 0.4000, 0.2000 );
-  options_registered_ = true;
+	options_registered_ = true;
 }
 
 
@@ -200,8 +200,8 @@ static thread_local basic::Tracer tr( "protocols.noesy_assign.parameters" );
 
 
 void PeakAssignmentParameters::set_options_from_cmdline( core::Size cycle_selector ) {
-  using namespace basic::options::OptionKeys;
-  using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace basic::options;
 
 	runtime_assert( options_registered_ );
 
@@ -214,30 +214,30 @@ void PeakAssignmentParameters::set_options_from_cmdline( core::Size cycle_select
 	}
 
 	//cycle independent
-  chemshift_overlap_weight_ = option[ noesy_weights::chemshift ](); //Gamma, eq. (4)
-  ignore_resonancefile_tolerances_ = option[ noesy::ignore_resonancefile_tolerances ]();
-  ignore_resonancefile_intensities_ = option[ noesy::ignore_resonancefile_intensities ]();
+	chemshift_overlap_weight_ = option[ noesy_weights::chemshift ](); //Gamma, eq. (4)
+	ignore_resonancefile_tolerances_ = option[ noesy::ignore_resonancefile_tolerances ]();
+	ignore_resonancefile_intensities_ = option[ noesy::ignore_resonancefile_intensities ]();
 	//  dmax_ = 5.5;
-  vmin_ = option[ noesy::network::vmin ](); //previously 0.1 minimum peak-volume contribution to network anchoring
-  vmax_ = option[ noesy::network::vmax ](); //previously 1.0; //maximum peak-volume contribution to network anchoring
-  nmax_ = option[ noesy::elim::max_assign ](); //20 maximum number of assignments
-  nr_conformers_violatable_ = option[ noesy::elim::dist_viol ](); // M/2
+	vmin_ = option[ noesy::network::vmin ](); //previously 0.1 minimum peak-volume contribution to network anchoring
+	vmax_ = option[ noesy::network::vmax ](); //previously 1.0; //maximum peak-volume contribution to network anchoring
+	nmax_ = option[ noesy::elim::max_assign ](); //20 maximum number of assignments
+	nr_conformers_violatable_ = option[ noesy::elim::dist_viol ](); // M/2
 	network_reswise_min_ = option[ noesy::network::reswise_min ]();
 	network_atom_min_ = option[ noesy::network::atomwise_min ]();
-	//	opt_read_out_macro( network_reswise_min_, network_min );
-	//	opt_read_out_macro( network_atom_min_, network_atom_min );
-  network_reswise_high_ = option[ noesy::network::reswise_high ]();// 4.0; //used in network-based elimination
+	// opt_read_out_macro( network_reswise_min_, network_min );
+	// opt_read_out_macro( network_atom_min_, network_atom_min );
+	network_reswise_high_ = option[ noesy::network::reswise_high ]();// 4.0; //used in network-based elimination
 	centroid_mapping_distance_padding_ = option[ noesy_weights::centroid_padding ]();
 
 	//cycle dependent
-#define opt_read_out_macro( VAR, OPT )															\
+	#define opt_read_out_macro( VAR, OPT )               \
 { VAR = option[ noesy_weights::defaults::OPT ]()[ cycle_selector_ ]; \
 	if ( option [ noesy_weights::OPT ].user() ) {  \
 		VAR = option[ noesy_weights::OPT ](); \
 	}\
 }\
 
-#define opt_read_out_macro2( VAR, OPT, DIROPT )														 \
+	#define opt_read_out_macro2( VAR, OPT, DIROPT )               \
 { VAR = option[ noesy_weights::defaults::OPT ]()[ cycle_selector_ ]; \
 	if ( option [ noesy::DIROPT ].user() ) {  \
 		VAR = option[ noesy::DIROPT ](); \
@@ -249,7 +249,7 @@ void PeakAssignmentParameters::set_options_from_cmdline( core::Size cycle_select
 	opt_read_out_macro2( min_volume_, Vmin, elim::vmin );
 	opt_read_out_macro( symmetry_compliance_weight_, symmetry );
 	opt_read_out_macro( covalent_compliance_weight_, covalent );
-	//	opt_read_out_macro( decoy_compatibility_exponent_, decoys );
+	// opt_read_out_macro( decoy_compatibility_exponent_, decoys );
 	opt_read_out_macro( smax_, Smax );
 	opt_read_out_macro2( dcut_, dcut, elim::dcut );
 	opt_read_out_macro( dcalibrate_, dcalibrate );
@@ -261,7 +261,7 @@ void PeakAssignmentParameters::set_options_from_cmdline( core::Size cycle_select
 
 	no_network_ = option[ noesy::no_network ]();
 	network_include_reverse_dir_= option[ noesy::network::include_reverse_dir ];
-  network_allow_same_residue_connect_ = option[ noesy::network::allow_same_residue_connect ];
+	network_allow_same_residue_connect_ = option[ noesy::network::allow_same_residue_connect ];
 	network_use_all_covalent_atoms_ = option[ noesy::network::use_all_covalent_atoms ];
 	network_mode_ = option[ noesy::network::mode ]();
 	cst_strength_ = option[ noesy_weights::cst_strength ]();
@@ -276,9 +276,9 @@ void PeakAssignmentParameters::set_options_from_cmdline( core::Size cycle_select
 	calibration_convergence_ = option[ noesy::calibration::convergence ]();
 	calibration_max_noe_dist_ = option[ noesy::calibration::max_noe_dist ]();
 	calibration_stop_nudging_ = option[ noesy::calibration::stop_nudging ]();
-  calibration_start_nudging_ = option[ noesy::calibration::start_nudging ]();
-  calibration_max_nudging_ = option[ noesy::calibration::max_nudging ]();
-  calibration_eliminate_ = option[ noesy::calibration::eliminate ]();
+	calibration_start_nudging_ = option[ noesy::calibration::start_nudging ]();
+	calibration_max_nudging_ = option[ noesy::calibration::max_nudging ]();
+	calibration_eliminate_ = option[ noesy::calibration::eliminate ]();
 	calibration_use_median_ = option[ noesy::calibration::use_median ]();
 	calibration_ignore_eliminated_peaks_ = option[ noesy::calibration::ignore_eliminated_peaks ]();
 	calibration_cycles_ = option[ noesy::calibration::cycles ]();
@@ -301,7 +301,7 @@ void PeakAssignmentParameters::show( std::ostream& os ) const {
 	os << "        Vmin: " << min_volume_ << std::endl;
 	os << "        T:    " << symmetry_compliance_weight_ << std::endl;
 	os << "        V:    " << covalent_compliance_weight_ << std::endl;
-	//	os << "        eta:  " << decoy_compatibility_exponent_ << std::endl;
+	// os << "        eta:  " << decoy_compatibility_exponent_ << std::endl;
 	os << "        Smax: " << smax_ << std::endl;
 	os << "        dcut: " << dcut_ << std::endl;
 	os << "   Nmin(res): " << network_reswise_min_ << std::endl;
@@ -314,7 +314,7 @@ void PeakAssignmentParameters::show( std::ostream& os ) const {
 	os << "      chemical shift agreement-weight: " << chemshift_overlap_weight_ << std::endl;
 	os << "      elimination of peak if distance-bound violates more than: " << nr_conformers_violatable_ << std::endl;
 	os << "      elimination MAXASSIGN if assignments count is above: " << nmax_ << std::endl;
-	//	os << "      contribution of network anchoring to peak volume XXX" << std::endl;
+	// os << "      contribution of network anchoring to peak volume XXX" << std::endl;
 	os << "      strength (curvature) of the constraint potential after upper distance is violated " << cst_strength_ << std::endl;
 	os << "      padding for CB-mapped protons in centroid mode: " << centroid_mapping_distance_padding_ << std::endl;
 	os << "      atom_dependent_calibration: " << (atom_dependent_calibration_ ? "yes" : "no" ) << std::endl;

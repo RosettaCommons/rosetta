@@ -34,23 +34,23 @@ using namespace ObjexxFCL;
 
 /* void
 maxsub_native(
-	FArray3_float const & x,
-	int & nali,
-	float & rms,
-	float & logeval
+FArray3_float const & x,
+int & nali,
+float & rms,
+float & logeval
 ); */
 
 /*
 void
 maxsub_partial(
-	const int nres,
-	FArray3A_float x1,
-	FArray3A_float x2,
-	FArray1A_bool occ1,
-	FArray1A_bool occ2,
-	int & nali,
-	float & rms,
-	float & logeval
+const int nres,
+FArray3A_float x1,
+FArray3A_float x2,
+FArray1A_bool occ1,
+FArray1A_bool occ2,
+int & nali,
+float & rms,
+float & logeval
 ); */
 
 

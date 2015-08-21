@@ -8,11 +8,11 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief      Optimizes the membrane position given the high-res score function
-/// @details	Optimizes the membrane position given the smooth high-res score
-///				function; scans the center along the normal around the initial center
-///				in 0.1A steps; scans the normal in 0.2degree steps along arches
-///				over the x-axis, y-axis, xy-direction, -xy-direction; outcome is
-///				deterministic
+/// @details Optimizes the membrane position given the smooth high-res score
+///    function; scans the center along the normal around the initial center
+///    in 0.1A steps; scans the normal in 0.2degree steps along arches
+///    over the x-axis, y-axis, xy-direction, -xy-direction; outcome is
+///    deterministic
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_OptimizeMembranePositionMoverCreator_hh
@@ -26,13 +26,13 @@ namespace membrane {
 
 /// @brief Mover Creator
 class OptimizeMembranePositionMoverCreator : public protocols::moves::MoverCreator {
-	
+
 public:
-	
+
 	virtual protocols::moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
 	static std::string mover_name();
-	
+
 };
 
 } // membrane

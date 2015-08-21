@@ -36,228 +36,228 @@ namespace stepwise {
 namespace modeler {
 namespace protein {
 
-	typedef std::map< core::Size, core::Size > ResMap;
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  class StepWiseProteinBackboneSampler: public protocols::moves::Mover {
-  public:
+typedef std::map< core::Size, core::Size > ResMap;
+/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+class StepWiseProteinBackboneSampler: public protocols::moves::Mover {
+public:
 
-    //constructor!
-		StepWiseProteinBackboneSampler( protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters );
+	//constructor!
+	StepWiseProteinBackboneSampler( protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters );
 
-    //destructor -- necessary?
-    ~StepWiseProteinBackboneSampler();
+	//destructor -- necessary?
+	~StepWiseProteinBackboneSampler();
 
-    /// @brief Apply the minimizer to one pose
-    virtual void apply( core::pose::Pose & pose_to_visualize );
+	/// @brief Apply the minimizer to one pose
+	virtual void apply( core::pose::Pose & pose_to_visualize );
 
 	virtual std::string get_name() const;
 
 
-    void
-		set_silent_file( std::string const & setting );
+	void
+	set_silent_file( std::string const & setting );
 
-		void
-		set_rmsd_cutoff( core::Real const & setting );
+	void
+	set_rmsd_cutoff( core::Real const & setting );
 
-		void
-		set_n_sample( core::Size const & setting );
+	void
+	set_n_sample( core::Size const & setting );
 
-		void
-		set_nstruct_centroid( core::Size const & setting );
+	void
+	set_nstruct_centroid( core::Size const & setting );
 
-		void
-		set_filter_native_big_bins( bool const & setting );
+	void
+	set_filter_native_big_bins( bool const & setting );
 
-		void
-		set_centroid_screen( bool const & setting );
+	void
+	set_centroid_screen( bool const & setting );
 
-		void
-		set_ghost_loops( bool const & setting );
+	void
+	set_ghost_loops( bool const & setting );
 
-		void
-		set_apply_vdw_cut( bool const & setting );
+	void
+	set_apply_vdw_cut( bool const & setting );
 
-		void
-		set_centroid_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn );
+	void
+	set_centroid_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn );
 
-		void
-		set_centroid_score_diff_cut( core::Real const & setting );
+	void
+	set_centroid_score_diff_cut( core::Real const & setting );
 
-		utility::vector1< MainChainTorsionSetList > const & main_chain_torsion_set_lists() const;
+	utility::vector1< MainChainTorsionSetList > const & main_chain_torsion_set_lists() const;
 
-		utility::vector1< utility::vector1< core::Real > >
-		main_chain_torsion_set_lists_real() const;
+	utility::vector1< utility::vector1< core::Real > >
+	main_chain_torsion_set_lists_real() const;
 
-		utility::vector1< core::id::TorsionID > which_torsions();
-
-
-		void
-		setup_centroid_screen(core::Real const & centroid_score_diff_cut,
-													std::string const & centroid_weights,
-													core::Size const nstruct_centroid,
-													bool const ghost_loops);
-
-		core::Size
-		get_big_bin( core::Real const phi, core::Real const psi ) const;
-
-		void
-		set_moving_residues( utility::vector1< core::Size > const & moving_res );
-
-		void
-		set_fixed_residues( utility::vector1< core::Size > const & fixed_res );
-
-		void set_expand_loop_takeoff( bool const setting ){ expand_loop_takeoff_ = setting; }
-		bool expand_loop_takeoff() const { return expand_loop_takeoff_; }
-
-  private:
-
-		void
-		define_moving_res( core::pose::Pose const & pose );
-
-		void
-		setup_torsion_sets();
-
-		void
-		filter_main_chain_torsion_sets();
-
-		void
-		prepare_ghost_pose( core::pose::Pose const & pose );
-
-		void
-		initialize_ghost_pose(
-		  core::pose::PoseOP & ghost_pose,
-			std::string const & desired_sequence,
-			core::pose::Pose const & template_pose,
-			ResMap const & ghost_map,
-			core::kinematics::FoldTree f );
-
-		void
-		copy_coords( core::pose::Pose & pose, core::pose::Pose const & template_pose, ResMap const & ghost_map ) const;
-
-		core::kinematics::FoldTree
-		figure_out_fold_tree( ResMap const & ghost_map ) const;
-
-		void
-		sample_residues_recursively(
-																Size const which_res,
-																Size & count,
-																core::pose::Pose & pose );
-
-		void
-		filter_and_save( core::pose::Pose & pose,
-										 std::string const & tag	 );
-
-		void
-		get_main_chain_torsion_set_list(
-										 core::Size const & n,
-										 core::pose::Pose const & pose,
-										 MainChainTorsionSetList & main_chain_torsion_set_list );
-
-		void
-		get_main_chain_torsion_set_list_coarse(
-										 core::Size const & n,
-										 core::pose::Pose const & pose,
-										 MainChainTorsionSetList & main_chain_torsion_set_list );
-
-		void
-		get_main_chain_torsion_set_list_full( core::Size const & n, core::pose::Pose const & pose, core::Real const & best_energy_cutoff,
-																					MainChainTorsionSetList & main_chain_torsion_set_list );
+	utility::vector1< core::id::TorsionID > which_torsions();
 
 
-		void
-		get_main_chain_torsion_set_list_n_terminus( core::Size const & n, core::pose::Pose const & pose, core::Real const & best_energy_cutoff,
-																								MainChainTorsionSetList & main_chain_torsion_set_list );
+	void
+	setup_centroid_screen(core::Real const & centroid_score_diff_cut,
+		std::string const & centroid_weights,
+		core::Size const nstruct_centroid,
+		bool const ghost_loops);
+
+	core::Size
+	get_big_bin( core::Real const phi, core::Real const psi ) const;
+
+	void
+	set_moving_residues( utility::vector1< core::Size > const & moving_res );
+
+	void
+	set_fixed_residues( utility::vector1< core::Size > const & fixed_res );
+
+	void set_expand_loop_takeoff( bool const setting ){ expand_loop_takeoff_ = setting; }
+	bool expand_loop_takeoff() const { return expand_loop_takeoff_; }
+
+private:
+
+	void
+	define_moving_res( core::pose::Pose const & pose );
+
+	void
+	setup_torsion_sets();
+
+	void
+	filter_main_chain_torsion_sets();
+
+	void
+	prepare_ghost_pose( core::pose::Pose const & pose );
+
+	void
+	initialize_ghost_pose(
+		core::pose::PoseOP & ghost_pose,
+		std::string const & desired_sequence,
+		core::pose::Pose const & template_pose,
+		ResMap const & ghost_map,
+		core::kinematics::FoldTree f );
+
+	void
+	copy_coords( core::pose::Pose & pose, core::pose::Pose const & template_pose, ResMap const & ghost_map ) const;
+
+	core::kinematics::FoldTree
+	figure_out_fold_tree( ResMap const & ghost_map ) const;
+
+	void
+	sample_residues_recursively(
+		Size const which_res,
+		Size & count,
+		core::pose::Pose & pose );
+
+	void
+	filter_and_save( core::pose::Pose & pose,
+		std::string const & tag  );
+
+	void
+	get_main_chain_torsion_set_list(
+		core::Size const & n,
+		core::pose::Pose const & pose,
+		MainChainTorsionSetList & main_chain_torsion_set_list );
+
+	void
+	get_main_chain_torsion_set_list_coarse(
+		core::Size const & n,
+		core::pose::Pose const & pose,
+		MainChainTorsionSetList & main_chain_torsion_set_list );
+
+	void
+	get_main_chain_torsion_set_list_full( core::Size const & n, core::pose::Pose const & pose, core::Real const & best_energy_cutoff,
+		MainChainTorsionSetList & main_chain_torsion_set_list );
 
 
-		void
-		get_main_chain_torsion_set_list_c_terminus( core::Size const & n, core::pose::Pose const & pose, core::Real const & best_energy_cutoff,
-																								MainChainTorsionSetList & main_chain_torsion_set_list );
+	void
+	get_main_chain_torsion_set_list_n_terminus( core::Size const & n, core::pose::Pose const & pose, core::Real const & best_energy_cutoff,
+		MainChainTorsionSetList & main_chain_torsion_set_list );
 
 
-		void
-		get_main_chain_torsion_set_list_sample_phi_only( core::Size const & n, core::pose::Pose const & pose, core::Real const best_energy_cutoff,
-																										 MainChainTorsionSetList & main_chain_torsion_set_list );
+	void
+	get_main_chain_torsion_set_list_c_terminus( core::Size const & n, core::pose::Pose const & pose, core::Real const & best_energy_cutoff,
+		MainChainTorsionSetList & main_chain_torsion_set_list );
 
 
-		void
-		get_main_chain_torsion_set_list_sample_psi_only( core::Size const & n, core::pose::Pose const & pose, core::Real const best_energy_cutoff,
-																										 MainChainTorsionSetList & main_chain_torsion_set_list );
-
-		void
-		filter_native_BIG_BINS(
-													core::Size const & n,
-													MainChainTorsionSetList & main_chain_torsion_set_list );
-
-		void
-		filter_based_on_desired_secstruct(
-																			char const & secstruct,
-																			MainChainTorsionSetList & main_chain_torsion_set_list );
-
-		void
-		filter_big_bin( Size const big_bin,
-										MainChainTorsionSetList & main_chain_torsion_set_list );
+	void
+	get_main_chain_torsion_set_list_sample_phi_only( core::Size const & n, core::pose::Pose const & pose, core::Real const best_energy_cutoff,
+		MainChainTorsionSetList & main_chain_torsion_set_list );
 
 
-	private:
+	void
+	get_main_chain_torsion_set_list_sample_psi_only( core::Size const & n, core::pose::Pose const & pose, core::Real const best_energy_cutoff,
+		MainChainTorsionSetList & main_chain_torsion_set_list );
 
-		void
-		output_centroid_silent_struct(
-																	core::pose::Pose const & pose, core::pose::PoseCOP const & native_pose_op,
-																	std::string const silent_file, std::string const & tag );
+	void
+	filter_native_BIG_BINS(
+		core::Size const & n,
+		MainChainTorsionSetList & main_chain_torsion_set_list );
 
-		void
-		convert_to_centroid( core::pose::Pose & pose );
+	void
+	filter_based_on_desired_secstruct(
+		char const & secstruct,
+		MainChainTorsionSetList & main_chain_torsion_set_list );
 
-		void
-		sample_cis_omega( MainChainTorsionSetList & main_chain_torsion_set_list );
+	void
+	filter_big_bin( Size const big_bin,
+		MainChainTorsionSetList & main_chain_torsion_set_list );
 
-		void
-		initialize_is_fixed_res();
 
-		core::Real
-		get_rotamer_angle( core::Size const & i, core::Size const & N_SAMPLE );
+private:
 
-	private:
+	void
+	output_centroid_silent_struct(
+		core::pose::Pose const & pose, core::pose::PoseCOP const & native_pose_op,
+		std::string const silent_file, std::string const & tag );
 
-		protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters_;
+	void
+	convert_to_centroid( core::pose::Pose & pose );
 
-		utility::vector1< Size > const moving_residues_input_;
-		utility::vector1< Size > moving_residues_;
-		core::Size n_sample_;
-		core::Real rmsd_cutoff_;
+	void
+	sample_cis_omega( MainChainTorsionSetList & main_chain_torsion_set_list );
 
-		core::scoring::ScoreFunctionOP centroid_scorefxn_;
-		std::string silent_file_;
-		bool filter_native_big_bins_;
-		bool centroid_screen_;
-		core::Real centroid_score_ref_;
-		core::Real centroid_score_diff_cut_;
+	void
+	initialize_is_fixed_res();
 
-		bool apply_vdw_cut_;
-		core::Real centroid_vdw_ref_;
+	core::Real
+	get_rotamer_angle( core::Size const & i, core::Size const & N_SAMPLE );
 
-		Size nstruct_centroid_;
+private:
 
-		core::scoring::Ramachandran const & ramachandran_;
+	protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters_;
 
-		MainChainTorsionSetList  main_chain_torsion_set_for_moving_residues_;
-		utility::vector1< MainChainTorsionSetList > main_chain_torsion_sets_for_moving_residues_;
+	utility::vector1< Size > const moving_residues_input_;
+	utility::vector1< Size > moving_residues_;
+	core::Size n_sample_;
+	core::Real rmsd_cutoff_;
 
-		utility::vector1< core::Real > centroid_scores_;
+	core::scoring::ScoreFunctionOP centroid_scorefxn_;
+	std::string silent_file_;
+	bool filter_native_big_bins_;
+	bool centroid_screen_;
+	core::Real centroid_score_ref_;
+	core::Real centroid_score_diff_cut_;
 
-		bool ghost_loops_;
-		ResMap ghost_map_;
-		core::pose::PoseOP ghost_pose_, ghost_native_pose_;
+	bool apply_vdw_cut_;
+	core::Real centroid_vdw_ref_;
 
-		utility::vector1< bool > is_pre_proline_;
+	Size nstruct_centroid_;
 
-		utility::vector1< bool > is_fixed_res_;
-		utility::vector1< bool > is_fixed_res_input_;
+	core::scoring::Ramachandran const & ramachandran_;
 
-		bool expand_loop_takeoff_;
+	MainChainTorsionSetList  main_chain_torsion_set_for_moving_residues_;
+	utility::vector1< MainChainTorsionSetList > main_chain_torsion_sets_for_moving_residues_;
 
-  };
+	utility::vector1< core::Real > centroid_scores_;
+
+	bool ghost_loops_;
+	ResMap ghost_map_;
+	core::pose::PoseOP ghost_pose_, ghost_native_pose_;
+
+	utility::vector1< bool > is_pre_proline_;
+
+	utility::vector1< bool > is_fixed_res_;
+	utility::vector1< bool > is_fixed_res_input_;
+
+	bool expand_loop_takeoff_;
+
+};
 
 } //protein
 } //modeler

@@ -69,7 +69,7 @@ public:
 	) const;
 
 	void
- 	finalize( pose::Pose & pose ) const;
+	finalize( pose::Pose & pose ) const;
 
 	Real
 	rna_base_backbone_pair_energy(
@@ -104,37 +104,37 @@ public:
 	void
 	eval_atom_derivative_base_base(
 		id::AtomID const & atom_id,
- 		pose::Pose const & pose,
+		pose::Pose const & pose,
 		scoring::EnergyMap const & weights,
- 		Vector & F1,
- 		Vector & F2 ) const;
+		Vector & F1,
+		Vector & F2 ) const;
 
 	void
 	eval_atom_derivative_rna_base_backbone(
 		id::AtomID const & atom_id,
- 		pose::Pose const & pose,
- 		Vector & F1,
- 		Vector & F2 ) const;
+		pose::Pose const & pose,
+		Vector & F1,
+		Vector & F2 ) const;
 
 	void
 	eval_atom_derivative_rna_backbone_backbone(
 		id::AtomID const & atom_id,
- 		pose::Pose const & pose,
- 		Vector & F1,
- 		Vector & F2 ) const;
+		pose::Pose const & pose,
+		Vector & F1,
+		Vector & F2 ) const;
 
 	void
 	eval_atom_derivative_rna_repulsive(
 		id::AtomID const & atom_id,
- 		pose::Pose const & pose,
- 		Vector & F1,
- 		Vector & F2 ) const;
+		pose::Pose const & pose,
+		Vector & F1,
+		Vector & F2 ) const;
 
 	bool
 	check_clear_for_stacking(
-	 pose::Pose & pose,
-	 Size const & i,
-	 int const & sign	) const;
+		pose::Pose & pose,
+		Size const & i,
+		int const & sign ) const;
 
 	bool
 	check_forming_base_pair(
@@ -167,14 +167,14 @@ public:
 
 	void
 	get_zeta_cutoff(
-									conformation::Residue const & res_i,
-									Real & zeta_hoogsteen_cutoff,
-									Real & zeta_sugar_cutoff
-									) const;
+		conformation::Residue const & res_i,
+		Real & zeta_hoogsteen_cutoff,
+		Real & zeta_sugar_cutoff
+	) const;
 
 	bool
 	check_for_base_neighbor(
-    conformation::Residue const & rsd1,
+		conformation::Residue const & rsd1,
 		Vector const & heavy_atom_j,
 		Real & atom_cutoff_weight ) const;
 
@@ -200,14 +200,14 @@ private:
 
 	Size
 	find_backbone_oxygen_atom(
-     ObjexxFCL::FArray2D < Size > const & atom_number_for_backbone_score_calculations,
-		 Size const & i,
-		 Size const & atom_num_i ) const;
+		ObjexxFCL::FArray2D < Size > const & atom_number_for_backbone_score_calculations,
+		Size const & i,
+		Size const & atom_num_i ) const;
 
 
 	Size
 	find_backbone_oxygen_atom(
-		 Size const & atom_num_i ) const;
+		Size const & atom_num_i ) const;
 
 private:
 
@@ -230,13 +230,13 @@ private:
 
 
 	Real get_rna_axis_score(
-   Real const cos_theta,
-	 Real & deriv = dummy_deriv ) const;
+		Real const cos_theta,
+		Real & deriv = dummy_deriv ) const;
 
 	Real get_rna_stagger_score( Distance const height, Real & deriv = dummy_deriv ) const;
 
 	Real get_rna_basepair_xy(
-    Distance const x,
+		Distance const x,
 		Distance const y,
 		Distance const z, // z is used for fading.
 		Real const cos_theta,
@@ -249,31 +249,31 @@ private:
 
 	Real
 	get_rna_backbone_backbone_score(
-	  Distance const & r,
+		Distance const & r,
 		Size const & atom_num_j_bin,
 		Real & deriv = dummy_deriv ) const;
 
 	Real
 	get_rna_repulsive_score(
-   Distance const & r,
-	 Size const & atom_num_j_bin,
-	 Real & deriv = dummy_deriv ) const;
+		Distance const & r,
+		Size const & atom_num_j_bin,
+		Real & deriv = dummy_deriv ) const;
 
 
 	Real
 	rna_backbone_backbone_pair_energy_one_way(
-			conformation::Residue const & rsd1,
-			conformation::Residue const & rsd2
- ) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2
+	) const;
 
 	Real
 	rna_repulsive_pair_energy_one_way(
-			conformation::Residue const & rsd1,
-			conformation::Residue const & rsd2 ) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2 ) const;
 
 	Real
 	get_rna_base_backbone_xy(
-    Distance const x,
+		Distance const x,
 		Distance const y,
 		Distance const z,
 		conformation::Residue const & res_i,
@@ -281,19 +281,19 @@ private:
 		bool const deriv_check = false,
 		Real & deriv_x = dummy_deriv,
 		Real & deriv_y = dummy_deriv,
-		Real & deriv_z = dummy_deriv	) const;
+		Real & deriv_z = dummy_deriv ) const;
 
 	Real
 	get_rna_backbone_backbone_xy( Distance const x,
-													 Distance const y,
-													 conformation::Residue const & res_i,
-													 Size const & atom_num_j_bin ) const;
+		Distance const y,
+		conformation::Residue const & res_i,
+		Size const & atom_num_j_bin ) const;
 
 	void
 	setup_precise_zeta_cutoffs( chemical::AA const & na_rad,
-															std::string const & hoogsteen_cutoff_atom,
-															std::string const & sugar_cutoff_atom
-															);
+		std::string const & hoogsteen_cutoff_atom,
+		std::string const & sugar_cutoff_atom
+	);
 
 private: // data
 
@@ -318,7 +318,7 @@ private: // data
 	//Some parameters for scoring.
 	Distance const rna_basepair_radius_cutoff_;
 	Distance const rna_basepair_stagger_cutoff_;
-  Real const rna_basepair_radius_cutoff2_;
+	Real const rna_basepair_radius_cutoff2_;
 	Distance const basepair_xy_bin_width_;
 	Size const basepair_xy_num_bins_;
 	Size const basepair_xy_table_size_;
@@ -326,7 +326,7 @@ private: // data
 
 	Distance const base_stack_min_height_;
 	Distance const base_stack_max_height_;
-  Distance const base_stack_radius_;
+	Distance const base_stack_radius_;
 	Real const base_stack_radius2_;
 	Distance const base_stack_z_fade_zone_;
 	Distance const base_stack_rho_fade_zone_;

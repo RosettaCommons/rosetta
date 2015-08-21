@@ -207,8 +207,8 @@ public:
 		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			core::conformation::Residue const &res_i = pose.residue(ii);
 			if ( res_i.aa()!=chemical::aa_gly
-			     && res_i.aa()!=chemical::aa_ala
-			     && res_i.type().has("CEN")) {
+					&& res_i.aa()!=chemical::aa_ala
+					&& res_i.type().has("CEN") ) {
 				mm.set( DOF_ID( AtomID( res_i.atom_index("CEN"), ii ), core::id::D ), true );
 				mm.set( DOF_ID( AtomID( res_i.atom_index("CEN"), ii ), core::id::THETA ), true );
 			}

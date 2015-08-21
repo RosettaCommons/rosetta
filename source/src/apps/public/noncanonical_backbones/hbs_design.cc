@@ -108,28 +108,28 @@ static thread_local basic::Tracer TR( "HbsDesign" );
 
 // application specific options
 namespace hbs_design {
-	// pert options
-	
-	IntegerOptionKey const pert_num( "hbs_design::pert_num" );
-	IntegerOptionKey const design_loop_num( "hbs_design::design_loop_num" );
+// pert options
 
-	IntegerVectorOptionKey const hbs_design_positions( "hbs_design::hbs_design_positions" );
+IntegerOptionKey const pert_num( "hbs_design::pert_num" );
+IntegerOptionKey const design_loop_num( "hbs_design::design_loop_num" );
+
+IntegerVectorOptionKey const hbs_design_positions( "hbs_design::hbs_design_positions" );
 
 }
 
 class HbsDesignMover : public Mover {
 
-	public:
+public:
 
-		//default ctor
-		HbsDesignMover(): Mover("HbsDesignMover"){}
+	//default ctor
+	HbsDesignMover(): Mover("HbsDesignMover"){}
 
-		//default dtor
-		virtual ~HbsDesignMover(){}
+	//default dtor
+	virtual ~HbsDesignMover(){}
 
-		//methods
-		virtual void apply( core::pose::Pose & pose );
-		virtual std::string get_name() const { return "HbsDesignMover"; }
+	//methods
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const { return "HbsDesignMover"; }
 
 };
 
@@ -140,34 +140,34 @@ typedef utility::pointer::shared_ptr< HbsDesignMover const > HbsDesignMoverCOP;
 int
 main( int argc, char* argv[] )
 {
-try{
-	/*********************************************************************************************************************
-	Common Setup
-	**********************************************************************************************************************/
+	try{
+		/*********************************************************************************************************************
+		Common Setup
+		**********************************************************************************************************************/
 
-	// add application specific options to options system
-	
-	option.add( hbs_design::pert_num, "Number of iterations of perturbation loop per design" ).def(10);
-	option.add( hbs_design::design_loop_num, "Number of iterations of pertubation and design" ).def(10);
+		// add application specific options to options system
 
-	utility::vector1< core::Size > empty_vector(0);
-	option.add( hbs_design::hbs_design_positions, "Positions of hbs to design" ).def( empty_vector );
+		option.add( hbs_design::pert_num, "Number of iterations of perturbation loop per design" ).def(10);
+		option.add( hbs_design::design_loop_num, "Number of iterations of pertubation and design" ).def(10);
 
-	// init command line options
-	//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
-	devel::init(argc, argv);
+		utility::vector1< core::Size > empty_vector(0);
+		option.add( hbs_design::hbs_design_positions, "Positions of hbs to design" ).def( empty_vector );
 
-	//create mover instance
-	HbsDesignMoverOP OD_mover( new HbsDesignMover() );
+		// init command line options
+		//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
+		devel::init(argc, argv);
 
-	setup_filter_stats();
+		//create mover instance
+		HbsDesignMoverOP OD_mover( new HbsDesignMover() );
 
-	//call job distributor
-	protocols::jd2::JobDistributor::get_instance()->go( OD_mover );
-} catch ( utility::excn::EXCN_Base const & e ) {
+		setup_filter_stats();
+
+		//call job distributor
+		protocols::jd2::JobDistributor::get_instance()->go( OD_mover );
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-}
+	}
 }//main
 
 void
@@ -207,16 +207,17 @@ HbsDesignMover::apply(
 	//kdrew: automatically find hbs positions
 	utility::vector1< core::Size > hbs_seq_positions;
 	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-		if( pose.residue(i).has_variant_type(chemical::HBS_PRE) == 1) {
+		if ( pose.residue(i).has_variant_type(chemical::HBS_PRE) == 1 ) {
 			hbs_seq_positions.push_back( i );
 			//kdrew: set up constraints
 			add_hbs_constraint( pose, i );
 			//kdrew: do not use small/shear mover on hbs positions, use hbs mover instead
 			pert_pep_mm->set_bb( i, false );
 
-			if( score_fxn->has_zero_weight( core::scoring::atom_pair_constraint ) )
+			if ( score_fxn->has_zero_weight( core::scoring::atom_pair_constraint ) ) {
 				score_fxn->set_weight( core::scoring::atom_pair_constraint, 1.0 );
-			
+			}
+
 		}
 	}
 
@@ -259,7 +260,7 @@ HbsDesignMover::apply(
 	desn_mm->set_jump( 1, true );
 
 	// create minimization mover
-	simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( desn_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
+	simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( desn_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 
 	//definitely want sidechain minimization here
 	using protocols::simple_moves::TaskAwareMinMoverOP;
@@ -273,18 +274,18 @@ HbsDesignMover::apply(
 	TR << "Main loop..." << std::endl;
 
 	ncbb_design_main_loop( Size( option[ hbs_design::design_loop_num ].value() ),
-						   Size( option[ hbs_design::pert_num ].value() ),
-						   pose,
-						   pert_trial,
-						   option[ hbs_design::hbs_design_positions ].value(),
-						   pep_start,
-						   pep_end,
-						   desn_ta_min,
-						   score_fxn,
-						   mc
-						  );
-	
-	
+		Size( option[ hbs_design::pert_num ].value() ),
+		pose,
+		pert_trial,
+		option[ hbs_design::hbs_design_positions ].value(),
+		pep_start,
+		pep_end,
+		desn_ta_min,
+		score_fxn,
+		mc
+	);
+
+
 
 	TR << "Ending main loop..." << std::endl;
 
@@ -292,9 +293,9 @@ HbsDesignMover::apply(
 	protocols::jd2::JobOP curr_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
 	curr_job->add_string_real_pair( "ENERGY_FINAL ", (*score_fxn)(pose) );
-	
+
 	calculate_statistics( curr_job, pose, score_fxn );
-	
+
 }
 
 

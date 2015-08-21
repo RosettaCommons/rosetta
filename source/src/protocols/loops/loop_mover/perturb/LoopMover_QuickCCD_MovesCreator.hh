@@ -32,12 +32,12 @@ namespace perturb {
 class LoopMover_Perturb_QuickCCD_MovesCreator : public moves::MoverCreator
 {
 public:
-  LoopMover_Perturb_QuickCCD_MovesCreator() {};
-  virtual ~LoopMover_Perturb_QuickCCD_MovesCreator();
+	LoopMover_Perturb_QuickCCD_MovesCreator() {};
+	virtual ~LoopMover_Perturb_QuickCCD_MovesCreator();
 
-  virtual moves::MoverOP create_mover() const;
+	virtual moves::MoverOP create_mover() const;
 
-  virtual std::string keyname() const;
+	virtual std::string keyname() const;
 
 };
 

@@ -22,9 +22,9 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-	class RNA_EnergyMethodOptions;
-	typedef utility::pointer::shared_ptr< RNA_EnergyMethodOptions > RNA_EnergyMethodOptionsOP;
-	typedef utility::pointer::shared_ptr< RNA_EnergyMethodOptions const > RNA_EnergyMethodOptionsCOP;
+class RNA_EnergyMethodOptions;
+typedef utility::pointer::shared_ptr< RNA_EnergyMethodOptions > RNA_EnergyMethodOptionsOP;
+typedef utility::pointer::shared_ptr< RNA_EnergyMethodOptions const > RNA_EnergyMethodOptionsCOP;
 
 } //rna
 } //scoring

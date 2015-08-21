@@ -45,12 +45,12 @@ namespace constraints {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Constructor
 FabConstraint::FabConstraint():
-MultiConstraint()
+	MultiConstraint()
 {}
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Constructor
 FabConstraint::FabConstraint(ConstraintCOPs & cst_in):
-MultiConstraint(cst_in)
+	MultiConstraint(cst_in)
 {}
 
 void
@@ -66,55 +66,54 @@ FabConstraint::show(std::ostream& out) const
 
 void
 FabConstraint::read_def(
-    std::istream & data,
-    core::pose::Pose const & pose,
-   func::FuncFactory const & /*func_factory*/
+	std::istream & data,
+	core::pose::Pose const & pose,
+	func::FuncFactory const & /*func_factory*/
 ) {
-    utility::vector1<Size> res1;
-    utility::vector1<Size> res2;
-    utility::vector1<std::string> tempres1;
-    utility::vector1<std::string> tempres2;
-    std::string antchains;
-    Size flag(1);
+	utility::vector1<Size> res1;
+	utility::vector1<Size> res2;
+	utility::vector1<std::string> tempres1;
+	utility::vector1<std::string> tempres2;
+	std::string antchains;
+	Size flag(1);
 
 
-    std::string line;
-    while(getline(data, line)){
-    	std::string entry1, entry2, entry3, cstname;
-    	std::istringstream line_stream(line);
-    	if (flag){
-    		line_stream >> entry1 >> entry2 >> entry3;
-    		flag = 0;
-    	}
-    	else{
-    		line_stream >> cstname >> entry1 >> entry2 >> entry3;
-    	}
-        TR.Info << "Entry1:" << entry1 << " Entry2:" << entry2 << " Entry3:" << entry3 << std::endl;
-        tempres1.push_back(entry1);
-        tempres2.push_back(entry2);
-        antchains = entry3;
-    }
+	std::string line;
+	while ( getline(data, line) ) {
+		std::string entry1, entry2, entry3, cstname;
+		std::istringstream line_stream(line);
+		if ( flag ) {
+			line_stream >> entry1 >> entry2 >> entry3;
+			flag = 0;
+		} else {
+			line_stream >> cstname >> entry1 >> entry2 >> entry3;
+		}
+		TR.Info << "Entry1:" << entry1 << " Entry2:" << entry2 << " Entry3:" << entry3 << std::endl;
+		tempres1.push_back(entry1);
+		tempres2.push_back(entry2);
+		antchains = entry3;
+	}
 
-	for (Size n=1; n<= tempres1.size(); ++n){
+	for ( Size n=1; n<= tempres1.size(); ++n ) {
 		res1.push_back(pose_res_no(pose, tempres1[n]));
 		res2.push_back(pose_res_no(pose, tempres2[n]));
 	}
 
-    TR.Info << "Penalizing residues which are not in range "
-    		<< res1[1] << "-" << res2[1] << ", "
-    		<< res1[2] << "-" << res2[2] << ", "
-    		<< res1[3] << "-" << res2[3] << ", "
-    		<< res1[4] << "-" << res2[4] << ", "
-    		<< res1[5] << "-" << res2[5] << ", "
-    		<< res1[6] << "-" << res2[6]
-            << " and at interface with antigen chains " << antchains << std::endl;
+	TR.Info << "Penalizing residues which are not in range "
+		<< res1[1] << "-" << res2[1] << ", "
+		<< res1[2] << "-" << res2[2] << ", "
+		<< res1[3] << "-" << res2[3] << ", "
+		<< res1[4] << "-" << res2[4] << ", "
+		<< res1[5] << "-" << res2[5] << ", "
+		<< res1[6] << "-" << res2[6]
+		<< " and at interface with antigen chains " << antchains << std::endl;
 
-    setup_csts(pose, res1, res2, antchains);
+	setup_csts(pose, res1, res2, antchains);
 
-    if (data.good()) {
-        //chu skip the rest of line since this is a single line defintion.
-		while( data.good() && (data.get() != '\n') ) {}
-		if (!data.good()) data.setstate( std::ios_base::eofbit );
+	if ( data.good() ) {
+		//chu skip the rest of line since this is a single line defintion.
+		while ( data.good() && (data.get() != '\n') ) {}
+		if ( !data.good() ) data.setstate( std::ios_base::eofbit );
 	}
 } // read_def
 
@@ -130,12 +129,11 @@ FabConstraint::pose_res_no(
 	char chain = tempres[tempres.length()-1];
 
 	//check if the residue has an insertion code
-	if (isdigit(tempres[tempres.length()-2])){
+	if ( isdigit(tempres[tempres.length()-2]) ) {
 		residue = tempres.substr(0,tempres.length()-1);
 		resnum = atoi(residue.c_str());
 		pose_resnum = pose.pdb_info()->pdb2pose(chain,resnum);
-	}
-	else{
+	} else {
 		char ins_code = tempres[tempres.length()-2];
 		residue = tempres.substr(0,tempres.length()-2);
 		resnum = atoi(residue.c_str());
@@ -155,27 +153,26 @@ FabConstraint::calc_penalty_vec(
 ) {
 	utility::vector1<Real> penalty;
 	Size n = 1;
-    for (Size m = 1 ; m <= stop_res ; ++m){
-    	if (m >= start_res && m <= stop_res){
-    		penalty.push_back(1.5);
-    		//if you hit the end of the flank region at c-term end of a cdr, go back and reassign the correct penalties
-    		//for cdrs and cdr flanking regions
-    		if (m == res2[n]+2){
-    			penalty[res1[n]-2] = 0.5;
-    			penalty[res1[n]-1] = 0.5;
-    			penalty[res2[n]+1] = 0.5;
-    			penalty[res2[n]+2] = 0.5;
-    			for (Size p = res1[n] ; p <= res2[n] ; ++p){
-    				penalty[p] = 0.0;
-    			}
-    			if(n < res2.size()) n++;
-    		}
-    	}
-    	else{
-    		penalty.push_back(0);
-    	}
-    }
-    return penalty;
+	for ( Size m = 1 ; m <= stop_res ; ++m ) {
+		if ( m >= start_res && m <= stop_res ) {
+			penalty.push_back(1.5);
+			//if you hit the end of the flank region at c-term end of a cdr, go back and reassign the correct penalties
+			//for cdrs and cdr flanking regions
+			if ( m == res2[n]+2 ) {
+				penalty[res1[n]-2] = 0.5;
+				penalty[res1[n]-1] = 0.5;
+				penalty[res2[n]+1] = 0.5;
+				penalty[res2[n]+2] = 0.5;
+				for ( Size p = res1[n] ; p <= res2[n] ; ++p ) {
+					penalty[p] = 0.0;
+				}
+				if ( n < res2.size() ) n++;
+			}
+		} else {
+			penalty.push_back(0);
+		}
+	}
+	return penalty;
 }
 
 
@@ -184,7 +181,7 @@ FabConstraint::setup_csts(
 	core::pose::Pose const & pose,
 	utility::vector1<Size> res1,
 	utility::vector1<Size> res2,
-    std::string antchains
+	std::string antchains
 ) {
 	utility::vector1<Real> abpenalty;
 	func::ConstantFuncOP flankpenaltyfunc( new func::ConstantFunc(0.5) );
@@ -196,41 +193,40 @@ FabConstraint::setup_csts(
 	Size ab_start_chain = pose.chain(res1[1]);
 	Size ab_stop_chain = pose.chain(res1[res1.size()]);
 
-    Size ant_start_res = pose.conformation().chain_begin(ant_start_chain);
-    Size ant_stop_res = pose.conformation().chain_end(ant_stop_chain);
-    Size ab_start_res = pose.conformation().chain_begin(ab_start_chain);
-    Size ab_stop_res = pose.conformation().chain_end(ab_stop_chain);
+	Size ant_start_res = pose.conformation().chain_begin(ant_start_chain);
+	Size ant_stop_res = pose.conformation().chain_end(ant_stop_chain);
+	Size ab_start_res = pose.conformation().chain_begin(ab_start_chain);
+	Size ab_stop_res = pose.conformation().chain_end(ab_stop_chain);
 
-    abpenalty = calc_penalty_vec(ab_start_res, ab_stop_res, res1, res2);
+	abpenalty = calc_penalty_vec(ab_start_res, ab_stop_res, res1, res2);
 
-/*    TR.Info << "Abpenalty Vector: ";
-    for (Size p = 1 ; p <= abpenalty.size() ; ++p){
-        TR.Info << abpenalty[p] << " ";
-    }
-    TR.Info << std::endl;*/
+	/*    TR.Info << "Abpenalty Vector: ";
+	for (Size p = 1 ; p <= abpenalty.size() ; ++p){
+	TR.Info << abpenalty[p] << " ";
+	}
+	TR.Info << std::endl;*/
 
-    //Find residues at interface and setup constraints
-    //loop over all antibody residues
-    for (Size i = ab_start_res ; i <= ab_stop_res ; ++i){
-    	id::AtomID atom1(pose.residue_type(i).atom_index("CA"),i);
-    	//now loop over all antigen residues
-        for (Size j = ant_start_res ; j <= ant_stop_res ; ++j){
-        	//check for residues at interface
-            if (pose.residue(i).xyz("CA").distance(pose.residue(j).xyz("CA")) < 8.0){
-                TR.Info << "Residue " << pose.residue(i).name3() << " " << pose.pdb_info()->pose2pdb(i) << " is at interface" << std::endl;
-            	id::AtomID atom2(pose.residue_type(j).atom_index("CA"),j);
-            	runtime_assert(atom1.valid() && atom2.valid());
-            	if (abpenalty[i] == 1.5){
-            		add_individual_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint(atom1,atom2, noncdrpenaltyfunc) ) ));
-            	}
-            	else if (abpenalty[i] == 0.5){
-            		add_individual_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint(atom1,atom2, flankpenaltyfunc) ) ));
-            	}
-            	break;
-            }
-        }
+	//Find residues at interface and setup constraints
+	//loop over all antibody residues
+	for ( Size i = ab_start_res ; i <= ab_stop_res ; ++i ) {
+		id::AtomID atom1(pose.residue_type(i).atom_index("CA"),i);
+		//now loop over all antigen residues
+		for ( Size j = ant_start_res ; j <= ant_stop_res ; ++j ) {
+			//check for residues at interface
+			if ( pose.residue(i).xyz("CA").distance(pose.residue(j).xyz("CA")) < 8.0 ) {
+				TR.Info << "Residue " << pose.residue(i).name3() << " " << pose.pdb_info()->pose2pdb(i) << " is at interface" << std::endl;
+				id::AtomID atom2(pose.residue_type(j).atom_index("CA"),j);
+				runtime_assert(atom1.valid() && atom2.valid());
+				if ( abpenalty[i] == 1.5 ) {
+					add_individual_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint(atom1,atom2, noncdrpenaltyfunc) ) ));
+				} else if ( abpenalty[i] == 0.5 ) {
+					add_individual_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint(atom1,atom2, flankpenaltyfunc) ) ));
+				}
+				break;
+			}
+		}
 
-    }
+	}
 
 } // setup_csts
 

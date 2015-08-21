@@ -47,7 +47,7 @@ using basic::read_metric_value;
 
 class MetricValueIOTest : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	// Shared data elements go here.
 

@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/scoring/Membrane_FAPotential.cc
+/// @file  core/scoring/Membrane_FAPotential.cc
 ///
-/// @brief		Membrane FA Potential - Class for Fullatom Membrane Scoring Methods
-/// @details	Compute High resolution energy terms and high resolution embedding corrections
-///				for penalties. Also contains pass-through methods for accessing and updating
-///				mp framework supported data in a membrane conformation.
-///				Last Modified: 3/11/14
+/// @brief  Membrane FA Potential - Class for Fullatom Membrane Scoring Methods
+/// @details Compute High resolution energy terms and high resolution embedding corrections
+///    for penalties. Also contains pass-through methods for accessing and updating
+///    mp framework supported data in a membrane conformation.
+///    Last Modified: 3/11/14
 ///
-///	@author		Rebecca Faye Alford (rfalford12@gmail.com)
-/// @author		Patrick Barth (original)
+/// @author  Rebecca Faye Alford (rfalford12@gmail.com)
+/// @author  Patrick Barth (original)
 
 // Unit headers
 #include <core/scoring/Membrane_FAPotential.hh>
@@ -58,7 +58,7 @@ Membrane_FAPotential::Membrane_FAPotential() :
 
 /// @brief Copy Constructor for Membrane Fullatom Embedding
 Membrane_FAEmbed::Membrane_FAEmbed( Membrane_FAEmbed const & src ) :
-CacheableData()
+	CacheableData()
 {
 	fa_center_ = src.fa_center_;
 	fa_proj_ = src.fa_proj_;
@@ -126,7 +126,7 @@ void Membrane_FAPotential::compute_fa_projection(pose::Pose & pose) const
 
 	membrane_faembed.initialize(pose);
 
-	if (membrane_faembed.Fa_Membed_update()) membrane_embed.calculated() = false;
+	if ( membrane_faembed.Fa_Membed_update() ) membrane_embed.calculated() = false;
 	membrane_potential_.compute_membrane_embedding(pose);
 
 	Vector const normal(MembraneEmbed_from_pose( pose ).normal());
@@ -140,13 +140,13 @@ void Membrane_FAPotential::compute_fa_projection(pose::Pose & pose) const
 
 /// @brief Helper function called by compute_fa_projection
 void Membrane_FAPotential::fa_projection(
-										 pose::Pose & pose,
-										 Vector const & normal,
-										 Vector const & center,
-										 Real const & thickness,
-										 Real const & steepness,
-										 Real const & penalty
-										 ) const
+	pose::Pose & pose,
+	Vector const & normal,
+	Vector const & center,
+	Real const & thickness,
+	Real const & steepness,
+	Real const & penalty
+) const
 {
 	// mjo commenting out 'topology' because it is unused and causes a warning
 	//core::scoring::MembraneTopology const & topology( core::scoring::MembraneTopology_from_pose(pose) );
@@ -160,7 +160,7 @@ void Membrane_FAPotential::fa_projection(
 
 
 	//pbadebug
-	if(!membrane_faembed.calculated()) {
+	if ( !membrane_faembed.calculated() ) {
 		// USE TRACER OUTPUT ! ! !
 		//     std::cout << "CENTER " << center.x() <<  " " << center.y() << " " << center.z() << "\n";
 		//     std::cout << "NORMAL " << normal.x() <<  " " << normal.y() << " " << normal.z() << "\n";

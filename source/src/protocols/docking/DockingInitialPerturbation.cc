@@ -10,10 +10,10 @@
 /// @file DockingInitialPerturbation.cc
 /// @brief initial position functions
 /// @details
-///		This contains the functions that create initial positions for docking
-///		You can either randomize partner 1 or partner 2, spin partner 2, or
-///		perform a simple perturbation.
-/// 	Also contains docking mcm protocol
+///  This contains the functions that create initial positions for docking
+///  You can either randomize partner 1 or partner 2, spin partner 2, or
+///  perform a simple perturbation.
+///  Also contains docking mcm protocol
 /// @author Monica Berrondo
 
 #include <protocols/docking/DockingInitialPerturbation.hh>
@@ -117,7 +117,7 @@ DockingInitialPerturbationCreator::mover_name()
 
 //constructors
 DockingInitialPerturbation::DockingInitialPerturbation()
- :
+:
 	Mover(),
 	slide_( true ),
 	rigid_body_info_( /* NULL */ )
@@ -129,8 +129,8 @@ DockingInitialPerturbation::DockingInitialPerturbation()
 }
 
 DockingInitialPerturbation::DockingInitialPerturbation(
-		core::Size const rb_jump,
-		bool const slide
+	core::Size const rb_jump,
+	bool const slide
 ) :
 	Mover(),
 	slide_(slide),
@@ -143,8 +143,8 @@ DockingInitialPerturbation::DockingInitialPerturbation(
 }
 
 DockingInitialPerturbation::DockingInitialPerturbation(
-		DockJumps const movable_jumps,
-		bool const slide
+	DockJumps const movable_jumps,
+	bool const slide
 ) :
 	Mover(),
 	slide_( slide ),
@@ -161,7 +161,7 @@ void
 DockingInitialPerturbation::init()
 {
 	set_default();
- 	init_from_options();  // put this into apply in case scripts is used, then this will not be needed.
+	init_from_options();  // put this into apply in case scripts is used, then this will not be needed.
 }
 
 void
@@ -174,8 +174,8 @@ DockingInitialPerturbation::set_default()
 	if_uniform_trans_ = false;
 	spin_ = false;
 	center_at_interface_ = false;
-	//	dock_pert_ = new utility::vector1< Real >(NULL);
-	//	uniform_trans_ = NULL;
+	// dock_pert_ = new utility::vector1< Real >(NULL);
+	// uniform_trans_ = NULL;
 	slide_axis_.zero();
 	spin_center_.zero();
 }
@@ -198,25 +198,31 @@ DockingInitialPerturbation::init_from_options()
 	using namespace basic::options;
 	TR << "Reading options..." << std::endl;
 
-	if ( option[ OptionKeys::docking::randomize1 ].user() )
+	if ( option[ OptionKeys::docking::randomize1 ].user() ) {
 		set_randomize1(option[ OptionKeys::docking::randomize1 ]());
+	}
 
-	if ( option[ OptionKeys::docking::randomize2 ].user() )
+	if ( option[ OptionKeys::docking::randomize2 ].user() ) {
 		set_randomize2(option[ OptionKeys::docking::randomize2 ]());
+	}
 
-	if ( option[ OptionKeys::docking::use_ellipsoidal_randomization ].user() )
+	if ( option[ OptionKeys::docking::use_ellipsoidal_randomization ].user() ) {
 		set_use_ellipsoidal_randomization(option[ OptionKeys::docking::use_ellipsoidal_randomization ]());
+	}
 
-	if ( option[ OptionKeys::docking::dock_pert ].user() )
+	if ( option[ OptionKeys::docking::dock_pert ].user() ) {
 		set_dock_pert(option[ OptionKeys::docking::dock_pert ]());
+	}
 
-	if ( option[ OptionKeys::docking::uniform_trans ].user() )
+	if ( option[ OptionKeys::docking::uniform_trans ].user() ) {
 		set_uniform_trans(option[ OptionKeys::docking::uniform_trans ]());
+	}
 
-	if ( option[ OptionKeys::docking::spin ].user() )
+	if ( option[ OptionKeys::docking::spin ].user() ) {
 		set_spin(option[ OptionKeys::docking::spin ]());
+	}
 
-	if ( option[ OptionKeys::docking::tilt ].user() ){
+	if ( option[ OptionKeys::docking::tilt ].user() ) {
 		set_tilt(option[ OptionKeys::docking::tilt ]());
 		set_tilt1_center( option[ OptionKeys::docking::tilt1_center ]());
 		set_tilt2_center( option[ OptionKeys::docking::tilt2_center ]());
@@ -224,8 +230,9 @@ DockingInitialPerturbation::init_from_options()
 
 
 
-	if ( option[ OptionKeys::docking::center_at_interface ].user() )
+	if ( option[ OptionKeys::docking::center_at_interface ].user() ) {
 		set_center(option[ OptionKeys::docking::center_at_interface ]());
+	}
 }
 
 void
@@ -275,7 +282,7 @@ void DockingInitialPerturbation::apply( core::pose::Pose & pose )
 
 	runtime_assert( !movable_jumps_.empty() );
 
-	for ( DockJumps::const_iterator it=movable_jumps_.begin(); it != movable_jumps_.end(); ++it){
+	for ( DockJumps::const_iterator it=movable_jumps_.begin(); it != movable_jumps_.end(); ++it ) {
 		apply_body( pose, *it );
 		TR.Debug <<"movable_jumps_ value in apply:" << *it << std::endl;
 	}
@@ -305,8 +312,8 @@ DockingInitialPerturbation::apply_body(core::pose::Pose & pose, core::Size jump_
 				TR.Debug << "fa-standard mode, FaDockingSlideIntoContact applied" << std::endl;
 			}
 		} else {
-		rigid::RigidBodyRandomizeMover mover( pose, jump_number, rigid::partner_upstream );
-		mover.apply( pose );
+			rigid::RigidBodyRandomizeMover mover( pose, jump_number, rigid::partner_upstream );
+			mover.apply( pose );
 		}
 	}
 
@@ -319,8 +326,8 @@ DockingInitialPerturbation::apply_body(core::pose::Pose & pose, core::Size jump_
 			slide_axis_ = mover.get_slide_axis();
 			spin_center_ = mover.get_spin_center();
 		} else {
-		rigid::RigidBodyRandomizeMover mover( pose, jump_number, rigid::partner_downstream );
-		mover.apply( pose );
+			rigid::RigidBodyRandomizeMover mover( pose, jump_number, rigid::partner_downstream );
+			mover.apply( pose );
 		}
 	}
 	if ( if_dock_pert_ ) {
@@ -339,7 +346,7 @@ DockingInitialPerturbation::apply_body(core::pose::Pose & pose, core::Size jump_
 		//TR << "option[ docking::parallel ]()" << trans << "\n";
 		TR << "option[ docking::dock_pert ]()" << pert_mags[rot] << ' ' << pert_mags[trans] << std::endl;
 		rigid::RigidBodyPerturbMoverOP mover;
-		if (center_at_interface_) mover = rigid::RigidBodyPerturbMoverOP( new rigid::RigidBodyPerturbMover( jump_number, pert_mags[rot], pert_mags[trans], rigid::partner_downstream, true ) );
+		if ( center_at_interface_ ) mover = rigid::RigidBodyPerturbMoverOP( new rigid::RigidBodyPerturbMover( jump_number, pert_mags[rot], pert_mags[trans], rigid::partner_downstream, true ) );
 		else mover = rigid::RigidBodyPerturbMoverOP( new rigid::RigidBodyPerturbMover( jump_number, pert_mags[rot], pert_mags[trans] ) );
 		mover->apply( pose );
 	}
@@ -352,14 +359,14 @@ DockingInitialPerturbation::apply_body(core::pose::Pose & pose, core::Size jump_
 	if ( spin_ ) {
 		TR << "axis_spin: true" << std::endl;
 		rigid::RigidBodySpinMover mover( jump_number );
-		if (slide_axis_.length() != 0){
+		if ( slide_axis_.length() != 0 ) {
 			mover.spin_axis( slide_axis_ );
 			mover.rot_center( spin_center_ );
 		}
 		mover.apply( pose );
 	}
 	// Tilt partners around sliding axis up to a user specified angle
-	if ( tilt_.size() ){
+	if ( tilt_.size() ) {
 		if ( tilt_.size() != 2 ) {
 			utility_exit_with_message( "Tilt option of DockingInitialPerturbation must be given exactly two parameters." );
 		}
@@ -367,12 +374,12 @@ DockingInitialPerturbation::apply_body(core::pose::Pose & pose, core::Size jump_
 		// process user specified rotation centers
 		core::Size tilt1_center_resid_=0;
 		core::Size tilt2_center_resid_=0;
-		if (tilt1_center_ != "") tilt1_center_resid_ = core::pose::parse_resnum( tilt1_center_, pose );
-		if (tilt2_center_ != "") tilt2_center_resid_ = core::pose::parse_resnum( tilt2_center_, pose );
+		if ( tilt1_center_ != "" ) tilt1_center_resid_ = core::pose::parse_resnum( tilt1_center_, pose );
+		if ( tilt2_center_ != "" ) tilt2_center_resid_ = core::pose::parse_resnum( tilt2_center_, pose );
 
 		// instantiate mover and apply tilt
 		rigid::RigidBodyTiltMover mover(jump_number,tilt_[1],tilt_[2],tilt1_center_resid_,tilt2_center_resid_);
-		if (slide_axis_.length() != 0){
+		if ( slide_axis_.length() != 0 ) {
 			mover.spin_axis( slide_axis_ );
 		}
 		mover.apply( pose );
@@ -409,7 +416,7 @@ DockingInitialPerturbation::parse_my_tag(
 		TR << "RigidBodyInfo not found in basic::datacache::DataMap" << std::endl;
 		rigid_body_info_ = protocols::docking::RigidBodyInfoOP( new protocols::docking::RigidBodyInfo );
 		data_map.add( "RigidBodyInfo", "docking_setup", rigid_body_info_ );
-		//		throw utility::excn::EXCN_RosettaScriptsOption( "RigidBodyInfo not found in basic::datacache::DataMap, DockingInitialPerturbation can not be done, so exit here!" );
+		//  throw utility::excn::EXCN_RosettaScriptsOption( "RigidBodyInfo not found in basic::datacache::DataMap, DockingInitialPerturbation can not be done, so exit here!" );
 	} else {
 		rigid_body_info_ = data_map.get_ptr< protocols::docking::RigidBodyInfo >( "RigidBodyInfo", "docking_setup" );
 		TR.Debug << "get RigidBodyInfo pointer from basic::datacache::DataMap" << std::endl;
@@ -464,7 +471,7 @@ DockingSlideIntoContact::DockingSlideIntoContact() : Mover()
 
 //constructor
 DockingSlideIntoContact::DockingSlideIntoContact(
-		core::Size const rb_jump
+	core::Size const rb_jump
 ) : Mover(), rb_jump_(rb_jump), slide_axis_(0.0)
 {
 	using namespace core::scoring;
@@ -491,8 +498,8 @@ DockingSlideIntoContact::~DockingSlideIntoContact() {}
 void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 {
 	using namespace moves;
-    using namespace protocols::membrane;
-    
+	using namespace protocols::membrane;
+
 	bool vary_stepsize( false );
 
 	// for a membrane pose the translation axis should be in the membrane
@@ -543,10 +550,9 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 
 	rigid::RigidBodyTransMoverOP mover;
 
-	if (slide_axis_.length() != 0){
+	if ( slide_axis_.length() != 0 ) {
 		mover = rigid::RigidBodyTransMoverOP( new rigid::RigidBodyTransMover( slide_axis_, rb_jump_, vary_stepsize ) );
-	}
-	else{
+	} else {
 		mover = rigid::RigidBodyTransMoverOP( new rigid::RigidBodyTransMover( pose, rb_jump_, vary_stepsize ) );
 	}
 	( *scorefxn_ )( pose );
@@ -562,7 +568,7 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 		( *scorefxn_ )( pose );
 		++counter;
 	}
-	if( counter > counter_breakpoint ){
+	if ( counter > counter_breakpoint ) {
 		TR<<"failed moving away with original vector. Aborting DockingSlideIntoContact."<<std::endl;
 		set_current_tag( "fail" );
 		return;
@@ -577,7 +583,7 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 		( *scorefxn_ )( pose );
 		++counter;
 	}
-	if( counter > counter_breakpoint ){
+	if ( counter > counter_breakpoint ) {
 		TR<<"moving together failed. Aborting DockingSlideIntoContact."<<std::endl;
 		set_current_tag( "fail" );
 		return;
@@ -586,7 +592,7 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 	// if the stepsize was variable, do a few more tries with stepsize of 1, before
 	// moving it back out
 	counter = 0;
-	if ( mover->step_size() > 1.0 ){
+	if ( mover->step_size() > 1.0 ) {
 		TR << "step size of 1.0..." << std::endl;
 		TR << "interchain scores: " << pose.energies().total_energies()[ scoring::interchain_vdw ] << std::endl;
 		while ( counter <= 10 && pose.energies().total_energies()[ scoring::interchain_vdw ] < 0.1 ) {
@@ -637,7 +643,7 @@ FaDockingSlideIntoContact::FaDockingSlideIntoContact()
 
 //constructor
 FaDockingSlideIntoContact::FaDockingSlideIntoContact(
-		core::Size const rb_jump
+	core::Size const rb_jump
 ) : Mover(), rb_jump_(rb_jump), tolerance_(0.2), slide_axis_(0.0)
 {
 	Mover::type( "FaDockingSlideIntoContact" );
@@ -646,7 +652,7 @@ FaDockingSlideIntoContact::FaDockingSlideIntoContact(
 }
 
 FaDockingSlideIntoContact::FaDockingSlideIntoContact( utility::vector1<core::Size> rb_jumps):
-		Mover(), rb_jumps_(rb_jumps),tolerance_(0.2),slide_axis_(0.0){
+	Mover(), rb_jumps_(rb_jumps),tolerance_(0.2),slide_axis_(0.0){
 	Mover::type( "FaDockingSlideIntoContact" );
 	scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
 	scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
@@ -675,22 +681,17 @@ void FaDockingSlideIntoContact::apply( core::pose::Pose & pose )
 
 	utility::vector1<rigid::RigidBodyTransMover> trans_movers;
 
-	if (slide_axis_.length() != 0)
-	{
+	if ( slide_axis_.length() != 0 ) {
 		trans_movers.push_back( rigid::RigidBodyTransMover(slide_axis_, rb_jump_));
-	}
-	else if(rb_jumps_.size()<1)
-	{
+	} else if ( rb_jumps_.size()<1 ) {
 		trans_movers.push_back( rigid::RigidBodyTransMover(pose,rb_jump_));
-	}
-
-	else{
-		for(
+	} else {
+		for (
 				utility::vector1<core::Size>::iterator jump_idx = rb_jumps_.begin(),
 				end = rb_jumps_.end();
 				jump_idx != end;
 				++jump_idx
-		){
+				) {
 			trans_movers.push_back( rigid::RigidBodyTransMover(pose, *jump_idx));
 		}
 	}
@@ -700,12 +701,12 @@ void FaDockingSlideIntoContact::apply( core::pose::Pose & pose )
 	//int i=1;
 	// Take 2A steps till clash, then back apart one step.  Now you're within 2A of touching.
 	// Repeat with 1A steps, 0.5A steps, 0.25A steps, etc until you're as close are you want.
-	for( core::Real stepsize = 2.0; stepsize > tolerance_; stepsize /= 2.0 ) {
-		for(
+	for ( core::Real stepsize = 2.0; stepsize > tolerance_; stepsize /= 2.0 ) {
+		for (
 				utility::vector1< rigid::RigidBodyTransMover >::iterator trans_mover(trans_movers.begin());
 				trans_mover != end;
 				++trans_mover
-		){
+				) {
 			trans_mover->trans_axis( trans_mover->trans_axis().negate() ); // now move together
 			trans_mover->step_size(stepsize);
 		}
@@ -713,11 +714,11 @@ void FaDockingSlideIntoContact::apply( core::pose::Pose & pose )
 		core::Size counter( 0 );
 		do
 		{
-			for(
+			for (
 					utility::vector1< rigid::RigidBodyTransMover >::iterator trans_mover(trans_movers.begin());
 					trans_mover != end;
 					++trans_mover
-			){
+					) {
 				trans_mover->apply( pose );
 			}
 			(*scorefxn_)( pose );
@@ -730,15 +731,15 @@ void FaDockingSlideIntoContact::apply( core::pose::Pose & pose )
 			//i += 1;
 			++counter;
 		} while( counter <= counter_breakpoint && !are_touching );
-		if( counter > counter_breakpoint ){
+		if ( counter > counter_breakpoint ) {
 			TR<<"Failed Fadocking Slide Together. Aborting."<<std::endl;
 			set_current_tag( "fail" );
 		}
-		for(
+		for (
 				utility::vector1< rigid::RigidBodyTransMover >::iterator trans_mover(trans_movers.begin());
 				trans_mover != end;
 				++trans_mover
-		){
+				) {
 			trans_mover->trans_axis( trans_mover->trans_axis().negate() ); // now move apart
 			trans_mover->apply( pose );
 		}

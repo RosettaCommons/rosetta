@@ -56,12 +56,12 @@ using basic::Warning;
 
 static thread_local basic::Tracer TR( "protocols.analysis.LoopAnalyzerMover" );
 
-namespace protocols{
-namespace analysis{
+namespace protocols {
+namespace analysis {
 
 ///stupid helper function needed because ternary operator does not allow variable return types
 std::ostream & which_ostream( std::ostream & ost, std::ostream & oss, bool const tracer){
-	if(tracer) return ost;
+	if ( tracer ) return ost;
 	return oss;
 }
 
@@ -134,30 +134,30 @@ void LoopAnalyzerMover::apply( core::pose::Pose & input_pose )
 	core::Real total_rama(0), total_omega(0), total_peptide_bond(0), total_chbreak(0);
 
 	results << "LoopAnalyzerMover: unweighted bonded terms and angles (in degrees)" << std::endl
-					<< "position phi_angle psi_angle omega_angle peptide_bond_C-N_distance rama_score omega_score dunbrack_score peptide_bond_score chainbreak_score" << std::endl
-					<< " pos phi_ang psi_ang omega_ang pbnd_dst    rama  omega_sc dbrack pbnd_sc   cbreak" << std::endl;
+		<< "position phi_angle psi_angle omega_angle peptide_bond_C-N_distance rama_score omega_score dunbrack_score peptide_bond_score chainbreak_score" << std::endl
+		<< " pos phi_ang psi_ang omega_ang pbnd_dst    rama  omega_sc dbrack pbnd_sc   cbreak" << std::endl;
 
-	for( core::Size i(1); i <= positions_.size(); ++i ){
+	for ( core::Size i(1); i <= positions_.size(); ++i ) {
 		core::Size const res(positions_[i]);
 		//peptide_bond distance
 		core::Real const pbnd_dist(input_pose.residue(res).atom("C").xyz().distance(input_pose.residue(res+1).atom("N").xyz()));
 		//phi/psi/omega
-		//		results.precision(3);
+		//  results.precision(3);
 		results << std::setw(4) << res
-						<< std::setw(8) << std::setprecision(4) << pose.phi(res)
-						<< std::setw(8) << std::setprecision(4) << pose.psi(res)
-						<< std::setw(10) << std::setprecision(4) << pose.omega(res)
-						<< std::setw(9) << std::setprecision(4) << pbnd_dist;
+			<< std::setw(8) << std::setprecision(4) << pose.phi(res)
+			<< std::setw(8) << std::setprecision(4) << pose.psi(res)
+			<< std::setw(10) << std::setprecision(4) << pose.omega(res)
+			<< std::setw(9) << std::setprecision(4) << pbnd_dist;
 
 		using namespace core::scoring;
 		EnergyMap const & emap(pose.energies().residue_total_energies(res));
 		results << std::setw(8) << std::setprecision(3) << emap[rama]
 			//<< std::setw(8) << std::setprecision(4) << emap[p_aa_pp]
-						<< std::setw(10) << std::setprecision(3) << emap[omega]
-						<< std::setw(7) << std::setprecision(3) << emap[fa_dun]
-						<< std::setw(8) << std::setprecision(3) << emap[peptide_bond]
-						<< std::setw(9) << std::setprecision(3) << scores_[i]
-						<< std::setprecision(6) << std::endl;
+			<< std::setw(10) << std::setprecision(3) << emap[omega]
+			<< std::setw(7) << std::setprecision(3) << emap[fa_dun]
+			<< std::setw(8) << std::setprecision(3) << emap[peptide_bond]
+			<< std::setw(9) << std::setprecision(3) << scores_[i]
+			<< std::setprecision(6) << std::endl;
 
 		total_rama += emap[rama];
 		max_rama_=std::max(max_rama_, emap[rama]);
@@ -180,7 +180,7 @@ void LoopAnalyzerMover::apply( core::pose::Pose & input_pose )
 	results << "total rama+omega+peptide bond+chainbreak " << total_score_ << std::endl;
 
 
-	if(!tracer_){
+	if ( !tracer_ ) {
 		protocols::jd2::JobDistributor::get_instance()->current_job()->add_string(results_oss.str());
 		//store the loop_total where jd2 silent file can get it
 		protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("LAM_total", total_score_);
@@ -225,12 +225,12 @@ LoopAnalyzerMover::get_chainbreak_scores(){
 
 void LoopAnalyzerMover::find_positions( core::pose::Pose const & pose ){
 	positions_.clear();
-	for( protocols::loops::Loops::const_iterator it=loops_->begin(), it_end=loops_->end(); it != it_end; ++it ){
+	for ( protocols::loops::Loops::const_iterator it=loops_->begin(), it_end=loops_->end(); it != it_end; ++it ) {
 		core::Size start(it->start());
 		core::Size end(it->stop());
-		if(!pose.residue(start).is_terminus() && start != 1) --start;
-		if(!pose.residue(end).is_terminus() && end != pose.total_residue()) ++end;
-		for( core::Size i(start); i <= end; ++i ) positions_.push_back(i);
+		if ( !pose.residue(start).is_terminus() && start != 1 ) --start;
+		if ( !pose.residue(end).is_terminus() && end != pose.total_residue() ) ++end;
+		for ( core::Size i(start); i <= end; ++i ) positions_.push_back(i);
 	}//for all loops
 	scores_.clear();
 	scores_.resize(positions_.size(), 0);
@@ -244,14 +244,14 @@ void LoopAnalyzerMover::calculate_all_chainbreaks( core::pose::Pose & pose )
 
 	//remove all chainbreak variants within loop
 	core::Size const numpos(positions_.size());
-	for(core::Size i(1); i<=numpos; ++i){
+	for ( core::Size i(1); i<=numpos; ++i ) {
 		core::Size const pos = positions_[i];
 		core::pose::remove_variant_type_from_pose_residue(pose, CUTPOINT_LOWER, pos);
 		core::pose::remove_variant_type_from_pose_residue(pose, CUTPOINT_UPPER, pos);
 	}
 
 	//create a chainbreak at the desired position, score it, store the score, and revert changes
-	for(core::Size i(1); i<=numpos; ++i){
+	for ( core::Size i(1); i<=numpos; ++i ) {
 		core::Size const pos = positions_[i];
 
 		//create chainbreak variant

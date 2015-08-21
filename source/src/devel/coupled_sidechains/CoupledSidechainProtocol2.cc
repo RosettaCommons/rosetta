@@ -82,7 +82,7 @@
 #include <utility/fixedsizearray1.hh>
 
 #ifdef WIN_PYROSETTA
-	#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
+#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
 #endif
 
 
@@ -104,13 +104,13 @@ OPT_1GRP_KEY(Real,rotamers,pert_magnitude)
 bool devel::coupled_sidechains::CoupledSidechainProtocol::options_registered_( false );
 
 void devel::coupled_sidechains::CoupledSidechainProtocol::register_options() {
-  using namespace basic::options;
-  using namespace OptionKeys;
-  if ( options_registered_ ) return;
-  options_registered_ = true;
+	using namespace basic::options;
+	using namespace OptionKeys;
+	if ( options_registered_ ) return;
+	options_registered_ = true;
 	protocols::canonical_sampling::SimulatedTempering::register_options();
 	protocols::canonical_sampling::SilentTrajectoryRecorder::register_options();
-	//	protocols::canonical_sampling::SilentTrajectoryRecorder::register_options();
+	// protocols::canonical_sampling::SilentTrajectoryRecorder::register_options();
 	//protocols::canonical_sampling::SilentTrajectoryRecorder::register_options();
 	OPT( score::weights );
 	OPT( score::patch );
@@ -129,29 +129,29 @@ namespace coupled_sidechains {
 /*
 std::string
 CoupledSidechainProtocolCreator::keyname() const {
-	return CoupledSidechainProtocolCreator::mover_name();
+return CoupledSidechainProtocolCreator::mover_name();
 }
 
 protocols::moves::MoverOP
 CoupledSidechainProtocolCreator::create_mover() const {
-	return new CoupledSidechainProtocol;
+return new CoupledSidechainProtocol;
 }
 
 std::string
 CoupledSidechainProtocolCreator::mover_name() {
-	return "SidechainMC";
+return "SidechainMC";
 }
 */
 CoupledSidechainProtocol::CoupledSidechainProtocol()  : protocols::moves::Mover()
 {
-	//	set_defaults();
+	// set_defaults();
 	init_from_options();
 	setup_objects();
 }
 
 protocols::moves::MoverOP
 CoupledSidechainProtocol::clone() const {
-  return( protocols::moves::MoverOP( new CoupledSidechainProtocol( *this ) ) );
+	return( protocols::moves::MoverOP( new CoupledSidechainProtocol( *this ) ) );
 }
 
 protocols::moves::MoverOP
@@ -198,20 +198,20 @@ CoupledSidechainProtocol::setup_objects() {
 	sampler_->set_ntrials( ntrials_ );
 	if ( prob_withinrot_ > 0.0 ) {
 		protocols::simple_moves::sidechain_moves::SidechainMoverBaseOP mover( new protocols::simple_moves::sidechain_moves::PerturbRotamerSidechainMover );
-		//		mover->set_task_factory( task_factory );
+		//  mover->set_task_factory( task_factory );
 		sampler_->add_mover( mover, prob_withinrot_ );
 	}
 
 	if ( prob_pert_chi_ > 0.0 ) {
 		protocols::simple_moves::sidechain_moves::PerturbChiSidechainMoverOP mover( new protocols::simple_moves::sidechain_moves::PerturbChiSidechainMover() );
 		mover->set_magnitude( pert_magnitude_ );
-		//		mover->set_task_factory( task_factory );
+		//  mover->set_task_factory( task_factory );
 		sampler_->add_mover( mover, prob_pert_chi_ );
 	}
 
 	if ( prob_jump_rot_ > 0.0 ) {
 		protocols::simple_moves::sidechain_moves::SidechainMoverBaseOP mover( new protocols::simple_moves::sidechain_moves::JumpRotamerSidechainMover() );
-		//		mover->set_task_factory( task_factory );
+		//  mover->set_task_factory( task_factory );
 		sampler_->add_mover( mover, prob_jump_rot_ );
 	}
 
@@ -233,13 +233,13 @@ CoupledSidechainProtocol::get_name() const {
 
 void
 CoupledSidechainProtocol::parse_my_tag( utility::tag::TagCOP const /*tag*/, basic::datacache::DataMap & /*data*/, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & /*pose*/) {
-	/*	ntrials_ = tag->getOption<core::Size>( "ntrials", 10000 );
+	/* ntrials_ = tag->getOption<core::Size>( "ntrials", 10000 );
 	set_prob_uniform( tag->getOption<core::Real>( "prob_uniform", 0.0 ) );
 	set_prob_withinrot( tag->getOption<core::Real>( "prob_withinrot", 0.0 ) );
 	set_prob_random_pert_current( tag->getOption<core::Real>( "prob_random_pert_current", 0.0 ) );
 	core::Real between_rot = 1.0 - prob_uniform() - prob_withinrot () - prob_random_pert_current();
 	set_scorefunction(
-		protocols::rosetta_scripts::parse_score_function(tag, data)->clone() );
+	protocols::rosetta_scripts::parse_score_function(tag, data)->clone() );
 	*/
 }
 

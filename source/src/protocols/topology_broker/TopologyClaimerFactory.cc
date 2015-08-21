@@ -111,10 +111,10 @@ TopologyClaimerFactory::TopologyClaimerFactory() {
 	add_type(TopologyClaimerOP( new CutBiasClaimer() ));
 	add_type(TopologyClaimerOP( new DensityScoringClaimer() ));
 	add_type(TopologyClaimerOP( new PseudocontactShiftEnergyController() ));
-  add_type(TopologyClaimerOP( new PseudocontactShiftEnergyController_Ts1() ));
-  add_type(TopologyClaimerOP( new PseudocontactShiftEnergyController_Ts2() ));
-  add_type(TopologyClaimerOP( new PseudocontactShiftEnergyController_Ts3() ));
-  add_type(TopologyClaimerOP( new PseudocontactShiftEnergyController_Ts4() ));
+	add_type(TopologyClaimerOP( new PseudocontactShiftEnergyController_Ts1() ));
+	add_type(TopologyClaimerOP( new PseudocontactShiftEnergyController_Ts2() ));
+	add_type(TopologyClaimerOP( new PseudocontactShiftEnergyController_Ts3() ));
+	add_type(TopologyClaimerOP( new PseudocontactShiftEnergyController_Ts4() ));
 	add_type(TopologyClaimerOP( new PcsEnergyController() ));
 	add_type(TopologyClaimerOP( new FoldandDockClaimer() ));
 	add_type(TopologyClaimerOP( new FibrilModelingClaimer() ));
@@ -139,13 +139,13 @@ void TopologyClaimerFactory::add_type(const std::string& name, TopologyClaimerOP
 TopologyClaimerOP TopologyClaimerFactory::newTopologyClaimer(const std::string& name) const {
 	using std::stringstream;
 
-	if (claimers_.find(name) != claimers_.end()) {
+	if ( claimers_.find(name) != claimers_.end() ) {
 		return claimers_[name]->clone();
 	} else {
 		stringstream ss;
 		ss << name
-		   << " does not name a known TopologyClaimer -->"
-		   << " check spelling or register the type via the add_type() method";
+			<< " does not name a known TopologyClaimer -->"
+			<< " check spelling or register the type via the add_type() method";
 		utility_exit_with_message(ss.str());
 
 		// purely superficial return statement to quiet the compiler

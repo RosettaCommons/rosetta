@@ -25,17 +25,18 @@
 namespace numeric {
 
 void read_probabilities_or_die(const std::string& filename, utility::vector1<double>* probs) {
-  using namespace std;
-  assert(probs);
-  probs->clear();
+	using namespace std;
+	assert(probs);
+	probs->clear();
 
-  ifstream in(filename.c_str());
-  if (!in.is_open())
-    utility_exit_with_message("Error reading probabilities from " + filename);
+	ifstream in(filename.c_str());
+	if ( !in.is_open() ) {
+		utility_exit_with_message("Error reading probabilities from " + filename);
+	}
 
 	double p;
 	in >> p;
-	while (in.good()) {
+	while ( in.good() ) {
 		probs->push_back(p);
 		in >> p;
 	}
@@ -43,9 +44,9 @@ void read_probabilities_or_die(const std::string& filename, utility::vector1<dou
 }
 
 void print_probabilities(const utility::vector1<double>& probs, std::ostream& out) {
-  for (unsigned i = 1; i <= probs.size(); ++i) {
-    out << "P(" << i << ") = " << probs[i] << std::endl;
-  }
+	for ( unsigned i = 1; i <= probs.size(); ++i ) {
+		out << "P(" << i << ") = " << probs[i] << std::endl;
+	}
 }
 
 }  // namespace numeric

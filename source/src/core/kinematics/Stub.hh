@@ -124,8 +124,8 @@ public: // Methods
 	{
 		Matrix delta( M * M.transposed() - Matrix::identity() );
 		return ( ( delta.col_x().length() +
-							 delta.col_y().length() +
-							 delta.col_z().length() ) < tolerance );
+			delta.col_y().length() +
+			delta.col_z().length() ) < tolerance );
 	}
 
 	/// @brief convert a global reference (lab) frame vector to our local (stub) frame
@@ -154,9 +154,9 @@ public: // Methods
 	{
 		Real const d_sin_theta( d * std::sin( theta ) );
 		return local2global( Vector(
-													 d * std::cos( theta ),
-													 d_sin_theta * std::cos( phi ),
-													 d_sin_theta * std::sin( phi ) ) );
+			d * std::cos( theta ),
+			d_sin_theta * std::cos( phi ),
+			d_sin_theta * std::sin( phi ) ) );
 	}
 
 	/// @brief  Build stubatom coords that would yield this stub
@@ -188,11 +188,11 @@ distance(
 {
 	using namespace numeric;
 	return std::sqrt(
-									 a.M.col_x().distance_squared(b.M.col_x() ) +
-									 a.M.col_y().distance_squared(b.M.col_y() ) +
-									 a.M.col_z().distance_squared(b.M.col_z() ) +
-									 a.v.distance_squared(        b.v         )
-									 );
+		a.M.col_x().distance_squared(b.M.col_x() ) +
+		a.M.col_y().distance_squared(b.M.col_y() ) +
+		a.M.col_z().distance_squared(b.M.col_z() ) +
+		a.v.distance_squared(        b.v         )
+	);
 }
 
 

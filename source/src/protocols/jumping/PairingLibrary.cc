@@ -268,8 +268,8 @@ PairingLibrary::read_from_file( std::string const& fn)
 	std::string line;
 	std::string tag,filename;
 	int pos1,pos2;
-  float o,p1,p2,mn_dist,mx_dist,
-	phi1,psi1,omega1,phi2,psi2,omega2;
+	float o,p1,p2,mn_dist,mx_dist,
+		phi1,psi1,omega1,phi2,psi2,omega2;
 	Size const MAX_POS( 5 ); // param::MAX_POS
 	FArray2D_float Epos1(3,MAX_POS), Epos2(3,MAX_POS);
 	utility::io::izstream data( fn ); //or from database file
@@ -280,12 +280,12 @@ PairingLibrary::read_from_file( std::string const& fn)
 		Vector n2, ca2, c2;
 		is >> tag >> filename >> pos1 >> pos2 >> mn_dist >> mx_dist >>
 			o >> p1 >> p2 >>
-		Epos1(1,1) >> Epos1(2,1) >> Epos1(3,1) >>
-		Epos1(1,2) >> Epos1(2,2) >> Epos1(3,2) >>
-		Epos1(1,4) >> Epos1(2,4) >> Epos1(3,4) >>
-		Epos2(1,1) >> Epos2(2,1) >> Epos2(3,1) >>
-		Epos2(1,2) >> Epos2(2,2) >> Epos2(3,2) >>
-		Epos2(1,4) >> Epos2(2,4) >> Epos2(3,4) >>
+			Epos1(1,1) >> Epos1(2,1) >> Epos1(3,1) >>
+			Epos1(1,2) >> Epos1(2,2) >> Epos1(3,2) >>
+			Epos1(1,4) >> Epos1(2,4) >> Epos1(3,4) >>
+			Epos2(1,1) >> Epos2(2,1) >> Epos2(3,1) >>
+			Epos2(1,2) >> Epos2(2,2) >> Epos2(3,2) >>
+			Epos2(1,4) >> Epos2(2,4) >> Epos2(3,4) >>
 
 			phi1 >> psi1 >> omega1 >>
 			phi2 >> psi2 >> omega2;
@@ -294,18 +294,18 @@ PairingLibrary::read_from_file( std::string const& fn)
 
 		if ( is.fail() || tag != "PAIR" ) continue;
 
-			runtime_assert ( pos1 < pos2 && p1 * p2 > 0.0 &&
-				std::abs(phi1) < 185 && std::abs(psi1) < 185 && std::abs(omega1) < 185 &&
-				std::abs(phi2) < 185 && std::abs(psi2) < 185 && std::abs(omega2) < 185 );
+		runtime_assert ( pos1 < pos2 && p1 * p2 > 0.0 &&
+			std::abs(phi1) < 185 && std::abs(psi1) < 185 && std::abs(omega1) < 185 &&
+			std::abs(phi2) < 185 && std::abs(psi2) < 185 && std::abs(omega2) < 185 );
 
 		// filter
 		// note that the filename contains info about the scop class so you could
 		// in principle filter for b,c,or d class proteins individually
 		if ( mx_dist > MAX_NO_DIST ||
-				 phi1 >  0.0 || phi2 >  0.0 ||
-				 psi1 < 50.0 || psi2 < 50.0 ||
-				 std::abs( omega1 ) < 90 ||
-				 std::abs( omega2 ) < 90 ) continue;
+				phi1 >  0.0 || phi2 >  0.0 ||
+				psi1 < 50.0 || psi2 < 50.0 ||
+				std::abs( omega1 ) < 90 ||
+				std::abs( omega2 ) < 90 ) continue;
 
 		// fill in a new beta-pairing template
 		PairingTemplate t("CA","N","CA","C");
@@ -339,24 +339,24 @@ PairingLibrary::read_from_file( std::string const& fn)
 	}
 }
 
-	///////////////////////////////////////////////////////////////////////////////
-	void
-	PairingLibrary::read_from_file_no_filters( std::string const& fn)
-	{
-		std::string line;
-		std::string tag,filename;
-		int pos1,pos2;
-	  float o,p1,p2,mn_dist,mx_dist,
+///////////////////////////////////////////////////////////////////////////////
+void
+PairingLibrary::read_from_file_no_filters( std::string const& fn)
+{
+	std::string line;
+	std::string tag,filename;
+	int pos1,pos2;
+	float o,p1,p2,mn_dist,mx_dist,
 		phi1,psi1,omega1,phi2,psi2,omega2;
-		Size const MAX_POS( 5 ); // param::MAX_POS
-		FArray2D_float Epos1(3,MAX_POS), Epos2(3,MAX_POS);
-		utility::io::izstream data( fn ); //or from database file
-		std::ofstream template_infofile("jump_TMH_templates.dat.info");
-		while ( getline( data,line ) ) {
-			std::istringstream is( line );
-			Vector n1, ca1, c1;
-			Vector n2, ca2, c2;
-			is >> tag >> filename >> pos1 >> pos2 >> mn_dist >> mx_dist >>
+	Size const MAX_POS( 5 ); // param::MAX_POS
+	FArray2D_float Epos1(3,MAX_POS), Epos2(3,MAX_POS);
+	utility::io::izstream data( fn ); //or from database file
+	std::ofstream template_infofile("jump_TMH_templates.dat.info");
+	while ( getline( data,line ) ) {
+		std::istringstream is( line );
+		Vector n1, ca1, c1;
+		Vector n2, ca2, c2;
+		is >> tag >> filename >> pos1 >> pos2 >> mn_dist >> mx_dist >>
 			o >> p1 >> p2 >>
 
 			n1.x() >> n1.y() >> n1.z() >>
@@ -372,67 +372,66 @@ PairingLibrary::read_from_file( std::string const& fn)
 
 		RT this_rt( kinematics::Stub( ca1, n1, ca1, c1 ), kinematics::Stub( ca2, n2, ca2, c2) );
 
-			// fill in a new beta-pairing template
-			char ss1,ss2;
-			if ( p1 == 'E' || p1 == 1 ) {
-				ss1 = 'E';
-			} else if ( p1 == 'H' || p1 == 2) {
-				ss1 = 'H';
-			} else if ( p1 == 'L' || p1 == 3) {
-				ss1 = 'L';
-			}else {
-				std::cout << "bad secstruct: " << p1 << std::endl;
-				continue;
-			}
-			if ( p2 == 'E' || p2 == 1 ) {
-				ss2 = 'E';
-			} else if ( p2 == 'H' || p2 == 2) {
-				ss2 = 'H';
-			} else if ( p2 == 'L' || p2 == 3) {
-				ss2 = 'L';
-			}else {
-				std::cout << "bad secstruct: " << p2 << std::endl;
-				continue;
-			}
-
-			template_infofile << fn << ' ' << this_rt << "\n";
-
-			PairingTemplate t("CA","N","CA","C");
-			t.rt_ = this_rt;
-			t.phi   (1) = phi1;
-			t.phi   (2) = phi2;
-			t.psi   (1) = psi1;
-			t.psi   (2) = psi2;
-			t.omega (1) = omega1;
-			t.omega (2) = omega2;
-			t.secstruct(1)=ss1;
-			t.secstruct(2)=ss2;
-
-			// bw for TMH the jump library are specific to the positions. these are defined in the template file to 1 or 2.
-			if(pos1==0 && pos2 == 1)
-			{
-				const int o_key = (int)o;
-				const int p_key = 0; //p1;
-
-				// This is for generic use in case pos1,pos2 from pairings_file is not defined in the jump library.
-				pairings_[ std::make_pair( o_key, p_key ) ].push_back( t );
-				++num_of_pairings_;
-			} else {
-				const int o_key = (int)o;
-				const int p_key = 0; //p1;
-				std::cout << t.rt_ << "\n";
-
-				// This is when we want to test a number of different jump for a particular position.
-				pairings_[ std::make_pair( pos1, pos2 ) ].push_back( t );
-
-				//Put all in generic library as well...
-				pairings_[ std::make_pair( o_key, p_key ) ].push_back( t );
-				++num_of_pairings_;
-				++num_of_pairings_;
-			}
+		// fill in a new beta-pairing template
+		char ss1,ss2;
+		if ( p1 == 'E' || p1 == 1 ) {
+			ss1 = 'E';
+		} else if ( p1 == 'H' || p1 == 2 ) {
+			ss1 = 'H';
+		} else if ( p1 == 'L' || p1 == 3 ) {
+			ss1 = 'L';
+		} else {
+			std::cout << "bad secstruct: " << p1 << std::endl;
+			continue;
 		}
-		template_infofile.close();
+		if ( p2 == 'E' || p2 == 1 ) {
+			ss2 = 'E';
+		} else if ( p2 == 'H' || p2 == 2 ) {
+			ss2 = 'H';
+		} else if ( p2 == 'L' || p2 == 3 ) {
+			ss2 = 'L';
+		} else {
+			std::cout << "bad secstruct: " << p2 << std::endl;
+			continue;
+		}
+
+		template_infofile << fn << ' ' << this_rt << "\n";
+
+		PairingTemplate t("CA","N","CA","C");
+		t.rt_ = this_rt;
+		t.phi   (1) = phi1;
+		t.phi   (2) = phi2;
+		t.psi   (1) = psi1;
+		t.psi   (2) = psi2;
+		t.omega (1) = omega1;
+		t.omega (2) = omega2;
+		t.secstruct(1)=ss1;
+		t.secstruct(2)=ss2;
+
+		// bw for TMH the jump library are specific to the positions. these are defined in the template file to 1 or 2.
+		if ( pos1==0 && pos2 == 1 ) {
+			const int o_key = (int)o;
+			const int p_key = 0; //p1;
+
+			// This is for generic use in case pos1,pos2 from pairings_file is not defined in the jump library.
+			pairings_[ std::make_pair( o_key, p_key ) ].push_back( t );
+			++num_of_pairings_;
+		} else {
+			const int o_key = (int)o;
+			const int p_key = 0; //p1;
+			std::cout << t.rt_ << "\n";
+
+			// This is when we want to test a number of different jump for a particular position.
+			pairings_[ std::make_pair( pos1, pos2 ) ].push_back( t );
+
+			//Put all in generic library as well...
+			pairings_[ std::make_pair( o_key, p_key ) ].push_back( t );
+			++num_of_pairings_;
+			++num_of_pairings_;
+		}
 	}
+	template_infofile.close();
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 kinematics::RT
@@ -460,111 +459,111 @@ PairingLibrary::get_random_beta_sheet_jump(
 	return t.rt_;
 }
 
-	///////////////////////////////////////////////////////////////////////////////
-	kinematics::RT
-	PairingLibrary::get_random_tmh_jump(int const orientation,
-										int const pos1,
-										int const pos2
-	) const
-	{
-		assert( pairings_.size() > 0 );
+///////////////////////////////////////////////////////////////////////////////
+kinematics::RT
+PairingLibrary::get_random_tmh_jump(int const orientation,
+	int const pos1,
+	int const pos2
+) const
+{
+	assert( pairings_.size() > 0 );
 
-		// key for looking up the template geometry:
-		std::pair<int,int> generic_key (orientation,0);
-		std::pair<int,int> specific_key (pos1,pos2);
-		// std::pair<int,int> key (specific_key); // Unused variable causes warning.
+	// key for looking up the template geometry:
+	std::pair<int,int> generic_key (orientation,0);
+	std::pair<int,int> specific_key (pos1,pos2);
+	// std::pair<int,int> key (specific_key); // Unused variable causes warning.
 
-		const PairingTemplateList & templates
+	const PairingTemplateList & templates
 		( pairings_.find( specific_key )->second );
 
-		const int ntemplates ( templates.size() );
-		if(ntemplates>0) {
-			int const index( static_cast<int>( numeric::random::rg().uniform() * ntemplates ) );
-			const PairingTemplate &t ( templates[ index ] );
-			return t.rt_;
-		} else { // use the generic key
-			std::cout << "No key found for " << pos1 << ' ' << pos2 << " using the generic template\n";
-			const PairingTemplateList & templates_generic( pairings_.find( generic_key )->second );
-			const int ntemplates_generic ( templates_generic.size() );
-			int const index( static_cast<int>( numeric::random::rg().uniform() * ntemplates_generic) );
-			const PairingTemplate &t ( templates[ index ] );
-			return t.rt_;
-		}
+	const int ntemplates ( templates.size() );
+	if ( ntemplates>0 ) {
+		int const index( static_cast<int>( numeric::random::rg().uniform() * ntemplates ) );
+		const PairingTemplate &t ( templates[ index ] );
+		return t.rt_;
+	} else { // use the generic key
+		std::cout << "No key found for " << pos1 << ' ' << pos2 << " using the generic template\n";
+		const PairingTemplateList & templates_generic( pairings_.find( generic_key )->second );
+		const int ntemplates_generic ( templates_generic.size() );
+		int const index( static_cast<int>( numeric::random::rg().uniform() * ntemplates_generic) );
+		const PairingTemplate &t ( templates[ index ] );
+		return t.rt_;
 	}
+}
 
-	///////////////////////////////////////////////////////////////////////////////
-	void
-	PairingLibrary::set_tmh_jump(core::pose::Pose pose,
-								int const jump_number,
-								int const orientation,
-								int const pos1,
-								int const pos2
-	) const
-	{
-		assert( pairings_.size() > 0 );
+///////////////////////////////////////////////////////////////////////////////
+void
+PairingLibrary::set_tmh_jump(core::pose::Pose pose,
+	int const jump_number,
+	int const orientation,
+	int const pos1,
+	int const pos2
+) const
+{
+	assert( pairings_.size() > 0 );
 
-		// key for looking up the template geometry:
-		std::pair<int,int> generic_key (orientation,0);
-		std::pair<int,int> specific_key (pos1,pos2);
-		// std::pair<int,int> key (specific_key); // Unused variable causes warning.
+	// key for looking up the template geometry:
+	std::pair<int,int> generic_key (orientation,0);
+	std::pair<int,int> specific_key (pos1,pos2);
+	// std::pair<int,int> key (specific_key); // Unused variable causes warning.
 
-		const PairingTemplateList & templates
+	const PairingTemplateList & templates
 		( pairings_.find( specific_key )->second );
 
-		const int ntemplates ( templates.size() );
-		if(ntemplates>0) {
-			int const index( static_cast<int>( numeric::random::rg().uniform() * ntemplates ) );
-			const PairingTemplate &t ( templates[ index ] );
-			std::cout << jump_number << "\n";
-			std::cout << t.rt_;
+	const int ntemplates ( templates.size() );
+	if ( ntemplates>0 ) {
+		int const index( static_cast<int>( numeric::random::rg().uniform() * ntemplates ) );
+		const PairingTemplate &t ( templates[ index ] );
+		std::cout << jump_number << "\n";
+		std::cout << t.rt_;
 
-			pose.set_phi(pos1,t.phi(1));
-			pose.set_phi(pos2,t.phi(2));
-			pose.set_psi(pos1,t.psi(1));
-			pose.set_psi(pos2,t.psi(2));
-			pose.set_omega(pos1,t.omega(1));
-			pose.set_omega(pos2,t.omega(2));
-			pose.set_secstruct(pos1,t.secstruct(1));
-			pose.set_secstruct(pos2,t.secstruct(2));
+		pose.set_phi(pos1,t.phi(1));
+		pose.set_phi(pos2,t.phi(2));
+		pose.set_psi(pos1,t.psi(1));
+		pose.set_psi(pos2,t.psi(2));
+		pose.set_omega(pos1,t.omega(1));
+		pose.set_omega(pos2,t.omega(2));
+		pose.set_secstruct(pos1,t.secstruct(1));
+		pose.set_secstruct(pos2,t.secstruct(2));
 
-			id::StubID up_stub(   core::pose::named_stub_id_to_stub_id( core::id::NamedStubID( "CA","N","CA","C", pos1 ), pose ) );
-			id::StubID down_stub( core::pose::named_stub_id_to_stub_id( core::id::NamedStubID( "CA","N","CA","C", pos2 ), pose ) );
-			pose.conformation().set_stub_transform( up_stub, down_stub, t.rt_ );
-		} else { // use the generic key
-			std::cout << "No key found for " << pos1 << ' ' << pos2 << " using the generic template\n";
-			const PairingTemplateList & templates_generic( pairings_.find( generic_key )->second );
-			const int ntemplates_generic ( templates_generic.size() );
-			int const index( static_cast<int>( numeric::random::rg().uniform() * ntemplates_generic) );
-			const PairingTemplate &t ( templates[ index ] );
-			std::cout << jump_number << "\n";
-			std::cout << t.rt_;
+		id::StubID up_stub(   core::pose::named_stub_id_to_stub_id( core::id::NamedStubID( "CA","N","CA","C", pos1 ), pose ) );
+		id::StubID down_stub( core::pose::named_stub_id_to_stub_id( core::id::NamedStubID( "CA","N","CA","C", pos2 ), pose ) );
+		pose.conformation().set_stub_transform( up_stub, down_stub, t.rt_ );
+	} else { // use the generic key
+		std::cout << "No key found for " << pos1 << ' ' << pos2 << " using the generic template\n";
+		const PairingTemplateList & templates_generic( pairings_.find( generic_key )->second );
+		const int ntemplates_generic ( templates_generic.size() );
+		int const index( static_cast<int>( numeric::random::rg().uniform() * ntemplates_generic) );
+		const PairingTemplate &t ( templates[ index ] );
+		std::cout << jump_number << "\n";
+		std::cout << t.rt_;
 
-			pose.set_phi(pos1,t.phi(1));
-			pose.set_phi(pos2,t.phi(2));
-			pose.set_psi(pos1,t.psi(1));
-			pose.set_psi(pos2,t.psi(2));
-			pose.set_omega(pos1,t.omega(1));
-			pose.set_omega(pos2,t.omega(2));
-			pose.set_secstruct(pos1,t.secstruct(1));
-			pose.set_secstruct(pos2,t.secstruct(2));
+		pose.set_phi(pos1,t.phi(1));
+		pose.set_phi(pos2,t.phi(2));
+		pose.set_psi(pos1,t.psi(1));
+		pose.set_psi(pos2,t.psi(2));
+		pose.set_omega(pos1,t.omega(1));
+		pose.set_omega(pos2,t.omega(2));
+		pose.set_secstruct(pos1,t.secstruct(1));
+		pose.set_secstruct(pos2,t.secstruct(2));
 
-			id::StubID up_stub(   core::pose::named_stub_id_to_stub_id( core::id::NamedStubID( "CA","N","CA","C", pos1 ), pose ) );
-			id::StubID down_stub( core::pose::named_stub_id_to_stub_id( core::id::NamedStubID( "CA","N","CA","C", pos2 ), pose ) );
-			pose.conformation().set_stub_transform( up_stub, down_stub, t.rt_ );
-		}
+		id::StubID up_stub(   core::pose::named_stub_id_to_stub_id( core::id::NamedStubID( "CA","N","CA","C", pos1 ), pose ) );
+		id::StubID down_stub( core::pose::named_stub_id_to_stub_id( core::id::NamedStubID( "CA","N","CA","C", pos2 ), pose ) );
+		pose.conformation().set_stub_transform( up_stub, down_stub, t.rt_ );
 	}
+}
 
 /// @details puts all jump-geometries that fit the orientation and pleating into
 /// list of FragData's. Try to reuse these FragData for different Frames that have same orientation and pleating
 void PairingLibrary::create_jump_fragments(
-  int const orientation,
+	int const orientation,
 	int const pleating,
 	bool bWithTorsion,
 	core::fragment::FragDataOPs& frags
 ) const {
 	using namespace core::fragment;
 
-	//	read_jump_templates(); // self-initializing
+	// read_jump_templates(); // self-initializing
 	runtime_assert( pairings_.size() > 0 );
 
 	// key for looking up the template geometry:
@@ -580,8 +579,8 @@ void PairingLibrary::create_jump_fragments(
 	const int iStart( 1 ); // in templates start residue is number 1
 	const int iStop ( 2 ); // in templates stop residue is number 2
 	frags.reserve( ntemplates );
-	for ( PairingTemplateList::const_iterator it=templates.begin(),	eit=templates.end();
-				it!=eit; ++it ) {
+	for ( PairingTemplateList::const_iterator it=templates.begin(), eit=templates.end();
+			it!=eit; ++it ) {
 		frags.push_back( core::fragment::FragDataOP( new FragData ) );
 		if ( bWithTorsion ) {
 			BBTorsionSRFDOP start( new BBTorsionSRFD( 3, 'E', 'X' ) );
@@ -623,40 +622,39 @@ PairingLibrary::generate_jump_frags(
 	JumpOrientations jump_kind;
 	Size jump_nr ( 1 );
 	for ( core::scoring::dssp::PairingsList::const_iterator it = pairings.begin(), eit = pairings.end();
-				it != eit; ++it ) {
+			it != eit; ++it ) {
 		Size o_key ( it->Orientation() ); // < 0 ? 1 : 2 );
 		Size p_key ( it->Pleating() ); // < 0 ? 1 : 2 );
 		jump_kind[ std::make_pair( o_key, p_key ) ].push_back( jump_nr++ );
 	}
 
 	// now generate fragments for each of the maximum four JumpOrientations present
-  for ( JumpOrientations::const_iterator it=jump_kind.begin(), eit=jump_kind.end();
-				it!=eit;
-				++it )
-    {
-      Size o_key( it->first.first ); //orientation
-      Size p_key( it->first.second ); //pleating ... believe me or not, it is in first.second
-			fragment::FragDataOPs frag_data;
-      create_jump_fragments( o_key, p_key, bWithTorsion, frag_data );
-      for ( JumpList::const_iterator jit=it->second.begin(), ejit=it->second.end();
-						jit!=ejit; ++jit ) {
-				int const jump_nr ( *jit );
-				int const startpos( pairings[ jump_nr ].Pos1() );
-				int const endpos( pairings[ jump_nr ].Pos2() );
+	for ( JumpOrientations::const_iterator it=jump_kind.begin(), eit=jump_kind.end();
+			it!=eit;
+			++it ) {
+		Size o_key( it->first.first ); //orientation
+		Size p_key( it->first.second ); //pleating ... believe me or not, it is in first.second
+		fragment::FragDataOPs frag_data;
+		create_jump_fragments( o_key, p_key, bWithTorsion, frag_data );
+		for ( JumpList::const_iterator jit=it->second.begin(), ejit=it->second.end();
+				jit!=ejit; ++jit ) {
+			int const jump_nr ( *jit );
+			int const startpos( pairings[ jump_nr ].Pos1() );
+			int const endpos( pairings[ jump_nr ].Pos2() );
 
-				if ( mm.get_bb( startpos ) && mm.get_bb( endpos ) ) {
-					Size const length( bWithTorsion ? 4 : 2 );
-					runtime_assert( length == frag_data.front()->size() );
-					fragment::JumpingFrameOP frame = generate_empty_jump_frame( startpos, endpos, length );
-					frame->add_fragment( frag_data );
-					frags_accumulator.add( frame );
-				} else {
-					utility_exit_with_message("need to implement this: make ss-library fragments that only contain those torsions for residues "
-						"that can move according to movemap -- call this function with	"
-						"bWithTorsions = false ... and it works for now");
-				}
-			} // for JumpList iteration
-		} // loop over orientations and pleatings
+			if ( mm.get_bb( startpos ) && mm.get_bb( endpos ) ) {
+				Size const length( bWithTorsion ? 4 : 2 );
+				runtime_assert( length == frag_data.front()->size() );
+				fragment::JumpingFrameOP frame = generate_empty_jump_frame( startpos, endpos, length );
+				frame->add_fragment( frag_data );
+				frags_accumulator.add( frame );
+			} else {
+				utility_exit_with_message("need to implement this: make ss-library fragments that only contain those torsions for residues "
+					"that can move according to movemap -- call this function with\t"
+					"bWithTorsions = false ... and it works for now");
+			}
+		} // for JumpList iteration
+	} // loop over orientations and pleatings
 } // method
 
 

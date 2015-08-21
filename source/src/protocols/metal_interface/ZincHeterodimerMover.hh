@@ -57,9 +57,9 @@ private:
 	void generate_factory();
 	/// @brief apply helper function (ugly complex interface, I know)
 	void copy_to_centroid(core::pose::Pose const & pose,
-												core::pose::Pose & centroid,
-												core::kinematics::FoldTree const & centroid_tree,
-												core::Size const metal_res);
+		core::pose::Pose & centroid,
+		core::kinematics::FoldTree const & centroid_tree,
+		core::Size const metal_res);
 
 	//generated data
 	core::scoring::ScoreFunctionOP centroid_scorefunction_;

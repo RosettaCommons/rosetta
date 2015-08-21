@@ -7,20 +7,20 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		apps/pilot/membrane/mp_symdock.cc
+/// @file  apps/pilot/membrane/mp_symdock.cc
 ///
-/// @brief		RosettaMP Membrane Symmetric Protien-Protein Docking Application
-/// @details	Assemble C-Symmetric poses in the membrane
+/// @brief  RosettaMP Membrane Symmetric Protien-Protein Docking Application
+/// @details Assemble C-Symmetric poses in the membrane
 ///
-/// @author 	Rebecca Faye Alford (rfalford12@gmail.com)
-/// @author		Julia Koehler Leman (julia.koehler1982@gmail.com)
-/// @note 		Last Updated: 5/18/15
+/// @author  Rebecca Faye Alford (rfalford12@gmail.com)
+/// @author  Julia Koehler Leman (julia.koehler1982@gmail.com)
+/// @note   Last Updated: 5/18/15
 
 // Unit Headers
 #include <devel/init.hh>
 
 // Project Headers
-#include <protocols/symmetric_docking/membrane/MPSymDockMover.hh> 
+#include <protocols/symmetric_docking/membrane/MPSymDockMover.hh>
 #include <protocols/moves/Mover.hh>
 
 // Project Headers
@@ -42,22 +42,22 @@ int
 main( int argc, char * argv [] )
 {
 	using namespace protocols::jd2;
-	
+
 	try {
-		
+
 		// Devel init factories
 		devel::init(argc, argv);
-		
+
 		// Register JD2 options
 		protocols::jd2::register_options();
-		
+
 		// Setup Membrane Symdocking & go!
 		using namespace protocols::symmetric_docking::membrane;
-        MPSymDockMoverOP mpsymdock( new MPSymDockMover() ); 
+		MPSymDockMoverOP mpsymdock( new MPSymDockMover() );
 		protocols::jd2::JobDistributor::get_instance()->go( mpsymdock );
 
 		return 0;
-		
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

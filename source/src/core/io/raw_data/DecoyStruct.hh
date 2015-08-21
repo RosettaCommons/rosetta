@@ -39,128 +39,128 @@ namespace core {
 namespace io {
 namespace raw_data {
 
-	class DecoyStruct : public RawStruct {
-	public:
+class DecoyStruct : public RawStruct {
+public:
 
-		// the constructor:
-		DecoyStruct( Size const nres_in )
-		{
-			nres_        = nres_in;
-			fullatom_    = false;
-			resize( nres_in );
-		}
+	// the constructor:
+	DecoyStruct( Size const nres_in )
+	{
+		nres_        = nres_in;
+		fullatom_    = false;
+		resize( nres_in );
+	}
 
-		DecoyStruct()
-		{
-			nres_        = 0;
-			fullatom_    = false;
-			decoy_tag_   = "empty";
-		}
+	DecoyStruct()
+	{
+		nres_        = 0;
+		fullatom_    = false;
+		decoy_tag_   = "empty";
+	}
 
-		DecoyStruct(
-			core::pose::Pose const& pose,
-			std::string tag = "empty_tag",
-			bool fa = false
-		);
+	DecoyStruct(
+		core::pose::Pose const& pose,
+		std::string tag = "empty_tag",
+		bool fa = false
+	);
 
-		// resize everything appropriately
-		void resize(
-			Size const nres_in
-		);
+	// resize everything appropriately
+	void resize(
+		Size const nres_in
+	);
 
-		// destructor
-		~DecoyStruct() {}
+	// destructor
+	~DecoyStruct() {}
 
-		//DecoyStruct & operator= (DecoyStruct const & src);
+	//DecoyStruct & operator= (DecoyStruct const & src);
 
-		void fill_pose(
-			core::pose::Pose & pose
-		);
+	void fill_pose(
+		core::pose::Pose & pose
+	);
 
-		void fill_pose(
-			core::pose::Pose & pose,
-			core::chemical::ResidueTypeSet const& residue_set
-		);
+	void fill_pose(
+		core::pose::Pose & pose,
+		core::chemical::ResidueTypeSet const& residue_set
+	);
 
-		// fills the res array
-		//void set_sequence(std::string const & sequence);
+	// fills the res array
+	//void set_sequence(std::string const & sequence);
 
-		virtual void print_conformation( std::ostream& output ) const;
+	virtual void print_conformation( std::ostream& output ) const;
 
-		/// @brief calculates the RMSD between the C-alpha atoms of a Pose built from the torsions in this
-		/// DecoyStruct and the C-alpha atoms from this DecoyStruct.
-		virtual Real get_debug_rmsd();
+	/// @brief calculates the RMSD between the C-alpha atoms of a Pose built from the torsions in this
+	/// DecoyStruct and the C-alpha atoms from this DecoyStruct.
+	virtual Real get_debug_rmsd();
 
-		/// @brief data getters/setters
-		bool fullatom() const {
-			return fullatom_;
-		}
+	/// @brief data getters/setters
+	bool fullatom() const {
+		return fullatom_;
+	}
 
-		Real phi( unsigned int seqpos ) const {
-			return phi_[seqpos];
-		}
+	Real phi( unsigned int seqpos ) const {
+		return phi_[seqpos];
+	}
 
-		Real psi( unsigned int seqpos ) const {
-			return psi_[seqpos];
-		}
+	Real psi( unsigned int seqpos ) const {
+		return psi_[seqpos];
+	}
 
-		Real omega( unsigned int seqpos ) const {
-			return omega_[seqpos];
-		}
+	Real omega( unsigned int seqpos ) const {
+		return omega_[seqpos];
+	}
 
-		char secstruct( unsigned int seqpos ) const {
-			return secstruct_[seqpos];
-		}
+	char secstruct( unsigned int seqpos ) const {
+		return secstruct_[seqpos];
+	}
 
-		utility::vector1< Real > chi( unsigned int seqpos ) const {
-			return chi_[ seqpos ];
-		}
+	utility::vector1< Real > chi( unsigned int seqpos ) const {
+		return chi_[ seqpos ];
+	}
 
-		Vector coords( unsigned int seqpos ) const {
-			return coords_[seqpos];
-		}
-
-
-		void fullatom( bool fullatom ) {
-			fullatom_ = fullatom;
-		}
-
-		void phi( unsigned int seqpos, Real phi ) {
-			phi_[seqpos] = phi;
-		}
-
-		void psi( unsigned int seqpos, Real psi ) {
-			psi_[seqpos] = psi;
-		}
-
-		void omega( unsigned int seqpos, Real omega ) {
-			omega_[seqpos] = omega;
-		}
-
-		void secstruct( unsigned int seqpos, char ss ) {
-			secstruct_[seqpos] = ss;
-		}
-
-		void chi( unsigned int seqpos, utility::vector1< Real > chis ) {
-			chi_[seqpos] = chis;
-		}
-
-		void coords( unsigned int seqpos, Vector coords ) {
-			coords_[seqpos] = coords;
-		}
+	Vector coords( unsigned int seqpos ) const {
+		return coords_[seqpos];
+	}
 
 
-	protected:
-		bool fullatom_;
+	void fullatom( bool fullatom ) {
+		fullatom_ = fullatom;
+	}
 
-		utility::vector1< char > secstruct_;
-		utility::vector1< Real > phi_;
-		utility::vector1< Real > psi_;
-		utility::vector1< Real > omega_;
-		utility::vector1< utility::vector1< Real > > chi_;
-		utility::vector1< Vector > coords_;
+	void phi( unsigned int seqpos, Real phi ) {
+		phi_[seqpos] = phi;
+	}
 
-	}; // class DecoyStruct
+	void psi( unsigned int seqpos, Real psi ) {
+		psi_[seqpos] = psi;
+	}
+
+	void omega( unsigned int seqpos, Real omega ) {
+		omega_[seqpos] = omega;
+	}
+
+	void secstruct( unsigned int seqpos, char ss ) {
+		secstruct_[seqpos] = ss;
+	}
+
+	void chi( unsigned int seqpos, utility::vector1< Real > chis ) {
+		chi_[seqpos] = chis;
+	}
+
+	void coords( unsigned int seqpos, Vector coords ) {
+		coords_[seqpos] = coords;
+	}
+
+
+protected:
+	bool fullatom_;
+
+	utility::vector1< char > secstruct_;
+	utility::vector1< Real > phi_;
+	utility::vector1< Real > psi_;
+	utility::vector1< Real > omega_;
+	utility::vector1< utility::vector1< Real > > chi_;
+	utility::vector1< Vector > coords_;
+
+}; // class DecoyStruct
 } // namespace silent
 } // namespace io
 } // namespace core

@@ -79,7 +79,7 @@ void ubq_ras_distance(core::pose::Pose const & pose, basic::Tracer & /*TR*/, pro
 
 	std::ostringstream score_name;
 	//apparently standard lexicographical iterator for loop - stolen from ZnHash
-	for(lex.begin(); !lex.at_end(); ++lex) {
+	for ( lex.begin(); !lex.at_end(); ++lex ) {
 		core::Size const ras(ras_residues[lex[1]]);
 		core::Size const ubq(ubq_residues[lex[2]]);
 
@@ -133,7 +133,7 @@ void ubq_ras_rotation_angle(
 
 	// TR << "Calculated centers of mass: ubq/pdz: " << ubq_calculated_center << " ras: " << ras_calculated_center << std::endl;
 
- 	core::Size const ubq_center(ubiquitin ? 209 : 224); //expected values for ubiquitin and PDZ, respectively
+	core::Size const ubq_center(ubiquitin ? 209 : 224); //expected values for ubiquitin and PDZ, respectively
 	core::Size const ras_center(79); //expected value
 	core::Size const ras_linker(GTPase_target);
 	core::Size const ras_reference(112);
@@ -187,7 +187,7 @@ void create_extra_output(
 	using protocols::jd2::JobDistributor;
 	protocols::jd2::JobOP job_me( JobDistributor::get_instance()->current_job() );
 
-	if(ubiquitin) ubq_ras_distance(pose, TR, job_me);
+	if ( ubiquitin ) ubq_ras_distance(pose, TR, job_me);
 
 	ubq_ras_rotation_angle(pose, TR, job_me, GTPase_target, ubiquitin);
 

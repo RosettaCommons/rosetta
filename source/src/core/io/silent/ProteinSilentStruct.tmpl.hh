@@ -402,10 +402,10 @@ ProteinSilentStruct_Template<T>::fill_struct(
 	basic::ProfileThis doit( basic::SILENT_FILL_STRUCT );
 	if ( !core::pose::is_ideal_pose(pose) ) {
 		// Barak 07/09 - non-ideal poses are currently not supported for PSS
-			// nor will they ever be!
-			pss_tr.Error << "ERROR: trying to use a 'protein' type silent file for a non-ideal pose" << std::endl;
-			pss_tr.Error << "consider using the '-out:file:silent_struct_type binary' flag" << std::endl;
-			//			utility_exit();
+		// nor will they ever be!
+		pss_tr.Error << "ERROR: trying to use a 'protein' type silent file for a non-ideal pose" << std::endl;
+		pss_tr.Error << "consider using the '-out:file:silent_struct_type binary' flag" << std::endl;
+		//   utility_exit();
 	}
 
 	SilentStruct::fill_struct( pose, tag );
@@ -452,7 +452,7 @@ ProteinSilentStruct_Template<T>::fill_struct(
 	fold_tree( pose.fold_tree() );
 
 	jumps_.clear();
-	for ( Size nr = 1; nr <= fold_tree().num_jump(); nr++)  {
+	for ( Size nr = 1; nr <= fold_tree().num_jump(); nr++ )  {
 		add_jump( pose.jump(nr) );
 	}
 
@@ -498,16 +498,16 @@ bool ProteinSilentStruct_Template<T>::init_from_lines(
 	Size const total_residue = one_letter_sequence().length();
 	resize( total_residue );
 	utility::vector1< bool > read_flag( total_residue, false ); //to check whether all seqpos have been filled with info
-	for ( utility::vector1< std::string >::const_iterator end = lines.end(); iter != end;	++iter ) {
+	for ( utility::vector1< std::string >::const_iterator end = lines.end(); iter != end; ++iter ) {
 		std::string tag;
 		std::istringstream line_stream( *iter );
 
 		if ( iter->substr(0,6) == "REMARK" ) {
-// 			std::string tag;
-// 			std::string comment;
-// 			std::string value;
-// 			runtime_assert( tag == "REMARK" );
-// 			line_stream >> tag >> comment >> value;
+			//    std::string tag;
+			//    std::string comment;
+			//    std::string value;
+			//    runtime_assert( tag == "REMARK" );
+			//    line_stream >> tag >> comment >> value;
 			comment_from_line( *iter );//add_comment( comment, value );
 			continue;  // don't skip comments
 		}
@@ -544,7 +544,7 @@ bool ProteinSilentStruct_Template<T>::init_from_lines(
 				pss_tr.Warning << "skipping duplicate sequence declaration " << std::endl;
 				//after a SEQUENCE declaration we might find another SCORE header that should be skipped, too...
 				utility::vector1< std::string >::const_iterator iter2 = ++iter;
-				if (( iter2 != end ) && iter2->substr(0,7) == "SCORE: " ) {
+				if ( ( iter2 != end ) && iter2->substr(0,7) == "SCORE: " ) {
 					pss_tr.Warning << "re-reading score declaration from second line... " << std::endl;
 					read_score_headers( *iter2, energy_names, container );
 					++iter;
@@ -594,7 +594,7 @@ bool ProteinSilentStruct_Template<T>::init_from_lines(
 				success = false;
 				return success;
 			}
-		//debug_assert( is_int( tag ) ); // this tag should represent the sequence position within the silent-file
+			//debug_assert( is_int( tag ) ); // this tag should represent the sequence position within the silent-file
 			seqpos = int_of( tag );
 			if ( seqpos <= 0 || seqpos > nres() ) {
 				pss_tr.Error << "ERROR: incorrect sequence number " << seqpos << " (nres = "
@@ -635,7 +635,7 @@ bool ProteinSilentStruct_Template<T>::init_from_lines(
 			}
 
 			if ( tag != decoy_tag() ) { // decoy_tag should be last tag.
-				pss_tr.Warning 	<< "parse error(" << *iter << ") " << tag << " != " << decoy_tag() << std::endl;
+				pss_tr.Warning  << "parse error(" << *iter << ") " << tag << " != " << decoy_tag() << std::endl;
 				success = false;
 				break;
 			}
@@ -658,8 +658,8 @@ bool ProteinSilentStruct_Template<T>::init_from_lines(
 			<< decoy_tag() << std::endl;
 		core::Size idx = 1;
 		for ( utility::vector1< bool >::iterator it = read_flag.begin(), end = read_flag.end();
-					it != end; ++it, ++idx
-		) {
+				it != end; ++it, ++idx
+				) {
 			if ( !*it ) pss_tr.Error << "Couldn't read position " << idx << std::endl;
 		}
 		return false; //no success
@@ -713,9 +713,9 @@ ProteinSilentStruct_Template<T>::resize_chi() {
 	chi_.resize( nres() );
 	chi_.reserve( nres() );
 	//for ( Size kk = 1; kk <= nres(); ++kk ) {
-	//	if ( n_chi(kk) < max_chi() ) {
-	//		chi_[ kk ].resize( max_chi(), 0.0 );
-	//	}
+	// if ( n_chi(kk) < max_chi() ) {
+	//  chi_[ kk ].resize( max_chi(), 0.0 );
+	// }
 	//} // kk
 } // resize_chi
 
@@ -744,7 +744,7 @@ void ProteinSilentStruct_Template<T>::fill_pose(
 	runtime_assert( sequence() != "" );
 	//fpd  why was this called twice???
 	//if ( pose.annotated_sequence() != sequence() ) {
-	//	core::pose::make_pose_from_sequence( pose, sequence(), residue_set );
+	// core::pose::make_pose_from_sequence( pose, sequence(), residue_set );
 	//}
 	//if ( pss_tr.Debug.visible() ) pss_tr.Debug << "FOLD TREE: " << fold_tree();
 	core::pose::make_pose_from_sequence( pose, sequence(), residue_set );
@@ -754,7 +754,7 @@ void ProteinSilentStruct_Template<T>::fill_pose(
 	pose.fold_tree( fold_tree() );
 
 	// set jumps
-	for ( Size nr = 1; nr <= fold_tree().num_jump(); nr++)  {
+	for ( Size nr = 1; nr <= fold_tree().num_jump(); nr++ )  {
 		if ( !bJumps_use_IntraResStub_ ) { //default modern file-format
 			pose.set_jump( nr, jump( nr ) );
 		} else { //support for rosetta++ format
@@ -780,9 +780,9 @@ void ProteinSilentStruct_Template<T>::fill_pose(
 				pose.set_omega ( seqpos, omega(seqpos) );
 				if ( fullatom() ) {
 					for ( Size jj = 1,
-									end = std::min( pose.residue_type(seqpos).nchi(), n_chi(seqpos) );
-								jj <= end; ++jj
-					) {
+							end = std::min( pose.residue_type(seqpos).nchi(), n_chi(seqpos) );
+							jj <= end; ++jj
+							) {
 						pose.set_chi( jj, seqpos, chi(seqpos,jj) );
 					}
 				} // if ( fullatom() )
@@ -810,10 +810,10 @@ void ProteinSilentStruct_Template<T>::print_conformation( std::ostream & output 
 	if ( fold_tree().size() > 1 ) { //assume non-trivial fold_tree only if more than one edge, i.e., EDGE 1 <nres> -1
 		output << "FOLD_TREE ";
 		for ( kinematics::FoldTree::const_iterator it = fold_tree().begin(), it_end = fold_tree().end();
-					it != it_end; ++it ) {
+				it != it_end; ++it ) {
 			output << *it;
 		}
-		//		output << fold_tree(); this produces a new-line --- wrong behaviour of fold_tree but I don't want to fix 1000 u-tracer unit-tests!
+		//  output << fold_tree(); this produces a new-line --- wrong behaviour of fold_tree but I don't want to fix 1000 u-tracer unit-tests!
 		output << ' ' << decoy_tag() << "\n";
 	}
 	for ( Size i = 1; i <= fold_tree().num_jump(); i++ ) {
@@ -1055,7 +1055,7 @@ core::Size ProteinSilentStruct_Template<T>::mem_footprint() const{
 		sizeof(Size) * chain_endings_.capacity()+
 		sizeof( fold_tree_ ) +
 		sizeof( symminfo_ );
-	for( chi_iterator it = chi_.begin(); it < chi_.end(); ++it ) sum += (*it).capacity() * sizeof( T ) ;
+	for ( chi_iterator it = chi_.begin(); it < chi_.end(); ++it ) sum += (*it).capacity() * sizeof( T ) ;
 	return sum;
 }
 

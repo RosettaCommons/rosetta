@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/toolbox/PoseMetricCalculators/RotamerBoltzCalculator.hh
-/// @brief Calculates Rotamer occupancy of each rotameric state in a given set of residues. 
+/// @brief Calculates Rotamer occupancy of each rotameric state in a given set of residues.
 /// @author Hetu Kamisetty
 
 
@@ -34,7 +34,7 @@
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
 
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 
@@ -43,56 +43,56 @@ class RotamerBoltzCalculator: public core::pose::metrics::StructureDependentCalc
 public:
 
 	RotamerBoltzCalculator(core::scoring::ScoreFunctionOP scorefxn, core::Real temp, core::Real repacking_radius=6.0);
-  //computeBoltzWeight(utility::vector0<int> moltres_to_pack, utility::vector0<int> rotid_in_moltres, core::Real temp);//gives rotamer id into rotamerset for each position of interest. 
+	//computeBoltzWeight(utility::vector0<int> moltres_to_pack, utility::vector0<int> rotid_in_moltres, core::Real temp);//gives rotamer id into rotamerset for each position of interest.
 	//computeBoltzWeight(utility::vector0<int> rot_to_pack);//gives rot_to_pack where entry is rotameric id into rotamersets
-  utility::vector1<core::Real> computeAllBoltz(core::pose::Pose& pose);
-  core::Real computeBoltzWeight(core::pose::Pose& pose, core::Size resi);
+	utility::vector1<core::Real> computeAllBoltz(core::pose::Pose& pose);
+	core::Real computeBoltzWeight(core::pose::Pose& pose, core::Size resi);
 	core::pose::metrics::PoseMetricCalculatorOP clone() const { return core::pose::metrics::PoseMetricCalculatorOP( new RotamerBoltzCalculator(scorefxn(), temperature()) ); };
 
 protected:
 	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
 	virtual std::string print( std::string const & key ) const;
 	virtual void recompute( core::pose::Pose const & this_pose );
-  core::Real computeBoltzWeight(core::pose::Pose& pose, core::Size resi, protocols::simple_moves::MinMoverOP min_mover, core::pack::task::PackerTaskOP task);
+	core::Real computeBoltzWeight(core::pose::Pose& pose, core::Size resi, protocols::simple_moves::MinMoverOP min_mover, core::pack::task::PackerTaskOP task);
 
-  core::scoring::ScoreFunctionOP scorefxn() const {return scorefxn_;};
+	core::scoring::ScoreFunctionOP scorefxn() const {return scorefxn_;};
 	//core::kinematics::MoveMapOP mm();
 	//protocols::simple_moves::MinMover min_mover();
-  core::Real computeBoltzSum(core::Real init_score, utility::vector1<core::Real> scores);
-  protocols::simple_moves::MinMoverOP init_minmover(core::pose::Pose& pose, core::Size resi, bool unbound, core::pack::task::PackerTaskOP  task);
-  core::pack::task::PackerTaskOP init_task(core::pose::Pose& pose, core::Size resi);
-  protocols::simple_filters::ScoreTypeFilter stf(){
-    return stf_;
-  }
-  void temperature(core::Real temp){
-    temperature_= temp;
-  }
-  void repacking_radius(core::Real rad) {
-    repacking_radius_ = rad;
-  }
-  core::Real repacking_radius() const{
-    return repacking_radius_;
-  }
-  core::Real temperature() const{
-    return temperature_;
-  }
+	core::Real computeBoltzSum(core::Real init_score, utility::vector1<core::Real> scores);
+	protocols::simple_moves::MinMoverOP init_minmover(core::pose::Pose& pose, core::Size resi, bool unbound, core::pack::task::PackerTaskOP  task);
+	core::pack::task::PackerTaskOP init_task(core::pose::Pose& pose, core::Size resi);
+	protocols::simple_filters::ScoreTypeFilter stf(){
+		return stf_;
+	}
+	void temperature(core::Real temp){
+		temperature_= temp;
+	}
+	void repacking_radius(core::Real rad) {
+		repacking_radius_ = rad;
+	}
+	core::Real repacking_radius() const{
+		return repacking_radius_;
+	}
+	core::Real temperature() const{
+		return temperature_;
+	}
 
 private:
-  //core::pose:: Pose & pose_;
-  core::Real rb_jump(){
-    return rb_jump_;
-  }
-  core::Real rb_jump_;
-  core::Real repacking_radius_;
-  //utility::vector0<int> init_rot_to_pack(core::pack::rotamer_set::RotamerSetsCOP rotamer_sets, core::Size rot_to_miss);
-  utility::vector0<int> init_rot_to_pack(core::pack::rotamer_set::RotamerSetsCOP rotamer_sets, core::Size moltenres, core::Size rot_to_fix);
-  core::scoring::ScoreFunctionOP scorefxn_;
+	//core::pose:: Pose & pose_;
+	core::Real rb_jump(){
+		return rb_jump_;
+	}
+	core::Real rb_jump_;
+	core::Real repacking_radius_;
+	//utility::vector0<int> init_rot_to_pack(core::pack::rotamer_set::RotamerSetsCOP rotamer_sets, core::Size rot_to_miss);
+	utility::vector0<int> init_rot_to_pack(core::pack::rotamer_set::RotamerSetsCOP rotamer_sets, core::Size moltenres, core::Size rot_to_fix);
+	core::scoring::ScoreFunctionOP scorefxn_;
 	//core::kinematics::MoveMapOP mm_;
 	//protocols::simple_moves::MinMover min_mover_;
-  core::Real temperature_;
-  protocols::simple_filters::ScoreTypeFilter const stf_;
-  utility::vector1<core::Real>all_boltz_;
-  core::pack::rotamer_set::RotamerSetOP rotset_;
+	core::Real temperature_;
+	protocols::simple_filters::ScoreTypeFilter const stf_;
+	utility::vector1<core::Real>all_boltz_;
+	core::pack::rotamer_set::RotamerSetOP rotset_;
 
 };
 

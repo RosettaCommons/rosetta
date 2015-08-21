@@ -25,17 +25,17 @@
 #include <string>
 
 namespace protocols {
-    namespace simple_filters {
-        
-        class MotifScoreFilterCreator : public protocols::filters::FilterCreator
-        {
-        public:
-            virtual filters::FilterOP create_filter() const;
-            virtual std::string keyname() const;
-        };
-        
-        
-    } //namespace filters
+namespace simple_filters {
+
+class MotifScoreFilterCreator : public protocols::filters::FilterCreator
+{
+public:
+	virtual filters::FilterOP create_filter() const;
+	virtual std::string keyname() const;
+};
+
+
+} //namespace filters
 } //namespace protocols
 
 #endif

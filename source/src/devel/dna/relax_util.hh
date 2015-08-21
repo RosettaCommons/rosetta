@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file Functions to help setup DNA relax.
-/// 
+///
 /// @brief
 
 #ifndef INCLUDED_devel_dna_relax_util_hh
@@ -44,10 +44,10 @@ choose_random_base_step_jump( core::pose::Pose const & pose );
 /// @brief  Adds jumps into the foldtree to support base-centric kinematics
 void
 add_dna_base_jumps_to_fold_tree(
-																core::pose::Pose const & pose,
-																core::kinematics::FoldTree & f,
-																bool const flip=false
-																);
+	core::pose::Pose const & pose,
+	core::kinematics::FoldTree & f,
+	bool const flip=false
+);
 
 
 /// @brief  Sets the jump-atoms in the foldtree so that the atomtree will have desired connectivity for dna jumps.

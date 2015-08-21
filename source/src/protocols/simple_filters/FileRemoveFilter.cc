@@ -25,7 +25,7 @@
 #include <fstream>
 
 
-namespace protocols{
+namespace protocols {
 namespace simple_filters {
 
 using namespace core;
@@ -41,8 +41,8 @@ FileRemoveFilterCreator::keyname() const { return "FileRemove"; }
 
 //default ctor
 FileRemoveFilter::FileRemoveFilter() :
-protocols::filters::Filter( "FileRemove" ),
-delete_content_only_( false )
+	protocols::filters::Filter( "FileRemove" ),
+	delete_content_only_( false )
 {
 	file_names_.clear();
 }
@@ -61,12 +61,13 @@ FileRemoveFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Data
 bool
 FileRemoveFilter::apply( core::pose::Pose const & ) const {
 	using namespace std;
-	BOOST_FOREACH( std::string const f, file_names_ ){
-		if( remove( f.c_str() ) )
+	BOOST_FOREACH ( std::string const f, file_names_ ) {
+		if ( remove( f.c_str() ) ) {
 			TR<<"Successfully removed "<<f<<std::endl;
-		else
+		} else {
 			TR<<"File "<<f<<" not found."<<std::endl;
-		if( delete_content_only() ){
+		}
+		if ( delete_content_only() ) {
 			TR<<"Leaving 0b placeholder for file "<<f<<std::endl;
 			ofstream outfile;
 			outfile.open( f.c_str(), ios::trunc );

@@ -39,22 +39,22 @@ namespace seeded_abinitio {
 
 
 /* @brief Calculates superposition transform from coords to ref_coords.
- *
- * Modifies ref_coords and coords, moving coords into superposition.
- */
+*
+* Modifies ref_coords and coords, moving coords into superposition.
+*/
 void
 superposition_transform(
-      utility::vector1< numeric::xyzVector< numeric::Real > > & init_coords,
-      utility::vector1< numeric::xyzVector< numeric::Real > > & ref_coords,
-			numeric::xyzMatrix< numeric::Real > & rotation,
-			numeric::xyzVector< numeric::Real > & toCenter,
-			numeric::xyzVector< numeric::Real > & toFitCenter);
+	utility::vector1< numeric::xyzVector< numeric::Real > > & init_coords,
+	utility::vector1< numeric::xyzVector< numeric::Real > > & ref_coords,
+	numeric::xyzMatrix< numeric::Real > & rotation,
+	numeric::xyzVector< numeric::Real > & toCenter,
+	numeric::xyzVector< numeric::Real > & toFitCenter);
 
 template <typename T>
-void 
+void
 vector_vector_to_FArray2(
-      utility::vector1< numeric::xyzVector< T > > & from,
-			ObjexxFCL::FArray2D< T > & to);
+	utility::vector1< numeric::xyzVector< T > > & from,
+	ObjexxFCL::FArray2D< T > & to);
 
 
 }

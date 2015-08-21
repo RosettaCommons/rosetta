@@ -37,8 +37,8 @@ public:
 	{}
 	/// input constructor
 	SS(
-		 core::Size const start_in, core::Size const stop_in, char const sstype_in
-			):
+		core::Size const start_in, core::Size const stop_in, char const sstype_in
+	):
 		start_( start_in ),
 		stop_( stop_in ),
 		sstype_( sstype_in )
@@ -48,7 +48,7 @@ public:
 	inline core::Size start() const { return start_; }
 	inline core::Size stop() const { return stop_; }
 	inline char sstype() const { return sstype_;}
-  inline core::Size size() const { return stop_ - start_ + 1; }
+	inline core::Size size() const { return stop_ - start_ + 1; }
 
 	inline void set_start( core::Size input ) { start_ = input; }
 	inline void set_stop( core::Size input  ) { stop_ = input; }
@@ -69,7 +69,7 @@ private:
 inline std::ostream & operator<<( std::ostream & os, const SS & ss_ ) {
 	// it's super-annoying that this returns a std::endl
 	os << "SecondaryStructureElement " << ss_.start_ << " " << ss_.stop_ << " "
-		 << ss_.sstype_;
+		<< ss_.sstype_;
 	return os;
 }
 
@@ -165,7 +165,7 @@ public:
 
 
 	core::Size size() const {
-	 		return sss_.size();
+		return sss_.size();
 	}
 
 
@@ -174,7 +174,7 @@ public:
 
 	void clear();
 
- 	SSList const& sss() const { return sss_; }
+	SSList const& sss() const { return sss_; }
 
 	inline
 	const SS&

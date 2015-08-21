@@ -120,8 +120,8 @@ optimize_suite(
 	start_pose = pose;
 
 	// setup the options
-	MinimizerOptions options( "dfpmin", 0.001, true /*use_nblist*/,	false /*deriv_check*/,
-														false /*no verbose-deriv-check, is default*/ );
+	MinimizerOptions options( "dfpmin", 0.001, true /*use_nblist*/, false /*deriv_check*/,
+		false /*no verbose-deriv-check, is default*/ );
 	//// setup the moving degrees of freedom
 	kinematics::MoveMap mm;
 
@@ -145,7 +145,7 @@ optimize_suite(
 	core::scoring::func::FuncOP coord_cst_func( new core::scoring::func::HarmonicFunc( 0.0, 0.1 ) );
 	for ( Size i=1; i<= 3; ++i ) {
 		cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( AtomID(i,4), AtomID(1,1), target_stub.build_fake_xyz(i),
-																											 coord_cst_func ) ) ) );
+			coord_cst_func ) ) ) );
 	}
 
 	for ( Size i=1; i<= torsions.size(); ++i ) {
@@ -176,12 +176,12 @@ optimize_suite(
 
 	for ( Size i=1; i<= torsions.size(); ++i ) {
 		frag.set_torsion_angle( frag_atoms[i], frag_atoms[i+1], frag_atoms[i+2], frag_atoms[i+3],
-														pose.dof( torsions[i] ) );
+			pose.dof( torsions[i] ) );
 	}
 
 	for ( Size i=1; i<= angles.size(); ++i ) {
 		frag.set_bond_angle( frag_atoms[i+1], frag_atoms[i+2], frag_atoms[i+3],
-												 numeric::constants::d::pi - pose.dof( angles[i] ) );
+			numeric::constants::d::pi - pose.dof( angles[i] ) );
 	}
 
 	for ( Size i=1; i<= my_atoms.size(); ++i ) {
@@ -198,15 +198,15 @@ optimize_suite(
 
 Real
 find_sugar_and_suite_frags(
-													 DNA_FragLib const & lib,
-													 kinematics::RT const & fwd_target,
-													 kinematics::RT const & bwd_target,
-													 bool const lower_terminus,
-													 bool const upper_terminus,
-													 CartesianFragment & sugar,
-													 CartesianFragment & fwd_suite,
-													 CartesianFragment & bwd_suite
-													 )
+	DNA_FragLib const & lib,
+	kinematics::RT const & fwd_target,
+	kinematics::RT const & bwd_target,
+	bool const lower_terminus,
+	bool const upper_terminus,
+	CartesianFragment & sugar,
+	CartesianFragment & fwd_suite,
+	CartesianFragment & bwd_suite
+)
 {
 	using kinematics::RT;
 
@@ -305,7 +305,7 @@ patch_up_backbone(
 	CartesianFragment sugar, fwd_suite, bwd_suite;
 	Real const final_summed_dev
 		( find_sugar_and_suite_frags( lib, target_forward, target_backward, lower_terminus, upper_terminus,
-																	sugar, fwd_suite, bwd_suite ) );
+		sugar, fwd_suite, bwd_suite ) );
 
 	// now make the fragment insertions
 	sugar.insert( conf, i );
@@ -339,12 +339,12 @@ patch_up_backbone_link(
 		patch_up_backbone( i+1, lib, pose_inout.conformation() );
 		patch_up_backbone( i  , lib, pose_inout.conformation() );
 	}
-// 	Real const fwd_score( scorefxn( pose ) );
-// 	Real const bwd_score( scorefxn( pose_inout ) );
-// 	tt << "patch_up_backbone_link: " << i << ' ' << fwd_score << ' ' << bwd_score << std::endl;
-// 	if ( fwd_score < bwd_score ) {
-// 		pose_inout = pose;
-// 	}
+	//  Real const fwd_score( scorefxn( pose ) );
+	//  Real const bwd_score( scorefxn( pose_inout ) );
+	//  tt << "patch_up_backbone_link: " << i << ' ' << fwd_score << ' ' << bwd_score << std::endl;
+	//  if ( fwd_score < bwd_score ) {
+	//   pose_inout = pose;
+	//  }
 }
 } // ns cartesian_frags
 } // ns devel

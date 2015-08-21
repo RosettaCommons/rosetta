@@ -76,12 +76,12 @@ void ImplicitFastClashCheck::init_clash_check(utility::vector1<Pose> const & pos
 	// points_.reserve((pose_->n_residue()-ignore.size())*5);
 	// resno_ .reserve((pose_->n_residue()-ignore.size())*5);
 	// atomno_.reserve((pose_->n_residue()-ignore.size())*5);
-	for(utility::vector1<Pose>::const_iterator pi = poses.begin(); pi != poses.end(); ++pi) {
-		for(Size i = 0; i < pi->n_residue(); ++i) {
-			if( std::find(ignore.begin(),ignore.end(),i+1) != ignore.end() ) continue;
+	for ( utility::vector1<Pose>::const_iterator pi = poses.begin(); pi != poses.end(); ++pi ) {
+		for ( Size i = 0; i < pi->n_residue(); ++i ) {
+			if ( std::find(ignore.begin(),ignore.end(),i+1) != ignore.end() ) continue;
 			//Size const natom = min(5ul,pi->residue(i+1).nheavyatoms());
 			Size const natom = pi->residue(i+1).nheavyatoms();
-			for(Size j = 1; j <= natom; ++j) {
+			for ( Size j = 1; j <= natom; ++j ) {
 				// TODO could check for point redundance here
 				points_.push_back( pi->xyz(AtomID(j,i+1)) );
 				resno_ .push_back( i+1 );
@@ -182,15 +182,15 @@ bool ImplicitFastClashCheck::clash_check(Vec const & pp, Size resno ) const {
 						Vec const j( points_[*ia] );
 						// TR << "resno " << resno << " resno_[*ia] " << resno_[*ia] << std::endl;
 						// if(resno_[*ia]==27 && atomno_[*ia]==1) {
-						// 	std::cout << "clash_check 27 1 " << j.x() << " " << j.y() << " " << j.z() << " " << pp.x() << " " << pp.y() << " " << pp.z() << std::endl;
+						//  std::cout << "clash_check 27 1 " << j.x() << " " << j.y() << " " << j.z() << " " << pp.x() << " " << pp.y() << " " << pp.z() << std::endl;
 						// }
-						if( resno == resno_[*ia] && (atomno_[*ia]==2 || atomno_[*ia]==5) ) {
+						if ( resno == resno_[*ia] && (atomno_[*ia]==2 || atomno_[*ia]==5) ) {
 							// std::cout << "ignoring same res clash " << resno_[*ia] << " " << atomno_[*ia] << std::endl;
 							continue; // ignore if same res && CA or CB
 						}
 						Real const d_sq( pp.distance_squared( j ) );
 						// if(resno_[*ia]==27 && atomno_[*ia]==1) {
-						// 	std::cout << "clash_check 27 1 " << d_sq << std::endl;
+						//  std::cout << "clash_check 27 1 " << d_sq << std::endl;
 						// }
 						if ( d_sq <= neighbor_cutoff_sq_ ) {
 							return false;
@@ -207,41 +207,41 @@ bool ImplicitFastClashCheck::clash_check(Vec const & pp, Size resno ) const {
 }
 
 // bool ImplicitFastClashCheck::clash_check(Pose const & pose, Size refrsd) const {
-// 	Stub stubl(pose_->xyz(AtomID(2,1)),pose_->xyz(AtomID(2,2)),pose_->xyz(AtomID(2,3)));
-// 	Stub stub1(pose  .xyz(AtomID(2,1)),pose  .xyz(AtomID(2,2)),pose  .xyz(AtomID(2,3)));
-// 	for(Size i = 9; i <= pose.residue(refrsd).nheavyatoms(); ++i) {
-// 		if( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+0*pose_->n_residue())))) ) ) return false;
-// 	}
-// 	return true;
+//  Stub stubl(pose_->xyz(AtomID(2,1)),pose_->xyz(AtomID(2,2)),pose_->xyz(AtomID(2,3)));
+//  Stub stub1(pose  .xyz(AtomID(2,1)),pose  .xyz(AtomID(2,2)),pose  .xyz(AtomID(2,3)));
+//  for(Size i = 9; i <= pose.residue(refrsd).nheavyatoms(); ++i) {
+//   if( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+0*pose_->n_residue())))) ) ) return false;
+//  }
+//  return true;
 // }
 
 // bool ImplicitFastClashCheck::clash_check(Stub const & stub, Vec pos) const {
-// 	// Stub stubl(pose_->xyz(AtomID(2,1)),pose_->xyz(AtomID(2,2)),pose_->xyz(AtomID(2,3)));
-// 	// return clash_check( stubl.local2global(stub.global2local(pos)) );
-// 	return clash_check( stub.local2global(pos) );
+//  // Stub stubl(pose_->xyz(AtomID(2,1)),pose_->xyz(AtomID(2,2)),pose_->xyz(AtomID(2,3)));
+//  // return clash_check( stubl.local2global(stub.global2local(pos)) );
+//  return clash_check( stub.local2global(pos) );
 // }
 
 bool ImplicitFastClashCheck::clash_check_trimer(Pose const & pose, Size refrsd) const {
 	Stub stubl(pose_->xyz(AtomID(2,1)),pose_->xyz(AtomID(2,2)),pose_->xyz(AtomID(2,3)));
 	Stub stub1(pose  .xyz(AtomID(2,1)),pose  .xyz(AtomID(2,2)),pose  .xyz(AtomID(2,3)));
-	for(Size i = 1; i <= pose.residue(refrsd).nheavyatoms(); ++i) {
-		if(i > 9) if( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+0*pose_->n_residue())))) ) ) return false;
-		if( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+1*pose_->n_residue())))) ) ) return false;
-		if( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+2*pose_->n_residue())))) ) ) return false;
+	for ( Size i = 1; i <= pose.residue(refrsd).nheavyatoms(); ++i ) {
+		if ( i > 9 ) if ( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+0*pose_->n_residue())))) ) ) return false;
+		if ( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+1*pose_->n_residue())))) ) ) return false;
+		if ( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+2*pose_->n_residue())))) ) ) return false;
 	}
 	Vec cen = stubl.local2global(stub1.global2local(Vec(0,0,0)));
 	Vec axs = stubl.local2global(stub1.global2local(Vec(0,0,1)));
 	axs = axs - cen;
 	Mat rot = numeric::rotation_matrix_degrees(axs,120.0);
-	for(vector1<Vec>::const_iterator i = points_.begin(); i != points_.end(); ++i) {
-		if( ! clash_check( rot*(*i-cen)+cen ) ) return false;
+	for ( vector1<Vec>::const_iterator i = points_.begin(); i != points_.end(); ++i ) {
+		if ( ! clash_check( rot*(*i-cen)+cen ) ) return false;
 	}
 	return true;
 }
 
 void ImplicitFastClashCheck::dump_debug_pdb( utility::io::ozstream & out, core::kinematics::Stub const & stub, char chain ) const {
 	using namespace ObjexxFCL::format;
-	for(Size i = 1; i <= points_.size(); ++i) {
+	for ( Size i = 1; i <= points_.size(); ++i ) {
 		numeric::xyzVector<Real> p = stub.global2local(points_[i]);
 		std::string rname = pose_->residue(resno_[i]).name3();
 		std::string aname = pose_->residue(resno_[i]).atom_name(atomno_[i]);
@@ -265,7 +265,7 @@ bool ImplicitFastClashCheck::clash_check_test( numeric::xyzVector<core::Real> co
 
 	bool bclash = true;
 	utility::vector1<numeric::xyzVector<core::Real> >::const_iterator i;
-	for( i = points_.begin(); i != points_.end(); ++i ) {
+	for ( i = points_.begin(); i != points_.end(); ++i ) {
 		Real const d_sq( pp.distance_squared( *i ) );
 		if ( d_sq <= neighbor_cutoff_sq_ ) {
 			bclash = false;
@@ -276,7 +276,7 @@ bool ImplicitFastClashCheck::clash_check_test( numeric::xyzVector<core::Real> co
 
 	bool clash = clash_check(pp);
 
-	if(clash != bclash) utility_exit_with_message("clash check test fails!!!");
+	if ( clash != bclash ) utility_exit_with_message("clash check test fails!!!");
 
 	return clash;
 }

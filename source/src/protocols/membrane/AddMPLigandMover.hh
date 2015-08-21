@@ -7,28 +7,28 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 		src/protocols/membrane/AddMPLigandMover.hh
+/// @file   src/protocols/membrane/AddMPLigandMover.hh
 ///
-/// @brief		Add "single" ligand to to membrane pose
-/// @details 	Accommodate membrane protein ligand in the membrane framework by
-///				reorganizing the current foldtree. Resulting foldtree will 
-///				keep the membrane attached to the COM and ligand to the closest
-///				binding pocket residue, provided in the constructor. 
+/// @brief  Add "single" ligand to to membrane pose
+/// @details  Accommodate membrane protein ligand in the membrane framework by
+///    reorganizing the current foldtree. Resulting foldtree will
+///    keep the membrane attached to the COM and ligand to the closest
+///    binding pocket residue, provided in the constructor.
 ///
-/// @author 	Rebecca Faye Alford (rfalford12@gmail.com)
+/// @author  Rebecca Faye Alford (rfalford12@gmail.com)
 /// #RosettaMPMover
 
 #ifndef INCLUDED_protocols_membrane_AddMPLigandMover_hh
 #define INCLUDED_protocols_membrane_AddMPLigandMover_hh
 
 // Unit Headers
-#include <protocols/membrane/AddMPLigandMover.fwd.hh> 
+#include <protocols/membrane/AddMPLigandMover.fwd.hh>
 
-#include <protocols/moves/Mover.hh> 
+#include <protocols/moves/Mover.hh>
 
 // Package Headers
-#include <core/pose/Pose.hh> 
-#include <core/types.hh> 
+#include <core/pose/Pose.hh>
+#include <core/types.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/filters/Filter.hh>
@@ -45,9 +45,9 @@ namespace membrane {
 
 /// @brief Add Membrane protein ligand mover
 /// @details Accommodate membrane protein ligand in the membrane foldtree
-class AddMPLigandMover : public protocols::moves::Mover { 
+class AddMPLigandMover : public protocols::moves::Mover {
 
-public: // constructors 
+public: // constructors
 
 	////////////////////
 	/// Constructors ///
@@ -55,41 +55,41 @@ public: // constructors
 
 	/// @brief Add membrane protein ligand mover
 	/// @details Attach ligand downstream in the foldtree
-	/// for refinement at the last residue as a default. 
+	/// for refinement at the last residue as a default.
 	/// DO NOT USE
-	AddMPLigandMover(); 
+	AddMPLigandMover();
 
 	/// @brief Add Membrane protein ligand mover (custom)
-	/// @details Attach ligand downstream in the foldtree of the 
-	/// closest residue to the binding pocket. Also specify 
+	/// @details Attach ligand downstream in the foldtree of the
+	/// closest residue to the binding pocket. Also specify
 	/// sequence position of the ligand
-	AddMPLigandMover( core::Size closest_rsd, core::Size ligand_seqpos ); 
+	AddMPLigandMover( core::Size closest_rsd, core::Size ligand_seqpos );
 
 	/// @brief Copy Constructor
 	/// @details Mkae a deep copy of this mover
-	AddMPLigandMover( AddMPLigandMover const & src ); 
+	AddMPLigandMover( AddMPLigandMover const & src );
 
 	/// @brief Destructor
-	virtual ~AddMPLigandMover(); 
+	virtual ~AddMPLigandMover();
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
 	///////////////////////////////
-	
+
 	/// @brief Create a Clone of this mover
 	virtual protocols::moves::MoverOP clone() const;
-	
+
 	/// @brief Create a Fresh Instance of this Mover
 	virtual protocols::moves::MoverOP fresh_instance() const;
-	
+
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void parse_my_tag(
-	  utility::tag::TagCOP tag,
-	  basic::datacache::DataMap &,
-	  protocols::filters::Filters_map const &,
-	  protocols::moves::Movers_map const &,
-	  core::pose::Pose const &
-	  );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
+	);
 
 	/////////////////////
 	/// Mover Methods ///
@@ -101,10 +101,10 @@ public: // constructors
 	/// @brief Show the name of this mvoer
 	virtual std::string get_name() const;
 
-private: 
+private:
 
 	core::Size closest_rsd_;
-	core::Size ligand_seqpos_;  
+	core::Size ligand_seqpos_;
 
 };
 

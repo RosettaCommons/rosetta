@@ -86,7 +86,7 @@ public:
 
 	core::Size index() const;
 	int rng_seed() const;
-	 MTJobGroupOP mtjob_group() const;
+	MTJobGroupOP mtjob_group() const;
 
 	JobOP job() const;
 	std::string const & output_name() const;

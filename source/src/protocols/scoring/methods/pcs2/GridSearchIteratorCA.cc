@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/GridSearchIteratorCA.cc
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/GridSearchIteratorCA.cc
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 
 // Unit headers
@@ -51,10 +51,10 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs2{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs2 {
 
 
 GridSearchIteratorCA::GridSearchIteratorCA()
@@ -94,10 +94,10 @@ GridSearchIteratorCA::reset(){
 
 void
 GridSearchIteratorCA::set_vec(utility::vector1<core::Real> & x_vec,
-															utility::vector1<core::Real> & y_vec,
-															utility::vector1<core::Real> & z_vec,
-															core::Size index,
-															core::pose::Pose const & pose){
+	utility::vector1<core::Real> & y_vec,
+	utility::vector1<core::Real> & z_vec,
+	core::Size index,
+	core::pose::Pose const & pose){
 
 	numeric::xyzVector< core::Real > coo1 = pose.residue(index).atom("CA").xyz();
 	numeric::xyzVector< core::Real > coo2 = pose.residue(index).atom("C").xyz();
@@ -118,8 +118,8 @@ GridSearchIteratorCA::GridSearchIteratorCA(core::pose::Pose const & pose)
 	res_num_cur_ = 1;
 
 
-	if(n_res <= 8){
-		for(i = 1; i <= n_res; i++){
+	if ( n_res <= 8 ) {
+		for ( i = 1; i <= n_res; i++ ) {
 			set_vec(x_vec_, y_vec_, z_vec_, i, pose);
 		}
 		res_num_total_ = x_vec_.size();
@@ -139,8 +139,8 @@ GridSearchIteratorCA::GridSearchIteratorCA(core::pose::Pose const & pose)
 
 	/*
 	if(n_res <= 16){
-		res_num_total_ = x_vec_.size();
-		return;
+	res_num_total_ = x_vec_.size();
+	return;
 	}
 
 
@@ -155,8 +155,8 @@ GridSearchIteratorCA::GridSearchIteratorCA(core::pose::Pose const & pose)
 
 
 	if(n_res <= 32){
-		res_num_total_ = x_vec_.size();
-		return;
+	res_num_total_ = x_vec_.size();
+	return;
 	}
 
 
@@ -179,8 +179,8 @@ GridSearchIteratorCA::GridSearchIteratorCA(core::pose::Pose const & pose)
 
 
 	if(n_res <= 64){
-		res_num_total_ = x_vec_.size();
-		return;
+	res_num_total_ = x_vec_.size();
+	return;
 	}
 
 
@@ -203,7 +203,7 @@ GridSearchIteratorCA::GridSearchIteratorCA(core::pose::Pose const & pose)
 	*/
 
 
-	if(n_res <= 128){
+	if ( n_res <= 128 ) {
 		res_num_total_ = x_vec_.size();
 		return;
 	}
@@ -216,9 +216,9 @@ GridSearchIteratorCA::GridSearchIteratorCA(core::pose::Pose const & pose)
 
 bool
 GridSearchIteratorCA::next_center(core::Real &x,
-																	core::Real &y,
-																	core::Real &z){
-	if(res_num_cur_ > res_num_total_){
+	core::Real &y,
+	core::Real &z){
+	if ( res_num_cur_ > res_num_total_ ) {
 		return false;
 	}
 

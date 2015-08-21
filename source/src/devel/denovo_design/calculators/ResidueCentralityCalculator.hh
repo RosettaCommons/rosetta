@@ -51,9 +51,9 @@ class Node : public utility::pointer::ReferenceCount
 {
 public:
 	Node( std::string const id, core::Size const resi)
-		: resi(resi), id(id),
-			distanceFromStart(9999),
-			in_list( false )
+	: resi(resi), id(id),
+		distanceFromStart(9999),
+		in_list( false )
 	{
 		neighbors.clear();
 	}
@@ -90,21 +90,21 @@ public:// constructor/destructor
 
 public:// virtual constructor
 	/// @brief make clone
-  core::pose::metrics::PoseMetricCalculatorOP
+	core::pose::metrics::PoseMetricCalculatorOP
 	clone() const { return core::pose::metrics::PoseMetricCalculatorOP( new ResidueCentralityCalculator( *this ) ); }
 
 public:// mutators
 
 protected:
-  virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-  virtual std::string print( std::string const & key ) const;
-  virtual void recompute( core::pose::Pose const & this_pose );
+	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
+	virtual std::string print( std::string const & key ) const;
+	virtual void recompute( core::pose::Pose const & this_pose );
 
 private:// private functions
 	/// @brief determine the connectivity index of a residue
 	core::Real
 	connectivity_index( std::list< NodeOP > const & nodes,
-											core::Size const resi ) const;
+		core::Size const resi ) const;
 
 private:// member variables
 	/// @brief the computed list of centrality indices, by residue

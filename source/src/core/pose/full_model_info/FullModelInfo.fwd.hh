@@ -25,8 +25,8 @@ namespace core {
 namespace pose {
 namespace full_model_info {
 
-	class FullModelInfo;
-	typedef utility::pointer::shared_ptr< FullModelInfo > FullModelInfoOP;
+class FullModelInfo;
+typedef utility::pointer::shared_ptr< FullModelInfo > FullModelInfoOP;
 
 } //full_model_info
 } //pose

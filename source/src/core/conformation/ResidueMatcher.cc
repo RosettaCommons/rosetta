@@ -35,15 +35,15 @@ WatsonCrickResidueMatcher::operator()( Residue const & rsd1, Residue const & rsd
 {
 	using namespace chemical;
 	switch ( rsd1.aa() ) {
-	case na_thy:
+	case na_thy :
 		return ( rsd2.aa() == na_ade );
-	case na_ade:
+	case na_ade :
 		return ( rsd2.aa() == na_thy );
-	case na_cyt:
+	case na_cyt :
 		return ( rsd2.aa() == na_gua );
-	case na_gua:
+	case na_gua :
 		return ( rsd2.aa() == na_cyt );
-	default:
+	default :
 		return false;
 	}
 }

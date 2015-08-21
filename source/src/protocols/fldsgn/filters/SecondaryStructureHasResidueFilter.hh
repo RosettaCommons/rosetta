@@ -72,7 +72,7 @@ public:// virtual constructor
 	virtual FilterOP clone() const { return FilterOP( new SecondaryStructureHasResidueFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const {	return FilterOP( new SecondaryStructureHasResidueFilter() ); }
+	virtual FilterOP fresh_instance() const { return FilterOP( new SecondaryStructureHasResidueFilter() ); }
 
 public:// accessor
 
@@ -84,10 +84,10 @@ public:// accessor
 public:// parser
 
 	virtual void parse_my_tag( TagCOP tag,
-														 basic::datacache::DataMap &,
-														 Filters_map const &,
-														 Movers_map const &,
-														 Pose const & );
+		basic::datacache::DataMap &,
+		Filters_map const &,
+		Movers_map const &,
+		Pose const & );
 
 
 public:// main operation
@@ -125,4 +125,4 @@ private:
 } // protocols
 
 #endif
-	// In this case, the test is whether the give pose is the topology we want.
+// In this case, the test is whether the give pose is the topology we want.

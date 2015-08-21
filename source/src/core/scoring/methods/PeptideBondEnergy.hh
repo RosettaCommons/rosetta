@@ -60,9 +60,9 @@ public:
 	//virtual
 	//void
 	//finalize_total_energy(
-	//	pose::Pose & pose,
-	//	ScoreFunction const &,
-	//	EnergyMap & totals
+	// pose::Pose & pose,
+	// ScoreFunction const &,
+	// EnergyMap & totals
 	//) const;
 
 	virtual
@@ -75,8 +75,8 @@ public:
 		EnergyMap & emap
 	) const;
 
-  virtual
-  void
+	virtual
+	void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
@@ -86,8 +86,8 @@ public:
 
 	/// called during gradient-based minimization inside dfunc
 	/**
-		 F1 and F2 are not zeroed -- contributions from this atom are
-		 just summed in
+	F1 and F2 are not zeroed -- contributions from this atom are
+	just summed in
 	**/
 	virtual
 	void
@@ -114,8 +114,8 @@ public:
 	virtual
 	Distance
 	atomic_interaction_cutoff() const;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 private:
 

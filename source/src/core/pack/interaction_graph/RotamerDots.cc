@@ -83,24 +83,24 @@ namespace interaction_graph {
 bool unpack_ubyte( ObjexxFCL::ubyte const & value, core::Size which_bit ) {
 
 	switch ( which_bit ) {
-		case 0 :
-			return value & static_cast< ObjexxFCL::ubyte >(0x01);
-		case 1 :
-			return value & static_cast< ObjexxFCL::ubyte >(0x02);
-		case 2 :
-			return value & static_cast< ObjexxFCL::ubyte >(0x04);
-		case 3 :
-			return value & static_cast< ObjexxFCL::ubyte >(0x08);
-		case 4 :
-			return value & static_cast< ObjexxFCL::ubyte >(0x10);
-		case 5 :
-			return value & static_cast< ObjexxFCL::ubyte >(0x20);
-		case 6 :
-			return value & static_cast< ObjexxFCL::ubyte >(0x40);
-		case 7 :
-			return value & static_cast< ObjexxFCL::ubyte >(0x80);
-		default :
-			utility_exit(); // this should never happen
+	case 0 :
+		return value & static_cast< ObjexxFCL::ubyte >(0x01);
+	case 1 :
+		return value & static_cast< ObjexxFCL::ubyte >(0x02);
+	case 2 :
+		return value & static_cast< ObjexxFCL::ubyte >(0x04);
+	case 3 :
+		return value & static_cast< ObjexxFCL::ubyte >(0x08);
+	case 4 :
+		return value & static_cast< ObjexxFCL::ubyte >(0x10);
+	case 5 :
+		return value & static_cast< ObjexxFCL::ubyte >(0x20);
+	case 6 :
+		return value & static_cast< ObjexxFCL::ubyte >(0x40);
+	case 7 :
+		return value & static_cast< ObjexxFCL::ubyte >(0x80);
+	default :
+		utility_exit(); // this should never happen
 	}
 
 	return false;
@@ -231,8 +231,9 @@ DotSphere const & DotSphere::operator= ( DotSphere const & rhs ) {
 ///
 bool DotSphere::operator!= ( DotSphere const & rhs ) {
 
-	if ( num_covered_ != rhs.num_covered_ || num_covered_current_ != rhs.num_covered_current_ )
+	if ( num_covered_ != rhs.num_covered_ || num_covered_current_ != rhs.num_covered_current_ ) {
 		return true;
+	}
 	for ( Size ii=0; ii < NUM_BYTES_IN_DOT_SPHERE_OVERLAP_ARRAYS; ++ii ) {
 		for ( Size jj=0; jj < 8; ++jj ) {
 			Size ii8_jj = ii*8 + jj;
@@ -251,8 +252,9 @@ bool DotSphere::operator!= ( DotSphere const & rhs ) {
 /// memset is fast -- a lot of time is spent in this function so I'm using c-style arrays instead of the FArrays
 ///
 void DotSphere::zero() {
-	if ( num_covered_current_ && num_covered_ == 0 )
+	if ( num_covered_current_ && num_covered_ == 0 ) {
 		return;
+	}
 	memset( dots_coverage_count_, 0, NUM_COUNTS_TO_ALLOCATE );
 	num_covered_ = 0;
 	num_covered_current_ = true;
@@ -329,8 +331,9 @@ Size DotSphere::get_num_uncovered() const {
 /// method uses the cached result
 ///
 Size DotSphere::get_num_covered() const {
-	if ( ! num_covered_current_ )
+	if ( ! num_covered_current_ ) {
 		count_num_covered();
+	}
 	return num_covered_;
 }
 
@@ -374,7 +377,7 @@ DotSphere const & DotSphere::operator -= ( DotSphere const & rhs ) {
 ///
 DotSphere const & DotSphere::operator += ( DotSphere const & rhs ) {
 	num_covered_current_ = false;
-	for (Size ii = 0; ii < NUM_COUNTS_TO_ALLOCATE; ++ii) {
+	for ( Size ii = 0; ii < NUM_COUNTS_TO_ALLOCATE; ++ii ) {
 		dots_coverage_count_[ ii ] += rhs.dots_coverage_count_[ ii ];
 	}
 	return *this;
@@ -386,7 +389,7 @@ DotSphere const & DotSphere::operator += ( DotSphere const & rhs ) {
 /// and converts that to 0-based for the C-style array used by this class.
 ///
 bool DotSphere::get_dot_covered( Size dot_index ) const {
-debug_assert( dot_index > 0 && dot_index <= NUM_DOTS_TOTAL );
+	debug_assert( dot_index > 0 && dot_index <= NUM_DOTS_TOTAL );
 	return ( dots_coverage_count_[ dot_index - 1 ] != 0 );
 }
 
@@ -443,14 +446,16 @@ void DotSphere::invert_to_compact_array( utility::vector1< ObjexxFCL::ubyte > & 
 void DotSphere::print( std::ostream & os ) const {
 
 	for ( Size ii=0; ii < NUM_COUNTS_TO_ALLOCATE; ++ii ) {
-		if ( ii % 16 == 0 )
+		if ( ii % 16 == 0 ) {
 			os << ii+1 << ":";
+		}
 		if ( dots_coverage_count_[ii] < 10 ) {
 			os << (Size)dots_coverage_count_[ii];
 		} else os << "9";
 
-		if (ii % 8 == 7)
+		if ( ii % 8 == 7 ) {
 			os << " ";
+		}
 	}
 	os << std::endl;
 	return;
@@ -590,8 +595,9 @@ bool RotamerDots::operator!=( RotamerDots const & rhs ) {
 
 	//TR_RD << "operator!=() score info same. checking if dot sphere objects match." << std::endl;
 	for ( Size ii=1; ii <= atom_counts_.size(); ++ii ) {
-		if ( atom_counts_[ ii ] != rhs.atom_counts_[ ii ] )
+		if ( atom_counts_[ ii ] != rhs.atom_counts_[ ii ] ) {
 			return true;
+		}
 	}
 
 	return false;
@@ -646,8 +652,9 @@ bool RotamerDots::overlaps( RotamerDots const & other ) const {
 			atom2_radius = other.get_atom_radius( jj ) + probe_radius_;
 
 			// exit if large probe radii touch
-			if ( distance_squared <= (atom1_radius + atom2_radius) * (atom1_radius + atom2_radius) )
+			if ( distance_squared <= (atom1_radius + atom2_radius) * (atom1_radius + atom2_radius) ) {
 				return true;
+			}
 		}
 	}
 	return false;
@@ -664,8 +671,9 @@ RotamerDots::rotamer() const {
 /// Is the state of this RotamerDots object unassigned?
 ///
 bool RotamerDots::state_unassigned() const {
-	if ( rotamer_ == 0 )
+	if ( rotamer_ == 0 ) {
 		return true;
+	}
 	return false;
 }
 
@@ -682,8 +690,9 @@ Size RotamerDots::get_num_atoms() const {
 /// Return the xyz coordinates of an atom in this RotamerDots instance.
 ///
 numeric::xyzVector< Real > RotamerDots::get_atom_coords_xyz( Size atom_index ) const {
-	if ( rotamer_ == 0 )
+	if ( rotamer_ == 0 ) {
 		return numeric::xyzVector< Real >(0,0,0);
+	}
 
 	return rotamer_->xyz( atom_index );
 }
@@ -699,8 +708,9 @@ numeric::xyzVector< Real > RotamerDots::get_atom_coords_xyz( Size atom_index ) c
 /// right type.
 ///
 Real RotamerDots::get_atom_radius( Size atom_index ) const {
-	if ( rotamer_ == 0 )
+	if ( rotamer_ == 0 ) {
 		return 0.0;
+	}
 
 	conformation::Atom const & atom( rotamer_->atom( atom_index ) );
 	return (*radii_)[ atom.type() ];
@@ -760,8 +770,9 @@ RotamerDots::invert_to_boolmasks(
 
 core::Vector
 RotamerDots::dot_coord( Size index ) {
-	if ( !sasa_arrays_initialized_ )
+	if ( !sasa_arrays_initialized_ ) {
 		initialize_sasa_arrays();
+	}
 	return dot_coords_[ index ];
 }
 
@@ -819,8 +830,8 @@ void RotamerDots::increment_self_overlap() {
 
 	//TR_RD << "increment_self_overlap(): incrementing with counts: " << std::endl;
 	//for ( Size ii = 1; ii <= num_atoms_; ++ii ) {
-	//	RotamerDotsCache rdc;
-	//	rdc.print_bit_string( self_overlap[ ii ] );
+	// RotamerDotsCache rdc;
+	// rdc.print_bit_string( self_overlap[ ii ] );
 	//}
 
 	for ( Size ii = 1; ii <= num_atoms_; ++ii ) {
@@ -855,7 +866,7 @@ void RotamerDots::increment_this_and_cache(
 
 	/*TR_RD << "atom_atom_overlaps_cache.size(): " << atom_atom_overlaps_cache.size() << std::endl;
 	for ( Size ii=1; ii <= atom_atom_overlaps_cache.size(); ++ii ) {
-		TR_RD << "atom_atom_overlaps_cache[ " << ii << " ].size(): " << atom_atom_overlaps_cache[ ii ].size() << std::endl;
+	TR_RD << "atom_atom_overlaps_cache[ " << ii << " ].size(): " << atom_atom_overlaps_cache[ ii ].size() << std::endl;
 	}
 	TR_RD << std::endl;*/
 
@@ -962,8 +973,9 @@ void RotamerDots::get_res_res_overlap(
 
 			// set the overlaps bool if overlap was found. the outer vector holds the changing node's atoms (or other_res, as it
 			// is referred to in this function) and the inner vector is for this RD object's atoms.
-			if ( overlap )
+			if ( overlap ) {
 				atom_atom_overlaps_cache[ jj ][ ii ] = true;
+			}
 
 			if ( square_distance > (ii_atom_radius + jj_atom_radius) * (ii_atom_radius + jj_atom_radius) ) {
 				break;
@@ -1024,9 +1036,10 @@ bool RotamerDots::get_atom_atom_coverage( Vector const & at1_xyz, Real at1_base_
 ///
 void RotamerDots::increment_from_cached( RotamerDotsCache const & cache ) {
 
-	if ( cache.atom_counts_.size() != atom_counts_.size() )
+	if ( cache.atom_counts_.size() != atom_counts_.size() ) {
 		TR_RD << "increment_from_cached(): cache.size(): " << cache.atom_counts_.size() << ", atom_counts_.size(): " << atom_counts_.size() << std::endl;
-debug_assert( cache.atom_counts_.size() == atom_counts_.size() );
+	}
+	debug_assert( cache.atom_counts_.size() == atom_counts_.size() );
 	for ( Size ii = 1; ii <= num_atoms_; ++ii ) {
 		atom_counts_[ ii ] += cache.atom_counts_[ ii ];
 	}
@@ -1040,7 +1053,7 @@ debug_assert( cache.atom_counts_.size() == atom_counts_.size() );
 ///
 void RotamerDots::decrement_from_cached( RotamerDotsCache const & cache ) {
 
-debug_assert( cache.atom_counts_.size() == atom_counts_.size() );
+	debug_assert( cache.atom_counts_.size() == atom_counts_.size() );
 	for ( Size ii = 1; ii <= num_atoms_; ++ii ) {
 		atom_counts_[ ii ] -= cache.atom_counts_[ ii ];
 	}
@@ -1114,11 +1127,13 @@ void RotamerDots::increment_both_and_cache( RotamerDots & other_rotamer, Rotamer
 ///
 Real RotamerDots::get_sasa() const {
 
-	if ( state_unassigned() )
+	if ( state_unassigned() ) {
 		return 0.0f;
+	}
 
-	if ( sasa_is_current_ )
+	if ( sasa_is_current_ ) {
 		return sasa_;
+	}
 
 	Real fraction_uncovered = 0.0;
 	Real atom_radius = 0.0;
@@ -1147,8 +1162,9 @@ Real RotamerDots::get_sasa() const {
 /// Assumes that get_atom_sasa() will never be called when the object is in the unassigned state.
 ///
 Real RotamerDots::get_atom_sasa( Size atom_index ) const {
-	if ( ! sasa_is_current_ )
+	if ( ! sasa_is_current_ ) {
 		get_sasa();
+	}
 
 	return atom_sasa_[ atom_index ];
 }
@@ -1179,86 +1195,86 @@ Size RotamerDots::get_num_covered_total() const {
 ///
 /*void RotamerDots::write_dot_kinemage( std::ofstream & kinfile ) {
 
-	for ( Size ii = 1; ii <= num_atoms_; ++ii ) {
-		write_dotlist_header( kinfile, "1.4 exposed dots", "red");
-		for ( Size jj = 1; jj <= DotSphere::NUM_DOTS_TOTAL; ++jj ) {
-			if ( ! atom_counts_[ii].get_dot_covered( jj ) ) {
-				write_dot( kinfile, ii, jj, probe_radius_ );
-			}
-		}
-		write_dotlist_header( kinfile, "SA", "red");
-		for ( Size jj = 1; jj <= DotSphere::NUM_DOTS_TOTAL; ++jj ) {
-			if ( ! atom_counts_[ii].get_dot_covered( jj ) ) {
-				write_dot( kinfile, ii, jj, 0 );
-			}
-		}
-		write_dotlist_header( kinfile, "1.0 A probe Accessible", "green");
-		for ( Size jj = 1; jj <= DotSphere::NUM_DOTS_TOTAL; ++jj ) {
-			if ( ! atom_counts_[ii].get_dot_covered( jj ) ) {
-				write_dot( kinfile, ii, jj, 0 );
-			}
-		}
-		//write_dotlist_header( kinfile, "void surface", "blue");
-		//for (int jj = 1; jj <= DotSphere::NUM_DOTS_TOTAL; ++jj) {
-		//	if ( atom_counts_[ii].get_dot_covered( jj ) && ! atom_counts_small_probe_[ii].get_dot_covered( jj ) ) {
-		//		write_dot( kinfile, ii, jj, 0 );
-		//	}
-		//}
-		//write_dotlist_header( kinfile, "all dots", "white");
-		//for (int jj = 1; jj <= DotSphere::NUM_DOTS_TOTAL; ++jj)
-		//{
-		//	write_dot( kinfile, ii, jj, 0 );
-		//}
-	}
+for ( Size ii = 1; ii <= num_atoms_; ++ii ) {
+write_dotlist_header( kinfile, "1.4 exposed dots", "red");
+for ( Size jj = 1; jj <= DotSphere::NUM_DOTS_TOTAL; ++jj ) {
+if ( ! atom_counts_[ii].get_dot_covered( jj ) ) {
+write_dot( kinfile, ii, jj, probe_radius_ );
+}
+}
+write_dotlist_header( kinfile, "SA", "red");
+for ( Size jj = 1; jj <= DotSphere::NUM_DOTS_TOTAL; ++jj ) {
+if ( ! atom_counts_[ii].get_dot_covered( jj ) ) {
+write_dot( kinfile, ii, jj, 0 );
+}
+}
+write_dotlist_header( kinfile, "1.0 A probe Accessible", "green");
+for ( Size jj = 1; jj <= DotSphere::NUM_DOTS_TOTAL; ++jj ) {
+if ( ! atom_counts_[ii].get_dot_covered( jj ) ) {
+write_dot( kinfile, ii, jj, 0 );
+}
+}
+//write_dotlist_header( kinfile, "void surface", "blue");
+//for (int jj = 1; jj <= DotSphere::NUM_DOTS_TOTAL; ++jj) {
+// if ( atom_counts_[ii].get_dot_covered( jj ) && ! atom_counts_small_probe_[ii].get_dot_covered( jj ) ) {
+//  write_dot( kinfile, ii, jj, 0 );
+// }
+//}
+//write_dotlist_header( kinfile, "all dots", "white");
+//for (int jj = 1; jj <= DotSphere::NUM_DOTS_TOTAL; ++jj)
+//{
+// write_dot( kinfile, ii, jj, 0 );
+//}
+}
 }
 
 ///
 void RotamerDots::write_dotlist_header( std::ofstream & kinfile, std::string master_name, std::string color ) {
-	kinfile << "@dotlist master= {" << master_name << "} color= " << color << "\n";
+kinfile << "@dotlist master= {" << master_name << "} color= " << color << "\n";
 }
 
 ///
 void RotamerDots::write_dot( std::ofstream & kinfile, Size atom, Size dot, Real radius ) {
-	static numeric::xyzVector< Real > coord;
-	coord = get_atom_coords_xyz( atom );
-	coord += (radius + get_atom_radius( atom )) * get_dot_coord( dot );
+static numeric::xyzVector< Real > coord;
+coord = get_atom_coords_xyz( atom );
+coord += (radius + get_atom_radius( atom )) * get_dot_coord( dot );
 
-	write_dot( kinfile, coord, "dot" );
+write_dot( kinfile, coord, "dot" );
 }
 
 ///
 void RotamerDots::write_dot( std::ofstream & kinfile, numeric::xyzVector< Real > const & coord, std::string atname ) {
-	static std::string last_atname = "";
-	if ( last_atname == atname ) {
-		kinfile << "{\"} P " << coord.x() << " " << coord.y() << " " << coord.z() << "\n";
-	} else {
-		kinfile << "{" << atname << "} P " << coord.x() << " " << coord.y() << " " << coord.z() << "\n";
-		last_atname = atname;
-	}
+static std::string last_atname = "";
+if ( last_atname == atname ) {
+kinfile << "{\"} P " << coord.x() << " " << coord.y() << " " << coord.z() << "\n";
+} else {
+kinfile << "{" << atname << "} P " << coord.x() << " " << coord.y() << " " << coord.z() << "\n";
+last_atname = atname;
+}
 }
 
 ///
 numeric::xyzVector<Real> const & RotamerDots::get_dot_coord( Size dot_id ) {
-	if ( ! dot_sphere_coordinates_initialized_ ) {
-		initialize_dot_sphere_coordinates_from_file();
-	}
-	return dot_sphere_coordinates_[ dot_id ];
+if ( ! dot_sphere_coordinates_initialized_ ) {
+initialize_dot_sphere_coordinates_from_file();
+}
+return dot_sphere_coordinates_[ dot_id ];
 }
 
 ///
 void RotamerDots::initialize_dot_sphere_coordinates_from_file() {
 
-	dot_sphere_coordinates_.resize( DotSphere::NUM_DOTS_TOTAL );
+dot_sphere_coordinates_.resize( DotSphere::NUM_DOTS_TOTAL );
 
-	std::ifstream dotfile("sphere.txt");
-	for ( Size ii = 1; ii <= DotSphere::NUM_DOTS_TOTAL; ++ii ) {
-		Real x, y, z;
-		dotfile >> x >> y >> z;
-		dot_sphere_coordinates_[ ii ] = -1 * numeric::xyzVector< Real >( x,y,z );
-	}
-	dotfile.close();
+std::ifstream dotfile("sphere.txt");
+for ( Size ii = 1; ii <= DotSphere::NUM_DOTS_TOTAL; ++ii ) {
+Real x, y, z;
+dotfile >> x >> y >> z;
+dot_sphere_coordinates_[ ii ] = -1 * numeric::xyzVector< Real >( x,y,z );
+}
+dotfile.close();
 
-	dot_sphere_coordinates_initialized_ = true;
+dot_sphere_coordinates_initialized_ = true;
 }
 */
 
@@ -1611,7 +1627,7 @@ void
 RotamerDotsCache::zero() {
 	for ( Size ii = 1; ii <= atom_counts_.size(); ++ii ) {
 		//if ( non_zero_overlap_[ ii ] ) {
-			atom_counts_[ ii ].zero(); // calls zero() on each DotSphere instance
+		atom_counts_[ ii ].zero(); // calls zero() on each DotSphere instance
 		//}
 	}
 	//atom_counts_.clear(); // leaving this in causes the vector to be sized down to 0, causing problems
@@ -1629,7 +1645,7 @@ void RotamerDotsCache::increment_count( utility::vector1< utility::vector1< Obje
 	//TR_RDC << "increment_count(): atom_counts_.size(): " << atom_counts_.size() << ", covered.size(): " << covered.size() << std::endl;
 	// do not assert this -- let there be more entries, possibly, in covered array;
 	//debug_assert( atom_counts_.size() == covered.size() );
-debug_assert( atom_counts_.size() <= covered.size() );
+	debug_assert( atom_counts_.size() <= covered.size() );
 	for ( Size ii = 1, ii_end = atom_counts_.size(); ii <= ii_end; ++ii ) {
 		//utility::vector1< ObjexxFCL::ubyte > const & atom_mask = covered[ ii ];
 		atom_counts_[ ii ].increment_count( covered[ ii ] );
@@ -1646,7 +1662,7 @@ debug_assert( atom_counts_.size() <= covered.size() );
 /// exists for expanded polar atom SASA dot counts.
 ///
 void RotamerDotsCache::write_to_compact_array( utility::vector1< utility::vector1< ObjexxFCL::ubyte > > & compact ) const {
-debug_assert( compact.size() != 0 );
+	debug_assert( compact.size() != 0 );
 	for ( Size ii = 1; ii <= atom_counts_.size(); ++ii ) {
 		atom_counts_[ ii ].write_to_compact_array( compact[ ii ] );
 	}
@@ -1738,7 +1754,7 @@ InvRotamerDots::rotamer() const
 /// @brief Is the intersection between two atoms on this inv-rotamer-dots object exposed?
 bool
 InvRotamerDots::atom_overlap_is_exposed( Size at1, Size at2 ) const {
-debug_assert( rotamer_ );
+	debug_assert( rotamer_ );
 	return overlap_exposed( rotamer_->atom( at1 ), inv_dots_[ at1 ], rotamer_->atom( at2 ), inv_dots_[ at2 ] );
 }
 
@@ -1756,7 +1772,7 @@ InvRotamerDots::atom_overlap_is_exposed(
 
 
 bool InvRotamerDots::dot_exposed( Size atomid, Size dot_index ) const {
-debug_assert( dot_index > 0 && dot_index <= 162 );
+	debug_assert( dot_index > 0 && dot_index <= 162 );
 	dot_index -= 1;
 	Size const which_byte = dot_index / 8;
 	Size const which_bit  = dot_index - which_byte * 8 ;
@@ -1796,7 +1812,7 @@ InvRotamerDots::write_circle_intersection_mask_to_kinemage(
 	Real const rad2 = (*radii_)[ at2.type() ] + RotamerDots::probe_radius_;
 
 	Real const dist_sq = at1.xyz().distance_squared( at2.xyz() );
-debug_assert( dist_sq < (rad1 + rad2) * (rad1 + rad2) );
+	debug_assert( dist_sq < (rad1 + rad2) * (rad1 + rad2) );
 	Real const distance = std::sqrt( dist_sq );
 
 	Real const step_size1 = rad1 * 0.02;
@@ -1831,13 +1847,13 @@ debug_assert( dist_sq < (rad1 + rad2) * (rad1 + rad2) );
 
 	// so we take two "offsets" into the "masks" table: 1) the one that normally gets used to figure out which dots are covered
 	// by the neighboring atom, and 2) one that's one "step" in, which represents the "ring" of dots that's just past the ones
-	// that are covered by the neighboring atom. if we then take the inverse (negate) the normally used mask, we'll get 0's 
+	// that are covered by the neighboring atom. if we then take the inverse (negate) the normally used mask, we'll get 0's
 	// whereever there are dots covered by the other atom (instead of 1's) and 1's everywhere else. if we logical AND that
 	// result with the dots that one "step" in, we'll get 1's at just the ring of dots that's next to the ones that are covered.
 
-	// if we then logical AND the ring of dots with all of the exposed dots on this atom, we can determine if there are any 
+	// if we then logical AND the ring of dots with all of the exposed dots on this atom, we can determine if there are any
 	// exposed dots adjacent to the intersection circle.
-	
+
 	for ( Size bb = 1, bblia = (*RotamerDots::lg_masks_).index( bb, masknum1a ), bblib = (*RotamerDots::lg_masks_).index( bb, masknum1b );
 			bb <= RotamerDots::num_bytes_; ++bb, ++bblia, ++bblib ) {
 		ring1[ bb ] = (*RotamerDots::lg_masks_)[ bblib ] & ~ (*RotamerDots::lg_masks_)[ bblia ];
@@ -1913,7 +1929,7 @@ InvRotamerDots::overlap_exposed(
 	Real const rad2 = (*radii_)[ at2.type() ] + RotamerDots::probe_radius_;
 
 	Real const dist_sq = at1.xyz().distance_squared( at2.xyz() );
-debug_assert( dist_sq <= (rad1 + rad2) * (rad1 + rad2) );
+	debug_assert( dist_sq <= (rad1 + rad2) * (rad1 + rad2) );
 	Real const distance = std::sqrt( dist_sq );
 
 	Real const step_size1 = rad1 * 0.02;
@@ -1933,7 +1949,7 @@ debug_assert( dist_sq <= (rad1 + rad2) * (rad1 + rad2) );
 	bool at1_intersection_exposed = false;
 	Size closest_dot1 = (*RotamerDots::lg_angles_)( aphi_1_2, theta_1_2 );
 	if ( degree_of_overlap1 + nsteps1 > 100 ) {
-		for ( Size bb = 1; bb <= RotamerDots::num_bytes_; ++bb ){
+		for ( Size bb = 1; bb <= RotamerDots::num_bytes_; ++bb ) {
 			if ( at1exposed_dots[ bb ] ) {
 				at1_intersection_exposed = true;
 				break;
@@ -1941,7 +1957,7 @@ debug_assert( dist_sq <= (rad1 + rad2) * (rad1 + rad2) );
 		}
 	} else {
 		int masknum = ( closest_dot1 * 100 ) + degree_of_overlap1 + nsteps1;
-		for ( Size bb = 1, bbli = (*RotamerDots::lg_masks_).index( bb, masknum ); bb <= RotamerDots::num_bytes_; ++bb, ++bbli ){
+		for ( Size bb = 1, bbli = (*RotamerDots::lg_masks_).index( bb, masknum ); bb <= RotamerDots::num_bytes_; ++bb, ++bbli ) {
 			if ( at1exposed_dots[ bb ] & (*RotamerDots::lg_masks_)[ bbli ] ) {
 				at1_intersection_exposed = true;
 				break;
@@ -1958,7 +1974,7 @@ debug_assert( dist_sq <= (rad1 + rad2) * (rad1 + rad2) );
 
 	Size closest_dot2 = (*RotamerDots::lg_angles_)( aphi_2_1, theta_2_1 );
 	if ( degree_of_overlap2 + nsteps2 > 100 ) {
-		for ( Size bb = 1; bb <= RotamerDots::num_bytes_; ++bb ){
+		for ( Size bb = 1; bb <= RotamerDots::num_bytes_; ++bb ) {
 			if ( at2exposed_dots[ bb ] ) {
 				at2_intersection_exposed = true;
 				break;
@@ -1966,7 +1982,7 @@ debug_assert( dist_sq <= (rad1 + rad2) * (rad1 + rad2) );
 		}
 	} else {
 		int masknum = ( closest_dot2 * 100 ) + degree_of_overlap2 + nsteps2;
-		for ( Size bb = 1, bbli = (*RotamerDots::lg_masks_).index( bb, masknum ); bb <= RotamerDots::num_bytes_; ++bb, ++bbli ){
+		for ( Size bb = 1, bbli = (*RotamerDots::lg_masks_).index( bb, masknum ); bb <= RotamerDots::num_bytes_; ++bb, ++bbli ) {
 			if ( at2exposed_dots[ bb ] & (*RotamerDots::lg_masks_)[ bbli ] ) {
 				at2_intersection_exposed = true;
 				break;

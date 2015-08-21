@@ -31,7 +31,7 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-	#include <protocols/frag_picker/FragmentPicker.hh>
+#include <protocols/frag_picker/FragmentPicker.hh>
 #endif
 
 
@@ -49,7 +49,7 @@ MidPhiOut::MidPhiOut(Size priority, Real lowest_acceptable_value, bool use_lowes
 void MidPhiOut::do_caching(VallChunkOP current_chunk) {
 
 	chunk_phi_.redimension(current_chunk->size());
-	for (Size i = 1; i <= current_chunk->size(); ++i) {
+	for ( Size i = 1; i <= current_chunk->size(); ++i ) {
 		VallResidueOP r = current_chunk->at(i);
 		chunk_phi_(i) = r->phi();
 	}
@@ -63,7 +63,7 @@ bool MidPhiOut::cached_score(FragmentCandidateOP fragment, FragmentScoreMapOP sc
 
 	std::string tmp = fragment->get_chunk()->chunk_key();
 
-	if (tmp.compare(cached_scores_id_) != 0) {
+	if ( tmp.compare(cached_scores_id_) != 0 ) {
 		do_caching(fragment->get_chunk());
 		cached_scores_id_ = tmp;
 	}
@@ -86,24 +86,24 @@ void MidPhiOut::clean_up() {
 
 /// @brief Creates a MidPhiOut scoring method
 /// @param priority - priority of the scoring method. The higher value the earlier the score
-///		will be evaluated
+///  will be evaluated
 /// @param lowest_acceptable_value - if a calculated score is higher than this value,
-///		fragment will be neglected
+///  fragment will be neglected
 /// @param FragmentPickerOP object - not used
 /// @param line - the relevant line extracted from the scoring configuration file that defines this scoring method
-/// 		It could look like: "MidPhiOut                140     -5.0     100.0 additional_string"
-///		where 140, -5.0 && 100.0 are priority, weight && treshold, respectively.
-///		The additional string may be:
-///		- empty: then the maker tries to create a scoring object from a TALOS file
-///			trying in::file::talos_phi_psi flag. If fails, will try to use a pose from in::file::s
-///		- a pdb file, pdb extension is necessary. This will create a pose && steal Phi && Psi
-///		- a TALOS file with Phi/Psi prediction (tab extension is necessary)
+///   It could look like: "MidPhiOut                140     -5.0     100.0 additional_string"
+///  where 140, -5.0 && 100.0 are priority, weight && treshold, respectively.
+///  The additional string may be:
+///  - empty: then the maker tries to create a scoring object from a TALOS file
+///   trying in::file::talos_phi_psi flag. If fails, will try to use a pose from in::file::s
+///  - a pdb file, pdb extension is necessary. This will create a pose && steal Phi && Psi
+///  - a TALOS file with Phi/Psi prediction (tab extension is necessary)
 FragmentScoringMethodOP MakeMidPhiOut::make(Size priority,
-		Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
-		, std::string ) {
+	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
+	, std::string ) {
 
 	return (FragmentScoringMethodOP) FragmentScoringMethodOP( new MidPhiOut(priority,
-																								 lowest_acceptable_value, use_lowest) );
+		lowest_acceptable_value, use_lowest) );
 }
 
 } // scores

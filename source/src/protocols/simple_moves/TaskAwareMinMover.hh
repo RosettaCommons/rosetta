@@ -45,7 +45,7 @@ public:
 	TaskAwareMinMover(
 		protocols::simple_moves::MinMoverOP minmover_in,
 		core::pack::task::TaskFactoryCOP factory_in
-		);
+	);
 
 	virtual ~TaskAwareMinMover();
 
@@ -63,7 +63,7 @@ public:
 		protocols::moves::Movers_map const &,
 		Pose const & );
 
-  virtual void parse_def( utility::lua::LuaObject const & def,
+	virtual void parse_def( utility::lua::LuaObject const & def,
 		utility::lua::LuaObject const & score_fxns,
 		utility::lua::LuaObject const & tasks,
 		protocols::moves::MoverCacheSP cache );

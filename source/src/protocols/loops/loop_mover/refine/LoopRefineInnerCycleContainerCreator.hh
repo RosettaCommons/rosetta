@@ -25,12 +25,12 @@ namespace refine {
 /// @brief creator for the LoopRefineInnerCycleContainer class
 class LoopRefineInnerCycleContainerCreator : public moves::MoverCreator {
 public:
-  LoopRefineInnerCycleContainerCreator() {}
-  virtual ~LoopRefineInnerCycleContainerCreator();
+	LoopRefineInnerCycleContainerCreator() {}
+	virtual ~LoopRefineInnerCycleContainerCreator();
 
-  virtual moves::MoverOP create_mover() const;
+	virtual moves::MoverOP create_mover() const;
 
-  virtual std::string keyname() const;
+	virtual std::string keyname() const;
 
 };
 

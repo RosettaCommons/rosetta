@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief
-/// @author 
+/// @author
 
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -43,7 +43,7 @@ static thread_local basic::Tracer TR( "protocols.hotspot_hashing.SurfaceSearchPa
 SurfaceSearchPattern::SurfaceSearchPattern(
 	core::pose::Pose const & source_pose,
 	core::pack::task::TaskFactoryOP surface_selection,
-	core::Real surface_density) : 
+	core::Real surface_density) :
 	surface_vectors_(),
 	surface_density_(surface_density)
 {
@@ -52,17 +52,14 @@ SurfaceSearchPattern::SurfaceSearchPattern(
 	core::pose::Pose pose(source_pose);
 
 	// Create list of target residues using taskoperation
-  core::pack::task::PackerTaskOP task;
-  if ( surface_selection != 0 )
-	{
-    task = surface_selection->create_task_and_apply_taskoperations( pose );
+	core::pack::task::PackerTaskOP task;
+	if ( surface_selection != 0 ) {
+		task = surface_selection->create_task_and_apply_taskoperations( pose );
 		TR.Debug << "Initializing from packer task." << std::endl;
-  }
-	else
-	{
+	} else {
 		task = core::pack::task::TaskFactory::create_packer_task( pose );
 		TR.Debug << "No packer task specified, using default task." << std::endl;
-  }
+	}
 
 	TR.Debug << "Initializing SurfaceSearchPattern. Density: " << surface_density << std::endl;
 
@@ -80,20 +77,14 @@ SurfaceSearchPattern::SurfaceSearchPattern(
 	core::Size skipped_dots = 0;
 	core::Size selected_dots = 0;
 
-	for (core::Size i = 0; i < surface_dots.size(); i++) 
-	{
-		if (surface_dots[i].outnml.length() == 0)
-		{
+	for ( core::Size i = 0; i < surface_dots.size(); i++ ) {
+		if ( surface_dots[i].outnml.length() == 0 ) {
 			zeronormal_dots++;
 			continue;
-		}
-		else if (task->pack_residue(surface_dots[i].atom->nresidue))
-		{
+		} else if ( task->pack_residue(surface_dots[i].atom->nresidue) ) {
 			selected_dots++;
 			surface_vectors_.push_back(VectorPair(surface_dots[i].coor, -surface_dots[i].outnml));
-		}
-		else
-		{
+		} else {
 			skipped_dots++;
 		}
 	}
@@ -104,28 +95,25 @@ SurfaceSearchPattern::SurfaceSearchPattern(
 
 	TR.Debug << "Generated surface vectors: " << surface_vectors_.size() << std::endl;
 
-	if ( TR.Trace.visible() )
-	{
+	if ( TR.Trace.visible() ) {
 		TR.Trace << "Raw surface dots:" << "\n";
 		TR.Trace << "id atomid residueid residue atom area x y z nx ny nz " << "\n";
 
-		for (core::Size i = 0; i < surface_dots.size(); i++) 
-		{
-			if (task->pack_residue(surface_dots[i].atom->nresidue))
-			{
-				TR.Trace <<	i << " " <<
-										surface_dots[i].atom->nresidue << " " <<
-										surface_dots[i].atom->natom << " " <<
-										surface_dots[i].atom->residue << " " <<
-										surface_dots[i].atom->atom << " " <<
-										surface_dots[i].area << " " <<
-										surface_dots[i].coor.x() << " " << 
-										surface_dots[i].coor.y() << " " <<
-										surface_dots[i].coor.z() << " " <<
-										surface_dots[i].outnml.x() << " " <<
-										surface_dots[i].outnml.y() << " " <<
-										surface_dots[i].outnml.z() << " " <<
-										"\n";
+		for ( core::Size i = 0; i < surface_dots.size(); i++ ) {
+			if ( task->pack_residue(surface_dots[i].atom->nresidue) ) {
+				TR.Trace << i << " " <<
+					surface_dots[i].atom->nresidue << " " <<
+					surface_dots[i].atom->natom << " " <<
+					surface_dots[i].atom->residue << " " <<
+					surface_dots[i].atom->atom << " " <<
+					surface_dots[i].area << " " <<
+					surface_dots[i].coor.x() << " " <<
+					surface_dots[i].coor.y() << " " <<
+					surface_dots[i].coor.z() << " " <<
+					surface_dots[i].outnml.x() << " " <<
+					surface_dots[i].outnml.y() << " " <<
+					surface_dots[i].outnml.z() << " " <<
+					"\n";
 			}
 		}
 
@@ -137,14 +125,13 @@ utility::vector1<core::kinematics::Stub> SurfaceSearchPattern::Searchpoints()
 {
 	utility::vector1<core::kinematics::Stub> searchpoints;
 
-	for (core::Size i = 1; i <= surface_vectors_.size(); i++)
-	{
+	for ( core::Size i = 1; i <= surface_vectors_.size(); i++ ) {
 		VectorPair search_vector = surface_vectors_[i];
 
 		core::kinematics::Stub tp(
-				search_vector.position,
-				search_vector.position + search_vector.direction,
-				search_vector.position + search_vector.direction + (search_vector.position != 0 ? search_vector.position.cross(search_vector.direction) : (search_vector.position + 1).cross(search_vector.direction)));
+			search_vector.position,
+			search_vector.position + search_vector.direction,
+			search_vector.position + search_vector.direction + (search_vector.position != 0 ? search_vector.position.cross(search_vector.direction) : (search_vector.position + 1).cross(search_vector.direction)));
 
 		searchpoints.push_back(tp);
 	}

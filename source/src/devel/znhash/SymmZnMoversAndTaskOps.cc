@@ -172,7 +172,7 @@ void InitializeZNCoordinationConstraintMover::apply( core::pose::Pose & p )
 		zn_score_->set_reference_pdb( reference_pdb_ );
 
 		// initialize the assym_resid and the third_resid
-		if (p.total_residue() < 3 ) {
+		if ( p.total_residue() < 3 ) {
 			utility_exit_with_message("Cannot use ZnCoordinationConstraint on a pose with fewer than three residues" );
 		}
 		zn_score_->set_asymm_resid(1);
@@ -188,7 +188,7 @@ void InitializeZNCoordinationConstraintMover::apply( core::pose::Pose & p )
 				zn_score_->set_symm_resid( ii );
 				break;
 			}
-			if ( ii == p.total_residue()) {
+			if ( ii == p.total_residue() ) {
 				utility_exit_with_message("Did not find chain B in input structure" );
 			}
 		}
@@ -207,7 +207,7 @@ void InitializeZNCoordinationConstraintMover::apply( core::pose::Pose & p )
 			}
 			std::string matchfilename;
 			if ( linestream.peek() == '#' ) continue;
-			if ( linestream.peek() == '\n') continue;
+			if ( linestream.peek() == '\n' ) continue;
 			linestream >> matchfilename;
 			if ( matchfilename == "" ) {
 				utility_exit_with_message("While reading line " + utility::to_string(linenum) + " of " + match_pdb_listfilename_ + " could not read matchfilename\n" + line );
@@ -264,7 +264,7 @@ void ZNCoordinationConstraintReporterMover::apply( core::pose::Pose & p )
 	//using namespace core::conformation::symmetry;
 
 	//SymmetricConformation const & SymmConf (
-	//	dynamic_cast<SymmetricConformation const &> ( p.conformation()) );
+	// dynamic_cast<SymmetricConformation const &> ( p.conformation()) );
 	//SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 	//Size nsubunits = symm_info->subunits();
 	//Size nres_asu = symm_info->num_independent_residues();
@@ -275,7 +275,7 @@ void ZNCoordinationConstraintReporterMover::apply( core::pose::Pose & p )
 	//TR << "Coordinated by residues " << m1.res1() << " and " << m1.res2() << " on chain A" << std::endl;
 	//TR << "Coordinated by residues " << m2.res1() << " and " << m2.res2() << " on chain B" << std::endl;
 	//TR << "Pymol: hide lines, elem H; show cartoon; show sticks, res " << m1.res1() << "+" << m1.res2()
-	//	<< " and chain A; show sticks, res " << nres_asu + m2.res1() << "+" << nres_asu + m2.res2() << " and chain B; show sticks, resn ZNX" << std::endl;
+	// << " and chain A; show sticks, res " << nres_asu + m2.res1() << "+" << nres_asu + m2.res2() << " and chain B; show sticks, resn ZNX" << std::endl;
 }
 
 
@@ -295,7 +295,7 @@ read_match_header_line_from_pdb(
 		utility_exit_with_message( "Expected to read REMARK in file " + fname + " on line " + utility::to_string( linenum ) );
 	}
 	matchline_stream >> header.remark_number_;
-	if ( header.remark_number_ != "666"  || ! matchline_stream.good()) {
+	if ( header.remark_number_ != "666"  || ! matchline_stream.good() ) {
 		utility_exit_with_message( "Expected to read 666 in file " + fname + " on line " + utility::to_string( linenum ) );
 	}
 	matchline_stream >> header.match_string_;
@@ -455,7 +455,7 @@ void ZNCoordinationConstraintPlacerMover::apply( core::pose::Pose & p )
 	//TR << p.fold_tree() << std::endl;
 
 	//core::conformation::symmetry::SymmetricConformation const & symm_conf (
-	//	dynamic_cast< core::conformation::symmetry::SymmetricConformation const & > ( p.conformation()) );
+	// dynamic_cast< core::conformation::symmetry::SymmetricConformation const & > ( p.conformation()) );
 	//core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 	//TR << "SymmInfo" << std::endl;
@@ -541,8 +541,8 @@ void ZNCoordinationConstraintPlacerMover::insert_zn_residues_into_pose( core::po
 	p.pdb_info( newinfo );
 
 	//for ( Size ii = 1; ii <= p.total_residue(); ++ii ) {
-	//	std::cout << "Residue " << ii << " chain: " << p.residue(ii).chain() << " ";
-	//	std::cout << p.residue(ii).name() << std::endl;
+	// std::cout << "Residue " << ii << " chain: " << p.residue(ii).chain() << " ";
+	// std::cout << p.residue(ii).name() << std::endl;
 	//}
 	//core::kinematics::FoldTree ft( p.fold_tree() );
 	//p.fold_tree( ft ); // see if this works?!
@@ -602,12 +602,12 @@ ZNCoordinationConstraintPlacerMover::add_matcher_remark_lines_for_zn_coordinatio
 		//rinfo.num = 666;
 		//std::ostringstream ss;
 		//ss << "MATCH TEMPLATE B ZNX " << nres_asu << " MATCH MOTIF A "
-		//	<< ( ii == 1 ?
-		//		p.residue( m1_.res1()).name3() :
-		//		p.residue( m1_.res2()).name3() )
-		//	<< " "
-		//	<< ( ii == 1 ? m1_.res1() : m1_.res2() )
-		//	<< " " << ii << " " << header.geocst_indstr2_ << "\n";  // I don't think a \n is required.
+		// << ( ii == 1 ?
+		//  p.residue( m1_.res1()).name3() :
+		//  p.residue( m1_.res2()).name3() )
+		// << " "
+		// << ( ii == 1 ? m1_.res1() : m1_.res2() )
+		// << " " << ii << " " << header.geocst_indstr2_ << "\n";  // I don't think a \n is required.
 		//rinfo.value = ss.str();
 		//std::cout << "remark " << ii << ": " << rinfo.value << std::endl;
 		//match_remarks.push_back( rinfo );
@@ -642,13 +642,13 @@ ZNCoordinationConstraintPlacerMover::add_matcher_remark_lines_for_zn_coordinatio
 		//rinfo.num = 666;
 		//std::ostringstream ss;
 		//ss << "MATCH TEMPLATE " << char( int('A') + 2*nsubunits - 1 )
-		//	<< " ZNX " << nsubunits * nres_asu << " MATCH MOTIF A "
-		//	<< ( ii == 1 ?
-		//		p.residue( m2_.res1()).name3() :
-		//		p.residue( m2_.res2()).name3() )
-		//	<< " "
-		//	<< ( ii == 1 ? m2_.res1() : m2_.res2() )
-		//	<< " " << which_cst << " " << header.geocst_indstr2_<< "\n";  // I don't think a \n is required.
+		// << " ZNX " << nsubunits * nres_asu << " MATCH MOTIF A "
+		// << ( ii == 1 ?
+		//  p.residue( m2_.res1()).name3() :
+		//  p.residue( m2_.res2()).name3() )
+		// << " "
+		// << ( ii == 1 ? m2_.res1() : m2_.res2() )
+		// << " " << which_cst << " " << header.geocst_indstr2_<< "\n";  // I don't think a \n is required.
 		//rinfo.value = ss.str();
 		//std::cout << "remark " << which_cst << ": " << rinfo.value << std::endl;
 		//match_remarks.push_back( rinfo );
@@ -778,7 +778,7 @@ ZNCoordinationConstraintPlacerMover::restore_alanine_interface_residues_to_wtcon
 	core::pose::Pose & p
 )
 {
-		// Symmetry info
+	// Symmetry info
 	using namespace core::conformation::symmetry;
 
 	SymmetricConformation const & SymmConf (
@@ -870,16 +870,16 @@ void FindZnCoordinatingResidues::find_coordinating_residues(
 
 			std::pair< core::Real, core::Size > closest_dist_info;
 			switch ( nbr.aa() ) {
-				case aa_his :
-					closest_dist_info = closest_distance_to_desired_vrt( zncoord, vcoord, nbr, his_coordinating_atoms );
+			case aa_his :
+				closest_dist_info = closest_distance_to_desired_vrt( zncoord, vcoord, nbr, his_coordinating_atoms );
 				break;
-				case aa_asp :
-					closest_dist_info = closest_distance_to_desired_vrt( zncoord, vcoord, nbr, asp_coordinating_atoms );
+			case aa_asp :
+				closest_dist_info = closest_distance_to_desired_vrt( zncoord, vcoord, nbr, asp_coordinating_atoms );
 				break;
-				case aa_glu :
-					closest_dist_info = closest_distance_to_desired_vrt( zncoord, vcoord, nbr, glu_coordinating_atoms );
+			case aa_glu :
+				closest_dist_info = closest_distance_to_desired_vrt( zncoord, vcoord, nbr, glu_coordinating_atoms );
 				break;
-			default:
+			default :
 				// Only looking for EDH coordination of the zinc -- this might need to change in the future
 				continue;
 			}
@@ -985,15 +985,15 @@ void InsertZincCoordinationRemarkLines::apply( core::pose::Pose & p )
 		if ( ii <= 2 ) {
 			coordination_data.protein_data_[ ii ].chain_ = 'A';
 			coordination_data.protein_data_[ ii ].resindex_ = finder.resinds()[ ii ];
-			coordination_data.protein_data_[ ii ].name3_ =	p.residue( finder.resinds()[ ii ] ).name3();
+			coordination_data.protein_data_[ ii ].name3_ = p.residue( finder.resinds()[ ii ] ).name3();
 		} else if ( ii <= 4 ) {
 			coordination_data.protein_data_[ ii ].chain_ = 'C';
 			coordination_data.protein_data_[ ii ].resindex_ = finder.resinds()[ ii ] + nres_asu;
-			coordination_data.protein_data_[ ii ].name3_ =	p.residue( finder.resinds()[ ii ] ).name3();
+			coordination_data.protein_data_[ ii ].name3_ = p.residue( finder.resinds()[ ii ] ).name3();
 		} else {
 			coordination_data.protein_data_[ ii ].chain_ = 'A';
 			coordination_data.protein_data_[ ii ].resindex_ = finder.resinds()[ ii - 2 ]; // ii - 2 == 3 or 4
-			coordination_data.protein_data_[ ii ].name3_ =	p.residue( finder.resinds()[ ii - 2 ] ).name3();
+			coordination_data.protein_data_[ ii ].name3_ = p.residue( finder.resinds()[ ii - 2 ] ).name3();
 		}
 		coordination_data.protein_data_[ ii ].exgeom_index_ = utility::to_string( coordination_data.protein_data_[ ii ].name3_ == "HIS" ? 1 : 2); // UGLY HACK!  Assumes that HIS is described in the first block of a variable constraint and that ASP/GLU are described in the second block. This is true for the one particular input file I'm working with, but may not be true generally.
 
@@ -1045,7 +1045,7 @@ void DisableZnCoordinationResiduesTaskOp::apply(
 	//FindZnCoordinatingResidues finder;
 	//finder.find_coordinating_residues( pose );
 	//for ( Size ii = 1; ii <= 4; ++ii ) {
-	//	task.nonconst_residue_task( finder.resinds()[ ii ] ).prevent_repacking();
+	// task.nonconst_residue_task( finder.resinds()[ ii ] ).prevent_repacking();
 	//}
 
 	using namespace core::conformation::symmetry;
@@ -1117,40 +1117,40 @@ void ZnCoordNumHbondCalculator::notify_energy_change() {
 
 void ZnCoordNumHbondCalculator::lookup( std::string const & key, basic::MetricValueBase * valptr ) const
 {
-   if ( key == "all_Hbonds" ) {
-     basic::check_cast( valptr, &all_Hbonds_, "all_Hbonds expects to return a Size" );
-     (static_cast< basic::MetricValue< core::Size > * >(valptr))->set( all_Hbonds_ );
+	if ( key == "all_Hbonds" ) {
+		basic::check_cast( valptr, &all_Hbonds_, "all_Hbonds expects to return a Size" );
+		(static_cast< basic::MetricValue< core::Size > * >(valptr))->set( all_Hbonds_ );
 
-	 } else if ( key == "atom_Hbonds" ) {
-     basic::check_cast( valptr, &atom_Hbonds_, "atom_Hbonds expects to return a id::AtomID_Map< Size >" );
-     (static_cast< basic::MetricValue< core::id::AtomID_Map< Size > > * >(valptr))->set( atom_Hbonds_ );
+	} else if ( key == "atom_Hbonds" ) {
+		basic::check_cast( valptr, &atom_Hbonds_, "atom_Hbonds expects to return a id::AtomID_Map< Size >" );
+		(static_cast< basic::MetricValue< core::id::AtomID_Map< Size > > * >(valptr))->set( atom_Hbonds_ );
 
-   } else if ( key == "residue_Hbonds" ) {
-     basic::check_cast( valptr, &residue_Hbonds_, "residue_Hbonds expects to return a utility::vector1< Size >" );
-     (static_cast<basic::MetricValue<utility::vector1< Size > > * >(valptr))->set( residue_Hbonds_ );
+	} else if ( key == "residue_Hbonds" ) {
+		basic::check_cast( valptr, &residue_Hbonds_, "residue_Hbonds expects to return a utility::vector1< Size >" );
+		(static_cast<basic::MetricValue<utility::vector1< Size > > * >(valptr))->set( residue_Hbonds_ );
 
-   } else {
-     basic::Error() << "NumberHbondsCalculator cannot compute the requested metric " << key << std::endl;
-     utility_exit();
-   }
+	} else {
+		basic::Error() << "NumberHbondsCalculator cannot compute the requested metric " << key << std::endl;
+		utility_exit();
+	}
 
 }
 
 std::string
 ZnCoordNumHbondCalculator::print( std::string const & key ) const
 {
-  if ( key == "all_Hbonds" ) {
-    return utility::to_string( all_Hbonds_ );
-  } else if ( key == "atom_Hbonds" ) {
-    basic::Error() << "id::AtomID_Map< Size > has no output operator, for metric " << key << std::endl;
-    utility_exit();
-  } else if ( key == "residue_Hbonds" ) {
-    return utility::to_string( residue_Hbonds_ );
-  }
+	if ( key == "all_Hbonds" ) {
+		return utility::to_string( all_Hbonds_ );
+	} else if ( key == "atom_Hbonds" ) {
+		basic::Error() << "id::AtomID_Map< Size > has no output operator, for metric " << key << std::endl;
+		utility_exit();
+	} else if ( key == "residue_Hbonds" ) {
+		return utility::to_string( residue_Hbonds_ );
+	}
 
-  basic::Error() << "ZnCoordNumHbondCalculator cannot compute metric " << key << std::endl;
-  utility_exit();
-  return "";
+	basic::Error() << "ZnCoordNumHbondCalculator cannot compute metric " << key << std::endl;
+	utility_exit();
+	return "";
 }
 
 void

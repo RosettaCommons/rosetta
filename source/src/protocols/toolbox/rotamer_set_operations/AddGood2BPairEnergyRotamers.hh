@@ -30,7 +30,7 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-	#include <core/graph/Graph.hh>
+#include <core/graph/Graph.hh>
 #endif
 
 
@@ -86,7 +86,7 @@ public:
 
 	void
 	set_debug( bool setting ){
-	 debug_ = setting; }
+		debug_ = setting; }
 
 	/// @brief helper function to check if the passed in candi
 	bool

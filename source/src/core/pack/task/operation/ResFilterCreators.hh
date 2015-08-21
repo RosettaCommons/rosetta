@@ -65,14 +65,14 @@ public:
 
 class ResiduePDBInfoHasLabelCreator : public ResFilterCreator {
 public:
-  virtual ResFilterOP create_res_filter() const;
-  virtual std::string keyname() const { return "ResiduePDBInfoHasLabel"; }
+	virtual ResFilterOP create_res_filter() const;
+	virtual std::string keyname() const { return "ResiduePDBInfoHasLabel"; }
 };
 
 class ResiduePDBInfoLacksLabelCreator : public ResFilterCreator {
 public:
-  virtual ResFilterOP create_res_filter() const;
-  virtual std::string keyname() const { return "ResiduePDBInfoLacksLabel"; }
+	virtual ResFilterOP create_res_filter() const;
+	virtual std::string keyname() const { return "ResiduePDBInfoLacksLabel"; }
 };
 
 class ResidueName3IsCreator : public ResFilterCreator {

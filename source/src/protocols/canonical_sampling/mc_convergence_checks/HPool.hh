@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	protocols/canonical_sampling/mc_convergence_checks/HPool.hh
-/// @brief	hierarchical pool
+/// @file protocols/canonical_sampling/mc_convergence_checks/HPool.hh
+/// @brief hierarchical pool
 /// @author Yuan Liu (wendao@u.washington.edu)
 
 #ifndef INCLUDED_protocols_canonical_sampling_mc_convergence_checks_HPool_hh
@@ -39,16 +39,16 @@ public:
 
 	//eval with a required radius
 	core::Size evaluate(
-        core::pose::Pose& pose,
-        core::Real resolution,
-        std::string& best_decoy,
-        core::Real& best_rmsd );
+		core::pose::Pose& pose,
+		core::Real resolution,
+		std::string& best_decoy,
+		core::Real& best_rmsd );
 
-    core::Size evaluate(
-        core::io::silent::SilentStruct& pss,
-        core::Real resolution,
-        std::string& best_decoy,
-        core::Real& best_rmsd );
+	core::Size evaluate(
+		core::io::silent::SilentStruct& pss,
+		core::Real resolution,
+		std::string& best_decoy,
+		core::Real& best_rmsd );
 
 	//load the correspond subcluster
 	bool load_lib(const core::Size);
@@ -75,17 +75,17 @@ private:
 protected:
 	//hierarchy evaluate FArray2D
 	core::Size evaluate(
-        ObjexxFCL::FArray2D_double& coord,
-        core::Real resolution,
-        std::string& best_decoy,
-        core::Real& best_rmsd );
+		ObjexxFCL::FArray2D_double& coord,
+		core::Real resolution,
+		std::string& best_decoy,
+		core::Real& best_rmsd );
 
 	//fast eval returns the index and tags at
 	core::Size evaluate_core(
-        ObjexxFCL::FArray2D_double& coord,
-        std::string& best_decoy,
-        core::Real& best_rmsd,
-        core::Size index ) const;
+		ObjexxFCL::FArray2D_double& coord,
+		std::string& best_decoy,
+		core::Real& best_rmsd,
+		core::Size index ) const;
 
 	void add(ObjexxFCL::FArray2D_double &, std::string &);
 

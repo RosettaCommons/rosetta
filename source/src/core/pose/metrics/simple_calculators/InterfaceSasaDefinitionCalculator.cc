@@ -44,7 +44,7 @@ using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
 
-namespace core{
+namespace core {
 namespace pose {
 namespace metrics {
 namespace simple_calculators {
@@ -80,7 +80,7 @@ void InterfaceSasaDefinitionCalculator::lookup( std::string const & key, basic::
 		basic::check_cast( valptr, &interface_residues_, "interface_residues expects to return a std::set< Size >" );
 		(static_cast<basic::MetricValue<std::set<Size> > *>(valptr))->set( interface_residues_ );
 
- } else if ( key == "first_chain_interface_residues" ) {
+	} else if ( key == "first_chain_interface_residues" ) {
 		basic::check_cast( valptr, &chain1_interface_residues_, "first_chain_interface_residues expects to return a std::set< Size >" );
 		(static_cast<basic::MetricValue<std::set<Size> > *>(valptr))->set( chain1_interface_residues_ );
 
@@ -128,9 +128,9 @@ std::string InterfaceSasaDefinitionCalculator::print( std::string const & key ) 
 
 	if ( key == "delta_sasa" ) {
 		return utility::to_string( delta_sasa_ );
-	}	else if ( key == "frac_ch1_dsasa" ) {
+	} else if ( key == "frac_ch1_dsasa" ) {
 		return utility::to_string( fraction_chain1_delta_sasa_ );
-	}	else if ( key == "frac_ch2_dsasa" ) {
+	} else if ( key == "frac_ch2_dsasa" ) {
 		return utility::to_string( fraction_chain2_delta_sasa_ );
 	} else if ( key == "delta_atom_sasa" ) {
 		basic::Error() << "No output operator, for metric " << key << std::endl;

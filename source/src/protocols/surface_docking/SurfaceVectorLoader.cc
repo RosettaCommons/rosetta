@@ -58,25 +58,23 @@ SurfaceVectorLoader::create_resource(
 	using utility::excn::EXCN_Msg_Exception;
 	using utility::split;
 	using utility::vector1;
-	
+
 	Size const number_of_points(3);
 	Size const number_of_dimensions(3);
-	
+
 	Size lines_read(0);
 	vector1< xyzVector<Real> > surf_coords(number_of_points);
 
 	string line;
-	while (getline( istream, line ))
-	{
+	while ( getline( istream, line ) )
+			{
 		++lines_read;
-		if (lines_read > number_of_points)
-		{
+		if ( lines_read > number_of_points ) {
 			break;
 		}
-		
+
 		vector1< string > point_coords ( split( line ) );
-		if (point_coords.size() != number_of_dimensions)
-		{
+		if ( point_coords.size() != number_of_dimensions ) {
 			std::ostringstream err;
 			err << "The input coordinates must specify a point in three-dimensional space, but the point on line ";
 			err << lines_read << " of " << locator_id << " has " << point_coords.size() << " coordinates listed.";
@@ -85,19 +83,15 @@ SurfaceVectorLoader::create_resource(
 		surf_coords[lines_read] = xyzVector<Real>(lexical_cast<Real>(point_coords[1]),lexical_cast<Real>(point_coords[2]),
 			lexical_cast<Real>(point_coords[3]));
 	}
-	
-	if (lines_read > number_of_points)
-	{
+
+	if ( lines_read > number_of_points ) {
 		throw EXCN_Msg_Exception( "SurfaceVectorLoader expected to be given exactly three points to " \
 			"define the periodicity of the surface, but more than three points were provided in "  + locator_id + ".");
-	}
-	
-	else if (lines_read < number_of_points)
-	{
+	} else if ( lines_read < number_of_points ) {
 		throw EXCN_Msg_Exception( "SurfaceVectorLoader expected to be given exactly three points to " \
 			"define the periodicity of the surface, but less than three points were provided in "  + locator_id + ".");
 	}
-	
+
 	return utility::pointer::ReferenceCountOP( new SurfaceParameters(surf_coords[1], surf_coords[2], surf_coords[3]) );
 }
 

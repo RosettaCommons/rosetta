@@ -119,8 +119,8 @@ bool
 InterlockingAromaFilter::compute( Size const & res, Pose const & pose, SS_Info2_COP const ssinfo ) const
 {
 	runtime_assert( pose.aa( res ) == core::chemical::aa_phe ||
-									pose.aa( res ) == core::chemical::aa_tyr ||
- 									pose.aa( res ) == core::chemical::aa_trp );
+		pose.aa( res ) == core::chemical::aa_tyr ||
+		pose.aa( res ) == core::chemical::aa_trp );
 
 	using core::Vector;
 	using core::conformation::Residue;
@@ -131,7 +131,7 @@ InterlockingAromaFilter::compute( Size const & res, Pose const & pose, SS_Info2_
 	Size natom( 0 );
 	centroid.zero();
 	for ( Size iatm=1, iatm_end=residue.natoms(); iatm<=iatm_end; ++iatm ) {
-		if( residue.atom_type( int(iatm) ).atom_type_name() == "aroC" ||
+		if ( residue.atom_type( int(iatm) ).atom_type_name() == "aroC" ||
 				residue.atom_type( int(iatm) ).atom_type_name() == "Ntrp" ) {
 			centroid += residue.atom( iatm ).xyz();
 			natom++;
@@ -144,13 +144,13 @@ InterlockingAromaFilter::compute( Size const & res, Pose const & pose, SS_Info2_
 	utility::vector1< Size > lockres;
 	TenANeighborGraph const & energy_graph( pose.energies().tenA_neighbor_graph() );
 	for ( core::graph::Graph::EdgeListConstIter
-					iru  = energy_graph.get_node( res )->const_edge_list_begin(),
-					irue = energy_graph.get_node( res )->const_edge_list_end(); iru != irue; ++iru ) {
+			iru  = energy_graph.get_node( res )->const_edge_list_begin(),
+			irue = energy_graph.get_node( res )->const_edge_list_end(); iru != irue; ++iru ) {
 
 		Size stres( (*iru)->get_second_node_ind() );
 		if ( res == stres ) stres = (*iru)->get_first_node_ind();
 
-		if( ssinfo->strand_id( stres ) == 0 ) continue;
+		if ( ssinfo->strand_id( stres ) == 0 ) continue;
 
 		Vector cb( ssinfo->bb_pos().CB( stres ) );
 		Real const dsq( cb.distance_squared( centroid ) );
@@ -161,31 +161,31 @@ InterlockingAromaFilter::compute( Size const & res, Pose const & pose, SS_Info2_
 		}
 
 
-//		if( stres+2 > pose.total_residue() ) continue;
-//		if( ssinfo->strand_id( stres ) == 0 && ssinfo->strand_id( stres+2 ) == 0 ) continue;
-//	Vector cb1( ssinfo->bb_pos().CB( stres ) );
-//	Real const dsq1( distance_squared( cb1, centroid ));
-//
-//	Vector cb2( ssinfo->bb_pos().CB( stres+2 ) );
-//	Real const dsq2( distance_squared( cb2, centroid ));
-//	tr << res << " " << stres << " " << stres+2 << " " << dsq1 << " " << dsq2 << std::endl;
-//
-//	if ( dsq1 <= contact_dist2_ ) {
-//		Vector cb2( ssinfo->bb_pos().CB( stres+2 ) );
-//		Real const dsq2( distance_squared( cb2, centroid ));
-//		if( dsq2 <= contact_dist2_ ) {
-//			if( verbose_ ) {
-//				tr << "Residue " << res << " is interlocking with " << stres << " & " << stres+2 << std::endl;
-//			}
-//			return true;
-//		}
-//	}
+		//  if( stres+2 > pose.total_residue() ) continue;
+		//  if( ssinfo->strand_id( stres ) == 0 && ssinfo->strand_id( stres+2 ) == 0 ) continue;
+		// Vector cb1( ssinfo->bb_pos().CB( stres ) );
+		// Real const dsq1( distance_squared( cb1, centroid ));
+		//
+		// Vector cb2( ssinfo->bb_pos().CB( stres+2 ) );
+		// Real const dsq2( distance_squared( cb2, centroid ));
+		// tr << res << " " << stres << " " << stres+2 << " " << dsq1 << " " << dsq2 << std::endl;
+		//
+		// if ( dsq1 <= contact_dist2_ ) {
+		//  Vector cb2( ssinfo->bb_pos().CB( stres+2 ) );
+		//  Real const dsq2( distance_squared( cb2, centroid ));
+		//  if( dsq2 <= contact_dist2_ ) {
+		//   if( verbose_ ) {
+		//    tr << "Residue " << res << " is interlocking with " << stres << " & " << stres+2 << std::endl;
+		//   }
+		//   return true;
+		//  }
+		// }
 	}
 
-	if( contact >= 2 ) {
+	if ( contact >= 2 ) {
 
 		tr << "Residue " << res << " is interlocking with ";
-		for( Size ii=1; ii<=lockres.size(); ii++ ) {
+		for ( Size ii=1; ii<=lockres.size(); ii++ ) {
 			tr << lockres[ ii ] << " ";
 		}
 		tr << std::endl;
@@ -207,7 +207,7 @@ InterlockingAromaFilter::compute( Pose const & pose ) const
 	using protocols::fldsgn::topology::SS_Info2_OP;
 
 	String ss("");
-	if( ! input_ss_.empty() ) {
+	if ( ! input_ss_.empty() ) {
 		ss = input_ss_;
 		runtime_assert( input_ss_.length() == pose.total_residue() );
 	} else {
@@ -218,12 +218,12 @@ InterlockingAromaFilter::compute( Pose const & pose ) const
 
 	// calc number of interlocking aromatic residues
 	Size num_interlocked( 0 );
-	for( Size ii=1; ii<=pose.total_residue(); ++ii ) {
-		if( ss.at( ii-1 ) == 'E' ) continue;
-		if( pose.aa( ii ) == core::chemical::aa_phe ||
+	for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
+		if ( ss.at( ii-1 ) == 'E' ) continue;
+		if ( pose.aa( ii ) == core::chemical::aa_phe ||
 				pose.aa( ii ) == core::chemical::aa_tyr ||
 				pose.aa( ii ) == core::chemical::aa_trp ) {
-			if( compute( ii, pose, ssinfo ) ) num_interlocked++;
+			if ( compute( ii, pose, ssinfo ) ) num_interlocked++;
 		}
 	}
 
@@ -236,10 +236,10 @@ InterlockingAromaFilter::compute( Pose const & pose ) const
 bool InterlockingAromaFilter::apply( Pose const & pose ) const
 {
 	Real value = compute( pose );
-	if( value > filter_value_ ){
+	if ( value > filter_value_ ) {
 		tr << "Successfully filtered: " << value << std::endl;
 		return true;
-	}else{
+	} else {
 		tr << "Filter failed current/threshold=" << value << "/" << filter_value_ << std::endl;
 		return false;
 	}
@@ -255,18 +255,18 @@ InterlockingAromaFilter::parse_my_tag(
 	Pose const & )
 {
 	String const blueprint = tag->getOption<String>( "blueprint", "" );
-	if( blueprint != "" ) {
+	if ( blueprint != "" ) {
 		jd2::parser::BluePrint blue( blueprint );
 		input_ss_ = blue.secstruct();
 	}
 	// set threshold
- 	filter_value( tag->getOption<Real>( "threshold", 0 ) );
+	filter_value( tag->getOption<Real>( "threshold", 0 ) );
 
 	// set threshold
- 	contact_distance( tag->getOption<Real>( "dist", 5.5 ) );
+	contact_distance( tag->getOption<Real>( "dist", 5.5 ) );
 
 	// set threshold
- 	verbose_ = tag->getOption<bool>( "verbose", 1 );
+	verbose_ = tag->getOption<bool>( "verbose", 1 );
 }
 
 protocols::filters::FilterOP

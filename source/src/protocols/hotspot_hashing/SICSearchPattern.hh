@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief
-/// @author 
+/// @author
 
 
 #ifndef INCLUDED_protocols_hotspot_hashing_SICSearchPattern_hh
@@ -38,29 +38,29 @@ namespace hotspot_hashing {
 
 class SICPatternAtTransform : public SearchPattern
 {
-	public:
-		const static core::Size default_displacement = 100;
+public:
+	const static core::Size default_displacement = 100;
 
-		SICPatternAtTransform(
-			core::pose::Pose const & source_pose,
-			core::pose::Pose const & placed_pose,
-			SearchPatternOP slide_pattern,
-			SearchPatternOP source_pattern,
-			core::Real starting_displacement = default_displacement);
+	SICPatternAtTransform(
+		core::pose::Pose const & source_pose,
+		core::pose::Pose const & placed_pose,
+		SearchPatternOP slide_pattern,
+		SearchPatternOP source_pattern,
+		core::Real starting_displacement = default_displacement);
 
-		SICPatternAtTransform(
-			core::pose::Pose const & source_pose,
-			core::pose::Pose const & placed_pose,
-			SearchPatternOP slide_pattern,
-			core::Real starting_displacement = default_displacement);
+	SICPatternAtTransform(
+		core::pose::Pose const & source_pose,
+		core::pose::Pose const & placed_pose,
+		SearchPatternOP slide_pattern,
+		core::Real starting_displacement = default_displacement);
 
-		virtual utility::vector1<core::kinematics::Stub> Searchpoints();
+	virtual utility::vector1<core::kinematics::Stub> Searchpoints();
 
-	private:
-		protocols::sic_dock::SICFast sic_fast_;
-		core::Real starting_displacement_;
-		SearchPatternOP slide_pattern_;
-		SearchPatternOP source_pattern_;
+private:
+	protocols::sic_dock::SICFast sic_fast_;
+	core::Real starting_displacement_;
+	SearchPatternOP slide_pattern_;
+	SearchPatternOP source_pattern_;
 };
 
 }

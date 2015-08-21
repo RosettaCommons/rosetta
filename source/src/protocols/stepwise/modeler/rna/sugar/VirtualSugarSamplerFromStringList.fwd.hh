@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/modeler/rna/sugar/VirtualSugarSamplerFromStringList.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -23,11 +23,11 @@ namespace stepwise {
 namespace modeler {
 namespace rna {
 namespace sugar {
-	
-	class VirtualSugarSamplerFromStringList;
-	typedef utility::pointer::shared_ptr< VirtualSugarSamplerFromStringList > VirtualSugarSamplerFromStringListOP;
-	typedef utility::pointer::shared_ptr< VirtualSugarSamplerFromStringList const > VirtualSugarSamplerFromStringListCOP;
-	
+
+class VirtualSugarSamplerFromStringList;
+typedef utility::pointer::shared_ptr< VirtualSugarSamplerFromStringList > VirtualSugarSamplerFromStringListOP;
+typedef utility::pointer::shared_ptr< VirtualSugarSamplerFromStringList const > VirtualSugarSamplerFromStringListCOP;
+
 } //sugar
 } //rna
 } //modeler

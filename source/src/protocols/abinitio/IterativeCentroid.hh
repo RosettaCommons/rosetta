@@ -55,15 +55,15 @@ namespace abinitio {
 class IterativeCentroid : public IterativeBase {
 	typedef IterativeBase Parent;
 public:
-  IterativeCentroid(IterativeFullatom* fullatom_pool_ptr ) :
+	IterativeCentroid(IterativeFullatom* fullatom_pool_ptr ) :
 		IterativeBase( "centroid_pool" ),
 		fullatom_pool_ptr_( fullatom_pool_ptr ) {};
 
 	virtual void gen_diversity_pool( jd2::archive::Batch& batch, bool fullatom = false );
 
 	virtual void update_noesy_filter_files(
-		 std::string const& current,
-		 bool fullatom
+		std::string const& current,
+		bool fullatom
 	);
 
 	/// @brief save and restore archive to file-system
@@ -74,12 +74,12 @@ protected:
 
 
 	virtual void erase_decoy(
- 	  std::string const& tag
+		std::string const& tag
 	);
 
 	/// @brief call to insert structure at position given by iterator
 	virtual void add_structure_at_position (
-    SilentStructs::iterator iss,
+		SilentStructs::iterator iss,
 		core::io::silent::SilentStructOP new_decoy,
 		core::io::silent::SilentStructOP alternative_decoy
 	);

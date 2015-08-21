@@ -141,7 +141,7 @@ BackrubDDMover::BackrubDDMover
 	core::Real const sidechain_move_prob,
 	std::vector<core::Size> const & residues
 )
-		: simple_moves::DesignRepackMover( "Backrub" )
+: simple_moves::DesignRepackMover( "Backrub" )
 {
 	core::Real const mm_bend_weight( 1.0 );
 
@@ -187,15 +187,16 @@ BackrubDDMover::apply( Pose & pose )
 
 	kinematics::FoldTree const saved_ft( pose.fold_tree() );
 	bool make_new_ft( false );
-	BOOST_FOREACH( kinematics::Edge const edge, saved_ft ){
-		if( edge.start() > edge.stop() ){
+	BOOST_FOREACH ( kinematics::Edge const edge, saved_ft ) {
+		if ( edge.start() > edge.stop() ) {
 			make_new_ft = true;
 			break;
 		}
 	}
 
-	if( make_new_ft )
+	if ( make_new_ft ) {
 		protocols::protein_interface_design::star_fold_tree( pose );
+	}
 
 	// backrub setup based on collin's backrub.cc
 
@@ -226,13 +227,14 @@ BackrubDDMover::apply( Pose & pose )
 	backrub_mover.clear_segments();
 	TaskFactoryOP main_task_factory;
 	TaskFactoryCOP ancestral_task( task_factory() );
-	if( ancestral_task )
+	if ( ancestral_task ) {
 		main_task_factory = TaskFactoryOP( new TaskFactory( *ancestral_task ) );
-	else
+	} else {
 		main_task_factory = TaskFactoryOP( new TaskFactory );
+	}
 	//RestrictToInterfaceOperationOP rtio = new RestrictToInterfaceOperation;
 	//rtio->interface_cutoff( 8.0 );
-	if( prevent_repacking().size() ){
+	if ( prevent_repacking().size() ) {
 		operation::OperateOnCertainResiduesOP prevent_repacking_on_certain_res( new operation::OperateOnCertainResidues );
 		prevent_repacking_on_certain_res->residue_indices( prevent_repacking() );
 		prevent_repacking_on_certain_res->op( ResLvlTaskOperationCOP( new PreventRepackingRLT ) );
@@ -243,18 +245,19 @@ BackrubDDMover::apply( Pose & pose )
 	//main_task_factory->push_back( rtio );
 	main_task_factory->push_back( TaskOperationCOP( new RestrictToRepacking ) );
 	main_task_factory->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
-	if( !backrub_partner1_ )
+	if ( !backrub_partner1_ ) {
 		main_task_factory->push_back( TaskOperationCOP( new PreventChainFromRepackingOperation( 1 ) ) );
-	if( !backrub_partner2_ )
+	}
+	if ( !backrub_partner2_ ) {
 		main_task_factory->push_back( TaskOperationCOP( new PreventChainFromRepackingOperation( 2 ) ) );
-	if( basic::options::option[ basic::options::OptionKeys::packing::resfile ].user() )
-	{
+	}
+	if ( basic::options::option[ basic::options::OptionKeys::packing::resfile ].user() ) {
 		main_task_factory->push_back( TaskOperationCOP( new ReadResfile ) );
 	}
 
 	using ObjexxFCL::FArray1D_bool;
 	utility::vector1< core::Size > resnums;
-	if( pose.conformation().num_chains() == 2 ){
+	if ( pose.conformation().num_chains() == 2 ) {
 		Size const rb_jump( 1 );
 
 		FArray1D_bool partner1( pose.total_residue() );
@@ -265,63 +268,61 @@ BackrubDDMover::apply( Pose & pose )
 		interface.distance( interface_distance_cutoff_ );
 		interface.calculate( pose );
 		// list of residues to backrub
-		if( !residues_.size() ) {
+		if ( !residues_.size() ) {
 			bool first( true ); bool last( false ); // mark all interface residues + 1 spanning residue on each side for backrub
-			for (Size i = 1; i <= pose.total_residue(); i++) {
-				if( !pose.residue( i ).is_protein() ) continue;
-				if( (( partner1( i ) && backrub_partner1_ ) || ( !partner1(i) && backrub_partner2_ )) &&
-					interface.is_interface( i ) && (!( i==begin2-1 || i==begin2) || (backrub_partner1_ && backrub_partner2_))) {
-					if( first && i != 1 && (i!= begin2 || (backrub_partner1_ && backrub_partner2_) ) && pose.residue( i-1 ).is_protein() )
+			for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+				if ( !pose.residue( i ).is_protein() ) continue;
+				if ( (( partner1( i ) && backrub_partner1_ ) || ( !partner1(i) && backrub_partner2_ )) &&
+						interface.is_interface( i ) && (!( i==begin2-1 || i==begin2) || (backrub_partner1_ && backrub_partner2_)) ) {
+					if ( first && i != 1 && (i!= begin2 || (backrub_partner1_ && backrub_partner2_) ) && pose.residue( i-1 ).is_protein() ) {
 						resnums.push_back( i - 1 );
+					}
 					first = false; last = true;
 					resnums.push_back( i );
-				}
-				else {
-					if( last ) { resnums.push_back( i ); }
+				} else {
+					if ( last ) { resnums.push_back( i ); }
 					last = false; first = true;
 				}
 			}
-		}
-		else resnums = residues_;
-	}
-	else if ( !residues_.size() ) { // pose does not have 2 chains, backrub all (protein)
+		} else resnums = residues_;
+	} else if ( !residues_.size() ) { // pose does not have 2 chains, backrub all (protein)
 		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 			if ( !pose.residue( i ).is_protein() ) continue;
 			resnums.push_back( i );
 		}
 	}
-	if( residues_.size() ){// add user-defined residues to the list of backrubbable residues
+	if ( residues_.size() ) { // add user-defined residues to the list of backrubbable residues
 		resnums.insert( resnums.begin(), residues_.begin(), residues_.end() );
 		std::sort( resnums.begin(), resnums.end() );
 		utility::vector1<Size>::iterator last = std::unique( resnums.begin(), resnums.end() );
 		resnums.erase( last, resnums.end() );
 	}
 
-/// movemap is used by smallmoves
+	/// movemap is used by smallmoves
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	movemap->clear();
 	movemap->set_bb( false );
 	core::Size const sm_begin( backrub_partner1_ ? pose.conformation().chain_begin( 1 ) : pose.conformation().chain_begin( 2 ) );
 	core::Size const sm_end( backrub_partner2_ ? pose.conformation().chain_end( 2 ) : pose.conformation().chain_end( 1 ) );
 
-	for( core::Size resi( sm_begin ); resi <= sm_end; ++resi )
+	for ( core::Size resi( sm_begin ); resi <= sm_end; ++resi ) {
 		movemap->set_bb( resi, true );
+	}
 	smallmover.movemap( movemap );
 	bbg8t3amover.movemap( movemap );
 
-  //take out the residues from the resnum vector that are not allowed to be repacked
+	//take out the residues from the resnum vector that are not allowed to be repacked
 	//as well as 1 before and 1 residue after that one
 	using namespace core::scoring;
-	for( utility::vector1< core::Size > ::const_iterator prev_rep = prevent_repacking_.begin(); prev_rep!=prevent_repacking_.end(); ++prev_rep ){
-  	utility::vector1< core::Size >::iterator it = std::find( resnums.begin(), resnums.end(),*prev_rep );
-  	if( it != resnums.end() )
-  	{
-    	resnums.erase( it );
-  		utility::vector1< core::Size >::iterator it_next = std::find( resnums.begin(), resnums.end(),*prev_rep+1 );
-			if( it_next != resnums.end() ) resnums.erase( it_next );
-  		utility::vector1< core::Size >::iterator it_previous = std::find( resnums.begin(), resnums.end(),*prev_rep-1 );
-			if( it_previous != resnums.end() ) resnums.erase( it_previous );
-  	}
+	for ( utility::vector1< core::Size > ::const_iterator prev_rep = prevent_repacking_.begin(); prev_rep!=prevent_repacking_.end(); ++prev_rep ) {
+		utility::vector1< core::Size >::iterator it = std::find( resnums.begin(), resnums.end(),*prev_rep );
+		if ( it != resnums.end() ) {
+			resnums.erase( it );
+			utility::vector1< core::Size >::iterator it_next = std::find( resnums.begin(), resnums.end(),*prev_rep+1 );
+			if ( it_next != resnums.end() ) resnums.erase( it_next );
+			utility::vector1< core::Size >::iterator it_previous = std::find( resnums.begin(), resnums.end(),*prev_rep-1 );
+			if ( it_previous != resnums.end() ) resnums.erase( it_previous );
+		}
 	}
 
 	// C-beta atoms should not be altered during packing because branching atoms are optimized
@@ -335,7 +336,7 @@ BackrubDDMover::apply( Pose & pose )
 
 	core::Size const br_segments( backrub_mover.num_segments() );
 	TR << "Backrub Segments Added: " << br_segments <<"\n";
-	if( br_segments == 0 ){
+	if ( br_segments == 0 ) {
 		TR<<"No segments to backrub. skipping backrub."<<std::endl;
 		return;
 	}
@@ -344,8 +345,8 @@ BackrubDDMover::apply( Pose & pose )
 	scorefxn_repack_->show(TR, pose);
 
 	backrub_mover.optimize_branch_angles( pose );
-// SJF It doesn't make sense to idealize sidechains in docking
-//	sidechain_mover.idealize_sidechains( pose );
+	// SJF It doesn't make sense to idealize sidechains in docking
+	// sidechain_mover.idealize_sidechains( pose );
 
 	TR << "Score After Branch Angle Optimization/Side Chain Idealization:\n" ;
 	scorefxn_repack_->show( TR, pose );
@@ -356,8 +357,7 @@ BackrubDDMover::apply( Pose & pose )
 
 	TR << "Running " << backrub_moves_ << " trials..." << std::endl;
 
-	for ( Size i = 1; i <= backrub_moves_; ++i )
-	{
+	for ( Size i = 1; i <= backrub_moves_; ++i ) {
 		std::string move_type;
 
 		// could use random mover for this...
@@ -365,14 +365,13 @@ BackrubDDMover::apply( Pose & pose )
 		if ( move_prob > small_move_prob_ + bbg_move_prob_ + sidechain_move_prob_ ) {
 			backrub_mover.apply( pose );
 			move_type = backrub_mover.type();
-		} else if( move_prob > sidechain_move_prob_ + bbg_move_prob_ ){
+		} else if ( move_prob > sidechain_move_prob_ + bbg_move_prob_ ) {
 			smallmover.apply( pose );
 			move_type = smallmover.type();
-		} else if( move_prob > sidechain_move_prob_ ) {
+		} else if ( move_prob > sidechain_move_prob_ ) {
 			bbg8t3amover.apply( pose );
 			move_type = bbg8t3amover.type();
-		}
-		else {
+		} else {
 			sidechain_mover.apply(pose);
 			move_type = sidechain_mover.type();
 		}
@@ -427,13 +426,13 @@ void BackrubDDMover::parse_my_tag(
 	scorefxn_repack_->set_energy_method_options( emo );
 
 	utility::vector0< TagCOP > const & backrub_tags( tag->getTags() );
-	for( utility::vector0< TagCOP >::const_iterator br_it=backrub_tags.begin(); br_it!=backrub_tags.end(); ++br_it ) {
+	for ( utility::vector0< TagCOP >::const_iterator br_it=backrub_tags.begin(); br_it!=backrub_tags.end(); ++br_it ) {
 		TagCOP const br_tag_ptr = *br_it;
-		if( br_tag_ptr->getName() == "residue" ) {
+		if ( br_tag_ptr->getName() == "residue" ) {
 			core::Size const resnum( core::pose::get_resnum( br_tag_ptr, pose ) );
 			residues_.push_back( resnum );
 		}
-		if( br_tag_ptr->getName() == "span" ) {
+		if ( br_tag_ptr->getName() == "span" ) {
 			string const begin_str( br_tag_ptr->getOption<string>( "begin" ) );
 			string const end_str( br_tag_ptr->getOption<string>( "end" ) );
 			core::Size const begin( core::pose::parse_resnum( begin_str, pose ) );
@@ -441,12 +440,13 @@ void BackrubDDMover::parse_my_tag(
 			runtime_assert( end > begin );
 			runtime_assert( begin>=1);
 			runtime_assert( end<=pose.total_residue() );
-			for( core::Size i=begin; i<=end; ++i ) residues_.push_back( i );
+			for ( core::Size i=begin; i<=end; ++i ) residues_.push_back( i );
 		}
 	}
 	TR<<"backrub mover over residues: ";
-	for( std::vector< core::Size >::const_iterator it=residues_.begin() ; it!=residues_.end(); ++it )
-								TR<<*it<<" ";
+	for ( std::vector< core::Size >::const_iterator it=residues_.begin() ; it!=residues_.end(); ++it ) {
+		TR<<*it<<" ";
+	}
 	TR<<std::endl;
 }
 

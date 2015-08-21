@@ -50,8 +50,8 @@ public:
 	//////////////////////////////creating output functions/////////////////////////////////////////
 
 	/// @brief this function takes a string and writes it to disk (separately from Tracer output).  This implementation writes a single file whose filename is based on the job and a user-specified extension (default .data)
-	//	virtual --> moved to FileJobOutputter
-	//	void file( JobCOP job, std::string const & data );
+	// virtual --> moved to FileJobOutputter
+	// void file( JobCOP job, std::string const & data );
 
 	/// @brief this function outputs the final result of a job.  This implementation will write a PDB file (plus scores).
 	virtual
@@ -92,9 +92,9 @@ protected:
 	void extract_data_from_Job( JobCOP job, utility::io::ozstream & out );
 
 	//This function is deprecated for now - might return in the future
-// 	/// @brief this function extracts the pose's extra data/scores for printing
-// 	virtual
-// 	void extract_extra_scores( core::pose::Pose const & pose, utility::io::ozstream & out );
+	//  /// @brief this function extracts the pose's extra data/scores for printing
+	//  virtual
+	//  void extract_extra_scores( core::pose::Pose const & pose, utility::io::ozstream & out );
 
 	//////////////////////////////////////protected PDB output/////////////////////////////////////
 	/// @brief handles ozstream output; shared by both pdb output functions
@@ -104,7 +104,7 @@ protected:
 	////////////////////////////////////////data////////////////////////////////////////
 private:
 	std::string extension_;
-    std::string path_;
+	std::string path_;
 }; // PDBJobOutputter
 
 } // namespace jd2

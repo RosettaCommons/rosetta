@@ -30,8 +30,8 @@
 //#include <core/chemical/ResidueTypeSet.fwd.hh>
 
 
-namespace protocols{
-namespace enzdes{
+namespace protocols {
+namespace enzdes {
 
 class EnzdesFixBBProtocol;
 typedef utility::pointer::shared_ptr< EnzdesFixBBProtocol > EnzdesFixBBProtocolOP;

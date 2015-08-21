@@ -45,9 +45,9 @@ static thread_local basic::Tracer TR( "core.optimization.NelderMeadSimplex" );
 
 // sort our vector list min->max
 struct sort_pred {
-    bool operator()(const std::pair< core::Real, Multivec > &left, const std::pair< core::Real, Multivec > &right) {
-        return left.first < right.first;
-    }
+	bool operator()(const std::pair< core::Real, Multivec > &left, const std::pair< core::Real, Multivec > &right) {
+		return left.first < right.first;
+	}
 };
 
 
@@ -72,10 +72,10 @@ NelderMeadSimplex::run(
 	utility::vector1< std::pair< core::Real, Multivec > > vertices(npoints, std::make_pair( 0.0, Multivec(ndim,0.0)) );
 
 	// populate and evaluate vertex list
-	for (Size i=1; i<=npoints; ++i) {
+	for ( Size i=1; i<=npoints; ++i ) {
 		Multivec &m_i = vertices[i].second;
-		for (Size j=1; j<=ndim; ++j) {
-			if (i==j) {
+		for ( Size j=1; j<=ndim; ++j ) {
+			if ( i==j ) {
 				m_i[j] = upperbound[j];
 			} else {
 				m_i[j] = phipsi_inout[j];
@@ -85,58 +85,61 @@ NelderMeadSimplex::run(
 		vertices[i].first = func_(m_i);
 	}
 
-	for (int i=1; i<=ITMAX; ++i) {
+	for ( int i=1; i<=ITMAX; ++i ) {
 		std::sort(vertices.begin(), vertices.end(), sort_pred() );
 
 		// 1 - median of all pts but the worst
 		Multivec x0(ndim,0.0);
-		for (Size j=1; j<=npoints-1; ++j) {
+		for ( Size j=1; j<=npoints-1; ++j ) {
 			Multivec &m_j = vertices[j].second;
-			for (Size k=1; k<=ndim; ++k) {
+			for ( Size k=1; k<=ndim; ++k ) {
 				x0[k]+=m_j[j];
 			}
 		}
-		for (Size k=1; k<=ndim; ++k) {
+		for ( Size k=1; k<=ndim; ++k ) {
 			x0[k]/=(npoints-1);
 		}
 
 		// 2 reflected point
 		Multivec xR(ndim);
 		Multivec &xN = vertices[npoints].second;
-		for (Size k=1; k<=ndim; ++k)
+		for ( Size k=1; k<=ndim; ++k ) {
 			xR[k] = x0[k] + ALPHA*(x0[k]-xN[k]);
+		}
 		//std::cerr << "reflect worst=" << vertices[npoints].first << std::endl;
 		core::Real yR = func_(xR);
 
-		if (yR < vertices[1].first) {
+		if ( yR < vertices[1].first ) {
 			// 3A new best? expansion
 			Multivec xE(ndim);
-			for (Size k=1; k<=ndim; ++k)
+			for ( Size k=1; k<=ndim; ++k ) {
 				xE[k] = x0[k] + GAMMA*(x0[k]-xN[k]);
+			}
 			//std::cerr << "expand new best =" << yR << std::endl;
 			core::Real yE = func_(xE);
-			if (yE<yR) {
+			if ( yE<yR ) {
 				vertices[npoints] = std::make_pair( yE,xE );
 			} else {
 				vertices[npoints] = std::make_pair( yR,xR );
 			}
-		} else if (yR < vertices[npoints-1].first) {
+		} else if ( yR < vertices[npoints-1].first ) {
 			// 3B better than second worst? replacement
 			vertices[npoints] = std::make_pair( yR,xR );
 		} else {
 			// 3C no improvement --- contraction
 			Multivec xC(ndim);
-			for (Size k=1; k<=ndim; ++k)
+			for ( Size k=1; k<=ndim; ++k ) {
 				xC[k] = x0[k] + RHO*(x0[k]-xN[k]);
+			}
 			//std::cerr << "contract new worst =" << yR << std::endl;
 			core::Real yC = func_(xC);
-			if (yC<vertices[npoints].first) {
+			if ( yC<vertices[npoints].first ) {
 				vertices[npoints] = std::make_pair( yC,xC );
 			} else {
 				// 4 collapse on best
-				for (Size j=2; j<=npoints; ++j) {
+				for ( Size j=2; j<=npoints; ++j ) {
 					Multivec &m_1 = vertices[1].second;
-					for (Size k=1; k<=ndim; ++k) {
+					for ( Size k=1; k<=ndim; ++k ) {
 						vertices[j].second[k] = m_1[k] + SIGMA*(vertices[j].second[k]-m_1[k]);
 					}
 					//std::cerr << "collapse point " << j << " " << vertices[j].first << std::endl;

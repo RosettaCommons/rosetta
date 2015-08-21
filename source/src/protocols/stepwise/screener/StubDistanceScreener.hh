@@ -24,42 +24,42 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class StubDistanceScreener: public StepWiseScreener {
+class StubDistanceScreener: public StepWiseScreener {
 
-	public:
+public:
 
-		//constructor
-		StubDistanceScreener( core::kinematics::Stub & moving_res_base_stub,
-													core::kinematics::Stub const & reference_stub,
-													core::Real const max_distance_squared );
+	//constructor
+	StubDistanceScreener( core::kinematics::Stub & moving_res_base_stub,
+		core::kinematics::Stub const & reference_stub,
+		core::Real const max_distance_squared );
 
-		//destructor
-		~StubDistanceScreener();
+	//destructor
+	~StubDistanceScreener();
 
-	public:
+public:
 
-		virtual
-		bool check_screen();
+	virtual
+	bool check_screen();
 
-		virtual
-		std::string
-		name() const { return "StubDistanceScreener"; }
+	virtual
+	std::string
+	name() const { return "StubDistanceScreener"; }
 
-		virtual
-		StepWiseScreenerType
-		type() const { return STUB_DISTANCE; }
+	virtual
+	StepWiseScreenerType
+	type() const { return STUB_DISTANCE; }
 
-		virtual
-		void
-		fast_forward( sampler::StepWiseSamplerBaseOP sampler );
+	virtual
+	void
+	fast_forward( sampler::StepWiseSamplerBaseOP sampler );
 
-	private:
+private:
 
-		core::kinematics::Stub & moving_res_base_stub_;
-		core::kinematics::Stub const & reference_stub_;
-		core::Real const max_distance_squared_;
+	core::kinematics::Stub & moving_res_base_stub_;
+	core::kinematics::Stub const & reference_stub_;
+	core::Real const max_distance_squared_;
 
-	};
+};
 
 } //screener
 } //stepwise

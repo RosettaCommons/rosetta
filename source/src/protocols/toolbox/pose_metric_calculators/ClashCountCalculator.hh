@@ -24,7 +24,7 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 
@@ -32,23 +32,23 @@ class ClashCountCalculator : public core::pose::metrics::StructureDependentCalcu
 
 public:
 
-  ClashCountCalculator( core::Real clash_threshold );
+	ClashCountCalculator( core::Real clash_threshold );
 
-  core::pose::metrics::PoseMetricCalculatorOP clone() const { return core::pose::metrics::PoseMetricCalculatorOP( new ClashCountCalculator( clash_threshold_ ) ); };
+	core::pose::metrics::PoseMetricCalculatorOP clone() const { return core::pose::metrics::PoseMetricCalculatorOP( new ClashCountCalculator( clash_threshold_ ) ); };
 
 protected:
 
-  virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-  virtual std::string print( std::string const & key ) const;
-  virtual void recompute( core::pose::Pose const & this_pose );
+	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
+	virtual std::string print( std::string const & key ) const;
+	virtual void recompute( core::pose::Pose const & this_pose );
 
 private:
-  core::Size total_clashes_; //count all clashes above threshold
-  core::Real clash_threshold_;
-  core::Size bb_clashes_; //count only clashes that do no involve CB, CEN or other sidechain atoms
+	core::Size total_clashes_; //count all clashes above threshold
+	core::Real clash_threshold_;
+	core::Size bb_clashes_; //count only clashes that do no involve CB, CEN or other sidechain atoms
 
-  // const-ref to scoring database
-  core::Real const vdw_scale_factor_;
+	// const-ref to scoring database
+	core::Real const vdw_scale_factor_;
 };
 
 

@@ -41,92 +41,92 @@ namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
 
-	class StepWiseMonteCarlo: public protocols::moves::Mover {
+class StepWiseMonteCarlo: public protocols::moves::Mover {
 
-	public:
+public:
 
 	//constructor
-		StepWiseMonteCarlo( core::scoring::ScoreFunctionCOP scorefxn );
+	StepWiseMonteCarlo( core::scoring::ScoreFunctionCOP scorefxn );
 
-		//destructor
-		~StepWiseMonteCarlo();
+	//destructor
+	~StepWiseMonteCarlo();
 
-	public:
+public:
 
-		virtual std::string get_name() const {
-			return "StepWiseMonteCarlo";
-		}
+	virtual std::string get_name() const {
+		return "StepWiseMonteCarlo";
+	}
 
-		/// @brief Apply the loop-rebuild protocol to the input pose
-		virtual
-		void apply ( core::pose::Pose & pose );
+	/// @brief Apply the loop-rebuild protocol to the input pose
+	virtual
+	void apply ( core::pose::Pose & pose );
 
-		/// @brief setter for native poses contained for rms ---- we should get rid of this method? it is widely used, but a bit unsafe
-		virtual void set_native_pose( core::pose::PoseCOP pose );
+	/// @brief setter for native poses contained for rms ---- we should get rid of this method? it is widely used, but a bit unsafe
+	virtual void set_native_pose( core::pose::PoseCOP pose );
 
-		void
-		set_options( options::StepWiseMonteCarloOptionsCOP options );
+	void
+	set_options( options::StepWiseMonteCarloOptionsCOP options );
 
-		options::StepWiseMonteCarloOptionsCOP
-		options() const { return options_; }
+	options::StepWiseMonteCarloOptionsCOP
+	options() const { return options_; }
 
-		void set_model_tag( std::string const & setting ){ model_tag_ = setting; }
-		std::string model_tag() const{ return model_tag_; }
+	void set_model_tag( std::string const & setting ){ model_tag_ = setting; }
+	std::string model_tag() const{ return model_tag_; }
 
-		void set_out_path( std::string const & setting ){ out_path_ = setting; }
-		std::string out_path() const{ return out_path_; }
+	void set_out_path( std::string const & setting ){ out_path_ = setting; }
+	std::string out_path() const{ return out_path_; }
 
-		void set_move( mover::StepWiseMove const setting ){ move_ = setting; }
-		mover::StepWiseMove move() const { return move_; }
+	void set_move( mover::StepWiseMove const setting ){ move_ = setting; }
+	mover::StepWiseMove move() const { return move_; }
 
-		void set_submotif_library( monte_carlo::submotif::SubMotifLibraryCOP setting );
+	void set_submotif_library( monte_carlo::submotif::SubMotifLibraryCOP setting );
 
-	private:
+private:
 
-		void initialize();
+	void initialize();
 
-		void initialize_scorefunction();
+	void initialize_scorefunction();
 
-		void initialize_for_movie( core::pose::Pose const & pose );
+	void initialize_for_movie( core::pose::Pose const & pose );
 
-		void do_main_loop( core::pose::Pose & pose );
+	void do_main_loop( core::pose::Pose & pose );
 
-		void
-		output_movie( core::pose::Pose const & pose, Size const k, std::string const tag, std::string const & movie_file );
+	void
+	output_movie( core::pose::Pose const & pose, Size const k, std::string const tag, std::string const & movie_file );
 
-		Real
-		display_progress( core::pose::Pose & pose, Size const cycle_num );
+	Real
+	display_progress( core::pose::Pose & pose, Size const cycle_num );
 
-		Real show_scores( core::pose::Pose & pose, std::string const tag );
+	Real show_scores( core::pose::Pose & pose, std::string const tag );
 
-		void
-		anneal_missing( protocols::moves::MonteCarloOP monte_carlo );
+	void
+	anneal_missing( protocols::moves::MonteCarloOP monte_carlo );
 
-	private:
+private:
 
-		core::scoring::ScoreFunctionCOP scorefxn_input_;
+	core::scoring::ScoreFunctionCOP scorefxn_input_;
 
-		core::scoring::ScoreFunctionOP scorefxn_;
-		options::StepWiseMonteCarloOptionsCOP options_;
-		mover::StepWiseMasterMoverOP master_mover_;
+	core::scoring::ScoreFunctionOP scorefxn_;
+	options::StepWiseMonteCarloOptionsCOP options_;
+	mover::StepWiseMasterMoverOP master_mover_;
 
-		// are these really in use anymore?
-		core::Real const max_missing_weight_;
-		core::Real missing_weight_interval_;
-		core::Real missing_weight_;
+	// are these really in use anymore?
+	core::Real const max_missing_weight_;
+	core::Real missing_weight_interval_;
+	core::Real missing_weight_;
 
-		// for movies
-		std::string model_tag_;
-		std::string out_path_;
-		std::string movie_file_trial_;
-		std::string movie_file_accepted_;
+	// for movies
+	std::string model_tag_;
+	std::string out_path_;
+	std::string movie_file_trial_;
+	std::string movie_file_accepted_;
 
-		// for testing individual moves
-		mover::StepWiseMove move_;
+	// for testing individual moves
+	mover::StepWiseMove move_;
 
-		// timing poses
-		std::clock_t start_time_;
-	};
+	// timing poses
+	std::clock_t start_time_;
+};
 
 } //monte_carlo
 } //stepwise

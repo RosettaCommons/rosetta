@@ -68,7 +68,7 @@ public:
 
 		// init the mmbondanglescore
 		mmbondanglescore = MMBondAngleScoreOP( new MMBondAngleScore( *mmbondanglelibrary ) );
-	 }
+	}
 
 	virtual ~MMBondAngleScoreTests() {}
 
@@ -104,25 +104,22 @@ public:
 
 		// make set of angles in radians
 		Real angles[180];
-		for( int i = 0; i<180; ++i )
-			{
-				angles[i] = numeric::conversions::radians( static_cast<Real>( i ) );
-			}
+		for ( int i = 0; i<180; ++i ) {
+			angles[i] = numeric::conversions::radians( static_cast<Real>( i ) );
+		}
 
 		UT << "Single Parameter Scores:" << "\n";
 		mm_bondangle_atom_tri A = make_tri( "C", "CA", "CP1" );
-		for( int i = 0; i<180; ++i )
-			{
-				Real const score( mmbondanglescore->score( A, angles[i] ) );
-				UT << numeric::conversions::degrees( angles[i] ) << "\t" << score << "\n";
-			}
+		for ( int i = 0; i<180; ++i ) {
+			Real const score( mmbondanglescore->score( A, angles[i] ) );
+			UT << numeric::conversions::degrees( angles[i] ) << "\t" << score << "\n";
+		}
 
 		UT << "Multiple Parameter Scores:" << "\n";
 		mm_bondangle_atom_tri B = make_tri( "CPH1", "CP3", "C" );
-		for(  int i = 0; i<180; ++i )
-			{
-				Real const score( mmbondanglescore->score( B, angles[i] ) );
-				UT << numeric::conversions::degrees( angles[i] ) << "\t" << score << "\n";
-			}
+		for (  int i = 0; i<180; ++i ) {
+			Real const score( mmbondanglescore->score( B, angles[i] ) );
+			UT << numeric::conversions::degrees( angles[i] ) << "\t" << score << "\n";
+		}
 	}
 };

@@ -30,156 +30,156 @@
 namespace core {
 namespace io {
 namespace raw_data {
-	/// @brief Abstract base class for classes that writes different types of
-	/// silent-files that contain a mixture of Struct objects which are expected
-	/// to be uniquely identified by some sort of string-based tag.
-	class RawFileData {
+/// @brief Abstract base class for classes that writes different types of
+/// silent-files that contain a mixture of Struct objects which are expected
+/// to be uniquely identified by some sort of string-based tag.
+class RawFileData {
+public:
+	///////////////////////////////////////////////////////////////////////////
+	// constructor
+
+	RawFileData() { }
+
+	/// @brief Destructor.
+	virtual ~RawFileData() {
+		clear_structure_map();
+	}
+
+	/// @brief Returns the number of structures contained in this container.
+	int size() const { return structure_map_.size(); }
+
+	/// @brief Returns the number of residues in the first structure in this object. Not
+	/// guaranteed to be fixed for all structures in this container.
+	int nres() const {
+		return begin_const()->nres();
+	}
+
+	/// @brief Returns the sequence of the first structure in this object. Not
+	/// guaranteed to be fixed for all structures in this container.
+	std::string sequence() const {
+		return sequence_;
+	}
+
+	/// @brief Remove all of the RawStruct objects from this object.
+	void clear_structure_map()
+	{
+		structure_map_.clear();
+	}
+
+	/// @brief quickly read a list of tags from a silent-input file. Only checks lines beginning
+	/// with SCORE: strings.
+	utility::vector1< std::string > read_tags_fast( std::string const filename ) const;
+
+	/// @brief write all RawStruct objects in the structure_map_ to the given filename.
+	void write_all( const std::string filename, std::map < std::string, core::Real > const & score_map );
+
+protected:
+	// mapping from tags to structure data pointers
+	StructureMap structure_map_;
+	std::string sequence_;
+
+public:
+	class const_iterator;
+
+	/// @brief Iterator class for RawFileData container.
+	class iterator {
+
+		friend class const_iterator;
+
 	public:
-		///////////////////////////////////////////////////////////////////////////
-		// constructor
+		/// @brief empty constructor
+		iterator() {}
 
-		RawFileData() { }
-
-		/// @brief Destructor.
-		virtual ~RawFileData() {
-			clear_structure_map();
+		/// @brief Constructor, given an iterator into the StructureMap.
+		iterator( StructureMap::iterator s_iter ) {
+			it_ = s_iter;
 		}
 
-		/// @brief Returns the number of structures contained in this container.
-		int size() const { return structure_map_.size(); }
+		~iterator() {}
 
-		/// @brief Returns the number of residues in the first structure in this object. Not
-		/// guaranteed to be fixed for all structures in this container.
-		int nres() const {
-			return begin_const()->nres();
+		iterator& operator=( const iterator& src ) {
+			it_ = src.it_;
+			return (*this);
 		}
 
-		/// @brief Returns the sequence of the first structure in this object. Not
-		/// guaranteed to be fixed for all structures in this container.
-		std::string sequence() const {
-			return sequence_;
+		bool operator==( const iterator& other ) {
+			return ( it_ == other.it_ );
 		}
 
-		/// @brief Remove all of the RawStruct objects from this object.
-		void clear_structure_map()
-		{
-			structure_map_.clear();
+		bool operator!=( const iterator& other ) {
+			return ( it_ != other.it_ );
 		}
 
-		/// @brief quickly read a list of tags from a silent-input file. Only checks lines beginning
-		/// with SCORE: strings.
-		utility::vector1< std::string > read_tags_fast( std::string const filename ) const;
+		iterator& operator++() {
+			it_++;
+			return (*this);
+		}
 
-		/// @brief write all RawStruct objects in the structure_map_ to the given filename.
-		void write_all( const std::string filename, std::map < std::string, core::Real > const & score_map );
+		RawStructOP operator->() {
+			return it_->second;
+		}
 
-	protected:
-		// mapping from tags to structure data pointers
-		StructureMap structure_map_;
-		std::string sequence_;
+		RawStructOP operator*() const {
+			return it_->second;
+		}
+
+	private:
+		StructureMap::iterator it_; // keep track of my place in a StructureMap
+	}; // class iterator
+
+	/// @brief const_iterator class for RawFileData container.
+	class const_iterator {
 
 	public:
-		class const_iterator;
+		/// @brief empty constructor
+		const_iterator() {}
 
-		/// @brief Iterator class for RawFileData container.
-		class iterator {
+		/// @brief Constructor, given an iterator into the StructureMap.
+		const_iterator( StructureMap::const_iterator s_iter ) {
+			it_ = s_iter;
+		}
 
-			friend class const_iterator;
+		~const_iterator() {}
 
-		public:
-			/// @brief empty constructor
-			iterator() {}
+		const_iterator& operator=( const const_iterator& src ) {
+			it_ = src.it_;
+			return (*this);
+		}
 
-			/// @brief Constructor, given an iterator into the StructureMap.
-			iterator( StructureMap::iterator s_iter ) {
-				it_ = s_iter;
-			}
+		bool operator==( const const_iterator& other ) {
+			return ( it_ == other.it_ );
+		}
 
-			~iterator() {}
+		bool operator!=( const const_iterator& other ) {
+			return ( it_ != other.it_ );
+		}
 
-			iterator& operator=( const iterator& src ) {
-				it_ = src.it_;
-				return (*this);
-			}
+		const_iterator& operator++() {
+			it_++;
+			return (*this);
+		}
 
-			bool operator==( const iterator& other ) {
-				return ( it_ == other.it_ );
-			}
+		RawStructOP operator->() const {
+			return it_->second;
+		}
 
-			bool operator!=( const iterator& other ) {
-				return ( it_ != other.it_ );
-			}
+		RawStructOP operator*() const {
+			return it_->second;
+		}
 
-			iterator& operator++() {
-				it_++;
-				return (*this);
-			}
+	private:
+		StructureMap::const_iterator it_; // keep track of my place in a StructureMap
+	}; // class iterator
 
-			RawStructOP operator->() {
-				return it_->second;
-			}
+	/// @brief Returns an iterator to the start of the members of this container.
+	iterator begin() { return ( iterator( structure_map_.begin() ) ); }
+	/// @brief Returns an iterator to the end of the members of this container.
+	iterator end()   { return ( iterator( structure_map_.end()   ) ); }
 
-			RawStructOP operator*() const {
-				return it_->second;
-			}
+	const_iterator begin_const() const { return ( const_iterator( structure_map_.begin() ) ); }
+	const_iterator end_const()   const { return ( const_iterator( structure_map_.end()   ) ); }
 
-		private:
-			StructureMap::iterator it_; // keep track of my place in a StructureMap
-		}; // class iterator
-
-		/// @brief const_iterator class for RawFileData container.
-		class const_iterator {
-
-		public:
-			/// @brief empty constructor
-			const_iterator() {}
-
-			/// @brief Constructor, given an iterator into the StructureMap.
-			const_iterator( StructureMap::const_iterator s_iter ) {
-				it_ = s_iter;
-			}
-
-			~const_iterator() {}
-
-			const_iterator& operator=( const const_iterator& src ) {
-				it_ = src.it_;
-				return (*this);
-			}
-
-			bool operator==( const const_iterator& other ) {
-				return ( it_ == other.it_ );
-			}
-
-			bool operator!=( const const_iterator& other ) {
-				return ( it_ != other.it_ );
-			}
-
-			const_iterator& operator++() {
-				it_++;
-				return (*this);
-			}
-
-			RawStructOP operator->() const {
-				return it_->second;
-			}
-
-			RawStructOP operator*() const {
-				return it_->second;
-			}
-
-		private:
-			StructureMap::const_iterator it_; // keep track of my place in a StructureMap
-		}; // class iterator
-
-		/// @brief Returns an iterator to the start of the members of this container.
-		iterator begin() { return ( iterator( structure_map_.begin() ) ); }
-		/// @brief Returns an iterator to the end of the members of this container.
-		iterator end()   { return ( iterator( structure_map_.end()   ) ); }
-
-		const_iterator begin_const() const { return ( const_iterator( structure_map_.begin() ) ); }
-		const_iterator end_const()   const { return ( const_iterator( structure_map_.end()   ) ); }
-
-	}; // class RawFileData
+}; // class RawFileData
 } // namespace silent
 } // namespace io
 } // namespace core

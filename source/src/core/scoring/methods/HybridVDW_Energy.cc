@@ -114,26 +114,26 @@ HybridVDW_Energy::residue_pair_energy(
 
 
 	if ( ( rsd1.is_protein() && ! rsd2.is_protein() ) ||
-			 ( rsd2.is_protein() && ! rsd1.is_protein() ) ) {
+			( rsd2.is_protein() && ! rsd1.is_protein() ) ) {
 		//OK
 	} else {
 		return;
 	}
-// 	bool swap( false );
-// 	if ( rsd1_in.is_protein() && !rsd2_in.is_protein() ) {
-// 		// pass
-// 	} else if ( rsd2_in.is_protein() && !rsd1_in.is_protein() ) {
-// 		swap = true;
-// 	} else {
-// 		return;
-// 	}
+	//  bool swap( false );
+	//  if ( rsd1_in.is_protein() && !rsd2_in.is_protein() ) {
+	//   // pass
+	//  } else if ( rsd2_in.is_protein() && !rsd1_in.is_protein() ) {
+	//   swap = true;
+	//  } else {
+	//   return;
+	//  }
 
-// 	conformation::Residue const & rsd1( swap ? rsd2_in : rsd1_in );
-// 	conformation::Residue const & rsd2( swap ? rsd1_in : rsd2_in );
-// debug_assert( rsd1.is_protein() && !rsd2.is_protein() );
+	//  conformation::Residue const & rsd1( swap ? rsd2_in : rsd1_in );
+	//  conformation::Residue const & rsd2( swap ? rsd1_in : rsd2_in );
+	// debug_assert( rsd1.is_protein() && !rsd2.is_protein() );
 
 	Real score(0.0);
-debug_assert( ! rsd1.is_bonded( rsd2 ) );
+	debug_assert( ! rsd1.is_bonded( rsd2 ) );
 
 	// no countpair!
 	for ( Size i = 1, i_end = rsd1.natoms(); i <= i_end; ++i ) {
@@ -146,12 +146,12 @@ debug_assert( ! rsd1.is_bonded( rsd2 ) );
 			if ( clash > 0.0 ) {
 				score += ( clash * clash ) / bump_dsq;
 				//std::cout << "BUMP: " << I(4,rsd1.seqpos() ) << I(4,rsd2.seqpos() ) <<
-				//	' ' << rsd1.atom_name(i) << ' ' << rsd2.atom_name(j) << ' ' << ( clash * clash ) / bump_dsq << std::endl;
+				// ' ' << rsd1.atom_name(i) << ' ' << rsd2.atom_name(j) << ' ' << ( clash * clash ) / bump_dsq << std::endl;
 			}
 		}
 	}
-debug_assert( rsd1.residue_type_set().name() == chemical::HYBRID_FA_STANDARD_CENTROID );
-debug_assert( rsd2.residue_type_set().name() == chemical::HYBRID_FA_STANDARD_CENTROID );
+	debug_assert( rsd1.residue_type_set().name() == chemical::HYBRID_FA_STANDARD_CENTROID );
+	debug_assert( rsd2.residue_type_set().name() == chemical::HYBRID_FA_STANDARD_CENTROID );
 	emap[ hybrid_vdw ] += score * vdw_scale_factor;
 
 }
@@ -166,7 +166,7 @@ HybridVDW_Energy::eval_atom_derivative(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
- 	) const
+) const
 {
 	using namespace etable::count_pair;
 
@@ -203,9 +203,9 @@ HybridVDW_Energy::eval_atom_derivative(
 		conformation::Residue const & rsd2( pose.residue( pos2 ) );
 
 		if ( ! ( ( rsd1.is_protein() && ! rsd2.is_protein() ) ||
-			( rsd2.is_protein() && ! rsd1.is_protein() ) ) ) continue;
-	debug_assert( pos2 != pos1 );
-	debug_assert( ! rsd1.is_bonded( rsd2 ) );
+				( rsd2.is_protein() && ! rsd1.is_protein() ) ) ) continue;
+		debug_assert( pos2 != pos1 );
+		debug_assert( ! rsd1.is_bonded( rsd2 ) );
 		// no countpair!
 		for ( Size j=1, j_end = rsd2.natoms(); j<= j_end; ++j ) {
 

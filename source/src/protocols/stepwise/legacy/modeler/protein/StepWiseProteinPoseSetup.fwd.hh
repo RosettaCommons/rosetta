@@ -22,9 +22,9 @@ namespace legacy {
 namespace modeler {
 namespace protein {
 
-	class StepWiseProteinPoseSetup;
-	typedef utility::pointer::shared_ptr< StepWiseProteinPoseSetup > StepWiseProteinPoseSetupOP;
-	typedef utility::pointer::shared_ptr< StepWiseProteinPoseSetup const > StepWiseProteinPoseSetupCOP;
+class StepWiseProteinPoseSetup;
+typedef utility::pointer::shared_ptr< StepWiseProteinPoseSetup > StepWiseProteinPoseSetupOP;
+typedef utility::pointer::shared_ptr< StepWiseProteinPoseSetup const > StepWiseProteinPoseSetupCOP;
 
 } //protein
 } //modeler

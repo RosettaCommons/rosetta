@@ -47,39 +47,39 @@ namespace environment {
 namespace claims {
 
 class CutBiasClaim : public EnvClaim {
-  typedef EnvClaim Parent;
-  typedef core::environment::FoldTreeSketch FoldTreeSketch;
-  typedef core::environment::LocalPosition LocalPosition;
+	typedef EnvClaim Parent;
+	typedef core::environment::FoldTreeSketch FoldTreeSketch;
+	typedef core::environment::LocalPosition LocalPosition;
 
 public:
-  CutBiasClaim( ClientMoverOP owner,
-                utility::tag::TagCOP tag,
-                basic::datacache::DataMap const& );
+	CutBiasClaim( ClientMoverOP owner,
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap const& );
 
-  CutBiasClaim( ClientMoverOP owner,
-                std::string const& label,
-                core::fragment::SecondaryStructure const& ss );
+	CutBiasClaim( ClientMoverOP owner,
+		std::string const& label,
+		core::fragment::SecondaryStructure const& ss );
 
-  CutBiasClaim( ClientMoverOP owner,
-                std::string const& label,
-                std::map< LocalPosition, core::Real > const& biases );
+	CutBiasClaim( ClientMoverOP owner,
+		std::string const& label,
+		std::map< LocalPosition, core::Real > const& biases );
 
-  CutBiasClaim( ClientMoverOP owner,
-                std::string const& label,
-                std::pair< core::Size, core::Size > const& range,
-                core::Real bias );
+	CutBiasClaim( ClientMoverOP owner,
+		std::string const& label,
+		std::pair< core::Size, core::Size > const& range,
+		core::Real bias );
 
-  virtual void yield_elements( FoldTreeSketch const& fts, CutBiasElements& elements ) const;
+	virtual void yield_elements( FoldTreeSketch const& fts, CutBiasElements& elements ) const;
 
-  EnvClaimOP clone() const;
+	EnvClaimOP clone() const;
 
-  virtual std::string type() const;
+	virtual std::string type() const;
 
-  virtual void show( std::ostream& os ) const;
+	virtual void show( std::ostream& os ) const;
 
 private:
-  std::string label_;
-  std::map< LocalPosition, core::Real > biases_;
+	std::string label_;
+	std::map< LocalPosition, core::Real > biases_;
 
 }; //class CutBiasClaim
 

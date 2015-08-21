@@ -152,8 +152,8 @@ public:
 		ScoreFunction sfxn;
 		sfxn.set_weight( atom_pair_constraint, 1.0 );
 		kinematics::MoveMap movemap;
-    movemap.set_bb( true );
-    movemap.set_chi( true );
+		movemap.set_bb( true );
+		movemap.set_chi( true );
 
 		for ( Size ii = 1; ii <= ubqstump->total_residue(); ++ii ) {
 			core::chemical::ResidueType const & rsd_type( ubqstump->residue_type( ii ));

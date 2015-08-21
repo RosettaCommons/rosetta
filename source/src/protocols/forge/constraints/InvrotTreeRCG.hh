@@ -33,9 +33,9 @@
 
 // C++headers
 
-namespace protocols{
-namespace forge{
-namespace constraints{
+namespace protocols {
+namespace forge {
+namespace constraints {
 
 
 /// @brief a RemodelConstraintGenerator wrapper that makes
@@ -53,16 +53,16 @@ public:
 	InvrotTreeRCG(
 		toolbox::match_enzdes_util::InvrotTreeOP invrot_tree,
 		toolbox::match_enzdes_util::AllowedSeqposForGeomCstOP geomcst_seqpos
-		);
+	);
 
- ~InvrotTreeRCG();
+	~InvrotTreeRCG();
 
 	virtual void
 	parse_my_tag( TagCOP tag,
-								basic::datacache::DataMap & data,
-								protocols::filters::Filters_map const & filters,
-								protocols::moves::Movers_map const & movers,
-								core::pose::Pose const & pose );
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose );
 
 	virtual std::string
 	get_name() const;

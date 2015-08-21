@@ -89,8 +89,8 @@ public:
 
 private:
 	CentroidDisulfidePotential const & potential_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 };
 
 

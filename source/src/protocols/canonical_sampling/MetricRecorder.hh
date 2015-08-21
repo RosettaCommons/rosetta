@@ -34,11 +34,11 @@ namespace protocols {
 namespace canonical_sampling {
 
 /// @brief Periodically output miscellaneous information.
-/// @details This class is capable of writing out a variety of data related to 
-/// the trajectory.  This includes the job name, the replica, the temperature, 
-/// and the score.  Any number of torsion angles can also be added to the 
-/// report using add_torsion().  Methods are also provided for specifying an 
-/// output filename.  Most of the IO work is done by update_after_boltzmann().  
+/// @details This class is capable of writing out a variety of data related to
+/// the trajectory.  This includes the job name, the replica, the temperature,
+/// and the score.  Any number of torsion angles can also be added to the
+/// report using add_torsion().  Methods are also provided for specifying an
+/// output filename.  Most of the IO work is done by update_after_boltzmann().
 
 class MetricRecorder : public ThermodynamicObserver
 {
@@ -114,7 +114,7 @@ public: // Methods
 	bool
 	cumulate_jobs() const;
 
-	/// @brief Indicate whether or not every job should be reported to the same 
+	/// @brief Indicate whether or not every job should be reported to the same
 	/// file.
 	void
 	cumulate_jobs(
@@ -125,19 +125,19 @@ public: // Methods
 	bool
 	cumulate_replicas() const;
 
-	/// @brief Indicate whether or not every replica should be reported to the 
+	/// @brief Indicate whether or not every replica should be reported to the
 	/// same file.
 	void
 	cumulate_replicas(
 		bool cumulate_replicas
 	);
 
-	/// @brief Return true if the job name should be prepended onto the output 
+	/// @brief Return true if the job name should be prepended onto the output
 	/// filename.
 	bool
 	prepend_output_name() const;
 
-	/// @brief Indicate whether or not the job name should be prepended onto the 
+	/// @brief Indicate whether or not the job name should be prepended onto the
 	/// output filename.
 	void
 	prepend_output_name(
@@ -162,8 +162,8 @@ public: // Methods
 	);
 
 	/// @brief Truncate the output file and rewrite the output header.
-	/// @details This method may not actually truncate the output file.  It 
-	/// really just closes and reopens the file, and I'm not sure whether or not 
+	/// @details This method may not actually truncate the output file.  It
+	/// really just closes and reopens the file, and I'm not sure whether or not
 	/// it picks a new name when it does the reopening.
 	void
 	reset(
@@ -171,7 +171,7 @@ public: // Methods
 		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = 0
 	);
 
-	/// @brief Write information like temperature, score, and torsion angles to a 
+	/// @brief Write information like temperature, score, and torsion angles to a
 	/// file.
 	void
 	update_after_boltzmann(

@@ -166,10 +166,10 @@ HitHasher::insert_hit( Size geometric_constraint_id, Hit const * hit )
 			if ( iter == hit_hashes_[ ii ].second.end() ) {
 
 				/*if ( geometric_constraint_id != 1 ) {
-					std::cout << "Weird -- this bin index " << bin_index << " should already have been inserted to hash " << ii;
-					for ( Size jj = 1; jj <= 6; ++jj ) std::cout << " " << geom[ jj ]; std::cout << std::endl;
+				std::cout << "Weird -- this bin index " << bin_index << " should already have been inserted to hash " << ii;
+				for ( Size jj = 1; jj <= 6; ++jj ) std::cout << " " << geom[ jj ]; std::cout << std::endl;
 				} else {
-					std::cout << "Inserting bin index: " << bin_index << " into hash " << ii << std::endl;
+				std::cout << "Inserting bin index: " << bin_index << " into hash " << ii << std::endl;
 				}*/
 
 				MatchSet ms( n_geometric_constraints_per_match_ );
@@ -206,10 +206,10 @@ HitHasher::insert_hit( Size which_hash_map, Size geometric_constraint_id, Hit co
 		if ( iter == hit_hashes_[ which_hash_map ].second.end() ) {
 
 			/*if ( geometric_constraint_id != 1 ) {
-				std::cout << "Weird -- this bin index " << bin_index << " should already have been inserted to hash " << which_hash_map;
-				for ( Size jj = 1; jj <= 6; ++jj ) std::cout << " " << geom[ jj ]; std::cout << std::endl;
+			std::cout << "Weird -- this bin index " << bin_index << " should already have been inserted to hash " << which_hash_map;
+			for ( Size jj = 1; jj <= 6; ++jj ) std::cout << " " << geom[ jj ]; std::cout << std::endl;
 			} else {
-				std::cout << "Inserting bin index: " << bin_index << " into hash " << which_hash_map << std::endl;
+			std::cout << "Inserting bin index: " << bin_index << " into hash " << which_hash_map << std::endl;
 			}*/
 
 			MatchSet ms( n_geometric_constraints_per_match_ );
@@ -355,7 +355,7 @@ HitNeighborFinder::connected_components() const
 		for ( HitIndexList::const_iterator
 				hitlist_iter = hitlist.begin(), hitlist_iter_end = hitlist.end();
 				hitlist_iter != hitlist_iter_end; ++hitlist_iter ) {
-			if ( ds.ds_find( first_hit_index ) == ds.ds_find( hitlist_iter->first )) continue;
+			if ( ds.ds_find( first_hit_index ) == ds.ds_find( hitlist_iter->first ) ) continue;
 			ds.ds_union( first_hit_index, hitlist_iter->first );
 		}
 
@@ -396,11 +396,11 @@ HitNeighborFinder::connected_components() const
 					// we have hits in the neighbor bin
 					for ( HitIndexList::const_iterator nbr_hits_iter = nbr_hits->second.begin(),
 							nbr_hits_iter_end = nbr_hits->second.end();
-							nbr_hits_iter != nbr_hits_iter_end;	++nbr_hits_iter ) {
+							nbr_hits_iter != nbr_hits_iter_end; ++nbr_hits_iter ) {
 						Size nbr_id = nbr_hits_iter->first;
 						if ( ds.ds_find( query_id ) == ds.ds_find( nbr_id ) ) continue; // already neighbors
 						Bin6D nb_halfbin = binner_->halfbin6( nbr_hits_iter->second->second() );
-						if ( within_reach( query_halfbin, nb_halfbin, nbbin, halfbin_lex )) {
+						if ( within_reach( query_halfbin, nb_halfbin, nbbin, halfbin_lex ) ) {
 							ds.ds_union( query_id, nbr_id ); // mark these hits as neighbors
 						}
 					}
@@ -416,45 +416,45 @@ HitNeighborFinder::connected_components() const
 	}
 
 	/*for ( HitIndexList::const_iterator iter = all_hits_.begin(), iter_end = all_hits_.end();
-			iter != iter_end; ++iter ) {
-		Size query_id = iter->first;
-		Hit const * query_hit = iter->second;
-		Bin6D query_bin = binner_->bin6( query_hit->second() );
-		Bin6D query_halfbin = binner_->halfbin6( query_hit->second() );
-		Real6 halfsteps( binner_->halfbin_widths() );
-		for ( Size ii = 1; ii <= 6; ++ii ) {
-			if ( query_halfbin[ ii ] == 0 ) halfsteps[ ii ] *= -1;
-		}
+	iter != iter_end; ++iter ) {
+	Size query_id = iter->first;
+	Hit const * query_hit = iter->second;
+	Bin6D query_bin = binner_->bin6( query_hit->second() );
+	Bin6D query_halfbin = binner_->halfbin6( query_hit->second() );
+	Real6 halfsteps( binner_->halfbin_widths() );
+	for ( Size ii = 1; ii <= 6; ++ii ) {
+	if ( query_halfbin[ ii ] == 0 ) halfsteps[ ii ] *= -1;
+	}
 
-		halfbin_lex.begin();
-		while ( !halfbin_lex.at_end() ) {
-			Bin6D nbbin;
-			Size skip_pos = find_next_bin( query_hit->second(), halfsteps, halfbin_lex, nbbin );
-			if ( skip_pos != 0 ) {
-				halfbin_lex.continue_at_dimension( skip_pos );
-				continue;
-			}
+	halfbin_lex.begin();
+	while ( !halfbin_lex.at_end() ) {
+	Bin6D nbbin;
+	Size skip_pos = find_next_bin( query_hit->second(), halfsteps, halfbin_lex, nbbin );
+	if ( skip_pos != 0 ) {
+	halfbin_lex.continue_at_dimension( skip_pos );
+	continue;
+	}
 
-			/// now query the hash map and find all the hits in the neighbor bin (if any)
-			boost::uint64_t nbindex = binner_->bin_index( nbbin );
-			HitHash::const_iterator nbr_hits = hash_.find( nbindex );
+	/// now query the hash map and find all the hits in the neighbor bin (if any)
+	boost::uint64_t nbindex = binner_->bin_index( nbbin );
+	HitHash::const_iterator nbr_hits = hash_.find( nbindex );
 
-			if ( nbr_hits != hash_.end() ) {
-				// we have hits in the neighbor bin
-				for ( HitIndexList::const_iterator nbr_hits_iter = nbr_hits->second.begin(),
-						nbr_hits_iter_end = nbr_hits->second.end();
-						nbr_hits_iter != nbr_hits_iter_end;	++nbr_hits_iter ) {
-					Size nbr_id = nbr_hits_iter->first;
-					if ( ds.ds_find( query_id ) == ds.ds_find( nbr_id ) ) continue; // already neighbors
-					Bin6D nb_halfbin = binner_->halfbin6( nbr_hits_iter->second->second() );
-					if ( within_reach( query_halfbin, nb_halfbin, nbbin, halfbin_lex )) {
-						ds.ds_union( query_id, nbr_id ); // mark these hits as neighbors
-					}
-				}
-			}
-			++halfbin_lex;
+	if ( nbr_hits != hash_.end() ) {
+	// we have hits in the neighbor bin
+	for ( HitIndexList::const_iterator nbr_hits_iter = nbr_hits->second.begin(),
+	nbr_hits_iter_end = nbr_hits->second.end();
+	nbr_hits_iter != nbr_hits_iter_end; ++nbr_hits_iter ) {
+	Size nbr_id = nbr_hits_iter->first;
+	if ( ds.ds_find( query_id ) == ds.ds_find( nbr_id ) ) continue; // already neighbors
+	Bin6D nb_halfbin = binner_->halfbin6( nbr_hits_iter->second->second() );
+	if ( within_reach( query_halfbin, nb_halfbin, nbbin, halfbin_lex )) {
+	ds.ds_union( query_id, nbr_id ); // mark these hits as neighbors
+	}
+	}
+	}
+	++halfbin_lex;
 
-		} // end while ( !halfbin_lex.at_end() )
+	} // end while ( !halfbin_lex.at_end() )
 	}*/
 
 	/// Iterate across all bins.  Then iterate across all halfbins, skipping over halfbins that have already been visited.
@@ -471,7 +471,7 @@ HitNeighborFinder::connected_components() const
 	}
 
 	utility::vector1< HitPtrList > hit_ccs( nccs );
-	for (HitIndexList::const_iterator iter = all_hits_.begin(), iter_end = all_hits_.end();
+	for ( HitIndexList::const_iterator iter = all_hits_.begin(), iter_end = all_hits_.end();
 			iter != iter_end; ++iter ) {
 		Size iterrep = ds.ds_find( iter->first );
 		Size setid = ds_representatives_to_setnos[ iterrep ];
@@ -526,7 +526,7 @@ HitNeighborFinder::neighbor_hits( HitPtrList const & queryhits ) const
 				bool all_inserted = true;
 				for ( HitIndexList::const_iterator nbr_hits_iter = nbr_hits->second.begin(),
 						nbr_hits_iter_end = nbr_hits->second.end();
-						nbr_hits_iter != nbr_hits_iter_end;	++nbr_hits_iter ) {
+						nbr_hits_iter != nbr_hits_iter_end; ++nbr_hits_iter ) {
 					Size nbr_id = nbr_hits_iter->first;
 					if ( neighbor_set.find( nbr_id ) != neighbor_set.end() ) {
 						// already found this neighbor; note does not invalidate the "all_inserted" boolean
@@ -535,7 +535,7 @@ HitNeighborFinder::neighbor_hits( HitPtrList const & queryhits ) const
 					}
 
 					Bin6D nb_halfbin = binner_->halfbin6( nbr_hits_iter->second->second() );
-					if ( within_reach( query_halfbin, nb_halfbin, nbbin, halfbin_lex )) {
+					if ( within_reach( query_halfbin, nb_halfbin, nbbin, halfbin_lex ) ) {
 						neighbor_set.insert( nbr_id );
 						neighbors.push_back( nbr_hits_iter->second );
 					} else {
@@ -609,8 +609,7 @@ HitNeighborFinder::within_reach(
 
 	// check everything but theta!
 	for ( Size ii = 1; ii <= 5; ++ii ) {
-		if ( halfbin_lex[ ii ] == NEIGHBOR_BIN && query_halfbin[ ii ] == nb_halfbin[ ii ] )
-				 {
+		if ( halfbin_lex[ ii ] == NEIGHBOR_BIN && query_halfbin[ ii ] == nb_halfbin[ ii ] ) {
 			/// Then this neighbor hit is too far away from the query hit: we've spanned
 			/// the bin boundary to a neighboring bin, but the neighbor hit is on
 			/// the other side of the halfbin divide from the query hit -- either
@@ -777,10 +776,10 @@ MatchCounter::count_n_matches() const
 
 	/// TEMP: reporting counts per bin
 	//for ( HitHash::const_iterator iter = hash_.begin(), iter_end = hash_.end(); iter != iter_end; ++iter ) {
-	//	boost::uint64_t bin_index = iter->first;
-	//	std::cout << "  bin " << bin_index << " w/counts:";
-	//	for ( Size ii = 1; ii <= n_geom_csts_; ++ii ) std::cout << " " << iter->second[ ii ];
-	//	std::cout << std::endl;
+	// boost::uint64_t bin_index = iter->first;
+	// std::cout << "  bin " << bin_index << " w/counts:";
+	// for ( Size ii = 1; ii <= n_geom_csts_; ++ii ) std::cout << " " << iter->second[ ii ];
+	// std::cout << std::endl;
 	//}//
 
 

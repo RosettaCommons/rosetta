@@ -24,17 +24,17 @@
 #include <string>
 
 namespace protocols {
-    namespace simple_filters {
-        
-        class RepeatParameterFilterCreator : public protocols::filters::FilterCreator
-        {
-        public:
-            virtual protocols::filters::FilterOP create_filter() const;
-            virtual std::string keyname() const;
-        };
-        
-        
-    } //namespace filters
+namespace simple_filters {
+
+class RepeatParameterFilterCreator : public protocols::filters::FilterCreator
+{
+public:
+	virtual protocols::filters::FilterOP create_filter() const;
+	virtual std::string keyname() const;
+};
+
+
+} //namespace filters
 } //namespace protocols
 
 #endif

@@ -22,7 +22,7 @@
 //#include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/util.hh>
 
-namespace protocols{
+namespace protocols {
 namespace simple_filters {
 
 static thread_local basic::Tracer TR( "protocols.simple_filters.PoseComment" );
@@ -35,10 +35,10 @@ PoseCommentFilterCreator::keyname() const { return "PoseComment"; }
 
 //default ctor
 PoseComment::PoseComment() :
-protocols::filters::Filter( "PoseComment" ),
-comment_name_( "" ),
-comment_value_( "" ),
-comment_exists_( false )
+	protocols::filters::Filter( "PoseComment" ),
+	comment_name_( "" ),
+	comment_value_( "" ),
+	comment_exists_( false )
 {
 }
 
@@ -58,10 +58,11 @@ bool
 PoseComment::apply( core::pose::Pose const & pose ) const {
 	core::Real const val ( compute( pose ) );
 	TR<<"Pose comment "<<comment_name()<<":"<<comment_value();
-	if( val >= 0.9999 )
+	if ( val >= 0.9999 ) {
 		TR<<" found"<<std::endl;
-	else
+	} else {
 		TR<<" not found"<<std::endl;
+	}
 	return( val >= 0.9999 );
 }
 
@@ -85,31 +86,36 @@ PoseComment::compute(
 
 	using namespace core::pose;
 
-	if( comment_name() == "" ){
+	if ( comment_name() == "" ) {
 		std::map< std::string, std::string > const comments = get_all_comments( pose );
-		if( comment_exists() && !comments.empty() ) //size() > 0 )
+		if ( comment_exists() && !comments.empty() ) { //size() > 0 )
 			return 1.0;
-		if( comments.empty() ) //size() == 0 )
+		}
+		if ( comments.empty() ) { //size() == 0 )
 			return 0.0;
-		for( std::map< std::string, std::string >::const_iterator it = comments.begin(); it != comments.end(); ++it ){// iterate over all comments and find the one with the value
-			if( it->second == comment_value() )
+		}
+		for ( std::map< std::string, std::string >::const_iterator it = comments.begin(); it != comments.end(); ++it ) {// iterate over all comments and find the one with the value
+			if ( it->second == comment_value() ) {
 				return 1.0;
+			}
 		}
 		return 0.0;
 	}
 
 	exists = get_comment( pose, comment_name(), val );
-	if( comment_exists() ){
-		if( exists )
+	if ( comment_exists() ) {
+		if ( exists ) {
 			return 1.0;
-		else
+		} else {
 			return 0.0;
+		}
 	}
 
-	if( val == comment_value() )
+	if ( val == comment_value() ) {
 		return 1.0;
-	else
+	} else {
 		return 0.0;
+	}
 }
 
 }

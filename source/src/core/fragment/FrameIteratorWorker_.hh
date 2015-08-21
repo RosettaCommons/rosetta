@@ -37,9 +37,9 @@
 
 
 /* Just a mad thought: with fragments becoming ever more "Residue" like one might want to use the
-	 packer to choose a combination of good fragments instead of makeing independent choices.
-	 I guess, it is only a question of keeping the combinatorics in control...
-	 maybe it makes sense to pack with only "unconfident" regions of the backbone flexible ..
+packer to choose a combination of good fragments instead of makeing independent choices.
+I guess, it is only a question of keeping the combinatorics in control...
+maybe it makes sense to pack with only "unconfident" regions of the backbone flexible ..
 */
 
 namespace core {
@@ -52,7 +52,7 @@ class FrameIteratorWorker_ : public utility::pointer::ReferenceCount {
 	friend class ConstFrameIterator;
 	friend class FragID_Iterator;
 protected:
-	//	FrameIteratorWorker_ ( BaseFragSet& bfs );
+	// FrameIteratorWorker_ ( BaseFragSet& bfs );
 	virtual bool operator != ( FrameIteratorWorker_ const& ) const = 0;
 	virtual bool operator == ( FrameIteratorWorker_ const& fit) const {
 		return !( (*this)!= fit );

@@ -80,7 +80,7 @@ RRComparerAutomorphicRMSD::measure_rotamer_recovery(
 	bool & recovered
 ) {
 
-	if( res1.aa() != res2.aa()  || res1.nheavyatoms() != res2.nheavyatoms()) {
+	if ( res1.aa() != res2.aa()  || res1.nheavyatoms() != res2.nheavyatoms() ) {
 		TR << "Cannot measure rotamer recovery of residue " << res1.seqpos() << " because" << endl;
 		TR << "\nresidue 1 has type '" << res1.type().name() << "'" << endl;
 		TR << "\nresidue 2 has type '" << res2.type().name() << "'" << endl;
@@ -89,12 +89,12 @@ RRComparerAutomorphicRMSD::measure_rotamer_recovery(
 	}
 
 	// TODO: Can this restriction be relaxed? What about using 'is_polymer()'?
-	if( res1.aa() > num_canonical_aas ){
+	if ( res1.aa() > num_canonical_aas ) {
 		TR << "WARNING: trying to compare rotamer bins for non-canonical amino acid '" << res1.name() << "'" << endl;
 		score = -1; recovered = false; return false;
 	}
 
-	if( get_include_backbone_atoms() ){
+	if ( get_include_backbone_atoms() ) {
 		score = automorphic_rmsd( res1, res2, false /*superimpose*/ );
 		recovered = (score <= get_recovery_threshold() );
 	} else {
@@ -127,7 +127,7 @@ string
 RRComparerAutomorphicRMSD::get_parameters() const {
 	stringstream ret;
 	ret << "include_backbone_atoms:" << get_include_backbone_atoms()
-			<< ",recovery_threshold:" << get_recovery_threshold();
+		<< ",recovery_threshold:" << get_recovery_threshold();
 	return ret.str();
 }
 

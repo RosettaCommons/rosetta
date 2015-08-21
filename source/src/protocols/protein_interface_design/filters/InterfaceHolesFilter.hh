@@ -42,13 +42,13 @@ public:
 	protocols::filters::FilterOP fresh_instance() const{
 		return protocols::filters::FilterOP( new InterfaceHolesFilter() );
 	}
-  InterfaceHolesFilter( InterfaceHolesFilter const & init ) :
-	//utility::pointer::ReferenceCount(),
-	protocols::filters::Filter( init )
-{
+	InterfaceHolesFilter( InterfaceHolesFilter const & init ) :
+		//utility::pointer::ReferenceCount(),
+		protocols::filters::Filter( init )
+	{
 		rb_jump_ = init.rb_jump_;
 		threshold_ = init.threshold_;
-  };
+	};
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Real compute( core::pose::Pose const & pose ) const;

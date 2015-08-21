@@ -80,7 +80,7 @@ void SecondaryStructureFilter::filtered_ss( String const & s )
 void SecondaryStructureFilter::filtered_abego( String const & s )
 {
 	filtered_abego_.clear();
-	for( Size ii=1; s.length(); ++ii ) {
+	for ( Size ii=1; s.length(); ++ii ) {
 		filtered_abego_.push_back( s.substr( ii-1, 1 ) );
 	}
 	use_abego_ = true;
@@ -98,10 +98,10 @@ bool SecondaryStructureFilter::apply( Pose const & pose ) const
 		}
 	}
 
-	if( protein_residues != filtered_ss_.length() ) {
+	if ( protein_residues != filtered_ss_.length() ) {
 		utility_exit_with_message("Length of input ss is not same as total residue of pose.");
 	}
-	if( filtered_abego_.size() >= 1 &&  protein_residues != filtered_abego_.size() ) {
+	if ( filtered_abego_.size() >= 1 &&  protein_residues != filtered_abego_.size() ) {
 		utility_exit_with_message("Length of input abego is not same as total residue of pose.");
 	}
 
@@ -118,22 +118,22 @@ SecondaryStructureFilter::parse_my_tag(
 	Movers_map const &,
 	Pose const & )
 {
- 	filtered_ss_ = tag->getOption<String>( "ss", "" );
+	filtered_ss_ = tag->getOption<String>( "ss", "" );
 
 	String abego( tag->getOption<String>( "abego", "" ) );
 	filtered_abego_.clear();
-	for( Size ii=1; abego.length(); ++ii ) {
+	for ( Size ii=1; abego.length(); ++ii ) {
 		filtered_abego_.push_back( abego.substr( ii-1, 1 ) );
 	}
-	if( filtered_abego_.size() >= 1 ) {
+	if ( filtered_abego_.size() >= 1 ) {
 		use_abego_ = true;
 	}
 
 	// use blueprint as input
 	String blueprint = tag->getOption<String>( "blueprint", "" );
-	if( blueprint != "" ) {
+	if ( blueprint != "" ) {
 
-		if( filtered_ss_ != "" || filtered_abego_.size() > 1 ) {
+		if ( filtered_ss_ != "" || filtered_abego_.size() > 1 ) {
 			tr << "ss and abego definition in xml will be ignored, and blueprint info is used. " << std::endl;
 			filtered_ss_ = "";
 			filtered_abego_.clear();
@@ -143,14 +143,14 @@ SecondaryStructureFilter::parse_my_tag(
 		use_abego_ = tag->getOption<bool>( "use_abego", 0 );
 	}
 
-	if( filtered_ss_ == "" ){
+	if ( filtered_ss_ == "" ) {
 		tr.Error << "Error!,  option of topology is empty." << std::endl;
 		runtime_assert( false );
 	}
 	tr << filtered_ss_ << " is filtered." << std::endl;
 
 	core::sequence::ABEGOManager abego_manager;
-	if( filtered_abego_.size() >= 1 && use_abego_ ) {
+	if ( filtered_abego_.size() >= 1 && use_abego_ ) {
 		tr << abego_manager.get_abego_string( filtered_abego_ ) << " is filtered " << std::endl;
 	}
 }
@@ -158,16 +158,16 @@ SecondaryStructureFilter::parse_my_tag(
 /// @brief sets the blueprint file based on filename.  If a strand pairing is impossible (i.e. the structure has two strands, 5 and 6 residues, respectively, it sets the unpaired residues to 'h' so that they still match.
 void
 SecondaryStructureFilter::set_blueprint( std::string const blueprint_file )
-{	
-	using protocols::jd2::parser::BluePrint;	
+{
+	using protocols::jd2::parser::BluePrint;
 	BluePrint blue( blueprint_file );
 	std::string ss = blue.secstruct();
 	filtered_abego_ = blue.abego();
-	
+
 	// now we check the strand pairing definitions in the BluePrint -- if some of them are impossible, DSSP will never return 'E',
 	// so we will want these residues to be L/E (which is specified as 'h').
 	protocols::fldsgn::topology::SS_Info2_COP ss_info;
- 	ss_info = protocols::fldsgn::topology::SS_Info2_COP( protocols::fldsgn::topology::SS_Info2_OP( new protocols::fldsgn::topology::SS_Info2( blue.secstruct() ) ) );
+	ss_info = protocols::fldsgn::topology::SS_Info2_COP( protocols::fldsgn::topology::SS_Info2_OP( new protocols::fldsgn::topology::SS_Info2( blue.secstruct() ) ) );
 	protocols::fldsgn::topology::StrandPairingSet spairs( blue.strand_pairings(), ss_info );
 	protocols::fldsgn::topology::StrandPairings pairs( spairs.strand_pairings() );
 
@@ -189,9 +189,9 @@ SecondaryStructureFilter::set_blueprint( std::string const blueprint_file )
 			if ( res2 >= 1 && res2 <= len2 ) {
 				paired_residues[s1][res] = true;
 				paired_residues[s2][res2] = true;
-			} 
+			}
 		}
-	}	
+	}
 
 	// determine unpaired residues and alter them in the string
 	for ( core::Size strand=1; strand<=pairs.size(); ++strand ) {
@@ -204,7 +204,7 @@ SecondaryStructureFilter::set_blueprint( std::string const blueprint_file )
 				core::Size const pose_res( ss_info->strand(s1)->begin() + res - 1 );
 				runtime_assert( pose_res <= ss.size() );
 				tr << "pose residue is " << pose_res << std::endl;
-				ss[pose_res-1] = 'h'; 
+				ss[pose_res-1] = 'h';
 			}
 		}
 		for ( core::Size res=1; res<=paired_residues[s2].size(); ++res ) {
@@ -229,43 +229,43 @@ SecondaryStructureFilter::compute( core::pose::Pose const & pose ) const {
 
 	core::sequence::ABEGOManager abego_manager;
 	core::Size match_count( 0 );
-	for( Size i=1; i<=pose.total_residue(); i++ ){
+	for ( Size i=1; i<=pose.total_residue(); i++ ) {
 		// if this residue is a ligand, ignore and move on
 		if ( ! pose.residue( i ).is_protein() ) continue;
 
 		String sec = filtered_ss_.substr( i-1, 1 );
-		if( *sec.c_str() == 'D' ){
+		if ( *sec.c_str() == 'D' ) {
 			++match_count;
 			continue;
-		}else if( *sec.c_str() == 'h' )	{
+		} else if ( *sec.c_str() == 'h' ) {
 			// small h means secondary structure other than H, so either L/E, therefore as long as it is not capital H (helix), it passes
-			if( pose.secstruct( i ) == 'H')	{
+			if ( pose.secstruct( i ) == 'H' ) {
 				// it is capital H (helix), so fails
 				tr << "SS filter fail: current/filtered = "
-				   << pose.secstruct( i ) << '/' << sec << " at position " << i << std::endl;
+					<< pose.secstruct( i ) << '/' << sec << " at position " << i << std::endl;
 				continue;
 			}
-		}else{
-			if( *sec.c_str() != pose.secstruct( i ) ){
+		} else {
+			if ( *sec.c_str() != pose.secstruct( i ) ) {
 				tr << "SS filter fail: current/filtered = "
-				   << pose.secstruct( i ) << '/' << sec << " at position " << i << std::endl;
+					<< pose.secstruct( i ) << '/' << sec << " at position " << i << std::endl;
 				continue;
 				//return false;
 			}
 		}
 
-		if( filtered_abego_.size() >= 1 && use_abego_ ) {
+		if ( filtered_abego_.size() >= 1 && use_abego_ ) {
 			String abego( filtered_abego_[ i ] );
 			bool flag( false );
-			for( Size j=1; j<=abego.size(); j++ ) {
-				if( abego_manager.check_rama( *abego.substr( j-1, 1 ).c_str(), pose.phi( i ), pose.psi( i ), pose.omega( i ) )) {
+			for ( Size j=1; j<=abego.size(); j++ ) {
+				if ( abego_manager.check_rama( *abego.substr( j-1, 1 ).c_str(), pose.phi( i ), pose.psi( i ), pose.omega( i ) ) ) {
 					flag = true;
 				}
 			}
-			if( !flag ) {
+			if ( !flag ) {
 				tr << "Abego filter fail current(phi,psi,omega)/filtered = "
-				   << pose.phi( i ) << "," << pose.psi( i ) << "," << pose.omega( i ) << "/" << abego
-				   << " at position " << i << std::endl;
+					<< pose.phi( i ) << "," << pose.psi( i ) << "," << pose.omega( i ) << "/" << abego
+					<< " at position " << i << std::endl;
 				continue;
 			}
 		} // if abego
@@ -274,7 +274,7 @@ SecondaryStructureFilter::compute( core::pose::Pose const & pose ) const {
 	} //for
 
 	tr << filtered_ss_ << " was filtered with " << match_count << " residues matching " << pose.secstruct() << std::endl;
-	if( filtered_abego_.size() >= 1 && use_abego_ ) {
+	if ( filtered_abego_.size() >= 1 && use_abego_ ) {
 		tr << abego_manager.get_abego_string( filtered_abego_ ) << " was filtered with " << match_count << " residues matching." << std::endl;
 	}
 	return match_count;

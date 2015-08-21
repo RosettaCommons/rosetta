@@ -87,7 +87,7 @@ LigandRepackMinimizeProtocol::apply( core::pose::Pose & pose )
 
 	//int jump_id = pose.num_jump(); // assume ligand attached by last jump
 	//if ( jump_id == 0 ) {
-	//	utility_exit_with_message("Pose has no jumps!");
+	// utility_exit_with_message("Pose has no jumps!");
 	//}
 
 	core::pack::dunbrack::load_unboundrot(pose); // adds scoring bonuses for the "unbound" rotamers, if any
@@ -103,9 +103,10 @@ LigandRepackMinimizeProtocol::apply( core::pose::Pose & pose )
 	pack_task->or_include_current(true); // may already be in lowest E conf
 	pack_task->append_rotamerset_operation( unboundrot_ );
 	// Disable packing completely for ligands b/c we want them to stay put
-	for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i) {
-		if ( !pose.residue(i).is_polymer() )
+	for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+		if ( !pose.residue(i).is_polymer() ) {
 			pack_task->nonconst_residue_task( i ).prevent_repacking();
+		}
 	}
 
 	//core::pack::rtmin(pose, *scorefxn_, pack_task);
@@ -121,8 +122,8 @@ LigandRepackMinimizeProtocol::apply( core::pose::Pose & pose )
 	// Set up move map for minimizing.
 	// Only want to minimize protein sc;  keep ligand the same as reference point
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
-	for(int i = 1, end_i = pose.total_residue(); i <= end_i; ++i) {
-		if( pose.residue(i).is_polymer() ) {
+	for ( int i = 1, end_i = pose.total_residue(); i <= end_i; ++i ) {
+		if ( pose.residue(i).is_polymer() ) {
 			movemap->set_chi(i, true);
 		}
 	}
@@ -138,32 +139,32 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-	OPT(in::path::database);
-	OPT(in::file::extra_res_fa);
-	OPT(packing::unboundrot);
-	OPT(packing::ex1::ex1);
-	OPT(packing::ex1aro::ex1aro);
-	OPT(packing::ex2::ex2);
-	OPT(packing::extrachi_cutoff);
-	OPT(packing::no_optH);
-	OPT(packing::flip_HNQ);
-	OPT(docking::ligand::soft_rep);
-	OPT(docking::ligand::old_estat);
+		OPT(in::path::database);
+		OPT(in::file::extra_res_fa);
+		OPT(packing::unboundrot);
+		OPT(packing::ex1::ex1);
+		OPT(packing::ex1aro::ex1aro);
+		OPT(packing::ex2::ex2);
+		OPT(packing::extrachi_cutoff);
+		OPT(packing::no_optH);
+		OPT(packing::flip_HNQ);
+		OPT(docking::ligand::soft_rep);
+		OPT(docking::ligand::old_estat);
 
-	OPT(in::file::s);
-	OPT(out::nstruct);
-	OPT(out::path::pdb);
+		OPT(in::file::s);
+		OPT(out::nstruct);
+		OPT(out::path::pdb);
 
-	// Parses command line options and inits RNG.
-	// Need to do this before trying to check options.
-	// Doesn't seem to hurt to do it again if already done once (?)
-	devel::init(argc, argv);
-	protocols::jd2::register_options();
+		// Parses command line options and inits RNG.
+		// Need to do this before trying to check options.
+		// Doesn't seem to hurt to do it again if already done once (?)
+		devel::init(argc, argv);
+		protocols::jd2::register_options();
 
-	// Build overall docking protocol Mover
-	LigandRepackMinimizeProtocolOP dockingProtocol( new LigandRepackMinimizeProtocol() );
+		// Build overall docking protocol Mover
+		LigandRepackMinimizeProtocolOP dockingProtocol( new LigandRepackMinimizeProtocol() );
 
-	protocols::jd2::JobDistributor::get_instance()->go(dockingProtocol);
+		protocols::jd2::JobDistributor::get_instance()->go(dockingProtocol);
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

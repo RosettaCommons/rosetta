@@ -46,24 +46,24 @@ public:
 
 	using protocols::moves::Mover::apply;
 
-  void
+	void
 	apply( core::pose::Pose & pose, Size const res_to_delete_in_full_model_numbering );
 
-  void
-  apply( core::pose::Pose & pose, utility::vector1< Size > const & residues_to_delete_in_full_model_numbering );
+	void
+	apply( core::pose::Pose & pose, utility::vector1< Size > const & residues_to_delete_in_full_model_numbering );
 
 	/// @brief Apply the minimizer to one pose
 	virtual void apply( core::pose::Pose & pose_to_visualize );
 	virtual std::string get_name() const;
 
 	bool
-  decide_to_keep_pose( pose::Pose const & pose ) const;
+	decide_to_keep_pose( pose::Pose const & pose ) const;
 
-  void
-  remove_singletons_and_update_pose_focus( core::pose::Pose & pose,
-																					 core::pose::PoseOP sliced_out_pose_op,
-																					 bool & keep_remainder_pose,
-																					 bool & keep_sliced_out_pose ) const;
+	void
+	remove_singletons_and_update_pose_focus( core::pose::Pose & pose,
+		core::pose::PoseOP sliced_out_pose_op,
+		bool & keep_remainder_pose,
+		bool & keep_sliced_out_pose ) const;
 
 	void
 	wipe_out_moving_residues( core::pose::Pose & pose );

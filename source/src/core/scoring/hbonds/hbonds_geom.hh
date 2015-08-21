@@ -126,18 +126,18 @@ fade_energy(
 	Real & dE_dchi = DUMMY_DERIV
 ) {
 	Real const input_energy( energy );
-	if(input_energy > 0.1L){
+	if ( input_energy > 0.1L ) {
 		energy = 0;
-		if(&dE_dxH != &DUMMY_DERIV){
+		if ( &dE_dxH != &DUMMY_DERIV ) {
 			dE_dr  = 0;
 			dE_dxD = 0;
 			dE_dxH = 0;
 			dE_dBAH = 0;
 			dE_dchi = 0;
 		}
-	} else if (input_energy > -0.1L){
+	} else if ( input_energy > -0.1L ) {
 		energy = -0.025 + 0.5*energy - 2.5*energy*energy;
-		if(&dE_dxH != &DUMMY_DERIV){
+		if ( &dE_dxH != &DUMMY_DERIV ) {
 			dE_dr  *= 5*(0.1-input_energy);
 			dE_dxD *= 5*(0.1-input_energy);
 			dE_dxH *= 5*(0.1-input_energy);
@@ -243,7 +243,7 @@ bah_chi_compute_energy_sp2(
 	if ( BAH >= pi * 2/3 ) {
 		F = d/2 * cos(3 * PI_minus_BAH) + d/2 - 0.5;
 		G = d - 0.5;
-	} else if ( BAH >= pi * (2/3 - l)) {
+	} else if ( BAH >= pi * (2/3 - l) ) {
 		Real const outer_rise(cos(pi - (pi*2/3 -  BAH)/l));
 		F = m/2 * outer_rise + m/2 - 0.5;
 		G = (m - d)/2 * outer_rise + (m - d)/2 + d - 0.5;
@@ -254,12 +254,12 @@ bah_chi_compute_energy_sp2(
 
 	energy += acc_don_scale * ( H*F + (1-H)*G );
 
-	if(&dE_dchi != &DUMMY_DERIV){
+	if ( &dE_dchi != &DUMMY_DERIV ) {
 		Real const dH_dchi(-1 * sin(2*chi));
 		Real dF_dBAH(0), dG_dBAH(0);
 		if ( BAH >= pi * 2/3 ) {
 			dF_dBAH = 3 * d/2 * sin(3 * PI_minus_BAH);
-		} else if ( BAH >= pi * (2/3 - l)) {
+		} else if ( BAH >= pi * (2/3 - l) ) {
 			Real const d_outer_rise_dBAH( -1/l * sin(pi - (2*pi/3 - BAH)/l) );
 			dF_dBAH = m/2 * d_outer_rise_dBAH;
 			dG_dBAH = (m - d)/2 * d_outer_rise_dBAH;
@@ -286,7 +286,7 @@ bah_chi_compute_energy_sp3(
 	Real cos2ChiShifted = max_penalty * ( 1 + std::cos(chi)) / 2;
 	energy += acc_don_scale * cos2ChiShifted;
 
-	if(&dE_dBAH != &DUMMY_DERIV){
+	if ( &dE_dBAH != &DUMMY_DERIV ) {
 		dE_dchi = -1 * max_penalty * std::sin(chi)/2 * acc_don_scale;
 	}
 }

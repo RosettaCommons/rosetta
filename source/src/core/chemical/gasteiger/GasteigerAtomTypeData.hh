@@ -154,48 +154,48 @@ public:
 	//! @brief the usual constructor
 	GasteigerAtomTypeData
 	(
-			const std::string &NAME,
-			const ElementOP &ELEMENT_TYPE,
-			const HybridOrbitalType &HYBRIDIZATION,
-			const core::Size &HYBRID_ORBITALS_IN_SIGMA_BONDS,
-			const core::Size &HYBRID_ORBITALS_NONBINDING,
-			const std::set< AtomicOrbitalTypes > &PI_ORBITALS_IN_BONDS,
-			const std::set< AtomicOrbitalTypes > &ATOMIC_ORBITALS_NONBINDING,
-			const core::Real &SIGMA_VALENCE_STATE_IONIZATION_POTENTIAL,
-			const core::Real &SIGMA_VALENCE_STATE_ELECTRON_AFFINITY,
-			const core::Real &PI_VALENCE_STATE_IONIZATION_POTENTIAL,
-			const core::Real &PI_VALENCE_STATE_ELECTRON_AFFINITY,
-			const core::Real &LONE_PAIR_IONIZATION_POTENTIAL,
-			const core::Real &LONE_PAIR_ELECTRON_AFFINITY,
-			const core::Real &ATOMIC_POLARIZABILITY
+		const std::string &NAME,
+		const ElementOP &ELEMENT_TYPE,
+		const HybridOrbitalType &HYBRIDIZATION,
+		const core::Size &HYBRID_ORBITALS_IN_SIGMA_BONDS,
+		const core::Size &HYBRID_ORBITALS_NONBINDING,
+		const std::set< AtomicOrbitalTypes > &PI_ORBITALS_IN_BONDS,
+		const std::set< AtomicOrbitalTypes > &ATOMIC_ORBITALS_NONBINDING,
+		const core::Real &SIGMA_VALENCE_STATE_IONIZATION_POTENTIAL,
+		const core::Real &SIGMA_VALENCE_STATE_ELECTRON_AFFINITY,
+		const core::Real &PI_VALENCE_STATE_IONIZATION_POTENTIAL,
+		const core::Real &PI_VALENCE_STATE_ELECTRON_AFFINITY,
+		const core::Real &LONE_PAIR_IONIZATION_POTENTIAL,
+		const core::Real &LONE_PAIR_ELECTRON_AFFINITY,
+		const core::Real &ATOMIC_POLARIZABILITY
 	);
 
 	//! @brief the usual constructor, with element set.
 	GasteigerAtomTypeData
 	(
-			const std::string &NAME,
-			const std::string &ELEMENT,
-			const HybridOrbitalType &HYBRIDIZATION,
-			const core::Size &HYBRID_ORBITALS_IN_SIGMA_BONDS,
-			const core::Size &HYBRID_ORBITALS_NONBINDING,
-			const std::set< AtomicOrbitalTypes > &PI_ORBITALS_IN_BONDS,
-			const std::set< AtomicOrbitalTypes > &ATOMIC_ORBITALS_NONBINDING,
-			const core::Real &SIGMA_VALENCE_STATE_IONIZATION_POTENTIAL,
-			const core::Real &SIGMA_VALENCE_STATE_ELECTRON_AFFINITY,
-			const core::Real &PI_VALENCE_STATE_IONIZATION_POTENTIAL,
-			const core::Real &PI_VALENCE_STATE_ELECTRON_AFFINITY,
-			const core::Real &LONE_PAIR_IONIZATION_POTENTIAL,
-			const core::Real &LONE_PAIR_ELECTRON_AFFINITY,
-			const core::Real &ATOMIC_POLARIZABILITY,
-			ElementSetCOP ele_set
+		const std::string &NAME,
+		const std::string &ELEMENT,
+		const HybridOrbitalType &HYBRIDIZATION,
+		const core::Size &HYBRID_ORBITALS_IN_SIGMA_BONDS,
+		const core::Size &HYBRID_ORBITALS_NONBINDING,
+		const std::set< AtomicOrbitalTypes > &PI_ORBITALS_IN_BONDS,
+		const std::set< AtomicOrbitalTypes > &ATOMIC_ORBITALS_NONBINDING,
+		const core::Real &SIGMA_VALENCE_STATE_IONIZATION_POTENTIAL,
+		const core::Real &SIGMA_VALENCE_STATE_ELECTRON_AFFINITY,
+		const core::Real &PI_VALENCE_STATE_IONIZATION_POTENTIAL,
+		const core::Real &PI_VALENCE_STATE_ELECTRON_AFFINITY,
+		const core::Real &LONE_PAIR_IONIZATION_POTENTIAL,
+		const core::Real &LONE_PAIR_ELECTRON_AFFINITY,
+		const core::Real &ATOMIC_POLARIZABILITY,
+		ElementSetCOP ele_set
 	);
 
 	//! @brief constructor from just an element type and charge
 	GasteigerAtomTypeData
 	(
-			const std::string &NAME,
-			ElementOP ELEMENT_TYPE,
-			const short &CHARGE
+		const std::string &NAME,
+		ElementOP ELEMENT_TYPE,
+		const short &CHARGE
 	);
 
 
@@ -433,54 +433,54 @@ public:
 
 private:
 
-//////////
-// data //
-//////////
+	//////////
+	// data //
+	//////////
 
-std::string name_; //! name of the atom type
+	std::string name_; //! name of the atom type
 
-ElementCOP element_type_;                 //!< element type
+	ElementCOP element_type_;                 //!< element type
 
-HybridOrbitalType hybridization_;         //!< Unhybridized, SP, SP2, or SP3
+	HybridOrbitalType hybridization_;         //!< Unhybridized, SP, SP2, or SP3
 
-core::Size number_hybrid_orbitals_sigma_binding_; //!< hybrid orbitals that are binding
-core::Size number_hybrid_orbitals_nonbinding_;   //!< hybrid orbitals that are non binding with their electrons
-core::Size number_electrons_in_bonds_;           //!< Number of e- bonds (calculated)
-core::Size number_bonds_;                      //!< Number of bonds (calculated)
-core::Size max_e_contribution_to_pi_system_;       //!< Number of e- in pi system (calculated)
+	core::Size number_hybrid_orbitals_sigma_binding_; //!< hybrid orbitals that are binding
+	core::Size number_hybrid_orbitals_nonbinding_;   //!< hybrid orbitals that are non binding with their electrons
+	core::Size number_electrons_in_bonds_;           //!< Number of e- bonds (calculated)
+	core::Size number_bonds_;                      //!< Number of bonds (calculated)
+	core::Size max_e_contribution_to_pi_system_;       //!< Number of e- in pi system (calculated)
 
-std::set< AtomicOrbitalTypes > pi_orbitals_binding_; //!< pi orbitals involved in binding
+	std::set< AtomicOrbitalTypes > pi_orbitals_binding_; //!< pi orbitals involved in binding
 
-//! non hybridized non binding orbitals with their electrons
-std::set< AtomicOrbitalTypes > atomic_orbitals_nonbinding_;
+	//! non hybridized non binding orbitals with their electrons
+	std::set< AtomicOrbitalTypes > atomic_orbitals_nonbinding_;
 
-core::Real properties_[ int( NumberOfProperties)]; //!< real-valued properties
-core::Real orbital_e_neg_pos_; //!< orbital electronegativity associated with the charged state
+	core::Real properties_[ int( NumberOfProperties)]; //!< real-valued properties
+	core::Real orbital_e_neg_pos_; //!< orbital electronegativity associated with the charged state
 
-//! estimated stability of the atom type; only used to resolve clashes in atom types
-core::Real stability_metric_;
+	//! estimated stability of the atom type; only used to resolve clashes in atom types
+	core::Real stability_metric_;
 
-//! charge of atom type = difference between electrons in bonds and non-bonds minus valence electrons
-short charge_;
+	//! charge of atom type = difference between electrons in bonds and non-bonds minus valence electrons
+	short charge_;
 
-//! whether this atom is conjugated
-bool conjugated_;
+	//! whether this atom is conjugated
+	bool conjugated_;
 
 
-// inflection points are needed for the above charge equations for the rare cases that the charge can end up on
-// the other side of the quadratic polynomial curve, in which case charges run off towards infinity
-// To avoid this problem, if the desired charge falls below the inflection point of the above quadratic or linear
-// functions, we use the value at the inflection point
-core::Real sigma_charge_to_en_inflection_;         //!< Inflection point for sigma charge to inflection
-core::Real pi_charge_to_en_inflection_;            //!< Inflection point for pi charge to inflection
-core::Real sigma_charge_to_lone_pair_en_inflection_; //!< Inflection point for sigma charge to inflection
+	// inflection points are needed for the above charge equations for the rare cases that the charge can end up on
+	// the other side of the quadratic polynomial curve, in which case charges run off towards infinity
+	// To avoid this problem, if the desired charge falls below the inflection point of the above quadratic or linear
+	// functions, we use the value at the inflection point
+	core::Real sigma_charge_to_en_inflection_;         //!< Inflection point for sigma charge to inflection
+	core::Real pi_charge_to_en_inflection_;            //!< Inflection point for pi charge to inflection
+	core::Real sigma_charge_to_lone_pair_en_inflection_; //!< Inflection point for sigma charge to inflection
 
-bool is_gasteiger_type_; //!< Is the type a proper gasteiger type
-// before SmallMoleculeStandardizer is used on a molecule all atoms in it will not have a proper gasteiger type
-// after SmallMoleculeStandardizer is used, all atoms in it will have have a proper gasteiger atom type, provided
-// one exists
+	bool is_gasteiger_type_; //!< Is the type a proper gasteiger type
+	// before SmallMoleculeStandardizer is used on a molecule all atoms in it will not have a proper gasteiger type
+	// after SmallMoleculeStandardizer is used, all atoms in it will have have a proper gasteiger atom type, provided
+	// one exists
 
-PiContributionType pi_contribution_; //!< Contribution of this atom type to a pi-conjugated system
+	PiContributionType pi_contribution_; //!< Contribution of this atom type to a pi-conjugated system
 
 
 }; // class AtomTypeData

@@ -32,35 +32,35 @@ namespace modeler {
 namespace protein {
 
 
-	// This is used by create_alignment_id_map, but should be deprecated in favor of StepWisePoseAligner
- 	void
- 	setup_protein_backbone_atom_id_map( core::pose::Pose const & pose_1,
-																			core::pose::Pose const & pose_2,
-																			core::Size const base_res,
-																			core::id::AtomID_Map< core::id::AtomID > & atom_ID_map);
+// This is used by create_alignment_id_map, but should be deprecated in favor of StepWisePoseAligner
+void
+setup_protein_backbone_atom_id_map( core::pose::Pose const & pose_1,
+	core::pose::Pose const & pose_2,
+	core::Size const base_res,
+	core::id::AtomID_Map< core::id::AtomID > & atom_ID_map);
 
 // This is used by create_alignment_id_map, but should be deprecated in favor of StepWisePoseAligner
- 	void
- 	setup_protein_backbone_atom_id_map( core::pose::Pose const & pose_1,
-																			core::pose::Pose const & pose_2,
-																			core::Size const base_res,
-																			core::Size const base_res2,
-																			core::id::AtomID_Map< core::id::AtomID > & atom_ID_map);
+void
+setup_protein_backbone_atom_id_map( core::pose::Pose const & pose_1,
+	core::pose::Pose const & pose_2,
+	core::Size const base_res,
+	core::Size const base_res2,
+	core::id::AtomID_Map< core::id::AtomID > & atom_ID_map);
 
-	void
-	figure_out_protein_modeling_info( core::pose::Pose const & pose,
-																		core::Size const moving_res,
-																		utility::vector1< core::Size > & moving_res_list );
+void
+figure_out_protein_modeling_info( core::pose::Pose const & pose,
+	core::Size const moving_res,
+	utility::vector1< core::Size > & moving_res_list );
 
-	utility::vector1< core::Size >
-	get_bridge_res( core::pose::Pose const & pose,
-									utility::vector1< core::Size > const & moving_res_list /*working*/ );
+utility::vector1< core::Size >
+get_bridge_res( core::pose::Pose const & pose,
+	utility::vector1< core::Size > const & moving_res_list /*working*/ );
 
-	utility::vector1< core::Size >
-	just_protein( utility::vector1< core::Size > const & res_list, core::pose::Pose const & pose );
+utility::vector1< core::Size >
+just_protein( utility::vector1< core::Size > const & res_list, core::pose::Pose const & pose );
 
-	bool
-	contains_protein( core::pose::Pose const & pose );
+bool
+contains_protein( core::pose::Pose const & pose );
 
 } //protein
 } //modeler

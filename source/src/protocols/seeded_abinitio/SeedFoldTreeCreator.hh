@@ -6,28 +6,28 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-/// 
+///
 /// @author Eva-Maria Strauch (evas01@u.washington.edu), March 2011
 
-#ifndef INCLUDED_protocols_seeded_abinitio_SeedFoldTreeCreator_hh 
-#define INCLUDED_protocols_seeded_abinitio_SeedFoldTreeCreator_hh 
+#ifndef INCLUDED_protocols_seeded_abinitio_SeedFoldTreeCreator_hh
+#define INCLUDED_protocols_seeded_abinitio_SeedFoldTreeCreator_hh
 
 // Project headers
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
-	namespace seeded_abinitio{
-		
-		class SeedFoldTreeCreator : public moves::MoverCreator
-		{
-		public:
-			virtual moves::MoverOP create_mover() const;
-			virtual std::string keyname() const;
-			static  std::string mover_name();
-			
-		};
-		
-	}
+namespace seeded_abinitio {
+
+class SeedFoldTreeCreator : public moves::MoverCreator
+{
+public:
+	virtual moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
+	static  std::string mover_name();
+
+};
+
+}
 }
 
 #endif

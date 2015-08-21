@@ -35,8 +35,8 @@
 //Auto Headers
 #include <protocols/features/FeaturesReporter.fwd.hh>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class Report : public utility::pointer::ReferenceCount {
 

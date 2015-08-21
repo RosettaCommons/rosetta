@@ -117,16 +117,16 @@ public:
 		Vector & F2
 	) const;
 
-// 	virtual
-// 	void
-// 	eval_atom_derivative(
-// 		id::AtomID const & atom_id,
-// 		pose::Pose const & pose,
-// 		ScoreFunction const &,
-// 		EnergyMap const & weights,
-// 		Vector & F1,
-// 		Vector & F2
-// 	) const;
+	//  virtual
+	//  void
+	//  eval_atom_derivative(
+	//   id::AtomID const & atom_id,
+	//   pose::Pose const & pose,
+	//   ScoreFunction const &,
+	//   EnergyMap const & weights,
+	//   Vector & F1,
+	//   Vector & F2
+	//  ) const;
 
 	virtual
 	bool

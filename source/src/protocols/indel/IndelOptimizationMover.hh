@@ -27,32 +27,32 @@ namespace protocols {
 namespace indel {
 
 class IndelOptimizationMover : public moves::Mover {
-	
+
 public:
-	
+
 	//default ctor
 	IndelOptimizationMover( Size start_res, Size end_res, Size loop_length,
-			std::string remodel, std::string intermedrelax, std::string refine, std::string relax, bool frag_files, Size num_to_dock, bool dump_initial_results ):
-	Mover("IndelOptimizationMover"),
-	start_res_( start_res ),
-	end_res_( end_res ),
-	loop_length_( loop_length ),
-	remodel_( remodel ),
-	intermedrelax_( intermedrelax ),
-	refine_( refine ),
-	relax_( relax ),
-	frag_files_( frag_files ),
-	num_to_dock_( num_to_dock ),
-	dump_initial_results_( dump_initial_results )
+		std::string remodel, std::string intermedrelax, std::string refine, std::string relax, bool frag_files, Size num_to_dock, bool dump_initial_results ):
+		Mover("IndelOptimizationMover"),
+		start_res_( start_res ),
+		end_res_( end_res ),
+		loop_length_( loop_length ),
+		remodel_( remodel ),
+		intermedrelax_( intermedrelax ),
+		refine_( refine ),
+		relax_( relax ),
+		frag_files_( frag_files ),
+		num_to_dock_( num_to_dock ),
+		dump_initial_results_( dump_initial_results )
 	{}
-	
+
 	//default dtor
 	virtual ~IndelOptimizationMover(){}
-	
+
 	//methods
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const { return "IndelOptimizationMover"; }
-	
+
 	// getters
 	Size start_res() {
 		return start_res_;
@@ -84,7 +84,7 @@ public:
 	bool dump_initial_results() {
 		return dump_initial_results_;
 	}
-	
+
 	// setters
 	void start_res( Size i ) {
 		start_res_ = i;
@@ -116,9 +116,9 @@ public:
 	void dump_initial_results( bool i ) {
 		dump_initial_results_ = i;
 	}
-	
+
 private:
-	
+
 	Size start_res_;
 	Size end_res_;
 	Size loop_length_;
@@ -129,7 +129,7 @@ private:
 	bool frag_files_;
 	Size num_to_dock_;
 	bool dump_initial_results_;
-	
+
 };
 
 }

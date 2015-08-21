@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/screener/SugarInstantiator.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace stepwise {
 namespace screener {
-	
-	class SugarInstantiator;
-	typedef utility::pointer::shared_ptr< SugarInstantiator > SugarInstantiatorOP;
-	typedef utility::pointer::shared_ptr< SugarInstantiator const > SugarInstantiatorCOP;
-	
+
+class SugarInstantiator;
+typedef utility::pointer::shared_ptr< SugarInstantiator > SugarInstantiatorOP;
+typedef utility::pointer::shared_ptr< SugarInstantiator const > SugarInstantiatorCOP;
+
 } //screener
 } //stepwise
 } //protocols

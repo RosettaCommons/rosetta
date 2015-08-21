@@ -24,38 +24,38 @@ namespace pack {
 namespace task {
 namespace rna {
 
-	class RNA_ResidueLevelTask: public utility::pointer::ReferenceCount {
+class RNA_ResidueLevelTask: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//constructor
-		RNA_ResidueLevelTask();
+	//constructor
+	RNA_ResidueLevelTask();
 
-		//destructor
-		~RNA_ResidueLevelTask();
+	//destructor
+	~RNA_ResidueLevelTask();
 
-	public:
+public:
 
-		void set_sample_rna_chi( bool setting ){ sample_rna_chi_ = setting; }
-		bool sample_rna_chi() const { return sample_rna_chi_; }
+	void set_sample_rna_chi( bool setting ){ sample_rna_chi_ = setting; }
+	bool sample_rna_chi() const { return sample_rna_chi_; }
 
-		void set_sample_five_prime_phosphate( bool setting ){ sample_five_prime_phosphate_ = setting; }
-		bool sample_five_prime_phosphate() const { return sample_five_prime_phosphate_; }
+	void set_sample_five_prime_phosphate( bool setting ){ sample_five_prime_phosphate_ = setting; }
+	bool sample_five_prime_phosphate() const { return sample_five_prime_phosphate_; }
 
-		void set_sample_three_prime_phosphate( bool setting ){ sample_three_prime_phosphate_ = setting; }
-		bool sample_three_prime_phosphate() const { return sample_three_prime_phosphate_; }
+	void set_sample_three_prime_phosphate( bool setting ){ sample_three_prime_phosphate_ = setting; }
+	bool sample_three_prime_phosphate() const { return sample_three_prime_phosphate_; }
 
-		void set_allow_phosphate_virtualization( bool setting ){ allow_phosphate_virtualization_ = setting; }
-		bool allow_phosphate_virtualization() const { return allow_phosphate_virtualization_; }
+	void set_allow_phosphate_virtualization( bool setting ){ allow_phosphate_virtualization_ = setting; }
+	bool allow_phosphate_virtualization() const { return allow_phosphate_virtualization_; }
 
-	private:
+private:
 
-		bool sample_rna_chi_;
-		bool sample_five_prime_phosphate_;
-		bool sample_three_prime_phosphate_;
-		bool allow_phosphate_virtualization_;
+	bool sample_rna_chi_;
+	bool sample_five_prime_phosphate_;
+	bool sample_three_prime_phosphate_;
+	bool allow_phosphate_virtualization_;
 
-	};
+};
 
 } //rna
 } //task

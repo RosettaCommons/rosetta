@@ -472,8 +472,8 @@ MMTDriver::optimize_generation()
 	for ( core::Size ii = 1; ii <= n_workers_; ++ii ) nodes_still_working.insert( ii );
 
 	while ( ! nodes_still_working.empty() ||
-		this_gen_work_->unfinished_jobs_outstanding() ||
-		this_gen_work_->unassigned_jobs_remain() ) {
+			this_gen_work_->unfinished_jobs_outstanding() ||
+			this_gen_work_->unassigned_jobs_remain() ) {
 
 		// wait for a message
 		core::Size communicating_node = utility::receive_integer_from_anyone();
@@ -566,7 +566,7 @@ MMTDriver::send_state_info_to_node(
 	for ( std::list< std::pair< core::Size, std::string > >::const_iterator
 			npditer     = daf_->npd_variable_indices_for_state_begin( state_index ),
 			npditer_end = daf_->npd_variable_indices_for_state_end( state_index );
-			npditer != npditer_end; ++npditer) {
+			npditer != npditer_end; ++npditer ) {
 		utility::send_integer_to_node( node_index, npditer->first );
 		utility::send_string_to_node( node_index, npditer->second );
 	}
@@ -662,7 +662,7 @@ MMTDriver::instruct_receivers_to_drop_old_job_data_for_entity(
 
 	SavedJobsForSequence::iterator iter = top_jobs_archive_.find(sequence );
 	assert( iter != top_jobs_archive_.end() );
-	JobsForSequence const & jobs_for_seq = 	*iter->second;
+	JobsForSequence const & jobs_for_seq =  *iter->second;
 	for ( core::Size ii = 1; ii <= daf_->num_states(); ++ii ) {
 		core::Size ii_node = jobs_for_seq.job_record( ii ).node_run_on();
 		utility::send_integer_to_node( ii_node, old_result_can_be_discarded );

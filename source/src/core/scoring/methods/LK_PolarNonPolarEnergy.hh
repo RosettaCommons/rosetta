@@ -50,7 +50,7 @@ public:
 public:
 
 	LK_PolarNonPolarEnergy( etable::Etable const & etable_in,
-										 bool const analytic_etable_evaluation );
+		bool const analytic_etable_evaluation );
 
 	/// clone
 	virtual
@@ -60,85 +60,85 @@ public:
 	LK_PolarNonPolarEnergy( LK_PolarNonPolarEnergy const & src );
 
 	virtual
- 	void
+	void
 	setup_for_derivatives(
 		pose::Pose & pose,
 		ScoreFunction const & scfxn
 	) const;
 
-    virtual
-    void
-    setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
-    
-    virtual
-    void
-    setup_for_minimizing(
-        pose::Pose & pose,
-        ScoreFunction const & sfxn,
-        kinematics::MinimizerMapBase const & min_map
-    ) const;
-    
-    virtual
-    bool
-    defines_score_for_residue_pair(
-        conformation::Residue const & rsd1,
-        conformation::Residue const & rsd2,
-        bool res_moving_wrt_eachother
-    ) const;
-    
-    virtual
-    etable::count_pair::CountPairFunctionCOP
-    get_count_pair_function(
-        Size const res1,
-        Size const res2,
-        pose::Pose const & pose,
-        ScoreFunction const &
-    ) const;
-    
-    virtual
-    etable::count_pair::CountPairFunctionCOP
-    get_count_pair_function(
-        conformation::Residue const & rsd1,
-        conformation::Residue const & rsd2
-    ) const;
-    
-    virtual
-    etable::count_pair::CountPairFunctionCOP
-    get_intrares_countpair(
-        conformation::Residue const & rsd1,
-        pose::Pose const &,
-        ScoreFunction const &
-    ) const;
-    
-    virtual
-    bool
-    use_extended_residue_pair_energy_interface() const;
-    
-    virtual
-    void
-    setup_for_minimizing_for_residue_pair(
-        conformation::Residue const & rsd1,
-        conformation::Residue const & rsd2,
-        pose::Pose const & pose,
-        ScoreFunction const &,
-        kinematics::MinimizerMapBase const &,
-        ResSingleMinimizationData const &,
-        ResSingleMinimizationData const &,
-        ResPairMinimizationData & pair_data
-    ) const;
-    
-    virtual
-    void
-    residue_pair_energy_ext(
-        conformation::Residue const & rsd1,
-        conformation::Residue const & rsd2,
-        ResPairMinimizationData const & min_data,
-        pose::Pose const & pose,
-        ScoreFunction const & scorefxn,
-        EnergyMap & emap
-    ) const;
+	virtual
+	void
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
 
-    
+	virtual
+	void
+	setup_for_minimizing(
+		pose::Pose & pose,
+		ScoreFunction const & sfxn,
+		kinematics::MinimizerMapBase const & min_map
+	) const;
+
+	virtual
+	bool
+	defines_score_for_residue_pair(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		bool res_moving_wrt_eachother
+	) const;
+
+	virtual
+	etable::count_pair::CountPairFunctionCOP
+	get_count_pair_function(
+		Size const res1,
+		Size const res2,
+		pose::Pose const & pose,
+		ScoreFunction const &
+	) const;
+
+	virtual
+	etable::count_pair::CountPairFunctionCOP
+	get_count_pair_function(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2
+	) const;
+
+	virtual
+	etable::count_pair::CountPairFunctionCOP
+	get_intrares_countpair(
+		conformation::Residue const & rsd1,
+		pose::Pose const &,
+		ScoreFunction const &
+	) const;
+
+	virtual
+	bool
+	use_extended_residue_pair_energy_interface() const;
+
+	virtual
+	void
+	setup_for_minimizing_for_residue_pair(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		ScoreFunction const &,
+		kinematics::MinimizerMapBase const &,
+		ResSingleMinimizationData const &,
+		ResSingleMinimizationData const &,
+		ResPairMinimizationData & pair_data
+	) const;
+
+	virtual
+	void
+	residue_pair_energy_ext(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		ResPairMinimizationData const & min_data,
+		pose::Pose const & pose,
+		ScoreFunction const & scorefxn,
+		EnergyMap & emap
+	) const;
+
+
 	void
 	eval_atom_derivative_intra_RNA( //Called by eval_atom_derivative, specific case for RNA intra_res. Parin Sripakdeevong June 27, 2011.
 		id::AtomID const & atom_id,
@@ -152,8 +152,8 @@ public:
 
 	/// called during gradient-based minimization inside dfunc
 	/**
-		 F1 and F2 are not zeroed -- contributions from this atom are
-		 just summed in
+	F1 and F2 are not zeroed -- contributions from this atom are
+	just summed in
 	**/
 	virtual
 	void
@@ -227,31 +227,31 @@ private:
 
 	void
 	get_residue_pair_energy_one_way(
-		 conformation::Residue const & rsd1,
-		 conformation::Residue const & rsd2,
-		 pose::Pose const & pose,
-		 Real & lk_polar_score,
-		 Real & lk_nonpolar_score,
-		 Real & lk_costheta_score,
-		 bool const compute_polar,
-		 bool const compute_nonpolar
-	 ) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		Real & lk_polar_score,
+		Real & lk_nonpolar_score,
+		Real & lk_costheta_score,
+		bool const compute_polar,
+		bool const compute_nonpolar
+	) const;
 
 	Real
 	eval_lk(
-	conformation::Atom const & atom1,
-	conformation::Atom const & atom2,
-	Real & deriv,
-    bool const & eval_deriv
-    ) const;
-    
-    std::pair<Real,Real>
-    eval_lk_efficient(
-        conformation::Atom const & atom1,
-        conformation::Atom const & atom2,
-        Real & deriv,
-        bool const & eval_deriv
-    ) const;
+		conformation::Atom const & atom1,
+		conformation::Atom const & atom2,
+		Real & deriv,
+		bool const & eval_deriv
+	) const;
+
+	std::pair<Real,Real>
+	eval_lk_efficient(
+		conformation::Atom const & atom1,
+		conformation::Atom const & atom2,
+		Real & deriv,
+		bool const & eval_deriv
+	) const;
 
 	void
 	distribute_pseudo_base_atom_derivatives( pose::Pose const & pose ) const;
@@ -260,9 +260,9 @@ private:
 	core::Size version() const;
 
 
-/////////////////////////////////////////////////////////////////////////////
-// data
-/////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////
+	// data
+	/////////////////////////////////////////////////////////////////////////////
 private:
 
 	etable::EtableEvaluatorOP etable_evaluator_;

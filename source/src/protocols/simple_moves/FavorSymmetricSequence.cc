@@ -52,8 +52,8 @@ FavorSymmetricSequence::FavorSymmetricSequence(core::Size symmetric_units, core:
 }
 
 FavorSymmetricSequence::FavorSymmetricSequence(FavorSymmetricSequence const & src) : Mover(src),
-		symmetric_units_(src.symmetric_units_),
-		penalty_(src.penalty_)
+	symmetric_units_(src.symmetric_units_),
+	penalty_(src.penalty_)
 {
 
 }
@@ -67,15 +67,11 @@ void FavorSymmetricSequence::apply(core::pose::Pose & pose)
 {
 	//Probably a faster way of doing this but it doesn't really matter I don't think
 	core::Size residue_count = pose.n_residue();
-	for(core::Size rsd1_index = 1; rsd1_index <= residue_count; ++rsd1_index)
-	{
-		for(core::Size rsd2_index = rsd1_index; rsd2_index <= residue_count; ++rsd2_index)
-		{
-			if(rsd1_index % (residue_count/symmetric_units_) == rsd2_index % (residue_count/symmetric_units_) && rsd1_index != rsd2_index)
-			{
+	for ( core::Size rsd1_index = 1; rsd1_index <= residue_count; ++rsd1_index ) {
+		for ( core::Size rsd2_index = rsd1_index; rsd2_index <= residue_count; ++rsd2_index ) {
+			if ( rsd1_index % (residue_count/symmetric_units_) == rsd2_index % (residue_count/symmetric_units_) && rsd1_index != rsd2_index ) {
 				pose.add_constraint(core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::ResidueTypeLinkingConstraint(pose,rsd1_index,rsd2_index,penalty_) ) ));
-				if(TR.visible(basic::t_debug))
-				{
+				if ( TR.visible(basic::t_debug) ) {
 					TR.Debug << "Enforcing Sequence Symmetry between residues: " << rsd1_index << " and " << rsd2_index << std::endl;
 				}
 			}
@@ -89,26 +85,25 @@ std::string FavorSymmetricSequence::get_name() const
 }
 
 void FavorSymmetricSequence::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & ,
-		protocols::moves::Movers_map const & ,
-		core::pose::Pose const & )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & ,
+	protocols::moves::Movers_map const & ,
+	core::pose::Pose const & )
 {
-	if (! tag->hasOption("penalty")) throw utility::excn::EXCN_RosettaScriptsOption("'FavorSymmetricSequence' mover requires penalty tag");
-	if (! tag->hasOption("symmetric_units")) throw utility::excn::EXCN_RosettaScriptsOption("'FavorSymmetricSequence' mover requires symmetric_units tag");
+	if ( ! tag->hasOption("penalty") ) throw utility::excn::EXCN_RosettaScriptsOption("'FavorSymmetricSequence' mover requires penalty tag");
+	if ( ! tag->hasOption("symmetric_units") ) throw utility::excn::EXCN_RosettaScriptsOption("'FavorSymmetricSequence' mover requires symmetric_units tag");
 
 	penalty_ = tag->getOption<core::Real>("penalty");
 	symmetric_units_ = tag->getOption<core::Size>("symmetric_units");
 
-	if(symmetric_units_ < 2)
-	{
+	if ( symmetric_units_ < 2 ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("'FavorSymmetricSequence' symmetric_units tag should specify at least 2 symmetric units");
 	}
 
-	for( std::map< std::string, utility::pointer::ReferenceCountOP >::const_iterator it = (data)[ "scorefxns" ].begin(); it!=(data)[ "scorefxns" ].end(); ++it ){
+	for ( std::map< std::string, utility::pointer::ReferenceCountOP >::const_iterator it = (data)[ "scorefxns" ].begin(); it!=(data)[ "scorefxns" ].end(); ++it ) {
 		core::scoring::ScoreFunctionOP scorefxn( data.get_ptr< core::scoring::ScoreFunction >( "scorefxns", it->first ) );
-		if( scorefxn->get_weight( core::scoring::res_type_linking_constraint ) == 0.0 ){
+		if ( scorefxn->get_weight( core::scoring::res_type_linking_constraint ) == 0.0 ) {
 			scorefxn->set_weight( core::scoring::res_type_linking_constraint, 1.0 );
 			TR<<"Setting res_type_linking_constraint weight in scorefxn "<<it->first<<" to "<<1.0<<'\n';
 		}

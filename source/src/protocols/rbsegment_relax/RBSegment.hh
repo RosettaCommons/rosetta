@@ -22,7 +22,7 @@
 #include <iostream>
 
 #ifdef WIN32
-	#include <functional>
+#include <functional>
 #endif
 
 
@@ -86,12 +86,13 @@ public:
 	/// construct a simple RB Segment
 	RBSegment( int seg_begin, int seg_end, char type ) {
 		RBSegmentType seg_type;
-		if (type == 'H')
+		if ( type == 'H' ) {
 			seg_type = RB_HELIX;
-		else if (type == 'E' || type == 'S')
+		} else if ( type == 'E' || type == 'S' ) {
 			seg_type = RB_SHEET;
-		else
+		} else {
 			seg_type = RB_DEFAULT;
+		}
 		segments_.push_back( RBResidueRange( seg_begin, seg_end, seg_type ) );
 		sigAxisR_ = sigAxisT_ = sigOffAxisR_ = sigOffAxisT_ = 0.0;
 	}
@@ -137,8 +138,8 @@ private:
 class RB_lt : public std::binary_function<double, double, bool> {
 public:
 	bool operator()(RBSegment x, RBSegment y) {
-		if (x.isEmpty()) return true;
-		else if (y.isEmpty()) return false;
+		if ( x.isEmpty() ) return true;
+		else if ( y.isEmpty() ) return false;
 		else return (x[1].start() < y[1].start());
 	}
 };
@@ -151,7 +152,7 @@ void read_RBSegment_file(
 	protocols::loops::Loops &loops,
 	std::string filename,
 	bool autoGenerateLoops=false,
-    int nres=0, // only needed if  autoGenerateLoops==true
+	int nres=0, // only needed if  autoGenerateLoops==true
 	utility::vector1< core::Size > cutpts=utility::vector1< core::Size >(0) // only needed if  autoGenerateLoops==true
 );
 

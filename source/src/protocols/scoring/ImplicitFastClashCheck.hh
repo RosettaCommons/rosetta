@@ -79,14 +79,14 @@ public:
 
 	// bool
 	// clash_check(
-	// 	core::pose::Pose const & pose,
-	// 	core::Size refrsd
+	//  core::pose::Pose const & pose,
+	//  core::Size refrsd
 	// ) const;
 	//
 	// bool
 	// clash_check(
-	// 	core::kinematics::Stub const & stub,
-	// 	numeric::xyzVector<core::Real> pos
+	//  core::kinematics::Stub const & stub,
+	//  numeric::xyzVector<core::Real> pos
 	// ) const;
 	//
 	bool

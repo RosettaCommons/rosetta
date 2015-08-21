@@ -41,7 +41,7 @@ namespace silent {
 template <class T>
 class ProteinSilentStruct_Template : public SilentStruct {
 
-typedef SilentStruct Parent;
+	typedef SilentStruct Parent;
 
 public:
 	ProteinSilentStruct_Template(
@@ -79,11 +79,11 @@ public:
 		symminfo_->set_use_symmetry(false);
 	}
 
-//	ProteinSilentStruct_Template(
-//		core::pose::Pose const & pose,
-//		std::string tag = "empty_tag",
-//		bool fa = false
-//	);
+	// ProteinSilentStruct_Template(
+	//  core::pose::Pose const & pose,
+	//  std::string tag = "empty_tag",
+	//  bool fa = false
+	// );
 
 	/// @brief Returns a new ProteinSilentStruct with a copy of the information
 	/// in this ProteinSilentStruct.
@@ -227,7 +227,7 @@ public:
 
 	//lin Symmetry
 	// @lin - move these to the .cc file so you can only include SymmetryInfo.fwd.hh!
-	bool is_symmetric() const { return symminfo_->get_use_symmetry();	}
+	bool is_symmetric() const { return symminfo_->get_use_symmetry(); }
 
 	void symmetry_info( core::conformation::symmetry::SymmetryInfo & s ) {
 		symminfo_ = core::conformation::symmetry::SymmetryInfoOP( new core::conformation::symmetry::SymmetryInfo( s ) );

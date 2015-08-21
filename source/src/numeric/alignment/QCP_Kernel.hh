@@ -32,9 +32,9 @@ public:
 	/// \remarks
 	/// Removes center of mass from given coordinate array.
 	///
-	/// \param 	coords [In] Array containing coordinates.
+	/// \param  coords [In] Array containing coordinates.
 	///
-	/// \param 	number_of_atoms [In] Number of atoms of both conformations.
+	/// \param  number_of_atoms [In] Number of atoms of both conformations.
 	///
 	/// \author fordas@uw.edu
 	/// \date 10/10/2013
@@ -46,8 +46,7 @@ public:
 		center[1] = 0;
 		center[2] = 0;
 
-		for(int n = 0; n < number_of_atoms * 3; n += 3)
-		{
+		for ( int n = 0; n < number_of_atoms * 3; n += 3 ) {
 			center[0] += coordinates[n + 0];
 			center[1] += coordinates[n + 1];
 			center[2] += coordinates[n + 2];
@@ -57,8 +56,7 @@ public:
 		center[1] /= number_of_atoms;
 		center[2] /= number_of_atoms;
 
-		for(int n = 0; n < number_of_atoms * 3; n += 3)
-		{
+		for ( int n = 0; n < number_of_atoms * 3; n += 3 ) {
 			coordinates[n + 0] -= center[0];
 			coordinates[n + 1] -= center[1];
 			coordinates[n + 2] -= center[2];
@@ -71,13 +69,13 @@ public:
 	/// and "Rapid calculation of RMSDs using a quaternion-based characteristic polynomial."  Acta Crystallogr A 61(4):478-480
 	/// for more info).
 	///
-	/// \param 	A [In/Out] 3x3 matrix for the coordinate inner product.
+	/// \param  A [In/Out] 3x3 matrix for the coordinate inner product.
 	///
-	/// \param 	coords_a [In] Array containing centered coordinates.
+	/// \param  coords_a [In] Array containing centered coordinates.
 	///
-	/// \param 	coords_b [In] Array containing centered coordinates.
+	/// \param  coords_b [In] Array containing centered coordinates.
 	///
-	/// \param 	number_of_atoms [In] Number of atoms of both conformations.
+	/// \param  number_of_atoms [In] Number of atoms of both conformations.
 	///
 	/// \return The E0 parameter (upper bound for max Eigenvalue).
 	///
@@ -85,10 +83,10 @@ public:
 	/// \date 05/10/2012
 	///////////////////////////////////////////////////////////////
 	static Real inner_product(
-	  Real* A,
-	  Real* first_conformation_coords,
-	  Real* second_conformation_coords,
-	  int number_of_atoms
+		Real* A,
+		Real* first_conformation_coords,
+		Real* second_conformation_coords,
+		int number_of_atoms
 	)
 	{
 		Real x1, x2, y1, y2, z1, z2;
@@ -99,8 +97,7 @@ public:
 
 		int total_number_of_coordinates = 3* number_of_atoms;
 
-		for (i = 0; i < total_number_of_coordinates; i+=3)
-		{
+		for ( i = 0; i < total_number_of_coordinates; i+=3 ) {
 			x1 = first_conformation_coords[i];
 			y1 = first_conformation_coords[i+1];
 			z1 = first_conformation_coords[i+2];
@@ -131,15 +128,15 @@ public:
 
 	///////////////////////////////////////////////////////////////
 	/// \remarks
-	///	This function ports the second part of Douglas Theobald's QCP superposition method.
+	/// This function ports the second part of Douglas Theobald's QCP superposition method.
 	///
-	/// \param 	A [In] 3x3 coordinate inner product matrix, as computed via innerProduct.
+	/// \param  A [In] 3x3 coordinate inner product matrix, as computed via innerProduct.
 	///
-	/// \param 	E0 [In] Upper bound for the maximum eigenvalue.
+	/// \param  E0 [In] Upper bound for the maximum eigenvalue.
 	///
-	/// \param 	number_of_atoms [In] Number of atoms of conformations used to generate A and E0.
+	/// \param  number_of_atoms [In] Number of atoms of conformations used to generate A and E0.
 	//
-	/// \param 	rot_matrix [Out] 3x3 Output rotation matrix of superposition, if non-null.
+	/// \param  rot_matrix [Out] 3x3 Output rotation matrix of superposition, if non-null.
 	///
 	/// \return Rmsd between source conformations.
 	///
@@ -147,17 +144,17 @@ public:
 	/// \date 05/10/2012
 	///////////////////////////////////////////////////////////////
 	static Real calc_rmsd_Theobald_method(
-	  Real *A,
-	  Real E0,
-	  int number_of_atoms,
-	  Real* rot_matrix
+		Real *A,
+		Real E0,
+		int number_of_atoms,
+		Real* rot_matrix
 	)
 	{
 		Real Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz;
 		Real Szz2, Syy2, Sxx2, Sxy2, Syz2, Sxz2, Syx2, Szy2, Szx2,
-		     SyzSzymSyySzz2, Sxx2Syy2Szz2Syz2Szy2, Sxy2Sxz2Syx2Szx2,
-		     SxzpSzx, SyzpSzy, SxypSyx, SyzmSzy,
-		     SxzmSzx, SxymSyx, SxxpSyy, SxxmSyy;
+			SyzSzymSyySzz2, Sxx2Syy2Szz2Syz2Szy2, Sxy2Sxz2Syx2Szx2,
+			SxzpSzx, SyzpSzy, SxypSyx, SyzmSzy,
+			SxzmSzx, SxymSyx, SxxpSyy, SxxmSyy;
 		Real C[4];
 		Real mxEigenV;
 		Real b, a, delta, x2;
@@ -203,32 +200,31 @@ public:
 		Sxy2Sxz2Syx2Szx2 = Sxy2 + Sxz2 - Syx2 - Szx2;
 
 		C[0] = Sxy2Sxz2Syx2Szx2 * Sxy2Sxz2Syx2Szx2
-		       + (Sxx2Syy2Szz2Syz2Szy2 + SyzSzymSyySzz2) * (Sxx2Syy2Szz2Syz2Szy2 - SyzSzymSyySzz2)
-		       + (-(SxzpSzx)*(SyzmSzy)+(SxymSyx)*(SxxmSyy-Szz)) * (-(SxzmSzx)*(SyzpSzy)+(SxymSyx)*(SxxmSyy+Szz))
-		       + (-(SxzpSzx)*(SyzpSzy)-(SxypSyx)*(SxxpSyy-Szz)) * (-(SxzmSzx)*(SyzmSzy)-(SxypSyx)*(SxxpSyy+Szz))
-		       + (+(SxypSyx)*(SyzpSzy)+(SxzpSzx)*(SxxmSyy+Szz)) * (-(SxymSyx)*(SyzmSzy)+(SxzpSzx)*(SxxpSyy+Szz))
-		       + (+(SxypSyx)*(SyzmSzy)+(SxzmSzx)*(SxxmSyy-Szz)) * (-(SxymSyx)*(SyzpSzy)+(SxzmSzx)*(SxxpSyy-Szz));
+			+ (Sxx2Syy2Szz2Syz2Szy2 + SyzSzymSyySzz2) * (Sxx2Syy2Szz2Syz2Szy2 - SyzSzymSyySzz2)
+			+ (-(SxzpSzx)*(SyzmSzy)+(SxymSyx)*(SxxmSyy-Szz)) * (-(SxzmSzx)*(SyzpSzy)+(SxymSyx)*(SxxmSyy+Szz))
+			+ (-(SxzpSzx)*(SyzpSzy)-(SxypSyx)*(SxxpSyy-Szz)) * (-(SxzmSzx)*(SyzmSzy)-(SxypSyx)*(SxxpSyy+Szz))
+			+ (+(SxypSyx)*(SyzpSzy)+(SxzpSzx)*(SxxmSyy+Szz)) * (-(SxymSyx)*(SyzmSzy)+(SxzpSzx)*(SxxpSyy+Szz))
+			+ (+(SxypSyx)*(SyzmSzy)+(SxzmSzx)*(SxxmSyy-Szz)) * (-(SxymSyx)*(SyzpSzy)+(SxzmSzx)*(SxxpSyy-Szz));
 
 		mxEigenV = E0;
-		for (int i = 0; i < 50; ++i)
-		{
+		for ( int i = 0; i < 50; ++i ) {
 			oldg = mxEigenV;
 			x2 = mxEigenV*mxEigenV;
 			b = (x2 + C[2])*mxEigenV;
 			a = b + C[1];
 			delta = ((a*mxEigenV + C[0])/(2.0*x2*mxEigenV + b + a));
 			mxEigenV -= delta;
-			if (fabs(mxEigenV - oldg) < fabs(evalprec*mxEigenV))
+			if ( fabs(mxEigenV - oldg) < fabs(evalprec*mxEigenV) ) {
 				break;
+			}
 		}
 
-		if (rot_matrix != NULL )
-		{
+		if ( rot_matrix != NULL ) {
 			Real a11, a12, a13, a14, a21, a22, a23, a24,
-			     a31, a32, a33, a34, a41, a42, a43, a44;
+				a31, a32, a33, a34, a41, a42, a43, a44;
 
 			Real a3344_4334, a3244_4234, a3243_4233,
-			     a3143_4133, a3144_4134, a3142_4132;
+				a3143_4133, a3144_4134, a3142_4132;
 
 			Real q1, q2, q3, q4, normq;
 
@@ -267,16 +263,14 @@ public:
 
 			Real qsqr = q1 * q1 + q2 * q2 + q3 * q3 + q4 * q4;
 
-			if (qsqr < evecprec)
-			{
+			if ( qsqr < evecprec ) {
 				q1 =  a12*a3344_4334 - a13*a3244_4234 + a14*a3243_4233;
 				q2 = -a11*a3344_4334 + a13*a3144_4134 - a14*a3143_4133;
 				q3 =  a11*a3244_4234 - a12*a3144_4134 + a14*a3142_4132;
 				q4 = -a11*a3243_4233 + a12*a3143_4133 - a13*a3142_4132;
 				qsqr = q1*q1 + q2 *q2 + q3*q3+q4*q4;
 
-				if (qsqr < evecprec)
-				{
+				if ( qsqr < evecprec ) {
 					Real a1324_1423 = a13 * a24 - a14 * a23, a1224_1422 = a12 * a24 - a14 * a22;
 					Real a1223_1322 = a12 * a23 - a13 * a22, a1124_1421 = a11 * a24 - a14 * a21;
 					Real a1123_1321 = a11 * a23 - a13 * a21, a1122_1221 = a11 * a22 - a12 * a21;
@@ -287,16 +281,14 @@ public:
 					q4 = -a41 * a1223_1322 + a42 * a1123_1321 - a43 * a1122_1221;
 					qsqr = q1*q1 + q2 *q2 + q3*q3+q4*q4;
 
-					if (qsqr < evecprec)
-					{
+					if ( qsqr < evecprec ) {
 						q1 =  a32 * a1324_1423 - a33 * a1224_1422 + a34 * a1223_1322;
 						q2 = -a31 * a1324_1423 + a33 * a1124_1421 - a34 * a1123_1321;
 						q3 =  a31 * a1224_1422 - a32 * a1124_1421 + a34 * a1122_1221;
 						q4 = -a31 * a1223_1322 + a32 * a1123_1321 - a33 * a1122_1221;
 						qsqr = q1*q1 + q2 *q2 + q3*q3 + q4*q4;
 
-						if (qsqr < evecprec)
-						{
+						if ( qsqr < evecprec ) {
 							// if qsqr is still too small, return the identity matrix.
 							rot_matrix[0] = rot_matrix[4] = rot_matrix[8] = 1.0;
 							rot_matrix[1] = rot_matrix[2] = rot_matrix[3] = rot_matrix[5] = rot_matrix[6] = rot_matrix[7] = 0.0;
@@ -334,12 +326,9 @@ public:
 			rot_matrix[8] = a2 - x2 - y2 + z2;
 		}
 
-		if (utility::is_nan(mxEigenV))
-		{
+		if ( utility::is_nan(mxEigenV) ) {
 			return 0.0;
-		}
-		else
-		{
+		} else {
 			return sqrt(fabs(2.0 * (E0 - mxEigenV)/number_of_atoms));
 		}
 	}
@@ -348,13 +337,13 @@ public:
 	/// \remarks
 	/// Wrapping function for Douglas Theobald QCP superposition method to calculate the RMSD for two conformations.
 	///
-	/// \param 	first_conformation_coords [In] Array containing the coordinates of the reference conformation.
+	/// \param  first_conformation_coords [In] Array containing the coordinates of the reference conformation.
 	///
-	/// \param 	second_conformation_coords [In] Array containing the coordinates of the conformation to be measured.
+	/// \param  second_conformation_coords [In] Array containing the coordinates of the conformation to be measured.
 	///
-	/// \param 	number_of_atoms [In] Number of atoms of both conformations.
+	/// \param  number_of_atoms [In] Number of atoms of both conformations.
 	///
-	/// \param 	rot_matrix [Out] 3x3 Output rotation matrix of superposition, if non-null.
+	/// \param  rot_matrix [Out] 3x3 Output rotation matrix of superposition, if non-null.
 	///
 	/// \return The rmsd between both conformations.
 	///
@@ -362,10 +351,10 @@ public:
 	/// \date 05/10/2012
 	///////////////////////////////////////////////////////////////
 	static Real calc_coordinate_rmsd(
-	  Real* coords_a,
-	  Real* coords_b,
-	  int number_of_atoms,
-	  Real* rot_matrix)
+		Real* coords_a,
+		Real* coords_b,
+		int number_of_atoms,
+		Real* rot_matrix)
 	{
 		remove_center_of_mass(coords_a, number_of_atoms);
 		remove_center_of_mass(coords_b, number_of_atoms);
@@ -379,13 +368,13 @@ public:
 	/// \remarks
 	/// Wrapping function for Douglas Theobald QCP superposition method to calculate the RMSD for two conformations.
 	///
-	/// \param 	first_conformation_coords [In] Array containing the coordinates of the reference conformation.
+	/// \param  first_conformation_coords [In] Array containing the coordinates of the reference conformation.
 	///
-	/// \param 	second_conformation_coords [In] Array containing the coordinates of the conformation to be measured.
+	/// \param  second_conformation_coords [In] Array containing the coordinates of the conformation to be measured.
 	///
-	/// \param 	number_of_atoms [In] Number of atoms of both conformations.
+	/// \param  number_of_atoms [In] Number of atoms of both conformations.
 	///
-	/// \param 	rot_matrix [Out] 3x3 Output rotation matrix of superposition, if non-null.
+	/// \param  rot_matrix [Out] 3x3 Output rotation matrix of superposition, if non-null.
 	///
 	/// \return The rmsd between both conformations.
 	///
@@ -393,10 +382,10 @@ public:
 	/// \date 05/10/2012
 	///////////////////////////////////////////////////////////////
 	static Real calc_centered_coordinate_rmsd(
-	  Real* coords_a,
-	  Real* coords_b,
-	  int number_of_atoms,
-	  Real* rot_matrix)
+		Real* coords_a,
+		Real* coords_b,
+		int number_of_atoms,
+		Real* rot_matrix)
 	{
 		Real A[9];
 		Real E0 = inner_product(A, coords_a, coords_b, number_of_atoms);

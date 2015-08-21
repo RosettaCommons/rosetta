@@ -53,101 +53,101 @@ namespace monte_carlo {
 namespace mover {
 
 
-  //////////////////////////////////////////////////////////////////////////
-  //constructor!
-	AddOrDeleteMover::AddOrDeleteMover( AddMoverOP rna_add_mover,
-																			DeleteMoverOP rna_delete_mover,
-																			FromScratchMoverOP rna_from_scratch_mover ) :
-		rna_add_mover_( rna_add_mover ),
-		rna_delete_mover_( rna_delete_mover ),
-		rna_from_scratch_mover_( rna_from_scratch_mover ),
-		disallow_deletion_of_last_residue_( false ),
-		swa_move_selector_( StepWiseMoveSelectorOP( new StepWiseMoveSelector ) ),
-		choose_random_( true )
-	{}
+//////////////////////////////////////////////////////////////////////////
+//constructor!
+AddOrDeleteMover::AddOrDeleteMover( AddMoverOP rna_add_mover,
+	DeleteMoverOP rna_delete_mover,
+	FromScratchMoverOP rna_from_scratch_mover ) :
+	rna_add_mover_( rna_add_mover ),
+	rna_delete_mover_( rna_delete_mover ),
+	rna_from_scratch_mover_( rna_from_scratch_mover ),
+	disallow_deletion_of_last_residue_( false ),
+	swa_move_selector_( StepWiseMoveSelectorOP( new StepWiseMoveSelector ) ),
+	choose_random_( true )
+{}
 
-  //////////////////////////////////////////////////////////////////////////
-  //destructor
-  AddOrDeleteMover::~AddOrDeleteMover()
-  {}
+//////////////////////////////////////////////////////////////////////////
+//destructor
+AddOrDeleteMover::~AddOrDeleteMover()
+{}
 
-  void
-  AddOrDeleteMover::apply( core::pose::Pose & pose ){
-		std::string move_type = "";
-		apply( pose, move_type );
-	}
+void
+AddOrDeleteMover::apply( core::pose::Pose & pose ){
+	std::string move_type = "";
+	apply( pose, move_type );
+}
 
-	///////////////////////////////////////////////////////////////////////////////
-	void
-	AddOrDeleteMover::apply( core::pose::Pose & pose, StepWiseMove const & swa_move ){
-		TR << swa_move << std::endl;
-		runtime_assert( swa_move_selector_->just_simple_cycles( swa_move, pose, false /*verbose*/ ) );
-		TR.Debug << "Starting from: " << pose.annotated_sequence() << std::endl;
-		if ( swa_move.move_type() == DELETE ) {
-			rna_delete_mover_->apply( pose, swa_move.move_element() );
-		} else if ( swa_move.move_type() == FROM_SCRATCH ) {
-			rna_from_scratch_mover_->apply( pose, swa_move.move_element() );
+///////////////////////////////////////////////////////////////////////////////
+void
+AddOrDeleteMover::apply( core::pose::Pose & pose, StepWiseMove const & swa_move ){
+	TR << swa_move << std::endl;
+	runtime_assert( swa_move_selector_->just_simple_cycles( swa_move, pose, false /*verbose*/ ) );
+	TR.Debug << "Starting from: " << pose.annotated_sequence() << std::endl;
+	if ( swa_move.move_type() == DELETE ) {
+		rna_delete_mover_->apply( pose, swa_move.move_element() );
+	} else if ( swa_move.move_type() == FROM_SCRATCH ) {
+		rna_from_scratch_mover_->apply( pose, swa_move.move_element() );
+	} else {
+		if ( swa_move.move_type() == ADD_SUBMOTIF ) {
+			runtime_assert( submotif_library_ != 0 );
+			nonconst_full_model_info( pose ).add_other_pose(
+				submotif_library_->create_new_submotif( swa_move.move_element(), swa_move.submotif_tag() , pose ) );
 		} else {
-			if ( swa_move.move_type() == ADD_SUBMOTIF ) {
-				runtime_assert( submotif_library_ != 0 );
-				nonconst_full_model_info( pose ).add_other_pose(
-																												submotif_library_->create_new_submotif( swa_move.move_element(), swa_move.submotif_tag() , pose ) );
-			} else {
-				runtime_assert( swa_move.move_type() == ADD );
-			}
-			rna_add_mover_->apply( pose, swa_move );
+			runtime_assert( swa_move.move_type() == ADD );
 		}
-		TR.Debug << "Ended with: " << pose.annotated_sequence() << std::endl;
+		rna_add_mover_->apply( pose, swa_move );
 	}
+	TR.Debug << "Ended with: " << pose.annotated_sequence() << std::endl;
+}
 
-  //////////////////////////////////////////////////////////////////////////
-	// This may be deprecated soon since we are moving move selection out
-	// to StepWiseMasterMover.
-  //////////////////////////////////////////////////////////////////////////
-	bool
-  AddOrDeleteMover::apply( core::pose::Pose & pose, std::string & move_type_string /* just used by monte carlo*/ )
-	{
-		utility::vector1< Size > const moving_res_list = core::pose::full_model_info::get_moving_res_from_full_model_info( pose );
+//////////////////////////////////////////////////////////////////////////
+// This may be deprecated soon since we are moving move selection out
+// to StepWiseMasterMover.
+//////////////////////////////////////////////////////////////////////////
+bool
+AddOrDeleteMover::apply( core::pose::Pose & pose, std::string & move_type_string /* just used by monte carlo*/ )
+{
+	utility::vector1< Size > const moving_res_list = core::pose::full_model_info::get_moving_res_from_full_model_info( pose );
 
-		bool disallow_delete  = disallow_deletion_of_last_residue_ && ( moving_res_list.size() <= 1 );
-		if ( options_->skip_deletions() || 	options_->rebuild_bulge_mode() ) disallow_delete = true;
+	bool disallow_delete  = disallow_deletion_of_last_residue_ && ( moving_res_list.size() <= 1 );
+	if ( options_->skip_deletions() ||  options_->rebuild_bulge_mode() ) disallow_delete = true;
 
-		StepWiseMove swa_move;
-		swa_move_selector_->set_allow_delete( !disallow_delete );
-		swa_move_selector_->set_skip_bulge_frequency( options_->skip_bulge_frequency() );
-		swa_move_selector_->set_from_scratch_frequency( options_->from_scratch_frequency() );
-		swa_move_selector_->set_docking_frequency( options_->docking_frequency() );
-		swa_move_selector_->set_submotif_frequency( options_->submotif_frequency() );
-		swa_move_selector_->set_choose_random( choose_random_ );
-		swa_move_selector_->set_submotif_library( submotif_library_ );
+	StepWiseMove swa_move;
+	swa_move_selector_->set_allow_delete( !disallow_delete );
+	swa_move_selector_->set_skip_bulge_frequency( options_->skip_bulge_frequency() );
+	swa_move_selector_->set_from_scratch_frequency( options_->from_scratch_frequency() );
+	swa_move_selector_->set_docking_frequency( options_->docking_frequency() );
+	swa_move_selector_->set_submotif_frequency( options_->submotif_frequency() );
+	swa_move_selector_->set_choose_random( choose_random_ );
+	swa_move_selector_->set_submotif_library( submotif_library_ );
 
-		swa_move_selector_->get_add_or_delete_element( pose, swa_move );
+	swa_move_selector_->get_add_or_delete_element( pose, swa_move );
 
-		move_type_string = get_move_type_string( swa_move );
+	move_type_string = get_move_type_string( swa_move );
 
-		if ( swa_move.move_type() == NO_MOVE ) return false;
-		apply( pose, swa_move );
-		return true;
-	}
+	if ( swa_move.move_type() == NO_MOVE ) return false;
+	apply( pose, swa_move );
+	return true;
+}
 
-	///////////////////////////////////////////////////////////////////////////////
-	void
-	AddOrDeleteMover::set_minimize_single_res( bool const setting ){
-		rna_add_mover_->set_minimize_single_res( setting );
-		rna_delete_mover_->set_minimize_after_delete( !setting );
-	}
+///////////////////////////////////////////////////////////////////////////////
+void
+AddOrDeleteMover::set_minimize_single_res( bool const setting ){
+	rna_add_mover_->set_minimize_single_res( setting );
+	rna_delete_mover_->set_minimize_after_delete( !setting );
+}
 
-	///////////////////////////////////////////////////////////////////////////////
-	std::string
-	AddOrDeleteMover::get_name() const {
-		return "AddOrDeleteMover";
-	}
+///////////////////////////////////////////////////////////////////////////////
+std::string
+AddOrDeleteMover::get_name() const {
+	return "AddOrDeleteMover";
+}
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	AddOrDeleteMover::set_options( options::StepWiseMonteCarloOptionsCOP options ){
-		options_ = options;
-	}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+AddOrDeleteMover::set_options( options::StepWiseMonteCarloOptionsCOP options ){
+	options_ = options;
+}
 
 
 } //mover

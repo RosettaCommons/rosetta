@@ -91,7 +91,7 @@ NTrim::domain_action(
 	assert( tokens[ which_token ] == name() );
 	std::string trim = tokens[ ++which_token ];
 	Size ntrim = atoi(trim.c_str());
-  domain.set_trim_nterm( ntrim);
+	domain.set_trim_nterm( ntrim);
 	++which_token;
 }
 /////////////////////
@@ -142,14 +142,14 @@ parse_da_option_file( utility::vector1< DomainInfo > & domains, std::string file
 	using namespace std;
 	map< string, DomainAssemblyCommandOP > command_map = create_command_map();
 
-	//	T("DomainAssemblyReader") << "Reading da_option-file: " << filename << std::endl;
+	// T("DomainAssemblyReader") << "Reading da_option-file: " << filename << std::endl;
 	ifstream da_option_file( filename.c_str() );
 	//if ( ! da_option_file ) { Error() << "Domain Assembly reader could not find a file named" << filename << std::endl; utility_exit(); }
 
 	int lineno = 0;
 	while ( da_option_file ) {
-	  utility::vector1< std::string > tokens( core::pack::task::tokenize_line( da_option_file ));
-	  ++lineno;
+		utility::vector1< std::string > tokens( core::pack::task::tokenize_line( da_option_file ));
+		++lineno;
 		core::Size which_token = 1;
 		core::Size ntokens( tokens.size() );
 
@@ -158,14 +158,14 @@ parse_da_option_file( utility::vector1< DomainInfo > & domains, std::string file
 
 		if ( core::pack::task::comment_begin( tokens, which_token ) ) { continue; } // ignore the rest of this line
 		DomainInfo domain;
-	  while ( which_token <= ntokens ) {
+		while ( which_token <= ntokens ) {
 			DomainAssemblyCommandOP command = command_map[ tokens[ which_token ] ];
-	    if ( !command ) {
-	      Error() << "da_option_file ERROR: line: " << lineno << " command not found: " << tokens[ which_token ] << std::endl;
-	      utility_exit();
-	    }
+			if ( !command ) {
+				Error() << "da_option_file ERROR: line: " << lineno << " command not found: " << tokens[ which_token ] << std::endl;
+				utility_exit();
+			}
 			command->domain_action( tokens, which_token, domain );
-	  }
+		}
 		domains.push_back(domain);
 	}
 }

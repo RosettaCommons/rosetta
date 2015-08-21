@@ -56,13 +56,13 @@ operator <<( std::ostream & os, const Edge & e )
 		if ( e.start_atom().size() ) {
 			os << e.start_atom() << ' ' << e.stop_atom() << ' ';
 		} else {
-			//		os << " X X "; not-necessary with JEDGE tag //otherwise reading becomes difficult
+			//  os << " X X "; not-necessary with JEDGE tag //otherwise reading becomes difficult
 		}
 	}
 	if ( e.is_jump() && e.has_atom_info() ) {
 		if ( e.keep_stub_in_residue() ) {
 			os << " INTRA_RES_STUB ";
-		debug_assert( e.start_atom().size() );
+			debug_assert( e.start_atom().size() );
 		} else {
 			os << " END ";
 		}
@@ -96,13 +96,13 @@ operator >>( std::istream & is, Edge & e )
 	if ( e.stop_atom_ == "X" ) e.stop_atom_ = "";
 
 	// allow either both atoms set or both unset
-debug_assert( ( (e.start_atom_.size() && e.stop_atom_.size()) )
+	debug_assert( ( (e.start_atom_.size() && e.stop_atom_.size()) )
 		|| (( e.start_atom_.size() == 0) && (e.stop_atom_.size() ==0 )));
 
 	is >> tag;
 	e.bKeepStubInResidue_ = false;
 	if ( tag == "END" ) return is;
-debug_assert( tag == "INTRA_RES_STUB" ); //only allowed if also atoms are specified;
+	debug_assert( tag == "INTRA_RES_STUB" ); //only allowed if also atoms are specified;
 	e.bKeepStubInResidue_ = true;
 	return is;
 }
@@ -115,10 +115,10 @@ bool
 operator <( Edge const & a, Edge const & b )
 {
 	//return ( a.start() <  b.start() ||
-	//	a.start() == b.start() && a.stop() <  b.stop() ||
-	//	a.start() == b.start() && a.stop() == b.stop() && a.label() < b.label() ||
-	//	a.start() == b.start() && a.stop() == b.stop() && a.label() == b.label() && a.start_atom() < b.start_atom() ||
-	//	a.start() == b.start() && a.stop() == b.stop() && a.label() == b.label() && a.start_atom() == b.start_atom() && a.stop_atom() < b.stop_atom() );
+	// a.start() == b.start() && a.stop() <  b.stop() ||
+	// a.start() == b.start() && a.stop() == b.stop() && a.label() < b.label() ||
+	// a.start() == b.start() && a.stop() == b.stop() && a.label() == b.label() && a.start_atom() < b.start_atom() ||
+	// a.start() == b.start() && a.stop() == b.stop() && a.label() == b.label() && a.start_atom() == b.start_atom() && a.stop_atom() < b.stop_atom() );
 	//);
 	return ( a.start() == b.start() ? ( a.stop() == b.stop() ? ( a.label() == b.label() ?
 		( a.start_atom() == b.start_atom() ? a.stop_atom() < b.stop_atom() : a.start_atom() < b.start_atom() ) :

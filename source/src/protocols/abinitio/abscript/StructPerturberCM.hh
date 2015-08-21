@@ -18,7 +18,7 @@
 #include <protocols/environment/ClientMover.hh>
 
 #ifdef WIN32
-  #include <basic/datacache/WriteableCacheableMap.hh>
+#include <basic/datacache/WriteableCacheableMap.hh>
 #endif
 
 // Package headers
@@ -34,46 +34,46 @@ namespace abinitio {
 namespace abscript {
 
 class StructPerturberCM : public protocols::environment::ClientMover {
-  typedef ClientMover Parent;
-  typedef environment::claims::EnvClaims EnvClaims;
-	
+	typedef ClientMover Parent;
+	typedef environment::claims::EnvClaims EnvClaims;
+
 public:
 
-  StructPerturberCM();
+	StructPerturberCM();
 
-  StructPerturberCM( std::string const& label,
-                     core::Real magnitude );
+	StructPerturberCM( std::string const& label,
+		core::Real magnitude );
 
-  virtual ~StructPerturberCM() {};
+	virtual ~StructPerturberCM() {};
 
-  virtual EnvClaims yield_claims( core::pose::Pose const&,
-                                  basic::datacache::WriteableCacheableMapOP );
+	virtual EnvClaims yield_claims( core::pose::Pose const&,
+		basic::datacache::WriteableCacheableMapOP );
 
-  virtual std::string get_name() const;
+	virtual std::string get_name() const;
 
-  virtual void apply( core::pose::Pose& );
+	virtual void apply( core::pose::Pose& );
 
-  std::string const& label() const { return label_; }
+	std::string const& label() const { return label_; }
 
-  void label( std::string const& label ) { label_ = label; }
+	void label( std::string const& label ) { label_ = label; }
 
-  core::Real const& magnitude() const { return magnitude_; }
+	core::Real const& magnitude() const { return magnitude_; }
 
-  void magnitude( core::Real const& value ) { magnitude_ = value; }
+	void magnitude( core::Real const& value ) { magnitude_ = value; }
 
-  virtual void
-  parse_my_tag(utility::tag::TagCOP tag,
-               basic::datacache::DataMap & data,
-               protocols::filters::Filters_map const & filters,
-               protocols::moves::Movers_map const & movers,
-               core::pose::Pose const & pose );
+	virtual void
+	parse_my_tag(utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose );
 
-  virtual
-  moves::MoverOP clone() const;
+	virtual
+	moves::MoverOP clone() const;
 
 private:
-  core::Real magnitude_;
-  std::string label_;
+	core::Real magnitude_;
+	std::string label_;
 
 }; // end StructPerturberCM base class
 

@@ -56,7 +56,7 @@ public:
 	/// @brief prints a detailed explanation how a fragment score has been computed
 	/// @details besides extensive output, the method should return the same result as score()
 	bool describe_score(FragmentCandidateOP f, FragmentScoreMapOP empty_map,
-			std::ostream& out);
+		std::ostream& out);
 
 	std::string & get_prediction_name() { return prediction_name_; }
 
@@ -85,7 +85,7 @@ public:
 	}
 
 	FragmentScoringMethodOP make(Size priority, Real lowest_acceptable_value, bool use_lowest,
-			FragmentPickerOP picker, std::string prediction_id ) {
+		FragmentPickerOP picker, std::string prediction_id ) {
 
 		if ( prediction_id == "" ) {
 			core::fragment::SecondaryStructureOP default_ss( new core::fragment::SecondaryStructure );
@@ -95,7 +95,7 @@ public:
 				default_ss->set_fractions(i, 0.333, 0.333, 0.334);
 			}
 
-			//			std::cout << "CO_PREDICTION_ID " << prediction_id << std::endl;
+			//   std::cout << "CO_PREDICTION_ID " << prediction_id << std::endl;
 			std::string default_prediction_name("uniform_default");
 			return (FragmentScoringMethodOP) FragmentScoringMethodOP( new RamaScore(priority,
 				lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), default_ss,default_prediction_name) );
@@ -103,7 +103,7 @@ public:
 
 			//std::cout << "PREDICTION_ID " << prediction_id << std::endl;
 			core::fragment::SecondaryStructureOP query_prediction( picker->get_query_ss(prediction_id) );
-			if( ! query_prediction ) {
+			if ( ! query_prediction ) {
 				utility_exit_with_message( "Unable to find secondary structure prediction for " + prediction_id );
 			}
 			return (FragmentScoringMethodOP) FragmentScoringMethodOP( new RamaScore(priority,

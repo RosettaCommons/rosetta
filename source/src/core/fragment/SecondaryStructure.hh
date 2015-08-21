@@ -65,7 +65,7 @@ public:
 
 	/// @brief c'stor compute fractions from fragments
 	SecondaryStructure(core::fragment::FragSet const& frags, core::Size nres =
-			0, bool bJustCenterResidue = false) :
+		0, bool bJustCenterResidue = false) :
 		total_residue_(nres) {
 		compute_fractions(frags, bJustCenterResidue);
 	}
@@ -108,7 +108,7 @@ public:
 		runtime_assert( pos <= total_residue_ );
 
 		core::Real s = helix_fraction + loop_fraction + sheet_fraction;
-		if (s != 1.0) {
+		if ( s != 1.0 ) {
 			sheet_fraction = sheet_fraction / s;
 			loop_fraction = loop_fraction / s;
 		}
@@ -130,7 +130,7 @@ public:
 
 	/// @brief returns regions (in loop-class format) that belong to contiguous pieces of ss-structure
 	//loops::Loops compute_ss_regions(
-	//	core::Real max_loop_frac = 0.3, core::Size min_length = 2
+	// core::Real max_loop_frac = 0.3, core::Size min_length = 2
 	//) const;
 
 	/// @brief number of residues for which information is available
@@ -167,7 +167,7 @@ public:
 
 private:
 	void compute_fractions(core::fragment::FragSet const&,
-			bool bJustCenterResidue);
+		bool bJustCenterResidue);
 
 	/// @brief store loop/strand fractions
 	ObjexxFCL::FArray1D_float loop_fraction_;
@@ -183,7 +183,7 @@ private:
 
 /// @brief output operator
 inline std::ostream & operator <<(std::ostream & os,
-		SecondaryStructure const & t) {
+	SecondaryStructure const & t) {
 	t.show(os);
 	return os;
 }

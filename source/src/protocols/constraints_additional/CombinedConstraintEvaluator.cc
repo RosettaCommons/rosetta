@@ -51,7 +51,7 @@ using namespace constraints;
 
 
 CombinedConstraintEvaluator::CombinedConstraintEvaluator( std::string tag, std::string file_name, Size combine_ratio, Size repeat )
-	: name_( tag )
+: name_( tag )
 {
 	for ( Size i = 1; i <= repeat; ++i ) {
 		cst_lib_.push_back( ConstraintEvaluator( tag, file_name ) );

@@ -54,29 +54,29 @@ public:
 		core::Size which_kin = 1 // multiple kineamges can be put in a single kinemage file.
 	) const;
 
-//	void master(    std::string const & setting );
-//	void dominant(                 bool setting );
-//	void animate(                  bool setting );
-//	void group(                    bool setting );
-//	void write_virtual_atoms(      bool setting );
-//
-//	/// @brief Calling this function with the setting "true", turns on polar, apolar, and backbone hydrogen writing.
-//	/// Calling this function with the setting "false", turns off polar, apolar, and backbone hydrogen writing.
-//	void write_hydrogens(          bool setting );
-//
-//	void write_apolar_hydrogens(   bool setting );
-//	void write_polar_hydrogens(    bool setting );
-//	void write_backbone_hydrogens( bool setting );
+	// void master(    std::string const & setting );
+	// void dominant(                 bool setting );
+	// void animate(                  bool setting );
+	// void group(                    bool setting );
+	// void write_virtual_atoms(      bool setting );
+	//
+	// /// @brief Calling this function with the setting "true", turns on polar, apolar, and backbone hydrogen writing.
+	// /// Calling this function with the setting "false", turns off polar, apolar, and backbone hydrogen writing.
+	// void write_hydrogens(          bool setting );
+	//
+	// void write_apolar_hydrogens(   bool setting );
+	// void write_polar_hydrogens(    bool setting );
+	// void write_backbone_hydrogens( bool setting );
 
 private:
-//	std::string master_;
-//	bool dominant_;
-//	bool animate_;
-//	bool group_; // false for subgroup
-//	bool write_apolar_hydrogens_;
-//	bool write_polar_hydrogens_;
-//	bool write_backbone_hydrogens_;
-//	bool write_virtual_atoms_;
+	// std::string master_;
+	// bool dominant_;
+	// bool animate_;
+	// bool group_; // false for subgroup
+	// bool write_apolar_hydrogens_;
+	// bool write_polar_hydrogens_;
+	// bool write_backbone_hydrogens_;
+	// bool write_virtual_atoms_;
 };
 
 

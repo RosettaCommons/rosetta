@@ -52,20 +52,18 @@ void ResFilterComposition::parse_tag(TagCOP tag)
 {
 	parse_sub_filters_tag(tag);
 
-	if (sub_filters_.size() == 0)
-	{
+	if ( sub_filters_.size() == 0 ) {
 		TR.Debug << "ResFilterComposition without sub-filters defined: " << *tag << std::endl;
 	}
 }
 
 void ResFilterComposition::parse_sub_filters_tag(TagCOP tag)
 {
-  utility::vector0< TagCOP > const & subtags( tag->getTags() );
+	utility::vector0< TagCOP > const & subtags( tag->getTags() );
 
-  for (utility::vector0< TagCOP >::const_iterator subtag( subtags.begin() ), end( subtags.end() );
+	for ( utility::vector0< TagCOP >::const_iterator subtag( subtags.begin() ), end( subtags.end() );
 			subtag != end;
-			++subtag )
-	{
+			++subtag ) {
 		std::string const type( (*subtag)->getName() );
 
 		ResFilterFactory * res_filter_factory = ResFilterFactory::get_instance();
@@ -91,10 +89,8 @@ ResFilterOP AnyResFilter::clone() const { return ResFilterOP( new AnyResFilter( 
 
 bool AnyResFilter::operator() ( Pose const & pose, Size index ) const
 {
-	for (core::Size i = 1; i <= sub_filters_.size(); ++i)
-	{
-		if((*(sub_filters_[i]))(pose, index))
-		{
+	for ( core::Size i = 1; i <= sub_filters_.size(); ++i ) {
+		if ( (*(sub_filters_[i]))(pose, index) ) {
 			return true;
 		}
 	}
@@ -119,10 +115,8 @@ ResFilterOP AllResFilter::clone() const { return ResFilterOP( new AllResFilter( 
 
 bool AllResFilter::operator() ( Pose const & pose, Size index ) const
 {
-	for (core::Size i = 1; i <= sub_filters_.size(); ++i)
-	{
-		if(!(*(sub_filters_[i]))(pose, index))
-		{
+	for ( core::Size i = 1; i <= sub_filters_.size(); ++i ) {
+		if ( !(*(sub_filters_[i]))(pose, index) ) {
 			return false;
 		}
 	}
@@ -147,10 +141,8 @@ ResFilterOP NoResFilter::clone() const { return ResFilterOP( new NoResFilter( *t
 
 bool NoResFilter::operator() ( Pose const & pose, Size index ) const
 {
-	for (core::Size i = 1; i <= sub_filters_.size(); ++i)
-	{
-		if((*(sub_filters_[i]))(pose, index))
-		{
+	for ( core::Size i = 1; i <= sub_filters_.size(); ++i ) {
+		if ( (*(sub_filters_[i]))(pose, index) ) {
 			return false;
 		}
 	}
@@ -159,7 +151,7 @@ bool NoResFilter::operator() ( Pose const & pose, Size index ) const
 }
 
 ResFilterOP NoResFilterCreator::create_res_filter() const
-	{
+{
 	return ResFilterOP( new NoResFilter() );
 }
 
@@ -181,9 +173,9 @@ bool ResidueTypeFilter::operator() ( Pose const & pose, Size index ) const
 	core::conformation::Residue const & residue = pose.residue(index);
 
 	return  (polar_ && residue.is_polar()) ||
-					(apolar_ && residue.is_apolar()) ||
-					(aromatic_ && residue.is_aromatic()) ||
-					(charged_ && residue.is_charged());
+		(apolar_ && residue.is_apolar()) ||
+		(aromatic_ && residue.is_aromatic()) ||
+		(charged_ && residue.is_charged());
 }
 
 void ResidueTypeFilter::parse_tag( TagCOP tag )
@@ -195,19 +187,19 @@ void ResidueTypeFilter::parse_tag( TagCOP tag )
 }
 
 ResFilterOP ResidueTypeFilterCreator::create_res_filter() const
-	{
+{
 	return ResFilterOP( new ResidueTypeFilter() );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // begin ResidueHasProperty
 ResidueHasProperty::ResidueHasProperty()
-	: parent()
+: parent()
 {}
 
 ResidueHasProperty::ResidueHasProperty( std::string const & str )
-	: parent(),
-		property_( str )
+: parent(),
+	property_( str )
 {}
 
 bool ResidueHasProperty::operator() ( Pose const & pose, Size index ) const
@@ -230,21 +222,21 @@ void ResidueHasProperty::parse_tag( TagCOP tag )
 
 // begin ResidueLacksProperty
 ResidueLacksProperty::ResidueLacksProperty()
-  : parent()
+: parent()
 {}
 
 ResidueLacksProperty::ResidueLacksProperty( std::string const & str )
-  : parent( str )
+: parent( str )
 {}
 
 bool ResidueLacksProperty::operator() ( Pose const & pose, Size index ) const
 {
-  return ( ! parent::operator()( pose, index ) );
+	return ( ! parent::operator()( pose, index ) );
 }
 
 ResFilterOP
 ResidueLacksPropertyCreator::create_res_filter() const {
-  return ResFilterOP( new ResidueLacksProperty );
+	return ResFilterOP( new ResidueLacksProperty );
 }
 
 ResFilterOP ResidueLacksProperty::clone() const { return ResFilterOP( new ResidueLacksProperty( *this ) ); }
@@ -252,50 +244,50 @@ ResFilterOP ResidueLacksProperty::clone() const { return ResFilterOP( new Residu
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //begin ResiduePDBInfoHasLabel
 ResiduePDBInfoHasLabel::ResiduePDBInfoHasLabel()
-  : parent()
+: parent()
 {}
 
 ResiduePDBInfoHasLabel::ResiduePDBInfoHasLabel( std::string const & str )
-  : parent(),
-    property_( str )
+: parent(),
+	property_( str )
 {}
 
 bool ResiduePDBInfoHasLabel::operator() ( Pose const & pose, Size index ) const
 {
-  runtime_assert( index > 0 && index <= pose.total_residue() );
-  return pose.pdb_info()->res_haslabel( index, property_ );
+	runtime_assert( index > 0 && index <= pose.total_residue() );
+	return pose.pdb_info()->res_haslabel( index, property_ );
 }
 
 ResFilterOP
 ResiduePDBInfoHasLabelCreator::create_res_filter() const {
-  return ResFilterOP( new ResiduePDBInfoHasLabel );
+	return ResFilterOP( new ResiduePDBInfoHasLabel );
 }
 
 ResFilterOP ResiduePDBInfoHasLabel::clone() const { return ResFilterOP( new ResiduePDBInfoHasLabel( *this ) ); }
 
 void ResiduePDBInfoHasLabel::parse_tag( TagCOP tag )
 {
-  if ( tag->hasOption("property") ) property_ = tag->getOption<std::string>("property");
+	if ( tag->hasOption("property") ) property_ = tag->getOption<std::string>("property");
 }
 //end ResiduePDBInfoHasLabel
 
 //begin ResiduePDBInfoLacksLabel
 ResiduePDBInfoLacksLabel::ResiduePDBInfoLacksLabel()
-  : parent()
+: parent()
 {}
 
 ResiduePDBInfoLacksLabel::ResiduePDBInfoLacksLabel( std::string const & str )
-  : parent( str )
+: parent( str )
 {}
 
 bool ResiduePDBInfoLacksLabel::operator() ( Pose const & pose, Size index ) const
 {
-  return ( ! parent::operator()( pose, index ) );
+	return ( ! parent::operator()( pose, index ) );
 }
 
 ResFilterOP
 ResiduePDBInfoLacksLabelCreator::create_res_filter() const {
-  return ResFilterOP( new ResiduePDBInfoLacksLabel );
+	return ResFilterOP( new ResiduePDBInfoLacksLabel );
 }
 
 ResFilterOP ResiduePDBInfoLacksLabel::clone() const { return ResFilterOP( new ResiduePDBInfoLacksLabel( *this ) ); }
@@ -304,20 +296,20 @@ ResFilterOP ResiduePDBInfoLacksLabel::clone() const { return ResFilterOP( new Re
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // begin ResidueName3Is
 ResidueName3Is::ResidueName3Is()
-	: parent(),
-	  name3_set()
+: parent(),
+	name3_set()
 {}
 
 ResidueName3Is::ResidueName3Is( std::string const & str )
-	: parent(),
-		name3_set()
+: parent(),
+	name3_set()
 {
 	name3_set.insert(str);
 }
 
 ResidueName3Is::ResidueName3Is( std::set<std::string> const & strs )
-	: parent(),
-		name3_set(strs)
+: parent(),
+	name3_set(strs)
 {}
 
 bool ResidueName3Is::operator() ( Pose const & pose, Size index ) const
@@ -335,8 +327,7 @@ ResFilterOP ResidueName3Is::clone() const { return ResFilterOP( new ResidueName3
 
 void ResidueName3Is::parse_tag( TagCOP tag )
 {
-	if ( tag->hasOption("name3") )
-	{
+	if ( tag->hasOption("name3") ) {
 		utility::vector1<std::string> names = utility::string_split(tag->getOption<std::string>("name3"), ',');
 		name3_set.insert(names.begin(), names.end());
 	}
@@ -344,15 +335,15 @@ void ResidueName3Is::parse_tag( TagCOP tag )
 
 // begin ResidueName3Isnt
 ResidueName3Isnt::ResidueName3Isnt()
-	: parent()
+: parent()
 {}
 
 ResidueName3Isnt::ResidueName3Isnt( std::string const & str )
-	: parent( str )
+: parent( str )
 {}
 
 ResidueName3Isnt::ResidueName3Isnt( std::set<std::string> const & strs )
-	: parent( strs )
+: parent( strs )
 {}
 
 bool ResidueName3Isnt::operator() ( Pose const & pose, Size index ) const
@@ -370,18 +361,18 @@ ResFilterOP ResidueName3Isnt::clone() const { return ResFilterOP( new ResidueNam
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // begin ResidueIndexIs
 ResidueIndexIs::ResidueIndexIs()
-	: parent()
+: parent()
 {}
 
 ResidueIndexIs::ResidueIndexIs( Size index )
-	: parent()
+: parent()
 {
 	indices_.push_back( index );
 }
 
 ResidueIndexIs::ResidueIndexIs( utility::vector1< Size > const & indices )
-	: parent(),
-		indices_( indices )
+: parent(),
+	indices_( indices )
 {}
 
 utility::vector1< Size > const &
@@ -407,7 +398,7 @@ void ResidueIndexIs::parse_tag( TagCOP tag )
 		std::string field( tag->getOption<std::string>("indices") );
 		utility::vector1< std::string > values( utility::string_split( field, ',' ) );
 		for ( utility::vector1< std::string >::const_iterator it( values.begin() ),
-			end( values.end() ); it != end; ++it ) {
+				end( values.end() ); it != end; ++it ) {
 			std::istringstream ss( *it );
 			Size index;
 			ss >> index;
@@ -417,7 +408,7 @@ void ResidueIndexIs::parse_tag( TagCOP tag )
 
 	TR << "ResidueIndex with indices:";
 	for ( utility::vector1< Size >::const_iterator it( indices_.begin() ), end( indices_.end() );
-		it != end; ++it ) {
+			it != end; ++it ) {
 		TR << " " << *it;
 	}
 	TR << std::endl;
@@ -426,15 +417,15 @@ void ResidueIndexIs::parse_tag( TagCOP tag )
 
 // begin ResidueIndexIsnt
 ResidueIndexIsnt::ResidueIndexIsnt()
-	: parent()
+: parent()
 {}
 
 ResidueIndexIsnt::ResidueIndexIsnt( Size index )
-	: parent( index )
+: parent( index )
 {}
 
 ResidueIndexIsnt::ResidueIndexIsnt( utility::vector1< Size > const & indices )
-	: parent( indices )
+: parent( indices )
 {}
 
 bool ResidueIndexIsnt::operator() ( Pose const & pose, Size index ) const
@@ -452,18 +443,18 @@ ResFilterOP ResidueIndexIsnt::clone() const { return ResFilterOP( new ResidueInd
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // ResiduePDBIndexIs
 ResiduePDBIndexIs::ResiduePDBIndexIs()
-	: parent()
+: parent()
 {}
 
 ResiduePDBIndexIs::ResiduePDBIndexIs( char chain, int pos )
-	: parent()
+: parent()
 {
 	indices_.push_back( ChainPos(chain,pos) );
 }
 
 ResiduePDBIndexIs::ResiduePDBIndexIs( utility::vector1< ChainPos > const & indices )
-	: parent(),
-		indices_( indices )
+: parent(),
+	indices_( indices )
 {}
 
 utility::vector1< ResiduePDBIndexIs::ChainPos > const &
@@ -495,7 +486,7 @@ void ResiduePDBIndexIs::parse_tag( TagCOP tag )
 		// split option value by comma
 		utility::vector1< std::string > values( utility::string_split( field, ',' ) );
 		for ( utility::vector1< std::string >::const_iterator it( values.begin() ),
-			end( values.end() ); it != end; ++it ) {
+				end( values.end() ); it != end; ++it ) {
 			// split pdb chain.pos token by '.'
 			utility::vector1< std::string > chainposstr( utility::string_split( *it, '.' ) );
 			if ( chainposstr.size() != 2 ) utility_exit_with_message("can't parse pdb index " + *it);
@@ -509,7 +500,7 @@ void ResiduePDBIndexIs::parse_tag( TagCOP tag )
 
 	TR << "ResiduePDBIndex with indices:";
 	for ( utility::vector1< ChainPos >::const_iterator it( indices_.begin() ), end( indices_.end() );
-		it != end; ++it ) {
+			it != end; ++it ) {
 		TR << " " << it->chain_ << '.' << it->pos_;
 	}
 	TR << std::endl;
@@ -518,15 +509,15 @@ void ResiduePDBIndexIs::parse_tag( TagCOP tag )
 
 // ResiduePDBIndexIsnt
 ResiduePDBIndexIsnt::ResiduePDBIndexIsnt()
-	: parent()
+: parent()
 {}
 
 ResiduePDBIndexIsnt::ResiduePDBIndexIsnt( char chain, int pos )
-	: parent( chain, pos )
+: parent( chain, pos )
 {}
 
 ResiduePDBIndexIsnt::ResiduePDBIndexIsnt( utility::vector1< ChainPos > const & indices )
-	: parent( indices )
+: parent( indices )
 {}
 
 bool ResiduePDBIndexIsnt::operator() ( Pose const & pose, Size index ) const
@@ -544,12 +535,12 @@ ResFilterOP ResiduePDBIndexIsnt::clone() const { return ResFilterOP( new Residue
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // ChainIs
 ChainIs::ChainIs()
-	: parent()
+: parent()
 {}
 
 ChainIs::ChainIs( char const & chain )
-	: parent(),
-		chain_( chain )
+: parent(),
+	chain_( chain )
 {}
 
 bool ChainIs::operator() ( Pose const & pose, Size index ) const
@@ -575,11 +566,11 @@ void ChainIs::parse_tag( TagCOP tag )
 
 // ChainIsnt
 ChainIsnt::ChainIsnt()
-	: parent()
+: parent()
 {}
 
 ChainIsnt::ChainIsnt( char const & chain )
-	: parent( chain )
+: parent( chain )
 {}
 
 bool ChainIsnt::operator() ( Pose const & pose, Size index ) const

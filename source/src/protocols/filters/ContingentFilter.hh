@@ -25,7 +25,7 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-	#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.hh>
 #endif
 
 

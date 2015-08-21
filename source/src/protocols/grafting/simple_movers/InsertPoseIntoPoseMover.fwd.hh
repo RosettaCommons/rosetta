@@ -20,7 +20,7 @@
 namespace protocols {
 namespace grafting {
 
-/// @brief  
+/// @brief
 class InsertPoseIntoPoseMover;
 
 typedef utility::pointer::shared_ptr<InsertPoseIntoPoseMover> InsertPoseIntoPoseMoverOP;

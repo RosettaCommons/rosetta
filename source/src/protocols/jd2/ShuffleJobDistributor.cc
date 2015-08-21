@@ -40,7 +40,7 @@ namespace jd2 {
 /// @details constructor.  Notice it calls the parent class!  It also builds some internal variables for determining
 ///which processor it is in MPI land.
 ShuffleFileSystemJobDistributor::ShuffleFileSystemJobDistributor() :
-  FileSystemJobDistributor()
+	FileSystemJobDistributor()
 {
 	next_random_job_ = 0; // indicate that list needs generating
 
@@ -58,13 +58,13 @@ core::Size
 ShuffleFileSystemJobDistributor::get_new_job_id()
 {
 	JobsContainer const & jobs( get_jobs() );
-	if( jobs.size() == 0 ) return 0; // no jobs;
+	if ( jobs.size() == 0 ) return 0; // no jobs;
 
 	JobOutputterOP outputter = job_outputter();
 
-	if( next_random_job_ == 0 ){
+	if ( next_random_job_ == 0 ) {
 		scrambled_job_order_.clear();
-		for( int i=0; i < basic::options::option[ basic::options::OptionKeys::out::nstruct ].value() ; i++ ){
+		for ( int i=0; i < basic::options::option[ basic::options::OptionKeys::out::nstruct ].value() ; i++ ) {
 			scrambled_job_order_.push_back( numeric::random::rg().random_range(1,jobs.size() ) );
 		}
 
@@ -72,66 +72,66 @@ ShuffleFileSystemJobDistributor::get_new_job_id()
 	}
 	next_random_job_++;
 
-//	for( core::Size ijob = 1; ijob <= jobs.size(); ijob ++ ){
-//		std::cerr  << "JL: " << jobs[ ijob ]->input_tag() << "  " << jobs[ ijob ]->nstruct_index()  << " Done? " << outputter->job_has_completed( jobs[ ijob ] ) << std::endl;
-//	}
-//
+	// for( core::Size ijob = 1; ijob <= jobs.size(); ijob ++ ){
+	//  std::cerr  << "JL: " << jobs[ ijob ]->input_tag() << "  " << jobs[ ijob ]->nstruct_index()  << " Done? " << outputter->job_has_completed( jobs[ ijob ] ) << std::endl;
+	// }
+	//
 	core::Size choice = scrambled_job_order_[next_random_job_];
-	if((int)next_random_job_ > (int)basic::options::option[ basic::options::OptionKeys::out::nstruct ].value() ) return 0; // we're done (nstruct decoys done)
-	if(next_random_job_ > scrambled_job_order_.size()) next_random_job_ = 0; // re-scramble the list
+	if ( (int)next_random_job_ > (int)basic::options::option[ basic::options::OptionKeys::out::nstruct ].value() ) return 0; // we're done (nstruct decoys done)
+	if ( next_random_job_ > scrambled_job_order_.size() ) next_random_job_ = 0; // re-scramble the list
 
 	// Now go backwards to find the last nstruct that hasn't been done yet.
 	// If we're not done
-	if( choice <= 0 ) choice = 1;
-	if( choice > jobs.size() ) choice = jobs.size();
-	if( !outputter->job_has_completed( jobs[ choice ] ) ) {
+	if ( choice <= 0 ) choice = 1;
+	if ( choice > jobs.size() ) choice = jobs.size();
+	if ( !outputter->job_has_completed( jobs[ choice ] ) ) {
 		while ( ( choice > 1 )  &&
-						( !outputter->job_has_completed( jobs[ choice-1 ]) ) &&
-						( jobs[ choice - 1 ]->input_tag() == jobs[ choice ]->input_tag() )
-			) {
+				( !outputter->job_has_completed( jobs[ choice-1 ]) ) &&
+				( jobs[ choice - 1 ]->input_tag() == jobs[ choice ]->input_tag() )
+				) {
 			choice -- ;
 		}
 
 	}
 
-	if( choice <= 0 ) choice = 1;
-	if( choice > jobs.size() ) choice = jobs.size();
-	if(outputter->job_has_completed( jobs[ choice ] ) ){
+	if ( choice <= 0 ) choice = 1;
+	if ( choice > jobs.size() ) choice = jobs.size();
+	if ( outputter->job_has_completed( jobs[ choice ] ) ) {
 		while ( ( choice <= (jobs.size()-1) )  &&
-						( outputter->job_has_completed( jobs[ choice ]) )
-			) {
+				( outputter->job_has_completed( jobs[ choice ]) )
+				) {
 			choice ++ ;
 		}
 	}
 
 	// still no luck ? then go back wards again looking for anything non-completed.
-	if( choice <= 0 ) choice = 1;
-	if( choice > jobs.size() ) choice = jobs.size();
-	if(outputter->job_has_completed( jobs[ choice ] ) ){
+	if ( choice <= 0 ) choice = 1;
+	if ( choice > jobs.size() ) choice = jobs.size();
+	if ( outputter->job_has_completed( jobs[ choice ] ) ) {
 		while ( ( choice > 1 )  &&
-						( outputter->job_has_completed( jobs[ choice ]) )
-			) {
+				( outputter->job_has_completed( jobs[ choice ]) )
+				) {
 			choice -- ;
 		}
 	}
 
 	// if at 0 and still completed status is true, we must have done all the jobs - return 0;
-	if( choice <= 0 ) choice = 1;
-	if( choice > jobs.size() ) choice = jobs.size();
-	if( outputter->job_has_completed( jobs[ choice ] ) ){
+	if ( choice <= 0 ) choice = 1;
+	if ( choice > jobs.size() ) choice = jobs.size();
+	if ( outputter->job_has_completed( jobs[ choice ] ) ) {
 		TR << "No more jobs found." << std::endl;
 		return 0;
 	}
 
 	// Now go backwards to find the last nstruct that hasn't been done yet.
 	// If we're not done
-	if( choice <= 0 ) choice = 1;
-	if( choice > jobs.size() ) choice = jobs.size();
-	if( !outputter->job_has_completed( jobs[ choice ] ) ) {
+	if ( choice <= 0 ) choice = 1;
+	if ( choice > jobs.size() ) choice = jobs.size();
+	if ( !outputter->job_has_completed( jobs[ choice ] ) ) {
 		while ( ( choice > 1 )  &&
-						( !outputter->job_has_completed( jobs[ choice-1 ]) ) &&
-						( jobs[ choice - 1 ]->input_tag() == jobs[ choice ]->input_tag() )
-			) {
+				( !outputter->job_has_completed( jobs[ choice-1 ]) ) &&
+				( jobs[ choice - 1 ]->input_tag() == jobs[ choice ]->input_tag() )
+				) {
 			choice -- ;
 		}
 

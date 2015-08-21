@@ -73,10 +73,10 @@ Record PDB_DReader::mapStringToRecord(const String & _s)
 	T.getValueFrom(s);
 
 	Record R;
-	if( pdb_records.count(T.value) ) {	R = pdb_records[ T.value ]; }
+	if ( pdb_records.count(T.value) ) { R = pdb_records[ T.value ]; }
 	else { R = pdb_records["UNKNOW"]; }
 
-	for(Record::iterator p=R.begin(), end=R.end(); p!=end; ++p ) (*p).second.getValueFrom(s);
+	for ( Record::iterator p=R.begin(), end=R.end(); p!=end; ++p ) ( *p).second.getValueFrom(s);
 
 	return R;
 }
@@ -86,19 +86,19 @@ std::vector<String> split(const String &s)
 {
 	std::vector<String> r;
 	Size start=0, i=0;
-	while(start < s.size()) {
-		if( s[i] == '\n' || s[i] == '\r' /* || i==s.size()-1 */) {
+	while ( start < s.size() ) {
+		if ( s[i] == '\n' || s[i] == '\r' /* || i==s.size()-1 */ ) {
 			r.push_back( String(s.begin()+start, s.begin()+i) );
 			start = i+1;
 		}
 		i++;
-		if( i == s.size() ) {
+		if ( i == s.size() ) {
 			r.push_back( std::string(s.begin()+start, s.begin()+i) );
 			break;
 		}
 	}
-	for(SSize i=r.size()-1; i>=0; i--) {  /// removing empty lines
-		if( r[i].size() == 0 ) r.erase( r.begin()+i );
+	for ( SSize i=r.size()-1; i>=0; i-- ) {  /// removing empty lines
+		if ( r[i].size() == 0 ) r.erase( r.begin()+i );
 	}
 	return r;
 }
@@ -135,7 +135,7 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOption
 
 	std::map<std::pair<Size, Size>, char> modelchain_to_chain;
 	std::string const chain_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-	for(Size i = 0; i < chain_letters.size(); ++i) {
+	for ( Size i = 0; i < chain_letters.size(); ++i ) {
 		modelchain_to_chain[std::pair<Size, Size>(0, i)] = chain_letters[i];
 		modelchain_to_chain[std::pair<Size, Size>(1, i)] = chain_letters[i];
 	}
@@ -143,69 +143,68 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOption
 	bool modeltags_present = false;
 
 	// Loop over all PDB records stored in vector VR.
-	for(Size i=0; i<VR.size(); ++i) {
+	for ( Size i=0; i<VR.size(); ++i ) {
 		std::string record_type = VR[i]["type"].value;
 
 		// Record contains "header information", i.e., is from the Title Section of the PDB file.
-		if (	record_type == "HEADER" || record_type == "KEYWDS" ||
+		if ( record_type == "HEADER" || record_type == "KEYWDS" ||
 				record_type == "TITLE " || record_type == "COMPND" ||
-				record_type == "EXPDTA") {
-			if( read_pdb_header ){
+				record_type == "EXPDTA" ) {
+			if ( read_pdb_header ) {
 				fd.store_header_record(VR[i]);
 			}
 
-		// Record contains a remark from the Title Section of the PDB file.
-		} else if( record_type == "REMARK")  {
+			// Record contains a remark from the Title Section of the PDB file.
+		} else if ( record_type == "REMARK" )  {
 			pose::RemarkInfo ri;
 			ri.num = atoi( VR[i]["remarkNum"].value.c_str() ),
-			ri.value = VR[i]["value"].value;
+				ri.value = VR[i]["value"].value;
 
 			//Added by DANIEL to skip reading the PDBinfo-LABEL, which comes "nfo-LABEL:"
 			//Those are read in a different way, using: core.import_pose().read_additional_pdb_data()
-			if( ( ri.value.size() >= 10 ) && ( ri.value.substr(0, 10) == "nfo-LABEL:" ) )
-			{
+			if ( ( ri.value.size() >= 10 ) && ( ri.value.substr(0, 10) == "nfo-LABEL:" ) ) {
 				continue;
 			}
 
 			fd.remarks->push_back(ri);
 
-		// Record contains heterogen nomenclature information from the Heterogen section of the PDB file.
+			// Record contains heterogen nomenclature information from the Heterogen section of the PDB file.
 		} else if ( record_type == "HETNAM" ) {
 			fd.store_heterogen_names( VR[ i ][ "hetID" ].value, VR[ i ][ "text" ].value );
 
-		// Record contains nonstandard polymer linkage information from the Connectivity Annotation Section of the PDB
-		//file.
+			// Record contains nonstandard polymer linkage information from the Connectivity Annotation Section of the PDB
+			//file.
 		} else if ( record_type == "LINK  " ) {
 			if ( options.read_link_records() ) {
 				fd.store_link_record( VR[ i ] );
 			}
 
-		// Record contains multimodel PDBs as specified in the Coordinate Section of the PDB file..
+			// Record contains multimodel PDBs as specified in the Coordinate Section of the PDB file..
 		} else if ( record_type == "MODEL " ) {
 			// store the serial number as the filename, which will become the PDBInfo name of the pose
 			std::string temp_model = ObjexxFCL::strip_whitespace( VR[i]["serial"].value ) ;
 			fd.modeltag = temp_model.c_str();
-			if( options.new_chain_order() ) {
-				if(modeltags_present) {
+			if ( options.new_chain_order() ) {
+				if ( modeltags_present ) {
 					// second model... all chains should be present...
-					for(Size model_idx=2; model_idx*chain_to_idx.size()<chain_letters.size(); ++model_idx) {
-						for(Size chain_idx=1; chain_idx <= chain_to_idx.size(); ++chain_idx) {
+					for ( Size model_idx=2; model_idx*chain_to_idx.size()<chain_letters.size(); ++model_idx ) {
+						for ( Size chain_idx=1; chain_idx <= chain_to_idx.size(); ++chain_idx ) {
 							TR << "REARRANGE CHAINS " << model_idx << " " << chain_idx << " ";
 							TR << (model_idx-1)*chain_to_idx.size()+chain_idx << std::endl;
 							modelchain_to_chain[std::pair<Size, Size>(model_idx, chain_idx)] =
-									chain_letters[(model_idx-1)*chain_to_idx.size() + chain_idx - 1];
+								chain_letters[(model_idx-1)*chain_to_idx.size() + chain_idx - 1];
 						}
 					}
 					++modelidx;
-					if(modelidx > 8) utility_exit_with_message("quitting: too many MODELs");
+					if ( modelidx > 8 ) utility_exit_with_message("quitting: too many MODELs");
 				} else {
 					modeltags_present = true;
 				}
 			}
 
-		// Record contains crystal information from the Crystallographic and Coordinate Transformation Section of the
-		//PDB file.
-		} else if( VR[i]["type"].value == "CRYST1")  {
+			// Record contains crystal information from the Crystallographic and Coordinate Transformation Section of the
+			//PDB file.
+		} else if ( VR[i]["type"].value == "CRYST1" )  {
 			pose::CrystInfo ci;
 			ci.A( atof( VR[i]["a"].value.c_str() ) );
 			ci.B( atof( VR[i]["b"].value.c_str() ) );
@@ -216,8 +215,8 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOption
 			ci.spacegroup( VR[i]["spacegroup"].value );
 			fd.crystinfo = ci;
 
-		// Record contains atom information from the Coordinate Section of the PDB file.
-		} else if( record_type == "ATOM  " || record_type == "HETATM" )  {
+			// Record contains atom information from the Coordinate Section of the PDB file.
+		} else if ( record_type == "ATOM  " || record_type == "HETATM" )  {
 			Record & R( VR[ i ] );
 
 			AtomInformation ai;
@@ -230,11 +229,11 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOption
 			}
 
 			ai.resName = R[ "resName" ].value;
-			ai.chainID = 0;	if( R["chainID"].value.size() > 0 ) ai.chainID = R["chainID"].value[0];
-			if( options.new_chain_order() ) {
-				if( R["chainID"].value.size() > 0 ) {
+			ai.chainID = 0; if ( R["chainID"].value.size() > 0 ) ai.chainID = R["chainID"].value[0];
+			if ( options.new_chain_order() ) {
+				if ( R["chainID"].value.size() > 0 ) {
 					char chainid = R["chainID"].value[0];
-					if( chain_to_idx.find(chainid) == chain_to_idx.end() ) {
+					if ( chain_to_idx.find(chainid) == chain_to_idx.end() ) {
 						chain_to_idx[chainid] = chain_to_idx.size()+1;
 						TR << "found new chain " << chainid << " " << chain_to_idx.size() << std::endl;
 					}
@@ -244,23 +243,23 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOption
 
 			ai.resSeq = atoi( R["resSeq"].value.c_str() );
 			ai.iCode = 0;
-			if( R["iCode"].value.size() > 0 ) ai.iCode = R["iCode"].value[0];
+			if ( R["iCode"].value.size() > 0 ) ai.iCode = R["iCode"].value[0];
 
 			// how can you check properly if something will successfully convert to a number !?!?!?
 			bool force_no_occupancy = false;
-			if ( R["x"].value == "     nan") {
+			if ( R["x"].value == "     nan" ) {
 				ai.x =0.0;
 				force_no_occupancy=true;
 			} else {
 				ai.x = atof( R["x"].value.c_str() );
 			}
-			if ( R["y"].value == "     nan") {
+			if ( R["y"].value == "     nan" ) {
 				ai.y =0.0;
 				force_no_occupancy=true;
 			} else {
 				ai.y = atof( R["y"].value.c_str() );
 			}
-			if ( R["z"].value == "     nan") {
+			if ( R["z"].value == "     nan" ) {
 				ai.z =0.0;
 				force_no_occupancy=true;
 			} else {
@@ -269,12 +268,12 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOption
 
 			// check that the occupancy column actually exists. If it doesn't, assume full occupancy.
 			// otherwise read it.
-			if( R["occupancy"].value == "      ") {
+			if ( R["occupancy"].value == "      " ) {
 				ai.occupancy = 1.0;
 			} else {
 				ai.occupancy = atof( R["occupancy"].value.c_str() );
 			}
-			if(force_no_occupancy) ai.occupancy = -1.0;
+			if ( force_no_occupancy ) ai.occupancy = -1.0;
 
 			ai.temperature = atof( R["tempFactor"].value.c_str() );
 			ai.element = R["element"].value;
@@ -301,16 +300,16 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOption
 				chain_list.push_back( ai.chainID );
 			}
 
-		} else if( record_type == "TER   " || record_type == "END   ")  {
+		} else if ( record_type == "TER   " || record_type == "END   " )  {
 			++ter_count;
 
-		} else if( (record_type == "ENDMDL") && (options.obey_ENDMDL()) )  {
-		 	TR.Warning << "hit ENDMDL, not reading anything further" << std::endl;
+		} else if ( (record_type == "ENDMDL") && (options.obey_ENDMDL()) )  {
+			TR.Warning << "hit ENDMDL, not reading anything further" << std::endl;
 			break;
 		}
 	}
 
-	if( read_pdb_header ) {
+	if ( read_pdb_header ) {
 		fd.finalize_header_information();
 	}
 
@@ -338,7 +337,7 @@ FileData PDB_DReader::createFileData(const String & data, PDB_DReaderOptions con
 String PDB_DReader::createPDBString(const Record &R)
 {
 	String s(80, ' ');
-	for(Record::const_iterator p=R.begin(); p!=R.end(); ++p ) {
+	for ( Record::const_iterator p=R.begin(); p!=R.end(); ++p ) {
 		String v = p->second.value;
 		v.resize(p->second.end - p->second.start +1, ' ');
 		s.replace( p->second.start-1, p->second.end - p->second.start +1, v);
@@ -353,7 +352,7 @@ String PDB_DReader::createPDBData(FileData const &fd)
 
 	String r;
 	r.reserve(81*VR.size());
-	for(Size i=0; i<VR.size(); ++i) {
+	for ( Size i=0; i<VR.size(); ++i ) {
 		r += createPDBString( VR[i] ) + '\n';
 	}
 	return r;
@@ -400,12 +399,12 @@ std::vector<Record> PDB_DReader::createRecords(FileData const & fd)
 {
 	std::vector<Record> VR;
 
-	if(fd.header_information()){
+	if ( fd.header_information() ) {
 		fd.fill_header_records(VR);
 	}
 
 	Record R = Field::getRecordCollection()["REMARK"];
-	for(Size i=0; i<fd.remarks->size(); ++i) {
+	for ( Size i=0; i<fd.remarks->size(); ++i ) {
 		pose::RemarkInfo const & ri( fd.remarks->at(i) );
 
 		R["type"].value = "REMARK";
@@ -416,7 +415,7 @@ std::vector<Record> PDB_DReader::createRecords(FileData const & fd)
 
 	R = Field::getRecordCollection()["HETNAM"];
 	Size n_het_names = fd.heterogen_names.size();
-	for (uint i = 1; i <= n_het_names; ++i) {
+	for ( uint i = 1; i <= n_het_names; ++i ) {
 		R["type"].value = "HETNAM";
 		R["continuation"].value = "  ";  // TODO: Wrap long text fields.
 		R["hetID"].value = fd.heterogen_names[i].first;
@@ -426,11 +425,11 @@ std::vector<Record> PDB_DReader::createRecords(FileData const & fd)
 
 	R = Field::getRecordCollection()["LINK  "];
 	std::map<std::string, utility::vector1<LinkInformation> >::const_iterator last_branch_point = fd.link_map.end();
-	for (std::map<std::string, utility::vector1<LinkInformation> >::const_iterator branch_point = fd.link_map.begin();
-			branch_point != last_branch_point; ++branch_point) {
+	for ( std::map<std::string, utility::vector1<LinkInformation> >::const_iterator branch_point = fd.link_map.begin();
+			branch_point != last_branch_point; ++branch_point ) {
 		utility::vector1<LinkInformation> links = branch_point->second;
 		Size n_links = links.size();
-		for (uint i = 1; i <= n_links; ++i) {
+		for ( uint i = 1; i <= n_links; ++i ) {
 			LinkInformation link = links[i];
 			R["type"].value = "LINK  ";
 			R["name1"].value = link.name1;
@@ -447,10 +446,10 @@ std::vector<Record> PDB_DReader::createRecords(FileData const & fd)
 			VR.push_back(R);
 		}
 	}
-	
+
 	R = Field::getRecordCollection()["CRYST1"];
 	pose::CrystInfo ci = fd.crystinfo;
-	if (ci.A() > 0 && ci.B() > 0 && ci.C() > 0) {
+	if ( ci.A() > 0 && ci.B() > 0 && ci.C() > 0 ) {
 		R["type"].value = "CRYST1";
 		R["a"].value =  print_d("%9.3f", ci.A());
 		R["b"].value =  print_d("%9.3f", ci.B());
@@ -464,8 +463,8 @@ std::vector<Record> PDB_DReader::createRecords(FileData const & fd)
 
 
 	R = Field::getRecordCollection()["ATOM  "];
-	for(Size i=0; i<fd.chains.size(); ++i) {
-		for(Size j=0; j<fd.chains[i].size(); ++j) {
+	for ( Size i=0; i<fd.chains.size(); ++i ) {
+		for ( Size j=0; j<fd.chains[i].size(); ++j ) {
 			AtomInformation const & ai( fd.chains[i][j] );
 			R["type"].value = (ai.isHet ? "HETATM" : "ATOM  ");
 			R["serial"].value = print_i("%5d", ai.serial);

@@ -35,76 +35,76 @@ namespace devel {
 namespace replica_docking {
 
 class ModulatedMover : public protocols::canonical_sampling::ThermodynamicMover {
-  typedef ThermodynamicMover Parent;
-  //  typedef std::map< std::string, devel::replica_docking::TempInterpolatorOP > Interpolators;
-  typedef std::map< std::string, devel::replica_docking::TempInterpolatorBaseOP > Interpolators;
-  typedef utility::vector1< protocols::canonical_sampling::ThermodynamicMoverOP > MoverOPs;
+	typedef ThermodynamicMover Parent;
+	//  typedef std::map< std::string, devel::replica_docking::TempInterpolatorOP > Interpolators;
+	typedef std::map< std::string, devel::replica_docking::TempInterpolatorBaseOP > Interpolators;
+	typedef utility::vector1< protocols::canonical_sampling::ThermodynamicMoverOP > MoverOPs;
 	typedef utility::vector1< core::Size > GridCoord;
 
 public:
-  ModulatedMover();
-  ModulatedMover( ModulatedMover const & );
+	ModulatedMover();
+	ModulatedMover( ModulatedMover const & );
 
-  virtual ~ModulatedMover();
-  virtual void apply( core::pose::Pose & pose );
+	virtual ~ModulatedMover();
+	virtual void apply( core::pose::Pose & pose );
 
-  virtual std::string get_name() const;
+	virtual std::string get_name() const;
 
-  protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const;
 
-  virtual protocols::moves::MoverOP fresh_instance() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 
-  virtual bool preserve_detailed_balance() const { return true; }
+	virtual bool preserve_detailed_balance() const { return true; }
 
-  virtual void set_preserve_detailed_balance( bool ) {};
+	virtual void set_preserve_detailed_balance( bool ) {};
 
-  virtual utility::vector1< core::id::TorsionID_Range > torsion_id_ranges( core::pose::Pose & ) {
-    return utility::vector1< core::id::TorsionID_Range>();
-  }
+	virtual utility::vector1< core::id::TorsionID_Range > torsion_id_ranges( core::pose::Pose & ) {
+		return utility::vector1< core::id::TorsionID_Range>();
+	}
 
-  virtual void parse_my_tag(
-       utility::tag::TagCOP tag,
-       basic::datacache::DataMap &,
-       protocols::filters::Filters_map const &,
-       protocols::moves::Movers_map const &,
-       core::pose::Pose const &
-  );
+	virtual void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
+	);
 
-  utility::tag::TagCOP generate_mover_tag(
-			 core::Size temp_level,
-			 std::string const& prefix,
-			 std::map< std::string, std::string > const& common_options
+	utility::tag::TagCOP generate_mover_tag(
+		core::Size temp_level,
+		std::string const& prefix,
+		std::map< std::string, std::string > const& common_options
 	) const;
 
-  virtual void
-  initialize_simulation(
-     core::pose::Pose& pose,
-     protocols::canonical_sampling::MetropolisHastingsMover const& mhm,
-     core::Size cycle
-  );
+	virtual void
+	initialize_simulation(
+		core::pose::Pose& pose,
+		protocols::canonical_sampling::MetropolisHastingsMover const& mhm,
+		core::Size cycle
+	);
 
-  virtual void
-  finalize_simulation(
-     core::pose::Pose & pose,
-     protocols::canonical_sampling::MetropolisHastingsMover const & mhm
-  );
+	virtual void
+	finalize_simulation(
+		core::pose::Pose & pose,
+		protocols::canonical_sampling::MetropolisHastingsMover const & mhm
+	);
 
-//   virtual void
-//   observe_after_metropolis(
-//      protocols::canonical_sampling::MetropolisHastingsMover const & mhm
-//   );
+	//   virtual void
+	//   observe_after_metropolis(
+	//      protocols::canonical_sampling::MetropolisHastingsMover const & mhm
+	//   );
 
 private:
 
-  //  protocols::canonical_sampling::ThermodynamicMoverOP mover_;
-  //  protocols::canonical_sampling::TemperatureControllerOP tempering_; // inteprete tempering as TemperatureController does not work for n_temp_levels, current_temp and so on, so here I directly interprete it as HamiltonianExchange
-  protocols::canonical_sampling::HamiltonianExchangeOP tempering_;
+	//  protocols::canonical_sampling::ThermodynamicMoverOP mover_;
+	//  protocols::canonical_sampling::TemperatureControllerOP tempering_; // inteprete tempering as TemperatureController does not work for n_temp_levels, current_temp and so on, so here I directly interprete it as HamiltonianExchange
+	protocols::canonical_sampling::HamiltonianExchangeOP tempering_;
 	//  core::Size n_temp_levels_ ;
-  MoverOPs movers_;
+	MoverOPs movers_;
 	//  Interpolators interpolators_; // OP or like this?
 	Interpolators interps_1_;
 	Interpolators interps_2_; // for the 2nd dimension
-  std::string mover_name_; //mover_creator, mover_type_name, mover_creator_key
+	std::string mover_name_; //mover_creator, mover_type_name, mover_creator_key
 };
 
 } // namespace replica_docking

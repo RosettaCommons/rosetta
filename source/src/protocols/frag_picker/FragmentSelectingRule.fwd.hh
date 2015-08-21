@@ -24,9 +24,9 @@ namespace frag_picker {
 class FragmentSelectingRule;
 
 typedef utility::pointer::shared_ptr<FragmentSelectingRule>
-		FragmentSelectingRuleOP;
+	FragmentSelectingRuleOP;
 typedef utility::pointer::shared_ptr<FragmentSelectingRule const>
-		FragmentSelectingRuleCOP;
+	FragmentSelectingRuleCOP;
 
 } // frag_picker
 } // protocols

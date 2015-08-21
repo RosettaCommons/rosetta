@@ -70,34 +70,34 @@ SameChiBinComboGrouper::assign_group_for_match(
 
 		/*
 		for ( Size jj = 1; jj <= iires->nchi(); ++jj ) {
-			core::Vector p1, p2, p3, p4;
-			p1 = iires->xyz( iires->chi_atoms( jj )[ 1 ] );
-			p2 = iires->xyz( iires->chi_atoms( jj )[ 2 ] );
-			p3 = iires->xyz( iires->chi_atoms( jj )[ 3 ] );
-			p4 = iires->xyz( iires->chi_atoms( jj )[ 4 ] );
+		core::Vector p1, p2, p3, p4;
+		p1 = iires->xyz( iires->chi_atoms( jj )[ 1 ] );
+		p2 = iires->xyz( iires->chi_atoms( jj )[ 2 ] );
+		p3 = iires->xyz( iires->chi_atoms( jj )[ 3 ] );
+		p4 = iires->xyz( iires->chi_atoms( jj )[ 4 ] );
 
-			std::cout << "res chi reported: chi " << jj << " " << iires->chi( jj ) << " real: "
-				<< numeric::constants::d::radians_to_degrees * numeric::dihedral_radians(
-				p1, p2, p3, p4 ) << std::endl;
+		std::cout << "res chi reported: chi " << jj << " " << iires->chi( jj ) << " real: "
+		<< numeric::constants::d::radians_to_degrees * numeric::dihedral_radians(
+		p1, p2, p3, p4 ) << std::endl;
 
 		}*/
 
-		rot_vector[	n_geometric_constraints_ + ii ] = iires->aa();
+		rot_vector[ n_geometric_constraints_ + ii ] = iires->aa();
 
 		SingleResidueRotamerLibraryCOP srrl( rotlib.get( iires->type() ) );
 		if ( ! srrl ) {
 			/// ?!?! What do we without a library?
-			rot_vector[	2*n_geometric_constraints_ + ii ] = 1;
+			rot_vector[ 2*n_geometric_constraints_ + ii ] = 1;
 		} else {
 			SingleResidueDunbrackLibraryCOP srdl(
 				utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const > ( srrl ));
 			if ( srdl ) {
 				RotVector rotvect;
 				srdl->get_rotamer_from_chi( iires->chi(), rotvect );
-				rot_vector[	2*n_geometric_constraints_ + ii ] = srdl->rotwell_2_rotno( rotvect );
+				rot_vector[ 2*n_geometric_constraints_ + ii ] = srdl->rotwell_2_rotno( rotvect );
 			} else {
 				/// ?!?! What do we do with a non-dunbrack library?
-				rot_vector[	2*n_geometric_constraints_ + ii ] = 1;
+				rot_vector[ 2*n_geometric_constraints_ + ii ] = 1;
 			}
 		}
 	}

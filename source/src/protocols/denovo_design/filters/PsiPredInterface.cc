@@ -42,28 +42,28 @@ namespace filters {
 
 /// @brief default constructor
 PsiPredInterface::PsiPredInterface( std::string const & cmd )
-	: ReferenceCount(),
-		cmd_( cmd )
+: ReferenceCount(),
+	cmd_( cmd )
 {}
 
 /// @brief copy constructor
 PsiPredInterface::PsiPredInterface( PsiPredInterface const & rval )
-	: ReferenceCount(),
-		psipred_output_( rval.psipred_output_ ),
-		cmd_( rval.cmd_ )
+: ReferenceCount(),
+	psipred_output_( rval.psipred_output_ ),
+	cmd_( rval.cmd_ )
 {}
 
 /// @brief given a pose, generates a fasta string
 /*std::string
 PsiPredInterface::extract_sequence( core::pose::Pose const & pose ) const
 {
-	std::string seq;
-	for ( core::Size i=1; i<=pose.total_residue(); i++ ){
-		if ( pose.residue( i ).is_protein() ){
-			seq += pose.residue( i ).name1();
-		} //if is protein
-	} // for each residue
-	return seq;
+std::string seq;
+for ( core::Size i=1; i<=pose.total_residue(); i++ ){
+if ( pose.residue( i ).is_protein() ){
+seq += pose.residue( i ).name1();
+} //if is protein
+} // for each residue
+return seq;
 }*/
 
 /// @brief converts a sequence into a fasta string, given the name
@@ -71,9 +71,9 @@ std::string
 PsiPredInterface::convert_to_fasta( std::string const & pname, std::string const & seq ) const
 {
 	std::string fasta_str( ">" + pname + "\n" );
-	for ( core::Size i=0; i<seq.size(); i++ ){
+	for ( core::Size i=0; i<seq.size(); i++ ) {
 		fasta_str += seq[i];
-		if ( (i+1) % 80 == 0 ){
+		if ( (i+1) % 80 == 0 ) {
 			fasta_str += "\n";
 		} //if 80 chars
 	} // for each residue
@@ -122,8 +122,9 @@ PsiPredInterface::parse_psipred_horiz_output( std::string const & psipred_horiz_
 	utility::vector1< core::Size > conf;
 	while ( getline( buffer, line ) ) {
 		// skip comments and blank lines
-		if ( line[0] == '#' || line == "" )
+		if ( line[0] == '#' || line == "" ) {
 			continue;
+		}
 		// we will basically read a block at a time in this while loop
 		// first 6 characters are header, strip them
 		std::string const data( line.substr( 6, std::string::npos ) );
@@ -159,17 +160,18 @@ PsiPredInterface::parse_psipred_horiz_output( std::string const & psipred_horiz_
 /// @brief Parses the psipred output and returns the predicted secondary structure and likelihoods of the blueprint secondary structure being present on the pose at each position.
 PsiPredResult
 PsiPredInterface::parse_psipred_output(
-		std::string const & psipred_str,
-		std::string const & blueprint_ss,
-		std::string const & psipred_horiz_filename ) const {
+	std::string const & psipred_str,
+	std::string const & blueprint_ss,
+	std::string const & psipred_horiz_filename ) const {
 	std::istringstream psipred( psipred_str );
 	utility::vector1< core::Real > probabilities;
 	std::string pred_ss( "" );
 	std::string line;
 	core::Size count( 0 );
-	while ( getline( psipred, line ) ){
-		if( line[0] == '#' || line == "" )
+	while ( getline( psipred, line ) ) {
+		if ( line[0] == '#' || line == "" ) {
 			continue;
+		}
 		std::istringstream line_stream( line );
 		core::Size resi( 0 );
 		char resn( 'X' ), ss( 'Y' );
@@ -215,14 +217,14 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 	PsiPredResultMap::const_iterator it( psipred_output_.find( pose.sequence() ) );
 	// if the lookup succeeded and we found something, return it
 	if ( it != psipred_output_.end() ) {
-		TR << "found output for " << pose.sequence() << " in the cache; returning it; " << std::endl;
-		return it;
-		}*/
+	TR << "found output for " << pose.sequence() << " in the cache; returning it; " << std::endl;
+	return it;
+	}*/
 
 	PsiPredResult result;
 	core::Size start_residue = 1;
 
-	for (core::Size i=1; i<=pose.conformation().num_chains(); ++i) {
+	for ( core::Size i=1; i<=pose.conformation().num_chains(); ++i ) {
 		// check pose split to see if there are protein residues present
 		TR << "Running psipred for chain " << i << " of " << pose.conformation().num_chains() << std::endl;
 		std::string pose_seq = pose.chain_sequence(i);
@@ -233,7 +235,7 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 					( j == 'F' ) || ( j == 'G' ) || ( j == 'H' ) || ( j == 'I' ) ||
 					( j == 'K' ) || ( j == 'L' ) || ( j == 'M' ) || ( j == 'N' ) ||
 					( j == 'P' ) || ( j == 'Q' ) || ( j == 'R' ) || ( j == 'S' ) ||
-					( j == 'T' ) ||	( j == 'V' ) || ( j == 'W' ) || ( j == 'Y' ) ) {	 
+					( j == 'T' ) || ( j == 'V' ) || ( j == 'W' ) || ( j == 'Y' ) ) {
 				seq += j;
 			}
 		}
@@ -253,17 +255,17 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 		runtime_assert( cmd_ != "" );
 		// Call psipred on the fasta file
 		std::string command = cmd_ + " " + fasta_filename;
-		#ifndef WIN32
-			command += " > /dev/null";
-		#endif
-			TR.Debug << "Trying to run " << command << std::endl;
+#ifndef WIN32
+		command += " > /dev/null";
+#endif
+		TR.Debug << "Trying to run " << command << std::endl;
 
-		#ifdef __native_client__
+#ifdef __native_client__
 	  		core::Size retval = 1;
-		#else
-	  		core::Size retval = system( command.c_str() );
-		#endif
-	  	if ( retval != 0 ){
+#else
+		core::Size retval = system( command.c_str() );
+#endif
+		if ( retval != 0 ) {
 			utility_exit_with_message( "Failed to run the psipred command, which was \"" + command + "\". Something went wrong. Make sure you specified the full path to the psipred command in your XML file. Return code=" + boost::lexical_cast<std::string>( retval ) );
 		}
 
@@ -279,7 +281,7 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 
 		TR.Debug << "BP len: " << chain_blueprint.size() << " Chain result prob len: " << chain_result.psipred_prob.size() << std::endl;
 		//for (core::Size j = 1; j <= chain_result.psipred_prob.size(); ++j) {
-		//	TR << "chainresult" << j << "  " << chain_result.psipred_prob[j] << std::endl;
+		// TR << "chainresult" << j << "  " << chain_result.psipred_prob[j] << std::endl;
 		//}
 
 		result.psipred_prob.insert(result.psipred_prob.end(), chain_result.psipred_prob.begin(), chain_result.psipred_prob.end());
@@ -292,11 +294,11 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 
 		start_residue += seq.size();
 
-	// parse and save result in the cache
+		// parse and save result in the cache
 	}
 
 	//for (core::Size j = 1; j <= result.psipred_prob.size(); ++j) {
-	//	TR << "result" << j << "  " << result.psipred_prob[j] << std::endl;
+	// TR << "result" << j << "  " << result.psipred_prob[j] << std::endl;
 	//}
 
 	return result;
@@ -363,9 +365,9 @@ nonmatching_residues( std::string const & blueprint_ss, std::string const & pred
 	utility::vector1< core::Size > residues;
 	runtime_assert( blueprint_ss.size() == pred_ss.size() );
 	for ( core::Size i=1; i<=blueprint_ss.size(); i++ ) {
-			if ( blueprint_ss[i-1] != pred_ss[i-1] ) {
-				residues.push_back( i );
-			}
+		if ( blueprint_ss[i-1] != pred_ss[i-1] ) {
+			residues.push_back( i );
+		}
 	}
 	return residues;
 }

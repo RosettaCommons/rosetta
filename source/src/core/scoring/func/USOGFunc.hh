@@ -33,49 +33,49 @@ namespace func {
 
 /// @brief Unnormalized, unbounded sum of Gaussians constraint
 class USOGFunc : public Func {
- public:
+public:
 	static Real background_prob;
 
-  /// @brief Used in conjunction with read_data() to initialize a new instance
-  USOGFunc() {};
+	/// @brief Used in conjunction with read_data() to initialize a new instance
+	USOGFunc() {};
 
-  /// @brief Constructs a new instance with a single gaussian
-  USOGFunc(core::Real mean, core::Real std_dev, core::Real weight=1);
+	/// @brief Constructs a new instance with a single gaussian
+	USOGFunc(core::Real mean, core::Real std_dev, core::Real weight=1);
 
-  /// @brief Constructs a new instance from the specified lists of means,
-  /// standard deviations, and weights. Assumes that all lists have equal
-  /// length and weights sum to 1.
-  USOGFunc(const utility::vector1<core::Real>& means,
-           const utility::vector1<core::Real>& std_devs,
-           const utility::vector1<core::Real>& weights);
+	/// @brief Constructs a new instance from the specified lists of means,
+	/// standard deviations, and weights. Assumes that all lists have equal
+	/// length and weights sum to 1.
+	USOGFunc(const utility::vector1<core::Real>& means,
+		const utility::vector1<core::Real>& std_devs,
+		const utility::vector1<core::Real>& weights);
 
-  /// @brief No-op virtual destructor
-  ~USOGFunc() {}
+	/// @brief No-op virtual destructor
+	~USOGFunc() {}
 
-  FuncOP clone() const;
+	FuncOP clone() const;
 
-  /// @brief Returns a value representing this function evaluated at a given point
-  core::Real func(const core::Real x) const;
+	/// @brief Returns a value representing this function evaluated at a given point
+	core::Real func(const core::Real x) const;
 
-  /// @brief Returns a value representing the derivative of this function evaluated at a given point
-  core::Real dfunc(const core::Real x) const;
+	/// @brief Returns a value representing the derivative of this function evaluated at a given point
+	core::Real dfunc(const core::Real x) const;
 
-  /// @brief Initializes this function from the given input stream
-  void read_data(std::istream& in);
+	/// @brief Initializes this function from the given input stream
+	void read_data(std::istream& in);
 
-  /// @brief Writes the definition of this function to the specific output stream
-  void show_definition(std::ostream& out) const;
+	/// @brief Writes the definition of this function to the specific output stream
+	void show_definition(std::ostream& out) const;
 
-  /// @brief Returns the number of Gaussian components
-  core::Size numGaussians() const;
+	/// @brief Returns the number of Gaussian components
+	core::Size numGaussians() const;
 
 private:
-  /// @brief Resets all information associated with this instance
-  void resetInstance();
+	/// @brief Resets all information associated with this instance
+	void resetInstance();
 
-  utility::vector1<core::Real> means_;
-  utility::vector1<core::Real> std_devs_;
-  utility::vector1<core::Real> weights_;
+	utility::vector1<core::Real> means_;
+	utility::vector1<core::Real> std_devs_;
+	utility::vector1<core::Real> weights_;
 };
 
 

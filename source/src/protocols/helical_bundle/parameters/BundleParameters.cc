@@ -36,106 +36,106 @@
 
 
 namespace protocols {
-	namespace helical_bundle {
-		namespace parameters {
+namespace helical_bundle {
+namespace parameters {
 
-			static thread_local basic::Tracer TR( "protocols.helical_bundle.parameters.BundleParameters" );
+static thread_local basic::Tracer TR( "protocols.helical_bundle.parameters.BundleParameters" );
 
-			/// @brief Constructor.
-			///
-			BundleParameters::BundleParameters() :
-				r0_(0.0),
-				omega0_(0.0),
-				delta_omega0_(0.0),
-				residues_per_repeat_(1),
-				repeating_unit_offset_(0),
-				atoms_per_residue_(),
-				r1_(),
-				omega1_(0.0),
-				delta_omega1_all_(0.0),
-				z1_(0.0),
-				delta_omega1_(),
-				delta_z1_(),
-				z1_offset_(0.0),
-				z0_offset_(0.0),
-				invert_helix_(false),
-				delta_t_(0.0),
-				allow_dihedrals_(true),
-				allow_bondangles_(true),
-				allow_bondlengths_(true)
-			{
-			}
+/// @brief Constructor.
+///
+BundleParameters::BundleParameters() :
+	r0_(0.0),
+	omega0_(0.0),
+	delta_omega0_(0.0),
+	residues_per_repeat_(1),
+	repeating_unit_offset_(0),
+	atoms_per_residue_(),
+	r1_(),
+	omega1_(0.0),
+	delta_omega1_all_(0.0),
+	z1_(0.0),
+	delta_omega1_(),
+	delta_z1_(),
+	z1_offset_(0.0),
+	z0_offset_(0.0),
+	invert_helix_(false),
+	delta_t_(0.0),
+	allow_dihedrals_(true),
+	allow_bondangles_(true),
+	allow_bondlengths_(true)
+{
+}
 
-			BundleParameters::BundleParameters( BundleParameters const & src ) :
-				core::conformation::parametric::Parameters( src ),
-				r0_(src.r0()),
-				omega0_(src.omega0()),
-				delta_omega0_(src.delta_omega0()),
-				residues_per_repeat_(src.residues_per_repeat()),
-				repeating_unit_offset_( src.repeating_unit_offset() ),
-				atoms_per_residue_(src.atoms_per_residue_),
-				r1_(src.r1_),
-				omega1_(src.omega1()),
-				delta_omega1_all_(src.delta_omega1_all()),
-				z1_(src.z1()),
-				delta_omega1_(src.delta_omega1_),
-				delta_z1_(src.delta_z1_),
-				z1_offset_(src.z1_offset_),
-				z0_offset_(src.z0_offset_),
-				invert_helix_(src.invert_helix()),
-				delta_t_(src.delta_t()),
-				allow_dihedrals_(src.allow_dihedrals()),
-				allow_bondangles_(src.allow_bondangles()),
-				allow_bondlengths_(src.allow_bondlengths())
-			{
-			}
+BundleParameters::BundleParameters( BundleParameters const & src ) :
+	core::conformation::parametric::Parameters( src ),
+	r0_(src.r0()),
+	omega0_(src.omega0()),
+	delta_omega0_(src.delta_omega0()),
+	residues_per_repeat_(src.residues_per_repeat()),
+	repeating_unit_offset_( src.repeating_unit_offset() ),
+	atoms_per_residue_(src.atoms_per_residue_),
+	r1_(src.r1_),
+	omega1_(src.omega1()),
+	delta_omega1_all_(src.delta_omega1_all()),
+	z1_(src.z1()),
+	delta_omega1_(src.delta_omega1_),
+	delta_z1_(src.delta_z1_),
+	z1_offset_(src.z1_offset_),
+	z0_offset_(src.z0_offset_),
+	invert_helix_(src.invert_helix()),
+	delta_t_(src.delta_t()),
+	allow_dihedrals_(src.allow_dihedrals()),
+	allow_bondangles_(src.allow_bondangles()),
+	allow_bondlengths_(src.allow_bondlengths())
+{
+}
 
-			BundleParameters::~BundleParameters() {}
+BundleParameters::~BundleParameters() {}
 
 
-			/// @brief make a copy of this residue( allocate actual memory for it )
-			///
-			core::conformation::parametric::ParametersOP
-			BundleParameters::clone() const
-			{
-				return ParametersOP( new BundleParameters( *this ) );
-			}
-			
-			/// @brief Get a summary of this ParametersSet object, for output to remark lines of a PDB file.
-			/// 
-			void BundleParameters::get_pdb_remark(std::stringstream &remark) const {
-				remark.setf( std::ios::fixed, std::ios::floatfield );
-				remark.precision(8);
-				remark << " MAJOR HELIX PARAMETERS:" << std::endl;
-				remark << "   Radius (r0,Angstroms): " << r0() << std::endl;
-				remark << "   Twist (omega0,radians/residue): " << omega0() << std::endl;
-				remark << "   Rotational offset (delta_omega0,radians): " << delta_omega0() << std::endl;
-				remark << "   Axial offset (z0_offset,Angstroms): " << z0_offset() << std::endl;
-				remark << "   Invert helix: " << (invert_helix() ? "true" : "false") << std::endl;
-				remark << "   Dihedrals set by generator: " << (allow_dihedrals() ? "true" : "false") << std::endl;
-				remark << "   Bond angles set by generator: " << (allow_bondangles() ? "true" : "false") << std::endl;
-				remark << "   Bond lengths set by generator: " << (allow_bondlengths() ? "true" : "false") << std::endl;
-				remark << " MINOR HELIX PARAMETERS (that are typically sampled):" << std::endl;
-				remark << "   Roll about axis (delta_omega1,radians): " << delta_omega1_all() << std::endl;
-				remark << "   Axial offset (z1_offset,vert. Angstroms): " << z1_offset() << std::endl;
-				remark << "   Registry shift (delta_t,residues): " << delta_t() << std::endl;
-				
-				remark << " OTHER MINOR HELIX PARAMETERS (fixed):" << std::endl;
-				remark << "   Residues/repeat: " << residues_per_repeat() << std::endl;
-				for(core::Size i=1, imax=residues_per_repeat(); i<=imax; ++i) {
-					remark << "   Atoms/residue" << i << ": " << atoms_per_residue(i) << std::endl;
-				}
-				remark << "   Repeat unit offset: " << repeating_unit_offset() << std::endl;
-				remark << "   Twist (omega1,radians/residue): " << omega1() << std::endl;
-				remark << "   Rise (z1,Angstroms/residue): " << z1() << std::endl;
-				for(core::Size i=1, imax=r1_.size(); i<=imax; ++i) {
-					remark << "   MAINCHAIN ATOM #" << i << ":" << std::endl;
-					remark << "   Radius (r1,Angstroms): " << r1(i) << std::endl;
-					remark << "   Axial offset (delta_z1,Angstroms): " << delta_z1(i) << std::endl;
-				}
-			}
+/// @brief make a copy of this residue( allocate actual memory for it )
+///
+core::conformation::parametric::ParametersOP
+BundleParameters::clone() const
+{
+	return ParametersOP( new BundleParameters( *this ) );
+}
 
-		} // namespace parameters
-	} // namespace helical_bundle
+/// @brief Get a summary of this ParametersSet object, for output to remark lines of a PDB file.
+///
+void BundleParameters::get_pdb_remark(std::stringstream &remark) const {
+	remark.setf( std::ios::fixed, std::ios::floatfield );
+	remark.precision(8);
+	remark << " MAJOR HELIX PARAMETERS:" << std::endl;
+	remark << "   Radius (r0,Angstroms): " << r0() << std::endl;
+	remark << "   Twist (omega0,radians/residue): " << omega0() << std::endl;
+	remark << "   Rotational offset (delta_omega0,radians): " << delta_omega0() << std::endl;
+	remark << "   Axial offset (z0_offset,Angstroms): " << z0_offset() << std::endl;
+	remark << "   Invert helix: " << (invert_helix() ? "true" : "false") << std::endl;
+	remark << "   Dihedrals set by generator: " << (allow_dihedrals() ? "true" : "false") << std::endl;
+	remark << "   Bond angles set by generator: " << (allow_bondangles() ? "true" : "false") << std::endl;
+	remark << "   Bond lengths set by generator: " << (allow_bondlengths() ? "true" : "false") << std::endl;
+	remark << " MINOR HELIX PARAMETERS (that are typically sampled):" << std::endl;
+	remark << "   Roll about axis (delta_omega1,radians): " << delta_omega1_all() << std::endl;
+	remark << "   Axial offset (z1_offset,vert. Angstroms): " << z1_offset() << std::endl;
+	remark << "   Registry shift (delta_t,residues): " << delta_t() << std::endl;
+
+	remark << " OTHER MINOR HELIX PARAMETERS (fixed):" << std::endl;
+	remark << "   Residues/repeat: " << residues_per_repeat() << std::endl;
+	for ( core::Size i=1, imax=residues_per_repeat(); i<=imax; ++i ) {
+		remark << "   Atoms/residue" << i << ": " << atoms_per_residue(i) << std::endl;
+	}
+	remark << "   Repeat unit offset: " << repeating_unit_offset() << std::endl;
+	remark << "   Twist (omega1,radians/residue): " << omega1() << std::endl;
+	remark << "   Rise (z1,Angstroms/residue): " << z1() << std::endl;
+	for ( core::Size i=1, imax=r1_.size(); i<=imax; ++i ) {
+		remark << "   MAINCHAIN ATOM #" << i << ":" << std::endl;
+		remark << "   Radius (r1,Angstroms): " << r1(i) << std::endl;
+		remark << "   Axial offset (delta_z1,Angstroms): " << delta_z1(i) << std::endl;
+	}
+}
+
+} // namespace parameters
+} // namespace helical_bundle
 } // namespace protocols
 

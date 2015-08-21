@@ -56,31 +56,31 @@ RepulsiveOnlyMover::~RepulsiveOnlyMover() {}
 // @brief apply function here
 void
 RepulsiveOnlyMover::apply( core::pose::Pose & pose ) {
-	if (	basic::options::option[basic::options::OptionKeys::in::replonly_loops]() ){
-		for ( core::Size i=1; i<=pose.n_residue(); i++ ){
-			if ( pose.secstruct(i)=='L' ){
-				if ( ! pose.residue(i).has_variant_type( core::chemical::REPLONLY ) ){
+	if ( basic::options::option[basic::options::OptionKeys::in::replonly_loops]() ) {
+		for ( core::Size i=1; i<=pose.n_residue(); i++ ) {
+			if ( pose.secstruct(i)=='L' ) {
+				if ( ! pose.residue(i).has_variant_type( core::chemical::REPLONLY ) ) {
 					core::pose::remove_lower_terminus_type_from_pose_residue( pose, i );
 					core::pose::remove_upper_terminus_type_from_pose_residue( pose, i );
 					core::pose::add_variant_type_to_pose_residue( pose, core::chemical::REPLONLY, i );
 				}
-			}else {
-				if ( pose.residue(i).has_variant_type( core::chemical::REPLONLY )){
+			} else {
+				if ( pose.residue(i).has_variant_type( core::chemical::REPLONLY ) ) {
 					core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::REPLONLY, i );
 				}
 			}
 		}
 	}
-	if ( basic::options::option[ basic::options::OptionKeys::in::replonly_residues ].user() ){
+	if ( basic::options::option[ basic::options::OptionKeys::in::replonly_residues ].user() ) {
 		utility::vector1<Size> replonly_rsd = basic::options::option[ basic::options::OptionKeys::in::replonly_residues ]();
 		//TR << "RepulsiveOnly protocols::moves::Mover has been called" << std::endl;
-		for ( core::Size i=1; i<=replonly_rsd.size(); i++ ){
+		for ( core::Size i=1; i<=replonly_rsd.size(); i++ ) {
 			if ( mutate_to_glycine_ ) {
 				core::chemical::ResidueType const & gly( pose.residue(replonly_rsd[i]).residue_type_set().name_map("GLY") );
 				core::pose::replace_pose_residue_copying_existing_coordinates( pose, replonly_rsd[i], gly );
 				TR << replonly_rsd[i] << " has been changed as GLY" << std::endl;
 			}
-			if ( ! pose.residue( replonly_rsd[i] ).has_variant_type( core::chemical::REPLONLY ) ){
+			if ( ! pose.residue( replonly_rsd[i] ).has_variant_type( core::chemical::REPLONLY ) ) {
 				core::pose::remove_lower_terminus_type_from_pose_residue( pose, replonly_rsd[i] );
 				core::pose::remove_upper_terminus_type_from_pose_residue( pose, replonly_rsd[i] );
 				core::pose::add_variant_type_to_pose_residue( pose, core::chemical::REPLONLY, replonly_rsd[i] );

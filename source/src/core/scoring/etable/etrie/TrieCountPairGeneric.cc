@@ -59,10 +59,10 @@ TrieCountPairGeneric::TrieCountPairGeneric(
 	//std::cout << "Constructed Trie Count Pair Generic " << std::endl;
 	Size nconnections( 0 );
 	Size nbonded( 0 );
-	if ( res1.is_bonded( res2.seqpos() )) {
+	if ( res1.is_bonded( res2.seqpos() ) ) {
 		nbonded = nconnections = res1.connections_to_residue( res2 ).size();
 	}
-	if ( res1.is_pseudo_bonded( res2.seqpos() )) {
+	if ( res1.is_pseudo_bonded( res2.seqpos() ) ) {
 		nconnections += res1.get_pseudobonds_to_residue( res2.seqpos() )->size();
 	}
 

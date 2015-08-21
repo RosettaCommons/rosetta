@@ -67,9 +67,9 @@ public:
 
 	virtual DofClaimOP clone() const { return DofClaimOP( new BBClaim( *this ) ); }
 
-// 	Size get_position() const {
-// 		return pos_;
-// 	}
+	//  Size get_position() const {
+	//   return pos_;
+	//  }
 
 	LocalPosition local_position() const {
 		return local_pos_;
@@ -89,21 +89,21 @@ public:
 	virtual void show(std::ostream& os) const {
 		TopologyClaimerCOP owner_op( owner() );
 		os << "DofClaim-" << str_type() << " owned by a " << (owner_op ? owner_op->type() : "(Unknown)") << " at ("
-			 << local_pos_.first << ", " << local_pos_.second << ")";
+			<< local_pos_.first << ", " << local_pos_.second << ")";
 	}
 
-//    virtual std::string to_string() const {
-//        std::ostringstream str_stream;
-//        str_stream << "(BBClaim; owner, " << owner()->type() << "; pos, " << pos_ << ")" ;
-//        return str_stream.str();
-//    }
+	//    virtual std::string to_string() const {
+	//        std::ostringstream str_stream;
+	//        str_stream << "(BBClaim; owner, " << owner()->type() << "; pos, " << pos_ << ")" ;
+	//        return str_stream.str();
+	//    }
 
 	virtual std::string str_type() const {
 		return "BB";
 	}
 
 protected:
-	std::pair< std::string, core::Size > local_pos_;	//first: label, second: position in label
+	std::pair< std::string, core::Size > local_pos_; //first: label, second: position in label
 
 }; //class BBClaim
 

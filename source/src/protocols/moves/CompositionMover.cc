@@ -22,7 +22,7 @@ namespace protocols {
 namespace moves {
 
 CompositionMover::CompositionMover()
-	: Mover("CompositionMover")
+: Mover("CompositionMover")
 {}
 
 void
@@ -49,7 +49,7 @@ utility::vector1< MoverOP > CompositionMover::get_movers() {
 
 void
 CompositionMover::apply_mover_if_defined( core::pose::Pose & pose, Size const n ){
-	if ( movers_[n]) movers_[n]->apply( pose );
+	if ( movers_[n] ) movers_[n]->apply( pose );
 }
 
 void
@@ -58,7 +58,7 @@ CompositionMover::apply( core::pose::Pose & pose, Size const i, Size const j ){
 	runtime_assert( j > 0 );
 	runtime_assert( i <= movers_.size() );
 	runtime_assert( j <= movers_.size() );
-	if ( i <= j ){
+	if ( i <= j ) {
 		for ( Size n = i; n <= j; n++ ) apply_mover_if_defined( pose, n );
 	} else {
 		for ( Size n = i; n >= j; n-- ) apply_mover_if_defined( pose, n );

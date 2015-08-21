@@ -101,10 +101,10 @@ bilinearly_interpolated(
 	X const bx( X( 1.0 ) - ax ); // beta_x == 1 - alpha_x
 	Y const by( Y( 1.0 ) - ay ); // beta_y == 1 - alpha_y
 	return
-	 ( bx * by * f11 ) +
-	 ( bx * ay * f12 ) +
-	 ( ax * by * f21 ) +
-	 ( ax * ay * f22 );
+		( bx * by * f11 ) +
+		( bx * ay * f12 ) +
+		( ax * by * f21 ) +
+		( ax * ay * f22 );
 }
 
 
@@ -124,10 +124,10 @@ bilinearly_interpolated(
 	X const bx( X( 1.0 ) - ax ); // beta_x == 1 - alpha_x
 	Y const by( Y( 1.0 ) - ay ); // beta_y == 1 - alpha_y
 	return
-	 ( bx * by * f11 ) +
-	 ( bx * ay * f12 ) +
-	 ( ax * by * f21 ) +
-	 ( ax * ay * f22 );
+		( bx * by * f11 ) +
+		( bx * ay * f12 ) +
+		( ax * by * f21 ) +
+		( ax * ay * f22 );
 }
 
 
@@ -149,10 +149,10 @@ bilinearly_interpolated(
 	assert( eq_tol( bx, X( 1.0 ) - ax, NumericTraits< X >::tolerance() * 1000, NumericTraits< X >::tolerance() * 1000 ) );
 	assert( eq_tol( by, Y( 1.0 ) - ay, NumericTraits< Y >::tolerance() * 1000, NumericTraits< Y >::tolerance() * 1000 ) );
 	return
-	 ( bx * by * f11 ) +
-	 ( bx * ay * f12 ) +
-	 ( ax * by * f21 ) +
-	 ( ax * ay * f22 );
+		( bx * by * f11 ) +
+		( bx * ay * f12 ) +
+		( ax * by * f21 ) +
+		( ax * ay * f22 );
 }
 
 

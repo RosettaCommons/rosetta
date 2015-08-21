@@ -219,7 +219,7 @@ void GunnCostTest::test_cost() {
 	movemap.set_bb( true );
 	fragset.region(movemap,25,27,3,3,frames);
 	aframe = frames[1];
-	for (int i=1; i<=200; i++) {
+	for ( int i=1; i<=200; i++ ) {
 		gc.compute_gunn( *aframe, i, data);
 		T(TR, basic::t_error) << "25" << " " << i << " " << data.q1 << " " << data.q2 << " " << data.q3<< " " << data.q4<< " " << data.q5<< " " << data.q6 << "\n";
 	}
@@ -251,10 +251,10 @@ void GunnCostTest::test_cost() {
 	aframe = frames[1];
 	GunnTuple fr_data;
 	float score_val[ 6 ] = { 10.964, 10.8948, 12.0666, 11.5839, 11.1111, 11.3222 };
-	for (int i=1; i<=200; i++) {
+	for ( int i=1; i<=200; i++ ) {
 		gc.compute_gunn( *aframe, i, fr_data);
 		T(TR, basic::t_error) << "42" << " " << i << " " << fr_data.q1 << " " << fr_data.q2 << " " << fr_data.q3<< " " << fr_data.q4<< " " << fr_data.q5<< " " << fr_data.q6 << "score: " << gc.score_tuple(data,fr_data) << "\n";
-		if (i<=6) {
+		if ( i<=6 ) {
 			TS_ASSERT_DELTA( gc.score_tuple(data,fr_data), score_val[i-1], 0.01);
 		}
 	}

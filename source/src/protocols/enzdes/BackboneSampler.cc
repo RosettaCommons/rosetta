@@ -94,7 +94,7 @@ BackboneSampler::BackboneSampler
 	core::Size const bb_moves,
 	core::Real const mc_kt
 )
-		: protocols::ligand_docking::LigandBaseProtocol()
+: protocols::ligand_docking::LigandBaseProtocol()
 {
 	bb_moves_ = bb_moves;
 	mc_kt_ = mc_kt;
@@ -111,7 +111,7 @@ BackboneSampler::clone() const {
 void
 BackboneSampler::apply( Pose & pose )
 {
-//  pose.dump_pdb("pose.pdb");
+	//  pose.dump_pdb("pose.pdb");
 	kinematics::FoldTree const ft_in = pose.fold_tree();
 
 	//checks wheather there are any segments set from cacheable observers
@@ -124,19 +124,17 @@ BackboneSampler::apply( Pose & pose )
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
 	//movemap -> clear();
 	if ( segments.empty() ) {
-	  for ( core::Size ii=1; ii <= pose.n_residue(); ++ii ) {
-	    if ( pose.residue(ii).is_protein() ) {
-	      movemap -> set_bb( ii, true );
-	      mobile_bb[ii] = true;
-	    }
-	  	else {
+		for ( core::Size ii=1; ii <= pose.n_residue(); ++ii ) {
+			if ( pose.residue(ii).is_protein() ) {
+				movemap -> set_bb( ii, true );
+				mobile_bb[ii] = true;
+			} else {
 				//C-term res in the protein is frozen
-	    	movemap -> set_bb( ii-1, false );
-	    	mobile_bb[ii-1] = false;
-	  	}
+				movemap -> set_bb( ii-1, false );
+				mobile_bb[ii-1] = false;
+			}
 		}
-	}
-	else {
+	} else {
 		for ( core::Size ii=1; ii <= pose.n_residue(); ++ii ) {
 			if ( pose.residue(ii).is_protein() && ( segments.find(ii) != segments.end() ) ) {
 				movemap -> set_bb( ii, true );
@@ -185,7 +183,7 @@ BackboneSampler::apply( Pose & pose )
 	protocols::loops::remove_cutpoint_variants( pose );
 	pose.fold_tree( ft_in );
 	TR << "Reinstated original fold tree: " << pose.fold_tree() << std::endl;
-//  pose.dump_pdb("BBG_pose.pdb");
+	//  pose.dump_pdb("BBG_pose.pdb");
 }
 
 std::string

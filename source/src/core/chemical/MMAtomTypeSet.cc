@@ -51,7 +51,7 @@ MMAtomTypeSet::~MMAtomTypeSet() {}
 void
 MMAtomTypeSet::read_file( std::string const & filename )
 {
-	utility::io::izstream data( filename.c_str() ); 
+	utility::io::izstream data( filename.c_str() );
 
 	if ( !data.good() ) utility_exit_with_message( "Unable to open MM atom type set file: "+filename );
 
@@ -63,7 +63,7 @@ MMAtomTypeSet::read_file( std::string const & filename )
 		std::istringstream l( line );
 		l >> tag;
 		if ( tag != "NAME" ) {
-			utility_exit_with_message("MMAtomTypeSet::read_file: bad first line: "+	line );
+			utility_exit_with_message("MMAtomTypeSet::read_file: bad first line: "+ line );
 		}
 		l >> tag;
 		while ( !l.fail() ) {
@@ -114,10 +114,9 @@ MMAtomTypeSet::read_file( std::string const & filename )
 void
 MMAtomTypeSet::print_all_types()
 {
-	for( std::map< std::string, int >::const_iterator i = atom_type_index_.begin(), e = atom_type_index_.end(); i != e; ++i )
-		{
-			std::cout << (*i).first << " " << (*i).second << std::endl;
-		}
+	for ( std::map< std::string, int >::const_iterator i = atom_type_index_.begin(), e = atom_type_index_.end(); i != e; ++i ) {
+		std::cout << (*i).first << " " << (*i).second << std::endl;
+	}
 }
 
 } // chemical

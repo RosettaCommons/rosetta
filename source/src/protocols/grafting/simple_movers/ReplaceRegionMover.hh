@@ -32,10 +32,10 @@ class ReplaceRegionMover : public  protocols::moves::Mover {
 public:
 	ReplaceRegionMover(bool copy_pdbinfo = false);
 	ReplaceRegionMover(core::pose::Pose const & src_pose,
-			core::Size const src_pose_start,
-			core::Size const target_pose_start,
-			core::Size const span,
-			bool copy_pdbinfo = false);
+		core::Size const src_pose_start,
+		core::Size const target_pose_start,
+		core::Size const span,
+		bool copy_pdbinfo = false);
 
 	ReplaceRegionMover(ReplaceRegionMover const & src);
 

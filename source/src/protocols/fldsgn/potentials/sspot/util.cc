@@ -56,7 +56,7 @@ spherical(
 	using numeric::conversions::degrees;
 	using numeric::sin_cos_range;
 
-	Vector v1( a2 - cen1 );  	// v1 vector from center to end of dimer1 vector
+	Vector v1( a2 - cen1 );   // v1 vector from center to end of dimer1 vector
 	Vector v2( a4 - cen2 );   // v2 vector from center to end of dimer2 vector
 
 	Vector const uz( v1.normalized_or_zero() );              // unit vector along v1 = uz
@@ -101,7 +101,7 @@ spherical(
 Size
 get_foldtree_seqsep( Pose const & pose, Size pos1, Size pos2, Size gap_size )
 {
-	if( pose.fold_tree().is_simple_tree() ) return std::abs( int( pos1 ) - int( pos2 ) );
+	if ( pose.fold_tree().is_simple_tree() ) return std::abs( int( pos1 ) - int( pos2 ) );
 
 	Size begin ( std::min(pos1,pos2) );
 	Size end   ( std::max(pos1,pos2) );
@@ -109,9 +109,9 @@ get_foldtree_seqsep( Pose const & pose, Size pos1, Size pos2, Size gap_size )
 
 	for ( Size i = begin; i < end; ++i ) {
 		//if( pose.fold_tree().is_cutpoint(i) ) { is_break=true; break; }
-		if( pose.residue_type(i).is_terminus() ) { is_break=true; break; }
+		if ( pose.residue_type(i).is_terminus() ) { is_break=true; break; }
 	}
-	if( is_break ) {
+	if ( is_break ) {
 		return end - begin + gap_size;
 	} else {
 		return end - begin;

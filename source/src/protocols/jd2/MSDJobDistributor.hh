@@ -46,7 +46,7 @@ public:
 
 	virtual void
 	job_failed( core::pose::Pose & /*pose*/,
-			bool /*will_retry*/ );
+		bool /*will_retry*/ );
 
 	virtual void handle_interrupt();
 
@@ -56,8 +56,8 @@ public:
 	friend class JobDistributorFactory;
 
 	bool apply_parsed_protocol( utility::vector1< core::pose::PoseOP > & working_poses,
-			utility::vector1<protocols::rosetta_scripts::ParsedProtocolOP> & protocols,
-			utility::vector1< core::Size > & pose_order );
+		utility::vector1<protocols::rosetta_scripts::ParsedProtocolOP> & protocols,
+		utility::vector1< core::Size > & pose_order );
 
 private:
 	std::map<core::Size, Jobs> job_map_;

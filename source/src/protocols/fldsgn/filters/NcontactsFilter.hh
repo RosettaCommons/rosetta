@@ -86,7 +86,7 @@ public:// virtual constructor
 	virtual FilterOP clone() const { return FilterOP( new NcontactsFilter( *this ) ); }
 
 	/// @brief make fresh instance
-	virtual FilterOP fresh_instance() const {	return FilterOP( new NcontactsFilter() ); }
+	virtual FilterOP fresh_instance() const { return FilterOP( new NcontactsFilter() ); }
 
 
 public:// accessor
@@ -121,10 +121,10 @@ public:// parser
 
 
 	virtual void parse_my_tag( TagCOP tag,
-														 basic::datacache::DataMap &,
-														 Filters_map const &,
-														 Movers_map const &,
-														 Pose const & );
+		basic::datacache::DataMap &,
+		Filters_map const &,
+		Movers_map const &,
+		Pose const & );
 
 
 private:

@@ -32,7 +32,7 @@ namespace match {
 namespace output {
 
 LimitHitsPerRotamerFilter::LimitHitsPerRotamerFilter()
-	: StateAccumulatingMatchFilter("LimitHitsPerRotamerFilter")
+: StateAccumulatingMatchFilter("LimitHitsPerRotamerFilter")
 {}
 LimitHitsPerRotamerFilter::LimitHitsPerRotamerFilter( Size n_geometric_constraints ) :
 	StateAccumulatingMatchFilter("LimitHitsPerRotamerFilter"),

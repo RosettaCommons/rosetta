@@ -127,23 +127,23 @@ using namespace core;
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 SheetBuilder::SheetBuilder( core::fragment::SecondaryStructureOP ss, core::scoring::dssp::PairingsList const& pairings, SheetTopology const& sheet_topol) :
-  total_residue_( ss->total_residue() ),
-  pairings_( pairings ),
-  same_strand_( SameStrandOP( new SameStrand( ss ) ) ),
-  secondary_structure_( ss ),
+	total_residue_( ss->total_residue() ),
+	pairings_( pairings ),
+	same_strand_( SameStrandOP( new SameStrand( ss ) ) ),
+	secondary_structure_( ss ),
 	sheet_sizes_( sheet_topol ),
-  bForceSingleSheet_( true ) // this should be set by an option or so
+	bForceSingleSheet_( true ) // this should be set by an option or so
 {}
 
 //copy c'stor
 SheetBuilder::SheetBuilder( SheetBuilder const& other )
-	: BaseJumpSetup(other),
-		total_residue_( other.total_residue_ ),
-		pairings_( other.pairings_ ),
-		same_strand_( other.same_strand_ ),
-		secondary_structure_( other.secondary_structure_ ),
-		sheet_sizes_( other.sheet_sizes_ ),
-		bForceSingleSheet_( other.bForceSingleSheet_ ) // this should be set by an option or so
+: BaseJumpSetup(other),
+	total_residue_( other.total_residue_ ),
+	pairings_( other.pairings_ ),
+	same_strand_( other.same_strand_ ),
+	secondary_structure_( other.secondary_structure_ ),
+	sheet_sizes_( other.sheet_sizes_ ),
+	bForceSingleSheet_( other.bForceSingleSheet_ ) // this should be set by an option or so
 {}
 
 //d'stor
@@ -152,11 +152,11 @@ SheetBuilder::~SheetBuilder() {}
 /// @brief simply random choice of pairing from pool
 void
 SheetBuilder::choose_next_pairing( FArray3D_int& sheet_pairing, Size pairing, Size sheet ) const {
-  int const	p = static_cast< int >( numeric::random::rg().uniform() * pairings_.size() ) + 1;
-	//	tr.Trace << "Picked pairing " << p << " out of " << pairings_.size() << std::endl;
+	int const p = static_cast< int >( numeric::random::rg().uniform() * pairings_.size() ) + 1;
+	// tr.Trace << "Picked pairing " << p << " out of " << pairings_.size() << std::endl;
 	runtime_assert( p>=1 && p<= (int) pairings_.size() );
-  // you should replace sheet_pairing with array of Pairings!!!!!
-  // then just use operator=
+	// you should replace sheet_pairing with array of Pairings!!!!!
+	// then just use operator=
 	sheet_pairing( 1, pairing, sheet ) = pairings_[ p ].Pos1();
 	sheet_pairing( 2, pairing, sheet ) = pairings_[ p ].Pos2();
 	sheet_pairing( 3, pairing, sheet ) = pairings_[ p ].Orientation();
@@ -167,16 +167,16 @@ SheetBuilder::choose_next_pairing( FArray3D_int& sheet_pairing, Size pairing, Si
 /// @detail return true if parings have a strand in common
 bool
 SheetBuilder::check_pairing_intersect (
-  FArray1A_int p1,
-  FArray1A_int p2
+	FArray1A_int p1,
+	FArray1A_int p2
 ) const
 {
-  for ( int i = 1; i <= 2; ++i ) {
-    for ( int j = 1; j <= 2; ++j ) {
-      if ( same_strand_->eval( p1(i), p2(j) ) ) return true;
-    }
-  }
-  return false;
+	for ( int i = 1; i <= 2; ++i ) {
+		for ( int j = 1; j <= 2; ++j ) {
+			if ( same_strand_->eval( p1(i), p2(j) ) ) return true;
+		}
+	}
+	return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -189,7 +189,7 @@ SheetBuilder::check_sheet_pairings(
 ) const
 {
 	if ( last_pairing < 2 ) return true; // first strand is OK by default
-	//	tr.Trace << "check_sheet_pairings ... last_pairing: " << last_pairing << std::endl;
+	// tr.Trace << "check_sheet_pairings ... last_pairing: " << last_pairing << std::endl;
 	const int max_sheet_size( 40 ); // can we get rid of this ? XXXX
 	pairing_list.dimension( 4, max_sheet_size );
 
@@ -199,9 +199,9 @@ SheetBuilder::check_sheet_pairings(
 
 		//count comman_strands and check if pleating is compatible
 		const bool ok( check_two_pairings( pairing_list(1,last_pairing),
-																			 pairing_list(1,i), common_strands ) );
+			pairing_list(1,i), common_strands ) );
 
-		//				tr.Trace << "( " << i << "-"<<last_pairing <<"  common_strands: " << common_strands << ") " << ( ok ? "good" : "bad" ) << " pleating" << std::endl;
+		//    tr.Trace << "( " << i << "-"<<last_pairing <<"  common_strands: " << common_strands << ") " << ( ok ? "good" : "bad" ) << " pleating" << std::endl;
 		//wrong pleating or two common_strands doesn't help to build beta-sheets
 		if ( !ok || common_strands > 1 ) return false;
 
@@ -210,7 +210,7 @@ SheetBuilder::check_sheet_pairings(
 	}
 
 	return ( ( total_common_strands >= 1 || !force_single_sheet ) &&
-					 ( total_common_strands < 2 ) );
+		( total_common_strands < 2 ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -260,10 +260,10 @@ SheetBuilder::check_two_pairings(
 	const int seqsep_mod2( numeric::mod( std::abs( (int) p1.Pos1() - (int) p2.Pos1() ), 2) );
 
 	return ( ( common_strands == 0 ) ||
-					 ( common_strands == 1 && seqsep_mod2 == 0 && p1.Pleating() != p2.Pleating() ) ||
-					 ( common_strands == 1 && seqsep_mod2 == 1 && p1.Pleating() == p2.Pleating() ) ||
-					 ( common_strands == 2 && seqsep_mod2 == 0 && p1.Pleating() == p2.Pleating() ) ||
-					 ( common_strands == 2 && seqsep_mod2 == 1 && p1.Pleating() != p2.Pleating() ) );
+		( common_strands == 1 && seqsep_mod2 == 0 && p1.Pleating() != p2.Pleating() ) ||
+		( common_strands == 1 && seqsep_mod2 == 1 && p1.Pleating() == p2.Pleating() ) ||
+		( common_strands == 2 && seqsep_mod2 == 0 && p1.Pleating() == p2.Pleating() ) ||
+		( common_strands == 2 && seqsep_mod2 == 1 && p1.Pleating() != p2.Pleating() ) );
 }
 
 bool
@@ -273,22 +273,22 @@ SheetBuilder::check_next_pairing( FArray3D_int& sheet_pairings, Size pairing, Si
 		if ( pos == 1 || pos >= total_residue_ ) return false;
 	}
 
-  // full compatibility chec
+	// full compatibility chec
 	//check1:  dont want to intersect previous sheets
 	for ( int prev_sheet = 1; prev_sheet <= (int) sheet - 1; ++prev_sheet ) {
 		int const num_pairings = sheet_sizes_[prev_sheet];
-    for ( int prev_pairing = 1;  prev_pairing <= num_pairings; ++prev_pairing ) {
-      if ( check_pairing_intersect( sheet_pairings( 1, prev_pairing, prev_sheet ),
+		for ( int prev_pairing = 1;  prev_pairing <= num_pairings; ++prev_pairing ) {
+			if ( check_pairing_intersect( sheet_pairings( 1, prev_pairing, prev_sheet ),
 					sheet_pairings( 1, pairing, sheet ) ) ) {
-				//				tr.Debug << "paring intersect : check failed for pairing" << pairing << " sheet: " << sheet << std::endl;
+				//    tr.Debug << "paring intersect : check failed for pairing" << pairing << " sheet: " << sheet << std::endl;
 				return false;
-      }
-    }
-  }
+			}
+		}
+	}
 	//check2:
 	return check_sheet_pairings(
-			sheet_pairings( 1, 1, sheet ),
-			pairing, bForceSingleSheet_ );
+		sheet_pairings( 1, 1, sheet ),
+		pairing, bForceSingleSheet_ );
 }
 
 JumpSample SheetBuilder::create_jump_sample() const{
@@ -303,28 +303,28 @@ JumpSample SheetBuilder::create_jump_sample() const{
 			continue;
 		}
 		JumpSample jumps( total_residue_, jump_pairings, *secondary_structure_ );
-		//		tr.Debug << " created jump sample " << jumps << std::endl;
-		/*	if ( tr.Debug.visible() && jumps.is_valid() ) { //debugging output
-			//			tr.Debug << "same_strand: ";
-			typedef utility::vector1< int > Int_List;
-			Int_List jres;
-			for ( core::scoring::dssp::PairingsList::const_iterator it = jump_pairings.begin(),
-							eit = jump_pairings.end(); it != eit; ++it ) {
-				jres.push_back( it->Pos1() );
-				jres.push_back( it->Pos2() );
-			}
-			for ( Int_List::iterator it=jres.begin(), eit=jres.end(); it!=eit; ++it ) {
-				for ( Int_List::iterator sit=jres.begin(), seit=jres.end(); sit!=seit; ++sit ) {
-					if ( *it > *sit ) {
-						//						tr.Debug << *it << ":"<< *sit << " " << (same_strand_->eval(*it,*sit ) ? "same" : "diff") << " ";
-					}
-				}
-			}
-			//			tr.Debug << std::endl;
+		//  tr.Debug << " created jump sample " << jumps << std::endl;
+		/* if ( tr.Debug.visible() && jumps.is_valid() ) { //debugging output
+		//   tr.Debug << "same_strand: ";
+		typedef utility::vector1< int > Int_List;
+		Int_List jres;
+		for ( core::scoring::dssp::PairingsList::const_iterator it = jump_pairings.begin(),
+		eit = jump_pairings.end(); it != eit; ++it ) {
+		jres.push_back( it->Pos1() );
+		jres.push_back( it->Pos2() );
+		}
+		for ( Int_List::iterator it=jres.begin(), eit=jres.end(); it!=eit; ++it ) {
+		for ( Int_List::iterator sit=jres.begin(), seit=jres.end(); sit!=seit; ++sit ) {
+		if ( *it > *sit ) {
+		//      tr.Debug << *it << ":"<< *sit << " " << (same_strand_->eval(*it,*sit ) ? "same" : "diff") << " ";
+		}
+		}
+		}
+		//   tr.Debug << std::endl;
 		} // is_valid()
 		*/
 		if ( jumps.is_valid() ) return jumps;
-		//		tr.Debug << " ...which had corrupted fold-tree. Try again! " << std::endl;
+		//  tr.Debug << " ...which had corrupted fold-tree. Try again! " << std::endl;
 	}
 	//utility_exit_with_message( "impossible to find a valid fold-tree with given sheet-topology and pairings" );
 	return JumpSample(); //to make compiler happy
@@ -332,81 +332,81 @@ JumpSample SheetBuilder::create_jump_sample() const{
 
 bool
 SheetBuilder::builder_loop( core::scoring::dssp::PairingsList& jump_pairings ) const {
-  Size const max_sheet_size( 40 );
-  Size const max_sheets( 40 ); // can we determine these from something ?
+	Size const max_sheet_size( 40 );
+	Size const max_sheets( 40 ); // can we determine these from something ?
 	int num_sheets( sheet_sizes_.size() );
-  //// fill the sheet_pairing array:
-  FArray3D_int sheet_pairing( 4, max_sheet_size, max_sheets );
+	//// fill the sheet_pairing array:
+	FArray3D_int sheet_pairing( 4, max_sheet_size, max_sheets );
 	tr.Info << "Start Sheet Building for " << num_sheets << " sheets of size ";
 	for ( int ii = 1; ii <= num_sheets; ii++ ) tr.Info << sheet_sizes_[ ii ] << " ";
 	tr.Info << std::endl;
-  bool success = false;
+	bool success = false;
 	int failed_once = 0;
-  for ( int tries1 = 0; tries1 < 30 && !success; ++tries1 ) { // redo_same_strand: try different sheet boundaries
+	for ( int tries1 = 0; tries1 < 30 && !success; ++tries1 ) { // redo_same_strand: try different sheet boundaries
 		same_strand_->redo();
-    for ( int tries2 = 0; tries2 < 30 && !success; ++tries2 ) { // sheet_fail
+		for ( int tries2 = 0; tries2 < 30 && !success; ++tries2 ) { // sheet_fail
 			tr.Debug << "SheetBuilder-loop round: " << tries1 << "/" << tries2 << std::endl;
-      // here we fill the array "sheet_pairing" that has all the pairings
-      // organized by sheets
+			// here we fill the array "sheet_pairing" that has all the pairings
+			// organized by sheets
 
-      int tries3 ( 0 );
-      int const max_tries3 ( 1000 );
+			int tries3 ( 0 );
+			int const max_tries3 ( 1000 );
 
-      // for each sheet
-      for ( int sheet = 1; sheet <= num_sheets; ++sheet ) {
+			// for each sheet
+			for ( int sheet = 1; sheet <= num_sheets; ++sheet ) {
 				// select sheet_size-1 pairings
-				for ( int pairing = 1; pairing <= (int) sheet_sizes_[ sheet ];	++pairing ) {
+				for ( int pairing = 1; pairing <= (int) sheet_sizes_[ sheet ]; ++pairing ) {
 					choose_next_pairing( sheet_pairing, pairing, sheet ); //draw randomly from pool
-									for ( int s = 1; s<=sheet; s++ ) {
-											for ( int p =1; p<=pairing; p ++ ) {
-												//tr.Debug << s << ":" << p << " pairs: " << sheet_pairing(1, p, s) << "-" <<sheet_pairing(2, p, s) << std::endl;
-											}
-									}
+					for ( int s = 1; s<=sheet; s++ ) {
+						for ( int p =1; p<=pairing; p ++ ) {
+							//tr.Debug << s << ":" << p << " pairs: " << sheet_pairing(1, p, s) << "-" <<sheet_pairing(2, p, s) << std::endl;
+						}
+					}
 
 
 					while ( !( success=check_next_pairing( sheet_pairing, pairing, sheet ) )  && tries3 < max_tries3 ) {
 						choose_next_pairing( sheet_pairing, pairing, sheet );
 						for ( int s = 1; s<=sheet; s++ ) {
 							for ( int p =1; p<=pairing; p ++ ) {
-								//							tr.Debug << s << ":" << p << " pairs: " << sheet_pairing(1, p, s) << "-" <<sheet_pairing(2, p, s) << std::endl;
+								//       tr.Debug << s << ":" << p << " pairs: " << sheet_pairing(1, p, s) << "-" <<sheet_pairing(2, p, s) << std::endl;
 							}
-							}
+						}
 
 						++tries3;
 					} // loop to choose pairings
-					//					tr.Trace << "Pairing " << pairing << " chosen for sheet " << sheet << std::endl;
+					//     tr.Trace << "Pairing " << pairing << " chosen for sheet " << sheet << std::endl;
 				} // for pairings per sheet
-      } // for sheets
-    } // for tries2 ( sheet_fail )
-    // if not successful try different sheet boundaries
-    if ( !success ) {
+			} // for sheets
+		} // for tries2 ( sheet_fail )
+		// if not successful try different sheet boundaries
+		if ( !success ) {
 			failed_once=tries1;
 			tr.Info << "redo same_strand: too many tries with this one!" <<
-      				format::SS( tries1 ) << std::endl;
-      // makes stochastic decisions about strand boundaries:
-      // some decisions may not be compatible with the desired pairings
-      // and our logic for choosing sheets
+				format::SS( tries1 ) << std::endl;
+			// makes stochastic decisions about strand boundaries:
+			// some decisions may not be compatible with the desired pairings
+			// and our logic for choosing sheets
 		}
-  } // for tries1 ( redo_same_strand)
+	} // for tries1 ( redo_same_strand)
 
-  if ( !success ) {
+	if ( !success ) {
 		return false;
 		//  utility_exit_with_message( "problem in SheetBuilder::builder_loop(): tries1 > 100." );
-  }
+	}
 	if ( failed_once ) tr.Warning << "figured out a valid strand after " << failed_once << " outer loop iterations " << std::endl;
-  // now load these pairings into the jump_pairings list:
-  jump_pairings.clear();
-  for ( int sheet = 1; sheet <= num_sheets; ++sheet ) {
-    for ( int pairing = 1, pe = sheet_sizes_[sheet]; pairing <= pe; ++pairing ) {
+	// now load these pairings into the jump_pairings list:
+	jump_pairings.clear();
+	for ( int sheet = 1; sheet <= num_sheets; ++sheet ) {
+		for ( int pairing = 1, pe = sheet_sizes_[sheet]; pairing <= pe; ++pairing ) {
 
 			core::scoring::dssp::Pairing p( sheet_pairing( 1,pairing,sheet) );
 			jump_pairings.push_back( p );
 
 			//      tr.Debug << "sheet_pairing:" << SS(sheet) << SS(pairing) << ' ' <<
-			//				p.Pos1() << ' ' << p.Pos2() << ' ' <<
-			//				p.Orientation() << ' ' << p.Pleating() << std::endl;
-    }
-  }
+			//    p.Pos1() << ' ' << p.Pos2() << ' ' <<
+			//    p.Orientation() << ' ' << p.Pleating() << std::endl;
+		}
+	}
 	return true;
 }
 

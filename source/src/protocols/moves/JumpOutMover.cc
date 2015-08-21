@@ -52,10 +52,10 @@ JumpOutMover::JumpOutMover(
 	core::scoring::ScoreFunctionCOP scorefxn_in,
 	core::Real tolerance_in
 ) : Mover("JumpOutMover"),
-		first_mover_(first_mover_in),
-		second_mover_(second_mover_in),
-		scorefxn_(scorefxn_in),
-		tolerance_(tolerance_in)
+	first_mover_(first_mover_in),
+	second_mover_(second_mover_in),
+	scorefxn_(scorefxn_in),
+	tolerance_(tolerance_in)
 {}
 
 JumpOutMover::~JumpOutMover() {}

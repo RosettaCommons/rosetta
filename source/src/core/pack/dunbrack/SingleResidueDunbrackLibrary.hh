@@ -85,8 +85,8 @@ public:
 	/*virtual
 	utility::vector1< DunbrackRotamerSampleData >
 	get_all_rotamer_samples(
-		Real phi,
-		Real psi
+	Real phi,
+	Real psi
 	) const = 0;*/
 
 	virtual
@@ -109,8 +109,8 @@ public:
 	/*virtual
 	Real
 	get_probability_for_rotamer(
-		utility::fixedsizearray1< Real > bbs,
-		Size rot_ind
+	utility::fixedsizearray1< Real > bbs,
+	Size rot_ind
 	) const = 0;*/
 
 	virtual
@@ -124,8 +124,8 @@ public:
 	/*virtual
 	DunbrackRotamerSampleData
 	get_rotamer(
-		utility::vector1< Real > bbs,
-		Size rot_ind
+	utility::vector1< Real > bbs,
+	Size rot_ind
 	) const = 0;*/
 
 	virtual
@@ -143,13 +143,13 @@ public:
 	//virtual
 	//Real
 	//get_bb_from_rsd(
-	//	conformation::Residue const & rsd,
-	//	Size bbn
+	// conformation::Residue const & rsd,
+	// Size bbn
 	//) const = 0;
 	//virtual
 	//utility::vector1< Real >
 	//get_bbs_from_rsd(
-	//	conformation::Residue const & rsd
+	// conformation::Residue const & rsd
 	//) const = 0;
 
 public:
@@ -162,9 +162,9 @@ public:
 	virtual
 	Size nchi() const = 0;
 
-    /// @brief the number of backbone dihedrals represented by the library
-    virtual
-    Size nbb() const = 0;
+	/// @brief the number of backbone dihedrals represented by the library
+	virtual
+	Size nbb() const = 0;
 
 	virtual
 	Size n_rotamer_bins() const = 0;
@@ -279,12 +279,12 @@ public:
 	) const {
 		debug_assert( ! dun02_ );
 		//assert( -180.0 <= chi && chi <= 180.0 );
-		if ( !(-180.0 <= chi && chi <= 180.0 )){
+		if ( !(-180.0 <= chi && chi <= 180.0 ) ) {
 			throw utility::excn::EXCN_RangeError(
 				"chi angle must be between -180 and 180: "+utility::to_string(chi));
 		}
 
-		if ( aa_ == chemical::aa_pro || aa_ == chemical::aa_dpr /*D-proline*/) {
+		if ( aa_ == chemical::aa_pro || aa_ == chemical::aa_dpr /*D-proline*/ ) {
 			if ( which_chi == 1 ) {
 				if ( chi > 0 ) { return 1; }
 				else { return 2; }
@@ -313,8 +313,8 @@ public:
 	) const {
 		/// very, very rarely, periodic_range( angle, 360 ) will return 180 instead of -180.
 		/// though it is supposed to return values in the range [-180, 180).
-	debug_assert( angle_start <= ang && ang <= angle_start + angle_range );
-	debug_assert( std::abs( nbins * angle_step - angle_range ) < 1e-15 );
+		debug_assert( angle_start <= ang && ang <= angle_start + angle_range );
+		debug_assert( std::abs( nbins * angle_step - angle_range ) < 1e-15 );
 
 		Real real_bin_lower = ( ang - angle_start ) / angle_step;
 		Size bin_prev = static_cast< Size > ( real_bin_lower );

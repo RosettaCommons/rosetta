@@ -24,7 +24,7 @@ namespace func {
 
 Real
 IdentityFunc::func( Real const x ) const {
-	 return x;
+	return x;
 }
 
 Real

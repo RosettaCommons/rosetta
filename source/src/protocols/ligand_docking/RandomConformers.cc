@@ -65,14 +65,14 @@ RandomConformersCreator::mover_name()
 }
 
 RandomConformers::RandomConformers():
-		//utility::pointer::ReferenceCount(),
-		Mover("RandomConformers")
+	//utility::pointer::ReferenceCount(),
+	Mover("RandomConformers")
 {}
 
 RandomConformers::RandomConformers(RandomConformers const & that):
-		//utility::pointer::ReferenceCount(),
-		protocols::moves::Mover( that ),
-		chain_(that.chain_)
+	//utility::pointer::ReferenceCount(),
+	protocols::moves::Mover( that ),
+	chain_(that.chain_)
 {}
 
 RandomConformers::~RandomConformers() {}
@@ -91,20 +91,20 @@ std::string RandomConformers::get_name() const{
 
 //void RandomConformers::set_chain(std::string chain)
 //{
-//	chain_ = chain;
+// chain_ = chain;
 //}
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 RandomConformers::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & /*datamap*/,
-		protocols::filters::Filters_map const & /*filters*/,
-		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & /*pose*/
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & /*datamap*/,
+	protocols::filters::Filters_map const & /*filters*/,
+	protocols::moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/
 )
 {
-	if ( tag->getName() != "RandomConformers" ){
+	if ( tag->getName() != "RandomConformers" ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
 	}
 	if ( ! tag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'RandomConformers' mover requires chain tag");
@@ -117,7 +117,7 @@ void RandomConformers::apply(core::pose::Pose & pose) {
 	core::Size i = pose.conformation().chain_begin(chain_id);
 	core::Size end = pose.conformation().chain_end(chain_id);
 
-	for (; i != end; ++i) {
+	for ( ; i != end; ++i ) {
 		apply_residue(i, pose);
 	}
 }
@@ -127,10 +127,10 @@ void RandomConformers::apply_residue(core::Size const residue_id, core::pose::Po
 	using core::conformation::ResidueOP;
 	RandomConformerMoverOP rcm( new RandomConformerMover(residue_id) );
 	rcm->apply(pose);
-/// TODO accomplish the below code within the scripter
-//	UnconstrainedTorsionsMoverOP utm =
-//			new UnconstrainedTorsionsMover(rcm, ligand_torsion_restraints_);
-//	utm->apply(pose);
+	/// TODO accomplish the below code within the scripter
+	// UnconstrainedTorsionsMoverOP utm =
+	//   new UnconstrainedTorsionsMover(rcm, ligand_torsion_restraints_);
+	// utm->apply(pose);
 }
 
 } //namespace ligand_docking

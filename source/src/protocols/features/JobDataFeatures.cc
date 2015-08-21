@@ -103,10 +103,10 @@ JobDataFeatures::features_reporter_dependencies() const {
 
 core::Size
 JobDataFeatures::report_features(
-		core::pose::Pose const & /*pose */,
-		utility::vector1<bool> const & /*relevant_residues*/,
-		StructureID struct_id,
-		utility::sql_database::sessionOP db_session
+	core::pose::Pose const & /*pose */,
+	utility::vector1<bool> const & /*relevant_residues*/,
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session
 )
 {
 	protocols::jd2::JobCOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
@@ -118,9 +118,9 @@ JobDataFeatures::report_features(
 
 void
 JobDataFeatures::load_into_pose(
-		utility::sql_database::sessionOP db_session,
-		StructureID struct_id,
-		core::pose::Pose & pose
+	utility::sql_database::sessionOP db_session,
+	StructureID struct_id,
+	core::pose::Pose & pose
 ){
 	load_string_data(db_session, struct_id, pose);
 	load_string_string_data(db_session, struct_id, pose);
@@ -130,7 +130,7 @@ JobDataFeatures::load_into_pose(
 void JobDataFeatures::delete_record(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session
-	)
+)
 {
 
 	std::string delete_js_string = "DELETE FROM job_string_data WHERE struct_id = ?;\n";
@@ -160,8 +160,7 @@ void JobDataFeatures::insert_string_rows(StructureID struct_id, utility::sql_dat
 	protocols::jd2::Job::Strings::const_iterator it(job->output_strings_begin());
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
-	for(; it != job->output_strings_end(); ++it)
-	{
+	for ( ; it != job->output_strings_end(); ++it ) {
 
 		RowDataBaseOP string_data( new RowData<std::string>("data_key",*it) );
 
@@ -174,24 +173,24 @@ void JobDataFeatures::insert_string_rows(StructureID struct_id, utility::sql_dat
 
 void
 JobDataFeatures::load_string_data(
-		utility::sql_database::sessionOP db_session,
-		StructureID struct_id,
-		core::pose::Pose &
+	utility::sql_database::sessionOP db_session,
+	StructureID struct_id,
+	core::pose::Pose &
 ){
-	if(!table_exists(db_session, "job_string_data")) return;
+	if ( !table_exists(db_session, "job_string_data") ) return;
 
 	std::string statement_string =
 		"SELECT\n"
-		"	data_key\n"
+		"\tdata_key\n"
 		"FROM\n"
-		"	job_string_data\n"
+		"\tjob_string_data\n"
 		"WHERE\n"
-		"	job_string_data.struct_id = ?;";
+		"\tjob_string_data.struct_id = ?;";
 	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,struct_id);
 	cppdb::result res(basic::database::safely_read_from_database(stmt));
 
-	while(res.next()){
+	while ( res.next() ) {
 		std::string data_key;
 		res >> data_key;
 		protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
@@ -211,8 +210,7 @@ void JobDataFeatures::insert_string_string_rows(StructureID struct_id, utility::
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
-	for(; it != job->output_string_string_pairs_end();++it)
-	{
+	for ( ; it != job->output_string_string_pairs_end(); ++it ) {
 
 		RowDataBaseOP key_data( new RowData<std::string>("data_key",it->first) );
 		RowDataBaseOP value_data( new RowData<std::string>("data_value",it->second) );
@@ -226,24 +224,24 @@ void JobDataFeatures::insert_string_string_rows(StructureID struct_id, utility::
 
 void
 JobDataFeatures::load_string_string_data(
-		utility::sql_database::sessionOP db_session,
-		StructureID struct_id,
-		core::pose::Pose &
+	utility::sql_database::sessionOP db_session,
+	StructureID struct_id,
+	core::pose::Pose &
 ){
-	if(!table_exists(db_session, "job_string_string_data")) return;
+	if ( !table_exists(db_session, "job_string_string_data") ) return;
 	std::string statement_string =
 		"SELECT\n"
-		"	data_key,\n"
-		"	data_value\n"
+		"\tdata_key,\n"
+		"\tdata_value\n"
 		"FROM\n"
-		"	job_string_string_data\n"
+		"\tjob_string_string_data\n"
 		"WHERE\n"
-		"	job_string_string_data.struct_id = ?;";
+		"\tjob_string_string_data.struct_id = ?;";
 	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,struct_id);
 	cppdb::result res(basic::database::safely_read_from_database(stmt));
 
-	while(res.next()){
+	while ( res.next() ) {
 		std::string data_key, data_value;
 		res >> data_key >> data_value;
 		protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
@@ -263,8 +261,7 @@ void JobDataFeatures::insert_string_real_rows(StructureID struct_id, utility::sq
 
 	protocols::jd2::Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin());
 
-	for(; it != job->output_string_real_pairs_end();++it)
-	{
+	for ( ; it != job->output_string_real_pairs_end(); ++it ) {
 
 		RowDataBaseOP key_data( new RowData<std::string>("data_key",it->first) );
 		RowDataBaseOP value_data( new RowData<core::Real>("data_value",it->second) );
@@ -277,24 +274,24 @@ void JobDataFeatures::insert_string_real_rows(StructureID struct_id, utility::sq
 
 void
 JobDataFeatures::load_string_real_data(
-		utility::sql_database::sessionOP db_session,
-		StructureID struct_id,
-		core::pose::Pose &
+	utility::sql_database::sessionOP db_session,
+	StructureID struct_id,
+	core::pose::Pose &
 ){
-	if(!table_exists(db_session, "job_string_real_data")) return;
+	if ( !table_exists(db_session, "job_string_real_data") ) return;
 	std::string statement_string =
 		"SELECT\n"
-		"	data_key,\n"
-		"	data_value\n"
+		"\tdata_key,\n"
+		"\tdata_value\n"
 		"FROM\n"
-		"	job_string_real_data\n"
+		"\tjob_string_real_data\n"
 		"WHERE\n"
-		"	job_string_real_data.struct_id = ?;";
+		"\tjob_string_real_data.struct_id = ?;";
 	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,struct_id);
 	cppdb::result res(basic::database::safely_read_from_database(stmt));
 
-	while(res.next()){
+	while ( res.next() ) {
 		std::string data_key;
 		core::Real data_value;
 		res >> data_key >> data_value;

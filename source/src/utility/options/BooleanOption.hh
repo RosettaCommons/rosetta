@@ -176,7 +176,7 @@ protected: // Methods
 			return false;
 		} else { // Illegal
 			std::cerr << "ERROR: Illegal value for boolean option -" << id()
-			 << " specified: " << value_str << std::endl;
+				<< " specified: " << value_str << std::endl;
 			std::exit( EXIT_FAILURE );
 			return false; // Keep compiler happy
 		}

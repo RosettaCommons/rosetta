@@ -83,9 +83,9 @@ OPT_KEY( String,  finish_weights )
 void
 rna_build_helix_test(){
 
- 	using namespace core::scoring;
- 	using namespace core::chemical;
- 	using namespace core::sequence;
+	using namespace core::scoring;
+	using namespace core::chemical;
+	using namespace core::sequence;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose;
@@ -98,10 +98,10 @@ rna_build_helix_test(){
 		std::string const fasta_file = option[ in::file::fasta ]()[1];
 		SequenceOP fasta_sequence = read_fasta_file( fasta_file )[1];
 		full_sequence = fasta_sequence->sequence();
-	} else if ( option[ seq ].user() ){
+	} else if ( option[ seq ].user() ) {
 		utility::vector1< std::string > full_sequence_segments = option[ seq ]();
 		full_sequence = "";
-		for (Size n = 1; n <= full_sequence_segments.size(); n++ ) full_sequence += full_sequence_segments[ n ];
+		for ( Size n = 1; n <= full_sequence_segments.size(); n++ ) full_sequence += full_sequence_segments[ n ];
 	} else {
 		utility_exit_with_message( "Need to specify -fasta <fasta file> or -seq <sequence>." );
 	}
@@ -120,8 +120,8 @@ rna_build_helix_test(){
 
 	pose::Pose pose;
 	std::string sequence_to_build;
-	for (Size n = 1; n <= full_sequence.size(); n++ ) if ( !is_blank_seq( full_sequence[n-1]) ) sequence_to_build.push_back( full_sequence[ n-1 ] );
-	pose::make_pose_from_sequence( pose, sequence_to_build,	*rsd_set );
+	for ( Size n = 1; n <= full_sequence.size(); n++ ) if ( !is_blank_seq( full_sequence[n-1]) ) sequence_to_build.push_back( full_sequence[ n-1 ] );
+	pose::make_pose_from_sequence( pose, sequence_to_build, *rsd_set );
 
 	RNA_HelixAssembler rna_helix_assembler;
 	//rna_helix_assembler.random_perturbation( true );
@@ -133,7 +133,7 @@ rna_build_helix_test(){
 		rna_helix_assembler.set_scorefxn ( scorefxn );
 	}
 	// if following is blank, there won't be a 'final' minimize.
-	if ( option[ finish_weights ].user() ){
+	if ( option[ finish_weights ].user() ) {
 		ScoreFunctionOP finish_scorefxn = ScoreFunctionFactory::create_score_function( option[ finish_weights ]()  );
 		rna_helix_assembler.set_finish_scorefxn( finish_scorefxn );
 	}
@@ -146,7 +146,7 @@ rna_build_helix_test(){
 	std::string outfile = full_sequence+".pdb";
 	if ( option[ out::file::o ].user() ) outfile = option[ out::file::o ]();
 
-	for (Size n = 1; n <= nstruct; n++ ) {
+	for ( Size n = 1; n <= nstruct; n++ ) {
 		rna_helix_assembler.apply( pose, full_sequence );
 
 		if ( output_silent ) {
@@ -179,31 +179,31 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-try {
-	using namespace basic::options;
+	try {
+		using namespace basic::options;
 
-	std::cout << std::endl << "Basic usage:  " << argv[0] << "  -seq <sequence of first strand> <sequence of second strand>   -o <name of output pdb file> " << std::endl;
-	std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
+		std::cout << std::endl << "Basic usage:  " << argv[0] << "  -seq <sequence of first strand> <sequence of second strand>   -o <name of output pdb file> " << std::endl;
+		std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
 
-	utility::vector1< std::string > blank_string_vector;
-	NEW_OPT( seq, "Input sequence", blank_string_vector );
-	NEW_OPT( minimize_all, "minimize all torsions in response to each base pair addition", false );
-	NEW_OPT( dump, "dump intermediate pdbs", false );
-	NEW_OPT( finish_weights, "[ optional ] score function to do a second minimize with after each base pair addition", "" );
+		utility::vector1< std::string > blank_string_vector;
+		NEW_OPT( seq, "Input sequence", blank_string_vector );
+		NEW_OPT( minimize_all, "minimize all torsions in response to each base pair addition", false );
+		NEW_OPT( dump, "dump intermediate pdbs", false );
+		NEW_OPT( finish_weights, "[ optional ] score function to do a second minimize with after each base pair addition", "" );
 
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	core::init::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		core::init::init(argc, argv);
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-	protocols::viewer::viewer_main( my_main );
-} catch ( utility::excn::EXCN_Base const & e ) {
-	std::cout << "caught exception " << e.msg() << std::endl;
-	return -1;
-}
+		protocols::viewer::viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 
 }

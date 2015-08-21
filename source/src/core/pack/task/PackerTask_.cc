@@ -99,20 +99,20 @@ PackerTask_::update_commutative(
 ){
 
 	/*for(int i = 0; i < 9; ++i){
-		std::cerr << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-		std::cerr << "!!!!!!!!!!!!!!  update update_commutative temporarially is copy! !!!!!!!!!!!!!!" << std::endl;
-		std::cerr << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-		}*/
+	std::cerr << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+	std::cerr << "!!!!!!!!!!!!!!  update update_commutative temporarially is copy! !!!!!!!!!!!!!!" << std::endl;
+	std::cerr << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+	}*/
 
 	PackerTask_ const & o(dynamic_cast<PackerTask_ const &>(t));
 
-	if( nres_ != o.nres_ ) utility_exit_with_message("unmatching nres_");
+	if ( nres_ != o.nres_ ) utility_exit_with_message("unmatching nres_");
 
 	/// leave the state of the pack_residue array as true everywhere.  This is an array
 	/// used only inside rotamer_trials and rtmin, so this should be a good idea.
-	for(Size i = 1; i <= pack_residue_.size(); ++i) pack_residue_[i] = true;
+	for ( Size i = 1; i <= pack_residue_.size(); ++i ) pack_residue_[i] = true;
 
-	for(Size i = 1; i <= residue_tasks_.size(); ++i) residue_tasks_[i].update_commutative(o.residue_tasks_[i]);
+	for ( Size i = 1; i <= residue_tasks_.size(); ++i ) residue_tasks_[i].update_commutative(o.residue_tasks_[i]);
 
 	n_to_be_packed_ = o.n_to_be_packed_;/// <-- this derived data will need to be updated
 	n_to_be_packed_up_to_date_ = false; /// <-- signal that n_to_be_packed will need to be updated
@@ -148,10 +148,10 @@ PackerTask_::update_commutative(
 	disallow_quench_ = o.disallow_quench_;
 
 
-	if(o.IG_edge_reweights_) {
+	if ( o.IG_edge_reweights_ ) {
 		IG_edge_reweights_ = IGEdgeReweightContainerOP( new IGEdgeReweightContainer(nres_) );
-		for(utility::vector1< IGEdgeReweighterOP >::const_iterator i = o.IG_edge_reweights_->reweighters_begin();
-			i != o.IG_edge_reweights_->reweighters_end(); ++i) {
+		for ( utility::vector1< IGEdgeReweighterOP >::const_iterator i = o.IG_edge_reweights_->reweighters_begin();
+				i != o.IG_edge_reweights_->reweighters_end(); ++i ) {
 			IG_edge_reweights_->add_reweighter(*i);
 		}
 	} else {
@@ -162,20 +162,20 @@ PackerTask_::update_commutative(
 
 void
 PackerTask_::request_symmetrize_by_intersection(){
-	if( symmetry_status_ == NO_SYMMETRIZATION_REQUEST ){
+	if ( symmetry_status_ == NO_SYMMETRIZATION_REQUEST ) {
 		symmetry_status_ = REQUEST_SYMMETRIZE_BY_INTERSECTION;
 	}
-	if( symmetry_status_ != REQUEST_SYMMETRIZE_BY_INTERSECTION ) {
+	if ( symmetry_status_ != REQUEST_SYMMETRIZE_BY_INTERSECTION ) {
 		utility_exit_with_message("PackerTask can be symmetrized by union or by intersection but not both.");
 	}
 }
 
 void
 PackerTask_::request_symmetrize_by_union(){
-	if( symmetry_status_ == NO_SYMMETRIZATION_REQUEST ){
+	if ( symmetry_status_ == NO_SYMMETRIZATION_REQUEST ) {
 		symmetry_status_ = REQUEST_SYMMETRIZE_BY_UNION;
 	}
-	if( symmetry_status_ != REQUEST_SYMMETRIZE_BY_UNION ) {
+	if ( symmetry_status_ != REQUEST_SYMMETRIZE_BY_UNION ) {
 		utility_exit_with_message("PackerTask can be symmetrized by union or by intersection but not both.");
 	}
 }
@@ -271,7 +271,7 @@ Size PackerTask_::total_residue() const
 void
 PackerTask_::clean_residue_task( conformation::Residue const & original_residue, Size const seqpos)
 {
-	if ( !pack_residue_[ seqpos ] ){
+	if ( !pack_residue_[ seqpos ] ) {
 		--n_to_be_packed_;
 		pack_residue_[ seqpos ] = true;
 	}
@@ -282,8 +282,7 @@ PackerTask_::clean_residue_task( conformation::Residue const & original_residue,
 ///This does not affect underlying ResidueLevelTasks, but at the moment there is no method for reversing
 void PackerTask_::temporarily_fix_everything()
 {
-	for ( Size ii = 1; ii <= nres_; ++ii )
-	{
+	for ( Size ii = 1; ii <= nres_; ++ii ) {
 		pack_residue_[ ii ] = false;
 	}
 	n_to_be_packed_ = 0;
@@ -294,7 +293,7 @@ void PackerTask_::temporarily_fix_everything()
 ///reverse with same function, opposite bool input
 void PackerTask_::temporarily_set_pack_residue( int resid, bool setting )
 {
-	if ( ! setting && pack_residue_[ resid ]) {
+	if ( ! setting && pack_residue_[ resid ] ) {
 		--n_to_be_packed_;
 	} else if ( setting && ! pack_residue_[ resid ] ) {
 		++n_to_be_packed_;
@@ -311,8 +310,8 @@ Size PackerTask_::num_to_be_packed() const
 
 bool PackerTask_::pack_residue( int resid ) const
 {
-	//	if ( resid < 0 || resid > pack_residue_.size() || resid > residue_tasks_.size() ){
-	//	T("core.pack.task.PackerTask") << "Resid " << resid << " out of range." << std::endl;
+	// if ( resid < 0 || resid > pack_residue_.size() || resid > residue_tasks_.size() ){
+	// T("core.pack.task.PackerTask") << "Resid " << resid << " out of range." << std::endl;
 	//}
 	return pack_residue_[ resid ] && residue_tasks_[ resid ].being_packed();
 }
@@ -392,7 +391,7 @@ bool PackerTask_::has_behavior( Size resid ) const
 
 chemical::ResidueTypeCOP
 PackerTask_::target_type( Size resid ) const
-	{ return residue_tasks_[ resid ].target_type(); }
+{ return residue_tasks_[ resid ].target_type(); }
 
 // adducts
 void PackerTask_::or_adducts( bool setting )
@@ -443,7 +442,7 @@ void PackerTask_::or_fix_his_tautomer( utility::vector1<int> const & positions, 
 {
 	if ( ! setting ) return;
 	if ( positions.size() == 0 ) { // no positions defined, set for all residue_tasks_
-		for (Size ii=1; ii<=nres_; ++ii) {
+		for ( Size ii=1; ii<=nres_; ++ii ) {
 			residue_tasks_[ii].or_fix_his_tautomer( setting );
 		}
 	} else { // set for specific positions
@@ -555,7 +554,7 @@ PackerTask_::show( std::ostream & out ) const {
 	out << "resid\tpack?\tdesign?\tallowed_aas" << std::endl;
 
 	for ( Size i=1, it_end = total_residue();
-				i <= it_end; ++i){
+			i <= it_end; ++i ) {
 
 		out << i;
 		out << "\t" << (pack_residue( i ) ? "TRUE" : "FALSE");
@@ -563,18 +562,18 @@ PackerTask_::show( std::ostream & out ) const {
 
 		out << "\t";
 		for ( ResidueLevelTask::ResidueTypeCOPListConstIter
-						allowed_iter(   residue_task( i ).allowed_residue_types_begin() );
-						allowed_iter != residue_task( i ).allowed_residue_types_end();
-					++allowed_iter ) {
+				allowed_iter(   residue_task( i ).allowed_residue_types_begin() );
+				allowed_iter != residue_task( i ).allowed_residue_types_end();
+				++allowed_iter ) {
 			out << ((allowed_iter == residue_task( i ).allowed_residue_types_begin()) ? "" : ",") <<
-					(*allowed_iter)->name();
+				(*allowed_iter)->name();
 		}
 		out << std::endl;
 	}
 
 	//sml pymol-style selection, great for debugging
-	if( basic::options::option[ basic::options::OptionKeys::packing::print_pymol_selection ].value() ){
-		for ( Size i=1, it_end = total_residue();	i != it_end; ++i)	if( pack_residue(i) ) out << i << "+";
+	if ( basic::options::option[ basic::options::OptionKeys::packing::print_pymol_selection ].value() ) {
+		for ( Size i=1, it_end = total_residue(); i != it_end; ++i ) if ( pack_residue(i) ) out << i << "+";
 		out << std::endl;
 	}
 }
@@ -588,26 +587,26 @@ void
 PackerTask_::show_residue_task( std::ostream & out, Size resid ) const {
 	out << "Residue " << resid << ": " << residue_task(resid).get_original_residue() << "\n";
 	out << " \tpack?\t\t\t\t" << (pack_residue(resid) ? "TRUE" : "FALSE") <<
-			"\n" << " \tdesign?\t\t\t\t" << (design_residue(resid) ? "TRUE" : "FALSE") <<
-			"\n" << " \tinclude current rotamer?\t" << (residue_task(resid).include_current() ? "TRUE" : "FALSE") <<
-			"\n" << " \thas protocol-level behavior?\t" << (residue_task(resid).has_behavior() ? "TRUE" : "FALSE") <<
-			"\n" << " \tinclude adducts?\t\t" << (residue_task(resid).adducts() ? "TRUE" : "FALSE") <<
-			"\n" << " \toptimize H placements?\t\t" << (residue_task(resid).optimize_h() ? "TRUE" : "FALSE") <<
-			"\n" << " \tpreserve C beta?\t\t" << (residue_task(resid).preserve_c_beta() ? "TRUE" : "FALSE") <<
-			"\n" << " \tflip HIS/ASN/GLN?\t\t" << (residue_task(resid).flip_HNQ() ? "TRUE" : "FALSE")<<
-			"\n" << " \tfix HIS tautamer?\t\t" << (residue_task(resid).fix_his_tautomer() ? "TRUE" : "FALSE") <<
-			"\n" << " \tsample proton chi?\t\t" << (residue_task(resid).sample_proton_chi() ? "TRUE" : "FALSE") <<
-			"\n" << " \textra chi cutoff:\t\t" << residue_task(resid).extrachi_cutoff() <<
-			"\n" << " \textra rotamer for chi 1\t\t" << (residue_task(resid).ex1() ? "TRUE" : "FALSE") <<
-			"\n" << " \textra rotamer for chi 2\t\t" << (residue_task(resid).ex2() ? "TRUE" : "FALSE") <<
-			"\n" << " \textra rotamer for chi 3\t\t" << (residue_task(resid).ex3() ? "TRUE" : "FALSE") <<
-			"\n" << " \textra rotamer for chi 4\t\t" << (residue_task(resid).ex4() ? "TRUE" : "FALSE") <<
-			"\n" << " \textra rotamer for chi 1 (aromatics)\t\t" << (residue_task(resid).ex1aro() ? "TRUE" : "FALSE") <<
-			"\n" << " \textra rotamer for chi 2 (aromatics)\t\t" << (residue_task(resid).ex2aro() ? "TRUE" : "FALSE") <<
-			"\n" << " \textra rotamer for chi 1 (exposed aromatics)\t" <<
-			(residue_task(resid).ex1aro_exposed() ? "TRUE" : "FALSE") <<
-			"\n" << " \textra rotamer for chi 2 (exposed aromatics)\t" <<
-			(residue_task(resid).ex2aro_exposed() ? "TRUE" : "FALSE") << "\n";
+		"\n" << " \tdesign?\t\t\t\t" << (design_residue(resid) ? "TRUE" : "FALSE") <<
+		"\n" << " \tinclude current rotamer?\t" << (residue_task(resid).include_current() ? "TRUE" : "FALSE") <<
+		"\n" << " \thas protocol-level behavior?\t" << (residue_task(resid).has_behavior() ? "TRUE" : "FALSE") <<
+		"\n" << " \tinclude adducts?\t\t" << (residue_task(resid).adducts() ? "TRUE" : "FALSE") <<
+		"\n" << " \toptimize H placements?\t\t" << (residue_task(resid).optimize_h() ? "TRUE" : "FALSE") <<
+		"\n" << " \tpreserve C beta?\t\t" << (residue_task(resid).preserve_c_beta() ? "TRUE" : "FALSE") <<
+		"\n" << " \tflip HIS/ASN/GLN?\t\t" << (residue_task(resid).flip_HNQ() ? "TRUE" : "FALSE")<<
+		"\n" << " \tfix HIS tautamer?\t\t" << (residue_task(resid).fix_his_tautomer() ? "TRUE" : "FALSE") <<
+		"\n" << " \tsample proton chi?\t\t" << (residue_task(resid).sample_proton_chi() ? "TRUE" : "FALSE") <<
+		"\n" << " \textra chi cutoff:\t\t" << residue_task(resid).extrachi_cutoff() <<
+		"\n" << " \textra rotamer for chi 1\t\t" << (residue_task(resid).ex1() ? "TRUE" : "FALSE") <<
+		"\n" << " \textra rotamer for chi 2\t\t" << (residue_task(resid).ex2() ? "TRUE" : "FALSE") <<
+		"\n" << " \textra rotamer for chi 3\t\t" << (residue_task(resid).ex3() ? "TRUE" : "FALSE") <<
+		"\n" << " \textra rotamer for chi 4\t\t" << (residue_task(resid).ex4() ? "TRUE" : "FALSE") <<
+		"\n" << " \textra rotamer for chi 1 (aromatics)\t\t" << (residue_task(resid).ex1aro() ? "TRUE" : "FALSE") <<
+		"\n" << " \textra rotamer for chi 2 (aromatics)\t\t" << (residue_task(resid).ex2aro() ? "TRUE" : "FALSE") <<
+		"\n" << " \textra rotamer for chi 1 (exposed aromatics)\t" <<
+		(residue_task(resid).ex1aro_exposed() ? "TRUE" : "FALSE") <<
+		"\n" << " \textra rotamer for chi 2 (exposed aromatics)\t" <<
+		(residue_task(resid).ex2aro_exposed() ? "TRUE" : "FALSE") << "\n";
 }
 
 void
@@ -617,14 +616,14 @@ PackerTask_::show_residue_task( Size resid ) const {
 
 void
 PackerTask_::show_all_residue_tasks( std::ostream & out ) const {
-	for ( Size i=1, it_end = total_residue(); i <= it_end; ++i){
+	for ( Size i=1, it_end = total_residue(); i <= it_end; ++i ) {
 		show_residue_task( out, i );
 	}
 }
 
 void
 PackerTask_::show_all_residue_tasks() const {
-	for ( Size i=1, it_end = total_residue(); i <= it_end; ++i){
+	for ( Size i=1, it_end = total_residue(); i <= it_end; ++i ) {
 		show_residue_task( i );
 	}
 }
@@ -727,7 +726,7 @@ PackerTask_::residue_task( Size resid ) const
 {
 	// packer has no need to read residue-level task for a residue that has been disabled
 	//This makes the assumption that ONLY the packer is allowed to use this function
-//debug_assert( pack_residue_[ resid ] );
+	//debug_assert( pack_residue_[ resid ] );
 	return residue_tasks_[ resid ];
 }
 
@@ -811,7 +810,7 @@ PackerTask_::IGEdgeReweights() const{
 IGEdgeReweightContainerOP
 PackerTask_::set_IGEdgeReweights()
 {
-	if( !IG_edge_reweights_ ){
+	if ( !IG_edge_reweights_ ) {
 		IG_edge_reweights_ = IGEdgeReweightContainerOP( new IGEdgeReweightContainer( nres_ ) );
 	}
 	return IG_edge_reweights_;
@@ -877,7 +876,7 @@ PackerTask_::disallow_quench() const { return disallow_quench_;}
 
 std::string ResidueLevelTask_::task_mode() const{
 	std::ostringstream modes;
-	for( std::vector<std::string>::const_iterator i = mode_tokens_.begin(); i < mode_tokens_.end(); ++i){
+	for ( std::vector<std::string>::const_iterator i = mode_tokens_.begin(); i < mode_tokens_.end(); ++i ) {
 		modes << *i << " ";
 	}
 	return modes.str();
@@ -890,13 +889,13 @@ std::string ResidueLevelTask_::get_ex_flags(
 ) const {
 	std::ostringstream ex_flags;
 
-	if (exaro_sample_level == 1){
+	if ( exaro_sample_level == 1 ) {
 		ex_flags << "EX ARO " << chiid;
-	} else if (exaro_sample_level > 1) {
+	} else if ( exaro_sample_level > 1 ) {
 		ex_flags << "EX ARO " << chiid << " LEVEL " << exaro_sample_level;
-	} else if (ex_sample_level == 1){
+	} else if ( ex_sample_level == 1 ) {
 		ex_flags << "EX " << chiid;
-	} else if (ex_sample_level > 1){
+	} else if ( ex_sample_level > 1 ) {
 		ex_flags << "EX " << chiid << " LEVEL " << ex_sample_level;
 	} else {
 		// use the default
@@ -904,33 +903,33 @@ std::string ResidueLevelTask_::get_ex_flags(
 	return ex_flags.str();
 }
 
-std::string	ResidueLevelTask_::command_string() const{
+std::string ResidueLevelTask_::command_string() const{
 
 	std::ostringstream command_string;
 	std::string task_name( task_mode() );
-	if (task_name != "NATRO")	command_string << " " << task_name;
+	if ( task_name != "NATRO" ) command_string << " " << task_name;
 
 	std::string ex1 = get_ex_flags( 1, ex1aro_sample_level_, ex1_sample_level_);
-	if (ex1 != "")  command_string << " " << ex1;
+	if ( ex1 != "" )  command_string << " " << ex1;
 
 	std::string ex2 = get_ex_flags( 2, ex2aro_sample_level_, ex2_sample_level_);
-	if (ex2 != "") command_string << " " << ex2;
+	if ( ex2 != "" ) command_string << " " << ex2;
 
 	std::string ex3 = get_ex_flags( 3, 0, ex3_sample_level_);
-	if (ex3 != "") command_string << " " << ex3;
+	if ( ex3 != "" ) command_string << " " << ex3;
 
 	std::string ex4 = get_ex_flags( 4, 0, ex4_sample_level_);
-	if (ex4 != "") command_string << " " << ex4;
+	if ( ex4 != "" ) command_string << " " << ex4;
 
-	if( extrachi_cutoff_ != 18) command_string << " EX_CUTOFF " << extrachi_cutoff_;
+	if ( extrachi_cutoff_ != 18 ) command_string << " EX_CUTOFF " << extrachi_cutoff_;
 
-	if( include_current()) command_string << " USE_INPUT_SC";
+	if ( include_current() ) command_string << " USE_INPUT_SC";
 
 	//SCAN, AUTO, TARGET etc
-	for (utility::vector1<std::string>::const_iterator i = behaviors_.begin(); i < behaviors_.end(); ++i){
-		if (*i == "TARGET"){
+	for ( utility::vector1<std::string>::const_iterator i = behaviors_.begin(); i < behaviors_.end(); ++i ) {
+		if ( *i == "TARGET" ) {
 			command_string << " TARGET ";
-			if (target_type() == 0){
+			if ( target_type() == 0 ) {
 				command_string << "_";
 			} else {
 				command_string << target_type()->name();
@@ -947,11 +946,11 @@ std::string PackerTask_::task_string( pose::Pose const & pose ) const{
 	std::ostringstream task_string;
 	task_string << "start" << std::endl;
 
-	for (Size i = 1; i <= total_residue(); ++i){
+	for ( Size i = 1; i <= total_residue(); ++i ) {
 		std::string residue_task_string = residue_tasks_[ i ].command_string( );
-		if (residue_task_string != "" && residue_task_string != " ") {
+		if ( residue_task_string != "" && residue_task_string != " " ) {
 			//std::cout << "residue_task_string -> '" << residue_task_string << "'." << std::endl;
-            task_string << pose.pdb_info()->number(i);
+			task_string << pose.pdb_info()->number(i);
 			task_string << " " << pose.pdb_info()->chain(i);
 			task_string << " " << residue_task_string << std::endl;
 		}
@@ -990,20 +989,20 @@ void PackerTask_::remap_residue_level_tasks(
 	core::id::SequenceMapping reverse_seqmap = core::id::SequenceMapping( *seqmap );
 	reverse_seqmap.reverse();
 
-	for( Size ii = 1; ii <= pose.total_residue(); ++ii ){
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		//core::Size new_pos =  (*seqmap)[ii];
 		core::Size old_pos = reverse_seqmap[ii];
 
-  		if( old_pos == 0 ){
-        //find insertions and remapped residues old res index is 0
-        remapped_residue_tasks.push_back( ResidueLevelTask_( pose.residue( ii ) ));
-        remapped_residue_tasks[ii].initialize_from_command_line();
-        remapped_pack_residue.push_back( true );
-      }else if( old_pos != 0 ){
-        // no change
-        remapped_residue_tasks.push_back( residue_tasks_[ old_pos ]);
-        remapped_pack_residue.push_back( pack_residue_[ old_pos ] );
-      }
+		if ( old_pos == 0 ) {
+			//find insertions and remapped residues old res index is 0
+			remapped_residue_tasks.push_back( ResidueLevelTask_( pose.residue( ii ) ));
+			remapped_residue_tasks[ii].initialize_from_command_line();
+			remapped_pack_residue.push_back( true );
+		} else if ( old_pos != 0 ) {
+			// no change
+			remapped_residue_tasks.push_back( residue_tasks_[ old_pos ]);
+			remapped_pack_residue.push_back( pack_residue_[ old_pos ] );
+		}
 	}
 
 	residue_tasks_ = remapped_residue_tasks;

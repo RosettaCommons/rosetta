@@ -71,7 +71,7 @@ SS_Base::SS_Base( Size const & begin, Size const & end ):
 
 
 /// @brief copy constructor
-SS_Base::SS_Base(	SS_Base const & s ):
+SS_Base::SS_Base( SS_Base const & s ):
 	ReferenceCount(),
 	begin_ ( s.begin_ ),
 	end_ ( s.end_ ),
@@ -103,7 +103,7 @@ Strand::Strand( Size const & begin, Size const & end ):
 
 
 /// @brief copy constructor
-Strand::Strand(	Strand const & s ):
+Strand::Strand( Strand const & s ):
 	SS_Base( s )
 {}
 
@@ -133,7 +133,7 @@ Strand::calc_geometry( BB_Pos const & bbpos )
 	orient( v.normalized() );
 
 	Size pos = ( end() - begin() )/2 + begin();
-	if( ( end() - begin() )%2 == 0 ) {
+	if ( ( end() - begin() )%2 == 0 ) {
 		mid_pos( ( bbpos.N( pos ) + bbpos.C( pos ) )/2.0 );
 	} else {
 		mid_pos( ( bbpos.N( pos ) + bbpos.C( pos+1 ) )/2.0 );
@@ -194,9 +194,9 @@ Helix::calc_geometry( BB_Pos const & bbpos )
 	Size const s4 = s3 + 1;
 
 	Vector const p1 = (                 bbpos.CA( s1 ) + bbpos.C( s1 ) ) +
-		                ( bbpos.N( s2 ) + bbpos.CA( s2 ) + bbpos.C( s2 ) ) +
-									 	( bbpos.N( s3 ) + bbpos.CA( s3 ) + bbpos.C( s3 ) ) +
-									 	( bbpos.N( s4 ) + bbpos.CA( s4 )                 ) ;
+		( bbpos.N( s2 ) + bbpos.CA( s2 ) + bbpos.C( s2 ) ) +
+		( bbpos.N( s3 ) + bbpos.CA( s3 ) + bbpos.C( s3 ) ) +
+		( bbpos.N( s4 ) + bbpos.CA( s4 )                 ) ;
 
 	Vector const Nend_pos1 = ( p1 + bbpos.N( s1 ) ) * eleven_inv;
 	Vector const Nend_pos2 = ( p1 + bbpos.C( s4 ) ) * eleven_inv;
@@ -208,9 +208,9 @@ Helix::calc_geometry( BB_Pos const & bbpos )
 	Size const n4 = n3 + 1;
 
 	Vector const p2 = (                 bbpos.CA( n1 ) + bbpos.C( n1 ) ) +
-										( bbpos.N( n2 ) + bbpos.CA( n2 ) + bbpos.C( n2 ) ) +
-		                ( bbpos.N( n3 ) + bbpos.CA( n3 ) + bbpos.C( n3 ) ) +
-									 	( bbpos.N( n4 ) + bbpos.CA( n4 )                 ) ;
+		( bbpos.N( n2 ) + bbpos.CA( n2 ) + bbpos.C( n2 ) ) +
+		( bbpos.N( n3 ) + bbpos.CA( n3 ) + bbpos.C( n3 ) ) +
+		( bbpos.N( n4 ) + bbpos.CA( n4 )                 ) ;
 
 	Vector const Cend_pos1 = ( p2 + bbpos.N( n1 ) ) * eleven_inv;
 	Vector const Cend_pos2 = ( p2 + bbpos.C( n4 ) ) * eleven_inv;
@@ -272,7 +272,7 @@ SS_Info2::SS_Info2():
 
 
 /// @brief value constructor
-SS_Info2::SS_Info2(	String const & secstruct ):
+SS_Info2::SS_Info2( String const & secstruct ):
 	CacheableData()
 {
 	initialize( secstruct );
@@ -280,7 +280,7 @@ SS_Info2::SS_Info2(	String const & secstruct ):
 
 
 /// @brief value constructor
-SS_Info2::SS_Info2(	Pose const & pose, String const & secstruct ):
+SS_Info2::SS_Info2( Pose const & pose, String const & secstruct ):
 	CacheableData()
 {
 	initialize( pose, secstruct );
@@ -354,16 +354,16 @@ SS_Info2::initialize( Pose const & pose, String const & secstruct )
 	//but make sure that secondary structure is according to number
 	//of protein res
 	core::Size num_protein_res( pose.total_residue() );
-	for( core::Size i = pose.total_residue(); i != 0; i--){
-		if( !pose.residue_type( i ).is_protein() ) num_protein_res--;
+	for ( core::Size i = pose.total_residue(); i != 0; i-- ) {
+		if ( !pose.residue_type( i ).is_protein() ) num_protein_res--;
 	}
 
 	// data all clear
 	clear_data();
 	// set strands and helices
-	if( secstruct == "" ){
+	if ( secstruct == "" ) {
 		secstruct_ = pose.secstruct();
-	}else{
+	} else {
 		secstruct_ = secstruct;
 		runtime_assert( num_protein_res == secstruct_.length() ); //flo sep'12 changed from pose.total_residue() to num_protein_res
 	}
@@ -424,17 +424,17 @@ SS_Info2::set_SSorient( Pose const & pose )
 void
 SS_Info2::set_SSorient()
 {
-	for( Strands::iterator iter = strands_.begin(),
-				 iter_end = strands_.end(); iter != iter_end; ++iter ) {
+	for ( Strands::iterator iter = strands_.begin(),
+			iter_end = strands_.end(); iter != iter_end; ++iter ) {
 		StrandOP & st( *iter );
-		if(  st->length() >= 2 ){
+		if (  st->length() >= 2 ) {
 			st->calc_geometry( bb_pos_ );
 		}
 	} // Strands
-	for( Helices::iterator iter = helices_.begin(),
-				 iter_end = helices_.end(); iter != iter_end; ++iter ) {
+	for ( Helices::iterator iter = helices_.begin(),
+			iter_end = helices_.end(); iter != iter_end; ++iter ) {
 		HelixOP & hx( *iter );
-		if(  hx->length() >= 4 ){
+		if (  hx->length() >= 4 ) {
 			hx->calc_geometry( bb_pos_ );
 		}
 	} // Helices
@@ -452,14 +452,14 @@ SS_Info2::identify_ss( String const & secstruct )
 	Size istrand( 0 ), ihelix( 0 ), iloop( 0 ), iss( 0 );
 
 	String prev( "" );
-	for( Size i=1; i<= secstruct.length(); ++i ) {
+	for ( Size i=1; i<= secstruct.length(); ++i ) {
 		String const & ss( secstruct.substr( i-1, 1 ) );
 
 		strand_id_[ i ] = 0;
 		helix_id_ [ i ] = 0;
 		loop_id_  [ i ] = 0;
 
-		if( ss =="E" ) {
+		if ( ss =="E" ) {
 
 			if ( flag_E == false ) {
 				istrand ++;
@@ -468,7 +468,7 @@ SS_Info2::identify_ss( String const & secstruct )
 			flag_E = true;
 			strand_id_[ i ] = istrand;
 
-		} else if( ss == "H" ) {
+		} else if ( ss == "H" ) {
 
 			if ( flag_H == false ) {
 				ihelix++;
@@ -479,7 +479,7 @@ SS_Info2::identify_ss( String const & secstruct )
 
 		} else {
 
-			if( flag_L == false ) {
+			if ( flag_L == false ) {
 				iloop++;
 				beginL = i;
 			}
@@ -490,7 +490,7 @@ SS_Info2::identify_ss( String const & secstruct )
 
 		if ( ss !="E" && flag_E == true ) {
 			flag_E = false;
-			if( ( i - beginE ) >= 2 ) {
+			if ( ( i - beginE ) >= 2 ) {
 				strands_.push_back( StrandOP( new Strand( beginE, i-1 ) ) );
 			} else {
 				strands_.push_back( StrandOP( new Strand( beginE, beginE ) ) );
@@ -499,23 +499,23 @@ SS_Info2::identify_ss( String const & secstruct )
 
 		if ( ss !="H" && flag_H == true ) {
 			flag_H = false;
-			if( ( i-beginH ) >= 2 ) {
+			if ( ( i-beginH ) >= 2 ) {
 				helices_.push_back( HelixOP( new Helix( beginH, i-1 ) ) );
 			} else {
 				helices_.push_back( HelixOP( new Helix( beginH, beginH ) ) );
 			}
 		}
 
-		if( ss !="L" && flag_L == true ) {
+		if ( ss !="L" && flag_L == true ) {
 			flag_L = false;
-			if( ( i-beginL ) >= 2 ) {
+			if ( ( i-beginL ) >= 2 ) {
 				loops_.push_back( LoopOP( new Loop( beginL, i-1 ) ) );
 			} else {
 				loops_.push_back( LoopOP( new Loop( beginL, beginL ) ) );
 			}
 		}
 
-		if( prev != ss ){
+		if ( prev != ss ) {
 			iss ++;
 			prev = ss;
 		}
@@ -523,22 +523,22 @@ SS_Info2::identify_ss( String const & secstruct )
 
 	} // for( Size i )
 
-	if( flag_E == true ) {
-		if( ( secstruct.length() - beginE + 1 ) >= 2 ) {
+	if ( flag_E == true ) {
+		if ( ( secstruct.length() - beginE + 1 ) >= 2 ) {
 			strands_.push_back( StrandOP( new Strand( beginE, secstruct.length() ) ) );
 		} else {
 			strands_.push_back( StrandOP( new Strand( beginE, beginE ) ) );
 		}
 	}
-	if( flag_H == true ) {
-		if( ( secstruct.length() - beginH + 1 ) >= 2 ) {
+	if ( flag_H == true ) {
+		if ( ( secstruct.length() - beginH + 1 ) >= 2 ) {
 			helices_.push_back( HelixOP( new Helix( beginH, secstruct.length() ) ) );
 		} else {
 			helices_.push_back( HelixOP( new Helix( beginH, beginH ) ) );
 		}
 	}
-	if( flag_L == true ) {
-		if( ( secstruct.length() - beginL + 1 ) >= 2 ) {
+	if ( flag_L == true ) {
+		if ( ( secstruct.length() - beginL + 1 ) >= 2 ) {
 			loops_.push_back( LoopOP( new Loop( beginL, secstruct.length() ) ) );
 		} else {
 			loops_.push_back( LoopOP( new Loop( beginL, beginL ) ) );

@@ -112,10 +112,10 @@ public:
 	) const;
 
 	/* void compute_one_body_energies_for_precomputed_ig(
-		Pose const & pose,
-		ScoreFunction const & sfxn,
-		core::graph::GraphCOP flexpack_neighbor_graph,
-		interaction_graph::FlexbbInteractionGraph & flexbb_ig
+	Pose const & pose,
+	ScoreFunction const & sfxn,
+	core::graph::GraphCOP flexpack_neighbor_graph,
+	interaction_graph::FlexbbInteractionGraph & flexbb_ig
 	) const; */
 
 	void compute_one_body_energies_for_otf_ig(
@@ -126,10 +126,10 @@ public:
 	) const;
 
 	/* void compute_two_body_energies(
-		Pose const & pose,
-		ScoreFunction const & sfxn,
-		core::graph::Graph const & flexpack_neighbor_graph,
-		interaction_graph::PrecomputedFlexbbInteractionGraph & flexbb_ig
+	Pose const & pose,
+	ScoreFunction const & sfxn,
+	core::graph::Graph const & flexpack_neighbor_graph,
+	interaction_graph::PrecomputedFlexbbInteractionGraph & flexbb_ig
 	) const; */
 
 	//void prepare_sets_for_packing( Pose const & pose, ScoreFunction const &);
@@ -195,7 +195,7 @@ public:
 	/// @brief The total number of rotamers across all residues and all backbone conformations
 	//Size
 	//nrotamers() const {
-	//	return nrotamers_;
+	// return nrotamers_;
 	//}
 
 	//Size
@@ -246,7 +246,7 @@ public:
 	//virtual
 	//uint
 	//nrotamer_offset_for_moltenres( uint moltenresid ) const {
-	//	return nrotoffset_for_moltenres_[ moltenresid ];
+	// return nrotoffset_for_moltenres_[ moltenresid ];
 	//}
 
 	/// @brief Input: rotid in global enumeration, Output rotid in local enumeration
@@ -329,7 +329,7 @@ public:
 	/// @brief rotamer_id in the global enumeration of rotamers.
 	//Size
 	//moltenres_for_rotamer( Size rotamer_id ) const {
-	//	return moltenres_for_rotamer_[ rotamer_id ];
+	// return moltenres_for_rotamer_[ rotamer_id ];
 	//}
 
 	Size

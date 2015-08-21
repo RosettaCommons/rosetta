@@ -21,7 +21,7 @@
 
 namespace protocols {
 namespace abinitio {
-namespace abscript{
+namespace abscript {
 
 class ConstraintPreparer;
 typedef utility::pointer::shared_ptr< ConstraintPreparer > ConstraintPreparerOP;

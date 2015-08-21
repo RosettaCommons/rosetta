@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/matdes/InterfacePackingFilter.hh
-/// @brief Calculates the RosettaHoles score for the atoms within a user-defined cutoff distance 
-/// (default = 9.0) of the subpose interface.  Filters based on lower and upper thresholds, 
+/// @brief Calculates the RosettaHoles score for the atoms within a user-defined cutoff distance
+/// (default = 9.0) of the subpose interface.  Filters based on lower and upper thresholds,
 /// which are set to -/+5 by default.
 /// @author Jacob Bale (balej@uw.edu)
 
@@ -53,8 +53,8 @@ public:
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );
 	void parse_def( utility::lua::LuaObject const & def,
-					utility::lua::LuaObject const & score_fxns,
-					utility::lua::LuaObject const & tasks );
+		utility::lua::LuaObject const & score_fxns,
+		utility::lua::LuaObject const & tasks );
 
 	core::Real distance_cutoff() const;
 	core::Real contact_dist() const;
@@ -72,7 +72,7 @@ public:
 
 private:
 
-	core::Real distance_cutoff_, contact_dist_, lower_threshold_, upper_threshold_; // distance within which atoms must be across interface in order to be scored. Lower and upper thresholds for the RosettaHoles score. 
+	core::Real distance_cutoff_, contact_dist_, lower_threshold_, upper_threshold_; // distance within which atoms must be across interface in order to be scored. Lower and upper thresholds for the RosettaHoles score.
 
 	bool multicomp_;
 	std::string sym_dof_names_;

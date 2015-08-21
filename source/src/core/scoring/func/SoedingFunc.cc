@@ -39,7 +39,7 @@ SoedingFunc::read_data( std::istream & in ) {
 }
 
 Real
-SoedingFunc::compute_func( Real const x ) const	{
+SoedingFunc::compute_func( Real const x ) const {
 	using std::exp;
 	using std::log;
 
@@ -56,7 +56,7 @@ SoedingFunc::compute_func( Real const x ) const	{
 }
 
 Real
-SoedingFunc::func( Real const x ) const	{
+SoedingFunc::func( Real const x ) const {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 

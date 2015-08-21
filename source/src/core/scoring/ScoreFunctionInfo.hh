@@ -41,20 +41,20 @@ namespace scoring {
 /// Info on the scorefunction settings
 
 /**
-	This object is handed to the pose's Energies object and stored
-	along with the cached energies. It is used in the next scoring
-	evaluation to decide whether it's safe to reuse cached energies.
+This object is handed to the pose's Energies object and stored
+along with the cached energies. It is used in the next scoring
+evaluation to decide whether it's safe to reuse cached energies.
 
-	It must describe the kinds of context that the Energies object provides
-	to the scoring function.  If any scoring function requires a tenA
-	neighbor graph, then that information is stored here.  If a scoring
-	function requires a different kind of neighborness graph (think
-	centroid mode), then this class will indicate the kind of storage.
+It must describe the kinds of context that the Energies object provides
+to the scoring function.  If any scoring function requires a tenA
+neighbor graph, then that information is stored here.  If a scoring
+function requires a different kind of neighborness graph (think
+centroid mode), then this class will indicate the kind of storage.
 
-	Finally, it must describe the maximum atom-to-atom distance cutoff that characterizes
-	the energy function.
+Finally, it must describe the maximum atom-to-atom distance cutoff that characterizes
+the energy function.
 
-	So all we need is a constructor and an operator==
+So all we need is a constructor and an operator==
 
 **/
 

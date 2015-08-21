@@ -10,8 +10,8 @@
 /// @file       protocols/simple_moves/UniformPositionMover.fwd.hh
 ///
 /// @brief      Apply a uniform (deterministic move) to a given position
-/// @details	Generic movers for applying a uniform rotation or translation move
-///				along a jump to a given partner in the pose.
+/// @details Generic movers for applying a uniform rotation or translation move
+///    along a jump to a given partner in the pose.
 ///
 /// @author     Rebecca Alford (rfalford12@gmail.com)
 /// @note       Last Modified (7/10/14)

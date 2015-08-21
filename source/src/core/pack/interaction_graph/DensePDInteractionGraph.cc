@@ -73,8 +73,7 @@ void DensePDNode::print() const
 {
 	std::cerr << "NODE: " << get_node_index() << " with " <<
 		get_num_states() << " states" << std::endl;
-	for (int ii = 1; ii <= get_num_states(); ++ii)
-	{
+	for ( int ii = 1; ii <= get_num_states(); ++ii ) {
 		std::cerr << "(" << ii << ", ";
 		std::cerr << one_body_energies_[ ii ] << ") ";
 		if ( ii % 3 == 0 ) std::cerr << std::endl;
@@ -99,9 +98,8 @@ void DensePDNode::update_one_body_energy( int state, core::PackerEnergy energy )
 /// @param energies - [in] - the array of energies. Must hold num_states_ entries
 void DensePDNode::update_one_body_energies( FArray1< core::PackerEnergy > & energies )
 {
-debug_assert( energies.size() == (unsigned int) get_num_states() );
-	for (int ii = 1; ii <= get_num_states(); ++ii)
-	{
+	debug_assert( energies.size() == (unsigned int) get_num_states() );
+	for ( int ii = 1; ii <= get_num_states(); ++ii ) {
 		one_body_energies_[ ii ] = energies( ii );
 	}
 	return;
@@ -122,9 +120,8 @@ void DensePDNode::add_to_one_body_energy( int state, core::PackerEnergy energy )
 /// @param energies - [in] - the array of energies. Must hold num_states_ entries
 void DensePDNode::add_to_one_body_energies( FArray1< core::PackerEnergy > & energies )
 {
-debug_assert( energies.size() == (unsigned int) get_num_states() );
-	for (int ii = 1; ii <= get_num_states(); ++ii)
-	{
+	debug_assert( energies.size() == (unsigned int) get_num_states() );
+	for ( int ii = 1; ii <= get_num_states(); ++ii ) {
 		one_body_energies_[ ii ] += energies( ii );
 	}
 	return;
@@ -133,8 +130,7 @@ debug_assert( energies.size() == (unsigned int) get_num_states() );
 /// @brief sets all of the one-body energies for this node to zero
 void DensePDNode::zero_one_body_energies()
 {
-	for (int ii = 1; ii <= get_num_states(); ++ii)
-	{
+	for ( int ii = 1; ii <= get_num_states(); ++ii ) {
 		one_body_energies_[ ii ] = 0;
 	}
 }
@@ -152,7 +148,7 @@ core::PackerEnergy DensePDNode::get_one_body_energy( int state )
 /// updates internal edge vector + other vectorized edge information
 void DensePDNode::prepare_for_simulated_annealing()
 {
-	if (! get_edge_vector_up_to_date() ) update_internal_vectors();
+	if ( ! get_edge_vector_up_to_date() ) update_internal_vectors();
 	return;
 }
 
@@ -164,7 +160,7 @@ void DensePDNode::assign_zero_state()
 {
 
 	//std::cerr << "assign_state: node -  " << get_node_index() <<
-	//	" new state " << 0 << "...";
+	// " new state " << 0 << "...";
 
 	current_state_ = 0;
 	alternate_state_ = 0;
@@ -179,8 +175,7 @@ void DensePDNode::assign_zero_state()
 		0.0f);
 	curr_state_total_energy_ = 0.0f;
 
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii )
-	{
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		get_incident_dpd_edge(ii)->
 			acknowledge_state_zeroed( get_node_index() );
 	}
@@ -196,11 +191,10 @@ void DensePDNode::assign_zero_state()
 /// @param new_state - [in] - the new state the node should be assigned
 void DensePDNode::assign_state(int new_state)
 {
-debug_assert( new_state >= 0 && new_state <= get_num_states());
+	debug_assert( new_state >= 0 && new_state <= get_num_states());
 
-	if (new_state == 0) assign_zero_state();
-	else
-	{
+	if ( new_state == 0 ) assign_zero_state();
+	else {
 		//std::cerr << "assign_state: node -  " << get_node_index() <<
 		// " new state " << new_state << "...";
 		current_state_ = new_state;
@@ -208,8 +202,7 @@ debug_assert( new_state >= 0 && new_state <= get_num_states());
 		curr_state_total_energy_ = curr_state_one_body_energy_;
 		alternate_state_is_being_considered_ = false;
 
-		for (int ii = 1; ii <= get_num_incident_edges(); ++ii )
-		{
+		for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 			get_incident_dpd_edge(ii)->acknowledge_state_change(
 				get_node_index(),
 				current_state_,
@@ -230,7 +223,7 @@ int DensePDNode::get_current_state() const
 
 /// @brief returns the one body energy for the state the node is currently assigned
 core::PackerEnergy DensePDNode::get_one_body_energy_current_state()
-{	return curr_state_one_body_energy_;}
+{ return curr_state_one_body_energy_;}
 
 
 /// @brief tells the node that it should change its state to the last state it was
@@ -241,7 +234,7 @@ core::PackerEnergy DensePDNode::get_one_body_energy_current_state()
 /// leaving energy2b structure
 void DensePDNode::commit_considered_substitution()
 {
-debug_assert( alternate_state_is_being_considered_ );
+	debug_assert( alternate_state_is_being_considered_ );
 
 	current_state_ = alternate_state_;
 	curr_state_one_body_energy_ = alternate_state_one_body_energy_;
@@ -255,10 +248,9 @@ debug_assert( alternate_state_is_being_considered_ );
 
 	std::copy( alt_position1,
 		alternate_state_two_body_energies_.end(),
-		 curr_position1 );
+		curr_position1 );
 
-	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii )
-	{
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		get_incident_dpd_edge(ii)->acknowledge_substitution(
 			get_node_index(),
 			alternate_state_two_body_energies_[ii],
@@ -285,8 +277,7 @@ void DensePDNode::update_internal_vectors()
 	edge_matrix_ptrs_.reserve( get_num_incident_edges() + 1);
 	edge_matrix_ptrs_.push_back( FArray2A< core::PackerEnergy >() ); //occupy the 0th position
 
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii)
-	{
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		edge_matrix_ptrs_.push_back( get_incident_dpd_edge(ii)->get_edge_table_ptr() );
 	}
 
@@ -303,8 +294,7 @@ void DensePDNode::print_internal_energies() const
 	std::cerr << "curr_state_one_body_energy_ ";
 	std::cerr << curr_state_one_body_energy_ << " ";
 	std::cerr << "curr_state_total_energy_" << curr_state_total_energy_ << " ";
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii)
-	{
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		std::cerr << "(" << get_index_of_adjacent_node( ii ) << ": " <<
 			curr_state_two_body_energies_[ ii ] << ") ";
 	}
@@ -315,10 +305,9 @@ void DensePDNode::print_internal_energies() const
 /// produces
 void DensePDNode::update_internal_energy_sums()
 {
-debug_assert( get_edge_vector_up_to_date() );
+	debug_assert( get_edge_vector_up_to_date() );
 	curr_state_total_energy_ = 0;
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii)
-	{
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		curr_state_total_energy_ +=
 			get_incident_dpd_edge(ii)->get_current_two_body_energy();
 	}
@@ -361,15 +350,15 @@ DensePDNode::count_dynamic_memory() const
 /// @param first_node_ind - [in] - the index of the smaller-indexed node
 /// @param second_node_ind - [in] - the index of the larger-indexed node
 DensePDEdge::DensePDEdge
-(	InteractionGraphBase* owner,
+( InteractionGraphBase* owner,
 	int first_node_ind,
 	int second_node_ind
 ) :
 	PrecomputedPairEnergiesEdge( owner, first_node_ind, second_node_ind),
 	two_body_energies_(
-		get_dpd_node(1)->get_num_states(),
-		get_dpd_node(0)->get_num_states(),
-		0.0f
+	get_dpd_node(1)->get_num_states(),
+	get_dpd_node(0)->get_num_states(),
+	0.0f
 	),
 	curr_state_energy_( core::PackerEnergy( 0.0 ) ),
 	energies_updated_since_last_prep_for_simA_( true )
@@ -406,8 +395,8 @@ void DensePDEdge::add_to_two_body_energies
 	FArray2< core::PackerEnergy > const & res_res_energy_array
 )
 {
-debug_assert( res_res_energy_array.size1() == two_body_energies_.size1() );
-debug_assert( res_res_energy_array.size2() == two_body_energies_.size2() );
+	debug_assert( res_res_energy_array.size1() == two_body_energies_.size1() );
+	debug_assert( res_res_energy_array.size2() == two_body_energies_.size2() );
 	for ( Size ii = 1, iie = two_body_energies_.size1(); ii <= iie; ++ii ) {
 		for ( Size jj = 1, jje = two_body_energies_.size2(); jj <= jje; ++jj ) {
 			two_body_energies_( ii, jj ) += edge_weight() * res_res_energy_array( ii, jj );
@@ -484,8 +473,7 @@ void DensePDEdge::prepare_for_simulated_annealing()
 
 	bool any_non_zero = false;
 	unsigned int const num_energies = two_body_energies_.size();
-	for (unsigned int ii = 0; ii < num_energies; ++ii)
-	{
+	for ( unsigned int ii = 0; ii < num_energies; ++ii ) {
 		if ( two_body_energies_[ ii ] != 0.0f ) { any_non_zero = true; break;}
 	}
 
@@ -504,7 +492,7 @@ core::PackerEnergy DensePDEdge::get_current_two_body_energy()
 /// @param node_ind - [in] - the index of the node that changed its state
 /// @param node_state - [in] - the index of the new state it assumed
 /// @param new_energy - [out] - the two body energy produced  by the new state and
-/// 	the current state on the other node
+///  the current state on the other node
 void
 DensePDEdge::acknowledge_state_change
 (
@@ -680,7 +668,7 @@ DensePDInteractionGraph::get_one_body_energy_for_node_state( int node, int state
 void DensePDInteractionGraph::blanket_assign_state_0()
 {
 	//a state assignment of 0 means "unassigned".
-	for (int ii = 1; ii <= get_num_nodes(); ++ii ) {
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		get_dpd_node(ii)->assign_zero_state();
 	}
 	total_energy_current_state_assignment_ = 0;
@@ -707,7 +695,7 @@ core::PackerEnergy DensePDInteractionGraph::set_state_for_node(int node_ind, int
 /// @param node_states - [in] - array of states, one for each node.
 core::PackerEnergy DensePDInteractionGraph::set_network_state( FArray1_int & node_states)
 {
-	for (int ii = 1; ii <= get_num_nodes(); ++ii ) {
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		get_dpd_node( ii )->assign_state( node_states(ii) );
 	}
 	update_internal_energy_totals();
@@ -723,10 +711,10 @@ core::PackerEnergy DensePDInteractionGraph::set_network_state( FArray1_int & nod
 /// @param node_ind - [in] - the index of the node considering a state change
 /// @param new_state - [in] - the new state that node is considering
 /// @param alt_total_energy - [out] - the total network energy produced under the
-///	new state
+/// new state
 /// @param delta_energy - [out] - the change in energy produced under the substitution
 /// @param prev_energy_for_node - [out] - the sum of the one and two body energies
-/// 	for this node under the current state assignment
+///  for this node under the current state assignment
 void
 DensePDInteractionGraph::consider_substitution
 (
@@ -759,7 +747,7 @@ DensePDInteractionGraph::commit_considered_substitution()
 		total_energy_alternate_state_assignment_;
 
 	++num_commits_since_last_update_;
-	if (num_commits_since_last_update_ == COMMIT_LIMIT_BETWEEN_UPDATES) {
+	if ( num_commits_since_last_update_ == COMMIT_LIMIT_BETWEEN_UPDATES ) {
 		update_internal_energy_totals();
 	}
 
@@ -781,17 +769,17 @@ void DensePDInteractionGraph::update_internal_energy_totals()
 	total_energy_current_state_assignment_ = 0;
 
 	//std::cerr << "updating internal energy totals: " << std::endl;
-	for (int ii = 1; ii <= get_num_nodes(); ++ii) {
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		//std::cerr << " ig_node " << ii << " = " << ((DensePDNode *) ig_nodes_[ ii ])
-		//	->get_one_body_energy_current_state();
+		// ->get_one_body_energy_current_state();
 
 		total_energy_current_state_assignment_ += get_dpd_node( ii )->
 			get_one_body_energy_current_state();
 	}
 
 	//int counter = 0;
-	for (std::list<EdgeBase*>::iterator iter = get_edge_list_begin();
-			iter != get_edge_list_end(); ++iter) {
+	for ( std::list<EdgeBase*>::iterator iter = get_edge_list_begin();
+			iter != get_edge_list_end(); ++iter ) {
 		//std::cerr << " ig_edge " << ++counter  << " =" <<
 		//((DensePDEdge*) *iter)->get_current_two_body_energy();
 		total_energy_current_state_assignment_ +=
@@ -808,8 +796,8 @@ void DensePDInteractionGraph::update_internal_energy_totals()
 int DensePDInteractionGraph::get_edge_memory_usage() const
 {
 	int sum = 0;
-	for (std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
-			iter != get_edge_list_end(); ++iter) {
+	for ( std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
+			iter != get_edge_list_end(); ++iter ) {
 		sum += ((DensePDEdge*) *iter)->get_two_body_table_size();
 	}
 	return sum;
@@ -848,7 +836,7 @@ DensePDInteractionGraph::swap_edge_energies(
 void DensePDInteractionGraph::print_current_state_assignment() const
 {
 	std::cerr << "Curr States: ";
-	for (int ii = 1; ii <= get_num_nodes(); ++ii) {
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		std::cerr << "(" << ii << ", ";
 		std::cerr << get_dpd_node(ii)->get_current_state() << ") ";
 		get_dpd_node(ii)->print_internal_energies();
@@ -874,19 +862,19 @@ core::PackerEnergy
 DensePDInteractionGraph::get_energy_sum_for_vertex_group( int group_id )
 {
 	core::PackerEnergy esum = 0;
-	for (int ii = 1; ii <= get_num_nodes(); ++ii) {
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		if ( get_vertex_member_of_energy_sum_group( ii, group_id ) ) {
 			esum += get_dpd_node( ii )->get_one_body_energy_current_state();
 		}
 	}
 
 	for ( std::list< EdgeBase* >::iterator edge_iter = get_edge_list_begin();
-			edge_iter != get_edge_list_end(); ++edge_iter) {
+			edge_iter != get_edge_list_end(); ++edge_iter ) {
 		int first_node_ind = (*edge_iter)->get_first_node_ind();
 		int second_node_ind = (*edge_iter)->get_second_node_ind();
 
 		if ( get_vertex_member_of_energy_sum_group( first_node_ind, group_id )
-			&& get_vertex_member_of_energy_sum_group( second_node_ind, group_id )) {
+				&& get_vertex_member_of_energy_sum_group( second_node_ind, group_id ) ) {
 			esum += ((DensePDEdge*) (*edge_iter))->get_current_two_body_energy();
 		}
 	}
@@ -927,7 +915,7 @@ DensePDInteractionGraph::get_aa_submatrix_energies_for_edge(
 NodeBase* DensePDInteractionGraph::create_new_node( int node_index, int num_states)
 {
 	DensePDNode* new_node = new DensePDNode(this, node_index, num_states);
-debug_assert( new_node != NULL );
+	debug_assert( new_node != NULL );
 	return new_node;
 }
 

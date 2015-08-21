@@ -26,10 +26,10 @@ namespace refine {
 class LoopMover_Refine_CCDCreator : public moves::MoverCreator
 {
 public:
-  virtual ~LoopMover_Refine_CCDCreator();
+	virtual ~LoopMover_Refine_CCDCreator();
 
-  virtual moves::MoverOP create_mover() const;
-  virtual std::string keyname() const;
+	virtual moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
 
 };
 

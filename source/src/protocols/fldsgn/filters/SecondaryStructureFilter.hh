@@ -77,7 +77,7 @@ public:// virtual constructor
 	virtual FilterOP clone() const { return FilterOP( new SecondaryStructureFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const {	return FilterOP( new SecondaryStructureFilter() ); }
+	virtual FilterOP fresh_instance() const { return FilterOP( new SecondaryStructureFilter() ); }
 
 
 public:// mutator
@@ -98,14 +98,14 @@ public:// accessor
 
 	/// @brief sets the blueprint file based on filename.  If a strand pairing is impossible (i.e. the structure has two strands, 5 and 6 residues, respectively, it sets the unpaired residues to 'h' so that they still match.
 	void set_blueprint( std::string const blueprint_file );
-			
+
 public:// parser
 
 	virtual void parse_my_tag( TagCOP tag,
-														 basic::datacache::DataMap &,
-														 Filters_map const &,
-														 Movers_map const &,
-														 Pose const & );
+		basic::datacache::DataMap &,
+		Filters_map const &,
+		Movers_map const &,
+		Pose const & );
 
 
 public:// virtual main operation

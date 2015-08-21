@@ -66,12 +66,12 @@ NCAARotamerLibrarySpecification::NCAARotamerLibrarySpecification( std::istream &
 	nrchi_start_angle_( 0 )
 {
 	input >> ncaa_rotlib_path_;
-	if( ! input ) {
+	if ( ! input ) {
 		utility_exit_with_message("Must provide rotamer library path for NCAA rotamer library specification.");
 	}
 	core::Size nbins;
 	input >> nbins;
-	while( input ) {
+	while ( input ) {
 		ncaa_rotlib_n_bins_per_rot_.push_back( nbins );
 		input >> nbins;
 	}
@@ -97,12 +97,12 @@ NCAARotamerLibrarySpecification::cache_tag(core::chemical::ResidueType const & r
 	ss << ncaa_rotlib_path_;
 	ss << "%" << restype.mainchain_atoms().size();
 	ss << "%" << int(semirotameric_ncaa_rotlib_);
-	if( semirotameric_ncaa_rotlib_ ){
+	if ( semirotameric_ncaa_rotlib_ ) {
 		ss << "%" << restype.name3();
 		ss << "%" << int(nrchi_symmetric_);
 		ss << "%" << nrchi_start_angle_;
 	}
-	for( core::Size ii(1); ii <= ncaa_rotlib_n_bins_per_rot_.size(); ++ii ) {
+	for ( core::Size ii(1); ii <= ncaa_rotlib_n_bins_per_rot_.size(); ++ii ) {
 		ss << "|" << ncaa_rotlib_n_bins_per_rot_[ii];
 	}
 	return ss.str();

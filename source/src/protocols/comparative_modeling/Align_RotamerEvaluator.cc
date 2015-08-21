@@ -136,7 +136,7 @@ Align_RotamerEvaluator::apply(
 		} // residue is aligned
 	} // for residues
 
-  Real const coverage(
+	Real const coverage(
 		(Real) (n_ali) / (Real) (native_pose()->total_residue())
 	);
 	Size const native_nres( native_pose()->total_residue() );

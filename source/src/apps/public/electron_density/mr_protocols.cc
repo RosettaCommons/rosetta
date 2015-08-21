@@ -64,16 +64,19 @@ my_main( void* ) {
 	using namespace core::fragment;
 
 
-	if (option[ OptionKeys::MR::mode ].user() )
+	if ( option[ OptionKeys::MR::mode ].user() ) {
 		TR << "The flag -MR::mode is no longer used.  Ignoring." << std::endl;
+	}
 
 	protocols::hybridization::MRMoverOP do_MR( new protocols::hybridization::MRMover );
 
 	do_MR->set_max_gaplength_to_model( option[ OptionKeys::MR::max_gaplength_to_model ]() );
-	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )
+	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() ) {
 		do_MR->set_symmdef_file( option[ OptionKeys::symmetry::symmetry_definition ]() );
-	if ( option[ OptionKeys::MR::disulf ].user() )
+	}
+	if ( option[ OptionKeys::MR::disulf ].user() ) {
 		do_MR->set_disulf( option[ OptionKeys::MR::disulf ]() );
+	}
 
 	do_MR->set_disulf( option[ OptionKeys::MR::disulf ]() );  // force disulfides
 	do_MR->set_censcale( option[ OptionKeys::MR::censcale ]() );  // scale # centroid cycles
@@ -81,20 +84,21 @@ my_main( void* ) {
 	do_MR->set_fa_cst_weight( option[ OptionKeys::MR::relax_cst_wt ]() );
 
 	// fragment files: BACKWARDS COMPATABILITY with -loop options
-	if (option[ OptionKeys::loops::frag_files ].user() ) {
+	if ( option[ OptionKeys::loops::frag_files ].user() ) {
 		FileVectorOption frag_files( option[ OptionKeys::loops::frag_files ] );
-		for (core::Size i=1; i<=frag_files.size(); ++i) {
+		for ( core::Size i=1; i<=frag_files.size(); ++i ) {
 			if ( frag_files[i] == std::string("none") ) continue;
 
 			FragSetOP frag_lib_op = (FragmentIO().read_data( frag_files[i] ));
-			if (frag_lib_op->max_frag_length() >= 7)
+			if ( frag_lib_op->max_frag_length() >= 7 ) {
 				do_MR->set_big_fragments( frag_lib_op );
-			else
+			} else {
 				do_MR->set_small_fragments( frag_lib_op );
+			}
 		}
 	}
 
-	if (option[ OptionKeys::edensity::mapfile ].user()) {
+	if ( option[ OptionKeys::edensity::mapfile ].user() ) {
 		do_MR->set_centroid_density_weight( option[ OptionKeys::MR::cen_dens_wt ]() );
 		do_MR->set_fullatom_density_weight( option[ OptionKeys::MR::fa_dens_wt ](), option[ OptionKeys::MR::fast ]() );
 	}
@@ -110,22 +114,22 @@ my_main( void* ) {
 int
 main( int argc, char * argv [] ) {
 	try {
-	NEW_OPT(MR::max_gaplength_to_model, "max gaplength to rebuild", 8);
-    NEW_OPT(MR::cen_dens_wt, "centroid density weight", 4.0);
-    NEW_OPT(MR::fa_dens_wt, "fullatom density weight", 1.0);
-    NEW_OPT(MR::cst_wt, "add constraints to centroid stage", false);
-    NEW_OPT(MR::relax_cst_wt, "add constraints to fullatom stage", false);
-    NEW_OPT(MR::fast, "fast mode", false);
-    NEW_OPT(MR::censcale, "scale # of centroid cycles", 1.0);
-    NEW_OPT(MR::disulf, "force a disulfide patterning", utility::vector1<std::string>());
-    NEW_OPT(MR::mode, "legacy flag; unused", "X");
+		NEW_OPT(MR::max_gaplength_to_model, "max gaplength to rebuild", 8);
+		NEW_OPT(MR::cen_dens_wt, "centroid density weight", 4.0);
+		NEW_OPT(MR::fa_dens_wt, "fullatom density weight", 1.0);
+		NEW_OPT(MR::cst_wt, "add constraints to centroid stage", false);
+		NEW_OPT(MR::relax_cst_wt, "add constraints to fullatom stage", false);
+		NEW_OPT(MR::fast, "fast mode", false);
+		NEW_OPT(MR::censcale, "scale # of centroid cycles", 1.0);
+		NEW_OPT(MR::disulf, "force a disulfide patterning", utility::vector1<std::string>());
+		NEW_OPT(MR::mode, "legacy flag; unused", "X");
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 	}
-	catch ( utility::excn::EXCN_Base const & e) {
-		std::cout << "caught exception " << e.msg() << std::endl;
-		return -1;
-	}
+catch ( utility::excn::EXCN_Base const & e) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+	return -1;
+}
 }

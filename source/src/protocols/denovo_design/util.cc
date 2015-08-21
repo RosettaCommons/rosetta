@@ -51,27 +51,31 @@ namespace denovo_design {
 /// @brief Tells whether the two given poses are identical based on # resides and dihedrals
 bool same_pose( core::pose::Pose const & pose1, core::pose::Pose const & pose2 )
 {
-	if (pose1.total_residue() != pose2.total_residue()) {
+	if ( pose1.total_residue() != pose2.total_residue() ) {
 		return false;
 	}
 
-	for (core::Size i = 1; i <= pose1.total_residue(); ++i) {
-		if ( pose1.residue(i).name() != pose2.residue(i).name() )
+	for ( core::Size i = 1; i <= pose1.total_residue(); ++i ) {
+		if ( pose1.residue(i).name() != pose2.residue(i).name() ) {
 			return false;
-		if ( pose1.residue(i).is_protein() && !pose2.residue(i).is_protein() )
+		}
+		if ( pose1.residue(i).is_protein() && !pose2.residue(i).is_protein() ) {
 			return false;
-		if ( !pose1.residue(i).is_protein() && pose2.residue(i).is_protein() )
+		}
+		if ( !pose1.residue(i).is_protein() && pose2.residue(i).is_protein() ) {
 			return false;
-		if ( !pose1.residue(i).is_protein() && !pose2.residue(i).is_protein() )
+		}
+		if ( !pose1.residue(i).is_protein() && !pose2.residue(i).is_protein() ) {
 			continue;
+		}
 
-		if (std::abs(pose1.phi(i) - pose2.phi(i)) > 0.0001) {
+		if ( std::abs(pose1.phi(i) - pose2.phi(i)) > 0.0001 ) {
 			return false;
 		}
-		if (std::abs(pose1.psi(i) - pose2.psi(i)) > 0.0001) {
+		if ( std::abs(pose1.psi(i) - pose2.psi(i)) > 0.0001 ) {
 			return false;
 		}
-		if (std::abs(pose1.omega(i) - pose2.omega(i)) > 0.0001) {
+		if ( std::abs(pose1.omega(i) - pose2.omega(i)) > 0.0001 ) {
 			return false;
 		}
 	}
@@ -107,11 +111,11 @@ void construct_poly_ala_pose(
 
 	for ( core::Size i=1, endi=pose.total_residue(); i<=endi; ++i ) {
 		if ( pose.residue(i).is_protein() && ( res_set.find(i) != res_set.end() ) ) {
-			if(!keep_chirality || !pose.residue(i).type().is_d_aa()) positions.push_back(i);
-			else if( keep_chirality && pose.residue(i).type().is_d_aa()) d_positions.push_back(i);
+			if ( !keep_chirality || !pose.residue(i).type().is_d_aa() ) positions.push_back(i);
+			else if ( keep_chirality && pose.residue(i).type().is_d_aa() ) d_positions.push_back(i);
 		}
 		if ( !keep_disulf && ( pose.residue(i).type().is_disulfide_bonded() ) ) {
-			if(pose.residue(i).type().is_l_aa() || !keep_chirality) {
+			if ( pose.residue(i).type().is_l_aa() || !keep_chirality ) {
 				protocols::simple_moves::MutateResidue mut( i, "ALA" );
 				mut.apply( pose );
 			} else {
@@ -121,16 +125,16 @@ void construct_poly_ala_pose(
 		}
 	}
 	protocols::toolbox::pose_manipulation::construct_poly_ala_pose(
-			pose, positions,
+		pose, positions,
+		false, // bool keep_pro,
+		true, // bool keep_gly,
+		keep_disulf ); // bool keep_disulfide_cys
+	if ( keep_chirality && d_positions.size() > 0 ) {
+		protocols::toolbox::pose_manipulation::construct_poly_d_ala_pose(
+			pose, d_positions,
 			false, // bool keep_pro,
 			true, // bool keep_gly,
 			keep_disulf ); // bool keep_disulfide_cys
-	if(keep_chirality && d_positions.size() > 0) {
-		protocols::toolbox::pose_manipulation::construct_poly_d_ala_pose(
-				pose, d_positions,
-				false, // bool keep_pro,
-				true, // bool keep_gly,
-				keep_disulf ); // bool keep_disulfide_cys
 	}
 }
 
@@ -141,10 +145,10 @@ get_residue_selector( basic::datacache::DataMap const & data, std::string const 
 	try {
 		selector = data.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", name );
 	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			std::stringstream error_msg;
-			error_msg << "Failed to find ResidueSelector named '" << name << "' from the Datamap.\n";
-			error_msg << e.msg();
-			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+		std::stringstream error_msg;
+		error_msg << "Failed to find ResidueSelector named '" << name << "' from the Datamap.\n";
+		error_msg << e.msg();
+		throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
 	}
 	assert( selector );
 	return selector;
@@ -269,7 +273,7 @@ void rebuild_missing_atoms( core::pose::Pose & pose, core::Size const resi )
 
 	if ( any_missing ) {
 		TR << "Rebuilding residue " << resi << std::endl;
-		core::conformation::Residue newres = 	pose.residue(resi);
+		core::conformation::Residue newres =  pose.residue(resi);
 		newres.fill_missing_atoms( missing, pose.conformation() );
 		pose.conformation().replace_residue( resi, newres, false );
 	} else {
@@ -279,8 +283,8 @@ void rebuild_missing_atoms( core::pose::Pose & pose, core::Size const resi )
 
 /// @brief helper function that looks for the given residue in a fold tree and returns the jump that controls its 6D-DoFs
 int find_jump_rec(
-		core::kinematics::FoldTree const & ft,
-		int const residue )
+	core::kinematics::FoldTree const & ft,
+	int const residue )
 {
 	assert( residue > 0 );
 	assert( residue <= static_cast<int>(ft.nres()) );
@@ -293,7 +297,7 @@ int find_jump_rec(
 	// search for jump edges that contains this residue
 	for ( core::kinematics::FoldTree::const_iterator e=ft.begin(), ende=ft.end(); e!=ende; ++e ) {
 		if ( ( e->label() > 0 ) && ( e->stop() == residue ) ) {
-				return e->label();
+			return e->label();
 		}
 	}
 
@@ -358,11 +362,11 @@ void insert_peptide_edges( core::kinematics::FoldTree & ft, core::kinematics::Ed
 			remove_edges.push_back( *it );
 		}
 	}
-	for( utility::vector1< core::kinematics::Edge >::iterator it=remove_edges.begin(); it!=remove_edges.end(); ++it ) {
+	for ( utility::vector1< core::kinematics::Edge >::iterator it=remove_edges.begin(); it!=remove_edges.end(); ++it ) {
 		TR.Debug << "Removing edge " << *it << std::endl;
 		ft.delete_edge( *it );
 	}
-	for( utility::vector1< core::kinematics::Edge >::iterator it=new_edges.begin(); it!=new_edges.end(); ++it ) {
+	for ( utility::vector1< core::kinematics::Edge >::iterator it=new_edges.begin(); it!=new_edges.end(); ++it ) {
 		TR.Debug << "Adding edge " << *it << std::endl;
 		ft.add_edge( *it );
 	}
@@ -445,14 +449,15 @@ parse_strand_pair( std::string const & strand_pair_str )
 
 std::string
 strand_pair_str(
-		components::StructureData const & perm,
-		std::string const & strand1,
-		std::string const & strand2,
-		std::map< std::string, core::Size > const & name_to_strandnum,
-		bool use_register_shift )
+	components::StructureData const & perm,
+	std::string const & strand1,
+	std::string const & strand2,
+	std::map< std::string, core::Size > const & name_to_strandnum,
+	bool use_register_shift )
 {
-	if ( strand1.empty() || strand2.empty() )
+	if ( strand1.empty() || strand2.empty() ) {
 		return "";
+	}
 
 	std::stringstream out;
 	bool in_order = true;
@@ -464,9 +469,9 @@ strand_pair_str(
 		out << snum2 << '-' << snum1;
 		in_order = false;
 	} else if ( snum1 == snum2 ) {
-			std::stringstream ss;
-			ss << "Two strands have the same number " << snum1 << " -- check your input! name_to_strandnum=" << name_to_strandnum << " strandnames=" << strand1 << "," << strand2 << std::endl;
-			throw utility::excn::EXCN_BadInput( ss.str() );
+		std::stringstream ss;
+		ss << "Two strands have the same number " << snum1 << " -- check your input! name_to_strandnum=" << name_to_strandnum << " strandnames=" << strand1 << "," << strand2 << std::endl;
+		throw utility::excn::EXCN_BadInput( ss.str() );
 	}
 
 	int const orientation = perm.get_data_int( strand2, "orientation" );
@@ -509,8 +514,8 @@ strand_pair_str(
 
 std::string
 get_strandpairings(
-		components::StructureData const & perm,
-		bool const use_register_shift )
+	components::StructureData const & perm,
+	bool const use_register_shift )
 {
 	// initiate strand pairing check
 	std::stringstream sheet_str;
@@ -548,8 +553,9 @@ get_strandpairings(
 			visited.insert( std::make_pair( *s, spair.first ) );
 			std::string const pair_str = strand_pair_str( perm, spair.first, *s, name_to_strandnum, use_register_shift );
 			if ( !pair_str.empty() ) {
-				if ( sheet_str.str().size() )
+				if ( sheet_str.str().size() ) {
 					sheet_str << ';';
+				}
 				sheet_str << pair_str;
 			}
 		}
@@ -559,8 +565,9 @@ get_strandpairings(
 			visited.insert( std::make_pair( *s, spair.second ) );
 			std::string const pair_str = strand_pair_str( perm, *s, spair.second, name_to_strandnum, use_register_shift );
 			if ( !pair_str.empty() ) {
-				if ( sheet_str.str().size() )
+				if ( sheet_str.str().size() ) {
 					sheet_str << ';';
+				}
 				sheet_str << strand_pair_str( perm, *s, spair.second, name_to_strandnum, use_register_shift );
 			}
 		}
@@ -577,73 +584,73 @@ get_strandpairings(
 
 namespace std {
 
-	/// @brief outputs a matrix
-	std::ostream &
-		operator<<( std::ostream & os, numeric::xyzMatrix< core::Real > const & mat ) {
-			os << "[ [" << mat.xx() << ", " << mat.xy() << ", " << mat.xz() << "]" << std::endl;
-			os << "  [" << mat.yx() << ", " << mat.yy() << ", " << mat.yz() << "]" << std::endl;
-			os << "  [" << mat.zx() << ", " << mat.zy() << ", " << mat.zz() << "] ]";
-			return os;
-		}
+/// @brief outputs a matrix
+std::ostream &
+operator<<( std::ostream & os, numeric::xyzMatrix< core::Real > const & mat ) {
+	os << "[ [" << mat.xx() << ", " << mat.xy() << ", " << mat.xz() << "]" << std::endl;
+	os << "  [" << mat.yx() << ", " << mat.yy() << ", " << mat.yz() << "]" << std::endl;
+	os << "  [" << mat.zx() << ", " << mat.zy() << ", " << mat.zz() << "] ]";
+	return os;
+}
 
-	/// @brief outputs a set
-	std::ostream &
-		operator<<( std::ostream & os, std::set< core::Size > const & set ) {
-			os << "[ ";
-			for ( std::set< core::Size >::const_iterator it=set.begin(); it != set.end(); ++it ) {
-				os << *it << " ";
-			}
-			os << "]";
-			return os;
-		}
-
-	/// @brief outputs a list of sizes
-	std::ostream & operator<<( std::ostream & os, std::list< core::Size > const & list )
-	{
-		os << "[ ";
-		for ( std::list< core::Size >::const_iterator c=list.begin(), end=list.end(); c != end; ++c ) {
-			os << *c << " ";
-		}
-		os << "]";
-		return os;
+/// @brief outputs a set
+std::ostream &
+operator<<( std::ostream & os, std::set< core::Size > const & set ) {
+	os << "[ ";
+	for ( std::set< core::Size >::const_iterator it=set.begin(); it != set.end(); ++it ) {
+		os << *it << " ";
 	}
+	os << "]";
+	return os;
+}
 
-	/// @brief outputs a list of strings
-	std::ostream &
-		operator<<( std::ostream & os, std::list< std::string > const & list ) {
-			os << "[ ";
-			for ( std::list< std::string >::const_iterator c=list.begin(), end=list.end(); c != end; ++c ) {
-				os << *c << " ";
-			}
-			os << "]";
-			return os;
-		}
+/// @brief outputs a list of sizes
+std::ostream & operator<<( std::ostream & os, std::list< core::Size > const & list )
+{
+	os << "[ ";
+	for ( std::list< core::Size >::const_iterator c=list.begin(), end=list.end(); c != end; ++c ) {
+		os << *c << " ";
+	}
+	os << "]";
+	return os;
+}
 
-	/// @brief outputs a set
-	std::ostream &
-		operator<<( std::ostream & os, std::set< std::string > const & set ) {
-			os << "[ ";
-			for ( std::set< std::string >::const_iterator it=set.begin(); it != set.end(); ++it ) {
-				os << *it << " ";
-			}
-			os << "]";
-			return os;
-		}
+/// @brief outputs a list of strings
+std::ostream &
+operator<<( std::ostream & os, std::list< std::string > const & list ) {
+	os << "[ ";
+	for ( std::list< std::string >::const_iterator c=list.begin(), end=list.end(); c != end; ++c ) {
+		os << *c << " ";
+	}
+	os << "]";
+	return os;
+}
 
-	/// @brief outputs a map
-	std::ostream &
-		operator<<( std::ostream & os, std::map< core::Size, core::Size > const & map ) {
-			os << "{";
-			std::map< core::Size, core::Size >::const_iterator it;
-			for ( it = map.begin(); it != map.end(); ++it ) {
-				if ( it != map.begin() ) {
-					os << ", ";
-				}
-				os << " " << it->first << ":" << it->second;
-			}
-			os << " }";
-			return os;
+/// @brief outputs a set
+std::ostream &
+operator<<( std::ostream & os, std::set< std::string > const & set ) {
+	os << "[ ";
+	for ( std::set< std::string >::const_iterator it=set.begin(); it != set.end(); ++it ) {
+		os << *it << " ";
+	}
+	os << "]";
+	return os;
+}
+
+/// @brief outputs a map
+std::ostream &
+operator<<( std::ostream & os, std::map< core::Size, core::Size > const & map ) {
+	os << "{";
+	std::map< core::Size, core::Size >::const_iterator it;
+	for ( it = map.begin(); it != map.end(); ++it ) {
+		if ( it != map.begin() ) {
+			os << ", ";
 		}
+		os << " " << it->first << ":" << it->second;
+	}
+	os << " }";
+	return os;
+}
 
 /// @brief outputs a map
 std::ostream &
@@ -704,8 +711,9 @@ std::ostream & operator<<( std::ostream & os, std::map< char, core::Size > const
 	os << "{";
 	std::map< char, core::Size >::const_iterator it;
 	for ( it = map.begin(); it != map.end(); ++it ) {
-		if ( it != map.begin() )
+		if ( it != map.begin() ) {
 			os << ", ";
+		}
 		os << " " << it->first << ":" << it->second;
 	}
 	os << "}";

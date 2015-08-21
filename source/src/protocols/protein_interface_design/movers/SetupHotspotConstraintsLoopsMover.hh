@@ -36,15 +36,15 @@ public:
 
 	SetupHotspotConstraintsLoopsMover();
 	SetupHotspotConstraintsLoopsMover(
-			protocols::hotspot_hashing::HotspotStubSetCOP hotspot_stub_set
+		protocols::hotspot_hashing::HotspotStubSetCOP hotspot_stub_set
 	);
-	//		core::Size const chain_to_design,
-	//	core::Real const & CB_force_constant,
-	//	core::Real const & worst_allowed_stub_bonus,
-	//	bool const apply_self_energies,
-	//	core::Real const & bump_cutoff,
-	//	bool const apply_ambiguous_constraints,
-	//	bool const colonyE
+	//  core::Size const chain_to_design,
+	// core::Real const & CB_force_constant,
+	// core::Real const & worst_allowed_stub_bonus,
+	// bool const apply_self_energies,
+	// core::Real const & bump_cutoff,
+	// bool const apply_ambiguous_constraints,
+	// bool const colonyE
 
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const;

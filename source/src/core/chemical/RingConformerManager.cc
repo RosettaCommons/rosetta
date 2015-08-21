@@ -93,7 +93,7 @@ RingConformerManager::get_conformers_for_ring_size( core::Size ring_size )
 		stringstream filename( stringstream::out );
 		filename << "chemical/ring_conformer_sets/" << ring_size << "-membered_ring_conformers.data";
 		vector1< RingConformer > conformers( read_conformers_from_database_file_for_ring_size(
-				basic::database::full_name( filename.str() ), ring_size ) );
+			basic::database::full_name( filename.str() ), ring_size ) );
 		conformers_.insert( make_pair( ring_size, conformers ) );
 	}
 	return conformers_[ ring_size ];

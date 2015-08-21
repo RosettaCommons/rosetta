@@ -54,31 +54,34 @@ void ResFileOutputter::write( Pose & p ) {
 	utility::vector1< core::Size > selected_residues;
 	// Prepare the PackerTask
 	assert( task_factory_ );
-  core::pack::task::PackerTaskCOP task( task_factory_->create_task_and_apply_taskoperations( p ) );
+	core::pack::task::PackerTaskCOP task( task_factory_->create_task_and_apply_taskoperations( p ) );
 	// Find out which residues are packable or designable
-	for( core::Size resi = 1; resi <= p.total_residue(); ++resi ) {
+	for ( core::Size resi = 1; resi <= p.total_residue(); ++resi ) {
 		if ( designable_only_ ) {
-    	if( task->residue_task( resi ).being_designed() && p.residue(resi).is_protein() )
-      	selected_residues.push_back( resi );
+			if ( task->residue_task( resi ).being_designed() && p.residue(resi).is_protein() ) {
+				selected_residues.push_back( resi );
+			}
 		} else {
-      if( task->residue_task( resi ).being_packed() && p.residue(resi).is_protein() )
-        selected_residues.push_back( resi );
+			if ( task->residue_task( resi ).being_packed() && p.residue(resi).is_protein() ) {
+				selected_residues.push_back( resi );
+			}
 		}
-  }
-  if( selected_residues.empty() )
-    TR.Warning << "WARNING: No residues were selected by your TaskOperations." << std::endl;
+	}
+	if ( selected_residues.empty() ) {
+		TR.Warning << "WARNING: No residues were selected by your TaskOperations." << std::endl;
+	}
 
 	// write to disk
 	std::string outfilename;
 	parse_format_string( filenameparts_, format_string_, outfilename );
-  assert( outfilename != "" );
+	assert( outfilename != "" );
 	std::ofstream resfile;
-  resfile.open( outfilename.c_str(), std::ios::out );
-  resfile << resfile_general_property_ << "\nstart\n";
+	resfile.open( outfilename.c_str(), std::ios::out );
+	resfile << resfile_general_property_ << "\nstart\n";
 	for ( core::Size i=1; i<=selected_residues.size(); i++ ) {
 		resfile << selected_residues[i] << '\t' << p.pdb_info()->chain(selected_residues[i]) << " PIKAA " << p.residue(selected_residues[i]).name1() << '\n';
-  }
-  resfile.close();
+	}
+	resfile.close();
 }
 
 #ifdef USELUA

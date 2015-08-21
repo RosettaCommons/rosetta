@@ -45,7 +45,7 @@ namespace asym_fold_and_dock {
 static thread_local basic::Tracer TR( "protocols.simple_moves.symmetry.AsymFoldandDockMoveRbJumpMover" );
 
 AsymFoldandDockMoveRbJumpMover::AsymFoldandDockMoveRbJumpMover( core::Size chain_start )
-	: protocols::moves::Mover("AsymFoldandDockMoveRbJumpMover"), chain_start_( chain_start )
+: protocols::moves::Mover("AsymFoldandDockMoveRbJumpMover"), chain_start_( chain_start )
 {}
 
 void
@@ -83,22 +83,21 @@ AsymFoldandDockMoveRbJumpMover::find_new_jump_residue( core::pose::Pose & pose )
 	TR << "The anchor residues are at residue " << residue_that_builds_anchor  << " : " << anchor_start << std::endl;
 
 	//Looking in central half of each segment -- pick a random point.
-  Size anchor_chain1 = static_cast<Size>( numeric::random::rg().uniform() * (chain_start_) ) + 1;
+	Size anchor_chain1 = static_cast<Size>( numeric::random::rg().uniform() * (chain_start_) ) + 1;
 	Size anchor_chain2 = static_cast<Size>( numeric::random::rg().uniform() * (nres_flexible_segment) ) +
-    chain_start_ + 1;
+		chain_start_ + 1;
 
-  if ( basic::options::option[ basic::options::OptionKeys::fold_and_dock::set_anchor_at_closest_point ] )
-  {
-    //Find Closest point of contact to the anchor of in the non-moving subunit. Really silly, should be the real minimal distance!!!
-    core::Real mindist = pose.residue(residue_that_builds_anchor).xyz("CEN").distance( pose.residue(anchor_chain2).xyz("CEN") );
-    for (Size i = chain_start_; i <= nres; i++) {
-      core::Real dist = pose.residue(residue_that_builds_anchor).xyz("CEN").distance( pose.residue(i).xyz("CEN") );
-      if ( dist < mindist ){
-        mindist = dist;
-        anchor_chain2 = i;
-      }
-    }
-  }
+	if ( basic::options::option[ basic::options::OptionKeys::fold_and_dock::set_anchor_at_closest_point ] ) {
+		//Find Closest point of contact to the anchor of in the non-moving subunit. Really silly, should be the real minimal distance!!!
+		core::Real mindist = pose.residue(residue_that_builds_anchor).xyz("CEN").distance( pose.residue(anchor_chain2).xyz("CEN") );
+		for ( Size i = chain_start_; i <= nres; i++ ) {
+			core::Real dist = pose.residue(residue_that_builds_anchor).xyz("CEN").distance( pose.residue(i).xyz("CEN") );
+			if ( dist < mindist ) {
+				mindist = dist;
+				anchor_chain2 = i;
+			}
+		}
+	}
 
 
 	TR << "The anchor residues are moved to residue " << anchor_chain1  << " : " << anchor_chain2 << std::endl;
@@ -127,25 +126,25 @@ AsymFoldandDockMoveRbJumpMover::find_new_jump_residue( core::pose::Pose & pose )
 		cuts(i) = cuts_vector[i];
 	}
 
-  int root ( f.root() );
+	int root ( f.root() );
 
 	jumps(1, jump_number ) = anchor_chain1;
 	jumps(2, jump_number ) = anchor_chain2;
 
-  /* debug
-  std::cout<<"cuts ";
+	/* debug
+	std::cout<<"cuts ";
 	for ( Size i = 1; i<= num_cuts; ++i ) {
-		std::cout<< cuts(i) << ' ';
+	std::cout<< cuts(i) << ' ';
 	}
 	std::cout<<std::endl;
-  std::cout<<"jumps ";
+	std::cout<<"jumps ";
 	for ( Size i = 1; i<= num_jumps; ++i ) {
-		std::cout<< " ( "<<jumps(1,i) << " , " << jumps(2,i) << " ) ";
+	std::cout<< " ( "<<jumps(1,i) << " , " << jumps(2,i) << " ) ";
 	}
 	std::cout<<std::endl; */
 	f.tree_from_jumps_and_cuts( pose.conformation().size(), num_jumps, jumps, cuts );
 	f.reorder( root );
-   pose.conformation().fold_tree( f );
+	pose.conformation().fold_tree( f );
 
 
 }

@@ -28,4 +28,4 @@ typedef utility::pointer::shared_ptr< StoreTaskMover const > StoreTaskMoverCOP;
 } // toolbox
 } // protocols
 
-#endif 
+#endif

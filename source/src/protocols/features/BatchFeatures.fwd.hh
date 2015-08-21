@@ -18,8 +18,8 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class BatchFeatures;
 typedef utility::pointer::shared_ptr< BatchFeatures > BatchFeaturesOP;
@@ -27,7 +27,7 @@ typedef utility::pointer::shared_ptr< BatchFeatures const > BatchFeaturesCOP;
 
 }
 }
-    
+
 #endif
 
 

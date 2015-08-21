@@ -20,11 +20,11 @@ namespace utility {
 std::string
 msg_name( simulate_mpi_message_type msg_type ) {
 	switch( msg_type ) {
-	case smpi_char		: return "smpi_char";
+	case smpi_char  : return "smpi_char";
 	case smpi_integer : return "smpi_integer";
-	case smpi_string	: return "smpi_string";
-	case smpi_double	: return "smpi_double";
-	case smpi_integers: return "smpi_integers";
+	case smpi_string : return "smpi_string";
+	case smpi_double : return "smpi_double";
+	case smpi_integers : return "smpi_integers";
 	case smpi_doubles : return "smpi_doubles";
 	}
 	return "unknown message type";

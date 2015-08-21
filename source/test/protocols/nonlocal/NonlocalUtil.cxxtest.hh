@@ -57,112 +57,113 @@ using std::string;
 using utility::vector1;
 
 class NonlocalUtilTest : public CxxTest::TestSuite {
- public:
-  static const core::Size MIN_CHUNK_SZ = 7;
-  static const core::Size MAX_CHUNK_SZ = 28;
-  vector1<SequenceAlignment> alignments_;
-  Loops regions;
+public:
+	static const core::Size MIN_CHUNK_SZ = 7;
+	static const core::Size MAX_CHUNK_SZ = 28;
+	vector1<SequenceAlignment> alignments_;
+	Loops regions;
 
-  void setUp() {
-    protocols_init();
+	void setUp() {
+		protocols_init();
 
-    vector1<string> filenames;
-    filenames.push_back("protocols/nonlocal/alignment.filt");
+		vector1<string> filenames;
+		filenames.push_back("protocols/nonlocal/alignment.filt");
 
-    core::sequence::read_all_alignments("grishin",
-                                        filenames,
-                                        &alignments_);
-  }
+		core::sequence::read_all_alignments("grishin",
+			filenames,
+			&alignments_);
+	}
 
-  void test_limit_chunk_size() {
-    const SequenceAlignment& alignment = alignments_[1];
+	void test_limit_chunk_size() {
+		const SequenceAlignment& alignment = alignments_[1];
 
-    protocols::loops::LoopsOP aligned( new Loops() );
-    protocols::loops::LoopsOP unaligned( new Loops() );
-    
-    protocols::nonlocal::find_regions_with_minimum_size
-        (alignment, MIN_CHUNK_SZ, aligned, unaligned);
-        
-    protocols::nonlocal::limit_chunk_size(MIN_CHUNK_SZ, MAX_CHUNK_SZ, aligned);
-    for (Loops::const_iterator i = aligned->begin(); i != aligned->end(); ++i) {
-      TS_ASSERT(i->length() >= MIN_CHUNK_SZ);
-      TS_ASSERT(i->length() <= MAX_CHUNK_SZ);
-    }
+		protocols::loops::LoopsOP aligned( new Loops() );
+		protocols::loops::LoopsOP unaligned( new Loops() );
 
-    protocols::nonlocal::limit_chunk_size(MIN_CHUNK_SZ, MAX_CHUNK_SZ, unaligned);
-    for (Loops::const_iterator i = unaligned->begin(); i != unaligned->end(); ++i) {
-      //const Loop& loop = *i;
-      TS_ASSERT(i->length() >= MIN_CHUNK_SZ);
-      TS_ASSERT(i->length() <= MAX_CHUNK_SZ);
-    }
-  }
+		protocols::nonlocal::find_regions_with_minimum_size
+			(alignment, MIN_CHUNK_SZ, aligned, unaligned);
 
-  /// @brief Unit test for method in core/pose/util.cc
-  void test_remove_virtual_residues() {
-    Pose pose = *core::import_pose::pose_from_pdb("protocols/nonlocal/2GB3.pdb");
+		protocols::nonlocal::limit_chunk_size(MIN_CHUNK_SZ, MAX_CHUNK_SZ, aligned);
+		for ( Loops::const_iterator i = aligned->begin(); i != aligned->end(); ++i ) {
+			TS_ASSERT(i->length() >= MIN_CHUNK_SZ);
+			TS_ASSERT(i->length() <= MAX_CHUNK_SZ);
+		}
 
-    Loops chunks;
-    chunks.push_back(1, 20);
-    chunks.push_back(21, pose.total_residue());
+		protocols::nonlocal::limit_chunk_size(MIN_CHUNK_SZ, MAX_CHUNK_SZ, unaligned);
+		for ( Loops::const_iterator i = unaligned->begin(); i != unaligned->end(); ++i ) {
+			//const Loop& loop = *i;
+			TS_ASSERT(i->length() >= MIN_CHUNK_SZ);
+			TS_ASSERT(i->length() <= MAX_CHUNK_SZ);
+		}
+	}
 
-    // add virtual residue at <chunks>'s center of mass
-    StarTreeBuilder builder;
-    builder.set_up(chunks, &pose);
+	/// @brief Unit test for method in core/pose/util.cc
+	void test_remove_virtual_residues() {
+		Pose pose = *core::import_pose::pose_from_pdb("protocols/nonlocal/2GB3.pdb");
 
-    Size num_residues_before = pose.total_residue();
-    core::pose::remove_virtual_residues(&pose);
-    Size num_residues_after = pose.total_residue();
-    TS_ASSERT_DIFFERS(num_residues_before, num_residues_after);
-  }
+		Loops chunks;
+		chunks.push_back(1, 20);
+		chunks.push_back(21, pose.total_residue());
 
-  /// @brief Unit test for method in core/scoring/rms_util.cc
-  /// @detail Pose with no jumps => No RMSD calculations
-  /// core < protocols leveling prevents use of StarTreeBuilder functionality
-  void test_compute_jump_rmsd_with_no_jumps() {
-    Pose model = *core::import_pose::pose_from_pdb("protocols/nonlocal/2GB3.pdb");
+		// add virtual residue at <chunks>'s center of mass
+		StarTreeBuilder builder;
+		builder.set_up(chunks, &pose);
 
-    unordered_map<Size, Real> rmsds;
-    core::scoring::compute_jump_rmsd(model, model, &rmsds);
-    TS_ASSERT_EQUALS(0, rmsds.size());
-  }
+		Size num_residues_before = pose.total_residue();
+		core::pose::remove_virtual_residues(&pose);
+		Size num_residues_after = pose.total_residue();
+		TS_ASSERT_DIFFERS(num_residues_before, num_residues_after);
+	}
 
-  /// @brief Unit test for method in core/scoring/rms_util.cc
-  /// @detail Same pose, different fold trees => RMSD of 0
-  /// core < protocols leveling prevents use of StarTreeBuilder functionality
-  void test_compute_jump_rmsd_identity() {
-    Pose model  = *core::import_pose::pose_from_pdb("protocols/nonlocal/2GB3.pdb");
-    Pose native = *core::import_pose::pose_from_pdb("protocols/nonlocal/2GB3.pdb");
+	/// @brief Unit test for method in core/scoring/rms_util.cc
+	/// @detail Pose with no jumps => No RMSD calculations
+	/// core < protocols leveling prevents use of StarTreeBuilder functionality
+	void test_compute_jump_rmsd_with_no_jumps() {
+		Pose model = *core::import_pose::pose_from_pdb("protocols/nonlocal/2GB3.pdb");
 
-    Loops chunks;
-    chunks.push_back(1, 20);
-    chunks.push_back(21, model.total_residue());
+		unordered_map<Size, Real> rmsds;
+		core::scoring::compute_jump_rmsd(model, model, &rmsds);
+		TS_ASSERT_EQUALS(0, rmsds.size());
+	}
 
-    StarTreeBuilder builder;
-    builder.set_up(chunks, &model);
+	/// @brief Unit test for method in core/scoring/rms_util.cc
+	/// @detail Same pose, different fold trees => RMSD of 0
+	/// core < protocols leveling prevents use of StarTreeBuilder functionality
+	void test_compute_jump_rmsd_identity() {
+		Pose model  = *core::import_pose::pose_from_pdb("protocols/nonlocal/2GB3.pdb");
+		Pose native = *core::import_pose::pose_from_pdb("protocols/nonlocal/2GB3.pdb");
 
-    unordered_map<Size, Real> rmsds;
-    core::scoring::compute_jump_rmsd(native, model, &rmsds);
+		Loops chunks;
+		chunks.push_back(1, 20);
+		chunks.push_back(21, model.total_residue());
 
-    for (unordered_map<Size, Real>::const_iterator i = rmsds.begin(); i != rmsds.end(); ++i)
-      TS_ASSERT_DELTA(0, i->second, 0.0025);
+		StarTreeBuilder builder;
+		builder.set_up(chunks, &model);
 
-    builder.tear_down(&model);
-  }
+		unordered_map<Size, Real> rmsds;
+		core::scoring::compute_jump_rmsd(native, model, &rmsds);
 
-  /// @brief Unit test for choosing insertion positions using binary search
-  void test_random_position() {
-    int x[] = {10, 20, 30, 30, 20, 10, 10, 20};
-    vector1<int> data(x, x + 8);
+		for ( unordered_map<Size, Real>::const_iterator i = rmsds.begin(); i != rmsds.end(); ++i ) {
+			TS_ASSERT_DELTA(0, i->second, 0.0025);
+		}
 
-    // data  10 10 10 20 20 20 30 30
-    //                ^        ^
-    // index 1  2  3  4  5  6  7  8
-    std::sort(data.begin(), data.end());
-    vector1<int>::const_iterator lower = std::lower_bound(data.begin(), data.end(), 20);
-    vector1<int>::const_iterator upper = std::upper_bound(data.begin(), data.end(), 20);
+		builder.tear_down(&model);
+	}
 
-    TS_ASSERT_EQUALS(4, lower - data.begin() + 1);
-    TS_ASSERT_EQUALS(7, upper - data.begin() + 1);
-  }
+	/// @brief Unit test for choosing insertion positions using binary search
+	void test_random_position() {
+		int x[] = {10, 20, 30, 30, 20, 10, 10, 20};
+		vector1<int> data(x, x + 8);
+
+		// data  10 10 10 20 20 20 30 30
+		//                ^        ^
+		// index 1  2  3  4  5  6  7  8
+		std::sort(data.begin(), data.end());
+		vector1<int>::const_iterator lower = std::lower_bound(data.begin(), data.end(), 20);
+		vector1<int>::const_iterator upper = std::upper_bound(data.begin(), data.end(), 20);
+
+		TS_ASSERT_EQUALS(4, lower - data.begin() + 1);
+		TS_ASSERT_EQUALS(7, upper - data.begin() + 1);
+	}
 };
 }  // anonymous namespace

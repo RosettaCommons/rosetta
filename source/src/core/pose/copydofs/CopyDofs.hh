@@ -32,53 +32,53 @@ namespace core {
 namespace pose {
 namespace copydofs {
 
-	class CopyDofs: public utility::pointer::ReferenceCount {
+class CopyDofs: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//constructor
-		CopyDofs( pose::MiniPose const & template_pose,
-							std::map < id::AtomID , id::AtomID > const & atom_id_map,
-							std::map< id::AtomID, Size > const & atom_id_domain_map );
+	//constructor
+	CopyDofs( pose::MiniPose const & template_pose,
+		std::map < id::AtomID , id::AtomID > const & atom_id_map,
+		std::map< id::AtomID, Size > const & atom_id_domain_map );
 
-		//constructor
-		CopyDofs( pose::MiniPose const & template_pose,
-							std::map < id::AtomID , id::AtomID > const & atom_id_map );
+	//constructor
+	CopyDofs( pose::MiniPose const & template_pose,
+		std::map < id::AtomID , id::AtomID > const & atom_id_map );
 
-		//destructor
-		~CopyDofs();
+	//destructor
+	~CopyDofs();
 
-	public:
+public:
 
-		void apply( pose::Pose & pose );
+	void apply( pose::Pose & pose );
 
-		void figure_out_dofs( pose::Pose & pose );
+	void figure_out_dofs( pose::Pose & pose );
 
-		CopyDofsInfo copy_dofs_info() const { return copy_dofs_info_; }
+	CopyDofsInfo copy_dofs_info() const { return copy_dofs_info_; }
 
-	private:
+private:
 
-		bool
-		get_scratch_atom_id( id::AtomID & other_scratch_atom_id,
-												 std::map< core::id::AtomID, core::id::AtomID> const & atom_id_map,
-												 core::kinematics::tree::AtomCOP other_atom );
+	bool
+	get_scratch_atom_id( id::AtomID & other_scratch_atom_id,
+		std::map< core::id::AtomID, core::id::AtomID> const & atom_id_map,
+		core::kinematics::tree::AtomCOP other_atom );
 
-		bool
-		check_domain_map( std::map< id::AtomID, Size > const & atom_id_domain_map,
-											id::AtomID const & atom_id1,
-											id::AtomID const & atom_id2 );
-		bool
-		check_domain_map( std::map< id::AtomID, Size > const & atom_id_domain_map,
-											utility::vector1< id::AtomID > const & atom_ids1,
-											utility::vector1< id::AtomID > const & atom_ids2 );
+	bool
+	check_domain_map( std::map< id::AtomID, Size > const & atom_id_domain_map,
+		id::AtomID const & atom_id1,
+		id::AtomID const & atom_id2 );
+	bool
+	check_domain_map( std::map< id::AtomID, Size > const & atom_id_domain_map,
+		utility::vector1< id::AtomID > const & atom_ids1,
+		utility::vector1< id::AtomID > const & atom_ids2 );
 
-	private:
+private:
 
-		pose::MiniPose const & scratch_pose_; // template_pose
-		std::map < id::AtomID , id::AtomID > const & atom_id_map_;
-		std::map< id::AtomID, Size > atom_id_domain_map_; // blank by default.
-		CopyDofsInfo copy_dofs_info_;
-	};
+	pose::MiniPose const & scratch_pose_; // template_pose
+	std::map < id::AtomID , id::AtomID > const & atom_id_map_;
+	std::map< id::AtomID, Size > atom_id_domain_map_; // blank by default.
+	CopyDofsInfo copy_dofs_info_;
+};
 
 
 } //copy_dofs

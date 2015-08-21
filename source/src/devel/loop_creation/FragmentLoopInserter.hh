@@ -9,7 +9,7 @@
 
 /// @file FragmentLoopInserter.hh
 ///
-/// @brief LoopInserter that identifies fragments with ends matching RMSD 
+/// @brief LoopInserter that identifies fragments with ends matching RMSD
 /// @author Tim Jacobs
 
 #ifndef INCLUDED_devel_loop_creation_FragmentLoopInserter_HH
@@ -32,43 +32,43 @@
 
 namespace devel {
 namespace loop_creation {
-		
+
 class FragmentLoopInserter : public LoopInserter
 {
 public:
-	
+
 	FragmentLoopInserter();
-	
+
 	protocols::moves::MoverOP
 	clone() const;
 
 	protocols::moves::MoverOP
 	fresh_instance() const;
-		
+
 	std::string
 	get_name() const;
-	
+
 	void
 	apply(
 		core::pose::Pose & pose
 	);
-	
+
 	void
 	find_loop_fragments(
 		core::pose::Pose & pose
 	);
-	
+
 	void
 	build_fragment_loop(
 		core::pose::Pose & pose,
 		core::fragment::FragDataCOP fragment
 	);
-	
+
 	utility::vector1< numeric::xyzVector<core::Real> >
 	get_pose_coords_to_match(
 		core::pose::Pose const & pose
 	);
-	
+
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -77,28 +77,28 @@ public:
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
 	);
-	
+
 private:
 
 	utility::vector1<core::fragment::FragSetOP> frag_sets_;
-	
+
 	core::Real max_rms_;
-	
+
 	utility::vector1<core::Size> loop_sizes_;
 	bool pack_;
 	bool design_;
-	
+
 	//a map from loop anchor size to fragments that pass RMS requirements. loop anchor size
 	//is needed so that if the loop anchor is changed, invalid fragments aren't returned.
 	std::map<core::Size, utility::vector1<core::fragment::FragDataCOP> > anchor_frags_;
-	
+
 	//number of flanking residues for each segment that must match the
 	//torsions of the input pose (within loophash min and max rms)
 	core::Size num_flanking_residues_to_match_;
-	
+
 	bool modify_flanking_regions_;
 };
-		
+
 } //loop creation
 } //devel
 

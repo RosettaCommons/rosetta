@@ -31,12 +31,12 @@ class GaussianChainFunc : public Func {
 public:
 
 	GaussianChainFunc(
-			 Real const gaussian_variance,
-			 Real const loop_fixed_cost,
-			 utility::vector1< Real > const & other_distances );
+		Real const gaussian_variance,
+		Real const loop_fixed_cost,
+		utility::vector1< Real > const & other_distances );
 
 	GaussianChainFunc( Real const gaussian_variance,
-										 Real const loop_fixed_cost );
+		Real const loop_fixed_cost );
 
 	FuncOP
 	clone() const;

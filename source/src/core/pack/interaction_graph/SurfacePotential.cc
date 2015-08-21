@@ -255,7 +255,7 @@ Real SurfacePotential::average_residue_hASA( chemical::AA aa_type, Size num_nbs 
 		std::cout << "aatype (" << aa_type << ") outside of canonical 20 in SurfacePotential::average_residue_hASA." << std::endl;
 	}
 #endif
-debug_assert( num_nbs <= BURIED_RESIDUE_NO_HSASA_CUTOFF );
+	debug_assert( num_nbs <= BURIED_RESIDUE_NO_HSASA_CUTOFF );
 	if ( aa_type > chemical::num_canonical_aas ) { return 0.0; }
 	return res_to_average_hASA_[ aa_type ][ num_nbs ];
 
@@ -272,7 +272,7 @@ Real SurfacePotential::hASA_patch_energy( Real patch_area, Size num_nbs ) {
 		std::cout << "patch_area (" << patch_area << ") greater than MAX_PATCH_SURFACE_AREA in SurfacePotential::hASA_patch_energy." << std::endl;
 	}
 #endif
-debug_assert( patch_area <= MAX_PATCH_SURFACE_AREA );
+	debug_assert( patch_area <= MAX_PATCH_SURFACE_AREA );
 	return hASA_to_score_[ (Size)(patch_area / SURFACE_SCORE_BIN_SIZE ) ][ num_nbs ];
 }
 
@@ -287,7 +287,7 @@ Real SurfacePotential::hpatch_score( Real patch_area ) {
 		std::cout << "patch_area (" << patch_area << ") greater than MAX_HPATCH_AREA in SurfacePotential::hpatch_score." << std::endl;
 	}
 #endif
-debug_assert( patch_area <= MAX_HPATCH_AREA );
+	debug_assert( patch_area <= MAX_HPATCH_AREA );
 	return patcharea_to_score_[ (Size)(patch_area / HPATCH_SCORE_BIN_SIZE) ];
 }
 
@@ -397,7 +397,7 @@ void SurfacePotential::compute_pose_surface_energy( pose::Pose const & pose, Rea
 
 	// need symmetry info to ignore the duplicated units
 	core::conformation::symmetry::SymmetryInfoCOP symm_info(NULL);
-	if( core::pose::symmetry::is_symmetric( pose ) ) {
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		symm_info = (dynamic_cast<const core::conformation::symmetry::SymmetricConformation &>(pose.conformation()).Symmetry_Info());
 	}
 
@@ -406,8 +406,8 @@ void SurfacePotential::compute_pose_surface_energy( pose::Pose const & pose, Rea
 
 	for ( core::Size res1_position = 1; res1_position <= pose.n_residue(); ++res1_position ) {
 
-		if( pose.residue( res1_position ).aa() > core::chemical::num_canonical_aas ) continue;
-		if( symm_info && !symm_info->bb_is_independent(res1_position) ) continue;
+		if ( pose.residue( res1_position ).aa() > core::chemical::num_canonical_aas ) continue;
+		if ( symm_info && !symm_info->bb_is_independent(res1_position) ) continue;
 
 		// reset the counter
 		Real total_hASA = 0.0;
@@ -432,20 +432,20 @@ void SurfacePotential::compute_pose_surface_energy( pose::Pose const & pose, Rea
 
 		// for every Edge in the neighbor graph, figure out if that residue is surface exposed
 		//for ( core::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_begin(),
-		//	eli_end = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_end(); eli != eli_end; ++eli ) {
+		// eli_end = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_end(); eli != eli_end; ++eli ) {
 
-			// save the value to simplify code ahead
-			//int res2_position = (*eli)->get_other_ind( res1_position );
+		// save the value to simplify code ahead
+		//int res2_position = (*eli)->get_other_ind( res1_position );
 
-			// get the other node for this edge, so pass in the res1 node to this method
-			//TR << pose.residue( res2_position ).name3() << " " << res2_position << std::endl;
+		// get the other node for this edge, so pass in the res1 node to this method
+		//TR << pose.residue( res2_position ).name3() << " " << res2_position << std::endl;
 
 		conformation::Residue const & rsd1 = pose.residue( res1_position );
 		Real distanceBetweenAtoms = 0.0;
 
 		for ( Size res2_position = 1; res2_position < pose.total_residue(); ++res2_position ) {
-			if( pose.residue( res2_position ).aa() > core::chemical::num_canonical_aas ) continue;
-			if( symm_info && !symm_info->bb_is_independent(res2_position) ) continue;
+			if ( pose.residue( res2_position ).aa() > core::chemical::num_canonical_aas ) continue;
+			if ( symm_info && !symm_info->bb_is_independent(res2_position) ) continue;
 
 			if ( res2_position == res1_position ) { continue; }
 			conformation::Residue const & rsd2 = pose.residue( res2_position );
@@ -562,7 +562,7 @@ void SurfacePotential::compute_pose_hpatch_score(
 	core::conformation::find_neighbors<core::conformation::PointGraphVertexData,core::conformation::PointGraphEdgeData>( pg, max_pair_radius + max_pair_radius + max_ep_radius /* Angstrom cutoff */ ); //create edges
 
 	// increment the self and residue-residue overlap for each residue
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ ii ){
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ ii ) {
 		rdots[ ii ]->increment_self_overlap();
 		for ( core::conformation::PointGraph::UpperEdgeListConstIter edge_iter = pg->get_vertex( ii ).upper_edge_list_begin(),
 				edge_end_iter = pg->get_vertex(ii ).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
@@ -578,7 +578,7 @@ void SurfacePotential::compute_pose_hpatch_score(
 		conformation::Residue const & rsd = pose.residue( ii );
 		heavyatom_count += rsd.nheavyatoms();
 	}
-	
+
 	graph::DisjointSets ds( heavyatom_count );
 	utility::vector1< id::AtomID > ds_index_2_atomid( heavyatom_count );
 
@@ -617,13 +617,15 @@ void SurfacePotential::compute_pose_hpatch_score(
 		for ( Size iia = 1, iia_end = pose.residue_type(ii).nheavyatoms(); iia <= iia_end; ++iia ) {
 
 			// check if iia atom is buried with expanded polar atoms
-			if ( rdots[ ii ]->get_atom_sasa( iia ) == 0 )
+			if ( rdots[ ii ]->get_atom_sasa( iia ) == 0 ) {
 				continue;
+			}
 
 			// check if jj atom is a hydrophobic atom
 			std::string const & iia_elem = pose.residue_type(ii).atom_type( iia ).element();
-			if ( iia_elem != carbon_atom && iia_elem != sulfur_atom ) // doing char comparison is much faster than string comparison
+			if ( iia_elem != carbon_atom && iia_elem != sulfur_atom ) { // doing char comparison is much faster than string comparison
 				continue;
+			}
 
 			Real const iia_rad = rdots[ ii ]->get_atom_radius( iia ) + RotamerDots::probe_radius_;
 			Vector const & iia_xyz = rdots[ ii ]->rotamer()->xyz( iia );
@@ -632,13 +634,15 @@ void SurfacePotential::compute_pose_hpatch_score(
 			for ( Size iib = iia+1; iib <= iia_end; ++iib ) {
 
 				// check if kk atom is buried with expanded polar atoms
-				if ( rdots[ ii ]->get_atom_sasa( iib ) == 0 )
+				if ( rdots[ ii ]->get_atom_sasa( iib ) == 0 ) {
 					continue;
+				}
 
 				// check if iib atom is a hydrophobic atom
 				std::string const & iib_elem = pose.residue_type( ii ).atom_type( iib ).element();
-				if ( iib_elem != carbon_atom && iib_elem != sulfur_atom ) // doing char comparison is much faster than string comparison
+				if ( iib_elem != carbon_atom && iib_elem != sulfur_atom ) { // doing char comparison is much faster than string comparison
 					continue;
+				}
 
 				Real const iib_rad = rdots[ ii ]->get_atom_radius( iib ) + RotamerDots::probe_radius_;
 				Vector const & iib_xyz = rdots[ ii ]->rotamer()->xyz( iib );
@@ -675,24 +679,28 @@ void SurfacePotential::compute_pose_hpatch_score(
 
 			for ( Size iia = 1; iia <= pose.residue_type( ii ).nheavyatoms(); ++iia ) {
 
-				if ( rdots[ ii ]->get_atom_sasa( iia ) == 0 )
+				if ( rdots[ ii ]->get_atom_sasa( iia ) == 0 ) {
 					continue;
+				}
 
 				std::string const & iia_elem = pose.residue_type( ii ).atom_type( iia ).element();
-				if ( iia_elem != carbon_atom && iia_elem != sulfur_atom )
+				if ( iia_elem != carbon_atom && iia_elem != sulfur_atom ) {
 					continue;
+				}
 
 				Real const iia_rad = rdots[ ii ]->get_atom_radius( iia ) + RotamerDots::probe_radius_;
 				Vector const & iia_xyz = rdots[ ii ]->rotamer()->xyz( iia );
 
 				for ( Size jja = 1; jja <= pose.residue_type( jj ).nheavyatoms(); ++jja ) {
 
-					if ( rdots[ jj ]->get_atom_sasa( jja ) == 0 )
+					if ( rdots[ jj ]->get_atom_sasa( jja ) == 0 ) {
 						continue;
+					}
 
 					std::string const & jja_elem = pose.residue_type( jj ).atom_type( jja ).element();
-					if ( jja_elem != carbon_atom && jja_elem != sulfur_atom )
+					if ( jja_elem != carbon_atom && jja_elem != sulfur_atom ) {
 						continue;
+					}
 
 					Real const jja_rad = rdots[ jj ]->get_atom_radius( jja ) + RotamerDots::probe_radius_;
 					Vector const & jja_xyz = rdots[ jj ]->rotamer()->xyz( jja );
@@ -724,7 +732,7 @@ void SurfacePotential::compute_pose_hpatch_score(
 						 << jj_rsd.aa() << " " << jj << "/" << utility::trim( jj_rsd.atom_name( jja ) ) << std::endl;
 						 }*/
 #endif
-						
+
 					}
 				}
 			}
@@ -794,7 +802,7 @@ void SurfacePotential::compute_pose_hpatch_score(
 		patch_scores_[ (*it).first ] = std::make_pair( score, patch_area );
 	}
 
-//#ifdef FILE_DEBUG
+	//#ifdef FILE_DEBUG
 	// output all of the scores on a single line
 	TR << "calculated total hpatch score: " << total_hpatch_score_ << ", individual patch scores: [ ";
 	std::map< Size, std::pair< Real, Real > >::iterator scores_iter;
@@ -802,22 +810,22 @@ void SurfacePotential::compute_pose_hpatch_score(
 		TR << (*scores_iter).second.first << ", ";
 	}
 	TR << "]" << std::endl;
-//#endif
+	//#endif
 
 	// iterate over the connected components again, but this time output only patches greater than or equal to 250A2
 	// by using a score cutoff.
 	for ( it = sets.begin() ; it != sets.end(); ++it ) {
 		//std::ostringstream strstream;
-		
+
 		std::map< core::Size, std::pair< core::Real, core::Real > >::iterator ps_it = patch_scores_.find( (*it).first );
 		if ( ps_it == patch_scores_.end() ) { continue; } // this shouldn't happen though
 		Real score = (*ps_it).second.first;
 		if ( score < 4.00 ) { continue; }
-		
+
 		TR << "large patch, hpatch_score: " << score << ", PyMOL expression: select p" << (*it).first << ", ";
 		for ( Size ii=1; ii <= (*it).second.size(); ++ii ) {
 			id::AtomID const & atomid = ds_index_2_atomid[ (*it).second[ii] ];
-			
+
 			// output PDB numbering if there's a PDBInfo object present
 			core::conformation::Residue const & rsd = pose.residue( atomid.rsd() );
 			if ( pose.pdb_info() ) {
@@ -829,10 +837,10 @@ void SurfacePotential::compute_pose_hpatch_score(
 				TR << rsd.seqpos() << "/" << utility::trim( rsd.atom_name( atomid.atomno() ) ) << " + ";
 			}
 		}
-		
+
 		TR << std::endl;
 	}
-	
+
 	return;
 
 }

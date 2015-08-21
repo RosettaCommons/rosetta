@@ -51,7 +51,7 @@ void MonteCarloLoader::load_data(
 
 	TagCOPs const montecarlo_tags( tag->getTags() );
 
-	BOOST_FOREACH(TagCOP montecarlo_tag, montecarlo_tags){
+	BOOST_FOREACH ( TagCOP montecarlo_tag, montecarlo_tags ) {
 		std::string const mc_name( montecarlo_tag->getName() );
 		core::Real const mctemp( montecarlo_tag->getOption< core::Real >( "temperature", 2.0 ));
 		core::scoring::ScoreFunctionOP scorefxn =

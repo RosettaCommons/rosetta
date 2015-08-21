@@ -18,8 +18,8 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace wum{
+namespace protocols {
+namespace wum {
 
 class DatabaseEntryWorkUnit;
 typedef utility::pointer::shared_ptr< DatabaseEntryWorkUnit > DatabaseEntryWorkUnitOP;

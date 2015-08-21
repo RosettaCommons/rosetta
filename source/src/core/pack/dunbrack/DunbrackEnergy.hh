@@ -108,9 +108,9 @@ public:
 
 	// data
 private:
-	
-virtual
-core::Size version() const;
+
+	virtual
+	core::Size version() const;
 
 };
 

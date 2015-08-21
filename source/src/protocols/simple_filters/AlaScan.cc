@@ -76,13 +76,13 @@ AlaScan::scorefxn( core::scoring::ScoreFunctionOP scorefxn )
 }
 
 AlaScan::AlaScan( bool const chain1, bool const chain2, core::Size const repeats, core::Real const dist, core::scoring::ScoreFunctionCOP scorefxn, core::Size const jump=1, bool const symmetry=false ) : Filter( "AlaScan" ),
-		chain1_( chain1 ),
-		chain2_( chain2 ),
-		repeats_( repeats ),
-		distance_threshold_( dist ),
-		jump_( jump ),
-		symmetry_( symmetry ),
-		repack_( true )
+	chain1_( chain1 ),
+	chain2_( chain2 ),
+	repeats_( repeats ),
+	distance_threshold_( dist ),
+	jump_( jump ),
+	symmetry_( symmetry ),
+	repack_( true )
 {
 	if ( symmetry_ ) scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn );
 	else scorefxn_ = scorefxn->clone();
@@ -129,7 +129,7 @@ AlaScan::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & dat
 core::Real
 AlaScan::ddG_for_single_residue( core::pose::Pose const & const_pose, core::Size const resi ) const
 {
-	if( !const_pose.residue( resi ).is_protein() ){
+	if ( !const_pose.residue( resi ).is_protein() ) {
 		TR<<"WARNING: Non-protein residue "<< resi<<" was requested for ala-scan. Returning 0"<<std::endl;
 		return 0.0;
 	}
@@ -137,10 +137,11 @@ AlaScan::ddG_for_single_residue( core::pose::Pose const & const_pose, core::Size
 	core::pose::Pose pose( const_pose );
 
 	simple_filters::DdgFilter ddg_filter( 100/*ddg_threshold*/, scorefxn_, rb_jump, 1 /*repeats*/ );
-	if( repack() )
+	if ( repack() ) {
 		TR<<"Energy calculations are carried out with repacking in the bound and unbound states (ddG)\n";
-	else
+	} else {
 		TR<<"Energy calculations are carried out without repackign in the bound and unbound states (dG)\n";
+	}
 	ddg_filter.repack( repack() );
 	simple_filters::ScoreTypeFilter const energy_filter( scorefxn_, core::scoring::total_score, 0 );
 
@@ -151,17 +152,19 @@ AlaScan::ddG_for_single_residue( core::pose::Pose const & const_pose, core::Size
 
 	PackerTaskOP task = TaskFactory::create_packer_task( pose );
 	task->initialize_from_command_line().or_include_current( true );
-	for( core::Size resj=1; resj<=pose.total_residue(); ++resj ){
-		if( resi == resj )
+	for ( core::Size resj=1; resj<=pose.total_residue(); ++resj ) {
+		if ( resi == resj ) {
 			task->nonconst_residue_task( resi ).restrict_absent_canonical_aas( allowed_aas );
-		else
+		} else {
 			task->nonconst_residue_task( resj ).prevent_repacking();
+		}
 	}
 	core::pack::pack_rotamers( pose, *scorefxn_, task );
 	core::Real accumulate_ddg = 0;
 
-	for( core::Size r=1; r<=repeats_; ++r )
+	for ( core::Size r=1; r<=repeats_; ++r ) {
 		accumulate_ddg += (rb_jump==0 ? energy_filter.compute( pose ) : ddg_filter.compute( pose ) );
+	}
 	core::Real const mut_ddg( accumulate_ddg / repeats_ );
 
 	TR.flush();
@@ -195,16 +198,17 @@ AlaScan::report( std::ostream & out, core::pose::Pose const & const_pose ) const
 	interface_obj.calculate( pose );
 
 	simple_filters::DdgFilter const ddg_filter( 100/*ddg_threshold*/, scorefxn_, rb_jump, 1 /*repeats*/ );
-  	simple_filters::ScoreTypeFilter const energy_filter( scorefxn_, core::scoring::total_score, 0 );
+	simple_filters::ScoreTypeFilter const energy_filter( scorefxn_, core::scoring::total_score, 0 );
 
 	core::Real accumulate_ddg( 0 );
-	for( core::Size r=1; r<=repeats_; ++r )
+	for ( core::Size r=1; r<=repeats_; ++r ) {
 		accumulate_ddg += (rb_jump==0 ? energy_filter.compute( const_pose ) : ddg_filter.compute( const_pose ) );
+	}
 
 	core::Real const wt_ddg( accumulate_ddg / repeats_ );
-	for( core::Size resi = chain_begin; resi <= chain_end; ++resi ){
-		if( !pose.residue( resi ).is_protein() ) continue;
-		if( interface_obj.is_interface( resi ) ){
+	for ( core::Size resi = chain_begin; resi <= chain_end; ++resi ) {
+		if ( !pose.residue( resi ).is_protein() ) continue;
+		if ( interface_obj.is_interface( resi ) ) {
 			core::Real const mut_ddg( ddG_for_single_residue( const_pose, resi ) );
 			core::Real const diff_ddg( mut_ddg - wt_ddg );
 
@@ -224,8 +228,8 @@ AlaScan::report_symmetry( std::ostream & out, core::pose::Pose const & const_pos
 	core::pose::Pose pose( const_pose );
 
 	assert( core::pose::symmetry::is_symmetric( pose ));
-  core::conformation::symmetry::SymmetricConformation & symm_conf (
-        dynamic_cast<core::conformation::symmetry::SymmetricConformation & > ( pose.conformation()) );
+	core::conformation::symmetry::SymmetricConformation & symm_conf (
+		dynamic_cast<core::conformation::symmetry::SymmetricConformation & > ( pose.conformation()) );
 
 	protocols::scoring::Interface interface_obj(1);
 	pose.update_residue_neighbors(); // o/w fails assertion `graph_state_ == GOOD`
@@ -234,32 +238,34 @@ AlaScan::report_symmetry( std::ostream & out, core::pose::Pose const & const_pos
 
 	simple_filters::DdgFilter const ddg( 100/*ddg_threshold*/, scorefxn_, 1, 1 /*repeats*/ /*, true */ ); //DdfFilter autodetects symmetry from input now
 	core::Real accumulate_ddg( 0 );
-	for( core::Size r=1; r<=repeats_; ++r )
+	for ( core::Size r=1; r<=repeats_; ++r ) {
 		accumulate_ddg += ddg.compute( const_pose );
+	}
 	core::Real const wt_ddg( accumulate_ddg / repeats_ );
 
 	//core::Real const wt_ddg( ddg.compute( const_pose ) );
 	utility::vector1< bool > allowed_aas;
 	allowed_aas.assign( core::chemical::num_canonical_aas, false );
 	allowed_aas[ core::chemical::aa_ala ] = true;
-	for( core::Size resi = 1; resi <= pose.total_residue(); ++resi ){
+	for ( core::Size resi = 1; resi <= pose.total_residue(); ++resi ) {
 		if ( !symm_conf.Symmetry_Info()->bb_is_independent(resi) ) continue;
-		if( !pose.residue( resi ).is_protein() ) continue;
-		if( interface_obj.is_interface( resi ) ){
+		if ( !pose.residue( resi ).is_protein() ) continue;
+		if ( interface_obj.is_interface( resi ) ) {
 			using namespace core::pack::task;
 
 			PackerTaskOP task = TaskFactory::create_packer_task( pose );
 			task->initialize_from_command_line().or_include_current( true );
-			for( core::Size resj=1; resj<=pose.total_residue(); ++resj ){
-				if( !pose.residue( resi ).is_protein() ) continue;
-				if( resi == resj )
+			for ( core::Size resj=1; resj<=pose.total_residue(); ++resj ) {
+				if ( !pose.residue( resi ).is_protein() ) continue;
+				if ( resi == resj ) {
 					task->nonconst_residue_task( resi ).restrict_absent_canonical_aas( allowed_aas );
-				else
+				} else {
 					task->nonconst_residue_task( resj ).prevent_repacking();
+				}
 			}
 			core::pack::pack_rotamers( pose, *scorefxn_, task );
 			accumulate_ddg = 0;
-			for( core::Size r=1; r<=repeats_; ++r ) accumulate_ddg += ddg.compute( pose );
+			for ( core::Size r=1; r<=repeats_; ++r ) accumulate_ddg += ddg.compute( pose );
 			core::Real const mut_ddg( accumulate_ddg / repeats_ );
 			//core::Real const mut_ddg( ddg.compute( const_pose ) );
 			core::Real const diff_ddg( mut_ddg - wt_ddg );

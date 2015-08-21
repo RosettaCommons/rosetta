@@ -45,19 +45,19 @@ namespace build {
 
 // enclose enum in descriptive namespace to prevent conflicts
 namespace BuildInstructionState {
-	/// @brief describes the state of the BuildInstruction
-	/// @details There are currently three possible BuildInstruction states.
-	///  <em>READY</em> indicates the BuildInstruction has been reset and is
-	///  ready to modify a Pose.  <em>WAITING_ON_DEPENDENCIES</em> indicates
-	///  the BuildInstruction is waiting for its dependencies to be satisfied
-	///  before allowing modifications to proceed.  <em>MODIFY_WAS_SUCCESSFUL</em>
-	///  indicates the BuildInstruction has finished modifications to the Pose,
-	///  and its residue indexing is now consistent with the newly modified Pose.
-	enum Enum {
-		READY,
-		MODIFY_WAS_SUCCESSFUL,
-		WAITING_ON_DEPENDENCIES
-	};
+/// @brief describes the state of the BuildInstruction
+/// @details There are currently three possible BuildInstruction states.
+///  <em>READY</em> indicates the BuildInstruction has been reset and is
+///  ready to modify a Pose.  <em>WAITING_ON_DEPENDENCIES</em> indicates
+///  the BuildInstruction is waiting for its dependencies to be satisfied
+///  before allowing modifications to proceed.  <em>MODIFY_WAS_SUCCESSFUL</em>
+///  indicates the BuildInstruction has finished modifications to the Pose,
+///  and its residue indexing is now consistent with the newly modified Pose.
+enum Enum {
+	READY,
+	MODIFY_WAS_SUCCESSFUL,
+	WAITING_ON_DEPENDENCIES
+};
 }
 
 

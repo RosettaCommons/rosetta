@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/modeler/rna/phosphate/MultiPhosphateSampler.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -23,11 +23,11 @@ namespace stepwise {
 namespace modeler {
 namespace rna {
 namespace phosphate {
-	
-	class MultiPhosphateSampler;
-	typedef utility::pointer::shared_ptr< MultiPhosphateSampler > MultiPhosphateSamplerOP;
-	typedef utility::pointer::shared_ptr< MultiPhosphateSampler const > MultiPhosphateSamplerCOP;
-	
+
+class MultiPhosphateSampler;
+typedef utility::pointer::shared_ptr< MultiPhosphateSampler > MultiPhosphateSamplerOP;
+typedef utility::pointer::shared_ptr< MultiPhosphateSampler const > MultiPhosphateSamplerCOP;
+
 } //phosphate
 } //rna
 } //modeler

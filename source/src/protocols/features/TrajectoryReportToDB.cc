@@ -26,8 +26,8 @@
 // Platform Headers
 #include <basic/Tracer.hh>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 // Constructors
 
@@ -70,9 +70,9 @@ TrajectoryReportToDB::TrajectoryReportToDB(
 	core::Size cache_size
 ) :
 	ReportToDB(
-		"TrajectoryReportToDB",
-		db_session, batch_name, batch_description,
-		use_transactions, cache_size ),
+	"TrajectoryReportToDB",
+	db_session, batch_name, batch_description,
+	use_transactions, cache_size ),
 	stride_(1),
 	trajectory_map_features_reporter_()
 {
@@ -160,8 +160,8 @@ TrajectoryReportToDB::parse_my_tag(
 void
 TrajectoryReportToDB::parse_stride_tag_item(
 	TagCOP const tag) {
-	if(tag->hasOption("stride")){
-	  set_stride( tag->getOption<core::Size>("stride") );
+	if ( tag->hasOption("stride") ) {
+		set_stride( tag->getOption<core::Size>("stride") );
 	}
 }
 
@@ -180,8 +180,7 @@ TrajectoryReportToDB::apply( Pose& pose )
 		// New job output tag - initialize cycle count at 0
 		cycle_counts_[structure_tag] = 0;
 		cycle_count = 0;
-	}
-	else {
+	} else {
 		cycle_count = tag_iter->second;
 	}
 

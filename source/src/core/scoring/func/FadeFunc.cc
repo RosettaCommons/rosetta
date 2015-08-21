@@ -35,8 +35,8 @@ FuncOP
 FadeFunc::clone() const
 {
 	return FuncOP( new FadeFunc( cutoff_lower_, cutoff_upper_,
-											 fade_zone_, well_depth_,
-											 well_offset_ ) );
+		fade_zone_, well_depth_,
+		well_offset_ ) );
 }
 
 Real
@@ -45,7 +45,7 @@ FadeFunc::func( Real const z ) const
 
 	Real fade_value( 1.0 );
 
-	if (z < cutoff_lower_ || z > cutoff_upper_ ){
+	if ( z < cutoff_lower_ || z > cutoff_upper_ ) {
 		fade_value = 0.0;
 	} else if ( z < cutoff_lower_ + fade_zone_ ) {
 		//Check little strip near lower cutoff.
@@ -53,14 +53,14 @@ FadeFunc::func( Real const z ) const
 		Real const b2 = b*b;
 		Real const b3 = b2*b;
 		fade_value = ( 2 * b3 - 3 * b2 + 1 );
-		//		fade_deriv = -1.0 * (6 * b2 - 6 * b ) / fade_zone_;
+		//  fade_deriv = -1.0 * (6 * b2 - 6 * b ) / fade_zone_;
 	} else if ( z > cutoff_upper_ - fade_zone_ ) {
 		//Check little strip near upper cutoff.
 		Real const b =  ( z - (cutoff_upper_ - fade_zone_) )/ fade_zone_;
 		Real const b2 = b*b;
 		Real const b3 = b2*b;
 		fade_value = ( 2 * b3 - 3 * b2 + 1 );
-		//		fade_deriv = (6 * b2 - 6 * b ) / fade_zone_;
+		//  fade_deriv = (6 * b2 - 6 * b ) / fade_zone_;
 	}
 
 
@@ -73,21 +73,21 @@ FadeFunc::dfunc( Real const z ) const
 
 	Real fade_deriv( 0.0 );
 
-	if (z < cutoff_lower_ || z > cutoff_upper_ ){
+	if ( z < cutoff_lower_ || z > cutoff_upper_ ) {
 		fade_deriv = 0.0;
 	} else if ( z < cutoff_lower_ + fade_zone_ ) {
 		//Check little strip near lower cutoff.
 		Real const b = -1.0 * ( z - (cutoff_lower_ + fade_zone_) )/ fade_zone_;
 		Real const b2 = b*b;
-		//		Real const b3 = b2*b;
+		//  Real const b3 = b2*b;
 		//fade_value = ( 2 * b3 - 3 * b2 + 1 );
 		fade_deriv = -1.0 * (6 * b2 - 6 * b ) / fade_zone_;
 	} else if ( z > cutoff_upper_ - fade_zone_ ) {
 		//Check little strip near upper cutoff.
 		Real const b =  ( z - (cutoff_upper_ - fade_zone_) )/ fade_zone_;
 		Real const b2 = b*b;
-		//		Real const b3 = b2*b;
-		//		fade_value = ( 2 * b3 - 3 * b2 + 1 );
+		//  Real const b3 = b2*b;
+		//  fade_value = ( 2 * b3 - 3 * b2 + 1 );
 		fade_deriv = (6 * b2 - 6 * b ) / fade_zone_;
 	}
 
@@ -107,9 +107,9 @@ FadeFunc::read_data( std::istream& in ) {
 	// there may be another number, which would be the well offset.
 	char dummy;
 	while ( in.good() && ( in.peek() == ' ' ) ) in.get( dummy );
-	if( in.good() ){
+	if ( in.good() ) {
 		char c = in.peek();
-		if ( isdigit( c ) || c == '-' || c == '+' ){ // allow for negative well offsets...
+		if ( isdigit( c ) || c == '-' || c == '+' ) { // allow for negative well offsets...
 			in >> well_offset_;
 		}
 	}
@@ -128,7 +128,7 @@ FadeFunc::show_definition( std::ostream &out ) const {
 
 Size
 FadeFunc::show_violations( std::ostream& out, Real x, Size verbose_level, Real threshold) const {
-	if (verbose_level > 100 ) {
+	if ( verbose_level > 100 ) {
 		out << "FADE " <<  ( x < cutoff_lower_ || x > cutoff_upper_ ) << std::endl;
 	}
 	return Func::show_violations( out, x, verbose_level, threshold);

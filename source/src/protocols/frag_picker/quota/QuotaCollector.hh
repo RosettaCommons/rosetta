@@ -65,18 +65,19 @@ public:
 
 	/// @brief Describes what has been collected
 	void print_report(std::ostream & output,
-			scores::FragmentScoreManagerOP scoring
+		scores::FragmentScoreManagerOP scoring
 	) const;
 
 	/// @brief Inserts candidates from another QuotaCollector for a give position in the query
 	/// Candidates may or may not get inserted depending on the candidate
 	void insert(Size pos, CandidatesCollectorOP collector) {
 		QuotaCollectorOP c = utility::pointer::dynamic_pointer_cast< protocols::frag_picker::quota::QuotaCollector > ( collector );
-		if (c == 0)
+		if ( c == 0 ) {
 			utility_exit_with_message("Cant' cast candidates' collector to QuotaCollector. Is quota set up correctly?");
-		for(Size j=1;j<=storage_[pos].size();++j) {
+		}
+		for ( Size j=1; j<=storage_[pos].size(); ++j ) {
 			ScoredCandidatesVector1 & content = c->get_pool(pos, j)->get_candidates(0);
-			for(Size l=1;l<=content.size();l++) storage_[pos][j]->push( content[l] );
+			for ( Size l=1; l<=content.size(); l++ ) storage_[pos][j]->push( content[l] );
 		}
 	}
 
@@ -85,26 +86,27 @@ public:
 
 	/// @brief prints the number of quota pools for a given positio in query
 	Size count_pools(Size position) const {
-	    return storage_[position].size();
+		return storage_[position].size();
 	}
 
 	QuotaPoolCOP get_pool( Size position, Size pool_id ) const {
-	    return storage_[position][pool_id];
+		return storage_[position][pool_id];
 	}
 
 	QuotaPoolOP get_pool( Size position, Size pool_id ) {
-	    return storage_[position][pool_id];
+		return storage_[position][pool_id];
 	}
 
 	void add_pool(Size position,QuotaPoolOP the_pool) {
-	    if(position <= storage_.size())
-		storage_[position].push_back(the_pool);
+		if ( position <= storage_.size() ) {
+			storage_[position].push_back(the_pool);
+		}
 	}
 
 	void renormalize_quota_pools();
 
 	void attach_secondary_structure_pools(Real,core::fragment::SecondaryStructureOP,
-    		std::string, Size, utility::vector1<Size>,utility::vector1<Real>,Size);
+		std::string, Size, utility::vector1<Size>,utility::vector1<Real>,Size);
 private:
 	Size frag_size_;
 	ScoredCandidatesVector1 frags_for_pos_;

@@ -147,9 +147,9 @@ FilterStructs::count_ntrial()
 bool
 FilterStructs::filter_is_over()
 {
-	if( current_trial_ >= ntrial_ ){
+	if ( current_trial_ >= ntrial_ ) {
 		return true;
-	}else{
+	} else {
 		return false;
 	}
 }
@@ -215,7 +215,7 @@ void FilterStructs_Packstat::apply( Pose const & pose )
 		best_packscore_ = packscore;
 		TR << " Packscore : " << best_packscore_ << std::endl;
 	}
-	if( filter_is_over() ){
+	if ( filter_is_over() ) {
 		set_filter_off();
 	}
 }
@@ -266,22 +266,22 @@ void FilterStructs_TotalCharge::apply( Pose const & pose )
 
 	count_ntrial();
 	Real total_charge( 0.0 );
-	for( Size i=1; i<=pose.total_residue(); ++i){
+	for ( Size i=1; i<=pose.total_residue(); ++i ) {
 
-		chemical::AA aa =	pose.aa(	i	 );
+		chemical::AA aa = pose.aa( i  );
 
-		if( aa == chemical::aa_from_name( "GLU" ) ){
+		if ( aa == chemical::aa_from_name( "GLU" ) ) {
 			total_charge -= 1.0;
-		}else if( aa == chemical::aa_from_name( "ASP" ) ){
+		} else if ( aa == chemical::aa_from_name( "ASP" ) ) {
 			total_charge -= 1.0;
-		}else if( aa == chemical::aa_from_name( "ARG" ) ){
+		} else if ( aa == chemical::aa_from_name( "ARG" ) ) {
 			total_charge += 1.0;
-		}else if( aa == chemical::aa_from_name( "LYS" ) ){
+		} else if ( aa == chemical::aa_from_name( "LYS" ) ) {
 			total_charge += 1.0;
 		}
 	}
 
-	if( total_charge != disallowed_value_ || filter_is_over() ){
+	if ( total_charge != disallowed_value_ || filter_is_over() ) {
 		set_filter_off();
 		set_bestpose( pose );
 		TR << " Total charge : " << total_charge << std::endl;

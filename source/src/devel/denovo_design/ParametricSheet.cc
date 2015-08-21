@@ -120,9 +120,9 @@ ParametricSheet::parse_tags( utility::vector1< utility::tag::TagCOP > const & ta
 				std::string const name( tags[i]->getOption< std::string >( "name" ) );
 				strand_name_to_index_[ name ] = i;
 				strand_data_.push_back( StrandData( name,
-							tags[i]->getOption< core::Size >( "length", default_strand_length_ ),
-							tags[i]->getOption< core::Size >( "register_shift", default_register_shift_ ),
-							tags[i]->getOption< std::string >( "orientation", default_orientation_ ) ) );
+					tags[i]->getOption< core::Size >( "length", default_strand_length_ ),
+					tags[i]->getOption< core::Size >( "register_shift", default_register_shift_ ),
+					tags[i]->getOption< std::string >( "orientation", default_orientation_ ) ) );
 			} else {
 				utility_exit_with_message( "Strand name option is not specified, and must be." );
 			}
@@ -150,9 +150,9 @@ ParametricSheet::from_pose( core::pose::Pose const & pose )
 		std::string const name( boost::lexical_cast< std::string >( chain_name + i ) );
 		strand_name_to_index_[ name ] = i;
 		strand_data_.push_back( StrandData( name,
-																				strands[i]->total_residue(),
-																				0,
-																				"P" ) );
+			strands[i]->total_residue(),
+			0,
+			"P" ) );
 	}
 
 	// initialize ca_coords from the pose
@@ -262,9 +262,9 @@ print_matrix( numeric::xyzMatrix< core::Real > const & mat )
 /// @brief given two previous h points, determine the h direction
 core::Vector
 ParametricSheet::get_h_axis( core::Vector const & p1,
-														 core::Vector const & p2,
-														 core::Vector const & /*c_axis*/,
-														 core::Size const /*resi*/ ) const
+	core::Vector const & p2,
+	core::Vector const & /*c_axis*/,
+	core::Size const /*resi*/ ) const
 {
 	core::Vector h_point_dir( p1 - p2 );
 	//return rotate_about_axis( c_axis, up_down( resi )*strand_rotation_ )*h_point_dir;
@@ -274,9 +274,9 @@ ParametricSheet::get_h_axis( core::Vector const & p1,
 /// @brief creates a vector for a new residue in the sheet based on the previous c and h vectors
 void
 ParametricSheet::new_strand( core::Size const strand_num,
-		core::Size const prev_strand,
-		core::Size const prev2_strand,
-		core::Size const center_resi )
+	core::Size const prev_strand,
+	core::Size const prev2_strand,
+	core::Size const center_resi )
 {
 	runtime_assert( strand_num );
 	runtime_assert( strand_num <= ca_coords_.size() );
@@ -316,8 +316,8 @@ ParametricSheet::new_strand( core::Size const strand_num,
 
 	// the new vector will have c,h coordinates -- this vector will convert that into xyz
 	numeric::xyzMatrix< core::Real > const rotate( numeric::xyzMatrix< core::Real >::rows( c_vec.x(), h_vec.x(), cross.x(),
-				c_vec.y(), h_vec.y(), cross.y(),
-				c_vec.z(), h_vec.z(), cross.z() ) );
+		c_vec.y(), h_vec.y(), cross.y(),
+		c_vec.z(), h_vec.z(), cross.z() ) );
 
 	// create the initial strand point and rotate it into place
 	core::Vector const new_point_ch( 0.0, strand_dist_*cos(h_coil_), strand_dist_*sin(h_coil_) );
@@ -353,11 +353,11 @@ ParametricSheet::test_matrix( utility::vector1< utility::vector1< core::Vector >
 /// c_point1 is assumed to be 0,0,0 in chz coordinates
 core::Vector
 ParametricSheet::chz_to_xyz( core::Vector const & chz_point,
-		core::Vector const & c_point1,
-		core::Vector const & c_point2,
-		core::Vector const & h_point1,
-		core::Vector const & h_point2,
-		core::Size const resi ) const
+	core::Vector const & c_point1,
+	core::Vector const & c_point2,
+	core::Vector const & h_point1,
+	core::Vector const & h_point2,
+	core::Size const resi ) const
 {
 	core::Vector c_vec( c_point1 - c_point2 );
 	core::Vector h_vec( get_h_axis( h_point1, h_point2, c_vec, resi ) );
@@ -372,8 +372,8 @@ ParametricSheet::chz_to_xyz( core::Vector const & chz_point,
 
 	// the new vector will have c,h coordinates -- this vector will convert that into xyz
 	numeric::xyzMatrix< core::Real > const rotate( numeric::xyzMatrix< core::Real >::rows( c_vec.x(), h_vec.x(), cross.x(),
-				c_vec.y(), h_vec.y(), cross.y(),
-				c_vec.z(), h_vec.z(), cross.z() ) );
+		c_vec.y(), h_vec.y(), cross.y(),
+		c_vec.z(), h_vec.z(), cross.z() ) );
 	core::Vector const retval( rotate*chz_point + c_point1 );
 	TR << " chz->xyz: [ " << chz_point.x() << ", " << chz_point.y() << ", " << chz_point.z() << " ] --> [ " << retval.x() << ", " << retval.y() << ", " << retval.z() << " ]" << std::endl;
 	return retval;
@@ -395,8 +395,8 @@ ParametricSheet::rotate_about_axis( core::Vector const & twist_axis, core::Real 
 	core::Real const zy = axis.z()*axis.y()*(1-cos(theta)) + axis.x()*sin(theta);
 	core::Real const zz = axis.z()*axis.z()*(1-cos(theta)) + cos(theta);
 	numeric::xyzMatrix< core::Real > const rotate( numeric::xyzMatrix< core::Real >::rows( xx, xy, xz,
-				yx, yy, yz,
-				zx, zy, zz ) );
+		yx, yy, yz,
+		zx, zy, zz ) );
 	return rotate;
 }
 
@@ -428,11 +428,11 @@ ParametricSheet::up_down( core::Size const resi ) const
 /// assumption: points_[i][j-1] has been generated
 void
 ParametricSheet::create_ca_point( core::Size const strand,
-		core::Size const prev_strand,
-		core::Size const prev2_strand,
-		core::Size const resi,
-		core::Size const prev_resi,
-		core::Size const prev2_resi )
+	core::Size const prev_strand,
+	core::Size const prev2_strand,
+	core::Size const resi,
+	core::Size const prev_resi,
+	core::Size const prev2_resi )
 {
 	runtime_assert( resi >= 1 );
 	runtime_assert( strand >= 1 );
@@ -537,9 +537,9 @@ ParametricSheet::generate_strand( core::Size const strand, core::Size const prev
 /// @brief Take the previous point in the c direction, the previous point in the h direction and a reference point and twist about the axis of the two points with the reference point as 0,0,0
 core::Vector
 ParametricSheet::twist( core::Vector const & xyz_point,
-		core::Vector const & c_prev,
-		core::Vector const & h_prev,
-		core::Vector const & reference ) const
+	core::Vector const & c_prev,
+	core::Vector const & h_prev,
+	core::Vector const & reference ) const
 {
 	print_vector( xyz_point, "xyz_point" );
 	print_vector( c_prev, "c_prev" );
@@ -690,7 +690,7 @@ ParametricSheet::calc_cdist() const
 	// limit ourselves to the actual points included in the sheet
 	for ( core::Size i=2; i<=ca_coords_.size()-1; ++i ) {
 		for ( core::Size j=3; j<=ca_coords_[i].size()-2; ++j ) {
-				dists.push_back( calc_cdist( i, j, j-1, j+1 ) );
+			dists.push_back( calc_cdist( i, j, j-1, j+1 ) );
 		}
 	}
 	core::Real avg( mean( dists ) );
@@ -701,7 +701,7 @@ ParametricSheet::calc_cdist() const
 /// @brief calculates the ca distance along the c axis between the given strand and residue numbers
 core::Real
 ParametricSheet::calc_cdist( core::Size const strand, core::Size const resi,
-		core::Size const resi_prev, core::Size const resi_next ) const
+	core::Size const resi_prev, core::Size const resi_next ) const
 {
 	// get c-axis estimate from resi_prev, resi_next
 	core::Vector c_axis( ca_coords_[strand][resi_next] - ca_coords_[strand][resi_prev] );

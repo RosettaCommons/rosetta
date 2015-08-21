@@ -40,53 +40,58 @@ const std::string ERROR_PREFIX = "Failed to specify required option ";
 
 /// @detail Standard options
 void check_required_common() {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-  if (!option[in::file::fasta].user())
-    utility_exit_with_message(ERROR_PREFIX + "-in:file:fasta");
+	if ( !option[in::file::fasta].user() ) {
+		utility_exit_with_message(ERROR_PREFIX + "-in:file:fasta");
+	}
 
-  if (!option[in::file::frag3].user())
-    utility_exit_with_message(ERROR_PREFIX + "-in:file:frag3");
+	if ( !option[in::file::frag3].user() ) {
+		utility_exit_with_message(ERROR_PREFIX + "-in:file:frag3");
+	}
 }
 
 /// @detail Comparative modeling options
 void check_required_cm() {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-  if (!option[cm::aln_format].user())
-    utility_exit_with_message(ERROR_PREFIX + "-cm:aln_format");
+	if ( !option[cm::aln_format].user() ) {
+		utility_exit_with_message(ERROR_PREFIX + "-cm:aln_format");
+	}
 
-  if (!option[in::file::alignment].user())
-    utility_exit_with_message(ERROR_PREFIX + "-in:file:alignment");
+	if ( !option[in::file::alignment].user() ) {
+		utility_exit_with_message(ERROR_PREFIX + "-in:file:alignment");
+	}
 
-  if (!option[in::file::template_pdb].user())
-    utility_exit_with_message(ERROR_PREFIX + "-in:file:template_pdb");
+	if ( !option[in::file::template_pdb].user() ) {
+		utility_exit_with_message(ERROR_PREFIX + "-in:file:template_pdb");
+	}
 }
 
 void* graphics_main(protocols::moves::MoverOP mover) {
-  using protocols::jd2::JobDistributor;
+	using protocols::jd2::JobDistributor;
 
-  try {
-    JobDistributor::get_instance()->go(mover);
-  } catch (utility::excn::EXCN_Base& e) {
-    std::cerr << "Exception: " << std::endl;
-    e.show(std::cerr);
-  }
-  return 0;
+	try {
+		JobDistributor::get_instance()->go(mover);
+	} catch (utility::excn::EXCN_Base& e) {
+		std::cerr << "Exception: " << std::endl;
+		e.show(std::cerr);
+	}
+	return 0;
 }
 
 void* Medal_main(void*) {
-  check_required_common();
-  check_required_cm();
-  return graphics_main(protocols::moves::MoverOP( new MedalMover() ));
+	check_required_common();
+	check_required_cm();
+	return graphics_main(protocols::moves::MoverOP( new MedalMover() ));
 }
 
 void* MedalExchange_main(void*) {
-  check_required_common();
-  check_required_cm();
-  return graphics_main(protocols::moves::MoverOP( new MedalExchangeMover() ));
+	check_required_common();
+	check_required_cm();
+	return graphics_main(protocols::moves::MoverOP( new MedalExchangeMover() ));
 }
 
 }  // namespace medal

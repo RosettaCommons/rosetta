@@ -34,25 +34,25 @@ static thread_local basic::Tracer TR( "core.chemical.bond_support" );
 /// @param BOND_ORDER_OR_AROMATIC bond type in notation: 1=single, 2=double, 3=triple, 4=aromatic
 gasteiger::GasteigerAtomTypeData::Properties bond_order_to_property( const core::Size &BOND_ORDER_OR_AROMATIC)
 {
-  static gasteiger::GasteigerAtomTypeData::Properties properties[ 5] =
-  {
-    gasteiger::GasteigerAtomTypeData::VdWaalsRadiusCSD,
-    gasteiger::GasteigerAtomTypeData::CovalentRadiusSingleBond,
-    gasteiger::GasteigerAtomTypeData::CovalentRadiusDoubleBond,
-    gasteiger::GasteigerAtomTypeData::CovalentRadiusTripleBond,
-    gasteiger::GasteigerAtomTypeData::CovalentRadiusAromaticBond
-  };
-  if(BOND_ORDER_OR_AROMATIC > 5 ){
-	  utility_exit_with_message("Bond order must be between 1 and 4 (4 = aromatic)");
-  }
-  return properties[ BOND_ORDER_OR_AROMATIC];
+	static gasteiger::GasteigerAtomTypeData::Properties properties[ 5] =
+		{
+		gasteiger::GasteigerAtomTypeData::VdWaalsRadiusCSD,
+		gasteiger::GasteigerAtomTypeData::CovalentRadiusSingleBond,
+		gasteiger::GasteigerAtomTypeData::CovalentRadiusDoubleBond,
+		gasteiger::GasteigerAtomTypeData::CovalentRadiusTripleBond,
+		gasteiger::GasteigerAtomTypeData::CovalentRadiusAromaticBond
+		};
+	if ( BOND_ORDER_OR_AROMATIC > 5 ) {
+		utility_exit_with_message("Bond order must be between 1 and 4 (4 = aromatic)");
+	}
+	return properties[ BOND_ORDER_OR_AROMATIC];
 }
 
 void find_bonds_in_rings(ResidueType & res){
 	//first, we assign all the bonds in the residue to having no rings
 	EIter edge_begin, edge_end;
 	boost::tie(edge_begin, edge_end) = boost::edges( res.graph() );
-	for(EIter edge_iter = edge_begin; edge_iter != edge_end; ++edge_iter){
+	for ( EIter edge_iter = edge_begin; edge_iter != edge_end; ++edge_iter ) {
 		Bond & bond = res.bond(*edge_iter);
 		//for now, nothing is in the ring. Defaulted to not known when constructed, after ring detection, either
 		//in a ring or not in a ring
@@ -70,9 +70,9 @@ void find_bonds_in_rings(ResidueType & res){
 	utility::vector1<utility::vector1<lwrg_VD> > rings = ring_detect.GetRings(); //these are the path of the rings
 
 	//iterate through the rings, then assign the bonds for ringness
-	for(core::Size i=1; i<= rings.size(); ++i){
+	for ( core::Size i=1; i<= rings.size(); ++i ) {
 		utility::vector1< ED > just_the_edges;
-		for(core::Size j=1; j<  rings[i].size(); ++j){ //not less than, see explanation below
+		for ( core::Size j=1; j<  rings[i].size(); ++j ) { //not less than, see explanation below
 			VD source =  lwrg_vd_to_VD[ rings[i][j] ];
 			//next set of code is a little convulted. The ring code returns all the vertex, but we need
 			//the edges to assign (bond), not the vertex. (atom, at least this point in time).
@@ -81,7 +81,7 @@ void find_bonds_in_rings(ResidueType & res){
 			ED edge;
 			bool edge_exists;
 			boost::tie(edge, edge_exists) = boost::edge(source, target, res.graph());
-			if(edge_exists){ //if there is an edge, mark it as being a ring
+			if ( edge_exists ) { //if there is an edge, mark it as being a ring
 				just_the_edges.push_back(edge); //get the edge
 				Bond & bond = res.bond(edge);
 				bond.ringness(BondInRing);
@@ -108,14 +108,14 @@ ED get_bond(ResidueType const & res, VD const & source, VD const & target){
 	bool bond_there(false);
 	ED edge;
 	boost::tie(edge,bond_there) = boost::edge(source, target, res.graph() );
-debug_assert(bond_there);
+	debug_assert(bond_there);
 	return edge;
 }
 
 Real create_bond_length(
-		gasteiger::GasteigerAtomTypeData const & atom1,
-		gasteiger::GasteigerAtomTypeData const & atom2,
-		BondName bond_type)
+	gasteiger::GasteigerAtomTypeData const & atom1,
+	gasteiger::GasteigerAtomTypeData const & atom2,
+	BondName bond_type)
 {
 	return atom1.get_atom_type_property( bond_order_to_property(bond_type) ) + atom2.get_atom_type_property( bond_order_to_property(bond_type));
 }
@@ -137,25 +137,25 @@ utility::vector1<VDs> find_chi_bonds( ResidueType const & restype ) {
 	//std::cerr << "Starting autodetermine" << std::endl;
 	//std::cerr << formatted_icoord_tree( restype ) << std::endl;
 	core::chemical::EIter eiter, eiter_end;
-	for( boost::tie(eiter, eiter_end) = restype.bond_iterators(); eiter != eiter_end; ++eiter ) {
+	for ( boost::tie(eiter, eiter_end) = restype.bond_iterators(); eiter != eiter_end; ++eiter ) {
 		// Check to make sure this edge is rotatable, and orient it along the established atom tree.
 		Bond const & bond( restype.bond( *eiter ) );
 		VD source(boost::source(*eiter,restype.graph()));
 		VD target(boost::target(*eiter,restype.graph()));
-		if( bond.bond_name() != SingleBond || // Should this be bond order instead?
+		if ( bond.bond_name() != SingleBond || // Should this be bond order instead?
 				bond.ringness() == BondInRing ||
 				restype.atom(source).element_type()->element() == element::H  ||
 				restype.atom(target).element_type()->element() == element::H ||
-				boost::out_degree(source,restype.graph()) == 1 || boost::out_degree(target,restype.graph()) == 1) {
+				boost::out_degree(source,restype.graph()) == 1 || boost::out_degree(target,restype.graph()) == 1 ) {
 			continue; // Skip non-single bonds, ring bonds, bonds to hydrogen, and bonds to terminal atoms
 		}
-		if( restype.atom_base(source) == target &&
+		if ( restype.atom_base(source) == target &&
 				restype.icoor(source).stub_atom1().vertex() != source ) { //Root atom has atom_base as it's child atom - don't swap there.
 			// Swap target and source such that source is nearer root.
 			VD temp(target);
 			target = source;
 			source = temp;
-		} else if ( restype.atom_base(target) != source ){
+		} else if ( restype.atom_base(target) != source ) {
 			TR << "Found non-tree bond " << restype.atom_name(source) << " --- " << restype.atom_name(target) << std::endl;
 			TR << "       Expected tree bond " << restype.atom_name( restype.atom_base(target) ) << " --- " << restype.atom_name(target) << std::endl;
 			utility_exit_with_message("Error: Non-ring bond not found in ResidueType atom tree.");
@@ -166,49 +166,49 @@ utility::vector1<VDs> find_chi_bonds( ResidueType const & restype ) {
 		VD first_targ_heavy( boost::graph_traits<ResidueGraph>::null_vertex() );
 		VD last_targ_hydro( boost::graph_traits<ResidueGraph>::null_vertex() );
 		ResidueGraph::adjacency_iterator aiter, aiter_end;
-		for( boost::tie(aiter, aiter_end) = boost::adjacent_vertices(target, restype.graph()); aiter != aiter_end; ++aiter) {
-			if( restype.atom(*aiter).element_type()->element() == element::H ) {
+		for ( boost::tie(aiter, aiter_end) = boost::adjacent_vertices(target, restype.graph()); aiter != aiter_end; ++aiter ) {
+			if ( restype.atom(*aiter).element_type()->element() == element::H ) {
 				++targ_hydro;
 				last_targ_hydro = *aiter;
 			} else {
 				++targ_heavy;
-				if( (first_targ_heavy == boost::graph_traits<ResidueGraph>::null_vertex()) && *aiter != source ) {
+				if ( (first_targ_heavy == boost::graph_traits<ResidueGraph>::null_vertex()) && *aiter != source ) {
 					first_targ_heavy = *aiter;
 				}
 			}
 		}
 		// For rotatable bonds, we want at least one other heavy atom on the target, or we want a single, non carbon hydrogen
 		element::Elements const & target_element( restype.atom(target).element_type()->element() );
-		if( targ_heavy < 2 && (targ_hydro != 1 || target_element == element::C) ) {
+		if ( targ_heavy < 2 && (targ_hydro != 1 || target_element == element::C) ) {
 			continue;
 		}
 
 		// Pick the other two atoms which will make up the chi
 		VD d, c(source), b(target), a;
-		if( targ_heavy >= 2 ) {
+		if ( targ_heavy >= 2 ) {
 			// Should be regular all-heavy atom chi
-		debug_assert( first_targ_heavy != boost::graph_traits<ResidueGraph>::null_vertex() );
+			debug_assert( first_targ_heavy != boost::graph_traits<ResidueGraph>::null_vertex() );
 			a = first_targ_heavy;
 		} else {
 			// Proton chi
-		debug_assert( targ_hydro == 1 && target_element != element::C );
-		debug_assert( last_targ_hydro != boost::graph_traits<ResidueGraph>::null_vertex() );
+			debug_assert( targ_hydro == 1 && target_element != element::C );
+			debug_assert( last_targ_hydro != boost::graph_traits<ResidueGraph>::null_vertex() );
 			a = last_targ_hydro;
 		}
-		if( restype.icoor(source).stub_atom1().vertex() != source ) {
+		if ( restype.icoor(source).stub_atom1().vertex() != source ) {
 			// Not a root atom.
 			d = restype.atom_base(source);
 		} else {
 			// Source is root atom: Find first connected heavy atom which isn't in the current bond.
 			d = boost::graph_traits<ResidueGraph>::null_vertex();
 			ResidueGraph::adjacency_iterator aiter2, aiter2_end;
-			for( boost::tie(aiter2, aiter2_end) = boost::adjacent_vertices(source, restype.graph()); aiter2 != aiter2_end; ++aiter2) {
-				if( *aiter2 != target && restype.atom(*aiter2).element_type()->element() != element::H ) {
+			for ( boost::tie(aiter2, aiter2_end) = boost::adjacent_vertices(source, restype.graph()); aiter2 != aiter2_end; ++aiter2 ) {
+				if ( *aiter2 != target && restype.atom(*aiter2).element_type()->element() != element::H ) {
 					d = *aiter2;
 					break;
 				}
 			}
-			if( d == boost::graph_traits<ResidueGraph>::null_vertex() ) {
+			if ( d == boost::graph_traits<ResidueGraph>::null_vertex() ) {
 				continue;
 			}
 		}
@@ -227,13 +227,13 @@ utility::vector1<VDs> find_chi_bonds( ResidueType const & restype ) {
 /// @details The use case is to see if the proton chi should flat or staggered with rotamers
 bool is_sp2_proton_chi( core::Size chi, ResidueType const & restype ) {
 	VDs atoms( restype.chi_atom_vds(chi) );
-debug_assert( atoms.size() == 4 );
+	debug_assert( atoms.size() == 4 );
 	// Note this is used in setting up proton chis, so we can't assume is_proton_chi() and associated are valid yet.
 	VD gp( atoms[2] );
 	OutEdgeIter iter, iter_end;
-	for( boost::tie(iter, iter_end) = restype.bond_iterators(gp); iter != iter_end; ++iter ) {
+	for ( boost::tie(iter, iter_end) = restype.bond_iterators(gp); iter != iter_end; ++iter ) {
 		core::chemical::BondName bt( restype.bond(*iter).bond_name() );
-		if( bt == DoubleBond || bt == SingleBond || bt == AromaticBond ) {
+		if ( bt == DoubleBond || bt == SingleBond || bt == AromaticBond ) {
 			return true;
 		}
 	}

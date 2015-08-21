@@ -40,7 +40,7 @@ namespace methods {
 
 class Fa_MbsolvEnergy : public ContextDependentTwoBodyEnergy {
 public:
-  typedef ContextDependentTwoBodyEnergy  parent;
+	typedef ContextDependentTwoBodyEnergy  parent;
 public:
 
 	Fa_MbsolvEnergy( etable::Etable const & etable_in, etable::MembEtable const & memb_etable_in );
@@ -52,7 +52,7 @@ public:
 	clone() const;
 
 	virtual
- 	void
+	void
 	setup_for_derivatives(
 		pose::Pose & pose,
 		ScoreFunction const & scfxn
@@ -60,8 +60,8 @@ public:
 
 	/// called during gradient-based minimization inside dfunc
 	/**
-		 F1 and F2 are not zeroed -- contributions from this atom are
-		 just summed in
+	F1 and F2 are not zeroed -- contributions from this atom are
+	just summed in
 	**/
 	virtual
 	void
@@ -106,21 +106,21 @@ public:
 
 	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
 
-  MembraneTopology const & MembraneTopology_from_pose( pose::Pose const & pose ) const;
-  Membrane_FAEmbed const & Membrane_FAEmbed_from_pose( pose::Pose const & pose ) const;
+	MembraneTopology const & MembraneTopology_from_pose( pose::Pose const & pose ) const;
+	Membrane_FAEmbed const & Membrane_FAEmbed_from_pose( pose::Pose const & pose ) const;
 
-  void
-  setup_for_scoring(
-  					pose::Pose & pose, ScoreFunction const &
-  					) const;
+	void
+	setup_for_scoring(
+		pose::Pose & pose, ScoreFunction const &
+	) const;
 
-  virtual
-  void
-  finalize_total_energy(
-  						pose::Pose & pose,
-  						ScoreFunction const &,
-  						EnergyMap & emap // totals
-  						) const;
+	virtual
+	void
+	finalize_total_energy(
+		pose::Pose & pose,
+		ScoreFunction const &,
+		EnergyMap & emap // totals
+	) const;
 
 
 private:
@@ -128,70 +128,70 @@ private:
 
 	void
 	get_residue_pair_energy(
-		 conformation::Residue const & rsd1,
-		 conformation::Residue const & rsd2,
-		 pose::Pose const & pose,
-		 Real & fa_mbsolv_score ) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		Real & fa_mbsolv_score ) const;
 
 	Real
 	eval_lk(
-	  conformation::Atom const & atom1,
-	  conformation::Atom const & atom2,
-	  Real const & d2,
-	  Real & deriv,
-    Real const & f1,
-    Real const & f2,
-    bool & debug ) const;
+		conformation::Atom const & atom1,
+		conformation::Atom const & atom2,
+		Real const & d2,
+		Real & deriv,
+		Real const & f1,
+		Real const & f2,
+		bool & debug ) const;
 
-  Real
-  eval_dE_dR_over_r(
-    conformation::Atom const & atom1,
-    conformation::Atom const & atom2,
-    EnergyMap const & weights,
-    Vector & F1,
-    Vector & F2,
-    Real const & f1,
-    Real const & f2
-  ) const;
+	Real
+	eval_dE_dR_over_r(
+		conformation::Atom const & atom1,
+		conformation::Atom const & atom2,
+		EnergyMap const & weights,
+		Vector & F1,
+		Vector & F2,
+		Real const & f1,
+		Real const & f2
+	) const;
 
-//	void
-//	distribute_pseudo_base_atom_derivatives( pose::Pose const & pose ) const;
+	// void
+	// distribute_pseudo_base_atom_derivatives( pose::Pose const & pose ) const;
 
-/////////////////////////////////////////////////////////////////////////////
-// data
-/////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////
+	// data
+	/////////////////////////////////////////////////////////////////////////////
 
 private:
 	etable::Etable const & etable_; // shouldn't this be a pointer? Reference count information is (dangerously) lost when
 	//a reference is taken, instead of a smart pointer.  There's the potential for a dangling reference with this.
-  etable::MembEtable const & memb_etable_;
+	etable::MembEtable const & memb_etable_;
 
 	/// these guys are taken from the etable
 	ObjexxFCL::FArray3D< Real > const & solv1_;
 	ObjexxFCL::FArray3D< Real > const & solv2_;
 	ObjexxFCL::FArray3D< Real > const & dsolv1_;
-  ObjexxFCL::FArray3D< Real > const & dsolv2_;
-  ObjexxFCL::FArray3D< Real > const & dsolv_;
+	ObjexxFCL::FArray3D< Real > const & dsolv2_;
+	ObjexxFCL::FArray3D< Real > const & dsolv_;
 
-  //pba taken from the membrane etable
-  ObjexxFCL::FArray3D< Real > const & memb_solv1_;
-  ObjexxFCL::FArray3D< Real > const & memb_solv2_;
-  ObjexxFCL::FArray3D< Real > const & memb_dsolv1_;
-  ObjexxFCL::FArray3D< Real > const & memb_dsolv2_;
-  //ObjexxFCL::FArray3D< Real > const & memb_dsolv_;
+	//pba taken from the membrane etable
+	ObjexxFCL::FArray3D< Real > const & memb_solv1_;
+	ObjexxFCL::FArray3D< Real > const & memb_solv2_;
+	ObjexxFCL::FArray3D< Real > const & memb_dsolv1_;
+	ObjexxFCL::FArray3D< Real > const & memb_dsolv2_;
+	//ObjexxFCL::FArray3D< Real > const & memb_dsolv_;
 
 	Real const safe_max_dis2_;
 	Real const get_bins_per_A2_;
 
 	bool const verbose_;
 
-  Membrane_FAPotential const & potential_;
+	Membrane_FAPotential const & potential_;
 
 	/// Used soley when calculating derivatives
 	/// Could/should be moved into the Pose's cachable data.
 	mutable Real fa_mbsolv_weight_; // hold this while calculating derivatives.
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 };
 
 }

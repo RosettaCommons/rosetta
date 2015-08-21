@@ -473,9 +473,9 @@ public:
 		//"AtomPair  CA     1  CA     3 HARMONIC 10 0.29\n"
 		core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 10.0, 0.29 ) );
 		core::scoring::constraints::ConstraintCOP cst13( new core::scoring::constraints::AtomPairConstraint(
-				core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
-				core::id::AtomID( pose.residue( 3 ).atom_index( "CA" ), 3 ),
-				fx ) );
+			core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
+			core::id::AtomID( pose.residue( 3 ).atom_index( "CA" ), 3 ),
+			fx ) );
 
 		pose.add_constraint(cst13);
 
@@ -597,9 +597,9 @@ public:
 		//"AtomPair  CA     1  CA     3 HARMONIC 14 0.2\n"
 		core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 14.0, 0.2 ) );
 		core::scoring::constraints::ConstraintCOP cst13( new core::scoring::constraints::AtomPairConstraint(
-				core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
-				core::id::AtomID( pose.residue( 3 ).atom_index( "CA" ), 3 ),
-				fx ) );
+			core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
+			core::id::AtomID( pose.residue( 3 ).atom_index( "CA" ), 3 ),
+			fx ) );
 
 		pose.add_constraint(cst13);
 
@@ -713,9 +713,9 @@ public:
 		//"AtomPair  CA     1  CA     3 HARMONIC 10 0.29\n"
 		core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 10.5, 0.29 ) );
 		core::scoring::constraints::ConstraintCOP cst13( new core::scoring::constraints::AtomPairConstraint(
-				core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
-				core::id::AtomID( pose.residue( 3 ).atom_index( "CA" ), 3 ),
-				fx ) );
+			core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
+			core::id::AtomID( pose.residue( 3 ).atom_index( "CA" ), 3 ),
+			fx ) );
 
 		pose.add_constraint(cst13);
 
@@ -837,9 +837,9 @@ public:
 		//"AtomPair  CA     1  CA     3 HARMONIC 14 0.1\n"
 		core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 14.0, 0.1 ) );
 		core::scoring::constraints::ConstraintCOP cst13( new core::scoring::constraints::AtomPairConstraint(
-				core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
-				core::id::AtomID( pose.residue( 3 ).atom_index( "CA" ), 3 ),
-				fx ) );
+			core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
+			core::id::AtomID( pose.residue( 3 ).atom_index( "CA" ), 3 ),
+			fx ) );
 
 		pose.add_constraint(cst13);
 
@@ -942,7 +942,7 @@ public:
 
 	void test_gaussian_functions() {
 		using core::Size;
-	 	using core::Real;
+		using core::Real;
 		using utility::vector1;
 		using namespace core::scoring::constraints;
 
@@ -963,7 +963,7 @@ public:
 
 	void test_exponential_functions() {
 		using core::Size;
-	 	using core::Real;
+		using core::Real;
 		using utility::vector1;
 		using namespace core::scoring::constraints;
 

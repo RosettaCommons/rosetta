@@ -166,15 +166,15 @@ public:
 	/*virtual
 	void
 	eval_atom_derivative_for_residue(
-		Size const atom_index,
-		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & min_data,
-		pose::Pose const & pose, // provides context
-		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
-		Vector & F1,
-		Vector & F2
+	Size const atom_index,
+	conformation::Residue const & rsd,
+	ResSingleMinimizationData const & min_data,
+	pose::Pose const & pose, // provides context
+	kinematics::DomainMap const & domain_map,
+	ScoreFunction const & sfxn,
+	EnergyMap const & weights,
+	Vector & F1,
+	Vector & F2
 	) const;*/
 
 	/// @brief Evaluate the derivatives for all atoms on this residue and increment them

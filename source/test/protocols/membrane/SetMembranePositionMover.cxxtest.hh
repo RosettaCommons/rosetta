@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		protocols/membrane/SetMembranePositionMover.cxxtest.hh
+/// @file  protocols/membrane/SetMembranePositionMover.cxxtest.hh
 ///
-/// @brief		Unit Test for Membrane Position Move (Rotation & Translation, Uniform)
-/// @details	The memrbane fold tree assumes that the membrane residue is attached by jump to
-///				the rest of the pose. This assumption asserts that all positions explicitly describing
-///				the membrane will be downstream of this jump. This code should apply the correct translation
-///				and rotation to describe a new position of the membrane.
-///				Last Updated: 7/8/14
+/// @brief  Unit Test for Membrane Position Move (Rotation & Translation, Uniform)
+/// @details The memrbane fold tree assumes that the membrane residue is attached by jump to
+///    the rest of the pose. This assumption asserts that all positions explicitly describing
+///    the membrane will be downstream of this jump. This code should apply the correct translation
+///    and rotation to describe a new position of the membrane.
+///    Last Updated: 7/8/14
 ///
-/// @author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 // Test Headers
 #include <cxxtest/TestSuite.h>
@@ -53,16 +53,16 @@ class SetMembranePositionTest : public CxxTest::TestSuite {
 
 public:
 
-    /// @brief Setup
-    void setUp()
-    {
+	/// @brief Setup
+	void setUp()
+	{
 
 		using namespace basic::options;
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 
 		// Initialize Rosetta
-        protocols_init();
+		protocols_init();
 
 		// Load Pose from pdb
 		std::string input_pose = "protocols/membrane/1C3W_TR_A.pdb";
@@ -75,14 +75,14 @@ public:
 		AddMembraneMoverOP add_memb( new AddMembraneMover( spanfile, 1 ) );
 		add_memb->apply( *pose_ );
 
-    }
+	}
 
-    /// @brief teardown
-    void tearDown()
-    {}
+	/// @brief teardown
+	void tearDown()
+	{}
 
-    /// @brief Testing Consecutive Transformations of the Membrane Center
-    void test_membrane_position_translation() {
+	/// @brief Testing Consecutive Transformations of the Membrane Center
+	void test_membrane_position_translation() {
 
 		TS_TRACE( "Testing Deterministic Translation of the Membrane Position" );
 
@@ -98,10 +98,10 @@ public:
 		// Check result
 		TS_ASSERT( xyz_trans == pose_->conformation().membrane_info()->membrane_center() );
 
-    }
+	}
 
-    /// @brief Testing Consecutive Rotations of the membrane Normal (about fixed center)
-    void test_membrane_position_rotation() {
+	/// @brief Testing Consecutive Rotations of the membrane Normal (about fixed center)
+	void test_membrane_position_rotation() {
 
 		TS_TRACE( "Testing Deterministic Rotation of the membrane position" );
 
@@ -152,8 +152,8 @@ public:
 
 private: // data
 
-    // Resulting Membrane Protein
-    core::pose::PoseOP pose_;
+	// Resulting Membrane Protein
+	core::pose::PoseOP pose_;
 
 }; // class SetMembranePositionTest
 

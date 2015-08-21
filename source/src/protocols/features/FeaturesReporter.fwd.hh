@@ -18,8 +18,8 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <boost/cstdint.hpp>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class FeaturesReporter;
 typedef utility::pointer::shared_ptr< FeaturesReporter > FeaturesReporterOP;

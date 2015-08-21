@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/modeler/StepWiseModeler.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace stepwise {
 namespace modeler {
-	
-	class StepWiseModeler;
-	typedef utility::pointer::shared_ptr< StepWiseModeler > StepWiseModelerOP;
-	typedef utility::pointer::shared_ptr< StepWiseModeler const > StepWiseModelerCOP;
-	
+
+class StepWiseModeler;
+typedef utility::pointer::shared_ptr< StepWiseModeler > StepWiseModelerOP;
+typedef utility::pointer::shared_ptr< StepWiseModeler const > StepWiseModelerCOP;
+
 } //modeler
 } //stepwise
 } //protocols

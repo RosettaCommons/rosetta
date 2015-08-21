@@ -32,39 +32,39 @@ namespace devel {
 
 namespace inv_kin_lig_loop_design {
 
-  using namespace std;
-  using core::conformation::Residue;
-  using platform::Size;
+using namespace std;
+using core::conformation::Residue;
+using platform::Size;
 
-  // ================================================
-  // ==================== Cloner ====================
-  // ================================================
+// ================================================
+// ==================== Cloner ====================
+// ================================================
 
-  typedef map< Residue*, Residue* > clones_type;
-  typedef vector<Segment> segments_type;
-  typedef vector<Loop> loops_type;
+typedef map< Residue*, Residue* > clones_type;
+typedef vector<Segment> segments_type;
+typedef vector<Loop> loops_type;
 
-  struct Cloner {
+struct Cloner {
 
-    Cloner(TagCOP const& tag0, core::pose::PoseOP pose);
+	Cloner(TagCOP const& tag0, core::pose::PoseOP pose);
 
-    core::pose::PoseOP clone();
-    core::kinematics::FoldTree getFoldTree();
-    void setInitialConfig();
-    loops_type getLoops();
+	core::pose::PoseOP clone();
+	core::kinematics::FoldTree getFoldTree();
+	void setInitialConfig();
+	loops_type getLoops();
 
-  private:
+private:
 
-    TagCOP tag0;
+	TagCOP tag0;
 
-    core::pose::PoseOP pose0;
-    core::pose::PoseOP pose1;
+	core::pose::PoseOP pose0;
+	core::pose::PoseOP pose1;
 
-    clones_type clones;
-    resids_type resids;
-    segments_type indels,segments,loops;
+	clones_type clones;
+	resids_type resids;
+	segments_type indels,segments,loops;
 
-  }; // class Cloner
+}; // class Cloner
 
 } // namespace LoopDesign
 

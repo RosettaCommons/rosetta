@@ -55,7 +55,7 @@ public:
 
 	void
 	setup_for_scoring(
-		 pose::Pose & pose, ScoreFunction const &
+		pose::Pose & pose, ScoreFunction const &
 	) const;
 
 	void

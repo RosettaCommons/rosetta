@@ -28,7 +28,7 @@ using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 
@@ -56,12 +56,12 @@ ResidueDecompositionCalculator::print(
 	} else if ( key == "residue_decomposition" ) {
 		std::ostringstream sstream;
 		sstream << "[";
-		for (core::Size i = 1; i <= residue_decomposition_.size(); ++i) {
-			if (i > 1) sstream << ", ";
+		for ( core::Size i = 1; i <= residue_decomposition_.size(); ++i ) {
+			if ( i > 1 ) sstream << ", ";
 			sstream << "Set " << i << " (" << set_names_[i] << "): [";
-			for (std::set<core::Size>::const_iterator iter = residue_decomposition_[i].begin();
-			     iter != residue_decomposition_[i].end(); ++iter) {
-				if (iter != residue_decomposition_[i].begin()) sstream << ", ";
+			for ( std::set<core::Size>::const_iterator iter = residue_decomposition_[i].begin();
+					iter != residue_decomposition_[i].end(); ++iter ) {
+				if ( iter != residue_decomposition_[i].begin() ) sstream << ", ";
 				sstream << *iter;
 			}
 			sstream << "]";
@@ -71,8 +71,8 @@ ResidueDecompositionCalculator::print(
 	} else if ( key == "residue_set_numbers" ) {
 		std::ostringstream sstream;
 		sstream << "[";
-		for (core::Size i = 1; i <= residue_set_numbers_.size(); ++i) {
-			if (i > 1) sstream << ", ";
+		for ( core::Size i = 1; i <= residue_set_numbers_.size(); ++i ) {
+			if ( i > 1 ) sstream << ", ";
 			sstream << i << ": " << residue_set_numbers_[i];
 		}
 		sstream << "]";
@@ -80,8 +80,8 @@ ResidueDecompositionCalculator::print(
 	} else if ( key == "set_names" ) {
 		std::ostringstream sstream;
 		sstream << "[";
-		for (core::Size i = 1; i <= set_names_.size(); ++i) {
-			if (i > 1) sstream << ", ";
+		for ( core::Size i = 1; i <= set_names_.size(); ++i ) {
+			if ( i > 1 ) sstream << ", ";
 			sstream << set_names_[i];
 		}
 		sstream << "]";
@@ -130,9 +130,9 @@ ResidueDecompositionCalculator::residue_decomposition_to_set_numbers(
 	// reset residue_set_numbers_ to zeros
 	residue_set_numbers_.assign(this_pose.total_residue(), 0);
 
-	for (core::Size i = 1; i <= residue_decomposition_.size(); ++i) {
-		for (std::set<core::Size>::iterator iter = residue_decomposition_[i].begin(); iter != residue_decomposition_[i].end(); ++iter) {
-			if (*iter <= residue_set_numbers_.size()) residue_set_numbers_[*iter] = i;
+	for ( core::Size i = 1; i <= residue_decomposition_.size(); ++i ) {
+		for ( std::set<core::Size>::iterator iter = residue_decomposition_[i].begin(); iter != residue_decomposition_[i].end(); ++iter ) {
+			if ( *iter <= residue_set_numbers_.size() ) residue_set_numbers_[*iter] = i;
 		}
 	}
 }
@@ -142,18 +142,18 @@ ResidueDecompositionCalculator::residue_set_numbers_to_decomposition()
 {
 	// reset residue_decomposition_ to the correct number of empty sets
 	core::Size max_set_number = 0;
-	for (core::Size i = 1; i <= residue_set_numbers_.size(); ++i) {
+	for ( core::Size i = 1; i <= residue_set_numbers_.size(); ++i ) {
 		core::Size const residue_set_number(residue_set_numbers_[i]);
-		if (residue_set_number > max_set_number) max_set_number = residue_set_number;
+		if ( residue_set_number > max_set_number ) max_set_number = residue_set_number;
 	}
 	residue_decomposition_.resize(max_set_number);
-	for (core::Size i = 1; i <= residue_decomposition_.size(); ++i) {
+	for ( core::Size i = 1; i <= residue_decomposition_.size(); ++i ) {
 		residue_decomposition_[i].clear();
 	}
 
-	for (core::Size i = 1; i <= residue_set_numbers_.size(); ++i) {
+	for ( core::Size i = 1; i <= residue_set_numbers_.size(); ++i ) {
 		core::Size const residue_set_number(residue_set_numbers_[i]);
-		if (residue_set_number > 0) residue_decomposition_[residue_set_number].insert(i);
+		if ( residue_set_number > 0 ) residue_decomposition_[residue_set_number].insert(i);
 	}
 }
 

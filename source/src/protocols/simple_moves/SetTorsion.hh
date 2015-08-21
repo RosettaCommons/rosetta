@@ -65,29 +65,29 @@ public:
 	virtual protocols::moves::MoverOP fresh_instance() const {
 		return protocols::moves::MoverOP( new SetTorsion );
 	}
-    
-    core::Size n_torsion_sets() const {
-        return residues_.size();
-    }
-    
-    utility::vector1<core::Size> residue_list(core::Size iset, core::pose::Pose const & pose);
 
-		/// @brief Actually get the value that the torsion will be set to.
-		/// @details Depending on settings, this will look up a value, generate a random value, or perturb an input value.
-    core::Real angle(
-    	core::Size const iset,
-    	core::Real const &old_angle
-    ) const;
+	core::Size n_torsion_sets() const {
+		return residues_.size();
+	}
+
+	utility::vector1<core::Size> residue_list(core::Size iset, core::pose::Pose const & pose);
+
+	/// @brief Actually get the value that the torsion will be set to.
+	/// @details Depending on settings, this will look up a value, generate a random value, or perturb an input value.
+	core::Real angle(
+		core::Size const iset,
+		core::Real const &old_angle
+	) const;
 
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );
-    
+
 	std::string torsion_name(core::Size const iset) {
-        return torsion_name_[iset];
-    }
+		return torsion_name_[iset];
+	}
 
 	/// @brief Sets a residue index that will serve as the root of the FoldTree for the SetTorsion operation.
 	/// @details The FoldTree is reset afterwards (i.e. the mover does not permanently change the FoldTree).
@@ -102,10 +102,10 @@ public:
 	/// @details Currently only allows "uniform" or "gaussian".  Checks for proper input.  After this operation, the
 	/// perturbation_type_ vector is one entry longer.
 	void add_perturbation_type( std::string const &type_in ) {
-		if(type_in=="uniform") {
+		if ( type_in=="uniform" ) {
 			perturbation_type_.push_back(perturbtorsion_uniform);
 			return;
-		} else if (type_in=="gaussian"){
+		} else if ( type_in=="gaussian" ) {
 			perturbation_type_.push_back(perturbtorsion_gaussian);
 			return;
 		} else {
@@ -134,7 +134,7 @@ public:
 	inline core::Real perturbation_magnitude( core::Size const index ) const {
 		return perturbation_magnitude_[index];
 	}
-	
+
 
 private:
 	bool random_set_;
@@ -143,7 +143,7 @@ private:
 	utility::vector1< std::string > torsion_name_; // phi/psi etc.
 	utility::vector1< Size > extending_;
 	utility::vector1< utility::vector1< core::id::NamedAtomID > > torsion_atoms_;
-	
+
 	/// @brief The type of perturbation, if the "perturb" option is used.
 	/// @details Current options are "uniform" and "gaussian".  Defaults to "gaussian".
 	utility::vector1< TorsionPerturbType  > perturbation_type_;

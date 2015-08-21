@@ -74,10 +74,10 @@ SubroutineMover::apply( core::pose::Pose & pose )
 
 void
 SubroutineMover::parse_my_tag( TagCOP const tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		Movers_map const &,
-		core::pose::Pose const & pose )
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	Movers_map const &,
+	core::pose::Pose const & pose )
 {
 	using namespace protocols::jd2;
 
@@ -93,7 +93,7 @@ SubroutineMover::parse_my_tag( TagCOP const tag,
 
 protocols::moves::MoverOP
 SubroutineMover::fresh_instance() const {
-   return protocols::moves::MoverOP( new SubroutineMover );
+	return protocols::moves::MoverOP( new SubroutineMover );
 }
 
 SubroutineMover::~SubroutineMover(){}

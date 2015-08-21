@@ -67,7 +67,7 @@ PeptideStapleDesignMover::PeptideStapleDesignMover( core::Size const seqpos, cor
 }
 
 PeptideStapleDesignMover::PeptideStapleDesignMover( PeptideStapleDesignMover const & init ) :
-	//utility::pointer::ReferenceCount(), 
+	//utility::pointer::ReferenceCount(),
 	protocols::moves::Mover( init )
 {
 	stapler_ = protocols::simple_moves::PeptideStapleMoverOP( new protocols::simple_moves::PeptideStapleMover( *(init.stapler_) ) );

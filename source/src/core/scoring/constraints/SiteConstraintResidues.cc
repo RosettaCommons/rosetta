@@ -38,12 +38,12 @@ namespace constraints {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Constructor
 SiteConstraintResidues::SiteConstraintResidues():
-AmbiguousConstraint()
+	AmbiguousConstraint()
 {}
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Constructor
 SiteConstraintResidues::SiteConstraintResidues( ConstraintCOPs & cst_in ):
-AmbiguousConstraint( cst_in )
+	AmbiguousConstraint( cst_in )
 {}
 
 void
@@ -63,29 +63,29 @@ SiteConstraintResidues::show( std::ostream& out) const
 
 void
 SiteConstraintResidues::read_def(
-    std::istream & data,
-    core::pose::Pose const & pose,
-   func::FuncFactory const & func_factory
+	std::istream & data,
+	core::pose::Pose const & pose,
+	func::FuncFactory const & func_factory
 ) {
-    TR.Debug << "read_site_cst" << std::endl;
-    Size res1;
-    std::string name;
-    Size res2;
-    Size res3;
-    std::string func_type;
-    data >> res1 >> name >> res2 >> res3 >> func_type;
-    TR.Info << "read: " << res1 << " "<< name << " constrain to residues " << res2 << ":" << res3  << " func: " << func_type << std::endl;
-    func::FuncOP aFunc = func_factory.new_func( func_type );
-    aFunc->read_data( data );
+	TR.Debug << "read_site_cst" << std::endl;
+	Size res1;
+	std::string name;
+	Size res2;
+	Size res3;
+	std::string func_type;
+	data >> res1 >> name >> res2 >> res3 >> func_type;
+	TR.Info << "read: " << res1 << " "<< name << " constrain to residues " << res2 << ":" << res3  << " func: " << func_type << std::endl;
+	func::FuncOP aFunc = func_factory.new_func( func_type );
+	aFunc->read_data( data );
 
-    if ( TR.Debug.visible() ) {
-        aFunc->show_definition( TR.Debug ); TR.Debug<<std::endl;
-    }
-    setup_csts( res1, name, res2,res3, pose, aFunc );
+	if ( TR.Debug.visible() ) {
+		aFunc->show_definition( TR.Debug ); TR.Debug<<std::endl;
+	}
+	setup_csts( res1, name, res2,res3, pose, aFunc );
 
-    if ( data.good() ) {
-        //chu skip the rest of line since this is a single line defintion.
-		while( data.good() && (data.get() != '\n') ) {}
+	if ( data.good() ) {
+		//chu skip the rest of line since this is a single line defintion.
+		while ( data.good() && (data.get() != '\n') ) {}
 		if ( !data.good() ) data.setstate( std::ios_base::eofbit );
 	}
 
@@ -98,20 +98,20 @@ SiteConstraintResidues::read_def(
 
 void
 SiteConstraintResidues::setup_csts(
-    Size res1,
-    std::string name,
-    Size res2,
-    Size res3,
-    core::pose::Pose const & pose,
-    func::FuncOP const & func
+	Size res1,
+	std::string name,
+	Size res2,
+	Size res3,
+	core::pose::Pose const & pose,
+	func::FuncOP const & func
 ) {
-    id::AtomID target_atom( pose.residue_type( res1 ).atom_index( name ), res1 );
-    //Size target_chain = pose.chain( res );
-    for (Size j = res2 ; j < res3 ; ++j ) {
-                id::AtomID atom2( pose.residue_type( j ).atom_index( "CA" ), j );
-                runtime_assert( target_atom.valid() && atom2.valid() );
-                add_individual_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint( target_atom, atom2, func ) ) ) );
-    }
+	id::AtomID target_atom( pose.residue_type( res1 ).atom_index( name ), res1 );
+	//Size target_chain = pose.chain( res );
+	for ( Size j = res2 ; j < res3 ; ++j ) {
+		id::AtomID atom2( pose.residue_type( j ).atom_index( "CA" ), j );
+		runtime_assert( target_atom.valid() && atom2.valid() );
+		add_individual_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint( target_atom, atom2, func ) ) ) );
+	}
 
 } // setup_csts
 

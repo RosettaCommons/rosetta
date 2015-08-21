@@ -33,7 +33,7 @@ namespace fragment {
 static thread_local basic::Tracer tr( "core.fragment.BBTorsionAndAnglesSRFD" );
 
 bool BBTorsionAndAnglesSRFD::apply( pose::Pose& pose, Size seqpos ) const {
-    bool const success ( Parent::apply( pose, seqpos ) );
+	bool const success ( Parent::apply( pose, seqpos ) );
 
 	// only move forward with changes if prior ops successful
 	if ( success ) {
@@ -60,7 +60,7 @@ bool BBTorsionAndAnglesSRFD::apply( pose::Pose& pose, Size seqpos ) const {
 ///  look them up within the MoveMap; the implementation in this class
 ///  must be changed if this is desired.
 bool BBTorsionAndAnglesSRFD::apply( kinematics::MoveMap const & movemap, pose::Pose & pose, Size const seqpos ) const {
-    // parent apply() successful?
+	// parent apply() successful?
 	if ( !Parent::apply( movemap, pose, seqpos ) ) {
 		return false; // punt
 	}
@@ -86,7 +86,7 @@ bool BBTorsionAndAnglesSRFD::apply( kinematics::MoveMap const & movemap, pose::P
 }
 
 bool BBTorsionAndAnglesSRFD::steal( pose::Pose const& pose, Size seqpos ) {
-    runtime_assert( angles_.size() > 0 );
+	runtime_assert( angles_.size() > 0 );
 	bool success ( Parent::steal( pose, seqpos ) );
 
 	for ( Size i=1; i<= angles_.size(); ++i ) {

@@ -50,7 +50,7 @@ public:
 
 	std::string
 	type() const;
-	
+
 private:
 
 	utility::sql_database::sessionOP database_session_;

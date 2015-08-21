@@ -10,7 +10,7 @@
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -48,39 +48,39 @@ namespace simple_filters {
 
 class RDC_Evaluator : public evaluation::SingleValuePoseEvaluator< core::Real > {
 public:
-  RDC_Evaluator( std::string tag = "rdc" );
+	RDC_Evaluator( std::string tag = "rdc" );
 	//  RDC_Evaluator( utility::vector1< std::string > const& rdc_files, std::string tag = "rdc" );
 
-  /// @brief evaluate pose
-  virtual core::Real apply( core::pose::Pose& ) const;
+	/// @brief evaluate pose
+	virtual core::Real apply( core::pose::Pose& ) const;
 
 private:
 	std::string tag_;
-  mutable core::scoring::ResidualDipolarCoupling rdc_data_; //initialized automatically from -in:file:rdc
+	mutable core::scoring::ResidualDipolarCoupling rdc_data_; //initialized automatically from -in:file:rdc
 };
 
 
 class SelectRDC_Evaluator : public evaluation::SingleValuePoseEvaluator< core::Real > {
 public:
-  SelectRDC_Evaluator( core::scoring::ResidueSelection const& selection, std::string tag = "", std::string file ="" );
-  SelectRDC_Evaluator( utility::vector1< core::Size> const& selection, std::string tag = "" , std::string file ="");
+	SelectRDC_Evaluator( core::scoring::ResidueSelection const& selection, std::string tag = "", std::string file ="" );
+	SelectRDC_Evaluator( utility::vector1< core::Size> const& selection, std::string tag = "" , std::string file ="");
 
-  //work it out by yourself from missing density == whacky random coords
-  SelectRDC_Evaluator( core::pose::PoseCOP, std::string tag = "" );
+	//work it out by yourself from missing density == whacky random coords
+	SelectRDC_Evaluator( core::pose::PoseCOP, std::string tag = "" );
 
-  //work it out by yourself from missing density == whacky random coords
-  SelectRDC_Evaluator( core::pose::Pose const&, std::string tag = "" );
+	//work it out by yourself from missing density == whacky random coords
+	SelectRDC_Evaluator( core::pose::Pose const&, std::string tag = "" );
 
-  /// @brief evaluate pose
-  virtual core::Real apply( core::pose::Pose& ) const;
+	/// @brief evaluate pose
+	virtual core::Real apply( core::pose::Pose& ) const;
 
 private:
 
-  void init_rdcs();
+	void init_rdcs();
 
-  core::scoring::ResidueSelection selection_;
-  std::string tag_;
-  core::scoring::ResidualDipolarCouplingOP rdc_data_;
+	core::scoring::ResidueSelection selection_;
+	std::string tag_;
+	core::scoring::ResidualDipolarCouplingOP rdc_data_;
 	std::string rdc_file_;
 };
 

@@ -8,17 +8,17 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/simple_moves/ChangeAndResetFoldTreeMoverCreator.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_simple_moves_ChangeAndResetFoldTreeMoverCreator_hh
-#define	INCLUDED_protocols_simple_moves_ChangeAndResetFoldTreeMoverCreator_hh
+#define INCLUDED_protocols_simple_moves_ChangeAndResetFoldTreeMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
 namespace simple_moves {
-		
+
 
 class ChangeAndResetFoldTreeMoverCreator : public protocols::moves::MoverCreator {
 public:
@@ -33,4 +33,4 @@ public:
 }
 }
 
-#endif	//INCLUDED_protocols_simple_moves_ChangeAndResetFoldTreeMoverCreator_hh
+#endif //INCLUDED_protocols_simple_moves_ChangeAndResetFoldTreeMoverCreator_hh

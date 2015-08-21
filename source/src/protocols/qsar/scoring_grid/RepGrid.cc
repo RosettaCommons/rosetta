@@ -86,11 +86,11 @@ void RepGrid::deserialize(utility::json_spirit::mObject data)
 void
 RepGrid::parse_my_tag(utility::tag::TagCOP tag) {
 
-	if (tag->hasOption("bb") || tag->hasOption("sc") || tag->hasOption("ligand") ){
+	if ( tag->hasOption("bb") || tag->hasOption("sc") || tag->hasOption("ligand") ) {
 		// the user MUST provide all 3 if he/she is providing any of these 3 options
-		if (!(tag->hasOption("bb") && tag->hasOption("sc") && tag->hasOption("ligand") ) ){
+		if ( !(tag->hasOption("bb") && tag->hasOption("sc") && tag->hasOption("ligand") ) ) {
 			throw utility::excn::EXCN_RosettaScriptsOption("'RepGrid' requires bb, sc, and ligand if any one of these are used");
-		}else{
+		} else {
 			bb_= tag->getOption<core::Real>("bb");
 			sc_= tag->getOption<core::Real>("sc");
 			ligand_= tag->getOption<core::Real>("ligand");
@@ -100,23 +100,28 @@ RepGrid::parse_my_tag(utility::tag::TagCOP tag) {
 
 void RepGrid::refresh( core::pose::Pose const & pose,  core::Vector const & )
 {
-	for(core::Size residue_index = 1; residue_index <= pose.total_residue(); ++residue_index)
-	{
+	for ( core::Size residue_index = 1; residue_index <= pose.total_residue(); ++residue_index ) {
 		//RepGridTracer <<"refreshing residue " <<residue_index << " of " << pose.total_residue() <<std::endl;
 		core::conformation::Residue const & residue = pose.residue(residue_index);
-		if(!residue.is_protein())
+		if ( !residue.is_protein() ) {
 			continue;
+		}
 
-		if(residue.has("CB"))
+		if ( residue.has("CB") ) {
 			this->set_sphere(residue.xyz("CB"),this->radius_,1.0);
-		if(residue.has("N"))
+		}
+		if ( residue.has("N") ) {
 			this->set_sphere(residue.xyz("N"),this->radius_,1.0);
-		if(residue.has("CA"))
+		}
+		if ( residue.has("CA") ) {
 			this->set_sphere(residue.xyz("CA"),this->radius_,1.0);
-		if(residue.has("C"))
+		}
+		if ( residue.has("C") ) {
 			this->set_sphere(residue.xyz("C"),this->radius_,1.0);
-		if(residue.has("O"))
+		}
+		if ( residue.has("O") ) {
 			this->set_sphere(residue.xyz("O"),this->radius_,1.0);
+		}
 	}
 }
 

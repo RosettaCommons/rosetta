@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/conformation/membrane/Span.fwd.hh
+/// @file  core/conformation/membrane/Span.fwd.hh
 ///
-/// @brief		Object for describing start and end of a transmembrane span
-/// @details	The Span object stores 2 SSizes - a stard and end position of a transmembrane span.
-///				Should be kept in a vector of spans toward describing the total spanning topology of a
-///				membrane protein.
-///				Last Modified: 7/23/14
+/// @brief  Object for describing start and end of a transmembrane span
+/// @details The Span object stores 2 SSizes - a stard and end position of a transmembrane span.
+///    Should be kept in a vector of spans toward describing the total spanning topology of a
+///    membrane protein.
+///    Last Modified: 7/23/14
 ///
-/// @author		Julia Koehler Leman (julia.koehler1982@gmail.com)
-/// @author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Julia Koehler Leman (julia.koehler1982@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_conformation_membrane_Span_fwd_hh
 #define INCLUDED_core_conformation_membrane_Span_fwd_hh
@@ -31,7 +31,7 @@ namespace membrane {
 class Span;
 typedef utility::pointer::shared_ptr< Span > SpanOP;
 typedef utility::pointer::shared_ptr< Span const > SpanCOP;
-            
+
 } // membrane
 } // conformation
 } // core

@@ -107,19 +107,19 @@ using namespace protocols::simple_moves;
 using namespace core::scoring;
 
 ddG::ddG() :
-		moves::Mover(ddGCreator::mover_name()),
-		bound_total_energy_(0.0),
-		unbound_total_energy_(0.0),
-		repeats_(0),
-		rb_jump_(0),
-		per_residue_ddg_(false),
-		repack_unbound_(false),
-		relax_mover_( /* NULL */ ),
-		use_custom_task_(false),
-		repack_bound_(true),
-		relax_bound_(false),
-		pb_enabled_(false),
-		translate_by_(1000)
+	moves::Mover(ddGCreator::mover_name()),
+	bound_total_energy_(0.0),
+	unbound_total_energy_(0.0),
+	repeats_(0),
+	rb_jump_(0),
+	per_residue_ddg_(false),
+	repack_unbound_(false),
+	relax_mover_( /* NULL */ ),
+	use_custom_task_(false),
+	repack_bound_(true),
+	relax_bound_(false),
+	pb_enabled_(false),
+	translate_by_(1000)
 {
 	bound_energies_.clear();
 	unbound_energies_.clear();
@@ -128,20 +128,20 @@ ddG::ddG() :
 }
 
 ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
-					core::Size const jump/*=1*/) :
-		moves::Mover(ddGCreator::mover_name()),
-		bound_total_energy_(0.0),
-		unbound_total_energy_(0.0),
-		repeats_(1),
-		rb_jump_(jump),
-		per_residue_ddg_(false),
-		repack_unbound_(true),
-		relax_mover_( /* NULL */ ),
-		use_custom_task_(false),
-		repack_bound_(true),
-		relax_bound_(false),
-		pb_enabled_(false),
-		translate_by_(1000)
+	core::Size const jump/*=1*/) :
+	moves::Mover(ddGCreator::mover_name()),
+	bound_total_energy_(0.0),
+	unbound_total_energy_(0.0),
+	repeats_(1),
+	rb_jump_(jump),
+	per_residue_ddg_(false),
+	repack_unbound_(true),
+	relax_mover_( /* NULL */ ),
+	use_custom_task_(false),
+	repack_bound_(true),
+	relax_bound_(false),
+	pb_enabled_(false),
+	translate_by_(1000)
 {
 	scorefxn_ = scorefxn_in->clone();
 
@@ -151,32 +151,31 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 	unbound_per_residue_energies_.clear();
 
 	// Determine if this PB enabled.
-	if( scorefxn_->get_weight(core::scoring::PB_elec) != 0.) {
+	if ( scorefxn_->get_weight(core::scoring::PB_elec) != 0. ) {
 		// Set this to PB enabled
 		pb_enabled_ = true;
 		TR << "PB enabled" << std::endl;
-	}
-	else{
+	} else {
 		pb_enabled_ = false;
 	}
 }
 
 ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
-					core::Size const jump/*=1*/,
-					utility::vector1<core::Size> const & chain_ids) :
-		moves::Mover(ddGCreator::mover_name()),
-		bound_total_energy_(0.0),
-		unbound_total_energy_(0.0),
-		repeats_(1),
-		rb_jump_(jump),
-		per_residue_ddg_(false),
-		repack_unbound_(true),
-		relax_mover_( /* NULL */ ),
-		use_custom_task_(false),
-		repack_bound_(true),
-		relax_bound_(false),
-		pb_enabled_(false),
-		translate_by_(1000)
+	core::Size const jump/*=1*/,
+	utility::vector1<core::Size> const & chain_ids) :
+	moves::Mover(ddGCreator::mover_name()),
+	bound_total_energy_(0.0),
+	unbound_total_energy_(0.0),
+	repeats_(1),
+	rb_jump_(jump),
+	per_residue_ddg_(false),
+	repack_unbound_(true),
+	relax_mover_( /* NULL */ ),
+	use_custom_task_(false),
+	repack_bound_(true),
+	relax_bound_(false),
+	pb_enabled_(false),
+	translate_by_(1000)
 {
 	scorefxn_ = scorefxn_in->clone();
 	chain_ids_ = chain_ids;
@@ -187,12 +186,11 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 	unbound_per_residue_energies_.clear();
 
 	// Determine if this PB enabled.
-	if( scorefxn_->get_weight(core::scoring::PB_elec) != 0.) {
+	if ( scorefxn_->get_weight(core::scoring::PB_elec) != 0. ) {
 		// Set this to PB enabled
 		pb_enabled_ = true;
 		TR << "PB enabled" << std::endl;
-	}
-	else{
+	} else {
 		pb_enabled_ = false;
 	}
 }
@@ -204,7 +202,7 @@ void ddG::parse_my_tag(
 	core::pose::Pose const& pose)
 {
 	rb_jump_ = tag->getOption<core::Size>("jump", 1);
-	if( tag->hasOption("symmetry") ) {
+	if ( tag->hasOption("symmetry") ) {
 		TR << "Option 'symmetry' for ddG mover has no effect - symmetry is autodetected from pose." << std::endl;
 	}
 	per_residue_ddg_ = tag->getOption<bool>("per_residue_ddg",0);
@@ -216,40 +214,34 @@ void ddG::parse_my_tag(
 	relax_bound_ = tag->getOption<bool>("relax_bound",0);
 	translate_by_ = tag->getOption<core::Real>("translate_by", 1000);
 
-	if( tag->hasOption( "relax_mover" ) ) {
+	if ( tag->hasOption( "relax_mover" ) ) {
 		relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover" ), movers ) );
 	}
-	if( tag->hasOption( "filter" ) ) {
+	if ( tag->hasOption( "filter" ) ) {
 		filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), filters ) );
 	}
 
-	if(tag->hasOption("chains") && tag->hasOption("symmetry"))
-	{
+	if ( tag->hasOption("chains") && tag->hasOption("symmetry") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("you cannot specify multiple chains and use symmetry mode in the ddG mover at the same time right now. Sorry");
 	}
 
 
-	if( ( tag->hasOption("chain_num") || tag->hasOption("chain_name") ) && tag->hasOption("jump"))
-	{
+	if ( ( tag->hasOption("chain_num") || tag->hasOption("chain_name") ) && tag->hasOption("jump") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("you can specify either chains or jump in the ddG mover, but not both");
 	}
 
-	if(tag->hasOption("chain_num"))
-	{
+	if ( tag->hasOption("chain_num") ) {
 		chain_ids_ = utility::string_split(tag->getOption<std::string>("chain_num"),',',core::Size());
 	}
 
-	if(tag->hasOption("chain_name"))
-	{
+	if ( tag->hasOption("chain_name") ) {
 		utility::vector1<std::string> chain_names = utility::string_split(tag->getOption<std::string>("chain_name"),',',std::string());
-		for(utility::vector1<std::string>::iterator chain_name_it = chain_names.begin(); chain_name_it != chain_names.end(); ++chain_name_it)
-		{
+		for ( utility::vector1<std::string>::iterator chain_name_it = chain_names.begin(); chain_name_it != chain_names.end(); ++chain_name_it ) {
 			chain_ids_.push_back(core::pose::get_chain_id_from_chain(*chain_name_it,pose));
 		}
 	}
 
-	if(std::find(chain_ids_.begin(),chain_ids_.end(),1) != chain_ids_.end())
-	{
+	if ( std::find(chain_ids_.begin(),chain_ids_.end(),1) != chain_ids_.end() ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("You can't move the first chain.  Moving chain 2 is the same as moving chain 1, so do that instead.");
 	}
 
@@ -257,20 +249,19 @@ void ddG::parse_my_tag(
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 
 	// Determine if this PB enabled.
-	if( scorefxn_->get_weight(core::scoring::PB_elec) != 0.) {
+	if ( scorefxn_->get_weight(core::scoring::PB_elec) != 0. ) {
 		// Set this to PB enabled
 		pb_enabled_ = true;
 		TR << "PB enabled.  Translation distance = " << translate_by_ << " A" << std::endl;
-		if( tag->hasOption("translate_by") && translate_by_ > 100) {
-		        TR.Warning << "Translation distance may be too large for PB-enabled scoring.  Consider 100 (default for PB enabled runs) if you run out of memory."<< std::endl;
-		        TR.Warning.flush();
-		} else if( !tag->hasOption("translate_by") ){
-		        translate_by_ = 100;
-		        TR.Warning << "Translation distance set to 100 in order to save memory for the PB calculations."<<std::endl;
-						TR.Warning.flush();
+		if ( tag->hasOption("translate_by") && translate_by_ > 100 ) {
+			TR.Warning << "Translation distance may be too large for PB-enabled scoring.  Consider 100 (default for PB enabled runs) if you run out of memory."<< std::endl;
+			TR.Warning.flush();
+		} else if ( !tag->hasOption("translate_by") ) {
+			translate_by_ = 100;
+			TR.Warning << "Translation distance set to 100 in order to save memory for the PB calculations."<<std::endl;
+			TR.Warning.flush();
 		}
-	}
-	else{
+	} else {
 		pb_enabled_ = false;
 	}
 	TR.flush();
@@ -292,8 +283,7 @@ void ddG::apply(Pose & pose)
 		rb_jump( 0 );
 	}
 
-	if(per_residue_ddg_)
-	{
+	if ( per_residue_ddg_ ) {
 		EnergyMethodOptionsOP energy_options( new core::scoring::methods::EnergyMethodOptions(scorefxn_->energy_method_options()) );
 		energy_options->hbond_options().decompose_bb_hb_into_pair_energies(true);
 		scorefxn_->set_energy_method_options(*energy_options);
@@ -302,30 +292,25 @@ void ddG::apply(Pose & pose)
 	Real average_ddg = 0.0;
 	std::map<Size, Real> average_per_residue_ddgs;
 
-	for(Size repeat = 1; repeat <= repeats_; ++repeat)
-	{
+	for ( Size repeat = 1; repeat <= repeats_; ++repeat ) {
 		// calculate() attaches pb-elec related cache to the pose, but shall not change the conformation.
 		calculate(pose);
 
 		// Carry on the gathered PB energy info.
-		if( pb_cached_data_ != 0 ) {
+		if ( pb_cached_data_ != 0 ) {
 			pose.data().set(pose::datacache::CacheableDataType::PB_LIFETIME_CACHE, pb_cached_data_);
 		}
 
 		average_ddg += sum_ddG();
 		report_ddG(TR);
-		if(per_residue_ddg_)
-		{
-			for(core::Size i = 1; i <= pose.n_residue();++i)
-			{
+		if ( per_residue_ddg_ ) {
+			for ( core::Size i = 1; i <= pose.n_residue(); ++i ) {
 				core::Real bound_energy = bound_per_residue_energies_[i];
 				core::Real unbound_energy = unbound_per_residue_energies_[i];
 				core::Real residue_ddg = bound_energy - unbound_energy;
-				if(average_per_residue_ddgs.find(i) == average_per_residue_ddgs.end())
-				{
+				if ( average_per_residue_ddgs.find(i) == average_per_residue_ddgs.end() ) {
 					average_per_residue_ddgs[i] = residue_ddg;
-				}else
-				{
+				} else {
 					average_per_residue_ddgs[i] += residue_ddg;
 				}
 			}
@@ -333,16 +318,14 @@ void ddG::apply(Pose & pose)
 	}
 
 	average_ddg /= repeats_;
-	for(std::map<Size,Real>::iterator avg_it = average_per_residue_ddgs.begin(); avg_it != average_per_residue_ddgs.end();++avg_it)
-	{
+	for ( std::map<Size,Real>::iterator avg_it = average_per_residue_ddgs.begin(); avg_it != average_per_residue_ddgs.end(); ++avg_it ) {
 		avg_it->second /= repeats_;
 	}
 
 	jd2::JobOP job(jd2::JobDistributor::get_instance()->current_job());
 	setPoseExtraScore(pose, "ddg",average_ddg);
-	if (per_residue_ddg_)
-	{
-		for (core::Size i = 1; i <= pose.n_residue(); ++i) {
+	if ( per_residue_ddg_ ) {
+		for ( core::Size i = 1; i <= pose.n_residue(); ++i ) {
 			std::string residue_string(utility::to_string<core::Size>(i));
 			setPoseExtraScore(pose,"residue_ddg_"+residue_string,average_per_residue_ddgs[i]);
 		}
@@ -354,7 +337,7 @@ void
 ddG::fill_energy_vector( pose::Pose const & pose, std::map< ScoreType, core::Real > & energy_map )
 {
 	energy_map.clear();
-	if( filter_ ) {
+	if ( filter_ ) {
 		filter_->report(TR, pose);
 		energy_map[ core::scoring::total_score ] = filter_->report_sm( pose );
 	} else {
@@ -369,17 +352,14 @@ ddG::fill_energy_vector( pose::Pose const & pose, std::map< ScoreType, core::Rea
 
 void ddG::fill_per_residue_energy_vector(pose::Pose const & pose, std::map<Size, Real> & energy_map)
 {
-	if( filter_ ) {
+	if ( filter_ ) {
 		utility_exit_with_message("Cannot calculate per-residue ddG's with a specified filter.");
 	}
 	energy_map.clear();
-	for(core::Size resid = 1; resid <= pose.total_residue(); ++resid)
-	{
+	for ( core::Size resid = 1; resid <= pose.total_residue(); ++resid ) {
 		core::Real energy = 0.0;
-		for (int st = 1; st <= n_score_types; ++st)
-		{
-			if( (*scorefxn_)[ScoreType(st)] != 0.0 && ScoreType(st) != pro_close)
-			{
+		for ( int st = 1; st <= n_score_types; ++st ) {
+			if ( (*scorefxn_)[ScoreType(st)] != 0.0 && ScoreType(st) != pro_close ) {
 				energy += (*scorefxn_)[ScoreType(st)] * pose.energies().residue_total_energies(resid)[ScoreType(st)];
 			}
 		}
@@ -398,17 +378,19 @@ ddG::report_ddG( std::ostream & out ) const
 	out << " Scores                       Wghtd.Score\n";
 	out << "-----------------------------------------\n";
 	std::map< ScoreType, Real >::const_iterator unbound_it=unbound_energies_.begin();
-	for( std::map< ScoreType, Real >::const_iterator bound_it=bound_energies_.begin();
-			 bound_it!=bound_energies_.end();
-			 ++bound_it
-	) {
+	for ( std::map< ScoreType, Real >::const_iterator bound_it=bound_energies_.begin();
+			bound_it!=bound_energies_.end();
+			++bound_it
+			) {
 		if ( unbound_it != unbound_energies_.end() ) {
-			if( std::abs( unbound_it->second ) > 0.001 || std::abs( bound_it->second ) > 0.001 )
+			if ( std::abs( unbound_it->second ) > 0.001 || std::abs( bound_it->second ) > 0.001 ) {
 				out << ' ' << LJ( 24, bound_it->first ) << ' ' << F( 9,3, bound_it->second - unbound_it->second )<<'\n';
+			}
 			++unbound_it;
 		} else {
-			if( std::abs( bound_it->second ) > 0.001 )
+			if ( std::abs( bound_it->second ) > 0.001 ) {
 				out << ' ' << LJ( 24, bound_it->first ) << ' ' << F( 9,3, bound_it->second )<<'\n';
+			}
 		}
 	}
 	out << "-----------------------------------------\n";
@@ -422,10 +404,10 @@ ddG::sum_ddG() const
 	Real sum_energy(0.0);
 
 	std::map< ScoreType, Real >::const_iterator unbound_it=unbound_energies_.begin();
-	for( std::map< ScoreType, Real >::const_iterator bound_it=bound_energies_.begin();
-			 bound_it!=bound_energies_.end();
-			 ++bound_it
-	) {
+	for ( std::map< ScoreType, Real >::const_iterator bound_it=bound_energies_.begin();
+			bound_it!=bound_energies_.end();
+			++bound_it
+			) {
 		if ( unbound_it != unbound_energies_.end() ) {
 			sum_energy += bound_it->second - unbound_it->second;
 			++unbound_it;
@@ -459,17 +441,17 @@ ddG::calculate( pose::Pose const & pose_original )
 	// Save the original state if pb
 	//----------------------------------
 	// The state is marked in pose's data-cache.
-	PBLifetimeCacheOP cached_data	= 0;
+	PBLifetimeCacheOP cached_data = 0;
 	core::scoring::methods::EnergyMethodOptions emoptions = scorefxn_->energy_method_options();
 
 	// First see if this method is called as part of PB-electrostatic computation.
-	if( pb_enabled_ ) {
+	if ( pb_enabled_ ) {
 		cached_data = static_cast< PBLifetimeCacheOP > (pose.data().get_ptr< PBLifetimeCache > ( pose::datacache::CacheableDataType::PB_LIFETIME_CACHE ));
 		runtime_assert( cached_data != 0 );
 		original_state = cached_data->get_energy_state();
 	}
 
-	if (core::pose::symmetry::is_symmetric( pose )) {
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		// Except for score function conversion, symmetry is now handled inline (pack_rotamers does autodispatch).
 		scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_ );
 	}
@@ -477,10 +459,10 @@ ddG::calculate( pose::Pose const & pose_original )
 	//---------------------------------
 	// Bound state
 	//---------------------------------
-	if( pb_enabled_ ) cached_data->set_energy_state(emoptions.pb_bound_tag());
+	if ( pb_enabled_ ) cached_data->set_energy_state(emoptions.pb_bound_tag());
 
-	if( repack_unbound_ || repack_bound_ )	{
-    setup_task(pose);
+	if ( repack_unbound_ || repack_bound_ ) {
+		setup_task(pose);
 	}
 
 	if ( repack_bound() ) {
@@ -493,7 +475,7 @@ ddG::calculate( pose::Pose const & pose_original )
 
 	(*scorefxn_)( pose );
 	fill_energy_vector( pose, bound_energies_ );
-	if(per_residue_ddg_) {
+	if ( per_residue_ddg_ ) {
 		fill_per_residue_energy_vector(pose, bound_per_residue_energies_);
 	}
 
@@ -501,26 +483,26 @@ ddG::calculate( pose::Pose const & pose_original )
 	// Unbound state
 	//---------------------------------
 	if ( unbind(pose) ) {
-		if( pb_enabled_ ) cached_data->set_energy_state(emoptions.pb_unbound_tag());
+		if ( pb_enabled_ ) cached_data->set_energy_state(emoptions.pb_unbound_tag());
 
-		if( repack_unbound_ ) {
+		if ( repack_unbound_ ) {
 			// Use the same task which was setup earlier
 			pack::pack_rotamers( pose, *scorefxn_, task_ );
 		}
-		if( relax_mover() ) {
+		if ( relax_mover() ) {
 			relax_mover()->apply( pose );
 		}
 
 		(*scorefxn_)( pose );
 		fill_energy_vector( pose, unbound_energies_ );
-		if(per_residue_ddg_) {
+		if ( per_residue_ddg_ ) {
 			fill_per_residue_energy_vector(pose, unbound_per_residue_energies_);
 		}
 
 		//----------------------------------
 		// Return to the original state
 		//----------------------------------
-		if( pb_enabled_ ) {
+		if ( pb_enabled_ ) {
 			cached_data->set_energy_state( original_state );
 			pb_cached_data_ = cached_data;
 		}
@@ -541,16 +523,16 @@ ddG::setup_task( pose::Pose const & pose) {
 		core::pack::task::operation::NoRepackDisulfides nodisulf;
 		nodisulf.apply( pose, *task_ );
 
-		if(chain_ids_.size() > 0 ) {
-			if( core::pose::symmetry::is_symmetric( pose ) ) {
+		if ( chain_ids_.size() > 0 ) {
+			if ( core::pose::symmetry::is_symmetric( pose ) ) {
 				utility_exit_with_message("Use of chain IDs in ddG with symmetric poses is not yet supported.");
 				// Mostly because I don't know if the following code is sensible with symmetric poses.
 			}
 			//We want to translate each chain the same direction, though it doesnt matter much which one
 			core::Size first_jump = core::pose::get_jump_id_from_chain_id(chain_ids_[1],pose);
 			protocols::toolbox::task_operations::RestrictToInterface rti( first_jump, 8.0 /*interface_distance_cutoff_*/ );
-			if(chain_ids_.size() > 1) {
-				for(core::Size chain_index = 2; chain_index <= chain_ids_.size();++chain_index) {
+			if ( chain_ids_.size() > 1 ) {
+				for ( core::Size chain_index = 2; chain_index <= chain_ids_.size(); ++chain_index ) {
 					core::Size current_jump = core::pose::get_jump_id_from_chain_id(chain_ids_[chain_index],pose);
 					rti.add_jump(current_jump);
 				}
@@ -566,17 +548,17 @@ ddG::setup_task( pose::Pose const & pose) {
 bool
 ddG::unbind( pose::Pose & pose ) const
 {
-	if( core::pose::symmetry::is_symmetric( pose ) ) {
-	  SymmetricConformation & symm_conf( dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		SymmetricConformation & symm_conf( dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 		std::map< Size, core::conformation::symmetry::SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 
 		rigid::RigidBodyDofSeqTransMoverOP translate( new rigid::RigidBodyDofSeqTransMover( dofs ) );
 		translate->step_size( translate_by_ );
 		translate->apply( pose );
-	} else if(chain_ids_.size() > 0) {
+	} else if ( chain_ids_.size() > 0 ) {
 		//We want to translate each chain the same direction, though it doesnt matter much which one
 		Vector translation_axis(1,0,0);
-		for(utility::vector1<core::Size>::const_iterator chain_it = chain_ids_.begin(); chain_it != chain_ids_.end();++chain_it) {
+		for ( utility::vector1<core::Size>::const_iterator chain_it = chain_ids_.begin(); chain_it != chain_ids_.end(); ++chain_it ) {
 			core::Size current_chain_id = *chain_it;
 			core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,pose);
 			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, current_jump_id) );
@@ -601,7 +583,7 @@ ddG::unbind( pose::Pose & pose ) const
 
 void
 ddG::filter( protocols::filters::FilterOP f ) {
-  filter_ = f;
+	filter_ = f;
 }
 
 protocols::filters::FilterOP

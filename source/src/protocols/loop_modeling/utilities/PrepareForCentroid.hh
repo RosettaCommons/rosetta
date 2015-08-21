@@ -26,7 +26,7 @@ namespace utilities {
 class PrepareForCentroid : public LoopMover {
 
 public:
-	
+
 	/// @brief Default constructor.
 	PrepareForCentroid();
 

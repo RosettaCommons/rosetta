@@ -121,9 +121,9 @@ find_cutpoint(
 
 	for ( Size i = left; i <= right; ++i ) {
 		if ( ft.is_cutpoint( i ) && i < pose.n_residue() &&
-		     !pose.residue( i ).is_lower_terminus() &&
-		     !pose.residue( i ).is_upper_terminus()
-		) {
+				!pose.residue( i ).is_lower_terminus() &&
+				!pose.residue( i ).is_upper_terminus()
+				) {
 			return i;
 		}
 	}
@@ -151,9 +151,9 @@ count_cutpoints(
 
 	for ( Size i = left; i <= right; ++i ) {
 		if ( ft.is_cutpoint( i ) && i < pose.n_residue() &&
-		     !pose.residue( i ).is_lower_terminus() &&
-		     !pose.residue( i ).is_upper_terminus()
-		) {
+				!pose.residue( i ).is_lower_terminus() &&
+				!pose.residue( i ).is_upper_terminus()
+				) {
 			++n;
 		}
 	}
@@ -280,11 +280,11 @@ set_single_loop_fold_tree(
 	pose.fold_tree( ft );
 }
 
-	// duplicated code from resfile reader... unfortunately there's no easy way around.
-	// question: if no chain is supplied should it be accepted?
-	// yes just pass ' ' for the chain
-	// how if a symbol is a chain or not?
-	// all commands begin with something in the command map, if it's not a command treat it as a chain
+// duplicated code from resfile reader... unfortunately there's no easy way around.
+// question: if no chain is supplied should it be accepted?
+// yes just pass ' ' for the chain
+// how if a symbol is a chain or not?
+// all commands begin with something in the command map, if it's not a command treat it as a chain
 
 utility::vector1< bool >
 parse_resfile_string_with_no_lockdown( core::pose::Pose const & pose, core::pack::task::PackerTask & the_task, std::string const & resfile_string )// throw(ResfileReaderException)
@@ -309,7 +309,7 @@ parse_resfile_string_with_no_lockdown( core::pose::Pose const & pose, core::pack
 		// for debug
 		//std::cout << "line->";
 		//for( Size i=1; i <= tokens.size(); i++){
-		//	std::cout << tokens[ i ] << ", ";
+		// std::cout << tokens[ i ] << ", ";
 		//}
 		//std::cout << std::endl;
 
@@ -340,18 +340,18 @@ parse_resfile_string_with_no_lockdown( core::pose::Pose const & pose, core::pack
 			++which_token;
 			char chain;
 			chain = get_token( which_token, tokens )[ 0 ];
-			if (chain == '_') chain = ' ';
+			if ( chain == '_' ) chain = ' ';
 			++which_token;
 
 			Size resid(0);
-			if(pose.pdb_info()){
+			if ( pose.pdb_info() ) {
 				resid = pose.pdb_info()->pdb2pose().find( chain, PDBnum, icode );
 			} else {
-				if((1 <= PDBnum) && (PDBnum <= (int)pose.total_residue())) {
+				if ( (1 <= PDBnum) && (PDBnum <= (int)pose.total_residue()) ) {
 					resid = PDBnum;
 				}
 			}
-			if (resid == 0){
+			if ( resid == 0 ) {
 				std::stringstream err_msg;
 				err_msg  << "On line " << lineno << ", the pose does not have residue (" << chain << ", " << PDBnum << ").";
 				onError( err_msg.str());
@@ -375,8 +375,8 @@ parse_resfile_string_with_no_lockdown( core::pose::Pose const & pose, core::pack
 					command->residue_action( the_task, resid );
 				} catch ( ResfileReaderException() ){
 					// there was a problem with this command.  If we're doing error recovery skip to next command.
-					while( which_token <= ntokens && command_map.find( get_token(which_token, tokens ) ) == command_map.end() )
-						which_token++;
+					while ( which_token <= ntokens && command_map.find( get_token(which_token, tokens ) ) == command_map.end() )
+							which_token++;
 					continue;
 				}
 			}
@@ -404,51 +404,51 @@ parse_resfile_string_with_no_lockdown( core::pose::Pose const & pose, core::pack
 	return non_default_lines;
 
 	// now process default behaviors
-/*
+	/*
 	for ( Size ii = 1; ii <= non_default_lines.size(); ++ii ) {
-		if ( ! non_default_lines[ ii ] ) {
-			Size which_token = 1, ntokens = default_tokens.size();
+	if ( ! non_default_lines[ ii ] ) {
+	Size which_token = 1, ntokens = default_tokens.size();
 
-			while( which_token <= ntokens ){
-				if ( command_map.find( get_token( which_token, default_tokens ) ) == command_map.end() ) {
-					std::stringstream err_msg;
-					err_msg  << "The default  command '" << get_token( which_token, default_tokens) <<"' is not recognized.";
-					onError(err_msg.str());
-					which_token++;
-					continue;
-				}
-
-				ResfileCommandOP command = command_map[ get_token( which_token, default_tokens ) ];
-
-				try{
-					command->residue_action( default_tokens, which_token, the_task, ii );
-				} catch ( ResfileReaderException() ){
-					// there was a problem with this command.  If we're doing error recovery skip to next command.
-					while( which_token <= ntokens && command_map.find( get_token(which_token, default_tokens ) ) == command_map.end() )
-						which_token++;
-					continue;
-				}
-			}
-		}
+	while( which_token <= ntokens ){
+	if ( command_map.find( get_token( which_token, default_tokens ) ) == command_map.end() ) {
+	std::stringstream err_msg;
+	err_msg  << "The default  command '" << get_token( which_token, default_tokens) <<"' is not recognized.";
+	onError(err_msg.str());
+	which_token++;
+	continue;
 	}
-*/
+
+	ResfileCommandOP command = command_map[ get_token( which_token, default_tokens ) ];
+
+	try{
+	command->residue_action( default_tokens, which_token, the_task, ii );
+	} catch ( ResfileReaderException() ){
+	// there was a problem with this command.  If we're doing error recovery skip to next command.
+	while( which_token <= ntokens && command_map.find( get_token(which_token, default_tokens ) ) == command_map.end() )
+	which_token++;
+	continue;
+	}
+	}
+	}
+	}
+	*/
 }
 
 core::pack::task::TaskFactoryOP
 remodel_generic_taskfactory(){
-  using core::pack::task::operation::IncludeCurrent;
-  using core::pack::task::operation::InitializeFromCommandline;
-  using core::pack::task::operation::NoRepackDisulfides;
-  using core::pack::task::operation::TaskOperationCOP;
-  using protocols::toolbox::task_operations::LimitAromaChi2Operation;
+	using core::pack::task::operation::IncludeCurrent;
+	using core::pack::task::operation::InitializeFromCommandline;
+	using core::pack::task::operation::NoRepackDisulfides;
+	using core::pack::task::operation::TaskOperationCOP;
+	using protocols::toolbox::task_operations::LimitAromaChi2Operation;
 
-  core::pack::task::TaskFactoryOP TF( new core::pack::task::TaskFactory() );
+	core::pack::task::TaskFactoryOP TF( new core::pack::task::TaskFactory() );
 
-  TF->push_back( TaskOperationCOP( new InitializeFromCommandline() ) ); // also inits -ex options
-  TF->push_back( TaskOperationCOP( new IncludeCurrent() ) ); // enforce keeping of input sidechains
-  TF->push_back( TaskOperationCOP( new NoRepackDisulfides() ) );
-  if (!basic::options::option[basic::options::OptionKeys::remodel::design::allow_rare_aro_chi].user()){
-  	TF->push_back( TaskOperationCOP( new LimitAromaChi2Operation() ) );
+	TF->push_back( TaskOperationCOP( new InitializeFromCommandline() ) ); // also inits -ex options
+	TF->push_back( TaskOperationCOP( new IncludeCurrent() ) ); // enforce keeping of input sidechains
+	TF->push_back( TaskOperationCOP( new NoRepackDisulfides() ) );
+	if ( !basic::options::option[basic::options::OptionKeys::remodel::design::allow_rare_aro_chi].user() ) {
+		TF->push_back( TaskOperationCOP( new LimitAromaChi2Operation() ) );
 	}
 
 	return TF;
@@ -456,8 +456,8 @@ remodel_generic_taskfactory(){
 
 void
 fill_non_loop_cst_set(
-  core::pose::Pose & pose,
-	  protocols::loops::Loops loops)
+	core::pose::Pose & pose,
+	protocols::loops::Loops loops)
 {
 	using namespace core::id;
 	using namespace core::conformation;
@@ -470,23 +470,22 @@ fill_non_loop_cst_set(
 
 	std::set<core::Size> loopRange;
 
- 	for ( protocols::loops::Loops::const_iterator it = loops.begin(), ite = loops.end(); it != ite; ++it ) {
-     protocols::loops::Loop const & loop = *it;
-			for (core::Size i = loop.start(); i<= loop.stop(); i++){
+	for ( protocols::loops::Loops::const_iterator it = loops.begin(), ite = loops.end(); it != ite; ++it ) {
+		protocols::loops::Loop const & loop = *it;
+		for ( core::Size i = loop.start(); i<= loop.stop(); i++ ) {
 
-				loopRange.insert(i);
+			loopRange.insert(i);
 
-			}
+		}
 	}
 	core::Size const nres( pose.total_residue());
-	for (core::Size i =1 ; i<=nres ; ++i){
-		if (loopRange.find(i) != loopRange.end()){ //value exist(check!)
+	for ( core::Size i =1 ; i<=nres ; ++i ) {
+		if ( loopRange.find(i) != loopRange.end() ) { //value exist(check!)
 			continue;
-		}
-		else {
+		} else {
 			Residue const & i_rsd( pose.residue(i));
 
-			for (core::Size ii = 1; ii <= i_rsd.nheavyatoms(); ++ii) {
+			for ( core::Size ii = 1; ii <= i_rsd.nheavyatoms(); ++ii ) {
 				core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc(0.0, coord_sdev) );
 				cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint(AtomID(ii,i), AtomID(1, my_anchor), i_rsd.xyz(ii), fx ) ) ));
 			}
@@ -495,66 +494,66 @@ fill_non_loop_cst_set(
 
 	pose.constraint_set( cst_set );
 }
-	void fixH(core::pose::Pose & pose) {
-		using namespace core;
-		using core::id::AtomID;
-		for(Size i = 1; i <= pose.n_residue(); ++i) {
-			numeric::xyzVector<Real> n  = pose.residue(i).xyz("N");
-			numeric::xyzVector<Real> ca = pose.residue(i).xyz("CA");
-			Size in = i-1;
-			if(in == 0) in = pose.n_residue();
-			numeric::xyzVector<Real> c  = pose.residue(in).xyz("C");
-			numeric::xyzVector<Real> h  = n + (n-(ca+c)/2.0).normalized()*1.01;
-			if (pose.residue(i).name3() != "PRO"){
-				pose.set_xyz(AtomID(pose.residue(i).atom_index("H"),i), h );
-			}
+void fixH(core::pose::Pose & pose) {
+	using namespace core;
+	using core::id::AtomID;
+	for ( Size i = 1; i <= pose.n_residue(); ++i ) {
+		numeric::xyzVector<Real> n  = pose.residue(i).xyz("N");
+		numeric::xyzVector<Real> ca = pose.residue(i).xyz("CA");
+		Size in = i-1;
+		if ( in == 0 ) in = pose.n_residue();
+		numeric::xyzVector<Real> c  = pose.residue(in).xyz("C");
+		numeric::xyzVector<Real> h  = n + (n-(ca+c)/2.0).normalized()*1.01;
+		if ( pose.residue(i).name3() != "PRO" ) {
+			pose.set_xyz(AtomID(pose.residue(i).atom_index("H"),i), h );
 		}
 	}
+}
 
 /// @brief return accessible surface area for each residue
 utility::vector1< core::Real > const
 calc_rsd_sasa( core::pose::Pose const & pose ) {
 
-  // define atom_map for main-chain and CB
-  core::id::AtomID_Map< bool > atom_map;
-  core::pose::initialize_atomid_map( atom_map, pose, false );
-  for ( core::Size ir = 1; ir <= pose.total_residue(); ++ir ) {
-    for ( core::Size j = 1; j<=5; ++j ) {
-      core::id::AtomID atom( j, ir );
-      atom_map.set( atom, true );
-    }
-  }
+	// define atom_map for main-chain and CB
+	core::id::AtomID_Map< bool > atom_map;
+	core::pose::initialize_atomid_map( atom_map, pose, false );
+	for ( core::Size ir = 1; ir <= pose.total_residue(); ++ir ) {
+		for ( core::Size j = 1; j<=5; ++j ) {
+			core::id::AtomID atom( j, ir );
+			atom_map.set( atom, true );
+		}
+	}
 
-  // calc sasa
-  core::id::AtomID_Map< core::Real > atom_sasa;
-  utility::vector1< core::Real > rsd_sasa;
+	// calc sasa
+	core::id::AtomID_Map< core::Real > atom_sasa;
+	utility::vector1< core::Real > rsd_sasa;
 	core::Real pore_radius = 2.0;
-  core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, pore_radius, false, atom_map );
+	core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, pore_radius, false, atom_map );
 
-  return rsd_sasa;
+	return rsd_sasa;
 } // calc_residue_sasa
 
 void
 apply_transformation(
-  core::pose::Pose & mod_pose,
-  std::list <core::Size> const & residue_list,
-  numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT
+	core::pose::Pose & mod_pose,
+	std::list <core::Size> const & residue_list,
+	numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT
 ) {
-  using namespace ObjexxFCL;
-  // translate xx2 by COM and fill in the new ref_pose coordinates
-  utility::vector1< core::id::AtomID > ids;
-  utility::vector1< numeric::xyzVector<core::Real> > positions;
+	using namespace ObjexxFCL;
+	// translate xx2 by COM and fill in the new ref_pose coordinates
+	utility::vector1< core::id::AtomID > ids;
+	utility::vector1< numeric::xyzVector<core::Real> > positions;
 
-  for (std::list<core::Size>::const_iterator it = residue_list.begin();
-     it != residue_list.end();
-     ++it) {
-    core::Size ires = *it;
-    for ( core::Size iatom=1; iatom<= mod_pose.residue_type(ires).natoms(); ++iatom ) { // use residue_type to prevent internal coord update
-      ids.push_back(core::id::AtomID(iatom,ires));
-      positions.push_back(postT + (R*( mod_pose.xyz(core::id::AtomID(iatom,ires)) - preT )));
-    }
-  }
-  mod_pose.batch_set_xyz(ids,positions);
+	for ( std::list<core::Size>::const_iterator it = residue_list.begin();
+			it != residue_list.end();
+			++it ) {
+		core::Size ires = *it;
+		for ( core::Size iatom=1; iatom<= mod_pose.residue_type(ires).natoms(); ++iatom ) { // use residue_type to prevent internal coord update
+			ids.push_back(core::id::AtomID(iatom,ires));
+			positions.push_back(postT + (R*( mod_pose.xyz(core::id::AtomID(iatom,ires)) - preT )));
+		}
+	}
+	mod_pose.batch_set_xyz(ids,positions);
 }
 
 
@@ -565,14 +564,14 @@ void cyclize_pose(core::pose::Pose & pose) {
 	using namespace chemical;
 	using core::id::AtomID;
 	//pose.conformation().show_residue_connections();
-  Size N = pose.n_residue();
-  for(Size i = 1; i <= N; ++i) {
-    if(pose.residue(i).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
-    if(pose.residue(i).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);
-    if(pose.residue(i).has_variant_type(CUTPOINT_UPPER)) core::pose::remove_variant_type_from_pose_residue(pose,CUTPOINT_UPPER,i);
-    if(pose.residue(i).has_variant_type(CUTPOINT_LOWER)) core::pose::remove_variant_type_from_pose_residue(pose,CUTPOINT_LOWER,i);
-  }
-  if(!pose.residue(1).has_variant_type(CUTPOINT_UPPER)) {
+	Size N = pose.n_residue();
+	for ( Size i = 1; i <= N; ++i ) {
+		if ( pose.residue(i).is_lower_terminus() ) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
+		if ( pose.residue(i).is_upper_terminus() ) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);
+		if ( pose.residue(i).has_variant_type(CUTPOINT_UPPER) ) core::pose::remove_variant_type_from_pose_residue(pose,CUTPOINT_UPPER,i);
+		if ( pose.residue(i).has_variant_type(CUTPOINT_LOWER) ) core::pose::remove_variant_type_from_pose_residue(pose,CUTPOINT_LOWER,i);
+	}
+	if ( !pose.residue(1).has_variant_type(CUTPOINT_UPPER) ) {
 		core::pose::add_variant_type_to_pose_residue(pose,CUTPOINT_UPPER,1);
 		/*
 		//make connection
@@ -585,7 +584,7 @@ void cyclize_pose(core::pose::Pose & pose) {
 		*/
 
 	}
-  if(!pose.residue(N).has_variant_type(CUTPOINT_LOWER)) {
+	if ( !pose.residue(N).has_variant_type(CUTPOINT_LOWER) ) {
 		core::pose::add_variant_type_to_pose_residue(pose,CUTPOINT_LOWER,N);
 		/*
 		//make connection
@@ -597,59 +596,59 @@ void cyclize_pose(core::pose::Pose & pose) {
 		pose.replace_residue(N, *cloneRes, false);
 		*/
 	}
-  pose.conformation().declare_chemical_bond( 1, "N", N, "C" );
-  fixH(pose);
+	pose.conformation().declare_chemical_bond( 1, "N", N, "C" );
+	fixH(pose);
 
 	pose.conformation().update_polymeric_connection(1);
 
-//	conformation::ResidueOP cloneRes2 = new conformation::Residue(*pose.residue(2).clone());
-//	cloneRes2->residue_connection_partner(1, 1, 2);
-//	cloneRes2->residue_connection_partner(2, 3, 1);
-//std::cout << "resconn1CR2: " << cloneRes2->connected_residue_at_resconn( 1 ) << " ";
-//        std::cout << cloneRes2->residue_connection_conn_id(1);
-//        std::cout << " resconn2: " << cloneRes2->connected_residue_at_resconn( 2 ) << " ";
-//        std::cout << cloneRes2->residue_connection_conn_id(2);
-//        std::cout << " seqpos: " << cloneRes2->seqpos() << std::endl;
-//
-//	pose.replace_residue(2, *cloneRes2, false);
-//	pose.conformation().update_polymeric_connection(2);
-//std::cout << "resconn1PR2: " << pose.residue(2).connected_residue_at_resconn( 1 ) << " ";
-//         std::cout << pose.residue(2).residue_connection_conn_id(1);
-//         std::cout << " resconn2: " << pose.residue(2).connected_residue_at_resconn( 2 ) << " ";
-//         std::cout << pose.residue(2).residue_connection_conn_id(2);
-//         std::cout << " seqpos: " << pose.residue(2).seqpos() << std::endl;
+	// conformation::ResidueOP cloneRes2 = new conformation::Residue(*pose.residue(2).clone());
+	// cloneRes2->residue_connection_partner(1, 1, 2);
+	// cloneRes2->residue_connection_partner(2, 3, 1);
+	//std::cout << "resconn1CR2: " << cloneRes2->connected_residue_at_resconn( 1 ) << " ";
+	//        std::cout << cloneRes2->residue_connection_conn_id(1);
+	//        std::cout << " resconn2: " << cloneRes2->connected_residue_at_resconn( 2 ) << " ";
+	//        std::cout << cloneRes2->residue_connection_conn_id(2);
+	//        std::cout << " seqpos: " << cloneRes2->seqpos() << std::endl;
+	//
+	// pose.replace_residue(2, *cloneRes2, false);
+	// pose.conformation().update_polymeric_connection(2);
+	//std::cout << "resconn1PR2: " << pose.residue(2).connected_residue_at_resconn( 1 ) << " ";
+	//         std::cout << pose.residue(2).residue_connection_conn_id(1);
+	//         std::cout << " resconn2: " << pose.residue(2).connected_residue_at_resconn( 2 ) << " ";
+	//         std::cout << pose.residue(2).residue_connection_conn_id(2);
+	//         std::cout << " seqpos: " << pose.residue(2).seqpos() << std::endl;
 
 	/*
 	//make connection
 	conformation::ResidueOP cloneRes1 = new conformation::Residue(*pose.residue(1).clone());
-//	conformation::ResidueOP cloneResN = new conformation::Residue(*pose.residue(N).clone());
+	// conformation::ResidueOP cloneResN = new conformation::Residue(*pose.residue(N).clone());
 
 	cloneRes1->residue_connection_partner(1, N, 2);
 	cloneRes1->residue_connection_partner(2, 2, 1);
-//	cloneRes1->residue_connection_partner(2, N, 2);
+	// cloneRes1->residue_connection_partner(2, N, 2);
 	cloneRes2->residue_connection_partner(1, 1, 2);
 	cloneRes2->residue_connection_partner(2, 3, 1);
-//	cloneResN->residue_connection_partner(1, N-1, 2);
-//	cloneResN->residue_connection_partner(2, 1, 1);
+	// cloneResN->residue_connection_partner(1, N-1, 2);
+	// cloneResN->residue_connection_partner(2, 1, 1);
 
 	pose.replace_residue(1, *cloneRes1, false);
 	pose.replace_residue(2, *cloneRes2, false);
-//	pose.replace_residue(N, *cloneResN, false);
-*/
+	// pose.replace_residue(N, *cloneResN, false);
+	*/
 
-//	pose.conformation().show_residue_connections();
+	// pose.conformation().show_residue_connections();
 
-  using namespace core::scoring::constraints;
-  AtomID a1( pose.residue(1).atom_index(   "N"), 1 ), a2( pose.residue(pose.n_residue()).atom_index("OVL1"), pose.n_residue() );
-  AtomID b1( pose.residue(1).atom_index(  "CA"), 1 ), b2( pose.residue(pose.n_residue()).atom_index("OVL2"), pose.n_residue() );
-  AtomID c1( pose.residue(1).atom_index("OVU1"), 1 ), c2( pose.residue(pose.n_residue()).atom_index(   "C"), pose.n_residue() );
-//  pose.remove_constraints();
-  core::scoring::func::FuncOP fx1( new core::scoring::func::HarmonicFunc(0.0,0.1) );
-  pose.add_constraint(scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(a1,a2,fx1) ) ));
-  core::scoring::func::FuncOP fx2( new core::scoring::func::HarmonicFunc(0.0,0.1) );
-  pose.add_constraint(scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(b1,b2,fx2) ) ));
-  core::scoring::func::FuncOP fx3( new core::scoring::func::HarmonicFunc(0.0,0.1) );
-  pose.add_constraint(scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(c1,c2,fx3) ) ));
+	using namespace core::scoring::constraints;
+	AtomID a1( pose.residue(1).atom_index(   "N"), 1 ), a2( pose.residue(pose.n_residue()).atom_index("OVL1"), pose.n_residue() );
+	AtomID b1( pose.residue(1).atom_index(  "CA"), 1 ), b2( pose.residue(pose.n_residue()).atom_index("OVL2"), pose.n_residue() );
+	AtomID c1( pose.residue(1).atom_index("OVU1"), 1 ), c2( pose.residue(pose.n_residue()).atom_index(   "C"), pose.n_residue() );
+	//  pose.remove_constraints();
+	core::scoring::func::FuncOP fx1( new core::scoring::func::HarmonicFunc(0.0,0.1) );
+	pose.add_constraint(scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(a1,a2,fx1) ) ));
+	core::scoring::func::FuncOP fx2( new core::scoring::func::HarmonicFunc(0.0,0.1) );
+	pose.add_constraint(scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(b1,b2,fx2) ) ));
+	core::scoring::func::FuncOP fx3( new core::scoring::func::HarmonicFunc(0.0,0.1) );
+	pose.add_constraint(scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(c1,c2,fx3) ) ));
 }
 
 

@@ -67,7 +67,7 @@ public:
 	/// @brief Comparison operator (previously free when FragID derived from std::pair).
 	bool operator <  ( FragID const & other ) const;
 
-/// TEMP!  soon to be private!
+	/// TEMP!  soon to be private!
 public:
 	/// Pretend this is a std pair
 	FrameCOP first;

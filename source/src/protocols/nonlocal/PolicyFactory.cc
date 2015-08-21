@@ -39,29 +39,29 @@ namespace protocols {
 namespace nonlocal {
 
 PolicyOP PolicyFactory::get_policy(const std::string& policy_name,
-                                   core::fragment::FragSetCOP fragments,
-                                   core::Size num_fragments) {
-  assert(fragments);
-  assert(num_fragments > 0);
+	core::fragment::FragSetCOP fragments,
+	core::Size num_fragments) {
+	assert(fragments);
+	assert(num_fragments > 0);
 
-  std::string type(policy_name);
-  boost::to_lower(type);
+	std::string type(policy_name);
+	boost::to_lower(type);
 
-  // Operate on a copy of the input to prevent unexpected (and unwanted)
-  // modification to the user's fragment data.
-  core::fragment::FragSetOP reduced_fragments = fragments->clone();
+	// Operate on a copy of the input to prevent unexpected (and unwanted)
+	// modification to the user's fragment data.
+	core::fragment::FragSetOP reduced_fragments = fragments->clone();
 
-  // Only consider the top <num_fragments> fragments within each Frame.
-  core::fragment::retain_top(num_fragments, reduced_fragments);
+	// Only consider the top <num_fragments> fragments within each Frame.
+	core::fragment::retain_top(num_fragments, reduced_fragments);
 
-  if (type == "uniform") {
-    return PolicyOP( new UniformPolicy(reduced_fragments) );
-  } else if (type == "smooth") {
-    return PolicyOP( new SmoothPolicy(reduced_fragments) );
-  } else {
-    utility_exit_with_message("Invalid policy_name: " + policy_name);
-  }
-  return NULL;
+	if ( type == "uniform" ) {
+		return PolicyOP( new UniformPolicy(reduced_fragments) );
+	} else if ( type == "smooth" ) {
+		return PolicyOP( new SmoothPolicy(reduced_fragments) );
+	} else {
+		utility_exit_with_message("Invalid policy_name: " + policy_name);
+	}
+	return NULL;
 }
 
 }  // namespace nonlocal

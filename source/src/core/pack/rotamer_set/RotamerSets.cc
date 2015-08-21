@@ -121,19 +121,16 @@ RotamerSets::set_task( task::PackerTaskCOP task)
 	nrotamers_for_moltenres_.resize( nmoltenres_ );
 
 	uint count_moltenres = 0;
-	for ( uint ii = 1; ii <= total_residue_; ++ii )
-	{
+	for ( uint ii = 1; ii <= total_residue_; ++ii ) {
 		if ( task_->pack_residue( ii ) ) {
 			++count_moltenres;
 			resid_2_moltenres_[ ii ] = count_moltenres;
 			moltenres_2_resid_[ count_moltenres ] = ii;
-		}
-		else
-		{
+		} else {
 			resid_2_moltenres_[ ii ] = 0; //sentinal value; Andrew, replace this magic number!
 		}
 	}
-debug_assert( count_moltenres == nmoltenres_ );
+	debug_assert( count_moltenres == nmoltenres_ );
 
 }
 
@@ -145,8 +142,7 @@ RotamerSets::build_rotamers(
 )
 {
 	RotamerSetFactory rsf;
-	for ( uint ii = 1; ii <= nmoltenres_; ++ii )
-	{
+	for ( uint ii = 1; ii <= nmoltenres_; ++ii ) {
 		uint ii_resid = moltenres_2_resid_[ ii ];
 		RotamerSetOP rotset( rsf.create_rotamer_set( pose.residue( ii_resid ) ));
 		rotset->set_resid( ii_resid );
@@ -158,8 +154,9 @@ RotamerSets::build_rotamers(
 	Size asym_length = 0;
 	// make sure we have a symmetric RotamerSet_ if we have a symmetric pose
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		if ( set_of_rotamer_sets_.size() > 0 )
+		if ( set_of_rotamer_sets_.size() > 0 ) {
 			runtime_assert ( dynamic_cast< core::pack::rotamer_set::symmetry::SymmetricRotamerSet_ const * >( set_of_rotamer_sets_[ 1 ].get() ) );
+		}
 		// also extract the asymmetric unit length for rotamer link operation
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 		asym_length = symm_info->num_independent_residues();
@@ -169,25 +166,24 @@ RotamerSets::build_rotamers(
 
 
 	// now build any additional rotamers that are dependent on placement of other rotamers
-	for ( uint ii = 1; ii <= nmoltenres_; ++ii )
-	{
+	for ( uint ii = 1; ii <= nmoltenres_; ++ii ) {
 		set_of_rotamer_sets_[ ii ]->build_dependent_rotamers( *this, pose, sfxn, *task_, packer_neighbor_graph );
 	}
 
 	update_offset_data();
 
-	if (task_->rotamer_links_exist()){
+	if ( task_->rotamer_links_exist() ) {
 		//check all the linked positions
 
 		utility::vector1<bool> visited(asym_length,false);
 
 		int expected_rot_count = 0;
 
-		for ( uint ii = 1; ii <= nmoltenres_; ++ii){
+		for ( uint ii = 1; ii <= nmoltenres_; ++ii ) {
 
 			utility::vector1<int> copies = task_->rotamer_links()->get_equiv(moltenres_2_resid_[ii]);
 
-			if ( visited[ moltenres_2_resid_[ii] ]){
+			if ( visited[ moltenres_2_resid_[ii] ] ) {
 				continue;
 			}
 
@@ -198,15 +194,15 @@ RotamerSets::build_rotamers(
 			//happen except in special cases (my scenario: add rotamer links and then relax
 			//with coordinate constraints, which addes virtual residues that have no equivalents
 			//set
-			if( copies.size() == 0 ) {
+			if ( copies.size() == 0 ) {
 				smallest_res = moltenres_2_resid_[ii];
 			}
 
-			for (uint jj = 1; jj <= copies.size(); ++jj){
+			for ( uint jj = 1; jj <= copies.size(); ++jj ) {
 				visited[ copies[jj] ] = true;
 				int buffer;
 				buffer = set_of_rotamer_sets_[ resid_2_moltenres_[ copies[jj] ] ]->num_rotamers();
-				if (buffer <= num_rot){
+				if ( buffer <= num_rot ) {
 					num_rot = buffer;
 					smallest_res = copies[jj];
 				}
@@ -216,16 +212,16 @@ RotamerSets::build_rotamers(
 			//relace rotset with the smallest set
 			RotamerSetCOP bufferset = rotamer_set_for_moltenresidue( resid_2_moltenres_[ smallest_res ]);
 
-			for (uint jj = 1; jj <= copies.size(); ++jj){
+			for ( uint jj = 1; jj <= copies.size(); ++jj ) {
 
-				if (copies[jj] == smallest_res){
+				if ( copies[jj] == smallest_res ) {
 					//no need to overwrite itself
 					continue;
 				}
 
 				RotamerSetOP smallset( rsf.create_rotamer_set( pose.residue( 1 ) )) ;
 
-				for (Rotamers::const_iterator itr = bufferset->begin(), ite = bufferset->end(); itr!=ite; ++itr ){
+				for ( Rotamers::const_iterator itr = bufferset->begin(), ite = bufferset->end(); itr!=ite; ++itr ) {
 
 					conformation::ResidueOP cloneRes( new conformation::Residue(*(*itr)->clone()) );
 
@@ -234,46 +230,42 @@ RotamerSets::build_rotamers(
 					//correct for connections if the smallset is from first or last
 					//residues.  These positions don't have a complete connect record.
 
-					if ((*itr)->seqpos() == 1 && copies[jj] != 1  ){
-					  if (cloneRes->has_variant_type( chemical::LOWER_TERMINUS_VARIANT )) {
-						  cloneRes = core::pose::remove_variant_type_from_residue( *cloneRes, chemical::LOWER_TERMINUS_VARIANT, pose);
-					  }
+					if ( (*itr)->seqpos() == 1 && copies[jj] != 1  ) {
+						if ( cloneRes->has_variant_type( chemical::LOWER_TERMINUS_VARIANT ) ) {
+							cloneRes = core::pose::remove_variant_type_from_residue( *cloneRes, chemical::LOWER_TERMINUS_VARIANT, pose);
+						}
 						cloneRes->residue_connection_partner(1, copies[jj]-1, 2);
 						cloneRes->residue_connection_partner(2, copies[jj]+1, 1);
-					}
-					else if ((*itr)->seqpos() == 1 && copies[jj] == 1  ){
+					} else if ( (*itr)->seqpos() == 1 && copies[jj] == 1  ) {
 						cloneRes->copy_residue_connections( pose.residue(copies[jj]));
-					}
-					else if ( (*itr)->seqpos() == asym_length && copies[jj] != (int) asym_length ){
-						if (cloneRes->has_variant_type( chemical::UPPER_TERMINUS_VARIANT )) {
+					} else if ( (*itr)->seqpos() == asym_length && copies[jj] != (int) asym_length ) {
+						if ( cloneRes->has_variant_type( chemical::UPPER_TERMINUS_VARIANT ) ) {
 							cloneRes = core::pose::remove_variant_type_from_residue( *cloneRes, chemical::UPPER_TERMINUS_VARIANT, pose);
 						}
 						cloneRes->residue_connection_partner(1, copies[jj]-1, 2);
 						cloneRes->residue_connection_partner(2, copies[jj]+1, 1);
-					}
-					else if ( (*itr)->seqpos() == asym_length && copies[jj] == (int) asym_length ){
+					} else if ( (*itr)->seqpos() == asym_length && copies[jj] == (int) asym_length ) {
 						cloneRes->copy_residue_connections( pose.residue(copies[jj]));
-					}
-					else {
+					} else {
 						cloneRes->copy_residue_connections( pose.residue(copies[jj]));
 					}
 
-					//debug	connectivity
-				  //std::cout << "resconn1: " << cloneRes->connected_residue_at_resconn( 1 ) << " ";
-				  //std::cout	<< cloneRes->residue_connection_conn_id(1);
-				  //std::cout << " resconn2: " << cloneRes->connected_residue_at_resconn( 2 ) << " ";
-				  //std::cout << cloneRes->residue_connection_conn_id(2);
-				  //std::cout << " seqpos: " << cloneRes->seqpos() << " for " << copies[jj] << " cloned from " << (*itr)->seqpos() << std::endl;
+					//debug connectivity
+					//std::cout << "resconn1: " << cloneRes->connected_residue_at_resconn( 1 ) << " ";
+					//std::cout << cloneRes->residue_connection_conn_id(1);
+					//std::cout << " resconn2: " << cloneRes->connected_residue_at_resconn( 2 ) << " ";
+					//std::cout << cloneRes->residue_connection_conn_id(2);
+					//std::cout << " seqpos: " << cloneRes->seqpos() << " for " << copies[jj] << " cloned from " << (*itr)->seqpos() << std::endl;
 
 					using namespace core::chemical;
 
 					//if pose is cyclic, it'll have cutpoint variants; in those cases,
 					//leave alone
-					if (copies[jj]==1 && !pose.residue(copies[jj]).has_variant_type(CUTPOINT_UPPER)) {
+					if ( copies[jj]==1 && !pose.residue(copies[jj]).has_variant_type(CUTPOINT_UPPER) ) {
 						cloneRes = core::pose::add_variant_type_to_residue( *cloneRes, chemical::LOWER_TERMINUS_VARIANT, pose);
 						//std::cout << cloneRes->name()  << " of variant type lower? " << cloneRes->has_variant_type("LOWER_TERMINUS") << std::endl;
 					}
-					if (copies[jj]== (int) asym_length && !pose.residue(copies[jj]).has_variant_type(CUTPOINT_LOWER)){
+					if ( copies[jj]== (int) asym_length && !pose.residue(copies[jj]).has_variant_type(CUTPOINT_LOWER) ) {
 						cloneRes = core::pose::add_variant_type_to_residue( *cloneRes, chemical::UPPER_TERMINUS_VARIANT, pose);
 						//std::cout << cloneRes->name() << " of variant type upper? " << cloneRes->has_variant_type("UPPER_TERMINUS") <<  std::endl;
 					}
@@ -282,7 +274,7 @@ RotamerSets::build_rotamers(
 
 					smallset->add_rotamer(*cloneRes);
 
-					//	std::cout << "smallset has " << smallset->num_rotamers() << std::endl;
+					// std::cout << "smallset has " << smallset->num_rotamers() << std::endl;
 				}
 				smallset->set_resid(copies[jj]);
 				set_of_rotamer_sets_[ resid_2_moltenres_[ copies[jj] ]] = smallset;
@@ -291,9 +283,9 @@ RotamerSets::build_rotamers(
 
 			//debug
 			/*
-						for (int i =1; i<= set_of_rotamer_sets_.size(); ++i){
-							std::cout << "set of rot set has " << set_of_rotamer_sets_[i]->num_rotamers() << " at " << i << std::endl;
-						}
+			for (int i =1; i<= set_of_rotamer_sets_.size(); ++i){
+			std::cout << "set of rot set has " << set_of_rotamer_sets_[i]->num_rotamers() << " at " << i << std::endl;
+			}
 			*/
 
 		}
@@ -303,19 +295,19 @@ RotamerSets::build_rotamers(
 
 	update_offset_data();
 
-//	// DOUG DOUG DOUG
-//	// Dump rotamers to the screen.
-//	for ( Size ii = 1; ii <= nmoltenres_; ++ii ) {
-//		RotamerSetOP rotset( set_of_rotamer_sets_[ ii ] );
-//		for ( Size jj = 1; jj <= rotset->num_rotamers(); ++jj ) {
-//			conformation::ResidueCOP jjres( rotset->rotamer( jj ) );
-//			std::cout << "ROT: " << ii << " " << jj << " " << jjres->name();
-//			for ( Size kk = 1; kk <= jjres->nchi(); ++kk ) {
-//				std::cout << " " << jjres->chi( kk );
-//			}
-//			std::cout << std::endl;
-//		}
-//	}
+	// // DOUG DOUG DOUG
+	// // Dump rotamers to the screen.
+	// for ( Size ii = 1; ii <= nmoltenres_; ++ii ) {
+	//  RotamerSetOP rotset( set_of_rotamer_sets_[ ii ] );
+	//  for ( Size jj = 1; jj <= rotset->num_rotamers(); ++jj ) {
+	//   conformation::ResidueCOP jjres( rotset->rotamer( jj ) );
+	//   std::cout << "ROT: " << ii << " " << jj << " " << jjres->name();
+	//   for ( Size kk = 1; kk <= jjres->nchi(); ++kk ) {
+	//    std::cout << " " << jjres->chi( kk );
+	//   }
+	//   std::cout << std::endl;
+	//  }
+	// }
 
 }
 
@@ -324,8 +316,7 @@ RotamerSets::update_offset_data()
 {
 	// count rotamers
 	nrotamers_ = 0;
-	for ( uint ii = 1; ii <= nmoltenres_; ++ii )
-	{
+	for ( uint ii = 1; ii <= nmoltenres_; ++ii ) {
 		nrotamers_for_moltenres_[ ii ] = set_of_rotamer_sets_[ii]->num_rotamers();
 		nrotamers_ += set_of_rotamer_sets_[ii]->num_rotamers();
 		if ( ii > 1 ) { nrotamer_offsets_[ ii ] = nrotamer_offsets_[ii - 1] + set_of_rotamer_sets_[ii - 1]->num_rotamers(); }
@@ -335,16 +326,12 @@ RotamerSets::update_offset_data()
 	moltenres_for_rotamer_.resize( nrotamers_ );
 	uint count_rots_for_moltenres = 1;
 	uint count_moltenres = 1;
-	for ( uint ii = 1; ii <= nrotamers_; ++ii )
-	{
+	for ( uint ii = 1; ii <= nrotamers_; ++ii ) {
 		moltenres_for_rotamer_[ ii ] = count_moltenres;
-		if ( count_rots_for_moltenres == nrotamers_for_moltenres_[ count_moltenres ] )
-		{
+		if ( count_rots_for_moltenres == nrotamers_for_moltenres_[ count_moltenres ] ) {
 			count_rots_for_moltenres = 1;
 			++count_moltenres;
-		}
-		else
-		{
+		} else {
 			++count_rots_for_moltenres;
 		}
 	}
@@ -395,8 +382,7 @@ RotamerSets::compute_one_body_energies(
 )
 {
 	// One body energies -- shared between pigs and otfigs
-	for ( uint ii = 1; ii <= nmoltenres_; ++ii )
-	{
+	for ( uint ii = 1; ii <= nmoltenres_; ++ii ) {
 		utility::vector1< core::PackerEnergy > one_body_energies( set_of_rotamer_sets_[ ii ]->num_rotamers() );
 		set_of_rotamer_sets_[ ii ]->compute_one_body_energies(
 			pose, scfxn, *task_, packer_neighbor_graph, one_body_energies );
@@ -420,17 +406,15 @@ RotamerSets::precompute_two_body_energies(
 
 	// Two body energies
 	//scoring::EnergyGraph const & energy_graph( pose.energies().energy_graph() );
-	for ( uint ii = 1; ii <= nmoltenres_; ++ ii )
-	{
+	for ( uint ii = 1; ii <= nmoltenres_; ++ ii ) {
 		//tt << "pairenergies for ii: " << ii << '\n';
 		uint const ii_resid = moltenres_2_resid_[ ii ];
 		//when design comes online, we will want to iterate across
 		//neighbors defined by a larger interaction cutoff
 		for ( graph::Graph::EdgeListConstIter
-			uli  = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_begin(),
-			ulie = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_end();
-			uli != ulie; ++uli )
-		{
+				uli  = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_begin(),
+				ulie = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_end();
+				uli != ulie; ++uli ) {
 			uint const jj_resid = (*uli)->get_second_node_ind();
 			uint const jj = resid_2_moltenres_[ jj_resid ]; //pretend we're iterating over jj >= ii
 			if ( jj == 0 ) continue; // Andrew, remove this magic number!
@@ -448,7 +432,7 @@ RotamerSets::precompute_two_body_energies(
 			pig->add_edge( ii, jj );
 			pig->add_to_two_body_energies_for_edge( ii, jj, pair_energy_table );
 
-			if ( finalize_edges && ! scfxn.any_lr_residue_pair_energy(pose, ii, jj) ){
+			if ( finalize_edges && ! scfxn.any_lr_residue_pair_energy(pose, ii, jj) ) {
 				pig->declare_edge_energies_final( ii, jj );
 			}
 
@@ -469,9 +453,9 @@ RotamerSets::precompute_two_body_energies(
 			uint const ii_resid = moltenres_2_resid_[ ii ];
 
 			for ( ResidueNeighborConstIteratorOP
-						rni = lrec->const_upper_neighbor_iterator_begin( ii_resid ),
-						rniend = lrec->const_upper_neighbor_iterator_end( ii_resid );
-						(*rni) != (*rniend); ++(*rni) ) {
+					rni = lrec->const_upper_neighbor_iterator_begin( ii_resid ),
+					rniend = lrec->const_upper_neighbor_iterator_end( ii_resid );
+					(*rni) != (*rniend); ++(*rni) ) {
 				Size const jj_resid = rni->upper_neighbor_id();
 
 				uint const jj = resid_2_moltenres_[ jj_resid ]; //pretend we're iterating over jj >= ii
@@ -540,7 +524,7 @@ RotamerSets::prepare_otf_graph(
 
 			bool any_neighbors = false;
 
-			if ( scfxn.any_lr_residue_pair_energy(pose, ii, jj) ){
+			if ( scfxn.any_lr_residue_pair_energy(pose, ii, jj) ) {
 				otfig->note_long_range_interactions_exist_for_edge( ii, jj );
 				// if there are any lr interactions between these two residues, assume, all
 				// residue type pairs interact
@@ -602,9 +586,9 @@ RotamerSets::prepare_otf_graph(
 			uint const ii_resid = moltenres_2_resid_[ ii ];
 
 			for ( ResidueNeighborConstIteratorOP
-						rni = lrec->const_upper_neighbor_iterator_begin( ii_resid ),
-						rniend = lrec->const_upper_neighbor_iterator_end( ii_resid );
-						(*rni) != (*rniend); ++(*rni) ) {
+					rni = lrec->const_upper_neighbor_iterator_begin( ii_resid ),
+					rniend = lrec->const_upper_neighbor_iterator_end( ii_resid );
+					(*rni) != (*rniend); ++(*rni) ) {
 				Size const jj_resid = rni->upper_neighbor_id();
 
 				uint const jj = resid_2_moltenres_[ jj_resid ]; //pretend we're iterating over jj >= ii
@@ -727,61 +711,61 @@ RotamerSets::compute_proline_correction_energies_for_otf_graph(
 	/* Giant code duplication ahead! -- when I'm 100% sure this is totally unncessary, I'll delete it... but it took a while to write
 	/// 3. For each molten residue
 	for ( Size ii = 1; ii <= (Size) nmoltenres_; ++ii ) {
-		RotamerSetCOP ii_rotset = set_of_rotamer_sets_[ ii ];
-		/// 4. Calculate one body energies
-		Size const ii_nrots = ii_rotset->num_rotamers();
-		Size const ii_resid = moltenres_2_resid_[ ii ];
+	RotamerSetCOP ii_rotset = set_of_rotamer_sets_[ ii ];
+	/// 4. Calculate one body energies
+	Size const ii_nrots = ii_rotset->num_rotamers();
+	Size const ii_resid = moltenres_2_resid_[ ii ];
 
-		utility::vector1< core::PackerEnergy > energies( ii_nrots, 0.0 );
-		for ( Size jj = 1; jj <= ii_nrots; ++jj ) {
-			EnergyMap emap;
-			sfxn.eval_ci_1b( *ii_rotset->rotamers( jj ), pose, emap );
-			sfxn.eval_cd_1b( *ii_rotset->rotamers( jj ), pose, emap );
-			energies[ jj ] += static_cast< core::PackerEnergy > ( sfxn.weights().dot( emap ) ); // precision loss here.
-		}
+	utility::vector1< core::PackerEnergy > energies( ii_nrots, 0.0 );
+	for ( Size jj = 1; jj <= ii_nrots; ++jj ) {
+	EnergyMap emap;
+	sfxn.eval_ci_1b( *ii_rotset->rotamers( jj ), pose, emap );
+	sfxn.eval_cd_1b( *ii_rotset->rotamers( jj ), pose, emap );
+	energies[ jj ] += static_cast< core::PackerEnergy > ( sfxn.weights().dot( emap ) ); // precision loss here.
+	}
 
-		sfxn.evaluate_rotamer_intrares_energies( *ii_rotset, pose, energies );
+	sfxn.evaluate_rotamer_intrares_energies( *ii_rotset, pose, energies );
 
-		/// 5. Iterate across all incident edges for the corresponding vertex in the packer neighbor graph
-		for ( graph::Graph::EdgeListConstIter
-				uli  = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_begin(),
-				ulie = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_end();
-				uli != ulie; ++uli ) {
-			Size const jj_resid = (*uli)->get_second_node_ind();
-			Size const jj = resid_2_moltenres_[ jj_resid ]; //pretend we're iterating over jj >= ii
-			if ( jj != 0 ) continue;
-			/// 6. Calculate two-body energies with the background residues
-			Residue const & neighbor( pose.residue( jj_resid ) );
-			sfxn.evaluate_rotamer_background_energies( ii_rotset, neighbor, pose, energies );
-		}
+	/// 5. Iterate across all incident edges for the corresponding vertex in the packer neighbor graph
+	for ( graph::Graph::EdgeListConstIter
+	uli  = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_begin(),
+	ulie = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_end();
+	uli != ulie; ++uli ) {
+	Size const jj_resid = (*uli)->get_second_node_ind();
+	Size const jj = resid_2_moltenres_[ jj_resid ]; //pretend we're iterating over jj >= ii
+	if ( jj != 0 ) continue;
+	/// 6. Calculate two-body energies with the background residues
+	Residue const & neighbor( pose.residue( jj_resid ) );
+	sfxn.evaluate_rotamer_background_energies( ii_rotset, neighbor, pose, energies );
+	}
 
-		/// 7. Iterate across long-range edges
-		for ( ScoreFunction::LR_2B_MethodIterator
-				lr_iter = sf.long_range_energies_begin(),
-				lr_end  = sf.long_range_energies_end();
-				lr_iter != lr_end; ++lr_iter ) {
-			LREnergyContainerCOP lrec = pose.energies().long_range_container( (*lr_iter)->long_range_type() );
-			if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
+	/// 7. Iterate across long-range edges
+	for ( ScoreFunction::LR_2B_MethodIterator
+	lr_iter = sf.long_range_energies_begin(),
+	lr_end  = sf.long_range_energies_end();
+	lr_iter != lr_end; ++lr_iter ) {
+	LREnergyContainerCOP lrec = pose.energies().long_range_container( (*lr_iter)->long_range_type() );
+	if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
 
-			// Potentially O(N) operation...
-			for ( ResidueNeighborConstIteratorOP
-					rni = lrec->const_neighbor_iterator_begin( ii_resid ),
-					rniend = lrec->const_neighbor_iterator_end( ii_resid );
-					(*rni) != (*rniend); ++(*rni) ) {
-				Size const neighbor_id = rni->neighbor_id();
-			debug_assert( neighbor_id != theresid );
-				if ( resid_2_moltenres_[ neighbor_id ] != 0 ) continue;
+	// Potentially O(N) operation...
+	for ( ResidueNeighborConstIteratorOP
+	rni = lrec->const_neighbor_iterator_begin( ii_resid ),
+	rniend = lrec->const_neighbor_iterator_end( ii_resid );
+	(*rni) != (*rniend); ++(*rni) ) {
+	Size const neighbor_id = rni->neighbor_id();
+	debug_assert( neighbor_id != theresid );
+	if ( resid_2_moltenres_[ neighbor_id ] != 0 ) continue;
 
-				(*lr_iter)->evaluate_rotamer_background_energies(
-					*ii_rotset, pose.residue( neighbor_id ), pose, sfxn,
-					sfxn.weights(), energies );
+	(*lr_iter)->evaluate_rotamer_background_energies(
+	*ii_rotset, pose.residue( neighbor_id ), pose, sfxn,
+	sfxn.weights(), energies );
 
-			} // (potentially) long-range neighbors of ii
-		} // long-range energy functions
+	} // (potentially) long-range neighbors of ii
+	} // long-range energy functions
 
-		for ( Size jj = 1; jj <= ii_nrots; ++jj ) {
-			otfig->add_to_one_body_energy_for_node_state( ii, jj, energies[ jj ] );
-		}
+	for ( Size jj = 1; jj <= ii_nrots; ++jj ) {
+	otfig->add_to_one_body_energy_for_node_state( ii, jj, energies[ jj ] );
+	}
 
 	}*/
 }
@@ -864,8 +848,7 @@ RotamerSets::prepare_sets_for_packing(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & sfxn)
 {
-	for ( Size ii = 1; ii <= nmoltenres(); ++ii )
-	{
+	for ( Size ii = 1; ii <= nmoltenres(); ++ii ) {
 		sfxn.prepare_rotamers_for_packing( pose, *set_of_rotamer_sets_[ ii ] );
 	}
 }
@@ -902,7 +885,7 @@ RotamerSets::get_sc_bbE(
 void
 RotamerSets::show( std::ostream & out ) const {
 	out << "RotamerSets with " << nmoltenres_ << " molten residues for " << total_residue_ << " total residues and " << nrotamers_ << " rotamers." << std::endl;
-	for( core::Size ii(1); ii <= set_of_rotamer_sets_.size(); ++ii) {
+	for ( core::Size ii(1); ii <= set_of_rotamer_sets_.size(); ++ii ) {
 		out << ii << ": " << *(set_of_rotamer_sets_[ii]) << std::endl;
 	}
 }

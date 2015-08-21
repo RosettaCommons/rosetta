@@ -180,24 +180,24 @@ public:
 	}
 
 	//void queue_repack_ubqtwores_mpi_messages() {
-	//	utility::SimulateMPI::set_mpi_rank( 0 );
+	// utility::SimulateMPI::set_mpi_rank( 0 );
 	//
-	//	// corresponding to the series of communications in MMTDriver::receive_state_input_data
-	//	utility::send_integer_to_node( 1, 1 ); // state index
-	//	utility::send_string_to_node( 1, "1ubq.pdb" );
-	//	utility::send_string_to_node( 1, ubq_twores_string() );
-	//	utility::send_string_to_node( 1, "bogus.corr" );
-	//	utility::send_string_to_node( 1, "1 1 _\n" );
-	//	utility::send_string_to_node( 1, "bogus.2res" );
-	//	utility::send_string_to_node( 1, "NATRO\nstart\n" );
-	//	utility::send_integer_to_node( 1, 0 ); // no npd properties
+	// // corresponding to the series of communications in MMTDriver::receive_state_input_data
+	// utility::send_integer_to_node( 1, 1 ); // state index
+	// utility::send_string_to_node( 1, "1ubq.pdb" );
+	// utility::send_string_to_node( 1, ubq_twores_string() );
+	// utility::send_string_to_node( 1, "bogus.corr" );
+	// utility::send_string_to_node( 1, "1 1 _\n" );
+	// utility::send_string_to_node( 1, "bogus.2res" );
+	// utility::send_string_to_node( 1, "NATRO\nstart\n" );
+	// utility::send_integer_to_node( 1, 0 ); // no npd properties
 	//}
 
 
 	//void queue_request_to_save_lastgen_sequence( std::string const & seq ) {
-	//	utility::send_integer_to_node( 1, devel::mmt_msd::result_from_last_generation_needs_saving );
-	//	utility::send_integer_to_node( 1, 1 );
-	//	utility::send_string_to_node( 1, seq );
+	// utility::send_integer_to_node( 1, devel::mmt_msd::result_from_last_generation_needs_saving );
+	// utility::send_integer_to_node( 1, 1 );
+	// utility::send_string_to_node( 1, seq );
 	//}
 
 	void initialize_main_opt_loop_messages(
@@ -374,9 +374,9 @@ public:
 			TS_ASSERT( false );
 		}
 
-		/// OK! let's see whether it worked.
+/// OK! let's see whether it worked.
 
-		/// 1st handshake
+/// 1st handshake
 		utility::SimulateMPI::set_mpi_rank( 1 );
 		ts_assert_mpi_buffer_has_integer( 0, "test_mmtdriver_end_to_end handshake 1", devel::mmt_msd::handshake_begin );
 		ts_assert_mpi_buffer_has_string(  0, "test_mmtdriver_end_to_end handshake 2", "ubq_entity.resfile" );

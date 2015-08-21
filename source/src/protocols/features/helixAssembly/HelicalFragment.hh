@@ -56,16 +56,16 @@ public:
 	core::Size start() const;
 	core::Size size() const;
 	bool reversed() const;
-	
+
 	void principal_component(numeric::xyzVector<core::Real> principal_component);
 	numeric::xyzVector<core::Real> principal_component() const;
-	
+
 	void com(numeric::xyzVector<core::Real> com);
 	numeric::xyzVector<core::Real> com() const;
-	
+
 	void sasa(core::Real sasa);
 	core::Real sasa() const;
-	
+
 	/// @brief output operator
 	friend std::ostream & operator <<(std::ostream & os, HelicalFragment const & t);
 

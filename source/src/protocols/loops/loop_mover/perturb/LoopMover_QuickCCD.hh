@@ -119,9 +119,9 @@ protected: // virtual loop operations
 		core::pose::Pose & pose,
 		protocols::loops::Loop const & loop
 	);
-    
-    virtual basic::Tracer & tr() const;
-    
+
+	virtual basic::Tracer & tr() const;
+
 protected: // data. should be private!
 
 	/// @brief randomize loops prior to performing loop modeling?

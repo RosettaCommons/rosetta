@@ -57,8 +57,8 @@ public:
 	/// @brief required in the context of the parser/scripting scheme
 	virtual moves::MoverOP clone() const;
 
-	virtual 
-	void 
+	virtual
+	void
 	parse_my_tag(
 		TagCOP /*tag*/,
 		basic::datacache::DataMap & /*data*/,

@@ -29,7 +29,7 @@ namespace scoring {
 namespace methods {
 
 
-	class HybridVDW_Energy;
+class HybridVDW_Energy;
 
 }
 }

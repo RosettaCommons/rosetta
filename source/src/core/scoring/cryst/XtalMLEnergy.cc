@@ -99,7 +99,7 @@ void XtalMLEnergy::setup_for_scoring( pose::Pose & , ScoreFunction const & ) con
 
 void XtalMLEnergy::finalize_total_energy(pose::Pose & pose, ScoreFunction const &sf, EnergyMap & emap) const {
 	using namespace core::scoring;
-	if (sf.get_weight( core::scoring::xtal_ml ) > 1e-8 || sf.get_weight( core::scoring::xtal_rwork ) > 1e-8 || sf.get_weight( core::scoring::xtal_rfree) > 1e-8) {
+	if ( sf.get_weight( core::scoring::xtal_ml ) > 1e-8 || sf.get_weight( core::scoring::xtal_rwork ) > 1e-8 || sf.get_weight( core::scoring::xtal_rfree) > 1e-8 ) {
 		emap[ xtal_ml ] += getPhenixInterface().getScore( pose );
 		emap[ xtal_rwork ] += getPhenixInterface().getR( );
 		emap[ xtal_rfree ] += getPhenixInterface().getRfree( );
@@ -108,7 +108,7 @@ void XtalMLEnergy::finalize_total_energy(pose::Pose & pose, ScoreFunction const 
 
 void
 XtalMLEnergy::setup_for_minimizing( pose::Pose & pose, ScoreFunction const &,
-		kinematics::MinimizerMapBase const & ) const
+	kinematics::MinimizerMapBase const & ) const
 {
 	using namespace core::chemical;
 	getPhenixInterface().getScore( pose );
@@ -119,17 +119,20 @@ XtalMLEnergy::setup_for_minimizing( pose::Pose & pose, ScoreFunction const &,
 void XtalMLEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const {
 	using namespace core::chemical;
 
-	if (sf.get_weight( core::scoring::xtal_rwork ) > 1e-8)
+	if ( sf.get_weight( core::scoring::xtal_rwork ) > 1e-8 ) {
 		utility_exit_with_message( "xtal_rwork  is not minimizable!" );
-	if (sf.get_weight( core::scoring::xtal_rfree ) > 1e-8)
+	}
+	if ( sf.get_weight( core::scoring::xtal_rfree ) > 1e-8 ) {
 		utility_exit_with_message( "xtal_rfree is not minimizable!" );
+	}
 
 	//fpd update mask
 	getPhenixInterface().updateSolventMask( pose );
-	if (sf.get_weight( core::scoring::xtal_ml ) > 1e-8 )
+	if ( sf.get_weight( core::scoring::xtal_ml ) > 1e-8 ) {
 		ml = getPhenixInterface().getScoreAndDerivs( pose, dml_dx );
-	else
+	} else {
 		ml = 0;
+	}
 }
 
 void XtalMLEnergy::eval_atom_derivative(
@@ -145,9 +148,9 @@ void XtalMLEnergy::eval_atom_derivative(
 	int atmid = id.atomno();
 	core::conformation::Residue const &rsd_i = pose.residue(resid);
 
-	if (rsd_i.aa() == core::chemical::aa_vrt) return;
+	if ( rsd_i.aa() == core::chemical::aa_vrt ) return;
 
-	if (dml_dx.size() == 0) return; //
+	if ( dml_dx.size() == 0 ) return; //
 
 	// look up derivative
 	numeric::xyzVector< core::Real > dCCdx = dml_dx[resid][atmid];

@@ -33,15 +33,15 @@ void lregister_PDBInputter( lua_State * lstate );
 
 class PDBInputter : public Inputter {
 
-	public:
-		PDBInputter():multiplier_(1), multiply_over_all_(true), curr_idx_(0){}
-		virtual ~PDBInputter();
+public:
+	PDBInputter():multiplier_(1), multiply_over_all_(true), curr_idx_(0){}
+	virtual ~PDBInputter();
 
-		// throw away n-1 poses and return the nth one
-		// necessary to prevent duplication of input across different masters
-		// of course, default is 1 for non-mpi scenarios
-		core::pose::PoseSP get_nth_pose( int n=1 );
-		bool has_nth_pose( int n=1 );
+	// throw away n-1 poses and return the nth one
+	// necessary to prevent duplication of input across different masters
+	// of course, default is 1 for non-mpi scenarios
+	core::pose::PoseSP get_nth_pose( int n=1 );
+	bool has_nth_pose( int n=1 );
 
 #ifdef USELUA
 		// need to pass in a map of the previous inputters, as inputters will call inputters
@@ -53,18 +53,18 @@ class PDBInputter : public Inputter {
 		virtual void lregister( lua_State * lstate );
 #endif
 
-		// factory functions
-		InputterSP create();
-		static std::string name() {
-			return "PDBInputter";
-		}
+	// factory functions
+	InputterSP create();
+	static std::string name() {
+		return "PDBInputter";
+	}
 
 
-	private:
-		std::deque< std::pair< int, std::string> > file_names_;
-		int multiplier_;
-		bool multiply_over_all_;
-		core::Size curr_idx_;
+private:
+	std::deque< std::pair< int, std::string> > file_names_;
+	int multiplier_;
+	bool multiply_over_all_;
+	core::Size curr_idx_;
 
 }; // end PDBInputter
 

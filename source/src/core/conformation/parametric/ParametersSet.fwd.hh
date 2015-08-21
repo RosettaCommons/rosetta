@@ -23,22 +23,22 @@
 // C++ headers
 
 namespace core {
-	namespace conformation {
-		namespace parametric {
+namespace conformation {
+namespace parametric {
 
-			class ParametersSet;
+class ParametersSet;
 
-			typedef  utility::pointer::weak_ptr< ParametersSet >  ParametersSetAP;
-			typedef  utility::pointer::weak_ptr< ParametersSet const >  ParametersSetCAP;
-			typedef  utility::pointer::shared_ptr< ParametersSet >  ParametersSetOP;
-			typedef  utility::pointer::shared_ptr< ParametersSet const >  ParametersSetCOP;
+typedef  utility::pointer::weak_ptr< ParametersSet >  ParametersSetAP;
+typedef  utility::pointer::weak_ptr< ParametersSet const >  ParametersSetCAP;
+typedef  utility::pointer::shared_ptr< ParametersSet >  ParametersSetOP;
+typedef  utility::pointer::shared_ptr< ParametersSet const >  ParametersSetCOP;
 
-			typedef  utility::vector1< ParametersSetOP >  ParametersSetOPs;
-			typedef  utility::vector1< ParametersSetCOP >  ParametersSetCOPs;
-			typedef  utility::vector1< ParametersSetCAP >  ParametersSetCAPs;
+typedef  utility::vector1< ParametersSetOP >  ParametersSetOPs;
+typedef  utility::vector1< ParametersSetCOP >  ParametersSetCOPs;
+typedef  utility::vector1< ParametersSetCAP >  ParametersSetCAPs;
 
-		} // namespace parametric
-	} // namespace conformation
+} // namespace parametric
+} // namespace conformation
 } // namespace core
 
 #endif // INCLUDED_core_conformation_parametric_ParametersSet_fwd_hh

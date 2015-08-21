@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   devel/domain_assembly/DomainAssemblyJobInputter.hh
-/// @brief  Declaration of DomainAssemblyJobInputter which creates a fusion pose from two PDB files 
+/// @brief  Declaration of DomainAssemblyJobInputter which creates a fusion pose from two PDB files
 /// @author Robert Lindner <rlindner@mpimf-heidelberg.mpg.de>
 
 #ifndef INCLUDED_devel_domain_assembly_DomainAssemblyJobInputter_hh
@@ -40,7 +40,7 @@ public:
 	virtual ~DomainAssemblyJobInputter();
 
 	/// @brief this function is responsible for filling the pose reference with the pose indicated by the job.  The Job object (within its InnerJob) contains a PoseCOP.  This function needs to either fill the pose reference from the InnerJob or, on first demand of a pose from that InnerJob, instantiate the pose, hand off a COP to the InnerJob, and fill the reference
- 	virtual void pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP job );
+	virtual void pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP job );
 
 	/// @brief this function determines what jobs exist using the da options file name and nstruct
 	virtual void fill_jobs( protocols::jd2::JobsContainer & jobs );

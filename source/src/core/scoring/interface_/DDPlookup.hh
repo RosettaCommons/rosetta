@@ -39,8 +39,8 @@ public:
 
 	core::Real
 	get_potentials(
-			const core::chemical::AA & aa1, const core::chemical::AA & aa2, core::Real distance
-			) const;
+		const core::chemical::AA & aa1, const core::chemical::AA & aa2, core::Real distance
+	) const;
 
 private:
 	numeric::interpolation::spline::SplineGenerator*** lookup_table_;

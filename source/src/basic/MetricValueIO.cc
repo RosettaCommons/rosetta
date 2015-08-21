@@ -64,7 +64,7 @@ write_metric_value_vector1(
 	vector1<T> const & vec(metric_value.value());
 
 	os << type_name << "[";
-	for (typename vector1<T>::const_iterator iter(vec.begin()), iter_end(vec.end()); iter != iter_end; ++iter) {
+	for ( typename vector1<T>::const_iterator iter(vec.begin()), iter_end(vec.end()); iter != iter_end; ++iter ) {
 		os << ' ' << *iter;
 	}
 	os << " ]";
@@ -80,36 +80,36 @@ write_metric_value(
 )
 {
 	MetricValue<double> const * const metric_value_real( dynamic_cast<MetricValue<double> const * > (&metric_value) );
-	if (metric_value_real) return write_metric_value_scalar(os, *metric_value_real, "Real");
+	if ( metric_value_real ) return write_metric_value_scalar(os, *metric_value_real, "Real");
 
 	MetricValue<int> const * const metric_value_int( dynamic_cast<MetricValue<int> const * > (&metric_value) );
-	if (metric_value_int) return write_metric_value_scalar(os, *metric_value_int, "Int");
+	if ( metric_value_int ) return write_metric_value_scalar(os, *metric_value_int, "Int");
 
 	MetricValue<size_t> const * const metric_value_size( dynamic_cast<MetricValue<size_t> const * > (&metric_value) );
-	if (metric_value_size) return write_metric_value_scalar(os, *metric_value_size, "Size");
+	if ( metric_value_size ) return write_metric_value_scalar(os, *metric_value_size, "Size");
 
 	MetricValue<bool> const * const metric_value_bool( dynamic_cast<MetricValue<bool> const * > (&metric_value) );
-	if (metric_value_bool) return write_metric_value_scalar(os, *metric_value_bool, "Bool");
+	if ( metric_value_bool ) return write_metric_value_scalar(os, *metric_value_bool, "Bool");
 
 	MetricValue<vector1<double> > const * const metric_value_vector_real(
 		dynamic_cast<MetricValue<vector1<double> > const * > (&metric_value)
 	);
-	if (metric_value_vector_real) return write_metric_value_vector1(os, *metric_value_vector_real, "Real");
+	if ( metric_value_vector_real ) return write_metric_value_vector1(os, *metric_value_vector_real, "Real");
 
 	MetricValue<vector1<int> > const * const metric_value_vector_int(
 		dynamic_cast<MetricValue<vector1<int> > const * > (&metric_value)
 	);
-	if (metric_value_vector_int) return write_metric_value_vector1(os, *metric_value_vector_int, "Int");
+	if ( metric_value_vector_int ) return write_metric_value_vector1(os, *metric_value_vector_int, "Int");
 
 	MetricValue<vector1<size_t> > const * const metric_value_vector_size(
 		dynamic_cast<MetricValue<vector1<size_t> > const * > (&metric_value)
 	);
-	if (metric_value_vector_size) return write_metric_value_vector1(os, *metric_value_vector_size, "Size");
+	if ( metric_value_vector_size ) return write_metric_value_vector1(os, *metric_value_vector_size, "Size");
 
 	MetricValue<vector1<bool> > const * const metric_value_vector_bool(
 		dynamic_cast<MetricValue<vector1<bool> > const * > (&metric_value)
 	);
-	if (metric_value_vector_bool) return write_metric_value_vector1(os, *metric_value_vector_bool, "Bool");
+	if ( metric_value_vector_bool ) return write_metric_value_vector1(os, *metric_value_vector_bool, "Bool");
 
 	return false;
 }
@@ -132,10 +132,10 @@ read_metric_value_scalar(
 )
 {
 	MetricValue<T> * const metric_value_typed( dynamic_cast<MetricValue<T> * > (&metric_value) );
-	if (!metric_value_typed) return false;
+	if ( !metric_value_typed ) return false;
 
 	T value;
-	if (!(is >> value)) return false;
+	if ( !(is >> value) ) return false;
 
 	metric_value_typed->set(value);
 
@@ -162,19 +162,19 @@ read_metric_value_vector1(
 )
 {
 	MetricValue<vector1<T> > * const metric_value_typed( dynamic_cast<MetricValue<vector1<T> > * > (&metric_value) );
-	if (!metric_value_typed) return false;
+	if ( !metric_value_typed ) return false;
 
 	vector1<T> vec;
 
 	std::string word;
-	while (is >> word) {
-		if (word == "]") {
+	while ( is >> word ) {
+		if ( word == "]" ) {
 			metric_value_typed->set(vec);
 			return true;
 		}
 		std::istringstream iss(word);
 		T value;
-		if (!(iss >> value)) return false;
+		if ( !(iss >> value) ) return false;
 		vec.push_back(value);
 	}
 
@@ -202,17 +202,17 @@ read_metric_value_template(
 )
 {
 	std::string word;
-	if (!(is >> word)) return false;
+	if ( !(is >> word) ) return false;
 
-	if (word == "Real") return read_metric_value_scalar<double>(is, metric_value);
-	if (word == "Int") return read_metric_value_scalar<int>(is, metric_value);
-	if (word == "Size") return read_metric_value_scalar<size_t>(is, metric_value);
-	if (word == "Bool") return read_metric_value_scalar<bool>(is, metric_value);
+	if ( word == "Real" ) return read_metric_value_scalar<double>(is, metric_value);
+	if ( word == "Int" ) return read_metric_value_scalar<int>(is, metric_value);
+	if ( word == "Size" ) return read_metric_value_scalar<size_t>(is, metric_value);
+	if ( word == "Bool" ) return read_metric_value_scalar<bool>(is, metric_value);
 
-	if (word == "Real[") return read_metric_value_vector1<double>(is, metric_value);
-	if (word == "Int[") return read_metric_value_vector1<int>(is, metric_value);
-	if (word == "Size[") return read_metric_value_vector1<size_t>(is, metric_value);
-	if (word == "Bool[") return read_metric_value_vector1<bool>(is, metric_value);
+	if ( word == "Real[" ) return read_metric_value_vector1<double>(is, metric_value);
+	if ( word == "Int[" ) return read_metric_value_vector1<int>(is, metric_value);
+	if ( word == "Size[" ) return read_metric_value_vector1<size_t>(is, metric_value);
+	if ( word == "Bool[" ) return read_metric_value_vector1<bool>(is, metric_value);
 
 	return false;
 }
@@ -233,7 +233,7 @@ read_metric_value(
 {
 	MetricValueBaseOP metric_value;
 
-	if (read_metric_value_template(is, metric_value)) return metric_value;
+	if ( read_metric_value_template(is, metric_value) ) return metric_value;
 
 	return NULL;
 }

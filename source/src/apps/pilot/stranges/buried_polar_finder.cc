@@ -92,7 +92,7 @@ OPT_1GRP_KEY( Boolean, bpf, variable_sasa_radii )
 
 // mover deffinition
 class CalcsTestMover : public Mover {
-public:
+	public:
 
 	CalcsTestMover();
 
@@ -100,54 +100,54 @@ public:
 
 	virtual std::string get_name() const{
 		return "CalcsTestMover";
-	}
+}
 
-	virtual void register_calculators( );
+virtual void register_calculators( );
 
-	virtual void calc_stuff(
-		pose::Pose & pose,
-		core::id::AtomID_Map< core::Real > & atom_sasa,
-		core::id::AtomID_Map< core::Size > & atom_hbonds
-	);
+virtual void calc_stuff(
+	pose::Pose & pose,
+	core::id::AtomID_Map< core::Real > & atom_sasa,
+	core::id::AtomID_Map< core::Size > & atom_hbonds
+);
 
-	virtual void pretty_print(
-		pose::Pose const & pose,
-		conformation::Residue const & rsd,
-		Size resnum,
-		Size atom_number,
-		Real sasa,
-		Size numHbonds,
-		bool unsat
-	) const;
+virtual void pretty_print(
+	pose::Pose const & pose,
+	conformation::Residue const & rsd,
+	Size resnum,
+	Size atom_number,
+	Real sasa,
+	Size numHbonds,
+	bool unsat
+) const;
 
-	virtual core::Size satisfaction_cutoff( std::string atom_type );
+virtual core::Size satisfaction_cutoff( std::string atom_type );
 
-	virtual MoverOP clone() const {
-		return MoverOP( new CalcsTestMover( *this ) );
-	}
+virtual MoverOP clone() const {
+	return MoverOP( new CalcsTestMover( *this ) );
+}
 
-	virtual	MoverOP	fresh_instance() const {
-		return clone();
-	}
+virtual MoverOP fresh_instance() const {
+	return clone();
+}
 
 private:
-	core::scoring::ScoreFunctionOP scorefxn_;
+core::scoring::ScoreFunctionOP scorefxn_;
 
-	utility::file::FileName posename_;
+utility::file::FileName posename_;
 
-  //names of calculators;
-	std::string Sasa_, NumberHBonds_, BuriedUnsatisfiedPolars_;
-	bool calcs_ready_;
-	//probe radius
-	core::Real probe_radius_;
-	//numbers of hbonds sat/unsat
-	Real n_burried_unsat_, n_exposed_sat_;
-	//cutoff to be considered burried...
-	core::Real burial_cutoff_;
-	//print only burried unsat atoms
-	bool print_unsat_only_;
-	//number of atoms of different types in a protein
-	Real n_heavy_atoms_, n_burried_N_, n_burried_O, n_burried_polars_,n_exposed_polars_, n_polars_;
+//names of calculators;
+std::string Sasa_, NumberHBonds_, BuriedUnsatisfiedPolars_;
+bool calcs_ready_;
+//probe radius
+core::Real probe_radius_;
+//numbers of hbonds sat/unsat
+Real n_burried_unsat_, n_exposed_sat_;
+//cutoff to be considered burried...
+core::Real burial_cutoff_;
+//print only burried unsat atoms
+bool print_unsat_only_;
+//number of atoms of different types in a protein
+Real n_heavy_atoms_, n_burried_N_, n_burried_O, n_burried_polars_,n_exposed_polars_, n_polars_;
 };
 
 CalcsTestMover::CalcsTestMover() {
@@ -165,7 +165,7 @@ void CalcsTestMover::apply( core::pose::Pose & pose ){
 	using namespace std;
 	posename_ = pose.pdb_info()->name();
 
-	if(!calcs_ready_){
+	if ( !calcs_ready_ ) {
 		register_calculators();
 		calcs_ready_ = true;
 	}
@@ -200,37 +200,37 @@ void CalcsTestMover::apply( core::pose::Pose & pose ){
 	//core::Real total_fraction_unsat ( n_burried_unsat_ / n_polars_ );  // unused ~Labonte
 	//core::Real exposed_fraction_sat ( n_exposed_sat_ / n_exposed_polars_);  // unused ~Labonte
 	//core::Real total_exposed_sat ( n_exposed_sat_ / n_polars_);  // unused ~Labonte
-	// 	//debugging
-	// 	cout << "Total burried:  "<<  n_burried_unsat_ << endl;
-	// 	cout << "Burried Polars:  " << n_burried_polars_ <<  " fraction unsat:  "<< burried_fraction_unsat << endl;
-	// 	cout << "Total Polars:  " << n_polars_ <<" n_polars_ << total faction unsat: " << total_fraction_unsat << endl;
+	//  //debugging
+	//  cout << "Total burried:  "<<  n_burried_unsat_ << endl;
+	//  cout << "Burried Polars:  " << n_burried_polars_ <<  " fraction unsat:  "<< burried_fraction_unsat << endl;
+	//  cout << "Total Polars:  " << n_polars_ <<" n_polars_ << total faction unsat: " << total_fraction_unsat << endl;
 
-// 	//print totals
-// 	TR << "INPUT:  " << setw(25)  << posename_.base()
-// 		 << "   total_burried_unsat: "<< setprecision(0) << fixed << n_burried_unsat_
-// 		 << "   faction_burried_polars_unsat: "<< setprecision(3) << fixed << burried_fraction_unsat
-// 		 << "   faction_total_polars_unsat: "<< setprecision(3) << fixed << total_fraction_unsat
-// 		 << endl;
+	//  //print totals
+	//  TR << "INPUT:  " << setw(25)  << posename_.base()
+	//    << "   total_burried_unsat: "<< setprecision(0) << fixed << n_burried_unsat_
+	//    << "   faction_burried_polars_unsat: "<< setprecision(3) << fixed << burried_fraction_unsat
+	//    << "   faction_total_polars_unsat: "<< setprecision(3) << fixed << total_fraction_unsat
+	//    << endl;
 
-// 	TR << "INPUT:  " << setw(25)  << posename_.base()
-// 		 << "   total_exposed_sat: "<< setprecision(0) << fixed << n_exposed_sat_
-// 		 << "   faction_exposed_polars_sat: "<< setprecision(3) << fixed << exposed_fraction_sat
-// 		 << "   faction_total_exposed_sat: "<< setprecision(3) << fixed << total_exposed_sat
-// 		 << endl;
+	//  TR << "INPUT:  " << setw(25)  << posename_.base()
+	//    << "   total_exposed_sat: "<< setprecision(0) << fixed << n_exposed_sat_
+	//    << "   faction_exposed_polars_sat: "<< setprecision(3) << fixed << exposed_fraction_sat
+	//    << "   faction_total_exposed_sat: "<< setprecision(3) << fixed << total_exposed_sat
+	//    << endl;
 
 	//print totals
 	TR << "INPUT:  " << setw(25)  << posename_.base()
-		 << "   burried_unsat: "<< setprecision(0) << fixed << n_burried_unsat_
-		 << "   burried_polar: "<< setprecision(0) << fixed << n_burried_polars_
-		 << "   exposed_sat: "<< setprecision(0) << fixed << n_exposed_sat_
-		 << "   exposed_polar: " << setprecision(0) << fixed << n_exposed_polars_
-		 << "   total_polar: " << setprecision(0) << fixed << n_polars_
-		 << "   probe_radius:  "<< setprecision(2) << fixed << probe_radius_
-		 << endl;
+		<< "   burried_unsat: "<< setprecision(0) << fixed << n_burried_unsat_
+		<< "   burried_polar: "<< setprecision(0) << fixed << n_burried_polars_
+		<< "   exposed_sat: "<< setprecision(0) << fixed << n_exposed_sat_
+		<< "   exposed_polar: " << setprecision(0) << fixed << n_exposed_polars_
+		<< "   total_polar: " << setprecision(0) << fixed << n_polars_
+		<< "   probe_radius:  "<< setprecision(2) << fixed << probe_radius_
+		<< endl;
 
 	set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY); //hacky way to prevent output
 
-  return;
+	return;
 }//end apply
 
 
@@ -254,17 +254,17 @@ void CalcsTestMover::calc_stuff(
 	n_polars_ = 0;
 	n_exposed_polars_ = 0;
 
-  for( Size ii = 1; ii <= pose.total_residue(); ++ii){
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		conformation::Residue rsd = pose.residue( ii );
 		//for all atoms in res
-		for( Size at = 1; at <= rsd.nheavyatoms(); ++at){
-				core::id::AtomID atid( at, ii );
+		for ( Size at = 1; at <= rsd.nheavyatoms(); ++at ) {
+			core::id::AtomID atid( at, ii );
 			bool this_atom_bur_unsat(false);
 			bool this_atom_exposed_sat(false);
 			++n_heavy_atoms_;
 
 			//is it a don/accp?
-			if( rsd.atom_type( at ).is_acceptor() || rsd.atom_type( at ).is_donor() ){
+			if ( rsd.atom_type( at ).is_acceptor() || rsd.atom_type( at ).is_donor() ) {
 				++n_polars_;
 				//how many hbonds to atom
 				Size nhbonds ( atom_hbonds[ atid ] );
@@ -273,8 +273,8 @@ void CalcsTestMover::calc_stuff(
 				//find sasa by adding in H's
 				Real cursasa =  atom_sasa[ atid ];
 				TRdebug << "Residue: "<< ii << "  Atom: "<< rsd.type().atom_name( at ) << " SASA: " << atom_sasa[ atid ]
-								<< "\n";
-				for( Size hcount = rsd.type().attached_H_begin( at ); hcount<= rsd.type().attached_H_end( at ); hcount++){
+					<< "\n";
+				for ( Size hcount = rsd.type().attached_H_begin( at ); hcount<= rsd.type().attached_H_end( at ); hcount++ ) {
 					cursasa = cursasa + atom_sasa[ core::id::AtomID ( hcount, ii ) ];
 					TRdebug << "Hydrogen: " << rsd.type().atom_name( hcount ) << "  SASA: "
 						<<  atom_sasa[ core::id::AtomID ( hcount, ii ) ] << "\n";
@@ -283,30 +283,30 @@ void CalcsTestMover::calc_stuff(
 				//how many does this require?
 				Size satisfaction_cut = CalcsTestMover::satisfaction_cutoff( rsd.type().atom_type( at ).name() );
 				//What is this atom's situation?
-				if( cursasa < burial_cutoff_ ){
+				if ( cursasa < burial_cutoff_ ) {
 					++n_burried_polars_;
-					if( num_bonds < satisfaction_cut) {
+					if ( num_bonds < satisfaction_cut ) {
 						this_atom_bur_unsat = true;
 					}
 				}
-				if( cursasa > burial_cutoff_ ){
+				if ( cursasa > burial_cutoff_ ) {
 					++n_exposed_polars_;
-					if( num_bonds >= satisfaction_cut)  {
+					if ( num_bonds >= satisfaction_cut )  {
 						this_atom_exposed_sat = true;
 					}
 				}
 				//now print info about all polar atoms
-				if( this_atom_bur_unsat ) {
-					CalcsTestMover::pretty_print( pose, rsd, ii, at, cursasa, nhbonds, this_atom_bur_unsat	);
-				} else if (!print_unsat_only_) {
-					CalcsTestMover::pretty_print( pose, rsd, ii, at, cursasa, nhbonds, this_atom_bur_unsat	);
+				if ( this_atom_bur_unsat ) {
+					CalcsTestMover::pretty_print( pose, rsd, ii, at, cursasa, nhbonds, this_atom_bur_unsat );
+				} else if ( !print_unsat_only_ ) {
+					CalcsTestMover::pretty_print( pose, rsd, ii, at, cursasa, nhbonds, this_atom_bur_unsat );
 				}
 
 			}//if is don/accp
-			if( this_atom_bur_unsat ) {
+			if ( this_atom_bur_unsat ) {
 				++n_burried_unsat_;
 			}
-			if( this_atom_exposed_sat ) {
+			if ( this_atom_exposed_sat ) {
 				++n_exposed_sat_;
 			}
 		}//for atoms in a residue
@@ -352,9 +352,9 @@ void CalcsTestMover::register_calculators(){
 
 	//now check on calculators
 	Sasa_ = "Sasa_" + name;
-	if( CalculatorFactory::Instance().check_calculator_exists( Sasa_ ) ){
+	if ( CalculatorFactory::Instance().check_calculator_exists( Sasa_ ) ) {
 		Warning() << "In InterfaceAnalyzerMover, calculator " << Sasa_
-		<< " already exists, this is hopefully correct for your purposes" << std::endl;
+			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
 		if ( basic::options::option[ basic::options::OptionKeys::bpf::variable_sasa_radii ] ) {
 			CalculatorFactory::Instance().register_calculator( Sasa_, PoseMetricCalculatorOP( new devel::vardist_solaccess::VarSolDistSasaCalculator ) );
@@ -365,7 +365,7 @@ void CalcsTestMover::register_calculators(){
 	}
 
 	NumberHBonds_ = "NumberHBonds_" + name;
-	if( CalculatorFactory::Instance().check_calculator_exists( NumberHBonds_ ) ){
+	if ( CalculatorFactory::Instance().check_calculator_exists( NumberHBonds_ ) ) {
 		Warning() << "In InterfaceAnalyzerMover, calculator " << NumberHBonds_
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
@@ -373,7 +373,7 @@ void CalcsTestMover::register_calculators(){
 	}
 
 	BuriedUnsatisfiedPolars_ = "BuriedUnsatisfiedPolars_" + name;
-	if( CalculatorFactory::Instance().check_calculator_exists( BuriedUnsatisfiedPolars_ ) ){
+	if ( CalculatorFactory::Instance().check_calculator_exists( BuriedUnsatisfiedPolars_ ) ) {
 		Warning() << "In InterfaceAnalyzerMover, calculator " << BuriedUnsatisfiedPolars_
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
@@ -389,14 +389,14 @@ CalcsTestMover::satisfaction_cutoff( std::string atom_type )
 {
 
 	//according to jk, buried hydroxyls are often seen making only one hydrogen bond. also, ether oxygens often are bad h-bond acceptors
-	if( atom_type == "OH" ) return 2;
+	if ( atom_type == "OH" ) return 2;
 
 	//backbone oxygens also only have one h-bbond in most secondary structure elements
-	else if (atom_type == "OCbb") return 2;
+	else if ( atom_type == "OCbb" ) return 2;
 
-	else if( atom_type ==  "S")	return 2;
+	else if ( atom_type ==  "S" ) return 2;
 
- //everything else we expect to have 3 bonded/h-bonded neighbours to count as satisfied
+	//everything else we expect to have 3 bonded/h-bonded neighbours to count as satisfied
 	else return 3;
 
 }
@@ -412,15 +412,15 @@ main( int argc, char * argv [] )
 	try {
 
 
-	option.add( print_only_unsat, "Print only unsatisfied atoms" ).def(false);
-	NEW_OPT( bpf::variable_sasa_radii, "Use the ", false );
+		option.add( print_only_unsat, "Print only unsatisfied atoms" ).def(false);
+		NEW_OPT( bpf::variable_sasa_radii, "Use the ", false );
 
-	// init
-	devel::init(argc, argv);
+		// init
+		devel::init(argc, argv);
 
-	protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new CalcsTestMover ) );
+		protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new CalcsTestMover ) );
 
-	std::cout << "Done! -------------------------------"<< std::endl;
+		std::cout << "Done! -------------------------------"<< std::endl;
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

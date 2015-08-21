@@ -77,7 +77,7 @@ void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, c
 	//CircularHarmonicFuncOP ang_func_60( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_over_3(), 0.02 ) );
 	CircularHarmonicFuncOP dih_func_180( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
 	CircularHarmonicFuncOP dih_func_0( new CircularHarmonicFunc( 0, 0.02 ) );
-																			 
+
 	AtomID aidCYH( pose.residue( hbs_pre_position ).atom_index("CYH"), hbs_pre_position );
 	AtomID aidHYH( pose.residue( hbs_pre_position ).atom_index("HYH"), hbs_pre_position );
 	AtomID aidCZH( pose.residue( hbs_pre_position+2 ).atom_index("CZH"), hbs_pre_position+2 );
@@ -97,7 +97,7 @@ void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, c
 	ConstraintCOP dihedral( ConstraintOP( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func_180 ) ) );
 	//ConstraintCOP dihedral2( ConstraintOP( new DihedralConstraint( aidN, aidCZH, aidCYH, aidHYH, dih_func_0 ) ) );
 	ConstraintCOP dihedral2( ConstraintOP( new DihedralConstraint( aidHYH, aidCZH, aidCY2, aidCYH, dih_func_0 ) ) );
-	
+
 
 	pose.add_constraint( atompair );
 	pose.add_constraint( atompair2 );
@@ -132,14 +132,14 @@ void HbsPatcher::apply( core::pose::Pose & pose )
 
 	//awatkins: check for proline
 	if ( pre_base_name == "PRO" || pre_base_name == "DPRO" ||
-		 post_base_name == "PRO" || post_base_name == "DPRO" ) {
-    	utility_exit_with_message("Cannot patch proline");
+			post_base_name == "PRO" || post_base_name == "DPRO" ) {
+		utility_exit_with_message("Cannot patch proline");
 	}
-	if ( pose.residue(hbs_pre_pos_).has_variant_type(chemical::HBS_POST) == 1) {
-    	utility_exit_with_message("Cannot patch HBS_PRE on an HBS_POST");
+	if ( pose.residue(hbs_pre_pos_).has_variant_type(chemical::HBS_POST) == 1 ) {
+		utility_exit_with_message("Cannot patch HBS_PRE on an HBS_POST");
 	}
-	if ( pose.residue(hbs_post_pos_).has_variant_type(chemical::HBS_PRE) == 1) {
-    	utility_exit_with_message("Cannot patch HBS_POST on an HBS_PRE");
+	if ( pose.residue(hbs_post_pos_).has_variant_type(chemical::HBS_PRE) == 1 ) {
+		utility_exit_with_message("Cannot patch HBS_POST on an HBS_PRE");
 	}
 
 	//awatkins: check if already patched
@@ -151,9 +151,9 @@ void HbsPatcher::apply( core::pose::Pose & pose )
 		TR<< pre_base_type.name() << std::endl;
 
 		//awatkins: add variant
-		
+
 		std::string const base_name( core::chemical::residue_type_base_name( pre_base_type ) );
-		
+
 		// the desired set of variant types:
 		utility::vector1< std::string > target_variants( pre_base_type.properties().get_list_of_variants() );
 		if ( !pre_base_type.has_variant_type( chemical::HBS_PRE ) ) {
@@ -181,7 +181,7 @@ void HbsPatcher::apply( core::pose::Pose & pose )
 		TR<< post_base_type.name() << std::endl;
 
 		std::string const base_name( core::chemical::residue_type_base_name( post_base_type ) );
-		
+
 		// the desired set of variant types:
 		utility::vector1< std::string > target_variants( post_base_type.properties().get_list_of_variants() );
 		if ( !post_base_type.has_variant_type( chemical::HBS_POST ) ) {
@@ -195,15 +195,15 @@ void HbsPatcher::apply( core::pose::Pose & pose )
 		replace_res_post.set_all_chi(pose.residue(hbs_post_pos_).chi());
 		//replace_res_pre.update_residue_connection_mapping();
 		//replace_res_pre.mainchain_torsions(pose.residue(hbs_pre_pos_).mainchain_torsions());
-					
+
 		pose.replace_residue( hbs_post_pos_, replace_res_post, true );
 		conformation::idealize_position( hbs_post_pos_, pose.conformation() );
 		TR<< replace_res_post.name() << std::endl;
-					
+
 	}// if post
 
 	add_hbs_constraint( pose, hbs_pre_pos_ );
-	
+
 	//awatkins: need to do all at once at the end because occasionally will get error:
 	//awatkins: Unable to handle change in the number of residue connections in the presence of pseudobonds!
 	//pose.conformation().detect_bonds();
@@ -221,8 +221,8 @@ HbsPatcher::get_name() const {
 
 /// @brief
 HbsPatcher::HbsPatcher(
-		core::Size hbs_seq_position
-	): Mover(), hbs_pre_pos_(hbs_seq_position), hbs_post_pos_(hbs_seq_position+2)
+	core::Size hbs_seq_position
+): Mover(), hbs_pre_pos_(hbs_seq_position), hbs_post_pos_(hbs_seq_position+2)
 {
 	Mover::type( "HbsPatcher" );
 

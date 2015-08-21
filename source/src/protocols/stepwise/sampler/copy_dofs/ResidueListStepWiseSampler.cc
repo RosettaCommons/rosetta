@@ -26,20 +26,20 @@ namespace stepwise {
 namespace sampler {
 namespace copy_dofs {
 
-	//Constructor
-	ResidueListStepWiseSampler::ResidueListStepWiseSampler( utility::vector1< core::conformation::ResidueOP > copy_dofs ):
-		copy_dofs_( copy_dofs )
-	{
-	}
+//Constructor
+ResidueListStepWiseSampler::ResidueListStepWiseSampler( utility::vector1< core::conformation::ResidueOP > copy_dofs ):
+	copy_dofs_( copy_dofs )
+{
+}
 
-	//Destructor
-	ResidueListStepWiseSampler::~ResidueListStepWiseSampler()
-	{}
+//Destructor
+ResidueListStepWiseSampler::~ResidueListStepWiseSampler()
+{}
 
-	core::conformation::ResidueOP
-	ResidueListStepWiseSampler::get_residue_at_origin(){
-		return copy_dofs_[ id() ];
-	}
+core::conformation::ResidueOP
+ResidueListStepWiseSampler::get_residue_at_origin(){
+	return copy_dofs_[ id() ];
+}
 
 } //copy_dofs
 } //sampler

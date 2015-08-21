@@ -88,17 +88,17 @@ SequenceOP CompositeSequence::clone() const {
 }
 
 std::string CompositeSequence::to_string() const {
- 	using ObjexxFCL::string_of;
+	using ObjexxFCL::string_of;
 	std::string retval("");
 	retval = Sequence::to_string();
- 	//retval += "*** IN CompositeSequence::to_string() ***\n";
+	//retval += "*** IN CompositeSequence::to_string() ***\n";
 	//retval += "*** print out " + string_of(n_seqs()) + " sequences\n";
 	//retval += "*** base sequence " + sequence() + "\n";
 	//for ( Size ii = 1; ii <= n_seqs(); ++ii ) {
-	//	retval += seqs_[ii]->to_string() + "\n";
+	// retval += seqs_[ii]->to_string() + "\n";
 	//}
 	return retval;
- 	//retval += "*** DONE WITH CompositeSequence::to_string() ***\n";
+	//retval += "*** DONE WITH CompositeSequence::to_string() ***\n";
 }
 
 std::string CompositeSequence::type() const {

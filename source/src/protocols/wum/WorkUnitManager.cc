@@ -67,8 +67,8 @@ void WorkUnitQueue_Swapped::add( WorkUnitBaseOP new_wu )
 
 	// if either we have to many structures in memory OR we have a running file swap already,
 	// add to swap pile, not to in-memory pile
-	if( ( wus_.size() > memory_limit_) ||
-      ( (n_swap_total_ - n_swap_dead_ ) > 0 ) ){
+	if ( ( wus_.size() > memory_limit_) ||
+			( (n_swap_total_ - n_swap_dead_ ) > 0 ) ) {
 		add_to_swap( new_wu );
 	} else {
 		// or call normal parent version
@@ -80,7 +80,7 @@ void WorkUnitQueue_Swapped::add( WorkUnitBaseOP new_wu )
 void WorkUnitQueue_Swapped::add_to_swap( WorkUnitBaseOP new_wu ){
 	swap_buffer_.add( new_wu );
 
-	if( swap_buffer_.size() > max_swap_buffer_size_ ){
+	if ( swap_buffer_.size() > max_swap_buffer_size_ ) {
 		// drain buffer to disk swap
 		std::ofstream ofout( swap_file_.c_str() , std::ios::app | std::ios::binary );
 		wum_->write_queue( swap_buffer_, ofout );
@@ -121,10 +121,10 @@ void WorkUnitManager::read_queues_from_file( const std::string& prefix )  {
 
 void WorkUnitManager::read_queue( WorkUnitQueue &the_queue, std::istream &fin ){
 	core::Size count=0;
-	while( !fin.eof() ){
+	while ( !fin.eof() ) {
 		TR.Debug << "Read: " << count << std::endl;
 		WorkUnitBaseOP new_wu;
-		if( !read_work_unit( new_wu, fin ) ) break;
+		if ( !read_work_unit( new_wu, fin ) ) break;
 		the_queue.push_back( new_wu );
 		count++;
 	}
@@ -132,16 +132,15 @@ void WorkUnitManager::read_queue( WorkUnitQueue &the_queue, std::istream &fin ){
 
 
 void WorkUnitManager::write_queue( const WorkUnitQueue &the_queue, std::ostream &out ) const {
-	for( WorkUnitQueue::const_iterator it = the_queue.begin();
-				it != the_queue.end(); ++it )
-	{
+	for ( WorkUnitQueue::const_iterator it = the_queue.begin();
+			it != the_queue.end(); ++it ) {
 		write_work_unit( *it, out );
 	}
 }
 
 
 void WorkUnitManager::write_work_unit( const WorkUnitBaseOP& MPI_ONLY(wu), std::ostream& MPI_ONLY( out ) ) const {
-	#ifdef USEMPI
+#ifdef USEMPI
 	// serialize data
 	double time1=MPI_Wtime();
 	wu->serialize();
@@ -160,7 +159,7 @@ void WorkUnitManager::write_work_unit( const WorkUnitBaseOP& MPI_ONLY(wu), std::
 	wu->clear_serial_data();
 	double time3=MPI_Wtime();
 	TR.Debug << "S: " << time3-time2 << "  " << time2-time1 << "  " << std::endl;
-	#endif
+#endif
 }
 
 
@@ -172,11 +171,11 @@ bool WorkUnitManager::read_work_unit( WorkUnitBaseOP &qualified_wu,  std::istrea
 	unsigned int my_WUB_magic_header_integer=0;
 	// Read magic 32 bit int
 	in.read( (char*) &my_WUB_magic_header_integer, 4 );
-	if( in.eof() ){
+	if ( in.eof() ) {
 		TR.Debug << "EOF" << std::endl;
 		return false;
 	}
-	if(my_WUB_magic_header_integer != WUB_magic_header_integer){
+	if ( my_WUB_magic_header_integer != WUB_magic_header_integer ) {
 		TR.Error << "Magic Integer in file: " << my_WUB_magic_header_integer << " != " << WUB_magic_header_integer << std::endl;
 		TR.Error << "ERROR Reading in WorkUnit from stream - Magic integer does not match. " << std::endl;
 		std::cerr << "Magic Integer in file: " << my_WUB_magic_header_integer << " != " << WUB_magic_header_integer << std::endl;
@@ -184,7 +183,7 @@ bool WorkUnitManager::read_work_unit( WorkUnitBaseOP &qualified_wu,  std::istrea
 	}
 
 	in.read( (char*)&size_of_raw_data, 4 );
-	if( size_of_raw_data > (1024*1024*1024) ){
+	if ( size_of_raw_data > (1024*1024*1024) ) {
 		TR.Error << "  Data corruption ? WorkUnitManager::read_work_unit found workunit with memory requirement > 1GB " << std::endl;
 	}
 
@@ -193,7 +192,7 @@ bool WorkUnitManager::read_work_unit( WorkUnitBaseOP &qualified_wu,  std::istrea
 
 	in.read( (char*)raw_data_ptr, (std::streamsize) size_of_raw_data );
 
-	if( raw_data_ptr[size_of_raw_data-1] != 0){
+	if ( raw_data_ptr[size_of_raw_data-1] != 0 ) {
 		utility_exit_with_message( "  ERROR: cannot load data - terminal zero not found!" );
 		delete [] raw_data_ptr;
 		return false;
@@ -202,22 +201,22 @@ bool WorkUnitManager::read_work_unit( WorkUnitBaseOP &qualified_wu,  std::istrea
 	TR.Debug << "  READ WU: Data: " << std::endl;
 
 	WorkUnitBaseOP wu( new WorkUnitBase );
-  runtime_assert( wu != 0 );
+	runtime_assert( wu != 0 );
 	wu->raw_data_load( raw_data_ptr, size_of_raw_data );
 	delete [] raw_data_ptr;
 
-  // Here at this point we have a WorkUnitBaseOP to a workUnitBase.
-  // Now we need to interpret the id field and upcast or somehow otherwise
-  // create the right type of work unit such that the polymorphic code
-  // for the interpretation of the serial data can take place.
+	// Here at this point we have a WorkUnitBaseOP to a workUnitBase.
+	// Now we need to interpret the id field and upcast or somehow otherwise
+	// create the right type of work unit such that the polymorphic code
+	// for the interpretation of the serial data can take place.
 
 	qualified_wu = work_unit_list().get_work_unit( *wu )->clone();
-  runtime_assert( qualified_wu != 0 );
+	runtime_assert( qualified_wu != 0 );
 	// cope over data (the header and the serial data)
 	(*qualified_wu) = (*wu);
 
 	TR.Debug << "  Received: " << std::endl;
-	if( TR.Debug.visible() ) qualified_wu->print( TR );
+	if ( TR.Debug.visible() ) qualified_wu->print( TR );
 
 	qualified_wu->deserialize( );
 	qualified_wu->clear_serial_data();
@@ -246,16 +245,15 @@ WorkUnitQueue::mem_stats(
 	structs_memory=0;
 	WU_memory=0;
 
-	for( const_iterator it = begin(), itend = end(); it != itend; ++it ){
+	for ( const_iterator it = begin(), itend = end(); it != itend; ++it ) {
 		WU_memory += (*it)->mem_footprint();
 		WorkUnitBaseOP wu_op = *it;
 		WorkUnit_SilentStructStoreOP structure_wu = utility::pointer::dynamic_pointer_cast< protocols::wum::WorkUnit_SilentStructStore > ( wu_op );
 		if ( structure_wu.get() == NULL ) continue;
 		SilentStructStore &decoys = structure_wu->decoys();
 		n_structs += structure_wu->decoys().size();
-		for( SilentStructStore::iterator jt =  decoys.begin(),
-				end = decoys.end(); jt != end; ++jt )
-		{
+		for ( SilentStructStore::iterator jt =  decoys.begin(),
+				end = decoys.end(); jt != end; ++jt ) {
 			structs_memory += (*jt)->mem_footprint();
 		}
 	}

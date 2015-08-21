@@ -22,9 +22,9 @@ namespace protocols {
 namespace simple_moves {
 namespace symmetry {
 
-	class SymShakeStructureMover;
-	typedef utility::pointer::shared_ptr< SymShakeStructureMover > SymShakeStructureMoverOP;
-	typedef utility::pointer::shared_ptr< SymShakeStructureMover const > SymShakeStructureMoverCOP;
+class SymShakeStructureMover;
+typedef utility::pointer::shared_ptr< SymShakeStructureMover > SymShakeStructureMoverOP;
+typedef utility::pointer::shared_ptr< SymShakeStructureMover const > SymShakeStructureMoverCOP;
 
 } //symmetry
 } //moves

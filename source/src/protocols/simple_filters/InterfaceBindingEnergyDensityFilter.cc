@@ -135,11 +135,10 @@ InterfaceBindingEnergyDensityFilter::apply( core::pose::Pose const & pose ) cons
 	core::Real const binding_energy_density( ddG / sasa );
 
 	TR << "SASA is "<<sasa<<". ddG is "<<ddG <<". Ratio is " << binding_energy_density << ". ";
-	if( binding_energy_density <= upper_threshold_ ){
+	if ( binding_energy_density <= upper_threshold_ ) {
 		TR<<"passing." <<std::endl;
 		return true;
-	}
-	else {
+	} else {
 		TR<<"failing."<<std::endl;
 		return false;
 	}

@@ -29,10 +29,10 @@ namespace func {
 class CircularGeneral1D_Func : public Func {
 public:
 	CircularGeneral1D_Func(
-									ObjexxFCL::FArray1D< core::Real > const & data,
-									core::Real const & xmin,
-									core::Real const & xbin
-									);
+		ObjexxFCL::FArray1D< core::Real > const & data,
+		core::Real const & xmin,
+		core::Real const & xbin
+	);
 
 	CircularGeneral1D_Func( std::string const & filename );
 

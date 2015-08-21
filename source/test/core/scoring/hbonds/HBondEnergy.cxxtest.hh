@@ -107,7 +107,7 @@ using namespace hbonds;
 class HBondEnergyTests : public CxxTest::TestSuite {
 
 public:
-  void setUp() {
+	void setUp() {
 		core_init();
 	}
 
@@ -336,16 +336,16 @@ public:
 
 		//Real closest_chi1( 0 ), closest_chi2( 0 ), mind2( -1 );
 		//for ( core::Real chi1= -80; chi1 < -40; chi1 += 0.5 ) {
-		//	for ( core::Real chi2 = 60; chi2 < 80; chi2 += 0.5 ) {
-		//		pose.set_chi( 1, 8, chi1 );
-		//		pose.set_chi( 2, 8, chi2 );
-		//		core::Real d2 = pose.xyz( AtomID( res8_HG_ind, 8 )).distance_squared( pose.xyz( AtomID( res4_O_ind, 4 )) );
-		//		if ( mind2 < 0 || d2 < mind2 ) {
-		//			closest_chi1 = chi1;
-		//			closest_chi2 = chi2;
-		//			mind2 = d2;
-		//		}
-		//	}
+		// for ( core::Real chi2 = 60; chi2 < 80; chi2 += 0.5 ) {
+		//  pose.set_chi( 1, 8, chi1 );
+		//  pose.set_chi( 2, 8, chi2 );
+		//  core::Real d2 = pose.xyz( AtomID( res8_HG_ind, 8 )).distance_squared( pose.xyz( AtomID( res4_O_ind, 4 )) );
+		//  if ( mind2 < 0 || d2 < mind2 ) {
+		//   closest_chi1 = chi1;
+		//   closest_chi2 = chi2;
+		//   mind2 = d2;
+		//  }
+		// }
 		//}
 		//std::cout << "closest res8_HG res4_0 distance " << std::sqrt( mind2 ) << " with chi1= " << closest_chi1 << " and chi2= " << closest_chi2 << std::endl;
 
@@ -371,16 +371,16 @@ public:
 		sfxn( pose );
 
 		{ // scope
-		core::graph::Edge const * e4_8 = pose.energies().energy_graph().find_edge( 4, 8 );
-		TS_ASSERT( e4_8 );
-		if ( ! e4_8 ) return;
+			core::graph::Edge const * e4_8 = pose.energies().energy_graph().find_edge( 4, 8 );
+			TS_ASSERT( e4_8 );
+			if ( ! e4_8 ) return;
 
-		EnergyEdge const * ee4_8 = dynamic_cast< EnergyEdge const * > (e4_8);
-		TS_ASSERT( ee4_8 );
-		if ( ! ee4_8 ) return;
+			EnergyEdge const * ee4_8 = dynamic_cast< EnergyEdge const * > (e4_8);
+			TS_ASSERT( ee4_8 );
+			if ( ! ee4_8 ) return;
 
-		// there should be no hydrogen bond detected, since residue 4 is already participating in a bb/bb hbond.
-		TS_ASSERT( (*ee4_8)[ hbond_bb_sc ] == 0.0 );
+			// there should be no hydrogen bond detected, since residue 4 is already participating in a bb/bb hbond.
+			TS_ASSERT( (*ee4_8)[ hbond_bb_sc ] == 0.0 );
 		}
 
 		ScoreFunction sfxn2;
@@ -393,16 +393,16 @@ public:
 		sfxn2( pose );
 
 		{ // scope
-		core::graph::Edge const * e4_8 = pose.energies().energy_graph().find_edge( 4, 8 );
-		TS_ASSERT( e4_8 );
-		if ( ! e4_8 ) return;
+			core::graph::Edge const * e4_8 = pose.energies().energy_graph().find_edge( 4, 8 );
+			TS_ASSERT( e4_8 );
+			if ( ! e4_8 ) return;
 
-		EnergyEdge const * ee4_8 = dynamic_cast< EnergyEdge const * > (e4_8);
-		TS_ASSERT( ee4_8 );
-		if ( ! ee4_8 ) return;
+			EnergyEdge const * ee4_8 = dynamic_cast< EnergyEdge const * > (e4_8);
+			TS_ASSERT( ee4_8 );
+			if ( ! ee4_8 ) return;
 
-		// turning off the bb/sc exclusion rule should produce an hbond.
-		TS_ASSERT( (*ee4_8)[ hbond_bb_sc ] != 0.0 );
+			// turning off the bb/sc exclusion rule should produce an hbond.
+			TS_ASSERT( (*ee4_8)[ hbond_bb_sc ] != 0.0 );
 		}
 
 		HBondEnergy hbe_w_bbsc_exclusion(   sfxn.energy_method_options().hbond_options() );

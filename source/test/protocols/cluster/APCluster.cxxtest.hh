@@ -44,7 +44,7 @@ public:
 
 	void test_cluster_random_3D_points() {
 		vector1< Vector > pts;
-		for(Size i = 1; i <= 1000; ++i) {
+		for ( Size i = 1; i <= 1000; ++i ) {
 			pts.push_back( Vector( 10*numeric::random::rg().uniform(), 10*numeric::random::rg().uniform(), 10*numeric::random::rg().uniform() ) );
 		}
 
@@ -56,8 +56,8 @@ public:
 		{ // first test: dense similarities
 			APCluster cluster(pts.size());
 			vector1< Real > sims;
-			for(Size i = 1; i <= pts.size(); ++i) {
-				for(Size k = i+1; k <= pts.size(); ++k) {
+			for ( Size i = 1; i <= pts.size(); ++i ) {
+				for ( Size k = i+1; k <= pts.size(); ++k ) {
 					Real const negdist2 = - pts[i].distance_squared( pts[k] );
 					cluster.set_sim(i, k, negdist2);
 					cluster.set_sim(k, i, negdist2);
@@ -71,13 +71,13 @@ public:
 			TR << "Median similarity: " << med_sim << std::endl;
 			TR << "Maximum similarity: " << sims[ sims.size() ] << std::endl;
 			// Small number of clusters
-			for(Size k = 1; k <= pts.size(); ++k) {
+			for ( Size k = 1; k <= pts.size(); ++k ) {
 				cluster.set_sim(k, k, min_sim);
 			}
 			cluster.cluster(maxits, convits, lambda);
 			write_cluster(pts, cluster, "dense_min.kin");
 			// Moderate number of clusters
-			for(Size k = 1; k <= pts.size(); ++k) {
+			for ( Size k = 1; k <= pts.size(); ++k ) {
 				cluster.set_sim(k, k, med_sim);
 			}
 			cluster.cluster(maxits, convits, lambda);
@@ -92,8 +92,8 @@ public:
 		{ // second test: sparse similarities
 			APCluster cluster(pts.size(), pts.size()/20);
 			vector1< Real > sims;
-			for(Size i = 1; i <= pts.size(); ++i) {
-				for(Size k = i+1; k <= pts.size(); ++k) {
+			for ( Size i = 1; i <= pts.size(); ++i ) {
+				for ( Size k = i+1; k <= pts.size(); ++k ) {
 					Real const negdist2 = - pts[i].distance_squared( pts[k] );
 					cluster.set_sim(i, k, negdist2);
 					cluster.set_sim(k, i, negdist2);
@@ -107,13 +107,13 @@ public:
 			TR << "Median similarity: " << med_sim << std::endl;
 			TR << "Maximum similarity: " << sims[ sims.size() ] << std::endl;
 			// Small number of clusters
-			for(Size k = 1; k <= pts.size(); ++k) {
+			for ( Size k = 1; k <= pts.size(); ++k ) {
 				cluster.set_sim(k, k, min_sim);
 			}
 			cluster.cluster(maxits, convits, lambda);
 			write_cluster(pts, cluster, "sparse_min.kin");
 			// Moderate number of clusters
-			for(Size k = 1; k <= pts.size(); ++k) {
+			for ( Size k = 1; k <= pts.size(); ++k ) {
 				cluster.set_sim(k, k, med_sim);
 			}
 			cluster.cluster(maxits, convits, lambda);
@@ -135,26 +135,26 @@ public:
 		out << "@kinemage {" << filename << "}\n";
 		out << "@onewidth\n";
 		out << "@balllist {points} radius= 0.1 color= gray\n";
-		for(Size i = 1; i <= pts.size(); ++i) {
+		for ( Size i = 1; i <= pts.size(); ++i ) {
 			out << "{" << i << "} " << pts[i].x() << " " << pts[i].y() << " " << pts[i].z() << "\n";
 		}
 		out << "@group {clusters}\n";
 		vector1< Size > exemplars, members;
 		cluster.get_all_exemplars(exemplars);
 		TR << exemplars.size() << " clusters for " << cluster.num_pts() << " points" << std::endl;
-		for(Size ii = 1; ii <= exemplars.size(); ++ii) {
+		for ( Size ii = 1; ii <= exemplars.size(); ++ii ) {
 			std::string color = colors[ (ii % colors.size()) + 1 ];
 			out << "@subgroup {cluster " << ii << "} dominant\n";
 			Size const i = exemplars[ii];
 			cluster.get_cluster_for(i, members);
 			out << "@vectorlist {cluster " << ii << "} color= " << color << "\n";
-			for(Size jj = 1; jj <= members.size(); ++jj) {
+			for ( Size jj = 1; jj <= members.size(); ++jj ) {
 				Size const j = members[jj];
 				out << "{ cluster" << ii << " exemplar" << i << " }P " << pts[j].x() << " " << pts[j].y() << " " << pts[j].z() << "\n";
 				out << "{ cluster" << ii << " exemplar" << i << " }  " << pts[i].x() << " " << pts[i].y() << " " << pts[i].z() << "\n";
 			}
 			out << "@balllist {cluster " << ii << "} radius= 0.1 color= " << color << "\n";
-			for(Size jj = 1; jj <= members.size(); ++jj) {
+			for ( Size jj = 1; jj <= members.size(); ++jj ) {
 				Size const j = members[jj];
 				out << "{ cluster" << ii << " exemplar" << i << " } " << pts[j].x() << " " << pts[j].y() << " " << pts[j].z() << "\n";
 			}

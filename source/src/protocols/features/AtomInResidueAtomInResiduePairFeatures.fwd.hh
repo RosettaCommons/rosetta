@@ -17,8 +17,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class AtomInResidueAtomInResiduePairFeatures;
 typedef utility::pointer::shared_ptr< AtomInResidueAtomInResiduePairFeatures > AtomInResidueAtomInResiduePairFeaturesOP;

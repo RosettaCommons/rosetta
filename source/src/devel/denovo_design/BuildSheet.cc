@@ -135,11 +135,11 @@ BuildSheet::get_name() const {
 
 void
 BuildSheet::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & )
 {
 	if ( tag->hasOption( "c_dist" ) ) sheet_.c_dist( tag->getOption< core::Real >( "c_dist" ) );
 	if ( tag->hasOption( "strand_dist" ) ) sheet_.strand_dist( tag->getOption< core::Real >( "strand_dist" ) );
@@ -219,8 +219,8 @@ BuildSheet::lookup_dihedrals( core::Size const i, core::Size const j ) const
 	runtime_assert( i <= sheet_.ca_coords_size() );
 	runtime_assert( j+1 <= sheet_.ca_coords_size( i ) );
 	numeric::xyzMatrix< core::Real > const rotate( align_matrix( sheet_.ca_coords( i, j-2 ),
-																															 sheet_.ca_coords( i, j-1 ),
-																															 sheet_.ca_coords( i, j ) ) );
+		sheet_.ca_coords( i, j-1 ),
+		sheet_.ca_coords( i, j ) ) );
 	core::Vector const next_ca_vec_xyz( sheet_.ca_coords( i, j+1 ) - sheet_.ca_coords( i, j ) );
 	core::Vector const next_ca_vec( rotate*next_ca_vec_xyz );
 	TR << "looking up dihedral; i=" << i << ", j=" << j << std::endl;
@@ -289,8 +289,8 @@ BuildSheet::build_sheet( core::pose::Pose & pose ) const
 
 			// this transformation matrix converts vectors of proper length to the three bb atoms
 			numeric::xyzMatrix< core::Real > const T1( numeric::xyzMatrix< core::Real >::rows( c1.x(), c3.x(), cross.x(),
-						c1.y(), c3.y(), cross.y(),
-						c1.z(), c3.z(), cross.z() ) );
+				c1.y(), c3.y(), cross.y(),
+				c1.z(), c3.z(), cross.z() ) );
 
 			numeric::xyzMatrix< core::Real > const T1_inv( numeric::inverse( T1 ) );
 
@@ -312,8 +312,8 @@ BuildSheet::build_sheet( core::pose::Pose & pose ) const
 			ideal_prevstrand.normalize();
 			// this transformation matrix convers unit vectors to the three "ideal" ca atoms
 			numeric::xyzMatrix< core::Real > const T_ideal( numeric::xyzMatrix< core::Real >::rows( ideal_prev.x(), ideal_next.x(), ideal_prevstrand.x(),
-						ideal_prev.y(), ideal_next.y(), ideal_prevstrand.y(),
-						ideal_prev.z(), ideal_next.z(), ideal_prevstrand.z() ) );
+				ideal_prev.y(), ideal_next.y(), ideal_prevstrand.y(),
+				ideal_prev.z(), ideal_next.z(), ideal_prevstrand.z() ) );
 			core::conformation::ResidueOP new_res( new core::conformation::Residue( dummy_pose.residue(2) ) );
 			for ( core::Size k=1; k<=new_res->natoms(); ++k ) {
 				numeric::xyzVector< core::Real > const & cur_pos( new_res->atom(k).xyz() );
@@ -350,16 +350,16 @@ BuildSheet::build_sheet( core::pose::Pose & pose ) const
 				if ( i > 2 ) {
 					pose_residues.push_back( strand_res_to_pose[ std::pair< core::Size, core::Size >( i-1, j ) ] );
 				} else {
-				pose_residues.push_back( 0 );
-			}
-			resis.push_back( j );
-			// minimize to try to get hydrogen bonds perfect
-			if ( i >= 2 ) {
-				minimize_residues( pose, pose_residues, strands, resis );
-				pose.dump_pdb("min" + boost::lexical_cast< std::string >( i ) + "-" + boost::lexical_cast< std::string >( j ) + ".pdb");
-			}
-			//minimize_residues( pose, residues, i, j );
-			//minimize_residues( pose, residues, i, j );
+					pose_residues.push_back( 0 );
+				}
+				resis.push_back( j );
+				// minimize to try to get hydrogen bonds perfect
+				if ( i >= 2 ) {
+					minimize_residues( pose, pose_residues, strands, resis );
+					pose.dump_pdb("min" + boost::lexical_cast< std::string >( i ) + "-" + boost::lexical_cast< std::string >( j ) + ".pdb");
+				}
+				//minimize_residues( pose, residues, i, j );
+				//minimize_residues( pose, residues, i, j );
 			}
 		}
 	}
@@ -372,9 +372,9 @@ BuildSheet::build_sheet( core::pose::Pose & pose ) const
 /// the "resis" vector contains ca_coords_ residue indices for the same three residues, in the same order
 void
 BuildSheet::minimize_residues( core::pose::Pose & pose,
-		utility::vector1< core::Size > const & pose_residues,
-		utility::vector1< core::Size > const & strands,
-		utility::vector1< core::Size > const & resis ) const
+	utility::vector1< core::Size > const & pose_residues,
+	utility::vector1< core::Size > const & strands,
+	utility::vector1< core::Size > const & resis ) const
 {
 	TR << "Residues are: " << pose_residues[1] << " " << pose_residues[2] << " " << pose_residues[3] << std::endl;
 	runtime_assert( pose_residues.size() == 3 );
@@ -413,9 +413,9 @@ BuildSheet::minimize_residues( core::pose::Pose & pose,
 			for ( core::Size j=1; j<=pose.residue(pose_residues[i]).natoms(); ++j ) {
 				core::scoring::constraints::ConstraintOP cst;
 				cst = core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint( core::id::AtomID(j,pose_residues[i]),
-						core::id::AtomID(anchor_ca_index,1),
-						pose.residue(pose_residues[i]).atom(j).xyz(),
-						weak_func ) );
+					core::id::AtomID(anchor_ca_index,1),
+					pose.residue(pose_residues[i]).atom(j).xyz(),
+					weak_func ) );
 				pose.add_constraint( cst );
 			}
 
@@ -424,9 +424,9 @@ BuildSheet::minimize_residues( core::pose::Pose & pose,
 				core::Size const ca_index( pose.residue_type( pose_residues[i] ).atom_index("CA") );
 				core::scoring::constraints::ConstraintOP cst;
 				cst = core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint( core::id::AtomID( ca_index, pose_residues[i] ),
-																																		core::id::AtomID( anchor_ca_index, 1 ),
-																																		sheet_.ca_coords( strands[i], resis[i] ),
-																																		func ) );
+					core::id::AtomID( anchor_ca_index, 1 ),
+					sheet_.ca_coords( strands[i], resis[i] ),
+					func ) );
 				pose.add_constraint( cst );
 			}
 		}
@@ -504,8 +504,8 @@ BuildSheet::angle_from_index( core::Size const index, core::Real const max_value
 /// @brief creates a rotation matrix that places p1, p2, and p_center in the XY plane with p_center at the origin and p2 on the x axis
 numeric::xyzMatrix< core::Real >
 align_matrix( core::Vector const & p1,
-		core::Vector const & p2,
-		core::Vector const & p_center )
+	core::Vector const & p2,
+	core::Vector const & p_center )
 {
 	// define axes for coordinate system
 	// 1. p2 will lie at -r, 0, 0
@@ -519,15 +519,15 @@ align_matrix( core::Vector const & p1,
 	// rotate about z axis
 	TR << "theta = " << theta << std::endl;
 	numeric::xyzMatrix< core::Real > rotate_z( numeric::xyzMatrix< core::Real >::rows( cos(theta), sin(theta), 0.0,
-				-sin(theta), cos(theta), 0.0,
-				0.0, 0.0, 1.0 ) );
+		-sin(theta), cos(theta), 0.0,
+		0.0, 0.0, 1.0 ) );
 	core::Vector const trans_point( rotate_z * p2_vec );
 	print_vectorBS( trans_point, "trans_point" );
 	core::Real const angle2( numeric::constants::f::pi + atan2( trans_point.z(), trans_point.x() ) );
 	TR << "phi = " << angle2 << std::endl;
 	numeric::xyzMatrix< core::Real > rotate_y( numeric::xyzMatrix< core::Real >::rows( cos(angle2), 0.0, sin(angle2),
-				0.0, 1.0, 0.0,
-				-sin(angle2), 0.0, cos(angle2) ) );
+		0.0, 1.0, 0.0,
+		-sin(angle2), 0.0, cos(angle2) ) );
 
 	core::Vector new_p1_vec( rotate_y * rotate_z * p1_vec );
 	print_vectorBS( new_p1_vec, "new_p1_vec" );
@@ -535,8 +535,8 @@ align_matrix( core::Vector const & p1,
 	// now we rotate about the x axis to place p1 on the xy plane
 	core::Real const angle3( atan2( new_p1_vec.z(), new_p1_vec.y() ) );
 	numeric::xyzMatrix< core::Real > rotate_x( numeric::xyzMatrix< core::Real >::rows( 1.0, 0.0, 0.0,
-				0.0, cos(angle3), sin(angle3),
-				0.0, -sin(angle3), cos(angle3) ) );
+		0.0, cos(angle3), sin(angle3),
+		0.0, -sin(angle3), cos(angle3) ) );
 	print_vectorBS( rotate_x * new_p1_vec, "fully_rotated_p1" );
 	print_vectorBS( rotate_x * rotate_y * rotate_z * p2_vec, "fully_rotated_p2" );
 	return rotate_x*rotate_y*rotate_z;
@@ -555,8 +555,8 @@ BuildSheet::align_pose( core::pose::Pose & pose ) const
 	// Ca-1 should be at (-r, 0, 0) in XYZ and Ca-2 should be at (0, 0, 0) in XYZ
 	// Ca-0 should lie in the XZ plane
 	numeric::xyzMatrix< core::Real > const rotate( align_matrix( pose.residue(1).xyz( "CA" ),
-				pose.residue(2).xyz( "CA" ),
-				pose.residue(3).xyz( "CA" ) ) );
+		pose.residue(2).xyz( "CA" ),
+		pose.residue(3).xyz( "CA" ) ) );
 	pose.apply_transform_Rx_plus_v( rotate, core::Vector( 0.0, 0.0, 0.0 ) );
 
 	print_vectorBS( pose.residue(1).xyz( "CA" ), "C-2 AFter rotate" );
@@ -690,8 +690,8 @@ BuildSheet::build_dihedral_map()
 /// @brief builds a small idealized strand fragment to be used for parameterized stuff
 core::pose::Pose
 BuildSheet::build_ideal_strand( core::chemical::ResidueTypeSetCAP restype_set_ap,
-		std::string const & res_name,
-		core::Size const len ) const {
+	std::string const & res_name,
+	core::Size const len ) const {
 	core::pose::Pose pose;
 	core::chemical::ResidueTypeSetCOP restype_set( restype_set_ap );
 	for ( core::Size i=1; i<=len; ++i ) {

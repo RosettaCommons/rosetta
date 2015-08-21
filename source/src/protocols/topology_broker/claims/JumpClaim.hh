@@ -55,11 +55,11 @@ class JumpClaim : public DofClaim {
 public:
 
 	JumpClaim( TopologyClaimerAP tc,
-						 core::Size pos1,
-						 core::Size pos2,
-						 std::string atom1,
-						 std::string atom2,
-						 ClaimRight right = DofClaim::CAN_INIT ) :
+		core::Size pos1,
+		core::Size pos2,
+		std::string atom1,
+		std::string atom2,
+		ClaimRight right = DofClaim::CAN_INIT ) :
 		DofClaim( tc, right ),
 		permanent_( false ),
 		atom1_( atom1 ),
@@ -70,9 +70,9 @@ public:
 	}
 
 	JumpClaim( TopologyClaimerAP tc,
-						 core::Size pos1,
-						 core::Size pos2,
-						 ClaimRight right = DofClaim::CAN_INIT ) :
+		core::Size pos1,
+		core::Size pos2,
+		ClaimRight right = DofClaim::CAN_INIT ) :
 		DofClaim( tc, right ),
 		permanent_( false ),
 		atom1_( "" ),
@@ -83,9 +83,9 @@ public:
 	}
 
 	JumpClaim( TopologyClaimerAP tc,
-						 LocalPosition pos1,
-						 LocalPosition pos2,
-						 ClaimRight right = DofClaim::CAN_INIT ) :
+		LocalPosition pos1,
+		LocalPosition pos2,
+		ClaimRight right = DofClaim::CAN_INIT ) :
 		DofClaim( tc, right ),
 		permanent_( false ),
 		local_pos1_( pos1 ),
@@ -95,11 +95,11 @@ public:
 	{}
 
 	JumpClaim( TopologyClaimerAP tc,
-						 LocalPosition pos1,
-						 LocalPosition pos2,
-						 std::string atom1,
-						 std::string atom2,
-						 ClaimRight right = DofClaim::CAN_INIT ) :
+		LocalPosition pos1,
+		LocalPosition pos2,
+		std::string atom1,
+		std::string atom2,
+		ClaimRight right = DofClaim::CAN_INIT ) :
 		DofClaim( tc, right ),
 		permanent_( false ),
 		local_pos1_( pos1 ),
@@ -121,8 +121,8 @@ public:
 	virtual void show(std::ostream& os) const {
 		TopologyClaimerCOP owner_op( owner() );
 		os << "DofClaim-" << str_type() << " owned by a " << (owner_op ? owner_op->type() : "(Unknown)") << " from ("
-			 << local_pos1_.first << ", " << local_pos1_.second << ") to ("
-			 << local_pos2_.first   << ", " << local_pos2_.second <<").";
+			<< local_pos1_.first << ", " << local_pos1_.second << ") to ("
+			<< local_pos2_.first   << ", " << local_pos2_.second <<").";
 	}
 
 	core::Size global_pos1() const {
@@ -178,11 +178,11 @@ public:
 		if ( i == 1 ) jump_atom1( str );
 		else jump_atom2( str );
 	}
-  
+
 private:
 	bool permanent_; //true if this jump should still be present after loop-closing
-// 	Size pos1_;
-// 	Size pos2_;
+	//  Size pos1_;
+	//  Size pos2_;
 	LocalPosition local_pos1_;
 	LocalPosition local_pos2_;
 	std::string atom1_;

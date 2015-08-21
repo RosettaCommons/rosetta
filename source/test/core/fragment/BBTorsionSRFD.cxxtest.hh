@@ -44,7 +44,7 @@ using namespace core::fragment;
 using namespace std;
 
 class BBTorsionSRFDTest : public CxxTest::TestSuite {
- public:
+public:
 	void setUp() {
 		// contains cartesian coordinates
 		core_init();
@@ -58,7 +58,7 @@ class BBTorsionSRFDTest : public CxxTest::TestSuite {
 	void test_cartesian_coordinates();
 	void test_cartesian_coordinates_iter();
 
- private:
+private:
 	/// @brief Fragments that contain cartesian coordinates
 	FragSetOP fragments_;
 
@@ -99,24 +99,24 @@ void BBTorsionSRFDTest::test_cartesian_coordinates_iter() {
 	using core::Real;
 	using core::Size;
 
-	for (ConstFrameIterator i = fragments_->begin(); i != fragments_->end(); ++i) {
+	for ( ConstFrameIterator i = fragments_->begin(); i != fragments_->end(); ++i ) {
 		// foreach frame (P)
 		FrameCOP frame = *i;
 		Size fragment_length = frame->length();
 
-		for (Size j = 1; j <= frame->nr_frags(); ++j) {
+		for ( Size j = 1; j <= frame->nr_frags(); ++j ) {
 			// foreach group
 			const FragData& group = frame->fragment(j);
 
-			for (Size k = 1; k <= fragment_length; ++k) {
+			for ( Size k = 1; k <= fragment_length; ++k ) {
 				// foreach entry
 				SingleResidueFragDataCOP entry = group.get_residue(k);
 
 				// explicit typecast required-- base class lacks accessors
 				// for Cartesian coordinates
 				BBTorsionSRFDCOP residue = utility::pointer::static_pointer_cast< core::fragment::BBTorsionSRFD const > ( entry );
-        Real x = residue->x();
-        Real y = residue->y();
+				Real x = residue->x();
+				Real y = residue->y();
 				Real z = residue->z();
 
 				// we're not testing against known values here so much as illustrating the use
@@ -131,7 +131,7 @@ void BBTorsionSRFDTest::test_cartesian_coordinates_iter() {
 			}
 		}
 	}
-  TS_ASSERT(1);
+	TS_ASSERT(1);
 }
 
 void BBTorsionSRFDTest::test_cartesian_coordinates() {
@@ -155,6 +155,6 @@ void BBTorsionSRFDTest::test_cartesian_coordinates() {
 
 	// correct values
 	TS_ASSERT_DELTA(derived_residue->x(), 28.590, DELTA);
-  TS_ASSERT_DELTA(derived_residue->y(), -2.030, DELTA);
-  TS_ASSERT_DELTA(derived_residue->z(), 115.920, DELTA);
+	TS_ASSERT_DELTA(derived_residue->y(), -2.030, DELTA);
+	TS_ASSERT_DELTA(derived_residue->z(), 115.920, DELTA);
 }

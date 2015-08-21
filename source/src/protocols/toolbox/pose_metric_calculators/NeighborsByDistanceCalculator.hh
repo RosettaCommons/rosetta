@@ -32,7 +32,7 @@
 // option key includes
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 
@@ -42,8 +42,8 @@ class NeighborsByDistanceCalculator : public core::pose::metrics::StructureDepen
 public:
 	typedef core::pose::metrics::StructureDependentCalculator parent;
 
-  /// @brief central_residue is the residue whose neighbors we find
-  NeighborsByDistanceCalculator(
+	/// @brief central_residue is the residue whose neighbors we find
+	NeighborsByDistanceCalculator(
 		core::Size central_residue,
 		core::Real dist_cutoff = basic::options::option[basic::options::OptionKeys::pose_metrics::neighbor_by_distance_cutoff]
 	);
@@ -61,20 +61,20 @@ public:
 
 protected:
 
-  virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-  virtual std::string print( std::string const & key ) const;
-  virtual void recompute( core::pose::Pose const & pose );
+	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
+	virtual std::string print( std::string const & key ) const;
+	virtual void recompute( core::pose::Pose const & pose );
 
 private:
 
-  /// @brief stores the input - whose neighbors are we finding?
-  core::Size const central_residue_;
+	/// @brief stores the input - whose neighbors are we finding?
+	core::Size const central_residue_;
 	/// @brief stores the input - how far away is a neighbor?
 	core::Real const dist_cutoff_;
-  /// @brief the number of neighbors, INCLUSIVE of this residue
-  core::Size num_neighbors_;
-  /// @brief the set of neighbors, INCLUSIVE of this residue
-  std::set< core::Size > neighbors_;
+	/// @brief the number of neighbors, INCLUSIVE of this residue
+	core::Size num_neighbors_;
+	/// @brief the set of neighbors, INCLUSIVE of this residue
+	std::set< core::Size > neighbors_;
 
 };
 

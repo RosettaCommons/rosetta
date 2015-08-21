@@ -59,7 +59,7 @@ ConstraintSetMoverCreator::mover_name()
 }
 
 ConstraintSetMover::ConstraintSetMover()
-	: protocols::moves::Mover( ConstraintSetMoverCreator::mover_name() )
+: protocols::moves::Mover( ConstraintSetMoverCreator::mover_name() )
 {
 	read_options();
 }
@@ -67,7 +67,7 @@ ConstraintSetMover::ConstraintSetMover()
 ConstraintSetMover::~ConstraintSetMover(){}
 
 ConstraintSetMover::ConstraintSetMover( std::string const & type )
-	: protocols::moves::Mover(type)
+: protocols::moves::Mover(type)
 {
 	read_options();
 }
@@ -134,21 +134,23 @@ ConstraintSetMover::apply( Pose & pose )
 	}
 
 	if ( pose.is_fullatom() ) {
-		if( add_constraints() )
+		if ( add_constraints() ) {
 			pose.add_constraints( constraint_set_high_res_->get_all_constraints());
-		else
+		} else {
 			pose.constraint_set( constraint_set_high_res_ );
-		if (TR.Debug.visible()) {
+		}
+		if ( TR.Debug.visible() ) {
 			TR.Debug << "High-res constraints:" << std::endl;
 			constraint_set_high_res_->show_definition(TR.Debug, pose);
 			TR.Debug.flush(); // Make sure the tracer is output if the definitions don't use a std::endl
 		}
 	} else {
-		if( add_constraints() )
+		if ( add_constraints() ) {
 			pose.add_constraints( constraint_set_low_res_->get_all_constraints() );
-		else
+		} else {
 			pose.constraint_set( constraint_set_low_res_ );
-		if (TR.Debug.visible()) {
+		}
+		if ( TR.Debug.visible() ) {
 			TR.Debug << "Low-res constraints:" << std::endl;
 			constraint_set_low_res_->show_definition(TR.Debug, pose);
 			TR.Debug.flush(); // Make sure the tracer is output if the definitions don't use a std::endl
@@ -190,9 +192,9 @@ ConstraintSetMover::parse_my_tag(
 	}
 }
 void ConstraintSetMover::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & /*score_fxns*/,
-				utility::lua::LuaObject const & /*tasks*/,
-				protocols::moves::MoverCacheSP /*cache*/ ) {
+	utility::lua::LuaObject const & /*score_fxns*/,
+	utility::lua::LuaObject const & /*tasks*/,
+	protocols::moves::MoverCacheSP /*cache*/ ) {
 	if ( def["cst_file"] ) cst_file_ = def["cst_file"].to<std::string>();
 	if ( def["cst_fa_file"] ) cst_fa_file_ = def["cst_fa_file"].to<std::string>();
 	else cst_fa_file_=cst_file_;

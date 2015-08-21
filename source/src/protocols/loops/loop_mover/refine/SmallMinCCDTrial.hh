@@ -71,7 +71,7 @@ public: // boiler plate / virtuals
 
 	/// @brief Associates relevant options with the LoopRefineInnerCycle class
 	static void register_options();
-	
+
 public: // printing methods
 	virtual void show( std::ostream & out=std::cout ) const;
 	friend std::ostream & operator<<(std::ostream& out, SmallMinCCDTrial const & small_min_ccd_trial );
@@ -82,7 +82,7 @@ public: // class-specific public methods
 
 	core::optimization::MinimizerOptionsOP minimizer_options() const;
 	void set_minimizer_options( core::optimization::MinimizerOptionsOP minimizer_options );
-	
+
 private: // methods
 	void setup_objects( Pose const & pose );
 	void init();

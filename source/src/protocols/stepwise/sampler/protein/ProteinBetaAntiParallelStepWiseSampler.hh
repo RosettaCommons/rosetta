@@ -26,31 +26,31 @@ namespace stepwise {
 namespace sampler {
 namespace protein {
 
-	class ProteinBetaAntiParallelStepWiseSampler: public JumpStepWiseSampler {
+class ProteinBetaAntiParallelStepWiseSampler: public JumpStepWiseSampler {
 
-	public:
+public:
 
-		//constructor
-		ProteinBetaAntiParallelStepWiseSampler( core::pose::Pose const & pose,
-																		Size const moving_residue );
+	//constructor
+	ProteinBetaAntiParallelStepWiseSampler( core::pose::Pose const & pose,
+		Size const moving_residue );
 
-		//destructor
-		~ProteinBetaAntiParallelStepWiseSampler();
+	//destructor
+	~ProteinBetaAntiParallelStepWiseSampler();
 
-	public:
+public:
 
-		/// @brief Name of the class
-		virtual std::string get_name() const { return "ProteinBetaAntiParallelStepWiseSampler"; }
+	/// @brief Name of the class
+	virtual std::string get_name() const { return "ProteinBetaAntiParallelStepWiseSampler"; }
 
-		/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-		virtual StepWiseSamplerType type() const { return PROTEIN_BETA_ANTIPARALLEL; }
+	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
+	virtual StepWiseSamplerType type() const { return PROTEIN_BETA_ANTIPARALLEL; }
 
-	private:
+private:
 
-		Size
-		get_antiparallel_beta_jumps( pose::Pose const & pose, int const sample_res );
+	Size
+	get_antiparallel_beta_jumps( pose::Pose const & pose, int const sample_res );
 
-	};
+};
 
 } //protein
 } //sampler

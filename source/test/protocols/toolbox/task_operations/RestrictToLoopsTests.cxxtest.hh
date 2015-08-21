@@ -80,7 +80,7 @@ public:
 	void test_set_loops_from_file() {
 		RestrictToLoopsOP restrict_to_loops( new RestrictToLoops );
 		restrict_to_loops->set_loops_from_file(
-				"protocols/toolbox/task_operations/loops.txt");
+			"protocols/toolbox/task_operations/loops.txt");
 
 		test_task_operation(restrict_to_loops, pose_, "011101110", "000000000");
 	}

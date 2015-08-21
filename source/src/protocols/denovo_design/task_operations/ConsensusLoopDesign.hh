@@ -76,8 +76,8 @@ public:
 
 	/// @brief apply
 	virtual void apply(
-			core::pose::Pose const & pose,
-			core::pack::task::PackerTask & task ) const;
+		core::pose::Pose const & pose,
+		core::pack::task::PackerTask & task ) const;
 
 	/// @brief Returns the name of the class
 	virtual std::string get_name() const;
@@ -88,30 +88,30 @@ public:
 
 public:
 	void parse_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & data_map );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data_map );
 
 	void read_db();
 
 	std::list< std::string > const & allowed_aas(
-			SurroundingSS const & surrounding,
-			std::string const & loop_abego ) const;
+		SurroundingSS const & surrounding,
+		std::string const & loop_abego ) const;
 
 	void set_allowed_aas(
-			SurroundingSS const & surrounding,
-			std::string const & loop_abego,
-			std::list< std::string > const & allowed_aa );
+		SurroundingSS const & surrounding,
+		std::string const & loop_abego,
+		std::list< std::string > const & allowed_aa );
 
 	void disallow_aas(
-			core::pack::task::PackerTask & task,
-			LoopInfo const & info ) const;
+		core::pack::task::PackerTask & task,
+		LoopInfo const & info ) const;
 
 	LoopInfoVec get_loop_info( core::pose::Pose const & pose ) const;
 
 	LoopInfoVec loop_info_from_subset(
-			core::pose::Pose const & pose,
-			std::string const & ss,
-			core::pack::task::residue_selector::ResidueSubset const & subset ) const;
+		core::pose::Pose const & pose,
+		std::string const & ss,
+		core::pack::task::residue_selector::ResidueSubset const & subset ) const;
 
 private:
 	core::pack::task::residue_selector::ResidueSelectorCOP selector_;

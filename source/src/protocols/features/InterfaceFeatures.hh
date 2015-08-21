@@ -22,8 +22,8 @@
 namespace protocols {
 namespace features {
 
-	using namespace protocols::analysis;
-	using utility::vector1;
+using namespace protocols::analysis;
+using utility::vector1;
 
 
 /// @brief Analyzes interfaces and interface residues of a pose mainly using InterfaceAnalayzerMover.
@@ -107,10 +107,10 @@ public:
 	/// @brief Set the reporter to only include interfaces >dSASA_cutoff.
 	void
 	set_dSASA_cutoff(core::Real dSASA_cutoff);
-	
+
 	void
 	set_scorefxn(core::scoring::ScoreFunctionOP scorefxn);
-	
+
 	////////////////////////////////////////////////////////////////////////////
 	virtual void
 	write_interface_schema_to_db(utility::sql_database::sessionOP db_session) const;
@@ -120,8 +120,8 @@ public:
 
 	virtual void
 	write_interface_side_schema_to_db(utility::sql_database::sessionOP db_session) const;
-	
-	
+
+
 	/// @brief Report all features.  Called by report_features.  Easy interface for subclassing specific interfaces.
 	/// @details interface is the interface analyzed, db_interface is the name that is actually inserted into the database
 	/// Usually this is the same, but useful when dealing with different chain ids but same interface type. db_interface should have sides as well (L_H))
@@ -133,7 +133,7 @@ public:
 		utility::sql_database::sessionOP db_session,
 		std::string const interface,
 		std::string const db_interface);
-	
+
 	/// @brief Add interfaces table data to table
 	virtual void
 	report_interface_features(
@@ -142,7 +142,7 @@ public:
 		utility::sql_database::sessionOP db_session,
 		std::string const chains_side1,
 		std::string const chains_side2) const;
-	
+
 	/// @brief Add interface_sides table data to table
 	virtual void
 	report_interface_side_features(
@@ -153,7 +153,7 @@ public:
 		std::string const chains_side2,
 		protocols::analysis::InterfaceRegion const region,
 		std::string const region_string) const;
-	
+
 	/// @brief Add interface_residues data to table
 	virtual void
 	report_interface_residue_features(
@@ -169,7 +169,7 @@ public:
 	make_interface_combos(core::pose::Pose const & pose, vector1<std::string> & interfaces);
 
 private:
-	
+
 	void
 	write_interface_residue_data_row_to_db(
 		StructureID struct_id,
@@ -190,18 +190,18 @@ private:
 
 	void
 	get_length_combos(std::string current, vector1<std::string> & sizes) const;
-	
+
 	std::string
 	get_all_pose_chains(core::pose::Pose const & pose);
-	
+
 protected:
-	
+
 	bool
 	interface_exists(vector1<std::string> & interfaces, std::string & dock_chains) const;
 
 	bool
 	chains_exist_in_pose(core::pose::Pose const & pose, std::string const interface) const;
-	
+
 	protocols::analysis::InterfaceAnalyzerMoverOP interface_analyzer_;
 	core::scoring::ScoreFunctionCOP scorefxn_;
 	vector1< std::string > interfaces_;
@@ -215,4 +215,4 @@ protected:
 }
 }
 
-#endif	//#ifndef INCLUDED_protocols/antibody_design_INTERFACEFEATURES_HH
+#endif //#ifndef INCLUDED_protocols/antibody_design_INTERFACEFEATURES_HH

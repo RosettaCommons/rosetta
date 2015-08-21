@@ -45,8 +45,8 @@ static thread_local basic::Tracer TR( "protocols.grafting.CCDEndsGraftMover" );
 namespace protocols {
 namespace grafting {
 
-    using core::kinematics::MoveMapCOP;
-    using core::Size;
+using core::kinematics::MoveMapCOP;
+using core::Size;
 
 CCDEndsGraftMover::CCDEndsGraftMover():
 	AnchoredGraftMover(0u, 0u) // 0u to avoid spurious rewrite
@@ -56,7 +56,7 @@ CCDEndsGraftMover::CCDEndsGraftMover():
 }
 
 CCDEndsGraftMover::CCDEndsGraftMover(const Size start, Size const end, bool copy_pdb_info /*false*/)
-	:AnchoredGraftMover(start, end)
+:AnchoredGraftMover(start, end)
 {
 	Nter_overhang_length(2);
 	Cter_overhang_length(2);
@@ -71,7 +71,7 @@ CCDEndsGraftMover::CCDEndsGraftMover(
 	Size Nter_overhang_length,
 	Size Cter_overhang_length,
 	bool copy_pdb_info /*false*/)
-	:AnchoredGraftMover(start, end, piece, Nter_overhang_length, Cter_overhang_length)
+:AnchoredGraftMover(start, end, piece, Nter_overhang_length, Cter_overhang_length)
 {
 	copy_pdbinfo(copy_pdb_info);
 }
@@ -139,14 +139,14 @@ CCDEndsGraftMover::setup_default_small_mover(){
 	typedef std::map< MoveMapTorsionID, bool > MoveMapTorsionID_Map;
 
 
-	for (MoveMapTorsionID_Map::const_iterator it=movemap()->movemap_torsion_id_begin(), it_end=movemap()->movemap_torsion_id_end(); it !=it_end; ++it){
-	    //Scaffold to new MM
-	    if (it->second && it->first.second == core::id::BB){
-		nmoves+=1;
-	    }
+	for ( MoveMapTorsionID_Map::const_iterator it=movemap()->movemap_torsion_id_begin(), it_end=movemap()->movemap_torsion_id_end(); it !=it_end; ++it ) {
+		//Scaffold to new MM
+		if ( it->second && it->first.second == core::id::BB ) {
+			nmoves+=1;
+		}
 	}
 
-   	SmallMoverOP small( new SmallMover(movemap(), 2, nmoves*2) );
+	SmallMoverOP small( new SmallMover(movemap(), 2, nmoves*2) );
 	small->angle_max( 'H', 10.0 );
 	small->angle_max( 'E', 10.0 );
 	small->angle_max( 'L', 30.0 );
@@ -164,7 +164,7 @@ CCDEndsGraftMover::apply(Pose & pose){
 	//TR <<"Beginning of anchored graft mover" <<std::endl;
 	//pose.constraint_set()->show(TR);
 
-	if (tag()){
+	if ( tag() ) {
 		core::Size scaffold_start = core::pose::get_resnum(tag(), pose, "start_");
 		core::Size scaffold_end = core::pose::get_resnum(tag(), pose, "end_");
 
@@ -212,17 +212,15 @@ CCDEndsGraftMover::apply(Pose & pose){
 	core::Size Nter_end;
 	core::Size Cter_start;
 
-	if (get_nterm_insert_flexibility() == 0){
+	if ( get_nterm_insert_flexibility() == 0 ) {
 		Nter_end = Nter_loop_end() +1;
-	}
-	else {
+	} else {
 		Nter_end = Nter_loop_end();
 	}
 
-	if (get_cterm_insert_flexibility() == 0 ){
+	if ( get_cterm_insert_flexibility() == 0 ) {
 		Cter_start = Cter_loop_start() -1;
-	}
-	else{
+	} else {
 		Cter_start = Cter_loop_start();
 	}
 
@@ -238,9 +236,9 @@ CCDEndsGraftMover::apply(Pose & pose){
 	//movemap()->show(TR);
 	//TR << "Loops: " << *loop_set << std::endl;
 
-	if ( Cter_start - Nter_end < 1 ){
+	if ( Cter_start - Nter_end < 1 ) {
 		utility_exit_with_message("Cannot setup correct loops for CCDEndsGraftMover as the loop FT is not proper.\n"
-				"The loop is short two loops on either side cannot be set.  Decrease Insert movement.  \n");
+			"The loop is short two loops on either side cannot be set.  Decrease Insert movement.  \n");
 	}
 	//combined.dump_pdb("combined_pose.pdb");
 
@@ -276,7 +274,7 @@ CCDEndsGraftMover::apply(Pose & pose){
 	SmallMoverOP small = setup_default_small_mover();
 
 	//Testing
-	if (test_control_mode()){perturb_backbone_for_test(combined, movemap());}
+	if ( test_control_mode() ) { perturb_backbone_for_test(combined, movemap());}
 
 	MonteCarlo mc(combined, (*cen_scorefxn()), 0.8);
 
@@ -285,11 +283,11 @@ CCDEndsGraftMover::apply(Pose & pose){
 	TR << "start " << ((*cen_scorefxn()))(combined) << std::endl;
 
 	bool skip_mc = false;
-	for( core::Size i(1); i<=cycles(); ++i){
+	for ( core::Size i(1); i<=cycles(); ++i ) {
 		TR <<"round "<<i <<std::endl;
-		if (!skip_sampling()){small->apply(combined);}
+		if ( !skip_sampling() ) { small->apply(combined);}
 
-		for (protocols::loops::Loops::const_iterator it=loop_set->begin(), it_end=loop_set->end(); it!=it_end; ++it){
+		for ( protocols::loops::Loops::const_iterator it=loop_set->begin(), it_end=loop_set->end(); it!=it_end; ++it ) {
 
 			loop_set_map[*it]->apply(combined);
 			combined.conformation().insert_ideal_geometry_at_polymer_bond(it->cut());
@@ -297,16 +295,16 @@ CCDEndsGraftMover::apply(Pose & pose){
 			combined.conformation().insert_ideal_geometry_at_polymer_bond(it->cut());
 
 		}
-        if (stop_at_closure() && graft_closed(combined, *loop_set)){
+		if ( stop_at_closure() && graft_closed(combined, *loop_set) ) {
 			TR << "Graft Closed early - returning" << std::endl;
 			skip_mc = true;
 			TR << i << " " << ((*cen_scorefxn()))(combined) << std::endl;
 			break;
 		}
-		if(mc.boltzmann(combined)) TR << i << " " << ((*cen_scorefxn()))(combined) << std::endl;
+		if ( mc.boltzmann(combined) ) TR << i << " " << ((*cen_scorefxn()))(combined) << std::endl;
 	}
 
-	if (! skip_mc) mc.recover_low(combined);
+	if ( ! skip_mc ) mc.recover_low(combined);
 	TR << "finish " << ((*cen_scorefxn()))(combined) << std::endl;
 	//combined.conformation().insert_ideal_geometry_at_polymer_bond(Cter_loop.cut());
 
@@ -317,7 +315,7 @@ CCDEndsGraftMover::apply(Pose & pose){
 
 	//Give back foldtree from pose_into_pose.
 	combined.fold_tree(original_ft);
-	if (final_repack()){
+	if ( final_repack() ) {
 		repack_connection_and_residues_in_movemap_and_piece_and_neighbors( pose, fa_scorefxn(),
 			start(), end(), movemap(), neighbor_dis());
 	}

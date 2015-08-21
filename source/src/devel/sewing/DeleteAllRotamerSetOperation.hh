@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file /rosetta/rosetta_source/src/devel/sewing/DeleteAllRotamerSetOperation.hh
-/// @brief 
+/// @brief
 /// @author Tim Jacobs
 
 #ifndef INCLUDED_devel_sewing_DeleteAllRotamerSetOperation_HH
@@ -37,11 +37,11 @@ public:
 
 	void
 	alter_rotamer_set(
-			core::pose::Pose const & pose,
-			core::scoring::ScoreFunction const & sfxn,
-			core::pack::task::PackerTask const & ptask,
-			core::graph::GraphCOP packer_neighbor_graph,
-			core::pack::rotamer_set::RotamerSet & rotamer_set
+		core::pose::Pose const & pose,
+		core::scoring::ScoreFunction const & sfxn,
+		core::pack::task::PackerTask const & ptask,
+		core::graph::GraphCOP packer_neighbor_graph,
+		core::pack::rotamer_set::RotamerSet & rotamer_set
 	);
 };
 

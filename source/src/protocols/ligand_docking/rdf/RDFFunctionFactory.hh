@@ -39,7 +39,7 @@
 namespace protocols {
 namespace ligand_docking {
 namespace rdf {
-	
+
 /// Create RDFFunctions
 class RDFFunctionFactory {
 

@@ -30,10 +30,10 @@ namespace id {
 
 class EXCN_AtomNotFound: public utility::excn::EXCN_Msg_Exception {
 public:
-  EXCN_AtomNotFound( NamedAtomID const& );
+	EXCN_AtomNotFound( NamedAtomID const& );
 	NamedAtomID const& atom() { return id_; }
 private:
-  NamedAtomID id_;
+	NamedAtomID id_;
 };
 
 

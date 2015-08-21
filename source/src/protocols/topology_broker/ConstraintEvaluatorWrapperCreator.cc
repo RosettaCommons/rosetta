@@ -43,7 +43,7 @@
 #include <utility/vector0.hh>
 
 #ifdef WIN32
-	#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.hh>
 #endif
 
 
@@ -70,16 +70,16 @@ void ConstraintEvaluatorWrapperCreator::add_evaluators( evaluation::MetaPoseEval
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-  if ( option[ OptionKeys::evaluation::combined_constraints ].user() ) {
-    /*
-      this creates Evaluators to evaluate different constraint sets against your decoys
-      pls: provide also as many column-names to match your constraint sets
-      ---
-    */
-    utility::vector1< std::string > const& cst_target( option[ OptionKeys::evaluation::combined_constraints ]() );
-    utility::vector1< std::string > const& cst_col_name( option[ OptionKeys::evaluation::combined_constraints_column ]() );
-    for ( Size ct = 1; ct <= cst_target.size(); ct ++ ) {
-      std::string tag( ObjexxFCL::string_of( ct ) );
+	if ( option[ OptionKeys::evaluation::combined_constraints ].user() ) {
+		/*
+		this creates Evaluators to evaluate different constraint sets against your decoys
+		pls: provide also as many column-names to match your constraint sets
+		---
+		*/
+		utility::vector1< std::string > const& cst_target( option[ OptionKeys::evaluation::combined_constraints ]() );
+		utility::vector1< std::string > const& cst_col_name( option[ OptionKeys::evaluation::combined_constraints_column ]() );
+		for ( Size ct = 1; ct <= cst_target.size(); ct ++ ) {
+			std::string tag( ObjexxFCL::string_of( ct ) );
 			if ( cst_col_name.size() >= ct ) tag = cst_col_name[ ct ];
 			topology_broker::ConstraintClaimerOP cst( new topology_broker::ConstraintClaimer( cst_target[ ct ], tag ) );
 			cst->set_combine_ratio( 2 );
@@ -87,9 +87,9 @@ void ConstraintEvaluatorWrapperCreator::add_evaluators( evaluation::MetaPoseEval
 			cst->set_centroid( false );
 			cst->set_filter_weight( 1 );
 			cst->set_skip_redundant( 1 );
-      eval.add_evaluation( PoseEvaluatorOP( new ConstraintEvaluatorWrapper( cst->tag(), cst ) ) );
-    }
-  }
+			eval.add_evaluation( PoseEvaluatorOP( new ConstraintEvaluatorWrapper( cst->tag(), cst ) ) );
+		}
+	}
 }
 
 std::string ConstraintEvaluatorWrapperCreator::type_name() const {

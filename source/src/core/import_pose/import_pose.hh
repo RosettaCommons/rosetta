@@ -44,7 +44,7 @@ typedef std::string String;
 /// extern basic::Tracer TR_dump_pdb_dummy;
 void
 read_all_poses(
-  const utility::vector1<std::string>& filenames,
+	const utility::vector1<std::string>& filenames,
 	utility::vector1<core::pose::Pose>* poses);
 
 void
@@ -169,10 +169,10 @@ poseOPs_from_pdbs(
 
 utility::vector1< core::pose::PoseOP >
 poseOPs_from_pdbs(
-  chemical::ResidueTypeSet const & residue_set,
-  utility::vector1< std::string > const & filenames,
-  ImportPoseOptions const & options,
-  bool read_fold_tree
+	chemical::ResidueTypeSet const & residue_set,
+	utility::vector1< std::string > const & filenames,
+	ImportPoseOptions const & options,
+	bool read_fold_tree
 );
 
 utility::vector1< core::pose::Pose >
@@ -183,9 +183,9 @@ poses_from_pdbs(
 
 utility::vector1< core::pose::Pose >
 poses_from_pdbs(
-  chemical::ResidueTypeSet const & residue_set,
-  utility::vector1< std::string > const & filenames,
-  bool read_fold_tree
+	chemical::ResidueTypeSet const & residue_set,
+	utility::vector1< std::string > const & filenames,
+	bool read_fold_tree
 );
 
 

@@ -30,50 +30,50 @@ namespace core {
 namespace scoring {
 namespace func {
 
-	Real
-	SumFunc::func( Real const x ) const {
-		Real f( 0.0 );
-		for( utility::vector1< FuncOP >::const_iterator it = funcs_.begin(), end = funcs_.end();
-					it != end; ++it
-		) {
-			f += (*it)->func( x );
-		}
-
-		return f;
+Real
+SumFunc::func( Real const x ) const {
+	Real f( 0.0 );
+	for ( utility::vector1< FuncOP >::const_iterator it = funcs_.begin(), end = funcs_.end();
+			it != end; ++it
+			) {
+		f += (*it)->func( x );
 	}
 
-	Real
-	SumFunc::dfunc( Real const x ) const {
-		Real df( 0.0 );
-		for( utility::vector1< FuncOP >::const_iterator it = funcs_.begin(), end = funcs_.end();
-					it != end; ++it
-		) {
-			df += (*it)->dfunc( x );
-		}
+	return f;
+}
 
-		return df;
+Real
+SumFunc::dfunc( Real const x ) const {
+	Real df( 0.0 );
+	for ( utility::vector1< FuncOP >::const_iterator it = funcs_.begin(), end = funcs_.end();
+			it != end; ++it
+			) {
+		df += (*it)->dfunc( x );
 	}
 
-	void
-	SumFunc::read_data( std::istream& in ) {
-		FuncFactory func_factory;
-		std::string func_type;
+	return df;
+}
 
-		Size n_funcs( 0 );
-		in >> n_funcs;
-		if ( in.fail() ) return;
+void
+SumFunc::read_data( std::istream& in ) {
+	FuncFactory func_factory;
+	std::string func_type;
+
+	Size n_funcs( 0 );
+	in >> n_funcs;
+	if ( in.fail() ) return;
 
 	debug_assert( n_funcs >= 1 );
 
-		for ( Size i = 1; i <= n_funcs; ++i ) {
-			in >> func_type;
-			FuncOP current_func;
+	for ( Size i = 1; i <= n_funcs; ++i ) {
+		in >> func_type;
+		FuncOP current_func;
 
-			current_func = func_factory.new_func( func_type );
-    	current_func->read_data( in );
-			add_func( current_func );
-		}
-	} // read_data
+		current_func = func_factory.new_func( func_type );
+		current_func->read_data( in );
+		add_func( current_func );
+	}
+} // read_data
 
 } // namespace constraints
 } // namespace scoring

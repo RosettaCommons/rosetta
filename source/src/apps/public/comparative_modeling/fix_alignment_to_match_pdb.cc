@@ -81,12 +81,12 @@ poses_from_cmd_line(
 	typedef vector1< string >::const_iterator iter;
 	for ( iter it = fn_list.begin(), end = fn_list.end(); it != end; ++it ) {
 		if ( file_exists(*it) ) {
-				Pose pose;
-				core::import_pose::pose_from_pdb( pose, *rsd_set, *it );
-				string name = utility::file_basename( *it );
-				name = name.substr( 0, 5 );
-				poses[name] = pose;
-			}
+			Pose pose;
+			core::import_pose::pose_from_pdb( pose, *rsd_set, *it );
+			string name = utility::file_basename( *it );
+			name = name.substr( 0, 5 );
+			poses[name] = pose;
+		}
 	}
 
 	return poses;
@@ -96,128 +96,128 @@ int
 main( int argc, char * argv [] ) {
 	try {
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-	using std::map;
-	using std::string;
-	using core::Real;
-	using core::Size;
-	using core::pose::Pose;
-	using utility::vector1;
-	using core::sequence::SequenceAlignment;
-	using core::sequence::SequenceProfile;
-	using core::id::SequenceMapping;
-	using core::import_pose::pose_from_pdb;
-	using namespace core::chemical;
-	using namespace core::sequence;
-	using namespace core::io::silent;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	basic::Tracer tr( "fix_alignment_to_match_pdb" );
+		using std::map;
+		using std::string;
+		using core::Real;
+		using core::Size;
+		using core::pose::Pose;
+		using utility::vector1;
+		using core::sequence::SequenceAlignment;
+		using core::sequence::SequenceProfile;
+		using core::id::SequenceMapping;
+		using core::import_pose::pose_from_pdb;
+		using namespace core::chemical;
+		using namespace core::sequence;
+		using namespace core::io::silent;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		basic::Tracer tr( "fix_alignment_to_match_pdb" );
 
-	// read pdbs into poses
-	map< string, Pose > poses;
-	poses = poses_from_cmd_line(
-		option[ in::file::template_pdb ]()
-	);
-
-	// Set up alignment options
-	std::string output_fn = option[ out::file::alignment ]();
-	utility::io::ozstream output( output_fn );
-	SWAligner sw_align;
-	ScoringSchemeOP ss( new SimpleScoringScheme( 120, 0, -140, 0 ) );
-	Size query_index_ = 1 ;
-	Size template_index_ = 2;
-
-	// read in alignments, fix and output each one
-	vector1< std::string > align_fns = option[ in::file::alignment ]();
-	typedef vector1< string >::const_iterator aln_iter;
-	for ( aln_iter aln_fn = align_fns.begin(), aln_end = align_fns.end();
-		aln_fn != aln_end; ++aln_fn
-	) {
-		vector1< SequenceAlignment > alns = core::sequence::read_aln(
-			option[ cm::aln_format ](), *aln_fn
+		// read pdbs into poses
+		map< string, Pose > poses;
+		poses = poses_from_cmd_line(
+			option[ in::file::template_pdb ]()
 		);
 
-		for ( vector1< SequenceAlignment >::iterator it = alns.begin(),
-			end = alns.end();
-			it != end; ++it
-		) {
-			string const template_id( it->sequence(2)->id().substr(0,5) );
-			string const template_id_full( it->sequence(2)->id());
-			tr << *it << std::endl;
-			tr << "template " << it->sequence(2)->id() << " => " << template_id << std::endl;
-			string target_ungapped(it->sequence(1)->ungapped_sequence());
-			string template_ungapped( it->sequence(2)->ungapped_sequence() );
-			map< string, Pose >::iterator pose_it = poses.find( template_id );
-			if ( pose_it == poses.end() ) {
-				string msg( "Error: can't find pose (id = " + template_id + ")");
-				//utility_exit_with_message(msg);
-				tr.Error << msg << std::endl;
-				continue;
-			} else {
-				Pose template_pose;
-				template_pose = pose_it->second;
-				string pdbTemplate_ungapped(template_pose.sequence());
+		// Set up alignment options
+		std::string output_fn = option[ out::file::alignment ]();
+		utility::io::ozstream output( output_fn );
+		SWAligner sw_align;
+		ScoringSchemeOP ss( new SimpleScoringScheme( 120, 0, -140, 0 ) );
+		Size query_index_ = 1 ;
+		Size template_index_ = 2;
 
-				SequenceOP t_target_seq( new Sequence(
-					target_ungapped,
-					it->sequence(1)->id(),
-					it->sequence(1)->start()
-				) );
+		// read in alignments, fix and output each one
+		vector1< std::string > align_fns = option[ in::file::alignment ]();
+		typedef vector1< string >::const_iterator aln_iter;
+		for ( aln_iter aln_fn = align_fns.begin(), aln_end = align_fns.end();
+				aln_fn != aln_end; ++aln_fn
+				) {
+			vector1< SequenceAlignment > alns = core::sequence::read_aln(
+				option[ cm::aln_format ](), *aln_fn
+			);
 
-				SequenceOP t_align_seq( new Sequence(
-					template_ungapped,
-					template_id + "_align_seq",
-					it->sequence(2)->start()
-				) );
+			for ( vector1< SequenceAlignment >::iterator it = alns.begin(),
+					end = alns.end();
+					it != end; ++it
+					) {
+				string const template_id( it->sequence(2)->id().substr(0,5) );
+				string const template_id_full( it->sequence(2)->id());
+				tr << *it << std::endl;
+				tr << "template " << it->sequence(2)->id() << " => " << template_id << std::endl;
+				string target_ungapped(it->sequence(1)->ungapped_sequence());
+				string template_ungapped( it->sequence(2)->ungapped_sequence() );
+				map< string, Pose >::iterator pose_it = poses.find( template_id );
+				if ( pose_it == poses.end() ) {
+					string msg( "Error: can't find pose (id = " + template_id + ")");
+					//utility_exit_with_message(msg);
+					tr.Error << msg << std::endl;
+					continue;
+				} else {
+					Pose template_pose;
+					template_pose = pose_it->second;
+					string pdbTemplate_ungapped(template_pose.sequence());
 
-				SequenceOP t_pdb_seq( new Sequence (
-					pdbTemplate_ungapped,
-					template_id + "_pdb_seq",
-					1
-				) );
-				SequenceOP t_pdb_seq_out( new Sequence (
-					pdbTemplate_ungapped,
-					template_id_full,
-					1
-				) );
-				//SequenceAlignment intermediate = sw_align.align( t_align_seq, t_pdb_seq, ss );
-				SequenceAlignment intermediate = sw_align.align( t_align_seq, t_pdb_seq, ss );
-				if ( intermediate.identities() != intermediate.length() ) {
-					tr.Warning << "Mismatch between sequence from alignment! Picked up error ";
-					tr.Warning << "alignment: " << std::endl << intermediate << std::endl;
-				}
+					SequenceOP t_target_seq( new Sequence(
+						target_ungapped,
+						it->sequence(1)->id(),
+						it->sequence(1)->start()
+						) );
 
-				SequenceMapping query_to_fullseq = it->sequence_mapping(1,2);
-				tr.Debug << "Query:    " << it->sequence( query_index_ ) << std::endl;
-				tr.Debug << "Template: " << it->sequence( template_index_ ) << std::endl;
-				tr.Debug << "Original Mapping:" << query_index_ << "-->" << template_index_
-					<< std::endl;
+					SequenceOP t_align_seq( new Sequence(
+						template_ungapped,
+						template_id + "_align_seq",
+						it->sequence(2)->start()
+						) );
 
-				tr.Debug << "query to fullseq" << std::endl;
-				query_to_fullseq.show( tr.Debug );
+					SequenceOP t_pdb_seq( new Sequence (
+						pdbTemplate_ungapped,
+						template_id + "_pdb_seq",
+						1
+						) );
+					SequenceOP t_pdb_seq_out( new Sequence (
+						pdbTemplate_ungapped,
+						template_id_full,
+						1
+						) );
+					//SequenceAlignment intermediate = sw_align.align( t_align_seq, t_pdb_seq, ss );
+					SequenceAlignment intermediate = sw_align.align( t_align_seq, t_pdb_seq, ss );
+					if ( intermediate.identities() != intermediate.length() ) {
+						tr.Warning << "Mismatch between sequence from alignment! Picked up error ";
+						tr.Warning << "alignment: " << std::endl << intermediate << std::endl;
+					}
 
-				SequenceMapping intermed_map = intermediate.sequence_mapping(1,2);
+					SequenceMapping query_to_fullseq = it->sequence_mapping(1,2);
+					tr.Debug << "Query:    " << it->sequence( query_index_ ) << std::endl;
+					tr.Debug << "Template: " << it->sequence( template_index_ ) << std::endl;
+					tr.Debug << "Original Mapping:" << query_index_ << "-->" << template_index_
+						<< std::endl;
 
-				tr.Debug << "intermediate map" << std::endl;
-				intermed_map.show(tr.Debug);
-				SequenceMapping query_to_pdbseq = core::sequence::transitive_map(
-					query_to_fullseq, intermed_map
-				);
+					tr.Debug << "query to fullseq" << std::endl;
+					query_to_fullseq.show( tr.Debug );
 
-				tr.Debug << "Transitive Map" << std::endl;
-				query_to_pdbseq.show( tr.Debug );
+					SequenceMapping intermed_map = intermediate.sequence_mapping(1,2);
 
-				SequenceAlignment new_aln = mapping_to_alignment(query_to_pdbseq,t_target_seq,t_pdb_seq_out);
+					tr.Debug << "intermediate map" << std::endl;
+					intermed_map.show(tr.Debug);
+					SequenceMapping query_to_pdbseq = core::sequence::transitive_map(
+						query_to_fullseq, intermed_map
+					);
 
-				new_aln.scores( it->scores() );
-				std::map< std::string, core::Real > scores( new_aln.scores() );
-				new_aln.printGrishinFormat(output);
-			} // if found a template pdb
-		} // for alns
-	} // for aln_fn
-	 } catch ( utility::excn::EXCN_Base const & e ) {
+					tr.Debug << "Transitive Map" << std::endl;
+					query_to_pdbseq.show( tr.Debug );
+
+					SequenceAlignment new_aln = mapping_to_alignment(query_to_pdbseq,t_target_seq,t_pdb_seq_out);
+
+					new_aln.scores( it->scores() );
+					std::map< std::string, core::Real > scores( new_aln.scores() );
+					new_aln.printGrishinFormat(output);
+				} // if found a template pdb
+			} // for alns
+		} // for aln_fn
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

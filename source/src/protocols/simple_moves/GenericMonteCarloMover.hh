@@ -54,9 +54,9 @@ using namespace protocols::moves;
 
 /// @brief Trigger API definition
 typedef boost::function<bool(core::Size,
-                             core::Size,
-                             const core::pose::Pose&,
-                             core::scoring::ScoreFunctionOP)> GenericMonteCarloMoverTrigger;
+	core::Size,
+	const core::pose::Pose&,
+	core::scoring::ScoreFunctionOP)> GenericMonteCarloMoverTrigger;
 
 
 class GenericMonteCarloMover : public protocols::moves::MoverApplyingMover {
@@ -98,12 +98,12 @@ public:
 	/// @brief value constructor with score function
 	// Undefined, commenting out to fix PyRosetta build
 	/* GenericMonteCarloMover(
-		Size const maxtrials,
-		MoverOP const & mover,
-		ScoreFunctionOP const & sfxn,
-		Real const temperature = 0.0,
-		String const sample_type = "low",
-		bool const drift = true
+	Size const maxtrials,
+	MoverOP const & mover,
+	ScoreFunctionOP const & sfxn,
+	Real const temperature = 0.0,
+	String const sample_type = "low",
+	bool const drift = true
 	); */
 
 
@@ -154,7 +154,7 @@ public:
 
 	Size num_designable( Pose & pose, PackerTaskOP & task);
 
- public: // accessor
+public: // accessor
 
 	/// @brief return the last accepted pose
 	PoseOP last_accepted_pose() const;
@@ -176,7 +176,7 @@ public:
 
 	/// @brief Return the score function in use
 	ScoreFunctionOP score_function() const {
-	 return scorefxn_;
+		return scorefxn_;
 	}
 
 	/// @brief Adds a new trigger, returning its id.
@@ -211,7 +211,7 @@ public:
 	/// @brief Returns the task scaling value
 	Size task_scaling() const { return task_scaling_; }
 
-	public: // mutators
+public: // mutators
 
 	/// @brief Removes the trigger with the specified id
 	void remove_trigger(Size trigger_id);
@@ -274,7 +274,7 @@ public:
 		basic::datacache::DataMap const &,
 		Filters_map const &,
 		Movers_map const &
-);
+	);
 
 	void add_filter( FilterOP filter, bool const adaptive, Real const temp, String const sample_type, bool rank_by=false);
 

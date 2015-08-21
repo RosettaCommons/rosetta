@@ -67,7 +67,7 @@ CartesianMinimizerMap::copy_dofs_from_pose(
 	utility::vector1< numeric::xyzVector<core::Real> > dofs_v(natoms);
 	pose.batch_get_xyz( moving_atoms_, dofs_v );
 
-	for(Size i=1; i<=natoms; ++i) {
+	for ( Size i=1; i<=natoms; ++i ) {
 		dofs[i*3-2] = dofs_v[i].x();
 		dofs[i*3-1] = dofs_v[i].y();
 		dofs[i*3]   = dofs_v[i].z();
@@ -86,7 +86,7 @@ CartesianMinimizerMap::copy_dofs_to_pose(
 
 	Size natoms=moving_atoms_.size();
 	utility::vector1< numeric::xyzVector<core::Real> > dofs_v(natoms);
-	for(Size i=1; i<=natoms; ++i) {
+	for ( Size i=1; i<=natoms; ++i ) {
 		dofs_v[i].x() = dofs[i*3-2];
 		dofs_v[i].y() = dofs[i*3-1];
 		dofs_v[i].z() = dofs[i*3];
@@ -102,8 +102,9 @@ CartesianMinimizerMap::add_torsion(
 	DOF_ID const &
 ) {
 	// only care about torsional DOFs
-	if ( dof_id.type() == id::PHI )
+	if ( dof_id.type() == id::PHI ) {
 		moving_dofids_.push_back( dof_id );
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -141,7 +142,7 @@ CartesianMinimizerMap::assign_rosetta_torsions_and_trim( pose::Pose const & pose
 	pose::setup_dof_to_torsion_map( pose, dof_map );
 
 	Size ndofs = moving_dofids_.size();
-	for ( Size i=1; i<=ndofs; ++i) {
+	for ( Size i=1; i<=ndofs; ++i ) {
 		DOF_ID const& dof_id( moving_dofids_[i] );
 		id::TorsionID const & tor_id( dof_map[ dof_id ] );
 
@@ -149,10 +150,10 @@ CartesianMinimizerMap::assign_rosetta_torsions_and_trim( pose::Pose const & pose
 			// check atoms
 			id::AtomID id1,id2,id3,id4;
 			pose.conformation().get_torsion_angle_atom_ids( tor_id, id1,id2,id3,id4 );
-			if (atom_indices_.has(id1)
-			      || atom_indices_.has(id2)
-			      || atom_indices_.has(id3)
-			      || atom_indices_.has(id4)) {
+			if ( atom_indices_.has(id1)
+					|| atom_indices_.has(id2)
+					|| atom_indices_.has(id3)
+					|| atom_indices_.has(id4) ) {
 				new_moving_dofids.push_back(dof_id);
 				moving_torsionids_.push_back(tor_id);
 			}
@@ -190,7 +191,7 @@ CartesianMinimizerMap::setup(
 		bool const chi_move( mm.get_chi(i) );
 
 		//fpd  do not let aa_vrt move
-		if ( rsd.aa() == chemical::aa_vrt) continue;
+		if ( rsd.aa() == chemical::aa_vrt ) continue;
 
 		// cartesian logic ...
 		//    if (chi_move && !bb_move) sc atoms only
@@ -209,7 +210,7 @@ CartesianMinimizerMap::setup(
 				moving_atoms_.push_back( id::AtomID( j,i ) );
 				atom_indices_[ id::AtomID( j,i ) ] = moving_atoms_.size();
 			}
-		} else if (bb_move) {
+		} else if ( bb_move ) {
 			Size start1 = 1;
 			Size stop1 = rsd.natoms();
 
@@ -245,7 +246,7 @@ CartesianMinimizerMap::setup(
 	core::pose::initialize_atomid_map( moving_dof, pose, false );
 
 	Size nmoving_atoms = moving_atoms_.size();
-	for (Size i=1; i<=nmoving_atoms; ++i) {
+	for ( Size i=1; i<=nmoving_atoms; ++i ) {
 		moving_xyz[ moving_atoms_[i] ] = true;
 	}
 

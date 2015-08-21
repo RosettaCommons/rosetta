@@ -201,13 +201,13 @@ LK_hack::residue_pair_energy(
 	utility::vector1< Size >   res2_heavy_is_polar( rsd2.nheavyatoms(), false );
 
 	for ( Size i = 1, i_end = rsd1.nheavyatoms(); i <= i_end; ++i ) {
-		if (rsd1.atom_type(i).is_acceptor() || rsd1.atom_type(i).is_donor()){
+		if ( rsd1.atom_type(i).is_acceptor() || rsd1.atom_type(i).is_donor() ) {
 			res1_heavy_is_polar[ i ] = true;
 			Size non_H_neib = 0;
 			Vector  base_pseudo_atom(0);
-			for (Size ii = 1; ii <=rsd1.bonded_neighbor(i).size(); ++ii){
+			for ( Size ii = 1; ii <=rsd1.bonded_neighbor(i).size(); ++ii ) {
 				Size neighbor_id = rsd1.bonded_neighbor(i)[ii];
-				if ( !  rsd1.atom_is_hydrogen(neighbor_id)){
+				if ( !  rsd1.atom_is_hydrogen(neighbor_id) ) {
 					base_pseudo_atom += rsd1.xyz(neighbor_id);
 					non_H_neib++;
 				}
@@ -232,13 +232,13 @@ LK_hack::residue_pair_energy(
 	}
 	//same for residue 2//
 	for ( Size i = 1, i_end = rsd2.nheavyatoms(); i <= i_end; ++i ) {
-		if (rsd2.atom_type(i).is_acceptor() || rsd2.atom_type(i).is_donor()){
+		if ( rsd2.atom_type(i).is_acceptor() || rsd2.atom_type(i).is_donor() ) {
 			res2_heavy_is_polar[ i ] = true;
 			Size non_H_neib = 0;
 			Vector  base_pseudo_atom(0);
-			for (Size ii = 1; ii <=rsd2.bonded_neighbor(i).size(); ++ii){
+			for ( Size ii = 1; ii <=rsd2.bonded_neighbor(i).size(); ++ii ) {
 				Size neighbor_id = rsd2.bonded_neighbor(i)[ii];
-				if ( ! rsd2.atom_is_hydrogen(neighbor_id) ){
+				if ( ! rsd2.atom_is_hydrogen(neighbor_id) ) {
 					base_pseudo_atom += rsd2.xyz(neighbor_id);
 					non_H_neib++;
 				}
@@ -263,7 +263,7 @@ LK_hack::residue_pair_energy(
 	}
 
 	Real cp_weight=0.;
-	for ( Size i = 1, i_end = rsd1.nheavyatoms(); i <= i_end; ++i){
+	for ( Size i = 1, i_end = rsd1.nheavyatoms(); i <= i_end; ++i ) {
 		for ( Size j = 1, j_end = rsd2.nheavyatoms(); j <= j_end; ++j ) {
 
 			cp_weight = 1.0;
@@ -275,8 +275,8 @@ LK_hack::residue_pair_energy(
 				if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
 
 				Real const d2_bin = d2 * get_bins_per_A2_;
-				int	disbin = static_cast< int >( d2_bin ) + 1;
-				Real	frac = d2_bin - ( disbin - 1 );
+				int disbin = static_cast< int >( d2_bin ) + 1;
+				Real frac = d2_bin - ( disbin - 1 );
 				int const l1 = solv1_.index( disbin, rsd2.atom(j).type(), rsd1.atom(i).type() ); // atom i being desolvated by atom j
 				int const l2 = l1 + 1;
 
@@ -286,7 +286,7 @@ LK_hack::residue_pair_energy(
 				Real i_to_j_angle_weight( 1.0 ), j_to_i_angle_weight( 1.0 );
 
 				if ( res1_heavy_is_polar[i] ) {
-					if (res1_base_vectors[i].dot( i_to_j_vec )  >=  0 ) {
+					if ( res1_base_vectors[i].dot( i_to_j_vec )  >=  0 ) {
 						//std::cout << "Normalizing i_to_j" << std::endl;
 
 						i_to_j_vec *= 1 / ( std::sqrt( d2 ) ); /// we already have d2, reuse it
@@ -314,7 +314,7 @@ LK_hack::residue_pair_energy(
 
 				if ( res2_heavy_is_polar[j] ) {
 					Vector j_to_i_vec = -1 * i_to_j_vec;
-					if (res2_base_vectors[j].dot( j_to_i_vec )  >  0 ) {
+					if ( res2_base_vectors[j].dot( j_to_i_vec )  >  0 ) {
 						if ( ! i_to_j_vec_normalized ) {
 							//std::cout << "Normalizing j_to_i" << std::endl;
 							j_to_i_vec *= 1 / ( std::sqrt( d2 ));
@@ -410,10 +410,10 @@ LK_hack::calculate_orientation_vectors_and_pseudo_base_atoms( pose::Pose const &
 		Size const ii_nheavy( pose.residue( ii ).nheavyatoms() );
 		Residue const & ii_res( pose.residue( ii ));
 		for ( Size jj = 1; jj <= ii_nheavy; ++jj ) {
-			if (ii_res.atom_type(jj).is_acceptor() || ii_res.atom_type(jj).is_donor()) {
-				for (Size kk = 1; kk <= ii_res.bonded_neighbor(jj).size(); ++kk){
+			if ( ii_res.atom_type(jj).is_acceptor() || ii_res.atom_type(jj).is_donor() ) {
+				for ( Size kk = 1; kk <= ii_res.bonded_neighbor(jj).size(); ++kk ) {
 					Size neighbor_id = ii_res.bonded_neighbor(jj)[kk];
-					if ( ! ii_res.atom_is_hydrogen(neighbor_id)){
+					if ( ! ii_res.atom_is_hydrogen(neighbor_id) ) {
 						base_pseudo_atom_centers_[ii][jj] += ii_res.xyz(neighbor_id);
 						++nneighbs_[ii][jj];
 					}
@@ -490,7 +490,7 @@ LK_hack::calculate_derivatives_for_residue_pair
 		CountPairFactory::create_count_pair_function( lowerres, upperres, CP_CROSSOVER_4 );
 
 	for ( Size ii = 1, iie = lowerres.nheavyatoms(), jje = upperres.nheavyatoms();
-		ii <= iie; ++ii ) {
+			ii <= iie; ++ii ) {
 		for ( Size jj = 1; jj <= jje; ++jj ) {
 			Real cp_weight = 1.0;
 			Size path_dist( 0 );
@@ -530,8 +530,8 @@ LK_hack::calculate_derivatives_for_residue_pair
 
 						// lk
 						Real const d2_bin = ii_jj_dis2 * get_bins_per_A2_;
-						int	disbin = static_cast< int >( d2_bin ) + 1;
-						Real	frac = d2_bin - ( disbin - 1 );
+						int disbin = static_cast< int >( d2_bin ) + 1;
+						Real frac = d2_bin - ( disbin - 1 );
 						int const l1 = solv1_.index( disbin, upperres.atom(jj).type(), lowerres.atom(ii).type() );
 						int const l2 = l1 + 1;
 						Real const lk = lk_hack_weight_ * cp_weight * ( (1.-frac)* solv1_[ l1 ] + frac * solv1_[ l2 ]);
@@ -596,7 +596,7 @@ LK_hack::calculate_derivatives_for_residue_pair
 				Real dot_prod = jj_to_ii.dot( orientation_vectors_[upper_res_id][ jj ] );
 				//std::cout << "Derivative for upperres " << upperres.atom_name( jj ) << " on " << upperres.name() << " dotprod: " << dot_prod << " with  " << lower_res_id << " " << ii << std::endl;
 
-				if ( dot_prod > 0  && dot_prod > LK_SigmoidalFunc::cos_flipped_ANGLE_CUTOFF_LOW) {
+				if ( dot_prod > 0  && dot_prod > LK_SigmoidalFunc::cos_flipped_ANGLE_CUTOFF_LOW ) {
 
 					Vector f1_jj( 0.0 ), f2_jj( 0.0 ), f1_ii( 0.0 ), f2_ii( 0.0 );
 
@@ -619,8 +619,8 @@ LK_hack::calculate_derivatives_for_residue_pair
 
 						// lk
 						Real const d2_bin = ii_jj_dis2 * get_bins_per_A2_;
-						int	disbin = static_cast< int >( d2_bin ) + 1;
-						Real	frac = d2_bin - ( disbin - 1 );
+						int disbin = static_cast< int >( d2_bin ) + 1;
+						Real frac = d2_bin - ( disbin - 1 );
 						int const l1 = solv1_.index( disbin, lowerres.atom(ii).type(), upperres.atom(jj).type() );
 						int const l2 = l1 + 1;
 						Real const lk = lk_hack_weight_ * cp_weight * ( (1.-frac)* solv1_[ l1 ] + frac * solv1_[ l2 ]);
@@ -703,8 +703,8 @@ LK_hack::eval_dE_dR_over_r(
 	if ( ( d2 < safe_max_dis2_) && ( d2 != Real(0.0) ) ) {
 
 		Real const d2_bin = d2 * get_bins_per_A2_;
-		int	disbin = static_cast< int >( d2_bin ) + 1;
-		Real	frac = d2_bin - ( disbin - 1 );
+		int disbin = static_cast< int >( d2_bin ) + 1;
+		Real frac = d2_bin - ( disbin - 1 );
 
 		//Real deriv = 0.0;
 
@@ -746,9 +746,9 @@ LK_hack::distribute_pseudo_base_atom_derivatives( pose::Pose const & pose ) cons
 			Vector const f2_to_divvy = divvy_proportion * base_pseudo_atom_f1_f2s_[ ii ][ jj ].second;
 
 			Size count_neighbors_found = 0;
-			for (Size kk = 1; kk <= ii_res.bonded_neighbor(jj).size(); ++kk){
+			for ( Size kk = 1; kk <= ii_res.bonded_neighbor(jj).size(); ++kk ) {
 				Size neighbor_id = ii_res.bonded_neighbor(jj)[kk];
-				if ( !  ii_res.atom_is_hydrogen(neighbor_id) ){
+				if ( !  ii_res.atom_is_hydrogen(neighbor_id) ) {
 					++count_neighbors_found;
 					atom_f1_f2s_[ ii ][ neighbor_id ].first  += f1_to_divvy;
 					atom_f1_f2s_[ ii ][ neighbor_id ].second += f2_to_divvy;
@@ -767,7 +767,7 @@ LK_hack::distribute_pseudo_base_atom_derivatives( pose::Pose const & pose ) cons
 					}
 				}
 			}
-		debug_assert( count_neighbors_found == jj_nneighbs );
+			debug_assert( count_neighbors_found == jj_nneighbs );
 		}
 	}
 

@@ -121,10 +121,10 @@ public:
 	void set_perturber( KinematicPerturberOP perturber_in );
 	KinematicPerturberOP perturber();
 	core::Real get_bump_overlap_factor() const
-  {
-    return bump_overlap_factor_;
-  }
-  void set_bump_overlap_factor(core::Real bump_overlap_factor)
+	{
+		return bump_overlap_factor_;
+	}
+	void set_bump_overlap_factor(core::Real bump_overlap_factor)
 	{
 		bump_overlap_factor_=bump_overlap_factor;
 	}
@@ -143,7 +143,7 @@ public:
 	core::Size count_bb_atoms_in_residue (const core::pose::Pose &pose, const core::Size position) const; //Added by VKM, 23 Aug 2013
 	core::Size count_bb_atoms (const core::pose::Pose &pose, const core::Size start_res, const core::Size end_res) const; //Added by VKM, 23 Aug 2013
 	std::string get_bb_atoms_for_residue (const core::conformation::Residue &res, const core::Size bb_atom_index) const; //Added by VKM, 26 Aug 2013
-	std::string get_bumpcheck_atoms_for_residue (	const core::conformation::Residue &rsd, const core::Size bumpcheck_atom_index) const; //Added by VKM, 27 Aug 2013
+	std::string get_bumpcheck_atoms_for_residue ( const core::conformation::Residue &rsd, const core::Size bumpcheck_atom_index) const; //Added by VKM, 27 Aug 2013
 	core::Size get_bumpcheck_atom_count_for_residue ( const core::conformation::Residue &rsd ) const; //Added by VKM, 27 Aug 2013
 
 private:
@@ -235,36 +235,36 @@ private:
 
 	/* AS Oct 03, 2012 -- commenting out unused function for vicinity refactoring
 	bool pivots_within_vicinity(
-							core::pose::Pose const & pose,
-							utility::vector1<core::Real> const & t_ang,
-							utility::vector1<Size> const & pivots,
-							Size const start_res,
-							Size const middle_res,
-							Size const end_res
-							);
-	 */
+	core::pose::Pose const & pose,
+	utility::vector1<core::Real> const & t_ang,
+	utility::vector1<Size> const & pivots,
+	Size const start_res,
+	Size const middle_res,
+	Size const end_res
+	);
+	*/
 
 	// this version checks rama for all residues in loop segment
 	bool perform_rama_check( core::pose::Pose const & pose,
-							 utility::vector1<core::Real> const & t_ang,
-							 utility::vector1<Size> const & pivots,
-							 Size const start_res,
-							 Size const seg_len
-						   );
+		utility::vector1<core::Real> const & t_ang,
+		utility::vector1<Size> const & pivots,
+		Size const start_res,
+		Size const seg_len
+	);
 
 	// this version only checks rama for pivot residues
 	bool perform_rama_check( core::pose::Pose const & pose,
-							 utility::vector1<core::Real> const & t_ang,
-							 utility::vector1<Size> const & pivots,
-							 Size const start_res,
-							 Size const middle_res,
-							 Size const end_res
-							 );
+		utility::vector1<core::Real> const & t_ang,
+		utility::vector1<Size> const & pivots,
+		Size const start_res,
+		Size const middle_res,
+		Size const end_res
+	);
 	// checks for backbone-backbone clashes for loop residues
 	bool perform_bump_check ( core::pose::Pose const & pose,
-							  Size const start_res,
-							  Size const end_res
-							  );
+		Size const start_res,
+		Size const end_res
+	);
 	// sets default options
 	void set_defaults();
 

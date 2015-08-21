@@ -44,7 +44,7 @@ public:
 
 	CoulombOP clone() const;
 
-  /// @brief Initilize constants.
+	/// @brief Initilize constants.
 	void
 	initialize();
 
@@ -84,8 +84,8 @@ public:
 	sigmoid_eps( Real R ) const {
 		return (sigmoidal_D_
 			- 0.5 * (sigmoidal_D_ - sigmoidal_D0_)
-				* (2 + 2*R*sigmoidal_S_ + R*R*sigmoidal_S_*sigmoidal_S_)
-				* std::exp (-R*sigmoidal_S_) );
+			* (2 + 2*R*sigmoidal_S_ + R*R*sigmoidal_S_*sigmoidal_S_)
+			* std::exp (-R*sigmoidal_S_) );
 	}
 
 	inline
@@ -130,7 +130,7 @@ private:
 	bool sigmoidal_die_;
 	Real sigmoidal_D_, sigmoidal_D0_, sigmoidal_S_;
 
-  /// @brief Precomputed constants
+	/// @brief Precomputed constants
 	Real C0_;
 	Real C1_;
 	Real C2_;
@@ -180,7 +180,7 @@ Coulomb::eval_atom_atom_fa_elecE(
 		return i_charge * j_charge * Etable::eval_cubic_polynomial( std::sqrt( d2 ), low_poly_ );
 	} else if ( d2 > hi_poly_start2_ ) {
 		return i_charge * j_charge * Etable::eval_cubic_polynomial( std::sqrt( d2 ), hi_poly_ );
-	} else if( sigmoidal_die_ ) {
+	} else if ( sigmoidal_die_ ) {
 		core::Real d = std::sqrt(d2);
 		return i_charge * j_charge * ( C1_ / (d*sigmoid_eps(d)) - C2_ );
 	} else if ( no_dis_dep_die_ ) {
@@ -206,7 +206,7 @@ Coulomb::eval_dfa_elecE_dr_over_r(
 	Real q1q2 = q1*q2;
 
 	if ( dis2 > low_poly_end2_ && dis2 < hi_poly_start2_ ) {
-		if( sigmoidal_die_ ) {
+		if ( sigmoidal_die_ ) {
 			core::Real d = std::sqrt(dis2);
 			Real eps_d = sigmoid_eps (d);
 			Real deps_d = sigmoid_deps_dr (d);

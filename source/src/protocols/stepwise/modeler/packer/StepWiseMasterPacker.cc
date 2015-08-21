@@ -63,96 +63,96 @@ namespace stepwise {
 namespace modeler {
 namespace packer {
 
-	//Constructor
-	StepWiseMasterPacker::StepWiseMasterPacker( working_parameters::StepWiseWorkingParametersCOP working_parameters,
-																							options::StepWiseModelerOptionsCOP options ):
-		working_parameters_( working_parameters),
-		options_( options )
-	{}
+//Constructor
+StepWiseMasterPacker::StepWiseMasterPacker( working_parameters::StepWiseWorkingParametersCOP working_parameters,
+	options::StepWiseModelerOptionsCOP options ):
+	working_parameters_( working_parameters),
+	options_( options )
+{}
 
-	//Destructor
-	StepWiseMasterPacker::~StepWiseMasterPacker()
-	{}
+//Destructor
+StepWiseMasterPacker::~StepWiseMasterPacker()
+{}
 
-	//////////////////////////////////////////////////////////////////////////////////////////
-	void
-	StepWiseMasterPacker::initialize( pose::Pose const & pose ) {
+//////////////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseMasterPacker::initialize( pose::Pose const & pose ) {
 
-		if ( options_->sampler_perform_phosphate_pack() ){
-			phosphate_sampler_ = rna::phosphate::MultiPhosphateSamplerOP( new rna::phosphate::MultiPhosphateSampler( pose ) );
-			phosphate_sampler_->set_moving_partition_res( working_parameters_->working_moving_partition_res() );
-			phosphate_sampler_->set_scorefxn( rna::phosphate::get_phosphate_scorefxn( scorefxn_->energy_method_options() ) );
-			phosphate_sampler_->set_force_phosphate_instantiation( options_->force_phosphate_instantiation() );
-		}
-
-		if ( options_->o2prime_legacy_mode() ) { // this is the only action that is non-const for the pose... deprecate?
-			rna::check_instantiated_O2Prime_hydrogen( pose ); // i.e., instantiate all 2'-OH.
-			o2prime_packer_ = rna::o2prime::O2PrimePackerOP( new rna::o2prime::O2PrimePacker( pose, scorefxn_, working_parameters_->working_moving_partition_res() ) );
-		}
-
-		initialize_packer();
+	if ( options_->sampler_perform_phosphate_pack() ) {
+		phosphate_sampler_ = rna::phosphate::MultiPhosphateSamplerOP( new rna::phosphate::MultiPhosphateSampler( pose ) );
+		phosphate_sampler_->set_moving_partition_res( working_parameters_->working_moving_partition_res() );
+		phosphate_sampler_->set_scorefxn( rna::phosphate::get_phosphate_scorefxn( scorefxn_->energy_method_options() ) );
+		phosphate_sampler_->set_force_phosphate_instantiation( options_->force_phosphate_instantiation() );
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////
-	void
-	StepWiseMasterPacker::set_working_pack_res( utility::vector1< core::Size > const & setting ){
-		working_pack_res_ = setting;
-		packer_->set_working_pack_res( working_pack_res_ );
+	if ( options_->o2prime_legacy_mode() ) { // this is the only action that is non-const for the pose... deprecate?
+		rna::check_instantiated_O2Prime_hydrogen( pose ); // i.e., instantiate all 2'-OH.
+		o2prime_packer_ = rna::o2prime::O2PrimePackerOP( new rna::o2prime::O2PrimePacker( pose, scorefxn_, working_parameters_->working_moving_partition_res() ) );
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////
- 	void
-	StepWiseMasterPacker::initialize_packer() {
-		packer_ = packer::get_packer( scorefxn_, get_all_working_moving_res( working_parameters_ ), options_ );
-		if ( options_->o2prime_legacy_mode() )	{
-			packer_->set_pack_o2prime_hydrogens( false ); // in legacy mode, HO2' was handled by separate packer
-		}
+	initialize_packer();
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseMasterPacker::set_working_pack_res( utility::vector1< core::Size > const & setting ){
+	working_pack_res_ = setting;
+	packer_->set_working_pack_res( working_pack_res_ );
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseMasterPacker::initialize_packer() {
+	packer_ = packer::get_packer( scorefxn_, get_all_working_moving_res( working_parameters_ ), options_ );
+	if ( options_->o2prime_legacy_mode() ) {
+		packer_->set_pack_o2prime_hydrogens( false ); // in legacy mode, HO2' was handled by separate packer
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseMasterPacker::do_prepack( pose::Pose & pose ) {
+	if ( phosphate_sampler_ != 0 ) phosphate_sampler_->do_prepack( pose, working_parameters_->working_moving_res_list() ); // must be fixed.
+	packer_->do_prepack( pose );
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseMasterPacker::add_packer_screeners( utility::vector1< screener::StepWiseScreenerOP > & screeners,
+	pose::Pose const & pose,
+	pose::PoseOP sugar_instantiation_pose ){
+
+	// testing -- OK to move down here? No won't be inherited by the actual pose, right?
+	if ( options_->sampler_perform_phosphate_pack() ) {
+		screeners.push_back( screener::StepWiseScreenerOP( new PhosphateScreener( phosphate_sampler_ ) ) );
 	}
 
-	//////////////////////////////////////////////////////////////////////////////////////////
-	void
-	StepWiseMasterPacker::do_prepack( pose::Pose & pose ) {
-		if ( phosphate_sampler_ != 0 )	phosphate_sampler_->do_prepack( pose, working_parameters_->working_moving_res_list() ); // must be fixed.
-		packer_->do_prepack( pose );
+	if ( options_->sampler_try_sugar_instantiation() &&
+			working_parameters_->floating_base() ) {
+		screeners.push_back( stepwise::screener::StepWiseScreenerOP( new SugarInstantiator( *sugar_instantiation_pose, working_parameters_->working_moving_res() ) ) );
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	StepWiseMasterPacker::add_packer_screeners( utility::vector1< screener::StepWiseScreenerOP > & screeners,
-																							pose::Pose const & pose,
-																							pose::PoseOP sugar_instantiation_pose ){
-
-		// testing -- OK to move down here? No won't be inherited by the actual pose, right?
-		if ( options_->sampler_perform_phosphate_pack() ) {
-			screeners.push_back( screener::StepWiseScreenerOP( new PhosphateScreener( phosphate_sampler_ ) ) );
-		}
-
-		if ( options_->sampler_try_sugar_instantiation() &&
-				 working_parameters_->floating_base() )	{
-			screeners.push_back( stepwise::screener::StepWiseScreenerOP( new SugarInstantiator( *sugar_instantiation_pose, working_parameters_->working_moving_res() ) ) );
-		}
-
-		if ( options_->o2prime_legacy_mode() ){
-			screeners.push_back( screener::StepWiseScreenerOP( new O2PrimeScreener( o2prime_packer_ ) ) );
-			if ( !protein::contains_protein( pose ) ) return; // don't put in PackScreener below.
-		}
-
-		packer_pose_ = pose.clone();
-		screeners.push_back( screener::StepWiseScreenerOP( new PackScreener( *packer_pose_, packer_ ) ) ); // includes HO2' for RNA.
+	if ( options_->o2prime_legacy_mode() ) {
+		screeners.push_back( screener::StepWiseScreenerOP( new O2PrimeScreener( o2prime_packer_ ) ) );
+		if ( !protein::contains_protein( pose ) ) return; // don't put in PackScreener below.
 	}
 
-	///////////////////////////////////////////////////////////////////////////
-	void
-	StepWiseMasterPacker::reset( pose::Pose const & pose ){
-		if ( phosphate_sampler_ != 0 ) phosphate_sampler_->reset( pose );
-		packer_->reset( pose );
-	}
+	packer_pose_ = pose.clone();
+	screeners.push_back( screener::StepWiseScreenerOP( new PackScreener( *packer_pose_, packer_ ) ) ); // includes HO2' for RNA.
+}
 
-	///////////////////////////////////////////////////////////////////////////
-	packer::StepWisePackerCOP
-	StepWiseMasterPacker::packer(){
-		return packer_;
-	}
+///////////////////////////////////////////////////////////////////////////
+void
+StepWiseMasterPacker::reset( pose::Pose const & pose ){
+	if ( phosphate_sampler_ != 0 ) phosphate_sampler_->reset( pose );
+	packer_->reset( pose );
+}
+
+///////////////////////////////////////////////////////////////////////////
+packer::StepWisePackerCOP
+StepWiseMasterPacker::packer(){
+	return packer_;
+}
 
 } //packer
 } //modeler

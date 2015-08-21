@@ -64,7 +64,7 @@ public:
 
 	virtual std::string get_name() const;
 
-	private:
+private:
 
 	/// @brief initial setup for apply
 	void setup_for_apply(core::pose::Pose& pose);

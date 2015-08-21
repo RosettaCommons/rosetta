@@ -34,11 +34,11 @@ using core::pose::Pose;
 class DbTrajectoryWriter : private boost::noncopyable {
 
 public:
-	
-	/// @brief Constructor.  The given pose will be recorded as the first frame 
+
+	/// @brief Constructor.  The given pose will be recorded as the first frame
 	/// in the trajectory.  Some performance settings can optionally be given.
 	DbTrajectoryWriter(
-			Size job_id, Pose const & pose, Size frequency=1, Size cache_limit=200);
+		Size job_id, Pose const & pose, Size frequency=1, Size cache_limit=200);
 
 	/// @brief Specify that a pose should be saved once every N iterations.
 	void set_frequency(Size setting);

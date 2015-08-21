@@ -50,14 +50,14 @@ HyperRectangleOP get_percentile_bounds(
 		upper( points.front().begin(), points.front().end() );
 
 	for ( row_iter it = points.begin(), end = points.end();
-				it != end; ++it
-	) {
+			it != end; ++it
+			) {
 		for ( pt_iter p_it = it->begin(), p_end = it->end(),
-					l_it = lower.begin(), l_end = lower.end(),
-					u_it = upper.begin(), u_end = upper.end();
-					p_it != p_end && l_it != l_end && u_it != u_end;
-					++p_it, ++l_it, ++u_it
-		) {
+				l_it = lower.begin(), l_end = lower.end(),
+				u_it = upper.begin(), u_end = upper.end();
+				p_it != p_end && l_it != l_end && u_it != u_end;
+				++p_it, ++l_it, ++u_it
+				) {
 			*l_it = std::min( *l_it, *p_it );
 			*u_it = std::max( *u_it, *p_it );
 		}
@@ -65,7 +65,7 @@ HyperRectangleOP get_percentile_bounds(
 
 	return HyperRectangleOP( new HyperRectangle(
 		upper, lower
-	) );
+		) );
 }
 
 void transform_percentile_single_pt(
@@ -79,11 +79,11 @@ void transform_percentile_single_pt(
 		upper( bounds->upper() );
 	typedef vector1< Real >::iterator pt_iter;
 	for ( pt_iter p_it = point.begin(), p_end = point.end(),
-				l_it = lower.begin(), l_end = lower.end(),
-				u_it = upper.begin(), u_end = upper.end();
-				p_it != p_end && l_it != l_end && u_it != u_end;
-				++p_it, ++l_it, ++u_it
-	) {
+			l_it = lower.begin(), l_end = lower.end(),
+			u_it = upper.begin(), u_end = upper.end();
+			p_it != p_end && l_it != l_end && u_it != u_end;
+			++p_it, ++l_it, ++u_it
+			) {
 		*p_it = ( *p_it - *l_it ) / ( *u_it - *l_it );
 	}
 }
@@ -106,14 +106,14 @@ void transform_percentile(
 
 	// transform values
 	for ( row_iter it = points.begin(), end = points.end();
-				it != end; ++it
-	) {
+			it != end; ++it
+			) {
 		for ( pt_iter p_it = it->begin(), p_end = it->end(),
-					l_it = lower.begin(), l_end = lower.end(),
-					u_it = upper.begin(), u_end = upper.end();
-					p_it != p_end && l_it != l_end && u_it != u_end;
-					++p_it, ++l_it, ++u_it
-		) {
+				l_it = lower.begin(), l_end = lower.end(),
+				u_it = upper.begin(), u_end = upper.end();
+				p_it != p_end && l_it != l_end && u_it != u_end;
+				++p_it, ++l_it, ++u_it
+				) {
 			*p_it = ( *p_it - *l_it ) / ( *u_it - *l_it );
 		}
 	} // rows
@@ -137,8 +137,8 @@ utility::vector1< KDPointOP > make_points(
 
 	vector1< KDPointOP > new_data;
 	for ( p_iter p_it = points.begin(), p_end = points.end();
-				p_it != p_end; ++p_it
-	) {
+			p_it != p_end; ++p_it
+			) {
 		KDPointOP pt( new KDPoint( *p_it ) );
 		new_data.push_back( pt );
 	}
@@ -162,9 +162,9 @@ utility::vector1< KDPointOP > make_points(
 	vector1< KDPointOP > new_data;
 	d_iter d_it = data.begin(), d_end = data.end();
 	for ( p_iter p_it = points.begin(), p_end = points.end();
-				p_it != p_end && d_it != d_end;
-				++p_it, ++d_it
-	) {
+			p_it != p_end && d_it != d_end;
+			++p_it, ++d_it
+			) {
 		KDPointOP pt( new KDPoint( *p_it, *d_it ) );
 		new_data.push_back( pt );
 	}
@@ -181,9 +181,9 @@ void print_points(
 	for ( vector1< vector1< Real > >::const_iterator pt = points.begin(),
 			end = points.end(); pt != end; ++pt ) {
 		//for ( vector1< Real >::const_iterator val = pt->begin(),
-		//		val_end = pt->end(); val != val_end; ++val
+		//  val_end = pt->end(); val != val_end; ++val
 		//) {
-		//	out << ' ' << *val;
+		// out << ' ' << *val;
 		//}
 		print_point( out, *pt );
 		out << std::endl;
@@ -198,7 +198,7 @@ void print_point(
 	using utility::vector1;
 	for ( vector1< Real >::const_iterator val = point.begin(),
 			val_end = point.end(); val != val_end; ++val
-	) {
+			) {
 		out << ' ' << *val;
 	}
 }
@@ -236,20 +236,20 @@ bool hr_intersects_hs(
 			upper_it = upper.begin(), upper_end = upper.end();
 			pt_it != pt_end && lower_it != lower_end && upper_it != upper_end;
 			++pt_it, ++lower_it, ++upper_it //, qt_it
-	) {
+			) {
 		using std::pow;
 
 		//if ( *pt_it <= *lower_it || *pt_it >= *upper_it ) {
-		//	std::cout << "points are "
-		//		<< *pt_it << "," << *lower_it << "," << *upper_it
-		//		<< std::endl;
-		//	dist_sq += std::min(
-		//		pow( *pt_it - *lower_it, 2 ), pow( *pt_it - *upper_it, 2 )
-		//	);
-		//	std::cout << "(choosing between "
-		//		<< pow( *pt_it - *lower_it, 2 ) << " and "
-		//		<< pow( *pt_it - *upper_it, 2 ) << ")"
-		//		<< std::endl;
+		// std::cout << "points are "
+		//  << *pt_it << "," << *lower_it << "," << *upper_it
+		//  << std::endl;
+		// dist_sq += std::min(
+		//  pow( *pt_it - *lower_it, 2 ), pow( *pt_it - *upper_it, 2 )
+		// );
+		// std::cout << "(choosing between "
+		//  << pow( *pt_it - *lower_it, 2 ) << " and "
+		//  << pow( *pt_it - *upper_it, 2 ) << ")"
+		//  << std::endl;
 		//}
 		//std::cout << "dist_sq = " << dist_sq << std::endl;
 	}

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief Declaration of the different ways in which a pose is searched for
-/// 	constellations.
+///  constellations.
 /// @author Andrea Bazzoli
 
 #ifndef INCLUDED_SearchOptions_hh
@@ -22,21 +22,21 @@ using core::pose::Pose;
 namespace devel {
 namespace constel {
 
-	class NeighTeller;
+class NeighTeller;
 
-	/// @brief Searches pair-constellations by target residue.
-	void pair_constel_set(int const target_pdb_number, char const target_pdb_chain,
-		Pose& pose_init);
+/// @brief Searches pair-constellations by target residue.
+void pair_constel_set(int const target_pdb_number, char const target_pdb_chain,
+	Pose& pose_init);
 
-	/// @brief Searches pair-constellations by mutation pair.
-	void pair_constel_set( std::string const& tgtmuts, Pose& pose_init );
+/// @brief Searches pair-constellations by mutation pair.
+void pair_constel_set( std::string const& tgtmuts, Pose& pose_init );
 
-	/// @brief Searches triple-constellations by target residue.
-	void triple_constel_set(int const target_pdb_number, char const target_pdb_chain,
-		Pose& pose_init);
+/// @brief Searches triple-constellations by target residue.
+void triple_constel_set(int const target_pdb_number, char const target_pdb_chain,
+	Pose& pose_init);
 
-	/// @brief Searches a single, target constellation.
-	void target_constel(std::string &tgtcnl_fil, Pose& ps);
+/// @brief Searches a single, target constellation.
+void target_constel(std::string &tgtcnl_fil, Pose& ps);
 
 } // constel
 } // devel

@@ -24,7 +24,7 @@
 
 namespace protocols {
 namespace topology_broker {
-namespace claims{
+namespace claims {
 
 class LegacyRootClaim;
 

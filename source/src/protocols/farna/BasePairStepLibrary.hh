@@ -31,93 +31,93 @@ namespace protocols {
 namespace farna {
 
 
-	////////////////////////////////////////////////////////////////////////
-	// BasePairStepSequence stores sequence of first dinucleotide strand and second dinucleotide strand --
-	// used as a 'key' for BasePairStepLibrary below.
-	class BasePairStepSequence: public utility::pointer::ReferenceCount {
+////////////////////////////////////////////////////////////////////////
+// BasePairStepSequence stores sequence of first dinucleotide strand and second dinucleotide strand --
+// used as a 'key' for BasePairStepLibrary below.
+class BasePairStepSequence: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//constructor
-		BasePairStepSequence( char const nt_i, char const nt_i_next, char const nt_j, char const nt_j_next );
+	//constructor
+	BasePairStepSequence( char const nt_i, char const nt_i_next, char const nt_j, char const nt_j_next );
 
-		BasePairStepSequence( std::string const & sequence, Size const i, Size const i_next, Size const j, Size const j_next );
+	BasePairStepSequence( std::string const & sequence, Size const i, Size const i_next, Size const j, Size const j_next );
 
-		BasePairStepSequence( std::string const & sequence, BasePairStep const & base_pair_step );
+	BasePairStepSequence( std::string const & sequence, BasePairStep const & base_pair_step );
 
-		//destructor
-		~BasePairStepSequence(){}
+	//destructor
+	~BasePairStepSequence(){}
 
-		friend
-		bool operator < (BasePairStepSequence const & lhs, BasePairStepSequence const & rhs )
-		{
-			//There must be a more elegant way to do this...
-			if( lhs.base_pair_step_sequence_.first.first < rhs.base_pair_step_sequence_.first.first ) {
+	friend
+	bool operator < (BasePairStepSequence const & lhs, BasePairStepSequence const & rhs )
+	{
+		//There must be a more elegant way to do this...
+		if ( lhs.base_pair_step_sequence_.first.first < rhs.base_pair_step_sequence_.first.first ) {
+			return true;
+		} else if ( lhs.base_pair_step_sequence_.first.first == rhs.base_pair_step_sequence_.first.first ) {
+			if ( lhs.base_pair_step_sequence_.first.second < rhs.base_pair_step_sequence_.first.second ) {
 				return true;
-			} else if ( lhs.base_pair_step_sequence_.first.first == rhs.base_pair_step_sequence_.first.first ) {
-				if ( lhs.base_pair_step_sequence_.first.second < rhs.base_pair_step_sequence_.first.second ) {
+			} else if ( lhs.base_pair_step_sequence_.first.second == rhs.base_pair_step_sequence_.first.second ) {
+				if ( lhs.base_pair_step_sequence_.second.first < rhs.base_pair_step_sequence_.second.first ) {
 					return true;
-				} else if ( lhs.base_pair_step_sequence_.first.second == rhs.base_pair_step_sequence_.first.second ) {
-					if ( lhs.base_pair_step_sequence_.second.first < rhs.base_pair_step_sequence_.second.first ) {
+				} else if ( lhs.base_pair_step_sequence_.second.first == rhs.base_pair_step_sequence_.second.first ) {
+					if ( lhs.base_pair_step_sequence_.second.second < rhs.base_pair_step_sequence_.second.second ) {
 						return true;
-					} else if ( lhs.base_pair_step_sequence_.second.first == rhs.base_pair_step_sequence_.second.first ) {
-						if ( lhs.base_pair_step_sequence_.second.second < rhs.base_pair_step_sequence_.second.second ) {
-							return true;
-						}
 					}
 				}
 			}
-			return false;
 		}
+		return false;
+	}
 
-		friend
-		std::ostream &
-		operator <<( std::ostream & os, BasePairStepSequence const & bps ){
-			os << bps.base_pair_step_sequence_.first.first << "-" << bps.base_pair_step_sequence_.first.second << " " << bps.base_pair_step_sequence_.second.first << "-" << bps.base_pair_step_sequence_.second.second;
-			return os;
-		}
+	friend
+	std::ostream &
+	operator <<( std::ostream & os, BasePairStepSequence const & bps ){
+		os << bps.base_pair_step_sequence_.first.first << "-" << bps.base_pair_step_sequence_.first.second << " " << bps.base_pair_step_sequence_.second.first << "-" << bps.base_pair_step_sequence_.second.second;
+		return os;
+	}
 
-	private:
+private:
 
-		typedef std::pair< char, char > DinucleotideStrandSequence;
-		std::pair< DinucleotideStrandSequence, DinucleotideStrandSequence > base_pair_step_sequence_;
+	typedef std::pair< char, char > DinucleotideStrandSequence;
+	std::pair< DinucleotideStrandSequence, DinucleotideStrandSequence > base_pair_step_sequence_;
 
-	};
+};
 
 
-	////////////////////////////////////////////////////////////////////////
-	class BasePairStepLibrary: public utility::pointer::ReferenceCount {
+////////////////////////////////////////////////////////////////////////
+class BasePairStepLibrary: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//constructor
-		BasePairStepLibrary();
+	//constructor
+	BasePairStepLibrary();
 
-		//destructor
-		~BasePairStepLibrary();
+	//destructor
+	~BasePairStepLibrary();
 
-	public:
+public:
 
-		void initialize();
+	void initialize();
 
-		bool has_value( BasePairStepSequence const & base_pair_step_sequence ) const;
+	bool has_value( BasePairStepSequence const & base_pair_step_sequence ) const;
 
-		// List of poses for each base pair step -- converted to
-		// 'mini-pose' format with just coordinates.
-		utility::vector1< core::pose::MiniPoseOP > const &
-		mini_pose_list( BasePairStepSequence const & base_pair_step_sequence );
+	// List of poses for each base pair step -- converted to
+	// 'mini-pose' format with just coordinates.
+	utility::vector1< core::pose::MiniPoseOP > const &
+	mini_pose_list( BasePairStepSequence const & base_pair_step_sequence );
 
-		// example of a full pose for each base pair step
-		pose::PoseOP const &
-		scratch_pose( BasePairStepSequence const & base_pair_step_sequence );
+	// example of a full pose for each base pair step
+	pose::PoseOP const &
+	scratch_pose( BasePairStepSequence const & base_pair_step_sequence );
 
-	private:
+private:
 
-		bool initialized_;
-		std::map< BasePairStepSequence, utility::vector1< core::pose::MiniPoseOP > > mini_pose_lists_;
-		std::map< BasePairStepSequence, pose::PoseOP > scratch_poses_;
+	bool initialized_;
+	std::map< BasePairStepSequence, utility::vector1< core::pose::MiniPoseOP > > mini_pose_lists_;
+	std::map< BasePairStepSequence, pose::PoseOP > scratch_poses_;
 
-	};
+};
 
 } //farna
 } //protocols

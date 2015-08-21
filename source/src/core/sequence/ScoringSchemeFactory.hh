@@ -27,7 +27,7 @@ class ScoringSchemeFactory {
 public:
 	ScoringSchemeFactory(void);
 
- 	/// @brief adds a ScoringSchemeOP
+	/// @brief adds a ScoringSchemeOP
 	void add_type( ScoringSchemeOP new_scheme );
 	ScoringSchemeOP get_scoring_scheme( std::string const & type ) const;
 

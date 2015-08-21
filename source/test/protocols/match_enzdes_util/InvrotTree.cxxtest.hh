@@ -68,7 +68,7 @@ class InvrotTreeTest : public CxxTest::TestSuite
 {
 
 public:
-  InvrotTreeTest() {};
+	InvrotTreeTest() {};
 	protocols::toolbox::match_enzdes_util::EnzConstraintIOOP tim_enz_io;
 
 
@@ -81,26 +81,26 @@ public:
 		utility::vector1< std::string > params_files;
 		ResidueTypeSetCOP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
-		if(!residue_set.has_name("1n1")) params_files.push_back("protocols/match_enzdes_util/1n1.params");
+		if ( !residue_set.has_name("1n1") ) params_files.push_back("protocols/match_enzdes_util/1n1.params");
 		residue_set.read_files(params_files);
 		basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
 
 		tim_enz_io = protocols::toolbox::match_enzdes_util::EnzConstraintIOOP( new protocols::toolbox::match_enzdes_util::EnzConstraintIO(residue_set.get_self_weak_ptr()) );
-  }
+	}
 
-  // Shared finalization goes here.
-  void tearDown() {
-  }
+	// Shared finalization goes here.
+	void tearDown() {
+	}
 
-  void test_invrot_tree()
-  {
-	  using namespace core::scoring::constraints;
+	void test_invrot_tree()
+	{
+		using namespace core::scoring::constraints;
 		using namespace protocols::toolbox::match_enzdes_util;
 
-	  pose::Pose tim_pose;
+		pose::Pose tim_pose;
 
-	  core::import_pose::pose_from_pdb( tim_pose, "protocols/match_enzdes_util/1ney_invtree_unittest.pdb");
-	  scoring::ScoreFunctionOP scorefxn = scoring::ScoreFunctionFactory::create_score_function("enzdes");
+		core::import_pose::pose_from_pdb( tim_pose, "protocols/match_enzdes_util/1ney_invtree_unittest.pdb");
+		scoring::ScoreFunctionOP scorefxn = scoring::ScoreFunctionFactory::create_score_function("enzdes");
 		scorefxn->set_weight( core::scoring::backbone_stub_constraint, 1.0 );
 		(*scorefxn)(tim_pose);
 		TR << "At first, pose has coordinate constraint score " << tim_pose.energies().total_energies()[ core::scoring::coordinate_constraint ] << " and backbone stub constraint score " << tim_pose.energies().total_energies()[ core::scoring::backbone_stub_constraint ] << std::endl;
@@ -116,7 +116,7 @@ public:
 		AllowedSeqposForGeomCstOP tim_actpos( new AllowedSeqposForGeomCst( tim_pos ) );
 
 
-	  tim_enz_io->read_enzyme_cstfile("protocols/match_enzdes_util/mocktim.cst");
+		tim_enz_io->read_enzyme_cstfile("protocols/match_enzdes_util/mocktim.cst");
 
 		InvrotTreeOP tim_invrot_tree( new TheozymeInvrotTree( tim_enz_io ) );
 		tim_invrot_tree->generate_targets_and_inverse_rotamers();

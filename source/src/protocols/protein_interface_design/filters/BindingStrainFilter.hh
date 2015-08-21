@@ -30,7 +30,7 @@
 // Unit headers
 
 namespace protocols {
-namespace protein_interface_design{
+namespace protein_interface_design {
 namespace filters {
 
 class BindingStrainFilter : public protocols::filters::Filter

@@ -131,7 +131,7 @@ public: // Methods
 	void
 	resize( Size const i_res, Size const n_atom, Value const & value )
 	{
-	debug_assert( dof_map_.size() == n_DOF_Type );
+		debug_assert( dof_map_.size() == n_DOF_Type );
 		for ( Size i = 1; i <= n_DOF_Type; ++i ) {
 			dof_map_[ i ].resize( i_res, n_atom, value );
 		}

@@ -10,7 +10,7 @@
 /// @file protocols/RosettaScripts/util.cc
 /// @brief Utility functions useful in RosettaScripts.
 /// @author Sarel Fleishman (sarelf@u.washington.edu), Jacob Corn (jecorn@u.washington.edu),
-///					Rocco Moretti (rmoretti@u.washington.edu), Eva-Maria Strauch (evas01@uw.edu)
+///     Rocco Moretti (rmoretti@u.washington.edu), Eva-Maria Strauch (evas01@uw.edu)
 
 // Unit Headers
 #include <protocols/rosetta_scripts/util.hh>
@@ -67,8 +67,8 @@ parse_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 
-  TaskFactoryOP new_task_factory( new TaskFactory );
-  if ( ! tag->hasOption("task_operations") ) return new_task_factory;
+	TaskFactoryOP new_task_factory( new TaskFactory );
+	if ( ! tag->hasOption("task_operations") ) return new_task_factory;
 	TR<<"Object "<<tag->getOption< std::string >( "name", "no_name" )<<" reading the following task_operations: ";
 	return( parse_task_operations( tag->getOption< std::string >( "task_operations"), data ) );
 }
@@ -79,68 +79,65 @@ parse_task_operations( std::string const & task_list, basic::datacache::DataMap 
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 
-  TaskFactoryOP new_task_factory( new TaskFactory );
-  std::string const t_o_val( task_list );
-  typedef utility::vector1< std::string > StringVec;
-  StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
+	TaskFactoryOP new_task_factory( new TaskFactory );
+	std::string const t_o_val( task_list );
+	typedef utility::vector1< std::string > StringVec;
+	StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
 	TR<<"Adding the following task operations\n";
-  for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
-        t_o_key != end; ++t_o_key ) {
-    if ( data.has( "task_operations", *t_o_key ) ) {
-      new_task_factory->push_back( data.get_ptr< TaskOperation >( "task_operations", *t_o_key ) );
+	for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
+			t_o_key != end; ++t_o_key ) {
+		if ( data.has( "task_operations", *t_o_key ) ) {
+			new_task_factory->push_back( data.get_ptr< TaskOperation >( "task_operations", *t_o_key ) );
 			TR<<*t_o_key<<' ';
-    } else {
-      throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
-    }
-  }
+		} else {
+			throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
+		}
+	}
 	TR<<std::endl;
-  return new_task_factory;
+	return new_task_factory;
 }
 
 ///option to add or refer to a Taskfactory through the datamap, similar to how to add/refer to movemap OPs (EMS)
 core::pack::task::TaskFactoryOP
 parse_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap & data, core::pack::task::TaskFactoryOP & task_factory /*, bool const reset_taskfactory */)
 {
-  using namespace core::pack::task;
-  using namespace core::pack::task::operation;
+	using namespace core::pack::task;
+	using namespace core::pack::task::operation;
 
-  if ( tag->hasOption("task_factory" ) ){
-    std::string const name( tag->getOption< std::string >("task_factory") );
-    TR <<"taskfacotry name: " << name << std::endl;
+	if ( tag->hasOption("task_factory" ) ) {
+		std::string const name( tag->getOption< std::string >("task_factory") );
+		TR <<"taskfacotry name: " << name << std::endl;
 
-    if( data.has( "TaskFactory", name ) ){
-       task_factory = data.get_ptr<TaskFactory>( "TaskFactory", name );
-      TR<<"found helper task_factory: "<< name <<" for mover: "<<tag->getName()<< std::endl;
-    }
+		if ( data.has( "TaskFactory", name ) ) {
+			task_factory = data.get_ptr<TaskFactory>( "TaskFactory", name );
+			TR<<"found helper task_factory: "<< name <<" for mover: "<<tag->getName()<< std::endl;
+		} else { // ( !data.has( "TaskFactory", name ) ){
+			std::string tf_string = "TaskFactory";
+			task_factory = core::pack::task::TaskFactoryOP( new TaskFactory );
+			data.add( tf_string , name , task_factory );
+			TR<<"adding new TaskFactory to the datamap: "<< name  <<std::endl;
+		}
+	}
 
-  else{ // ( !data.has( "TaskFactory", name ) ){
-      std::string tf_string = "TaskFactory";
-      task_factory = core::pack::task::TaskFactoryOP( new TaskFactory );
-      data.add( tf_string , name , task_factory );
-      TR<<"adding new TaskFactory to the datamap: "<< name  <<std::endl;
-    }
-  }
+	if ( ! tag->hasOption("task_operations") ) return task_factory;
 
-  if ( ! tag->hasOption("task_operations") ) return task_factory;
+	std::string const t_o_val( tag->getOption<std::string>("task_operations") );
+	typedef utility::vector1< std::string > StringVec;
+	StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
+	TR<<"Adding the following task operations to mover "<<tag->getName()<<" called "<<tag->getOption<std::string>( "name", "no_name" )<<":\n";
 
-  std::string const t_o_val( tag->getOption<std::string>("task_operations") );
-  typedef utility::vector1< std::string > StringVec;
-  StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
-  TR<<"Adding the following task operations to mover "<<tag->getName()<<" called "<<tag->getOption<std::string>( "name", "no_name" )<<":\n";
+	for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
+			t_o_key != end; ++t_o_key ) {
 
-  for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
-     t_o_key != end; ++t_o_key ) {
-
-    if ( data.has( "task_operations", *t_o_key ) ) {
-      task_factory->push_back( data.get_ptr< TaskOperation >( "task_operations", *t_o_key ) );
-      TR<<*t_o_key<<' ';
-    }
-    else {
-      throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
-    }
-  }
-  TR<<std::endl;
-  return task_factory;
+		if ( data.has( "task_operations", *t_o_key ) ) {
+			task_factory->push_back( data.get_ptr< TaskOperation >( "task_operations", *t_o_key ) );
+			TR<<*t_o_key<<' ';
+		} else {
+			throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
+		}
+	}
+	TR<<std::endl;
+	return task_factory;
 }
 
 utility::vector1< core::pack::task::operation::TaskOperationOP >
@@ -152,7 +149,7 @@ get_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const &
 
 	utility::vector1< TaskOperationOP > task_operations;
 	String const t_o_val( tag->getOption<String>("task_operations", "" ) );
-	if( t_o_val != "" ){
+	if ( t_o_val != "" ) {
 		utility::vector1< String > const t_o_keys( utility::string_split( t_o_val, ',' ) );
 		for ( utility::vector1< String >::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
 				t_o_key != end; ++t_o_key ) {
@@ -218,7 +215,7 @@ parse_score_function(
 		err_msg
 			<< std::endl << std::endl
 			<< "Error getting score function from";
-		if( tag->hasOption("name") ){
+		if ( tag->hasOption("name") ) {
 			err_msg
 				<< " the tag '" << tag->getOption<std::string>("name") << "' of type ";
 		} else {
@@ -228,7 +225,7 @@ parse_score_function(
 		err_msg
 			<< "'" << tag->getName() << "':" << std::endl;
 
-		if( !tag->hasOption(option_name) ){
+		if ( !tag->hasOption(option_name) ) {
 			err_msg
 				<< "  No value for option '" << option_name << "' is provided, so it is using the default value of '" << dflt_key << "'" << std::endl;
 		} else {
@@ -273,20 +270,18 @@ get_score_function_name(
 core::pose::PoseOP
 saved_reference_pose( utility::tag::TagCOP const in_tag, basic::datacache::DataMap & data_map, std::string const & tag_name ){
 
-	if( in_tag->hasOption(tag_name) ){
+	if ( in_tag->hasOption(tag_name) ) {
 		core::pose::PoseOP refpose(NULL);
 		std::string refpose_name(in_tag->getOption<std::string>( tag_name) );
 		TR<<"Loading PDB: "<<refpose_name<<std::endl;
 
-		if( !data_map.has("spm_ref_poses",refpose_name) ){
+		if ( !data_map.has("spm_ref_poses",refpose_name) ) {
 			refpose = core::pose::PoseOP( new core::pose::Pose() );
 			data_map.add("spm_ref_poses",refpose_name,refpose );
-		}
-		else refpose = data_map.get_ptr<core::pose::Pose>("spm_ref_poses",refpose_name );
+		} else refpose = data_map.get_ptr<core::pose::Pose>("spm_ref_poses",refpose_name );
 
 		return refpose;
-	}
-	else std::cerr << "WARNING: saved_reference_pose function called even though tag has no " + tag_name + " entry. something's unclean somewhere." << std::endl;
+	} else std::cerr << "WARNING: saved_reference_pose function called even though tag has no " + tag_name + " entry. something's unclean somewhere." << std::endl;
 	return NULL;
 }
 
@@ -300,51 +295,51 @@ foreach_movemap_tag(
 	using namespace core::kinematics;
 	using namespace utility::tag;
 
-	BOOST_FOREACH( TagCOP const tag, in_tag->getTags() ){
+	BOOST_FOREACH ( TagCOP const tag, in_tag->getTags() ) {
 		std::string const name( tag->getName() );
 		runtime_assert( name == "Jump" || name == "Chain" || name == "Span" );
-		if( name == "Jump" ){
+		if ( name == "Jump" ) {
 			core::Size const num( tag->getOption< core::Size >( "number" ) );
 			bool const setting( tag->getOption< bool >( "setting" ) );
-			if( num == 0 ) mm->set_jump( setting ); // set all jumps if number==0
+			if ( num == 0 ) mm->set_jump( setting ); // set all jumps if number==0
 			else mm->set_jump( num, setting );
 		}
-		if( name == "Chain" ){
+		if ( name == "Chain" ) {
 			core::Size const num( tag->getOption< core::Size >( "number" ) );
 			bool const chi( tag->getOption< bool >( "chi" ) );
 			bool const bb( tag->getOption< bool >( "bb" ) );
 			core::Size const chain_begin( pose.conformation().chain_begin( num ) );
 			core::Size const chain_end( pose.conformation().chain_end( num ) );
-			for( core::Size i( chain_begin ); i <= chain_end; ++i ){
+			for ( core::Size i( chain_begin ); i <= chain_end; ++i ) {
 				mm->set_chi( i, chi );
 				mm->set_bb( i, bb );
 			}
 			bool const bondangle( tag->getOption< bool >( "bondangle", false ) );
 			bool const bondlength( tag->getOption< bool >( "bondlength", false ) );
-			if (bondangle || bondlength) {
-				for( core::Size i( chain_begin ); i <= chain_end; ++i ){
-					for( core::Size j=1; j<=pose.residue_type(i).natoms(); ++j ){
+			if ( bondangle || bondlength ) {
+				for ( core::Size i( chain_begin ); i <= chain_end; ++i ) {
+					for ( core::Size j=1; j<=pose.residue_type(i).natoms(); ++j ) {
 						mm->set( core::id::DOF_ID(core::id::AtomID(j,i), core::id::THETA ), bondangle );
 						mm->set( core::id::DOF_ID(core::id::AtomID(j,i), core::id::D ), bondlength );
 					}
 				}
 			}
 		}
-		if( name == "Span" ){
+		if ( name == "Span" ) {
 			core::Size const begin( tag->getOption< core::Size >( "begin" ) );
 			core::Size const end( tag->getOption< core::Size >( "end" ) );
 			runtime_assert( end >= begin );
 			bool const chi( tag->getOption< bool >( "chi" ) );
 			bool const bb( tag->getOption< bool >( "bb" ) );
-			for( core::Size i( begin ); i <= end; ++i ){
+			for ( core::Size i( begin ); i <= end; ++i ) {
 				mm->set_chi( i, chi );
 				mm->set_bb( i, bb );
 			}
 			bool const bondangle( tag->getOption< bool >( "bondangle", false ) );
 			bool const bondlength( tag->getOption< bool >( "bondlength", false ) );
-			if (bondangle || bondlength) {
-				for( core::Size i( begin ); i <= end; ++i ){
-					for( core::Size j=1; j<=pose.residue_type(i).natoms(); ++j ){
+			if ( bondangle || bondlength ) {
+				for ( core::Size i( begin ); i <= end; ++i ) {
+					for ( core::Size j=1; j<=pose.residue_type(i).natoms(); ++j ) {
 						mm->set( core::id::DOF_ID(core::id::AtomID(j,i), core::id::THETA ), bondangle );
 						mm->set( core::id::DOF_ID(core::id::AtomID(j,i), core::id::D ), bondlength );
 					}
@@ -366,28 +361,27 @@ parse_movemap(
 	using utility::tag::TagCOP;
 	using namespace core::kinematics;
 
-	if( in_tag == NULL ) return;
+	if ( in_tag == NULL ) return;
 	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
 	utility::vector1< TagCOP >::const_iterator tag_it;
-	for( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ){
-		if( (*tag_it)->getName() =="MoveMap"){
+	for ( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ) {
+		if ( (*tag_it)->getName() =="MoveMap" ) {
 			break;
 		}
 	}
-	if( reset_map ){
+	if ( reset_map ) {
 		mm->set_bb( true );
 		mm->set_chi( true );
 		mm->set_jump( true );
 	}
-	if( tag_it == branch_tags.end()) return;
+	if ( tag_it == branch_tags.end() ) return;
 
-	if( (*tag_it)->hasOption("name") ){
+	if ( (*tag_it)->hasOption("name") ) {
 		std::string const name( (*tag_it)->getOption< std::string >( "name" ) );
-		if( data.has( "movemaps", name ) ){
+		if ( data.has( "movemaps", name ) ) {
 			mm = data.get_ptr<MoveMap>( "movemaps", name );
 			TR<<"Found movemap "<<name<<" on datamap"<<std::endl;
-		}
-		else{
+		} else {
 			data.add( "movemaps", name, mm );
 			TR<<"Adding movemap "<<name<<" to datamap"<<std::endl;
 		}
@@ -407,21 +401,21 @@ parse_movemap(
 	using utility::tag::TagCOP;
 	using namespace core::kinematics;
 
-	if( in_tag == NULL ) return;
+	if ( in_tag == NULL ) return;
 	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
 	utility::vector1< TagCOP >::const_iterator tag_it;
-	for( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ){
-		if( (*tag_it)->getName() =="MoveMap"){
+	for ( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ) {
+		if ( (*tag_it)->getName() =="MoveMap" ) {
 			break;
 		}
 	}
-	if (reset_movemap){
+	if ( reset_movemap ) {
 		mm->set_bb( true );
 		mm->set_chi( true );
 		mm->set_jump( true );
 	}
-	if( tag_it == branch_tags.end()) return;
-	if( (*tag_it)->hasOption("name" ) ){
+	if ( tag_it == branch_tags.end() ) return;
+	if ( (*tag_it)->hasOption("name" ) ) {
 		TR<<"ERROR in "<<*tag_it<<'\n';
 		throw utility::excn::EXCN_RosettaScriptsOption("Tag called with option name but this option is not available to this mover. Note that FastRelax cannot work with a prespecified movemap b/c its movemap is parsed at apply time. Sorry." );
 	}
@@ -440,19 +434,19 @@ add_movemaps_to_datamap(
 	using utility::tag::TagCOP;
 	using namespace core::kinematics;
 
-	if( in_tag == NULL ) return;
+	if ( in_tag == NULL ) return;
 	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
 	utility::vector1< TagCOP >::const_iterator tag_it;
-	for( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ){
-		if( (*tag_it)->getName() =="MoveMap"){
+	for ( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ) {
+		if ( (*tag_it)->getName() =="MoveMap" ) {
 
-			if (! (*tag_it)->hasOption("name")) continue;
+			if ( ! (*tag_it)->hasOption("name") ) continue;
 			std::string const name( (*tag_it)->getOption< std::string >( "name" ) );
-			if (data.has("movemaps", name)) continue;
+			if ( data.has("movemaps", name) ) continue;
 
 
 			MoveMapOP mm( new MoveMap() );
-			if (initialize_mm_as_true){
+			if ( initialize_mm_as_true ) {
 				mm->set_bb( true );
 				mm->set_chi( true );
 				mm->set_jump( true );
@@ -470,8 +464,8 @@ has_branch(utility::tag::TagCOP in_tag, std::string const & branch_name){
 
 	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
 	utility::vector1< TagCOP >::const_iterator tag_it;
-	for( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ){
-		if( (*tag_it)->getName() == branch_name){
+	for ( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ) {
+		if ( (*tag_it)->getName() == branch_name ) {
 			return true;
 		}
 	}
@@ -480,18 +474,20 @@ has_branch(utility::tag::TagCOP in_tag, std::string const & branch_name){
 
 protocols::filters::FilterOP
 parse_filter( std::string const & filter_name, protocols::filters::Filters_map const & filters ){
-  protocols::filters::Filters_map::const_iterator filter_it( filters.find( filter_name ) );
-  if( filter_it == filters.end() )
-    throw utility::excn::EXCN_RosettaScriptsOption( "Filter "+filter_name+" not found" );
-  return filter_it->second;
+	protocols::filters::Filters_map::const_iterator filter_it( filters.find( filter_name ) );
+	if ( filter_it == filters.end() ) {
+		throw utility::excn::EXCN_RosettaScriptsOption( "Filter "+filter_name+" not found" );
+	}
+	return filter_it->second;
 }
 
 protocols::moves::MoverOP
 parse_mover( std::string const & mover_name, protocols::moves::Movers_map const & movers ){
-  protocols::moves::Movers_map::const_iterator mover_it( movers.find( mover_name ) );
-  if( mover_it == movers.end() )
-    throw utility::excn::EXCN_RosettaScriptsOption("Mover "+mover_name+" not found" );
-  return mover_it->second;
+	protocols::moves::Movers_map::const_iterator mover_it( movers.find( mover_name ) );
+	if ( mover_it == movers.end() ) {
+		throw utility::excn::EXCN_RosettaScriptsOption("Mover "+mover_name+" not found" );
+	}
+	return mover_it->second;
 }
 
 /// @brief utility function for parsing xyzVector
@@ -517,16 +513,16 @@ core::Size
 find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res, core::Size const chain/*=0*/ ){
 	//TR<<"looking for neiboughrs of: "<<source.pdb_info()->name()<< " and residue "<<res<<std::endl;
 	core::Real min_dist( 100000 ); core::Size nearest_res( 0 );
-	for( core::Size i = 1; i <= source.total_residue(); ++i ){
-		if( source.residue( i ).is_ligand() ) continue;
-		if( chain && source.residue( i ).chain() != chain ) continue;
+	for ( core::Size i = 1; i <= source.total_residue(); ++i ) {
+		if ( source.residue( i ).is_ligand() ) continue;
+		if ( chain && source.residue( i ).chain() != chain ) continue;
 		core::Real const dist( target.residue( res ).xyz( "CA" ).distance( source.residue( i ).xyz( "CA" ) ) );
-		if( dist <= min_dist ){
+		if ( dist <= min_dist ) {
 			min_dist = dist;
 			nearest_res = i;
 		}
 	}
-	if( min_dist <= 3.0 ) return nearest_res;
+	if ( min_dist <= 3.0 ) return nearest_res;
 	else return 0;
 }
 
@@ -534,16 +530,16 @@ void
 find_nearest_res(  core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res, core::Size & target_res, core::Real & target_dist, core::Size const chain/*=0*/ ){
 	target_res = 0; target_dist = 0.0;
 	core::Real min_dist( 100000 ); core::Size nearest_res( 0 );
-	for( core::Size i = 1; i <= source.total_residue(); ++i ){
-		if( source.residue( i ).is_ligand() ) continue;
-		if( chain && source.residue( i ).chain() != chain ) continue;
+	for ( core::Size i = 1; i <= source.total_residue(); ++i ) {
+		if ( source.residue( i ).is_ligand() ) continue;
+		if ( chain && source.residue( i ).chain() != chain ) continue;
 		core::Real const dist( target.residue( res ).xyz( "CA" ).distance( source.residue( i ).xyz( "CA" ) ) );
-		if( dist <= min_dist ){
+		if ( dist <= min_dist ) {
 			min_dist = dist;
 			nearest_res = i;
 		}
 	}
-	if( min_dist <= 3.0 ){
+	if ( min_dist <= 3.0 ) {
 		target_res = nearest_res;
 		target_dist = min_dist;
 	}
@@ -552,22 +548,24 @@ find_nearest_res(  core::pose::Pose const & source, core::pose::Pose const & tar
 
 utility::vector1< core::Size >
 residue_packer_states( core::pose::Pose const & pose, core::pack::task::TaskFactoryCOP tf, bool const designable, bool const packable/*but not designable*/) {
-  utility::vector1< core::Size > designable_vec, packable_vec, both;
-  designable_vec.clear(); packable_vec.clear(); both.clear();
-  core::pack::task::PackerTaskOP packer_task( tf->create_task_and_apply_taskoperations( pose ) );
-  for( core::Size resi=1; resi<=pose.total_residue(); ++resi ){
-    if( packer_task->being_designed( resi ) )
-      designable_vec.push_back( resi );
-		else if( packer_task->being_packed( resi ) )
+	utility::vector1< core::Size > designable_vec, packable_vec, both;
+	designable_vec.clear(); packable_vec.clear(); both.clear();
+	core::pack::task::PackerTaskOP packer_task( tf->create_task_and_apply_taskoperations( pose ) );
+	for ( core::Size resi=1; resi<=pose.total_residue(); ++resi ) {
+		if ( packer_task->being_designed( resi ) ) {
+			designable_vec.push_back( resi );
+		} else if ( packer_task->being_packed( resi ) ) {
 			packable_vec.push_back( resi );
+		}
 	}
-	if( designable && packable ){
+	if ( designable && packable ) {
 		both.insert( both.begin(), designable_vec.begin(), designable_vec.end() );
 		both.insert( both.end(), packable_vec.begin(), packable_vec.end() );
- 		return both;
- 	}
-	if( designable )
+		return both;
+	}
+	if ( designable ) {
 		return designable_vec;
+	}
 	return packable_vec;
 }
 /// @brief finds the nearest disulife to given residue on pose by searching both up and down stream to the given postion
@@ -575,24 +573,26 @@ core::Size
 find_nearest_disulfide( core::pose::Pose const & pose, core::Size const res)
 {
 	core::Size disulfideN=0,disulfideC=0;
-	for( core::Size i = res; i <= pose.total_residue(); ++i ){
-		if( pose.residue( i ).has_variant_type( core::chemical::DISULFIDE ) ){
+	for ( core::Size i = res; i <= pose.total_residue(); ++i ) {
+		if ( pose.residue( i ).has_variant_type( core::chemical::DISULFIDE ) ) {
 			disulfideC=i;
 			break;
 		}
 	}
-//	TR<<"C-ter disulfide: "<<disulfideC<<std::endl;
-	for( core::Size i = res ;i > 0; --i ){
-		if( pose.residue( i ).has_variant_type( core::chemical::DISULFIDE ) ){
+	// TR<<"C-ter disulfide: "<<disulfideC<<std::endl;
+	for ( core::Size i = res ; i > 0; --i ) {
+		if ( pose.residue( i ).has_variant_type( core::chemical::DISULFIDE ) ) {
 			disulfideN=i;
-		break;
+			break;
 		}
 	}
 	//TR<<"N-ter disulfide: "<<disulfideN<<std::endl;
-	if ((disulfideN==0)&&(disulfideC==0))
+	if ( (disulfideN==0)&&(disulfideC==0) ) {
 		utility_exit_with_message("Could not find disulfides on: "+pose.pdb_info()->name());
-	if (((disulfideC-res)>(res-disulfideN))&&disulfideN!=0)
+	}
+	if ( ((disulfideC-res)>(res-disulfideN))&&disulfideN!=0 ) {
 		return disulfideN;
+	}
 
 	return disulfideC;
 }
@@ -603,10 +603,9 @@ parse_bogus_res_tag( utility::tag::TagCOP tag, std::string const & prefix ){
 	// The answer, excruciatingly, is that this is a way to handle tags silently that just shouldn't be there, I guess?
 	// This function is passed a prefix before "pdb_num"
 	std::string bogus;
-	if (tag->hasOption(prefix+"pdb_num")){
+	if ( tag->hasOption(prefix+"pdb_num") ) {
 		bogus = tag->getOption<std::string>(prefix+"pdb_num");
-	}
-	else if(tag->hasOption(prefix+"res_num")){
+	} else if ( tag->hasOption(prefix+"res_num") ) {
 		bogus = tag->getOption<std::string>(prefix+"res_num");
 	}
 

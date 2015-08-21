@@ -19,9 +19,9 @@
 namespace protocols {
 namespace flexpep_docking {
 
-  class FlexPepDockingAbInitio;
-  typedef utility::pointer::shared_ptr< FlexPepDockingAbInitio > FlexPepDockingAbInitioOP;
-  typedef utility::pointer::shared_ptr< FlexPepDockingAbInitio const > FlexPepDockingAbInitioCOP;
+class FlexPepDockingAbInitio;
+typedef utility::pointer::shared_ptr< FlexPepDockingAbInitio > FlexPepDockingAbInitioOP;
+typedef utility::pointer::shared_ptr< FlexPepDockingAbInitio const > FlexPepDockingAbInitioCOP;
 
 } // moves
 } // protocols

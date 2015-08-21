@@ -161,8 +161,8 @@ public: // Properties
 	empty() const
 	{
 		return (
-		 ( vol_.empty() ) &&
-		 ( path_.empty() ) );
+			( vol_.empty() ) &&
+			( path_.empty() ) );
 	}
 
 
@@ -209,8 +209,8 @@ public: // Properties
 	name() const
 	{
 		return
-		 vol_ +
-		 path_;
+			vol_ +
+			path_;
 	}
 
 
@@ -335,37 +335,37 @@ private: // Fields
 
 
 /// @brief PathName == PathName
-#ifndef __clang__ 
+#ifndef __clang__
 bool
 operator ==( PathName const & name1, PathName const & name2 );
 #endif
 
 /// @brief PathName != PathName
-#ifndef __clang__ 
+#ifndef __clang__
 bool
 operator !=( PathName const & name1, PathName const & name2 );
 #endif
 
 /// @brief PathName < PathName
-#ifndef __clang__ 
+#ifndef __clang__
 bool
 operator <( PathName const & name1, PathName const & name2 );
 #endif
 
 /// @brief PathName <= PathName
-#ifndef __clang__ 
+#ifndef __clang__
 bool
 operator <=( PathName const & name1, PathName const & name2 );
 #endif
 
 /// @brief PathName >= PathName
-#ifndef __clang__ 
+#ifndef __clang__
 bool
 operator >=( PathName const & name1, PathName const & name2 );
 #endif
 
 /// @brief PathName > PathName
-#ifndef __clang__ 
+#ifndef __clang__
 bool
 operator >( PathName const & name1, PathName const & name2 );
 #endif

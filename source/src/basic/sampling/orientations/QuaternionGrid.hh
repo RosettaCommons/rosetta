@@ -45,16 +45,16 @@ class Quaternion {
 public:
 	numeric::Real w, x, y, z;
 	Quaternion(numeric::Real ww = 1, numeric::Real xx = 0, numeric::Real yy = 0, numeric::Real zz = 0)
-		: w(ww)    , x(xx)    , y(yy)    , z(zz) {}
+	: w(ww)    , x(xx)    , y(yy)    , z(zz) {}
 	void Normalize();
 	void Canonicalize() {
 		Normalize();
 		// Make first biggest element positive
 		numeric::Real mag = w;
-		if (std::abs(x) > std::abs(mag))      mag = x;
-		if (std::abs(y) > std::abs(mag))      mag = y;
-		if (std::abs(z) > std::abs(mag))      mag = z;
-		if (mag < 0) {      w *= -1;      x *= -1;      y *= -1;      z *= -1;    }
+		if ( std::abs(x) > std::abs(mag) )      mag = x;
+		if ( std::abs(y) > std::abs(mag) )      mag = y;
+		if ( std::abs(z) > std::abs(mag) )      mag = z;
+		if ( mag < 0 ) {      w *= -1;      x *= -1;      y *= -1;      z *= -1;    }
 		return;
 	}
 	// a.Times(b) returns a * b
@@ -118,38 +118,43 @@ public:
 		m_arr.push_back(x);
 		size_t n = 1;
 		// Do the sign changes
-		if (x.a != 0) {
-			for (size_t i = 0; i < n; ++i)
+		if ( x.a != 0 ) {
+			for ( size_t i = 0; i < n; ++i ) {
 				m_arr.push_back(Triple(-m_arr[i].a, m_arr[i].b, m_arr[i].c));
+			}
 			n *= 2;
 		}
-		if (x.b != 0) {
-			for (size_t i = 0; i < n; ++i)
+		if ( x.b != 0 ) {
+			for ( size_t i = 0; i < n; ++i ) {
 				m_arr.push_back(Triple(m_arr[i].a, -m_arr[i].b, m_arr[i].c));
+			}
 			n *= 2;
 		}
-		if (x.c != 0) {
-			for (size_t i = 0; i < n; ++i)
+		if ( x.c != 0 ) {
+			for ( size_t i = 0; i < n; ++i ) {
 				m_arr.push_back(Triple(m_arr[i].a, m_arr[i].b, -m_arr[i].c));
+			}
 			n *= 2;
 		}
-		if (x.a == x.b && x.b == x.c)
+		if ( x.a == x.b && x.b == x.c ) {
 			return;
+		}
 		// With at least two distinct indices we can rotate the set thru 3
 		// permuations.
-		for (size_t i = 0; i < n; ++i) {
+		for ( size_t i = 0; i < n; ++i ) {
 			m_arr.push_back(Triple(m_arr[i].b, m_arr[i].c, m_arr[i].a));
 			m_arr.push_back(Triple(m_arr[i].c, m_arr[i].a, m_arr[i].b));
 		}
 		n *= 3;
-		if (x.a == x.b || x.b == x.c)
+		if ( x.a == x.b || x.b == x.c ) {
 			return;
+		}
 		// With three distinct indices we can in addition interchange the
 		// first two indices (to yield all 6 permutations of 3 indices).
-		for (size_t i = 0; i < n; ++i) {
+		for ( size_t i = 0; i < n; ++i ) {
 			m_arr.push_back(Triple(m_arr[i].b, m_arr[i].a, m_arr[i].c));
 		}
-		// This adjustment is not made because the variable is not used again in this function 
+		// This adjustment is not made because the variable is not used again in this function
 		//n *= 2;
 	}
 	size_t Number() const {
@@ -166,15 +171,15 @@ private:
 class QuaternionGrid : public utility::pointer::ReferenceCount {
 public:
 
- 	QuaternionGrid(std::string const & name, std::istream & in);
- 	void print() const;
- 	long num_samples() const { return ntot; }
- 	Quaternion quaternion(long i) const { return s.Orientation(i-1); }
+	QuaternionGrid(std::string const & name, std::istream & in);
+	void print() const;
+	long num_samples() const { return ntot; }
+	Quaternion quaternion(long i) const { return s.Orientation(i-1); }
 	numeric::Real maxrad() const {return maxrad_;}
- 	numeric::Real weight(long i) const { return s.Weight(i-1); }
+	numeric::Real weight(long i) const { return s.Weight(i-1); }
 private:
- 	numeric::xyzVector<numeric::Real> euler(long i) const { return s.Orientation(i-1).euler(); }
- 	std::string name_;
+	numeric::xyzVector<numeric::Real> euler(long i) const { return s.Orientation(i-1).euler(); }
+	std::string name_;
 	numeric::Real delta, sigma, maxrad_, coverage;
 	size_t ncell, ntot, nent;
 	QuatSet s;

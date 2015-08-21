@@ -78,7 +78,7 @@ public:
 		}
 #endif
 #else
-  	// not multithreaded; standard singleton instantiation logic
+		// not multithreaded; standard singleton instantiation logic
 		if ( ! instance_ ) {
 			instance_ = T::create_singleton_instance();
 		}

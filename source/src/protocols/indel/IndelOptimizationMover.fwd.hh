@@ -27,7 +27,7 @@ namespace protocols {
 namespace indel {
 
 class IndelOptimizationMover;
-	
+
 typedef utility::pointer::shared_ptr< IndelOptimizationMover > IndelOptimizationMoverOP;
 typedef utility::pointer::shared_ptr< IndelOptimizationMover const > IndelOptimizationMoverCOP;
 

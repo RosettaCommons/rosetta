@@ -29,58 +29,58 @@ namespace protocols {
 namespace star {
 
 class Extender : private boost::noncopyable {
- public:
-  Extender(core::sequence::SequenceAlignmentCOP alignment, int num_residues);
+public:
+	Extender(core::sequence::SequenceAlignmentCOP alignment, int num_residues);
 
-  /// @detail Sets unaligned residues' torsion angles to their extended values
-  /// and idealizes bond lengths and angles. The placement of unaligned residues
-  /// depends on the number of residues separating the adjacent aligned regions.
-  ///
-  /// Given aligned regions a_1 and a_2 with (a_1.start < a_2.start):
-  ///
-  /// If (a_2.start - a_1.stop) <= -abinitio:star:short_loop_len, the unaligned
-  /// residues are grown off a_1.stop. Otherwise, a stochastically selected
-  /// portion of the residues are grown off a_1.stop and the remainder grown off
-  /// a_2.start. In both cases, the method is responsible for noting the interior
-  /// cutpoints it selected.
-  void extend_unaligned(core::pose::Pose* pose);
+	/// @detail Sets unaligned residues' torsion angles to their extended values
+	/// and idealizes bond lengths and angles. The placement of unaligned residues
+	/// depends on the number of residues separating the adjacent aligned regions.
+	///
+	/// Given aligned regions a_1 and a_2 with (a_1.start < a_2.start):
+	///
+	/// If (a_2.start - a_1.stop) <= -abinitio:star:short_loop_len, the unaligned
+	/// residues are grown off a_1.stop. Otherwise, a stochastically selected
+	/// portion of the residues are grown off a_1.stop and the remainder grown off
+	/// a_2.start. In both cases, the method is responsible for noting the interior
+	/// cutpoints it selected.
+	void extend_unaligned(core::pose::Pose* pose);
 
-  /// @brief Returns the unaligned regions in increasing order of start position
-  protocols::loops::LoopsCOP unaligned() const {
-    return unaligned_;
-  }
+	/// @brief Returns the unaligned regions in increasing order of start position
+	protocols::loops::LoopsCOP unaligned() const {
+		return unaligned_;
+	}
 
-  /// @brief Returns the aligned regions in increasing order of start position
-  protocols::loops::LoopsCOP aligned() const {
-    return aligned_;
-  }
+	/// @brief Returns the aligned regions in increasing order of start position
+	protocols::loops::LoopsCOP aligned() const {
+		return aligned_;
+	}
 
-  /// @brief Returns a set of suggested cutpoints for star fold tree construction
-  /// based on information gathered during extend_unaligned().
-  const utility::vector1<int>& cutpoints() const {
-    return cutpoints_;
-  }
+	/// @brief Returns a set of suggested cutpoints for star fold tree construction
+	/// based on information gathered during extend_unaligned().
+	const utility::vector1<int>& cutpoints() const {
+		return cutpoints_;
+	}
 
-  /// @brief Updates predicted secondary structure, improving cutpoint selection
-  void set_secondary_structure(core::fragment::SecondaryStructureCOP pred_ss) {
-    pred_ss_ = pred_ss;
-  }
+	/// @brief Updates predicted secondary structure, improving cutpoint selection
+	void set_secondary_structure(core::fragment::SecondaryStructureCOP pred_ss) {
+		pred_ss_ = pred_ss;
+	}
 
- protected:
-  /// @detail Selects a cutpoint on the closed interval [start, stop] using
-  /// weighted reservoir sampling. Each residue's weight is proportional to its
-  /// likelihood of being a loop.
-  int choose_cutpoint(int start, int stop) const;
+protected:
+	/// @detail Selects a cutpoint on the closed interval [start, stop] using
+	/// weighted reservoir sampling. Each residue's weight is proportional to its
+	/// likelihood of being a loop.
+	int choose_cutpoint(int start, int stop) const;
 
- private:
-  core::sequence::SequenceAlignmentCOP alignment_;
-  protocols::loops::LoopsOP unaligned_;
-  protocols::loops::LoopsOP aligned_;
-  // KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
-  // int num_residues_;
+private:
+	core::sequence::SequenceAlignmentCOP alignment_;
+	protocols::loops::LoopsOP unaligned_;
+	protocols::loops::LoopsOP aligned_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// int num_residues_;
 
-  core::fragment::SecondaryStructureCOP pred_ss_;
-  utility::vector1<int> cutpoints_;
+	core::fragment::SecondaryStructureCOP pred_ss_;
+	utility::vector1<int> cutpoints_;
 };
 
 }  // namespace star

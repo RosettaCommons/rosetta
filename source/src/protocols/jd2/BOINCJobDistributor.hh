@@ -38,8 +38,8 @@ namespace jd2 {
 class BOINCJobDistributor : public ShuffleFileSystemJobDistributor
 {
 protected:
-  /// @brief ctor is protected; singleton pattern
-  BOINCJobDistributor();
+	/// @brief ctor is protected; singleton pattern
+	BOINCJobDistributor();
 
 	virtual
 	void
@@ -64,12 +64,12 @@ protected:
 	core::Size total_completed_nstruct_; // for graphics display
 
 public:
-  virtual ~BOINCJobDistributor();
+	virtual ~BOINCJobDistributor();
 	void checkpoint_read();
 	void checkpoint_write();
 	void checkpoint_clear();
 
-  friend class JobDistributorFactory; //ctor access
+	friend class JobDistributorFactory; //ctor access
 
 	virtual
 	void

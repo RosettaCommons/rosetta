@@ -66,7 +66,7 @@ rna_suitename()
 	Size i( 0 );
 	RNA_SuiteName suitename;
 
-	while ( input->has_another_pose() ){
+	while ( input->has_another_pose() ) {
 		input->fill_pose( pose, *rsd_set );
 		i++;
 
@@ -75,7 +75,7 @@ rna_suitename()
 		core::pose::rna::virtualize_5prime_phosphates( pose ); // should we have this on by deafult?
 
 		std::cout << "-----Pose " << i << "-----" << std::endl;
-		for (Size j = 1; j <= pose.total_residue(); ++j){
+		for ( Size j = 1; j <= pose.total_residue(); ++j ) {
 			RNA_SuiteAssignment assignment = suitename.assign(pose, j);
 			std::cout << "Residue " << j << ' ' << assignment.name << ' ' << std::setprecision(3) <<assignment.suiteness << std::endl;
 		}
@@ -99,25 +99,25 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-    try {
-        using namespace basic::options;
+	try {
+		using namespace basic::options;
 
-        std::cout << std::endl << "Basic usage:  " << argv[0] << "  -s <pdb file> " << std::endl;
-        std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
+		std::cout << std::endl << "Basic usage:  " << argv[0] << "  -s <pdb file> " << std::endl;
+		std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
 
-				option.add_relevant( in::file::s );
+		option.add_relevant( in::file::s );
 
-        ////////////////////////////////////////////////////////////////////////////
-        // setup
-        ////////////////////////////////////////////////////////////////////////////
-        core::init::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		core::init::init(argc, argv);
 
-        ////////////////////////////////////////////////////////////////////////////
-        // end of setup
-        ////////////////////////////////////////////////////////////////////////////
-        protocols::viewer::viewer_main( my_main );
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cout << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
+		protocols::viewer::viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 }

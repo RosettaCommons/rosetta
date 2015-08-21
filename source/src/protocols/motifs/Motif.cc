@@ -67,17 +67,17 @@ Motif::Motif(
 	std::string const res2_atom3,
 	core::kinematics::Jump const & orientation
 ) : restype_name1_( protocols::dna::dna_full_name3( resname1 ) ),
-		res1_atom1_name_( res1_atom1 ),
-		res1_atom2_name_( res1_atom2 ),
-		res1_atom3_name_( res1_atom3 ),
-		restype_name2_( protocols::dna::dna_full_name3( resname2 ) ),
-		res2_atom1_name_( res2_atom1 ),
-		res2_atom2_name_( res2_atom2 ),
-		res2_atom3_name_( res2_atom3 ),
-		forward_jump_( orientation ),
-		backward_jump_( ( orientation.reversed() ) ),
-		has_remark_( false ),
-		has_path_( false )
+	res1_atom1_name_( res1_atom1 ),
+	res1_atom2_name_( res1_atom2 ),
+	res1_atom3_name_( res1_atom3 ),
+	restype_name2_( protocols::dna::dna_full_name3( resname2 ) ),
+	res2_atom1_name_( res2_atom1 ),
+	res2_atom2_name_( res2_atom2 ),
+	res2_atom3_name_( res2_atom3 ),
+	forward_jump_( orientation ),
+	backward_jump_( ( orientation.reversed() ) ),
+	has_remark_( false ),
+	has_path_( false )
 {
 	core::chemical::ResidueTypeSet & rsd_set( core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD ) );
 	core::chemical::ResidueType const & rsd_type( rsd_set.name_map( restype_name1_ ) );
@@ -103,25 +103,25 @@ Motif::Motif(
 	std::string const res2_atom2_name,
 	std::string const res2_atom3_name
 ) : restype_name1_( protocols::dna::dna_full_name3( pose.residue( pose.pdb_info()->pdb2pose( chain1, residue_position_1 ) ).name3() ) ),
-		res1_atom1_name_( res1_atom1_name ),
-		res1_atom2_name_( res1_atom2_name ),
-		res1_atom3_name_( res1_atom3_name ),
-		restype_name2_( protocols::dna::dna_full_name3( pose.residue( pose.pdb_info()->pdb2pose( chain2, residue_position_2 ) ).name3() ) ),
-		res2_atom1_name_( res2_atom1_name ),
-		res2_atom2_name_( res2_atom2_name ),
-		res2_atom3_name_( res2_atom3_name ),
-		forward_jump_( core::kinematics::Jump(
-			core::kinematics::Stub(  pose.residue( pose.pdb_info()->pdb2pose( chain1, residue_position_1 ) ).atom( res1_atom2_name ).xyz(),
-				pose.residue( pose.pdb_info()->pdb2pose( chain1, residue_position_1 ) ).atom( res1_atom1_name ).xyz(),
-				pose.residue( pose.pdb_info()->pdb2pose( chain1, residue_position_1 ) ).atom( res1_atom2_name ).xyz(),
-				pose.residue( pose.pdb_info()->pdb2pose( chain1, residue_position_1 ) ).atom( res1_atom3_name ).xyz() ),
-			core::kinematics::Stub(  pose.residue( pose.pdb_info()->pdb2pose( chain2, residue_position_2 ) ).atom( res2_atom2_name ).xyz(),
-				pose.residue( pose.pdb_info()->pdb2pose( chain2, residue_position_2 ) ).atom( res2_atom1_name ).xyz(),
-				pose.residue( pose.pdb_info()->pdb2pose( chain2, residue_position_2 ) ).atom( res2_atom2_name ).xyz(),
-				pose.residue( pose.pdb_info()->pdb2pose( chain2, residue_position_2 ) ).atom( res2_atom3_name ).xyz() ) ) ),
-		backward_jump_( forward_jump_.reversed() ),
-		has_remark_( false ),
-		has_path_( false )
+	res1_atom1_name_( res1_atom1_name ),
+	res1_atom2_name_( res1_atom2_name ),
+	res1_atom3_name_( res1_atom3_name ),
+	restype_name2_( protocols::dna::dna_full_name3( pose.residue( pose.pdb_info()->pdb2pose( chain2, residue_position_2 ) ).name3() ) ),
+	res2_atom1_name_( res2_atom1_name ),
+	res2_atom2_name_( res2_atom2_name ),
+	res2_atom3_name_( res2_atom3_name ),
+	forward_jump_( core::kinematics::Jump(
+	core::kinematics::Stub(  pose.residue( pose.pdb_info()->pdb2pose( chain1, residue_position_1 ) ).atom( res1_atom2_name ).xyz(),
+	pose.residue( pose.pdb_info()->pdb2pose( chain1, residue_position_1 ) ).atom( res1_atom1_name ).xyz(),
+	pose.residue( pose.pdb_info()->pdb2pose( chain1, residue_position_1 ) ).atom( res1_atom2_name ).xyz(),
+	pose.residue( pose.pdb_info()->pdb2pose( chain1, residue_position_1 ) ).atom( res1_atom3_name ).xyz() ),
+	core::kinematics::Stub(  pose.residue( pose.pdb_info()->pdb2pose( chain2, residue_position_2 ) ).atom( res2_atom2_name ).xyz(),
+	pose.residue( pose.pdb_info()->pdb2pose( chain2, residue_position_2 ) ).atom( res2_atom1_name ).xyz(),
+	pose.residue( pose.pdb_info()->pdb2pose( chain2, residue_position_2 ) ).atom( res2_atom2_name ).xyz(),
+	pose.residue( pose.pdb_info()->pdb2pose( chain2, residue_position_2 ) ).atom( res2_atom3_name ).xyz() ) ) ),
+	backward_jump_( forward_jump_.reversed() ),
+	has_remark_( false ),
+	has_path_( false )
 {
 	core::chemical::ResidueTypeSet & rsd_set( core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD ) );
 	core::chemical::ResidueType const & rsd_type( rsd_set.name_map( restype_name1_ ) );
@@ -144,26 +144,26 @@ Motif::Motif(
 	std::string const res2_atom1_name,
 	std::string const res2_atom2_name,
 	std::string const res2_atom3_name
-) :	restype_name1_( protocols::dna::dna_full_name3( pose.residue( residue_position_1 ).name3() ) ),
-		res1_atom1_name_( res1_atom1_name ),
-		res1_atom2_name_( res1_atom2_name ),
-		res1_atom3_name_( res1_atom3_name ),
-		restype_name2_( protocols::dna::dna_full_name3( pose.residue( residue_position_2 ).name3() ) ),
-		res2_atom1_name_( res2_atom1_name ),
-		res2_atom2_name_( res2_atom2_name ),
-		res2_atom3_name_( res2_atom3_name ),
-		forward_jump_( core::kinematics::Jump(
-			core::kinematics::Stub(  pose.residue( residue_position_1 ).atom( res1_atom2_name ).xyz(),
-				pose.residue( residue_position_1 ).atom( res1_atom1_name ).xyz(),
-				pose.residue( residue_position_1 ).atom( res1_atom2_name ).xyz(),
-				pose.residue( residue_position_1 ).atom( res1_atom3_name ).xyz() ),
-			core::kinematics::Stub(  pose.residue( residue_position_2 ).atom( res2_atom2_name ).xyz(),
-				pose.residue( residue_position_2 ).atom( res2_atom1_name ).xyz(),
-				pose.residue( residue_position_2 ).atom( res2_atom2_name ).xyz(),
-				pose.residue( residue_position_2 ).atom( res2_atom3_name ).xyz() ) ) ),
-		backward_jump_( forward_jump_.reversed() ),
-		has_remark_( false ),
-		has_path_( false )
+) : restype_name1_( protocols::dna::dna_full_name3( pose.residue( residue_position_1 ).name3() ) ),
+	res1_atom1_name_( res1_atom1_name ),
+	res1_atom2_name_( res1_atom2_name ),
+	res1_atom3_name_( res1_atom3_name ),
+	restype_name2_( protocols::dna::dna_full_name3( pose.residue( residue_position_2 ).name3() ) ),
+	res2_atom1_name_( res2_atom1_name ),
+	res2_atom2_name_( res2_atom2_name ),
+	res2_atom3_name_( res2_atom3_name ),
+	forward_jump_( core::kinematics::Jump(
+	core::kinematics::Stub(  pose.residue( residue_position_1 ).atom( res1_atom2_name ).xyz(),
+	pose.residue( residue_position_1 ).atom( res1_atom1_name ).xyz(),
+	pose.residue( residue_position_1 ).atom( res1_atom2_name ).xyz(),
+	pose.residue( residue_position_1 ).atom( res1_atom3_name ).xyz() ),
+	core::kinematics::Stub(  pose.residue( residue_position_2 ).atom( res2_atom2_name ).xyz(),
+	pose.residue( residue_position_2 ).atom( res2_atom1_name ).xyz(),
+	pose.residue( residue_position_2 ).atom( res2_atom2_name ).xyz(),
+	pose.residue( residue_position_2 ).atom( res2_atom3_name ).xyz() ) ) ),
+	backward_jump_( forward_jump_.reversed() ),
+	has_remark_( false ),
+	has_path_( false )
 {
 	core::chemical::ResidueTypeSet & rsd_set( core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD ) );
 	core::chemical::ResidueType const & rsd_type( rsd_set.name_map( restype_name1_ ) );
@@ -176,19 +176,19 @@ Motif::Motif(
 	res2_atom3_index_ = rsd_type2.atom_index( res2_atom3_name_ );
 }
 
-  // Matt's new constructor: This constructor gets the jump for you - Rosetta numbering
-  // Residue 1 is protein, residue 2 is ligand. For residue 1, just get the residue. For residue 2, get the residue and the 3 atom numbers as a vector.
+// Matt's new constructor: This constructor gets the jump for you - Rosetta numbering
+// Residue 1 is protein, residue 2 is ligand. For residue 1, just get the residue. For residue 2, get the residue and the 3 atom numbers as a vector.
 Motif::Motif(
-core::conformation::Residue const & res1,
-core::conformation::Residue const & res2,
-utility::vector1< Size >  const res2_atoms
+	core::conformation::Residue const & res1,
+	core::conformation::Residue const & res2,
+	utility::vector1< Size >  const res2_atoms
 ):
-		has_remark_( false ),
-		has_path_( false )
+	has_remark_( false ),
+	has_path_( false )
 {
-  if( (res1.is_protein() && res2.is_ligand() ) || (res1.is_protein() && res2.is_protein() ) ) {
+	if ( (res1.is_protein() && res2.is_ligand() ) || (res1.is_protein() && res2.is_protein() ) ) {
 		restype_name1_ = res1.name3();
- mt << "Res1 name is " <<  restype_name1_ << std::endl;
+		mt << "Res1 name is " <<  restype_name1_ << std::endl;
 		res1_atom1_name_ = motifAtomIDs[restype_name1_][1];
 		res1_atom2_name_ = motifAtomIDs[restype_name1_][2];
 		res1_atom3_name_ = motifAtomIDs[restype_name1_][3];
@@ -198,26 +198,26 @@ utility::vector1< Size >  const res2_atoms
 		core::chemical::AtomType res2_atom3_type = res2.atom_type(res2_atoms[3]);
 
 		res2_atom1_name_ = res2_atom1_type.atom_type_name();
- mt << "atom1 name is " <<  res2_atom1_name_  << std::endl;
+		mt << "atom1 name is " <<  res2_atom1_name_  << std::endl;
 		res2_atom2_name_ = res2_atom2_type.atom_type_name();
- mt << "atom2 name is " <<   res2_atom2_name_  << std::endl;
+		mt << "atom2 name is " <<   res2_atom2_name_  << std::endl;
 		res2_atom3_name_ = res2_atom3_type.atom_type_name();
- mt << "atom3 name is " <<   res2_atom3_name_  << std::endl;
+		mt << "atom3 name is " <<   res2_atom3_name_  << std::endl;
 		//Can't use motif atom name for
 		forward_jump_ = core::kinematics::Jump(
 			core::kinematics::Stub(  res1.atom( res1_atom2_name_ ).xyz(),
-				res1.atom( res1_atom1_name_ ).xyz(),
-				res1.atom( res1_atom2_name_ ).xyz(),
-				res1.atom( res1_atom3_name_ ).xyz() ),
+			res1.atom( res1_atom1_name_ ).xyz(),
+			res1.atom( res1_atom2_name_ ).xyz(),
+			res1.atom( res1_atom3_name_ ).xyz() ),
 			core::kinematics::Stub(  res2.atom( res2_atoms[2]  ).xyz(),
-				res2.atom( res2_atoms[1] ).xyz(),
-				res2.atom( res2_atoms[2] ).xyz(),
-				res2.atom( res2_atoms[3] ).xyz() ) );
+			res2.atom( res2_atoms[1] ).xyz(),
+			res2.atom( res2_atoms[2] ).xyz(),
+			res2.atom( res2_atoms[3] ).xyz() ) );
 		backward_jump_ = forward_jump_.reversed();
 
-	} else{
-			mt << "Input motif residues do not match the expected combinations for this constructor; please use constructor that allows you to explicitly specify atoms involved." << std::endl;
-				}
+	} else {
+		mt << "Input motif residues do not match the expected combinations for this constructor; please use constructor that allows you to explicitly specify atoms involved." << std::endl;
+	}
 	core::chemical::ResidueTypeSet & rsd_set( core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD ) );
 	core::chemical::ResidueType const & rsd_type1( rsd_set.name_map( restype_name1_ ) );
 	//core::chemical::ResidueType const & rsd_type2( rsd_set.name_map( restype_name2_ ) );
@@ -231,55 +231,55 @@ utility::vector1< Size >  const res2_atoms
 
 // Search constructor for reading out the motifs from the motif file for ligands
 Motif::Motif(
- std::string const resname1,
- std::string const res1_atom1,
- std::string const res1_atom2,
- std::string const res1_atom3,
- std::string const res2_atom1,
- std::string const res2_atom2,
- std::string const res2_atom3,
- core::kinematics::Jump const & orientation
+	std::string const resname1,
+	std::string const res1_atom1,
+	std::string const res1_atom2,
+	std::string const res1_atom3,
+	std::string const res2_atom1,
+	std::string const res2_atom2,
+	std::string const res2_atom3,
+	core::kinematics::Jump const & orientation
 ):
-		has_remark_( false ),
-		has_path_( false )
+	has_remark_( false ),
+	has_path_( false )
 {
-		restype_name1_ = resname1;
-		res1_atom1_name_ = res1_atom1;
-		res1_atom2_name_ = res1_atom2;
-		res1_atom3_name_ = res1_atom3;
-		restype_name2_ = "LG1"; //We need to give the second residue (ligand residue) some random name
-		res2_atom1_name_ = res2_atom1;
-		res2_atom2_name_ = res2_atom2;
-		res2_atom3_name_ = res2_atom3;
+	restype_name1_ = resname1;
+	res1_atom1_name_ = res1_atom1;
+	res1_atom2_name_ = res1_atom2;
+	res1_atom3_name_ = res1_atom3;
+	restype_name2_ = "LG1"; //We need to give the second residue (ligand residue) some random name
+	res2_atom1_name_ = res2_atom1;
+	res2_atom2_name_ = res2_atom2;
+	res2_atom3_name_ = res2_atom3;
 
- forward_jump_ = orientation;
- backward_jump_ = forward_jump_.reversed();
+	forward_jump_ = orientation;
+	backward_jump_ = forward_jump_.reversed();
 
 	core::chemical::ResidueTypeSet & rsd_set( core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD ) );
 	core::chemical::ResidueType const & rsd_type1( rsd_set.name_map( restype_name1_ ) );
 
-  res1_atom1_index_ = rsd_type1.atom_index( res1_atom1_name_ );
+	res1_atom1_index_ = rsd_type1.atom_index( res1_atom1_name_ );
 	res1_atom2_index_ = rsd_type1.atom_index( res1_atom2_name_ );
 	res1_atom3_index_ = rsd_type1.atom_index( res1_atom3_name_ );
-// mt << "Res1: " <<  res1_atom1_name_ << res1_atom2_name_ << res1_atom3_name_ << " res2: " << res2_atom1_name_ << res2_atom2_name_ << res2_atom3_name_ << std::endl;
+	// mt << "Res1: " <<  res1_atom1_name_ << res1_atom2_name_ << res1_atom3_name_ << " res2: " << res2_atom1_name_ << res2_atom2_name_ << res2_atom3_name_ << std::endl;
 	//int res1_atom1_int_ = rsd_type.atom_type_index( res1_atom1_index_);
 	//int res1_atom2_int_ = rsd_type.atom_type_index( res1_atom2_index_ );
 	//int res1_atom3_int_ = rsd_type.atom_type_index( res1_atom3_index_ );
-  core::chemical::AtomTypeSetCOP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( core::chemical::FA_STANDARD );
+	core::chemical::AtomTypeSetCOP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( core::chemical::FA_STANDARD );
 	res2_atom1_int_ = atset->atom_type_index(res2_atom1_name_);
 	res2_atom2_int_ = atset->atom_type_index(res2_atom2_name_);
 	res2_atom3_int_ = atset->atom_type_index(res2_atom3_name_);
- // mt << " res2: " << res2_atom1_int_ << ", " << res2_atom2_int_ << ", " << res2_atom3_int_ << std::endl;
+	// mt << " res2: " << res2_atom1_int_ << ", " << res2_atom2_int_ << ", " << res2_atom3_int_ << std::endl;
 }
 
 Motif::Motif(
 	core::conformation::Residue const & res1,
 	core::conformation::Residue const & res2
 ):
-		has_remark_( false ),
-		has_path_( false )
+	has_remark_( false ),
+	has_path_( false )
 {
-	if( (res1.is_protein() && res2.is_protein() ) || (res1.is_protein() && res2.is_DNA() ) ) {
+	if ( (res1.is_protein() && res2.is_protein() ) || (res1.is_protein() && res2.is_DNA() ) ) {
 		restype_name1_ = protocols::dna::dna_full_name3( res1.name3() );
 		res1_atom1_name_ = motifAtomIDs[restype_name1_][1];
 		res1_atom2_name_ = motifAtomIDs[restype_name1_][2];
@@ -290,35 +290,35 @@ Motif::Motif(
 		res2_atom3_name_ = motifAtomIDs[restype_name2_][3];
 		forward_jump_ = core::kinematics::Jump(
 			core::kinematics::Stub(  res1.atom( res1_atom2_name_ ).xyz(),
-				res1.atom( res1_atom1_name_ ).xyz(),
-				res1.atom( res1_atom2_name_ ).xyz(),
-				res1.atom( res1_atom3_name_ ).xyz() ),
+			res1.atom( res1_atom1_name_ ).xyz(),
+			res1.atom( res1_atom2_name_ ).xyz(),
+			res1.atom( res1_atom3_name_ ).xyz() ),
 			core::kinematics::Stub(  res2.atom( res2_atom2_name_ ).xyz(),
-				res2.atom( res2_atom1_name_ ).xyz(),
-				res2.atom( res2_atom2_name_ ).xyz(),
-				res2.atom( res2_atom3_name_ ).xyz() ) );
+			res2.atom( res2_atom1_name_ ).xyz(),
+			res2.atom( res2_atom2_name_ ).xyz(),
+			res2.atom( res2_atom3_name_ ).xyz() ) );
 		backward_jump_ = forward_jump_.reversed();
-	} else if( res1.is_DNA() && res2.is_DNA() ) { // Can't use .build_motif_rotamers or .build_rotamers if both residues are DNA (at least right now)
-			restype_name1_ = protocols::dna::dna_full_name3( res1.name3() );
-			res1_atom1_name_ = basebaseAtomIDs[restype_name1_][1];
-			res1_atom2_name_ = basebaseAtomIDs[restype_name1_][2];
-			res1_atom3_name_ = basebaseAtomIDs[restype_name1_][3];
-			restype_name2_ = protocols::dna::dna_full_name3( res2.name3() );
-			res2_atom1_name_ = basebaseAtomIDs[restype_name2_][1];
-			res2_atom2_name_ = basebaseAtomIDs[restype_name2_][2];
-			res2_atom3_name_ = basebaseAtomIDs[restype_name2_][3];
-			forward_jump_ = core::kinematics::Jump(
-				core::kinematics::Stub(  res1.atom( res1_atom2_name_ ).xyz(),
-					res1.atom( res1_atom1_name_ ).xyz(),
-					res1.atom( res1_atom2_name_ ).xyz(),
-					res1.atom( res1_atom3_name_ ).xyz() ),
-				core::kinematics::Stub(  res2.atom( res2_atom2_name_ ).xyz(),
-					res2.atom( res2_atom1_name_ ).xyz(),
-					res2.atom( res2_atom2_name_ ).xyz(),
-					res2.atom( res2_atom3_name_ ).xyz() ) );
-			backward_jump_ = forward_jump_.reversed();
+	} else if ( res1.is_DNA() && res2.is_DNA() ) { // Can't use .build_motif_rotamers or .build_rotamers if both residues are DNA (at least right now)
+		restype_name1_ = protocols::dna::dna_full_name3( res1.name3() );
+		res1_atom1_name_ = basebaseAtomIDs[restype_name1_][1];
+		res1_atom2_name_ = basebaseAtomIDs[restype_name1_][2];
+		res1_atom3_name_ = basebaseAtomIDs[restype_name1_][3];
+		restype_name2_ = protocols::dna::dna_full_name3( res2.name3() );
+		res2_atom1_name_ = basebaseAtomIDs[restype_name2_][1];
+		res2_atom2_name_ = basebaseAtomIDs[restype_name2_][2];
+		res2_atom3_name_ = basebaseAtomIDs[restype_name2_][3];
+		forward_jump_ = core::kinematics::Jump(
+			core::kinematics::Stub(  res1.atom( res1_atom2_name_ ).xyz(),
+			res1.atom( res1_atom1_name_ ).xyz(),
+			res1.atom( res1_atom2_name_ ).xyz(),
+			res1.atom( res1_atom3_name_ ).xyz() ),
+			core::kinematics::Stub(  res2.atom( res2_atom2_name_ ).xyz(),
+			res2.atom( res2_atom1_name_ ).xyz(),
+			res2.atom( res2_atom2_name_ ).xyz(),
+			res2.atom( res2_atom3_name_ ).xyz() ) );
+		backward_jump_ = forward_jump_.reversed();
 	} else {
-			mt << "Input motif residues do not match the expected combinations for this constructor; please use constructor that allows you to explicitly specify atoms involved." << std::endl;
+		mt << "Input motif residues do not match the expected combinations for this constructor; please use constructor that allows you to explicitly specify atoms involved." << std::endl;
 	}
 	core::chemical::ResidueTypeSet & rsd_set( core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD ) );
 	core::chemical::ResidueType const & rsd_type( rsd_set.name_map( restype_name1_ ) );
@@ -393,37 +393,36 @@ Motif::apply_check(
 	Size const pos
 ) const
 {
-		if ( pose.residue(pos).is_DNA() )
-    {
-				return(
-               utility::trimmed_compare(  protocols::dna::dna_full_name3(pose.residue( pos ).name3()), restype_name1_ ) ||
-               utility::trimmed_compare(  protocols::dna::dna_full_name3(pose.residue( pos ).name3()), restype_name2_ )
-               );
-    }
+	if ( pose.residue(pos).is_DNA() ) {
+		return(
+			utility::trimmed_compare(  protocols::dna::dna_full_name3(pose.residue( pos ).name3()), restype_name1_ ) ||
+			utility::trimmed_compare(  protocols::dna::dna_full_name3(pose.residue( pos ).name3()), restype_name2_ )
+		);
+	}
 	return( utility::trimmed_compare( pose.residue( pos ).name3(), restype_name1_ ) ||
-					utility::trimmed_compare( pose.residue( pos ).name3(), restype_name2_ ) );
+		utility::trimmed_compare( pose.residue( pos ).name3(), restype_name2_ ) );
 }
 /*
 // Search constructor for reading out the motifs from the motif file for ligands
 Motif::Motif(
- std::string const resname1,
- std::string const res1_atom1,
- std::string const res1_atom2,
- std::string const res1_atom3,
- std::string const res2_atom1,
- std::string const res2_atom2,
- std::string const res2_atom3,
- core::kinematics::Jump const & orientation
+std::string const resname1,
+std::string const res1_atom1,
+std::string const res1_atom2,
+std::string const res1_atom3,
+std::string const res2_atom1,
+std::string const res2_atom2,
+std::string const res2_atom3,
+core::kinematics::Jump const & orientation
 )
 {
-		restype_name1_ = resname1;
-		res1_atom1_name_ = res1_atom1;
-		res1_atom2_name_ = res1_atom2;
-		res1_atom3_name_ = res1_atom3;
-		restype_name2_ = "LG1"; //We need to give the second residue (ligand residue) some random name
-		res2_atom1_name_ = res2_atom1;
-		res2_atom2_name_ = res2_atom2;
-		res2_atom3_name_ = res2_atom3;
+restype_name1_ = resname1;
+res1_atom1_name_ = res1_atom1;
+res1_atom2_name_ = res1_atom2;
+res1_atom3_name_ = res1_atom3;
+restype_name2_ = "LG1"; //We need to give the second residue (ligand residue) some random name
+res2_atom1_name_ = res2_atom1;
+res2_atom2_name_ = res2_atom2;
+res2_atom3_name_ = res2_atom3;
 */
 
 /*
@@ -432,24 +431,24 @@ void
 Motif::generate_atom_ints(
 )
 {
-  core::chemical::AtomTypeSetCAP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( core::chemical::FA_STANDARD );
- mt << "Res1: " <<  res1_atom1_name_ << res1_atom2_name_ << res1_atom3_name_ << " res2: " << res2_atom1_name_ << res2_atom2_name_ << res2_atom3_name_ << std::endl;
+core::chemical::AtomTypeSetCAP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( core::chemical::FA_STANDARD );
+mt << "Res1: " <<  res1_atom1_name_ << res1_atom2_name_ << res1_atom3_name_ << " res2: " << res2_atom1_name_ << res2_atom2_name_ << res2_atom3_name_ << std::endl;
 
-	// core::chemical::ResidueTypeSet & rsd_set( core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD ) ); // Unused variable causes warning
-	// core::chemical::ResidueType const & rsd_type( rsd_set.name_map( restype_name1_ ) ); // Unused variable causes warning
-	// Size res1_atom1_index = rsd_type.atom_index( res1_atom1_name_ ); // Unused variable causes warning
-	// Size res1_atom2_index = rsd_type.atom_index( res1_atom2_name_ ); // Unused variable causes warning
-	// Size res1_atom3_index = rsd_type.atom_index( res1_atom3_name_ ); // Unused variable causes warning
+// core::chemical::ResidueTypeSet & rsd_set( core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD ) ); // Unused variable causes warning
+// core::chemical::ResidueType const & rsd_type( rsd_set.name_map( restype_name1_ ) ); // Unused variable causes warning
+// Size res1_atom1_index = rsd_type.atom_index( res1_atom1_name_ ); // Unused variable causes warning
+// Size res1_atom2_index = rsd_type.atom_index( res1_atom2_name_ ); // Unused variable causes warning
+// Size res1_atom3_index = rsd_type.atom_index( res1_atom3_name_ ); // Unused variable causes warning
 
-	// FIXME: these local variables have the same name as data members!
-	// int res1_atom1_int_ = rsd_type.atom( res1_atom1_index).atom_type_index(); // Unused variable causes warning
-	// int res1_atom2_int_ = rsd_type.atom( res1_atom2_index ).atom_type_index(); // Unused variable causes warning
-	// int res1_atom3_int_ = rsd_type.atom( res1_atom3_index ).atom_type_index(); // Unused variable causes warning
-	int res2_atom1_int_ = atset->atom_type_index(res2_atom1_name_);
-	int res2_atom2_int_ = atset->atom_type_index(res2_atom2_name_);
-	int res2_atom3_int_ = atset->atom_type_index(res2_atom3_name_);
- mt << " res2: " << res2_atom1_int_ << ", " << res2_atom2_int_ << ", " << res2_atom3_int_ << std::endl;
-	return;
+// FIXME: these local variables have the same name as data members!
+// int res1_atom1_int_ = rsd_type.atom( res1_atom1_index).atom_type_index(); // Unused variable causes warning
+// int res1_atom2_int_ = rsd_type.atom( res1_atom2_index ).atom_type_index(); // Unused variable causes warning
+// int res1_atom3_int_ = rsd_type.atom( res1_atom3_index ).atom_type_index(); // Unused variable causes warning
+int res2_atom1_int_ = atset->atom_type_index(res2_atom1_name_);
+int res2_atom2_int_ = atset->atom_type_index(res2_atom2_name_);
+int res2_atom3_int_ = atset->atom_type_index(res2_atom3_name_);
+mt << " res2: " << res2_atom1_int_ << ", " << res2_atom2_int_ << ", " << res2_atom3_int_ << std::endl;
+return;
 }
 */
 
@@ -503,7 +502,7 @@ Motif::build_rotamers(
 	utility::vector1< bool > aa_info( core::chemical::num_canonical_aas, false );
 
 	// Here's the aa to build
-	if( res2 ) {
+	if ( res2 ) {
 		aa_info[ aa_from_name( restype_name2() ) ] = true;
 		//use_forward = true;  // set but never used ~Labonte
 	} else {
@@ -518,14 +517,14 @@ Motif::build_rotamers(
 	//task->nonconst_residue_task( rotamer_build_position ).or_include_current( true );
 	// You can't "include_current" because there is no current or native residue
 	//task->nonconst_residue_task( rotamer_build_position).or_exrandom_sample_level(core::pack::task::NO_EXTRA_CHI_SAMPLES);
-	if( ex_ > 0 ) task->nonconst_residue_task( rotamer_build_position ).or_ex1( true );
-	if( ex_ > 1 ) task->nonconst_residue_task( rotamer_build_position ).or_ex2( true );
-	if( ex_ > 2 ) task->nonconst_residue_task( rotamer_build_position ).or_ex3( true );
-	if( ex_ > 3 ) task->nonconst_residue_task( rotamer_build_position ).or_ex4( true );
-	if( ex_ > 4 ) task->nonconst_residue_task( rotamer_build_position ).or_ex1_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
-	if( ex_ > 5 ) task->nonconst_residue_task( rotamer_build_position ).or_ex2_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
-	if( ex_ > 6 ) task->nonconst_residue_task( rotamer_build_position ).or_ex3_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
-	if( ex_ > 7 ) task->nonconst_residue_task( rotamer_build_position ).or_ex4_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
+	if ( ex_ > 0 ) task->nonconst_residue_task( rotamer_build_position ).or_ex1( true );
+	if ( ex_ > 1 ) task->nonconst_residue_task( rotamer_build_position ).or_ex2( true );
+	if ( ex_ > 2 ) task->nonconst_residue_task( rotamer_build_position ).or_ex3( true );
+	if ( ex_ > 3 ) task->nonconst_residue_task( rotamer_build_position ).or_ex4( true );
+	if ( ex_ > 4 ) task->nonconst_residue_task( rotamer_build_position ).or_ex1_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
+	if ( ex_ > 5 ) task->nonconst_residue_task( rotamer_build_position ).or_ex2_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
+	if ( ex_ > 6 ) task->nonconst_residue_task( rotamer_build_position ).or_ex3_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
+	if ( ex_ > 7 ) task->nonconst_residue_task( rotamer_build_position ).or_ex4_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
 
 	scorefxn( pose );
 
@@ -554,7 +553,7 @@ Motif::build_inverted_rotamers(
 
 	// If no build position was passed, it will be the default value ( 0 ),
 	// and we need to find the closest bb position to the anchor residue
-	if( rotamer_build_position == Size( 0 ) ) {
+	if ( rotamer_build_position == Size( 0 ) ) {
 		// Find closest
 		// *********** TO DO ************
 		mt << "Using nonsense build residue in build_motif_rotamer - default argument not yet supported" << std::endl;
@@ -564,7 +563,7 @@ Motif::build_inverted_rotamers(
 	RotamerSetOP rotset;
 
 	// Check to make sure the motif applies to the anchor residue
-	if( !apply_check( pose, motif_anchor_position ) ) {
+	if ( !apply_check( pose, motif_anchor_position ) ) {
 		mt << "Bailing from build_motif_rotamer - given anchor residue not in motif" << std::endl;
 		return rotset;
 	}
@@ -573,12 +572,12 @@ Motif::build_inverted_rotamers(
 
 	rotset = build_rotamers( pose, rotamer_build_position, extra_value, use_forward );
 
-		// Invert the rotamer library as specified by the motif
-		for( Size ir = 1 , end_ir = rotset->num_rotamers() ; ir <= end_ir ; ++ir ) {
-			place_residue( pose.residue( motif_anchor_position ), *(rotset->nonconst_rotamer( ir )) );
-		}
+	// Invert the rotamer library as specified by the motif
+	for ( Size ir = 1 , end_ir = rotset->num_rotamers() ; ir <= end_ir ; ++ir ) {
+		place_residue( pose.residue( motif_anchor_position ), *(rotset->nonconst_rotamer( ir )) );
+	}
 
-		return rotset;
+	return rotset;
 }
 
 // place_atoms for ligands
@@ -587,24 +586,24 @@ Motif::place_atoms(
 	core::conformation::Residue const & fixed,
 	core::conformation::Residue & mobile,
 	utility::vector1< Size > const & atoms,
-	  Size const & res2_atom1_index_in,
-	  Size const & res2_atom2_index_in,
-    Size const & res2_atom3_index_in,
+	Size const & res2_atom1_index_in,
+	Size const & res2_atom2_index_in,
+	Size const & res2_atom3_index_in,
 	bool one_three
 ) const
 {
-std::string ligand_name( "LG1" );
-/*	if( utility::trimmed_compare( protocols::dna::dna_full_name3( fixed.name3() ), restype_name1_ ) &&
-			utility::trimmed_compare( protocols::dna::dna_full_name3( mobile.name3() ), restype_name2_ ) ) {
-			return place_atoms_( fixed, mobile, true, atoms, one_three );
+	std::string ligand_name( "LG1" );
+	/* if( utility::trimmed_compare( protocols::dna::dna_full_name3( fixed.name3() ), restype_name1_ ) &&
+	utility::trimmed_compare( protocols::dna::dna_full_name3( mobile.name3() ), restype_name2_ ) ) {
+	return place_atoms_( fixed, mobile, true, atoms, one_three );
 
 	} else if ( utility::trimmed_compare( protocols::dna::dna_full_name3( fixed.name3() ), restype_name2_ ) &&
-			utility::trimmed_compare( protocols::dna::dna_full_name3( mobile.name3() ), restype_name1_ ) ) {
-			return place_atoms_( fixed, mobile, false, atoms, one_three );
+	utility::trimmed_compare( protocols::dna::dna_full_name3( mobile.name3() ), restype_name1_ ) ) {
+	return place_atoms_( fixed, mobile, false, atoms, one_three );
 
 	} else*/ if ( utility::trimmed_compare( protocols::dna::dna_full_name3( fixed.name3() ), restype_name1_ ) &&
 			utility::trimmed_compare( ligand_name , restype_name2_ ) ) {
-			return place_atoms_( fixed, mobile, true, atoms, res2_atom1_index_in, res2_atom2_index_in, res2_atom3_index_in, one_three ); //This is Matt's new test for ligands
+		return place_atoms_( fixed, mobile, true, atoms, res2_atom1_index_in, res2_atom2_index_in, res2_atom3_index_in, one_three ); //This is Matt's new test for ligands
 	} else {
 		mt << "Bad Mojo a! call to Motif::place_atom() with wrong residue(s)!" << std::endl;
 		mt << "Motif wants: " << restype_name1_ << " and " << restype_name2_ << std::endl;
@@ -643,16 +642,16 @@ Motif::place_residue(
 	bool one_three
 ) const
 {
-//restype_name1_ is amino acid
-//restype_name2_ is ligand
-//fixed should be amino acid
-//mobile should be ligand (are there counterexamples?)
-//std::string ligand_name( "LG1" );
-	if( utility::trimmed_compare( protocols::dna::dna_full_name3( fixed.name3() ), restype_name1_ ) ) {
-			return Motif::place_residue_( fixed, mobile, true,res2_atom1_index_in, res2_atom2_index_in, res2_atom3_index_in, one_three );
+	//restype_name1_ is amino acid
+	//restype_name2_ is ligand
+	//fixed should be amino acid
+	//mobile should be ligand (are there counterexamples?)
+	//std::string ligand_name( "LG1" );
+	if ( utility::trimmed_compare( protocols::dna::dna_full_name3( fixed.name3() ), restype_name1_ ) ) {
+		return Motif::place_residue_( fixed, mobile, true,res2_atom1_index_in, res2_atom2_index_in, res2_atom3_index_in, one_three );
 
 	} else if ( utility::trimmed_compare( protocols::dna::dna_full_name3( mobile.name3() ), restype_name1_ ) ) {
-			return Motif::place_residue_( fixed, mobile, false, res2_atom1_index_in, res2_atom2_index_in, res2_atom3_index_in,  one_three );
+		return Motif::place_residue_( fixed, mobile, false, res2_atom1_index_in, res2_atom2_index_in, res2_atom3_index_in,  one_three );
 	} else {
 		mt << "Bad Mojo b! call to Motif::place_residue() with wrong residue(s)!" << std::endl;
 		mt << "Motif wants: " << restype_name1_ << " and " << restype_name2_ << std::endl;
@@ -682,9 +681,9 @@ Motif::place_atom_(
 	core::kinematics::Stub mobile_stub;
 	core::kinematics::Stub start_stub1;
 
-	if( forward ) {
+	if ( forward ) {
 		// Extract a stub from the fixed residue
-		if( one_three ) {
+		if ( one_three ) {
 			core::kinematics::Stub start_stub(
 				fixed.atom( res1_atom2_index_ ).xyz(),
 				fixed.atom( res1_atom1_index_ ).xyz(),
@@ -693,12 +692,12 @@ Motif::place_atom_(
 			);
 			start_stub1 = start_stub;
 		} else {
-				core::kinematics::Stub start_stub(
-					fixed.atom( res1_atom2_index_ ).xyz(),
-					fixed.atom( res1_atom3_index_ ).xyz(),
-					fixed.atom( res1_atom2_index_ ).xyz(),
-					fixed.atom( res1_atom1_index_ ).xyz()
-				);
+			core::kinematics::Stub start_stub(
+				fixed.atom( res1_atom2_index_ ).xyz(),
+				fixed.atom( res1_atom3_index_ ).xyz(),
+				fixed.atom( res1_atom2_index_ ).xyz(),
+				fixed.atom( res1_atom1_index_ ).xyz()
+			);
 			start_stub1 = start_stub;
 		}
 
@@ -720,7 +719,7 @@ Motif::place_atom_(
 			fixed.atom( res2_atom3_index_in ).xyz()
 		);
 
-		if( one_three ) {
+		if ( one_three ) {
 			mobile_stub.from_four_points(
 				mobile.atom( res1_atom2_index_ ).xyz(),
 				mobile.atom( res1_atom1_index_ ).xyz(),
@@ -754,13 +753,13 @@ Motif::place_atoms(
 	bool one_three
 ) const
 {
-	if( utility::trimmed_compare( protocols::dna::dna_full_name3( fixed.name3() ), restype_name1_ ) &&
+	if ( utility::trimmed_compare( protocols::dna::dna_full_name3( fixed.name3() ), restype_name1_ ) &&
 			utility::trimmed_compare( protocols::dna::dna_full_name3( mobile.name3() ), restype_name2_ ) ) {
-			return place_atoms_( fixed, mobile, true, atoms, one_three );
+		return place_atoms_( fixed, mobile, true, atoms, one_three );
 
 	} else if ( utility::trimmed_compare( protocols::dna::dna_full_name3( fixed.name3() ), restype_name2_ ) &&
 			utility::trimmed_compare( protocols::dna::dna_full_name3( mobile.name3() ), restype_name1_ ) ) {
-			return place_atoms_( fixed, mobile, false, atoms, one_three );
+		return place_atoms_( fixed, mobile, false, atoms, one_three );
 
 	} else {
 		mt << "Bad Mojo! call to Motif::place_atom() with wrong residue(s)!" << std::endl;
@@ -785,18 +784,18 @@ Motif::place_atom(
 	// IE, WITH ATM BEING AN ATOM FROM THE MOBILE RESIDUE, NOT THE FIXED
 	return place_atom_( fixed, mobile, true, atm, one_three, atomtype );
 	/*if( utility::trimmed_compare( protocols::dna::dna_full_name3( fixed.name3() ), restype_name1_ ) &&
-			utility::trimmed_compare( protocols::dna::dna_full_name3( mobile.name3() ), restype_name2_ ) ) {
-			return place_atom_( fixed, mobile, true, atm, one_three, atomtype );
+	utility::trimmed_compare( protocols::dna::dna_full_name3( mobile.name3() ), restype_name2_ ) ) {
+	return place_atom_( fixed, mobile, true, atm, one_three, atomtype );
 
 	} else if ( utility::trimmed_compare( protocols::dna::dna_full_name3( fixed.name3() ), restype_name2_ ) &&
-			utility::trimmed_compare( protocols::dna::dna_full_name3( mobile.name3() ), restype_name1_ ) ) {
-			return place_atom_( fixed, mobile, false, atm, one_three, atomtype );
+	utility::trimmed_compare( protocols::dna::dna_full_name3( mobile.name3() ), restype_name1_ ) ) {
+	return place_atom_( fixed, mobile, false, atm, one_three, atomtype );
 
 	} else {
-		mt << "Bad Mojo! call to Motif::place_atom() with wrong residue(s)!\n";
-		mt << "Motif wants: " << restype_name1_ << " and " << restype_name2_ << "\n";
-		mt << "arguments are: " << fixed.name3() << " and " << mobile.name3() << "\n";
-		mt << "Neither order matches!\n";
+	mt << "Bad Mojo! call to Motif::place_atom() with wrong residue(s)!\n";
+	mt << "Motif wants: " << restype_name1_ << " and " << restype_name2_ << "\n";
+	mt << "arguments are: " << fixed.name3() << " and " << mobile.name3() << "\n";
+	mt << "Neither order matches!\n";
 	}
 
 	return;*/
@@ -809,13 +808,13 @@ Motif::place_residue(
 	bool one_three
 ) const
 {
-	if( utility::trimmed_compare( protocols::dna::dna_full_name3( fixed.name3() ), restype_name1_ ) &&
+	if ( utility::trimmed_compare( protocols::dna::dna_full_name3( fixed.name3() ), restype_name1_ ) &&
 			utility::trimmed_compare( protocols::dna::dna_full_name3( mobile.name3() ), restype_name2_ ) ) {
-			return place_residue_( fixed, mobile, true, one_three );
+		return place_residue_( fixed, mobile, true, one_three );
 
 	} else if ( utility::trimmed_compare( protocols::dna::dna_full_name3( fixed.name3() ), restype_name2_ ) &&
 			utility::trimmed_compare( protocols::dna::dna_full_name3( mobile.name3() ), restype_name1_ ) ) {
-			return place_residue_( fixed, mobile, false, one_three );
+		return place_residue_( fixed, mobile, false, one_three );
 
 	} else {
 		mt << "Bad Mojo! call to Motif::place_residue() with wrong residue(s)!" << std::endl;
@@ -836,12 +835,12 @@ Motif::place_residue_helper(
 	bool forward,
 	bool one_three
 ) const {
-	
+
 	core::kinematics::Stub start_stub1;
-	
-	if( forward ) {
+
+	if ( forward ) {
 		// Extract a stub from the fixed residue
-		if( one_three ) {
+		if ( one_three ) {
 			core::kinematics::Stub start_stub(
 				fixed.atom( res1_atom2_name_ ).xyz(),
 				fixed.atom( res1_atom1_name_ ).xyz(),
@@ -858,17 +857,17 @@ Motif::place_residue_helper(
 			);
 			start_stub1 = start_stub;
 		}
-		
+
 		mobile_stub.from_four_points(
 			mobile.atom( res2_atom2_name_ ).xyz(),
 			mobile.atom( res2_atom1_name_ ).xyz(),
 			mobile.atom( res2_atom2_name_ ).xyz(),
 			mobile.atom( res2_atom3_name_ ).xyz()
 		);
-		
+
 		// Get the stub at the other end of the jump
 		forward_jump_.make_jump( start_stub1, end_stub );
-		
+
 	} else {
 		// Extract a stub from the fixed residue
 		core::kinematics::Stub start_stub(
@@ -877,10 +876,10 @@ Motif::place_residue_helper(
 			fixed.atom( res2_atom2_name_ ).xyz(),
 			fixed.atom( res2_atom3_name_ ).xyz()
 		);
-		
+
 		// This one_three bool assumes that res1 is always the amino acid of a base-protein interaction
 		// The base will never need automorphism
-		if( one_three ) {
+		if ( one_three ) {
 			mobile_stub.from_four_points(
 				mobile.atom( res1_atom2_name_ ).xyz(),
 				mobile.atom( res1_atom1_name_ ).xyz(),
@@ -895,7 +894,7 @@ Motif::place_residue_helper(
 				mobile.atom( res1_atom1_name_ ).xyz()
 			);
 		}
-		
+
 		// Get the stub at the other end of the jump
 		backward_jump_.make_jump( start_stub, end_stub );
 	}
@@ -913,9 +912,9 @@ Motif::place_residue_(
 	//core::kinematics::Stub start_stub1;
 
 	place_residue_helper( end_stub, mobile_stub, fixed, mobile, forward, one_three );
-	
+
 	// Apply to the mobile residue
-	for( Size i(1), end_i = mobile.natoms() ; i <= end_i ; ++i ) {
+	for ( Size i(1), end_i = mobile.natoms() ; i <= end_i ; ++i ) {
 		mobile.set_xyz( i, end_stub.local2global( mobile_stub.global2local( mobile.xyz( i ) ) ) );
 	}
 
@@ -935,9 +934,9 @@ Motif::place_residue_helper(
 	bool one_three
 ) const {
 	core::kinematics::Stub start_stub1;
-	if( forward ) {
+	if ( forward ) {
 		// Extract a stub from the fixed residue
-		if( one_three ) {
+		if ( one_three ) {
 			core::kinematics::Stub start_stub(
 				fixed.atom( res1_atom2_name_ ).xyz(),
 				fixed.atom( res1_atom1_name_ ).xyz(),
@@ -954,7 +953,7 @@ Motif::place_residue_helper(
 			);
 			start_stub1 = start_stub;
 		}
-		
+
 		mobile_stub.from_four_points(
 			mobile.atom( res2_atom2_index_in ).xyz(),
 			mobile.atom( res2_atom1_index_in ).xyz(),
@@ -971,10 +970,10 @@ Motif::place_residue_helper(
 			fixed.atom( res2_atom2_index_in ).xyz(),
 			fixed.atom( res2_atom3_index_in ).xyz()
 		);
-		
+
 		// This one_three bool assumes that res1 is always the amino acid of a base-protein interaction
 		// The base will never need automorphism
-		if( one_three ) {
+		if ( one_three ) {
 			mobile_stub.from_four_points(
 				mobile.atom( res1_atom2_name_ ).xyz(),
 				mobile.atom( res1_atom1_name_ ).xyz(),
@@ -1008,13 +1007,13 @@ Motif::place_residue_(
 {
 	core::kinematics::Stub end_stub;
 	core::kinematics::Stub mobile_stub;
-//	core::kinematics::Stub start_stub1;
-	
+	// core::kinematics::Stub start_stub1;
+
 	place_residue_helper( end_stub, mobile_stub, fixed, mobile, forward,
-						  res2_atom1_index_in, res2_atom2_index_in, res2_atom3_index_in, one_three );
+		res2_atom1_index_in, res2_atom2_index_in, res2_atom3_index_in, one_three );
 
 	// Apply to the mobile residue
-	for( Size i(1), end_i = mobile.natoms() ; i <= end_i ; ++i ) {
+	for ( Size i(1), end_i = mobile.natoms() ; i <= end_i ; ++i ) {
 		mobile.set_xyz( i, end_stub.local2global( mobile_stub.global2local( mobile.xyz( i ) ) ) );
 	}
 	return;
@@ -1034,9 +1033,9 @@ Motif::place_atom_(
 	core::kinematics::Stub mobile_stub;
 	core::kinematics::Stub start_stub1;
 
-	if( forward ) {
+	if ( forward ) {
 		// Extract a stub from the fixed residue
-		if( one_three ) {
+		if ( one_three ) {
 			core::kinematics::Stub start_stub(
 				fixed.atom( res1_atom2_index_ ).xyz(),
 				fixed.atom( res1_atom1_index_ ).xyz(),
@@ -1045,12 +1044,12 @@ Motif::place_atom_(
 			);
 			start_stub1 = start_stub;
 		} else {
-				core::kinematics::Stub start_stub(
-					fixed.atom( res1_atom2_index_ ).xyz(),
-					fixed.atom( res1_atom3_index_ ).xyz(),
-					fixed.atom( res1_atom2_index_ ).xyz(),
-					fixed.atom( res1_atom1_index_ ).xyz()
-				);
+			core::kinematics::Stub start_stub(
+				fixed.atom( res1_atom2_index_ ).xyz(),
+				fixed.atom( res1_atom3_index_ ).xyz(),
+				fixed.atom( res1_atom2_index_ ).xyz(),
+				fixed.atom( res1_atom1_index_ ).xyz()
+			);
 			start_stub1 = start_stub;
 		}
 
@@ -1072,7 +1071,7 @@ Motif::place_atom_(
 			fixed.atom( res2_atom3_index_ ).xyz()
 		);
 
-		if( one_three ) {
+		if ( one_three ) {
 			mobile_stub.from_four_points(
 				mobile.atom( res1_atom2_index_ ).xyz(),
 				mobile.atom( res1_atom1_index_ ).xyz(),
@@ -1114,7 +1113,7 @@ Motif::place_atoms_(
 	place_residue_helper( end_stub, mobile_stub, fixed, mobile, forward, one_three );
 
 	// Apply to the mobile residue
-	for( Size i(1), end_i = atoms.size() ; i <= end_i ; ++i ) {
+	for ( Size i(1), end_i = atoms.size() ; i <= end_i ; ++i ) {
 		mobile.set_xyz( atoms[i], end_stub.local2global( mobile_stub.global2local( mobile.xyz( atoms[i] ) ) ) );
 	}
 
@@ -1130,7 +1129,7 @@ Motif::place_atoms_(
 	utility::vector1< Size > const & atoms,
 	Size const & res2_atom1_index_in,
 	Size const & res2_atom2_index_in,
-    Size const & res2_atom3_index_in,
+	Size const & res2_atom3_index_in,
 	bool one_three
 ) const
 {
@@ -1139,10 +1138,10 @@ Motif::place_atoms_(
 	//core::kinematics::Stub start_stub1;
 
 	place_residue_helper( end_stub, mobile_stub, fixed, mobile, forward,
-						 res2_atom1_index_in, res2_atom2_index_in, res2_atom3_index_in, one_three );
+		res2_atom1_index_in, res2_atom2_index_in, res2_atom3_index_in, one_three );
 
 	// Apply to the mobile residue
-	for( Size i(1), end_i = atoms.size() ; i <= end_i ; ++i ) {
+	for ( Size i(1), end_i = atoms.size() ; i <= end_i ; ++i ) {
 		mobile.set_xyz( atoms[i], end_stub.local2global( mobile_stub.global2local( mobile.xyz( atoms[i] ) ) ) );
 	}
 
@@ -1154,13 +1153,13 @@ Motif::print( std::ostream & out ) const
 {
 
 	out << "SINGLE   " << restype_name1() << "   " << res1_atom1_name()
-					<< "   " << res1_atom2_name()
-					<< "   " << res1_atom3_name()
+		<< "   " << res1_atom2_name()
+		<< "   " << res1_atom3_name()
 		<< "   " << restype_name2() <<  "   " << res2_atom1_name()
-					<< "   " << res2_atom2_name()
-					<< "   " << res2_atom3_name();// << '\n';
+		<< "   " << res2_atom2_name()
+		<< "   " << res2_atom3_name();// << '\n';
 
-	if( has_remark() ) {
+	if ( has_remark() ) {
 		out << " ### REMARK " << remark();
 	}
 	out << '\n';

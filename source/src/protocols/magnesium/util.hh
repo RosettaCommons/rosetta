@@ -29,77 +29,77 @@
 namespace protocols {
 namespace magnesium {
 
-	void
-	fixup_magnesiums( core::pose::Pose & pose );
+void
+fixup_magnesiums( core::pose::Pose & pose );
 
-	core::scoring::ScoreFunctionOP
-	get_mg_scorefxn();
+core::scoring::ScoreFunctionOP
+get_mg_scorefxn();
 
-	numeric::UniformRotationSamplerCOP
-	get_water_uniform_rotation_sampler();
+numeric::UniformRotationSamplerCOP
+get_water_uniform_rotation_sampler();
 
-	numeric::UniformRotationSamplerCOP
-	get_octahedral_uniform_rotation_sampler( core::Real const rotstep = 2.5,
-																					 bool const remove_redundant = false );
+numeric::UniformRotationSamplerCOP
+get_octahedral_uniform_rotation_sampler( core::Real const rotstep = 2.5,
+	bool const remove_redundant = false );
 
-	core::conformation::ResidueOP
-	get_useful_HOH_coords( core::Vector & Oc, core::Vector & OH1c, core::Vector & OH2c,
-												 core::chemical::ResidueTypeSet const & residue_set );
+core::conformation::ResidueOP
+get_useful_HOH_coords( core::Vector & Oc, core::Vector & OH1c, core::Vector & OH2c,
+	core::chemical::ResidueTypeSet const & residue_set );
 
-	void
-	add_single_magnesium( core::pose::Pose & pose );
+void
+add_single_magnesium( core::pose::Pose & pose );
 
-	void
-	strip_out_magnesiums( core::pose::Pose & pose );
+void
+strip_out_magnesiums( core::pose::Pose & pose );
 
-	utility::vector1< std::pair< core::Size, core::Size > >
-	get_mg_water_pairs( core::pose::Pose const & pose );
+utility::vector1< std::pair< core::Size, core::Size > >
+get_mg_water_pairs( core::pose::Pose const & pose );
 
-	utility::vector1< std::pair< core::Size, core::Size > >
-	get_mg_water_pairs( core::pose::Pose const & pose,
-											utility::vector1< core::Size > const & mg_res );
+utility::vector1< std::pair< core::Size, core::Size > >
+get_mg_water_pairs( core::pose::Pose const & pose,
+	utility::vector1< core::Size > const & mg_res );
 
-	utility::vector1< core::id::AtomID >
-	get_mg_ligands( core::pose::Pose const & pose, core::Size const i,
-									bool const filter_for_acceptors = true );
+utility::vector1< core::id::AtomID >
+get_mg_ligands( core::pose::Pose const & pose, core::Size const i,
+	bool const filter_for_acceptors = true );
 
-	utility::vector1< core::id::AtomID >
-	filter_acceptor_ligands( core::pose::Pose const & pose, utility::vector1< core::id::AtomID > const & ligands );
+utility::vector1< core::id::AtomID >
+filter_acceptor_ligands( core::pose::Pose const & pose, utility::vector1< core::id::AtomID > const & ligands );
 
-	void
-	instantiate_water_at_octahedral_vertex( core::pose::Pose & pose,
-										 core::Size const mg_res,
-										 core::Size const n /* 1 ... 6*/,
-										 core::Distance const hoh_distance = MG_HOH_DISTANCE );
+void
+instantiate_water_at_octahedral_vertex( core::pose::Pose & pose,
+	core::Size const mg_res,
+	core::Size const n /* 1 ... 6*/,
+	core::Distance const hoh_distance = MG_HOH_DISTANCE );
 
-	core::conformation::ResidueOP
-	get_mg_rsd();
+core::conformation::ResidueOP
+get_mg_rsd();
 
-	utility::vector1< core::Size >
-	get_mg_res( core::pose::Pose const & pose );
+utility::vector1< core::Size >
+get_mg_res( core::pose::Pose const & pose );
 
-	utility::vector1< core::Size >
-	get_water_res( core::pose::Pose const & pose );
+utility::vector1< core::Size >
+get_water_res( core::pose::Pose const & pose );
 
-	void
-	remove_waters_except_mg_bound( core::pose::Pose & pose,
-																 utility::vector1< std::pair< core::Size, core::Size > > const & mg_water_pairs );
+void
+remove_waters_except_mg_bound( core::pose::Pose & pose,
+	utility::vector1< std::pair< core::Size, core::Size > > const & mg_water_pairs );
 
-	void
-	remove_mg_bound_waters( core::pose::Pose & pose, utility::vector1< core::Size > const & mg_res, bool const leave_other_waters = false );
+void
+remove_mg_bound_waters( core::pose::Pose & pose, utility::vector1< core::Size > const & mg_res, bool const leave_other_waters = false );
 
 
-	void
-	update_numbers_in_pdb_info( core::pose::Pose & pose, bool const reset_waters = false );
+void
+update_numbers_in_pdb_info( core::pose::Pose & pose, bool const reset_waters = false );
 
-	utility::vector1< core::Size >
-	pdbslice( core::pose::Pose & pose, core::Size const center_res, core::Distance distance_cutoff = 12.0 );
+utility::vector1< core::Size >
+pdbslice( core::pose::Pose & pose, core::Size const center_res, core::Distance distance_cutoff = 12.0 );
 
-	void
-	get_hydration_stats( core::pose::Pose const & pose,
-											 core::pose::Pose const & reference_pose,
-											 utility::vector1< core::Size > const & pdb_mg_res_list_in,
-											 std::string const & outfile );
+void
+get_hydration_stats( core::pose::Pose const & pose,
+	core::pose::Pose const & reference_pose,
+	utility::vector1< core::Size > const & pdb_mg_res_list_in,
+	std::string const & outfile );
 
 } //magnesium
 } //protocols

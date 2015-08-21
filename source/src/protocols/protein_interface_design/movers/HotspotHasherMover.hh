@@ -32,13 +32,13 @@ class HotspotHasherMover : public protocols::moves::Mover
 public:
 	HotspotHasherMover();
 	HotspotHasherMover( std::vector<std::string> const resnames,
-			core::scoring::ScoreFunctionCOP scorefxn,
-			core::Size const n_stubs,
-			core::Size const target_resnum,
-			protocols::filters::FilterOP hotspot_filter,
-			core::Real const target_distance,
-			std::string const hashin_fname,
-			std::string const hashout_fname );
+		core::scoring::ScoreFunctionCOP scorefxn,
+		core::Size const n_stubs,
+		core::Size const target_resnum,
+		protocols::filters::FilterOP hotspot_filter,
+		core::Real const target_distance,
+		std::string const hashin_fname,
+		std::string const hashout_fname );
 	protocols::moves::MoverOP clone() const;
 	virtual ~HotspotHasherMover();
 	void apply( core::pose::Pose & pose );

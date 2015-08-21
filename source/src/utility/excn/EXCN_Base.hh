@@ -33,15 +33,15 @@ namespace excn {
 *********************                                                                  *********************
 ************************************************************************************************************
 ************************************************************************************************************
-   don't use this Exception definition anywhere apart from
-	 in the jd2::JobDistributor
-	 ( or in your main if you don't use the JobDistributor )
-	 instead derive your Exceptions from EXCN_Exception
-	 and only catch EXCN_Exception or child-classes
-	 ( except in main and jdist, where you should catch EXCN_Base )
+don't use this Exception definition anywhere apart from
+in the jd2::JobDistributor
+( or in your main if you don't use the JobDistributor )
+instead derive your Exceptions from EXCN_Exception
+and only catch EXCN_Exception or child-classes
+( except in main and jdist, where you should catch EXCN_Base )
 
-	  Oliver <olange@u.washington.edu>
-		Matthew O'Meara <mattjomeara@gmail.com>
+Oliver <olange@u.washington.edu>
+Matthew O'Meara <mattjomeara@gmail.com>
 ************************************************************************************************************
 ************************************************************************************************************
 */
@@ -56,7 +56,7 @@ protected:
 
 
 		//* THE ASSERT MACRO is here that one can find the origin of the EXCEPTION in gdb */
-		//	debug_assert( false );
+		// debug_assert( false );
 		// a better method for this is to issue the command
 		// catch throw
 		// in the gdb command line... now gdb will stop execution when an Exception
@@ -72,7 +72,7 @@ public:
 		show( os );
 		msg = os.str();
 		return msg;
- 	};
+	};
 };
 
 inline std::ostream& operator << ( std::ostream& os, EXCN_Base& excn ) {

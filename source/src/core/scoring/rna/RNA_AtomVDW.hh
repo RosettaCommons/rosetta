@@ -53,7 +53,7 @@ public:
 
 	Real
 	bump_parameter( Size const atom1, Size const atom2,
-									char const which_nucleotide1, char const which_nucleotide2 ) const;
+		char const which_nucleotide1, char const which_nucleotide2 ) const;
 
 private: //data
 
@@ -68,7 +68,7 @@ private: //data
 	ObjexxFCL::FArray4D < Real > rna_vdw_parameter_;
 
 
-	};
+};
 
 } //rna
 } //scoring

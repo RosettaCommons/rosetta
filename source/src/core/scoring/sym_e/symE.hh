@@ -56,8 +56,8 @@ public:
 		ScoreFunction const &,
 		EnergyMap & emap
 	) const;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 };
 
 

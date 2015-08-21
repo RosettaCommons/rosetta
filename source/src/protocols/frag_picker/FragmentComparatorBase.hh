@@ -29,10 +29,10 @@ namespace frag_picker {
 
 class FragmentComparatorBase : public utility::pointer::ReferenceCount {
 public:
-    virtual bool operator() (
-      ScoredCandidate first_candidate,
-	    ScoredCandidate second_candidate
-		) = 0;
+	virtual bool operator() (
+		ScoredCandidate first_candidate,
+		ScoredCandidate second_candidate
+	) = 0;
 };
 
 } // frag_picker

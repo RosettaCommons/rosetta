@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/monte_carlo/mover/FromScratchMover.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -22,11 +22,11 @@ namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
 namespace mover {
-	
-	class FromScratchMover;
-	typedef utility::pointer::shared_ptr< FromScratchMover > FromScratchMoverOP;
-	typedef utility::pointer::shared_ptr< FromScratchMover const > FromScratchMoverCOP;
-	
+
+class FromScratchMover;
+typedef utility::pointer::shared_ptr< FromScratchMover > FromScratchMoverOP;
+typedef utility::pointer::shared_ptr< FromScratchMover const > FromScratchMoverCOP;
+
 } //mover
 } //monte_carlo
 } //stepwise

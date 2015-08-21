@@ -40,18 +40,18 @@ void B2::status() {
 
 	std::cout << "B2::status -- My A has value " << a_instance_.my_int() << std::endl;
 
-   /// When you've replaced a_instance_ with a_pointer_, use the code below to report
+	/// When you've replaced a_instance_ with a_pointer_, use the code below to report
 	/// B2's status instead of the code above
 
 	/*if ( a_instance_ )  { /// NULL POINTER CHECK
-		std::cout << "B2::status -- My A has value " << a_instance_->my_int() << std::endl;
+	std::cout << "B2::status -- My A has value " << a_instance_->my_int() << std::endl;
 	} else {
-		std::cout << "B2::status -- My A is null " << std::endl;
+	std::cout << "B2::status -- My A is null " << std::endl;
 	}*/
 }
 
 /*B2OP B2::clone() const {
-	return new B2( *this );
+return new B2( *this );
 }*/
 
 }

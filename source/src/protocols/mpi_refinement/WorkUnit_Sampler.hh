@@ -26,13 +26,13 @@ namespace mpi_refinement {
 
 class WorkUnit_Sampler;
 typedef utility::pointer::shared_ptr< WorkUnit_Sampler > WorkUnit_SamplerOP;
-	typedef utility::pointer::shared_ptr< WorkUnit_Sampler const > WorkUnit_SamplerCOP;
+typedef utility::pointer::shared_ptr< WorkUnit_Sampler const > WorkUnit_SamplerCOP;
 
 class WorkUnit_Sampler: public protocols::wum::WorkUnit_SilentStructStore {
 
 public:
 	// initialize only via this
-	WorkUnit_Sampler():	WorkUnit_SilentStructStore(){}
+	WorkUnit_Sampler(): WorkUnit_SilentStructStore(){}
 
 	// @brief Run the workunit - overloaded by children of this class
 	virtual void run() = 0;
@@ -43,44 +43,44 @@ protected:
 
 	core::kinematics::MoveMapOP
 	get_movemap( core::pose::Pose const &pose,
-							 std::string const mode,
-							 bool const nonideal ) const;
+		std::string const mode,
+		bool const nonideal ) const;
 
 	void
 	store_to_decoys( core::io::silent::SilentStructCOP start_struct,
-									 core::pose::Pose const pose,
-									 std::string const additional_tag = "" );
+		core::pose::Pose const pose,
+		std::string const additional_tag = "" );
 
 	void
 	store_to_decoys( core::io::silent::SilentStructCOP start_struct,
-									 core::io::silent::SilentStructOP ss,
-									 std::string const additional_tag = "" );
+		core::io::silent::SilentStructOP ss,
+		std::string const additional_tag = "" );
 
 	void
 	repack( core::pose::Pose &pose,
-					core::scoring::ScoreFunctionOP sfxn );
+		core::scoring::ScoreFunctionOP sfxn );
 
-	void 
+	void
 	ramp_minpack_loop2( core::pose::Pose &pose,
-											utility::vector1< core::Size > const loopres, 
-											core::scoring::ScoreFunctionCOP sfxn,
-											bool const nonideal = true,
-											bool const ramp = true,
-											bool const efficient = false,
-											core::Real dist_cut = 0.0
-											);
+		utility::vector1< core::Size > const loopres,
+		core::scoring::ScoreFunctionCOP sfxn,
+		bool const nonideal = true,
+		bool const ramp = true,
+		bool const efficient = false,
+		core::Real dist_cut = 0.0
+	);
 
-	void 
+	void
 	superimpose_to_ref( core::pose::Pose const &pose_ref,
-											core::pose::Pose &pose_work,
-											utility::vector1< core::Size > exclude_res 
-											= utility::vector1< core::Size >(0) ) const;
+		core::pose::Pose &pose_work,
+		utility::vector1< core::Size > exclude_res
+		= utility::vector1< core::Size >(0) ) const;
 
 
-	core::scoring::ScoreFunctionOP 
+	core::scoring::ScoreFunctionOP
 	get_energy( std::string const sfxn_name,
-							bool const softpack = false,
-							core::Real const weight_coord_cst = 0.0 ) const;
+		bool const softpack = false,
+		core::Real const weight_coord_cst = 0.0 ) const;
 
 	void
 	revert_facts_params() const;

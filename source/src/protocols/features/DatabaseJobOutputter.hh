@@ -43,11 +43,11 @@ class DatabaseJobOutputter : public protocols::jd2::FileJobOutputter
 {
 public:
 
-  typedef protocols::jd2::FileJobOutputter parent;
+	typedef protocols::jd2::FileJobOutputter parent;
 
-  DatabaseJobOutputter();
+	DatabaseJobOutputter();
 
-  virtual ~DatabaseJobOutputter();
+	virtual ~DatabaseJobOutputter();
 
 	static void register_options();
 
@@ -55,11 +55,11 @@ public:
 	void
 	load_options_from_option_system();
 
-	 /// @brief Set database name
-	 void
-	 set_database_name(std::string const & database_name);
+	/// @brief Set database name
+	void
+	set_database_name(std::string const & database_name);
 
-	 /// @brief Get database name
+	/// @brief Get database name
 	std::string
 	get_database_name() const;
 
@@ -96,15 +96,15 @@ public:
 	/// normally writes to.  This class checks wherever output goes to
 	/// see if the job's expected output already exists (on disk or
 	/// whatever).  This is the most basic form of checkpointing.
-  virtual
-  bool job_has_completed( protocols::jd2::JobCOP job );
+	virtual
+	bool job_has_completed( protocols::jd2::JobCOP job );
 
 public: // accessors
 
 	/// @brief this is the master function for determining the
 	/// unique output identifier for a job
-  virtual
-  std::string output_name( protocols::jd2::JobCOP job );
+	virtual
+	std::string output_name( protocols::jd2::JobCOP job );
 
 private: // members
 

@@ -26,8 +26,7 @@ UltraLightResidue::UltraLightResidue(ResidueCOP residue)
 {
 	residue_ = residue;
 	core::Size resnum = residue->seqpos();
-	for(core::Size atom_index = 1; atom_index <= residue->natoms();++atom_index)
-	{
+	for ( core::Size atom_index = 1; atom_index <= residue->natoms(); ++atom_index ) {
 		coords_.push_back(residue->xyz(atom_index));
 		id::AtomID new_atom_id(atom_index,resnum);
 		atom_ids_.push_back(new_atom_id);
@@ -36,7 +35,7 @@ UltraLightResidue::UltraLightResidue(ResidueCOP residue)
 }
 
 UltraLightResidue::UltraLightResidue(UltraLightResidue const & src) : ReferenceCount(),
-		atom_ids_(src.atom_ids_), coords_(src.coords_), center_(src.center_), residue_(src.residue_)
+	atom_ids_(src.atom_ids_), coords_(src.coords_), center_(src.center_), residue_(src.residue_)
 {}
 
 void UltraLightResidue::update_conformation(Conformation & conformation) const
@@ -49,8 +48,7 @@ void UltraLightResidue::transform(numeric::xyzMatrix<core::Real> const & rotatio
 	PointPosition old_center = numeric::center_of_mass(coords_);
 	center_ = old_center+translation_vector;
 	numeric::xyzTransform<core::Real> transformer(numeric::xyzTransform<core::Real>::rot(rotation_matrix,old_center,center_));
-	for(utility::vector1<PointPosition>::iterator it = coords_.begin(); it != coords_.end(); ++it)
-	{
+	for ( utility::vector1<PointPosition>::iterator it = coords_.begin(); it != coords_.end(); ++it ) {
 		*it = transformer*(*it);
 	}
 }
@@ -78,8 +76,7 @@ void UltraLightResidue::align_to_residue(UltraLightResidue const & other_residue
 
 	//coords_ and target_coords get recentered to 0,0,0.  rot_matrix gets set to the correct rotation matrix. sigma3 is set but nobody cares
 	//setup the transform, use the last move center to recenter away from zero
-	for(utility::vector1<PointPosition>::iterator it = coords_.begin(); it != coords_.end(); ++it)
-	{
+	for ( utility::vector1<PointPosition>::iterator it = coords_.begin(); it != coords_.end(); ++it ) {
 		*it = transformer*(*it);
 	}
 
@@ -91,8 +88,7 @@ void UltraLightResidue::slide(core::Vector const & translation_vector)
 {
 	numeric::xyzMatrix<core::Real> identity(numeric::xyzMatrix<core::Real>::identity());
 	numeric::xyzTransform<core::Real> transformer(numeric::xyzTransform<core::Real>::rot(identity,translation_vector));
-	for(utility::vector1<PointPosition>::iterator it = coords_.begin(); it != coords_.end(); ++it)
-	{
+	for ( utility::vector1<PointPosition>::iterator it = coords_.begin(); it != coords_.end(); ++it ) {
 		*it = translation_vector+(*it);
 	}
 	center_ = numeric::center_of_mass(coords_);

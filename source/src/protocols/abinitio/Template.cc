@@ -84,30 +84,30 @@ using namespace scoring::constraints;
 
 void
 dump_movemap( kinematics::MoveMap const& mm, Size nres, std::ostream& out ) {
-  for ( Size i = 1; i<=nres; i++ ) {
-    if ( (i-1)%10 == 0 ) { out << i; continue; }
-    //large numbers take several characters... skip appropriate
-    if ( (i>=10) && (i-2)%10 == 0 ) { continue; }
-    if ( (i>=100) && (i-3)%10 == 0 ) { continue; }
-    if ( (i>=1000) && (i-4)%10 == 0 ) { continue; }
-    out << ".";
-  }
-  out << std::endl;
-  for ( Size i = 1; i<=nres; i++ ) {
-    if ( mm.get_bb( i ) ) out << 'F'; //cuttable
-    else out << '.';
-  }
-  out << std::endl;
+	for ( Size i = 1; i<=nres; i++ ) {
+		if ( (i-1)%10 == 0 ) { out << i; continue; }
+		//large numbers take several characters... skip appropriate
+		if ( (i>=10) && (i-2)%10 == 0 ) { continue; }
+		if ( (i>=100) && (i-3)%10 == 0 ) { continue; }
+		if ( (i>=1000) && (i-4)%10 == 0 ) { continue; }
+		out << ".";
+	}
+	out << std::endl;
+	for ( Size i = 1; i<=nres; i++ ) {
+		if ( mm.get_bb( i ) ) out << 'F'; //cuttable
+		else out << '.';
+	}
+	out << std::endl;
 }
 
 Template::Template( std::string const& name, pose::PoseCOP pose, core::sequence::DerivedSequenceMapping const& mapping )
-  : name_ ( name )
+: name_ ( name )
 {
-  tr.Error << "STUB ERROR: Template::Template(pose, mapping) constructure,  not really finished yet !!! " << std::endl;
-  pose_ = pose;
-  mapping_ = mapping;
-  reverse_mapping_ = mapping;
-  reverse_mapping_.reverse();
+	tr.Error << "STUB ERROR: Template::Template(pose, mapping) constructure,  not really finished yet !!! " << std::endl;
+	pose_ = pose;
+	mapping_ = mapping;
+	reverse_mapping_ = mapping;
+	reverse_mapping_.reverse();
 	good_ = false;
 }
 
@@ -117,20 +117,20 @@ Template::Template(
 	std::string const& map_file,
 	int offset,
 	Real score )
-	: pose_( pose ),
-		name_( name ),
-		score_( score )
+: pose_( pose ),
+	name_( name ),
+	score_( score )
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
 	good_ = false;
 
-  // read alignment
-  tr.Info << "template  " << name << " read alignment file: " << map_file << std::endl;
-  mapping_ = sequence::simple_mapping_from_file( map_file );
+	// read alignment
+	tr.Info << "template  " << name << " read alignment file: " << map_file << std::endl;
+	mapping_ = sequence::simple_mapping_from_file( map_file );
 
-  // offset it because pdb starts at offset rather than sequence pos nr 1
+	// offset it because pdb starts at offset rather than sequence pos nr 1
 	if ( offset >= 0 ) { //ignore negative offsets -- in agreement with myself
 		mapping_.set_offset( offset-1 ); //offset 1 --> do nothing
 	} else { //find offset automatically
@@ -145,8 +145,8 @@ Template::Template(
 			tr.Error << "mapping_.seq2()" <<   mapping_.seq2() << std::endl;
 			std::ofstream out( "BAD_SEQUENCES", std::ios_base::out | std::ios_base::app );
 			out << name << "  "
-			    << " Expecting:  "  << mapping_.seq2()
-					<< " PDBseq:  " << pdb_seq << std::endl;
+				<< " Expecting:  "  << mapping_.seq2()
+				<< " PDBseq:  " << pdb_seq << std::endl;
 			return ;
 		}
 	}
@@ -165,9 +165,9 @@ Template::Template(
 		}
 	}
 
-  // get the reverse mapping: template --> target
-  reverse_mapping_ = mapping_;
-  reverse_mapping_.reverse();
+	// get the reverse mapping: template --> target
+	reverse_mapping_ = mapping_;
+	reverse_mapping_.reverse();
 
 	// get strand pairings
 	strand_pairings_ = core::scoring::dssp::StrandPairingSetOP( new core::scoring::dssp::StrandPairingSet( *pose_ ) );
@@ -180,10 +180,10 @@ Template::Template(
 	core::scoring::dssp::StrandPairingSet target_strand_pairings( target_pairings );
 	tr.Info << " strand_pairings of " << name << " aligned to target \n" << target_strand_pairings << std::endl;
 
-  // for information purpose: write sequence where alignment starts. should be the same as seen in hhr file
-  std::string seq = pose_->sequence();
-  Size tpos, pos = 1; while ( (tpos = mapping_[ pos++ ])<=0 ) ; //go to first aligned residue
-  tr.Info << "template sequence " << seq.substr( tpos-1 ) << std::endl; //string count from 0
+	// for information purpose: write sequence where alignment starts. should be the same as seen in hhr file
+	std::string seq = pose_->sequence();
+	Size tpos, pos = 1; while ( (tpos = mapping_[ pos++ ])<=0 ) ; //go to first aligned residue
+	tr.Info << "template sequence " << seq.substr( tpos-1 ) << std::endl; //string count from 0
 	tr.Debug <<"compare with      " << mapping_.seq2() << std::endl;
 	tr.Info << "first 10 aligned residues:" << std::endl;
 	for ( Size i = pos-1; i<= pos + 9; i++ ) {
@@ -202,15 +202,15 @@ Template::pick_large_frags( FragSet& frag_set, core::fragment::SingleResidueFrag
 	typedef utility::vector1< Size > FragLengthMap;
 	FrameList template_frames;
 	Size const nres( std::min( pose_->total_residue(), reverse_mapping_.size1() ) );
-	FragLengthMap	frag_length( nres, 0);
+	FragLengthMap frag_length( nres, 0);
 	for ( Size pos1 = nres; pos1 >= 2; pos1-- ) {
 		//if pos1 is aligned .. assign appropriate lengths for each residue in continuous stretch, e.g., 5 4 3 2 1
 		if ( reverse_mapping_[ pos1 ] ) {
 			Size cont_length( 0 );
 			for ( Size pos2 = pos1;
-							pos2 >= 2 &&	 //avoids out-of-range in reverse_mapping_[ pos2 - 1 ] ...
-							reverse_mapping_[ pos2 ]; // &&
-						pos2-- ) {
+					pos2 >= 2 &&  //avoids out-of-range in reverse_mapping_[ pos2 - 1 ] ...
+					reverse_mapping_[ pos2 ]; // &&
+					pos2-- ) {
 				cont_length++;
 				frag_length[ pos2 ] = cont_length;
 				if ( reverse_mapping_[ pos2 - 1 ] + 1 !=  reverse_mapping_[ pos2 ] ) break;
@@ -272,97 +272,97 @@ Template::pick_large_frags( FragSet& frag_set, core::fragment::SingleResidueFrag
 // until proper weighting in fragments is set up
 Size
 Template::steal_frags( FrameList const& frames, FragSet &accumulator, Size ncopies ) const {
-  FrameList template_frames;
-  map2template( frames, template_frames );
-  Size total( 0 );
-  for ( FrameList::iterator it = template_frames.begin(),
-	  eit = template_frames.end(); it!=eit; ++it )	{
-    tr.Trace << name() << " pick frags at " << (*it)->start() << " " << (*it)->end() << " " << pose_->total_residue() << std::endl;
+	FrameList template_frames;
+	map2template( frames, template_frames );
+	Size total( 0 );
+	for ( FrameList::iterator it = template_frames.begin(),
+			eit = template_frames.end(); it!=eit; ++it ) {
+		tr.Trace << name() << " pick frags at " << (*it)->start() << " " << (*it)->end() << " " << pose_->total_residue() << std::endl;
 		for ( Size ct = 1; ct <= ncopies; ct ++ ) {
 			if ( (*it)->steal( *pose_ ) ) total++;
 		}
-  }
+	}
 
-  //this should always work, since we created only alignable frames
-  map2target( template_frames );
-  accumulator.add( template_frames );
-  return total;
+	//this should always work, since we created only alignable frames
+	map2target( template_frames );
+	accumulator.add( template_frames );
+	return total;
 }
 
 bool
 Template::map_pairing( core::scoring::dssp::Pairing const& in, core::scoring::dssp::Pairing &out, core::sequence::DerivedSequenceMapping const& map ) const {
-  out.Pos1(map[in.Pos1()]);
-  out.Pos2(map[in.Pos2()]);
-  out.Orientation(in.Orientation());
-  out.Pleating(in.Pleating()); // how is this different from calling out = in?
-  return !( out.Pos1() <= 0 || out.Pos2() <= 0 );
+	out.Pos1(map[in.Pos1()]);
+	out.Pos2(map[in.Pos2()]);
+	out.Orientation(in.Orientation());
+	out.Pleating(in.Pleating()); // how is this different from calling out = in?
+	return !( out.Pos1() <= 0 || out.Pos2() <= 0 );
 }
 
 void
 Template::map_pairings2template( core::scoring::dssp::PairingsList const& in, core::scoring::dssp::PairingsList &out ) const {
-  for ( core::scoring::dssp::PairingsList::const_iterator it = in.begin(),
-	  eit = in.end(); it!=eit; ++it ) {
-    core::scoring::dssp::Pairing pairing;
-    if ( map_pairing( *it, pairing, mapping_ ) ) out.push_back( pairing );
-  }
+	for ( core::scoring::dssp::PairingsList::const_iterator it = in.begin(),
+			eit = in.end(); it!=eit; ++it ) {
+		core::scoring::dssp::Pairing pairing;
+		if ( map_pairing( *it, pairing, mapping_ ) ) out.push_back( pairing );
+	}
 }
 
 void
 Template::map_pairings2target( core::scoring::dssp::PairingsList const& in, core::scoring::dssp::PairingsList &out ) const {
-  for ( core::scoring::dssp::PairingsList::const_iterator it = in.begin(),
-	  eit = in.end(); it!=eit; ++it ) {
-    core::scoring::dssp::Pairing pairing;
-    if ( map_pairing( *it, pairing, reverse_mapping_ ) ) out.push_back( pairing );
+	for ( core::scoring::dssp::PairingsList::const_iterator it = in.begin(),
+			eit = in.end(); it!=eit; ++it ) {
+		core::scoring::dssp::Pairing pairing;
+		if ( map_pairing( *it, pairing, reverse_mapping_ ) ) out.push_back( pairing );
 		tr.Trace << "template: "<<*it<< "     target: " << pairing;
-  }
+	}
 }
 
 void
 Template::map2target( FrameList const& frames, FrameList& target_frames ) const {
 	for ( FrameList::const_iterator it=frames.begin(),
-	  eit = frames.end(); it!=eit; ++it ) {
-    FrameOP frame = (*it)->clone_with_frags();
-    if ( frame->align( reverse_mapping_ ) ) {
-      target_frames.push_back( frame );
-    }
-  }
+			eit = frames.end(); it!=eit; ++it ) {
+		FrameOP frame = (*it)->clone_with_frags();
+		if ( frame->align( reverse_mapping_ ) ) {
+			target_frames.push_back( frame );
+		}
+	}
 }
 
 void
 Template::map2target( FrameList &frames ) const {
-  for ( FrameList::const_iterator it=frames.begin(),
-	  eit = frames.end(); it!=eit; ++it ) {
-    FrameOP frame = (*it);
+	for ( FrameList::const_iterator it=frames.begin(),
+			eit = frames.end(); it!=eit; ++it ) {
+		FrameOP frame = (*it);
 		Size start( frame->start() );
 		tr.Trace << start << " " << frame->end() << std::endl;
-    if ( !frame->align( reverse_mapping_ ) ) {
-      std::cerr << start << " could not align frame " << *frame << std::endl;
+		if ( !frame->align( reverse_mapping_ ) ) {
+			std::cerr << start << " could not align frame " << *frame << std::endl;
 			utility_exit_with_message("Could not align frame ");
-    }
-  }
+		}
+	}
 }
 
 void
 Template::map2template( FrameList &frames ) const {
-  for ( FrameList::const_iterator it=frames.begin(),
-	  eit = frames.end(); it!=eit; ++it ) {
-    if ( !(*it)->align( mapping_ ) ) {
-      tr.Error << "could not align frame " << **it << std::endl;
+	for ( FrameList::const_iterator it=frames.begin(),
+			eit = frames.end(); it!=eit; ++it ) {
+		if ( !(*it)->align( mapping_ ) ) {
+			tr.Error << "could not align frame " << **it << std::endl;
 			utility_exit_with_message("Could not align frame ");
-    }
-  }
+		}
+	}
 }
 
 void
 Template::map2template( FrameList const& target_frames, FrameList& template_frames ) const {
-  for ( FrameList::const_iterator it=target_frames.begin(),
-	  eit = target_frames.end(); it!=eit; ++it ) {
-    FrameOP frame = (*it)->clone();
-    *frame = **it; //copy fragments
-    if ( frame->align( mapping_ ) ) {
-      template_frames.push_back( frame );
-    }
-  }
+	for ( FrameList::const_iterator it=target_frames.begin(),
+			eit = target_frames.end(); it!=eit; ++it ) {
+		FrameOP frame = (*it)->clone();
+		*frame = **it; //copy fragments
+		if ( frame->align( mapping_ ) ) {
+			template_frames.push_back( frame );
+		}
+	}
 }
 
 using namespace core::scoring::constraints;
@@ -372,80 +372,80 @@ void Template::read_constraints( std::string const& cst_file ) {
 }
 
 void Template::_read_constraints( std::string const& cst_file ) const {
-  ConstraintSetOP cstset = ConstraintIO::get_instance()->read_constraints( cst_file, ConstraintSetOP( new ConstraintSet ), *pose_ );
-  typedef utility::vector1< ConstraintCOP > FlatList;
-  FlatList all_cst = cstset->get_all_constraints();
-  for ( FlatList::const_iterator it = all_cst.begin(),
-	  eit = all_cst.end(); it!=eit; ++it ) {
-    ConstraintCOP ptr = *it;
-    AtomPairConstraintCOP ptr2 = utility::pointer::dynamic_pointer_cast< core::scoring::constraints::AtomPairConstraint const > ( ptr );
-    if ( ptr2 ) {
-      AtomPairConstraintOP valued_cst = utility::pointer::const_pointer_cast< AtomPairConstraint >(ptr2);
-      cstset_.push_back( core::scoring::constraints::Obsolet_NamedAtomPairConstraintOP( new Obsolet_NamedAtomPairConstraint( valued_cst, *pose_ ) ) );
-    } else {
-      tr.Warning << "WARNING: constraint found that is not AtomPairConstraint... will be ignored by Template" << std::endl;
-    }
-  }
+	ConstraintSetOP cstset = ConstraintIO::get_instance()->read_constraints( cst_file, ConstraintSetOP( new ConstraintSet ), *pose_ );
+	typedef utility::vector1< ConstraintCOP > FlatList;
+	FlatList all_cst = cstset->get_all_constraints();
+	for ( FlatList::const_iterator it = all_cst.begin(),
+			eit = all_cst.end(); it!=eit; ++it ) {
+		ConstraintCOP ptr = *it;
+		AtomPairConstraintCOP ptr2 = utility::pointer::dynamic_pointer_cast< core::scoring::constraints::AtomPairConstraint const > ( ptr );
+		if ( ptr2 ) {
+			AtomPairConstraintOP valued_cst = utility::pointer::const_pointer_cast< AtomPairConstraint >(ptr2);
+			cstset_.push_back( core::scoring::constraints::Obsolet_NamedAtomPairConstraintOP( new Obsolet_NamedAtomPairConstraint( valued_cst, *pose_ ) ) );
+		} else {
+			tr.Warning << "WARNING: constraint found that is not AtomPairConstraint... will be ignored by Template" << std::endl;
+		}
+	}
 }
 
 void
 Template::map2target(
-   NamedAtomPairConstraintList const& template_list,
-   NamedAtomPairConstraintList& target_list ) const
+	NamedAtomPairConstraintList const& template_list,
+	NamedAtomPairConstraintList& target_list ) const
 {
-  using namespace core::id;
+	using namespace core::id;
 
-  target_list.clear();
-  for ( NamedAtomPairConstraintList::const_iterator it = template_list.begin(),
-	  eit = template_list.end(); it!=eit; ++it ) {
-    Obsolet_NamedAtomPairConstraintOP new_cst = (*it)->mapto( reverse_mapping_ );
-    if ( new_cst ) {
-      target_list.push_back( new_cst );
-    } else {
-      tr.Trace << "map2target: could not align constraint " << **it << std::endl;
-    }
-  }
+	target_list.clear();
+	for ( NamedAtomPairConstraintList::const_iterator it = template_list.begin(),
+			eit = template_list.end(); it!=eit; ++it ) {
+		Obsolet_NamedAtomPairConstraintOP new_cst = (*it)->mapto( reverse_mapping_ );
+		if ( new_cst ) {
+			target_list.push_back( new_cst );
+		} else {
+			tr.Trace << "map2target: could not align constraint " << **it << std::endl;
+		}
+	}
 }
 
 void
 Template::map2template(
-   NamedAtomPairConstraintList const& target_list,
-   NamedAtomPairConstraintList& template_list ) const
+	NamedAtomPairConstraintList const& target_list,
+	NamedAtomPairConstraintList& template_list ) const
 {
-  using namespace core::id;
-  template_list.clear();
-  for ( NamedAtomPairConstraintList::const_iterator it = target_list.begin(),
-	  eit = target_list.end(); it!=eit; ++it ) {
-    Obsolet_NamedAtomPairConstraintOP new_cst = (*it)->mapto( mapping_ );
-    if ( new_cst ) {
-      template_list.push_back( new_cst );
-    } else {
-      tr.Trace << "map2template: could not align constraint " << **it << std::endl;
-    }
-  }
+	using namespace core::id;
+	template_list.clear();
+	for ( NamedAtomPairConstraintList::const_iterator it = target_list.begin(),
+			eit = target_list.end(); it!=eit; ++it ) {
+		Obsolet_NamedAtomPairConstraintOP new_cst = (*it)->mapto( mapping_ );
+		if ( new_cst ) {
+			template_list.push_back( new_cst );
+		} else {
+			tr.Trace << "map2template: could not align constraint " << **it << std::endl;
+		}
+	}
 }
 
 void
 Template::cull_violators(
-   NamedAtomPairConstraintList const& target_list,
-   NamedAtomPairConstraintList& culled_list ) const
+	NamedAtomPairConstraintList const& target_list,
+	NamedAtomPairConstraintList& culled_list ) const
 {
 	using namespace core::scoring::constraints;
-  for ( NamedAtomPairConstraintList::const_iterator it = target_list.begin(),
-	  eit = target_list.end(); it!=eit; ++it ) {
-    AtomPairConstraintOP cst = (*it)->mapto( mapping_, *pose_ );
-    if ( cst ) {
-      tr.Trace << "test: (target)" << cst->atom(1) << " " << cst->atom(2) <<  std::endl;
-      if ( cst->score( *pose_ ) < 1.0 ) {
+	for ( NamedAtomPairConstraintList::const_iterator it = target_list.begin(),
+			eit = target_list.end(); it!=eit; ++it ) {
+		AtomPairConstraintOP cst = (*it)->mapto( mapping_, *pose_ );
+		if ( cst ) {
+			tr.Trace << "test: (target)" << cst->atom(1) << " " << cst->atom(2) <<  std::endl;
+			if ( cst->score( *pose_ ) < 1.0 ) {
 				culled_list.push_back( *it );
-      } else {
+			} else {
 				tr.Trace <<"cull constraint with score: " << cst->score( *pose_ ) << " "
-								 << cst->atom(1) << " " << cst->atom(2) << std::endl;
+					<< cst->atom(1) << " " << cst->atom(2) << std::endl;
 			} // cull this
-    } else { //atoms present
-      culled_list.push_back( *it ); //constraint cannot be tested on template... keep it !
-    }
-  }
+		} else { //atoms present
+			culled_list.push_back( *it ); //constraint cannot be tested on template... keep it !
+		}
+	}
 }
 
 } //abinitio

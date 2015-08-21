@@ -18,7 +18,7 @@
 
 // Unit Headers
 #define private public
-	#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.hh>
 #undef private
 
 #include <core/chemical/ResidueGraphTypes.hh>

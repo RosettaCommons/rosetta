@@ -36,12 +36,12 @@ namespace chemical {
 const std::string &Element::get_property_name( const Element::Properties &PROPERTY)
 {
 	static const std::string s_properties[] =
-	{
-			"Mass",
-			"CovalentRadius",
-			"VDWaalsRadius",
-			"Properties" // GetStaticClassName< Properties>()
-	};
+		{
+		"Mass",
+		"CovalentRadius",
+		"VDWaalsRadius",
+		"Properties" // GetStaticClassName< Properties>()
+		};
 	return s_properties[ PROPERTY];
 }
 
@@ -51,14 +51,14 @@ const std::string &Element::get_property_name( const Element::Properties &PROPER
 
 //! @brief construct undefined element
 Element::Element() :
-		element_( core::chemical::element::UnknownElement ),
-		atomic_number_( utility::get_undefined_size() ),
-		period_( utility::get_undefined_size() ),
-		main_group_( utility::get_undefined_size() ),
-		chemical_symbol_( "X"),
-		chemical_name_( "UNDEFINED_ELEMENT"),
-		electron_configuration_(),
-		properties_(NumberOfProperties, utility::get_undefined_real() ) // set all properties to undefined
+	element_( core::chemical::element::UnknownElement ),
+	atomic_number_( utility::get_undefined_size() ),
+	period_( utility::get_undefined_size() ),
+	main_group_( utility::get_undefined_size() ),
+	chemical_symbol_( "X"),
+	chemical_name_( "UNDEFINED_ELEMENT"),
+	electron_configuration_(),
+	properties_(NumberOfProperties, utility::get_undefined_real() ) // set all properties to undefined
 {}
 
 //! @brief construct element from all its data
@@ -73,28 +73,28 @@ Element::Element() :
 //! @param ELECTRON_CONFIGURATION  - the electron configuration
 Element::Element
 (
-		const core::Size ATOMIC_NUMBER,
-		const core::Size PERIOD,
-		const core::Size MAIN_GROUP,
-		const std::string &CHEMICAL_SYMBOL,
-		const std::string &CHEMICAL_NAME,
-		const core::Real MASS,
-		const core::Real COVALENT_RADIUS,
-		const core::Real VDW_RADIUS,
-		const ElectronConfiguration &ELECTRON_CONFIGURATION
+	const core::Size ATOMIC_NUMBER,
+	const core::Size PERIOD,
+	const core::Size MAIN_GROUP,
+	const std::string &CHEMICAL_SYMBOL,
+	const std::string &CHEMICAL_NAME,
+	const core::Real MASS,
+	const core::Real COVALENT_RADIUS,
+	const core::Real VDW_RADIUS,
+	const ElectronConfiguration &ELECTRON_CONFIGURATION
 ) :
-atomic_number_( ATOMIC_NUMBER),
-period_( PERIOD),
-main_group_( MAIN_GROUP),
-chemical_symbol_( CHEMICAL_SYMBOL),
-chemical_name_( CHEMICAL_NAME),
-electron_configuration_( ELECTRON_CONFIGURATION),
-properties_(NumberOfProperties, utility::get_undefined_real() )
+	atomic_number_( ATOMIC_NUMBER),
+	period_( PERIOD),
+	main_group_( MAIN_GROUP),
+	chemical_symbol_( CHEMICAL_SYMBOL),
+	chemical_name_( CHEMICAL_NAME),
+	electron_configuration_( ELECTRON_CONFIGURATION),
+	properties_(NumberOfProperties, utility::get_undefined_real() )
 {
-		element_ = core::chemical::element::elements_from_name(chemical_symbol_);
-		properties_[ Mass] = MASS;
-		properties_[ CovalentRadius]      = COVALENT_RADIUS;
-		properties_[ VDWaalsRadius]       = VDW_RADIUS;
+	element_ = core::chemical::element::elements_from_name(chemical_symbol_);
+	properties_[ Mass] = MASS;
+	properties_[ CovalentRadius]      = COVALENT_RADIUS;
+	properties_[ VDWaalsRadius]       = VDW_RADIUS;
 
 }
 
@@ -130,12 +130,11 @@ std::istream &Element::read( std::istream &ISTREAM)
 	// Ensure that the number of properties is the same as when the file was written
 	core::Size properties_in_files;
 	ISTREAM >> properties_in_files; //io::Serialize::Read( properties_in_files, ISTREAM);
-	if( properties_in_files != NumberOfProperties ) {
+	if ( properties_in_files != NumberOfProperties ) {
 		utility_exit_with_message("Number of properties in Element file was incorrect");
 	}
 
-	for( core::Size a = 0; a < core::Size( NumberOfProperties); a++)
-	{
+	for ( core::Size a = 0; a < core::Size( NumberOfProperties); a++ ) {
 		gasteiger::safe_read( ISTREAM, properties_[ a] );
 	}
 
@@ -162,8 +161,7 @@ std::ostream &Element::write( std::ostream &OSTREAM) const
 	// Write out the number of properties, if this changes, the read function will fail
 	OSTREAM << NumberOfProperties << ' '; //io::Serialize::Write( core::Size( NumberOfProperties), OSTREAM, INDENT) << '\n';
 
-	for( core::Size a = 0; a < core::Size( NumberOfProperties); a++)
-	{
+	for ( core::Size a = 0; a < core::Size( NumberOfProperties); a++ ) {
 		gasteiger::safe_write( OSTREAM, properties_[ a]); //io::Serialize::Write( properties_[ a], OSTREAM, INDENT) << '\n';
 	}
 

@@ -34,8 +34,8 @@ public:
 
 
 	FadeFunc( Real const cutoff_lower, Real const cutoff_upper,
-						Real const fade_zone, Real const well_depth,
-						Real const well_offset ):
+		Real const fade_zone, Real const well_depth,
+		Real const well_offset ):
 		cutoff_lower_( cutoff_lower ),
 		cutoff_upper_( cutoff_upper ),
 		fade_zone_( fade_zone ),
@@ -43,7 +43,7 @@ public:
 		well_offset_( well_offset ){}
 
 	FadeFunc( Real const cutoff_lower, Real const cutoff_upper,
-						Real const fade_zone, Real const well_depth ):
+		Real const fade_zone, Real const well_depth ):
 		cutoff_lower_( cutoff_lower ),
 		cutoff_upper_( cutoff_upper ),
 		fade_zone_( fade_zone ),
@@ -51,7 +51,7 @@ public:
 		well_offset_( 0.0 ){}
 
 	FadeFunc( Real const cutoff_lower, Real const cutoff_upper,
-						Real const fade_zone ):
+		Real const fade_zone ):
 		cutoff_lower_( cutoff_lower ),
 		cutoff_upper_( cutoff_upper ),
 		fade_zone_( fade_zone ),

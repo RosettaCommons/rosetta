@@ -121,14 +121,14 @@ public:
 
 		RotamerSetsCOP rotsets = daemon.rot_sets();
 		/*for ( Size ii = 1; ii <= 3; ++ii ) {
-			Size ii_resid = rotsets->moltenres_2_resid( ii );
-			Size ii_rot_offset = rotsets->nrotamer_offset_for_moltenres( ii );
-			std::cout << "Residue " << ii_resid << " rotamers:";
-			RotamerSetCOP ii_rotset = rotsets->rotamer_set_for_moltenresidue( ii );
-			for ( Size jj = 1; jj <= ii_rotset->num_rotamers(); ++jj ) {
-				std::cout << " (" << ii_rot_offset + jj << "," << ii_rotset->rotamer( jj )->aa() << ")";
-			}
-			std::cout << std::endl;
+		Size ii_resid = rotsets->moltenres_2_resid( ii );
+		Size ii_rot_offset = rotsets->nrotamer_offset_for_moltenres( ii );
+		std::cout << "Residue " << ii_resid << " rotamers:";
+		RotamerSetCOP ii_rotset = rotsets->rotamer_set_for_moltenresidue( ii );
+		for ( Size jj = 1; jj <= ii_rotset->num_rotamers(); ++jj ) {
+		std::cout << " (" << ii_rot_offset + jj << "," << ii_rotset->rotamer( jj )->aa() << ")";
+		}
+		std::cout << std::endl;
 		}*/
 
 		utility::vector0< Size > rots_to_pack = daemon.select_rotamer_subset( ent );
@@ -160,7 +160,7 @@ public:
 		PackDaemon::RotamerAssignmentAndEnergy const & assignment = daemon.last_assignment();
 		//std::cout << "Total energy: " << assignment.second << std::endl;
 		//for ( Size ii = 1; ii <= 3; ++ii ) {
-		//	std::cout << "Moltenres " << ii << " with rotamer " << assignment.first[ ii ] << std::endl;
+		// std::cout << "Moltenres " << ii << " with rotamer " << assignment.first[ ii ] << std::endl;
 		//}
 		//Moltenres 1 with rotamer 1
 		//Moltenres 2 with rotamer 5
@@ -170,9 +170,9 @@ public:
 		for ( Size ii = 1; ii <= 3; ++ii ) {
 			//std::cout << "Moltenres " << ii << " with rotamer " << assignment.first[ ii ] << std::endl;
 			switch ( ii ) {
-				case 1 : TS_ASSERT( assignment.first[ ii ] == 1 ); break;
-				case 2 : TS_ASSERT( assignment.first[ ii ] == 42 ); break;
-				case 3 : TS_ASSERT( assignment.first[ ii ] == 90 ); break;
+			case 1 : TS_ASSERT( assignment.first[ ii ] == 1 ); break;
+			case 2 : TS_ASSERT( assignment.first[ ii ] == 42 ); break;
+			case 3 : TS_ASSERT( assignment.first[ ii ] == 90 ); break;
 			}
 		}
 
@@ -198,15 +198,15 @@ public:
 
 		DaemonSet::ConstDaemonList daemons = ds.daemons();
 		/*for ( std::list< std::pair< core::Size, PackDaemonCOP > >::const_iterator
-				iter = daemons.begin(), iter_end = daemons.end(); iter != iter_end; ++iter ) {
-			PackDaemon const & daemon = *( iter->second );
-			core::pack::rotamer_set::RotamerSetsCOP rotsets = daemon.rot_sets();
-			for ( Size ii = 1; ii <= rotsets->nmoltenres(); ++ii ) {
-				for ( Size jj = 1; jj <= rotsets->rotamer_set_for_moltenresidue( ii )->num_rotamers(); ++jj ) {
-					std::cout << "Rotamer on residue " << ii << " #" << jj << " " << rotsets->rotamer_set_for_moltenresidue( ii )->rotamer( jj )->aa() << std::endl;
+		iter = daemons.begin(), iter_end = daemons.end(); iter != iter_end; ++iter ) {
+		PackDaemon const & daemon = *( iter->second );
+		core::pack::rotamer_set::RotamerSetsCOP rotsets = daemon.rot_sets();
+		for ( Size ii = 1; ii <= rotsets->nmoltenres(); ++ii ) {
+		for ( Size jj = 1; jj <= rotsets->rotamer_set_for_moltenresidue( ii )->num_rotamers(); ++jj ) {
+		std::cout << "Rotamer on residue " << ii << " #" << jj << " " << rotsets->rotamer_set_for_moltenresidue( ii )->rotamer( jj )->aa() << std::endl;
 
-				}
-			}
+		}
+		}
 		}*/
 
 		Entity ent( "traits AA:1:P AA:2:F fitness 0.0" );
@@ -228,9 +228,9 @@ public:
 			for ( Size ii = 1; ii <= 3; ++ii ) {
 				//std::cout << "Moltenres " << ii << " with rotamer " << assignment.first[ ii ] << std::endl;
 				switch ( ii ) {
-					case 1 : TS_ASSERT( assignment.first[ ii ] == 22  ); break;
-					case 2 : TS_ASSERT( assignment.first[ ii ] == 277 ); break;
-					case 3 : TS_ASSERT( assignment.first[ ii ] == 285 ); break;
+				case 1 : TS_ASSERT( assignment.first[ ii ] == 22  ); break;
+				case 2 : TS_ASSERT( assignment.first[ ii ] == 277 ); break;
+				case 3 : TS_ASSERT( assignment.first[ ii ] == 285 ); break;
 				}
 			}
 		}
@@ -297,33 +297,33 @@ public:
 		bool all_good = true;
 		/* Uncomment to regenerate the rotamer mapping.
 		for ( Size ii = 0; ii < rtp.size(); ++ii ) {
-			std::cout << "TS_ASSERT( rtp[ " << ii << " ] == " << rtp[ ii ] << ");";
-			std::cout << " if ( rtp[ " << ii << " ] != " << rtp[ ii ] << ") all_good = false;" << std::endl;
+		std::cout << "TS_ASSERT( rtp[ " << ii << " ] == " << rtp[ ii ] << ");";
+		std::cout << " if ( rtp[ " << ii << " ] != " << rtp[ ii ] << ") all_good = false;" << std::endl;
 		}*/
 
-		TS_ASSERT( rtp[ 0 ] == 2); if ( rtp[ 0 ] != 2) all_good = false;
-		TS_ASSERT( rtp[ 1 ] == 3); if ( rtp[ 1 ] != 3) all_good = false;
-		TS_ASSERT( rtp[ 2 ] == 25); if ( rtp[ 2 ] != 25) all_good = false;
-		TS_ASSERT( rtp[ 3 ] == 26); if ( rtp[ 3 ] != 26) all_good = false;
-		TS_ASSERT( rtp[ 4 ] == 27); if ( rtp[ 4 ] != 27) all_good = false;
-		TS_ASSERT( rtp[ 5 ] == 28); if ( rtp[ 5 ] != 28) all_good = false;
-		TS_ASSERT( rtp[ 6 ] == 66); if ( rtp[ 6 ] != 66) all_good = false;
-		TS_ASSERT( rtp[ 7 ] == 67); if ( rtp[ 7 ] != 67) all_good = false;
-		TS_ASSERT( rtp[ 8 ] == 68); if ( rtp[ 8 ] != 68) all_good = false;
-		TS_ASSERT( rtp[ 9 ] == 69); if ( rtp[ 9 ] != 69) all_good = false;
-		TS_ASSERT( rtp[ 10 ] == 70); if ( rtp[ 10 ] != 70) all_good = false;
-		TS_ASSERT( rtp[ 11 ] == 71); if ( rtp[ 11 ] != 71) all_good = false;
-		TS_ASSERT( rtp[ 12 ] == 72); if ( rtp[ 12 ] != 72) all_good = false;
-		TS_ASSERT( rtp[ 13 ] == 73); if ( rtp[ 13 ] != 73) all_good = false;
-		TS_ASSERT( rtp[ 14 ] == 74); if ( rtp[ 14 ] != 74) all_good = false;
-		TS_ASSERT( rtp[ 15 ] == 75); if ( rtp[ 15 ] != 75) all_good = false;
-		TS_ASSERT( rtp[ 16 ] == 76); if ( rtp[ 16 ] != 76) all_good = false;
-		TS_ASSERT( rtp[ 17 ] == 77); if ( rtp[ 17 ] != 77) all_good = false;
-		TS_ASSERT( rtp[ 18 ] == 78); if ( rtp[ 18 ] != 78) all_good = false;
-		TS_ASSERT( rtp[ 19 ] == 79); if ( rtp[ 19 ] != 79) all_good = false;
-		TS_ASSERT( rtp[ 20 ] == 80); if ( rtp[ 20 ] != 80) all_good = false;
-		TS_ASSERT( rtp[ 21 ] == 81); if ( rtp[ 21 ] != 81) all_good = false;
-		TS_ASSERT( rtp[ 22 ] == 82); if ( rtp[ 22 ] != 82) all_good = false;
+		TS_ASSERT( rtp[ 0 ] == 2); if ( rtp[ 0 ] != 2 ) all_good = false;
+		TS_ASSERT( rtp[ 1 ] == 3); if ( rtp[ 1 ] != 3 ) all_good = false;
+		TS_ASSERT( rtp[ 2 ] == 25); if ( rtp[ 2 ] != 25 ) all_good = false;
+		TS_ASSERT( rtp[ 3 ] == 26); if ( rtp[ 3 ] != 26 ) all_good = false;
+		TS_ASSERT( rtp[ 4 ] == 27); if ( rtp[ 4 ] != 27 ) all_good = false;
+		TS_ASSERT( rtp[ 5 ] == 28); if ( rtp[ 5 ] != 28 ) all_good = false;
+		TS_ASSERT( rtp[ 6 ] == 66); if ( rtp[ 6 ] != 66 ) all_good = false;
+		TS_ASSERT( rtp[ 7 ] == 67); if ( rtp[ 7 ] != 67 ) all_good = false;
+		TS_ASSERT( rtp[ 8 ] == 68); if ( rtp[ 8 ] != 68 ) all_good = false;
+		TS_ASSERT( rtp[ 9 ] == 69); if ( rtp[ 9 ] != 69 ) all_good = false;
+		TS_ASSERT( rtp[ 10 ] == 70); if ( rtp[ 10 ] != 70 ) all_good = false;
+		TS_ASSERT( rtp[ 11 ] == 71); if ( rtp[ 11 ] != 71 ) all_good = false;
+		TS_ASSERT( rtp[ 12 ] == 72); if ( rtp[ 12 ] != 72 ) all_good = false;
+		TS_ASSERT( rtp[ 13 ] == 73); if ( rtp[ 13 ] != 73 ) all_good = false;
+		TS_ASSERT( rtp[ 14 ] == 74); if ( rtp[ 14 ] != 74 ) all_good = false;
+		TS_ASSERT( rtp[ 15 ] == 75); if ( rtp[ 15 ] != 75 ) all_good = false;
+		TS_ASSERT( rtp[ 16 ] == 76); if ( rtp[ 16 ] != 76 ) all_good = false;
+		TS_ASSERT( rtp[ 17 ] == 77); if ( rtp[ 17 ] != 77 ) all_good = false;
+		TS_ASSERT( rtp[ 18 ] == 78); if ( rtp[ 18 ] != 78 ) all_good = false;
+		TS_ASSERT( rtp[ 19 ] == 79); if ( rtp[ 19 ] != 79 ) all_good = false;
+		TS_ASSERT( rtp[ 20 ] == 80); if ( rtp[ 20 ] != 80 ) all_good = false;
+		TS_ASSERT( rtp[ 21 ] == 81); if ( rtp[ 21 ] != 81 ) all_good = false;
+		TS_ASSERT( rtp[ 22 ] == 82); if ( rtp[ 22 ] != 82 ) all_good = false;
 
 		TS_ASSERT( all_good );
 		if ( ! all_good ) return;
@@ -414,33 +414,33 @@ public:
 		bool all_good = true;
 		/* Uncomment to regenerate the rotamer mapping.
 		for ( Size ii = 0; ii < rtp.size(); ++ii ) {
-			std::cout << "TS_ASSERT( rtp[ " << ii << " ] == " << rtp[ ii ] << ");";
-			std::cout << " if ( rtp[ " << ii << " ] != " << rtp[ ii ] << ") all_good = false;" << std::endl;
+		std::cout << "TS_ASSERT( rtp[ " << ii << " ] == " << rtp[ ii ] << ");";
+		std::cout << " if ( rtp[ " << ii << " ] != " << rtp[ ii ] << ") all_good = false;" << std::endl;
 		}*/
 
-		TS_ASSERT( rtp[ 0 ] == 2); if ( rtp[ 0 ] != 2) all_good = false;
-		TS_ASSERT( rtp[ 1 ] == 3); if ( rtp[ 1 ] != 3) all_good = false;
-		TS_ASSERT( rtp[ 2 ] == 25); if ( rtp[ 2 ] != 25) all_good = false;
-		TS_ASSERT( rtp[ 3 ] == 26); if ( rtp[ 3 ] != 26) all_good = false;
-		TS_ASSERT( rtp[ 4 ] == 27); if ( rtp[ 4 ] != 27) all_good = false;
-		TS_ASSERT( rtp[ 5 ] == 28); if ( rtp[ 5 ] != 28) all_good = false;
-		TS_ASSERT( rtp[ 6 ] == 66); if ( rtp[ 6 ] != 66) all_good = false;
-		TS_ASSERT( rtp[ 7 ] == 67); if ( rtp[ 7 ] != 67) all_good = false;
-		TS_ASSERT( rtp[ 8 ] == 68); if ( rtp[ 8 ] != 68) all_good = false;
-		TS_ASSERT( rtp[ 9 ] == 69); if ( rtp[ 9 ] != 69) all_good = false;
-		TS_ASSERT( rtp[ 10 ] == 70); if ( rtp[ 10 ] != 70) all_good = false;
-		TS_ASSERT( rtp[ 11 ] == 71); if ( rtp[ 11 ] != 71) all_good = false;
-		TS_ASSERT( rtp[ 12 ] == 72); if ( rtp[ 12 ] != 72) all_good = false;
-		TS_ASSERT( rtp[ 13 ] == 73); if ( rtp[ 13 ] != 73) all_good = false;
-		TS_ASSERT( rtp[ 14 ] == 74); if ( rtp[ 14 ] != 74) all_good = false;
-		TS_ASSERT( rtp[ 15 ] == 75); if ( rtp[ 15 ] != 75) all_good = false;
-		TS_ASSERT( rtp[ 16 ] == 76); if ( rtp[ 16 ] != 76) all_good = false;
-		TS_ASSERT( rtp[ 17 ] == 77); if ( rtp[ 17 ] != 77) all_good = false;
-		TS_ASSERT( rtp[ 18 ] == 78); if ( rtp[ 18 ] != 78) all_good = false;
-		TS_ASSERT( rtp[ 19 ] == 79); if ( rtp[ 19 ] != 79) all_good = false;
-		TS_ASSERT( rtp[ 20 ] == 80); if ( rtp[ 20 ] != 80) all_good = false;
-		TS_ASSERT( rtp[ 21 ] == 81); if ( rtp[ 21 ] != 81) all_good = false;
-		TS_ASSERT( rtp[ 22 ] == 82); if ( rtp[ 22 ] != 82) all_good = false;
+		TS_ASSERT( rtp[ 0 ] == 2); if ( rtp[ 0 ] != 2 ) all_good = false;
+		TS_ASSERT( rtp[ 1 ] == 3); if ( rtp[ 1 ] != 3 ) all_good = false;
+		TS_ASSERT( rtp[ 2 ] == 25); if ( rtp[ 2 ] != 25 ) all_good = false;
+		TS_ASSERT( rtp[ 3 ] == 26); if ( rtp[ 3 ] != 26 ) all_good = false;
+		TS_ASSERT( rtp[ 4 ] == 27); if ( rtp[ 4 ] != 27 ) all_good = false;
+		TS_ASSERT( rtp[ 5 ] == 28); if ( rtp[ 5 ] != 28 ) all_good = false;
+		TS_ASSERT( rtp[ 6 ] == 66); if ( rtp[ 6 ] != 66 ) all_good = false;
+		TS_ASSERT( rtp[ 7 ] == 67); if ( rtp[ 7 ] != 67 ) all_good = false;
+		TS_ASSERT( rtp[ 8 ] == 68); if ( rtp[ 8 ] != 68 ) all_good = false;
+		TS_ASSERT( rtp[ 9 ] == 69); if ( rtp[ 9 ] != 69 ) all_good = false;
+		TS_ASSERT( rtp[ 10 ] == 70); if ( rtp[ 10 ] != 70 ) all_good = false;
+		TS_ASSERT( rtp[ 11 ] == 71); if ( rtp[ 11 ] != 71 ) all_good = false;
+		TS_ASSERT( rtp[ 12 ] == 72); if ( rtp[ 12 ] != 72 ) all_good = false;
+		TS_ASSERT( rtp[ 13 ] == 73); if ( rtp[ 13 ] != 73 ) all_good = false;
+		TS_ASSERT( rtp[ 14 ] == 74); if ( rtp[ 14 ] != 74 ) all_good = false;
+		TS_ASSERT( rtp[ 15 ] == 75); if ( rtp[ 15 ] != 75 ) all_good = false;
+		TS_ASSERT( rtp[ 16 ] == 76); if ( rtp[ 16 ] != 76 ) all_good = false;
+		TS_ASSERT( rtp[ 17 ] == 77); if ( rtp[ 17 ] != 77 ) all_good = false;
+		TS_ASSERT( rtp[ 18 ] == 78); if ( rtp[ 18 ] != 78 ) all_good = false;
+		TS_ASSERT( rtp[ 19 ] == 79); if ( rtp[ 19 ] != 79 ) all_good = false;
+		TS_ASSERT( rtp[ 20 ] == 80); if ( rtp[ 20 ] != 80 ) all_good = false;
+		TS_ASSERT( rtp[ 21 ] == 81); if ( rtp[ 21 ] != 81 ) all_good = false;
+		TS_ASSERT( rtp[ 22 ] == 82); if ( rtp[ 22 ] != 82 ) all_good = false;
 
 		TS_ASSERT( all_good );
 		if ( ! all_good ) return;

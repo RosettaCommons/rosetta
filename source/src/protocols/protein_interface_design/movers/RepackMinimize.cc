@@ -91,12 +91,12 @@ RepackMinimize::RepackMinimize(
 	repack_partner1_ = repack_partner1;
 	target_residues_ = target_residues;
 	interface_distance_cutoff_ = interface_distance_cutoff;
-	if (symmetry_ ) {
-		if( scorefxn_repack ) scorefxn_repack_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_repack );
-		if( scorefxn_minimize ) scorefxn_minimize_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_minimize );
+	if ( symmetry_ ) {
+		if ( scorefxn_repack ) scorefxn_repack_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_repack );
+		if ( scorefxn_minimize ) scorefxn_minimize_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_minimize );
 	} else {
-		if( scorefxn_repack ) scorefxn_repack_ = core::scoring::symmetry::asymmetrize_scorefunction( *scorefxn_repack );
-		if( scorefxn_minimize ) scorefxn_minimize_ = core::scoring::symmetry::asymmetrize_scorefunction( *scorefxn_minimize );
+		if ( scorefxn_repack ) scorefxn_repack_ = core::scoring::symmetry::asymmetrize_scorefunction( *scorefxn_repack );
+		if ( scorefxn_minimize ) scorefxn_minimize_ = core::scoring::symmetry::asymmetrize_scorefunction( *scorefxn_minimize );
 	}
 	repack_non_ala_ = repack_non_ala;
 }
@@ -121,8 +121,8 @@ RepackMinimize::apply( pose::Pose & pose )
 	allowed_aas_[ chemical::aa_gly ] = false;
 	allowed_aas_[ chemical::aa_pro ] = false;
 
-if ( symmetry_ ) {
-    protocols::simple_moves::symmetry::SetupForSymmetryMoverOP setup_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
+	if ( symmetry_ ) {
+		protocols::simple_moves::symmetry::SetupForSymmetryMoverOP setup_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
 		setup_mover->apply( pose );
 	}
 

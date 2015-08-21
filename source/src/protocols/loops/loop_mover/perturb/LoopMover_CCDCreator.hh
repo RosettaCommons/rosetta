@@ -25,10 +25,10 @@ namespace perturb {
 class LoopMover_Perturb_CCDCreator : public moves::MoverCreator
 {
 public:
-  virtual ~LoopMover_Perturb_CCDCreator();
+	virtual ~LoopMover_Perturb_CCDCreator();
 
-  virtual moves::MoverOP create_mover() const;
-  virtual std::string keyname() const;
+	virtual moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
 
 };
 

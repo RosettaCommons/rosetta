@@ -108,28 +108,28 @@ public:
 	inline
 	EdgeBase const * get_incident_edge( int index ) const
 	{
-	debug_assert( edge_vector_up_to_date_ );
+		debug_assert( edge_vector_up_to_date_ );
 		return incident_edge_vector_[ index ];
 	}
 
 	inline
 	EdgeBase * get_incident_edge( int index )
 	{
-	debug_assert( edge_vector_up_to_date_ );
+		debug_assert( edge_vector_up_to_date_ );
 		return incident_edge_vector_[ index ];
 	}
 
 	inline
 	int get_index_of_adjacent_node( int index ) const
 	{
-	debug_assert( edge_vector_up_to_date_ );
+		debug_assert( edge_vector_up_to_date_ );
 		return adjacent_node_ind_[ index ];
 	}
 
 	inline
 	NodeBase const * get_adjacent_node( int index ) const
 	{
-	debug_assert( edge_vector_up_to_date_ );
+		debug_assert( edge_vector_up_to_date_ );
 		return adjacent_node_[ index ];
 	}
 
@@ -137,7 +137,7 @@ public:
 	inline
 	NodeBase * get_adjacent_node( int index )
 	{
-	debug_assert( edge_vector_up_to_date_ );
+		debug_assert( edge_vector_up_to_date_ );
 		return adjacent_node_[ index ];
 	}
 
@@ -214,14 +214,14 @@ protected:
 	inline
 	int get_node_index( int index ) const
 	{
-	debug_assert( index == 0 || index == 1 );
+		debug_assert( index == 0 || index == 1 );
 		return node_indices_[ index ];
 	}
 
 	inline
 	int get_num_states_for_node( int index ) const
 	{
-	debug_assert( index == 0 || index == 1 );
+		debug_assert( index == 0 || index == 1 );
 		return num_node_states_[ index ];
 	}
 
@@ -229,7 +229,7 @@ protected:
 	NodeBase const *
 	get_node( int index ) const
 	{
-	debug_assert( index == 0 || index == 1 );
+		debug_assert( index == 0 || index == 1 );
 		return nodes_[ index ];
 	}
 
@@ -237,14 +237,14 @@ protected:
 	NodeBase *
 	get_node( int index )
 	{
-	debug_assert( index == 0 || index == 1 );
+		debug_assert( index == 0 || index == 1 );
 		return nodes_[ index ];
 	}
 
 	inline
 	int get_edges_position_in_nodes_edge_vector( int index ) const
 	{
-	debug_assert( index == 0 || index == 1 );
+		debug_assert( index == 0 || index == 1 );
 		return pos_in_nodes_edge_vector_[ index ];
 	}
 
@@ -267,7 +267,7 @@ protected:
 	inline
 	int
 	which_node( int node_index ) const {
-	debug_assert( node_index == node_indices_[ 0 ] || node_index == node_indices_[ 1 ] );
+		debug_assert( node_index == node_indices_[ 0 ] || node_index == node_indices_[ 1 ] );
 		return ( node_index == node_indices_[ 0 ] ? 0 : 1 );
 	}
 
@@ -395,7 +395,7 @@ public:
 	inline
 	bool get_vertex_member_of_energy_sum_group( int node_index, int group_id )
 	{
-	debug_assert(  num_energy_sum_groups_ != -1 &&
+		debug_assert(  num_energy_sum_groups_ != -1 &&
 			node_index > 0 && node_index <= num_ig_nodes_ &&
 			group_id > 0 && group_id <= num_energy_sum_groups_);
 		return energy_sum_group_membership_( node_index, group_id );
@@ -441,7 +441,7 @@ public:
 	inline
 	NodeBase* get_node( int index ) const
 	{
-	debug_assert( index > 0 && index <= num_ig_nodes_ );
+		debug_assert( index > 0 && index <= num_ig_nodes_ );
 		return ig_nodes_[ index ];
 	}
 
@@ -474,7 +474,7 @@ protected:
 	inline
 	int get_node_state_offset( int index ) const
 	{
-	debug_assert( index > 0 && index <= num_ig_nodes_ );
+		debug_assert( index > 0 && index <= num_ig_nodes_ );
 		return node_state_offsets_[ index ];
 	}
 

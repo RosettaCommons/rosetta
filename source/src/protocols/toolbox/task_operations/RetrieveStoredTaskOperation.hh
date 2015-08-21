@@ -52,7 +52,7 @@ public:
 
 private:
 	std::string task_name_;
-	
+
 };
 
 } //namespace task_operations

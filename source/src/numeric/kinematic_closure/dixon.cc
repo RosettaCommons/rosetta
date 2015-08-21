@@ -52,10 +52,10 @@ typedef Eigen::Matrix<Real, 16, 16> Matrix16;
 typedef Eigen::Matrix<Real, Eigen::Dynamic, 1, 0, 16, 1> Vector16;
 typedef linear_algebra::GeneralizedEigenSolver<Matrix16> SolverType;
 
-// If I can rant for a little bit, using STL vectors as a matrix type was a 
-// fucking horrible idea.  For one thing, the API presented by the std::vector 
-// class is totally inappropriate for doing linear algebra.  More importantly, 
-// you run the risk of getting really terrible caching performance because 
+// If I can rant for a little bit, using STL vectors as a matrix type was a
+// fucking horrible idea.  For one thing, the API presented by the std::vector
+// class is totally inappropriate for doing linear algebra.  More importantly,
+// you run the risk of getting really terrible caching performance because
 // these matrices aren't necessarily stored contiguously in memory.
 
 typedef vector1<Real> PseudoVector;
@@ -67,7 +67,7 @@ typedef vector1<PseudoVector> PseudoMatrix;
 /* C becomes the point value 2 between A and t */
 void point_value2(const utility::vector1<Real>& A, const utility::vector1<Real>& t, utility::vector1<Real>& C) {
 	C.resize(t.size());
-	for (unsigned i=1; i<=t.size(); i++) {
+	for ( unsigned i=1; i<=t.size(); i++ ) {
 		C[i] = A[1]+t[i] * (A[2]+t[i]*A[3]);
 	}
 }
@@ -76,7 +76,7 @@ void point_value2(const utility::vector1<Real>& A, const utility::vector1<Real>&
 /* C becomes the point value 4 between A and t */
 void point_value4(const utility::vector1<Real>& A, const utility::vector1<Real>& t, utility::vector1<Real>& C) {
 	C.resize(t.size());
-	for (unsigned i=1; i<=t.size(); i++) {
+	for ( unsigned i=1; i<=t.size(); i++ ) {
 		C[i] = A[1]+t[i] * (A[2] + t[i] * (A[3] + t[i] * (A[4] + t[i]*A[5])));
 	}
 }
@@ -85,7 +85,7 @@ void point_value4(const utility::vector1<Real>& A, const utility::vector1<Real>&
 /* C becomes the point value 6 between B and t */
 void point_value6(const utility::vector1<Real>& B, const utility::vector1<Real>& t, utility::vector1<Real>& C) {
 	C.resize(t.size());
-	for (unsigned i=1; i<=t.size(); i++) {
+	for ( unsigned i=1; i<=t.size(); i++ ) {
 		C[i] = B[1]+t[i]*(B[2]+t[i]*(B[3]+t[i]*(B[4]+t[i]*(B[5]+t[i]*(B[6]+t[i]*B[7])))));
 	}
 }
@@ -94,7 +94,7 @@ void point_value6(const utility::vector1<Real>& B, const utility::vector1<Real>&
 /* C becomes the point value 8 between A and t */
 void point_value8(const utility::vector1<Real>& A, const utility::vector1<Real>& t, utility::vector1<Real>& C) {
 	C.resize(t.size());
-	for (unsigned i=1; i<=t.size(); i++) {
+	for ( unsigned i=1; i<=t.size(); i++ ) {
 		C[i] = A[1]+t[i]*(A[2]+t[i]*(A[3]+t[i]*(A[4]+t[i]*(A[5]+t[i]*(A[6]+t[i]*(A[7]+t[i]*(A[8]+t[i]*A[9])))))));
 	}
 }
@@ -103,7 +103,7 @@ void point_value8(const utility::vector1<Real>& A, const utility::vector1<Real>&
 /* C becomes the point value 16 between A and t */
 void point_value16(const utility::vector1<Real>& A, const utility::vector1<Real>& t, utility::vector1<Real>& C) {
 	C.resize(t.size());
-	for (unsigned i=1; i<=t.size(); i++) {
+	for ( unsigned i=1; i<=t.size(); i++ ) {
 		C[i] = A[1]+t[i]*(A[2]+t[i]*(A[3]+t[i]*(A[4]+t[i]*(A[5]+t[i]*(A[6]+t[i]*(A[7]+t[i]*(A[8]+t[i]*(A[9]+t[i]*(A[10]+t[i]*(A[11]+t[i]*(A[12]+t[i]*(A[13]+t[i]*(A[14]+t[i]*(A[15]+t[i]*(A[16]+t[i]*A[17])))))))))))))));
 	}
 }
@@ -112,151 +112,151 @@ void point_value16(const utility::vector1<Real>& A, const utility::vector1<Real>
 // polyProduct2x2 {{{1
 /* C becomes the polyProduct2x2 of A and B */
 void polyProduct2x2(const utility::vector1<Real>& A, const utility::vector1<Real>& B, utility::vector1<Real>& C) {
-  C.resize(PP4x2_VECSIZE);
-  C[5] = A[3]*B[3];
-  C[4] = A[3]*B[2]+A[2]*B[3];
-  C[3] = A[3]*B[1]+A[2]*B[2]+A[1]*B[3];
-  C[2] = A[2]*B[1]+A[1]*B[2];
-  C[1] = A[1]*B[1];
-  return;
+	C.resize(PP4x2_VECSIZE);
+	C[5] = A[3]*B[3];
+	C[4] = A[3]*B[2]+A[2]*B[3];
+	C[3] = A[3]*B[1]+A[2]*B[2]+A[1]*B[3];
+	C[2] = A[2]*B[1]+A[1]*B[2];
+	C[1] = A[1]*B[1];
+	return;
 }
 
 // polyProduct4x2 {{{1
 /* C becomes the polyProduct4x2 of A and B */
 void polyProduct4x2(const utility::vector1<Real>& A, const utility::vector1<Real>& B, utility::vector1<Real>& C) {
-  C.resize(7);
-  C[7] = A[5]*B[3];
-  C[6] = A[5]*B[2]+A[4]*B[3];
-  C[5] = A[5]*B[1]+A[4]*B[2]+A[3]*B[3];
-  C[4] = A[4]*B[1]+A[3]*B[2]+A[2]*B[3];
-  C[3] = A[3]*B[1]+A[2]*B[2]+A[1]*B[3];
-  C[2] = A[2]*B[1]+A[1]*B[2];
-  C[1] = A[1]*B[1];
-  return;
+	C.resize(7);
+	C[7] = A[5]*B[3];
+	C[6] = A[5]*B[2]+A[4]*B[3];
+	C[5] = A[5]*B[1]+A[4]*B[2]+A[3]*B[3];
+	C[4] = A[4]*B[1]+A[3]*B[2]+A[2]*B[3];
+	C[3] = A[3]*B[1]+A[2]*B[2]+A[1]*B[3];
+	C[2] = A[2]*B[1]+A[1]*B[2];
+	C[1] = A[1]*B[1];
+	return;
 }
 
 // polyProduct4x4 {{{1
 /* C becomes the polyProduct4x4 of A and B */
 void polyProduct4x4(const utility::vector1<Real>& A, const utility::vector1<Real>& B, utility::vector1<Real>& C) {
-  C.resize(9);
-  C[9] = A[5]*B[5];
-  C[8] = A[5]*B[4]+A[4]*B[5];
-  C[7] = A[5]*B[3]+A[4]*B[4]+A[3]*B[5];
-  C[6] = A[5]*B[2]+A[4]*B[3]+A[3]*B[4]+A[2]*B[5];
-  C[5] = A[5]*B[1]+A[4]*B[2]+A[3]*B[3]+A[2]*B[4]+A[1]*B[5];
-  C[4] = A[4]*B[1]+A[3]*B[2]+A[2]*B[3]+A[1]*B[4];
-  C[3] = A[3]*B[1]+A[2]*B[2]+A[1]*B[3];
-  C[2] = A[2]*B[1]+A[1]*B[2];
-  C[1] = A[1]*B[1];
-  return;
+	C.resize(9);
+	C[9] = A[5]*B[5];
+	C[8] = A[5]*B[4]+A[4]*B[5];
+	C[7] = A[5]*B[3]+A[4]*B[4]+A[3]*B[5];
+	C[6] = A[5]*B[2]+A[4]*B[3]+A[3]*B[4]+A[2]*B[5];
+	C[5] = A[5]*B[1]+A[4]*B[2]+A[3]*B[3]+A[2]*B[4]+A[1]*B[5];
+	C[4] = A[4]*B[1]+A[3]*B[2]+A[2]*B[3]+A[1]*B[4];
+	C[3] = A[3]*B[1]+A[2]*B[2]+A[1]*B[3];
+	C[2] = A[2]*B[1]+A[1]*B[2];
+	C[1] = A[1]*B[1];
+	return;
 }
 
 // polyProduct4sq {{{1
 /* C becomes the polyProduct4sq of A*A */
 void polyProduct4sq(const utility::vector1<Real>& A, utility::vector1<Real>& C) {
-  C.resize(9);
-  C[9] = A[5]*A[5];
-  C[8] =             2* A[5]*A[4];
-  C[7] = A[4]*A[4] + 2* A[5]*A[3];
-  C[6] =             2*(A[5]*A[2]+A[4]*A[3]);
-  C[5] = A[3]*A[3] + 2*(A[5]*A[1]+A[4]*A[2]);
-  C[4] =             2*(A[4]*A[1]+A[3]*A[2]);
-  C[3] = A[2]*A[2] + 2* A[3]*A[1];
-  C[2] =             2* A[2]*A[1];
-  C[1] = A[1]*A[1];
-  return;
+	C.resize(9);
+	C[9] = A[5]*A[5];
+	C[8] =             2* A[5]*A[4];
+	C[7] = A[4]*A[4] + 2* A[5]*A[3];
+	C[6] =             2*(A[5]*A[2]+A[4]*A[3]);
+	C[5] = A[3]*A[3] + 2*(A[5]*A[1]+A[4]*A[2]);
+	C[4] =             2*(A[4]*A[1]+A[3]*A[2]);
+	C[3] = A[2]*A[2] + 2* A[3]*A[1];
+	C[2] =             2* A[2]*A[1];
+	C[1] = A[1]*A[1];
+	return;
 }
 
 // polyProduct6x6 {{{1
 /* C becomes the polyProduct6x6 of A and B */
 void polyProduct6x6(const utility::vector1<Real>& A, const utility::vector1<Real>& B, utility::vector1<Real>& C) {
-  C.resize(13);
-  C[13] = A[7]*B[7];
-  C[12] = A[7]*B[6]+A[6]*B[7];
-  C[11] = A[7]*B[5]+A[6]*B[6]+A[5]*B[7];
-  C[10] = A[7]*B[4]+A[6]*B[5]+A[5]*B[6]+A[4]*B[7];
-  C[9]  = A[7]*B[3]+A[6]*B[4]+A[5]*B[5]+A[4]*B[6]+A[3]*B[7];
-  C[8]  = A[7]*B[2]+A[6]*B[3]+A[5]*B[4]+A[4]*B[5]+A[3]*B[6]+A[2]*B[7];
-  C[7]  = A[7]*B[1]+A[6]*B[2]+A[5]*B[3]+A[4]*B[4]+A[3]*B[5]+A[2]*B[6]+A[1]*B[7];
-  C[6]  = A[6]*B[1]+A[5]*B[2]+A[4]*B[3]+A[3]*B[4]+A[2]*B[5]+A[1]*B[6];
-  C[5]  = A[5]*B[1]+A[4]*B[2]+A[3]*B[3]+A[2]*B[4]+A[1]*B[5];
-  C[4]  = A[4]*B[1]+A[3]*B[2]+A[2]*B[3]+A[1]*B[4];
-  C[3]  = A[3]*B[1]+A[2]*B[2]+A[1]*B[3];
-  C[2]  = A[2]*B[1]+A[1]*B[2];
-  C[1]  = A[1]*B[1];
-  return;
+	C.resize(13);
+	C[13] = A[7]*B[7];
+	C[12] = A[7]*B[6]+A[6]*B[7];
+	C[11] = A[7]*B[5]+A[6]*B[6]+A[5]*B[7];
+	C[10] = A[7]*B[4]+A[6]*B[5]+A[5]*B[6]+A[4]*B[7];
+	C[9]  = A[7]*B[3]+A[6]*B[4]+A[5]*B[5]+A[4]*B[6]+A[3]*B[7];
+	C[8]  = A[7]*B[2]+A[6]*B[3]+A[5]*B[4]+A[4]*B[5]+A[3]*B[6]+A[2]*B[7];
+	C[7]  = A[7]*B[1]+A[6]*B[2]+A[5]*B[3]+A[4]*B[4]+A[3]*B[5]+A[2]*B[6]+A[1]*B[7];
+	C[6]  = A[6]*B[1]+A[5]*B[2]+A[4]*B[3]+A[3]*B[4]+A[2]*B[5]+A[1]*B[6];
+	C[5]  = A[5]*B[1]+A[4]*B[2]+A[3]*B[3]+A[2]*B[4]+A[1]*B[5];
+	C[4]  = A[4]*B[1]+A[3]*B[2]+A[2]*B[3]+A[1]*B[4];
+	C[3]  = A[3]*B[1]+A[2]*B[2]+A[1]*B[3];
+	C[2]  = A[2]*B[1]+A[1]*B[2];
+	C[1]  = A[1]*B[1];
+	return;
 }
 
 // polyProduct12x4 {{{1
 /* C becomes the polyProduct12x4 of A and B */
 void polyProduct12x4(const utility::vector1<Real>& A, const utility::vector1<Real>& B, utility::vector1<Real>& C) {
-  C.resize(17);
-  C[17] = A[13]*B[5];
-  C[16] = A[13]*B[4]+A[12]*B[5];
-  C[15] = A[13]*B[3]+A[12]*B[4]+A[11]*B[5];
-  C[14] = A[13]*B[2]+A[12]*B[3]+A[11]*B[4]+A[10]*B[5];
-  C[13] = A[13]*B[1]+A[12]*B[2]+A[11]*B[3]+A[10]*B[4]+A[9]*B[5];
-  C[12] = A[12]*B[1]+A[11]*B[2]+A[10]*B[3]+A[ 9]*B[4]+A[8]*B[5];
-  C[11] = A[11]*B[1]+A[10]*B[2]+A[ 9]*B[3]+A[ 8]*B[4]+A[7]*B[5];
-  C[10] = A[10]*B[1]+A[ 9]*B[2]+A[ 8]*B[3]+A[ 7]*B[4]+A[6]*B[5];
-  C[ 9] = A[ 9]*B[1]+A[ 8]*B[2]+A[ 7]*B[3]+A[ 6]*B[4]+A[5]*B[5];
-  C[ 8] = A[ 8]*B[1]+A[ 7]*B[2]+A[ 6]*B[3]+A[ 5]*B[4]+A[4]*B[5];
-  C[ 7] = A[ 7]*B[1]+A[ 6]*B[2]+A[ 5]*B[3]+A[ 4]*B[4]+A[3]*B[5];
-  C[ 6] = A[ 6]*B[1]+A[ 5]*B[2]+A[ 4]*B[3]+A[ 3]*B[4]+A[2]*B[5];
-  C[ 5] = A[ 5]*B[1]+A[ 4]*B[2]+A[ 3]*B[3]+A[ 2]*B[4]+A[1]*B[5];
-  C[ 4] = A[ 4]*B[1]+A[ 3]*B[2]+A[ 2]*B[3]+A[ 1]*B[4];
-  C[ 3] = A[ 3]*B[1]+A[ 2]*B[2]+A[ 1]*B[3];
-  C[ 2] = A[ 2]*B[1]+A[ 1]*B[2];
-  C[ 1] = A[ 1]*B[1];
-  return;
+	C.resize(17);
+	C[17] = A[13]*B[5];
+	C[16] = A[13]*B[4]+A[12]*B[5];
+	C[15] = A[13]*B[3]+A[12]*B[4]+A[11]*B[5];
+	C[14] = A[13]*B[2]+A[12]*B[3]+A[11]*B[4]+A[10]*B[5];
+	C[13] = A[13]*B[1]+A[12]*B[2]+A[11]*B[3]+A[10]*B[4]+A[9]*B[5];
+	C[12] = A[12]*B[1]+A[11]*B[2]+A[10]*B[3]+A[ 9]*B[4]+A[8]*B[5];
+	C[11] = A[11]*B[1]+A[10]*B[2]+A[ 9]*B[3]+A[ 8]*B[4]+A[7]*B[5];
+	C[10] = A[10]*B[1]+A[ 9]*B[2]+A[ 8]*B[3]+A[ 7]*B[4]+A[6]*B[5];
+	C[ 9] = A[ 9]*B[1]+A[ 8]*B[2]+A[ 7]*B[3]+A[ 6]*B[4]+A[5]*B[5];
+	C[ 8] = A[ 8]*B[1]+A[ 7]*B[2]+A[ 6]*B[3]+A[ 5]*B[4]+A[4]*B[5];
+	C[ 7] = A[ 7]*B[1]+A[ 6]*B[2]+A[ 5]*B[3]+A[ 4]*B[4]+A[3]*B[5];
+	C[ 6] = A[ 6]*B[1]+A[ 5]*B[2]+A[ 4]*B[3]+A[ 3]*B[4]+A[2]*B[5];
+	C[ 5] = A[ 5]*B[1]+A[ 4]*B[2]+A[ 3]*B[3]+A[ 2]*B[4]+A[1]*B[5];
+	C[ 4] = A[ 4]*B[1]+A[ 3]*B[2]+A[ 2]*B[3]+A[ 1]*B[4];
+	C[ 3] = A[ 3]*B[1]+A[ 2]*B[2]+A[ 1]*B[3];
+	C[ 2] = A[ 2]*B[1]+A[ 1]*B[2];
+	C[ 1] = A[ 1]*B[1];
+	return;
 }
 
 // polyProduct8x8 {{{1
 /* C becomes the polyProduct8x8 of A and B */
 void polyProduct8x8(const utility::vector1<Real>& A, const utility::vector1<Real>& B, utility::vector1<Real>& C) {
-  C.resize(17);
-  C[17] = A[9]*B[9];
-  C[16] = A[9]*B[8]+A[8]*B[9];
-  C[15] = A[9]*B[7]+A[8]*B[8]+A[7]*B[9];
-  C[14] = A[9]*B[6]+A[8]*B[7]+A[7]*B[8]+A[6]*B[9];
-  C[13] = A[9]*B[5]+A[8]*B[6]+A[7]*B[7]+A[6]*B[8]+A[5]*B[9];
-  C[12] = A[9]*B[4]+A[8]*B[5]+A[7]*B[6]+A[6]*B[7]+A[5]*B[8]+A[4]*B[9];
-  C[11] = A[9]*B[3]+A[8]*B[4]+A[7]*B[5]+A[6]*B[6]+A[5]*B[7]+A[4]*B[8]+A[3]*B[9];
-  C[10] = A[9]*B[2]+A[8]*B[3]+A[7]*B[4]+A[6]*B[5]+A[5]*B[6]+A[4]*B[7]+A[3]*B[8]+A[2]*B[9];
-  C[ 9] = A[9]*B[1]+A[8]*B[2]+A[7]*B[3]+A[6]*B[4]+A[5]*B[5]+A[4]*B[6]+A[3]*B[7]+A[2]*B[8]+A[1]*B[9];
-  C[ 8] = A[8]*B[1]+A[7]*B[2]+A[6]*B[3]+A[5]*B[4]+A[4]*B[5]+A[3]*B[6]+A[2]*B[7]+A[1]*B[8];
-  C[ 7] = A[7]*B[1]+A[6]*B[2]+A[5]*B[3]+A[4]*B[4]+A[3]*B[5]+A[2]*B[6]+A[1]*B[7];
-  C[ 6] = A[6]*B[1]+A[5]*B[2]+A[4]*B[3]+A[3]*B[4]+A[2]*B[5]+A[1]*B[6];
-  C[ 5] = A[5]*B[1]+A[4]*B[2]+A[3]*B[3]+A[2]*B[4]+A[1]*B[5];
-  C[ 4] = A[4]*B[1]+A[3]*B[2]+A[2]*B[3]+A[ 1]*B[4];
-  C[ 3] = A[3]*B[1]+A[2]*B[2]+A[1]*B[3];
-  C[ 2] = A[2]*B[1]+A[1]*B[2];
-  C[ 1] = A[1]*B[1];
-  return;
+	C.resize(17);
+	C[17] = A[9]*B[9];
+	C[16] = A[9]*B[8]+A[8]*B[9];
+	C[15] = A[9]*B[7]+A[8]*B[8]+A[7]*B[9];
+	C[14] = A[9]*B[6]+A[8]*B[7]+A[7]*B[8]+A[6]*B[9];
+	C[13] = A[9]*B[5]+A[8]*B[6]+A[7]*B[7]+A[6]*B[8]+A[5]*B[9];
+	C[12] = A[9]*B[4]+A[8]*B[5]+A[7]*B[6]+A[6]*B[7]+A[5]*B[8]+A[4]*B[9];
+	C[11] = A[9]*B[3]+A[8]*B[4]+A[7]*B[5]+A[6]*B[6]+A[5]*B[7]+A[4]*B[8]+A[3]*B[9];
+	C[10] = A[9]*B[2]+A[8]*B[3]+A[7]*B[4]+A[6]*B[5]+A[5]*B[6]+A[4]*B[7]+A[3]*B[8]+A[2]*B[9];
+	C[ 9] = A[9]*B[1]+A[8]*B[2]+A[7]*B[3]+A[6]*B[4]+A[5]*B[5]+A[4]*B[6]+A[3]*B[7]+A[2]*B[8]+A[1]*B[9];
+	C[ 8] = A[8]*B[1]+A[7]*B[2]+A[6]*B[3]+A[5]*B[4]+A[4]*B[5]+A[3]*B[6]+A[2]*B[7]+A[1]*B[8];
+	C[ 7] = A[7]*B[1]+A[6]*B[2]+A[5]*B[3]+A[4]*B[4]+A[3]*B[5]+A[2]*B[6]+A[1]*B[7];
+	C[ 6] = A[6]*B[1]+A[5]*B[2]+A[4]*B[3]+A[3]*B[4]+A[2]*B[5]+A[1]*B[6];
+	C[ 5] = A[5]*B[1]+A[4]*B[2]+A[3]*B[3]+A[2]*B[4]+A[1]*B[5];
+	C[ 4] = A[4]*B[1]+A[3]*B[2]+A[2]*B[3]+A[ 1]*B[4];
+	C[ 3] = A[3]*B[1]+A[2]*B[2]+A[1]*B[3];
+	C[ 2] = A[2]*B[1]+A[1]*B[2];
+	C[ 1] = A[1]*B[1];
+	return;
 }
 
 // polyProduct8sq {{{1
 /* C becomes the polyProduct8sq of A*A */
 void polyProduct8sq(const utility::vector1<Real>& A, utility::vector1<Real>& C) {
-  C.resize(17);
-  C[17] = A[9]*A[9];
-  C[16] =             2* A[9]*A[8];
-  C[15] = A[8]*A[8] + 2* A[9]*A[7];
-  C[14] =             2*(A[9]*A[6]+A[8]*A[7]);
-  C[13] = A[7]*A[7] + 2*(A[9]*A[5]+A[8]*A[6]);
-  C[12] =             2*(A[9]*A[4]+A[8]*A[5]+A[7]*A[6]);
-  C[11] = A[6]*A[6] + 2*(A[9]*A[3]+A[8]*A[4]+A[7]*A[5]);
-  C[10] =             2*(A[9]*A[2]+A[8]*A[3]+A[7]*A[4]+A[6]*A[5]);
-  C[ 9] = A[5]*A[5] + 2*(A[9]*A[1]+A[8]*A[2]+A[7]*A[3]+A[6]*A[4]);
-  C[ 8] =             2*(A[8]*A[1]+A[7]*A[2]+A[6]*A[3]+A[5]*A[4]);
-  C[ 7] = A[4]*A[4] + 2*(A[7]*A[1]+A[6]*A[2]+A[5]*A[3]);
-  C[ 6] =             2*(A[6]*A[1]+A[5]*A[2]+A[4]*A[3]);
-  C[ 5] = A[3]*A[3] + 2*(A[5]*A[1]+A[4]*A[2]);
-  C[ 4] =             2*(A[4]*A[1]+A[3]*A[2]);
-  C[ 3] = A[2]*A[2] + 2* A[3]*A[1];
-  C[ 2] =             2* A[2]*A[1];
-  C[ 1] = A[1]*A[1];
-  return;
+	C.resize(17);
+	C[17] = A[9]*A[9];
+	C[16] =             2* A[9]*A[8];
+	C[15] = A[8]*A[8] + 2* A[9]*A[7];
+	C[14] =             2*(A[9]*A[6]+A[8]*A[7]);
+	C[13] = A[7]*A[7] + 2*(A[9]*A[5]+A[8]*A[6]);
+	C[12] =             2*(A[9]*A[4]+A[8]*A[5]+A[7]*A[6]);
+	C[11] = A[6]*A[6] + 2*(A[9]*A[3]+A[8]*A[4]+A[7]*A[5]);
+	C[10] =             2*(A[9]*A[2]+A[8]*A[3]+A[7]*A[4]+A[6]*A[5]);
+	C[ 9] = A[5]*A[5] + 2*(A[9]*A[1]+A[8]*A[2]+A[7]*A[3]+A[6]*A[4]);
+	C[ 8] =             2*(A[8]*A[1]+A[7]*A[2]+A[6]*A[3]+A[5]*A[4]);
+	C[ 7] = A[4]*A[4] + 2*(A[7]*A[1]+A[6]*A[2]+A[5]*A[3]);
+	C[ 6] =             2*(A[6]*A[1]+A[5]*A[2]+A[4]*A[3]);
+	C[ 5] = A[3]*A[3] + 2*(A[5]*A[1]+A[4]*A[2]);
+	C[ 4] =             2*(A[4]*A[1]+A[3]*A[2]);
+	C[ 3] = A[2]*A[2] + 2* A[3]*A[1];
+	C[ 2] =             2* A[2]*A[1];
+	C[ 1] = A[1]*A[1];
+	return;
 }
 // }}}1
 
@@ -265,7 +265,7 @@ void polyProduct8sq(const utility::vector1<Real>& A, utility::vector1<Real>& C) 
 /* Assumes A and B are the same size */
 void vectorDiff(const utility::vector1<Real>& A, const utility::vector1<Real>& B, utility::vector1<Real>& C) {
 	C.resize(A.size());
-	for (unsigned i=1; i<=A.size(); i++) {
+	for ( unsigned i=1; i<=A.size(); i++ ) {
 		C[i]=A[i]-B[i];
 	}
 	return;
@@ -274,15 +274,15 @@ void vectorDiff(const utility::vector1<Real>& A, const utility::vector1<Real>& B
 
 // dixonResultant {{{1
 /* R becomes the Dixon resultant of the determinant of the matrix polynomial
-	 D(t3) := R{1} + R{2} * t3 + R{3} * t3^2
+D(t3) := R{1} + R{2} * t3 + R{3} * t3^2
 */
 void dixonResultant(const utility::vector1<utility::vector1<Real> >& A,
-		const utility::vector1<utility::vector1<Real> >& B, 
-		const utility::vector1<utility::vector1<Real> >& C, 
-		const utility::vector1<utility::vector1<Real> >& D, 
-		utility::vector1<utility::vector1<utility::vector1<Real> > >& R) {
+	const utility::vector1<utility::vector1<Real> >& B,
+	const utility::vector1<utility::vector1<Real> >& C,
+	const utility::vector1<utility::vector1<Real> >& D,
+	utility::vector1<utility::vector1<utility::vector1<Real> > >& R) {
 	R.resize(DIXON_RESULTANT_SIZE);
-	for (int i=1; i<=3; i++) {
+	for ( int i=1; i<=3; i++ ) {
 		R[i].resize(DIXON_SIZE);
 		//first row
 		R[i][1].resize(DIXON_SIZE);
@@ -370,16 +370,16 @@ void dixonResultant(const utility::vector1<utility::vector1<Real> >& A,
 
 // build_dixon_matrices {{{1
 void build_dixon_matrices(
-		PseudoMatrix const & A, PseudoMatrix const & B,
-		PseudoMatrix const & C, PseudoMatrix const & D,
-		Matrix8 & R0, Matrix8 & R1, Matrix8 & R2) {
+	PseudoMatrix const & A, PseudoMatrix const & B,
+	PseudoMatrix const & C, PseudoMatrix const & D,
+	Matrix8 & R0, Matrix8 & R1, Matrix8 & R2) {
 
 	// The variable names used here mostly correspond to those used by:
 	// Coutsias, Seok, Wester, Dill; Int. J. Quant. Chem. 106:176-189 (2006).
 
 	Matrix8 * R[3] = {&R0, &R1, &R2};
 
-	for (int i = 1; i <= 3; i++) {
+	for ( int i = 1; i <= 3; i++ ) {
 		Matrix8 & Ri = *R[i-1];
 		Ri.fill(0);
 
@@ -403,7 +403,7 @@ void build_dixon_matrices(
 
 // build_sin_and_cos {{{1
 void build_sin_and_cos(
-		PseudoMatrix const & u, PseudoMatrix & sin, PseudoMatrix & cos) {
+	PseudoMatrix const & u, PseudoMatrix & sin, PseudoMatrix & cos) {
 
 	// The variable names used here mostly correspond to those used by:
 	// Coutsias, Seok, Wester, Dill; Int. J. Quant. Chem. 106:176-189 (2006).
@@ -414,11 +414,11 @@ void build_sin_and_cos(
 	cos.resize(num_solutions);
 	sin.resize(num_solutions);
 
-	for (int i = 1; i <= num_solutions; i++) {
+	for ( int i = 1; i <= num_solutions; i++ ) {
 		cos[i].resize(3);
 		sin[i].resize(3);
 
-		for (int j = 1; j <= 3; j++) {
+		for ( int j = 1; j <= 3; j++ ) {
 			u_squared = u[i][j] * u[i][j];
 			u_squared_plus_1 = u_squared + 1;
 
@@ -429,22 +429,22 @@ void build_sin_and_cos(
 }
 
 void dixon_eig( // {{{1
-		PseudoMatrix const & A,
-		PseudoMatrix const & B,
-		PseudoMatrix const & C,
-		PseudoMatrix const & D,
-		vector1<int> const & /*order*/,
-		PseudoMatrix & cos,
-		PseudoMatrix & sin,
-		PseudoMatrix & u,
-		int & num_solutions) {
+	PseudoMatrix const & A,
+	PseudoMatrix const & B,
+	PseudoMatrix const & C,
+	PseudoMatrix const & D,
+	vector1<int> const & /*order*/,
+	PseudoMatrix & cos,
+	PseudoMatrix & sin,
+	PseudoMatrix & u,
+	int & num_solutions) {
 
 	// The variable names used here mostly correspond to those used by:
 	// Coutsias, Seok, Wester, Dill; Int. J. Quant. Chem. 106:176-189 (2006).
 	//
-	// An exception is made for the script A and B variables, which represent the 
-	// 16x16 matrices used to setup to generalized eigenvalue problem, because 
-	// the non-script A and B variables are already in use.  Instead, script A 
+	// An exception is made for the script A and B variables, which represent the
+	// 16x16 matrices used to setup to generalized eigenvalue problem, because
+	// the non-script A and B variables are already in use.  Instead, script A
 	// and B will be named U and V, respectively.
 
 	// Fill in the Dixon matrices.
@@ -472,14 +472,13 @@ void dixon_eig( // {{{1
 	num_solutions = solver.num_real_solutions();
 	u.resize(num_solutions);
 
-	for (int i = 0; i < num_solutions; i++) {
+	for ( int i = 0; i < num_solutions; i++ ) {
 		u[i+1].resize(3);
 
-		if ( std::abs(eigenvectors(0, i)) > 1e-8) {
+		if ( std::abs(eigenvectors(0, i)) > 1e-8 ) {
 			u[i+1][1] = eigenvectors(1, i) / eigenvectors(0, i);
 			u[i+1][2] = eigenvectors(4, i) / eigenvectors(0, i);
-		}
-		else {
+		} else {
 			u[i+1][1] = eigenvectors(3, i) / eigenvectors(2, i);
 			u[i+1][2] = eigenvectors(6, i) / eigenvectors(2, i);
 		}
@@ -491,14 +490,14 @@ void dixon_eig( // {{{1
 }
 
 void dixon_sturm( // {{{1
-		const utility::vector1<utility::vector1<Real> >& A,
-		const utility::vector1<utility::vector1<Real> >& B,
-		const utility::vector1<utility::vector1<Real> >& C,
-		const utility::vector1<utility::vector1<Real> >& D,
-		const utility::vector1<int>& order,
-		utility::vector1<utility::vector1<Real> >& cos,
-		utility::vector1<utility::vector1<Real> >& sin,
-		utility::vector1<utility::vector1<Real> >& tau, int& nsol) {
+	const utility::vector1<utility::vector1<Real> >& A,
+	const utility::vector1<utility::vector1<Real> >& B,
+	const utility::vector1<utility::vector1<Real> >& C,
+	const utility::vector1<utility::vector1<Real> >& D,
+	const utility::vector1<int>& order,
+	utility::vector1<utility::vector1<Real> >& cos,
+	utility::vector1<utility::vector1<Real> >& sin,
+	utility::vector1<utility::vector1<Real> >& tau, int& nsol) {
 
 	using utility::vector1;
 	using namespace numeric::kinematic_closure;
@@ -639,7 +638,7 @@ void dixon_sturm( // {{{1
 	Det678.resize(PP4x2_VECSIZE); // same size as polyProduct4x2 output
 	Det123.resize(PP4x2_VECSIZE); // same size as polyProduct4x2 output
 	// compute Det678 and Det123
-	for (int i=1; i<=PP4x2_VECSIZE; i++) {
+	for ( int i=1; i<=PP4x2_VECSIZE; i++ ) {
 		Det678[i]=(-C0Det23[i] + C1Det22[i] - C2Det21[i]);
 		Det123[i]=( A0Det23[i] - A1Det22[i] + A2Det21[i]);
 	}
@@ -682,7 +681,7 @@ void dixon_sturm( // {{{1
 	//     ( 5 * 17ops = 85ops)
 	//-----------------------------------
 
-	for (unsigned i=1; i<=ddet.size(); i++) {
+	for ( unsigned i=1; i<=ddet.size(); i++ ) {
 		ddet[i] = (-2*D1235_4678[i] + D1256_3478[i] - D1257_3468[i] - D1356_2478[i] + D1357_2468[i]);
 	}
 
@@ -691,34 +690,34 @@ void dixon_sturm( // {{{1
 	//-----------------------------------
 
 	// Get the coefficients
-	for (unsigned i=1; i<=ddet.size(); i++) {
+	for ( unsigned i=1; i<=ddet.size(); i++ ) {
 		Q[i]=ddet[i] / ddet[17];
 	}
 
 	// Get the roots and put them into tau[3]
 	initialize_sturm(&tol_secant, &max_iter_sturm, &max_iter_secant);
 	solve_sturm(p_order, nsol, Q, roots);
-	if (nsol==0) return; // no solns found
+	if ( nsol==0 ) return; // no solns found
 
 	// remove negative roots // DJM: 7-10-2007: KEEP ALL ROOTS!
 	//utility::vector1<Real>::iterator rootIterator=roots.end();
 	//while(rootIterator != roots.begin()) {
-	//	rootIterator--;
-	//	if (*rootIterator < 0) {
-	//		roots.erase(rootIterator);
-	//	}
+	// rootIterator--;
+	// if (*rootIterator < 0) {
+	//  roots.erase(rootIterator);
+	// }
 	//}
 
 	nsol=roots.size();
 	tau.resize(nsol);
-	for(int i=1; i<=nsol; i++) {
+	for ( int i=1; i<=nsol; i++ ) {
 		tau[i].resize(3);
 		tau[i][order[3]]=roots[i];  // restoring column-major indexing!
 	}
 
 	////---------------------------------------------------------------------
 	// B: Determination of tau[1] and tau[2] from tau[3] using Cramers' rule
-  ////---------------------------------------------------------------------
+	////---------------------------------------------------------------------
 
 	//-----------------------------------
 	//B1.  Compute the denominator
@@ -727,36 +726,36 @@ void dixon_sturm( // {{{1
 	point_value4(Det23,roots,pdet23);
 	point_value4(D0D2,roots,pd0d2);
 	cram11.resize(nsol);
-	for (int i=1; i<=nsol; i++) {
+	for ( int i=1; i<=nsol; i++ ) {
 		cram11[i] = pdet23[i]*pd0d2[i];
 	}
 	point_value6(Det678, roots, cram12);
 	point_value4(Det31, roots, pdet31);
 	point_value2(D[2], roots, pd2);
 	cram21.resize(nsol);
-	for (int i=1; i<=nsol; i++) {
+	for ( int i=1; i<=nsol; i++ ) {
 		cram21[i] = -pdet31[i]*pd2[i];
 	}
 	point_value8(Det3478, roots, cram22);
 	point_value4(Det32, roots, pdet32);
 	cram31.resize(nsol);
-	for (int i=1; i<=nsol; i++) {
+	for ( int i=1; i<=nsol; i++ ) {
 		cram31[i] = -pdet32[i]*pd2[i];
 	}
 	point_value8(Det3468, roots, cram32);
 	point_value2(D[3], roots, pd3);
 	cram41.resize(nsol);
-	for (int i=1; i<=nsol; i++) {
+	for ( int i=1; i<=nsol; i++ ) {
 		cram41[i] = -pdet31[i]*pd3[i];
 	}
 	point_value8(Det2478, roots, cram42);
 	cram51.resize(nsol);
-	for (int i=1; i<=nsol; i++) {
+	for ( int i=1; i<=nsol; i++ ) {
 		cram51[i] = -pdet32[i]*pd3[i];
 	}
 	point_value8(Det1357, roots, cram52);
 	crden.resize(nsol);
-	for (int i=1; i<=nsol; i++) {
+	for ( int i=1; i<=nsol; i++ ) {
 		crden[i] = -cram11[i]*cram12[i] + cram21[i]*cram22[i] - cram31[i]*cram32[i] - cram41[i]*cram42[i] + cram51[i]*cram52[i];
 	}
 
@@ -766,23 +765,23 @@ void dixon_sturm( // {{{1
 
 	point_value4(Det22, roots, pdet22);
 	crn111.resize(nsol);
-	for (int i=1; i<=nsol; i++) {
+	for ( int i=1; i<=nsol; i++ ) {
 		crn111[i] = pdet22[i]*pd0d2[i];
 	}
 	point_value6(Det678, roots, crn112);
 	point_value2(D[1], roots, pd1);
 	crn121.resize(nsol);
-	for (int i=1; i<=nsol; i++) {
+	for ( int i=1; i<=nsol; i++ ) {
 		crn121[i] = -pdet31[i]*pd1[i];
 	}
 	point_value8(Det3478, roots, crn122);
 	crn131.resize(nsol);
-	for (int i=1; i<=nsol; i++) {
+	for ( int i=1; i<=nsol; i++ ) {
 		crn131[i] = -pdet32[i]*pd1[i];
 	}
 	point_value8(Det3468, roots, crn132);
 	cram_num1.resize(nsol);
-	for (int i=1; i<=nsol; i++) {
+	for ( int i=1; i<=nsol; i++ ) {
 		cram_num1[i] = -crn111[i]*crn112[i]+crn121[i]*crn122[i]-crn131[i]*crn132[i];
 		tau[i][order[1]] = -cram_num1[i] / crden[i]; // restoring column-major indexing!
 	}
@@ -793,33 +792,33 @@ void dixon_sturm( // {{{1
 
 	point_value4(Det21, roots, pdet21);
 	crn221.resize(nsol);
-	for (int i=1; i<=nsol; i++) {
+	for ( int i=1; i<=nsol; i++ ) {
 		crn221[i] = -pdet21[i]*pd2[i];
 	}
 	point_value8(Det3478, roots, crn222);
 	crn231.resize(nsol);
-	for (int i=1; i<=nsol; i++) {
+	for ( int i=1; i<=nsol; i++ ) {
 		crn231[i] = -pdet21[i]*pd3[i];
 	}
 	point_value8(Det3468, roots, crn232);
 	crn241.resize(nsol);
-	for (int i=1; i<=nsol; i++) {
+	for ( int i=1; i<=nsol; i++ ) {
 		crn241[i] = -pdet22[i]*pd2[i];
 	}
 	point_value8(Det2478, roots, crn242);
 	crn251.resize(nsol);
-	for (int i=1; i<=nsol; i++) {
+	for ( int i=1; i<=nsol; i++ ) {
 		crn251[i] = -pdet22[i]*pd3[i];
 	}
 	point_value8(Det1357, roots, crn252);
 	point_value4(Det33, roots, pdet33);
 	crn261.resize(nsol);
-	for (int i=1; i<=nsol; i++) {
+	for ( int i=1; i<=nsol; i++ ) {
 		crn261[i] = -pdet33[i]*pd0d2[i];
 	}
 	point_value6(Det123, roots, crn262);
 	cram_num2.resize(nsol);
-	for (int i=1; i<=nsol; i++) {
+	for ( int i=1; i<=nsol; i++ ) {
 		cram_num2[i] = crn221[i]*crn222[i] - crn231[i]*crn232[i] - crn241[i]*crn242[i] + crn251[i]*crn252[i] - crn261[i]*crn262[i];
 		tau[i][order[2]] = -cram_num2[i] / crden[i]; // DJM: division inside for-loop!
 	}                                              // and restoring column-major indexing!
@@ -831,12 +830,12 @@ void dixon_sturm( // {{{1
 	tsq1.resize(nsol);
 	cos.resize(nsol);
 	sin.resize(nsol);
-	for (int i=1; i<=nsol; i++) {
+	for ( int i=1; i<=nsol; i++ ) {
 		tsq[i].resize(3);
 		tsq1[i].resize(3);
 		cos[i].resize(3);
 		sin[i].resize(3);
-		for (int j=1; j<=3; j++) {
+		for ( int j=1; j<=3; j++ ) {
 			tsq[i][j]=(tau[i][j])*(tau[i][j]);
 			tsq1[i][j]=tsq[i][j]+1;
 			cos[i][j]=(1-tsq[i][j]) / tsq1[i][j];  // DJM: division inside
@@ -844,7 +843,7 @@ void dixon_sturm( // {{{1
 		}
 	}
 
-  return;
+	return;
 }
 // }}}1
 
@@ -856,20 +855,20 @@ void test_point_value2() {
 	A[3]=0.0;
 	t[1]=7.4248;
 	t[2]=5.3100;
- 	t[3]=0.0;
- 	t[4]=0.0;
- 	t[5]=0.0;
- 	t[6]=0.0;
- 	t[7]=0.0;
- 	t[8]=0.0;
- 	t[9]=0.0;
- 	t[10]=0.0;
- 	t[11]=0.0;
- 	t[12]=0.0;
- 	t[13]=0.0;
- 	t[14]=0.0;
- 	t[15]=0.0;
- 	t[16]=0.0;
+	t[3]=0.0;
+	t[4]=0.0;
+	t[5]=0.0;
+	t[6]=0.0;
+	t[7]=0.0;
+	t[8]=0.0;
+	t[9]=0.0;
+	t[10]=0.0;
+	t[11]=0.0;
+	t[12]=0.0;
+	t[13]=0.0;
+	t[14]=0.0;
+	t[15]=0.0;
+	t[16]=0.0;
 	point_value2(A,t,C);
 	printVector(C);
 	// output should be { -445.4891, -318.6002, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,0.0,0.0, 0.0, 0.0}
@@ -877,121 +876,121 @@ void test_point_value2() {
 
 // test_polyProduct6x6 {{{1
 void test_polyProduct6x6() {
-  utility::vector1<Real> A (7), B (7), C;
-  A[1]=366130000.0;
-  A[2]=0.0;
-  A[3]=316600000.0;
-  A[4]=0.0;
-  A[5]=-47950000.0;
-  A[6]=0.0;
-  A[7]=920000.0;
-  B[1]=1790200000.0;
-  B[2]=0.0;
-  B[3]=2113200000.0;
-  B[4]=0.0;
-  B[5]=317100000.0;
-  B[6]=0.0;
-  B[7]=-8300000.0;
-  polyProduct6x6(A,B,C);
-  printVector(C);
-  // output should be 1.0e+18*{0.6554, 0.0, 1.3405, 0.0, 0.6993, 0.0, -0.0023, 0.0, -0.0159, 0.0}, 6.89717e+14, 0.0, -7.636e+12
-  return;
+	utility::vector1<Real> A (7), B (7), C;
+	A[1]=366130000.0;
+	A[2]=0.0;
+	A[3]=316600000.0;
+	A[4]=0.0;
+	A[5]=-47950000.0;
+	A[6]=0.0;
+	A[7]=920000.0;
+	B[1]=1790200000.0;
+	B[2]=0.0;
+	B[3]=2113200000.0;
+	B[4]=0.0;
+	B[5]=317100000.0;
+	B[6]=0.0;
+	B[7]=-8300000.0;
+	polyProduct6x6(A,B,C);
+	printVector(C);
+	// output should be 1.0e+18*{0.6554, 0.0, 1.3405, 0.0, 0.6993, 0.0, -0.0023, 0.0, -0.0159, 0.0}, 6.89717e+14, 0.0, -7.636e+12
+	return;
 }
 
 // test_polyProduct4sq {{{1
 void test_polyProduct4sq() {
-  utility::vector1<Real> A (5), C;
-  A[1]=126600.0;
-  A[2]=0.0;
-  A[3]=-28200.0;
-  A[4]=0.0;
-  A[5]=-2890.0;
-  polyProduct4sq(A,C);
-  printVector(C);
-  // output should be 1.0e+10*{1.6027, 0.0, -0.7140, 0.0, 0.0063, 0.0, 0.0163, 0.0, 0.0008}
-  return;
+	utility::vector1<Real> A (5), C;
+	A[1]=126600.0;
+	A[2]=0.0;
+	A[3]=-28200.0;
+	A[4]=0.0;
+	A[5]=-2890.0;
+	polyProduct4sq(A,C);
+	printVector(C);
+	// output should be 1.0e+10*{1.6027, 0.0, -0.7140, 0.0, 0.0063, 0.0, 0.0163, 0.0, 0.0008}
+	return;
 }
 
 // test_polyProduct4x4 {{{1
 void test_polyProduct4x4() {
-  utility::vector1<Real> A (5), B (5), C;
-  A[1]=126940.0;
-  A[2]=0.0;
-  A[3]=-28110.0;
-  A[4]=0.0;
-  A[5]=-2890.0;
-  B[1]=0.0;
-  B[2]=172730.0;
-  B[3]=0.0;
-  B[4]=20800.0;
-  B[5]=0.0;
-  polyProduct4x4(A,B,C);
-  printVector(C);
-  // output should be 1.0e+10*{0.0, 2.1927, 0.0, -0.2216, 0.0, -0.1085, 0.0, -0.0060, 0.0}
-  return;
+	utility::vector1<Real> A (5), B (5), C;
+	A[1]=126940.0;
+	A[2]=0.0;
+	A[3]=-28110.0;
+	A[4]=0.0;
+	A[5]=-2890.0;
+	B[1]=0.0;
+	B[2]=172730.0;
+	B[3]=0.0;
+	B[4]=20800.0;
+	B[5]=0.0;
+	polyProduct4x4(A,B,C);
+	printVector(C);
+	// output should be 1.0e+10*{0.0, 2.1927, 0.0, -0.2216, 0.0, -0.1085, 0.0, -0.0060, 0.0}
+	return;
 }
 
 // test_polyProduct4x2 {{{1
 void test_polyProduct4x2() {
-  utility::vector1<Real> A (5), B (3), C;
-  A[1]=0.0;
-  A[2]=-108950.0;
-  A[3]=0.0;
-  A[4]=43180.0;
-  A[5]=0.0;
-  B[1]=0.0;
-  B[2]=-1799.10;
-  B[3]=0.0;
-  polyProduct4x2(A,B,C);
-  printVector(C);
-  // output should be 1.0e+08 * {0.0, 0.0, 1.9601, 0.0, -0.7769, 0.0, 0.0}
-  return;
+	utility::vector1<Real> A (5), B (3), C;
+	A[1]=0.0;
+	A[2]=-108950.0;
+	A[3]=0.0;
+	A[4]=43180.0;
+	A[5]=0.0;
+	B[1]=0.0;
+	B[2]=-1799.10;
+	B[3]=0.0;
+	polyProduct4x2(A,B,C);
+	printVector(C);
+	// output should be 1.0e+08 * {0.0, 0.0, 1.9601, 0.0, -0.7769, 0.0, 0.0}
+	return;
 }
 
 // test_polyProduct2x2 {{{1
 void test_polyProduct2x2() {
-  utility::vector1<Real> A (3), B (3), C;
-  A[1]=15.999410431075338;
-  A[2]=0.0;
-  A[3]=-8.999904923464781;
-  B[1]=72.015965384650187;
-  B[2]=0.0;
-  B[3]=7.000641402062060;
-  polyProduct2x2(A,B,C);
-  printVector(C);
-  // output should be 1.03e+03 * {1.152212987779133, 0.0, -0.536130706361013, 0.0, -0.063005107021830}
-  return;
+	utility::vector1<Real> A (3), B (3), C;
+	A[1]=15.999410431075338;
+	A[2]=0.0;
+	A[3]=-8.999904923464781;
+	B[1]=72.015965384650187;
+	B[2]=0.0;
+	B[3]=7.000641402062060;
+	polyProduct2x2(A,B,C);
+	printVector(C);
+	// output should be 1.03e+03 * {1.152212987779133, 0.0, -0.536130706361013, 0.0, -0.063005107021830}
+	return;
 }
 
 // test_dixon() {{{1
 void test_dixon() {
-  Real Avals[]={-0.061472096577788, -2.424098126176366, -0.016332287075674, 2.421954432062721, -0.090242315482933, 0.643479843225995, 0.061472096577788, -0.646358402699405, 0.016332287075674};
-  Real Bvals[]={-0.000625561301665, 0.0, 1.070810990722253,  0.054344479784912, 0.0, 0.054308028868740, -1.071191403371629, 0.0, 0.000963218011333};
-  Real Cvals[]={0.063394336809916, 2.498922707477288, -0.025585174231195, -2.497689253369826, 0.177963037883907, 1.008036647097698, -0.063394336809916, -1.006882302775246, 0.025585174231195};
-  Real Dvals[]={0.673457026339820, -0.015821144672541, 1.005285612756159, -0.078123031130501, 3.277064399971811, 0.078123031130501, 1.004894243686905, 0.075272539656448, -0.573852487168651};
-  //utility::vector1<utility::vector1<utility::vector1<Real> > > P(3); // dixon input
+	Real Avals[]={-0.061472096577788, -2.424098126176366, -0.016332287075674, 2.421954432062721, -0.090242315482933, 0.643479843225995, 0.061472096577788, -0.646358402699405, 0.016332287075674};
+	Real Bvals[]={-0.000625561301665, 0.0, 1.070810990722253,  0.054344479784912, 0.0, 0.054308028868740, -1.071191403371629, 0.0, 0.000963218011333};
+	Real Cvals[]={0.063394336809916, 2.498922707477288, -0.025585174231195, -2.497689253369826, 0.177963037883907, 1.008036647097698, -0.063394336809916, -1.006882302775246, 0.025585174231195};
+	Real Dvals[]={0.673457026339820, -0.015821144672541, 1.005285612756159, -0.078123031130501, 3.277064399971811, 0.078123031130501, 1.004894243686905, 0.075272539656448, -0.573852487168651};
+	//utility::vector1<utility::vector1<utility::vector1<Real> > > P(3); // dixon input
 	utility::vector1<utility::vector1<Real> > A (3);
 	utility::vector1<utility::vector1<Real> > B (3);
 	utility::vector1<utility::vector1<Real> > C (3);
 	utility::vector1<utility::vector1<Real> > D (3);
-  utility::vector1<int> order (3);  // dixon input
-  utility::vector1<utility::vector1<Real> > tau; // dixon output
-  utility::vector1<utility::vector1<Real> > cos; // dixon output
-  utility::vector1<utility::vector1<Real> > sin; // dixon output
+	utility::vector1<int> order (3);  // dixon input
+	utility::vector1<utility::vector1<Real> > tau; // dixon output
+	utility::vector1<utility::vector1<Real> > cos; // dixon output
+	utility::vector1<utility::vector1<Real> > sin; // dixon output
 	int nsol = 0;
 
-  // Allocate A,B,C,D
-	for (int i=1; i<=3; i++) {
+	// Allocate A,B,C,D
+	for ( int i=1; i<=3; i++ ) {
 		A[i].resize(3);
 		B[i].resize(3);
 		C[i].resize(3);
 		D[i].resize(3);
-  }
+	}
 
-  // Fill A,B,C,D
-  int n=0;
-  for (int i=1; i<=3; i++) {
-		for (int j=1; j<=3; j++) {
+	// Fill A,B,C,D
+	int n=0;
+	for ( int i=1; i<=3; i++ ) {
+		for ( int j=1; j<=3; j++ ) {
 			A[i][j]=Avals[n];
 			B[i][j]=Bvals[n];
 			C[i][j]=Cvals[n];
@@ -1000,18 +999,18 @@ void test_dixon() {
 		}
 	}
 
-  // initialize order
-  order[1]=1;
-  order[2]=2;
-  order[3]=3;
+	// initialize order
+	order[1]=1;
+	order[2]=2;
+	order[3]=3;
 
-  // compute Dixon resultant
+	// compute Dixon resultant
 	//dixon(A, B, C, D, order, cos, sin, tau, nsol);
 
 	cout << "number of solutions" << nsol << std::endl;
 	printMatrix(cos);
 	printMatrix(sin);
-  return;
+	return;
 }
 // }}}1
 
@@ -1023,10 +1022,10 @@ void test_dixon() {
 //   //test_polyProduct4x4();
 //   //test_polyProduct4sq();
 //   //test_polyProduct6x6();
-// 	//test_point_value2();
-// 	//	for (int i=1; i<10000; i++) {
-// 	test_dixon();
-// 	//}
+//  //test_point_value2();
+//  // for (int i=1; i<10000; i++) {
+//  test_dixon();
+//  //}
 // }
 // }}}1
 

@@ -31,9 +31,9 @@ namespace protocols {
 namespace hotspot_hashing {
 
 enum StubStatus {
-	reject=1,	// stub is not compatible with scaffold position[i]
-	accept, 	// stub is compatible with scaffold position[i]
-	unchecked	// stub has not been checked yet
+	reject=1, // stub is not compatible with scaffold position[i]
+	accept,  // stub is compatible with scaffold position[i]
+	unchecked // stub has not been checked yet
 };
 
 class HotspotStub : public utility::pointer::ReferenceCount {
@@ -44,10 +44,10 @@ public:
 	//SJF do we need to instantiate the filter at construction? At that point, we don't actually know what filter we would
 	// use...
 	HotspotStub( core::conformation::ResidueCOP const & residue,
-							 core::Real const bonus_value,
-							 core::pose::PoseOP pose,
-							 core::Size chain_to_design,
-							 protocols::filters::FilterCOP filter );
+		core::Real const bonus_value,
+		core::pose::PoseOP pose,
+		core::Size chain_to_design,
+		protocols::filters::FilterCOP filter );
 
 	HotspotStub( HotspotStub const & src );
 

@@ -45,7 +45,7 @@ class PackRotamersMoverLazy: public protocols::simple_moves::PackRotamersMover{
 public:
 	/// @brief default constructor
 
-  PackRotamersMoverLazy(
+	PackRotamersMoverLazy(
 		ScoreFunctionCOP scorefxn,
 		PackerTaskCOP task = 0,
 		core::Size nloop = 1
@@ -69,7 +69,7 @@ public:
 		Pose const & );
 
 protected:
-//core::PackerEnergy run_with_ig( Pose & pose, utility::vector0< int > rot_to_pack, InteractionGraphBaseOP ig) const;
+	//core::PackerEnergy run_with_ig( Pose & pose, utility::vector0< int > rot_to_pack, InteractionGraphBaseOP ig) const;
 
 private:
 

@@ -25,8 +25,8 @@
 namespace protocols {
 namespace farna {
 
-	class RNA_SecStructInfo;
-	typedef utility::pointer::shared_ptr< RNA_SecStructInfo > RNA_SecStructInfoOP;
+class RNA_SecStructInfo;
+typedef utility::pointer::shared_ptr< RNA_SecStructInfo > RNA_SecStructInfoOP;
 
 } //farna
 } //protocols

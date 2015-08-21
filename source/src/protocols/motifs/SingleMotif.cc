@@ -43,16 +43,16 @@ SingleMotif::SingleMotif(
 	std::string const res2_atom3,
 	core::kinematics::Jump const & orientation
 ) : Motif(
-			resname1,
-			res1_atom1,
-			res1_atom2,
-			res1_atom3,
-			resname2,
-			res2_atom1,
-			res2_atom2,
-			res2_atom3,
-			orientation
-		)
+	resname1,
+	res1_atom1,
+	res1_atom2,
+	res1_atom3,
+	resname2,
+	res2_atom1,
+	res2_atom2,
+	res2_atom3,
+	orientation
+	)
 {}
 
 SingleMotif::SingleMotif(
@@ -68,18 +68,18 @@ SingleMotif::SingleMotif(
 	std::string const res2_atom2_name,
 	std::string const res2_atom3_name
 ) : Motif(
-			pose,
-			residue_position_1,
-			chain1,
-			res1_atom1_name,
-			res1_atom2_name,
-			res1_atom3_name,
-			residue_position_2,
-			chain2,
-			res2_atom1_name,
-			res2_atom2_name,
-			res2_atom3_name
-		)
+	pose,
+	residue_position_1,
+	chain1,
+	res1_atom1_name,
+	res1_atom2_name,
+	res1_atom3_name,
+	residue_position_2,
+	chain2,
+	res2_atom1_name,
+	res2_atom2_name,
+	res2_atom3_name
+	)
 {}
 
 SingleMotif::SingleMotif(
@@ -93,32 +93,32 @@ SingleMotif::SingleMotif(
 	std::string const res2_atom2_name,
 	std::string const res2_atom3_name
 ) : Motif(
-			pose,
-			residue_position_1,
-			res1_atom1_name,
-			res1_atom2_name,
-			res1_atom3_name,
-			residue_position_2,
-			res2_atom1_name,
-			res2_atom2_name,
-			res2_atom3_name
-		)
+	pose,
+	residue_position_1,
+	res1_atom1_name,
+	res1_atom2_name,
+	res1_atom3_name,
+	residue_position_2,
+	res2_atom1_name,
+	res2_atom2_name,
+	res2_atom3_name
+	)
 {}
 
 SingleMotif::SingleMotif(
 	core::conformation::Residue const & res1,
 	core::conformation::Residue const & res2
 ) : Motif(
-			res1,
-			res2
-		)
+	res1,
+	res2
+	)
 {}
 
 SingleMotif::SingleMotif(
-		SingleMotif const & src
+	SingleMotif const & src
 ) : Motif(
-			src
-		)
+	src
+	)
 {}
 
 // SingleMotif constructor for ligands
@@ -132,15 +132,15 @@ SingleMotif::SingleMotif(
 	std::string const res2_atom3,
 	core::kinematics::Jump const & orientation
 ) : Motif(
-			resname1,
-			res1_atom1,
-			res1_atom2,
-			res1_atom3,
-			res2_atom1,
-			res2_atom2,
-			res2_atom3,
-			orientation
-		)
+	resname1,
+	res1_atom1,
+	res1_atom2,
+	res1_atom3,
+	res2_atom1,
+	res2_atom2,
+	res2_atom3,
+	orientation
+	)
 {}
 
 std::ostream & operator <<(

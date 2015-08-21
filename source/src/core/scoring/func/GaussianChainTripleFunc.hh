@@ -30,9 +30,9 @@ class GaussianChainTripleFunc : public Func {
 public:
 
 	GaussianChainTripleFunc( Real const gaussian_variance_,
-													 Real const loop_fixed_cost,
-													 Real const D2,
-													 Real const D3 );
+		Real const loop_fixed_cost,
+		Real const D2,
+		Real const D3 );
 
 	FuncOP
 	clone() const;

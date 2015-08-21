@@ -39,7 +39,7 @@ namespace environment {
 
 basic::datacache::WriteableCacheableDataOP
 AutoCutDataCreator::create_data( std::istream &in ) const {
-  return basic::datacache::WriteableCacheableDataOP( new AutoCutData( in ) );
+	return basic::datacache::WriteableCacheableDataOP( new AutoCutData( in ) );
 }
 
 std::string AutoCutDataCreator::keyname() const{
@@ -47,56 +47,58 @@ std::string AutoCutDataCreator::keyname() const{
 }
 
 AutoCutData::AutoCutData( std::istream &in ) :
-  Parent()
+	Parent()
 {
-  utility::excn::EXCN_BadInput e( "AutoCutData tried to read an improperly formatted SilentFile remark." );
+	utility::excn::EXCN_BadInput e( "AutoCutData tried to read an improperly formatted SilentFile remark." );
 
-  std::string token;
+	std::string token;
 
-  in >> token;
-  if( token != "HASH")
-    throw e;
+	in >> token;
+	if ( token != "HASH" ) {
+		throw e;
+	}
 
-  in >> hash_;
+	in >> hash_;
 
-  in >> token;
-  if( token != "CUTS" )
-    throw e;
+	in >> token;
+	if ( token != "CUTS" ) {
+		throw e;
+	}
 
-  while( in.good() ){
-    core::Size cut;
-    in >> cut;
-    auto_cuts_.push_back( cut );
-  }
+	while ( in.good() ) {
+		core::Size cut;
+		in >> cut;
+		auto_cuts_.push_back( cut );
+	}
 
-  std::sort( auto_cuts_.begin(), auto_cuts_.end() );
+	std::sort( auto_cuts_.begin(), auto_cuts_.end() );
 }
 
 
 AutoCutData::AutoCutData( core::Size const& hash,
-                          std::set< core::Size > const& cuts ) :
-  Parent(),
-  auto_cuts_(),
-  hash_( hash )
+	std::set< core::Size > const& cuts ) :
+	Parent(),
+	auto_cuts_(),
+	hash_( hash )
 {
-  std::copy( cuts.begin(), cuts.end(), std::back_inserter( auto_cuts_ ) );
+	std::copy( cuts.begin(), cuts.end(), std::back_inserter( auto_cuts_ ) );
 }
 
 void AutoCutData::write( std::ostream &out ) const {
 
 	out << TYPE_NAME() ;
-  out << " HASH ";
-  out << hash() << " ";
+	out << " HASH ";
+	out << hash() << " ";
 
-  out << "CUTS ";
-  BOOST_FOREACH( Size cut, cuts() ){
-    out << cut << " ";
-  }
+	out << "CUTS ";
+	BOOST_FOREACH ( Size cut, cuts() ) {
+		out << cut << " ";
+	}
 }
 
 basic::datacache::CacheableDataOP
 AutoCutData::clone() const {
-  return basic::datacache::CacheableDataOP( new AutoCutData( *this ) );
+	return basic::datacache::CacheableDataOP( new AutoCutData( *this ) );
 }
 
 std::string AutoCutData::datatype() const {

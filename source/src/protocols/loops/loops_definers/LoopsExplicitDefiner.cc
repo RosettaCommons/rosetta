@@ -61,7 +61,7 @@ LoopsExplicitDefiner::LoopsExplicitDefiner() :
 LoopsExplicitDefiner::~LoopsExplicitDefiner() {}
 
 LoopsExplicitDefiner::LoopsExplicitDefiner(LoopsExplicitDefiner const & src) : LoopsDefiner(src),
-		loop_list_(src.loop_list_)
+	loop_list_(src.loop_list_)
 {}
 
 /// @brief Create another loops definer of the type matching the most-derived
@@ -80,7 +80,7 @@ LoopsExplicitDefiner::parse_loop_tag(
 
 	SerializedLoop loop;
 
-	if(tag->hasOption("start")){
+	if ( tag->hasOption("start") ) {
 		loop.start = tag->getOption<Size>("start");
 	} else {
 		stringstream err_msg;
@@ -90,7 +90,7 @@ LoopsExplicitDefiner::parse_loop_tag(
 		utility_exit_with_message(err_msg.str());
 	}
 
-	if(tag->hasOption("stop")){
+	if ( tag->hasOption("stop") ) {
 		loop.stop = tag->getOption<Size>("stop");
 	} else {
 		stringstream err_msg;
@@ -116,7 +116,7 @@ LoopsExplicitDefiner::parse_my_tag(
 	Pose const &
 ) {
 
-	if(!tag->hasOption("name")){
+	if ( !tag->hasOption("name") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption(
 			"Unable to create unnamed LoopsDefiner (type: Loops)" );
 	}
@@ -126,10 +126,10 @@ LoopsExplicitDefiner::parse_my_tag(
 	vector0< TagCOP >::const_iterator begin=tag->getTags().begin();
 	vector0< TagCOP >::const_iterator end=tag->getTags().end();
 
-	for(; begin != end; ++begin){
+	for ( ; begin != end; ++begin ) {
 		TagCOP loop_tag= *begin;
 
-		if(loop_tag->getName() != "loop"){
+		if ( loop_tag->getName() != "loop" ) {
 			TR.Error
 				<< "Please include only tags with name 'loop' "
 				<< "as subtags of a 'Loops' tag" << endl

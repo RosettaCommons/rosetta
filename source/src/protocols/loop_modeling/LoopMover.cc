@@ -50,18 +50,18 @@ const string ToolboxKeys::TASK_FACTORY = "task_factory";
 // }}}1
 
 LoopMover::LoopMover()  // {{{1
-	: children_(),
-		toolbox_(new basic::datacache::HierarchicalDataMap),
-		parent_name_(""),
-	  trust_fold_tree_(false),
-		was_successful_(false) {}
+: children_(),
+	toolbox_(new basic::datacache::HierarchicalDataMap),
+	parent_name_(""),
+	trust_fold_tree_(false),
+	was_successful_(false) {}
 
 void LoopMover::parse_my_tag( // {{{1
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const &) {
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &) {
 
 	using utility::tag::TagCOP;
 
@@ -69,42 +69,41 @@ void LoopMover::parse_my_tag( // {{{1
 
 	LoopsOP parsed_loops;
 
-	if (tag->hasOption("loops_file")) {
+	if ( tag->hasOption("loops_file") ) {
 		string loops_file = tag->getOption<string>("loops_file");
 		parsed_loops = LoopsOP( new Loops(loops_file) );
 	}
 
-	foreach (TagCOP subtag, tag->getTags("Loop")) {
+	foreach ( TagCOP subtag, tag->getTags("Loop") ) {
 		Size start = subtag->getOption<Size>("start");
 		Size stop = subtag->getOption<Size>("stop");
 		Size cut = subtag->getOption<Size>("cut", 0);
 		Real skip_rate = subtag->getOption<Real>("skip_rate", 0.0);
 		bool extended = subtag->getOption<bool>("rebuild", false);
 
-		if (! parsed_loops) {
+		if ( ! parsed_loops ) {
 			parsed_loops = LoopsOP( new Loops() );
 		}
 		parsed_loops->add_loop(start, stop, cut, skip_rate, extended);
 	}
 
-	// Don't override any loops that may be specified in parent movers unless 
+	// Don't override any loops that may be specified in parent movers unless
 	// loops really were specified here.
 
-	if (parsed_loops) {
+	if ( parsed_loops ) {
 		set_loops(parsed_loops);
 	}
 }
 
 void LoopMover::apply(Pose & pose) { // {{{1
 
-	// If the existing fold tree is trusted, then just apply the loop mover.  
-	// Otherwise, construct an compatible fold tree, apply the loop mover, then 
+	// If the existing fold tree is trusted, then just apply the loop mover.
+	// Otherwise, construct an compatible fold tree, apply the loop mover, then
 	// restore the existing fold tree.
 
-	if (trust_fold_tree_) {
+	if ( trust_fold_tree_ ) {
 		was_successful_ = do_apply(pose);
-	}
-	else {
+	} else {
 		FoldTree original_tree = pose.fold_tree();
 		FoldTreeRequest request = request_fold_tree();
 		setup_fold_tree(pose, get_loops(), request);
@@ -112,11 +111,11 @@ void LoopMover::apply(Pose & pose) { // {{{1
 
 		was_successful_ = do_apply(pose);
 
-		// There is a protocols::loops::remove_cutpoint_variants() function, but it 
-		// clobbers the constraint weights in the pose (even though it seems 
-		// explicitly designed to not do that).  Because this leads to incorrect 
-		// scores being reported in the output pdb file, I chose to use the 
-		// core::util function instead, which doesn't have this weakness. 
+		// There is a protocols::loops::remove_cutpoint_variants() function, but it
+		// clobbers the constraint weights in the pose (even though it seems
+		// explicitly designed to not do that).  Because this leads to incorrect
+		// scores being reported in the output pdb file, I chose to use the
+		// core::util function instead, which doesn't have this weakness.
 
 		core::util::remove_cutpoint_variants(pose);
 		pose.fold_tree(original_tree);
@@ -127,9 +126,9 @@ bool LoopMover::do_apply(Pose & pose) { // {{{1
 	LoopsCOP loops = get_loops();
 	Loops::const_iterator loop, end;
 
-	for (loop = loops->begin(), end = loops->end(); loop != end; ++loop) {
+	for ( loop = loops->begin(), end = loops->end(); loop != end; ++loop ) {
 		bool was_successful = do_apply(pose, *loop);
-		if (! was_successful) return false;
+		if ( ! was_successful ) return false;
 	}
 	return true;
 }
@@ -140,10 +139,10 @@ bool LoopMover::do_apply(Pose &, Loop const &) { // {{{1
 }
 
 void LoopMover::get_children_names( // {{{1
-		utility::vector1<string> & names, string indent) const {
+	utility::vector1<string> & names, string indent) const {
 
 	names.push_back(indent + get_name());
-	foreach (LoopMoverOP mover, get_children()) {
+	foreach ( LoopMoverOP mover, get_children() ) {
 		mover->get_children_names(names, indent + "  ");
 	}
 }
@@ -181,7 +180,7 @@ void LoopMover::set_loop(Loop const & loop) { // {{{1
 
 FoldTreeRequest LoopMover::request_fold_tree() const { // {{{1
 	FoldTreeRequest request = FTR_DONT_CARE;
-	foreach (LoopMoverCOP mover, get_children()) {
+	foreach ( LoopMoverCOP mover, get_children() ) {
 		request = request & mover->request_fold_tree();
 	}
 	return request;
@@ -192,24 +191,18 @@ void LoopMover::trust_fold_tree() { // {{{1
 }
 
 void LoopMover::setup_fold_tree( // {{{1
-		Pose & pose, LoopsCOP loops, FoldTreeRequest request) {
+	Pose & pose, LoopsCOP loops, FoldTreeRequest request) {
 
-	if (request == FTR_DONT_CARE) {
+	if ( request == FTR_DONT_CARE ) {
 		return;
-	}
-
-	else if (request & FTR_LOOPS_WITH_CUTS) {
+	} else if ( request & FTR_LOOPS_WITH_CUTS ) {
 		core::kinematics::FoldTree tree;
 		protocols::loops::fold_tree_from_loops(pose, *loops, tree, true);
 		pose.fold_tree(tree);
-	}
-
-	else if (request & FTR_SIMPLE_TREE) {
+	} else if ( request & FTR_SIMPLE_TREE ) {
 		core::kinematics::FoldTree tree(pose.total_residue());
 		pose.fold_tree(tree);
-	}
-
-	else {
+	} else {
 		utility_exit_with_message("Could not setup the requested fold tree.");
 	}
 
@@ -223,7 +216,7 @@ void LoopMover::remove_child(LoopMoverOP child) { // {{{1
 }
 
 void LoopMover::clear_children() { // {{{1
-	foreach(LoopMoverOP child, children_) {
+	foreach ( LoopMoverOP child, children_ ) {
 		child->parent_name_ = "";
 		child->toolbox_->unset_parent();
 	}

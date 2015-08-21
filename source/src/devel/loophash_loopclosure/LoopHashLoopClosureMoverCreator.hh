@@ -21,11 +21,11 @@ namespace loophash_loopclosure {
 
 class LoopHashLoopClosureMoverCreator : public protocols::moves::MoverCreator {
 public:
-  LoopHashLoopClosureMoverCreator();
-  virtual ~LoopHashLoopClosureMoverCreator();
-  virtual protocols::moves::MoverOP create_mover() const;
-  virtual std::string keyname() const;
-  static std::string mover_name();
+	LoopHashLoopClosureMoverCreator();
+	virtual ~LoopHashLoopClosureMoverCreator();
+	virtual protocols::moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
+	static std::string mover_name();
 };
 
 } // loophash_loopclosure

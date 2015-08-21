@@ -9,18 +9,18 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file protocols//AntibodyDesignProtocolCreator.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_antibody_design_AntibodyDesignProtocolCreator_hh
-#define	INCLUDED_protocols_antibody_design_AntibodyDesignProtocolCreator_hh
+#define INCLUDED_protocols_antibody_design_AntibodyDesignProtocolCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
 namespace antibody {
 namespace design {
-	
+
 
 class AntibodyDesignProtocolCreator : public protocols::moves::MoverCreator {
 public:

@@ -32,7 +32,7 @@ namespace mpi_refinement {
 class MPI_Refine_Master: public MPI_Refinement {
 public:
 	MPI_Refine_Master( core::Size my_emperor,
-										 core::Size master_rank ):
+		core::Size master_rank ):
 		MPI_Refinement( 'M' ),
 		my_emperor_( my_emperor ),
 		master_rank_( master_rank )
@@ -63,13 +63,13 @@ protected: // overloaded functions
 protected: // Added functions
 
 	void create_WUs( const core::io::silent::SilentStructOP &start_struct,
-									 core::Size const i_ss );
+		core::Size const i_ss );
 
 	void assign_loop_info( core::io::silent::SilentStructOP ss ) const;
 
 	// Simpler re-relax
 	void add_relax_simple( protocols::wum::SilentStructStore &start_decoys,
-												 core::Size const rerelax_type );
+		core::Size const rerelax_type );
 
 	void check_library_expiry_dates();
 
@@ -78,8 +78,8 @@ protected: // Added functions
 	virtual bool add_structure_to_library( core::io::silent::SilentStructOP ss, std::string add_algorithm = "" );
 
 	void feedback_structures_to_emperor( bool get_feedback,
-																			 std::string const pick_strategy,
-																			 std::string const objfunction );
+		std::string const pick_strategy,
+		std::string const objfunction );
 
 	void feedback_structure_to_emperor( core::io::silent::SilentStructOP &ss ) ;
 
@@ -96,10 +96,10 @@ private:
 
 	core::pose::Pose
 	get_average_structure( protocols::wum::SilentStructStore &decoys,
-												 utility::vector1< core::Size > const touse,
-												 std::string const columnname, 
-												 bool const minimize,
-												 bool const calcdev = false) const;
+		utility::vector1< core::Size > const touse,
+		std::string const columnname,
+		bool const minimize,
+		bool const calcdev = false) const;
 
 private:
 	// parameters

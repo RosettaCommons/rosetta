@@ -44,7 +44,7 @@ namespace utility {
 
 enum simulate_mpi_message_type {
 	smpi_char = 1,
-  smpi_integer,
+	smpi_integer,
 	smpi_string,
 	smpi_double,
 	smpi_integers,
@@ -101,7 +101,7 @@ public:
 public:
 	SimulateMPIData( platform::Size nprocs );
 
-	int mpi_nprocs() const { return	mpi_nprocs_; }
+	int mpi_nprocs() const { return mpi_nprocs_; }
 
 	void queue_message( SimulateMPIMessageOP msg );
 

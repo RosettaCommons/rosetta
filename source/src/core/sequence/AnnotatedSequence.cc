@@ -26,12 +26,12 @@ namespace core {
 namespace sequence {
 
 AnnotatedSequence::AnnotatedSequence()
-  : map_is_clean_( true )
+: map_is_clean_( true )
 {}
 
 AnnotatedSequence::AnnotatedSequence( std::string const& str_in )
-  : std::string( str_in ),
-    map_is_clean_( false )
+: std::string( str_in ),
+	map_is_clean_( false )
 {}
 
 AnnotatedSequence::AnnotatedSequence( AnnotatedSequence const& other ) :
@@ -53,44 +53,44 @@ AnnotatedSequence& AnnotatedSequence::operator=( AnnotatedSequence const& other 
 }
 
 void AnnotatedSequence::operator=( std::string const& other ) {
-  std::string::operator=( other );
-  map_is_clean_ = false;
+	std::string::operator=( other );
+	map_is_clean_ = false;
 }
 
 //@brief sequence position is patched
 bool AnnotatedSequence::is_patched( core::Size seqpos ) const {
-  if ( !map_is_clean_ ) calculate_map();
-  runtime_assert( seqpos <= pos_map_.size() );
-  Size apos( pos_map_[ seqpos ] );
-  std::string const& annotated_seq = *this;
-  if ( apos < annotated_seq.length()-1 ) {
-    return annotated_seq[ apos+1 ]=='[';
-  }
-  return false;
+	if ( !map_is_clean_ ) calculate_map();
+	runtime_assert( seqpos <= pos_map_.size() );
+	Size apos( pos_map_[ seqpos ] );
+	std::string const& annotated_seq = *this;
+	if ( apos < annotated_seq.length()-1 ) {
+		return annotated_seq[ apos+1 ]=='[';
+	}
+	return false;
 }
 
 //@brief return the string within the [ ] or ""
 std::string AnnotatedSequence::patch_str( core::Size seqpos ) const {
-  if ( !map_is_clean_ ) calculate_map();
-  runtime_assert( seqpos <= pos_map_.size() );
-  Size apos( pos_map_[ seqpos ] );
-  std::string const& annotated_seq = *this;
-  std::string patch_txt;
-  if ( apos < annotated_seq.length()-2 ) {
-    if ( annotated_seq[ apos+1 ] != '[' ) return "";
-    for ( Size i = apos+2; i < annotated_seq.length() && annotated_seq[ i ]!= ']'; ++i ) {
-      patch_txt = patch_txt + annotated_seq[ i ];
-    }
-  }
-  return patch_txt;
+	if ( !map_is_clean_ ) calculate_map();
+	runtime_assert( seqpos <= pos_map_.size() );
+	Size apos( pos_map_[ seqpos ] );
+	std::string const& annotated_seq = *this;
+	std::string patch_txt;
+	if ( apos < annotated_seq.length()-2 ) {
+		if ( annotated_seq[ apos+1 ] != '[' ) return "";
+		for ( Size i = apos+2; i < annotated_seq.length() && annotated_seq[ i ]!= ']'; ++i ) {
+			patch_txt = patch_txt + annotated_seq[ i ];
+		}
+	}
+	return patch_txt;
 }
 
 char AnnotatedSequence::one_letter( core::Size seqpos ) const {
-  if ( !map_is_clean_ ) calculate_map();
-  runtime_assert( seqpos <= pos_map_.size() );
-  Size apos( pos_map_[ seqpos ] );
-  std::string const& annotated_seq = *this;
-  return annotated_seq[ apos ];
+	if ( !map_is_clean_ ) calculate_map();
+	runtime_assert( seqpos <= pos_map_.size() );
+	Size apos( pos_map_[ seqpos ] );
+	std::string const& annotated_seq = *this;
+	return annotated_seq[ apos ];
 }
 
 core::chemical::AA AnnotatedSequence::aa( core::Size seqpos ) const {
@@ -104,38 +104,38 @@ std::string AnnotatedSequence::one_letter_sequence() const {
 }
 
 core::Size AnnotatedSequence::length() const {
-	if ( !map_is_clean_ )	calculate_map();
+	if ( !map_is_clean_ ) calculate_map();
 	return one_letter_sequence_.size();
 }
 
 void AnnotatedSequence::calculate_map() const {
-  if ( map_is_clean_ ) return;
-  map_is_clean_ = true;
+	if ( map_is_clean_ ) return;
+	map_is_clean_ = true;
 
-  std::string const& annotated_seq = *this;
-  std::string sequence("");
+	std::string const& annotated_seq = *this;
+	std::string sequence("");
 
-  bool in_bracket = false;
-  pos_map_.clear();
-  pos_map_.reserve( annotated_seq.length() ); //a little more ... but avoiding resizing...
-  for ( Size i = 0, ie = annotated_seq.length(); i < ie; ++i ) {
-    char c = annotated_seq[i];
-    if ( c == '[' ) {
-      in_bracket = true;
-      continue;
-    } else if ( c == ']' ) {
-      in_bracket = false;
-      continue;
-    } else {
-      if ( in_bracket ) {
-	continue;
-      } else {
+	bool in_bracket = false;
+	pos_map_.clear();
+	pos_map_.reserve( annotated_seq.length() ); //a little more ... but avoiding resizing...
+	for ( Size i = 0, ie = annotated_seq.length(); i < ie; ++i ) {
+		char c = annotated_seq[i];
+		if ( c == '[' ) {
+			in_bracket = true;
+			continue;
+		} else if ( c == ']' ) {
+			in_bracket = false;
+			continue;
+		} else {
+			if ( in_bracket ) {
+				continue;
+			} else {
 				pos_map_.push_back( i );
 				sequence = sequence + c;
-      }
-    }
-  }
-  one_letter_sequence_ = sequence;
+			}
+		}
+	}
+	one_letter_sequence_ = sequence;
 	runtime_assert( !in_bracket );
 }
 

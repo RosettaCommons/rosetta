@@ -131,7 +131,7 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 	define_movemap( movemap, input_pose , loops_);
 
 
-    core::pose::Pose loops_pdb = loops_pdb_;
+	core::pose::Pose loops_pdb = loops_pdb_;
 
 
 	new_pose_generator( loops_pdb  , input_pose , loops_, cut_points );
@@ -146,10 +146,10 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 	refresh_cutpoints(input_pose, cut_points);
 
 
-	if (option[ OptionKeys::in::file::psipred_ss2 ].user() ) {
+	if ( option[ OptionKeys::in::file::psipred_ss2 ].user() ) {
 
 
-			protocols::loops::set_secstruct_from_psipred_ss2( input_pose ); //needs to be done inside the mover
+		protocols::loops::set_secstruct_from_psipred_ss2( input_pose ); //needs to be done inside the mover
 
 
 	}
@@ -157,15 +157,15 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 
 	protocols::abinitio::ClassicAbinitioOP abinitio( new protocols::abinitio::ClassicAbinitio( frag_small_, frag_large_ ,movemap ) );
 
-		if (option [OptionKeys::fold_from_loops::native_ca_cst].user() ){
+	if ( option [OptionKeys::fold_from_loops::native_ca_cst].user() ) {
 
-				input_pose.constraint_set( ca_csts_ );
+		input_pose.constraint_set( ca_csts_ );
 
-				abinitio = protocols::abinitio::ClassicAbinitioOP( new protocols::abinitio::FoldConstraints( frag_small_, frag_large_ ,movemap ) );
+		abinitio = protocols::abinitio::ClassicAbinitioOP( new protocols::abinitio::FoldConstraints( frag_small_, frag_large_ ,movemap ) );
 
-			}
+	}
 
-    //input_pose.dump_pdb("extended_pose");
+	//input_pose.dump_pdb("extended_pose");
 
 
 	abinitio->init(input_pose);
@@ -186,53 +186,49 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 	(*scorefxn_centr)(input_pose);
 
 
-		if ( rmsd_to_native < option[ OptionKeys::fold_from_loops::ca_rmsd_cutoff] )
-			{
+	if ( rmsd_to_native < option[ OptionKeys::fold_from_loops::ca_rmsd_cutoff] ) {
 
-			set_last_move_status( MS_SUCCESS );
+		set_last_move_status( MS_SUCCESS );
 
-			if ( option[ OptionKeys::loops::ccd_closure ].user()  ){ // to close loops
+		if ( option[ OptionKeys::loops::ccd_closure ].user()  ) { // to close loops
 
-					Real chain_break_dist = 0; // chain_break eval
+			Real chain_break_dist = 0; // chain_break eval
 
-					chain_break_dist = input_pose.energies().total_energies()[ scoring::linear_chainbreak ];
-
-
-					TR << "Chain Break -  " << chain_break_dist << std::endl;
+			chain_break_dist = input_pose.energies().total_energies()[ scoring::linear_chainbreak ];
 
 
-					protocols::loops::loop_closure::ccd::SlidingWindowLoopClosureOP closure_protocol( new protocols::loops::loop_closure::ccd::SlidingWindowLoopClosure( frag_small_, scorefxn_centr, movemap ) );
+			TR << "Chain Break -  " << chain_break_dist << std::endl;
 
 
-					closure_protocol->scored_frag_cycle_ratio( 0.2 );
-					closure_protocol->short_frag_cycle_ratio( 0.1 );
-
-					// TODO: fix the new checkpointer issue
-						Real loop_tag = 1;
-						try{
-							protocols::jumping::close_chainbreaks( closure_protocol, input_pose, sliding_checkpoint ,"sliding", f );
-						} catch ( protocols::loops::EXCN_Loop_not_closed& excn ) {
-							loop_tag = 0;
-							set_last_move_status ( FAIL_RETRY ); // if the loops fail set fail_retry
-
-						}
-
-						TR << "LOOPS_TAG " << loop_tag << std::endl;
+			protocols::loops::loop_closure::ccd::SlidingWindowLoopClosureOP closure_protocol( new protocols::loops::loop_closure::ccd::SlidingWindowLoopClosure( frag_small_, scorefxn_centr, movemap ) );
 
 
-		    }
+			closure_protocol->scored_frag_cycle_ratio( 0.2 );
+			closure_protocol->short_frag_cycle_ratio( 0.1 );
 
-
-			if ( get_last_move_status() == MS_SUCCESS && option [OptionKeys::fold_from_loops::output_centroid].user() ){
-
-				(*scorefxn_centr)(input_pose);
-
-				TR << "Outputing centroid structure  " << std::endl;
+			// TODO: fix the new checkpointer issue
+			Real loop_tag = 1;
+			try{
+				protocols::jumping::close_chainbreaks( closure_protocol, input_pose, sliding_checkpoint ,"sliding", f );
+			} catch ( protocols::loops::EXCN_Loop_not_closed& excn ) {
+				loop_tag = 0;
+				set_last_move_status ( FAIL_RETRY ); // if the loops fail set fail_retry
 
 			}
 
+			TR << "LOOPS_TAG " << loop_tag << std::endl;
 
-			else if ( get_last_move_status() == MS_SUCCESS  && !option [OptionKeys::fold_from_loops::output_centroid].user() ){
+
+		}
+
+
+		if ( get_last_move_status() == MS_SUCCESS && option [OptionKeys::fold_from_loops::output_centroid].user() ) {
+
+			(*scorefxn_centr)(input_pose);
+
+			TR << "Outputing centroid structure  " << std::endl;
+
+		} else if ( get_last_move_status() == MS_SUCCESS  && !option [OptionKeys::fold_from_loops::output_centroid].user() ) {
 
 			core::util::switch_to_residue_type_set( input_pose, chemical::FA_STANDARD );
 
@@ -244,7 +240,7 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 
 			//if (loops_.size() > 1 ){
 
-				//refresh_cutpoints(input_pose, cut_points);
+			//refresh_cutpoints(input_pose, cut_points);
 
 			//}
 
@@ -273,49 +269,46 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 			protocols::jd2::output_intermediate_pose( input_pose, std::string() ); //output it to the same file name
 
 
-			if ( option [OptionKeys::fold_from_loops::add_relax_cycles ].user() ){
+			if ( option [OptionKeys::fold_from_loops::add_relax_cycles ].user() ) {
 
-						Size n_relax = option [OptionKeys::fold_from_loops::add_relax_cycles ] ;
+				Size n_relax = option [OptionKeys::fold_from_loops::add_relax_cycles ] ;
 
-						for ( Size i=1; i <= n_relax ; ++i ){
-
-
-							std::string outfilename_n_rlx =  option [OptionKeys::out::prefix] + "dr_" + ObjexxFCL::right_string_of(i,3,'0')+"_" ;
+				for ( Size i=1; i <= n_relax ; ++i ) {
 
 
-							design_excluding_swap_loops (  input_pose, loops_, scorefxn_fa );
+					std::string outfilename_n_rlx =  option [OptionKeys::out::prefix] + "dr_" + ObjexxFCL::right_string_of(i,3,'0')+"_" ;
 
 
-							relax_protocol.apply( input_pose );
+					design_excluding_swap_loops (  input_pose, loops_, scorefxn_fa );
 
 
-							protocols::jd2::JobDistributor::get_instance()->current_job()->set_status_prefix( outfilename_n_rlx );
-
-							protocols::jd2::output_intermediate_pose( input_pose, std::string() );
+					relax_protocol.apply( input_pose );
 
 
-						}
+					protocols::jd2::JobDistributor::get_instance()->current_job()->set_status_prefix( outfilename_n_rlx );
+
+					protocols::jd2::output_intermediate_pose( input_pose, std::string() );
+
 
 				}
+
+			}
 
 
 			protocols::jd2::JobDistributor::get_instance()->current_job()->set_status_prefix( std::string() );
 
 
-			}
-
-
-		} // RMSD cutoff for the relax cycles
-
-
-		else {
-
-			set_last_move_status( FAIL_RETRY );
-
 		}
 
 
-	} //mover apply function
+	} else { // RMSD cutoff for the relax cycles
+
+		set_last_move_status( FAIL_RETRY );
+
+	}
+
+
+} //mover apply function
 
 std::string
 FoldFromLoopsMover::get_name() const {

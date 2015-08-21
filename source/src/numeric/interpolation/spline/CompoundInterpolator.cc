@@ -23,9 +23,9 @@ namespace interpolation {
 namespace spline {
 
 struct compare_interp_range {
-  bool operator()( interp_range const & a, interp_range const & b ) {
+	bool operator()( interp_range const & a, interp_range const & b ) {
 		return a.lb < b.ub;
-  }
+	}
 };
 
 void
@@ -40,7 +40,7 @@ CompoundInterpolator::add_range(
 	ir.interp = interp;
 	interpolators_.push_back( ir );
 	std::sort( interpolators_.begin(), interpolators_.end(), compare_interp_range() );
-	for( size_t i = 1; i < interpolators_.size(); ++i ) {
+	for ( size_t i = 1; i < interpolators_.size(); ++i ) {
 		assert( interpolators_[i].ub <= interpolators_[i+1].lb );
 	}
 }
@@ -53,17 +53,15 @@ CompoundInterpolator::interpolate(
 	Real & dy
 ) {
 
-	if(has_lb_function() && x < get_lb_function_cutoff())
-	{
+	if ( has_lb_function() && x < get_lb_function_cutoff() ) {
 		return compute_lb_function_solution(x,y);
 	}
-	if(has_ub_function() && x > get_ub_function_cutoff())
-	{
+	if ( has_ub_function() && x > get_ub_function_cutoff() ) {
 		return compute_ub_function_solution(x,y);
 	}
 
-	for( size_t i = 1; i <= interpolators_.size(); ++i ) {
-		if( interpolators_[i].lb <= x && x <= interpolators_[i].ub ) {
+	for ( size_t i = 1; i <= interpolators_.size(); ++i ) {
+		if ( interpolators_[i].lb <= x && x <= interpolators_[i].ub ) {
 			return interpolators_[i].interp->interpolate(x,y,dy);
 		}
 	}
@@ -76,8 +74,7 @@ utility::json_spirit::Value CompoundInterpolator::serialize()
 	using utility::json_spirit::Value;
 	using utility::json_spirit::Pair;
 	std::vector<Value> interpolator_data;
-	for(utility::vector1<interp_range>::iterator it = interpolators_.begin();it != interpolators_.end();++it)
-	{
+	for ( utility::vector1<interp_range>::iterator it = interpolators_.begin(); it != interpolators_.end(); ++it ) {
 		Pair ub("ub",Value(it->ub));
 		Pair lb("lb",Value(it->lb));
 		Pair interpolator("interp",it->interp->serialize());
@@ -96,8 +93,7 @@ void CompoundInterpolator::deserialize(utility::json_spirit::mObject data)
 {
 	interpolators_.clear();
 	utility::json_spirit::mArray interpolator_data(data["interp_list"].get_array());
-	for(utility::json_spirit::mArray::iterator it = interpolator_data.begin(); it != interpolator_data.end();++it)
-	{
+	for ( utility::json_spirit::mArray::iterator it = interpolator_data.begin(); it != interpolator_data.end(); ++it ) {
 		utility::json_spirit::mObject interpolator_record(it->get_obj());
 		InterpolatorOP current_interpolator( new SimpleInterpolator() );
 		current_interpolator->deserialize(interpolator_record["interp"].get_obj());

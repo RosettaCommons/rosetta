@@ -66,27 +66,27 @@ RigidLigandBuilder::RigidLigandBuilder( RigidLigandBuilder const & other ) :
 	lig_conformers_( other.lig_conformers_.size() ),
 	min_sep_d2_from_upstream_atoms_( other.min_sep_d2_from_upstream_atoms_ )
 {
-  for ( Size ii = 1; ii <= lig_conformers_.size(); ++ii ) {
-    lig_conformers_[ ii ] = toolbox::match_enzdes_util::LigandConformerOP( new toolbox::match_enzdes_util::LigandConformer( * other.lig_conformers_[ ii ] ) );
-  }
+	for ( Size ii = 1; ii <= lig_conformers_.size(); ++ii ) {
+		lig_conformers_[ ii ] = toolbox::match_enzdes_util::LigandConformerOP( new toolbox::match_enzdes_util::LigandConformer( * other.lig_conformers_[ ii ] ) );
+	}
 }
 
 //RigidLigandBuilder::RigidLigandBuilder( RigidLigandBuilder const & other, core::chemical::ResidueTypeCOP upstream_restype ) :
-//	parent(other),
-//	downstream_restype_( other.downstream_restype_ ),
-//	upstream_restype_( upstream_restype ),
-//	ignore_h_collisions_( other.ignore_h_collisions_ ),
-//	atom_radii_( other.atom_radii_ ),
+// parent(other),
+// downstream_restype_( other.downstream_restype_ ),
+// upstream_restype_( upstream_restype ),
+// ignore_h_collisions_( other.ignore_h_collisions_ ),
+// atom_radii_( other.atom_radii_ ),
 //  atom_required_in_active_site_( other.atom_required_in_active_site_ ),
 //  non_collision_detection_atoms_reqd_in_active_site_( other.non_collision_detection_atoms_reqd_in_active_site_ ),
 //  lig_conformers_( other.lig_conformers_.size() )
 //{
 //  for ( Size ii = 1; ii <= lig_conformers_.size(); ++ii ) {
 //    lig_conformers_[ ii ] = new LigandConformer( * other.lig_conformers_[ ii ] );
-//		//TR << "natoms " << lig_conformers_[ii]->n_collision_check_atoms() << std::endl;
+//  //TR << "natoms " << lig_conformers_[ii]->n_collision_check_atoms() << std::endl;
 //  }
 //
-//	initialize_upstream_residue( upstream_restype );
+// initialize_upstream_residue( upstream_restype );
 //}
 
 
@@ -117,8 +117,8 @@ RigidLigandBuilder::build(
 
 	//std::cout << "RigidLigandBuilder::build" << std::endl;
 	//for ( Size ii = 1; ii <= 3; ++ii ) {
-		//Vector const iiloc = atom3_frame * ats123_in_atom3_frame_[ ii ];
-		//std::cout << "Atom D" << ii << " coordinate: " << iiloc.x() << " " << iiloc.y() << " " << iiloc.z() << std::endl;
+	//Vector const iiloc = atom3_frame * ats123_in_atom3_frame_[ ii ];
+	//std::cout << "Atom D" << ii << " coordinate: " << iiloc.x() << " " << iiloc.y() << " " << iiloc.z() << std::endl;
 	//}
 
 	/// collision detection and active-site containment enforcement.
@@ -127,7 +127,7 @@ RigidLigandBuilder::build(
 
 		Vector const iiloc = lig_conformers_[1]->coordinate_in_D3_frame( ii_restype_id, atom3_frame );
 		//std::cout << "   " << downstream_restype_->atom_name( at3_frame_id_2_restype_id_[ ii ] ) << " ";
-			//std::cout << iiloc.x() << "  " << iiloc.y() << " " << iiloc.z() << std::endl;
+		//std::cout << iiloc.x() << "  " << iiloc.y() << " " << iiloc.z() << std::endl;
 		if ( atom_radii_[ ii_restype_id ] > ZERO && bbgrid().occupied( atom_radii_[ ii_restype_id ], iiloc ) ) {
 			return hitlist;
 		}
@@ -319,8 +319,8 @@ RigidLigandBuilder::coordinates_from_hit(
 {
 	/*HTReal global_frame = frame_from_global_orientation( hit.second() );
 	for ( Size ii = 1; ii <= atom_indices.size(); ++ii ) {
-		assert( atom_indices[ ii ].rsd() == 1 );
-		atom_coords[ ii ] = global_frame * points_in_global_orintation_frame_[ atom_indices[ ii ].atomno() ];
+	assert( atom_indices[ ii ].rsd() == 1 );
+	atom_coords[ ii ] = global_frame * points_in_global_orintation_frame_[ atom_indices[ ii ].atomno() ];
 	}*/
 	lig_conformers_[1]->coordinates_from_orientation( hit.second(), atom_indices, atom_coords );
 }
@@ -440,7 +440,7 @@ RigidLigandBuilder::initialize_upstream_residue(
 			if ( jj > upstream_restype_->natoms() ) break;
 			Real weight( 1.0 );
 			Size path_dist( 0 );
-			if ( count_pair && ( ! count_pair->count( jj, ii_restype_id, weight, path_dist ) || weight != 1.0 )) {
+			if ( count_pair && ( ! count_pair->count( jj, ii_restype_id, weight, path_dist ) || weight != 1.0 ) ) {
 				/// WITHIN STRIKING DISTANCE OF BACKBONE!  DO NOT COLLISON-CHECK THIS ATOM
 				atom_radii_[ ii_restype_id ] = ZERO;
 			}
@@ -478,97 +478,97 @@ RigidLigandBuilder::initialize_upstream_residue(
 	}
 
 	//if ( count_pair ) {
-	//	for ( Size ii = 1; ii <= upstream_restype_->n_
+	// for ( Size ii = 1; ii <= upstream_restype_->n_
 	//}
 }
 
 /*Real6
 RigidLigandBuilder::global_orientation_from_frame3(
-	HTReal const & frame3
+HTReal const & frame3
 ) const
 {
-	HTReal global_frame = frame3 * oframe_in_at3frame_;
-	//std::cout.precision( 12 );
-	//std::cout << "Global frame" << std::endl;
-	//std::cout << "  " << global_frame.xx() << " " << global_frame.yx() << " " << global_frame.zx() << " " << global_frame.px() << std::endl;
-	//std::cout << "  " << global_frame.xy() << " " << global_frame.yy() << " " << global_frame.zy() << " " << global_frame.py() << std::endl;
-	//std::cout << "  " << global_frame.xz() << " " << global_frame.yz() << " " << global_frame.zz() << " " << global_frame.pz() << std::endl;
-	//std::cout.precision( 6 );
+HTReal global_frame = frame3 * oframe_in_at3frame_;
+//std::cout.precision( 12 );
+//std::cout << "Global frame" << std::endl;
+//std::cout << "  " << global_frame.xx() << " " << global_frame.yx() << " " << global_frame.zx() << " " << global_frame.px() << std::endl;
+//std::cout << "  " << global_frame.xy() << " " << global_frame.yy() << " " << global_frame.zy() << " " << global_frame.py() << std::endl;
+//std::cout << "  " << global_frame.xz() << " " << global_frame.yz() << " " << global_frame.zz() << " " << global_frame.pz() << std::endl;
+//std::cout.precision( 6 );
 
-	Vector euler_angles = global_frame.euler_angles_deg();
-	for ( Size ii = 1; ii <= 3; ++ii ) if ( euler_angles( ii ) < 0 ) euler_angles( ii ) += 360.0;
-	Vector oat3_coords = global_frame.point(); //frame3 * points_in_at3_frame_[ restype_id_2_at3_frame_id_[ orientation_atoms_[ 3 ]]];
+Vector euler_angles = global_frame.euler_angles_deg();
+for ( Size ii = 1; ii <= 3; ++ii ) if ( euler_angles( ii ) < 0 ) euler_angles( ii ) += 360.0;
+Vector oat3_coords = global_frame.point(); //frame3 * points_in_at3_frame_[ restype_id_2_at3_frame_id_[ orientation_atoms_[ 3 ]]];
 
-	Real6 global_coords;
-	global_coords[ 1 ] = oat3_coords( 1 );
-	global_coords[ 2 ] = oat3_coords( 2 );
-	global_coords[ 3 ] = oat3_coords( 3 );
-	global_coords[ 4 ] = euler_angles( 1 );
-	global_coords[ 5 ] = euler_angles( 2 );
-	global_coords[ 6 ] = euler_angles( 3 );
+Real6 global_coords;
+global_coords[ 1 ] = oat3_coords( 1 );
+global_coords[ 2 ] = oat3_coords( 2 );
+global_coords[ 3 ] = oat3_coords( 3 );
+global_coords[ 4 ] = euler_angles( 1 );
+global_coords[ 5 ] = euler_angles( 2 );
+global_coords[ 6 ] = euler_angles( 3 );
 
 
-	if ( false ) {
+if ( false ) {
 
-		Vector oat1_coord = frame3 * oats_in_at3_frame_[ 1 ];
-		Vector oat2_coord = frame3 * oats_in_at3_frame_[ 2 ];
-		Vector oat3_coord = frame3 * oats_in_at3_frame_[ 3 ];
-		HTReal global_frame2( oat1_coord, oat2_coord, oat3_coord );
-		Vector euler_angles2 = global_frame2.euler_angles_deg();
-		std::cout << "Euler angle comparison.";
-		std::cout << " 1: " << euler_angles( 1 ) << " vs " << euler_angles2( 1 ) << " ";
-		std::cout << " 2: " << euler_angles( 2 ) << " vs " << euler_angles2( 2 ) << " ";
-		std::cout << " 3: " << euler_angles( 3 ) << " vs " << euler_angles2( 3 ) << std::endl;
+Vector oat1_coord = frame3 * oats_in_at3_frame_[ 1 ];
+Vector oat2_coord = frame3 * oats_in_at3_frame_[ 2 ];
+Vector oat3_coord = frame3 * oats_in_at3_frame_[ 3 ];
+HTReal global_frame2( oat1_coord, oat2_coord, oat3_coord );
+Vector euler_angles2 = global_frame2.euler_angles_deg();
+std::cout << "Euler angle comparison.";
+std::cout << " 1: " << euler_angles( 1 ) << " vs " << euler_angles2( 1 ) << " ";
+std::cout << " 2: " << euler_angles( 2 ) << " vs " << euler_angles2( 2 ) << " ";
+std::cout << " 3: " << euler_angles( 3 ) << " vs " << euler_angles2( 3 ) << std::endl;
 
-		for ( Size ii = 1; ii <= points_in_atom3_frame_.size(); ++ii ) {
-			Vector ii3loc = frame3 * points_in_atom3_frame_[ ii ];
-			Vector iigloc = global_frame * points_in_global_orintation_frame_[ at3_frame_id_2_restype_id_[ ii ]];
-			for ( Size jj = 1; jj <= 3; ++jj ) {
-				std::cout << ii << " " << jj << " " << ii3loc( jj ) << " " << iigloc( jj ) << std::endl;
-			}
-		}
+for ( Size ii = 1; ii <= points_in_atom3_frame_.size(); ++ii ) {
+Vector ii3loc = frame3 * points_in_atom3_frame_[ ii ];
+Vector iigloc = global_frame * points_in_global_orintation_frame_[ at3_frame_id_2_restype_id_[ ii ]];
+for ( Size jj = 1; jj <= 3; ++jj ) {
+std::cout << ii << " " << jj << " " << ii3loc( jj ) << " " << iigloc( jj ) << std::endl;
+}
+}
 
-		HTReal global_frame3;
-		global_frame3.from_euler_angles_deg( euler_angles );
-		global_frame3.set_point( oat3_coord );
-		//std::cout.precision( 12 );
-		std::cout << "Global frame3" << std::endl;
-		std::cout << "  " << global_frame3.xx() << " " << global_frame3.yx() << " " << global_frame3.zx() << " " << global_frame3.px() << std::endl;
-		std::cout << "  " << global_frame3.xy() << " " << global_frame3.yy() << " " << global_frame3.zy() << " " << global_frame3.py() << std::endl;
-		std::cout << "  " << global_frame3.xz() << " " << global_frame3.yz() << " " << global_frame3.zz() << " " << global_frame3.pz() << std::endl;
-		//std::cout.precision( 6 );
-	}
+HTReal global_frame3;
+global_frame3.from_euler_angles_deg( euler_angles );
+global_frame3.set_point( oat3_coord );
+//std::cout.precision( 12 );
+std::cout << "Global frame3" << std::endl;
+std::cout << "  " << global_frame3.xx() << " " << global_frame3.yx() << " " << global_frame3.zx() << " " << global_frame3.px() << std::endl;
+std::cout << "  " << global_frame3.xy() << " " << global_frame3.yy() << " " << global_frame3.zy() << " " << global_frame3.py() << std::endl;
+std::cout << "  " << global_frame3.xz() << " " << global_frame3.yz() << " " << global_frame3.zz() << " " << global_frame3.pz() << std::endl;
+//std::cout.precision( 6 );
+}
 
-	return global_coords;
+return global_coords;
 }
 
 RigidLigandBuilder::HTReal
 RigidLigandBuilder::frame_from_global_orientation(
-	Real6 orientation
+Real6 orientation
 ) const
 {
-	Vector oat3_coord(orientation[ 1 ], orientation[ 2 ], orientation[ 3 ] );
-	Vector euler_deg( orientation[ 4 ], orientation[ 5 ], orientation[ 6 ] );
+Vector oat3_coord(orientation[ 1 ], orientation[ 2 ], orientation[ 3 ] );
+Vector euler_deg( orientation[ 4 ], orientation[ 5 ], orientation[ 6 ] );
 
-	//std::cout << "oat3_coord: " << oat3_coord(1) << " " << oat3_coord(2) << " " << oat3_coord(3) << std::endl;
-	//std::cout << "euler_deg: " << euler_deg(1) << " " << euler_deg(2) << " " << euler_deg(3) << std::endl;
+//std::cout << "oat3_coord: " << oat3_coord(1) << " " << oat3_coord(2) << " " << oat3_coord(3) << std::endl;
+//std::cout << "euler_deg: " << euler_deg(1) << " " << euler_deg(2) << " " << euler_deg(3) << std::endl;
 
-	HTReal oframe;
+HTReal oframe;
 
-	oframe.from_euler_angles_deg( euler_deg );
-	oframe.set_point( oat3_coord );
+oframe.from_euler_angles_deg( euler_deg );
+oframe.set_point( oat3_coord );
 
-	//std::cout.precision( 12 );
-	//std::cout << "Global frame" << std::endl;
-	//std::cout << "  " << oframe.xx() << " " << oframe.yx() << " " << oframe.zx() << " " << oframe.px() << std::endl;
-	//std::cout << "  " << oframe.xy() << " " << oframe.yy() << " " << oframe.zy() << " " << oframe.py() << std::endl;
-	//std::cout << "  " << oframe.xz() << " " << oframe.yz() << " " << oframe.zz() << " " << oframe.pz() << std::endl;
-	//std::cout.precision( 6 );
+//std::cout.precision( 12 );
+//std::cout << "Global frame" << std::endl;
+//std::cout << "  " << oframe.xx() << " " << oframe.yx() << " " << oframe.zx() << " " << oframe.px() << std::endl;
+//std::cout << "  " << oframe.xy() << " " << oframe.yy() << " " << oframe.zy() << " " << oframe.py() << std::endl;
+//std::cout << "  " << oframe.xz() << " " << oframe.yz() << " " << oframe.zz() << " " << oframe.pz() << std::endl;
+//std::cout.precision( 6 );
 
-	//Vector euler_deg2 = oframe.euler_angles_deg();
-	//std::cout << "reverse euler angles: " << euler_deg2(1) << " " << euler_deg2(2) << " " << euler_deg2(3) << std::endl;
+//Vector euler_deg2 = oframe.euler_angles_deg();
+//std::cout << "reverse euler angles: " << euler_deg2(1) << " " << euler_deg2(2) << " " << euler_deg2(3) << std::endl;
 
-	return oframe;
+return oframe;
 }
 */
 
@@ -605,13 +605,13 @@ RigidLigandBuilder::initialize_upstream_nonbonded_min_separation_d2()
 toolbox::match_enzdes_util::LigandConformerOP
 RigidLigandBuilder::get_lig_conformers(core::Size conf_id) const
 {
- return lig_conformers_[ conf_id ];
+	return lig_conformers_[ conf_id ];
 }
 
 //utility::vector1< utility::vector1< std::pair< core::Size, core::Real > > >
 //RigidLigandBuilder::get_min_sep_d2_from_upstream_atoms() const
 //{
-//	return min_sep_d2_from_upstream_atoms_;
+// return min_sep_d2_from_upstream_atoms_;
 //}
 
 core::chemical::ResidueTypeCOP

@@ -24,7 +24,7 @@ namespace protocols {
 namespace simple_moves {
 
 /// @brief Align a chain in the working pose to a chain. CA superposition
-/// @details  
+/// @details
 ///  source_chain: the chain number in the working pose. 0 means the entire pose.
 ///  target_chain: the chain number in the target pose. 0 means the entire pose.
 ///  **target and source chains must have the same length of residues.

@@ -60,9 +60,9 @@ public:
 	virtual
 	bool
 	defines_residue_pair_energy (
-	  pose::Pose const & pose,
-	  Size res1,
-	  Size res2
+		pose::Pose const & pose,
+		Size res1,
+		Size res2
 	) const;
 
 
@@ -76,21 +76,21 @@ public:
 	virtual
 	void
 	residue_pair_energy (
-	  conformation::Residue const & rsd1,
-	  conformation::Residue const & rsd2,
-	  pose::Pose const & pose,
-	  ScoreFunction const & sfxn,
-	  EnergyMap & emap
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn,
+		EnergyMap & emap
 	) const;
 
 
 	virtual
 	void
 	eval_intrares_energy (
-	  conformation::Residue const &,
-	  pose::Pose const &,
-	  ScoreFunction const &,
-	  EnergyMap &
+		conformation::Residue const &,
+		pose::Pose const &,
+		ScoreFunction const &,
+		EnergyMap &
 	) const {
 		return;
 	}
@@ -99,21 +99,21 @@ public:
 	virtual
 	void
 	eval_atom_derivative (
-	  id::AtomID const & id,
-	  pose::Pose const & pose,
-	  kinematics::DomainMap const &, // domain_map,
-	  ScoreFunction const & sfxn,
-	  EnergyMap const & weights,
-	  Vector & F1,
-	  Vector & F2
+		id::AtomID const & id,
+		pose::Pose const & pose,
+		kinematics::DomainMap const &, // domain_map,
+		ScoreFunction const & sfxn,
+		EnergyMap const & weights,
+		Vector & F1,
+		Vector & F2
 	) const;
 
 
 	virtual
 	void
 	setup_for_scoring (
-	  pose::Pose & pose,
-	  ScoreFunction const &
+		pose::Pose & pose,
+		ScoreFunction const &
 	) const;
 
 	using parent::finalize_total_energy;
@@ -122,9 +122,9 @@ public:
 	virtual
 	void
 	finalize_total_energy (
-	  pose::Pose const &,
-	  ScoreFunction const &,
-	  EnergyMap &
+		pose::Pose const &,
+		ScoreFunction const &,
+		EnergyMap &
 	) const {
 		return;
 	}

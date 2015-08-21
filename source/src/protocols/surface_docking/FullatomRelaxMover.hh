@@ -44,11 +44,11 @@ class FullatomRelaxMover : public moves::Mover {
 public:
 
 	FullatomRelaxMover();
-	
+
 	FullatomRelaxMover(FullatomRelaxMover const & src);
-	
+
 	virtual protocols::moves::MoverOP clone() const;
-	
+
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
 	//destructor
@@ -62,45 +62,45 @@ public:
 
 	std::string get_sol_secondary_struct();
 	std::string get_ads_secondary_struct();
-	
+
 	void set_surface_contact_mover( protocols::docking::FaDockingSlideIntoContactOP surface_contact_mover );
-	
+
 	void set_surface_orient_mover( SurfaceOrientMoverOP surface_orient );
-	
+
 	void set_surface_parameters(protocols::surface_docking::SurfaceParametersOP surface_parameters);
 
 private:
-	
+
 	void copy_data(FullatomRelaxMover object_to_copy_to, FullatomRelaxMover object_to_copy_from);
-	
+
 	void inner_loop_refinement( core::pose::Pose & pose );
-	
+
 	void outer_loop_refinement_solution( core::pose::Pose & pose );
-	
+
 	void outer_loop_refinement_adsorbed( core::pose::Pose & pose );
-	
+
 	void reorient_and_slide_into_surface( core::pose::Pose & pose );
-	
+
 	void dock_mcm_on_surface( core::pose::Pose & pose );
-	
+
 	void output_solution_state( core::pose::Pose & pose );
-	
+
 	void refinement_cycle( core::pose::Pose & pose );
-	
+
 	void setup_defaults();
-	
+
 	void setup_movers( const core::pose::Pose & pose );
-	
+
 	void set_smallmovesize(Size scale);
-	
+
 	void set_ljrepulsion_weight(core::Real weight_scale);
-	
+
 	void set_ecounter(core::Size ecount);
-	
+
 	void calc_secondary_struct(core::pose::Pose & pose);
-	
+
 	void set_secondary_struct(core::pose::Pose & pose);
-	
+
 	void reposition_above_surface(core::pose::Pose & pose);
 
 	//members for smallTrialMove
@@ -110,7 +110,7 @@ private:
 	core::Size encounter_cycle_;
 
 	std::map< char, core::Real > angle_max_;
-        // for scoring
+	// for scoring
 	core::scoring::ScoreFunctionOP score_high_res_;
 	// for movers
 
@@ -135,14 +135,14 @@ private:
 	std::string sol_sec_struct_;
 	std::string ads_sec_struct_;
 	std::string sec_struct_;
-	
+
 	protocols::docking::FaDockingSlideIntoContactOP surface_contact_mover_;
 	protocols::surface_docking::SurfaceOrientMoverOP surface_orient_;
 	protocols::surface_docking::SurfaceParametersOP surface_parameters_;
 	docking::DockMCMProtocolOP dock_mcm_;
 	core::Size outer_loop_cycles_;
 	core::Size inner_loop_cycles_;
-    };
+};
 
 
 } // surface_docking

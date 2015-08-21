@@ -39,8 +39,8 @@ public:
 	DockingBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
 	virtual void setUp() {
-		if( dock == Low ) core_init_with_additional_options( "-low_res_protocol_only -dock_pert 3 8 -run:constant_seed" );
-		if( dock == High ) core_init_with_additional_options( "-docking_local_refine -run:constant_seed" );
+		if ( dock == Low ) core_init_with_additional_options( "-low_res_protocol_only -dock_pert 3 8 -run:constant_seed" );
+		if ( dock == High ) core_init_with_additional_options( "-docking_local_refine -run:constant_seed" );
 		start_pose = core::pose::PoseOP( new core::pose::Pose() );
 		core::import_pose::pose_from_pdb(*start_pose, "dock_in.pdb");
 		docking = protocols::docking::DockingProtocolOP( new protocols::docking::DockingProtocol() );
@@ -51,11 +51,11 @@ public:
 
 	virtual void run(core::Real scaleFactor) {
 		//for(int i=0; i<10; i++) {
-		//	std::cout << "i="<< i << " R=" << numeric::random::uniform() << std::endl;
+		// std::cout << "i="<< i << " R=" << numeric::random::uniform() << std::endl;
 		//}
 		int reps( (int)(TScale*scaleFactor) );
-		if( reps == 0 ) { reps = 1; } // do at least one repetition, regardless of scaling
-		for(int i=0; i<reps; i++) {
+		if ( reps == 0 ) { reps = 1; } // do at least one repetition, regardless of scaling
+		for ( int i=0; i<reps; i++ ) {
 			core::pose::Pose pose;
 			pose = *start_pose;
 			docking->apply( pose );

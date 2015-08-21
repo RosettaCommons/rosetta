@@ -138,22 +138,20 @@ FixbbLinkingRotamerSimAnnealer::setup_rotamer_links(
 		//init anything linking to it locally
 		//iterate over the associated set to check the positions, if molten
 		//std::cout << "linking positions: ";
-		if (rotamer_links->has(resid)){ // not a null
-		//std::cout << " linked IN " << std::endl;
+		if ( rotamer_links->has(resid) ) { // not a null
+			//std::cout << " linked IN " << std::endl;
 			utility::vector1<int> copies = rotamer_links->get_equiv(resid);
-			for (Size i = 1; i <= copies.size(); ++i ){
-				if ( rotamer_sets()->resid_2_moltenres( copies[i] )) {
-	//				rotamer_links_->set_equiv(resid, copies[i]);
+			for ( Size i = 1; i <= copies.size(); ++i ) {
+				if ( rotamer_sets()->resid_2_moltenres( copies[i] ) ) {
+					//    rotamer_links_->set_equiv(resid, copies[i]);
 					rotamer_links_->set_equiv(moltenres_id, rotamer_sets()->resid_2_moltenres(copies[i]));
 					//std::cout << copies[i];
 					//std::cout << ":" << rotamer_sets()->resid_2_moltenres(copies[i]) << std::endl;
-				}
-				else {
+				} else {
 					std::cout << "a position in the link isn't to be changed" << std::endl;
 				}
 			}
-		}
-		else {
+		} else {
 			std::cout << "singular unlinked position" << std::endl;
 		}
 	}
@@ -197,10 +195,12 @@ void FixbbLinkingRotamerSimAnnealer::run()
 	for ( core::Size i = 1; i <= nmoltenres; ++i ) {
 		utility::vector1<Size> these_links = rotamer_links_->get_equiv(i);
 		if ( flag1 && flag2 ) break;
-		if ( these_links.size() == 1 && these_links[1] == i )
+		if ( these_links.size() == 1 && these_links[1] == i ) {
 			flag1 = true;
-		if ( these_links.size() > 1 )
+		}
+		if ( these_links.size() > 1 ) {
 			flag2 = true;
+		}
 	}
 
 	core::Size totalrot = 0;
@@ -218,10 +218,10 @@ void FixbbLinkingRotamerSimAnnealer::run()
 		//Size repeat_number = segmentTest.back()/segmentTest[1];
 		//std::cout<< "number of repeats" << repeat_number << std::endl;
 
-		for (core::Size res = segmentTest[1]; res <= segmentTest[1]*2 ; res++){
+		for ( core::Size res = segmentTest[1]; res <= segmentTest[1]*2 ; res++ ) {
 			totalrot += rotamer_sets()->nrotamers_for_moltenres(res);
 		}
-			//std::cout << "TOTAL ROTAMER " << totalrot << std::endl;
+		//std::cout << "TOTAL ROTAMER " << totalrot << std::endl;
 	} // end quasisymmetric if-else
 
 
@@ -238,24 +238,24 @@ void FixbbLinkingRotamerSimAnnealer::run()
 	//static bool const record_annealer_trajectory( truefalseoption("record_annealer_trajectory") ); //look up once
 	//if ( record_annealer_trajectory )
 	//{
-	//	std::string trajectory_file_name( stringafteroption("record_annealer_trajectory" ) );
-	//	annealer_trajectory.open(trajectory_file_name.c_str() );
+	// std::string trajectory_file_name( stringafteroption("record_annealer_trajectory" ) );
+	// annealer_trajectory.open(trajectory_file_name.c_str() );
 	//}
 
 
-			// some rotamer may not exist on other repeats, and use a new vector to
-			// iterate the "good" rotamers
+	// some rotamer may not exist on other repeats, and use a new vector to
+	// iterate the "good" rotamers
 
 
-		int allrot = rotamer_sets()->nrotamers();
-		utility::vector1<bool> rot_valid(allrot, true);
-		//std::cout << "outer iteration: " << outeriterations << std::endl;
+	int allrot = rotamer_sets()->nrotamers();
+	utility::vector1<bool> rot_valid(allrot, true);
+	//std::cout << "outer iteration: " << outeriterations << std::endl;
 
 
 	//outer loop
-	for (int nn = 1; nn <= outeriterations; ++nn ){
+	for ( int nn = 1; nn <= outeriterations; ++nn ) {
 		setup_temperature(loopenergy,nn);
-		if ( quench() ){
+		if ( quench() ) {
 			currentenergy = bestenergy();
 			state_on_node = best_state_on_node;
 			ig_->set_network_state( state_on_node );
@@ -269,30 +269,30 @@ void FixbbLinkingRotamerSimAnnealer::run()
 		ig_->set_errorfull_deltaE_threshold( treshold_for_deltaE_inaccuracy );
 
 		//inner loop
-		for (int n = 1; n <= inneriterations; ++n ){
+		for ( int n = 1; n <= inneriterations; ++n ) {
 
 			int ranrotamer = -1;
 			bool invalid_rotamer = false;
-			while (!invalid_rotamer){
+			while ( !invalid_rotamer ) {
 				ranrotamer = static_cast<int>( numeric::random::rg().random_range(1, allrot ));
-				if (rot_valid[ ranrotamer ]){
+				if ( rot_valid[ ranrotamer ] ) {
 					invalid_rotamer = true;
 				}
 			}
 
 			//int const ranrotamer = pick_a_rotamer( n );
-			if (ranrotamer == -1) continue;
+			if ( ranrotamer == -1 ) continue;
 
 			int const moltenres_id = rotamer_sets()->moltenres_for_rotamer( ranrotamer );
 			int const rotamer_state_on_moltenres = rotamer_sets()->rotid_on_moltenresidue( ranrotamer );
 			int const prevrotamer_state = state_on_node(moltenres_id);
 
-			if (rotamer_state_on_moltenres == prevrotamer_state ) continue; //skip iteration
+			if ( rotamer_state_on_moltenres == prevrotamer_state ) continue; //skip iteration
 
 			core::PackerEnergy previous_energy_for_node, delta_energy;
 
 			ig_->consider_substitution( moltenres_id, rotamer_state_on_moltenres,
-																	delta_energy, previous_energy_for_node);
+				delta_energy, previous_energy_for_node);
 
 			// specialize to the case of coupled pairs in this first pass implementation
 
@@ -317,9 +317,9 @@ void FixbbLinkingRotamerSimAnnealer::run()
 
 			bool found_rotamer = false;
 			Size num_linked_res =0;
-			for (utility::vector1<int>::iterator itr = linked_residues.begin(), ite = linked_residues.end(); itr != ite; ++itr ){
+			for ( utility::vector1<int>::iterator itr = linked_residues.begin(), ite = linked_residues.end(); itr != ite; ++itr ) {
 				num_linked_res++;
-				if ( (*itr != 0) && (*itr != moltenres_id )){
+				if ( (*itr != 0) && (*itr != moltenres_id ) ) {
 					TR.Trace << "moltenres_id " << moltenres_id << " coupled to moltenres_id " << *itr << std::endl;
 
 					//try multiple substitutions
@@ -334,7 +334,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 
 					int const other_nrotamers( other_rotamer_set->num_rotamers() );
 					int tries = other_nrotamers;
-					 found_rotamer = false;
+					found_rotamer = false;
 					while ( tries ) {
 						// pick a rotamer at the other position
 						int other_rotamer_state = tries;
@@ -352,8 +352,8 @@ void FixbbLinkingRotamerSimAnnealer::run()
 							}
 						} else { // not psuedosymmetric
 							if ( new_rotamer->is_similar_rotamer( *other_rotamer ) ) { //found the same rotamer, move on
-							//if ( new_rotamer->is_similar_aa( *other_rotamer ) ) { //found the same rotamer, move on
-							//std::cout << "found the same rotamer for " << moltenres_id << " and " <<  *itr << "of types " << new_rotamer->aa() << " and " << other_rotamer->aa() << std::endl;
+								//if ( new_rotamer->is_similar_aa( *other_rotamer ) ) { //found the same rotamer, move on
+								//std::cout << "found the same rotamer for " << moltenres_id << " and " <<  *itr << "of types " << new_rotamer->aa() << " and " << other_rotamer->aa() << std::endl;
 								found_rotamer = true;
 
 								// record the state
@@ -363,30 +363,29 @@ void FixbbLinkingRotamerSimAnnealer::run()
 							}
 						}
 					}
-					if (!found_rotamer){ // any of the linked position without the same rotamer should be passed
+					if ( !found_rotamer ) { // any of the linked position without the same rotamer should be passed
 						//std::cout << "same rotamer not found for " << moltenres_id << " and " <<  *itr << std::endl;
 						break;
 					}
 
-				}
-        // For quasisymmetrical design, one might have designable positions that are not
-        // quasisymmetrical, and therefore do not need RotamerLinks to other residues. But in
-        // order to get around a segfault in src/core/pack/rotamer_sets/RotamerSets.cc,
-        // these residues must have RotamerLinks to only themselves; they therefore fail the
-        // if above, leading to a continue directly below at if (!foundrotamer). So, here we
-        // will detect these positions and set found_rotamer to true.
-        else if ( (*itr == moltenres_id) && (linked_residues.size() == 1) ) {
-          found_rotamer = true;
+				} else if ( (*itr == moltenres_id) && (linked_residues.size() == 1) ) {
+					// For quasisymmetrical design, one might have designable positions that are not
+					// quasisymmetrical, and therefore do not need RotamerLinks to other residues. But in
+					// order to get around a segfault in src/core/pack/rotamer_sets/RotamerSets.cc,
+					// these residues must have RotamerLinks to only themselves; they therefore fail the
+					// if above, leading to a continue directly below at if (!foundrotamer). So, here we
+					// will detect these positions and set found_rotamer to true.
+					found_rotamer = true;
 					other_prevrotamer_state = state_on_node(*itr);
-        }
+				}
 			} // for linked residues
 
-			if (!found_rotamer){ // any of the linked position without the same rotamer should be passed
+			if ( !found_rotamer ) { // any of the linked position without the same rotamer should be passed
 				//invalidate all the linked positions
 				//std::cout << "invalidate " ;
-				for (std::map<Size, Size>::iterator it = resid_states.begin(), ite = resid_states.end(); it != ite; ++it ){
+				for ( std::map<Size, Size>::iterator it = resid_states.begin(), ite = resid_states.end(); it != ite; ++it ) {
 					rot_valid[ rotamer_sets()->moltenres_rotid_2_rotid( (*it).first, (*it).second ) ] = false;
-					//	std::cout << (*it).first << "(" << (*it).second << ")"  ;
+					// std::cout << (*it).first << "(" << (*it).second << ")"  ;
 				}
 				//std::cout << std::endl;
 				continue;
@@ -396,31 +395,31 @@ void FixbbLinkingRotamerSimAnnealer::run()
 			//score the good rotamers and pass through metropolis
 			//std::cout << "summing energies: " ;
 
-			for (std::map<Size, Size>::iterator it = resid_states.begin(), ite = resid_states.end(); it != ite; ++it ){
+			for ( std::map<Size, Size>::iterator it = resid_states.begin(), ite = resid_states.end(); it != ite; ++it ) {
 
-			//std::cout << (*it).first << "(" << (*it).second << ")"  ;
+				//std::cout << (*it).first << "(" << (*it).second << ")"  ;
 
 				core::PackerEnergy delta_energy_temp, previous_energy_for_node_temp;
 				ig_->consider_substitution( (*it).first,  (*it).second,
-																		delta_energy_temp, previous_energy_for_node_temp );
+					delta_energy_temp, previous_energy_for_node_temp );
 
 				//tmp_currentenergy = currentenergy;  // set but never used ~Labonte
 				currentenergy = ig_->commit_considered_substitution();
 
 				{ // debugging
-						//Real const dev( std::abs( currentenergy - tmp_currentenergy - delta_energy_temp ) );
-			//std::cout << (*it).first << "(" << (*it).second << ")"  ;
-				//if ( dev > 0.01 ) {
-				//	std::cout  << "equal2? " << dev << ' ' << currentenergy << " " <<  tmp_currentenergy << ' ' << delta_energy_temp <<
-				//	'\n';
-				//}
+					//Real const dev( std::abs( currentenergy - tmp_currentenergy - delta_energy_temp ) );
+					//std::cout << (*it).first << "(" << (*it).second << ")"  ;
+					//if ( dev > 0.01 ) {
+					// std::cout  << "equal2? " << dev << ' ' << currentenergy << " " <<  tmp_currentenergy << ' ' << delta_energy_temp <<
+					// '\n';
+					//}
 				} // scope
 
 
 				delta_energy_accumulated += delta_energy_temp;
 				previous_energy_for_node_accumulated += previous_energy_for_node_temp;
 
-			//	std::cout << "delta_energy_temp " << delta_energy_temp << " previous_energy_for_node_temp " << previous_energy_for_node_temp ;
+				// std::cout << "delta_energy_temp " << delta_energy_temp << " previous_energy_for_node_temp " << previous_energy_for_node_temp ;
 
 			}
 			//std::cout << " accumulated " << previous_energy_for_node_accumulated << "  delta_accumulated" << delta_energy_accumulated;
@@ -435,39 +434,39 @@ void FixbbLinkingRotamerSimAnnealer::run()
 			//std::cout << prevrotamer_state << " " << other_prevrotamer_state << " " <<  previous_energy_average << " " << delta_energy_average << std::endl;
 
 			if ( prevrotamer_state == 0 || other_prevrotamer_state == 0 ||
-						pass_metropolis( previous_energy_average, delta_energy_average ) ) {
+					pass_metropolis( previous_energy_average, delta_energy_average ) ) {
 				// accept !!!!!!!
 				TR.Trace << "accepting multiple rotamer substitution" << std::endl;
 
 
-			//std::cout << "ACCEPT: substitution on ";
-			//set state
-				for (std::map<Size, Size>::iterator it = resid_states.begin(), ite = resid_states.end(); it != ite; ++it){
-	/*				core::PackerEnergy dE, oldE;
+				//std::cout << "ACCEPT: substitution on ";
+				//set state
+				for ( std::map<Size, Size>::iterator it = resid_states.begin(), ite = resid_states.end(); it != ite; ++it ) {
+					/*    core::PackerEnergy dE, oldE;
 					ig_->consider_substitution( (*it).first,  (*it).second,
-																			dE, oldE );
-																			tmp_currentenergy = currentenergy;
+					dE, oldE );
+					tmp_currentenergy = currentenergy;
 					currentenergy = ig_->commit_considered_substitution();
 
 					{ // debugging
-						Real const dev( std::abs( currentenergy - tmp_currentenergy - dE ) );
-				std::cout << (*it).first << "(" << (*it).second << ")"  ;
-				//		if ( dev > 0.01 ) {
-							std::cout  << "equal2? " << dev << ' ' << currentenergy << " " <<  tmp_currentenergy << ' ' << dE <<
-								'\n';
-				//		}
+					Real const dev( std::abs( currentenergy - tmp_currentenergy - dE ) );
+					std::cout << (*it).first << "(" << (*it).second << ")"  ;
+					//  if ( dev > 0.01 ) {
+					std::cout  << "equal2? " << dev << ' ' << currentenergy << " " <<  tmp_currentenergy << ' ' << dE <<
+					'\n';
+					//  }
 					} // scope
 
 					std::cout << "RUNNING CURRENT " << currentenergy << std::endl;
-				//	std::cout << (*it).first << "(" << (*it).second << ")"  ;
-*/
+					// std::cout << (*it).first << "(" << (*it).second << ")"  ;
+					*/
 					state_on_node( (*it).first ) = (*it).second;
 				}
-			//std::cout << "ACCEPT: currentenergy " << currentenergy << std::endl;
-			//std::cout << std::endl;
+				//std::cout << "ACCEPT: currentenergy " << currentenergy << std::endl;
+				//std::cout << std::endl;
 
-			//std::cout << "CURRENT: " << currentenergy << "BEST: " << bestenergy() << std::endl;
-				if ( ( prevrotamer_state == 0 ) || ( other_prevrotamer_state == 0 ) || ( currentenergy <= bestenergy() )) {
+				//std::cout << "CURRENT: " << currentenergy << "BEST: " << bestenergy() << std::endl;
+				if ( ( prevrotamer_state == 0 ) || ( other_prevrotamer_state == 0 ) || ( currentenergy <= bestenergy() ) ) {
 					bestenergy() = currentenergy;
 					best_state_on_node = state_on_node;
 					if ( false ) { // hacking ///////////////////////////////////////////
@@ -490,27 +489,27 @@ void FixbbLinkingRotamerSimAnnealer::run()
 				TR.Trace << "rejecting multiple rotamer substitution" << std::endl;
 				//revert changes:
 
-				for (std::map<Size, Size>::iterator it = resid_states.begin(), ite = resid_states.end(); it != ite; ++it){
+				for ( std::map<Size, Size>::iterator it = resid_states.begin(), ite = resid_states.end(); it != ite; ++it ) {
 
 					core::PackerEnergy dE, oldE;
 					ig_->consider_substitution( (*it).first,  state_on_node((*it).first),
-																			dE, oldE );
+						dE, oldE );
 					//tmp_currentenergy = currentenergy;  // set but never used ~Labonte
 					currentenergy = ig_->commit_considered_substitution();
 				}
-			//std::cout << "REJECT: currentenergy " << currentenergy << std::endl;
-			//	{ // debugging
-			//		Real const dev( std::abs( tmp_currentenergy - currentenergy ) );
-			//		if ( dev > 0.01 ) {
-			//			TR << "equal3? " << dev << ' ' << tmp_currentenergy << ' ' << currentenergy << '\n';
-			//		}
-			//	} // scope
-			//	currentenergy = previous_energy_average + delta_energy_average;
+				//std::cout << "REJECT: currentenergy " << currentenergy << std::endl;
+				// { // debugging
+				//  Real const dev( std::abs( tmp_currentenergy - currentenergy ) );
+				//  if ( dev > 0.01 ) {
+				//   TR << "equal3? " << dev << ' ' << tmp_currentenergy << ' ' << currentenergy << '\n';
+				//  }
+				// } // scope
+				// currentenergy = previous_energy_average + delta_energy_average;
 			} // accept or reject?
 
 			loopenergy(nn) = currentenergy;
 
-		debug_assert( !calc_rot_freq() );
+			debug_assert( !calc_rot_freq() );
 			continue; // skip the logic below for single-rotamer substitution ////////////////////////////////////
 
 
@@ -520,14 +519,12 @@ void FixbbLinkingRotamerSimAnnealer::run()
 			//bk keep new rotamer if it is lower in energy or accept it at some
 			//bk probability if it is higher in energy, if it is the first
 			//bk rotamer to be tried at this position automatically accept it.
-			if ( (prevrotamer_state == 0) || pass_metropolis(previous_energy_for_node,delta_energy) )
-			{
+			if ( (prevrotamer_state == 0) || pass_metropolis(previous_energy_for_node,delta_energy) ) {
 
 				//std::cerr << "Accepted" << std::endl;
-//				currentenergy = ig_->commit_considered_substitution();
+				//    currentenergy = ig_->commit_considered_substitution();
 				state_on_node(moltenres_id) = rotamer_state_on_moltenres;
-				if ((prevrotamer_state == 0)||(currentenergy < bestenergy() ))
-				{
+				if ( (prevrotamer_state == 0)||(currentenergy < bestenergy() ) ) {
 					bestenergy() = currentenergy;
 					best_state_on_node = state_on_node;
 				}
@@ -536,14 +533,11 @@ void FixbbLinkingRotamerSimAnnealer::run()
 			loopenergy(nn) = currentenergy;
 			core::PackerEnergy const temperature = get_temperature();
 
-			if ( calc_rot_freq() && ( temperature <= calc_freq_temp ) )
-			{
+			if ( calc_rot_freq() && ( temperature <= calc_freq_temp ) ) {
 				++nsteps;
-				for (Size ii = 1; ii <= nmoltenres; ++ii )
-				{
+				for ( Size ii = 1; ii <= nmoltenres; ++ii ) {
 					int iistate = state_on_node(ii);
-					if (iistate != 0)
-					{
+					if ( iistate != 0 ) {
 						++nsteps_for_rot( rotamer_sets()->moltenres_rotid_2_rotid(ii, iistate) );
 					}
 				}
@@ -553,33 +547,29 @@ void FixbbLinkingRotamerSimAnnealer::run()
 		} // end of inneriteration loop
 	} //end of outeriteration loop
 
-	if ( ig_->any_vertex_state_unassigned() )
-	{
+	if ( ig_->any_vertex_state_unassigned() ) {
 		std::cerr << "Critical error -- In FixbbLinkingRotamerSimAnnealer, one or more vertex states unassigned at annealing's completion." << std::endl;
 		std::cerr << "Critical error -- assignment and energy of assignment meaningless" << std::endl;
 
 		FArray1D_int nstates_for_moltenres( rotamer_sets()->nmoltenres(), 0 );
-		for ( uint ii = 0; ii < num_rots_to_pack(); ++ii)
-		{
+		for ( uint ii = 0; ii < num_rots_to_pack(); ++ii ) {
 			++nstates_for_moltenres( rotamer_sets()->res_for_rotamer( rot_to_pack()[ ii ] ) );
 		}
 
-		for ( uint ii = 1; ii <= rotamer_sets()->nmoltenres(); ++ii)
-		{
-			if ( best_state_on_node( ii ) == 0 )
-			{
+		for ( uint ii = 1; ii <= rotamer_sets()->nmoltenres(); ++ii ) {
+			if ( best_state_on_node( ii ) == 0 ) {
 				std::cout << "Molten res " << ii << " (residue " << rotamer_sets()->moltenres_2_resid( ii );
 				std::cout << " ) assigned state 0 despite having " << nstates_for_moltenres( ii ) << " states to choose from" << std::endl;
 			}
 		}
-	debug_assert( ! ig_->any_vertex_state_unassigned() );
+		debug_assert( ! ig_->any_vertex_state_unassigned() );
 		utility_exit();
 
 
 	}
 
 	//convert best_state_on_node into best_rotamer_at_seqpos
-	for (Size ii = 1; ii <= nmoltenres; ++ii){
+	for ( Size ii = 1; ii <= nmoltenres; ++ii ) {
 		Size const iiresid = rotamer_sets()->moltenres_2_resid( ii );
 		bestrotamer_at_seqpos()( iiresid ) = rotamer_sets()->moltenres_rotid_2_rotid( ii, best_state_on_node(ii));
 	}

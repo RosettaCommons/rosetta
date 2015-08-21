@@ -123,7 +123,7 @@ LoopHashMoverWrapper::apply( Pose & pose )
 	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
 
 	// symmetric->asymmetric
-	if (core::pose::symmetry::is_symmetric( pose )) {
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		core::pose::Pose pose_asu;
 		core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu);
 		pose = pose_asu;
@@ -136,12 +136,12 @@ LoopHashMoverWrapper::apply( Pose & pose )
 
 	lsampler.set_start_res( start_res_ );
 	lsampler.set_stop_res ( stop_res_ );
-  lsampler.set_min_bbrms( min_bbrms() );
-  lsampler.set_max_bbrms( max_bbrms() );
-  lsampler.set_min_rms( min_rms() );
-  lsampler.set_max_rms( max_rms() );
-  lsampler.set_max_nstruct( max_nstruct() );
-  lsampler.set_nonideal( !ideal_ );
+	lsampler.set_min_bbrms( min_bbrms() );
+	lsampler.set_max_bbrms( max_bbrms() );
+	lsampler.set_min_rms( min_rms() );
+	lsampler.set_max_rms( max_rms() );
+	lsampler.set_max_nstruct( max_nstruct() );
+	lsampler.set_nonideal( !ideal_ );
 	lsampler.use_prefiltering( prefilter_scorefxn_, nprefilter_ );
 	lsampler.set_max_radius( max_radius_ );//all hardcoded for testing
 	lsampler.set_max_struct( max_struct_ );
@@ -151,8 +151,9 @@ LoopHashMoverWrapper::apply( Pose & pose )
 	std::vector< SilentStructOP > lib_structs;
 	Size starttime = time( NULL );
 	std::string sample_weight( "" );
-	for( Size resi = 1; resi <= pose.total_residue(); ++resi )
+	for ( Size resi = 1; resi <= pose.total_residue(); ++resi ) {
 		sample_weight += utility::to_string( sample_weight_const_ ) + " ";
+	}
 	core::pose::add_comment( pose, "sample_weight", sample_weight );
 	lsampler.build_structures( pose, lib_structs );
 	Size endtime = time( NULL );
@@ -162,21 +163,21 @@ LoopHashMoverWrapper::apply( Pose & pose )
 	numeric::random::random_permutation( lib_structs.begin(), lib_structs.end(), numeric::random::rg() );
 
 	std::vector< std::pair< Real, SilentStructOP > > cen_scored_structs;
-	BOOST_FOREACH( SilentStructOP structure, lib_structs ){
+	BOOST_FOREACH ( SilentStructOP structure, lib_structs ) {
 		Pose rpose;
 		structure->fill_pose( rpose );
 
 		// asymmetric->symmetric (if input was symmetric)
-		if (core::pose::symmetry::is_symmetric( saved_pose )) {
+		if ( core::pose::symmetry::is_symmetric( saved_pose ) ) {
 			core::pose::Pose pose_asu = rpose;
 			rpose = saved_pose;
 
 			// xyz copy
-		  utility::vector1< core::id::AtomID > atm_ids;
-		  utility::vector1< numeric::xyzVector< core::Real> > atm_xyzs;
-			for (Size i=1; i<=pose_asu.total_residue(); ++i) {
-				if (pose_asu.residue_type(i).aa() == core::chemical::aa_vrt) continue;
-				for (Size j=1; j<=pose_asu.residue_type(i).natoms(); ++j) {
+			utility::vector1< core::id::AtomID > atm_ids;
+			utility::vector1< numeric::xyzVector< core::Real> > atm_xyzs;
+			for ( Size i=1; i<=pose_asu.total_residue(); ++i ) {
+				if ( pose_asu.residue_type(i).aa() == core::chemical::aa_vrt ) continue;
+				for ( Size j=1; j<=pose_asu.residue_type(i).natoms(); ++j ) {
 					core::id::AtomID atm_ij(j,i);
 					atm_ids.push_back( atm_ij );
 					atm_xyzs.push_back( pose_asu.xyz( atm_ij ) );
@@ -187,7 +188,7 @@ LoopHashMoverWrapper::apply( Pose & pose )
 
 		// apply selection criteria
 		bool passed_i = cenfilter_->apply( rpose );
-		if (passed_i) {
+		if ( passed_i ) {
 			core::Real score_i = ranking_cenfilter()->report_sm( rpose );
 			core::util::switch_to_residue_type_set( rpose, core::chemical::FA_STANDARD );
 
@@ -201,7 +202,7 @@ LoopHashMoverWrapper::apply( Pose & pose )
 
 	// sort by centroid criteria
 	std::sort( cen_scored_structs.begin(), cen_scored_structs.end(), utility::SortFirst<Real, SilentStructOP>() );
-	if (ncentroid_ >= cen_scored_structs.size()) {
+	if ( ncentroid_ >= cen_scored_structs.size() ) {
 		all_structs_ = cen_scored_structs;
 	} else {
 		std::vector< std::pair< Real, SilentStructOP > >::const_iterator first = cen_scored_structs.end() - ncentroid_;
@@ -211,27 +212,27 @@ LoopHashMoverWrapper::apply( Pose & pose )
 	TR << "After centroid filter: " << all_structs_.size() << " of " << cen_scored_structs.size() << " structures" << std::endl;
 
 	// if a relax mover is specified, apply to each structure passing the filter
-	if (fastrelax_) {
+	if ( fastrelax_ ) {
 		std::vector< std::pair< Real, SilentStructOP > > fa_scored_structs;
 		std::vector< std::pair< Real, SilentStructOP > >::const_iterator it = all_structs_.begin();
 
-		while (it != all_structs_.end()) {
+		while ( it != all_structs_.end() ) {
 			// prepare local batch
 			std::vector < SilentStructOP > relax_structs;  // the local batch
 
-			for (int i=0;i<(int)batch_size_; ++i) {
+			for ( int i=0; i<(int)batch_size_; ++i ) {
 				SilentStructOP new_struct;
 				new_struct = (*it).second->clone();
 
 				relax_structs.push_back( new_struct );
-				if (++it == all_structs_.end()) break; // early exit
+				if ( ++it == all_structs_.end() ) break; // early exit
 			}
 
 			TR << "BATCHSIZE: " <<  relax_structs.size() << std::endl;
 			fastrelax_->batch_apply( relax_structs );
 
 			// Now save the resulting decoys
-			BOOST_FOREACH( SilentStructOP structure, relax_structs ){
+			BOOST_FOREACH ( SilentStructOP structure, relax_structs ) {
 				// inflate ...
 				Pose rpose;
 				structure->fill_pose( rpose );
@@ -240,7 +241,7 @@ LoopHashMoverWrapper::apply( Pose & pose )
 				bool passed_i = fafilter_->apply( rpose );
 
 				// ... and insert
-				if (passed_i) {
+				if ( passed_i ) {
 					core::Real score_i = ranking_fafilter_->report_sm( rpose );
 					core::io::silent::SilentStructOP new_struct =  ideal_?
 						core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out() :
@@ -253,7 +254,7 @@ LoopHashMoverWrapper::apply( Pose & pose )
 
 		// sort by fa criteria
 		std::sort( fa_scored_structs.begin(), fa_scored_structs.end(), utility::SortFirst<Real, SilentStructOP>() );
-		if (nfullatom_ >= fa_scored_structs.size()) {
+		if ( nfullatom_ >= fa_scored_structs.size() ) {
 			all_structs_ = fa_scored_structs;
 		} else {
 			std::vector< std::pair< Real, SilentStructOP > >::const_iterator first = fa_scored_structs.end() - nfullatom_;
@@ -263,7 +264,7 @@ LoopHashMoverWrapper::apply( Pose & pose )
 		TR << "After fullatom filter: " << all_structs_.size() << " of " << cen_scored_structs.size() << " structures" << std::endl;
 	}
 
-	if( all_structs_.size() == 0 ){
+	if ( all_structs_.size() == 0 ) {
 		TR<<"No structures survived fullatom filter. Consider relaxing filters"<<std::endl;
 		set_last_move_status( protocols::moves::FAIL_RETRY );
 		return;
@@ -278,8 +279,9 @@ LoopHashMoverWrapper::apply( Pose & pose )
 
 core::pose::PoseOP
 LoopHashMoverWrapper::get_additional_output() {
-	if ( all_structs_.size() == 0)
+	if ( all_structs_.size() == 0 ) {
 		return NULL;
+	}
 
 	// pop best
 	core::pose::PoseOP pose( new core::pose::Pose() );
@@ -299,10 +301,10 @@ LoopHashMoverWrapper::get_name() const {
 
 void
 LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const &filters,
-		Movers_map const &movers,
-		Pose const & pose )
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const &filters,
+	Movers_map const &movers,
+	Pose const & pose )
 {
 	min_bbrms_ = tag->getOption< Real >( "min_bbrms", 0 );
 	max_bbrms_ = tag->getOption< Real >( "max_bbrms", 100000 );
@@ -318,19 +320,22 @@ LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 
 	start_res_ = 2;
 	stop_res_ = 0;
-	if ( tag->hasOption( "start_res_num" ) || tag->hasOption( "start_pdb_num"))
+	if ( tag->hasOption( "start_res_num" ) || tag->hasOption( "start_pdb_num") ) {
 		start_res_ = core::pose::get_resnum( tag, pose, "start_" );
-	if ( tag->hasOption( "stop_res_num" ) || tag->hasOption( "stop_pdb_num"))
+	}
+	if ( tag->hasOption( "stop_res_num" ) || tag->hasOption( "stop_pdb_num") ) {
 		stop_res_ = core::pose::get_resnum( tag, pose, "stop_" );
+	}
 
 	string const loop_sizes_str( tag->getOption< string >( "loop_sizes" ) );
 	vector1< string > const loop_sizes_split( utility::string_split( loop_sizes_str, ',' ) );
-	BOOST_FOREACH( string const loop_size, loop_sizes_split )
+	BOOST_FOREACH ( string const loop_size, loop_sizes_split ) {
 		add_loop_size( (Size)std::atoi(loop_size.c_str()) ) ;
+	}
 
 	// path to DB -- if not specified then command-line flag is used
 	library_ = LoopHashLibraryOP( new LoopHashLibrary( loop_sizes() , 1 , 0 ) );
-	if ( tag->hasOption( "db_path" )) {
+	if ( tag->hasOption( "db_path" ) ) {
 		std::string db_path = tag->getOption< string >( "db_path" );
 		library_->set_db_path( db_path );
 	}
@@ -339,7 +344,7 @@ LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 
 	// FILTERING STEP 1 --- filter with chainbreak
 	nprefilter_ = tag->getOption< Size >( "nprefilter", 0 );
-	if ( tag->hasOption( "prefilter_scorefxn" )) {
+	if ( tag->hasOption( "prefilter_scorefxn" ) ) {
 		string const prefilter_scorefxn_name( tag->getOption< string >( "prefilter_scorefxn" ) );
 		prefilter_scorefxn_ = data.get_ptr< ScoreFunction >( "scorefxns", prefilter_scorefxn_name );
 	}
@@ -353,20 +358,22 @@ LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 	// centroid filter
 	string const centroid_filter_name( tag->getOption< string >( "centroid_filter", "true_filter" ) );
 	Filters_map::const_iterator find_cenfilter( filters.find( centroid_filter_name ) );
-	if( find_cenfilter == filters.end() )
+	if ( find_cenfilter == filters.end() ) {
 		utility_exit_with_message( "Filter " + centroid_filter_name + " not found in LoopHashMoverWrapper" );
+	}
 	cenfilter( find_cenfilter->second );
 	ranking_cenfilter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "ranking_cenfilter", centroid_filter_name ), filters ) );
 
 	// batch relax mover
-	if (tag->hasOption( "relax_mover" )) {
+	if ( tag->hasOption( "relax_mover" ) ) {
 		string const relax_mover_name( tag->getOption< string >( "relax_mover" ) );
 		Movers_map::const_iterator find_mover( movers.find( relax_mover_name ) );
 		bool const mover_found( find_mover != movers.end() );
-		if( mover_found )
+		if ( mover_found ) {
 			relax_mover( utility::pointer::dynamic_pointer_cast< protocols::relax::FastRelax > ( find_mover->second ) );
-		else
+		} else {
 			utility_exit_with_message( "Mover " + relax_mover_name + " not found in LoopHashMoverWrapper" );
+		}
 
 		// nonideal
 		fastrelax_->set_force_nonideal( !ideal_ );
@@ -381,14 +388,15 @@ LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 		// fullatom filter <<<< used to select best 'nfullatom' from all decoys
 		string const fullatom_filter_name( tag->getOption< string >( "fullatom_filter", "true_filter" ) );
 		Filters_map::const_iterator find_fafilter( filters.find( fullatom_filter_name ) );
-		if( find_fafilter == filters.end() )
+		if ( find_fafilter == filters.end() ) {
 			utility_exit_with_message( "Filter " + fullatom_filter_name + " not found in LoopHashMoverWrapper" );
+		}
 		fafilter( find_fafilter->second );
 		ranking_fafilter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string> ( "ranking_fafilter", fullatom_filter_name ), filters ) );
 	} else {
-		if (tag->hasOption(  "batch_size" ) ) TR << "Ignoring option batch_size" << std::endl;
-		if (tag->hasOption(  "nfullatom" ) ) TR << "Ignoring option nfullatom" << std::endl;
-		if (tag->hasOption(  "fullatom_filter" ) ) TR << "Ignoring option fullatom_filter" << std::endl;
+		if ( tag->hasOption(  "batch_size" ) ) TR << "Ignoring option batch_size" << std::endl;
+		if ( tag->hasOption(  "nfullatom" ) ) TR << "Ignoring option nfullatom" << std::endl;
+		if ( tag->hasOption(  "fullatom_filter" ) ) TR << "Ignoring option fullatom_filter" << std::endl;
 	}
 }
 

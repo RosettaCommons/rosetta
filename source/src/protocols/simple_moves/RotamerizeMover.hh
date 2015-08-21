@@ -57,7 +57,7 @@ public:
 	RotamerizeMover( std::string const & );
 
 	RotamerizeMover(
-			PackerTaskOP task
+		PackerTaskOP task
 	);
 
 	// destructor (important for properly forward-declaring smart-pointer members)

@@ -55,9 +55,9 @@ public:
 	SymDofMover();
 	//SymDofMover(const SymDofMover& rval);
 
- 	// --- virtual functions from mover ---
-	 virtual std::string get_name() const { return "SymDofMover"; }
-	 virtual void apply(Pose& pose);
+	// --- virtual functions from mover ---
+	virtual std::string get_name() const { return "SymDofMover"; }
+	virtual void apply(Pose& pose);
 	// virtual void trans_pose( Pose & pose, numeric::xyzVector<Real> const & trans, Size start, Size end );
 	// virtual void rot_pose( Pose & pose, numeric::xyzMatrix<Real> const & rot, Size start, Size end );
 	// virtual void rot_pose( Pose & pose, numeric::xyzMatrix<Real> const & rot, numeric::xyzVector<Real> const & cen, Size start, Size end );

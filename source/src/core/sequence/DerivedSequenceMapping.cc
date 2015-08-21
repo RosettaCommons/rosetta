@@ -39,7 +39,7 @@ using namespace ObjexxFCL;
 DerivedSequenceMapping::~DerivedSequenceMapping() {}
 
 DerivedSequenceMapping::DerivedSequenceMapping( DerivedSequenceMapping const & src )
-	: SequenceMapping(src)
+: SequenceMapping(src)
 {
 	*this = src;
 }

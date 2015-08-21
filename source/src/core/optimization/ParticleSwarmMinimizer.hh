@@ -59,7 +59,7 @@ public:
 		// Reverse the sign: for normal multifunc, lower is better
 		// For historical reasons, the code maximizes the "fitness"
 		fitness_ = -f(p_);
-		if( ! best_valid_ || fitness_pbest_ < fitness_ ) {
+		if ( ! best_valid_ || fitness_pbest_ < fitness_ ) {
 			best_valid_ = true;
 			pbest_ = p_; // make a copy
 			fitness_pbest_ = fitness_;
@@ -72,7 +72,7 @@ public:
 		// Reverse the sign: for normal multifunc, lower is better
 		// For historical reasons, the code maximizes the "fitness"
 		fitness_ = -new_score;
-		if( ! best_valid_ || fitness_pbest_ < fitness_ ) {
+		if ( ! best_valid_ || fitness_pbest_ < fitness_ ) {
 			best_valid_ = true;
 			pbest_ = p_; // make a copy
 			fitness_pbest_ = fitness_;
@@ -83,22 +83,22 @@ public:
 	/// @brief Make sure that all arrays are large enough -- prevents index-out-of-bound errors.
 	void ensure_size(Size minsize)
 	{
-		if( p_.size() < minsize ) p_.resize(minsize);
+		if ( p_.size() < minsize ) p_.resize(minsize);
 		Size const s = p_.size();
-		if( v_.size() < s ) v_.resize(s);
-		if( pbest_.size() < s ) pbest_.resize(s);
+		if ( v_.size() < s ) v_.resize(s);
+		if ( pbest_.size() < s ) pbest_.resize(s);
 	}
 
 	/// @brief This is why data should be private: you get to ensure it's valid when you read it.
 	Multivec const &
 	pbest() const {
-	debug_assert( best_valid_ );
+		debug_assert( best_valid_ );
 		return pbest_;
 	}
 
 	Real
 	fitness_pbest() const {
-	debug_assert( best_valid_ );
+		debug_assert( best_valid_ );
 		return fitness_pbest_;
 	}
 

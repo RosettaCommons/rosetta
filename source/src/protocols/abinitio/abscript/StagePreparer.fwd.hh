@@ -21,7 +21,7 @@
 
 namespace protocols {
 namespace abinitio {
-namespace abscript{
+namespace abscript {
 
 class StagePreparer;
 typedef utility::pointer::shared_ptr< StagePreparer > StagePreparerOP;

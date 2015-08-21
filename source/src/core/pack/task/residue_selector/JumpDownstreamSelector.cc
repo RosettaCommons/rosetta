@@ -38,7 +38,7 @@ namespace task {
 namespace residue_selector {
 
 JumpDownstreamSelector::JumpDownstreamSelector():
-jump_(0) {}
+	jump_(0) {}
 
 JumpDownstreamSelector::JumpDownstreamSelector( int jump )
 {
@@ -51,14 +51,14 @@ JumpDownstreamSelector::~JumpDownstreamSelector() {}
 ResidueSubset
 JumpDownstreamSelector::apply( core::pose::Pose const & pose ) const
 {
-debug_assert( jump_ > 0 );
+	debug_assert( jump_ > 0 );
 
 	ResidueSubset subset( pose.total_residue(), false );
 
 	ObjexxFCL::FArray1D_bool upstream( pose.total_residue() );
 	pose.fold_tree().partition_by_jump( jump_, upstream );
 
-	for( core::Size ii = 1; ii < upstream.size(); ++ii ) {
+	for ( core::Size ii = 1; ii < upstream.size(); ++ii ) {
 		subset[ ii ] = !upstream( ii );
 	}
 	return subset;
@@ -66,8 +66,8 @@ debug_assert( jump_ > 0 );
 
 void
 JumpDownstreamSelector::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &)
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &)
 {
 	try {
 		set_jump( tag->getOption< int >( "jump" ) );
@@ -90,7 +90,7 @@ std::string JumpDownstreamSelector::get_name() const {
 }
 
 std::string JumpDownstreamSelector::class_name() {
-		  return "JumpDownstream";
+	return "JumpDownstream";
 }
 
 ResidueSelectorOP

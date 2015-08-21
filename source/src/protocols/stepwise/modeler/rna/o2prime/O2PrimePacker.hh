@@ -32,61 +32,61 @@ namespace modeler {
 namespace rna {
 namespace o2prime {
 
-	class O2PrimePacker: public protocols::moves::Mover {
+class O2PrimePacker: public protocols::moves::Mover {
 
-	public:
+public:
 
-		//constructor
-		O2PrimePacker( pose::Pose const & pose,
-									 core::scoring::ScoreFunctionCOP const & scorefxn,
-									 utility::vector1< core::Size > moving_res ,
-									 bool const pack_virtual_o2prime_hydrogen = false );
+	//constructor
+	O2PrimePacker( pose::Pose const & pose,
+		core::scoring::ScoreFunctionCOP const & scorefxn,
+		utility::vector1< core::Size > moving_res ,
+		bool const pack_virtual_o2prime_hydrogen = false );
 
-		//destructor
-		~O2PrimePacker();
+	//destructor
+	~O2PrimePacker();
 
-		void
-		sample_o2prime_hydrogen();
+	void
+	sample_o2prime_hydrogen();
 
-		pose::Pose & pose();
+	pose::Pose & pose();
 
-		void
-		apply( core::pose::Pose & pose ){ copy_all_o2prime_torsions( pose ); }
+	void
+	apply( core::pose::Pose & pose ){ copy_all_o2prime_torsions( pose ); }
 
-		std::string get_name() const{ return "O2PrimePacker"; }
+	std::string get_name() const{ return "O2PrimePacker"; }
 
-		void
-		copy_all_o2prime_torsions( core::pose::Pose & mod_pose ) const;
+	void
+	copy_all_o2prime_torsions( core::pose::Pose & mod_pose ) const;
 
-		void
-		set_use_green_packer( bool const & setting ){ use_green_packer_ = setting ; }
+	void
+	set_use_green_packer( bool const & setting ){ use_green_packer_ = setting ; }
 
-		void set_partition_definition( ObjexxFCL::FArray1D < bool > const & setting ){ partition_definition_ = setting; }
+	void set_partition_definition( ObjexxFCL::FArray1D < bool > const & setting ){ partition_definition_ = setting; }
 
-	private:
+private:
 
-		void
-		initialize_o2prime_packer_task();
+	void
+	initialize_o2prime_packer_task();
 
-		void
-		initialize_o2prime_green_packer();
+	void
+	initialize_o2prime_green_packer();
 
-	private:
+private:
 
-		Pose const pose_with_original_HO2prime_torsion_;
-		utility::vector1< Size > const moving_res_;
-		Pose o2prime_pack_pose_;
-		bool const pack_virtual_o2prime_hydrogen_;
-		bool use_green_packer_;
+	Pose const pose_with_original_HO2prime_torsion_;
+	utility::vector1< Size > const moving_res_;
+	Pose o2prime_pack_pose_;
+	bool const pack_virtual_o2prime_hydrogen_;
+	bool use_green_packer_;
 
-		core::pack::task::PackerTaskOP o2prime_pack_task_;
-		protocols::simple_moves::GreenPackerOP o2prime_green_packer_;
+	core::pack::task::PackerTaskOP o2prime_pack_task_;
+	protocols::simple_moves::GreenPackerOP o2prime_green_packer_;
 
-		core::scoring::ScoreFunctionCOP o2prime_pack_scorefxn_;
+	core::scoring::ScoreFunctionCOP o2prime_pack_scorefxn_;
 
-		ObjexxFCL::FArray1D < bool > partition_definition_; // needed by green packer
+	ObjexxFCL::FArray1D < bool > partition_definition_; // needed by green packer
 
-	};
+};
 
 } //o2prime
 } //rna

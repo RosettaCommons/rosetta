@@ -147,7 +147,7 @@ PlacementAuctionMover::end() const{
 void
 PlacementAuctionMover::apply( core::pose::Pose & pose )
 {
-  core::pose::Pose const saved_pose( pose ); // the pose should not actually be changed within this function
+	core::pose::Pose const saved_pose( pose ); // the pose should not actually be changed within this function
 
 	using namespace protocols::hotspot_hashing;
 	using namespace core::scoring;
@@ -158,7 +158,7 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 	ScoreFunctionOP only_stub_scorefxn( new ScoreFunction );
 	only_stub_scorefxn->reset();
 
-  protocols::filters::FilterOP stf;
+	protocols::filters::FilterOP stf;
 	if ( stub_energy_fxn_ == "backbone_stub_constraint" ) {
 		only_stub_scorefxn->set_weight( backbone_stub_constraint, 1.0 );
 		stf = protocols::filters::FilterOP( new protocols::simple_filters::ScoreTypeFilter(only_stub_scorefxn, backbone_stub_constraint, 1.0 ) );
@@ -171,26 +171,28 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 	}
 
 	core::Size fixed_res(1);
-	if( host_chain_ == 1 ) fixed_res = pose.total_residue();
+	if ( host_chain_ == 1 ) fixed_res = pose.total_residue();
 	core::id::AtomID const fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
-/// ResidueAuction is keyed by energy => we select the residue,stub,stubset combination with the best energy for each stubset,stub combination
+	/// ResidueAuction is keyed by energy => we select the residue,stub,stubset combination with the best energy for each stubset,stub combination
 	typedef std::pair< HotspotStubSetOP, HotspotStubOP > StubsetStubPair;
 	//typedef std::pair< core::Real, std::pair< core::Size, StubsetStubPair > > ResidueAuctionItem;
 	typedef std::multimap< core::Real, std::pair< core::Size, StubsetStubPair > > ResidueAuction;
-/// Preventing positions that have already been prevented throught task factory or through the prevent_repacking method
+	/// Preventing positions that have already been prevented throught task factory or through the prevent_repacking method
 	using namespace core::pack::task;
 	PackerTaskOP task;
-	if( task_factory() )
+	if ( task_factory() ) {
 		task = task_factory()->create_task_and_apply_taskoperations( pose );
-	else
+	} else {
 		task = TaskFactory::create_packer_task( pose );
+	}
 	utility::vector1< core::Size > host_positions;
-	for( core::Size host_position( host_chain_begin+1 ); host_position<=host_chain_end-1; ++host_position ){
+	for ( core::Size host_position( host_chain_begin+1 ); host_position<=host_chain_end-1; ++host_position ) {
 		using namespace core::chemical;
 		// exclude gly/pro and don't allow prevented residues
-		if( std::find( prevent_repacking_.begin(), prevent_repacking_.end(), host_position ) == prevent_repacking_.end() && pose.residue( host_position ).aa() != aa_gly && pose.residue( host_position ).aa() != aa_pro ){
-			if( task->nonconst_residue_task( host_position ).being_packed() )
+		if ( std::find( prevent_repacking_.begin(), prevent_repacking_.end(), host_position ) == prevent_repacking_.end() && pose.residue( host_position ).aa() != aa_gly && pose.residue( host_position ).aa() != aa_pro ) {
+			if ( task->nonconst_residue_task( host_position ).being_packed() ) {
 				host_positions.push_back( host_position );
+			}
 		}
 	}// for host_position
 
@@ -199,15 +201,14 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 		saved_auction = auction_results() ; /// auction_results_ will be depleted in the following. Then, if successful, I'll reinstate it.
 	}
 
-	BOOST_FOREACH( StubSetStubPos const hs_set, stub_sets_ ){
+	BOOST_FOREACH ( StubSetStubPos const hs_set, stub_sets_ ) {
 		HotspotStubSetOP stub_set( hs_set.first );
-    //TR << "Loop restart: " << std::endl; //loop through each library
-		BOOST_FOREACH( HotspotStubSet::Hs_data const stub_pair, *stub_set ){
+		//TR << "Loop restart: " << std::endl; //loop through each library
+		BOOST_FOREACH ( HotspotStubSet::Hs_data const stub_pair, *stub_set ) {
 			HotspotStubOP stub( stub_pair.second.second );
-			BOOST_FOREACH( core::Size const host_residue, host_positions )
-			{
+			BOOST_FOREACH ( core::Size const host_residue, host_positions ) {
 				core::Real const distance( pose.residue( host_residue ).xyz( "CB" ).distance( stub->residue()->xyz( "CB" ) ) );
-				if( distance >= max_cb_cb_dist_ ) continue;
+				if ( distance >= max_cb_cb_dist_ ) continue;
 				//TR<< "residue: " << pose.residue( host_residue ).seqpos() << " " << pose.residue( host_residue ).name()<< " stub: " << stub->residue()->seqpos() << " " << stub->residue()->name() << " distance: " << distance  << " max_cb_cb_dist_: " << max_cb_cb_dist_ <<std::endl;
 				core::Real const bonus( stub->bonus_value() );
 				// I'm circumventing add_hotspot_constraints to pose and adding the constraint directly
@@ -216,100 +217,101 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 				using namespace core::scoring::constraints;
 				ConstraintCOPs stub_constraints;
 				core::conformation::Residue const host_res( pose.conformation().residue( host_residue ) );
-  				if ( stub_energy_fxn_ == "backbone_stub_constraint" ) {
-						stub_constraints.push_back( core::scoring::constraints::ConstraintOP( new BackboneStubConstraint( pose, host_residue, fixed_atom_id, host_res, bonus, cb_force_ ) ) );
-						stub_constraints = pose.add_constraints( stub_constraints );
-						core::Real const bb_cst_score( stf->report_sm( pose ) );
-						if( bb_cst_score <= -0.5 ) // take only residues that make some appreciable contribution
-							insert( std::make_pair( bb_cst_score, std::make_pair( host_residue, std::make_pair( stub_set, stub ) ) ) );
+				if ( stub_energy_fxn_ == "backbone_stub_constraint" ) {
+					stub_constraints.push_back( core::scoring::constraints::ConstraintOP( new BackboneStubConstraint( pose, host_residue, fixed_atom_id, host_res, bonus, cb_force_ ) ) );
+					stub_constraints = pose.add_constraints( stub_constraints );
+					core::Real const bb_cst_score( stf->report_sm( pose ) );
+					if ( bb_cst_score <= -0.5 ) { // take only residues that make some appreciable contribution
+						insert( std::make_pair( bb_cst_score, std::make_pair( host_residue, std::make_pair( stub_set, stub ) ) ) );
+					}
 				} else if ( stub_energy_fxn_ == "backbone_stub_linear_constraint" ) {
-						stub_constraints.push_back( core::scoring::constraints::ConstraintOP( new BackboneStubLinearConstraint( pose, host_residue, fixed_atom_id, *(stub->residue()), bonus, cb_force_ ) ) );
-						stub_constraints = pose.add_constraints( stub_constraints );
-        		core::Real const bb_cst_score( stf->report_sm( pose ) );
-						insert( std::make_pair( bonus+bb_cst_score, std::make_pair( host_residue, std::make_pair( stub_set, stub ) ) ) );
+					stub_constraints.push_back( core::scoring::constraints::ConstraintOP( new BackboneStubLinearConstraint( pose, host_residue, fixed_atom_id, *(stub->residue()), bonus, cb_force_ ) ) );
+					stub_constraints = pose.add_constraints( stub_constraints );
+					core::Real const bb_cst_score( stf->report_sm( pose ) );
+					insert( std::make_pair( bonus+bb_cst_score, std::make_pair( host_residue, std::make_pair( stub_set, stub ) ) ) );
 				}
-			 pose = saved_pose;
+				pose = saved_pose;
 			}// foreach host_residue
 		}//foreach stub_pair
 
 		//only for backbone_stub_linear_constraint
-     if ( stub_energy_fxn_ == "backbone_stub_linear_constraint" ) {
-				if( size() == 0 ){
-					TR<<"No pairing found. Failing."<<std::endl;
-					set_last_move_status( protocols::moves::FAIL_RETRY );
-					return;
+		if ( stub_energy_fxn_ == "backbone_stub_linear_constraint" ) {
+			if ( size() == 0 ) {
+				TR<<"No pairing found. Failing."<<std::endl;
+				set_last_move_status( protocols::moves::FAIL_RETRY );
+				return;
+			}
+
+			//Insert all auctioned postiions to be used by PlaceSimultaneousMover
+			core::Real best_combined_energy=100;
+			//TR<<"Total possiblitly found: " << size() <<std::endl;
+			for ( ResidueAuction::iterator lowest_energy = begin(); lowest_energy != end(); ++lowest_energy ) {
+				if ( lowest_energy->first <= best_combined_energy ) {
+					saved_auction.insert(*lowest_energy);
+					core::Size const position( lowest_energy->second.first );
+					HotspotStubSetCOP stubset( lowest_energy->second.second.first );
+					HotspotStubOP stub( lowest_energy->second.second.second );
+
+					//assign matched positions to stub_sets_
+					BOOST_FOREACH ( StubSetStubPos & hs_set, stub_sets() ) {
+						if ( position == hs_set.second.second ) { // it has already being used!
+							break;
+						}
+						if ( hs_set.first == stubset ) {
+							hs_set.second.first = stub;
+							hs_set.second.second = position;
+							break;
+						}
+					}
 				}
-
-      //Insert all auctioned postiions to be used by PlaceSimultaneousMover
-       core::Real best_combined_energy=100;
-       //TR<<"Total possiblitly found: " << size() <<std::endl;
-       for( ResidueAuction::iterator lowest_energy = begin(); lowest_energy != end(); ++lowest_energy) {
-              if (lowest_energy->first <= best_combined_energy ) {
-                 saved_auction.insert(*lowest_energy);
-                 core::Size const position( lowest_energy->second.first );
-                 HotspotStubSetCOP stubset( lowest_energy->second.second.first );
-                 HotspotStubOP stub( lowest_energy->second.second.second );
-
-                 //assign matched positions to stub_sets_
-                BOOST_FOREACH( StubSetStubPos & hs_set, stub_sets() ){
-                 if ( position == hs_set.second.second ) // it has already being used!
-                   break;
-                 if( hs_set.first == stubset ){
-                   hs_set.second.first = stub;
-                   hs_set.second.second = position;
-                   break;
-                 }
-               }
-             }
-           }
-           clear(); //clear auction results for one hotspot
+			}
+			clear(); //clear auction results for one hotspot
 		} //end of backbone_stub_linear_constraint
 	}//foreach hs_set
 
-  if ( stub_energy_fxn_ == "backbone_stub_constraint" ) {
-					if( size() == 0 ){
-						TR<<"No pairing found. Failing."<<std::endl;
-						set_last_move_status( protocols::moves::FAIL_RETRY );
-						return;
-					}
+	if ( stub_energy_fxn_ == "backbone_stub_constraint" ) {
+		if ( size() == 0 ) {
+			TR<<"No pairing found. Failing."<<std::endl;
+			set_last_move_status( protocols::moves::FAIL_RETRY );
+			return;
+		}
 
-					saved_auction = auction_results() ; /// auction_results_ will be depleted in the following. Then, if successful, I'll reinstate it.
-					while( size() > 0 ){
-						// The auction ensures that each position is paired to the stubset that bids the lowest-energy stub on that
-						/// position, but allows each stubset to bid multiple positions. This allows stubsets that lose on one position
-						// to potentially succeed on another.
-						PlacementAuctionMover::const_iterator lowest_energy( begin() );
-						core::Size const position( lowest_energy->second.first );
-						HotspotStubSetCOP stubset( lowest_energy->second.second.first );
-						HotspotStubOP stub( lowest_energy->second.second.second );
-						BOOST_FOREACH( StubSetStubPos & hs_set, stub_sets() ){
-					// This is where the pairing takes place
-							if( hs_set.first == stubset ){
-								hs_set.second.first = stub;
-								hs_set.second.second = position;
-								break;
-							}
-						}
+		saved_auction = auction_results() ; /// auction_results_ will be depleted in the following. Then, if successful, I'll reinstate it.
+		while ( size() > 0 ) {
+			// The auction ensures that each position is paired to the stubset that bids the lowest-energy stub on that
+			/// position, but allows each stubset to bid multiple positions. This allows stubsets that lose on one position
+			// to potentially succeed on another.
+			PlacementAuctionMover::const_iterator lowest_energy( begin() );
+			core::Size const position( lowest_energy->second.first );
+			HotspotStubSetCOP stubset( lowest_energy->second.second.first );
+			HotspotStubOP stub( lowest_energy->second.second.second );
+			BOOST_FOREACH ( StubSetStubPos & hs_set, stub_sets() ) {
+				// This is where the pairing takes place
+				if ( hs_set.first == stubset ) {
+					hs_set.second.first = stub;
+					hs_set.second.second = position;
+					break;
+				}
+			}
 
-						for( ResidueAuction::iterator energy_set_pair = begin(); energy_set_pair != end(); /*incrementing done within the loop*/ ){
-							ResidueAuction::iterator next_it = energy_set_pair;
-							core::Size const erased_pos( energy_set_pair->second.first );
-							HotspotStubSetCOP erased_stubset( energy_set_pair->second.second.first );
+			for ( ResidueAuction::iterator energy_set_pair = begin(); energy_set_pair != end(); /*incrementing done within the loop*/ ) {
+				ResidueAuction::iterator next_it = energy_set_pair;
+				core::Size const erased_pos( energy_set_pair->second.first );
+				HotspotStubSetCOP erased_stubset( energy_set_pair->second.second.first );
 
-							if( position == erased_pos || stubset == erased_stubset ){
-								++next_it;
-								erase( energy_set_pair );
-								energy_set_pair = next_it;
-							}
-							else ++energy_set_pair;
-						}//for energy_set_pair
-					}//while size()
+				if ( position == erased_pos || stubset == erased_stubset ) {
+					++next_it;
+					erase( energy_set_pair );
+					energy_set_pair = next_it;
+				} else ++energy_set_pair;
+			}//for energy_set_pair
+		}//while size()
 	} //end of backbone_stub_constraint
 
 	//check if all stub positions have been paired
-	BOOST_FOREACH( StubSetStubPos const stubset_pos_pair, stub_sets() ){
+	BOOST_FOREACH ( StubSetStubPos const stubset_pos_pair, stub_sets() ) {
 		core::Size const pos( stubset_pos_pair.second.second );
-		if( pos == 0 ){
+		if ( pos == 0 ) {
 			TR<<"Pairing failed"<<std::endl;
 			set_last_move_status( protocols::moves::FAIL_RETRY );
 			return;
@@ -366,10 +368,10 @@ PlacementAuctionMover::stub_sets() {
 
 void
 PlacementAuctionMover::parse_my_tag( TagCOP const tag,
-		basic::datacache::DataMap &data,
-		protocols::filters::Filters_map const &,
-		Movers_map const &,
-		core::pose::Pose const & pose )
+	basic::datacache::DataMap &data,
+	protocols::filters::Filters_map const &,
+	Movers_map const &,
+	core::pose::Pose const & pose )
 {
 	using namespace protocols::hotspot_hashing;
 	using namespace protocols::filters;

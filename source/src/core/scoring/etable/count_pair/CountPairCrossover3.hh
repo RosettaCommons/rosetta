@@ -29,7 +29,7 @@ namespace count_pair {
 class CountPairCrossover3 : public CountPairFunction
 {
 public:
-	public:
+public:
 	typedef CountPairFunction parent;
 
 public:

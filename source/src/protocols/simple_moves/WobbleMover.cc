@@ -69,10 +69,10 @@ WobbleMover::WobbleMover(
 /// Copy constructor disabled until the virtual base class
 /// ClassicFragmentMover's construction is sorted out
 /*WobbleMover::WobbleMover( WobbleMover const & src ) :
-	Parent( src ),
-	buffer_length_( src.buffer_length_ ),
-	forward_threshold_( src.forward_threshold_ ),
-	backward_threshold_( src.backward_threshold_ )
+Parent( src ),
+buffer_length_( src.buffer_length_ ),
+forward_threshold_( src.forward_threshold_ ),
+backward_threshold_( src.backward_threshold_ )
 {}*/
 
 WobbleMover::~WobbleMover()
@@ -91,7 +91,7 @@ bool WobbleMover::ccd_closure(
 	// There is only one loop.
 	protocols::loops::Loops::const_iterator it = loops.begin();
 	protocols::loops::loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover(
-			*it, kinematics::MoveMapCOP( kinematics::MoveMapOP( new kinematics::MoveMap( mm ) ) ) );
+		*it, kinematics::MoveMapCOP( kinematics::MoveMapOP( new kinematics::MoveMap( mm ) ) ) );
 	ccd_loop_closure_mover.apply( pose );
 
 	return ( ccd_loop_closure_mover.deviation() < forward_threshold_ );
@@ -120,9 +120,9 @@ bool WobbleMover::apply_fragment (
 		bool cut_Cterm; // controls whether cutpoint is at C-terminal side of fragment
 		if ( frame.end() + buffer_length_ >= pose.total_residue() ) { //close to end of pose: cut at Nterm
 			cut_Cterm = false;
- 		} else if ( frame.start() <= buffer_length_ ) { //close to start of pose: cut at Cterm
+		} else if ( frame.start() <= buffer_length_ ) { //close to start of pose: cut at Cterm
 			cut_Cterm = true;
-		}	else { //otherwise random direction
+		} else { //otherwise random direction
 			cut_Cterm = numeric::random::rg().uniform() >= 0.5 ;
 		};
 
@@ -147,7 +147,7 @@ bool WobbleMover::apply_fragment (
 
 	//apply fragment
 	bool success = frame.apply( movemap, frag_num, pose );
-	//	pose.dump_pdb( "pre_ccd.pdb" );
+	// pose.dump_pdb( "pre_ccd.pdb" );
 
 	//close loop with ccd
 	if ( success && use_ccd ) {

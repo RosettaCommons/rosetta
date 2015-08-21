@@ -39,14 +39,14 @@ NeighborTypeFilter::~NeighborTypeFilter() {}
 void
 NeighborTypeFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
 {
-  residue_types_.assign( core::chemical::num_canonical_aas, false );
+	residue_types_.assign( core::chemical::num_canonical_aas, false );
 	utility::vector0< utility::tag::TagCOP > const neighbor_type_tags( tag->getTags() );
-	for( utility::vector0< utility::tag::TagCOP >::const_iterator nt_it=neighbor_type_tags.begin(); nt_it!=neighbor_type_tags.end(); ++nt_it ) {
-    utility::tag::TagCOP const nt_tag_ptr = *nt_it;
-    if( nt_tag_ptr->getName() == "Neighbor" ) {
+	for ( utility::vector0< utility::tag::TagCOP >::const_iterator nt_it=neighbor_type_tags.begin(); nt_it!=neighbor_type_tags.end(); ++nt_it ) {
+		utility::tag::TagCOP const nt_tag_ptr = *nt_it;
+		if ( nt_tag_ptr->getName() == "Neighbor" ) {
 			std::string const type( nt_tag_ptr->getOption<std::string>( "type" ) );
 			residue_types_[ core::chemical::aa_from_name( type ) ] = true;
-    }
+		}
 	}
 	target_residue_ = core::pose::get_resnum( tag, pose );
 	distance_threshold_ = tag->getOption<core::Real>( "distance", 8.0 );
@@ -58,9 +58,9 @@ bool
 NeighborTypeFilter::apply( core::pose::Pose const & pose ) const
 {
 	std::vector< core::Size > neighbors = compute( pose );
-	if( neighbors.size() == 0 ) return false;
+	if ( neighbors.size() == 0 ) return false;
 	neighbor_type_filter_tracer<<"neighbours of residue "<<pose.residue( target_residue_ ).name3()<<target_residue_<<": ";
-	for( std::vector< core::Size >::const_iterator n_it=neighbors.begin(); n_it!=neighbors.end(); ++n_it ) {
+	for ( std::vector< core::Size >::const_iterator n_it=neighbors.begin(); n_it!=neighbors.end(); ++n_it ) {
 		neighbor_type_filter_tracer<<pose.residue( *n_it ).name3()<<*n_it<<" ";
 	}
 	neighbor_type_filter_tracer<<std::endl;
@@ -72,7 +72,7 @@ NeighborTypeFilter::report( std::ostream & out, core::pose::Pose const & pose ) 
 {
 	std::vector< core::Size > neighbors = compute( pose );
 	out<<"neighbours of residue "<<pose.residue( target_residue_ ).name3()<<target_residue_<<": ";
-	for( std::vector< core::Size >::const_iterator n_it=neighbors.begin(); n_it!=neighbors.end(); ++n_it ) {
+	for ( std::vector< core::Size >::const_iterator n_it=neighbors.begin(); n_it!=neighbors.end(); ++n_it ) {
 		out<<pose.residue( *n_it ).name3()<<*n_it<<" ";
 	}
 	out<<'\n';
@@ -98,13 +98,14 @@ NeighborTypeFilter::compute( core::pose::Pose const & pose ) const
 	core::conformation::Residue const res_target( pose.residue( target_residue_ ) );
 
 	runtime_assert( target_residue_ <= residue_num );
-	for( core::Size res=start; res<=end; ++res ) {
+	for ( core::Size res=start; res<=end; ++res ) {
 		core::conformation::Residue const resi( pose.residue( res ) );
-		if( !residue_types_[ resi.aa() ] ) continue;
+		if ( !residue_types_[ resi.aa() ] ) continue;
 
 		core::Real const distance( res_target.xyz( res_target.nbr_atom() ).distance( resi.xyz( resi.nbr_atom() )) );
-		if( distance <= distance_threshold_ )
+		if ( distance <= distance_threshold_ ) {
 			neighbors.push_back( res );
+		}
 	}
 	return neighbors;
 }

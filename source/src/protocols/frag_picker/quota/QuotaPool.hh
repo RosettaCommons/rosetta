@@ -10,7 +10,7 @@
 /// @file   protocols/frag_picker/quota/QuotaPool.hh
 /// @brief provides a single pool used by quota
 /// @details a QuotaSelector is constructed with a few pools. At fragment selection procedure
-///		it tries to fit each fragment candidate into the pools by a round robin procedure
+///  it tries to fit each fragment candidate into the pools by a round robin procedure
 /// @author Dominik Gront (dgront@chem.uw.edu.pl)
 
 #ifndef INCLUDED_protocols_frag_picker_quota_QuotaPool_hh
@@ -39,10 +39,10 @@ class QuotaPool: public CandidatesCollector {
 public:
 	/// @brief Creates a pool of a given size and name
 	/// @param name - name assigned to this pool. This in general may be any string that
-	///	later allows one control pool's behavior from a flag file
+	/// later allows one control pool's behavior from a flag file
 	QuotaPool(std::string pool_name,Real quota_fraction) {
-	    pool_name_ = pool_name;
-	    quota_fraction_ = quota_fraction;
+		pool_name_ = pool_name;
+		quota_fraction_ = quota_fraction;
 	}
 
 	virtual ~QuotaPool() {};
@@ -73,7 +73,7 @@ public:
 	inline
 	std::string const &
 	get_pool_name() const  {
-	  return pool_name_;
+		return pool_name_;
 	}
 
 	/// @brief prints information on which fragments can be accepted by this pool and how many of them
@@ -91,7 +91,7 @@ public:
 	/// @brief provides the score for a candidate that was used to sort a quota pool
 	/// @details This base class returns the most recent total score for a fragment
 	inline virtual Real quota_score(ScoredCandidate candidate) const {
-	    return candidate.second->get_most_recent_total_score();
+		return candidate.second->get_most_recent_total_score();
 	}
 private:
 	std::string pool_name_;

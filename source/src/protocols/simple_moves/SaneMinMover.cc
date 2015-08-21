@@ -53,7 +53,7 @@ SaneMinMover::SaneMinMover() : protocols::moves::Mover("SaneMinMover") {
 }
 
 SaneMinMover::SaneMinMover( std::string const & name ) :
-protocols::moves::Mover(name) {
+	protocols::moves::Mover(name) {
 	set_defaults_();
 }
 
@@ -66,10 +66,10 @@ SaneMinMover::SaneMinMover(
 	core::optimization::MinimizerOptionsOP min_options_in,
 	bool cartesian_in
 ) : protocols::moves::Mover("SaneMinMover"),
-		cartesian_(cartesian_in),
-		movemap_(movemap_in),
-		scorefxn_(scorefxn_in),
-		min_options_(min_options_in)
+	cartesian_(cartesian_in),
+	movemap_(movemap_in),
+	scorefxn_(scorefxn_in),
+	min_options_(min_options_in)
 {}
 
 bool SaneMinMover::cartesian() const {
@@ -94,7 +94,7 @@ SaneMinMover::apply( core::pose::Pose & pose ) {
 
 	PROF_START( basic::MINMOVER_APPLY );
 	(*scorefxn_)(pose);
-	if (cartesian()) {
+	if ( cartesian() ) {
 		CartesianMinimizer minimizer;
 		minimizer.run( pose, *movemap_, *scorefxn_, *min_options_ );
 	} else {

@@ -32,11 +32,11 @@ basic::resource_manager::ResourceOptionsOP ResidueLoaderOptionsCreator::create_o
 
 
 ResidueLoaderOptions::ResidueLoaderOptions() :
-		atom_type_set_tag_("fa_standard"),
-		mm_atom_type_set_tag_("fa_standard"),
-		element_set_tag_("default"),
-		residue_type_set_tag_("fa_standard"),
-		orbital_set_tag_("fa_standard")
+	atom_type_set_tag_("fa_standard"),
+	mm_atom_type_set_tag_("fa_standard"),
+	element_set_tag_("default"),
+	residue_type_set_tag_("fa_standard"),
+	orbital_set_tag_("fa_standard")
 {
 
 }

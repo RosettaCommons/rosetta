@@ -42,56 +42,56 @@ namespace abinitio {
 namespace abscript {
 
 class AbscriptLoopCloserCM : public protocols::environment::ClientMover {
-  typedef ClientMover Parent;
-  typedef environment::claims::EnvClaims EnvClaims;
+	typedef ClientMover Parent;
+	typedef environment::claims::EnvClaims EnvClaims;
 
 public:
-  AbscriptLoopCloserCM();
+	AbscriptLoopCloserCM();
 
-  AbscriptLoopCloserCM( core::fragment::FragSetCOP fragset,
-                        core::scoring::ScoreFunctionOP scorefxn );
+	AbscriptLoopCloserCM( core::fragment::FragSetCOP fragset,
+		core::scoring::ScoreFunctionOP scorefxn );
 
-  virtual ~AbscriptLoopCloserCM() {};
+	virtual ~AbscriptLoopCloserCM() {};
 
-  virtual EnvClaims yield_claims( core::pose::Pose const&,
-                                  basic::datacache::WriteableCacheableMapOP );
+	virtual EnvClaims yield_claims( core::pose::Pose const&,
+		basic::datacache::WriteableCacheableMapOP );
 
-  virtual void broking_finished( environment::EnvClaimBroker::BrokerResult const& );
+	virtual void broking_finished( environment::EnvClaimBroker::BrokerResult const& );
 
-  core::pack::task::residue_selector::ResidueSelectorCOP selector() const { return selector_; }
+	core::pack::task::residue_selector::ResidueSelectorCOP selector() const { return selector_; }
 
-  void set_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector ) { selector_ = selector; }
+	void set_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector ) { selector_ = selector; }
 
-  virtual std::string get_name() const;
+	virtual std::string get_name() const;
 
-  virtual void apply( core::pose::Pose& );
+	virtual void apply( core::pose::Pose& );
 
-  virtual void
-  parse_my_tag(utility::tag::TagCOP tag,
-               basic::datacache::DataMap & data,
-               protocols::filters::Filters_map const & filters,
-               protocols::moves::Movers_map const & movers,
-               core::pose::Pose const & pose );
+	virtual void
+	parse_my_tag(utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose );
 
-  virtual
-  moves::MoverOP clone() const;
+	virtual
+	moves::MoverOP clone() const;
 
 protected:
-  virtual void passport_updated();
+	virtual void passport_updated();
 
 private:
-  void attempt_idealize( core::pose::Pose& );
+	void attempt_idealize( core::pose::Pose& );
 
-  bool attempt_ccd( core::pose::Pose& );
+	bool attempt_ccd( core::pose::Pose& );
 
-  core::kinematics::FoldTreeOP final_ft_;
-  core::fragment::FragSetCOP fragset_;
-  mutable core::kinematics::MoveMapOP movemap_;
-  core::scoring::ScoreFunctionOP scorefxn_;
+	core::kinematics::FoldTreeOP final_ft_;
+	core::fragment::FragSetCOP fragset_;
+	mutable core::kinematics::MoveMapOP movemap_;
+	core::scoring::ScoreFunctionOP scorefxn_;
 
-  core::pack::task::residue_selector::ResidueSelectorCOP selector_;
+	core::pack::task::residue_selector::ResidueSelectorCOP selector_;
 
-  mutable bool bUpdateMM_;
+	mutable bool bUpdateMM_;
 
 }; // end AbscriptLoopCloserCM base class
 

@@ -63,7 +63,7 @@ public:
 	PlaceSimultaneouslyMover();
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const {
-		 return protocols::moves::MoverOP( new PlaceSimultaneouslyMover );
+		return protocols::moves::MoverOP( new PlaceSimultaneouslyMover );
 	}
 
 	virtual void apply( core::pose::Pose & pose );
@@ -77,7 +77,7 @@ public:
 	/// @brief pair each stub set with a position on the scaffold
 	/// @brief if no mutually exclusive matches are found for all sets, return false
 	bool pair_sets_with_positions( core::pose::Pose & pose );
-/// @brief conducts user-specified design movers. Returns true if the energy per residue filter passes for each of the placed hotspots
+	/// @brief conducts user-specified design movers. Returns true if the energy per residue filter passes for each of the placed hotspots
 	void design( core::pose::Pose & pose );
 	/// @brief will be removed
 	bool place_stubs( core::pose::Pose & pose ) const;
@@ -91,7 +91,7 @@ public:
 	void refresh_coordinate_constraints( core::pose::Pose & pose, core::Real const coord_sdev );
 	core::pack::task::PackerTaskOP create_task_for_hotspot_packing( core::pose::Pose const & );
 	core::pack::task::PackerTaskOP create_task_for_allhotspot_packing( core::pose::Pose const & );
-  void add_coordinatecst_for_hotspot_packing( core::pose::Pose & );
+	void add_coordinatecst_for_hotspot_packing( core::pose::Pose & );
 	void stub_sets( utility::vector1< StubSetStubPos > const sets ) { stub_sets_ = sets; }
 	void host_chain( core::Size const host_chain ) { host_chain_ = host_chain; }
 	virtual ~PlaceSimultaneouslyMover();
@@ -127,9 +127,9 @@ private:
 	/// @brief does the pose have any active constraints?
 	protocols::protein_interface_design::filters::StubScoreFilterOP stub_score_filter_;
 	PlacementMinimizationMoverOP rbstub_minimization_;
-//	bool user_defined_auction_; // in which case, auction will not be called in PlaceSim
-//	bool user_defined_stub_score_filter_; // in which case, preliminary minimization will not be called in PlaceSim
-//	bool user_defined_bbstub_minimization_;
+	// bool user_defined_auction_; // in which case, auction will not be called in PlaceSim
+	// bool user_defined_stub_score_filter_; // in which case, preliminary minimization will not be called in PlaceSim
+	// bool user_defined_bbstub_minimization_;
 	core::scoring::constraints::ConstraintCOPs saved_coord_constraints_;
 };
 

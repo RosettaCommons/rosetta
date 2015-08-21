@@ -24,31 +24,31 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	//Constructor
-	RNA_ChainClosableGeometryScreener::RNA_ChainClosableGeometryScreener( modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker,
-																							  pose::PoseOP screening_pose,
-																								bool const finer_sampling_at_chain_closure ):
-		StepWiseResiduePairScreener( chain_closable_geometry_checker->five_prime_chain_break_res(),
-																 chain_closable_geometry_checker->three_prime_chain_break_res() ),
-		chain_closable_geometry_checker_( chain_closable_geometry_checker ),
-		screening_pose_( screening_pose ),
-		finer_sampling_at_chain_closure_( finer_sampling_at_chain_closure )
-	{}
+//Constructor
+RNA_ChainClosableGeometryScreener::RNA_ChainClosableGeometryScreener( modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker,
+	pose::PoseOP screening_pose,
+	bool const finer_sampling_at_chain_closure ):
+	StepWiseResiduePairScreener( chain_closable_geometry_checker->five_prime_chain_break_res(),
+	chain_closable_geometry_checker->three_prime_chain_break_res() ),
+	chain_closable_geometry_checker_( chain_closable_geometry_checker ),
+	screening_pose_( screening_pose ),
+	finer_sampling_at_chain_closure_( finer_sampling_at_chain_closure )
+{}
 
 
-	//Destructor
-	RNA_ChainClosableGeometryScreener::~RNA_ChainClosableGeometryScreener()
-	{}
+//Destructor
+RNA_ChainClosableGeometryScreener::~RNA_ChainClosableGeometryScreener()
+{}
 
-	//////////////////////////////////////////////////////////////////////////////////////////
-	///////////////RNA_Chain_break_screening -- distance cut                     /////////////////
-	//////////////////////////////////////////////////////////////////////////////////////////
-	bool
-	RNA_ChainClosableGeometryScreener::check_screen() {
-		bool const ok = chain_closable_geometry_checker_->check_screen( *screening_pose_, finer_sampling_at_chain_closure_ );
-		//		TR << "RES " << chain_closable_geometry_checker_->dist_squared() << " " << ok << std::endl;
-		return ok;
-	}
+//////////////////////////////////////////////////////////////////////////////////////////
+///////////////RNA_Chain_break_screening -- distance cut                     /////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+bool
+RNA_ChainClosableGeometryScreener::check_screen() {
+	bool const ok = chain_closable_geometry_checker_->check_screen( *screening_pose_, finer_sampling_at_chain_closure_ );
+	//  TR << "RES " << chain_closable_geometry_checker_->dist_squared() << " " << ok << std::endl;
+	return ok;
+}
 
 
 } //screener

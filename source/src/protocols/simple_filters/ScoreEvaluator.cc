@@ -10,7 +10,7 @@
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -62,10 +62,10 @@ using namespace core;
 
 ScoreEvaluator::ScoreEvaluator( std::string tag, core::scoring::ScoreFunctionOP scorefxn, bool fullname ) :
 	evaluation::SingleValuePoseEvaluator< Real >(  ( !fullname ? ("score"+tag) : tag ) ),
-  scorefxn_ ( /* NULL */ )
+	scorefxn_ ( /* NULL */ )
 
 {
-	if( !scorefxn ) {
+	if ( !scorefxn ) {
 		utility_exit_with_message("Score evaluator score function is NULL");
 	} else {
 		scorefxn_ = scorefxn->clone();
@@ -79,13 +79,13 @@ ScoreEvaluator::~ScoreEvaluator() {}
 
 core::Real
 ScoreEvaluator::apply(
-  core::pose::Pose& pose
+	core::pose::Pose& pose
 ) const {
 	core::scoring::ScoreFunctionOP scorefxn( scorefxn_->clone() );
 	core::pose::Pose chainbreak_pose( pose );
 	core::pose::Pose nochainbreak_pose( pose );
 	toolbox::pose_manipulation::add_chainbreaks_according_to_jumps( chainbreak_pose );
-	//	js.remove_chainbreaks( nochainbreak_pose );  --- whatever comes in should be consistent with constraints..this might make it worse
+	// js.remove_chainbreaks( nochainbreak_pose );  --- whatever comes in should be consistent with constraints..this might make it worse
 	scoring::ScoreFunction chainbreaks_scfxn;
 	chainbreaks_scfxn.set_weight(  scoring::linear_chainbreak, scorefxn->get_weight(  scoring::linear_chainbreak ) );
 	chainbreaks_scfxn.set_weight(  scoring::overlap_chainbreak, scorefxn->get_weight(  scoring::overlap_chainbreak ) );
@@ -105,10 +105,10 @@ bool ScoreEvaluator::applicable( core::pose::Pose const&pose ) const {
 }
 
 TruncatedScoreEvaluator::TruncatedScoreEvaluator(
-	 std::string tag,
-   core::scoring::ResidueSelectionVector const& selection,
- 	 core::scoring::ScoreFunctionOP scorefxn,
-	 bool fullname
+	std::string tag,
+	core::scoring::ResidueSelectionVector const& selection,
+	core::scoring::ScoreFunctionOP scorefxn,
+	bool fullname
 ) :
 	ScoreEvaluator( tag, scorefxn, fullname ),
 	selection_( selection ),
@@ -132,7 +132,7 @@ TruncatedScoreEvaluator::TruncatedScoreEvaluator(
 TruncatedScoreEvaluator::~TruncatedScoreEvaluator() {}
 
 Real TruncatedScoreEvaluator::apply( core::pose::Pose& pose ) const {
-	//	core::Pose my_pose( pose );
+	// core::Pose my_pose( pose );
 	PROF_START( basic::TRUNCATED_SCORE_EVALUATOR );
 	scoring::ScoreFunctionOP scorefxn( scorefxn_ );
 	if ( !scorefxn ) {
@@ -159,7 +159,7 @@ Real TruncatedScoreEvaluator::apply( core::pose::Pose& pose ) const {
 	core::pose::Pose chainbreak_pose( pose );
 	core::pose::Pose nochainbreak_pose( pose );
 	toolbox::pose_manipulation::add_chainbreaks_according_to_jumps( chainbreak_pose );
-	//	js.remove_chainbreaks( nochainbreak_pose );
+	// js.remove_chainbreaks( nochainbreak_pose );
 	scoring::ScoreFunction chainbreaks_scfxn;
 	chainbreaks_scfxn.set_weight(  scoring::linear_chainbreak, scorefxn->get_weight(  scoring::linear_chainbreak ) );
 	chainbreaks_scfxn.set_weight(  scoring::overlap_chainbreak, scorefxn->get_weight(  scoring::overlap_chainbreak ) );

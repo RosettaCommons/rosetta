@@ -38,16 +38,16 @@ namespace jd2 {
 class ShuffleFileSystemJobDistributor : public FileSystemJobDistributor
 {
 protected:
-  /// @brief ctor is protected; singleton pattern
-  ShuffleFileSystemJobDistributor();
+	/// @brief ctor is protected; singleton pattern
+	ShuffleFileSystemJobDistributor();
 
-  virtual void handle_interrupt() {}
+	virtual void handle_interrupt() {}
 
 public:
-  virtual ~ShuffleFileSystemJobDistributor();
+	virtual ~ShuffleFileSystemJobDistributor();
 
 
-  friend class JobDistributorFactory; //ctor access
+	friend class JobDistributorFactory; //ctor access
 
 	virtual
 	core::Size

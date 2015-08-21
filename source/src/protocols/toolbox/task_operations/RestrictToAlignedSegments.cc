@@ -47,7 +47,7 @@ using basic::Warning;
 static thread_local basic::Tracer TR( "protocols.toolbox.task_operations.RestrictToAlignedSegmentsOperation" );
 
 namespace protocols {
-namespace toolbox{
+namespace toolbox {
 namespace task_operations {
 
 using namespace core::pack::task::operation;
@@ -82,23 +82,24 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 
 	std::set< core::Size > designable;
 	designable.clear();
-	for( core::Size count = 1; count <= source_pose_.size(); ++count ){
+	for ( core::Size count = 1; count <= source_pose_.size(); ++count ) {
 		core::Size const nearest_to_from = protocols::rosetta_scripts::find_nearest_res( pose, *source_pose_[ count ], start_res_[ count ], chain() );
 		core::Size const nearest_to_to = protocols::rosetta_scripts::find_nearest_res( pose, *source_pose_[ count ], std::min( stop_res_[ count ], source_pose_[ count ]->total_residue() ), chain() );
 
 		TR<<"Finding nearest residue to residue pair "<<start_res_[ count ]<<','<<stop_res_[ count ]<<" in source pose"<<std::endl;
-		if( nearest_to_from == 0 || nearest_to_to == 0 ){
+		if ( nearest_to_from == 0 || nearest_to_to == 0 ) {
 			TR<<"nearest_to_from: "<<nearest_to_from<<" nearest_to_to: "<<nearest_to_to<<". Failing"<<std::endl;
 			continue;
 		}
-		for( core::Size position = nearest_to_from; position <= nearest_to_to; ++position )
+		for ( core::Size position = nearest_to_from; position <= nearest_to_to; ++position ) {
 			designable.insert( position );
-  }
-/// in the following we use dao to compute the residues that surround the aligned region. We then go over these residues to make sure they're within the target chain
+		}
+	}
+	/// in the following we use dao to compute the residues that surround the aligned region. We then go over these residues to make sure they're within the target chain
 	protocols::toolbox::task_operations::DesignAroundOperationOP dao( new protocols::toolbox::task_operations::DesignAroundOperation );
 	dao->design_shell( 0.1 );
 	dao->repack_shell( repack_shell() );
-	BOOST_FOREACH( core::Size const d, designable ){
+	BOOST_FOREACH ( core::Size const d, designable ) {
 		dao->include_residue( d );
 	}
 	core::pack::task::TaskFactoryOP dao_tf( new core::pack::task::TaskFactory );
@@ -109,32 +110,36 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 
 	utility::vector1< core::Size > repackable, immutable;
 	repackable.clear(); immutable.clear();
-	for( core::Size i = pose.conformation().chain_begin( chain() ); i<=pose.conformation().chain_end( chain() ); ++i ){
-		if( std::find( designed_residues.begin(), designed_residues.end(), i ) != designed_residues.end() ) // don't change designed residues
+	for ( core::Size i = pose.conformation().chain_begin( chain() ); i<=pose.conformation().chain_end( chain() ); ++i ) {
+		if ( std::find( designed_residues.begin(), designed_residues.end(), i ) != designed_residues.end() ) { // don't change designed residues
 			continue;
-		if( std::find( surrounding_shell.begin(), surrounding_shell.end(), i ) == surrounding_shell.end() )
+		}
+		if ( std::find( surrounding_shell.begin(), surrounding_shell.end(), i ) == surrounding_shell.end() ) {
 			immutable.push_back( i );
-		else
+		} else {
 			repackable.push_back( i );
+		}
 	}
-///for some unfathomable reason OperateOnCertainResidues defaults to applying to all residues if none are defined, so you have to be careful here...
+	///for some unfathomable reason OperateOnCertainResidues defaults to applying to all residues if none are defined, so you have to be careful here...
 	OperateOnCertainResidues oocr_repackable, oocr_immutable;
 	oocr_immutable.op( ResLvlTaskOperationCOP( new PreventRepackingRLT ) );
 	oocr_repackable.op( ResLvlTaskOperationCOP( new RestrictToRepackingRLT ) );
-	if( repackable.size() ){
+	if ( repackable.size() ) {
 		oocr_repackable.residue_indices( repackable );
 		oocr_repackable.apply( pose, task );
 		TR<<"allowing repacking in: ";
-		BOOST_FOREACH( core::Size const r, repackable )
+		BOOST_FOREACH ( core::Size const r, repackable ) {
 			TR<<r<<' ';
+		}
 		TR<<std::endl;
 	}
-	if( immutable.size() ){
+	if ( immutable.size() ) {
 		oocr_immutable.residue_indices( immutable );
 		oocr_immutable.apply( pose, task );
 		TR<<"no repack in: ";
-		BOOST_FOREACH( core::Size const i, immutable )
+		BOOST_FOREACH ( core::Size const i, immutable ) {
 			TR<<i<<' ';
+		}
 		TR<<std::endl;
 	}
 }
@@ -145,32 +150,35 @@ RestrictToAlignedSegmentsOperation::parse_tag( TagCOP tag , DataMap & )
 	using namespace protocols::rosetta_scripts;
 	utility::vector1< std::string > pdb_names, start_res, stop_res;
 	pdb_names.clear(); start_res.clear(); stop_res.clear();
-	if( tag->hasOption( "source_pdb" ) )
+	if ( tag->hasOption( "source_pdb" ) ) {
 		pdb_names.push_back( tag->getOption< std::string >( "source_pdb" ) );
-	if( tag->hasOption( "start_res" ) )
+	}
+	if ( tag->hasOption( "start_res" ) ) {
 		start_res.push_back( tag->getOption< std::string >( "start_res" ) );
-	if( tag->hasOption( "stop_res" ) )
+	}
+	if ( tag->hasOption( "stop_res" ) ) {
 		stop_res.push_back( tag->getOption< std::string >( "stop_res" ) );
+	}
 
 	chain( tag->getOption< core::Size >( "chain", 1 ) );
-	if( tag->hasOption( "source_pdb" ) || tag->hasOption( "start_res" ) || tag->hasOption( "stop_res" ) ){
+	if ( tag->hasOption( "source_pdb" ) || tag->hasOption( "start_res" ) || tag->hasOption( "stop_res" ) ) {
 		runtime_assert( tag->hasOption( "source_pdb" ) && tag->hasOption( "start_res" ) && tag->hasOption( "stop_res" ) );
 	}
 
 	utility::vector0< TagCOP > const & btags( tag->getTags() );
-	BOOST_FOREACH( TagCOP const btag, btags ){
+	BOOST_FOREACH ( TagCOP const btag, btags ) {
 		pdb_names.push_back( btag->getOption< std::string >( "source_pdb" ) );
 		start_res.push_back( btag->getOption< std::string >( "start_res" ) );
 		stop_res.push_back( btag->getOption< std::string >( "stop_res" ) );
 	}
 
-	for( core::Size i = 1; i <= pdb_names.size(); ++i ){
-		if( i == 1 || pdb_names[ i ] != pdb_names[ i - 1 ]){ // scrimp on reading from disk
+	for ( core::Size i = 1; i <= pdb_names.size(); ++i ) {
+		if ( i == 1 || pdb_names[ i ] != pdb_names[ i - 1 ] ) { // scrimp on reading from disk
 			source_pose_.push_back( core::pose::PoseOP( new core::pose::Pose ) );
 			core::import_pose::pose_from_pdb( *source_pose_[ i ], pdb_names[ i ] );
-		}
-		else
+		} else {
 			source_pose_.push_back( source_pose_[ i - 1 ] );
+		}
 		core::Size const parsed_start( core::pose::parse_resnum( start_res[ i ], *source_pose_[ i ] ) );
 		core::Size const parsed_stop ( core::pose::parse_resnum( stop_res[ i ], *source_pose_[ i ] ) );
 		start_res_.push_back( parsed_start );

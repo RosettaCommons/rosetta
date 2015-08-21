@@ -10,7 +10,7 @@
 /// @file src/protocols/abinitio/MembraneAbinitio.hh
 /// @brief header file for MembraneAbinitio protocol
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -61,7 +61,7 @@ MembraneAbinitio  abinitio;
 abinitio.init( pose );
 ...
 while(nstruct) {
-	 abinitio.apply( pose );
+abinitio.apply( pose );
 }
 
 call MembraneAbinitio::register_options() before core::init::init to add relevant options to the applications help
@@ -92,17 +92,17 @@ mc().score_function() ...
 Behaviour can be changed in the following ways:
 
 use non-classic FragmentMover  --> eg. not uniformly sampled fragments, but using some weighting
-															 --> large and small moves doesn't have to be 3mers and 9mers... use other movers...
-															 ---> or other fragets for the "convenience constructor"
+--> large and small moves doesn't have to be 3mers and 9mers... use other movers...
+---> or other fragets for the "convenience constructor"
 use custom trial classes --> overload update_moves()
 
 change sampling behaviour:
-	 overload prepare_XXX() methods: these are called before the cycling for a certain stage begins
-	 overload do_stageX_cycles() : the actual loops over trial-moves ...
+overload prepare_XXX() methods: these are called before the cycling for a certain stage begins
+overload do_stageX_cycles() : the actual loops over trial-moves ...
 
 change scoring functions:
-	 overload set_default_scores()
-	 weight-changes effective for all stages: set_score_weight()
+overload set_default_scores()
+weight-changes effective for all stages: set_score_weight()
 
 */
 
@@ -130,8 +130,8 @@ public:
 
 	/// @brief constructor: supply fragsets for large and small fragment moves
 	MembraneAbinitio(
-					 core::fragment::FragSetCOP fragset_small,
-					 core::fragment::FragSetCOP fragset_small_top25,
+		core::fragment::FragSetCOP fragset_small,
+		core::fragment::FragSetCOP fragset_small_top25,
 		core::fragment::FragSetCOP fragset_large,
 		core::kinematics::MoveMapCOP movemap
 	);
@@ -145,7 +145,7 @@ public:
 	//@brief MembraneAbinitio has virtual functions... use this to obtain a new instance
 	virtual
 	moves::MoverOP clone() const;
-	//	MembraneAbinitioOP clone() const;
+	// MembraneAbinitioOP clone() const;
 
 	//@brief run protocol on pose
 	virtual void apply( core::pose::Pose & pose );
@@ -204,7 +204,7 @@ public:
 	}
 
 	//@brief override cycle setting for specific stage ( valid nr: 1,2,3,4)
-	//	void set_cycles( Size stage, Size cycles );
+	// void set_cycles( Size stage, Size cycles );
 
 	// eventually replace with a polymorphic checkpointer class
 	// these functions are almost identical to the ones used for ClassicRelax
@@ -213,18 +213,18 @@ public:
 	virtual void checkpoint( core::pose::Pose &pose, std::string const & id );
 
 	/* obsoleted by set_current_tag in Mover class
- /// @brief set tag for debugging output
-		void set_output_tag( std::string tag ) {
-		output_tag_ = tag;
+	/// @brief set tag for debugging output
+	void set_output_tag( std::string tag ) {
+	output_tag_ = tag;
 	}
 
 	std::string get_output_tag() {
-		return output_tag_;
+	return output_tag_;
 	}
 	*/
 
 	/// @brief for debugging, one wants to have access to the native pose.
-	//	void set_native_pose( core::pose::Pose const & pose );
+	// void set_native_pose( core::pose::Pose const & pose );
 
 	//@brief set weight - effective for all scoring functions  stage == -1 --> set weight for all stages
 	// mod -1 (ignored) ,  in stage3 mod = 1 --> 3a , mod = 2 --> 3b
@@ -274,7 +274,7 @@ protected:
 	virtual int do_stage4_cycles( core::pose::Pose &pose );
 
 	//@brief returns true if pose is < 3.0 A rms to last pose sent to this function
-	//	bool convergence_check( core::pose::Pose const & pose );
+	// bool convergence_check( core::pose::Pose const & pose );
 
 	//@brief returns the Mover that is applied inside the stage3 double loop
 	virtual moves::TrialMoverOP

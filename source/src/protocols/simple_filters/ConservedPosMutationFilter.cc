@@ -67,28 +67,27 @@ ConservedPosMutationFilter::apply( core::pose::Pose const & pose ) const {
 	bool verbose( conserved_pos_taskop_->verbose() );
 	std::string mutstring;
 
-	for( core::Size i(1); i <= pose.total_residue(); ++i){
-		if( !pose.residue_type(i).is_protein() ) continue;
+	for ( core::Size i(1); i <= pose.total_residue(); ++i ) {
+		if ( !pose.residue_type(i).is_protein() ) continue;
 
 		core::chemical::AA wt_aa( conserved_pos_taskop_->seqprof_wt_aa(i) );
-		if( conserved_pos_taskop_->position_untouchable(i, wt_aa) && (wt_aa != pose.residue_type(i).aa() ) ){
+		if ( conserved_pos_taskop_->position_untouchable(i, wt_aa) && (wt_aa != pose.residue_type(i).aa() ) ) {
 			conserved_pos_mutations++;
-			if( !verbose && (conserved_pos_mutations > max_allowed_conserved_pos_mutations_)){
+			if ( !verbose && (conserved_pos_mutations > max_allowed_conserved_pos_mutations_) ) {
 				tr << "Pose has at least " << conserved_pos_mutations << " mutations at conserved positions, but only " << max_allowed_conserved_pos_mutations_ << " are allowed, returnig false..." << std::endl;
 				return false;
-			}
-			else if (verbose ){
+			} else if ( verbose ) {
 				using namespace core::chemical;
 				mutstring = mutstring + oneletter_code_from_aa( wt_aa ) + utility::to_string( i ) + oneletter_code_from_aa( pose.residue_type(i).aa() ) + ", ";
 			}
 		}
 		//if the user is interested, we'll write out the conservation and ddg info for every mutation
-		if( verbose && (wt_aa != pose.residue_type(i).aa() ) ){
+		if ( verbose && (wt_aa != pose.residue_type(i).aa() ) ) {
 			tr << "Mutation at pos " << i << " with ala_ddg of " << conserved_pos_taskop_->position_ala_ddG( i ) << " and wt conservation " << conserved_pos_taskop_->seqprof()->profile()[ i ][ conserved_pos_taskop_->seqprof_wt_aa(i) ]  << std::endl;
 		}
 	}
-	if( verbose ) tr << "Forbidden mutations detected: " << mutstring << std::endl;
-	if( conserved_pos_mutations > max_allowed_conserved_pos_mutations_){
+	if ( verbose ) tr << "Forbidden mutations detected: " << mutstring << std::endl;
+	if ( conserved_pos_mutations > max_allowed_conserved_pos_mutations_ ) {
 		tr << "Pose has " << conserved_pos_mutations << " mutations at conserved positions, but only " << max_allowed_conserved_pos_mutations_ << " are allowed, returnig false..." << std::endl;
 		return false;
 	}
@@ -103,7 +102,7 @@ ConservedPosMutationFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datac
 {
 	conserved_pos_taskop_->parse_tag( tag, datamap );
 
-	if (tag->hasOption("max_conserved_pos_mutations")) {
+	if ( tag->hasOption("max_conserved_pos_mutations") ) {
 		max_allowed_conserved_pos_mutations_ = tag->getOption<core::Size>("max_conserved_pos_mutations");
 	}
 }

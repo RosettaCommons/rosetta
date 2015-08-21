@@ -56,23 +56,23 @@ using namespace core::optimization;
 NormalModeMultifunc::~NormalModeMultifunc() {}
 
 NormalModeMultifunc::NormalModeMultifunc(
-		pose::Pose & pose_in,
-		MinimizerMap & min_map_in,
-		scoring::ScoreFunction const & scorefxn_in,
-		protocols::normalmode::NormalMode const & normalmode_in,
-		bool const use_omega,
-		bool const deriv_check_in,
-		bool const deriv_check_verbose_in
+	pose::Pose & pose_in,
+	MinimizerMap & min_map_in,
+	scoring::ScoreFunction const & scorefxn_in,
+	protocols::normalmode::NormalMode const & normalmode_in,
+	bool const use_omega,
+	bool const deriv_check_in,
+	bool const deriv_check_verbose_in
 ) :
-		pose_( pose_in ),
-		min_map_( min_map_in ),
-		score_function_( scorefxn_in ),
-		use_omega_( use_omega ),
-		pose0_( pose_in ),
-		NM_( normalmode_in ),
-		deriv_check_( deriv_check_in ),
-		deriv_check_verbose_( deriv_check_verbose_in ),
-		deriv_check_result_( /* 0 */ )
+	pose_( pose_in ),
+	min_map_( min_map_in ),
+	score_function_( scorefxn_in ),
+	use_omega_( use_omega ),
+	pose0_( pose_in ),
+	NM_( normalmode_in ),
+	deriv_check_( deriv_check_in ),
+	deriv_check_verbose_( deriv_check_verbose_in ),
+	deriv_check_result_( /* 0 */ )
 {
 	// NormalMode should be TorsionalNormalMode
 	assert( NM_.torsion() );
@@ -80,7 +80,7 @@ NormalModeMultifunc::NormalModeMultifunc(
 	assert( NM_.ntor() > 0 );
 
 	k_dampen_ = basic::options::option[
-              basic::options::OptionKeys::optimization::scale_normalmode_dampen ]();
+		basic::options::OptionKeys::optimization::scale_normalmode_dampen ]();
 
 	set_default_modes( );
 	TR << "Setup dofs using default modes." << std::endl;
@@ -97,14 +97,14 @@ NormalModeMultifunc::operator ()( Multivec const & vars ) const {
 
 	/* //Just for debugging
 	for( Size i = 1; i <= vars.size(); ++i ){
-		std::cout << "Vars: " << i << " " << vars[i] << std::endl;
+	std::cout << "Vars: " << i << " " << vars[i] << std::endl;
 	}
 
 	std::list< DOF_NodeOP > dof_nodes( min_map_.dof_nodes() );
 	int imap = 1;
 	for ( std::list< DOF_NodeOP >::const_iterator it=dof_nodes.begin(),
-					it_end = dof_nodes.end();	it != it_end; ++it, ++imap ) {
-		id::TorsionID const tor_id( (*it)->torsion_id() );
+	it_end = dof_nodes.end(); it != it_end; ++it, ++imap ) {
+	id::TorsionID const tor_id( (*it)->torsion_id() );
 	}
 	*/
 
@@ -135,7 +135,7 @@ NormalModeMultifunc::dfunc( Multivec const & vars, Multivec & dE_dvars ) const
 	//if ( deriv_check_ ) {
 	// don't do this because min_map_ dof is different from vars here
 	// this will be taken care of at NormalModeMinimizer instead
-	//	numerical_derivative_check( min_map_, *this, vars, dE_dvars, deriv_check_result_, deriv_check_verbose_ );
+	// numerical_derivative_check( min_map_, *this, vars, dE_dvars, deriv_check_result_, deriv_check_verbose_ );
 	//}
 
 	PROF_STOP( basic::DFUNC );
@@ -163,19 +163,19 @@ NormalModeMultifunc::get_dofs_for_pose0()
 
 	int imap = 1;
 	for ( std::list< DOF_NodeOP >::const_iterator it=dof_nodes.begin(),
-					it_end = dof_nodes.end();	it != it_end; ++it, ++imap ) {
-		//id::TorsionID const tor_id( (*it)->torsion_id() );
-		//tors_for_pose0_.push_back( pose0_.torsion( tor_id ) );
-		id::DOF_ID const dof_id( (*it)->dof_id() );
-		id::DOF_Type const type( (*it)->type() );
+	it_end = dof_nodes.end(); it != it_end; ++it, ++imap ) {
+	//id::TorsionID const tor_id( (*it)->torsion_id() );
+	//tors_for_pose0_.push_back( pose0_.torsion( tor_id ) );
+	id::DOF_ID const dof_id( (*it)->dof_id() );
+	id::DOF_Type const type( (*it)->type() );
 
-		if( type ==  id::RB1 || type == id::RB2 || type == id::RB3 ||
-				type ==  id::RB4 || type == id::RB5 || type == id::RB6  ) {
-			dofs_for_pose0_.push_back( pose0_.dof( dof_id ) );
+	if( type ==  id::RB1 || type == id::RB2 || type == id::RB3 ||
+	type ==  id::RB4 || type == id::RB5 || type == id::RB6  ) {
+	dofs_for_pose0_.push_back( pose0_.dof( dof_id ) );
 
-		} else {
-			dofs_for_pose0_.push_back( pose0_.dof( dof_id )*rad2deg ); // convert to degee
-		}
+	} else {
+	dofs_for_pose0_.push_back( pose0_.dof( dof_id )*rad2deg ); // convert to degee
+	}
 	}
 	*/
 }
@@ -189,10 +189,10 @@ NormalModeMultifunc::vars_to_dofs( Multivec const & vars ) const {
 	std::list< DOF_NodeOP > dof_nodes( min_map_.dof_nodes() );
 
 
-	for( Size i_var = 1; i_var <= vars.size(); ++i_var ){
+	for ( Size i_var = 1; i_var <= vars.size(); ++i_var ) {
 		//std::cout << "i_var, type: " << i_var << " " << var_type_[i_var] << std::endl;
 		// Normal Mode variables: project eigenvectors
-		if( var_type_[i_var].compare("NM") == 0 ){
+		if ( var_type_[i_var].compare("NM") == 0 ) {
 
 			// Get index / scale for the mode in vars
 			std::map< Size, Size >::const_iterator it = map_var_to_modeno_.find( i_var );
@@ -202,15 +202,15 @@ NormalModeMultifunc::vars_to_dofs( Multivec const & vars ) const {
 			Real const scale( get_modescale( modeno ) );
 
 			// Iter over Normal mode torsions to accummulate into dofs
-			for( Size i_tor = 1; i_tor <= NM_torID.size(); ++i_tor ){
-				if( map_NM_to_DOF_.count( i_tor ) ){
+			for ( Size i_tor = 1; i_tor <= NM_torID.size(); ++i_tor ) {
+				if ( map_NM_to_DOF_.count( i_tor ) ) {
 					std::map< Size, Size >::const_iterator it = map_NM_to_DOF_.find( i_tor );
 					Size const i_dof( it->second );
 					dofs[ i_dof ] += scale * vars[ i_var ]*eigv[ i_tor ];
 				}
 			}
 
-	  // Non-Normal Mode variables: just copy
+			// Non-Normal Mode variables: just copy
 		} else {
 			std::map< Size, Size >::const_iterator it = map_var_to_DOF_.find( i_var );
 			Size const i_dof( it->second );
@@ -228,8 +228,8 @@ NormalModeMultifunc::dofs_to_vars( Multivec const & dofs ) const
 	// First store the difference in torsion from the starting values
 	Multivec tors_NM( NM_.ntor(), 0.0 );
 
-	for( Size i_dof = 1; i_dof <= dofs.size(); ++i_dof ){
-		if( map_DOF_to_NM_.count( i_dof ) ){
+	for ( Size i_dof = 1; i_dof <= dofs.size(); ++i_dof ) {
+		if ( map_DOF_to_NM_.count( i_dof ) ) {
 			std::map< Size, Size >::const_iterator it = map_DOF_to_NM_.find( i_dof );
 			Size const i_tor( it->second );
 			tors_NM[ i_tor ] = dofs[ i_dof ] - dofs_for_pose0( i_dof );
@@ -242,10 +242,10 @@ NormalModeMultifunc::dofs_to_vars( Multivec const & dofs ) const
 	// Next, iter over vars to convert dofs info to vars info
 	Multivec vars( nvar(), 0.0 );
 
-	for( Size i_var = 1; i_var <= nvar(); ++i_var ){
+	for ( Size i_var = 1; i_var <= nvar(); ++i_var ) {
 		// 1. Normal Mode vars
 		// Get dot product for each given mode, and add it into vars
-		if( var_type_[i_var].compare("NM") == 0 ){
+		if ( var_type_[i_var].compare("NM") == 0 ) {
 
 			Real dotsum( 0.0 );
 
@@ -255,12 +255,12 @@ NormalModeMultifunc::dofs_to_vars( Multivec const & dofs ) const
 			utility::vector1< Real > const eigv = NM_.get_eigvec_tor( modeno );
 			Real const scale( get_modescale( modeno ) );
 
-			for( Size i_tor = 1; i_tor <= tors_NM.size(); ++i_tor ){
+			for ( Size i_tor = 1; i_tor <= tors_NM.size(); ++i_tor ) {
 				dotsum += tors_NM[ i_tor ]*eigv[ i_tor ];
 			}
 			vars[ i_var ] = scale*dotsum;
 
-		// 2. Non-Normal Mode vars
+			// 2. Non-Normal Mode vars
 		} else {
 			std::map< Size, Size >::const_iterator it = map_var_to_DOF_.find( i_var );
 			Size const i_dof( it->second );
@@ -278,10 +278,10 @@ NormalModeMultifunc::dEddofs_to_dEdvars( Multivec const & dEddofs ) const
 
 	Multivec dEdvars( nvar(), 0.0 );
 
-	for( Size i_var = 1; i_var <= nvar(); ++i_var ){
+	for ( Size i_var = 1; i_var <= nvar(); ++i_var ) {
 		// 1. Normal Mode vars
 		// Get dot product for each given mode, and add it into vars
-		if( var_type_[i_var].compare("NM") == 0 ){
+		if ( var_type_[i_var].compare("NM") == 0 ) {
 
 			// Get index/scale for the modes
 			std::map< Size, Size >::const_iterator it = map_var_to_modeno_.find( i_var );
@@ -289,8 +289,8 @@ NormalModeMultifunc::dEddofs_to_dEdvars( Multivec const & dEddofs ) const
 			utility::vector1< Real > const eigv = NM_.get_eigvec_tor( modeno );
 			Real const scale( get_modescale( modeno ) );
 
-			for( Size i_tor = 1; i_tor <= eigv.size(); ++i_tor ){
-				if( map_NM_to_DOF_.count( i_tor ) ){
+			for ( Size i_tor = 1; i_tor <= eigv.size(); ++i_tor ) {
+				if ( map_NM_to_DOF_.count( i_tor ) ) {
 					std::map< Size, Size >::const_iterator it = map_NM_to_DOF_.find( i_tor );
 					Size const i_dof( it->second );
 
@@ -301,7 +301,7 @@ NormalModeMultifunc::dEddofs_to_dEdvars( Multivec const & dEddofs ) const
 				}
 			}
 
-		// 2. Non-Normal Mode vars
+			// 2. Non-Normal Mode vars
 		} else {
 			std::map< Size, Size >::const_iterator it = map_var_to_DOF_.find( i_var );
 			Size const i_dof( it->second );
@@ -342,13 +342,13 @@ NormalModeMultifunc::get_dofs_map()
 	// 1. Rigid-Body DOF
 	int imap = 1;
 	for ( std::list< DOF_NodeOP >::const_iterator it=dof_nodes.begin(),
-					it_end = dof_nodes.end();	it != it_end; ++it, ++imap ) {
+			it_end = dof_nodes.end(); it != it_end; ++it, ++imap ) {
 		id::DOF_Type const type( (*it)->type() );
 		id::DOF_ID const dof( (*it)->dof_id() );
 
 		//std::cout << "check: " << imap << " " << dof.rsd() << " " << dof.type() << std::endl;
 
-		if( type ==  id::RB1 || type == id::RB2 || type == id::RB3 ||
+		if ( type ==  id::RB1 || type == id::RB2 || type == id::RB3 ||
 				type ==  id::RB4 || type == id::RB5 || type == id::RB6  ) {
 
 			nvar_++;
@@ -360,7 +360,7 @@ NormalModeMultifunc::get_dofs_map()
 	}
 
 	// 2-1. Store indices for Normal mode numbers
-	for( Size i_mode = 1; i_mode <= modes_using_.size(); ++i_mode ){
+	for ( Size i_mode = 1; i_mode <= modes_using_.size(); ++i_mode ) {
 		Size const modeno( modes_using_[i_mode] );
 		nvar_++;
 		var_type_.push_back("NM");
@@ -373,13 +373,13 @@ NormalModeMultifunc::get_dofs_map()
 	// In this case, iteration is independent to nvar_
 	imap = 1;
 	for ( std::list< DOF_NodeOP >::const_iterator it=dof_nodes.begin(),
-					it_end = dof_nodes.end();	it != it_end; ++it, ++imap ) {
+			it_end = dof_nodes.end(); it != it_end; ++it, ++imap ) {
 		id::TorsionID const tor_id( (*it)->torsion_id() );
 
-		for( Size itor = 1; itor <= NM_torID.size(); ++itor ){
+		for ( Size itor = 1; itor <= NM_torID.size(); ++itor ) {
 			id::TorsionID const &id( NM_torID[itor] );
 
-			if( id == tor_id ){
+			if ( id == tor_id ) {
 				map_NM_to_DOF_[ itor ] = imap;
 				map_DOF_to_NM_[ imap ] = itor;
 				break;
@@ -388,12 +388,12 @@ NormalModeMultifunc::get_dofs_map()
 	}
 
 	// 3. (Optional) Omega angles
-	if( use_omega_ ){
+	if ( use_omega_ ) {
 		imap = 1;
 		for ( std::list< DOF_NodeOP >::const_iterator it=dof_nodes.begin(),
-						it_end = dof_nodes.end();	it != it_end; ++it, ++imap ) {
+				it_end = dof_nodes.end(); it != it_end; ++it, ++imap ) {
 			id::TorsionID const tor_id( (*it)->torsion_id() );
-			if( tor_id.torsion() == id::omega_torsion ){
+			if ( tor_id.torsion() == id::omega_torsion ) {
 				nvar_++;
 				map_var_to_DOF_[ nvar_ ] = imap;
 				var_type_.push_back("omega");
@@ -530,7 +530,7 @@ NormalModeMultifunc::set_default_modes()
 	modes_using_.resize( 0 );
 	Size ntors = std::min( (Size)(50), NM_.ntor() );
 
-	for( core::Size i = 1; i <= ntors; ++i ){
+	for ( core::Size i = 1; i <= ntors; ++i ) {
 		modes_using_.push_back( i );
 	}
 }
@@ -547,11 +547,11 @@ NormalModeMultifunc::set_modes( utility::vector1< Size > modes_using_in )
 }
 
 MinimizerMap const & NormalModeMultifunc::min_map() const {
-	 return min_map_;
+	return min_map_;
 }
 
 core::scoring::ScoreFunction const & NormalModeMultifunc::score_function() const {
-	 return score_function_;
+	return score_function_;
 }
 
 } // namespace optimization

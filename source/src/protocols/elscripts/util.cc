@@ -30,11 +30,11 @@ using namespace utility::lua;
 
 core::scoring::ScoreFunctionOP
 parse_scoredef( LuaObject const & scoredef,
-		LuaObject const & score_fxns ) {
+	LuaObject const & score_fxns ) {
 
 	std::string scorefxn_name = scoredef.to<std::string>();
-	for (LuaIterator i=score_fxns.begin(), end; i != end; ++i) {
-		if( i.skey() == scorefxn_name ) {
+	for ( LuaIterator i=score_fxns.begin(), end; i != end; ++i ) {
+		if ( i.skey() == scorefxn_name ) {
 			return (*i).to<core::scoring::ScoreFunctionSP>()->clone();
 			//break;
 		}
@@ -44,29 +44,29 @@ parse_scoredef( LuaObject const & scoredef,
 
 core::pack::task::TaskFactoryOP
 parse_taskdef( LuaObject const & taskdef,
-		LuaObject const & tasks ) {
+	LuaObject const & tasks ) {
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 
-  TaskFactoryOP new_task_factory( new TaskFactory );
-	for (LuaIterator i=taskdef.begin(), end; i != end; ++i) {
+	TaskFactoryOP new_task_factory( new TaskFactory );
+	for ( LuaIterator i=taskdef.begin(), end; i != end; ++i ) {
 		std::string task_name = (*i).to<std::string>();
 		bool taskfound = false;
-		for (LuaIterator j=tasks.begin(), end; j != end; ++j) {
-			if( j.skey() == task_name ) {
+		for ( LuaIterator j=tasks.begin(), end; j != end; ++j ) {
+			if ( j.skey() == task_name ) {
 				new_task_factory->push_back( (*j).to<TaskOperationOP>() );
 				taskfound = true;
 				break;
 			}
 		}
-		if( !taskfound ) utility_exit_with_message("TaskOperation " + task_name + " not found in tasks map.");
+		if ( !taskfound ) utility_exit_with_message("TaskOperation " + task_name + " not found in tasks map.");
 	}
-  return new_task_factory;
+	return new_task_factory;
 }
 
 core::pack::task::TaskFactorySP
 sp_parse_taskdef( LuaObject const & taskdef,
-		LuaObject const & tasks ) {
+	LuaObject const & tasks ) {
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 	TaskFactoryOP tmpop = parse_taskdef( taskdef, tasks );
@@ -76,28 +76,28 @@ sp_parse_taskdef( LuaObject const & taskdef,
 }
 
 void parse_movemapdef( LuaObject const & movemapdef, core::kinematics::MoveMapOP mm ) {
-	for (LuaIterator i=movemapdef.begin(), end; i != end; ++i) {
+	for ( LuaIterator i=movemapdef.begin(), end; i != end; ++i ) {
 		switch( (*i).size() ) {
-			case 2:
-				{
-					core::Size const num( (*i)[1].to<core::Size>() );
-					bool const setting( (*i)[2].to<bool>() );
-					num == 0 ? mm->set_jump( setting ) : mm->set_jump( num, setting );
-					break;
-				}
-			case 4:
-				{
-					core::Size const begin( (*i)[1].to<core::Size>() );
-					core::Size const end( (*i)[2].to<core::Size>() );
-					runtime_assert( end >= begin );
-					bool const chi( (*i)["chi"].to<bool>() );
-					bool const bb( (*i)["bb"].to<bool>() );
-					for( core::Size i( begin ); i <= end; ++i ){
-						mm->set_chi( i, chi );
-						mm->set_bb( i, bb );
-					}
-					break;
-				}
+		case 2 :
+			{
+			core::Size const num( (*i)[1].to<core::Size>() );
+			bool const setting( (*i)[2].to<bool>() );
+			num == 0 ? mm->set_jump( setting ) : mm->set_jump( num, setting );
+			break;
+		}
+		case 4 :
+			{
+			core::Size const begin( (*i)[1].to<core::Size>() );
+			core::Size const end( (*i)[2].to<core::Size>() );
+			runtime_assert( end >= begin );
+			bool const chi( (*i)["chi"].to<bool>() );
+			bool const bb( (*i)["bb"].to<bool>() );
+			for ( core::Size i( begin ); i <= end; ++i ) {
+				mm->set_chi( i, chi );
+				mm->set_bb( i, bb );
+			}
+			break;
+		}
 		}
 	}
 }

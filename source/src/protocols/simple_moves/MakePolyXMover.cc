@@ -115,11 +115,11 @@ MakePolyXMover::parse_my_tag(
 
 	TR << "MakePolyXMover was loaded" << std::endl;
 
-	if( keep_pro_ || keep_gly_ || keep_disulfide_cys_ ) {
+	if ( keep_pro_ || keep_gly_ || keep_disulfide_cys_ ) {
 		TR << "but keep AA types of ";
-		if( keep_pro_ ) TR << "Pro ";
-		if( keep_gly_ ) TR << "Gly  ";
-		if( keep_disulfide_cys_ ) TR << "Disulfide Cys";
+		if ( keep_pro_ ) TR << "Pro ";
+		if ( keep_gly_ ) TR << "Gly  ";
+		if ( keep_disulfide_cys_ ) TR << "Disulfide Cys";
 		TR << std::endl;
 	}
 

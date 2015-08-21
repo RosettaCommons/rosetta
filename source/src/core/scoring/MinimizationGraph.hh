@@ -433,48 +433,48 @@ MinimizationEdge::get_minimization_owner() {
 
 /*void
 reinitialize_minedge_for_respair(
-	MinimizationEdge & min_edge,
-	conformation::Residue const & rsd1,
-	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const & res1_ressingle_min_data,
-	ResSingleMinimizationData const & res2_ressingle_min_data,
-	pose::Pose & p,
-	ScoreFunction const & sfxn,
-	kinematics::MinimizerMapBase const & minmap
+MinimizationEdge & min_edge,
+conformation::Residue const & rsd1,
+conformation::Residue const & rsd2,
+ResSingleMinimizationData const & res1_ressingle_min_data,
+ResSingleMinimizationData const & res2_ressingle_min_data,
+pose::Pose & p,
+ScoreFunction const & sfxn,
+kinematics::MinimizerMapBase const & minmap
 );*/
 
 /*void
 setup_for_scoring_for_minnode(
-	MinimizationNode & min_node,
-	conformation::Residue const & rsd,
-	pose::Pose const & pose
+MinimizationNode & min_node,
+conformation::Residue const & rsd,
+pose::Pose const & pose
 );*/
 
 /*void
 setup_for_scoring_for_minedge(
-	MinimizationEdge & min_edge,
-	conformation::Residue const & rsd1,
-	conformation::Residue const & rsd2,
-	pose::Pose const & pose,
-	ResSingleMinimizationData const & res1_ressingle_min_data,
-	ResSingleMinimizationData const & res2_ressingle_min_data
+MinimizationEdge & min_edge,
+conformation::Residue const & rsd1,
+conformation::Residue const & rsd2,
+pose::Pose const & pose,
+ResSingleMinimizationData const & res1_ressingle_min_data,
+ResSingleMinimizationData const & res2_ressingle_min_data
 );*/
 
 /*void
 setup_for_derivatives_for_minnode(
-	MinimizationNode & min_node,
-	conformation::Residue const & rsd,
-	pose::Pose const & pose
+MinimizationNode & min_node,
+conformation::Residue const & rsd,
+pose::Pose const & pose
 );*/
 
 /*void
 setup_for_derivatives_for_minedge(
-	MinimizationEdge & min_edge,
-	conformation::Residue const & rsd1,
-	conformation::Residue const & rsd2,
-	pose::Pose const & pose,
-	ResSingleMinimizationData const & res1_min_data,
-	ResSingleMinimizationData const & res2_min_data
+MinimizationEdge & min_edge,
+conformation::Residue const & rsd1,
+conformation::Residue const & rsd2,
+pose::Pose const & pose,
+ResSingleMinimizationData const & res1_min_data,
+ResSingleMinimizationData const & res2_min_data
 );*/
 
 /// @brief Evaluate the derivatives for all atoms on the input residue
@@ -492,15 +492,15 @@ eval_atom_derivatives_for_minnode(
 /// @brief Deprecated
 /*void
 eval_atom_derivative_for_minnode(
-	MinimizationNode const & min_node,
-	Size atom_index,
-	conformation::Residue const & rsd,
-	pose::Pose const & pose,
-	kinematics::DomainMap const & domain_map,
-	ScoreFunction const & sfxn,
-	EnergyMap const & res_weights,
-	Vector & F1, // accumulated into
-	Vector & F2  // accumulated into
+MinimizationNode const & min_node,
+Size atom_index,
+conformation::Residue const & rsd,
+pose::Pose const & pose,
+kinematics::DomainMap const & domain_map,
+ScoreFunction const & sfxn,
+EnergyMap const & res_weights,
+Vector & F1, // accumulated into
+Vector & F2  // accumulated into
 );*/
 
 void
@@ -541,18 +541,18 @@ eval_weighted_atom_derivatives_for_minedge(
 /// @brief Deprecated
 /*void
 eval_atom_deriv_for_minedge(
-	MinimizationEdge const & min_edge,
-	Size atom_index,
-	conformation::Residue const & res1,
-	conformation::Residue const & res2,
-	ResSingleMinimizationData const & res1_min_data,
-	ResSingleMinimizationData const & res2_min_data,
-	pose::Pose const & pose,
-	kinematics::DomainMap const & domain_map,
-	ScoreFunction const & sfxn,
-	EnergyMap const & respair_weights,
-	Vector & F1, // accumulated into
-	Vector & F2  // accumulated into
+MinimizationEdge const & min_edge,
+Size atom_index,
+conformation::Residue const & res1,
+conformation::Residue const & res2,
+ResSingleMinimizationData const & res1_min_data,
+ResSingleMinimizationData const & res2_min_data,
+pose::Pose const & pose,
+kinematics::DomainMap const & domain_map,
+ScoreFunction const & sfxn,
+EnergyMap const & respair_weights,
+Vector & F1, // accumulated into
+Vector & F2  // accumulated into
 );*/
 
 void
@@ -578,15 +578,15 @@ eval_dof_deriv_for_minnode(
 
 /*void
 eval_weighted_atom_derivative_for_minnode(
-	MinimizationNode const & min_node,
-	Size atom_index,
-	conformation::Residue const & rsd,
-	pose::Pose const & pose,
-	kinematics::DomainMap const & domain_map,
-	ScoreFunction const & sfxn,
-	EnergyMap const & res_weights,
-	Vector & F1, // accumulated into
-	Vector & F2  // accumulated into
+MinimizationNode const & min_node,
+Size atom_index,
+conformation::Residue const & rsd,
+pose::Pose const & pose,
+kinematics::DomainMap const & domain_map,
+ScoreFunction const & sfxn,
+EnergyMap const & res_weights,
+Vector & F1, // accumulated into
+Vector & F2  // accumulated into
 );*/
 
 void
@@ -602,18 +602,18 @@ eval_weighted_res_onebody_energies_for_minnode(
 
 /*void
 eval_weighted_atom_deriv_for_minedge(
-	MinimizationEdge const & min_edge,
-	Size atom_index,
-	conformation::Residue const & res1,
-	conformation::Residue const & res2,
-	ResSingleMinimizationData const & res1_min_data,
-	ResSingleMinimizationData const & res2_min_data,
-	pose::Pose const & pose,
-	kinematics::DomainMap const & domain_map,
-	ScoreFunction const & sfxn,
-	EnergyMap const & respair_weights,
-	Vector & F1, // accumulated into
-	Vector & F2  // accumulated into
+MinimizationEdge const & min_edge,
+Size atom_index,
+conformation::Residue const & res1,
+conformation::Residue const & res2,
+ResSingleMinimizationData const & res1_min_data,
+ResSingleMinimizationData const & res2_min_data,
+pose::Pose const & pose,
+kinematics::DomainMap const & domain_map,
+ScoreFunction const & sfxn,
+EnergyMap const & respair_weights,
+Vector & F1, // accumulated into
+Vector & F2  // accumulated into
 );*/
 
 void

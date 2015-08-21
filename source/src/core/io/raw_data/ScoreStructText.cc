@@ -27,40 +27,40 @@ namespace core {
 namespace io {
 namespace raw_data {
 
-	ScoreStructText::ScoreStructText() {
-		decoy_tag_   = "empty";
-	}
+ScoreStructText::ScoreStructText() {
+	decoy_tag_   = "empty";
+}
 
-	ScoreStructText::ScoreStructText(
-		core::pose::Pose, // pose,
-		std::string tag
-	) {
-		// tag information
-		decoy_tag_ = tag;
-	}
-	// @brief Fill a Pose with the data in this ScoreStructText.
-	void ScoreStructText::fill_pose(
-		core::pose::Pose &
-	) {
-//		basic::T("core.io.silent.ScoreStructText") << "Error: don't have a conformation! (called fill_pose())";
-	} // fill_pose
+ScoreStructText::ScoreStructText(
+	core::pose::Pose, // pose,
+	std::string tag
+) {
+	// tag information
+	decoy_tag_ = tag;
+}
+// @brief Fill a Pose with the data in this ScoreStructText.
+void ScoreStructText::fill_pose(
+	core::pose::Pose &
+) {
+	//  basic::T("core.io.silent.ScoreStructText") << "Error: don't have a conformation! (called fill_pose())";
+} // fill_pose
 
-	void ScoreStructText::fill_pose(
-		core::pose::Pose &,
-		core::chemical::ResidueTypeSet const&
-	) {
-//		basic::T("core.io.silent.ScoreStructText") << "Error: don't have a conformation! (called fill_pose())";
-	} // fill_pose
+void ScoreStructText::fill_pose(
+	core::pose::Pose &,
+	core::chemical::ResidueTypeSet const&
+) {
+	//  basic::T("core.io.silent.ScoreStructText") << "Error: don't have a conformation! (called fill_pose())";
+} // fill_pose
 
-	/// @brief Print the conformation information contained in this object to the given ozstream.
-	void ScoreStructText::print_conformation( std::ostream& ) const {
-//		basic::T("core.io.silent.ScoreStructText") << "Error: don't have a conformation (called print_conformation())!";
-	} // print_conformation
+/// @brief Print the conformation information contained in this object to the given ozstream.
+void ScoreStructText::print_conformation( std::ostream& ) const {
+	//  basic::T("core.io.silent.ScoreStructText") << "Error: don't have a conformation (called print_conformation())!";
+} // print_conformation
 
-	Real ScoreStructText::get_debug_rmsd() {
-//		basic::T("core.io.silent.ScoreStructText") << "Error: don't have a conformation (called get_debug_rmsd())!";
-		return 0;
-	}
+Real ScoreStructText::get_debug_rmsd() {
+	//  basic::T("core.io.silent.ScoreStructText") << "Error: don't have a conformation (called get_debug_rmsd())!";
+	return 0;
+}
 
 } // namespace silent
 } // namespace io

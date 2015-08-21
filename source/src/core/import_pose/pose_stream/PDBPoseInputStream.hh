@@ -42,7 +42,7 @@ public:
 		set_filenames( fns );
 	}
 
-	PDBPoseInputStream( utility::file::FileName const & fn	) {
+	PDBPoseInputStream( utility::file::FileName const & fn ) {
 		utility::vector1< utility::file::FileName > fns;
 		fns.push_back( fn );
 		set_filenames( fns );
@@ -70,7 +70,7 @@ public:
 		core::pose::Pose & pose,
 		core::chemical::ResidueTypeSet const & residue_set
 	);
-	virtual void fill_pose(	core::pose::Pose&	);
+	virtual void fill_pose( core::pose::Pose& );
 
 	virtual utility::vector1< core::pose::PoseOP > get_all_poses(
 		core::chemical::ResidueTypeSet const & residue_set

@@ -71,8 +71,7 @@ void OopMover::apply( core::pose::Pose & pose )
 	runtime_assert ( oop_post_pos_ != 1 );
 
 	//kdrew: first residue is a special case, no phi torsion
-	if( pose.residue_type( oop_pre_pos_ ).is_lower_terminus() )
-	{
+	if ( pose.residue_type( oop_pre_pos_ ).is_lower_terminus() ) {
 		//kdrew: no phi angle, adjust CYP-N-Ca-C torsion
 		Real offset = 180 + phi_angle_ ;
 
@@ -81,7 +80,7 @@ void OopMover::apply( core::pose::Pose & pose )
 		AtomID aidCA( pose.residue(oop_pre_pos_).atom_index("CA"), oop_pre_pos_ );
 		AtomID aidC( pose.residue(oop_pre_pos_).atom_index("C"), oop_pre_pos_ );
 
-		pose.conformation().set_torsion_angle( aidCYP, aidN, aidCA, aidC, radians( offset ) ); 
+		pose.conformation().set_torsion_angle( aidCYP, aidN, aidCA, aidC, radians( offset ) );
 	}
 
 
@@ -104,18 +103,18 @@ OopMover::get_name() const {
 }
 
 /// @brief
-OopMover::OopMover( 
-		core::Size oop_seq_position 
-	): Mover(), oop_pre_pos_(oop_seq_position), oop_post_pos_(oop_seq_position+1)
+OopMover::OopMover(
+	core::Size oop_seq_position
+): Mover(), oop_pre_pos_(oop_seq_position), oop_post_pos_(oop_seq_position+1)
 {
 	Mover::type( "OopMover" );
 }
 
-OopMover::OopMover( 
-		core::Size oop_seq_position, 
-		core::Real phi_angle,
-		core::Real psi_angle
-	): Mover(), oop_pre_pos_(oop_seq_position), oop_post_pos_(oop_seq_position+1), phi_angle_(phi_angle), psi_angle_(psi_angle)
+OopMover::OopMover(
+	core::Size oop_seq_position,
+	core::Real phi_angle,
+	core::Real psi_angle
+): Mover(), oop_pre_pos_(oop_seq_position), oop_post_pos_(oop_seq_position+1), phi_angle_(phi_angle), psi_angle_(psi_angle)
 {
 	Mover::type( "OopMover" );
 
@@ -139,7 +138,7 @@ void OopMover::update_hydrogens_( core::pose::Pose & pose )
 	AtomID aidCA_Z( pose.residue(oop_post_pos_).atom_index("CA"), oop_post_pos_);
 	AtomID aid1HZP( pose.residue(oop_post_pos_).atom_index("1HZP"), oop_post_pos_);
 
-	//kdrew: definitions for xyz coordinates 
+	//kdrew: definitions for xyz coordinates
 	Vector const& CA_xyz ( pose.residue(oop_pre_pos_).xyz("CA") );
 	Vector const& N_xyz ( pose.residue(oop_pre_pos_).xyz("N") );
 	Vector const& CYP_xyz ( pose.residue(oop_pre_pos_).xyz("CYP") );
@@ -153,32 +152,32 @@ void OopMover::update_hydrogens_( core::pose::Pose & pose )
 	Real VZP_torsion_correction = numeric::dihedral_degrees( CZP_xyz, CYP_xyz, N_xyz, CA_xyz ) - degrees( pose.conformation().torsion_angle( aidVZP, aidCYP, aidN, aidCA ) );
 	//kdrew: change the 1HYP torsion by the corrected amount
 	Real torsion_1HYP = degrees(pose.conformation().torsion_angle(aid1HYP,aidCYP,aidN,aidCA)) + VZP_torsion_correction;
-	pose.conformation().set_torsion_angle(aid1HYP,aidCYP,aidN,aidCA,radians(torsion_1HYP)); 
+	pose.conformation().set_torsion_angle(aid1HYP,aidCYP,aidN,aidCA,radians(torsion_1HYP));
 	//pose.dump_pdb( "rosetta_out_oop_pre_mvH.pdb" );
 
 	//kdrew: calculate the difference between the virtual atom VYP torsion and the torsion involving the real CYP atom (on the pre residue)
 	Real VYP_torsion_correction = numeric::dihedral_degrees( CYP_xyz, CZP_xyz, NZ_xyz, CAZ_xyz ) - degrees( pose.conformation().torsion_angle( aidVYP, aidCZP, aidN_Z, aidCA_Z ));
 	//kdrew: change the 1HZP torsion by the corrected amount
 	Real torsion_1HZP = degrees(pose.conformation().torsion_angle(aid1HZP,aidCZP,aidN_Z,aidCA_Z)) + VYP_torsion_correction;
-	pose.conformation().set_torsion_angle(aid1HZP,aidCZP,aidN_Z,aidCA_Z,radians(torsion_1HZP)); 
+	pose.conformation().set_torsion_angle(aid1HZP,aidCZP,aidN_Z,aidCA_Z,radians(torsion_1HZP));
 	//pose.dump_pdb( "rosetta_out_oop_pre_pos_t_mvH.pdb" );
 
 	//kdrew: possibly minimize pose here
 
 	//kdrew: debug printing
 	//kdrew: VZP CYP N CA
-	TR<<"VZP-CYP-N-CA: "<< degrees(pose.conformation().torsion_angle(aidVZP,aidCYP,aidN,aidCA)) <<std::endl; 
+	TR<<"VZP-CYP-N-CA: "<< degrees(pose.conformation().torsion_angle(aidVZP,aidCYP,aidN,aidCA)) <<std::endl;
 	//kdrew: CZP CYP N CA
-	TR<<"CZP-CYP-N-CA: "<< numeric::dihedral_degrees(CZP_xyz,CYP_xyz,N_xyz,CA_xyz) <<std::endl; 
+	TR<<"CZP-CYP-N-CA: "<< numeric::dihedral_degrees(CZP_xyz,CYP_xyz,N_xyz,CA_xyz) <<std::endl;
 	//kdrew: 1HYP CYP N CA
-	TR<<"1HYP-CYP-N-CA: "<< degrees(pose.conformation().torsion_angle(aid1HYP,aidCYP,aidN,aidCA)) <<std::endl; 
+	TR<<"1HYP-CYP-N-CA: "<< degrees(pose.conformation().torsion_angle(aid1HYP,aidCYP,aidN,aidCA)) <<std::endl;
 
 	//kdrew: VYP CZP N_Z CA_Z
-	TR<<"VYP-CZP-N-CA: "<< degrees(pose.conformation().torsion_angle(aidVYP,aidCZP,aidN_Z,aidCA_Z)) << std::endl; 
+	TR<<"VYP-CZP-N-CA: "<< degrees(pose.conformation().torsion_angle(aidVYP,aidCZP,aidN_Z,aidCA_Z)) << std::endl;
 	//kdrew: CYP CZP N_Z CA_Z
-	TR<<"CYP-CZP-N-CA: "<< numeric::dihedral_degrees(CYP_xyz,CZP_xyz,NZ_xyz,CAZ_xyz) <<std::endl; 
+	TR<<"CYP-CZP-N-CA: "<< numeric::dihedral_degrees(CYP_xyz,CZP_xyz,NZ_xyz,CAZ_xyz) <<std::endl;
 	//kdrew: 1HZP CZP N_Z CA_Z
-	TR<<"1HZP-CZP-N-CA: "<< degrees(pose.conformation().torsion_angle(aid1HZP,aidCZP,aidN_Z,aidCA_Z)) << std::endl; 
+	TR<<"1HZP-CZP-N-CA: "<< degrees(pose.conformation().torsion_angle(aid1HZP,aidCZP,aidN_Z,aidCA_Z)) << std::endl;
 
 }
 

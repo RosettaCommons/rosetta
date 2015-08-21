@@ -94,7 +94,7 @@ private:
 	bool check_next_pairing(  ObjexxFCL::FArray3D_int &, core::Size, core::Size ) const;
 
 	bool check_two_pairings(
-   	ObjexxFCL::FArray1A_int pairing1,
+		ObjexxFCL::FArray1A_int pairing1,
 		ObjexxFCL::FArray1A_int pairing2,
 		int & common_strands
 	) const;

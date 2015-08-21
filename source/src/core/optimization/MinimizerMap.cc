@@ -72,7 +72,7 @@ MinimizerMap::link_torsion_vectors()
 	for ( iterator it=dof_nodes_.begin(),
 			it_end=dof_nodes_.end(); it != it_end; ++it ) {
 		DOF_Node & dof_node( **it );
-	debug_assert( last_depth == -1 || dof_node.depth() <= last_depth );
+		debug_assert( last_depth == -1 || dof_node.depth() <= last_depth );
 #ifndef NDEBUG
 		last_depth = dof_node.depth();
 #endif
@@ -85,7 +85,7 @@ void
 MinimizerMap::zero_torsion_vectors()
 {
 	for ( iterator iter=dof_nodes_.begin(), iter_end=dof_nodes_.end();
-				iter != iter_end; ++iter ) {
+			iter != iter_end; ++iter ) {
 		(*iter)->F1() = 0.0;
 		(*iter)->F2() = 0.0;
 	}
@@ -189,8 +189,8 @@ MinimizerMap::clear_dof_nodes()
 {
 	// delete old memory -- deprecated 7/1/2010 following DOF_Node's inherretance from ReferenceCount
 	//for ( iterator it=dof_nodes_.begin(), it_end = dof_nodes_.end();
-	//			it != it_end; ++it ) {
-	//	delete (*it);
+	//   it != it_end; ++it ) {
+	// delete (*it);
 	//}
 
 	dof_nodes_.clear();
@@ -221,7 +221,7 @@ MinimizerMap::copy_dofs_from_pose(
 {
 	int imap = 1;
 	for ( const_iterator it=dof_nodes_.begin(), it_end = dof_nodes_.end();
-				it != it_end; ++it, ++imap ) {
+			it != it_end; ++it, ++imap ) {
 		DOF_Node const & dof_node( **it );
 		dofs[ imap ] = torsion_scale_factor( dof_node ) *
 			pose.dof( dof_node.dof_id() );
@@ -311,7 +311,7 @@ MinimizerMap::setup(
 	core::pose::initialize_atomid_map( moving_xyz, pose, false );
 	core::pose::initialize_atomid_map( moving_dof, pose, false );
 	for ( const_iterator it = dof_nodes_.begin(), it_end = dof_nodes_.end();
-				it != it_end; ++it ) {
+			it != it_end; ++it ) {
 		moving_dof[ (**it).atom_id() ] = true;
 	}
 
@@ -332,7 +332,7 @@ MinimizerMap::assign_rosetta_torsions( pose::Pose const & pose )
 	pose::setup_dof_to_torsion_map( pose, dof_map );
 
 	for ( iterator it = dof_nodes_.begin(), it_end = dof_nodes_.end();
-				it != it_end; ++it ) {
+			it != it_end; ++it ) {
 		DOF_Node & dof_node( **it );
 
 		if ( dof_node.type() == id::PHI ) {

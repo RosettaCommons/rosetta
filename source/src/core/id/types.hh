@@ -49,25 +49,25 @@ static Size const n_DOF_Type( 9 ); // Update this if DOF_Type changes
 inline std::string
 to_string( DOF_Type const & type ) {
 	switch ( type ) {
-	case PHI:
+	case PHI :
 		return "PHI";
-	case THETA:
+	case THETA :
 		return "THETA";
-	case D:
+	case D :
 		return "D";
-	case RB1:
+	case RB1 :
 		return "RB1";
-	case RB2:
+	case RB2 :
 		return "RB2";
-	case RB3:
+	case RB3 :
 		return "RB3";
-	case RB4:
+	case RB4 :
 		return "RB4";
-	case RB5:
+	case RB5 :
 		return "RB5";
-	case RB6:
+	case RB6 :
 		return "RB6";
-	default:
+	default :
 		return "UNKNOWN";
 	}
 }
@@ -90,17 +90,17 @@ enum TorsionType {
 inline std::string
 to_string( TorsionType const & type ) {
 	switch ( type ) {
-	case BB:
+	case BB :
 		return "BB";
-	case CHI:
+	case CHI :
 		return "SC";
-	case NU:
+	case NU :
 		return "NU";
-	case BRANCH:
+	case BRANCH :
 		return "BRANCH";
-	case JUMP:
+	case JUMP :
 		return "JUMP";
-	default:
+	default :
 		return "UNKNOWN";
 	}
 }

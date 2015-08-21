@@ -56,8 +56,8 @@
 // Boost Headers
 #include <boost/foreach.hpp>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::endl;
 using std::string;
@@ -147,12 +147,12 @@ get_protocol_and_batch_id(
 
 	//Some implementations of mpi don't allow self messaging. So, if we
 	//are the head node, don't try to message yourself, just access the listener directly
-	if(rank != 0) {
+	if ( rank != 0 ) {
 		listener_data = request_data_from_head_node(DATABASE_PROTOCOL_AND_BATCH_ID_TAG, batch_name);
 	} else {
 		MessageListenerOP listener(
 			MessageListenerFactory::get_instance()->get_listener(
-				DATABASE_PROTOCOL_AND_BATCH_ID_TAG));
+			DATABASE_PROTOCOL_AND_BATCH_ID_TAG));
 		listener->request(batch_name,listener_data);
 	}
 
@@ -166,7 +166,7 @@ get_protocol_and_batch_id(
 	bool send_new_ids_to_head_node=false;
 
 	//no protocol id set yet - have protocol features reporter generate one
-	if(protocol_id==0){
+	if ( protocol_id==0 ) {
 		try {
 			db_session->begin_transaction();
 			protocol_id = protocol_features->report_features(protocol_id, db_session);
@@ -186,7 +186,7 @@ get_protocol_and_batch_id(
 	}
 
 	//no batch id set yet - have the batch features reporter generate one
-	if(batch_id==0){
+	if ( batch_id==0 ) {
 		try {
 			db_session->begin_transaction();
 			batch_id = batch_features->report_features(batch_id, protocol_id, batch_name, batch_description, db_session);
@@ -207,18 +207,18 @@ get_protocol_and_batch_id(
 	}
 
 	//If we generate any new ids, then send them to the head node.
-	if(send_new_ids_to_head_node){
+	if ( send_new_ids_to_head_node ) {
 		TR
 			<< "protocol_id '" << protocol_id << "' "
 			<< "and batch_id '" << batch_id << "', for batch '" << batch_name
 			<< "' have been written to the database. Now sending info back to head node." <<std::endl;
 
-		if(rank != 0) {
+		if ( rank != 0 ) {
 			send_data_to_head_node(serialize_ids(protocol_id, batch_name, batch_id));
 		} else {
 			MessageListenerOP listener(
 				MessageListenerFactory::get_instance()->get_listener(
-					DATABASE_PROTOCOL_AND_BATCH_ID_TAG));
+				DATABASE_PROTOCOL_AND_BATCH_ID_TAG));
 			listener->receive(serialize_ids(protocol_id, batch_name, batch_id));
 		}
 	}
@@ -244,11 +244,11 @@ write_features_reporters_table(
 
 	features_reporters_schema.write(db_session);
 
-  std::vector< std::string > column_names;
+	std::vector< std::string > column_names;
 	column_names.push_back("report_name");
-		std::vector< std::string > values;
+	std::vector< std::string > values;
 
-	BOOST_FOREACH(FeaturesReporterOP const & reporter, features_reporters){
+	BOOST_FOREACH ( FeaturesReporterOP const & reporter, features_reporters ) {
 		string const report_name(reporter->type_name());
 
 		values.clear();
@@ -290,22 +290,22 @@ write_batch_reports_table(
 	string select_string =
 		"SELECT *\n"
 		"FROM\n"
-		"	batch_reports\n"
+		"\tbatch_reports\n"
 		"WHERE\n"
-		"	batch_id = ? AND\n"
+		"\tbatch_id = ? AND\n"
 		" report_name = ?;";
 	statement select_stmt(safely_prepare_statement(select_string, db_session));
 
 	string insert_string = "INSERT INTO batch_reports (batch_id, report_name) VALUES (?,?);";
 	statement insert_stmt(safely_prepare_statement(insert_string, db_session));
 
-	BOOST_FOREACH(FeaturesReporterOP const & reporter, features_reporters){
+	BOOST_FOREACH ( FeaturesReporterOP const & reporter, features_reporters ) {
 		string const report_name(reporter->type_name());
 		select_stmt.bind(1,batch_id);
 		select_stmt.bind(2,report_name);
 
 		result res(safely_read_from_database(select_stmt));
-		if(!res.next()) {
+		if ( !res.next() ) {
 			insert_stmt.bind(1, batch_id);
 			insert_stmt.bind(2, report_name);
 			safely_write_to_database(insert_stmt);
@@ -318,7 +318,7 @@ deserialize_db_listener_data(
 	string data
 ){
 	utility::vector1< std::string > tokens = utility::split(data);
-	if(tokens.size() != 2){
+	if ( tokens.size() != 2 ) {
 		utility_exit_with_message("failed to deserialize the message from master node. Message was: " + data + " You will get this message if trying to run ReportToDB mover in MPI mode with only on processor.");
 	}
 	int protocol_id=utility::string2int(tokens[1]);
@@ -353,7 +353,7 @@ get_batch_id(
 	stmt.bind(1, struct_id);
 	result res(basic::database::safely_read_from_database(stmt));
 
-	if(!res.next()){
+	if ( !res.next() ) {
 		stringstream err_msg;
 		err_msg
 			<< "No batch_id found for struct_id '"
@@ -370,14 +370,14 @@ struct_ids_from_tag(
 	sessionOP db_session,
 	string const & tag
 ){
-  std::string statement_string = "SELECT struct_id FROM structures WHERE tag=?;";
+	std::string statement_string = "SELECT struct_id FROM structures WHERE tag=?;";
 	statement stmt = basic::database::safely_prepare_statement(statement_string,db_session);
 	stmt.bind(1,tag);
 	result res = stmt.query();
 
-  utility::vector1<StructureID> struct_ids;
+	utility::vector1<StructureID> struct_ids;
 
-	while(res.next()){
+	while ( res.next() ) {
 		StructureID id;
 		res >> id;
 		struct_ids.push_back(id);
@@ -390,8 +390,7 @@ std::string serialize_residue_xyz_coords(core::conformation::Residue const & res
 {
 	//6bitencode and decode work best with arrays
 	core::Real* coord_data = new core::Real[residue.natoms()*3];
-	for(core::Size atom_index = 1; atom_index <= residue.natoms();++atom_index)
-	{
+	for ( core::Size atom_index = 1; atom_index <= residue.natoms(); ++atom_index ) {
 		core::Size array_index = (atom_index - 1)*3;
 		numeric::xyzVector<core::Real> xyz_coords(residue.xyz(atom_index));
 
@@ -416,8 +415,7 @@ utility::vector1< numeric::xyzVector<core::Real> > deserialize_xyz_coords(std::s
 	utility::decode6bit((unsigned char*)coord_data,data);
 
 	utility::vector1< numeric::xyzVector<core::Real> > xyz_vector;
-	for(core::Size atom_index = 1; atom_index <= natoms;++atom_index)
-	{
+	for ( core::Size atom_index = 1; atom_index <= natoms; ++atom_index ) {
 		core::Size array_index = (atom_index - 1)*3;
 		xyz_vector.push_back(numeric::xyzVector<core::Real>(coord_data[array_index],coord_data[array_index + 1],coord_data[array_index + 2]));
 	}
@@ -428,13 +426,12 @@ utility::vector1< numeric::xyzVector<core::Real> > deserialize_xyz_coords(std::s
 std::string
 get_question_mark_string(core::Size const n){
 	std::string result;
-	if (n==1){
+	if ( n==1 ) {
 		result = "(?)";
 		return result;
-	}
-	else{
+	} else {
 		result = "(?";
-		for (core::Size i =2; i<=n; ++i){
+		for ( core::Size i =2; i<=n; ++i ) {
 			result += ",?";
 		}
 		result += ")";

@@ -27,41 +27,41 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class ResidueContactScreener: public StepWiseScreener {
+class ResidueContactScreener: public StepWiseScreener {
 
-	public:
+public:
 
-		//constructor
-		// Undefined, commenting out to fix PyRosetta build  ResidueContactScreener();
+	//constructor
+	// Undefined, commenting out to fix PyRosetta build  ResidueContactScreener();
 
-		//constructor
-		ResidueContactScreener(  pose::Pose & screening_pose,
-														 Size const last_append_res,
-														 Size const last_prepend_res,
-														 Distance const atom_atom_overlap_dist_cutoff );
+	//constructor
+	ResidueContactScreener(  pose::Pose & screening_pose,
+		Size const last_append_res,
+		Size const last_prepend_res,
+		Distance const atom_atom_overlap_dist_cutoff );
 
-		//destructor
-		~ResidueContactScreener();
+	//destructor
+	~ResidueContactScreener();
 
-	public:
+public:
 
-		bool
-		check_screen();
+	bool
+	check_screen();
 
-		std::string
-		name() const { return "ResidueContactScreener"; }
+	std::string
+	name() const { return "ResidueContactScreener"; }
 
-		StepWiseScreenerType
-		type() const { return RESIDUE_CONTACT; }
+	StepWiseScreenerType
+	type() const { return RESIDUE_CONTACT; }
 
-	private:
+private:
 
-		pose::Pose & screening_pose_;
-		Size const last_append_res_;
-		Size const last_prepend_res_;
-		Distance const atom_atom_overlap_dist_cutoff_;
+	pose::Pose & screening_pose_;
+	Size const last_append_res_;
+	Size const last_prepend_res_;
+	Distance const atom_atom_overlap_dist_cutoff_;
 
-	};
+};
 
 } //screener
 } //stepwise

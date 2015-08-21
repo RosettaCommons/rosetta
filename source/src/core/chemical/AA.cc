@@ -37,7 +37,7 @@ std::map< std::string, AA > setup_name2aa() {
 
 	std::map< std::string, AA > n2aa;
 
-    // L-amino acid types
+	// L-amino acid types
 	n2aa[ "ALA" ] = aa_ala;
 	n2aa[ "CYS" ] = aa_cys;
 	n2aa[ "ASP" ] = aa_asp;
@@ -59,7 +59,7 @@ std::map< std::string, AA > setup_name2aa() {
 	n2aa[ "TRP" ] = aa_trp;
 	n2aa[ "TYR" ] = aa_tyr;
 
-    // D-amino acids
+	// D-amino acids
 	n2aa[ "DAL" ] = aa_dal;
 	n2aa[ "DCS" ] = aa_dcs;
 	n2aa[ "DAS" ] = aa_das;
@@ -80,7 +80,7 @@ std::map< std::string, AA > setup_name2aa() {
 	n2aa[ "DTR" ] = aa_dtr;
 	n2aa[ "DTY" ] = aa_dty;
 
-    // beta-3-L amino acids
+	// beta-3-L amino acids
 	n2aa[ "B3A" ] = aa_b3a;
 	n2aa[ "B3C" ] = aa_b3c;
 	n2aa[ "B3D" ] = aa_b3d;
@@ -101,12 +101,12 @@ std::map< std::string, AA > setup_name2aa() {
 	n2aa[ "B3V" ] = aa_b3v;
 	n2aa[ "B3W" ] = aa_b3w;
 	n2aa[ "B3Y" ] = aa_b3y;
-		// 3 common cyclic beta-3 amino acids
+	// 3 common cyclic beta-3 amino acids
 	n2aa[ "cPr" ] = aa_b3cisACPrC;
 	n2aa[ "cAC" ] = aa_b3cisACPC;
 	n2aa[ "cAH" ] = aa_b3cisACHC;
 
-		// Nucleic acids
+	// Nucleic acids
 	n2aa[ "ADE" ] = na_ade;
 	n2aa[ "CYT" ] = na_cyt;
 	n2aa[ "GUA" ] = na_gua;
@@ -120,7 +120,7 @@ std::map< std::string, AA > setup_name2aa() {
 	n2aa[ "H2O" ] = aa_h2o;
 	n2aa[ "HOH" ] = aa_h2o; //ok to have redundant?
 
-    // Virtual residues
+	// Virtual residues
 	n2aa[ "VRT" ] = aa_vrt;
 
 	n2aa[ "UNP" ] = aa_unp;
@@ -219,7 +219,7 @@ utility::vector1< std::string > setup_aa2name() {
 	utility::vector1< std::string > aa2n( num_aa_types );
 
 	for ( std::map< std::string, AA >::const_iterator iter = name2aa().begin(),
-		iter_end = name2aa().end(); iter != iter_end; ++iter ) {
+			iter_end = name2aa().end(); iter != iter_end; ++iter ) {
 		aa2n[ iter->second ] = iter->first;
 	}
 
@@ -242,7 +242,7 @@ utility::vector1< char > setup_aa2oneletter() {
 	utility::vector1< char > aa2l( num_aa_types );
 
 	for ( std::map< char, AA >::const_iterator iter = oneletter2aa().begin(),
-		iter_end = oneletter2aa().end(); iter != iter_end; ++iter ) {
+			iter_end = oneletter2aa().end(); iter != iter_end; ++iter ) {
 		aa2l[ iter->second ] = iter->first;
 	}
 
@@ -279,56 +279,56 @@ aa_from_name( std::string const & name )
 bool
 is_canonical_D_aa( AA aa )
 {
-	if(aa>=first_D_aa && aa<=last_D_aa) return true;
-  return false;
+	if ( aa>=first_D_aa && aa<=last_D_aa ) return true;
+	return false;
 }
 
 AA
 get_L_equivalent( AA aa ) {
-	if(aa==aa_dal) return aa_ala;
-	else if(aa==aa_dcs) return aa_cys;
-	else if(aa==aa_das) return aa_asp;
-	else if(aa==aa_dgu) return aa_glu;
-	else if(aa==aa_dph) return aa_phe;
-	else if(aa==aa_dhi) return aa_his;
-	else if(aa==aa_dil) return aa_ile;
-	else if(aa==aa_dly) return aa_lys;
-	else if(aa==aa_dle) return aa_leu;
-	else if(aa==aa_dme) return aa_met;
-	else if(aa==aa_dan) return aa_asn;
-	else if(aa==aa_dpr) return aa_pro;
-	else if(aa==aa_dgn) return aa_gln;
-	else if(aa==aa_dar) return aa_arg;
-	else if(aa==aa_dse) return aa_ser;
-	else if(aa==aa_dth) return aa_thr;
-	else if(aa==aa_dva) return aa_val;
-	else if(aa==aa_dtr) return aa_trp;
-	else if(aa==aa_dty) return aa_tyr;
+	if ( aa==aa_dal ) return aa_ala;
+	else if ( aa==aa_dcs ) return aa_cys;
+	else if ( aa==aa_das ) return aa_asp;
+	else if ( aa==aa_dgu ) return aa_glu;
+	else if ( aa==aa_dph ) return aa_phe;
+	else if ( aa==aa_dhi ) return aa_his;
+	else if ( aa==aa_dil ) return aa_ile;
+	else if ( aa==aa_dly ) return aa_lys;
+	else if ( aa==aa_dle ) return aa_leu;
+	else if ( aa==aa_dme ) return aa_met;
+	else if ( aa==aa_dan ) return aa_asn;
+	else if ( aa==aa_dpr ) return aa_pro;
+	else if ( aa==aa_dgn ) return aa_gln;
+	else if ( aa==aa_dar ) return aa_arg;
+	else if ( aa==aa_dse ) return aa_ser;
+	else if ( aa==aa_dth ) return aa_thr;
+	else if ( aa==aa_dva ) return aa_val;
+	else if ( aa==aa_dtr ) return aa_trp;
+	else if ( aa==aa_dty ) return aa_tyr;
 
 	return aa_unk;
 }
 
 AA
 get_D_equivalent( AA aa ) {
-	if(aa==aa_ala) return aa_dal;
-	else if(aa==aa_cys) return aa_dcs;
-	else if(aa==aa_asp) return aa_das;
-	else if(aa==aa_glu) return aa_dgu;
-	else if(aa==aa_phe) return aa_dph;
-	else if(aa==aa_his) return aa_dhi;
-	else if(aa==aa_ile) return aa_dil;
-	else if(aa==aa_lys) return aa_dly;
-	else if(aa==aa_leu) return aa_dle;
-	else if(aa==aa_met) return aa_dme;
-	else if(aa==aa_asn) return aa_dan;
-	else if(aa==aa_pro) return aa_dpr;
-	else if(aa==aa_gln) return aa_dgn;
-	else if(aa==aa_arg) return aa_dar;
-	else if(aa==aa_ser) return aa_dse;
-	else if(aa==aa_thr) return aa_dth;
-	else if(aa==aa_val) return aa_dva;
-	else if(aa==aa_trp) return aa_dtr;
-	else if(aa==aa_tyr) return aa_dty;
+	if ( aa==aa_ala ) return aa_dal;
+	else if ( aa==aa_cys ) return aa_dcs;
+	else if ( aa==aa_asp ) return aa_das;
+	else if ( aa==aa_glu ) return aa_dgu;
+	else if ( aa==aa_phe ) return aa_dph;
+	else if ( aa==aa_his ) return aa_dhi;
+	else if ( aa==aa_ile ) return aa_dil;
+	else if ( aa==aa_lys ) return aa_dly;
+	else if ( aa==aa_leu ) return aa_dle;
+	else if ( aa==aa_met ) return aa_dme;
+	else if ( aa==aa_asn ) return aa_dan;
+	else if ( aa==aa_pro ) return aa_dpr;
+	else if ( aa==aa_gln ) return aa_dgn;
+	else if ( aa==aa_arg ) return aa_dar;
+	else if ( aa==aa_ser ) return aa_dse;
+	else if ( aa==aa_thr ) return aa_dth;
+	else if ( aa==aa_val ) return aa_dva;
+	else if ( aa==aa_trp ) return aa_dtr;
+	else if ( aa==aa_tyr ) return aa_dty;
 
 	return aa_unk;
 }
@@ -352,7 +352,7 @@ operator >>(
 	is >> name;
 	std::map< std::string, AA >::const_iterator iter = name2aa().find( name );
 	if ( iter == name2aa().end() ) {
- 		//std::cout << "aaextract failed: " << name << std::endl;
+		//std::cout << "aaextract failed: " << name << std::endl;
 		aa = aa_unk;
 		is.setstate( std::ios_base::failbit );
 	} else {
@@ -381,14 +381,14 @@ operator <<(
 
 std::string
 name_from_aa( AA aa ) {
-	if( aa > num_aa_types || aa == 0 ) return "AAOutOfRange";
+	if ( aa > num_aa_types || aa == 0 ) return "AAOutOfRange";
 	return aa2name()[ aa ];
 }
 
 
 char
 oneletter_code_from_aa( AA aa ) {
-debug_assert( aa <= chemical::num_canonical_aas );
+	debug_assert( aa <= chemical::num_canonical_aas );
 	return aa2oneletter()[ aa ];
 }
 
@@ -397,7 +397,7 @@ AA
 aa_from_oneletter_code( char onelettercode )
 {
 	std::map< char, AA >::iterator item( oneletter2aa().find( onelettercode ) );
-	if( item == oneletter2aa().end() ) {
+	if ( item == oneletter2aa().end() ) {
 		return aa_unk; // Not ideal, but better than a random value or a crash later on.
 	} else {
 		return item->second;

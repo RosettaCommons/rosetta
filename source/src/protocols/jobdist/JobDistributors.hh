@@ -319,7 +319,7 @@ private:
 class PlainPdbJobDistributor : public BaseJobDistributor
 {
 public:
-  typedef BaseJobDistributor parent;
+	typedef BaseJobDistributor parent;
 
 protected:
 
@@ -383,7 +383,7 @@ private:
 class PlainRawJobDistributor : public BaseJobDistributor
 {
 public:
-  typedef BaseJobDistributor parent;
+	typedef BaseJobDistributor parent;
 
 protected:
 
@@ -435,7 +435,7 @@ private:
 class PlainSilentFileJobDistributor : public BaseJobDistributor
 {
 public:
-  typedef BaseJobDistributor parent;
+	typedef BaseJobDistributor parent;
 
 protected:
 	typedef utility::vector1< BasicJobOP > JobVector;

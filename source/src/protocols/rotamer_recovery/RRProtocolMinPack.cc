@@ -66,19 +66,19 @@ RRProtocolMinPack::get_parameters() const {
 /// @details apply MinPack and measure rotamer recovery for each residue
 void
 RRProtocolMinPack::run(
-  RRComparerOP comparer,
-  RRReporterOP reporter,
-  Pose const & pose,
+	RRComparerOP comparer,
+	RRReporterOP reporter,
+	Pose const & pose,
 	ScoreFunction const & score_function,
-  PackerTask const & packer_task
+	PackerTask const & packer_task
 ) {
 	// Assume score_function.setup_for_scoring(pose) has already been called.
 
 	Pose working_pose = pose; // deep copy
 	min_pack(working_pose, score_function, packer_task.get_self_ptr());
 
-	for(Size ii = 1; ii <= pose.total_residue(); ++ii){
-		if (!packer_task.pack_residue(ii)) continue;
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		if ( !packer_task.pack_residue(ii) ) continue;
 		measure_rotamer_recovery(
 			comparer, reporter,
 			pose, working_pose,

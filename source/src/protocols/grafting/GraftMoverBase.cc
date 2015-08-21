@@ -73,7 +73,7 @@ GraftMoverBase::GraftMoverBase(std::string mover_name):
 	Cter_overhang_length_(0),
 	copy_pdbinfo_(false)
 {
-	
+
 }
 
 GraftMoverBase::GraftMoverBase(Size start, Size end, std::string mover_name):
@@ -86,7 +86,7 @@ GraftMoverBase::GraftMoverBase(Size start, Size end, std::string mover_name):
 	copy_pdbinfo_(false)
 
 {
-    
+
 }
 
 GraftMoverBase::GraftMoverBase(const Size start, const Size end, std::string mover_name, core::pose::Pose const & piece, Size Nter_overhang_length, Size Cter_overhang_length) :
@@ -97,12 +97,12 @@ GraftMoverBase::GraftMoverBase(const Size start, const Size end, std::string mov
 	Nter_overhang_length_(0),
 	Cter_overhang_length_(0),
 	copy_pdbinfo_(false)
-	
+
 {
-    set_piece(piece, Nter_overhang_length, Cter_overhang_length);
+	set_piece(piece, Nter_overhang_length, Cter_overhang_length);
 }
-    
-    
+
+
 /// @brief copy ctor
 GraftMoverBase::GraftMoverBase( GraftMoverBase const & src ) :
 	Mover(src),
@@ -114,16 +114,16 @@ GraftMoverBase::GraftMoverBase( GraftMoverBase const & src ) :
 	Nter_overhang_length_(src.Nter_overhang_length_),
 	Cter_overhang_length_(src.Cter_overhang_length_),
 	copy_pdbinfo_(src.copy_pdbinfo_)
-	
+
 {
 	/*
 	if (src.piece_){
-		piece_ = new core::pose::Pose(*src.piece_);
+	piece_ = new core::pose::Pose(*src.piece_);
 	}
 	else{
-		piece_ = NULL;
+	piece_ = NULL;
 	}
-	  */
+	*/
 }
 
 
@@ -156,7 +156,7 @@ GraftMoverBase::insert_piece(Pose const & pose){
 	delete_region(final_pose, start_+1, end_-1);
 	//Pose insert(piece_); Does the piece still exist afterward?
 	final_pose = insert_pose_into_pose(final_pose, *piece_, start_, start_+1, copy_pdbinfo_);
-	
+
 	//Update end residue number.
 	end_ = start_+insertion_length_+1;
 	TR <<"Insertion complete."<<std::endl;
@@ -188,13 +188,13 @@ GraftMoverBase::copy_pdbinfo(bool copy_pdbinfo){
 
 void
 GraftMoverBase::original_end(Size original_end){
-    original_end_ = original_end;
+	original_end_ = original_end;
 }
 
 Size GraftMoverBase::original_end(){return original_end_;}
 
 void GraftMoverBase::insertion_length(Size insertion_length){
-    insertion_length_ = insertion_length;
+	insertion_length_ = insertion_length;
 }
 
 Size GraftMoverBase::insertion_length(){return insertion_length_;}

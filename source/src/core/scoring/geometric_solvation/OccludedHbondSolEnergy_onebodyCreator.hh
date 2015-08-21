@@ -32,7 +32,7 @@ public:
 	/// @brief Instantiate a new OccludedHbondSolEnergy_onebody
 	virtual
 	methods::EnergyMethodOP
-		create_energy_method(
+	create_energy_method(
 		methods::EnergyMethodOptions const &
 	) const;
 

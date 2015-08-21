@@ -140,7 +140,7 @@ private:
 	bool build_random_loops( core::pose::Pose & pose );
 
 	/// @brief
-	void set_looprlx_allow_move_map( int const & loop_begin, int const & loop_end, core::kinematics::MoveMap & mm	);
+	void set_looprlx_allow_move_map( int const & loop_begin, int const & loop_end, core::kinematics::MoveMap & mm );
 
 	/// @brief Get the cutoff for score filtering loop conformations.  CURRENTLY UNUSED IN THE PROTOCOL
 	core::Real get_score_filter_cutoff();

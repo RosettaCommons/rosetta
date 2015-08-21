@@ -33,26 +33,26 @@ void lregister_Inputter( lua_State * lstate );
 
 class Inputter {
 
-	public:
-		Inputter();
-		virtual ~Inputter();
+public:
+	Inputter();
+	virtual ~Inputter();
 
-		// throw away n-1 poses and return the nth one
-		// necessary to prevent duplication of input across different masters
-		// of course, default is 1 for non-mpi scenarios
-		virtual core::pose::PoseSP get_nth_pose( int n=1 ) = 0;
-		virtual bool has_nth_pose( int n=1 ) = 0;
+	// throw away n-1 poses and return the nth one
+	// necessary to prevent duplication of input across different masters
+	// of course, default is 1 for non-mpi scenarios
+	virtual core::pose::PoseSP get_nth_pose( int n=1 ) = 0;
+	virtual bool has_nth_pose( int n=1 ) = 0;
 
 
-		// this says whether any poses have been returned from here or not
-		// ie whether or not the masterrank offset has been set
-		// this is required because if inputter is split across masters
-		// 1) get_nth_pose( my_master_rank )
-		// 2) get_nth_pose( num_masters) for every pose after that
-		// so need to know when 1) has been done
-		bool offset() {
-				return offset_;
-		}
+	// this says whether any poses have been returned from here or not
+	// ie whether or not the masterrank offset has been set
+	// this is required because if inputter is split across masters
+	// 1) get_nth_pose( my_master_rank )
+	// 2) get_nth_pose( num_masters) for every pose after that
+	// so need to know when 1) has been done
+	bool offset() {
+		return offset_;
+	}
 
 #ifdef USELUA
 		// need to pass in a map of the previous inputters, as inputters will call inputters
@@ -64,15 +64,15 @@ class Inputter {
 		virtual void lregister( lua_State * lstate )=0;
 #endif
 
-		// factory functions
-		virtual InputterSP create() = 0;
-		static std::string name() {
-			return "UNDEFINED NAME";
-		}
+	// factory functions
+	virtual InputterSP create() = 0;
+	static std::string name() {
+		return "UNDEFINED NAME";
+	}
 
 
-	protected:
-		bool offset_;
+protected:
+	bool offset_;
 
 }; // end Inputter base class
 

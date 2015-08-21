@@ -7,21 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/scoring/membrane/MPTerminiPenalty.cc
+/// @file  core/scoring/membrane/MPTerminiPenalty.cc
 ///
-///	@brief		Membrane Protein Termini Penalty
-///	@details	Whole structure energy - penalty for residues on the wrong side of the membrane?
-///				nd uses mpframework data
-///				Last Modified: 3/31/14
+/// @brief  Membrane Protein Termini Penalty
+/// @details Whole structure energy - penalty for residues on the wrong side of the membrane?
+///    nd uses mpframework data
+///    Last Modified: 3/31/14
 ///
-///	@author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_scoring_membrane_MPTerminiPenalty_cc
 #define INCLUDED_core_scoring_membrane_MPTerminiPenalty_cc
 
 // Unit Headers
-#include <core/scoring/membrane/MPTerminiPenalty.hh> 
-#include <core/scoring/membrane/MPTerminiPenaltyCreator.hh> 
+#include <core/scoring/membrane/MPTerminiPenalty.hh>
+#include <core/scoring/membrane/MPTerminiPenaltyCreator.hh>
 
 // Project Headers
 #include <core/scoring/membrane/MembraneData.hh>
@@ -51,14 +51,14 @@ static thread_local basic::Tracer TR( "core.scoring.membrane.MPTerminiPenalty" )
 namespace core {
 namespace scoring {
 namespace membrane {
-	
+
 /// Creator Methods ///////////////////////
 
 /// @brief Return a Fresh Instance of the Energy Method
 methods::EnergyMethodOP
 MPTerminiPenaltyCreator::create_energy_method(
-											  methods::EnergyMethodOptions const &
-											  ) const {
+	methods::EnergyMethodOptions const &
+) const {
 	return methods::EnergyMethodOP( new MPTerminiPenalty );
 }
 
@@ -89,21 +89,21 @@ MPTerminiPenalty::clone() const
 /// @brief Compute termini penalty per-residue
 void
 MPTerminiPenalty::residue_energy(
-								 conformation::Residue const & rsd,
-								 pose::Pose const & pose,
-								 EnergyMap & emap
-								 ) const {
-	
+	conformation::Residue const & rsd,
+	pose::Pose const & pose,
+	EnergyMap & emap
+) const {
+
 	using namespace core::scoring::membrane;
-	
+
 	// Check Structure is a membrane protein
-	if (! pose.conformation().is_membrane() ) {
+	if ( ! pose.conformation().is_membrane() ) {
 		utility_exit_with_message("Error: Cannot use mpframework energy term using a non membrane pose!");
 	}
-	
+
 	// Initialize Termnini Penalty
 	Real termini_pen(0);
-	
+
 	// Skip Membrane Residues
 	core::Size nres = pose.total_residue()-1;
 	if ( rsd.seqpos() > nres ) return;
@@ -112,7 +112,7 @@ MPTerminiPenalty::residue_energy(
 	if ( !rsd.is_terminus() ) return;
 	if ( rsd.seqpos() == 0 ) return;
 	if ( rsd.aa() == core::chemical::aa_vrt ) return;
-	
+
 	// Compute my actual penalty
 	core::Real z_position = pose.conformation().membrane_info()->residue_z_position( rsd.seqpos() );
 	termini_pen = compute_termini_penalty( z_position ) * 50;
@@ -120,14 +120,14 @@ MPTerminiPenalty::residue_energy(
 	// Add to Score Map
 	emap[ MPTermini ] += termini_pen;
 }
-	
+
 /// @brief Finalize Whole Structure Energy
 void
 MPTerminiPenalty::finalize_total_energy(
-										pose::Pose & pose,
-										ScoreFunction const &,
-										EnergyMap &
-										) const {
+	pose::Pose & pose,
+	ScoreFunction const &,
+	EnergyMap &
+) const {
 	mpdata_.finalize( pose );
 }
 
@@ -137,12 +137,12 @@ MPTerminiPenalty::finalize_total_energy(
 ///             spanning
 core::Real
 MPTerminiPenalty::compute_termini_penalty( core::Real z_position ) const {
-	
+
 	if ( z_position > -12 && z_position < 12 ) return 1;
 	else return 0;
 }
 
-	
+
 } // membrane
 } // scoring
 } // core

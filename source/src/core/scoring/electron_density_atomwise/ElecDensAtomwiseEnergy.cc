@@ -53,7 +53,7 @@ static thread_local basic::Tracer TR( "core.scoring.electron_density_atomwise.El
 /// never an instance already in use
 methods::EnergyMethodOP
 ElecDensAtomwiseEnergyCreator::create_energy_method (
-  methods::EnergyMethodOptions const &
+	methods::EnergyMethodOptions const &
 ) const {
 	return methods::EnergyMethodOP( new ElecDensAtomwiseEnergy );
 }
@@ -86,8 +86,8 @@ methods::EnergyMethodOP ElecDensAtomwiseEnergy::clone() const {
 
 void
 ElecDensAtomwiseEnergy::setup_for_scoring (
-  pose::Pose & pose,
-  ScoreFunction const &
+	pose::Pose & pose,
+	ScoreFunction const &
 ) const {
 	using namespace methods;
 
@@ -128,7 +128,7 @@ ElecDensAtomwiseEnergy::setup_for_scoring (
 	if ( create_new_lre_container ) {
 		TR.Debug << "Creating new one-to-all energy container (" << pose.total_residue() << ")" << std::endl;
 		LREnergyContainerOP new_dec( new OneToAllEnergyContainer (
-		  virt_res_idx, pose.total_residue(),  elec_dens_atomwise ) );
+			virt_res_idx, pose.total_residue(),  elec_dens_atomwise ) );
 		energies.set_long_range_container ( lr_type, new_dec );
 	}
 
@@ -141,9 +141,9 @@ ElecDensAtomwiseEnergy::setup_for_scoring (
 ///////////////////////////////////////////////////////////////////////
 ///
 bool ElecDensAtomwiseEnergy::defines_residue_pair_energy (
-  pose::Pose const & pose,
-  Size res1,
-  Size res2
+	pose::Pose const & pose,
+	Size res1,
+	Size res2
 ) const {
 	return ( pose.residue ( res1 ).aa() == core::chemical::aa_vrt || pose.residue ( res2 ).aa() == core::chemical::aa_vrt );
 }
@@ -151,11 +151,11 @@ bool ElecDensAtomwiseEnergy::defines_residue_pair_energy (
 ///Compute the residue energy
 void
 ElecDensAtomwiseEnergy::residue_pair_energy (
-  conformation::Residue const & rsd1,
-  conformation::Residue const & rsd2,
-  pose::Pose const &,
-  ScoreFunction const &,
-  EnergyMap & emap
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	pose::Pose const &,
+	ScoreFunction const &,
+	EnergyMap & emap
 ) const {
 	if ( rsd1.aa() != core::chemical::aa_vrt ) {
 		if ( rsd2.aa() != core::chemical::aa_vrt ) return;
@@ -169,13 +169,13 @@ ElecDensAtomwiseEnergy::residue_pair_energy (
 
 void
 ElecDensAtomwiseEnergy::eval_atom_derivative (
-  id::AtomID const & id,
-  pose::Pose const & pose,
-  kinematics::DomainMap const &, // domain_map,
-  ScoreFunction const &,
-  EnergyMap const & weights,
-  Vector & F1,
-  Vector & F2
+	id::AtomID const & id,
+	pose::Pose const & pose,
+	kinematics::DomainMap const &, // domain_map,
+	ScoreFunction const &,
+	EnergyMap const & weights,
+	Vector & F1,
+	Vector & F2
 ) const {
 	core::Size const &rsd_id = id.rsd();
 	core::Size const &atm_id = id.atomno();

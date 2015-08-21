@@ -20,19 +20,19 @@
 namespace protocols {
 namespace antibody {
 namespace clusters {
-	using namespace protocols::antibody;
+using namespace protocols::antibody;
 
 
 CDRCluster::CDRCluster(core::pose::Pose const & pose, CDRNameEnum const cdr, core::Size const cdr_length,
-		CDRClusterEnum const cluster, core::Size const start, core::Real const distance,
-		bool cis_trans_match /*true*/):
-		utility::pointer::ReferenceCount(),
-		cdr_(cdr),
-		cluster_(cluster),
-		distance_(distance),
-		start_(start),
-		length_(cdr_length),
-		cis_trans_match_(cis_trans_match)
+	CDRClusterEnum const cluster, core::Size const start, core::Real const distance,
+	bool cis_trans_match /*true*/):
+	utility::pointer::ReferenceCount(),
+	cdr_(cdr),
+	cluster_(cluster),
+	distance_(distance),
+	start_(start),
+	length_(cdr_length),
+	cis_trans_match_(cis_trans_match)
 {
 	end_ = start+cdr_length-1;
 	normalized_distance_ = distance/(cdr_length*2);
@@ -40,20 +40,20 @@ CDRCluster::CDRCluster(core::pose::Pose const & pose, CDRNameEnum const cdr, cor
 }
 
 CDRCluster::CDRCluster(const CDRCluster& src):
-		utility::pointer::ReferenceCount(src),
-		cdr_(src.cdr_),
-		cluster_(src.cluster_),
-		distance_(src.distance_),
-		normalized_distance_(src.normalized_distance_),
-		pdb_start_(src.pdb_start_),
-		pdb_end_(src.pdb_end_),
-		pdb_start_insertion_code_(src.pdb_start_insertion_code_),
-		pdb_end_insertion_code_(src.pdb_end_insertion_code_),
-		start_(src.start_),
-		end_(src.end_),
-		length_(src.length_),
-		chain_(src.chain_),
-		cis_trans_match_(src.cis_trans_match_)
+	utility::pointer::ReferenceCount(src),
+	cdr_(src.cdr_),
+	cluster_(src.cluster_),
+	distance_(src.distance_),
+	normalized_distance_(src.normalized_distance_),
+	pdb_start_(src.pdb_start_),
+	pdb_end_(src.pdb_end_),
+	pdb_start_insertion_code_(src.pdb_start_insertion_code_),
+	pdb_end_insertion_code_(src.pdb_end_insertion_code_),
+	start_(src.start_),
+	end_(src.end_),
+	length_(src.length_),
+	chain_(src.chain_),
+	cis_trans_match_(src.cis_trans_match_)
 
 {
 

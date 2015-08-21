@@ -29,7 +29,7 @@
 // Unit headers
 
 namespace protocols {
-namespace protein_interface_design{
+namespace protein_interface_design {
 namespace filters {
 
 class DesignableResiduesFilter : public protocols::filters::Filter
@@ -56,8 +56,8 @@ public:
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );
 	void parse_def( utility::lua::LuaObject const & def,
-					utility::lua::LuaObject const & score_fxns,
-					utility::lua::LuaObject const & tasks );
+		utility::lua::LuaObject const & score_fxns,
+		utility::lua::LuaObject const & tasks );
 	core::Size lower_threshold() const;
 	core::Size upper_threshold() const;
 	bool packable() const;

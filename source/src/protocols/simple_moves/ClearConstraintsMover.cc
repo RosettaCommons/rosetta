@@ -38,7 +38,7 @@ ClearConstraintsMover::parse_my_tag(
 )
 {
 }
-	
+
 moves::MoverOP ClearConstraintsMover::clone() const { return moves::MoverOP( new ClearConstraintsMover( *this ) ); }
 moves::MoverOP ClearConstraintsMover::fresh_instance() const { return moves::MoverOP( new ClearConstraintsMover ); }
 
@@ -63,6 +63,6 @@ std::string
 ClearConstraintsMover::get_name() const {
 	return "ClearConstraintsMover";
 }
-	
+
 } // moves
 } // protocols

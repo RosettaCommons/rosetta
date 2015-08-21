@@ -26,8 +26,8 @@ namespace stepwise {
 namespace monte_carlo {
 namespace rna {
 
-	class RNA_AddDeleteMonteCarlo;
-	typedef utility::pointer::shared_ptr< RNA_AddDeleteMonteCarlo > RNA_AddDeleteMonteCarloOP;
+class RNA_AddDeleteMonteCarlo;
+typedef utility::pointer::shared_ptr< RNA_AddDeleteMonteCarlo > RNA_AddDeleteMonteCarloOP;
 
 } //rna
 } //monte_carlo

@@ -83,15 +83,15 @@ public:
 	/// @brief set struct_ids from a list of strings of integer representations
 	void
 	set_struct_ids_from_strings(
-	utility::vector1<std::string> const & struct_id_strings);
+		utility::vector1<std::string> const & struct_id_strings);
 
 	/// @brief set input tags using a database SELECT command
 	void
 	set_struct_ids_from_sql(utility::vector1<std::string> const & sql);
 
-//	/// @brief Get input tags
-//	void
-//	get_tags(utility::vector1< std::string > & tags);
+	// /// @brief Get input tags
+	// void
+	// get_tags(utility::vector1< std::string > & tags);
 
 	/// @brief this function is responsible for filling the pose reference with
 	/// the pose indicated by the job.  The Job object (within its InnerJob)

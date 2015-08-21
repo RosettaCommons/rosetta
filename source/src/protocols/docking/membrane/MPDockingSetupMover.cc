@@ -9,8 +9,8 @@
 
 /// @file       protocols/membrane/MPDockingSetupMover.fwd.hh
 /// @brief      Reads in 2 poses and 2 spanfiles, concatenates them, and
-///				prints them out
-///				CURRENTLY ONLY WORKS FOR 2 POSES!!!
+///    prints them out
+///    CURRENTLY ONLY WORKS FOR 2 POSES!!!
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 /// @note       Last Modified (10/16/14)
 
@@ -70,7 +70,7 @@ namespace membrane {
 using namespace core;
 using namespace core::pose;
 using namespace protocols::moves;
-	
+
 /////////////////////
 /// Constructors  ///
 /////////////////////
@@ -84,7 +84,7 @@ MPDockingSetupMover::MPDockingSetupMover() :
 
 /// @brief Copy Constructor
 MPDockingSetupMover::MPDockingSetupMover( MPDockingSetupMover const & src ) :
-	protocols::moves::Mover( src ), 
+	protocols::moves::Mover( src ),
 	poses_( src.poses_ ),
 	spanfiles_( src.spanfiles_ ),
 	optimize1_( src.optimize1_ ),
@@ -105,34 +105,34 @@ protocols::moves::MoverOP
 MPDockingSetupMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new MPDockingSetupMover() );
 }
-    
+
 /// @brief Pase Rosetta Scripts Options for this Mover
 void
 MPDockingSetupMover::parse_my_tag(
-    utility::tag::TagCOP,
-    basic::datacache::DataMap &,
-    protocols::filters::Filters_map const &,
-    protocols::moves::Movers_map const &,
-    core::pose::Pose const &
-    )
+	utility::tag::TagCOP,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
+)
 {}
 
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
 MPDockingSetupMoverCreator::create_mover() const {
-    return protocols::moves::MoverOP( new MPDockingSetupMover );
+	return protocols::moves::MoverOP( new MPDockingSetupMover );
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
 std::string
 MPDockingSetupMoverCreator::keyname() const {
-    return MPDockingSetupMoverCreator::mover_name();
+	return MPDockingSetupMoverCreator::mover_name();
 }
 
 /// @brief Mover name for Rosetta Scripts
 std::string
 MPDockingSetupMoverCreator::mover_name() {
-    return "MPDockingSetupMover";
+	return "MPDockingSetupMover";
 }
 
 /////////////////////
@@ -148,9 +148,9 @@ MPDockingSetupMover::get_name() const {
 ////////////////////////////////////////////////////////////////////////////////
 
 /// @brief Add membrane components to the pose, then dock proteins along
-///			the flexible jump
+///   the flexible jump
 void MPDockingSetupMover::apply( Pose & pose ) {
-	
+
 	using namespace core::pose;
 	using namespace core::conformation::membrane;
 	using namespace protocols::docking;
@@ -226,8 +226,8 @@ void MPDockingSetupMover::apply( Pose & pose ) {
 	add_membrane3->apply( pose1_cp );
 
 	// reorder foldtree
-    using namespace protocols::membrane; 
-    reorder_membrane_foldtree( pose1_cp );
+	using namespace protocols::membrane;
+	reorder_membrane_foldtree( pose1_cp );
 
 	// get axis for sliding together the two poses
 	Vector slide_axis = center2 - center1;
@@ -238,10 +238,10 @@ void MPDockingSetupMover::apply( Pose & pose ) {
 
 	pose1_cp.dump_pdb("mpdocking_setup_out.pdb");
 	TR << "=== DUMPED FINAL POSE ===: mpdocking_setup_out.pdb" << std::endl;
-	
+
 	// copy pose1_cp into the pose we are working with
 	pose = pose1_cp;
-	
+
 	// reset foldtree and show final one
 	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
 	pose.fold_tree().show( TR );
@@ -258,21 +258,21 @@ void MPDockingSetupMover::read_poses() {
 	using namespace basic::options::OptionKeys;
 
 	// cry if PDBs not given
-	if ( ! option[OptionKeys::in::file::s].user() ){
-	utility_exit_with_message("Please provide two PDB files with flag -in:file:s!");
+	if ( ! option[OptionKeys::in::file::s].user() ) {
+		utility_exit_with_message("Please provide two PDB files with flag -in:file:s!");
 	}
 
 	// get filenames from option system
 	utility::vector1< std::string > pdbs = option[OptionKeys::in::file::s]();
 
 	// put poses into private vector
-	for ( Size i = 1; i <= pdbs.size(); ++i ){
+	for ( Size i = 1; i <= pdbs.size(); ++i ) {
 		PoseOP pose = core::import_pose::pose_from_pdb( pdbs[i] );
 		poses_.push_back( pose );
 	}
-	
+
 }// read poses
-	
+
 ////////////////////////////////////////////////////////////////////////////////
 
 // read spanfiles
@@ -286,22 +286,22 @@ void MPDockingSetupMover::read_spanfiles() {
 void MPDockingSetupMover::init_from_cmd() {
 
 	using namespace basic::options;
-	
+
 	optimize1_ = false;
 	optimize2_ = false;
-	
+
 	// flags for optimizing partner 1 or 2 (depending on order given)
-	if ( option[ OptionKeys::mp::setup::optimize1 ].user() ){
+	if ( option[ OptionKeys::mp::setup::optimize1 ].user() ) {
 		optimize1_ = option[ OptionKeys::mp::setup::optimize1 ]();
 	}
-	if ( option[ OptionKeys::mp::setup::optimize2 ].user() ){
+	if ( option[ OptionKeys::mp::setup::optimize2 ].user() ) {
 		optimize2_ = option[ OptionKeys::mp::setup::optimize2 ]();
 	}
 
 }// read spanfiles
 
 ////////////////////////////////////////////////////////////////////////////////
-	
+
 // transform pose into membrane
 void MPDockingSetupMover::transform_pose_into_membrane( Pose & pose, Vector center, Vector normal, std::string spanfile, Size partner ) {
 
@@ -319,8 +319,8 @@ void MPDockingSetupMover::transform_pose_into_membrane( Pose & pose, Vector cent
 	if ( ( ( optimize1_ == true ) && ( partner == 1 ) ) || ( ( optimize2_ == true ) && ( partner == 2 ) ) ) {
 
 		TR << "Optimizing membrane position for partner " << partner << std::endl;
-//		OptimizeMembranePositionMoverOP optmem( new OptimizeMembranePositionMover() );
-//		optmem->apply( pose );
+		//  OptimizeMembranePositionMoverOP optmem( new OptimizeMembranePositionMover() );
+		//  optmem->apply( pose );
 
 		// transform pose into membrane and optimize embedding beforehand
 		TR << "Transforming partner " << partner << " into the membrane, keeping the relation between optimized embedding and membrane." << std::endl;
@@ -328,8 +328,7 @@ void MPDockingSetupMover::transform_pose_into_membrane( Pose & pose, Vector cent
 		transform->optimize_embedding( true );
 		transform->apply( pose );
 
-	}
-	else if ( ( ( optimize1_ == false ) && ( partner == 1 ) ) || ( ( optimize2_ == false ) && ( partner == 2 ) ) ) {
+	} else if ( ( ( optimize1_ == false ) && ( partner == 1 ) ) || ( ( optimize2_ == false ) && ( partner == 2 ) ) ) {
 
 		TR << "Transforming partner " << partner << " into the membrane, adding small random tilt angle below 30 degrees." << std::endl;
 
@@ -337,19 +336,18 @@ void MPDockingSetupMover::transform_pose_into_membrane( Pose & pose, Vector cent
 		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( center, normal ) );
 		transform->optimize_embedding( false );
 		transform->apply( pose );
-		
+
 		// tilt pose slightly with random flip angle, default jump is membrane jump
 		FlipMoverOP flip( new FlipMover() );
 		flip->set_random_membrane_flip_angle();
 		flip->set_range( 30 );
 		flip->apply( pose );
-	}
-	else {
+	} else {
 		TR << "No transformation took place, check your inputs for mp:setup:optimize1 or 2" << std::endl;
 	}
-	
+
 }// transform pose into membrane
-	
+
 
 } // membrane
 } // docking

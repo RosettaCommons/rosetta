@@ -27,45 +27,45 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	//Constructor
-	IntegrationTestBreaker::IntegrationTestBreaker( StepWiseScreenerOP screener_whose_counts_to_check,
-																									StepWiseScreenerOP final_screener /*total_count -- for turning on align screen*/,
-																									AlignRMSD_ScreenerOP align_rmsd_screener ):
-		screener_whose_counts_to_check_( screener_whose_counts_to_check ),
-		final_screener_( final_screener ),
-		align_rmsd_screener_( align_rmsd_screener )
-	{}
+//Constructor
+IntegrationTestBreaker::IntegrationTestBreaker( StepWiseScreenerOP screener_whose_counts_to_check,
+	StepWiseScreenerOP final_screener /*total_count -- for turning on align screen*/,
+	AlignRMSD_ScreenerOP align_rmsd_screener ):
+	screener_whose_counts_to_check_( screener_whose_counts_to_check ),
+	final_screener_( final_screener ),
+	align_rmsd_screener_( align_rmsd_screener )
+{}
 
-	//Destructor
-	IntegrationTestBreaker::~IntegrationTestBreaker()
-	{}
+//Destructor
+IntegrationTestBreaker::~IntegrationTestBreaker()
+{}
 
-	//////////////////////////////////////////////////////////////////////////
-	// If you see an issue with changes to integration tests, take
-	// a close look at options -- note that it should 'spawn' get_sampler_options()
-	// which is fixed for integration tests.
-	bool
-	IntegrationTestBreaker::check_screen() {
-		if ( screener_whose_counts_to_check_ && screener_whose_counts_to_check_->count() >= 100 ) 	return false;
+//////////////////////////////////////////////////////////////////////////
+// If you see an issue with changes to integration tests, take
+// a close look at options -- note that it should 'spawn' get_sampler_options()
+// which is fixed for integration tests.
+bool
+IntegrationTestBreaker::check_screen() {
+	if ( screener_whose_counts_to_check_ && screener_whose_counts_to_check_->count() >= 100 )  return false;
 
-		if ( align_rmsd_screener_ != 0 ){
-			if ( final_screener_->count() >= 10 ) align_rmsd_screener_->set_do_screen( true );
-			if ( align_rmsd_screener_->pass_count() >= 10 ) return false;
-		}
-		return true;
+	if ( align_rmsd_screener_ != 0 ) {
+		if ( final_screener_->count() >= 10 ) align_rmsd_screener_->set_do_screen( true );
+		if ( align_rmsd_screener_->pass_count() >= 10 ) return false;
 	}
+	return true;
+}
 
-	////////////////////////////////////////////////////////////////////////////
-	void
-	IntegrationTestBreaker::fast_forward( sampler::StepWiseSamplerBaseOP sampler ){
-		if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_LIST ){
-			RigidBodyStepWiseSamplerWithResidueList & rigid_body_rotamer_with_copy_dofs = *( static_cast< RigidBodyStepWiseSamplerWithResidueList * >( sampler.get() ) );
-			rigid_body_rotamer_with_copy_dofs.fast_forward();
-		} else if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ){
-			RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
-			rigid_body_rotamer_with_residue_alternatives.fast_forward();
-		}
+////////////////////////////////////////////////////////////////////////////
+void
+IntegrationTestBreaker::fast_forward( sampler::StepWiseSamplerBaseOP sampler ){
+	if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_LIST ) {
+		RigidBodyStepWiseSamplerWithResidueList & rigid_body_rotamer_with_copy_dofs = *( static_cast< RigidBodyStepWiseSamplerWithResidueList * >( sampler.get() ) );
+		rigid_body_rotamer_with_copy_dofs.fast_forward();
+	} else if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ) {
+		RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
+		rigid_body_rotamer_with_residue_alternatives.fast_forward();
 	}
+}
 
 } //screener
 } //stepwise

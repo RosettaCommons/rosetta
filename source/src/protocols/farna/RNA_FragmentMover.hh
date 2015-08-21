@@ -51,12 +51,12 @@ public:
 
 	/// @brief Construct the protocol object given the RNA fragment library to use.
 	RNA_FragmentMover( RNA_FragmentsOP all_rna_fragments,
-										 protocols::toolbox::AllowInsertOP allow_insert );
+		protocols::toolbox::AllowInsertOP allow_insert );
 
 	// is this defunct now? I think so.
 	RNA_FragmentMover( RNA_FragmentsOP all_rna_fragments,
-										 ObjexxFCL::FArray1D<bool> const & allow_insert,
-										 core::pose::Pose const & pose );
+		ObjexxFCL::FArray1D<bool> const & allow_insert,
+		core::pose::Pose const & pose );
 
 	/// @brief Copy constructor
 	RNA_FragmentMover(RNA_FragmentMover const & object_to_copy);
@@ -78,8 +78,8 @@ public:
 	// is this defunct now? I think so.
 	void
 	set_frag_size(
-	 Size const fragment_size
-	 );
+		Size const fragment_size
+	);
 
 private:
 

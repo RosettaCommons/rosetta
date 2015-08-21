@@ -10,7 +10,7 @@
 /// @file src/protocols/abinitio/FragmentSampler.hh
 /// @brief header file for FragmentSampler protocol
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -74,7 +74,7 @@ FragmentSampler  abinitio;
 abinitio.init( pose );
 ...
 while(nstruct) {
-	 abinitio.apply( pose );
+abinitio.apply( pose );
 }
 
 call FragmentSampler::register_options() before core::init::init to add relevant options to the applications help
@@ -105,17 +105,17 @@ mc().score_function() ...
 Behaviour can be changed in the following ways:
 
 use non-classic FragmentMover  --> eg. not uniformly sampled fragments, but using some weighting
-															 --> large and small moves doesn't have to be 3mers and 9mers... use other movers...
-															 ---> or other fragets for the "convenience constructor"
+--> large and small moves doesn't have to be 3mers and 9mers... use other movers...
+---> or other fragets for the "convenience constructor"
 use custom trial classes --> overload update_moves()
 
 change sampling behaviour:
-	 overload prepare_XXX() methods: these are called before the cycling for a certain stage begins
-	 overload do_stageX_cycles() : the actual loops over trial-moves ...
+overload prepare_XXX() methods: these are called before the cycling for a certain stage begins
+overload do_stageX_cycles() : the actual loops over trial-moves ...
 
 change scoring functions:
-	 overload set_default_scores()
-	 weight-changes effective for all stages: set_score_weight()
+overload set_default_scores()
+weight-changes effective for all stages: set_score_weight()
 
 */
 
@@ -150,15 +150,15 @@ public:
 
 	virtual checkpoint::CheckPointer &get_checkpoints() { return checkpoints_; }
 
-	//	void output_debug_structure( core::pose::Pose&, std::string file_tag ); //make part of Mover class
+	// void output_debug_structure( core::pose::Pose&, std::string file_tag ); //make part of Mover class
 
 	void topology_broker( topology_broker::TopologyBrokerOP set );
 
 	//@brief currently used score function ( depends on stage ) -- publich
 	core::scoring::ScoreFunction const& current_scorefxn() const;
 
-//	/// @brief get membrane topology information
-//	core::scoring::MembraneTopologyCOP get_membrane_topology_from_pose(core::pose::Pose const& pose);
+	// /// @brief get membrane topology information
+	// core::scoring::MembraneTopologyCOP get_membrane_topology_from_pose(core::pose::Pose const& pose);
 
 protected:
 	topology_broker::TopologyBroker const& topology_broker();
@@ -179,7 +179,7 @@ protected:
 	//@brief called by constructor ---  calls all set_default_XXX methods
 	void set_defaults();
 
-		//@brief set current scorefunction
+	//@brief set current scorefunction
 	void current_scorefxn( core::scoring::ScoreFunction const& scorefxn );
 
 	//@brief If appropriate for the stage then recover low mc.
@@ -202,25 +202,25 @@ protected:
 	virtual void do_stage4_cycles( core::pose::Pose &pose );
 
 	//@brief returns true if pose is < 3.0 A rms to last pose sent to this function
-	//	bool convergence_check( core::pose::Pose const & pose );
+	// bool convergence_check( core::pose::Pose const & pose );
 
 	virtual moves::MoverOP
 	mover( core::pose::Pose const& pose, StageID stage_id, core::scoring::ScoreFunction const& scorefxn, core::Real progress = 1.0 );
-// 	//@brief returns the Mover that is applied inside the stage1 loop
-// 	virtual moves::MoverOP
-// 	stage1_mover( core::pose::Pose const& pose );
+	//  //@brief returns the Mover that is applied inside the stage1 loop
+	//  virtual moves::MoverOP
+	//  stage1_mover( core::pose::Pose const& pose );
 
-// 	//@brief returns the Mover that is applied inside the stage3 double loop
-// 	virtual moves::MoverOP
-// 	stage2_mover( core::pose::Pose const& pose );
+	//  //@brief returns the Mover that is applied inside the stage3 double loop
+	//  virtual moves::MoverOP
+	//  stage2_mover( core::pose::Pose const& pose );
 
-// 	//@brief returns the Mover that is applied inside the stage3 double loop
-// 	virtual moves::MoverOP
-// 	stage3_mover( core::pose::Pose const& pose, core::Size lct1, core::Size lct2 );
+	//  //@brief returns the Mover that is applied inside the stage3 double loop
+	//  virtual moves::MoverOP
+	//  stage3_mover( core::pose::Pose const& pose, core::Size lct1, core::Size lct2 );
 
-// 	//@brief returns the Mover that is applied inside the stage4 loop
-// 	virtual moves::MoverOP
-// 	stage4_mover( core::pose::Pose const& pose, core::Size kk );
+	//  //@brief returns the Mover that is applied inside the stage4 loop
+	//  virtual moves::MoverOP
+	//  stage4_mover( core::pose::Pose const& pose, core::Size kk );
 
 
 	//@brief called by update_moves() creates the instances of TrialMover with the FragmentMoves
@@ -302,7 +302,7 @@ private:
 	void set_default_scores();
 
 	//@brief construct default monto-carlo object
-	void set_default_mc( core::scoring::ScoreFunction const& scorefxn	);
+	void set_default_mc( core::scoring::ScoreFunction const& scorefxn );
 
 
 	void checkpointed_cycle_block( core::pose::Pose&, StageID, void (FragmentSampler::*cycles) ( core::pose::Pose& ) );

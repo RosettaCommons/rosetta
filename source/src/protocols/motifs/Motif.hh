@@ -44,8 +44,8 @@ namespace motifs {
 class Motif : public utility::pointer::ReferenceCount
 {
 
-static std::map < std::string, utility::vector1 < std::string > > motifAtomIDs;
-static std::map < std::string, utility::vector1 < std::string > > basebaseAtomIDs;
+	static std::map < std::string, utility::vector1 < std::string > > motifAtomIDs;
+	static std::map < std::string, utility::vector1 < std::string > > basebaseAtomIDs;
 
 public:
 	// This is a 'by hand' way to associate a jump with the coordinate system-forming
@@ -103,7 +103,7 @@ public:
 		utility::vector1< Size >  const res2_atoms
 	);
 
-// Ligand motif search constructor: No residues, just atom names and a jump
+	// Ligand motif search constructor: No residues, just atom names and a jump
 	Motif(
 		std::string const resname1,
 		std::string const res1_atom1,
@@ -276,9 +276,9 @@ public:
 		core::conformation::Residue & mobile,
 		bool forward,
 		core::conformation::Atom & atm,
-	  Size const & res2_atom1_index_in,
-	  Size const & res2_atom2_index_in,
-    Size const & res2_atom3_index_in,
+		Size const & res2_atom1_index_in,
+		Size const & res2_atom2_index_in,
+		Size const & res2_atom3_index_in,
 		Size const & atomtype,
 		bool one_three = true
 	) const;
@@ -290,9 +290,9 @@ public:
 		core::conformation::Residue & mobile,
 		bool forward,
 		utility::vector1< Size > const & atoms,
-	  Size const & res2_atom1_index_in,
-	  Size const & res2_atom2_index_in,
-    Size const & res2_atom3_index_in,
+		Size const & res2_atom1_index_in,
+		Size const & res2_atom2_index_in,
+		Size const & res2_atom3_index_in,
 		bool one_three = true
 	) const;
 
@@ -406,7 +406,7 @@ private:
 		Size const & res2_atom3_index_in,
 		bool one_three
 	) const;
-	
+
 	void
 	place_residue_helper(
 		core::kinematics::Stub & end_stub,

@@ -67,40 +67,40 @@ public:
 		core_init();
 	}
 
-void test_pair_scoring_scheme() {
-	using core::Size;
-	using core::Real;
-	using namespace core::sequence;
-	SequenceOP seq1( new Sequence( "ABCDEFGHIJ", "first",  1 ) );
-	SequenceOP seq2( new Sequence( "----EFG-IJ", "second", 1 ) );
+	void test_pair_scoring_scheme() {
+		using core::Size;
+		using core::Real;
+		using namespace core::sequence;
+		SequenceOP seq1( new Sequence( "ABCDEFGHIJ", "first",  1 ) );
+		SequenceOP seq2( new Sequence( "----EFG-IJ", "second", 1 ) );
 
-	core::Real const big_score( 537.5 );
+		core::Real const big_score( 537.5 );
 
-	PairScoringSchemeOP ss( new PairScoringScheme );
-	ss->add_scored_pair( 5, 5, big_score );
-	TS_ASSERT( ss->score( seq1, seq2, 5, 5 ) == big_score );
-} // test_pair_scoring_scheme
+		PairScoringSchemeOP ss( new PairScoringScheme );
+		ss->add_scored_pair( 5, 5, big_score );
+		TS_ASSERT( ss->score( seq1, seq2, 5, 5 ) == big_score );
+	} // test_pair_scoring_scheme
 
-void test_simple_scoring_scheme() {
-	using core::Size;
-	using core::Real;
-	using namespace core::sequence;
+	void test_simple_scoring_scheme() {
+		using core::Size;
+		using core::Real;
+		using namespace core::sequence;
 
-	SequenceOP seq1( new Sequence( "EFGILK", "first",  1 ) );
-	SequenceOP seq2( new Sequence( "EFGIJX", "second", 1 ) );
+		SequenceOP seq1( new Sequence( "EFGILK", "first",  1 ) );
+		SequenceOP seq2( new Sequence( "EFGIJX", "second", 1 ) );
 
-	ScoringSchemeOP ss( new SimpleScoringScheme( 4, 1, -4, -1 ) );
-	utility::vector1< core::Real > scores;
-	scores.push_back(  4 );
-	scores.push_back(  4 );
-	scores.push_back(  4 );
-	scores.push_back(  4 );
-	scores.push_back(  1 );
-	scores.push_back(  1 );
+		ScoringSchemeOP ss( new SimpleScoringScheme( 4, 1, -4, -1 ) );
+		utility::vector1< core::Real > scores;
+		scores.push_back(  4 );
+		scores.push_back(  4 );
+		scores.push_back(  4 );
+		scores.push_back(  4 );
+		scores.push_back(  1 );
+		scores.push_back(  1 );
 
-	for ( Size ii = 1; ii <= seq1->length() && ii <= seq2->length(); ++ii ) {
-		TS_ASSERT( scores[ii] == ss->score( seq1, seq2, ii, ii ) );
-	}
-} // test_pair_scoring_scheme
+		for ( Size ii = 1; ii <= seq1->length() && ii <= seq2->length(); ++ii ) {
+			TS_ASSERT( scores[ii] == ss->score( seq1, seq2, ii, ii ) );
+		}
+	} // test_pair_scoring_scheme
 
 }; // ScoringSchemeTests

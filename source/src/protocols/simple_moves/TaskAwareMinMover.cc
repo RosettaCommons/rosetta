@@ -70,11 +70,11 @@ TaskAwareMinMoverCreator::mover_name()
 }
 
 TaskAwareMinMover::TaskAwareMinMover()
-	: protocols::moves::Mover("TaskAwareMinMover"),
-		minmover_(/* 0 */),
-		factory_(/* 0 */),
-		chi_(true),
-		bb_(false)
+: protocols::moves::Mover("TaskAwareMinMover"),
+	minmover_(/* 0 */),
+	factory_(/* 0 */),
+	chi_(true),
+	bb_(false)
 {}
 
 /// @brief constructor with TaskFactory
@@ -82,11 +82,11 @@ TaskAwareMinMover::TaskAwareMinMover(
 	protocols::simple_moves::MinMoverOP minmover_in,
 	core::pack::task::TaskFactoryCOP factory_in
 ) : protocols::moves::Mover("TaskAwareMinMover"),
-		minmover_(minmover_in),
-		factory_(factory_in),
-		chi_(true),
-		bb_(false),
-		jump_(false)
+	minmover_(minmover_in),
+	factory_(factory_in),
+	chi_(true),
+	bb_(false),
+	jump_(false)
 {
 	protocols::moves::Mover::type( "TaskAwareMinMover" );
 }
@@ -98,22 +98,22 @@ void TaskAwareMinMover::apply( core::pose::Pose & pose ){
 	runtime_assert( minmover_ != 0 );
 	runtime_assert( factory_ != 0 );
 
-  using core::kinematics::MoveMapOP;
-  using core::kinematics::MoveMap;
+	using core::kinematics::MoveMapOP;
+	using core::kinematics::MoveMap;
 
 	// non-initialization failsafe
 	if ( ! minmover_->movemap() ) minmover_->movemap( core::kinematics::MoveMapCOP( core::kinematics::MoveMapOP( new MoveMap ) ) );
 
-  //clone the MinMover's MoveMap
-  MoveMapOP mm( new MoveMap( *( minmover_->movemap() ) ) );
-  MoveMapOP mm_copy( new MoveMap( *( minmover_->movemap() ) ) );
+	//clone the MinMover's MoveMap
+	MoveMapOP mm( new MoveMap( *( minmover_->movemap() ) ) );
+	MoveMapOP mm_copy( new MoveMap( *( minmover_->movemap() ) ) );
 
-  //generate task
-  using core::pack::task::PackerTaskOP;
-  PackerTaskOP task( factory_->create_task_and_apply_taskoperations( pose ) );
+	//generate task
+	using core::pack::task::PackerTaskOP;
+	PackerTaskOP task( factory_->create_task_and_apply_taskoperations( pose ) );
 
-  //modify movemap by task
-//  core::kinematics::modify_movemap_from_packertask( *mm, *task );
+	//modify movemap by task
+	//  core::kinematics::modify_movemap_from_packertask( *mm, *task );
 	Size const nres( task->total_residue() );
 
 	mm->set_jump( jump_ );
@@ -123,20 +123,19 @@ void TaskAwareMinMover::apply( core::pose::Pose & pose ){
 			// this class only turns on minimization at packable dofs, it does not turn them off
 			if ( chi_ ) mm->set_chi( i, chi_ );
 			if ( bb_ ) mm->set_bb( i, bb_ );
-		}
-		else if( task->pack_residue( i ) ) {
-			if( chi_ ) mm->set_chi( i, chi_ );
+		} else if ( task->pack_residue( i ) ) {
+			if ( chi_ ) mm->set_chi( i, chi_ );
 		}
 	}
 
-  //pass the modified map into the MinMover
-  minmover_->movemap( mm );
+	//pass the modified map into the MinMover
+	minmover_->movemap( mm );
 
 	//now run MinMover
 	minmover_->apply( pose );
 
 	//restore MinMover's original movemap to prevent accumulation of state
-  minmover_->movemap( mm_copy );
+	minmover_->movemap( mm_copy );
 
 
 }//apply
@@ -166,10 +165,11 @@ TaskAwareMinMover::parse_my_tag(
 	}
 	if ( tag->hasOption("chi") ) chi_ = tag->getOption<bool>("chi");
 	if ( tag->hasOption("bb") ) bb_ = tag->getOption<bool>("bb");
-	if( tag->hasOption( "jump" ) ){
+	if ( tag->hasOption( "jump" ) ) {
 		std::string const jump( tag->getOption< std::string >( "jump" ) );
-		if( jump != "0" && jump != "1" )
+		if ( jump != "0" && jump != "1" ) {
 			utility_exit_with_message( "TaskAwareMinMover only knows how to interpret jump=1(all jumps true) or jump=0 (false). I got jump = "+jump );
+		}
 	}
 	jump_ = tag->getOption< bool >( "jump", false );
 	minmover_ = protocols::simple_moves::MinMoverOP( new MinMover );
@@ -180,23 +180,25 @@ TaskAwareMinMover::parse_my_tag(
 }
 
 void TaskAwareMinMover::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & score_fxns,
-				utility::lua::LuaObject const & tasks,
-				protocols::moves::MoverCacheSP cache ) {
-	if( def["chi"] )
+	utility::lua::LuaObject const & score_fxns,
+	utility::lua::LuaObject const & tasks,
+	protocols::moves::MoverCacheSP cache ) {
+	if ( def["chi"] ) {
 		chi_ = def["chi"].to<bool>();
-	if( def["bb"] )
+	}
+	if ( def["bb"] ) {
 		bb_ = def["bb"].to<bool>();
+	}
 	jump_ = def["jump"] ? def["jump"].to<bool>() : false;
 	minmover_ = protocols::simple_moves::MinMoverOP( new MinMover );
-// interesting how this doesn't read a movemap....
+	// interesting how this doesn't read a movemap....
 	minmover_->parse_def_opts( def, score_fxns, tasks, cache );
-	if( def["tasks"] ) {
+	if ( def["tasks"] ) {
 		core::pack::task::TaskFactoryOP new_task_factory( protocols::elscripts::parse_taskdef( def["tasks"], tasks ));
-		if ( new_task_factory == 0) return;
+		if ( new_task_factory == 0 ) return;
 		factory_ =  new_task_factory;
 	}
-	if( def["scorefxn"] ) {
+	if ( def["scorefxn"] ) {
 		minmover_->score_function( protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns ) );
 	} else {
 		minmover_->score_function( score_fxns["score12"].to<core::scoring::ScoreFunctionSP>()->clone()  );
@@ -215,7 +217,7 @@ TaskAwareMinMover::parse_task_operations(
 {
 	using namespace core::pack::task;
 	TaskFactoryOP new_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
-	if ( new_task_factory == 0) return;
+	if ( new_task_factory == 0 ) return;
 	factory_ = new_task_factory;
 }
 

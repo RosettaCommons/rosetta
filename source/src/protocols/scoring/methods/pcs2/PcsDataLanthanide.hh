@@ -6,25 +6,25 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/PcsDataLanthanide.hh
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/PcsDataLanthanide.hh
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs2_PcsDataLanthanide_hh
 #define INCLUDED_protocols_scoring_methods_pcs2_PcsDataLanthanide_hh
@@ -51,10 +51,10 @@
 
 //#define LOGPCS
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs2{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs2 {
 
 class PcsDataLanthanide{
 private:
@@ -63,8 +63,8 @@ private:
 
 	core::Size n_pcs_;
 	utility::vector1<core::Size> A_index_; //index on the giant matrix A to build all the smalls matrix A_
-	////	ObjexxFCL::FArray2D< core::Real > fstyle_A_; //We are going to SVD Ax = b
-	////	ObjexxFCL::FArray1D< core::Real > fstyle_b_; //I should make this one const
+	//// ObjexxFCL::FArray2D< core::Real > fstyle_A_; //We are going to SVD Ax = b
+	//// ObjexxFCL::FArray1D< core::Real > fstyle_b_; //I should make this one const
 	utility::vector1< utility::vector1<core::Real> > cstyle_A_;
 	utility::vector1<core::Real> cstyle_b_;
 	utility::vector1<core::Real> cstyle_b_individual_scale_;
@@ -99,7 +99,7 @@ public:
 
 	/// @brief update the A matrix given A_all matrix.
 	/// Dimensions of A_all >= dimension of A.
-  /// A_all is common to all the lanthanide sharing the same center
+	/// A_all is common to all the lanthanide sharing the same center
 	void
 	update_my_A_matrix_for_svd(utility::vector1< utility::vector1<core::Real> > & A_all);
 
@@ -141,7 +141,7 @@ public:
 	get_fstyle_A() const;
 	*/
 
-	const	utility::vector1< utility::vector1<core::Real> > &
+	const utility::vector1< utility::vector1<core::Real> > &
 	get_cstyle_A() const;
 
 	const utility::vector1<core::Real> &

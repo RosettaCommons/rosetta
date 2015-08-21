@@ -34,8 +34,8 @@
 #include <basic/Tracer.fwd.hh>
 
 #ifdef WIN32
-	//#include <core/fragment/FragData.hh>
-	#include <core/fragment/FragSet.hh>
+//#include <core/fragment/FragData.hh>
+#include <core/fragment/FragSet.hh>
 #endif
 
 // Utility headers

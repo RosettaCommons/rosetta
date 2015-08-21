@@ -54,7 +54,7 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );
-//// mutators for Placement movers to copy their internals onto auctionMover
+	//// mutators for Placement movers to copy their internals onto auctionMover
 	void host_chain( core::Size const hc );
 	//void max_cb_cb_dist( core::Real const mccd );
 	void cb_force( core::Real const cf );

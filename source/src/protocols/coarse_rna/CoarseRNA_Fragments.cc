@@ -63,235 +63,235 @@ SourcePositions::~SourcePositions() {}
 
 CoarseRNA_Fragments::~CoarseRNA_Fragments() {}
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// This sort of repeats a lot of stuff in protocols/farna/RNA_Fragments
-	//
-	//  Not quite sure whether we should unify, or make subclasses of a Fragments class...
-	//
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	CoarseRNA_Fragments::CoarseRNA_Fragments( std::string const & frag_source_file ):
-		RNA_Fragments(),
-		frag_source_file_( frag_source_file )
-	{
-		initialize_frag_source_pose();
-	}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// This sort of repeats a lot of stuff in protocols/farna/RNA_Fragments
+//
+//  Not quite sure whether we should unify, or make subclasses of a Fragments class...
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+CoarseRNA_Fragments::CoarseRNA_Fragments( std::string const & frag_source_file ):
+	RNA_Fragments(),
+	frag_source_file_( frag_source_file )
+{
+	initialize_frag_source_pose();
+}
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	CoarseRNA_Fragments::initialize_frag_source_pose(){
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+CoarseRNA_Fragments::initialize_frag_source_pose(){
 
-		using namespace core::chemical;
-		using namespace core::pose;
-		using namespace core::kinematics;
+	using namespace core::chemical;
+	using namespace core::pose;
+	using namespace core::kinematics;
 
-		ResidueTypeSetCOP rsd_set( ChemicalManager::get_instance()->residue_type_set( "coarse_rna" ) );
+	ResidueTypeSetCOP rsd_set( ChemicalManager::get_instance()->residue_type_set( "coarse_rna" ) );
 
-		if ( frag_source_file_.substr( frag_source_file_.size()-4, frag_source_file_.size() ) == ".pdb" ){
-			Pose pose;
-			import_pose::pose_from_pdb( pose, *rsd_set, frag_source_file_ );
-			protocols::farna::figure_out_secstruct( pose );
-			frag_source_secstruct_ = protocols::farna::get_rna_secstruct( pose );
-			frag_source_pose_ = core::pose::MiniPoseOP( new MiniPose( pose ) );
-		} else {
+	if ( frag_source_file_.substr( frag_source_file_.size()-4, frag_source_file_.size() ) == ".pdb" ) {
+		Pose pose;
+		import_pose::pose_from_pdb( pose, *rsd_set, frag_source_file_ );
+		protocols::farna::figure_out_secstruct( pose );
+		frag_source_secstruct_ = protocols::farna::get_rna_secstruct( pose );
+		frag_source_pose_ = core::pose::MiniPoseOP( new MiniPose( pose ) );
+	} else {
 
-			// Figure out correspondence: P,S,CEN,X,Y --> 1,2,3,4,5. Hopefully!
-			ResidueTypeCOP const & rsd_type = rsd_set->get_representative_type_aa( na_rad );
-			for( Size i = 1; i <= rsd_type->natoms(); i++ ){
-				coarse_rna_name_to_num_[ rsd_type->atom_name( i ) ] = i;
+		// Figure out correspondence: P,S,CEN,X,Y --> 1,2,3,4,5. Hopefully!
+		ResidueTypeCOP const & rsd_type = rsd_set->get_representative_type_aa( na_rad );
+		for ( Size i = 1; i <= rsd_type->natoms(); i++ ) {
+			coarse_rna_name_to_num_[ rsd_type->atom_name( i ) ] = i;
+		}
+
+		std::string line;
+		char dummy_char;
+		Real x,y,z;
+		std::string sequence = "";
+		frag_source_secstruct_ = "";
+		utility::vector1< utility::vector1< PointPosition > > all_res_coords;
+		utility::io::izstream coords_in( frag_source_file_.c_str() );
+		while (  getline( coords_in, line) ) {
+
+			std::istringstream line_stream( line );
+			line_stream >> dummy_char;
+			sequence += dummy_char;
+
+			line_stream >> dummy_char;
+			frag_source_secstruct_ += dummy_char;
+
+			utility::vector1< PointPosition > res_coords;
+			while ( line_stream.good() ) {
+				line_stream >> x >> y >> z;
+				res_coords.push_back( Vector( x,y,z) );
 			}
+			if ( res_coords.size() != coarse_rna_name_to_num_.size() ) utility_exit_with_message( "Should only have 5? atoms in mini ppose file.");
+			all_res_coords.push_back( res_coords );
+		}
 
-			std::string line;
-			char dummy_char;
-			Real x,y,z;
-			std::string sequence = "";
-			frag_source_secstruct_ = "";
-			utility::vector1< utility::vector1< PointPosition > > all_res_coords;
-			utility::io::izstream coords_in( frag_source_file_.c_str() );
-			while (  getline( coords_in, line) ){
+		//  std::cout << "SIZE     ! " << all_res_coords.size() << std::endl;
+		//  std::cout << "SEQUENCE ! " << sequence << std::endl;
+		//  std::cout << "SECSTRUCT! " << frag_source_secstruct_ << std::endl;
+		frag_source_pose_ = core::pose::MiniPoseOP( new MiniPose( all_res_coords, FoldTree( all_res_coords.size() ), sequence ) );
 
-				std::istringstream line_stream( line );
-				line_stream >> dummy_char;
-				sequence += dummy_char;
+	}
 
-				line_stream >> dummy_char;
-				frag_source_secstruct_ += dummy_char;
+}
 
-				utility::vector1< PointPosition > res_coords;
-				while ( line_stream.good() ) {
-					line_stream >> x >> y >> z;
-					res_coords.push_back( Vector( x,y,z) );
-				}
-				if ( res_coords.size() != coarse_rna_name_to_num_.size() ) utility_exit_with_message( "Should only have 5? atoms in mini ppose file.");
-				all_res_coords.push_back( res_coords );
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+CoarseRNA_Fragments::insert_fragment(
+	core::pose::Pose & pose,
+	Size const & insert_res,
+	Size const & source_res,
+	Size const & frag_size,
+	protocols::toolbox::AllowInsertOP allow_insert ){
+
+	using namespace core::id;
+
+	std::map< Size, Size > res_map;
+
+	for ( Size offset = 0; offset < frag_size; offset ++ ) {
+
+		Size const insert_offset = insert_res + offset;
+		Size const source_offset = source_res + offset;
+
+		if ( (insert_offset) > pose.total_residue() ) continue;
+		if ( (source_offset) > frag_source_pose_->total_residue() ) continue;
+
+		res_map[ insert_offset ] = source_offset;
+
+	}
+	//  std::cout << std::endl;
+
+	std::map< AtomID, AtomID > atom_id_map;
+	allow_insert->calculate_atom_id_map( pose, res_map, frag_source_pose_->fold_tree(), atom_id_map );
+	core::pose::copydofs::copy_dofs(  pose, *frag_source_pose_, atom_id_map, allow_insert->calculate_atom_id_domain_map( pose ) );
+
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+void
+CoarseRNA_Fragments::find_source_positions( SequenceSecStructPair const & key ){
+
+	using namespace protocols::farna;
+
+	SourcePositionsOP source_positions( new SourcePositions );
+
+	std::string const RNA_string = key.first;
+	std::string const RNA_secstruct_string = key.second;
+
+	Size const size = RNA_string.length();
+	static Distance const DIST_CUTOFF( 10.0 ); /*distance of S to next P*/
+
+	runtime_assert( RNA_string.length() == RNA_secstruct_string.length() );
+
+	// dummy initialization.
+	std::string vall_current_sequence ( RNA_string );
+	std::string vall_current_secstruct( RNA_secstruct_string );
+
+	std::string const & source_secstruct( frag_source_secstruct_ );
+	std::string const & source_sequence( frag_source_pose_->sequence() );
+
+	for ( Size i = 1; i <= source_sequence.size() - size + 1; i++ ) {
+
+		bool match( true );
+
+		for ( Size offset = 0; offset < size; offset++ ) {
+			vall_current_sequence [offset] = source_sequence[ i - 1 + offset ];
+			vall_current_secstruct[offset] = source_secstruct[ i - 1 + offset ];
+
+			if (
+					!compare_RNA_char( vall_current_sequence[offset], RNA_string[ offset ] ) ||
+					!compare_RNA_secstruct( vall_current_secstruct[offset], RNA_secstruct_string[ offset ] ) ) {
+				match = false;
+				break;
 			}
+			// check for chainbreak
+			if ( offset > 1 &&
+					( ( frag_source_pose_->xyz( id::AtomID( 2, i+offset-1 ) ) -
+					frag_source_pose_->xyz( id::AtomID( 1, i+offset   ) ) ).length() > DIST_CUTOFF ) ) continue;
 
-			//		std::cout << "SIZE     ! " << all_res_coords.size() << std::endl;
-			//		std::cout << "SEQUENCE ! " << sequence << std::endl;
-			//		std::cout << "SECSTRUCT! " << frag_source_secstruct_ << std::endl;
-			frag_source_pose_ = core::pose::MiniPoseOP( new MiniPose( all_res_coords, FoldTree( all_res_coords.size() ), sequence ) );
+		}
 
+		if ( match ) {
+			source_positions->push_back( i );
 		}
 
 	}
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	CoarseRNA_Fragments::insert_fragment(
-																			 core::pose::Pose & pose,
-																			 Size const & insert_res,
-																			 Size const & source_res,
-																			 Size const & frag_size,
-																			 protocols::toolbox::AllowInsertOP allow_insert ){
+	std::cout << "Picked Fragment Library for sequence " << RNA_string << " " <<
+		" and sec. struct " << RNA_secstruct_string << " ... found " <<
+		source_positions->size() << " potential fragments" << std::endl;
 
-		using namespace core::id;
+	source_positions_map_[ key ] = source_positions;
 
-		std::map< Size, Size > res_map;
+}
 
-		for ( Size offset = 0; offset < frag_size; offset ++ ) {
+///////////////////////////////////////////////////////////////////////////////////////
+Size
+CoarseRNA_Fragments::pick_random_fragment(
+	std::string const RNA_string,
+	std::string const RNA_secstruct_string,
+	Size const type ){
 
-			Size const insert_offset = insert_res + offset;
-			Size const source_offset = source_res + offset;
+	std::string const RNA_string_local = protocols::farna::convert_based_on_match_type( RNA_string, type );
 
-			if ( (insert_offset) > pose.total_residue() ) continue;
-			if ( (source_offset) > frag_source_pose_->total_residue() ) continue;
+	SequenceSecStructPair const key( std::make_pair( RNA_string_local, RNA_secstruct_string ) );
 
-			res_map[ insert_offset ] = source_offset;
-
-		}
-		//		std::cout << std::endl;
-
-		std::map< AtomID, AtomID > atom_id_map;
-		allow_insert->calculate_atom_id_map( pose, res_map, frag_source_pose_->fold_tree(), atom_id_map );
-		core::pose::copydofs::copy_dofs(  pose, *frag_source_pose_, atom_id_map, allow_insert->calculate_atom_id_domain_map( pose ) );
-
+	if ( ! source_positions_map_.count( key ) ) {
+		find_source_positions( key );
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////////
-	void
-	CoarseRNA_Fragments::find_source_positions( SequenceSecStructPair const & key ){
+	SourcePositionsOP source_positions = source_positions_map_[ key ];
 
-		using namespace protocols::farna;
+	Size const num_frags = source_positions->size();
 
-		SourcePositionsOP source_positions( new SourcePositions );
-
-		std::string const RNA_string = key.first;
-		std::string const RNA_secstruct_string = key.second;
-
-		Size const size = RNA_string.length();
-		static Distance const DIST_CUTOFF( 10.0 ); /*distance of S to next P*/
-
-		runtime_assert( RNA_string.length() == RNA_secstruct_string.length() );
-
-		// dummy initialization.
-		std::string vall_current_sequence ( RNA_string );
-		std::string vall_current_secstruct( RNA_secstruct_string );
-
-		std::string const & source_secstruct( frag_source_secstruct_ );
-		std::string const & source_sequence( frag_source_pose_->sequence() );
-
-		for (Size i = 1; i <= source_sequence.size() - size + 1; i++ ){
-
-			bool match( true );
-
-			for (Size offset = 0; offset < size; offset++ ){
-				vall_current_sequence [offset] = source_sequence[ i - 1 + offset ];
-				vall_current_secstruct[offset] = source_secstruct[ i - 1 + offset ];
-
-				if (
-						!compare_RNA_char( vall_current_sequence[offset], RNA_string[ offset ] ) ||
-						!compare_RNA_secstruct( vall_current_secstruct[offset], RNA_secstruct_string[ offset ] ) )	{
-					match = false;
-					break;
-				}
-				// check for chainbreak
-				if ( offset > 1 &&
-						 ( ( frag_source_pose_->xyz( id::AtomID( 2, i+offset-1 ) ) -
-								 frag_source_pose_->xyz( id::AtomID( 1, i+offset   ) ) ).length() > DIST_CUTOFF ) ) continue;
-
-			}
-
-			if (match) {
-				source_positions->push_back( i );
-			}
-
-		}
-
-		std::cout << "Picked Fragment Library for sequence " << RNA_string << " " <<
-			" and sec. struct " << RNA_secstruct_string << " ... found " <<
-			source_positions->size() << " potential fragments" << std::endl;
-
-		source_positions_map_[ key ] = source_positions;
-
+	if ( num_frags == 0 ) { //trouble.
+		std::cout << "Fragment Library: zero fragments found for " << RNA_string_local << std::endl;
+		std::cerr << "Fragment Library: zero fragments found for " << RNA_string_local << std::endl;
+		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////////
-	Size
-	CoarseRNA_Fragments::pick_random_fragment(
-																						std::string const RNA_string,
-																						std::string const RNA_secstruct_string,
-																						Size const type ){
+	Size const which_frag = static_cast <Size> ( numeric::random::rg().uniform() * num_frags) + 1;
 
-		std::string const RNA_string_local = protocols::farna::convert_based_on_match_type( RNA_string, type );
+	return (*source_positions)[ which_frag ];
 
-		SequenceSecStructPair const key( std::make_pair( RNA_string_local, RNA_secstruct_string ) );
+}
 
-		if (! source_positions_map_.count( key ) ){
-			find_source_positions( key );
-		}
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+Size
+CoarseRNA_Fragments::pick_random_fragment(
+	core::pose::Pose & pose,
+	Size const position,
+	Size const size,
+	Size const type ){
 
-		SourcePositionsOP source_positions = source_positions_map_[ key ];
+	std::string const & RNA_sequence( pose.sequence() );
+	std::string const & RNA_string = RNA_sequence.substr( position - 1, size );
 
-		Size const num_frags = source_positions->size();
+	std::string const & RNA_secstruct( protocols::farna::get_rna_secstruct( pose ) );
+	std::string const & RNA_secstruct_string = RNA_secstruct.substr( position - 1, size );
 
-		if (num_frags == 0) { //trouble.
-			std::cout << "Fragment Library: zero fragments found for " << RNA_string_local << std::endl;
-			std::cerr << "Fragment Library: zero fragments found for " << RNA_string_local << std::endl;
-			utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
-		}
+	return pick_random_fragment( RNA_string, RNA_secstruct_string, type );
 
-		Size const which_frag = static_cast <Size> ( numeric::random::rg().uniform() * num_frags) + 1;
+}
 
-		return (*source_positions)[ which_frag ];
+////////////////////////////////////////////////////////////////////////////////////////
+void
+CoarseRNA_Fragments::apply_random_fragment(
+	core::pose::Pose & pose,
+	core::Size const position,
+	core::Size const size,
+	core::Size const type,
+	protocols::toolbox::AllowInsertOP allow_insert )
+{
+	Size const source_res = pick_random_fragment( pose, position, size, type );
+	//  std::cout << "applying to fragment position " << position << " from source position " << source_res << std::endl;
+	insert_fragment( pose, position, source_res, size, allow_insert );
+}
 
-	}
-
-	///////////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////
-	Size
-	CoarseRNA_Fragments::pick_random_fragment(
-																						core::pose::Pose & pose,
-																						Size const position,
-																						Size const size,
-																						Size const type ){
-
-		std::string const & RNA_sequence( pose.sequence() );
-		std::string const & RNA_string = RNA_sequence.substr( position - 1, size );
-
-		std::string const & RNA_secstruct( protocols::farna::get_rna_secstruct( pose ) );
-		std::string const & RNA_secstruct_string = RNA_secstruct.substr( position - 1, size );
-
-		return pick_random_fragment( RNA_string, RNA_secstruct_string, type );
-
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////
-	void
-	CoarseRNA_Fragments::apply_random_fragment(
-																						 core::pose::Pose & pose,
-																						 core::Size const position,
-																						 core::Size const size,
-																						 core::Size const type,
-																						 protocols::toolbox::AllowInsertOP allow_insert )
-	{
-		Size const source_res = pick_random_fragment( pose, position, size, type );
-		//		std::cout << "applying to fragment position " << position << " from source position " << source_res << std::endl;
-		insert_fragment( pose, position, source_res, size, allow_insert );
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////
-	bool
-	CoarseRNA_Fragments::is_fullatom(){ return false; }
+////////////////////////////////////////////////////////////////////////////////////////
+bool
+CoarseRNA_Fragments::is_fullatom(){ return false; }
 
 
 } // namespace rna

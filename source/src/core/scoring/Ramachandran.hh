@@ -114,7 +114,7 @@ public:
 	) const;
 
 	/// @brief Function to evaluate the rama score for residues whose connection partners are not necessarily adjacent
-  /// in linear sequence (e.g. for backbone-cyclized peptides).  Note that this assumes that rama is being used only
+	/// in linear sequence (e.g. for backbone-cyclized peptides).  Note that this assumes that rama is being used only
 	/// for scoring alpha-amino acids (L- or D-).
 	/// @author Vikram K. Mulligan
 	void
@@ -192,7 +192,7 @@ public:
 
 	//Real get_rama_score_residue_deriv( int res, Pose const & a_pose, ProteinTorsion torsion ) const;
 	//void eval_procheck_rama( Pose const & a_pose,
-	//	Real & favorable, Real & allowed, Real & generous ) const;
+	// Real & favorable, Real & allowed, Real & generous ) const;
 
 	/// @brief Function to do a quick check that the upper connection is seqpos+1 and the lower connection is seqpos-1.  Returns true if this is so, false otherwise.
 	/// @author Vikram K. Mulligan

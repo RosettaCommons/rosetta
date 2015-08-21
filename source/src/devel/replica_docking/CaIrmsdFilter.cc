@@ -66,12 +66,12 @@ CaIrmsdFilter::CaIrmsdFilter() :
 	if ( option[ in::file::native ].user() ) {
 		core::pose::PoseOP native_pose( new core::pose::Pose() );
 		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]());
- 		native_pose_ = native_pose;
+		native_pose_ = native_pose;
 	} else {
 		utility_exit_with_message("need to specify native pdb to calculate Irms");
 	}
 	scorefxn_ = core::scoring::get_score_function();
-	//	scorefxn_->show(TR.Info);
+	// scorefxn_->show(TR.Info);
 	movable_jumps_ = utility::tools::make_vector1<core::Size>(1);
 	TR << "End constructer"<<std::endl;
 
@@ -87,18 +87,18 @@ CaIrmsdFilter::CaIrmsdFilter( core::scoring::ScoreFunctionOP sfxn, core::Size co
 	if ( option[ in::file::native ].user() ) {
 		core::pose::PoseOP native_pose( new core::pose::Pose() );
 		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]);
- 		native_pose_ = native_pose;
+		native_pose_ = native_pose;
 	} else {
 		utility_exit_with_message("need to specify native pdb to calculate Ca-Irms");
 	}
 
-	if( !sfxn ) {
+	if ( !sfxn ) {
 		scorefxn_ = core::scoring::get_score_function();
 	} else {
 		scorefxn_ = sfxn->clone();
 	}
 	TR.Info <<"CaIrmsdEvaluator: "<<"score" << std::endl;
-	//	scorefxn_->show(TR.Info);
+	// scorefxn_->show(TR.Info);
 	movable_jumps_.push_back( rb_jump );
 	TR << "End constructer"<<std::endl;
 
@@ -123,14 +123,14 @@ CaIrmsdFilter::parse_my_tag(
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
-	) {
+) {
 
- 	std::string const scorefxn_name(
+	std::string const scorefxn_name(
 		protocols::rosetta_scripts::get_score_function_name(tag) );
 	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( scorefxn_name );
-// // 	scorefxn_ = new core::scoring::ScoreFunction( *(data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name )) );
+	// //  scorefxn_ = new core::scoring::ScoreFunction( *(data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name )) );
 
-// //	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
+	// // scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 
 	lower_threshold_ = tag->getOption<core::Real>( "threshold", 0.0 );
 	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 9999);
@@ -144,11 +144,10 @@ CaIrmsdFilter::apply( core::pose::Pose const & pose ) const {
 	core::Real const Irms( compute( pose ) );
 
 	TR<<"Ca_Irms is "<<Irms<<". ";
-	if( Irms >= lower_threshold_ && Irms <= upper_threshold_ ){
+	if ( Irms >= lower_threshold_ && Irms <= upper_threshold_ ) {
 		TR<<"passing." <<std::endl;
 		return true;
-	}
-	else {
+	} else {
 		TR<<"failing."<<std::endl;
 		return false;
 	}

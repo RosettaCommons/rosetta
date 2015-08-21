@@ -35,18 +35,18 @@ namespace operation {
 
 class ResFilterComposition : public ResFilter
 {
-	public:
-		typedef ResFilter parent;
+public:
+	typedef ResFilter parent;
 
-	public:
-		ResFilterComposition();
-		ResFilterComposition(utility::vector1<ResFilterCOP> const &);
+public:
+	ResFilterComposition();
+	ResFilterComposition(utility::vector1<ResFilterCOP> const &);
 
-		virtual void parse_tag( TagCOP );
+	virtual void parse_tag( TagCOP );
 
-	protected:
-		utility::vector1<ResFilterCOP> sub_filters_;
-	  void parse_sub_filters_tag( TagCOP );
+protected:
+	utility::vector1<ResFilterCOP> sub_filters_;
+	void parse_sub_filters_tag( TagCOP );
 };
 
 class AnyResFilter : public ResFilterComposition
@@ -128,26 +128,26 @@ public:
 
 class ResiduePDBInfoHasLabel : public ResFilter {
 public:
-  typedef ResFilter parent;
+	typedef ResFilter parent;
 public:
-  ResiduePDBInfoHasLabel();
-  ResiduePDBInfoHasLabel( std::string const & );
-  virtual bool operator() ( Pose const &, Size ) const;
-  virtual ResFilterOP clone() const;
-  virtual void parse_tag( TagCOP );
-  virtual std::string const & property() const { return property_; }
+	ResiduePDBInfoHasLabel();
+	ResiduePDBInfoHasLabel( std::string const & );
+	virtual bool operator() ( Pose const &, Size ) const;
+	virtual ResFilterOP clone() const;
+	virtual void parse_tag( TagCOP );
+	virtual std::string const & property() const { return property_; }
 private:
-  std::string property_;
+	std::string property_;
 };
 
 class ResiduePDBInfoLacksLabel : public ResiduePDBInfoHasLabel {
 public:
-  typedef ResiduePDBInfoHasLabel parent;
+	typedef ResiduePDBInfoHasLabel parent;
 public:
-  ResiduePDBInfoLacksLabel();
-  ResiduePDBInfoLacksLabel( std::string const & );
-  virtual bool operator() ( Pose const &, Size ) const;
-  virtual ResFilterOP clone() const;
+	ResiduePDBInfoLacksLabel();
+	ResiduePDBInfoLacksLabel( std::string const & );
+	virtual bool operator() ( Pose const &, Size ) const;
+	virtual ResFilterOP clone() const;
 };
 
 class ResidueName3Is : public ResFilter {
@@ -212,7 +212,7 @@ public:
 		char chain_; int pos_;
 		ChainPos( char chain, int pos ) : chain_(chain), pos_(pos) {}
 		bool operator == ( ChainPos const & other ) const
-			{ return( chain_ == other.chain_ && pos_ == other.pos_ ); }
+		{ return( chain_ == other.chain_ && pos_ == other.pos_ ); }
 	};
 
 public:

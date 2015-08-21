@@ -68,15 +68,15 @@ MultiCoolAnnealer::MultiCoolAnnealer(
 	FArray1D< core::PackerEnergy > & rot_freq
 ):
 	RotamerAssigningAnnealer(
-		rot_to_pack,
-		(int) rot_to_pack.size(),
-		bestrotamer_at_seqpos,
-		bestenergy,
-		start_with_current, // start simulation with current rotamers
-		p_rotamer_set,
-		current_rot_index,
-		calc_rot_freq,
-		rot_freq
+	rot_to_pack,
+	(int) rot_to_pack.size(),
+	bestrotamer_at_seqpos,
+	bestenergy,
+	start_with_current, // start simulation with current rotamers
+	p_rotamer_set,
+	current_rot_index,
+	calc_rot_freq,
+	rot_freq
 	),
 	ig_(ig),
 	nsteps_for_rot_( p_rotamer_set->nrotamers() , 0 ),
@@ -102,14 +102,14 @@ MultiCoolAnnealer::MultiCoolAnnealer(
 	FArray1D< core::PackerEnergy > & rot_freq
 ):
 	RotamerAssigningAnnealer(
-		(ig->get_num_total_states()),
-		bestrotamer_at_seqpos,
-		bestenergy,
-		start_with_current, // start simulation with current rotamers
-		p_rotamer_set,
-		current_rot_index,
-		calc_rot_freq,
-		rot_freq
+	(ig->get_num_total_states()),
+	bestrotamer_at_seqpos,
+	bestenergy,
+	start_with_current, // start simulation with current rotamers
+	p_rotamer_set,
+	current_rot_index,
+	calc_rot_freq,
+	rot_freq
 	),
 	ig_(ig),
 	nsteps_for_rot_( num_rots_to_pack(), 0 ),
@@ -156,7 +156,7 @@ void MultiCoolAnnealer::run()
 
 	ig_->prepare_for_simulated_annealing();
 
-  TR << "IG after prepare_for_simulated_annealing: " << ig_->getTotalMemoryUsage() << " bytes" << std::endl;
+	TR << "IG after prepare_for_simulated_annealing: " << ig_->getTotalMemoryUsage() << " bytes" << std::endl;
 
 	ig_->blanket_assign_state_0();
 
@@ -190,9 +190,9 @@ void MultiCoolAnnealer::run()
 	//outer loop
 	set_temperature( 10 );
 	set_lowtemp( 0.2 );
-	for (int nn = 1; nn <= outeriterations; ++nn ) {
+	for ( int nn = 1; nn <= outeriterations; ++nn ) {
 
-		if ( nn % 6 == 1 && nn != 1) {
+		if ( nn % 6 == 1 && nn != 1 ) {
 			cool();
 		}
 
@@ -201,7 +201,7 @@ void MultiCoolAnnealer::run()
 
 		//std::cerr << "inneriterations: " << inneriterations << std::endl;
 
-		if (nn % 2 == 0 ) {
+		if ( nn % 2 == 0 ) {
 			//last_temperature = get_temperature();
 			network_state_to_restore = state_on_node;
 
@@ -229,7 +229,7 @@ void MultiCoolAnnealer::run()
 
 		core::PackerEnergy best_of_best = energy_top_( 1 );
 		int which_best_of_best = 1;
-		for ( Size ii = 2; ii <= top_to_keep; ++ii) {
+		for ( Size ii = 2; ii <= top_to_keep; ++ii ) {
 			if ( best_of_best > energy_top_( ii ) && energy_top_( ii ) != uninitialized_energy ) {
 				best_of_best = energy_top_( ii );
 				which_best_of_best = ii;
@@ -247,12 +247,12 @@ void MultiCoolAnnealer::run()
 		//std::cout << " with network state: " << std::endl;
 		//for ( int jj = 1; jj <= rotamer_sets()->nmoltenres(); ++jj )
 		//{
-		//	int jjstate = top_netstates_(jj, ii );
-		//	if ( jjstate < 1000 ) std::cerr << " ";
-		//	if ( jjstate < 100  ) std::cerr << " ";
-		//	if ( jjstate < 10   ) std::cerr << " ";
-		//	std::cout << jjstate << " ";
-		//	if ( jj % 10 == 0 ) std::cerr << std::endl;
+		// int jjstate = top_netstates_(jj, ii );
+		// if ( jjstate < 1000 ) std::cerr << " ";
+		// if ( jjstate < 100  ) std::cerr << " ";
+		// if ( jjstate < 10   ) std::cerr << " ";
+		// std::cout << jjstate << " ";
+		// if ( jj % 10 == 0 ) std::cerr << std::endl;
 		//}
 		//std::cout << std::endl << "With energy: " << energy_top_( ii ) << std::endl;
 
@@ -269,8 +269,8 @@ void MultiCoolAnnealer::run()
 		outeriterations = 6;
 		int inneriterations = get_inneriterations();
 
-		for (int nn = 1; nn <= outeriterations; ++nn ) {
-			if (nn != 1 ) cool();
+		for ( int nn = 1; nn <= outeriterations; ++nn ) {
+			if ( nn != 1 ) cool();
 
 			//std::cerr << "MultiCoolAnnealer: temperature = " << get_temperature() << " currenergy: ";
 			//std::cerr << ig_->get_energy_current_state_assignment() << std::endl;
@@ -290,8 +290,8 @@ void MultiCoolAnnealer::run()
 				inneriterations / 2);
 			//if ( bestE_before_quench > bestenergy() )
 			//{
-			//	std::cerr << "Quench inside cooling run # " << ii << " found lower energy: ";
-			//	std::cerr << bestenergy() << std::endl;
+			// std::cerr << "Quench inside cooling run # " << ii << " found lower energy: ";
+			// std::cerr << bestenergy() << std::endl;
 			//}
 			state_on_node = state_to_restore;
 			ig_->set_network_state( state_on_node );
@@ -300,7 +300,7 @@ void MultiCoolAnnealer::run()
 
 		if ( std::abs(best_energy_this_starting_point - energy_top_( ii ) ) < 0.001 ) {
 			bool same_as_start = true;
-			for (Size jj = 1; jj <= rotamer_sets()->nmoltenres(); ++jj) {
+			for ( Size jj = 1; jj <= rotamer_sets()->nmoltenres(); ++jj ) {
 				if ( best_state_on_node_this_starting_point( jj ) != top_netstates_( jj, ii ) ) {
 					same_as_start = false;
 					break;
@@ -322,7 +322,7 @@ void MultiCoolAnnealer::run()
 			inneriterations );
 
 		second_round_cooling_finalE( ii ) = best_energy_this_starting_point;
-		for (Size jj = 1; jj <= rotamer_sets()->nmoltenres(); ++jj) {
+		for ( Size jj = 1; jj <= rotamer_sets()->nmoltenres(); ++jj ) {
 			if ( best_state_on_node_this_starting_point( jj ) != top_netstates_(jj, ii ) ) {
 				++hamming_start_to_stop(ii);
 			}
@@ -337,12 +337,12 @@ void MultiCoolAnnealer::run()
 		//std::cerr << "MultiCoolAnnealer: final low temp annealing # "<< ii << " with network state: " << std::endl;
 		//for ( int jj = 1; jj <= rotamer_sets()->nmoltenres(); ++jj )
 		//{
-		//	int jjstate = state_on_node(jj);
-		//	if ( jjstate < 1000 ) std::cerr << " ";
-		//	if ( jjstate < 100  ) std::cerr << " ";
-		//	if ( jjstate < 10   ) std::cerr << " ";
-		//	std::cerr << jjstate << " ";
-		//	if ( jj % 10 == 0 ) std::cerr << std::endl;
+		// int jjstate = state_on_node(jj);
+		// if ( jjstate < 1000 ) std::cerr << " ";
+		// if ( jjstate < 100  ) std::cerr << " ";
+		// if ( jjstate < 10   ) std::cerr << " ";
+		// std::cerr << jjstate << " ";
+		// if ( jj % 10 == 0 ) std::cerr << std::endl;
 		//}
 		//std::cerr << std::endl << "With energy: " << ig_->get_energy_current_state_assignment();
 		//std::cerr << " and bestenergy()" << bestenergy() << std::endl;
@@ -360,50 +360,50 @@ void MultiCoolAnnealer::run()
 		std::cerr << "Critical error -- assignment and energy of assignment meaningless" << std::endl;
 
 		FArray1D_int nstates_for_moltenres( rotamer_sets()->nmoltenres(), 0 );
-		for (Size ii = 0; ii < num_rots_to_pack(); ++ii) {
+		for ( Size ii = 0; ii < num_rots_to_pack(); ++ii ) {
 			++nstates_for_moltenres( rotamer_sets()->res_for_rotamer( rot_to_pack()[ ii ] ) );
 		}
 
-		for ( Size ii = 1, iie = rotamer_sets()->nmoltenres(); ii <= iie; ++ii) {
+		for ( Size ii = 1, iie = rotamer_sets()->nmoltenres(); ii <= iie; ++ii ) {
 			if ( best_state_on_node( ii ) == 0 ) {
 				std::cerr << "Molten res " << ii << " (residue " << rotamer_sets()->moltenres_2_resid( ii );
 				std::cerr << " ) assigned state 0 despite having " << nstates_for_moltenres( ii ) << " states to choose from" << std::endl;
 			}
 		}
 		std::cout << "num_top_kept_: " << num_top_kept_ << std::endl;
-	debug_assert( ! ig_->any_vertex_state_unassigned() );
+		debug_assert( ! ig_->any_vertex_state_unassigned() );
 		utility_exit();
 	}
 
 	//for (int ii = 1; ii <= top_to_keep; ++ii)
 	//{
-	//	for (int jj = 1; jj <= ii; ++jj )
-	//	{
-	//		std::cerr << "    ";
-	//	}
+	// for (int jj = 1; jj <= ii; ++jj )
+	// {
+	//  std::cerr << "    ";
+	// }
 	//
-	//	for (int jj = ii + 1; jj <= top_to_keep; ++jj)
-	//	{
-	//		int hamming = 0;
-	//		for (int kk = 1; kk <= rotamer_sets()->nmoltenres(); ++kk)
-	//		{
-	//			if ( top_netstates_( kk, ii ) != top_netstates_( kk, jj ) )
-	//			{
-	//				++hamming;
-	//			}
-	//		}
-	//		hamming_distance( jj, ii ) = hamming;
-	//		if ( hamming < 100  ) std::cerr << " ";
-	//		if ( hamming < 10   ) std::cerr << " ";
-	//		std::cerr << hamming << " ";
-	//	}
+	// for (int jj = ii + 1; jj <= top_to_keep; ++jj)
+	// {
+	//  int hamming = 0;
+	//  for (int kk = 1; kk <= rotamer_sets()->nmoltenres(); ++kk)
+	//  {
+	//   if ( top_netstates_( kk, ii ) != top_netstates_( kk, jj ) )
+	//   {
+	//    ++hamming;
+	//   }
+	//  }
+	//  hamming_distance( jj, ii ) = hamming;
+	//  if ( hamming < 100  ) std::cerr << " ";
+	//  if ( hamming < 10   ) std::cerr << " ";
+	//  std::cerr << hamming << " ";
+	// }
 	//
-	//	std::cerr << energy_top_(ii) << " " << hamming_start_to_stop(ii) << " "<< second_round_cooling_finalE( ii ) << std::endl;
+	// std::cerr << energy_top_(ii) << " " << hamming_start_to_stop(ii) << " "<< second_round_cooling_finalE( ii ) << std::endl;
 	//
 	//}
 
 	//convert best_state_on_node into best_rotamer_at_seqpos
-	for ( Size ii = 1; ii <= rotamer_sets()->nmoltenres(); ++ii) {
+	for ( Size ii = 1; ii <= rotamer_sets()->nmoltenres(); ++ii ) {
 		int iiresid = rotamer_sets()->moltenres_2_resid(ii);
 		bestrotamer_at_seqpos()( iiresid ) = rotamer_sets()->moltenres_rotid_2_rotid( ii, best_state_on_node(ii) );
 	}
@@ -449,17 +449,17 @@ MultiCoolAnnealer::run_constant_temp_rotamer_substitutions(
 	if ( quench() ) { threshold_for_deltaE_inaccuracy = 0; }
 	ig_->set_errorfull_deltaE_threshold( threshold_for_deltaE_inaccuracy );
 
-	for (int n = 1; n <= num_cycles; ++n ) {
+	for ( int n = 1; n <= num_cycles; ++n ) {
 
 		int ranrotamer = pick_a_rotamer( n );
-		if (ranrotamer == -1) continue;
+		if ( ranrotamer == -1 ) continue;
 
-      int rotamer_seqpos = rotamer_sets()->res_for_rotamer(ranrotamer);
-      int moltenres_id = rotamer_sets()->resid_2_moltenres(rotamer_seqpos);
-      int rotamer_state_on_moltenres = rotamer_sets()->rotid_on_moltenresidue(ranrotamer);
-      int prevrotamer_state = state_on_node(moltenres_id);
+		int rotamer_seqpos = rotamer_sets()->res_for_rotamer(ranrotamer);
+		int moltenres_id = rotamer_sets()->resid_2_moltenres(rotamer_seqpos);
+		int rotamer_state_on_moltenres = rotamer_sets()->rotid_on_moltenresidue(ranrotamer);
+		int prevrotamer_state = state_on_node(moltenres_id);
 
-      if (rotamer_state_on_moltenres == prevrotamer_state ) continue; //skip iteration
+		if ( rotamer_state_on_moltenres == prevrotamer_state ) continue; //skip iteration
 
 		core::PackerEnergy delta_energy, previous_energy_for_node;
 		++nsteps_;
@@ -469,7 +469,7 @@ MultiCoolAnnealer::run_constant_temp_rotamer_substitutions(
 		//bk keep new rotamer if it is lower in energy or accept it at some
 		//bk probability if it is higher in energy, if it is the first
 		//bk rotamer to be tried at this position automatically accept it.
-		if ((prevrotamer_state == 0)||pass_metropolis(previous_energy_for_node,delta_energy)) {
+		if ( (prevrotamer_state == 0)||pass_metropolis(previous_energy_for_node,delta_energy) ) {
 			substitutions_without_a_commit = 0;
 			currentenergy = ig_->commit_considered_substitution();
 			state_on_node(moltenres_id) = rotamer_state_on_moltenres;
@@ -490,7 +490,7 @@ MultiCoolAnnealer::run_constant_temp_rotamer_substitutions(
 		if ( calc_rot_freq() && ( get_temperature() <= calc_freq_temp ) ) {
 			for ( Size ii = 1; ii <= rotamer_sets()->nmoltenres(); ++ii ) {
 				int iistate = state_on_node(ii);
-				if (iistate != 0) {
+				if ( iistate != 0 ) {
 					++nsteps_for_rot_( rotamer_sets()->moltenres_rotid_2_rotid( ii, best_state_on_node(ii) ) );
 				}
 			}
@@ -506,20 +506,20 @@ void MultiCoolAnnealer::store_top_energy(
 )
 {
 	if ( worst_top_energy_ != uninitialized_energy && energy > worst_top_energy_ ) return;
-	for ( Size ii = 1; ii <= rotamer_sets()->nmoltenres(); ++ii) {
-		if (state_on_node(ii) == 0 ) return;
+	for ( Size ii = 1; ii <= rotamer_sets()->nmoltenres(); ++ii ) {
+		if ( state_on_node(ii) == 0 ) return;
 	}
 
-	for ( Size ii = 1; ii <= top_to_keep; ++ii) {
+	for ( Size ii = 1; ii <= top_to_keep; ++ii ) {
 		if ( std::abs( energy - energy_top_( ii )) < 0.0001 ) {
 			bool repeat = true;
-			for ( Size jj = 1; jj <= rotamer_sets()->nmoltenres(); ++jj) {
+			for ( Size jj = 1; jj <= rotamer_sets()->nmoltenres(); ++jj ) {
 				if ( state_on_node( jj ) != top_netstates_( jj, ii ) ) {
 					repeat = false;
 					break;
 				}
 			}
-			if (repeat) {
+			if ( repeat ) {
 				//std::cerr << "MultiCoolAnnealer: already found this network state" << std::endl;
 				return;
 			}
@@ -527,8 +527,8 @@ void MultiCoolAnnealer::store_top_energy(
 	}
 
 	//std::cerr << "MultiCoolAnnealer:  replacing worst_best: " <<
-	//	which_netstate_worst_top_ << " " << worst_top_energy_ << " with " <<
-	//	energy << std::endl;
+	// which_netstate_worst_top_ << " " << worst_top_energy_ << " with " <<
+	// energy << std::endl;
 
 	FArray1A_int netstate_to_replace(
 		top_netstates_( 1, which_netstate_worst_top_ ), rotamer_sets()->nmoltenres() );

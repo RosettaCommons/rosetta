@@ -62,7 +62,7 @@ public:
 
 	FA_ElecEnergy( FA_ElecEnergy const & src );
 
-  /// @brief Initilize constants.
+	/// @brief Initilize constants.
 	void
 	initialize();
 
@@ -385,7 +385,7 @@ public:
 	}
 
 
-/// Private methods
+	/// Private methods
 private:
 
 	void

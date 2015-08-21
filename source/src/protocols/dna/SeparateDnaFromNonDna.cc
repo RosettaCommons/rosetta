@@ -53,18 +53,18 @@ SeparateDnaFromNonDnaCreator::mover_name()
 }
 
 SeparateDnaFromNonDna::SeparateDnaFromNonDna()
-	: Mover( SeparateDnaFromNonDnaCreator::mover_name() ),
-		translation_( 1000, 0, 0 )
+: Mover( SeparateDnaFromNonDnaCreator::mover_name() ),
+	translation_( 1000, 0, 0 )
 {}
 
 SeparateDnaFromNonDna::SeparateDnaFromNonDna( Real x, Real y, Real z )
-	: Mover( SeparateDnaFromNonDnaCreator::mover_name() ),
-		translation_( x, y, z )
+: Mover( SeparateDnaFromNonDnaCreator::mover_name() ),
+	translation_( x, y, z )
 {}
 
 SeparateDnaFromNonDna::SeparateDnaFromNonDna( numeric::xyzVector< Real > const & xyz )
-	: Mover( SeparateDnaFromNonDnaCreator::mover_name() ),
-		translation_( xyz )
+: Mover( SeparateDnaFromNonDnaCreator::mover_name() ),
+	translation_( xyz )
 {}
 
 SeparateDnaFromNonDna::SeparateDnaFromNonDna( SeparateDnaFromNonDna const & other ) :
@@ -98,14 +98,14 @@ SeparateDnaFromNonDna::apply( pose::Pose & pose )
 		}
 		// manually add continuous segment edges
 		// NO! FoldTree will attempt to do this on its own, and this will create duplications that will cause assertion/runtime failures
-//		fold_tree.add_edge( conf.chain_begin( chain_index ), conf.chain_end( chain_index ), Edge::PEPTIDE );
+		//  fold_tree.add_edge( conf.chain_begin( chain_index ), conf.chain_end( chain_index ), Edge::PEPTIDE );
 	}
 
 	// connect non-DNA chains
 	Size const first_nonDNA_chain( non_DNA_chain_indices.front() );
 	Size const nonDNA_anchor_index( conf.chain_begin( first_nonDNA_chain ) );
 	for ( vector1< Size >::const_iterator chain_iter( non_DNA_chain_indices.begin()+1 );
-	      chain_iter != non_DNA_chain_indices.end(); ++chain_iter ) {
+			chain_iter != non_DNA_chain_indices.end(); ++chain_iter ) {
 		Size const chain_begin( conf.chain_begin( *chain_iter ) );
 
 		TR << "linking non-DNA chains " << first_nonDNA_chain << " and " << *chain_iter
@@ -126,7 +126,7 @@ SeparateDnaFromNonDna::apply( pose::Pose & pose )
 	Size const first_DNA_chain( DNA_chain_indices.front() );
 	Size const DNA_anchor_index( conf.chain_begin( first_DNA_chain ) );
 	for ( vector1< Size >::const_iterator chain_iter( DNA_chain_indices.begin()+1 );
-	      chain_iter != DNA_chain_indices.end(); ++chain_iter ) {
+			chain_iter != DNA_chain_indices.end(); ++chain_iter ) {
 		Size const chain_begin( conf.chain_begin( *chain_iter ) );
 
 		TR << "linking DNA chains " << first_DNA_chain << " and " << *chain_iter << " residues " << DNA_anchor_index << " (";
@@ -155,7 +155,7 @@ SeparateDnaFromNonDna::apply( pose::Pose & pose )
 
 	// make sure that this jump goes in the 'forward' direction, in case the DNA chains came first
 	Size const jump_start( std::min( nonDNA_anchor_index, DNA_anchor_index ) ),
-	           jump_end( std::max( nonDNA_anchor_index, DNA_anchor_index ) );
+		jump_end( std::max( nonDNA_anchor_index, DNA_anchor_index ) );
 	fold_tree.new_jump( jump_start, jump_end, jump_end-1 );
 
 	// set the new fold tree
@@ -168,7 +168,7 @@ SeparateDnaFromNonDna::apply( pose::Pose & pose )
 	prot_DNA_jump.set_translation( translation_ );
 	TR << std::fixed << std::setprecision(0);
 	TR << "separating non-DNA chains from DNA chains by translation ("
-	   << translation_.x() << "," << translation_.y() << "," << translation_.z() << ")" << '\n';
+		<< translation_.x() << "," << translation_.y() << "," << translation_.z() << ")" << '\n';
 	pose.set_jump( prot_DNA_jump_index, prot_DNA_jump );
 	TR.flush();
 }

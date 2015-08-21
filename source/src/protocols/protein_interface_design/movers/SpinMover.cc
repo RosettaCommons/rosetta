@@ -42,17 +42,17 @@ static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers
 
 std::string SpinMoverCreator::keyname() const
 {
-        return SpinMoverCreator::mover_name();
+	return SpinMoverCreator::mover_name();
 }
 
 protocols::moves::MoverOP
 SpinMoverCreator::create_mover() const {
-        return protocols::moves::MoverOP( new SpinMover );
+	return protocols::moves::MoverOP( new SpinMover );
 }
 
 std::string
 SpinMoverCreator::mover_name() {
-        return "SpinMover";
+	return "SpinMover";
 }
 
 SpinMover::SpinMover( ) :
@@ -63,11 +63,11 @@ SpinMover::SpinMover( ) :
 SpinMover::SpinMover( core::Size jump_num ) :
 	protocols::moves::Mover( SpinMoverCreator::mover_name()  ),
 	// protocols::moves::Mover ( "SpinMover" ),
-   jump_num_(jump_num)
+	jump_num_(jump_num)
 { }
 
 std::string SpinMover::get_name() const {
- 	       return SpinMoverCreator::mover_name();
+	return SpinMoverCreator::mover_name();
 }
 
 void
@@ -84,31 +84,31 @@ SpinMover::apply( core::pose::Pose & pose )
 	core::Size const downstream_res(pose.fold_tree().jump_edge(jump_num_).stop());
 	std::string upstream_atom(pose.fold_tree().jump_edge(jump_num_).upstream_atom());
 	std::string downstream_atom(pose.fold_tree().jump_edge(jump_num_).downstream_atom());
-	if( upstream_atom == "" ) upstream_atom = "C";
-	if( downstream_atom == "" ) downstream_atom = "C";
+	if ( upstream_atom == "" ) upstream_atom = "C";
+	if ( downstream_atom == "" ) downstream_atom = "C";
 	TR<<"upstream residue: "<<upstream_res<<" and atom "<<upstream_atom<<std::endl;
 
 	core::kinematics::Stub downstream_stub = pose.conformation().upstream_jump_stub( jump_num_ );
 	//calculate the rotation axis
 	//looking down the axis from the upstream to downstream atom, positive rotations are counterclockwise
 	core::Vector axis( pose.residue(upstream_res).atom(upstream_atom).xyz()//minus
-										 - pose.residue(downstream_res).atom(downstream_atom).xyz() );
+		- pose.residue(downstream_res).atom(downstream_atom).xyz() );
 
 
 	numeric::xyzVector<double> reference_center = pose.residue(downstream_res).atom(downstream_atom).xyz();
 	curr_jump.rotation_by_axis( downstream_stub, axis, reference_center, 360.0f*numeric::random::rg().uniform() /*degrees*/ );
 	TR<<"new jump: " << curr_jump<<std::endl;
-	 TR<<"new fold-tree: "<< pose.fold_tree()<<std::endl;
+	TR<<"new fold-tree: "<< pose.fold_tree()<<std::endl;
 	pose.set_jump( jump_num_, curr_jump );
-	  TR<<"new jump: " << curr_jump<<std::endl;
-   TR<<"new fold-tree: "<< pose.fold_tree()<<std::endl;
+	TR<<"new jump: " << curr_jump<<std::endl;
+	TR<<"new fold-tree: "<< pose.fold_tree()<<std::endl;
 }
 //mjo commenting out 'data' and 'pose' because they are unused and cause warnings
 void
 SpinMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & /*data*/, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & /*pose*/ )
 {
-        jump_num_ = tag->getOption<core::Size>( "jump_num", 1);
-        TR<<"SpinMover was instantiated "<<std::endl;
+	jump_num_ = tag->getOption<core::Size>( "jump_num", 1);
+	TR<<"SpinMover was instantiated "<<std::endl;
 }
 
 

@@ -29,9 +29,9 @@ namespace perturbers {
 using numeric::conversions::DEGREES;
 
 void IdealizeNonPhiPsi::perturb_subset(
-		Pose const &, IndexList const & residues, ClosureProblemOP problem) {
+	Pose const &, IndexList const & residues, ClosureProblemOP problem) {
 
-	foreach (Size residue, residues) {
+	foreach ( Size residue, residues ) {
 		problem->perturb_omega(residue, IdealParameters::omega_dihedral, DEGREES);
 		problem->perturb_c_n_ca(residue, IdealParameters::c_n_ca_angle, DEGREES);
 		problem->perturb_n_ca_c(residue, IdealParameters::n_ca_c_angle, DEGREES);
@@ -43,7 +43,7 @@ void IdealizeNonPhiPsi::perturb_subset(
 }
 
 void IdealizeNonPhiPsi::perturb_subset_with_balance(
-		Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
+	Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
 
 	perturb_subset(pose, residues, problem);
 }

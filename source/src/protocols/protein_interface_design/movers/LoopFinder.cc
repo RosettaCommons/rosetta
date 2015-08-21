@@ -109,7 +109,7 @@ LoopFinder::LoopFinder(
 LoopFinder::~LoopFinder() {}
 
 protocols::moves::MoverOP LoopFinder::clone() const {
-    return( protocols::moves::MoverOP( new LoopFinder( *this ) ) );
+	return( protocols::moves::MoverOP( new LoopFinder( *this ) ) );
 }
 
 void
@@ -119,7 +119,7 @@ LoopFinder::apply( core::pose::Pose & pose )
 
 	protocols::scoring::Interface iface;
 	iface.distance( iface_cutoff_ );
-	if( interface_ ) {
+	if ( interface_ ) {
 		iface.jump( interface_ );
 		iface.calculate( pose );
 	}
@@ -132,63 +132,61 @@ LoopFinder::apply( core::pose::Pose & pose )
 	loopfinder( pose, *all_loops ); // runs dssp, inserts ss into the pose, and extracts all loops at least 3 residues long
 
 	// all loops, no restrictions
-	if( !interface_ && ch1_ && ch2_ && (max_length_ >= 1000) && (min_length_ <= 1) && (mingap_ == 0) ) {
+	if ( !interface_ && ch1_ && ch2_ && (max_length_ >= 1000) && (min_length_ <= 1) && (mingap_ == 0) ) {
 		loops_ =  all_loops ;
 		return;
 	}
 
-	if( all_loops->size() > 0 ) {
-		for( Loops::const_iterator it = all_loops->begin(); it != all_loops->end(); ++it ) {
+	if ( all_loops->size() > 0 ) {
+		for ( Loops::const_iterator it = all_loops->begin(); it != all_loops->end(); ++it ) {
 			LoopCOP loop( LoopOP( new Loop(*it) ) );
-			if( pose.residue( loop->start() ).is_upper_terminus() || pose.residue( loop->stop() ).is_lower_terminus() ) continue; // skip if terminal loop
-			if( loop->size() < min_length_ || loop->size() > max_length_ ) continue; // skip this loop
+			if ( pose.residue( loop->start() ).is_upper_terminus() || pose.residue( loop->stop() ).is_lower_terminus() ) continue; // skip if terminal loop
+			if ( loop->size() < min_length_ || loop->size() > max_length_ ) continue; // skip this loop
 
 			// look at all residues in each loop.
 			// do we want interface residues?
 			// if so, go through all residues of each loop, checking whether interfacial and which chain it's in.
 			// if not, only end up looking at 1st residue in loop to check which chain it's in (break statements prevent multiple addition)
 
-			for( core::Size i = loop->start(); i <= loop->stop(); ++i ) {
-				if( interface_ ) {
+			for ( core::Size i = loop->start(); i <= loop->stop(); ++i ) {
+				if ( interface_ ) {
 					// if even one residue is at the interface, count whole loop as interface for purposes of aggressive remodeling
-					if( !iface.is_interface(i) ) continue;
+					if ( !iface.is_interface(i) ) continue;
 				}
 
-				if( resnum_ > 0) {
+				if ( resnum_ > 0 ) {
 					TR.Debug <<"residue : " << resnum_ << " was specified" << std::endl;
-					if( pose.residue( i ).xyz( "CA" ).distance( pose.residue( resnum_ ).xyz( "CA" ) ) < ca_ca_distance_ ) {
+					if ( pose.residue( i ).xyz( "CA" ).distance( pose.residue( resnum_ ).xyz( "CA" ) ) < ca_ca_distance_ ) {
 						TR.Debug<< "residue is within " << ca_ca_distance_ << " of the specified target chain(s)" << std::endl;
-											}
-					else {
+					} else {
 						TR.Debug<<"residue is not within " << ca_ca_distance_ << " of this loop residue " << std::endl;
-					  break;
+						break;
 					}
 				}
-				if( ch1_ && ch2_ ) {
+				if ( ch1_ && ch2_ ) {
 					ch1ch2_loops->add_loop( *loop, mingap_ );
 					break;
 				}
-				if( ch1_ ) {
-					if( pose.residue(i).chain() == 1 ) ch1_loops->add_loop( *loop, mingap_ );
+				if ( ch1_ ) {
+					if ( pose.residue(i).chain() == 1 ) ch1_loops->add_loop( *loop, mingap_ );
 					break;
 				}
-				if( ch2_ ) {
-					if( pose.residue(i).chain() == 2 ) ch2_loops->add_loop( *loop, mingap_ );
+				if ( ch2_ ) {
+					if ( pose.residue(i).chain() == 2 ) ch2_loops->add_loop( *loop, mingap_ );
 					break;
-				}
-				else TR << "Neither chain1 nor chain2 specified for loop finding. No loops added!" << std::endl;
+				} else TR << "Neither chain1 nor chain2 specified for loop finding. No loops added!" << std::endl;
 			}
 		}
 		TR.Debug << "ch1ch2 loops " << *ch1ch2_loops << std::endl;
 		TR.Debug << "ch1 loops " << *ch1_loops << std::endl;
 		TR.Debug << "ch2 loops " << *ch2_loops << std::endl;
-		if( ch1_ && ch2_ ) *loops_ = *ch1ch2_loops ; // copy, rather than change pointer address
-		else if( ch1_ ) *loops_ = *ch1_loops ;
-		else if( ch2_ ) *loops_ = *ch2_loops ;
+		if ( ch1_ && ch2_ ) *loops_ = *ch1ch2_loops ; // copy, rather than change pointer address
+		else if ( ch1_ ) *loops_ = *ch1_loops ;
+		else if ( ch2_ ) *loops_ = *ch2_loops ;
 		//runtime_assert( data_->has( "loops", "loops" ) );
-	}
-	else
+	} else {
 		TR << "No loops found." << std::endl;
+	}
 }
 
 std::string
@@ -207,19 +205,18 @@ LoopFinder::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, pr
 	max_length_ = tag->getOption<core::Size>( "max_length", 1000 );
 	iface_cutoff_ = tag->getOption<core::Real>( "iface_cutoff", 8.0 );
 	runtime_assert( ch1_ || ch2_ );
-	if( interface_ ) runtime_assert( pose.num_jump() >= 1 );
+	if ( interface_ ) runtime_assert( pose.num_jump() >= 1 );
 	mingap_ = tag->getOption<core::Size>( "mingap", 1 );
-	if( tag->hasOption( "resnum" ) || ( tag->hasOption( "pdb_num" ) ))	{
+	if ( tag->hasOption( "resnum" ) || ( tag->hasOption( "pdb_num" ) ) ) {
 		resnum_ = core::pose::get_resnum( tag, pose );
 		TR<<"user specified residue " << resnum_ << " for distance cutoff" << std::endl;
 
-	}
-	else	{
+	} else {
 		resnum_ = 0;
 		TR<<"no target residue has been specified"<< std::endl;
 	}
-  ca_ca_distance_ = tag->getOption<core::Real>( "CA_CA_distance", 15 );
-	if( resnum_ != 0 )	TR<<"distance cutoff from user defined residue is " << ca_ca_distance_ << std::endl;
+	ca_ca_distance_ = tag->getOption<core::Real>( "CA_CA_distance", 15 );
+	if ( resnum_ != 0 ) TR<<"distance cutoff from user defined residue is " << ca_ca_distance_ << std::endl;
 
 	// add loopsOP to the basic::datacache::DataMap
 	loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops );

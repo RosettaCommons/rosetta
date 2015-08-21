@@ -52,62 +52,62 @@ namespace protocols {
 namespace domain_assembly {
 
 void AssembleLinkerMover::apply( core::pose::Pose & pose ) {
-		using core::Real;
-		using std::string;
+	using core::Real;
+	using std::string;
 
-		char const first_chain( pose.pdb_info()->chain(1) );
-		// rename second chain
-		Size breakpoint(0);
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-			char const chain_ii( pose.pdb_info()->chain(ii) );
-			if ( !breakpoint && chain_ii != first_chain ) {
-				breakpoint = ii;
-			}
-			pose.pdb_info()->number(ii,ii);
+	char const first_chain( pose.pdb_info()->chain(1) );
+	// rename second chain
+	Size breakpoint(0);
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		char const chain_ii( pose.pdb_info()->chain(ii) );
+		if ( !breakpoint && chain_ii != first_chain ) {
+			breakpoint = ii;
 		}
-		// make a single-chain pdb
-		pose.pdb_info()->set_chains(first_chain);
-		pose.conformation().reset_chain_endings();
+		pose.pdb_info()->number(ii,ii);
+	}
+	// make a single-chain pdb
+	pose.pdb_info()->set_chains(first_chain);
+	pose.conformation().reset_chain_endings();
 
-		// new fold tree
-		using core::kinematics::FoldTree;
-		FoldTree new_fold_tree(pose.total_residue());
-		pose.fold_tree(new_fold_tree);
+	// new fold tree
+	using core::kinematics::FoldTree;
+	FoldTree new_fold_tree(pose.total_residue());
+	pose.fold_tree(new_fold_tree);
 
-		// remodel loops
-		using namespace protocols::loops;
-		using namespace protocols::comparative_modeling;
-		Size const loop_start( breakpoint - min_loop_size_ );
-		Size const loop_stop ( breakpoint + min_loop_size_ );
+	// remodel loops
+	using namespace protocols::loops;
+	using namespace protocols::comparative_modeling;
+	Size const loop_start( breakpoint - min_loop_size_ );
+	Size const loop_stop ( breakpoint + min_loop_size_ );
 
-		core::util::switch_to_residue_type_set(
-			pose, core::chemical::CENTROID
-		);
+	core::util::switch_to_residue_type_set(
+		pose, core::chemical::CENTROID
+	);
 
-		Loop loop( loop_start, loop_stop, 0, 0, false );
-		LoopsOP loops( new Loops() );
-		loops->add_loop(loop);
-		loop_mover::LoopMoverOP loop_mover = LoopMoverFactory::get_instance()->create_loop_mover(
-			loop_mover_name_, loops
-		);
-		for ( Size ii = 1; ii <= frag_libs_.size(); ++ii ) {
-			loop_mover->add_fragments( frag_libs_[ii] );
+	Loop loop( loop_start, loop_stop, 0, 0, false );
+	LoopsOP loops( new Loops() );
+	loops->add_loop(loop);
+	loop_mover::LoopMoverOP loop_mover = LoopMoverFactory::get_instance()->create_loop_mover(
+		loop_mover_name_, loops
+	);
+	for ( Size ii = 1; ii <= frag_libs_.size(); ++ii ) {
+		loop_mover->add_fragments( frag_libs_[ii] );
+	}
+	loop_mover->apply(pose);
+	Size const max_tries( 10 ); // make this an option?
+	bool loops_closed( false );
+	for ( Size ii = 1; (ii <= max_tries) && !loops_closed; ++ii ) {
+		LoopsOP loops = pick_loops_chainbreak( pose, min_loop_size_ );
+		loops_closed = ( loops->size() == 0 );
+		if ( loops_closed ) {
+			loop_mover = LoopMoverFactory::get_instance()->create_loop_mover( loop_mover_name_, loops );
+			loop_mover->apply( pose );
 		}
-		loop_mover->apply(pose);
-		Size const max_tries( 10 ); // make this an option?
-		bool loops_closed( false );
-		for ( Size ii = 1; (ii <= max_tries) && !loops_closed; ++ii ) {
-			LoopsOP loops = pick_loops_chainbreak( pose, min_loop_size_ );
-			loops_closed = ( loops->size() == 0 );
-			if ( loops_closed ) {
-				loop_mover = LoopMoverFactory::get_instance()->create_loop_mover( loop_mover_name_, loops );
-				loop_mover->apply( pose );
-			}
-		}
+	}
 
-		core::util::switch_to_residue_type_set(
-			pose, core::chemical::FA_STANDARD
-		);
+	core::util::switch_to_residue_type_set(
+		pose, core::chemical::FA_STANDARD
+	);
 } // apply
 
 

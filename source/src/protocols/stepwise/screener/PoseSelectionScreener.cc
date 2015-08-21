@@ -27,26 +27,26 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	//Constructor
-	PoseSelectionScreener::PoseSelectionScreener( pose::Pose & pose,
-																								scoring::ScoreFunctionCOP scorefxn,
-																								modeler::align::StepWiseClustererOP stepwise_clusterer ):
-		pose_( pose ),
-		scorefxn_( scorefxn ),
-		stepwise_clusterer_( stepwise_clusterer )
-	{
-	}
+//Constructor
+PoseSelectionScreener::PoseSelectionScreener( pose::Pose & pose,
+	scoring::ScoreFunctionCOP scorefxn,
+	modeler::align::StepWiseClustererOP stepwise_clusterer ):
+	pose_( pose ),
+	scorefxn_( scorefxn ),
+	stepwise_clusterer_( stepwise_clusterer )
+{
+}
 
-	//Destructor
-	PoseSelectionScreener::~PoseSelectionScreener()
-	{}
+//Destructor
+PoseSelectionScreener::~PoseSelectionScreener()
+{}
 
-	bool
-	PoseSelectionScreener::check_screen(){
-		( *scorefxn_ )( pose_ );
-		stepwise_clusterer_->apply( pose_ ); // super-simple. sticks into clusterer.
-		return true;
-	}
+bool
+PoseSelectionScreener::check_screen(){
+	( *scorefxn_ )( pose_ );
+	stepwise_clusterer_->apply( pose_ ); // super-simple. sticks into clusterer.
+	return true;
+}
 
 } //screener
 } //stepwise

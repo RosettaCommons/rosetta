@@ -46,8 +46,8 @@ LHRepulsiveRamp::LHRepulsiveRamp() : Mover() {}
 
 
 LHRepulsiveRamp::LHRepulsiveRamp(  docking::DockJumps const movable_jumps,
-                                   core::scoring::ScoreFunctionCOP dock_scorefxn,
-                                   core::scoring::ScoreFunctionCOP pack_scorefxn ) : Mover() {
+	core::scoring::ScoreFunctionCOP dock_scorefxn,
+	core::scoring::ScoreFunctionCOP pack_scorefxn ) : Mover() {
 	user_defined_ = true;
 	jump_ = movable_jumps;
 	dock_scorefxn_ = dock_scorefxn->clone();
@@ -86,9 +86,7 @@ void LHRepulsiveRamp::set_default() {
 	trans_mag_       = 0.1 ;
 	num_repeats_     = 4;
 
-	if(!user_defined_) {
-
-	}
+	if ( !user_defined_ ) {}
 
 }
 
@@ -129,7 +127,7 @@ void LHRepulsiveRamp::apply( pose::Pose & pose ) {
 	// dampen fa_rep weight
 	core::Real rep_weight_max = dock_scorefxn_->get_weight( core::scoring::fa_rep );
 
-	if( benchmark_ ) {
+	if ( benchmark_ ) {
 		rep_ramp_cycles_ = 1;
 		num_repeats_ = 1;
 	}
@@ -149,14 +147,14 @@ void LHRepulsiveRamp::apply( pose::Pose & pose ) {
 		dockmcm_cyclemover->set_rot_magnitude(rot_mag_);
 		dockmcm_cyclemover->set_task_factory(tf_);
 		dockmcm_cyclemover->set_move_map(movemap_);
-		if(sc_min_) {
+		if ( sc_min_ ) {
 			dockmcm_cyclemover->set_scmin(true);
 		}
-		if(sc_min_) {
+		if ( sc_min_ ) {
 			dockmcm_cyclemover->set_scmin(true);
 		}
 
-		for (Size j=1; j<=num_repeats_; j++) {
+		for ( Size j=1; j<=num_repeats_; j++ ) {
 			dockmcm_cyclemover -> apply(pose);
 			TR<<"       doing rb_mover_min_trial in the DockMCMCycle  ...   "<<j<<std::endl;
 		}

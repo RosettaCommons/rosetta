@@ -138,8 +138,8 @@ Conformation::Conformation( Conformation const & src ) :
 
 	// parametric conformations
 	parameters_set_.clear();
-	if(src.parameters_set_.size() > 0) {
-		for(core::Size i=1, imax=src.parameters_set_.size(); i<=imax; ++i) {
+	if ( src.parameters_set_.size() > 0 ) {
+		for ( core::Size i=1, imax=src.parameters_set_.size(); i<=imax; ++i ) {
 			parameters_set_.push_back( src.parameters_set_[i]->clone() );
 			//parameters_set_[parameters_set_.size()]->update_residue_links( *this );
 		}
@@ -149,13 +149,13 @@ Conformation::Conformation( Conformation const & src ) :
 	contains_carbohydrate_residues_ = src.contains_carbohydrate_residues_;
 
 	// membranes
-    using namespace core::conformation::membrane;
-    if ( src.membrane_info_ != NULL ) {
-        membrane_info_ = MembraneInfoOP( new MembraneInfo( *src.membrane_info_ ) );
-    } else if ( membrane_info_ != NULL ) {
-        membrane_info_ = 0;
-    }
-    
+	using namespace core::conformation::membrane;
+	if ( src.membrane_info_ != NULL ) {
+		membrane_info_ = MembraneInfoOP( new MembraneInfo( *src.membrane_info_ ) );
+	} else if ( membrane_info_ != NULL ) {
+		membrane_info_ = 0;
+	}
+
 	// chain info
 	chain_endings_ = src.chain_endings_;
 	// secstruct
@@ -170,8 +170,9 @@ Conformation::Conformation( Conformation const & src ) :
 	structure_moved_ = src.structure_moved_;
 
 	// final update of records -- keep this last:
-	for(core::Size i=1, imax=parameters_set_.size(); i<=imax; ++i)
+	for ( core::Size i=1, imax=parameters_set_.size(); i<=imax; ++i ) {
 		parameters_set_[i]->update_residue_links( *this );
+	}
 }
 
 // equals operator
@@ -202,8 +203,8 @@ Conformation::operator=( Conformation const & src )
 
 		// parametric conformations
 		parameters_set_.clear();
-		if(src.parameters_set_.size() > 0) {
-			for(core::Size i=1, imax=src.parameters_set_.size(); i<=imax; ++i) {
+		if ( src.parameters_set_.size() > 0 ) {
+			for ( core::Size i=1, imax=src.parameters_set_.size(); i<=imax; ++i ) {
 				parameters_set_.push_back( src.parameters_set_[i]->clone() );
 				//parameters_set_[parameters_set_.size()]->update_residue_links( *this );
 			}
@@ -235,8 +236,9 @@ Conformation::operator=( Conformation const & src )
 		notify_identity_obs( IdentityEvent( this, IdentityEvent::INVALIDATE, 0, NULL ), false );
 
 		// final update of records -- keep this last in this scope:
-		for(core::Size i=1, imax=parameters_set_.size(); i<=imax; ++i)
+		for ( core::Size i=1, imax=parameters_set_.size(); i<=imax; ++i ) {
 			parameters_set_[i]->update_residue_links( *this );
+		}
 	}
 
 	notify_xyz_obs( XYZEvent( this ) );
@@ -278,7 +280,7 @@ Conformation::debug_residue_torsions( bool verbose ) const
 
 	update_residue_coordinates();
 	update_residue_torsions();
-static thread_local basic::Tracer my_tracer( "core.conformation", basic::t_warning );
+	static thread_local basic::Tracer my_tracer( "core.conformation", basic::t_warning );
 
 	if ( verbose ) {
 		int width = 14;
@@ -287,7 +289,7 @@ static thread_local basic::Tracer my_tracer( "core.conformation", basic::t_warni
 			<< A( width, "rsd_dihedral" )
 			<< A( width, "atr_dihedral" )
 			<< A( width, "rsd_torsion"  )
-			<< A( width, "torsion"	  )
+			<< A( width, "torsion"   )
 			<< A( width, "atr_torsion"  )
 			<< std::endl;
 	}
@@ -296,14 +298,14 @@ static thread_local basic::Tracer my_tracer( "core.conformation", basic::t_warni
 
 		for ( Size r=1; r<= 2; ++r ) {
 			id::TorsionType const type( r == 1 ? id::BB :
-																					id::CHI );
+				id::CHI );
 			Size const n( r == 1 ? rsd.mainchain_atoms().size() : rsd.nchi() );
 
 
 			for ( Size j=1; j<= n; ++j ) {
 				TorsionID const tor_id( i, type, j );
 				AtomID atom1,atom2,atom3,atom4;
-                bool const fail
+				bool const fail
 					( get_torsion_angle_atom_ids( tor_id, atom1, atom2, atom3, atom4 ) );
 				if ( fail ) {
 					if ( ( r == 1 ) &&
@@ -316,37 +318,37 @@ static thread_local basic::Tracer my_tracer( "core.conformation", basic::t_warni
 
 				Real const rsd_dihedral
 					(numeric::dihedral(residue(atom1.rsd()).atom(atom1.atomno()).xyz(),
-							residue(atom2.rsd()).atom(atom2.atomno()).xyz(),
-							residue(atom3.rsd()).atom(atom3.atomno()).xyz(),
-							residue(atom4.rsd()).atom(atom4.atomno()).xyz()));
+					residue(atom2.rsd()).atom(atom2.atomno()).xyz(),
+					residue(atom3.rsd()).atom(atom3.atomno()).xyz(),
+					residue(atom4.rsd()).atom(atom4.atomno()).xyz()));
 
 				Real const atom_tree_dihedral
 					( numeric::dihedral( atom_tree_->xyz( atom1 ),
-						atom_tree_->xyz( atom2 ),
-						atom_tree_->xyz( atom3 ),
-						atom_tree_->xyz( atom4 ) ) );
+					atom_tree_->xyz( atom2 ),
+					atom_tree_->xyz( atom3 ),
+					atom_tree_->xyz( atom4 ) ) );
 
 				Real const rsd_torsion
 					( r == 1 ? rsd.mainchain_torsion(j) : rsd.chi(j) );
 
 				ASSERT_ONLY(Real const dev
 					( std::abs( subtract_degree_angles(rsd_dihedral,atom_tree_dihedral))+
-						std::abs( subtract_degree_angles(rsd_dihedral,rsd_torsion))+
-						std::abs( subtract_degree_angles(rsd_dihedral,torsion(tor_id)))+
-						std::abs( subtract_degree_angles(rsd_dihedral,
-								atom_tree_torsion(tor_id))));)
+					std::abs( subtract_degree_angles(rsd_dihedral,rsd_torsion))+
+					std::abs( subtract_degree_angles(rsd_dihedral,torsion(tor_id)))+
+					std::abs( subtract_degree_angles(rsd_dihedral,
+					atom_tree_torsion(tor_id))));)
 
-			debug_assert( dev < 1e-3 );
+					debug_assert( dev < 1e-3 );
 
 				if ( verbose ) {
 					int width = 14;
 					int precision = 4;
 					my_tracer
-						// << F( width, precision, tor_id					)
-						<< F( width, precision, rsd_dihedral			  )
-						<< F( width, precision, atom_tree_dihedral		)
-						<< F( width, precision, rsd_torsion			   )
-						<< F( width, precision, torsion(tor_id)		   )
+						// << F( width, precision, tor_id     )
+						<< F( width, precision, rsd_dihedral     )
+						<< F( width, precision, atom_tree_dihedral  )
+						<< F( width, precision, rsd_torsion      )
+						<< F( width, precision, torsion(tor_id)     )
 						<< F( width, precision, atom_tree_torsion(tor_id) )
 						<< std::endl;
 				}
@@ -371,16 +373,16 @@ Conformation::show_residue_connections() const
 void
 Conformation::show_residue_connections(std::ostream &os) const
 {
-	for (Size i = 1; i <= size(); ++i) {
+	for ( Size i = 1; i <= size(); ++i ) {
 		Residue const &res(*(residues_[i]));
 		Size const nconn(res.n_residue_connections());
 		os << "RESCON: " << i << ' ' << res.name() << " n-conn= " << nconn <<
 			" n-poly= " << res.n_polymeric_residue_connections() <<
 			" n-nonpoly= " << res.n_non_polymeric_residue_connections();
-		for (Size j = 1; j <= nconn; ++j) {
+		for ( Size j = 1; j <= nconn; ++j ) {
 			os << " conn# " << j << ' ' << res.residue_connect_atom_index( j )
-			<< ' ' << res.connect_map(j).resid() << ' ' <<
-			res.connect_map(j).connid();
+				<< ' ' << res.connect_map(j).resid() << ' ' <<
+				res.connect_map(j).connid();
 		}
 		os << std::endl;
 	}
@@ -415,8 +417,8 @@ Conformation::sequence_matches( Conformation const & other ) const
 {
 	if ( size() != other.size() ) return false;
 	for ( Size ii = 1, iiend = size(); ii <= iiend; ++ii ) {
-		if ( & residue(ii).type() != & other.residue(ii).type() )	  return false;
-		if ( residue(ii).chain() != other.residue(ii).chain() ) 	  return false;
+		if ( & residue(ii).type() != & other.residue(ii).type() )   return false;
+		if ( residue(ii).chain() != other.residue(ii).chain() )    return false;
 		if ( !residue(ii).connections_match( other.residue( ii ) ) ) return false;
 	}
 	return true;
@@ -440,7 +442,7 @@ Conformation::is_centroid() const {
 bool
 Conformation::is_residue_typeset( std::string tag ) const {
 	// Empty poses aren't any residue typeset (special case prevents segfault)
-	if( size() == 0 ) {
+	if ( size() == 0 ) {
 		TR.Warning << "WARNING: Attempted to determine the residue type set of an empty pose." << std::endl;
 		return false;
 	}
@@ -487,7 +489,7 @@ Conformation::chain_endings( utility::vector1< Size > const & endings )
 void
 Conformation::insert_chain_ending( Size const seqpos )
 {
-debug_assert( seqpos >= 1 && seqpos < size() ); // dont count last residue as chain ending
+	debug_assert( seqpos >= 1 && seqpos < size() ); // dont count last residue as chain ending
 
 	chain_endings_.push_back( seqpos );
 	std::sort( chain_endings_.begin(), chain_endings_.end() );
@@ -596,7 +598,7 @@ Conformation::check_valid_membrane() const {
 	Stub membrane_stub = downstream_jump_stub( jump );
 
 	// Check the stub still contains an orthogonal coordinate frame
-	if (! membrane_stub.is_orthogonal( 0.0001 ) ) {
+	if ( ! membrane_stub.is_orthogonal( 0.0001 ) ) {
 		utility_exit_with_message( "Cannot set xyz to create an invalid coordinate frame" );
 	}
 
@@ -656,7 +658,7 @@ Conformation::append_residue_by_jump(
 		return;
 	}
 
-debug_assert( anchor_pos ); // should be set
+	debug_assert( anchor_pos ); // should be set
 
 	// now call our internal append method
 	append_residue( new_rsd, true, root_atom, id::NamedAtomID( anchor_atom, anchor_pos ), start_new_chain );
@@ -676,7 +678,7 @@ Conformation::insert_residue_by_jump(
 {
 	pre_nresidue_change();
 	ASSERT_ONLY(Size const old_size( size() );) //, new_size( old_size+1 );
-debug_assert( old_size );
+		debug_assert( old_size );
 	runtime_assert( fold_tree_->is_cutpoint( seqpos-1 ) );
 
 	// this handles all renumbering internal to the Residues, *_moved arrays
@@ -684,7 +686,7 @@ debug_assert( old_size );
 
 	Residue const & new_rsd( residue_( seqpos ) );
 
-debug_assert( new_rsd.seqpos() == seqpos );
+	debug_assert( new_rsd.seqpos() == seqpos );
 
 	fold_tree_->insert_residue_by_jump( seqpos, anchor_pos /* in the OLD numbering system */, anchor_atom, root_atom );
 
@@ -692,7 +694,7 @@ debug_assert( new_rsd.seqpos() == seqpos );
 
 	residue_torsions_need_updating_ = true;
 
-debug_assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
+	debug_assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
 
 	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_PREPEND, seqpos, 1, &new_rsd ), false );
 }
@@ -701,15 +703,15 @@ debug_assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size()
 ///  Fires a LengthEvent::RESIDUE_PREPEND signal.
 void
 Conformation::insert_residue_by_bond(
-									 Residue const & new_rsd_in,
-									 Size const seqpos, // desired seqpos of new_rsd
-									 Size anchor_pos, // in the current sequence numbering, ie before insertion of seqpos
-									 bool const build_ideal_geometry, // = false,
-									 std::string const& anchor_atom, // could be ""
-									 std::string const& root_atom, // ditto
-									 bool new_chain,
-									 bool const lookup_bond_length // default false
-									 )
+	Residue const & new_rsd_in,
+	Size const seqpos, // desired seqpos of new_rsd
+	Size anchor_pos, // in the current sequence numbering, ie before insertion of seqpos
+	bool const build_ideal_geometry, // = false,
+	std::string const& anchor_atom, // could be ""
+	std::string const& root_atom, // ditto
+	bool new_chain,
+	bool const lookup_bond_length // default false
+)
 {
 	pre_nresidue_change();
 	Size const old_size( size() );
@@ -741,7 +743,7 @@ Conformation::insert_residue_by_bond(
 		core::Size root_connecting_id = new_rsd_in.type().residue_connection_id_for_atom(root_atomid);
 
 		// using a non-polymer residue-residue connection
-		new_rsd_connection	= new_rsd_in.residue_connection(   root_connecting_id );
+		new_rsd_connection = new_rsd_in.residue_connection(   root_connecting_id );
 		anchor_rsd_connection = anchor_rsd.residue_connection( anchor_connecting_id );
 
 		// this is a little wasteful, creating a new copy, but we need non-const access
@@ -753,10 +755,9 @@ Conformation::insert_residue_by_bond(
 		// this handles all renumbering internal to the Residues, *_moved arrays
 		residues_insert( seqpos, *ideal_geometry_rsd, false );
 
-		residues_[ seqpos ]->residue_connection_partner(		root_connecting_id, old2new[anchor_pos], anchor_connecting_id );
-		residues_[ old2new[anchor_pos] ]->residue_connection_partner( anchor_connecting_id, seqpos,	  root_connecting_id );
-	}
-	else {
+		residues_[ seqpos ]->residue_connection_partner(  root_connecting_id, old2new[anchor_pos], anchor_connecting_id );
+		residues_[ old2new[anchor_pos] ]->residue_connection_partner( anchor_connecting_id, seqpos,   root_connecting_id );
+	} else {
 		// this handles all renumbering internal to the Residues, *_moved arrays
 		residues_insert( seqpos, new_rsd_in, false, new_chain );
 	}
@@ -795,7 +796,7 @@ Conformation::append_residue_by_bond(
 	bool const lookup_bond_length // default false
 )
 {
-	if(!build_ideal_geometry)debug_assert(!lookup_bond_length); // lookup only possible if building ideal geometry
+	if ( !build_ideal_geometry ) debug_assert(!lookup_bond_length); // lookup only possible if building ideal geometry
 
 	pre_nresidue_change();
 
@@ -818,13 +819,12 @@ Conformation::append_residue_by_bond(
 	if ( polymer_connection ) {
 		// otherwise confirm that we are making a valid polymer bond
 		//Don't use "is_upper_terminus" here as it fails to catch non-"terminus" residue types that have no upper connect id (e.g. methylamidated reisdues)
-		if(!anchor_rsd.is_polymer() || !anchor_rsd.type().upper_connect_id()){
+		if ( !anchor_rsd.is_polymer() || !anchor_rsd.type().upper_connect_id() ) {
 			std::stringstream err;
 			err << "Can't create a polymer bond after residue " << anchor_pos
 				<< " due to incompatible type: " << anchor_rsd.type().name();
 			utility_exit_with_message(err.str());
-		}
-		else if(!new_rsd.is_polymer() || !new_rsd.type().lower_connect_id()){
+		} else if ( !new_rsd.is_polymer() || !new_rsd.type().lower_connect_id() ) {
 			std::stringstream err;
 			err << "Can't create a polymer bond to new residue " << seqpos
 				<< " due to incompatible type: " << new_rsd.type().name();
@@ -832,7 +832,7 @@ Conformation::append_residue_by_bond(
 		}
 	} else {
 		// if using a non-polymer connection, confirm that anchor_pos & anchor_residue_connection_index are set
-	debug_assert( anchor_pos && anchor_residue_connection_index );
+		debug_assert( anchor_pos && anchor_residue_connection_index );
 	}
 
 	//////////////////////////////////////////////////
@@ -844,11 +844,11 @@ Conformation::append_residue_by_bond(
 
 		if ( polymer_connection ) {
 			// polymer connection
-			new_rsd_connection	=	new_rsd.lower_connect();
+			new_rsd_connection = new_rsd.lower_connect();
 			anchor_rsd_connection = anchor_rsd.upper_connect();
 		} else {
 			// using a non-polymer residue-residue connection
-			new_rsd_connection	=	new_rsd.residue_connection(		residue_connection_index );
+			new_rsd_connection = new_rsd.residue_connection(  residue_connection_index );
 			anchor_rsd_connection = anchor_rsd.residue_connection( anchor_residue_connection_index );
 		}
 
@@ -867,11 +867,11 @@ Conformation::append_residue_by_bond(
 
 	if ( polymer_connection ) {
 		// connecting by a polymer bond
-		root_atomno		=	new_rsd.lower_connect_atom();
+		root_atomno  = new_rsd.lower_connect_atom();
 		anchor_id.atomno() = anchor_rsd.upper_connect_atom();
 	} else {
 		// non-polymer connection
-		root_atomno		=	new_rsd.residue_connection(		residue_connection_index ).atomno();
+		root_atomno  = new_rsd.residue_connection(  residue_connection_index ).atomno();
 		anchor_id.atomno() = anchor_rsd.residue_connection( anchor_residue_connection_index ).atomno();
 	}
 
@@ -880,14 +880,13 @@ Conformation::append_residue_by_bond(
 
 	// Now call our internal append method
 	if ( build_ideal_geometry ) {
-		if (polymer_connection) {
+		if ( polymer_connection ) {
 			append_residue( *ideal_geometry_rsd,
-						   false,
-						   "",
-						   id::BOGUS_NAMED_ATOM_ID,
-						   start_new_chain );
-		}
-		else {
+				false,
+				"",
+				id::BOGUS_NAMED_ATOM_ID,
+				start_new_chain );
+		} else {
 			append_residue(
 				*ideal_geometry_rsd,
 				false /* not by a jump */,
@@ -896,7 +895,7 @@ Conformation::append_residue_by_bond(
 				start_new_chain
 			);
 		}
-	}	else {
+	} else {
 		append_residue(
 			new_rsd,
 			false /* not by a jump */,
@@ -909,8 +908,8 @@ Conformation::append_residue_by_bond(
 
 	// update the connection info stored inside the residues
 	//if ( !polymer_connection ) {
-		residues_[ seqpos	 ]->residue_connection_partner(		residue_connection_index, anchor_pos, anchor_residue_connection_index );
-		residues_[ anchor_pos ]->residue_connection_partner( anchor_residue_connection_index, seqpos,			residue_connection_index );
+	residues_[ seqpos  ]->residue_connection_partner(  residue_connection_index, anchor_pos, anchor_residue_connection_index );
+	residues_[ anchor_pos ]->residue_connection_partner( anchor_residue_connection_index, seqpos,   residue_connection_index );
 	//}
 
 } // append_residue_by_bond
@@ -925,13 +924,13 @@ Conformation::append_polymer_residue_after_seqpos(
 )
 {
 	pre_nresidue_change();
-debug_assert( !new_rsd.is_lower_terminus() );
+	debug_assert( !new_rsd.is_lower_terminus() );
 
 	ResidueOP ideal_geometry_rsd;
 	if ( build_ideal_geometry ) {
 		if ( residue_coordinates_need_updating_ ) update_residue_coordinates( seqpos );
 		Residue const & anchor_rsd( residue_( seqpos ) ); // not residue(seqpos)
-	debug_assert( !anchor_rsd.is_upper_terminus() );
+		debug_assert( !anchor_rsd.is_upper_terminus() );
 		// this is a little wasteful, creating a new copy, but we need non-const access
 		ideal_geometry_rsd = new_rsd.clone();
 
@@ -941,14 +940,14 @@ debug_assert( !new_rsd.is_lower_terminus() );
 	bool const join_upper( !fold_tree_->is_cutpoint( seqpos ) );
 
 	if ( build_ideal_geometry ) insert_polymer_residue( *ideal_geometry_rsd, seqpos+1, join_lower, join_upper );
-	else						insert_polymer_residue(			 new_rsd, seqpos+1, join_lower, join_upper );
+	else      insert_polymer_residue(    new_rsd, seqpos+1, join_lower, join_upper );
 
 	if ( build_ideal_geometry ) {
 		rebuild_polymer_bond_dependent_atoms( seqpos );
 	}
 
-debug_assert( dof_moved_[seqpos+1].size() == new_rsd.natoms() &&
-					xyz_moved_[seqpos+1].size() == new_rsd.natoms() );
+	debug_assert( dof_moved_[seqpos+1].size() == new_rsd.natoms() &&
+		xyz_moved_[seqpos+1].size() == new_rsd.natoms() );
 }
 
 void
@@ -972,13 +971,13 @@ Conformation::prepend_polymer_residue_before_seqpos(
 )
 {
 	pre_nresidue_change();
-debug_assert( !new_rsd.is_upper_terminus() );
+	debug_assert( !new_rsd.is_upper_terminus() );
 
 	ResidueOP ideal_geometry_rsd;
 	if ( build_ideal_geometry ) {
 		if ( residue_coordinates_need_updating_ ) update_residue_coordinates( seqpos );
 		Residue const & anchor_rsd( residue_( seqpos ) ); // not residue(seqpos)
-	debug_assert( !anchor_rsd.is_lower_terminus() );
+		debug_assert( !anchor_rsd.is_lower_terminus() );
 		// this is a little wasteful, creating a new copy, but we need non-const access
 		ideal_geometry_rsd = new_rsd.clone();
 
@@ -989,14 +988,14 @@ debug_assert( !new_rsd.is_upper_terminus() );
 	bool const join_lower( !fold_tree_->is_cutpoint( seqpos-1 ) );
 
 	if ( build_ideal_geometry ) insert_polymer_residue( *ideal_geometry_rsd, seqpos, join_lower, join_upper );
-	else						insert_polymer_residue(			 new_rsd, seqpos, join_lower, join_upper );
+	else      insert_polymer_residue(    new_rsd, seqpos, join_lower, join_upper );
 
 	if ( build_ideal_geometry ) {
 		rebuild_polymer_bond_dependent_atoms( seqpos );
 	}
 
-debug_assert( dof_moved_[seqpos].size() == new_rsd.natoms() &&
-					xyz_moved_[seqpos].size() == new_rsd.natoms() );
+	debug_assert( dof_moved_[seqpos].size() == new_rsd.natoms() &&
+		xyz_moved_[seqpos].size() == new_rsd.natoms() );
 }
 
 /// @details Fires a LengthEvent::RESIDUE_PREPEND signal.
@@ -1041,7 +1040,7 @@ Conformation::replace_residue(
 	replace_residue_in_atom_tree( new_rsd, *fold_tree_, const_residues(), *atom_tree_ );
 
 	residue_torsions_need_updating_ = true;
-// 	if ( !residue_torsions_need_updating_ ) update_residue_torsions( seqpos );
+	//  if ( !residue_torsions_need_updating_ ) update_residue_torsions( seqpos );
 
 	notify_identity_obs( IdentityEvent( this, IdentityEvent::RESIDUE, seqpos, &new_rsd ), false );
 }
@@ -1080,7 +1079,7 @@ void
 Conformation::delete_polymer_residue( Size const seqpos )
 {
 	pre_nresidue_change();
-debug_assert( !fold_tree_->is_jump_point( seqpos ) );
+	debug_assert( !fold_tree_->is_jump_point( seqpos ) );
 
 	residues_delete( seqpos ); // handles renumbering of residues, _moved, chains
 
@@ -1092,7 +1091,7 @@ debug_assert( !fold_tree_->is_jump_point( seqpos ) );
 
 	residue_torsions_need_updating_ = true; // could reupdate before and after
 
-debug_assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
+	debug_assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
 
 	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_DELETE, seqpos, -1, NULL ), false );
 }
@@ -1118,7 +1117,7 @@ Conformation::delete_residue_slow( Size const seqpos )
 
 	residue_torsions_need_updating_ = true;
 
-debug_assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
+	debug_assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
 
 }
 
@@ -1129,7 +1128,7 @@ Conformation::delete_residue_range_slow( Size const range_begin, Size const rang
 {
 	pre_nresidue_change();
 	Size const range_size( range_end - range_begin + 1 );
-debug_assert( range_size >= 1);
+	debug_assert( range_size >= 1);
 	for ( Size i=1; i<= range_size; ++i ) {
 		fold_tree_->delete_seqpos( range_begin );
 		residues_delete( range_begin );
@@ -1142,7 +1141,7 @@ debug_assert( range_size >= 1);
 
 	residue_torsions_need_updating_ = true;
 
-debug_assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
+	debug_assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
 
 }
 
@@ -1152,7 +1151,7 @@ debug_assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size()
 utility::vector1<bool>
 Conformation::get_residue_mask() const {
 	Size const nres( residues_.size() );
-	return 	utility::vector1<bool>(nres, true);
+	return  utility::vector1<bool>(nres, true);
 }
 
 /// @details Returns a weight to be used when scoring this residue.
@@ -1271,7 +1270,7 @@ Conformation::detect_bonds()
 
 			if ( best_match_resid == 0 ) {
 				TR.Warning << "Failed to find a residue connection for residue " << ii_resid <<
-						" with connection point " << jj << std::endl;
+					" with connection point " << jj << std::endl;
 				continue;
 			}
 
@@ -1281,7 +1280,7 @@ Conformation::detect_bonds()
 			TR.Info << ii_res.type().atom_name( ii_res.type().residue_connection( jj ).atomno() );
 			TR.Info << " and ";
 			TR.Info << residue( best_match_resid ).type().atom_name(
-					residue( best_match_resid ).type().residue_connection( best_match_connid ).atomno() );
+				residue( best_match_resid ).type().residue_connection( best_match_connid ).atomno() );
 			TR.Info << std::endl;
 			TR.Info << " with mutual distances: " << best_jj << " and " << best_kk << std::endl;
 
@@ -1315,7 +1314,7 @@ Conformation::detect_pseudobonds()
 					Size const lri = jj_conn_res < kk_conn_res ? jj_conn_id  : kk_conn_id ;
 					Size const ur  = jj_conn_res < kk_conn_res ? kk_conn_res : jj_conn_res;
 					Size const uri = jj_conn_res < kk_conn_res ? kk_conn_id  : jj_conn_id ;
-					if(! (lr && lri && ur && uri)) continue;
+					if ( ! (lr && lri && ur && uri) ) continue;
 					add_pseudobond( lr, lri, ur, uri, ii_res.path_distance( kk_atid, jj_atid ));
 
 					TR.Info << "Adding PseudoBond between residues " << lr << " " << ur << ", connecting atoms ";
@@ -1459,8 +1458,8 @@ Conformation::inter_residue_connection_partner(
 ) const
 {
 	Residue const & rsd( *residues_[ seqpos ] );
-	return id::AtomID( rsd.residue_connection		( connection_index ).atomno(),
-										 rsd.residue_connection_partner( connection_index ) );
+	return id::AtomID( rsd.residue_connection  ( connection_index ).atomno(),
+		rsd.residue_connection_partner( connection_index ) );
 }
 
 /// @details virtual atoms are excluded by default
@@ -1476,20 +1475,20 @@ Conformation::bonded_neighbor_all_res(
 
 	// add all the atoms in the same residue
 	chemical::AtomIndices const & intrares_atomnos(primary_residue.bonded_neighbor(atomid.atomno()));
-	for (Size i = 1; i <= intrares_atomnos.size(); ++i) {
-		if (virt || ! primary_residue.is_virtual(intrares_atomnos[i]) ) {
+	for ( Size i = 1; i <= intrares_atomnos.size(); ++i ) {
+		if ( virt || ! primary_residue.is_virtual(intrares_atomnos[i]) ) {
 			neighbors.push_back(id::AtomID(intrares_atomnos[i], atomid.rsd()));
 		}
 	}
 
 	// add all the atoms in other residues
 	Size const num_connections(primary_residue.n_residue_connections());
-	for (Size i = 1; i <= num_connections; ++i) {
-		if (primary_residue.residue_connect_atom_index(i) == atomid.atomno() &&
-				!primary_residue.connection_incomplete(i)) {
+	for ( Size i = 1; i <= num_connections; ++i ) {
+		if ( primary_residue.residue_connect_atom_index(i) == atomid.atomno() &&
+				!primary_residue.connection_incomplete(i) ) {
 			chemical::ResConnID resconid(primary_residue.actual_residue_connection(i));
 			Size connected_atomno(residue(resconid.resid()).residue_connect_atom_index(resconid.connid()));
-			if (virt || ! residue(resconid.resid()).is_virtual(connected_atomno)) {
+			if ( virt || ! residue(resconid.resid()).is_virtual(connected_atomno) ) {
 				neighbors.push_back(id::AtomID(connected_atomno, resconid.resid()));
 			}
 		}
@@ -1524,26 +1523,26 @@ Conformation::fill_missing_atoms(
 				AtomID const id( j, i );
 				if ( missing[ id ] ) {
 					// Virtual atoms don't get written to the PDB file, so we shouldn't expect them in input.
-					if ( rsd.atom_type(j).is_heavyatom() && ! rsd.is_virtual(j)) {
+					if ( rsd.atom_type(j).is_heavyatom() && ! rsd.is_virtual(j) ) {
 						TR.Warning << "[ WARNING ] missing heavyatom: " << rsd.atom_name(j) <<
 							" on residue " << rsd.name() << ' ' << i << std::endl;
 					}
 					any_missing = true;
 
-					if(rsd.icoor(j).depends_on_residue_connection()) {
+					if ( rsd.icoor(j).depends_on_residue_connection() ) {
 						//if the coordinates of this atom depend on a residue connection
 						//NOTE: we assume that the coordinates of the root atom are never connection-dependent (which is true).
 						bool needed_atom_is_missing(false);
-						for(core::Size ii=1; ii<=3; ++ii) { //Check whether needed residues are missing, ignoring connections.
-							if(!rsd.icoor(j).stub_atom(ii).is_connect() && missing[rsd.icoor(j).stub_atom(ii).atom_id(i, *this)] ) {
+						for ( core::Size ii=1; ii<=3; ++ii ) { //Check whether needed residues are missing, ignoring connections.
+							if ( !rsd.icoor(j).stub_atom(ii).is_connect() && missing[rsd.icoor(j).stub_atom(ii).atom_id(i, *this)] ) {
 								needed_atom_is_missing = true;
 								break;
 							}
 						}
-						if(!needed_atom_is_missing) { //If no needed atoms are missing
-								set_xyz( id , rsd.build_atom_ideal( j, *this ) );
-								missing[ id ] = false;
-								num_present += 1;
+						if ( !needed_atom_is_missing ) { //If no needed atoms are missing
+							set_xyz( id , rsd.build_atom_ideal( j, *this ) );
+							missing[ id ] = false;
+							num_present += 1;
 						}
 					} else { //if the coordinates of this atom do not depend on a residue connection
 						// check if our stub atoms are all present
@@ -1596,8 +1595,8 @@ Conformation::fill_missing_atoms(
 										"\nshould be further optimized..." << std::endl;
 									kinematics::Stub stub
 										( rsd.xyz( new_stub_atom1.atomno() ),
-											rsd.xyz( new_stub_atom2.atomno() ),
-											rsd.xyz( new_stub_atom3.atomno() ) );
+										rsd.xyz( new_stub_atom2.atomno() ),
+										rsd.xyz( new_stub_atom3.atomno() ) );
 									set_xyz( id, stub.spherical( rsd_tree.dof( DOF_ID( id, id::PHI ) ),
 										rsd_tree.dof( DOF_ID( id, id::THETA ) ),
 										rsd_tree.dof( DOF_ID( id, id::D ) ) ) );
@@ -1634,12 +1633,12 @@ Conformation::atom_is_backbone_norefold( Size const pos, Size const atomno ) con
 
 void
 Conformation::set_stub_transform(
-  id::StubID const & stub_id1,
-  id::StubID const & stub_id2,
-  kinematics::RT const & target_rt
+	id::StubID const & stub_id1,
+	id::StubID const & stub_id2,
+	kinematics::RT const & target_rt
 )
 {
-  set_dof_moved( atom_tree_->set_stub_transform( stub_id1, stub_id2, target_rt ) );
+	set_dof_moved( atom_tree_->set_stub_transform( stub_id1, stub_id2, target_rt ) );
 }
 
 /// @brief  get the transform between two stubs
@@ -1656,7 +1655,7 @@ Conformation::get_stub_transform(
 void
 Conformation::set_jump_atom_stub_id( id::StubID const& id )
 {
-  atom_tree_->set_jump_atom_stub_id( id );
+	atom_tree_->set_jump_atom_stub_id( id );
 }
 
 kinematics::Stub
@@ -1696,21 +1695,21 @@ Conformation::update_polymeric_connection(
 
 
 	if ( !disconnected ) set_polymeric_connection( lower_seqpos, lower_seqpos+1 );
-	if (update_connection_dep_atoms) { //Update connection-dependent atoms, EVEN if there's no connection between lower_seqpos and lower_seqpos+1
+	if ( update_connection_dep_atoms ) { //Update connection-dependent atoms, EVEN if there's no connection between lower_seqpos and lower_seqpos+1
 		//TR << "Updating connection-dependent atoms." << std::endl; TR.flush();
-		rebuild_polymer_bond_dependent_atoms( lower_seqpos	,  1 );
+		rebuild_polymer_bond_dependent_atoms( lower_seqpos ,  1 );
 		rebuild_polymer_bond_dependent_atoms( lower_seqpos + 1, -1 );
 	} //else {
-		//TR << "NOT updating connection-dependent atoms." << std::endl; TR.flush();
+	//TR << "NOT updating connection-dependent atoms." << std::endl; TR.flush();
 	//}
 }
 
 void
 Conformation::update_noncanonical_connection(
-											 Size const lower_seqpos,
-											 Size const lr_conn_id,
-											 Size const upper_seqpos,
-											 Size const ur_conn_id)
+	Size const lower_seqpos,
+	Size const lr_conn_id,
+	Size const upper_seqpos,
+	Size const ur_conn_id)
 {
 	if ( lower_seqpos < 1 || lower_seqpos > size() ) return;
 	if ( upper_seqpos < 1 || upper_seqpos > size() ) return;
@@ -1735,11 +1734,11 @@ Conformation::set_polymeric_connection(
 
 void
 Conformation::set_noncanonical_connection(
-									   Size res_id_lower,
-									   Size lr_conn_id,
-									   Size res_id_upper,
-									   Size ur_conn_id
-									   )
+	Size res_id_lower,
+	Size lr_conn_id,
+	Size res_id_upper,
+	Size ur_conn_id
+)
 {
 	residues_[ res_id_lower ]->residue_connection_partner( lr_conn_id, res_id_upper, ur_conn_id );
 	residues_[ res_id_upper ]->residue_connection_partner( ur_conn_id, res_id_lower, lr_conn_id );
@@ -1752,18 +1751,18 @@ void
 Conformation::fix_disulfides(utility::vector1< std::pair<Size, Size> > disulf_bonds)
 {
 	typedef std::pair<Size,Size> SizePair;
-	BOOST_FOREACH(SizePair disulfide_bond, disulf_bonds){
+	BOOST_FOREACH ( SizePair disulfide_bond, disulf_bonds ) {
 		using utility::vector1;
 
 		Size l_index = (disulfide_bond).first; //Lower residue
 		Size u_index = (disulfide_bond).second; //Upper residue, usually l<u
 
 		// Check that the residues exist
-		if(l_index > size() ) {
+		if ( l_index > size() ) {
 			TR.Error << "[ERROR] Residue " << l_index << " is out of range." << std::endl;
 			utility_exit();
 		}
-		if(u_index > size() ) {
+		if ( u_index > size() ) {
 			TR.Error << "[ERROR] Residue " << u_index << " is out of range." << std::endl;
 			utility_exit();
 		}
@@ -1771,7 +1770,7 @@ Conformation::fix_disulfides(utility::vector1< std::pair<Size, Size> > disulf_bo
 		//Swap the CYS for CYD
 		bool replaced = conformation::change_cys_state( l_index, "CYD", *this );
 		replaced = replaced && conformation::change_cys_state( u_index, "CYD", *this );
-		if(! replaced) {
+		if ( ! replaced ) {
 			TR.Error << "Failed to introduce CYD for disulfide ("
 				<< l_index <<", "<< u_index << ")." << std::endl;
 			continue;
@@ -1795,21 +1794,21 @@ Conformation::fix_disulfides(utility::vector1< std::pair<Size, Size> > disulf_bo
 			TR.Error << "Cannot form disulfide bond with residue " << u_index << std::endl;
 			continue;
 		}
-		
+
 		Size l_bond_atom = l_res.atom_index( l_res.type().get_disulfide_atom_name() );
 		Size u_bond_atom = u_res.atom_index( u_res.type().get_disulfide_atom_name() );
 
 		// We only care about warning FA to CEN
-		
+
 		if ( l_res.type().get_disulfide_atom_name() == "CEN" && u_res.type().get_disulfide_atom_name() != "CEN" ) {
 			TR.Warning << "Forming a disulfide bond between FA residue " << u_index
-			<< " and centroid residue "<< l_index << std::endl;
+				<< " and centroid residue "<< l_index << std::endl;
 		}
 		if ( l_res.type().get_disulfide_atom_name() != "CEN" && u_res.type().get_disulfide_atom_name() == "CEN" ) {
 			TR.Warning << "Forming a disulfide bond between FA residue " << l_index
-			<< " and centroid residue "<< u_index << std::endl;
+				<< " and centroid residue "<< u_index << std::endl;
 		}
-		
+
 		//Now have the correct atoms, so bond them
 		Size l_connid = l_res.type().residue_connection_id_for_atom( l_bond_atom );
 		Size u_connid = u_res.type().residue_connection_id_for_atom( u_bond_atom );
@@ -1817,8 +1816,8 @@ Conformation::fix_disulfides(utility::vector1< std::pair<Size, Size> > disulf_bo
 		residues_[ l_index ]->residue_connection_partner( l_connid, u_index, u_connid);
 		residues_[ u_index ]->residue_connection_partner( u_connid, l_index, l_connid);
 
-	debug_assert( residue(l_index).has_variant_type( chemical::DISULFIDE ));
-	debug_assert( residue(u_index).has_variant_type( chemical::DISULFIDE ));
+		debug_assert( residue(l_index).has_variant_type( chemical::DISULFIDE ));
+		debug_assert( residue(u_index).has_variant_type( chemical::DISULFIDE ));
 
 	} //done with this disulfide
 }
@@ -1865,8 +1864,8 @@ Conformation::detect_disulfides()
 	// SG-SG distance for fullatom, CB-CB distance otherwise
 	Real const typical_disulfide_distance = fullatom? 2.02 : 3.72;
 	Real const tolerance = option[OptionKeys::in::detect_disulf_tolerance].user()
-						 ? option[OptionKeys::in::detect_disulf_tolerance]()
-						 : ( fullatom? 0.5 : 1.0 );
+		? option[OptionKeys::in::detect_disulf_tolerance]()
+		: ( fullatom? 0.5 : 1.0 );
 
 	// Create point graph
 	PointGraphOP pg( new PointGraph );
@@ -1929,7 +1928,7 @@ Conformation::detect_disulfides()
 			} else {
 				jj_sg_atomno = jj_res.type().atom_index( jj_res.type().get_disulfide_atom_name() );
 			}
-			
+
 			Size jj_distance_atom_id = fullatom ? jj_sg_atomno : jj_res.atom_index( "CB" );
 
 			Distance dist = ii_res.atom( ii_distance_atom_id ).xyz().distance(
@@ -1969,12 +1968,14 @@ Conformation::detect_disulfides()
 			std::string ii_name_start = residues_[ ii_resid ]->type().name();
 			std::string bn_name_start = residues_[ best_neighbor ]->type().name();
 			// unless it's for cys/cyd itself, condense that part for integration test clarity.
-			if ( residues_[ ii_resid ]->type().name3() == "CYS" )
+			if ( residues_[ ii_resid ]->type().name3() == "CYS" ) {
 				ii_name_start = ( residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
-			if ( residues_[ best_neighbor ]->type().name3() == "CYS" )
+			}
+			if ( residues_[ best_neighbor ]->type().name3() == "CYS" ) {
 				bn_name_start = ( residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
-			
-			TR << "current variant for " << ii_resid	  << " " << ii_name_start << std::endl;
+			}
+
+			TR << "current variant for " << ii_resid   << " " << ii_name_start << std::endl;
 			TR << "current variant for " << best_neighbor << " " << bn_name_start << std::endl;
 
 			bool const success_at_ii = conformation::change_cys_state( ii_resid, "CYD", *this )
@@ -1982,16 +1983,18 @@ Conformation::detect_disulfides()
 			bool const success_at_best_neighbor = conformation::change_cys_state( best_neighbor, "CYD", *this )
 				&& residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE );
 
-			if ( !success_at_ii )			TR.Error << "ERROR: unable to create appropriate residue type for disulfide at resid " << ii_resid	  << std::endl;
+			if ( !success_at_ii )   TR.Error << "ERROR: unable to create appropriate residue type for disulfide at resid " << ii_resid   << std::endl;
 			if ( !success_at_best_neighbor ) TR.Error << "ERROR: unable to create appropriate residue type for disulfide at resid " << best_neighbor << std::endl;
 
 			ii_name_start = residues_[ ii_resid ]->type().name();
 			bn_name_start = residues_[ best_neighbor ]->type().name();
-			if ( residues_[ ii_resid ]->type().name3() == "CYS" )
+			if ( residues_[ ii_resid ]->type().name3() == "CYS" ) {
 				ii_name_start = ( residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
-			if ( residues_[ best_neighbor ]->type().name3() == "CYS" )
+			}
+			if ( residues_[ best_neighbor ]->type().name3() == "CYS" ) {
 				bn_name_start = ( residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
-			TR << "current variant for " << ii_resid	  << " " << ii_name_start << std::endl;
+			}
+			TR << "current variant for " << ii_resid   << " " << ii_name_start << std::endl;
 			TR << "current variant for " << best_neighbor << " " << bn_name_start << std::endl;
 
 			// Record SG-SG connections.
@@ -2030,17 +2033,17 @@ Conformation::detect_disulfides()
 /// (1) residue connections: assume all residue connections within conf carry over, after renumbering residues positions
 /// (2) jump numbers: see FoldTree::insert_fold_tree_by_jump
 /// (3) chains: chain endings are inserted before insert_seqpos, and after insert_seqpos+conf.size()-1
-///	 ie. at the beginning and ending of the inserted conformation; all internal chain endings from conf are used
+///  ie. at the beginning and ending of the inserted conformation; all internal chain endings from conf are used
 /// (4) atom_tree: setup_atom_tree is called to rebuild from scratch using the fold_tree
 void
 Conformation::insert_conformation_by_jump(
 	Conformation const & conf,
-	Size const insert_seqpos,		 // rsd 1 in conf goes here
-	Size const insert_jumppos,		// jump#1 in conf goes here
-	Size const anchor_pos,			// in the current sequence numbering, ie before insertion of conf
-	Size const anchor_jump_number,	// the desired jump number of the anchoring jump, default=0
+	Size const insert_seqpos,   // rsd 1 in conf goes here
+	Size const insert_jumppos,  // jump#1 in conf goes here
+	Size const anchor_pos,   // in the current sequence numbering, ie before insertion of conf
+	Size const anchor_jump_number, // the desired jump number of the anchoring jump, default=0
 	std::string const & anchor_atom,  // could be ""
-	std::string const & root_atom	 // ditto
+	std::string const & root_atom  // ditto
 )
 {
 	// ensure that residue data is OK
@@ -2050,12 +2053,12 @@ Conformation::insert_conformation_by_jump(
 	Size const old_size( size() );
 	Size const insert_size( conf.size() );
 	Size const new_size( old_size + insert_size );
-debug_assert( old_size );
+	debug_assert( old_size );
 
 	// sanity checks
 	bool const fold_tree_polymer_bond( !fold_tree_->is_cutpoint( insert_seqpos-1 ) );
 	bool const residues_polymer_bond( insert_seqpos > 1 && insert_seqpos <= old_size &&
-																		residue( insert_seqpos-1 ).is_polymer_bonded( insert_seqpos ) );
+		residue( insert_seqpos-1 ).is_polymer_bonded( insert_seqpos ) );
 	if ( fold_tree_polymer_bond || residues_polymer_bond ) {
 		utility_exit_with_message("cant insert 'by_jump' into a polymer stretch");
 	}
@@ -2093,11 +2096,13 @@ debug_assert( old_size );
 		}
 		for ( Size i=1; i< conf.num_chains(); ++i ) new_chain_endings.push_back( conf.chain_end(i) + insert_seqpos-1 );
 		if ( insert_seqpos > 1 &&
-			 std::find(new_chain_endings.begin(),new_chain_endings.end(),insert_seqpos-1) == new_chain_endings.end())
+				std::find(new_chain_endings.begin(),new_chain_endings.end(),insert_seqpos-1) == new_chain_endings.end() ) {
 			new_chain_endings.push_back( insert_seqpos-1 );
+		}
 		if ( insert_seqpos <= old_size &&
-			 std::find(new_chain_endings.begin(),new_chain_endings.end(),insert_seqpos+insert_size-1) == new_chain_endings.end())
+				std::find(new_chain_endings.begin(),new_chain_endings.end(),insert_seqpos+insert_size-1) == new_chain_endings.end() ) {
 			new_chain_endings.push_back( insert_seqpos+insert_size-1 );
+		}
 		std::sort( new_chain_endings.begin(), new_chain_endings.end() );
 		chain_endings_ = new_chain_endings;
 		rederive_chain_ids();
@@ -2105,7 +2110,7 @@ debug_assert( old_size );
 
 	// FoldTree
 	fold_tree_->insert_fold_tree_by_jump( conf.fold_tree(), insert_seqpos, insert_jumppos, anchor_pos, anchor_jump_number,
-																			 anchor_atom, root_atom );
+		anchor_atom, root_atom );
 
 	// AtomTree
 	setup_atom_tree();
@@ -2114,18 +2119,18 @@ debug_assert( old_size );
 	// These are appended to the current ParametersSet list
 	{
 		core::Size n_sets(conf.n_parameters_sets());
-		if(n_sets > 0) {
-			for(core::Size iset=1; iset<=n_sets; ++iset) {
+		if ( n_sets > 0 ) {
+			for ( core::Size iset=1; iset<=n_sets; ++iset ) {
 				add_parameters_set( conf.parameters_set(iset)->clone() );
 				core::Size curset( n_parameters_sets() );
 				//Ensure that all of the residue pointers in the Parameters objects in the newly-created object
 				//point to residues in THIS Conformation object.
 				core::Size n_params( conf.parameters_set(iset)->n_parameters() );
-				if(n_params > 0) {
-					for(core::Size iparams=1; iparams<=n_params; ++iparams) { //Loop through all Parameters objects in this ParametersSet
+				if ( n_params > 0 ) {
+					for ( core::Size iparams=1; iparams<=n_params; ++iparams ) { //Loop through all Parameters objects in this ParametersSet
 						core::Size n_res( conf.parameters_set(iset)->parameters(iparams)->n_residue() );
-						if(n_res>0) {
-							for(core::Size ires=1; ires<=n_res; ++ires) { //Loop through all Residue objects in this Parameters object
+						if ( n_res>0 ) {
+							for ( core::Size ires=1; ires<=n_res; ++ires ) { //Loop through all Residue objects in this Parameters object
 								core::Size old_index( conf.parameters_set(iset)->parameters(iparams)->residue_cop(ires)->seqpos() );
 								core::Size new_index( old_index + insert_seqpos - 1 );
 								//Replace the owning pointer to the Residue object with one pointing at the corresponding residue in this Conformation object:
@@ -2142,8 +2147,7 @@ debug_assert( old_size );
 	residue_torsions_need_updating_ = true;
 
 	// Notify length observers
-	for (core::Size i = insert_seqpos; i < insert_size + insert_seqpos; i++)
-	{
+	for ( core::Size i = insert_seqpos; i < insert_size + insert_seqpos; i++ ) {
 		notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_APPEND, i - 1, 1, &residue(i)), false );
 	}
 }
@@ -2160,7 +2164,7 @@ Conformation::copy_segment(
 )
 {
 	for ( Size i=0; i< size; ++i ) {
-		Size const seqpos	(	 begin + i );
+		Size const seqpos (  begin + i );
 		Size const seqpos_src( src_begin + i );
 		replace_residue( seqpos, src.residue(seqpos_src), false );
 	}
@@ -2213,18 +2217,18 @@ Conformation::torsion( TorsionID const & tor_id ) const
 	// This will ensure that the torsions in the residue are in sync with the AtomTree torsions.
 	// Use of residues_[]-> would not be safe.
 	switch ( tor_id.type() ) {
-		case id::BB:
-			return residue( tor_id.rsd() ).mainchain_torsion( tor_id.torsion() );
-		case id::CHI:
-			return residue( tor_id.rsd() ).chi( tor_id.torsion() );
-		case id::NU:
-			return residue( tor_id.rsd() ).nu( tor_id.torsion() );
-		case id::BRANCH:
-			// TODO: Convert to degrees.
-			return degrees( atom_tree_->dof( dof_id_from_torsion_id( tor_id ) ) );
-		case id::JUMP:
-			// jump rigid-body offset
-			return atom_tree_->dof( dof_id_from_torsion_id( tor_id ) );
+	case id::BB :
+		return residue( tor_id.rsd() ).mainchain_torsion( tor_id.torsion() );
+	case id::CHI :
+		return residue( tor_id.rsd() ).chi( tor_id.torsion() );
+	case id::NU :
+		return residue( tor_id.rsd() ).nu( tor_id.torsion() );
+	case id::BRANCH :
+		// TODO: Convert to degrees.
+		return degrees( atom_tree_->dof( dof_id_from_torsion_id( tor_id ) ) );
+	case id::JUMP :
+		// jump rigid-body offset
+		return atom_tree_->dof( dof_id_from_torsion_id( tor_id ) );
 	}
 	return 0.0;  // Code will never reach here.
 }
@@ -2243,27 +2247,27 @@ Conformation::set_torsion( TorsionID const & tor_id, Real const setting )
 	} else /* BB, CHI, or NU */ {
 		// Update residue torsions.
 		switch (tor_id.type()) {
-			case id::BB:
-				residues_[tor_id.rsd()]->mainchain_torsions()[tor_id.torsion()] = setting;
-				break;
-			case id::CHI:
-				residues_[tor_id.rsd()]->chi()[tor_id.torsion()] = setting;
-				break;
-			case id::NU:
-				residues_[tor_id.rsd()]->nus()[tor_id.torsion()] = setting;
-				break;
-			case id::BRANCH:
-				// Residue does not store branch point connection torsions -- nothing to do here.
-				break;
-			default:
-				TR.Warning << "Unknown torsion type." << std::endl;
+		case id::BB :
+			residues_[tor_id.rsd()]->mainchain_torsions()[tor_id.torsion()] = setting;
+			break;
+		case id::CHI :
+			residues_[tor_id.rsd()]->chi()[tor_id.torsion()] = setting;
+			break;
+		case id::NU :
+			residues_[tor_id.rsd()]->nus()[tor_id.torsion()] = setting;
+			break;
+		case id::BRANCH :
+			// Residue does not store branch point connection torsions -- nothing to do here.
+			break;
+		default :
+			TR.Warning << "Unknown torsion type." << std::endl;
 		}
 
 		// Find out what the four atoms are that define this torsion angle.
 		AtomID id1, id2, id3, id4;
-        //TR << "amw in set_torsion and about to call on " << tor_id.torsion() << std::endl;
+		//TR << "amw in set_torsion and about to call on " << tor_id.torsion() << std::endl;
 		bool const fail( get_torsion_angle_atom_ids( tor_id, id1, id2, id3, id4 ) );
-        //TR << "amw just got atom ids for " << tor_id.torsion() << " has atoms " << id1.atomno() << "-" << id2.atomno() << "-" << id3.atomno() << "-" << id4.atomno() << "." << std::endl;
+		//TR << "amw just got atom ids for " << tor_id.torsion() << " has atoms " << id1.atomno() << "-" << id2.atomno() << "-" << id3.atomno() << "-" << id4.atomno() << "." << std::endl;
 
 		if ( fail ) {
 			TR.Debug << "Unable to find torsion angle in atom_tree: " << tor_id << std::endl;
@@ -2275,7 +2279,7 @@ Conformation::set_torsion( TorsionID const & tor_id, Real const setting )
 
 		if ( ! dof_id.valid() ) {
 			//TR << "amw in set_torsion  " << tor_id.torsion() << " has atoms " << id1.atomno() << "-" << id2.atomno() << "-" << id3.atomno() << "-" << id4.atomno() << "." << std::endl;
-            TR.Warning << "Unable to set torsion angle in atom_tree: " << tor_id << std::endl;
+			TR.Warning << "Unable to set torsion angle in atom_tree: " << tor_id << std::endl;
 			return;
 		}
 	}
@@ -2288,10 +2292,10 @@ Conformation::set_torsion( TorsionID const & tor_id, Real const setting )
 // Returns the torsion angle defined by  <atom[1-4]>
 Real
 Conformation::torsion_angle(
-		AtomID const & atom1,
-		AtomID const & atom2,
-		AtomID const & atom3,
-		AtomID const & atom4
+	AtomID const & atom1,
+	AtomID const & atom2,
+	AtomID const & atom3,
+	AtomID const & atom4
 ) const
 {
 	return atom_tree_->torsion_angle( atom1, atom2, atom3, atom4 );
@@ -2321,9 +2325,9 @@ Conformation::set_torsion_angle(
 // Returns the bond angle defined by  <atom[1-3]>
 Real
 Conformation::bond_angle(
-		AtomID const & atom1,
-		AtomID const & atom2,
-		AtomID const & atom3
+	AtomID const & atom1,
+	AtomID const & atom2,
+	AtomID const & atom3
 ) const
 {
 	return atom_tree_->bond_angle( atom1, atom2, atom3 );
@@ -2348,8 +2352,8 @@ Conformation::set_bond_angle(
 // Returns the bond length between  <atom1>  and  <atom2>
 Real
 Conformation::bond_length(
-		AtomID const & atom1,
-		AtomID const & atom2
+	AtomID const & atom1,
+	AtomID const & atom2
 ) const
 {
 	return atom_tree_->bond_length( atom1, atom2 );
@@ -2385,11 +2389,11 @@ Conformation::jump( AtomID const & id ) const
 // Sets the jump  <jump_number>  to  <new_jump>
 void
 Conformation::set_jump(
-		int const jump_number,
-		Jump const & new_jump
+	int const jump_number,
+	Jump const & new_jump
 )
 {
-debug_assert( new_jump.ortho_check() );
+	debug_assert( new_jump.ortho_check() );
 	AtomID const id( jump_atom_id( jump_number ) );
 	atom_tree_->set_jump( id, new_jump );
 	set_dof_moved( id );
@@ -2398,11 +2402,11 @@ debug_assert( new_jump.ortho_check() );
 
 void
 Conformation::set_jump(
-		AtomID const & id,
-		Jump const & new_jump
+	AtomID const & id,
+	Jump const & new_jump
 )
 {
-debug_assert( new_jump.ortho_check() );
+	debug_assert( new_jump.ortho_check() );
 	atom_tree_->set_jump( id, new_jump );
 	set_dof_moved( id );
 }
@@ -2443,8 +2447,9 @@ Conformation::batch_set_xyz(
 	if ( !atom_tree_->empty() ) atom_tree_->batch_set_xyz( ids, positions );
 
 	// update residue coords
-	for (core::Size i=1; i<=ids.size(); ++i)
+	for ( core::Size i=1; i<=ids.size(); ++i ) {
 		residues_[ ids[i].rsd() ]->set_xyz( ids[i].atomno(), positions[i] );
+	}
 
 	// notify scoring
 	set_xyz_moved( ids );
@@ -2459,8 +2464,9 @@ Conformation::batch_get_xyz(
 	positions.resize( ids.size() );
 
 	// update residue coords
-	for (core::Size i=1; i<=ids.size(); ++i)
+	for ( core::Size i=1; i<=ids.size(); ++i ) {
 		positions[i] = xyz( ids[i] );
+	}
 }
 
 
@@ -2475,9 +2481,9 @@ Conformation::insert_ideal_geometry_at_polymer_bond( Size const seqpos )
 	// what are the four atoms that define the bonds/angles?
 	Size const nbb( lower_rsd_type.mainchain_atoms().size() );
 	AtomID const atom1( lower_rsd_type.mainchain_atom( nbb - 1 ), seqpos   );
-	AtomID const atom2( lower_rsd_type.mainchain_atom( nbb	 ), seqpos   );
-	AtomID const atom3( upper_rsd_type.mainchain_atom( 1	   ), seqpos+1 );
-	AtomID const atom4( upper_rsd_type.mainchain_atom( 2	   ), seqpos+1 );
+	AtomID const atom2( lower_rsd_type.mainchain_atom( nbb  ), seqpos   );
+	AtomID const atom3( upper_rsd_type.mainchain_atom( 1    ), seqpos+1 );
+	AtomID const atom4( upper_rsd_type.mainchain_atom( 2    ), seqpos+1 );
 
 	// what is the ideal geometry?
 	chemical::ResidueConnection const & connect1( lower_rsd_type.upper_connect() );
@@ -2487,10 +2493,10 @@ Conformation::insert_ideal_geometry_at_polymer_bond( Size const seqpos )
 	Real const bond_angle1( numeric::constants::d::pi - connect1.icoor().theta() );
 	Real const bond_angle2( numeric::constants::d::pi - connect2.icoor().theta() );
 
-debug_assert( ( connect1.icoor().stub_atom2().atomno() == Size( atom1.atomno() ) ) &&
-					( connect1.icoor().stub_atom1().atomno() == Size( atom2.atomno() ) ) &&
-					( connect2.icoor().stub_atom1().atomno() == Size( atom3.atomno() ) ) &&
-					( connect2.icoor().stub_atom2().atomno() == Size( atom4.atomno() ) ) );
+	debug_assert( ( connect1.icoor().stub_atom2().atomno() == Size( atom1.atomno() ) ) &&
+		( connect1.icoor().stub_atom1().atomno() == Size( atom2.atomno() ) ) &&
+		( connect2.icoor().stub_atom1().atomno() == Size( atom3.atomno() ) ) &&
+		( connect2.icoor().stub_atom2().atomno() == Size( atom4.atomno() ) ) );
 
 	set_bond_angle( atom1, atom2, atom3, bond_angle1 );
 	set_bond_angle( atom2, atom3, atom4, bond_angle2 );
@@ -2511,7 +2517,7 @@ Conformation::insert_ideal_geometry_at_residue_connection( Size const pos1, Size
 	//
 	// determine what the other residue for this connection is:
 	ResidueCOP rsd1( residues_[ pos1 ] );
-	Size const	pos2( rsd1->connect_map( connid1 ).resid() );
+	Size const pos2( rsd1->connect_map( connid1 ).resid() );
 	Size const connid2( rsd1->connect_map( connid1 ).connid() );
 	ResidueCOP rsd2( residues_[ pos2 ] );
 
@@ -2541,10 +2547,8 @@ Conformation::insert_ideal_geometry_at_residue_connection( Size const pos1, Size
 void
 Conformation::update_actcoords()
 {
-	for ( Size ii = 1; ii <= size(); ++ii )
-	{
-		if ( residues_[ ii ]->requires_actcoord() )
-		{
+	for ( Size ii = 1; ii <= size(); ++ii ) {
+		if ( residues_[ ii ]->requires_actcoord() ) {
 			residues_[ ii ]->update_actcoord();
 		}
 	}
@@ -2561,14 +2565,14 @@ Conformation::update_actcoord( Size resid )
 void
 Conformation::update_orbital_coords( Size resid )
 {
-		residues_[ resid ]->update_orbital_coords();
+	residues_[ resid ]->update_orbital_coords();
 }
 
 void
 Conformation::update_orbital_coords( Residue & rsd) const{
-	BOOST_FOREACH(core::Size atom_with_orbitals, rsd.atoms_with_orb_index()){
+	BOOST_FOREACH ( core::Size atom_with_orbitals, rsd.atoms_with_orb_index() ) {
 		utility::vector1<core::Size> const & orbital_indices(rsd.bonded_orbitals(atom_with_orbitals));
-		BOOST_FOREACH(core::Size orbital_index, orbital_indices){
+		BOOST_FOREACH ( core::Size orbital_index, orbital_indices ) {
 			Vector orb_xyz(rsd.build_orbital_xyz(orbital_index));
 			rsd.set_orbital_xyz(orbital_index, orb_xyz );
 		}
@@ -2624,11 +2628,11 @@ Conformation::jump_atom_id( int const jump_number ) const
 /// @note  Returns TRUE to signal FAILURE.
 bool
 Conformation::get_torsion_angle_atom_ids(
-		TorsionID const & tor_id,
-		AtomID & id1,
-		AtomID & id2,
-		AtomID & id3,
-		AtomID & id4
+	TorsionID const & tor_id,
+	AtomID & id1,
+	AtomID & id2,
+	AtomID & id3,
+	AtomID & id4
 ) const
 {
 	uint const torsion( tor_id.torsion() );
@@ -2637,36 +2641,36 @@ Conformation::get_torsion_angle_atom_ids(
 	bool fail( false );
 
 	switch ( tor_id.type() ) {
-		case id::BB:
-			// backbone torsion, e.g., if protein: 1==phi, 2==psi, 3==omega
-			// may fail if we are at a chainbreak
-			fail = backbone_torsion_angle_atoms( tor_id, id1, id2, id3, id4 );
-			break;
-		case id::CHI:
-			id1.rsd() = id2.rsd() = id3.rsd() = id4.rsd() = seqpos;
-			id1.atomno() = residue_( seqpos ).chi_atoms( torsion )[ 1 ];
-			id2.atomno() = residue_( seqpos ).chi_atoms( torsion )[ 2 ];
-			id3.atomno() = residue_( seqpos ).chi_atoms( torsion )[ 3 ];
-			id4.atomno() = residue_( seqpos ).chi_atoms( torsion )[ 4 ];
-			break;
-		case id::NU:
-			id1.rsd() = id2.rsd() = id3.rsd() = id4.rsd() = seqpos;
-			id1.atomno() = residue_( seqpos ).nu_atoms( torsion )[ 1 ];
-			id2.atomno() = residue_( seqpos ).nu_atoms( torsion )[ 2 ];
-			id3.atomno() = residue_( seqpos ).nu_atoms( torsion )[ 3 ];
-			id4.atomno() = residue_( seqpos ).nu_atoms( torsion )[ 4 ];
-			break;
-		case id::BRANCH:
-			fail = branch_connection_torsion_angle_atoms( tor_id, id1, id2, id3, id4 );
-			break;
-		case id::JUMP:
-			TR.Error << "Conformation::get_torsion_angle_atom_ids: " << tor_id <<
-				" Jump 'torsions' are not described by four atoms!" << std::endl;
-			utility_exit();
-			break;
-		default:
-			TR.Error << "Invalid torsion type provided." << std::endl;
-			fail = true;
+	case id::BB :
+		// backbone torsion, e.g., if protein: 1==phi, 2==psi, 3==omega
+		// may fail if we are at a chainbreak
+		fail = backbone_torsion_angle_atoms( tor_id, id1, id2, id3, id4 );
+		break;
+	case id::CHI :
+		id1.rsd() = id2.rsd() = id3.rsd() = id4.rsd() = seqpos;
+		id1.atomno() = residue_( seqpos ).chi_atoms( torsion )[ 1 ];
+		id2.atomno() = residue_( seqpos ).chi_atoms( torsion )[ 2 ];
+		id3.atomno() = residue_( seqpos ).chi_atoms( torsion )[ 3 ];
+		id4.atomno() = residue_( seqpos ).chi_atoms( torsion )[ 4 ];
+		break;
+	case id::NU :
+		id1.rsd() = id2.rsd() = id3.rsd() = id4.rsd() = seqpos;
+		id1.atomno() = residue_( seqpos ).nu_atoms( torsion )[ 1 ];
+		id2.atomno() = residue_( seqpos ).nu_atoms( torsion )[ 2 ];
+		id3.atomno() = residue_( seqpos ).nu_atoms( torsion )[ 3 ];
+		id4.atomno() = residue_( seqpos ).nu_atoms( torsion )[ 4 ];
+		break;
+	case id::BRANCH :
+		fail = branch_connection_torsion_angle_atoms( tor_id, id1, id2, id3, id4 );
+		break;
+	case id::JUMP :
+		TR.Error << "Conformation::get_torsion_angle_atom_ids: " << tor_id <<
+			" Jump 'torsions' are not described by four atoms!" << std::endl;
+		utility_exit();
+		break;
+	default :
+		TR.Error << "Invalid torsion type provided." << std::endl;
+		fail = true;
 	}
 
 	return fail;
@@ -2676,7 +2680,7 @@ Conformation::get_torsion_angle_atom_ids(
 /// @brief get two atoms connect by jump
 bool
 Conformation::get_jump_atom_ids(
-  core::Size const jump_number,
+	core::Size const jump_number,
 	AtomID & upstream_id,
 	AtomID & downstream_id ) const {
 	downstream_id = jump_atom_id( jump_number );
@@ -2692,7 +2696,7 @@ Conformation::update_domain_map( DomainMap & domain_map ) const
 {
 	domain_map.dimension( size() );
 	domain_map = 0;
-	if( size() ) {
+	if ( size() ) {
 		atom_tree_->update_domain_map( domain_map, dof_moved_, xyz_moved_ );
 	}
 }
@@ -2847,16 +2851,16 @@ Conformation::rebuild_polymer_bond_dependent_atoms( Size const seqpos, int const
 	update_residue_coordinates();
 	Residue const & rsd( residue_(seqpos) );
 
- 	for ( Size i=1, ie=rsd.natoms(); i<= ie; ++i ) {
+	for ( Size i=1, ie=rsd.natoms(); i<= ie; ++i ) {
 		// OP1 and OP2 could in principle be figured out to 'depend on polymer lower'; they
 		// currently depend on atoms which themselves can depend on LOWER. Following has hacks
 		// until a general fix is tested and checked in. --rhiju.
- 		if ( ( upper_lower == -1 && rsd.icoor(i).depends_on_polymer_lower() ) ||
-				 ( upper_lower == -1 && rsd.atom_name( i ) == " OP1" ) || // hack1
-				 ( upper_lower == -1 && rsd.atom_name( i ) == " OP2" ) || // hack2
- 				 ( upper_lower ==  1 && rsd.icoor(i).depends_on_polymer_upper() ) ) {
- 			set_xyz( AtomID(i,seqpos), rsd.icoor(i).build( rsd, *this ) );
- 		}
+		if ( ( upper_lower == -1 && rsd.icoor(i).depends_on_polymer_lower() ) ||
+				( upper_lower == -1 && rsd.atom_name( i ) == " OP1" ) || // hack1
+				( upper_lower == -1 && rsd.atom_name( i ) == " OP2" ) || // hack2
+				( upper_lower ==  1 && rsd.icoor(i).depends_on_polymer_upper() ) ) {
+			set_xyz( AtomID(i,seqpos), rsd.icoor(i).build( rsd, *this ) );
+		}
 	}
 }
 
@@ -2873,8 +2877,8 @@ Conformation::insert_polymer_residue(
 {
 	pre_nresidue_change();
 	// debug termini status
-	if ( join_lower )debug_assert( !new_rsd_in.is_lower_terminus() );
-	if ( join_upper )debug_assert( !new_rsd_in.is_upper_terminus() );
+	if ( join_lower ) debug_assert( !new_rsd_in.is_lower_terminus() );
+	if ( join_upper ) debug_assert( !new_rsd_in.is_upper_terminus() );
 
 	// this handles all renumbering internal to the Residues, *_moved arrays
 	residues_insert( seqpos, new_rsd_in, !join_upper );
@@ -2887,7 +2891,7 @@ Conformation::insert_polymer_residue(
 
 	residue_torsions_need_updating_ = true; // could reupdate before and after
 
-debug_assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
+	debug_assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
 
 	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_PREPEND, seqpos, 1, &new_rsd ), false );
 }
@@ -2910,7 +2914,7 @@ Conformation::append_residue(
 	pre_nresidue_change();
 
 	Size const seqpos( size() + 1 );
-debug_assert( seqpos == fold_tree_->nres() + 1 );
+	debug_assert( seqpos == fold_tree_->nres() + 1 );
 
 	// is this the first residue?
 	bool const first_residue( seqpos == 1 );
@@ -2934,9 +2938,9 @@ debug_assert( seqpos == fold_tree_->nres() + 1 );
 		// try to detect a non-polymer chemical bond:
 		if ( !attach_by_jump && root_atomno != 0 && ( new_rsd.is_ligand() || // needed because new_rsd.is_lower_terminus() asserts this is a polymer
 				new_rsd.is_lower_terminus() || anchor_id.rsd() != seqpos-1 ||
-					residues_[ seqpos-1 ]->is_upper_terminus() ||	  // if we got here we're connect to seqpos-1...
-					root_atomno != int(new_rsd_in.lower_connect_atom()) ||  // ...by our lower-connect-atom
-					anchor_atomno != int(residues_[ seqpos-1 ]->upper_connect_atom()) ) ) {
+				residues_[ seqpos-1 ]->is_upper_terminus() ||   // if we got here we're connect to seqpos-1...
+				root_atomno != int(new_rsd_in.lower_connect_atom()) ||  // ...by our lower-connect-atom
+				anchor_atomno != int(residues_[ seqpos-1 ]->upper_connect_atom()) ) ) {
 			// must be a chemical bond since the criteria for a polymer connection are not met
 			TR << "appending residue by a chemical bond in the foldtree: " << seqpos << ' ' <<
 				new_rsd.name() << " anchor: " << anchor_id << " root: " << root_atom <<  std::endl;
@@ -2954,9 +2958,9 @@ debug_assert( seqpos == fold_tree_->nres() + 1 );
 	// good thing we set it already.
 
 	if ( first_residue ) {
-	debug_assert( atom_tree_->empty() );
+		debug_assert( atom_tree_->empty() );
 		setup_atom_tree(); // just this once
-    } else {
+	} else {
 		insert_residue_into_atom_tree( new_rsd, *fold_tree_, const_residues(), *atom_tree_ );
 	}
 
@@ -2989,9 +2993,8 @@ Conformation::residues_replace(
 	if ( residues_[ seqpos ]->data_ptr() != 0 ) residues_[ seqpos ]->nonconst_data_ptr()->clear();
 	//Loop through all the connections of the new residue and ensure that the residues connected to it have their
 	//connect_map_ updated appropriately:
-	for(core::Size i=1, imax=residues_[seqpos]->type().n_residue_connections(); i<=imax; ++i)
-	{
-		if(!residues_[seqpos]->connection_incomplete(i)) { //If we're connected to something,
+	for ( core::Size i=1, imax=residues_[seqpos]->type().n_residue_connections(); i<=imax; ++i ) {
+		if ( !residues_[seqpos]->connection_incomplete(i) ) { //If we're connected to something,
 			core::Size const res_to_update = residues_[seqpos]->connected_residue_at_resconn(i); //Get the index of the residue to update
 			residues_[res_to_update]->update_connections_to_other_residue(*(residues_[seqpos])); //Update the connections
 		}
@@ -3034,7 +3037,7 @@ Conformation::residues_insert(
 	bool const new_chain // = false
 )
 {
-debug_assert( ! new_chain || residues_[ seqpos-1 ]->chain() != residues_[ seqpos ]->chain() );
+	debug_assert( ! new_chain || residues_[ seqpos-1 ]->chain() != residues_[ seqpos ]->chain() );
 
 	Size const old_size( residues_.size() ), new_size( old_size+1 );
 
@@ -3053,7 +3056,7 @@ debug_assert( ! new_chain || residues_[ seqpos-1 ]->chain() != residues_[ seqpos
 	Size const newrsd_chain( new_chain ? old_chain + 1 :old_chain );
 
 	residues_.insert( residues_.begin() + (seqpos-1), new_rsd.clone() );
-debug_assert( residues_[seqpos]->name() == new_rsd.name() );
+	debug_assert( residues_[seqpos]->name() == new_rsd.name() );
 	residues_[ seqpos ]->seqpos( seqpos );
 	residues_[ seqpos ]->chain( newrsd_chain );
 	if ( new_chain ) {
@@ -3077,7 +3080,7 @@ debug_assert( residues_[seqpos]->name() == new_rsd.name() );
 
 	utility::vector1< bool > & xyz_m( xyz_moved_[seqpos] );
 	utility::vector1< bool > & dof_m( dof_moved_[seqpos] );
-debug_assert( xyz_m.empty() && dof_m.empty() );
+	debug_assert( xyz_m.empty() && dof_m.empty() );
 	xyz_m.resize( new_rsd.natoms(), true  );
 	dof_m.resize( new_rsd.natoms(), false );
 
@@ -3152,22 +3155,19 @@ Conformation::residues_append( Residue const & new_rsd, bool const start_new_cha
 
 	// update polymeric connection status from chain id's and termini status (but only if it's possible they're chemically connected)
 	if ( nres > 1 && ! by_jump ) {
-		if (anchor_id == id::BOGUS_NAMED_ATOM_ID) {
+		if ( anchor_id == id::BOGUS_NAMED_ATOM_ID ) {
 			update_polymeric_connection(nres - 1);
-		}
-		else {
+		} else {
 			Size root_atomno = residues_[nres]->type().atom_index(root_atom);
 			Size lr_conn_id = residues_[nres]->type().residue_connection_id_for_atom(root_atomno);
 			Size anchor_atomno = residues_[anchor_id.rsd()]->atom_index( anchor_id.atom() );
 			Size ur_conn_id = residues_[anchor_id.rsd()]->type().residue_connection_id_for_atom(anchor_atomno);
 			if ( anchor_id.rsd() == nres - 1
-				&& lr_conn_id == residues_[nres]->type().lower_connect_id()
-				&& ur_conn_id == residues_[anchor_id.rsd()]->type().upper_connect_id()
-				)
-			{
+					&& lr_conn_id == residues_[nres]->type().lower_connect_id()
+					&& ur_conn_id == residues_[anchor_id.rsd()]->type().upper_connect_id()
+					) {
 				update_polymeric_connection(nres - 1);
-			}
-			else {
+			} else {
 				update_noncanonical_connection(nres, lr_conn_id, anchor_id.rsd(), ur_conn_id);
 			}
 		}
@@ -3186,9 +3186,9 @@ Conformation::residues_append( Residue const & new_rsd, bool const start_new_cha
 
 /// @details used when we want to copy torsions from the atomtree to the residues
 /// used when updating the torsion angles stashed in the Residues
-///	other torsion access calls look inside the residues since this
-///	will be faster than getting from the atomtree, at least in the
-///	current implementation of this routine
+/// other torsion access calls look inside the residues since this
+/// will be faster than getting from the atomtree, at least in the
+/// current implementation of this routine
 Real
 Conformation::atom_tree_torsion( TorsionID const & tor_id ) const
 {
@@ -3202,7 +3202,7 @@ Conformation::atom_tree_torsion( TorsionID const & tor_id ) const
 		// bb, chi, nu, or branch
 		// find out what are the four atoms that define this torsion angle
 		AtomID id1, id2, id3, id4;
-        //TR << "amw someone called atom_tree_torsion on " << tor_id.torsion() << std::endl;
+		//TR << "amw someone called atom_tree_torsion on " << tor_id.torsion() << std::endl;
 		bool const fail
 			( get_torsion_angle_atom_ids( tor_id, id1, id2, id3, id4 ) );
 
@@ -3211,21 +3211,21 @@ Conformation::atom_tree_torsion( TorsionID const & tor_id ) const
 		}
 
 		//Check whether the four atoms are a valid DOF id:
-		if(atom_tree_->torsion_angle_dof_id(id1,id2,id3,id4, true).valid()) {
+		if ( atom_tree_->torsion_angle_dof_id(id1,id2,id3,id4, true).valid() ) {
 			//printf("Torsion angle %lu-%s %lu-%s %lu-%s %lu-%s is valid.\n",
-			//	id1.rsd(), residue_(id1.rsd()).atom_name(id1.atomno()).c_str(),
-			//	id2.rsd(), residue_(id2.rsd()).atom_name(id2.atomno()).c_str(),
-			//	id3.rsd(), residue_(id3.rsd()).atom_name(id3.atomno()).c_str(),
-			//	id4.rsd(), residue_(id4.rsd()).atom_name(id4.atomno()).c_str() ); fflush(stdout); //DELETE ME
+			// id1.rsd(), residue_(id1.rsd()).atom_name(id1.atomno()).c_str(),
+			// id2.rsd(), residue_(id2.rsd()).atom_name(id2.atomno()).c_str(),
+			// id3.rsd(), residue_(id3.rsd()).atom_name(id3.atomno()).c_str(),
+			// id4.rsd(), residue_(id4.rsd()).atom_name(id4.atomno()).c_str() ); fflush(stdout); //DELETE ME
 			// atomtree works in radians
 			//TR << "amw atoms " << residue_( id1.rsd() ).atom_name(id1.atomno()) << "-" << residue_( id2.rsd() ).atom_name(id2.atomno()) << "-" << residue_( id3.rsd() ).atom_name(id3.atomno()) << "-" << residue_( id4.rsd() ).atom_name(id4.atomno()) << " valid torsion id, so returning angle given by atom tree" << std::endl;
 			return degrees( atom_tree_->torsion_angle( id1, id2, id3, id4 ) );
 		} else { //If the torsion is not in the atom tree, it might still be a valid torsion angle (e.g. an C-terminus-to-N-terminus peptide bond).
 			//printf("Torsion angle %lu-%s %lu-%s %lu-%s %lu-%s is NOT valid.\n",
-			//	id1.rsd(), residue_(id1.rsd()).atom_name(id1.atomno()).c_str(),
-			//	id2.rsd(), residue_(id2.rsd()).atom_name(id2.atomno()).c_str(),
-			//	id3.rsd(), residue_(id3.rsd()).atom_name(id3.atomno()).c_str(),
-			//	id4.rsd(), residue_(id4.rsd()).atom_name(id4.atomno()).c_str() ); fflush(stdout); //DELETE ME
+			// id1.rsd(), residue_(id1.rsd()).atom_name(id1.atomno()).c_str(),
+			// id2.rsd(), residue_(id2.rsd()).atom_name(id2.atomno()).c_str(),
+			// id3.rsd(), residue_(id3.rsd()).atom_name(id3.atomno()).c_str(),
+			// id4.rsd(), residue_(id4.rsd()).atom_name(id4.atomno()).c_str() ); fflush(stdout); //DELETE ME
 			//Determine whether the atoms are bonded in a way that defines a dihedral angle:
 			//TR << "amw not an atom tree torsion, computing manually if bonded" << std::endl;
 			bool const bonded = atoms_are_bonded(id1, id2) && atoms_are_bonded(id2, id3) && atoms_are_bonded(id3, id4);
@@ -3303,11 +3303,11 @@ Conformation::setup_atom_tree()
 /// @note returns TRUE for FAILURE
 bool
 Conformation::backbone_torsion_angle_atoms(
-		TorsionID const & id,
-		AtomID & id1,
-		AtomID & id2,
-		AtomID & id3,
-		AtomID & id4
+	TorsionID const & id,
+	AtomID & id1,
+	AtomID & id2,
+	AtomID & id3,
+	AtomID & id4
 ) const
 {
 	//std::cout << "here" << std::endl;
@@ -3324,19 +3324,19 @@ Conformation::backbone_torsion_angle_atoms(
 
 	Size const ntorsions( mainchain.size() ); // rsd.mainchain_torsions().size() - 1?
 	if ( torsion < 1 || torsion > ntorsions ) { return fail; }
-    
-    debug_assert( torsion >= 1 && torsion <= ntorsions );
+
+	debug_assert( torsion >= 1 && torsion <= ntorsions );
 
 	// this is hacky
 	// The ACETYLATED_NTERMINUS and METHYLATED_CTERMINUS prepend and append additional backbone atoms which is why the
-    // numbers may seem off.
+	// numbers may seem off.
 	if ( rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) &&
 			rsd.has_variant_type( chemical::METHYLATED_CTERMINUS_VARIANT ) ) {
 		// set all id rsds to seqpos since they are all in the same residue
 		id1.rsd() = id2.rsd() = id3.rsd() = id4.rsd() = seqpos;
 		if ( rsd.type().is_peptoid() ) {
 			// just explicit for now -- shouldn't be necessary, though, since the general case covers this.
-			if ( torsion == 1 ){
+			if ( torsion == 1 ) {
 				id1.atomno() = rsd.atom_index( "CP2" );
 				id2.atomno() = rsd.atom_index( "CO" );
 				id3.atomno() = rsd.atom_index( "N" );
@@ -3358,45 +3358,45 @@ Conformation::backbone_torsion_angle_atoms(
 				id4.atomno() = rsd.atom_index( "CN" );
 			}
 		} else { //General case -- should be correct for an arbitrary heteropolymer.
-			if ( torsion == 1 ){
+			if ( torsion == 1 ) {
 				id1.atomno() = rsd.atom_index( "CP2" ); //CP2 0
 				id2.atomno() = mainchain[0+torsion];//CO 1
 				id3.atomno() = mainchain[1+torsion];//N 2
 				id4.atomno() = mainchain[2+torsion];//CA 3
 				//std::cout << "CP2-" << rsd.atom_name( id2.atomno() ) << "-" << rsd.atom_name( id3.atomno() ) <<
-				//		"-" << rsd.atom_name( id4.atomno() ) << std::endl;
+				//  "-" << rsd.atom_name( id4.atomno() ) << std::endl;
 			} else if ( torsion == rsd.mainchain_torsions().size() - 1 ) {
 				id1.atomno() = mainchain[-1+torsion]; //N 2
 				id2.atomno() = mainchain[0+torsion]; //CA 3
 				id3.atomno() = mainchain[1+torsion]; //C 4
 				id4.atomno() = rsd.atom_index( "NM" ); //NM 5
 				//std::cout << rsd.atom_name( id1.atomno() )<<"-" << rsd.atom_name( id2.atomno() ) << "-" <<
-				//		rsd.atom_name( id3.atomno() ) << "-" << rsd.atom_name( id4.atomno() ) << std::endl;
+				//  rsd.atom_name( id3.atomno() ) << "-" << rsd.atom_name( id4.atomno() ) << std::endl;
 			} else if ( torsion == rsd.mainchain_torsions().size() ) {
 				id1.atomno() = mainchain[-1+torsion]; //CA 3 or CM 4
 				id2.atomno() = mainchain[0+torsion]; //C 4 or C 5
 				id3.atomno() = rsd.atom_index( "NM" ); //NM 5
 				id4.atomno() = rsd.atom_index( "CN" ); //CN 6
 				//std::cout << rsd.atom_name( id1.atomno() )<<"-" << rsd.atom_name( id2.atomno() ) << "-" <<
-				//		rsd.atom_name( id3.atomno() ) << "-" << rsd.atom_name( id4.atomno() ) << std::endl;
+				//  rsd.atom_name( id3.atomno() ) << "-" << rsd.atom_name( id4.atomno() ) << std::endl;
 			} else if ( torsion < /*ntorsions*/rsd.mainchain_torsions().size() - 1 ) {
 				id1.atomno() = mainchain[-1+torsion]; //CO 1 or N 2
 				id2.atomno() = mainchain[0+torsion]; //N 2 or CA 3
 				id3.atomno() = mainchain[1+torsion]; //CA 3 or CM 4
 				id4.atomno() = mainchain[2+torsion]; //C 4 or C 5
 				//std::cout << rsd.atom_name( id1.atomno() )<<"-" << rsd.atom_name( id2.atomno() ) << "-" <<
-				//		rsd.atom_name( id3.atomno() ) << "-" << rsd.atom_name( id4.atomno() ) << std::endl;
+				//  rsd.atom_name( id3.atomno() ) << "-" << rsd.atom_name( id4.atomno() ) << std::endl;
 			}
 		}
 
-    // the ACETYLATED_NTERMINUS prepends an additional backbone atom which is why the numbers are increased by one.
+		// the ACETYLATED_NTERMINUS prepends an additional backbone atom which is why the numbers are increased by one.
 	} else if ( rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) ) {
 		// Acetylated N-terminus variant but no C-terminal methylation.
 		if ( torsion + 1 > mainchain.size() ) {
 			// The torsion is not well defined if the first two atoms aren't in the current residue.
 			return true;
 		}
-		 
+
 		id1.rsd() = seqpos; id1.atomno() = mainchain[ torsion ]; // First atom is always in the current residue.
 		id2.rsd() = seqpos; id2.atomno() = mainchain[ torsion + 1 ]; // Second atom is always in the current residue.
 		if ( torsion + 2 <= mainchain.size() ) { // If the third atom is in the current residue...
@@ -3413,7 +3413,7 @@ Conformation::backbone_torsion_angle_atoms(
 				// Get the atom index in the connected residue of the atom that's making a connection to THIS residue's
 				// connection #2.
 				id4.atomno() = residue_( id4.rsd() ).residue_connect_atom_index(
-						rsd.residue_connection_conn_id(rsd.type().upper_connect_id()) );
+					rsd.residue_connection_conn_id(rsd.type().upper_connect_id()) );
 			}
 		} else { // If the third atom is NOT in the current residue...
 			if ( ! rsd.has_upper_connect() || rsd.connection_incomplete( rsd.type().upper_connect_id() ) ) {
@@ -3421,7 +3421,7 @@ Conformation::backbone_torsion_angle_atoms(
 				return true;
 			}
 			AtomIndices const & next_mainchain ( residue_( rsd.residue_connection_partner(
-					rsd.type().upper_connect_id() ) ).mainchain_atoms() );
+				rsd.type().upper_connect_id() ) ).mainchain_atoms() );
 			//Get the residue index of the residue connected to this residue at this residue's connection #2.
 			id3.rsd() = rsd.residue_connection_partner( rsd.type().upper_connect_id() );
 			if ( residue_( id3.rsd() ).connect_map_size() <
@@ -3432,7 +3432,7 @@ Conformation::backbone_torsion_angle_atoms(
 			// Get the atom index in the connected residue of the atom that's making a connection to THIS residue's
 			// connection #2.
 			id3.atomno() = residue_( id3.rsd() ).residue_connect_atom_index(
-					rsd.residue_connection_conn_id( rsd.type().upper_connect_id() ) );
+				rsd.residue_connection_conn_id( rsd.type().upper_connect_id() ) );
 			if ( next_mainchain.size() >= 2 ) {
 				id4.rsd() = id3.rsd();
 				if ( id3.atomno() == next_mainchain[ 1 ] ) {
@@ -3453,13 +3453,13 @@ Conformation::backbone_torsion_angle_atoms(
 		///////////////////////////////////////////////////////////////////////
 		// first atom -- may be in seqpos-1
 		if ( torsion > 1 ) {
-			id1.rsd()	= seqpos;
+			id1.rsd() = seqpos;
 			id1.atomno() = mainchain[ torsion -1 ];
 		} else {
 			// AMW: Remember: chain_end does not refer to the actual chain end if we're in a one chain pose.
 			// Also, num_chains is 2 if we are in a one chain pose because fuck my life.
 			Residue const cterm_res = ( num_chains() == 1 || rsd.chain() == num_chains() - 1 ) ?
-					*residues_[ size() ] : *residues_[ chain_end( rsd.chain() ) ];
+				*residues_[ size() ] : *residues_[ chain_end( rsd.chain() ) ];
 			if ( rsd.has_variant_type( chemical::NTERM_CONNECT ) &&
 					cterm_res.has_variant_type( chemical::CTERM_CONNECT ) ) {
 				// Assume that they are connected as a cyclic polymer.
@@ -3468,7 +3468,7 @@ Conformation::backbone_torsion_angle_atoms(
 				AtomIndices const & cyclic_partner_mainchain( cterm_res.mainchain_atoms() );
 				id1.rsd() = cterm_res.seqpos(); // last residue in chain
 				id1.atomno() = cyclic_partner_mainchain[
-						cyclic_partner_mainchain.size() ]; // last mainchain atom in last residue in chain
+					cyclic_partner_mainchain.size() ]; // last mainchain atom in last residue in chain
 			} else if ( fold_tree_->is_cutpoint( seqpos - 1 ) ) { // seems like this should be a bug if seqpos==1
 				if ( rsd.has_variant_type( chemical::CUTPOINT_UPPER ) ) {
 					id1.rsd() = seqpos; id1.atomno() = rsd.atom_index( "OVU1" );
@@ -3489,7 +3489,7 @@ Conformation::backbone_torsion_angle_atoms(
 					// Get the atom index in the connected residue of the atom that's making a connection to THIS
 					// residue's connection #1.  (Convoluted, I know.)
 					id1.atomno() = residue_( id1.rsd() ).residue_connect_atom_index(
-							rsd.residue_connection_conn_id( rsd.type().lower_connect_id() ) );
+						rsd.residue_connection_conn_id( rsd.type().lower_connect_id() ) );
 				} else {
 					// first bb-torsion is not well-defined
 					return true; // FAILURE
@@ -3510,7 +3510,7 @@ Conformation::backbone_torsion_angle_atoms(
 				// Get the atom index in the connected residue of the atom that's making a connection to THIS residue's
 				// connection #1.  (Convoluted, I know.)
 				id1.atomno() = residue_(id1.rsd()).residue_connect_atom_index(
-						rsd.residue_connection_conn_id( rsd.type().lower_connect_id() ) );
+					rsd.residue_connection_conn_id( rsd.type().lower_connect_id() ) );
 			}
 		}
 
@@ -3532,7 +3532,7 @@ Conformation::backbone_torsion_angle_atoms(
 				// Assume that they are connected as a cyclic polymer.
 				// psi and omega are defined even though it is the last residue.
 				AtomIndices const & cyclic_partner_mainchain(
-						residue_( chain_begin( rsd.chain() ) ).mainchain_atoms() );
+					residue_( chain_begin( rsd.chain() ) ).mainchain_atoms() );
 				if ( torsion == 2 ) {
 					//TR << "HI MOM, CTERM, 2" << std::endl;
 					id3.rsd() = seqpos; id3.atomno() = mainchain[ 3 ];
@@ -3543,13 +3543,13 @@ Conformation::backbone_torsion_angle_atoms(
 					id4.rsd() = chain_begin( rsd.chain() ); id4.atomno() = cyclic_partner_mainchain[ 2 ];
 				} // Shouldn't there be an else here for if torsion is not 2 or 3? ~Labonte
 
-			// As far as I can tell, this next else if statement covers a whole bunch of very special cases.
-			// It's exceptionally ugly, and I'm trying to isolate it as much as possible to keep it from being invoked
-			// accidentally (as it seems to be).
-			} else if ( 	fold_tree_->is_cutpoint( seqpos ) &&
+				// As far as I can tell, this next else if statement covers a whole bunch of very special cases.
+				// It's exceptionally ugly, and I'm trying to isolate it as much as possible to keep it from being invoked
+				// accidentally (as it seems to be).
+			} else if (  fold_tree_->is_cutpoint( seqpos ) &&
 					! ( seqpos == residues_.size() && rsd.has_upper_connect() &&
-							! rsd.connection_incomplete( rsd.type().upper_connect_id() )
-							/*special case -- last residue is connected to something at its upper connection*/ ) &&
+					! rsd.connection_incomplete( rsd.type().upper_connect_id() )
+					/*special case -- last residue is connected to something at its upper connection*/ ) &&
 					! ( rsd.has_variant_type( chemical::METHYLATED_CTERMINUS_VARIANT ) ) ) {
 				if ( rsd.has_variant_type( chemical::CUTPOINT_LOWER ) ) {
 					if ( torsion + 1 == ntorsions ) {
@@ -3608,7 +3608,7 @@ Conformation::backbone_torsion_angle_atoms(
 					return true;
 				}
 				AtomIndices const & next_mainchain (
-						residue_( rsd.residue_connection_partner( rsd.type().upper_connect_id() ) ).mainchain_atoms() );
+					residue_( rsd.residue_connection_partner( rsd.type().upper_connect_id() ) ).mainchain_atoms() );
 
 				if ( torsion + 1 == ntorsions ) {
 					// If this is the second-to-last torsion angle (e.g. psi, in alpha-amino acids)
@@ -3625,7 +3625,7 @@ Conformation::backbone_torsion_angle_atoms(
 					// Get the atom index in the connected residue of the atom that's making a connection to THIS
 					// residue's connection #2.
 					id4.atomno() = residue_( id4.rsd() ).residue_connect_atom_index(
-							rsd.residue_connection_conn_id( rsd.type().upper_connect_id() ) );
+						rsd.residue_connection_conn_id( rsd.type().upper_connect_id() ) );
 
 				} else { // If this is the last torsion angle (e.g. omega, in alpha- or beta-amino acids).
 					debug_assert( torsion == ntorsions );
@@ -3641,11 +3641,11 @@ Conformation::backbone_torsion_angle_atoms(
 					// Get the atom index in the connected residue of the atom that's making a connection to THIS
 					// residue's connection #2.
 					id3.atomno() = residue_( id3.rsd() ).residue_connect_atom_index(
-							rsd.residue_connection_conn_id( rsd.type().upper_connect_id() ) );
+						rsd.residue_connection_conn_id( rsd.type().upper_connect_id() ) );
 
 					if ( next_mainchain.size() >= 2 ) {
 						id4.rsd() = id3.rsd();
-						if( id3.atomno() == next_mainchain[ 1 ] ) {
+						if ( id3.atomno() == next_mainchain[ 1 ] ) {
 							id4.atomno() = next_mainchain[ 2 ];
 						} else {
 							// Let the fourth atom index be the parent atom of the third if it is not the first
@@ -3689,11 +3689,11 @@ Conformation::backbone_torsion_angle_atoms(
 /// @author  Labonte <JWLabonte@jhu.edu>
 bool
 Conformation::branch_connection_torsion_angle_atoms(
-		TorsionID const & torsion,
-		AtomID & id1,
-		AtomID & id2,
-		AtomID & id3,
-		AtomID & id4 ) const
+	TorsionID const & torsion,
+	AtomID & id1,
+	AtomID & id2,
+	AtomID & id3,
+	AtomID & id4 ) const
 {
 	using namespace std;
 	using namespace id;
@@ -3757,22 +3757,22 @@ bool Conformation::atoms_are_bonded(
 	AtomID const &id1,
 	AtomID const &id2
 ) const {
-	if(id1.rsd()==id2.rsd()) { //If the atoms are in the same residue
-		if(residue_(id1.rsd()).type().atoms_are_bonded( id1.atomno(), id2.atomno() ) ) return true;
+	if ( id1.rsd()==id2.rsd() ) { //If the atoms are in the same residue
+		if ( residue_(id1.rsd()).type().atoms_are_bonded( id1.atomno(), id2.atomno() ) ) return true;
 		else return false; //Should be redundant.
 	} else { //If the atoms are in different residues
-		if(!residue_(id1.rsd()).is_bonded( residue_(id2.rsd()) ) ) return false;
+		if ( !residue_(id1.rsd()).is_bonded( residue_(id2.rsd()) ) ) return false;
 		//Get the list of connection ids in residue 1 that connect to residue 2:
 		utility::vector1< core::Size > connlist = residue_(id1.rsd()).connections_to_residue(id2.rsd());
 
 		//Loop through these, and check each for a connection between the atom pair in question.
-		for(core::Size i=1, imax=connlist.size(); i<=imax; ++i) {
+		for ( core::Size i=1, imax=connlist.size(); i<=imax; ++i ) {
 			//Does the current connection id in residue 1 correspond to the correct atom index in residue 1?:
-			if(residue_(id1.rsd()).residue_connect_atom_index(connlist[i]) != id1.atomno() ) continue;
+			if ( residue_(id1.rsd()).residue_connect_atom_index(connlist[i]) != id1.atomno() ) continue;
 			//Redundant check: the current connection id in residue 1 should connect to residue 2:
-		debug_assert(residue_(id1.rsd()).connected_residue_at_resconn(connlist[i]) == id2.rsd() );
+			debug_assert(residue_(id1.rsd()).connected_residue_at_resconn(connlist[i]) == id2.rsd() );
 			//Does the current connection id in residue 1 connect to a residue id in residue 2 with the correct atom id?:
-			if(   residue_(id2.rsd()).residue_connect_atom_index( residue_(id1.rsd()).residue_connection_conn_id( connlist[i]) ) == id2.atomno() ) return true;
+			if (   residue_(id2.rsd()).residue_connect_atom_index( residue_(id1.rsd()).residue_connection_conn_id( connlist[i]) ) == id2.atomno() ) return true;
 		}
 	}
 	return false;
@@ -3800,7 +3800,7 @@ Conformation::update_residue_coordinates() const
 
 	PROF_START( basic::UPDATE_RESIDUE_COORDINATES );
 	for ( kinematics::ResidueListIterator iter = atom_tree_->residue_xyz_change_list_begin(),
-		iter_end = atom_tree_->residue_xyz_change_list_end(); iter != iter_end; ++iter ) {
+			iter_end = atom_tree_->residue_xyz_change_list_end(); iter != iter_end; ++iter ) {
 		update_residue_coordinates( *iter, false );
 	}
 	atom_tree_->note_coordinate_change_registered();
@@ -3847,8 +3847,8 @@ Conformation::rederive_chain_endings()
 	chain_endings_.clear();
 	for ( Size i=1, ie=size()-1; i<=ie; ++i ) {
 		if ( residues_[i+1]->chain() != residues_[i]->chain() ) {
-		debug_assert( residues_[i+1]->chain() > residues_[i]->chain() );
-			// 		debug_assert( residues_[i+1]->chain() == residues_[i]->chain() + 1 );
+			debug_assert( residues_[i+1]->chain() > residues_[i]->chain() );
+			//   debug_assert( residues_[i+1]->chain() == residues_[i]->chain() + 1 );
 			chain_endings_.push_back( i );
 		}
 	}
@@ -3884,7 +3884,7 @@ Conformation::update_residue_torsions( Size const seqpos, bool const fire_signal
 	using id::NU;
 
 	Residue & rsd( *residues_[seqpos] );
-    
+
 	// mainchain
 	for ( Size j=1, j_end = rsd.mainchain_torsions().size(); j<= j_end; ++j ) {
 		// these hacks are for cyclization
@@ -3902,9 +3902,8 @@ Conformation::update_residue_torsions( Size const seqpos, bool const fire_signal
 				residues_[ id2.rsd() ]->xyz( id2.atomno() ),
 				residues_[ id3.rsd() ]->xyz( id3.atomno() ),
 				residues_[ id4.rsd() ]->xyz( id4.atomno() ) );
-		}
-		// psi and omg of last residue in cycle
-		else if ( rsd.has_variant_type( chemical::CTERM_CONNECT ) && residues_[ chain_begin( rsd.chain() ) ]->has_variant_type( chemical::NTERM_CONNECT ) && ( j == 2 || j == 3 ) ) {
+		} else if ( rsd.has_variant_type( chemical::CTERM_CONNECT ) && residues_[ chain_begin( rsd.chain() ) ]->has_variant_type( chemical::NTERM_CONNECT ) && ( j == 2 || j == 3 ) ) {
+			// psi and omg of last residue in cycle
 			// calc torsion from xyz since those DOFs are not in atom tree
 			// not sure how well this will work since the xyz might not be up to date
 			TorsionID tid(seqpos,BB,j);
@@ -3917,22 +3916,20 @@ Conformation::update_residue_torsions( Size const seqpos, bool const fire_signal
 				residues_[ id2.rsd() ]->xyz( id2.atomno() ),
 				residues_[ id3.rsd() ]->xyz( id3.atomno() ),
 				residues_[ id4.rsd() ]->xyz( id4.atomno() ) );
-		}
-		// make rot lib case
-		else if ( rsd.has_variant_type( chemical::METHYLATED_CTERMINUS_VARIANT ) && rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) ){
+		} else if ( rsd.has_variant_type( chemical::METHYLATED_CTERMINUS_VARIANT ) && rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) ) {
+			// make rot lib case
 			if ( j < rsd.mainchain_torsions().size() ) {
 				//TR << "amw in update_residue_torsions, considering running get_torsion_angle_atom_ids on torsion " << j << std::endl;
-                TorsionID tid(seqpos,BB,j);
+				TorsionID tid(seqpos,BB,j);
 				AtomID id1, id2, id3, id4;
-    	   	    get_torsion_angle_atom_ids( tid, id1, id2, id3, id4 );
+				get_torsion_angle_atom_ids( tid, id1, id2, id3, id4 );
 				//TR << "amw torsion " << j << " has atoms " << residue_( id1.rsd() ).atom_name(id1.atomno()) << "-" << residue_( id2.rsd() ).atom_name(id2.atomno()) << "-" << residue_( id3.rsd() ).atom_name(id3.atomno()) << "-" << residue_( id4.rsd() ).atom_name(id4.atomno()) << "." << std::endl;
 				//TR << "amw torsion " << j << " has atoms " << id1.atomno() << "-" << id2.atomno() << "-" << id3.atomno() << "-" << id4.atomno() << "." << std::endl;
 				//TR << "amw about to assign torison " << j << " the value " << atom_tree_torsion( TorsionID(seqpos, BB, j)) << std::endl;
 				rsd.mainchain_torsions()[ j ] = atom_tree_torsion( TorsionID(seqpos,BB,j) );
 			}
-		}
-		// normal residue
-		else {
+		} else {
+			// normal residue
 			rsd.mainchain_torsions()[ j ] = atom_tree_torsion( TorsionID(seqpos,BB,j) );
 		}
 	}
@@ -3967,11 +3964,11 @@ Conformation::add_pseudobond(
 )
 {
 	PseudoBondCollectionOP new_pbs;
-debug_assert(residues_.size()>0);
-debug_assert(lr>0);
-debug_assert(lr_connid>0);//?
-debug_assert(ur>0);
-debug_assert(ur_connid>0);//?
+	debug_assert(residues_.size()>0);
+	debug_assert(lr>0);
+	debug_assert(lr_connid>0);//?
+	debug_assert(ur>0);
+	debug_assert(ur_connid>0);//?
 
 	if ( residues_[ lr ]->is_pseudo_bonded( *residues_[ ur ] ) ) {
 		PseudoBondCollectionCOP existing_pbs = residues_[ lr ]->get_pseudobonds_to_residue( ur );
@@ -3994,7 +3991,7 @@ Conformation::in_place_copy(
 	Conformation const & src
 )
 {
-debug_assert( src.size() == size() );
+	debug_assert( src.size() == size() );
 
 	/// BEGIN IN PLACE OPTIMIZATION
 
@@ -4022,11 +4019,11 @@ debug_assert( src.size() == size() );
 	chain_endings_ = src.chain_endings_;
 	// secstruct
 	secstruct_ = src.secstruct_;
-	
+
 	// parametric conformations
 	parameters_set_.clear();
-	if(src.parameters_set_.size() > 0) {
-		for(core::Size i=1, imax=src.parameters_set_.size(); i<=imax; ++i) {
+	if ( src.parameters_set_.size() > 0 ) {
+		for ( core::Size i=1, imax=src.parameters_set_.size(); i<=imax; ++i ) {
 			parameters_set_.push_back( src.parameters_set_[i]->clone() );
 			//parameters_set_[parameters_set_.size()]->update_residue_links( *this );
 		}
@@ -4034,7 +4031,7 @@ debug_assert( src.size() == size() );
 
 	// bookkeeping
 	residue_coordinates_need_updating_ = src.residue_coordinates_need_updating_;
-	residue_torsions_need_updating_	= src.residue_torsions_need_updating_;
+	residue_torsions_need_updating_ = src.residue_torsions_need_updating_;
 
 	dof_moved_ = src.dof_moved_;
 	xyz_moved_ = src.xyz_moved_;
@@ -4042,8 +4039,9 @@ debug_assert( src.size() == size() );
 	structure_moved_ = src.structure_moved_;
 
 	// final update of records -- keep this last in this scope:
-	for(core::Size i=1, imax=parameters_set_.size(); i<=imax; ++i)
+	for ( core::Size i=1, imax=parameters_set_.size(); i<=imax; ++i ) {
 		parameters_set_[i]->update_residue_links( *this );
+	}
 
 } // in_place_copy
 
@@ -4068,14 +4066,14 @@ Conformation::pre_nresidue_change()
 void
 insert_chemical_chainbreak_between_polymer_residues( Size const lower_seqpos )
 {
-	ResidueOP lower_rsd( residues_[ lower_seqpos ] );
+ResidueOP lower_rsd( residues_[ lower_seqpos ] );
 
-	// the type of the desired variant residue
-	ResidueTypeSet const & rsd_set( lower_rsd->residue_type_set() );
+// the type of the desired variant residue
+ResidueTypeSet const & rsd_set( lower_rsd->residue_type_set() );
 
-	ResidueType const & new_lower_rsd_type
-		( rsd_set.get_residue_type_with_variant_removed( lower_rsd.type(), UPPER_TERMINUS ) );
-	ResidueOP new_lower_rsd( ResidueFactory::create_residue( new_lower_rsd_type ) );
+ResidueType const & new_lower_rsd_type
+( rsd_set.get_residue_type_with_variant_removed( lower_rsd.type(), UPPER_TERMINUS ) );
+ResidueOP new_lower_rsd( ResidueFactory::create_residue( new_lower_rsd_type ) );
 }
 **/
 /////////////////////////////////////////////////////
@@ -4140,7 +4138,7 @@ Conformation::notify_xyz_obs( XYZEvent const & e, bool const fire_general ) cons
 
 std::ostream &operator<< (std::ostream &os, Conformation const &conf)
 {
- 	conf.show_residue_connections(os);
+	conf.show_residue_connections(os);
 	return os;
 }
 

@@ -89,15 +89,12 @@ void VdwGrid::refresh(core::pose::Pose const & pose, core::Vector const &  )
 	this->fill_with_value(cutoff_);
 
 
-	for(core::Size residue_index = 1; residue_index <= pose.n_residue(); ++residue_index)
-	{
+	for ( core::Size residue_index = 1; residue_index <= pose.n_residue(); ++residue_index ) {
 		core::conformation::Residue residue = pose.residue(residue_index);
-		if(residue.chain() == chain_id)
-		{
+		if ( residue.chain() == chain_id ) {
 			continue;
 		}
-		for(core::Size atom_index = 1; atom_index <= residue.natoms();++atom_index)
-		{
+		for ( core::Size atom_index = 1; atom_index <= residue.natoms(); ++atom_index ) {
 			core::id::AtomID atom_id(atom_index,residue_index);
 			core::Vector xyz(pose.xyz(atom_id));
 			core::Real const & radius(residue.atom_type(atom_index).lj_radius());
@@ -122,18 +119,16 @@ VdwGrid::~VdwGrid()
 }
 
 core::Real VdwGrid::score(
-		core::conformation::UltraLightResidue const & residue,
-		core::Real const max_score,
-		qsarMapOP /*qsar_map*/)
+	core::conformation::UltraLightResidue const & residue,
+	core::Real const max_score,
+	qsarMapOP /*qsar_map*/)
 {
 	core::Real score = 0.0;
 
-	for(core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index )
-	{
+	for ( core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index ) {
 		core::Vector const & atom_coord(residue[atom_index]);
 		core::Real const & radius(residue.residue()->atom_type(atom_index).lj_radius());
-		if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
-		{
+		if ( this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()) ) {
 			core::Real max_radius = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
 			core::Real spline_score = 0.0;
 			core::Real spline_score_deriv = 0.0;
@@ -147,14 +142,13 @@ core::Real VdwGrid::score(
 }
 
 core::Real VdwGrid::atom_score(
-		core::conformation::UltraLightResidue const & residue,
-		core::Size atomno,
-		qsarMapOP /*qsar_map*/)
+	core::conformation::UltraLightResidue const & residue,
+	core::Size atomno,
+	qsarMapOP /*qsar_map*/)
 {
 	core::Vector const & atom_coord(residue[atomno]);
 	core::Real const & radius(residue.residue()->atom_type(atomno).lj_radius());
-	if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
-	{
+	if ( this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()) ) {
 		core::Real max_radius = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
 		core::Real spline_score = 0.0;
 		core::Real spline_score_deriv = 0.0;
@@ -170,12 +164,10 @@ core::Real VdwGrid::score(core::conformation::Residue const & residue, core::Rea
 {
 	core::Real score = 0.0;
 
-	for(core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index )
-	{
+	for ( core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index ) {
 		core::Vector const & atom_coord(residue.xyz(atom_index));
 		core::Real const & radius(residue.atom_type(atom_index).lj_radius());
-		if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
-		{
+		if ( this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()) ) {
 			core::Real max_radius = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
 			core::Real spline_score = 0.0;
 			core::Real spline_score_deriv = 0.0;
@@ -192,8 +184,7 @@ core::Real VdwGrid::atom_score(core::conformation::Residue const & residue, core
 {
 	core::Vector const & atom_coord(residue.xyz(atomno));
 	core::Real const & radius(residue.atom_type(atomno).lj_radius());
-	if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
-	{
+	if ( this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()) ) {
 		core::Real max_radius = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
 		core::Real spline_score = 0.0;
 		core::Real spline_score_deriv = 0.0;
@@ -213,9 +204,9 @@ utility::json_spirit::Value VdwGrid::serialize()
 	Pair cutoff_data("cutoff",Value(cutoff_));
 	Pair spline_data("spline",lj_spline_->serialize());
 	Pair base_data("base_data",SingleGrid::serialize());
-	#ifdef PYROSETTA
+#ifdef PYROSETTA
 		Value _;  return _;
-	#endif
+#endif
 	return Value(utility::tools::make_vector(cutoff_data,spline_data,base_data));
 }
 

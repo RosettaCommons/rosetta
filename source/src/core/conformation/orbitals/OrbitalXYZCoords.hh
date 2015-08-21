@@ -21,9 +21,9 @@
 #include <numeric/xyzVector.hh>
 
 
-namespace core{
-namespace conformation{
-namespace orbitals{
+namespace core {
+namespace conformation {
+namespace orbitals {
 
 
 class OrbitalXYZCoords {

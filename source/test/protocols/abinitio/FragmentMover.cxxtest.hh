@@ -204,71 +204,71 @@ static basic::Tracer tr("protocols.simple_moves.FragmentMover.cxxtest", basic::t
 
 class FragmentMoverTest : public CxxTest::TestSuite
 {
-  pose::Pose pose_;
+	pose::Pose pose_;
 public:
-  FragmentMoverTest() {};
+	FragmentMoverTest() {};
 
-  // Shared initialization goes here.
-  void setUp() {
-    core_init();
-    core::import_pose::pose_from_pdb( pose_, "protocols/abinitio/2GB3.pdb" );
+	// Shared initialization goes here.
+	void setUp() {
+		core_init();
+		core::import_pose::pose_from_pdb( pose_, "protocols/abinitio/2GB3.pdb" );
 
-    fragset3mer_ = ConstantLengthFragSetOP( new ConstantLengthFragSet );
-    fragset3mer_->read_fragment_file( "protocols/abinitio/mfr_aa2GB3_03_05.200_v1_3" );
+		fragset3mer_ = ConstantLengthFragSetOP( new ConstantLengthFragSet );
+		fragset3mer_->read_fragment_file( "protocols/abinitio/mfr_aa2GB3_03_05.200_v1_3" );
 
-    TS_ASSERT_EQUALS( fragset3mer_->max_frag_length(), 3 );
-  }
-  void test_proposed_ss();
+		TS_ASSERT_EQUALS( fragset3mer_->max_frag_length(), 3 );
+	}
+	void test_proposed_ss();
 	void test_ss_check();
-  void test_mover();
-  void test_window_start();
+	void test_mover();
+	void test_window_start();
 	void test_steal();
-  // Shared finalization goes here.
-  void tearDown() {
-  }
+	// Shared finalization goes here.
+	void tearDown() {
+	}
 
 private:
-  ConstantLengthFragSetOP fragset3mer_;
+	ConstantLengthFragSetOP fragset3mer_;
 };
 
 
 void FragmentMoverTest::test_mover() {
-  using namespace pose;
-  using namespace fragment;
-  using namespace protocols;
-  using namespace simple_moves;
-  using namespace scoring;
-  kinematics::MoveMapOP movemap( new kinematics::MoveMap ); //dummy ( functionality not used yet )
-  //Size len (3);
-  movemap->set_bb( true );
-  //	for (Size ii=1; ii<=6; ii++ ) {
-  //	movemap->set_bb( ii, false );
-  //	movemap->set_bb( pose_.total_residue()-ii, false );
-  //	TS_ASSERT( !movemap->get_bb( ii ) );
-  //}
+	using namespace pose;
+	using namespace fragment;
+	using namespace protocols;
+	using namespace simple_moves;
+	using namespace scoring;
+	kinematics::MoveMapOP movemap( new kinematics::MoveMap ); //dummy ( functionality not used yet )
+	//Size len (3);
+	movemap->set_bb( true );
+	// for (Size ii=1; ii<=6; ii++ ) {
+	// movemap->set_bb( ii, false );
+	// movemap->set_bb( pose_.total_residue()-ii, false );
+	// TS_ASSERT( !movemap->get_bb( ii ) );
+	//}
 	// Pose pose = pose_;
-  //FragmentMover mover( fragset3mer_, movemap, new GunnCost( 7.0 ) );
-  //	moves::TrialMover wobble_min_trial
+	//FragmentMover mover( fragset3mer_, movemap, new GunnCost( 7.0 ) );
+	// moves::TrialMover wobble_min_trial
 
-  //for ( Size i=1; i<= 100; i++ ) {
+	//for ( Size i=1; i<= 100; i++ ) {
 	// tr.Debug << " ----------------------------- " << i << " -------------------------------- " << std::endl;
-    //wobbles.apply( pose );
-  //  pose=pose_;
-  //};
+	//wobbles.apply( pose );
+	//  pose=pose_;
+	//};
 }
 
 void FragmentMoverTest::test_steal() {
-  using namespace pose;
-  using namespace fragment;
-  using namespace protocols;
-  using namespace simple_moves;
-  using namespace scoring;
+	using namespace pose;
+	using namespace fragment;
+	using namespace protocols;
+	using namespace simple_moves;
+	using namespace scoring;
 
-	for ( ConstFrameIterator it = fragset3mer_->begin(), eit = fragset3mer_->end(); it!=eit; ++it ){
+	for ( ConstFrameIterator it = fragset3mer_->begin(), eit = fragset3mer_->end(); it!=eit; ++it ) {
 		TS_ASSERT_EQUALS( (*it)->nr_frags() , 200 );
 	}
 	steal_constant_length_frag_set_from_pose( pose_, *fragset3mer_ );
-	for ( ConstFrameIterator it = fragset3mer_->begin(), eit = fragset3mer_->end(); it!=eit; ++it ){
+	for ( ConstFrameIterator it = fragset3mer_->begin(), eit = fragset3mer_->end(); it!=eit; ++it ) {
 		TS_ASSERT_EQUALS( (*it)->nr_frags() , 201 );
 	}
 
@@ -277,48 +277,48 @@ void FragmentMoverTest::test_steal() {
 //checks whether the proposed secondary structure is correct
 // does not check whether the ss-check is applied correctly in FragmentMover
 void FragmentMoverTest::test_proposed_ss() {
-  using namespace pose;
-  using namespace fragment;
-  using namespace protocols;
-  using namespace simple_moves;
-  using namespace scoring;
+	using namespace pose;
+	using namespace fragment;
+	using namespace protocols;
+	using namespace simple_moves;
+	using namespace scoring;
 
 
-  std::string proposed_ss;
-  proposed_ss.reserve( pose_.total_residue() );
-  proposed_ss = pose_.secstruct(); // full ss-string from pose
-  std::string old_ss = proposed_ss;
-  kinematics::MoveMapOP movemap( new kinematics::MoveMap ); //dummy ( functionality not used yet )
-  //Size len (3);
-  movemap->set_bb( true );
-  ClassicFragmentMover mover ( fragset3mer_, movemap );
-  TS_ASSERT( mover.valid_ss( proposed_ss ) );
-  std::string full_result("");
+	std::string proposed_ss;
+	proposed_ss.reserve( pose_.total_residue() );
+	proposed_ss = pose_.secstruct(); // full ss-string from pose
+	std::string old_ss = proposed_ss;
+	kinematics::MoveMapOP movemap( new kinematics::MoveMap ); //dummy ( functionality not used yet )
+	//Size len (3);
+	movemap->set_bb( true );
+	ClassicFragmentMover mover ( fragset3mer_, movemap );
+	TS_ASSERT( mover.valid_ss( proposed_ss ) );
+	std::string full_result("");
 	full_result.reserve( 130*200 );
-  int ct = 1;
-  for ( FragID_Iterator it = fragset3mer_->begin(), eit = fragset3mer_->end();
-	it!=eit; ++it , ++ ct) {
+	int ct = 1;
+	for ( FragID_Iterator it = fragset3mer_->begin(), eit = fragset3mer_->end();
+			it!=eit; ++it , ++ ct ) {
 		for ( int i = 1; i<=10 && it!=eit;  ++i ) ++it;
 		if ( it == eit ) break;
-    proposed_ss = old_ss;
-    it->apply_ss( *movemap, proposed_ss );
-    tr.Debug << "proposed_ss " << proposed_ss << std::endl;
-    if ( mover.valid_ss( proposed_ss ) ) {
-      full_result.push_back ( 'y' );
-    } else {
-      full_result.push_back( 'n' );
-    }
+		proposed_ss = old_ss;
+		it->apply_ss( *movemap, proposed_ss );
+		tr.Debug << "proposed_ss " << proposed_ss << std::endl;
+		if ( mover.valid_ss( proposed_ss ) ) {
+			full_result.push_back ( 'y' );
+		} else {
+			full_result.push_back( 'n' );
+		}
 
-    //each 100 fragment also try if it is the same result if we apply it to pose directly
-    if ( ct % 1000  == 0 ) {
+		//each 100 fragment also try if it is the same result if we apply it to pose directly
+		if ( ct % 1000  == 0 ) {
 			tr.Info << "run full ss-check on fragment insertion" << std::endl;
-      pose::Pose scratch_pose = pose_;
-      it->apply( *movemap, scratch_pose );
-      TS_ASSERT( scratch_pose.secstruct() == proposed_ss );
-    }
-  }
+			pose::Pose scratch_pose = pose_;
+			it->apply( *movemap, scratch_pose );
+			TS_ASSERT( scratch_pose.secstruct() == proposed_ss );
+		}
+	}
 
-  tr.Info << "valid_ss history " << std::endl;
+	tr.Info << "valid_ss history " << std::endl;
 	//std::ofstream out( "valid_ss.dat" );
 	//out << full_result << std::endl;
 	std::string check_result;
@@ -331,19 +331,19 @@ void FragmentMoverTest::test_proposed_ss() {
 //checks whether the proposed secondary structure is correct
 // does not check whether the ss-check is applied correctly in FragmentMover
 void FragmentMoverTest::test_ss_check() {
-  using namespace pose;
-  using namespace fragment;
-  using namespace protocols;
-  using namespace simple_moves;
-  using namespace scoring;
+	using namespace pose;
+	using namespace fragment;
+	using namespace protocols;
+	using namespace simple_moves;
+	using namespace scoring;
 
 	std::string const proposed_ss( pose_.secstruct() ); // full ss-string from pose
-  kinematics::MoveMapOP movemap( new kinematics::MoveMap );
-  movemap->set_bb( true );
-  ClassicFragmentMover mover ( fragset3mer_, movemap );
+	kinematics::MoveMapOP movemap( new kinematics::MoveMap );
+	movemap->set_bb( true );
+	ClassicFragmentMover mover ( fragset3mer_, movemap );
 
 	//check that we start with valid_ss
-  TS_ASSERT( mover.valid_ss( proposed_ss ) );
+	TS_ASSERT( mover.valid_ss( proposed_ss ) );
 
 	pose::Pose scratch_pose = pose_;
 	tr.Info << "do a couple of fragment moves and check whether wrong ss is accepted" << std::endl;
@@ -356,17 +356,17 @@ void FragmentMoverTest::test_ss_check() {
 
 
 void FragmentMoverTest::test_window_start() {
-  using namespace pose;
-  using namespace fragment;
-  using namespace protocols;
-  using namespace simple_moves;
-  using namespace scoring;
+	using namespace pose;
+	using namespace fragment;
+	using namespace protocols;
+	using namespace simple_moves;
+	using namespace scoring;
 
-  // test if all insertable positions are chosen
-  kinematics::MoveMapOP movemap( new kinematics::MoveMap ); //dummy ( functionality not used yet )
-  movemap->set_bb( true );
+	// test if all insertable positions are chosen
+	kinematics::MoveMapOP movemap( new kinematics::MoveMap ); //dummy ( functionality not used yet )
+	movemap->set_bb( true );
 	std::map< Size, Size > inserted_pos; // make it a set such that it will be sorted and no positions are doubled
-  core::fragment::InsertMap insert_map;
+	core::fragment::InsertMap insert_map;
 	core::fragment::InsertSize insert_size;
 
 	// disallow some residues to save sampling time ( and to make it more tricky )
@@ -380,7 +380,7 @@ void FragmentMoverTest::test_window_start() {
 	}
 
 	// there is already a check for generate_insert_map in core/fragment ... should be correct here
-  fragset3mer_->generate_insert_map( *movemap, insert_map, insert_size );
+	fragset3mer_->generate_insert_map( *movemap, insert_map, insert_size );
 
 	ClassicFragmentMover mover ( fragset3mer_, movemap );
 
@@ -411,8 +411,8 @@ void FragmentMoverTest::test_window_start() {
 		// find maximum
 		Size max = inserted_pos[ center_pos ];
 		//for ( Size ct = 1; ct <= insert_map.size(); ct++ ) {
-		//	Size m = inserted_pos[ insert_map[ ct ] ];
-		//	if ( m > max ) max = m;
+		// Size m = inserted_pos[ insert_map[ ct ] ];
+		// if ( m > max ) max = m;
 		//}
 
 		// check for bias
@@ -430,19 +430,19 @@ void FragmentMoverTest::test_window_start() {
 			// this checks for a correct distribution of positions: if slightly inaccurate -- maybe just more sampling required ? --> nmoves
 		}
 	} // passes
-	//	TS_ASSERT( success );
+	// TS_ASSERT( success );
 	if ( !success ) {
 		Size max = inserted_pos[ center_pos ];
 		// make notification to test-system
-			for ( Size ct = 1; ct <= insert_map.size() && success; ct++ ) {
-				Size begin = insert_map[ ct ];
-				Size min_fixed_residues;
-				Size const fixed_residues =
-					pose_.fold_tree().count_fixed_residues( begin, insert_size[ begin ], min_fixed_residues );
+		for ( Size ct = 1; ct <= insert_map.size() && success; ct++ ) {
+			Size begin = insert_map[ ct ];
+			Size min_fixed_residues;
+			Size const fixed_residues =
+				pose_.fold_tree().count_fixed_residues( begin, insert_size[ begin ], min_fixed_residues );
 
-				Real prob = std::exp( 1.0* ( (Real) min_fixed_residues - fixed_residues ) / end_bias );
-				Real freq = 1.0/max * inserted_pos[ begin ];
-				TS_ASSERT_DELTA( prob, freq, 0.04 );
-			}
+			Real prob = std::exp( 1.0* ( (Real) min_fixed_residues - fixed_residues ) / end_bias );
+			Real freq = 1.0/max * inserted_pos[ begin ];
+			TS_ASSERT_DELTA( prob, freq, 0.04 );
+		}
 	}
 }

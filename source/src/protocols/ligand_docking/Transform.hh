@@ -93,19 +93,19 @@ public:
 	virtual void apply(core::pose::Pose & pose);
 
 private:
-	
+
 	/// @brief translate a ligand residue by some random value within a uniform distribution with a max of distance
-    void translate_ligand(core::conformation::UltraLightResidue & residue, core::Real distance);
-	
+	void translate_ligand(core::conformation::UltraLightResidue & residue, core::Real distance);
+
 	/// @brief translate and rotate a random value by the distances specified in the Transform_info object, using a gaussian distribution
 	void transform_ligand(core::conformation::UltraLightResidue & residue);
-	
+
 	/// @brief randomly change the ligand conformation
 	void change_conformer(core::conformation::UltraLightResidue & residue);
-	
+
 	/// @brief output the ligand residues to a pdb file
 	void dump_conformer(core::conformation::UltraLightResidue & residue, utility::io::ozstream & output);
-	
+
 	/// @brief return true if the rmsd is within the specified cutoff
 	bool check_rmsd(core::conformation::UltraLightResidue const & start, core::conformation::UltraLightResidue const& current) const;
 
@@ -117,7 +117,7 @@ private:
 	bool output_sampled_space_;
 	bool check_rmsd_;
 	std::string sampled_space_file_;
-    core::Real initial_perturb_;
+	core::Real initial_perturb_;
 
 };
 

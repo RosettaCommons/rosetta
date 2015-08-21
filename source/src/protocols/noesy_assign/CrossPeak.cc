@@ -10,7 +10,7 @@
 /// @file FragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -78,9 +78,9 @@ core::Size CrossPeak::Spin::assignment_index( core::Size assignment ) const {
 }
 
 CrossPeak::CrossPeak( Spin const& sp1, Spin const& sp2, Real strength ) :
-  proton1_( sp1 ),
-  proton2_( sp2 ),
-  volume_( strength ),
+	proton1_( sp1 ),
+	proton2_( sp2 ),
+	volume_( strength ),
 	cumulative_peak_volume_( 1.0 ),
 	distance_bound_( 100 ), //what would be a good initial value? -1 ?
 	eliminated_( NOT_ELIMINATED ),
@@ -101,15 +101,15 @@ CrossPeak::~CrossPeak() {}
 /// @detail use for reading of assignments from file
 /// pass as spin1, spin2, label1, label2 (indices 1..4)
 void CrossPeak::add_full_assignment( Size res_ids[] ) {
-// 	std::cerr << "CrossPeak::add_full_assignment stubbed out " << res_ids[ 1 ] << std::endl;
-//  	std::cerr << "run with 'ignore_assignments'" << std::endl;
-// 	utility_exit_with_message( "stubbed function" );
+	//  std::cerr << "CrossPeak::add_full_assignment stubbed out " << res_ids[ 1 ] << std::endl;
+	//   std::cerr << "run with 'ignore_assignments'" << std::endl;
+	//  utility_exit_with_message( "stubbed function" );
 	Size ind1 = assign_spin( 1, res_ids );
 	Size ind2 = assign_spin( 2, res_ids );
 #ifndef WIN32
 	assignments_.push_back( protocols::noesy_assign::PeakAssignmentOP( new PeakAssignment( this, ind1, ind2 ) ) );
 #endif
-	//	for ( Size i = 1;
+	// for ( Size i = 1;
 	//need to find resonances in Spins and add them if they are still missing.
 	//get id for spin1 and spin2
 	//then make PeakAssignment() and add to assignments_
@@ -124,22 +124,22 @@ void CrossPeak::find_assignments( ) {
 
 	if ( proton1_.n_assigned() && proton2_.n_assigned() ) return; //if assignments are already present do nothing
 
-  runtime_assert( proton1_.n_assigned() == proton2_.n_assigned() );
-  assign_spin( 1 );
-  assign_spin( 2 );
+	runtime_assert( proton1_.n_assigned() == proton2_.n_assigned() );
+	assign_spin( 1 );
+	assign_spin( 2 );
 
-  Size const n_assigned_1( proton( 1 ).n_assigned() );
-  Size const n_assigned_2( proton( 2 ).n_assigned() );
+	Size const n_assigned_1( proton( 1 ).n_assigned() );
+	Size const n_assigned_2( proton( 2 ).n_assigned() );
 
-  for ( Size ct1 = 1; ct1 <= n_assigned_1; ++ct1 ) {
-    for ( Size ct2 = 1; ct2 <= n_assigned_2; ++ct2 ) {
+	for ( Size ct1 = 1; ct1 <= n_assigned_1; ++ct1 ) {
+		for ( Size ct2 = 1; ct2 <= n_assigned_2; ++ct2 ) {
 #ifndef WIN32
-      assignments_.push_back( protocols::noesy_assign::PeakAssignmentOP( new PeakAssignment( this, ct1, ct2 ) ) );
+			assignments_.push_back( protocols::noesy_assign::PeakAssignmentOP( new PeakAssignment( this, ct1, ct2 ) ) );
 #endif
+		}
 	}
-  }
-  //write_to_stream( tr.Debug );
-  //  tr.Debug << std::endl;
+	//write_to_stream( tr.Debug );
+	//  tr.Debug << std::endl;
 }
 
 void CrossPeak::print_peak_info( std::ostream& os ) const {
@@ -153,15 +153,15 @@ void CrossPeak::print_peak_info( std::ostream& os ) const {
 
 /// @brief assign protons based on chemical shifts and tolerances
 void CrossPeak::assign_spin( Size iproton ) {
-  //base-class: disregard label
-  Real const my_freq( proton( iproton ).freq() );
-  Real const my_tolerance( info( iproton ).proton_tolerance() );
-  for ( ResonanceList::const_iterator it = resonances().begin(); it != resonances().end(); ++it )  {
+	//base-class: disregard label
+	Real const my_freq( proton( iproton ).freq() );
+	Real const my_tolerance( info( iproton ).proton_tolerance() );
+	for ( ResonanceList::const_iterator it = resonances().begin(); it != resonances().end(); ++it )  {
 		//    if ( std::abs( fold_resonance( it->second->freq(), iproton ) - my_freq ) < std::max( my_tolerance, it->second->error() ) ) {
 		if ( it->second->match( my_freq, my_tolerance, folder( iproton ) ) ) {
-      proton( iproton ).add_assignment( it->first );
-    }
-  }
+			proton( iproton ).add_assignment( it->first );
+		}
+	}
 }
 
 /// @brief assign protons ass pre-determined
@@ -185,13 +185,13 @@ core::Real round( core::Real d, core::Size digits ) {
 
 void
 CrossPeak::create_fa_and_cen_constraint(
-			core::scoring::constraints::ConstraintOP& fa_cst,
-			core::scoring::constraints::ConstraintOP& cen_cst,
-			pose::Pose const& pose,
-			pose::Pose const& centroid_pose,
-			core::Size normalization,
-			core::Real padding,
-			bool fa_only
+	core::scoring::constraints::ConstraintOP& fa_cst,
+	core::scoring::constraints::ConstraintOP& cen_cst,
+	pose::Pose const& pose,
+	pose::Pose const& centroid_pose,
+	core::Size normalization,
+	core::Real padding,
+	bool fa_only
 ) const {
 #ifndef WIN32
 	core::Size const round_digits( 2 );
@@ -200,15 +200,15 @@ CrossPeak::create_fa_and_cen_constraint(
 	core::Real inv_weight( sqrt( 1.0*normalization )/params.cst_strength_ );
 
 	core::scoring::func::FuncOP func( new BoundFunc(1.5,
-			round(distance_bound()+padding,round_digits),
-			round(inv_weight,round_digits),
-			  "automatic NOE Peak "+ObjexxFCL::string_of( peak_id() )+" "+filename()+" Volume: "+ObjexxFCL::string_of( volume() )
-			) );
+		round(distance_bound()+padding,round_digits),
+		round(inv_weight,round_digits),
+		"automatic NOE Peak "+ObjexxFCL::string_of( peak_id() )+" "+filename()+" Volume: "+ObjexxFCL::string_of( volume() )
+		) );
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	bool const map_to_CEN( params.map_to_cen_atom_ );
-	//	tr.Debug << "MAPPING TO " << ( map_to_CEN ? "CEN-ATOM" : "C-BETA" ) << std::endl;
+	// tr.Debug << "MAPPING TO " << ( map_to_CEN ? "CEN-ATOM" : "C-BETA" ) << std::endl;
 
 	QualityClass const qc( quality_class() );
 	Real min_vc = params.min_volume_;
@@ -232,7 +232,7 @@ CrossPeak::create_fa_and_cen_constraint(
 		AmbiguousNMRConstraintOP
 			my_cen_cst( new AmbiguousNMRConstraint( func ) );
 
-		//		core::Size n( n_assigned() );
+		//  core::Size n( n_assigned() );
 		//mjo commenting out 'sd' because it is unused and causes a warning
 		//core::Real sd( 1.0/params.cst_strength_ );
 		core::Real eff_single_dist( pow( pow( distance_bound(), -6 ) / ct_ambiguous, -1.0/6 ) ); //assuming equal contribution of all which is of course wrong
@@ -272,10 +272,10 @@ CrossPeak::create_fa_and_cen_constraint(
 				mapped_inv_weight = inv_weight;
 			}
 			core::scoring::func::FuncOP centroid_bound_func( new BoundFunc( 1.5,
-					round(mapped_upl,round_digits),
-					round(mapped_inv_weight,round_digits),
-					"CEN mapped automatic NOE: Peak "+ ObjexxFCL::string_of( peak_id() )
-			) );
+				round(mapped_upl,round_digits),
+				round(mapped_inv_weight,round_digits),
+				"CEN mapped automatic NOE: Peak "+ ObjexxFCL::string_of( peak_id() )
+				) );
 			if ( my_cen_cst->member_constraints().size()<=1 ) {
 				cen_cst = my_cen_cst->member_constraints()[ 1 ]->clone( centroid_bound_func );
 			} else {
@@ -308,7 +308,7 @@ CrossPeak::create_fa_and_cen_constraint(
 			std::string const comment( "CEN mapped automatic NOE: Peak "+ ObjexxFCL::string_of( peak_id() ) );
 			cen_cst = my_cen_cst->clone( core::scoring::func::FuncOP( new BoundFunc( 1.5, round(mapped_upl,round_digits), round(mapped_inv_weight,round_digits), comment ) ) );
 		}
-		//	tr.Trace << "constraint for " << peak_id() << " finished " << std::endl;
+		// tr.Trace << "constraint for " << peak_id() << " finished " << std::endl;
 	}
 
 #endif //WIN32
@@ -316,7 +316,7 @@ CrossPeak::create_fa_and_cen_constraint(
 
 Real sigmoid( Real x, Real tau, Real m, int sign = 1 ) {
 	if ( sign > 0 ) {
-    return 1.0/(1+exp(-1.0/tau*5.0*(x-m)));
+		return 1.0/(1+exp(-1.0/tau*5.0*(x-m)));
 	}
 	return 1.0-1./(1+exp(-1.0/tau*5.0*(x-m)));
 }
@@ -464,8 +464,8 @@ bool CrossPeak::eliminated( bool recompute, bool do_not_compute ) const {
 #ifndef WIN32
 	if ( recompute && !do_not_compute ) eliminated_ = eliminated_due_to_dist_violations_ ? EL_DISTVIOL : NOT_ELIMINATED;
 	//if dist_cut problem eliminated_ should already be set to false.
-	//	tr.Trace << "elimination check for peak " << peak_id() << "...";
-	//	if ( eliminated_ ) tr.Trace << "eliminated from cached value" << std::endl;
+	// tr.Trace << "elimination check for peak " << peak_id() << "...";
+	// if ( eliminated_ ) tr.Trace << "eliminated from cached value" << std::endl;
 	if ( eliminated_ ) return true;
 	if ( do_not_compute ) return false; //not eliminated as of now...
 
@@ -476,12 +476,12 @@ bool CrossPeak::eliminated( bool recompute, bool do_not_compute ) const {
 	}
 
 	eliminated_ = !min_peak_volume_reached ? EL_MINPEAKVOL : eliminated_;
-	//	if ( eliminated_ ) tr.Trace << "eliminated (min_peak_volume)" << std::endl;
+	// if ( eliminated_ ) tr.Trace << "eliminated (min_peak_volume)" << std::endl;
 	if ( eliminated_ ) return true;
 
 	bool const too_many_assignments( assignments().size() > params.nmax_ );
 	eliminated_ = too_many_assignments ? EL_MAXASSIGN : eliminated_;
-	//	if ( eliminated_ ) tr.Trace << "eliminated (too many assignments)" << std::endl;
+	// if ( eliminated_ ) tr.Trace << "eliminated (too many assignments)" << std::endl;
 	if ( eliminated_ ) return true;
 
 	//network anchoring
@@ -495,10 +495,10 @@ bool CrossPeak::eliminated( bool recompute, bool do_not_compute ) const {
 	bool pass_network_test( N_res_sum > params.network_reswise_high_ );
 	if ( !pass_network_test ) pass_network_test = N_res_sum >= params.network_reswise_min_ && N_atom_sum >= params.network_atom_min_;
 	eliminated_ = !pass_network_test ? EL_NETWORK : eliminated_;
-	//	if ( eliminated_ ) tr.Trace << "eliminated (network)" << std::endl;
+	// if ( eliminated_ ) tr.Trace << "eliminated (network)" << std::endl;
 
 	if ( eliminated_ ) return true;
-	//	tr.Trace << "passed" << std::endl;
+	// tr.Trace << "passed" << std::endl;
 #endif
 	return false;
 }
@@ -526,7 +526,7 @@ void CrossPeak::calibrate( PeakCalibrator const& calibrator, PeakCalibrator::Typ
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	Real sum( 0.0 );
 	Size ct( 0 );
-	//	if ( volume_ <= 0.0 ) throw utility::excn::EXCN_BadInput("Peak intensity negative or zero for "+ObjexxFCL::string_of( peak_id_ ) );
+	// if ( volume_ <= 0.0 ) throw utility::excn::EXCN_BadInput("Peak intensity negative or zero for "+ObjexxFCL::string_of( peak_id_ ) );
 	for ( PeakAssignments::const_iterator it = begin(); it != end(); ++it ) {
 		CALIBRATION_ATOM_TYPE type1, type2;
 		type1 = (*it)->calibration_atom_type( 1 );
@@ -541,7 +541,7 @@ void CrossPeak::calibrate( PeakCalibrator const& calibrator, PeakCalibrator::Typ
 		sum += (vol > params.min_volume_ ? vol : 0 ) / cal / int_factor;
 		ct += vol > params.min_volume_;
 	}
-	if ( ct > 0 )	distance_bound_ = pow( sum*std::abs( volume_ ), -1.0/6.0 );
+	if ( ct > 0 ) distance_bound_ = pow( sum*std::abs( volume_ ), -1.0/6.0 );
 	else distance_bound_ = 0.0;
 
 	core::Real max_dist( info( 1 ).max_noe_distance() );
@@ -560,19 +560,19 @@ Size CrossPeak3D::assign_spin( Size iproton, Size res_id[] ) {
 
 void CrossPeak3D::assign_spin( Size iproton ) {
 	tr.Trace << "assign_spin for Peak " << peak_id() << std::endl;
-  if ( iproton == 2 ) CrossPeak::assign_spin( iproton ); //base-class: no label
-  else assign_labelled_spin( iproton );
+	if ( iproton == 2 ) CrossPeak::assign_spin( iproton ); //base-class: no label
+	else assign_labelled_spin( iproton );
 }
 
 void CrossPeak3D::assign_labelled_spin( Size iproton ) {
-  runtime_assert( has_label( iproton ));
-  Real const proton_freq( proton( iproton ).freq() );
-  Real const label_freq( label( iproton ).freq() );
-  Real const proton_tolerance( info( iproton ).proton_tolerance() );
-  Real const label_tolerance( info( iproton ).label_tolerance() );
+	runtime_assert( has_label( iproton ));
+	Real const proton_freq( proton( iproton ).freq() );
+	Real const label_freq( label( iproton ).freq() );
+	Real const proton_tolerance( info( iproton ).proton_tolerance() );
+	Real const label_tolerance( info( iproton ).label_tolerance() );
 
 	for ( ResonanceList::const_iterator it = resonances().begin(); it != resonances().end(); ++it ) {
-		//		tr.Trace << "match2D for peak " << peak_id() << " with resonance " << it->second->atom() << std::endl;
+		//  tr.Trace << "match2D for peak " << peak_id() << " with resonance " << it->second->atom() << std::endl;
 		Resonance::ResonancePairs matches;
 		if ( it->second->match2D( proton_freq, proton_tolerance, folder( iproton ), label_freq, label_tolerance, folder( iproton+2 ), matches ) ) {
 			tr.Debug << "successful 2D match for peak " << peak_id() << " with resonance " << it->second->atom() << std::endl;
@@ -586,85 +586,85 @@ void CrossPeak3D::assign_labelled_spin( Size iproton ) {
 	/*
 	/// if we have pseudo 4D spectrum we speed things up a bit by filtering out non-protons here
 	if ( my_tolerance > 99 ) {
-		for ( ResonanceList::const_iterator it = resonances().begin(); it != resonances().end(); ++it )  {
-			//			if ( std::abs( fold_resonance( it->second->freq(), iproton + 2 ) - my_label_freq ) < std::max( my_label_tolerance, it->second->error() ) ) {
-			if ( it->second->match( my_label_freq, my_label_tolerance, folder( iproton+2 ) ) ) {
-				//now find all proton-resonances that are bound to this label atom
-				core::Size resid( it->second->resid() );
-				std::string const& label_name( it->second->name() );
-				ResonanceList::Resonances const& residue_list( resonances().resonances_at_residue( resid ) );
-				for ( ResonanceList::Resonances::const_iterator rit = residue_list.begin(); rit != residue_list.end(); ++rit ) {
-					if ( (*rit)->name()[ 0 ]=='Q' || (*rit)->name().find("H") != std::string::npos ) {
-						//						tr.Debug << "resid: " << resid<< " test label: " << label_name << " with proton " << (*rit)->name() << std::endl;
-						try {
-							std::string possible_label( info( iproton ).
-								label_atom_name( (*rit)->name(), resonances().aa_from_resid( resid ) ) );
-							//tr.Debug << "found possible label " << possible_label << std::endl;
-							if ( possible_label == label_name ) {
-								label( iproton ).add_assignment( it->first );
-								proton( iproton ).add_assignment( (*rit)->label() );
-								//we have found a proton that can be attached to our label
-							}
-						} catch ( EXCN_UnknownAtomname& exception ) {
-							continue;
-						}
-					} // if rit is proton
-				} // for rit
-			} // if matched resonance
-		}// all resonances
+	for ( ResonanceList::const_iterator it = resonances().begin(); it != resonances().end(); ++it )  {
+	//   if ( std::abs( fold_resonance( it->second->freq(), iproton + 2 ) - my_label_freq ) < std::max( my_label_tolerance, it->second->error() ) ) {
+	if ( it->second->match( my_label_freq, my_label_tolerance, folder( iproton+2 ) ) ) {
+	//now find all proton-resonances that are bound to this label atom
+	core::Size resid( it->second->resid() );
+	std::string const& label_name( it->second->name() );
+	ResonanceList::Resonances const& residue_list( resonances().resonances_at_residue( resid ) );
+	for ( ResonanceList::Resonances::const_iterator rit = residue_list.begin(); rit != residue_list.end(); ++rit ) {
+	if ( (*rit)->name()[ 0 ]=='Q' || (*rit)->name().find("H") != std::string::npos ) {
+	//      tr.Debug << "resid: " << resid<< " test label: " << label_name << " with proton " << (*rit)->name() << std::endl;
+	try {
+	std::string possible_label( info( iproton ).
+	label_atom_name( (*rit)->name(), resonances().aa_from_resid( resid ) ) );
+	//tr.Debug << "found possible label " << possible_label << std::endl;
+	if ( possible_label == label_name ) {
+	label( iproton ).add_assignment( it->first );
+	proton( iproton ).add_assignment( (*rit)->label() );
+	//we have found a proton that can be attached to our label
+	}
+	} catch ( EXCN_UnknownAtomname& exception ) {
+	continue;
+	}
+	} // if rit is proton
+	} // for rit
+	} // if matched resonance
+	}// all resonances
 	} else {
-		for ( ResonanceList::const_iterator it = resonances().begin(); it != resonances().end(); ++it )  {
-			if ( it->second->match( my_freq, my_tolerance, folder( iproton ) ) ) {
-				Size resid( it->second->atom().rsd() );
-				//maybe also map resonance by resid?
-				try {
-					id::NamedAtomID atomID( info( iproton ).label_atom_name( it->second->atom().atom(), resonances().aa_from_resid( resid ) ), resid );
-					Resonance const& label_reso ( resonances()[ atomID ] );
-					//					if ( tr_labels.Trace.visible() ) {
-					//						tr_labels.Trace << "trying to match " << atomID << " as label to " << it->second->atom() << std::endl;
-					//					}
-					if ( label_reso.match( my_label_freq, my_label_tolerance, folder( iproton+2 ) ) ) {
-						proton( iproton ).add_assignment( it->first );
-						label( iproton ).add_assignment( label_reso.label() );
-					}
-				} catch ( EXCN_UnknownResonance& exception ) {
-					if ( !unknown_resonances_.count( exception.atom() ) ) {
-						unknown_resonances_.insert( exception.atom() );
-						exception.show( tr.Warning );
-						tr.Warning << " as label for atom " << it->second->atom().atom() << " " <<  resonances().aa_from_resid( resid ) << std::endl;
-					//				if ( tr.Debug.visible() ) exception.show( tr.Debug );
-					}
-					continue; //if no label is known we don't assign this proton
-				} catch ( EXCN_UnknownAtomname& exception ) { //this happens if we try to assign a proton that can't have a label: i.e., a H in a HCH spectrum
-					if ( tr_labels.Trace.visible() ) {
-						tr_labels.Trace << "cannot find label atom for resid: " + it->second->atom().atom() + " " + ObjexxFCL::string_of( resid ) + " --- ignore proton assignment" << std::endl;
-					}
-					continue;
-				}
-			}
-		}
+	for ( ResonanceList::const_iterator it = resonances().begin(); it != resonances().end(); ++it )  {
+	if ( it->second->match( my_freq, my_tolerance, folder( iproton ) ) ) {
+	Size resid( it->second->atom().rsd() );
+	//maybe also map resonance by resid?
+	try {
+	id::NamedAtomID atomID( info( iproton ).label_atom_name( it->second->atom().atom(), resonances().aa_from_resid( resid ) ), resid );
+	Resonance const& label_reso ( resonances()[ atomID ] );
+	//     if ( tr_labels.Trace.visible() ) {
+	//      tr_labels.Trace << "trying to match " << atomID << " as label to " << it->second->atom() << std::endl;
+	//     }
+	if ( label_reso.match( my_label_freq, my_label_tolerance, folder( iproton+2 ) ) ) {
+	proton( iproton ).add_assignment( it->first );
+	label( iproton ).add_assignment( label_reso.label() );
+	}
+	} catch ( EXCN_UnknownResonance& exception ) {
+	if ( !unknown_resonances_.count( exception.atom() ) ) {
+	unknown_resonances_.insert( exception.atom() );
+	exception.show( tr.Warning );
+	tr.Warning << " as label for atom " << it->second->atom().atom() << " " <<  resonances().aa_from_resid( resid ) << std::endl;
+	//    if ( tr.Debug.visible() ) exception.show( tr.Debug );
+	}
+	continue; //if no label is known we don't assign this proton
+	} catch ( EXCN_UnknownAtomname& exception ) { //this happens if we try to assign a proton that can't have a label: i.e., a H in a HCH spectrum
+	if ( tr_labels.Trace.visible() ) {
+	tr_labels.Trace << "cannot find label atom for resid: " + it->second->atom().atom() + " " + ObjexxFCL::string_of( resid ) + " --- ignore proton assignment" << std::endl;
+	}
+	continue;
+	}
+	}
+	}
 	}
 	*/
 }
 
 CrossPeak3D::CrossPeak3D( Spin const& sp1, Spin const& sp2, Spin const& label1, Real strength ) :
-  CrossPeak( sp1, sp2, strength ),
-  label1_( label1 )
+	CrossPeak( sp1, sp2, strength ),
+	label1_( label1 )
 {}
 
 CrossPeak3D::CrossPeak3D() {}
 CrossPeak3D::~CrossPeak3D() {}
 
 CrossPeak4D::CrossPeak4D( Spin const& sp1, Spin const& sp2, Spin const& label1, Spin const& label2, Real strength ) :
-  CrossPeak3D( sp1, sp2, label1, strength ),
-  label2_( label2 )
+	CrossPeak3D( sp1, sp2, label1, strength ),
+	label2_( label2 )
 {}
 
 CrossPeak4D::CrossPeak4D() {}
 CrossPeak4D::~CrossPeak4D() {}
 
 void CrossPeak4D::assign_spin( Size iproton ) {
-  assign_labelled_spin( iproton );
+	assign_labelled_spin( iproton );
 }
 
 Size CrossPeak4D::assign_spin( Size iproton, Size res_id[] ) {
@@ -742,7 +742,7 @@ Size CrossPeak4D::assign_spin( Size iproton, Size res_id[] ) {
 //     for ( Size i=1; i<=2; i++ ) {
 //       os << ObjexxFCL::format::RJ( 6, (*it)->resonance_id( i ) ) << " ";
 //       if ( has_label( i ) ) {
-// 	os << ObjexxFCL::format::RJ( 6, (*it)->label_resonance_id( i ) << " ";
+//  os << ObjexxFCL::format::RJ( 6, (*it)->label_resonance_id( i ) << " ";
 //       }
 //     }
 //   }

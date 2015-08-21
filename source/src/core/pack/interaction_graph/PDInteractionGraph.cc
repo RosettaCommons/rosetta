@@ -70,7 +70,7 @@ void PDNode::print() const
 {
 	std::cerr << "NODE: " << get_node_index() << " with " <<
 		get_num_states() << " states" << std::endl;
-	for (int ii = 1; ii <= get_num_states(); ++ii) {
+	for ( int ii = 1; ii <= get_num_states(); ++ii ) {
 		std::cerr << "(" << ii << ", " <<
 			sparse_mat_info_for_state_[ii].get_aa_type() << ", ";
 		std::cerr <<
@@ -90,10 +90,10 @@ void PDNode::print() const
 /// @param aatypes_for_state - [in] - amino acid type for each state in the node
 void PDNode::set_amino_acid_types( std::vector< int > const & aatypes_for_state)
 {
-debug_assert(aatypes_for_state.size() == (Size)(get_num_states() + 1) );
+	debug_assert(aatypes_for_state.size() == (Size)(get_num_states() + 1) );
 
-	for (int ii = 1; ii <= get_num_states(); ++ii) {
-	debug_assert( aatypes_for_state[ii] > 0 && aatypes_for_state[ii] <= (int)num_states_for_aatype_.size());
+	for ( int ii = 1; ii <= get_num_states(); ++ii ) {
+		debug_assert( aatypes_for_state[ii] > 0 && aatypes_for_state[ii] <= (int)num_states_for_aatype_.size());
 
 		sparse_mat_info_for_state_[ii].set_aa_type( aatypes_for_state[ii] );
 
@@ -133,8 +133,8 @@ void PDNode::update_one_body_energy( int state, core::PackerEnergy energy )
 /// @param energies - [in] - the array of energies. Must hold num_states_ entries
 void PDNode::update_one_body_energies( ObjexxFCL::FArray1< core::PackerEnergy > & energies )
 {
-debug_assert( energies.size() == (unsigned int) get_num_states() );
-	for (int ii = 1; ii <= get_num_states(); ++ii) {
+	debug_assert( energies.size() == (unsigned int) get_num_states() );
+	for ( int ii = 1; ii <= get_num_states(); ++ii ) {
 		one_body_energies_[ ii ] = energies( ii );
 	}
 	return;
@@ -153,8 +153,8 @@ void PDNode::add_to_one_body_energy( int state, core::PackerEnergy energy )
 /// @param energies - [in] - the array of energies. Must hold num_states_ entries
 void PDNode::add_to_one_body_energies( ObjexxFCL::FArray1< core::PackerEnergy > & energies )
 {
-debug_assert( energies.size() == (unsigned int) get_num_states() );
-	for (int ii = 1; ii <= get_num_states(); ++ii) {
+	debug_assert( energies.size() == (unsigned int) get_num_states() );
+	for ( int ii = 1; ii <= get_num_states(); ++ii ) {
 		one_body_energies_[ ii ] += energies( ii );
 	}
 	return;
@@ -162,7 +162,7 @@ debug_assert( energies.size() == (unsigned int) get_num_states() );
 
 void PDNode::zero_one_body_energies()
 {
-	for (int ii = 1; ii <= get_num_states(); ++ii) {
+	for ( int ii = 1; ii <= get_num_states(); ++ii ) {
 		one_body_energies_[ ii ] = 0;
 	}
 }
@@ -178,7 +178,7 @@ core::PackerEnergy PDNode::get_one_body_energy( int state )
 /// @details updates internal edge vector + other vectorized edge information
 void PDNode::prepare_for_simulated_annealing()
 {
-	if (! get_edge_vector_up_to_date() ) update_internal_vectors();
+	if ( ! get_edge_vector_up_to_date() ) update_internal_vectors();
 	return;
 }
 
@@ -187,24 +187,24 @@ void PDNode::prepare_for_simulated_annealing()
 unsigned int
 PDNode::getMemoryUsageInBytes() const
 {
-	unsigned int total_memory = 0;
-	total_memory += num_states_for_aatype_.size() * sizeof( int );
-	total_memory += sparse_mat_info_for_state_.size() * sizeof( SparseMatrixIndex );
-	total_memory += one_body_energies_.size() * sizeof( core::PackerEnergy );
-	total_memory += neighbors_curr_state_.size() * sizeof (int );
+unsigned int total_memory = 0;
+total_memory += num_states_for_aatype_.size() * sizeof( int );
+total_memory += sparse_mat_info_for_state_.size() * sizeof( SparseMatrixIndex );
+total_memory += one_body_energies_.size() * sizeof( core::PackerEnergy );
+total_memory += neighbors_curr_state_.size() * sizeof (int );
 
-	total_memory += aa_offsets_for_edges_.size() * sizeof( int );
-	total_memory += num_states_for_aa_type_for_higher_indexed_neighbor_.size() * sizeof( int );
-	total_memory += neighbors_curr_state_.size() * sizeof( int );
-	total_memory += neighbors_curr_state_sparse_info_.size() * sizeof( SparseMatrixIndex );
-	total_memory += edge_matrix_ptrs_.size() * sizeof( FArray1A< core::PackerEnergy > );
+total_memory += aa_offsets_for_edges_.size() * sizeof( int );
+total_memory += num_states_for_aa_type_for_higher_indexed_neighbor_.size() * sizeof( int );
+total_memory += neighbors_curr_state_.size() * sizeof( int );
+total_memory += neighbors_curr_state_sparse_info_.size() * sizeof( SparseMatrixIndex );
+total_memory += edge_matrix_ptrs_.size() * sizeof( FArray1A< core::PackerEnergy > );
 
-	total_memory += curr_state_two_body_energies_.size() * sizeof( float );
-	total_memory += alternate_state_two_body_energies_.size() * sizeof( float );
+total_memory += curr_state_two_body_energies_.size() * sizeof( float );
+total_memory += alternate_state_two_body_energies_.size() * sizeof( float );
 
-	total_memory += sizeof( PDNode );
-	//total_memory += NodeBase::getMemoryUsageInBytes();
-	return total_memory;
+total_memory += sizeof( PDNode );
+//total_memory += NodeBase::getMemoryUsageInBytes();
+return total_memory;
 }
 */
 
@@ -216,7 +216,7 @@ void PDNode::assign_zero_state()
 {
 
 	//std::cerr << "assign_state: node -  " << get_node_index() <<
-	//	" new state " << 0 << "...";
+	// " new state " << 0 << "...";
 
 	current_state_ = 0;
 	alternate_state_ = 0;
@@ -231,7 +231,7 @@ void PDNode::assign_zero_state()
 		0.0f);
 	curr_state_total_energy_ = 0.0f;
 
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		get_incident_pd_edge(ii)->
 			acknowledge_state_zeroed( get_node_index() );
 	}
@@ -246,9 +246,9 @@ void PDNode::assign_zero_state()
 ///
 void PDNode::assign_state(int new_state)
 {
-debug_assert( new_state >= 0 && new_state <= get_num_states());
+	debug_assert( new_state >= 0 && new_state <= get_num_states());
 
-	if (new_state == 0) {
+	if ( new_state == 0 ) {
 		assign_zero_state();
 	} else {
 		//std::cerr << "assign_state: node -  " << get_node_index() <<
@@ -260,7 +260,7 @@ debug_assert( new_state >= 0 && new_state <= get_num_states());
 		curr_state_total_energy_ = curr_state_one_body_energy_;
 		alternate_state_is_being_considered_ = false;
 
-		for (int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
+		for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 			get_incident_pd_edge(ii)->acknowledge_state_change(
 				get_node_index(),
 				current_state_,
@@ -294,7 +294,7 @@ float PDNode::get_one_body_energy_current_state() const
 /// leaving energy2b structure
 void PDNode::commit_considered_substitution()
 {
-debug_assert( alternate_state_is_being_considered_ );
+	debug_assert( alternate_state_is_being_considered_ );
 
 	current_state_ = alternate_state_;
 	curr_state_sparse_mat_info_ = alt_state_sparse_mat_info_;
@@ -352,9 +352,9 @@ void PDNode::update_internal_vectors()
 
 	//copy offsets from edges
 	//int neighb_aa_offset =
-	//	num_states_for_aa_type_for_higher_indexed_neighbor_.index(1,1);
+	// num_states_for_aa_type_for_higher_indexed_neighbor_.index(1,1);
 	int count_neighbs_with_higher_indices = 0;
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii) {
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		neighbors_curr_state_sparse_info_[ii].set_aa_type( 1 );
 
 		// Edge::get_edge_table_ptr() calls getMatrixPointer() on the AminoAcidNeighborSparseMatrix instance two_body_energies_
@@ -421,7 +421,7 @@ PDNode::calc_deltaEpd( int alternate_state )
 SparseMatrixIndex const &
 PDNode::get_sparse_mat_info_for_state(int state) const
 {
-debug_assert( state > 0 && state <= get_num_states());
+	debug_assert( state > 0 && state <= get_num_states());
 	return sparse_mat_info_for_state_[ state ];
 }
 
@@ -455,8 +455,7 @@ void PDNode::print_internal_energies() const
 	std::cerr << "curr_state_one_body_energy_ ";
 	std::cerr << curr_state_one_body_energy_ << " ";
 	std::cerr << "curr_state_total_energy_" << curr_state_total_energy_ << " ";
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii)
-	{
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		std::cerr << "(" << get_index_of_adjacent_node( ii ) << ": " <<
 			curr_state_two_body_energies_[ ii ] << ") ";
 	}
@@ -468,9 +467,9 @@ void PDNode::print_internal_energies() const
 ///
 void PDNode::update_internal_energy_sums()
 {
-debug_assert( get_edge_vector_up_to_date() );
+	debug_assert( get_edge_vector_up_to_date() );
 	curr_state_total_energy_ = 0;
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii) {
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		curr_state_total_energy_ +=
 			get_incident_pd_edge(ii)->get_current_two_body_energy();
 	}
@@ -517,24 +516,24 @@ PDNode::count_dynamic_memory() const
 ///
 void PDNode::prepare_to_write_to_file()
 {
-	initialize_aa_for_state_array();
+initialize_aa_for_state_array();
 }
 
 
 /// @brief counts the number of states for each amion acid
 void PDNode::initialize_aa_for_state_array()
 {
-	aa_types_for_instance_states_.dimension( get_num_states() );
-	for (int ii = 1; ii <= get_num_states(); ++ii)
-	{
-		aa_types_for_instance_states_(ii) = sparse_mat_info_for_state_[ii].get_aa_type();
-	}
+aa_types_for_instance_states_.dimension( get_num_states() );
+for (int ii = 1; ii <= get_num_states(); ++ii)
+{
+aa_types_for_instance_states_(ii) = sparse_mat_info_for_state_[ii].get_aa_type();
+}
 }
 
 /// @brief deallocates extra memory allocated before writing to a file
 void PDNode::clean_up_after_writing_to_file()
 {
-	aa_types_for_instance_states_.dimension(0);
+aa_types_for_instance_states_.dimension(0);
 }
 
 /// @brief allocates extra space required of reading to a file
@@ -555,31 +554,31 @@ void PDNode::clean_up_after_writing_to_file()
 ///
 void PDNode::prepare_to_read_energies_from_file(int num_states_for_node_in_file)
 {
-	int num_aa_types_in_file =
-		get_pdig_owner()->get_num_file_aatypes();
+int num_aa_types_in_file =
+get_pdig_owner()->get_num_file_aatypes();
 
-	num_states_in_file_ = num_states_for_node_in_file;
-	instance_states_2_file_states_.dimension( get_num_states() );
-	file_states_2_instance_states_.dimension( num_states_for_node_in_file );
-	aa_types_for_file_states_.dimension( num_states_for_node_in_file );
-	num_file_states_for_aa_.dimension( num_aa_types_in_file );
+num_states_in_file_ = num_states_for_node_in_file;
+instance_states_2_file_states_.dimension( get_num_states() );
+file_states_2_instance_states_.dimension( num_states_for_node_in_file );
+aa_types_for_file_states_.dimension( num_states_for_node_in_file );
+num_file_states_for_aa_.dimension( num_aa_types_in_file );
 
-	instance_states_2_file_states_ = -1;
-	file_states_2_instance_states_ = -1;
-	aa_types_for_file_states_ = -1;
-	num_file_states_for_aa_ = 0;
+instance_states_2_file_states_ = -1;
+file_states_2_instance_states_ = -1;
+aa_types_for_file_states_ = -1;
+num_file_states_for_aa_ = 0;
 
-	initialize_aa_for_state_array(); //apl borrowing functionality from wri
+initialize_aa_for_state_array(); //apl borrowing functionality from wri
 }
 
 /// @brief deallocate extra tables after having written to a file
 void PDNode::clean_up_after_reading_energies_from_file()
 {
-	instance_states_2_file_states_.dimension(0);
-	file_states_2_instance_states_.dimension(0);
-	aa_types_for_file_states_.dimension(0);
-	aa_types_for_instance_states_.dimension(0);
-	num_file_states_for_aa_.dimension(0);
+instance_states_2_file_states_.dimension(0);
+file_states_2_instance_states_.dimension(0);
+aa_types_for_file_states_.dimension(0);
+aa_types_for_instance_states_.dimension(0);
+num_file_states_for_aa_.dimension(0);
 }
 
 /// @brief set the amino acid type for a file-state
@@ -597,15 +596,15 @@ void PDNode::clean_up_after_reading_energies_from_file()
 ///
 void PDNode::set_aa_for_file_state(int file_state, int aa )
 {
-	if ( (unsigned int) aa > num_file_states_for_aa_.size() || aa <= 0)
-	{
-		std::cerr << "Error in interaction graph file: amino acid type out";
-		std::cerr << " of range on node: " << get_node_index() << " for file state ";
-		std::cerr <<  file_state << ": aa = " << aa << std::endl;
-		utility_exit();
-	}
-	aa_types_for_file_states_( file_state ) = aa;
-	++num_file_states_for_aa_( aa );
+if ( (unsigned int) aa > num_file_states_for_aa_.size() || aa <= 0)
+{
+std::cerr << "Error in interaction graph file: amino acid type out";
+std::cerr << " of range on node: " << get_node_index() << " for file state ";
+std::cerr <<  file_state << ": aa = " << aa << std::endl;
+utility_exit();
+}
+aa_types_for_file_states_( file_state ) = aa;
+++num_file_states_for_aa_( aa );
 }
 
 /// @brief declares that an instance state corresponds to a file state.
@@ -621,33 +620,33 @@ void PDNode::set_aa_for_file_state(int file_state, int aa )
 ///
 void PDNode::set_instance_state_correspondence
 (
-	int instance_state,
-	int state_from_file
+int instance_state,
+int state_from_file
 )
 {
-	//apl Enforce bijection:
-	//apl Much easier to handle I/O when no to file-states map to a single
-	//apl instance state, and no two instance states map to a single file state.
-	//apl If a protocol creates two identical rotamers before reading the
-	//apl interaction graph file, then that protocol must also
-	//apl have generated the same identical rotamers before writing the
-	//apl interaction graph file.
-	if ( instance_states_2_file_states_( instance_state ) != -1
-		|| file_states_2_instance_states_( state_from_file ) != -1 )
-	{
-		std::cerr << "Reading Interaction Graph from File: Bijection Failure" << std::endl;
-		std::cerr << "Node: " << get_node_index() << " instance_state " << instance_state;
-		std::cerr << "file_state: " << state_from_file << std::endl;
-		std::cerr << "First Correspondence: instance_states_2_file_states_( ";
-		std::cerr << instance_state << " ) = " << instance_states_2_file_states_( instance_state );
-		std::cerr << std::endl << "First Correspondence: file_states_2_instance_staets_( ";
-		std::cerr << state_from_file << " ) = " << file_states_2_instance_states_( state_from_file );
-		std::cerr << std::endl;
-		utility_exit();
-	}
+//apl Enforce bijection:
+//apl Much easier to handle I/O when no to file-states map to a single
+//apl instance state, and no two instance states map to a single file state.
+//apl If a protocol creates two identical rotamers before reading the
+//apl interaction graph file, then that protocol must also
+//apl have generated the same identical rotamers before writing the
+//apl interaction graph file.
+if ( instance_states_2_file_states_( instance_state ) != -1
+|| file_states_2_instance_states_( state_from_file ) != -1 )
+{
+std::cerr << "Reading Interaction Graph from File: Bijection Failure" << std::endl;
+std::cerr << "Node: " << get_node_index() << " instance_state " << instance_state;
+std::cerr << "file_state: " << state_from_file << std::endl;
+std::cerr << "First Correspondence: instance_states_2_file_states_( ";
+std::cerr << instance_state << " ) = " << instance_states_2_file_states_( instance_state );
+std::cerr << std::endl << "First Correspondence: file_states_2_instance_staets_( ";
+std::cerr << state_from_file << " ) = " << file_states_2_instance_states_( state_from_file );
+std::cerr << std::endl;
+utility_exit();
+}
 
-	instance_states_2_file_states_( instance_state ) = state_from_file;
-	file_states_2_instance_states_( state_from_file ) = instance_state;
+instance_states_2_file_states_( instance_state ) = state_from_file;
+file_states_2_instance_states_( state_from_file ) = instance_state;
 }
 
 
@@ -657,7 +656,7 @@ void PDNode::set_instance_state_correspondence
 ///
 int PDNode::get_correspondence_for_state( int instance_state )
 {
-	return instance_states_2_file_states_( instance_state );
+return instance_states_2_file_states_( instance_state );
 }
 
 /// @brief returns the number of instance states that did not correspond to any
@@ -666,21 +665,21 @@ int PDNode::get_correspondence_for_state( int instance_state )
 ///
 int PDNode::get_num_rots_absent_from_file()
 {
-	if ( instance_states_2_file_states_.size() == 0 )
-	{
-		//no correspondence found with input file
-		return get_num_states();
-	}
+if ( instance_states_2_file_states_.size() == 0 )
+{
+//no correspondence found with input file
+return get_num_states();
+}
 
-	int count_absent = 0;
-	for (int ii = 1; ii <= get_num_states(); ++ii)
-	{
-		if (instance_states_2_file_states_(ii) == -1 )
-		{
-			++count_absent;
-		}
-	}
-	return count_absent;
+int count_absent = 0;
+for (int ii = 1; ii <= get_num_states(); ++ii)
+{
+if (instance_states_2_file_states_(ii) == -1 )
+{
+++count_absent;
+}
+}
+return count_absent;
 }
 
 /// @brief writes the index of the instance states with no matching file states into
@@ -690,27 +689,27 @@ int PDNode::get_num_rots_absent_from_file()
 ///
 void PDNode::get_absent_rots( FArray1_int & rots_absent )
 {
-	if ( instance_states_2_file_states_.size() == 0 ) {
-		//no correspondence found with input file
-		for (int ii = 1; ii <= get_num_states(); ++ii) {
-			rots_absent(ii) = ii;
-		}
-		return;
-	}
+if ( instance_states_2_file_states_.size() == 0 ) {
+//no correspondence found with input file
+for (int ii = 1; ii <= get_num_states(); ++ii) {
+rots_absent(ii) = ii;
+}
+return;
+}
 
-	int count_absent = 0;
-	for (int ii = 1; ii <= get_num_states(); ++ii) {
-		if (instance_states_2_file_states_(ii) == -1 ) {
-			++count_absent;
-			rots_absent( count_absent ) = ii;
-		}
-	}
+int count_absent = 0;
+for (int ii = 1; ii <= get_num_states(); ++ii) {
+if (instance_states_2_file_states_(ii) == -1 ) {
+++count_absent;
+rots_absent( count_absent ) = ii;
+}
+}
 }
 
 /// @brief returns the number of file states for this node
 int PDNode::get_num_states_in_file()
 {
-	return num_states_in_file_;
+return num_states_in_file_;
 }
 
 /// @brief returns a reference to the first entry in the aa_types_for_file_states_
@@ -719,7 +718,7 @@ int PDNode::get_num_states_in_file()
 /// used by a PDEdge while it's reading energies from a file
 int & PDNode::get_aatypes_for_file_states()
 {
-	return aa_types_for_file_states_(1);
+return aa_types_for_file_states_(1);
 }
 
 /// @brief returns a reference to the first entry in the aa_types_for_instance_states_
@@ -728,7 +727,7 @@ int & PDNode::get_aatypes_for_file_states()
 /// used by a PDEdge while it's reading energies from a file
 int & PDNode::get_aatypes_for_states()
 {
-	return aa_types_for_instance_states_(1);
+return aa_types_for_instance_states_(1);
 }
 
 /// @brief returns a reference to the first entry in the num_file_states_for_aa_
@@ -738,7 +737,7 @@ int & PDNode::get_aatypes_for_states()
 ///
 int & PDNode::get_num_file_states_for_aa()
 {
-	return num_file_states_for_aa_(1);
+return num_file_states_for_aa_(1);
 }
 
 /// @brief returns a reference to the first entry in the file_states_2_instance_states_
@@ -748,7 +747,7 @@ int & PDNode::get_num_file_states_for_aa()
 ///
 int & PDNode::get_file_states_2_instance_states_array()
 {
-	return file_states_2_instance_states_(1);
+return file_states_2_instance_states_(1);
 }
 
 /// @brief returns true if a node corresponds to one of the nodes described in the
@@ -756,7 +755,7 @@ int & PDNode::get_file_states_2_instance_states_array()
 ///
 bool PDNode::get_node_corresponded_to_file_node()
 {
-	return (instance_states_2_file_states_.size() != 0 );
+return (instance_states_2_file_states_.size() != 0 );
 }
 
 */
@@ -772,15 +771,15 @@ bool PDNode::get_node_corresponded_to_file_node()
 /// @param second_node_ind - [in] - the index of the larger-indexed node
 ///
 PDEdge::PDEdge
-(	InteractionGraphBase* owner,
+( InteractionGraphBase* owner,
 	int first_node_ind,
 	int second_node_ind
 ) :
 	PrecomputedPairEnergiesEdge( owner, first_node_ind, second_node_ind),
 	//energy_table_size_(0)
 	two_body_energies_(
-		get_pd_node(0)->get_num_states_for_aa_types(),
-		get_pd_node(1)->get_num_states_for_aa_types()
+	get_pd_node(0)->get_num_states_for_aa_types(),
+	get_pd_node(1)->get_num_states_for_aa_types()
 	),
 	energies_updated_since_last_prep_for_simA_( true )
 {
@@ -795,7 +794,7 @@ PDEdge::~PDEdge()
 /// and initializes the table to 0.
 ///
 /// @param sparse_conn_info - [in] - a MAX_AA x MAX_AA 2D array where each "true" entry
-/// 	means that the corresponding amino acid pair are neighbors.
+///  means that the corresponding amino acid pair are neighbors.
 ///
 /// @remarks idea borrowed from energy2b implementation
 ///
@@ -861,7 +860,7 @@ void PDEdge::add_to_two_body_energy
 /// should have the dimension (node1->get_num_states() x node2->get_num_states());
 ///
 /// @param res_res_energy_array - [in] - an array containing the state pair
-/// 	energies
+///  energies
 ///
 void PDEdge::add_to_two_body_energies
 (
@@ -966,18 +965,18 @@ void PDEdge::declare_energies_final()
 void PDEdge::prepare_for_simulated_annealing()
 {
 	prepare_for_simulated_annealing_no_deletion();
-	if (two_body_energies_.get_table_size() == 0) delete this;
+	if ( two_body_energies_.get_table_size() == 0 ) delete this;
 }
 
 /*
 unsigned int
 PDEdge::getMemoryUsageInBytes() const
 {
-	unsigned int total_memory = 0;
-	total_memory += two_body_energies_.get_table_size() * sizeof( int );
-	total_memory += two_body_energies_.get_offset_table_size_in_bytes();
-	total_memory += sizeof( PDEdge );
-	return total_memory;
+unsigned int total_memory = 0;
+total_memory += two_body_energies_.get_table_size() * sizeof( int );
+total_memory += two_body_energies_.get_offset_table_size_in_bytes();
+total_memory += sizeof( PDEdge );
+return total_memory;
 }
 */
 
@@ -995,7 +994,7 @@ float PDEdge::get_current_two_body_energy()
 /// @param node_state - [in] - the index of the new state it assumed
 /// @param new_state_spare_info - [in] - the sparse-matrix information for the state
 /// @param new_energy - [out] - the two body energy produced  by the new state and
-/// 	the current state on the other node
+///  the current state on the other node
 ///
 void
 PDEdge::acknowledge_state_change
@@ -1034,7 +1033,7 @@ PDEdge::acknowledge_state_change
 	new_energy = curr_state_energy_;
 
 	get_pd_node( node_not_substituted )->
-	acknowledge_neighbors_state_substitution(
+		acknowledge_neighbors_state_substitution(
 		get_edges_position_in_nodes_edge_vector( node_not_substituted ),
 		curr_state_energy_,
 		new_state,
@@ -1057,7 +1056,7 @@ void PDEdge::acknowledge_state_zeroed( int node_ind )
 	dummy_sparse_info.set_state_ind_for_this_aa_type(1);
 
 	get_pd_node( node_not_substituted )->
-	acknowledge_neighbors_state_substitution(
+		acknowledge_neighbors_state_substitution(
 		get_edges_position_in_nodes_edge_vector( node_not_substituted ),
 		curr_state_energy_,
 		0,
@@ -1153,98 +1152,98 @@ PDEdge::set_edge_weight( Real weight )
 ///
 void PDEdge::read_edge_energies_from_file( std::ifstream & infile )
 {
-	std::cerr << "Reading Edge: " << get_node_index(0) << " " << get_node_index(1) << std::endl;
-	int node1_num_states_in_file = get_pd_node(0)->get_num_states_in_file();
-	int node2_num_states_in_file = get_pd_node(1)->get_num_states_in_file();
+std::cerr << "Reading Edge: " << get_node_index(0) << " " << get_node_index(1) << std::endl;
+int node1_num_states_in_file = get_pd_node(0)->get_num_states_in_file();
+int node2_num_states_in_file = get_pd_node(1)->get_num_states_in_file();
 
-	FArray1A_int node1_file_states_2_instance_states(
-		get_pd_node(0)->get_file_states_2_instance_states_array(),
-		node1_num_states_in_file);
+FArray1A_int node1_file_states_2_instance_states(
+get_pd_node(0)->get_file_states_2_instance_states_array(),
+node1_num_states_in_file);
 
-	FArray1A_int node2_file_states_2_instance_states(
-		get_pd_node(1)->get_file_states_2_instance_states_array(),
-		node2_num_states_in_file);
+FArray1A_int node2_file_states_2_instance_states(
+get_pd_node(1)->get_file_states_2_instance_states_array(),
+node2_num_states_in_file);
 
-	FArray1A_int node1_aatypes_file_states(
-		get_pd_node(0)->get_aatypes_for_file_states(),
-		node1_num_states_in_file);
+FArray1A_int node1_aatypes_file_states(
+get_pd_node(0)->get_aatypes_for_file_states(),
+node1_num_states_in_file);
 
-	FArray1A_int node2_aatypes_file_states(
-		get_pd_node(1)->get_aatypes_for_file_states(),
-		node2_num_states_in_file);
+FArray1A_int node2_aatypes_file_states(
+get_pd_node(1)->get_aatypes_for_file_states(),
+node2_num_states_in_file);
 
-	int num_file_aa = get_pdig_owner()->get_num_file_aatypes();
-	int num_aa = get_pdig_owner()->get_num_aatypes();
+int num_file_aa = get_pdig_owner()->get_num_file_aatypes();
+int num_aa = get_pdig_owner()->get_num_aatypes();
 
-	FArray1A_int node1_num_file_states_for_aa(
-		get_pd_node(0)->get_num_file_states_for_aa(),
-		num_file_aa);
+FArray1A_int node1_num_file_states_for_aa(
+get_pd_node(0)->get_num_file_states_for_aa(),
+num_file_aa);
 
-	FArray1A_int node2_num_file_states_for_aa(
-		get_pd_node(1)->get_num_file_states_for_aa(),
-		num_file_aa);
+FArray1A_int node2_num_file_states_for_aa(
+get_pd_node(1)->get_num_file_states_for_aa(),
+num_file_aa);
 
-	int sqr_file_aa = num_file_aa * num_file_aa;
-	FArray2D_bool aa_neighbors( num_aa, num_aa, false );
-	bool* aa_neighbor_buffer = new bool[ sqr_file_aa ];
-	for (int ii = 0; ii <= sqr_file_aa; ++ii)
-		aa_neighbor_buffer[ii] = false;
+int sqr_file_aa = num_file_aa * num_file_aa;
+FArray2D_bool aa_neighbors( num_aa, num_aa, false );
+bool* aa_neighbor_buffer = new bool[ sqr_file_aa ];
+for (int ii = 0; ii <= sqr_file_aa; ++ii)
+aa_neighbor_buffer[ii] = false;
 
-	//std::cerr << "square file aa: " << sqr_file_aa << std::endl;
-	infile.read( (char*) aa_neighbor_buffer, sizeof( bool ) * sqr_file_aa );
-	//int num_bools_read = infile.gcount();
+//std::cerr << "square file aa: " << sqr_file_aa << std::endl;
+infile.read( (char*) aa_neighbor_buffer, sizeof( bool ) * sqr_file_aa );
+//int num_bools_read = infile.gcount();
 //debug_assert( num_bools_read == sizeof( bool ) * sqr_file_aa );
 
-	int buffer_index = 0;
-	int num_pair_energies = 0;
-	for (int ii = 1; ii <= num_file_aa; ++ii) {
-		for (int jj = 1; jj <= num_file_aa; ++jj) {
-			aa_neighbors(jj, ii) = aa_neighbor_buffer[ buffer_index ];
-			//std::cerr << aa_neighbor_buffer[ buffer_index ];
-			if ( aa_neighbor_buffer[ buffer_index ] ) {
-				num_pair_energies += node1_num_file_states_for_aa(ii) *
-					node2_num_file_states_for_aa( jj );
-			}
-			++buffer_index;
+int buffer_index = 0;
+int num_pair_energies = 0;
+for (int ii = 1; ii <= num_file_aa; ++ii) {
+for (int jj = 1; jj <= num_file_aa; ++jj) {
+aa_neighbors(jj, ii) = aa_neighbor_buffer[ buffer_index ];
+//std::cerr << aa_neighbor_buffer[ buffer_index ];
+if ( aa_neighbor_buffer[ buffer_index ] ) {
+num_pair_energies += node1_num_file_states_for_aa(ii) *
+node2_num_file_states_for_aa( jj );
+}
+++buffer_index;
 
-		}
-		//std::cerr << std::endl;
-	}
+}
+//std::cerr << std::endl;
+}
 
-	//std::cerr << "num pair energies: " << num_pair_energies << std::endl;
+//std::cerr << "num pair energies: " << num_pair_energies << std::endl;
 
-	two_body_energies_.set_sparse_aa_info( aa_neighbors );
+two_body_energies_.set_sparse_aa_info( aa_neighbors );
 
-	float * energies_buffer = new float [ num_pair_energies ];
+float * energies_buffer = new float [ num_pair_energies ];
 
-	infile.read( (char*) energies_buffer, sizeof( float ) * num_pair_energies );
-	//int read_num_floats = infile.gcount();
-	buffer_index = 0;
+infile.read( (char*) energies_buffer, sizeof( float ) * num_pair_energies );
+//int read_num_floats = infile.gcount();
+buffer_index = 0;
 
-	for (int ii = 1; ii <= node1_num_states_in_file; ++ii) {
-		int ii_aa = node1_aatypes_file_states( ii );
-		int ii_instance_state = node1_file_states_2_instance_states( ii );
-		for (int jj = 1; jj <= node2_num_states_in_file; ++jj) {
-			int jj_aa = node2_aatypes_file_states( jj );
-			int jj_instance_state = node2_file_states_2_instance_states( jj );
+for (int ii = 1; ii <= node1_num_states_in_file; ++ii) {
+int ii_aa = node1_aatypes_file_states( ii );
+int ii_instance_state = node1_file_states_2_instance_states( ii );
+for (int jj = 1; jj <= node2_num_states_in_file; ++jj) {
+int jj_aa = node2_aatypes_file_states( jj );
+int jj_instance_state = node2_file_states_2_instance_states( jj );
 
-			if ( ! aa_neighbors(jj_aa, ii_aa ) ) continue;
+if ( ! aa_neighbors(jj_aa, ii_aa ) ) continue;
 
-		debug_assert( buffer_index < num_pair_energies );
-			float energy = energies_buffer[ buffer_index ];
-			++buffer_index;
+debug_assert( buffer_index < num_pair_energies );
+float energy = energies_buffer[ buffer_index ];
+++buffer_index;
 
-			if ( ii_instance_state == -1 || jj_instance_state == -1 ) continue;
+if ( ii_instance_state == -1 || jj_instance_state == -1 ) continue;
 
-			two_body_energies_.set(
-				get_pd_node(0)->get_sparse_mat_info_for_state(ii_instance_state),
-				get_pd_node(1)->get_sparse_mat_info_for_state(jj_instance_state),
-				energy);
-		}
-	}
+two_body_energies_.set(
+get_pd_node(0)->get_sparse_mat_info_for_state(ii_instance_state),
+get_pd_node(1)->get_sparse_mat_info_for_state(jj_instance_state),
+energy);
+}
+}
 
-	delete [] aa_neighbor_buffer;
-	delete [] energies_buffer;
+delete [] aa_neighbor_buffer;
+delete [] energies_buffer;
 }
 
 /// @brief Advances the infile past the section describing an edge between
@@ -1269,32 +1268,32 @@ void PDEdge::read_edge_energies_from_file( std::ifstream & infile )
 void
 PDEdge::skip_over_edge_energies_from_file
 (
-	std::ifstream & infile,
-	int num_file_aa,
-	FArray1_int & node1_num_file_states_for_aa,
-	FArray1_int & node2_num_file_states_for_aa
+std::ifstream & infile,
+int num_file_aa,
+FArray1_int & node1_num_file_states_for_aa,
+FArray1_int & node2_num_file_states_for_aa
 )
 {
-	int sqr_file_aa = num_file_aa * num_file_aa;
-	bool* aa_neighbor_buffer = new bool[ sqr_file_aa ];
+int sqr_file_aa = num_file_aa * num_file_aa;
+bool* aa_neighbor_buffer = new bool[ sqr_file_aa ];
 
-	infile.read( (char*) aa_neighbor_buffer, sizeof(bool) * sqr_file_aa);
+infile.read( (char*) aa_neighbor_buffer, sizeof(bool) * sqr_file_aa);
 
-	int buffer_index = 0;
-	int num_pair_energies = 0;
-	for (int ii = 1; ii <= num_file_aa; ++ii) {
-		for (int jj = 1; jj <= num_file_aa; ++jj) {
-			if ( aa_neighbor_buffer[ buffer_index ] ) {
-				num_pair_energies += node1_num_file_states_for_aa( ii ) *
-					node2_num_file_states_for_aa( jj );
-			}
-			++buffer_index;
-		}
-	}
+int buffer_index = 0;
+int num_pair_energies = 0;
+for (int ii = 1; ii <= num_file_aa; ++ii) {
+for (int jj = 1; jj <= num_file_aa; ++jj) {
+if ( aa_neighbor_buffer[ buffer_index ] ) {
+num_pair_energies += node1_num_file_states_for_aa( ii ) *
+node2_num_file_states_for_aa( jj );
+}
+++buffer_index;
+}
+}
 
-	//skip forward
-	infile.seekg( sizeof( float ) * num_pair_energies, std::ios::cur );
-	delete [] aa_neighbor_buffer;
+//skip forward
+infile.seekg( sizeof( float ) * num_pair_energies, std::ios::cur );
+delete [] aa_neighbor_buffer;
 }
 
 /// @brief Writes the energies for this edge to a binary output file.
@@ -1306,52 +1305,52 @@ PDEdge::skip_over_edge_energies_from_file
 ///
 void PDEdge::write_edge_energies_to_file( std::ofstream & outfile )
 {
-	FArray1A_int node1_aatypes_for_state(
-		get_pd_node(0)->get_aatypes_for_states(),
-		get_num_states_for_node(0) );
+FArray1A_int node1_aatypes_for_state(
+get_pd_node(0)->get_aatypes_for_states(),
+get_num_states_for_node(0) );
 
-	FArray1A_int node2_aatypes_for_state(
-		get_pd_node(1)->get_aatypes_for_states(),
-		get_num_states_for_node(1) );
+FArray1A_int node2_aatypes_for_state(
+get_pd_node(1)->get_aatypes_for_states(),
+get_num_states_for_node(1) );
 
-	//write the aa-neighbor information
-	int num_aa = get_pdig_owner()->get_num_aatypes();
-	int sqr_num_aa = num_aa * num_aa;
-	bool * aa_neighbor_buffer = new bool[ sqr_num_aa ];
-	int buffer_index = 0;
+//write the aa-neighbor information
+int num_aa = get_pdig_owner()->get_num_aatypes();
+int sqr_num_aa = num_aa * num_aa;
+bool * aa_neighbor_buffer = new bool[ sqr_num_aa ];
+int buffer_index = 0;
 
-	for (int ii = 1; ii <= num_aa; ++ii) {
-		for (int jj = 1; jj <= num_aa; ++jj) {
-			if ( two_body_energies_.get_sparse_aa_info(ii, jj) ) {
-				aa_neighbor_buffer[ buffer_index ] = true;
-			} else {
-				aa_neighbor_buffer[ buffer_index ] = false;
-			}
-			//std::cerr << aa_neighbor_buffer[ buffer_index ];
-			++buffer_index;
-		}
-		//std::cerr << std::endl;
-	}
-	outfile.write( (char*) aa_neighbor_buffer, sizeof( bool ) * sqr_num_aa );
+for (int ii = 1; ii <= num_aa; ++ii) {
+for (int jj = 1; jj <= num_aa; ++jj) {
+if ( two_body_energies_.get_sparse_aa_info(ii, jj) ) {
+aa_neighbor_buffer[ buffer_index ] = true;
+} else {
+aa_neighbor_buffer[ buffer_index ] = false;
+}
+//std::cerr << aa_neighbor_buffer[ buffer_index ];
+++buffer_index;
+}
+//std::cerr << std::endl;
+}
+outfile.write( (char*) aa_neighbor_buffer, sizeof( bool ) * sqr_num_aa );
 
-	float * energy_buffer = new float[ two_body_energies_.get_table_size() ];
-	buffer_index = 0;
-	for (int ii = 1; ii <= get_num_states_for_node(0); ++ii ) {
-		int ii_aa = node1_aatypes_for_state( ii );
-		for (int jj = 1; jj <= get_num_states_for_node(1); ++jj ) {
-			int jj_aa = node2_aatypes_for_state( jj );
-			if ( ! two_body_energies_.get_sparse_aa_info(ii_aa, jj_aa) ) continue;
+float * energy_buffer = new float[ two_body_energies_.get_table_size() ];
+buffer_index = 0;
+for (int ii = 1; ii <= get_num_states_for_node(0); ++ii ) {
+int ii_aa = node1_aatypes_for_state( ii );
+for (int jj = 1; jj <= get_num_states_for_node(1); ++jj ) {
+int jj_aa = node2_aatypes_for_state( jj );
+if ( ! two_body_energies_.get_sparse_aa_info(ii_aa, jj_aa) ) continue;
 
-			energy_buffer[ buffer_index ] = get_two_body_energy( ii, jj );
-			++buffer_index;
-		}
-	}
+energy_buffer[ buffer_index ] = get_two_body_energy( ii, jj );
+++buffer_index;
+}
+}
 
-	outfile.write( (char*) energy_buffer, sizeof(float) * two_body_energies_.get_table_size() );
-	std::cerr << "Writing edge: " << get_node_index(0) << " " << get_node_index(1);
-	std::cerr << "; num_energies: " << two_body_energies_.get_table_size() << std::endl;
-	delete [] aa_neighbor_buffer;
-	delete [] energy_buffer;
+outfile.write( (char*) energy_buffer, sizeof(float) * two_body_energies_.get_table_size() );
+std::cerr << "Writing edge: " << get_node_index(0) << " " << get_node_index(1);
+std::cerr << "; num_energies: " << two_body_energies_.get_table_size() << std::endl;
+delete [] aa_neighbor_buffer;
+delete [] energy_buffer;
 }
 
 */
@@ -1377,7 +1376,7 @@ void PDEdge::prepare_for_simulated_annealing_no_deletion() //hook for derived cl
 ///   prepare_for_simulated_annealing_no_deletion() has been called first.
 bool PDEdge::pd_edge_table_all_zeros() const
 {
-debug_assert( ! energies_updated_since_last_prep_for_simA_ );
+	debug_assert( ! energies_updated_since_last_prep_for_simA_ );
 	return ( two_body_energies_.get_table_size() == 0);
 }
 
@@ -1388,7 +1387,7 @@ debug_assert( ! energies_updated_since_last_prep_for_simA_ );
 /// energies is a special case of this function where epsilon == 0.
 ///
 /// @param epsilon - [in] - the magnitude threshold for keeping amino-acid neighbor
-///	submatrices.
+/// submatrices.
 ///
 void PDEdge::drop_small_submatrices_where_possible( float epsilon )
 {
@@ -1459,7 +1458,7 @@ PDInteractionGraph::initialize( rotamer_set::RotamerSetsBase const & rot_sets_ba
 
 			aatype_for_state[ jj ] = curr_resgroup;
 			++count_for_resgroup;
-			while ( count_for_resgroup > rot_sets.rotamer_set_for_moltenresidue( ii )->get_n_rotamers_for_residue_group( curr_resgroup )) {
+			while ( count_for_resgroup > rot_sets.rotamer_set_for_moltenresidue( ii )->get_n_rotamers_for_residue_group( curr_resgroup ) ) {
 				// increment curr_restype and skip over restypes with 0 rotamers
 				++curr_resgroup;
 				count_for_resgroup = 1;
@@ -1485,13 +1484,13 @@ PDInteractionGraph::initialize( rotamer_set::RotamerSetsBase const & rot_sets_ba
 /*void PDInteractionGraph::set_num_aatypes(int num_aa_types)
 {
 debug_assert( num_aa_types_ == -1 && num_aa_types > 0 );
-	num_aa_types_ = num_aa_types;
-	return;
+num_aa_types_ = num_aa_types;
+return;
 }*/
 
 /// @brief returns the number of different amino acid types
 int  PDInteractionGraph::get_num_aatypes() const
-{	return num_aa_types_;}
+{ return num_aa_types_;}
 
 void
 PDInteractionGraph::add_edge(int node1, int node2)
@@ -1514,7 +1513,7 @@ PDInteractionGraph::get_one_body_energy_for_node_state( int node, int state)
 void PDInteractionGraph::blanket_assign_state_0()
 {
 	//a state assignment of 0 means "unassigned".
-	for (int ii = 1; ii <= get_num_nodes(); ++ii ) {
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		get_pd_node(ii)->assign_zero_state();
 	}
 	total_energy_current_state_assignment_ = 0;
@@ -1542,7 +1541,7 @@ float PDInteractionGraph::set_state_for_node(int node_ind, int new_state)
 float PDInteractionGraph::set_network_state( ObjexxFCL::FArray1_int & node_states)
 {
 	//node_states.dimension( get_num_nodes() );
-	for (int ii = 1; ii <= get_num_nodes(); ++ii ) {
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		get_pd_node( ii )->assign_state( node_states(ii) );
 	}
 	update_internal_energy_totals();
@@ -1558,10 +1557,10 @@ float PDInteractionGraph::set_network_state( ObjexxFCL::FArray1_int & node_state
 /// @param node_ind - [in] - the index of the node considering a state change
 /// @param new_state - [in] - the new state that node is considering
 /// @param alt_total_energy - [out] - the total network energy produced under the
-///	new state
+/// new state
 /// @param delta_energy - [out] - the change in energy produced under the substitution
 /// @param prev_energy_for_node - [out] - the sum of the one and two body energies
-/// 	for this node under the current state assignment
+///  for this node under the current state assignment
 void
 PDInteractionGraph::consider_substitution
 (
@@ -1597,7 +1596,7 @@ PDInteractionGraph::commit_considered_substitution()
 		total_energy_alternate_state_assignment_;
 
 	++num_commits_since_last_update_;
-	if (num_commits_since_last_update_ == COMMIT_LIMIT_BETWEEN_UPDATES) {
+	if ( num_commits_since_last_update_ == COMMIT_LIMIT_BETWEEN_UPDATES ) {
 		update_internal_energy_totals();
 	}
 
@@ -1626,17 +1625,17 @@ void PDInteractionGraph::update_internal_energy_totals()
 	total_energy_current_state_assignment_ = 0;
 
 	//std::cerr << "updating internal energy totals: " << std::endl;
-	for (int ii = 1; ii <= get_num_nodes(); ++ii) {
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		//std::cerr << " ig_node " << ii << " = " << ((PDNode *) ig_nodes_[ ii ])
-		//	->get_one_body_energy_current_state();
+		// ->get_one_body_energy_current_state();
 
 		total_energy_current_state_assignment_ += get_pd_node( ii )->
 			get_one_body_energy_current_state();
 	}
 
 	//int counter = 0;
-	for (std::list<EdgeBase*>::iterator iter = get_edge_list_begin();
-			iter != get_edge_list_end(); ++iter) {
+	for ( std::list<EdgeBase*>::iterator iter = get_edge_list_begin();
+			iter != get_edge_list_end(); ++iter ) {
 		//std::cerr << " ig_edge " << ++counter  << " =" <<
 		//((PDEdge*) *iter)->get_current_two_body_energy();
 		total_energy_current_state_assignment_ +=
@@ -1652,9 +1651,8 @@ void PDInteractionGraph::update_internal_energy_totals()
 int PDInteractionGraph::get_edge_memory_usage() const
 {
 	int sum = 0;
-	for (std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
-		iter != get_edge_list_end(); ++iter)
-	{
+	for ( std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
+			iter != get_edge_list_end(); ++iter ) {
 		sum += ((PDEdge*) *iter)->get_two_body_table_size();
 	}
 	return sum;
@@ -1672,8 +1670,7 @@ PDInteractionGraph::getMemoryUsageInBytes() const
 void PDInteractionGraph::print_current_state_assignment() const
 {
 	std::cerr << "Curr States: ";
-	for (int ii = 1; ii <= get_num_nodes(); ++ii)
-	{
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		std::cerr << "(" << ii << ", ";
 		std::cerr << get_pd_node(ii)->get_current_state() << ") ";
 		get_pd_node(ii)->print_internal_energies();
@@ -1686,23 +1683,23 @@ void PDInteractionGraph::print_current_state_assignment() const
 ///
 void PDInteractionGraph::prepare_to_read_energies_from_file()
 {
-	instance_node_2_file_node_.dimension( get_num_nodes() );
-	instance_node_2_file_node_ = -1;
+instance_node_2_file_node_.dimension( get_num_nodes() );
+instance_node_2_file_node_ = -1;
 }
 
 
 /// @brief deallocates arrays used to read energies from a file
 void PDInteractionGraph::declare_finished_reading_from_file()
 {
-	instance_node_2_file_node_.dimension( 0 );
-	file_node_2_instance_node_.dimension( 0 );
-	aa_types_for_states_on_file_nodes_.dimension( 0 );
+instance_node_2_file_node_.dimension( 0 );
+file_node_2_instance_node_.dimension( 0 );
+aa_types_for_states_on_file_nodes_.dimension( 0 );
 
 
-	for (int ii = 1; ii <= get_num_nodes(); ++ii )
-	{
-		get_pd_node(ii)->clean_up_after_reading_energies_from_file();
-	}
+for (int ii = 1; ii <= get_num_nodes(); ++ii )
+{
+get_pd_node(ii)->clean_up_after_reading_energies_from_file();
+}
 }
 
 /// @brief sets the number of amino acid types according to the input file
@@ -1710,14 +1707,14 @@ void PDInteractionGraph::declare_finished_reading_from_file()
 /// @param num_file_aatypes - [in] - the number of amino acid types
 void PDInteractionGraph::set_num_file_aatypes( int num_file_aatypes )
 {
-	num_file_aa_types_ = num_file_aatypes;
+num_file_aa_types_ = num_file_aatypes;
 }
 
 /// @brief returns the number of amino acid types according to the input file
 ///
 int PDInteractionGraph::get_num_file_aatypes()
 {
-	return num_file_aa_types_;
+return num_file_aa_types_;
 }
 
 /// @brief sets the number of nodes for the graph described in the input file
@@ -1725,12 +1722,12 @@ int PDInteractionGraph::get_num_file_aatypes()
 /// @param num_nodes_in_file - [in] - the number of nodes in the file
 void PDInteractionGraph::set_num_nodes_in_file( int num_nodes_in_file )
 {
-	num_nodes_in_file_ = num_nodes_in_file;
-	file_node_2_instance_node_.dimension( num_nodes_in_file );
-	aa_types_for_states_on_file_nodes_.dimension( num_nodes_in_file );
-	num_file_states_for_aa_for_node_.dimension( num_nodes_in_file );
+num_nodes_in_file_ = num_nodes_in_file;
+file_node_2_instance_node_.dimension( num_nodes_in_file );
+aa_types_for_states_on_file_nodes_.dimension( num_nodes_in_file );
+num_file_states_for_aa_for_node_.dimension( num_nodes_in_file );
 
-	file_node_2_instance_node_ = -1;
+file_node_2_instance_node_ = -1;
 }
 
 /// @brief records the correspondence between an instance node and a file node
@@ -1740,12 +1737,12 @@ void PDInteractionGraph::set_num_nodes_in_file( int num_nodes_in_file )
 ///
 void PDInteractionGraph::set_node_correspondence
 (
-	int instance_node,
-	int file_node
+int instance_node,
+int file_node
 )
 {
-	file_node_2_instance_node_( file_node ) = instance_node;
-	instance_node_2_file_node_( instance_node ) = file_node;
+file_node_2_instance_node_( file_node ) = instance_node;
+instance_node_2_file_node_( instance_node ) = file_node;
 }
 
 
@@ -1763,19 +1760,19 @@ void PDInteractionGraph::set_node_correspondence
 ///
 void PDInteractionGraph::set_num_states_for_file_node
 (
-	int node,
-	int num_file_states
+int node,
+int num_file_states
 )
 {
-	if ( file_node_2_instance_node_( node ) == -1 ) {
-		aa_types_for_states_on_file_nodes_( node ).dimension( num_file_states );
-		num_file_states_for_aa_for_node_( node ).dimension( num_file_aa_types_ );
-		num_file_states_for_aa_for_node_( node ) = 0;
-	} else {
-		int instance_node = file_node_2_instance_node_( node );
-		get_pd_node(instance_node)->
-			prepare_to_read_energies_from_file( num_file_states );
-	}
+if ( file_node_2_instance_node_( node ) == -1 ) {
+aa_types_for_states_on_file_nodes_( node ).dimension( num_file_states );
+num_file_states_for_aa_for_node_( node ).dimension( num_file_aa_types_ );
+num_file_states_for_aa_for_node_( node ) = 0;
+} else {
+int instance_node = file_node_2_instance_node_( node );
+get_pd_node(instance_node)->
+prepare_to_read_energies_from_file( num_file_states );
+}
 }
 
 /// @brief sets the amino acid type for a file state
@@ -1786,18 +1783,18 @@ void PDInteractionGraph::set_num_states_for_file_node
 ///
 void PDInteractionGraph::set_aa_for_file_node_state
 (
-	int node,
-	int file_state,
-	int state_aa
+int node,
+int file_state,
+int state_aa
 )
 {
-	int instance_node = file_node_2_instance_node_( node );
-	if ( instance_node == -1 ) {
-		aa_types_for_states_on_file_nodes_( node )( file_state ) = state_aa;
-		++num_file_states_for_aa_for_node_( node )(state_aa);
-	} else {
-		get_pd_node( instance_node )->set_aa_for_file_state(file_state, state_aa);
-	}
+int instance_node = file_node_2_instance_node_( node );
+if ( instance_node == -1 ) {
+aa_types_for_states_on_file_nodes_( node )( file_state ) = state_aa;
+++num_file_states_for_aa_for_node_( node )(state_aa);
+} else {
+get_pd_node( instance_node )->set_aa_for_file_state(file_state, state_aa);
+}
 }
 
 /// @brief sets the correspondence between an instance state and a file state
@@ -1808,7 +1805,7 @@ void PDInteractionGraph::set_aa_for_file_node_state
 ///
 void PDInteractionGraph::set_correspondence_for_state(int node, int state, int file_state)
 {
-	get_pd_node(node)->set_instance_state_correspondence( state, file_state );
+get_pd_node(node)->set_instance_state_correspondence( state, file_state );
 }
 
 /// @brief returns the file state that an instance state corresponds to
@@ -1818,7 +1815,7 @@ void PDInteractionGraph::set_correspondence_for_state(int node, int state, int f
 ///
 int PDInteractionGraph::get_correspondence_for_state(int node, int state )
 {
-	return get_pd_node(node)->get_correspondence_for_state( state );
+return get_pd_node(node)->get_correspondence_for_state( state );
 }
 
 /// @brief returns true if an instance node corresponds to a node in the file
@@ -1827,7 +1824,7 @@ int PDInteractionGraph::get_correspondence_for_state(int node, int state )
 ///
 bool PDInteractionGraph::get_node_corresponded_to_file_node( int node )
 {
-	return get_pd_node(node)->get_node_corresponded_to_file_node( );
+return get_pd_node(node)->get_node_corresponded_to_file_node( );
 }
 
 /// @brief returns the number of instance states not described by any file state for
@@ -1837,7 +1834,7 @@ bool PDInteractionGraph::get_node_corresponded_to_file_node( int node )
 ///
 int PDInteractionGraph::get_num_rots_absent_from_file(int node)
 {
-	return get_pd_node(node)->get_num_rots_absent_from_file();
+return get_pd_node(node)->get_num_rots_absent_from_file();
 }
 
 /// @brief fills an input array with the indices of the instance states for an
@@ -1849,8 +1846,8 @@ int PDInteractionGraph::get_num_rots_absent_from_file(int node)
 ///
 void PDInteractionGraph::get_absent_rots(int node, FArray1_int & rots_absent )
 {
-	get_pd_node(node)->get_absent_rots( rots_absent );
-	return;
+get_pd_node(node)->get_absent_rots( rots_absent );
+return;
 }
 
 /// @brief reads pair energies from a binary file
@@ -1872,61 +1869,61 @@ void PDInteractionGraph::get_absent_rots(int node, FArray1_int & rots_absent )
 ///
 void PDInteractionGraph::read_edge_energies_from_file( std::ifstream & infile )
 {
-	int num_edges;
-	infile.read( (char*) &num_edges,4);
+int num_edges;
+infile.read( (char*) &num_edges,4);
 
-	for (int ii = 1; ii <= num_edges; ++ii)
-	{
-		int node1, node2;
-		infile.read( (char*)  & node1, 4);
-		infile.read( (char*)   & node2, 4 );
+for (int ii = 1; ii <= num_edges; ++ii)
+{
+int node1, node2;
+infile.read( (char*)  & node1, 4);
+infile.read( (char*)   & node2, 4 );
 
-		int instance_node1 = file_node_2_instance_node_( node1 );
-		int instance_node2 = file_node_2_instance_node_( node2 );
-		if ( instance_node1 == -1 || instance_node2 == -1 )
-		{	//skip over the energies for this edge
-			if (instance_node1 == -1 ) {
-				FArray1A_int node1_num_states_for_aa(
-					num_file_states_for_aa_for_node_( node1 ), num_file_aa_types_);
+int instance_node1 = file_node_2_instance_node_( node1 );
+int instance_node2 = file_node_2_instance_node_( node2 );
+if ( instance_node1 == -1 || instance_node2 == -1 )
+{ //skip over the energies for this edge
+if (instance_node1 == -1 ) {
+FArray1A_int node1_num_states_for_aa(
+num_file_states_for_aa_for_node_( node1 ), num_file_aa_types_);
 
-				if (instance_node2 == -1) {
-					FArray1A_int node2_num_states_for_aa(
-						num_file_states_for_aa_for_node_( node2 ), num_file_aa_types_);
+if (instance_node2 == -1) {
+FArray1A_int node2_num_states_for_aa(
+num_file_states_for_aa_for_node_( node2 ), num_file_aa_types_);
 
 
-					PDEdge::skip_over_edge_energies_from_file( infile,
-						num_file_aa_types_,
-						node1_num_states_for_aa, node2_num_states_for_aa);
-				} else {
-					FArray1A_int node2_num_states_for_aa(
-						get_pd_node( instance_node2 )
-						->get_num_file_states_for_aa(), num_file_aa_types_ );
+PDEdge::skip_over_edge_energies_from_file( infile,
+num_file_aa_types_,
+node1_num_states_for_aa, node2_num_states_for_aa);
+} else {
+FArray1A_int node2_num_states_for_aa(
+get_pd_node( instance_node2 )
+->get_num_file_states_for_aa(), num_file_aa_types_ );
 
-					PDEdge::skip_over_edge_energies_from_file( infile,
-						num_file_aa_types_,
-						node1_num_states_for_aa, node2_num_states_for_aa);
-				}
-			} else {
-				FArray1A_int node1_num_states_for_aa(
-						get_pd_node( instance_node1 )
-						->get_num_file_states_for_aa(), num_file_aa_types_);
+PDEdge::skip_over_edge_energies_from_file( infile,
+num_file_aa_types_,
+node1_num_states_for_aa, node2_num_states_for_aa);
+}
+} else {
+FArray1A_int node1_num_states_for_aa(
+get_pd_node( instance_node1 )
+->get_num_file_states_for_aa(), num_file_aa_types_);
 
-				FArray1A_int node2_num_states_for_aa(
-						num_file_states_for_aa_for_node_( node2 ), num_file_aa_types_);
+FArray1A_int node2_num_states_for_aa(
+num_file_states_for_aa_for_node_( node2 ), num_file_aa_types_);
 
-				PDEdge::skip_over_edge_energies_from_file( infile,
-						num_file_aa_types_,
-						node1_num_states_for_aa, node2_num_states_for_aa);
+PDEdge::skip_over_edge_energies_from_file( infile,
+num_file_aa_types_,
+node1_num_states_for_aa, node2_num_states_for_aa);
 
-			}
-		} else {
-			add_edge( instance_node1, instance_node2 );
-			PDEdge* new_edge = (PDEdge*) find_edge( instance_node1, instance_node2);
+}
+} else {
+add_edge( instance_node1, instance_node2 );
+PDEdge* new_edge = (PDEdge*) find_edge( instance_node1, instance_node2);
 
-			new_edge->read_edge_energies_from_file( infile );
-		}
+new_edge->read_edge_energies_from_file( infile );
+}
 
-	}
+}
 }
 
 /// @brief writes the edge energies, in a binary format, to the outfile.
@@ -1939,26 +1936,26 @@ void PDInteractionGraph::read_edge_energies_from_file( std::ifstream & infile )
 ///
 void PDInteractionGraph::write_edge_energies_to_file( std::ofstream & outfile )
 {
-	for (int ii = 1; ii <= get_num_nodes(); ++ii) {
-		get_pd_node(ii)->prepare_to_write_to_file();
-	}
+for (int ii = 1; ii <= get_num_nodes(); ++ii) {
+get_pd_node(ii)->prepare_to_write_to_file();
+}
 
-	int num_edges = get_num_edges(); //O(N) size method
-	outfile.write( (char*) (&num_edges), 4);
-	for ( std::list< EdgeBase* >::iterator edge_iter = get_edge_list_begin();
-			edge_iter != get_edge_list_end(); ++edge_iter) {
-		int first_node_ind = (*edge_iter)->get_first_node_ind();
-		int second_node_ind = (*edge_iter)->get_second_node_ind();
-		outfile.write( (char*) & first_node_ind, 4);
-		outfile.write( (char*) & second_node_ind, 4);
-		((PDEdge*) (*edge_iter) )->write_edge_energies_to_file( outfile );
-	}
+int num_edges = get_num_edges(); //O(N) size method
+outfile.write( (char*) (&num_edges), 4);
+for ( std::list< EdgeBase* >::iterator edge_iter = get_edge_list_begin();
+edge_iter != get_edge_list_end(); ++edge_iter) {
+int first_node_ind = (*edge_iter)->get_first_node_ind();
+int second_node_ind = (*edge_iter)->get_second_node_ind();
+outfile.write( (char*) & first_node_ind, 4);
+outfile.write( (char*) & second_node_ind, 4);
+((PDEdge*) (*edge_iter) )->write_edge_energies_to_file( outfile );
+}
 
-	for (int ii = 1; ii <= get_num_nodes(); ++ii) {
-		get_pd_node(ii)->clean_up_after_writing_to_file();
-	}
+for (int ii = 1; ii <= get_num_nodes(); ++ii) {
+get_pd_node(ii)->clean_up_after_writing_to_file();
+}
 
-	return;
+return;
 }
 */
 
@@ -1979,19 +1976,19 @@ float
 PDInteractionGraph::get_energy_sum_for_vertex_group( int group_id )
 {
 	float esum = 0;
-	for (int ii = 1; ii <= get_num_nodes(); ++ii) {
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		if ( get_vertex_member_of_energy_sum_group( ii, group_id ) ) {
 			esum += get_pd_node( ii )->get_one_body_energy_current_state();
 		}
 	}
 
 	for ( std::list< EdgeBase* >::iterator edge_iter = get_edge_list_begin();
-			edge_iter != get_edge_list_end(); ++edge_iter) {
+			edge_iter != get_edge_list_end(); ++edge_iter ) {
 		int first_node_ind = (*edge_iter)->get_first_node_ind();
 		int second_node_ind = (*edge_iter)->get_second_node_ind();
 
 		if ( get_vertex_member_of_energy_sum_group( first_node_ind, group_id )
-				&& get_vertex_member_of_energy_sum_group( second_node_ind, group_id )) {
+				&& get_vertex_member_of_energy_sum_group( second_node_ind, group_id ) ) {
 			esum += ((PDEdge*) (*edge_iter))->get_current_two_body_energy();
 		}
 	}
@@ -2046,7 +2043,7 @@ PDInteractionGraph::get_aa_submatrix_energies_for_edge(
 NodeBase* PDInteractionGraph::create_new_node( int node_index, int num_states)
 {
 	PDNode* new_node = new PDNode(this, node_index, num_states);
-debug_assert( new_node != NULL );
+	debug_assert( new_node != NULL );
 	return new_node;
 }
 
@@ -2090,14 +2087,14 @@ void PDNode::project_deltaE_for_substitution
 	float curr_total_energy_weighted      = curr_state_one_body_energy_;
 	float alternate_total_energy_weighted = alternate_state_one_body_energy_;
 
-	for( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 
-		// 		const int i = get_node_index();
-		// 		const int j = get_adjacent_node(ii)->get_node_index();
+		//   const int i = get_node_index();
+		//   const int j = get_adjacent_node(ii)->get_node_index();
 		//const float bias_ii = get_bias(bias,i,j);//get_node_index(),get_adjacent_node(ii)->get_node_index());
 
 		const float bias_ii = weights(get_incident_edge(ii)->get_first_node_ind(), // !!! symmetric bias matrix
-																	get_incident_edge(ii)->get_second_node_ind());
+			get_incident_edge(ii)->get_second_node_ind());
 
 		curr_total_energy_weighted      += bias_ii * curr_state_two_body_energies_[ii];
 		alternate_total_energy_weighted += bias_ii * alternate_state_two_body_energies_[ii];
@@ -2114,19 +2111,17 @@ void PDNode::project_deltaE_for_substitution
 // THIS IS DUPLCATED CODE: EdgeBase already provides this functionality
 namespace {
 
-	int get_other_index(const EdgeBase* edge_base, const int index) {
-		if( index == edge_base->get_first_node_ind() ) {
-			return edge_base->get_second_node_ind();
-		}
-		else if( index == edge_base->get_second_node_ind() ) {
-			return edge_base->get_first_node_ind();
-		}
-		else {
+int get_other_index(const EdgeBase* edge_base, const int index) {
+	if ( index == edge_base->get_first_node_ind() ) {
+		return edge_base->get_second_node_ind();
+	} else if ( index == edge_base->get_second_node_ind() ) {
+		return edge_base->get_first_node_ind();
+	} else {
 		debug_assert( false );
-			utility_exit_with_message("et_other_index(const EdgeBase* edge_base, const int index)  failed");
-			return -1;
-		}
-	} // get_other_index
+		utility_exit_with_message("et_other_index(const EdgeBase* edge_base, const int index)  failed");
+		return -1;
+	}
+} // get_other_index
 
 } // namespace
 
@@ -2136,8 +2131,8 @@ float
 PDNode::get_weighted_energy_with_higher_indexed_nodes( ObjexxFCL::FArray2D< core::PackerEnergy > const & weights ) const
 {
 	float rval = curr_state_one_body_energy_;
-	for( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
-		if( get_other_index(get_incident_edge(ii),get_node_index()) > ii ) {
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
+		if ( get_other_index(get_incident_edge(ii),get_node_index()) > ii ) {
 			const float weight_ii = weights(get_incident_edge(ii)->get_first_node_ind(), // !!! symmetric bias matrix
 				get_incident_edge(ii)->get_second_node_ind());
 			rval += weight_ii * curr_state_two_body_energies_[ii];
@@ -2151,7 +2146,7 @@ PDNode::get_weighted_energy_with_higher_indexed_nodes( ObjexxFCL::FArray2D< core
 float PDInteractionGraph::get_weighted_energy(const ObjexxFCL::FArray2D< core::PackerEnergy >& weights) const {
 	// Compute and return biased energy
 	float rval = 0;
-	for( int ii = 1; ii <= get_num_nodes(); ++ii ) {
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		rval += get_pd_node(ii)->get_weighted_energy_with_higher_indexed_nodes(weights);
 	}
 	return rval;

@@ -113,7 +113,7 @@ LocalInserter_SimpleMin::make_local_bb_change(
 
 	core::Real final_score = scorefxn_cen_cst_->score(newpose);
 
-	TR.Debug << "INSERTRESULT: " << final_rms << "	" << final_score << std::endl;
+	TR.Debug << "INSERTRESULT: " << final_rms << "\t" << final_score << std::endl;
 	core::pose::setPoseExtraScore( newpose, "lh_censcore", final_score );
 
 	//transfer_phi_psi( newpose, start_pose );
@@ -142,7 +142,7 @@ LocalInserter_SimpleMin::make_local_bb_change_close_gaps(
 
 
 	// fix gaps between ir and jr if it exists by idealizing every position
-	for( Size idx = res_pos, end_pos = res_pos + new_bs.length(); idx <= end_pos; idx ++ ) {
+	for ( Size idx = res_pos, end_pos = res_pos + new_bs.length(); idx <= end_pos; idx ++ ) {
 		conformation::insert_ideal_bonds_at_polymer_junction( idx, newpose.conformation() );
 		excluded_res.push_back(idx);
 	}
@@ -171,7 +171,7 @@ LocalInserter_SimpleMin::make_local_bb_change_close_gaps(
 
 	core::Real final_score = scorefxn_cen_cst_->score(newpose);
 
-	TR.Debug << "INSERTRESULT: " << final_rms << "	" << final_score << std::endl;
+	TR.Debug << "INSERTRESULT: " << final_rms << "\t" << final_score << std::endl;
 	core::pose::setPoseExtraScore( newpose, "censcore", final_score );
 
 	// remove that extra virtual atom cooordinate constraints adds on
@@ -208,7 +208,7 @@ LocalInserter_SimpleMin::make_local_bb_change_include_cut(
 
 	core::Real final_score = scorefxn_cen_cst_->score(newpose);
 
-	TR.Debug << "INSERTRESULT: " << final_rms << "	" << final_score << std::endl;
+	TR.Debug << "INSERTRESULT: " << final_rms << "\t" << final_score << std::endl;
 	core::pose::setPoseExtraScore( newpose, "censcore", final_score );
 	core::pose::setPoseExtraScore( newpose, "rms", final_rms );
 
@@ -222,19 +222,19 @@ LocalInserter_SimpleMin::set_default_score_functions(){
 	using namespace core::scoring;
 
 	scorefxn_rama_cst_->set_weight( coordinate_constraint, 0.5 );
-	scorefxn_rama_cst_->set_weight( rama		, 1.0 );
+	scorefxn_rama_cst_->set_weight( rama  , 1.0 );
 
 	scorefxn_cen_cst_->set_weight( coordinate_constraint, 0.05 );
-	scorefxn_cen_cst_->set_weight( env			, 1.0);
-	scorefxn_cen_cst_->set_weight( pair		 , 1.0);
-	scorefxn_cen_cst_->set_weight( cbeta		, 1.0);
-	scorefxn_cen_cst_->set_weight( vdw			, 1.0);
-	scorefxn_cen_cst_->set_weight( rg			 , 3.0);
-	scorefxn_cen_cst_->set_weight( cenpack	, 1.0);
-	scorefxn_cen_cst_->set_weight( hs_pair	, 1.0);
-	scorefxn_cen_cst_->set_weight( ss_pair	, 1.0);
-	scorefxn_cen_cst_->set_weight( rsigma	 , 1.0);
-	scorefxn_cen_cst_->set_weight( sheet		, 1.0);
+	scorefxn_cen_cst_->set_weight( env   , 1.0);
+	scorefxn_cen_cst_->set_weight( pair   , 1.0);
+	scorefxn_cen_cst_->set_weight( cbeta  , 1.0);
+	scorefxn_cen_cst_->set_weight( vdw   , 1.0);
+	scorefxn_cen_cst_->set_weight( rg    , 3.0);
+	scorefxn_cen_cst_->set_weight( cenpack , 1.0);
+	scorefxn_cen_cst_->set_weight( hs_pair , 1.0);
+	scorefxn_cen_cst_->set_weight( ss_pair , 1.0);
+	scorefxn_cen_cst_->set_weight( rsigma  , 1.0);
+	scorefxn_cen_cst_->set_weight( sheet  , 1.0);
 }
 
 } // namespace loophash

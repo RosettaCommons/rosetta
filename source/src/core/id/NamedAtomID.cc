@@ -36,7 +36,7 @@ std::string NamedAtomID::to_string() const {
 std::ostream &
 operator <<( std::ostream& os, NamedAtomID const & a )
 {
-	//	os << " atom= " << a.atom() << " rsd= " << a.rsd() << ' ';
+	// os << " atom= " << a.atom() << " rsd= " << a.rsd() << ' ';
 	os << ObjexxFCL::format::A(4,a.atom()) << " " << ObjexxFCL::format::RJ(4,a.rsd());
 	return os;
 }

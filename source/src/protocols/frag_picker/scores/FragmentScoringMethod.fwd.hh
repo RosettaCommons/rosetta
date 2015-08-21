@@ -26,16 +26,16 @@ namespace scores {
 class FragmentScoringMethod;
 
 typedef utility::pointer::shared_ptr<FragmentScoringMethod>
-		FragmentScoringMethodOP;
+	FragmentScoringMethodOP;
 typedef utility::pointer::shared_ptr<FragmentScoringMethod const>
-		FragmentScoringMethodCOP;
+	FragmentScoringMethodCOP;
 
 class MakeFragmentScoringMethod;
 
 typedef utility::pointer::shared_ptr<MakeFragmentScoringMethod>
-		MakeFragmentScoringMethodOP;
+	MakeFragmentScoringMethodOP;
 typedef utility::pointer::shared_ptr<MakeFragmentScoringMethod const>
-		MakeFragmentScoringMethodCOP;
+	MakeFragmentScoringMethodCOP;
 
 } // scores
 } // frag_picker

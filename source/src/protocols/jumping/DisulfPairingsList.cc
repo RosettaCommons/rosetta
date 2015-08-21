@@ -65,45 +65,45 @@ DisulfPairing::DisulfPairing( ObjexxFCL::FArray1A_int data) {
 
 void read_pairing_list( std::string disulf_pairing_file, DisulfPairingsList& disulf_pairings)
 {
-  	utility::io::izstream disulf_pairing_stream( disulf_pairing_file );
-  if ( !disulf_pairing_stream ) {
-    tr.Fatal << "can't open disulf_pairings file!!!" << disulf_pairing_file << std::endl;
-    disulf_pairing_stream.close();
-    utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
-  }
+	utility::io::izstream disulf_pairing_stream( disulf_pairing_file );
+	if ( !disulf_pairing_stream ) {
+		tr.Fatal << "can't open disulf_pairings file!!!" << disulf_pairing_file << std::endl;
+		disulf_pairing_stream.close();
+		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
+	}
 	read_disulf_pairing_list( disulf_pairing_stream, disulf_pairings );
-  disulf_pairing_stream.close();
+	disulf_pairing_stream.close();
 }
 
 void read_disulf_pairing_list( std::istream& disulf_pairing_stream, DisulfPairingsList& disulf_pairings) {
-  std::string line;
+	std::string line;
 	Size a,b,c,d;
-  while ( getline( disulf_pairing_stream, line ) ) {
-    std::istringstream line_stream( line );
-    // a=i, b=j, c=orientation(1 or 2), d=pleating(1 or 2)
-    //std::string o, pleat;
-    line_stream >> a >> b >> c >> d;
-    if ( line_stream.fail() ) {
-      std::cout << "[ERROR] unable to parse " << line << std::endl;
-      continue;
-    }
+	while ( getline( disulf_pairing_stream, line ) ) {
+		std::istringstream line_stream( line );
+		// a=i, b=j, c=orientation(1 or 2), d=pleating(1 or 2)
+		//std::string o, pleat;
+		line_stream >> a >> b >> c >> d;
+		if ( line_stream.fail() ) {
+			std::cout << "[ERROR] unable to parse " << line << std::endl;
+			continue;
+		}
 
 		DisulfPairing p( a, b, c, d);
-    //if ( a > b ) p.reverse();
-    disulf_pairings.push_back( p );
+		//if ( a > b ) p.reverse();
+		disulf_pairings.push_back( p );
 
-  }
+	}
 } // read_disulf_pairings
 
 std::ostream& operator<< ( std::ostream& out, DisulfPairing const& p) {
 	out << format::RJ(5, p.pos1 ) << format::RJ(5, p.pos2 ) << " "
-		  << format::RJ(5, p.seq_sep) << format::RJ(5, p.ss_type );
+		<< format::RJ(5, p.seq_sep) << format::RJ(5, p.ss_type );
 	return out;
 }
 
 std::ostream& operator<< ( std::ostream& out, DisulfPairingsList const& p) {
-	for (DisulfPairingsList::const_iterator it= p.begin(),
-				 eit = p.end(); it!=eit; ++it ) {
+	for ( DisulfPairingsList::const_iterator it= p.begin(),
+			eit = p.end(); it!=eit; ++it ) {
 		out << (*it) << "\n";
 	}
 	return out;

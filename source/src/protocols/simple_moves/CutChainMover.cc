@@ -131,8 +131,8 @@ CutChainMover::chain_id(core::Size const ID){
 void
 CutChainMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
-  bond_length( tag->getOption< core::Real >( "bond_length", 4.0 ) ); // EH!? Covalent bond length is more like 1.33 angstrom
-  chain_id( tag->getOption< core::Size >( "chain_id", 1 ) );
+	bond_length( tag->getOption< core::Real >( "bond_length", 4.0 ) ); // EH!? Covalent bond length is more like 1.33 angstrom
+	chain_id( tag->getOption< core::Size >( "chain_id", 1 ) );
 	TR<<" bond_length: "<<bond_length();
 	TR<<"Chain id: "<<chain_id();
 	TR<<std::endl;
@@ -140,8 +140,8 @@ CutChainMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap
 
 void CutChainMover::apply( core::pose::Pose & pose )
 {
-		create_subpose(pose);
-		foldTree(pose);
+	create_subpose(pose);
+	foldTree(pose);
 
 }
 
@@ -149,11 +149,11 @@ core::Size
 CutChainMover::chain_cut( core::pose::Pose & pose)
 {
 	core::Size cut_pos = 0;
-	for( core::Size resj = pose.conformation().chain_begin( chain_id_ ); resj <= pose.conformation().chain_end( chain_id_ )-1; ++resj ){
+	for ( core::Size resj = pose.conformation().chain_begin( chain_id_ ); resj <= pose.conformation().chain_end( chain_id_ )-1; ++resj ) {
 		core::Real const distance = pose.residue( resj+1 ).xyz( "N" ).distance(pose.residue( resj ).xyz( "C" ));
-			//TR<<"distance is: "<<distance<<std::endl;
-			//TR<<"residue name is : "<<pose.residue(resj).name1()<<std::endl;
-		if( distance > bond_length()){
+		//TR<<"distance is: "<<distance<<std::endl;
+		//TR<<"residue name is : "<<pose.residue(resj).name1()<<std::endl;
+		if ( distance > bond_length() ) {
 			cut_pos = resj;
 			TR<<"Found cut at: "<<resj<<std::endl;
 			break;
@@ -165,11 +165,11 @@ core::Size
 CutChainMover::chain_cut(core::pose::Pose & pose, core::Size start_res,core::Size end_res)
 {
 	core::Size cut_pos = 0;
-	for( core::Size resj = start_res; resj <end_res; ++resj ){
+	for ( core::Size resj = start_res; resj <end_res; ++resj ) {
 		core::Real const distance = pose.residue( resj+1 ).xyz( "N" ).distance(pose.residue( resj ).xyz( "C" ));
-//			TR<<"distance is: "<<distance<<std::endl;
-//			TR<<"residue name is : "<<pose.residue(resj).name1()<<std::endl;
-		if( distance > bond_length()){
+		//   TR<<"distance is: "<<distance<<std::endl;
+		//   TR<<"residue name is : "<<pose.residue(resj).name1()<<std::endl;
+		if ( distance > bond_length() ) {
 			cut_pos = resj;
 			TR<<"Found cut at: "<<resj<<std::endl;
 			break;
@@ -185,7 +185,7 @@ CutChainMover::create_subpose(core::pose::Pose & pose)
 	pose.clear();
 
 	//add to pose only residues from main chain
-	for (core::Size resj = copy_pose.conformation().chain_begin( chain_id_); resj <= copy_pose.conformation().chain_end( chain_id_); ++resj) {
+	for ( core::Size resj = copy_pose.conformation().chain_begin( chain_id_); resj <= copy_pose.conformation().chain_end( chain_id_); ++resj ) {
 		core::conformation::Residue const & rsd( copy_pose.residue( resj) );
 		pose.append_residue_by_bond( rsd );
 	}
@@ -194,16 +194,16 @@ CutChainMover::create_subpose(core::pose::Pose & pose)
 
 void
 CutChainMover::foldTree (core::pose::Pose & pose){
-core::Size const s1 = chain_cut(pose);
-core::kinematics::FoldTree ft;
+	core::Size const s1 = chain_cut(pose);
+	core::kinematics::FoldTree ft;
 	ft.clear();
 	ft.add_edge( 1, s1, -1 );
 	ft.add_edge( s1, s1+1, 1 );
 	ft.add_edge( s1+1, pose.conformation().chain_end( chain_id()), -1 );
-TR<<"old foldtree: "<<pose.fold_tree()<<std::endl;
-pose.fold_tree(ft);
-TR<<"new_foldtree: "<<pose.fold_tree()<<std::endl;
-pose.conformation().detect_disulfides();
+	TR<<"old foldtree: "<<pose.fold_tree()<<std::endl;
+	pose.fold_tree(ft);
+	TR<<"new_foldtree: "<<pose.fold_tree()<<std::endl;
+	pose.conformation().detect_disulfides();
 }
 
 

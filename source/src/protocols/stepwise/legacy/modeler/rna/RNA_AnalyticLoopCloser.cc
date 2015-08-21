@@ -149,33 +149,33 @@ RNA_AnalyticLoopCloser::close_at_cutpoint ( core::pose::Pose & pose ) {
 	Size cutpos_ = chainbreak_suite_;
 	////////////////////////////////////////////////////////////////////////////////////
 	Real const d_O3prime_nextP = ( pose.xyz ( NamedAtomID ( " O3'", cutpos_ ) ) -
-	                              pose.xyz ( NamedAtomID ( "OVL1", cutpos_ ) ) ).length();
+		pose.xyz ( NamedAtomID ( "OVL1", cutpos_ ) ) ).length();
 	db_len[ 8 ] = d_O3prime_nextP;
 	////////////////////////////////////////////////////////////////////////////////////
 	Real const theta_C3prime_O3prime_nextP = degrees ( angle_radians ( pose.xyz ( NamedAtomID ( " C3'", cutpos_ ) ),
-	                                       pose.xyz ( NamedAtomID ( " O3'", cutpos_ ) ),
-	                                       pose.xyz ( NamedAtomID ( "OVL1", cutpos_ ) ) ) );
+		pose.xyz ( NamedAtomID ( " O3'", cutpos_ ) ),
+		pose.xyz ( NamedAtomID ( "OVL1", cutpos_ ) ) ) );
 	db_ang[ 8 ] = theta_C3prime_O3prime_nextP;
 	Real const theta_O3prime_nextP_nextO5prime = degrees ( angle_radians ( pose.xyz ( NamedAtomID ( " O3'", cutpos_ ) ),
-	    pose.xyz ( NamedAtomID ( "OVL1", cutpos_ ) ),
-	    pose.xyz ( NamedAtomID ( "OVL2", cutpos_ ) ) ) );
+		pose.xyz ( NamedAtomID ( "OVL1", cutpos_ ) ),
+		pose.xyz ( NamedAtomID ( "OVL2", cutpos_ ) ) ) );
 	db_ang[ 9 ] = theta_O3prime_nextP_nextO5prime;
 	////////////////////////////////////////////////////////////////////////////////////
 	Real const phi_C4prime_C3prime_O3prime_nextP = degrees ( dihedral_radians ( pose.xyz ( NamedAtomID ( " C4'", moving_suite_ + 1 ) ),
-	    pose.xyz ( NamedAtomID ( " C3'", cutpos_ ) ),
-	    pose.xyz ( NamedAtomID ( " O3'", cutpos_ ) ),
-	    pose.xyz ( NamedAtomID ( "OVL1", cutpos_ ) ) ) );
+		pose.xyz ( NamedAtomID ( " C3'", cutpos_ ) ),
+		pose.xyz ( NamedAtomID ( " O3'", cutpos_ ) ),
+		pose.xyz ( NamedAtomID ( "OVL1", cutpos_ ) ) ) );
 	dt_ang[ 7 ] =  phi_C4prime_C3prime_O3prime_nextP;
 	Real const phi_C3prime_O3prime_nextP_nextO5prime = degrees ( dihedral_radians (
-	      pose.xyz ( NamedAtomID ( " C3'", cutpos_ ) ),
-	      pose.xyz ( NamedAtomID ( " O3'", cutpos_ ) ),
-	      pose.xyz ( NamedAtomID ( "OVL1", cutpos_ ) ),
-	      pose.xyz ( NamedAtomID ( "OVL2", cutpos_ ) ) ) );
+		pose.xyz ( NamedAtomID ( " C3'", cutpos_ ) ),
+		pose.xyz ( NamedAtomID ( " O3'", cutpos_ ) ),
+		pose.xyz ( NamedAtomID ( "OVL1", cutpos_ ) ),
+		pose.xyz ( NamedAtomID ( "OVL2", cutpos_ ) ) ) );
 	dt_ang[ 8 ] =  phi_C3prime_O3prime_nextP_nextO5prime;
 	Real const phi_O3prime_nextP_nextO5prime_nextC5prime = degrees ( dihedral_radians ( pose.xyz ( NamedAtomID ( "OVU1", cutpos_ + 1 ) ),
-	    pose.xyz ( NamedAtomID ( " P  ", cutpos_ + 1 ) ),
-	    pose.xyz ( NamedAtomID ( " O5'", cutpos_ + 1 ) ),
-	    pose.xyz ( NamedAtomID ( " C5'", cutpos_ + 1 ) ) ) );
+		pose.xyz ( NamedAtomID ( " P  ", cutpos_ + 1 ) ),
+		pose.xyz ( NamedAtomID ( " O5'", cutpos_ + 1 ) ),
+		pose.xyz ( NamedAtomID ( " C5'", cutpos_ + 1 ) ) ) );
 	dt_ang[ 9 ] =  phi_O3prime_nextP_nextO5prime_nextC5prime;
 
 	if ( verbose_ ) {
@@ -202,7 +202,7 @@ RNA_AnalyticLoopCloser::close_at_cutpoint ( core::pose::Pose & pose ) {
 ///////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_AnalyticLoopCloser::figure_out_dof_ids_and_offsets ( pose::Pose const & pose,
-    utility::vector1< Real > const & dt_ang ) {
+	utility::vector1< Real > const & dt_ang ) {
 	////////////////////////////////////////////////////////////////////////////////////
 	// Note that the torsion angles that we solved for do not directly correspond to
 	// torsion angles in the atom-tree. But they are right up to an *offset*, which
@@ -266,14 +266,14 @@ RNA_AnalyticLoopCloser::figure_out_dof_ids_and_offsets ( pose::Pose const & pose
 ////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_AnalyticLoopCloser::figure_out_offset (
-  core::pose::Pose const & pose,
-  core::id::DOF_ID const & dof_id,
-  core::Real const & original_torsion_value,
-  utility::vector1< core::Real > & offset_save ) {
+	core::pose::Pose const & pose,
+	core::id::DOF_ID const & dof_id,
+	core::Real const & original_torsion_value,
+	utility::vector1< core::Real > & offset_save ) {
 	if ( dof_id == BOGUS_DOF_ID ) { //expected at cutpoint!
 		TR <<  "Problem with DOF_ID " << dof_id << std::endl;
 		utility_exit_with_message ( "Problem with DOF_ID" );
-		//		}
+		//  }
 	} else {
 		offset_save.push_back ( pose.dof ( dof_id ) - radians ( original_torsion_value ) );
 		dof_ids_.push_back ( dof_id );
@@ -281,7 +281,7 @@ RNA_AnalyticLoopCloser::figure_out_offset (
 		if ( verbose_ ) {
 			TR << dof_id;
 			TR << "  offset " << pose.dof ( dof_id ) << " " << radians ( original_torsion_value )
-			          << " " << pose.dof ( dof_id ) - radians ( original_torsion_value ) << std::endl;
+				<< " " << pose.dof ( dof_id ) - radians ( original_torsion_value ) << std::endl;
 		}
 	}
 }
@@ -289,7 +289,7 @@ RNA_AnalyticLoopCloser::figure_out_offset (
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_AnalyticLoopCloser::apply_solutions ( core::pose::Pose & pose ) {
-debug_assert ( t_ang_.size() == Size ( nsol_ ) );
+	debug_assert ( t_ang_.size() == Size ( nsol_ ) );
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Finally, ready to check out the solutions
@@ -297,7 +297,7 @@ debug_assert ( t_ang_.size() == Size ( nsol_ ) );
 	if ( nsol_ == 0 ) return;
 
 	if ( choose_least_perturb_solution_ ) {
-		if ( verbose_ )		{
+		if ( verbose_ )  {
 			TR << "---------------------------------- " << std::endl;
 			TR << "   start pose " << std::endl;
 			TR << "---------------------------------- " << std::endl;
@@ -341,9 +341,9 @@ debug_assert ( t_ang_.size() == Size ( nsol_ ) );
 			output_chainTORS ( t_ang_[best_sol], b_ang_[best_sol], b_len_[best_sol] );
 		}
 
-		//		fill_solution( pose, best_sol );
+		//  fill_solution( pose, best_sol );
 
-		if ( verbose_ )		{
+		if ( verbose_ )  {
 			TR << "pose " << best_sol << ": " << std::endl;
 			utility::vector1< Real > dt_ang, db_len, db_ang;
 			utility::vector1< utility::vector1< Real > > atoms;
@@ -352,7 +352,7 @@ debug_assert ( t_ang_.size() == Size ( nsol_ ) );
 			pose.dump_pdb ( "closed.pdb" );
 		}
 	} else if ( choose_best_solution_ ) {
-	debug_assert ( scorefxn_ != 0 );
+		debug_assert ( scorefxn_ != 0 );
 		Real best_score ( 0.0 );
 		Size best_sol ( 0 );
 
@@ -378,7 +378,7 @@ debug_assert ( t_ang_.size() == Size ( nsol_ ) );
 
 		fill_solution ( pose, best_sol );
 	} else {
-	debug_assert ( choose_random_solution_ );
+		debug_assert ( choose_random_solution_ );
 		Size const n = static_cast< int > ( nsol_ * numeric::random::rg().uniform() ) + 1;
 		fill_solution ( pose, n );
 	}
@@ -387,7 +387,7 @@ debug_assert ( t_ang_.size() == Size ( nsol_ ) );
 //////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_AnalyticLoopCloser::get_all_solutions ( core::pose::Pose & pose,
-    utility::vector1< core::pose::PoseOP > & pose_list ) {
+	utility::vector1< core::pose::PoseOP > & pose_list ) {
 	pose_list.clear();
 
 	for ( Size n = 1; n <= Size ( nsol_ ); n++ ) {
@@ -406,7 +406,7 @@ RNA_AnalyticLoopCloser::get_all_solutions ( core::pose::Pose & pose,
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_AnalyticLoopCloser::fill_solution ( core::pose::Pose & pose,
-                                        Size const n ) const {
+	Size const n ) const {
 	Size count ( 0 );
 
 	for ( Size i = 1; i <= 3; i++ ) {
@@ -421,7 +421,7 @@ RNA_AnalyticLoopCloser::fill_solution ( core::pose::Pose & pose,
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Real >
 RNA_AnalyticLoopCloser::get_torsions ( Size const n ) {
-debug_assert ( n <= t_ang_.size() );
+	debug_assert ( n <= t_ang_.size() );
 	utility::vector1< Real > torsions;
 	Size count ( 0 );
 
@@ -464,8 +464,8 @@ RNA_AnalyticLoopCloser::choose_least_perturb_solution() {
 ///////////////////////////////////////////////////////////////////////////
 void
 RNA_AnalyticLoopCloser::output_chainTORS ( utility::vector1< core::Real > const & dt_ang,
-    utility::vector1< core::Real > const & db_ang,
-    utility::vector1< core::Real > const & db_len ) const {
+	utility::vector1< core::Real > const & db_ang,
+	utility::vector1< core::Real > const & db_len ) const {
 	TR << "------  chainTORS output ---- " << std::endl;
 
 	for ( Size i = 1; i <= dt_ang.size(); i++ ) {
@@ -483,12 +483,12 @@ RNA_AnalyticLoopCloser::output_chainTORS ( utility::vector1< core::Real > const 
 ///////////////////////////////////////////////////////////
 void
 RNA_AnalyticLoopCloser::fill_chainTORS (
-  core::pose::Pose const & pose,
-  utility::vector1< id::NamedAtomID > const & atom_ids_,
-  utility::vector1< utility::vector1< Real > > & atoms,
-  utility::vector1< Real > & dt_ang,
-  utility::vector1< Real > & db_ang,
-  utility::vector1< Real > & db_len ) const {
+	core::pose::Pose const & pose,
+	utility::vector1< id::NamedAtomID > const & atom_ids_,
+	utility::vector1< utility::vector1< Real > > & atoms,
+	utility::vector1< Real > & dt_ang,
+	utility::vector1< Real > & db_ang,
+	utility::vector1< Real > & db_len ) const {
 	using namespace core::kinematics;
 	using namespace numeric::kinematic_closure;
 	utility::vector1< utility::vector1< Real > > Q0 ( 3 );
@@ -496,7 +496,7 @@ RNA_AnalyticLoopCloser::fill_chainTORS (
 	utility::vector1< Vector > atoms_xyz;
 
 	for ( Size i = 1; i <= atom_ids_.size(); i++ ) {
-		//		TR << "filling: " << atom_ids_[i].atomno() << " " << atom_ids_[i].rsd() << std::endl;
+		//  TR << "filling: " << atom_ids_[i].atomno() << " " << atom_ids_[i].rsd() << std::endl;
 		atoms_xyz.push_back ( pose.xyz ( atom_ids_[ i ] ) );
 	}
 
@@ -512,14 +512,14 @@ RNA_AnalyticLoopCloser::fill_chainTORS (
 	// where we nudge one atom the slightest bit.
 	// static Real const nudge( 0.000001 );
 	// for ( Size n = 1; n <= ( (atom_ids_.size()/3) - 3 ) ; n++ ){
-	// 	Size const i = 3 + (n * 3); // Look at S at the end of one triplet that may overlap with starting S of next triplet
-	// 	if ( atom_ids_[ i ] == atom_ids_[ i+1 ] ){
-	// 		// This should be the S at the end of one triplet overlapping with
-	// 		// the S beginning the next triplet.
-	// 		Size const seqpos = atom_ids_[ i ].rsd();
-	// 		atoms_xyz[ i+1 ]  = atoms_xyz[ i ] +
-	// 			nudge * ( pose.xyz( NamedAtomID( " CEN", seqpos ) ) - atoms_xyz[i] ).normalize();
-	// 	}
+	//  Size const i = 3 + (n * 3); // Look at S at the end of one triplet that may overlap with starting S of next triplet
+	//  if ( atom_ids_[ i ] == atom_ids_[ i+1 ] ){
+	//   // This should be the S at the end of one triplet overlapping with
+	//   // the S beginning the next triplet.
+	//   Size const seqpos = atom_ids_[ i ].rsd();
+	//   atoms_xyz[ i+1 ]  = atoms_xyz[ i ] +
+	//    nudge * ( pose.xyz( NamedAtomID( " CEN", seqpos ) ) - atoms_xyz[i] ).normalize();
+	//  }
 	// }
 	// formatting.
 	atoms.clear();

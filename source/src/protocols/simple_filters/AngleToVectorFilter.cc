@@ -24,7 +24,7 @@
 #include <core/conformation/Residue.hh>
 #include <utility/vector1.hh>
 
-namespace protocols{
+namespace protocols {
 namespace simple_filters {
 
 using core::Size;
@@ -42,12 +42,12 @@ AngleToVectorFilterCreator::keyname() const { return "AngleToVector"; }
 
 //default ctor
 AngleToVector::AngleToVector() :
-protocols::filters::Filter( "AngleToVector" ),
-min_angle_( 0.0 ),
-max_angle_( 90.0 ),
-refx_( 0.0 ), refy_( 0.0 ), refz_( 0.0 ),
-chain_( 2 ),
-atm1_( "" ), atm2_( "" )
+	protocols::filters::Filter( "AngleToVector" ),
+	min_angle_( 0.0 ),
+	max_angle_( 90.0 ),
+	refx_( 0.0 ), refy_( 0.0 ), refz_( 0.0 ),
+	chain_( 2 ),
+	atm1_( "" ), atm2_( "" )
 {
 }
 
@@ -91,13 +91,13 @@ AngleToVector::compute( core::pose::Pose const & pose ) const {
 bool
 AngleToVector::apply( core::pose::Pose const & pose ) const{
 	core::Real const angle( compute( pose ) );
-	if( angle >= min_angle() && angle <= max_angle() ) return true;
+	if ( angle >= min_angle() && angle <= max_angle() ) return true;
 	return false;
 }
 
 void
 AngleToVector::report( std::ostream &, core::pose::Pose const & ) const {
-//	os<<"angle: "<<compute( pose )<<std::endl;
+	// os<<"angle: "<<compute( pose )<<std::endl;
 }
 
 core::Real

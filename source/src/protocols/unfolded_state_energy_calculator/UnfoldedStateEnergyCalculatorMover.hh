@@ -44,7 +44,7 @@ namespace unfolded_state_energy_calculator {
 /// @brief
 class UnfoldedStateEnergyCalculatorMover : public protocols::moves::Mover {
 
-// ctors, dtors, and cctors
+	// ctors, dtors, and cctors
 public:
 
 	/// @brief ctor
@@ -65,14 +65,14 @@ public:
 		bool seq_match_frags
 	);
 
-  /// @brief dtor
-  virtual ~UnfoldedStateEnergyCalculatorMover();
+	/// @brief dtor
+	virtual ~UnfoldedStateEnergyCalculatorMover();
 
-  /// @brief cctor
-  UnfoldedStateEnergyCalculatorMover( UnfoldedStateEnergyCalculatorMover const & usecm );
+	/// @brief cctor
+	UnfoldedStateEnergyCalculatorMover( UnfoldedStateEnergyCalculatorMover const & usecm );
 
 
-// mover and job distributor interface functions
+	// mover and job distributor interface functions
 public:
 
 	/// @brief
@@ -84,12 +84,12 @@ public:
 	virtual std::string get_name() const;
 
 	/// @brief
-	virtual	bool reinitialize_for_each_job() const;
+	virtual bool reinitialize_for_each_job() const;
 
 	/// @brief
-	virtual	bool reinitialize_for_new_input() const;
+	virtual bool reinitialize_for_new_input() const;
 
-// class specific functions
+	// class specific functions
 private:
 
 	bool fragment_check( Pose & pose, Size frag_start_pos );
@@ -98,7 +98,7 @@ private:
 
 	void create_sequence_match_fragments( Pose & pose, utility::vector1< Pose > & fragments );
 
-// data
+	// data
 private:
 
 	// job distributor

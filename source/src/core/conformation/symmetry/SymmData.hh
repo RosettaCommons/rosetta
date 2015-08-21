@@ -41,10 +41,10 @@ namespace symmetry {
 class SymmData : public utility::pointer::ReferenceCount
 {
 
-//	typedef utility::vector1< Size > Clones;
+	// typedef utility::vector1< Size > Clones;
 	typedef utility::vector1< std::pair<Size,Real> > WtedClones;
 
-	public:
+public:
 
 	SymmData();
 	SymmData( core::Size nres, core::Size njump );
@@ -63,7 +63,7 @@ class SymmData : public utility::pointer::ReferenceCount
 
 	//void test( SymmData tmp );
 
-	private:
+private:
 
 	std::string symmetry_name_;
 	std::string symmetry_type_;
@@ -109,11 +109,11 @@ class SymmData : public utility::pointer::ReferenceCount
 
 	utility::vector1<std::string> leaves_of_jump(std::string const & jname) const;
 
-	public:
+public:
 	typedef numeric::xyzVector< core::Real > Vector;
 	typedef numeric::xyzMatrix< core::Real > Matrix;
 
-	public:
+public:
 	void
 	read_symmetry_data_from_file(
 		std::string filename
@@ -134,7 +134,7 @@ class SymmData : public utility::pointer::ReferenceCount
 	void
 	show();
 
-	public:
+public:
 	// Accessor functions
 
 	std::string const &
@@ -221,7 +221,7 @@ class SymmData : public utility::pointer::ReferenceCount
 
 	void
 	set_symmetry_name(
-	  std::string symm_name );
+		std::string symm_name );
 
 	void
 	set_symmetry_type(

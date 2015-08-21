@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/sampler/copy_dofs/ResidueAlternativeSet.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -22,11 +22,11 @@ namespace protocols {
 namespace stepwise {
 namespace sampler {
 namespace copy_dofs {
-	
-	class ResidueAlternativeSet;
-	typedef utility::pointer::shared_ptr< ResidueAlternativeSet > ResidueAlternativeSetOP;
-	typedef utility::pointer::shared_ptr< ResidueAlternativeSet const > ResidueAlternativeSetCOP;
-	
+
+class ResidueAlternativeSet;
+typedef utility::pointer::shared_ptr< ResidueAlternativeSet > ResidueAlternativeSetOP;
+typedef utility::pointer::shared_ptr< ResidueAlternativeSet const > ResidueAlternativeSetCOP;
+
 } //copy_dofs
 } //sampler
 } //stepwise

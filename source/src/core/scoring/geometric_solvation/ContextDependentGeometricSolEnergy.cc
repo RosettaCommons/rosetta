@@ -93,7 +93,7 @@ ContextDependentGeometricSolEnergy::ContextDependentGeometricSolEnergy( methods:
 	parent( methods::EnergyMethodCreatorOP( new ContextDependentGeometricSolEnergyCreator ) ),
 	options_( opts ),
 	evaluator_( GeometricSolEnergyEvaluatorOP( new GeometricSolEnergyEvaluator( opts ) ) ),
-  precalculated_bb_bb_energy_(0.0f),
+	precalculated_bb_bb_energy_(0.0f),
 	using_extended_method_( false )
 {
 }
@@ -116,31 +116,31 @@ ContextDependentGeometricSolEnergy::clone() const
 
 void
 ContextDependentGeometricSolEnergy::setup_for_packing(
-  pose::Pose  & pose,
-  utility::vector1< bool > const &,
-  utility::vector1< bool > const & designing_residues
+	pose::Pose  & pose,
+	utility::vector1< bool > const &,
+	utility::vector1< bool > const & designing_residues
 ) const
 {
 	// Need an HBOND_SET if we don't already have one from regular HBONDS
 	// Note: The logic here is kinda hacky.
 	using EnergiesCacheableDataType::HBOND_SET;
-	if( ! pose.energies().data().has( HBOND_SET )	) {
+	if ( ! pose.energies().data().has( HBOND_SET ) ) {
 		hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( options_.hbond_options() ) );
 		hbond_set->setup_for_residue_pair_energies( pose );
 		pose.energies().data().set( HBOND_SET, hbond_set );
 	}
 
-  bool might_be_designing( false );
-	for ( Size n = 1; n <= designing_residues.size(); n++ ){
+	bool might_be_designing( false );
+	for ( Size n = 1; n <= designing_residues.size(); n++ ) {
 		if ( designing_residues[n] ) {
 			might_be_designing = true;
 			break;
 		}
 	}
-  precalculated_bb_bb_energy_ = 0.0f;
+	precalculated_bb_bb_energy_ = 0.0f;
 
-  //if nothing can be designed no reason to precalculate backbone/backbone geom_solv
-  if (!might_be_designing) return;
+	//if nothing can be designed no reason to precalculate backbone/backbone geom_solv
+	if ( !might_be_designing ) return;
 	precalculated_bb_bb_energy_ = evaluator_->precalculate_bb_bb_energy_for_design( pose );
 }
 
@@ -153,7 +153,7 @@ ContextDependentGeometricSolEnergy::setup_for_scoring( pose::Pose & pose, ScoreF
 	// Need an HBOND_SET if we don't already have one from regular HBONDS
 	// Note: The logic here is kinda hacky.
 	using EnergiesCacheableDataType::HBOND_SET;
-	if( ! pose.energies().data().has( HBOND_SET )	) {
+	if ( ! pose.energies().data().has( HBOND_SET ) ) {
 		hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( options_.hbond_options() ) );
 		hbond_set->setup_for_residue_pair_energies( pose );
 		pose.energies().data().set( HBOND_SET, hbond_set );
@@ -163,10 +163,10 @@ ContextDependentGeometricSolEnergy::setup_for_scoring( pose::Pose & pose, ScoreF
 ///////////////////////////////////////////////////////////////////////////////
 bool
 ContextDependentGeometricSolEnergy::defines_score_for_residue_pair(
-												   conformation::Residue const & rsd1,
-												   conformation::Residue const & rsd2,
-												   bool res_moving_wrt_eachother
-												   ) const
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	bool res_moving_wrt_eachother
+) const
 {
 	return evaluator_->defines_score_for_residue_pair( rsd1, rsd2, res_moving_wrt_eachother);
 }
@@ -174,11 +174,11 @@ ContextDependentGeometricSolEnergy::defines_score_for_residue_pair(
 ///////////////////////////////////////////////////////////////////////////////
 etable::count_pair::CountPairFunctionCOP
 ContextDependentGeometricSolEnergy::get_count_pair_function(
-											Size const res1,
-											Size const res2,
-											pose::Pose const & pose,
-											ScoreFunction const &
-											) const
+	Size const res1,
+	Size const res2,
+	pose::Pose const & pose,
+	ScoreFunction const &
+) const
 {
 	return evaluator_->get_count_pair_function( res1, res2, pose );
 }
@@ -186,9 +186,9 @@ ContextDependentGeometricSolEnergy::get_count_pair_function(
 ///////////////////////////////////////////////////////////////////////////////
 etable::count_pair::CountPairFunctionCOP
 ContextDependentGeometricSolEnergy::get_count_pair_function(
-											conformation::Residue const & rsd1,
-											conformation::Residue const & rsd2
-											) const
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2
+) const
 {
 	return evaluator_->get_count_pair_function( rsd1, rsd2 );
 }
@@ -196,10 +196,10 @@ ContextDependentGeometricSolEnergy::get_count_pair_function(
 ///////////////////////////////////////////////////////////////////////////////
 etable::count_pair::CountPairFunctionCOP
 ContextDependentGeometricSolEnergy::get_intrares_countpair(
-										   conformation::Residue const & res,
-										   pose::Pose const &,
-										   ScoreFunction const &
-										   ) const
+	conformation::Residue const & res,
+	pose::Pose const &,
+	ScoreFunction const &
+) const
 {
 	return evaluator_->get_intrares_countpair( res );
 }
@@ -231,7 +231,7 @@ ContextDependentGeometricSolEnergy::eval_intrares_derivatives(
 {
 	if ( !defines_intrares_energy( weights ) ) return;
 	evaluator_->eval_intrares_derivatives( rsd, pose, weights[ geom_sol_intra_RNA ], atom_derivs, true /*just_RNA*/);
-	if (options_.put_intra_into_total() ) evaluator_->eval_intrares_derivatives( rsd, pose, weights[ geom_sol ], atom_derivs, false /*just_RNA*/ );
+	if ( options_.put_intra_into_total() ) evaluator_->eval_intrares_derivatives( rsd, pose, weights[ geom_sol ], atom_derivs, false /*just_RNA*/ );
 }
 
 ////////////////////////////////////////////////////
@@ -254,13 +254,13 @@ ContextDependentGeometricSolEnergy::eval_residue_pair_derivatives(
 ////////////////////////////////////////////////////////////////////////////////
 void
 ContextDependentGeometricSolEnergy::residue_pair_energy_ext(
-											conformation::Residue const & rsd1,
-											conformation::Residue const & rsd2,
-											ResPairMinimizationData const & min_data,
-											pose::Pose const & pose,
-											ScoreFunction const &,
-											EnergyMap & emap
-											) const
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	ResPairMinimizationData const & min_data,
+	pose::Pose const & pose,
+	ScoreFunction const &,
+	EnergyMap & emap
+) const
 {
 	using_extended_method_ = true;
 	emap[ geom_sol ] += evaluator_->residue_pair_energy_ext( rsd1, rsd2, min_data, pose );
@@ -269,14 +269,14 @@ ContextDependentGeometricSolEnergy::residue_pair_energy_ext(
 ////////////////////////////////////////////////////////////////////////////////
 void
 ContextDependentGeometricSolEnergy::setup_for_minimizing_for_residue_pair(
-    conformation::Residue const & rsd1,
-    conformation::Residue const & rsd2,
-    pose::Pose const &,
-    ScoreFunction const &,
-    kinematics::MinimizerMapBase const &,
-    ResSingleMinimizationData const &,
-    ResSingleMinimizationData const &,
-    ResPairMinimizationData & pair_data
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	pose::Pose const &,
+	ScoreFunction const &,
+	kinematics::MinimizerMapBase const &,
+	ResSingleMinimizationData const &,
+	ResSingleMinimizationData const &,
+	ResPairMinimizationData & pair_data
 ) const
 {
 	evaluator_->setup_for_minimizing_for_residue_pair( rsd1, rsd2, pair_data );
@@ -294,21 +294,21 @@ ContextDependentGeometricSolEnergy::residue_pair_energy(
 	ScoreFunction const & scorefxn,
 	EnergyMap & emap ) const
 {
-  using_extended_method_ = false;
+	using_extended_method_ = false;
 
-  //if the backbone/backbone energy has already been calculated in setup_for_packing
-  //  this is done only if we are doing fix backbone design and the backbone/backbone
-  //  energy cannot change (Joseph Yesselman 9/11/13)
+	//if the backbone/backbone energy has already been calculated in setup_for_packing
+	//  this is done only if we are doing fix backbone design and the backbone/backbone
+	//  energy cannot change (Joseph Yesselman 9/11/13)
 	// note from rhiju -- this looks dangerous
-  if ( precalculated_bb_bb_energy_ > 0.0f) {
+	if ( precalculated_bb_bb_energy_ > 0.0f ) {
 
-    emap[ geom_sol ] += evaluator_->geometric_sol_one_way_sc(rsd1, rsd2, pose) +
-                             evaluator_->geometric_sol_one_way_sc(rsd2, rsd1, pose);
-  }  else {
+		emap[ geom_sol ] += evaluator_->geometric_sol_one_way_sc(rsd1, rsd2, pose) +
+			evaluator_->geometric_sol_one_way_sc(rsd2, rsd1, pose);
+	}  else {
 
-    evaluator_->residue_pair_energy( rsd1, rsd2, pose, scorefxn, emap );
+		evaluator_->residue_pair_energy( rsd1, rsd2, pose, scorefxn, emap );
 
-  }
+	}
 }
 
 /////////////////////////////
@@ -321,9 +321,9 @@ ContextDependentGeometricSolEnergy::minimize_in_whole_structure_context( pose::P
 
 void
 ContextDependentGeometricSolEnergy::finalize_total_energy(
-    pose::Pose &,
-    ScoreFunction const &,
-    EnergyMap & totals ) const
+	pose::Pose &,
+	ScoreFunction const &,
+	EnergyMap & totals ) const
 {
 
 	if ( !using_extended_method_ ) {
@@ -335,60 +335,60 @@ ContextDependentGeometricSolEnergy::finalize_total_energy(
 
 
 	/*---
-   //if ( !using_extended_method_ ) return;
-    if ( ! pose.energies().use_nblist() || ! pose.energies().use_nblist_auto_update() ) return;
-    NeighborList const & nblist
-        ( pose.energies().nblist( EnergiesCacheableDataType::GEOM_SOLV_NBLIST ) );
-    nblist.check_domain_map( pose.energies().domain_map() );
-    utility::vector1< conformation::Residue const * > resvect;
-    resvect.reserve( pose.total_residue() );
-    for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-        resvect.push_back( & pose.residue( ii ) );
-    }
-    Real score( 0.0 );
-    Real energy( 0.0 );
+	//if ( !using_extended_method_ ) return;
+	if ( ! pose.energies().use_nblist() || ! pose.energies().use_nblist_auto_update() ) return;
+	NeighborList const & nblist
+	( pose.energies().nblist( EnergiesCacheableDataType::GEOM_SOLV_NBLIST ) );
+	nblist.check_domain_map( pose.energies().domain_map() );
+	utility::vector1< conformation::Residue const * > resvect;
+	resvect.reserve( pose.total_residue() );
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	resvect.push_back( & pose.residue( ii ) );
+	}
+	Real score( 0.0 );
+	Real energy( 0.0 );
 
-    for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
-        conformation::Residue const & ires( *resvect[i] );
-        for ( Size ii=1, ii_end=ires.natoms(); ii<= ii_end; ++ii ) {
-            AtomNeighbors const & nbrs( nblist.upper_atom_neighbors(i,ii) );
-            for ( AtomNeighbors::const_iterator nbr_iter=nbrs.begin(),
-                    nbr_end=nbrs.end(); nbr_iter!= nbr_end; ++nbr_iter ) {
-                AtomNeighbor const & nbr( *nbr_iter );
+	for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
+	conformation::Residue const & ires( *resvect[i] );
+	for ( Size ii=1, ii_end=ires.natoms(); ii<= ii_end; ++ii ) {
+	AtomNeighbors const & nbrs( nblist.upper_atom_neighbors(i,ii) );
+	for ( AtomNeighbors::const_iterator nbr_iter=nbrs.begin(),
+	nbr_end=nbrs.end(); nbr_iter!= nbr_end; ++nbr_iter ) {
+	AtomNeighbor const & nbr( *nbr_iter );
 
-                Size const  j( nbr.rsd() );
-                if ( i==j ) continue;
-                Size const jj( nbr.atomno() );
-                // could reorder the nbr lists so that we dont need this check:
-                //if ( ( j < i ) || ( j == i && jj <= ii ) ) continue;
+	Size const  j( nbr.rsd() );
+	if ( i==j ) continue;
+	Size const jj( nbr.atomno() );
+	// could reorder the nbr lists so that we dont need this check:
+	//if ( ( j < i ) || ( j == i && jj <= ii ) ) continue;
 
-                conformation::Residue const & jres( *resvect[j] );
+	conformation::Residue const & jres( *resvect[j] );
 
-                if ( evaluator_->atom_is_heavy( jres, jj ) ) {
-									  if ( ires.atom_is_polar_hydrogen( ii ) ) {
-                        evaluator_->get_atom_atom_geometric_solvation_for_donor( ii, ires, jj, jres, pose, energy );
-                        score += energy;
-                    } else if ( ires.heavyatom_is_an_acceptor( ii ) ) {
-                        evaluator_->get_atom_atom_geometric_solvation_for_acceptor( ii, ires, jj, jres, pose, energy );
-                        score += energy;
-                    }
-                }
-                if ( evaluator_->atom_is_heavy ( ires, ii ) ) {
-                    if ( evaluator_->atom_is_donor_h( jres, jj ) ) {
-                        evaluator_->get_atom_atom_geometric_solvation_for_donor( jj, jres, ii, ires, pose, energy );
-                        score += energy;
-                    } else if ( evaluator_->atom_is_acceptor( jres, jj ) ) {
-                        evaluator_->get_atom_atom_geometric_solvation_for_acceptor( jj, jres, ii, ires, pose, energy );
-                        score += energy;
-                    }
-                }
-            }
-        }
-    }
+	if ( evaluator_->atom_is_heavy( jres, jj ) ) {
+	if ( ires.atom_is_polar_hydrogen( ii ) ) {
+	evaluator_->get_atom_atom_geometric_solvation_for_donor( ii, ires, jj, jres, pose, energy );
+	score += energy;
+	} else if ( ires.heavyatom_is_an_acceptor( ii ) ) {
+	evaluator_->get_atom_atom_geometric_solvation_for_acceptor( ii, ires, jj, jres, pose, energy );
+	score += energy;
+	}
+	}
+	if ( evaluator_->atom_is_heavy ( ires, ii ) ) {
+	if ( evaluator_->atom_is_donor_h( jres, jj ) ) {
+	evaluator_->get_atom_atom_geometric_solvation_for_donor( jj, jres, ii, ires, pose, energy );
+	score += energy;
+	} else if ( evaluator_->atom_is_acceptor( jres, jj ) ) {
+	evaluator_->get_atom_atom_geometric_solvation_for_acceptor( jj, jres, ii, ires, pose, energy );
+	score += energy;
+	}
+	}
+	}
+	}
+	}
 
-    totals[ geom_sol ] += score;
+	totals[ geom_sol ] += score;
 
-		--*/
+	--*/
 }
 
 
@@ -403,7 +403,7 @@ bool
 ContextDependentGeometricSolEnergy::defines_intrares_energy( EnergyMap const &  ) const
 {
 	//Change to this on Feb 06, 2012. Ensure that the function returns false if weights[geom_sol_intra_RNA] == 0.0
-	//	return ( weights[geom_sol_intra_RNA] > 0.0001 );
+	// return ( weights[geom_sol_intra_RNA] > 0.0001 );
 	return true;
 }
 

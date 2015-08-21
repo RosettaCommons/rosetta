@@ -23,26 +23,26 @@ namespace nonlocal {
 Region::~Region() {}
 
 Region::Region(core::Size start_pos, core::Size stop_pos)
-  : start_(start_pos), stop_(stop_pos) {}
+: start_(start_pos), stop_(stop_pos) {}
 
 core::Size Region::start() const {
-  return start_;
+	return start_;
 }
 
 core::Size Region::stop() const {
-  return stop_;
+	return stop_;
 }
 
 core::Size Region::length() const {
-  return increasing() ? stop() - start() + 1 : start() - stop() + 1;
+	return increasing() ? stop() - start() + 1 : start() - stop() + 1;
 }
 
 bool Region::increasing() const {
-  return start() <= stop();
+	return start() <= stop();
 }
 
 bool Region::decreasing() const {
-  return stop() <= start();
+	return stop() <= start();
 }
 
 }  // namespace nonlocal

@@ -82,18 +82,18 @@ public:
 	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
 
 
-///////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////
 	virtual
 	void
 	eval_atom_derivative(
-											 id::AtomID const & id,
-											 pose::Pose const & pose,
-											 kinematics::DomainMap const &, // domain_map,
-											 ScoreFunction const & sfxn,
-											 EnergyMap const & weights,
-											 Vector & F1,
-											 Vector & F2
-											 ) const;
+		id::AtomID const & id,
+		pose::Pose const & pose,
+		kinematics::DomainMap const &, // domain_map,
+		ScoreFunction const & sfxn,
+		EnergyMap const & weights,
+		Vector & F1,
+		Vector & F2
+	) const;
 
 
 	/// @brief RNA_SugarCloseEnergy is context independent; indicates that no

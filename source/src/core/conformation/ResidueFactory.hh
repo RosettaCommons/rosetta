@@ -29,9 +29,9 @@ namespace conformation {
 class ResidueFactory
 {
 public:
-// 	static
-// 	ResidueTypeOP
-// 	create_residue_type( chemical::AtomTypeSetCAP atom_types, chemical::MMAtomTypeSetCAP mm_atom_types );
+	//  static
+	//  ResidueTypeOP
+	//  create_residue_type( chemical::AtomTypeSetCAP atom_types, chemical::MMAtomTypeSetCAP mm_atom_types );
 
 	/// creates residue of desired type, coords are ideal values in some default spatial orientation
 	static
@@ -43,11 +43,11 @@ public:
 	static
 	ResidueOP
 	create_residue(
-	 chemical::ResidueType const & rsd_type,
-	 Residue const & current_rsd,
-	 Conformation const & conformation,
-	 bool preserve_c_beta = false
- );
+		chemical::ResidueType const & rsd_type,
+		Residue const & current_rsd,
+		Conformation const & conformation,
+		bool preserve_c_beta = false
+	);
 
 };
 

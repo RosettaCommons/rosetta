@@ -73,14 +73,14 @@ using namespace core::pack::task;
 void DesignRelaxMover::apply( core::pose::Pose & pose )
 {
 	using core::pack::task::operation::TaskOperationCOP;
-	
+
 	bool debug( false );
-	if( basic::options::option[ basic::options::OptionKeys::run::debug ].user() ){
+	if ( basic::options::option[ basic::options::OptionKeys::run::debug ].user() ) {
 		debug = true;
 	}
 
 	// we don't know how the pose coming in was created but it needs to be a full atom pose
-	if( !pose.is_fullatom() ){
+	if ( !pose.is_fullatom() ) {
 		core::util::switch_to_residue_type_set(pose, core::chemical::FA_STANDARD);
 		TR << "switching pose to be full atom" << std::endl;
 	}
@@ -92,22 +92,21 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 	// designrelaxmover works with resfile and commandline operations
 	designtaskfactory_->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
 	// check for resfile - if present use it
-	if( basic::options::option [ basic::options::OptionKeys::packing::resfile ].user()  ){
+	if ( basic::options::option [ basic::options::OptionKeys::packing::resfile ].user()  ) {
 		designtaskfactory_->push_back( TaskOperationCOP( new operation::ReadResfile ) );
 	}
 
 
 	// make decision about what loops may be rebuilt
-    bool loop_file_is_present = option[ OptionKeys::loops::loop_file].user();
-    // read in loops from a file if given
+	bool loop_file_is_present = option[ OptionKeys::loops::loop_file].user();
+	// read in loops from a file if given
 	protocols::loops::LoopsOP loops( new protocols::loops::Loops( loop_file_is_present ) );
-	
-    // we need this for the rama term
+
+	// we need this for the rama term
 	basic::options::option[ basic::options::OptionKeys::loops::nonpivot_torsion_sampling ].value(true);
-	if( !loop_file_is_present )
-    {
-        protocols::loops::loopfinder( pose, *loops );
-    }
+	if ( !loop_file_is_present ) {
+		protocols::loops::loopfinder( pose, *loops );
+	}
 
 	// set up variables to control designrelaxcycles
 	core::Size designrelaxcycles(1);
@@ -119,7 +118,7 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 	core::scoring::ScoreFunctionOP centfxn( ( core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::CENTROID_WTS ) ));
 
 	core::pose::Pose native_pose;
-	if(  basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ){
+	if (  basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 		native_pose = pose;
 	}
 
@@ -131,14 +130,14 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 		protocols::simple_moves::PackRotamersMover design_step( designfxn_, designtask );
 		design_step.apply( pose );
 
-		if( debug ){
+		if ( debug ) {
 			std::string design_tag = "design_step" + ObjexxFCL::lead_zero_string_of( designrelaxcycles, 6 );
 			core::io::pdb::dump_pdb( pose, design_tag);
 		}
 
 		// default is false, so loop rebuilding must be turned off if not desired
-		if( option[ OptionKeys::loops::no_looprebuild ].value() == true  ){ continue; }
-		else{
+		if ( option[ OptionKeys::loops::no_looprebuild ].value() == true  ) { continue; }
+		else {
 
 			// changing the number of inner and outer cycles for LoopMover_Refine_KIC
 			// giving the user the chance to increase or decrease cycles
@@ -150,41 +149,41 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 
 
 			protocols::loops::loop_mover::refine::LoopMover_Refine_KIC refine_alc( loops, relaxfxn_ );
-			//			refine_alc.set_native_pose( native_pose );
+			//   refine_alc.set_native_pose( native_pose );
 			refine_alc.apply( pose );
 
-			if( debug ){
+			if ( debug ) {
 				std::string loop_tag = "loop_step" + ObjexxFCL::lead_zero_string_of( designrelaxcycles, 6 );
 				core::io::pdb::dump_pdb( pose, loop_tag);
 			}
 
 			/*
-			 protocols::loops::kinematic_closure::KinematicMoverOP kin_moverOP( new protocols::loops::kinematic_closure::KinematicMover(2.0));
-			 kin_moverOP->set_vary_bondangles( true );
-			 for( protocols::loops::Loops::const_iterator it= loops.begin(), it_end=loops.end();
-					it != it_end; ++it ){
-				 protocols::loops::kinematic_closure::KinematicWrapper kinwrapper( kin_moverOP, *it , 100);
+			protocols::loops::kinematic_closure::KinematicMoverOP kin_moverOP( new protocols::loops::kinematic_closure::KinematicMover(2.0));
+			kin_moverOP->set_vary_bondangles( true );
+			for( protocols::loops::Loops::const_iterator it= loops.begin(), it_end=loops.end();
+			it != it_end; ++it ){
+			protocols::loops::kinematic_closure::KinematicWrapper kinwrapper( kin_moverOP, *it , 100);
 
-				 protocols::moves::MoverOP moverop; // need this to pass kinwrapper to TrialMover
-				 moverop = kinwrapper;
+			protocols::moves::MoverOP moverop; // need this to pass kinwrapper to TrialMover
+			moverop = kinwrapper;
 
-				 // put this into a monte carlo mover
-				 using protocols::moves::MonteCarloOP;
-				 using protocols::moves::MonteCarlo;
-				 MonteCarloOP loop_mc( new MonteCarlo( pose, *centfxn , 0.8) );
-				 protocols::moves::TrialMoverOP trial_mover = new protocols::moves::TrialMover( moverop, loop_mc );
+			// put this into a monte carlo mover
+			using protocols::moves::MonteCarloOP;
+			using protocols::moves::MonteCarlo;
+			MonteCarloOP loop_mc( new MonteCarlo( pose, *centfxn , 0.8) );
+			protocols::moves::TrialMoverOP trial_mover = new protocols::moves::TrialMover( moverop, loop_mc );
 
-				 protocols::moves::SequenceMoverOP loop_rebuild( new protocols::moves::SequenceMover() );
+			protocols::moves::SequenceMoverOP loop_rebuild( new protocols::moves::SequenceMover() );
 
-				 for( core::Size nn = 1; nn <= 10; nn++){
-					 loop_rebuild->add_mover( trial_mover );
-				 }
+			for( core::Size nn = 1; nn <= 10; nn++){
+			loop_rebuild->add_mover( trial_mover );
+			}
 
-				 loop_rebuild->apply( pose );
-				 loop_mc->recover_low( pose );
+			loop_rebuild->apply( pose );
+			loop_mc->recover_low( pose );
 
-			 }
-			 */
+			}
+			*/
 
 		}
 
@@ -195,7 +194,7 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 		protocols::relax::ClassicRelax relax_step( relaxfxn_ );
 		relax_step.apply( pose );
 
-		if( debug ){
+		if ( debug ) {
 			std::string relax_tag = "relax_step" + ObjexxFCL::lead_zero_string_of( designrelaxcycles, 6 );
 			core::io::pdb::dump_pdb( pose, relax_tag);
 		}
@@ -205,8 +204,8 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 		// if CurrentEnergy is less than BestEnergy - read better -
 		// so energychange is negative and we need to upate
 		energychange =  CurrentEnergy - BestEnergy;
-		if( debug ){ TR << " Current Energy " << CurrentEnergy << " BestEnergy " << BestEnergy << " energychange "<< energychange	<< " cycles " << designrelaxcycles << std::endl; }
-		if ( CurrentEnergy < BestEnergy ){
+		if ( debug ) { TR << " Current Energy " << CurrentEnergy << " BestEnergy " << BestEnergy << " energychange "<< energychange << " cycles " << designrelaxcycles << std::endl; }
+		if ( CurrentEnergy < BestEnergy ) {
 			bestpose = pose; // update bestpose
 			BestEnergy = CurrentEnergy; // update BestEnergy
 			TR << "updated bestpose and bestenergy " << std::endl;
@@ -225,16 +224,16 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 
 	// i should do this in a monte carlo setting
 	// now that we have a sequence we like - we may want to optimize the loop conformation
-	  if( option[ OptionKeys::DenovoProteinDesign::optimize_loops ].user() ){
-		  protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP kin_moverOP( new protocols::loops::loop_closure::kinematic_closure::KinematicMover() );
-		  kin_moverOP->set_vary_bondangles( true );
-		  kin_moverOP->set_temperature( 2.0 );
-		  for( protocols::loops::Loops::const_iterator it= loops->begin(), it_end=loops->end();
-				 it != it_end; ++it ){
-			  protocols::loops::loop_closure::kinematic_closure::KinematicWrapper kinwrapper( kin_moverOP, *it , 1000);
-			  kinwrapper.apply(pose);
-		  }
-	  }
+	if ( option[ OptionKeys::DenovoProteinDesign::optimize_loops ].user() ) {
+		protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP kin_moverOP( new protocols::loops::loop_closure::kinematic_closure::KinematicMover() );
+		kin_moverOP->set_vary_bondangles( true );
+		kin_moverOP->set_temperature( 2.0 );
+		for ( protocols::loops::Loops::const_iterator it= loops->begin(), it_end=loops->end();
+				it != it_end; ++it ) {
+			protocols::loops::loop_closure::kinematic_closure::KinematicWrapper kinwrapper( kin_moverOP, *it , 1000);
+			kinwrapper.apply(pose);
+		}
+	}
 
 }
 

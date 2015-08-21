@@ -80,20 +80,20 @@ DataMap::get( std::string const type, std::string const name ) const {
 	using namespace utility::pointer;
 	Ty ret( 0 );
 
-	if( !has( type, name ) ){
+	if ( !has( type, name ) ) {
 		std::stringstream error_message;
 		error_message << "ERROR: Could not find "<<type<<" and name "<<name<<" in Datamap\n";
 		throw utility::excn::EXCN_Msg_Exception( error_message.str() );
 	}
 
 	std::map< std::string, utility::pointer::ReferenceCountOP > const dm( data_map_.find( type )->second );
-	for( std::map< std::string, ReferenceCountOP >::const_iterator it=dm.begin(); it!=dm.end(); ++it ) {
-		if( it->first == name ) {
+	for ( std::map< std::string, ReferenceCountOP >::const_iterator it=dm.begin(); it!=dm.end(); ++it ) {
+		if ( it->first == name ) {
 			ret = dynamic_cast< Ty >( it->second.get() );
 			break;
 		}
 	}
-	if( ret==0 ) {
+	if ( ret==0 ) {
 		std::stringstream error_message;
 		error_message << "ERROR: Dynamic_cast failed for type "<<type<<" and name "<<name<<'\n';
 		throw utility::excn::EXCN_Msg_Exception( error_message.str() );
@@ -112,20 +112,20 @@ DataMap::get_ptr( std::string const type, std::string const name ) const {
 	using namespace utility::pointer;
 	utility::pointer::shared_ptr< Ty > ret( 0 );
 
-	if( !has( type, name ) ){
+	if ( !has( type, name ) ) {
 		std::stringstream error_message;
 		error_message << "ERROR: Could not find "<<type<<" and name "<<name<<" in Datamap\n";
 		throw utility::excn::EXCN_Msg_Exception( error_message.str() );
 	}
 
 	std::map< std::string, utility::pointer::ReferenceCountOP > const dm( data_map_.find( type )->second );
-	for( std::map< std::string, ReferenceCountOP >::const_iterator it=dm.begin(); it!=dm.end(); ++it ) {
-		if( it->first == name ) {
+	for ( std::map< std::string, ReferenceCountOP >::const_iterator it=dm.begin(); it!=dm.end(); ++it ) {
+		if ( it->first == name ) {
 			ret = utility::pointer::dynamic_pointer_cast< Ty >( it->second );
 			break;
 		}
 	}
-	if( ret==0 ) {
+	if ( ret==0 ) {
 		std::stringstream error_message;
 		error_message << "ERROR: Dynamic_cast failed for type "<<type<<" and name "<<name<<'\n';
 		throw utility::excn::EXCN_Msg_Exception( error_message.str() );
@@ -141,11 +141,10 @@ template < class Ty >
 utility::pointer::shared_ptr< Ty >
 get_set_from_datamap( std::string const type, std::string const name, basic::datacache::DataMap & data ){
 	utility::pointer::shared_ptr< Ty > obj;
-	if( data.has( type, name ) ){
+	if ( data.has( type, name ) ) {
 		obj = data.get_ptr< Ty >( type, name );
 		TR_hh<<"Getting object-type, name "<<type<<' '<<name<<" from datamap"<<std::endl;
-	}
-	else{
+	} else {
 		obj = utility::pointer::shared_ptr< Ty >( new Ty );
 		data.add( type, name, obj );
 		TR_hh<<"Adding object-type, name "<<type<<' '<<name<<" to datamap"<<std::endl;

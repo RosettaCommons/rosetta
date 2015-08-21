@@ -123,7 +123,7 @@ public:
 
 	optimization::DOF_Node &
 	dof_node( Size index ) {
-	debug_assert( index > 0 && index <= n_active_dof_nodes_ );
+		debug_assert( index > 0 && index <= n_active_dof_nodes_ );
 		return *dof_nodes_[ index ];
 	}
 
@@ -174,7 +174,7 @@ private:
 	utility::vector1< Size > atoms_representing_thetas_;
 
 	utility::vector1< Size > chi_start_for_active_residue_;   // what's the index of the first chi for a particular active residue?
-	                                                          //fpd  not sure if nonideal analogues are needed for this ... 
+	//fpd  not sure if nonideal analogues are needed for this ...
 	utility::vector1< utility::vector1< Size > > active_residue_atom_to_dofnode_index_;
 
 	/// For parent_dof lookup: track which dofs a particular atom are responsible for.

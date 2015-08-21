@@ -56,8 +56,8 @@
 
 static thread_local basic::Tracer TR( "protocols.features.StructureFeatures" );
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::string;
 using std::stringstream;
@@ -98,8 +98,7 @@ StructureFeatures::write_schema_to_db(
 
 	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false /*not null*/, true);
 
-	if (db_session->is_db_partitioned())
-	{
+	if ( db_session->is_db_partitioned() ) {
 		// If database is partitioned struct_id prefix (32 high bits in structure id) should be
 		// set to the database partition identifier.
 		//
@@ -201,7 +200,7 @@ void StructureFeatures::delete_record(
 	utility::sql_database::sessionOP db_session
 ){
 
- 	std::string statement_string = "DELETE FROM structures WHERE struct_id = ?;";
+	std::string statement_string = "DELETE FROM structures WHERE struct_id = ?;";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,struct_id);
 	basic::database::safely_write_to_database(stmt);
@@ -226,18 +225,18 @@ StructureFeatures::load_tag(
 #ifndef __native_client__
 	std::string statement_string =
 		"SELECT\n"
-		"	tag\n"
+		"\ttag\n"
 		"FROM\n"
-		"	structures\n"
+		"\tstructures\n"
 		"WHERE\n"
-		"	structures.struct_id=?";
+		"\tstructures.struct_id=?";
 
-	statement stmt(basic::database::safely_prepare_statement(statement_string, db_session))	;
+	statement stmt(basic::database::safely_prepare_statement(statement_string, db_session)) ;
 	stmt.bind(1,struct_id);
 
 
 	result res(basic::database::safely_read_from_database(stmt));
-	if(!res.next()){
+	if ( !res.next() ) {
 		stringstream error_message;
 		error_message << "Unable to locate structure with struct_id '"
 			<< struct_id << "'." << endl;
@@ -259,22 +258,22 @@ StructureFeatures::get_struct_id(
 
 	std::string statement_string =
 		"SELECT\n"
-		"	structures.struct_id\n"
+		"\tstructures.struct_id\n"
 		"FROM\n"
-		"	protocols\n"
+		"\tprotocols\n"
 		"JOIN batches ON\n"
-		"	protocols.protocol_id = batches.protocol_id\n"
+		"\tprotocols.protocol_id = batches.protocol_id\n"
 		"JOIN structures ON\n"
-		"	batches.batch_id = structures.batch_id\n"
+		"\tbatches.batch_id = structures.batch_id\n"
 		"WHERE\n"
-		"	structures.tag=? AND protocols.protocol_id=?;";
+		"\tstructures.tag=? AND protocols.protocol_id=?;";
 
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,tag);
 	stmt.bind(2,protocol_id);
 
 	result res(basic::database::safely_read_from_database(stmt));
-	if(!res.next()){
+	if ( !res.next() ) {
 		stringstream error_message;
 		error_message << "Unable to locate structure with tag '"<<tag<<"'."<<endl;
 		utility_exit_with_message(error_message.str());

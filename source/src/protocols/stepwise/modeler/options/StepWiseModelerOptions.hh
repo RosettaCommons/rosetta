@@ -27,72 +27,72 @@ namespace stepwise {
 namespace modeler {
 namespace options {
 
-	/////////////////////////////////////////////////////////////////////////////////////////////
-	// Note the use of multiple inheritance. This makes the code more concise and easy to expand,
-	//  in the sense that any new options just need to be defined once. But its a little
-	//  weird, since its hard to conceptualize that StepWiseModelerOptions 'is a'  StepWiseProteinModelerOptions
-	//   and 'is a' StepWiseRNA_ModelerOptions object. Anyway.
-	//
-	// The other way to do this would be by composition, but that requires new set() and get() functions
-	// to be defined in multiple places (in the base classes and in this class as well.)
-	//
-	//   -- rhiju, 2014.
-	/////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+// Note the use of multiple inheritance. This makes the code more concise and easy to expand,
+//  in the sense that any new options just need to be defined once. But its a little
+//  weird, since its hard to conceptualize that StepWiseModelerOptions 'is a'  StepWiseProteinModelerOptions
+//   and 'is a' StepWiseRNA_ModelerOptions object. Anyway.
+//
+// The other way to do this would be by composition, but that requires new set() and get() functions
+// to be defined in multiple places (in the base classes and in this class as well.)
+//
+//   -- rhiju, 2014.
+/////////////////////////////////////////////////////////////////////////////////////////////
 
-	class StepWiseModelerOptions: public StepWiseBasicModelerOptions,
-																public options::StepWiseProteinModelerOptions,
-																public options::StepWiseRNA_ModelerOptions {
+class StepWiseModelerOptions: public StepWiseBasicModelerOptions,
+	public options::StepWiseProteinModelerOptions,
+	public options::StepWiseRNA_ModelerOptions {
 
-	public:
+public:
 
-		//constructor
-		StepWiseModelerOptions();
+	//constructor
+	StepWiseModelerOptions();
 
-		StepWiseModelerOptions( StepWiseModelerOptions const & src );
+	StepWiseModelerOptions( StepWiseModelerOptions const & src );
 
-		//destructor
-		~StepWiseModelerOptions();
+	//destructor
+	~StepWiseModelerOptions();
 
-	public:
+public:
 
-		StepWiseModelerOptionsOP clone() const;
+	StepWiseModelerOptionsOP clone() const;
 
-		/// @brief Describe this instance to a given output stream
-		virtual
-		void
-		show( std::ostream & ) const{}
+	/// @brief Describe this instance to a given output stream
+	virtual
+	void
+	show( std::ostream & ) const{}
 
-		/// @brief Initialize from the recursive "tag" structure.
-		virtual
-		void
-		parse_my_tag( utility::tag::TagCOP ){}
+	/// @brief Initialize from the recursive "tag" structure.
+	virtual
+	void
+	parse_my_tag( utility::tag::TagCOP ){}
 
-		/// @brief The class name (its type) for a particular ResourceOptions instance.
-		/// This function allows for better error message delivery.
-		virtual
-		std::string
-		type() const{ return "StepWiseModelerOptions";}
+	/// @brief The class name (its type) for a particular ResourceOptions instance.
+	/// This function allows for better error message delivery.
+	virtual
+	std::string
+	type() const{ return "StepWiseModelerOptions";}
 
-	public:
+public:
 
-		void
-		initialize_from_command_line();
+	void
+	initialize_from_command_line();
 
-		void
-		setup_options_for_VDW_bin_checker( rna::checker::RNA_VDW_BinCheckerOP user_input_VDW_bin_checker ) const;
+	void
+	setup_options_for_VDW_bin_checker( rna::checker::RNA_VDW_BinCheckerOP user_input_VDW_bin_checker ) const;
 
-		StepWiseModelerOptionsOP
-		get_sampler_options() const;
+	StepWiseModelerOptionsOP
+	get_sampler_options() const;
 
-	private:
+private:
 
-		void
-		initialize_variables();
+	void
+	initialize_variables();
 
-	private:
+private:
 
 
-	};
+};
 
 } //options
 } //modeler

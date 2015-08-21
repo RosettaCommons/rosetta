@@ -77,7 +77,7 @@ utility::vector1< std::string > SilentFileData::tags() const {
 	utility::vector1< std::string > tag_list;
 
 	for ( const_iterator it=structure_map_.begin(),
-			it_end = structure_map_.end(); it != it_end; ++it ){
+			it_end = structure_map_.end(); it != it_end; ++it ) {
 		tag_list.push_back( it->decoy_tag() );
 	}
 	return tag_list;
@@ -112,7 +112,7 @@ bool SilentFileData::setup_include_patches(
 	getline( data, line ); // score line
 
 	utility::vector1< std::string > all_res, all_patches;
-	while( getline(data,line) ) {
+	while ( getline(data,line) ) {
 		if ( line.substr(0,19) == "ANNOTATED_SEQUENCE:"  ) {
 			std::istringstream l( line );
 			std::string tag, annotated_seq;
@@ -131,7 +131,7 @@ bool SilentFileData::setup_include_patches(
 				std::string const fullname = fullname_list[ index ];
 				utility::vector1< std::string > const cols = utility::string_split( fullname, ':' );
 				if ( !all_res.has_value( cols[1] ) ) all_res.push_back( cols[1] );
-				for ( Size n = 2; n <= cols.size(); n++ ){ // might be better to make all_cols a set.
+				for ( Size n = 2; n <= cols.size(); n++ ) { // might be better to make all_cols a set.
 					if ( !all_patches.has_value( cols[n] ) ) all_patches.push_back( cols[n] );
 				}
 			}
@@ -158,7 +158,7 @@ SilentFileData::setup_extra_res( utility::vector1< std::string > & all_res ) con
 	FileVectorOption & extra_res_fa = option[ OptionKeys::in::file::extra_res_fa ];
 	for ( Size n = 1; n <= all_res.size(); n++ ) {
 		std::string const & patch_name = all_res[n];
-		if ( extra_res_tag.find( patch_name ) != extra_res_tag.end() ){
+		if ( extra_res_tag.find( patch_name ) != extra_res_tag.end() ) {
 			std::string const & tag = extra_res_tag[ patch_name ];
 			if ( !extra_res_fa.value().has_value( tag ) ) extra_res_fa.push_back( tag );
 		}
@@ -191,7 +191,7 @@ SilentFileData::setup_extra_patches( utility::vector1< std::string > & all_patch
 	StringVectorOption & patch_selectors = option[ OptionKeys::chemical::patch_selectors ];
 	for ( Size n = 1; n <= all_patches.size(); n++ ) {
 		std::string const & patch_name = all_patches[n];
-		if ( cmdline_selector_tag.find( patch_name ) != cmdline_selector_tag.end() ){
+		if ( cmdline_selector_tag.find( patch_name ) != cmdline_selector_tag.end() ) {
 			std::string const & tag = cmdline_selector_tag[ patch_name ];
 			if ( !patch_selectors.value().has_value( tag ) ) patch_selectors.push_back( tag );
 		}
@@ -216,7 +216,7 @@ bool SilentFileData::read_tags_fast(
 	getline( data, line ); // sequence line
 	getline( data, line ); // score line
 
-	while( getline(data,line) ) {
+	while ( getline(data,line) ) {
 		if ( line.substr(0,7) == "SCORE: " && line.substr(8,20).find( "score" ) == std::string::npos ) {
 			std::istringstream l( line );
 
@@ -235,16 +235,16 @@ SilentFileData::matched_tags(
 	std::string const & expression,
 	std::string const & mode,
 	utility::vector1< std::string >& tags_in_file//,
-	//	utility::vector1< SilentStructOP >& decoys_in_file,
-	//	bool ignore_decoys
+	// utility::vector1< SilentStructOP >& decoys_in_file,
+	// bool ignore_decoys
 ) const {
 
 	//open file
 	utility::io::izstream data( filename().c_str() );
 	if ( !data.good() ) {
-// 		utility_exit_with_message(
-// 			"ERROR: Unable to open silent_input file: '" + filename() + "'"
-// 		);
+		//   utility_exit_with_message(
+		//    "ERROR: Unable to open silent_input file: '" + filename() + "'"
+		//   );
 		tr.Info << "file: " << filename() << " not found" << std::endl;
 		return false;
 	}
@@ -266,7 +266,7 @@ SilentFileData::matched_tags(
 	std::string final_tag;
 	//bool ignore_this_decoy = true;
 	utility::vector1< std::string > the_lines;
-	while( getline(data,line) ) {
+	while ( getline(data,line) ) {
 		//find a line with SCORE: but without "score"
 		if ( line.substr(0,7) == "SCORE: " && line.substr(8,20).find( "score" ) == std::string::npos ) {
 			tr.Info << "reading the lines in file:\n" << line << std::endl;
@@ -278,23 +278,23 @@ SilentFileData::matched_tags(
 			tr.Info << "current_tag:" << current_tag << std::endl;
 			//does it match ?
 			if ( current_tag.find(expression)!=std::string::npos ) {
-				//				ignore_this_decoy = ignore_decoys;
- 				if ( !return_last ) {
+				//    ignore_this_decoy = ignore_decoys;
+				if ( !return_last ) {
 					tags_in_file.push_back( current_tag );
 				} else final_tag = current_tag;
 				if ( return_first ) return true;  //if we want decoys this will be wrong
 			}
 		} // SCORE: header of decoy
-		//		if ( !ignore_this_decoy ) {
-		//			utility_exit_with_message( "SilentFileData::matched_tag() function stubbed out -- cannot return decoys yet" );
-		//		}
+		//  if ( !ignore_this_decoy ) {
+		//   utility_exit_with_message( "SilentFileData::matched_tag() function stubbed out -- cannot return decoys yet" );
+		//  }
 	} // while( getline(data,line) )
-// 	if ( return_last ) {
-// 		if ( current_tag.find(expression)!=std::string::npos ) {
-// 			tags_in_file.push_back( current_tag );
-// 			return true;
-// 		}
-// 	}
+	//  if ( return_last ) {
+	//   if ( current_tag.find(expression)!=std::string::npos ) {
+	//    tags_in_file.push_back( current_tag );
+	//    return true;
+	//   }
+	//  }
 	if ( return_last ) {
 		if ( final_tag.find( expression ) != std::string::npos ) {
 			tags_in_file.push_back( final_tag );
@@ -307,7 +307,7 @@ SilentFileData::matched_tags(
 
 //////////////////////////////////////////////////////
 void SilentFileData::add_structure_replace_tag_if_necessary(
-	 SilentStructOP & new_struct
+	SilentStructOP & new_struct
 ) {
 
 	std::string old_tag = new_struct->decoy_tag();
@@ -349,7 +349,7 @@ void SilentFileData::add_structure(
 		structure_list_.push_back(new_struct);
 		tr.Debug << "added structure with tag " << new_tag << std::endl;
 		tr.Debug << "now have " << structure_map_.size() << " structures."
-						 << std::endl;
+			<< std::endl;
 		tr.flush();
 	} else {
 		SilentStructOP new_struct_clone = new_struct->clone();
@@ -417,7 +417,7 @@ bool SilentFileData::write_silent_struct(
 	utility::io::ozstream output;
 
 	std::stringstream header;
-	if ( bWriteScoreOnly )	s.print_score_header( header );
+	if ( bWriteScoreOnly ) s.print_score_header( header );
 	else s.print_header( header ); //this is SEQUENCE line + print_score_header
 
 #ifndef USEMPI
@@ -430,14 +430,14 @@ bool SilentFileData::write_silent_struct(
 	}
 #endif
 
-	//	std::string header_string( header.str() );
-	//	std::cout << header_string << std::endl;
+	// std::string header_string( header.str() );
+	// std::cout << header_string << std::endl;
 
 	//atomic version of opening procedure... writes header only if file is new -- appends if file already exists.
 	output.open_append_if_existed( filename, header );
 
 	// to prevent jobs from proceeding blithely when a directory doesn't exist.
-	if ( !output.good() ){
+	if ( !output.good() ) {
 		utility_exit_with_message( "Could not make "+filename );
 	}
 
@@ -474,7 +474,7 @@ bool SilentFileData::write_silent_struct(
 	EnergyNamesOP enames;
 	// set minimal set of EnergyNames if we know about them ...
 	if ( has_shared_silent_data( energynames ) ) {
-  	enames = EnergyNamesOP(
+		enames = EnergyNamesOP(
 			utility::pointer::static_pointer_cast< core::io::silent::EnergyNames > ( get_shared_silent_data( energynames ) )
 		);
 	} else {
@@ -493,7 +493,7 @@ bool SilentFileData::write_silent_struct(
 		using namespace basic::options::OptionKeys;
 		if ( s.energy_names().energy_names() != enames->energy_names() ||
 				option[ out::file::silent_print_all_score_headers ]()
-		) {
+				) {
 			s.print_header( out );
 			enames = EnergyNamesOP( new EnergyNames() );
 			enames->energy_names( s.energy_names().energy_names() );
@@ -545,19 +545,19 @@ void SilentFileData::write_all(
 
 	utility::io::ozstream output;
 
-	if ( begin() != end() )	{
+	if ( begin() != end() ) {
 		std::stringstream header;
 		begin()->print_header( header );
 		output.open_append_if_existed( filename, header );
 	}
 
 	for ( core::io::silent::SilentFileData::const_iterator iter = begin(),
-					it_end = end(); iter != it_end; ++iter ) {
+			it_end = end(); iter != it_end; ++iter ) {
 		write_silent_struct( **iter, output, bWriteScoreOnly );
-		// 			iter->print_scores      ( output );
-		// 			if ( !bWriteScoreOnly ) {
-		// 				iter->print_conformation( output );
-		// 			}
+		//    iter->print_scores      ( output );
+		//    if ( !bWriteScoreOnly ) {
+		//     iter->print_conformation( output );
+		//    }
 	} // for ( iter )
 } // write_all
 
@@ -583,7 +583,7 @@ SilentFileData::read_file(
 
 bool
 SilentFileData::_read_file(
-  std::string const & filename,
+	std::string const & filename,
 	bool throw_exception_on_bad_structs /*default false*/
 ) {
 
@@ -622,13 +622,13 @@ SilentFileData::_read_file(
 		range_end = std::min( (int)range_end, (int)all_tags.size() );
 
 		tr << "Reading range: "  << range_start << " <= i < " << range_end << std::endl;
-		for( core::Size position = range_start; position < range_end; position++){
+		for ( core::Size position = range_start; position < range_end; position++ ) {
 			tags_wanted.push_back( all_tags[position+1] ); // the +1 converts to 1 based counting ov the utility::vector1
 		}
 
-  }
+	}
 
-  if( all_tags.size() == 0 ) return true;
+	if ( all_tags.size() == 0 ) return true;
 
 	bool success = _read_file( filename, tags_wanted, throw_exception_on_bad_structs  );
 	return success;
@@ -640,13 +640,13 @@ SilentFileData::read_file(
 	std::string const & filename,
 	utility::vector1< std::string > const & tags
 ) {
-using namespace basic::options;
+	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
 	bool success = _read_file(
-    filename,
+		filename,
 		tags,
-		!option[ OptionKeys::in::file::silent_read_through_errors ]()	/*throw_exception_on_bad_structs*/
+		!option[ OptionKeys::in::file::silent_read_through_errors ]() /*throw_exception_on_bad_structs*/
 	);
 	if ( !success && !option[ OptionKeys::in::file::silent_read_through_errors ]() ) {
 		throw utility::excn::EXCN_BadInput("no success reading silent file "+filename);
@@ -668,8 +668,8 @@ SilentFileData::_read_file(
 			throw utility::excn::EXCN_FileNotFound( filename );
 		} else {
 			utility_exit_with_message(
-																"ERROR:: Unable to open silent_input file: '" +
-																filename + "'"
+				"ERROR:: Unable to open silent_input file: '" +
+				filename + "'"
 			);
 		}
 	}
@@ -680,17 +680,17 @@ SilentFileData::_read_file(
 
 bool
 SilentFileData::read_stream(
-														std::istream & data,
-														utility::vector1< std::string > const & tags,
-														bool throw_exception_on_bad_structs, /*default false*/
-														std::string filename /** for error reporting and suppressing bitflip**/
+	std::istream & data,
+	utility::vector1< std::string > const & tags,
+	bool throw_exception_on_bad_structs, /*default false*/
+	std::string filename /** for error reporting and suppressing bitflip**/
 ){
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
 	// put the tags on a set to avoid repetition and fast search
-  std::set<std::string> tagset(tags.begin(), tags.end());
+	std::set<std::string> tagset(tags.begin(), tags.end());
 	std::string sequence_line, score_line, line;
 	bool success = false;
 	// read SEQUENCE line:
@@ -728,7 +728,7 @@ SilentFileData::read_stream(
 	read_full_model_parameters_from_remark( line, true /* header */ );
 
 	SilentStructOP tmp_struct = create_SilentStructOP();
-	if(filename != "suppress_bitflip" && option[in::file::force_silent_bitflip_on_read].user()) {
+	if ( filename != "suppress_bitflip" && option[in::file::force_silent_bitflip_on_read].user() ) {
 		tmp_struct->set_force_bitflip(true); //Option to force flipping from big-endian to little-endian or the converse.
 	}
 
@@ -737,10 +737,11 @@ SilentFileData::read_stream(
 	mylines.push_back( score_line    );
 
 	if ( verbose_ ) {
-		if ( !tagset.empty()/*size()*/ )  tr.Info << "Reading " << tagset.size()
-																	<< " structures from " << filename
-																	<< std::endl;
-		else  tr.Info << "Reading all structures from " << filename << std::endl;
+		if ( !tagset.empty()/*size()*/ ) {
+			tr.Info << "Reading " << tagset.size()
+				<< " structures from " << filename
+				<< std::endl;
+		} else  tr.Info << "Reading all structures from " << filename << std::endl;
 	}
 	bool all_tags = tagset.empty();//tagset.size() == 0; //if no tags selected we read all decoys
 
@@ -765,15 +766,15 @@ SilentFileData::read_stream(
 			bool init_good = tmp_struct->init_from_lines( mylines, *this );
 
 			if ( !init_good && throw_exception_on_bad_structs ) {
-				 	throw utility::excn::EXCN_BadInput(
-						"failure to read decoy "+tmp_struct->decoy_tag()+
-						" from silent-file " + filename
-					);
+				throw utility::excn::EXCN_BadInput(
+					"failure to read decoy "+tmp_struct->decoy_tag()+
+					" from silent-file " + filename
+				);
 			}
 
 			if ( init_good ) {
 				//tr.Debug << "candidate structure " << tmp_struct->decoy_tag()
-				//	<< std::endl;
+				// << std::endl;
 				PROF_START( basic::SILENT_READ_TAG_TEST );
 
 				// Look for the tag in the tagset, if it is present set
@@ -787,12 +788,12 @@ SilentFileData::read_stream(
 					if ( tag_it != tagset.end() ) {
 						good_tag = true;
 						tagset.erase(tag_it); //expensive restructering of set -- how about saving a bunch of bools to do this book-keeping.
-			   	}
+					}
 				}
 				bool add_struct( init_good && ( all_tags || good_tag ));
 				PROF_STOP( basic::SILENT_READ_TAG_TEST );
 
-				if (record_source_) tmp_struct->add_comment("SOURCE",filename);
+				if ( record_source_ ) tmp_struct->add_comment("SOURCE",filename);
 
 				if ( add_struct ) {
 					add_structure( tmp_struct );
@@ -801,7 +802,7 @@ SilentFileData::read_stream(
 				}
 
 				tmp_struct = create_SilentStructOP();
-				if(filename != "suppress_bitflip" && option[in::file::force_silent_bitflip_on_read].user()) {
+				if ( filename != "suppress_bitflip" && option[in::file::force_silent_bitflip_on_read].user() ) {
 					tmp_struct->set_force_bitflip(true); //Option to force flipping from big-endian to little-endian or the converse.
 				}
 			}
@@ -812,7 +813,7 @@ SilentFileData::read_stream(
 
 		if ( read_silent_struct_type_from_remark( line ) ) {
 			tmp_struct = create_SilentStructOP();
-			if(filename != "suppress_bitflip" && option[in::file::force_silent_bitflip_on_read].user()) {
+			if ( filename != "suppress_bitflip" && option[in::file::force_silent_bitflip_on_read].user() ) {
 				tmp_struct->set_force_bitflip(true); //Option to force flipping from big-endian to little-endian or the converse.
 			}
 		}
@@ -824,19 +825,19 @@ SilentFileData::read_stream(
 		/// in no case interrupt loop here, because then mylines will have incomplete silent-struct causing
 		/// seqfault in the "init_from_lines" for last decoy
 		/* CAUSES SEGFAULT  OL 12/10/11
- if(!all_tags && tagset.empty())
-			 break;  */
+		if(!all_tags && tagset.empty())
+		break;  */
 	} // while( getline(data,line) )
 
 	// don't forget to initialize last structure!
 	bool init_good = tmp_struct->init_from_lines( mylines, *this );
 	if ( !init_good && throw_exception_on_bad_structs ) throw utility::excn::EXCN_BadInput( "failure to read decoy "+tmp_struct->decoy_tag()+" from silent-file " +filename);
 
-  bool good_tag = false;
-  std::set<std::string>::iterator tag_it = tagset.find(tmp_struct->decoy_tag());
-  if ( tag_it != tagset.end() ) {
-  	good_tag = true;
-  }
+	bool good_tag = false;
+	std::set<std::string>::iterator tag_it = tagset.find(tmp_struct->decoy_tag());
+	if ( tag_it != tagset.end() ) {
+		good_tag = true;
+	}
 
 	bool add_struct( init_good && ( all_tags || good_tag ));
 
@@ -846,7 +847,7 @@ SilentFileData::read_stream(
 
 	if ( verbose_ ) {
 		tr.Info << "Finished reading " << structure_map_.size() << " structures from "
-						<< filename << std::endl;
+			<< filename << std::endl;
 		tr.flush();
 	}
 
@@ -871,15 +872,15 @@ SilentFileData::read_silent_struct_type_from_remark(
 	bool changed( false );
 
 	if ( line.substr(0,6) != "SCORE:" ) {
-		if (( line.find( "BINARY_SILENTFILE" ) != std::string::npos ) ||
-				( line.find ("BINARY SILENTFILE" ) != std::string::npos )) {
+		if ( ( line.find( "BINARY_SILENTFILE" ) != std::string::npos ) ||
+				( line.find ("BINARY SILENTFILE" ) != std::string::npos ) ) {
 			silent_struct_type_ = "binary";
 			changed = true;
 		} else if ( header && ( line.find( "RNA" ) != std::string::npos || option[ in::file::residue_type_set ]() == "rna") &&
-								silent_struct_type_ != "binary_rna" && silent_struct_type_ != "rna" ) {
+				silent_struct_type_ != "binary_rna" && silent_struct_type_ != "rna" ) {
 			silent_struct_type_ = "rna";
 			changed = true;
-		} else if (( line.find( "PROTEIN_SILENTFILE" ) != std::string::npos ) || ( line.find( "PROTEIN SILENTFILE" ) != std::string::npos ) ) {
+		} else if ( ( line.find( "PROTEIN_SILENTFILE" ) != std::string::npos ) || ( line.find( "PROTEIN SILENTFILE" ) != std::string::npos ) ) {
 			if ( line.find("SINGLE") != std::string::npos ) {
 				silent_struct_type_ ="protein_float";
 			} else {
@@ -887,10 +888,10 @@ SilentFileData::read_silent_struct_type_from_remark(
 			}
 			changed = true;
 		}
-	} else if (( line.find ("SOCREJUMP SILENTFILE" ) != std::string::npos )) {
+	} else if ( ( line.find ("SOCREJUMP SILENTFILE" ) != std::string::npos ) ) {
 		silent_struct_type_ = "score_jump";
 		changed = true;
- }
+	}
 
 	if ( changed ) tr.Trace << "found new silent_struct_type_ " << silent_struct_type_ << " from line " << line << std::endl;
 
@@ -942,10 +943,10 @@ SilentStructOP SilentFileData::create_SilentStructOP() {
 	//static SilentStructFactory ssf;
 	SilentStructOP new_ss_op;
 
-	//if( silent_struct_type_ == "" )	new_ss_op	= ssf.get_silent_struct_in();
-	//else                          	new_ss_op	= ssf.get_silent_struct( silent_struct_type_ );
-	if( silent_struct_type_ == "" )	new_ss_op	= SilentStructFactory::get_instance()->get_silent_struct_in();
-	else                          	new_ss_op	= SilentStructFactory::get_instance()->get_silent_struct( silent_struct_type_ );
+	//if( silent_struct_type_ == "" ) new_ss_op = ssf.get_silent_struct_in();
+	//else                           new_ss_op = ssf.get_silent_struct( silent_struct_type_ );
+	if ( silent_struct_type_ == "" ) new_ss_op = SilentStructFactory::get_instance()->get_silent_struct_in();
+	else                           new_ss_op = SilentStructFactory::get_instance()->get_silent_struct( silent_struct_type_ );
 
 	if ( full_model_parameters_ ) new_ss_op->set_full_model_parameters( full_model_parameters_ );
 
@@ -981,8 +982,9 @@ SilentFileData::reverse_score_filter(
 	// go through all of the scores, and calculate the threshold for accepting a
 	// decoy by score.
 	utility::vector1< Real > scores;
-	for ( iterator iter = begin(), it_end = end(); iter != it_end; ++iter )
+	for ( iterator iter = begin(), it_end = end(); iter != it_end; ++iter ) {
 		scores.push_back( iter->get_energy( "score" ) );
+	}
 
 	//Real local_score_fraction( score_fraction * -1 );
 	std::sort( scores.begin(), scores.end() );
@@ -1036,8 +1038,9 @@ SilentFileData::score_filter(
 	// go through all of the scores, and calculate the threshold for accepting a
 	// decoy by score.
 	utility::vector1< Real > scores;
-	for ( iterator iter = begin(), it_end = end(); iter != it_end; ++iter )
+	for ( iterator iter = begin(), it_end = end(); iter != it_end; ++iter ) {
 		scores.push_back( iter->get_energy( "score" ) );
+	}
 
 	std::sort( scores.begin(), scores.end() );
 	Size const idx( static_cast< Size > (score_fraction * scores.size() ) );
@@ -1087,7 +1090,7 @@ SilentFileData::order_by_energy()
 	using namespace core::io::silent;
 
 	// go through all of the scores, and then order.
-	typedef std::list< std::pair< std::pair< Real, Size >, SilentStructOP > >	ScoreTagList;
+	typedef std::list< std::pair< std::pair< Real, Size >, SilentStructOP > > ScoreTagList;
 	ScoreTagList score_tag_list;
 	Size count( 0 ); // to break ties in energies.
 	for ( iterator iter = begin(), it_end = end(); iter != it_end; ++iter ) {
@@ -1101,7 +1104,7 @@ SilentFileData::order_by_energy()
 	utility::vector1 < SilentStructOP > new_structure_list_;
 	count = 0;
 	for ( ScoreTagList::const_iterator iter = score_tag_list.begin();
-				iter != score_tag_list.end(); ++iter ) {
+			iter != score_tag_list.end(); ++iter ) {
 		SilentStructOP const & silent_struct_op( iter->second );
 
 		///////////////////////////////////////////////

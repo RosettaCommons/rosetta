@@ -20,7 +20,7 @@
 #include <utility/pointer/owning_ptr.fwd.hh>
 
 namespace protocols {
-namespace protein_interface_design{
+namespace protein_interface_design {
 namespace filters {
 
 // Forward

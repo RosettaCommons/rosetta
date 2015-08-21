@@ -96,10 +96,10 @@ ResfileContents::ResfileContents(
 		vector1< string > tokens( tokenize_line( resfile ));
 		++lineno;
 
-		if (!tokens.size()) continue;
-		if (comment_begin(tokens,1)) continue; // ignore the rest of this line
+		if ( !tokens.size() ) continue;
+		if ( comment_begin(tokens,1) ) continue; // ignore the rest of this line
 
-		if (!have_read_start_token) {
+		if ( !have_read_start_token ) {
 			parse_header_line(tokens, command_map, lineno, have_read_start_token);
 		} else {
 			parse_body_line(pose, tokens, command_map, lineno,
@@ -107,19 +107,19 @@ ResfileContents::ResfileContents(
 		}
 	}
 
-	if (!have_read_start_token) {
+	if ( !have_read_start_token ) {
 		TR.Warning
 			<< "Reached the end of resfile without finding a 'START' token." << endl
 			<< "No residue-specific behavior specified in resfile." << endl;
 	}
 
 	// apply the RANGE and CHAIN commands
-	for(Size i = 1; i <= pose.total_residue(); ++i){
-		if(commands_[i].empty()){
-			if(!residue_range_commands[i].empty()){
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( commands_[i].empty() ) {
+			if ( !residue_range_commands[i].empty() ) {
 				commands_[i].assign(
 					residue_range_commands[i].begin(), residue_range_commands[i].end());
-			} else if(!residue_chain_commands[i].empty()){
+			} else if ( !residue_chain_commands[i].empty() ) {
 				commands_[i].assign(
 					residue_chain_commands[i].begin(), residue_chain_commands[i].end());
 			}
@@ -171,8 +171,8 @@ ResfileContents::parse_header_line(
 		have_read_start_token = true;
 	} else {
 		Size which_token = 1, ntokens = tokens.size();
-		while(which_token <= ntokens){
-			if (comment_begin(tokens, which_token)) break;
+		while ( which_token <= ntokens ) {
+			if ( comment_begin(tokens, which_token) ) break;
 
 			ResfileCommandOP command(
 				locate_command(which_token, tokens, command_map, lineno));
@@ -213,11 +213,11 @@ ResfileContents::parse_body_line(
 
 	bool found_commands(false);
 
-	if(id_type == ResfileContents::SINGLE_RESID){
+	if ( id_type == ResfileContents::SINGLE_RESID ) {
 		Size const resid(locate_resid(pose, chain, PDBnum, icode, lineno));
 
-		while (which_token <= ntokens) {
-			if (comment_begin(tokens, which_token)) break;
+		while ( which_token <= ntokens ) {
+			if ( comment_begin(tokens, which_token) ) break;
 
 			ResfileCommandOP command(
 				locate_command(which_token, tokens, command_map, lineno));
@@ -225,22 +225,22 @@ ResfileContents::parse_body_line(
 			commands_[ resid ].push_back( command );
 			found_commands = true;
 		}
-	} else if (id_type == ResfileContents::RANGE_RESID) {
+	} else if ( id_type == ResfileContents::RANGE_RESID ) {
 		Size const resid_start(locate_resid(pose, chain, PDBnum, icode, lineno));
 		Size const resid_end(locate_resid(pose, chain, PDBnum_end, icode_end, lineno));
-		if(resid_start >= resid_end){
+		if ( resid_start >= resid_end ) {
 			stringstream err_msg;
 			err_msg
 				<< "On line " << lineno << ", "
 				<< "the start residue (PDBnum=" << PDBnum;
-			if(icode != ' '){
+			if ( icode != ' ' ) {
 				err_msg << ", icode=" << icode;
 			}
 			err_msg
 				<< ", chain=" << (chain == ' ' ? '_' : chain) << ") "
 				<< "does not come before the end residue "
 				<< "(PDBnum=" << PDBnum_end;
-			if(icode_end != ' '){
+			if ( icode_end != ' ' ) {
 				err_msg << ", icode=" << icode_end;
 			}
 			err_msg
@@ -249,14 +249,14 @@ ResfileContents::parse_body_line(
 		}
 
 		while ( which_token <= ntokens ) {
-			if (comment_begin(tokens, which_token)) break;
+			if ( comment_begin(tokens, which_token) ) break;
 
 			ResfileCommandOP command(
 				locate_command(which_token, tokens, command_map, lineno));
 			Size const saved_which_token(which_token);
 			Size which_token_i;
 			// The number in pdb files is not straight
-			for(Size i = resid_start; i <= resid_end; ++i){
+			for ( Size i = resid_start; i <= resid_end; ++i ) {
 				which_token_i = saved_which_token;
 				ResfileCommandOP command_i(command->clone());
 				command_i->initialize_from_tokens(tokens, which_token_i, i);
@@ -265,8 +265,8 @@ ResfileContents::parse_body_line(
 			which_token = which_token_i;
 			found_commands = true;
 		}
-	} else if (id_type == ResfileContents::CHAIN_RESID) {
-		if(!pose.pdb_info()) {
+	} else if ( id_type == ResfileContents::CHAIN_RESID ) {
+		if ( !pose.pdb_info() ) {
 			stringstream err_msg;
 			err_msg
 				<< "On line " << lineno << ", "
@@ -275,14 +275,14 @@ ResfileContents::parse_body_line(
 		}
 		bool found_a_residue_on_chain(false);
 		while ( which_token <= ntokens ) {
-			if (comment_begin(tokens, which_token)) break;
+			if ( comment_begin(tokens, which_token) ) break;
 
 			ResfileCommandOP command(
 				locate_command(which_token, tokens, command_map, lineno));
 			Size const saved_which_token(which_token);
 			Size which_token_i;
-			for(Size i=1; i <= pose.total_residue(); ++i){
-				if(pose.pdb_info()->chain(i) == chain){
+			for ( Size i=1; i <= pose.total_residue(); ++i ) {
+				if ( pose.pdb_info()->chain(i) == chain ) {
 					found_a_residue_on_chain = true;
 					which_token_i = saved_which_token;
 					ResfileCommandOP command_i(command->clone());
@@ -293,7 +293,7 @@ ResfileContents::parse_body_line(
 			which_token = which_token_i;
 			found_commands = true;
 		}
-		if(!found_a_residue_on_chain){
+		if ( !found_a_residue_on_chain ) {
 			stringstream err_msg;
 			err_msg
 				<< "On line " << lineno << ", "
@@ -307,7 +307,7 @@ ResfileContents::parse_body_line(
 		runtime_assert(false);
 	}
 
-	if(!found_commands){
+	if ( !found_commands ) {
 		stringstream err_msg;
 		err_msg
 			<< "On line " << lineno << ", "
@@ -331,11 +331,11 @@ ResfileContents::parse_resid(
 
 	string token(get_token(which_token, tokens));
 	++which_token;
-	if(*token.begin() == '*'){
+	if ( *token.begin() == '*' ) {
 		// apply task all residues on the chain
 		id_type = ResfileContents::CHAIN_RESID;
 
-		if(token.length() > 1){
+		if ( token.length() > 1 ) {
 			stringstream err_msg;
 			err_msg
 				<< "On line " << lineno << ", "
@@ -356,9 +356,9 @@ ResfileContents::parse_resid(
 	token = get_token(which_token, tokens);
 	++which_token;
 
-	if(token == "-"){
+	if ( token == "-" ) {
 
-		if(id_type == ResfileContents::CHAIN_RESID){
+		if ( id_type == ResfileContents::CHAIN_RESID ) {
 			// In this case we've already encountered a '*' to it can't be a
 			// range specification
 			stringstream err_msg;
@@ -384,7 +384,7 @@ ResfileContents::parse_resid(
 	// specifier! Get the token again but this time do not change it to
 	// upper case
 	token = get_token(which_token-1, tokens, false);
-	if (token.length() != 1){
+	if ( token.length() != 1 ) {
 		stringstream err_msg;
 		err_msg
 			<< "On line " << lineno << ", "
@@ -394,9 +394,9 @@ ResfileContents::parse_resid(
 		onError(err_msg.str());
 	}
 	chain = token[0];
-	if (chain == '_') chain = ' ';
-	if(core::chemical::chr_chains.find(chain) == std::string::npos
-		 && chain != ' ' ){
+	if ( chain == '_' ) chain = ' ';
+	if ( core::chemical::chr_chains.find(chain) == std::string::npos
+			&& chain != ' ' ) {
 		stringstream err_msg;
 		err_msg
 			<< "On line " << lineno << ", "
@@ -424,7 +424,7 @@ ResfileContents::parse_PDBnum_icode(
 	}
 
 	char remaining;
-	if(!(PDBnum_s >> PDBnum) || PDBnum_s.get(remaining)){
+	if ( !(PDBnum_s >> PDBnum) || PDBnum_s.get(remaining) ) {
 		stringstream err_msg;
 		err_msg
 			<< "On line " << lineno << ", "
@@ -445,18 +445,18 @@ ResfileContents::locate_resid(
 ) const {
 
 	Size resid(0);
-	if(pose.pdb_info() == 0){
-		if(1 <= PDBnum && PDBnum <= pose.total_residue()){
+	if ( pose.pdb_info() == 0 ) {
+		if ( 1 <= PDBnum && PDBnum <= pose.total_residue() ) {
 			resid = PDBnum;
 		}
 	} else {
 		resid = pose.pdb_info()->pdb2pose().find( chain, PDBnum, icode );
 	}
 
-	if(resid == 0){
+	if ( resid == 0 ) {
 		std::stringstream err_msg;
 		err_msg  << "On line " << lineno << ", the pose does not have residue with chain=" << chain << ", PDBnum=" << PDBnum;
-		if(icode != ' '){
+		if ( icode != ' ' ) {
 			err_msg << ", icode=" << icode;
 		}
 		err_msg << ".";
@@ -477,7 +477,7 @@ ResfileContents::locate_command(
 	std::map< string, ResfileCommandOP >::const_iterator command(
 		command_map.find(get_token(which_token, tokens)));
 
-	if (command == command_map.end()) {
+	if ( command == command_map.end() ) {
 		std::stringstream err_msg;
 		err_msg
 			<< "On line " << lineno
@@ -498,7 +498,7 @@ NATRO::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-debug_assert( get_token( which_token, tokens ) == name() );
+	debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 }
 
@@ -520,7 +520,7 @@ NATAA::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-debug_assert( get_token( which_token, tokens ) == name() );
+	debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 }
 
@@ -542,7 +542,7 @@ ALLAA::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-debug_assert( get_token( which_token, tokens ) == name() );
+	debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 }
 
@@ -555,10 +555,10 @@ ALLAA::residue_action(
 	//warn user not to use ALLAA to mean ALLAAxc.  This repeats for every line on purpose!
 	// disable warning with command -nowarn_ALLAA
 	// this warning is /really/ not necessary -- people ought to know that cys is an amino acid!
-//	T("core.pack.task.ResfileReader") << "RESFILE WARNING: " << ALLAA::name() << " is deprecated.  Use "
-//				<< ALLAAxc::name() << " to exclude cysteine, or "
-//				<< ALLAAwc::name() << " to include cysteine.  Substituting "
-//				<< ALLAAwc::name() << " behavior." << std::endl;
+	// T("core.pack.task.ResfileReader") << "RESFILE WARNING: " << ALLAA::name() << " is deprecated.  Use "
+	//    << ALLAAxc::name() << " to exclude cysteine, or "
+	//    << ALLAAwc::name() << " to include cysteine.  Substituting "
+	//    << ALLAAwc::name() << " behavior." << std::endl;
 
 	//as in warning, pass to ALLAAwc
 	ALLAAwc allaawc;
@@ -576,7 +576,7 @@ ALLAAxc::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-debug_assert( get_token( which_token, tokens ) == name() );
+	debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 }
 
@@ -602,7 +602,7 @@ ALLAAwc::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-debug_assert( get_token( which_token, tokens ) == name() || get_token( which_token, tokens ) == ALLAA::name() );
+	debug_assert( get_token( which_token, tokens ) == name() || get_token( which_token, tokens ) == ALLAA::name() );
 	++which_token;
 }
 
@@ -630,7 +630,7 @@ PIKAA::initialize_from_tokens(
 	using namespace chemical;
 	using utility::vector1;
 
-debug_assert( get_token( which_token, tokens ) == name() );
+	debug_assert( get_token( which_token, tokens ) == name() );
 	keep_canonical_aas_.resize( chemical::num_canonical_aas, false );
 
 	if ( which_token == tokens.size() ) {
@@ -649,9 +649,8 @@ debug_assert( get_token( which_token, tokens ) == name() );
 			AA aa( aa_from_oneletter_code( aas_to_keep[ ii ] ) );
 			if ( size_t(aa) <= keep_canonical_aas_.size() ) {
 				keep_canonical_aas_[ aa ] = true;
-			}
-			// allow use of PIKAA for DNA types (letters a,c,g,t)
-			else if ( aa == na_ade || aa == na_cyt || aa == na_gua || aa == na_thy ) {
+			} else if ( aa == na_ade || aa == na_cyt || aa == na_gua || aa == na_thy ) {
+				// allow use of PIKAA for DNA types (letters a,c,g,t)
 				na_allowed_.push_back( aa );
 			}
 		} else {
@@ -695,7 +694,7 @@ PIKNA::initialize_from_tokens(
 	using namespace chemical;
 	using utility::vector1;
 
-debug_assert( get_token( which_token, tokens ) == name() );
+	debug_assert( get_token( which_token, tokens ) == name() );
 
 	if ( which_token == tokens.size() ) {
 		std::stringstream err_msg;
@@ -708,7 +707,7 @@ debug_assert( get_token( which_token, tokens ) == name() );
 	// note: stl uses an index-by-0 convention so the for-loop initialization statment
 	// and its boundary check are not in the rosetta standard.
 	for ( std::string::const_iterator letter( nas_string.begin() );
-		    letter != nas_string.end(); ++letter ) {
+			letter != nas_string.end(); ++letter ) {
 		// custom conversion from single letter to aa enum
 		AA na( aa_unk );
 		if      ( *letter == 'A' || *letter == 'a' ) na = na_ade;
@@ -746,10 +745,10 @@ PIKRNA::initialize_from_tokens(
 	using namespace chemical;
 	using utility::vector1;
 
-debug_assert( tokens[ which_token ] == name() );
+	debug_assert( tokens[ which_token ] == name() );
 	if ( which_token == tokens.size() ) {
 		TR.Error << "RESFILE ERROR: PIKRNA must be followed by a string of allowed "
-		        << "nucleic acids in single-letter format" << std::endl;
+			<< "nucleic acids in single-letter format" << std::endl;
 		utility_exit();
 	}
 	std::string const & nas_string( tokens[ ++which_token ] );
@@ -757,7 +756,7 @@ debug_assert( tokens[ which_token ] == name() );
 	// note: stl uses an index-by-0 convention so the for-loop initialization statment
 	// and its boundary check are not in the rosetta standard.
 	for ( std::string::const_iterator letter( nas_string.begin() );
-		    letter != nas_string.end(); ++letter ) {
+			letter != nas_string.end(); ++letter ) {
 		// custom conversion from single letter to aa enum
 		AA na( aa_unk );
 		if      ( *letter == 'A' || *letter == 'a' ) na = na_rad;
@@ -766,7 +765,7 @@ debug_assert( tokens[ which_token ] == name() );
 		else if ( *letter == 'U' || *letter == 'u' ) na = na_ura;
 		else {
 			TR.Error << "RESFILE ERROR: unknown one-letter nucleic acid code " << *letter
-				      << " while parsing PIKRNA option for residue " << resid << std::endl;
+				<< " while parsing PIKRNA option for residue " << resid << std::endl;
 			utility_exit();
 		}
 		keep_rnas_.push_back( na );
@@ -799,7 +798,7 @@ NOTAA::initialize_from_tokens(
 {
 	using namespace chemical;
 
-debug_assert( get_token( which_token, tokens ) == name() );
+	debug_assert( get_token( which_token, tokens ) == name() );
 	keep_aas_.resize( chemical::num_canonical_aas, true );
 
 	++which_token;
@@ -809,7 +808,7 @@ debug_assert( get_token( which_token, tokens ) == name() );
 	// and its boundary check are not in the rosetta standard.
 	for ( Size ii = 0; ii < aas_to_exclude.size(); ++ii ) {
 		if ( oneletter_code_specifies_aa( aas_to_exclude[ ii ] ) &&
-				 aa_from_oneletter_code(aas_to_exclude[ii]) <= chemical::num_canonical_aas  ) {
+				aa_from_oneletter_code(aas_to_exclude[ii]) <= chemical::num_canonical_aas  ) {
 			keep_aas_[ aa_from_oneletter_code( aas_to_exclude[ ii ] ) ] = false;
 		} else {
 			TR << "Ignoring Unknown one-letter amino acid code "<< aas_to_exclude[ ii ] << " while parsing NOTAA option for residue " << resid << ".";
@@ -840,7 +839,7 @@ EMPTY::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-debug_assert( get_token( which_token, tokens ) == name() );
+	debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 }
 
@@ -868,7 +867,7 @@ RESET::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-debug_assert( get_token( which_token, tokens ) == name() );
+	debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 }
 
@@ -895,7 +894,7 @@ POLAR::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-debug_assert( get_token( which_token, tokens ) == name() );
+	debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 }
 
@@ -938,7 +937,7 @@ APOLAR::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-debug_assert( get_token( which_token, tokens ) == name() );
+	debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 
 }
@@ -978,13 +977,13 @@ APOLA::initialize_from_tokens(
 #ifdef NDEBUG
 							  utility::vector1< std::string > const & ,
 #else
-							  utility::vector1< std::string > const & tokens,
+	utility::vector1< std::string > const & tokens,
 #endif
 	Size & which_token,
 	Size /*resid*/
 )
 {
-debug_assert( get_token( which_token, tokens ) == name() );
+	debug_assert( get_token( which_token, tokens ) == name() );
 	TR << "RESFILE NOTE: APOLA command deprecated.  Use APOLAR command instead.  Treating as APOLAR command." << std::endl;
 	++which_token;
 }
@@ -1012,7 +1011,7 @@ EX::initialize_from_tokens(
 	Size resid
 )
 {
-debug_assert( get_token( which_token, tokens ) == name() );
+	debug_assert( get_token( which_token, tokens ) == name() );
 
 	if ( which_token == tokens.size() ) {
 		std::stringstream err_msg;
@@ -1052,8 +1051,7 @@ debug_assert( get_token( which_token, tokens ) == name() );
 		std::stringstream err_msg;
 		err_msg  << "The token following EX ARO, " << get_token( which_chi_token, tokens ) << ", should be a valid chi-id level, eg a '1' or a '2' for residue " << resid << ".";
 		onError(err_msg.str());
-	}
-	else if ( which_chi_ > 4 ) {
+	} else if ( which_chi_ > 4 ) {
 		std::stringstream err_msg;
 		err_msg  << "The given chi-id, '" << get_token( which_chi_token, tokens ) << "' must either be an integer [1-4] or 'ARO' for residue " << resid << ".";
 		onError(err_msg.str());
@@ -1098,7 +1096,7 @@ NC::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-debug_assert( get_token( which_token, tokens ) == name() );
+	debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 	nc_to_include_ = get_token( which_token, tokens );
 	++which_token;
@@ -1111,9 +1109,9 @@ NC::residue_action(
 ) const
 {
 	core::chemical::ResidueTypeSet const & residue_set = task.residue_task( resid ).get_original_residue_set();
-	if ( residue_set.has_interchangeability_group( nc_to_include_ ) ){
+	if ( residue_set.has_interchangeability_group( nc_to_include_ ) ) {
 		task.nonconst_residue_task(resid).allow_noncanonical_aa( nc_to_include_ );
-	}	else {
+	} else {
 		std::stringstream err_msg;
 		err_msg  << "Unable to add non-canonical amino acid(s) with interchangeability group " << nc_to_include_ << " because there are no ResidueTypes with that interchangeability group in the ResidueTypeSet for residue " << resid << ".";
 		onError(err_msg.str());
@@ -1129,14 +1127,14 @@ EX_CUTOFF::initialize_from_tokens(
 	Size resid
 )
 {
-debug_assert( get_token( which_token, tokens ) == name() );
+	debug_assert( get_token( which_token, tokens ) == name() );
 
 	//check that next token is an integer value
 	//stringstreams provide type safety!  yay!
 	++which_token;
 	std::istringstream ex_cutoff_ss( get_token( which_token, tokens ) );
 
-	if (( ex_cutoff_ss >> ex_cutoff_ ).fail() ) { //convert string to Size and check error
+	if ( ( ex_cutoff_ss >> ex_cutoff_ ).fail() ) { //convert string to Size and check error
 		std::stringstream err_msg;
 		err_msg << "The leve given for EX_CUTOFF, " << get_token( which_token-1, tokens) << ", must be an integer in the range [0-18] where 18 is the default for residue " << resid << ".";
 		onError(err_msg.str());
@@ -1163,7 +1161,7 @@ USE_INPUT_SC::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-debug_assert( get_token( which_token, tokens ) == name() );
+	debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 }//end USE_INPUT_SC
 
@@ -1185,7 +1183,7 @@ AUTO::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-debug_assert( get_token( which_token, tokens ) == name() );
+	debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 }
 
@@ -1207,7 +1205,7 @@ SCAN::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-debug_assert( get_token( which_token, tokens ) == name() );
+	debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 }
 
@@ -1230,7 +1228,7 @@ TARGET::initialize_from_tokens(
 	Size resid
 )
 {
-debug_assert( get_token( which_token, tokens ) == name() );
+	debug_assert( get_token( which_token, tokens ) == name() );
 
 	if ( which_token == tokens.size() ) {
 		std::stringstream err_msg;
@@ -1263,8 +1261,7 @@ TARGET::residue_action(
 			err_msg  << "Unknown one-letter code '"<< letter << "' for TARGET command for residue " << resid << ".";
 			onError(err_msg.str());
 		}
-	}
-	else rtask.target_type( argstring_ );
+	} else rtask.target_type( argstring_ );
 }
 //end TARGET
 
@@ -1277,7 +1274,7 @@ NO_ADDUCTS::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-debug_assert( get_token( which_token, tokens ) == name() );
+	debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
 }
 
@@ -1300,7 +1297,7 @@ FIX_HIS_TAUTOMER::initialize_from_tokens(
 	Size /*resid*/
 )
 {
-debug_assert( tokens[ which_token ] == name() );
+	debug_assert( tokens[ which_token ] == name() );
 	++which_token;
 }
 
@@ -1384,7 +1381,7 @@ parse_resfile(
 
 	std::string resfile;
 	utility::io::izstream file( filename );
-	if (!file) {
+	if ( !file ) {
 		TR << "File:" << filename << " not found!\n";
 		utility_exit_with_message( "Cannot open file " + filename );
 	} else {
@@ -1394,7 +1391,7 @@ parse_resfile(
 	try{
 		parse_resfile_string( pose, the_task, resfile );
 	} catch (ResfileReaderException &) {
-		if (basic::options::option[ basic::options::OptionKeys::run::interactive ].user()){
+		if ( basic::options::option[ basic::options::OptionKeys::run::interactive ].user() ) {
 			throw;
 		} else {
 			utility_exit();
@@ -1403,10 +1400,10 @@ parse_resfile(
 }
 
 
-	// question: if no chain is supplied should it be accepted?
-	// yes just pass ' ' for the chain
-	// how if a symbol is a chain or not?
-	// all commands begin with something in the command map, if it's not a command treat it as a chain
+// question: if no chain is supplied should it be accepted?
+// yes just pass ' ' for the chain
+// how if a symbol is a chain or not?
+// all commands begin with something in the command map, if it's not a command treat it as a chain
 
 void
 parse_resfile_string(
@@ -1445,8 +1442,8 @@ get_token(
 	const utility::vector1<std::string> & tokens,
 	bool make_upper_case) {
 
-	if (which_token >  tokens.size() ){
-		if (which_token == 1){
+	if ( which_token >  tokens.size() ) {
+		if ( which_token == 1 ) {
 			std::stringstream err_msg;
 			err_msg  << "Resfile does not specify anything.";
 			onError(err_msg.str());
@@ -1457,7 +1454,7 @@ get_token(
 		}
 	}
 	std::string token = tokens[ which_token ];
-	if(make_upper_case){
+	if ( make_upper_case ) {
 
 		std::transform(token.begin(), token.end(), token.begin(), (int(*)(int)) std::toupper);
 	}
@@ -1495,7 +1492,7 @@ tokenize_line( std::istream & inputstream )
 
 	/*
 	for ( Size ii = 1; ii <= tokens.size(); ++ii ) {
-		std::cout << "token: " << ii << ": \"" << tokens[ ii ] << "\"" << std::endl;
+	std::cout << "token: " << ii << ": \"" << tokens[ ii ] << "\"" << std::endl;
 	}
 	*/
 
@@ -1505,7 +1502,7 @@ tokenize_line( std::istream & inputstream )
 void onError( std::string message){
 	static bool interactive = basic::options::option[ basic::options::OptionKeys::run::interactive ].value();
 	TR << message << std::endl;
-	if (interactive){
+	if ( interactive ) {
 		throw ResfileReaderException(message);
 	} else {
 		utility_exit();

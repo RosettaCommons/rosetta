@@ -109,11 +109,11 @@ RRProtocolRTMin::get_cartesian() const {
 /// compared to where it started
 void
 RRProtocolRTMin::run(
-  RRComparerOP comparer,
-  RRReporterOP reporter,
-  Pose const & pose,
+	RRComparerOP comparer,
+	RRReporterOP reporter,
+	Pose const & pose,
 	ScoreFunction const & score_function,
-  PackerTask const & packer_task
+	PackerTask const & packer_task
 ) {
 
 	using core::chemical::aa_unk;
@@ -133,21 +133,21 @@ RRProtocolRTMin::run(
 
 	// For each residue in the packer task,
 	// rtmin residue -> and measure recovery
-	for( Size ii = 1; ii <= pose.total_residue(); ++ii ){
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		if ( !packer_task.pack_residue(ii) ) continue;
 
 		one_res_task->temporarily_set_pack_residue( ii, true );
-    if ( ! packer_task.include_current( ii ) ) {
-      // if we're not asking for the input sidechains, then don't use them -- replace the input sidechain with a rotamer that will be sampled inside
-      // rotamer trials anyways
+		if ( ! packer_task.include_current( ii ) ) {
+			// if we're not asking for the input sidechains, then don't use them -- replace the input sidechain with a rotamer that will be sampled inside
+			// rotamer trials anyways
 			core::pack::rotamer_set::RotamerSetFactory rsf;
 			core::pack::rotamer_set::RotamerSetOP rotset( rsf.create_rotamer_set( pose.residue( ii ) ));
-      rotset->set_resid( ii );
-      rotset->build_rotamers( pose, score_function, *one_res_task, packer_neighbor_graph );
-      if ( rotset->num_rotamers() > 0 ) {
-        working_pose.replace_residue( ii, *rotset->rotamer(1), false );
-      }
-    }
+			rotset->set_resid( ii );
+			rotset->build_rotamers( pose, score_function, *one_res_task, packer_neighbor_graph );
+			if ( rotset->num_rotamers() > 0 ) {
+				working_pose.replace_residue( ii, *rotset->rotamer(1), false );
+			}
+		}
 
 		rtmin.rtmin( working_pose, score_function, one_res_task );
 		measure_rotamer_recovery(

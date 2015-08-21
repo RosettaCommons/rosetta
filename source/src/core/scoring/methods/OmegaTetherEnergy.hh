@@ -102,8 +102,8 @@ public:
 	// data
 private:
 	OmegaTether const & potential_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

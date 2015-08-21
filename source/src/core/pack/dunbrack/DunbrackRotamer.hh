@@ -55,16 +55,16 @@ inline Size product( utility::fixedsizearray1< Size, N > factors ) {
 	for ( Size i = 2; i <= N; ++i ) x *= factors[ i ];
 	return x;
 }
-	
+
 inline bool
 bit_is_set(
-    Size num,
-    Size num_len,
-    Size pos
+	Size num,
+	Size num_len,
+	Size pos
 ) {
-    return ( num - 1 ) & ( 1 << ( num_len - pos ) );
+	return ( num - 1 ) & ( 1 << ( num_len - pos ) );
 }
-	
+
 template< Size N >
 inline Size make_index(
 	Size n_bb,
@@ -78,20 +78,20 @@ inline Size make_index(
 	return index;
 }
 
-	
+
 template< Size N >
 inline Size make_index(
 	Size n_bb,
-    utility::fixedsizearray1< Size, N > num_bins,
-    utility::fixedsizearray1< Size, N+1 > bb_bin
+	utility::fixedsizearray1< Size, N > num_bins,
+	utility::fixedsizearray1< Size, N+1 > bb_bin
 ) {
-    Size index = 1;
+	Size index = 1;
 	for ( Size bbi = 1; bbi <= N; ++bbi ) {
 		index += ( bb_bin[ bbi ] - 1 ) * positive_pow( num_bins[ bbi ], n_bb - bbi );
 	}
-    return index;
+	return index;
 }
-	
+
 template < Size N >
 inline Size make_conditional_index(
 	Size n_bb,
@@ -115,19 +115,19 @@ template < Size N >
 inline Size make_conditional_index(
 	Size n_bb,
 	utility::fixedsizearray1< Size, N > num_bins,
-    Size cond_i,
-    utility::fixedsizearray1< Size, N+1 > bin_true,
-    utility::fixedsizearray1< Size, N+1 > bin_false
+	Size cond_i,
+	utility::fixedsizearray1< Size, N+1 > bin_true,
+	utility::fixedsizearray1< Size, N+1 > bin_false
 ) {
-    Size index = 1;
-    for ( Size bbi = 1; bbi <= n_bb; ++bbi ) {
+	Size index = 1;
+	for ( Size bbi = 1; bbi <= n_bb; ++bbi ) {
 		if ( ( cond_i - 1 ) & ( 1 << ( n_bb - bbi ) ) ) {
-            index += ( bin_true[ bbi ]  - 1 ) * positive_pow( num_bins[ bbi ], n_bb - bbi );
+			index += ( bin_true[ bbi ]  - 1 ) * positive_pow( num_bins[ bbi ], n_bb - bbi );
 		} else {
-            index += ( bin_false[ bbi ] - 1 ) * positive_pow( num_bins[ bbi ], n_bb - bbi );
+			index += ( bin_false[ bbi ] - 1 ) * positive_pow( num_bins[ bbi ], n_bb - bbi );
 		}
-    }
-    return index;
+	}
+	return index;
 }
 
 /// @brief A class whose size is known at compile time.  A vector of these objects
@@ -143,37 +143,37 @@ class DunbrackRotamerMeanSD {
 public:
 
 	DunbrackRotamerMeanSD( DunbrackRotamerMeanSD< S, N, P > const & rhs ) :
-    rotamer_probability_( P( 0.0 ) )
-	{
-        n_derivs_ = rhs.n_derivs();
-        for ( Size ii = 1; ii <= S; ++ii ) {
-			chi_mean_[ ii ] = rhs.chi_mean( ii );
-			chi_sd_[ ii ]   = rhs.chi_sd( ii );
-        }
-	}
-
-	/*DunbrackRotamerMeanSD( PackedDunbrackRotamer< S, N, P > const & rhs ) :
-	rotamer_probability_( rhs.rotamer_probability() )
+		rotamer_probability_( P( 0.0 ) )
 	{
 		n_derivs_ = rhs.n_derivs();
 		for ( Size ii = 1; ii <= S; ++ii ) {
 			chi_mean_[ ii ] = rhs.chi_mean( ii );
 			chi_sd_[ ii ]   = rhs.chi_sd( ii );
 		}
+	}
+
+	/*DunbrackRotamerMeanSD( PackedDunbrackRotamer< S, N, P > const & rhs ) :
+	rotamer_probability_( rhs.rotamer_probability() )
+	{
+	n_derivs_ = rhs.n_derivs();
+	for ( Size ii = 1; ii <= S; ++ii ) {
+	chi_mean_[ ii ] = rhs.chi_mean( ii );
+	chi_sd_[ ii ]   = rhs.chi_sd( ii );
+	}
 	}*/
 
 	DunbrackRotamerMeanSD(
-        typename utility::vector1< P > const & chimean_in,
+		typename utility::vector1< P > const & chimean_in,
 		typename utility::vector1< P > const & chisd_in,
 		P const prob_in
 	) :
 		rotamer_probability_( prob_in )
 	{
-        //std::cout << "Currently sizing n_derivs_ to ";
-        for ( Size deriv_i = 1; deriv_i <= ( 1 << N ); ++deriv_i ) {
-            n_derivs_[ deriv_i ] = P( 0.0 );
-        }
-        //std::cout << n_derivs_.size() << std::endl;
+		//std::cout << "Currently sizing n_derivs_ to ";
+		for ( Size deriv_i = 1; deriv_i <= ( 1 << N ); ++deriv_i ) {
+			n_derivs_[ deriv_i ] = P( 0.0 );
+		}
+		//std::cout << n_derivs_.size() << std::endl;
 		for ( Size ii = 1; ii <= S; ++ii ) {
 			chi_mean_[ ii ] = chimean_in[ ii ];
 			chi_sd_  [ ii ] = chisd_in  [ ii ];
@@ -181,11 +181,11 @@ public:
 	}
 
 	DunbrackRotamerMeanSD():
-	rotamer_probability_( P( 0.0 ) )
+		rotamer_probability_( P( 0.0 ) )
 	{
-        for ( Size deriv_i = 1; deriv_i <= ( 1 << N ); ++deriv_i ) {
-            n_derivs_[ deriv_i ] = P( 0.0 );
-        }
+		for ( Size deriv_i = 1; deriv_i <= ( 1 << N ); ++deriv_i ) {
+			n_derivs_[ deriv_i ] = P( 0.0 );
+		}
 		for ( Size ii = 1; ii <= S; ++ii ) {
 			chi_mean_[ ii ] = P( 0.0 );
 			chi_sd_  [ ii ] = P( 0.0 );
@@ -205,7 +205,7 @@ public:
 		return rotamer_probability_;
 	}
 
-    utility::fixedsizearray1< P, (1<<N) >
+	utility::fixedsizearray1< P, (1<<N) >
 	n_derivs() const {
 		return n_derivs_;
 	}
@@ -225,7 +225,7 @@ public:
 		return rotamer_probability_;
 	}
 
-    utility::fixedsizearray1< P, (1<<N) > & n_derivs() {
+	utility::fixedsizearray1< P, (1<<N) > & n_derivs() {
 		return n_derivs_;
 	}
 
@@ -245,7 +245,7 @@ private:
 	utility::fixedsizearray1< P, S > chi_mean_;
 	utility::fixedsizearray1< P, S > chi_sd_;
 	P rotamer_probability_;
-    utility::fixedsizearray1< P, (1<<N) > n_derivs_;
+	utility::fixedsizearray1< P, (1<<N) > n_derivs_;
 };
 
 template < Size S, Size N, class P >
@@ -310,8 +310,8 @@ public:
 		parent( chimean_in, chisd_in, prob_in ),
 		packed_rotno_( packed_rotno_in )
 	{
-        //std::cout << "In the ctor body that is used in read_from_file " <<std::endl;
-    }
+		//std::cout << "In the ctor body that is used in read_from_file " <<std::endl;
+	}
 
 	PackedDunbrackRotamer(
 		DunbrackRotamer< S, N, P > const & sibling,
@@ -324,29 +324,29 @@ public:
 	PackedDunbrackRotamer(
 		DunbrackRotamer< S, N, P > const & sibling
 	) :
-    parent( sibling ),
-    packed_rotno_( 0 )
+		parent( sibling ),
+		packed_rotno_( 0 )
 	{}
 
-    PackedDunbrackRotamer(
+	PackedDunbrackRotamer(
 		PackedDunbrackRotamer const & rhs
-		) :
-    parent( rhs ),
-    packed_rotno_( rhs.packed_rotno() )
+	) :
+		parent( rhs ),
+		packed_rotno_( rhs.packed_rotno() )
 	{}
 
 
-    PackedDunbrackRotamer(
-                          PackedDunbrackRotamer & rhs
-                          ) :
-    parent( rhs ),
-    packed_rotno_( rhs.packed_rotno() )
+	PackedDunbrackRotamer(
+		PackedDunbrackRotamer & rhs
+	) :
+		parent( rhs ),
+		packed_rotno_( rhs.packed_rotno() )
 	{}
 
 
 	PackedDunbrackRotamer() :
-    parent(),
-    packed_rotno_( 0 )
+		parent(),
+		packed_rotno_( 0 )
 	{}
 
 	Size &
@@ -548,8 +548,9 @@ interpolate_polylinear_by_value(
 		for ( Size total = vals.size(); total >= 4; total /= 2 ) {
 			for ( Size ii = 1; ii <= total/2; ++ii ) {
 				double a_val = 0;
-				if ( w[ ii ] + w[ ii + total/2 ] != 0.0 )
+				if ( w[ ii ] + w[ ii + total/2 ] != 0.0 ) {
 					a_val = ( w[ ii ] * vals[ ii ] + w[ ii + total/2 ] * ( basic::subtract_degree_angles(vals[ ii + total/2 ], vals[ ii ] ) + vals[ ii ] ) ) / ( w[ ii ] + w[ ii + total/2 ] );
+				}
 				a.push_back( a_val );
 			}
 			if ( total > 4 ) {
@@ -632,8 +633,8 @@ public:
 	RotamericData( DunbrackRotamer< T, N, Real > const & rotamer_in ) :
 		rotamer_( rotamer_in )
 	{
-        rotamer_.rotamer_probability() = rotamer_in.rotamer_probability();
-    }
+		rotamer_.rotamer_probability() = rotamer_in.rotamer_probability();
+	}
 
 	virtual ~RotamericData() {}
 

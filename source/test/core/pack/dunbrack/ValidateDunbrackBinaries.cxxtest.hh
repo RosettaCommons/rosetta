@@ -51,13 +51,13 @@ void print_relevant_info() {
 
 	TR.Error << "---------------------- Settings: --------------------------------" << std::endl;
 	TR.Error << "Database Directory(s): " << std::endl;
-	for( core::Size ii(1); ii <= option[ in::path::database ]().size(); ++ii ) {
-		 TR.Error << "\t\t" << option[ in::path::database ](ii).name() << std::endl;
+	for ( core::Size ii(1); ii <= option[ in::path::database ]().size(); ++ii ) {
+		TR.Error << "\t\t" << option[ in::path::database ](ii).name() << std::endl;
 	}
 	TR.Error << "No binary Dunlib : " << (option[ in::file::no_binary_dunlib ] ? " true " : " false " ) << std::endl;
 	TR.Error << "Dun10: " << (option[ corrections::score::dun10 ] ? " true " : " false " ) << std::endl;
 	TR.Error << "-correct " << (option[ corrections::correct ] ? " true " : " false " ) << std::endl;
-	if( option[ corrections::score::dun10 ] ) {
+	if ( option[ corrections::score::dun10 ] ) {
 		TR.Error << "Dunbrack 2010 directory: " << option[ corrections::score::dun10_dir ].value() << std::endl;
 	} else {
 		TR.Error << "Dunbrack 2002 file: " << option[ corrections::score::dun02_file ].value() << std::endl;
@@ -83,7 +83,7 @@ public:
 
 		core::pack::dunbrack::RotamerLibrary* rotamer_library(  core::pack::dunbrack::RotamerLibrary::get_instance() );
 
-		if( ! rotamer_library->validate_dunbrack_binary() ) {
+		if ( ! rotamer_library->validate_dunbrack_binary() ) {
 			TR << "Failure validating the Dunbrack2010 binary" << std::endl;
 			print_relevant_info();
 			TS_FAIL("Dunbrack2010 ASCII/binary inconsistency");
@@ -108,7 +108,7 @@ public:
 
 		core::pack::dunbrack::RotamerLibrary* rotamer_library(  core::pack::dunbrack::RotamerLibrary::get_instance() );
 
-		if( ! rotamer_library->validate_dunbrack_binary() ) {
+		if ( ! rotamer_library->validate_dunbrack_binary() ) {
 			TR << "Failure validating the Dunbrack2002 binary" << std::endl;
 			print_relevant_info();
 			TS_FAIL("Dunbrack2002 ASCII/binary inconsistency");
@@ -133,7 +133,7 @@ public:
 
 		core::pack::dunbrack::RotamerLibrary* rotamer_library(  core::pack::dunbrack::RotamerLibrary::get_instance() );
 
-		if( ! rotamer_library->validate_dunbrack_binary() ) {
+		if ( ! rotamer_library->validate_dunbrack_binary() ) {
 			TR << "Failure validating the Dunbrack2002 -correct binary" << std::endl;
 			print_relevant_info();
 			TS_FAIL("Dunbrack2002 -correct ASCII/binary inconsistency");

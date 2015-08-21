@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/modeler/rna/checker/RNA_ChainClosureChecker.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -23,11 +23,11 @@ namespace stepwise {
 namespace modeler {
 namespace rna {
 namespace checker {
-	
-	class RNA_ChainClosureChecker;
-	typedef utility::pointer::shared_ptr< RNA_ChainClosureChecker > RNA_ChainClosureCheckerOP;
-	typedef utility::pointer::shared_ptr< RNA_ChainClosureChecker const > RNA_ChainClosureCheckerCOP;
-	
+
+class RNA_ChainClosureChecker;
+typedef utility::pointer::shared_ptr< RNA_ChainClosureChecker > RNA_ChainClosureCheckerOP;
+typedef utility::pointer::shared_ptr< RNA_ChainClosureChecker const > RNA_ChainClosureCheckerCOP;
+
 } //checker
 } //rna
 } //modeler

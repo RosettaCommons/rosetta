@@ -58,7 +58,7 @@
 #include <utility/vector0.hh>
 
 #ifdef WIN32
-	#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.hh>
 #endif
 
 #include <utility/exit.hh>
@@ -98,8 +98,8 @@ void NativeEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eva
 
 	// set rmsd native
 	if ( native_pose && option[ in::file::native ].user() ) {
-		if ( option[ OptionKeys::symmetry::symmetric_rmsd ].user() ){
-				eval.add_evaluation( PoseEvaluatorOP( new SymmetricRmsdEvaluator( native_pose, "" ) ) );
+		if ( option[ OptionKeys::symmetry::symmetric_rmsd ].user() ) {
+			eval.add_evaluation( PoseEvaluatorOP( new SymmetricRmsdEvaluator( native_pose, "" ) ) );
 		}
 
 		if ( option[ in::file::native_exclude_res ].user() ) {
@@ -115,7 +115,7 @@ void NativeEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eva
 					option[ in::file::native_exclude_res ]()), "" ) )
 				);
 			}
-		} else if ( option[ OptionKeys::abinitio::rmsd_residues ].user() ){
+		} else if ( option[ OptionKeys::abinitio::rmsd_residues ].user() ) {
 			core::Size start = option[ OptionKeys::abinitio::rmsd_residues ]()[ 1 ];
 			Size end = option[ OptionKeys::abinitio::rmsd_residues ]()[ 2 ];
 			eval.add_evaluation( PoseEvaluatorOP( new RmsdEvaluator( native_pose, start, end,  "", option[ OptionKeys::abinitio::bGDT ]() ) ) );
@@ -125,18 +125,18 @@ void NativeEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eva
 			eval.add_evaluation( PoseEvaluatorOP( new SelectMaxsubEvaluator( native_pose, "" ) ) );
 		}
 	} // if ( native_pose_ )
-	
+
 	if ( option[ OptionKeys::evaluation::rmsd_select ].user() ) {
 		utility::vector1< utility::file::FileName > const& rmsd_core( option[ OptionKeys::evaluation::rmsd_select ]() );
 		if ( !option[ in::file::native ].user() ) utility_exit_with_message( "need to specify in:file:native together with rmsd_select " );
-		
+
 		for ( Size ct = 1; ct <= rmsd_core.size(); ct ++ ) {
 			std::ifstream is( rmsd_core[ ct ].name().c_str() );
-			
-			if (!is.good()) {
+
+			if ( !is.good() ) {
 				utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + rmsd_core[ ct ].name() + "'" );
 			}
-			
+
 			loops::PoseNumberedLoopFileReader reader;
 			reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
 			loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file( is, rmsd_core[ ct ].name(), false /*no strict checking */ );

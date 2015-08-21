@@ -36,26 +36,26 @@ using core::scoring::ScoringManager;
 using numeric::conversions::DEGREES;
 
 void Rama2bPerturber::perturb_subset(
-		Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
+	Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
 
 	Real phi, psi;
 	Ramachandran2B const & rama =
 		ScoringManager::get_instance()->get_Ramachandran2B();
 
-	BOOST_FOREACH(Size residue, residues) {
+	BOOST_FOREACH ( Size residue, residues ) {
 
-		// Currently we don't have data for both neighbors together.  Instead, for 
-		// each residue we consider either its left neighbor or its right neighbor 
-		// with equal probability.  The conditionals in this loop might be 
-		// problematic from a branch prediction perspective, because this is a 
+		// Currently we don't have data for both neighbors together.  Instead, for
+		// each residue we consider either its left neighbor or its right neighbor
+		// with equal probability.  The conditionals in this loop might be
+		// problematic from a branch prediction perspective, because this is a
 		// fairly inner loop, but this hasn't been actually benchmarked.
 
-		if (numeric::random::uniform() > 0.5) {
+		if ( numeric::random::uniform() > 0.5 ) {
 			rama.random_phipsi_from_rama_left(
-					pose.aa(residue - 1), pose.aa(residue), phi, psi);
+				pose.aa(residue - 1), pose.aa(residue), phi, psi);
 		} else {
 			rama.random_phipsi_from_rama_right(
-					pose.aa(residue), pose.aa(residue + 1), phi, psi);
+				pose.aa(residue), pose.aa(residue + 1), phi, psi);
 		}
 
 		problem->perturb_phi(residue, phi, DEGREES);

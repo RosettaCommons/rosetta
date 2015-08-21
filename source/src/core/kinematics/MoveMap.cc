@@ -48,15 +48,15 @@ void MoveMap::set_ranges_unmodifiable(const std::vector<std::pair<Size, Size> >&
 
 	set_bb(true);
 	vector<pair<Size, Size> >::const_iterator i;
-	for (i = ranges.begin(); i != ranges.end(); ++i) {
+	for ( i = ranges.begin(); i != ranges.end(); ++i ) {
 		Size begin = i->first;
 		Size end = i->second;
 
-	debug_assert(begin > 0);
-	debug_assert(end > 0);
-	debug_assert(begin <= end);
+		debug_assert(begin > 0);
+		debug_assert(end > 0);
+		debug_assert(begin <= end);
 
-		for (Size i = begin; i <= end; ++i) set_bb(i, false);
+		for ( Size i = begin; i <= end; ++i ) set_bb(i, false);
 	}
 }
 
@@ -371,32 +371,32 @@ MoveMap::find( DOF_ID const & id ) const {
 ///    RESIDUE * BBCHI
 void
 MoveMap::init_from_file( std::string const & filename ) {
- 	utility::io::izstream data( filename.c_str() );
- 	if ( !data ) {
- 		utility_exit_with_message("ERROR: could not open file " + filename );
- 	}
+	utility::io::izstream data( filename.c_str() );
+	if ( !data ) {
+		utility_exit_with_message("ERROR: could not open file " + filename );
+	}
 
- 	std::string line;
+	std::string line;
 	bool res_default_set=false, jump_default_set=false;
- 	while( getline(data,line) ) {
+	while ( getline(data,line) ) {
 		if ( line.substr(0,1) == "#" ) continue;
 		if ( line == "" ) continue;
 
 		utility::vector1< std::string > tokens ( utility::split( line ) );
-		if( tokens.size() > 0 ) {
+		if ( tokens.size() > 0 ) {
 			if ( tokens[1] == "JUMP" || tokens[1] == "jump" ) {
-				if (tokens.size() < 2) {
+				if ( tokens.size() < 2 ) {
 					utility_exit_with_message( "Error reading movemap at line: " + line );
 				}
 
 				if ( tokens[2] == "*" ) {
-					if (jump_default_set) {
+					if ( jump_default_set ) {
 						utility_exit_with_message( "Error reading movemap: default jump set multiple times!" );
 					} else {
 						jump_default_set=true;
 						if ( tokens.size() < 3 || tokens[3] == "YES" || tokens[3] == "yes" ) {
 							set_jump( true );
-						} else if (tokens[3] == "NO" || tokens[3] == "no" ){
+						} else if ( tokens[3] == "NO" || tokens[3] == "no" ) {
 							set_jump( false );
 						} else {
 							utility_exit_with_message( "Error reading movemap at line: " + line );
@@ -406,42 +406,42 @@ MoveMap::init_from_file( std::string const & filename ) {
 					core::Size jump_num = (core::Size) atoi(tokens[2].c_str());
 					if ( tokens.size() < 3 || tokens[3] == "YES" || tokens[3] == "yes" ) {
 						set_jump( jump_num, true );
-					} else if (tokens[3] == "NO" || tokens[3] == "no" ){
+					} else if ( tokens[3] == "NO" || tokens[3] == "no" ) {
 						set_jump( jump_num, false );
 					} else {
 						utility_exit_with_message( "Error reading movemap at line: " + line );
 					}
 				}
 			} else if ( tokens[1] == "RESIDUE" || tokens[1] == "residue" ) {
-				if (tokens.size() < 3) {
+				if ( tokens.size() < 3 ) {
 					utility_exit_with_message( "Error reading movemap at line: " + line );
 				}
 				if ( tokens[2] == "*" ) {
-					if (res_default_set) {
+					if ( res_default_set ) {
 						utility_exit_with_message( "Error reading movemap: default residue set multiple times!" );
 					} else {
 						res_default_set=true;
 						if ( tokens[3] == "BB" || tokens[3] == "bb" ) {
 							set_bb( true ); set_chi( false );
-						} else if (tokens[3] == "CHI" || tokens[3] == "chi" ){
+						} else if ( tokens[3] == "CHI" || tokens[3] == "chi" ) {
 							set_bb( false ); set_chi( true );
-						} else if (tokens[3] == "BBCHI" || tokens[3] == "bbchi" ){
+						} else if ( tokens[3] == "BBCHI" || tokens[3] == "bbchi" ) {
 							set_bb( true ); set_chi( true );
-						} else if (tokens[3] == "NO" || tokens[3] == "no" ){
+						} else if ( tokens[3] == "NO" || tokens[3] == "no" ) {
 							set_bb( false ); set_chi( false );
 						} else {
 							utility_exit_with_message( "Error reading movemap at line: " + line );
 						}
 					}
-				} else if (tokens.size() == 3) {
+				} else if ( tokens.size() == 3 ) {
 					core::Size start_res   = (core::Size) atoi(tokens[2].c_str());
 					if ( tokens[3] == "BB" || tokens[3] == "bb" ) {
 						set_bb( start_res, true ); set_chi( start_res, false );
-					} else if (tokens[3] == "CHI" || tokens[3] == "chi" ){
+					} else if ( tokens[3] == "CHI" || tokens[3] == "chi" ) {
 						set_bb( start_res, false ); set_chi( start_res, true );
-					} else if (tokens[3] == "BBCHI" || tokens[3] == "bbchi" ){
+					} else if ( tokens[3] == "BBCHI" || tokens[3] == "bbchi" ) {
 						set_bb( start_res, true ); set_chi( start_res, true );
-					} else if (tokens[3] == "NO" || tokens[3] == "no" ){
+					} else if ( tokens[3] == "NO" || tokens[3] == "no" ) {
 						set_bb( start_res, false ); set_chi( start_res, false );
 					} else {
 						utility_exit_with_message( "Error reading movemap at line: " + line );
@@ -453,19 +453,19 @@ MoveMap::init_from_file( std::string const & filename ) {
 						utility_exit_with_message( "Error reading movemap at line: " + line );
 					}
 					if ( tokens[4] == "BB" || tokens[4] == "bb" ) {
-						for (core::Size i = start_res; i<= end_res; ++i) {
+						for ( core::Size i = start_res; i<= end_res; ++i ) {
 							set_bb( i, true ); set_chi( i, false );
 						}
-					} else if (tokens[4] == "CHI" || tokens[4] == "chi" ){
-						for (core::Size i = start_res; i<= end_res; ++i) {
+					} else if ( tokens[4] == "CHI" || tokens[4] == "chi" ) {
+						for ( core::Size i = start_res; i<= end_res; ++i ) {
 							set_bb( i, false ); set_chi( i, true );
 						}
-					} else if (tokens[4] == "BBCHI" || tokens[4] == "bbchi" ){
-						for (core::Size i = start_res; i<= end_res; ++i) {
+					} else if ( tokens[4] == "BBCHI" || tokens[4] == "bbchi" ) {
+						for ( core::Size i = start_res; i<= end_res; ++i ) {
 							set_bb( i, true ); set_chi( i, true );
 						}
-					} else if (tokens[4] == "NO" || tokens[4] == "no" ){
-						for (core::Size i = start_res; i<= end_res; ++i) {
+					} else if ( tokens[4] == "NO" || tokens[4] == "no" ) {
+						for ( core::Size i = start_res; i<= end_res; ++i ) {
 							set_bb( i, false ); set_chi( i, false );
 						}
 					} else {
@@ -484,7 +484,7 @@ void
 MoveMap::show( std::ostream & out, Size n_residues_to_show ) const
 {
 	PyAssert( (n_residues_to_show>0), "MoveMap::show( std::ostream & out , Size n_residues_to_show ): "
-			"input variable total_residue has a meaningless value");
+		"input variable total_residue has a meaningless value");
 	out << A(8, "resnum") << ' ';
 	out << A(8, "BB") << ' ' << A(8, "CHI") << ' ' << A(8, "NU") << A(8, "BRANCH") << std::endl;
 	for ( Size i = 1; i <= n_residues_to_show; ++i ) {
@@ -497,8 +497,8 @@ MoveMap::show( std::ostream & out, Size n_residues_to_show ) const
 		if ( get_nu( i ) ) { nu = "TRUE "; }
 		if ( get_branches( i ) ) { branches = "TRUE "; }
 		out << I(8,3,i) << ' ' << A(8, bb) << ' ' << A(8, chi) << A(8, nu) << A(8, branches) << std::endl;
-		}
 	}
+}
 
 void
 MoveMap::show( std::ostream & out ) const
@@ -512,13 +512,13 @@ MoveMap::show( std::ostream & out ) const
 	out << A(8,"DEFAULT") <<' '<< A(7, id::to_string(id::CHI)) << "  " << A(8,( get(id::CHI) ? "TRUE":"FALSE")) << "\n";
 	out << A(8,"DEFAULT") <<' '<< A(7, id::to_string(id::NU) ) << "  " << A(8,( get(id::NU) ? "TRUE":"FALSE")) << "\n";
 	out << A(8,"DEFAULT") <<' '<< A(7, id::to_string(id::BRANCH) ) << "  "
-			<< A(8,( get(id::BRANCH) ? "TRUE":"FALSE")) << "\n";
+		<< A(8,( get(id::BRANCH) ? "TRUE":"FALSE")) << "\n";
 	// The overrides:
 	Size prev_resnum = 0;
 	utility::vector1< bool > jumpbool;
 	utility::vector1< Size > jumpnum;
-	for (MoveMapTorsionID_Map::const_iterator it = movemap_torsion_id_begin(), it_end = movemap_torsion_id_end();
-			it != it_end; ++it) {
+	for ( MoveMapTorsionID_Map::const_iterator it = movemap_torsion_id_begin(), it_end = movemap_torsion_id_end();
+			it != it_end; ++it ) {
 		MoveMapTorsionID mmtorsionID = it->first;
 		bool boolean = it->second;
 		Size res = mmtorsionID.first;
@@ -526,7 +526,7 @@ MoveMap::show( std::ostream & out ) const
 		std::string type( id::to_string( torsiontype ) );
 
 		// Jumps are handled under a separate heading.
-		if (torsiontype == id::JUMP) {
+		if ( torsiontype == id::JUMP ) {
 			jumpbool.push_back(boolean);
 			jumpnum.push_back(res);
 			continue;
@@ -548,7 +548,7 @@ MoveMap::show( std::ostream & out ) const
 	// The general setting
 	out << A(8,"DEFAULT")<<' '<< A(8,"JUMP") <<' '<< A(8,( get(id::JUMP) ? "TRUE":"FALSE"))<< "\n";
 	// Jump overrides
-	for (Size i = 1; i <= jumpnum.size(); ++i) {
+	for ( Size i = 1; i <= jumpnum.size(); ++i ) {
 		out << I(8,3,jumpnum[i])<<' '<< A(8,"JUMP") <<' '<< A(8,(jumpbool[i] ? "TRUE":"FALSE"))<< "\n";
 	}
 
@@ -566,8 +566,8 @@ MoveMap::show( std::ostream & out ) const
 	out << A(8,"DEFAULT") << ' ' << A(8, ' ') << ' ' << A(8,id::to_string(id::RB5)) <<' '<< A(8,( get(id::RB5) ? "TRUE":"FALSE"))<< "\n";
 	out << A(8,"DEFAULT") << ' ' << A(8, ' ') << ' ' << A(8,id::to_string(id::RB6)) <<' '<< A(8,( get(id::RB6) ? "TRUE":"FALSE"))<< "\n";
 	prev_resnum = 0;
-	for (DOF_ID_Map::const_iterator it = dof_id_begin(), it_end = dof_id_end();
-			it != it_end; ++it) {
+	for ( DOF_ID_Map::const_iterator it = dof_id_begin(), it_end = dof_id_end();
+			it != it_end; ++it ) {
 		DOF_ID const & dofID = it->first;
 		bool boolean = it->second;
 		Size res = dofID.rsd();

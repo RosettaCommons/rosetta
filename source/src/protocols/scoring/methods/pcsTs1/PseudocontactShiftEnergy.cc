@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/PseudocontactShiftEnergy.cc
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890
- ///
- /// @authorv Christophe Schmitz , Kala Bharath Pilla
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/PseudocontactShiftEnergy.cc
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890
+///
+/// @authorv Christophe Schmitz , Kala Bharath Pilla
+///
+////////////////////////////////////////////////
 
 
 // Unit headers
@@ -97,8 +97,7 @@ PCS_Energy_Ts1 &
 PCS_Energy_Ts1::operator=(PCS_Energy_Ts1 const & other){
 	std::cerr << "Error, == operator not correctly implemented in the PCS_Energy_Ts1" << std::endl;
 	utility_exit_with_message("Exiting");
-	if ( this != &other ) {
-	}
+	if ( this != &other ) {}
 	return *this;
 }
 
@@ -142,7 +141,7 @@ PCS_Energy_Ts1::PCS_data_from_pose(core::pose::Pose & pose) const{
 	bool have_exclusions_changed = PCS_Energy_parameters_manager_Ts1::get_instance()->has_exclude_residues_vector_changed();
 
 	if ( (!have_exclusions_changed) &&
-			 ( pose.data().has( core::pose::datacache::CacheableDataType::TS1_PSEUDOCONTACT_SHIFT_DATA ) ) ){
+			( pose.data().has( core::pose::datacache::CacheableDataType::TS1_PSEUDOCONTACT_SHIFT_DATA ) ) ) {
 		return *( utility::pointer::static_pointer_cast< protocols::scoring::methods::pcsTs1::PCS_data_Ts1 > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::TS1_PSEUDOCONTACT_SHIFT_DATA ) ) );
 	}
 
@@ -157,17 +156,17 @@ PCS_Energy_Ts1::PCS_data_from_pose(core::pose::Pose & pose) const{
 	vec_weight = PCS_Energy_parameters_manager_Ts1::get_instance()->get_vector_weight();
 
 	TR_PCS_Energy_Ts1 << "Initialization of PCS_data_Ts1" << std::endl;
-        
-        
 
-	if(vec_filename.size() == 0){
+
+
+	if ( vec_filename.size() == 0 ) {
 		utility_exit_with_message("Missing input file for PCS@Ts1. Review your setup file");
 	}
 
 	PCS_data_input_Ts1 pcs_d_i = PCS_data_input_manager_Ts1::get_instance()->get_input_data(vec_filename, vec_weight);
 
 	PCS_data_Ts1OP pcs_d;
-	if (has_exclude_residues) {
+	if ( has_exclude_residues ) {
 		utility::vector1< bool > exclude_residues;
 		exclude_residues = PCS_Energy_parameters_manager_Ts1::get_instance()->get_vector_exclude_residues();
 		pcs_d = PCS_data_Ts1OP( new PCS_data_Ts1(pcs_d_i, exclude_residues) );
@@ -199,20 +198,19 @@ PCS_Energy_Ts1::dump_PCS_info(
 	static core::Size n_rescore(1);
 	utility::vector1<core::Real> A(5, 0);
 
-	if( option[ basic::options::OptionKeys::PCSTS1::write_extra ].user() ){
+	if ( option[ basic::options::OptionKeys::PCSTS1::write_extra ].user() ) {
 
 		std::string file_dump (option[ basic::options::OptionKeys::PCSTS1::write_extra ]());
 
 		std::ofstream myfile;
-		if(n_rescore == 1){
+		if ( n_rescore == 1 ) {
 			myfile.open (file_dump.c_str(), std::ios::out);
 			myfile << "# Tensor: Xxx Xxy Xxz Xyy Xyz x y z" << std::endl;
 			myfile << "# Spins: res_num atom_name PCS_exp PCS_calc PCS_dev PCS_abs_dev" << std::endl;
-		}
-		else{
+		} else {
 			myfile.open (file_dump.c_str(), std::ios::app);
 		}
-		if (!myfile.is_open ()){
+		if ( !myfile.is_open () ) {
 			std::cerr << "Unable to open the file '" << file_dump  <<"'" << std::endl;
 			utility_exit();
 		}
@@ -222,7 +220,7 @@ PCS_Energy_Ts1::dump_PCS_info(
 		const utility::vector1<core::Real> & Y_all(pcs_d.get_Y_all());
 		const utility::vector1<core::Real> & Z_all(pcs_d.get_Z_all());
 
-		for (i = 1 ; i <= pcs_d.get_n_lanthanides(); ++i){
+		for ( i = 1 ; i <= pcs_d.get_n_lanthanides(); ++i ) {
 			PCS_data_per_lanthanides_Ts1 const & PCS_d_p_l (pcs_d.get_pcs_data_per_lanthanides_all()[i]);
 			utility::vector1<PCS_line_data_Ts1> const & PCS_d_l_a_s (pcs_d.get_PCS_data_line_all_spin());
 
@@ -238,7 +236,7 @@ PCS_Energy_Ts1::dump_PCS_info(
 
 			myfile << "# Tensor: " << std::setw(10) << Xxx << " " << Xxy << " "  << Xxz << " " << Xyy << " " << Xyz << " " << best_coo.x() << " " << best_coo.y() << " " << best_coo.z() << std::endl;
 
-			for ( j = 1; j <= PCS_d_p_l.get_n_pcs(); ++j){
+			for ( j = 1; j <= PCS_d_p_l.get_n_pcs(); ++j ) {
 				core::Real PCS_exp (fstyle_b(j));
 				core::Size idx (A_index[j]);
 				core::Real x (X_all[idx]);
@@ -267,7 +265,7 @@ PCS_Energy_Ts1::calculate_pcs_score(core::pose::Pose & pdb, bool print_to_tracer
 	using namespace basic::options::OptionKeys;
 
 
-  utility::vector1<PCS_tensor_Ts1> vec_tensor;
+	utility::vector1<PCS_tensor_Ts1> vec_tensor;
 	utility::vector1<core::Real> vec_score;
 
 	core::Real pcs_score_total;
@@ -278,13 +276,13 @@ PCS_Energy_Ts1::calculate_pcs_score(core::pose::Pose & pdb, bool print_to_tracer
 
 	PCS_data_Ts1 &pcs_d = PCS_data_from_pose(pdb);
 
-	if (pcs_weight == 0){
+	if ( pcs_weight == 0 ) {
 		return 0;
 	}
 
 
 	//alloc best score and vector and coordinate
-	for ( i = 1; i <= pcs_d.get_n_lanthanides(); ++i){
+	for ( i = 1; i <= pcs_d.get_n_lanthanides(); ++i ) {
 		PCS_tensor_Ts1 PCS_t = PCS_tensor_Ts1(0, 0, 0, 0, 0, ((pcs_d.get_pcs_data_per_lanthanides_all())[i]).get_filename());
 		vec_tensor.push_back(PCS_t);
 	}
@@ -300,28 +298,28 @@ PCS_Energy_Ts1::calculate_pcs_score(core::pose::Pose & pdb, bool print_to_tracer
 
 	print_to_tracer = false;
 
-	if(minimize_best_tensor){
-		if(print_to_tracer){//Only called in PCS_main at the moment, quick flag.
+	if ( minimize_best_tensor ) {
+		if ( print_to_tracer ) { //Only called in PCS_main at the moment, quick flag.
 
 			TR_PCS_Energy_Ts1 << "*** Before minimization of the tensor ***" << std::endl;
 			TR_PCS_Energy_Ts1 << "Score: " << pcs_score_total << std::endl;
 			TR_PCS_Energy_Ts1 << "Sum of: ";
-			for(i = 1; i <= vec_score.size(); ++i){
-				TR_PCS_Energy_Ts1	<< vec_score[i] << " ";
+			for ( i = 1; i <= vec_score.size(); ++i ) {
+				TR_PCS_Energy_Ts1 << vec_score[i] << " ";
 			}
-			TR_PCS_Energy_Ts1	<< std::endl;
+			TR_PCS_Energy_Ts1 << std::endl;
 			TR_PCS_Energy_Ts1 << "Score weighted: " << pcs_weight * pcs_score_total << std::endl;
 			TR_PCS_Energy_Ts1 << "Tensors found:" << std::endl;
-			for(i = 1; i <= vec_tensor.size(); ++i){
-				TR_PCS_Energy_Ts1	<< vec_tensor[i] << std::endl;
+			for ( i = 1; i <= vec_tensor.size(); ++i ) {
+				TR_PCS_Energy_Ts1 << vec_tensor[i] << std::endl;
 			}
 			TR_PCS_Energy_Ts1 << "Lanthanide position: " << best_coo.x() << " " << best_coo.y() << " " << best_coo.z() << std::endl;
-			}
+		}
 
 		core::Real optimized_score (minimize_tensors_from_PCS_data(vec_tensor, best_coo, pcs_d));
-		//		std::cerr << pcs_score_total << " -> " << optimized_score << std::endl;
+		//  std::cerr << pcs_score_total << " -> " << optimized_score << std::endl;
 		core::Real tolerance( 0.001);
-		if((pcs_score_total + tolerance) < optimized_score){
+		if ( (pcs_score_total + tolerance) < optimized_score ) {
 			TR_PCS_Energy_Ts1 << "Warning, optimized score has a higher value than starting position. Problem with minimizer?" << std::endl;
 			TR_PCS_Energy_Ts1 << pcs_score_total << " -> " << optimized_score << std::endl;
 			//utility_exit_with_message("PROBLEM WITH MINIMIZER");
@@ -329,18 +327,18 @@ PCS_Energy_Ts1::calculate_pcs_score(core::pose::Pose & pdb, bool print_to_tracer
 
 		pcs_score_total = optimized_score;
 
-		if(print_to_tracer){//Only called in PCS_main at the moment, quick flag.
+		if ( print_to_tracer ) { //Only called in PCS_main at the moment, quick flag.
 			TR_PCS_Energy_Ts1 << "*** After minimization of the tensor ***" << std::endl;
 			TR_PCS_Energy_Ts1 << "Score: " << optimized_score << std::endl;
 			TR_PCS_Energy_Ts1 << "Sum of: NOT AVAILABLE";
-			TR_PCS_Energy_Ts1	<< std::endl;
+			TR_PCS_Energy_Ts1 << std::endl;
 			TR_PCS_Energy_Ts1 << "Score weighted: " << pcs_weight * optimized_score << std::endl;
 			TR_PCS_Energy_Ts1 << "Tensors found:" << std::endl;
-			for(i = 1; i <= vec_tensor.size(); ++i){
-				TR_PCS_Energy_Ts1	<< vec_tensor[i] << std::endl;
+			for ( i = 1; i <= vec_tensor.size(); ++i ) {
+				TR_PCS_Energy_Ts1 << vec_tensor[i] << std::endl;
 			}
 			TR_PCS_Energy_Ts1 << "Lanthanide position: " << best_coo.x() << " " << best_coo.y() << " " << best_coo.z() << std::endl;
-			}
+		}
 	}
 
 
@@ -350,10 +348,10 @@ PCS_Energy_Ts1::calculate_pcs_score(core::pose::Pose & pdb, bool print_to_tracer
 }
 
 core::Real
-PCS_Energy_Ts1::minimize_tensors_from_PCS_data(	utility::vector1<PCS_tensor_Ts1> & vec_best_tensor,
-																						numeric::xyzVector< core::Real > & best_coo,
-																						PCS_data_Ts1 const & pcs_d
-																						) const{
+PCS_Energy_Ts1::minimize_tensors_from_PCS_data( utility::vector1<PCS_tensor_Ts1> & vec_best_tensor,
+	numeric::xyzVector< core::Real > & best_coo,
+	PCS_data_Ts1 const & pcs_d
+) const{
 
 	core::Size i;
 
@@ -362,11 +360,11 @@ PCS_Energy_Ts1::minimize_tensors_from_PCS_data(	utility::vector1<PCS_tensor_Ts1>
 	vect_to_opt.push_back(best_coo.y());
 	vect_to_opt.push_back(best_coo.z());
 
-	if(vec_best_tensor.size() !=  pcs_d.get_n_lanthanides()){
+	if ( vec_best_tensor.size() !=  pcs_d.get_n_lanthanides() ) {
 		utility_exit_with_message("n_lanthanides and vec_best_tensor size differs in minimize_tensors_from_PCS_data");
 	}
 
-	for(i = 1; i <= vec_best_tensor.size(); ++i){
+	for ( i = 1; i <= vec_best_tensor.size(); ++i ) {
 		vect_to_opt.push_back(vec_best_tensor[i].chi_xx());
 		vect_to_opt.push_back(vec_best_tensor[i].chi_xy());
 		vect_to_opt.push_back(vec_best_tensor[i].chi_xz());
@@ -375,7 +373,7 @@ PCS_Energy_Ts1::minimize_tensors_from_PCS_data(	utility::vector1<PCS_tensor_Ts1>
 	}
 
 	TensorsOptimizer_Ts1 tensors_opt(pcs_d);
-	//	optimization::MinimizerOptions options( "dfpmin_armijo_nonmonotone_atol", 0.0000001, true, false, false );
+	// optimization::MinimizerOptions options( "dfpmin_armijo_nonmonotone_atol", 0.0000001, true, false, false );
 	core::optimization::MinimizerOptions options( "dfpmin", 0.00001, true, false, false );
 	core::optimization::Minimizer minimizer(tensors_opt, options );
 
@@ -383,12 +381,12 @@ PCS_Energy_Ts1::minimize_tensors_from_PCS_data(	utility::vector1<PCS_tensor_Ts1>
 
 	best_coo.assign(vect_to_opt[1], vect_to_opt[2], vect_to_opt[3]);
 
-	for(i = 1; i <= vec_best_tensor.size(); ++i){
+	for ( i = 1; i <= vec_best_tensor.size(); ++i ) {
 		vec_best_tensor[i].reset_tensor((core::Real)vect_to_opt[3 + 5*(i-1) + 1],
-																		(core::Real)vect_to_opt[3 + 5*(i-1) + 2],
-																		(core::Real)vect_to_opt[3 + 5*(i-1) + 3],
-																		(core::Real)vect_to_opt[3 + 5*(i-1) + 4],
-																		(core::Real)vect_to_opt[3 + 5*(i-1) + 5]);
+			(core::Real)vect_to_opt[3 + 5*(i-1) + 2],
+			(core::Real)vect_to_opt[3 + 5*(i-1) + 3],
+			(core::Real)vect_to_opt[3 + 5*(i-1) + 4],
+			(core::Real)vect_to_opt[3 + 5*(i-1) + 5]);
 	}
 	return (optimized_cost);
 }
@@ -396,14 +394,14 @@ PCS_Energy_Ts1::minimize_tensors_from_PCS_data(	utility::vector1<PCS_tensor_Ts1>
 
 //This will be called for each new pose
 core::Real
-PCS_Energy_Ts1::calculate_scores_and_tensors_from_pose_and_PCS_data(	utility::vector1<core::Real> & vec_best_score,
-																																	utility::vector1<PCS_tensor_Ts1> & vec_best_tensor,
-																																	numeric::xyzVector< core::Real > & best_coo,
-																																	core::pose::Pose const & pdb,
-																																	PCS_data_Ts1 & pcs_d) const{
+PCS_Energy_Ts1::calculate_scores_and_tensors_from_pose_and_PCS_data( utility::vector1<core::Real> & vec_best_score,
+	utility::vector1<PCS_tensor_Ts1> & vec_best_tensor,
+	numeric::xyzVector< core::Real > & best_coo,
+	core::pose::Pose const & pdb,
+	PCS_data_Ts1 & pcs_d) const{
 
-	//	using namespace basic::options;
-	//	using namespace basic::options::OptionKeys;
+	// using namespace basic::options;
+	// using namespace basic::options::OptionKeys;
 	core::Real x, y, z;
 	core::Real best_score, score; //, score2;
 	core::Size i;
@@ -419,8 +417,8 @@ PCS_Energy_Ts1::calculate_scores_and_tensors_from_pose_and_PCS_data(	utility::ve
 
 	//some basic checking...
 	size_of = vec_best_score.size();
-	if((size_of != vec_best_tensor.size())||
-		 (size_of != pcs_d.get_n_lanthanides())){
+	if ( (size_of != vec_best_tensor.size())||
+			(size_of != pcs_d.get_n_lanthanides()) ) {
 		std::cerr << "Problem in calculate_scores_and_tensors_from_pose_and_PCS_data function" << std::endl;
 		std::cerr << "n_lanthanides =  " << pcs_d.get_n_lanthanides();
 		std::cerr << "vec_best_tensor.size() = " << vec_best_tensor.size();
@@ -428,7 +426,7 @@ PCS_Energy_Ts1::calculate_scores_and_tensors_from_pose_and_PCS_data(	utility::ve
 		utility_exit_with_message("Exiting");
 	}
 
-	for( i = 1; i <= size_of; i++){
+	for ( i = 1; i <= size_of; i++ ) {
 		vec_tensor_temp.push_back(vec_best_tensor[i]);
 	}
 
@@ -440,7 +438,7 @@ PCS_Energy_Ts1::calculate_scores_and_tensors_from_pose_and_PCS_data(	utility::ve
 
 	pcs_d.update_X_Y_Z_all(pdb);
 
-	//	TR_PCS_Energy_Ts1 << "Reading grid search paramaters" << std::endl;
+	// TR_PCS_Energy_Ts1 << "Reading grid search paramaters" << std::endl;
 
 	core::Real grid_edge (PCS_Energy_parameters_manager_Ts1::get_instance()->get_grid_edge());
 	core::Real grid_step (PCS_Energy_parameters_manager_Ts1::get_instance()->get_grid_step());
@@ -453,22 +451,22 @@ PCS_Energy_Ts1::calculate_scores_and_tensors_from_pose_and_PCS_data(	utility::ve
 	core::Size grid_residue_num_2 (PCS_Energy_parameters_manager_Ts1::get_instance()->get_grid_residue_num_2());
 	core::Real grid_k_vector (PCS_Energy_parameters_manager_Ts1::get_instance()->get_grid_k_vector());
 
-	if(grid_residue_num_1 > pdb.total_residue()){
+	if ( grid_residue_num_1 > pdb.total_residue() ) {
 		std::cerr << "Error: Couldn't find residue " << grid_residue_num_1 << std::endl;
 		std::cerr << "Numbering residue within Rosetta match the sequence provided as input" << std::endl;
 		utility_exit_with_message("Can't define gridsearchiterator");
 	}
-	if( grid_residue_num_2> pdb.total_residue()){
+	if ( grid_residue_num_2> pdb.total_residue() ) {
 		std::cerr << "Error: Couldn't find residue " << grid_residue_num_1 << std::endl;
 		std::cerr << "Numbering residue within Rosetta match the sequence provided as input" << std::endl;
 		utility_exit_with_message("Can't define gridsearchiterator");
 	}
-	if( ! pdb.residue(grid_residue_num_1).has(grid_atom_name_1)){
+	if ( ! pdb.residue(grid_residue_num_1).has(grid_atom_name_1) ) {
 		std::cerr << "Error: Couldn't find the atom " << grid_atom_name_1 << " in residue " << grid_residue_num_1 << std::endl;
 		std::cerr << "Numbering residue within Rosetta match the sequence provided as input" << std::endl;
 		utility_exit_with_message("Can't define gridsearchiterator");
 	}
-	if( ! pdb.residue(grid_residue_num_2).has(grid_atom_name_2)){
+	if ( ! pdb.residue(grid_residue_num_2).has(grid_atom_name_2) ) {
 		std::cerr << "Error: Couldn't find the atom " << grid_atom_name_2 << " in residue " <<  grid_residue_num_2<< std::endl;
 		std::cerr << "Numbering residue within Rosetta match the sequence provided as input" << std::endl;
 		utility_exit_with_message("Can't define gridsearchiterator");
@@ -483,40 +481,39 @@ PCS_Energy_Ts1::calculate_scores_and_tensors_from_pose_and_PCS_data(	utility::ve
 	best_score = 999999999999999999999999999.9; //std::numeric_limits::infinity();x
 	bool test_at_least_one_iteration = false;
 
-	while(grid_it.next_center(x, y, z) == true){
+	while ( grid_it.next_center(x, y, z) == true ) {
 		test_at_least_one_iteration = true;
 		//TR_PCS_Energy_Ts1 << "trying x= " << x << "y= " << y << "z= " << z << std::endl;
-		//		std::cout  << x << " " << y << " " << z << " SCANNER " << std::endl;
+		//  std::cout  << x << " " << y << " " << z << " SCANNER " << std::endl;
 		pcs_d.update_matrix_A_all(x, y, z);
 
 		score = 0;
-		for(i = 1; i <= pcs_d.get_n_lanthanides(); ++i){
+		for ( i = 1; i <= pcs_d.get_n_lanthanides(); ++i ) {
 			(*vec_score_ref_current)[i] = pcs_d.get_pcs_data_per_lanthanides_all()[i].calculate_tensor_and_cost_with_svd((*vec_tensor_ref_current)[i]);
 			//score += (*vec_score_ref_current)[i];
 			score += (*vec_score_ref_current)[i] * (*vec_score_ref_current)[i];
 
-			if (score > best_score){ // if a single lanthanide already give a worse score, no need to look for other lanthanides
+			if ( score > best_score ) { // if a single lanthanide already give a worse score, no need to look for other lanthanides
 				continue;
 			}
 		}
 
-		if ( score < best_score){
+		if ( score < best_score ) {
 			best_score = score;
 
 			best_coo.assign(x, y, z);
 
 			//atomic switch
-			if((vec_score_ref_current != &vec_score_temp) && (vec_score_ref_current != &vec_best_score)){ //test to make sure...
+			if ( (vec_score_ref_current != &vec_score_temp) && (vec_score_ref_current != &vec_best_score) ) { //test to make sure...
 				std::cerr << "Problem in calculate_scores_and_tensors_from_pose_and_PCS_data function" << std::endl;
 				std::cerr << "The atomic switch is not working (1)" << std::endl;
 				utility_exit_with_message("Exiting");
 			}
-			if(vec_tensor_ref_current == &vec_best_tensor){
+			if ( vec_tensor_ref_current == &vec_best_tensor ) {
 				vec_tensor_ref_current = &vec_tensor_temp;
 				vec_score_ref_current = &vec_score_temp;
-			}
-			else{
-				if(vec_tensor_ref_current != &vec_tensor_temp){ //test to make sure...
+			} else {
+				if ( vec_tensor_ref_current != &vec_tensor_temp ) { //test to make sure...
 					std::cerr << "Problem in calculate_scores_and_tensors_from_pose_and_PCS_data function" << std::endl;
 					std::cerr << "The atomic switch is not working (2)" << std::endl;
 					utility_exit_with_message("Exiting");
@@ -529,19 +526,19 @@ PCS_Energy_Ts1::calculate_scores_and_tensors_from_pose_and_PCS_data(	utility::ve
 	} //while
 
 
-	if(test_at_least_one_iteration == false){
+	if ( test_at_least_one_iteration == false ) {
 		std::cerr << "The description of the grid search given is too restrictive" << std::endl;
 		utility_exit_with_message("Exiting");
 	}
 
-	if( vec_tensor_ref_current == &vec_best_tensor ){
- 		for(i = 1; i <= vec_best_score.size(); ++i){
+	if ( vec_tensor_ref_current == &vec_best_tensor ) {
+		for ( i = 1; i <= vec_best_score.size(); ++i ) {
 			vec_best_tensor[i].copy_from_ref(vec_tensor_temp[i]);
 		}
 	}
 
-	if( vec_score_ref_current == &vec_best_score ){
- 		for(i = 1; i <= vec_best_score.size(); ++i){
+	if ( vec_score_ref_current == &vec_best_score ) {
+		for ( i = 1; i <= vec_best_score.size(); ++i ) {
 			vec_best_score[i] = vec_score_temp[i];
 		}
 	}
@@ -556,7 +553,7 @@ PCS_Energy_Ts1::version() const
 
 PCS_Energy_parameters_manager_Ts1 *
 PCS_Energy_parameters_manager_Ts1::get_instance(){
-	if ( instance_ == 0 ){
+	if ( instance_ == 0 ) {
 		instance_ = new PCS_Energy_parameters_manager_Ts1();
 	}
 	return instance_;
@@ -564,11 +561,11 @@ PCS_Energy_parameters_manager_Ts1::get_instance(){
 
 PCS_Energy_parameters_manager_Ts1::PCS_Energy_parameters_manager_Ts1(){
 	/*
-//Do I need to initialize to some values?? In principle no.
+	//Do I need to initialize to some values?? In principle no.
 	grid_edge_ = 20;
 	grid_step_ = 2;
 	grid_small_cutoff_ = 4;
-	grid_large_cutoff_ = 	10;
+	grid_large_cutoff_ =  10;
 	grid_cone_angle_cutoff_ = 180;
 	grid_atom_name_1_ = "CA";
 	grid_atom_name_2_ = "CB";
@@ -597,11 +594,11 @@ PCS_Energy_parameters_manager_Ts1::PCS_Energy_parameters_manager_Ts1(){
 void
 PCS_Energy_parameters_manager_Ts1::set_vector_exclude_residues(utility::vector1< core::Size > const vec_exclude) {
 
-	if (vec_exclude.size() > 0) {
+	if ( vec_exclude.size() > 0 ) {
 
 		core::Size largest_n = 0;
 
-		for (core::Size i = 1; i <= vec_exclude.size(); ++i) {
+		for ( core::Size i = 1; i <= vec_exclude.size(); ++i ) {
 			if ( vec_exclude[i] > largest_n ) {
 				largest_n = vec_exclude[i];
 			}
@@ -609,7 +606,7 @@ PCS_Energy_parameters_manager_Ts1::set_vector_exclude_residues(utility::vector1<
 
 		utility::vector1< bool > temp (largest_n, false);
 
-		for (core::Size i = 1; i <= vec_exclude.size(); ++i) {
+		for ( core::Size i = 1; i <= vec_exclude.size(); ++i ) {
 			temp[vec_exclude[i]] = true;
 		}
 
@@ -658,7 +655,7 @@ PCS_Energy_parameters_manager_Ts1::exclude_residues_vector_is_current() {
 
 void
 PCS_Energy_parameters_manager_Ts1::set_vector_name_and_weight(utility::vector1<std::string> const vec_filename,
-																													utility::vector1<core::Real> const vec_individual_weight){
+	utility::vector1<core::Real> const vec_individual_weight){
 
 	vec_filename_ = vec_filename;
 	vec_individual_weight_ = vec_individual_weight;
@@ -666,20 +663,20 @@ PCS_Energy_parameters_manager_Ts1::set_vector_name_and_weight(utility::vector1<s
 
 void
 PCS_Energy_parameters_manager_Ts1::set_grid_param(core::Real const grid_edge,
-																							core::Real const grid_step,
-																							core::Real const grid_small_cutoff,
-																							core::Real const grid_large_cutoff,
-																							core::Real const grid_cone_angle_cutoff,
-																							std::string const grid_atom_name_1,
-																							std::string const grid_atom_name_2,
-																							core::SSize const grid_residue_num_1,
-																							core::SSize const grid_residue_num_2,
-																							core::Real const grid_k_vector,
-																							bool const minimize_best_tensor,
-																							core::Real const pcs_weight
-																							){
+	core::Real const grid_step,
+	core::Real const grid_small_cutoff,
+	core::Real const grid_large_cutoff,
+	core::Real const grid_cone_angle_cutoff,
+	std::string const grid_atom_name_1,
+	std::string const grid_atom_name_2,
+	core::SSize const grid_residue_num_1,
+	core::SSize const grid_residue_num_2,
+	core::Real const grid_k_vector,
+	bool const minimize_best_tensor,
+	core::Real const pcs_weight
+){
 
-	if((grid_residue_num_1 < 0)||(grid_residue_num_2 < 0)){
+	if ( (grid_residue_num_1 < 0)||(grid_residue_num_2 < 0) ) {
 		utility_exit_with_message("Residue num negative. Please review your setup files");
 	}
 	core::Size grid_residue_num_1_positif(grid_residue_num_1);
@@ -688,7 +685,7 @@ PCS_Energy_parameters_manager_Ts1::set_grid_param(core::Real const grid_edge,
 	grid_edge_ = grid_edge;
 	grid_step_ = grid_step;
 	grid_small_cutoff_ = grid_small_cutoff;
-	grid_large_cutoff_ = 	grid_large_cutoff;
+	grid_large_cutoff_ =  grid_large_cutoff;
 	grid_cone_angle_cutoff_ = grid_cone_angle_cutoff;
 	grid_atom_name_1_ = grid_atom_name_1;
 	grid_atom_name_2_ = grid_atom_name_2;
@@ -718,78 +715,78 @@ PCS_Energy_parameters_manager_Ts1::print_grid_param() const{
 }
 
 
-	//	void
-	//	PCS_Energy_parameters_manager_Ts1::print_grid_param() const;
+// void
+// PCS_Energy_parameters_manager_Ts1::print_grid_param() const;
 
-	core::Real
-	PCS_Energy_parameters_manager_Ts1::get_grid_edge() const{
-		return grid_edge_;
-	}
+core::Real
+PCS_Energy_parameters_manager_Ts1::get_grid_edge() const{
+	return grid_edge_;
+}
 
-	core::Real
-	PCS_Energy_parameters_manager_Ts1::get_grid_step() const{
-		return grid_step_;
-	}
+core::Real
+PCS_Energy_parameters_manager_Ts1::get_grid_step() const{
+	return grid_step_;
+}
 
-	core::Real
-	PCS_Energy_parameters_manager_Ts1::get_grid_small_cutoff() const{
-		return grid_small_cutoff_;
-	}
+core::Real
+PCS_Energy_parameters_manager_Ts1::get_grid_small_cutoff() const{
+	return grid_small_cutoff_;
+}
 
-	core::Real
-	PCS_Energy_parameters_manager_Ts1::get_grid_large_cutoff() const{
-		return grid_large_cutoff_;
-	}
+core::Real
+PCS_Energy_parameters_manager_Ts1::get_grid_large_cutoff() const{
+	return grid_large_cutoff_;
+}
 
-	core::Real
-	PCS_Energy_parameters_manager_Ts1::get_grid_cone_angle_cutoff() const{
-		return grid_cone_angle_cutoff_;
-	}
+core::Real
+PCS_Energy_parameters_manager_Ts1::get_grid_cone_angle_cutoff() const{
+	return grid_cone_angle_cutoff_;
+}
 
-	std::string
-	PCS_Energy_parameters_manager_Ts1::get_grid_atom_name_1() const{
-		return grid_atom_name_1_;
-	}
+std::string
+PCS_Energy_parameters_manager_Ts1::get_grid_atom_name_1() const{
+	return grid_atom_name_1_;
+}
 
-	std::string
-	PCS_Energy_parameters_manager_Ts1::get_grid_atom_name_2() const{
-		return grid_atom_name_2_;
-	}
+std::string
+PCS_Energy_parameters_manager_Ts1::get_grid_atom_name_2() const{
+	return grid_atom_name_2_;
+}
 
-	core::Size
-	PCS_Energy_parameters_manager_Ts1::get_grid_residue_num_1() const{
-		return grid_residue_num_1_;
-	}
+core::Size
+PCS_Energy_parameters_manager_Ts1::get_grid_residue_num_1() const{
+	return grid_residue_num_1_;
+}
 
-	core::Size
-	PCS_Energy_parameters_manager_Ts1::get_grid_residue_num_2() const{
-		return grid_residue_num_2_;
-	}
+core::Size
+PCS_Energy_parameters_manager_Ts1::get_grid_residue_num_2() const{
+	return grid_residue_num_2_;
+}
 
-	core::Real
-	PCS_Energy_parameters_manager_Ts1::get_grid_k_vector() const{
-		return grid_k_vector_;
-	}
+core::Real
+PCS_Energy_parameters_manager_Ts1::get_grid_k_vector() const{
+	return grid_k_vector_;
+}
 
-	bool
-	PCS_Energy_parameters_manager_Ts1::get_minimize_best_tensor() const{
-		return minimize_best_tensor_;
-	}
+bool
+PCS_Energy_parameters_manager_Ts1::get_minimize_best_tensor() const{
+	return minimize_best_tensor_;
+}
 
-	core::Real
-	PCS_Energy_parameters_manager_Ts1::get_pcs_weight() const{
-		return pcs_weight_;
-	}
+core::Real
+PCS_Energy_parameters_manager_Ts1::get_pcs_weight() const{
+	return pcs_weight_;
+}
 
-	utility::vector1<std::string> const &
-	PCS_Energy_parameters_manager_Ts1::get_vector_filename() const{
-		return vec_filename_;
-	}
+utility::vector1<std::string> const &
+PCS_Energy_parameters_manager_Ts1::get_vector_filename() const{
+	return vec_filename_;
+}
 
-	utility::vector1<core::Real> const &
-	PCS_Energy_parameters_manager_Ts1::get_vector_weight() const{
-		return vec_individual_weight_;
-	}
+utility::vector1<core::Real> const &
+PCS_Energy_parameters_manager_Ts1::get_vector_weight() const{
+	return vec_individual_weight_;
+}
 
 PCS_Energy_parameters_manager_Ts1 * PCS_Energy_parameters_manager_Ts1::instance_( 0 );
 

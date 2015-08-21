@@ -670,7 +670,7 @@ public:
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector);
 
-/// Hack Elec Energy
+	/// Hack Elec Energy
 
 	virtual
 	void

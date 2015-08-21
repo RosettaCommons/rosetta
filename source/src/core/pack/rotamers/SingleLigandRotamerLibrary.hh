@@ -148,10 +148,10 @@ private:
 	//void unique_auto_for_frags();
 
 	//void superimpose(
-	//	conformation::Residue const & existing,
-	//	conformation::Residue & conformer,
-	//	Fragment const & frag,
-	//	Automorphism const & morph
+	// conformation::Residue const & existing,
+	// conformation::Residue & conformer,
+	// Fragment const & frag,
+	// Automorphism const & morph
 	//) const;
 
 private:

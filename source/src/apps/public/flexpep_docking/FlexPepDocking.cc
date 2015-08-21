@@ -59,7 +59,7 @@
 
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 
@@ -77,42 +77,42 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-	using namespace protocols;
-	using namespace protocols::jobdist;
-	using namespace protocols::moves;
-	using basic::options::option;
-	using namespace basic::options::OptionKeys;
+		using namespace protocols;
+		using namespace protocols::jobdist;
+		using namespace protocols::moves;
+		using basic::options::option;
+		using namespace basic::options::OptionKeys;
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// setup
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// setup
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	MoverOP fpDock( new flexpep_docking::FlexPepDockingProtocol(1,true, true) );
+		MoverOP fpDock( new flexpep_docking::FlexPepDockingProtocol(1,true, true) );
 
-	// read native pose: (TODO: look how this should be handled in Job Distributor 2)
-	//	protocols::jd2::set_native_in_mover(*fpDock);
-	if ( option[ in::file::native ].user() ) {
-		core::pose::PoseOP native_pose( new core::pose::Pose );
-		core::chemical::ResidueTypeSetCAP rsd_set;
-		if ( option[ in::file::centroid_input ].user() ) {
-		  core::import_pose::centroid_pose_from_pdb( *native_pose, option[ in::file::native ]() );
-		} else {
-		  core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() );
+		// read native pose: (TODO: look how this should be handled in Job Distributor 2)
+		// protocols::jd2::set_native_in_mover(*fpDock);
+		if ( option[ in::file::native ].user() ) {
+			core::pose::PoseOP native_pose( new core::pose::Pose );
+			core::chemical::ResidueTypeSetCAP rsd_set;
+			if ( option[ in::file::centroid_input ].user() ) {
+				core::import_pose::centroid_pose_from_pdb( *native_pose, option[ in::file::native ]() );
+			} else {
+				core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() );
+			}
+			fpDock->set_native_pose( native_pose );
 		}
-		fpDock->set_native_pose( native_pose );
-	}
 
 
-	// run:
-	protocols::jd2::JobDistributor::get_instance()->go(fpDock);
-	//	protocols::jobdist::main_plain_mover( *fpDock);
-	//protocols::jobdist::universal_main(*fpDock);
+		// run:
+		protocols::jd2::JobDistributor::get_instance()->go(fpDock);
+		// protocols::jobdist::main_plain_mover( *fpDock);
+		//protocols::jobdist::universal_main(*fpDock);
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

@@ -123,7 +123,7 @@ SecondaryMatcherToUpstreamResidue::build_hits_at_all_positions(
 	utility::vector1< std::list< Hit > > hits( my_build_points.size() );
 
 	for ( Size ii = 1; ii <= target_build_points.size(); ++ii ) {
-		if ( ! prepare_for_hit_generation_at_target_build_point( matcher, *target_build_points[ ii ] )) {
+		if ( ! prepare_for_hit_generation_at_target_build_point( matcher, *target_build_points[ ii ] ) ) {
 			continue;
 		}
 
@@ -285,11 +285,11 @@ SecondaryMatcherToUpstreamResidue::build(
 	for ( Size ii = 1; ii <= target_geomcst_coords_->n_restypes(); ++ii ) {
 		core::conformation::Residue target_residue( *target_geomcst_coords_->restype( ii ), false );
 		Size const ii_natoms = target_geomcst_coords_->n_atoms_for_restype( ii );
-    core::chemical::ResidueTypeCOP us_res_type = upstream_residue.type().get_self_ptr();
-    //TR << " sec. matched  residue type:  " << us_res_type->name() << std::endl;
+		core::chemical::ResidueTypeCOP us_res_type = upstream_residue.type().get_self_ptr();
+		//TR << " sec. matched  residue type:  " << us_res_type->name() << std::endl;
 
 		for ( Size jj = 1; jj <= target_geomcst_coords_->n_rotamers_for_restype( ii ); ++jj ) {
-      //TR << "number of rotamers for restype " << target_geomcst_coords_->n_rotamers_for_restype( ii ) << std::endl;
+			//TR << "number of rotamers for restype " << target_geomcst_coords_->n_rotamers_for_restype( ii ) << std::endl;
 
 
 			target_residue.seqpos(smUR_pose_build_resids_[target_geomcst_coords_->hit( ii, jj ).scaffold_build_id()]);
@@ -305,10 +305,10 @@ SecondaryMatcherToUpstreamResidue::build(
 					eval_iter != eval_iter_end; ++eval_iter ) {
 
 				if ( eval_iter->first->evaluate_residues( upstream_residue, target_residue ) ) {
-   	  	  //Do a clash check by passing the current hit, upstream residue
-    	    //and a dsbuilder that contains the clash info between the
-        	//upstream restype and the downstream residue
-        	//if ( ! are_colliding( target_geomcst_coords_->hit(ii,jj), upstream_residue, dsbuilders_.find(  us_res_type->name() )->second ) ){
+					//Do a clash check by passing the current hit, upstream residue
+					//and a dsbuilder that contains the clash info between the
+					//upstream restype and the downstream residue
+					//if ( ! are_colliding( target_geomcst_coords_->hit(ii,jj), upstream_residue, dsbuilders_.find(  us_res_type->name() )->second ) ){
 					Hit hit;
 					hit.first()[ 1 ] = scaffold_build_point_id;
 					hit.first()[ 2 ] = upstream_conf_id;
@@ -321,8 +321,8 @@ SecondaryMatcherToUpstreamResidue::build(
 					hit.second()[ 5 ] = 0.0;
 					hit.second()[ 6 ] = 0.0;
 					hits.push_back( hit );
-				     //TR << " ADDING A HIT! " << "rotamers for restype " << jj << std::endl;
-						 //}
+					//TR << " ADDING A HIT! " << "rotamers for restype " << jj << std::endl;
+					//}
 				}
 			}
 		}
@@ -409,7 +409,7 @@ SecondaryMatcherToUpstreamResidue::set_target_geomcst_id( Size target_geomcst_id
 void
 SecondaryMatcherToUpstreamResidue::add_target_restype( core::chemical::ResidueTypeCOP target_restype )
 {
-	if( target_restype_index_map_.find( target_restype ) == target_restype_index_map_.end() ){
+	if ( target_restype_index_map_.find( target_restype ) == target_restype_index_map_.end() ) {
 		target_restypes_.push_back( target_restype );
 		target_restype_index_map_[ target_restype ] = target_restypes_.size();
 	}
@@ -590,7 +590,7 @@ SecondaryMatcherToUpstreamResidue::prepare_for_hit_generation_at_target_build_po
 			iter = dsalgs.begin(), iter_end = dsalgs.end();
 			iter != iter_end; ++iter ) {
 		if ( iter->get() != this ) {
-			SecondaryMatcherToUpstreamResidueOP other = 
+			SecondaryMatcherToUpstreamResidueOP other =
 				utility::pointer::dynamic_pointer_cast< SecondaryMatcherToUpstreamResidue > ( *iter );
 			runtime_assert( other != 0 );
 			//TR << "SecondaryMatcherToUpstreamResidue * other" << other << std::endl;
@@ -664,13 +664,13 @@ void SecondaryMatcherToUpstreamResidue::reorder_restypes(
 	upstream::UpstreamBuilder const & usbuilder
 )
 {
-  utility::vector1< Size > old_2_new( target_restypes_.size(), 0 );
-  //TR << "TARGET RESTYPES: "<< target_restypes_.size() << "UPSTREAMBUILDER RESTYPES: " <<usbuilder.n_restypes_to_build() << std::endl;
+	utility::vector1< Size > old_2_new( target_restypes_.size(), 0 );
+	//TR << "TARGET RESTYPES: "<< target_restypes_.size() << "UPSTREAMBUILDER RESTYPES: " <<usbuilder.n_restypes_to_build() << std::endl;
 	runtime_assert( target_restypes_.size() == usbuilder.n_restypes_to_build() );
 	for ( Size ii = 1; ii <= usbuilder.n_restypes_to_build(); ++ii ) {
 		std::map< core::chemical::ResidueTypeCOP, Size >::const_iterator
 			olditer = target_restype_index_map_.find( usbuilder.restype( ii ) );
-    //TR << "TARGET RESTYPES: " << usbuilder.restype( ii )->name() << std::endl;
+		//TR << "TARGET RESTYPES: " << usbuilder.restype( ii )->name() << std::endl;
 		runtime_assert( olditer != target_restype_index_map_.end() );
 		old_2_new[ olditer->second ] = ii;
 	}

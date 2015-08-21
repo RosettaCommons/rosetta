@@ -149,13 +149,10 @@ int SimAnnealerBase::get_outeriterations() const
 
 int SimAnnealerBase::get_inneriterations() const
 {
-	if ( low_temp_annealing_ )
-	{
+	if ( low_temp_annealing_ ) {
 		return int (inneriterations_scaling_ *
 			(get_temperature() > 3.0f ? inneriterations_ * 0.5 : inneriterations_ ));
-	}
-	else
-	{
+	} else {
 		return int (inneriterations_scaling_ * inneriterations_);
 	}
 }
@@ -186,18 +183,14 @@ void SimAnnealerBase::setup_iterations()
 void SimAnnealerBase::setup_iterations( const int & num_of_state_changes )
 {
 
-	if ( start_with_current_ ){
+	if ( start_with_current_ ) {
 		inneriterations_ = std::max( num_of_state_changes, (int) current_rot_index_.size1() );
 		outeriterations_ = 10;
-	}
-	else
-	{
-		if ( low_temp_annealing_ ){
+	} else {
+		if ( low_temp_annealing_ ) {
 			inneriterations_ = std::max( 10 * num_of_state_changes, 2 * ((int) current_rot_index_.size1()) );
 			outeriterations_ = 10;
-		}
-		else
-		{
+		} else {
 			inneriterations_ = std::max( 5 * num_of_state_changes, (int) current_rot_index_.size1() );
 			outeriterations_ = 20;
 		}
@@ -217,42 +210,34 @@ void SimAnnealerBase::setup_temperature(const FArray1D< core::PackerEnergy > & l
 {
 	bool calc_rot_freq = get_calc_rot_freq();
 	core::PackerEnergy avgloopE = 0.0f;
-	if (( nn == get_outeriterations() )&&(!calc_rot_freq) && !disallow_quench_ )
-	{
+	if ( ( nn == get_outeriterations() )&&(!calc_rot_freq) && !disallow_quench_ ) {
 		set_to_quench();
 		temperature_ = lowtemp_;
-	}
-	else if ( jump_ > 3)
-	{
+	} else if ( jump_ > 3 ) {
 		avgloopE = (loopenergy( nn - 4 ) + loopenergy( nn -3 ) + loopenergy( nn - 2 ))/3.0;
 		//std::cout << "avgloopE: " << avgloopE << " vs " << loopenergy( nn - 1) << std::endl;
-		if (( loopenergy( nn - 1) - avgloopE ) > -1.0)
-		{
+		if ( ( loopenergy( nn - 1) - avgloopE ) > -1.0 ) {
 			//std::cout << "High temp!" << std::endl;
 			temperature_ = hightemp_;
 			jump_ = 1;
-		}
-		else
-		{
+		} else {
 			temperature_ = (hightemp_ - lowtemp_)*std::exp(-core::PackerEnergy(jump_)) + lowtemp_;
 			jump_++;
 			//std::cout << "Cool " << temperature_ << std::endl;
 		}
-	}
-	// This is terrible.  If instructions are to be passed to the packer, they are to be passed through the PackerTask.
-	// Do not insert code into the middle of a low level function like this such that it can go totally unnoticed
-	// by people who rely upon it.
-	//else if( pKa_mode::get_pKa_flag() && pKa_mode::pKa_packer_flags::packer_set_temp )
-	//{
-	//	temperature_ = pKa_mode::pKa_packer_flags::packer_temp;
-	//}
-	else
-	{
+	} else {
+		// This is terrible.  If instructions are to be passed to the packer, they are to be passed through the PackerTask.
+		// Do not insert code into the middle of a low level function like this such that it can go totally unnoticed
+		// by people who rely upon it.
+		//else if( pKa_mode::get_pKa_flag() && pKa_mode::pKa_packer_flags::packer_set_temp )
+		//{
+		// temperature_ = pKa_mode::pKa_packer_flags::packer_temp;
+		//}
 		temperature_ = (hightemp_ - lowtemp_)*std::exp(-core::PackerEnergy(jump_)) + lowtemp_;
 		jump_++;
 
 
-		if (calc_rot_freq && (temperature_ < calc_freq_temp)){
+		if ( calc_rot_freq && (temperature_ < calc_freq_temp) ) {
 			temperature_ = calc_freq_temp;
 		}
 	}
@@ -336,14 +321,12 @@ bool SimAnnealerBase::pass_metropolis( core::PackerEnergy previous_energy, core:
 		return true;
 	} else { //evaluate prob of substitution
 		lnprob = beta * delta_energy;
-		if ( previous_energy > 1.0 ) // this is specific to FixbbSimAnnealer
-		{
+		if ( previous_energy > 1.0 ) { // this is specific to FixbbSimAnnealer
 			//if both previous energy and new energy are poor
 			//increase the probability of accept
 			lnprob /= previous_energy;
 		}
-		if ( lnprob < 10.0 )
-		{
+		if ( lnprob < 10.0 ) {
 			probability = std::exp(-lnprob);
 			if ( probability > rg_uniform ) return true;
 		}

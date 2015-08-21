@@ -18,8 +18,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace metal_interface{
+namespace protocols {
+namespace metal_interface {
 
 //Forwards and OP typedefs
 class ZincHeterodimerMover;

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/Rama2BOffset.cc
-/// @brief  
+/// @brief
 /// @author
 
 // Unit Headers
@@ -49,8 +49,8 @@ namespace scoring {
 
 Rama2BOffset::Rama2BOffset() {
 	using namespace basic::options;
- 	read_r2bo_tables( );
- 	read_paapp_tables( );
+	read_r2bo_tables( );
+	read_paapp_tables( );
 }
 
 
@@ -71,8 +71,8 @@ Rama2BOffset::eval_r2bo_rama_score(
 	using basic::subtract_degree_angles;
 
 	core::Real omega_p = omega2;
-	while( omega_p <  -90.0 ) omega_p += 360.0;
-	while( omega_p >  270.0 ) omega_p -= 360.0;
+	while ( omega_p <  -90.0 ) omega_p += 360.0;
+	while ( omega_p >  270.0 ) omega_p -= 360.0;
 	bool is_cis = (omega_p < 90.0);
 	Size table = aapair_to_table_index(res_aa1, res_aa2, is_cis);
 
@@ -98,8 +98,8 @@ Rama2BOffset::eval_r2bo_omega_score(
 	using basic::subtract_degree_angles;
 
 	core::Real omega_p = omega2;
-	while( omega_p <  -90.0 ) omega_p += 360.0;
-	while( omega_p >  270.0 ) omega_p -= 360.0;
+	while ( omega_p <  -90.0 ) omega_p += 360.0;
+	while ( omega_p >  270.0 ) omega_p -= 360.0;
 	bool is_cis = (omega_p < 90.0);
 	Size table = aapair_to_table_index(res_aa1, res_aa2, is_cis);
 
@@ -146,37 +146,37 @@ Rama2BOffset::eval_p_aa_pp_score(
 	dE_dphi2 = 0.5*(sub1_dscore_dphi2+sub2_dscore_dphi2);
 
 	//if (std::fabs(score) > 10000) {
-	//	std::cerr << "PAAPP: " << score << " " << subscore1 << " " << subscore2 << " " << (Size)aa1 << " " << (Size)aa2 << " " << psi1 << " " << phi2 << std::endl;
+	// std::cerr << "PAAPP: " << score << " " << subscore1 << " " << subscore2 << " " << (Size)aa1 << " " << (Size)aa2 << " " << psi1 << " " << phi2 << std::endl;
 	//}
 }
 
 Size
 Rama2BOffset::aapair_to_table_index( chemical::AA const res_aa1, chemical::AA const res_aa2, bool cis ) const {
 	using namespace core::chemical;
-	if (cis) {
-		if (res_aa2 == aa_pro) return CIS_XP;
+	if ( cis ) {
+		if ( res_aa2 == aa_pro ) return CIS_XP;
 		else return CIS_XX;
 	}
 
-	if (res_aa1 == aa_pro) {
-		if (res_aa2 == aa_pro) return TRANS_PP;
-		else if (res_aa2 == aa_gly) return TRANS_PG;
-		else if (res_aa2 == aa_val || res_aa2 == aa_ile) return TRANS_PV;
+	if ( res_aa1 == aa_pro ) {
+		if ( res_aa2 == aa_pro ) return TRANS_PP;
+		else if ( res_aa2 == aa_gly ) return TRANS_PG;
+		else if ( res_aa2 == aa_val || res_aa2 == aa_ile ) return TRANS_PV;
 		else return TRANS_PX;
-	} else if (res_aa1 == aa_gly) {
-		if (res_aa2 == aa_pro) return TRANS_GP;
-		else if (res_aa2 == aa_gly) return TRANS_GG;
-		else if (res_aa2 == aa_val || res_aa2 == aa_ile) return TRANS_GV;
+	} else if ( res_aa1 == aa_gly ) {
+		if ( res_aa2 == aa_pro ) return TRANS_GP;
+		else if ( res_aa2 == aa_gly ) return TRANS_GG;
+		else if ( res_aa2 == aa_val || res_aa2 == aa_ile ) return TRANS_GV;
 		else return TRANS_GX;
-	} else if (res_aa1 == aa_val || res_aa1 == aa_ile) {
-		if (res_aa2 == aa_pro) return TRANS_VP;
-		else if (res_aa2 == aa_gly) return TRANS_VG;
-		else if (res_aa2 == aa_val || res_aa2 == aa_ile) return TRANS_VV;
+	} else if ( res_aa1 == aa_val || res_aa1 == aa_ile ) {
+		if ( res_aa2 == aa_pro ) return TRANS_VP;
+		else if ( res_aa2 == aa_gly ) return TRANS_VG;
+		else if ( res_aa2 == aa_val || res_aa2 == aa_ile ) return TRANS_VV;
 		else return TRANS_VX;
 	} else {
-		if (res_aa2 == aa_pro) return TRANS_XP;
-		else if (res_aa2 == aa_gly) return TRANS_XG;
-		else if (res_aa2 == aa_val || res_aa2 == aa_ile) return TRANS_XV;
+		if ( res_aa2 == aa_pro ) return TRANS_XP;
+		else if ( res_aa2 == aa_gly ) return TRANS_XG;
+		else if ( res_aa2 == aa_val || res_aa2 == aa_ile ) return TRANS_XV;
 		else return TRANS_XX;
 	}
 }
@@ -191,44 +191,44 @@ Rama2BOffset::read_r2bo_tables( ) {
 
 	ObjexxFCL::FArray2D< core::Real > rama_i, omega_mu_i, omega_sig_i;
 
-	for (int i=1; i<=NRAMATABLES; ++i) {
+	for ( int i=1; i<=NRAMATABLES; ++i ) {
 		utility::io::izstream stream;
 		switch (i) {
-		case TRANS_XX:
+		case TRANS_XX :
 			basic::database::open( stream, "scoring/score_functions/rama/offset/rama_XX.txt"); break;
-		case TRANS_XG:
+		case TRANS_XG :
 			basic::database::open( stream, "scoring/score_functions/rama/offset/rama_XG.txt"); break;
-		case TRANS_XP:
+		case TRANS_XP :
 			basic::database::open( stream, "scoring/score_functions/rama/offset/rama_XP.txt"); break;
-		case TRANS_XV:
+		case TRANS_XV :
 			basic::database::open( stream, "scoring/score_functions/rama/offset/rama_XV.txt"); break;
-		case TRANS_GX:
+		case TRANS_GX :
 			basic::database::open( stream, "scoring/score_functions/rama/offset/rama_GX.txt"); break;
-		case TRANS_GG:
+		case TRANS_GG :
 			basic::database::open( stream, "scoring/score_functions/rama/offset/rama_GG.txt"); break;
-		case TRANS_GP:
+		case TRANS_GP :
 			basic::database::open( stream, "scoring/score_functions/rama/offset/rama_GP.txt"); break;
-		case TRANS_GV:
+		case TRANS_GV :
 			basic::database::open( stream, "scoring/score_functions/rama/offset/rama_GV.txt"); break;
-		case TRANS_PX:
+		case TRANS_PX :
 			basic::database::open( stream, "scoring/score_functions/rama/offset/rama_PX.txt"); break;
-		case TRANS_PG:
+		case TRANS_PG :
 			basic::database::open( stream, "scoring/score_functions/rama/offset/rama_PG.txt"); break;
-		case TRANS_PP:
+		case TRANS_PP :
 			basic::database::open( stream, "scoring/score_functions/rama/offset/rama_PP.txt"); break;
-		case TRANS_PV:
+		case TRANS_PV :
 			basic::database::open( stream, "scoring/score_functions/rama/offset/rama_PV.txt"); break;
-		case TRANS_VX:
+		case TRANS_VX :
 			basic::database::open( stream, "scoring/score_functions/rama/offset/rama_VX.txt"); break;
-		case TRANS_VG:
+		case TRANS_VG :
 			basic::database::open( stream, "scoring/score_functions/rama/offset/rama_VG.txt"); break;
-		case TRANS_VP:
+		case TRANS_VP :
 			basic::database::open( stream, "scoring/score_functions/rama/offset/rama_VP.txt"); break;
-		case TRANS_VV:
+		case TRANS_VV :
 			basic::database::open( stream, "scoring/score_functions/rama/offset/rama_VV.txt"); break;
-		case CIS_XP:
+		case CIS_XP :
 			basic::database::open( stream, "scoring/score_functions/rama/offset/rama_cis_XP.txt"); break;
-		case CIS_XX:
+		case CIS_XX :
 			basic::database::open( stream, "scoring/score_functions/rama/offset/rama_cis_XX.txt"); break;
 		}
 
@@ -250,7 +250,7 @@ Rama2BOffset::read_paapp_tables()
 		utility::io::izstream stream;
 		basic::database::open( stream, "scoring/score_functions/P_AA_pp/P_AA_pp_offset1");
 		read_paapp_table_from_stream( stream, paas );
-		for (int i=1; i<=chemical::num_canonical_aas; ++i) {
+		for ( int i=1; i<=chemical::num_canonical_aas; ++i ) {
 			setup_interpolation( paas[i], paapp1_[i] );
 		}
 	}
@@ -260,7 +260,7 @@ Rama2BOffset::read_paapp_tables()
 		utility::io::izstream stream;
 		basic::database::open( stream, "scoring/score_functions/P_AA_pp/P_AA_pp_offset2");
 		read_paapp_table_from_stream( stream, paas );
-		for (int i=1; i<=chemical::num_canonical_aas; ++i) {
+		for ( int i=1; i<=chemical::num_canonical_aas; ++i ) {
 			setup_interpolation( paas[i], paapp2_[i] );
 		}
 	}
@@ -326,14 +326,14 @@ Rama2BOffset::read_paapp_table_from_stream(
 	std::string line;
 
 	paas.resize( chemical::num_canonical_aas );
-	for (core::Size z=1; z<=paas.size(); ++z) {
+	for ( core::Size z=1; z<=paas.size(); ++z ) {
 		paas[z].dimension(36,36);
 	}
 
 	while ( getline( stream, line ) ) {
 		std::istringstream l(line);
 		l >> i >> j >> psi >> phi;
-		for (core::Size z=1; z<=paas.size(); ++z ) {
+		for ( core::Size z=1; z<=paas.size(); ++z ) {
 			l >> prob_n;
 			paas[z](i+1,j+1) = prob_n;
 		}

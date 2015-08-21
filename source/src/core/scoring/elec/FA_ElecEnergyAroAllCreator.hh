@@ -33,7 +33,7 @@ public:
 	/// @brief Instantiate a new FA_ElecEnergyAroAll
 	virtual
 	methods::EnergyMethodOP
-		create_energy_method(
+	create_energy_method(
 		methods::EnergyMethodOptions const &
 	) const;
 

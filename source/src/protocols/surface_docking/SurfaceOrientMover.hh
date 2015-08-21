@@ -41,18 +41,18 @@ public:
 
 	//destructor
 	~SurfaceOrientMover();
-	
+
 	void apply( core::pose::Pose & );
 
 	virtual std::string get_name() const;
-	
+
 	void set_surface_parameters( protocols::surface_docking::SurfaceParametersOP surface_parameters);
-	
-	
+
+
 private:
 	//methods
 	core::Vector calculate_recenter_vector( core::Vector const & total_displacement );
-	
+
 	//data
 	protocols::surface_docking::SurfaceParametersOP surface_parameters_;
 

@@ -26,27 +26,27 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	///////////////////////////////////////////////////////////////////////////////////////
-	// used by StepWiseResiduePairScreener, and also ChainClosureScreener.
-	void
-	fast_forward_to_next_residue_pair( sampler::StepWiseSamplerBaseOP sampler,
-																		 Size const res1,
-																		 Size const res2 ){
+///////////////////////////////////////////////////////////////////////////////////////
+// used by StepWiseResiduePairScreener, and also ChainClosureScreener.
+void
+fast_forward_to_next_residue_pair( sampler::StepWiseSamplerBaseOP sampler,
+	Size const res1,
+	Size const res2 ){
 
-		using namespace sampler;
-		using namespace sampler::rigid_body;
+	using namespace sampler;
+	using namespace sampler::rigid_body;
 
-		if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_LIST ){
-			RigidBodyStepWiseSamplerWithResidueList & rigid_body_rotamer_with_residue_list = *( static_cast< RigidBodyStepWiseSamplerWithResidueList * >( sampler.get() ) );
-			rigid_body_rotamer_with_residue_list.fast_forward_to_next_rigid_body();
-			return;
-		} else if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ){
-			RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
-			rigid_body_rotamer_with_residue_alternatives.fast_forward_to_next_residue_pair( res1, res2 );
-			return;
-		}
-
+	if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_LIST ) {
+		RigidBodyStepWiseSamplerWithResidueList & rigid_body_rotamer_with_residue_list = *( static_cast< RigidBodyStepWiseSamplerWithResidueList * >( sampler.get() ) );
+		rigid_body_rotamer_with_residue_list.fast_forward_to_next_rigid_body();
+		return;
+	} else if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ) {
+		RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
+		rigid_body_rotamer_with_residue_alternatives.fast_forward_to_next_residue_pair( res1, res2 );
+		return;
 	}
+
+}
 
 } //screener
 } //stepwise

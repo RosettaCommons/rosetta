@@ -35,18 +35,18 @@ namespace canonical_sampling {
 
 /// @brief Run a sidechain-only canonical Monte Carlo simulation.
 ///
-/// @details The Monte Carlo algorithm present in apply() has been optimized 
-/// for the case where only the sidechains can moves.  This makes it possible 
-/// speed up score function evaluation by either precalculating and/or caching 
-/// residue pair energies.  In this specific case, however, I'm not exactly 
+/// @details The Monte Carlo algorithm present in apply() has been optimized
+/// for the case where only the sidechains can moves.  This makes it possible
+/// speed up score function evaluation by either precalculating and/or caching
+/// residue pair energies.  In this specific case, however, I'm not exactly
 /// sure how the algorithm is doing its optimization.
 ///
-/// @warning Although this class inherits from MetropolisHastingsMover, it 
-/// doesn't support all of its parent's interface.  In particular, since the 
-/// algorithm is customized for a particular sidechain move, movers added via 
-/// add_mover() or its related methods are ignored.  However, observers added 
-/// via add_observer() can still be used to report on the state of the 
-/// simulation.  
+/// @warning Although this class inherits from MetropolisHastingsMover, it
+/// doesn't support all of its parent's interface.  In particular, since the
+/// algorithm is customized for a particular sidechain move, movers added via
+/// add_mover() or its related methods are ignored.  However, observers added
+/// via add_observer() can still be used to report on the state of the
+/// simulation.
 
 class SidechainMetropolisHastingsMover : public protocols::canonical_sampling::MetropolisHastingsMover {
 
@@ -94,11 +94,11 @@ public:
 		core::pose::Pose const & pose
 	);
 
-	/// @brief Return true if a move should be accepted, given @a delta_energy 
+	/// @brief Return true if a move should be accepted, given @a delta_energy
 	/// and @a proposal_density_ratio.
 	bool pass_metropolis( core::Real delta_energy , core::Real last_proposal_density_ratio ) const;
 
-	/// @brief Return non-zero if the observers should be invoked on this 
+	/// @brief Return non-zero if the observers should be invoked on this
 	/// iteration.
 	/// @see set_stride()
 	core::Size output_count( core::Size ct ) const;

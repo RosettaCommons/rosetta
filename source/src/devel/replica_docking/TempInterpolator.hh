@@ -27,58 +27,58 @@ namespace devel {
 namespace replica_docking {
 class TempInterpolatorBase :  public utility::pointer::ReferenceCount {
 public:
-  virtual core::Real get_value(core::Size temp_level) = 0;
+	virtual core::Real get_value(core::Size temp_level) = 0;
 };
 
 class TempFixValue : public TempInterpolatorBase {
 public:
-  TempFixValue( core::Real the_value );
-  virtual ~TempFixValue();
-  virtual core::Real get_value( core::Size ) { return value_; }
+	TempFixValue( core::Real the_value );
+	virtual ~TempFixValue();
+	virtual core::Real get_value( core::Size ) { return value_; }
 private:
-  core::Real value_;
+	core::Real value_;
 };
 
 class TempInterpolator : public TempInterpolatorBase {
 
 public:
-  TempInterpolator( core::Size n_levels, core::Real start, core::Real end, std::string curve="exponential" );
+	TempInterpolator( core::Size n_levels, core::Real start, core::Real end, std::string curve="exponential" );
 
-  TempInterpolator( utility::tag::TagCOP tag, core::Size n_levels );
+	TempInterpolator( utility::tag::TagCOP tag, core::Size n_levels );
 
-  TempInterpolator( TempInterpolator const & temp_interpolator );
+	TempInterpolator( TempInterpolator const & temp_interpolator );
 
-  virtual ~TempInterpolator();
+	virtual ~TempInterpolator();
 
-//   void set_end( core::Real end ) {
-//     end_ = end;
-//   }
+	//   void set_end( core::Real end ) {
+	//     end_ = end;
+	//   }
 
-//   void set_start( core::Real s ) {
-//     start_ = s;
-//   }
+	//   void set_start( core::Real s ) {
+	//     start_ = s;
+	//   }
 
-//   core::Real get_end() {
-//     return end_;
-//   }
+	//   core::Real get_end() {
+	//     return end_;
+	//   }
 
-//   core::Real get_start() {
-//     return start_;
-//   }
+	//   core::Real get_start() {
+	//     return start_;
+	//   }
 
-  void interpolate();
+	void interpolate();
 
-  virtual core::Real get_value( core::Size temp_level );
+	virtual core::Real get_value( core::Size temp_level );
 
 private:
-  core::Real start_;
-  core::Real end_;
-  std::string curve_;
-  core::Size n_levels_;
-  //  protocols::canonical_sampling::TemperatureControllerOP tempering_;
-  utility::vector1< core::Real > interpolated_nums_;
-  bool calculated_;
-  //  protocols::canonical_sampling::TemperatureControllerOP tempering_;
+	core::Real start_;
+	core::Real end_;
+	std::string curve_;
+	core::Size n_levels_;
+	//  protocols::canonical_sampling::TemperatureControllerOP tempering_;
+	utility::vector1< core::Real > interpolated_nums_;
+	bool calculated_;
+	//  protocols::canonical_sampling::TemperatureControllerOP tempering_;
 
 };
 

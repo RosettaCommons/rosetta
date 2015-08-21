@@ -65,7 +65,7 @@ public:
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );
 	std::string span_file() const { return span_file_; }
-  void span_file( std::string const s ){ span_file_ = s; }
+	void span_file( std::string const s ){ span_file_ = s; }
 
 private:
 	std::string span_file_;

@@ -23,7 +23,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 
 namespace protocols {
-namespace simple_filters{
+namespace simple_filters {
 
 class ResiduesInInterfaceFilter : public filters::Filter
 {
@@ -40,12 +40,12 @@ public:
 	filters::FilterOP fresh_instance() const{
 		return filters::FilterOP( new ResiduesInInterfaceFilter() );
 	}
-  	ResiduesInInterfaceFilter( ResiduesInInterfaceFilter const & init ) :
-	//utility::pointer::ReferenceCount(),
-	Filter( init ) {
-    residues_in_interface_threshold_ = init.residues_in_interface_threshold_;
+	ResiduesInInterfaceFilter( ResiduesInInterfaceFilter const & init ) :
+		//utility::pointer::ReferenceCount(),
+		Filter( init ) {
+		residues_in_interface_threshold_ = init.residues_in_interface_threshold_;
 		rb_jump_ = init.rb_jump_;
-  	}
+	}
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Size compute( core::pose::Pose const & pose ) const;

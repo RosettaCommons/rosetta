@@ -80,7 +80,7 @@ public:
 	}
 
 private:
-	//	bool permanent_; //true if this cut should still be present after loop-closing
+	// bool permanent_; //true if this cut should still be present after loop-closing
 	std::pair< std::string, core::Size > local_position_;
 }; //LegacyRootClaim
 

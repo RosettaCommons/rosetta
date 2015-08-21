@@ -52,7 +52,7 @@
 
 
 #ifdef WIN32
-	#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.hh>
 #endif
 
 
@@ -80,22 +80,22 @@ void PalesEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval
 
 
 	if ( option[ OptionKeys::evaluation::pales ].user() ) {
-    typedef utility::vector1< std::string > CSVector;
-    CSVector const& pales( option[ OptionKeys::evaluation::pales ]() );
+		typedef utility::vector1< std::string > CSVector;
+		CSVector const& pales( option[ OptionKeys::evaluation::pales ]() );
 
-    for ( CSVector::const_iterator it=pales.begin(); it!=pales.end(); ++it ) {
-      std::string fname( *it );
-      std::string column;
-      ++it;
-      if ( it != pales.end() ) {
-        column = *it;
-      } else {
-        utility_exit_with_message(
-               "need to specify dupletss <pales_rdcs> <column>  with option -evaluation:pales   last read: "+fname );
-      }
-      eval.add_evaluation( PoseEvaluatorOP( new PalesEvaluator( column, fname ) ) );
-    }
-  }
+		for ( CSVector::const_iterator it=pales.begin(); it!=pales.end(); ++it ) {
+			std::string fname( *it );
+			std::string column;
+			++it;
+			if ( it != pales.end() ) {
+				column = *it;
+			} else {
+				utility_exit_with_message(
+					"need to specify dupletss <pales_rdcs> <column>  with option -evaluation:pales   last read: "+fname );
+			}
+			eval.add_evaluation( PoseEvaluatorOP( new PalesEvaluator( column, fname ) ) );
+		}
+	}
 
 }
 

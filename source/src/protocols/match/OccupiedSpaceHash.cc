@@ -261,17 +261,17 @@ OccupiedSpaceHash::match_possible_for_hit_geometry( Real6 const & geom ) const
 	}
 	return false;
 
-/*	for ( Size ii = 1; ii <= N_HASH_MAPS; ++ii ) {
-		if ( hashes_[ ii ].first->contains( geom ) ) {
-			boost::uint64_t bin_index = hashes_[ ii ].first->bin_index( geom );
-			ActiveVoxelSet::const_iterator iter = hashes_[ ii ].second.find( bin_index );
-			if ( iter != hashes_[ ii ].second.end() ) {
-				//if ( ! threeD_projection_->occupied( point ) ) {
-				//	std::cout << "point is not active?" << point.x() << " " << point.y() << " " << point.z() << std::endl;
-				//}
-				return true;
-			}
-		}
+	/* for ( Size ii = 1; ii <= N_HASH_MAPS; ++ii ) {
+	if ( hashes_[ ii ].first->contains( geom ) ) {
+	boost::uint64_t bin_index = hashes_[ ii ].first->bin_index( geom );
+	ActiveVoxelSet::const_iterator iter = hashes_[ ii ].second.find( bin_index );
+	if ( iter != hashes_[ ii ].second.end() ) {
+	//if ( ! threeD_projection_->occupied( point ) ) {
+	// std::cout << "point is not active?" << point.x() << " " << point.y() << " " << point.z() << std::endl;
+	//}
+	return true;
+	}
+	}
 	}
 
 	/// None of the 64 bins was already occupied by this geometry; a match cannot be found with this hit!
@@ -319,7 +319,7 @@ OccupiedSpaceHash::revision_id() const
 void
 OccupiedSpaceHash::project_point_to_3d( Real6 const & geom )
 {
-/*
+	/*
 	Vector point( Vector( geom[ 1 ], geom[ 2 ], geom[ 3 ] ));
 
 	Vector lower_bound( point ), upper_bound( point );
@@ -329,7 +329,7 @@ OccupiedSpaceHash::project_point_to_3d( Real6 const & geom )
 	for ( Size ii = 1; ii <= 3; ++ii ) if ( upper_bound( ii ) < bb_.upper()( ii ) ) upper_bound( ii ) = bb_.upper()( ii );
 
 	threeD_projection_->or_by_box_liberal( BoundingBox( lower_bound, upper_bound ) );
-*/
+	*/
 	Vector point( Vector( geom[ 1 ], geom[ 2 ], geom[ 3 ] ));
 	assert( bb_.contains( point ));
 
@@ -369,78 +369,78 @@ OccupiedSpaceHash::bitmask_for_position( Size pos ) const {
 	assert( pos > 0 && pos <= 64 );
 
 	switch ( pos ) {
-		case  1: return 0x01;
-		case  2: return 0x02;
-		case  3: return 0x04;
-		case  4: return 0x08;
-		case  5: return 0x10;
-		case  6: return 0x20;
-		case  7: return 0x40;
-		case  8: return 0x80;
+	case  1 : return 0x01;
+	case  2 : return 0x02;
+	case  3 : return 0x04;
+	case  4 : return 0x08;
+	case  5 : return 0x10;
+	case  6 : return 0x20;
+	case  7 : return 0x40;
+	case  8 : return 0x80;
 
-		case  9: return 0x0100;
-		case 10: return 0x0200;
-		case 11: return 0x0400;
-		case 12: return 0x0800;
-		case 13: return 0x1000;
-		case 14: return 0x2000;
-		case 15: return 0x4000;
-		case 16: return 0x8000;
+	case  9 : return 0x0100;
+	case 10 : return 0x0200;
+	case 11 : return 0x0400;
+	case 12 : return 0x0800;
+	case 13 : return 0x1000;
+	case 14 : return 0x2000;
+	case 15 : return 0x4000;
+	case 16 : return 0x8000;
 
-		case 17: return 0x010000;
-		case 18: return 0x020000;
-		case 19: return 0x040000;
-		case 20: return 0x080000;
-		case 21: return 0x100000;
-		case 22: return 0x200000;
-		case 23: return 0x400000;
-		case 24: return 0x800000;
+	case 17 : return 0x010000;
+	case 18 : return 0x020000;
+	case 19 : return 0x040000;
+	case 20 : return 0x080000;
+	case 21 : return 0x100000;
+	case 22 : return 0x200000;
+	case 23 : return 0x400000;
+	case 24 : return 0x800000;
 
-		case 25: return 0x01000000;
-		case 26: return 0x02000000;
-		case 27: return 0x04000000;
-		case 28: return 0x08000000;
-		case 29: return 0x10000000;
-		case 30: return 0x20000000;
-		case 31: return 0x40000000;
-		case 32: return 0x80000000;
+	case 25 : return 0x01000000;
+	case 26 : return 0x02000000;
+	case 27 : return 0x04000000;
+	case 28 : return 0x08000000;
+	case 29 : return 0x10000000;
+	case 30 : return 0x20000000;
+	case 31 : return 0x40000000;
+	case 32 : return 0x80000000;
 
-		case 33: return 0x0100000000LL;
-		case 34: return 0x0200000000LL;
-		case 35: return 0x0400000000LL;
-		case 36: return 0x0800000000LL;
-		case 37: return 0x1000000000LL;
-		case 38: return 0x2000000000LL;
-		case 39: return 0x4000000000LL;
-		case 40: return 0x8000000000LL;
+	case 33 : return 0x0100000000LL;
+	case 34 : return 0x0200000000LL;
+	case 35 : return 0x0400000000LL;
+	case 36 : return 0x0800000000LL;
+	case 37 : return 0x1000000000LL;
+	case 38 : return 0x2000000000LL;
+	case 39 : return 0x4000000000LL;
+	case 40 : return 0x8000000000LL;
 
-		case 41: return 0x010000000000LL;
-		case 42: return 0x020000000000LL;
-		case 43: return 0x040000000000LL;
-		case 44: return 0x080000000000LL;
-		case 45: return 0x100000000000LL;
-		case 46: return 0x200000000000LL;
-		case 47: return 0x400000000000LL;
-		case 48: return 0x800000000000LL;
+	case 41 : return 0x010000000000LL;
+	case 42 : return 0x020000000000LL;
+	case 43 : return 0x040000000000LL;
+	case 44 : return 0x080000000000LL;
+	case 45 : return 0x100000000000LL;
+	case 46 : return 0x200000000000LL;
+	case 47 : return 0x400000000000LL;
+	case 48 : return 0x800000000000LL;
 
-		case 49: return 0x01000000000000LL;
-		case 50: return 0x02000000000000LL;
-		case 51: return 0x04000000000000LL;
-		case 52: return 0x08000000000000LL;
-		case 53: return 0x10000000000000LL;
-		case 54: return 0x20000000000000LL;
-		case 55: return 0x40000000000000LL;
-		case 56: return 0x80000000000000LL;
+	case 49 : return 0x01000000000000LL;
+	case 50 : return 0x02000000000000LL;
+	case 51 : return 0x04000000000000LL;
+	case 52 : return 0x08000000000000LL;
+	case 53 : return 0x10000000000000LL;
+	case 54 : return 0x20000000000000LL;
+	case 55 : return 0x40000000000000LL;
+	case 56 : return 0x80000000000000LL;
 
-		case 57: return 0x0100000000000000LL;
-		case 58: return 0x0200000000000000LL;
-		case 59: return 0x0400000000000000LL;
-		case 60: return 0x0800000000000000LL;
-		case 61: return 0x1000000000000000LL;
-		case 62: return 0x2000000000000000LL;
-		case 63: return 0x4000000000000000LL;
-		case 64: return 0x8000000000000000LL;
-		default: break;
+	case 57 : return 0x0100000000000000LL;
+	case 58 : return 0x0200000000000000LL;
+	case 59 : return 0x0400000000000000LL;
+	case 60 : return 0x0800000000000000LL;
+	case 61 : return 0x1000000000000000LL;
+	case 62 : return 0x2000000000000000LL;
+	case 63 : return 0x4000000000000000LL;
+	case 64 : return 0x8000000000000000LL;
+	default : break;
 	}
 	utility_exit_with_message( "Critical Error in OccupiedSpaceHash::bitmask_for_position. position outside of range [1 .. 64].  Cannot continue." );
 	return 0;

@@ -18,7 +18,7 @@
 /// First, create the calculator. To do this, see below:
 /// core::pose::metrics::PoseMetricCalculatorOP sb_calculator = new protocols::toolbox::pose_metric_calculators::SaltBridgeCalculator();
 /// Then you must register this so that the pose understands it. See below:
-///	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sb_metric", sb_calculator );
+/// core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sb_metric", sb_calculator );
 /// To actually get the metric, you have to print it. For example:
 /// core::pose::Pose pose;
 /// pose.print_metric("sb_metric", "salt_bridge")
@@ -46,48 +46,48 @@
 
 static thread_local basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.SaltBridgeCalculator" );
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 
 
-	/// @brief default constructor sets distance_cutoff to 3.2. This is what is usually defined as a Hbond between heavy atom and Hydrogen
-	SaltBridgeCalculator::SaltBridgeCalculator() :
-		distance_cutoff_(3.2),
-		salt_bridge_total_(0)
-	{
+/// @brief default constructor sets distance_cutoff to 3.2. This is what is usually defined as a Hbond between heavy atom and Hydrogen
+SaltBridgeCalculator::SaltBridgeCalculator() :
+	distance_cutoff_(3.2),
+	salt_bridge_total_(0)
+{
 
-	}
+}
 
 
-	/// @brief constructur where you define what the distance cutoff is for the salt bridge
-	SaltBridgeCalculator::SaltBridgeCalculator(core::Real dist_cutoff) :
-		distance_cutoff_(dist_cutoff),
-		salt_bridge_total_(0)
-	{
+/// @brief constructur where you define what the distance cutoff is for the salt bridge
+SaltBridgeCalculator::SaltBridgeCalculator(core::Real dist_cutoff) :
+	distance_cutoff_(dist_cutoff),
+	salt_bridge_total_(0)
+{
 
-	}
+}
 
 
 void SaltBridgeCalculator::lookup( std::string const & key, basic::MetricValueBase * valptr ) const{
-	 if ( key == "salt_bridge" ) {
-	     basic::check_cast( valptr, &salt_bridge_total_, "salt_bridge expects to return a Size" );
-	     (static_cast<basic::MetricValue<core::Size> *>(valptr))->set( salt_bridge_total_ );
+	if ( key == "salt_bridge" ) {
+		basic::check_cast( valptr, &salt_bridge_total_, "salt_bridge expects to return a Size" );
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( salt_bridge_total_ );
 
-	   }else {
-		     basic::Error() << "SaltBridgeCalculator cannot compute the requested metric " << key << std::endl;
-		     utility_exit();
-		   }
+	} else {
+		basic::Error() << "SaltBridgeCalculator cannot compute the requested metric " << key << std::endl;
+		utility_exit();
+	}
 }
 
 
 std::string SaltBridgeCalculator::print( std::string const & key ) const{
-	if(key == "salt_bridge"){
+	if ( key == "salt_bridge" ) {
 		return utility::to_string(salt_bridge_total_);
 	}
 	basic::Error() << "SaltBridgeCalculator cannot compute metric " << key << std::endl;
-	  utility_exit();
-	  return "";
+	utility_exit();
+	return "";
 
 }
 
@@ -96,39 +96,38 @@ std::string SaltBridgeCalculator::print( std::string const & key ) const{
 void SaltBridgeCalculator::recompute(core::pose::Pose const & pose){
 	salt_bridge_total_ = 0;
 	//start iterating through the residues
-	for(core::Size res_num1=1; res_num1 <= pose.n_residue(); ++res_num1){
+	for ( core::Size res_num1=1; res_num1 <= pose.n_residue(); ++res_num1 ) {
 		//assign the number to a residue based on the seqpos
 		core::conformation::Residue acceptor(pose.residue(res_num1));
 		//continue only if the residue is either aspartic or glutamic acid
-		if(acceptor.name3() == "ASP" || acceptor.name3() =="GLU"){
-			for(core::Size res_num2=1; res_num2 <= pose.n_residue(); ++res_num2){
+		if ( acceptor.name3() == "ASP" || acceptor.name3() =="GLU" ) {
+			for ( core::Size res_num2=1; res_num2 <= pose.n_residue(); ++res_num2 ) {
 				core::conformation::Residue donate(pose.residue(res_num2));
 				//only continue if this residue is a his, lys or arg
-				if(donate.name3() == "HIS" || donate.name3() == "LYS" || donate.name3() =="ARG"){
+				if ( donate.name3() == "HIS" || donate.name3() == "LYS" || donate.name3() =="ARG" ) {
 					//set up a flag that will stop us from double counting salt bridges
 					bool get_out_of_loop=false;
 					//start iteration through acceptor heavy atoms
 					for (
 							core::chemical::AtomIndices::const_iterator
 							anum  = acceptor.accpt_pos().begin(),
-							anume = acceptor.accpt_pos().end(); anum != anume; ++anum )
-					{
+							anume = acceptor.accpt_pos().end(); anum != anume; ++anum ) {
 						core::Size const acc_atm( *anum );
 
 
 						for
-						(
-								core::chemical::AtomIndices::const_iterator
-								don_num = donate.Hpos_polar_sc().begin(),
-								don_nume = donate.Hpos_polar_sc().end();
-								don_num != don_nume; ++don_num
-						){
+							(
+									core::chemical::AtomIndices::const_iterator
+									don_num = donate.Hpos_polar_sc().begin(),
+									don_nume = donate.Hpos_polar_sc().end();
+									don_num != don_nume; ++don_num
+									) {
 							core::Size const don_atm(*don_num);
 
 							//get the distance between the donor residue and polar hydrogen sidechain
 							core::Real distance(acceptor.xyz(acc_atm).distance(donate.xyz(don_atm)) );
 
-							if(get_out_of_loop ==false && distance < distance_cutoff_){
+							if ( get_out_of_loop ==false && distance < distance_cutoff_ ) {
 								++salt_bridge_total_;
 								get_out_of_loop=true;
 							}

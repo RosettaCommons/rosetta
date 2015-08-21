@@ -126,20 +126,19 @@ FlexbbRotamerSets::set_frames(
 	conformations_for_flexible_segments_.resize( nmoltenres_ );
 
 	core::Size count_moltenres(0);
-	for( core::Size ii = 1; ii<= total_residue_; ++ii){
+	for ( core::Size ii = 1; ii<= total_residue_; ++ii ) {
 
-		if( task_->pack_residue( ii ) ){
+		if ( task_->pack_residue( ii ) ) {
 			count_moltenres++;
 			resid_2_moltenres_[ ii ] = count_moltenres;
 			moltenres_2_resid_[ count_moltenres ] = ii;
 			moltenres_2_flexseg_[ count_moltenres ] = 0; //will be filled with the correct values later
-		}
-		else resid_2_moltenres_[ ii ] = 0;
+		} else resid_2_moltenres_[ ii ] = 0;
 	}
 	assert( count_moltenres == nmoltenres_ );
 
 	//for( utility::vector1< core::fragment::FrameOP >::const_iterator frame_it = frames.begin(); frame_it != frames.end(); ++frame_it ){
-	for( core::Size frame_count = 1; frame_count <= num_frames; ++frame_count ){
+	for ( core::Size frame_count = 1; frame_count <= num_frames; ++frame_count ) {
 
 		core::Size cur_frame_start( frames[ frame_count ]->start() ), cur_frame_end( frames[ frame_count]->end() );
 
@@ -147,18 +146,18 @@ FlexbbRotamerSets::set_frames(
 		nbbconfs_for_flexseg_[ frame_count ] = frames[ frame_count ]->nr_frags();
 		nbbconfs_ += nbbconfs_for_flexseg_[ frame_count ];
 
-		for( core::Size frameres_count = cur_frame_start; frameres_count <= cur_frame_end; ++frameres_count){
+		for ( core::Size frameres_count = cur_frame_start; frameres_count <= cur_frame_end; ++frameres_count ) {
 
 			moltenres_2_flexseg_[ resid_2_moltenres_[ frameres_count ] ] = frame_count;
 
 		}
 
 		//now we need to translate the information in the fragments of this frame  into actual  3D residue coordinates
-		for( core::Size frag_count = 1; frag_count <= frames[ frame_count ]->nr_frags(); ++frag_count ){
+		for ( core::Size frag_count = 1; frag_count <= frames[ frame_count ]->nr_frags(); ++frag_count ) {
 			utility::vector1< core::conformation::ResidueOP > fragment_res;
 			build_residue_vector_from_fragment( helper_pose, frames[ frame_count ], frag_count, fragment_res );
 
-			for( core::Size rescount = cur_frame_start; rescount <= cur_frame_end; ++rescount ){
+			for ( core::Size rescount = cur_frame_start; rescount <= cur_frame_end; ++rescount ) {
 				conformations_for_flexible_segments_[ resid_2_moltenres_[ rescount ] ].push_back( fragment_res[ rescount - cur_frame_start + 1] );
 			}
 
@@ -167,9 +166,9 @@ FlexbbRotamerSets::set_frames(
 	} //iterator over all frames
 
 	//finally, we have to fill the conformations_for_flexseg array for all moltenres that are not part of a frame
-	for( core::Size ii = 1; ii <= nmoltenres_; ++ii){
+	for ( core::Size ii = 1; ii <= nmoltenres_; ++ii ) {
 
-		if( conformations_for_flexible_segments_[ ii ].size() == 0 ) { //means this was not part of any fragment
+		if ( conformations_for_flexible_segments_[ ii ].size() == 0 ) { //means this was not part of any fragment
 			conformations_for_flexible_segments_[ ii ].push_back( core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue( pose.residue( moltenres_2_resid_[ ii ] ) ) ) ) );
 		}
 	} //loop over moltenres
@@ -196,8 +195,8 @@ FlexbbRotamerSets::flexpack_neighbor_graph(
 
 	utility::vector1< core::Distance > residue_radii = core::pack::find_residue_max_radii( pose, task);
 
-	for( core::Size i = 1; i <= total_residue_; ++i )	{
-		if( resid_2_moltenres_[ i ] != 0 ) residue_radii[ i ] += determine_res_cb_deviation( pose, resid_2_moltenres_[ i ] );
+	for ( core::Size i = 1; i <= total_residue_; ++i ) {
+		if ( resid_2_moltenres_[ i ] != 0 ) residue_radii[ i ] += determine_res_cb_deviation( pose, resid_2_moltenres_[ i ] );
 	}
 
 	return core::pack::create_packer_graph( pose, sfxn, task, total_residue_, residue_radii );
@@ -221,12 +220,12 @@ FlexbbRotamerSets::determine_res_cb_deviation(
 
 	//utility::vector1< core::conformation::ResidueCOP > const & confs_this_position = conformations_for_flexible_segments[ resid ];
 
-	for( utility::vector1< core::conformation::ResidueCOP >::const_iterator res_it = conformations_for_flexible_segments_[ moltenres ].begin();
-			 res_it != conformations_for_flexible_segments_[ moltenres ].end(); ++res_it){
+	for ( utility::vector1< core::conformation::ResidueCOP >::const_iterator res_it = conformations_for_flexible_segments_[ moltenres ].begin();
+			res_it != conformations_for_flexible_segments_[ moltenres ].end(); ++res_it ) {
 
 		core::Distance sq_dist = cur_xyz.distance_squared( (*res_it)->xyz( (*res_it)->nbr_atom() ) );
 
-		if( sq_dist > max_sq_dist ) max_sq_dist = sq_dist;
+		if ( sq_dist > max_sq_dist ) max_sq_dist = sq_dist;
 	}
 
 	return sqrt( max_sq_dist);
@@ -242,12 +241,12 @@ FlexbbRotamerSets::build_rotamers(
 )
 {
 
-	for( core::Size ii = 1; ii <= nmoltenres_; ++ii){
+	for ( core::Size ii = 1; ii <= nmoltenres_; ++ii ) {
 
 		core::Size cur_resid = moltenres_2_resid_[ ii ];
 		//for( core::Size jj = 1; jj<= conformations_for_flexible_segments_[ cur_resid ].size(); ++jj ){
-		for( utility::vector1< core::conformation::ResidueCOP >::const_iterator res_it = conformations_for_flexible_segments_[ ii ].begin();
-				 res_it != conformations_for_flexible_segments_[ ii ].end(); ++res_it){
+		for ( utility::vector1< core::conformation::ResidueCOP >::const_iterator res_it = conformations_for_flexible_segments_[ ii ].begin();
+				res_it != conformations_for_flexible_segments_[ ii ].end(); ++res_it ) {
 
 			FlexbbRotamerSetOP rotset( new FlexbbRotamerSet() );
 			rotset->set_owner( get_self_weak_ptr() );
@@ -258,9 +257,9 @@ FlexbbRotamerSets::build_rotamers(
 
 			rotamers_[ ii ].push_back( rotset );
 			//TR << "Built: " << rotset->num_rotamers() << " for moltenres " << ii
-			//	<< " (resid: " << cur_resid << ") ";
+			// << " (resid: " << cur_resid << ") ";
 			//if ( conformations_for_flexible_segments_[ ii ].size() != 1 ) {
-			//	TR << " backone # " << rotamers_[ii].size();
+			// TR << " backone # " << rotamers_[ii].size();
 			//}
 			//TR << std::endl;;
 		} //loop over bb conformations for moltenres
@@ -270,7 +269,7 @@ FlexbbRotamerSets::build_rotamers(
 	update_offset_data() ;
 
 
-	if( basic::options::option[basic::options::OptionKeys::packing::dump_rotamer_sets].user() ){
+	if ( basic::options::option[basic::options::OptionKeys::packing::dump_rotamer_sets].user() ) {
 
 		this->dump_pdbs( pose, "flex_rotamers");
 	}
@@ -332,7 +331,7 @@ FlexbbRotamerSets::dump_pdbs( core::pose::Pose const & pose, std::string const &
 
 	bool all_confs_covered(false);
 
-	while( ! all_confs_covered ){
+	while ( ! all_confs_covered ) {
 
 		std::string cur_filename = filename_base + "_flexconf" + utility::to_string( curconf - 1 ) + ".pdb";
 		std::ofstream cur_out( cur_filename.c_str() );
@@ -342,21 +341,21 @@ FlexbbRotamerSets::dump_pdbs( core::pose::Pose const & pose, std::string const &
 		model = 0;
 		atom_counter = 0;
 
-		while( true ){
+		while ( true ) {
 
 			bool found_a_rotamer( false );
 			++model;
 
-			for( core::Size ii =1; ii <= nmoltenres_; ++ii ){
+			for ( core::Size ii =1; ii <= nmoltenres_; ++ii ) {
 
-				if( rotamers_[ ii ].size() < curconf ) continue;
-				else{
+				if ( rotamers_[ ii ].size() < curconf ) continue;
+				else {
 
 					all_confs_covered = false;
 					FlexbbRotamerSetOP rotset( rotamers_[ ii ][ curconf ] );
 
-					if( rotset->num_rotamers() >= model ){
-						if( !found_a_rotamer ){
+					if ( rotset->num_rotamers() >= model ) {
+						if ( !found_a_rotamer ) {
 							found_a_rotamer = true;
 							cur_out << "MODEL" << I(9,model) << '\n';
 						}
@@ -365,7 +364,7 @@ FlexbbRotamerSets::dump_pdbs( core::pose::Pose const & pose, std::string const &
 				}
 
 			} //loop over moltenres
-			if( found_a_rotamer ) cur_out << "ENDMDL\n";
+			if ( found_a_rotamer ) cur_out << "ENDMDL\n";
 
 			else break;
 		} // loop over models
@@ -475,9 +474,9 @@ FlexbbRotamerSets::build_residue_vector_from_fragment(
 )
 {
 
-	if( frame->apply( frag_num, pose ) != frame->length() ) utility_exit_with_message("unknown error when trying to apply a fragment to a pose in setting up FlexbbRotamerSets.");
+	if ( frame->apply( frag_num, pose ) != frame->length() ) utility_exit_with_message("unknown error when trying to apply a fragment to a pose in setting up FlexbbRotamerSets.");
 
-	for( core::Size rescount = frame->start(); rescount <= frame->end(); ++rescount ){
+	for ( core::Size rescount = frame->start(); rescount <= frame->end(); ++rescount ) {
 
 		fragment_res.push_back( core::conformation::ResidueOP( new core::conformation::Residue ( pose.residue( rescount ) ) ) );
 	}
@@ -487,7 +486,7 @@ FlexbbRotamerSets::build_residue_vector_from_fragment(
 core::Size
 FlexbbRotamerSets::nbbconfs_for_moltenres( core::Size moltenres ) const
 {
-	if( moltenres_2_flexseg_[ moltenres ] == 0 ) return 1;
+	if ( moltenres_2_flexseg_[ moltenres ] == 0 ) return 1;
 
 	else return nbbconfs_for_flexseg_[ moltenres_2_flexseg_[ moltenres ] ];
 }
@@ -495,7 +494,7 @@ FlexbbRotamerSets::nbbconfs_for_moltenres( core::Size moltenres ) const
 core::Size
 FlexbbRotamerSets::nbbconfs_for_res( core::Size resid ) const
 {
-	if( resid_2_moltenres_[ resid ] == 0 ) return 1;
+	if ( resid_2_moltenres_[ resid ] == 0 ) return 1;
 
 	else return nbbconfs_for_moltenres( resid_2_moltenres_[ resid ] );
 }
@@ -503,16 +502,16 @@ FlexbbRotamerSets::nbbconfs_for_res( core::Size resid ) const
 //core::conformation::ResidueCOP
 //FlexbbRotamerSets::rotamer_for_moltenres( core::Size moltenres, core::Size rotindex_on_residue ) const
 //{
-//	core::Size bb_conf( bbconf_for_rotamer_of_moltenres_[ moltenres ][ rotindex_on_residue + nrotoffset_for_moltenres_[ moltenres ] ] );
-//	return rotamers_[ moltenres ][ bb_conf ]->rotamer( rotindex_on_residue - nrotoffset_for_moltenres_bbconf_[ moltenres ][ bb_conf ] );
+// core::Size bb_conf( bbconf_for_rotamer_of_moltenres_[ moltenres ][ rotindex_on_residue + nrotoffset_for_moltenres_[ moltenres ] ] );
+// return rotamers_[ moltenres ][ bb_conf ]->rotamer( rotindex_on_residue - nrotoffset_for_moltenres_bbconf_[ moltenres ][ bb_conf ] );
 //}
 
 //core::conformation::ResidueCOP
 //FlexbbRotamerSets::rotamer( core::Size rotindex ) const
 //{
-//	core::Size moltenres( moltenres_for_rotamer_[ rotindex ] );
-//	core::Size bb_conf( bbconf_for_rotamer_of_moltenres_[ moltenres ][ rotindex ] );
-//	return rotamers_[ moltenres ][ bb_conf ]->rotamer( rotindex - nrotoffset_for_moltenres_bbconf_[ moltenres ][ bb_conf ] );
+// core::Size moltenres( moltenres_for_rotamer_[ rotindex ] );
+// core::Size bb_conf( bbconf_for_rotamer_of_moltenres_[ moltenres ][ rotindex ] );
+// return rotamers_[ moltenres ][ bb_conf ]->rotamer( rotindex - nrotoffset_for_moltenres_bbconf_[ moltenres ][ bb_conf ] );
 //}
 
 void
@@ -521,7 +520,7 @@ FlexbbRotamerSets::update_offset_data()
 	nrotamers_ = 0;
 	moltenres_for_rotamer_.clear();
 
-	for( core::Size ii = 1; ii <= nmoltenres_; ++ii){
+	for ( core::Size ii = 1; ii <= nmoltenres_; ++ii ) {
 		nrotamers_for_moltenres_[ ii ] = 0;
 
 		nrots_for_moltenres_bbconf_[ ii ].resize( conformations_for_flexible_segments_[ ii ].size() );
@@ -530,31 +529,28 @@ FlexbbRotamerSets::update_offset_data()
 
 		assert( nrots_for_moltenres_bbconf_[ ii ].size() == rotamers_[ ii ].size() );
 
-		for( core::Size jj = 1; jj <= rotamers_[ ii ].size(); ++jj){
+		for ( core::Size jj = 1; jj <= rotamers_[ ii ].size(); ++jj ) {
 
 			core::Size cur_numrots = rotamers_[ ii ][ jj ]->num_rotamers();
 
 			nrots_for_moltenres_bbconf_[ ii ][ jj ] = cur_numrots;
 			//TR << "nrots_for_moltenres_bbconf_[ "<<ii<<" ][ " <<jj <<" ]  is " << nrots_for_moltenres_bbconf_[ ii ][ jj ] <<  ",   ";
 			nrotamers_for_moltenres_[ ii ] += cur_numrots;
-			//TR << "nrotamers_for_moltenres_[ " << ii << " ] is " <<	nrotamers_for_moltenres_[ ii ] << " ;   ";
+			//TR << "nrotamers_for_moltenres_[ " << ii << " ] is " << nrotamers_for_moltenres_[ ii ] << " ;   ";
 
-			for( core::Size rot = 1; rot <= cur_numrots; ++rot ){
+			for ( core::Size rot = 1; rot <= cur_numrots; ++rot ) {
 				moltenres_for_rotamer_.push_back( ii );
 				bbconf_for_rotamer_of_moltenres_[ ii ].push_back( jj );
 			}
 
-			if( jj > 1 ){
+			if ( jj > 1 ) {
 				nrotoffset_for_moltenres_bbconf_[ ii ][ jj ] = nrotoffset_for_moltenres_bbconf_[ ii ][ jj-1 ] + nrots_for_moltenres_bbconf_[ ii ][ jj-1 ];
 				//TR << "nrotoffset_for_moltenres_bbconf_[ " << ii << " ][ " << jj << " ] is " << nrotoffset_for_moltenres_bbconf_[ ii ][ jj ] << std::endl;
-			}
-			else{
-				if( ii > 1 ){
+			} else {
+				if ( ii > 1 ) {
 					nrotoffset_for_moltenres_bbconf_[ ii ][ jj ] = nrotoffset_for_moltenres_[ ii - 1 ] + nrotamers_for_moltenres_[ ii-1 ];
 					//TR << "nrotoffset_for_moltenres_bbconf_[ " << ii << " ][ " << jj << " ] is " << nrotoffset_for_moltenres_bbconf_[ ii ][ jj ] << std::endl;
-				}
-
-				else{
+				} else {
 					nrotoffset_for_moltenres_bbconf_[ ii ][ jj ] = 0;
 					//TR << "nrotoffset_for_moltenres_bbconf_[ " << ii << " ][ " << jj << " ] is " << nrotoffset_for_moltenres_bbconf_[ ii ][ jj ] << std::endl;
 				}
@@ -563,7 +559,7 @@ FlexbbRotamerSets::update_offset_data()
 
 		} //iterator over rotamer sets for moltenres
 
-		if( ii > 1 ) nrotoffset_for_moltenres_[ ii ] = nrotoffset_for_moltenres_[ ii - 1 ] + nrotamers_for_moltenres_[ ii - 1 ] ;
+		if ( ii > 1 ) nrotoffset_for_moltenres_[ ii ] = nrotoffset_for_moltenres_[ ii - 1 ] + nrotamers_for_moltenres_[ ii - 1 ] ;
 		else nrotoffset_for_moltenres_[ ii ] = 0;
 		//TR << "nrotoffset_for_moltenres_[ " << ii << " ] is " << nrotoffset_for_moltenres_[ ii ] << std::endl;
 
@@ -682,7 +678,7 @@ FlexbbRotamerSets::compute_one_body_energies_for_otf_ig(
 			Size const jj_resid = (*li)->get_second_node_ind();
 			Size const jj = resid_2_moltenres_[ jj_resid ];
 
-			if( jj == 0 ) continue;
+			if ( jj == 0 ) continue;
 
 			compute_sr_one_body_energies_for_flexsets(
 				ii, jj,
@@ -704,9 +700,9 @@ FlexbbRotamerSets::compute_one_body_energies_for_otf_ig(
 		if ( !lrec || lrec->empty() ) continue; // only score non-empty energies.
 		// Potentially O(N^2) operation...
 
-		#ifdef WIN32
+#ifdef WIN32
 		using namespace platform;
-		#endif
+#endif
 
 		for ( core::Size ii = 1; ii <= nmoltenres_; ++ ii ) {
 			core::Size const ii_resid = moltenres_2_resid_[ ii ];
@@ -834,111 +830,111 @@ FlexbbRotamerSets::compute_sr_one_body_energies_for_flexsets(
 	}
 
 	{ // scope
-	/// Sidechain/backbone energies for the lower-residue's rotamers.
-	utility::vector1< PackerEnergy > scbb_energies_lower( NBBCLASSES );
-	for ( Size ii = 1; ii <= lnrots; ++ii ) {
-		Size iibb = bbconf_for_rotamer_of_moltenres_[ lowermoltenres ][ ii ];
-		core::conformation::Residue const & iirot( *( rotamer_for_moltenres( lowermoltenres, ii )));
-		Size iibbclass = ( iirot.aa() == core::chemical::aa_pro ? BBPRO : iirot.aa() == core::chemical::aa_gly ? BBGLY : BBREG );
+		/// Sidechain/backbone energies for the lower-residue's rotamers.
+		utility::vector1< PackerEnergy > scbb_energies_lower( NBBCLASSES );
+		for ( Size ii = 1; ii <= lnrots; ++ii ) {
+			Size iibb = bbconf_for_rotamer_of_moltenres_[ lowermoltenres ][ ii ];
+			core::conformation::Residue const & iirot( *( rotamer_for_moltenres( lowermoltenres, ii )));
+			Size iibbclass = ( iirot.aa() == core::chemical::aa_pro ? BBPRO : iirot.aa() == core::chemical::aa_gly ? BBGLY : BBREG );
 
-		for ( Size jj = 1, jje = (sameflexseg ? 1 : unbb); jj <= jje; ++jj ) {
-			Size jjbb = sameflexseg ? iibb : jj;
-			FlexbbRotamerSetCOP jjrotset( rotamers_[ uppermoltenres ][ jjbb ] );
-			upper_bbrepresentatives[ BBREG ] = uregrep[ jjbb ];
-			upper_bbrepresentatives[ BBPRO ] = uprorep[ jjbb ];
-			upper_bbrepresentatives[ BBGLY ] = uglyrep[ jjbb ];
-			std::fill( scbb_energies_lower.begin(), scbb_energies_lower.end(), 0.0f );
-			for ( Size kk = 1; kk <= NBBCLASSES; ++kk ) {
-				if ( upper_bbrepresentatives[ kk ] == 0 ) continue;
-				core::conformation::Residue const & kkrot( *(jjrotset->rotamer( upper_bbrepresentatives[ kk ] )) );
-				scbb_energies_lower[ kk ] =
-					core::pack::rotamer_set::RotamerSets::get_sc_bbE( pose, sfxn, iirot, kkrot );
+			for ( Size jj = 1, jje = (sameflexseg ? 1 : unbb); jj <= jje; ++jj ) {
+				Size jjbb = sameflexseg ? iibb : jj;
+				FlexbbRotamerSetCOP jjrotset( rotamers_[ uppermoltenres ][ jjbb ] );
+				upper_bbrepresentatives[ BBREG ] = uregrep[ jjbb ];
+				upper_bbrepresentatives[ BBPRO ] = uprorep[ jjbb ];
+				upper_bbrepresentatives[ BBGLY ] = uglyrep[ jjbb ];
+				std::fill( scbb_energies_lower.begin(), scbb_energies_lower.end(), 0.0f );
+				for ( Size kk = 1; kk <= NBBCLASSES; ++kk ) {
+					if ( upper_bbrepresentatives[ kk ] == 0 ) continue;
+					core::conformation::Residue const & kkrot( *(jjrotset->rotamer( upper_bbrepresentatives[ kk ] )) );
+					scbb_energies_lower[ kk ] =
+						core::pack::rotamer_set::RotamerSets::get_sc_bbE( pose, sfxn, iirot, kkrot );
 					if ( sought_pair ) {
 						std::cout << "lower bbscE: " << ii  << " " << jj << " " << kk << " " << scbb_energies_lower[ kk ] << std::endl;
 					}
 
-			}
-			if ( upper_bbrepresentatives[ BBREG ] != 0  &&
-					upper_bbrepresentatives[ BBPRO ] == 0 &&
-					upper_bbrepresentatives[ BBGLY ] == 0 ) {
-				// Neither a proline correction nor a glycine correction.
-				// Set the bb/bb and bb/sc energies.
-				flexbb_ig.set_ProCorrection_values_for_edge( lowermoltenres, uppermoltenres,
-					lowermoltenres, ii, jjbb,
-					bbbb_energies( iibbclass, BBREG, iibb, jjbb ), 0.0,
-					scbb_energies_lower[ BBREG ], 0.0 );
-			}
-			if ( upper_bbrepresentatives[ BBPRO ] != 0 ) {
-				flexbb_ig.set_ProCorrection_values_for_edge( lowermoltenres, uppermoltenres,
-					lowermoltenres, ii, jjbb,
-					bbbb_energies( iibbclass, BBREG, iibb, jjbb ), bbbb_energies( iibbclass, BBPRO, iibb, jjbb ),
-					scbb_energies_lower[ BBREG ],                  scbb_energies_lower[ BBPRO ] );
+				}
+				if ( upper_bbrepresentatives[ BBREG ] != 0  &&
+						upper_bbrepresentatives[ BBPRO ] == 0 &&
+						upper_bbrepresentatives[ BBGLY ] == 0 ) {
+					// Neither a proline correction nor a glycine correction.
+					// Set the bb/bb and bb/sc energies.
+					flexbb_ig.set_ProCorrection_values_for_edge( lowermoltenres, uppermoltenres,
+						lowermoltenres, ii, jjbb,
+						bbbb_energies( iibbclass, BBREG, iibb, jjbb ), 0.0,
+						scbb_energies_lower[ BBREG ], 0.0 );
+				}
+				if ( upper_bbrepresentatives[ BBPRO ] != 0 ) {
+					flexbb_ig.set_ProCorrection_values_for_edge( lowermoltenres, uppermoltenres,
+						lowermoltenres, ii, jjbb,
+						bbbb_energies( iibbclass, BBREG, iibb, jjbb ), bbbb_energies( iibbclass, BBPRO, iibb, jjbb ),
+						scbb_energies_lower[ BBREG ],                  scbb_energies_lower[ BBPRO ] );
 
-			}
-			if ( upper_bbrepresentatives[ BBGLY ] != 0 ) {
-				flexbb_ig.set_GlyCorrection_values_for_edge( lowermoltenres, uppermoltenres,
-					lowermoltenres, ii, jjbb,
-					bbbb_energies( iibbclass, BBREG, iibb, jjbb ), bbbb_energies( iibbclass, BBGLY, iibb, jjbb ),
-					scbb_energies_lower[ BBREG ],                  scbb_energies_lower[ BBGLY ] );
+				}
+				if ( upper_bbrepresentatives[ BBGLY ] != 0 ) {
+					flexbb_ig.set_GlyCorrection_values_for_edge( lowermoltenres, uppermoltenres,
+						lowermoltenres, ii, jjbb,
+						bbbb_energies( iibbclass, BBREG, iibb, jjbb ), bbbb_energies( iibbclass, BBGLY, iibb, jjbb ),
+						scbb_energies_lower[ BBREG ],                  scbb_energies_lower[ BBGLY ] );
+				}
 			}
 		}
-	}
 	}
 
 	{ // scope
-	/// Sidechain/backbone energies for the upper-residue's rotamers.
-	utility::vector1< PackerEnergy > scbb_energies_upper( NBBCLASSES );
-	for ( Size ii = 1; ii <= unrots; ++ii ) {
-		Size iibb = bbconf_for_rotamer_of_moltenres_[ uppermoltenres ][ ii ];
-		core::conformation::Residue const & iirot( *( rotamer_for_moltenres( uppermoltenres, ii )));
-		Size iibbclass = ( iirot.aa() == core::chemical::aa_pro ? BBPRO : iirot.aa() == core::chemical::aa_gly ? BBGLY : BBREG );
+		/// Sidechain/backbone energies for the upper-residue's rotamers.
+		utility::vector1< PackerEnergy > scbb_energies_upper( NBBCLASSES );
+		for ( Size ii = 1; ii <= unrots; ++ii ) {
+			Size iibb = bbconf_for_rotamer_of_moltenres_[ uppermoltenres ][ ii ];
+			core::conformation::Residue const & iirot( *( rotamer_for_moltenres( uppermoltenres, ii )));
+			Size iibbclass = ( iirot.aa() == core::chemical::aa_pro ? BBPRO : iirot.aa() == core::chemical::aa_gly ? BBGLY : BBREG );
 
-		for ( Size jj = 1, jje = sameflexseg ? 1 : lnbb; jj <= jje; ++jj ) {
-			Size jjbb = sameflexseg ? iibb : jj;
-			FlexbbRotamerSetCOP jjrotset( rotamers_[ lowermoltenres ][ jjbb ] );
-			lower_bbrepresentatives[ BBREG ] = lregrep[ jjbb ];
-			lower_bbrepresentatives[ BBPRO ] = lprorep[ jjbb ];
-			lower_bbrepresentatives[ BBGLY ] = lglyrep[ jjbb ];
-			std::fill( scbb_energies_upper.begin(), scbb_energies_upper.end(), 0.0 );
+			for ( Size jj = 1, jje = sameflexseg ? 1 : lnbb; jj <= jje; ++jj ) {
+				Size jjbb = sameflexseg ? iibb : jj;
+				FlexbbRotamerSetCOP jjrotset( rotamers_[ lowermoltenres ][ jjbb ] );
+				lower_bbrepresentatives[ BBREG ] = lregrep[ jjbb ];
+				lower_bbrepresentatives[ BBPRO ] = lprorep[ jjbb ];
+				lower_bbrepresentatives[ BBGLY ] = lglyrep[ jjbb ];
+				std::fill( scbb_energies_upper.begin(), scbb_energies_upper.end(), 0.0 );
 
-			for ( Size kk = 1; kk <= NBBCLASSES; ++kk ) {
-				if ( lower_bbrepresentatives[ kk ] == 0 ) continue;
-				core::conformation::Residue const & kkrot( *(jjrotset->rotamer( lower_bbrepresentatives[ kk ] )) );
-				scbb_energies_upper[ kk ] =
-					core::pack::rotamer_set::RotamerSets::get_sc_bbE( pose, sfxn, iirot, kkrot );
-				if ( sought_pair ) {
-					std::cout << "upper bbscE: " << ii  << " " << jj << " " << kk << " " << scbb_energies_upper[ kk ] <<
-						" aa " << iirot.aa() <<
-						" coord: " << iirot.xyz( iirot.nheavyatoms() ).x() <<
-						" " << iirot.xyz( iirot.nheavyatoms() ).y() <<
-						" " << iirot.xyz( iirot.nheavyatoms() ).z() <<  std::endl;
+				for ( Size kk = 1; kk <= NBBCLASSES; ++kk ) {
+					if ( lower_bbrepresentatives[ kk ] == 0 ) continue;
+					core::conformation::Residue const & kkrot( *(jjrotset->rotamer( lower_bbrepresentatives[ kk ] )) );
+					scbb_energies_upper[ kk ] =
+						core::pack::rotamer_set::RotamerSets::get_sc_bbE( pose, sfxn, iirot, kkrot );
+					if ( sought_pair ) {
+						std::cout << "upper bbscE: " << ii  << " " << jj << " " << kk << " " << scbb_energies_upper[ kk ] <<
+							" aa " << iirot.aa() <<
+							" coord: " << iirot.xyz( iirot.nheavyatoms() ).x() <<
+							" " << iirot.xyz( iirot.nheavyatoms() ).y() <<
+							" " << iirot.xyz( iirot.nheavyatoms() ).z() <<  std::endl;
+					}
+				}
+				if ( lower_bbrepresentatives[ BBREG ] != 0  &&
+						lower_bbrepresentatives[ BBPRO ] == 0 &&
+						lower_bbrepresentatives[ BBGLY ] == 0 ) {
+					// Neither a proline correction nor a glycine correction.
+					// Set the bb/bb and bb/sc energies.
+					flexbb_ig.set_ProCorrection_values_for_edge( lowermoltenres, uppermoltenres,
+						uppermoltenres, ii, jjbb,
+						bbbb_energies( BBREG, iibbclass, jjbb, iibb ), 0.0,
+						scbb_energies_upper[ BBREG ], 0.0 );
+				}
+				if ( lower_bbrepresentatives[ BBPRO ] != 0 ) {
+					flexbb_ig.set_ProCorrection_values_for_edge( lowermoltenres, uppermoltenres,
+						uppermoltenres, ii, jjbb,
+						bbbb_energies( BBREG, iibbclass, jjbb, iibb ), bbbb_energies( BBPRO, iibbclass, jjbb, iibb ),
+						scbb_energies_upper[ BBREG ],                  scbb_energies_upper[ BBPRO ] );
+
+				}
+				if ( lower_bbrepresentatives[ BBGLY ] != 0 ) {
+					flexbb_ig.set_GlyCorrection_values_for_edge( lowermoltenres, uppermoltenres,
+						uppermoltenres, ii, jjbb,
+						bbbb_energies( BBREG, iibbclass, jjbb, iibb ), bbbb_energies( BBGLY, iibbclass, jjbb, iibb ),
+						scbb_energies_upper[ BBREG ],                   scbb_energies_upper[ BBGLY ] );
 				}
 			}
-			if ( lower_bbrepresentatives[ BBREG ] != 0  &&
-					lower_bbrepresentatives[ BBPRO ] == 0 &&
-					lower_bbrepresentatives[ BBGLY ] == 0 ) {
-				// Neither a proline correction nor a glycine correction.
-				// Set the bb/bb and bb/sc energies.
-				flexbb_ig.set_ProCorrection_values_for_edge( lowermoltenres, uppermoltenres,
-					uppermoltenres, ii, jjbb,
-					bbbb_energies( BBREG, iibbclass, jjbb, iibb ), 0.0,
-					scbb_energies_upper[ BBREG ], 0.0 );
-			}
-			if ( lower_bbrepresentatives[ BBPRO ] != 0 ) {
-				flexbb_ig.set_ProCorrection_values_for_edge( lowermoltenres, uppermoltenres,
-					uppermoltenres, ii, jjbb,
-					bbbb_energies( BBREG, iibbclass, jjbb, iibb ), bbbb_energies( BBPRO, iibbclass, jjbb, iibb ),
-					scbb_energies_upper[ BBREG ],                  scbb_energies_upper[ BBPRO ] );
-
-			}
-			if ( lower_bbrepresentatives[ BBGLY ] != 0 ) {
-				flexbb_ig.set_GlyCorrection_values_for_edge( lowermoltenres, uppermoltenres,
-					uppermoltenres, ii, jjbb,
-					bbbb_energies( BBREG, iibbclass, jjbb, iibb ), bbbb_energies( BBGLY, iibbclass, jjbb, iibb ),
-					scbb_energies_upper[ BBREG ],                   scbb_energies_upper[ BBGLY ] );
-			}
 		}
-	}
 	}
 }
 

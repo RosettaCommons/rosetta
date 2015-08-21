@@ -34,63 +34,63 @@ namespace stepwise {
 namespace modeler {
 namespace packer {
 
-	class StepWiseMasterPacker: public utility::pointer::ReferenceCount {
+class StepWiseMasterPacker: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//constructor
-		StepWiseMasterPacker( working_parameters::StepWiseWorkingParametersCOP working_parameters,
-													options::StepWiseModelerOptionsCOP options );
+	//constructor
+	StepWiseMasterPacker( working_parameters::StepWiseWorkingParametersCOP working_parameters,
+		options::StepWiseModelerOptionsCOP options );
 
-		//destructor
-		~StepWiseMasterPacker();
+	//destructor
+	~StepWiseMasterPacker();
 
-	public:
+public:
 
-		void
-		initialize( core::pose::Pose const & pose );
+	void
+	initialize( core::pose::Pose const & pose );
 
-		void
-		add_packer_screeners( utility::vector1< screener::StepWiseScreenerOP > & screeners,
-													core::pose::Pose const & pose,
-													core::pose::PoseOP sugar_instantiation_pose );
+	void
+	add_packer_screeners( utility::vector1< screener::StepWiseScreenerOP > & screeners,
+		core::pose::Pose const & pose,
+		core::pose::PoseOP sugar_instantiation_pose );
 
-		void
-		reset( core::pose::Pose const & pose );
+	void
+	reset( core::pose::Pose const & pose );
 
-		void
-		do_prepack( core::pose::Pose & pose );
+	void
+	do_prepack( core::pose::Pose & pose );
 
-		void	set_working_pack_res( utility::vector1< core::Size > const & setting );
-		utility::vector1< core::Size > const & working_pack_res() const { return working_pack_res_; }
+	void set_working_pack_res( utility::vector1< core::Size > const & setting );
+	utility::vector1< core::Size > const & working_pack_res() const { return working_pack_res_; }
 
-		// Undefined, commenting out to fix PyRosetta build  bool working_pack_res_was_inputted() const;
+	// Undefined, commenting out to fix PyRosetta build  bool working_pack_res_was_inputted() const;
 
-		void set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn ){ scorefxn_ = scorefxn; }
+	void set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn ){ scorefxn_ = scorefxn; }
 
-		core::scoring::ScoreFunctionCOP scorefxn() const { return scorefxn_; }
+	core::scoring::ScoreFunctionCOP scorefxn() const { return scorefxn_; }
 
-		packer::StepWisePackerCOP packer();
+	packer::StepWisePackerCOP packer();
 
-	private:
+private:
 
-		void
-		initialize_packer();
+	void
+	initialize_packer();
 
-	private:
+private:
 
-		working_parameters::StepWiseWorkingParametersCOP working_parameters_;
-		options::StepWiseModelerOptionsCOP options_;
-		core::scoring::ScoreFunctionCOP scorefxn_;
-		core::scoring::ScoreFunctionCOP phosphate_scorefxn_;
-		utility::vector1< core::Size > working_pack_res_;
+	working_parameters::StepWiseWorkingParametersCOP working_parameters_;
+	options::StepWiseModelerOptionsCOP options_;
+	core::scoring::ScoreFunctionCOP scorefxn_;
+	core::scoring::ScoreFunctionCOP phosphate_scorefxn_;
+	utility::vector1< core::Size > working_pack_res_;
 
-		core::pose::PoseOP packer_pose_;
-    packer::StepWisePackerOP packer_;
-		rna::o2prime::O2PrimePackerOP o2prime_packer_; // deprecate after refactoring of packer
-		rna::phosphate::MultiPhosphateSamplerOP phosphate_sampler_; // deprecate after refactoring of packer
+	core::pose::PoseOP packer_pose_;
+	packer::StepWisePackerOP packer_;
+	rna::o2prime::O2PrimePackerOP o2prime_packer_; // deprecate after refactoring of packer
+	rna::phosphate::MultiPhosphateSamplerOP phosphate_sampler_; // deprecate after refactoring of packer
 
-	};
+};
 
 } //packer
 } //modeler

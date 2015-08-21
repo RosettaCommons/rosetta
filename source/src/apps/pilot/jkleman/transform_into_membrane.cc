@@ -53,20 +53,20 @@ main( int argc, char * argv [] ) {
 
 		using namespace protocols::jd2;
 		using namespace protocols::membrane;
-		
+
 		devel::init(argc, argv);
-		
+
 		// create two movers and concatenate them in a sequence mover
 		AddMembraneMoverOP addmem( new AddMembraneMover() );
 		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover() );
 		SequenceMoverOP seq( new SequenceMover( addmem, transform ) );
-		
+
 		// call jobdistributor on sequence mover
 		JobDistributor::get_instance()->go( seq );
 	}
-	catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
-		return -1;
-	}
+catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+	return -1;
+}
 
 }

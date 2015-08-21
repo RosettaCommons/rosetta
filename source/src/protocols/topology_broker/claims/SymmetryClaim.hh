@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	SymmetryClaim
-/// @brief	Claim for Symmetry (includes SymmData)
+/// @file SymmetryClaim
+/// @brief Claim for Symmetry (includes SymmData)
 /// @author Justin Porter, Tatjana Braun
 
 
@@ -54,43 +54,43 @@ namespace claims {
 // pos=0 claims will be assigned a position from the broker.
 class SymmetryClaim : public DofClaim {
 public:
-    SymmetryClaim( TopologyClaimerAP tc, core::conformation::symmetry::SymmDataOP symmdata,
-                  std::string const& label, ClaimRight right )  :
-        DofClaim( tc, right ),
-        label_( label ),
-        symm_data_( symmdata )
-    {}
+	SymmetryClaim( TopologyClaimerAP tc, core::conformation::symmetry::SymmDataOP symmdata,
+		std::string const& label, ClaimRight right )  :
+		DofClaim( tc, right ),
+		label_( label ),
+		symm_data_( symmdata )
+	{}
 
-    virtual DofClaimOP clone() const {
-        return DofClaimOP( new SymmetryClaim( *this ) );
-    }
+	virtual DofClaimOP clone() const {
+		return DofClaimOP( new SymmetryClaim( *this ) );
+	}
 
-    std::string const& label() const {
-        return label_;
-    }
+	std::string const& label() const {
+		return label_;
+	}
 
-    core::conformation::symmetry::SymmDataOP get_symm_data(){
-        return symm_data_;
-    }
+	core::conformation::symmetry::SymmDataOP get_symm_data(){
+		return symm_data_;
+	}
 
-    virtual std::string str_type() const {
-        return "SYMMETRY";
-    }
+	virtual std::string str_type() const {
+		return "SYMMETRY";
+	}
 
-    virtual void show( std::ostream& os ) const {
-        os << " with label: " << label();
-    }
-    
-//    virtual std::string to_string() const {
-//        std::ostringstream str_stream;
-//        str_stream << "(SymmetryClaim; owner, " << owner()->type() //<< "; label, " << label()
-//            << "; symmetry name, " << symm_data_->get_symmetry_name() << ")" ;
-//        return str_stream.str();
-//    }
-    
+	virtual void show( std::ostream& os ) const {
+		os << " with label: " << label();
+	}
+
+	//    virtual std::string to_string() const {
+	//        std::ostringstream str_stream;
+	//        str_stream << "(SymmetryClaim; owner, " << owner()->type() //<< "; label, " << label()
+	//            << "; symmetry name, " << symm_data_->get_symmetry_name() << ")" ;
+	//        return str_stream.str();
+	//    }
+
 private:
-    std::string label_;
-    core::conformation::symmetry::SymmDataOP symm_data_;
+	std::string label_;
+	core::conformation::symmetry::SymmDataOP symm_data_;
 };
 
 } // claims

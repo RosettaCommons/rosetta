@@ -82,15 +82,15 @@ SymAtomTreeMinimizer::run(
 	else make_semisymmetric_movemap( pose, move_map, semisym_move_map );
 
 	SymmetricConformation const & symm_conf ( dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
-debug_assert( conformation::symmetry::is_symmetric( symm_conf ) );
+	debug_assert( conformation::symmetry::is_symmetric( symm_conf ) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 	// setup the minimizer map using the semi-symetric min map
 	SymMinimizerMap sym_min_map( pose, semisym_move_map, symm_info, new_sym_min );
 	//kinematics::DomainMap const & dm( sym_min_map.domain_map() );
 	//for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-	//	std::cout << "(" << ii << ", " << dm(ii) << "), ";
-	//	if ( ii % 10 == 0 ) std::cout << std::endl;
+	// std::cout << "(" << ii << ", " << dm(ii) << "), ";
+	// if ( ii % 10 == 0 ) std::cout << std::endl;
 	//}
 	//std::cout << std::endl;
 
@@ -175,7 +175,7 @@ SymAtomTreeMinimizer::make_semisymmetric_movemap(
 
 	SymmetricConformation const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
-debug_assert( conformation::symmetry::is_symmetric( SymmConf ) );
+	debug_assert( conformation::symmetry::is_symmetric( SymmConf ) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	// copy bb/chi DOFs from symm movemap
@@ -183,7 +183,7 @@ debug_assert( conformation::symmetry::is_symmetric( SymmConf ) );
 
 	for ( Size i=1; i<= pose.conformation().fold_tree().num_jump(); ++i ) {
 		id::DOF_ID const & null_id
-		( pose.conformation().dof_id_from_torsion_id(id::TorsionID(i,id::JUMP,1)));
+			( pose.conformation().dof_id_from_torsion_id(id::TorsionID(i,id::JUMP,1)));
 		if ( symm_info->get_dof_derivative_weight( null_id , SymmConf ) > 0 ) {
 			// if this is not the master get the master
 			if ( symm_info->jump_is_independent( i ) ) continue;
@@ -191,10 +191,10 @@ debug_assert( conformation::symmetry::is_symmetric( SymmConf ) );
 			Size master_i = symm_info->jump_follows( i );
 
 			for ( int j=1; j<= 6; ++j ) {
-			id::DOF_ID const & id_master
-				( pose.conformation().dof_id_from_torsion_id(id::TorsionID(master_i,id::JUMP,j)));
+				id::DOF_ID const & id_master
+					( pose.conformation().dof_id_from_torsion_id(id::TorsionID(master_i,id::JUMP,j)));
 				id::DOF_ID const & id
-				( pose.conformation().dof_id_from_torsion_id(id::TorsionID(i,id::JUMP,j)));
+					( pose.conformation().dof_id_from_torsion_id(id::TorsionID(i,id::JUMP,j)));
 
 				bool allow ( move_map_sym.get( id_master ) );
 				move_map_semisym.set(id, allow );
@@ -218,7 +218,7 @@ SymAtomTreeMinimizer::make_assymetric_movemap(
 
 	SymmetricConformation const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
-debug_assert( conformation::symmetry::is_symmetric( SymmConf ) );
+	debug_assert( conformation::symmetry::is_symmetric( SymmConf ) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	for ( Size i=1; i<= pose.conformation().size(); ++i ) {
@@ -230,7 +230,7 @@ debug_assert( conformation::symmetry::is_symmetric( SymmConf ) );
 			for ( std::vector< Size>::const_iterator
 					clone     = symm_info->bb_clones( i ).begin(),
 					clone_end = symm_info->bb_clones( i ).end();
-					clone != clone_end; ++clone ){
+					clone != clone_end; ++clone ) {
 				move_map_asym.set_bb ( *clone, bb );
 				move_map_asym.set_chi( *clone, chi );
 			}
@@ -240,7 +240,7 @@ debug_assert( conformation::symmetry::is_symmetric( SymmConf ) );
 		if ( symm_info->jump_is_independent( i ) ) {
 			for ( int j=1; j<= 6; ++j ) {
 				id::DOF_ID const & id
-				( pose.conformation().dof_id_from_torsion_id(id::TorsionID(i,id::JUMP,j)));
+					( pose.conformation().dof_id_from_torsion_id(id::TorsionID(i,id::JUMP,j)));
 				DOF_IDs const & dofs( symm_info->dependent_dofs( id, SymmConf ) );
 				bool allow ( move_map_sym.get( id ) );
 				move_map_asym.set(id, allow );

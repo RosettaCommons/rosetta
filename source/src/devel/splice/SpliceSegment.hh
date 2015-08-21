@@ -42,21 +42,21 @@ formatted as Rosetta-readable PSSM files*/
 /// @brief utility class and functions for dealing with sequence profiles for varying segments in Splice
 class SpliceSegment : public utility::pointer::ReferenceCount
 {
-	public:
-		SpliceSegment();
-		virtual ~SpliceSegment();
-		void read_profile( std::string const file_name, std::string const segment_name ); /// read pssm
-		void read_many( std::string const protein_family , std::string const segmetn); /// read pssm
-		void all_pdb_profile(std::string const s, std::string const );
-		void read_pdb_profile( std::string const file_name ); /// read the pdb-profile match from a disk file
-		core::sequence::SequenceProfileOP get_profile( std::string const segment_name ); // return the requested sequence profile
-		void add_pdb_profile_pair( std::string const pdb, std::string const profile_name ); /// add a sequence profile
-		core::sequence::SequenceProfileOP pdb_profile( std::string const pdb_name ); // return a sequence profile according to a pdb file name
-		core::sequence::SequenceProfileOP sequence_profile( std::string const profile_name ); // return a sequence profile according to a profile name
-		std::string get_cluster_name_by_PDB(std::string pdbNAme){return pdb_to_profile_map_[pdbNAme];}
-	private:
-		std::map< std::string/*L3.10.1*/, core::sequence::SequenceProfileOP > sequence_profile_;
-		std::map< std::string/*1AHW*/, std::string/*L1.1*/ > pdb_to_profile_map_;
+public:
+	SpliceSegment();
+	virtual ~SpliceSegment();
+	void read_profile( std::string const file_name, std::string const segment_name ); /// read pssm
+	void read_many( std::string const protein_family , std::string const segmetn); /// read pssm
+	void all_pdb_profile(std::string const s, std::string const );
+	void read_pdb_profile( std::string const file_name ); /// read the pdb-profile match from a disk file
+	core::sequence::SequenceProfileOP get_profile( std::string const segment_name ); // return the requested sequence profile
+	void add_pdb_profile_pair( std::string const pdb, std::string const profile_name ); /// add a sequence profile
+	core::sequence::SequenceProfileOP pdb_profile( std::string const pdb_name ); // return a sequence profile according to a pdb file name
+	core::sequence::SequenceProfileOP sequence_profile( std::string const profile_name ); // return a sequence profile according to a profile name
+	std::string get_cluster_name_by_PDB(std::string pdbNAme){return pdb_to_profile_map_[pdbNAme];}
+private:
+	std::map< std::string/*L3.10.1*/, core::sequence::SequenceProfileOP > sequence_profile_;
+	std::map< std::string/*1AHW*/, std::string/*L1.1*/ > pdb_to_profile_map_;
 
 };
 

@@ -38,7 +38,7 @@ std::string get_env_var( std::string const & key ) {
 	char * val;
 	val = getenv( key.c_str() );
 	std::string retval = "";
-	if (val != NULL) {
+	if ( val != NULL ) {
 		retval = val;
 	}
 	return retval;
@@ -48,33 +48,33 @@ int
 main( int argc, char * argv [] ) {
 	try {
 
-	using namespace protocols::jobdist;
-	using namespace protocols::moves;
-	using namespace core::scoring;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace protocols::jobdist;
+		using namespace protocols::moves;
+		using namespace core::scoring;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	//option[ in::file::rescore ].def( true );
-	//option[ in::file::residue_type_set ].def( "fa_standard" );
-	//option[ in::file::silent_struct_type ].def( "binary" );
-	//option[ score::weights ].def( "score" );
-	//option[ score::patch ].def( "score12" );
-	//option[ out::file::silent_struct_type ].def( "score" );
-	//option[ out::file::silent ].def( "scores.sc" );
+		//option[ in::file::rescore ].def( true );
+		//option[ in::file::residue_type_set ].def( "fa_standard" );
+		//option[ in::file::silent_struct_type ].def( "binary" );
+		//option[ score::weights ].def( "score" );
+		//option[ score::patch ].def( "score12" );
+		//option[ out::file::silent_struct_type ].def( "score" );
+		//option[ out::file::silent ].def( "scores.sc" );
 
-	// initialize core
-	devel::init(argc, argv);
+		// initialize core
+		devel::init(argc, argv);
 
-	std::cout << "currently in file " << __FILE__ << std::endl;
-	std::cout << "currently at line " << __LINE__ << std::endl;
+		std::cout << "currently in file " << __FILE__ << std::endl;
+		std::cout << "currently at line " << __LINE__ << std::endl;
 
-	MoverOP mover( new NullMover );
-	if ( option[ OptionKeys::constraints::cst_weight ].user() ) {
-		protocols::simple_moves::ConstraintSetMoverOP loadcsts( new protocols::simple_moves::ConstraintSetMover );
-		loadcsts->constraint_file( core::scoring::constraints::get_cst_file_option() );
-		mover = loadcsts;
-	}
-	not_universal_main( *mover );
+		MoverOP mover( new NullMover );
+		if ( option[ OptionKeys::constraints::cst_weight ].user() ) {
+			protocols::simple_moves::ConstraintSetMoverOP loadcsts( new protocols::simple_moves::ConstraintSetMover );
+			loadcsts->constraint_file( core::scoring::constraints::get_cst_file_option() );
+			mover = loadcsts;
+		}
+		not_universal_main( *mover );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

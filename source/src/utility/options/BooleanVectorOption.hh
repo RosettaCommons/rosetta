@@ -132,7 +132,7 @@ protected: // Methods
 			return false;
 		} else { // Illegal
 			std::cerr << "ERROR: Illegal value for boolean option -" << id()
-			 << " specified: " << value_str << std::endl;
+				<< " specified: " << value_str << std::endl;
 			std::exit( EXIT_FAILURE );
 			return false; // Keep compiler happy
 		}
@@ -145,19 +145,19 @@ protected: // Methods
 	is_true_value( std::string const & value_str ) const
 	{
 		return (
-		 ( value_str.empty() ) ||
-		 ( value_str == "true" ) ||
-		 ( value_str == "True" ) ||
-		 ( value_str == "TRUE" ) ||
-		 ( value_str == "t" ) ||
-		 ( value_str == "T" ) ||
-		 ( value_str == "1" ) ||
-		 ( value_str == "on" ) ||
-		 ( value_str == "On" ) ||
-		 ( value_str == "ON" ) ||
-		 ( value_str == "yes" ) ||
-		 ( value_str == "Yes" ) ||
-		 ( value_str == "YES" ) );
+			( value_str.empty() ) ||
+			( value_str == "true" ) ||
+			( value_str == "True" ) ||
+			( value_str == "TRUE" ) ||
+			( value_str == "t" ) ||
+			( value_str == "T" ) ||
+			( value_str == "1" ) ||
+			( value_str == "on" ) ||
+			( value_str == "On" ) ||
+			( value_str == "ON" ) ||
+			( value_str == "yes" ) ||
+			( value_str == "Yes" ) ||
+			( value_str == "YES" ) );
 	}
 
 
@@ -167,18 +167,18 @@ protected: // Methods
 	is_false_value( std::string const & value_str ) const
 	{
 		return (
-		 ( value_str == "false" ) ||
-		 ( value_str == "False" ) ||
-		 ( value_str == "FALSE" ) ||
-		 ( value_str == "f" ) ||
-		 ( value_str == "F" ) ||
-		 ( value_str == "0" ) ||
-		 ( value_str == "off" ) ||
-		 ( value_str == "Off" ) ||
-		 ( value_str == "OFF" ) ||
-		 ( value_str == "no" ) ||
-		 ( value_str == "No" ) ||
-		 ( value_str == "NO" ) );
+			( value_str == "false" ) ||
+			( value_str == "False" ) ||
+			( value_str == "FALSE" ) ||
+			( value_str == "f" ) ||
+			( value_str == "F" ) ||
+			( value_str == "0" ) ||
+			( value_str == "off" ) ||
+			( value_str == "Off" ) ||
+			( value_str == "OFF" ) ||
+			( value_str == "no" ) ||
+			( value_str == "No" ) ||
+			( value_str == "NO" ) );
 	}
 
 

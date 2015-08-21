@@ -50,7 +50,7 @@ public:
 
 private:
 	Timer(void) {
-		if (!is_on_) time(&time_);
+		if ( !is_on_ ) time(&time_);
 		is_on_ = true;
 	}
 

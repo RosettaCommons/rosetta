@@ -91,12 +91,12 @@ static thread_local basic::Tracer TR( "core.pack.rotamer_set.rna_rotamer_buildin
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 fill_chi_rotamers_with_center_and_stddev( conformation::ResidueOP const & rot,
-		utility::vector1< conformation::ResidueOP > & rotamers,
-		utility::vector1< Real > const & chi_steps,
-		Real const & center, Real const & width )
+	utility::vector1< conformation::ResidueOP > & rotamers,
+	utility::vector1< Real > const & chi_steps,
+	Real const & center, Real const & width )
 {
 	using namespace conformation;
-	for (Size n = 1 ; n <= chi_steps.size(); n++ ) {
+	for ( Size n = 1 ; n <= chi_steps.size(); n++ ) {
 		ResidueOP new_rot = rot->clone();
 		new_rot->set_chi( 1, center + chi_steps[n] * width );
 		rotamers.push_back( new_rot );
@@ -106,9 +106,9 @@ fill_chi_rotamers_with_center_and_stddev( conformation::ResidueOP const & rot,
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 add_rna_chi_rotamers( conformation::ResidueOP const & rot,
-											utility::vector1< conformation::ResidueOP > & rotamers,
-											pack::task::ExtraRotSample const & level,
-											utility::vector1< chemical::rna::GaussianParameter > const & gaussian_parameter_set )
+	utility::vector1< conformation::ResidueOP > & rotamers,
+	pack::task::ExtraRotSample const & level,
+	utility::vector1< chemical::rna::GaussianParameter > const & gaussian_parameter_set )
 {
 	using namespace conformation;
 	using namespace chemical::rna;
@@ -120,7 +120,7 @@ add_rna_chi_rotamers( conformation::ResidueOP const & rot,
 	//This copies code, unfortunately, from RotamerSet_.cc
 	switch ( level ) {
 	case NO_EXTRA_CHI_SAMPLES : // 0
-		//		return;
+		//  return;
 		break;
 	case EX_ONE_STDDEV : // 1
 		chi_steps.push_back(1);
@@ -183,15 +183,15 @@ add_rna_chi_rotamers( conformation::ResidueOP const & rot,
 
 	GaussianParameter const & gaussian_parameter( gaussian_parameter_set[1] );
 	fill_chi_rotamers_with_center_and_stddev( rot, rotamers,
-																						chi_steps,
-																						gaussian_parameter.center, gaussian_parameter.width );
+		chi_steps,
+		gaussian_parameter.center, gaussian_parameter.width );
 
 	//Add in syn configurations for purines.
 	if ( rot->aa() == chemical::na_rad || rot->aa() == chemical::na_rgu ) {
 		GaussianParameter const & gaussian_parameter2( gaussian_parameter_set[2] );
 		fill_chi_rotamers_with_center_and_stddev( rot, rotamers,
-																							chi_steps,
-																							gaussian_parameter2.center, gaussian_parameter2.width );
+			chi_steps,
+			gaussian_parameter2.center, gaussian_parameter2.width );
 	}
 
 }
@@ -214,12 +214,12 @@ build_rna_chi_rotamers(
 	using namespace id;
 	using namespace pack::task;
 
-	//	Real const max_rotation( 5.0 ); // degrees
-	//	bool const tether_bond_distance( true );
-	//	bool const tether_bond_angle( false );
+	// Real const max_rotation( 5.0 ); // degrees
+	// bool const tether_bond_distance( true );
+	// bool const tether_bond_angle( false );
 
 	Residue const & existing_residue( pose.residue( resid ) );
-debug_assert( existing_residue.is_RNA() && concrete_residue->is_RNA() );
+	debug_assert( existing_residue.is_RNA() && concrete_residue->is_RNA() );
 
 	// a residue of the correct type aligned to the existing backbone
 	ResidueOP rot = ResidueFactory::create_residue( *concrete_residue, existing_residue, pose.conformation(), false /*true*/ /*preserve c_beta*/ );
@@ -238,7 +238,7 @@ debug_assert( existing_residue.is_RNA() && concrete_residue->is_RNA() );
 		rotamers.push_back( new_rot );
 	}
 
-	if (!sample_rna_chi && level == 0) return;
+	if ( !sample_rna_chi && level == 0 ) return;
 
 	//Different chi angles depending on sugar pucker.
 	if ( delta <= delta_cutoff ) {
@@ -259,11 +259,11 @@ debug_assert( existing_residue.is_RNA() && concrete_residue->is_RNA() );
 //
 void
 build_proton_chi_rotamers(
-		Size const /* resid */,
-		pose::Pose const & pose,
-		chemical::ResidueTypeCOP concrete_residue,
-		pack::task::ResidueLevelTask const & residue_task,
-		utility::vector1< conformation::ResidueOP > & rotamers )
+	Size const /* resid */,
+	pose::Pose const & pose,
+	chemical::ResidueTypeCOP concrete_residue,
+	pack::task::ResidueLevelTask const & residue_task,
+	utility::vector1< conformation::ResidueOP > & rotamers )
 {
 	using namespace conformation;
 	Size const n_proton_chi = concrete_residue->n_proton_chi();
@@ -276,8 +276,8 @@ build_proton_chi_rotamers(
 
 		for ( Size ii = 1; ii <= n_proton_chi; ++ii ) {
 			pack::dunbrack::expand_proton_chi( residue_task.extrachi_sample_level( true /*nneighb test*/,
-					concrete_residue->proton_chi_2_chi( ii ), *concrete_residue ),
-					concrete_residue, ii, proton_chi_chisets);
+				concrete_residue->proton_chi_2_chi( ii ), *concrete_residue ),
+				concrete_residue, ii, proton_chi_chisets);
 		}
 
 		Size const number_of_starting_rotamers = rotamers.size();
@@ -293,21 +293,21 @@ build_proton_chi_rotamers(
 					Size const jj_protchi( concrete_residue->proton_chi_2_chi( jj ) );
 					ResidueOP rot = rotamers[ new_rotamer_number ];
 					rot->set_chi( jj_protchi,
-												proton_chi_chisets[ ii ]->chi[ jj_protchi ] );
+						proton_chi_chisets[ ii ]->chi[ jj_protchi ] );
 
 					if ( include_virtual_side_chain ) {
 						runtime_assert( !rot->has_variant_type( chemical::VIRTUAL_O2PRIME_HYDROGEN ) );
 						static core::scoring::rna::RNA_EnergyMethodOptions const rna_options;
 						static core::scoring::rna::RNA_TorsionPotential rna_torsion_potential( rna_options ); // I think this is OK.
 						Real const rna_torsion = rna_torsion_potential.eval_intrares_energy( *rot, pose );
-						if ( n_min == 0 || rna_torsion < rna_torsion_min ){
+						if ( n_min == 0 || rna_torsion < rna_torsion_min ) {
 							n_min = new_rotamer_number; rna_torsion_min = rna_torsion;
 						}
 					}
 				}
 
 			}
-			if ( include_virtual_side_chain ){
+			if ( include_virtual_side_chain ) {
 				ResidueOP rot = core::pose::add_variant_type_to_residue( *rotamers[ n_min ], chemical::VIRTUAL_O2PRIME_HYDROGEN, pose);
 				rotamers.push_back( rot );
 			}
@@ -320,7 +320,7 @@ build_proton_chi_rotamers(
 /////////////////////////////////////////////////////////////////////////////
 void
 build_five_prime_phosphate_rotamers( utility::vector1< conformation::ResidueOP > & rotamers,
-																		 pose::Pose const & pose, bool const allow_phosphate_virtualization ){
+	pose::Pose const & pose, bool const allow_phosphate_virtualization ){
 	using namespace core::conformation;
 
 	utility::vector1< Real > const full_torsions  = chemical::rna::get_full_torsions();
@@ -330,9 +330,9 @@ build_five_prime_phosphate_rotamers( utility::vector1< conformation::ResidueOP >
 
 		runtime_assert( rotamers[n]->has_variant_type( chemical::FIVE_PRIME_PACKABLE_PHOSPHATE ) );
 		// this nested iteration is totally ghetto -- would be better to unify with fang's protocols/rotamer_sample/rna/RNA_SuiteRotamer code.
-		for ( Size i = 1; i <= full_torsions.size(); i++ ){
-			for ( Size j = 1; j <= full_torsions.size(); j++ ){
-				for ( Size k = 1; k <= full_torsions.size(); k++ ){
+		for ( Size i = 1; i <= full_torsions.size(); i++ ) {
+			for ( Size j = 1; j <= full_torsions.size(); j++ ) {
+				for ( Size k = 1; k <= full_torsions.size(); k++ ) {
 					ResidueOP  new_rsd = rotamers[n]->clone();
 					Size const chi_number_i = rotamers[n]->type().RNA_type().chi_number_pseudoalpha();
 					Size const chi_number_j = rotamers[n]->type().RNA_type().chi_number_pseudobeta();
@@ -348,7 +348,7 @@ build_five_prime_phosphate_rotamers( utility::vector1< conformation::ResidueOP >
 			} //j
 		} //i
 
-		if ( allow_phosphate_virtualization ){
+		if ( allow_phosphate_virtualization ) {
 			//also add a rotamer that removes this variant!
 			ResidueOP new_rsd = remove_variant_type_from_residue( *rotamers[n], chemical::FIVE_PRIME_PACKABLE_PHOSPHATE, pose );
 			rotamers.push_back( new_rsd );
@@ -362,8 +362,8 @@ build_five_prime_phosphate_rotamers( utility::vector1< conformation::ResidueOP >
 /////////////////////////////////////////////////////////////////////////////
 void
 build_three_prime_phosphate_rotamers( utility::vector1< conformation::ResidueOP > & rotamers,
-																			pose::Pose const & pose,
-																			bool const allow_phosphate_virtualization ){
+	pose::Pose const & pose,
+	bool const allow_phosphate_virtualization ){
 
 	using namespace core::conformation;
 	using namespace core::chemical::rna;
@@ -372,11 +372,11 @@ build_three_prime_phosphate_rotamers( utility::vector1< conformation::ResidueOP 
 	Size const number_of_starting_rotamers = rotamers.size();
 	for ( Size n = 1 ; n <= number_of_starting_rotamers; ++n ) {
 		utility::vector1< Real > const epsilon_torsions  = get_epsilon_torsions( rotamers[n]->mainchain_torsion( DELTA ),
-																																						 true /*extra epsilon*/, 10.0 /*bin size*/ );
+			true /*extra epsilon*/, 10.0 /*bin size*/ );
 		runtime_assert( rotamers[n]->has_variant_type( chemical::THREE_PRIME_PACKABLE_PHOSPHATE ) );
 		// this nested iteration is totally ghetto -- would be better to unify with fang's protocols/rotamer_sample/rna/RNA_SuiteRotamer code.
-		for ( Size i = 1; i <= epsilon_torsions.size(); i++ ){
-			for ( Size j = 1; j <= full_torsions.size(); j++ ){
+		for ( Size i = 1; i <= epsilon_torsions.size(); i++ ) {
+			for ( Size j = 1; j <= full_torsions.size(); j++ ) {
 				ResidueOP  new_rsd = rotamers[n]->clone();
 				Size const chi_number_i = rotamers[n]->type().RNA_type().chi_number_pseudoepsilon();
 				Size const chi_number_j = rotamers[n]->type().RNA_type().chi_number_pseudozeta();
@@ -388,7 +388,7 @@ build_three_prime_phosphate_rotamers( utility::vector1< conformation::ResidueOP 
 			} //j
 		} //i
 
-		if ( allow_phosphate_virtualization ){
+		if ( allow_phosphate_virtualization ) {
 			//also add a rotamer that removes this variant!
 			ResidueOP new_rsd = remove_variant_type_from_residue( *rotamers[n], chemical::THREE_PRIME_PACKABLE_PHOSPHATE, pose );
 			rotamers.push_back( new_rsd );
@@ -418,9 +418,9 @@ build_rna_rotamers(
 	//////////////////////////////////////////////////////////////////////////
 	// Basic set up...
 	build_rna_chi_rotamers( resid, pose, concrete_residue, level,
-													task.residue_task( resid ).rna_task().sample_rna_chi(),
-													task.include_current( resid ),
-													new_rotamers );
+		task.residue_task( resid ).rna_task().sample_rna_chi(),
+		task.include_current( resid ),
+		new_rotamers );
 
 	//////////////////////////////////////////////////////////////////////////
 	// include current... this doesn't use ideal bond lengths/angles.
@@ -447,9 +447,11 @@ build_rna_rotamers(
 	}
 
 	///////////////////////////////////////////////////////////
-	if ( task.residue_task( resid ).sample_proton_chi() ) build_proton_chi_rotamers( resid, pose, concrete_residue,
-																																									 task.residue_task( resid ),
-																																									 new_rotamers );
+	if ( task.residue_task( resid ).sample_proton_chi() ) {
+		build_proton_chi_rotamers( resid, pose, concrete_residue,
+			task.residue_task( resid ),
+			new_rotamers );
+	}
 
 }
 

@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/scoring/Membrane_FAPotential.cc
+/// @file  core/scoring/Membrane_FAPotential.cc
 ///
-/// @brief		Membrane FA Potential - Class for Fullatom Membrane Scoring Methods
-/// @details	Compute High resolution energy terms and high resolution embedding corrections
-///				for penalties. Also contains pass-through methods for accessing and updating
-///				mp framework supported data in a membrane conformation.
-///				Last Modified: 3/11/14
+/// @brief  Membrane FA Potential - Class for Fullatom Membrane Scoring Methods
+/// @details Compute High resolution energy terms and high resolution embedding corrections
+///    for penalties. Also contains pass-through methods for accessing and updating
+///    mp framework supported data in a membrane conformation.
+///    Last Modified: 3/11/14
 ///
-///	@author		Rebecca Faye Alford (rfalford12@gmail.com)
-/// @author		Patrick Barth (original)
+/// @author  Rebecca Faye Alford (rfalford12@gmail.com)
+/// @author  Patrick Barth (original)
 
 
 #ifndef INCLUDED_core_scoring_Membrane_FA_Potential_hh
@@ -53,10 +53,10 @@ namespace scoring {
 
 ////////////////////////////////// Membrane Fullatom Embedding ///////////////////////////////////
 
-/// @brief	 Membrane Fullatom embedding info
+/// @brief  Membrane Fullatom embedding info
 /// @details Cacheable Data - Stores Full atom embedding information including
-///			 projection from z axis, fa depth, center, penalty, membrane thicnkess
-///			 steepness and normal
+///    projection from z axis, fa depth, center, penalty, membrane thicnkess
+///    steepness and normal
 class Membrane_FAEmbed : public basic::datacache::CacheableData {
 
 public:
@@ -139,9 +139,9 @@ private: // data
 	bool Fa_Membed_update_;
 };
 
-/// @brief		Mmebrane Fullatom Potential - Scoring Class
-/// @details	Helper methods for computing fullatom energy terms
-///				in the membrane scoring function
+/// @brief  Mmebrane Fullatom Potential - Scoring Class
+/// @details Helper methods for computing fullatom energy terms
+///    in the membrane scoring function
 class Membrane_FAPotential : public EnvPairPotential {
 
 public:
@@ -152,7 +152,7 @@ public:
 	void compute_fa_projection(pose::Pose & pose) const;
 
 	/// @brief Base Class Method - Finalize Scoring Setup
-	virtual	void finalize( pose::Pose & pose ) const;
+	virtual void finalize( pose::Pose & pose ) const;
 
 private: // methods
 

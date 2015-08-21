@@ -48,7 +48,7 @@ private:
 
 	// Copy constructors and assignment operators may discard subtype information.
 	// Do not use or implement
- 	SymmetricScoreFunction &
+	SymmetricScoreFunction &
 	operator=( SymmetricScoreFunction const & );
 
 	SymmetricScoreFunction( SymmetricScoreFunction const & );
@@ -58,11 +58,11 @@ public:
 	/// @brief NOT FOR GENERAL USE
 	/// Copy the information about src into the current score function.
 	/// There are deep interactions with subclasses,
-  /// (the subclass information doesn't necessarily get copied)
-  /// so this is primarily for advanced scorefunction manipulation.
-  /// Normal usage should just use clone() and replace the OP.
-  virtual void
-  assign( ScoreFunction const & src);
+	/// (the subclass information doesn't necessarily get copied)
+	/// so this is primarily for advanced scorefunction manipulation.
+	/// Normal usage should just use clone() and replace the OP.
+	virtual void
+	assign( ScoreFunction const & src);
 
 	/// @brief NOT FOR GENERAL USE
 	virtual void
@@ -70,9 +70,9 @@ public:
 
 	ScoreFunctionOP clone() const;
 
-  /////////////////////////////////////////////////////////////////////////////
-  // score
-  /////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////
+	// score
+	/////////////////////////////////////////////////////////////////////////////
 
 	virtual Real
 	operator ()( pose::Pose & pose ) const;
@@ -143,14 +143,14 @@ public:
 
 inline core::scoring::ScoreFunctionOP
 asymmetrize_scorefunction( ScoreFunction const & src ) {
-  //Should there be some test to see if the ScoreFunction is actually symmetric first?
+	//Should there be some test to see if the ScoreFunction is actually symmetric first?
 	return src.clone_as_base_class();
 }
 
 inline core::scoring::symmetry::SymmetricScoreFunctionOP
 symmetrize_scorefunction( ScoreFunction const & src ) {
-  //Should there be some test to see if the ScoreFunction is actually symmetric first?
-  SymmetricScoreFunctionOP new_scorefxn( new SymmetricScoreFunction );
+	//Should there be some test to see if the ScoreFunction is actually symmetric first?
+	SymmetricScoreFunctionOP new_scorefxn( new SymmetricScoreFunction );
 	new_scorefxn->assign( src );
 	return new_scorefxn;
 }

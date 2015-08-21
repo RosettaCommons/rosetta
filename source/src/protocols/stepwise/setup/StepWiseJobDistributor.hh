@@ -25,49 +25,49 @@ namespace protocols {
 namespace stepwise {
 namespace setup {
 
-	class StepWiseJobDistributor: public protocols::moves::Mover {
+class StepWiseJobDistributor: public protocols::moves::Mover {
 
-	public:
+public:
 
-		StepWiseJobDistributor( stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo,
-														std::string const silent_file,
-														core::Size const nstruct ):
+	StepWiseJobDistributor( stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo,
+		std::string const silent_file,
+		core::Size const nstruct ):
 		stepwise_monte_carlo_( stepwise_monte_carlo ),
 		silent_file_( silent_file ),
 		nstruct_( nstruct ),
 		superimpose_over_all_( false )
-		{
-		}
+	{
+	}
 
 
-		virtual std::string get_name() const {
-			return "StepWiseJobDistributor";
-		}
+	virtual std::string get_name() const {
+		return "StepWiseJobDistributor";
+	}
 
-		virtual
-		void
-		apply( core::pose::Pose & pose ) = 0;
+	virtual
+	void
+	apply( core::pose::Pose & pose ) = 0;
 
-		virtual
-		void
-		initialize( core::pose::Pose const & pose ) = 0;
+	virtual
+	void
+	initialize( core::pose::Pose const & pose ) = 0;
 
-		virtual
-		bool
-		has_another_job() = 0;
+	virtual
+	bool
+	has_another_job() = 0;
 
-		void set_superimpose_over_all( bool const & setting ){ superimpose_over_all_ = setting; }
-		bool superimpose_over_all() const { return superimpose_over_all_; }
+	void set_superimpose_over_all( bool const & setting ){ superimpose_over_all_ = setting; }
+	bool superimpose_over_all() const { return superimpose_over_all_; }
 
-	protected:
+protected:
 
-		stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo_;
-		std::string const silent_file_;
-		core::Size const nstruct_;
-		bool superimpose_over_all_;
-		core::pose::PoseCOP start_pose_;
+	stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo_;
+	std::string const silent_file_;
+	core::Size const nstruct_;
+	bool superimpose_over_all_;
+	core::pose::PoseCOP start_pose_;
 
-	};
+};
 
 } //setup
 } //stepwise

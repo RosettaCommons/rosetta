@@ -25,7 +25,7 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 
@@ -33,37 +33,37 @@ class ChargeCalculator : public core::pose::metrics::StructureDependentCalculato
 
 public:
 
-  ChargeCalculator();
+	ChargeCalculator();
 
 
-  ChargeCalculator(
-    std::set< core::Size > const & special_region
-  );
+	ChargeCalculator(
+		std::set< core::Size > const & special_region
+	);
 
-  ~ChargeCalculator();
+	~ChargeCalculator();
 
 
-  core::pose::metrics::PoseMetricCalculatorOP clone() const {
-    return core::pose::metrics::PoseMetricCalculatorOP( new ChargeCalculator( special_region_) ); };
+	core::pose::metrics::PoseMetricCalculatorOP clone() const {
+		return core::pose::metrics::PoseMetricCalculatorOP( new ChargeCalculator( special_region_) ); };
 
 protected:
 
-  virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-  virtual std::string print( std::string const & key ) const;
-  virtual void recompute( core::pose::Pose const & this_pose );
+	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
+	virtual std::string print( std::string const & key ) const;
+	virtual void recompute( core::pose::Pose const & this_pose );
 
 
 private:
 
-  core::Real total_charge_;
-  core::Size total_pos_charges_;
-  core::Size total_neg_charges_;
+	core::Real total_charge_;
+	core::Size total_pos_charges_;
+	core::Size total_neg_charges_;
 
-  core::Real SR_total_charge_;
-  core::Size SR_total_pos_charges_;
-  core::Size SR_total_neg_charges_;
+	core::Real SR_total_charge_;
+	core::Size SR_total_pos_charges_;
+	core::Size SR_total_neg_charges_;
 
-  std::set< core::Size > special_region_;
+	std::set< core::Size > special_region_;
 
 };
 

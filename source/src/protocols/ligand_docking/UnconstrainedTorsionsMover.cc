@@ -45,7 +45,7 @@ UnconstrainedTorsionsMover::UnconstrainedTorsionsMover(
 	Mover(),
 	child_mover_(child_mover)
 {
-	BOOST_FOREACH(ResidueTorsionRestraintsOP restraint, restraints){
+	BOOST_FOREACH ( ResidueTorsionRestraintsOP restraint, restraints ) {
 		restraints_.push_back(restraint);
 	}
 }
@@ -57,19 +57,19 @@ UnconstrainedTorsionsMover::UnconstrainedTorsionsMover(
 	Mover(),
 	child_mover_(child_mover)
 {
-	BOOST_FOREACH(MinimizeLigandOP minimize_ligand, minimize_ligands){
+	BOOST_FOREACH ( MinimizeLigandOP minimize_ligand, minimize_ligands ) {
 		restraints_.insert( restraints_.end(), minimize_ligand->begin(), minimize_ligand->end() );
 	}
 }
 
 void UnconstrainedTorsionsMover::apply( core::pose::Pose & pose )
 {
-	BOOST_FOREACH(ResidueTorsionRestraintsOP restraint, restraints_){
+	BOOST_FOREACH ( ResidueTorsionRestraintsOP restraint, restraints_ ) {
 		restraint->disable( pose );
 	}
 	child_mover_->apply(pose);
 
-	BOOST_FOREACH(ResidueTorsionRestraintsOP restraint, restraints_){
+	BOOST_FOREACH ( ResidueTorsionRestraintsOP restraint, restraints_ ) {
 		restraint->enable( pose );
 	}
 }

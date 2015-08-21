@@ -97,10 +97,10 @@ void SymSidechainMinMover::set_minmover( protocols::simple_moves::MinMoverOP min
 //default options setup for SymSidechainMinMover
 void SymSidechainMinMover::set_default_options()
 {
-	if(update_movemap_){
+	if ( update_movemap_ ) {
 		movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
 		movemap_->set_chi( true );
-		}
+	}
 	scorefxn_ = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	minmover_ = protocols::simple_moves::MinMoverOP( new simple_moves::symmetry::SymMinMover(movemap_, scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/  ) );
 }
@@ -114,19 +114,19 @@ SymSidechainMinMover::get_name() const {
 void SymSidechainMinMover::update_movemap( core::pose::Pose & pose)
 {
 	movemap_->set_chi( true );
-	if (tf_) task_ = tf_->create_task_and_apply_taskoperations( pose );
-	if (task_){
-		for(Size i = 1; i <= pose.total_residue(); i++){
-			if (!task_->nonconst_residue_task(i).being_packed()) movemap_->set_chi(i, false);
-			}
+	if ( tf_ ) task_ = tf_->create_task_and_apply_taskoperations( pose );
+	if ( task_ ) {
+		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+			if ( !task_->nonconst_residue_task(i).being_packed() ) movemap_->set_chi(i, false);
 		}
+	}
 }
 
 //SymSidechainMinMover apply function
 void SymSidechainMinMover::apply( core::pose::Pose & pose )
 {
 	//runtime_assert(pose.is_fullatom());
-	if(update_movemap_) update_movemap( pose );
+	if ( update_movemap_ ) update_movemap( pose );
 	core::pose::symmetry::make_symmetric_movemap(pose, *movemap_);
 	minmover_->apply( pose );
 }
@@ -134,17 +134,17 @@ void SymSidechainMinMover::apply( core::pose::Pose & pose )
 //constructor
 SymInterfaceSidechainMinMover::SymInterfaceSidechainMinMover() : SymSidechainMinMover(), interface_dist_(8.0)
 {
-			Mover::type( "SymInterfaceSidechainMinMover" );
-			set_default_options();
+	Mover::type( "SymInterfaceSidechainMinMover" );
+	set_default_options();
 }
 
 SymInterfaceSidechainMinMover::SymInterfaceSidechainMinMover(
-		core::scoring::ScoreFunctionCOP scorefxn_in,
-		core::Real interface_dist_in
-	) : SymSidechainMinMover(scorefxn_in), interface_dist_(interface_dist_in)
+	core::scoring::ScoreFunctionCOP scorefxn_in,
+	core::Real interface_dist_in
+) : SymSidechainMinMover(scorefxn_in), interface_dist_(interface_dist_in)
 {
-		Mover::type( "SymInterfaceSidechainMin" );
-		set_default_options();
+	Mover::type( "SymInterfaceSidechainMin" );
+	set_default_options();
 }
 
 //destructor
@@ -152,8 +152,8 @@ SymInterfaceSidechainMinMover::~SymInterfaceSidechainMinMover() {}
 
 void SymInterfaceSidechainMinMover::set_interface_dist( core::Real interface_dist_in)
 {
-		interface_dist_ = interface_dist_in;
-		interface_->distance(interface_dist_);
+	interface_dist_ = interface_dist_in;
+	interface_->distance(interface_dist_);
 }
 
 //default options setup for SymInterfaceSidechainMinMover

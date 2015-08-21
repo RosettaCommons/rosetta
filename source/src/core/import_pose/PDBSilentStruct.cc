@@ -85,7 +85,7 @@ void PDBSilentStruct::fill_struct(
 	if ( tag == "empty_tag" ) set_tag_from_pose( pose );
 
 	energies_from_pose( pose );
-	
+
 	fd_.init_from_pose( pose );
 
 	sequence( pose.sequence() );
@@ -120,7 +120,7 @@ bool PDBSilentStruct::init_from_lines(
 	} // get header information
 
 	std::string concatenated_pdb_info; // concatenated pdb information
-	for ( vector1< string >::const_iterator end = lines.end(); iter != end;	++iter ) {
+	for ( vector1< string >::const_iterator end = lines.end(); iter != end; ++iter ) {
 		string tag;
 		std::istringstream line_stream( *iter );
 
@@ -135,8 +135,8 @@ bool PDBSilentStruct::init_from_lines(
 
 			vector1< string >::const_iterator energy_iter;
 			for ( energy_iter = energy_names_.begin();
-						energy_iter != energy_names_.end(); ++energy_iter
-			) {
+					energy_iter != energy_names_.end(); ++energy_iter
+					) {
 				line_stream >> tag;
 				if ( *energy_iter != "description" ) { // currently the only text-based field, might change in future.
 					Real score_val = (Real) float_of( tag );

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief A class to filter out constellations based on SASA (Solvent
-/// 	Accessible Surface Area).
+///  Accessible Surface Area).
 /// @author Andrea Bazzoli
 
 #ifndef INCLUDED_FilterBySASA_hh
@@ -35,11 +35,11 @@ class FilterBySASA {
 private:
 
 	/// @brief A table listing, for each amino acid type, the atoms whose SASA
-	/// 	value	is relevant to filtering.
+	///  value is relevant to filtering.
 	static std::map< char, utility::vector1<std::string> > aa_sasa_atoms;
 
 	/// @brief A table holding the SASA values of all atoms in the pose to which
-	/// 	constellations belong.
+	///  constellations belong.
 	static core::id::AtomID_Map<Real> atom_sasa;
 
 	/// @brief Maximum allowed SASA value for a constellation atom.
@@ -55,6 +55,6 @@ public:
 };
 
 } // constel
-} // devel 
+} // devel
 
 #endif

@@ -124,7 +124,7 @@ public:
 	) const
 	{
 		b1_torsion_offset = b1_torsion_offset_A_ +
-		                    m2_bond_angle * (b1_torsion_offset_B_ + m2_bond_angle * b1_torsion_offset_C_);
+			m2_bond_angle * (b1_torsion_offset_B_ + m2_bond_angle * b1_torsion_offset_C_);
 		b1_bond_angle = b1_bond_angle_A_ + m2_bond_angle * (b1_bond_angle_B_ + m2_bond_angle * b1_bond_angle_C_);
 	}
 

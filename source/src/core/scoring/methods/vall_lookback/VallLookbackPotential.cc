@@ -49,21 +49,22 @@ VallLookbackPotential::VallLookbackPotential(){
 	using namespace OptionKeys::indexed_structure_store;
 	using namespace core::indexed_structure_store;
 	std::string db = option[fragment_store]();
-	if (!option[fragment_store].user())
+	if ( !option[fragment_store].user() ) {
 		utility_exit_with_message("Must have option indexed_structure_store::fragment_store defined to use the vall lookback score function");
+	}
 	TR <<  "loading db:" << db << std::endl;
 	FragmentStoreOP target_store = NULL;
-	#ifdef USEHDF5
+#ifdef USEHDF5
 		H5FragmentStoreBackend backend(db);
 		target_store = backend.get_fragment_store("9_mer","abego_bin","int64");
-	#else
-		utility_exit_with_message("StructureStoreManager::load_fragment_store without HDF5 support, unable to load store");
-	#endif
+#else
+	utility_exit_with_message("StructureStoreManager::load_fragment_store without HDF5 support, unable to load store");
+#endif
 	//add distance to all fragments
 	Real thresholdDistance = option[fragment_threshold_distance]();
 	TR << "setting fragment threshold distance to" << thresholdDistance;
 	abegoHashedFragmentStore_=StructureStoreManager::get_instance()->group_fragment_store_int("abego_bin",target_store);
-	for (std::map<Size, core::indexed_structure_store::FragmentStoreOP>::iterator fragStoreMap_iter = abegoHashedFragmentStore_.begin(), end = abegoHashedFragmentStore_.end(); fragStoreMap_iter != end; ++fragStoreMap_iter ){
+	for ( std::map<Size, core::indexed_structure_store::FragmentStoreOP>::iterator fragStoreMap_iter = abegoHashedFragmentStore_.begin(), end = abegoHashedFragmentStore_.end(); fragStoreMap_iter != end; ++fragStoreMap_iter ) {
 		fragStoreMap_iter->second->add_threshold_distance_allFrag( thresholdDistance );
 	}
 }
@@ -72,16 +73,15 @@ Real VallLookbackPotential::lookback(pose::Pose & pose, Size resid) const{
 	using namespace core::pose::datacache;
 	using namespace core::scoring::methods;
 	runtime_assert( resid<=pose.total_residue());
-	if(!pose.data().has( CacheableDataType::VALL_LOOKBACK_DATA)){
+	if ( !pose.data().has( CacheableDataType::VALL_LOOKBACK_DATA) ) {
 		VallLookbackDataOP history = VallLookbackDataOP(new VallLookbackData(pose));
 		pose.data().set( CacheableDataType::VALL_LOOKBACK_DATA,history);
 	}
 	VallLookbackDataOP history_ = utility::pointer::static_pointer_cast<core::scoring::methods::VallLookbackData >( pose.data().get_ptr( CacheableDataType::VALL_LOOKBACK_DATA ));
 
-	if(!history_->get_res_changed(resid)){
+	if ( !history_->get_res_changed(resid) ) {
 		return(history_->get_rmsd(resid));
-	}
-	else{
+	} else {
 		return(lookback_db(pose,resid));
 	}
 }
@@ -104,22 +104,23 @@ Real VallLookbackPotential::lookback_db(pose::Pose & pose, Size resid) const{
 	utility::vector1< std::string > abegoSeq = AM.get_symbols( pose,1 );//1 stands for class of ABEGO strings
 	Size fragmentStore_fragment_length = abegoHashedFragmentStore_.begin()->second->fragment_specification.fragment_length;
 	std::string fragAbegoStr = "";
-	for(Size ii=0; ii<fragmentStore_fragment_length; ++ii)
+	for ( Size ii=0; ii<fragmentStore_fragment_length; ++ii ) {
 		fragAbegoStr += abegoSeq[resid+ii];
-	if(fragAbegoStr == "AAAAAAAAA") {
+	}
+	if ( fragAbegoStr == "AAAAAAAAA" ) {
 		history_->set_rmsd(resid,0);
 		history_->set_res_changed(resid,false);
 		return 0;
 	}
 	Size base5index = AM.symbolString2base5index(fragAbegoStr);
 	Real returnRmsd;
-	if(abegoHashedFragmentStore_.find(base5index)  != abegoHashedFragmentStore_.end()){
+	if ( abegoHashedFragmentStore_.find(base5index)  != abegoHashedFragmentStore_.end() ) {
 		//case where item is found in map;
 		FragmentStoreOP selected_fragStoreOP = abegoHashedFragmentStore_.at(base5index);
 		FragmentLookupOP selected_fragLookupOP = FragmentLookupOP(new FragmentLookup(selected_fragStoreOP));
 		std::vector< numeric::xyzVector<numeric::Real> > coordinates;
-		for (Size ii = 0;  ii < fragmentStore_fragment_length; ++ii){
-			BOOST_FOREACH(std::string atom_name, selected_fragStoreOP->fragment_specification.fragment_atoms){
+		for ( Size ii = 0;  ii < fragmentStore_fragment_length; ++ii ) {
+			BOOST_FOREACH ( std::string atom_name, selected_fragStoreOP->fragment_specification.fragment_atoms ) {
 				coordinates.push_back(pose.residue(resid+ii).xyz(atom_name));
 			}
 		}
@@ -127,8 +128,7 @@ Real VallLookbackPotential::lookback_db(pose::Pose & pose, Size resid) const{
 		history_->set_rmsd(resid, lookupResults.match_rmsd);
 		history_->set_res_changed(resid, false);
 		returnRmsd = lookupResults.match_rmsd;
-	}
-	else{
+	} else {
 		TR.Debug << "ABEGO not found in map!! given rms 9999" << std::endl;
 		//case where item is not found in map. ABEGO not found in pdb is bad sign. Give this a 999 rmsd value
 		returnRmsd = 999;
@@ -146,25 +146,25 @@ Real VallLookbackPotential::lookback_db(const pose::Pose & pose, Size resid) con
 	utility::vector1< std::string > abegoSeq = AM.get_symbols( pose,1 );//1 stands for class of ABEGO strings
 	Size fragmentStore_fragment_length = abegoHashedFragmentStore_.begin()->second->fragment_specification.fragment_length;
 	std::string fragAbegoStr = "";
-	for(Size ii=0; ii<fragmentStore_fragment_length; ++ii)
+	for ( Size ii=0; ii<fragmentStore_fragment_length; ++ii ) {
 		fragAbegoStr += abegoSeq[resid+ii];
-	if(fragAbegoStr == "AAAAAAAAA") { //don't bother looking for helical rmsd. All are very close by rms
+	}
+	if ( fragAbegoStr == "AAAAAAAAA" ) { //don't bother looking for helical rmsd. All are very close by rms
 		return 0;
 	}
 	Size base5index = AM.symbolString2base5index(fragAbegoStr);
-	if(abegoHashedFragmentStore_.find(base5index)  != abegoHashedFragmentStore_.end()){
+	if ( abegoHashedFragmentStore_.find(base5index)  != abegoHashedFragmentStore_.end() ) {
 		FragmentStoreOP selected_fragStoreOP = abegoHashedFragmentStore_.at(base5index);
 		FragmentLookupOP selected_fragLookupOP = FragmentLookupOP(new FragmentLookup(selected_fragStoreOP));
 		std::vector< numeric::xyzVector<numeric::Real> > coordinates;
-		for (Size ii = 0;  ii < fragmentStore_fragment_length; ++ii){
-			BOOST_FOREACH(std::string atom_name, selected_fragStoreOP->fragment_specification.fragment_atoms){
+		for ( Size ii = 0;  ii < fragmentStore_fragment_length; ++ii ) {
+			BOOST_FOREACH ( std::string atom_name, selected_fragStoreOP->fragment_specification.fragment_atoms ) {
 				coordinates.push_back(pose.residue(resid+ii).xyz(atom_name));
 			}
 		}
 		FragmentLookupResult lookupResults= selected_fragLookupOP->lookup_fragment(&coordinates[0]);
 		return(lookupResults.match_rmsd);
-	}
-	else{//case where item is not found in map. ABEGO not found in pdb is bad sign. Give this a 999 rmsd value
+	} else { //case where item is not found in map. ABEGO not found in pdb is bad sign. Give this a 999 rmsd value
 		return(999);
 	}
 }
@@ -173,10 +173,11 @@ Real VallLookbackPotential::lookback_db(const pose::Pose & pose, Size resid) con
 Real VallLookbackPotential::lookbackRegion(pose::Pose & pose, Size startRes, Size endRes) const{
 	using namespace core::pose::datacache;
 	Real maxRmsd = 0;
-	for (Size ii = startRes;  ii <= endRes; ++ii){
+	for ( Size ii = startRes;  ii <= endRes; ++ii ) {
 		Real tmpRmsd = lookback(pose,ii);
-		if(tmpRmsd > maxRmsd)
+		if ( tmpRmsd > maxRmsd ) {
 			maxRmsd = tmpRmsd;
+		}
 	}
 	return(maxRmsd);
 }
@@ -184,10 +185,11 @@ Real VallLookbackPotential::lookbackRegion(pose::Pose & pose, Size startRes, Siz
 Real VallLookbackPotential::lookbackRegion(const pose::Pose & pose, Size startRes, Size endRes) const{
 	using namespace core::pose::datacache;
 	Real maxRmsd = 0;
-	for (Size ii = startRes;  ii <= endRes; ++ii){
+	for ( Size ii = startRes;  ii <= endRes; ++ii ) {
 		Real tmpRmsd = lookback(pose,ii);
-		if(tmpRmsd > maxRmsd)
+		if ( tmpRmsd > maxRmsd ) {
 			maxRmsd = tmpRmsd;
+		}
 	}
 	return(maxRmsd);
 }

@@ -35,10 +35,10 @@ class ScoreEValuator: public ProfileScore {
 
 public:
 	ScoreEValuator(Size priority, Real lowest_acceptable_value,
-			bool use_lowest, sequence::SequenceProfileOP query_profile,
-			sequence::ScoringSchemeOP profile_scoring, Size largest_chunk_size) :
+		bool use_lowest, sequence::SequenceProfileOP query_profile,
+		sequence::ScoringSchemeOP profile_scoring, Size largest_chunk_size) :
 		ProfileScore(priority, lowest_acceptable_value, use_lowest, query_profile,
-				profile_scoring, largest_chunk_size) {
+		profile_scoring, largest_chunk_size) {
 		max_rand_ = 12;
 	}
 

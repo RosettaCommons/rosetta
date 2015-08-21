@@ -76,7 +76,7 @@
 #include <ObjexxFCL/format.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 #include <basic/Tracer.hh>
@@ -124,7 +124,7 @@ PeriodicBoxMoverCreator::mover_name() {
 }
 
 PeriodicBoxMover::PeriodicBoxMover()
-	: Mover("PeriodicBoxMover") {
+: Mover("PeriodicBoxMover") {
 
 	// 125 molecule sim, 1g/ml
 	nmol_side_ = 5;
@@ -212,19 +212,20 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 	mweight=0;
 	Vector com(0,0,0);
 	for ( Size i=1; i<= nres; ++i ) {
-		if (pose.residue(i).aa() == core::chemical::aa_vrt) continue;
+		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
 
 		for ( Size j=1; j<= pose.residue(i).natoms(); ++j ) {
 			std::string elt = pose.residue(i).atom_type(j).element();
 			core::Real wt = 0.0;
-			if (elt=="H") wt = 1.008;
-			else if (elt=="C") wt = 12.011;
-			else if (elt=="N") wt = 14.007;
-			else if (elt=="O") wt = 15.999;
-			else if (elt=="P") wt = 30.974;
-			else if (elt=="S") wt = 32.060;
-			else
+			if ( elt=="H" ) wt = 1.008;
+			else if ( elt=="C" ) wt = 12.011;
+			else if ( elt=="N" ) wt = 14.007;
+			else if ( elt=="O" ) wt = 15.999;
+			else if ( elt=="P" ) wt = 30.974;
+			else if ( elt=="S" ) wt = 32.060;
+			else {
 				TR << "ERROR: " << elt << std::endl;
+			}
 
 			com += wt*pose.residue(i).xyz(j);
 			mweight+=wt;
@@ -241,37 +242,41 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 		pose.apply_transform_Rx_plus_v( numeric::xyzMatrix<core::Real>::identity(),-com );
 
 		TR << "Creating a box " << sidelen << "A on each side with " << nmolecules << " molecules." << std::endl;
-		for (int i=1; i<=nmol_side_; ++i)
-		for (int j=1; j<=nmol_side_; ++j)
-		for (int k=1; k<=nmol_side_; ++k) {
-			core::Vector center (
-				sidelen * (2.0*i-1.0)/(2.0*nmol_side_),
-				sidelen * (2.0*j-1.0)/(2.0*nmol_side_),
-				sidelen * (2.0*k-1.0)/(2.0*nmol_side_) );
+		for ( int i=1; i<=nmol_side_; ++i ) {
+			for ( int j=1; j<=nmol_side_; ++j ) {
+				for ( int k=1; k<=nmol_side_; ++k ) {
+					core::Vector center (
+						sidelen * (2.0*i-1.0)/(2.0*nmol_side_),
+						sidelen * (2.0*j-1.0)/(2.0*nmol_side_),
+						sidelen * (2.0*k-1.0)/(2.0*nmol_side_) );
 
 
-			// replace a position if running liqsim for two systems
-			if( i == (nmol_side_+1)/2 && j == (nmol_side_+1)/2 && k == (nmol_side_+1)/2
-					&& central_molecule_pdb_ != "" ){
-				core::chemical::ResidueTypeSetCOP rsd_set =
-					core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
-				core::pose::Pose pose_central;
-				core::import_pose::pose_from_pdb( pose_central, *rsd_set, central_molecule_pdb_ );
+					// replace a position if running liqsim for two systems
+					if ( i == (nmol_side_+1)/2 && j == (nmol_side_+1)/2 && k == (nmol_side_+1)/2
+							&& central_molecule_pdb_ != "" ) {
+						core::chemical::ResidueTypeSetCOP rsd_set =
+							core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
+						core::pose::Pose pose_central;
+						core::import_pose::pose_from_pdb( pose_central, *rsd_set, central_molecule_pdb_ );
 
-				runtime_assert( pose_central.total_residue() == 1 );
-				core::conformation::Residue rsd_new = pose_central.residue(1);
-				for ( Size z=1; z<= rsd_new.natoms(); ++z )
-					rsd_new.set_xyz( z, rsd_new.xyz(z) + center );
-				pose_asu.append_residue_by_jump( rsd_new, 1 );
+						runtime_assert( pose_central.total_residue() == 1 );
+						core::conformation::Residue rsd_new = pose_central.residue(1);
+						for ( Size z=1; z<= rsd_new.natoms(); ++z ) {
+							rsd_new.set_xyz( z, rsd_new.xyz(z) + center );
+						}
+						pose_asu.append_residue_by_jump( rsd_new, 1 );
 
-				central_resno_ = pose_asu.total_residue();
-				TR << "central resno: " << central_resno_ << std::endl;
+						central_resno_ = pose_asu.total_residue();
+						TR << "central resno: " << central_resno_ << std::endl;
 
-			} else {
-				core::conformation::Residue rsd_new = pose.residue(1);
-				for ( Size z=1; z<= rsd_new.natoms(); ++z )
-					rsd_new.set_xyz( z, rsd_new.xyz(z) + center );
-				pose_asu.append_residue_by_jump( rsd_new, 1 );
+					} else {
+						core::conformation::Residue rsd_new = pose.residue(1);
+						for ( Size z=1; z<= rsd_new.natoms(); ++z ) {
+							rsd_new.set_xyz( z, rsd_new.xyz(z) + center );
+						}
+						pose_asu.append_residue_by_jump( rsd_new, 1 );
+					}
+				}
 			}
 		}
 	} else {
@@ -310,13 +315,13 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 	origin_ = -0.5*sidelen;
 
 	// 1 expand A (j==k==1)
-	for (int i=1; i<=3; ++i) {
+	for ( int i=1; i<=3; ++i ) {
 		core::Vector O ((i-1.5)*sidelen, -0.5*sidelen, -0.5*sidelen);
 		ResidueOP vrt_x = make_vrt(O,Ax,Ay);
 		ResidueOP vrt_y = make_vrt(O,Bx,By);
 		ResidueOP vrt_z = make_vrt(O,Cx,Cy);
 
-		if (i==1) {
+		if ( i==1 ) {
 			pose_periodic.append_residue_by_bond( *vrt_x );    vrtX(1,1,1) = 1;
 			pose_periodic.append_residue_by_jump( *vrt_y, 1);  vrtY(1,1,1) = 2;
 			pose_periodic.append_residue_by_jump( *vrt_z, 2);  vrtZ(1,1,1) = 3;
@@ -329,26 +334,29 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 	}
 
 	// expand B (k==1)
-	for (int i=1; i<=3; ++i)
-	for (int j=2; j<=3; ++j) {
-		core::Vector O ((i-1.5)*sidelen, (j-1.5)*sidelen, -0.5*sidelen);
-		ResidueOP vrt_y = make_vrt(O,Bx,By);
-		ResidueOP vrt_z = make_vrt(O,Cx,Cy);
+	for ( int i=1; i<=3; ++i ) {
+		for ( int j=2; j<=3; ++j ) {
+			core::Vector O ((i-1.5)*sidelen, (j-1.5)*sidelen, -0.5*sidelen);
+			ResidueOP vrt_y = make_vrt(O,Bx,By);
+			ResidueOP vrt_z = make_vrt(O,Cx,Cy);
 
-		pose_periodic.append_residue_by_jump( *vrt_y, vrtY(i,j-1,1)); vrtY(i,j,1) = pose_periodic.total_residue();
-		Bjumps.push_back(pose_periodic.fold_tree().num_jump());
-		pose_periodic.append_residue_by_jump( *vrt_z, vrtY(i,j,1));   vrtZ(i,j,1) = pose_periodic.total_residue();
+			pose_periodic.append_residue_by_jump( *vrt_y, vrtY(i,j-1,1)); vrtY(i,j,1) = pose_periodic.total_residue();
+			Bjumps.push_back(pose_periodic.fold_tree().num_jump());
+			pose_periodic.append_residue_by_jump( *vrt_z, vrtY(i,j,1));   vrtZ(i,j,1) = pose_periodic.total_residue();
+		}
 	}
 
 	// expand C
-	for (int i=1; i<=3; ++i)
-	for (int j=1; j<=3; ++j)
-	for (int k=2; k<=3; ++k) {
-		core::Vector O ((i-1.5)*sidelen, (j-1.5)*sidelen, (k-1.5)*sidelen);
-		ResidueOP vrt_z = make_vrt(O,Cx,Cy);
+	for ( int i=1; i<=3; ++i ) {
+		for ( int j=1; j<=3; ++j ) {
+			for ( int k=2; k<=3; ++k ) {
+				core::Vector O ((i-1.5)*sidelen, (j-1.5)*sidelen, (k-1.5)*sidelen);
+				ResidueOP vrt_z = make_vrt(O,Cx,Cy);
 
-		pose_periodic.append_residue_by_jump( *vrt_z, vrtZ(i,j,k-1));  vrtZ(i,j,k) = pose_periodic.total_residue();
-		Cjumps.push_back(pose_periodic.fold_tree().num_jump());
+				pose_periodic.append_residue_by_jump( *vrt_z, vrtZ(i,j,k-1));  vrtZ(i,j,k) = pose_periodic.total_residue();
+				Cjumps.push_back(pose_periodic.fold_tree().num_jump());
+			}
+		}
 	}
 
 	Size nvirtuals = pose_periodic.total_residue();
@@ -356,39 +364,41 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 	// add subunits
 	core::Size nres_monomer = pose_asu.total_residue();
 	core::Size nres_protein=0;
-	for (int n=1; n<=(int)nres_monomer; ++n) {
+	for ( int n=1; n<=(int)nres_monomer; ++n ) {
 		pose_periodic.insert_residue_by_jump( pose_asu.residue(n), nres_protein+1, vrtZ(2,2,2)+nres_protein ); ++nres_protein;
 		//pose_periodic.append_residue_by_jump( pose_asu.residue(n), vrtZ(2,2,2) );
 		SUBjumps.push_back(pose_periodic.fold_tree().num_jump());
 	}
 
-	for (int i=1; i<=3; ++i)
-	for (int j=1; j<=3; ++j)
-	for (int k=1; k<=3; ++k) {
-		if (i==2 && j==2 && k==2) continue;
-		for (int n=1; n<=(int)nres_monomer; ++n) {
-			pose_periodic.insert_residue_by_jump( pose_asu.residue(n), nres_protein+1, vrtZ(i,j,k)+nres_protein ); ++nres_protein;
-			//pose_periodic.append_residue_by_jump( pose_asu.residue(n), vrtZ(i,j,k) );
+	for ( int i=1; i<=3; ++i ) {
+		for ( int j=1; j<=3; ++j ) {
+			for ( int k=1; k<=3; ++k ) {
+				if ( i==2 && j==2 && k==2 ) continue;
+				for ( int n=1; n<=(int)nres_monomer; ++n ) {
+					pose_periodic.insert_residue_by_jump( pose_asu.residue(n), nres_protein+1, vrtZ(i,j,k)+nres_protein ); ++nres_protein;
+					//pose_periodic.append_residue_by_jump( pose_asu.residue(n), vrtZ(i,j,k) );
+				}
+			}
 		}
 	}
 
 	// make proper symmetric pose
 	conformation::symmetry::SymmetryInfo symminfo;
 	core::Size njumps_monomer = SUBjumps.size();
-	for (int i=2; i<=3*3*3; ++i) {
+	for ( int i=2; i<=3*3*3; ++i ) {
 		for ( Size j=1; j<= nres_monomer; ++j ) {
 			symminfo.add_bb_clone ( j, (i-1)*nres_monomer+j );
 			symminfo.add_chi_clone( j, (i-1)*nres_monomer+j );
 		}
-		for (Size j=1; j<=njumps_monomer; ++j) {
+		for ( Size j=1; j<=njumps_monomer; ++j ) {
 			symminfo.add_jump_clone( SUBjumps[j], (i-1)*njumps_monomer+SUBjumps[j], 0.0 );
 		}
 	}
 
 	Size cellMaster=Ajumps[1];
-	for (Size i=2; i<=Ajumps.size(); ++i) symminfo.add_jump_clone( cellMaster, Ajumps[i], 0.0 );
-	for (Size i=1; i<=Bjumps.size(); ++i) symminfo.add_jump_clone( cellMaster, Bjumps[i], 0.0 );
-	for (Size i=1; i<=Cjumps.size(); ++i) symminfo.add_jump_clone( cellMaster, Cjumps[i], 0.0 );
+	for ( Size i=2; i<=Ajumps.size(); ++i ) symminfo.add_jump_clone( cellMaster, Ajumps[i], 0.0 );
+	for ( Size i=1; i<=Bjumps.size(); ++i ) symminfo.add_jump_clone( cellMaster, Bjumps[i], 0.0 );
+	for ( Size i=1; i<=Cjumps.size(); ++i ) symminfo.add_jump_clone( cellMaster, Cjumps[i], 0.0 );
 
 	std::map< Size, SymDof > symdofs;
 	SymDof symdof_a;
@@ -398,7 +408,7 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 
 	// jump names
 	TR << "Initializing " << pose_periodic.num_jump() << " jumps." << std::endl;
-	for (Size v=1; v<=pose.num_jump(); ++v) symminfo.set_jump_name(v, "v_"+utility::to_string(v));
+	for ( Size v=1; v<=pose.num_jump(); ++v ) symminfo.set_jump_name(v, "v_"+utility::to_string(v));
 	symminfo.set_jump_name(Ajumps[1], "A");
 
 	symminfo.num_virtuals( nvirtuals );
@@ -414,7 +424,7 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 
 	pose::symmetry::make_symmetric_pose( pose_periodic, symminfo );
 
-	for (int i=1; i<=(int)SUBjumps.size(); ++i) {
+	for ( int i=1; i<=(int)SUBjumps.size(); ++i ) {
 		core::kinematics::Jump j = pose_periodic.jump( SUBjumps[i] );
 		pose_periodic.set_jump( SUBjumps[i], j );
 	}
@@ -440,8 +450,9 @@ PeriodicBoxMover::check_virial_pressure( Pose & pose, core::Real L ) const
 	// First get virial
 
 	// just a way to get force
-	if (core::pose::symmetry::is_symmetric( pose ))
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
+	}
 
 	CartesianMinimizerMap min_map;
 	min_map.setup( pose, *movemap );
@@ -461,29 +472,29 @@ PeriodicBoxMover::check_virial_pressure( Pose & pose, core::Real L ) const
 	core::Vector F1, F2;
 	core::kinematics::DomainMap dommap = pose.energies().domain_map();
 	for( core::Size imol = 1; imol <= pose.total_residue(); ++imol ){
-		for( core::Size iatm = 1; iatm <= pose.residue(imol).natoms(); ++iatm ){
-		  sf_->eval_npd_atom_derivative( core::id::AtomID( iatm, imol ),
-																		 pose, dommap, F1, F2 );
-			TR << F1[0] << " " << F1[1] << " " << F1[2] << std::endl;
-		}
+	for( core::Size iatm = 1; iatm <= pose.residue(imol).natoms(); ++iatm ){
+	sf_->eval_npd_atom_derivative( core::id::AtomID( iatm, imol ),
+	pose, dommap, F1, F2 );
+	TR << F1[0] << " " << F1[1] << " " << F1[2] << std::endl;
+	}
 	}
 	*/
 
 	// just for check
 	core::Vector forcesum( 0.0 );
-	for( core::Size i = 1; i <= force.size(); ++i )	forcesum[i%3] += force[i];
+	for ( core::Size i = 1; i <= force.size(); ++i ) forcesum[i%3] += force[i];
 
 	TR  << forcesum[0] << " " << forcesum[1] << " " << forcesum[2] << std::endl;
 
-  core::Real vir( 0.0 );
-  for( core::Size i = 1; i <= force.size(); ++i ) vir += force[i]*xyz[i];
-  vir /= 3.0;
+	core::Real vir( 0.0 );
+	for ( core::Size i = 1; i <= force.size(); ++i ) vir += force[i]*xyz[i];
+	vir /= 3.0;
 
 	// Then
-  core::Real const V = L*L*L;
+	core::Real const V = L*L*L;
 	//core::Size N( nmol_side_*nmol_side_*nmol_side_ );
 	core::Size const N( force.size()/3 );
-  core::Real const rho = (core::Real)(N)/V;
+	core::Real const rho = (core::Real)(N)/V;
 
 	core::Real const Boltzmann( 0.0019872065 ); // Boltmann constant in kcal
 	// unit of P is kcal/molAng^3, rho: 1/Ang^3,
@@ -508,20 +519,20 @@ PeriodicBoxMover::report_thermodynamics( Pose & pose, core::Size lattice_jump )
 
 	// 1. Density
 	core::Real density( 0.0 );
-	for( core::Size ires = 1; ires <= nmol_side_*nmol_side_*nmol_side_; ++ires ){ // mol1
-		if (pose.residue(ires).aa() == core::chemical::aa_vrt) continue;
+	for ( core::Size ires = 1; ires <= nmol_side_*nmol_side_*nmol_side_; ++ires ) { // mol1
+		if ( pose.residue(ires).aa() == core::chemical::aa_vrt ) continue;
 
 		for ( Size j=1; j<= pose.residue(ires).natoms(); ++j ) {
 			std::string elt = pose.residue(ires).atom_type(j).element();
 			core::Real wt = 0.0;
-			if (elt=="H") wt = 1.008;
-			else if (elt=="C") wt = 12.011;
-			else if (elt=="N") wt = 14.007;
-			else if (elt=="O") wt = 15.999;
-			else if (elt=="P") wt = 30.974;
-			else if (elt=="S") wt = 32.060;
+			if ( elt=="H" ) wt = 1.008;
+			else if ( elt=="C" ) wt = 12.011;
+			else if ( elt=="N" ) wt = 14.007;
+			else if ( elt=="O" ) wt = 15.999;
+			else if ( elt=="P" ) wt = 30.974;
+			else if ( elt=="S" ) wt = 32.060;
 			else wt = 0.0;
-			//	TR << "ERROR: " << elt << std::endl;
+			// TR << "ERROR: " << elt << std::endl;
 			density += wt;
 		}
 	}
@@ -535,7 +546,7 @@ PeriodicBoxMover::report_thermodynamics( Pose & pose, core::Size lattice_jump )
 	EnergyGraph const & egraph( pose_energies.energy_graph() );
 
 	core::Real intraE( 0.0 ), interE( 0.0 ), centralE( 0.0 );
-	for( core::Size ires = 1; ires <= nres; ++ires ){ // mol1
+	for ( core::Size ires = 1; ires <= nres; ++ires ) { // mol1
 
 		EnergyEdge const * edge(egraph.find_energy_edge(ires, ires));
 		EnergyMap pair_energies;
@@ -549,7 +560,7 @@ PeriodicBoxMover::report_thermodynamics( Pose & pose, core::Size lattice_jump )
 		intraE += pair_energies.sum() + (onebody_energies * weights).sum();
 		interE += pose_energies.residue_total_energy( ires );
 
-		if( ires == central_resno_ ){
+		if ( ires == central_resno_ ) {
 			centralE = pose_energies.residue_total_energy( ires );
 		}
 	}
@@ -571,23 +582,23 @@ PeriodicBoxMover::report_thermodynamics( Pose & pose, core::Size lattice_jump )
 
 	// 3. Radial distribution
 	// skip if rg_atoms undefined
-	if( rg_atom1_ == "" || rg_atom2_ == "" ) return;
+	if ( rg_atom1_ == "" || rg_atom2_ == "" ) return;
 
 	core::Real const rgmin = 1.0, rgmax = 9.0, rgbin=0.2;
 	core::Size const nbins = (core::Size)(( rgmax - rgmin )/rgbin) + 1;
 	utility::vector1< core::Size > rgcounts( 0, nbins );
 
 	// count RG
-	for( core::Size ires = 1; ires <= pose.total_residue(); ++ires ){ // mol1
-		if( !pose.residue(ires).has( rg_atom1_ ) ) continue;
+	for ( core::Size ires = 1; ires <= pose.total_residue(); ++ires ) { // mol1
+		if ( !pose.residue(ires).has( rg_atom1_ ) ) continue;
 		core::Vector const &crd1 = pose.residue(ires).xyz( rg_atom1_ );
 
-		for( core::Size jres = 1; jres <= pose.total_residue(); ++jres ){ // mol1
-			if( !pose.residue(ires).has( rg_atom1_ ) ) continue;
+		for ( core::Size jres = 1; jres <= pose.total_residue(); ++jres ) { // mol1
+			if ( !pose.residue(ires).has( rg_atom1_ ) ) continue;
 			core::Vector const &crd2 = pose.residue(jres).xyz( rg_atom2_ );
 			core::Real const dist = crd1.distance(crd2);
 
-			if( dist > rgmin || dist < rgmax ) continue;
+			if ( dist > rgmin || dist < rgmax ) continue;
 
 			core::Size ibin = (dist - rgmin)/rgbin + 1;
 			rgcounts[ibin]++;
@@ -595,8 +606,9 @@ PeriodicBoxMover::report_thermodynamics( Pose & pose, core::Size lattice_jump )
 	}
 
 	TR << "RG: ";
-	for( core::Size ibin = 1; ibin <= nbins; ++ibin )
+	for ( core::Size ibin = 1; ibin <= nbins; ++ibin ) {
 		TR << " " << rgcounts[ibin];
+	}
 	TR << std::endl;
 
 }
@@ -614,7 +626,7 @@ PeriodicBoxMover::change_volume_move( Pose & pose, core::Size lattice_jump, bool
 	core::Real new_lattice = std::pow( volume+del_volume, 1.0/3.0 );
 
 	// 0.5: correction for symmetry setup
-	core::Real const Eprv = 0.5*(sf_->score( pose_trial ) + ljcorrection_factor_/volume); 
+	core::Real const Eprv = 0.5*(sf_->score( pose_trial ) + ljcorrection_factor_/volume);
 
 	core::Size const N( nmol_side_*nmol_side_*nmol_side_ );
 
@@ -638,10 +650,10 @@ PeriodicBoxMover::change_volume_move( Pose & pose, core::Size lattice_jump, bool
 	core::Real const arg2 = -((core::Real)(N))*log( volume2/volume );
 
 	core::Real probability = exp( -(arg1+arg2) ) ;
-	if( probability > 1.0 ) probability = 1.0;
+	if ( probability > 1.0 ) probability = 1.0;
 
 	// Metropolis criteria
-	if( probability >= numeric::random::rg().uniform() ){
+	if ( probability >= numeric::random::rg().uniform() ) {
 		accept = true;
 		pose = pose_trial;
 	}
@@ -649,7 +661,7 @@ PeriodicBoxMover::change_volume_move( Pose & pose, core::Size lattice_jump, bool
 	TR << "Accept/Prob/dE/N/V/dV/PdV(kcal/mole)/arg1/arg2: " << accept << " " <<  F(8,5,probability);
 	TR << " " << F(8,5,Eaft-Eprv) << " " << N << " " << F(10,5,volume2) << " " << F(10,5,del_volume);
 	TR << " " << F(8,5,P0_*del_volume*convert) << " " << F(8,5,ljcorrection_factor_*(1.0/volume2 - 1.0/volume) )
-		 << " " << F(10,5,arg1) << " " << F(10,5,arg2) << std::endl;
+		<< " " << F(10,5,arg1) << " " << F(10,5,arg2) << std::endl;
 
 	// Check consistency by comparing to virial pressure
 	//check_virial_pressure( pose, new_lattice );
@@ -659,18 +671,20 @@ void
 PeriodicBoxMover::recenter_pose( Pose & pose, core::Real const lattice, core::Real const new_lattice) const {
 
 	// now recenter
-	for (int mol_num=1; mol_num<=nmol_side_*nmol_side_*nmol_side_; ++mol_num) {
+	for ( int mol_num=1; mol_num<=nmol_side_*nmol_side_*nmol_side_; ++mol_num ) {
 		core::Vector com(0,0,0);
-		for (int i=1; i<=(int)pose.residue(mol_num).natoms(); ++i)
+		for ( int i=1; i<=(int)pose.residue(mol_num).natoms(); ++i ) {
 			com += pose.residue(mol_num).xyz(i);
+		}
 		com /= pose.residue(mol_num).natoms();
 
 		//origin_ = new_lattice*0.5;
 		com = com-origin_-0.5*new_lattice;
 		core::Vector offset = com*new_lattice/lattice - com;
 
-		for (int i=1; i<=(int)pose.residue(mol_num).natoms(); ++i)
+		for ( int i=1; i<=(int)pose.residue(mol_num).natoms(); ++i ) {
 			pose.set_xyz( core::id::AtomID( i, mol_num ),  pose.residue(mol_num).xyz(i) + offset );
+		}
 	}
 }
 
@@ -684,40 +698,40 @@ PeriodicBoxMover::perturb_molecule_move( Pose & pose, core::Size lattice_jump, b
 	core::Size mol_num = numeric::random::rg().random_range(1,nmol_side_*nmol_side_*nmol_side_);
 	core::conformation::Residue res_old (pose.residue(mol_num));
 
-	if( pose.residue(mol_num).nchi() == 0 || numeric::random::rg().uniform() <= probability_rigid_ ){
+	if ( pose.residue(mol_num).nchi() == 0 || numeric::random::rg().uniform() <= probability_rigid_ ) {
 		//2 random rotation & translation
 		numeric::xyzMatrix<core::Real> R = random_rotation(  rot_step_ * numeric::random::rg().gaussian() );
 		core::Vector T (
-										trans_step_ * numeric::random::gaussian(),
-										trans_step_ * numeric::random::gaussian(),
-										trans_step_ * numeric::random::gaussian()
-										);
+			trans_step_ * numeric::random::gaussian(),
+			trans_step_ * numeric::random::gaussian(),
+			trans_step_ * numeric::random::gaussian()
+		);
 
 		//3 apply
 		core::Vector com(0,0,0);
-		for (int i=1; i<=(int)pose.residue(mol_num).natoms(); ++i) {
+		for ( int i=1; i<=(int)pose.residue(mol_num).natoms(); ++i ) {
 			com += pose.residue(mol_num).xyz(i);
 		}
 		com /= pose.residue(mol_num).natoms();
 
 		// boundry check
-		for (int i=0; i<3; ++i) {
-			if (com[i]+T[i]-origin_ > 1.5*lattice) T[i]-=lattice;
-			if (com[i]+T[i]-origin_ < 0.5*lattice) T[i]+=lattice;
+		for ( int i=0; i<3; ++i ) {
+			if ( com[i]+T[i]-origin_ > 1.5*lattice ) T[i]-=lattice;
+			if ( com[i]+T[i]-origin_ < 0.5*lattice ) T[i]+=lattice;
 		}
 
-		for (core::Size i=1; i<=pose.residue(mol_num).natoms(); ++i) {
+		for ( core::Size i=1; i<=pose.residue(mol_num).natoms(); ++i ) {
 			core::Vector Rb = pose.residue(mol_num).xyz(i);
 			core::Vector Rc = R*( Rb - com) +T+com;
 			pose.set_xyz( core::id::AtomID( i, mol_num ), R*( pose.residue(mol_num).xyz(i) - com) +T+com );
 		}
 
- 	} else {
- 		// 2-2. torsional change
- 		core::Real dtor = tor_step_*(1.0 - 2.0*numeric::random::rg().uniform());
- 		core::Size ichi = numeric::random::rg().random_range( 1, pose.residue(mol_num).nchi() );
- 		core::Real newchi = pose.chi( ichi, mol_num ) + dtor;
- 		pose.set_chi( ichi, mol_num, newchi );
+	} else {
+		// 2-2. torsional change
+		core::Real dtor = tor_step_*(1.0 - 2.0*numeric::random::rg().uniform());
+		core::Size ichi = numeric::random::rg().random_range( 1, pose.residue(mol_num).nchi() );
+		core::Real newchi = pose.chi( ichi, mol_num ) + dtor;
+		pose.set_chi( ichi, mol_num, newchi );
 	}
 
 	core::Real const Eaft = 0.5*sf_->score( pose ); // 0.5: correction for symmetry setup
@@ -726,10 +740,10 @@ PeriodicBoxMover::perturb_molecule_move( Pose & pose, core::Size lattice_jump, b
 	core::Real kT( 0.008315*0.239*temp_ );
 	core::Real const arg = (Eaft - Eprv)/kT;
 	core::Real probability = exp( -(arg) ) ;
-	if( probability > 1.0 ) probability = 1.0;
+	if ( probability > 1.0 ) probability = 1.0;
 
 	// Metropolis criteria
-	if( probability >= numeric::random::rg().uniform() ){
+	if ( probability >= numeric::random::rg().uniform() ) {
 		accept = true;
 	} else {
 		pose.replace_residue( mol_num, res_old, false );
@@ -739,73 +753,73 @@ PeriodicBoxMover::perturb_molecule_move( Pose & pose, core::Size lattice_jump, b
 /*
 void
 PeriodicBoxMoverWaterReporter::report( PeriodicBoxMover & mover, int step, core::pose::Pose & pose, core::Real mweight, core::Size lattice_jump ) {
-	// calculate and write density
-	core::Real sidelen = std::abs( pose.jump(lattice_jump).get_translation()[0] );
-	core::Real box_vol = std::pow( sidelen, 3.0 );
-	core::Real nres = mover.nmol_side_*mover.nmol_side_*mover.nmol_side_;
-	core::Real box_den = (mweight*nres)/(box_vol*0.6022); // box volume in gm/cm3
-	volout_eq_ << step << " " << sidelen << " " << box_vol << " " << box_den << std::endl;
+// calculate and write density
+core::Real sidelen = std::abs( pose.jump(lattice_jump).get_translation()[0] );
+core::Real box_vol = std::pow( sidelen, 3.0 );
+core::Real nres = mover.nmol_side_*mover.nmol_side_*mover.nmol_side_;
+core::Real box_den = (mweight*nres)/(box_vol*0.6022); // box volume in gm/cm3
+volout_eq_ << step << " " << sidelen << " " << box_vol << " " << box_den << std::endl;
 
 
-	// calculate and write RDF data
-	core::Real cut = 10.0; // cutoff for RDF
-	core::Real bw = 0.1; // bin width for RDF
-	if (print_RDF_header_) {
-		RDF_eq_ << "#RDF cutoff distance = "<< cut <<"; bin width = "<< bw <<"\n";
-		RDF_eq_ << "#step: RDF bins\n";
-		print_RDF_header_ = false;
-	}
+// calculate and write RDF data
+core::Real cut = 10.0; // cutoff for RDF
+core::Real bw = 0.1; // bin width for RDF
+if (print_RDF_header_) {
+RDF_eq_ << "#RDF cutoff distance = "<< cut <<"; bin width = "<< bw <<"\n";
+RDF_eq_ << "#step: RDF bins\n";
+print_RDF_header_ = false;
+}
 
-	int nbins = (core::Size)std::ceil(cut/bw);
-	utility::vector1<int> RDF_data(nbins);
+int nbins = (core::Size)std::ceil(cut/bw);
+utility::vector1<int> RDF_data(nbins);
 
-	// create normalization vector for given bin width and cutoff and number density
-	core::Real nden = nres/std::abs((std::pow(pose.jump(lattice_jump).get_translation()[0],3.0)));
-	utility::vector1<core::Real> RDF_norm(std::ceil(cut/bw));
-	for (std::string::size_type ni = 1; ni<=RDF_norm.size(); ni++)
-		RDF_norm[ni] = nden*(4/3*M_PI*std::pow((bw*(ni-1))+bw, 3.0) - 4/3*M_PI*std::pow(bw*(ni-1), 3.0));
+// create normalization vector for given bin width and cutoff and number density
+core::Real nden = nres/std::abs((std::pow(pose.jump(lattice_jump).get_translation()[0],3.0)));
+utility::vector1<core::Real> RDF_norm(std::ceil(cut/bw));
+for (std::string::size_type ni = 1; ni<=RDF_norm.size(); ni++)
+RDF_norm[ni] = nden*(4/3*M_PI*std::pow((bw*(ni-1))+bw, 3.0) - 4/3*M_PI*std::pow(bw*(ni-1), 3.0));
 
-	// find all interacting pairs and sort them into RDF bins
-	for (int ires=1; ires<=nres; ++ires) {
-		core::scoring::EnergyGraph const & energy_graph( pose.energies().energy_graph() );
-		for (core::graph::Graph::EdgeListConstIter iru = energy_graph.get_node(ires)->const_edge_list_begin(),
-		     irue = energy_graph.get_node(ires)->const_edge_list_end(); iru != irue; ++iru) {
-			core::scoring::EnergyEdge const * edge( static_cast< core::scoring::EnergyEdge const *> (*iru) );
-			core::Size const e1( edge->get_first_node_ind() );
-			core::Size const e2( edge->get_second_node_ind() );
-			numeric::xyzVector< core::Real > p1(pose.residue(e1).xyz("O"));
-			numeric::xyzVector< core::Real > p2(pose.residue(e2).xyz("O"));
-			int bin = (int)std::floor( p1.distance(p2)/bw ) +1;
-			if (bin>=1 && bin<=nbins)
-				++RDF_data[bin]; // increment RDF bins
-		}
-	}
-	// normalize simulation data with ideal gas case
-	utility::vector1<core::Real> RDF_out(std::ceil(cut/bw));
-	for (std::string::size_type k=1; k <= RDF_data.size(); k++) {
-		RDF_out[k] = RDF_data[k]/nres/RDF_norm[k];
-	}
+// find all interacting pairs and sort them into RDF bins
+for (int ires=1; ires<=nres; ++ires) {
+core::scoring::EnergyGraph const & energy_graph( pose.energies().energy_graph() );
+for (core::graph::Graph::EdgeListConstIter iru = energy_graph.get_node(ires)->const_edge_list_begin(),
+irue = energy_graph.get_node(ires)->const_edge_list_end(); iru != irue; ++iru) {
+core::scoring::EnergyEdge const * edge( static_cast< core::scoring::EnergyEdge const *> (*iru) );
+core::Size const e1( edge->get_first_node_ind() );
+core::Size const e2( edge->get_second_node_ind() );
+numeric::xyzVector< core::Real > p1(pose.residue(e1).xyz("O"));
+numeric::xyzVector< core::Real > p2(pose.residue(e2).xyz("O"));
+int bin = (int)std::floor( p1.distance(p2)/bw ) +1;
+if (bin>=1 && bin<=nbins)
+++RDF_data[bin]; // increment RDF bins
+}
+}
+// normalize simulation data with ideal gas case
+utility::vector1<core::Real> RDF_out(std::ceil(cut/bw));
+for (std::string::size_type k=1; k <= RDF_data.size(); k++) {
+RDF_out[k] = RDF_data[k]/nres/RDF_norm[k];
+}
 
-	RDF_eq_ << step <<": ";
-	for (std::string::size_type rdfi=1; rdfi <= RDF_out.size(); rdfi++) {
-		RDF_eq_ << RDF_out[rdfi] <<" ";
-	}
-	RDF_eq_ << std::endl;
+RDF_eq_ << step <<": ";
+for (std::string::size_type rdfi=1; rdfi <= RDF_out.size(); rdfi++) {
+RDF_eq_ << RDF_out[rdfi] <<" ";
+}
+RDF_eq_ << std::endl;
 
-	// calculate hydrogen bonds
-	core::scoring::hbonds::HBondSet hbond_set;
-	core::scoring::hbonds::fill_hbond_set( pose, false, hbond_set );
-	Size nhbond_tot( 0 );
-	for ( Size ihb = 1; ihb <= Size(hbond_set.nhbonds()); ++ihb ) {
-		core::scoring::hbonds::HBond const & hb( hbond_set.hbond(ihb) );
-		if ((hb.don_res() <= nres) && (hb.acc_res() <= nres)) {
-			nhbond_tot += 2;
-		}
-		else {
-			nhbond_tot++;
-		}
-	}
-	hbond_eq_ << step << " "<<  hbond_set.nhbonds() <<" "<< nhbond_tot <<" " <<ObjexxFCL::format::F(6,3,(float)nhbond_tot/(float)nres)<< std::endl;
+// calculate hydrogen bonds
+core::scoring::hbonds::HBondSet hbond_set;
+core::scoring::hbonds::fill_hbond_set( pose, false, hbond_set );
+Size nhbond_tot( 0 );
+for ( Size ihb = 1; ihb <= Size(hbond_set.nhbonds()); ++ihb ) {
+core::scoring::hbonds::HBond const & hb( hbond_set.hbond(ihb) );
+if ((hb.don_res() <= nres) && (hb.acc_res() <= nres)) {
+nhbond_tot += 2;
+}
+else {
+nhbond_tot++;
+}
+}
+hbond_eq_ << step << " "<<  hbond_set.nhbonds() <<" "<< nhbond_tot <<" " <<ObjexxFCL::format::F(6,3,(float)nhbond_tot/(float)nres)<< std::endl;
 }
 */
 
@@ -823,9 +837,9 @@ PeriodicBoxMover::setup_LJcorrection( core::pose::Pose const &pose )
 	ljcorrection_factor_ = 0.0;
 
 	// For now, assume that we're running only for single type molecule simulation
-	for( core::Size iatm = 1; iatm <= pose.residue( 1 ).natoms(); ++iatm ){
+	for ( core::Size iatm = 1; iatm <= pose.residue( 1 ).natoms(); ++iatm ) {
 		core::Size atmtype( pose.residue(1).atom_type_index(iatm) );
-		if( atommap.count( atmtype ) == 0 ){
+		if ( atommap.count( atmtype ) == 0 ) {
 			Natoms.push_back( 0 );
 			atmtypes.push_back( atmtype );
 			atommap[ atmtype ] = Natoms.size();
@@ -834,8 +848,8 @@ PeriodicBoxMover::setup_LJcorrection( core::pose::Pose const &pose )
 	}
 
 	//core::chemical::AtomTypeSet const atom_set = pose.residue( 1 ).atom_type_set();
-    core::chemical::AtomTypeSetCOP atom_set =
-    core::chemical::ChemicalManager::get_instance()->atom_type_set("fa_standard");
+	core::chemical::AtomTypeSetCOP atom_set =
+		core::chemical::ChemicalManager::get_instance()->atom_type_set("fa_standard");
 
 	TR << "LJ tail correction (energy times 1000 Ang^3)" << std::endl;
 	TR << "Atom1 Atom2   Ni   Nj    Ecorr       arg1       arg2      eps      sig" <<  std::endl;
@@ -843,15 +857,15 @@ PeriodicBoxMover::setup_LJcorrection( core::pose::Pose const &pose )
 	core::Size Ntot( nmol_side_*nmol_side_*nmol_side_ );
 	bool const score_Hatr( option[ score::fa_Hatr]() );
 
-	for( core::Size i = 1; i <= atmtypes.size(); ++i ){
+	for ( core::Size i = 1; i <= atmtypes.size(); ++i ) {
 		core::Size const Ni = Natoms[i]*Ntot;
 		core::Real const eps1 = (*atom_set)[atmtypes[i]].lj_wdepth();
 		core::Real const sig1 = (*atom_set)[atmtypes[i]].lj_radius();
 
 		bool const is_iH = (*atom_set)[atmtypes[i]].is_hydrogen();
-		if( !score_Hatr && is_iH ) continue;
+		if ( !score_Hatr && is_iH ) continue;
 
-		for( core::Size j = 1; j <= atmtypes.size(); ++j ){
+		for ( core::Size j = 1; j <= atmtypes.size(); ++j ) {
 			core::Size const Nj = Natoms[j]*Ntot;
 			core::Real const eps2 = (*atom_set)[atmtypes[j]].lj_wdepth();
 			core::Real const sig2 = (*atom_set)[atmtypes[j]].lj_radius();
@@ -861,7 +875,7 @@ PeriodicBoxMover::setup_LJcorrection( core::pose::Pose const &pose )
 
 			bool const is_jH = (*atom_set)[atmtypes[j]].is_hydrogen();
 
-			if( !score_Hatr && is_jH ) continue;
+			if ( !score_Hatr && is_jH ) continue;
 
 			core::Real factor1(0.0), factor2(0.0);
 			core::Real rc = option[ score::fa_max_dis ]();
@@ -876,8 +890,8 @@ PeriodicBoxMover::setup_LJcorrection( core::pose::Pose const &pose )
 			// using apprx function of (r-max_dis+1.5)/1.5, integrating over max_dis-1.5 to max_dis
 			core::Real rt = rc - 1.5;
 			/*
-				core::Real rt3 = rt*rt*rt;
-				core::Real factor2 = (-rc/18.0+rc/3.0)*rc3 - (-rt/18.0+rc/3.0)*rt3;
+			core::Real rt3 = rt*rt*rt;
+			core::Real factor2 = (-rc/18.0+rc/3.0)*rc3 - (-rt/18.0+rc/3.0)*rt3;
 			*/
 			core::Real ra = 0.5*(rc + rt);
 			factor2 = 4.0*3.141592*0.5*1.5*ra*ra; // ~20 at rc = 6.0
@@ -887,9 +901,9 @@ PeriodicBoxMover::setup_LJcorrection( core::pose::Pose const &pose )
 			// correction factor * 1/V gives correction energy
 			ljcorrection_factor_ += factor1 + factor2;
 			TR << std::setw(5) << (*atom_set)[atmtypes[i]].name() << " " << std::setw(5) << (*atom_set)[atmtypes[j]].name()
-				 << " " << I(4,Ni) << " " << I(4,Nj) << " " << F(8,3,(factor1 + factor2)/1000.0) 
-				 << " " << F(10,3,factor1/1000.0) << " " << F(10,3,factor2/1000.0)
-				 << " " << F(8,5,eps) << " " << F(8,3,sig) << std::endl;
+				<< " " << I(4,Ni) << " " << I(4,Nj) << " " << F(8,3,(factor1 + factor2)/1000.0)
+				<< " " << F(10,3,factor1/1000.0) << " " << F(10,3,factor2/1000.0)
+				<< " " << F(8,5,eps) << " " << F(8,3,sig) << std::endl;
 		}
 	}
 
@@ -905,7 +919,7 @@ PeriodicBoxMover::add_thermodynamic_data_to_silent( core::io::silent::SilentStru
 	ss->add_energy( "intraE", thermodynamic_data_.intraE );
 	ss->add_energy( "interE", thermodynamic_data_.interE );
 	ss->add_energy( "LJcorr", ljcorrection_factor_/thermodynamic_data_.volume );
-	if( central_molecule_pdb_ != "" ){
+	if ( central_molecule_pdb_ != "" ) {
 		ss->add_energy( "centralE", thermodynamic_data_.centralE );
 	}
 }
@@ -928,7 +942,7 @@ PeriodicBoxMover::apply( Pose & pose ) {
 	sf_ = core::scoring::symmetry::symmetrize_scorefunction( *sf_ );
 	core::io::silent::SilentFileData sfd, sfd2;
 
-	if( correct_LJtruncation_ ) setup_LJcorrection( pose );
+	if ( correct_LJtruncation_ ) setup_LJcorrection( pose );
 
 	// burn in
 	core::Size nvolume_change( 0 ), nvolume_change_accept( 0 );
@@ -938,22 +952,22 @@ PeriodicBoxMover::apply( Pose & pose ) {
 
 	// get initial thermodynamics properties
 
-	for (int i=istart_+1; i<=(int)nsteps_equilibrate_; ++i) {
-		if (i%resize_vol_every_ == 0) {
- 			nvolume_change++;
+	for ( int i=istart_+1; i<=(int)nsteps_equilibrate_; ++i ) {
+		if ( i%resize_vol_every_ == 0 ) {
+			nvolume_change++;
 			bool accept( false );
 			change_volume_move(pose, lattice_jump, accept );
-			if( accept ) nvolume_change_accept++;
+			if ( accept ) nvolume_change_accept++;
 		} else {
- 			nperturb++;
+			nperturb++;
 			bool accept( false );
 			perturb_molecule_move(pose, lattice_jump, accept);
-			if( accept ) nperturb_accept++;
+			if ( accept ) nperturb_accept++;
 		}
 
 		// this is for scorefile
 		currtime = time(NULL);
-		if (report_every_>0 && i%report_every_ == 0) {
+		if ( report_every_>0 && i%report_every_ == 0 ) {
 			core::Real dt_in_min = ( currtime - starttime ) / 60.0;
 			TR << "[equilibrate cycle " << i << ", time(min) " << dt_in_min << "]" << std::endl;
 			core::Real ratio_volume = (core::Real)( nvolume_change_accept )/(core::Real)( nvolume_change );
@@ -961,7 +975,7 @@ PeriodicBoxMover::apply( Pose & pose ) {
 			TR << "change_volume    trials= " << I(6,nvolume_change) << ";  accepts= " << F(8,4,ratio_volume) << std::endl;
 			TR << "perturb_molecule trials= " << I(6,nperturb) << ";  accepts= " << F(8,4,nperturb_volume) << std::endl;
 
-			if( report_scorefile_ != "" ){
+			if ( report_scorefile_ != "" ) {
 				core::io::silent::SilentStructOP ss =
 					core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
 
@@ -973,20 +987,21 @@ PeriodicBoxMover::apply( Pose & pose ) {
 			}
 		}
 
-		if (report_thermodynamics_>0 && ( i == 1 || i%report_thermodynamics_ == 0) )
+		if ( report_thermodynamics_>0 && ( i == 1 || i%report_thermodynamics_ == 0) ) {
 			report_thermodynamics( pose, lattice_jump );
+		}
 
 		//if (water_reporter_ && report_water_>0 && i%report_water_==0)
-		//	water_reporter_->report( *this, i, pose, mweight, lattice_jump );
+		// water_reporter_->report( *this, i, pose, mweight, lattice_jump );
 
 		// this is for structure
-		if (dump_every_>0 && i%dump_every_==0) {
+		if ( dump_every_>0 && i%dump_every_==0 ) {
 
-			if ( report_silent_ == "pdb" ){
+			if ( report_silent_ == "pdb" ) {
 				//pose.dump_pdb( "equilibrate_"+utility::to_string(i)+".pdb" );
 				dump_ASU( pose, lattice_jump, "equilibrate_"+utility::to_string(i)+".pdb" );
 
-			} else if( report_silent_ != "" ){
+			} else if ( report_silent_ != "" ) {
 				core::io::silent::SilentStructOP ss =
 					core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
 
@@ -1015,25 +1030,25 @@ PeriodicBoxMover::apply( Pose & pose ) {
 	}
 
 	//if (water_reporter_) // reset water reporter for sim run after eq completes
-	//	water_reporter_ = PeriodicBoxMoverWaterReporterOP( new PeriodicBoxMoverWaterReporter("sim") );
+	// water_reporter_ = PeriodicBoxMoverWaterReporterOP( new PeriodicBoxMoverWaterReporter("sim") );
 
 	nvolume_change_accept = 0; nvolume_change = 0;
 	nperturb = 0; nperturb_accept = 0;
-	for (int i=1; i<=(int)nsteps_sim_; ++i) {
-		if (i%resize_vol_every_ == 0) {
- 			nvolume_change++;
+	for ( int i=1; i<=(int)nsteps_sim_; ++i ) {
+		if ( i%resize_vol_every_ == 0 ) {
+			nvolume_change++;
 			bool accept( false );
 			change_volume_move(pose, lattice_jump, accept );
-			if( accept ) nvolume_change_accept++;
+			if ( accept ) nvolume_change_accept++;
 		} else {
- 			nperturb++;
+			nperturb++;
 			bool accept( false );
 			perturb_molecule_move(pose, lattice_jump, accept);
-			if( accept ) nperturb_accept++;
+			if ( accept ) nperturb_accept++;
 		}
 
 		currtime = time(NULL);
-		if (report_every_>0 && i%report_every_ == 0) {
+		if ( report_every_>0 && i%report_every_ == 0 ) {
 			core::Real dt_in_min = ( currtime - starttime ) / 60.0;
 			TR << "[simulate cycle " << i << ", time(min) " << dt_in_min << "]" << std::endl;
 			core::Real ratio_volume = (core::Real)( nvolume_change_accept )/(core::Real)( nvolume_change );
@@ -1041,7 +1056,7 @@ PeriodicBoxMover::apply( Pose & pose ) {
 			TR << "change_volume    trials= " << I(6,nvolume_change) << ";  accepts= " << F(8,4,ratio_volume) << std::endl;
 			TR << "perturb_molecule trials= " << I(6,nperturb) << ";  accepts= " << F(8,4,nperturb_volume) << std::endl;
 
-			if( report_scorefile_ != "" ){
+			if ( report_scorefile_ != "" ) {
 				core::io::silent::SilentStructOP ss =
 					core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
 
@@ -1053,14 +1068,15 @@ PeriodicBoxMover::apply( Pose & pose ) {
 			}
 		}
 
-		if (report_thermodynamics_>0 && i%report_thermodynamics_ == 0)
+		if ( report_thermodynamics_>0 && i%report_thermodynamics_ == 0 ) {
 			report_thermodynamics( pose, lattice_jump );
+		}
 
 		//if (water_reporter_ && report_water_>0 && i%report_water_==0)
-		//	water_reporter_->report( *this, i, pose, mweight, lattice_jump );
+		// water_reporter_->report( *this, i, pose, mweight, lattice_jump );
 
-		if (dump_every_>0 && i%dump_every_==0) {
-			if( report_silent_ != "" ){
+		if ( dump_every_>0 && i%dump_every_==0 ) {
+			if ( report_silent_ != "" ) {
 				core::io::silent::SilentStructOP ss =
 					core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
 
@@ -1077,72 +1093,93 @@ PeriodicBoxMover::apply( Pose & pose ) {
 
 void
 PeriodicBoxMover::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & datamap,
-		filters::Filters_map const &,
-		moves::Movers_map const &,
-		core::pose::Pose const &  ) {
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & datamap,
+	filters::Filters_map const &,
+	moves::Movers_map const &,
+	core::pose::Pose const &  ) {
 	using namespace core::conformation;
 	using namespace core::pack::task;
 
 	sf_ = protocols::rosetta_scripts::parse_score_function( tag, datamap );
 
 
-	if (tag->hasOption("nmol_side"))
+	if ( tag->hasOption("nmol_side") ) {
 		nmol_side_ = tag->getOption<core::Real>("nmol_side");
-	if (tag->hasOption("initial_density"))
+	}
+	if ( tag->hasOption("initial_density") ) {
 		initial_density_ = tag->getOption<core::Real>("initial_density");
-	if (tag->hasOption("temp"))
+	}
+	if ( tag->hasOption("temp") ) {
 		temp_ = tag->getOption<core::Real>("temp");
-	if (tag->hasOption("vol_step"))
+	}
+	if ( tag->hasOption("vol_step") ) {
 		vol_step_ = tag->getOption<core::Real>("vol_step");
-	if (tag->hasOption("trans_step"))
+	}
+	if ( tag->hasOption("trans_step") ) {
 		trans_step_ = tag->getOption<core::Real>("trans_step");
-	if (tag->hasOption("rot_step"))
+	}
+	if ( tag->hasOption("rot_step") ) {
 		rot_step_ = tag->getOption<core::Real>("rot_step");
-	if (tag->hasOption("tor_step"))
+	}
+	if ( tag->hasOption("tor_step") ) {
 		tor_step_ = tag->getOption<core::Real>("tor_step");
-	if (tag->hasOption("probability_rigid"))
+	}
+	if ( tag->hasOption("probability_rigid") ) {
 		probability_rigid_ = tag->getOption<core::Real>("probability_rigid");
-	if (tag->hasOption("resize_vol_every"))
+	}
+	if ( tag->hasOption("resize_vol_every") ) {
 		resize_vol_every_ = tag->getOption<core::Real>("resize_vol_every");
-	if (tag->hasOption("report_every"))
+	}
+	if ( tag->hasOption("report_every") ) {
 		report_every_ = tag->getOption<core::Real>("report_every");
-	if (tag->hasOption("report_silent"))
+	}
+	if ( tag->hasOption("report_silent") ) {
 		report_silent_ = tag->getOption<std::string>("report_silent");
-	if (tag->hasOption("report_scorefile"))
+	}
+	if ( tag->hasOption("report_scorefile") ) {
 		report_scorefile_ = tag->getOption<std::string>("report_scorefile");
-	if (tag->hasOption("dump_every"))
+	}
+	if ( tag->hasOption("dump_every") ) {
 		dump_every_ = tag->getOption<core::Real>("dump_every");
-	if (tag->hasOption("nsteps_equilibrate"))
+	}
+	if ( tag->hasOption("nsteps_equilibrate") ) {
 		nsteps_equilibrate_ = tag->getOption<core::Real>("nsteps_equilibrate");
-	if (tag->hasOption("nsteps_sim"))
+	}
+	if ( tag->hasOption("nsteps_sim") ) {
 		nsteps_sim_ = tag->getOption<core::Real>("nsteps_sim");
-	if (tag->hasOption("istart"))
+	}
+	if ( tag->hasOption("istart") ) {
 		istart_ = tag->getOption<core::Real>("istart");
-	if (tag->hasOption("central_molecule_pdb"))
+	}
+	if ( tag->hasOption("central_molecule_pdb") ) {
 		central_molecule_pdb_ = tag->getOption<std::string>("central_molecule_pdb");
+	}
 
 	// correction factor for LJ truncation
-	if (tag->hasOption("correct_LJtruncation"))
+	if ( tag->hasOption("correct_LJtruncation") ) {
 		correct_LJtruncation_ = tag->getOption< bool>("correct_LJtruncation");
+	}
 
 	// added for thermodynamics stuffs
-	if (tag->hasOption("report_thermodynamics"))
+	if ( tag->hasOption("report_thermodynamics") ) {
 		report_thermodynamics_ = tag->getOption< core::Real>("report_thermodynamics");
-	if (tag->hasOption("pressure")){
+	}
+	if ( tag->hasOption("pressure") ) {
 		P0_ = tag->getOption<core::Real>("pressure");
 	}
-	if (tag->hasOption("rg_atom1"))
+	if ( tag->hasOption("rg_atom1") ) {
 		rg_atom1_ = tag->getOption<std::string>("rg_atom1");
-	if (tag->hasOption("rg_atom2"))
+	}
+	if ( tag->hasOption("rg_atom2") ) {
 		rg_atom2_ = tag->getOption<std::string>("rg_atom1");
+	}
 
 	// reporters for water
 	/*
 	if (tag->hasOption("report_water")) {
-		report_water_ = tag->getOption<core::Real>("report_water");
-        	water_reporter_ = PeriodicBoxMoverWaterReporterOP( new PeriodicBoxMoverWaterReporter("eq") );
+	report_water_ = tag->getOption<core::Real>("report_water");
+	water_reporter_ = PeriodicBoxMoverWaterReporterOP( new PeriodicBoxMoverWaterReporter("eq") );
 	}
 	*/
 }

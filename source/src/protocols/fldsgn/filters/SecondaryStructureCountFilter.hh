@@ -70,7 +70,7 @@ public:// virtual constructor
 	virtual FilterOP clone() const { return FilterOP( new SecondaryStructureCountFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const {	return FilterOP( new SecondaryStructureCountFilter() ); }
+	virtual FilterOP fresh_instance() const { return FilterOP( new SecondaryStructureCountFilter() ); }
 
 public:// accessor
 
@@ -82,10 +82,10 @@ public:// accessor
 public:// parser
 
 	virtual void parse_my_tag( TagCOP tag,
-														 basic::datacache::DataMap &,
-														 Filters_map const &,
-														 Movers_map const &,
-														 Pose const & );
+		basic::datacache::DataMap &,
+		Filters_map const &,
+		Movers_map const &,
+		Pose const & );
 
 
 public:// main operation

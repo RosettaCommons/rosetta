@@ -33,34 +33,34 @@ namespace protocols {
 namespace stepwise {
 namespace sampler {
 
-	//Constructor
-	JumpStepWiseSampler::JumpStepWiseSampler():
-		which_jump_( 0 )
-	{
-		set_random( false );
-	}
+//Constructor
+JumpStepWiseSampler::JumpStepWiseSampler():
+	which_jump_( 0 )
+{
+	set_random( false );
+}
 
-	//Constructor
-	JumpStepWiseSampler::JumpStepWiseSampler(	Size const which_jump,
-														utility::vector1< core::kinematics::Jump > const & jumps,
-														bool const choose_random /* = false */ ):
-		which_jump_( which_jump ),
-		jumps_( jumps )
-	{
-		set_random( choose_random );
-	}
+//Constructor
+JumpStepWiseSampler::JumpStepWiseSampler( Size const which_jump,
+	utility::vector1< core::kinematics::Jump > const & jumps,
+	bool const choose_random /* = false */ ):
+	which_jump_( which_jump ),
+	jumps_( jumps )
+{
+	set_random( choose_random );
+}
 
-	//Destructor
-	JumpStepWiseSampler::~JumpStepWiseSampler()
-	{}
+//Destructor
+JumpStepWiseSampler::~JumpStepWiseSampler()
+{}
 
-  //////////////////////////////////////////////////////////////////////////
-	void
-	JumpStepWiseSampler::apply( core::pose::Pose & pose, Size const id )
-	{
-		runtime_assert( id <= size() );
-		pose.set_jump( which_jump_, jumps_[ id ] );
-	}
+//////////////////////////////////////////////////////////////////////////
+void
+JumpStepWiseSampler::apply( core::pose::Pose & pose, Size const id )
+{
+	runtime_assert( id <= size() );
+	pose.set_jump( which_jump_, jumps_[ id ] );
+}
 
 
 } //sampler

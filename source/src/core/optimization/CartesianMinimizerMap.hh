@@ -100,10 +100,10 @@ public:
 
 
 	inline int
-	ndofs() const	{ return 3*moving_atoms_.size(); }
+	ndofs() const { return 3*moving_atoms_.size(); }
 
 	inline int
-	ntorsions() const	{ return moving_dofids_.size(); }
+	ntorsions() const { return moving_dofids_.size(); }
 
 	inline id::DOF_ID
 	get_dof_id(Size n) const { return moving_dofids_[n]; }
@@ -112,7 +112,7 @@ public:
 	get_TorsionID(Size n) const { return moving_torsionids_[n]; }
 
 	inline int
-	natoms() const	{ return moving_atoms_.size(); }
+	natoms() const { return moving_atoms_.size(); }
 
 	inline id::AtomID
 	get_atom(Size n) const { return moving_atoms_[n]; }

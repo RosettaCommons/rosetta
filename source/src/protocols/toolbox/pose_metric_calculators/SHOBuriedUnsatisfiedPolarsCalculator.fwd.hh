@@ -9,7 +9,7 @@
 
 
 /// @brief Definition of types SHOBuriedUnsatisfiedPolarsCalculatorOP and
-/// 	SHOBuriedUnsatisfiedPolarsCalculatorCOP
+///  SHOBuriedUnsatisfiedPolarsCalculatorCOP
 ///
 /// @author Andrea Bazzoli (bazzoli@ku.edu)
 

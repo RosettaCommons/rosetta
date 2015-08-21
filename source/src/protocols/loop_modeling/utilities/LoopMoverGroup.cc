@@ -31,25 +31,25 @@ namespace utilities {
 using namespace std;
 
 LoopMoverGroup::LoopMoverGroup() // {{{1
-	: is_default_(false) {}
+: is_default_(false) {}
 
 bool LoopMoverGroup::do_apply(Pose & pose) { // {{{1
-	foreach (LoopMoverOP child, get_children()) {
+	foreach ( LoopMoverOP child, get_children() ) {
 		child->apply(pose);
-		if (! child->was_successful()) return false;
+		if ( ! child->was_successful() ) return false;
 	}
 	return true;
 }
 
 void LoopMoverGroup::get_children_names( // {{{1
-		utility::vector1<string> & names, string indent) const {
+	utility::vector1<string> & names, string indent) const {
 
-	foreach (LoopMoverOP mover, get_children()) {
+	foreach ( LoopMoverOP mover, get_children() ) {
 		mover->get_children_names(names, indent);
 	}
 }
 LoopMoverOP LoopMoverGroup::add_mover(LoopMoverOP mover) { // {{{1
-	if (is_default_) { clear(); }
+	if ( is_default_ ) { clear(); }
 	return add_child(mover);
 }
 

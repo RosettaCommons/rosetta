@@ -73,10 +73,10 @@ static thread_local basic::Tracer tr( "protocols.sparta" );
 bool protocols::sparta::Sparta::options_registered_( false );
 
 void protocols::sparta::Sparta::register_options() {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  if ( options_registered_ ) return;
-  options_registered_ = true;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	if ( options_registered_ ) return;
+	options_registered_ = true;
 }
 
 
@@ -90,9 +90,9 @@ using namespace core;
 using namespace std;
 Sparta::SpartaLib::SpartaLib() {
 	//string libvar;
-	if( getenv( "SPARTA_DIR" ) == NULL )	{
+	if ( getenv( "SPARTA_DIR" ) == NULL ) {
 		SPARTA_DIR = ".";
-	} else{
+	} else {
 		SPARTA_DIR = getenv( "SPARTA_DIR" );
 	}
 
@@ -108,10 +108,10 @@ Sparta::SpartaLib::SpartaLib() {
 	else SPARTA_DIR = ".";
 
 	string temp;
-	if( getenv( "PATH" ) != NULL ) {
+	if ( getenv( "PATH" ) != NULL ) {
 		temp = getenv( "PATH" );
-		if(temp.find("/") != string::npos ) slash_char = "/"; // unix
-		else if(temp.find("\\") != string::npos ) slash_char = "\\"; // Windows
+		if ( temp.find("/") != string::npos ) slash_char = "/"; // unix
+		else if ( temp.find("\\") != string::npos ) slash_char = "\\"; // Windows
 	};
 
 	aN[1]="N"; aN[2]="HA"; aN[3]="C"; aN[4]="CA"; aN[5]="CB"; aN[6]="HN"; //aN[7]="H3";
@@ -129,7 +129,7 @@ Sparta::Sparta( std::string const & cs_file ) :
 	REF_CS_Tab( cs_file ),
 	bCreateOutput_( false )
 {
-	if (!lib_instance_ ) lib_instance_ = new SpartaLib;
+	if ( !lib_instance_ ) lib_instance_ = new SpartaLib;
 	refCSFileName=cs_file;
 }
 
@@ -141,13 +141,13 @@ void Sparta::SpartaLib::setup_for_scoring( core::pose::Pose const & pose ) {
 	r1 = inPDB.r1;
 	rN = inPDB.rN;
 
-	if (firstRes < r1) firstRes = r1;
-	if (lastRes  < r1) lastRes  = r1;
+	if ( firstRes < r1 ) firstRes = r1;
+	if ( lastRes  < r1 ) lastRes  = r1;
 
-	if (firstRes > rN) firstRes = rN;
-	if (lastRes  > rN) lastRes  = rN;
+	if ( firstRes > rN ) firstRes = rN;
+	if ( lastRes  > rN ) lastRes  = rN;
 
-	if (firstRes > lastRes) {
+	if ( firstRes > lastRes ) {
 		int itemp = firstRes;
 		firstRes  = lastRes;
 		lastRes   = itemp;
@@ -210,8 +210,8 @@ void Sparta::SpartaLib::setup_defaults() {
 	//later use Evaluator to determine scratch dir as in ExternalEvaluator...
 	PRED_DIR = "pred";
 	inName = "INTERNAL";
- //	if( args["in"].length() > 0 ) inName = args["in"];
-//	 if( args["ins"].length() > 0 ) inNames = args["ins"];
+	// if( args["in"].length() > 0 ) inName = args["in"];
+	//  if( args["ins"].length() > 0 ) inNames = args["ins"];
 
 	tripFileName = TAB_DIR + slash_char+ "sparta.tab";
 	weightFileName = TAB_DIR + slash_char + "weight.tab";
@@ -219,7 +219,7 @@ void Sparta::SpartaLib::setup_defaults() {
 	fitFileName = TAB_DIR + slash_char + "fitting.tab";
 	sumName = PRED_DIR + slash_char +"pred.tab";
 
- //	if( args["ref"].length() > 0 ) refCSFileName = args["ref"];
+	// if( args["ref"].length() > 0 ) refCSFileName = args["ref"];
 
 	rcFileName = TAB_DIR + slash_char + "randcoil.tab";
 	adjFileName = TAB_DIR + slash_char + "rcadj.tab";
@@ -230,19 +230,19 @@ void Sparta::SpartaLib::setup_defaults() {
 	EXCLUDED="";
 
 	// if(args["atom"].length() > 0 ) {
-//		 aN.clear();
-//		 utility::vector0< string > temp = GDB::split(" ", args["atom"]);
-//		 int cnt = 1;
-//		 for(int i = 0; i < temp.size(); i++)
-//			 {
-// 				if( temp[i]!="N" && temp[i]!="HA"&& temp[i]!="C"&& temp[i]!="CA"&& temp[i]!="CB"&& temp[i]!="HN")
-// 					{
-// 						cerr << "\tInvalid atom -" << temp[i] << endl;
-// 						exit(0);
-// 					}
-// 				aN[cnt++] = temp[i];
-//			 }
-//	 }
+	//   aN.clear();
+	//   utility::vector0< string > temp = GDB::split(" ", args["atom"]);
+	//   int cnt = 1;
+	//   for(int i = 0; i < temp.size(); i++)
+	//    {
+	//     if( temp[i]!="N" && temp[i]!="HA"&& temp[i]!="C"&& temp[i]!="CA"&& temp[i]!="CB"&& temp[i]!="HN")
+	//      {
+	//       cerr << "\tInvalid atom -" << temp[i] << endl;
+	//       exit(0);
+	//      }
+	//     aN[cnt++] = temp[i];
+	//    }
+	//  }
 
 	matchCount = 20;
 	tVal = 500.0; // not used
@@ -294,99 +294,101 @@ void Sparta::SpartaLib::init() {
 //**************** NOT ABLE TO HANDLE PROTEIN WITH MULTIPLE CHAINS ****************
 void Sparta::SpartaLib::getResInfo( bool create_output )
 {
-  const Real SPARTA_PI = numeric::NumericTraits<Real>::pi();
-  const Real SPARTA_RADS_PER_DEG = SPARTA_PI / 180.0;
-  const Real SIN_PI = sin(SPARTA_PI);
-  const Real COS_PI = cos(SPARTA_PI);
+	const Real SPARTA_PI = numeric::NumericTraits<Real>::pi();
+	const Real SPARTA_RADS_PER_DEG = SPARTA_PI / 180.0;
+	const Real SIN_PI = sin(SPARTA_PI);
+	const Real COS_PI = cos(SPARTA_PI);
 
-  inTab.Entries.clear();
+	inTab.Entries.clear();
 
-  // allocation
-  int n = rN-r1+1, m = 10;
-  U_ANGLES = new float* [n];
-  U_ANGLES[0] = new float [n*m];
-  for(int i = 1; i < n; ++i)
-    U_ANGLES[i] = U_ANGLES[i-1] + m;
+	// allocation
+	int n = rN-r1+1, m = 10;
+	U_ANGLES = new float* [n];
+	U_ANGLES[0] = new float [n*m];
+	for ( int i = 1; i < n; ++i ) {
+		U_ANGLES[i] = U_ANGLES[i-1] + m;
+	}
 
-  U_RING_SHIFTS = new float* [n];
-  U_RING_SHIFTS[0] = new float [n*(aN.size()+1)];
-  for(int i = 1; i < n; ++i)
-    U_RING_SHIFTS[i] = U_RING_SHIFTS[i-1] + aN.size()+1;
+	U_RING_SHIFTS = new float* [n];
+	U_RING_SHIFTS[0] = new float [n*(aN.size()+1)];
+	for ( int i = 1; i < n; ++i ) {
+		U_RING_SHIFTS[i] = U_RING_SHIFTS[i-1] + aN.size()+1;
+	}
 
-  n = rN-r1+1; m = 4;
-  U_NAME = new string* [n];
-  U_NAME[0] = new string [n*m];
-  for(int i = 1; i < n; ++i)
-    U_NAME[i] = U_NAME[i-1] + m;
+	n = rN-r1+1; m = 4;
+	U_NAME = new string* [n];
+	U_NAME[0] = new string [n*m];
+	for ( int i = 1; i < n; ++i ) {
+		U_NAME[i] = U_NAME[i-1] + m;
+	}
 
-  U_HN_HB = new float [n];
-  U_HA_HB = new float [n];
-  U_CO_HB = new float [n];
+	U_HN_HB = new float [n];
+	U_HA_HB = new float [n];
+	U_CO_HB = new float [n];
 
-  int pos0 = inName.find_last_of(slash_char)+1;
-  int pos1 = inName.find_last_of(".");
+	int pos0 = inName.find_last_of(slash_char)+1;
+	int pos1 = inName.find_last_of(".");
 
-  sourceName=inName.substr(pos0,pos1-pos0);
+	sourceName=inName.substr(pos0,pos1-pos0);
 
-  int cnt = 0;
-  // format the sequence read from PDB coordinates
-  sequence="";
-  for ( ResidList::iterator itN = residList.begin(), end = residList.end(); itN != end; ++itN ) {
-    sequence += itN->second;
-    cnt++;
-    if( cnt%10 == 0 ) sequence += " "; //separator for each 10 residues
+	int cnt = 0;
+	// format the sequence read from PDB coordinates
+	sequence="";
+	for ( ResidList::iterator itN = residList.begin(), end = residList.end(); itN != end; ++itN ) {
+		sequence += itN->second;
+		cnt++;
+		if ( cnt%10 == 0 ) sequence += " "; //separator for each 10 residues
 		++itN;
-    if(itN != residList.end()) {//add "?" if sequence numbers are not consecutive
+		if ( itN != residList.end() ) { //add "?" if sequence numbers are not consecutive
 			int j = itN->first;
 			--itN;
-			for(int i = 1; i< j - itN->first; i++) {
+			for ( int i = 1; i< j - itN->first; i++ ) {
 				sequence += "?"; cnt++;
-				if( cnt%10 == 0 ) sequence += " ";
+				if ( cnt%10 == 0 ) sequence += " ";
 			}
-		}
-    else --itN;
-  }
+		} else --itN;
+	}
 
-//   clock_t start, finish;
-//   start = clock();
+	//   clock_t start, finish;
+	//   start = clock();
 
-  inPDB.initOrbitalShift();
-  //finish = clock();
-  //tr.Info << "\n\t initOrbitalShift running time: " << (float)(finish - start)/ CLOCKS_PER_SEC << " seconds" << endl;
-  inPDB.initHBond();
-  //finish = clock();
-  //tr.Info << "\n\t initHBond running time: " << (float)(finish - start)/ CLOCKS_PER_SEC << " seconds" << endl;
-  inPDB.collect_HN_S2_and_EF();
-  //inPDB.calc_HN_S2();
-  //finish = clock();
-  //tr.Info << "\n\t calc_HN_S2 running time: " << (float)(finish - start)/ CLOCKS_PER_SEC << " seconds" << endl;
+	inPDB.initOrbitalShift();
+	//finish = clock();
+	//tr.Info << "\n\t initOrbitalShift running time: " << (float)(finish - start)/ CLOCKS_PER_SEC << " seconds" << endl;
+	inPDB.initHBond();
+	//finish = clock();
+	//tr.Info << "\n\t initHBond running time: " << (float)(finish - start)/ CLOCKS_PER_SEC << " seconds" << endl;
+	inPDB.collect_HN_S2_and_EF();
+	//inPDB.calc_HN_S2();
+	//finish = clock();
+	//tr.Info << "\n\t calc_HN_S2 running time: " << (float)(finish - start)/ CLOCKS_PER_SEC << " seconds" << endl;
 
-  inTab.setData("SEQUENCE", sequence);
-  inTab.VARS_str_parser("  RESID_R1 RESNAME_R1 PHI_R1 PSI_R1 CHI1_R1 RESID_R2 RESNAME_R2 PHI_R2 PSI_R2 CHI1_R2 RESID_R3 RESNAME_R3 PHI_R3 PSI_R3 CHI1_R3 N_HM HA_HM C_HM CA_HM CB_HM H_HM H_HB HA_HB CO_HB SOURCE");
-  inTab.FORMAT_str_parser("%4d %s %8.3f %8.3f %8.3f %4d %s %8.3f %8.3f %8.3f %4d %s %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %s");
+	inTab.setData("SEQUENCE", sequence);
+	inTab.VARS_str_parser("  RESID_R1 RESNAME_R1 PHI_R1 PSI_R1 CHI1_R1 RESID_R2 RESNAME_R2 PHI_R2 PSI_R2 CHI1_R2 RESID_R3 RESNAME_R3 PHI_R3 PSI_R3 CHI1_R3 N_HM HA_HM C_HM CA_HM CB_HM H_HM H_HB HA_HB CO_HB SOURCE");
+	inTab.FORMAT_str_parser("%4d %s %8.3f %8.3f %8.3f %4d %s %8.3f %8.3f %8.3f %4d %s %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %s");
 
-  //calculate H-bond for the first residue
-  float dist = inPDB.HBDistList[r1]["HN"];
-  U_HN_HB[0] = dist;
-  dist = inPDB.HBDistList[r1]["HA"];
-  U_HA_HB[0] = dist;
-  dist = inPDB.HBDistList[r1]["O"];
-  U_CO_HB[0] = dist;
+	//calculate H-bond for the first residue
+	float dist = inPDB.HBDistList[r1]["HN"];
+	U_HN_HB[0] = dist;
+	dist = inPDB.HBDistList[r1]["HA"];
+	U_HA_HB[0] = dist;
+	dist = inPDB.HBDistList[r1]["O"];
+	U_CO_HB[0] = dist;
 
 
-  for ( int i = r1; i <= rN; i++ ) {
+	for ( int i = r1; i <= rN; i++ ) {
 		CHI2_ANGLES[i] = inPDB.getChi2(1,i); // chi2 angle for residue r1, index by i-r1 (confusing..., but consistent with the loop)
 		//OMEGA_ANGLES[i] = inPDB.getOmega(1,i); // chi2 angle for residue r1, index by i-r1 (confusing..., but consistent with the loop)
 	}
 
-  float shift;
-  //loop for the polypeptide chain
-  for ( int i = r1+1; i < rN; i++ ) {
+	float shift;
+	//loop for the polypeptide chain
+	for ( int i = r1+1; i < rN; i++ ) {
 		int index = i-r1;
 
-		if( residList.find(i-1) == residList.end() ||
-			residList.find(i) == residList.end() ||
-			residList.find(i+1) == residList.end()) continue;
+		if ( residList.find(i-1) == residList.end() ||
+				residList.find(i) == residList.end() ||
+				residList.find(i+1) == residList.end() ) continue;
 
 
 		shift = inPDB.getPhi(1,i+1);
@@ -406,15 +408,15 @@ void Sparta::SpartaLib::getResInfo( bool create_output )
 		inTab.Entries[index]["SOURCE"] = inName.substr(pos0,pos1-pos0);
 
 		//Ring current shifts
-		for( AtomNameList::iterator itN_unordered = aN.begin(), end = aN.end(); itN_unordered != end; ++itN_unordered )	{
+		for ( AtomNameList::iterator itN_unordered = aN.begin(), end = aN.end(); itN_unordered != end; ++itN_unordered ) {
 			string name = itN_unordered->second;
-			if( name == "H" ) {
+			if ( name == "H" ) {
 				name = "HN";
-				if( residList[i] == "P" ) continue;
-	    }	else if( name == "HA" && residList[i] == "G" ) {
-	      U_RING_SHIFTS[index][7-1] = inPDB.getOrbitalShift(1,i,"HA3"); // change to use standard HA2/3 names
-	      name = "HA2";
-	    }	else if( name == "CB" && residList[i] == "G" ) continue;
+				if ( residList[i] == "P" ) continue;
+			} else if ( name == "HA" && residList[i] == "G" ) {
+				U_RING_SHIFTS[index][7-1] = inPDB.getOrbitalShift(1,i,"HA3"); // change to use standard HA2/3 names
+				name = "HA2";
+			} else if ( name == "CB" && residList[i] == "G" ) continue;
 
 			U_RING_SHIFTS[index][itN_unordered->first-1] = inPDB.getOrbitalShift(1,i,name) ;
 			inTab.Entries[index][itN_unordered->second+"_HM"] = ftoa(U_RING_SHIFTS[index][itN_unordered->first-1], buf);
@@ -433,7 +435,7 @@ void Sparta::SpartaLib::getResInfo( bool create_output )
 		inTab.Entries[index]["CO_HB"] = ftoa(dist, buf);
 		U_CO_HB[index] = dist;
 
-		if( inTab.Entries.find(index-1) != inTab.Entries.end() ) {
+		if ( inTab.Entries.find(index-1) != inTab.Entries.end() ) {
 			//if tripet i-1 exist
 			//assign the values of positions 1 and 2 of triplet i using the postions 2 and 3 of triplet i-1
 			U_ANGLES[index][1] = U_ANGLES[index-1][4];
@@ -456,8 +458,7 @@ void Sparta::SpartaLib::getResInfo( bool create_output )
 			inTab.Entries[index]["CHI1_R2"] = inTab.Entries[index-1]["CHI1_R3"];
 			inTab.Entries[index]["RESID_R2"] = inTab.Entries[index-1]["RESID_R3"];
 			inTab.Entries[index]["RESNAME_R2"] = inTab.Entries[index-1]["RESNAME_R3"];
-		}
-		else {	//else, calculate the values from coordinates
+		} else { //else, calculate the values from coordinates
 
 			shift = inPDB.getPhi(1,i-1);
 			U_ANGLES[index][1] = shift;
@@ -497,97 +498,96 @@ void Sparta::SpartaLib::getResInfo( bool create_output )
 		// (20 BLOSSUM + 2 PHI + 2 PSI + 2 CHI1 + 2 CHI2 + 2 Oemga)*3 + (4 H-bond)*5 [O(i-1),HN,HA,O,HN(i+1)]
 		utility::vector0<float> temp;
 		//add ANN input for residue i-1
-		string resName=residList[i-1]; if(resName=="c") resName="C";
+		string resName=residList[i-1]; if ( resName=="c" ) resName="C";
 		//1-20
 		temp.insert(temp.end(), BLOSUM_62[resName].begin(), BLOSUM_62[resName].end());
 		//21-22
 		float phi = U_ANGLES[index][1], psi = U_ANGLES[index][2], chi1 = U_ANGLES[index][3], chi2 = CHI2_ANGLES[i-1];//, omega=OMEGA_ANGLES[i-1];
-		if( phi<999 ) { temp.push_back(sin(phi*SPARTA_RADS_PER_DEG)); temp.push_back(cos(phi*SPARTA_RADS_PER_DEG));}//phi
-		else { temp.push_back(SIN_PI); temp.push_back(COS_PI);}
+		if ( phi<999 ) { temp.push_back(sin(phi*SPARTA_RADS_PER_DEG)); temp.push_back(cos(phi*SPARTA_RADS_PER_DEG));}//phi
+		else { temp.push_back(SIN_PI); temp.push_back(COS_PI); }
 		//23-24
-		if( psi<999 ) { temp.push_back(sin(psi*SPARTA_RADS_PER_DEG)); temp.push_back(cos(psi*SPARTA_RADS_PER_DEG));}//psi
-		else { temp.push_back(SIN_PI); temp.push_back(COS_PI);}
+		if ( psi<999 ) { temp.push_back(sin(psi*SPARTA_RADS_PER_DEG)); temp.push_back(cos(psi*SPARTA_RADS_PER_DEG));}//psi
+		else { temp.push_back(SIN_PI); temp.push_back(COS_PI); }
 		//25-26
-		if( chi1<999 ) { temp.push_back(sin(chi1*SPARTA_RADS_PER_DEG)); temp.push_back(cos(chi1*SPARTA_RADS_PER_DEG));}//chi1
-		else { temp.push_back(0); temp.push_back(0);}
+		if ( chi1<999 ) { temp.push_back(sin(chi1*SPARTA_RADS_PER_DEG)); temp.push_back(cos(chi1*SPARTA_RADS_PER_DEG));}//chi1
+		else { temp.push_back(0); temp.push_back(0); }
 		//27
 		temp.push_back(chi1<999);
 		//28-29
-		if( chi2<999 ) { temp.push_back(sin(chi2*SPARTA_RADS_PER_DEG)); temp.push_back(cos(chi2*SPARTA_RADS_PER_DEG));}//chi2
-		else { temp.push_back(0); temp.push_back(0);}
+		if ( chi2<999 ) { temp.push_back(sin(chi2*SPARTA_RADS_PER_DEG)); temp.push_back(cos(chi2*SPARTA_RADS_PER_DEG));}//chi2
+		else { temp.push_back(0); temp.push_back(0); }
 		//30
 		temp.push_back(chi2<999);
 
 		//add ANN input for residue i
 		//31-50
-		resName=residList[i]; if(resName=="c") resName="C";
+		resName=residList[i]; if ( resName=="c" ) resName="C";
 		temp.insert(temp.end(), BLOSUM_62[resName].begin(), BLOSUM_62[resName].end());
 		phi = U_ANGLES[index][4]; psi = U_ANGLES[index][5]; chi1 = U_ANGLES[index][6]; chi2 = CHI2_ANGLES[i];//, omega=OMEGA_ANGLES[i];
 		//51-52
-		if( phi<999 ) { temp.push_back(sin(phi*SPARTA_RADS_PER_DEG)); temp.push_back(cos(phi*SPARTA_RADS_PER_DEG));}//phi
-		else { temp.push_back(SIN_PI); temp.push_back(COS_PI);}
+		if ( phi<999 ) { temp.push_back(sin(phi*SPARTA_RADS_PER_DEG)); temp.push_back(cos(phi*SPARTA_RADS_PER_DEG));}//phi
+		else { temp.push_back(SIN_PI); temp.push_back(COS_PI); }
 		//53-54
-		if( psi<999 ) { temp.push_back(sin(psi*SPARTA_RADS_PER_DEG)); temp.push_back(cos(psi*SPARTA_RADS_PER_DEG));}//psi
-		else { temp.push_back(SIN_PI); temp.push_back(COS_PI);}
+		if ( psi<999 ) { temp.push_back(sin(psi*SPARTA_RADS_PER_DEG)); temp.push_back(cos(psi*SPARTA_RADS_PER_DEG));}//psi
+		else { temp.push_back(SIN_PI); temp.push_back(COS_PI); }
 		//55-56
-		if( chi1<999 ) { temp.push_back(sin(chi1*SPARTA_RADS_PER_DEG)); temp.push_back(cos(chi1*SPARTA_RADS_PER_DEG));}//chi1
-		else { temp.push_back(0); temp.push_back(0);}
+		if ( chi1<999 ) { temp.push_back(sin(chi1*SPARTA_RADS_PER_DEG)); temp.push_back(cos(chi1*SPARTA_RADS_PER_DEG));}//chi1
+		else { temp.push_back(0); temp.push_back(0); }
 		//57
 		temp.push_back(chi1<999);
 		//58-59
-		if( chi2<999 ) { temp.push_back(sin(chi2*SPARTA_RADS_PER_DEG)); temp.push_back(cos(chi2*SPARTA_RADS_PER_DEG));}//chi2
-		else { temp.push_back(0); temp.push_back(0);}
+		if ( chi2<999 ) { temp.push_back(sin(chi2*SPARTA_RADS_PER_DEG)); temp.push_back(cos(chi2*SPARTA_RADS_PER_DEG));}//chi2
+		else { temp.push_back(0); temp.push_back(0); }
 		//60
 		temp.push_back(chi2<999);
 
 		//add ANN input for residue i+1
 		//61-80
-		resName=residList[i+1]; if(resName=="c") resName="C";
+		resName=residList[i+1]; if ( resName=="c" ) resName="C";
 		temp.insert(temp.end(), BLOSUM_62[resName].begin(), BLOSUM_62[resName].end());
 		//81-82
 		phi = U_ANGLES[index][7]; psi = U_ANGLES[index][8]; chi1 = U_ANGLES[index][9]; chi2 = CHI2_ANGLES[i+1];//, omega=OMEGA_ANGLES[i+1];
-		if( phi<999 ) { temp.push_back(sin(phi*SPARTA_RADS_PER_DEG)); temp.push_back(cos(phi*SPARTA_RADS_PER_DEG));}//phi
-		else { temp.push_back(SIN_PI); temp.push_back(COS_PI);}
+		if ( phi<999 ) { temp.push_back(sin(phi*SPARTA_RADS_PER_DEG)); temp.push_back(cos(phi*SPARTA_RADS_PER_DEG));}//phi
+		else { temp.push_back(SIN_PI); temp.push_back(COS_PI); }
 		//83-84
-		if( psi<999 ) { temp.push_back(sin(psi*SPARTA_RADS_PER_DEG)); temp.push_back(cos(psi*SPARTA_RADS_PER_DEG));}//psi
-		else { temp.push_back(SIN_PI); temp.push_back(COS_PI);}
+		if ( psi<999 ) { temp.push_back(sin(psi*SPARTA_RADS_PER_DEG)); temp.push_back(cos(psi*SPARTA_RADS_PER_DEG));}//psi
+		else { temp.push_back(SIN_PI); temp.push_back(COS_PI); }
 		//85-86
-		if( chi1<999 ) { temp.push_back(sin(chi1*SPARTA_RADS_PER_DEG)); temp.push_back(cos(chi1*SPARTA_RADS_PER_DEG));}//chi1
-		else { temp.push_back(0); temp.push_back(0);}
+		if ( chi1<999 ) { temp.push_back(sin(chi1*SPARTA_RADS_PER_DEG)); temp.push_back(cos(chi1*SPARTA_RADS_PER_DEG));}//chi1
+		else { temp.push_back(0); temp.push_back(0); }
 		//87
 		temp.push_back(chi1<999);
 		//88-89
-		if( chi2<999 ) { temp.push_back(sin(chi2*SPARTA_RADS_PER_DEG)); temp.push_back(cos(chi2*SPARTA_RADS_PER_DEG));}//chi2
-		else { temp.push_back(0); temp.push_back(0);}
+		if ( chi2<999 ) { temp.push_back(sin(chi2*SPARTA_RADS_PER_DEG)); temp.push_back(cos(chi2*SPARTA_RADS_PER_DEG));}//chi2
+		else { temp.push_back(0); temp.push_back(0); }
 		//90
 		temp.push_back(chi2<999);
 
 		//91-94
 		float hb = inPDB.HBDistList[i-1]["O"];
-		if(hb>0) {
+		if ( hb>0 ) {
 			temp.push_back(1.0); temp.push_back(hb); temp.push_back( cos(inPDB.HB_DHO_AngleList[i-1]["O"]*SPARTA_RADS_PER_DEG) ); temp.push_back( cos(inPDB.HB_HOA_AngleList[i-1]["O"]*SPARTA_RADS_PER_DEG) );
-		}
-		else {temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0);}
+		} else { temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0); }
 		//95-98
 		hb = inPDB.HBDistList[i]["HN"];
-		if(hb>0) {
+		if ( hb>0 ) {
 			temp.push_back(1.0); temp.push_back(hb); temp.push_back( cos(inPDB.HB_DHO_AngleList[i]["HN"]*SPARTA_RADS_PER_DEG) ); temp.push_back( cos(inPDB.HB_HOA_AngleList[i]["HN"]*SPARTA_RADS_PER_DEG) );
-		}	else {temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0);}
+		} else { temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0); }
 		//99-102
 		hb = inPDB.HBDistList[i]["HA"];
-		if(hb>0) {
+		if ( hb>0 ) {
 			temp.push_back(1.0); temp.push_back(hb); temp.push_back( cos(inPDB.HB_DHO_AngleList[i]["HA"]*SPARTA_RADS_PER_DEG) ); temp.push_back( cos(inPDB.HB_HOA_AngleList[i]["HA"]*SPARTA_RADS_PER_DEG) );
-		}	else {temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0);}
+		} else { temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0); }
 		//103-106
 		hb = inPDB.HBDistList[i]["O"];
-		if(hb>0) {
+		if ( hb>0 ) {
 			temp.push_back(1.0); temp.push_back(hb); temp.push_back( cos(inPDB.HB_DHO_AngleList[i]["O"]*SPARTA_RADS_PER_DEG) ); temp.push_back( cos(inPDB.HB_HOA_AngleList[i]["O"]*SPARTA_RADS_PER_DEG) );
-		}	else {temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0);}
+		} else { temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0); }
 		//107-110
 		hb = inPDB.HBDistList[i+1]["HN"];
-		if(hb>0) {
+		if ( hb>0 ) {
 			temp.push_back(1.0); temp.push_back(hb); temp.push_back( cos(inPDB.HB_DHO_AngleList[i+1]["HN"]*SPARTA_RADS_PER_DEG) ); temp.push_back( cos(inPDB.HB_HOA_AngleList[i+1]["HN"]*SPARTA_RADS_PER_DEG) );
-		}	else {temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0);}
+		} else { temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0); }
 
 		//111-113
 		temp.push_back(inPDB.HN_S2[i-1]);
@@ -600,21 +600,22 @@ void Sparta::SpartaLib::getResInfo( bool create_output )
 	}
 
 
-  //calculate H-bond for the last residue
-  dist = inPDB.HBDistList[rN]["HN"];
-  U_HN_HB[rN-r1] = dist;
-  dist = inPDB.HBDistList[rN]["HA"];
-  U_HA_HB[rN-r1] = dist;
-  dist = inPDB.HBDistList[rN]["O"];
-  U_CO_HB[rN-r1] = dist;
+	//calculate H-bond for the last residue
+	dist = inPDB.HBDistList[rN]["HN"];
+	U_HN_HB[rN-r1] = dist;
+	dist = inPDB.HBDistList[rN]["HA"];
+	U_HA_HB[rN-r1] = dist;
+	dist = inPDB.HBDistList[rN]["O"];
+	U_CO_HB[rN-r1] = dist;
 
 	if ( create_output ) inTab.saveGDB(PRED_DIR+slash_char+inName.substr(pos0,pos1-pos0) + "_in.tab");
 
-  if ( tr.Trace.visible() ) {
+	if ( tr.Trace.visible() ) {
 		ANN::ANN_Matrix::iterator itX, end;
-		for(itX = ANN_IN_MTX.begin(), end = ANN_IN_MTX.end(); itX != end; ++itX) {
-			for(int i=0; i< (int)(itX->second).size();i++)
+		for ( itX = ANN_IN_MTX.begin(), end = ANN_IN_MTX.end(); itX != end; ++itX ) {
+			for ( int i=0; i< (int)(itX->second).size(); i++ ) {
 				tr.Trace << (itX->first) << " " << (itX->second)[i] << std::endl;
+			}
 		}
 	}
 }
@@ -622,39 +623,39 @@ void Sparta::SpartaLib::getResInfo( bool create_output )
 
 // run ANN prediction for a single protein chain
 //void Sparta::runANN_Prediction() {
-// 	clock_t start/*, finish*/;
-// 	start = clock();
+//  clock_t start/*, finish*/;
+//  start = clock();
 
-// 	//  init(); now in constructor
-// 	if ( bCreateOutput_ ) {
+//  //  init(); now in constructor
+//  if ( bCreateOutput_ ) {
 //   // mkdir for prediction
-// 		if (PRED_DIR.find_last_of(slash_char) == PRED_DIR.length()-1 ) {
-// 			PRED_DIR = PRED_DIR.substr(0,PRED_DIR.length()-1);
-// 		}
-// 		mkdir_pred(PRED_DIR);
-// 	}
+//   if (PRED_DIR.find_last_of(slash_char) == PRED_DIR.length()-1 ) {
+//    PRED_DIR = PRED_DIR.substr(0,PRED_DIR.length()-1);
+//   }
+//   mkdir_pred(PRED_DIR);
+//  }
 //   //for( itN = aN.begin(); itN != aN.end(); itN++ )
-//   //	mkdir_pred(PRED_DIR+slash_char+itN->second);
+//   // mkdir_pred(PRED_DIR+slash_char+itN->second);
 
-// 	tr.Info << "Reading PDB Coordinates from " << inName << endl;
-// 	inPDB.loadPDB(inName);
+//  tr.Info << "Reading PDB Coordinates from " << inName << endl;
+//  inPDB.loadPDB(inName);
 
-// 	residList = inPDB.residListOne;
+//  residList = inPDB.residListOne;
 
-// 	r1 = inPDB.r1;
-// 	rN = inPDB.rN;
+//  r1 = inPDB.r1;
+//  rN = inPDB.rN;
 
-// 	if (firstRes < r1) firstRes = r1;
-// 	if (lastRes  < r1) lastRes = r1;
+//  if (firstRes < r1) firstRes = r1;
+//  if (lastRes  < r1) lastRes = r1;
 
-// 	if (firstRes > rN) firstRes = rN;
-// 	if (lastRes  > rN) lastRes = rN;
+//  if (firstRes > rN) firstRes = rN;
+//  if (lastRes  > rN) lastRes = rN;
 
-// 	if (firstRes > lastRes) {
-// 		int itemp = firstRes;
-// 		firstRes  = lastRes;
-// 		lastRes   = itemp;
-// 	}
+//  if (firstRes > lastRes) {
+//   int itemp = firstRes;
+//   firstRes  = lastRes;
+//   lastRes   = itemp;
+//  }
 
 //   run_A_ANN_Prediction();
 // }
@@ -704,9 +705,9 @@ GDB Sparta::SpartaLib::get_ANN_data( bool create_output ) {
 
 	//start = clock();
 	tr.Info << "ANN prediction ..." << endl;
-	for( AtomNameList::iterator itN = aN.begin(), end = aN.end(); itN != end; ++itN ) {
+	for ( AtomNameList::iterator itN = aN.begin(), end = aN.end(); itN != end; ++itN ) {
 		string atomName = itN->second;
-		if( atomName == "H" ) atomName="HN";
+		if ( atomName == "H" ) atomName="HN";
 
 		SPARTA_ANN[atomName].ANN_OUT_MTX_LEVEL1.clear();
 		SPARTA_ANN[atomName].runSpartaANN(ANN_IN_MTX);
@@ -726,26 +727,26 @@ GDB Sparta::SpartaLib::get_ANN_data( bool create_output ) {
 
 	float RC, RCadj, pred_2nd_shift, pred_shift/*, HB*/;
 	for ( int i = r1+1; i <= rN-1; i++ ) { //olange: we have not loaded the ANN with stuff for residue 1 or rN as it would be the 0,1,2 triplett.. ignore here TOO!
-		for( AtomNameList::iterator itN = aN.begin(), end = aN.end(); itN != end; ++itN)	{
+		for ( AtomNameList::iterator itN = aN.begin(), end = aN.end(); itN != end; ++itN ) {
 			string atomName = itN->second;
-			if( atomName == "H" ) atomName="HN";
+			if ( atomName == "H" ) atomName="HN";
 			int index = PRED_SUM.Entries.size()+1;
 
-			if( residList[i].empty() ) continue;
-			if( residList[i] == "P" && (atomName == "HN" || atomName == "N") ) continue;
-			if( residList[i] == "G" && atomName == "CB" ) continue;
-			if( i==r1 && (atomName == "HN"|| atomName == "N") ) continue; //added from email Yang Shen/ Aug 6th.
-			if( i==rN && atomName == "C" ) continue; //added from email Yang Shen/ Aug 6th
+			if ( residList[i].empty() ) continue;
+			if ( residList[i] == "P" && (atomName == "HN" || atomName == "N") ) continue;
+			if ( residList[i] == "G" && atomName == "CB" ) continue;
+			if ( i==r1 && (atomName == "HN"|| atomName == "N") ) continue; //added from email Yang Shen/ Aug 6th.
+			if ( i==rN && atomName == "C" ) continue; //added from email Yang Shen/ Aug 6th
 
 			PRED_SUM.setEntry(index, "RESID",  itoa(i,buf));
 			PRED_SUM.setEntry(index, "RESNAME",  residList[i]);
-			if (atomName=="HA" && residList[i] == "G") PRED_SUM.setEntry(index, "ATOMNAME",  "HA2"); //added from email YangShen Aug 6th.
+			if ( atomName=="HA" && residList[i] == "G" ) PRED_SUM.setEntry(index, "ATOMNAME",  "HA2"); //added from email YangShen Aug 6th.
 			else PRED_SUM.setEntry(index, "ATOMNAME",  atomName);
 
 
 			RC = getRC(residList[i],atomName);
 			RCadj = getRCadj(residList[i],atomName);
-			if (i==r1 || i==rN) {
+			if ( i==r1 || i==rN ) {
 				pred_2nd_shift = 0.0; //may not good for the last residue, for which the neighoring residue effect is not considered.
 			} else {
 				pred_2nd_shift = 0.0;
@@ -753,9 +754,9 @@ GDB Sparta::SpartaLib::get_ANN_data( bool create_output ) {
 					pred_2nd_shift = ANN_CS_OUTPUT_FULL[atomName][i][0];
 				}
 
-				if      (atomName == "HA") pred_2nd_shift /= 4.0;
-				else if (atomName == "HN") pred_2nd_shift /= 2.0;
-				else if (atomName == "N") pred_2nd_shift  *= 2.5;
+				if      ( atomName == "HA" ) pred_2nd_shift /= 4.0;
+				else if ( atomName == "HN" ) pred_2nd_shift /= 2.0;
+				else if ( atomName == "N" ) pred_2nd_shift  *= 2.5;
 
 				if ( pred_2nd_shift > 20.0 || pred_2nd_shift < -20.0 ) pred_shift = 0.0;
 
@@ -769,13 +770,13 @@ GDB Sparta::SpartaLib::get_ANN_data( bool create_output ) {
 			}
 
 			pred_shift = pred_2nd_shift + RC + RCadj; // + PrevRCadj + NextRCadj;
-			if( pred_shift > 999.0) pred_shift = SPARTA_MAX_NUM;
+			if ( pred_shift > 999.0 ) pred_shift = SPARTA_MAX_NUM;
 
 
 			PRED_SUM.setEntry(index, "SS_SHIFT",  ftoa(pred_2nd_shift,buf));
 
 			pred_shift += 0.6*atof(inTab.Entries[i-r1][atomName+"_HM"].c_str());
-			if(atomName == "HN" || atomName == "HA" ) pred_shift-= inPDB.ElectricField[i][atomName]; //marked off to exclude shifts from "global" contacts and to test MFR
+			if ( atomName == "HN" || atomName == "HA" ) pred_shift-= inPDB.ElectricField[i][atomName]; //marked off to exclude shifts from "global" contacts and to test MFR
 			PRED_SUM.setEntry(index, "SHIFT",  ftoa(pred_shift,buf));
 
 			PRED_SUM.setEntry(index, "RC_SHIFT", ftoa(RC+RCadj ,buf) );
@@ -785,7 +786,7 @@ GDB Sparta::SpartaLib::get_ANN_data( bool create_output ) {
 			PRED_SUM.setEntry(index, "HM_SHIFT", inTab.Entries[i-r1][atomName+"_HM"] );
 			PRED_SUM.setEntry(index, "EF_SHIFT", ftoa(inPDB.ElectricField[i][atomName],buf) );
 
-			if(atomName=="HA" && residList[i] == "G") { // for GLY HA3
+			if ( atomName=="HA" && residList[i] == "G" ) { // for GLY HA3
 				index++;
 				PRED_SUM.setEntry(index, "RESID",  itoa(i,buf));
 				PRED_SUM.setEntry(index, "RESNAME",  residList[i]);
@@ -813,7 +814,7 @@ GDB Sparta::SpartaLib::get_ANN_data( bool create_output ) {
 	if ( create_output ) {
 		PRED_SUM.saveGDB(sumName);
 		// snippet moved from compareRef. Not sure why this is done twice
-	   // in slightly different ways ...
+		// in slightly different ways ...
 		int pos = sumName.find_last_of(".");
 		PRED_SUM.saveGDB( sumName.substr(0, pos) + "_full.tab" ); //save the original prediction summary file to a new name
 	}
@@ -825,56 +826,56 @@ GDB Sparta::SpartaLib::get_ANN_data( bool create_output ) {
 // void Sparta::runANN_Predictions() {
 //   //init(); //now in constructor
 //   // mkdir for prediction
-// 	if ( bCreateOutput_ ) {
+//  if ( bCreateOutput_ ) {
 
-// 		if (PRED_DIR.find_last_of(slash_char) == PRED_DIR.length()-1 ) {
-// 			PRED_DIR = PRED_DIR.substr(0,PRED_DIR.length()-1);
-// 		}
-// 		mkdir_pred(PRED_DIR);
-// 		//	for( itN = aN.begin(); itN != aN.end(); itN++ )
-// 		//		mkdir_pred(PRED_DIR+slash_char+itN->second);
-// 	}
+//   if (PRED_DIR.find_last_of(slash_char) == PRED_DIR.length()-1 ) {
+//    PRED_DIR = PRED_DIR.substr(0,PRED_DIR.length()-1);
+//   }
+//   mkdir_pred(PRED_DIR);
+//   // for( itN = aN.begin(); itN != aN.end(); itN++ )
+//   //  mkdir_pred(PRED_DIR+slash_char+itN->second);
+//  }
 
 //   utility::vector0< string > temp = split(" ", inNames);
 //   string  outName = sumName;
 
 //   tr.Info << inNames << endl;
 
-// 	for ( Size i = 0; i < temp.size(); i++) {
-// 		inName = temp[i];
-// 		//tr.Info << "Reading PDB Coordinates from " << inName << endl;
-// 		inPDB.loadPDB(inName);
+//  for ( Size i = 0; i < temp.size(); i++) {
+//   inName = temp[i];
+//   //tr.Info << "Reading PDB Coordinates from " << inName << endl;
+//   inPDB.loadPDB(inName);
 
-// 		residList = inPDB.residListOne;
+//   residList = inPDB.residListOne;
 
-// 		r1 = inPDB.r1;
-// 		rN = inPDB.rN;
+//   r1 = inPDB.r1;
+//   rN = inPDB.rN;
 
-// 		if (firstRes < r1) firstRes = r1;
-// 		if (lastRes  < r1) lastRes = r1;
+//   if (firstRes < r1) firstRes = r1;
+//   if (lastRes  < r1) lastRes = r1;
 
-// 		if (firstRes > rN) firstRes = rN;
-// 		if (lastRes  > rN) lastRes = rN;
+//   if (firstRes > rN) firstRes = rN;
+//   if (lastRes  > rN) lastRes = rN;
 
-// 		if (firstRes > lastRes) {
-// 			int itemp = firstRes;
-// 			firstRes  = lastRes;
-// 			lastRes   = itemp;
-// 		}
+//   if (firstRes > lastRes) {
+//    int itemp = firstRes;
+//    firstRes  = lastRes;
+//    lastRes   = itemp;
+//   }
 
-// 		ANN_IN_MTX.clear();
-// 		ANN_CS_OUTPUT_FULL.clear();
+//   ANN_IN_MTX.clear();
+//   ANN_CS_OUTPUT_FULL.clear();
 
-// 		int pos0 = inName.find_last_of(slash_char)+1;
-// 		int pos1 = inName.find_last_of(".");
+//   int pos0 = inName.find_last_of(slash_char)+1;
+//   int pos1 = inName.find_last_of(".");
 
-// 		sourceName=inName.substr(pos0,pos1-pos0);
-// 		sumName = PRED_DIR + slash_char + sourceName + "_pred.tab";
+//   sourceName=inName.substr(pos0,pos1-pos0);
+//   sumName = PRED_DIR + slash_char + sourceName + "_pred.tab";
 
-// 		run_A_ANN_Prediction();
-// 		tr.Info << "\tPrediction file " << sumName << " is ready for protein " << inName << endl;
+//   run_A_ANN_Prediction();
+//   tr.Info << "\tPrediction file " << sumName << " is ready for protein " << inName << endl;
 
-// 	}
+//  }
 
 // }
 
@@ -882,43 +883,43 @@ GDB Sparta::SpartaLib::get_ANN_data( bool create_output ) {
 // Initiate an ANN prediction for a single protein using its file name
 //void Sparta::runANN_Prediction(const string& pName)
 //{
-	//init(); now in constructor
-// 	if ( bCreateOutput_ ) {
+//init(); now in constructor
+//  if ( bCreateOutput_ ) {
 
-// 		// mkdir for prediction
-// 		if (PRED_DIR.find_last_of(slash_char) == PRED_DIR.length()-1 )
-// 			PRED_DIR = PRED_DIR.substr(0,PRED_DIR.length()-1);
-// 		for( itN = aN.begin(); itN != aN.end(); itN++ )
-// 			mkdir_pred(PRED_DIR+slash_char+itN->second);
-// 	}
-// 	inName = pName;
-// 	inPDB.loadPDB(inName);
+//   // mkdir for prediction
+//   if (PRED_DIR.find_last_of(slash_char) == PRED_DIR.length()-1 )
+//    PRED_DIR = PRED_DIR.substr(0,PRED_DIR.length()-1);
+//   for( itN = aN.begin(); itN != aN.end(); itN++ )
+//    mkdir_pred(PRED_DIR+slash_char+itN->second);
+//  }
+//  inName = pName;
+//  inPDB.loadPDB(inName);
 
-//	run_A_ANN_Prediction();
+// run_A_ANN_Prediction();
 //}
 
 
 void Sparta::SpartaLib::init_PredErrorSurface()
 {
-  int step = 5;
+	int step = 5;
 
-  for( AtomNameList::iterator itN = aN.begin(), end = aN.end(); itN != end; ++itN ) {
+	for ( AtomNameList::iterator itN = aN.begin(), end = aN.end(); itN != end; ++itN ) {
 		string atomName = itN->second;
-		if( atomName == "H" ) atomName="HN";
+		if ( atomName == "H" ) atomName="HN";
 
-		for( Size i=0; i<AAlist.length();i++)	{
+		for ( Size i=0; i<AAlist.length(); i++ ) {
 			string AA = AAlist.substr(i,1);
-			if( AA == " " ) continue;
+			if ( AA == " " ) continue;
 
-			if( AA == "G" && atomName == "CB" ) continue;
-			if( AA == "P" && atomName == "HN" ) continue;
+			if ( AA == "G" && atomName == "CB" ) continue;
+			if ( AA == "P" && atomName == "HN" ) continue;
 
 			string surfName = TAB_DIR + slash_char + "errorSurface" + slash_char + atomName + slash_char + AA + "..A450.S5.RMS.tab";
 			GDB surf(surfName);
 
-			for ( GDB::EntryList::iterator it = surf.Entries.begin(); it != surf.Entries.end(); ++it )	{
+			for ( GDB::EntryList::iterator it = surf.Entries.begin(); it != surf.Entries.end(); ++it ) {
 				int phi = atoi( it->second["PHI"].c_str() );
-				for ( int y=-180; y<180; y+=step)	{
+				for ( int y=-180; y<180; y+=step ) {
 					string psi=itoa(y,buf);
 					SPARTA_ERR_SURF[AA][atomName][phi][y] = atof( it->second[psi].c_str() );
 				}
@@ -939,9 +940,9 @@ float Sparta::SpartaLib::getRC(const string& resName, const string& aName)
 {
 	GDB::GDB_Entry temp = RC_Tab.getEntry("RESNAME",resName,1);
 
-  if(temp.size() != 0) return atof( temp[aName].c_str() );
+	if ( temp.size() != 0 ) return atof( temp[aName].c_str() );
 
-  return 9999.0;
+	return 9999.0;
 }
 
 
@@ -949,9 +950,9 @@ float Sparta::SpartaLib::getRCadj(const string& resName, const string& aName)
 {
 	GDB::GDB_Entry temp = ADJ_Tab.getEntry("RESNAME",resName,1);
 
-  if(temp.size() != 0) return atof( temp[aName].c_str() );
+	if ( temp.size() != 0 ) return atof( temp[aName].c_str() );
 
-  return 0.0;
+	return 0.0;
 }
 
 
@@ -959,9 +960,9 @@ float Sparta::SpartaLib::getPrevRCadj(const string& prev_rName, const string& aN
 {
 	GDB::GDB_Entry temp = PREV_Tab.getEntry("RESNAME",prev_rName,1);
 
-  if(temp.size() != 0) return atof( temp[aName].c_str() );
+	if ( temp.size() != 0 ) return atof( temp[aName].c_str() );
 
-  return 0.0;
+	return 0.0;
 }
 
 
@@ -969,18 +970,18 @@ float Sparta::SpartaLib::getNextRCadj(const string& next_rName, const string& aN
 {
 	GDB::GDB_Entry temp = NEXT_Tab.getEntry("RESNAME",next_rName,1);
 
-  if(temp.size() != 0) return atof( temp[aName].c_str() );
+	if ( temp.size() != 0 ) return atof( temp[aName].c_str() );
 
-  return 0.0;
+	return 0.0;
 }
 
 float Sparta::SpartaLib::getWeight(const string& Name, const string& aName)
 {
 	GDB::GDB_Entry temp = WEIGHT_Tab.getEntry("RESNAME",Name,1);
 
-  if(temp.size() != 0) return atof( temp[aName].c_str() );
+	if ( temp.size() != 0 ) return atof( temp[aName].c_str() );
 
-  return 9999.0;
+	return 9999.0;
 
 }
 

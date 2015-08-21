@@ -118,10 +118,10 @@ public:
 	Size
 	n_kept_matches() const;
 
-	match const & 
+	match const &
 	kept_match( Size which_match ) const;
 
-	match_dspos1 const & 
+	match_dspos1 const &
 	kept_match_dspos1( Size which_match ) const;
 
 private:

@@ -25,4 +25,4 @@ typedef utility::pointer::shared_ptr<HelixRotate const> HelixRotateCOP;
 }  // namespace nonlocal
 }  // namespace protocols
 
-#endif  
+#endif

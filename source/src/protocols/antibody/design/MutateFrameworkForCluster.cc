@@ -49,8 +49,8 @@ namespace protocols {
 namespace antibody {
 namespace design {
 
-	using namespace core::scoring;
-	using namespace protocols::antibody::clusters;
+using namespace core::scoring;
+using namespace protocols::antibody::clusters;
 
 MutateFrameworkForCluster::MutateFrameworkForCluster() :
 	protocols::moves::Mover("MutateFrameworkForCluster"),
@@ -96,7 +96,7 @@ MutateFrameworkForCluster::set_defaults() {
 
 //moves::MoverOP
 //MutateFrameworkForCluster::clone() const {
-//	return moves::MoverOP(new MutateFrameworkForCluster(*this));
+// return moves::MoverOP(new MutateFrameworkForCluster(*this));
 //}
 
 protocols::moves::MoverOP
@@ -111,11 +111,11 @@ MutateFrameworkForCluster::get_name() const {
 
 void
 MutateFrameworkForCluster::parse_my_tag(
-		TagCOP tag,
-		basic::datacache::DataMap& data,
-		const Filters_map&,
-		const moves::Movers_map&,
-		const Pose& pose)
+	TagCOP tag,
+	basic::datacache::DataMap& data,
+	const Filters_map&,
+	const moves::Movers_map&,
+	const Pose& pose)
 {
 	ab_info_ = AntibodyInfoOP( new AntibodyInfo( pose ));
 	cdrs_ = get_cdr_bool_from_tag(tag, "cdrs");
@@ -166,22 +166,20 @@ MutateFrameworkForCluster::get_data(){
 bool
 MutateFrameworkForCluster::has_framework_dependant_cluster(const core::pose::Pose& pose, const CDRNameEnum cdr){
 	CDRClusterEnum cluster = get_cluster_from_cache_or_ab_info(ab_info_, pose, cdr);
-	if (mutant_info_.count(cluster) > 0){
+	if ( mutant_info_.count(cluster) > 0 ) {
 		return true;
-	}
-	else{
+	} else {
 		return false;
 	}
 }
 
 bool
 MutateFrameworkForCluster::has_framework_dependant_clusters(const core::pose::Pose& pose){
-	for (core::Size i = 1; i <= static_cast<core::Size>(ab_info_->get_total_num_CDRs()); ++i){
+	for ( core::Size i = 1; i <= static_cast<core::Size>(ab_info_->get_total_num_CDRs()); ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
-		if (has_framework_dependant_cluster(pose, cdr)){
+		if ( has_framework_dependant_cluster(pose, cdr) ) {
 			return true;
-		}
-		else {
+		} else {
 			continue;
 		}
 	}
@@ -191,7 +189,7 @@ MutateFrameworkForCluster::has_framework_dependant_clusters(const core::pose::Po
 utility::vector1<CDRClusterEnum>
 MutateFrameworkForCluster::framework_dependant_clusters(){
 	utility::vector1<CDRClusterEnum> clusters;
-	for (std::map<CDRClusterEnum, utility::vector1<MutantPosition> >::iterator iter = mutant_info_.begin(); iter != mutant_info_.end(); ++iter){
+	for ( std::map<CDRClusterEnum, utility::vector1<MutantPosition> >::iterator iter = mutant_info_.begin(); iter != mutant_info_.end(); ++iter ) {
 		clusters.push_back(iter->first);
 	}
 	return clusters;
@@ -202,9 +200,9 @@ MutateFrameworkForCluster::framework_dependant_positions(const core::pose::Pose&
 
 	utility::vector1<bool> positions(pose.total_residue(), false);
 
-	for (std::map<CDRClusterEnum, utility::vector1<MutantPosition> >::iterator iter = mutant_info_.begin(); iter != mutant_info_.end(); ++iter){
+	for ( std::map<CDRClusterEnum, utility::vector1<MutantPosition> >::iterator iter = mutant_info_.begin(); iter != mutant_info_.end(); ++iter ) {
 
-		for (core::Size i = 1; i <= iter->second.size(); ++i){
+		for ( core::Size i = 1; i <= iter->second.size(); ++i ) {
 			core::Size resnum = get_resnum_from_single_string_w_landmark(ab_info_, pose, iter->second[ i ].pdb_position_, iter->second[ i ].numbering_scheme_);
 			positions[resnum] = true;
 		}
@@ -218,7 +216,7 @@ MutateFrameworkForCluster::framework_dependant_positions(const core::pose::Pose&
 	utility::vector1<bool> positions(pose.total_residue(), false);
 
 
-	for (core::Size i = 1; i <= mutant_info_[ cluster ].size(); ++i){
+	for ( core::Size i = 1; i <= mutant_info_[ cluster ].size(); ++i ) {
 		core::Size resnum = get_resnum_from_single_string_w_landmark(ab_info_, pose, mutant_info_[ cluster ][ i ].pdb_position_, mutant_info_[ cluster ][ i ].numbering_scheme_);
 		positions[resnum] = true;
 	}
@@ -229,9 +227,9 @@ utility::vector1<bool>
 MutateFrameworkForCluster::framework_dependant_mutations(core::pose::Pose const & pose, const clusters::CDRClusterEnum cluster, core::Size const resnum){
 
 	utility::vector1<bool> mutants(20, false);
-	for (core::Size i = 1; i <= mutant_info_[ cluster ].size(); ++i){
+	for ( core::Size i = 1; i <= mutant_info_[ cluster ].size(); ++i ) {
 		core::Size present_resnum = get_resnum_from_single_string_w_landmark(ab_info_, pose, mutant_info_[ cluster ][ i ].pdb_position_, mutant_info_[ cluster ][ i ].numbering_scheme_);
-		if (resnum == present_resnum){
+		if ( resnum == present_resnum ) {
 			mutants = mutant_info_[ cluster ][ i ].mutants_allowed_;
 			break;
 		}
@@ -248,17 +246,17 @@ MutateFrameworkForCluster::load_data() {
 	std::string filename = basic::database::full_name("sampling/antibodies/design/cluster_framework_mutations.txt");
 	std::fstream INFILE(filename.c_str(), std::ios::in); //Why a copy constructor with = will not work here is beyond me.  The std library is pathetic.
 
-	if(! INFILE){
+	if ( ! INFILE ) {
 		utility_exit_with_message("Cannot open mutate cluster framework file.");
 	}
 
-	while (getline(INFILE, line)){
+	while ( getline(INFILE, line) ) {
 		//TR << line << std::endl;
 		utility::trim(line, "\n"); //Remove trailing line break
 		boost::algorithm::trim(line); //Remove any whitespace on either side of the string
 
 		//Continue to next line on empty string, comment
-		if (utility::startswith(line, "#") || utility::startswith(line, "\n") || line.empty()  ||  (line.find_first_not_of(' ') == std::string::npos) ){
+		if ( utility::startswith(line, "#") || utility::startswith(line, "\n") || line.empty()  ||  (line.find_first_not_of(' ') == std::string::npos) ) {
 			continue;
 		}
 
@@ -277,7 +275,7 @@ MutateFrameworkForCluster::load_data() {
 		mut_pos.mutants_allowed_.clear();
 		mut_pos.mutants_allowed_.resize(20, false); //Standard cannonical aas.
 
-		for (std::string::iterator iter_aa = aas_str.begin(); iter_aa != aas_str.end(); ++iter_aa){
+		for ( std::string::iterator iter_aa = aas_str.begin(); iter_aa != aas_str.end(); ++iter_aa ) {
 			//TR << *iter_aa << std::endl;
 			mut_pos.mutants_allowed_[ core::chemical::aa_from_oneletter_code( *iter_aa ) ] = true;
 
@@ -285,10 +283,9 @@ MutateFrameworkForCluster::load_data() {
 
 
 		CDRClusterEnum cluster = ab_info_->get_cluster_enum(cluster_str);
-		if (mutant_info_.count(cluster)){
+		if ( mutant_info_.count(cluster) ) {
 			mutant_info_[ cluster ].push_back(mut_pos);
-		}
-		else{
+		} else {
 			mutant_info_[ cluster ];
 			mutant_info_[ cluster ].push_back(mut_pos);
 		}
@@ -298,10 +295,10 @@ MutateFrameworkForCluster::load_data() {
 
 	/*
 	for (std::map<CDRClusterEnum, utility::vector1<MutantPosition> >::iterator iter = mutant_info_.begin(); iter != mutant_info_.end(); ++iter){
-		TR << ab_info_->get_cluster_name(iter->first) << std::endl;
-		for (core::Size i = 1; i <= mutant_info_[ iter->first ].size(); ++i){
-			TR << ab_info_->get_cluster_name(iter->first) << " " << iter->second[ i ].pdb_position_ << " " << utility::to_string(iter->second[ i ].mutants_allowed_) << std::endl;
-		}
+	TR << ab_info_->get_cluster_name(iter->first) << std::endl;
+	for (core::Size i = 1; i <= mutant_info_[ iter->first ].size(); ++i){
+	TR << ab_info_->get_cluster_name(iter->first) << " " << iter->second[ i ].pdb_position_ << " " << utility::to_string(iter->second[ i ].mutants_allowed_) << std::endl;
+	}
 	}
 	*/
 }
@@ -316,11 +313,11 @@ MutateFrameworkForCluster::apply(core::pose::Pose& pose) {
 	/*
 	//Check to make sure everything is loaded correctly.
 	for (std::map<CDRClusterEnum, utility::vector1<MutantPosition> >::iterator iter = mutant_info_.begin(); iter != mutant_info_.end(); ++iter){
-		for (core::Size i = 1; i <= mutant_info_[ iter->first ].size(); ++i){
-			TR << ab_info_->get_cluster_name(iter->first) << " " << iter->second[ i ].pdb_position_ << " " << utility::to_string(iter->second[ i ].mutants_allowed_);
-		}
+	for (core::Size i = 1; i <= mutant_info_[ iter->first ].size(); ++i){
+	TR << ab_info_->get_cluster_name(iter->first) << " " << iter->second[ i ].pdb_position_ << " " << utility::to_string(iter->second[ i ].mutants_allowed_);
 	}
-	 */
+	}
+	*/
 
 	TaskFactoryOP tf = TaskFactoryOP( new TaskFactory());
 	tf->push_back(TaskOperationCOP(new InitializeFromCommandline()) );
@@ -331,56 +328,54 @@ MutateFrameworkForCluster::apply(core::pose::Pose& pose) {
 
 	bool framework_dependant_clusters = false;
 
-	for (core::Size i = 1; i <= core::Size( ab_info_->get_total_num_CDRs() ); ++i){
+	for ( core::Size i = 1; i <= core::Size( ab_info_->get_total_num_CDRs() ); ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
-		if (! cdrs_[ cdr ]) continue;
+		if ( ! cdrs_[ cdr ] ) continue;
 
 		CDRClusterEnum current_cluster;
 
-		if (pose.data().has(core::pose::datacache::CacheableDataType::CDR_CLUSTER_INFO)){
+		if ( pose.data().has(core::pose::datacache::CacheableDataType::CDR_CLUSTER_INFO) ) {
 			BasicCDRClusterSet const & cluster_cache = static_cast< BasicCDRClusterSet const & >(
-						pose.data().get(core::pose::datacache::CacheableDataType::CDR_CLUSTER_INFO));
+				pose.data().get(core::pose::datacache::CacheableDataType::CDR_CLUSTER_INFO));
 			current_cluster = cluster_cache.get_cluster(cdr)->cluster();
-		}
-		else {
+		} else {
 			current_cluster = ab_info_->get_CDR_cluster(cdr)->cluster();
 		}
-		if(current_cluster  == NA){
+		if ( current_cluster  == NA ) {
 			continue;
 		}
 
 		/// Cluster is found.  Now check that it actually has data we need.
-		if (! mutant_info_.count( current_cluster )) continue;
+		if ( ! mutant_info_.count( current_cluster ) ) continue;
 
 		//TR << "Found cluster mutant. " << std::endl;
 		framework_dependant_clusters = true;
 
-		for (core::Size i = 1; i <= mutant_info_[ current_cluster ].size(); ++i){
+		for ( core::Size i = 1; i <= mutant_info_[ current_cluster ].size(); ++i ) {
 			MutantPosition mut_pos = mutant_info_[ current_cluster ][ i ];
 			core::Size resnum = get_resnum_from_single_string_w_landmark(ab_info_, pose, mut_pos.pdb_position_, mut_pos.numbering_scheme_);
-			if (resnum == 0){
+			if ( resnum == 0 ) {
 
 				TR << "Resnum missing from pose "<< mut_pos.pdb_position_ <<
-					  " skipping mutation for " << ab_info_->get_cluster_name( current_cluster ) <<
-				      " skipping..." << std::endl;
+					" skipping mutation for " << ab_info_->get_cluster_name( current_cluster ) <<
+					" skipping..." << std::endl;
 				continue;
 
 			}
 			design_positions[ resnum ] = true;
 
 
-			if (keep_current_){
-				for (core::Size aa_num = 1; aa_num <= 20; ++aa_num){
+			if ( keep_current_ ) {
+				for ( core::Size aa_num = 1; aa_num <= 20; ++aa_num ) {
 
-					if (mut_pos.mutants_allowed_[ aa_num ]){
+					if ( mut_pos.mutants_allowed_[ aa_num ] ) {
 
 						core::chemical::AA amino = static_cast<core::chemical::AA>(aa_num);
 						task->nonconst_residue_task(i).allow_aa(amino);
 					}
 				}
-			}
-			//Replace the current aminos
-			else{
+			} else {
+				//Replace the current aminos
 				task->nonconst_residue_task(i).restrict_absent_canonical_aas( mut_pos.mutants_allowed_);
 			}
 
@@ -390,7 +385,7 @@ MutateFrameworkForCluster::apply(core::pose::Pose& pose) {
 	//Now we get all the residues we will pack and design.
 	// Currently at most we are talking about like 2 or 3 clusters that need a single mutation
 
-	if (! framework_dependant_clusters){
+	if ( ! framework_dependant_clusters ) {
 		return;
 	}
 
@@ -398,11 +393,10 @@ MutateFrameworkForCluster::apply(core::pose::Pose& pose) {
 	core::pack::task::operation::PreventRepacking turn_off_packing;
 
 	std::set<core::Size> design_positions_set;
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ){
-		if (! design_positions[ i ]){
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( ! design_positions[ i ] ) {
 			turn_off_design.include_residue( i );
-		}
-		else{
+		} else {
 			design_positions_set.insert( i );
 		}
 	}
@@ -410,8 +404,8 @@ MutateFrameworkForCluster::apply(core::pose::Pose& pose) {
 	residue_selector::NeighborhoodResidueSelector neighbor_sel = residue_selector::NeighborhoodResidueSelector(design_positions_set, pack_shell_);
 	utility::vector1<bool> pack_positions = neighbor_sel.apply(pose);
 
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ){
-		if (! pack_positions[ i ]){
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( ! pack_positions[ i ] ) {
 			turn_off_packing.include_residue( i );
 		}
 	}

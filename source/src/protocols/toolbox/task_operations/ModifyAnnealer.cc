@@ -29,15 +29,15 @@ namespace task_operations {
 
 //initialize to default packer settings
 ModifyAnnealer::ModifyAnnealer():
-disallow_quench_(false),
-high_temp_(100.0),
-low_temp_(0.3)
+	disallow_quench_(false),
+	high_temp_(100.0),
+	low_temp_(0.3)
 {}
 
 ModifyAnnealer::ModifyAnnealer(bool disallow_quench, core::Real high_temp, core::Real low_temp):
-disallow_quench_(disallow_quench),
-high_temp_(high_temp),
-low_temp_(low_temp)
+	disallow_quench_(disallow_quench),
+	high_temp_(high_temp),
+	low_temp_(low_temp)
 {}
 
 ModifyAnnealer::~ModifyAnnealer(){}

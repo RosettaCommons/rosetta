@@ -170,7 +170,7 @@ Templates::Templates( std::string const& config_file, pose::PoseCOP native ) :
 			tr.Info << "template  " << name << " read template structure " << pdb << " with offset " << offset << std::endl;
 
 			theTemplate = TemplateOP( new Template( name, pose_store[pdb], align, offset, score ) );
-			if( !theTemplate->is_good() ){
+			if ( !theTemplate->is_good() ) {
 				good_ = false;
 				continue;
 			}
@@ -217,7 +217,7 @@ Templates::Templates( std::string const& config_file, pose::PoseCOP native ) :
 		helixjump_pick_list_ = fragpick_list_;
 		tr.Info << "helixjump_list \n";
 		for ( TemplateList::const_iterator it = helixjump_pick_list_.begin(), eit = helixjump_pick_list_.end();
-					it != eit; ++it ) {
+				it != eit; ++it ) {
 			tr.Info << (*it)->name() << "\n";
 		}
 		tr.Info << std::endl;
@@ -243,7 +243,7 @@ Templates::get_cst_list( TemplateList& cst_list, TemplateList& cull_list ) const
 
 	// first get list of Templates with constraints
 	for ( TemplateMap::const_iterator it=templates_.begin(),
-					eit = templates_.end(); it!=eit; ++it ) {
+			eit = templates_.end(); it!=eit; ++it ) {
 		// if template has constraints
 		TemplateCOP aTemplate( it->second );
 		if ( aTemplate->has_constraints() ) {
@@ -270,7 +270,7 @@ Templates::scored_fragpick_list( TemplateList& frag_list ) const {
 	}
 
 	for ( TemplateMap::const_iterator it=templates_.begin(),
-					eit = templates_.end(); it!=eit; ++it ) {
+			eit = templates_.end(); it!=eit; ++it ) {
 		frag_list.push_back( it->second );
 	}
 	_get_scored_list( frag_list, option[ templates::fragsteal::topN ], wTopol, wExtern );
@@ -289,7 +289,7 @@ void Templates::_get_scored_list( TemplateList& cst_list, Size topN, Real wTopol
 
 	// first get list of Templates with constraints
 	for ( TemplateMap::const_iterator it=templates_.begin(),
-					eit = templates_.end(); it!=eit; ++it ) {
+			eit = templates_.end(); it!=eit; ++it ) {
 		TemplateCOP aTemplate( it->second );
 		if ( bScoreFilter ) {
 			sum_extern += aTemplate->external_score();
@@ -309,7 +309,7 @@ void Templates::_get_scored_list( TemplateList& cst_list, Size topN, Real wTopol
 
 	std::list< std::pair< core::Real, TemplateCOP > > weight_list;
 	for ( TemplateList::const_iterator it = cst_list.begin(), eit = cst_list.end();
-				it != eit; ++it ) {
+			it != eit; ++it ) {
 		Real score = ( (*it)->topology_score() - mean_topol ) / std_topol * wTopol
 			+ ( (*it)->external_score() - mean_extern ) / std_extern * wExtern;
 		weight_list.push_back( std::make_pair( score, *it ) );
@@ -337,7 +337,7 @@ Templates::pick_frags( FragSet& frag_set, core::fragment::FragDataCOP frag_type,
 	}
 
 	for ( TemplateList::const_iterator it=fragpick_list_.begin(),
-					eit = fragpick_list_.end(); it!=eit; ++it ) {
+			eit = fragpick_list_.end(); it!=eit; ++it ) {
 		tr.Info << "pick from template " << (*it)->name() << std::endl;
 		Size nr_frags = (*it)->steal_frags( frames, frag_set, ncopies );
 		tr.Info << "found " << nr_frags << " new fragments " << std::endl;
@@ -373,7 +373,7 @@ Templates::pick_frags( FragSetOP frag_set, core::fragment::FragDataCOP frag_type
 			if ( standard_frames.size() ) {
 				tr.Info << "attempt to fill up with " << nr_fill << " frags at position " << pos << " ... ";
 				for ( FragID_Iterator it = standard_frames.begin(), eit = standard_frames.end();
-							it != eit && nr_fill; ++it, --nr_fill ) {
+						it != eit && nr_fill; ++it, --nr_fill ) {
 					merged_frags->add( *it );
 					++total_fill;
 				}
@@ -390,20 +390,20 @@ Templates::pick_frags( FragSetOP frag_set, core::fragment::FragDataCOP frag_type
 }
 //   Size total( 0 );
 //   for ( TemplateMap::const_iterator it=templates_.begin(),
-// 	  eit = templates_.end(); it!=eit; ++it ) {
+//    eit = templates_.end(); it!=eit; ++it ) {
 //     total += it->second->pick_frags( frag_set, frag_type );
 //   }
 //  return total;
 //}
 
 Size Templates::pick_large_frags(
-			core::fragment::FragSet& frag_set,
-			core::fragment::SingleResidueFragDataOP frag_type,
-			core::Size ncopies /*default = 1*/
+	core::fragment::FragSet& frag_set,
+	core::fragment::SingleResidueFragDataOP frag_type,
+	core::Size ncopies /*default = 1*/
 ) const {
 	Size total( 0 );
 	for ( TemplateList::const_iterator it=fragpick_list_.begin(),
-					eit = fragpick_list_.end(); it!=eit; ++it ) {
+			eit = fragpick_list_.end(); it!=eit; ++it ) {
 		tr.Info << "pick large frag from template " << (*it)->name() << std::endl;
 		Size nr_frags = (*it)->pick_large_frags( frag_set, frag_type, ncopies );
 		tr.Info << "found " << nr_frags << " new fragments " << std::endl;
@@ -444,10 +444,10 @@ TemplateJumpSetupOP Templates::create_jump_def( core::fragment::SecondaryStructu
 		pick_frags( fragset, core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new SecstructSRFD ), 1 ) ) ) ); //for ss-structure 1mers are enough
 		ss_def = core::fragment::SecondaryStructureCOP( core::fragment::SecondaryStructureOP( new core::fragment::SecondaryStructure( fragset, target_total_residue() ) ) );
 	}
-// 	utility::io::ozstream dump("ss_def_for_jumps");
-// 	for ( Size i = 1; i<=ss_def->total_residue(); i++ ) {
-// 		dump << i << " " << ss_def->loop_fraction()(i) << std::endl;
-// 	}
+	//  utility::io::ozstream dump("ss_def_for_jumps");
+	//  for ( Size i = 1; i<=ss_def->total_residue(); i++ ) {
+	//   dump << i << " " << ss_def->loop_fraction()(i) << std::endl;
+	//  }
 	core::scoring::dssp::PairingsList helix_pairings;
 	if ( option[ templates::helix_pairings ].user() ) read_pairings( option[ templates::helix_pairings ], helix_pairings );
 	return TemplateJumpSetupOP( new TemplateJumpSetup( get_self_ptr(), ss_def, strand_stats_, helix_pairings ) );
@@ -471,7 +471,7 @@ Templates::add_target_constraints( scoring::constraints::ConstraintSetOP cstset,
 	tr.Info << "pick constraints from " << cst_list.size() << " models " << std::endl;
 
 	for ( TemplateList::const_iterator it=cst_list.begin(),
-					eit = cst_list.end(); it!=eit; ++it ) {
+			eit = cst_list.end(); it!=eit; ++it ) {
 		tr.Info << "pick constraints from template " << (*it)->name() << std::endl;
 
 		// if template has constraints
@@ -485,7 +485,7 @@ Templates::add_target_constraints( scoring::constraints::ConstraintSetOP cstset,
 		if ( !option[ templates::no_culling ] ) {
 			//throw out all constraints that violate any template structure
 			for ( TemplateList::const_iterator it=cull_list.begin(),
-							eit = cull_list.end(); it!=eit; ++it ) {
+					eit = cull_list.end(); it!=eit; ++it ) {
 				NamedAtomPairConstraintList culled_constraints;
 				tr.Info << "cull with template " << (*it)->name() << std::endl;
 				(*it)->cull_violators( new_constraints, culled_constraints );
@@ -496,10 +496,10 @@ Templates::add_target_constraints( scoring::constraints::ConstraintSetOP cstset,
 
 		// add them to full_list if they are not out of bounds
 		for ( NamedAtomPairConstraintList::const_iterator it = new_constraints.begin(),
-						eit = new_constraints.end(); it!=eit; ++it ) {
-				AtomPairConstraintOP cst = (*it)->mapto( pose );
-				if ( cst ) full_list.push_back( cst );
-			}
+				eit = new_constraints.end(); it!=eit; ++it ) {
+			AtomPairConstraintOP cst = (*it)->mapto( pose );
+			if ( cst ) full_list.push_back( cst );
+		}
 	}
 	cstset->add_constraints( full_list );
 	// run them over all other templates and throw out violated constraints

@@ -53,37 +53,37 @@ inline
 std::string
 demangle( std::string trace ) {
 
- 	std::string::size_type begin, end;
+	std::string::size_type begin, end;
 
- 	// find the beginning and the end of the useful part of the trace
+	// find the beginning and the end of the useful part of the trace
 
 	// On a Mac, part to be demangled starts with underscore, and then is followed by "+" increment,
 	//  separated by spaces from surrounding.
- 	begin = trace.find(" _") + 1;
- 	end   = trace.find(" +",begin);
+	begin = trace.find(" _") + 1;
+	end   = trace.find(" +",begin);
 
 	//How it looks for Linux, with parentheses around part to be demangled.
-	//	/home/rhiju/src/rosetta/main/source/cmake/build_release/libutility.so(_Z15print_backtracev+0x23) [0x7fb75e08c1a3]
- 	if (begin == std::string::npos || end == std::string::npos) {
+	// /home/rhiju/src/rosetta/main/source/cmake/build_release/libutility.so(_Z15print_backtracev+0x23) [0x7fb75e08c1a3]
+	if ( begin == std::string::npos || end == std::string::npos ) {
 		begin = trace.find("(_") + 1;
 		end   = trace.find("+",begin);
 	}
 
- 	// if begina and end were found, we'll go ahead and demangle
- 	if (begin != std::string::npos && end != std::string::npos) {
+	// if begina and end were found, we'll go ahead and demangle
+	if ( begin != std::string::npos && end != std::string::npos ) {
 		std::string mangled_trace = trace.substr(begin, end - begin);
- 		size_t maxName = 1024;
- 		int demangleStatus;
+		size_t maxName = 1024;
+		int demangleStatus;
 
- 		char* demangledName = (char*) malloc(maxName);
- 		if ((demangledName = abi::__cxa_demangle(mangled_trace.c_str(), demangledName, &maxName,
- 																						 &demangleStatus)) && demangleStatus == 0) {
- 			trace = trace.substr(0,begin) + demangledName + trace.substr(end ); // the demangled name is now in our trace string
- 		}
+		char* demangledName = (char*) malloc(maxName);
+		if ( (demangledName = abi::__cxa_demangle(mangled_trace.c_str(), demangledName, &maxName,
+				&demangleStatus)) && demangleStatus == 0 ) {
+			trace = trace.substr(0,begin) + demangledName + trace.substr(end ); // the demangled name is now in our trace string
+		}
 		free(demangledName);
- 	}
- 	return trace;
- }
+	}
+	return trace;
+}
 
 ////////////////////////////////////////////////////////////////////
 //
@@ -105,11 +105,11 @@ bool
 print_backtrace() {
 
 	size_t const callstack_size = 128;
-  void* callstack[callstack_size];
+	void* callstack[callstack_size];
 	int i, frames = backtrace(callstack, callstack_size);
 	char** strs = backtrace_symbols(callstack, frames);
 	std::cerr << utility::CSI_Magenta; // set color of cerr to magenta
-	for (i = 0; i < frames; ++i) {
+	for ( i = 0; i < frames; ++i ) {
 		std::cerr << demangle( strs[i] ).c_str() << std::endl;
 	}
 	std::cerr << utility::CSI_Reset; // reset color of cerr

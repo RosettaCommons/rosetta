@@ -35,7 +35,7 @@ switch_to_residue_type_set(
 	core::pose::Pose & pose,
 	std::string const & type_set_name,
 	bool allow_sloppy_match = false
-	);
+);
 
 } // util
 } // core

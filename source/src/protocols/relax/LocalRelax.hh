@@ -59,10 +59,10 @@ public:
 	/// @brief one cycle of local optimization
 	void
 	optimization_loop(
-			Pose & pose,
-			core::pack::task::PackerTaskOP ptask,
-			core::kinematics::MoveMapOP mm,
-			core::Real, core::Real);
+		Pose & pose,
+		core::pack::task::PackerTaskOP ptask,
+		core::kinematics::MoveMapOP mm,
+		core::Real, core::Real);
 
 	/// @brief get matrix of interacting residues
 	void
@@ -72,11 +72,11 @@ public:
 
 	/// @brief RS integration
 	void parse_my_tag(
-	  utility::tag::TagCOP tag,
-	  basic::datacache::DataMap & data,
-	  protocols::filters::Filters_map const &,
-	  protocols::moves::Movers_map const &,
-	  core::pose::Pose const &
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
 	);
 
 	/// @brief return a fresh instance of this class in an owning pointer

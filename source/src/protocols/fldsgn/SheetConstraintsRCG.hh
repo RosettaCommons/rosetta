@@ -32,8 +32,8 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace fldsgn{
+namespace protocols {
+namespace fldsgn {
 
 class SheetConstraintsRCG : public protocols::forge::remodel::RemodelConstraintGenerator {
 public:
@@ -59,10 +59,10 @@ public:
 
 	virtual void
 	parse_my_tag( TagCOP tag,
-								basic::datacache::DataMap & data,
-								protocols::filters::Filters_map const & filters,
-								protocols::moves::Movers_map const & movers,
-								core::pose::Pose const & pose );
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose );
 
 	virtual std::string
 	get_name() const;

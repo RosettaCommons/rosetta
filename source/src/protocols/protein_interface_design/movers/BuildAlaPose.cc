@@ -65,8 +65,8 @@ BuildAlaPoseCreator::mover_name()
 }
 
 BuildAlaPose::BuildAlaPose() : simple_moves::DesignRepackMover( BuildAlaPoseCreator::mover_name() ),
-AA_("ALA")
- {}
+	AA_("ALA")
+{}
 
 BuildAlaPose::BuildAlaPose(
 	bool const partner1,
@@ -95,13 +95,13 @@ BuildAlaPose::apply( pose::Pose & pose )
 	allowed_aas_[ core::chemical::aa_from_name(AA_) ] = true;
 	//allowed_aas_[ core::chemical::aa_ala ] = true;
 	//allowed_aas_[ core::chemical::aa_gly ] = true;
-/*	if( repack_partner1_ ^ repack_partner2_ ){
-		bool const prevent_chain1( !repack_partner1_ );
-		bool const prevent_chain2( !repack_partner2_ );
-		core::Size const prevent_chain_begin( pose.conformation().chain_begin( prevent_chain1 ? 1 : 2 ) );
-		core::Size const prevent_chain_end( pose.conformation().chain_end( prevent_chain2 ? 2 : 1 ) );
-		for( core::Size res=prevent_chain_begin; res<=prevent_chain_end; ++res )
-			prevent_repacking_.push_back( res );
+	/* if( repack_partner1_ ^ repack_partner2_ ){
+	bool const prevent_chain1( !repack_partner1_ );
+	bool const prevent_chain2( !repack_partner2_ );
+	core::Size const prevent_chain_begin( pose.conformation().chain_begin( prevent_chain1 ? 1 : 2 ) );
+	core::Size const prevent_chain_end( pose.conformation().chain_end( prevent_chain2 ? 2 : 1 ) );
+	for( core::Size res=prevent_chain_begin; res<=prevent_chain_end; ++res )
+	prevent_repacking_.push_back( res );
 	} */
 	setup_packer_and_movemap( pose );
 
@@ -133,7 +133,7 @@ BuildAlaPose::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, p
 
 protocols::moves::MoverOP
 BuildAlaPose::clone() const {
-    return( protocols::moves::MoverOP( new BuildAlaPose( *this ) ));
+	return( protocols::moves::MoverOP( new BuildAlaPose( *this ) ));
 }
 
 } //movers

@@ -48,7 +48,7 @@ ResidueProperties::ResidueProperties( ResidueType const * residue_type ) : utili
 
 // "Copy constructor"
 ResidueProperties::ResidueProperties( ResidueProperties const & object_to_copy, ResidueType const * new_owner ) :
-		utility::pointer::ReferenceCount( object_to_copy )
+	utility::pointer::ReferenceCount( object_to_copy )
 {
 	residue_type_ = new_owner;
 	copy_data( *this, object_to_copy );
@@ -152,21 +152,21 @@ ResidueProperties::set_variant_type( std::string const & variant_type, bool cons
 			if ( setting /* == true */ ) {
 				if ( custom_variant_types_.has_value( variant_type ) ) {
 					TR.Warning << "Custom variant " << variant_type <<
-							" already exists in " << residue_type_->name() << endl;
+						" already exists in " << residue_type_->name() << endl;
 				} else {
 					TR.Info << "Adding the custom variant " << variant_type <<
-							" to " << residue_type_->name() << endl;
+						" to " << residue_type_->name() << endl;
 					custom_variant_types_.push_back( variant_type );
 				}
 			} else /* setting == false */ {
 				vector1< string >::iterator i =
-						find( custom_variant_types_.begin(), custom_variant_types_.end(), variant_type );
+					find( custom_variant_types_.begin(), custom_variant_types_.end(), variant_type );
 				if ( i == custom_variant_types_.end() ) {
 					utility_exit_with_message( "Rosetta does not recognize the custom variant " + variant_type +
-							" in " + residue_type_->name() );
+						" in " + residue_type_->name() );
 				} else {
 					TR.Info << "Removing the custom variant " << variant_type <<
-							" from " << residue_type_->name() << endl;
+						" from " << residue_type_->name() << endl;
 					custom_variant_types_.erase( i );
 				}
 			}

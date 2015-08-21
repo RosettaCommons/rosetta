@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	protocols/features/BetaTurnDetection.cc
-/// @brief	determine the presence and type of beta turn at a specific postion in a pose
+/// @file protocols/features/BetaTurnDetection.cc
+/// @brief determine the presence and type of beta turn at a specific postion in a pose
 /// @author Brian D. Weitzner (brian.weitzner@gmail.com)
 
 // Unit Headers
@@ -22,8 +22,8 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::string;
 using std::map;
@@ -51,8 +51,7 @@ map< string, string > const & BetaTurnDetection::get_conformation_to_turn_type_m
 	// It pisses me off that C++ works this way, but it does. Sergey promises this line will only ever be executed once.
 	static map< string, string > * conformation_to_turn_type = 0;
 
-	if ( conformation_to_turn_type == 0 )
-	{
+	if ( conformation_to_turn_type == 0 ) {
 		conformation_to_turn_type = new map< string, string >;
 
 		// Turn types will be notated thusly: TurnXX[_NUMERAL], where XX is the Ramachandran hash of residues 2 and 3,
@@ -96,8 +95,7 @@ vector1< string > const & BetaTurnDetection::get_valid_ramachandran_hashes()
 	// It pisses me off that C++ works this way, but it does. Sergey promises this line will only ever be executed once.
 	static vector1< string > * valid_ramachandran_hashes = 0;
 
-	if ( valid_ramachandran_hashes == 0 )
-	{
+	if ( valid_ramachandran_hashes == 0 ) {
 		valid_ramachandran_hashes = new vector1< string >;
 		valid_ramachandran_hashes->resize( number_of_ramachandran_hashes );
 
@@ -113,10 +111,8 @@ vector1< string > const & BetaTurnDetection::get_valid_ramachandran_hashes()
 bool BetaTurnDetection::all_turn_residues_are_on_the_same_chain( Pose const & pose, Size first_residue ) const
 {
 	Size chain = pose.residue( first_residue ).chain();
-	for ( Size residue_number = first_residue + 1; residue_number <= first_residue + beta_turn_length_; ++residue_number )
-	{
-		if ( pose.residue( first_residue ).chain() != chain )
-		{
+	for ( Size residue_number = first_residue + 1; residue_number <= first_residue + beta_turn_length_; ++residue_number ) {
+		if ( pose.residue( first_residue ).chain() != chain ) {
 			return false;
 		}
 	}
@@ -126,11 +122,9 @@ bool BetaTurnDetection::all_turn_residues_are_on_the_same_chain( Pose const & po
 
 bool BetaTurnDetection::residue_range_is_protein( Pose const & pose, Size range_begin, Size range_end ) const
 {
-	for ( Size current_residue = range_begin; current_residue <= range_end; ++current_residue )
-	{
-		if ( !pose.residue( current_residue ).is_protein() )
-		{
-				return false;
+	for ( Size current_residue = range_begin; current_residue <= range_end; ++current_residue ) {
+		if ( !pose.residue( current_residue ).is_protein() ) {
+			return false;
 		}
 	}
 	return true;
@@ -153,8 +147,7 @@ string const & BetaTurnDetection::beta_turn_type( Pose const & pose, Size first_
 string BetaTurnDetection::determine_ramachandran_hash( Pose const & pose, Size first_residue ) const
 {
 	string rama_hash = "";
-	for ( Size residue_number = first_residue + 1; residue_number < first_residue + beta_turn_length_; ++residue_number )
-	{
+	for ( Size residue_number = first_residue + 1; residue_number < first_residue + beta_turn_length_; ++residue_number ) {
 		rama_hash += determine_ramachandran_hash_for_residue_with_dihedrals( pose.phi( residue_number ), pose.psi( residue_number ), pose.omega( residue_number ) );
 	}
 	return rama_hash;
@@ -185,7 +178,7 @@ string BetaTurnDetection::determine_ramachandran_hash( Pose const & pose, Size f
 ///       |          |===========| -50
 ///  -100 |==========|           |
 ///       |          |     E     |
-///       |    B     |	         |
+///       |    B     |          |
 ///       |----------------------|
 ///     -180         0          180
 ///                 phi
@@ -193,32 +186,22 @@ string BetaTurnDetection::determine_ramachandran_hash( Pose const & pose, Size f
 string BetaTurnDetection::determine_ramachandran_hash_for_residue_with_dihedrals( Real phi, Real psi, Real omega ) const
 {
 	string rama_hash;
-	if ( phi <= 0. )
-	{
-		if ( psi > -100. && psi <= 50. )
-		{
+	if ( phi <= 0. ) {
+		if ( psi > -100. && psi <= 50. ) {
 			rama_hash = get_valid_ramachandran_hashes()[ A ];
-		}
-		else
-		{
+		} else {
 			rama_hash = get_valid_ramachandran_hashes()[ B ];
 		}
-	}
-	else
-	{
-		if ( psi  > -50. && psi <= 100. )
-		{
+	} else {
+		if ( psi  > -50. && psi <= 100. ) {
 			rama_hash = get_valid_ramachandran_hashes()[ L ];
-		}
-		else
-		{
+		} else {
 			rama_hash = get_valid_ramachandran_hashes()[ E ];
 		}
 	}
 
 	// Return the lower case letter for the hash for Cis peptide planes
-	if ( omega > -90 && omega <= 90 )
-	{
+	if ( omega > -90 && omega <= 90 ) {
 		transform( rama_hash.begin(), rama_hash.end(), rama_hash.begin(), ::tolower );
 	}
 	return rama_hash;
@@ -226,17 +209,14 @@ string BetaTurnDetection::determine_ramachandran_hash_for_residue_with_dihedrals
 
 void BetaTurnDetection::validate_ramachandran_hash( std::string & rama_hash ) const
 {
-	if ( ! get_conformation_to_turn_type_map().count(  rama_hash ) )
-	{
+	if ( ! get_conformation_to_turn_type_map().count(  rama_hash ) ) {
 		string cis_trans_hash = "";
 
-		for ( string::const_iterator it = rama_hash.begin(); it != rama_hash.end(); ++it )
-		{
+		for ( string::const_iterator it = rama_hash.begin(); it != rama_hash.end(); ++it ) {
 			bool cis_peptide_bond = islower( * it );
 			string single_residue_rama_hash( 1, toupper( * it ) );
 
-			if ( ! get_valid_ramachandran_hashes().contains( single_residue_rama_hash ) )
-			{
+			if ( ! get_valid_ramachandran_hashes().contains( single_residue_rama_hash ) ) {
 				throw EXCN_Msg_Exception( "The Ramachandran hash '" + rama_hash + "' contains '" + string( 1, * it ) + ",' which is not valid. " +
 					"Valid Ramachandran hashes are 'A', 'B', 'L' and 'E' for trans peptide bonds, and 'a', 'b', 'l' and 'e' for cis peptide bonds."
 				);
@@ -244,8 +224,7 @@ void BetaTurnDetection::validate_ramachandran_hash( std::string & rama_hash ) co
 			cis_trans_hash += cis_peptide_bond ? "x" : "X";
 		}
 
-		if ( ! get_conformation_to_turn_type_map().count(  cis_trans_hash ) )
-		{
+		if ( ! get_conformation_to_turn_type_map().count(  cis_trans_hash ) ) {
 			throw EXCN_Msg_Exception( "The Ramachandran hash '" + rama_hash +
 				"' is not recognized as a valid beta-turn type.  " +
 				"The attempt to create a generic hash based on the omega dihedral angle resulted in '" +

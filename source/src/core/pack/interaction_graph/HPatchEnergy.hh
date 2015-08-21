@@ -72,8 +72,8 @@ public:
 	finalize_total_energy( pose::Pose & pose, scoring::ScoreFunction const &, scoring::EnergyMap & totals ) const;
 
 	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const {};
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 
 private:

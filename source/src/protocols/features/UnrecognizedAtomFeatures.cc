@@ -54,8 +54,8 @@
 // Boost Headers
 #include <boost/foreach.hpp>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 static thread_local basic::Tracer TR( "protocols.features.UnrecognizedAtomFeatures" );
 
@@ -86,7 +86,7 @@ using basic::database::insert_statement_generator::RowData;
 UnrecognizedAtomFeatures::UnrecognizedAtomFeatures() :
 	neighbor_distance_cutoff_(12.0)
 {
-	if(!basic::options::option[basic::options::OptionKeys::in::remember_unrecognized_res]() || !basic::options::option[basic::options::OptionKeys::in::remember_unrecognized_water]()){
+	if ( !basic::options::option[basic::options::OptionKeys::in::remember_unrecognized_res]() || !basic::options::option[basic::options::OptionKeys::in::remember_unrecognized_water]() ) {
 		TR.Warning << "Use -in:remember_unrecognized_res and -in:remember_unrecognized_water to locate unrecognized atoms." << endl;
 	}
 }
@@ -259,7 +259,7 @@ UnrecognizedAtomFeatures::insert_unrecognized_residues_rows(
 	sessionOP db_session
 ){
 	PDBInfoCOP pdb_info(pose.pdb_info());
-	if(!pdb_info) return;
+	if ( !pdb_info ) return;
 
 
 	InsertGenerator insert_generator("unrecognized_residues");
@@ -272,35 +272,35 @@ UnrecognizedAtomFeatures::insert_unrecognized_residues_rows(
 
 	map< Size, UnrecognizedAtomRecord const * > ur_found;
 
-	for(
-		vector1< UnrecognizedAtomRecord >::const_iterator
+	for (
+			vector1< UnrecognizedAtomRecord >::const_iterator
 			ua(pdb_info->get_unrecognized_atoms().begin()),
 			ua_end(pdb_info->get_unrecognized_atoms().end());
-		ua != ua_end; ++ua){
+			ua != ua_end; ++ua ) {
 		map< Size, UnrecognizedAtomRecord const * >::const_iterator
 			i(ur_found.find(ua->res_num()));
-		if( i == ur_found.end()){
+		if ( i == ur_found.end() ) {
 			ur_found[ua->res_num()] = &(*ua);
 		} else {
-			if (i->second->temp() > ua->temp()){
+			if ( i->second->temp() > ua->temp() ) {
 				ur_found[ua->res_num()] = &(*ua);
 			}
 		}
 	}
 
-	for(
-		map<Size, UnrecognizedAtomRecord const * >::const_iterator
+	for (
+			map<Size, UnrecognizedAtomRecord const * >::const_iterator
 			i = ur_found.begin(), ie = ur_found.end();
-		i != ie; ++i){
+			i != ie; ++i ) {
 
 		UnrecognizedAtomRecord const & ua(*(i->second));
 
 		insert_generator.add_row(
 			make_vector(
-				struct_id_data,
-				RowDataBaseOP( new RowData<Size>("residue_number", ua.res_num()) ),
-				RowDataBaseOP( new RowData<string>("name3", ua.res_name()) ),
-				RowDataBaseOP( new RowData<Real>("max_temperature", ua.temp()) )));
+			struct_id_data,
+			RowDataBaseOP( new RowData<Size>("residue_number", ua.res_num()) ),
+			RowDataBaseOP( new RowData<string>("name3", ua.res_name()) ),
+			RowDataBaseOP( new RowData<Real>("max_temperature", ua.temp()) )));
 	}
 
 	insert_generator.write_to_database(db_session);
@@ -314,7 +314,7 @@ UnrecognizedAtomFeatures::insert_unrecognized_atoms_rows(
 	sessionOP db_session
 ){
 	PDBInfoCOP pdb_info(pose.pdb_info());
-	if(!pdb_info) return;
+	if ( !pdb_info ) return;
 
 
 	InsertGenerator insert_generator("unrecognized_atoms");
@@ -328,17 +328,17 @@ UnrecognizedAtomFeatures::insert_unrecognized_atoms_rows(
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id", struct_id) );
 
-	BOOST_FOREACH( UnrecognizedAtomRecord ua, pdb_info->get_unrecognized_atoms()){
+	BOOST_FOREACH ( UnrecognizedAtomRecord ua, pdb_info->get_unrecognized_atoms() ) {
 
 		insert_generator.add_row(
 			make_vector(
-				struct_id_data,
-				RowDataBaseOP( new RowData<Size>("residue_number", ua.res_num()) ),
-				RowDataBaseOP( new RowData<string>("atom_name", ua.atom_name()) ),
-				RowDataBaseOP( new RowData<Real>("coord_x", ua.coords().x()) ),
-				RowDataBaseOP( new RowData<Real>("coord_y", ua.coords().y()) ),
-				RowDataBaseOP( new RowData<Real>("coord_z", ua.coords().z()) ),
-				RowDataBaseOP( new RowData<Real>("temperature", ua.temp()) )));
+			struct_id_data,
+			RowDataBaseOP( new RowData<Size>("residue_number", ua.res_num()) ),
+			RowDataBaseOP( new RowData<string>("atom_name", ua.atom_name()) ),
+			RowDataBaseOP( new RowData<Real>("coord_x", ua.coords().x()) ),
+			RowDataBaseOP( new RowData<Real>("coord_y", ua.coords().y()) ),
+			RowDataBaseOP( new RowData<Real>("coord_z", ua.coords().z()) ),
+			RowDataBaseOP( new RowData<Real>("temperature", ua.temp()) )));
 
 	}
 
@@ -353,7 +353,7 @@ UnrecognizedAtomFeatures::insert_unrecognized_neighbors_rows(
 	sessionOP db_session
 ){
 	PDBInfoCOP pdb_info(pose.pdb_info());
-	if(!pdb_info) return;
+	if ( !pdb_info ) return;
 
 
 	InsertGenerator insert_generator("unrecognized_neighbors");
@@ -367,28 +367,28 @@ UnrecognizedAtomFeatures::insert_unrecognized_neighbors_rows(
 	map< Size, pair< Size, Real > > closest_contact;
 
 
-	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
-		if(!check_relevant_residues(relevant_residues, resNum)) continue;
+	for ( Size resNum=1; resNum <= pose.total_residue(); ++resNum ) {
+		if ( !check_relevant_residues(relevant_residues, resNum) ) continue;
 		Residue const & res(pose.residue(resNum));
 
 		Size closest_ua_resNum(0);
 		Distance closest_ua_distance(10000000);
-		BOOST_FOREACH( UnrecognizedAtomRecord ua, pdb_info->get_unrecognized_atoms()){
+		BOOST_FOREACH ( UnrecognizedAtomRecord ua, pdb_info->get_unrecognized_atoms() ) {
 			Distance const ua_distance(res.actcoord().distance(ua.coords()));
-			if(
-				ua_distance < neighbor_distance_cutoff_ &&
-				ua_distance < closest_ua_distance){
+			if (
+					ua_distance < neighbor_distance_cutoff_ &&
+					ua_distance < closest_ua_distance ) {
 				closest_ua_resNum = ua.res_num();
 				closest_ua_distance = ua_distance;
 			}
 		}
-		if(closest_ua_distance < neighbor_distance_cutoff_){
+		if ( closest_ua_distance < neighbor_distance_cutoff_ ) {
 			insert_generator.add_row(
 				make_vector(
-					struct_id_data,
-					RowDataBaseOP( new RowData<Size>("residue_number", resNum) ),
-					RowDataBaseOP( new RowData<Size>("unrecognized_residue_number", closest_ua_resNum) ),
-					RowDataBaseOP( new RowData<Distance>("closest_contact", closest_ua_distance) )));
+				struct_id_data,
+				RowDataBaseOP( new RowData<Size>("residue_number", resNum) ),
+				RowDataBaseOP( new RowData<Size>("unrecognized_residue_number", closest_ua_resNum) ),
+				RowDataBaseOP( new RowData<Distance>("closest_contact", closest_ua_distance) )));
 		}
 	}
 

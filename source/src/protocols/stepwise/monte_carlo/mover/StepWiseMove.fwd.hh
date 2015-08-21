@@ -23,13 +23,13 @@ namespace stepwise {
 namespace monte_carlo {
 namespace mover {
 
-	class StepWiseMove;
-	typedef utility::pointer::shared_ptr< StepWiseMove > StepWiseMoveOP;
-	typedef utility::pointer::shared_ptr< StepWiseMove const > StepWiseMoveCOP;
+class StepWiseMove;
+typedef utility::pointer::shared_ptr< StepWiseMove > StepWiseMoveOP;
+typedef utility::pointer::shared_ptr< StepWiseMove const > StepWiseMoveCOP;
 
-	class Attachment;
-	typedef utility::pointer::shared_ptr< Attachment > AttachmentOP;
-	typedef utility::pointer::shared_ptr< Attachment const > AttachmentCOP;
+class Attachment;
+typedef utility::pointer::shared_ptr< Attachment > AttachmentOP;
+typedef utility::pointer::shared_ptr< Attachment const > AttachmentCOP;
 
 
 } //mover

@@ -107,11 +107,11 @@ protocols::backrub::BackrubSidechainMover::BackrubSidechainMover(
 	proposal_hists_(mover.proposal_hists_),
 	accept_hists_(mover.accept_hists_)
 {
-	if (mover.backrub_mover_) {
+	if ( mover.backrub_mover_ ) {
 		backrub_mover_ = utility::pointer::dynamic_pointer_cast< protocols::backrub::BackrubMover > ( mover.backrub_mover_->clone() );
 		runtime_assert(backrub_mover_ != 0);
 	}
-	if (mover.sidechain_mover_) {
+	if ( mover.sidechain_mover_ ) {
 		sidechain_mover_ = utility::pointer::dynamic_pointer_cast< protocols::simple_moves::sidechain_moves::SidechainMover > ( mover.sidechain_mover_->clone() );
 		runtime_assert(sidechain_mover_ != 0);
 	}
@@ -158,7 +158,7 @@ protocols::backrub::BackrubSidechainMover::parse_my_tag(
 		typedef utility::vector1< std::string > StringVec;
 		StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
 		for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
-					t_o_key != end; ++t_o_key ) {
+				t_o_key != end; ++t_o_key ) {
 			if ( data.has( "task_operations", *t_o_key ) ) {
 				new_task_factory->push_back( data.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", *t_o_key ) );
 			} else {
@@ -189,7 +189,7 @@ protocols::backrub::BackrubSidechainMover::update_segments(
 	core::pose::Pose const & pose
 )
 {
-	if (!(backrub_mover_->get_input_pose() && backrub_mover_->get_input_pose()->fold_tree() == pose.fold_tree())) {
+	if ( !(backrub_mover_->get_input_pose() && backrub_mover_->get_input_pose()->fold_tree() == pose.fold_tree()) ) {
 		backrub_mover_->set_input_pose(core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose(pose) ) ));
 	}
 
@@ -201,21 +201,21 @@ protocols::backrub::BackrubSidechainMover::update_segments(
 
 	valid_segments_.clear();
 
-	for (core::Size i = 1; i <= backrub_mover_->num_segments(); ++i) {
+	for ( core::Size i = 1; i <= backrub_mover_->num_segments(); ++i ) {
 		BackrubSegment const & segment(backrub_mover_->segment(i));
-		if (pose.residue(segment.start_atomid().rsd()).atom_name(segment.start_atomid().atomno()) == " CA " &&
-		    pose.residue(segment.end_atomid().rsd()).atom_name(segment.end_atomid().atomno()) == " CA " &&
-		    segment.size() == 7) {
+		if ( pose.residue(segment.start_atomid().rsd()).atom_name(segment.start_atomid().atomno()) == " CA " &&
+				pose.residue(segment.end_atomid().rsd()).atom_name(segment.end_atomid().atomno()) == " CA " &&
+				segment.size() == 7 ) {
 			core::Size middle_rsd = (segment.start_atomid().rsd() + segment.end_atomid().rsd())/2;
-			if (sidechain_mover_->residue_packed()[middle_rsd]) {
+			if ( sidechain_mover_->residue_packed()[middle_rsd] ) {
 				//TR << "Adding segment start:" << segment.start_atomid() << "end:"
-				//	 << segment.end_atomid() << "size: " << segment.size() << std::endl;
+				//  << segment.end_atomid() << "size: " << segment.size() << std::endl;
 				valid_segments_.push_back(i);
 			}
 		}
 	}
 
-	if (record_statistics_) reset_statistics();
+	if ( record_statistics_ ) reset_statistics();
 }
 
 void
@@ -225,15 +225,15 @@ protocols::backrub::BackrubSidechainMover::initialize_simulation(
 	core::Size cycle //default=0; non-zero if trajectory is restarted
 )
 {
-	if (!(valid_segments_.size() && backrub_mover_->get_input_pose() && backrub_mover_->get_input_pose()->fold_tree() == pose.fold_tree())) {
-  	update_segments(pose);
+	if ( !(valid_segments_.size() && backrub_mover_->get_input_pose() && backrub_mover_->get_input_pose()->fold_tree() == pose.fold_tree()) ) {
+		update_segments(pose);
 	}
 
 	// because the segments have already been set up, they shouldn't be set up again in the next call
 	backrub_mover_->initialize_simulation(pose, metropolis_hastings_mover,cycle);
 	sidechain_mover_->initialize_simulation(pose, metropolis_hastings_mover,cycle);
 
-	if (record_statistics_) reset_statistics();
+	if ( record_statistics_ ) reset_statistics();
 }
 
 void
@@ -241,8 +241,8 @@ protocols::backrub::BackrubSidechainMover::apply(
 	core::pose::Pose & pose
 )
 {
-	if (!(valid_segments_.size() && backrub_mover_->get_input_pose() && backrub_mover_->get_input_pose()->fold_tree() == pose.fold_tree())) {
-  	update_segments(pose);
+	if ( !(valid_segments_.size() && backrub_mover_->get_input_pose() && backrub_mover_->get_input_pose()->fold_tree() == pose.fold_tree()) ) {
+		update_segments(pose);
 	}
 
 	last_valid_segment_index_ = numeric::random::rg().random_range(1, valid_segments_.size());
@@ -267,7 +267,7 @@ protocols::backrub::BackrubSidechainMover::observe_after_metropolis(
 	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 )
 {
-	if (record_statistics_) record_histograms(metropolis_hastings_mover.monte_carlo()->mc_accepted());
+	if ( record_statistics_ ) record_histograms(metropolis_hastings_mover.monte_carlo()->mc_accepted());
 }
 
 void
@@ -276,10 +276,10 @@ protocols::backrub::BackrubSidechainMover::finalize_simulation(
 	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 )
 {
-	if (record_statistics_) {
+	if ( record_statistics_ ) {
 
 		std::ostringstream filename;
-		if (metropolis_hastings_mover.output_name() != "") {
+		if ( metropolis_hastings_mover.output_name() != "" ) {
 			filename << metropolis_hastings_mover.output_name() << "_";
 		}
 		filename << statistics_filename();
@@ -350,7 +350,7 @@ protocols::backrub::BackrubSidechainMover::set_prob_withinrot(
 core::Real
 protocols::backrub::BackrubSidechainMover::prob_random_pert_current() const
 {
-  return sidechain_mover_->prob_random_pert_current();
+	return sidechain_mover_->prob_random_pert_current();
 }
 
 void
@@ -358,7 +358,7 @@ protocols::backrub::BackrubSidechainMover::set_prob_random_pert_current(
 	core::Real prob_pert
 )
 {
-  sidechain_mover_->set_prob_random_pert_current(prob_pert);
+	sidechain_mover_->set_prob_random_pert_current(prob_pert);
 }
 
 bool
@@ -411,7 +411,7 @@ protocols::backrub::BackrubSidechainMover::set_record_statistics(
 {
 	bool const needs_reset(record_statistics_ != record_statistics);
 	record_statistics_ = record_statistics;
-	if (needs_reset) reset_statistics();
+	if ( needs_reset ) reset_statistics();
 }
 
 std::string const &
@@ -439,7 +439,7 @@ protocols::backrub::BackrubSidechainMover::output_statistics(
 	std::ostream & out
 )
 {
-	for (core::Size i = 1; i <= proposal_hists_.size(); ++i) {
+	for ( core::Size i = 1; i <= proposal_hists_.size(); ++i ) {
 		out << proposal_hists_[i] << accept_hists_[i];
 	}
 }
@@ -447,7 +447,7 @@ protocols::backrub::BackrubSidechainMover::output_statistics(
 void
 protocols::backrub::BackrubSidechainMover::setup_histograms()
 {
-	if (!(record_statistics_ && backrub_mover_->get_input_pose())) {
+	if ( !(record_statistics_ && backrub_mover_->get_input_pose()) ) {
 		proposal_hists_.resize(0);
 		accept_hists_.resize(0);
 		return;
@@ -462,14 +462,14 @@ protocols::backrub::BackrubSidechainMover::setup_histograms()
 	proposal_hists_.resize(valid_segments_.size());
 	accept_hists_.resize(valid_segments_.size());
 
-	for (core::Size i = 1; i <= valid_segments_.size(); ++i) {
+	for ( core::Size i = 1; i <= valid_segments_.size(); ++i ) {
 
 		core::Size res_num(backrub_mover_->segment(valid_segments_[i]).start_atomid().rsd()+1);
 
 		std::ostringstream res_label_stream;
 		res_label_stream << pose.residue(res_num).name3() << " "
-		                 << pose.pdb_info()->chain(res_num) << " "
-		                 << pose.pdb_info()->number(res_num);
+			<< pose.pdb_info()->chain(res_num) << " "
+			<< pose.pdb_info()->number(res_num);
 
 		std::ostringstream proposal_label_stream;
 		proposal_label_stream << res_label_stream.str() << " Proposal";
@@ -496,7 +496,7 @@ protocols::backrub::BackrubSidechainMover::record_histograms(
 	bool accepted
 )
 {
-	if (proposal_hists_.size() == 0) setup_histograms();
+	if ( proposal_hists_.size() == 0 ) setup_histograms();
 
 	//BackrubSegment const & segment(backrub_mover_->segment(backrub_mover_->last_segment_id()));
 	//core::Size middle_rsd = (segment.start_atomid().rsd() + segment.end_atomid().rsd())/2;
@@ -512,7 +512,7 @@ protocols::backrub::BackrubSidechainMover::record_histograms(
 	values[3] = numeric::nonnegative_principal_angle_radians(last_chi1_post_);
 
 	proposal_hists_[last_valid_segment_index_].record(values);
-	if (accepted) accept_hists_[last_valid_segment_index_].record(values);
+	if ( accepted ) accept_hists_[last_valid_segment_index_].record(values);
 }
 
 void
@@ -523,12 +523,12 @@ protocols::backrub::BackrubSidechainMover::update_type()
 	char bin_letters[] = {'p', 't', 'm'};
 
 	core::Size chi1_pre_bin(static_cast<core::Size>(floor(numeric::nonnegative_principal_angle_radians(last_chi1_pre_)/numeric::constants::r::pi_2_over_3)));
-	if (chi1_pre_bin == 3) chi1_pre_bin = 2;
+	if ( chi1_pre_bin == 3 ) chi1_pre_bin = 2;
 	core::Size chi1_post_bin(static_cast<core::Size>(floor(numeric::nonnegative_principal_angle_radians(last_chi1_post_)/numeric::constants::r::pi_2_over_3)));
-	if (chi1_post_bin == 3) chi1_post_bin = 2;
+	if ( chi1_post_bin == 3 ) chi1_post_bin = 2;
 
 	mt << "brsc_" << bin_letters[chi1_pre_bin] << bin_letters[chi1_post_bin] << "_"
-	   << (sidechain_mover_->last_nchi() ? (sidechain_mover_->last_uniform() ? "unif" : (sidechain_mover_->last_withinrot() ? "withinrot" : "rot")) : "none");
+		<< (sidechain_mover_->last_nchi() ? (sidechain_mover_->last_uniform() ? "unif" : (sidechain_mover_->last_withinrot() ? "withinrot" : "rot")) : "none");
 
 	std::string const new_type(mt.str());
 	type(new_type);

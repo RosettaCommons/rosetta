@@ -35,22 +35,22 @@ read_movemap_from_da_linker_file();
 ///  Each line of the file should have the start and end position for a linker region
 bool
 read_linker_file(
-  std::string const & filename,
-  utility::vector1< std::pair < core::Size, core::Size > > & linker_ranges
+	std::string const & filename,
+	utility::vector1< std::pair < core::Size, core::Size > > & linker_ranges
 );
 
 /// @brief sets movemap true for regions specified in linker file
 void
 set_movemap_for_linkers(
-  utility::vector1< std::pair < core::Size, core::Size > > const & linker_ranges,
-  core::kinematics::MoveMapOP & mm
+	utility::vector1< std::pair < core::Size, core::Size > > const & linker_ranges,
+	core::kinematics::MoveMapOP & mm
 );
 
 /// @brief centroid mode optimization of linkers
 void
 optimize_linkers_centroid_mode(
-  core::kinematics::MoveMapOP & mm,
-  core::pose::Pose & full_pose
+	core::kinematics::MoveMapOP & mm,
+	core::pose::Pose & full_pose
 );
 
 void
@@ -61,25 +61,25 @@ optimize_linkers_fullatom_mode(
 
 ObjexxFCL::FArray1D_bool
 set_moveable_rna(
-  core::pose::Pose & full_pose,
-  utility::vector1< std::pair < core::Size, core::Size > > & linker_rna
+	core::pose::Pose & full_pose,
+	utility::vector1< std::pair < core::Size, core::Size > > & linker_rna
 );
 
 void
 optimize_linkers_rna_fullatom_mode(
-  core::kinematics::MoveMapOP & mm,
-  core::pose::Pose & full_pose,
-  protocols::farna::RNA_FragmentsOP & all_rna_fragments
+	core::kinematics::MoveMapOP & mm,
+	core::pose::Pose & full_pose,
+	protocols::farna::RNA_FragmentsOP & all_rna_fragments
 );
 
 /// @brief a helper function for the domain assembly protocol. Selects
 ///residues near linkers and domain interfaces for repacking
 void
 da_residues_to_repack(
-  core:: kinematics::MoveMapOP & mm,
-  utility::vector1< std::pair < core::Size, core::Size > > & nearest_movable_residues,
-  core::pose::Pose & pose,
-  utility::vector1<bool> & repack_residues
+	core:: kinematics::MoveMapOP & mm,
+	utility::vector1< std::pair < core::Size, core::Size > > & nearest_movable_residues,
+	core::pose::Pose & pose,
+	utility::vector1<bool> & repack_residues
 );
 
 /// @brief a helper function for the domain assembly protocol.  For each residue
@@ -87,9 +87,9 @@ da_residues_to_repack(
 /// in the input movemap)
 void
 find_nearest_movable_residues(
-  core::kinematics::MoveMapOP & mm,
-  core::pose::Pose & pose,
-  utility::vector1< std::pair < core::Size, core::Size > > & nearest_movable_residues
+	core::kinematics::MoveMapOP & mm,
+	core::pose::Pose & pose,
+	utility::vector1< std::pair < core::Size, core::Size > > & nearest_movable_residues
 );
 
 

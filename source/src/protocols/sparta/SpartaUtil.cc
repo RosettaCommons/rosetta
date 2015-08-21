@@ -73,7 +73,7 @@ calc_per_residue_scores(
 	COMP_Tab.FORMAT_str_parser("  %4d %4s %4s %9.3f %9.3f %9.3f %9.3f %9.3f %.2f");
 
 	//boost::unordered_map< int, string >::iterator itN;
-	//	boost::unordered_map< int, boost::unordered_map< string, string > >::iterator it;
+	// boost::unordered_map< int, boost::unordered_map< string, string > >::iterator it;
 
 	//std::cout << "begin_scoring: scores.size() = " << per_residue_scores.size() << std::endl;
 
@@ -84,57 +84,57 @@ calc_per_residue_scores(
 		bool floating_sign( REF_CS_Tab.isVarFloat("SHIFT2") );
 		if ( floating_sign ) tr.Info << " use floating sign1 " << std::endl;
 		else tr.Info << " no floating sign " << std::endl;
-		for ( GDB::EntryList::iterator it = REF_CS_Tab.Entries.begin(), end2 = REF_CS_Tab.Entries.end(); it != end2; ++it )	{
+		for ( GDB::EntryList::iterator it = REF_CS_Tab.Entries.begin(), end2 = REF_CS_Tab.Entries.end(); it != end2; ++it ) {
 			float obs_shift, pred_shift, obs_shift2( 0.0 );
 			string aName_ref = it->second["ATOMNAME"];
 			if ( aName_ref == "H" ) aName_ref = "HN";
 
-			if ( aName == "HA" && aName_ref == "G")	{
+			if ( aName == "HA" && aName_ref == "G" ) {
 				// AMW: cppcheck claims that compare would be faster than find here
 				if ( aName_ref.find("HA") != 0 ) continue;
-			}	else if ( aName_ref != aName ) continue;
+			} else if ( aName_ref != aName ) continue;
 
 			GDB::GDB_Entry temp = Pred_Sum.getEntry("RESID",it->second["RESID"],"ATOMNAME",aName,1);
 
-			if (temp["SHIFT"].length() <= 0) continue;
+			if ( temp["SHIFT"].length() <= 0 ) continue;
 
 			obs_shift = atof( (it->second["SHIFT"]).c_str() );
 			if ( floating_sign ) obs_shift2 = atof( (it->second["SHIFT2"]).c_str() );
 
 			pred_shift = atof( (temp["SHIFT"]).c_str() );
 
-			if ( aName == "HA" && it->second["RESNAME"] == "G") { //for HA of Gly
+			if ( aName == "HA" && it->second["RESNAME"] == "G" ) { //for HA of Gly
 				if ( aName_ref == "HA2" ) { // assign HA2 to the one with smaller shift
 					float shift_HA3 = 9999.000;
 					float shift_HA3_2 = 9999;
 					GDB::GDB_Entry HA3 = REF_CS_Tab.getEntry("RESID",it->second["RESID"],"ATOMNAME","HA3",1);
-					if ( HA3["ATOMNAME"] == "HA3") shift_HA3 = atof( (HA3["SHIFT"]).c_str() );
-					if ( floating_sign && HA3["ATOMNAME"] == "HA3") shift_HA3_2 = atof( (HA3["SHIFT2"]).c_str() );
+					if ( HA3["ATOMNAME"] == "HA3" ) shift_HA3 = atof( (HA3["SHIFT"]).c_str() );
+					if ( floating_sign && HA3["ATOMNAME"] == "HA3" ) shift_HA3_2 = atof( (HA3["SHIFT2"]).c_str() );
 
-					if ( shift_HA3 < obs_shift) obs_shift = shift_HA3;
+					if ( shift_HA3 < obs_shift ) obs_shift = shift_HA3;
 					if ( floating_sign && shift_HA3_2 < obs_shift2 ) obs_shift2 = shift_HA3_2;
 
 					shift_HA3 = 9999.000;
 					HA3 = Pred_Sum.getEntry("RESID",it->second["RESID"],"ATOMNAME","HA3",1);
-					if ( HA3["ATOMNAME"] == "HA3") shift_HA3 = atof( (HA3["SHIFT"]).c_str() );
+					if ( HA3["ATOMNAME"] == "HA3" ) shift_HA3 = atof( (HA3["SHIFT"]).c_str() );
 
-					if ( shift_HA3 < pred_shift) pred_shift = shift_HA3;
-				}	else if ( aName_ref == "HA3" ) { // assign HA3 to the one with larger shift
+					if ( shift_HA3 < pred_shift ) pred_shift = shift_HA3;
+				} else if ( aName_ref == "HA3" ) { // assign HA3 to the one with larger shift
 
 					float shift_HA2 = -9999.000;
 					float shift_HA2_2 = -9999;
 					GDB::GDB_Entry HA2 = REF_CS_Tab.getEntry("RESID",it->second["RESID"],"ATOMNAME","HA2",1);
-					if ( HA2["ATOMNAME"] == "HA2") shift_HA2 = atof( (HA2["SHIFT"]).c_str() );
-					if ( floating_sign && HA2["ATOMNAME"] == "HA2") shift_HA2_2 = atof( (HA2["SHIFT2"]).c_str() );
+					if ( HA2["ATOMNAME"] == "HA2" ) shift_HA2 = atof( (HA2["SHIFT"]).c_str() );
+					if ( floating_sign && HA2["ATOMNAME"] == "HA2" ) shift_HA2_2 = atof( (HA2["SHIFT2"]).c_str() );
 
-					if ( shift_HA2 > obs_shift) obs_shift = shift_HA2;
+					if ( shift_HA2 > obs_shift ) obs_shift = shift_HA2;
 					if ( floating_sign && shift_HA2_2 > obs_shift2 ) obs_shift2 = shift_HA2_2;
 
 					shift_HA2 = -9999.000;
 					HA2 = Pred_Sum.getEntry("RESID",it->second["RESID"],"ATOMNAME","HA2",1);
-					if ( HA2["ATOMNAME"] == "HA2") shift_HA2 = atof( (HA2["SHIFT"]).c_str() );
+					if ( HA2["ATOMNAME"] == "HA2" ) shift_HA2 = atof( (HA2["SHIFT"]).c_str() );
 
-					if ( shift_HA2 > pred_shift) pred_shift = shift_HA2;
+					if ( shift_HA2 > pred_shift ) pred_shift = shift_HA2;
 				}
 			}
 
@@ -155,7 +155,7 @@ calc_per_residue_scores(
 				);
 				//std::cout << "score(" << res_id << "," << aName << ") = " << score << std::endl;
 				//if ( per_residue_scores.size() < res_id ) {
-				//	per_residue_scores.resize( res_id, 0.0 );
+				// per_residue_scores.resize( res_id, 0.0 );
 				//}
 
 				// don't run off the end of the per_residue_scores, as the per_residue_scores tell
@@ -173,7 +173,7 @@ calc_per_residue_scores(
 		}
 
 		float avg_diff = getAVG(DIFF_V);
-		for( Size i = 0; i< OBS_V.size(); i++) {
+		for ( Size i = 0; i< OBS_V.size(); i++ ) {
 			OBS_V_CORRECTED.push_back( OBS_V[i] + avg_diff );
 		}
 
@@ -191,7 +191,7 @@ calc_per_residue_scores(
 }
 
 Real compareRef_fxn(
-  Sparta::SpartaLib::AtomNameList& names,
+	Sparta::SpartaLib::AtomNameList& names,
 	GDB & Pred_Sum,
 	GDB & REF_CS_Tab,
 	GDB & COMP_Tab
@@ -226,7 +226,7 @@ float getAVG(utility::vector0<float> &v1) {
 
 	float sum = 0.0;
 
-	for(int i = 0; i < n; i++) {
+	for ( int i = 0; i < n; i++ ) {
 		sum += v1[i];
 	}
 
@@ -239,7 +239,7 @@ float getSTD(utility::vector0<float> &v1) {
 
 	float sum = 0.0;
 
-	for (int i = 0; i < n; i++) {
+	for ( int i = 0; i < n; i++ ) {
 		sum += (v1[i]-avg)*(v1[i]-avg);
 	}
 
@@ -247,13 +247,13 @@ float getSTD(utility::vector0<float> &v1) {
 }
 
 float getRMS(utility::vector0<float> &v1, utility::vector0<float> &v2) {
-	if (v1.size() != v2.size() ) return -1.0;
+	if ( v1.size() != v2.size() ) return -1.0;
 
 	int n = v1.size();
 
 	float sum = 0.0;
 	// using iterators should speed this up ...
-	for(int i = 0; i < n; i++) {
+	for ( int i = 0; i < n; i++ ) {
 		sum += ( (v1[i]-v2[i])*(v1[i]-v2[i]) );
 	}
 
@@ -274,11 +274,12 @@ char * ftoa( float n, char *buff, char f, int prec )
 		f = 'f';
 	}
 	char format[20];
-	char *fs = format;				// generate format string
-	*fs++ = '%';					// "%.<prec>l<f>"
+	char *fs = format;    // generate format string
+	*fs++ = '%';     // "%.<prec>l<f>"
 	if ( prec >= 0 ) {
-		if ( prec > 99 )			// buf big enough for precision?
+		if ( prec > 99 ) {   // buf big enough for precision?
 			prec = 99;
+		}
 		*fs++ = '.';
 		if ( prec >= 10 ) {
 			*fs++ = prec / 10 + '0';
@@ -320,7 +321,7 @@ bool isDirExists(const string &Dir) {
 #else
 	DIR *dp;
 	dp = opendir(Dir.c_str());
-	if (dp != NULL) {
+	if ( dp != NULL ) {
 		(void) closedir (dp);
 		return true;
 	} else {

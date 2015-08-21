@@ -150,19 +150,19 @@ public:
 	void frag_libs( utility::vector1< core::fragment::FragSetOP > new_libs );
 
 	bool cmd_line_csts() const {
-		 return cmd_line_csts_;
+		return cmd_line_csts_;
 	}
 
 	bool copy_sidechains() const {
-		 return copy_sidechains_;
+		return copy_sidechains_;
 	}
 
 	core::Size n_rebuild_tries() const {
-		 return n_rebuild_tries_;
+		return n_rebuild_tries_;
 	}
 
 	core::Real rebuild_filter() const {
-		 return rebuild_filter_;
+		return rebuild_filter_;
 	}
 
 	/// @brief Loops accessor.  May only be retrieved after the loop indices have been resolved
@@ -204,8 +204,8 @@ public:
 		core::pose::Pose const &
 	);
 
-//	void task_factory( core::pack::task::TaskFactoryOP tf ); /// currently taskfactory is not supported
-//	core::pack::task::TaskFactoryOP task_factory() const;
+	// void task_factory( core::pack::task::TaskFactoryOP tf ); /// currently taskfactory is not supported
+	// core::pack::task::TaskFactoryOP task_factory() const;
 
 private:
 	void set_defaults_();
@@ -228,7 +228,7 @@ private:
 
 	utility::vector1< core::fragment::FragSetOP > frag_libs_;
 	bool compute_rmsd_; //dflt true; but set to false if you change the pose length between start and rmsd measurements;
-//	core::pack::task::TaskFactoryOP task_factory_; //dflt NULL; a way to restrict packing from outside the mover
+	// core::pack::task::TaskFactoryOP task_factory_; //dflt NULL; a way to restrict packing from outside the mover
 };
 
 } // namespace loops

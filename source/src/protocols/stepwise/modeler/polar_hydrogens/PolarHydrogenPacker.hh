@@ -28,49 +28,49 @@ namespace stepwise {
 namespace modeler {
 namespace polar_hydrogens {
 
-	class PolarHydrogenPacker: public moves::Mover {
+class PolarHydrogenPacker: public moves::Mover {
 
-	public:
+public:
 
-		//constructor
-		PolarHydrogenPacker();
+	//constructor
+	PolarHydrogenPacker();
 
-		//destructor
-		~PolarHydrogenPacker();
+	//destructor
+	~PolarHydrogenPacker();
 
-	public:
+public:
 
-		/// @brief  Apply the corresponding move to <pose>.
-		virtual void apply( core::pose::Pose & pose );
+	/// @brief  Apply the corresponding move to <pose>.
+	virtual void apply( core::pose::Pose & pose );
 
-		/// @brief  Return the name of the Mover.
-		virtual std::string get_name() const { return "PolaryHydrogenPacker"; }
+	/// @brief  Return the name of the Mover.
+	virtual std::string get_name() const { return "PolaryHydrogenPacker"; }
 
 
-		void set_allow_virtual_o2prime_hydrogens( bool const setting ){ allow_virtual_o2prime_hydrogens_ = setting; }
+	void set_allow_virtual_o2prime_hydrogens( bool const setting ){ allow_virtual_o2prime_hydrogens_ = setting; }
 
-	private:
+private:
 
-		void init();
+	void init();
 
-		void check_hbond_score( core::Vector const & H_xyz,
-														core::Vector const & D_xyz,
-														core::Real & best_score,
-														core::Vector & best_hydrogen_xyz );
+	void check_hbond_score( core::Vector const & H_xyz,
+		core::Vector const & D_xyz,
+		core::Real & best_score,
+		core::Vector & best_hydrogen_xyz );
 
-		void
-		get_possible_hbond_acceptors( core::pose::Pose const & pose, core::Size const moving_res, core::Size const atomno );
+	void
+	get_possible_hbond_acceptors( core::pose::Pose const & pose, core::Size const moving_res, core::Size const atomno );
 
-	private:
+private:
 
-		core::scoring::hbonds::HBondOptionsOP hbond_options_;
-		core::scoring::hbonds::HBondDatabaseCOP hbond_database_;
+	core::scoring::hbonds::HBondOptionsOP hbond_options_;
+	core::scoring::hbonds::HBondDatabaseCOP hbond_database_;
 
-		utility::vector1< utility::vector1< core::Vector > > possible_hbond_acceptors_;
-		utility::vector1< core::scoring::hbonds::HBEvalTuple > hb_eval_tuples_;
+	utility::vector1< utility::vector1< core::Vector > > possible_hbond_acceptors_;
+	utility::vector1< core::scoring::hbonds::HBEvalTuple > hb_eval_tuples_;
 
-		bool allow_virtual_o2prime_hydrogens_;
-	};
+	bool allow_virtual_o2prime_hydrogens_;
+};
 
 } //polar_hydrogens
 } //modeler

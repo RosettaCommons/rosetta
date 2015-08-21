@@ -44,9 +44,9 @@ struct history_queue_struct
 // Have to define it by hand because compiler does not automatically generate comparison for structs (and we need it for vector1::has_one implementaion)
 inline bool operator== (history_queue_struct const &a, history_queue_struct const &b)
 {
-    return (a.more_recent_ptr  == b.more_recent_ptr &&
-            a.element_in_rh    == b.element_in_rh &&
-            a.more_ancient_ptr == b.more_ancient_ptr);
+	return (a.more_recent_ptr  == b.more_recent_ptr &&
+		a.element_in_rh    == b.element_in_rh &&
+		a.more_ancient_ptr == b.more_ancient_ptr);
 }
 
 

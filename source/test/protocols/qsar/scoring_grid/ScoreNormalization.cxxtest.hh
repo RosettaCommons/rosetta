@@ -58,7 +58,7 @@ public:
 				protocols::qsar::scoring_grid::get_score_normalization_function("NonExistantNormalization");
 			TS_ASSERT(false); // last line ought to throw an exception
 		}catch(utility::excn::EXCN_RosettaScriptsOption const &)
-		{
+{
 			TS_ASSERT(true);
 		}
 	}

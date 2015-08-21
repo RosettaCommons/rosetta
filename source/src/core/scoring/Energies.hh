@@ -63,31 +63,31 @@ namespace core {
 namespace scoring {
 
 
-	/// A cached energies object
+/// A cached energies object
 
-	/**
-		 @li  Stores total, residue, and residue-pair energies, as well as
-					residue neighbor information.
+/**
+@li  Stores total, residue, and residue-pair energies, as well as
+residue neighbor information.
 
-		 @li  Meant to replace fullatom_energies:: namespace.
+@li  Meant to replace fullatom_energies:: namespace.
 
-		 @li  Stores residue neighbor information as well as cached residue
-				pair energies in O(N) space using a graph.
+@li  Stores residue neighbor information as well as cached residue
+pair energies in O(N) space using a graph.
 
-		 @li  Also stores a DomainMap object which is used during scoring
-					to know which rsd pairs have changed relative orientation and
-				which residues have changed internally
+@li  Also stores a DomainMap object which is used during scoring
+to know which rsd pairs have changed relative orientation and
+which residues have changed internally
 
-		 @note  We distinguish between two kinds of per-residue (1D) energy:
-						onebody residue energies and twobody residue energies. Onebody
-						residue energies are things like dunbrack, intrares, Paa, which
-						depend only on the state of the residue in question. Twobody
-						residue energies (like the residue atr energy) are summations
-						of twobody interactions involving a single residue. The onebody
-						energies can be reused at positions whose internal phi/psi/chi
-						conformation hasn't changed. Twobody residue energies, on the other
-						hand must be invalidated if the structure has changed at all.
-	**/
+@note  We distinguish between two kinds of per-residue (1D) energy:
+onebody residue energies and twobody residue energies. Onebody
+residue energies are things like dunbrack, intrares, Paa, which
+depend only on the state of the residue in question. Twobody
+residue energies (like the residue atr energy) are summations
+of twobody interactions involving a single residue. The onebody
+energies can be reused at positions whose internal phi/psi/chi
+conformation hasn't changed. Twobody residue energies, on the other
+hand must be invalidated if the structure has changed at all.
+**/
 
 class Energies : public utility::pointer::ReferenceCount
 {
@@ -233,8 +233,8 @@ public:
 	EnergyMap const &
 	residue_total_energies( int const seqpos ) const
 	{
-	debug_assert( !use_nblist() && energies_updated() );
-//		PyAssert( (!use_nblist()) && (energies_updated()), "Energies::residue_total_energies(): the Energies object isn't ready! Has it been scored?" );
+		debug_assert( !use_nblist() && energies_updated() );
+		//  PyAssert( (!use_nblist()) && (energies_updated()), "Energies::residue_total_energies(): the Energies object isn't ready! Has it been scored?" );
 		PyAssert( (seqpos>0) && (seqpos<=int(size())), "Energies::residue_total_energies( int const seqpos ): variable seqpos is out of range!" );
 		if ( ! residue_total_energies_uptodate_ ) accumulate_residue_total_energies();
 		return residue_total_energies_[ seqpos ];
@@ -254,8 +254,8 @@ public:
 	Real
 	residue_total_energy( int const seqpos ) const
 	{
-	debug_assert( !use_nblist() && energies_updated() );
-//		PyAssert( (!use_nblist()) && (energies_updated()), "Energies::residue_total_energy(): the Energies object isn't ready! Has it been scored?" );
+		debug_assert( !use_nblist() && energies_updated() );
+		//  PyAssert( (!use_nblist()) && (energies_updated()), "Energies::residue_total_energy(): the Energies object isn't ready! Has it been scored?" );
 		PyAssert( (seqpos>0) && (seqpos<=int(size())), "Energies::residue_total_energy( int const seqpos ): variable seqpos is out of range!" );
 		if ( ! residue_total_energy_uptodate_ ) accumulate_residue_total_energy();
 		return residue_total_energy_[ seqpos ];
@@ -437,12 +437,12 @@ public:
 
 	/// @brief called (eg by pose) to notify us of a change to the structure
 	/**
-		 Triggers clearing of the total energies and the twobody rsd energies
-		 PHIL -- should also mark the neighbor links as invalid somehow...
-		 Called by pose when someone tries to access us, if the Conformation
-		 indicates that the structure has moved since the last score evaluation
+	Triggers clearing of the total energies and the twobody rsd energies
+	PHIL -- should also mark the neighbor links as invalid somehow...
+	Called by pose when someone tries to access us, if the Conformation
+	indicates that the structure has moved since the last score evaluation
 
-		 const b/c called inside const access methods
+	const b/c called inside const access methods
 	**/
 	void
 	structure_has_moved( Size const nres ) const;
@@ -569,7 +569,7 @@ protected:
 	conformation::PointGraphOP
 	point_graph();
 
-/// @brief Write access to the EnergyGraph.
+	/// @brief Write access to the EnergyGraph.
 	EnergyGraph &
 	energy_graph_no_state_check();
 
@@ -707,9 +707,9 @@ private:
 
 	/// our internal nres
 	/**
-		 Used for dimensioning new Energy1D's, eg
-		 and for checking the validity of the NeighborEnergies by comparing
-		 against their size
+	Used for dimensioning new Energy1D's, eg
+	and for checking the validity of the NeighborEnergies by comparing
+	against their size
 	**/
 	Size size_;
 
@@ -729,7 +729,7 @@ private:
 	/// graph (e.g the packer), it may call require_context_graph( int cgtype ), which
 	/// will create the context graph immediately
 	mutable utility::vector1< ContextGraphOP > context_graphs_;
-	 /// those required by non-score function entities (e.g. the packer).
+	/// those required by non-score function entities (e.g. the packer).
 	mutable utility::vector1< bool > externally_required_context_graphs_;
 	/// OR of the sfxn required context graphs and the externally required ones.
 	mutable utility::vector1< bool > required_context_graphs_;
@@ -771,9 +771,9 @@ private:
 	/// Domain map, stores information about the rigid-bodies whose internal conformation is unchanged since
 	/// the last score calc'n
 	/**
-		 If domain_map_(i) == 0 then residue i has changed internal conformation. -- no longer true
-		 If domain_map_(i) > 0 and domain_map_(i) == domain_map_(j),  then residues
-		 i and j are unchanged wrt one another
+	If domain_map_(i) == 0 then residue i has changed internal conformation. -- no longer true
+	If domain_map_(i) > 0 and domain_map_(i) == domain_map_(j),  then residues
+	i and j are unchanged wrt one another
 	**/
 	DomainMap domain_map_;
 

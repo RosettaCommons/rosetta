@@ -65,21 +65,21 @@ public:
 	virtual std::string get_name() const;
 
 	virtual void parse_my_tag(
-	  utility::tag::TagCOP tag,
-	  basic::datacache::DataMap & data,
-	  protocols::filters::Filters_map const &,
-	  protocols::moves::Movers_map const &,
-	  core::pose::Pose const &
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
 	);
 private:
 
 	void setup_foldtree( core::pose::Pose & pose );
 
 	void minimize_only(
-											core::pose::Pose & pose,
-											const std::string & min_type,
-											const float min_func_tol
-											);
+		core::pose::Pose & pose,
+		const std::string & min_type,
+		const float min_func_tol
+	);
 
 	/////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////
@@ -108,40 +108,40 @@ private:
 
 	void set_allowed_moves( );
 
-  void random_peptide_phi_psi_perturbation( core::pose::Pose & pose );
+	void random_peptide_phi_psi_perturbation( core::pose::Pose & pose );
 
 	void extend_peptide( core::pose::Pose & pose );
 
-  void place_peptide_on_binding_site ( core::pose::Pose & pose );
+	void place_peptide_on_binding_site ( core::pose::Pose & pose );
 
-  void flip_in_pcs( core::pose::Pose & pose );
+	void flip_in_pcs( core::pose::Pose & pose );
 
-  void SlideIntoContact( core::pose::Pose & pose, core::Vector translate_axis );
+	void SlideIntoContact( core::pose::Pose & pose, core::Vector translate_axis );
 
-  void random_rb_pert( core::pose::Pose & pose );
+	void random_rb_pert( core::pose::Pose & pose );
 
-  void small_moves(	core::pose::Pose & pose );
+	void small_moves( core::pose::Pose & pose );
 
-	void shear_moves(	core::pose::Pose & pose );
+	void shear_moves( core::pose::Pose & pose );
 
 	void backrub_move( core::pose::Pose & pose );
 
-	void polyAla(	core::pose::Pose & pose );
+	void polyAla( core::pose::Pose & pose );
 
-  bool check_filters( core::pose::Pose & pose);
+	bool check_filters( core::pose::Pose & pose);
 
-  void calcMetrics( core::pose::Pose & pose );
+	void calcMetrics( core::pose::Pose & pose );
 
-  // randomly change peptide's jump residue every cycle
-  // TODO: add a flag for this? (currently not used)
-  void randomlySlidePeptideJump(core::pose::Pose & pose);
+	// randomly change peptide's jump residue every cycle
+	// TODO: add a flag for this? (currently not used)
+	void randomlySlidePeptideJump(core::pose::Pose & pose);
 
 	void torsions_monte_carlo_minimize(
-	core::pose::Pose & pose,
-	const int cycles,
-	const std::string & min_type,
-	const float minimization_threshold,
-	const float min_func_tol
+		core::pose::Pose & pose,
+		const int cycles,
+		const std::string & min_type,
+		const float minimization_threshold,
+		const float min_func_tol
 	);
 
 	void rigidbody_monte_carlo_minimize(
@@ -230,9 +230,9 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 	core::scoring::ScoreFunctionOP scorefxn_lowres_; // for low-res optimization
 
-  // metrics calculator object
-	FlexPepDockingPoseMetrics	fpdock_metrics_;
-  std::map < std::string, core::Real > if_metrics_; // interface metrics
+	// metrics calculator object
+	FlexPepDockingPoseMetrics fpdock_metrics_;
+	std::map < std::string, core::Real > if_metrics_; // interface metrics
 
 	// taskfactory for all-protein repacking operations
 	core::pack::task::TaskFactoryOP allprotein_tf_;
@@ -257,7 +257,7 @@ private:
 	// loop mover for modeling loop closure
 	protocols::comparative_modeling::LoopRelaxMoverOP loop_relax_mover_;
 
-	//	int num_jumps_;
+	// int num_jumps_;
 
 	// flag to indicate when the flexible loops are stripped from the pose
 	// this is useful for various tasks when we want to work only on the core

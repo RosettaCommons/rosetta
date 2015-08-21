@@ -144,13 +144,13 @@ void MiniRelax::apply( core::pose::Pose & pose ) {
 
 	// clean up hydrogens
 	//{
-	//	using namespace core::conformation;
-	//	typedef core::conformation::ResidueOPs::iterator iter;
-	//	for ( iter it = pose.res_begin(), end = pose.res_end();
-	//				it != end; ++it
-	//	) {
-	//		idealize_hydrogens( *(*it), pose.conformation() );
-	//	}
+	// using namespace core::conformation;
+	// typedef core::conformation::ResidueOPs::iterator iter;
+	// for ( iter it = pose.res_begin(), end = pose.res_end();
+	//    it != end; ++it
+	// ) {
+	//  idealize_hydrogens( *(*it), pose.conformation() );
+	// }
 	//}
 
 	delete_virtual_residues(pose);

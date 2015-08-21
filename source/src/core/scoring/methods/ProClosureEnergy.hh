@@ -84,18 +84,18 @@ public:
 	/*virtual
 	void
 	eval_atom_derivative_for_residue_pair(
-		Size const atom_index,
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		ResSingleMinimizationData const & minsingle_data1,
-		ResSingleMinimizationData const & minsingle_data2,
-		ResPairMinimizationData const & min_data,
-		pose::Pose const & pose, // provides context
-		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
-		Vector & F1,
-		Vector & F2
+	Size const atom_index,
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	ResSingleMinimizationData const & minsingle_data1,
+	ResSingleMinimizationData const & minsingle_data2,
+	ResPairMinimizationData const & min_data,
+	pose::Pose const & pose, // provides context
+	kinematics::DomainMap const & domain_map,
+	ScoreFunction const & sfxn,
+	EnergyMap const & weights,
+	Vector & F1,
+	Vector & F2
 	) const;*/
 
 	virtual
@@ -115,12 +115,12 @@ public:
 	/// @brief Non-virtual interface; takes only the needed parameters.
 	/*void
 	eval_atom_derivative_for_residue_pair2(
-		Size const atom_index,
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		EnergyMap const & weights,
-		Vector & F1,
-		Vector & F2
+	Size const atom_index,
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	EnergyMap const & weights,
+	Vector & F1,
+	Vector & F2
 	) const;*/
 
 	/// @brief Penalize the pucker-up residue type if its chi1 is positive;
@@ -199,7 +199,7 @@ public:
 	Distance
 	atomic_interaction_cutoff() const
 	{ return 4.0; }
-	
+
 	/// @brief Queries whether the user has set the -score::no_pro_close_ring_closure flag.
 	/// If he/she has, this sets skip_ring_closure_ to 'true'.
 	void set_skip_ring_closure_from_flags();
@@ -258,8 +258,8 @@ private:
 	std::string const scCD_;
 	std::string const bbC_;
 	std::string const bbO_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

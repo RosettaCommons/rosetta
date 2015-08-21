@@ -49,14 +49,14 @@ OrResidueSelector::OrResidueSelector( ResidueSelectorCOP selector1, ResidueSelec
 ResidueSubset
 OrResidueSelector::apply( core::pose::Pose const & pose ) const
 {
-debug_assert( num_selectors() > 0 );
+	debug_assert( num_selectors() > 0 );
 
 	// make subset neutral for OR operations
 	ResidueSubset subset( pose.total_residue(), false );
 	for ( std::list< ResidueSelectorCOP >::const_iterator
 			rs = selectors_.begin();
 			rs != selectors_.end();
-			++rs) {
+			++rs ) {
 		ResidueSubset tmp = (*rs)->apply( pose );
 		apply_or_to_subset(tmp, subset);
 	}
@@ -71,7 +71,7 @@ void OrResidueSelector::parse_my_tag(
 	// grab the comma-separated list of residue selectors that should be ORed together
 	// from the tag, and then grab each of the indicated residue selectors from the datamap.
 	std::list< ResidueSelectorCOP > local_selectors;
-	if( tag->hasOption( "selectors" ) ) {
+	if ( tag->hasOption( "selectors" ) ) {
 		std::string selectors_str;
 		try {
 			selectors_str = tag->getOption< std::string >( "selectors" );
@@ -82,8 +82,8 @@ void OrResidueSelector::parse_my_tag(
 			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
 		}
 		utility::vector1< std::string > selector_names = utility::string_split( selectors_str, ',' );
-	
-	
+
+
 		for ( core::Size ii = 1; ii <= selector_names.size(); ++ii ) {
 			try {
 				ResidueSelectorCOP selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_names[ ii ] );
@@ -97,14 +97,14 @@ void OrResidueSelector::parse_my_tag(
 		}
 	}
 	// add selectors from tags
-	for(utility::vector0< utility::tag::TagCOP >::const_iterator itag = tag->getTags().begin();
-			itag != tag->getTags().end(); ++itag) {
+	for ( utility::vector0< utility::tag::TagCOP >::const_iterator itag = tag->getTags().begin();
+			itag != tag->getTags().end(); ++itag ) {
 		ResidueSelectorCOP rs = ResidueSelectorFactory::get_instance()->new_residue_selector(
-				(*itag)->getName(),
-				(*itag),
-				datamap
-			);
-		local_selectors.push_back( rs );	
+			(*itag)->getName(),
+			(*itag),
+			datamap
+		);
+		local_selectors.push_back( rs );
 	}
 
 	if ( local_selectors.empty() ) { //size() == 0 ) {
@@ -133,8 +133,8 @@ Size OrResidueSelector::num_selectors() const
 void
 OrResidueSelector::apply_or_to_subset(ResidueSubset const & newSubset, ResidueSubset & existingSubset) const
 {
-debug_assert( existingSubset.size() == newSubset.size() );
-	for( Size ii = 1; ii <= existingSubset.size(); ++ii) {
+	debug_assert( existingSubset.size() == newSubset.size() );
+	for ( Size ii = 1; ii <= existingSubset.size(); ++ii ) {
 		existingSubset[ ii ] = existingSubset[ ii ] || newSubset[ ii ];
 	}
 }

@@ -90,10 +90,10 @@ public:
 	void translate_virt_to_CoM(core::pose::Pose & pose);
 
 	void get_residue_weights(
-			core::pose::Pose & pose,
-			utility::vector1< core::Real > &wt1,
-			utility::vector1< core::Real > &wt3,
-			utility::vector1< core::Real > &wt9);
+		core::pose::Pose & pose,
+		utility::vector1< core::Real > &wt1,
+		utility::vector1< core::Real > &wt3,
+		utility::vector1< core::Real > &wt9);
 
 	void set_constraint_file(std::string cst_file_in) { cst_file_=cst_file_in; }
 	void set_increase_cycles(core::Real increase_cycles_in) { increase_cycles_=increase_cycles_in; }
@@ -103,9 +103,9 @@ public:
 	void set_stage1_4_cycles(core::Size stage1_4_cycles_in) { stage1_4_cycles_=stage1_4_cycles_in; }
 	void set_add_non_init_chunks(core::Size add_non_init_chunks_in) { add_non_init_chunks_=add_non_init_chunks_in; }
 	void set_add_hetatm(
-			bool add_hetatm_in,
-			core::Real hetatm_self_cst_weight_in,
-			core::Real hetatm_prot_cst_weight_in) {
+		bool add_hetatm_in,
+		core::Real hetatm_self_cst_weight_in,
+		core::Real hetatm_prot_cst_weight_in) {
 		add_hetatm_=add_hetatm_in;
 		hetatm_self_cst_weight_=hetatm_self_cst_weight_in;
 		hetatm_prot_cst_weight_=hetatm_prot_cst_weight_in;
@@ -135,8 +135,8 @@ public:
 	void set_user_csts(  utility::vector1< core::Size > user_csts_in ) { user_csts_=user_csts_in; }
 
 	void set_per_residue_controls(
-			utility::vector1<bool> const &residue_sample_template_in,
-			utility::vector1<bool> const &residue_sample_abinitio_in) {
+		utility::vector1<bool> const &residue_sample_template_in,
+		utility::vector1<bool> const &residue_sample_abinitio_in) {
 		residue_sample_template_ = residue_sample_template_in;
 		residue_sample_abinitio_ = residue_sample_abinitio_in;
 	}
@@ -151,7 +151,7 @@ public:
 
 	void apply(core::pose::Pose & pose);
 
-	std::string	get_name() const;
+	std::string get_name() const;
 
 	// strand pairings
 	utility::vector1< std::pair< core::Size, core::Size > > get_strand_pairs() { return strand_pairs_; };

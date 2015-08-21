@@ -67,34 +67,34 @@ void SavePoseConstraintToFileFilter::report( std::ostream &, core::pose::Pose co
 	std::ofstream outfile;
 	outfile.open(filename_.c_str(),std::ios::out);
 	if ( ! outfile.good() ) {
-			utility_exit_with_message( "Unable to open file: " + filename_);
+		utility_exit_with_message( "Unable to open file: " + filename_);
 	}
 
 	pose.constraint_set()->show_definition(outfile,pose);
 }
 
 void SavePoseConstraintToFileFilter::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & /*pose*/)
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & /*pose*/)
 {
-  overwrite_ = tag->getOption< bool >( "overwrite", false );
- 
-  if ( tag->hasOption("filename") ) {
-    filename_ = tag->getOption<std::string>("filename");
+	overwrite_ = tag->getOption< bool >( "overwrite", false );
+
+	if ( tag->hasOption("filename") ) {
+		filename_ = tag->getOption<std::string>("filename");
 		std::fstream file;
-    file.open( filename_.c_str(), std::ios::out | std::ios::in );
-		if (file.is_open()) {
-				if (overwrite_) {
-						TR << filename_ << " exists and will overwrite" << std::endl;
-						file.clear();
-      			file.close();
-				} else {
-					utility_exit_with_message(filename_+" exists, specify overwrite=1");
-				}
+		file.open( filename_.c_str(), std::ios::out | std::ios::in );
+		if ( file.is_open() ) {
+			if ( overwrite_ ) {
+				TR << filename_ << " exists and will overwrite" << std::endl;
+				file.clear();
+				file.close();
+			} else {
+				utility_exit_with_message(filename_+" exists, specify overwrite=1");
+			}
 		} //clear file contents and throw out warning.
-  } else {
+	} else {
 		utility_exit_with_message("Must specify a filename");
 	}//require a filename to be specified
 }

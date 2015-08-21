@@ -108,20 +108,20 @@ public:
 
 
 	//inline PackerEnergy project_deltaE_for_alt_bb_state (
-	//	int alternate_state,
-	//	PackerEnergy & curr_frag_etotal,
-	//	bool & valid_motion
+	// int alternate_state,
+	// PackerEnergy & curr_frag_etotal,
+	// bool & valid_motion
 	//);
 
 	//inline PackerEnergy project_deltaE_for_alt_bb(
-	//	int alternate_backbone,
-	//	PackerEnergy & curr_frag_etotal,
-	//	bool & valid_motion
+	// int alternate_backbone,
+	// PackerEnergy & curr_frag_etotal,
+	// bool & valid_motion
 	//);
 
 	//PackerEnergy get_altE_for_bb_move
 	//(
-	//	PackerEnergy & curr_frag_etotal
+	// PackerEnergy & curr_frag_etotal
 	//);
 
 	//void commit_considered_substitution();
@@ -130,8 +130,8 @@ public:
 
 	//inline
 	//void acknowledge_neighbors_state_substitution(
-	//	int edge_to_altered_neighbor,
-	//	PackerEnergy new_edge_energy
+	// int edge_to_altered_neighbor,
+	// PackerEnergy new_edge_energy
 	//);
 
 	//virtual void note_last_considered_bbsub_uncommitted() = 0;
@@ -344,11 +344,11 @@ protected:
 
 	inline
 	FlexbbNode const * get_flexbb_node( int index ) const
-	{	return static_cast< FlexbbNode const * > (get_node( index )); }
+	{ return static_cast< FlexbbNode const * > (get_node( index )); }
 
 	inline
 	FlexbbNode * get_flexbb_node( int index )
-	{	return static_cast< FlexbbNode * > (get_node( index )); }
+	{ return static_cast< FlexbbNode * > (get_node( index )); }
 
 	inline
 	FlexbbInteractionGraph const * get_flexbbig_owner() const;
@@ -474,7 +474,7 @@ private:
 public:
 	//void set_edge_connecting_nodes_on_same_flexseg(int, int); // knowable at edge construction time!
 
-   virtual
+	virtual
 	void consider_backbone_move(
 		int bb_id,
 		core::PackerEnergy & delta_energy,
@@ -646,37 +646,37 @@ private:
 
 inline
 FlexbbEdge const * FlexbbNode::get_incident_flexbb_edge( int index ) const
-{	return static_cast< FlexbbEdge const * > ( get_incident_edge( index )); }
+{ return static_cast< FlexbbEdge const * > ( get_incident_edge( index )); }
 
 inline
 FlexbbEdge * FlexbbNode::get_incident_flexbb_edge( int index )
-{	return static_cast< FlexbbEdge * > ( get_incident_edge( index )); }
+{ return static_cast< FlexbbEdge * > ( get_incident_edge( index )); }
 
 inline
 FlexbbNode const * FlexbbNode::get_adjacent_flexbb_node( int index ) const
-{	return static_cast< FlexbbNode const * > ( get_adjacent_node( index )); }
+{ return static_cast< FlexbbNode const * > ( get_adjacent_node( index )); }
 
 inline
 FlexbbNode * FlexbbNode::get_adjacent_flexbb_node( int index )
-{	return static_cast< FlexbbNode * > ( get_adjacent_node( index )); }
+{ return static_cast< FlexbbNode * > ( get_adjacent_node( index )); }
 
 
 inline
 FlexbbInteractionGraph const * FlexbbNode::get_flexbbig_owner() const
-{	return static_cast< FlexbbInteractionGraph const * > (get_owner()); }
+{ return static_cast< FlexbbInteractionGraph const * > (get_owner()); }
 
 inline
 FlexbbInteractionGraph * FlexbbNode::get_flexbbig_owner()
-{	return static_cast< FlexbbInteractionGraph * > (get_owner()); }
+{ return static_cast< FlexbbInteractionGraph * > (get_owner()); }
 
 
 inline
 FlexbbInteractionGraph const * FlexbbEdge::get_flexbbig_owner() const
-{	return static_cast< FlexbbInteractionGraph const * > (get_owner()); }
+{ return static_cast< FlexbbInteractionGraph const * > (get_owner()); }
 
 inline
 FlexbbInteractionGraph * FlexbbEdge::get_flexbbig_owner()
-{	return static_cast< FlexbbInteractionGraph * > (get_owner()); }
+{ return static_cast< FlexbbInteractionGraph * > (get_owner()); }
 
 
 }

@@ -46,14 +46,14 @@ class ProQPotential  {
 
 public:
 	ProQPotential();
-	
+
 	inline
 	~ProQPotential()
 	{}
 
-	void 
+	void
 	setup_for_scoring( pose::Pose & pose ) const;
-		
+
 	void
 	score(pose::Pose & pose,
 		ObjexxFCL::FArray2D< Real > & feature_vector,
@@ -70,7 +70,7 @@ public:
 private: // data
 
 	ObjexxFCL::FArray2D< Real > linear_weights_; //ProQM
-	ObjexxFCL::FArray1D< Real > b_;	// ProQM
+	ObjexxFCL::FArray1D< Real > b_; // ProQM
 	ObjexxFCL::FArray2D< Real > linear_weights_proq2_;
 	ObjexxFCL::FArray1D< Real > b_proq2_;
 

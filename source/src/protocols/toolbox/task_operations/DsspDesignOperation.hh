@@ -75,15 +75,15 @@ public:
 
 	/// @brief define secondary structure from a blueprint
 	void set_blueprint( BluePrintOP const bp );
-	
+
 	/// @brief define allowed residues for some SSE
-    void set_restrictions_aa( std::string const & sse, std::string const & aas );
+	void set_restrictions_aa( std::string const & sse, std::string const & aas );
 
 	/// @brief append allowed residues for some SSE
-    void set_restrictions_append( std::string const & sse, std::string const & aas );
+	void set_restrictions_append( std::string const & sse, std::string const & aas );
 
 	/// @brief exclude allowed residues for some SSE
-    void set_restrictions_exclude( std::string const & sse, std::string const & aas );
+	void set_restrictions_exclude( std::string const & sse, std::string const & aas );
 
 
 private:

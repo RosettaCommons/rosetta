@@ -21,22 +21,22 @@
 namespace numeric {
 
 class ClusterOptions {
-	public:
-	
+public:
+
 	ClusterOptions() :
-	node1_( 0 ),
-	node2_( 0 ),
-	min_i_( 0 ),
-	min_j_( 0 ),
-	min_  ( 0 ) {}
-	
+		node1_( 0 ),
+		node2_( 0 ),
+		min_i_( 0 ),
+		min_j_( 0 ),
+		min_  ( 0 ) {}
+
 	ClusterOptions( Size node1, Size node2, Size min_i, Size min_j, Real min ) :
-	node1_( node1 ),
-	node2_( node2 ),
-	min_i_( min_i ),
-	min_j_( min_j ),
-	min_  ( min   ) {}
-	
+		node1_( node1 ),
+		node2_( node2 ),
+		min_i_( min_i ),
+		min_j_( min_j ),
+		min_  ( min   ) {}
+
 	Size node1_;
 	Size node2_;
 	Size min_i_;
@@ -49,7 +49,7 @@ void get_cluster_data(utility::vector1<T> &data_in,ClusteringTreeNodeOP cluster,
 
 	utility::vector1<Size> ids;
 	cluster->copy_leaf_ids( ids );
-	for(Size i=1;i<=ids.size();i++) {
+	for ( Size i=1; i<=ids.size(); i++ ) {
 		data_out.push_back( data_in[ids[i]] );
 	}
 }
@@ -59,35 +59,35 @@ class AgglomerativeHierarchicalClusterer {
 public:
 	utility::vector1<ClusteringTreeNodeOP>cluster( utility::vector1< utility::vector1<Real> > & dm, Size n );
 	virtual void comparator(utility::vector1< utility::vector1<Real> > &distance_matrix,
-							utility::vector1<Size> const & members1,
-							utility::vector1<Size> const & members2,
-							ClusterOptions & co ) = 0; /*Size node1, Size node2,
-							Size& min_i, Size& min_j,
-							Real& min ) = 0;*/
+		utility::vector1<Size> const & members1,
+		utility::vector1<Size> const & members2,
+		ClusterOptions & co ) = 0; /*Size node1, Size node2,
+	Size& min_i, Size& min_j,
+	Real& min ) = 0;*/
 };
 
 class SingleLinkClusterer : public AgglomerativeHierarchicalClusterer {
 public:
 	void comparator( utility::vector1< utility::vector1<Real> > &distance_matrix,
-					utility::vector1<Size> const & members1,
-					utility::vector1<Size> const & members2,
-					ClusterOptions & co);
+		utility::vector1<Size> const & members1,
+		utility::vector1<Size> const & members2,
+		ClusterOptions & co);
 };
 
 class AverageLinkClusterer : public AgglomerativeHierarchicalClusterer {
 public:
 	void comparator( utility::vector1< utility::vector1<Real> > &distance_matrix,
-					utility::vector1<Size> const & members1,
-					utility::vector1<Size> const & members2,
-					ClusterOptions & co);
+		utility::vector1<Size> const & members1,
+		utility::vector1<Size> const & members2,
+		ClusterOptions & co);
 };
 
 class CompleteLinkClusterer : public AgglomerativeHierarchicalClusterer {
 public:
 	void comparator( utility::vector1< utility::vector1<Real> > &distance_matrix,
-					utility::vector1<Size> const & members1,
-					utility::vector1<Size> const & members2,
-					ClusterOptions & co);
+		utility::vector1<Size> const & members1,
+		utility::vector1<Size> const & members2,
+		ClusterOptions & co);
 };
 
 } // numeric

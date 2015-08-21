@@ -84,11 +84,11 @@ RNA_BulgeEnergy::residue_energy(
 
 	if ( !rsd.is_RNA() ) return;
 
-	if ( rsd.has_variant_type( chemical::BULGE ) ){
+	if ( rsd.has_variant_type( chemical::BULGE ) ) {
 		emap[ rna_bulge ] += bulge_bonus_;
 	}
 
-	if ( rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ){
+	if ( rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) {
 		emap[ rna_bulge ] += bulge_bonus_;
 	}
 
@@ -113,7 +113,7 @@ RNA_BulgeEnergy::finalize_total_energy(
 		utility::vector1< utility::vector1< Size > > loop_suites;
 		Size nmissing = get_number_missing_residues_and_connections( pose, loop_suites );
 
-		if ( rna_bulge_bonus_once_per_loop_ ){
+		if ( rna_bulge_bonus_once_per_loop_ ) {
 			// refactor -- have entropic bonus for each loop, but don't increase the
 			//  bonus with the number of residues in the loop.
 			totals[ rna_bulge ] += bulge_bonus_ * loop_suites.size();

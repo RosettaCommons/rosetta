@@ -45,83 +45,83 @@ namespace protocols {
 namespace environment {
 
 class ClientMover : public protocols::moves::Mover {
-  // Uses push and pop_passport.
-  friend class Environment;
-  // Uses passport_updated during initialization
-  friend class EnvClaimBroker;
+	// Uses push and pop_passport.
+	friend class Environment;
+	// Uses passport_updated during initialization
+	friend class EnvClaimBroker;
 
-  typedef core::environment::DofPassportCOP DofPassportCOP;
+	typedef core::environment::DofPassportCOP DofPassportCOP;
 
-  typedef std::stack< std::pair< EnvironmentCAP, DofPassportCOP > > PassportStack;
+	typedef std::stack< std::pair< EnvironmentCAP, DofPassportCOP > > PassportStack;
 
 public:
-  ClientMover();
+	ClientMover();
 
-  ClientMover( ClientMover const& );
+	ClientMover( ClientMover const& );
 
-  virtual ~ClientMover();
+	virtual ~ClientMover();
 
-  /// @brief   Returns a list of claims for this mover.
-  /// @details The pose passed as an argument is used for reference informational
-  ///          purposes only (for example, you want to know the sequence) or access
-  ///          the pose cache. Any changes to the conformation will get overwritten!
-  virtual claims::EnvClaims yield_claims( core::pose::Pose const&,
-                                          basic::datacache::WriteableCacheableMapOP ) = 0;
+	/// @brief   Returns a list of claims for this mover.
+	/// @details The pose passed as an argument is used for reference informational
+	///          purposes only (for example, you want to know the sequence) or access
+	///          the pose cache. Any changes to the conformation will get overwritten!
+	virtual claims::EnvClaims yield_claims( core::pose::Pose const&,
+		basic::datacache::WriteableCacheableMapOP ) = 0;
 
-  /// @brief this method is called by the broking system in response to a
-  ///        successful initialization claim by this mover. The passport
-  ///        will prevent any unauthorized changes.
-  virtual void initialize( Pose& conf );
+	/// @brief this method is called by the broking system in response to a
+	///        successful initialization claim by this mover. The passport
+	///        will prevent any unauthorized changes.
+	virtual void initialize( Pose& conf );
 
-  /// @brief this method is used to make sure any movers contained in this
-  ///        mover (that want to make claims) also get registered with the
-  ///        environment.
-  virtual void yield_submovers( std::set< ClientMoverOP >& ) const {};
+	/// @brief this method is used to make sure any movers contained in this
+	///        mover (that want to make claims) also get registered with the
+	///        environment.
+	virtual void yield_submovers( std::set< ClientMoverOP >& ) const {};
 
 protected:
 
-  /// @brief convience method that copies all changes from an unprotected pose to a protected pose.
-  void sandboxed_copy( core::pose::Pose const& sandbox_pose,
-                       core::pose::Pose& true_pose ) const;
+	/// @brief convience method that copies all changes from an unprotected pose to a protected pose.
+	void sandboxed_copy( core::pose::Pose const& sandbox_pose,
+		core::pose::Pose& true_pose ) const;
 
-  /// @brief hook that is called each time the passport status is updated
-  ///        (presumably because there's a new subenvironment, or the sub-
-  ///        environment has expired).
-  virtual void passport_updated() {}
+	/// @brief hook that is called each time the passport status is updated
+	///        (presumably because there's a new subenvironment, or the sub-
+	///        environment has expired).
+	virtual void passport_updated() {}
 
-  /// @brief hook that provides information about the final result of broking
-  ///        at the very end, though this BrokerResult construct.
-  virtual void broking_finished( EnvClaimBroker::BrokerResult const& ) {}
+	/// @brief hook that provides information about the final result of broking
+	///        at the very end, though this BrokerResult construct.
+	virtual void broking_finished( EnvClaimBroker::BrokerResult const& ) {}
 
-  /// @brief return a pointer the active environment
-  EnvironmentCAP active_environment() const;
+	/// @brief return a pointer the active environment
+	EnvironmentCAP active_environment() const;
 
-  /// @brief read-only access to the top passport in the passport stack.
-  core::environment::DofPassportCOP passport() const;
+	/// @brief read-only access to the top passport in the passport stack.
+	core::environment::DofPassportCOP passport() const;
 
-  bool has_passport() const {
-    return !passports_.empty();
-  }
+	bool has_passport() const {
+		return !passports_.empty();
+	}
 
-  /// @brief convienence method for failing a state-set call after brokering.
-  /// @details once brokering has been completed, most state-set calls
-  ///          (e.g. set_mover or the like) don't make sense anymore. This
-  ///          method is used to convienently throw an explanatory exception.
-  bool state_check( std::string const& method_name, bool test ) const;
+	/// @brief convienence method for failing a state-set call after brokering.
+	/// @details once brokering has been completed, most state-set calls
+	///          (e.g. set_mover or the like) don't make sense anymore. This
+	///          method is used to convienently throw an explanatory exception.
+	bool state_check( std::string const& method_name, bool test ) const;
 
 private:
 
-  /// @brief called by environments to push a new passport on the passport stack
-  //friend void Environment::assign_passport( ClientMoverOP, DofPassportCOP );
+	/// @brief called by environments to push a new passport on the passport stack
+	//friend void Environment::assign_passport( ClientMoverOP, DofPassportCOP );
 
-  /// @brief called by environments when the environment expires to pop the environment.
-  //friend void Environment::cancel_passport( ClientMoverOP );
+	/// @brief called by environments when the environment expires to pop the environment.
+	//friend void Environment::cancel_passport( ClientMoverOP );
 
-  void push_passport( EnvironmentCAP, DofPassportCOP );
+	void push_passport( EnvironmentCAP, DofPassportCOP );
 
-  void pop_passport( Environment const& );
+	void pop_passport( Environment const& );
 
-  PassportStack passports_;
+	PassportStack passports_;
 
 }; // end ClientMover base class
 

@@ -35,29 +35,29 @@ namespace protocols {
 namespace medal {
 
 class MedalExchangeMover : public protocols::moves::Mover {
- public:
-  MedalExchangeMover();
-  void apply(core::pose::Pose& pose);
+public:
+	MedalExchangeMover();
+	void apply(core::pose::Pose& pose);
 
-  /// @brief Uses the copy constructor to create a new instance
-  protocols::moves::MoverOP clone() const;
+	/// @brief Uses the copy constructor to create a new instance
+	protocols::moves::MoverOP clone() const;
 
-  /// @brief Uses the no-argument constructor to create a new instance
-  protocols::moves::MoverOP fresh_instance() const;
+	/// @brief Uses the no-argument constructor to create a new instance
+	protocols::moves::MoverOP fresh_instance() const;
 
-  /// @brief Returns the name of this mover
-  std::string get_name() const;
+	/// @brief Returns the name of this mover
+	std::string get_name() const;
 
- private:
-  /// @brief Computes the probability of selecting each residue as a candidate
-  /// for fragment insertion. P(unaligned) = 0, P(aligned) > 0.
-  void setup_sampling_probs(core::Size num_residues,
-                            const core::kinematics::FoldTree& tree,
-                            protocols::loops::LoopsCOP aligned,
-                            utility::vector1<double>* probs) const;
+private:
+	/// @brief Computes the probability of selecting each residue as a candidate
+	/// for fragment insertion. P(unaligned) = 0, P(aligned) > 0.
+	void setup_sampling_probs(core::Size num_residues,
+		const core::kinematics::FoldTree& tree,
+		protocols::loops::LoopsCOP aligned,
+		utility::vector1<double>* probs) const;
 
-  core::fragment::FragSetOP fragments_;
-  core::fragment::SecondaryStructureOP pred_ss_;
+	core::fragment::FragSetOP fragments_;
+	core::fragment::SecondaryStructureOP pred_ss_;
 };
 
 }  // namespace medal

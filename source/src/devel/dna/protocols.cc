@@ -98,7 +98,7 @@ repack_base_pair_neighbors(
 	utility::vector1< bool > is_base_pair_neighbor( nres, false );
 	for ( Size i=1; i<= nres; ++i ) {
 		if ( scorefxn.are_they_neighbors( pose, i, seqpos ) ||
-				 ( seqpos_partner > 0 && scorefxn.are_they_neighbors( pose, i, seqpos_partner ) ) ) {
+				( seqpos_partner > 0 && scorefxn.are_they_neighbors( pose, i, seqpos_partner ) ) ) {
 			is_base_pair_neighbor[i] = true;
 		}
 	}
@@ -272,7 +272,7 @@ packing_specificity_test_fast(
 			using namespace pack::rotamer_set;
 			RotamerCouplingsOP couplings( new RotamerCouplings() );
 			couplings->resize( nres );
-			for ( Size i=1;i<= nres; ++i ){
+			for ( Size i=1; i<= nres; ++i ) {
 				if ( partner[i] ) {
 					(*couplings)[i].first = partner[i];
 					(*couplings)[i].second = conformation::ResidueMatcherOP( new conformation::WatsonCrickResidueMatcher() );
@@ -293,7 +293,7 @@ packing_specificity_test_fast(
 
 		{ // test for mismatches
 			WatsonCrickResidueMatcher m;
-			for ( Size i=1;i<= nres; ++i ){
+			for ( Size i=1; i<= nres; ++i ) {
 				if ( partner[i]>i ) {
 					assert( m( pose.residue(i), pose.residue(partner[i])));
 				}
@@ -338,33 +338,33 @@ packing_specificity_test_fast(
 	basic::prof_show();
 }
 
-// 		pack::task::PackerTaskOP
-// 			pack_task( pack::task::TaskFactory::create_packer_task( pose )),
-// 			design_task( pack::task::TaskFactory::create_packer_task( pose )),
-// 			coupled_design_task( pack::task::TaskFactory::create_packer_task( pose ));
+//   pack::task::PackerTaskOP
+//    pack_task( pack::task::TaskFactory::create_packer_task( pose )),
+//    design_task( pack::task::TaskFactory::create_packer_task( pose )),
+//    coupled_design_task( pack::task::TaskFactory::create_packer_task( pose ));
 
-// 		pack_task->initialize_from_command_line();
-// 		design_task->initialize_from_command_line();
-// 		coupled_design_task->initialize_from_command_line();
-// 		tt << "packloop: " << pose.sequence() << " START" << std::endl;
+//   pack_task->initialize_from_command_line();
+//   design_task->initialize_from_command_line();
+//   coupled_design_task->initialize_from_command_line();
+//   tt << "packloop: " << pose.sequence() << " START" << std::endl;
 
-// 		for ( Size ii = 1; ii <= nres; ++ii ) {
-// 			if ( pose.residue(ii).is_protein() ) {
-// 				pack_task->nonconst_residue_task( ii ).restrict_to_repacking();
-// 				design_task->nonconst_residue_task( ii ).restrict_to_repacking();
-// 				coupled_design_task->nonconst_residue_task( ii ).restrict_to_repacking();
-// 			} else {
-// 				pack_task->nonconst_residue_task( ii ).prevent_repacking();
-// 				design_task->nonconst_residue_task( ii ).allow_aa( na_ade );
-// 				design_task->nonconst_residue_task( ii ).allow_aa( na_thy );
-// 				design_task->nonconst_residue_task( ii ).allow_aa( na_gua );
-// 				design_task->nonconst_residue_task( ii ).allow_aa( na_cyt );
-// 				coupled_design_task->nonconst_residue_task( ii ).allow_aa( na_ade );
-// 				coupled_design_task->nonconst_residue_task( ii ).allow_aa( na_thy );
-// 				coupled_design_task->nonconst_residue_task( ii ).allow_aa( na_gua );
-// 				coupled_design_task->nonconst_residue_task( ii ).allow_aa( na_cyt );
-// 			}
-// 		}
+//   for ( Size ii = 1; ii <= nres; ++ii ) {
+//    if ( pose.residue(ii).is_protein() ) {
+//     pack_task->nonconst_residue_task( ii ).restrict_to_repacking();
+//     design_task->nonconst_residue_task( ii ).restrict_to_repacking();
+//     coupled_design_task->nonconst_residue_task( ii ).restrict_to_repacking();
+//    } else {
+//     pack_task->nonconst_residue_task( ii ).prevent_repacking();
+//     design_task->nonconst_residue_task( ii ).allow_aa( na_ade );
+//     design_task->nonconst_residue_task( ii ).allow_aa( na_thy );
+//     design_task->nonconst_residue_task( ii ).allow_aa( na_gua );
+//     design_task->nonconst_residue_task( ii ).allow_aa( na_cyt );
+//     coupled_design_task->nonconst_residue_task( ii ).allow_aa( na_ade );
+//     coupled_design_task->nonconst_residue_task( ii ).allow_aa( na_thy );
+//     coupled_design_task->nonconst_residue_task( ii ).allow_aa( na_gua );
+//     coupled_design_task->nonconst_residue_task( ii ).allow_aa( na_cyt );
+//    }
+//   }
 
 /// @details Try all possible dna basepairs at the motif positions
 /// evaluate their energies with a repack
@@ -424,8 +424,7 @@ packing_specificity_test(
 
 
 	// score the starting structure
-	if (false)
-	{
+	if ( false ) {
 		Pose pose;
 		pose = start_pose;
 
@@ -531,8 +530,8 @@ packing_specificity_test(
 			if ( pose.residue(ii).is_protein() ) {
 				task->nonconst_residue_task( ii ).restrict_to_repacking();
 				task->nonconst_residue_task( ii ).restrict_to_repacking();
-// 				task->nonconst_residue_task( ii ).or_ex1aro_sample_level ( pack::task::EX_SIX_QUARTER_STEP_STDDEVS );
-// 				task->nonconst_residue_task( ii ).or_ex2aro_sample_level ( pack::task::EX_SIX_QUARTER_STEP_STDDEVS );
+				//     task->nonconst_residue_task( ii ).or_ex1aro_sample_level ( pack::task::EX_SIX_QUARTER_STEP_STDDEVS );
+				//     task->nonconst_residue_task( ii ).or_ex2aro_sample_level ( pack::task::EX_SIX_QUARTER_STEP_STDDEVS );
 				assert( task->pack_residue(ii) );
 			} else {
 				if ( repack_DNA ) {
@@ -550,7 +549,7 @@ packing_specificity_test(
 		Size const nloop( 50 );
 		utility::vector1< std::pair< Real, std::string > > results;
 		pack::pack_rotamers_loop( pose, scorefxn, task, nloop, results );
-// 		pack::pack_rotamers( pose, scorefxn, task);
+		//   pack::pack_rotamers( pose, scorefxn, task);
 		Energy pack_score = scorefxn( pose );
 
 		if ( false ) { //debugging
@@ -564,7 +563,7 @@ packing_specificity_test(
 
 		{ // test for mismatches -- unnecessary for packing but debugs pose setup
 			WatsonCrickResidueMatcher m;
-			for ( Size i=1;i<= nres; ++i ){
+			for ( Size i=1; i<= nres; ++i ) {
 				if ( partner[i]>i ) {
 					assert( m( pose.residue(i), pose.residue(partner[i])));
 				}
@@ -597,8 +596,8 @@ packing_specificity_test(
 		calc_DNA_bb_rmsd( pose, start_pose, dna_bb_rmsd );
 
 		std::cout << " RMSDs: " << output_tag << ' ' << combo_tag << ' ' << nat_seq
-							<< " interface_allatom=" << interface_allatom_rmsd << ", dna_bb=" << dna_bb_rmsd
-							<< std::endl;
+			<< " interface_allatom=" << interface_allatom_rmsd << ", dna_bb=" << dna_bb_rmsd
+			<< std::endl;
 
 		io::pdb::dump_pdb( pose, output_tag+"_"+combo_tag+"_"+nat_seq+".pdb" );
 

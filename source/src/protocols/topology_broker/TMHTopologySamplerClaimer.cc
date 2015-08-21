@@ -10,7 +10,7 @@
 /// @file src/protocols/topology_broker/TMHTopologySamplerClaimer.hh
 /// @brief source file for TMHTopologySamplerClaimer protocol
 /// @details implementation of sampling protocol that treats transmembrane helices as rigid bodies and moves them around to improve
-/// 	sampling of membrane protein topologies
+///  sampling of membrane protein topologies
 ///
 /// @author Stephanie H. DeLuca (stephanie.h.deluca@vanderbilt.edu)
 
@@ -70,31 +70,31 @@
 
 static thread_local basic::Tracer tr( "protocols.topo_broker.TMHTopologySampler" );
 
-namespace protocols{
-namespace topology_broker{
+namespace protocols {
+namespace topology_broker {
 
 TMHTopologySamplerClaimer::TMHTopologySamplerClaimer()
-	: rotation_mag_(0),
-	  translation_mag_(0),
-	  rb_mover_stage1_weight_(0),
-	  nres_(0),
-	  njumps_(0),
-	  jump_array_(2,0),
-	  topology_root_res_(0),
-	  tmhelix_(0)
+: rotation_mag_(0),
+	translation_mag_(0),
+	rb_mover_stage1_weight_(0),
+	nres_(0),
+	njumps_(0),
+	jump_array_(2,0),
+	topology_root_res_(0),
+	tmhelix_(0)
 {
 	set_defaults();
 }
 
 TMHTopologySamplerClaimer::TMHTopologySamplerClaimer(TopologyBrokerOP /*broker*/)
-	: rotation_mag_(0),
-	  translation_mag_(0),
-	  rb_mover_stage1_weight_(0),
-	  nres_(0),
-	  njumps_(0),
-	  jump_array_(2,0),
-	  topology_root_res_(0),
-	  tmhelix_(0)
+: rotation_mag_(0),
+	translation_mag_(0),
+	rb_mover_stage1_weight_(0),
+	nres_(0),
+	njumps_(0),
+	jump_array_(2,0),
+	topology_root_res_(0),
+	tmhelix_(0)
 {
 	set_defaults();
 }
@@ -126,10 +126,9 @@ TMHTopologySamplerClaimer::get_membrane_topology(core::pose::Pose& pose)
 {
 	//get the membrane_topology
 	core::scoring::MembraneTopologyOP membrane_topology;
-	if (pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) )
-	{
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ) {
 		membrane_topology = utility::pointer::static_pointer_cast< core::scoring::MembraneTopology > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY)  );
-	}else{
+	} else {
 		utility_exit_with_message("Must have MembraneTopology!");
 	}
 	return membrane_topology;
@@ -165,26 +164,21 @@ void
 TMHTopologySamplerClaimer::set_defaults()
 {
 	set_label("DEFAULT");
-	if(option[basic::options::OptionKeys::rigid::rotation].value())
-	{
+	if ( option[basic::options::OptionKeys::rigid::rotation].value() ) {
 		rotation_mag_ = option[basic::options::OptionKeys::rigid::rotation].value();
-	}
-	else{
+	} else {
 		rotation_mag_ = 3.0;
 	}
 
-	if(option[basic::options::OptionKeys::rigid::translation].value())
-	{
+	if ( option[basic::options::OptionKeys::rigid::translation].value() ) {
 		translation_mag_ = option[basic::options::OptionKeys::rigid::translation].value();
-	}
-	else{
+	} else {
 		translation_mag_ = 8.0;
 	}
 
-	if(option[basic::options::OptionKeys::broker::rb_mover_stage1_weight].value())
-	{
+	if ( option[basic::options::OptionKeys::broker::rb_mover_stage1_weight].value() ) {
 		rb_mover_stage1_weight_ = option[basic::options::OptionKeys::broker::rb_mover_stage1_weight].value();
-	}else{
+	} else {
 		rb_mover_stage1_weight_ = 5.0;
 	}
 }
@@ -209,15 +203,13 @@ TMHTopologySamplerClaimer::pre_process(core::pose::Pose& pose)
 	njumps_ = nspan;
 	nres_ = pose.total_residue();
 
-	if(tr.Trace.visible())
-	{
+	if ( tr.Trace.visible() ) {
 		tr.Trace << "fold tree at beginning of TMHTopologySampler::build_fold_tree()\n" << pose.fold_tree();
 	}
 	tr.Info << "will set up fold_tree(nres) with " << nres_ << " residues, " << nspan << " spans, and " << njumps_ << " jump(s) in a total of " << num_cut_loops << " loops to cut\n";
 
 	// exit if spanfile not formatted correctly
-	if(nspan==0)
-	{
+	if ( nspan==0 ) {
 		utility_exit_with_message("bad format for spanfile total_tmhelix==0");
 	}
 
@@ -227,23 +219,18 @@ TMHTopologySamplerClaimer::pre_process(core::pose::Pose& pose)
 
 	//put all residues in spans in a one-dimensional array that is nres long, and 0=not in span, 1-3=is in span
 	ObjexxFCL::FArray1D_int span(nres_,0);
-	for(int i=1;i<=nres_;++i)
-	{
-		for(core::Size j=1;j<=nspan;++j)
-		{
-			if(static_cast<core::Size>(i) >= membrane_topology->span_begin(j) && static_cast<core::Size>(i) <= membrane_topology->span_end(j))
-			{
+	for ( int i=1; i<=nres_; ++i ) {
+		for ( core::Size j=1; j<=nspan; ++j ) {
+			if ( static_cast<core::Size>(i) >= membrane_topology->span_begin(j) && static_cast<core::Size>(i) <= membrane_topology->span_end(j) ) {
 				span(i)=j;
 			}
 		}
 	}
 
 	//Get info to make sure membrane span information is being read in correctly
-	if(tr.Trace.visible())
-	{
+	if ( tr.Trace.visible() ) {
 		tr.Trace << "size of span array:  " << span.size() << "\tnumber of residues:  " << nres_ << std::endl;
-		for(core::Size i=1;i<=span.size();++i)
-		{
+		for ( core::Size i=1; i<=span.size(); ++i ) {
 			tr.Trace << "residue:  " << i << " span:  " << span(i) << std::endl;
 		}
 	}
@@ -257,16 +244,13 @@ TMHTopologySamplerClaimer::pre_process(core::pose::Pose& pose)
 
 	//Make an array of start and end points of loops where we can cut. Needed by FoldTree::random_tree_from_jump_points();
 	// initialize some variables for setting up loops array
-	if(tr.Trace.visible())
-	{
+	if ( tr.Trace.visible() ) {
 		tr.Trace << "fold tree before setting jumps\n" << pose.fold_tree();
 		tr.Trace << "fold_tree_root:  " << pose.fold_tree().root() << std::endl;
 	}
 
-	if(tr.Trace.visible())
-	{
-		for(core::Size atom = 1; atom<=pose.residue(topology_root_res_).natoms(); ++atom)
-		{
+	if ( tr.Trace.visible() ) {
+		for ( core::Size atom = 1; atom<=pose.residue(topology_root_res_).natoms(); ++atom ) {
 			tr.Trace << "atom in root residue:  " << pose.residue(topology_root_res_).atom_name(atom) << std::endl;
 		}
 	}
@@ -289,8 +273,7 @@ TMHTopologySamplerClaimer::pre_process(core::pose::Pose& pose)
 	cuts_ = ObjexxFCL::FArray1D_int(ncuts,0);
 
 	// set up cut loops array
-	for(span_index = 1; span_index <= nspan-1;++span_index)
-	{
+	for ( span_index = 1; span_index <= nspan-1; ++span_index ) {
 		//need to know the beginning and end of the TMs to determine where the loops are
 		previous_span_begin(span_index) = membrane_topology->span_begin(span_index);
 		previous_span_end(span_index) = membrane_topology->span_end(span_index);
@@ -298,16 +281,15 @@ TMHTopologySamplerClaimer::pre_process(core::pose::Pose& pose)
 		span_end(span_index) = membrane_topology->span_end(span_index+1);
 
 		tr.Info << "span_index:  " << span_index << " previous_span_begin:  " << previous_span_begin(span_index) << " previous_span_end: "
-				<< previous_span_end(span_index) << std::endl;
+			<< previous_span_end(span_index) << std::endl;
 		tr.Info << "span_index:  " << span_index << " span_begin:  " << span_begin(span_index) << " span_end: "
-				<< span_end(span_index) << std::endl;
+			<< span_end(span_index) << std::endl;
 
 		loop_begin(span_index) = previous_span_end(span_index) + 1;
 		loop_end(span_index) = span_begin(span_index) - 1;
 
 		//if the predicted loop (that is, not span) is shorter than 3 res
-		if(loop_end(span_index) - loop_begin(span_index) < 2)
-		{
+		if ( loop_end(span_index) - loop_begin(span_index) < 2 ) {
 			loop_begin(span_index) -= 1;
 			loop_end(span_index) += 1;
 		}
@@ -319,8 +301,7 @@ TMHTopologySamplerClaimer::pre_process(core::pose::Pose& pose)
 		core::Size random_number = numeric::random::rg().random_range(loop_begin(span_index),loop_end(span_index));
 		cuts_(span_index) = random_number;
 
-		if(tr.Debug.visible())
-		{
+		if ( tr.Debug.visible() ) {
 			tr.Debug << "LOOP:  " << loop_begin(span_index) << " " << loop_end(span_index) << std::endl;
 			tr.Debug << "random number:  " << random_number << std::endl;
 		}
@@ -337,13 +318,11 @@ TMHTopologySamplerClaimer::pre_process(core::pose::Pose& pose)
 		core::Size last_span_jump_end = 0;
 		last_span_jump_end = core::pose::residue_center_of_mass(pose,membrane_topology->span_begin(nspan),membrane_topology->span_end(nspan));
 
-		for(core::Size jump_array_index = 1;jump_array_index <= njumps_; ++jump_array_index)
-		{
-			if(jump_array_index==njumps_)
-			{
+		for ( core::Size jump_array_index = 1; jump_array_index <= njumps_; ++jump_array_index ) {
+			if ( jump_array_index==njumps_ ) {
 				jump_array_(1,jump_array_index) = last_span_jump_end;
 				jump_array_(2,jump_array_index) = topology_root_res_;
-			}else{
+			} else {
 				jump_array_(1,jump_array_index) = jump_begin(jump_array_index);
 				jump_array_(2,jump_array_index) = jump_end(jump_array_index);
 			}
@@ -355,8 +334,7 @@ TMHTopologySamplerClaimer::pre_process(core::pose::Pose& pose)
 
 	//make the last cut the last residue before the root residue
 	cuts_(ncuts) = nres_-1;
-	for(core::Size cut_index = 1; cut_index <= ncuts; ++cut_index)
-	{
+	for ( core::Size cut_index = 1; cut_index <= ncuts; ++cut_index ) {
 		tr.Info << "cuts array:  " << cut_index << " " << cuts_(cut_index) << std::endl;
 	}
 
@@ -374,28 +352,25 @@ TMHTopologySamplerClaimer::build_fold_tree(core::pose::Pose& pose, core::kinemat
 	new_fold_tree.tree_from_jumps_and_cuts(nres_,njumps_,jump_array_,cuts_,topology_root_res_);
 	pose.fold_tree(new_fold_tree);
 
-	if(tr.Debug.visible())
-	{
+	if ( tr.Debug.visible() ) {
 		tr.Debug << "TMHTopologySampler finished making fold tree" << std::endl;
 		tr.Debug << new_fold_tree << std::endl;
 		tr.Debug << "pose has " << pose.total_residue() << " residues.  Fold_tree_begin:  " << pose.fold_tree().begin()->start()
-				<< " " << pose.fold_tree().begin()->stop() << "\tfold_tree_end:  " << pose.fold_tree().end()->start() <<
-				" " << pose.fold_tree().end()->stop() << std::endl;
+			<< " " << pose.fold_tree().begin()->stop() << "\tfold_tree_end:  " << pose.fold_tree().end()->start() <<
+			" " << pose.fold_tree().end()->stop() << std::endl;
 		tr.Debug << pose.annotated_sequence() << std::endl;
 	}
 
-	for(Size jump_num = 1; jump_num <= new_fold_tree.num_jump(); ++jump_num){
+	for ( Size jump_num = 1; jump_num <= new_fold_tree.num_jump(); ++jump_num ) {
 		tr.Info << "final_jump_array:  " << jump_array_(1,jump_num) << " "
 			<< jump_array_(2,jump_num) << std::endl;
 		new_fold_tree.set_jump_atoms(jump_num, "X", "N" );
 	}
 
 	// output fold tree
-	if(new_fold_tree.empty())
-	{
+	if ( new_fold_tree.empty() ) {
 		tr << "Warning!  fold_tree is empty!!" << std::endl;
-	}
-	else{
+	} else {
 		tr << new_fold_tree;
 	}
 }
@@ -410,20 +385,15 @@ TMHTopologySamplerClaimer::get_fold_tree(core::pose::Pose& pose)
 void
 TMHTopologySamplerClaimer::generate_claims(claims::DofClaims &dof_claims)
 {
-	for(Size jump_num = 1; jump_num <= njumps_; ++jump_num)
-	{
+	for ( Size jump_num = 1; jump_num <= njumps_; ++jump_num ) {
 		dof_claims.push_back( claims::DofClaimOP( new claims::JumpClaim(get_self_weak_ptr(),jump_array_(1,jump_num),jump_array_(2,jump_num),claims::DofClaim::CAN_INIT) ) );
 	}
-	for(int i=1;i<=nres_;++i)
-	{
-		for(core::Size cut_index = 1; cut_index <= cuts_.size(); ++cut_index)
-		{
-			if(cuts_(cut_index)==i)
-			{
-					dof_claims.push_back( claims::DofClaimOP( new claims::CutClaim(get_self_weak_ptr(),std::make_pair(TopologyClaimer::label(),i),claims::DofClaim::CAN_INIT) ) );
+	for ( int i=1; i<=nres_; ++i ) {
+		for ( core::Size cut_index = 1; cut_index <= cuts_.size(); ++cut_index ) {
+			if ( cuts_(cut_index)==i ) {
+				dof_claims.push_back( claims::DofClaimOP( new claims::CutClaim(get_self_weak_ptr(),std::make_pair(TopologyClaimer::label(),i),claims::DofClaim::CAN_INIT) ) );
 			}
-			if(i == topology_root_res_)
-			{
+			if ( i == topology_root_res_ ) {
 				dof_claims.push_back( claims::DofClaimOP( new claims::BBClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ) );
 				dof_claims.push_back( claims::DofClaimOP( new claims::LegacyRootClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ) );
 			}
@@ -439,18 +409,15 @@ TMHTopologySamplerClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofC
 	core::kinematics::MoveMapOP init_map( new core::kinematics::MoveMap );
 	init_map->set_jump( false );
 
-	for ( claims::DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end(); it != eit; ++it )
-	{
-		if ( (*it)->owner().lock().get() == this && (*it)->str_type() == "JUMP") {
-			if(tr.Trace.visible())
-			{
+	for ( claims::DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end(); it != eit; ++it ) {
+		if ( (*it)->owner().lock().get() == this && (*it)->str_type() == "JUMP" ) {
+			if ( tr.Trace.visible() ) {
 				(*it)->show(tr.Trace);
 				tr.Trace << std::endl;
 			}
 			(*it)->toggle( *init_map, true );
-		}else{
-			if(tr.Trace.visible())
-			{
+		} else {
+			if ( tr.Trace.visible() ) {
 				(*it)->show(tr.Trace);
 				tr.Trace << std::endl;
 				tr.Trace << "No need to init dof in MoveMap" << std::endl;
@@ -465,13 +432,10 @@ TMHTopologySamplerClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofC
 void
 TMHTopologySamplerClaimer::set_pose_torsions(core::pose::Pose& pose)
 {
-	for(core::Size i=1;i<=pose.total_residue();i++)
-	{
-		if(pose.residue(i).is_virtual_residue() || pose.residue(i).name3() == "XXX")
-		{
+	for ( core::Size i=1; i<=pose.total_residue(); i++ ) {
+		if ( pose.residue(i).is_virtual_residue() || pose.residue(i).name3() == "XXX" ) {
 			continue;
-		}
-		else{
+		} else {
 			//set phi and psi to make "ideal" helix
 			pose.set_phi(i,-58.0);
 			pose.set_psi(i,-47.0);
@@ -493,26 +457,22 @@ TMHTopologySamplerClaimer::move_spans(core::pose::Pose& pose)
 	utility::vector1<core::Vector> grid_points = pre_compute_grid_points(pose);
 
 	//jump_index = span#  loop through all spans and move each one at a time
-	for(core::Size jump_index = 1; jump_index <= pose.num_jump(); jump_index++)
-	{
+	for ( core::Size jump_index = 1; jump_index <= pose.num_jump(); jump_index++ ) {
 		//Since I've added residues to pose by jump, have more jumps than helices
-		if(!(pose.residue(pose.fold_tree().jump_edge(jump_index).stop()).is_virtual_residue()) &&
-				!(pose.residue(pose.fold_tree().jump_edge(jump_index).stop()).name3()=="XXX"))
-		{
-			if(tr.Debug.visible())
-			{
+		if ( !(pose.residue(pose.fold_tree().jump_edge(jump_index).stop()).is_virtual_residue()) &&
+				!(pose.residue(pose.fold_tree().jump_edge(jump_index).stop()).name3()=="XXX") ) {
+			if ( tr.Debug.visible() ) {
 				tr.Debug << "jump " << jump_index << "\t" << pose.fold_tree().jump_edge(jump_index).start() << " " <<
-						pose.fold_tree().jump_edge(jump_index).stop() << std::endl;
+					pose.fold_tree().jump_edge(jump_index).stop() << std::endl;
 			}
 
 			//Compute a helix vector between a CA and n+4 CA
 			core::Size current_span_CoM(pose.fold_tree().jump_edge(jump_index).stop());
 			core::Vector rb_centroid(pose.residue(current_span_CoM).xyz("CA"));
 			core::Vector rb_centroid_second(0,0,0);
-			if(pose.residue(current_span_CoM+4).seqpos() >= pose.residue(membrane_topology->span_end(jump_index)).seqpos())
-			{
+			if ( pose.residue(current_span_CoM+4).seqpos() >= pose.residue(membrane_topology->span_end(jump_index)).seqpos() ) {
 				rb_centroid_second = pose.residue(current_span_CoM-4).xyz("CA");
-			}else{
+			} else {
 				rb_centroid_second = pose.residue(current_span_CoM+4).xyz("CA");
 			}
 			core::Vector current_helix_vector(rb_centroid - rb_centroid_second);
@@ -523,11 +483,10 @@ TMHTopologySamplerClaimer::move_spans(core::pose::Pose& pose)
 			core::Real const mag = membrane_vector.length() *current_helix_vector.length();
 			angle =  (mag > 0.0) ? std::acos( numeric::sin_cos_range( membrane_vector.dot(current_helix_vector  ) / mag ) ) :  0  ;
 			angle = numeric::conversions::degrees(angle);
-			if(tr.Trace.visible()){tr.Trace << "angle between membrane_vector and helix_vector:  " << angle << std::endl;};
-			if(membrane_topology->helix_id(jump_index) % 2 == 0)
-			{
+			if ( tr.Trace.visible() ) { tr.Trace << "angle between membrane_vector and helix_vector:  " << angle << std::endl;};
+			if ( membrane_topology->helix_id(jump_index) % 2 == 0 ) {
 				angle+=180;
-				if(tr.Trace.visible()){tr.Trace << "angle between membrane_vector and helix_vector:  " << angle << std::endl;}
+				if ( tr.Trace.visible() ) { tr.Trace << "angle between membrane_vector and helix_vector:  " << angle << std::endl;}
 			}
 
 			//compute a spin axis by taking cross product of helix vector and membrane vector.
@@ -537,7 +496,7 @@ TMHTopologySamplerClaimer::move_spans(core::pose::Pose& pose)
 			protocols::rigid::RigidBodyDeterministicSpinMover spin_mover(jump_index,current_spin_axis,rb_centroid,angle);
 			spin_mover.apply(pose);
 
-			//Get the vector of grid points and make sure it's the same size as the number of jumps	core::Size grid_point(0);
+			//Get the vector of grid points and make sure it's the same size as the number of jumps core::Size grid_point(0);
 			core::Size grid_point(0);
 			core::Size random_gp = numeric::random::rg().random_range(1,grid_points.size());
 			core::Vector desired_centroid(0.0,0.0,0.0);
@@ -545,17 +504,17 @@ TMHTopologySamplerClaimer::move_spans(core::pose::Pose& pose)
 			grid_point = random_gp;
 
 			desired_centroid = grid_points[grid_point];
-			if(tr.Trace.visible()){
+			if ( tr.Trace.visible() ) {
 				tr.Debug << "jump:  " << jump_index << "; grid_point:  " << grid_point << " " << grid_points[grid_point].x() << " " << grid_points[grid_point].y() << " " << grid_points[grid_point].z() << std::endl;
 				tr.Debug << "grid_points.size() before erase:  " << grid_points.size() << std::endl;
 			}
 			grid_points.erase(grid_points.begin()+(grid_point-1));
-			if(tr.Trace.visible()){tr.Trace << "grid_points.size() after erase:  " << grid_points.size() << std::endl;}
+			if ( tr.Trace.visible() ) { tr.Trace << "grid_points.size() after erase:  " << grid_points.size() << std::endl;}
 
 			//Move helices to origin (for now)
 			core::Vector trans_vec = desired_centroid - rb_centroid;
 			core::Real trans_len = trans_vec.length();
-			if (trans_len > 1e-3) { // otherwise we get NaNs
+			if ( trans_len > 1e-3 ) { // otherwise we get NaNs
 				protocols::rigid::RigidBodyTransMover mover(pose, jump_index);
 				mover.step_size(trans_len);
 				mover.trans_axis(trans_vec);
@@ -564,7 +523,7 @@ TMHTopologySamplerClaimer::move_spans(core::pose::Pose& pose)
 		}
 	}
 	current_pose_ = pose;
-	if (tr.Debug.visible()){
+	if ( tr.Debug.visible() ) {
 		pose.dump_pdb("test_move_spans.pdb","test_move_spans");
 	}
 }
@@ -588,8 +547,7 @@ TMHTopologySamplerClaimer::output_membrane_vector(core::pose::Pose& pose)
 	core::conformation::ResidueOP membrane_center_res = core::conformation::ResidueFactory::create_residue( *(rsd_type) ) ;
 	core::conformation::ResidueOP membrane_normal_res = core::conformation::ResidueFactory::create_residue( *(rsd_type) ) ;
 
-	if(option[basic::options::OptionKeys::out::file::output_virtual].user())
-	{
+	if ( option[basic::options::OptionKeys::out::file::output_virtual].user() ) {
 		for ( Size j=1; j<= membrane_center_res->natoms(); ++j ) {
 			membrane_center_res->atom(j).xyz( membrane_center_res->atom(j).xyz() + membrane_center);
 		}
@@ -615,43 +573,39 @@ TMHTopologySamplerClaimer::pre_compute_grid_points(core::pose::Pose& pose)
 	core::Vector new_vector(0,0,0);
 	core::Vector add_vector(0,0,0);
 	core::Size sequence_counter(1);
-	while(grid_points.size()<tmhelix_)
-	{
-		if(sequence_counter>6)
-		{
+	while ( grid_points.size()<tmhelix_ )
+			{
+		if ( sequence_counter>6 ) {
 			origin = *grid_points.rbegin();
 			sequence_counter = 1;
 		}
 
 		tr.Debug << "sequence_counter:  " << sequence_counter << std::endl;
 		switch(sequence_counter)
-		{
-			case 1:
-				add_vector = core::Vector(15,0,0);
-				break;
-			case 2:
-				add_vector = core::Vector(7.5,sqrt(168.75),0); // this will overlap in 2nd round
-				break;
-			case 3:
-				add_vector = core::Vector(-7.5,sqrt(168.75),0);
-				break;
-			case 4:
-				add_vector = core::Vector(-15,0,0); // this will overlab in second round
-				break;
-			case 5:
-				add_vector = core::Vector(-7.5,-(sqrt(168.75)),0);
-				break;
-			case 6:
-				add_vector = core::Vector(7.5,-(sqrt(168.75)),0);
-				break;
-		}
-		bool gp_exists(false);
-		for(utility::vector1<core::Vector>::iterator used_gp_it=used_grid_points.begin(), end =used_grid_points.end(); used_gp_it != end; ++used_gp_it )
-		{
-			if(*used_gp_it == origin+add_vector)
-			{
-				if(tr.Trace.visible())
 				{
+				case 1 :
+					add_vector = core::Vector(15,0,0);
+					break;
+				case 2 :
+					add_vector = core::Vector(7.5,sqrt(168.75),0); // this will overlap in 2nd round
+					break;
+				case 3 :
+					add_vector = core::Vector(-7.5,sqrt(168.75),0);
+					break;
+				case 4 :
+					add_vector = core::Vector(-15,0,0); // this will overlab in second round
+					break;
+				case 5 :
+					add_vector = core::Vector(-7.5,-(sqrt(168.75)),0);
+					break;
+				case 6 :
+					add_vector = core::Vector(7.5,-(sqrt(168.75)),0);
+					break;
+				}
+		bool gp_exists(false);
+		for ( utility::vector1<core::Vector>::iterator used_gp_it=used_grid_points.begin(), end =used_grid_points.end(); used_gp_it != end; ++used_gp_it ) {
+			if ( *used_gp_it == origin+add_vector ) {
+				if ( tr.Trace.visible() ) {
 					tr.Trace << "*used_gp_it:  " << used_gp_it->x() << " " << used_gp_it->y() << " " << used_gp_it->z() << std::endl;
 					tr.Trace << "origin+add_vector:  " << (origin+add_vector).x() << " " << (origin+add_vector).y() << " " << (origin+add_vector).z() << std::endl;
 					tr.Trace << "grid point already exists, try another!" << std::endl;
@@ -659,22 +613,20 @@ TMHTopologySamplerClaimer::pre_compute_grid_points(core::pose::Pose& pose)
 				gp_exists = true;
 			}
 		}
-		if(gp_exists==true)
-		{
+		if ( gp_exists==true ) {
 			tr.Debug << "gp_exists is TRUE" << std::endl;
 			sequence_counter++;
 			continue;
-		}else{
+		} else {
 			new_vector = origin + add_vector;
 			grid_points.push_back(new_vector);
 			used_grid_points.push_back(new_vector);
-			if(tr.Debug.visible())
-			{
+			if ( tr.Debug.visible() ) {
 				tr.Debug << "gp_exists is FALSE" << std::endl;
 				tr.Debug << "add_vector xyz():  x=" << add_vector.x() << "; y=" <<
-						add_vector.y() << "; z=" << add_vector.z() << std::endl;
+					add_vector.y() << "; z=" << add_vector.z() << std::endl;
 				tr.Debug << "grid point " << sequence_counter << " new_vector xyz():  x=" << new_vector.x() << "; y=" <<
-						new_vector.y() << "; z=" << new_vector.z() << std::endl;
+					new_vector.y() << "; z=" << new_vector.z() << std::endl;
 				tr.Debug << "grid_points.size() after:  " << grid_points.size() << std::endl;
 				tr.Debug << "used_grid_points.size() after:  " << used_grid_points.size() << std::endl;
 			}
@@ -698,18 +650,16 @@ TMHTopologySamplerClaimer::add_mover(
 )
 {
 	core::Real weight(0.0);
-	if(stageID == 1)
-	{
+	if ( stageID == 1 ) {
 		weight = rb_mover_stage1_weight_;
 	}
-//	}else if(stageID == 2)
-//	{
-//		weight = 1.0;
-//	}
-//	if(stageID == 1 || stageID == 2)
-	if(stageID == 1)
-	{
-		if(tr.Trace.visible()) { tr.Trace << "stageID is " << stageID << " so adding RBMover!" << std::endl; }
+	// }else if(stageID == 2)
+	// {
+	//  weight = 1.0;
+	// }
+	// if(stageID == 1 || stageID == 2)
+	if ( stageID == 1 ) {
+		if ( tr.Trace.visible() ) { tr.Trace << "stageID is " << stageID << " so adding RBMover!" << std::endl; }
 		tr.Debug << "rotation_mag:  " << rotation_mag_ << " translation_mag:  " << translation_mag_ << " num_jump_moved:  " << tmhelix_ << std::endl;
 		//Use the RigidBodyRandomTMHMover to move TMHs.  The mover chooses a random jump from the pose and does a RB perturb on it given the rotation and translation
 		//If the helix moves too far away from starting position, moves it back to initial position so it doesnt escape out into space
@@ -717,9 +667,8 @@ TMHTopologySamplerClaimer::add_mover(
 		RigidBodyRandomTMHMoverOP RBMover( new RigidBodyRandomTMHMover(max_trans,rotation_mag_,translation_mag_,tmhelix_,get_self_ptr()) );
 		//Add RBMover to the random_mover, which is then passed on to TopologyBroker::mover(pose, stageID, scorefxn, progress)
 		random_mover.add_mover(RBMover,weight);
-	}else{
-		if(tr.Trace.visible())
-		{
+	} else {
+		if ( tr.Trace.visible() ) {
 			tr.Trace << "stageID is " << stageID << std::endl;
 		}
 	}

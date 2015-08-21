@@ -48,122 +48,122 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	//Constructor
-	PartitionContactScreener::PartitionContactScreener( pose::Pose const & pose,
-																											modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters,
-																											bool const use_loose_rep_cutoff,
-																											core::scoring::methods::EnergyMethodOptions const & options /* how to setup etable */ ):
-		pose_( pose ),
-		moving_res_list_( working_parameters->working_moving_res_list() ),
-		fa_atr_weight_( 0.23 ), // historical -- used to use Rosetta scoring
-		fa_rep_weight_( 0.12 ), // historical -- used to use Rosetta scoring
-		rep_cutoff_(  4.0 ), // 10.0 for proteins?
-		atr_cutoff_( -1.0 ), // -0.4 for proteins? [allow a single H-bond to count]
-		use_loose_rep_cutoff_( use_loose_rep_cutoff ),
-		close_chain_( modeler::figure_out_moving_cutpoints_closed_from_moving_res( pose, moving_res_list_ ).size() > 0 ),
-		actual_rep_cutoff_( rep_cutoff_ )
-	{
-		runtime_assert( moving_res_list_.size() > 0 );
-		initialize_actual_rep_cutoff();
-		initialize_evaluator( options );
+//Constructor
+PartitionContactScreener::PartitionContactScreener( pose::Pose const & pose,
+	modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters,
+	bool const use_loose_rep_cutoff,
+	core::scoring::methods::EnergyMethodOptions const & options /* how to setup etable */ ):
+	pose_( pose ),
+	moving_res_list_( working_parameters->working_moving_res_list() ),
+	fa_atr_weight_( 0.23 ), // historical -- used to use Rosetta scoring
+	fa_rep_weight_( 0.12 ), // historical -- used to use Rosetta scoring
+	rep_cutoff_(  4.0 ), // 10.0 for proteins?
+	atr_cutoff_( -1.0 ), // -0.4 for proteins? [allow a single H-bond to count]
+	use_loose_rep_cutoff_( use_loose_rep_cutoff ),
+	close_chain_( modeler::figure_out_moving_cutpoints_closed_from_moving_res( pose, moving_res_list_ ).size() > 0 ),
+	actual_rep_cutoff_( rep_cutoff_ )
+{
+	runtime_assert( moving_res_list_.size() > 0 );
+	initialize_actual_rep_cutoff();
+	initialize_evaluator( options );
+}
+
+//Destructor
+PartitionContactScreener::~PartitionContactScreener()
+{}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+PartitionContactScreener::initialize_actual_rep_cutoff(){
+	actual_rep_cutoff_ = rep_cutoff_;
+	if ( use_loose_rep_cutoff_ ) {
+		actual_rep_cutoff_ = 200.0; // KIC needs a much higher cutoff -- atoms can get really close
+	} else if ( close_chain_ ) {
+		actual_rep_cutoff_ = 10.0;  //Parin's old parameter
 	}
+}
 
-	//Destructor
-	PartitionContactScreener::~PartitionContactScreener()
-	{}
+//////////////////////////////////////////////////////////////////////////////
+void
+PartitionContactScreener::initialize_evaluator( core::scoring::methods::EnergyMethodOptions const & options ){
+	core::scoring::etable::EtableCOP etable(core::scoring::ScoringManager::get_instance()->etable( options ) );
+	eval_ = core::scoring::etable::AnalyticEtableEvaluatorOP( new core::scoring::etable::AnalyticEtableEvaluator( *etable ) );
+}
 
-	//////////////////////////////////////////////////////////////////////////////
-	void
-	PartitionContactScreener::initialize_actual_rep_cutoff(){
-		actual_rep_cutoff_ = rep_cutoff_;
-		if ( use_loose_rep_cutoff_ ) {
-			actual_rep_cutoff_ = 200.0; // KIC needs a much higher cutoff -- atoms can get really close
-		} else if ( close_chain_ ) {
-			actual_rep_cutoff_ = 10.0;  //Parin's old parameter
-		}
+//////////////////////////////////////////////////////////////////////////////
+bool
+PartitionContactScreener::check_screen(){
+	bool makes_contact( false ), atr_ok( false ), rep_ok( false );
+	for ( Size n = 1; n <= moving_res_list_.size(); n++ ) {
+		check_screen( moving_res_list_[n], atr_ok, rep_ok );
+		if ( !rep_ok ) return false;
+		if (  atr_ok ) makes_contact = true;
 	}
+	return makes_contact;
+}
 
-	//////////////////////////////////////////////////////////////////////////////
-	void
-	PartitionContactScreener::initialize_evaluator( core::scoring::methods::EnergyMethodOptions const & options ){
-		core::scoring::etable::EtableCOP etable(core::scoring::ScoringManager::get_instance()->etable( options ) );
-		eval_ = core::scoring::etable::AnalyticEtableEvaluatorOP( new core::scoring::etable::AnalyticEtableEvaluator( *etable ) );
-	}
+//////////////////////////////////////////////////////////////////////////////
+//
+// Look at residue pair energy for residues in partitions on either side of
+//  moving connection (as defined by moving_res).
+//
+// Could be sped up a little if we precalculate neighbor graph and/or cache
+// energies between different moving_res.
+//
+//////////////////////////////////////////////////////////////////////////////
+void
+PartitionContactScreener::check_screen( Size const moving_res, bool & atr_ok, bool & rep_ok ) const {
 
-	//////////////////////////////////////////////////////////////////////////////
-	bool
-	PartitionContactScreener::check_screen(){
-		bool makes_contact( false ), atr_ok( false ), rep_ok( false );
-		for ( Size n = 1; n <= moving_res_list_.size(); n++ ){
-			check_screen( moving_res_list_[n], atr_ok, rep_ok );
-			if ( !rep_ok ) return false;
-			if (  atr_ok ) makes_contact = true;
-		}
-		return makes_contact;
-	}
+	using namespace core::scoring;
+	using namespace core::scoring::etable;
+	using namespace core::scoring::etable::count_pair;
 
-	//////////////////////////////////////////////////////////////////////////////
-	//
-	// Look at residue pair energy for residues in partitions on either side of
-	//  moving connection (as defined by moving_res).
-	//
-	// Could be sped up a little if we precalculate neighbor graph and/or cache
-	// energies between different moving_res.
-	//
-	//////////////////////////////////////////////////////////////////////////////
-	void
-	PartitionContactScreener::check_screen(	Size const moving_res, bool & atr_ok, bool & rep_ok ) const {
+	atr_ok = false;
+	rep_ok = false;
 
-		using namespace core::scoring;
-		using namespace core::scoring::etable;
-		using namespace core::scoring::etable::count_pair;
+	utility::vector1< Size > root_partition_res, moving_partition_res;
+	modeler::figure_out_root_and_moving_partition_res( pose_, moving_res, root_partition_res, moving_partition_res );
 
- 		atr_ok = false;
-		rep_ok = false;
+	EnergyMap emap;
+	//Distance const contact_dist( 4.0 );
+	for ( Size m = 1; m <= root_partition_res.size(); m++ ) {
 
-		utility::vector1< Size > root_partition_res, moving_partition_res;
-		modeler::figure_out_root_and_moving_partition_res( pose_, moving_res, root_partition_res, moving_partition_res );
+		Size const & i = root_partition_res[ m ];
+		core::conformation::Residue const & rsd_i = pose_.residue( i );
 
-		EnergyMap emap;
-		//Distance const contact_dist( 4.0 );
-		for ( Size m = 1; m <= root_partition_res.size(); m++ ){
+		for ( Size n = 1; n <= moving_partition_res.size(); n++ ) {
 
-			Size const & i = root_partition_res[ m ];
-			core::conformation::Residue const & rsd_i = pose_.residue( i );
+			Size const & j = moving_partition_res[ n ];
+			core::conformation::Residue const & rsd_j = pose_.residue( j );
 
-			for ( Size n = 1; n <= moving_partition_res.size(); n++ ){
+			CPCrossoverBehavior crossover = CP_CROSSOVER_3;
+			if ( rsd_i.polymeric_sequence_distance( rsd_j ) == 1 ) crossover = CP_CROSSOVER_4;
+			CountPairFunctionCOP count_pair =  CountPairFactory::create_count_pair_function( rsd_i, rsd_j, crossover );
 
-				Size const & j = moving_partition_res[ n ];
-				core::conformation::Residue const & rsd_j = pose_.residue( j );
-
-				CPCrossoverBehavior crossover = CP_CROSSOVER_3;
-				if ( rsd_i.polymeric_sequence_distance( rsd_j ) == 1 ) crossover = CP_CROSSOVER_4;
-				CountPairFunctionCOP count_pair =  CountPairFactory::create_count_pair_function( rsd_i, rsd_j, crossover );
-
-				eval_->residue_atom_pair_energy( rsd_i, rsd_j, *count_pair, emap );
-				if ( ( fa_rep_weight_ * emap[ fa_rep ] ) > actual_rep_cutoff_ ) {
-					return;
-				}
+			eval_->residue_atom_pair_energy( rsd_i, rsd_j, *count_pair, emap );
+			if ( ( fa_rep_weight_ * emap[ fa_rep ] ) > actual_rep_cutoff_ ) {
+				return;
 			}
 		}
-		rep_ok = true;
-
-		Real const weighted_atr_score = fa_atr_weight_ * emap[ fa_atr ];
-		Real const weighted_rep_score = fa_rep_weight_ * emap[ fa_rep ];
-		Real const weighted_contact_score = weighted_atr_score + weighted_rep_score;
-		if ( close_chain_ ) { // no check on attractive.
-			atr_ok = true;
-		} else if ( use_loose_rep_cutoff_ ){
-			if ( weighted_atr_score < atr_cutoff_ &&
-					 weighted_contact_score < (actual_rep_cutoff_ - rep_cutoff_)  ) 	atr_ok = true;
-		} else {
-			if ( weighted_atr_score < atr_cutoff_ &&
-					 weighted_contact_score < 0.0 ) 	atr_ok = true;
-		}
-
-		return;
-
 	}
+	rep_ok = true;
+
+	Real const weighted_atr_score = fa_atr_weight_ * emap[ fa_atr ];
+	Real const weighted_rep_score = fa_rep_weight_ * emap[ fa_rep ];
+	Real const weighted_contact_score = weighted_atr_score + weighted_rep_score;
+	if ( close_chain_ ) { // no check on attractive.
+		atr_ok = true;
+	} else if ( use_loose_rep_cutoff_ ) {
+		if ( weighted_atr_score < atr_cutoff_ &&
+				weighted_contact_score < (actual_rep_cutoff_ - rep_cutoff_)  )  atr_ok = true;
+	} else {
+		if ( weighted_atr_score < atr_cutoff_ &&
+				weighted_contact_score < 0.0 )  atr_ok = true;
+	}
+
+	return;
+
+}
 
 
 } //screener

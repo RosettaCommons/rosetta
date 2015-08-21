@@ -36,7 +36,7 @@ static thread_local basic::Tracer TR( "protocols.moves.symmetry.SymFoldandDockMo
 
 
 SymFoldandDockMoveRbJumpMover::SymFoldandDockMoveRbJumpMover()
-	: Mover("SymFoldandDockMoveRbJumpMover")
+: Mover("SymFoldandDockMoveRbJumpMover")
 {}
 
 void
@@ -54,29 +54,29 @@ SymFoldandDockMoveRbJumpMover::get_name() const {
 }
 
 void
-SymFoldandDockMoveRbJumpMover::parse_my_tag( 
-		utility::tag::TagCOP const,
-		basic::datacache::DataMap & ,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & )
+SymFoldandDockMoveRbJumpMover::parse_my_tag(
+	utility::tag::TagCOP const,
+	basic::datacache::DataMap & ,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & )
 {
 }
 
 
 std::string
 SymFoldandDockMoveRbJumpMoverCreator::keyname() const {
-    return SymFoldandDockMoveRbJumpMoverCreator::mover_name();
+	return SymFoldandDockMoveRbJumpMoverCreator::mover_name();
 }
 
 protocols::moves::MoverOP
 SymFoldandDockMoveRbJumpMoverCreator::create_mover() const {
-    return protocols::moves::MoverOP( new SymFoldandDockMoveRbJumpMover() );
+	return protocols::moves::MoverOP( new SymFoldandDockMoveRbJumpMover() );
 }
 
 std::string
 SymFoldandDockMoveRbJumpMoverCreator::mover_name() {
-    return "SymFoldandDockMoveRbJumpMover";
+	return "SymFoldandDockMoveRbJumpMover";
 }
 
 } // symmetric_docking

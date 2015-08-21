@@ -44,14 +44,14 @@ namespace protocols {
 namespace simple_moves {
 
 using namespace core;
-	using namespace basic::options;
-	using namespace pack;
-		using namespace rotamer_set;
-		using namespace task;
-			using namespace operation;
-	using namespace scoring;
-	using namespace chemical;
-	using namespace conformation;
+using namespace basic::options;
+using namespace pack;
+using namespace rotamer_set;
+using namespace task;
+using namespace operation;
+using namespace scoring;
+using namespace chemical;
+using namespace conformation;
 
 using basic::Warning;
 using basic::t_warning;
@@ -73,7 +73,7 @@ RotamerizeMover::RotamerizeMover( std::string const & type_name ) :
 	rotamer_sets_( RotamerSetsOP( new rotamer_set::RotamerSets ) )
 {}
 
-	// constructors with arguments
+// constructors with arguments
 RotamerizeMover::RotamerizeMover(
 	PackerTaskOP task
 ) :
@@ -86,7 +86,7 @@ RotamerizeMover::RotamerizeMover(
 RotamerizeMover::~RotamerizeMover(){}
 
 RotamerizeMover::RotamerizeMover( RotamerizeMover const & other )
-	: Mover( other )
+: Mover( other )
 {
 	task_ = other.task();
 	task_factory_ = other.task_factory();
@@ -103,12 +103,12 @@ RotamerizeMover::apply( Pose & pose )
 	// Now loop through positions and find the best geometric fit, taking into account
 	// silly symmetries due to goofy renaming of atoms
 
-	for( utility::vector1< RotamerSetOP >::const_iterator itr = rotamer_sets_->begin() ;
-				itr != rotamer_sets_->end() ; ++itr ) {
+	for ( utility::vector1< RotamerSetOP >::const_iterator itr = rotamer_sets_->begin() ;
+			itr != rotamer_sets_->end() ; ++itr ) {
 
 		Size this_resid( (*itr)->resid() );
 
-		if( pose.residue_type( this_resid ).is_NA() ) continue;
+		if ( pose.residue_type( this_resid ).is_NA() ) continue;
 
 		//TR << "Working on RotamerSet for position " << this_resid << std::endl;
 
@@ -117,38 +117,38 @@ RotamerizeMover::apply( Pose & pose )
 		bool best_is_flipped( false );
 
 		// Process the rotamers for this site
-		for( Rotamers::const_iterator r_itr = (*itr)->begin() ; r_itr != (*itr)->end() ; ++r_itr ) {
+		for ( Rotamers::const_iterator r_itr = (*itr)->begin() ; r_itr != (*itr)->end() ; ++r_itr ) {
 
 			ResidueCOP rotamer( *r_itr );
 
 			// Skip if not the same aa type
-			if( pose.residue_type( this_resid ).aa() != rotamer->type().aa() ) {
+			if ( pose.residue_type( this_resid ).aa() != rotamer->type().aa() ) {
 				TR << "Rotamer residue type doesn't make pose - bad task?" << std::endl;
 				continue;
 			}
 
 			// Loop over heavy atoms and get the rmsd
 			Real rmsd_sum( 0.0 );
-			for( Size iatom = 1 ; iatom <= rotamer->nheavyatoms() ; ++iatom ) {
+			for ( Size iatom = 1 ; iatom <= rotamer->nheavyatoms() ; ++iatom ) {
 				rmsd_sum += pose.residue( this_resid ).xyz( iatom ).distance_squared( rotamer->xyz( iatom ) );
 			}
 			rmsd_sum = std::sqrt( rmsd_sum / (1.0 * rotamer->nheavyatoms() ) );
 
-			if( rmsd_sum < curr_best_rmsd ) {
+			if ( rmsd_sum < curr_best_rmsd ) {
 				curr_best_rmsd = rmsd_sum;
 				best_itr = r_itr;
 				best_is_flipped = false;
 			}
 
 			// Explicitly check any needed arginine flips
-			if( rotamer->type().aa() == aa_arg ) {
+			if ( rotamer->type().aa() == aa_arg ) {
 
 				Real flip_rmsd_sum( 0.0 );
-				for( Size iatom = 1 ; iatom <= rotamer->nheavyatoms() ; ++iatom ) {
-					if( pose.residue( this_resid ).atom_name( iatom ) == "NH1" ) {
+				for ( Size iatom = 1 ; iatom <= rotamer->nheavyatoms() ; ++iatom ) {
+					if ( pose.residue( this_resid ).atom_name( iatom ) == "NH1" ) {
 						Size other_atom( rotamer->atom_index( "NH2" ) );
 						flip_rmsd_sum += pose.residue( this_resid ).xyz( iatom ).distance_squared( rotamer->xyz( other_atom ) );
-					} else if( pose.residue( this_resid ).atom_name( iatom ) == "NH2" ) {
+					} else if ( pose.residue( this_resid ).atom_name( iatom ) == "NH2" ) {
 						Size other_atom( rotamer->atom_index( "NH1" ) );
 						flip_rmsd_sum += pose.residue( this_resid ).xyz( iatom ).distance_squared( rotamer->xyz( other_atom ) );
 					} else {
@@ -157,14 +157,14 @@ RotamerizeMover::apply( Pose & pose )
 				}
 				flip_rmsd_sum = std::sqrt( rmsd_sum / (1.0 * rotamer->nheavyatoms() ) );
 
-				if( flip_rmsd_sum < curr_best_rmsd ) {
+				if ( flip_rmsd_sum < curr_best_rmsd ) {
 					curr_best_rmsd = flip_rmsd_sum;
 					best_itr = r_itr;
 					best_is_flipped = true;
 				}
 			} // End of Arg flip check
 
-			if( rotamer->type().aa() == aa_glu ) {
+			if ( rotamer->type().aa() == aa_glu ) {
 
 				// Do this by an explicit chi flip
 				Residue mut_res( *rotamer ); // I'm making a copy because I'm going to mess with it
@@ -173,19 +173,19 @@ RotamerizeMover::apply( Pose & pose )
 				mut_res.set_chi( 3, mut_res.chi()[3] - 180.0 );
 
 				Real flip_rmsd_sum( 0.0 );
-				for( Size iatom = 1 ; iatom <= rotamer->nheavyatoms() ; ++iatom ) {
+				for ( Size iatom = 1 ; iatom <= rotamer->nheavyatoms() ; ++iatom ) {
 					flip_rmsd_sum += pose.residue( this_resid ).xyz( iatom ).distance_squared( mut_res.xyz( iatom ) );
 				}
 				flip_rmsd_sum = std::sqrt( rmsd_sum / (1.0 * rotamer->nheavyatoms() ) );
 
-				if( flip_rmsd_sum < curr_best_rmsd ) {
+				if ( flip_rmsd_sum < curr_best_rmsd ) {
 					curr_best_rmsd = flip_rmsd_sum;
 					best_itr = r_itr;
 					best_is_flipped = true;
 				}
 			} // End of Chi 3 flip check
 
-			if( rotamer->type().aa() == aa_asp || rotamer->type().aa() == aa_phe || rotamer->type().aa() == aa_tyr ) {
+			if ( rotamer->type().aa() == aa_asp || rotamer->type().aa() == aa_phe || rotamer->type().aa() == aa_tyr ) {
 
 				// Do this by an explicit chi flip
 				Residue mut_res( *rotamer ); // I'm making a copy because I'm going to mess with it
@@ -194,12 +194,12 @@ RotamerizeMover::apply( Pose & pose )
 				mut_res.set_chi( 2, mut_res.chi()[2] - 180.0 );
 
 				Real flip_rmsd_sum( 0.0 );
-				for( Size iatom = 1 ; iatom <= rotamer->nheavyatoms() ; ++iatom ) {
+				for ( Size iatom = 1 ; iatom <= rotamer->nheavyatoms() ; ++iatom ) {
 					flip_rmsd_sum += pose.residue( this_resid ).xyz( iatom ).distance_squared( mut_res.xyz( iatom ) );
 				}
 				flip_rmsd_sum = std::sqrt( rmsd_sum / (1.0 * rotamer->nheavyatoms() ) );
 
-				if( flip_rmsd_sum < curr_best_rmsd ) {
+				if ( flip_rmsd_sum < curr_best_rmsd ) {
 					curr_best_rmsd = flip_rmsd_sum;
 					best_itr = r_itr;
 					best_is_flipped = true;
@@ -211,7 +211,7 @@ RotamerizeMover::apply( Pose & pose )
 
 		// See what we have
 		TR << "Best rmsd for this position is " << curr_best_rmsd << " aa type is " << (*best_itr)->type().name3() << std::endl;
-		if( best_is_flipped ) {
+		if ( best_is_flipped ) {
 			TR << "Best rotamer was a flipped rotamer!" << std::endl;
 		}
 
@@ -253,9 +253,8 @@ void RotamerizeMover::setup( Pose & pose )
 	} else if ( task_ == 0 ) {
 		Warning() << "undefined PackerTask -- creating a default one" << std::endl;
 		task_ = TaskFactory::create_packer_task( pose );
-	}
+	} else runtime_assert( task_is_valid( pose ) );
 	// in case PackerTask was not generated locally, verify compatibility with pose
-	else runtime_assert( task_is_valid( pose ) );
 
 	// Make sure the bump check is off
 	task_->set_bump_check( false );

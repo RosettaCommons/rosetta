@@ -43,7 +43,7 @@ inline
 Target
 down_cast( Source & s )
 {
-debug_assert( dynamic_cast< typename RawType< Target >::Pointer >( &s ) == &s );
+	debug_assert( dynamic_cast< typename RawType< Target >::Pointer >( &s ) == &s );
 	return static_cast< Target >( s );
 }
 
@@ -59,7 +59,7 @@ inline
 Target
 down_cast( Source * p )
 {
-debug_assert( dynamic_cast< typename RawType< Target >::Pointer >( p ) == p );
+	debug_assert( dynamic_cast< typename RawType< Target >::Pointer >( p ) == p );
 	return static_cast< Target >( p );
 }
 

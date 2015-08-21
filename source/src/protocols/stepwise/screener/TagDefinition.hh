@@ -27,47 +27,47 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class TagDefinition: public StepWiseScreener {
+class TagDefinition: public StepWiseScreener {
 
-	public:
+public:
 
-		//constructor
-		TagDefinition( pose::Pose & pose,
-									 StepWiseScreenerOP first_sampler,
-									 bool const sampler_include_torsion_value_in_tag_ = false,
-									 Size const moving_res = 0,
-									 Size const reference_res = 0,
-									 std::string const extra_tag = "" );
+	//constructor
+	TagDefinition( pose::Pose & pose,
+		StepWiseScreenerOP first_sampler,
+		bool const sampler_include_torsion_value_in_tag_ = false,
+		Size const moving_res = 0,
+		Size const reference_res = 0,
+		std::string const extra_tag = "" );
 
-		//destructor
-		~TagDefinition();
+	//destructor
+	~TagDefinition();
 
-	public:
+public:
 
-		std::string	tag() const { return tag_; }
+	std::string tag() const { return tag_; }
 
-		bool
-		check_screen();
+	bool
+	check_screen();
 
-		std::string
-		name() const { return "TagDefinition"; }
+	std::string
+	name() const { return "TagDefinition"; }
 
-		StepWiseScreenerType
-		type() const { return TAG_DEFINITION; }
+	StepWiseScreenerType
+	type() const { return TAG_DEFINITION; }
 
-		void
-		append_to_tag( std::string const value ){ tag_ += value; }
+	void
+	append_to_tag( std::string const value ){ tag_ += value; }
 
-	private:
+private:
 
-		pose::Pose & pose_;
-		StepWiseScreenerOP first_sampler_;
-		bool const sampler_include_torsion_value_in_tag_;
-		Size const moving_res_, reference_res_;
-		std::string const extra_tag_;
-		std::string tag_;
+	pose::Pose & pose_;
+	StepWiseScreenerOP first_sampler_;
+	bool const sampler_include_torsion_value_in_tag_;
+	Size const moving_res_, reference_res_;
+	std::string const extra_tag_;
+	std::string tag_;
 
-	};
+};
 
 } //screener
 } //stepwise

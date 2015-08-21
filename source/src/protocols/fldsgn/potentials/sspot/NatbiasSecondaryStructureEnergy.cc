@@ -47,7 +47,7 @@ namespace sspot {
 /// @details This must return a fresh instance of the SecondaryStructureEnergy class,
 /// never an instance already in use
 NatbiasSecondaryStructureEnergyCreator::EnergyMethodOP
-NatbiasSecondaryStructureEnergyCreator::create_energy_method(	EnergyMethodOptions const & ) const
+NatbiasSecondaryStructureEnergyCreator::create_energy_method( EnergyMethodOptions const & ) const
 {
 	return NatbiasSecondaryStructureEnergyCreator::EnergyMethodOP( new NatbiasSecondaryStructureEnergy );
 }
@@ -185,11 +185,11 @@ NatbiasSecondaryStructureEnergy::finalize_total_energy(
 
 	SS_Info2_OP ssinfo( new SS_Info2( pose, native_secstruct_ ) );
 
-	if( use_sspot_ ) sspot_->score( pose, *ssinfo, ss_score );
+	if ( use_sspot_ ) sspot_->score( pose, *ssinfo, ss_score );
 
-	if( use_hhpot_ ) hhpot_->score( ssinfo, hh_score );
+	if ( use_hhpot_ ) hhpot_->score( ssinfo, hh_score );
 
-	if( use_hspot_ ) hspot_->score( ssinfo, hh_score, hs_score );
+	if ( use_hspot_ ) hspot_->score( ssinfo, hh_score, hs_score );
 
 	// set calculated score
 	totals[ core::scoring::natbias_hs ] = hs_score;
@@ -206,7 +206,7 @@ core::Distance
 NatbiasSecondaryStructureEnergy::atomic_interaction_cutoff() const
 {
 	return 6.0; /// now subtracted off 6.0 from cutoffs in centroid params files
-// 	return 0.0; /// since all the cutoffs for centroid mode are rolled into the cendist check
+	//  return 0.0; /// since all the cutoffs for centroid mode are rolled into the cendist check
 }
 
 /// @brief SecondaryStructureEnergy
@@ -222,5 +222,5 @@ NatbiasSecondaryStructureEnergy::version() const
 
 } // sspot
 } // potentials
-}	// fldsgn
-}	// protocols
+} // fldsgn
+} // protocols

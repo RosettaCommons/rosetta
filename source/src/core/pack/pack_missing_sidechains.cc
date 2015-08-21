@@ -58,7 +58,7 @@ pack_missing_sidechains(
 
 	utility::vector1_bool repackable;
 	bool something_to_pack = figure_out_repackable_residues( pose, missing, repackable );
-	if (!something_to_pack) return;
+	if ( !something_to_pack ) return;
 
 	//task is set up
 	task->restrict_to_residues(repackable);
@@ -84,16 +84,16 @@ bool figure_out_repackable_residues( core::pose::Pose & pose,
 		//iterate over all heavy sidechain atoms
 		core::chemical::ResidueType const & restype(pose.residue_type(resid));
 
-		for( core::Size atomno=restype.first_sidechain_atom(); atomno <= restype.nheavyatoms(); ++atomno) {
+		for ( core::Size atomno=restype.first_sidechain_atom(); atomno <= restype.nheavyatoms(); ++atomno ) {
 			core::id::AtomID atomid(atomno, resid);
 			//if the atom is to_repack and not a virtual atom...
 			if ( to_repack.get(atomid) &&
-				! restype.is_virtual(atomno) &&
-				restype.atom_type(atomno).name() != "ORBS"  &&
-				restype.atom_type(atomno).name() != "LPbb"
-			) {
+					! restype.is_virtual(atomno) &&
+					restype.atom_type(atomno).name() != "ORBS"  &&
+					restype.atom_type(atomno).name() != "LPbb"
+					) {
 				TR << "packing residue number " << resid << " because of missing atom number " << atomno << " atom name "
-					 << restype.atom_name(atomno) << std::endl;
+					<< restype.atom_name(atomno) << std::endl;
 				repackable[resid] = true;
 				any_to_repack = true;
 				break; //we can stop now

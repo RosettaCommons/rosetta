@@ -77,10 +77,10 @@ public: // scoring
 
 
 	/// @brief score secondary structure
-	void score(	Pose const & pose,
-							SS_Info2 const & ss_info,
-							DimerPairings & dimer_pairs,
-							Real & ss_score ) const;
+	void score( Pose const & pose,
+		SS_Info2 const & ss_info,
+		DimerPairings & dimer_pairs,
+		Real & ss_score ) const;
 
 
 private: // methods
@@ -92,7 +92,7 @@ private: // methods
 	/// @brief to determine which direction the CO groups point
 	void
 	pair_dp(
-	  Size const & ss1,
+		Size const & ss1,
 		Size const & ss2,
 		BB_Pos const & bb_pos,
 		Real & dp,
@@ -115,7 +115,7 @@ private:
 	Real calc_rsigmascore( Real sig, Real dist, Size const sign1, Size const sign2 ) const;
 
 	/// @brief
-	static void rsigma_dot_initializer(	FArray4D_real & rsigma_dot );
+	static void rsigma_dot_initializer( FArray4D_real & rsigma_dot );
 
 
 private: // initialization

@@ -55,7 +55,7 @@ public:
 		return ScoringSchemeOP( new ProfSimScoringScheme(
 			gap_open(),
 			gap_extend()
-		) );
+			) );
 	}
 
 	/// @brief ProfSim profile-profile similarity metric based on information theory.

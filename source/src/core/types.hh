@@ -26,44 +26,44 @@
 #include <limits>
 
 namespace core {
-	// Integer scalars
-	typedef platform::Size Size;
-	typedef platform::SSize SSize;
-	typedef platform::uint uint;
+// Integer scalars
+typedef platform::Size Size;
+typedef platform::SSize SSize;
+typedef platform::uint uint;
 
 #ifndef WIN32
-  typedef platform::Real Real;
+typedef platform::Real Real;
 #else
-	// Floating point precision control scalar
-  #ifdef ROSETTA_FLOAT // Real == float
+// Floating point precision control scalar
+#ifdef ROSETTA_FLOAT // Real == float
 	  typedef  float  Real;
-	#else // Real == double
-	  typedef  double  Real;
-	#endif
+#else // Real == double
+typedef  double  Real;
+#endif
 #endif
 
-	typedef unsigned short ShortSize; // used in the conformation::Atom
+typedef unsigned short ShortSize; // used in the conformation::Atom
 
-	// Floating point scalars
-	typedef Real Length;
-	typedef Real LengthSquared;
-	typedef Real Distance;
-	typedef Real DistanceSquared;
-	typedef Real Volume;
-	typedef Real Angle;
-	typedef Real Trig; // Trigonometric values of angles
-	typedef Real Mass;
-	typedef Real Charge;
-	typedef Real Energy;
-	typedef Real EnergyDerivative;
+// Floating point scalars
+typedef Real Length;
+typedef Real LengthSquared;
+typedef Real Distance;
+typedef Real DistanceSquared;
+typedef Real Volume;
+typedef Real Angle;
+typedef Real Trig; // Trigonometric values of angles
+typedef Real Mass;
+typedef Real Charge;
+typedef Real Energy;
+typedef Real EnergyDerivative;
 
-	// Double precision slows the packer considerably
-	typedef float PackerEnergy;
+// Double precision slows the packer considerably
+typedef float PackerEnergy;
 
-	// Floating point arrays
-	typedef  numeric::xyzVector< Length >  PointPosition;
-	typedef  numeric::xyzVector< Length >  Vector;
-	typedef  numeric::xyzVector< EnergyDerivative >  EnergyGradient;
+// Floating point arrays
+typedef  numeric::xyzVector< Length >  PointPosition;
+typedef  numeric::xyzVector< Length >  Vector;
+typedef  numeric::xyzVector< EnergyDerivative >  EnergyGradient;
 }  // namespace core
 
 #endif // INCLUDED_core_types_HH

@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file 
+/// @file
 /// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
@@ -23,7 +23,7 @@
 namespace protocols {
 namespace antibody {
 namespace design {
-			
+
 
 
 // Forward
@@ -36,7 +36,7 @@ typedef utility::pointer::shared_ptr< MutateFrameworkForCluster const > MutateFr
 } //antibody
 } //protocols
 
-#endif	//INCLUDED_protocols_antibody_designMutateFrameworkForCluster
+#endif //INCLUDED_protocols_antibody_designMutateFrameworkForCluster
 
 
 

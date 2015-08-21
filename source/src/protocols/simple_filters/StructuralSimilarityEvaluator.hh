@@ -49,9 +49,9 @@ public:
 	}
 
 private:
-	 // KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
-	 // std::string const & atom_name_;
-	 utility::vector1< core::pose::Pose > const poses_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// std::string const & atom_name_;
+	utility::vector1< core::pose::Pose > const poses_;
 };
 
 } // simple_filter

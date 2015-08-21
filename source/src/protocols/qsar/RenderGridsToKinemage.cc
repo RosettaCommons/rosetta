@@ -51,9 +51,9 @@ std::string RenderGridsToKinemageCreator::mover_name()
 }
 
 ColorGradient::ColorGradient(numeric::xyzVector<core::Real> const & value,
-		core::Real const & lower,
-		core::Real const & upper,
-		std::string const & name)
+	core::Real const & lower,
+	core::Real const & upper,
+	std::string const & name)
 {
 	color_value = value;
 	lower_bound = lower;
@@ -62,31 +62,31 @@ ColorGradient::ColorGradient(numeric::xyzVector<core::Real> const & value,
 }
 
 RenderGridsToKinemage::RenderGridsToKinemage() :
-		protocols::moves::Mover("RenderGridsToKinemage"),
-		color_mode_(0),
-		gradient_bins_(10),
-		stride_(1)
-		//low_cut_(0.0),
-		//high_cut_(0.0)
+	protocols::moves::Mover("RenderGridsToKinemage"),
+	color_mode_(0),
+	gradient_bins_(10),
+	stride_(1)
+	//low_cut_(0.0),
+	//high_cut_(0.0)
 {
 
 }
 
 RenderGridsToKinemage::RenderGridsToKinemage(
-		RenderGridsToKinemage const & mover
-		) :
-		protocols::moves::Mover(mover),
-		filename_(mover.filename_),
-		color_mode_(mover.color_mode_),
-		gradient_bins_(mover.gradient_bins_),
-		stride_(mover.stride_),
-		grid_name_(mover.grid_name_),
-		color_(mover.color_),
-		low_color_(mover.low_color_),
-		zero_color_(mover.zero_color_),
-		high_color_(mover.high_color_),
-		color_data_(mover.color_data_),
-		grid_(mover.grid_)
+	RenderGridsToKinemage const & mover
+) :
+	protocols::moves::Mover(mover),
+	filename_(mover.filename_),
+	color_mode_(mover.color_mode_),
+	gradient_bins_(mover.gradient_bins_),
+	stride_(mover.stride_),
+	grid_name_(mover.grid_name_),
+	color_(mover.color_),
+	low_color_(mover.low_color_),
+	zero_color_(mover.zero_color_),
+	high_color_(mover.high_color_),
+	color_data_(mover.color_data_),
+	grid_(mover.grid_)
 {
 
 }
@@ -120,12 +120,10 @@ void RenderGridsToKinemage::apply(core::pose::Pose & )
 	infile.close();
 
 	utility::io::ozstream outfile;
-	if(first_word == "@kinemage")
-	{
+	if ( first_word == "@kinemage" ) {
 		//header already written, append to existing file, don't write the header
 		outfile.open(filename_,std::ios::app);
-	}else
-	{
+	} else {
 		//header not written, open for overwrite, write the header
 		outfile.open(filename_,std::ios::out);
 		write_header(outfile);
@@ -144,54 +142,45 @@ void RenderGridsToKinemage::parse_my_tag(utility::tag::TagCOP tag,
 )
 {
 
-	if(!tag->hasOption("grid_name"))
-	{
+	if ( !tag->hasOption("grid_name") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("RenderGridsToKinemage requires the'grid name' option");
 	}
 
 	grid_name_ = tag->getOption<std::string>("grid_name");
 	grid_ = utility::pointer::dynamic_pointer_cast<scoring_grid::SingleGrid,scoring_grid::GridBase>(scoring_grid::GridManager::get_instance()->get_grid(grid_name_) );
-	if( ! grid_ )
-	{
+	if ( ! grid_ ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("RenderGridsToKinemage is currently unable to output the contents of a metagrid.  Sorry.");
 	}
 
-	if(!tag->hasOption("file_name"))
-	{
+	if ( !tag->hasOption("file_name") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("RenderGridsToKinemage requires the 'file_name' option");
 	}
 	filename_ = tag->getOption<std::string>("file_name");
 
-	if(!tag->hasOption("low_color") && !tag->hasOption("zero_color") && !tag->hasOption("high_color"))
-	{
-		if(tag->hasOption("color"))
-		{
+	if ( !tag->hasOption("low_color") && !tag->hasOption("zero_color") && !tag->hasOption("high_color") ) {
+		if ( tag->hasOption("color") ) {
 			//one color
 			color_mode_ = 1;
 			color_ = numeric::comma_seperated_string_to_xyz<core::Real>(tag->getOption<std::string>("color"));
 
-		}else
-		{
+		} else {
 			throw utility::excn::EXCN_RosettaScriptsOption("To use RenderGridsToKinemage you must specify color for a 1 color grid plot, "
 				"high_color and low_color for a two color gradient, or high_color, low_color and "
 				"zero_color for a three color gradient centered at zero");
 		}
-	}else if(tag->hasOption("low_color") && tag->hasOption("zero_color") && tag->hasOption("high_color"))
-	{
+	} else if ( tag->hasOption("low_color") && tag->hasOption("zero_color") && tag->hasOption("high_color") ) {
 		//3 part gradient
 		color_mode_ = 3;
 		low_color_ = numeric::comma_seperated_string_to_xyz<core::Real>(tag->getOption<std::string>("low_color"));
 		zero_color_ = numeric::comma_seperated_string_to_xyz<core::Real>(tag->getOption<std::string>("zero_color"));
 		high_color_ = numeric::comma_seperated_string_to_xyz<core::Real>(tag->getOption<std::string>("high_color"));
 
-	}else if(tag->hasOption("low_color")&& tag->hasOption("high_color"))
-	{
+	} else if ( tag->hasOption("low_color")&& tag->hasOption("high_color") ) {
 		//2 part gradient
 		color_mode_ = 2;
 		low_color_ = numeric::comma_seperated_string_to_xyz<core::Real>(tag->getOption<std::string>("low_color"));
 		high_color_ = numeric::comma_seperated_string_to_xyz<core::Real>(tag->getOption<std::string>("high_color"));
-	}else
-	{
+	} else {
 		throw utility::excn::EXCN_RosettaScriptsOption("To use RenderGridsToKinemage you must specify color for a 1 color grid plot, "
 			"high_color and low_color for a two color gradient, or high_color, low_color and "
 			"zero_color for a three color gradient centered at zero");
@@ -206,17 +195,13 @@ void RenderGridsToKinemage::parse_my_tag(utility::tag::TagCOP tag,
 
 void RenderGridsToKinemage::setup_colors()
 {
-	if(color_mode_ == 1)
-	{
+	if ( color_mode_ == 1 ) {
 		setup_one_color_scheme();
-	}else if(color_mode_ == 2)
-	{
+	} else if ( color_mode_ == 2 ) {
 		setup_two_color_scheme();
-	}else if(color_mode_ == 3)
-	{
+	} else if ( color_mode_ == 3 ) {
 		setup_three_color_scheme();
-	}else
-	{
+	} else {
 		assert(false); //This should never happen
 	}
 
@@ -246,8 +231,7 @@ void RenderGridsToKinemage::setup_two_color_scheme()
 	core::Vector current_color = low_color_;
 	core::Real current_low = grid_min;
 	core::Real current_high = current_low+value_step;
-	for(core::Size bin = 1; bin <= gradient_bins_; ++bin)
-	{
+	for ( core::Size bin = 1; bin <= gradient_bins_; ++bin ) {
 		current_color.x(current_color.x()+red_step);
 		current_color.y(current_color.y()+green_step);
 		current_color.z(current_color.z()+blue_step);
@@ -265,8 +249,7 @@ void RenderGridsToKinemage::setup_three_color_scheme()
 {
 	core::Real grid_min = grid_->get_min_value();
 	core::Real grid_max = grid_->get_max_value();
-	if(grid_min >= 0)
-	{
+	if ( grid_min >= 0 ) {
 		utility_exit_with_message("This grid does not have any scores greater than 0, a three color gradient makes no sense here");
 	}
 
@@ -287,8 +270,7 @@ void RenderGridsToKinemage::setup_three_color_scheme()
 	core::Real current_low = grid_min;
 	core::Real current_high = current_low+low_value_step;
 	//set up colors between low_color and zero
-	for(core::Size bin = 1; bin <= half_bins; ++bin)
-	{
+	for ( core::Size bin = 1; bin <= half_bins; ++bin ) {
 		current_color.x(current_color.x()+red_step_low);
 		current_color.y(current_color.y()+green_step_low);
 		current_color.z(current_color.z()+blue_step_low);
@@ -306,8 +288,7 @@ void RenderGridsToKinemage::setup_three_color_scheme()
 	current_low = 0.0;
 	current_high = current_low+high_value_step;
 
-	for(core::Size bin = 1; bin <= half_bins;++bin)
-	{
+	for ( core::Size bin = 1; bin <= half_bins; ++bin ) {
 		current_color.x(current_color.x()+red_step_high);
 		current_color.y(current_color.y()+green_step_high);
 		current_color.z(current_color.z()+blue_step_high);
@@ -329,22 +310,19 @@ void RenderGridsToKinemage::write_points(utility::io::ozstream & kin_file)
 	kin_file << "@dotlist {" << master_name << " dots} color=white master={" <<master_name << "}" <<std::endl;
 
 	//loop through each color in color_data
-	for(core::Size color_index = 1; color_index <= color_data_.size();++color_index)
-	{
+	for ( core::Size color_index = 1; color_index <= color_data_.size(); ++color_index ) {
 		//write dot for each point in color_range
 		ColorGradient current_color(color_data_[color_index]);
 		std::list<std::pair<core::Vector, core::Real> > point_list(
-				grid_->get_point_value_list_within_range(current_color.lower_bound,current_color.upper_bound,stride_));
+			grid_->get_point_value_list_within_range(current_color.lower_bound,current_color.upper_bound,stride_));
 
 		std::list<std::pair<core::Vector, core::Real> >::iterator point_iterator = point_list.begin();
-		for(; point_iterator != point_list.end(); ++point_iterator)
-		{
+		for ( ; point_iterator != point_list.end(); ++point_iterator ) {
 			core::Vector coords(point_iterator->first);
 			core::Real value(point_iterator->second);
 
 			//don't output zero points
-			if( value != 0.0)
-			{
+			if ( value != 0.0 ) {
 				kin_file <<"{" << master_name << "_points} " << current_color.color_name << " " <<
 					coords.x() << " " << coords.y() << " " << coords.z() <<std::endl;
 			}
@@ -355,13 +333,12 @@ void RenderGridsToKinemage::write_points(utility::io::ozstream & kin_file)
 
 void RenderGridsToKinemage::write_colors(utility::io::ozstream & kin_file)
 {
-	for(core::Size color_index = 1; color_index <= color_data_.size();++color_index)
-	{
+	for ( core::Size color_index = 1; color_index <= color_data_.size(); ++color_index ) {
 		ColorGradient current_color(color_data_[color_index]);
 		//we asked the user to specify in RGB, but the kinemage needs to be in HSV
 		core::Vector hsv_color(numeric::rgb_to_hsv(current_color.color_value));
 		kin_file << "@hsvcolor {" << current_color.color_name << "} " <<
-				hsv_color.x() << " "<< hsv_color.y()*100 << " " << hsv_color.z()*100 << std::endl;
+			hsv_color.x() << " "<< hsv_color.y()*100 << " " << hsv_color.z()*100 << std::endl;
 	}
 }
 

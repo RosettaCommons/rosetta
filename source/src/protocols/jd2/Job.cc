@@ -42,34 +42,34 @@ namespace jd2 {
 
 ////////////////////////////Job/////////////////////////////
 Job::Job( InnerJobOP inner_job, core::Size nstruct_index )
-	: inner_job_(inner_job),
-		nstruct_index_(nstruct_index),
-		status_prefix_( "" ),
-		long_strings_(),
-		string_string_pairs_(),
-		string_real_pairs_(),
-		completed_(false),
-		can_be_deleted_(false),
-		start_time_(0),
-		end_time_(0),
-		timestamp_("")
+: inner_job_(inner_job),
+	nstruct_index_(nstruct_index),
+	status_prefix_( "" ),
+	long_strings_(),
+	string_string_pairs_(),
+	string_real_pairs_(),
+	completed_(false),
+	can_be_deleted_(false),
+	start_time_(0),
+	end_time_(0),
+	timestamp_("")
 {
 }
 
 /// @brief Copy constructor
 ///
 Job::Job( Job const &src )
-	: utility::pointer::ReferenceCount(),
-		inner_job_(src.inner_job_->clone()),
-		nstruct_index_(src.nstruct_index_),
-		status_prefix_( src.status_prefix_ ),
-		long_strings_(src.long_strings_),
-		string_string_pairs_(src.string_string_pairs_),
-		string_real_pairs_(src.string_real_pairs_),
-		completed_(src.completed_),
-		can_be_deleted_(src.can_be_deleted_),
-		start_time_(src.start_time_),
-		timestamp_(src.timestamp_)
+: utility::pointer::ReferenceCount(),
+	inner_job_(src.inner_job_->clone()),
+	nstruct_index_(src.nstruct_index_),
+	status_prefix_( src.status_prefix_ ),
+	long_strings_(src.long_strings_),
+	string_string_pairs_(src.string_string_pairs_),
+	string_real_pairs_(src.string_real_pairs_),
+	completed_(src.completed_),
+	can_be_deleted_(src.can_be_deleted_),
+	start_time_(src.start_time_),
+	timestamp_(src.timestamp_)
 {
 	//TR.Trace << "Using Job (base class) for JobDistributor" << std::endl;
 }
@@ -202,7 +202,7 @@ bool Job::bad() const {
 
 void Job::set_bad(bool value)  {
 	inner_job_->set_bad( value );
-	if(inner_job_->bad()) can_be_deleted_=true; //If this job is bad, it can be deleted to free up memory.  If not, it may or may not be deletable, so don't touch the value of can_be_deleted_.
+	if ( inner_job_->bad() ) can_be_deleted_=true; //If this job is bad, it can be deleted to free up memory.  If not, it may or may not be deletable, so don't touch the value of can_be_deleted_.
 	return;
 }
 
@@ -215,10 +215,10 @@ core::Size Job::end_time() const {
 }
 
 core::Size Job::elapsed_time() const {
-	if( start_time_ == 0 ) {
+	if ( start_time_ == 0 ) {
 		// Haven't started job yet.
 		return 0;
-	} else if( end_time_ == 0 ) {
+	} else if ( end_time_ == 0 ) {
 		// In the middle of job
 		return time(NULL) - start_time_;
 	}
@@ -258,8 +258,9 @@ void Job::call_output_observers( core::pose::Pose const & pose )
 			it_end = output_observers_.end();
 			it != it_end; ++it ) {
 		JobOutputterObserverOP observer = (*it).lock();
-		if(observer)
+		if ( observer ) {
 			observer->add_values_to_job( pose, *this );
+		}
 	}
 }
 
@@ -268,8 +269,8 @@ JobCOP const JD2_BOGUS_JOB(  JobOP( new Job( InnerJobOP( new InnerJob("EMPTY_JOB
 
 bool
 operator==(
-  Job const & a,
-  Job const & b
+	Job const & a,
+	Job const & b
 ) {
 	return
 		*(a.inner_job_) == *(b.inner_job_) &&
@@ -285,8 +286,8 @@ operator==(
 
 bool
 operator!=(
-  Job const & a,
-  Job const & b
+	Job const & a,
+	Job const & b
 ) {
 	return !(a == b);
 }
@@ -298,7 +299,7 @@ Job::show(
 ) const {
 	out
 		<< "Inner Job:";
-	if(inner_job_){
+	if ( inner_job_ ) {
 		out << std::endl << *inner_job_ << std::endl;
 	} else {
 		out << " NULL" << std::endl;
@@ -308,10 +309,10 @@ Job::show(
 		<< "nstruct index: " << nstruct_index_ << std::endl
 		<< "status_prefix: " << status_prefix_ << std::endl
 		<< "long_strings:" << std::endl;
-	for(
-		Strings::const_iterator
+	for (
+			Strings::const_iterator
 			s = long_strings_.begin(), se = long_strings_.end();
-		s != se; ++s){
+			s != se; ++s ) {
 		out << *s << std::endl;
 	}
 
@@ -319,19 +320,19 @@ Job::show(
 		<< "completed: " << completed_ << std::endl
 		<< "can be deleted: " << (can_be_deleted_ ? "true" : "false") << std::endl
 		<< "String -> String Pairs:" << std::endl;
-	for(
-		StringStringPairs::const_iterator
+	for (
+			StringStringPairs::const_iterator
 			s = string_string_pairs_.begin(), se = string_string_pairs_.end();
-		s != se; ++s){
+			s != se; ++s ) {
 		out
 			<< "\t" << s->first << ": " << s->second << std::endl;
 	}
 
-	out	<< "String -> Real Pairs:" << std::endl;
-	for(
-		StringRealPairs::const_iterator
+	out << "String -> Real Pairs:" << std::endl;
+	for (
+			StringRealPairs::const_iterator
 			s = string_real_pairs_.begin(), se = string_real_pairs_.end();
-		s != se; ++s){
+			s != se; ++s ) {
 		out
 			<< "\t" << s->first << ": " << s->second << std::endl;
 	}

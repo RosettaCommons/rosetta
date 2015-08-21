@@ -162,7 +162,7 @@ OTFFlexbbEdge::OTFFlexbbEdge( OTFFlexbbInteractionGraph * owner, int node1, int 
 			num_bb( 0 ),
 			num_bb( 1 ),
 			(unsigned char) 0 ),
-		all_vs_bb_energies_[ 0 ].dimension( get_num_states_for_node( 0 ), num_bb( 1 ) );
+			all_vs_bb_energies_[ 0 ].dimension( get_num_states_for_node( 0 ), num_bb( 1 ) );
 		all_vs_bb_energies_[ 1 ].dimension( get_num_states_for_node( 1 ), num_bb( 0 ) );
 		procorr_energies_[ 0 ].dimension( get_num_states_for_node( 0 ), num_bb( 1 ) );
 		procorr_energies_[ 1 ].dimension( get_num_states_for_node( 1 ), num_bb( 0 ) );
@@ -234,8 +234,8 @@ OTFFlexbbEdge::compute_samebbconf_alternate_state_energy_first_node()
 	if ( lr_energies_exist_ ) {
 		EnergyMap emap;
 		for ( ScoreFunction::LR_2B_MethodIterator iter = sfxn_->long_range_energies_begin(),
-					iter_end = sfxn_->long_range_energies_end();
-					iter != iter_end; ++iter ) {
+				iter_end = sfxn_->long_range_energies_end();
+				iter != iter_end; ++iter ) {
 			(*iter)->residue_pair_energy( alt_rot(0), alt_rot(1), *pose_, *sfxn_, emap );
 		}
 		scsc_energy_alt_conf_ += static_cast< PackerEnergy > ( sfxn_->weights().dot( emap ) );
@@ -326,8 +326,8 @@ OTFFlexbbEdge::compute_samebbconf_alternate_state_energy_second_node()
 	if ( lr_energies_exist_ ) {
 		EnergyMap emap;
 		for ( ScoreFunction::LR_2B_MethodIterator iter = sfxn_->long_range_energies_begin(),
-					iter_end = sfxn_->long_range_energies_end();
-					iter != iter_end; ++iter ) {
+				iter_end = sfxn_->long_range_energies_end();
+				iter != iter_end; ++iter ) {
 			(*iter)->residue_pair_energy( alt_rot(0), alt_rot(1), *pose_, *sfxn_, emap );
 		}
 		scsc_energy_alt_conf_ += static_cast< PackerEnergy > ( sfxn_->weights().dot( emap ) );
@@ -415,8 +415,8 @@ OTFFlexbbEdge::compute_altbbconf_alternate_state_energy()
 	if ( lr_energies_exist_ ) {
 		EnergyMap emap;
 		for ( ScoreFunction::LR_2B_MethodIterator iter = sfxn_->long_range_energies_begin(),
-					iter_end = sfxn_->long_range_energies_end();
-					iter != iter_end; ++iter ) {
+				iter_end = sfxn_->long_range_energies_end();
+				iter != iter_end; ++iter ) {
 			(*iter)->residue_pair_energy( alt_rot(0), alt_rot(1), *pose_, *sfxn_, emap );
 		}
 		scsc_energy_alt_conf_ += static_cast< PackerEnergy > ( sfxn_->weights().dot( emap ) );
@@ -462,23 +462,23 @@ OTFFlexbbEdge::otfedge_note_substitution_accepted()
 	procorr_curr_conf_[ 1 ]          = procorr_alt_conf_[ 1 ];
 	glycorr_curr_conf_[ 0 ]          = glycorr_alt_conf_[ 0 ];
 	glycorr_curr_conf_[ 1 ]          = glycorr_alt_conf_[ 1 ];
-/*
+	/*
 	std::cout << "scsc_energy_alt_conf_ " << scsc_energy_alt_conf_ <<
-		" all_vs_bb_energy_alt_conf_[ 0 ] " << all_vs_bb_energy_alt_conf_[ 0 ] <<
-		" all_vs_bb_energy_alt_conf_[ 1 ] " << all_vs_bb_energy_alt_conf_[ 1 ] <<
-		" procorr_alt_conf_[ 0 ] " << procorr_alt_conf_[ 1 ] <<
-		" procorr_alt_conf_[ 1 ] " <<  procorr_alt_conf_[ 1 ] <<
-		" glycorr_alt_conf_[ 0 ] " << glycorr_alt_conf_[ 1 ] <<
-		" glycorr_alt_conf_[ 1 ] " << glycorr_alt_conf_[ 1 ] << std::endl;
+	" all_vs_bb_energy_alt_conf_[ 0 ] " << all_vs_bb_energy_alt_conf_[ 0 ] <<
+	" all_vs_bb_energy_alt_conf_[ 1 ] " << all_vs_bb_energy_alt_conf_[ 1 ] <<
+	" procorr_alt_conf_[ 0 ] " << procorr_alt_conf_[ 1 ] <<
+	" procorr_alt_conf_[ 1 ] " <<  procorr_alt_conf_[ 1 ] <<
+	" glycorr_alt_conf_[ 0 ] " << glycorr_alt_conf_[ 1 ] <<
+	" glycorr_alt_conf_[ 1 ] " << glycorr_alt_conf_[ 1 ] << std::endl;
 
 	std::cout << "scsc_energy_curr_conf_ " << scsc_energy_curr_conf_ <<
-		" all_vs_bb_energy_curr_conf_[ 0 ] " << all_vs_bb_energy_curr_conf_[ 0 ] <<
-		" all_vs_bb_energy_curr_conf_[ 1 ] " << all_vs_bb_energy_curr_conf_[ 1 ] <<
-		" procorr_curr_conf_[ 0 ] " << procorr_curr_conf_[ 1 ] <<
-		" procorr_curr_conf_[ 1 ] " <<  procorr_curr_conf_[ 1 ] <<
-		" glycorr_curr_conf_[ 0 ] " << glycorr_curr_conf_[ 1 ] <<
-		" glycorr_curr_conf_[ 1 ] " << glycorr_curr_conf_[ 1 ] << std::endl;
-*/
+	" all_vs_bb_energy_curr_conf_[ 0 ] " << all_vs_bb_energy_curr_conf_[ 0 ] <<
+	" all_vs_bb_energy_curr_conf_[ 1 ] " << all_vs_bb_energy_curr_conf_[ 1 ] <<
+	" procorr_curr_conf_[ 0 ] " << procorr_curr_conf_[ 1 ] <<
+	" procorr_curr_conf_[ 1 ] " <<  procorr_curr_conf_[ 1 ] <<
+	" glycorr_curr_conf_[ 0 ] " << glycorr_curr_conf_[ 1 ] <<
+	" glycorr_curr_conf_[ 1 ] " << glycorr_curr_conf_[ 1 ] << std::endl;
+	*/
 }
 
 unsigned int
@@ -516,9 +516,9 @@ OTFFlexbbEdge::set_ProCorrection_values(
 		(sc_nonprobb_E + 0.5 * bb_nonprobb_E);
 
 	/*if ( get_node_index(0) == 27 && get_node_index(1) == 28 ) {
-		std::cout << "SetProCorr: " << get_node_index(0) << " " << get_node_index(1) << " " << node << " " << state << " " << compact_bbindex( other_bb )
-			<< " allvbb " << all_vs_bb_energies_[ node ]( state, compact_bbindex( other_bb ) ) << " "
-			<< " procorr " << procorr_energies_[ node ]( state, compact_bbindex( other_bb ) ) << std::endl;
+	std::cout << "SetProCorr: " << get_node_index(0) << " " << get_node_index(1) << " " << node << " " << state << " " << compact_bbindex( other_bb )
+	<< " allvbb " << all_vs_bb_energies_[ node ]( state, compact_bbindex( other_bb ) ) << " "
+	<< " procorr " << procorr_energies_[ node ]( state, compact_bbindex( other_bb ) ) << std::endl;
 	}*/
 
 
@@ -547,9 +547,9 @@ OTFFlexbbEdge::set_GlyCorrection_values(
 		(sc_nonglybb_E + 0.5 * bb_nonglybb_E);
 
 	/*if ( get_node_index(0) == 27 && get_node_index(1) == 28 ) {
-		std::cout << "SetGlyCorr: " << get_node_index(0) << " " << get_node_index(1) << " " << node << " " << state << " " << compact_bbindex( other_bb )
-			<< " allvbb " << all_vs_bb_energies_[ node ]( state, compact_bbindex( other_bb ) ) << " "
-			<< " glycorr " << glycorr_energies_[ node ]( state, compact_bbindex( other_bb ) ) << std::endl;
+	std::cout << "SetGlyCorr: " << get_node_index(0) << " " << get_node_index(1) << " " << node << " " << state << " " << compact_bbindex( other_bb )
+	<< " allvbb " << all_vs_bb_energies_[ node ]( state, compact_bbindex( other_bb ) ) << " "
+	<< " glycorr " << glycorr_energies_[ node ]( state, compact_bbindex( other_bb ) ) << std::endl;
 	}*/
 
 }
@@ -926,11 +926,11 @@ OTFFlexbbInteractionGraph::debug_note_projected_deltaE_of_considered_substitutio
 				//std::cout << " " << jj_resid << " " << ii_jj_energy ;
 
 				//std::cout << " bbbb: " << core::pack::rotamer_set::RotamerSets::get_bb_bbE(
-				//	*alternate_pose_, *oc_sfxn_, alternate_pose_->residue( ii_resid ), alternate_pose_->residue( jj_resid ) );
+				// *alternate_pose_, *oc_sfxn_, alternate_pose_->residue( ii_resid ), alternate_pose_->residue( jj_resid ) );
 				//std::cout << " sc1bb2: " << core::pack::rotamer_set::RotamerSets::get_sc_bbE(
-				//	*alternate_pose_, *oc_sfxn_, alternate_pose_->residue( ii_resid ), alternate_pose_->residue( jj_resid ) );
+				// *alternate_pose_, *oc_sfxn_, alternate_pose_->residue( ii_resid ), alternate_pose_->residue( jj_resid ) );
 				//std::cout << " bb1sc2: " << core::pack::rotamer_set::RotamerSets::get_sc_bbE(
-				//	*alternate_pose_, *oc_sfxn_, alternate_pose_->residue( jj_resid ), alternate_pose_->residue( ii_resid ) );
+				// *alternate_pose_, *oc_sfxn_, alternate_pose_->residue( jj_resid ), alternate_pose_->residue( ii_resid ) );
 
 				//core::scoring::EnergyMap tbemap;
 				//oc_sfxn_->eval_ci_2b_sc_sc( alternate_pose_->residue( ii_resid ), alternate_pose_->residue( jj_resid ) , *alternate_pose_, tbemap );
@@ -947,7 +947,7 @@ OTFFlexbbInteractionGraph::debug_note_projected_deltaE_of_considered_substitutio
 			//std::cout << "Real two body background energy total: " << ii_total << std::endl;
 			//std::cout << "Real total energy: " << alternate_pose_->energies().residue_total_energies( ii_resid ).dot( oc_sfxn_->weights() ) << std::endl;
 			Real one_body_delta = std::abs( ii_one_body_and_background - get_otfflexbb_node( ii_moltenresid )->alternate_state_one_body_energy() );
-			if ( one_body_delta > 1e-5 && one_body_delta / ii_one_body_and_background > 1e-5) {
+			if ( one_body_delta > 1e-5 && one_body_delta / ii_one_body_and_background > 1e-5 ) {
 				std::cout << "One body energy in error: molt: " << ii_moltenresid << " resid: " << ii_resid
 					<< " rot: " << alt_rot_inds_[ ii ] << " " << alternate_pose_->residue( ii_resid ).aa()
 					<< " real " << ii_one_body_and_background << " pred "
@@ -956,18 +956,18 @@ OTFFlexbbInteractionGraph::debug_note_projected_deltaE_of_considered_substitutio
 				alternate_pose_->energies().onebody_energies( ii_resid ).show_weighted( std::cout, oc_sfxn_->weights() );
 				std::cout << std::endl;
 				/*for ( Size jj = 1; jj <= alt_rots_[ ii ]->mainchain_torsions().size(); ++jj ) {
-					std::cout << "bb angles: " << jj << " " <<
-						alternate_pose_->residue( ii_resid ).mainchain_torsions()[ jj ] << " vs " <<
-						alt_rots_[ ii ]->mainchain_torsions()[ jj ] << std::endl;
+				std::cout << "bb angles: " << jj << " " <<
+				alternate_pose_->residue( ii_resid ).mainchain_torsions()[ jj ] << " vs " <<
+				alt_rots_[ ii ]->mainchain_torsions()[ jj ] << std::endl;
 				}
 				for ( Size jj = 1; jj <= alt_rots_[ ii ]->natoms(); ++jj ) {
-					std::cout << "coords: " << jj << " (" << alternate_pose_->residue( ii_resid ).xyz( jj ).x()
-					<< " " << alternate_pose_->residue( ii_resid ).xyz( jj ).y()
-					<< " " << alternate_pose_->residue( ii_resid ).xyz( jj ).z() << ") vs ("
-					<< " " << alt_rots_[ ii ]->xyz( jj ).x()
-					<< " " << alt_rots_[ ii ]->xyz( jj ).y()
-					<< " " << alt_rots_[ ii ]->xyz( jj ).z()
-					<< ")" <<  std::endl;
+				std::cout << "coords: " << jj << " (" << alternate_pose_->residue( ii_resid ).xyz( jj ).x()
+				<< " " << alternate_pose_->residue( ii_resid ).xyz( jj ).y()
+				<< " " << alternate_pose_->residue( ii_resid ).xyz( jj ).z() << ") vs ("
+				<< " " << alt_rots_[ ii ]->xyz( jj ).x()
+				<< " " << alt_rots_[ ii ]->xyz( jj ).y()
+				<< " " << alt_rots_[ ii ]->xyz( jj ).z()
+				<< ")" <<  std::endl;
 				}*/
 				for ( core::graph::Graph::EdgeListIter
 						ir  = alternate_pose_->energies().energy_graph().get_node(ii_resid)->edge_list_begin(),
@@ -980,11 +980,11 @@ OTFFlexbbInteractionGraph::debug_note_projected_deltaE_of_considered_substitutio
 					std::cout << ii_resid << " " << jj_resid << " " << ii_jj_energy << std::endl;;
 
 					//std::cout << " bbbb: " << core::pack::rotamer_set::RotamerSets::get_bb_bbE(
-					//	*alternate_pose_, *oc_sfxn_, alternate_pose_->residue( ii_resid ), alternate_pose_->residue( jj_resid ) );
+					// *alternate_pose_, *oc_sfxn_, alternate_pose_->residue( ii_resid ), alternate_pose_->residue( jj_resid ) );
 					//std::cout << " sc1bb2: " << core::pack::rotamer_set::RotamerSets::get_sc_bbE(
-					//	*alternate_pose_, *oc_sfxn_, alternate_pose_->residue( ii_resid ), alternate_pose_->residue( jj_resid ) );
+					// *alternate_pose_, *oc_sfxn_, alternate_pose_->residue( ii_resid ), alternate_pose_->residue( jj_resid ) );
 					//std::cout << " bb1sc2: " << core::pack::rotamer_set::RotamerSets::get_sc_bbE(
-					//	*alternate_pose_, *oc_sfxn_, alternate_pose_->residue( jj_resid ), alternate_pose_->residue( ii_resid ) );
+					// *alternate_pose_, *oc_sfxn_, alternate_pose_->residue( jj_resid ), alternate_pose_->residue( ii_resid ) );
 
 					//core::scoring::EnergyMap tbemap;
 					//oc_sfxn_->eval_ci_2b_sc_sc( alternate_pose_->residue( ii_resid ), alternate_pose_->residue( jj_resid ) , *alternate_pose_, tbemap );
@@ -1003,7 +1003,7 @@ OTFFlexbbInteractionGraph::debug_note_projected_deltaE_of_considered_substitutio
 
 
 		//for ( Size ii = 1; ii <= moltenres_2_resid_.size(); ++ii ) {
-			//std::cout << "moltenres: " << ii << " " << moltenres_2_resid_[ ii ] << std::endl;
+		//std::cout << "moltenres: " << ii << " " << moltenres_2_resid_[ ii ] << std::endl;
 		//}
 		static int count_bad( 0 );
 		alternate_pose_->dump_pdb( "BadPredDeltaE_" + utility::to_string( ++count_bad ) + "_alternate.pdb" );

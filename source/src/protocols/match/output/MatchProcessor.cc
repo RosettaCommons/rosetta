@@ -40,8 +40,8 @@ namespace output {
 static thread_local basic::Tracer TR( "protocols.match.output.MatchProcessor" );
 
 MatchProcessor::MatchProcessor()
-	: match_processing_successful_(false), writer_(/* NULL */),
-		num_matches_processed_(0), up_down_filt_(/* NULL */), up_coll_filt_(NULL)
+: match_processing_successful_(false), writer_(/* NULL */),
+	num_matches_processed_(0), up_down_filt_(/* NULL */), up_coll_filt_(NULL)
 {
 	filter_failcounts_.clear();
 }
@@ -66,16 +66,15 @@ MatchProcessor::end_processing()
 
 	TR << "A total of " << num_matches_processed_ << " matches were processed." << std::endl;
 	core::Size total_filter_fails(0);
-	if( filter_failcounts_.size() != 0 ){
-		for( std::map< std::string, core::Size >::const_iterator map_it( filter_failcounts_.begin() ), map_end( filter_failcounts_.end() ); map_it != map_end; ++map_it){
+	if ( filter_failcounts_.size() != 0 ) {
+		for ( std::map< std::string, core::Size >::const_iterator map_it( filter_failcounts_.begin() ), map_end( filter_failcounts_.end() ); map_it != map_end; ++map_it ) {
 			TR << map_it->second << " matches did not pass filter " << map_it->first << ".\n" ;
 			total_filter_fails += map_it->second;
 		}
-		if( num_matches_processed_ == total_filter_fails ) TR << "Apparently no matches passed all filters." << std::endl;
-	}
-	else TR << "No matches failed any filter.\n";
+		if ( num_matches_processed_ == total_filter_fails ) TR << "Apparently no matches passed all filters." << std::endl;
+	} else TR << "No matches failed any filter.\n";
 
-	if( num_matches_processed_ > total_filter_fails ){
+	if ( num_matches_processed_ > total_filter_fails ) {
 		match_processing_successful_ = true;
 	}
 	TR.flush();
@@ -98,10 +97,9 @@ void
 MatchProcessor::note_filter_fail( std::string filter_name )
 {
 	std::map< std::string, core::Size >::iterator map_it( filter_failcounts_.find( filter_name ) );
-	if( map_it == filter_failcounts_.end() ){
+	if ( map_it == filter_failcounts_.end() ) {
 		filter_failcounts_.insert( std::pair< std::string, core::Size >( filter_name, 1 ) );
-	}
-	else map_it->second++;
+	} else map_it->second++;
 }
 
 void
@@ -112,13 +110,13 @@ MatchProcessor::note_match_processed()
 
 bool
 MatchProcessor::passes_filters(
-		match const & m
+	match const & m
 )
 {
 
 	for ( std::list< MatchFilterOP >::const_iterator
-					iter = filters_.begin(), iter_end = filters_.end();
-				iter != iter_end; ++iter ) {
+			iter = filters_.begin(), iter_end = filters_.end();
+			iter != iter_end; ++iter ) {
 		if (  ! (*iter)->passes_filter( m ) ) {
 			note_filter_fail( (*iter)->filter_name() );
 			return false;
@@ -135,7 +133,7 @@ MatchProcessor::passes_filters(
 
 bool
 MatchProcessor::passes_filters(
-		match_dspos1 const & m
+	match_dspos1 const & m
 )
 {
 	for ( std::list< MatchFilterOP >::const_iterator
@@ -162,7 +160,7 @@ MatchProcessor::add_filter( MatchFilterOP filter )
 
 	UpstreamCollisionFilterCOP up_coll_filt(
 		utility::pointer::dynamic_pointer_cast< UpstreamCollisionFilter > ( filter ) );
-	if( up_coll_filt ){
+	if ( up_coll_filt ) {
 		up_coll_filt_ = up_coll_filt;
 		return;  //upstream collision filter not happening at match enumeration stage anymore
 	}
@@ -178,7 +176,7 @@ MatchProcessor::add_filter( MatchFilterOP filter )
 
 	UpstreamDownstreamCollisionFilterCOP up_down_filt(
 		utility::pointer::dynamic_pointer_cast< UpstreamDownstreamCollisionFilter > ( filter ) );
-	if( up_down_filt ) up_down_filt_ = up_down_filt;
+	if ( up_down_filt ) up_down_filt_ = up_down_filt;
 
 }
 
@@ -214,13 +212,13 @@ MatchProcessor::up_coll_filt() const
 void
 MatchProcessor::set_evaluator( MatchEvaluatorOP evaluator )
 {
-  evaluator_ = evaluator;
+	evaluator_ = evaluator;
 }
 
 void
 MatchProcessor::set_match_score_writer( MatchScoreWriterOP scorewriter)
 {
-  match_score_writer_ = scorewriter;
+	match_score_writer_ = scorewriter;
 }
 
 }

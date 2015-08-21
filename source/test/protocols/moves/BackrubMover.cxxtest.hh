@@ -170,44 +170,44 @@ public:
 		// These segment additions should succeed
 		TR << "Attempting 3 residue segment" << std::endl;
 		TS_ASSERT( backrubmover.add_segment(id::AtomID(the_pose->residue_type(2).atom_index(" CA "), 2),
-		                                    id::AtomID(the_pose->residue_type(2).atom_index(" CA "), 4)) );
+			id::AtomID(the_pose->residue_type(2).atom_index(" CA "), 4)) );
 
 		TR << "Attempting 3 residue segment (reversed)" << std::endl;
 		TS_ASSERT( backrubmover.add_segment(id::AtomID(the_pose->residue_type(3).atom_index(" CA "), 3),
-		                                    id::AtomID(the_pose->residue_type(1).atom_index(" CA "), 1)) );
+			id::AtomID(the_pose->residue_type(1).atom_index(" CA "), 1)) );
 
 		TR << "Attempting 2 residue segment" << std::endl;
 		TS_ASSERT( backrubmover.add_segment(id::AtomID(the_pose->residue_type(1).atom_index(" CA "), 1),
-		                                    id::AtomID(the_pose->residue_type(2).atom_index(" CA "), 2)) );
+			id::AtomID(the_pose->residue_type(2).atom_index(" CA "), 2)) );
 
 		TR << "Attempting 3 atom segment" << std::endl;
 		TS_ASSERT( backrubmover.add_segment(id::AtomID(the_pose->residue_type(1).atom_index(" CA "), 1),
-		                                    id::AtomID(the_pose->residue_type(2).atom_index(" N  "), 2)) );
+			id::AtomID(the_pose->residue_type(2).atom_index(" N  "), 2)) );
 
 		TR << "Attempting 3 residue segment (duplicate)" << std::endl;
 		TS_ASSERT( backrubmover.add_segment(id::AtomID(the_pose->residue_type(2).atom_index(" CA "), 2),
-		                                    id::AtomID(the_pose->residue_type(4).atom_index(" CA "), 4)) );
+			id::AtomID(the_pose->residue_type(4).atom_index(" CA "), 4)) );
 
 		// These segment additions should fail
 		TR << "Attempting 3 residue segment (invalid)" << std::endl;
 		TS_ASSERT(!backrubmover.add_segment(id::AtomID(the_pose->residue_type(1).atom_index(" OD1"), 1),
-		                                    id::AtomID(the_pose->residue_type(3).atom_index(" CA "), 3)) );
+			id::AtomID(the_pose->residue_type(3).atom_index(" CA "), 3)) );
 
 		TR << "Attempting 2 atom segment (short)" << std::endl;
 		TS_ASSERT(!backrubmover.add_segment(id::AtomID(the_pose->residue_type(1).atom_index(" CA "), 1),
-		                                    id::AtomID(the_pose->residue_type(1).atom_index(" C  "), 1)) );
+			id::AtomID(the_pose->residue_type(1).atom_index(" C  "), 1)) );
 
 		TR << "Attempting 2 atom segment (short, reversed)" << std::endl;
 		TS_ASSERT(!backrubmover.add_segment(id::AtomID(the_pose->residue_type(1).atom_index(" C  "), 1),
-		                                    id::AtomID(the_pose->residue_type(1).atom_index(" CA "), 1)) );
+			id::AtomID(the_pose->residue_type(1).atom_index(" CA "), 1)) );
 
 		TR << "Attempting 1 atom segment (ultra short)" << std::endl;
 		TS_ASSERT(!backrubmover.add_segment(id::AtomID(the_pose->residue_type(1).atom_index(" C  "), 1),
-		                                    id::AtomID(the_pose->residue_type(1).atom_index(" C  "), 1)) );
+			id::AtomID(the_pose->residue_type(1).atom_index(" C  "), 1)) );
 
 		TR << "Attempting 2 residue segment (N atoms)" << std::endl;
 		TS_ASSERT(!backrubmover.add_segment(id::AtomID(the_pose->residue_type(1).atom_index(" N  "), 1),
-		                                    id::AtomID(the_pose->residue_type(2).atom_index(" N  "), 2)) );
+			id::AtomID(the_pose->residue_type(2).atom_index(" N  "), 2)) );
 
 		// This section needs actual asserts/UTracer output
 		int segid;
@@ -224,14 +224,14 @@ public:
 		//start_constants.clear();
 		//end_constants.clear();
 		//segid = backrubmover.add_segment(id::AtomID(the_pose->residue_type(19).atom_index(" CB "), 19),
-		//																 id::AtomID(the_pose->residue_type(19).atom_index(" CD "), 19));
+		//                 id::AtomID(the_pose->residue_type(19).atom_index(" CD "), 19));
 		//backrubmover.rotate_segment(*the_pose, segid, numeric::conversions::radians(20.), start_constants, end_constants);
 
 		TR << "Rotating lysine side chain segment" << std::endl;
 		start_constants.clear();
 		end_constants.clear();
 		segid = backrubmover.add_segment(id::AtomID(the_pose->residue_type(42).atom_index(" CB "), 42),
-																		 id::AtomID(the_pose->residue_type(42).atom_index("2HZ "), 42));
+			id::AtomID(the_pose->residue_type(42).atom_index("2HZ "), 42));
 		backrubmover.rotate_segment(*the_pose, segid, numeric::conversions::radians(40.), start_constants, end_constants);
 
 		//backrubmover.branchopt().read_database();

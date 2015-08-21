@@ -31,27 +31,27 @@ using core::chemical::AA;
 using core::scoring::Ramachandran;
 
 AA amino_acids[] = { // {{{1
-		core::chemical::aa_unk, // Start counting from 1.
-		core::chemical::aa_ala,
-		core::chemical::aa_cys,
-		core::chemical::aa_asp,
-		core::chemical::aa_glu,
-		core::chemical::aa_phe,
-		core::chemical::aa_gly,
-		core::chemical::aa_his,
-		core::chemical::aa_ile,
-		core::chemical::aa_lys,
-		core::chemical::aa_leu,
-		core::chemical::aa_met,
-		core::chemical::aa_asn,
-		core::chemical::aa_pro,
-		core::chemical::aa_gln,
-		core::chemical::aa_arg,
-		core::chemical::aa_ser,
-		core::chemical::aa_thr,
-		core::chemical::aa_val,
-		core::chemical::aa_trp,
-		core::chemical::aa_tyr };
+core::chemical::aa_unk, // Start counting from 1.
+core::chemical::aa_ala,
+core::chemical::aa_cys,
+core::chemical::aa_asp,
+core::chemical::aa_glu,
+core::chemical::aa_phe,
+core::chemical::aa_gly,
+core::chemical::aa_his,
+core::chemical::aa_ile,
+core::chemical::aa_lys,
+core::chemical::aa_leu,
+core::chemical::aa_met,
+core::chemical::aa_asn,
+core::chemical::aa_pro,
+core::chemical::aa_gln,
+core::chemical::aa_arg,
+core::chemical::aa_ser,
+core::chemical::aa_thr,
+core::chemical::aa_val,
+core::chemical::aa_trp,
+core::chemical::aa_tyr };
 // }}}1
 
 // This is not a particularly strong set of tests, but hopefully it is enough
@@ -69,10 +69,10 @@ public:
 		pose_ = core::pose::PoseOP( new core::pose::Pose );
 		core::pose::make_pose_from_sequence(*pose_, "VVAV", "fa_standard", false);
 
-		pose_->set_phi(1, 296); pose_->set_psi(1, 319);		// alpha helix
-		pose_->set_phi(2, 235); pose_->set_psi(2, 138);		// beta strand
-		pose_->set_phi(3,  55); pose_->set_psi(3,  42);		// left-handed helix
-		pose_->set_phi(4, 125); pose_->set_psi(4, 100);		// forbidden
+		pose_->set_phi(1, 296); pose_->set_psi(1, 319);  // alpha helix
+		pose_->set_phi(2, 235); pose_->set_psi(2, 138);  // beta strand
+		pose_->set_phi(3,  55); pose_->set_psi(3,  42);  // left-handed helix
+		pose_->set_phi(4, 125); pose_->set_psi(4, 100);  // forbidden
 	}
 
 	void tearDown() {
@@ -84,7 +84,7 @@ public:
 		Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran();
 		Real expected[] = { -0.2578, -0.9390, 0.4680, 4.9683};
 
-		for (Size i = 1; i <= pose_->total_residue(); i++) {
+		for ( Size i = 1; i <= pose_->total_residue(); i++ ) {
 			Real observed = rama.eval_rama_score_residue(pose_->residue(i));
 			TS_ASSERT_DELTA(observed, expected[i-1], 1e-4);
 		}
@@ -95,7 +95,7 @@ public:
 		Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran();
 		Real phi, psi;
 
-		for (Size i = 1; i <= 20; i++) {
+		for ( Size i = 1; i <= 20; i++ ) {
 			rama.random_phipsi_from_rama(amino_acids[i], phi, psi);
 			//std::cout << "phipsi: " << phi << " " << psi << std::endl;
 		}
@@ -106,7 +106,7 @@ public:
 		Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran();
 		Real phi, psi;
 
-		for (Size i = 1; i <= 20; i++) {
+		for ( Size i = 1; i <= 20; i++ ) {
 			rama.uniform_phipsi_from_allowed_rama(amino_acids[i], phi, psi);
 		}
 	}
@@ -116,11 +116,11 @@ public:
 		Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran();
 		bool expected[] = {true, true, true, false};
 
-		for (Size i = 1; i <= pose_->total_residue(); i++) {
+		for ( Size i = 1; i <= pose_->total_residue(); i++ ) {
 			bool is_allowed = rama.phipsi_in_allowed_rama(
-					pose_->aa(i), pose_->phi(i), pose_->psi(i));
+				pose_->aa(i), pose_->phi(i), pose_->psi(i));
 			bool is_forbidden = rama.phipsi_in_forbidden_rama(
-					pose_->aa(i), pose_->phi(i), pose_->psi(i));
+				pose_->aa(i), pose_->phi(i), pose_->psi(i));
 
 			TS_ASSERT_EQUALS(is_allowed, expected[i-1]);
 			TS_ASSERT_EQUALS(is_forbidden, not expected[i-1]);

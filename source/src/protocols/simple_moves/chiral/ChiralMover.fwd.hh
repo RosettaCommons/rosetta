@@ -15,9 +15,9 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace simple_moves{
-namespace chiral{
+namespace protocols {
+namespace simple_moves {
+namespace chiral {
 
 
 //Forwards and OP typedefs

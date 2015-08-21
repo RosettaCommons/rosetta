@@ -38,8 +38,8 @@
 // C++ Headers
 #include <sstream>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::string;
 using std::stringstream;
@@ -87,7 +87,7 @@ AtomTypesFeatures::report_features(
 	StructureID const,
 	sessionOP db_session
 ){
-	if(pose.total_residue() == 0) return 0;
+	if ( pose.total_residue() == 0 ) return 0;
 
 	// All residues in a pose must have the same atom type set. So look
 	// up the atom type set of the first residue if it exists

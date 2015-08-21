@@ -34,83 +34,83 @@ static thread_local basic::Tracer ligand_scores_tracer( "protocols.ligand_dockin
 /// @brief append interface_delta scores
 void
 append_interface_deltas(
-		core::Size jump_id,
-		protocols::jd2::JobOP job,
-		core::pose::Pose const & after,
-		const core::scoring::ScoreFunctionOP scorefxn,
-		std::string const & prefix
+	core::Size jump_id,
+	protocols::jd2::JobOP job,
+	core::pose::Pose const & after,
+	const core::scoring::ScoreFunctionOP scorefxn,
+	std::string const & prefix
 );
 
-	
+
 void
 append_interface_deltas(
-		core::Size jump_id,
-		protocols::jd2::JobOP job,
-		core::pose::Pose const & after,
-		const core::scoring::ScoreFunctionOP scorefxn,
-		std::string const & prefix,
-		protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function
+	core::Size jump_id,
+	protocols::jd2::JobOP job,
+	core::pose::Pose const & after,
+	const core::scoring::ScoreFunctionOP scorefxn,
+	std::string const & prefix,
+	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function
 );
 
 void
 append_ligand_travel(
-		core::Size jump_id,
-		protocols::jd2::JobOP job,
-		core::pose::Pose const & before,
-		core::pose::Pose const & after,
-		std::string const & prefix
+	core::Size jump_id,
+	protocols::jd2::JobOP job,
+	core::pose::Pose const & before,
+	core::pose::Pose const & after,
+	std::string const & prefix
 );
 
 void
 append_ligand_grid_scores(
-		core::Size jump_id,
-		protocols::jd2::JobOP job,
-		core::pose::Pose const & after,
-		std::string const & prefix
+	core::Size jump_id,
+	protocols::jd2::JobOP job,
+	core::pose::Pose const & after,
+	std::string const & prefix
 );
 
 void
 append_ligand_grid_scores(
-		core::Size jump_id,
-		protocols::jd2::JobOP job,
-		core::pose::Pose const & after,
-		std::string const & prefix,
-		protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function
+	core::Size jump_id,
+	protocols::jd2::JobOP job,
+	core::pose::Pose const & after,
+	std::string const & prefix,
+	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function
 );
 
 void
 append_radius_of_gyration(
-		core::Size jump_id,
-		protocols::jd2::JobOP job,
-		core::pose::Pose const & before,
-		std::string const & prefix
+	core::Size jump_id,
+	protocols::jd2::JobOP job,
+	core::pose::Pose const & before,
+	std::string const & prefix
 );
 
 void
 append_ligand_RMSD(
-		core::Size jump_id,
-		protocols::jd2::JobOP job,
-		core::pose::Pose const & before,
-		core::pose::Pose const & after,
-		std::string const & prefix
+	core::Size jump_id,
+	protocols::jd2::JobOP job,
+	core::pose::Pose const & before,
+	core::pose::Pose const & after,
+	std::string const & prefix
 );
 
 void
 append_multi_residue_ligand_RMSD(
-		core::Size jump_id,
-		protocols::jd2::JobOP job,
-		core::pose::Pose const & before,
-		core::pose::Pose const & after,
-		std::string const & prefix
+	core::Size jump_id,
+	protocols::jd2::JobOP job,
+	core::pose::Pose const & before,
+	core::pose::Pose const & after,
+	std::string const & prefix
 );
 
 void
 append_automorphic_rmsd(
-		core::Size ligand_residue_id,
-		protocols::jd2::JobOP job,
-		core::pose::Pose const & before,
-		core::pose::Pose const & after,
-		std::string const & prefix
+	core::Size ligand_residue_id,
+	protocols::jd2::JobOP job,
+	core::pose::Pose const & before,
+	core::pose::Pose const & after,
+	std::string const & prefix
 );
 
 } // namespace ligand_docking

@@ -69,7 +69,7 @@ public:
 		utility::vector1< std::string > params_files;
 		ResidueTypeSetCOP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
-		if(!residue_set.has_name("D2I")) params_files.push_back("devel/denovo_design/D2I.params");
+		if ( !residue_set.has_name("D2I") ) params_files.push_back("devel/denovo_design/D2I.params");
 		residue_set.read_files(params_files);
 
 		// initialize common filters/movers/scorefxns
@@ -104,9 +104,9 @@ public:
 		utility::vector1< StrandData > strand_data;
 		for ( core::Size i=1; i<=4; ++i ) {
 			strand_data.push_back( StrandData( "S" + boost::lexical_cast< std::string >( i ),
-																				 6,
-																				 0,
-																				 "P" ) );
+				6,
+				0,
+				"P" ) );
 		}
 		builder.strand_data( strand_data );
 		// initialize points, ca_coords data
@@ -124,10 +124,10 @@ public:
 			}
 		}
 		/*// strands should be build from the center outward
-	for ( core::Size i=center_low; i>=1; --i ) {
+		for ( core::Size i=center_low; i>=1; --i ) {
 		generate_strand( i, i+1, i+2 );
-	}
-	for ( core::Size i=center_high; i<=strands_to_build; ++i ) {
+		}
+		for ( core::Size i=center_high; i<=strands_to_build; ++i ) {
 		generate_strand( i, i-1, i-2 );
 		}*/
 

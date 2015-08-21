@@ -23,7 +23,7 @@
 #include <protocols/forge/build/BuildInstruction.fwd.hh>
 
 #if defined(WIN_PYROSETTA) || defined(WIN32)
-	#include <protocols/forge/build/BuildInstruction.hh>
+#include <protocols/forge/build/BuildInstruction.hh>
 #endif
 
 // project headers
@@ -63,7 +63,7 @@ public: // typedefs
 
 	typedef core::Size Size;
 	typedef core::kinematics::MoveMap MoveMap;
-    typedef core::kinematics::MoveMapOP MoveMapOP;
+	typedef core::kinematics::MoveMapOP MoveMapOP;
 	typedef core::pose::Pose Pose;
 
 	typedef core::id::SequenceMapping SequenceMapping;
@@ -226,8 +226,8 @@ public: // movemap
 	/// @brief return the combined movemap from all instructions in this manager
 	/// @return If modify() has not been called will return an empty MoveMap.
 	MoveMap movemap() const;
-    
-    MoveMapOP movemap_as_OP() const;
+
+	MoveMapOP movemap_as_OP() const;
 
 
 public: // mapping

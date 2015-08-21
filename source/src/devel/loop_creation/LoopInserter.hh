@@ -36,46 +36,46 @@ class LoopInserter : public protocols::moves::Mover
 {
 
 public:
-	
+
 	protocols::loops::Loop
 	get_created_loop() const;
-	
+
 	core::Size
 	loop_anchor() const;
-	
+
 	void
 	loop_anchor(
 		core::Size loop_anchor
 	);
-	
+
 	void
 	modified_range(
 		core::Size res_begin,
 		core::Size res_end
 	);
-	
+
 	std::pair<core::Size, core::Size>
 	modified_range() const;
-	
+
 	void
 	parse_loop_anchor(
 		utility::tag::TagCOP tag
 	);
-	
+
 protected:
 
 	//The inserted loop to be set by subclasses
 	protocols::loops::Loop created_loop_;
-	
+
 	//Residues that have been modified by this loop inserter
 	std::pair<core::Size, core::Size> modified_range_;
-	
+
 	//The residue to build the loop after (new loop will be between current loop_anchor_ and loop_anchor_+1)
 	core::Size loop_anchor_;
-	
+
 	//Should this mover be allowed to make modifications outside of the loop region?
 	bool prevent_nonloop_modifications_;
-	
+
 };
 
 } //loop creation

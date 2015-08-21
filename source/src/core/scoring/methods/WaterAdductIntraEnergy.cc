@@ -74,8 +74,8 @@ WaterAdductIntraEnergy::residue_energy(
 ) const
 {
 	// Sum over all waters
-	for( int atm = 1, atme = rsd.natoms() ; atm <= atme ; ++atm ) {
-		if( rsd.atom_type( atm ).is_h2o() ) emap[ h2o_intra ] += 1.0;
+	for ( int atm = 1, atme = rsd.natoms() ; atm <= atme ; ++atm ) {
+		if ( rsd.atom_type( atm ).is_h2o() ) emap[ h2o_intra ] += 1.0;
 	}
 }
 

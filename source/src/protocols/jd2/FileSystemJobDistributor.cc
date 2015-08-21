@@ -49,14 +49,14 @@ namespace jd2 {
 FileSystemJobDistributor::FileSystemJobDistributor() :
 	JobDistributor(),
 	extension_(".in_progress"),
-	//	next_job_to_try_assigning_( 1 ),
+	// next_job_to_try_assigning_( 1 ),
 	retry_count_( 0 )
 {
-	if ( basic::options::option[ basic::options::OptionKeys::out::path::pdb ].user() ){
+	if ( basic::options::option[ basic::options::OptionKeys::out::path::pdb ].user() ) {
 		path_ = basic::options::option[ basic::options::OptionKeys::out::path::pdb ]().path();
-	} else if( basic::options::option[ basic::options::OptionKeys::out::path::all ].user() ){
+	} else if ( basic::options::option[ basic::options::OptionKeys::out::path::all ].user() ) {
 		path_ = basic::options::option[ basic::options::OptionKeys::out::path::all ]().path();
-	}else{
+	} else {
 		path_ = "";
 	}
 
@@ -68,7 +68,7 @@ FileSystemJobDistributor::~FileSystemJobDistributor()
 {}
 
 void FileSystemJobDistributor::restart() {
-	//	next_job_to_try_assigning_ = 1;
+	// next_job_to_try_assigning_ = 1;
 	retry_count_ = 0;
 	JobDistributor::restart();
 }
@@ -77,14 +77,14 @@ void FileSystemJobDistributor::restart() {
 core::Size get_min_nstruct_index_checkpoint_file(){
 	using namespace std;
 	using namespace basic::options;
-	if ( option[ basic::options::OptionKeys::jd2::checkpoint_file ].user()) {
+	if ( option[ basic::options::OptionKeys::jd2::checkpoint_file ].user() ) {
 		std::string saved_nstruct_number_file = option[ basic::options::OptionKeys::jd2::checkpoint_file ]();
 		ifstream f( saved_nstruct_number_file.c_str(), ios::in );
-		if( !f.good() ) return 0;
+		if ( !f.good() ) return 0;
 		core::Size const begin = f.tellg();
 		f.seekg( 0, ios::end );
 		core::Size const end = f.tellg();
-		if( end - begin == 0 ) return 0;
+		if ( end - begin == 0 ) return 0;
 		f.seekg( 0, ios::beg );
 		std::string line;
 		getline( f, line );
@@ -101,8 +101,8 @@ core::Size
 FileSystemJobDistributor::get_new_job_id()
 {
 
-	if( basic::options::option[ basic::options::OptionKeys::out::overwrite ].value()  &&
-  		basic::options::option[ basic::options::OptionKeys::run::multiple_processes_writing_to_one_directory ].value() ){
+	if ( basic::options::option[ basic::options::OptionKeys::out::overwrite ].value()  &&
+			basic::options::option[ basic::options::OptionKeys::run::multiple_processes_writing_to_one_directory ].value() ) {
 		utility_exit_with_message("ambiguous, cannot have both -out::overwrite and -run::multiple_processes_writing_to_one_directory");
 	}
 
@@ -114,10 +114,10 @@ FileSystemJobDistributor::get_new_job_id()
 		if ( jobs[ next_job_to_try_assigning ]->bad() ) {
 			++next_job_to_try_assigning;
 		} else if ( outputter->job_has_completed( jobs[ next_job_to_try_assigning ] ) &&
-				 !basic::options::option[ basic::options::OptionKeys::out::overwrite ].value() ) {
+				!basic::options::option[ basic::options::OptionKeys::out::overwrite ].value() ) {
 			++next_job_to_try_assigning;
 		} else if ( basic::options::option[ basic::options::OptionKeys::run::multiple_processes_writing_to_one_directory ].value() ) {
-            std::string const next_job_output_name( temporary_file_name( jobs[ next_job_to_try_assigning ] ) );
+			std::string const next_job_output_name( temporary_file_name( jobs[ next_job_to_try_assigning ] ) );
 			if ( utility::file::file_exists( next_job_output_name) ) {
 				++next_job_to_try_assigning;
 			} else {
@@ -137,8 +137,8 @@ FileSystemJobDistributor::get_new_job_id()
 	} //while
 
 	if ( next_job_to_try_assigning <= jobs.size() ) {
-		//	core::Size job_to_assign = next_job_to_try_assigning;
-		//	++next_job_to_try_assigning;
+		// core::Size job_to_assign = next_job_to_try_assigning;
+		// ++next_job_to_try_assigning;
 		return next_job_to_try_assigning;
 	}
 
@@ -150,17 +150,17 @@ void
 FileSystemJobDistributor::mark_current_job_id_for_repetition()
 {
 	using namespace basic::options;
-// 	if( current_job_id() != next_job_to_try_assigning - 1 ){
-// 		std::cerr << current_job_id() << "  " << next_job_to_try_assigning << std::endl;
-// 		runtime_assert( current_job_id() == next_job_to_try_assigning - 1 );
-// 	}
+	//  if( current_job_id() != next_job_to_try_assigning - 1 ){
+	//   std::cerr << current_job_id() << "  " << next_job_to_try_assigning << std::endl;
+	//   runtime_assert( current_job_id() == next_job_to_try_assigning - 1 );
+	//  }
 	++retry_count_;
-	if( (int)retry_count_ <= (int)basic::options::option[ basic::options::OptionKeys::run::max_retry_job ].value() ) {
-		// 		--next_job_to_try_assigning;
-		if ( !option[ OptionKeys::run::write_failures ]() ){
+	if ( (int)retry_count_ <= (int)basic::options::option[ basic::options::OptionKeys::run::max_retry_job ].value() ) {
+		//   --next_job_to_try_assigning;
+		if ( !option[ OptionKeys::run::write_failures ]() ) {
 			clear_current_job_output(); // DONT DO THIS WHEN WRITING FAILURES COS IT LOOSES THE PAIR DATA
 		}
-	}else{
+	} else {
 		retry_count_=0; // reset
 		TR << "Too many retries (max_retry_job = " << basic::options::option[ basic::options::OptionKeys::run::max_retry_job ].value() << ") " << std::endl;
 	}
@@ -172,29 +172,29 @@ FileSystemJobDistributor::remove_bad_inputs_from_job_list()
 {
 	//we should only fail on a job which was the first of its type - if it fails on nstruct=2 with BAD_INPUT then why did it not fail on nstruct=1?
 	//runtime_assert( current_job()->nstruct_index() == 1 );
-	if( current_job()->nstruct_index() != 1 ){
+	if ( current_job()->nstruct_index() != 1 ) {
 		Warning() << "A job reported bad input, but was not the first input of its type!  You should figure out why the first one passed if later ones failed!" << std::endl;
 	}
 
-	//	std::string const & current_input_tag(current_job()->inner_job()->input_tag());
+	// std::string const & current_input_tag(current_job()->inner_job()->input_tag());
 	//std::string const & current_native_tag(current_job()->inner_job()->native_tag());
 
 	TR << "job failed, reporting bad input; other jobs of same input will be canceled: "
-		 << job_outputter()->output_name( current_job() ) << std::endl;
+		<< job_outputter()->output_name( current_job() ) << std::endl;
 	mark_job_as_bad( current_job_id() );
 	// this latter stuff requires that jobs come in sequence of input... some application might prefer to
 	// reshuffle ...
 
-// 	JobsContainer const & jobs( get_jobs() );
-// 	core::Size next_job_to_try_assigning( current_job_id() );
-// 	while(next_job_to_try_assigning <= jobs.size() && //MUST BE FIRST for c++ shortcut logical evaluation
-// 				jobs[next_job_to_try_assigning]->inner_job()->input_tag() == current_input_tag) {
-// 		//&&jobs[next_job_to_try_assigning]->inner_job()->native_tag() == current_native_tag){
-// 		TR << "job canceled without trying due to previous bad input: "
-// 			 << job_outputter()->output_name( jobs[next_job_to_try_assigning] ) << std::endl;
-// 		mark_job_as_bad( next_job_to_try_assigning );
-// 		++next_job_to_try_assigning;
-// 	}
+	//  JobsContainer const & jobs( get_jobs() );
+	//  core::Size next_job_to_try_assigning( current_job_id() );
+	//  while(next_job_to_try_assigning <= jobs.size() && //MUST BE FIRST for c++ shortcut logical evaluation
+	//     jobs[next_job_to_try_assigning]->inner_job()->input_tag() == current_input_tag) {
+	//   //&&jobs[next_job_to_try_assigning]->inner_job()->native_tag() == current_native_tag){
+	//   TR << "job canceled without trying due to previous bad input: "
+	//     << job_outputter()->output_name( jobs[next_job_to_try_assigning] ) << std::endl;
+	//   mark_job_as_bad( next_job_to_try_assigning );
+	//   ++next_job_to_try_assigning;
+	//  }
 
 }
 
@@ -208,10 +208,10 @@ FileSystemJobDistributor::current_job_finished()
 	if ( option[ basic::options::OptionKeys::jd2::checkpoint_file ].user() ) {
 		std::string saved_nstruct_number_file = option[ basic::options::OptionKeys::jd2::checkpoint_file ]();
 		std::ofstream f;
-	    f.open( saved_nstruct_number_file.c_str(), std::ios::out );
-	    if( !f.good() ) utility_exit_with_message( "Unable to open MC checkpointing file " + saved_nstruct_number_file );
+		f.open( saved_nstruct_number_file.c_str(), std::ios::out );
+		if ( !f.good() ) utility_exit_with_message( "Unable to open MC checkpointing file " + saved_nstruct_number_file );
 		f<<(1+current_job()->nstruct_index());
-	    f.close();
+		f.close();
 	}
 }
 
@@ -235,7 +235,7 @@ void
 FileSystemJobDistributor::job_succeeded(core::pose::Pose & pose, core::Real run_time, std::string const & tag)
 {
 	JobDistributor::job_succeeded( pose, run_time, tag );
- 	retry_count_ = 0;
+	retry_count_ = 0;
 	return;
 }
 
@@ -246,12 +246,12 @@ FileSystemJobDistributor::job_failed( core::pose::Pose & pose, bool will_retry )
 
 	JobDistributor::job_failed( pose, will_retry );
 
-	if ( option[ OptionKeys::run::write_failures ]() ){
+	if ( option[ OptionKeys::run::write_failures ]() ) {
 		current_job()->set_status_prefix("C");
 		job_succeeded( pose, 0, "" );
 	}
 
-	if( !will_retry ) retry_count_ = 0;
+	if ( !will_retry ) retry_count_ = 0;
 }
 
 void FileSystemJobDistributor::handle_interrupt()

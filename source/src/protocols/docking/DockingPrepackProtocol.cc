@@ -10,7 +10,7 @@
 /// @file DockingPrepackProtocol.cc
 /// @brief Prepacking of the bound sturcture before docking.
 /// @author Robin A Thottungal (raugust1@jhu.edu)
-///			added to: JKLeman (julia.koehler1982@gmail.com)
+///   added to: JKLeman (julia.koehler1982@gmail.com)
 
 // Unit Headers
 #include <protocols/docking/DockingPrepackProtocol.hh>
@@ -62,12 +62,12 @@ using namespace protocols::moves;
 using namespace core;
 using namespace pack::task;
 using protocols::jd2::JobDistributor;
-using namespace protocols::membrane; 
+using namespace protocols::membrane;
 
 static thread_local basic::Tracer TR( "protocols.docking.DockingPrepackProtocol" );
 
-namespace protocols{
-namespace docking{
+namespace protocols {
+namespace docking {
 
 DockingPrepackProtocol::DockingPrepackProtocol(): DockingHighRes()
 {
@@ -92,20 +92,25 @@ DockingPrepackProtocol::~DockingPrepackProtocol(){
 void DockingPrepackProtocol::init_from_options()
 {
 	using namespace basic::options;
-	if( option[ OptionKeys::docking::dock_rtmin ].user() )
+	if ( option[ OptionKeys::docking::dock_rtmin ].user() ) {
 		set_rt_min(option[ OptionKeys::docking::dock_rtmin ]());
+	}
 
-	if( option[ OptionKeys::docking::sc_min ].user() )
+	if ( option[ OptionKeys::docking::sc_min ].user() ) {
 		set_sc_min(option[ OptionKeys::docking::sc_min ]());
+	}
 
-	if( option[ OptionKeys::docking::partners ].user() )
+	if ( option[ OptionKeys::docking::partners ].user() ) {
 		set_partners(option[ OptionKeys::docking::partners ]());
+	}
 
-	if( option[ OptionKeys::docking::dock_ppk ].user() )
+	if ( option[ OptionKeys::docking::dock_ppk ].user() ) {
 		set_dock_ppk(option[ OptionKeys::docking::dock_ppk ]());
+	}
 
-	if( option[ OptionKeys::mp::setup::spanfiles ].user() )
+	if ( option[ OptionKeys::mp::setup::spanfiles ].user() ) {
 		membrane_ = true;
+	}
 }
 
 void DockingPrepackProtocol::set_dock_ppk(bool dock_ppk)
@@ -131,7 +136,7 @@ void DockingPrepackProtocol::score_and_output(std::string outfilename,
 	// Creating a job compatible with JD2
 	static protocols::jd2::JobOP job = jd2::JobDistributor::get_instance()->current_job();
 	//job_ = jd2::JobDistributor::get_instance()->current_job();
-		
+
 	core::Real score_pose  = ( *scorefxn() )( pose ); // scoring the pose
 
 	// Getting the name of current job
@@ -148,13 +153,13 @@ void DockingPrepackProtocol::setup_pack_operation_movers()
 	prepack_full_repack_->task_factory( task_factory() );
 	pack_operations_->add_mover(prepack_full_repack_);
 
-	if ( rt_min() ){
+	if ( rt_min() ) {
 		rtmin_mover_ = protocols::simple_moves::RotamerTrialsMinMoverOP( new protocols::simple_moves::RotamerTrialsMinMover( ) );
 		rtmin_mover_->score_function( scorefxn_pack() );
 		rtmin_mover_->task_factory( task_factory() );
 		pack_operations_->add_mover(rtmin_mover_);
 	}
-	if ( sc_min() ){
+	if ( sc_min() ) {
 		scmin_mover_ = SidechainMinMoverOP( new SidechainMinMover() );
 		scmin_mover_->set_scorefxn( scorefxn_pack() );
 		scmin_mover_->set_task_factory( task_factory() );
@@ -194,8 +199,8 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 	score_and_output("initial",pose);
 
 	//Move each partners away from the others
-	for( DockJumps::const_iterator jump = movable_jumps().begin() ; jump != movable_jumps().end() ; ++jump ) {
-		
+	for ( DockJumps::const_iterator jump = movable_jumps().begin() ; jump != movable_jumps().end() ; ++jump ) {
+
 		// if membrane protein: translate in membrane plane
 		if ( membrane_ ) {
 
@@ -208,10 +213,8 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 			// do actual translation
 			translate_away->step_size( trans_magnitude_ );
 			translate_away->apply(pose);
-		}
-		
-		// if not membrane protein
-		else {
+		} else {
+			// if not membrane protein
 			rigid::RigidBodyTransMoverOP translate_away( new rigid::RigidBodyTransMover(pose, *jump) );
 			translate_away->step_size( trans_magnitude_ );
 			translate_away->apply(pose);
@@ -224,22 +227,20 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 	score_and_output("away_packed",pose);
 
 	//bringing the packed structures together
-	for( DockJumps::const_iterator jump= movable_jumps().begin(); jump != movable_jumps().end(); ++jump ) {
+	for ( DockJumps::const_iterator jump= movable_jumps().begin(); jump != movable_jumps().end(); ++jump ) {
 
 		// for membrane protein, translate in membrane plane
 		if ( membrane_ ) {
 
-            core::Vector trans_axis( protocols::membrane::membrane_axis( pose, *jump ) );
+			core::Vector trans_axis( protocols::membrane::membrane_axis( pose, *jump ) );
 			rigid::RigidBodyTransMoverOP translate_back( new rigid::RigidBodyTransMover(trans_axis, *jump) );
 			translate_back->step_size( trans_magnitude_ );
 
 			// why this needs to be commented out to work is a mystery
-//			translate_back->trans_axis().negate();
+			//   translate_back->trans_axis().negate();
 			translate_back->apply(pose);
-		}
-		
-		// if not membrane protein
-		else {
+		} else {
+			// if not membrane protein
 			rigid::RigidBodyTransMoverOP translate_back ( new rigid::RigidBodyTransMover(pose, *jump) );
 
 			translate_back->step_size( trans_magnitude_ );
@@ -251,7 +252,7 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 		}
 	}
 
-	if (dock_ppk_){
+	if ( dock_ppk_ ) {
 		pack_operations_->apply( pose );
 	}
 	score_and_output("prepack",pose);

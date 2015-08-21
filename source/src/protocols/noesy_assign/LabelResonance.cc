@@ -48,12 +48,12 @@ namespace noesy_assign {
 LabelResonance::LabelResonance() {}
 
 LabelResonance::LabelResonance(
-			core::Size label,
-			core::Real freq,
-			core::Real error,
-			core::id::NamedAtomID const& id,
-			core::chemical::AA aa,
-			core::Real intensity
+	core::Size label,
+	core::Real freq,
+	core::Real error,
+	core::id::NamedAtomID const& id,
+	core::chemical::AA aa,
+	core::Real intensity
 ) : Resonance( label, freq, error, id, aa, intensity )
 {}
 
@@ -61,13 +61,13 @@ LabelResonance::~LabelResonance() {}
 
 /// @brief match the proton and corresponding label atom at same time
 bool LabelResonance::match2D(
-  	core::Real /*proton_freq*/, //proton_frequenices are ignored
-		core::Real proton_error,
-    FoldResonance const& /*proton_folder*/,
-    core::Real label_freq,
-    core::Real label_error,
-    FoldResonance const& label_folder,
-		ResonancePairs& matches
+	core::Real /*proton_freq*/, //proton_frequenices are ignored
+	core::Real proton_error,
+	FoldResonance const& /*proton_folder*/,
+	core::Real label_freq,
+	core::Real label_error,
+	FoldResonance const& label_folder,
+	ResonancePairs& matches
 ) const {
 	// only pseudo4D peaks are matched via the heavy-atom
 	if ( proton_error < 99 ) return false;

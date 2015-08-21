@@ -46,81 +46,81 @@ OPT_KEY( String, overlapfile)
 OPT_KEY( String, nonoverlapfile)
 
 
-void 
+void
 register_options(
 ){
-    using namespace basic::options;
-    using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-    NEW_OPT( outfile, "outfile name", "mc_sampling.out" );
-    NEW_OPT( nmodels, "nmodels", 1 );
-    NEW_OPT( runid, "runid", 0 );
-    NEW_OPT( init_type, "init_type: 1=null; 2=random; 3=lowrmsd", 2 );
-    NEW_OPT( sa_verbose, "dump frag assignments throughout simulations", false );
-    NEW_OPT( sa_start_temp, "sa_start_temp", 1000.0 );
-    NEW_OPT( sa_end_temp, "sa_end_temp", 1.0 );
-    NEW_OPT( sa_nsteps, "sa_nsteps", 25 );
-    NEW_OPT( mc_nsteps, "mc_nsteps", 1500 );
-    NEW_OPT( null_frag_score, "null", -150.0 );
-    NEW_OPT( wt_dens , "dens", 1.0 );
-    NEW_OPT( wt_clash , "clash", 30.0 );
-    NEW_OPT( wt_closab , "close", 3.0 );
-    NEW_OPT( wt_overlap , "overlap", 3.0 );
-    NEW_OPT( fragidx_file, "fragidx_file", "" );
-    NEW_OPT( densfile, "densfile", "" );
-    NEW_OPT( overlapfile, "overlapfile", "");
-    NEW_OPT( nonoverlapfile, "nonoverlapfile", "" );
+	NEW_OPT( outfile, "outfile name", "mc_sampling.out" );
+	NEW_OPT( nmodels, "nmodels", 1 );
+	NEW_OPT( runid, "runid", 0 );
+	NEW_OPT( init_type, "init_type: 1=null; 2=random; 3=lowrmsd", 2 );
+	NEW_OPT( sa_verbose, "dump frag assignments throughout simulations", false );
+	NEW_OPT( sa_start_temp, "sa_start_temp", 1000.0 );
+	NEW_OPT( sa_end_temp, "sa_end_temp", 1.0 );
+	NEW_OPT( sa_nsteps, "sa_nsteps", 25 );
+	NEW_OPT( mc_nsteps, "mc_nsteps", 1500 );
+	NEW_OPT( null_frag_score, "null", -150.0 );
+	NEW_OPT( wt_dens , "dens", 1.0 );
+	NEW_OPT( wt_clash , "clash", 30.0 );
+	NEW_OPT( wt_closab , "close", 3.0 );
+	NEW_OPT( wt_overlap , "overlap", 3.0 );
+	NEW_OPT( fragidx_file, "fragidx_file", "" );
+	NEW_OPT( densfile, "densfile", "" );
+	NEW_OPT( overlapfile, "overlapfile", "");
+	NEW_OPT( nonoverlapfile, "nonoverlapfile", "" );
 }
 
 
-int main( int argc, char* argv[] ) 
+int main( int argc, char* argv[] )
 {
-  try {
-    using namespace basic::options;
-    using namespace basic::options::OptionKeys;
+	try {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-    register_options();
-    devel::init(argc, argv);
+		register_options();
+		devel::init(argc, argv);
 
-    FragMonteCarlo mc( option[wt_dens], 
-                       option[wt_overlap],
-                       option[wt_closab], 
-                       option[wt_clash],
-                       option[null_frag_score] );
+		FragMonteCarlo mc( option[wt_dens],
+			option[wt_overlap],
+			option[wt_closab],
+			option[wt_clash],
+			option[null_frag_score] );
 
-    mc.load_scorefiles( option[fragidx_file], 
-                        option[densfile],
-                        option[overlapfile], 
-                        option[nonoverlapfile] );
+		mc.load_scorefiles( option[fragidx_file],
+			option[densfile],
+			option[overlapfile],
+			option[nonoverlapfile] );
 
 
-    utility::io::ozstream outstream;
-    std::string outfile_name = option[outfile];
+		utility::io::ozstream outstream;
+		std::string outfile_name = option[outfile];
 
-    if( ! utility::file::file_exists( outfile_name ) ){
-        outstream.open( outfile_name );
-    } else {
-        outstream.open_append( outfile_name );
-    }
+		if ( ! utility::file::file_exists( outfile_name ) ) {
+			outstream.open( outfile_name );
+		} else {
+			outstream.open_append( outfile_name );
+		}
 
-    for ( int i=1; i<=option[nmodels]; ++i ){
-        mc.initialize_frag_assignment( option[init_type] );
+		for ( int i=1; i<=option[nmodels]; ++i ) {
+			mc.initialize_frag_assignment( option[init_type] );
 
-        mc.run( option[sa_verbose],
-                option[sa_start_temp],
-                option[sa_end_temp],
-                option[sa_nsteps],
-                option[mc_nsteps] );
+			mc.run( option[sa_verbose],
+				option[sa_start_temp],
+				option[sa_end_temp],
+				option[sa_nsteps],
+				option[mc_nsteps] );
 
-        outstream << mc.report_results( i, option[runid] ) << std::endl;
-    }
+			outstream << mc.report_results( i, option[runid] ) << std::endl;
+		}
 
-    outstream.close();
+		outstream.close();
 
-  } catch ( utility::excn::EXCN_Base const & e ) {
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
-  return 0;
+	return 0;
 }
 

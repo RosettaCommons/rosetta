@@ -48,7 +48,7 @@ public:
 
 	HBondOptions( std::string params_db_tag = "" );
 
-	//	HBondOptions(); // removed in favor of single constructor to avoid copying code.
+	// HBondOptions(); // removed in favor of single constructor to avoid copying code.
 
 	void initialize_from_options();
 

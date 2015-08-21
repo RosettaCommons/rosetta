@@ -69,24 +69,24 @@ InterfaceScoreCalculatorCreator::mover_name()
 
 /// @brief
 InterfaceScoreCalculator::InterfaceScoreCalculator():
-		Mover("InterfaceScoreCalculator"),
-		chains_(),
-		native_(/* NULL */),
-		score_fxn_(/* NULL */),
-		normalization_function_(/* NULL */),
-		compute_grid_scores_(true),
-		prefix_("")
+	Mover("InterfaceScoreCalculator"),
+	chains_(),
+	native_(/* NULL */),
+	score_fxn_(/* NULL */),
+	normalization_function_(/* NULL */),
+	compute_grid_scores_(true),
+	prefix_("")
 {}
 
 InterfaceScoreCalculator::InterfaceScoreCalculator(InterfaceScoreCalculator const & that):
-	    //utility::pointer::ReferenceCount(),
-		protocols::moves::Mover( that ),
-		chains_(that.chains_),
-		native_(that.native_),
-		score_fxn_(that.score_fxn_),
-		normalization_function_(that.normalization_function_),
-		compute_grid_scores_(that.compute_grid_scores_),
-		prefix_(that.prefix_)
+	//utility::pointer::ReferenceCount(),
+	protocols::moves::Mover( that ),
+	chains_(that.chains_),
+	native_(that.native_),
+	score_fxn_(that.score_fxn_),
+	normalization_function_(that.normalization_function_),
+	compute_grid_scores_(that.compute_grid_scores_),
+	prefix_(that.prefix_)
 {}
 
 InterfaceScoreCalculator::~InterfaceScoreCalculator() {}
@@ -118,14 +118,14 @@ void InterfaceScoreCalculator::score_fxn(core::scoring::ScoreFunctionOP const & 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 InterfaceScoreCalculator::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & datamap,
-		protocols::filters::Filters_map const & /*filters*/,
-		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & /*pose*/
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & datamap,
+	protocols::filters::Filters_map const & /*filters*/,
+	protocols::moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/
 )
 {
-	if ( tag->getName() != "InterfaceScoreCalculator" ){
+	if ( tag->getName() != "InterfaceScoreCalculator" ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
 	}
 	if ( ! tag->hasOption("chains") ) throw utility::excn::EXCN_RosettaScriptsOption("'InterfaceScoreCalculator' requires 'chains' tag (comma separated chains to dock)");
@@ -139,20 +139,19 @@ InterfaceScoreCalculator::parse_my_tag(
 	score_fxn_= datamap.get_ptr<core::scoring::ScoreFunction>( "scorefxns", scorefxn_name);
 	assert(score_fxn_);
 
-	if (tag->hasOption("native") ){
+	if ( tag->hasOption("native") ) {
 		std::string const & native_str= tag->getOption<std::string>("native");
 		utility::vector1<std::string> natives_strs= utility::string_split(native_str, ',');
 		std::string natives_str = utility::join(natives_strs, " ");
 
 		native_ = core::pose::PoseOP( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*native_, natives_str);
-	}
-	else if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user()){
+	} else if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 		std::string const & native_str= basic::options::option[ basic::options::OptionKeys::in::file::native ]().name();
 		native_ = core::pose::PoseOP( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*native_, native_str);
 	}
-	if(tag->hasOption("normalize")) {
+	if ( tag->hasOption("normalize") ) {
 		std::string const & normalization_mode = tag->getOption<std::string>("normalize");
 		normalization_function_ = protocols::qsar::scoring_grid::get_score_normalization_function(normalization_mode);
 	}
@@ -166,8 +165,7 @@ InterfaceScoreCalculator::parse_my_tag(
 void InterfaceScoreCalculator::apply(core::pose::Pose & pose) {
 	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 	protocols::jd2::Job::StringStringPairs string_string_pairs(job->get_string_string_pairs());
-	if(string_string_pairs.find("native_path") != string_string_pairs.end())
-	{
+	if ( string_string_pairs.find("native_path") != string_string_pairs.end() ) {
 		std::string native_string(string_string_pairs.find("native_path")->second);
 		native_ = core::pose::PoseOP( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*native_,native_string);
@@ -189,28 +187,23 @@ void InterfaceScoreCalculator::add_scores_to_job(
 	// Which score terms to use
 	typedef utility::vector1<ScoreType> ScoreTypeVec;
 	ScoreTypeVec score_types;
-	for(int i = 1; i <= n_score_types; ++i) {
+	for ( int i = 1; i <= n_score_types; ++i ) {
 		ScoreType ii = ScoreType(i);
 		if ( score_fxn_->has_nonzero_weight(ii) ) score_types.push_back(ii);
 	}
 
-	BOOST_FOREACH(ScoreType score_type, score_types){
+	BOOST_FOREACH ( ScoreType score_type, score_types ) {
 		std::string const score_term = name_from_score_type(score_type);
 		core::Real const weight = score_fxn_->get_weight(score_type);
-		if(prefix_ == "")
-		{
+		if ( prefix_ == "" ) {
 			job->add_string_real_pair(score_term,  weight * pose.energies().total_energies()[ score_type ]);
-		}else
-		{
+		} else {
 			job->add_string_real_pair(prefix_+ "_" + score_term,  weight * pose.energies().total_energies()[ score_type ]);
 		}
 	}
-	if(prefix_ == "")
-	{
+	if ( prefix_ == "" ) {
 		job->add_string_real_pair(name_from_score_type(core::scoring::total_score), tot_score);
-	}
-	else
-	{
+	} else {
 		job->add_string_real_pair(prefix_+"_"+name_from_score_type(core::scoring::total_score), tot_score);
 	}
 
@@ -220,28 +213,24 @@ void InterfaceScoreCalculator::add_scores_to_job(
 /// @brief For multiple ligands, append ligand docking scores for each ligand
 void
 InterfaceScoreCalculator::append_ligand_docking_scores(
-		core::pose::Pose const & after,
-		protocols::jd2::JobOP job
+	core::pose::Pose const & after,
+	protocols::jd2::JobOP job
 ) const
 {
-	BOOST_FOREACH(std::string chain, chains_){
+	BOOST_FOREACH ( std::string chain, chains_ ) {
 		InterfaceScoreCalculator_tracer.Debug << "appending ligand: "<< chain << std::endl;
 		assert( core::pose::has_chain(chain, after));
-		if(native_)
-		{
-			if( !core::pose::has_chain(chain, *native_))
-			{
+		if ( native_ ) {
+			if ( !core::pose::has_chain(chain, *native_) ) {
 				utility_exit_with_message("The native pose passed to InterfaceScoreCalculator does not have chain " +chain);
 			}
 		}
 
 		utility::vector1<core::Size> jump_ids= core::pose::get_jump_ids_from_chain(chain, after);
-		BOOST_FOREACH(core::Size jump_id, jump_ids){
-			if(normalization_function_)
-			{
+		BOOST_FOREACH ( core::Size jump_id, jump_ids ) {
+			if ( normalization_function_ ) {
 				append_interface_deltas(jump_id,job,after,score_fxn_,prefix_,normalization_function_);
-			}else
-			{
+			} else {
 				append_interface_deltas(jump_id, job, after, score_fxn_,prefix_);
 			}
 			append_ligand_docking_scores(jump_id, after, job);
@@ -256,14 +245,13 @@ InterfaceScoreCalculator::append_ligand_docking_scores(
 	core::pose::Pose const & after,
 	protocols::jd2::JobOP job
 ) const {
-	if( jump_id == 0 || jump_id > after.num_jump() ) {
-				utility_exit_with_message("The pose does not have jump number " + utility::to_string( jump_id ) );
+	if ( jump_id == 0 || jump_id > after.num_jump() ) {
+		utility_exit_with_message("The pose does not have jump number " + utility::to_string( jump_id ) );
 	}
 
-	if(native_)
-	{
-		if( jump_id > native_->num_jump() ) {
-					utility_exit_with_message("The native pose does not have jump number " + utility::to_string( jump_id ) );
+	if ( native_ ) {
+		if ( jump_id > native_->num_jump() ) {
+			utility_exit_with_message("The native pose does not have jump number " + utility::to_string( jump_id ) );
 		}
 
 		append_ligand_travel(jump_id, job, *native_, after,prefix_);
@@ -271,13 +259,10 @@ InterfaceScoreCalculator::append_ligand_docking_scores(
 		append_ligand_RMSD(jump_id, job, *native_, after,prefix_);
 	}
 
-	if(compute_grid_scores_)
-	{
-		if(normalization_function_ && !protocols::qsar::scoring_grid::GridManager::get_instance()->is_normalization_enabled())
-		{
+	if ( compute_grid_scores_ ) {
+		if ( normalization_function_ && !protocols::qsar::scoring_grid::GridManager::get_instance()->is_normalization_enabled() ) {
 			append_ligand_grid_scores(jump_id,job,after,prefix_,normalization_function_);
-		}else
-		{
+		} else {
 			append_ligand_grid_scores(jump_id,job,after,prefix_);
 		}
 	}

@@ -81,11 +81,11 @@ AbrelaxMover::AbrelaxMover() :
 	relax_protocol_( /* NULL */ ),
 	post_loop_closure_protocol_( /* NULL */ ),
 	b_return_unrelaxed_fullatom_( false )
-  {
-		basic::mem_tr << "AbrelaxMover CStor start" << std::endl;
-		set_defaults();
-		basic::mem_tr << "AbrelaxMover CStor end" << std::endl;
-	}
+{
+	basic::mem_tr << "AbrelaxMover CStor start" << std::endl;
+	set_defaults();
+	basic::mem_tr << "AbrelaxMover CStor end" << std::endl;
+}
 
 AbrelaxMover::~AbrelaxMover() {}
 
@@ -111,21 +111,21 @@ void AbrelaxMover::set_defaults() {
 	topology_broker::add_cmdline_claims( *topology_broker_ );
 
 
-//	FragmentSamplerOP sampler;
+	// FragmentSamplerOP sampler;
 	// use the TMHTopologySampler or default ConstraintFragmentSampler
-//	if(option[OptionKeys::abinitio::TMH_topology].user())
-//	{
-//		tr << "setting TMYTopologySampler" << std::endl;
-//		FragmentSamplerOP sampler = new TMHTopologySampler(topology_broker_);
-//		tr << "sampler:  " << sampler->get_name() << std::endl;
-//		sampling_protocol( sampler );
-//	}
-//	else{
-		//tr << "setting ConstraintfragmentSampler" << std::endl;
-		FragmentSamplerOP sampler( new ConstraintFragmentSampler( topology_broker_ ) );
-		//tr << "sampler:  " << sampler->get_name() << std::endl;
-		sampling_protocol( sampler );
-//	}
+	// if(option[OptionKeys::abinitio::TMH_topology].user())
+	// {
+	//  tr << "setting TMYTopologySampler" << std::endl;
+	//  FragmentSamplerOP sampler = new TMHTopologySampler(topology_broker_);
+	//  tr << "sampler:  " << sampler->get_name() << std::endl;
+	//  sampling_protocol( sampler );
+	// }
+	// else{
+	//tr << "setting ConstraintfragmentSampler" << std::endl;
+	FragmentSamplerOP sampler( new ConstraintFragmentSampler( topology_broker_ ) );
+	//tr << "sampler:  " << sampler->get_name() << std::endl;
+	sampling_protocol( sampler );
+	// }
 
 
 	//  Idealize the structure before relax
@@ -228,13 +228,12 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 	{
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
-		if (option[OptionKeys::run::show_simulation_in_pymol].user()
-				&& option[OptionKeys::run::show_simulation_in_pymol].value() > 0.0)
-			{
-				protocols::moves::AddPyMolObserver(pose,
-						option[OptionKeys::run::keep_pymol_simulation_history](),
-						option[OptionKeys::run::show_simulation_in_pymol].value());
-			}
+		if ( option[OptionKeys::run::show_simulation_in_pymol].user()
+				&& option[OptionKeys::run::show_simulation_in_pymol].value() > 0.0 ) {
+			protocols::moves::AddPyMolObserver(pose,
+				option[OptionKeys::run::keep_pymol_simulation_history](),
+				option[OptionKeys::run::show_simulation_in_pymol].value());
+		}
 	}
 
 	using namespace basic::options;
@@ -250,7 +249,7 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 	checkpoint::CheckPointer &checkpoints = sampling_protocol()->get_checkpoints();
 
 	// need to save numeric::random::rg() states such that choices for constraints and fold-tree are the same.
-	if( ! checkpoints.recover_checkpoint( pose, get_current_tag(), "rg_state") ){
+	if ( ! checkpoints.recover_checkpoint( pose, get_current_tag(), "rg_state") ) {
 		checkpoints.checkpoint( pose, get_current_tag(), "rg_state");
 	}
 
@@ -285,8 +284,7 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 #endif
 
 	sampling_protocol()->apply( pose );
-	if(sampling_protocol()->get_last_move_status() == protocols::moves::FAIL_RETRY)
-	{
+	if ( sampling_protocol()->get_last_move_status() == protocols::moves::FAIL_RETRY ) {
 		this->set_last_move_status(protocols::moves::FAIL_RETRY);
 		return;
 	}
@@ -294,8 +292,8 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 	//make sure all chainbreak variants are activated:
 	if ( !topology_broker()->check_chainbreak_variants( pose ) ) {
 		tr.Warning << "[WARNING] some chainbreaks in " << jd2::current_output_name()
-		           << " were not penalized at end of " << sampling_protocol()->type()
-				   << std::endl;
+			<< " were not penalized at end of " << sampling_protocol()->type()
+			<< std::endl;
 		topology_broker()->add_chainbreak_variants( pose );
 	}
 
@@ -328,10 +326,10 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 	//
 	if ( closure_protocol() ) {
 		// Did we already close the loops successfully ?
-		if ( checkpoints.recover_checkpoint( pose, get_current_tag(), "loops_S", false /*fullatom*/, true /*foldtree*/))  {
+		if ( checkpoints.recover_checkpoint( pose, get_current_tag(), "loops_S", false /*fullatom*/, true /*foldtree*/) )  {
 			checkpoints.debug( get_current_tag(), "close_loops", (*last_scorefxn)(pose), (core::Real) true );
 			loop_success = true;
-		} else if ( checkpoints.recover_checkpoint( pose, get_current_tag(), "loops_C", false /*fullatom*/, true /*foldtree*/))  {
+		} else if ( checkpoints.recover_checkpoint( pose, get_current_tag(), "loops_C", false /*fullatom*/, true /*foldtree*/) )  {
 			// No ? Have we already tried but failed ?
 			checkpoints.debug( get_current_tag(), "close_loops", (*last_scorefxn)(pose), (core::Real) false );
 			loop_success = false;
@@ -345,10 +343,10 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 
 			try {
 				jumping::close_chainbreaks(closure_protocol(),
-										   pose,
-										   sampling_protocol()->get_checkpoints(),
-										   get_current_tag(),
-										   topology_broker()->final_fold_tree());
+					pose,
+					sampling_protocol()->get_checkpoints(),
+					get_current_tag(),
+					topology_broker()->final_fold_tree());
 			} catch ( loops::EXCN_Loop_not_closed& excn ) {
 				set_current_tag( "C_"+get_current_tag().substr(std::min(2,(int)get_current_tag().size())) );
 				set_last_move_status( moves::FAIL_DO_NOT_RETRY );
@@ -383,14 +381,14 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 	basic::mem_tr << "AbrelaxMover::apply fullatom switch" << std::endl;
 	if ( relax_protocol() || b_return_unrelaxed_fullatom_ ) {
 		tr << "AbrelaxMover: switch to fullatom" << std::endl;
-		jd2::get_current_job()->add_string_real_pair( "prefa_centroid_score", 	((sampling_protocol()->current_scorefxn())( pose ) ) );
+		jd2::get_current_job()->add_string_real_pair( "prefa_centroid_score",  ((sampling_protocol()->current_scorefxn())( pose ) ) );
 		tr.Info << "prefa_centroid_score:\n ";
 		(sampling_protocol()->current_scorefxn()).show( tr.Info, pose );
 		tr.Info << std::endl;
 		core::scoring::ScoreFunctionOP clean_score3( core::scoring::ScoreFunctionFactory::create_score_function( "score3" ) );
 		clean_score3->set_weight( scoring::linear_chainbreak, 1.33 );
 		clean_score3->set_weight( scoring::overlap_chainbreak, 1.0 );
-		//		clean_score3->set_weight( scoring::chainbreak, 1.0 );
+		//  clean_score3->set_weight( scoring::chainbreak, 1.0 );
 		jd2::get_current_job()->add_string_real_pair( "prefa_clean_score3", ((*clean_score3)(pose)) );
 		tr.Info << "prefa_clean_score3:\n ";
 		clean_score3->show( tr.Info, pose );
@@ -398,17 +396,17 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 		topology_broker()->switch_to_fullatom( pose );
 
 		// we're now in fullatom mode - so upate the score function.
-		if (( (option[ OptionKeys::score::weights ]() == "score0") ||
-					(option[ OptionKeys::score::weights ]() == "score2") ||
-					(option[ OptionKeys::score::weights ]() == "score3") ||
-					(option[ OptionKeys::score::weights ]() == "score5") ) ) {
-					utility_exit_with_message("Cannot proceed - you chose a centroid score function for fullatom mode");
+		if ( ( (option[ OptionKeys::score::weights ]() == "score0") ||
+				(option[ OptionKeys::score::weights ]() == "score2") ||
+				(option[ OptionKeys::score::weights ]() == "score3") ||
+				(option[ OptionKeys::score::weights ]() == "score5") ) ) {
+			utility_exit_with_message("Cannot proceed - you chose a centroid score function for fullatom mode");
 		}
 
 		protocols::relax::RelaxProtocolBaseCOP relax_prot = relax_protocol();
 		last_scorefxn_cop = relax_prot->get_scorefxn();
 		last_scorefxn = last_scorefxn_cop.get();
-		
+
 	} //switched to fullatom
 
 
@@ -418,14 +416,14 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 		replonly.apply( pose );
 	}
 
-	if( option[ basic::options::OptionKeys::abinitio::close_loops_by_idealizing ]() ){
+	if ( option[ basic::options::OptionKeys::abinitio::close_loops_by_idealizing ]() ) {
 		close_with_idealization( pose );
 	}
 
 	//   Relax
 	//
 	basic::mem_tr << "AbrelaxMover::apply relax" << std::endl;
-	if ( ( loop_success || option[ OptionKeys::abinitio::relax_failures ]() ) && relax_protocol()) {
+	if ( ( loop_success || option[ OptionKeys::abinitio::relax_failures ]() ) && relax_protocol() ) {
 		tr << "AbrelaxMover: relax " << std::endl;
 		if ( !checkpoints.recover_checkpoint( pose, get_current_tag(), "relax", true, true) ) {
 			topology_broker()->adjust_relax_movemap( *(relax_protocol()->get_movemap() ) );
@@ -451,14 +449,14 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 
 	if ( option[ OptionKeys::abinitio::clear_pose_cache ]() ) {
 		tr.Debug << "\n******************************************************** \n"
-				 << "              CLEAR POSE CACHE                             \n"
-				 << "*************************************************************"
-		         << std::endl;
+			<< "              CLEAR POSE CACHE                             \n"
+			<< "*************************************************************"
+			<< std::endl;
 		pose.data().clear();
 	}
 
 	if ( sampling_protocol() ) sampling_protocol()->get_checkpoints().clear_checkpoints();
-	if ( !b_return_unrelaxed_fullatom_ ) (*last_scorefxn)( pose );
+	if ( !b_return_unrelaxed_fullatom_ ) ( *last_scorefxn)( pose );
 
 	basic::mem_tr << "AbrelaxMover::apply end" << std::endl;
 	basic::show_time( tr,  "AbrelaxMover: finished ..."+jd2::current_batch()+" "+jd2::current_output_name() );
@@ -478,10 +476,11 @@ void AbrelaxMover::close_with_idealization( pose::Pose &pose) {
 		Size cutpoint = pose.fold_tree().cutpoint( ncut );
 		Size margin = option[ basic::options::OptionKeys::abinitio::optimize_cutpoints_margin ]();
 		protocols::loops::Loop newloop (std::max( (int) 1, int(cutpoint - margin) ),
-										std::min( (int) pose.total_residue(), int(cutpoint + margin) ),
-										0);
-		if( cloops->size() >= 2 )
-			if( newloop.start() <= ( *cloops )[cloops->size()-1].stop() ) newloop.set_start( ( *cloops )[cloops->size()-1].stop() +2 );
+			std::min( (int) pose.total_residue(), int(cutpoint + margin) ),
+			0);
+		if ( cloops->size() >= 2 ) {
+			if ( newloop.start() <= ( *cloops )[cloops->size()-1].stop() ) newloop.set_start( ( *cloops )[cloops->size()-1].stop() +2 );
+		}
 		newloop.choose_cutpoint( pose );
 		cloops->add_loop( newloop );
 	}
@@ -499,7 +498,7 @@ void AbrelaxMover::close_with_idealization( pose::Pose &pose) {
 	relax_protocol()->apply( pose );
 
 	// now optimize around the old cut points.
-	if( option[ basic::options::OptionKeys::abinitio::optimize_cutpoints_using_kic ]() ){
+	if ( option[ basic::options::OptionKeys::abinitio::optimize_cutpoints_using_kic ]() ) {
 		protocols::loops::fold_tree_from_loops( pose, *cloops, fold_tree , true /* include terminal cutpoints */);
 		pose.fold_tree( fold_tree );
 

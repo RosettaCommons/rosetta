@@ -33,58 +33,58 @@ namespace stepwise {
 namespace monte_carlo {
 namespace mover {
 
-	class ResampleMover: public protocols::moves::Mover {
+class ResampleMover: public protocols::moves::Mover {
 
-	public:
+public:
 
-		//constructor
-		ResampleMover( protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler );
+	//constructor
+	ResampleMover( protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler );
 
-		//destructor
-		~ResampleMover();
+	//destructor
+	~ResampleMover();
 
-	public:
+public:
 
-		using moves::Mover::apply;
+	using moves::Mover::apply;
 
-		/// @brief Apply the minimizer to one pose
-		virtual void apply( pose::Pose & pose_to_visualize );
-		virtual std::string get_name() const;
+	/// @brief Apply the minimizer to one pose
+	virtual void apply( pose::Pose & pose_to_visualize );
+	virtual std::string get_name() const;
 
-		bool
-		apply( pose::Pose & pose,
-					 std::string & move_type );
+	bool
+	apply( pose::Pose & pose,
+		std::string & move_type );
 
-		bool
-		apply( pose::Pose & pose,
-					 StepWiseMove const & swa_move );
+	bool
+	apply( pose::Pose & pose,
+		StepWiseMove const & swa_move );
 
-		bool
-		apply( pose::Pose & pose,
-					 StepWiseMove const & swa_move,
-					 std::string & move_type );
+	bool
+	apply( pose::Pose & pose,
+		StepWiseMove const & swa_move,
+		std::string & move_type );
 
-		void set_minimize_single_res( bool const & setting ){ minimize_single_res_ = setting; }
-		bool minimize_single_res() const{ return minimize_single_res_; }
+	void set_minimize_single_res( bool const & setting ){ minimize_single_res_ = setting; }
+	bool minimize_single_res() const{ return minimize_single_res_; }
 
-		void
-		set_options( options::StepWiseMonteCarloOptionsCOP options );
+	void
+	set_options( options::StepWiseMonteCarloOptionsCOP options );
 
-		Size
-		get_remodel_res( StepWiseMove const & swa_move, pose::Pose const & pose ) const;
+	Size
+	get_remodel_res( StepWiseMove const & swa_move, pose::Pose const & pose ) const;
 
-		void
-		slide_jump_randomly( pose::Pose & pose, Size & remodel_res ) const;
+	void
+	slide_jump_randomly( pose::Pose & pose, Size & remodel_res ) const;
 
-	private:
+private:
 
-		protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler_;
-		StepWiseMoveSelectorOP swa_move_selector_;
-		options::StepWiseMonteCarloOptionsCOP options_;
+	protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler_;
+	StepWiseMoveSelectorOP swa_move_selector_;
+	options::StepWiseMonteCarloOptionsCOP options_;
 
-		bool minimize_single_res_;
-		bool slide_docking_jumps_;
-	};
+	bool minimize_single_res_;
+	bool slide_docking_jumps_;
+};
 
 } //mover
 } //monte_carlo

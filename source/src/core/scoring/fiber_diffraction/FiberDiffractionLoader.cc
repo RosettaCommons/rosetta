@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/fiber_diffraction/FiberDiffractionLoader.cc
-/// @brief  Options for constructing fiber diffraction layer lines 
+/// @brief  Options for constructing fiber diffraction layer lines
 /// @author Wojciech Potrzebowski and Ingemar Andre
 
 // Unit Headers
@@ -74,7 +74,7 @@ FiberDiffractionLoader::create_resource(
 			"but was given a ResourceOptions of type '" + options.type() + "', "
 			"which has the name '" + options.name() + "'." );
 	}
-	
+
 	FiberDiffractionOptions const & resource_options(
 		static_cast< FiberDiffractionOptions const & >( options ));
 
@@ -84,7 +84,7 @@ FiberDiffractionLoader::create_resource(
 		istream,
 		locator_id,
 		resource_options.get_c_repeat(),
-	 	resource_options.get_res_high(), 
+		resource_options.get_res_high(),
 		resource_options.get_res_low());
 
 	return fiber_diffraction;
@@ -92,7 +92,7 @@ FiberDiffractionLoader::create_resource(
 
 ResourceOptionsOP
 FiberDiffractionLoader::default_options() const {
-		return ResourceOptionsOP( new FiberDiffractionOptions() );
+	return ResourceOptionsOP( new FiberDiffractionOptions() );
 }
 
 } // namespace

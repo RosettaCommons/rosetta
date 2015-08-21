@@ -23,138 +23,138 @@
 namespace protocols {
 namespace farna {
 
-	///////////////////////////////////////////////////////////////////////////////////
-	class BasePairType{
-	public:
-		char aa1;
-		char aa2;
-		char edge1;
-		char edge2;
-		char orientation;
+///////////////////////////////////////////////////////////////////////////////////
+class BasePairType{
+public:
+	char aa1;
+	char aa2;
+	char edge1;
+	char edge2;
+	char orientation;
 
-		BasePairType( char const aa1_in, char const aa2_in,
-									char const edge1_in, char const edge2_in,
-									char const orientation_in){
-			aa1 = aa1_in;		aa2 = aa2_in;
-			edge1 = edge1_in;		edge2 = edge2_in;
-			orientation = orientation_in;
-		}
+	BasePairType( char const aa1_in, char const aa2_in,
+		char const edge1_in, char const edge2_in,
+		char const orientation_in){
+		aa1 = aa1_in;  aa2 = aa2_in;
+		edge1 = edge1_in;  edge2 = edge2_in;
+		orientation = orientation_in;
+	}
 
-		friend
-		bool operator < (BasePairType const & lhs, BasePairType const & rhs )
-		{
-			//There must be a more elegant way to do this...
-			if( lhs.aa1 < rhs.aa1 ) {
+	friend
+	bool operator < (BasePairType const & lhs, BasePairType const & rhs )
+	{
+		//There must be a more elegant way to do this...
+		if ( lhs.aa1 < rhs.aa1 ) {
+			return true;
+		} else if ( lhs.aa1 == rhs.aa1 ) {
+			if ( lhs.aa2 < rhs.aa2 ) {
 				return true;
-			} else if ( lhs.aa1 == rhs.aa1 ) {
-				if ( lhs.aa2 < rhs.aa2 ) {
+			} else if ( lhs.aa2 == rhs.aa2 ) {
+				if ( lhs.edge1 < rhs.edge1 ) {
 					return true;
-				} else if ( lhs.aa2 == rhs.aa2 ) {
-					if ( lhs.edge1 < rhs.edge1 ) {
+				} else if ( lhs.edge1 == rhs.edge1 ) {
+					if ( lhs.edge2 < rhs.edge2 ) {
 						return true;
-					} else if ( lhs.edge1 == rhs.edge1 ) {
-						if ( lhs.edge2 < rhs.edge2 ) {
-							return true;
-						} else {
-							if ( lhs.edge2 == rhs.edge2) {
-								return ( lhs.orientation < rhs.orientation);
-							}
+					} else {
+						if ( lhs.edge2 == rhs.edge2 ) {
+							return ( lhs.orientation < rhs.orientation);
 						}
 					}
 				}
 			}
-			return false;
 		}
+		return false;
+	}
 
-	};
+};
 
-	///////////////////////////////////////////////////////////////////////////////////
-	class RNA_PairingTemplate : public utility::pointer::ReferenceCount {
+///////////////////////////////////////////////////////////////////////////////////
+class RNA_PairingTemplate : public utility::pointer::ReferenceCount {
 
-	public:
+public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~RNA_PairingTemplate();
 
-		RNA_PairingTemplate( core::kinematics::Jump const j, std::string const atom_name1, std::string const atom_name2 );
+	RNA_PairingTemplate( core::kinematics::Jump const j, std::string const atom_name1, std::string const atom_name2 );
 
-		RNA_PairingTemplate( core::kinematics::Jump const j1, core::kinematics::Jump const j2, std::string const atom_name1, std::string const atom_name2 );
+	RNA_PairingTemplate( core::kinematics::Jump const j1, core::kinematics::Jump const j2, std::string const atom_name1, std::string const atom_name2 );
 
-		core::kinematics::Jump const &
-		jump() const { return jump_forward_; }
+	core::kinematics::Jump const &
+	jump() const { return jump_forward_; }
 
-		core::kinematics::Jump const &
-		jump_forward() const { return jump_forward_; }
+	core::kinematics::Jump const &
+	jump_forward() const { return jump_forward_; }
 
-		core::kinematics::Jump const &
-		jump_backward() const { return jump_backward_; }
+	core::kinematics::Jump const &
+	jump_backward() const { return jump_backward_; }
 
-		std::string const &
-		atom_name1() const {return atom_name1_; }
+	std::string const &
+	atom_name1() const {return atom_name1_; }
 
-		std::string const &
-		atom_name2() const {return atom_name2_; }
+	std::string const &
+	atom_name2() const {return atom_name2_; }
 
-	private:
-		core::kinematics::Jump const jump_forward_;
-		core::kinematics::Jump const jump_backward_;
-		std::string const atom_name1_;
-		std::string const atom_name2_;
-	};
+private:
+	core::kinematics::Jump const jump_forward_;
+	core::kinematics::Jump const jump_backward_;
+	std::string const atom_name1_;
+	std::string const atom_name2_;
+};
 
-	typedef utility::pointer::shared_ptr< RNA_PairingTemplate > RNA_PairingTemplateOP;
+typedef utility::pointer::shared_ptr< RNA_PairingTemplate > RNA_PairingTemplateOP;
 
-	///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 
-	typedef utility::vector1< RNA_PairingTemplateOP > RNA_PairingTemplateList;
-	typedef std::map< BasePairType, RNA_PairingTemplateList > RNA_PairingTemplateMap;
+typedef utility::vector1< RNA_PairingTemplateOP > RNA_PairingTemplateList;
+typedef std::map< BasePairType, RNA_PairingTemplateList > RNA_PairingTemplateMap;
 
-	///////////////////////////////////////////////////////////////////////////////////
-	class RNA_JumpLibrary : public utility::pointer::ReferenceCount {
-	public:
+///////////////////////////////////////////////////////////////////////////////////
+class RNA_JumpLibrary : public utility::pointer::ReferenceCount {
+public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~RNA_JumpLibrary();
-		RNA_JumpLibrary( std::string const filename ){ read_jumps_from_file( filename ); };
+	RNA_JumpLibrary( std::string const filename ){ read_jumps_from_file( filename ); };
 
-		void
-		read_jumps_from_file( std::string const & jump_library_filename );
+	void
+	read_jumps_from_file( std::string const & jump_library_filename );
 
-		void
-		check_forward_backward(
-													 std::string & atom_name,
-													 bool const forward,
-													 core::kinematics::Jump & j,
-													 RNA_PairingTemplateOP const & t) const;
+	void
+	check_forward_backward(
+		std::string & atom_name,
+		bool const forward,
+		core::kinematics::Jump & j,
+		RNA_PairingTemplateOP const & t) const;
 
-		core::kinematics::Jump
-		get_random_base_pair_jump(
-															char const aa1,
-															char const aa2,
-															char const edge1,
-															char const edge2,
-															char const orientation,
-															std::string & atom_name1,
-															std::string & atom_name2,
-															bool & success,
-															bool const forward1 = true,
-															bool const forward2 = true ) const;
+	core::kinematics::Jump
+	get_random_base_pair_jump(
+		char const aa1,
+		char const aa2,
+		char const edge1,
+		char const edge2,
+		char const orientation,
+		std::string & atom_name1,
+		std::string & atom_name2,
+		bool & success,
+		bool const forward1 = true,
+		bool const forward2 = true ) const;
 
-	private:
+private:
 
-		void
-		save_in_jump_library( core::Size const reschar1, core::Size const reschar2,
-													char const edgechar1, char const edgechar2,
-													char const orientation,
-													std::string const & atom_name1,
-													std::string const & atom_name2,
-													core::kinematics::Jump const & jump1,
-													core::kinematics::Jump const & jump2 );
+	void
+	save_in_jump_library( core::Size const reschar1, core::Size const reschar2,
+		char const edgechar1, char const edgechar2,
+		char const orientation,
+		std::string const & atom_name1,
+		std::string const & atom_name2,
+		core::kinematics::Jump const & jump1,
+		core::kinematics::Jump const & jump2 );
 
 
-		RNA_PairingTemplateMap rna_pairing_template_map_;
+	RNA_PairingTemplateMap rna_pairing_template_map_;
 
-	};
+};
 
-	typedef utility::pointer::shared_ptr< RNA_JumpLibrary > RNA_JumpLibraryOP;
+typedef utility::pointer::shared_ptr< RNA_JumpLibrary > RNA_JumpLibraryOP;
 
 } //farna
 } //protocols

@@ -52,121 +52,121 @@ namespace monte_carlo {
 namespace rna {
 
 
-  //////////////////////////////////////////////////////////////////////////
-  //constructor!
-	//	RNA_TorsionMover::RNA_TorsionMover():
-	//		Mover(),
-	//		default_sample_range_( 10.0 )
-	//	{}
+//////////////////////////////////////////////////////////////////////////
+//constructor!
+// RNA_TorsionMover::RNA_TorsionMover():
+//  Mover(),
+//  default_sample_range_( 10.0 )
+// {}
 
-  //////////////////////////////////////////////////////////////////////////
-  //destructor
-  RNA_TorsionMover::~RNA_TorsionMover()
-  {}
+//////////////////////////////////////////////////////////////////////////
+//destructor
+RNA_TorsionMover::~RNA_TorsionMover()
+{}
 
-	//////////////////////////////////////////////////////////////////////
-  void
-  RNA_TorsionMover::apply( core::pose::Pose & pose )
-	{
-		std::string move_type = "";
-		default_sample_range_ = 10; //not very elegant.
-		apply( pose, move_type, default_sample_range_ );
-	}
+//////////////////////////////////////////////////////////////////////
+void
+RNA_TorsionMover::apply( core::pose::Pose & pose )
+{
+	std::string move_type = "";
+	default_sample_range_ = 10; //not very elegant.
+	apply( pose, move_type, default_sample_range_ );
+}
 
-	//////////////////////////////////////////////////////////////////////
-  void
-  RNA_TorsionMover::apply( core::pose::Pose & pose, std::string & move_type, Real const & sample_range )
-	{
-		utility::vector1< Size > const moving_res_list = core::pose::full_model_info::get_moving_res_from_full_model_info( pose );
-		random_torsion_move( pose, moving_res_list, move_type, sample_range );
-	}
+//////////////////////////////////////////////////////////////////////
+void
+RNA_TorsionMover::apply( core::pose::Pose & pose, std::string & move_type, Real const & sample_range )
+{
+	utility::vector1< Size > const moving_res_list = core::pose::full_model_info::get_moving_res_from_full_model_info( pose );
+	random_torsion_move( pose, moving_res_list, move_type, sample_range );
+}
 
-	//////////////////////////////////////////////////////////////////////
-	void
-	RNA_TorsionMover::random_torsion_move( pose::Pose & pose,
-																				 utility::vector1< Size > const & moving_res_list,
-																				 std::string & move_type,
-																				 Real const & sample_range ){
+//////////////////////////////////////////////////////////////////////
+void
+RNA_TorsionMover::random_torsion_move( pose::Pose & pose,
+	utility::vector1< Size > const & moving_res_list,
+	std::string & move_type,
+	Real const & sample_range ){
 
-		using namespace pose::full_model_info;
-		Size const random_idx = int( numeric::random::rg().uniform() * moving_res_list.size() ) + 1;
-		Size const i = moving_res_list[ random_idx ];
+	using namespace pose::full_model_info;
+	Size const random_idx = int( numeric::random::rg().uniform() * moving_res_list.size() ) + 1;
+	Size const i = moving_res_list[ random_idx ];
 
-		StepWiseMoveSelector swa_move_selector;
-		Attachments attachments = swa_move_selector.get_attachments( pose, sub_to_full( i, pose ) );
+	StepWiseMoveSelector swa_move_selector;
+	Attachments attachments = swa_move_selector.get_attachments( pose, sub_to_full( i, pose ) );
 
-		runtime_assert( attachments.size() > 0 );
+	runtime_assert( attachments.size() > 0 );
 
-		if ( attachments.size() == 1 ){
+	if ( attachments.size() == 1 ) {
 
-			Attachment const & attachment = attachments[ 1 ];
+		Attachment const & attachment = attachments[ 1 ];
 
-			// an edge residue -- change both its nucleoside & suite -- can go crazy.
-			Size const nucleoside_num = i;
-			sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range);
+		// an edge residue -- change both its nucleoside & suite -- can go crazy.
+		Size const nucleoside_num = i;
+		sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range);
+
+		Size suite_num( 0 );
+		if ( attachment.attachment_type() == BOND_TO_PREVIOUS ) suite_num = i - 1;
+		else suite_num = i;
+
+		if ( numeric::random::rg().uniform() < 0.5 ) {
+			sample_near_suite_torsion( pose, suite_num, sample_range);
+			move_type += "-nuc-suite";
+		} else {
+			crankshaft_alpha_gamma( pose, suite_num, sample_range);
+			move_type += "-nuc-crank";
+		}
+
+	} else {
+
+		// internal.
+		runtime_assert( attachments.size() == 2 );
+
+		// don't do anything super-crazy -- either do previous suite, current nucleoside, or next suite.
+		Real const random_number = numeric::random::rg().uniform();
+
+		if ( random_number < 0.6 ) {
 
 			Size suite_num( 0 );
-			if ( attachment.attachment_type() == BOND_TO_PREVIOUS ) suite_num = i - 1;
-			else suite_num = i;
+			if ( numeric::random::rg().uniform() < 0.5 ) {
+				suite_num= i-1;
+			} else {
+				suite_num= i;
+			}
 
-			if ( numeric::random::rg().uniform() < 0.5) {
+			if ( numeric::random::rg().uniform() < 0.5 ) {
 				sample_near_suite_torsion( pose, suite_num, sample_range);
-				move_type += "-nuc-suite";
+				//move_type += "-suite" + string_of(suite_num);
+				move_type += "-suite";
 			} else {
 				crankshaft_alpha_gamma( pose, suite_num, sample_range);
-				move_type += "-nuc-crank";
+				//move_type += "-suite" + string_of(suite_num);
+				move_type += "-crank";
 			}
-
 		} else {
-
-			// internal.
-			runtime_assert( attachments.size() == 2 );
-
-			// don't do anything super-crazy -- either do previous suite, current nucleoside, or next suite.
-			Real const random_number = numeric::random::rg().uniform();
-
-			if ( random_number < 0.6 ){
-
-				Size suite_num( 0 );
-				if ( numeric::random::rg().uniform() < 0.5) {
-					suite_num= i-1;
-				} else {
-					suite_num= i;
-				}
-
-				if ( numeric::random::rg().uniform() < 0.5) {
-					sample_near_suite_torsion( pose, suite_num, sample_range);
-					//move_type += "-suite" + string_of(suite_num);
-					move_type += "-suite";
-				} else {
-					crankshaft_alpha_gamma( pose, suite_num, sample_range);
-					//move_type += "-suite" + string_of(suite_num);
-					move_type += "-crank";
-				}
-			} else {
-				Size const nucleoside_num = i;
-				sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range);
-				//move_type += "-nuc" + string_of(nucleoside_num);
-				move_type += "-nuc";
-			}
-
+			Size const nucleoside_num = i;
+			sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range);
+			//move_type += "-nuc" + string_of(nucleoside_num);
+			move_type += "-nuc";
 		}
 
 	}
 
+}
+
 
 //////////////////////////////////////////////////
-	std::string
-	RNA_TorsionMover::get_name() const {
-		return "RNA_TorsionMover";
-	}
+std::string
+RNA_TorsionMover::get_name() const {
+	return "RNA_TorsionMover";
+}
 
 
 //////////////////////////////////////////////////
 void
 RNA_TorsionMover::sample_near_suite_torsion(utility::vector1< Real > & torsion_list, Real const stddev) {
-	//	static const Real delta_north = rna_fitted_torsion_info_.delta_north();
-	//	static const Real delta_south = rna_fitted_torsion_info_.delta_south();
+	// static const Real delta_north = rna_fitted_torsion_info_.delta_north();
+	// static const Real delta_south = rna_fitted_torsion_info_.delta_south();
 
 	torsion_list[1] += numeric::random::rg().gaussian() * stddev;
 	torsion_list[2] += numeric::random::rg().gaussian() * stddev;
@@ -185,14 +185,14 @@ RNA_TorsionMover::sample_near_nucleoside_torsion(utility::vector1< Real > & tors
 	static const Real delta_north = rna_fitted_torsion_info_.delta_north();
 	static const Real delta_south = rna_fitted_torsion_info_.delta_south();
 
-	if (numeric::random::rg().uniform() < 0.2) {
+	if ( numeric::random::rg().uniform() < 0.2 ) {
 		torsion_list[1]  = (numeric::random::rg().uniform() < 0.5) ? delta_south : delta_north;
 	}
 
 	torsion_list[2] += numeric::random::rg().gaussian() * stddev;
-	if (torsion_list[2] > 360) {
+	if ( torsion_list[2] > 360 ) {
 		torsion_list[2] -= 360;
-	} else if (torsion_list[2] <=  0) {
+	} else if ( torsion_list[2] <=  0 ) {
 		torsion_list[2] += 360;
 	}
 
@@ -201,14 +201,14 @@ RNA_TorsionMover::sample_near_nucleoside_torsion(utility::vector1< Real > & tors
 //////////////////////////////////
 void
 RNA_TorsionMover::apply_nucleoside_torsion( utility::vector1< Real > const & torsion_set,
-													pose::Pose & pose,
-													Size const moving_res){
+	pose::Pose & pose,
+	Size const moving_res){
 
 	using namespace id;
 	using namespace chemical::rna;
 
 	Real delta, nu2, nu1;
-	if (torsion_set[1] < 115) { //North pucker, [6] is delta angle (only pick one of the two states)
+	if ( torsion_set[1] < 115 ) { //North pucker, [6] is delta angle (only pick one of the two states)
 		delta = rna_fitted_torsion_info_.delta_north();
 		nu2 = rna_fitted_torsion_info_.nu2_north();
 		nu1 = rna_fitted_torsion_info_.nu1_north();
@@ -227,8 +227,8 @@ RNA_TorsionMover::apply_nucleoside_torsion( utility::vector1< Real > const & tor
 //////////////////////////////////
 void
 RNA_TorsionMover::apply_suite_torsion( utility::vector1< Real > const & torsion_set,
-										 pose::Pose & pose,
-										 Size const moving_suite ){
+	pose::Pose & pose,
+	Size const moving_suite ){
 
 	using namespace id;
 	using namespace chemical::rna;
@@ -245,7 +245,7 @@ RNA_TorsionMover::apply_suite_torsion( utility::vector1< Real > const & torsion_
 //////////////////////////////////
 void
 RNA_TorsionMover::apply_random_nucleoside_torsion( pose::Pose & pose,
-																									 Size const moving_res ){
+	Size const moving_res ){
 
 	utility::vector1< Real > torsion_set;
 
@@ -255,7 +255,7 @@ RNA_TorsionMover::apply_random_nucleoside_torsion( pose::Pose & pose,
 	// could be syn if purine.
 	if ( chemical::rna::is_purine( pose.residue( moving_res ) ) && numeric::random::rg().uniform() < 0.5 ) chi_rotamer = 2;
 
-	if ( north_pucker ){
+	if ( north_pucker ) {
 		torsion_set.push_back( rna_fitted_torsion_info_.delta_north() );
 		torsion_set.push_back( rna_fitted_torsion_info_.gaussian_parameter_set_chi_north()[chi_rotamer].center );
 	} else {
@@ -270,7 +270,7 @@ RNA_TorsionMover::apply_random_nucleoside_torsion( pose::Pose & pose,
 //////////////////////////////////
 void
 RNA_TorsionMover::apply_random_suite_torsion( pose::Pose & pose,
-														Size const moving_suite ){
+	Size const moving_suite ){
 
 	utility::vector1< Real > torsion_set;
 
@@ -283,9 +283,9 @@ RNA_TorsionMover::apply_random_suite_torsion( pose::Pose & pose,
 
 	Size const zeta_rotamer = int( 2 * numeric::random::rg().uniform() ) + 1;
 	Real zeta;
-	if ( alpha_rotamer == 1 ){
+	if ( alpha_rotamer == 1 ) {
 		zeta = rna_fitted_torsion_info_.gaussian_parameter_set_zeta_alpha_sc_minus()[ zeta_rotamer ].center;
-	} else if ( alpha_rotamer == 2 ){
+	} else if ( alpha_rotamer == 2 ) {
 		zeta = rna_fitted_torsion_info_.gaussian_parameter_set_zeta_alpha_sc_plus()[ zeta_rotamer ].center;
 	} else {
 		zeta = rna_fitted_torsion_info_.gaussian_parameter_set_zeta_alpha_ap()[ zeta_rotamer ].center;
@@ -306,8 +306,8 @@ RNA_TorsionMover::apply_random_suite_torsion( pose::Pose & pose,
 //////////////////////////////////
 void
 RNA_TorsionMover::apply_nucleoside_torsion_Aform(
-																								 pose::Pose & pose,
-																								 Size const moving_res ){
+	pose::Pose & pose,
+	Size const moving_res ){
 
 	utility::vector1< Real > ideal_A_form_torsions;
 	ideal_A_form_torsions.push_back( rna_fitted_torsion_info_.delta_north() );
@@ -319,8 +319,8 @@ RNA_TorsionMover::apply_nucleoside_torsion_Aform(
 //////////////////////////////////
 void
 RNA_TorsionMover::apply_suite_torsion_Aform(
-													pose::Pose & pose,
-													Size const moving_suite ){
+	pose::Pose & pose,
+	Size const moving_suite ){
 
 	utility::vector1< Real > ideal_A_form_torsions;
 	ideal_A_form_torsions.push_back( rna_fitted_torsion_info_.gaussian_parameter_set_epsilon_north()[1].center );
@@ -339,11 +339,11 @@ RNA_TorsionMover::get_suite_torsion( pose::Pose const & pose, Size const moving_
 	using namespace id;
 
 	utility::vector1< Real > torsion_set;
-	torsion_set.push_back(	pose.torsion( TorsionID( moving_suite, id::BB, 5 ) ) );   //epsilon
-	torsion_set.push_back(	pose.torsion( TorsionID( moving_suite, id::BB, 6 ) ) );   //zeta
-	torsion_set.push_back(	pose.torsion( TorsionID( moving_suite+1, id::BB, 1 ) ) ); //alpha
-	torsion_set.push_back(	pose.torsion( TorsionID( moving_suite+1, id::BB, 2 ) ) ); //beta
-	torsion_set.push_back(	pose.torsion( TorsionID( moving_suite+1, id::BB, 3 ) ) ); //gamma
+	torsion_set.push_back( pose.torsion( TorsionID( moving_suite, id::BB, 5 ) ) );   //epsilon
+	torsion_set.push_back( pose.torsion( TorsionID( moving_suite, id::BB, 6 ) ) );   //zeta
+	torsion_set.push_back( pose.torsion( TorsionID( moving_suite+1, id::BB, 1 ) ) ); //alpha
+	torsion_set.push_back( pose.torsion( TorsionID( moving_suite+1, id::BB, 2 ) ) ); //beta
+	torsion_set.push_back( pose.torsion( TorsionID( moving_suite+1, id::BB, 3 ) ) ); //gamma
 
 	return torsion_set;
 }
@@ -355,8 +355,8 @@ RNA_TorsionMover::get_nucleoside_torsion( pose::Pose const & pose, Size const mo
 	using namespace id;
 
 	utility::vector1< Real > torsion_set;
-	torsion_set.push_back(	pose.torsion( TorsionID( moving_nucleoside, id::BB, 4 ) ) );  //delta
-	torsion_set.push_back(	pose.torsion( TorsionID( moving_nucleoside, id::CHI, 1 ) ) ); //chi
+	torsion_set.push_back( pose.torsion( TorsionID( moving_nucleoside, id::BB, 4 ) ) );  //delta
+	torsion_set.push_back( pose.torsion( TorsionID( moving_nucleoside, id::CHI, 1 ) ) ); //chi
 
 	return torsion_set;
 }

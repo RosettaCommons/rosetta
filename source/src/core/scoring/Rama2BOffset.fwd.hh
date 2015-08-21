@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/Rama2BOffset.fwd.hh
-/// @brief  
+/// @brief
 /// @author
 
 #ifndef INCLUDED_core_scoring_Rama2BOffset_fwd_hh

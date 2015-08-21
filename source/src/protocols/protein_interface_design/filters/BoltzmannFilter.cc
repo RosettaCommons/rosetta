@@ -26,7 +26,7 @@ using ObjexxFCL::format::F;
 
 
 namespace protocols {
-namespace protein_interface_design{
+namespace protein_interface_design {
 namespace filters {
 
 static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.BoltzmannFilter" );
@@ -66,17 +66,17 @@ BoltzmannFilter::temperature( core::Real const t ){
 
 core::Real
 BoltzmannFilter::triage_threshold() const{
-	  return triage_threshold_;
+	return triage_threshold_;
 }
 
 void
 BoltzmannFilter::triage_threshold( core::Real const t ){
-	  triage_threshold_ = t;
+	triage_threshold_ = t;
 }
 
 void
 BoltzmannFilter::norm_neg( bool const n ){
-	  norm_neg_ = n;
+	norm_neg_ = n;
 }
 
 bool
@@ -136,36 +136,36 @@ BoltzmannFilter::compute( core::pose::Pose const & pose ) const{
 	core::Real positive_sum( 0.0 ), negative_sum( 0.0 );
 	core::Size negative_counter( 0 );
 	std::string s = "BOLTZ: ";
-	for( core::Size index = 1; index <= get_positive_filters().size(); ++index ){
+	for ( core::Size index = 1; index <= get_positive_filters().size(); ++index ) {
 		core::Real const filter_val( get_positive_filters()[ index ]->report_sm( pose ));
 		s += F(7,3,filter_val)+" ";
 		positive_sum += exp( -filter_val / temperature() );
-		if( anchors_.size() >= index ) {
+		if ( anchors_.size() >= index ) {
 			negative_sum += exp( ( filter_val - anchors_[ index ] ) / temperature() );
 		}
 	}
 
-	BOOST_FOREACH( FilterCOP filter, get_negative_filters() ) {
+	BOOST_FOREACH ( FilterCOP filter, get_negative_filters() ) {
 		core::Real filter_val = filter->report_sm( pose );
 		s += F(7,3,filter_val)+" ";
-		if ( filter_val >= triage_threshold() ){
+		if ( filter_val >= triage_threshold() ) {
 			negative_sum += exp( -filter_val / temperature() );
 			negative_counter += 1;
 			TR<<"Taken filter: "<<filter->get_user_defined_name()<<" filter val: "<< filter_val<<std::endl;
-			}
+		}
 	}
 	TR << s << -positive_sum/(positive_sum+negative_sum) <<std::endl;
-			if ( norm_neg() ){
-				TR<<"Negative counter: "<< negative_counter <<std::endl;
-				// if there are no negative states then set a value that will definitely return fail in compute
-				if( !negative_counter ){
-					TR<<"Normalized fitness: 9999 "<<std::endl;
-					return 9999;
-				}
-				TR<<"Normalized fitness: " << (( -(core::Real)positive_sum / ( positive_sum + negative_sum )) / ((core::Real) get_positive_filters().size()/(get_positive_filters().size()+negative_counter)))<<std::endl;
-				TR<<"Number of positive states: " << get_positive_filters().size() << std::endl;
-				return ( ( -(core::Real)positive_sum / ( positive_sum + negative_sum )) / ((core::Real) get_positive_filters().size()/(get_positive_filters().size()+negative_counter) ) );
-			}
+	if ( norm_neg() ) {
+		TR<<"Negative counter: "<< negative_counter <<std::endl;
+		// if there are no negative states then set a value that will definitely return fail in compute
+		if ( !negative_counter ) {
+			TR<<"Normalized fitness: 9999 "<<std::endl;
+			return 9999;
+		}
+		TR<<"Normalized fitness: " << (( -(core::Real)positive_sum / ( positive_sum + negative_sum )) / ((core::Real) get_positive_filters().size()/(get_positive_filters().size()+negative_counter)))<<std::endl;
+		TR<<"Number of positive states: " << get_positive_filters().size() << std::endl;
+		return ( ( -(core::Real)positive_sum / ( positive_sum + negative_sum )) / ((core::Real) get_positive_filters().size()/(get_positive_filters().size()+negative_counter) ) );
+	}
 	TR<<"Fitness: " << ( -(core::Real)positive_sum / ( positive_sum + negative_sum )) << std::endl;
 	return( -(core::Real)positive_sum / ( positive_sum + negative_sum ));
 }
@@ -197,19 +197,24 @@ BoltzmannFilter::parse_my_tag( utility::tag::TagCOP tag,
 	utility::vector1< std::string > const positive_filter_names( utility::string_split( tag->getOption< std::string >( "positive_filters" ), ',' ) );
 	utility::vector1< std::string > negative_filter_names, anchors_string;
 	negative_filter_names.clear(); anchors_string.clear();
-	if( tag->hasOption( "negative_filters" ) )
+	if ( tag->hasOption( "negative_filters" ) ) {
 		negative_filter_names = utility::string_split( tag->getOption< std::string >( "negative_filters" ), ',' );
-	if( tag->hasOption( "anchors" ) )
+	}
+	if ( tag->hasOption( "anchors" ) ) {
 		anchors_string = utility::string_split( tag->getOption< std::string >( "anchors"), ',' );
-	BOOST_FOREACH( std::string const positive_filter_name, positive_filter_names )
+	}
+	BOOST_FOREACH ( std::string const positive_filter_name, positive_filter_names ) {
 		add_positive_filter( protocols::rosetta_scripts::parse_filter( positive_filter_name, filters ) );
-	BOOST_FOREACH( std::string const negative_filter_name, negative_filter_names )
+	}
+	BOOST_FOREACH ( std::string const negative_filter_name, negative_filter_names ) {
 		add_negative_filter( protocols::rosetta_scripts::parse_filter( negative_filter_name, filters ) );
-	BOOST_FOREACH( std::string const anchor_str, anchors_string )
+	}
+	BOOST_FOREACH ( std::string const anchor_str, anchors_string ) {
 		anchors_.push_back( (core::Real) utility::string2float( anchor_str ) );
+	}
 
 	TR<<"with options temperature: "<<temperature()<<"  triage_threshold "<<triage_threshold()<<" fitness_threshold "<<fitness_threshold()<<"  "<<get_positive_filters().size()<<" positive and "<<get_negative_filters().size()<<" negative filters."<<std::endl;
-	if( anchors().size() > 0 ){
+	if ( anchors().size() > 0 ) {
 		TR<<"defined "<<anchors().size()<<" anchors"<<std::endl;
 		runtime_assert( get_positive_filters().size() == anchors().size());
 	}

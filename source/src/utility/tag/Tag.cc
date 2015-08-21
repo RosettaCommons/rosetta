@@ -87,9 +87,9 @@
 #include <sstream>
 
 namespace boost {
-	void throw_exception(std::exception const&) {
-		std::cerr << "some kind of exception was thrown" << std::endl;
-	}
+void throw_exception(std::exception const&) {
+	std::cerr << "some kind of exception was thrown" << std::endl;
+}
 }
 
 namespace utility {
@@ -134,7 +134,7 @@ Tag::operator=(Tag const &other) {
 	name_ = other.name_;
 	mOptions_ = other.mOptions_;
 
-	for( size_t i = 0; i < other.vTags_.size(); ++i ) {
+	for ( size_t i = 0; i < other.vTags_.size(); ++i ) {
 		TagOP tag( new Tag() );
 		*tag = *other.vTags_[i];
 		addTag( tag );
@@ -145,13 +145,14 @@ Tag::operator=(Tag const &other) {
 
 void Tag::die_for_unaccessed_options() const {
 	options_t::const_iterator option= mOptions_.begin();
-	for(; option != mOptions_.end(); ++option){
+	for ( ; option != mOptions_.end(); ++option ) {
 		std::string const & option_key= option->first;
 		options_t::const_iterator const & found= accessed_options_.find(option_key);
-		if( found == accessed_options_.end()){
+		if ( found == accessed_options_.end() ) {
 			std::cerr<<"In tag\n"<<*this<<"\n available options are: ";
-			for( options_t::const_iterator available_option = accessed_options_.begin(); available_option != accessed_options_.end(); ++available_option )
+			for ( options_t::const_iterator available_option = accessed_options_.begin(); available_option != accessed_options_.end(); ++available_option ) {
 				std::cerr<<available_option->first<<", ";
+			}
 			std::cerr<<std::endl;
 			utility_exit_with_message("'"+option->first+"' is not a valid option for "+name_);
 		}
@@ -161,7 +162,7 @@ void Tag::die_for_unaccessed_options() const {
 void Tag::die_for_unaccessed_options_recursively() const {
 	die_for_unaccessed_options();
 	tags_t::const_iterator begin= vTags_.begin();
-	for(; begin != vTags_.end(); ++begin){
+	for ( ; begin != vTags_.end(); ++begin ) {
 		(*begin)->die_for_unaccessed_options_recursively();
 	}
 }
@@ -191,7 +192,7 @@ Tag::getTags() const {
 utility::vector0< TagCOP > const &
 Tag::getTags( string const& name ) const {
 	map< string, utility::vector0< TagCOP > >::const_iterator i = mvTags_.find(name);
-	if( i == mvTags_.end() ) {
+	if ( i == mvTags_.end() ) {
 		return vEmpty_;
 	}
 	return i->second;
@@ -201,7 +202,7 @@ TagCOP const &
 Tag::getTag( string const& name ) const
 {
 	utility::vector0< TagCOP > const& v = getTags(name);
-	if( v.size() != 1 ) {
+	if ( v.size() != 1 ) {
 		std::stringstream error_msg;
 		error_msg << "Tag::getTag - name=" << name << ", appears " << v.size() << " times in xml file. Only allowed once.\n";
 		error_msg << *this << std::endl;
@@ -221,15 +222,15 @@ void Tag::write(std::ostream& out, int num_tabs ) const
 	string tabs(num_tabs,'\t');
 
 	out << tabs << "<" << name_;
-	for( options_t::const_iterator i = mOptions_.begin(), end_i = mOptions_.end(); i != end_i; ++i ) {
+	for ( options_t::const_iterator i = mOptions_.begin(), end_i = mOptions_.end(); i != end_i; ++i ) {
 		out << " " << i->first << "=" << i->second;
 	}
 
-	if( vTags_.size() == 0 ) {
+	if ( vTags_.size() == 0 ) {
 		out << "/>\n";
 	} else {
 		out << ">\n";
-		for( tags_t::const_iterator i = vTags_.begin(), end_i = vTags_.end(); i != end_i; ++i ) {
+		for ( tags_t::const_iterator i = vTags_.begin(), end_i = vTags_.end(); i != end_i; ++i ) {
 			TagCOP tag = *i;
 			tag->write(out,num_tabs+1);
 		}
@@ -240,7 +241,7 @@ void Tag::write(std::ostream& out, int num_tabs ) const
 
 size_t Tag::size() const {
 	size_t rval = 1;
-	for( tags_t::const_iterator i = vTags_.begin(), end_i = vTags_.end(); i != end_i; ++i ) {
+	for ( tags_t::const_iterator i = vTags_.begin(), end_i = vTags_.end(); i != end_i; ++i ) {
 		rval += (**i).size();
 	}
 	return rval;
@@ -255,7 +256,7 @@ template<>
 bool
 Tag::getOption<bool>(std::string const& key, bool const& t_default) const {
 	options_t::const_iterator i = mOptions_.find(key);
-	if( i == mOptions_.end() ) {
+	if ( i == mOptions_.end() ) {
 		accessed_options_[key]= key;
 		return t_default;
 	}
@@ -274,7 +275,7 @@ template<>
 bool
 Tag::getOption<bool>(std::string const& key) const {
 	options_t::const_iterator i = mOptions_.find(key);
-	if( i == mOptions_.end() ) {
+	if ( i == mOptions_.end() ) {
 		std::stringstream error_message;
 		error_message << "Option '" << key << "' not found in Tag named '" << this->getName() << "'.";
 		throw utility::excn::EXCN_Msg_Exception( error_message.str() );
@@ -325,7 +326,7 @@ void set_name_and_options( TagOP & tag, name_and_options_value_type const & v )
 {
 	tag = TagOP( new Tag() );
 	tag->setName( v.first );
-	for(  map<string,string>::const_iterator i = v.second.begin(), end_i = v.second.end(); i != end_i ; ++i ) {
+	for (  map<string,string>::const_iterator i = v.second.begin(), end_i = v.second.end(); i != end_i ; ++i ) {
 		tag->setOption( i->first, i->second );
 	}
 } // set_name_and_options
@@ -336,7 +337,7 @@ void add_tag( TagOP tag, TagOP other ) {
 
 void assert_matching_tag_names( TagCOP tag, string const& closing_tag_name )
 {
-	if( tag->getName() != closing_tag_name ) {
+	if ( tag->getName() != closing_tag_name ) {
 		std::cerr << "error - tag names do not match! (Possibly due to unclosed tag.) " << tag->getName() << " != " << closing_tag_name << endl;
 	}
 } // set_name_and_options
@@ -456,38 +457,36 @@ void print_error( ostream& out, string const& str, file_position const& lc ) {
 	size_t line_begin = 0;
 	size_t line_end = str.find('\n',line_begin);
 
-	for( int line = 1; line < lc.line; ++line ) {
+	for ( int line = 1; line < lc.line; ++line ) {
 		line_begin = line_end+1;
-		if( line_begin < str.size() ) {
+		if ( line_begin < str.size() ) {
 			line_end = str.find('\n',line_begin);
 		}
 	}
 
-	if( line_end == std::string::npos ){
+	if ( line_end == std::string::npos ) {
 		line_end = str.size();
 	}
 
 
-	if( line_begin < str.size() ) {
+	if ( line_begin < str.size() ) {
 		out << "Tag::read - parse error - file:" << lc.file << " line:" << lc.line << " column:" << lc.column << " - ";
-		for( size_t column = line_begin; column < line_end; ++column ) {
+		for ( size_t column = line_begin; column < line_end; ++column ) {
 			out << str[column];
 		}
 		out << "\n";
 
 		out << "Tag::read - parse error - file:" << lc.file << " line:" << lc.line << " column:" << lc.column << " - ";
-		for( int k = 0; k < (lc.column-1); ++k ) {
+		for ( int k = 0; k < (lc.column-1); ++k ) {
 			size_t column = line_begin + k;
-			if( column < str.size() && str[ column ] == '\t' ) {
+			if ( column < str.size() && str[ column ] == '\t' ) {
 				out << "\t";
-			}
-			else {
+			} else {
 				out << " ";
 			}
 		}
 		out << "^\n" << endl;
-	}
-	else {
+	} else {
 		out << "Tag::read - parse error - file:" << lc.file << " line:" << lc.line << " column:" << lc.column << " - somewhere in file\n" << endl;
 	}
 }
@@ -496,7 +495,7 @@ void print_error( ostream& out, string const& str, file_position const& lc ) {
 
 void Tag::read(std::istream& in ) {
 	string str;
-	while( in.peek() != EOF ) str.push_back(in.get());
+	while ( in.peek() != EOF ) str.push_back(in.get());
 
 	typedef position_iterator<char const*> iterator_t;
 	iterator_t begin(str.c_str(), str.c_str() + str.size(), "istream"); // is this remotely correct?
@@ -507,12 +506,12 @@ void Tag::read(std::istream& in ) {
 	tag_grammar g;
 	bool full = parse(begin, end, g[ var(tag) = arg1 ] ).full;
 
-	if( tag && full ) {
+	if ( tag && full ) {
 		*this = *tag;
 	} else {
 		stringstream err_msg;
 		err_msg << "Tag::read - parse error, printing backtrace.\n" << endl;
-		for( size_t k = 0; k < g.errors.size(); ++k ) {
+		for ( size_t k = 0; k < g.errors.size(); ++k ) {
 			print_error(err_msg,str,g.errors[k]);
 		}
 
@@ -531,10 +530,10 @@ tag_grammar g;
 TagCOP tag; // don't need to initialize this at all
 
 if( parse( str.c_str(), g[ var(tag) = arg1 ] ).full ) {
-		*this = *tag;
+*this = *tag;
 }
 else {
-		runtime_assert( false );
+runtime_assert( false );
 }
 
 } // read

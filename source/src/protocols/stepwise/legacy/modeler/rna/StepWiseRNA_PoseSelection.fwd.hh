@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSelection.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -23,11 +23,11 @@ namespace stepwise {
 namespace legacy {
 namespace modeler {
 namespace rna {
-	
-	class StepWiseRNA_PoseSelection;
-	typedef utility::pointer::shared_ptr< StepWiseRNA_PoseSelection > StepWiseRNA_PoseSelectionOP;
-	typedef utility::pointer::shared_ptr< StepWiseRNA_PoseSelection const > StepWiseRNA_PoseSelectionCOP;
-	
+
+class StepWiseRNA_PoseSelection;
+typedef utility::pointer::shared_ptr< StepWiseRNA_PoseSelection > StepWiseRNA_PoseSelectionOP;
+typedef utility::pointer::shared_ptr< StepWiseRNA_PoseSelection const > StepWiseRNA_PoseSelectionCOP;
+
 } //rna
 } //modeler
 } //legacy

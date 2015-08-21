@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file PseudocontactShiftData.cc
- ///
- /// @brief  Hold the PCS data on which the SVD will be applied
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file PseudocontactShiftData.cc
+///
+/// @brief  Hold the PCS data on which the SVD will be applied
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 // TO DO FOR FASTER COMPILATION: remove the Pose.hh dependancy that could be centralized only in
 // PseudocontactShiftEnergy.cc, by doing the work on Pose in PseudocontactShiftEnergy.cc instead of here.
@@ -61,10 +61,10 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs {
 
 using namespace ObjexxFCL;
 
@@ -103,22 +103,22 @@ PCS_data_per_lanthanides::get_normalization_factor() const{
 	return normalization_factor_;
 }
 
-	/*
+/*
 core::Real
 PCS_data_per_lanthanides::get_normalization_1() const{
-	return normalization_1_;
+return normalization_1_;
 }
 
 core::Real
 PCS_data_per_lanthanides::get_normalization_2() const{
-	return normalization_2_;
+return normalization_2_;
 }
 
 core::Real
 PCS_data_per_lanthanides::get_normalization_3() const{
-	return normalization_3_;
+return normalization_3_;
 }
-	*/
+*/
 
 PCS_data_per_lanthanides &
 PCS_data_per_lanthanides::operator=( PCS_data_per_lanthanides const & other )
@@ -180,12 +180,12 @@ PCS_data::clone() const {
 
 void
 fill_A_line(utility::vector1<core::Real> & A_line,
-						core::Real const xM,
-						core::Real const yM,
-						core::Real const zM,
-						core::Real const x,
-						core::Real const y,
-						core::Real const z){
+	core::Real const xM,
+	core::Real const yM,
+	core::Real const zM,
+	core::Real const x,
+	core::Real const y,
+	core::Real const z){
 
 	using namespace core;
 
@@ -221,8 +221,8 @@ fill_A_line(utility::vector1<core::Real> & A_line,
 void
 PCS_data_per_lanthanides::update_my_A_matrix(utility::vector1< utility::vector1<core::Real> > & A_all){
 	core::Size i, j;
-	for(i = 1; i <= A_index_.size(); ++i){
-		for(j = 1; j <= 5; ++j){
+	for ( i = 1; i <= A_index_.size(); ++i ) {
+		for ( j = 1; j <= 5; ++j ) {
 			fstyle_A_(i, j) = A_all[A_index_[i]][j];
 		}
 	}
@@ -238,7 +238,7 @@ PCS_data_per_lanthanides::calculate_tensor_and_cost_with_svd(PCS_tensor &PCS_t){
 	//FAST SCORING is actually not faster (nor slower)
 	//FAST SCORING gives the PCS score without actually solving Ax = b
 	//(but still, the matrix has to be decomposed.
-  //So FAST_SCORING doesn't give the tensor parameters...
+	//So FAST_SCORING doesn't give the tensor parameters...
 	//FAST SCORING might become handy when working on unassigned data, that's why I keep it.
 
 	svd_s_.run_decomp_svd();
@@ -250,15 +250,15 @@ PCS_data_per_lanthanides::calculate_tensor_and_cost_with_svd(PCS_tensor &PCS_t){
 	svd_s_.run_solve_svd();
 	score = svd_s_.run_score_svd_on_matrix(fstyle_A_);
 	// The 2 following calls are not that necessary for just scoring
-	//	FArray1D<core::Real> f (svd_s_.get_svd_solution());
+	// FArray1D<core::Real> f (svd_s_.get_svd_solution());
 
 	utility::vector1<core::Real> const & f (svd_s_.get_svd_solution());
 
-	//	PCS_t.reset_tensor(f(1), f(2), f(3), f(4), f(5));
+	// PCS_t.reset_tensor(f(1), f(2), f(3), f(4), f(5));
 	PCS_t.reset_tensor(f[1], f[2], f[3], f[4], f[5]);
 #endif
 
-	//	std::cerr << weight_ << "applyed as individual weight in svd" << std::endl;
+	// std::cerr << weight_ << "applyed as individual weight in svd" << std::endl;
 
 	score *= weight_;
 
@@ -283,19 +283,19 @@ PCS_data::get_pcs_data_per_lanthanides_all() const {
 void
 PCS_data::update_matrix_A(){
 	core::Size i;
-	for( i = 1; i <= PCS_data_per_lanthanides_all_.size(); ++i){
+	for ( i = 1; i <= PCS_data_per_lanthanides_all_.size(); ++i ) {
 		PCS_data_per_lanthanides_all_[i].update_my_A_matrix(A_all_);
 	}
 }
 
 void
 PCS_data::update_matrix_A_all(core::Real const X,
-															core::Real const Y,
-															core::Real const Z){
+	core::Real const Y,
+	core::Real const Z){
 	core::Size i;
 	core::Real x, y, z;
 
-	for( i = 1; i <= n_pcs_spin_; ++i){
+	for ( i = 1; i <= n_pcs_spin_; ++i ) {
 		x = X_all_[i];
 		y = Y_all_[i];
 		z = Z_all_[i];
@@ -312,9 +312,9 @@ PCS_data::update_X_Y_Z_all(core::pose::Pose const & pose){
 	std::string at;
 	numeric::xyzVector< core::Real > coo;
 
-	for( i = 1; i <= PCS_data_line_all_spin_.size(); ++i){
+	for ( i = 1; i <= PCS_data_line_all_spin_.size(); ++i ) {
 		res = PCS_data_line_all_spin_[i].residue_num();
-		if(res > pose.total_residue()){
+		if ( res > pose.total_residue() ) {
 			std::cerr << "Error: Couldn't find residue " << res << std::endl;
 			std::cerr << "Numbering residue within Rosetta match the sequence provided as input" << std::endl;
 			std::cerr << "Make sure the numbering between the sequence and the PseudocontactShift (npc) input file match" << std::endl;
@@ -322,7 +322,7 @@ PCS_data::update_X_Y_Z_all(core::pose::Pose const & pose){
 		}
 
 		at = PCS_data_line_all_spin_[i].atom_name();
-		if( ! pose.residue(res).has(at)){
+		if ( ! pose.residue(res).has(at) ) {
 			std::cerr << "Error: Couldn't find the atom " << at << " in residue " << res << std::endl;
 			std::cerr << "Numbering residue within Rosetta match the sequence provided as input" << std::endl;
 			std::cerr << "Make sure the numbering between the sequence and the PseudocontactShift (npc) input file match" << std::endl;
@@ -358,10 +358,10 @@ PCS_data_per_lanthanides::get_fstyle_b() const{
 //Function for debugging
 void
 PCS_data_per_lanthanides::print_index_A() const{
-	core::Size i;
-	for (i = 1; i <= n_pcs_; ++i){
-		TR_pcs_d_p_l << i << " -> "  <<A_index_[i] << std::endl;
-	}
+core::Size i;
+for (i = 1; i <= n_pcs_; ++i){
+TR_pcs_d_p_l << i << " -> "  <<A_index_[i] << std::endl;
+}
 }
 */
 
@@ -371,8 +371,8 @@ PCS_data::where_is_line(PCS_line_data & P_l_d){
 	core::Size index;
 	index = 1;
 	for ( it = PCS_data_line_all_spin_.begin(); it != PCS_data_line_all_spin_.end(); ++it ) {
-		if ((*it).residue_num() == P_l_d.residue_num()){
-			if ((*it).atom_name() == P_l_d.atom_name()){
+		if ( (*it).residue_num() == P_l_d.residue_num() ) {
+			if ( (*it).atom_name() == P_l_d.atom_name() ) {
 				return(index);
 			}
 		}
@@ -382,97 +382,97 @@ PCS_data::where_is_line(PCS_line_data & P_l_d){
 }
 
 // PCS_data_per_lanthanides::PCS_data_per_lanthanides(std::string filename,
-// 																									 PCS_file_data & PCS_f_d,
-// 																									 core::Real const weight):
-// 	filename_(filename), svd_s_(numeric::svd::SVD_Solver(PCS_f_d.get_PCS_data_line_all_reference().size(), 5)), weight_(weight)
+//                           PCS_file_data & PCS_f_d,
+//                           core::Real const weight):
+//  filename_(filename), svd_s_(numeric::svd::SVD_Solver(PCS_f_d.get_PCS_data_line_all_reference().size(), 5)), weight_(weight)
 // {
 
-// 	using namespace core;
-// 	using namespace basic::options;
-// 	using namespace basic::options::OptionKeys;
+//  using namespace core;
+//  using namespace basic::options;
+//  using namespace basic::options::OptionKeys;
 
-// 	core::Size i;
-// 	utility::vector1<PCS_line_data>::iterator it;
+//  core::Size i;
+//  utility::vector1<PCS_line_data>::iterator it;
 
-// 	utility::vector1<PCS_line_data> & PCS_d_l_a = PCS_f_d.get_PCS_data_line_all_reference();
+//  utility::vector1<PCS_line_data> & PCS_d_l_a = PCS_f_d.get_PCS_data_line_all_reference();
 
-// 	n_pcs_ =  PCS_d_l_a.size();
-// 	A_index_.resize(n_pcs_);
+//  n_pcs_ =  PCS_d_l_a.size();
+//  A_index_.resize(n_pcs_);
 
-// 	core::Size M, N;
-// 	M = n_pcs_;
-// 	N = 5;
+//  core::Size M, N;
+//  M = n_pcs_;
+//  N = 5;
 
-// 	svd_s_ = numeric::svd::SVD_Solver(M, N);
-// 	utility::vector1<core::Real> vec_temp;
-// 	fstyle_A_.dimension(M, N);
-// 	fstyle_b_.dimension(M);
+//  svd_s_ = numeric::svd::SVD_Solver(M, N);
+//  utility::vector1<core::Real> vec_temp;
+//  fstyle_A_.dimension(M, N);
+//  fstyle_b_.dimension(M);
 
-// 	normalization_1_ = 0;
-// 	core::Real sum (0);
+//  normalization_1_ = 0;
+//  core::Real sum (0);
 
-// 	for (i = 1; i <= PCS_d_l_a.size(); ++i){
-// 		PCS_line_data PCS_l_d = PCS_d_l_a[i];
-// 		vec_temp.push_back(PCS_l_d.PCS_experimental());
-// 		fstyle_b_(i) = PCS_l_d.PCS_experimental();
-// 		normalization_1_ += PCS_l_d.PCS_experimental() * PCS_l_d.PCS_experimental();
-// 		sum += PCS_l_d.PCS_experimental();
-// 	}
-// 	svd_s_.set_vector_b(vec_temp);
-// 	normalization_1_ = sqrt(normalization_1_);
+//  for (i = 1; i <= PCS_d_l_a.size(); ++i){
+//   PCS_line_data PCS_l_d = PCS_d_l_a[i];
+//   vec_temp.push_back(PCS_l_d.PCS_experimental());
+//   fstyle_b_(i) = PCS_l_d.PCS_experimental();
+//   normalization_1_ += PCS_l_d.PCS_experimental() * PCS_l_d.PCS_experimental();
+//   sum += PCS_l_d.PCS_experimental();
+//  }
+//  svd_s_.set_vector_b(vec_temp);
+//  normalization_1_ = sqrt(normalization_1_);
 
-// 	normalization_3_ = sqrt(normalization_1_ / PCS_d_l_a.size());
+//  normalization_3_ = sqrt(normalization_1_ / PCS_d_l_a.size());
 
-// 	core::Real average(sum/PCS_d_l_a.size());
+//  core::Real average(sum/PCS_d_l_a.size());
 
-// 	normalization_2_ = 0;
-// 	for (i = 1; i <= PCS_d_l_a.size(); ++i){
-// 		normalization_2_ += (fstyle_b_(i) - average) *  (fstyle_b_(i) - average);
-// 	}
-// 	normalization_2_ = sqrt( normalization_2_ / PCS_d_l_a.size() );
+//  normalization_2_ = 0;
+//  for (i = 1; i <= PCS_d_l_a.size(); ++i){
+//   normalization_2_ += (fstyle_b_(i) - average) *  (fstyle_b_(i) - average);
+//  }
+//  normalization_2_ = sqrt( normalization_2_ / PCS_d_l_a.size() );
 
-// 	TR_pcs_d_p_l << "n_pcs: " << n_pcs_ << std::endl;
-// 	TR_pcs_d_p_l << "Normalization 1: " << normalization_1_ << std::endl;
-// 	TR_pcs_d_p_l << "Normalization 2: " << normalization_2_ << std::endl;
-// 	TR_pcs_d_p_l << "Normalization 3: " << normalization_3_ << std::endl;
+//  TR_pcs_d_p_l << "n_pcs: " << n_pcs_ << std::endl;
+//  TR_pcs_d_p_l << "Normalization 1: " << normalization_1_ << std::endl;
+//  TR_pcs_d_p_l << "Normalization 2: " << normalization_2_ << std::endl;
+//  TR_pcs_d_p_l << "Normalization 3: " << normalization_3_ << std::endl;
 
-// 	if( option[ basic::options::OptionKeys::PCS::normalization_id ].user() ){
-// 		core::Size norma_id (option[ basic::options::OptionKeys::PCS::normalization_id ]());
+//  if( option[ basic::options::OptionKeys::PCS::normalization_id ].user() ){
+//   core::Size norma_id (option[ basic::options::OptionKeys::PCS::normalization_id ]());
 
-// 		switch (norma_id){
-// 		case 1:{
-// 			TR_pcs_d_p_l << "Using Normalization '1': " << normalization_1_ << ". Normalize each data set by SQRT( SUM( PCScalc(i)^2 ) ) " << std::endl;
-// 			normalization_factor_ = normalization_1_;
-// 			break;
-// 		}
-// 		case 2:{
-// 			TR_pcs_d_p_l << "Using Normalization '2': " << normalization_2_ << ". Normalize each data set by Standard Deviation" << std::endl;
-// 			normalization_factor_ = normalization_2_;
-// 			break;
-// 		}
-// 		case 3:{
-// 			TR_pcs_d_p_l << "Using Normalization '3': " << normalization_3_ << ". Normalize each data set by SQRT( SUM( PCScalc(i)^2 ) / N) " << std::endl;
-// 			normalization_factor_ = normalization_3_;
-// 			break;
-// 		}
-// 		default:{
-// 			TR_pcs_d_p_l << "Normalization '"<< norma_id << "' id not recognized " << std::endl;
-// 			utility_exit_with_message("You should use a valid normalization id ('1' or '2' or '3')");
-// 			break;
-// 		}
-// 		}
-// 	}
-// 	else{
-// 		TR_pcs_d_p_l << "Normalization NOT used in calculations " << std::endl;
-// 		normalization_factor_ = 1.0;
-// 	}
+//   switch (norma_id){
+//   case 1:{
+//    TR_pcs_d_p_l << "Using Normalization '1': " << normalization_1_ << ". Normalize each data set by SQRT( SUM( PCScalc(i)^2 ) ) " << std::endl;
+//    normalization_factor_ = normalization_1_;
+//    break;
+//   }
+//   case 2:{
+//    TR_pcs_d_p_l << "Using Normalization '2': " << normalization_2_ << ". Normalize each data set by Standard Deviation" << std::endl;
+//    normalization_factor_ = normalization_2_;
+//    break;
+//   }
+//   case 3:{
+//    TR_pcs_d_p_l << "Using Normalization '3': " << normalization_3_ << ". Normalize each data set by SQRT( SUM( PCScalc(i)^2 ) / N) " << std::endl;
+//    normalization_factor_ = normalization_3_;
+//    break;
+//   }
+//   default:{
+//    TR_pcs_d_p_l << "Normalization '"<< norma_id << "' id not recognized " << std::endl;
+//    utility_exit_with_message("You should use a valid normalization id ('1' or '2' or '3')");
+//    break;
+//   }
+//   }
+//  }
+//  else{
+//   TR_pcs_d_p_l << "Normalization NOT used in calculations " << std::endl;
+//   normalization_factor_ = 1.0;
+//  }
 // }
 
 
 PCS_data_per_lanthanides::PCS_data_per_lanthanides(std::string filename,
-																									 core::Real const weight,
-																									 utility::vector1< PCS_line_data > & PCS_d_l_a):
-		filename_(filename), svd_s_(basic::svd::SVD_Solver(PCS_d_l_a.size(), 5)), weight_(weight)
+	core::Real const weight,
+	utility::vector1< PCS_line_data > & PCS_d_l_a):
+	filename_(filename), svd_s_(basic::svd::SVD_Solver(PCS_d_l_a.size(), 5)), weight_(weight)
 {
 	using namespace core;
 	using namespace basic::options;
@@ -496,7 +496,7 @@ PCS_data_per_lanthanides::PCS_data_per_lanthanides(std::string filename,
 	normalization_1_ = 0;
 	core::Real sum (0);
 
-	for (i = 1; i <= PCS_d_l_a.size(); ++i){
+	for ( i = 1; i <= PCS_d_l_a.size(); ++i ) {
 		PCS_line_data PCS_l_d = PCS_d_l_a[i];
 		vec_temp.push_back(PCS_l_d.PCS_experimental());
 		fstyle_b_(i) = PCS_l_d.PCS_experimental();
@@ -511,7 +511,7 @@ PCS_data_per_lanthanides::PCS_data_per_lanthanides(std::string filename,
 	core::Real average(sum/PCS_d_l_a.size());
 
 	normalization_2_ = 0;
-	for (i = 1; i <= PCS_d_l_a.size(); ++i){
+	for ( i = 1; i <= PCS_d_l_a.size(); ++i ) {
 		normalization_2_ += (fstyle_b_(i) - average) *  (fstyle_b_(i) - average);
 	}
 	normalization_2_ = sqrt( normalization_2_ / PCS_d_l_a.size() );
@@ -521,33 +521,32 @@ PCS_data_per_lanthanides::PCS_data_per_lanthanides(std::string filename,
 	TR_pcs_d_p_l << "Normalization 2: " << normalization_2_ << std::endl;
 	TR_pcs_d_p_l << "Normalization 3: " << normalization_3_ << std::endl;
 
-	if( option[ basic::options::OptionKeys::PCS::normalization_id ].user() ){
+	if ( option[ basic::options::OptionKeys::PCS::normalization_id ].user() ) {
 		core::Size norma_id (option[ basic::options::OptionKeys::PCS::normalization_id ]());
 
 		switch (norma_id){
-		case 1:{
+		case 1 : {
 			TR_pcs_d_p_l << "Using Normalization '1': " << normalization_1_ << ". Normalize each data set by SQRT( SUM( PCScalc(i)^2 ) ) " << std::endl;
 			normalization_factor_ = normalization_1_;
 			break;
 		}
-		case 2:{
+		case 2 : {
 			TR_pcs_d_p_l << "Using Normalization '2': " << normalization_2_ << ". Normalize each data set by Standard Deviation" << std::endl;
 			normalization_factor_ = normalization_2_;
 			break;
 		}
-		case 3:{
+		case 3 : {
 			TR_pcs_d_p_l << "Using Normalization '3': " << normalization_3_ << ". Normalize each data set by SQRT( SUM( PCScalc(i)^2 ) / N) " << std::endl;
 			normalization_factor_ = normalization_3_;
 			break;
 		}
-		default:{
+		default : {
 			TR_pcs_d_p_l << "Normalization '"<< norma_id << "' id not recognized " << std::endl;
 			utility_exit_with_message("You should use a valid normalization id ('1' or '2' or '3')");
 			break;
 		}
 		}
-	}
-	else{
+	} else {
 		TR_pcs_d_p_l << "Normalization NOT used in calculations " << std::endl;
 		normalization_factor_ = 1.0;
 	}
@@ -560,7 +559,7 @@ PCS_data_per_lanthanides::get_filename() const {
 
 void
 PCS_data_per_lanthanides::set_A_index(core::Size j,
-																			core::Size index){
+	core::Size index){
 	A_index_[j] = index;
 }
 
@@ -590,25 +589,24 @@ PCS_data::PCS_data(PCS_data_input & P_d_i){
 		PCS_data_per_lanthanides P_d_p_l = PCS_data_per_lanthanides(filename, weight, PCS_d_l_a );
 
 		j = 1;
-		for ( it2 = PCS_d_l_a.begin(); it2 != PCS_d_l_a.end(); ++it2 ){
+		for ( it2 = PCS_d_l_a.begin(); it2 != PCS_d_l_a.end(); ++it2 ) {
 			P_l_d_temp = &(*it2);
 			index = where_is_line(*P_l_d_temp);
-			if(index == 0){
+			if ( index == 0 ) {
 				PCS_data_line_all_spin_.push_back(*it2);
 				n_pcs_spin_ = n_pcs_spin_ + 1;
 				P_d_p_l.set_A_index(j, n_pcs_spin_);
-			}
-			else{
+			} else {
 				P_d_p_l.set_A_index(j, index);
 			}
 			j = j + 1;
 		}
 		PCS_data_per_lanthanides_all_.push_back(P_d_p_l);
 	}
-	TR_pcs_d << "Total spin independent: " <<	n_pcs_spin_ << std::endl;
+	TR_pcs_d << "Total spin independent: " << n_pcs_spin_ << std::endl;
 
 	A_all_.resize(n_pcs_spin_);
-	for(i = 1; i <= n_pcs_spin_; i++){
+	for ( i = 1; i <= n_pcs_spin_; i++ ) {
 		(A_all_[i]).resize(5);
 	}
 	X_all_.resize(n_pcs_spin_);
@@ -640,7 +638,7 @@ PCS_data::PCS_data(PCS_data_input & P_d_i, utility::vector1< bool > const exclud
 		utility::vector1< PCS_line_data > & file_PCS_d_l_a = P_f_d.get_PCS_data_line_all_reference();
 		utility::vector1< PCS_line_data > PCS_d_l_a;
 
-		for ( it2 = file_PCS_d_l_a.begin(); it2 != file_PCS_d_l_a.end(); ++it2 ){
+		for ( it2 = file_PCS_d_l_a.begin(); it2 != file_PCS_d_l_a.end(); ++it2 ) {
 			bool use_residue = false;
 
 			if ( it2->residue_num() > exclude_residues.size() ) {
@@ -651,7 +649,7 @@ PCS_data::PCS_data(PCS_data_input & P_d_i, utility::vector1< bool > const exclud
 				}
 			}
 
-			if (use_residue == true) {
+			if ( use_residue == true ) {
 				PCS_d_l_a.push_back(*it2);
 			}
 		}
@@ -659,25 +657,24 @@ PCS_data::PCS_data(PCS_data_input & P_d_i, utility::vector1< bool > const exclud
 		PCS_data_per_lanthanides P_d_p_l = PCS_data_per_lanthanides(filename, weight, PCS_d_l_a );
 
 		j = 1;
-		for ( it2 = PCS_d_l_a.begin(); it2 != PCS_d_l_a.end(); ++it2 ){
+		for ( it2 = PCS_d_l_a.begin(); it2 != PCS_d_l_a.end(); ++it2 ) {
 			P_l_d_temp = &(*it2);
 			index = where_is_line(*P_l_d_temp);
-			if(index == 0){
+			if ( index == 0 ) {
 				PCS_data_line_all_spin_.push_back(*it2);
 				n_pcs_spin_ = n_pcs_spin_ + 1;
 				P_d_p_l.set_A_index(j, n_pcs_spin_);
-			}
-			else{
+			} else {
 				P_d_p_l.set_A_index(j, index);
 			}
 			j = j + 1;
 		}
 		PCS_data_per_lanthanides_all_.push_back(P_d_p_l);
 	}
-	TR_pcs_d << "Total spin independent: " <<	n_pcs_spin_ << std::endl;
+	TR_pcs_d << "Total spin independent: " << n_pcs_spin_ << std::endl;
 
 	A_all_.resize(n_pcs_spin_);
-	for(i = 1; i <= n_pcs_spin_; i++){
+	for ( i = 1; i <= n_pcs_spin_; i++ ) {
 		(A_all_[i]).resize(5);
 	}
 	X_all_.resize(n_pcs_spin_);
@@ -711,7 +708,7 @@ operator<<(std::ostream& out, const PCS_data & P_d){
 	core::Size i;
 	out << "n lanthanides experiment: " << P_d.get_n_lanthanides() << std::endl;
 	out << "n independent spins in total: " << P_d.n_pcs_spin_ << std::endl;
-	for (i = 1 ; i <= P_d.n_lanthanides_; ++i){
+	for ( i = 1 ; i <= P_d.n_lanthanides_; ++i ) {
 		out << P_d.PCS_data_per_lanthanides_all_[i] << std::endl;
 	}
 
@@ -726,22 +723,22 @@ operator<<(std::ostream& out, const PCS_data_per_lanthanides &PCS_d_p_l){
 	out << "  Number of pcs : " << PCS_d_p_l.get_n_pcs() << std::endl;
 	out << "  b vector (pcs values)  : " << std::endl;
 
-	for ( i = 1; i <= PCS_d_p_l.get_n_pcs(); ++i){
+	for ( i = 1; i <= PCS_d_p_l.get_n_pcs(); ++i ) {
 		out << "  " << std::setw(4) << i << ":"<< std::setw(10) <<PCS_d_p_l.fstyle_b_(i)  << std::endl;
 	}
 	out << std::endl;
 
 	out << "  A_index  : " << std::endl;
-	for ( i = 1; i <= PCS_d_p_l.get_n_pcs(); ++i){
+	for ( i = 1; i <= PCS_d_p_l.get_n_pcs(); ++i ) {
 		out << "  " << std::setw(4) << i << ":"  << std::setw(4) <<PCS_d_p_l.A_index_[i];
 		out << std::endl;
 	}
 
 
 	out << "  Matrix A:"<< std::endl;
-	for( i = 1; i <= PCS_d_p_l.n_pcs_ ; ++i ){
+	for ( i = 1; i <= PCS_d_p_l.n_pcs_ ; ++i ) {
 		out << "  " << std::setw(4) << i << ":";
-		for (j = 1; j <= 5; ++j){
+		for ( j = 1; j <= 5; ++j ) {
 			out << " " << std::setw(12) << PCS_d_p_l.fstyle_A_( i, j);
 		}
 		out << std::endl;

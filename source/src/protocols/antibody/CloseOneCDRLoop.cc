@@ -94,8 +94,8 @@ void CloseOneCDRLoop::apply( pose::Pose & pose_in ) {
 	peptide_N = pose_in.residue( cdr_loop_end_ + 1 ).xyz( N );
 
 	// calculate separation at ends to see if it needs to be closed
-//	Real nter_separation=distance(peptide_C, peptide_N);
-//	Real cter_separation=distance(peptide_C, peptide_N);
+	// Real nter_separation=distance(peptide_C, peptide_N);
+	// Real cter_separation=distance(peptide_C, peptide_N);
 	Real nter_separation=peptide_C.distance(peptide_N);
 	Real cter_separation=peptide_C.distance(peptide_N);
 
@@ -106,20 +106,21 @@ void CloseOneCDRLoop::apply( pose::Pose & pose_in ) {
 
 	// setup movemap to only loop residues
 	utility::vector1< bool> allow_bb_move( pose_in.total_residue(), false );
-	for ( Size i=loop_start_; i<= loop_end_; ++i )
+	for ( Size i=loop_start_; i<= loop_end_; ++i ) {
 		allow_bb_move[ i ] = true;
+	}
 	movemap_->set_bb( allow_bb_move );
 	movemap_->set_jump( 1, false );
 
 
-	if( nter_separation > allowed_separation_ ) {
+	if ( nter_separation > allowed_separation_ ) {
 		loops::Loop one_loop( loop_start_, cdr_loop_start_, cdr_loop_start_-1, 0, false );
 		simple_one_loop_fold_tree( pose_in, one_loop );
 		CCDLoopClosureMoverOP ccd_moves( new CCDLoopClosureMover( one_loop, movemap_ ) );
 		ccd_moves->apply( pose_in );
 	}
 
-	if( cter_separation > allowed_separation_ ) {
+	if ( cter_separation > allowed_separation_ ) {
 		loops::Loop one_loop( cdr_loop_end_, loop_end_, cdr_loop_end_+1, 0, false );
 		simple_one_loop_fold_tree( pose_in, one_loop );
 		CCDLoopClosureMoverOP ccd_moves( new CCDLoopClosureMover( one_loop, movemap_ ) );
@@ -127,12 +128,12 @@ void CloseOneCDRLoop::apply( pose::Pose & pose_in ) {
 	}
 
 	Real separation = 0.00;
-	for( Size ii = loop_start_; ii <= loop_end_; ii++ ) {
+	for ( Size ii = loop_start_; ii <= loop_end_; ii++ ) {
 		peptide_C = pose_in.residue( ii ).xyz( C );
 		peptide_N = pose_in.residue( ii + 1 ).xyz( N );
 		separation=peptide_C.distance(peptide_N);
-//		separation=distance(peptide_C, peptide_N);
-		if( separation > allowed_separation_ ) {
+		//  separation=distance(peptide_C, peptide_N);
+		if ( separation > allowed_separation_ ) {
 			Size cutpoint = ii;
 			loops::Loop one_loop( loop_start_, loop_end_, cutpoint, 0, false );
 			CCDLoopClosureMoverOP ccd_moves( new CCDLoopClosureMover( one_loop, movemap_ ) );

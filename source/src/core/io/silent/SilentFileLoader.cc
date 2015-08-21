@@ -67,7 +67,7 @@ SilentFileLoader::SilentFileLoader() {}
 
 SilentFileLoader::~SilentFileLoader() {}
 
-SilentFileLoader::SilentFileLoader(	SilentFileLoader const &) : ResourceLoader() {}
+SilentFileLoader::SilentFileLoader( SilentFileLoader const &) : ResourceLoader() {}
 
 ResourceOP
 SilentFileLoader::create_resource(
@@ -87,24 +87,24 @@ SilentFileLoader::create_resource(
 
 	utility::vector1< std::string > lines;
 	std::string line;
-	while(getline(istream, line)) {
+	while ( getline(istream, line) ) {
 		lines.push_back(line);
 	}
 
 	SilentStructOP ss(
 		SilentStructFactory::get_instance()->get_silent_struct(
-			resource_options.get_silent_struct_type()));
+		resource_options.get_silent_struct_type()));
 
 	SilentFileData container;
 
-	if(!(ss->init_from_lines(lines, container))) {
+	if ( !(ss->init_from_lines(lines, container)) ) {
 		throw utility::excn::EXCN_BadInput( "SilentFileLoader failed to load silent file with locator_id '" + locator_id + "'." );
 	}
 
 	PoseOP pose( new Pose() );
 	ss->fill_pose(*pose);
 
-	if(pose->total_residue() == 0){
+	if ( pose->total_residue() == 0 ) {
 		TR.Warning
 			<< "Loading Pose with SilentFileLoader for the "
 			<< "locator_id '" << locator_id << "', "

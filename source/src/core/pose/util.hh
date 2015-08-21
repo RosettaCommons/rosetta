@@ -110,13 +110,13 @@ create_subpose(
 /// @brief Create a subpose of the src pose -- figures out a reasonable fold tree.
 void
 pdbslice( pose::Pose & new_pose,
-					pose::Pose const & pose,
-					utility::vector1< Size > const & slice_res );
+	pose::Pose const & pose,
+	utility::vector1< Size > const & slice_res );
 
 /// @brief Create a subpose of the src pose -- figures out a reasonable fold tree.
 void
 pdbslice( pose::Pose & pose,
-					utility::vector1< Size > const & slice_res );
+	utility::vector1< Size > const & slice_res );
 
 // for partition_by_jump: both new poses start residue numbering from 1 and don't keep the original numbering!
 void
@@ -138,7 +138,7 @@ set_ss_from_phipsi(
 // /// structure - ideally dssp should be used for that
 // void
 // set_ss_from_phipsi_dssp(
-// 	pose::Pose &pose
+//  pose::Pose &pose
 // );
 
 utility::vector1< char > read_psipred_ss2_file( pose::Pose const & pose );
@@ -305,7 +305,7 @@ bool renumber_pdbinfo_based_on_conf_chains(
 /// @return true if all pose positions have ideal bond lengths and angles
 ///  up to some very small epsilon
 bool is_ideal_pose(
-									 core::pose::Pose const & pose
+	core::pose::Pose const & pose
 );
 
 /// @brief Returns true if the  <pose> geometry is ideal in position  <seqpos>
@@ -313,8 +313,8 @@ bool is_ideal_pose(
 /// @return true if position seqpos has ideal bond lengths and angles
 ///  up to some very small epsilon
 bool is_ideal_position(
-											 Size seqpos,
-											 core::pose::Pose const & pose
+	Size seqpos,
+	core::pose::Pose const & pose
 );
 
 /// @brief this function removes all residues from the pose which are not protein residues.  This removal includes, but is not limited to, metals, DNA, RNA, and ligands.  It will NOT remove ligands which are canonical residues (for example, if a protein binds an alanine monomer, the monomer will be untouched).
@@ -407,74 +407,74 @@ replace_pose_residue_copying_existing_coordinates(
 	pose::Pose & pose,
 	Size const seqpos,
 	core::chemical::ResidueType const & new_rsd_type
-	);
+);
 
 /// @brief Remove variant from an existing residue.
 conformation::ResidueOP remove_variant_type_from_residue(
-		conformation::Residue const & old_rsd,
-		core::chemical::VariantType const variant_type,
-		pose::Pose const & pose );
+	conformation::Residue const & old_rsd,
+	core::chemical::VariantType const variant_type,
+	pose::Pose const & pose );
 
 /// @brief Construct a variant of an existing residue.
 conformation::ResidueOP add_variant_type_to_residue(
-		conformation::Residue const & old_rsd,
-		core::chemical::VariantType const variant_type,
-		pose::Pose const & pose );
+	conformation::Residue const & old_rsd,
+	core::chemical::VariantType const variant_type,
+	pose::Pose const & pose );
 
 /// @brief Construct a variant of an existing pose residue.
 void add_variant_type_to_pose_residue(
-		pose::Pose & pose,
-		chemical::VariantType const variant_type,
-		Size const seqpos );
+	pose::Pose & pose,
+	chemical::VariantType const variant_type,
+	Size const seqpos );
 
 /// @brief Construct a non-variant of an existing pose residue.
 void remove_variant_type_from_pose_residue(
-		pose::Pose & pose,
-		chemical::VariantType const variant_type,
-		Size const seqpos );
+	pose::Pose & pose,
+	chemical::VariantType const variant_type,
+	Size const seqpos );
 
 
 void
 add_lower_terminus_type_to_pose_residue(
 	pose::Pose & pose,
 	Size const seqpos
-	);
+);
 
 
 void
 add_upper_terminus_type_to_pose_residue(
 	pose::Pose & pose,
 	Size const seqpos
-	);
+);
 
 
 void
 remove_lower_terminus_type_from_pose_residue(
 	pose::Pose & pose,
 	Size const seqpos
-	);
+);
 
 
 void
 remove_upper_terminus_type_from_pose_residue(
 	pose::Pose & pose,
 	Size const seqpos
-	);
+);
 
 /// @brief set up a map to look up TORSION_ID by DOF_ID (Map[DOF_ID] = TORISION_ID)
 void
 setup_dof_to_torsion_map(
 	pose::Pose const & pose,
 	id::DOF_ID_Map< id::TorsionID > & dof_map
-	);
+);
 
 
 /// @brief convert from allow-bb/allow-chi MoveMap to simple DOF_ID boolean mask needed by the minimizer
 void
 setup_dof_mask_from_move_map(
-		core::kinematics::MoveMap const & mm,
-		pose::Pose const & pose,
-		id::DOF_ID_Mask & dof_mask
+	core::kinematics::MoveMap const & mm,
+	pose::Pose const & pose,
+	id::DOF_ID_Mask & dof_mask
 );
 
 bool
@@ -543,21 +543,21 @@ core::Size num_heavy_atoms(
 );
 
 core::Size num_atoms(
-		core::Size begin,
-		core::Size const end,
-		core::pose::Pose const & pose
+	core::Size begin,
+	core::Size const end,
+	core::pose::Pose const & pose
 );
 
 core::Size num_hbond_acceptors(
-		core::Size begin,
-		core::Size const end,
-		core::pose::Pose const & pose
+	core::Size begin,
+	core::Size const end,
+	core::pose::Pose const & pose
 );
 
 core::Size num_hbond_donors(
-		core::Size begin,
-		core::Size const end,
-		core::pose::Pose const & pose
+	core::Size begin,
+	core::Size const end,
+	core::pose::Pose const & pose
 );
 core::Size
 num_chi_angles(
@@ -568,9 +568,9 @@ num_chi_angles(
 
 core::Real
 mass(
-		core::Size begin,
-		core::Size const end,
-		core::pose::Pose const & pose
+	core::Size begin,
+	core::Size const end,
+	core::pose::Pose const & pose
 );
 
 core::Size
@@ -719,8 +719,8 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose );
 
 void
 correctly_add_cutpoint_variants( core::pose::Pose & pose,
-		Size const cutpoint_res,
-		bool const check_fold_tree = true );
+	Size const cutpoint_res,
+	bool const check_fold_tree = true );
 
 
 void

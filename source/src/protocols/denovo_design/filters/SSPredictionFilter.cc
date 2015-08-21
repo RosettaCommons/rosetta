@@ -42,51 +42,51 @@ namespace filters {
 
 // general constructor
 SSPredictionFilter::SSPredictionFilter()
-	: protocols::filters::Filter( "SSPrediction" ),
-		threshold_( 0 ),
-		cmd_( "" ),
-		blueprint_( /* NULL */ ),
-		use_probability_( false ),
-		mismatch_probability_(false),
-		use_confidence_( false ),
-		use_svm_( true ),
-		temp_( 0.6 ),
-		ss_predictor_( /* NULL */ ),
-		psipred_interface_( /* NULL */ )
+: protocols::filters::Filter( "SSPrediction" ),
+	threshold_( 0 ),
+	cmd_( "" ),
+	blueprint_( /* NULL */ ),
+	use_probability_( false ),
+	mismatch_probability_(false),
+	use_confidence_( false ),
+	use_svm_( true ),
+	temp_( 0.6 ),
+	ss_predictor_( /* NULL */ ),
+	psipred_interface_( /* NULL */ )
 {}
 
 // value constructor
 SSPredictionFilter::SSPredictionFilter( core::Real const threshold,
-																				std::string const cmd,
-																				std::string const blueprint_filename,
-																				bool const use_probability,
-																				bool const mismatch_probability)
-	: protocols::filters::Filter( "SSPrediction" ),
-		threshold_( threshold ),
-		cmd_( cmd ),
-		blueprint_( protocols::jd2::parser::BluePrintOP( new protocols::jd2::parser::BluePrint( blueprint_filename ) ) ),
-		use_probability_( use_probability ),
-		mismatch_probability_ (mismatch_probability),
-		use_confidence_( false ),
-		use_svm_( true ),
-		temp_( 0.6 ),
-		ss_predictor_( /* NULL */ ),
-		psipred_interface_( PsiPredInterfaceOP( new PsiPredInterface( cmd ) ) )
+	std::string const cmd,
+	std::string const blueprint_filename,
+	bool const use_probability,
+	bool const mismatch_probability)
+: protocols::filters::Filter( "SSPrediction" ),
+	threshold_( threshold ),
+	cmd_( cmd ),
+	blueprint_( protocols::jd2::parser::BluePrintOP( new protocols::jd2::parser::BluePrint( blueprint_filename ) ) ),
+	use_probability_( use_probability ),
+	mismatch_probability_ (mismatch_probability),
+	use_confidence_( false ),
+	use_svm_( true ),
+	temp_( 0.6 ),
+	ss_predictor_( /* NULL */ ),
+	psipred_interface_( PsiPredInterfaceOP( new PsiPredInterface( cmd ) ) )
 {}
 
 // copy constructor
 SSPredictionFilter::SSPredictionFilter( SSPredictionFilter const & rval )
-	: protocols::filters::Filter( rval ),
-		threshold_( rval.threshold_ ),
-		cmd_( rval.cmd_ ),
-		blueprint_( rval.blueprint_ ),
-		use_probability_( rval.use_probability_ ),
-		mismatch_probability_( rval.mismatch_probability_),
-		use_confidence_( rval.use_confidence_ ),
-		use_svm_( rval.use_svm_ ),
-		temp_( rval.temp_ ),
-		ss_predictor_( rval.ss_predictor_ ),
-		psipred_interface_( rval.psipred_interface_ )
+: protocols::filters::Filter( rval ),
+	threshold_( rval.threshold_ ),
+	cmd_( rval.cmd_ ),
+	blueprint_( rval.blueprint_ ),
+	use_probability_( rval.use_probability_ ),
+	mismatch_probability_( rval.mismatch_probability_),
+	use_confidence_( rval.use_confidence_ ),
+	use_svm_( rval.use_svm_ ),
+	temp_( rval.temp_ ),
+	ss_predictor_( rval.ss_predictor_ ),
+	psipred_interface_( rval.psipred_interface_ )
 {}
 
 SSPredictionFilter::~SSPredictionFilter()
@@ -206,7 +206,7 @@ SSPredictionFilter::compute( core::pose::Pose const & pose ) const {
 				runtime_assert( wanted_ss.size() == psipred_result.psipred2_confidence.size() );
 				return compute_boltz_sum( generate_prob( psipred_result, wanted_ss ) );
 			} else {
-				if (mismatch_probability_) {
+				if ( mismatch_probability_ ) {
 					runtime_assert( wanted_ss.size() == psipred_result.psipred2_confidence.size() );
 					return compute_mismatch_prob( psipred_result.psipred_prob );
 				} else {
@@ -238,7 +238,7 @@ void SSPredictionFilter::parse_my_tag(
 	use_svm_ = tag->getOption< bool >( "use_svm", use_svm_ );
 
 	cmd_ = tag->getOption< std::string >( "cmd", "" );
-	if( cmd_ == "" && ! use_svm_ ) {
+	if ( cmd_ == "" && ! use_svm_ ) {
 		utility_exit_with_message("The SSPrediction Filter requires the psipred executable be set with the cmd option in the XML tag if SVM is not being used. Exiting now...");
 	}
 

@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/PcsTensor.hh
- ///
- /// @brief Hold chi-tensor information of PCS
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references JBNMR 2008  41:179-189 schmitz et all will explains the tensor convention used
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/PcsTensor.hh
+///
+/// @brief Hold chi-tensor information of PCS
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references JBNMR 2008  41:179-189 schmitz et all will explains the tensor convention used
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs2_PcsTensor_hh
 #define INCLUDED_protocols_scoring_methods_pcs2_PcsTensor_hh
@@ -44,27 +44,27 @@
 // C++ headers
 #include <string>
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs2{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs2 {
 
 class PcsTensor {
 private:
 
-  core::Real a_; //alpha
-  core::Real b_; //beta
-  core::Real g_; //gamma
-  core::Real ax_; //axial component
-  core::Real rh_; //rhombic component
+	core::Real a_; //alpha
+	core::Real b_; //beta
+	core::Real g_; //gamma
+	core::Real ax_; //axial component
+	core::Real rh_; //rhombic component
 	//ideally, alpha beta gamma ax and rh will follow the UTR convention
 	//see numbat paper JBNMR 2008  41:179-189 schmitz et all
 
-  core::Real chi_xx_;
-  core::Real chi_yy_;
-  core::Real chi_xy_;
-  core::Real chi_xz_;
-  core::Real chi_yz_;
+	core::Real chi_xx_;
+	core::Real chi_yy_;
+	core::Real chi_xy_;
+	core::Real chi_xz_;
+	core::Real chi_yz_;
 
 	std::string label_; //most likely the filename of the pcs exepriment
 	//Used to identify which data has been used in case of multiple lanthanides
@@ -85,12 +85,12 @@ public:
 	PcsTensor & //=
 	operator=(PcsTensor const & other);
 
-  PcsTensor(core::Real const chi_xx,
-						core::Real const chi_yy,
-						core::Real const chi_xy,
-						core::Real const chi_xz,
-						core::Real const chi_yz,
-						std::string const label);
+	PcsTensor(core::Real const chi_xx,
+		core::Real const chi_yy,
+		core::Real const chi_xy,
+		core::Real const chi_xz,
+		core::Real const chi_yz,
+		std::string const label);
 
 	/// @brief Give me delta chi_xx
 	core::Real
@@ -109,23 +109,23 @@ public:
 	get_chi_zz() const;
 
 	/// @brief Give me chi_xx
-  core::Real
+	core::Real
 	get_chi_xx() const;
 
 	/// @brief Give me chi_yy
-  core::Real
+	core::Real
 	get_chi_yy() const;
 
 	/// @brief Give me chi_xy
-  core::Real
+	core::Real
 	get_chi_xy() const;
 
 	/// @brief Give me chi_xz
-  core::Real
+	core::Real
 	get_chi_xz() const;
 
 	/// @brief Give me chi_yz
-  core::Real
+	core::Real
 	get_chi_yz() const;
 
 	/// @brief Reset the tensor from the other tensor value
@@ -139,10 +139,10 @@ public:
 	/// @brief Reset the tensor from the given values.
 	void
 	reset_tensor(core::Real const chi_xx,
-							 core::Real const chi_yy,
-							 core::Real const chi_xy,
-							 core::Real const chi_xz,
-							 core::Real const chi_yz);
+		core::Real const chi_yy,
+		core::Real const chi_xy,
+		core::Real const chi_xz,
+		core::Real const chi_yz);
 
 	/// @brief Print me
 	friend std::ostream &

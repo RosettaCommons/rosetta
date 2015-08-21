@@ -32,7 +32,7 @@ namespace symmetry {
 
 class VirtualCoordinate {
 
-	public:
+public:
 
 	VirtualCoordinate();
 
@@ -46,7 +46,7 @@ class VirtualCoordinate {
 	);
 
 	VirtualCoordinate &
-  operator=( VirtualCoordinate const & src );
+	operator=( VirtualCoordinate const & src );
 
 	~VirtualCoordinate();
 
@@ -84,7 +84,7 @@ class VirtualCoordinate {
 	operator!=(VirtualCoordinate const & a, VirtualCoordinate const & b);
 
 
-	private:
+private:
 
 	numeric::xyzVector< core::Real> axis_x_; // store unit vector for X
 	numeric::xyzVector< core::Real> axis_y_; // store unit vector for Y

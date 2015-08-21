@@ -50,24 +50,24 @@ read_fold_tree_from_file(
 {
 	std::ifstream filestream(filepath.c_str());
 
-	while (filestream.good()) {
+	while ( filestream.good() ) {
 
 		std::string line;
 		std::string key;
 
 		getline(filestream, line);
-		if (filestream.fail()) {
+		if ( filestream.fail() ) {
 			//TR << "getline() failed" << std::endl;
 			return false;
 		}
 
 		std::istringstream linestream(line);
 		linestream >> key;
-		if (key == "FOLD_TREE") {
+		if ( key == "FOLD_TREE" ) {
 			linestream.clear();
 			linestream.seekg(0, std::ios::beg);
 			linestream >> foldtree;
-			if (linestream.fail()) {
+			if ( linestream.fail() ) {
 				TR << "FoldTree parsing failed" << std::endl;
 				return false;
 			} else {
@@ -84,13 +84,13 @@ read_fold_tree_from_file( core::pose::Pose & pose, std::string filepath)
 {
 	core::kinematics::FoldTree foldtree;
 
-	if (read_fold_tree_from_file(foldtree, filepath)) {
-		if (foldtree.nres() == pose.total_residue()) {
+	if ( read_fold_tree_from_file(foldtree, filepath) ) {
+		if ( foldtree.nres() == pose.total_residue() ) {
 			pose.fold_tree(foldtree);
 			return true;
 		} else {
 			TR << "Different number of residues in Pose (" << pose.total_residue() << ") and FoldTree (" << foldtree.nres()
-			   << ")" << std::endl;
+				<< ")" << std::endl;
 		}
 	}
 
@@ -124,23 +124,23 @@ positions_incompatible_with_task(
 	assert(pose.total_residue() == packertask.total_residue());
 
 	// iterate over all residues to see if they're compatible
-	for (core::Size i = 1; i <= pose.total_residue(); ++i) {
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 
 		// only check packable residues for compatibility
-		if (packertask.pack_residue(i)) {
+		if ( packertask.pack_residue(i) ) {
 
 			// assume residue is incompatible
 			bool incompatible(true);
 
 			// check to see if pose residue type is in list of allowed residue types
 			core::pack::task::ResidueLevelTask const & residueleveltask(packertask.residue_task(i));
-			for (core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter iter(residueleveltask.allowed_residue_types_begin());
-			     iter != residueleveltask.allowed_residue_types_end(); ++iter) {
+			for ( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter iter(residueleveltask.allowed_residue_types_begin());
+					iter != residueleveltask.allowed_residue_types_end(); ++iter ) {
 
-				if ((*iter)->name() == pose.residue_type(i).name()) incompatible = false;
+				if ( (*iter)->name() == pose.residue_type(i).name() ) incompatible = false;
 			}
 
-			if (incompatible) incompatible_positions.push_back(i);
+			if ( incompatible ) incompatible_positions.push_back(i);
 		}
 	}
 
@@ -156,9 +156,9 @@ get_pivot_residues_from_movemap( core::kinematics::MoveMapCOP movemap) {
 
 	utility::vector1<core::Size> pivot_residues;
 
-	for (MoveMapTorsionID_Map::const_iterator it=movemap->movemap_torsion_id_begin(), it_end=movemap->movemap_torsion_id_end(); it !=it_end; ++it){
-	    //Scaffold to new MM
-		if (it->first.second == core::id::BB && it->second){
+	for ( MoveMapTorsionID_Map::const_iterator it=movemap->movemap_torsion_id_begin(), it_end=movemap->movemap_torsion_id_end(); it !=it_end; ++it ) {
+		//Scaffold to new MM
+		if ( it->first.second == core::id::BB && it->second ) {
 			pivot_residues.push_back(it->first.first);
 		}
 	}

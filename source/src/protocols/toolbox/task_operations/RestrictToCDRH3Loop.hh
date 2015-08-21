@@ -50,18 +50,18 @@ public:
 	virtual
 	void
 	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
-    
+
 private:
-    bool residue_is_in_h3_loop( core::pose::Pose const & pose, Size residue_number ) const;
-    
+	bool residue_is_in_h3_loop( core::pose::Pose const & pose, Size residue_number ) const;
+
 private:
-	
-	
-    // These definitions correspond to the AHo numbering scheme.  This could be expanded to other numbering schemes in the future
-    static Size const pdb_numbered_h3_loop_start = 107;
-    static Size const pdb_numbered_h3_loop_end = 138;
-    static char const heavy_chain = 'H';
-    
+
+
+	// These definitions correspond to the AHo numbering scheme.  This could be expanded to other numbering schemes in the future
+	static Size const pdb_numbered_h3_loop_start = 107;
+	static Size const pdb_numbered_h3_loop_end = 138;
+	static char const heavy_chain = 'H';
+
 };
 
 } //namespace task_operations

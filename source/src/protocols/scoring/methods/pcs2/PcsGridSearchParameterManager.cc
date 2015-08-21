@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/PcsGridSearchParameter.cc
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/PcsGridSearchParameter.cc
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 
 // Unit Headers
@@ -88,7 +88,7 @@ PcsGridSearchParameterManager::re_init(){
 	core::Size i(1);
 
 
-	for(i = 1; i <= n; ++i){
+	for ( i = 1; i <= n; ++i ) {
 		grid_s_p_all_.pop_back();
 	}
 	std::cerr <<"CHECKING zz 0 = " << grid_s_p_all_.size() << std::endl ;
@@ -113,7 +113,7 @@ PcsGridSearchParameter &
 PcsGridSearchParameterManager::get_grid_search_parameters(core::Size i_multi_data){
 
 	core::Size n_multi_data(get_n_multi_data());
-	if ( (i_multi_data > n_multi_data) ){
+	if ( (i_multi_data > n_multi_data) ) {
 		TR_PcsGridSearchParameterManager << "Problem in get_grid_search_parameters: i_multi_data = "<<i_multi_data<<" and n_multi_data = "<<n_multi_data << std::endl;
 		utility_exit_with_message("There is a coding problem");
 	}

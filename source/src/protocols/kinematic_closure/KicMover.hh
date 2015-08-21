@@ -86,7 +86,7 @@ public:
 
 	/// @copydoc LoopMover::get_children_names
 	void get_children_names(
-			utility::vector1<std::string> & names, std::string indent="") const;
+		utility::vector1<std::string> & names, std::string indent="") const;
 
 	/// @brief Return the PivotPicker being used by this mover.
 	pivot_pickers::PivotPickerOP get_pivot_picker();

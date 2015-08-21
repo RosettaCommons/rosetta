@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief      Does a quick relax of a membrane protein
-/// @details	Uses SmallMover and ShearMover with adjustable maximum dihedral
-///				angle changes, then repacking and a single round of minimization
+/// @details Uses SmallMover and ShearMover with adjustable maximum dihedral
+///    angle changes, then repacking and a single round of minimization
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_MPQuickRelaxMover_fwd_hh

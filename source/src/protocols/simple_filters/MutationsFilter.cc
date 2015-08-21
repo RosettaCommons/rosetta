@@ -158,7 +158,7 @@ MutationsFilter::apply(core::pose::Pose const & pose ) const
 	if ( mutations_ ) {
 		core::Size const num_mutations( (core::Size) compute( pose, false ) );
 		TR<<"The designed pose possesses "<<num_mutations<<" compared to the reference pose. ";
-		if( num_mutations <= mutation_threshold_ ){
+		if ( num_mutations <= mutation_threshold_ ) {
 			TR<<"Success."<<std::endl;
 			return true;
 		} else {
@@ -168,11 +168,11 @@ MutationsFilter::apply(core::pose::Pose const & pose ) const
 	} else {
 		core::Real const recovery_rate( compute( pose, false ) );
 		TR<<"Sequence recovery rate evaluates to "<<recovery_rate<<". ";
-		if( recovery_rate <= rate_threshold_ ){
+		if ( recovery_rate <= rate_threshold_ ) {
 			TR<<"Failing."<<std::endl;
 			return false;
 		} else {
-		TR<<"Success."<<std::endl;
+			TR<<"Success."<<std::endl;
 			return true;
 		}
 	}
@@ -184,10 +184,10 @@ MutationsFilter::compute( core::pose::Pose const & pose, bool const & write ) co
 	runtime_assert( reference_pose() != 0 );
 	core::Size total_residue_ref;
 	core::pose::Pose asym_ref_pose;
-	if(core::pose::symmetry::is_symmetric( *reference_pose() )) {
+	if ( core::pose::symmetry::is_symmetric( *reference_pose() ) ) {
 		core::pose::symmetry::extract_asymmetric_unit( *reference_pose(), asym_ref_pose);
-  	for (core::Size i = 1; i <= asym_ref_pose.total_residue(); ++i) {
-    	if (asym_ref_pose.residue_type(i).name() == "VRT") {
+		for ( core::Size i = 1; i <= asym_ref_pose.total_residue(); ++i ) {
+			if ( asym_ref_pose.residue_type(i).name() == "VRT" ) {
 				asym_ref_pose.conformation().delete_residue_slow(asym_ref_pose.total_residue());
 			}
 		}
@@ -198,10 +198,10 @@ MutationsFilter::compute( core::pose::Pose const & pose, bool const & write ) co
 	}
 	core::Size total_residue;
 	core::pose::Pose asym_pose;
-	if (core::pose::symmetry::is_symmetric( pose )) {
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		core::pose::symmetry::extract_asymmetric_unit(pose, asym_pose);
-  	for (core::Size i = 1; i <= asym_pose.total_residue(); ++i) {
-    	if (asym_pose.residue_type(i).name() == "VRT") {
+		for ( core::Size i = 1; i <= asym_pose.total_residue(); ++i ) {
+			if ( asym_pose.residue_type(i).name() == "VRT" ) {
 				asym_pose.conformation().delete_residue_slow(asym_pose.total_residue());
 			}
 		}
@@ -210,16 +210,17 @@ MutationsFilter::compute( core::pose::Pose const & pose, bool const & write ) co
 		total_residue = pose.total_residue();
 		asym_pose = pose;
 	}
-	if( total_residue_ref != total_residue )
+	if ( total_residue_ref != total_residue ) {
 		utility_exit_with_message( "Reference pose and current pose have a different number of residues" );
+	}
 	core::pack::task::PackerTaskOP packer_task( task_factory_->create_task_and_apply_taskoperations( pose ) );
 	core::Size resi_count( 0 );
 	core::Size mutation_count( 0 );
 	//core::Size output_resi;
-  std::map< core::Size, std::string > res_names1;
-  std::map< core::Size, std::string > res_names2;
-	for( core::Size resi=1; resi<=total_residue; ++resi ) {
-		if( packer_task->being_designed( resi ) || (packer_task->being_packed( resi) && packable_) ) {
+	std::map< core::Size, std::string > res_names1;
+	std::map< core::Size, std::string > res_names2;
+	for ( core::Size resi=1; resi<=total_residue; ++resi ) {
+		if ( packer_task->being_designed( resi ) || (packer_task->being_packed( resi) && packable_) ) {
 			resi_count++;
 			res_names1.insert( std::make_pair( resi, asym_ref_pose.residue(resi).name3() ));
 			res_names2.insert( std::make_pair( resi, asym_pose.residue(resi).name3() ));
@@ -236,11 +237,11 @@ MutationsFilter::compute( core::pose::Pose const & pose, bool const & write ) co
 		}
 	}
 	// AMW: cppcheck notes that if this can be zero, then we divide by zero by it in the next line
-	if( !resi_count ) {
+	if ( !resi_count ) {
 		TR<<"Warning: No designable residues identified in pose. Are you sure you have set the correct task operations?"<<std::endl;
 	}
-  core::Real const rate( 1.0 - (core::Real) mutation_count / resi_count );
-  TR<<"Your design mover mutated "<<mutation_count<<" positions out of "<<resi_count<<" designable positions. Sequence recovery is: "<<rate<<std::endl;
+	core::Real const rate( 1.0 - (core::Real) mutation_count / resi_count );
+	TR<<"Your design mover mutated "<<mutation_count<<" positions out of "<<resi_count<<" designable positions. Sequence recovery is: "<<rate<<std::endl;
 	if ( write ) {
 		write_to_pdb( pose, res_names1, res_names2 );
 	}
@@ -255,19 +256,19 @@ MutationsFilter::compute( core::pose::Pose const & pose, bool const & write ) co
 void
 MutationsFilter::write_to_pdb( core::pose::Pose const & pose, std::map< core::Size, std::string > const & res_names1, std::map< core::Size, std::string > const & res_names2 ) const {
 
-  protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
-  std::string user_name = this->get_user_defined_name();
+	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
+	std::string user_name = this->get_user_defined_name();
 	std::map< Size, std::string >::const_iterator it_name1 = res_names1.begin();
 	std::map< Size, std::string >::const_iterator it_name2 = res_names2.begin();
 	core::Size output_resi = it_name1->first;
-	while( it_name1 != res_names1.end() ) {
+	while ( it_name1 != res_names1.end() ) {
 		if ( !basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {
 			output_resi = pose.pdb_info()->number( it_name1->first );
 		}
 		std::string output_string = "MutationsFilter " + user_name + ": " + it_name2->second + ObjexxFCL::string_of( output_resi ) + it_name1->second;
 		job->add_string( output_string );
 		++it_name1; ++it_name2;
- 	}
+	}
 
 }
 
@@ -285,10 +286,10 @@ MutationsFilter::report( std::ostream & out, core::pose::Pose const & pose ) con
 
 void
 MutationsFilter::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & pose )
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & pose )
 {
 	TR << "MutationsFilter"<<std::endl;
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
@@ -302,14 +303,13 @@ MutationsFilter::parse_my_tag( utility::tag::TagCOP tag,
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if( option[ in::file::native ].user() ){
+	if ( option[ in::file::native ].user() ) {
 		std::string const reference_pdb = option[ in::file::native ]();
 		core::pose::PoseOP temp_pose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb( *temp_pose, reference_pdb );
 		reference_pose( temp_pose );
 		TR<<"Using native pdb "<<reference_pdb<<" as reference.";
-	}
-	else{
+	} else {
 		TR<<"Using starting pdb as reference. You could use -in::file::native to specify a different pdb for reference";
 		reference_pose( pose );
 	}

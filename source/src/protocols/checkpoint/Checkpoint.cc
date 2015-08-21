@@ -24,25 +24,25 @@
 namespace protocols {
 namespace checkpoint {
 
-	void checkpoint_with_interval( const int interval_in ) {
-		Timer timer = Timer::instance();
-		timer.set_interval( interval_in );
-	}
+void checkpoint_with_interval( const int interval_in ) {
+	Timer timer = Timer::instance();
+	timer.set_interval( interval_in );
+}
 
-	Timer& Timer::instance(void)
-	{
-		static Timer theTimer;
-		return theTimer;
-	}
+Timer& Timer::instance(void)
+{
+	static Timer theTimer;
+	return theTimer;
+}
 
-	void Timer::set_interval( const int interval_in ) {
-		if (interval_in < 1) return;
-		interval_ = interval_in;
-	}
+void Timer::set_interval( const int interval_in ) {
+	if ( interval_in < 1 ) return;
+	interval_ = interval_in;
+}
 
-	bool Timer::is_on() { return is_on_; }
+bool Timer::is_on() { return is_on_; }
 
-	bool Timer::time_to_checkpoint() {
+bool Timer::time_to_checkpoint() {
 #ifdef BOINC
 		// honor user's disk write interval preference
 		// note: boinc_time_to_checkpoint sets critical section to true if
@@ -52,26 +52,26 @@ namespace checkpoint {
 		if (!boinc_time_to_checkpoint() && !boinc_is_standalone()) return false;
 		boinc_end_critical_section(); // boinc_time_to_checkpoint sets is, and we dont need it yet.
 #endif
-		//double time_diff(0.0);
-		time_t curr_time;
-		time(&curr_time);
-		double time_diff = difftime( curr_time, time_ );
-		if ( time_diff > interval_ ) return true;
+	//double time_diff(0.0);
+	time_t curr_time;
+	time(&curr_time);
+	double time_diff = difftime( curr_time, time_ );
+	if ( time_diff > interval_ ) return true;
 
-		return false;
-	}
+	return false;
+}
 
-	void Timer::reset() {
-		time(&time_);
+void Timer::reset() {
+	time(&time_);
 #ifdef BOINC
 		protocols::boinc::Boinc::update_pct_complete();
 		protocols::boinc::Boinc::checkpoint_completed();
 #endif
-	}
+}
 
-	bool Timer::is_on_ = false;
-	int Timer::interval_ = 600;
-	time_t Timer::time_ = time(0);
+bool Timer::is_on_ = false;
+int Timer::interval_ = 600;
+time_t Timer::time_ = time(0);
 
 
 } // checkpoint

@@ -93,20 +93,19 @@ SymmetricRotamerSets::compute_energies(
 // @details compute all rotamer one-body interactions for a symmetrical rotamer_sets
 void
 SymmetricRotamerSets::compute_one_body_energies(
-  pose::Pose const & pose,
-  scoring::ScoreFunction const & scfxn,
-  graph::GraphCOP packer_neighbor_graph,
-  interaction_graph::InteractionGraphBaseOP ig
+	pose::Pose const & pose,
+	scoring::ScoreFunction const & scfxn,
+	graph::GraphCOP packer_neighbor_graph,
+	interaction_graph::InteractionGraphBaseOP ig
 )
 {
-  // One body energies -- shared between pigs and otfigs
-  for ( uint ii = 1; ii <= nmoltenres(); ++ii )
-  {
-    utility::vector1< core::PackerEnergy > one_body_energies( rotamer_set_for_moltenresidue( ii )->num_rotamers() );
-    rotamer_set_for_moltenresidue( ii )->compute_one_body_energies(
-      pose, scfxn, *task(), packer_neighbor_graph, one_body_energies );
-    ig->add_to_nodes_one_body_energy( ii, one_body_energies );
-  }
+	// One body energies -- shared between pigs and otfigs
+	for ( uint ii = 1; ii <= nmoltenres(); ++ii ) {
+		utility::vector1< core::PackerEnergy > one_body_energies( rotamer_set_for_moltenresidue( ii )->num_rotamers() );
+		rotamer_set_for_moltenresidue( ii )->compute_one_body_energies(
+			pose, scfxn, *task(), packer_neighbor_graph, one_body_energies );
+		ig->add_to_nodes_one_body_energy( ii, one_body_energies );
+	}
 }
 
 // @details calculate all rotamer two body interactions and place them in a ig. Adds in
@@ -125,21 +124,19 @@ SymmetricRotamerSets::precompute_two_body_energies(
 	using namespace scoring;
 
 	// find SymmInfo
-  SymmetricConformation const & SymmConf (
-    dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
-  SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
+	SymmetricConformation const & SymmConf (
+		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
+	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	// Two body energies
-	for ( uint ii = 1; ii <= nmoltenres(); ++ii )
-	{
+	for ( uint ii = 1; ii <= nmoltenres(); ++ii ) {
 		//tt << "pairenergies for ii: " << ii << '\n';
 		uint ii_resid = moltenres_2_resid( ii );
 		// observe that we will loop over only one subunit here
 		for ( graph::Graph::EdgeListConstIter
-			uli  = packer_neighbor_graph->get_node( ii_resid )->const_edge_list_begin(),
-			ulie = packer_neighbor_graph->get_node( ii_resid )->const_edge_list_end();
-			uli != ulie; ++uli )
-		{
+				uli  = packer_neighbor_graph->get_node( ii_resid )->const_edge_list_begin(),
+				ulie = packer_neighbor_graph->get_node( ii_resid )->const_edge_list_end();
+				uli != ulie; ++uli ) {
 			uint jj_resid = (*uli)->get_other_ind( ii_resid );
 			uint jj = resid_2_moltenres( jj_resid ); //pretend we're iterating over jj >= ii
 			// if jj_resid is not repackable and jj_resid is not in a different subunit continue
@@ -159,7 +156,7 @@ SymmetricRotamerSets::precompute_two_body_energies(
 			if ( jj_master == 0 ) continue;
 			// if we the ii_resid and jj_resid_master have an edge this intersubunit
 			// interaction is already being calculated
-//			if ( packer_neighbor_graph->get_edge_exists(ii_resid,jj_resid_master ) && jj == 0 ) continue;
+			//   if ( packer_neighbor_graph->get_edge_exists(ii_resid,jj_resid_master ) && jj == 0 ) continue;
 
 			if ( fabs( symm_info->score_multiply(ii_resid,jj_resid) )<1e-3 ) continue;
 			uint ii_master = ii;
@@ -184,8 +181,8 @@ SymmetricRotamerSets::precompute_two_body_energies(
 			// make a pair energy table to store use jj_master and ii_master
 			// to size the array ( if we have have a intersubunit interaction)
 			FArray2D< core::PackerEnergy > pair_energy_table(
-			nrotamers_for_moltenres( jj_master ),
-			nrotamers_for_moltenres( ii_master ), 0.0 );
+				nrotamers_for_moltenres( jj_master ),
+				nrotamers_for_moltenres( ii_master ), 0.0 );
 
 			RotamerSetOP ii_rotset = rotamer_set_for_moltenresidue( ii_master );
 			RotamerSetOP jj_rotset = rotamer_set_for_moltenresidue( jj_master );
@@ -211,7 +208,7 @@ SymmetricRotamerSets::precompute_two_body_energies(
 				*ii_rotset, *jj_rotset, pose, pair_energy_table );
 
 			// Apply the multiplication factors
- 			pair_energy_table *= symm_info->score_multiply(ii_resid,jj_resid);
+			pair_energy_table *= symm_info->score_multiply(ii_resid,jj_resid);
 
 			if ( !pig->get_edge_exists( ii_master, jj_master ) ) {
 				pig->add_edge( ii_master, jj_master );
@@ -220,9 +217,9 @@ SymmetricRotamerSets::precompute_two_body_energies(
 
 			// finalize the edge
 			// if ( finalize_edges && ! scfxn.any_lr_residue_pair_energy(pose, ii_master, jj_master )
-			// 			&& final_visit_to_edge( pose, packer_neighbor_graph, ii_resid, jj_resid ) ){
-			// 	pig->declare_edge_energies_final( ii_master, jj_master );
-			// 	std::cout << "finalize pair " << ii_master << ' '<< jj_master << std::endl;
+			//    && final_visit_to_edge( pose, packer_neighbor_graph, ii_resid, jj_resid ) ){
+			//  pig->declare_edge_energies_final( ii_master, jj_master );
+			//  std::cout << "finalize pair " << ii_master << ' '<< jj_master << std::endl;
 			// }
 		}
 	}
@@ -242,78 +239,78 @@ SymmetricRotamerSets::precompute_two_body_energies(
 			uint const ii_resid = moltenres_2_resid( ii );
 
 			for ( ResidueNeighborConstIteratorOP
-						rni = lrec->const_neighbor_iterator_begin( ii_resid ),
-						rniend = lrec->const_neighbor_iterator_end( ii_resid );
-						(*rni) != (*rniend); ++(*rni) ) {
+					rni = lrec->const_neighbor_iterator_begin( ii_resid ),
+					rniend = lrec->const_neighbor_iterator_end( ii_resid );
+					(*rni) != (*rniend); ++(*rni) ) {
 				Size jj_resid = ( rni->upper_neighbor_id() == ii_resid ? rni->lower_neighbor_id() : rni->upper_neighbor_id() );
 
 				uint jj = resid_2_moltenres( jj_resid ); //pretend we're iterating over jj >= ii
-//				if ( jj == 0 ) continue; // Andrew, remove this magic number! (it's the signal that jj_resid is not "molten")
-			// if jj_resid is not repackable and jj_resid is not in a different subunit continue
-			uint jj_resid_master(0);
-			if ( symm_info->chi_follows( jj_resid ) == 0  ) {
-				// jj_resid is independent like ii_resid
-				if ( jj == 0 ) continue;
-				if ( jj_resid <= ii_resid ) continue; // we will hit this in the other order
-				jj_resid_master = jj_resid;
-			} else {
-				// if jj_resid is in a different subunit we need to know its master
-				jj_resid_master = symm_info->chi_follows( jj_resid );
-			}
-			// find out the moltenres id for the master
-			uint jj_master = resid_2_moltenres( jj_resid_master );
-			// if the master is not repackable continue
-			if ( jj_master == 0 ) continue;
-			// if we the ii_resid and jj_resid_master have an edge this intersubunit
-			// interaction is already being calculated
-//			if ( packer_neighbor_graph->get_edge_exists(ii_resid,jj_resid_master ) && jj == 0 ) continue;
-
-			if ( fabs( symm_info->score_multiply(ii_resid,jj_resid)) <1e-3 ) continue;
-
-			uint ii_master = ii;
-			uint ii_resid_master = ii_resid;
-
-			// the self interaction energy is already calculated in the one-body ter,
-	     if ( ii_master == jj_master ) continue;
-			// swap the order of the nodes that form the edge if jj_resid_master < ii_resid.
-			// Edges are always stored as pairs (a, b) where a > b. This only happens if we
-			// are calculation interactions from the controling subunit to another subunit
-			bool swap( false );
-			if ( jj_resid_master < ii_resid ) {
-				swap = true;
-				uint temp_ii = ii_master;
-				uint temp_ii_resid = ii_resid_master;
-				ii_master = jj_master;
-				ii_resid_master = jj_resid_master;
-				jj_master = temp_ii;
-				jj_resid_master = temp_ii_resid;
-			}
-
-			// make a pair energy table to store use jj_master and ii_master
-			// to size the array ( if we have have a intersubunit interaction)
-			FArray2D< core::PackerEnergy > pair_energy_table(
-			nrotamers_for_moltenres( jj_master ),
-			nrotamers_for_moltenres( ii_master ), 0.0 );
-
-			RotamerSetOP ii_rotset = rotamer_set_for_moltenresidue( ii_master );
-			RotamerSetOP jj_rotset = rotamer_set_for_moltenresidue( jj_master );
-
-			// we have a intersubunit interaction then calculate the interaction
-			// here instead of the intrasubunit interaction. If jj == 0 then we will calculate
-			// intrasubunit interaction. If we swapped the order we have to orient ii instead of jj
-			if ( symm_info->chi_follows( jj_resid ) != 0 && jj == 0 ) {
-				if ( swap ) {
-					RotamerSetOP rotated_ii_rotset(
-						orient_rotamer_set_to_symmetric_partner(pose,ii_resid_master,jj_resid) );
-					ii_rotset = rotated_ii_rotset;
-					scfxn.prepare_rotamers_for_packing( pose, *ii_rotset );
+				//    if ( jj == 0 ) continue; // Andrew, remove this magic number! (it's the signal that jj_resid is not "molten")
+				// if jj_resid is not repackable and jj_resid is not in a different subunit continue
+				uint jj_resid_master(0);
+				if ( symm_info->chi_follows( jj_resid ) == 0  ) {
+					// jj_resid is independent like ii_resid
+					if ( jj == 0 ) continue;
+					if ( jj_resid <= ii_resid ) continue; // we will hit this in the other order
+					jj_resid_master = jj_resid;
 				} else {
-					RotamerSetOP rotated_jj_rotset(
-						orient_rotamer_set_to_symmetric_partner(pose,jj_resid_master,jj_resid) );
-					jj_rotset = rotated_jj_rotset;
-					scfxn.prepare_rotamers_for_packing( pose, *jj_rotset );
+					// if jj_resid is in a different subunit we need to know its master
+					jj_resid_master = symm_info->chi_follows( jj_resid );
 				}
-			}
+				// find out the moltenres id for the master
+				uint jj_master = resid_2_moltenres( jj_resid_master );
+				// if the master is not repackable continue
+				if ( jj_master == 0 ) continue;
+				// if we the ii_resid and jj_resid_master have an edge this intersubunit
+				// interaction is already being calculated
+				//   if ( packer_neighbor_graph->get_edge_exists(ii_resid,jj_resid_master ) && jj == 0 ) continue;
+
+				if ( fabs( symm_info->score_multiply(ii_resid,jj_resid)) <1e-3 ) continue;
+
+				uint ii_master = ii;
+				uint ii_resid_master = ii_resid;
+
+				// the self interaction energy is already calculated in the one-body ter,
+				if ( ii_master == jj_master ) continue;
+				// swap the order of the nodes that form the edge if jj_resid_master < ii_resid.
+				// Edges are always stored as pairs (a, b) where a > b. This only happens if we
+				// are calculation interactions from the controling subunit to another subunit
+				bool swap( false );
+				if ( jj_resid_master < ii_resid ) {
+					swap = true;
+					uint temp_ii = ii_master;
+					uint temp_ii_resid = ii_resid_master;
+					ii_master = jj_master;
+					ii_resid_master = jj_resid_master;
+					jj_master = temp_ii;
+					jj_resid_master = temp_ii_resid;
+				}
+
+				// make a pair energy table to store use jj_master and ii_master
+				// to size the array ( if we have have a intersubunit interaction)
+				FArray2D< core::PackerEnergy > pair_energy_table(
+					nrotamers_for_moltenres( jj_master ),
+					nrotamers_for_moltenres( ii_master ), 0.0 );
+
+				RotamerSetOP ii_rotset = rotamer_set_for_moltenresidue( ii_master );
+				RotamerSetOP jj_rotset = rotamer_set_for_moltenresidue( jj_master );
+
+				// we have a intersubunit interaction then calculate the interaction
+				// here instead of the intrasubunit interaction. If jj == 0 then we will calculate
+				// intrasubunit interaction. If we swapped the order we have to orient ii instead of jj
+				if ( symm_info->chi_follows( jj_resid ) != 0 && jj == 0 ) {
+					if ( swap ) {
+						RotamerSetOP rotated_ii_rotset(
+							orient_rotamer_set_to_symmetric_partner(pose,ii_resid_master,jj_resid) );
+						ii_rotset = rotated_ii_rotset;
+						scfxn.prepare_rotamers_for_packing( pose, *ii_rotset );
+					} else {
+						RotamerSetOP rotated_jj_rotset(
+							orient_rotamer_set_to_symmetric_partner(pose,jj_resid_master,jj_resid) );
+						jj_rotset = rotated_jj_rotset;
+						scfxn.prepare_rotamers_for_packing( pose, *jj_rotset );
+					}
+				}
 				(*lr_iter)->evaluate_rotamer_pair_energies(
 					*ii_rotset, *jj_rotset, pose, scfxn, scfxn.weights(), pair_energy_table );
 
@@ -322,8 +319,8 @@ SymmetricRotamerSets::precompute_two_body_energies(
 				if ( ! pig->get_edge_exists( ii_master, jj_master ) ) { pig->add_edge( ii_master, jj_master ); }
 				pig->add_to_two_body_energies_for_edge( ii_master, jj_master, pair_energy_table );
 				// if ( finalize_edges && final_visit_to_edge( pose, packer_neighbor_graph, ii_resid, jj_resid ) ) {
-				// 	pig->declare_edge_energies_final( ii_master, jj_master );
-				// 	std::cout << "finalize pair " << ii_master << ' '<< jj_master << std::endl;
+				//  pig->declare_edge_energies_final( ii_master, jj_master );
+				//  std::cout << "finalize pair " << ii_master << ' '<< jj_master << std::endl;
 				// }
 			}
 		}
@@ -418,7 +415,7 @@ SymmetricRotamerSets::prepare_symm_otf_interaction_graph(
 			// now let's inform the graph that, for this ii_resid / jj_resid pair that
 			// an interaction exists.
 
-		debug_assert( ii_resid <= symm_info->num_independent_residues() || jj_resid <= symm_info->num_independent_residues() );
+			debug_assert( ii_resid <= symm_info->num_independent_residues() || jj_resid <= symm_info->num_independent_residues() );
 
 			ig->set_residues_adjacent_for_subunit_pair_for_edge( ii_master, jj_master,
 				swap ? 2 : 1,
@@ -442,7 +439,7 @@ SymmetricRotamerSets::prepare_symm_otf_interaction_graph(
 			for ( scoring::ResidueNeighborConstIteratorOP
 					rni = lrec->const_upper_neighbor_iterator_begin( ii_resid ),
 					rniend = lrec->const_upper_neighbor_iterator_end( ii_resid );
-    			(*rni) != (*rniend); ++(*rni) ) {
+					(*rni) != (*rniend); ++(*rni) ) {
 
 				Size jj_resid = rni->upper_neighbor_id();
 				Size jj = resid_2_moltenres( jj_resid );
@@ -477,7 +474,7 @@ SymmetricRotamerSets::prepare_symm_otf_interaction_graph(
 				ig->note_long_range_interactions_exist_for_edge( ii_master, jj_master );
 			}
 		}
-  }
+	}
 
 	compute_proline_correction_energies_for_otf_graph( pose, symm_info, sfxn, packer_neighbor_graph, ig );
 }
@@ -632,32 +629,32 @@ SymmetricRotamerSets::compute_proline_correction_energies_for_otf_graph(
 // @details orients all rotamers in a rotamer_set to a different (symmetrical) position
 RotamerSetOP
 SymmetricRotamerSets::orient_rotamer_set_to_symmetric_partner(
-  pose::Pose const & pose,
-  uint const & seqpos,
-  uint const & sympos
+	pose::Pose const & pose,
+	uint const & seqpos,
+	uint const & sympos
 )
 {
 
-  RotamerSetCOP rotset_in = rotamer_set_for_residue( seqpos );
-  SymmetricRotamerSetFactory rsf;
-  RotamerSetOP sym_rotamer_set = rsf.create_rotamer_set( pose.residue( seqpos ) );
+	RotamerSetCOP rotset_in = rotamer_set_for_residue( seqpos );
+	SymmetricRotamerSetFactory rsf;
+	RotamerSetOP sym_rotamer_set = rsf.create_rotamer_set( pose.residue( seqpos ) );
 	sym_rotamer_set->set_resid(sympos);
-  for (Rotamers::const_iterator
-    rot     = rotset_in->begin(),
-    rot_end = rotset_in->end();
-    rot != rot_end; ++rot) {
-      conformation::ResidueOP target_rsd( (*rot)->clone() /*pose.residue( seqpos )*/ );
+	for ( Rotamers::const_iterator
+			rot     = rotset_in->begin(),
+			rot_end = rotset_in->end();
+			rot != rot_end; ++rot ) {
+		conformation::ResidueOP target_rsd( (*rot)->clone() /*pose.residue( seqpos )*/ );
 
-			// peptoids have a different orientation function due to the placement of the first side chain atom
-			if ( target_rsd->type().is_peptoid() ) {
-				target_rsd->orient_onto_residue_peptoid( pose.residue( sympos ), pose.conformation() );
-			} else {
-				target_rsd->orient_onto_residue( pose.residue( sympos ) );
-			}
+		// peptoids have a different orientation function due to the placement of the first side chain atom
+		if ( target_rsd->type().is_peptoid() ) {
+			target_rsd->orient_onto_residue_peptoid( pose.residue( sympos ), pose.conformation() );
+		} else {
+			target_rsd->orient_onto_residue( pose.residue( sympos ) );
+		}
 
-      sym_rotamer_set->add_rotamer( *target_rsd );
-  }
-  return sym_rotamer_set;
+		sym_rotamer_set->add_rotamer( *target_rsd );
+	}
+	return sym_rotamer_set;
 }
 
 // @details is this the final visit to an edge?
@@ -667,35 +664,37 @@ SymmetricRotamerSets::final_visit_to_edge(
 	graph::GraphCOP packer_neighbor_graph,
 	uint ii_resid,
 	uint jj_resid
-	)
+)
 {
 	// find SymmInfo
-  SymmetricConformation const & SymmConf (
-    dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
-  SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
+	SymmetricConformation const & SymmConf (
+		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
+	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	// find the highest jj clone sequence number we could have
 	uint jj_highest(jj_resid);
 	for ( std::vector< Size>::const_iterator
-	  clone     = symm_info->chi_clones( jj_resid ).begin(),
-		clone_end = symm_info->chi_clones( jj_resid ).end();
-		clone != clone_end; ++clone ){
+			clone     = symm_info->chi_clones( jj_resid ).begin(),
+			clone_end = symm_info->chi_clones( jj_resid ).end();
+			clone != clone_end; ++clone ) {
 		if (  *clone > jj_highest &&
-					packer_neighbor_graph->get_edge_exists(ii_resid, *clone) )
+				packer_neighbor_graph->get_edge_exists(ii_resid, *clone) ) {
 			jj_highest = *clone;
-    }
-		// find the highest jj clone sequence number we could have
-  uint ii_highest(ii_resid);
-  for ( std::vector< Size>::const_iterator
-    clone     = symm_info->chi_clones( ii_resid ).begin(),
-    clone_end = symm_info->chi_clones( ii_resid ).end();
-    clone != clone_end; ++clone ){
-    if (  *clone > ii_highest &&
-          packer_neighbor_graph->get_edge_exists(*clone, jj_resid) )
-      ii_highest = *clone;
-    }
-		if ( ii_resid == ii_highest && jj_resid == jj_highest ) return true;
-		else return false;
+		}
+	}
+	// find the highest jj clone sequence number we could have
+	uint ii_highest(ii_resid);
+	for ( std::vector< Size>::const_iterator
+			clone     = symm_info->chi_clones( ii_resid ).begin(),
+			clone_end = symm_info->chi_clones( ii_resid ).end();
+			clone != clone_end; ++clone ) {
+		if (  *clone > ii_highest &&
+				packer_neighbor_graph->get_edge_exists(*clone, jj_resid) ) {
+			ii_highest = *clone;
+		}
+	}
+	if ( ii_resid == ii_highest && jj_resid == jj_highest ) return true;
+	else return false;
 }
 
 } // namespace symmetry

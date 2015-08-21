@@ -35,44 +35,44 @@ namespace protocols {
 namespace environment {
 
 class EXCN_Env_Security_Exception : public core::environment::EXCN_Env_Exception {
-  typedef core::environment::EXCN_Env_Exception Parent;
+	typedef core::environment::EXCN_Env_Exception Parent;
 public:
-  EXCN_Env_Security_Exception( core::id::DOF_ID const& dof,
-                               core::environment::DofPassportCOP pass,
-                               std::string const& mod_type,
-                               ProtectedConformation const&,
-                               std::string const& mover_name,
-                               EnvironmentCAP env );
+	EXCN_Env_Security_Exception( core::id::DOF_ID const& dof,
+		core::environment::DofPassportCOP pass,
+		std::string const& mod_type,
+		ProtectedConformation const&,
+		std::string const& mover_name,
+		EnvironmentCAP env );
 
-  EXCN_Env_Security_Exception( std::string const& message,
-                               std::string const& mover_name,
-                               EnvironmentCAP env );
+	EXCN_Env_Security_Exception( std::string const& message,
+		std::string const& mover_name,
+		EnvironmentCAP env );
 
-  core::id::DOF_ID const& id() const {
-    return id_;
-  }
-  core::environment::DofPassportCOP passport() const {
-    return pass_;
-  }
+	core::id::DOF_ID const& id() const {
+		return id_;
+	}
+	core::environment::DofPassportCOP passport() const {
+		return pass_;
+	}
 
 private:
-  core::id::DOF_ID const id_;
-  core::environment::DofPassportCOP pass_;
+	core::id::DOF_ID const id_;
+	core::environment::DofPassportCOP pass_;
 
 };
 
 class EXCN_Env_Passport : public core::environment::EXCN_Env_Exception {
-  typedef core::environment::EXCN_Env_Exception Parent;
+	typedef core::environment::EXCN_Env_Exception Parent;
 public:
-  EXCN_Env_Passport( std::string const& message,
-                     std::string const& mover_name,
-                    EnvironmentCAP env ) :
-  Parent( env ) {
-    std::ostringstream msg;
-    msg << message << " Mover: '" << mover_name << "'.";
+	EXCN_Env_Passport( std::string const& message,
+		std::string const& mover_name,
+		EnvironmentCAP env ) :
+		Parent( env ) {
+		std::ostringstream msg;
+		msg << message << " Mover: '" << mover_name << "'.";
 
-    add_msg( msg.str() );
-  }
+		add_msg( msg.str() );
+	}
 };
 
 } // environment

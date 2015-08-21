@@ -48,7 +48,7 @@ MolarMassFilter::apply( core::pose::Pose const & pose ) const {
 	//core::Real mass=0;
 
 
-	if(	core::pose::mass(start,end,pose) > mass_limit_ ){
+	if ( core::pose::mass(start,end,pose) > mass_limit_ ) {
 		atom_tracer<< "Reached atom limit"<< std::endl;
 		return false;
 	}
@@ -64,7 +64,7 @@ MolarMassFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 		assert(false);
 		return;
 	}
-	if ( ! (tag->hasOption("chain") && tag->hasOption("mass_limit") ) ){
+	if ( ! (tag->hasOption("chain") && tag->hasOption("mass_limit") ) ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("MolarMass filter needs a 'chain' and an 'mass_limit' option");
 	}
 	chain_ = tag->getOption<std::string>("chain");

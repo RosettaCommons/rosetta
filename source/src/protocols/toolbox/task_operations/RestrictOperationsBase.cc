@@ -55,7 +55,7 @@ RestrictOperationsBase::run_calculator(
 	SizeSet const & sizeset(mv_sizeset.value());
 
 	//insert this into the vector
-	for(SizeSet::const_iterator it(sizeset.begin()), end(sizeset.end()) ; it != end; ++it){
+	for ( SizeSet::const_iterator it(sizeset.begin()), end(sizeset.end()) ; it != end; ++it ) {
 		//TR << *it << std::endl;
 		residues[*it] = true;
 	}

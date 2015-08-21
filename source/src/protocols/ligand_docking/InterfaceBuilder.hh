@@ -55,8 +55,8 @@ public:
 	);
 
 	/* InterfaceBuilder(
-			utility::vector1<std::string> const & ligand_chains,
-			core::Size extension_window=0
+	utility::vector1<std::string> const & ligand_chains,
+	core::Size extension_window=0
 	); */
 
 	ligand_options::Interface build(core::pose::Pose const & pose) const;
@@ -72,7 +72,7 @@ private:
 		core::pose::Pose const & pose
 	) const;
 
-//	void extend_interface(const core::Size residue_id, const core::Size window);
+	// void extend_interface(const core::Size residue_id, const core::Size window);
 
 	void find_interface_residues(
 		ligand_options::Interface & interface,
@@ -81,22 +81,22 @@ private:
 
 	/// @brief First call find_ligand_residues
 	void find_protein_residues(
-			ligand_options::Interface & interface,
-			core::Size ligand_residue_id,
-			core::pose::Pose const & pose
+		ligand_options::Interface & interface,
+		core::Size ligand_residue_id,
+		core::pose::Pose const & pose
 	)const;
 
 	void set_interface_residue(
-			ligand_options::Interface & interface,
-			core::Size const potential_interface_residue_id,
-			core::Size const ligand_interface_residue_id,
-			core::pose::Pose const & pose
+		ligand_options::Interface & interface,
+		core::Size const potential_interface_residue_id,
+		core::Size const ligand_interface_residue_id,
+		core::pose::Pose const & pose
 	)const;
 
 	bool is_interface_residue(
-			core::conformation::Residue const & potential_interface_residue,
-			core::conformation::Residue const & ligand_interface_residue,
-			char const chain
+		core::conformation::Residue const & potential_interface_residue,
+		core::conformation::Residue const & ligand_interface_residue,
+		char const chain
 	)const;
 
 };

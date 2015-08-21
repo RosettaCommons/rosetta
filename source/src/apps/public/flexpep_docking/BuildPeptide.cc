@@ -66,42 +66,42 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-	using namespace pose;
-	using namespace scoring;
-	using namespace conformation;
-	using namespace core::chemical;
+		using namespace pose;
+		using namespace scoring;
+		using namespace conformation;
+		using namespace core::chemical;
 
-	//setup random numbers and options
-	devel::init(argc, argv);
+		//setup random numbers and options
+		devel::init(argc, argv);
 
-   //create a pose
-   pose::Pose pose;
+		//create a pose
+		pose::Pose pose;
 
-	//protein pose
-	//pose::Pose prot_pose;
-	//io::pdb::pose_from_pdb( prot_pose, options::start_file() ); // gets filename from -s option
+		//protein pose
+		//pose::Pose prot_pose;
+		//io::pdb::pose_from_pdb( prot_pose, options::start_file() ); // gets filename from -s option
 
-  //read peptides fasta file
-  std::string pepSeq = core::sequence::read_fasta_file( basic::options::option[ in::file::fasta ]()[1] )[1]->sequence();
-	int seqLen = pepSeq.length();
+		//read peptides fasta file
+		std::string pepSeq = core::sequence::read_fasta_file( basic::options::option[ in::file::fasta ]()[1] )[1]->sequence();
+		int seqLen = pepSeq.length();
 
-  make_pose_from_sequence(pose,pepSeq, *ChemicalManager::get_instance()->residue_type_set( "fa_standard" ));
+		make_pose_from_sequence(pose,pepSeq, *ChemicalManager::get_instance()->residue_type_set( "fa_standard" ));
 
-   //make peptide extended
-   for (int i=1; i<=seqLen; i++) {
-            pose.set_phi(i,-135.0);
-            pose.set_psi(i,135.0);
-            pose.set_omega(i,180.0);
-   }
+		//make peptide extended
+		for ( int i=1; i<=seqLen; i++ ) {
+			pose.set_phi(i,-135.0);
+			pose.set_psi(i,135.0);
+			pose.set_omega(i,180.0);
+		}
 
-   //dump pdb to output
-	 std::string oFileName= basic::options::option[ out::file::o ]();
-   pose.dump_pdb(oFileName);
+		//dump pdb to output
+		std::string oFileName= basic::options::option[ out::file::o ]();
+		pose.dump_pdb(oFileName);
 
-   } catch ( utility::excn::EXCN_Base const & e ) {
-	  std::cout << "caught exception " << e.msg() << std::endl;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-   }
+	}
 
-   return 0;
+	return 0;
 }

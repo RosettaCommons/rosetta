@@ -128,7 +128,7 @@ public:
 		TS_ASSERT_LESS_THAN(favored_score, 0);
 
 		// Check each individual residues value
-		for( core::Size ii(1); ii <= pose.total_residue(); ++ii) {
+		for ( core::Size ii(1); ii <= pose.total_residue(); ++ii ) {
 			core::Real resenergy = pose.energies().residue_total_energies(ii)[core::scoring::res_type_constraint];
 			//TR << "Blosum62 resi " << ii << " res_type_constraint score " << resenergy << std::endl;
 			TS_ASSERT_LESS_THAN(resenergy, 0);
@@ -167,7 +167,7 @@ public:
 		TS_ASSERT_LESS_THAN(favored_score, 0);
 
 		// Check each individual residues value
-		for( core::Size ii(1); ii <= pose.total_residue(); ++ii) {
+		for ( core::Size ii(1); ii <= pose.total_residue(); ++ii ) {
 			core::Real resenergy = pose.energies().residue_total_energies(ii)[core::scoring::res_type_constraint];
 			//TR << "Blosum62 resi " << ii << " res_type_constraint score " << resenergy << std::endl;
 			TS_ASSERT_LESS_THAN(resenergy, 0);
@@ -205,7 +205,7 @@ public:
 		TS_ASSERT_LESS_THAN(favored_score, 0);
 
 		// Check each individual residues value
-		for( core::Size ii(1); ii <= pose.total_residue(); ++ii) {
+		for ( core::Size ii(1); ii <= pose.total_residue(); ++ii ) {
 			core::Real resenergy = pose.energies().residue_total_energies(ii)[core::scoring::res_type_constraint];
 			//TR << "Blosum62 resi " << ii << " res_type_constraint score " << resenergy << std::endl;
 			TS_ASSERT_LESS_THAN(resenergy, 0);
@@ -242,7 +242,7 @@ public:
 		TS_ASSERT_LESS_THAN(favored_score, 0);
 
 		// Check each individual residues value
-		for( core::Size ii(1); ii <= pose.total_residue(); ++ii) {
+		for ( core::Size ii(1); ii <= pose.total_residue(); ++ii ) {
 			core::Real resenergy = pose.energies().residue_total_energies(ii)[core::scoring::res_type_constraint];
 			//TR << "Blosum62 resi " << ii << " res_type_constraint score " << resenergy << std::endl;
 			TS_ASSERT_LESS_THAN(resenergy, 0);

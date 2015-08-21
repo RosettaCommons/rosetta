@@ -93,8 +93,8 @@ public:
 	/// @brief output operator for KDNode
 	/*
 	friend std::ostream & operator<< (
-		std::ostream & out,
-		const KDNode & kdnode
+	std::ostream & out,
+	const KDNode & kdnode
 	); */
 
 private:

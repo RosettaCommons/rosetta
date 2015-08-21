@@ -135,9 +135,9 @@ public:  // Accessors/Mutators ////////////////////////////////////////////////
 	/// @param   Order of parameters is helix, strand, coil. Angles are in degrees.
 	void
 	max_per_move_torsion_delta_per_residue(
-			core::Angle input_max_delta_helix,
-			core::Angle input_max_delta_strand,
-			core::Angle input_max_delta_coil )
+		core::Angle input_max_delta_helix,
+		core::Angle input_max_delta_strand,
+		core::Angle input_max_delta_coil )
 	{
 		max_per_move_torsion_delta_[ helix ] = input_max_delta_helix;
 		max_per_move_torsion_delta_[ strand ] = input_max_delta_strand;
@@ -175,9 +175,9 @@ public:  // Accessors/Mutators ////////////////////////////////////////////////
 	/// @param Order of parameters is helix, strand, coil.  Angles are in degrees.
 	void
 	max_total_torsion_delta_per_residue(
-			core::Angle input_max_delta_helix,
-			core::Angle input_max_delta_strand,
-			core::Angle input_max_delta_coil )
+		core::Angle input_max_delta_helix,
+		core::Angle input_max_delta_strand,
+		core::Angle input_max_delta_coil )
 	{
 		max_total_torsion_delta_[ helix ] = input_max_delta_helix;
 		max_total_torsion_delta_[ strand ] = input_max_delta_strand;
@@ -226,7 +226,7 @@ public:  // Accessors/Mutators ////////////////////////////////////////////////
 
 	/// @brief  Get the average change in the main-chain torsion angles of the loop after completion of loop closure.
 	/// @note   Change this name to match the datum. ~Labonte
-	core::Angle	torsion_delta() const	{ return average_change_in_torsion_angle_; }
+	core::Angle torsion_delta() const { return average_change_in_torsion_angle_; }
 
 	/// @brief  Get the average change in rama score for the residues in the loop after completion of loop closure.
 	/// @note   This value will only be meaningful if the option for checking the rama score is turned on.
@@ -261,39 +261,39 @@ private:  // Private methods //////////////////////////////////////////////////
 	void index_pair_in_range( core::uint & pos, core::uint & atom, core::Size const n_mainchain_atoms ) const;
 
 	void get_torsion_axis(
-			core::pose::Pose const & pose,
-			core::uint const seqpos,
-			core::uint const torsion_num,
-			core::Vector & axis_atom_coords,
-			core::Vector & axis_unit_vector ) const;
+		core::pose::Pose const & pose,
+		core::uint const seqpos,
+		core::uint const torsion_num,
+		core::Vector & axis_atom_coords,
+		core::Vector & axis_unit_vector ) const;
 
 	core::Angle calculate_ccd_angle(
-			core::pose::Pose const & pose,
-			core::uint const pos,
-			core::uint const torsion,
-			ChainDirection const direction );
+		core::pose::Pose const & pose,
+		core::uint const pos,
+		core::uint const torsion,
+		ChainDirection const direction );
 
 	// This method can be overridden to change the way maximum deviations are determined
 	virtual void get_maximum_torsion_deltas_for_residue(
-			core::pose::Pose const & pose,
-			core::uint const seqpos,
-			core::Real & per_move_allowed_delta,
-			core::Real & total_allowed_delta ) const;
+		core::pose::Pose const & pose,
+		core::uint const seqpos,
+		core::Real & per_move_allowed_delta,
+		core::Real & total_allowed_delta ) const;
 
 	// This method should be reimplemented in derived classes that may want to use alternate formulations of CCD
 	virtual void adjust_residue_to_minimize_deviation(
-			core::pose::Pose & pose,
-			core::pose::Pose const & starting_pose,
-			core::uint const seqpos,
-			ChainDirection const direction,
-			core::Real const max_per_move_torsion_delta,
-			core::Real const max_total_torsion_delta );
+		core::pose::Pose & pose,
+		core::pose::Pose const & starting_pose,
+		core::uint const seqpos,
+		ChainDirection const direction,
+		core::Real const max_per_move_torsion_delta,
+		core::Real const max_total_torsion_delta );
 
 	// This method performs most of the work of the CCD closure.
 	void close_loop_in_single_direction(
-			core::pose::Pose & pose,
-			core::pose::Pose const & starting_pose,
-			ChainDirection const direction );
+		core::pose::Pose & pose,
+		core::pose::Pose const & starting_pose,
+		ChainDirection const direction );
 
 	void compute_closure_metrics( core::pose::Pose const & pose, core::pose::Pose const & starting_pose );
 

@@ -46,8 +46,8 @@ using basic::Warning;
 
 static thread_local basic::Tracer TR( "apps.public.interface_design.anchored_design.AnchoredPDBCreator" );
 
-namespace basic{ namespace options{ namespace OptionKeys{
-namespace AnchoredPDBCreator{
+namespace basic { namespace options { namespace OptionKeys {
+namespace AnchoredPDBCreator {
 basic::options::FileOptionKey const scaffold_loop( "AnchoredPDBCreator::scaffold_loop" );
 basic::options::FileOptionKey const scaffold_pdb( "AnchoredPDBCreator::scaffold_pdb" );
 basic::options::FileOptionKey const anchor_pdb( "AnchoredPDBCreator::anchor_pdb" );
@@ -105,8 +105,8 @@ public:
 		insert_loop_end = pose_map.find( chain, PDBloopend );
 		insert_point = pose_map.find( chain, PDBinsertstart );
 
-		if( !( insert_loop_start < insert_point )
-			&& ( insert_point < insert_loop_end ) ){
+		if ( !( insert_loop_start < insert_point )
+				&& ( insert_point < insert_loop_end ) ) {
 			utility_exit_with_message( "insert/loop definitions must obey insert_loop_start < insert_point < insert_loop_end" );
 		}
 
@@ -130,12 +130,12 @@ public:
 		core::pose::Pose piece( anchor );
 		grafter.set_piece( piece, 0, 0 );
 		grafter.set_mintype( "dfpmin_armijo_nonmonotone" );//mintype from pose_into_pose
-		
+
 		grafter.final_repack( false );
 		grafter.stop_at_closure( false );
-		
+
 		grafter.idealize_insert( true ); //JAB - Idealize angles and omega (180) as has been the case.
-		
+
 		Pose combined( scaffold );//Copy the scaffold into combined before passing to Mover.
 		grafter.apply( combined );
 
@@ -185,24 +185,24 @@ typedef utility::pointer::shared_ptr< APDBCMover > APDBCMoverOP;
 int main( int argc, char* argv[] )
 {
 	try {
-	using basic::options::option;
-	using namespace basic::options::OptionKeys::AnchoredPDBCreator;
-	option.add( scaffold_loop, "scaffold anchor loop location file" ).def( "scaffold_loop" );
-	option.add( scaffold_pdb, "scaffold pdb location file" ).def( "scaffold.pdb" );
-	option.add( anchor_pdb, "anchor pdb location file" ).def( "anchor.pdb" );
-	option.add( target_pdb, "target pdb location file" ).def( "target.pdb" );
-	option.add( APDBC_cycles, "loop closure cycles" ).def( 500 );
+		using basic::options::option;
+		using namespace basic::options::OptionKeys::AnchoredPDBCreator;
+		option.add( scaffold_loop, "scaffold anchor loop location file" ).def( "scaffold_loop" );
+		option.add( scaffold_pdb, "scaffold pdb location file" ).def( "scaffold.pdb" );
+		option.add( anchor_pdb, "anchor pdb location file" ).def( "anchor.pdb" );
+		option.add( target_pdb, "target pdb location file" ).def( "target.pdb" );
+		option.add( APDBC_cycles, "loop closure cycles" ).def( 500 );
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-	protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new APDBCMover ) );
+		protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new APDBCMover ) );
 
-	TR << "************************d**o**n**e**************************************" << std::endl;
+		TR << "************************d**o**n**e**************************************" << std::endl;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
 
- 	return 0;
+	return 0;
 }

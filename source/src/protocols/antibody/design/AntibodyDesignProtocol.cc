@@ -61,7 +61,7 @@
 #include <utility/tag/Tag.hh>
 
 static thread_local basic::Tracer TR( "protocols.antibody.design.AntibodyDesignProtocol" );
-namespace protocols{
+namespace protocols {
 namespace antibody {
 namespace design {
 
@@ -76,11 +76,11 @@ using core::pose::Pose;
 using std::string;
 
 AntibodyDesignProtocol::AntibodyDesignProtocol() : protocols::moves::Mover(),
-		graft_designer_(/* NULL */),
-		cdr_dihedral_cst_mover_(/* NULL */),
-		scorefxn_(/* NULL */),
-		scorefxn_min_(/* NULL */),
-		ab_info_(/* NULL */)
+	graft_designer_(/* NULL */),
+	cdr_dihedral_cst_mover_(/* NULL */),
+	scorefxn_(/* NULL */),
+	scorefxn_min_(/* NULL */),
+	ab_info_(/* NULL */)
 
 {
 	protocols::moves::Mover::type( "AntibodyDesign" );
@@ -113,7 +113,7 @@ AntibodyDesignProtocol::get_name() const {
 
 //protocols::moves::MoverOP
 //AntibodyDesignProtocol::clone() const {
-//	return protocols::moves::MoverOP( new AntibodyDesignProtocol(*this) );
+// return protocols::moves::MoverOP( new AntibodyDesignProtocol(*this) );
 //}
 
 
@@ -126,7 +126,7 @@ AntibodyDesignProtocol::read_cmd_line_options(){
 
 	remove_antigen_ = option [OptionKeys::antibody::design::remove_antigen]();
 
-	if (basic::options::option [basic::options::OptionKeys::antibody::design::instructions].user()){
+	if ( basic::options::option [basic::options::OptionKeys::antibody::design::instructions].user() ) {
 		instruction_file_ = basic::options::option [basic::options::OptionKeys::antibody::design::instructions]();
 		TR << "Instructions file: " << instruction_file_ << std::endl;
 	}
@@ -145,11 +145,11 @@ AntibodyDesignProtocol::fresh_instance() const {
 
 void
 AntibodyDesignProtocol::parse_my_tag(
-		TagCOP tag,
-		basic::datacache::DataMap & data,
-		Filters_map const & ,
-		moves::Movers_map const & ,
-		Pose const &
+	TagCOP tag,
+	basic::datacache::DataMap & data,
+	Filters_map const & ,
+	moves::Movers_map const & ,
+	Pose const &
 ){
 	using namespace core::scoring;
 	AntibodyEnumManager manager = AntibodyEnumManager();
@@ -157,22 +157,20 @@ AntibodyDesignProtocol::parse_my_tag(
 	scorefxn_ = get_ab_design_global_scorefxn(tag, data);
 	scorefxn_min_ = get_ab_design_min_scorefxn(tag, data);
 
-	if (tag->hasOption("design_cdrs")){
+	if ( tag->hasOption("design_cdrs") ) {
 		utility::vector1<std::string> cdr_strings = utility::string_split_multi_delim(tag->getOption< std::string>("design_cdrs"), ":,'`~+*&|;.");
-		for (core::Size i = 1; i <= cdr_strings.size(); ++i){
+		for ( core::Size i = 1; i <= cdr_strings.size(); ++i ) {
 			CDRNameEnum cdr_enum =manager.cdr_name_string_to_enum( cdr_strings[ i ] );
 			design_override_.push_back(cdr_enum);
 		}
 	}
 
 	//A little redundancy
-	if (tag->hasOption("instruction_file")){
+	if ( tag->hasOption("instruction_file") ) {
 		instruction_file_ = tag->getOption< std::string >("instruction_file");
-	}
-	else if (tag->hasOption("instructions_file")) {
+	} else if ( tag->hasOption("instructions_file") ) {
 		instruction_file_ = tag->getOption< std::string >("instructions_file");
-	}
-	else if (tag->hasOption("cdr_instructions_file")) {
+	} else if ( tag->hasOption("cdr_instructions_file") ) {
 		instruction_file_ = tag->getOption< std::string >("cdr_instructions_file");
 	}
 
@@ -186,11 +184,11 @@ void
 AntibodyDesignProtocol::setup_scorefxns(){
 	using namespace basic::options;
 
-	if (! scorefxn_){
+	if ( ! scorefxn_ ) {
 		scorefxn_ = get_ab_design_global_scorefxn();
 	}
 
-	if (! scorefxn_min_){
+	if ( ! scorefxn_min_ ) {
 		scorefxn_min_ = get_ab_design_min_scorefxn();
 	}
 
@@ -227,7 +225,7 @@ AntibodyDesignProtocol::model_post_design(core::pose::Pose& pose){
 	//If no constraints are set - add constraints to pose CDRs.
 	core::Real start = scorefxn_->score(pose);
 
-	if (run_snugdock_){
+	if ( run_snugdock_ ) {
 		SnugDockOP snug( new SnugDock() );
 		AntibodyInfoOP updated_ab_info( new AntibodyInfo(pose, AHO_Scheme, North) ); //Should be a reset method in AbInfo..
 
@@ -241,7 +239,7 @@ AntibodyDesignProtocol::model_post_design(core::pose::Pose& pose){
 		TR <<"postSD:        " << post_snugdock << std::endl;
 	}
 
-	if (run_relax_){
+	if ( run_relax_ ) {
 		protocols::relax::FastRelaxOP rel( new protocols::relax::FastRelax() );
 
 		ScoreFunctionOP dualspace_scorefxn = scorefxn_->clone(); //May need to be strictly Talaris2013_cart;
@@ -269,7 +267,7 @@ AntibodyDesignProtocol::setup_design_mover() {
 	graft_designer_->set_scorefunction_min(scorefxn_min_);
 	graft_designer_->set_instruction_file(instruction_file_);
 
-	if (design_override_.size() > 0){
+	if ( design_override_.size() > 0 ) {
 		graft_designer_->set_cdr_override(design_override_);
 	}
 
@@ -277,38 +275,38 @@ AntibodyDesignProtocol::setup_design_mover() {
 
 void
 AntibodyDesignProtocol::reorder_poses(utility::vector1<core::pose::PoseOP>& poses){
-    	//Can be refactored to use utility::TopScoreSelector
+	//Can be refactored to use utility::TopScoreSelector
 	//From mc algorithm, you can have multiple poses that are equivalent...
 
-    if (poses.size() <= 1) return;
-    utility::vector1<core::pose::PoseOP> sorted_poses;
-    sorted_poses.push_back(poses[1]);
+	if ( poses.size() <= 1 ) return;
+	utility::vector1<core::pose::PoseOP> sorted_poses;
+	sorted_poses.push_back(poses[1]);
 
-    for (core::Size i = 1; i <= poses.size(); ++i){
-    	core::Real scU = (*scorefxn_)(*poses[i]);
-    	vector1<core::pose::PoseOP>::iterator pose_it = sorted_poses.begin();
+	for ( core::Size i = 1; i <= poses.size(); ++i ) {
+		core::Real scU = (*scorefxn_)(*poses[i]);
+		vector1<core::pose::PoseOP>::iterator pose_it = sorted_poses.begin();
 
-    	for (core::Size x = 1; x <= sorted_poses.size(); ++x){
-    		core::Real scS = (*scorefxn_)(*sorted_poses[x]);
-    		if (scU < scS){
-    			sorted_poses.insert(pose_it+x-1, poses[i]);
-    			break;
-    		}
-    		//If the unsorted pose is not lower in energy than any of the sorted poses, add it to the end
-    		if (x == sorted_poses.size()){
-    			sorted_poses.push_back(poses[i]);
-    		}
-    	}
-    }
-    assert(sorted_poses.size() == poses.size());
-    poses = sorted_poses;
+		for ( core::Size x = 1; x <= sorted_poses.size(); ++x ) {
+			core::Real scS = (*scorefxn_)(*sorted_poses[x]);
+			if ( scU < scS ) {
+				sorted_poses.insert(pose_it+x-1, poses[i]);
+				break;
+			}
+			//If the unsorted pose is not lower in energy than any of the sorted poses, add it to the end
+			if ( x == sorted_poses.size() ) {
+				sorted_poses.push_back(poses[i]);
+			}
+		}
+	}
+	assert(sorted_poses.size() == poses.size());
+	poses = sorted_poses;
 }
 
 void
 AntibodyDesignProtocol::output_ensemble(vector1<core::pose::PoseOP> ensemble, core::Size range_start, core::Size range_end, std::string prefix){
 
 	protocols::jd2::JobOP current_job( protocols::jd2::JobDistributor::get_instance()->current_job());
-	for (core::Size i = range_start; i <= range_end; ++i){
+	for ( core::Size i = range_start; i <= range_end; ++i ) {
 		//Filter here
 		std::string tag = prefix+"_"+utility::to_string(i)+"_";
 		TR << "Outputting ensemble " << i << std::endl;
@@ -331,7 +329,7 @@ AntibodyDesignProtocol::apply(core::pose::Pose& pose){
 
 
 	//if (! protocols::antibody::clusters::check_if_pose_renumbered_for_clusters(pose)){
-	//	utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  Please see Antibody Design documentation.");
+	// utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  Please see Antibody Design documentation.");
 	//}
 
 
@@ -365,19 +363,18 @@ AntibodyDesignProtocol::apply(core::pose::Pose& pose){
 
 	vector1<core::pose::PoseOP> pose_ensemble;
 	vector1<core::pose::PoseOP> final_pose_ensemble;
-	if (run_graft_designer_){
+	if ( run_graft_designer_ ) {
 		TR <<"Running Graft Design Protocol" <<std::endl;
 		graft_designer_->apply(pose);
 		pose_ensemble = graft_designer_->get_top_designs();
 
-		for (core::Size i = 1; i <= pose_ensemble.size(); ++i){
+		for ( core::Size i = 1; i <= pose_ensemble.size(); ++i ) {
 
 			//Use a filter on ensembles generated?  Could have ~15 ensembles. What about the main pose?
 			//If it passes filter, add to final_pose_ensemble.
 			final_pose_ensemble.push_back(pose_ensemble[i]);
 		}
-	}
-	else{
+	} else {
 		//ab_info_->setup_CDR_clusters(pose);
 		//current_constraint_result = protocols::antibody::add_harmonic_cluster_constraints(ab_info_, pose);
 		final_pose_ensemble.push_back( core::pose::PoseOP( new Pose() ));
@@ -389,12 +386,12 @@ AntibodyDesignProtocol::apply(core::pose::Pose& pose){
 	//reorder_poses(final_pose_ensemble); Need debugging - no time to run debugger
 
 	TR << "Running Post-Graft modeling" << std::endl;
-	for (core::Size i = 1; i <= final_pose_ensemble.size(); ++i){
+	for ( core::Size i = 1; i <= final_pose_ensemble.size(); ++i ) {
 		this->model_post_design(*final_pose_ensemble[ i ]);
 	}
-	
+
 	TR <<"Native: "<< native_score << std::endl;
-	for (core::Size i = 1; i <= final_pose_ensemble.size(); ++i){
+	for ( core::Size i = 1; i <= final_pose_ensemble.size(); ++i ) {
 		TR << "Pose " << i << std::endl;
 		scorefxn_->show(TR, *final_pose_ensemble[ i ]);
 		ab_info_->setup_CDR_clusters(*final_pose_ensemble[ i ], false);
@@ -405,11 +402,11 @@ AntibodyDesignProtocol::apply(core::pose::Pose& pose){
 
 	//Output final ensembles.
 	pose = *final_pose_ensemble[1];
-	if (final_pose_ensemble.size() > 1){
+	if ( final_pose_ensemble.size() > 1 ) {
 		output_ensemble(final_pose_ensemble, 2, final_pose_ensemble.size(), "ensemble");
 	}
 
-	if (! option [OptionKeys::out::file::pdb_comments]()){
+	if ( ! option [OptionKeys::out::file::pdb_comments]() ) {
 		TR << "Added pose comments for cluster info.  Use -pdb_comments option to have it output to pdb file." << std::endl;
 	}
 	TR << "Complete." << std::endl;

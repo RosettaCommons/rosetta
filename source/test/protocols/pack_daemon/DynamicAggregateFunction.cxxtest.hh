@@ -679,8 +679,8 @@ public:
 			TS_ASSERT( false );
 		}
 
-		// Now let's go and make sure that the vector variable actually has length 2
-		// and not some other size.
+// Now let's go and make sure that the vector variable actually has length 2
+// and not some other size.
 		using namespace numeric::expression_parser;
 		ArithmeticScanner scanner;
 		scanner.add_variable( "tc_vec" );
@@ -1066,7 +1066,7 @@ public:
 				"Expected to read an equals sign after reading amino-acid-set name'polar' but found '{'\n"
 				"Error encountered while reading AA_SET command\n"
 				"AA_SET polar { d, e,h,k,n,q,r,s,t}\n"
-				"Line # 1"	== e.msg() );
+				"Line # 1" == e.msg() );
 		}
 
 	}

@@ -57,87 +57,93 @@ using utility::pointer::ReferenceCount;
 // <sampler_> in the copy constructor and assignment operator.
 
 Chunk::Chunk(const RegionOP& region, const MoveMapOP& movable)
-    : ReferenceCount(), region_(region), movable_(movable) {
-  using namespace boost::accumulators;
+: ReferenceCount(), region_(region), movable_(movable) {
+	using namespace boost::accumulators;
 
-  // compute normal distribution parameters
-  accumulator_set<Size, stats<tag::mean, tag::variance> > acc;
-  for (Size i = start(); i <= stop(); ++i)
-    acc(i);
+	// compute normal distribution parameters
+	accumulator_set<Size, stats<tag::mean, tag::variance> > acc;
+	for ( Size i = start(); i <= stop(); ++i ) {
+		acc(i);
+	}
 
-  double mu = mean(acc);
-  double sigma = (std::sqrt(variance(acc)) * SD_MULTIPLIER) + SALT;
-  Normal dist(mu, sigma);
-  sampler_.reset(new numeric::random::DistributionSampler<Normal>(dist));
+	double mu = mean(acc);
+	double sigma = (std::sqrt(variance(acc)) * SD_MULTIPLIER) + SALT;
+	Normal dist(mu, sigma);
+	sampler_.reset(new numeric::random::DistributionSampler<Normal>(dist));
 }
 
 Chunk::Chunk(const Chunk& other)
-  : ReferenceCount(), region_(other.region_), movable_(other.movable_) {
-  Normal dist = other.sampler_->distribution();
-  sampler_.reset(new numeric::random::DistributionSampler<Normal>(dist));
+: ReferenceCount(), region_(other.region_), movable_(other.movable_) {
+	Normal dist = other.sampler_->distribution();
+	sampler_.reset(new numeric::random::DistributionSampler<Normal>(dist));
 }
 
 Chunk& Chunk::operator=(const Chunk& other) {
-  // check for self-assignment
-  if (this == &other)
-    return *this;
+	// check for self-assignment
+	if ( this == &other ) {
+		return *this;
+	}
 
-  region_ = other.region_;
-  movable_ = other.movable_;
-  Normal dist = other.sampler_->distribution();
-  sampler_.reset(new numeric::random::DistributionSampler<Normal>(dist));
-  return *this;
+	region_ = other.region_;
+	movable_ = other.movable_;
+	Normal dist = other.sampler_->distribution();
+	sampler_.reset(new numeric::random::DistributionSampler<Normal>(dist));
+	return *this;
 }
 
 // -- Accessors -- //
 
 Size Chunk::choose() const {
-  assert(valid());
-  while (1) {
-    Size insert_pos = static_cast<Size>(sampler_->sample());
+	assert(valid());
+	while ( 1 ) {
+		Size insert_pos = static_cast<Size>(sampler_->sample());
 
-    // restrict samples to the closed interval [start(), stop()]
-    if (insert_pos < start() || insert_pos > stop())
-      continue;
+		// restrict samples to the closed interval [start(), stop()]
+		if ( insert_pos < start() || insert_pos > stop() ) {
+			continue;
+		}
 
-    if (movable_->get_bb(insert_pos))
-      return insert_pos;
-  }
-  return 0;
+		if ( movable_->get_bb(insert_pos) ) {
+			return insert_pos;
+		}
+	}
+	return 0;
 }
 
 Size Chunk::start() const {
-  return region_->start();
+	return region_->start();
 }
 
 Size Chunk::stop() const {
-  return region_->stop();
+	return region_->stop();
 }
 
 Size Chunk::length() const {
-  return region_->length();
+	return region_->length();
 }
 
 // -- Utility Functions -- //
 
 bool Chunk::is_movable() const {
-  for (Size i = start(); i <= stop(); ++i) {
-    if (movable_->get_bb(i))
-      return true;
-  }
+	for ( Size i = start(); i <= stop(); ++i ) {
+		if ( movable_->get_bb(i) ) {
+			return true;
+		}
+	}
 
-  return false;
+	return false;
 }
 
 bool Chunk::valid() const {
-  // Region's are agnostic as to their direction: start => stop, stop <= start.
-  // For simplicity, our iteration methods assume a left-to-right orientation
-  if (start() >= stop())
-    return false;
+	// Region's are agnostic as to their direction: start => stop, stop <= start.
+	// For simplicity, our iteration methods assume a left-to-right orientation
+	if ( start() >= stop() ) {
+		return false;
+	}
 
-  // In order to avoid an infinite loop in choose(), at least one position on
-  // the interval [start(), stop()] must be movable. Short-circuit evaluation.
-  return is_movable();
+	// In order to avoid an infinite loop in choose(), at least one position on
+	// the interval [start(), stop()] must be movable. Short-circuit evaluation.
+	return is_movable();
 }
 
 }  // namespace nonlocal

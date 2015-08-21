@@ -65,8 +65,8 @@ private:
 	std::string type_;
 	UnfoldedStatePotential const & unf_state_potential_;
 	EnergyMap score_type_weights_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

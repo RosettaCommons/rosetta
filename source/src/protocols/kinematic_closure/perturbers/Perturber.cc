@@ -22,28 +22,28 @@ namespace perturbers {
 using namespace std;
 
 void Perturber::perturb(
-		Pose const & pose, ClosureProblemOP problem) {
+	Pose const & pose, ClosureProblemOP problem) {
 
 	perturb_subset(pose, problem->residues(), problem);
 }
 
-/// @details If not reimplemented, this method will kill rosetta and complain 
+/// @details If not reimplemented, this method will kill rosetta and complain
 /// that no balanced implementation of this algorithm exists.
 
 void Perturber::perturb_with_balance(
-		Pose const & pose, ClosureProblemOP problem) {
+	Pose const & pose, ClosureProblemOP problem) {
 
 	perturb_subset_with_balance(pose, problem->residues(), problem);
 }
 
-/// @details If not reimplemented, this method will kill rosetta and complain 
+/// @details If not reimplemented, this method will kill rosetta and complain
 /// that no balanced implementation of this algorithm exists.
 
 void Perturber::perturb_subset_with_balance(
-		Pose const &, IndexList const &, ClosureProblemOP) {
+	Pose const &, IndexList const &, ClosureProblemOP) {
 
 	utility_exit_with_message(
-			"The " + get_name() + " perturber can not sample without bias.");
+		"The " + get_name() + " perturber can not sample without bias.");
 }
 
 }

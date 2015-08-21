@@ -27,10 +27,10 @@ namespace toolbox {
 class InteratomicVarianceMatrix {
 public:
 
-  InteratomicVarianceMatrix( core::Size n_atoms, ObjexxFCL::FArray2D_double& ivm )
+	InteratomicVarianceMatrix( core::Size n_atoms, ObjexxFCL::FArray2D_double& ivm )
 	: n_atoms_( n_atoms ), ivm_( ivm ) { };
 
-  InteratomicVarianceMatrix( core::Size n_atoms = 0 )
+	InteratomicVarianceMatrix( core::Size n_atoms = 0 )
 	: n_atoms_( n_atoms ) { };
 
 	core::Size n_atoms() const {
@@ -52,8 +52,8 @@ public:
 	void optimize_kurtosis( core::Size ngrid, core::Real lb, core::Real ub );
 
 private:
-  core::Size n_atoms_;
-  ObjexxFCL::FArray2D_double ivm_;
+	core::Size n_atoms_;
+	ObjexxFCL::FArray2D_double ivm_;
 
 	/// @brief order parameter to given value epsilon
 	ObjexxFCL::FArray1D_double T_;

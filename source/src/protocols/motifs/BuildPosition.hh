@@ -35,7 +35,7 @@
 
 //Auto Headers
 #ifdef WIN32
-	#include <protocols/motifs/MotifHit.hh>
+#include <protocols/motifs/MotifHit.hh>
 #endif
 
 

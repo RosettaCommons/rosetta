@@ -32,8 +32,8 @@ namespace canonical_sampling {
 
 /// @brief Record a trajectory to an SQL database.
 ///
-/// @details This class builds upon Rosetta's database framework, which means 
-/// that there is support for SQLite3, MySQL and PostgreSQL.  Database options 
+/// @details This class builds upon Rosetta's database framework, which means
+/// that there is support for SQLite3, MySQL and PostgreSQL.  Database options
 /// must be specified on the command line (i.e. there's no API for this):
 ///
 /// @code{.sh}
@@ -63,38 +63,38 @@ public:
 	DbTrajectoryRecorder( DbTrajectoryRecorder const & );
 
 public:
-	protocols::moves::MoverOP	clone() const;
+	protocols::moves::MoverOP clone() const;
 
-	protocols::moves::MoverOP	fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const;
 
-	std::string	get_name() const;
+	std::string get_name() const;
 
-	/// @brief Return the job id that will be used as a foreign key in the 
+	/// @brief Return the job id that will be used as a foreign key in the
 	/// trajectory table that gets generated.
 	core::Size job_id() const { return job_id_; }
 
-	/// @brief Set the job id that will be used as a foreign key in the 
+	/// @brief Set the job id that will be used as a foreign key in the
 	/// trajectory table that gets generated.
 	void job_id( core::Size id ) { job_id_ = id; }
 
 	void initialize_simulation(
-			core::pose::Pose & pose,
-			MetropolisHastingsMover const & mover,
-			core::Size cycle
+		core::pose::Pose & pose,
+		MetropolisHastingsMover const & mover,
+		core::Size cycle
 	);
 
 	void finalize_simulation(
-			core::pose::Pose & pose,
-			MetropolisHastingsMover const & mover
+		core::pose::Pose & pose,
+		MetropolisHastingsMover const & mover
 	);
 
 	/// @brief Not implemented, except to complain if accidentally used.
 	bool restart_simulation(
-			core::pose::Pose & pose,
-			MetropolisHastingsMover& mover,
-			core::Size& cycle,
-			core::Size& temp_level,
-			core::Real& temperature
+		core::pose::Pose & pose,
+		MetropolisHastingsMover& mover,
+		core::Size& cycle,
+		core::Size& temp_level,
+		core::Real& temperature
 	);
 
 private:
@@ -105,9 +105,9 @@ private:
 	/// @brief Write any cached poses into the database, then clear the cache.
 	void write_cache_to_db() const;
 
-	/// @brief Append the given model to the silent file trajectory being 
+	/// @brief Append the given model to the silent file trajectory being
 	/// written.
-	void 	write_model(
+	void  write_model(
 		core::pose::Pose const & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const * mover=0
 	);

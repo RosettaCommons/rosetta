@@ -29,26 +29,26 @@ namespace modeler {
 namespace polar_hydrogens {
 
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	Size
-	check_if_proton_chi_atom( pose::Pose const & pose, Size const rsd, Size const atomno ){
-		core::chemical::ResidueType rsd_type = pose.residue_type( rsd );
-		for ( Size n = 1; n <= rsd_type.n_proton_chi(); n++ ){
-			Size chino = rsd_type.proton_chi_2_chi( n );
-			Size const & proton_chi_atom = rsd_type.chi_atoms( chino )[4];
-			if ( proton_chi_atom == atomno ) return n;
-		}
-		return 0;
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Size
+check_if_proton_chi_atom( pose::Pose const & pose, Size const rsd, Size const atomno ){
+	core::chemical::ResidueType rsd_type = pose.residue_type( rsd );
+	for ( Size n = 1; n <= rsd_type.n_proton_chi(); n++ ) {
+		Size chino = rsd_type.proton_chi_2_chi( n );
+		Size const & proton_chi_atom = rsd_type.chi_atoms( chino )[4];
+		if ( proton_chi_atom == atomno ) return n;
 	}
+	return 0;
+}
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	pack_polar_hydrogens( pose::Pose & pose,
-												bool allow_virtual_o2prime_hydrogens /* = false */ ) {
-		PolarHydrogenPacker polar_hydrogen_packer;
-		polar_hydrogen_packer.set_allow_virtual_o2prime_hydrogens( allow_virtual_o2prime_hydrogens );
-		polar_hydrogen_packer.apply( pose );
-	}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+pack_polar_hydrogens( pose::Pose & pose,
+	bool allow_virtual_o2prime_hydrogens /* = false */ ) {
+	PolarHydrogenPacker polar_hydrogen_packer;
+	polar_hydrogen_packer.set_allow_virtual_o2prime_hydrogens( allow_virtual_o2prime_hydrogens );
+	polar_hydrogen_packer.apply( pose );
+}
 
 } //polar_hydrogens
 } //modeler

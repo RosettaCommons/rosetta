@@ -38,7 +38,7 @@ template <class T>
 std::ostream & operator <<( std::ostream & os, std::vector<T> const & v)
 {
 	os << "[";
-	for(size_t i = 0; i < v.size(); i++) {
+	for ( size_t i = 0; i < v.size(); i++ ) {
 		os << v[i];
 		if ( i < v.size()-1 ) os << ", ";
 	}
@@ -51,7 +51,7 @@ std::ostream & operator <<( std::ostream & os, std::vector<T> const & v)
 template <class T>
 std::ostream & operator <<(std::ostream & os, utility::vector1<T> const & v) {
 	os << "[";
-	for(size_t i=1; i<=v.size(); i++) {
+	for ( size_t i=1; i<=v.size(); i++ ) {
 		os << v[i];
 		if ( i < v.size() ) os << ", ";
 	}
@@ -79,7 +79,7 @@ std::ostream & operator <<(std::ostream & os, std::map<T1, T2> const & m) {
 
 	os << "{";
 
-	for(p=m.begin(); p!=m.end(); p++ ) {
+	for ( p=m.begin(); p!=m.end(); p++ ) {
 		os << p->first << ":" << p->second << ", ";
 	}
 
@@ -96,7 +96,7 @@ std::ostream & operator <<(std::ostream & os, std::list<T> const & l) {
 
 	os << "[[";
 
-	for(p=l.begin(); p!=l.end(); p++ ) {
+	for ( p=l.begin(); p!=l.end(); p++ ) {
 		os << *p << ", ";
 	}
 

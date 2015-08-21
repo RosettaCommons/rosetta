@@ -82,7 +82,7 @@ regular_facet_containing_position(
 		if ( e->label() < 0 ) {
 
 			if ( ( static_cast< Size >( e->start() ) < pos && pos < static_cast< Size >( e->stop() ) ) ||
-			     ( static_cast< Size >( e->start() ) > pos && pos > static_cast< Size >( e->stop() ) ) ) {
+					( static_cast< Size >( e->start() ) > pos && pos > static_cast< Size >( e->stop() ) ) ) {
 				return e;
 			}
 
@@ -194,7 +194,7 @@ facet_containing_position(
 		if ( e->label() == label ) {
 
 			if ( ( static_cast< Size >( e->start() ) < pos && pos < static_cast< Size >( e->stop() ) ) ||
-			     ( static_cast< Size >( e->start() ) > pos && pos > static_cast< Size >( e->stop() ) ) ) {
+					( static_cast< Size >( e->start() ) > pos && pos > static_cast< Size >( e->stop() ) ) ) {
 				return e;
 			}
 

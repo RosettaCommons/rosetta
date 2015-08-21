@@ -9,8 +9,8 @@
 
 /// @file       protocols/docking/membrane/MPFindInterfaceMoverCreator.hh
 /// @brief      Sample protein-protein interface in the membrane
-/// @details	The foldtree after the mover is reset to the original one as it
-///				was before - so it should work with both fixed and movable membrane
+/// @details The foldtree after the mover is reset to the original one as it
+///    was before - so it should work with both fixed and movable membrane
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 
 #ifndef INCLUDED_protocols_docking_membrane_MPFindInterfaceMover_cc
@@ -44,8 +44,8 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/membrane/MembraneInfo.hh> 
-#include <core/conformation/membrane/SpanningTopology.hh> 
+#include <core/conformation/membrane/MembraneInfo.hh>
+#include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/scoring/sasa/SasaCalc.hh>
@@ -91,7 +91,7 @@ static basic::Tracer TR( "protocols.membrane.MPFindInterfaceMover" );
 namespace protocols {
 namespace docking {
 namespace membrane {
-	
+
 using namespace core;
 using namespace core::pose;
 using namespace core::conformation::membrane;
@@ -99,12 +99,12 @@ using namespace protocols::moves;
 using namespace protocols::docking;
 using namespace protocols::membrane;
 using namespace protocols::membrane::geometry;
-		
+
 /////////////////////
 /// Constructors  ///
 /////////////////////
 
-	
+
 /// @brief Default Constructor
 /// @details Takes topology from MembraneInfo, gets the jump from docking partners
 MPFindInterfaceMover::MPFindInterfaceMover() :
@@ -113,7 +113,7 @@ MPFindInterfaceMover::MPFindInterfaceMover() :
 	topo_up_( new SpanningTopology() ),
 	topo_down_( new SpanningTopology() )
 {}
-	
+
 /// @brief Copy Constructor
 MPFindInterfaceMover::MPFindInterfaceMover( MPFindInterfaceMover const & src ) :
 	protocols::moves::Mover( src ),
@@ -129,7 +129,7 @@ MPFindInterfaceMover::MPFindInterfaceMover( MPFindInterfaceMover const & src ) :
 	flexible_bb_( src.flexible_bb_ ),
 	flexible_sc_( src.flexible_sc_ )
 {}
-	
+
 /// @brief Destructor
 MPFindInterfaceMover::~MPFindInterfaceMover() {}
 
@@ -152,20 +152,20 @@ MPFindInterfaceMover::fresh_instance() const {
 /// @brief Parse Rosetta Scripts Options for this Mover
 void
 MPFindInterfaceMover::parse_my_tag(
-	 utility::tag::TagCOP tag,
-	 basic::datacache::DataMap &,
-	 protocols::filters::Filters_map const &,
-	 protocols::moves::Movers_map const &,
-	 core::pose::Pose const &
-	 ) {
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
+) {
 
 	// Read in docking partners
 	if ( tag->hasOption( "partners" ) ) {
 		partners_ = tag->getOption< std::string >( "partners" );
 	}
-	
+
 	// TODO: to implement
-	
+
 }
 
 /// @brief Create a new copy of this mover
@@ -199,7 +199,7 @@ MPFindInterfaceMover::get_name() const {
 /// @brief Sampling protein-protein interface in the membrane
 void
 MPFindInterfaceMover::apply( Pose & pose ) {
-	
+
 	using namespace numeric;
 	using namespace basic::options;
 	using namespace core::conformation::membrane;
@@ -223,17 +223,17 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 	pose.fold_tree().show( TR );
 	core::kinematics::FoldTree orig_ft = pose.fold_tree();
 
-//	core::Vector center = pose.conformation().membrane_info()->membrane_center();
-//	core::Vector normal = pose.conformation().membrane_info()->membrane_normal();
-//	TR << "membrane center 1: " << center.to_string() << ", normal: " << normal.to_string() << std::endl;
+	// core::Vector center = pose.conformation().membrane_info()->membrane_center();
+	// core::Vector normal = pose.conformation().membrane_info()->membrane_normal();
+	// TR << "membrane center 1: " << center.to_string() << ", normal: " << normal.to_string() << std::endl;
 
 	// superimpose upstream partner with the native
 	superimpose_upstream_partner( pose );
 
 	////////////////////// MOVE PARTNERS APART //////////////////////////
-	
+
 	TR << "Moving partners apart..." << std::endl;
-	
+
 	// get membrane axis from docking metrics function
 	core::Vector slide_axis = membrane_axis( pose, jump_ );
 	bool vary_stepsize = false;
@@ -241,15 +241,15 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 	// compute embedding for partners (compute structure-based embedding with split topologies)
 	EmbeddingDef emb_up, emb_down;
 	update_partner_embeddings( pose, jump_, emb_up, emb_down );
-	
+
 	// get distance between points
 	core::Real dist1 = ( emb_down.center() - emb_up.center() ).length();
 	TR << "distance between partners: " << dist1 << std::endl;
-	
+
 	slide_axis.negate();
 	slide_axis.normalize();
 	TR << "slide axis: " << slide_axis.to_string() << std::endl;
-	
+
 	// move apart
 	TR << "Moving apart" << std::endl;
 	RigidBodyTransMoverOP mover( new rigid::RigidBodyTransMover( slide_axis, jump_, vary_stepsize ) );
@@ -268,8 +268,8 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 	repack->restrict_to_repacking();
 
 	// score pose
-//	core::Real tot_score = ( *sfxn_ )( pose );
-//	core::Real fa_rep = pose.energies().total_energies()[ core::scoring::fa_rep ];
+	// core::Real tot_score = ( *sfxn_ )( pose );
+	// core::Real fa_rep = pose.energies().total_energies()[ core::scoring::fa_rep ];
 
 	if ( flexible_bb_ == true ) {
 		TR << "++++++++++++++++ relaxing... " << std::endl;
@@ -277,24 +277,21 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 		relax->membrane_from_topology( false );
 		relax->optimize_membrane( false );
 
-//		while ( tot_score > 0 || fa_rep > ( nres_protein( pose ) + 200 ) * 3 ) {
-//			TR << "need an fa_rep of " << ((nres_protein( pose ) + 200 ) * 3) << std::endl;
-			relax->apply( pose );
-////			core::pack::pack_rotamers( pose, *sfxn_, repack );
-//			tot_score = ( *sfxn_ )( pose );
-//			fa_rep = pose.energies().total_energies()[ core::scoring::fa_rep ];
-//		}
-		
-		core::pack::pack_rotamers( pose, *sfxn_, repack );
-//		shake->apply( pose );
-	}
+		//  while ( tot_score > 0 || fa_rep > ( nres_protein( pose ) + 200 ) * 3 ) {
+		//   TR << "need an fa_rep of " << ((nres_protein( pose ) + 200 ) * 3) << std::endl;
+		relax->apply( pose );
+		////   core::pack::pack_rotamers( pose, *sfxn_, repack );
+		//   tot_score = ( *sfxn_ )( pose );
+		//   fa_rep = pose.energies().total_energies()[ core::scoring::fa_rep ];
+		//  }
 
-	// repack
-	else if ( flexible_sc_ == true ){
+		core::pack::pack_rotamers( pose, *sfxn_, repack );
+		//  shake->apply( pose );
+	} else if ( flexible_sc_ == true ) {
+		// repack
 		TR << "++++++++++++++++ packing... " << std::endl;
 		core::pack::pack_rotamers( pose, *sfxn_, repack );
-	}
-	else {
+	} else {
 		TR << "++++++++++++++++ no relaxing or packing before... " << std::endl;
 	}
 
@@ -310,7 +307,7 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 	setmem->apply( pose );
 
 	//////////////// CENTROID OR FULL-ATOM /////////////////////
-	
+
 	if ( option[ OptionKeys::mp::dock::lowres ].user() ) {
 		SwitchResidueTypeSetMoverOP centroid( new SwitchResidueTypeSetMover( "centroid" ) );
 		centroid->apply( pose );
@@ -318,36 +315,36 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 
 	TR << "Is pose centroid? " << pose.is_centroid() << std::endl;
 	TR << "Flexible backbone? " << flexible_bb_ << " flexible sidechain? " << flexible_sc_ << std::endl;
-	
+
 	//////////////// RUN REST OF PROTOCOL ////////////////////////
 
 	TR << "foldtree before protocol: " << std::endl;
 	pose.fold_tree().show( TR );
-	
+
 	// create MC object
 	protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *sfxn_, 1.0 ) );
 
 	// do this for a certain number of iterations
-	for ( Size i = 1; i <= 10; ++i ){
-		
+	for ( Size i = 1; i <= 10; ++i ) {
+
 		// SPIN MOVER
 		// get a random spin angle between 0 and 360 degrees
 		int spin_angle( numeric::random::random_range( 0, 360 ) );
 		TR << "=========================SPIN MOVER==============================" << std::endl;
 		TR << "random spin angle: " << spin_angle << std::endl;
-		
+
 		// spin downstream partner around spin angle
 		update_partner_embeddings( pose, jump_, emb_up, emb_down );
 		RigidBodyDeterministicSpinMoverOP spin( new RigidBodyDeterministicSpinMover(
-					jump_, emb_down.normal(), emb_down.center(), spin_angle ) );
+			jump_, emb_down.normal(), emb_down.center(), spin_angle ) );
 		spin->apply( pose );
-		
+
 		// slide into contact
 		DockingSlideIntoContactOP slide( new DockingSlideIntoContact( jump_ ) );
 		slide->apply( pose );
 		mc->boltzmann( pose );
 		TR << "accepted? " << mc->mc_accepted() << " pose energy: " << pose.energies().total_energy() << std::endl;
-		
+
 		// SPIN-AROUND-PARTNER-MOVER!!!
 		TR << "=========================SPIN-AROUND-PARTNER MOVER===============" << std::endl;
 		SpinAroundPartnerMoverOP around( new SpinAroundPartnerMover( jump_, 100 ) );
@@ -355,7 +352,7 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 		slide->apply( pose );
 		mc->boltzmann( pose );
 		TR << "accepted? " << mc->mc_accepted() << " pose energy: " << pose.energies().total_energy() << std::endl;
-		
+
 		// TILT MOVER
 		// get axis perpendicular to downstream partner embedding normal and
 		// perpendicular to vector between embedding centers of two partners
@@ -365,7 +362,7 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 		slide->apply( pose );
 		mc->boltzmann( pose );
 		TR << "accepted? " << mc->mc_accepted() << " pose energy: " << pose.energies().total_energy() << std::endl;
-		
+
 		// FLIP MOVER, if allowed
 		// FlipMover calculates embedding automatically
 		if ( flips_ == true ) {
@@ -373,31 +370,29 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 			protocols::membrane::FlipMoverOP flip( new FlipMover( jump_ ) );
 			flip->set_random_membrane_flip_angle();
 			flip->apply( pose );
-		}
-		else {
+		} else {
 			TR << "====================SMALL TILTS WITH FLIP MOVER==================" << std::endl;
 			update_partner_embeddings( pose, jump_, emb_up, emb_down );
 			core::Vector mem_norm = pose.conformation().membrane_info()->membrane_normal();
 			core::Real angle_mem_emb = numeric::conversions::degrees( angle_of( mem_norm, emb_down.normal() ) );
-			
+
 			// if angle between membrane normal and embedding is smaller 90
 			int max( 45 );
 			core::Real angle;
 			if ( angle_mem_emb <= 90 ) {
 				angle = numeric::random::random_range( max - nearest_int( angle_mem_emb ), max + nearest_int( angle_mem_emb ) );
-			}
-			else {
+			} else {
 				angle = numeric::random::random_range( max + 180 - nearest_int( angle_mem_emb ), max - 180 + nearest_int( angle_mem_emb ) );
 			}
 			protocols::membrane::FlipMoverOP flip( new FlipMover( jump_, angle ) );
 			flip->apply( pose );
 		}
-		
+
 		// slide into contact
 		slide->apply( pose );
 		mc->boltzmann( pose );
 		TR << "accepted? " << mc->mc_accepted() << " pose energy: " << pose.energies().total_energy() << std::endl;
-		
+
 		// SPIN-AROUND-PARTNER-MOVER!!!
 		TR << "=========================SPIN-AROUND-PARTNER MOVER===============" << std::endl;
 		SpinAroundPartnerMoverOP around1( new SpinAroundPartnerMover( jump_, 100 ) );
@@ -405,7 +400,7 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 		slide->apply( pose );
 		mc->boltzmann( pose );
 		TR << "accepted? " << mc->mc_accepted() << " pose energy: " << pose.energies().total_energy() << std::endl;
-		
+
 	} // number of iterations for search
 
 	// score and dump the pose
@@ -428,27 +423,25 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 		relax->add_membrane_again( false );
 		relax->membrane_from_topology( false );
 		relax->optimize_membrane( false );
-//		relax->apply( pose );
+		//  relax->apply( pose );
 
 		// score pose
-//		tot_score = ( *sfxn_ )( pose );
-//		fa_rep = pose.energies().total_energies()[ core::scoring::fa_rep ];
+		//  tot_score = ( *sfxn_ )( pose );
+		//  fa_rep = pose.energies().total_energies()[ core::scoring::fa_rep ];
 
-//		while ( tot_score > 0 || fa_rep > ( nres_protein( pose ) + 200 ) * 3 ) {
-			relax->apply( pose );
-//			core::pack::pack_rotamers( pose, *sfxn_, repack );
-//			tot_score = ( *sfxn_ )( pose );
-//			fa_rep = pose.energies().total_energies()[ core::scoring::fa_rep ];
-//		}
+		//  while ( tot_score > 0 || fa_rep > ( nres_protein( pose ) + 200 ) * 3 ) {
+		relax->apply( pose );
+		//   core::pack::pack_rotamers( pose, *sfxn_, repack );
+		//   tot_score = ( *sfxn_ )( pose );
+		//   fa_rep = pose.energies().total_energies()[ core::scoring::fa_rep ];
+		//  }
 		core::pack::pack_rotamers( pose, *sfxn_, repack );
-//		shake->apply( pose );
-	}
-	// repack
-	else if ( flexible_sc_ == true ){
+		//  shake->apply( pose );
+	} else if ( flexible_sc_ == true ) {
+		// repack
 		TR << "++++++++++++++++ packing again... " << std::endl;
 		core::pack::pack_rotamers( pose, *sfxn_, repack );
-	}
-	else {
+	} else {
 		TR << "++++++++++++++++ no relaxing or packing after... " << std::endl;
 	}
 
@@ -467,7 +460,7 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 	// TODO: THIS SHOULD ULTIMATELY BE REPLACED WITH THE MP-INTERFACE-STATISTICS-MOVER
 
 	// score the pose - this hopefully writes this into the scorefile
-//	core::scoring::ScoreFunctionOP highres_sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "mpframework_docking_fa_2015.wts" );
+	// core::scoring::ScoreFunctionOP highres_sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "mpframework_docking_fa_2015.wts" );
 	( *highres_sfxn )( pose );
 
 	// get job
@@ -484,24 +477,23 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 	interface.calculate( pose );
 
 	job->add_string_real_pair( "Ncntct", interface.interface_nres() );
-//	job->add_string_real_pair( "SASA", sasa->compute( pose ) );
-//	job->add_string_real_pair( "intSASA", calculate_interface_SASA( pose, interface ) );
+	// job->add_string_real_pair( "SASA", sasa->compute( pose ) );
+	// job->add_string_real_pair( "intSASA", calculate_interface_SASA( pose, interface ) );
 
 	job->add_string_real_pair( "Fnat", protocols::docking::calc_Fnat( pose, native_, sfxn_, jumps_ ) );
 	job->add_string_real_pair( "Fnonnat", protocols::docking::calc_Fnonnat( pose, native_, sfxn_, jumps_ ) );
 
-	if ( pose.residue( nres_protein( pose ) ).atom("CA").xyz().z() > 0.0 ){
+	if ( pose.residue( nres_protein( pose ) ).atom("CA").xyz().z() > 0.0 ) {
 		job->add_string_real_pair( "in/out", 0.0 );
-	}
-	else {
+	} else {
 		job->add_string_real_pair( "in/out", 1.0 );
 	}
-	
+
 	// surface complementarity
 	core::scoring::sc::ShapeComplementarityCalculator shape;
 	shape.Init();
 	job->add_string_real_pair( "Shape", shape.CalcSc( pose, jump_, 1 ) );
-	
+
 	// difference of fractions of small residues in the interface
 	core::Real small_frct_diff = fractions_small_residues( pose, interface).first - fractions_small_residues( pose, interface).second;
 	job->add_string_real_pair( "small_res", small_frct_diff );
@@ -522,7 +514,7 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 /// @brief Register Options with JD2
 void
 MPFindInterfaceMover::register_options() {
-	
+
 	using namespace basic::options;
 
 	option.add_relevant( OptionKeys::in::file::native );
@@ -532,7 +524,7 @@ MPFindInterfaceMover::register_options() {
 	option.add_relevant( OptionKeys::mp::dock::allow_flips );
 	option.add_relevant( OptionKeys::mp::dock::flexible_bb );
 	option.add_relevant( OptionKeys::mp::dock::flexible_sc );
-	
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -540,30 +532,28 @@ MPFindInterfaceMover::register_options() {
 /// @brief Initialize Mover options from the comandline
 void
 MPFindInterfaceMover::init_from_cmd() {
-	
+
 	using namespace basic::options;
-	
+
 	// docking partners
-	if( option[ OptionKeys::docking::partners ].user() ) {
+	if ( option[ OptionKeys::docking::partners ].user() ) {
 		partners_ = option[ OptionKeys::docking::partners ]();
 	}
-	
+
 	// native
-	if( option[ OptionKeys::in::file::native ].user() ) {
+	if ( option[ OptionKeys::in::file::native ].user() ) {
 		core::import_pose::pose_from_pdb( native_, option[ OptionKeys::in::file::native ]() );
 	}
 
 	// setup scorefunction
 	if ( option[ OptionKeys::mp::dock::lowres ].user() ) {
 		sfxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "mpframework_docking_cen_2015.wts" );
-	}
-	else if ( option[ OptionKeys::mp::dock::highres ].user() ) {
+	} else if ( option[ OptionKeys::mp::dock::highres ].user() ) {
 		sfxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "mpframework_docking_fa_2015.wts" );
-	}
-	else {
+	} else {
 		utility_exit_with_message( "Have to specify score function: either use -mp::dock:lowres or -mp::dock:highres flag!" );
 	}
-	
+
 	// allow flips in the membrane?
 	flips_ = true;
 	if ( option[ OptionKeys::mp::dock::allow_flips ].user() ) {
@@ -575,7 +565,7 @@ MPFindInterfaceMover::init_from_cmd() {
 	if ( option[ OptionKeys::mp::dock::flexible_bb ].user() ) {
 		flexible_bb_ = option[ OptionKeys::mp::dock::flexible_bb ]();
 	}
-	
+
 	// repack before and after?
 	flexible_sc_ = false;
 	if ( option[ OptionKeys::mp::dock::flexible_sc ].user() ) {
@@ -599,7 +589,7 @@ void MPFindInterfaceMover::finalize_setup( Pose & pose ) {
 	// call AddMembraneMover on native for RMSD calculation
 	AddMembraneMoverOP addmem( new AddMembraneMover() );
 	addmem->apply( native_ );
-	
+
 	///////////////////// SET MEMBRANE TO ROOT ///////////////////////
 
 	// get foldtree from partners (setup_foldtree) and movable jump
@@ -608,7 +598,7 @@ void MPFindInterfaceMover::finalize_setup( Pose & pose ) {
 	setup_foldtree( pose, partners_, jumps_);
 	jump_ = jumps_[1];
 	TR << "jump_ from foldtree: " << jump_ << std::endl;
-	
+
 	// get anchor point for membrane from jump; I think this is residue closest to
 	// COM of the upstream partner
 	int anchor = pose.fold_tree().upstream_jump_residue( jump_ );
@@ -620,16 +610,16 @@ void MPFindInterfaceMover::finalize_setup( Pose & pose ) {
 	AddMembraneMoverOP add_memb( new AddMembraneMover( anchor, 0 ) );
 	add_memb->apply( pose );
 	pose.fold_tree().show( TR );
-	
+
 	// reorder foldtree to have membrane at root
 	ft.reorder( pose.conformation().membrane_info()->membrane_rsd_num() );
 	pose.fold_tree( ft );
 	TR << "reordered foltree: " << std::endl;
 	pose.fold_tree().show( TR );
 	TR << "jump: " << jump_ << std::endl;
-	
+
 	//////////////// TOPOLOGY //////////////////////
-	
+
 	// get topology
 	topo_ = pose.conformation().membrane_info()->spanning_topology();
 
@@ -643,36 +633,36 @@ void MPFindInterfaceMover::finalize_setup( Pose & pose ) {
 /// @brief Superimpose upstream partner
 /// @details Superimpose upstream partner of the pose with the native
 void MPFindInterfaceMover::superimpose_upstream_partner( Pose & pose ) {
-	
+
 	using namespace protocols::simple_moves;
-	
+
 	// get partner 1: ALL CHAINS MUST BE IN PDB CONSECUTIVELY!!!
 	utility::vector1< std::string > partners( utility::string_split( partners_, '_' ) );
 	utility::vector1< std::string > partner1( utility::split( partners[1] ) );
-	
+
 	// get residue range for superposition: get start residue
 	Size start(0);
-	for ( Size i = 1; i <= pose.total_residue(); ++i ){
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 		if ( start == 0 &&
-			partner1[1] == utility::to_string( pose.pdb_info()->chain( i ) ) ){
+				partner1[1] == utility::to_string( pose.pdb_info()->chain( i ) ) ) {
 			start = i;
 		}
 	}
-	
+
 	// get end residue
 	Size end(0);
-	for ( Size j = pose.total_residue(); j >= 1; --j ){
+	for ( Size j = pose.total_residue(); j >= 1; --j ) {
 		if ( end == 0 &&
-			partner1[partner1.size()] == utility::to_string( pose.pdb_info()->chain( j ) ) ){
+				partner1[partner1.size()] == utility::to_string( pose.pdb_info()->chain( j ) ) ) {
 			end = j;
 		}
 	}
 	TR << "range start: " << start << ", end: " << end << std::endl;
-	
+
 	// superimpose partner 1 with starting pose for easier rmsd calculation
 	SuperimposeMoverOP super( new SuperimposeMover( native_, start, end, start, end, true ) );
 	super->apply( pose );
-	
+
 } // superimpose_upstream_partner
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -685,8 +675,8 @@ core::Real MPFindInterfaceMover::calculate_interface_SASA( Pose & pose, Interfac
 	using namespace core::pose;
 	using namespace core::scoring::sasa;
 	using namespace protocols::scoring;
-//	using namespace protocols::simple_filters;
-	
+	// using namespace protocols::simple_filters;
+
 	// get per-residue SASA
 	SasaCalc calc = SasaCalc();
 	utility::vector1< core::Real > sasa = calc.get_residue_sasa();
@@ -698,10 +688,10 @@ core::Real MPFindInterfaceMover::calculate_interface_SASA( Pose & pose, Interfac
 	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
 		interface_sasa += interface.is_interface( i ) * sasa[ i ];
 	}
-	
+
 	// get SASA
-	//	InterfaceSasaFilterOP sasa( new InterfaceSasaFilter() );
-	//	sasa->jump( jump_ );
+	// InterfaceSasaFilterOP sasa( new InterfaceSasaFilter() );
+	// sasa->jump( jump_ );
 
 	return interface_sasa;
 
@@ -711,59 +701,57 @@ core::Real MPFindInterfaceMover::calculate_interface_SASA( Pose & pose, Interfac
 /// @brief Calculate fraction of small residues in interface
 /// details See Andrew Bordner, 2009, BMC Bioinformatics
 std::pair< core::Real, core::Real > MPFindInterfaceMover::fractions_small_residues( Pose & pose, Interface & interface ) {
-	
+
 	core::Size cnt_intf_res( 0 );
 	core::Size cnt_nonintf_res( 0 );
 	core::Size small_intf_res( 0 );
 	core::Size small_nonintf_res( 0 );
-	
+
 	// iterate over residues in protein
 	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
-		
+
 		// check if residue is in interface
 		bool intf( false );
 		intf = interface.is_interface( i );
-		
+
 		// check if residue is small
 		bool small( false );
 		std::string res = pose.residue( i ).name3();
-		if ( res == "ALA" || res == "GLY" || res == "LEU" || res == "VAL" ){
+		if ( res == "ALA" || res == "GLY" || res == "LEU" || res == "VAL" ) {
 			small = true;
 		}
 
 		// count small and in interface
 		if ( small == true && intf == true ) {
 			++small_intf_res;
-		}
-		// count small and not in interface
-		else if ( small == true && intf == false ) {
+		} else if ( small == true && intf == false ) {
+			// count small and not in interface
 			++small_nonintf_res;
 		}
-		
+
 		// increment total counters
 		if ( intf == true ) {
 			++cnt_intf_res;
-		}
-		else {
+		} else {
 			++cnt_nonintf_res;
 		}
 	}
-	
+
 	// get fractions
 	core::Real frct_small_intf = static_cast< core::Real > ( small_intf_res );
 	frct_small_intf /= cnt_intf_res;
 	core::Real frct_small_nonintf = static_cast< core::Real > ( small_nonintf_res );
 	frct_small_nonintf /= cnt_nonintf_res;
-	
+
 	TR << "frct_small_intf " << frct_small_intf << " frct_small_nonintf " << frct_small_nonintf << std::endl;
-	
+
 	// return pair
 	std::pair< core::Real, core::Real > fractions( frct_small_intf, frct_small_nonintf );
 	return fractions;
-	
+
 }// fractions small residues
 
-	
+
 } // membrane
 } // docking
 } // protocols

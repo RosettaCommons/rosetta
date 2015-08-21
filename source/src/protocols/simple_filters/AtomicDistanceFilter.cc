@@ -59,7 +59,7 @@ bool AtomicDistanceFilter::apply(core::pose::Pose const & pose ) const
 {
 	core::Real const dist( compute( pose ) );
 	report( TR.Debug, pose );
-	if( dist <= distance_ ) return true;
+	if ( dist <= distance_ ) return true;
 	return false;
 }
 
@@ -92,10 +92,10 @@ AtomicDistanceFilter::compute( core::pose::Pose const & pose ) const
 	}
 
 	bool found1(false), found2(false);
-	for ( core::Size ii(a1primet); ii <= a1end; ++ii) {
+	for ( core::Size ii(a1primet); ii <= a1end; ++ii ) {
 		if ( !astype1_ || res1.atom_type(ii).name() == atomdesg1_ ) {
 			found1 = true;
-			for ( core::Size jj(a2primet); jj <= a2end; ++jj) {
+			for ( core::Size jj(a2primet); jj <= a2end; ++jj ) {
 				if ( !astype2_ || res2.atom_type(jj).name() == atomdesg2_ ) {
 					found2 = true;
 					core::Real const dist( res1.atom(ii).xyz().distance( res2.atom(jj).xyz() ) );
@@ -109,8 +109,7 @@ AtomicDistanceFilter::compute( core::pose::Pose const & pose ) const
 
 	if ( ! found1 ) {
 		TR << "WARNING! Residue "<<residue1_<<" of type "<<res1.type().name()<<" does not have atom with "<<(astype1_?"type ":"name ")<<atomdesg1_<<std::endl;
-	}
-	else if ( ! found2 ) { // elseif because the inner loop doesn't run if the outer loop doesn't trip. (if found1 is false, found2 is always false)
+	} else if ( ! found2 ) { // elseif because the inner loop doesn't run if the outer loop doesn't trip. (if found1 is false, found2 is always false)
 		TR << "WARNING! Residue "<<residue2_<<" of type "<<res2.type().name()<<" does not have atom with "<<(astype2_?"type ":"name ")<<atomdesg2_<<std::endl;
 	}
 	return( nearest_distance );
@@ -130,10 +129,10 @@ void AtomicDistanceFilter::report( std::ostream & out, core::pose::Pose const & 
 }
 
 void AtomicDistanceFilter::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & pose)
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & pose)
 {
 	distance_ = tag->getOption< core::Real >( "distance", 4.0 );
 
@@ -142,35 +141,33 @@ void AtomicDistanceFilter::parse_my_tag( utility::tag::TagCOP tag,
 	residue1_ = core::pose::parse_resnum( res1, pose );
 	residue2_ = core::pose::parse_resnum( res2, pose );
 
-	if (residue1_ == 0) {
+	if ( residue1_ == 0 ) {
 		TR << "Residue number "<<res1<<" not found in pose."<<std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption("Residue number not found. Check xml file");
 	}
-	if (residue2_ == 0) {
+	if ( residue2_ == 0 ) {
 		TR << "Residue number "<<res2<<" not found in pose."<<std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption("Residue number not found. Check xml file");
 	}
 
-	if( tag->hasOption( "atomtype1" ) ) {
-		if( tag->hasOption( "atomname1" ) ) {
+	if ( tag->hasOption( "atomtype1" ) ) {
+		if ( tag->hasOption( "atomname1" ) ) {
 			throw utility::excn::EXCN_RosettaScriptsOption("Can't set both atomname1 and atomtype1. Check xml file");
 		}
 		atomdesg1_ = tag->getOption< std::string >( "atomtype1" );
 		astype1_ = true;
-	}
-	else {
+	} else {
 		atomdesg1_ = tag->getOption< std::string >( "atomname1", "CB" );
 		astype1_ = false;
 	}
 
-	if( tag->hasOption( "atomtype2" ) ) {
-		if( tag->hasOption( "atomname2" ) ) {
+	if ( tag->hasOption( "atomtype2" ) ) {
+		if ( tag->hasOption( "atomname2" ) ) {
 			throw utility::excn::EXCN_RosettaScriptsOption("Can't set both atomname2 and atomtype2. Check xml file");
 		}
 		atomdesg2_ = tag->getOption< std::string >( "atomtype2" );
 		astype2_ = true;
-	}
-	else {
+	} else {
 		atomdesg2_ = tag->getOption< std::string >( "atomname2", "CB" );
 		astype2_ = false;
 	}

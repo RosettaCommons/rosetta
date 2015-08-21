@@ -50,7 +50,7 @@ public:
 		return filters::FilterOP( new NetChargeFilter() );
 	}
 
-  core::pack::task::TaskFactoryOP task_factory() const;
+	core::pack::task::TaskFactoryOP task_factory() const;
 	void task_factory( core::pack::task::TaskFactoryOP tf );
 
 	virtual ~NetChargeFilter();

@@ -73,7 +73,7 @@ void register_options()
 	helix_phipsiomega.push_back(-64.8); //phi
 	helix_phipsiomega.push_back(-41.0); //psi
 	helix_phipsiomega.push_back(180.0); //omega
-	
+
 	//An empty real vector.
 	utility::vector1 <core::Real> emptyreal;
 
@@ -100,7 +100,7 @@ void register_options()
 	NEW_OPT( delta_z1_guesses, "Initial guesses for the value of delta_z1 of all atoms (the axial offset, in Angstroms).  The guess for the reference atom will be disregarded, since delta_z1 is always zero for the reference atom.  Unused if not specified, but if specified, one guess must be provided for each atom.", emptyreal);
 	NEW_OPT( nonideal_angles, "Mainchain bond angles that are nonideal.  These must be specified as a list of the form \"<resnum1> <first_atomname> <resnum2> <second_atomname> <resnum3> <third_atomname> <angle>\".  For example, if we were working with alpha-amino acids and we wanted to specify that the N-CA-C bond angle for the second residue in the repeating unit was 110 degrees, we would use \"-nonideal_angles 2 N 2 CA 2 C 110.0\".  Not used if not specified.", emptystring);
 	NEW_OPT( nonideal_bondlengths, "Mainchain bond lengths that are nonideal.  These must be specified as a list of the form \"<resnum1> <preceding_atomname> <resnum2> <following_atomname> <length>\".  For example, if we were working with alpha-amino acids and we wanted to specify that the CA-C bond length for the second residue in the repeating unit was 1.3 Angstroms, we would use \"-nonideal_bondlengths 2 CA 2 C 1.3\".  Not used if not specified.",  emptystring);
-	
+
 	return;
 }
 
@@ -117,18 +117,18 @@ void build_polymer(
 	using namespace protocols::cyclic_peptide;
 
 	TR << "Building " << repeats << " repeat polymer (" << residues_per_repeat*repeats << " residues) from ";
-	for(core::Size i=1; i<=residues_per_repeat; ++i) {
+	for ( core::Size i=1; i<=residues_per_repeat; ++i ) {
 		TR << restypes[i] << (i<residues_per_repeat ? ", " : " ");
 	}
-	TR << "building blocks." << std::endl; 
+	TR << "building blocks." << std::endl;
 
 	PeptideStubMover stubmover;
 
 	stubmover.set_reset_mode(true);
 	stubmover.reset_mover_data();
 	stubmover.add_residue ("Append", "GLY", 0, false, "", 1, 0, "");
-	for(core::Size i=1; i<=repeats; ++i) {
-		for(core::Size j=1; j<=residues_per_repeat; ++j) {
+	for ( core::Size i=1; i<=repeats; ++i ) {
+		for ( core::Size j=1; j<=residues_per_repeat; ++j ) {
 			stubmover.add_residue( "Append", restypes[j], 0, false, "", 1, 0, "" );
 		}
 	}
@@ -160,7 +160,7 @@ void set_pose_conformation(
 
 	{ //Scope 1: Check that the right number of mainchain torsions have been specified.
 		core::Size counter(0);
-		for(core::Size i=1; i<=residues_per_repeat; ++i) {
+		for ( core::Size i=1; i<=residues_per_repeat; ++i ) {
 			++ir;
 			counter += pose.residue(ir).mainchain_torsions().size();
 		}
@@ -169,11 +169,11 @@ void set_pose_conformation(
 
 	ir=1;
 
-	for(core::Size irepeat=1; irepeat<=total_repeats; ++irepeat) {
+	for ( core::Size irepeat=1; irepeat<=total_repeats; ++irepeat ) {
 		++ir;
 
 		//Set nonstandard bond angles and bond lengths:
-		for(core::Size j=1, jmax=nonstandard_bondangle_list.size(); j<=jmax; ++j) {
+		for ( core::Size j=1, jmax=nonstandard_bondangle_list.size(); j<=jmax; ++j ) {
 			runtime_assert_string_msg( nonstandard_bondangle_list[j].first.size() == 3, "Internal program error: nonstandard_bondangle_list vectors are the wrong size." );
 			core::id::AtomID at1( nonstandard_bondangle_list[j].first[1].atomno(), nonstandard_bondangle_list[j].first[1].rsd() + (irepeat - 1) * residues_per_repeat + 1 );
 			core::id::AtomID at2( nonstandard_bondangle_list[j].first[2].atomno(), nonstandard_bondangle_list[j].first[2].rsd() + (irepeat - 1) * residues_per_repeat + 1 );
@@ -181,7 +181,7 @@ void set_pose_conformation(
 			pose.conformation().set_bond_angle( at1, at2, at3, nonstandard_bondangle_list[j].second );
 		}
 		pose.update_residue_neighbors();
-		for(core::Size j=1, jmax=nonstandard_bondlength_list.size(); j<=jmax; ++j) {
+		for ( core::Size j=1, jmax=nonstandard_bondlength_list.size(); j<=jmax; ++j ) {
 			runtime_assert_string_msg( nonstandard_bondlength_list[j].first.size() == 2, "Internal program error: nonstandard_bondlength_list vectors are the wrong size." );
 			core::id::AtomID at1( nonstandard_bondlength_list[j].first[1].atomno(), nonstandard_bondlength_list[j].first[1].rsd() + (irepeat - 1) * residues_per_repeat + 1 );
 			core::id::AtomID at2( nonstandard_bondlength_list[j].first[2].atomno(), nonstandard_bondlength_list[j].first[2].rsd() + (irepeat - 1) * residues_per_repeat + 1 );
@@ -192,10 +192,10 @@ void set_pose_conformation(
 		//Set torsions:
 		core::Size itors_list(0); //Index of the current torsion in the torsion list.
 		core::Size itors_pose(0); //Index of the current torsion in the pose.
-		while(itors_list < itorsmax) {
+		while ( itors_list < itorsmax ) {
 			++itors_list;
 			++itors_pose;
-			if(itors_pose > pose.residue(ir).mainchain_torsions().size()) { //We've set all mainchain torsions in the current resiude, so go on to next.
+			if ( itors_pose > pose.residue(ir).mainchain_torsions().size() ) { //We've set all mainchain torsions in the current resiude, so go on to next.
 				++ir;
 				itors_pose=0;
 				--itors_list; //Because this will be incremented twice, otherwise.
@@ -205,7 +205,7 @@ void set_pose_conformation(
 		}
 	}
 	pose.update_residue_neighbors();
-	
+
 	//pose.dump_pdb( "temp.pdb" ); //DELETE ME
 
 	return;
@@ -228,11 +228,11 @@ void add_Cu_chains(
 
 	//A pose that will just be a bunch of Cu residues
 	core::pose::Pose cupose;
-	
+
 	//Count the number of mainchain atoms that we'll be placing coppers over:
 	core::Size nres(pose.n_residue() - 2);
 	core::Size natoms(0);
-	for(core::Size ir=2, irmax=res_per_repeat+1; ir<=irmax; ++ir) {
+	for ( core::Size ir=2, irmax=res_per_repeat+1; ir<=irmax; ++ir ) {
 		natoms += pose.residue(ir).n_mainchain_atoms();
 	}
 
@@ -240,7 +240,7 @@ void add_Cu_chains(
 	PeptideStubMover stubmover;
 	stubmover.set_reset_mode(true);
 	stubmover.reset_mover_data();
-	for(core::Size ir=1; ir<=rescount; ++ir) {
+	for ( core::Size ir=1; ir<=rescount; ++ir ) {
 		stubmover.add_residue (
 			"Append",
 			"CU",
@@ -249,17 +249,17 @@ void add_Cu_chains(
 			"",
 			1,
 			0,
-			""		
+			""
 		);
 	}
 	stubmover.apply(cupose);
-	
+
 	core::Size atomno(0);
-	for(core::Size ir=2, irmax=res_per_repeat+1; ir<=irmax; ++ir) {
-		for(core::Size ia=1, iamax=pose.residue(ir).n_mainchain_atoms(); ia<=iamax; ++ia) {
+	for ( core::Size ir=2, irmax=res_per_repeat+1; ir<=irmax; ++ir ) {
+		for ( core::Size ia=1, iamax=pose.residue(ir).n_mainchain_atoms(); ia<=iamax; ++ia ) {
 			++atomno;
 			core::Real t = -1.0*static_cast<core::Real>(nres)/2.0 + ir-2;
-			for(core::Size irepeat=1; irepeat<=rescount; ++irepeat) {
+			for ( core::Size irepeat=1; irepeat<=rescount; ++irepeat ) {
 				cupose.set_xyz( core::id::AtomID( 1, irepeat), numeric::crick_equations::xyz( r1_vals[atomno], omega1_val, t, z1_val, delta_omega1_vals[atomno], delta_z1_vals[atomno] ) );
 				t+=res_per_repeat;
 			}
@@ -273,9 +273,9 @@ void add_Cu_chains(
 /// @brief Parse the user flags for nonstandard bond angles, and convert this into a data object
 /// that can be passed to the pose conformation setup function.
 void parse_nonstandard_angles(
-		utility::vector1< std::pair< utility::vector1< core::id::AtomID >, core::Real > > &nonstandard_angle_list,
-		core::pose::Pose const &pose,
-		core::Size const residues_per_repeat
+	utility::vector1< std::pair< utility::vector1< core::id::AtomID >, core::Real > > &nonstandard_angle_list,
+	core::pose::Pose const &pose,
+	core::Size const residues_per_repeat
 ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -285,11 +285,11 @@ void parse_nonstandard_angles(
 	std::stringstream ss("");
 	core::Size const noptions(option[nonideal_angles]().size());
 
-	for(core::Size i=1; i<=noptions; ++i) {
+	for ( core::Size i=1; i<=noptions; ++i ) {
 		ss << option[nonideal_angles]()[i] << " ";
-	}	
-	
-	for(core::Size i=1; i<=noptions; i+=7) {
+	}
+
+	for ( core::Size i=1; i<=noptions; i+=7 ) {
 		core::Size res1;
 		ss >> res1;
 		runtime_assert_string_msg( !ss.fail(), "Error in parsing angle list!" );
@@ -298,7 +298,7 @@ void parse_nonstandard_angles(
 		std::string at1str("");
 		ss >> at1str;
 		runtime_assert_string_msg( !ss.fail(), "Error in parsing angle list!" );
-		
+
 		core::Size res2;
 		ss >> res2;
 		runtime_assert_string_msg( !ss.fail(), "Error in parsing angle list!" );
@@ -316,11 +316,11 @@ void parse_nonstandard_angles(
 		std::string at3str("");
 		ss >> at3str;
 		runtime_assert_string_msg( !ss.fail(), "Error in parsing angle list!" );
-		
+
 		core::Real angleval(0.0);
 		ss >> angleval;
 		runtime_assert_string_msg( !ss.fail(), "Error in parsing angle list!" );
-		
+
 		core::id::AtomID id1( pose.residue(res1+1).type().atom_index( at1str ), res1 );
 		core::id::AtomID id2( pose.residue(res2+1).type().atom_index( at2str ), res2 );
 		core::id::AtomID id3( pose.residue(res3+1).type().atom_index( at3str ), res3 );
@@ -329,33 +329,33 @@ void parse_nonstandard_angles(
 		idvect.push_back(id2);
 		idvect.push_back(id3);
 		core::Real const angleval_radians( numeric::conversions::radians(angleval) );
-		
+
 		nonstandard_angle_list.push_back( std::pair< utility::vector1<core::id::AtomID>, core::Real >(idvect, angleval_radians) );
 	}
-	
+
 	return;
 }
 
 /// @brief Parse the user flags for nonstandard bond lengths, and convert this into a data object
 /// that can be passed to the pose conformation setup function.
 void parse_nonstandard_bondlengths(
-		utility::vector1< std::pair< utility::vector1< core::id::AtomID >, core::Real > > &nonstandard_bondlength_list,
-		core::pose::Pose const &pose,
-		core::Size const residues_per_repeat
+	utility::vector1< std::pair< utility::vector1< core::id::AtomID >, core::Real > > &nonstandard_bondlength_list,
+	core::pose::Pose const &pose,
+	core::Size const residues_per_repeat
 ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	
+
 	nonstandard_bondlength_list.clear();
 
 	std::stringstream ss("");
 	core::Size const noptions(option[nonideal_bondlengths]().size());
 
-	for(core::Size i=1; i<=noptions; ++i) {
+	for ( core::Size i=1; i<=noptions; ++i ) {
 		ss << option[nonideal_bondlengths]()[i] << " ";
-	}	
-	
-	for(core::Size i=1; i<=noptions; i+=5) {
+	}
+
+	for ( core::Size i=1; i<=noptions; i+=5 ) {
 		core::Size res1;
 		ss >> res1;
 		runtime_assert_string_msg( !ss.fail(), "Error in parsing bondlength list!" );
@@ -364,7 +364,7 @@ void parse_nonstandard_bondlengths(
 		std::string at1str("");
 		ss >> at1str;
 		runtime_assert_string_msg( !ss.fail(), "Error in parsing bondlength list!" );
-		
+
 		core::Size res2;
 		ss >> res2;
 		runtime_assert_string_msg( !ss.fail(), "Error in parsing bondlength list!" );
@@ -377,16 +377,16 @@ void parse_nonstandard_bondlengths(
 		core::Real lengthval(0.0);
 		ss >> lengthval;
 		runtime_assert_string_msg( !ss.fail(), "Error in parsing angle list!" );
-		
+
 		core::id::AtomID id1( pose.residue(res1+1).type().atom_index( at1str ), res1 );
 		core::id::AtomID id2( pose.residue(res2+1).type().atom_index( at2str ), res2 );
 		utility::vector1< core::id::AtomID > idvect;
 		idvect.push_back(id1);
 		idvect.push_back(id2);
-		
+
 		nonstandard_bondlength_list.push_back( std::pair< utility::vector1<core::id::AtomID>, core::Real >(idvect, lengthval) );
 	}
-	
+
 	return;
 }
 
@@ -400,7 +400,7 @@ main( int argc, char * argv [] )
 		register_options();
 		devel::init(argc, argv);
 
-		if(TR.visible()) {
+		if ( TR.visible() ) {
 			TR << "Starting fit_helixparams.cc" << std::endl;
 			TR << "Pilot app created 23 October 2014 by Vikram K. Mulligan, Ph.D., Baker laboratory." << std::endl;
 			TR << "App updated 29 May 2015 to support multiple residues per repeating unit." << std::endl;
@@ -417,14 +417,14 @@ main( int argc, char * argv [] )
 		utility::vector1<core::Real> const r1guesses( option[r1_guesses]() );
 		utility::vector1<core::Real> const deltaomega1_guesses( option[delta_omega1_guesses]() );
 		utility::vector1<core::Real> const deltaz1_guesses( option[delta_z1_guesses]() );
-		
+
 		utility::vector1< std::pair< utility::vector1< core::id::AtomID >, core::Real > > nonstandard_angle_list;
 		utility::vector1< std::pair< utility::vector1< core::id::AtomID >, core::Real > > nonstandard_bondlength_list;
-			
+
 		core::pose::Pose pose; //Make the empty pose
-		
+
 		build_polymer(pose, restypes, residues_per_repeat, nrepeats); //Build the repeating secondary structure element
-		
+
 		//Set up the AtomIDs for the nonstandard bond angles and bond lengths:
 		parse_nonstandard_angles( nonstandard_angle_list, pose, residues_per_repeat );
 		parse_nonstandard_bondlengths( nonstandard_bondlength_list, pose, residues_per_repeat );
@@ -433,7 +433,7 @@ main( int argc, char * argv [] )
 
 		//Count atoms:
 		core::Size atomcount(0);
-		for(core::Size ir=2, irmax=residues_per_repeat+1; ir<=irmax; ++ir) {
+		for ( core::Size ir=2, irmax=residues_per_repeat+1; ir<=irmax; ++ir ) {
 			atomcount += pose.residue(ir).n_mainchain_atoms();
 		}
 		runtime_assert_string_msg( r1guesses.size()==0 || r1guesses.size()==atomcount, "Error in user input from command-line flags.  If specified, the number of r1 guesses must equal the number of atoms." );
@@ -448,10 +448,10 @@ main( int argc, char * argv [] )
 		fitter.set_reference_atom( option[reference_atom]() );
 		fitter.set_residues_per_repeat( residues_per_repeat );
 		fitter.set_reference_residue( static_cast<core::Size>(option[reference_residue]()) );
-		
-		if(r1guesses.size() > 0) fitter.set_r1_guesses( r1guesses );
-		if(deltaomega1_guesses.size() > 0) fitter.set_delta_omega1_guesses( deltaomega1_guesses );
-		if(deltaz1_guesses.size() > 0) fitter.set_delta_z1_guesses( deltaz1_guesses );
+
+		if ( r1guesses.size() > 0 ) fitter.set_r1_guesses( r1guesses );
+		if ( deltaomega1_guesses.size() > 0 ) fitter.set_delta_omega1_guesses( deltaomega1_guesses );
+		if ( deltaz1_guesses.size() > 0 ) fitter.set_delta_z1_guesses( deltaz1_guesses );
 
 		fitter.apply(pose); //Will shift the pose to match the ideal helix
 
@@ -468,15 +468,15 @@ main( int argc, char * argv [] )
 		//Add chains B, C, D, etc. -- chains of Cu (a convenient single-atom residue) overlaying on each of the mainchain atoms.
 		add_Cu_chains(pose, r1_vals, omega1_val, z1_val, delta_omega1_vals, delta_z1_vals, nrepeats, residues_per_repeat );
 
-		if(TR.visible()) TR << "Writing result.pdb." << std::endl;
+		if ( TR.visible() ) TR << "Writing result.pdb." << std::endl;
 		pose.dump_pdb("result.pdb"); //dump out a pose.
 
-		if(TR.visible()) TR << "Writing result.crick_params" << std::endl;
-		if(residues_per_repeat==1) protocols::helical_bundle::write_minor_helix_params("result.crick_params", r1_vals, omega1_val, z1_val, delta_omega1_vals, delta_z1_vals);
+		if ( TR.visible() ) TR << "Writing result.crick_params" << std::endl;
+		if ( residues_per_repeat==1 ) protocols::helical_bundle::write_minor_helix_params("result.crick_params", r1_vals, omega1_val, z1_val, delta_omega1_vals, delta_z1_vals);
 		else {
 			utility::vector1 <core::Size> atoms_per_residue;
 			core::Size ir=1;
-			for(core::Size irepeat=1; irepeat<=residues_per_repeat; ++irepeat) {
+			for ( core::Size irepeat=1; irepeat<=residues_per_repeat; ++irepeat ) {
 				++ir;
 				atoms_per_residue.push_back( pose.residue(ir).n_mainchain_atoms() );
 			}
@@ -484,7 +484,7 @@ main( int argc, char * argv [] )
 		}
 
 		//Write out the Crick parameters
-		if(TR.visible()) {
+		if ( TR.visible() ) {
 			TR << std::endl;
 			TR << "Results from the fitter:" << std::endl;
 			TR.width(20);
@@ -492,11 +492,11 @@ main( int argc, char * argv [] )
 			TR << "Res\tID\tAtom\tr1\tomega1\tz1\tdelta_omega1\tdelta_z1\t" << std::endl;
 			core::Size completed_residues(0);
 			core::Size counter(0);
-			for(core::Size ir=2; completed_residues<residues_per_repeat; ++ir) {
-				for(core::Size ia=1, iamax=pose.residue(ir).n_mainchain_atoms(); ia<=iamax; ++ia) {
+			for ( core::Size ir=2; completed_residues<residues_per_repeat; ++ir ) {
+				for ( core::Size ia=1, iamax=pose.residue(ir).n_mainchain_atoms(); ia<=iamax; ++ia ) {
 					++counter;
 					TR << ir-1 << "\t" << ia << "\t" << pose.residue(ir).atom_name(ia);
-					if( (ir-1)==static_cast<core::Size>(option[reference_residue]()) && ia==pose.residue(ir).atom_index(option[reference_atom]()) ) TR << "*";
+					if ( (ir-1)==static_cast<core::Size>(option[reference_residue]()) && ia==pose.residue(ir).atom_index(option[reference_atom]()) ) TR << "*";
 					TR << "\t" << r1_vals[counter] << "\t" << omega1_val << "\t" << z1_val << "\t" << delta_omega1_vals[counter] << "\t" << delta_z1_vals[counter] << std::endl;
 				}
 				++completed_residues;
@@ -505,7 +505,7 @@ main( int argc, char * argv [] )
 			TR << std::endl;
 		}
 
-		if(TR.visible()) {
+		if ( TR.visible() ) {
 			TR << "Finished fit_helixparams.cc.  Exiting." << std::endl;
 			TR.flush();
 		}

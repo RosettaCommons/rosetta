@@ -28,12 +28,12 @@
 
 namespace protocols {
 namespace abinitio {
-namespace abscript{
+namespace abscript {
 
 class StagePreparer : public protocols::environment::ClientMover {
 
 public:
-  virtual void prepare( core::pose::Pose& pose, core::Real progress ) = 0;
+	virtual void prepare( core::pose::Pose& pose, core::Real progress ) = 0;
 
 }; // end StagePreparer base class
 

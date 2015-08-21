@@ -154,7 +154,7 @@ namespace options {
 template< typename T, typename K >
 T get_option(std::string const & id)
 {
-	if( !utility::options::OptionKeys::has( id ) ) utility_exit_with_message( "get_option: OptionKey with id " + id + " not found!" );
+	if ( !utility::options::OptionKeys::has( id ) ) utility_exit_with_message( "get_option: OptionKey with id " + id + " not found!" );
 
 	return basic::options::option[ dynamic_cast<K const &>( utility::options::OptionKeys::key( id ) ) ].value();
 }
@@ -162,7 +162,7 @@ T get_option(std::string const & id)
 template< typename T, typename K >
 void set_option(std::string const & id, T const & value)
 {
-	if( !utility::options::OptionKeys::has( id ) ) 	utility_exit_with_message( "set_option: OptionKey with id " + id + " not found!" );
+	if ( !utility::options::OptionKeys::has( id ) )  utility_exit_with_message( "set_option: OptionKey with id " + id + " not found!" );
 
 	basic::options::option[ dynamic_cast<K const &>( utility::options::OptionKeys::key( id ) ) ].value( value );
 }

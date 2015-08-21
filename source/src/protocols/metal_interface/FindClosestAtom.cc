@@ -23,8 +23,8 @@ using basic::T;
 using basic::Warning;
 
 
-namespace protocols{
-namespace metal_interface{
+namespace protocols {
+namespace metal_interface {
 
 //local helper function - iterates over all sidechain non-carbon heavy atoms of res to find the one closest to xyz
 std::string find_closest_atom( core::conformation::Residue const & res, core::Vector const & xyz ){
@@ -33,17 +33,17 @@ std::string find_closest_atom( core::conformation::Residue const & res, core::Ve
 	core::Real temp_dis(dis);
 
 	//atom ordering rules are in ResidueType.hh; briefly sidechain heavy atoms are between first_sidechain_heavyatom and nheavyatoms
-	for( core::Size i(res.first_sidechain_atom()); i <= res.nheavyatoms(); ++i){
+	for ( core::Size i(res.first_sidechain_atom()); i <= res.nheavyatoms(); ++i ) {
 		temp_dis = res.xyz(i).distance(xyz);
-		if (res.is_virtual(i)){
+		if ( res.is_virtual(i) ) {
 			continue;
 		}
-		if ( (temp_dis < dis) && (res.atom_type(i).element() != "C") ){ //Carbon is not a metal-coordinating atom
+		if ( (temp_dis < dis) && (res.atom_type(i).element() != "C") ) { //Carbon is not a metal-coordinating atom
 			dis = temp_dis;
 			index = i; //accepting change
 		}//if shorter and non-carbon
 	}//for all sidechain heavyatoms
-	if (!(res.atom_type(index).element() == "N") && !(res.atom_type(index).element() == "S") && !(res.atom_type(index).element() == "O")){
+	if ( !(res.atom_type(index).element() == "N") && !(res.atom_type(index).element() == "S") && !(res.atom_type(index).element() == "O") ) {
 		Warning() << "irregular ligand atom - not N or S or O" << std::endl;
 	}
 	return res.atom_name(index);

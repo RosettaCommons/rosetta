@@ -38,17 +38,17 @@ using core::pack::pack_rotamers_run;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 PackingState::PackingState()
-	: SingleState(),
-		ptask_p_(/* 0 */),
-		rotamersets_p_(/* 0 */),
-		ig_p_(/* 0 */)
+: SingleState(),
+	ptask_p_(/* 0 */),
+	rotamersets_p_(/* 0 */),
+	ig_p_(/* 0 */)
 {}
 
 PackingState::PackingState( core::pose::Pose const & pose, bool is_positive )
-	: SingleState( pose, is_positive ),
-		ptask_p_(/* 0 */),
-		rotamersets_p_(/* 0 */),
-		ig_p_(/* 0 */)
+: SingleState( pose, is_positive ),
+	ptask_p_(/* 0 */),
+	rotamersets_p_(/* 0 */),
+	ig_p_(/* 0 */)
 {}
 
 PackingState::~PackingState() {}

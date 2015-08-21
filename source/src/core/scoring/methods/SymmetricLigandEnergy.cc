@@ -83,8 +83,8 @@ SymmetricLigandEnergy::residue_energy(
 ) const
 {
 	numeric::xyzVector<core::Real> target(0,0,4);
-	if( rsd.has("CEN") ) { // centroid
-		if( /*"HIS" == rsd.name3() &&*/ rsd.xyz("CEN").z() > 0.0 ) {
+	if ( rsd.has("CEN") ) { // centroid
+		if ( /*"HIS" == rsd.name3() &&*/ rsd.xyz("CEN").z() > 0.0 ) {
 			numeric::xyzVector<core::Real> cen  = rsd.xyz("CEN");
 			numeric::xyzVector<core::Real> base = rsd.xyz("CA" );
 			Real score = numeric::min( 0.0, (-10.0 / (cen.distance(target) + 1.0) + 1.0) );
@@ -98,13 +98,13 @@ SymmetricLigandEnergy::residue_energy(
 		}
 		emap[sym_lig] += numeric::min( 0.0, rsd.xyz("CEN").distance(target) - 20.0 ) / 20;
 	} else { // full atom
-		if( "HIS" == rsd.name3() && rsd.xyz("NE2").z() > 0.0 ) {
+		if ( "HIS" == rsd.name3() && rsd.xyz("NE2").z() > 0.0 ) {
 			numeric::xyzVector<core::Real> cen  = rsd.xyz("NE2");
 			numeric::xyzVector<core::Real> base = (rsd.xyz("CG")+rsd.xyz("ND1"))/2.0;
 			Real score = numeric::min( 0.0, (-8.0 / (cen.distance(target) + 1.0) + 1.0) );
 			// no orientation here yet because I don't wanna do derives for it
 			// if( score != 0.0 ) {
-			// 	std::cerr << "FA HIS BONUS " << score << std::endl;
+			//  std::cerr << "FA HIS BONUS " << score << std::endl;
 			// }
 			emap[sym_lig] += score;
 		}
@@ -124,18 +124,18 @@ SymmetricLigandEnergy::eval_atom_derivative(
 	Vector & F1,
 	Vector & F2
 ) const {
-	if( "HIS" != pose.residue(id.rsd()).name3() ) return;
+	if ( "HIS" != pose.residue(id.rsd()).name3() ) return;
 
-	if( "NE2" != pose.residue(id.rsd()).atom_name(id.atomno()) ) return;
+	if ( "NE2" != pose.residue(id.rsd()).atom_name(id.atomno()) ) return;
 
 	// std::cerr << "SymmetricLigandEnergy deriv " << id << std::endl;
 
 	numeric::xyzVector<core::Real> target(0,0,4.0);
 	//if( pose.xyz(id).z() < 0.0 ) target *= -1.0;
 
-	if( pose.xyz(id).distance(target) > 5.0 ) return;
+	if ( pose.xyz(id).distance(target) > 5.0 ) return;
 
-  	numeric::xyzVector<core::Real> atom_x = pose.xyz(id);
+	numeric::xyzVector<core::Real> atom_x = pose.xyz(id);
 	core::Real mag = pose.xyz(id).distance(target) + 1.0;
 	mag = 6.0 / (mag*mag);
 	numeric::xyzVector<core::Real> const f2( mag * ( pose.xyz(id) - target ).normalized() );

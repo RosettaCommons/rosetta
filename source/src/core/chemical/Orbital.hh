@@ -56,17 +56,17 @@ public:
 	/// @details All its properties are unset by default.
 	///
 	Orbital():
-			name_(""),
-			orbital_type_index_(0),
-			ideal_xyz_(),
-			icoor_(),
-			new_icoor_()
+		name_(""),
+		orbital_type_index_(0),
+		ideal_xyz_(),
+		icoor_(),
+		new_icoor_()
 	{}
 
 	Orbital(
-			std::string const & name_in,
-			Size const orbital_type_index,
-			Vector const & xyz
+		std::string const & name_in,
+		Size const orbital_type_index,
+		Vector const & xyz
 	):
 		name_( name_in ),
 		orbital_type_index_(orbital_type_index),
@@ -90,16 +90,16 @@ public:
 	std::ostream &
 	operator<< ( std::ostream & out, const Orbital & atom_type );
 
-// Const Getters
+	// Const Getters
 	std::string const& name() const { return name_; };
 	Size const& orbital_type_index() const { return orbital_type_index_; };
 	Vector const& ideal_xyz() const { return ideal_xyz_; };
 	orbitals::ICoorOrbitalData const& icoor() const { return icoor_; };
 	orbitals::ICoorOrbitalData const& new_icoor() const { return new_icoor_; };
-// Non-const getters
+	// Non-const getters
 	orbitals::ICoorOrbitalData & icoor() { return icoor_; };
 	orbitals::ICoorOrbitalData & new_icoor() { return new_icoor_; };
-// Setters
+	// Setters
 	void name( std::string const & name ) { name_ = name; };
 	void orbital_type_index( Size const & atom_type_index ) { orbital_type_index_ = atom_type_index; };
 	void ideal_xyz( Vector const & xyz) { ideal_xyz_= xyz; };

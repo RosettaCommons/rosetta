@@ -49,41 +49,40 @@ ContingentAcceptMoverCreator::mover_name()
 }
 
 ContingentAcceptMover::ContingentAcceptMover()
-    : moves::Mover("ContingentAccept"),
-    filter_(/* NULL */),
-    mover_(/* NULL */),
-    delta_(5)
+: moves::Mover("ContingentAccept"),
+	filter_(/* NULL */),
+	mover_(/* NULL */),
+	delta_(5)
 {
 }
-    
+
 protocols::filters::FilterOP
 ContingentAcceptMover::filter() const{
-    return filter_;
+	return filter_;
 }
 
 void
 ContingentAcceptMover::filter( protocols::filters::FilterOP f ){
-    filter_ = f;
+	filter_ = f;
 }
-    
+
 void
 ContingentAcceptMover::apply( Pose & pose )
 {
-    core::pose::Pose const old_pose = pose;
-    core::Real preMoveScore;
-    preMoveScore = filter()->report_sm( pose );
-    mover()->apply(pose);
-    core::Real postMoveScore;
-    postMoveScore = filter()->report_sm( pose );
-	
-    if (postMoveScore <= preMoveScore + delta()){
-        TR<<"postMoveScore is "<<postMoveScore<<" preMoveScore is "<<preMoveScore<<" . Accepting new pose."<<std::endl;
-	return;
-    }
-    else{
-	TR<<"postMoveScore is "<<postMoveScore<<" preMoveScore is "<<preMoveScore<<" . Rejecting new pose."<<std::endl;
-        pose = old_pose;
-    }
+	core::pose::Pose const old_pose = pose;
+	core::Real preMoveScore;
+	preMoveScore = filter()->report_sm( pose );
+	mover()->apply(pose);
+	core::Real postMoveScore;
+	postMoveScore = filter()->report_sm( pose );
+
+	if ( postMoveScore <= preMoveScore + delta() ) {
+		TR<<"postMoveScore is "<<postMoveScore<<" preMoveScore is "<<preMoveScore<<" . Accepting new pose."<<std::endl;
+		return;
+	} else {
+		TR<<"postMoveScore is "<<postMoveScore<<" preMoveScore is "<<preMoveScore<<" . Rejecting new pose."<<std::endl;
+		pose = old_pose;
+	}
 }
 
 std::string
@@ -104,14 +103,14 @@ ContingentAcceptMover::fresh_instance() const
 }
 
 /*
-	returns the contains mover
+returns the contains mover
 */
 protocols::moves::MoverOP ContingentAcceptMover::mover() const {
 	return mover_;
 }
-  
+
 /*
-	Setting the internal mover to point to m.
+Setting the internal mover to point to m.
 */
 void ContingentAcceptMover::mover( protocols::moves::MoverOP m ){
 	mover_ = m;
@@ -119,19 +118,19 @@ void ContingentAcceptMover::mover( protocols::moves::MoverOP m ){
 
 void
 ContingentAcceptMover::parse_my_tag(
-                               TagCOP const tag,
-                               basic::datacache::DataMap &,
-                               protocols::filters::Filters_map const & filters,
-                               protocols::moves::Movers_map const & movers,
-                               Pose const & )
+	TagCOP const tag,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const & movers,
+	Pose const & )
 {
-    filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), filters ) );
-    mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "mover" ), movers ) );
-    delta( tag->getOption< core::Real >( "delta" , 5)); // do I need anything like ( "MaxDeltaFilterVal", 5 )?? What is the integer for?
+	filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), filters ) );
+	mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "mover" ), movers ) );
+	delta( tag->getOption< core::Real >( "delta" , 5)); // do I need anything like ( "MaxDeltaFilterVal", 5 )?? What is the integer for?
 }
 
-    
-    
+
+
 } // simple_moves
 } // protocols
 

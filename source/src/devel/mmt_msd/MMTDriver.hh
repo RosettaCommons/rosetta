@@ -114,7 +114,7 @@ public:
 	utility::vector1< std::string > const & sequences() const { return sequences_; }
 	utility::vector1< core::Size >  const & full_seqinds_2_newseqinds() const { return full_seqinds_2_newseqinds_; }
 	std::map< std::string, core::Size > const & sequence_to_index_map() const { return sequence_to_index_map_; }
-		utility::vector1< utility::vector1< core::Real > > job_completed() const { return job_completed_; }
+	utility::vector1< utility::vector1< core::Real > > job_completed() const { return job_completed_; }
 	std::list< JobID > const & job_order() const { return job_order_; }
 	std::set< JobID > const & work_outstanding() const { return work_outstanding_; }
 

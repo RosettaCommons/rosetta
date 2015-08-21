@@ -39,7 +39,7 @@ using namespace core::pose::metrics;
 
 static thread_local basic::Tracer TR( "protocols/toolbox/PoseMetricCalculators/PackstatCalculator" );
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 
@@ -48,52 +48,52 @@ PackstatCalculator::PackstatCalculator(
 	core::Size oversample,
 	bool remove_nonprotein_res
 ) : total_packstat_(0),
-		special_region_packstat_(0),
-		oversample_(oversample),
-		remove_nonprotein_res_(remove_nonprotein_res)
+	special_region_packstat_(0),
+	oversample_(oversample),
+	remove_nonprotein_res_(remove_nonprotein_res)
 {
-  special_region_.clear();
+	special_region_.clear();
 	residue_packstat_.clear();
 }
 
 
 PackstatCalculator::PackstatCalculator(
-  std::set< core::Size > const & special_region,
+	std::set< core::Size > const & special_region,
 	core::Size oversample,
 	bool remove_nonprotein_res
 ) : total_packstat_(0),
-    special_region_packstat_(0),
-		oversample_(oversample),
-		remove_nonprotein_res_(remove_nonprotein_res),
-    special_region_( special_region )
+	special_region_packstat_(0),
+	oversample_(oversample),
+	remove_nonprotein_res_(remove_nonprotein_res),
+	special_region_( special_region )
 {
-  residue_packstat_.clear();
+	residue_packstat_.clear();
 }
 
 
 void
 PackstatCalculator::lookup(
-  std::string const & key,
-  basic::MetricValueBase * valptr
+	std::string const & key,
+	basic::MetricValueBase * valptr
 ) const
 {
 
-   if ( key == "total_packstat" ) {
-     basic::check_cast( valptr, &total_packstat_, "total_packstat expects to return a real" );
-     (static_cast<basic::MetricValue<Real> *>(valptr))->set( total_packstat_ );
+	if ( key == "total_packstat" ) {
+		basic::check_cast( valptr, &total_packstat_, "total_packstat expects to return a real" );
+		(static_cast<basic::MetricValue<Real> *>(valptr))->set( total_packstat_ );
 
-   } else if ( key == "special_region_packstat" ) {
-     basic::check_cast( valptr, &special_region_packstat_, "special_region_packstat expects to return a real" );
-     (static_cast<basic::MetricValue<Real> *>(valptr))->set( special_region_packstat_ );
+	} else if ( key == "special_region_packstat" ) {
+		basic::check_cast( valptr, &special_region_packstat_, "special_region_packstat expects to return a real" );
+		(static_cast<basic::MetricValue<Real> *>(valptr))->set( special_region_packstat_ );
 
-   } else if ( key == "residue_packstat" ) {
-     basic::check_cast( valptr, &residue_packstat_, "residue_packstat expects to return a utility::vector1< Real >" );
-     (static_cast<basic::MetricValue<utility::vector1< Real > > *>(valptr))->set( residue_packstat_ );
+	} else if ( key == "residue_packstat" ) {
+		basic::check_cast( valptr, &residue_packstat_, "residue_packstat expects to return a utility::vector1< Real >" );
+		(static_cast<basic::MetricValue<utility::vector1< Real > > *>(valptr))->set( residue_packstat_ );
 
-   } else {
-     basic::Error() << "PackstatCalculator cannot compute the requested metric " << key << std::endl;
-     utility_exit();
-   }
+	} else {
+		basic::Error() << "PackstatCalculator cannot compute the requested metric " << key << std::endl;
+		utility_exit();
+	}
 
 } //lookup
 
@@ -102,17 +102,17 @@ std::string
 PackstatCalculator::print( std::string const & key ) const
 {
 
-  if ( key == "total_packstat" ) {
-    return utility::to_string( total_packstat_ );
-  } else if ( key == "special_region_packstat" ) {
-    return utility::to_string( special_region_packstat_ );
-  } else if ( key == "residue_packstat" ) {
-    return utility::to_string( residue_packstat_ );
-  }
+	if ( key == "total_packstat" ) {
+		return utility::to_string( total_packstat_ );
+	} else if ( key == "special_region_packstat" ) {
+		return utility::to_string( special_region_packstat_ );
+	} else if ( key == "residue_packstat" ) {
+		return utility::to_string( residue_packstat_ );
+	}
 
-  basic::Error() << "PackstatCalculator cannot compute metric " << key << std::endl;
-  utility_exit();
-  return "";
+	basic::Error() << "PackstatCalculator cannot compute metric " << key << std::endl;
+	utility_exit();
+	return "";
 
 } //print
 
@@ -124,18 +124,18 @@ PackstatCalculator::recompute( Pose const & this_pose )
 {
 	using namespace core::scoring::packstat;
 
-	if( remove_nonprotein_res_ ){
+	if ( remove_nonprotein_res_ ) {
 
 		bool has_nonprot_res(false);
 
-		for( core::Size i = 1; i <= this_pose.total_residue(); ++i){
-			if( ! this_pose.residue_type(i).is_protein() ){
+		for ( core::Size i = 1; i <= this_pose.total_residue(); ++i ) {
+			if ( ! this_pose.residue_type(i).is_protein() ) {
 				has_nonprot_res = true;
 				break;
 			}
 		}
 
-		if( has_nonprot_res ){
+		if ( has_nonprot_res ) {
 
 			PoseOP pureprotpose( new Pose( this_pose ) );
 
@@ -144,15 +144,12 @@ PackstatCalculator::recompute( Pose const & this_pose )
 			total_packstat_ = compute_packing_score( *pureprotpose, oversample_ );
 			residue_packstat_ = compute_residue_packing_scores( *pureprotpose, oversample_ );
 			runtime_assert( pureprotpose->total_residue() == residue_packstat_.size() );
-		}
-		else{
+		} else {
 			total_packstat_ = compute_packing_score( this_pose, oversample_ );
 			residue_packstat_ = compute_residue_packing_scores( this_pose, oversample_ );
 			runtime_assert( this_pose.total_residue() == residue_packstat_.size() );
 		}
-	}
-
-	else{
+	} else {
 		total_packstat_ = compute_packing_score( this_pose, oversample_ );
 		residue_packstat_ = compute_residue_packing_scores( this_pose, oversample_ );
 		runtime_assert( this_pose.total_residue() == residue_packstat_.size() );
@@ -161,10 +158,10 @@ PackstatCalculator::recompute( Pose const & this_pose )
 
 	core::Real respackstat_sum(0.0);
 	core::Real special_region_sum(0.0);
-	for( Size i = 1; i <= residue_packstat_.size(); ++i){
+	for ( Size i = 1; i <= residue_packstat_.size(); ++i ) {
 
 		respackstat_sum = respackstat_sum + residue_packstat_[i];
-		if( special_region_.find( i ) != special_region_.end() ) special_region_sum = special_region_sum + residue_packstat_[i];
+		if ( special_region_.find( i ) != special_region_.end() ) special_region_sum = special_region_sum + residue_packstat_[i];
 
 	}
 

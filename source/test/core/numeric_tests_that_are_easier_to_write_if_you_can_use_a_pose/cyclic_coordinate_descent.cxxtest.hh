@@ -44,9 +44,9 @@ private:
 	core::pose::Pose pose_;
 
 public:
-  // Shared initialization goes here.
-  void setUp() {
-    core_init();
+	// Shared initialization goes here.
+	void setUp() {
+		core_init();
 
 		using namespace core::chemical;
 		using namespace core::pose;
@@ -77,10 +77,10 @@ public:
 		core::uint cutpoint = pose_.fold_tree().cutpoint( 1 );
 		add_variant_type_to_pose_residue( pose_, CUTPOINT_LOWER, cutpoint );
 		add_variant_type_to_pose_residue( pose_, CUTPOINT_UPPER, cutpoint + 1 );
-  }
+	}
 
-  // Shared finalization goes here.
-  void tearDown() {}
+	// Shared finalization goes here.
+	void tearDown() {}
 
 	// This helper method is reproduced from CCDLoopClosureMover
 	utility::vector1< core::PointPosition >
@@ -109,12 +109,12 @@ public:
 		} else {
 			TS_ASSERT( false );
 		}
-		
+
 		return anchors;
 	}
 
-  // --------------- Test Cases --------------- //
-  void test_angle_forward(){
+	// --------------- Test Cases --------------- //
+	void test_angle_forward(){
 		using numeric::ccd_angle;
 		using numeric::wrap_180;
 		using utility::vector1;
@@ -157,9 +157,9 @@ public:
 		// loop, we know that the initial value of phi is the angle that produces a chain break of 0.
 		TS_ASSERT_DELTA( test_phi, initial_phi, 1E-2 );
 		TS_ASSERT( deviation < 1E-6 );
-  }
+	}
 
-  void test_angle_backward(){
+	void test_angle_backward(){
 		using numeric::ccd_angle;
 		using numeric::wrap_180;
 		using utility::vector1;
@@ -203,9 +203,9 @@ public:
 		// loop, we know that the initial value of phi is the angle that produces a chain break of 0.
 		TS_ASSERT_DELTA( test_phi, initial_phi, 1E-2 );
 		TS_ASSERT( deviation < 1E-6 );
-  }
+	}
 
-  void test_dev(){
+	void test_dev(){
 		using numeric::ccd_angle;
 		using utility::vector1;
 		using core::Angle;
@@ -258,5 +258,5 @@ public:
 			pose.residue( cutpoint + 1 ).xyz( "CA" ) );
 
 		TS_ASSERT_DELTA( deviation, sum_sq_dist, 1E-8 );
-  }
+	}
 };

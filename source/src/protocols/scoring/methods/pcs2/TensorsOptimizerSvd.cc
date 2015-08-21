@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/TensorsOptimizerSvd.cc
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/TensorsOptimizerSvd.cc
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 
 // Unit headers
@@ -52,25 +52,25 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs2{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs2 {
 
 using namespace core::optimization;
 
 static thread_local basic::Tracer TR_TensorsOptimizerSvd( "protocols.scoring.methods.pcs.TensorsOptimizerSvd" );
 
-	/*
+/*
 TensorsOptimizerSvd::TensorsOptimizerSvd():
-	pcs_d_c_(PcsDataCenter())
+pcs_d_c_(PcsDataCenter())
 {
 
-  utility_exit_with_message("You shouldn't call the empty constructor for class TensorsOptimizerSvd");
+utility_exit_with_message("You shouldn't call the empty constructor for class TensorsOptimizerSvd");
 }
-	*/
+*/
 
-	TensorsOptimizerSvd::TensorsOptimizerSvd(PcsDataCenter /*const*/ & pcs_d_c):
+TensorsOptimizerSvd::TensorsOptimizerSvd(PcsDataCenter /*const*/ & pcs_d_c):
 	pcs_d_c_(pcs_d_c)
 {
 }
@@ -82,7 +82,7 @@ TensorsOptimizerSvd::~TensorsOptimizerSvd(){
 bool
 TensorsOptimizerSvd::abort_min(core::optimization::Multivec const & vars ) const{
 
-	//	return false;
+	// return false;
 
 	core::Real limit(4000);
 	core::Size i;
@@ -93,17 +93,17 @@ TensorsOptimizerSvd::abort_min(core::optimization::Multivec const & vars ) const
 	core::Real xM(vars[1]);
 	core::Real yM(vars[1]);
 	core::Real zM(vars[1]);
-	if( (xM*xM + yM*yM + zM*zM) > 90000){
+	if ( (xM*xM + yM*yM + zM*zM) > 90000 ) {
 		return true;
 	}
 
-	for (i = 1; i <= n_la; i++){
+	for ( i = 1; i <= n_la; i++ ) {
 		core::Real Xxx(vars[3 + 5*(i-1) + 1]);
 		core::Real Xxy(vars[3 + 5*(i-1) + 2]);
 		core::Real Xxz(vars[3 + 5*(i-1) + 3]);
 		core::Real Xyy(vars[3 + 5*(i-1) + 4]);
 		core::Real Xyz(vars[3 + 5*(i-1) + 5]);
-		if((fabs(Xxx) + fabs(Xxy) + fabs(Xxz) + fabs(Xyy) + fabs(Xyz)) > limit){
+		if ( (fabs(Xxx) + fabs(Xxy) + fabs(Xxz) + fabs(Xyy) + fabs(Xyz)) > limit ) {
 			return true;
 		}
 	}
@@ -129,23 +129,23 @@ TensorsOptimizerSvd::func( core::optimization::Multivec const & vars ) const{
 	PcsTensor pcs_t(0, 0, 0, 0, 0, "");
 
 	pcs_d_c_.update_matrix_A_all_for_svd(xM, yM, zM);
-	//	std::cerr << "updating from func" << std::endl;
-	//	std::cerr  << std::setprecision(20) << xM << " " << yM << " " << zM  << std::endl;
+	// std::cerr << "updating from func" << std::endl;
+	// std::cerr  << std::setprecision(20) << xM << " " << yM << " " << zM  << std::endl;
 	utility::vector1<PcsDataLanthanide> & pcs_d_l_vec(pcs_d_c_.get_pcs_data_per_lanthanides_all());
 
-	if(n_la != pcs_d_l_vec.size()){
+	if ( n_la != pcs_d_l_vec.size() ) {
 		utility_exit_with_message("The number of lanthanides is inconsistent");
 	}
 
 
-	//	utility::vector1< utility::vector1<core::Real> >  const & A_all(pcs_d_c_.get_A_all());
+	// utility::vector1< utility::vector1<core::Real> >  const & A_all(pcs_d_c_.get_A_all());
 
 
-	for (i = 1; i <= n_la; i++){
+	for ( i = 1; i <= n_la; i++ ) {
 		PcsDataLanthanide & pcs_d_l(pcs_d_l_vec[i]);
 
-		//		core::Real weight(pcs_d_l.get_weight());
-		//		score += pcs_d_l.calculate_cost_only_with_svd();
+		//  core::Real weight(pcs_d_l.get_weight());
+		//  score += pcs_d_l.calculate_cost_only_with_svd();
 
 		score += pcs_d_l.calculate_tensor_and_cost_with_svd(pcs_t);
 		//score += pcs_d_l.calculate_cost_only_with_svd();// * weight * pcs_d_l.get_normalization_factor_inversed();
@@ -153,18 +153,18 @@ TensorsOptimizerSvd::func( core::optimization::Multivec const & vars ) const{
 
 	}
 
-  return(score);
+	return(score);
 }
 
 void
 TensorsOptimizerSvd::dfunc_numeric(core::optimization::Multivec const & vars,
-																 core::optimization::Multivec & dE_dvars
-																 ) const{
+	core::optimization::Multivec & dE_dvars
+) const{
 
 	core::Size i;
 	core::Real delta(0.0001);
 
-	for(i = 1; i <= vars.size(); i++){
+	for ( i = 1; i <= vars.size(); i++ ) {
 		core::optimization::Multivec vars_bis_pd (vars);
 		core::optimization::Multivec vars_bis_md (vars);
 		vars_bis_pd[i] += delta;
@@ -177,8 +177,8 @@ TensorsOptimizerSvd::dfunc_numeric(core::optimization::Multivec const & vars,
 
 void
 TensorsOptimizerSvd::dfunc(core::optimization::Multivec const & vars,
-													 core::optimization::Multivec & dE_dvars
-													 ) const{
+	core::optimization::Multivec & dE_dvars
+) const{
 
 	dfunc_exact(vars, dE_dvars);
 	//dfunc_numeric(vars, dE_dvars);
@@ -186,14 +186,14 @@ TensorsOptimizerSvd::dfunc(core::optimization::Multivec const & vars,
 	core::Size i;
 	std::cerr << "df_exact ";
 	for(i = 1; i <= vars.size(); i++){
-		std::cerr << std::setw(8) << dE_dvars[i] << " " ;
+	std::cerr << std::setw(8) << dE_dvars[i] << " " ;
 	}
 	std::cerr << std::endl;
 
 	dfunc_numeric(vars, dE_dvars);
 	std::cerr << "df_numer ";
 	for(i = 1; i <= vars.size(); i++){
-		std::cerr  << std::setw(8)<< dE_dvars[i] << " " ;
+	std::cerr  << std::setw(8)<< dE_dvars[i] << " " ;
 	}
 	std::cerr << std::endl;
 	*/
@@ -207,8 +207,8 @@ TensorsOptimizerSvd::operator ()( core::optimization::Multivec const & vars ) co
 
 void
 TensorsOptimizerSvd::dfunc_exact(core::optimization::Multivec const & vars,
-																 core::optimization::Multivec & dE_dvars
-																 ) const{
+	core::optimization::Multivec & dE_dvars
+) const{
 	core::Size i, j, idx;
 	core::Size n_la, n_pcs;
 	core::Real x, y, z, xS, yS, zS;
@@ -220,7 +220,7 @@ TensorsOptimizerSvd::dfunc_exact(core::optimization::Multivec const & vars,
 	n_la = pcs_d_c_.get_n_lanthanides();
 
 	//lets' init everyone to zero because we are going to use +=
-	for (i = 1; i <= dE_dvars.size(); i++){
+	for ( i = 1; i <= dE_dvars.size(); i++ ) {
 		dE_dvars[i] = 0;
 	}
 
@@ -241,13 +241,13 @@ TensorsOptimizerSvd::dfunc_exact(core::optimization::Multivec const & vars,
 	const utility::vector1<core::Real> & Z_all(pcs_d_c_.get_Z_all());
 
 
-	if(n_la != pcs_d_l_vec.size()){
+	if ( n_la != pcs_d_l_vec.size() ) {
 		utility_exit_with_message("The number of lanthanides is inconsistent");
 	}
 
 
 	PcsTensor pcs_t(0, 0, 0, 0, 0, "");
-	for (i = 1; i <= n_la; i++){
+	for ( i = 1; i <= n_la; i++ ) {
 		PcsDataLanthanide & pcs_d_l(pcs_d_l_vec[i]);
 		utility::vector1<core::Size> const & A_index( pcs_d_l.get_A_index());
 		utility::vector1< core::Real > const & cstyle_b(pcs_d_l.get_cstyle_b());
@@ -262,7 +262,7 @@ TensorsOptimizerSvd::dfunc_exact(core::optimization::Multivec const & vars,
 		core::Real Xyz(pcs_t.get_chi_yz());
 
 		core::Size p;
-		for (p = 1; p <= vec_temp.size(); p++){
+		for ( p = 1; p <= vec_temp.size(); p++ ) {
 			vec_temp[p] = 0;
 		}
 
@@ -271,7 +271,7 @@ TensorsOptimizerSvd::dfunc_exact(core::optimization::Multivec const & vars,
 
 		core::Real square_sum = 0;
 
-		for (j = 1; j <= n_pcs; j++){
+		for ( j = 1; j <= n_pcs; j++ ) {
 			idx = A_index[j]; //index on the vector X_all_, Y_all_, Z_all_
 			xS = X_all[idx];
 			yS = Y_all[idx];
@@ -298,7 +298,7 @@ TensorsOptimizerSvd::dfunc_exact(core::optimization::Multivec const & vars,
 			vec_temp[2] += (y*common2 - 2*( x*Xxy + y*Xyy + z*Xyz)) * common3;
 			vec_temp[3] += (z*common2 - 2*(-z*Xxx + x*Xxz - z*Xyy + y*Xyz)) * common3;
 		}
-		//		std::cerr << "square_sum" <<square_sum << std::endl;
+		//  std::cerr << "square_sum" <<square_sum << std::endl;
 		core::Real one_over_RMSD(1.0/sqrt(square_sum));
 		core::Real common_temp( one_over_RMSD * weight * pcs_d_l.get_normalization_factor_inversed() );
 

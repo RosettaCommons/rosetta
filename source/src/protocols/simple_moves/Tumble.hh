@@ -51,34 +51,34 @@ class Tumble: public protocols::moves::Mover
 {
 public:
 	/// @brief
-	/// 	empty constructor fills values with the expected defaults
+	///  empty constructor fills values with the expected defaults
 	Tumble();
 
 	//destructor
 	~Tumble();
 
-    numeric::xyzVector<core::Real> center_of_mass(core::pose::Pose const & pose);
+	numeric::xyzVector<core::Real> center_of_mass(core::pose::Pose const & pose);
 
-    void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose );
 
-    void
-    parse_my_tag(
-                 TagCOP tag,
-                 basic::datacache::DataMap & datamap,
-                 Filters_map const & filters,
-                 moves::Movers_map const & movers,
-                 Pose const & pose
-                 );
+	void
+	parse_my_tag(
+		TagCOP tag,
+		basic::datacache::DataMap & datamap,
+		Filters_map const & filters,
+		moves::Movers_map const & movers,
+		Pose const & pose
+	);
 
 	virtual protocols::moves::MoverOP clone() const;
 
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
-    std::string get_name() const;
+	std::string get_name() const;
 
 
 private:
-    utility::vector1< core::Size > residue_list_;
+	utility::vector1< core::Size > residue_list_;
 };
 } // simple_moves
 } // protocols

@@ -151,25 +151,25 @@ public:
 		Size mcfi_id
 	);
 
-  void
-  set_catalytic_atoms(
-    utility::vector1< core::Size > catalytic_atoms
-  ){
-    catalytic_atoms_ = catalytic_atoms;
-  }
+	void
+	set_catalytic_atoms(
+		utility::vector1< core::Size > catalytic_atoms
+	){
+		catalytic_atoms_ = catalytic_atoms;
+	}
 
-//	void
-//	set_dsbuilders(
-//  	std::map<std::string, DownstreamBuilderCOP> dsbuilders
-//	);
+	// void
+	// set_dsbuilders(
+	//   std::map<std::string, DownstreamBuilderCOP> dsbuilders
+	// );
 
 	//assign minimum separation distance to downstream-upstrean pair
 	//min_sep_d2_from_upstream_atoms_[ downstream ][ upstream ].second distance
 	//min_sep_d2_from_upstream_atoms_[ downstream ][ upstream ].first
-//	void
-//	initialize_upstream_residue(
-//  	core::chemical::ResidueTypeCOP  us_res /*upstream residue*/
-//	);
+	// void
+	// initialize_upstream_residue(
+	//   core::chemical::ResidueTypeCOP  us_res /*upstream residue*/
+	// );
 
 private:
 
@@ -205,18 +205,18 @@ private:
 
 	bool
 	ds_atom_present(
-  	Size index
+		Size index
 	) const;
 
-  utility::vector1< utility::vector1< utility::vector1< std::pair< core::Size, core::Real > > > >
-  get_min_sep_d2_from_upstream_atoms() const;
+	utility::vector1< utility::vector1< utility::vector1< std::pair< core::Size, core::Real > > > >
+	get_min_sep_d2_from_upstream_atoms() const;
 
 private:
 
 	core::chemical::ResidueTypeCOP downstream_restype_;
 	core::pose::PoseCOP upstream_pose_;
 	EvaluatorSet respair_evaluators_;
-//  std::map < std::string, DownstreamBuilderCOP > dsbuilders_;
+	//  std::map < std::string, DownstreamBuilderCOP > dsbuilders_;
 
 	Size focused_geomcst_id_;
 	Matcher::HitListConstIterator hits_for_focused_geomcst_and_build_point_begin_;
@@ -225,10 +225,10 @@ private:
 
 	mutable TargetRotamerCoordsOP target_downstream_coords_;
 	utility::vector1< core::id::AtomID > downstream_atom_coordinates_needed_;
-  //catalytic_atoms_[2] and catalytic_atoms_[1] upstream two atoms
-  //(built from distance and angle) from the constraint
-  //catalytic_atoms_[3] and catalytic_atoms_[4] downstream two atoms
-  //(built from distance and angle) from the constraint
+	//catalytic_atoms_[2] and catalytic_atoms_[1] upstream two atoms
+	//(built from distance and angle) from the constraint
+	//catalytic_atoms_[3] and catalytic_atoms_[4] downstream two atoms
+	//(built from distance and angle) from the constraint
 	utility::vector1< core::Size > catalytic_atoms_;
 
 	//utility::vector1< core::id::AtomID > downstream_atoms_for_clash_checking_ ;

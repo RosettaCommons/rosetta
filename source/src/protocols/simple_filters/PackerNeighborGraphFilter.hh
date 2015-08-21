@@ -52,7 +52,7 @@ public:
 		std::set< core::Size > const & reg1,
 		std::set< core::Size > const & reg2,
 		core::Size required_cons
-		) : region1_( reg1 ), region2_( reg2 ), required_connections_( required_cons ), num_cons_( 0 )
+	) : region1_( reg1 ), region2_( reg2 ), required_connections_( required_cons ), num_cons_( 0 )
 	{}
 
 	std::set< core::Size > const &
@@ -69,7 +69,7 @@ public:
 
 	//core::Size
 	//num_connections() const {
-	//	return num_connections_; }
+	// return num_connections_; }
 
 	void
 	reset_num_connections() const{
@@ -101,7 +101,7 @@ public:
 	PackerNeighborGraphFilter(
 		core::pack::task::PackerTaskCOP task,
 		core::scoring::ScoreFunctionCOP sfxn
-		) : task_( task ), sfxn_( sfxn ), task_invalidated_( false ) {}
+	) : task_( task ), sfxn_( sfxn ), task_invalidated_( false ) {}
 
 
 	PackerNeighborGraphFilter();

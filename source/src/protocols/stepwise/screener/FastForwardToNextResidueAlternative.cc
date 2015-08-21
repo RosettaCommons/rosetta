@@ -24,29 +24,29 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	//Constructor
-	FastForwardToNextResidueAlternative::FastForwardToNextResidueAlternative( Size const moving_res ):
-		moving_res_( moving_res )
-	{}
+//Constructor
+FastForwardToNextResidueAlternative::FastForwardToNextResidueAlternative( Size const moving_res ):
+	moving_res_( moving_res )
+{}
 
-	//Destructor
-	FastForwardToNextResidueAlternative::~FastForwardToNextResidueAlternative()
-	{}
+//Destructor
+FastForwardToNextResidueAlternative::~FastForwardToNextResidueAlternative()
+{}
 
-	////////////////////////////////////////////////////////////////////////////
-	// kind of sly -- this normally would be in fast_forward(),
-	// but calling that requires 'failure' of screen.
-	void
-	FastForwardToNextResidueAlternative::get_update( sampler::StepWiseSamplerBaseOP sampler ){
-		using namespace sampler;
-		using namespace sampler::rigid_body;
+////////////////////////////////////////////////////////////////////////////
+// kind of sly -- this normally would be in fast_forward(),
+// but calling that requires 'failure' of screen.
+void
+FastForwardToNextResidueAlternative::get_update( sampler::StepWiseSamplerBaseOP sampler ){
+	using namespace sampler;
+	using namespace sampler::rigid_body;
 
-		if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ) {
-			RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
-			rigid_body_rotamer_with_residue_alternatives.fast_forward_to_next_residue( moving_res_ );
-		}
-
+	if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ) {
+		RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
+		rigid_body_rotamer_with_residue_alternatives.fast_forward_to_next_residue( moving_res_ );
 	}
+
+}
 
 } //screener
 } //stepwise

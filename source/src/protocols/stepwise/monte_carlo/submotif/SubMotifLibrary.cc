@@ -58,291 +58,292 @@ namespace stepwise {
 namespace monte_carlo {
 namespace submotif {
 
-	//Constructor
-  SubMotifLibrary::SubMotifLibrary( core::chemical::ResidueTypeSetCAP rsd_set ):
-		rsd_set_( rsd_set )
-	{
-		initialize();
-	}
+//Constructor
+SubMotifLibrary::SubMotifLibrary( core::chemical::ResidueTypeSetCAP rsd_set ):
+	rsd_set_( rsd_set )
+{
+	initialize();
+}
 
-	//Destructor
-	SubMotifLibrary::~SubMotifLibrary()
-	{
-	}
+//Destructor
+SubMotifLibrary::~SubMotifLibrary()
+{
+}
 
-	//////////////////////////////////////////////////////////////////////////////////////////
-	// pose is only used to figure out if we're doing an RNA only run, which can
-	// save us some time in instantiating the residue type set. Silly -- we need
-	// to refactor ResidueTypeSet.
-	void
-	SubMotifLibrary::initialize(){
-		// could also create a protein library for, e.g., helices & beta strand pairings.
-		initialize_from_directory( basic::database::full_name( "sampling/rna/submotif/" ) );
-	}
+//////////////////////////////////////////////////////////////////////////////////////////
+// pose is only used to figure out if we're doing an RNA only run, which can
+// save us some time in instantiating the residue type set. Silly -- we need
+// to refactor ResidueTypeSet.
+void
+SubMotifLibrary::initialize(){
+	// could also create a protein library for, e.g., helices & beta strand pairings.
+	initialize_from_directory( basic::database::full_name( "sampling/rna/submotif/" ) );
+}
 
-	//////////////////////////////////////////////////////////////////////////////////////////
-	void
-	SubMotifLibrary::initialize_from_directory( std::string const directory ){
-		utility::vector1< std::string > filenames;
+//////////////////////////////////////////////////////////////////////////////////////////
+void
+SubMotifLibrary::initialize_from_directory( std::string const directory ){
+	utility::vector1< std::string > filenames;
 
-		utility::io::izstream data( ( directory+"/submotifs.txt" ).c_str() );
-		if ( data.good() ) { // add extra data
-			std::string line;
-			while( getline( data, line ) ) {
-				if ( line.size() && line[0] == '#' ) continue;
-				filenames.push_back( line );
-			}
-		}
-
-		for ( Size n = 1; n <= filenames.size(); n++ ){
-			PoseTag const & tag = filenames[ n ];
-			if ( tag.substr(  tag.size()-4, 4 ) != ".pdb" ) continue;
-			std::string const full_filename = directory + "/" + tag ;
-			runtime_assert( utility::file::file_exists( full_filename ) );
-
-			TR  << "Reading in submotif: " << full_filename << TR.Reset << std::endl;
-			PoseOP pose =	setup::get_pdb_and_cleanup( full_filename, rsd_set_ );
-			tag_into_pose( *pose, tag );
-			submotif_poses_by_tag_[ tag ] = pose;
-
-			SubMotifSequenceSet submotif_sequence_set = get_submotif_sequence_set( *pose );
-			submotif_sequence_sets_.insert( submotif_sequence_set );
-			utility::vector1< SequenceMapping > matches = get_matches_for_one_submotif_sequence_set( submotif_sequence_set, *pose, false /*use_full_model_info*/ );
-			runtime_assert( matches.size() > 0 );
-			for ( Size n = 1; n <= matches.size(); n++ ) {
-				if ( n > 1 ) continue; // hmm. trying to avoid redundancy -- all threadings will be enumerated in target full_model in get_matches_for_one_submotif_sequence_set later.
-				submotif_mappings_by_sequence_set_[ submotif_sequence_set ].push_back( std::make_pair( tag, matches[ n ] ) );
-			}
+	utility::io::izstream data( ( directory+"/submotifs.txt" ).c_str() );
+	if ( data.good() ) { // add extra data
+		std::string line;
+		while ( getline( data, line ) ) {
+			if ( line.size() && line[0] == '#' ) continue;
+			filenames.push_back( line );
 		}
 	}
 
+	for ( Size n = 1; n <= filenames.size(); n++ ) {
+		PoseTag const & tag = filenames[ n ];
+		if ( tag.substr(  tag.size()-4, 4 ) != ".pdb" ) continue;
+		std::string const full_filename = directory + "/" + tag ;
+		runtime_assert( utility::file::file_exists( full_filename ) );
 
-	//////////////////////////////////////////////////////////////////////////////////////////
-	SubMotifSequenceSet
-	SubMotifLibrary::get_submotif_sequence_set( pose::Pose const & pose, bool sort_sequences /* = true */ ) const {
+		TR  << "Reading in submotif: " << full_filename << TR.Reset << std::endl;
+		PoseOP pose = setup::get_pdb_and_cleanup( full_filename, rsd_set_ );
+		tag_into_pose( *pose, tag );
+		submotif_poses_by_tag_[ tag ] = pose;
 
-		utility::vector1< std::string > submotif_sequence_set;
-		std::string chain_sequence( "" );
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) {
-			chain_sequence += pose.sequence()[ n - 1 ];
-			if ( pose.fold_tree().is_cutpoint( n ) ) {
-				submotif_sequence_set.push_back( chain_sequence );
-				chain_sequence = "";
-			}
+		SubMotifSequenceSet submotif_sequence_set = get_submotif_sequence_set( *pose );
+		submotif_sequence_sets_.insert( submotif_sequence_set );
+		utility::vector1< SequenceMapping > matches = get_matches_for_one_submotif_sequence_set( submotif_sequence_set, *pose, false /*use_full_model_info*/ );
+		runtime_assert( matches.size() > 0 );
+		for ( Size n = 1; n <= matches.size(); n++ ) {
+			if ( n > 1 ) continue; // hmm. trying to avoid redundancy -- all threadings will be enumerated in target full_model in get_matches_for_one_submotif_sequence_set later.
+			submotif_mappings_by_sequence_set_[ submotif_sequence_set ].push_back( std::make_pair( tag, matches[ n ] ) );
 		}
-		if ( chain_sequence.size() > 0 ) submotif_sequence_set.push_back( chain_sequence );
-
-		// important -- need to match up submotifs if they have the same chain sequences.
-		if ( sort_sequences ) std::sort( submotif_sequence_set.begin(), submotif_sequence_set.end() );
-
-		return submotif_sequence_set;
 	}
+}
 
-	//////////////////////////////////////////////////////////////////////////////////////////
-	// currently slow but a complete recursive search.
-	// Could be computed once, and then filtered by pose_domain_map...
-	//////////////////////////////////////////////////////////////////////////////////////////
-	utility::vector1< StepWiseMove >
-	SubMotifLibrary::get_submotif_moves( pose::Pose const & pose ) const {
 
-		utility::vector1< StepWiseMove > submotif_moves;
+//////////////////////////////////////////////////////////////////////////////////////////
+SubMotifSequenceSet
+SubMotifLibrary::get_submotif_sequence_set( pose::Pose const & pose, bool sort_sequences /* = true */ ) const {
 
-		for ( std::set< SubMotifSequenceSet >::const_iterator it = submotif_sequence_sets_.begin(),
-					end = submotif_sequence_sets_.end(); it != end; ++it ){
+	utility::vector1< std::string > submotif_sequence_set;
+	std::string chain_sequence( "" );
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		chain_sequence += pose.sequence()[ n - 1 ];
+		if ( pose.fold_tree().is_cutpoint( n ) ) {
+			submotif_sequence_set.push_back( chain_sequence );
+			chain_sequence = "";
+		}
+	}
+	if ( chain_sequence.size() > 0 ) submotif_sequence_set.push_back( chain_sequence );
 
-			SubMotifSequenceSet const & submotif_sequence_set( *it );
-			utility::vector1< SequenceMapping > all_matches =
-         get_matches_for_one_submotif_sequence_set( submotif_sequence_set, pose );
+	// important -- need to match up submotifs if they have the same chain sequences.
+	if ( sort_sequences ) std::sort( submotif_sequence_set.begin(), submotif_sequence_set.end() );
 
-			for ( Size m = 1; m <= all_matches.size(); m++ ) {
-				SequenceMapping const & mapping_to_pose = all_matches[ m ];
+	return submotif_sequence_set;
+}
 
-				// need to combine this mapping from submotif_sequence_set --> pose
-				// with stored          mapping from submotif_sequence_set --> submotif_pose
-				utility::vector1< std::pair< PoseTag, SequenceMapping > > const & submotif_tags_with_mapping = submotif_mappings_by_sequence_set_.find( submotif_sequence_set )->second;
-				for ( Size q = 1; q <= submotif_tags_with_mapping.size(); q++ ) {
+//////////////////////////////////////////////////////////////////////////////////////////
+// currently slow but a complete recursive search.
+// Could be computed once, and then filtered by pose_domain_map...
+//////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< StepWiseMove >
+SubMotifLibrary::get_submotif_moves( pose::Pose const & pose ) const {
 
-					std::string const & submotif_tag = submotif_tags_with_mapping[ q ].first;
-					SequenceMapping const & mapping_to_submotif_pose = submotif_tags_with_mapping[ q ].second;
-					utility::vector1< Size > moving_res;
-					for ( Size k = 1; k <= mapping_to_submotif_pose.size(); k++ ) {
-						moving_res.push_back( mapping_to_pose[ mapping_to_submotif_pose.index( k ) ] );
-					}
+	utility::vector1< StepWiseMove > submotif_moves;
 
-					StepWiseMove submotif_move( moving_res, Attachments(), FROM_SCRATCH, submotif_tag );
-					submotif_moves.push_back( submotif_move );
+	for ( std::set< SubMotifSequenceSet >::const_iterator it = submotif_sequence_sets_.begin(),
+			end = submotif_sequence_sets_.end(); it != end; ++it ) {
+
+		SubMotifSequenceSet const & submotif_sequence_set( *it );
+		utility::vector1< SequenceMapping > all_matches =
+			get_matches_for_one_submotif_sequence_set( submotif_sequence_set, pose );
+
+		for ( Size m = 1; m <= all_matches.size(); m++ ) {
+			SequenceMapping const & mapping_to_pose = all_matches[ m ];
+
+			// need to combine this mapping from submotif_sequence_set --> pose
+			// with stored          mapping from submotif_sequence_set --> submotif_pose
+			utility::vector1< std::pair< PoseTag, SequenceMapping > > const & submotif_tags_with_mapping = submotif_mappings_by_sequence_set_.find( submotif_sequence_set )->second;
+			for ( Size q = 1; q <= submotif_tags_with_mapping.size(); q++ ) {
+
+				std::string const & submotif_tag = submotif_tags_with_mapping[ q ].first;
+				SequenceMapping const & mapping_to_submotif_pose = submotif_tags_with_mapping[ q ].second;
+				utility::vector1< Size > moving_res;
+				for ( Size k = 1; k <= mapping_to_submotif_pose.size(); k++ ) {
+					moving_res.push_back( mapping_to_pose[ mapping_to_submotif_pose.index( k ) ] );
 				}
+
+				StepWiseMove submotif_move( moving_res, Attachments(), FROM_SCRATCH, submotif_tag );
+				submotif_moves.push_back( submotif_move );
 			}
 		}
-
-		return submotif_moves;
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////
-	utility::vector1< SequenceMapping >
-	SubMotifLibrary::get_matches_for_one_submotif_sequence_set( SubMotifSequenceSet const & submotif_sequence_set,
-																															pose::Pose const & pose,
-																															bool const use_full_model_info /* = true */ ) const {
+	return submotif_moves;
+}
 
-		// a little precomputation...
+///////////////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< SequenceMapping >
+SubMotifLibrary::get_matches_for_one_submotif_sequence_set( SubMotifSequenceSet const & submotif_sequence_set,
+	pose::Pose const & pose,
+	bool const use_full_model_info /* = true */ ) const {
 
-		Size submotif_length = 0;
-		vector1< Size > submotif_cutpoints;
-		std::string submotif_full_sequence;
-		for ( Size n = 1; n <= submotif_sequence_set.size(); n++ ) {
-			std::string const & submotif_sequence = submotif_sequence_set[ n ];
-			submotif_length += submotif_sequence.size();
-			submotif_cutpoints.push_back( submotif_length );
-			submotif_full_sequence += submotif_sequence;
-		}
+	// a little precomputation...
 
-		std::string pose_full_sequence = pose.sequence();
-		utility::vector1< Size > pose_cutpoints;
-		for ( Size n = 1; n < pose.total_residue(); n++ ) {
-			if ( pose.fold_tree().is_cutpoint( n ) ) pose_cutpoints.push_back( n );
-		}
-		utility::vector1< Size > pose_domain_map( pose_full_sequence.size(), 0 );
-
-		if ( use_full_model_info ) {
-			runtime_assert( full_model_info_defined( pose ) );
-			pose_full_sequence   = const_full_model_info( pose ).full_sequence();
-			pose_cutpoints  = const_full_model_info( pose ).cutpoint_open_in_full_model();
-			pose_domain_map = figure_out_pose_domain_map_const( pose );
-			utility::vector1< Size > const & sample_res( const_full_model_info( pose ).sample_res() );
-			utility::vector1< Size > const & bulge_res( const_full_model_info( pose ).rna_bulge_res() );
-			for ( Size n = 1; n <= pose_domain_map.size(); n++ ) {
-				if ( ( !sample_res.has_value( n ) || bulge_res.has_value( n ) )  &&
-						 pose_domain_map[ n ] == 0 ) pose_domain_map[ n ] = 999; // disallow match unless sample_res.
-			}
-		}
-
-		// do via a recursive search.
-		utility::vector1< utility::vector1< Size > > all_matches;
-		SequenceMapping matching_residues;
-		get_matches( all_matches,
-								 matching_residues,
-								 submotif_full_sequence,
-								 submotif_cutpoints,
-								 pose_full_sequence,
-								 pose_cutpoints,
-								 pose_domain_map );
-
-		return all_matches;
+	Size submotif_length = 0;
+	vector1< Size > submotif_cutpoints;
+	std::string submotif_full_sequence;
+	for ( Size n = 1; n <= submotif_sequence_set.size(); n++ ) {
+		std::string const & submotif_sequence = submotif_sequence_set[ n ];
+		submotif_length += submotif_sequence.size();
+		submotif_cutpoints.push_back( submotif_length );
+		submotif_full_sequence += submotif_sequence;
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	SubMotifLibrary::get_matches( utility::vector1< SequenceMapping > & all_matches /* stores matches */,
-															  SequenceMapping const matching_residues /* working mapping */,
-																std::string const & submotif_full_sequence,
-																utility::vector1< Size > const & submotif_cutpoints,
-																std::string const & pose_full_sequence,
-																utility::vector1< Size > const & pose_cutpoints,
-																utility::vector1< Size > const & pose_domain_map ) const
-	{
+	std::string pose_full_sequence = pose.sequence();
+	utility::vector1< Size > pose_cutpoints;
+	for ( Size n = 1; n < pose.total_residue(); n++ ) {
+		if ( pose.fold_tree().is_cutpoint( n ) ) pose_cutpoints.push_back( n );
+	}
+	utility::vector1< Size > pose_domain_map( pose_full_sequence.size(), 0 );
 
-		if ( matching_residues.size() == submotif_full_sequence.size() ) { // done!
-			all_matches.push_back( matching_residues );
-			return;
+	if ( use_full_model_info ) {
+		runtime_assert( full_model_info_defined( pose ) );
+		pose_full_sequence   = const_full_model_info( pose ).full_sequence();
+		pose_cutpoints  = const_full_model_info( pose ).cutpoint_open_in_full_model();
+		pose_domain_map = figure_out_pose_domain_map_const( pose );
+		utility::vector1< Size > const & sample_res( const_full_model_info( pose ).sample_res() );
+		utility::vector1< Size > const & bulge_res( const_full_model_info( pose ).rna_bulge_res() );
+		for ( Size n = 1; n <= pose_domain_map.size(); n++ ) {
+			if ( ( !sample_res.has_value( n ) || bulge_res.has_value( n ) )  &&
+					pose_domain_map[ n ] == 0 ) pose_domain_map[ n ] = 999; // disallow match unless sample_res.
 		}
+	}
 
-		// if not done, look for next match.
-		utility::vector1< Size > possible_next_res;
-		Size const i_submotif = matching_residues.size() + 1;
-		Size const nfull = pose_full_sequence.size();
-		if ( i_submotif == 1 || submotif_cutpoints.has_value( i_submotif - 1 ) ) {
-			// starting a new chain -- only constraint is that it should *not* be the very next residue.
-			for ( Size i_full = 1; i_full <= nfull; i_full++ ) {
-		 		if ( i_submotif == 1 || i_full == 1 || pose_cutpoints.has_value( i_full - 1 ) ||
-		 				( i_full != matching_residues[ i_submotif - 1 ] && i_full != matching_residues[ i_submotif - 1 ] + 1 ) )
-		 			possible_next_res.push_back( i_full );
-			}
-		} else {
-			// must be contiguous
-			runtime_assert( matching_residues.size() >= 1 );
-			Size const i_full = matching_residues[ i_submotif - 1 ] + 1;
-			if ( !pose_cutpoints.has_value( i_full - 1 ) ) {
+	// do via a recursive search.
+	utility::vector1< utility::vector1< Size > > all_matches;
+	SequenceMapping matching_residues;
+	get_matches( all_matches,
+		matching_residues,
+		submotif_full_sequence,
+		submotif_cutpoints,
+		pose_full_sequence,
+		pose_cutpoints,
+		pose_domain_map );
+
+	return all_matches;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+void
+SubMotifLibrary::get_matches( utility::vector1< SequenceMapping > & all_matches /* stores matches */,
+	SequenceMapping const matching_residues /* working mapping */,
+	std::string const & submotif_full_sequence,
+	utility::vector1< Size > const & submotif_cutpoints,
+	std::string const & pose_full_sequence,
+	utility::vector1< Size > const & pose_cutpoints,
+	utility::vector1< Size > const & pose_domain_map ) const
+{
+
+	if ( matching_residues.size() == submotif_full_sequence.size() ) { // done!
+		all_matches.push_back( matching_residues );
+		return;
+	}
+
+	// if not done, look for next match.
+	utility::vector1< Size > possible_next_res;
+	Size const i_submotif = matching_residues.size() + 1;
+	Size const nfull = pose_full_sequence.size();
+	if ( i_submotif == 1 || submotif_cutpoints.has_value( i_submotif - 1 ) ) {
+		// starting a new chain -- only constraint is that it should *not* be the very next residue.
+		for ( Size i_full = 1; i_full <= nfull; i_full++ ) {
+			if ( i_submotif == 1 || i_full == 1 || pose_cutpoints.has_value( i_full - 1 ) ||
+					( i_full != matching_residues[ i_submotif - 1 ] && i_full != matching_residues[ i_submotif - 1 ] + 1 ) ) {
 				possible_next_res.push_back( i_full );
 			}
 		}
-
-		////////////////////////////////////////////////////////////////////////////
-		//  for full_model residue to match submotif residue, should
-		//
-		//    1. actually be in range
-		//    2. match in sequence
-		//    3. be sample-able
-		//    4. not already sampled in full_model.
-		//    5. not already matched to another residue in the submotif.
-		//
-		// info on what is already sampled in full_model is in pose_domain_map_ which
-		///  is set separately.
-		//
-		////////////////////////////////////////////////////////////////////////////
-		for ( Size n = 1; n <= possible_next_res.size(); n++ ) {
-			Size const i_full = possible_next_res[ n ];
-
-			if (	i_full <= pose_full_sequence.size() &&
-						submotif_full_sequence[ i_submotif - 1 ] == pose_full_sequence[ i_full - 1 ] &&
-						pose_domain_map[ i_full ] == 0 &&
-						!matching_residues.has_value( i_full ) &&
-						( !matching_residues.has_value( i_full + 1 ) ||
-							pose_cutpoints.has_value( i_full ) ) ) {
-
-				SequenceMapping matching_residues_new( matching_residues );
-				matching_residues_new.push_back( i_full );
-				get_matches( all_matches,
-										 matching_residues_new,
-										 submotif_full_sequence,
-										 submotif_cutpoints,
-										 pose_full_sequence,
-										 pose_cutpoints,
-										 pose_domain_map );
-			}
-		}
-
-	}
-
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	SubMotifLibrary::output_tags() const {
-		for ( std::map< PoseTag, core::pose::PoseCOP >::const_iterator it = submotif_poses_by_tag_.begin(),
-					end = submotif_poses_by_tag_.end(); it != end; ++it ) {
-			TR << TR.Green << it->first << " " << get_submotif_sequence_set( *(it->second), false /*sort_sequences*/ ) << TR.Reset << std::endl;
+	} else {
+		// must be contiguous
+		runtime_assert( matching_residues.size() >= 1 );
+		Size const i_full = matching_residues[ i_submotif - 1 ] + 1;
+		if ( !pose_cutpoints.has_value( i_full - 1 ) ) {
+			possible_next_res.push_back( i_full );
 		}
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////
-	pose::PoseOP
-	SubMotifLibrary::create_new_submotif( SequenceMapping const & move_element,
-																				PoseTag const submotif_tag,
-																				pose::Pose const & pose ) const {
+	////////////////////////////////////////////////////////////////////////////
+	//  for full_model residue to match submotif residue, should
+	//
+	//    1. actually be in range
+	//    2. match in sequence
+	//    3. be sample-able
+	//    4. not already sampled in full_model.
+	//    5. not already matched to another residue in the submotif.
+	//
+	// info on what is already sampled in full_model is in pose_domain_map_ which
+	///  is set separately.
+	//
+	////////////////////////////////////////////////////////////////////////////
+	for ( Size n = 1; n <= possible_next_res.size(); n++ ) {
+		Size const i_full = possible_next_res[ n ];
 
-		TR.Debug << TR.Magenta << "Creating: " << submotif_tag << TR.Reset << std::endl;
+		if ( i_full <= pose_full_sequence.size() &&
+				submotif_full_sequence[ i_submotif - 1 ] == pose_full_sequence[ i_full - 1 ] &&
+				pose_domain_map[ i_full ] == 0 &&
+				!matching_residues.has_value( i_full ) &&
+				( !matching_residues.has_value( i_full + 1 ) ||
+				pose_cutpoints.has_value( i_full ) ) ) {
 
-		if( submotif_poses_by_tag_.find( submotif_tag ) == submotif_poses_by_tag_.end() ) {
-			TR << std::endl << TR.Green << "Valid submotif tags " << TR.Reset << std::endl;
-			output_tags();
-			utility_exit_with_message( "Invalid SUBMOTIF tag: "+submotif_tag );
+			SequenceMapping matching_residues_new( matching_residues );
+			matching_residues_new.push_back( i_full );
+			get_matches( all_matches,
+				matching_residues_new,
+				submotif_full_sequence,
+				submotif_cutpoints,
+				pose_full_sequence,
+				pose_cutpoints,
+				pose_domain_map );
 		}
-
-		PoseOP new_pose = submotif_poses_by_tag_.find( submotif_tag )->second->clone();
-
-		std::string const & full_sequence = const_full_model_info( pose ).full_sequence();
-		for ( Size n = 1; n <= move_element.size(); n++ ) {
-			runtime_assert( full_sequence[ move_element[ n ]-1 ] == new_pose->sequence()[ n - 1 ] );
-			// should also check that cutpoints match up.
-		}
-
-		FullModelInfoOP full_model_info_for_pose( new FullModelInfo( const_full_model_info( pose ).full_model_parameters() )  );
-		full_model_info_for_pose->set_res_list( move_element );
-		set_full_model_info( *new_pose, full_model_info_for_pose );
-
-		modeler::fix_up_residue_type_variants( *new_pose );
-
-		return new_pose;
 	}
+
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+void
+SubMotifLibrary::output_tags() const {
+	for ( std::map< PoseTag, core::pose::PoseCOP >::const_iterator it = submotif_poses_by_tag_.begin(),
+			end = submotif_poses_by_tag_.end(); it != end; ++it ) {
+		TR << TR.Green << it->first << " " << get_submotif_sequence_set( *(it->second), false /*sort_sequences*/ ) << TR.Reset << std::endl;
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+pose::PoseOP
+SubMotifLibrary::create_new_submotif( SequenceMapping const & move_element,
+	PoseTag const submotif_tag,
+	pose::Pose const & pose ) const {
+
+	TR.Debug << TR.Magenta << "Creating: " << submotif_tag << TR.Reset << std::endl;
+
+	if ( submotif_poses_by_tag_.find( submotif_tag ) == submotif_poses_by_tag_.end() ) {
+		TR << std::endl << TR.Green << "Valid submotif tags " << TR.Reset << std::endl;
+		output_tags();
+		utility_exit_with_message( "Invalid SUBMOTIF tag: "+submotif_tag );
+	}
+
+	PoseOP new_pose = submotif_poses_by_tag_.find( submotif_tag )->second->clone();
+
+	std::string const & full_sequence = const_full_model_info( pose ).full_sequence();
+	for ( Size n = 1; n <= move_element.size(); n++ ) {
+		runtime_assert( full_sequence[ move_element[ n ]-1 ] == new_pose->sequence()[ n - 1 ] );
+		// should also check that cutpoints match up.
+	}
+
+	FullModelInfoOP full_model_info_for_pose( new FullModelInfo( const_full_model_info( pose ).full_model_parameters() )  );
+	full_model_info_for_pose->set_res_list( move_element );
+	set_full_model_info( *new_pose, full_model_info_for_pose );
+
+	modeler::fix_up_residue_type_variants( *new_pose );
+
+	return new_pose;
+}
 
 } //submotif
 } //monte_carlo

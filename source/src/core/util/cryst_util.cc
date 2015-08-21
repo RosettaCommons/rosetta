@@ -80,9 +80,9 @@ core::Real getMLweight( core::scoring::ScoreFunction & scorefxn, core::pose::Pos
 	core::pose::Pose pose = pose_orig; // copy the pose since we will perturb it
 
 	// symmetrize?
-	if (core::pose::symmetry::is_symmetric(pose)) {
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetricConformation const & symm_conf (
-				dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 		// symmetrize scorefunct & movemap
@@ -106,7 +106,7 @@ core::Real getMLweight( core::scoring::ScoreFunction & scorefxn, core::pose::Pos
 		f_xtal.dfunc( vars, dExtal_dvars );
 
 		// sum
-		for (int i=1; i<=(int)vars.size(); ++i) {
+		for ( int i=1; i<=(int)vars.size(); ++i ) {
 			grad2_xtal += dExtal_dvars[ i ]*dExtal_dvars[ i ];
 			grad2_ros += dEros_dvars[ i ]*dEros_dvars[ i ];
 		}
@@ -117,31 +117,31 @@ core::Real getMLweight( core::scoring::ScoreFunction & scorefxn, core::pose::Pos
 		return w_xtal1;
 
 		// now take a step in the grad direction and recompute
-		// 		{
-		// 			(*rosetta_scorefxn)(pose);  // score pose first
-		// 			rosetta_scorefxn->setup_for_minimizing( pose, min_map );
-		// 			BrentLineMinimization test_brent( f_ros, vars.size() );
-		// 			core::Real newval = test_brent( vars, dEros_dvars );
+		//   {
+		//    (*rosetta_scorefxn)(pose);  // score pose first
+		//    rosetta_scorefxn->setup_for_minimizing( pose, min_map );
+		//    BrentLineMinimization test_brent( f_ros, vars.size() );
+		//    core::Real newval = test_brent( vars, dEros_dvars );
 		//
-		// 			f_ros.dfunc( vars, dEros_dvars );
+		//    f_ros.dfunc( vars, dEros_dvars );
 		//
-		// 			min_map.copy_dofs_to_pose( pose, vars );
-		// 			(*xtal_scorefxn)(pose);  // score pose first
-		// 			xtal_scorefxn->setup_for_minimizing( pose, min_map );
-		// 			f_xtal.dfunc( vars, dExtal_dvars );
+		//    min_map.copy_dofs_to_pose( pose, vars );
+		//    (*xtal_scorefxn)(pose);  // score pose first
+		//    xtal_scorefxn->setup_for_minimizing( pose, min_map );
+		//    f_xtal.dfunc( vars, dExtal_dvars );
 		//
-		// 			// sum
-		// 			grad2_xtal = grad2_ros = 0;
-		// 			for (int i=1; i<=(int)vars.size(); ++i) {
-		// 				grad2_xtal += dExtal_dvars[ i ]*dExtal_dvars[ i ];
-		// 				grad2_ros += dEros_dvars[ i ]*dEros_dvars[ i ];
-		// 			}
-		// 		}
+		//    // sum
+		//    grad2_xtal = grad2_ros = 0;
+		//    for (int i=1; i<=(int)vars.size(); ++i) {
+		//     grad2_xtal += dExtal_dvars[ i ]*dExtal_dvars[ i ];
+		//     grad2_ros += dEros_dvars[ i ]*dEros_dvars[ i ];
+		//    }
+		//   }
 		//
-		// 		core::Real w_xtal2 = (grad2_xtal != 0) ?  1 * sqrt( grad2_ros / grad2_xtal ) : 1;
-		// 		std::cerr << " w2 = " << w_xtal2 << " = sqrt( " << grad2_ros << " / " << grad2_xtal << " )" << std::endl;
+		//   core::Real w_xtal2 = (grad2_xtal != 0) ?  1 * sqrt( grad2_ros / grad2_xtal ) : 1;
+		//   std::cerr << " w2 = " << w_xtal2 << " = sqrt( " << grad2_ros << " / " << grad2_xtal << " )" << std::endl;
 		//
-		// 		return 0.5*(w_xtal1+w_xtal2);
+		//   return 0.5*(w_xtal1+w_xtal2);
 	} else {
 		// compute gradients using both scorefunctions
 		MinimizerMap min_map;
@@ -160,13 +160,13 @@ core::Real getMLweight( core::scoring::ScoreFunction & scorefxn, core::pose::Pos
 		f_xtal.dfunc( vars, dExtal_dvars );
 
 		// sum
-		for (int i=1; i<=(int)vars.size(); ++i) {
+		for ( int i=1; i<=(int)vars.size(); ++i ) {
 			grad2_xtal += dExtal_dvars[ i ]*dExtal_dvars[ i ];
 			grad2_ros += dEros_dvars[ i ]*dEros_dvars[ i ];
 		}
 
 		core::Real w_xtal;
-		if (grad2_xtal != 0) {
+		if ( grad2_xtal != 0 ) {
 			w_xtal = 1 * sqrt( grad2_ros / grad2_xtal );
 		} else {
 			w_xtal = 1;
@@ -210,9 +210,9 @@ core::Real getMLweight_cart( core::scoring::ScoreFunction & scorefxn, core::pose
 	core::Real grad2_ros=0, grad2_xtal=0;
 
 	// symmetrize?
-	if (core::pose::symmetry::is_symmetric(pose)) {
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetricConformation const & symm_conf (
-				dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 		// symmetrize scorefunct & movemap
@@ -238,16 +238,17 @@ core::Real getMLweight_cart( core::scoring::ScoreFunction & scorefxn, core::pose
 	f_xtal.dfunc( vars, dExtal_dvars );
 
 	// sum
-	for (int i=1; i<=(int)vars.size(); ++i) {
+	for ( int i=1; i<=(int)vars.size(); ++i ) {
 		grad2_xtal += dExtal_dvars[ i ]*dExtal_dvars[ i ];
 		grad2_ros += dEros_dvars[ i ]*dEros_dvars[ i ];
 	}
 
 	core::Real w_xtal1;
-	if (grad2_xtal != 0)
+	if ( grad2_xtal != 0 ) {
 		w_xtal1 = 1 * sqrt( grad2_ros / grad2_xtal );
-	else
+	} else {
 		w_xtal1 = 1;
+	}
 	std::cerr << " w0 = " << w_xtal1 << " = sqrt( " << grad2_ros << " / " << grad2_xtal << " )" << std::endl;
 
 	return 0.5*(w_xtal1+w_xtal1);

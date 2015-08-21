@@ -92,11 +92,11 @@ std::string ScoreFileSilentStructCreator::keyname() const {
 ScoreJumpFileSilentStructCreator::ScoreJumpFileSilentStructCreator() {}
 ScoreJumpFileSilentStructCreator::~ScoreJumpFileSilentStructCreator() {}
 SilentStructOP ScoreJumpFileSilentStructCreator::create_silent_struct() const {
-  return SilentStructOP( new ScoreJumpFileSilentStruct );
+	return SilentStructOP( new ScoreJumpFileSilentStruct );
 }
 
 std::string ScoreJumpFileSilentStructCreator::keyname() const {
-  return "score_jump";
+	return "score_jump";
 }
 
 

@@ -34,54 +34,54 @@ namespace devel {
 namespace replica_docking {
 
 class UnbiasedRigidBodyPerturbNoCenterMover : public protocols::rigid::RigidBodyPerturbNoCenterMover {
-  typedef RigidBodyPerturbNoCenterMover Parent;
-  //  typedef std::map< std::string, devel::replica_docking::TempInterpolatorOP > Interpolators;
-  //  typedef utility::vector1< protocols::canonical_sampling::UnbiasedMoverOP > MoverOPs;
+	typedef RigidBodyPerturbNoCenterMover Parent;
+	//  typedef std::map< std::string, devel::replica_docking::TempInterpolatorOP > Interpolators;
+	//  typedef utility::vector1< protocols::canonical_sampling::UnbiasedMoverOP > MoverOPs;
 
 public:
-  UnbiasedRigidBodyPerturbNoCenterMover();
-  UnbiasedRigidBodyPerturbNoCenterMover( UnbiasedRigidBodyPerturbNoCenterMover const & );
+	UnbiasedRigidBodyPerturbNoCenterMover();
+	UnbiasedRigidBodyPerturbNoCenterMover( UnbiasedRigidBodyPerturbNoCenterMover const & );
 
-  virtual ~UnbiasedRigidBodyPerturbNoCenterMover();
+	virtual ~UnbiasedRigidBodyPerturbNoCenterMover();
 
-  /// @brief overload it to use random unit quaternion to unbiasedly sample rotation instead of Jump::gaussian_move
-  virtual void apply( core::pose::Pose & pose );
+	/// @brief overload it to use random unit quaternion to unbiasedly sample rotation instead of Jump::gaussian_move
+	virtual void apply( core::pose::Pose & pose );
 
-  virtual std::string get_name() const;
+	virtual std::string get_name() const;
 
-  protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const;
 
-  virtual protocols::moves::MoverOP fresh_instance() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 
-  void initialize( core::pose::Pose const &);
+	void initialize( core::pose::Pose const &);
 
-  virtual void parse_my_tag(
-       utility::tag::TagCOP tag,
-       basic::datacache::DataMap &,
-       protocols::filters::Filters_map const &,
-       protocols::moves::Movers_map const &,
-       core::pose::Pose const &
-  );
+	virtual void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
+	);
 
-//   virtual void
-//   initialize_simulation(
-//      core::pose::Pose& pose,
-//      protocols::canonical_sampling::MetropolisHastingsMover const& metropolis_hastings_mover,
-//      core::Size cycle
-//   );
+	//   virtual void
+	//   initialize_simulation(
+	//      core::pose::Pose& pose,
+	//      protocols::canonical_sampling::MetropolisHastingsMover const& metropolis_hastings_mover,
+	//      core::Size cycle
+	//   );
 
 private:
 
-  protocols::docking::RigidBodyInfoOP rigid_body_info_;
-  protocols::docking::DockJumps movable_jumps_;
-  bool initialized_;
-  bool restrict_; // if restrict the searching space from a reference structure
-  bool max_move_;
-  std::string ref_file_;
-  core::Real max_trans_dist_;
-  core::Real max_rot_angle_;
-  numeric::xyzVector<core::Real> ref_T_;
-  numeric::xyzMatrix<core::Real> ref_R_;
+	protocols::docking::RigidBodyInfoOP rigid_body_info_;
+	protocols::docking::DockJumps movable_jumps_;
+	bool initialized_;
+	bool restrict_; // if restrict the searching space from a reference structure
+	bool max_move_;
+	std::string ref_file_;
+	core::Real max_trans_dist_;
+	core::Real max_rot_angle_;
+	numeric::xyzVector<core::Real> ref_T_;
+	numeric::xyzMatrix<core::Real> ref_R_;
 
 };
 

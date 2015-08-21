@@ -55,16 +55,14 @@ LoopHashLibraryOptions::parse_my_tag(
 	utility::tag::TagCOP tag
 )
 {
-	if(tag->hasOption("loop_sizes")){
+	if ( tag->hasOption("loop_sizes") ) {
 		loop_sizes_.clear();
 		utility::vector1<std::string> loop_sizes_strings =
 			utility::string_split(tag->getOption< std::string >("loop_sizes"), ',');
-		for(core::Size i=1; i<=loop_sizes_strings.size(); ++i)
-		{
+		for ( core::Size i=1; i<=loop_sizes_strings.size(); ++i ) {
 			loop_sizes_.push_back(utility::string2int(loop_sizes_strings[i]));
 		}
-	}
-	else{
+	} else {
 		utility_exit_with_message("You must provide a 'loop_sizes' option to the LoopHashLibrary tag");
 	}
 }

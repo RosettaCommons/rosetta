@@ -101,7 +101,7 @@ public:
 		return output_file_name_;
 	};
 
-/// @brief The tag supplied at create time plus the nstruct number (from 1 to nstruct inclusive).
+	/// @brief The tag supplied at create time plus the nstruct number (from 1 to nstruct inclusive).
 	void set_output_file_name( std::string str ) {
 		output_file_name_ = str;
 	};
@@ -110,7 +110,7 @@ public:
 	template <typename T>
 	bool get(std::string const & key, T & value)
 	{
-		if( extra_data_.find(key) == extra_data_.end() ) return false;
+		if ( extra_data_.find(key) == extra_data_.end() ) return false;
 		std::istringstream is( extra_data_[key] );
 		is >> value;
 		return !is.fail();
@@ -119,7 +119,7 @@ public:
 	/// @brief Specialization for strings.
 	bool get(std::string const & key, std::string & value)
 	{
-		if( extra_data_.find(key) == extra_data_.end() ) return false;
+		if ( extra_data_.find(key) == extra_data_.end() ) return false;
 		value = extra_data_[key];
 		return true;
 	}

@@ -34,25 +34,26 @@ namespace constel {
 ///   non-zero occupancy only for the atoms that belong to the constellation.
 ///   This is guaranteed if the residues forming the constellation were
 ///   previously passed as arguments to function
-/// 	"SingResCnlCrea::zero_occ_for_deleted_atoms()".
+///  "SingResCnlCrea::zero_occ_for_deleted_atoms()".
 ///
 ///
 xyzVector<Real> cnl_com(vector1<Size> const &cnl, Pose const &ps) {
 
-  xyzVector<Real> com(0);
-  Size nats = 0;
-  for(Size i=1; i<=cnl.size(); ++i) {
-    Residue const &rsd(ps.residue(cnl[i]));
-    for (Size j=1; j<=rsd.natoms(); ++j)
-      if (ps.pdb_info()->occupancy(cnl[i], j)) {
-        ++nats;
-        com += rsd.xyz(j);
-      }
-  }
-  com /= nats;
+	xyzVector<Real> com(0);
+	Size nats = 0;
+	for ( Size i=1; i<=cnl.size(); ++i ) {
+		Residue const &rsd(ps.residue(cnl[i]));
+		for ( Size j=1; j<=rsd.natoms(); ++j ) {
+			if ( ps.pdb_info()->occupancy(cnl[i], j) ) {
+				++nats;
+				com += rsd.xyz(j);
+			}
+		}
+	}
+	com /= nats;
 
-  return com;
+	return com;
 }
 
 } // constel
-} // devel 
+} // devel

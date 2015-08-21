@@ -47,9 +47,9 @@
 #include <string>
 #include <core/chemical/orbitals/OrbitalTypeMapper.fwd.hh>
 
-namespace core{
-namespace chemical{
-namespace orbitals{
+namespace core {
+namespace chemical {
+namespace orbitals {
 
 class OrbitalType {
 public:

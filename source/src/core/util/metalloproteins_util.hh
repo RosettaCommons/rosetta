@@ -70,7 +70,7 @@ add_covalent_linkage(
 	Size const resB_pos,
 	Size const resA_At,
 	Size const resB_At,
-	bool const remove_hydrogens //Should extraneous hydrogens on the bonding atoms be removed? 
+	bool const remove_hydrogens //Should extraneous hydrogens on the bonding atoms be removed?
 );
 
 
@@ -79,9 +79,9 @@ add_covalent_linkage(
 /// @details This function generates the list by looping through all residues and checking all metal-binding atoms of all
 /// metal-binding residues, so it's not super speedy.
 /// Inputs:
-///		pose (The pose that we'll operate on, unchanged by operation)
-///		metal_postion (The residue number of the metal)
-/// 	dist_cutoff_multiplier (A float for the distance cutoff multiplier; the cutoff is the sum of the Lennard-Jones radii times the multiplier)
+///  pose (The pose that we'll operate on, unchanged by operation)
+///  metal_postion (The residue number of the metal)
+///  dist_cutoff_multiplier (A float for the distance cutoff multiplier; the cutoff is the sum of the Lennard-Jones radii times the multiplier)
 /// @author Vikram K. Mulligan (vmulligan@uw.edu)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1 < core::id::AtomID >
@@ -112,9 +112,9 @@ add_covalent_linkages_to_metal (
 /// @brief Function to auto-detect and add covalent connections to a particular metal ion.
 /// @details This function calls find_metalbinding_atoms and then passes the list of metal binding atoms to add_covalent_linkages_to_metal.
 /// Inputs:
-///		pose (The pose that we'll operate on, changed by operation)
-///		metal_postion (The residue number of the metal)
-/// 	dist_cutoff_multiplier (A float for the distance cutoff multiplier; the cutoff is the sum of the Lennard-Jones radii times the multiplier)
+///  pose (The pose that we'll operate on, changed by operation)
+///  metal_postion (The residue number of the metal)
+///  dist_cutoff_multiplier (A float for the distance cutoff multiplier; the cutoff is the sum of the Lennard-Jones radii times the multiplier)
 ///   remove_hydrogesn (Should hydrogens on the liganding atoms be auto-removed?  Default true.)
 /// @author Vikram K. Mulligan (vmulligan@uw.edu)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -130,8 +130,8 @@ auto_setup_metal_bonds (
 /// @brief Function to auto-detect and add covalent connections to all metal ions in a pose.
 /// @details This function iteratively calls auto_setup_metal_bonds.
 /// Inputs:
-///		pose (The pose that we'll operate on, changed by operation)
-/// 	dist_cutoff_multiplier (A float for the distance cutoff multiplier; the cutoff is the sum of the Lennard-Jones radii times the multiplier)
+///  pose (The pose that we'll operate on, changed by operation)
+///  dist_cutoff_multiplier (A float for the distance cutoff multiplier; the cutoff is the sum of the Lennard-Jones radii times the multiplier)
 ///   remove_hydrogesn (Should hydrogens on the liganding atoms be auto-removed?  Default true.)
 /// @author Vikram K. Mulligan (vmulligan@uw.edu)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -147,7 +147,7 @@ auto_setup_all_metal_bonds (
 /// @details This function constrains the distances to be whatever they are in the input pose.  This version
 /// does not set the weights for the constraints terms in the scorefunction.
 /// Inputs:
-///		pose (The pose that we'll operate on, changed by operation)
+///  pose (The pose that we'll operate on, changed by operation)
 ///   distance_constraint_multiplier (A float for the strength of the metal - binding atom distance constraint.  A value of 2.0 doubles
 ///   it, for example.)
 ///   angle_constraint_multiplier (A float for the strength of the metal - binding atom - binding atom parent angle constraint.)
@@ -166,7 +166,7 @@ auto_setup_all_metal_constraints (
 /// sets the weights for the constraints terms in the scorefunction to 1.0 if they're off, or scales the
 /// constraints themselves appropriately if they're already on.
 /// Inputs:
-///		pose (The pose that we'll operate on, changed by operation)
+///  pose (The pose that we'll operate on, changed by operation)
 ///   sfxn (An owning pointer to the scorefunction, changed by operation)
 ///   distance_constraint_multiplier (A float for the strength of the metal - binding atom distance constraint.  A value of 2.0 doubles
 ///   it, for example.)

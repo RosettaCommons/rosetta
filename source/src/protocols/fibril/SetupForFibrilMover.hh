@@ -47,7 +47,7 @@ public:
 		core::pose::Pose & pose,
 		core::pose::Pose & monomer_pose,
 		protocols::loops::Loops core,
-  	protocols::loops::Loops ref_core
+		protocols::loops::Loops ref_core
 	);
 
 	void apply( core::pose::Pose & pose );

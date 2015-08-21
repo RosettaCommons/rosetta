@@ -19,7 +19,7 @@
 
 #include <core/id/AtomID_Map.hh>
 #include <core/scoring/ScoreFunction.hh>
- // for core::pose::make_pose_from_sequence
+// for core::pose::make_pose_from_sequence
 
 
 // Package Headers
@@ -38,7 +38,7 @@ using namespace core;
 
 class SasaTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	Real TOLERATED_ERROR;
 	pose::Pose pose;

@@ -33,46 +33,46 @@ namespace floppy_tail {
 /// @details This function is specific to the original system for which this code was written
 void create_extra_output( core::pose::Pose & pose, core::scoring::ScoreFunctionCOP score_fxn ){
 
-  //score main pose
-  core::Real const full_score((*score_fxn)(pose));
+	//score main pose
+	core::Real const full_score((*score_fxn)(pose));
 
-  //constants for hacking up pose
-  core::Size const E2_chain(pose.conformation().num_chains()); //E2 is last chain
-  core::Size const E2_start(pose.conformation().chain_begin(E2_chain));
+	//constants for hacking up pose
+	core::Size const E2_chain(pose.conformation().num_chains()); //E2 is last chain
+	core::Size const E2_start(pose.conformation().chain_begin(E2_chain));
 
-  //create and score E3_RING portion
-  core::pose::Pose E3_RING(pose);
-  E3_RING.conformation().delete_residue_range_slow(E2_start, E3_RING.total_residue());
-  core::Real const E3_RING_score((*score_fxn)(E3_RING));
+	//create and score E3_RING portion
+	core::pose::Pose E3_RING(pose);
+	E3_RING.conformation().delete_residue_range_slow(E2_start, E3_RING.total_residue());
+	core::Real const E3_RING_score((*score_fxn)(E3_RING));
 
-  //create and score E2 portion
-  core::pose::PoseOP E2 = pose.split_by_chain(E2_chain);
-  core::Real const E2_score((*score_fxn)(*E2));
+	//create and score E2 portion
+	core::pose::PoseOP E2 = pose.split_by_chain(E2_chain);
+	core::Real const E2_score((*score_fxn)(*E2));
 
-  //print Job
-  using protocols::jd2::JobDistributor;
-  protocols::jd2::JobOP job_me( JobDistributor::get_instance()->current_job() );
-  //debugging - check these pdbs
-  //JobDistributor::get_instance()->job_outputter()->other_pose( job_me, E2, "E2");
-  //JobDistributor::get_instance()->job_outputter()->other_pose( job_me, E3_RING, "E3_RING");
+	//print Job
+	using protocols::jd2::JobDistributor;
+	protocols::jd2::JobOP job_me( JobDistributor::get_instance()->current_job() );
+	//debugging - check these pdbs
+	//JobDistributor::get_instance()->job_outputter()->other_pose( job_me, E2, "E2");
+	//JobDistributor::get_instance()->job_outputter()->other_pose( job_me, E3_RING, "E3_RING");
 
-  //print Binding_Energy
-  core::Real const BE(full_score - E3_RING_score - E2_score);
-  job_me->add_string("Binding_Energy = Complex - E2 alone - E3/RING alone");
-  job_me->add_string_real_pair("Binding energy", BE);
-  //print crosslink distance
-  //magic numbers: crosslink experiment tested these residues
-  bool const NEDD8(E2_chain == 4);
-  core::Size const cl_base(pose.pdb_info()->pdb2pose('A', (NEDD8 ? 1676: 679)));   //K1676??
-  core::Size const cl_tail(pose.pdb_info()->pdb2pose('C', 223));
+	//print Binding_Energy
+	core::Real const BE(full_score - E3_RING_score - E2_score);
+	job_me->add_string("Binding_Energy = Complex - E2 alone - E3/RING alone");
+	job_me->add_string_real_pair("Binding energy", BE);
+	//print crosslink distance
+	//magic numbers: crosslink experiment tested these residues
+	bool const NEDD8(E2_chain == 4);
+	core::Size const cl_base(pose.pdb_info()->pdb2pose('A', (NEDD8 ? 1676: 679)));   //K1676??
+	core::Size const cl_tail(pose.pdb_info()->pdb2pose('C', 223));
 
-  core::Real const cl_dist(pose.residue(cl_base).atom("CA").xyz().distance( pose.residue(cl_tail).atom("CA").xyz() ));
-  job_me->add_string("Crosslink = distance between atom CA on residues (chain A, K679/K1676; chain C, 223)");
-  job_me->add_string_real_pair("crosslink distance", cl_dist);
+	core::Real const cl_dist(pose.residue(cl_base).atom("CA").xyz().distance( pose.residue(cl_tail).atom("CA").xyz() ));
+	job_me->add_string("Crosslink = distance between atom CA on residues (chain A, K679/K1676; chain C, 223)");
+	job_me->add_string_real_pair("crosslink distance", cl_dist);
 
-  //std::cout << full_score << " " << E3_RING_score << " " << E2_score << std::endl;
+	//std::cout << full_score << " " << E3_RING_score << " " << E2_score << std::endl;
 
-  return;
+	return;
 }
 
 } //floppy_tail

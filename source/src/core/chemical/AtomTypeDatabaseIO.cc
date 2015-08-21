@@ -231,10 +231,10 @@ AtomTypeDatabaseIO::write_atom_type_set_to_database(
 	statement stmt(safely_prepare_statement(stmt_string, db_session));
 	stmt.bind(1, atom_type_set_name);
 	result res(safely_read_from_database(stmt));
-	if(res.next()) return;
+	if ( res.next() ) return;
 
 
-	for(Size atom_index=1; atom_index <= atom_type_set.n_atomtypes(); ++atom_index){
+	for ( Size atom_index=1; atom_index <= atom_type_set.n_atomtypes(); ++atom_index ) {
 		AtomType const & atom_type(atom_type_set[atom_index]);
 		write_atom_type_table(
 			atom_type_set_name, atom_type, db_session);
@@ -255,8 +255,8 @@ AtomTypeDatabaseIO::get_all_atom_types_in_database(
 	string stmt_string = "SELECT name FROM atom_types;";
 	statement stmt(safely_prepare_statement(stmt_string, db_session));
 	result res(safely_read_from_database(stmt));
-	while(res.next())
-	{
+	while ( res.next() )
+			{
 		string name;
 		res >> name;
 		atom_names.push_back(name);
@@ -306,9 +306,9 @@ AtomTypeDatabaseIO::write_atom_type_properties_table(
 	statement stmt(safely_prepare_statement(statement_string, db_session));
 
 	vector1<string> properties(atom_type.get_all_properties());
-	for(vector1<string>::const_iterator
-			property_iter = properties.begin(),	property_end = properties.end();
-			property_iter != property_end; ++property_iter){
+	for ( vector1<string>::const_iterator
+			property_iter = properties.begin(), property_end = properties.end();
+			property_iter != property_end; ++property_iter ) {
 		stmt.bind(1, atom_type_set_name);
 		stmt.bind(2, atom_type.name());
 		stmt.bind(3, *property_iter);
@@ -329,13 +329,13 @@ AtomTypeDatabaseIO::write_atom_type_extra_parameters_table(
 	string stmt_string = "INSERT INTO atom_type_extra_parameters (atom_type_set_name, name, parameter, value) VALUES (?,?,?,?);";
 	statement stmt(safely_prepare_statement(stmt_string, db_session));
 
-	for(std::map<std::string, int>::const_iterator
-		extra_parameter_index_iter =
+	for ( std::map<std::string, int>::const_iterator
+			extra_parameter_index_iter =
 			atom_type_set.extra_parameter_indices().begin(),
-		extra_parameter_index_iter_end =
+			extra_parameter_index_iter_end =
 			atom_type_set.extra_parameter_indices().end();
-		extra_parameter_index_iter != extra_parameter_index_iter_end;
-		++extra_parameter_index_iter){
+			extra_parameter_index_iter != extra_parameter_index_iter_end;
+			++extra_parameter_index_iter ) {
 
 		string const extra_parameter_name(extra_parameter_index_iter->first);
 		Size const extra_parameter_index(extra_parameter_index_iter->second);

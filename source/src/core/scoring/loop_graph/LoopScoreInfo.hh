@@ -29,43 +29,43 @@ namespace core {
 namespace scoring {
 namespace loop_graph {
 
-	class LoopScoreInfo: public utility::pointer::ReferenceCount {
+class LoopScoreInfo: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
 	//constructor
-		LoopScoreInfo();
+	LoopScoreInfo();
 
 	//destructor
 	~LoopScoreInfo();
 
-	public:
+public:
 
-		void set_length( core::Size const & setting ){ length_ = setting; }
-		core::Size length() const{ return length_; }
+	void set_length( core::Size const & setting ){ length_ = setting; }
+	core::Size length() const{ return length_; }
 
-		void set_takeoff_atom( id::AtomID const & setting ){ takeoff_atom_ = setting; }
-		id::AtomID takeoff_atom() const{ return takeoff_atom_; }
+	void set_takeoff_atom( id::AtomID const & setting ){ takeoff_atom_ = setting; }
+	id::AtomID takeoff_atom() const{ return takeoff_atom_; }
 
-		void set_landing_atom( id::AtomID const & setting ){ landing_atom_ = setting; }
-		id::AtomID landing_atom() const{ return landing_atom_; }
+	void set_landing_atom( id::AtomID const & setting ){ landing_atom_ = setting; }
+	id::AtomID landing_atom() const{ return landing_atom_; }
 
-		void set_current_distance( core::Real const & setting ){ current_distance_ = setting; }
-		core::Real current_distance() const{ return current_distance_; }
+	void set_current_distance( core::Real const & setting ){ current_distance_ = setting; }
+	core::Real current_distance() const{ return current_distance_; }
 
-		void set_func( FuncOP const & setting );
-		FuncOP func() const;
+	void set_func( FuncOP const & setting );
+	FuncOP func() const;
 
-	private:
+private:
 
-		core::Size length_;
-		id::AtomID takeoff_atom_;
-		id::AtomID landing_atom_;
-		core::Real current_distance_;
+	core::Size length_;
+	id::AtomID takeoff_atom_;
+	id::AtomID landing_atom_;
+	core::Real current_distance_;
 
-		FuncOP func_;
+	FuncOP func_;
 
-	};
+};
 
 } //loop_graph
 } //scoring

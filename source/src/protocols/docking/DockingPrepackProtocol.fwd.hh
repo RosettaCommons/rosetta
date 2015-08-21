@@ -16,7 +16,7 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
-namespace docking{
+namespace docking {
 
 class DockingPrepackProtocol;
 typedef utility::pointer::shared_ptr< DockingPrepackProtocol > DockingPrepackProtocolOP;

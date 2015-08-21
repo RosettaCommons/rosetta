@@ -27,35 +27,35 @@ namespace simple_filters {
 /// @brief test whether a pose contains a comment that evaluates to a predefined value. This is useful in controlling execution flow in RosettaScripts.
 class PoseComment : public filters::Filter
 {
-  public:
-    PoseComment();
-    virtual ~PoseComment();
-		filters::FilterOP clone() const {
-			return filters::FilterOP( new PoseComment( *this ) );
-		}
-		filters::FilterOP fresh_instance() const{
-			return filters::FilterOP( new PoseComment() );
-		}
+public:
+	PoseComment();
+	virtual ~PoseComment();
+	filters::FilterOP clone() const {
+		return filters::FilterOP( new PoseComment( *this ) );
+	}
+	filters::FilterOP fresh_instance() const{
+		return filters::FilterOP( new PoseComment() );
+	}
 
-		virtual bool apply( core::pose::Pose const & pose ) const;
-		virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
-		virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-		void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & );
-		core::Real compute( core::pose::Pose const & pose ) const;
+	virtual bool apply( core::pose::Pose const & pose ) const;
+	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
+	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & );
+	core::Real compute( core::pose::Pose const & pose ) const;
 
-		std::string comment_name() const{ return comment_name_; }
-		void comment_name( std::string const s ){ comment_name_ = s; }
+	std::string comment_name() const{ return comment_name_; }
+	void comment_name( std::string const s ){ comment_name_ = s; }
 
-		std::string comment_value() const{ return comment_value_; }
-		void comment_value( std::string const s ){ comment_value_ = s; }
+	std::string comment_value() const{ return comment_value_; }
+	void comment_value( std::string const s ){ comment_value_ = s; }
 
-		bool comment_exists() const { return comment_exists_; }
-		void comment_exists( bool const c ){ comment_exists_ = c; }
+	bool comment_exists() const { return comment_exists_; }
+	void comment_exists( bool const c ){ comment_exists_ = c; }
 
-  private:
-		std::string comment_name_; //dflt ""; define the comment name
-		std::string comment_value_; //dflt ""; define the comment value
-	  bool comment_exists_; //dflt false; simply test whether or not the comment is there. If it is, return true, regardless of its value
+private:
+	std::string comment_name_; //dflt ""; define the comment name
+	std::string comment_value_; //dflt ""; define the comment value
+	bool comment_exists_; //dflt false; simply test whether or not the comment is there. If it is, return true, regardless of its value
 };
 }
 }

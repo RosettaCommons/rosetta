@@ -53,7 +53,7 @@ public:
 	// copy constructor
 	SymPackRotamersMover( PackRotamersMover const & other );
 
-//	virtual void apply( core::pose::Pose & pose );
+	// virtual void apply( core::pose::Pose & pose );
 
 	core::pack::task::PackerTaskOP
 	make_symmetric_task(
@@ -66,15 +66,15 @@ public:
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
 	virtual void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap &data,
-			filters::Filters_map const &filters,
-			moves::Movers_map const &movers,
-			core::pose::Pose const & pose );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &data,
+		filters::Filters_map const &filters,
+		moves::Movers_map const &movers,
+		core::pose::Pose const & pose );
 	virtual void parse_def( utility::lua::LuaObject const & def,
-					utility::lua::LuaObject const & score_fxns,
-					utility::lua::LuaObject const & tasks,
-					protocols::moves::MoverCacheSP cache );
+		utility::lua::LuaObject const & score_fxns,
+		utility::lua::LuaObject const & tasks,
+		protocols::moves::MoverCacheSP cache );
 
 private:
 

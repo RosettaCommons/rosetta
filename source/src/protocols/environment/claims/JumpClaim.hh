@@ -40,95 +40,95 @@ namespace environment {
 namespace claims {
 
 class JumpClaim : public EnvClaim {
-  typedef EnvClaim Parent;
-  typedef core::environment::LocalPosition LocalPosition;
-  typedef core::pack::task::residue_selector::ResidueSelector ResidueSelector;
-  typedef core::pack::task::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
+	typedef EnvClaim Parent;
+	typedef core::environment::LocalPosition LocalPosition;
+	typedef core::pack::task::residue_selector::ResidueSelector ResidueSelector;
+	typedef core::pack::task::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
 
 public:
 
-  JumpClaim( ClientMoverOP owner,
-             utility::tag::TagCOP tag,
-             basic::datacache::DataMap const& );
+	JumpClaim( ClientMoverOP owner,
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap const& );
 
-  JumpClaim( ClientMoverOP owner,
-             std::string const& label,
-             LocalPosition const& jpos1,
-             LocalPosition const& jpos2,
-             LocalPosition const& cutp = core::environment::NO_POSITION );
+	JumpClaim( ClientMoverOP owner,
+		std::string const& label,
+		LocalPosition const& jpos1,
+		LocalPosition const& jpos2,
+		LocalPosition const& cutp = core::environment::NO_POSITION );
 
-  virtual void yield_elements( core::environment::FoldTreeSketch const& fts, ResidueElements& elements ) const;
+	virtual void yield_elements( core::environment::FoldTreeSketch const& fts, ResidueElements& elements ) const;
 
-  virtual void yield_elements( core::environment::FoldTreeSketch const& fts, JumpElements& elements ) const;
+	virtual void yield_elements( core::environment::FoldTreeSketch const& fts, JumpElements& elements ) const;
 
-  virtual void yield_elements( core::environment::FoldTreeSketch const& fts, CutElements& elements ) const;
+	virtual void yield_elements( core::environment::FoldTreeSketch const& fts, CutElements& elements ) const;
 
-  virtual void yield_elements( core::pose::Pose const&, DOFElements& elements ) const;
+	virtual void yield_elements( core::pose::Pose const&, DOFElements& elements ) const;
 
-  /// @brief set the two atom names to use as the start and beginning of the jump. Both must be set simultaneously
-  ///        because the FoldTree requires this.
-  void set_atoms( std::string const& a1, std::string const& a2 );
+	/// @brief set the two atom names to use as the start and beginning of the jump. Both must be set simultaneously
+	///        because the FoldTree requires this.
+	void set_atoms( std::string const& a1, std::string const& a2 );
 
-  void strength( ControlStrength const& cstr, ControlStrength const& istr );
+	void strength( ControlStrength const& cstr, ControlStrength const& istr );
 
-  bool physical() const { return physical_cut_; }
+	bool physical() const { return physical_cut_; }
 
-  void physical( bool setting ) { physical_cut_ = setting; }
+	void physical( bool setting ) { physical_cut_ = setting; }
 
-  void create_vrt_if_necessary( bool setting );
+	void create_vrt_if_necessary( bool setting );
 
-  /// @brief configure this JumpClaim to create a virtual residue to be the jump point if label of the
-  ///        proposed jump point (i.e. pos1_.label()) does not already exist.
-  /// @param set this behavior for pos1()
-  /// @param set this behavior for pos2()
-  void create_vrt_if_necessary( bool setting_p1,
-                                bool setting_p2 );
+	/// @brief configure this JumpClaim to create a virtual residue to be the jump point if label of the
+	///        proposed jump point (i.e. pos1_.label()) does not already exist.
+	/// @param set this behavior for pos1()
+	/// @param set this behavior for pos2()
+	void create_vrt_if_necessary( bool setting_p1,
+		bool setting_p2 );
 
-  void cut( LocalPosition const& );
+	void cut( LocalPosition const& );
 
-  void stubs_intra_residue( bool setting ){ stubs_intra_residue_ = setting; }
+	void stubs_intra_residue( bool setting ){ stubs_intra_residue_ = setting; }
 
-  bool stubs_intra_residue() const { return stubs_intra_residue_; }
+	bool stubs_intra_residue() const { return stubs_intra_residue_; }
 
-  std::string const& label() const;
+	std::string const& label() const;
 
-  LocalPosition const& pos1() const;
+	LocalPosition const& pos1() const;
 
-  LocalPosition const& pos2() const;
+	LocalPosition const& pos2() const;
 
-  std::pair< std::string, std::string > const& atoms() const { return atoms_; }
+	std::pair< std::string, std::string > const& atoms() const { return atoms_; }
 
-  virtual EnvClaimOP clone() const;
+	virtual EnvClaimOP clone() const;
 
-  virtual std::string type() const;
+	virtual std::string type() const;
 
-  virtual void show( std::ostream& os ) const;
+	virtual void show( std::ostream& os ) const;
 
 protected:
 
-  //protected and not public because it can return garbage if the value isn't set.
-  LocalPosition const& cut() const;
+	//protected and not public because it can return garbage if the value isn't set.
+	LocalPosition const& cut() const;
 
-  virtual void validate() const;
+	virtual void validate() const;
 
 private:
 
-  std::string label_;
+	std::string label_;
 
-  LocalPosition pos1_;
-  LocalPosition pos2_;
+	LocalPosition pos1_;
+	LocalPosition pos2_;
 
-  LocalPosition cut_;
+	LocalPosition cut_;
 
-  std::pair< std::string, std::string > atoms_;
+	std::pair< std::string, std::string > atoms_;
 
-  bool physical_cut_;
-  bool create_vrt_p1_, create_vrt_p2_;
+	bool physical_cut_;
+	bool create_vrt_p1_, create_vrt_p2_;
 
-  bool stubs_intra_residue_;
+	bool stubs_intra_residue_;
 
-  ControlStrength c_str_;
-  ControlStrength i_str_;
+	ControlStrength c_str_;
+	ControlStrength i_str_;
 
 }; //JumpClaim
 

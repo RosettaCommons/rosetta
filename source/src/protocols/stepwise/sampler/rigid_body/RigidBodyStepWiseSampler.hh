@@ -32,125 +32,125 @@ namespace stepwise {
 namespace sampler {
 namespace rigid_body {
 
-	class RigidBodyStepWiseSampler: public StepWiseSamplerOneValueComb {
+class RigidBodyStepWiseSampler: public StepWiseSamplerOneValueComb {
 
-	public:
+public:
 
-		//constructor
-		RigidBodyStepWiseSampler( pose::Pose const & pose,
-											Size const moving_res );
+	//constructor
+	RigidBodyStepWiseSampler( pose::Pose const & pose,
+		Size const moving_res );
 
-		//constructor
-		RigidBodyStepWiseSampler( Size const moving_res,
-											core::conformation::Residue const & moving_residue_at_origin,
-											core::kinematics::Stub const & reference_stub );
+	//constructor
+	RigidBodyStepWiseSampler( Size const moving_res,
+		core::conformation::Residue const & moving_residue_at_origin,
+		core::kinematics::Stub const & reference_stub );
 
-		//destructor
-		~RigidBodyStepWiseSampler();
+	//destructor
+	~RigidBodyStepWiseSampler();
 
-	public:
+public:
 
-		void init();
+	void init();
 
-		virtual void apply( core::pose::Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
-		virtual void apply( core::pose::Pose & pose,
-												Size const id );
+	virtual void apply( core::pose::Pose & pose,
+		Size const id );
 
-		void apply( core::pose::Pose & pose,
-								core::conformation::Residue const & moving_residue_at_origin );
+	void apply( core::pose::Pose & pose,
+		core::conformation::Residue const & moving_residue_at_origin );
 
-		void apply( core::pose::Pose & pose,
-								core::conformation::Residue const & moving_residue_at_origin,
-								Size const id );
-
-
-		void apply( core::conformation::Residue & residue_initially_at_origin );
-
-		void
-		apply( Vector & xyz_initially_at_origin, Size const seqpos );
-
-		core::kinematics::Stub const &
-		get_stub();
-
-		core::kinematics::Stub const &
-		get_stub( utility::vector1< Size > const & id_list);
+	void apply( core::pose::Pose & pose,
+		core::conformation::Residue const & moving_residue_at_origin,
+		Size const id );
 
 
-		core::kinematics::Stub const &
-		get_stub( Size const id );
+	void apply( core::conformation::Residue & residue_initially_at_origin );
 
-		core::kinematics::Stub const &
-		reference_stub(){ return reference_stub_; }
+	void
+	apply( Vector & xyz_initially_at_origin, Size const seqpos );
 
-		core::conformation::Residue const &
-		get_residue_at_origin( Size const seqpos );
+	core::kinematics::Stub const &
+	get_stub();
 
-		core::pose::PoseCOP pose_at_origin();
-		void
-		fast_forward_to_end();
+	core::kinematics::Stub const &
+	get_stub( utility::vector1< Size > const & id_list);
 
-		void
-		fast_forward_to_next_translation();
 
-		void
-		fast_forward_to_next_euler_gamma();
+	core::kinematics::Stub const &
+	get_stub( Size const id );
 
-		ValueList const & get_values();
+	core::kinematics::Stub const &
+	reference_stub(){ return reference_stub_; }
 
-		Size const & moving_res() const { return moving_res_; }
+	core::conformation::Residue const &
+	get_residue_at_origin( Size const seqpos );
 
-		core::conformation::Residue const & moving_residue_at_origin() const { return *moving_residue_at_origin_; }
+	core::pose::PoseCOP pose_at_origin();
+	void
+	fast_forward_to_end();
 
-		/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-		virtual StepWiseSamplerType type() const { return RIGID_BODY; }
+	void
+	fast_forward_to_next_translation();
 
-		Size const & reference_res() const { return reference_res_; }
-		utility::vector1< Size > const & moving_partition_res() const { return moving_partition_res_;}
+	void
+	fast_forward_to_next_euler_gamma();
 
-		RigidBodyStepWiseSamplerValueRange & value_range(){ return value_range_; }
+	ValueList const & get_values();
 
-		void set_x_values( Real const centroid_x_min, Real const centroid_x_max, Real const centroid_x_bin );
-		void set_y_values( Real const centroid_y_min, Real const centroid_y_max, Real const centroid_y_bin );
-		void set_z_values( Real const centroid_z_min, Real const centroid_z_max, Real const centroid_z_bin );
-		void set_euler_alpha_values( Real const centroid_euler_alpha_min, Real const centroid_euler_alpha_max, Real const centroid_euler_alpha_bin );
-		void set_euler_z_values( Real const centroid_euler_z_min, Real const centroid_euler_z_max, Real const centroid_euler_z_bin );
-		void set_euler_gamma_values( Real const centroid_euler_gamma_min, Real const centroid_euler_gamma_max, Real const centroid_euler_gamma_bin );
+	Size const & moving_res() const { return moving_res_; }
 
-		/// @brief Name of the class
-		virtual std::string get_name() const;
+	core::conformation::Residue const & moving_residue_at_origin() const { return *moving_residue_at_origin_; }
 
-	private:
+	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
+	virtual StepWiseSamplerType type() const { return RIGID_BODY; }
 
-		void
-		calculate_jump( pose::Pose & pose, Size const seq_num, kinematics::Stub const & moving_res_stub );
+	Size const & reference_res() const { return reference_res_; }
+	utility::vector1< Size > const & moving_partition_res() const { return moving_partition_res_;}
 
-		void
-		transform_single_residue( pose::Pose & pose, Size const & seq_num,
-															core::conformation::Residue const & rsd_at_origin, core::kinematics::Stub const & moving_res_stub );
+	RigidBodyStepWiseSamplerValueRange & value_range(){ return value_range_; }
 
-		void
-		apply_by_jump( pose::Pose & pose, Size const & seq_num,
-									 core::kinematics::Stub const & moving_res_stub );
+	void set_x_values( Real const centroid_x_min, Real const centroid_x_max, Real const centroid_x_bin );
+	void set_y_values( Real const centroid_y_min, Real const centroid_y_max, Real const centroid_y_bin );
+	void set_z_values( Real const centroid_z_min, Real const centroid_z_max, Real const centroid_z_bin );
+	void set_euler_alpha_values( Real const centroid_euler_alpha_min, Real const centroid_euler_alpha_max, Real const centroid_euler_alpha_bin );
+	void set_euler_z_values( Real const centroid_euler_z_min, Real const centroid_euler_z_max, Real const centroid_euler_z_bin );
+	void set_euler_gamma_values( Real const centroid_euler_gamma_min, Real const centroid_euler_gamma_max, Real const centroid_euler_gamma_bin );
 
-	private:
+	/// @brief Name of the class
+	virtual std::string get_name() const;
 
-		Size const moving_res_;
-		conformation::ResidueCOP moving_residue_at_origin_;
-		kinematics::Stub reference_stub_;
-		kinematics::Stub moving_res_stub_;
+private:
 
-		RigidBodyStepWiseSamplerValueRange value_range_;
+	void
+	calculate_jump( pose::Pose & pose, Size const seq_num, kinematics::Stub const & moving_res_stub );
 
-		kinematics::Jump jump_;
-		id::AtomID jump_atom_id_;
+	void
+	transform_single_residue( pose::Pose & pose, Size const & seq_num,
+		core::conformation::Residue const & rsd_at_origin, core::kinematics::Stub const & moving_res_stub );
 
-		// following is only set when RigidBodyStepWiseSampler is initialized with a pose.
-		Size const reference_res_;
-		utility::vector1< Size > moving_partition_res_;
-		pose::PoseCOP pose_at_origin_;
+	void
+	apply_by_jump( pose::Pose & pose, Size const & seq_num,
+		core::kinematics::Stub const & moving_res_stub );
 
-	};
+private:
+
+	Size const moving_res_;
+	conformation::ResidueCOP moving_residue_at_origin_;
+	kinematics::Stub reference_stub_;
+	kinematics::Stub moving_res_stub_;
+
+	RigidBodyStepWiseSamplerValueRange value_range_;
+
+	kinematics::Jump jump_;
+	id::AtomID jump_atom_id_;
+
+	// following is only set when RigidBodyStepWiseSampler is initialized with a pose.
+	Size const reference_res_;
+	utility::vector1< Size > moving_partition_res_;
+	pose::PoseCOP pose_at_origin_;
+
+};
 
 } //rigid_body
 } //sampler

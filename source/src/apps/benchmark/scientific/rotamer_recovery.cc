@@ -83,7 +83,7 @@ register_options() {
 	NEW_OPT( rotamer_recovery::protocol, "Rotamer Recovery Protocol component.", "RRProtocolMinPack");
 	NEW_OPT( rotamer_recovery::comparer, "Rotamer Recovery Comparer component.", "RRComparerAutomorphicRMSD");
 	NEW_OPT( rotamer_recovery::reporter, "Rotamer Recovery Reporter component.", "RRReporterHuman");
-	//	NEW_OPT( rotamer_recovery::native_vs_decoy, "Table of describing which native structures the decoys are modeling.  The first column is native pdb filename and the second column is the decoy pdb filename.", "");
+	// NEW_OPT( rotamer_recovery::native_vs_decoy, "Table of describing which native structures the decoys are modeling.  The first column is native pdb filename and the second column is the decoy pdb filename.", "");
 	NEW_OPT( out::file::rotamer_recovery, "Output File  Name for reporters that write their results to a file.", "");
 
 }
@@ -92,62 +92,62 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-  register_options();
+		register_options();
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using namespace basic::options::OptionKeys::out::file;
-  using namespace core::pack::task::operation;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace basic::options::OptionKeys::out::file;
+		using namespace core::pack::task::operation;
 
-	string const & protocol( option[ rotamer_recovery::protocol ].value() );
-	string const & reporter( option[ rotamer_recovery::reporter ].value() );
-	string const & output_fname( option[ out::file::rotamer_recovery ].value() );
-	string const & comparer( option[ rotamer_recovery::comparer ].value() );
-	ScoreFunctionOP scfxn( get_score_function() );
-	TaskFactoryOP task_factory( new TaskFactory );
-	task_factory->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
-	if(option.has(OptionKeys::packing::resfile) && option[OptionKeys::packing::resfile].user()){
-		task_factory->push_back( TaskOperationCOP( new ReadResfile ) );
-	}
-	task_factory->push_back( TaskOperationCOP( new RestrictToRepacking ) );
+		string const & protocol( option[ rotamer_recovery::protocol ].value() );
+		string const & reporter( option[ rotamer_recovery::reporter ].value() );
+		string const & output_fname( option[ out::file::rotamer_recovery ].value() );
+		string const & comparer( option[ rotamer_recovery::comparer ].value() );
+		ScoreFunctionOP scfxn( get_score_function() );
+		TaskFactoryOP task_factory( new TaskFactory );
+		task_factory->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+		if ( option.has(OptionKeys::packing::resfile) && option[OptionKeys::packing::resfile].user() ) {
+			task_factory->push_back( TaskOperationCOP( new ReadResfile ) );
+		}
+		task_factory->push_back( TaskOperationCOP( new RestrictToRepacking ) );
 
-  RotamerRecoveryOP rotamer_recovery(
-		RotamerRecoveryFactory::get_instance()->get_rotamer_recovery(
+		RotamerRecoveryOP rotamer_recovery(
+			RotamerRecoveryFactory::get_instance()->get_rotamer_recovery(
 			protocol, comparer, reporter));
 
-	RotamerRecoveryMoverOP rotamer_recovery_mover( new RotamerRecoveryMover(rotamer_recovery, scfxn, task_factory) );
+		RotamerRecoveryMoverOP rotamer_recovery_mover( new RotamerRecoveryMover(rotamer_recovery, scfxn, task_factory) );
 
 
-  try{
-    JobDistributor::get_instance()->go( rotamer_recovery_mover );
+		try{
+			JobDistributor::get_instance()->go( rotamer_recovery_mover );
 
-		rotamer_recovery_mover->show();
+			rotamer_recovery_mover->show();
 
-		// if requsted write output to disk
-		if(option[ out::file::rotamer_recovery].user()){
-			ofstream fout;
-			fout.open( output_fname.c_str(), std::ios::out );
-			if( !fout.is_open() ){
-				TR << "Unable to open output file '" << output_fname << "'." << endl;
-				utility_exit();
+			// if requsted write output to disk
+			if ( option[ out::file::rotamer_recovery].user() ) {
+				ofstream fout;
+				fout.open( output_fname.c_str(), std::ios::out );
+				if ( !fout.is_open() ) {
+					TR << "Unable to open output file '" << output_fname << "'." << endl;
+					utility_exit();
+				}
+				rotamer_recovery_mover->show( fout );
+				fout.close();
 			}
-			rotamer_recovery_mover->show( fout );
-			fout.close();
-		}
-  } catch (EXCN_Base & excn ) {
-    TR.Error << "Exception: " << endl;
-    excn.show( TR.Error );
+		} catch (EXCN_Base & excn ) {
+			TR.Error << "Exception: " << endl;
+			excn.show( TR.Error );
 
-    TR << "Exception: " << endl;
-    excn.show( TR ); //so its also seen in a >LOG file
-  }
+			TR << "Exception: " << endl;
+			excn.show( TR ); //so its also seen in a >LOG file
+		}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
 
-  return 0;
+	return 0;
 }

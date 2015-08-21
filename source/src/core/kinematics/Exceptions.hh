@@ -37,18 +37,18 @@ namespace kinematics {
 class EXCN_InvalidFoldTree : public utility::excn::EXCN_Msg_Exception {
 	typedef utility::excn::EXCN_Msg_Exception Parent;
 public:
-  EXCN_InvalidFoldTree( std::string const& msg, FoldTree f )
+	EXCN_InvalidFoldTree( std::string const& msg, FoldTree f )
 	: EXCN_Msg_Exception( msg ), bad_tree_( f ) {};
 
-  using utility::excn::EXCN_Msg_Exception::show;
+	using utility::excn::EXCN_Msg_Exception::show;
 
-  virtual void show( std::ostream& os ) {
+	virtual void show( std::ostream& os ) {
 		os << msg() << "\nInvalid FoldTree: "<< bad_tree() << std::endl;
-  }
+	}
 
 	FoldTree const& bad_tree() { return bad_tree_; };
 private:
-  FoldTree bad_tree_;
+	FoldTree bad_tree_;
 };
 
 }

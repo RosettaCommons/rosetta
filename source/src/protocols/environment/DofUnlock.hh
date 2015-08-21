@@ -35,12 +35,12 @@ namespace environment {
 class DofUnlock : public utility::pointer::ReferenceCount {
 
 public:
-  DofUnlock( core::conformation::Conformation&, core::environment::DofPassportCOP );
-  ~DofUnlock();
+	DofUnlock( core::conformation::Conformation&, core::environment::DofPassportCOP );
+	~DofUnlock();
 
 private:
-  core::conformation::Conformation& conformation_;
-  core::environment::DofPassportCOP pass_;
+	core::conformation::Conformation& conformation_;
+	core::environment::DofPassportCOP pass_;
 
 }; // end DofUnlock base class
 

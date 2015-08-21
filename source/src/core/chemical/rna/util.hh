@@ -27,7 +27,7 @@
 
 namespace core {
 namespace chemical {
-namespace rna{
+namespace rna {
 
 ///////////////////////////////////////////////////////////////////////////////
 enum BaseEdge    { ANY_BASE_EDGE, WATSON_CRICK, HOOGSTEEN, SUGAR, O2PRIME, PHOSPHATE };
@@ -63,14 +63,14 @@ std::string get_full_orientation_from_num( Size const num );
 std::string get_full_LW_orientation_from_num( Size const num );
 
 ///////////////////////////////////////////////////////////////////////////////
-std::string const	first_base_atom( conformation::Residue const & rsd );
-bool	is_purine( conformation::Residue const & rsd );
+std::string const first_base_atom( conformation::Residue const & rsd );
+bool is_purine( conformation::Residue const & rsd );
 Size first_base_atom_index( conformation::Residue const & rsd );
 
-std::string const	chi1_torsion_atom( conformation::Residue const & rsd );
+std::string const chi1_torsion_atom( conformation::Residue const & rsd );
 Size chi1_torsion_atom_index( conformation::Residue const & rsd );
 
-std::string const	default_jump_atom( conformation::Residue const & rsd );
+std::string const default_jump_atom( conformation::Residue const & rsd );
 
 bool
 possibly_canonical( chemical::AA const & aa1,  chemical::AA const & aa2 );
@@ -83,17 +83,17 @@ get_WC_atom( core::chemical::AA const & res_type );
 
 void
 get_watson_crick_base_pair_atoms(
-	 conformation::Residue const & rsd_type1,
-	 conformation::Residue const & rsd_type2,
-	 std::string & atom1,
-	 std::string & atom2 );
+	conformation::Residue const & rsd_type1,
+	conformation::Residue const & rsd_type2,
+	std::string & atom1,
+	std::string & atom2 );
 
 void
 get_watson_crick_base_pair_atoms(
-	 conformation::Residue const & rsd_type1,
-	 conformation::Residue const & rsd_type2,
-	 utility::vector1< std::string > & atom_ids1,
-	 utility::vector1< std::string > & atom_ids2	 );
+	conformation::Residue const & rsd_type1,
+	conformation::Residue const & rsd_type2,
+	utility::vector1< std::string > & atom_ids1,
+	utility::vector1< std::string > & atom_ids2  );
 
 //Copied from Parin SRC on Dec 23, 2011.
 numeric::xyzVector<core::Real>

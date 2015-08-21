@@ -26,9 +26,9 @@ namespace scores {
 class FourAtomsConstraintData;
 
 typedef utility::pointer::shared_ptr<FourAtomsConstraintData>
-		FourAtomsConstraintDataOP;
+	FourAtomsConstraintDataOP;
 typedef utility::pointer::shared_ptr<FourAtomsConstraintData const>
-		FourAtomsConstraintDataCOP;
+	FourAtomsConstraintDataCOP;
 
 } // scores
 } // frag_picker

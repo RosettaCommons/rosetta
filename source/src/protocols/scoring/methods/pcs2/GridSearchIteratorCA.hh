@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/GridSearchIteratorCA.hh
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/GridSearchIteratorCA.hh
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs2_GridSearchIteratorCA_hh
@@ -50,10 +50,10 @@
 // C++ headers
 
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs2{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs2 {
 
 class GridSearchIteratorCA{
 public:
@@ -73,8 +73,8 @@ public:
 	/// bool return FALSE if everything has been visited
 	bool
 	next_center(core::Real &x,
-							core::Real &y,
-							core::Real &z);
+		core::Real &y,
+		core::Real &z);
 
 	void
 	reset();
@@ -83,10 +83,10 @@ public:
 private:
 	void
 	set_vec(utility::vector1<core::Real> & x_vec,
-					utility::vector1<core::Real> & y_vec,
-					utility::vector1<core::Real> & z_vec,
-					core::Size index,
-					core::pose::Pose const & pose);
+		utility::vector1<core::Real> & y_vec,
+		utility::vector1<core::Real> & z_vec,
+		core::Size index,
+		core::pose::Pose const & pose);
 
 	utility::vector1<core::Real>  x_vec_;
 	utility::vector1<core::Real>  y_vec_;

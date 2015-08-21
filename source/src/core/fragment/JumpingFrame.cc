@@ -65,7 +65,7 @@ bool
 NonContinuousFrame::align( core::id::SequenceMapping const& map ) {
 	bool success = Parent::align( map );
 	for ( PosList::iterator it = pos_.begin(),
-					eit = pos_.end(); it!=eit && success; ++it )  {
+			eit = pos_.end(); it!=eit && success; ++it )  {
 		Size newpos( map[ *it ] );
 		if ( newpos > 0 ) {
 			*it = newpos;
@@ -97,7 +97,7 @@ void NonContinuousFrame::read( std::istream &in ) {
 
 void NonContinuousFrame::show_pos( std::ostream &out ) const {
 	for ( PosList::const_iterator it = pos_.begin(),
-					eit = pos_.end(); it!=eit; ++it ) {
+			eit = pos_.end(); it!=eit; ++it ) {
 		out << RJ( 3, *it ) << " ";
 	}
 }
@@ -111,7 +111,7 @@ void NonContinuousFrame::shift_to( core::Size setting ) {
 void NonContinuousFrame::shift_by( int offset ) {
 	Parent::shift_by( offset );
 	for ( PosList::iterator it = pos_.begin(),
-					eit = pos_.end(); it!=eit; ++it ) {
+			eit = pos_.end(); it!=eit; ++it ) {
 		int new_pos = *it + offset;
 		if ( new_pos < 1 ) {
 			std::ostringstream msg;
@@ -125,26 +125,26 @@ void NonContinuousFrame::shift_by( int offset ) {
 
 //  --- cloning with frags is taken care of correctly by base-class
 // it is enough that clone() itself is virtually overloaded
- /// @brief clone method, new frame with same alignment position, fragments are not copied!
+/// @brief clone method, new frame with same alignment position, fragments are not copied!
 FrameOP NonContinuousFrame::clone() const {
- 	return FrameOP( new NonContinuousFrame( start(), end(), length() ) );
+	return FrameOP( new NonContinuousFrame( start(), end(), length() ) );
 }
 
 // /// @brief clone method, new frame with same alignment position, fragments are not copied!
 // NonContinuousFrameOP NonContinuousFrame::clone_with_frags() const {
-// 	NonContinuousFrameOP newFrame = clone();// new Frame( start(), end(), length() );
-// 	*newFrame = *this; //usually that is enough
-// 	return newFrame;
+//  NonContinuousFrameOP newFrame = clone();// new Frame( start(), end(), length() );
+//  *newFrame = *this; //usually that is enough
+//  return newFrame;
 // }
 
 // /// @brief clone method, new frame with same alignment position, one fragments is copied as template ( valid() == false )
 // NonContinuousFrameOP NonContinuousFrame::clone_with_template() {
-// 	NonContinuousFrameOP newFrame = clone();// new Frame( start(), end(), length() );
-// 	if ( nr_frags() ) {
-// 		newFrame->frag_list_.push_back( frag_list_[ 1 ]->clone() );
-// 		newFrame->frag_list_[ 1 ]->set_valid( false );
-// 	}
-// 	return newFrame;
+//  NonContinuousFrameOP newFrame = clone();// new Frame( start(), end(), length() );
+//  if ( nr_frags() ) {
+//   newFrame->frag_list_.push_back( frag_list_[ 1 ]->clone() );
+//   newFrame->frag_list_[ 1 ]->set_valid( false );
+//  }
+//  return newFrame;
 // }
 
 

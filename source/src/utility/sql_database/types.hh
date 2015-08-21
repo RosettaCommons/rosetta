@@ -29,7 +29,7 @@ struct TransactionMode {
 		chunk
 	};
 };
-	
+
 struct DatabaseMode {
 	enum e {
 		sqlite3 = 1,
@@ -40,19 +40,19 @@ struct DatabaseMode {
 
 TransactionMode::e
 transaction_mode_from_name(
-  std::string transaction_mode);
+	std::string transaction_mode);
 
 std::string
 name_from_transaction_mode(
-  TransactionMode::e transaction_mode);
- 
+	TransactionMode::e transaction_mode);
+
 DatabaseMode::e
 database_mode_from_name(
-  std::string database_mode);
+	std::string database_mode);
 
 std::string
 name_from_database_mode(
-  DatabaseMode::e database_mode);
+	DatabaseMode::e database_mode);
 
 
 }

@@ -8,12 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/antibody_design/AntibodyFeaturesCreator.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
 #ifndef INCLUDED_protocols_antibody_AntibodyFeaturesCreator_hh
-#define	INCLUDED_protocols_antibody_AntibodyFeaturesCreator_hh
+#define INCLUDED_protocols_antibody_AntibodyFeaturesCreator_hh
 
 #include <protocols/features/FeaturesReporterCreator.hh>
 
@@ -24,8 +24,8 @@
 
 namespace protocols {
 namespace antibody {
-	using namespace protocols::features;
-	
+using namespace protocols::features;
+
 /// @brief creator for the HBondParameterFeatures class
 class AntibodyFeaturesCreator : public FeaturesReporterCreator
 {
@@ -40,5 +40,5 @@ public:
 } //namespace antibody
 } //namespace protocols
 
-#endif	//INCLUDED_protocols_antibody_AntibodyFeaturesCreator.hh
+#endif //INCLUDED_protocols_antibody_AntibodyFeaturesCreator.hh
 

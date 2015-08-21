@@ -63,11 +63,11 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );
-		
+
 	/// @brief Set this mover's target residue index.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void set_target( std::string const &target_in ) { target_ = target_in; return; }
-	
+
 	/// @brief Set this mover's target residue index, based on the Rosetta indexing.
 	///
 	void set_target(core::Size const target_in);
@@ -75,7 +75,7 @@ public:
 	/// @brief Get this mover's target residue index.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	std::string target() const { return target_; }
-	
+
 	/// @brief Set the residue to mutate to.
 	/// @details This is the full name, not the three-letter code.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
@@ -85,7 +85,7 @@ public:
 	/// @details This is the full name, not the three-letter code.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	std::string res_name() { return res_name_; }
-	
+
 	/// @brief Set whether the mover should try to preserve atoms' xyz coordinates or not.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void set_preserve_atom_coords( bool const val ) { preserve_atom_coords_ = val; return; }

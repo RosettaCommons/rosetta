@@ -71,23 +71,23 @@ public:
 
 	virtual std::string get_name() const { return "DockSetupMover"; }
 
-	//	DockJumps & movable_jumps(){ return movable_jumps_;} /// @brief returns ref to the jumps vector for docking
-	//	DockJumps const & movable_jumps() const { return movable_jumps_; } /// @ return const ref to the jumps vector for docking
+	// DockJumps & movable_jumps(){ return movable_jumps_;} /// @brief returns ref to the jumps vector for docking
+	// DockJumps const & movable_jumps() const { return movable_jumps_; } /// @ return const ref to the jumps vector for docking
 
 	void set_partners( std::string const& setting ){ partners_=setting; }
-	//	void set_movable_jumps( DockJumps const& setting ){ movable_jumps_ = setting; }
-	//	void add_jump( core::SSize const jump_number ){ movable_jumps_.push_back( int( jump_number ) ); }
+	// void set_movable_jumps( DockJumps const& setting ){ movable_jumps_ = setting; }
+	// void add_jump( core::SSize const jump_number ){ movable_jumps_.push_back( int( jump_number ) ); }
 
 	void show( std::ostream & out=std::cout ) const;
 	friend std::ostream & operator<<(std::ostream& out, const DockSetupMover & dp );
 
 	// function for the parser with lots of accessors
 	void parse_my_tag(
-			 utility::tag::TagCOP tag,
-			 basic::datacache::DataMap &,
-			 protocols::filters::Filters_map const &,
-			 protocols::moves::Movers_map const &,
-			 core::pose::Pose const &
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
 	);
 
 protected:
@@ -96,13 +96,13 @@ protected:
 private:
 	/// --- configurables -----
 	std::string partners_;
- 	protocols::rigid::RigidBodyPerturbNoCenterMoverOP rb_mover_;
+	protocols::rigid::RigidBodyPerturbNoCenterMoverOP rb_mover_;
 	DockJumps movable_jumps_; //vector1_int
 	protocols::docking::RigidBodyInfoOP rigid_body_info_;
 
 	/// --- state ----
-	//	core::kinematics::FoldTree fold_tree_;
-	//	std::string previous_sequence_;
+	// core::kinematics::FoldTree fold_tree_;
+	// std::string previous_sequence_;
 
 };
 

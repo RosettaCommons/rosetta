@@ -30,28 +30,28 @@
 namespace core {
 namespace io {
 namespace raw_data {
-	class ScoreFileData : public RawFileData {
-		public:
-			///////////////////////////////////////////////////////////////////////////
-			// constructor
-			ScoreFileData(std::string filename) : filename_(filename) {}
+class ScoreFileData : public RawFileData {
+public:
+	///////////////////////////////////////////////////////////////////////////
+	// constructor
+	ScoreFileData(std::string filename) : filename_(filename) {}
 
-			bool write_struct(
-				const RawStructOP s,
-				std::map < std::string, core::Real > const & score_map,
-                std::map < std::string, std::string > const & string_map = ( std::map < std::string, std::string > () )
-			);
+	bool write_struct(
+		const RawStructOP s,
+		std::map < std::string, core::Real > const & score_map,
+		std::map < std::string, std::string > const & string_map = ( std::map < std::string, std::string > () )
+	);
 
-			bool write_pose(
-				const core::pose::Pose & pose,
-				std::map < std::string, core::Real > const & score_map,
-                std::string tag,
-                std::map < std::string, std::string > const & string_map = ( std::map < std::string, std::string > () )
-			);
+	bool write_pose(
+		const core::pose::Pose & pose,
+		std::map < std::string, core::Real > const & score_map,
+		std::string tag,
+		std::map < std::string, std::string > const & string_map = ( std::map < std::string, std::string > () )
+	);
 
-		private:
-			std::string filename_;
-	};
+private:
+	std::string filename_;
+};
 
 } // namespace silent
 } // namespace io

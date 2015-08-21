@@ -94,20 +94,20 @@ buns_for_pose(
 
 	std::list< AtomID > buns;
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-		for ( Size jj = 1; jj <= pose.residue(ii).nheavyatoms(); ++jj) {
+		for ( Size jj = 1; jj <= pose.residue(ii).nheavyatoms(); ++jj ) {
 			AtomID atid( jj, ii );
 
 			if ( pose.residue(ii).atom_type( jj ).is_acceptor() || pose.residue(ii).atom_type( jj ).is_donor() ) {
 
 				if ( pose.residue(ii).atom_type( jj ).is_donor() &&
-						pose.residue(ii).type().attached_H_begin( jj ) > pose.residue(ii).type().attached_H_end( jj )) {
-						// i.e. proline backbone N; not really a donor
-						continue;
+						pose.residue(ii).type().attached_H_begin( jj ) > pose.residue(ii).type().attached_H_end( jj ) ) {
+					// i.e. proline backbone N; not really a donor
+					continue;
 				}
 
 				if ( rotamer_dots[ ii ]->any_exposed_dots( jj ) ) continue;
 				bool exposed_hydrogens = false;
-				for( Size kk = pose.residue(ii).type().attached_H_begin( jj ); kk<= pose.residue(ii).type().attached_H_end( jj ); kk++){
+				for ( Size kk = pose.residue(ii).type().attached_H_begin( jj ); kk<= pose.residue(ii).type().attached_H_end( jj ); kk++ ) {
 					if ( rotamer_dots[ ii ]->any_exposed_dots( kk ) ) { exposed_hydrogens = true; break; }
 				}
 				if ( exposed_hydrogens ) continue;
@@ -115,7 +115,7 @@ buns_for_pose(
 				utility::vector1< HBondCOP > const & jjhbonds( hbset.atom_hbonds( atid ));
 				bool attached_h_form_hbonds = false;
 				if ( jjhbonds.empty() ) {
-					for( Size kk = pose.residue(ii).type().attached_H_begin( jj ); kk<= pose.residue(ii).type().attached_H_end( jj ); ++kk ){
+					for ( Size kk = pose.residue(ii).type().attached_H_begin( jj ); kk<= pose.residue(ii).type().attached_H_end( jj ); ++kk ) {
 						utility::vector1< HBondCOP > const & kkhbonds( hbset.atom_hbonds( AtomID( kk, ii ) ));
 						if ( ! kkhbonds.empty() ) {
 							attached_h_form_hbonds = true;
@@ -213,7 +213,7 @@ int main( int argc, char * argv [] )
 		return -1;
 	}
 
-  return 0;
+	return 0;
 
 }
 

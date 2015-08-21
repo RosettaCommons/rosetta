@@ -46,7 +46,7 @@ public:
 	typedef core::conformation::Atom Atom;
 	typedef core::conformation::Residue Residue;
 	typedef core::pose::metrics::PoseMetricCalculatorOP PoseMetricCalculatorOP;
-  typedef basic::MetricValueBase MetricValueBase;
+	typedef basic::MetricValueBase MetricValueBase;
 	//typedef protocols::fldsgn::topology::SS_Info2 SS_Info2;
 	//typedef protocols::fldsgn::topology::SS_Info2_OP SS_Info2_OP;
 
@@ -71,7 +71,7 @@ public:// virtual constructor
 
 
 	/// @brief make clone
-  PoseMetricCalculatorOP clone() const { return PoseMetricCalculatorOP( new NcontactsCalculator( *this ) ); }
+	PoseMetricCalculatorOP clone() const { return PoseMetricCalculatorOP( new NcontactsCalculator( *this ) ); }
 
 
 public:// mutator
@@ -94,9 +94,9 @@ public:// mutator
 protected:
 
 
-  virtual void lookup( String const & key, MetricValueBase * valptr ) const;
-  virtual std::string print( String const & key ) const;
-  virtual void recompute( Pose const & this_pose );
+	virtual void lookup( String const & key, MetricValueBase * valptr ) const;
+	virtual std::string print( String const & key ) const;
+	virtual void recompute( Pose const & this_pose );
 
 
 private:
@@ -122,7 +122,7 @@ private:
 	/// @brief  #atom-contacts among all heavy atoms
 	Real nc_allatm_;
 
-  /// @brief  #atom-contacts among hydrophobic heavy atoms
+	/// @brief  #atom-contacts among hydrophobic heavy atoms
 	Real nc_hpatm_;
 
 	/// @brief #atom-contacts among heavy atoms of sidechains of hydrophobic residues

@@ -159,10 +159,10 @@ public:
 	virtual
 	void
 	compute_two_body_energies(
-		RotamerSet const & other,
-		pose::Pose const & pose,
-		scoring::ScoreFunction const & scorefxn,
-		ObjexxFCL::FArray2< Energy > & pair_energy_table ) const;
+	RotamerSet const & other,
+	pose::Pose const & pose,
+	scoring::ScoreFunction const & scorefxn,
+	ObjexxFCL::FArray2< Energy > & pair_energy_table ) const;
 	*/
 
 	virtual
@@ -256,7 +256,7 @@ protected:
 	build_dependent_rotamers_for_concrete(
 		RotamerSets const & rotamer_sets,
 		pose::Pose const & pose,
-			scoring::ScoreFunction const &, // scorefxn,
+		scoring::ScoreFunction const &, // scorefxn,
 		task::PackerTask const & task,
 		conformation::Residue const & existing_residue,
 		chemical::ResidueTypeCOP concrete_residue,
@@ -354,7 +354,7 @@ private:
 	void
 	update_rotamer_offsets() const;
 
-// DATA
+	// DATA
 private:
 
 	BumpSelector bump_selector_;

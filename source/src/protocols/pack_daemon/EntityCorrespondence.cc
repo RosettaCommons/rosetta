@@ -117,7 +117,7 @@ EntityCorrespondence::initialize_from_correspondence_file( std::istream & instre
 		if ( line.size() == 0 ) continue; // Ignore blank lines
 
 		std::istringstream linestream( line );
-		if (( linestream >> entity_id ).fail() ) {
+		if ( ( linestream >> entity_id ).fail() ) {
 			throw utility::excn::EXCN_Msg_Exception(
 				"Failed to read entity id on line " + utility::to_string( line_count ) +
 				" of the EntityCorrespondence file:\n" + line );
@@ -130,7 +130,7 @@ EntityCorrespondence::initialize_from_correspondence_file( std::istream & instre
 				utility::to_string( entity_id ) + " vs " + utility::to_string( num_entities() ) );
 		}
 
-		if (( linestream >> PDBnum_string ).fail() ) {
+		if ( ( linestream >> PDBnum_string ).fail() ) {
 			throw utility::excn::EXCN_Msg_Exception(
 				"Failed to read PDB id for a residue on line " + utility::to_string( line_count ) +
 				" of the EntityCorrespondence file:\n" + line );
@@ -142,10 +142,10 @@ EntityCorrespondence::initialize_from_correspondence_file( std::istream & instre
 #else
 		condition = isalpha(*PDBnum_string.rbegin());
 #endif
-			if (condition) {
+		if ( condition ) {
 			/// The last character is the insertion code.
 			for ( Size ch = 0; ch < PDBnum_string.length()-1; ++ch ) {
-				if ( ! isdigit( PDBnum_string[ ch ] ) && ( ch != 0 || PDBnum_string[ ch ] != '-'  )) {
+				if ( ! isdigit( PDBnum_string[ ch ] ) && ( ch != 0 || PDBnum_string[ ch ] != '-'  ) ) {
 					throw utility::excn::EXCN_Msg_Exception(
 						"Failed to read PDB residue id on line " + utility::to_string( line_count ) +
 						" of the EntityCorrespondence file:\n" + line +"\nCharacter" +
@@ -156,7 +156,7 @@ EntityCorrespondence::initialize_from_correspondence_file( std::istream & instre
 			icode = *PDBnum_string.rbegin();
 		} else { // no insertion code
 			for ( Size ch = 0; ch < PDBnum_string.length(); ++ch ) {
-				if ( ! isdigit( PDBnum_string[ ch ] ) && ( ch != 0 || PDBnum_string[ ch ] != '-'  )) {
+				if ( ! isdigit( PDBnum_string[ ch ] ) && ( ch != 0 || PDBnum_string[ ch ] != '-'  ) ) {
 					throw utility::excn::EXCN_Msg_Exception(
 						"Failed to read PDB residue id on line " + utility::to_string( line_count ) +
 						" of the EntityCorrespondence file:\n" + line +"\nCharacter" +
@@ -165,12 +165,12 @@ EntityCorrespondence::initialize_from_correspondence_file( std::istream & instre
 			}
 			PDBnum = atoi( PDBnum_string.c_str() );
 		}
-		if ((linestream >> chain ).fail() ) {
+		if ( (linestream >> chain ).fail() ) {
 			throw utility::excn::EXCN_Msg_Exception(
 				"Failed to read a chain id for a PDB residue on line " + utility::to_string( line_count ) +
 				" of the EntityCorrespondence file:\n" + line );
 		}
-		if (chain == '_') chain = ' ';
+		if ( chain == '_' ) chain = ' ';
 		residue_index = pdb_pose_map_->find( chain, PDBnum, icode );
 		/* end resfile code */
 
@@ -184,9 +184,9 @@ EntityCorrespondence::initialize_from_correspondence_file( std::istream & instre
 	}
 
 	/*if ( count_correspondences == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception(
-			"Failed to find any correspondences while reading from EntityCorrespondence file" );
-			}*/
+	throw utility::excn::EXCN_Msg_Exception(
+	"Failed to find any correspondences while reading from EntityCorrespondence file" );
+	}*/
 }
 
 void

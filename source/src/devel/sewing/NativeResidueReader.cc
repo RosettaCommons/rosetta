@@ -57,18 +57,18 @@ NativeResidueReader::generateResiduesFromFile(utility::file::FileName file){
 	int res_num = 0;
 	//std::string res_name;
 	core::conformation::ResidueOP new_rsd;
-	while ( input_stream.good() ){
+	while ( input_stream.good() ) {
 		std::string line;
 		input_stream.getline(line);
 
 		utility::vector1<std::string> tokens = utility::split(line);
 
 		TR.Debug << "Parsing: " << line << std::endl;
-		if(tokens.size() > 0){ //Allow blank lines and comments in the file
-			if ( tokens[1]=="RESNUM" ){
+		if ( tokens.size() > 0 ) { //Allow blank lines and comments in the file
+			if ( tokens[1]=="RESNUM" ) {
 				res_num = utility::string2int(tokens[2]);
 				TR << "Creating Residue object for resnum: " << res_num << std::endl;
-			} else if( tokens[1]=="RESIDUE"){
+			} else if ( tokens[1]=="RESIDUE" ) {
 				//get ResidueType from NativeResidue file residue name
 				core::chemical::ResidueType const & res_type = residue_set->name_map(tokens[2]);
 
@@ -78,7 +78,7 @@ NativeResidueReader::generateResiduesFromFile(utility::file::FileName file){
 				res_map[res_num].push_back(new_rsd);
 
 				TR << "Creating default " << res_type.name3() << " to be populated: " << new_rsd->natoms() << std::endl;
-			} else if( tokens[1]=="ATOM"){
+			} else if ( tokens[1]=="ATOM" ) {
 				double offset = 1e-250; /// coordinates now double, so we can use _really_ small offset.
 
 				core::Size atom_index(utility::string2int(tokens[2]));
@@ -92,11 +92,11 @@ NativeResidueReader::generateResiduesFromFile(utility::file::FileName file){
 	input_stream.close();
 
 
-	for(std::map<core::Size, utility::vector1<core::conformation::ResidueOP> >::const_iterator map_it = res_map.begin();
-			map_it != res_map.end(); ++map_it){
+	for ( std::map<core::Size, utility::vector1<core::conformation::ResidueOP> >::const_iterator map_it = res_map.begin();
+			map_it != res_map.end(); ++map_it ) {
 
 		TR.Debug << "Resnum: " << map_it->first << std::endl;
-		for(core::Size p=1; p<=map_it->second.size();p++){
+		for ( core::Size p=1; p<=map_it->second.size(); p++ ) {
 			TR.Debug << "Residue: " << map_it->second[p]->name3() << std::endl;
 			TR.Debug << "Num atoms: " << map_it->second[p]->natoms() << std::endl;
 		}
@@ -110,21 +110,21 @@ NativeResidueReader::generateResiduesFromFile(utility::file::FileName file){
 
 
 //ResidueType &
-//				nonconst_name_map( std::string const & name )
+//    nonconst_name_map( std::string const & name )
 //
 //ResidueOP new_rsd( ResidueFactory::create_residue( rsd_type ) );
 //
 ////Fill in residue coords
 //for ( ResidueCoords::const_iterator iter=xyz.begin(), iter_end=xyz.end(); iter!= iter_end; ++iter ) {
-//																if ( new_rsd->has( local_strip_whitespace(iter->first) ) ) {
-//																				// offsetting all coordinates by a small constant prevents problems with atoms located
-//																				// at position (0,0,0).
-//																				// This is a bit of a dirty hack but it fixes the major problem of reading in rosetta
-//																				// pdbs which suually start at 0,0,0. However the magnitude of this offset is so small
-//																				// that the output pdbs should still match input pdbs. hopefully. yes. aehm.
+//                if ( new_rsd->has( local_strip_whitespace(iter->first) ) ) {
+//                    // offsetting all coordinates by a small constant prevents problems with atoms located
+//                    // at position (0,0,0).
+//                    // This is a bit of a dirty hack but it fixes the major problem of reading in rosetta
+//                    // pdbs which suually start at 0,0,0. However the magnitude of this offset is so small
+//                    // that the output pdbs should still match input pdbs. hopefully. yes. aehm.
 //
-//																				double offset = 1e-250; /// coordinates now double, so we can use _really_ small offset.
-//																				new_rsd->atom( local_strip_whitespace(iter->first) ).xyz( iter->second + offset );
-//																}
-//																//else runtime_assert( iter->first == " H	" && rsd_type.is_terminus() ); // special casee
-//												}
+//                    double offset = 1e-250; /// coordinates now double, so we can use _really_ small offset.
+//                    new_rsd->atom( local_strip_whitespace(iter->first) ).xyz( iter->second + offset );
+//                }
+//                //else runtime_assert( iter->first == " H " && rsd_type.is_terminus() ); // special casee
+//            }

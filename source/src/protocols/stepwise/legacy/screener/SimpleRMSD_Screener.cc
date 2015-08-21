@@ -27,63 +27,63 @@ namespace stepwise {
 namespace legacy {
 namespace screener {
 
-	//Constructor
-	SimpleRMSD_Screener::SimpleRMSD_Screener( pose::Pose const & pose,
-																						utility::vector1< Size > const calc_rms_res,
-																						core::pose::PoseCOP native_pose,
-																						Real const rmsd_cutoff,
-																						bool const force_align ):
-		pose_( pose ),
-		calc_rms_res_( calc_rms_res ),
-		native_pose_( native_pose ),
-		rmsd_cutoff_( rmsd_cutoff ),
-		force_align_( force_align ),
-		cluster_by_all_atom_rmsd_( false ) // currently disabled -- need to fix for RNA.
-  {
-		initialize_corresponding_atom_id_map( *native_pose );
-  }
+//Constructor
+SimpleRMSD_Screener::SimpleRMSD_Screener( pose::Pose const & pose,
+	utility::vector1< Size > const calc_rms_res,
+	core::pose::PoseCOP native_pose,
+	Real const rmsd_cutoff,
+	bool const force_align ):
+	pose_( pose ),
+	calc_rms_res_( calc_rms_res ),
+	native_pose_( native_pose ),
+	rmsd_cutoff_( rmsd_cutoff ),
+	force_align_( force_align ),
+	cluster_by_all_atom_rmsd_( false ) // currently disabled -- need to fix for RNA.
+{
+	initialize_corresponding_atom_id_map( *native_pose );
+}
 
-	//Destructor
-	SimpleRMSD_Screener::~SimpleRMSD_Screener()
-	{}
+//Destructor
+SimpleRMSD_Screener::~SimpleRMSD_Screener()
+{}
 
-  //////////////////////////////////////////////////////////////////////////
-	bool
-	SimpleRMSD_Screener::check_screen(){
+//////////////////////////////////////////////////////////////////////////
+bool
+SimpleRMSD_Screener::check_screen(){
 
-		using namespace core::scoring;
+	using namespace core::scoring;
 
-		Real rmsd( 0.0 );
+	Real rmsd( 0.0 );
 
-		if ( calc_rms_res_.size() == 0 ) {
-			rmsd = rms_at_corresponding_atoms( pose_, *native_pose_, corresponding_atom_id_map_ );
-		} else if ( force_align_ ) {
-			rmsd = rms_at_corresponding_atoms( pose_, *native_pose_, corresponding_atom_id_map_, calc_rms_res_ );
-		} else {
-			// assumes prealignment of poses!!!
-			rmsd = rms_at_corresponding_atoms_no_super( pose_, *native_pose_,
-																									corresponding_atom_id_map_, calc_rms_res_ );
-			//			TR << rmsd << " compared to cutoff " << rmsd_cutoff_ << "  over " << calc_rms_res_ << ", natoms: " << corresponding_atom_id_map_.size() << std::endl;
-		}
-
-		if ( rmsd < rmsd_cutoff_ ) return true;
-		return false;
+	if ( calc_rms_res_.size() == 0 ) {
+		rmsd = rms_at_corresponding_atoms( pose_, *native_pose_, corresponding_atom_id_map_ );
+	} else if ( force_align_ ) {
+		rmsd = rms_at_corresponding_atoms( pose_, *native_pose_, corresponding_atom_id_map_, calc_rms_res_ );
+	} else {
+		// assumes prealignment of poses!!!
+		rmsd = rms_at_corresponding_atoms_no_super( pose_, *native_pose_,
+			corresponding_atom_id_map_, calc_rms_res_ );
+		//   TR << rmsd << " compared to cutoff " << rmsd_cutoff_ << "  over " << calc_rms_res_ << ", natoms: " << corresponding_atom_id_map_.size() << std::endl;
 	}
 
+	if ( rmsd < rmsd_cutoff_ ) return true;
+	return false;
+}
 
-	/////////////////////////////////////////////////////////////////////
-	void
-	SimpleRMSD_Screener::initialize_corresponding_atom_id_map( core::pose::Pose const & pose ){
-		using namespace core::scoring;
 
-		// presumably can figure this out based on whether protein or RNA. anyway.
-		if( cluster_by_all_atom_rmsd_ ) {
-			setup_matching_heavy_atoms( pose, pose, corresponding_atom_id_map_ );
-		} else {
-			setup_matching_protein_backbone_heavy_atoms( pose, pose, corresponding_atom_id_map_ );
-		}
+/////////////////////////////////////////////////////////////////////
+void
+SimpleRMSD_Screener::initialize_corresponding_atom_id_map( core::pose::Pose const & pose ){
+	using namespace core::scoring;
 
+	// presumably can figure this out based on whether protein or RNA. anyway.
+	if ( cluster_by_all_atom_rmsd_ ) {
+		setup_matching_heavy_atoms( pose, pose, corresponding_atom_id_map_ );
+	} else {
+		setup_matching_protein_backbone_heavy_atoms( pose, pose, corresponding_atom_id_map_ );
 	}
+
+}
 
 
 } //screener

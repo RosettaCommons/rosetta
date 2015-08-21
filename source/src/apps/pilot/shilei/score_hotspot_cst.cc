@@ -94,14 +94,14 @@ OPT_1GRP_KEY(Real,score_hotspot_cst,hotspot_score_weight)
 OPT_1GRP_KEY(RealVector,score_hotspot_cst,hotspot_distcb_weight)
 
 class run_score_hotspot : public protocols::moves::Mover {
-public:
-        run_score_hotspot() { }
+	public:
+	run_score_hotspot() { }
 
-        void apply( pose::Pose & pose) {
+		void apply( pose::Pose & pose) {
 
-        Pose archive_pose=pose;
+		Pose archive_pose=pose;
 
-  protocols::viewer::add_conformation_viewer( pose.conformation(), "pose" );
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "pose" );
 
 	core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function("interchain_cen") );
 	core::scoring::ScoreFunctionOP scorefxn_emp( ScoreFunctionFactory::create_score_function("empty") );
@@ -120,12 +120,12 @@ public:
 	num_hotspot_name=basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_names ].size();
 
 	//print out input information
-  /*
+	/*
 	for (Size i=1; i <= num_hotspot_name; i++) {
-		TR << "hotspot_names["<<i<<"]: " << basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_names]()[i] << std::endl;
-		TR << "hotspot_distcb_weight["<<i<<"]: " << basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_distcb_weight]()[i] << std::endl;
+	TR << "hotspot_names["<<i<<"]: " << basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_names]()[i] << std::endl;
+	TR << "hotspot_distcb_weight["<<i<<"]: " << basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_distcb_weight]()[i] << std::endl;
 	}
-*/
+	*/
 
 	// Assign a fixed residue (for the constraints)
 	//core::Size fixed_res(1);  // unused ~Labonte
@@ -141,16 +141,16 @@ public:
 	core::Real hotspot_score_weight=basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_score_weight];
 
 	//read file and assign constraint to pose
-	for (Size i=1; i <= num_hotspot_name; i++) {
+	for ( Size i=1; i <= num_hotspot_name; i++ ) {
 		//std::string hotspot_namei="hotspot_name"+ObjexxFCL::string_of(i);
 		std::string const hotspot_name= basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_names]()[i];
-//			TR << "Reading and generate cst from: " << hotspot_name << std::endl;
-			protocols::hotspot_hashing::HotspotStubSetOP hotspot_stub_setOP( new protocols::hotspot_hashing::HotspotStubSet );
-			hotspot_stub_setOP->read_data( hotspot_name );
-			hotspot_stub_setOP->add_hotspot_constraints_to_wholepose( pose, chain_to_redesign, hotspot_stub_setOP,
-					basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_distcb_weight][i],
-					worst_allowed_stub_bonus, apply_self_energies, bump_cutoff, apply_ambiguous_constraints );
-			//hotspot_stub_setOP->clear();
+		//   TR << "Reading and generate cst from: " << hotspot_name << std::endl;
+		protocols::hotspot_hashing::HotspotStubSetOP hotspot_stub_setOP( new protocols::hotspot_hashing::HotspotStubSet );
+		hotspot_stub_setOP->read_data( hotspot_name );
+		hotspot_stub_setOP->add_hotspot_constraints_to_wholepose( pose, chain_to_redesign, hotspot_stub_setOP,
+			basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_distcb_weight][i],
+			worst_allowed_stub_bonus, apply_self_energies, bump_cutoff, apply_ambiguous_constraints );
+		//hotspot_stub_setOP->clear();
 	}
 
 	//convert to centroid (Can only do it after setting hotspot since it uses the packer task)
@@ -176,35 +176,35 @@ public:
 
 }//end of apply
 
-  virtual std::string get_name() const {
-          return "run_score_hotspot";
-  }
+virtual std::string get_name() const {
+	return "run_score_hotspot";
+}
 
 };//end of run_score_hotspot
 
 
 ///////////////////////////////////////////////////////////////////////////////
 void* my_main( void* ) {
-        using namespace protocols::moves;
+	using namespace protocols::moves;
 
-        SequenceMoverOP seq( new SequenceMover() );
-        seq->add_mover( MoverOP( new run_score_hotspot() ) );
+	SequenceMoverOP seq( new SequenceMover() );
+	seq->add_mover( MoverOP( new run_score_hotspot() ) );
 
-        if ( basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_names ].user() && basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_distcb_weight].user()  &&
-             basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_names ].size()==basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_distcb_weight].size()) {
-// 	 	  		  TR << "Will read: " << basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_names ].size() << " hotspot files" << std::endl;
-        } else {
-              throw( utility::excn::EXCN_BadInput("expected hostspot_filename and hotspot_distcb_weight this app and their size should be equal") );
- 	 	  }
+	if ( basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_names ].user() && basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_distcb_weight].user()  &&
+			basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_names ].size()==basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_distcb_weight].size() ) {
+		//          TR << "Will read: " << basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_names ].size() << " hotspot files" << std::endl;
+	} else {
+		throw( utility::excn::EXCN_BadInput("expected hostspot_filename and hotspot_distcb_weight this app and their size should be equal") );
+	}
 
-        try{
-                protocols::jd2::JobDistributor::get_instance()->go( seq );
-        } catch ( utility::excn::EXCN_Base& excn ) {
-                std::cerr << "Exception: " << std::endl;
-                excn.show( std::cerr );
-        }
+	try{
+		protocols::jd2::JobDistributor::get_instance()->go( seq );
+	} catch ( utility::excn::EXCN_Base& excn ) {
+		std::cerr << "Exception: " << std::endl;
+		excn.show( std::cerr );
+	}
 
-        return 0;
+	return 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -212,18 +212,18 @@ int main( int argc, char * argv [] )
 {
 	try {
 
-  NEW_OPT(score_hotspot_cst::hotspot_names, "hotspot_names","hotspot_name.files");
-  NEW_OPT(score_hotspot_cst::hotspot_score_weight, "weight for hotspot_score_weight",10.0);
-  NEW_OPT(score_hotspot_cst::hotspot_distcb_weight, "weight for Cb distance",utility::vector1<core::Real>());
+		NEW_OPT(score_hotspot_cst::hotspot_names, "hotspot_names","hotspot_name.files");
+		NEW_OPT(score_hotspot_cst::hotspot_score_weight, "weight for hotspot_score_weight",10.0);
+		NEW_OPT(score_hotspot_cst::hotspot_distcb_weight, "weight for Cb distance",utility::vector1<core::Real>());
 
-	// setup random numbers and options
-	devel::init(argc, argv);
+		// setup random numbers and options
+		devel::init(argc, argv);
 
-	//see David Kim app dekim/score_nonlocal_frags.cc
+		//see David Kim app dekim/score_nonlocal_frags.cc
 
-	// run the test
-	// score_hotspot();
-  protocols::viewer::viewer_main( my_main );
+		// run the test
+		// score_hotspot();
+		protocols::viewer::viewer_main( my_main );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

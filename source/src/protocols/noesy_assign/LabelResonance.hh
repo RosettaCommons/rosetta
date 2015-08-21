@@ -43,39 +43,39 @@ LabelResonance combines resonanceID (label), chemical shift (freq), tolerance (e
 */
 
 class LabelResonance : public Resonance {
-  //typedefs
+	//typedefs
 public:
 private:
-  typedef Resonance Parent;
-  //methods
+	typedef Resonance Parent;
+	//methods
 public:
-  LabelResonance();
+	LabelResonance();
 
-  LabelResonance(
-      core::Size label,
-      core::Real freq,
-      core::Real error,
-      core::id::NamedAtomID const& id,
-      core::chemical::AA,
-			core::Real intensity
-  );
+	LabelResonance(
+		core::Size label,
+		core::Real freq,
+		core::Real error,
+		core::id::NamedAtomID const& id,
+		core::chemical::AA,
+		core::Real intensity
+	);
 
-  ~LabelResonance();
+	~LabelResonance();
 
-  virtual ResonanceOP clone() {
-    return ResonanceOP( new LabelResonance( *this ) );
-  }
+	virtual ResonanceOP clone() {
+		return ResonanceOP( new LabelResonance( *this ) );
+	}
 
-  /// @brief match the proton and corresponding label atom at same time
-  virtual bool match2D(
-    core::Real proton_freq,
-    core::Real proton_error,
-    FoldResonance const& proton_folder,
-    core::Real label_freq,
-    core::Real label_error,
-    FoldResonance const& label_folder,
+	/// @brief match the proton and corresponding label atom at same time
+	virtual bool match2D(
+		core::Real proton_freq,
+		core::Real proton_error,
+		FoldResonance const& proton_folder,
+		core::Real label_freq,
+		core::Real label_error,
+		FoldResonance const& label_folder,
 		ResonancePairs& matches
-  ) const;
+	) const;
 
 };
 

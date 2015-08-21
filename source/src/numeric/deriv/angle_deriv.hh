@@ -121,21 +121,21 @@ p1_theta_deriv(
 
 	// translation of p1 along v1 or perpendicular to v1 and v2 ==> deriv=0
 	assert( f1.distance( cross(f2,p1) ) < Real(1e-3) && // see helper fcn
-					std::abs( dot( f2, v1 ) ) < Real(1e-3) &&
-					std::abs( dot( f2, cross( v1, v2 ) ) ) < Real(1e-3) );
+		std::abs( dot( f2, v1 ) ) < Real(1e-3) &&
+		std::abs( dot( f2, cross( v1, v2 ) ) ) < Real(1e-3) );
 
 
 	{ // more debugging
 		// pretend axis = u2, R_phi = p2
 		ASSERT_ONLY(Vector const u_phi( v2.normalized() );)
-		ASSERT_ONLY(Vector const R_phi( p2 );)
-		ASSERT_ONLY(Real const deriv = - dot( u_phi, f1 ) - dot( cross( u_phi, R_phi ), f2);)
-		assert( std::abs( deriv ) < Real(1e-3) );
+			ASSERT_ONLY(Vector const R_phi( p2 );)
+			ASSERT_ONLY(Real const deriv = - dot( u_phi, f1 ) - dot( cross( u_phi, R_phi ), f2);)
+			assert( std::abs( deriv ) < Real(1e-3) );
 		//std::cout << "deriv: " << deriv<< ' ' <<
-		//	F(9,3,u_phi(1)) << F(9,3,u_phi(2)) << F(9,3,u_phi(3)) << ' ' <<
-		//	F(9,3,R_phi(1)) << F(9,3,R_phi(2)) << F(9,3,R_phi(3)) << "\nF1,F2: " <<
-		//	F(9,3,f1(1)) << F(9,3,f1(2)) << F(9,3,f1(3)) << ' ' <<
-		//	F(9,3,f2(1)) << F(9,3,f2(2)) << F(9,3,f2(3)) << std::endl;
+		// F(9,3,u_phi(1)) << F(9,3,u_phi(2)) << F(9,3,u_phi(3)) << ' ' <<
+		// F(9,3,R_phi(1)) << F(9,3,R_phi(2)) << F(9,3,R_phi(3)) << "\nF1,F2: " <<
+		// F(9,3,f1(1)) << F(9,3,f1(2)) << F(9,3,f1(3)) << ' ' <<
+		// F(9,3,f2(1)) << F(9,3,f2(2)) << F(9,3,f2(3)) << std::endl;
 	}
 
 
@@ -247,20 +247,20 @@ p1_theta_deriv(
 
 	// translation of p1 along v1 or perpendicular to v1 and v2 ==> deriv=0
 	//assert( f1.distance( cross(f2,p1) ) < Real(1e-3) && // see helper fcn
-	//				std::abs( dot( f2, v1 ) ) < Real(1e-3) &&
-	//				std::abs( dot( f2, cross( v1, v2 ) ) ) < Real(1e-3) );
+	//    std::abs( dot( f2, v1 ) ) < Real(1e-3) &&
+	//    std::abs( dot( f2, cross( v1, v2 ) ) ) < Real(1e-3) );
 
 
 	//{ // more debugging
-	//	// pretend axis = u2, R_phi = p2
-	//	Vector const u_phi( v2.normalized() ), R_phi( p2 );
-	//	Real const deriv = - dot( u_phi, f1 ) - dot( cross( u_phi, R_phi ), f2);
-	//	assert( std::abs( deriv ) < Real(1e-3) );
-	//	//std::cout << "deriv: " << deriv<< ' ' <<
-	//	//	F(9,3,u_phi(1)) << F(9,3,u_phi(2)) << F(9,3,u_phi(3)) << ' ' <<
-	//	//	F(9,3,R_phi(1)) << F(9,3,R_phi(2)) << F(9,3,R_phi(3)) << "\nF1,F2: " <<
-	//	//	F(9,3,f1(1)) << F(9,3,f1(2)) << F(9,3,f1(3)) << ' ' <<
-	//	//	F(9,3,f2(1)) << F(9,3,f2(2)) << F(9,3,f2(3)) << std::endl;
+	// // pretend axis = u2, R_phi = p2
+	// Vector const u_phi( v2.normalized() ), R_phi( p2 );
+	// Real const deriv = - dot( u_phi, f1 ) - dot( cross( u_phi, R_phi ), f2);
+	// assert( std::abs( deriv ) < Real(1e-3) );
+	// //std::cout << "deriv: " << deriv<< ' ' <<
+	// // F(9,3,u_phi(1)) << F(9,3,u_phi(2)) << F(9,3,u_phi(3)) << ' ' <<
+	// // F(9,3,R_phi(1)) << F(9,3,R_phi(2)) << F(9,3,R_phi(3)) << "\nF1,F2: " <<
+	// // F(9,3,f1(1)) << F(9,3,f1(2)) << F(9,3,f1(3)) << ' ' <<
+	// // F(9,3,f2(1)) << F(9,3,f2(2)) << F(9,3,f2(3)) << std::endl;
 	//}
 
 
@@ -289,10 +289,10 @@ angle_p1_deriv(
 )
 {
 	//std::cout << "core.mm.MMBondAngleEnergy:     p1 angle deriv:" <<
-		//" p1 (" << p1.x() << "," << p1.y() << "," << p1.z() <<
-		//") p2 (" << p2.x() << "," << p2.y() << "," << p2.z() <<
-		//") p3 (" << p3.x() << "," << p3.y() << "," << p3.z() << ")" <<
-		//std::endl;
+	//" p1 (" << p1.x() << "," << p1.y() << "," << p1.z() <<
+	//") p2 (" << p2.x() << "," << p2.y() << "," << p2.z() <<
+	//") p3 (" << p3.x() << "," << p3.y() << "," << p3.z() << ")" <<
+	//std::endl;
 
 
 	typedef P Real;
@@ -346,10 +346,10 @@ angle_p2_deriv(
 )
 {
 	//std::cout << "core.mm.MMBondAngleEnergy:     p2 angle deriv:" <<
-		//" p1 (" << p1.x() << "," << p1.y() << "," << p1.z() <<
-		//") p2 (" << p2.x() << "," << p2.y() << "," << p2.z() <<
-		//") p3 (" << p3.x() << "," << p3.y() << "," << p3.z() << ")" <<
-		//std::endl;
+	//" p1 (" << p1.x() << "," << p1.y() << "," << p1.z() <<
+	//") p2 (" << p2.x() << "," << p2.y() << "," << p2.z() <<
+	//") p3 (" << p3.x() << "," << p3.y() << "," << p3.z() << ")" <<
+	//std::endl;
 
 	typedef P Real;
 	typedef xyzVector< P > Vector;
@@ -475,13 +475,13 @@ angle_p1_p2_p3_deriv(
 	Vector test_p1_f1, test_p1_f2; Real test_theta;
 	angle_p1_deriv( p1, p2, p3, test_theta, test_p1_f1, test_p1_f2 );
 	if ( f1_p1.distance_squared( test_p1_f1 ) > 1e-4 ) {
-		std::cout << "Point 1 f1 vector in error: " << f1_p1.x() << " " << f1_p1.y() << " " << f1_p1.z() <<
-			" vs " << test_p1_f1.x() << " " << test_p1_f1.y() << " " << test_p1_f1.z() << std::endl;
+	std::cout << "Point 1 f1 vector in error: " << f1_p1.x() << " " << f1_p1.y() << " " << f1_p1.z() <<
+	" vs " << test_p1_f1.x() << " " << test_p1_f1.y() << " " << test_p1_f1.z() << std::endl;
 	}
 
 	if ( f2_p1.distance_squared( test_p1_f2 ) > 1e-4 ) {
-		std::cout << "Point 1 f2 vector in error: " << f2_p1.x() << " " << f2_p1.y() << " " << f2_p1.z() <<
-			" vs " << test_p1_f2.x() << " " << test_p1_f2.y() << " " << test_p1_f2.z() << std::endl;
+	std::cout << "Point 1 f2 vector in error: " << f2_p1.x() << " " << f2_p1.y() << " " << f2_p1.z() <<
+	" vs " << test_p1_f2.x() << " " << test_p1_f2.y() << " " << test_p1_f2.z() << std::endl;
 	}
 	}
 
@@ -489,13 +489,13 @@ angle_p1_p2_p3_deriv(
 	Vector test_p2_f1, test_p2_f2; Real test_theta;
 	angle_p2_deriv( p1, p2, p3, test_theta, test_p2_f1, test_p2_f2 );
 	if ( f1_p2.distance_squared( test_p2_f1 ) > 1e-4 ) {
-		std::cout << "Point 1 f1 vector in error: " << f1_p2.x() << " " << f1_p2.y() << " " << f1_p2.z() <<
-			" vs " << test_p2_f1.x() << " " << test_p2_f1.y() << " " << test_p2_f1.z() << std::endl;
+	std::cout << "Point 1 f1 vector in error: " << f1_p2.x() << " " << f1_p2.y() << " " << f1_p2.z() <<
+	" vs " << test_p2_f1.x() << " " << test_p2_f1.y() << " " << test_p2_f1.z() << std::endl;
 	}
 
 	if ( f2_p2.distance_squared( test_p2_f2 ) > 1e-4 ) {
-		std::cout << "Point 1 f2 vector in error: " << f2_p2.x() << " " << f2_p2.y() << " " << f2_p2.z() <<
-			" vs " << test_p2_f2.x() << " " << test_p2_f2.y() << " " << test_p2_f2.z() << std::endl;
+	std::cout << "Point 1 f2 vector in error: " << f2_p2.x() << " " << f2_p2.y() << " " << f2_p2.z() <<
+	" vs " << test_p2_f2.x() << " " << test_p2_f2.y() << " " << test_p2_f2.z() << std::endl;
 	}
 	}
 
@@ -503,13 +503,13 @@ angle_p1_p2_p3_deriv(
 	Vector test_p3_f1, test_p3_f2; Real test_theta;
 	angle_p1_deriv( p3, p2, p1, test_theta, test_p3_f1, test_p3_f2 );
 	if ( f1_p3.distance_squared( test_p3_f1 ) > 1e-4 ) {
-		std::cout << "Point 1 f1 vector in error: " << f1_p3.x() << " " << f1_p3.y() << " " << f1_p3.z() <<
-			" vs " << test_p3_f1.x() << " " << test_p3_f1.y() << " " << test_p3_f1.z() << std::endl;
+	std::cout << "Point 1 f1 vector in error: " << f1_p3.x() << " " << f1_p3.y() << " " << f1_p3.z() <<
+	" vs " << test_p3_f1.x() << " " << test_p3_f1.y() << " " << test_p3_f1.z() << std::endl;
 	}
 
 	if ( f2_p3.distance_squared( test_p3_f2 ) > 1e-4 ) {
-		std::cout << "Point 1 f2 vector in error: " << f2_p3.x() << " " << f2_p3.y() << " " << f2_p3.z() <<
-			" vs " << test_p3_f2.x() << " " << test_p3_f2.y() << " " << test_p3_f2.z() << std::endl;
+	std::cout << "Point 1 f2 vector in error: " << f2_p3.x() << " " << f2_p3.y() << " " << f2_p3.z() <<
+	" vs " << test_p3_f2.x() << " " << test_p3_f2.y() << " " << test_p3_f2.z() << std::endl;
 	}
 	}*/
 

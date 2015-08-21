@@ -72,28 +72,28 @@ InteractingRotamerExplosion::apply( core::pose::Pose const & pose, core::pack::t
 	core::Real excl_radius_sq( exclude_radius_ * exclude_radius_ );
 	utility::vector1< core::Size > target_seqpos;
 	std::set< core::Size > parsed_seqpos( core::pose::get_resnum_list( string_target_seqpos_, pose ) );
-	for( 	std::set< core::Size >::const_iterator set_it( parsed_seqpos.begin() ), set_end( parsed_seqpos.end() ); set_it != set_end; ++set_it ) target_seqpos.push_back( *set_it );
+	for (  std::set< core::Size >::const_iterator set_it( parsed_seqpos.begin() ), set_end( parsed_seqpos.end() ); set_it != set_end; ++set_it ) target_seqpos.push_back( *set_it );
 
 	std::string report_string("Potential rotamer explosion positions against target pdb pos");
-	for( core::Size j(1); j <= target_seqpos.size(); ++j ) {
+	for ( core::Size j(1); j <= target_seqpos.size(); ++j ) {
 		report_string += (" " + utility::to_string( pose.pdb_info()->chain( target_seqpos[j] ) )  + utility::to_string( pose.pdb_info()->number( target_seqpos[j] ) ) );
 	}
 	report_string += " are: ";
 
-	for( core::Size i(1); i <= pose.total_residue(); ++i){
+	for ( core::Size i(1); i <= pose.total_residue(); ++i ) {
 
-		if( !pose.residue_type(i).is_protein() ) continue;
+		if ( !pose.residue_type(i).is_protein() ) continue;
 		bool out_of_all_target_res_radius( true );
-		for( core::Size j(1); j <= target_seqpos.size(); ++j ){
-			if( (pose.residue(i).atom( pose.residue(i).nbr_atom() ).xyz().distance_squared( pose.residue( target_seqpos[j] ).atom( pose.residue( target_seqpos[j] ).nbr_atom() ).xyz() ) ) <= excl_radius_sq ){
+		for ( core::Size j(1); j <= target_seqpos.size(); ++j ) {
+			if ( (pose.residue(i).atom( pose.residue(i).nbr_atom() ).xyz().distance_squared( pose.residue( target_seqpos[j] ).atom( pose.residue( target_seqpos[j] ).nbr_atom() ).xyz() ) ) <= excl_radius_sq ) {
 				out_of_all_target_res_radius = false;
 				break;
 			}
 		}
-		if( out_of_all_target_res_radius ) continue;
+		if ( out_of_all_target_res_radius ) continue;
 
 		rotamer_set_operations::AddGood2BPairEnergyRotamersOP rotsetop( new rotamer_set_operations::AddGood2BPairEnergyRotamers(i, ex_level_, target_seqpos, score_cutoff_, false ) );
-		if( debug_ ) rotsetop->set_debug( true );
+		if ( debug_ ) rotsetop->set_debug( true );
 		task.nonconst_residue_task(i).append_rotamerset_operation( rotsetop );
 		report_string += (utility::to_string( i ) + ", ");
 	} //loop over pose res i

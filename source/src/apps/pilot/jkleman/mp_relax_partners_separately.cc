@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief      Mover partners apart and relax them separately
-/// @details	Run quick relax on separated partners; this emulates unbound docking
+/// @details Run quick relax on separated partners; this emulates unbound docking
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 
 // App headers
@@ -34,17 +34,17 @@ main( int argc, char * argv [] )
 		using namespace protocols::jd2;
 		using namespace protocols::docking::membrane;
 
-		
+
 		// initialize options, RNG, and factory-registrators
 		devel::init(argc, argv);
-		
+
 		QuickRelaxPartnersSeparatelyOP qr( new QuickRelaxPartnersSeparately() );
 		JobDistributor::get_instance()->go(qr);
 	}
-	catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
-		return -1;
-	}
+catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+	return -1;
+}
 
 	return 0;
 }

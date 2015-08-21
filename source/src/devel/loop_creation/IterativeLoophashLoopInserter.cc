@@ -109,100 +109,96 @@ IterativeLoophashLoopInserter::apply(
 ){
 	using namespace core;
 	using namespace protocols::loophash;
-	
+
 	init(pose);
-	
+
 	//Build the first fragment
 	core::Size lh_fragment_begin = loop_anchor()-num_flanking_residues_to_match_+1;
 	core::Size lh_fragment_end = loop_anchor()+num_flanking_residues_to_match_;
-	
+
 	HashBuckets hash_buckets = find_fragments(pose, lh_fragment_begin, lh_fragment_end);
-	
+
 	std::pair<core::Size, core::Size> random_fragment =
 		get_random_fragment(hash_buckets);
-	
+
 	std::pair<core::Real,core::Real> deviations =
 		build_loop(pose, lh_fragment_begin, lh_fragment_end, random_fragment.first, random_fragment.second);
-	
+
 	TR << "Deviations after initial loop insert: " << deviations.first << " " << deviations.second << std::endl;
-	
+
 	lh_fragment_end+=created_loop_.size();
 	core::Size loop_cut = created_loop_.cut();
-	
+
 	//core::Size max_lh_fragment_size = created_loop_.size() + (2*num_flanking_residues_to_match_);
 	core::Size min_lh_fragment_size=100000;
-	for(core::Size i=0; i<lh_library_->hash_sizes().size(); ++i)
-	{
+	for ( core::Size i=0; i<lh_library_->hash_sizes().size(); ++i ) {
 		min_lh_fragment_size = std::min(min_lh_fragment_size, lh_library_->hash_sizes()[i]);
 	}
-	
+
 	//restrict future loophash lookups to be maximally the size we just created
 	//Pick two random loophash fragment ends
-	for(core::Size i=2; i<=max_insertions_; ++i)
-	{
-		if(deviations.first <= max_closure_deviation_ && deviations.second <= max_closure_deviation_)
-		{
+	for ( core::Size i=2; i<=max_insertions_; ++i ) {
+		if ( deviations.first <= max_closure_deviation_ && deviations.second <= max_closure_deviation_ ) {
 			TR.Debug << "Insertion deviations satisfied after " << i-1 << " insertions." << std::endl;
 			break;
 		}
-		
+
 		core::Size new_begin = numeric::random::random_range(lh_fragment_begin, loop_cut);
 		core::Size new_end = numeric::random::random_range(loop_cut+1, lh_fragment_end);
 		core::Size temp_size = new_end-new_begin+1;
-		while(temp_size < min_lh_fragment_size)
-		{
+		while ( temp_size < min_lh_fragment_size )
+				{
 			new_begin = numeric::random::random_range(lh_fragment_begin, loop_cut);
 			new_end = numeric::random::random_range(loop_cut+1, lh_fragment_end);
 			temp_size = new_end-new_begin+1;
 		}
 		TR.Debug << "new begin, new end, size = " << new_begin << ", " << new_end << ", " << temp_size << std::endl;
-		
+
 		hash_buckets = find_fragments(pose, new_begin, new_end, temp_size, temp_size);
-		
+
 		//If there are no loops for this particular break, then skip
-		if(hash_buckets.size()==0)
-		{
+		if ( hash_buckets.size()==0 ) {
 			TR << "No loophash fragments found for transform between residues " << new_begin << " and " << new_end << std::endl;
 			continue;
 		}
-		
+
 		std::pair<core::Size, core::Size> random_fragment =
 			get_random_fragment(hash_buckets);
-			
+
 		//apply random fragment and get deviations
 		LoopHashMap & hashmap = lh_library_->gethash( random_fragment.first );
 		LeapIndex cp = hashmap.get_peptide( random_fragment.second );
-		
+
 		BackboneSegment lh_fragment_bs;
 		lh_library_->backbone_database().get_backbone_segment( cp.index, cp.offset, hashmap.get_loop_size() , lh_fragment_bs );
-		
+
 		protocols::loops::Loop temp_loop(new_begin, new_end, loop_cut);
 		protocols::loops::set_single_loop_fold_tree(pose, temp_loop);
-		
+
 		TR.Debug << "Applying " << lh_fragment_bs.length() << " lh fragment torsions starting at residue " << new_begin << std::endl;
 		lh_fragment_bs.apply_to_pose(pose, new_begin, false);
 		deviations = protocols::loops::loop_closure::ccd::get_deviation(pose, loop_cut);
 		TR.Debug << "Deviations after insertion " << i << ": " << deviations.first << " " << deviations.second << std::endl;
-		
-//		core::Size fewer_n_term = new_begin - lh_fragment_begin;
-//		core::Size fewer_c_term = lh_fragment_end - new_end;
-//		int cur_max_size = max_lh_fragment_size - fewer_n_term - fewer_c_term;
-//		TR.Debug << "min_lh_fragment_size, max_lh_fragment_size, fewer_n_term, fewer_c_term -- " <<
-//			min_lh_fragment_size << ", " << max_lh_fragment_size << ", " << fewer_n_term << ", " << fewer_c_term << std::endl;
-//		TR.Debug << "cut, max_size, new_begin, new_end -- " << loop_cut << ", " << cur_max_size << ", " << new_begin << ", " << new_end << std::endl;
-//		while(cur_max_size < (int)min_lh_fragment_size)
-//		{
-//			new_begin = numeric::random::random_range(lh_fragment_begin, loop_cut);
-//			new_end = numeric::random::random_range(loop_cut+1, lh_fragment_end);
-//			
-//			fewer_n_term = new_begin - lh_fragment_begin;
-//			fewer_c_term = lh_fragment_end - new_end;
-//			cur_max_size = max_lh_fragment_size - fewer_n_term - fewer_c_term;
-//			
-//			TR.Debug << "min_lh_fragment_size, max_lh_fragment_size, fewer_n_term, fewer_c_term -- " <<
-//				min_lh_fragment_size << ", " << max_lh_fragment_size << ", " << fewer_n_term << ", " << fewer_c_term << std::endl;
-//			TR.Debug << "cut, max_size, new_begin, new_end -- " << loop_cut << ", " << cur_max_size << ", " << new_begin << ", " << new_end << std::endl;
-//		}
+
+		//  core::Size fewer_n_term = new_begin - lh_fragment_begin;
+		//  core::Size fewer_c_term = lh_fragment_end - new_end;
+		//  int cur_max_size = max_lh_fragment_size - fewer_n_term - fewer_c_term;
+		//  TR.Debug << "min_lh_fragment_size, max_lh_fragment_size, fewer_n_term, fewer_c_term -- " <<
+		//   min_lh_fragment_size << ", " << max_lh_fragment_size << ", " << fewer_n_term << ", " << fewer_c_term << std::endl;
+		//  TR.Debug << "cut, max_size, new_begin, new_end -- " << loop_cut << ", " << cur_max_size << ", " << new_begin << ", " << new_end << std::endl;
+		//  while(cur_max_size < (int)min_lh_fragment_size)
+		//  {
+		//   new_begin = numeric::random::random_range(lh_fragment_begin, loop_cut);
+		//   new_end = numeric::random::random_range(loop_cut+1, lh_fragment_end);
+		//
+		//   fewer_n_term = new_begin - lh_fragment_begin;
+		//   fewer_c_term = lh_fragment_end - new_end;
+		//   cur_max_size = max_lh_fragment_size - fewer_n_term - fewer_c_term;
+		//
+		//   TR.Debug << "min_lh_fragment_size, max_lh_fragment_size, fewer_n_term, fewer_c_term -- " <<
+		//    min_lh_fragment_size << ", " << max_lh_fragment_size << ", " << fewer_n_term << ", " << fewer_c_term << std::endl;
+		//   TR.Debug << "cut, max_size, new_begin, new_end -- " << loop_cut << ", " << cur_max_size << ", " << new_begin << ", " << new_end << std::endl;
+		//  }
 	}
 	TR << "Final loop deviations " << deviations.first << " " << deviations.second << std::endl;
 }
@@ -216,11 +212,11 @@ IterativeLoophashLoopInserter::parse_my_tag(
 	core::pose::Pose const & pose
 ){
 	LoophashLoopInserter::parse_my_tag(tag, data, filters, movers, pose);
-	
-	if(tag->hasOption("max_closure_deviation")){
+
+	if ( tag->hasOption("max_closure_deviation") ) {
 		max_closure_deviation_ = tag->getOption<core::Real>("max_closure_deviation");
 	}
-	if(tag->hasOption("max_insertions")){
+	if ( tag->hasOption("max_insertions") ) {
 		max_insertions_ = tag->getOption<core::Real>("max_insertions");
 	}
 }

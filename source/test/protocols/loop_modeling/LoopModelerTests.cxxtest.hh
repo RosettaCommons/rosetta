@@ -58,40 +58,40 @@ using core::import_pose::pose_from_pdb;
 using utility::excn::EXCN_Msg_Exception;
 
 // Brainstorming {{{1
-// Look at the TaskOperationRegistrator class to see how to register KIC 
-// helpers.  (TaskOperation doesn't derive from Mover, but the Registrator/ 
-// Factory machinery is actually agnostic to all that.)  The question is still 
+// Look at the TaskOperationRegistrator class to see how to register KIC
+// helpers.  (TaskOperation doesn't derive from Mover, but the Registrator/
+// Factory machinery is actually agnostic to all that.)  The question is still
 // how to distinguish perturbers from pivot_pickers from solution_pickers.
 //
 // There are three classes: Registrator, Factory, and Creator
 //
-// Registrator is just a C++ trick to associate creators with factories before 
+// Registrator is just a C++ trick to associate creators with factories before
 // main.
 //
-// Factory is a singleton that manages a group of creators.  For example, there 
-// is a MoverFactory and a separate Creator for each mover.  Each creator has a 
-// method create an object and a method to provide a key name.  For each 
-// creator it receives, the factory looks at the key name and uses it to 
-// construct a key-name -> creator map, which it can use later on to 
+// Factory is a singleton that manages a group of creators.  For example, there
+// is a MoverFactory and a separate Creator for each mover.  Each creator has a
+// method create an object and a method to provide a key name.  For each
+// creator it receives, the factory looks at the key name and uses it to
+// construct a key-name -> creator map, which it can use later on to
 // instantiate things.
 //
-// Right now, the factories just return default constructed objects and 
-// parse_my_tag() is called to set them up.  It's nice that the factory doesn't 
+// Right now, the factories just return default constructed objects and
+// parse_my_tag() is called to set them up.  It's nice that the factory doesn't
 // depend on rosetta scripts.
 //
-// For KIC, I don't know what type of object I'm going to get if I pass the 
-// factory a name.  I could create a type for all KIC helpers, that would 
-// basically have just parse_my_tag(tag, kic_mover) that would setup the mover 
-// and add it to the kic mover.  Or I could split that into two functions: 
-// parse_my_tag(tag) and add_to_kic_mover().  The former could be written once 
-// for each thing.  There's not even one KicMover, though.  There are 3, and 
-// they don't have all the same methods.  Could write one add_to_kic_mover() 
-// for each, although this sounds like the kind of can't-redefine-overloaded- 
+// For KIC, I don't know what type of object I'm going to get if I pass the
+// factory a name.  I could create a type for all KIC helpers, that would
+// basically have just parse_my_tag(tag, kic_mover) that would setup the mover
+// and add it to the kic mover.  Or I could split that into two functions:
+// parse_my_tag(tag) and add_to_kic_mover().  The former could be written once
+// for each thing.  There's not even one KicMover, though.  There are 3, and
+// they don't have all the same methods.  Could write one add_to_kic_mover()
+// for each, although this sounds like the kind of can't-redefine-overloaded-
 // methods-in-subclass issues that I might have run across before.
 //
-// If I have a different factory for perturbers, pivot_pickers, and 
-// solution_pickers, I'll have to manually deal with misspelled names.  But 
-// appealing because KicMover.parse_my_tag() can do things like: No 
+// If I have a different factory for perturbers, pivot_pickers, and
+// solution_pickers, I'll have to manually deal with misspelled names.  But
+// appealing because KicMover.parse_my_tag() can do things like: No
 // solution_pickers for balanced kic mover.
 //
 // Only one solution picker and pivot picker.
@@ -109,7 +109,7 @@ using utility::excn::EXCN_Msg_Exception;
 //     <RamaPerturber options=...>
 //     <FragmentPerturber options=...>
 //   </Perturbers>
-//   <SolutionPicker>		// Misleading because more than one picker is illegal.
+//   <SolutionPicker>  // Misleading because more than one picker is illegal.
 //     <StandardPivots options=...>
 //   </SolutionPicker>
 // </KicMover>
@@ -121,32 +121,32 @@ using utility::excn::EXCN_Msg_Exception;
 //   <StandardPivots options=...>
 // </KicMover>
 //
-// The thing is that specifying a pivot picker or a solution picker won't 
-// change the perturbers, and likewise specifying a perturber won't affect the 
+// The thing is that specifying a pivot picker or a solution picker won't
+// change the perturbers, and likewise specifying a perturber won't affect the
 // pickers.  So maybe there's value in clearly distinguishing these things.
 //
-// A heuristic approach: Perturbers must end with "Perturber", pivot pickers 
-// must end with "Pivots", and solution pickers must end with "Solutions".  
-// Could be enforced by a single factory which manages three types of creators.  
-// Then KicMover.parse_my_tag() can know what type to ask for.  I'll have to 
-// rename IdealizeNonPhiPsi and PerturberSet.  This approach seems inflexible, 
-// but from a YAGNI perspective it might be the way to go.  The KicMovers will 
+// A heuristic approach: Perturbers must end with "Perturber", pivot pickers
+// must end with "Pivots", and solution pickers must end with "Solutions".
+// Could be enforced by a single factory which manages three types of creators.
+// Then KicMover.parse_my_tag() can know what type to ask for.  I'll have to
+// rename IdealizeNonPhiPsi and PerturberSet.  This approach seems inflexible,
+// but from a YAGNI perspective it might be the way to go.  The KicMovers will
 // have to do the string manip logic, though.
-// 
-// I could have the factory have a method that takes a name and returns the 
-// type as an enum.  Then the KicMover can drop into a switch and request the 
-// type it wants.  Or the factory could return a ReferenceCount object (i.e.  
+//
+// I could have the factory have a method that takes a name and returns the
+// type as an enum.  Then the KicMover can drop into a switch and request the
+// type it wants.  Or the factory could return a ReferenceCount object (i.e.
 // base class) and an enum type, and KicMover could drop into a switch to cast.
-// 
-// I could have the factory just build up lists of perturbers etc.  But then I 
+//
+// I could have the factory just build up lists of perturbers etc.  But then I
 // won't know which tag goes with which instance.
 //
-// I think the cleanest system is to have the subclasses manage everything 
-// themselves.  Best not to even know what class I'm dealing with.  Now the 
-// question is: what do I call it?  ClosureAlgorithm?  KicPlugin.  That's not 
-// bad.  
+// I think the cleanest system is to have the subclasses manage everything
+// themselves.  Best not to even know what class I'm dealing with.  Now the
+// question is: what do I call it?  ClosureAlgorithm?  KicPlugin.  That's not
+// bad.
 //
-// Anyways, the poit is that the whole registrator system is flexible and not 
+// Anyways, the poit is that the whole registrator system is flexible and not
 // limited to movers.
 // }}}1
 
@@ -278,7 +278,7 @@ public:
 		TS_ASSERT(get_fullatom_movers(modeler).empty());
 		TS_ASSERT(get_fullatom_refiners(modeler).empty());
 	}
-	
+
 	void test_modeler_options() { // {{{1
 		string tag =
 			"<LoopModeler"
@@ -299,12 +299,12 @@ public:
 			modeler,
 			modeler->prepare_for_centroid_,
 			modeler->build_stage_,
-			modeler->centroid_stage_, 
+			modeler->centroid_stage_,
 			modeler->prepare_for_fullatom_,
 			modeler->fullatom_stage_,
-		};
+			};
 
-		foreach (LoopMoverOP mover, movers) {
+		foreach ( LoopMoverOP mover, movers ) {
 			TS_ASSERT_EQUALS(mover->get_loops()->size(), 3);
 			TS_ASSERT_EQUALS(mover->get_loop(1).start(), 30);
 			TS_ASSERT_EQUALS(mover->get_loop(1).cut(), 41);
@@ -330,7 +330,7 @@ public:
 	void test_fast_option() { // {{{1
 		string tag;
 		LoopModelerOP modeler;
-		
+
 		tag = "<LoopModeler fast=yes/>";
 		modeler = parse_tag<LoopModeler>(tag);
 
@@ -370,7 +370,7 @@ public:
 	}
 
 	void test_build_options() { // {{{1
-		string tag = 
+		string tag =
 			"<LoopModeler>"
 			"  <Build skip=yes max_attempts=5000/>"
 			"</LoopModeler>";
@@ -384,13 +384,13 @@ public:
 	}
 
 	void test_centroid_options() { // {{{1
-		string tag = 
+		string tag =
 			"<LoopModeler>"
 			"  <Centroid"
-      "    sfxn_cycles=21 temp_cycles=53 mover_cycles=11"
-      "    ramp_rama=yes ramp_rep=yes ramp_temp=no"
+			"    sfxn_cycles=21 temp_cycles=53 mover_cycles=11"
+			"    ramp_rama=yes ramp_rep=yes ramp_temp=no"
 			"    initial_temp=2.6 final_temp=0.6"
-      "    skip=yes auto_refine=no/>"
+			"    skip=yes auto_refine=no/>"
 			"</LoopModeler>";
 		LoopModelerOP modeler = parse_tag<LoopModeler>(tag);
 
@@ -409,16 +409,16 @@ public:
 		TS_ASSERT_DELTA(modeler->centroid_stage_->final_temp_, 0.6, 1e-5);
 
 		TS_ASSERT(get_centroid_refiners(modeler).empty())
-	}
+			}
 
-	void test_fullatom_options() { // {{{1
-		string tag = 
+			void test_fullatom_options() { // {{{1
+			string tag =
 			"<LoopModeler>"
 			"  <Fullatom"
-      "    sfxn_cycles=28 temp_cycles=55 mover_cycles=18"
-      "    ramp_rama=yes ramp_rep=yes ramp_temp=no"
+			"    sfxn_cycles=28 temp_cycles=55 mover_cycles=18"
+			"    ramp_rama=yes ramp_rep=yes ramp_temp=no"
 			"    initial_temp=2.4 final_temp=0.4"
-      "    skip=yes auto_refine=no/>"
+			"    skip=yes auto_refine=no/>"
 			"</LoopModeler>";
 		LoopModelerOP modeler = parse_tag<LoopModeler>(tag);
 
@@ -437,10 +437,10 @@ public:
 		TS_ASSERT_DELTA(modeler->fullatom_stage_->final_temp_, 0.4, 1e-5);
 
 		TS_ASSERT(get_fullatom_refiners(modeler).empty())
-	}
+			}
 
-	void test_temp_cycles_regex() { // {{{1
-		string tag; LoopModelerOP modeler;
+			void test_temp_cycles_regex() { // {{{1
+			string tag; LoopModelerOP modeler;
 
 		// Case 1: Number of cycles explicitly given.
 
@@ -465,7 +465,7 @@ public:
 	}
 
 	void test_custom_movers() { // {{{1
-		string tag = 
+		string tag =
 			"<LoopModeler>"
 			"  <LegacyKicSampler/>"
 			"  <KicMover/>"
@@ -499,22 +499,22 @@ public:
 	}
 
 	void test_illegal_movers() { // {{{1
-		string tag = 
+		string tag =
 			"<LoopModeler>"
 			"  <MutateResidue/>"
 			"</LoopModeler>";
 
-		// Can only use LoopMover subclasses within LoopModeler, not regular 
+		// Can only use LoopMover subclasses within LoopModeler, not regular
 		// Movers.
 
 		TS_ASSERT_THROWS(parse_tag<LoopModeler>(tag), EXCN_Msg_Exception);
 	}
 
 	void test_custom_centroid_movers() { // {{{1
-		// Only test one nested mover here.  The more comprehensive test is 
+		// Only test one nested mover here.  The more comprehensive test is
 		// test_custom_movers().
-		
-		string tag = 
+
+		string tag =
 			"<LoopModeler>"
 			"  <Centroid>"
 			"    <LegacyKicSampler/>"
@@ -534,10 +534,10 @@ public:
 	}
 
 	void test_custom_fullatom_movers() { // {{{1
-		// Only test one nested mover here.  The more comprehensive test is 
+		// Only test one nested mover here.  The more comprehensive test is
 		// test_custom_movers().
-		
-		string tag = 
+
+		string tag =
 			"<LoopModeler>"
 			"  <Fullatom>"
 			"    <LegacyKicSampler/>"
@@ -568,7 +568,7 @@ public:
 		modeler->centroid_stage()->set_sfxn_cycles(1);
 		modeler->centroid_stage()->set_temp_cycles(1);
 		modeler->centroid_stage()->set_mover_cycles(1);
-		modeler->disable_fullatom_stage();	// Repacking before fullatom too slow.
+		modeler->disable_fullatom_stage(); // Repacking before fullatom too slow.
 
 		// Just checking to make sure no exceptions get thrown.
 

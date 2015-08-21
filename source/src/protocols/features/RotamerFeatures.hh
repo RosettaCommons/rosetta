@@ -41,8 +41,8 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 //@brief Extract from the dunbrack Energy term the model for the
 // rotamer conformation.
@@ -63,14 +63,14 @@ public:
 		SingleResidueRotamerLibraryCOP generic_rotlib =
 			core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( residue.type() );
 
-		if(!generic_rotlib){
+		if ( !generic_rotlib ) {
 			return false;
 		}
 
 		// This will throw a std::bad_cast if the residue has a non Dunbrack rotamer library.
 		RotamericSingleResidueDunbrackLibrary< T, N > const & rotlib(
 			dynamic_cast< RotamericSingleResidueDunbrackLibrary< T, N > const & >(
-				* generic_rotlib));
+			* generic_rotlib));
 
 		RotVector rotamer_vector;
 		Size4 rotamer_fixed_vector;
@@ -79,7 +79,7 @@ public:
 		// can't use get_rotamer_from_chi_static because it's private. Perhaps it should be made public?
 		rotlib.get_rotamer_from_chi(residue.chi(), rotamer_vector);
 
-		if(rotamer_vector.size() > 4){
+		if ( rotamer_vector.size() > 4 ) {
 			//eg LYS_p:dimethylated, perhaps there is a more direct way to
 			//detect cases like this?
 			return false;
@@ -88,7 +88,7 @@ public:
 		copy(rotamer_vector.begin(), rotamer_vector.end(), rotamer_fixed_vector.begin());
 
 		packed_rotno = rotlib.rotwell_2_packed_rotno(rotamer_vector);
-		if(packed_rotno == 0){
+		if ( packed_rotno == 0 ) {
 			packed_rotno = rotlib.find_another_representative_for_unlikely_rotamer(
 				residue, rotamer_fixed_vector);
 			rotlib.packed_rotno_2_rotwell(packed_rotno, rotamer_vector);

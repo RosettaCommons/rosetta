@@ -201,7 +201,7 @@ endrepeat
 #endif
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 #ifdef BOINC_GRAPHICS
@@ -230,18 +230,18 @@ using namespace ObjexxFCL;
 std::string
 FastRelaxCreator::keyname() const
 {
-  return FastRelaxCreator::mover_name();
+	return FastRelaxCreator::mover_name();
 }
 
 protocols::moves::MoverOP
 FastRelaxCreator::create_mover() const {
-  return protocols::moves::MoverOP( new FastRelax() );
+	return protocols::moves::MoverOP( new FastRelax() );
 }
 
 std::string
 FastRelaxCreator::mover_name()
 {
-  return "FastRelax";
+	return "FastRelax";
 }
 
 ///  ---------------------------------------------------------------------------------
@@ -256,8 +256,8 @@ FastRelax::FastRelax(
 	movemap_tag_( /* NULL */ )
 {
 	set_to_default();
-	if( standard_repeats == 0 ) standard_repeats = default_repeats_;
-	if( explicit_ramp_constraints() && ! ramp_down_constraints() ) {
+	if ( standard_repeats == 0 ) standard_repeats = default_repeats_;
+	if ( explicit_ramp_constraints() && ! ramp_down_constraints() ) {
 		read_script_file( "NO CST RAMPING", standard_repeats );
 	} else {
 		read_script_file( "", standard_repeats );
@@ -274,8 +274,8 @@ FastRelax::FastRelax(
 	movemap_tag_( /* NULL */ )
 {
 	set_to_default();
-	if( standard_repeats == 0 ) standard_repeats = default_repeats_;
-	if( explicit_ramp_constraints() && ! ramp_down_constraints() ) {
+	if ( standard_repeats == 0 ) standard_repeats = default_repeats_;
+	if ( explicit_ramp_constraints() && ! ramp_down_constraints() ) {
 		read_script_file( "NO CST RAMPING", standard_repeats );
 	} else {
 		read_script_file( "", standard_repeats );
@@ -305,7 +305,7 @@ FastRelax::FastRelax(
 	movemap_tag_( /* NULL */ )
 {
 	set_to_default();
-	if( standard_repeats == 0 ) standard_repeats = default_repeats_;
+	if ( standard_repeats == 0 ) standard_repeats = default_repeats_;
 	read_script_file( script_file , standard_repeats );
 }
 
@@ -353,8 +353,8 @@ FastRelax::parse_my_tag(
 	set_enable_design( !( tag->getOption<bool>("disable_design", !enable_design_ ) ) );
 
 	core::pack::task::TaskFactoryOP tf = protocols::rosetta_scripts::parse_task_operations( tag, data );
-	if ( tf->size() > 0){
-		if (!enable_design_){
+	if ( tf->size() > 0 ) {
+		if ( !enable_design_ ) {
 			tf->push_back(TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ));
 		}
 		set_task_factory( tf );
@@ -368,8 +368,8 @@ FastRelax::parse_my_tag(
 	std::string script_file = tag->getOption< std::string >("relaxscript", "" );
 
 	// Only support single file; is there a way to support multiple input files in rosetta scripts?
-	std::string cstfile =	tag->getOption< std::string >("cst_file", "");
-	if( cstfile != "" )	add_cst_files( cstfile );
+	std::string cstfile = tag->getOption< std::string >("cst_file", "");
+	if ( cstfile != "" ) add_cst_files( cstfile );
 
 	bool batch = tag->getOption< bool >( "batch", false );
 
@@ -395,29 +395,30 @@ FastRelax::parse_my_tag(
 	} else {
 		//fpd if no minimizer is specified, and we're doing flexible bond minimization
 		//fpd   we should use lbfgs (dfpmin is way too slow)
-		if ( cartesian() || minimize_bond_angles() || minimize_bond_lengths() )
+		if ( cartesian() || minimize_bond_angles() || minimize_bond_lengths() ) {
 			min_type( "lbfgs_armijo_nonmonotone" );
+		}
 	}
 
-	if (batch) {
+	if ( batch ) {
 		set_script_to_batchrelax_default( default_repeats_ );
-	} else if( script_file == "" ) {
+	} else if ( script_file == "" ) {
 		read_script_file( "", default_repeats_ );
 	} else {
 		read_script_file( script_file );
 	}
 
 	delete_virtual_residues_after_FastRelax_ = tag->getOption<bool>("delete_virtual_residues_after_FastRelax", false);
-		/// @brief if one uses constrain_relax_to_native_coords/constrain_relax_to_start_coords for the FastRelax,
-		// 		   virtual residues need to be deleted to calculate rmsd after FastRelax
+	/// @brief if one uses constrain_relax_to_native_coords/constrain_relax_to_start_coords for the FastRelax,
+	//      virtual residues need to be deleted to calculate rmsd after FastRelax
 
-}	//parse_my_tag
+} //parse_my_tag
 
 void FastRelax::parse_def( utility::lua::LuaObject const & def,
 	utility::lua::LuaObject const & score_fxns,
 	utility::lua::LuaObject const & tasks,
 	protocols::moves::MoverCacheSP ) {
-	if( def["scorefxn"] ) {
+	if ( def["scorefxn"] ) {
 		set_scorefxn( protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns ) );
 	} else {
 		set_scorefxn( score_fxns["score12"].to<core::scoring::ScoreFunctionSP>()->clone()  );
@@ -428,13 +429,14 @@ void FastRelax::parse_def( utility::lua::LuaObject const & def,
 	mm->set_bb( true );
 	mm->set_jump( true );
 	// initially, all backbone torsions are movable
-	if( def["movemap"] )
+	if ( def["movemap"] ) {
 		protocols::elscripts::parse_movemapdef( def["movemap"], mm );
+	}
 	set_movemap(mm);
 
-	if( def["tasks"] ) {
+	if ( def["tasks"] ) {
 		core::pack::task::TaskFactoryOP new_task_factory( protocols::elscripts::parse_taskdef( def["tasks"], tasks ));
-		if ( new_task_factory == 0) return;
+		if ( new_task_factory == 0 ) return;
 		set_task_factory(new_task_factory);
 	}
 
@@ -444,14 +446,14 @@ void FastRelax::parse_def( utility::lua::LuaObject const & def,
 	bool batch = def["batch"] ? def["batch"].to<bool>() : false;
 	cartesian (def["cartesian"] ? def["cartesian"].to<bool>() : false );
 
-	if (batch) {
+	if ( batch ) {
 		set_script_to_batchrelax_default( default_repeats_ );
-	} else if( script_file == "" ) {
+	} else if ( script_file == "" ) {
 		read_script_file( "", default_repeats_ );
 	} else {
 		read_script_file( script_file );
 	}
-}	//parse_def
+} //parse_def
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void FastRelax::set_to_default( )
@@ -485,14 +487,14 @@ void FastRelax::set_to_default( )
 	// design
 	enable_design_ = false;
 
-	//	delete_virtual_residues_after_FastRelax_	=	'false' by default in this constructor, since parse_my_tag in rosetta_scripts alone is not enough to specifically designate default value for a user who uses command-line
-	delete_virtual_residues_after_FastRelax_	=	false;
-}	//set_to_default
+	// delete_virtual_residues_after_FastRelax_ = 'false' by default in this constructor, since parse_my_tag in rosetta_scripts alone is not enough to specifically designate default value for a user who uses command-line
+	delete_virtual_residues_after_FastRelax_ = false;
+} //set_to_default
 
 ///Make sure correct mintype for cartesian or dualspace during apply
 void FastRelax::check_nonideal_mintype() {
-	if (dualspace() || cartesian() || minimize_bond_lengths() || minimize_bond_angles()) {
-		if (!basic::options::option[ basic::options::OptionKeys::relax::min_type ].user()) {
+	if ( dualspace() || cartesian() || minimize_bond_lengths() || minimize_bond_angles() ) {
+		if ( !basic::options::option[ basic::options::OptionKeys::relax::min_type ].user() ) {
 			min_type("lbfgs_armijo_nonmonotone");
 		}
 	}
@@ -511,15 +513,15 @@ void FastRelax::cmd_accept_to_best(
 	using namespace core::scoring;
 	using namespace core::conformation;
 	core::Real score = (*local_scorefxn)( pose );
-	if( ( score < best_score) || (accept_count == 0) ){
+	if ( ( score < best_score) || (accept_count == 0) ) {
 		best_score = score;
 		best_pose = pose;
 	}
-	#ifdef BOINC_GRAPHICS
+#ifdef BOINC_GRAPHICS
 	boinc::Boinc::update_graphics_low_energy( best_pose, best_score  );
 	boinc::Boinc::update_graphics_last_accepted( pose, score );
 	//boinc::Boinc::update_mc_trial_info( total_count , "FastRelax" );  // total_count not defined
-	#endif
+#endif
 	core::Real rms = 0, irms = 0;
 	if ( core::pose::symmetry::is_symmetric( pose ) && symmetric_rmsd_ ) {
 		rms = CA_rmsd_symmetric( *get_native_pose() , best_pose );
@@ -529,7 +531,7 @@ void FastRelax::cmd_accept_to_best(
 		irms = native_CA_rmsd( start_pose , best_pose );
 	}
 	TR << "MRP: " << accept_count << "  " << score << "  " << best_score << "  " << rms << "  " << irms << "  " << std::endl;
-}	//cmd_accept_to_best
+} //cmd_accept_to_best
 
 
 void FastRelax::do_minimize(
@@ -550,7 +552,7 @@ void FastRelax::do_minimize(
 	}
 
 	min_mover->cartesian( cartesian() );
-	if (max_iter() > 0) min_mover->max_iter( max_iter() );
+	if ( max_iter() > 0 ) min_mover->max_iter( max_iter() );
 
 	min_mover->apply( pose );
 
@@ -592,7 +594,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	using namespace basic::options;
 
 	TR.Debug   << "================== FastRelax: " << script_.size() << " ===============================" << std::endl;
- 	if( pose.total_residue() == 0 ) {
+	if ( pose.total_residue() == 0 ) {
 		TR.Warning << "WARNING: Pose has no residues. Doing a FastRelax would be pointless. Skipping." << std::endl;
 		return;
 	}
@@ -601,20 +603,20 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	protocols::rosetta_scripts::parse_movemap( movemap_tag_, pose, get_movemap() ); //Didn't we already set this in parse_my_tag?
 
 #if defined GL_GRAPHICS
-    protocols::viewer::add_conformation_viewer( pose.conformation(), "TESTING");
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "TESTING");
 #endif
 	// One out of 10 times dont bother doing Ramady Relax. You may wonder why - the reason is that occasionally
 	// there are phi-pso pairs outside of the commonly allowed ranges which are *correct* for some sort of quirk
 	// of nature. In that case using ramady relax screws things up, so to allow for that chance only execture ramady relax
 	// 90% of the time.
 	bool do_rama_repair = ramady_;
-	if( !ramady_force_ && numeric::random::uniform() <= 0.1 ) do_rama_repair = false;
+	if ( !ramady_force_ && numeric::random::uniform() <= 0.1 ) do_rama_repair = false;
 
 
 	// Relax is a fullatom protocol so switch the residue set here. The rotamers
 	// wont be properly packed at this stage but it doesnt really matter.
 	// They'll get repacked shortly.
-	if( !pose.is_fullatom() ){
+	if ( !pose.is_fullatom() ) {
 		core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD);
 	}
 
@@ -637,10 +639,9 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	core::scoring::EnergyMap full_weights = local_scorefxn->weights();
 
 	// Make DNA Rigid or setup DNA-specific relax settings.  Use the orbitals scorefunction when relaxing with DNA
-	if (dna_move_){
+	if ( dna_move_ ) {
 		setup_for_dna( *local_scorefxn );
-	}
-	else{
+	} else {
 		make_dna_rigid( pose, *local_movemap );
 	}
 
@@ -657,23 +658,21 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 	//If a user gives a TaskFactory, completely respect it.
 
-	if ( get_task_factory() ){
+	if ( get_task_factory() ) {
 		local_tf = get_task_factory()->clone();
-	}
-	else{
+	} else {
 		local_tf->push_back(TaskOperationCOP( new InitializeFromCommandline() ));
-		if (option[ OptionKeys::relax::respect_resfile]() && option[ OptionKeys::packing::resfile].user() ) {
+		if ( option[ OptionKeys::relax::respect_resfile]() && option[ OptionKeys::packing::resfile].user() ) {
 			local_tf->push_back(TaskOperationCOP( new ReadResfile() ));
 			TR << "Using Resfile for packing step. " <<std::endl;
-		}
-		else {
+		} else {
 			//Keep the same behavior as before if no resfile given for design.
 			//Though, as mentioned in the doc, movemap now overrides chi_move as it was supposed to.
 
 			local_tf->push_back(TaskOperationCOP( new RestrictToRepacking() ));
 			PreventRepackingOP turn_off_packing( new PreventRepacking() );
 			for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
-				if (! local_movemap->get_chi(pos) ){
+				if ( ! local_movemap->get_chi(pos) ) {
 					turn_off_packing->include_residue(pos);
 				}
 			}
@@ -683,7 +682,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	//Include current rotamer by default - as before.
 	local_tf->push_back(TaskOperationCOP( new IncludeCurrent() ));
 
-	if( limit_aroma_chi2() ) {
+	if ( limit_aroma_chi2() ) {
 		local_tf->push_back(TaskOperationCOP( new toolbox::task_operations::LimitAromaChi2Operation() ));
 	}
 
@@ -718,14 +717,14 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 
 	// Obtain the native pose
-	if( !get_native_pose() ) set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new Pose( start_pose ) ) ) );
+	if ( !get_native_pose() ) set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new Pose( start_pose ) ) ) );
 
 	// Statistic information
 	std::vector< core::Real > best_score_log;
 	std::vector< core::Real > curr_score_log;
 
 	// for dry runs, literally just score the pose and quit.
-	if( dry_run() ){
+	if ( dry_run() ) {
 		(*local_scorefxn)( pose );
 		return;
 	}
@@ -735,52 +734,47 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 	int total_count=0;
 	int dump_counter=0;
-	for ( core::Size ncmd = 0; ncmd < script_.size(); ncmd ++ ){
+	for ( core::Size ncmd = 0; ncmd < script_.size(); ncmd ++ ) {
 		total_count++;
 		if ( basic::options::option[ basic::options::OptionKeys::run::debug ]() ) local_scorefxn->show( TR, pose );
 		if ( basic::options::option[ basic::options::OptionKeys::run::debug ]() ) pose.constraint_set()->show_numbers( TR.Debug );
 
 		// No MC is used, so update graphics manually
-		#ifdef BOINC_GRAPHICS
-			boinc::Boinc::update_graphics_current( pose );
-		#endif
+#ifdef BOINC_GRAPHICS
+		boinc::Boinc::update_graphics_current( pose );
+#endif
 
 		RelaxScriptCommand cmd = script_[ncmd];
 
-    TR.Debug << "Command: " << cmd.command << std::endl;
+		TR.Debug << "Command: " << cmd.command << std::endl;
 
-    if( cmd.command == "repeat" ){
-			if( cmd.nparams < 1 ){ utility_exit_with_message( "ERROR: Syntax: " + cmd.command + "<number_of_repeats> " ); }
+		if ( cmd.command == "repeat" ) {
+			if ( cmd.nparams < 1 ) { utility_exit_with_message( "ERROR: Syntax: " + cmd.command + "<number_of_repeats> " ); }
 			repeat_count = (int) cmd.param1;
 			repeat_step = ncmd;
-	} else
-
-		if( cmd.command == "endrepeat" ){
+		} else if ( cmd.command == "endrepeat" ) {
 			TR.Debug << "CMD:  Repeat: " << repeat_count << std::endl;
 			repeat_count -- ;
 			total_repeat_count ++ ;
-			if( repeat_count <= 0 ){}
-			else{
+			if ( repeat_count <= 0 ) {}
+			else {
 				ncmd = repeat_step;
 			}
-		} else
-		if( cmd.command == "dump" ){
-			if( cmd.nparams < 1 ){ utility_exit_with_message( "ERROR: Syntax: " + cmd.command + "<number> " ); }
+		} else if ( cmd.command == "dump" ) {
+			if ( cmd.nparams < 1 ) { utility_exit_with_message( "ERROR: Syntax: " + cmd.command + "<number> " ); }
 			pose.dump_pdb( "dump_" + right_string_of( (int) cmd.param1, 4, '0' ) );
-		}	else
-
-		if( cmd.command.substr(0,7) == "dumpall" ){
-				if( cmd.command.substr(8) == "true" )
-					dumpall_ = true;
-				if( cmd.command.substr(8) == "false" )
-					dumpall_ = false;
-		}	else
-
-		if( cmd.command == "repack" ){
+		} else if ( cmd.command.substr(0,7) == "dumpall" ) {
+			if ( cmd.command.substr(8) == "true" ) {
+				dumpall_ = true;
+			}
+			if ( cmd.command.substr(8) == "false" ) {
+				dumpall_ = false;
+			}
+		} else if ( cmd.command == "repack" ) {
 			//if( cmd.nparams < 0 ){ utility_exit_with_message( "More parameters expected after : " + cmd.command  ); }
 			chk_counter++;
 			std::string checkpoint_id = "chk" + string_of( chk_counter );
-			if (!checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true )){
+			if ( !checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true ) ) {
 				pack_full_repack_->apply( pose );
 				checkpoints_.checkpoint( pose, get_current_tag(), checkpoint_id,  true );
 			}
@@ -788,85 +782,70 @@ void FastRelax::apply( core::pose::Pose & pose ){
 				pose.dump_pdb( "dump_" + right_string_of( dump_counter, 4, '0' ) );
 				dump_counter++;
 			}
-		}	else
-
-		if( cmd.command == "min" ){
-			if( cmd.nparams < 1 ){ utility_exit_with_message( "ERROR: Syntax " + cmd.command + " <min_tolerance>  " ); }
+		} else if ( cmd.command == "min" ) {
+			if ( cmd.nparams < 1 ) { utility_exit_with_message( "ERROR: Syntax " + cmd.command + " <min_tolerance>  " ); }
 
 			chk_counter++;
 			std::string checkpoint_id = "chk" + string_of( chk_counter );
-			if (!checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true )){
-        do_minimize( pose, cmd.param1, local_movemap, local_scorefxn );
+			if ( !checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true ) ) {
+				do_minimize( pose, cmd.param1, local_movemap, local_scorefxn );
 				checkpoints_.checkpoint( pose, get_current_tag(), checkpoint_id,  true );
 			}
-			if ( dumpall_) {
+			if ( dumpall_ ) {
 				pose.dump_pdb( "dump_" + right_string_of( dump_counter, 4, '0' ) );
 				dump_counter++;
-				}
-		}	else
-		if( cmd.command == "md" ){
-			if( cmd.nparams < 2 ){ utility_exit_with_message( "ERROR: Syntax " + cmd.command + " <mdstep> <temperature> " ); }
+			}
+		} else if ( cmd.command == "md" ) {
+			if ( cmd.nparams < 2 ) { utility_exit_with_message( "ERROR: Syntax " + cmd.command + " <mdstep> <temperature> " ); }
 
 			chk_counter++;
 			std::string checkpoint_id = "chk" + string_of( chk_counter );
-			if (!checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true )){
+			if ( !checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true ) ) {
 				// param1: nstep; param2: temperature
 				//if ( input_csts ) pose.constraint_set( input_csts );
 				do_md( pose, cmd.param1, cmd.param2, local_movemap, local_scorefxn );
 				checkpoints_.checkpoint( pose, get_current_tag(), checkpoint_id,  true );
 			}
 
-		}	else
-
-		if( cmd.command.substr(0,5) == "scale" ){
+		} else if ( cmd.command.substr(0,5) == "scale" ) {
 			// no input validation as of now, relax will just die
 			scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(6));
 			local_scorefxn->set_weight( scale_param, full_weights[ scale_param ] * cmd.param1 );
-		}   else
-
-		if( cmd.command.substr(0,6) == "rscale" ){
-				// no input validation as of now, relax will just die
-				scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(7));
-				local_scorefxn->set_weight( scale_param, full_weights[ scale_param ] * ((cmd.param2 - cmd.param1 ) * numeric::random::uniform() + cmd.param1 ));
-		}   else
-
-		if( cmd.command.substr(0,6) == "switch" ){
-				// no input validation as of now, relax will just die
-				if( cmd.command.substr(7) == "torsion" ) {
-					TR << "Using AtomTreeMinimizer"  << std::endl;
-					cartesian( false );
-				} else if( cmd.command.substr(7) == "cartesian" ) {
-					TR << "Using CartesianMinizer with lbfgs"  << std::endl;
-					cartesian( true );
-				}
-		}   else
-
-		if( cmd.command.substr(0,6) == "weight" ){
+		}   else if ( cmd.command.substr(0,6) == "rscale" ) {
+			// no input validation as of now, relax will just die
+			scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(7));
+			local_scorefxn->set_weight( scale_param, full_weights[ scale_param ] * ((cmd.param2 - cmd.param1 ) * numeric::random::uniform() + cmd.param1 ));
+		}   else if ( cmd.command.substr(0,6) == "switch" ) {
+			// no input validation as of now, relax will just die
+			if ( cmd.command.substr(7) == "torsion" ) {
+				TR << "Using AtomTreeMinimizer"  << std::endl;
+				cartesian( false );
+			} else if ( cmd.command.substr(7) == "cartesian" ) {
+				TR << "Using CartesianMinizer with lbfgs"  << std::endl;
+				cartesian( true );
+			}
+		}   else if ( cmd.command.substr(0,6) == "weight" ) {
 			// no input validation as of now, relax will just die
 			scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(7));
 			local_scorefxn->set_weight( scale_param, cmd.param1 );
 			// I'm not too sure if the changing the default weight makes sense
 			full_weights[ scale_param ] = cmd.param1;
-		}   else
-		if( cmd.command == "batch_shave" ){  // grab the score and remember the pose if the score is better then ever before.
-		} else
-		if( cmd.command == "show_weights" ){
+		}   else if ( cmd.command == "batch_shave" ) {  // grab the score and remember the pose if the score is better then ever before.
+		} else if ( cmd.command == "show_weights" ) {
 			local_scorefxn->show(TR, pose);
-		}   else
-
-		if( cmd.command == "ramp_repack_min" ){
-			if( cmd.nparams < 2 ){ utility_exit_with_message( "More parameters expected after : " + cmd.command  ); }
+		}   else if ( cmd.command == "ramp_repack_min" ) {
+			if ( cmd.nparams < 2 ) { utility_exit_with_message( "More parameters expected after : " + cmd.command  ); }
 
 			// The first parameter is the relate repulsive weight
 			local_scorefxn->set_weight( scoring::fa_rep, full_weights[ scoring::fa_rep ] * cmd.param1 );
 
 			// The third paramter is the coordinate constraint weight
-			if( ( constrain_coords() || ramp_down_constraints() ) && (cmd.nparams >= 3) ){
+			if ( ( constrain_coords() || ramp_down_constraints() ) && (cmd.nparams >= 3) ) {
 				set_constraint_weight( local_scorefxn, full_weights, cmd.param3, pose );
 			}
 
 			// The fourth paramter is the minimization
-			if( cmd.nparams >= 4 ){
+			if ( cmd.nparams >= 4 ) {
 				Size const iter_cmd = (Size)(cmd.param4);
 				max_iter( iter_cmd );
 				//Size const original_iter = max_iter();
@@ -874,9 +853,9 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			}
 
 			// decide when to call ramady repair code
-			if( total_repeat_count > 1 && repeat_count > 2 ){
-				if( cmd.param1 < 0.2 ){
-					if( do_rama_repair ){
+			if ( total_repeat_count > 1 && repeat_count > 2 ) {
+				if ( cmd.param1 < 0.2 ) {
+					if ( do_rama_repair ) {
 						fix_worst_bad_ramas( pose, ramady_num_rebuild_, 0.0, ramady_cutoff_, ramady_rms_limit_);
 					}
 				}
@@ -884,7 +863,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 			chk_counter++;
 			std::string checkpoint_id = "chk" + string_of( chk_counter );
-			if (!checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true )){
+			if ( !checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true ) ) {
 				pack_full_repack_->apply( pose );
 				do_minimize( pose, cmd.param2, local_movemap, local_scorefxn );
 				checkpoints_.checkpoint( pose, get_current_tag(), checkpoint_id,  true );
@@ -901,20 +880,18 @@ void FastRelax::apply( core::pose::Pose & pose ){
 				pose.dump_pdb( "dump_" + right_string_of( dump_counter, 4, '0' ) );
 				dump_counter++;
 			}
-		}	else
-
-		if( cmd.command == "accept_to_best" ){
+		} else if ( cmd.command == "accept_to_best" ) {
 			// grab the score and remember the pose if the score is better then ever before.
 			core::Real score = (*local_scorefxn)( pose );
-			if( ( score < best_score) || (accept_count == 0) ){
+			if ( ( score < best_score) || (accept_count == 0) ) {
 				best_score = score;
 				best_pose = pose;
 			}
-			#ifdef BOINC_GRAPHICS
-					boinc::Boinc::update_graphics_low_energy( best_pose, best_score  );
-					boinc::Boinc::update_graphics_last_accepted( pose, score );
-					boinc::Boinc::update_mc_trial_info( total_count , "FastRelax" );
-			#endif
+#ifdef BOINC_GRAPHICS
+			boinc::Boinc::update_graphics_low_energy( best_pose, best_score  );
+			boinc::Boinc::update_graphics_last_accepted( pose, score );
+			boinc::Boinc::update_mc_trial_info( total_count , "FastRelax" );
+#endif
 			core::Real rms = 0, irms = 0;
 			if ( core::pose::symmetry::is_symmetric( pose ) && symmetric_rmsd_ ) {
 				rms = CA_rmsd_symmetric( *get_native_pose() , best_pose );
@@ -929,23 +906,16 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 			accept_count++;
 			if ( accept_count > script_max_accept_ ) break;
-			if( test_cycles_ || dry_run() ) break;
+			if ( test_cycles_ || dry_run() ) break;
 
-		}	else
-
-
-		if( cmd.command == "load_best" ){
+		} else if ( cmd.command == "load_best" ) {
 			pose = best_pose;
-		}	else
-		if( cmd.command == "load_start" ){
+		} else if ( cmd.command == "load_start" ) {
 			pose = start_pose;
-		}	else
-
-		if( cmd.command == "exit" ){
+		} else if ( cmd.command == "exit" ) {
 			utility_exit_with_message( "EXIT INVOKED" );
-		}	else
+		} else {
 
-		{
 			utility_exit_with_message( "Unknown command: " + cmd.command );
 		}
 
@@ -965,7 +935,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			<< (*local_scorefxn)( pose ) << "  "
 			<< rms << "  "
 			<< irms << "  "
-			<< local_scorefxn->get_weight( scoring::fa_rep	)
+			<< local_scorefxn->get_weight( scoring::fa_rep )
 			<< std::endl;
 	}
 
@@ -973,24 +943,24 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	(*local_scorefxn)( pose );
 
 	if ( basic::options::option[ basic::options::OptionKeys::run::debug ]() ) {
-		for( Size j = 0; j < best_score_log.size(); j++ )
+		for ( Size j = 0; j < best_score_log.size(); j++ ) {
 			core::pose::setPoseExtraScore( pose, "B" + right_string_of(j,3,'0'), best_score_log[j]);
+		}
 
-		for( Size j = 0; j < curr_score_log.size(); j ++ )
+		for ( Size j = 0; j < curr_score_log.size(); j ++ ) {
 			core::pose::setPoseExtraScore( pose, "S" + right_string_of(j,3,'0'), curr_score_log[j] );
+		}
 	}
 
 	checkpoints_.clear_checkpoints();
 
-	if	(constrain_coords())
-	{
-		if (delete_virtual_residues_after_FastRelax_)
-		{
+	if ( constrain_coords() ) {
+		if ( delete_virtual_residues_after_FastRelax_ ) {
 			// remove extra virtual atom cooordinate constraints
 			protocols::relax::delete_virtual_residues( pose );
 		}
 	}
-}	//apply
+} //apply
 
 std::string
 FastRelax::get_name() const {
@@ -1007,8 +977,9 @@ void FastRelax::set_script_to_batchrelax_default( core::Size repeats ) {
 	//fpd
 	//fpd sets a "reasonable" script for performing batch relax
 	//fpd uses 'default_repeats'
-	if (repeats == 0)
+	if ( repeats == 0 ) {
 		repeats = default_repeats_;
+	}
 	runtime_assert( repeats > 0 );
 
 	// repeat 1
@@ -1022,7 +993,7 @@ void FastRelax::set_script_to_batchrelax_default( core::Size repeats ) {
 	filelines.push_back( "accept_to_best"  );
 
 	// repeats 2->n
-	for (core::Size i=2; i<=repeats; ++i) {
+	for ( core::Size i=2; i<=repeats; ++i ) {
 		filelines.push_back( "ramp_repack_min 0.02  0.01"  );
 		filelines.push_back( "ramp_repack_min 0.250 0.01"  );
 		filelines.push_back( "batch_shave 0.25"  );
@@ -1035,7 +1006,7 @@ void FastRelax::set_script_to_batchrelax_default( core::Size repeats ) {
 	script_.clear();
 
 	core::Size i;
-	for( i =0; i< filelines.size(); i++ ){
+	for ( i =0; i< filelines.size(); i++ ) {
 		line = filelines[i];
 		TR.Debug << line << std::endl;
 		linecount++;
@@ -1045,10 +1016,10 @@ void FastRelax::set_script_to_batchrelax_default( core::Size repeats ) {
 			RelaxScriptCommand newcmd;
 			newcmd.command = tokens[1];
 
-			if (tokens.size() > 1) {newcmd.param1 = atof(tokens[2].c_str()); newcmd.nparams = 1;}
-			if (tokens.size() > 2) {newcmd.param2 = atof(tokens[3].c_str()); newcmd.nparams = 2;}
-			if (tokens.size() > 3) {newcmd.param3 = atof(tokens[4].c_str()); newcmd.nparams = 3;}
-			if (tokens.size() > 4) {newcmd.param4 = atof(tokens[5].c_str()); newcmd.nparams = 4;}
+			if ( tokens.size() > 1 ) { newcmd.param1 = atof(tokens[2].c_str()); newcmd.nparams = 1;}
+			if ( tokens.size() > 2 ) { newcmd.param2 = atof(tokens[3].c_str()); newcmd.nparams = 2;}
+			if ( tokens.size() > 3 ) { newcmd.param3 = atof(tokens[4].c_str()); newcmd.nparams = 3;}
+			if ( tokens.size() > 4 ) { newcmd.param4 = atof(tokens[5].c_str()); newcmd.nparams = 4;}
 
 			script_.push_back( newcmd );
 		}
@@ -1065,7 +1036,7 @@ void FastRelax::set_script_from_lines( std::vector< std::string > const fileline
 	script_.clear();
 
 	core::Size i;
-	for( i =0; i< filelines.size(); i++ ){
+	for ( i =0; i< filelines.size(); i++ ) {
 		line = filelines[i];
 		TR.Debug << line << std::endl;
 		linecount++;
@@ -1075,10 +1046,10 @@ void FastRelax::set_script_from_lines( std::vector< std::string > const fileline
 			RelaxScriptCommand newcmd;
 			newcmd.command = tokens[1];
 
-			if (tokens.size() > 1) {newcmd.param1 = atof(tokens[2].c_str()); newcmd.nparams = 1;}
-			if (tokens.size() > 2) {newcmd.param2 = atof(tokens[3].c_str()); newcmd.nparams = 2;}
-			if (tokens.size() > 3) {newcmd.param3 = atof(tokens[4].c_str()); newcmd.nparams = 3;}
-			if (tokens.size() > 4) {newcmd.param4 = atof(tokens[5].c_str()); newcmd.nparams = 4;}
+			if ( tokens.size() > 1 ) { newcmd.param1 = atof(tokens[2].c_str()); newcmd.nparams = 1;}
+			if ( tokens.size() > 2 ) { newcmd.param2 = atof(tokens[3].c_str()); newcmd.nparams = 2;}
+			if ( tokens.size() > 3 ) { newcmd.param3 = atof(tokens[4].c_str()); newcmd.nparams = 3;}
+			if ( tokens.size() > 4 ) { newcmd.param4 = atof(tokens[5].c_str()); newcmd.nparams = 4;}
 			script_.push_back( newcmd );
 		}
 	}
@@ -1091,26 +1062,26 @@ void FastRelax::read_script_file( const std::string &script_file, core::Size sta
 	std::string line;
 
 	runtime_assert( standard_repeats > 0 );
-	if( script_file == "" && dualspace_ ){
-    TR << "================== Using dualspace script ==================" << std::endl;
-    filelines.push_back( "switch:torsion"  								 );
-    filelines.push_back( "repeat " + string_of( standard_repeats - 1 ) );
-    filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
-    filelines.push_back( "ramp_repack_min 0.250 0.01     0.5"      );
-    filelines.push_back( "ramp_repack_min 0.550 0.01     0.0"      );
-    filelines.push_back( "ramp_repack_min 1     0.00001  0.0"      );
-    filelines.push_back( "accept_to_best"                  );
-    filelines.push_back( "endrepeat "                      );
+	if ( script_file == "" && dualspace_ ) {
+		TR << "================== Using dualspace script ==================" << std::endl;
+		filelines.push_back( "switch:torsion"           );
+		filelines.push_back( "repeat " + string_of( standard_repeats - 1 ) );
+		filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
+		filelines.push_back( "ramp_repack_min 0.250 0.01     0.5"      );
+		filelines.push_back( "ramp_repack_min 0.550 0.01     0.0"      );
+		filelines.push_back( "ramp_repack_min 1     0.00001  0.0"      );
+		filelines.push_back( "accept_to_best"                  );
+		filelines.push_back( "endrepeat "                      );
 
-    filelines.push_back( "switch:cartesian"  								 );
-    filelines.push_back( "repeat 1"  															 );
-    filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
-    filelines.push_back( "ramp_repack_min 0.250 0.01     0.5"      );
-    filelines.push_back( "ramp_repack_min 0.550 0.01     0.0"      );
-    filelines.push_back( "ramp_repack_min 1     0.00001  0.0"      );
-    filelines.push_back( "accept_to_best"                  );
-    filelines.push_back( "endrepeat "                      );
-	}else if( script_file == "" ){
+		filelines.push_back( "switch:cartesian"           );
+		filelines.push_back( "repeat 1"                  );
+		filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
+		filelines.push_back( "ramp_repack_min 0.250 0.01     0.5"      );
+		filelines.push_back( "ramp_repack_min 0.550 0.01     0.0"      );
+		filelines.push_back( "ramp_repack_min 1     0.00001  0.0"      );
+		filelines.push_back( "accept_to_best"                  );
+		filelines.push_back( "endrepeat "                      );
+	} else if ( script_file == "" ) {
 		TR << "================== Using default script ==================" << std::endl;
 		filelines.push_back( "repeat " + string_of( standard_repeats )  );
 		filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
@@ -1119,47 +1090,47 @@ void FastRelax::read_script_file( const std::string &script_file, core::Size sta
 		filelines.push_back( "ramp_repack_min 1     0.00001  0.0"      );
 		filelines.push_back( "accept_to_best"                  );
 		filelines.push_back( "endrepeat "                      );
-	}else if (script_file == "NO CST RAMPING" && dualspace_ ){
-    TR << "================== Using dualspace script - no constraint ramping ==================" << std::endl;
-    filelines.push_back( "switch:torsion"                  );
-    filelines.push_back( "repeat " + string_of( standard_repeats - 1 ) );
-    filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
-    filelines.push_back( "ramp_repack_min 0.250 0.01     1.0"      );
-    filelines.push_back( "ramp_repack_min 0.550 0.01     1.0"      );
-    filelines.push_back( "ramp_repack_min 1     0.00001  1.0"      );
-    filelines.push_back( "accept_to_best"                  );
-    filelines.push_back( "endrepeat "                      );
+	} else if ( script_file == "NO CST RAMPING" && dualspace_ ) {
+		TR << "================== Using dualspace script - no constraint ramping ==================" << std::endl;
+		filelines.push_back( "switch:torsion"                  );
+		filelines.push_back( "repeat " + string_of( standard_repeats - 1 ) );
+		filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
+		filelines.push_back( "ramp_repack_min 0.250 0.01     1.0"      );
+		filelines.push_back( "ramp_repack_min 0.550 0.01     1.0"      );
+		filelines.push_back( "ramp_repack_min 1     0.00001  1.0"      );
+		filelines.push_back( "accept_to_best"                  );
+		filelines.push_back( "endrepeat "                      );
 
-    filelines.push_back( "switch:cartesian"                  );
-    filelines.push_back( "repeat 1"                                );
-    filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
-    filelines.push_back( "ramp_repack_min 0.250 0.01     1.0"      );
-    filelines.push_back( "ramp_repack_min 0.550 0.01     1.0"      );
-    filelines.push_back( "ramp_repack_min 1     0.00001  1.0"      );
-    filelines.push_back( "accept_to_best"                  );
-    filelines.push_back( "endrepeat "                      );
+		filelines.push_back( "switch:cartesian"                  );
+		filelines.push_back( "repeat 1"                                );
+		filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
+		filelines.push_back( "ramp_repack_min 0.250 0.01     1.0"      );
+		filelines.push_back( "ramp_repack_min 0.550 0.01     1.0"      );
+		filelines.push_back( "ramp_repack_min 1     0.00001  1.0"      );
+		filelines.push_back( "accept_to_best"                  );
+		filelines.push_back( "endrepeat "                      );
 		/*
-	}else if (script_file == "NO CST RAMPING" && basic::options::option[ basic::options::OptionKeys::relax::dualfaster ]() ){
-    TR << "================== Using faster dualspace script ==================" << std::endl;
-    filelines.push_back( "switch:torsion"                  );
-    filelines.push_back( "repeat 3"                                );
-    filelines.push_back( "ramp_repack_min 0.02  0.01     1.0  50"  );
-    filelines.push_back( "ramp_repack_min 0.250 0.01     1.0  50"  );
-    filelines.push_back( "ramp_repack_min 0.550 0.01     1.0 100"  );
-    filelines.push_back( "ramp_repack_min 1     0.00001  1.0 200"  );
-    filelines.push_back( "accept_to_best"                  );
-    filelines.push_back( "endrepeat "                      );
+		}else if (script_file == "NO CST RAMPING" && basic::options::option[ basic::options::OptionKeys::relax::dualfaster ]() ){
+		TR << "================== Using faster dualspace script ==================" << std::endl;
+		filelines.push_back( "switch:torsion"                  );
+		filelines.push_back( "repeat 3"                                );
+		filelines.push_back( "ramp_repack_min 0.02  0.01     1.0  50"  );
+		filelines.push_back( "ramp_repack_min 0.250 0.01     1.0  50"  );
+		filelines.push_back( "ramp_repack_min 0.550 0.01     1.0 100"  );
+		filelines.push_back( "ramp_repack_min 1     0.00001  1.0 200"  );
+		filelines.push_back( "accept_to_best"                  );
+		filelines.push_back( "endrepeat "                      );
 
-    filelines.push_back( "switch:cartesian"                  );
-    filelines.push_back( "repeat 2"                                );
-    filelines.push_back( "ramp_repack_min 0.02  0.01     1.0  50"  );
-    filelines.push_back( "ramp_repack_min 0.250 0.01     1.0  50"  );
-    filelines.push_back( "ramp_repack_min 0.550 0.01     1.0 100"  );
-    filelines.push_back( "ramp_repack_min 1     0.00001  1.0 200"  );
-    filelines.push_back( "accept_to_best"                  );
-    filelines.push_back( "endrepeat "                      );
+		filelines.push_back( "switch:cartesian"                  );
+		filelines.push_back( "repeat 2"                                );
+		filelines.push_back( "ramp_repack_min 0.02  0.01     1.0  50"  );
+		filelines.push_back( "ramp_repack_min 0.250 0.01     1.0  50"  );
+		filelines.push_back( "ramp_repack_min 0.550 0.01     1.0 100"  );
+		filelines.push_back( "ramp_repack_min 1     0.00001  1.0 200"  );
+		filelines.push_back( "accept_to_best"                  );
+		filelines.push_back( "endrepeat "                      );
 		*/
-	}else if (script_file == "NO CST RAMPING"){
+	} else if ( script_file == "NO CST RAMPING" ) {
 		TR << "================== Using default script - no constraint ramping ==================" << std::endl;
 		filelines.push_back( "repeat " + string_of( standard_repeats )  );
 		filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
@@ -1168,14 +1139,13 @@ void FastRelax::read_script_file( const std::string &script_file, core::Size sta
 		filelines.push_back( "ramp_repack_min 1     0.00001  1.0"      );
 		filelines.push_back( "accept_to_best"                  );
 		filelines.push_back( "endrepeat "                      );
-	}
-	else{
+	} else {
 		std::ifstream infile( script_file.c_str() );
 		TR.Debug << "================== Reading script file: ==================" << std::endl;
-		if (!infile.good()) {
+		if ( !infile.good() ) {
 			utility_exit_with_message( "[ERROR] Error opening script file '" + script_file + "'" );
 		}
-		while( getline(infile,line) ) {
+		while ( getline(infile,line) ) {
 			filelines.push_back( line );
 		}
 		infile.close();
@@ -1186,7 +1156,7 @@ void FastRelax::read_script_file( const std::string &script_file, core::Size sta
 	script_.clear();
 
 	core::Size i;
-	for( i =0; i< filelines.size(); i++ ){
+	for ( i =0; i< filelines.size(); i++ ) {
 		line = filelines[i];
 		TR.Debug << line << std::endl;
 		linecount++;
@@ -1196,10 +1166,10 @@ void FastRelax::read_script_file( const std::string &script_file, core::Size sta
 			RelaxScriptCommand newcmd;
 			newcmd.command = tokens[1];
 
-			if (tokens.size() > 1) {newcmd.param1 = atof(tokens[2].c_str()); newcmd.nparams = 1;}
-			if (tokens.size() > 2) {newcmd.param2 = atof(tokens[3].c_str()); newcmd.nparams = 2;}
-			if (tokens.size() > 3) {newcmd.param3 = atof(tokens[4].c_str()); newcmd.nparams = 3;}
-			if (tokens.size() > 4) {newcmd.param4 = atof(tokens[5].c_str()); newcmd.nparams = 4;}
+			if ( tokens.size() > 1 ) { newcmd.param1 = atof(tokens[2].c_str()); newcmd.nparams = 1;}
+			if ( tokens.size() > 2 ) { newcmd.param2 = atof(tokens[3].c_str()); newcmd.nparams = 2;}
+			if ( tokens.size() > 3 ) { newcmd.param3 = atof(tokens[4].c_str()); newcmd.nparams = 3;}
+			if ( tokens.size() > 4 ) { newcmd.param4 = atof(tokens[5].c_str()); newcmd.nparams = 4;}
 
 			script_.push_back( newcmd );
 		}
@@ -1228,16 +1198,16 @@ struct SRelaxPose {
 	std::vector< core::Real > curr_score_log;
 
 	core::Size mem_footprint(){
-	 return sizeof ( SRelaxPose ) + current_struct->mem_footprint() + start_struct->mem_footprint() + best_struct->mem_footprint() + (best_score_log.size()+curr_score_log.size())*sizeof( core::Real);
+		return sizeof ( SRelaxPose ) + current_struct->mem_footprint() + start_struct->mem_footprint() + best_struct->mem_footprint() + (best_score_log.size()+curr_score_log.size())*sizeof( core::Real);
 	}
 };
 
 
 void FastRelax::batch_apply(
-		std::vector < SilentStructOP > & input_structs,
-		core::scoring::constraints::ConstraintSetOP input_csts, // = NULL
-		core::Real decay_rate // = 0.5
-		){
+	std::vector < SilentStructOP > & input_structs,
+	core::scoring::constraints::ConstraintSetOP input_csts, // = NULL
+	core::Real decay_rate // = 0.5
+){
 	using namespace basic::options;
 	using namespace core::scoring;
 	using namespace core::conformation;
@@ -1271,7 +1241,7 @@ void FastRelax::batch_apply(
 	}
 	// Set up rama-repair if requested - one out of 10 times dont bother
 	bool do_rama_repair = ramady_;
-	if( !ramady_force_ && numeric::random::uniform() <= 0.1 ) do_rama_repair = false;
+	if ( !ramady_force_ && numeric::random::uniform() <= 0.1 ) do_rama_repair = false;
 
 	// 432/436mb
 
@@ -1279,7 +1249,7 @@ void FastRelax::batch_apply(
 	std::vector < SRelaxPose > relax_decoys;
 	core::Size total_mem = 0;
 
-	for( core::Size i = 0; i < input_structs.size(); ++i ){
+	for ( core::Size i = 0; i < input_structs.size(); ++i ) {
 		TR.Debug << "iClock" << clock() << std::endl;
 
 		SRelaxPose new_relax_decoy;
@@ -1287,7 +1257,7 @@ void FastRelax::batch_apply(
 		input_structs[i]->fill_pose( pose );
 		if ( input_csts ) pose.constraint_set( input_csts );
 		// 432mb
-		if( !pose.is_fullatom() ){
+		if ( !pose.is_fullatom() ) {
 			TR.Debug << "Switching struct to fullatom" << std::endl;
 			core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD);
 			//core::Real afterscore = (*local_scorefxn)(pose);
@@ -1329,7 +1299,7 @@ void FastRelax::batch_apply(
 		total_mem += new_relax_decoy.mem_footprint();
 		relax_decoys.push_back( new_relax_decoy );
 		// 453 mb
-		if( i == 0 ){
+		if ( i == 0 ) {
 			if ( get_task_factory() ) {
 				pack_full_repack_ = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover() );
 				if ( core::pose::symmetry::is_symmetric( pose ) )  {
@@ -1378,38 +1348,33 @@ void FastRelax::batch_apply(
 	int total_repeat_count = 0;
 
 	int total_count=0;
-	for ( core::Size ncmd = 0; ncmd < script_.size(); ncmd ++ ){
+	for ( core::Size ncmd = 0; ncmd < script_.size(); ncmd ++ ) {
 		total_count++;
 
 		RelaxScriptCommand cmd = script_[ncmd];
-    TR.Debug << "Command: " << cmd.command << std::endl;
+		TR.Debug << "Command: " << cmd.command << std::endl;
 
-		if( cmd.command == "repeat" ){
-			if( cmd.nparams < 1 ){ utility_exit_with_message( "ERROR: Syntax: " + cmd.command + "<number_of_repeats> " ); }
+		if ( cmd.command == "repeat" ) {
+			if ( cmd.nparams < 1 ) { utility_exit_with_message( "ERROR: Syntax: " + cmd.command + "<number_of_repeats> " ); }
 			repeat_count = (int) cmd.param1;
 			repeat_step = ncmd;
-		} else
-
-		if( cmd.command == "endrepeat" ){
+		} else if ( cmd.command == "endrepeat" ) {
 			TR.Debug << "CMD:  Repeat: " << repeat_count << std::endl;
 			repeat_count -- ;
 			total_repeat_count ++ ;
-			if( repeat_count <= 0 ){}
-			else{
+			if ( repeat_count <= 0 ) {}
+			else {
 				ncmd = repeat_step;
 			}
-		} else
-		if( cmd.command == "dump" ){
-			if( cmd.nparams < 1 ){ utility_exit_with_message( "More parameters expected after : " + cmd.command  ); }
+		} else if ( cmd.command == "dump" ) {
+			if ( cmd.nparams < 1 ) { utility_exit_with_message( "More parameters expected after : " + cmd.command  ); }
 
-			for( core::Size index=0; index < relax_decoys.size(); ++ index ){
+			for ( core::Size index=0; index < relax_decoys.size(); ++ index ) {
 				relax_decoys[index].current_struct->fill_pose( pose );
 				pose.dump_pdb( "dump_" + right_string_of( index, 4, '0' ) + "_" + right_string_of( (int) cmd.param1, 4, '0' ) );
 			}
-		}	else
-
-		if( cmd.command == "repack" ){
-			for( core::Size index=0; index < relax_decoys.size(); ++ index ){
+		} else if ( cmd.command == "repack" ) {
+			for ( core::Size index=0; index < relax_decoys.size(); ++ index ) {
 				if ( !relax_decoys[index].active ) continue;
 				relax_decoys[index].current_struct->fill_pose( pose );
 				if ( input_csts ) pose.constraint_set( input_csts );
@@ -1419,111 +1384,96 @@ void FastRelax::batch_apply(
 				relax_decoys[index].current_struct->fill_struct( pose );
 			}
 
-		}	else
+		} else if ( cmd.command == "min" ) {
+			if ( cmd.nparams < 1 ) { utility_exit_with_message( "More parameters expected after : " + cmd.command  ); }
 
-		if( cmd.command == "min" ){
-			if( cmd.nparams < 1 ){ utility_exit_with_message( "More parameters expected after : " + cmd.command  ); }
-
-			for( core::Size index=0; index < relax_decoys.size(); ++ index ){
+			for ( core::Size index=0; index < relax_decoys.size(); ++ index ) {
 				if ( !relax_decoys[index].active ) continue;
 				relax_decoys[index].current_struct->fill_pose( pose );
 				if ( input_csts ) pose.constraint_set( input_csts );
-        do_minimize( pose, cmd.param1, local_movemap, local_scorefxn  );
+				do_minimize( pose, cmd.param1, local_movemap, local_scorefxn  );
 				core::Real score = (*local_scorefxn)(pose);
 				relax_decoys[index].current_score = score;
 				relax_decoys[index].current_struct->fill_struct( pose );
 			}
-		}	else
-
-        if( cmd.command.substr(0,5) == "scale" ){
-            // no input validation as of now, relax will just die
-            scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(6));
-            local_scorefxn->set_weight( scale_param, full_weights[ scale_param ] * cmd.param1 );
-        }   else
-
-        if( cmd.command.substr(0,6) == "rscale" ){
-            // no input validation as of now, relax will just die
-            scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(7));
-            local_scorefxn->set_weight( scale_param, full_weights[ scale_param ] * ((cmd.param2 - cmd.param1 ) * numeric::random::uniform() + cmd.param1 ));
-        }   else
-
-		if( cmd.command.substr(0,6) == "switch" ){
+		} else if ( cmd.command.substr(0,5) == "scale" ) {
 			// no input validation as of now, relax will just die
-			if( cmd.command.substr(7) == "torsion" ) {
+			scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(6));
+			local_scorefxn->set_weight( scale_param, full_weights[ scale_param ] * cmd.param1 );
+		}   else if ( cmd.command.substr(0,6) == "rscale" ) {
+			// no input validation as of now, relax will just die
+			scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(7));
+			local_scorefxn->set_weight( scale_param, full_weights[ scale_param ] * ((cmd.param2 - cmd.param1 ) * numeric::random::uniform() + cmd.param1 ));
+		}   else if ( cmd.command.substr(0,6) == "switch" ) {
+			// no input validation as of now, relax will just die
+			if ( cmd.command.substr(7) == "torsion" ) {
 				TR << "Using AtomTreeMinimizer"  << std::endl;
 				cartesian( false );
-			} else if( cmd.command.substr(7) == "cartesian" ) {
+			} else if ( cmd.command.substr(7) == "cartesian" ) {
 				TR << "Using CartesianMinimizer"  << std::endl;
 				cartesian( true );
 			}
-		}   else
-
-        if( cmd.command.substr(0,6) == "weight" ){
-            // no input validation as of now, relax will just die
-            scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(7));
-            local_scorefxn->set_weight( scale_param, cmd.param1 );
-            // I'm not too sure if the changing the default weight makes sense
-            full_weights[ scale_param ] = cmd.param1;
-        }   else
-
-        if( cmd.command == "show_weights" ){
-            local_scorefxn->show(TR, pose);
-        }   else
-
-		if( cmd.command == "ramp_repack_min" ){
-			if( cmd.nparams < 2 ){ utility_exit_with_message( "More parameters expected after : " + cmd.command  ); }
+		}   else if ( cmd.command.substr(0,6) == "weight" ) {
+			// no input validation as of now, relax will just die
+			scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(7));
+			local_scorefxn->set_weight( scale_param, cmd.param1 );
+			// I'm not too sure if the changing the default weight makes sense
+			full_weights[ scale_param ] = cmd.param1;
+		}   else if ( cmd.command == "show_weights" ) {
+			local_scorefxn->show(TR, pose);
+		}   else if ( cmd.command == "ramp_repack_min" ) {
+			if ( cmd.nparams < 2 ) { utility_exit_with_message( "More parameters expected after : " + cmd.command  ); }
 			local_scorefxn->set_weight( scoring::fa_rep, full_weights[ scoring::fa_rep ] * cmd.param1 );
 
 
-			for( core::Size index=0; index < relax_decoys.size(); ++ index ){
-					try {
-				clock_t starttime = clock();
-				if ( !relax_decoys[index].active ) continue;
-				relax_decoys[index].current_struct->fill_pose( pose );
-				if ( input_csts ) pose.constraint_set( input_csts );
-				if( total_repeat_count > 1 && repeat_count > 2 ){
-					if( cmd.param1 < 0.2 ){
-						if( do_rama_repair ){
-							fix_worst_bad_ramas( pose, ramady_num_rebuild_, 0.0, ramady_cutoff_, ramady_rms_limit_);
+			for ( core::Size index=0; index < relax_decoys.size(); ++ index ) {
+				try {
+					clock_t starttime = clock();
+					if ( !relax_decoys[index].active ) continue;
+					relax_decoys[index].current_struct->fill_pose( pose );
+					if ( input_csts ) pose.constraint_set( input_csts );
+					if ( total_repeat_count > 1 && repeat_count > 2 ) {
+						if ( cmd.param1 < 0.2 ) {
+							if ( do_rama_repair ) {
+								fix_worst_bad_ramas( pose, ramady_num_rebuild_, 0.0, ramady_cutoff_, ramady_rms_limit_);
+							}
 						}
 					}
+
+					pack_full_repack_->apply( pose );
+					do_minimize( pose, cmd.param2, local_movemap, local_scorefxn  );
+					relax_decoys[index].current_score = (*local_scorefxn)(pose);
+					relax_decoys[index].current_struct->fill_struct( pose );
+
+					clock_t endtime = clock();
+					TR.Debug << "time:" << endtime - starttime << " Score: " << relax_decoys[index].current_score << std::endl;
+				} catch ( utility::excn::EXCN_Base& excn ) {
+					std::cerr << "Ramp_repack_min exception: " << std::endl;
+					excn.show( std::cerr );
+					// just deactivate this pose
+					relax_decoys[index].active = false;
+					// and need to "reset scoring" of the pose we reuse
+					TR << "Throwing out one structure due to scoring problems!" << std::endl;
+					pose.scoring_end(*local_scorefxn);
 				}
-
-				pack_full_repack_->apply( pose );
-        do_minimize( pose, cmd.param2, local_movemap, local_scorefxn  );
-				relax_decoys[index].current_score = (*local_scorefxn)(pose);
-				relax_decoys[index].current_struct->fill_struct( pose );
-
-				clock_t endtime = clock();
-				TR.Debug << "time:" << endtime - starttime << " Score: " << relax_decoys[index].current_score << std::endl;
-					} catch ( utility::excn::EXCN_Base& excn ) {
-						std::cerr << "Ramp_repack_min exception: " << std::endl;
-						excn.show( std::cerr );
-						// just deactivate this pose
-						relax_decoys[index].active = false;
-						// and need to "reset scoring" of the pose we reuse
-						TR << "Throwing out one structure due to scoring problems!" << std::endl;
-						pose.scoring_end(*local_scorefxn);
-					}
 			}
 
-		}	else
-		if( cmd.command == "batch_shave" ){
-			if( cmd.nparams < 1 ){ utility_exit_with_message( "More parameters expected after : " + cmd.command  ); }
+		} else if ( cmd.command == "batch_shave" ) {
+			if ( cmd.nparams < 1 ) { utility_exit_with_message( "More parameters expected after : " + cmd.command  ); }
 			core::Real reduce_factor = cmd.param1;
-			if( (reduce_factor <= 0) ||  (reduce_factor >= 1.0)  ){ utility_exit_with_message( "Parameter after : " + cmd.command + " should be > 0 and < 1 " ); }
+			if ( (reduce_factor <= 0) ||  (reduce_factor >= 1.0)  ) { utility_exit_with_message( "Parameter after : " + cmd.command + " should be > 0 and < 1 " ); }
 
 			TR.Debug << "SHAVE FACTOR: " << reduce_factor << std::endl;
 
 			std::vector < core::Real > energies;
-			for( core::Size index=0; index < relax_decoys.size(); ++ index ){
+			for ( core::Size index=0; index < relax_decoys.size(); ++ index ) {
 				if ( !relax_decoys[index].active ) continue;
 				TR.Debug << "SHAVE: " << relax_decoys[index].current_score << std::endl;
 				energies.push_back( relax_decoys[index].current_score );
 				TR.Debug << relax_decoys[index].current_score << std::endl;
 			}
 
-			if ( energies.size() < 1 ){
+			if ( energies.size() < 1 ) {
 				TR.Debug << "ERROR: Cannot shave off structures - there are not enough left" << std::endl;
 				continue;
 			}
@@ -1533,39 +1483,38 @@ void FastRelax::batch_apply(
 			TR.Debug << "Energies: cutoff index " << cutoff_index << std::endl;
 			core::Real cutoff_energy = energies[ cutoff_index ];
 			TR.Debug << "Energies: cutoff " << cutoff_energy << std::endl;
-			for( core::Size index=0; index < relax_decoys.size(); ++ index ){
+			for ( core::Size index=0; index < relax_decoys.size(); ++ index ) {
 				if ( !relax_decoys[index].active ) continue;
 				TR.Debug << "Shaving candidate: " << index << "  "  << relax_decoys[index].current_score  << "  " << cutoff_energy << std::endl;
 				if ( relax_decoys[index].current_score > cutoff_energy ) relax_decoys[index].active = false;
 			}
 
 
-		}	else
-		if( cmd.command == "accept_to_best" ){  // grab the score and remember the pose if the score is better then ever before.
+		} else if ( cmd.command == "accept_to_best" ) {  // grab the score and remember the pose if the score is better then ever before.
 
 
 			std::vector < core::Real > energies;
 
-			for( core::Size index=0; index < relax_decoys.size(); ++ index ){
+			for ( core::Size index=0; index < relax_decoys.size(); ++ index ) {
 				if ( !relax_decoys[index].active ) continue;
 				relax_decoys[index].current_struct->fill_pose( pose );
 				if ( input_csts ) pose.constraint_set( input_csts );
 				core::Real score = 0;
 				try {
-						score = (*local_scorefxn)( pose );
-					} catch ( utility::excn::EXCN_Base& excn ) {
-						std::cerr << "Accept_to_best scoring exception: " << std::endl;
-						excn.show( std::cerr );
-						// just deactivate this pose
-						relax_decoys[index].active = false;
-						// and need to "reset scoring" of the pose we reuse
-						TR << "Throwing out one structure due to scoring problems!" << std::endl;
-						pose.scoring_end(*local_scorefxn);
-						continue;
-					}
+					score = (*local_scorefxn)( pose );
+				} catch ( utility::excn::EXCN_Base& excn ) {
+					std::cerr << "Accept_to_best scoring exception: " << std::endl;
+					excn.show( std::cerr );
+					// just deactivate this pose
+					relax_decoys[index].active = false;
+					// and need to "reset scoring" of the pose we reuse
+					TR << "Throwing out one structure due to scoring problems!" << std::endl;
+					pose.scoring_end(*local_scorefxn);
+					continue;
+				}
 				TR.Debug << "Comparison: " << score << " " << relax_decoys[index].best_score << std::endl;
 
-				if( ( score < relax_decoys[index].best_score) || (relax_decoys[index].accept_count == 0) ){
+				if ( ( score < relax_decoys[index].best_score) || (relax_decoys[index].accept_count == 0) ) {
 					relax_decoys[index].best_score = score;
 					relax_decoys[index].best_struct->fill_struct( pose );
 #ifdef DEBUG
@@ -1579,20 +1528,20 @@ void FastRelax::batch_apply(
 
 				if ( get_native_pose() ) {
 					if ( core::pose::symmetry::is_symmetric( pose ) && option[ basic::options::OptionKeys::evaluation::symmetric_rmsd ].user() ) {
-							core::Real rms = CA_rmsd_symmetric( *get_native_pose() , pose );
-							TR << "MRP: " << index << " " << relax_decoys[index].accept_count << "  " << score << "  " << relax_decoys[index].best_score << "  "
+						core::Real rms = CA_rmsd_symmetric( *get_native_pose() , pose );
+						TR << "MRP: " << index << " " << relax_decoys[index].accept_count << "  " << score << "  " << relax_decoys[index].best_score << "  "
 							<< rms << "  "
 							<< std::endl;
 
 					} else {
 						core::Real rms =  native_CA_rmsd( *get_native_pose() , pose );
 						TR << "MRP: " << index << " " << relax_decoys[index].accept_count << "  " << score << "  " << relax_decoys[index].best_score << "  "
-							 << rms << "  "
-							 << std::endl;
+							<< rms << "  "
+							<< std::endl;
 					}
 				} else {
-						TR << "MRP: " << index << " " << relax_decoys[index].accept_count << "  " << score << "  " << relax_decoys[index].best_score << "  "
-							 << std::endl;
+					TR << "MRP: " << index << " " << relax_decoys[index].accept_count << "  " << score << "  " << relax_decoys[index].best_score << "  "
+						<< std::endl;
 				}
 
 				relax_decoys[index].curr_score_log.push_back( score );
@@ -1602,42 +1551,39 @@ void FastRelax::batch_apply(
 
 
 			// now decide who to keep relaxing and who to abandon!
-			if ( energies.size() < 1 ){
+			if ( energies.size() < 1 ) {
 				TR.Debug << "Cannot shave off structures - there are not enough left" << std::endl;
 				continue;
 			}
 			std::sort( energies.begin(), energies.end() );
 			core::Real cutoff_energy = energies[ core::Size( floor(core::Real(energies.size()) * (decay_rate)) )];
-			for( core::Size index=0; index < relax_decoys.size(); ++ index ){
+			for ( core::Size index=0; index < relax_decoys.size(); ++ index ) {
 				if ( !relax_decoys[index].active ) continue;
 				if ( relax_decoys[index].best_score > cutoff_energy ) relax_decoys[index].active = false;
 			}
 
-		}	else
-
-		if( cmd.command == "exit" ){
+		} else if ( cmd.command == "exit" ) {
 			utility_exit_with_message( "EXIT INVOKED FROM SEQUENCE RELAX SCRIPT" );
-		}	else
+		} else {
 
-		{
 			utility_exit_with_message( "Unknown command: " + cmd.command );
 		}
 
 		TR.Debug << "CMD: " <<  cmd.command << "  Rep_Wght:"
-			<< local_scorefxn->get_weight( scoring::fa_rep	)
+			<< local_scorefxn->get_weight( scoring::fa_rep )
 			<< std::endl;
 	}
 
 
 	input_structs.clear();
 	// Finally return all the scores;
-	for( core::Size index=0; index < relax_decoys.size(); ++ index ){
+	for ( core::Size index=0; index < relax_decoys.size(); ++ index ) {
 		relax_decoys[index].best_struct->fill_pose( pose );
 		if ( input_csts ) pose.constraint_set( input_csts );
 		setPoseExtraScore( pose, "giveup", relax_decoys[index].accept_count  );
 		core::Real rms = 0;
 		core::Real gdtmm = 0;
-		if ( get_native_pose() ){
+		if ( get_native_pose() ) {
 			rms =  native_CA_rmsd( *get_native_pose() , pose );
 			gdtmm =  native_CA_gdtmm( *get_native_pose() , pose );
 			TR.Trace << "BRELAXRMS: " << rms << "  " << gdtmm << std::endl;
@@ -1645,12 +1591,12 @@ void FastRelax::batch_apply(
 		//pose.dump_pdb("best_relax_step_"+string_of( index )+".pdb" );
 		core::Real score = (*local_scorefxn)( pose );
 		TR << "BRELAX: Rms: "<< rms
-		   << " CenScore: "  << relax_decoys[index].initial_score
-		   << " CenRMS: "    << relax_decoys[index].initial_rms
-			 << " FAScore: "   << score
-			 << " Check: "     << relax_decoys[index].best_score
-			 << " Acc: "       << relax_decoys[index].accept_count
-			 << " Go: "        << (relax_decoys[index].active ? "  1" : "  0") <<  std::endl;
+			<< " CenScore: "  << relax_decoys[index].initial_score
+			<< " CenRMS: "    << relax_decoys[index].initial_rms
+			<< " FAScore: "   << score
+			<< " Check: "     << relax_decoys[index].best_score
+			<< " Acc: "       << relax_decoys[index].accept_count
+			<< " Go: "        << (relax_decoys[index].active ? "  1" : "  0") <<  std::endl;
 
 		if ( !relax_decoys[index].active ) continue;
 
@@ -1670,9 +1616,9 @@ void FastRelax::batch_apply(
 
 void
 FastRelax::set_constraint_weight( core::scoring::ScoreFunctionOP local_scorefxn,
-											 core::scoring::EnergyMap const & full_weights,
-											 core::Real const weight,
-											 core::pose::Pose & ) const {
+	core::scoring::EnergyMap const & full_weights,
+	core::Real const weight,
+	core::pose::Pose & ) const {
 	local_scorefxn->set_weight( scoring::coordinate_constraint,  full_weights[ scoring::coordinate_constraint ] * weight );
 }
 

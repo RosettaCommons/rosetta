@@ -104,11 +104,11 @@ parse_res( core::pose::Pose const &pose, std::string resnum ) {
 	core::Size num;
 	char chain;
 	std::string::const_iterator input_end = resnum.end(), number_start = resnum.begin(), number_end = resnum.begin();
-	while( number_end != input_end && *number_end >= '0' && *number_end <= '9' )
-		++number_end;
+	while ( number_end != input_end && *number_end >= '0' && *number_end <= '9' )
+			++number_end;
 	std::string num_str(number_start,number_end);
 	num = std::atoi( num_str.c_str() );
-	if (number_end == input_end) {
+	if ( number_end == input_end ) {
 		chain = pose.pdb_info()->chain(1);
 	} else {
 		chain = *number_end;
@@ -118,8 +118,8 @@ parse_res( core::pose::Pose const &pose, std::string resnum ) {
 
 
 MRMover::MRMover() :
-		fragments_big_(/* NULL */),
-		fragments_small_(/* NULL */) {
+	fragments_big_(/* NULL */),
+	fragments_small_(/* NULL */) {
 	init();
 }
 
@@ -139,10 +139,12 @@ MRMover::init(){
 	relax_cycles_ = 2;
 	censcale_ = 1.0;
 
-	if (option[ OptionKeys::relax::default_repeats ].user())
+	if ( option[ OptionKeys::relax::default_repeats ].user() ) {
 		relax_cycles_ = option[ OptionKeys::relax::default_repeats ]();
-	if (option[ OptionKeys::optimization::default_max_cycles ].user())
+	}
+	if ( option[ OptionKeys::optimization::default_max_cycles ].user() ) {
 		relax_max_iter_ = option[ OptionKeys::optimization::default_max_cycles ]();
+	}
 
 	// initialize scorefunctions
 	cen1_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.25 );
@@ -150,7 +152,7 @@ MRMover::init(){
 	fa_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.0 );
 
 	// use reasonable defaults
-	if (option[ OptionKeys::edensity::mapfile ].user()) {
+	if ( option[ OptionKeys::edensity::mapfile ].user() ) {
 		cen1_scorefxn_->set_weight( core::scoring::elec_dens_fast, 4.0 );
 		cen2_scorefxn_->set_weight( core::scoring::elec_dens_fast, 4.0 );
 		fa_scorefxn_->set_weight( core::scoring::elec_dens_window, 1.0 );
@@ -172,7 +174,7 @@ void MRMover::apply( Pose &pose ) {
 	bool threaded = true;
 	protocols::comparative_modeling::ThreadingJobCOP job = utility::pointer::dynamic_pointer_cast< protocols::comparative_modeling::ThreadingJob const > ( JobDistributor::get_instance()->current_job()->inner_job() );
 	if ( !job ) {
-		if (option[ OptionKeys::in::file::fasta ].user()) {
+		if ( option[ OptionKeys::in::file::fasta ].user() ) {
 			utility_exit_with_message(
 				"CORE ERROR: You must use the ThreadingJobInputter with the LoopRelaxThreadingMover "
 				"- did you forget the -in:file:template_pdb option?" );
@@ -187,18 +189,18 @@ void MRMover::apply( Pose &pose ) {
 
 	// we do a nonideal relax so make sure fa scorefunction is setup for that
 	if (   fa_scorefxn_->get_weight( core::scoring::cart_bonded ) == 0
-	    && fa_scorefxn_->get_weight( core::scoring::cart_bonded_angle ) == 0
-	    && fa_scorefxn_->get_weight( core::scoring::cart_bonded_length ) == 0
-	    && fa_scorefxn_->get_weight( core::scoring::cart_bonded_torsion ) == 0 ) {
+			&& fa_scorefxn_->get_weight( core::scoring::cart_bonded_angle ) == 0
+			&& fa_scorefxn_->get_weight( core::scoring::cart_bonded_length ) == 0
+			&& fa_scorefxn_->get_weight( core::scoring::cart_bonded_torsion ) == 0 ) {
 		fa_scorefxn_->set_weight( core::scoring::cart_bonded, 0.5 );
 		fa_scorefxn_->set_weight( core::scoring::pro_close, 0.0 );
 	}
 
 	// set up initial loop build
 	LoopsOP my_loops;
-	if (threaded) {
+	if ( threaded ) {
 		core::Size nres = pose.total_residue();
-		while (!pose.residue(nres).is_polymer()) nres--;
+		while ( !pose.residue(nres).is_polymer() ) nres--;
 		my_loops = LoopsOP( new Loops( job->loops( nres ) ) );
 
 		if ( max_gaplength_to_model_ < 999 ) {
@@ -206,7 +208,7 @@ void MRMover::apply( Pose &pose ) {
 		}
 	}
 
-	if (max_gaplength_to_model_ > 0) {
+	if ( max_gaplength_to_model_ > 0 ) {
 		to_centroid.apply(pose);
 
 		// setup & call single-template hybridize
@@ -215,24 +217,27 @@ void MRMover::apply( Pose &pose ) {
 		utility::vector1< char > pdb_chains;
 		core::pose::PoseOP template_pose( new core::pose::Pose );
 		bool add_by_jump = true;
-		for (Size i=1; i<=pose.total_residue(); ++i) {
-			if (!threaded || !my_loops->is_loop_residue(i)) {
-				if (add_by_jump) {
-					if (template_pose->total_residue() > 0
-								 && !template_pose->residue(template_pose->total_residue()).is_upper_terminus()
-								 && template_pose->residue(template_pose->total_residue()).is_polymer())
+		for ( Size i=1; i<=pose.total_residue(); ++i ) {
+			if ( !threaded || !my_loops->is_loop_residue(i) ) {
+				if ( add_by_jump ) {
+					if ( template_pose->total_residue() > 0
+							&& !template_pose->residue(template_pose->total_residue()).is_upper_terminus()
+							&& template_pose->residue(template_pose->total_residue()).is_polymer() ) {
 						core::pose::add_upper_terminus_type_to_pose_residue( *template_pose, template_pose->total_residue() );
+					}
 
 					template_pose->append_residue_by_jump( pose.residue(i), template_pose->total_residue(), "", "", true );
 					add_by_jump = (!pose.residue(i).is_polymer() || pose.residue(i).is_upper_terminus());
-					if (template_pose->residue(template_pose->total_residue()).is_polymer()
-								 && !template_pose->residue(template_pose->total_residue()).is_lower_terminus() )
+					if ( template_pose->residue(template_pose->total_residue()).is_polymer()
+							&& !template_pose->residue(template_pose->total_residue()).is_lower_terminus() ) {
 						core::pose::add_lower_terminus_type_to_pose_residue( *template_pose, template_pose->total_residue() );
+					}
 				} else if ( !pose.residue(i).is_polymer() ) {
-					if (template_pose->total_residue() > 0
-								 && !template_pose->residue(template_pose->total_residue()).is_upper_terminus()
-								 && template_pose->residue(template_pose->total_residue()).is_polymer())
+					if ( template_pose->total_residue() > 0
+							&& !template_pose->residue(template_pose->total_residue()).is_upper_terminus()
+							&& template_pose->residue(template_pose->total_residue()).is_polymer() ) {
 						core::pose::add_upper_terminus_type_to_pose_residue( *template_pose, template_pose->total_residue() );
+					}
 					template_pose->append_residue_by_jump( pose.residue(i), template_pose->total_residue(), "", "", true );
 					add_by_jump = true;
 				} else {
@@ -246,10 +251,11 @@ void MRMover::apply( Pose &pose ) {
 				add_by_jump = true;
 			}
 		}
-		if (template_pose->total_residue() > 0
-				 && !template_pose->residue(template_pose->total_residue()).is_upper_terminus()
-				 && template_pose->residue(template_pose->total_residue()).is_polymer())
-		core::pose::add_upper_terminus_type_to_pose_residue( *template_pose, template_pose->total_residue() );
+		if ( template_pose->total_residue() > 0
+				&& !template_pose->residue(template_pose->total_residue()).is_upper_terminus()
+				&& template_pose->residue(template_pose->total_residue()).is_polymer() ) {
+			core::pose::add_upper_terminus_type_to_pose_residue( *template_pose, template_pose->total_residue() );
+		}
 		core::pose::PDBInfoOP new_pdb_info( new core::pose::PDBInfo( *template_pose ) );
 
 		// pdbinfo
@@ -260,15 +266,15 @@ void MRMover::apply( Pose &pose ) {
 
 		// pose must be ideal going into hybrid
 		//  only the foldtree+sequence is used from input pose
-		for (Size i=1; i<=pose.total_residue(); ++i) {
+		for ( Size i=1; i<=pose.total_residue(); ++i ) {
 			core::conformation::idealize_position(i, pose.conformation());
 		}
 
 
 		protocols::hybridization::HybridizeProtocol rebuild;
 		rebuild.add_template( template_pose, "AUTO", symm_def_file_);
-		if (fragments_big_trim_) rebuild.add_big_fragments( fragments_big_trim_ );
-		if (fragments_small_trim_) rebuild.add_small_fragments( fragments_small_trim_ );
+		if ( fragments_big_trim_ ) rebuild.add_big_fragments( fragments_big_trim_ );
+		if ( fragments_small_trim_ ) rebuild.add_small_fragments( fragments_small_trim_ );
 		rebuild.set_stage1_scorefxn( cen1_scorefxn_ );
 		rebuild.set_stage2_scorefxn( cen2_scorefxn_ );
 		rebuild.set_stage1_increase_cycles( threaded ? 1.0*censcale_ : 0.0 );
@@ -277,14 +283,14 @@ void MRMover::apply( Pose &pose ) {
 		rebuild.apply( pose );
 	}
 
-	if (relax_cycles_ > 0) {
+	if ( relax_cycles_ > 0 ) {
 		to_fullatom.apply(pose);
 
 		// setup disulfides
-		if (disulfs_.size() > 0) {
+		if ( disulfs_.size() > 0 ) {
 			utility::vector1< std::pair<Size,Size> > disulfides;
 			core::Size ndisulf = disulfs_.size();
-			for (core::Size i=1; i<=ndisulf; ++i) {
+			for ( core::Size i=1; i<=ndisulf; ++i ) {
 				utility::vector1<std::string> pair_i = utility::string_split( disulfs_[i], ':');
 				runtime_assert( pair_i.size() == 2 );
 				core::Size lres=parse_res( pose, pair_i[1] );
@@ -329,11 +335,11 @@ void MRMover::pack_missing_sidechains( Pose & pose ) {
 			if ( !pose.residue_type(i).has("CB") ) continue;
 
 			cb_pos = pose.residue(i).atom("CB").xyz();
-			if ((ca_pos - cb_pos).length() > 3) {
+			if ( (ca_pos - cb_pos).length() > 3 ) {
 				needToRepack[i] = true;
 				needToRepackAny = true;  // unused ~Labonte
 			} else {
-				for (int j=(int)pose.residue(i).first_sidechain_atom()+1; j<=(int)pose.residue(i).natoms(); ++j) {
+				for ( int j=(int)pose.residue(i).first_sidechain_atom()+1; j<=(int)pose.residue(i).natoms(); ++j ) {
 					if ( (cb_pos - pose.residue(i).atom(j).xyz()).length() > 10 ) {
 						needToRepack[i] = true;
 						needToRepackAny = true;
@@ -344,7 +350,7 @@ void MRMover::pack_missing_sidechains( Pose & pose ) {
 		}
 	}
 
-	if (!needToRepackAny) return; //?? fpd: it's used right here
+	if ( !needToRepackAny ) return; //?? fpd: it's used right here
 
 	core::pack::task::PackerTaskOP taskstd = core::pack::task::TaskFactory::create_packer_task( pose );
 	taskstd->restrict_to_repacking();
@@ -373,26 +379,28 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 	protocols::loops::Loops new_loops;
 
 
-	for (int i=1; i<=(int)loops.size(); ++i) {
-		if (loops[i].size() > max_gaplength ) {
-			for (int j=(int)loops[i].start()+1; j<= (int)loops[i].stop()-1; ++j) {
+	for ( int i=1; i<=(int)loops.size(); ++i ) {
+		if ( loops[i].size() > max_gaplength ) {
+			for ( int j=(int)loops[i].start()+1; j<= (int)loops[i].stop()-1; ++j ) {
 				to_trim[j] = true;
 			}
 			//fpd check bb connectivity
 			bool trim_start, trim_stop;
 			trim_stop  = loops[i].stop() == query_pose.total_residue() || query_pose.fold_tree().is_cutpoint(loops[i].stop());
 			trim_start = loops[i].start() == 1 || query_pose.fold_tree().is_cutpoint(loops[i].start()-1);
-			if (!trim_start) {
+			if ( !trim_start ) {
 				numeric::xyzVector< core::Real > x0 = query_pose.residue( loops[i].start() ).atom( "N" ).xyz();
 				numeric::xyzVector< core::Real > x1 = query_pose.residue( loops[i].start()-1 ).atom( "C" ).xyz();
-				if ( (x0-x1).length() > 4 )
+				if ( (x0-x1).length() > 4 ) {
 					trim_start = true;
+				}
 			}
-			if (!trim_stop) {
+			if ( !trim_stop ) {
 				numeric::xyzVector< core::Real > x0 = query_pose.residue( loops[i].stop() ).atom( "C" ).xyz();
 				numeric::xyzVector< core::Real > x1 = query_pose.residue( loops[i].stop()+1 ).atom( "N" ).xyz();
-				if ( (x0-x1).length() > 4 )
+				if ( (x0-x1).length() > 4 ) {
 					trim_stop = true;
+				}
 			}
 			to_trim[loops[i].start()] = trim_start;
 			to_trim[loops[i].stop()] = trim_stop;
@@ -404,11 +412,11 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 	// # residues in new pose
 	Size new_nres = 0;
 	for ( Size i = 1; i <= query_pose.total_residue(); ++i ) {
-		if (!to_trim[i]) new_nres++;
+		if ( !to_trim[i] ) new_nres++;
 	}
 
-	if (new_nres == query_pose.total_residue()) return;  // nothing to do
-	if (new_nres < 2) {
+	if ( new_nres == query_pose.total_residue() ) return;  // nothing to do
+	if ( new_nres < 2 ) {
 		std::cerr << "Error: not enough aligned residues! trying to continue" << std::endl;
 		return;
 	}
@@ -423,22 +431,25 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 	core::id::SequenceMapping new_invmapping(query_pose.total_residue() , new_nres);
 
 	for ( Size i = 1; i <= query_pose.total_residue(); ++i ) {
-		if (!to_trim[i]) {
-			if (add_by_jump) {
-				if (new_query_pose.total_residue() > 0
-							 && new_query_pose.residue(new_query_pose.total_residue()).is_polymer())
+		if ( !to_trim[i] ) {
+			if ( add_by_jump ) {
+				if ( new_query_pose.total_residue() > 0
+						&& new_query_pose.residue(new_query_pose.total_residue()).is_polymer() ) {
 					core::pose::add_upper_terminus_type_to_pose_residue( new_query_pose, new_query_pose.total_residue() );
+				}
 
 				new_query_pose.append_residue_by_jump( query_pose.residue(i), new_query_pose.total_residue(), "", "", true );
 				add_by_jump = !query_pose.residue(i).is_polymer();
 
-				if (new_query_pose.residue(new_query_pose.total_residue()).is_polymer())
+				if ( new_query_pose.residue(new_query_pose.total_residue()).is_polymer() ) {
 					core::pose::add_lower_terminus_type_to_pose_residue( new_query_pose, new_query_pose.total_residue() );
+				}
 
 			} else if ( !query_pose.residue(i).is_polymer() ) {
-				if (new_query_pose.total_residue() > 0
-							 && new_query_pose.residue(new_query_pose.total_residue()).is_polymer())
+				if ( new_query_pose.total_residue() > 0
+						&& new_query_pose.residue(new_query_pose.total_residue()).is_polymer() ) {
 					core::pose::add_upper_terminus_type_to_pose_residue( new_query_pose, new_query_pose.total_residue() );
+				}
 				new_query_pose.append_residue_by_jump( query_pose.residue(i), new_query_pose.total_residue(), "", "", true );
 				add_by_jump = true;
 			} else {
@@ -452,13 +463,15 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 			add_by_jump = true;
 		}
 	}
-	if (new_query_pose.total_residue() > 0
-		 && new_query_pose.residue(new_query_pose.total_residue()).is_polymer())
+	if ( new_query_pose.total_residue() > 0
+			&& new_query_pose.residue(new_query_pose.total_residue()).is_polymer() ) {
 		core::pose::add_upper_terminus_type_to_pose_residue( new_query_pose, new_query_pose.total_residue() );
+	}
 
 	core::kinematics::FoldTree f = new_query_pose.fold_tree();
-	if (new_invmapping[old_root] != 0)
+	if ( new_invmapping[old_root] != 0 ) {
 		f.reorder( new_invmapping[old_root] );
+	}
 
 	//PDBInfo stuff
 	core::pose::PDBInfoOP pdb_info( query_pose.pdb_info() );
@@ -467,7 +480,7 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 	utility::vector1< char > pdb_chains;
 
 	for ( Size i(1); i <= query_pose.total_residue(); ++i ) {
-		if (new_invmapping[i] != 0) {
+		if ( new_invmapping[i] != 0 ) {
 			pdb_numbering.push_back( i );
 			pdb_chains.push_back( 'A' );
 		}
@@ -486,7 +499,7 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 		int nAtms=0, nres=new_query_pose.total_residue();
 		for ( int i=1; i<= nres; ++i ) {
 			core::conformation::Residue const & rsd( new_query_pose.residue(i) );
-			if (rsd.aa() == core::chemical::aa_vrt) continue;
+			if ( rsd.aa() == core::chemical::aa_vrt ) continue;
 			for ( Size j=1; j<= rsd.nheavyatoms(); ++j ) {
 				core::conformation::Atom const & atom( rsd.atom(j) );
 				massSum += atom.xyz();
@@ -502,11 +515,11 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 		core::Real d_min = 99999, this_d;
 		for ( int i=r_start; i<=r_end; ++i ) {
 			core::conformation::Residue const & rsd( new_query_pose.residue(i) );
-			if (!rsd.is_protein() ) continue;
+			if ( !rsd.is_protein() ) continue;
 
 			core::conformation::Atom const & atom( rsd.atom("CA") );
 			this_d = (atom.xyz() - massSum).length();
-			if (this_d < d_min) {
+			if ( this_d < d_min ) {
 				d_min = this_d;
 				i_min = i;
 			}
@@ -519,18 +532,20 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 	new_query_pose.fold_tree( f );
 
 	// remap loops
-	for (int i=1; i<=(int)new_loops.size(); ++i) {
+	for ( int i=1; i<=(int)new_loops.size(); ++i ) {
 		new_loops[i].set_start( new_invmapping[new_loops[i].start()] );
 		new_loops[i].set_stop( new_invmapping[new_loops[i].stop()] );
 
 		//fpd
-		if (new_invmapping[new_loops[i].start()] == new_invmapping[new_loops[i].stop()]
+		if ( new_invmapping[new_loops[i].start()] == new_invmapping[new_loops[i].stop()]
 				&& new_invmapping[new_loops[i].start()] != 0
 				&& new_invmapping[new_loops[i].stop()] != 0 ) {
-			if (new_invmapping[new_loops[i].start()] != 1)
+			if ( new_invmapping[new_loops[i].start()] != 1 ) {
 				new_loops[i].set_start( new_invmapping[new_loops[i].start()]-1 );
-			if (new_invmapping[new_loops[i].stop()] != new_nres)
+			}
+			if ( new_invmapping[new_loops[i].stop()] != new_nres ) {
 				new_loops[i].set_stop( new_invmapping[new_loops[i].stop()]+1 );
+			}
 		}
 	}
 	loops = new_loops;
@@ -538,7 +553,7 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 	// copy pose
 	query_pose = new_query_pose;
 
-	if (fragments_big_) {
+	if ( fragments_big_ ) {
 		// remap fragments
 		core::fragment::FragSetOP new_big_frags( fragments_big_->empty_clone() );
 
@@ -549,7 +564,7 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 
 			// if any residue is unmapped, remove the frame
 			bool keepthis = true;
-			for (Size j=start_res; j<=end_res; ++j) keepthis &= ( new_invmapping[ j ] != 0 );
+			for ( Size j=start_res; j<=end_res; ++j ) keepthis &= ( new_invmapping[ j ] != 0 );
 			if ( keepthis ) {
 				core::fragment::FrameOP new_f = f->clone_with_frags();
 				new_f->align(new_invmapping);
@@ -559,7 +574,7 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 		fragments_big_trim_ = new_big_frags;
 	}
 
-	if (fragments_small_) {
+	if ( fragments_small_ ) {
 		core::fragment::FragSetOP new_small_frags( fragments_small_->empty_clone() );
 		for ( core::fragment::ConstFrameIterator f=fragments_small_->begin(); f != fragments_small_->end(); ++f ) {
 			core::Size start_res = f->start();
@@ -567,7 +582,7 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 
 			// if any residue is unmapped, remove the frame
 			bool keepthis = true;
-			for (Size j=start_res; j<=end_res; ++j) keepthis &= ( new_invmapping[ j ] != 0 );
+			for ( Size j=start_res; j<=end_res; ++j ) keepthis &= ( new_invmapping[ j ] != 0 );
 			if ( keepthis ) {
 				core::fragment::FrameOP new_f = f->clone_with_frags();
 				new_f->align(new_invmapping);

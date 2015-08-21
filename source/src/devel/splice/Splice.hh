@@ -38,68 +38,68 @@ namespace splice {
 //@brief lightweight class containing bb torsions and residue identities
 class BBDofs : public utility::pointer::ReferenceCount
 {
-	public:
-		BBDofs() : resid_( 0 ), phi_( 0.0 ), psi_( 0.0 ), omega_( 0.0 ), resn_( "" ){}
-		BBDofs( core::Size const resid, core::Real const phi, core::Real const psi, core::Real const omega, std::string const resn ) : resid_( resid ), phi_( phi ), psi_( psi ), omega_( omega ), resn_( resn ){}
-		core::Size resid() const{ return resid_; }
-		core::Real phi() const{ return phi_; }
-		core::Real psi() const{ return psi_; }
-		core::Real omega() const{ return omega_; }
-		std::string resn() const {return resn_; }
-		void resid( core::Size const r ){ resid_ = r; }
-		void phi( core::Real const p ){ phi_ = p; }
-		void psi( core::Real const p ){ psi_ = p; }
-		void omega( core::Real const o ){ omega_ = o; }
-		void resn( std::string const r ){ resn_ = r; }
-		virtual ~BBDofs();
-	private:
-		core::Size resid_; /// this is currently not used in splice
-		core::Real phi_, psi_, omega_;
-		std::string resn_;
+public:
+	BBDofs() : resid_( 0 ), phi_( 0.0 ), psi_( 0.0 ), omega_( 0.0 ), resn_( "" ){}
+	BBDofs( core::Size const resid, core::Real const phi, core::Real const psi, core::Real const omega, std::string const resn ) : resid_( resid ), phi_( phi ), psi_( psi ), omega_( omega ), resn_( resn ){}
+	core::Size resid() const{ return resid_; }
+	core::Real phi() const{ return phi_; }
+	core::Real psi() const{ return psi_; }
+	core::Real omega() const{ return omega_; }
+	std::string resn() const {return resn_; }
+	void resid( core::Size const r ){ resid_ = r; }
+	void phi( core::Real const p ){ phi_ = p; }
+	void psi( core::Real const p ){ psi_ = p; }
+	void omega( core::Real const o ){ omega_ = o; }
+	void resn( std::string const r ){ resn_ = r; }
+	virtual ~BBDofs();
+private:
+	core::Size resid_; /// this is currently not used in splice
+	core::Real phi_, psi_, omega_;
+	std::string resn_;
 };
 
 /// @brief container for BBDofs, providing a convenient operator [], size, other methods and iterators that allow splice to treat
 /// ResidueBBDofs as a simple vector (even though it contains other elements as well)
 class ResidueBBDofs : public utility::pointer::ReferenceCount
 {
-	public:
-		typedef utility::vector1< BBDofs > bbdof_list;
-		typedef bbdof_list::iterator iterator;
-		typedef bbdof_list::const_iterator const_iterator;
+public:
+	typedef utility::vector1< BBDofs > bbdof_list;
+	typedef bbdof_list::iterator iterator;
+	typedef bbdof_list::const_iterator const_iterator;
 
-		ResidueBBDofs() : cut_site_( 0 ), start_loop_( 0 ), stop_loop_( 0 ), source_pdb_(""), aa_sequence_(""), dssp_("") { clear(); }
-		virtual ~ResidueBBDofs();
-		void cut_site( core::Size const c ){ cut_site_ = c; }
-		core::Size cut_site() const { return cut_site_; }
-		void clear() { bbdofs_.clear(); }
-		void push_back( BBDofs const b ){ bbdofs_.push_back( b ); }
-		const_iterator begin() const{ return bbdofs_.begin(); }
-		const_iterator end() const{ return bbdofs_.end(); }
-		iterator begin(){ return bbdofs_.begin(); }
-		iterator end(){ return bbdofs_.end(); }
-		core::Size size() const{ return bbdofs_.size(); }
-		BBDofs & operator[]( int const i ) { return bbdofs_[ i ]; }
-		core::Size start_loop() const{ return start_loop_; }
-		void start_loop( core::Size const s ){ start_loop_ = s; }
-		core::Size stop_loop() const{ return stop_loop_; }
-		void stop_loop( core::Size const s ){ stop_loop_ = s; }
-		std::string source_pdb() const{ return source_pdb_; }
-		void source_pdb( std::string const s ){ source_pdb_ = s; }
-		std::string tail_segment() const{ return tail_segment_; }
-		void tail_segment( std::string const s ){ tail_segment_ = s; }
-		core::Size disulfide() const{ return disulfide_; }
-		void disulfide( core::Size const s ){ disulfide_ = s; }
-		void aa_sequence( std::string const s ){ aa_sequence_ = s; }
-		std::string aa_sequence() const{ return aa_sequence_; }
-		void dssp( std::string const s ){ dssp_ = s; }
-		std::string dssp() const{ return dssp_; }
+	ResidueBBDofs() : cut_site_( 0 ), start_loop_( 0 ), stop_loop_( 0 ), source_pdb_(""), aa_sequence_(""), dssp_("") { clear(); }
+	virtual ~ResidueBBDofs();
+	void cut_site( core::Size const c ){ cut_site_ = c; }
+	core::Size cut_site() const { return cut_site_; }
+	void clear() { bbdofs_.clear(); }
+	void push_back( BBDofs const b ){ bbdofs_.push_back( b ); }
+	const_iterator begin() const{ return bbdofs_.begin(); }
+	const_iterator end() const{ return bbdofs_.end(); }
+	iterator begin(){ return bbdofs_.begin(); }
+	iterator end(){ return bbdofs_.end(); }
+	core::Size size() const{ return bbdofs_.size(); }
+	BBDofs & operator[]( int const i ) { return bbdofs_[ i ]; }
+	core::Size start_loop() const{ return start_loop_; }
+	void start_loop( core::Size const s ){ start_loop_ = s; }
+	core::Size stop_loop() const{ return stop_loop_; }
+	void stop_loop( core::Size const s ){ stop_loop_ = s; }
+	std::string source_pdb() const{ return source_pdb_; }
+	void source_pdb( std::string const s ){ source_pdb_ = s; }
+	std::string tail_segment() const{ return tail_segment_; }
+	void tail_segment( std::string const s ){ tail_segment_ = s; }
+	core::Size disulfide() const{ return disulfide_; }
+	void disulfide( core::Size const s ){ disulfide_ = s; }
+	void aa_sequence( std::string const s ){ aa_sequence_ = s; }
+	std::string aa_sequence() const{ return aa_sequence_; }
+	void dssp( std::string const s ){ dssp_ = s; }
+	std::string dssp() const{ return dssp_; }
 
 
-	private:
-		core::Size cut_site_, start_loop_, stop_loop_, disulfide_/*what is the disulfide on the template*/;
-		bbdof_list bbdofs_;
-		std::string source_pdb_, tail_segment_/*either n or c*/; // the source pdb from which the loop is taken
-		std::string aa_sequence_, dssp_;
+private:
+	core::Size cut_site_, start_loop_, stop_loop_, disulfide_/*what is the disulfide on the template*/;
+	bbdof_list bbdofs_;
+	std::string source_pdb_, tail_segment_/*either n or c*/; // the source pdb from which the loop is taken
+	std::string aa_sequence_, dssp_;
 };
 
 
@@ -115,7 +115,7 @@ public:
 	virtual std::string get_name() const;
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new Splice ); }
-		void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	virtual ~Splice();
 
 	void from_res( core::Size const f ){ from_res_ = f; }
@@ -201,9 +201,9 @@ public:
 	std::string database_pdb_entry() const { return database_pdb_entry_; }
 	void minimize_segment(core::pose::Pose & pose);
 
-/// sequence profiles
-/// Splice changes the backbone of the current pose and the following methods deal with dynamically constructing a
-/// sequence profile for the current backbone choices.
+	/// sequence profiles
+	/// Splice changes the backbone of the current pose and the following methods deal with dynamically constructing a
+	/// sequence profile for the current backbone choices.
 	void read_splice_segments( std::string const segment_type, std::string const segment_name, std::string const file_name );
 	core::sequence::SequenceProfileOP generate_sequence_profile(core::pose::Pose & pose);
 	void load_pdb_segments_from_pose_comments( core::pose::Pose  const  & p); // get the segment names for those segments that are constant in this splice function
@@ -251,11 +251,11 @@ public:
 private:
 	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
 	void retrieve_values(); // call at end of apply
-	std::string	parse_pdb_code(std::string pdb_file_name);
+	std::string parse_pdb_code(std::string pdb_file_name);
 	void copy_stretch( core::pose::Pose & target, core::pose::Pose const & source, core::Size const from_res, core::Size const to_res );
 	core::Size find_non_active_site_cut_site(core::pose::Pose const & pose);
 	void superimpose_source_on_pose( core::pose::Pose const &, core::pose::Pose & );
-	void chainbreak_check( core::pose::Pose const & pose , core::Real const tolerance , bool fail_retry_if_found , bool crash_if_found ); 
+	void chainbreak_check( core::pose::Pose const & pose , core::Real const tolerance , bool fail_retry_if_found , bool crash_if_found );
 
 	// This vector will hold the segment names by order so when the segments are concatenated into a single profile it
 	// is done by user defined order
@@ -397,10 +397,10 @@ private:
 	std::map < std::string, std::string> database_segment_map_;//map between antibody segment and database file, e.g. <L1_L2,"l1_l2.db">
 	core::Size vl_vh_cut;//keeps track of the residue number between the vl vh of the pose. this postion should change with loop length changes.
 	std::string tail_segment_; //dflt ""; User should insert either "C"/"N" designating that that the N-termini tail of
-								// the inserted segment should also be inserted and modeled. For Example if the user inserted
-								// The L1_L2 segment from a source antibody and used "N" option than the residues that
-								// are at the N terminal end of the segment all the way up to the first residue will also be added to the pose from the template
-								//PDB
+	// the inserted segment should also be inserted and modeled. For Example if the user inserted
+	// The L1_L2 segment from a source antibody and used "N" option than the residues that
+	// are at the N terminal end of the segment all the way up to the first residue will also be added to the pose from the template
+	//PDB
 	bool min_seg_;//dflt false. if set to true then we perform minimization on bb and chi of segement after splice in
 	bool CG_const_;//dflt false. if set to true then We aplly CG constraints from source pose onto pose according to PSSM rules
 	bool debug_;//dflt false if set to true then the all sorts of dump pdb options are activated

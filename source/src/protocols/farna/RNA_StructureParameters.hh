@@ -80,7 +80,7 @@ public:
 	bool
 	random_jump_change( core::pose::Pose & pose ) const;
 
-toolbox::AllowInsertOP
+	toolbox::AllowInsertOP
 	allow_insert();
 
 	void
@@ -123,7 +123,7 @@ toolbox::AllowInsertOP
 		return rna_pairing_list_;
 	}
 
-	private:
+private:
 
 	void
 	initialize_secstruct( core::pose::Pose & pose );
@@ -139,12 +139,12 @@ toolbox::AllowInsertOP
 
 	void
 	get_pairings_from_line(
-												 std::istringstream & line_stream,
-												 bool const in_stem );
+		std::istringstream & line_stream,
+		bool const in_stem );
 
 	void
 	save_res_lists_to_chain_connections_and_clear( utility::vector1< Size > & res_list1,
-																							 utility::vector1< Size > & res_list2 );
+		utility::vector1< Size > & res_list2 );
 
 	void
 	read_chain_connection( std::istringstream & line_stream );
@@ -189,7 +189,7 @@ toolbox::AllowInsertOP
 
 	Size
 	check_in_pairing_sets( utility::vector1 < utility::vector1 <core::Size > > pairing_sets,
-												 RNA_Pairing const & rna_pairing_check ) const;
+		RNA_Pairing const & rna_pairing_check ) const;
 
 private:
 	RNA_JumpLibraryOP rna_jump_library_;
@@ -200,7 +200,7 @@ private:
 
 	utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > > chain_connections_;
 
-	//		int force_stems_;// deprecated.
+	//  int force_stems_;// deprecated.
 
 	utility::vector1 <core::Size > cutpoints_open_;
 	utility::vector1 <core::Size > cutpoints_closed_;
@@ -222,7 +222,7 @@ private:
 
 };
 
-	typedef utility::pointer::shared_ptr< RNA_StructureParameters > RNA_StructureParametersOP;
+typedef utility::pointer::shared_ptr< RNA_StructureParameters > RNA_StructureParametersOP;
 
 
 } //farna

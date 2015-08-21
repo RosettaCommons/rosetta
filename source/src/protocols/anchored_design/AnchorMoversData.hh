@@ -39,8 +39,8 @@
 
 // C++ Headers
 
-namespace protocols{
-namespace anchored_design{
+namespace protocols {
+namespace anchored_design {
 
 /// @brief This data class wraps all the data needed for the AnchoredDesign movers.
 /// @details This data class keeps the anchor, mobile loops, and movemaps associated with the loops all together.
@@ -167,7 +167,7 @@ public:
 	void set_resfile_1(std::string const & resfile_1);
 	/// @brief later-stage resfile if desired
 	void set_resfile_2(std::string const & resfile_2);
-	//	/// @brief whether to automatically initialize from the options system; defaults to true
+	// /// @brief whether to automatically initialize from the options system; defaults to true
 	//void set_autoinitialize(bool const autoinitialize);
 	/// @brief copy of cmdline option loop_file
 	//void set_loop_file(std::string const & loop_file); //This setter in un-provided because it cannot be used; the variable is only used in the option-system-dependent ctor; it's only a class variable to fit the rules
@@ -196,7 +196,7 @@ public:
 	std::string const & get_resfile_1() const;
 	/// @brief later-stage resfile if desired
 	std::string const & get_resfile_2() const;
-	//	/// @brief whether to automatically initialize from the options system; defaults to true
+	// /// @brief whether to automatically initialize from the options system; defaults to true
 	//bool get_autoinitialize() const;
 	/// @brief copy of cmdline option loop_file
 	std::string const & get_loop_file() const;
@@ -289,7 +289,7 @@ private:
 	std::string resfile_1_;
 	/// @brief later-stage resfile if desired
 	std::string resfile_2_;
-	//	/// @brief whether to automatically initialize from the options system; defaults to true
+	// /// @brief whether to automatically initialize from the options system; defaults to true
 	//bool autoinitialize_;
 	/// @brief copy of loop_file cmdline option
 	std::string loop_file_;

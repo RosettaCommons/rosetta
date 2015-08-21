@@ -27,36 +27,36 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class RNA_ChainClosableGeometryResidueBasedScreener: public StepWiseResiduePairScreener {
+class RNA_ChainClosableGeometryResidueBasedScreener: public StepWiseResiduePairScreener {
 
-	public:
+public:
 
-		//constructor
-		RNA_ChainClosableGeometryResidueBasedScreener( modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker );
+	//constructor
+	RNA_ChainClosableGeometryResidueBasedScreener( modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker );
 
-		//destructor
-		~RNA_ChainClosableGeometryResidueBasedScreener();
+	//destructor
+	~RNA_ChainClosableGeometryResidueBasedScreener();
 
-	public:
+public:
 
-		void
-		get_update( sampler::StepWiseSamplerBaseOP sampler );
+	void
+	get_update( sampler::StepWiseSamplerBaseOP sampler );
 
-		bool
-		check_screen();
+	bool
+	check_screen();
 
-		std::string
-		name() const { return "RNA_ChainClosableGeometryResidueBasedScreener"; }
+	std::string
+	name() const { return "RNA_ChainClosableGeometryResidueBasedScreener"; }
 
-		StepWiseScreenerType
-		type() const { return RNA_CHAIN_CLOSABLE_GEOMETRY_RESIDUE_BASED; }
+	StepWiseScreenerType
+	type() const { return RNA_CHAIN_CLOSABLE_GEOMETRY_RESIDUE_BASED; }
 
-	private:
+private:
 
-		modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker_;
-//		core::conformation::ResidueCOP rsd1_, rsd2_;
-Vector five_prime_xyz_, three_prime_xyz_;
-	};
+	modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker_;
+	//  core::conformation::ResidueCOP rsd1_, rsd2_;
+	Vector five_prime_xyz_, three_prime_xyz_;
+};
 
 } //screener
 } //stepwise

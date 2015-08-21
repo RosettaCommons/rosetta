@@ -357,9 +357,9 @@ test_gb()
 			F(9,2,pose.energies().onebody_energies( ii )[ gb_elec ] ) << std::endl;
 
 		for ( ResidueNeighborConstIteratorOP
-						rni = lrec->const_upper_neighbor_iterator_begin( ii ),
-							rniend = lrec->const_upper_neighbor_iterator_end( ii );
-					(*rni) != (*rniend); ++(*rni) ) {
+				rni = lrec->const_upper_neighbor_iterator_begin( ii ),
+				rniend = lrec->const_upper_neighbor_iterator_end( ii );
+				(*rni) != (*rniend); ++(*rni) ) {
 			Size const jj = rni->upper_neighbor_id();
 			EnergyMap emap;
 			rni->retrieve_energy( emap );
@@ -690,7 +690,7 @@ simple_loop_modeling_test()
 	// now fill in the breaks
 	{
 		for ( Size cut=1; cut<= Size(pose.fold_tree().num_cutpoint()); ++cut ) {
-			while ( mapping[ pose.fold_tree().cutpoint( cut )+1] != Size(pose.fold_tree().cutpoint( cut )+1 )) {
+			while ( mapping[ pose.fold_tree().cutpoint( cut )+1] != Size(pose.fold_tree().cutpoint( cut )+1 ) ) {
 				Size const cutpoint( pose.fold_tree().cutpoint( cut ) );
 				assert( mapping[cutpoint] == cutpoint ); // we've fixed everything up til here
 
@@ -724,8 +724,8 @@ simple_loop_modeling_test()
 	assert( start_mapping.size1() == nres );
 	for ( Size i=1; i<= nres; ++i ) {
 		if ( ( !start_mapping[i] ) || // unaligned
-				 ( i>   1 && start_mapping[i] != start_mapping[i-1]+1 ) ||
-				 ( i<nres && start_mapping[i] != start_mapping[i+1]-1 ) ) {
+				( i>   1 && start_mapping[i] != start_mapping[i-1]+1 ) ||
+				( i<nres && start_mapping[i] != start_mapping[i+1]-1 ) ) {
 			std::cout << "moving: " << i << ' ' << start_mapping[i] << std::endl;
 			mm.set_bb( i, true );
 			if ( !start_mapping[i] ) {
@@ -813,8 +813,8 @@ simple_loop_modeling_test()
 				bool allowed( true );
 				for ( Size k=0; k< frag_size; ++k ) {
 					if ( !( mm.get( TorsionID( pos+k, BB,   phi_torsion ) ) &&
-									mm.get( TorsionID( pos+k, BB,   psi_torsion ) ) &&
-									mm.get( TorsionID( pos+k, BB, omega_torsion ) ) ) ) {
+							mm.get( TorsionID( pos+k, BB,   psi_torsion ) ) &&
+							mm.get( TorsionID( pos+k, BB, omega_torsion ) ) ) ) {
 						allowed = false;
 						break;
 					}
@@ -900,15 +900,15 @@ dna_deriv_test_old()
 				} else {
 					pose.append_polymer_residue_after_seqpos( rsd, rsd_seqpos-1, false );
 					jump_pose.insert_residue_by_jump( rsd, rsd_seqpos, rsd_seqpos-1,
-																						jump_anchor_atom, // anchor
-																						jump_anchor_atom ); // root_atomno
+						jump_anchor_atom, // anchor
+						jump_anchor_atom ); // root_atomno
 				}
 
 				tt << "a " << j << pose.fold_tree() << std::endl;
 				pose.insert_residue_by_jump( partner_rsd, rsd_seqpos + 1, rsd_seqpos, jump_anchor_atom,
-																		 jump_anchor_atom );
+					jump_anchor_atom );
 				jump_pose.insert_residue_by_jump( partner_rsd, rsd_seqpos + 1, rsd_seqpos, jump_anchor_atom,
-																					jump_anchor_atom );
+					jump_anchor_atom );
 				tt << "b " << j << pose.fold_tree() << std::endl;
 			}
 			break;
@@ -949,7 +949,7 @@ dna_deriv_test_old()
 	{ // dna_bs minimize
 		// setup the options
 		MinimizerOptions options( "dfpmin", 0.1, true /*use_nblist*/,
-															true /*deriv_check*/, false /*no verbose-deriv-check, is default*/ );
+			true /*deriv_check*/, false /*no verbose-deriv-check, is default*/ );
 		ScoreFunction scorefxn;
 		scorefxn.set_weight( dna_bs, 0.5 );
 
@@ -967,7 +967,7 @@ dna_deriv_test_old()
 	{
 		// dna_bs minimize
 		MinimizerOptions options( "dfpmin", 0.1, true /*use_nblist*/,
-															true /*deriv_check*/, false /*no verbose-deriv-check, is default*/ );
+			true /*deriv_check*/, false /*no verbose-deriv-check, is default*/ );
 		ScoreFunction scorefxn;
 		scorefxn.set_weight( dna_bp, 0.5 );
 
@@ -1029,8 +1029,8 @@ dna_deriv_test()
 				} else {
 					pose.append_polymer_residue_after_seqpos( rsd, rsd_seqpos-1, false );
 					jump_pose.insert_residue_by_jump( rsd, rsd_seqpos, rsd_seqpos-1,
-																						jump_anchor_atom, // anchor
-																						jump_anchor_atom ); // root_atomno
+						jump_anchor_atom, // anchor
+						jump_anchor_atom ); // root_atomno
 				}
 
 				tt << "a " << j << pose.fold_tree() << std::endl;
@@ -1254,10 +1254,10 @@ simple_frag_test()
 		Pose pose;
 		for ( Size i=1; i<= 20; ++i ) {
 			utility::vector1< std::string > variants;
-			if( i == 1 ) {
+			if ( i == 1 ) {
 				variants.push_back( "LOWER_TERMINUS_VARIANT" );
 			}
-			if( i == 20 ) {
+			if ( i == 20 ) {
 				variants.push_back( "UPPER_TERMINUS_VARIANT" );
 			}
 			ResidueTypeCOP rsd_type( rsd_set->get_representative_type_aa( static_cast<AA>(i) /*BAD*/, variants ) );
@@ -1386,7 +1386,7 @@ dna_coupled_rotamer_design_test()
 			using namespace pack::rotamer_set;
 			RotamerCouplingsOP couplings( new RotamerCouplings() );
 			couplings->resize( nres );
-			for ( Size i=1;i<= nres; ++i ){
+			for ( Size i=1; i<= nres; ++i ) {
 				if ( partner[i] ) {
 					(*couplings)[i].first = partner[i];
 					(*couplings)[i].second = core::conformation::ResidueMatcherOP( new conformation::WatsonCrickResidueMatcher() );
@@ -1406,7 +1406,7 @@ dna_coupled_rotamer_design_test()
 
 			{ // test for mismatches
 				WatsonCrickResidueMatcher m;
-				for ( Size i=1;i<= nres; ++i ){
+				for ( Size i=1; i<= nres; ++i ) {
 					if ( partner[i]>i ) {
 						std::cout << i << pose.residue(i).aa() << ' ' << pose.residue(partner[i]).aa() << std::endl;
 						assert( m( pose.residue(i), pose.residue(partner[i])) ); // fails if mismatch
@@ -1429,7 +1429,7 @@ dna_coupled_rotamer_design_test()
 
 		{ // test for mismatches
 			WatsonCrickResidueMatcher m;
-			for ( Size i=1;i<= nres; ++i ){
+			for ( Size i=1; i<= nres; ++i ) {
 				if ( partner[i]>i ) {
 					std::cout << i << pose.residue(i).aa() << ' ' << pose.residue(partner[i]).aa() << std::endl;
 					assert( m( pose.residue(i), pose.residue(partner[i])));
@@ -1664,17 +1664,17 @@ atom_tree_torsion_test()
 
 		for ( int r=1; r<= 2; ++r ) {
 			id::TorsionType const type( r == 1 ? id::BB :
-																					id::CHI );
+				id::CHI );
 			Size const n( r == 1 ? rsd.mainchain_atoms().size() : rsd.nchi() );
 
 			for ( Size j=1; j<= n; ++j ) {
 				id::TorsionID const tor_id( i, type, j );
 				//std::cout << "set_torsion: " << tor_id <<
-				//	" =============================================" << std::endl;
+				// " =============================================" << std::endl;
 				pose.set_torsion( tor_id, 180.0 );
 				pose.conformation().debug_residue_torsions();
 				assert( std::abs( basic::subtract_degree_angles( pose.torsion( tor_id ),
-																												180.0 ) ) < 1e-3 );
+					180.0 ) ) < 1e-3 );
 			}
 		}
 	}
@@ -1701,7 +1701,7 @@ fa_scorefxn_test()
 	scorefxn.set_weight( fa_dun, 0.49 );
 	scorefxn.set_weight( rama, 0.2 );
 	scorefxn.set_weight( hbond_lr_bb, 1.0 );
- 	scorefxn.set_weight( hbond_sr_bb, 1.0 );
+	scorefxn.set_weight( hbond_sr_bb, 1.0 );
 	scorefxn.set_weight( hbond_bb_sc, 1.0 );
 	scorefxn.set_weight( hbond_sc, 1.0 );
 
@@ -1742,7 +1742,7 @@ rotamer_trials_test()
 
 	Pose pose;
 	core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );
-	// 	core::import_pose::pose_from_pdb( pose, "input/test_in_noPRO.pdb" );
+	//  core::import_pose::pose_from_pdb( pose, "input/test_in_noPRO.pdb" );
 	Energy score_orig = scorefxn( pose );
 
 	scorefxn.show( std::cout, pose );
@@ -1799,27 +1799,27 @@ pack_rotamers_test()
 	scorefxn.set_weight( hbond_sc, 1.0 );
 
 	{ /* test 1 */
-	Pose pose;
-	core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );
-	Energy score_orig = scorefxn( pose );
+		Pose pose;
+		core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );
+		Energy score_orig = scorefxn( pose );
 
-	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
-	task->initialize_from_command_line().restrict_to_repacking().or_include_current( true );
-	task->set_bump_check( true );
+		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
+		task->initialize_from_command_line().restrict_to_repacking().or_include_current( true );
+		task->set_bump_check( true );
 
-	clock_t starttime = clock();
-	pack::pack_rotamers( pose, scorefxn, task);
-	clock_t stoptime = clock();
-	std::cout << "TIMING: pack_rotamers took " << ((double) stoptime - starttime)/CLOCKS_PER_SEC << std::endl;
-	Energy score = scorefxn( pose );
+		clock_t starttime = clock();
+		pack::pack_rotamers( pose, scorefxn, task);
+		clock_t stoptime = clock();
+		std::cout << "TIMING: pack_rotamers took " << ((double) stoptime - starttime)/CLOCKS_PER_SEC << std::endl;
+		Energy score = scorefxn( pose );
 
-	std::cout << "Completed pack_rotamers_test() #1 with new score: " << score << " vs orig: " << score_orig << std::endl;
+		std::cout << "Completed pack_rotamers_test() #1 with new score: " << score << " vs orig: " << score_orig << std::endl;
 
-	scorefxn.set_weight( ref, 1.0 );
-	scorefxn.set_weight( p_aa_pp, 0.29 );
-	score_orig = scorefxn( pose );
+		scorefxn.set_weight( ref, 1.0 );
+		scorefxn.set_weight( p_aa_pp, 0.29 );
+		score_orig = scorefxn( pose );
 
-	dump_pdb( pose, "test_packrots.pdb" );
+		dump_pdb( pose, "test_packrots.pdb" );
 	} /* test1 */
 
 	{ /* test2: design */
@@ -1913,7 +1913,7 @@ small_min_test()
 	(*scorefxn)( pose );
 	/// Now handled automatically.  scorefxn->accumulate_residue_total_energies( pose );
 	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn, *task, mc, 0.01 /*energycut*/ ) );
-//	pack_rottrial->setup_rottrial_task( pose, mc, 0.01 /*energycut*/ );
+	// pack_rottrial->setup_rottrial_task( pose, mc, 0.01 /*energycut*/ );
 
 	// setup the move objects
 	Size nmoves ( 5 );
@@ -1973,14 +1973,14 @@ small_min_test()
 
 }
 
-	//-----------------------------------------------------------------------------------------A
-	//_________________________________________________________________________________________A
-	//
-	//    |
-	//    |
-	//    |
-	//    |
-	//
+//-----------------------------------------------------------------------------------------A
+//_________________________________________________________________________________________A
+//
+//    |
+//    |
+//    |
+//    |
+//
 ///////////////////////////////////////////////////////////////////////////////
 void
 rb_test()
@@ -2007,9 +2007,9 @@ rb_test()
 
 	dump_pdb( pose, "tmp1.pdb" );
 
-// 	kinematics::Stub stub1( pose.conformation().upstream_jump_stub(1) ),
-// 		stub2( pose.conformation().downstream_jump_stub(1) );
-// 	exit(0);
+	//  kinematics::Stub stub1( pose.conformation().upstream_jump_stub(1) ),
+	//   stub2( pose.conformation().downstream_jump_stub(1) );
+	//  exit(0);
 
 	{ // now add a pseudo residue at the end
 		ResidueTypeSetCOP residue_set
@@ -2047,7 +2047,7 @@ rb_test()
 	}
 
 	scorefxn( pose );
-//	pose.energies().show( std::cout );
+	// pose.energies().show( std::cout );
 
 	// now test the simple rigid-body move stuff
 	MoveMap mm;
@@ -2064,7 +2064,7 @@ rb_test()
 
 	// forward rotation
 	rigid::RigidBodyPerturbMoverOP rb_mover( new rigid::RigidBodyPerturbMover(
-			1 /*jump_num*/, 5.0 /*rot*/, 0.0 /*trans*/ ) );
+		1 /*jump_num*/, 5.0 /*rot*/, 0.0 /*trans*/ ) );
 	moves::PDBDumpMoverOP dumper( new PDBDumpMover( "tmp_fwd_rotation_" ) );
 	moves::SequenceMoverOP sequencer( new SequenceMover );
 	sequencer->add_mover( rb_mover );
@@ -2124,7 +2124,7 @@ ccd_test()
 		pose.fold_tree( f );
 
 		// introduce new variant types
-		if ( true ) {//false ) {
+		if ( true ) { //false ) {
 			core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, cutpoint   );
 			core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, cutpoint+1 );
 		}
@@ -2264,7 +2264,7 @@ mm_pack_test()
 	ScoreFunctionOP score_12( get_score_function() );
 	ScoreFunctionOP score_mod( get_score_function() );
 	score_mod->set_weight( fa_dun, 0.00 );
-	ScoreFunctionOP score_mm_only( new ScoreFunction );	score_mm_only->set_weight( mm_twist,   1.00 );
+	ScoreFunctionOP score_mm_only( new ScoreFunction ); score_mm_only->set_weight( mm_twist,   1.00 );
 
 	// weighting
 	Pose pose;
@@ -2277,7 +2277,7 @@ mm_pack_test()
 	float mm_weight = (ener_12 - ener_mod)/ener_mm;
 
 	ScoreFunctionOP score_mm( get_score_function() );
-	score_mm->set_weight( fa_dun, 0.00 );	score_mm->set_weight( mm_twist, mm_weight );
+	score_mm->set_weight( fa_dun, 0.00 ); score_mm->set_weight( mm_twist, mm_weight );
 
 	// pack
 	Pose pose_12;
@@ -2286,8 +2286,8 @@ mm_pack_test()
 	Pose pose_mm;
 	core::import_pose::pose_from_pdb( pose_mm, "input/test_in.pdb" );
 
-// 	Pose pose_mod;
-// 	core::import_pose::pose_from_pdb( pose_mod, "input/test_in.pdb" );
+	//  Pose pose_mod;
+	//  core::import_pose::pose_from_pdb( pose_mod, "input/test_in.pdb" );
 
 	pack::task::PackerTaskOP task_12( pack::task::TaskFactory::create_packer_task( pose_12 ));
 	task_12->initialize_from_command_line().restrict_to_repacking().or_include_current( true );
@@ -2297,35 +2297,35 @@ mm_pack_test()
 	task_mm->initialize_from_command_line().restrict_to_repacking().or_include_current( true );
 	task_mm->set_bump_check( true );
 
-// 	pack::task::PackerTaskOP task_mod( pack::task::TaskFactory::create_packer_task( pose_mod ));
-// 	task_mm->initialize_from_command_line().restrict_to_repacking().or_include_current( true );
-//	task_mm->set_bump_check( true );
+	//  pack::task::PackerTaskOP task_mod( pack::task::TaskFactory::create_packer_task( pose_mod ));
+	//  task_mm->initialize_from_command_line().restrict_to_repacking().or_include_current( true );
+	// task_mm->set_bump_check( true );
 
 
 	Energy orig_score_12 = (*score_12)(pose_12);
-	clock_t starttime_12 = clock();	pack::pack_rotamers( pose_12, *score_12, task_12); clock_t stoptime_12 = clock();
+	clock_t starttime_12 = clock(); pack::pack_rotamers( pose_12, *score_12, task_12); clock_t stoptime_12 = clock();
 	Energy final_score_12 = (*score_12)(pose_12);
 
 	Energy orig_score_mm = (*score_mm)(pose_mm);
-	clock_t starttime_mm = clock();	pack::pack_rotamers( pose_mm, *score_mm, task_mm); clock_t stoptime_mm = clock();
+	clock_t starttime_mm = clock(); pack::pack_rotamers( pose_mm, *score_mm, task_mm); clock_t stoptime_mm = clock();
 	Energy final_score_mm = (*score_mm)(pose_mm);
 
-// 	Energy orig_score_mod = (*score_mod)(pose_mod);
-// 	clock_t starttime_mod = clock(); pack::pack_rotamers( pose_mod, *score_mod, task_mod); clock_t stoptime_mod = clock();
-// 	Energy final_score_mod = (*score_mod)(pose_mod);
+	//  Energy orig_score_mod = (*score_mod)(pose_mod);
+	//  clock_t starttime_mod = clock(); pack::pack_rotamers( pose_mod, *score_mod, task_mod); clock_t stoptime_mod = clock();
+	//  Energy final_score_mod = (*score_mod)(pose_mod);
 
 	//output
 	std::cout << "mm_pack_test score 12 orig: " << orig_score_12 << " final score: " << final_score_12 << "in "
-						<<  ((double) stoptime_12 - starttime_12)/CLOCKS_PER_SEC << " seconds" << std::endl;
+		<<  ((double) stoptime_12 - starttime_12)/CLOCKS_PER_SEC << " seconds" << std::endl;
 	std::cout << "mm_pack_test score mm orig: " << orig_score_mm << " final score: " << final_score_mm << "in "
-						<<  ((double) stoptime_mm - starttime_mm)/CLOCKS_PER_SEC << " seconds" << std::endl;
-// 	std::cout << "mm_pack_test score mod orig: " << orig_score_mod << " final score: " << final_score_mod << "in "
-// 						<<  ((double) stoptime_mod - starttime_mod)/CLOCKS_PER_SEC << " seconds" << std::endl;
+		<<  ((double) stoptime_mm - starttime_mm)/CLOCKS_PER_SEC << " seconds" << std::endl;
+	//  std::cout << "mm_pack_test score mod orig: " << orig_score_mod << " final score: " << final_score_mod << "in "
+	//       <<  ((double) stoptime_mod - starttime_mod)/CLOCKS_PER_SEC << " seconds" << std::endl;
 	std::cout << "MM Weight is: " << mm_weight << std::endl;
 
 	dump_pdb(pose_12, "test_out_12.pdb");
 	dump_pdb(pose_mm, "test_out_mm.pdb");
-//	dump_pdb(pose_mod, "test_out_mod.pdb");
+	// dump_pdb(pose_mod, "test_out_mod.pdb");
 
 }
 
@@ -2371,7 +2371,7 @@ ss_test()
 
 		core::import_pose::pose_from_pdb( pose, *rsd_set, pdbname );
 
-		//	protocols::loops::set_secstruct_from_psipred_ss2( pose ); // uses -in::file::psipred_ss2 <ss-filename>
+		// protocols::loops::set_secstruct_from_psipred_ss2( pose ); // uses -in::file::psipred_ss2 <ss-filename>
 
 		std::string dsspname = pdbname;
 		dsspname.replace( dsspname.rfind(".pdb", dsspname.length() ), 4, ".dssp" );
@@ -2443,7 +2443,7 @@ backrub_min_test()
 		DOF_ID const dof( atom.child(0)->id(), id::PHI );
 		std::cout << "pseudo 1st child: " << i << ' ' <<dof << std::endl;
 		Real const orig( pose.dof( dof ) );
-		for ( int k=-5;k<=5; ++k ) {
+		for ( int k=-5; k<=5; ++k ) {
 			pose.set_dof( dof, orig+k*0.05 );
 			pose.dump_pdb("backrub_move_"+string_of(i)+"_"+string_of(k)+".pdb" );
 		}
@@ -2481,25 +2481,25 @@ backrub_min_test()
 
 	}
 
-// 	Size const first_new_pseudo_residue( pose.total_residue() + 1 );
+	//  Size const first_new_pseudo_residue( pose.total_residue() + 1 );
 
-// 	kinematics::tree::Atom * root( pose.atom_tree().root()->clone(0) );
-// 	AtomPointers old_atom_pointer;
-// 	root->update_atom_pointer( old_atom_pointer );
+	//  kinematics::tree::Atom * root( pose.atom_tree().root()->clone(0) );
+	//  AtomPointers old_atom_pointer;
+	//  root->update_atom_pointer( old_atom_pointer );
 
-// 	for ( Size i=1; i<= mainchain.size(); ++i ) {
-// 		assert( mainchain[i] == old_atom_pointer[mainchain[i]]->id() );
-// 		std::cout << mainchain[i] << std::endl;
-// 	}
+	//  for ( Size i=1; i<= mainchain.size(); ++i ) {
+	//   assert( mainchain[i] == old_atom_pointer[mainchain[i]]->id() );
+	//   std::cout << mainchain[i] << std::endl;
+	//  }
 
-// 	kinematics::tree::Atom * new_root
-// 		( setup_backrub_atom_tree( mainchain, downstream_id, old_atom_pointer, edges, first_new_pseudo_residue ) );
+	//  kinematics::tree::Atom * new_root
+	//   ( setup_backrub_atom_tree( mainchain, downstream_id, old_atom_pointer, edges, first_new_pseudo_residue ) );
 
-// 	new_root->show();
+	//  new_root->show();
 
-// 	AtomTree at( new_root );
+	//  AtomTree at( new_root );
 
-// 	dump_atomtree_kinemage( "tmp.kin", at, pose.conformation() );
+	//  dump_atomtree_kinemage( "tmp.kin", at, pose.conformation() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2590,16 +2590,16 @@ bk_test2()
 	Size const ubq_connid( 2 );
 
 	assert( cyx_rsd_type.n_residue_connections() == cyx_connid &&
-					cyx_rsd_type.lower_connect_id() != cyx_connid &&
-					cyx_rsd_type.upper_connect_id() != cyx_connid );
+		cyx_rsd_type.lower_connect_id() != cyx_connid &&
+		cyx_rsd_type.upper_connect_id() != cyx_connid );
 
 	assert( lyx_rsd_type.n_residue_connections() == lyx_connid &&
-					lyx_rsd_type.lower_connect_id() != lyx_connid &&
-					lyx_rsd_type.upper_connect_id() != lyx_connid );
+		lyx_rsd_type.lower_connect_id() != lyx_connid &&
+		lyx_rsd_type.upper_connect_id() != lyx_connid );
 
 	assert( ubq_rsd_type.n_residue_connections() == ubq_connid &&
-					ubq_rsd_type.lower_connect_id() != ubq_connid &&
-					ubq_rsd_type.is_upper_terminus() );
+		ubq_rsd_type.lower_connect_id() != ubq_connid &&
+		ubq_rsd_type.is_upper_terminus() );
 
 
 	tt << "before append_by_bond\n";
@@ -2756,7 +2756,7 @@ proclose_test()
 //void
 //hbond_plot_test()
 //{
-//	scoring::hbonds::show_poly();
+// scoring::hbonds::show_poly();
 //}
 
 
@@ -2803,7 +2803,7 @@ set_stub_transform_test()
 	AtomID const c3( rsd3.atom_index("C" ), pos3 );
 
 	RT const rt2( Stub( pose.xyz(a1), pose.xyz(a2), pose.xyz(a3) ),
-								Stub( pose.xyz(c1), pose.xyz(c2), pose.xyz(c3) ) );
+		Stub( pose.xyz(c1), pose.xyz(c2), pose.xyz(c3) ) );
 
 	pose.conformation().set_stub_transform( stub_id1, stub_id2, rt2 );
 	pose.dump_pdb( "test2.pdb" );
@@ -2830,8 +2830,8 @@ lk_ball_wtd_deriv_test()
 
 	/// scorefxn
 	ScoreFunctionOP scorefxn( new ScoreFunction() );
- 	scorefxn->set_weight( fa_atr, 0.01 );
- 	scorefxn->set_weight( fa_rep, 0.01 );
+	scorefxn->set_weight( fa_atr, 0.01 );
+	scorefxn->set_weight( fa_rep, 0.01 );
 	scorefxn->set_weight( lk_ball_wtd, 0.8 );
 
 	Real const scorebefore( (*scorefxn)( pose ) );
@@ -2875,7 +2875,7 @@ lk_ball_wtd_deriv_test()
 
 
 	MinimizerOptions options( "dfpmin", 0.1, true /*use_nblist*/,
-														true /*deriv_check*/, false /*no verbose-deriv-check, is default*/ );
+		true /*deriv_check*/, false /*no verbose-deriv-check, is default*/ );
 	AtomTreeMinimizer minimizer;
 
 	minimizer.run( pose, mm, *scorefxn, options );
@@ -2930,111 +2930,111 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	using namespace basic::options;
+		using namespace basic::options;
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// setup
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// setup
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	/////////////////////////////////////
-	// If you want to add a temporary
-	// "run this and exit" behavior to
-	// main, add it AFTER the following check
-	if ( option[ OptionKeys::run::benchmark ] ) {
-		simple_benchmark(  );
+		/////////////////////////////////////
+		// If you want to add a temporary
+		// "run this and exit" behavior to
+		// main, add it AFTER the following check
+		if ( option[ OptionKeys::run::benchmark ] ) {
+			simple_benchmark(  );
+			exit(0);
+		}
+		/////////////////////////////////////
+
+		// atom_types_test();
+		// exit(0);
+
+		lk_ball_wtd_deriv_test();
 		exit(0);
-	}
-	/////////////////////////////////////
 
-	// atom_types_test();
-	// exit(0);
+		dna_deriv_test();
+		exit(0);
 
-	lk_ball_wtd_deriv_test();
-	exit(0);
+		delete_test();
+		exit(0);
 
-	dna_deriv_test();
-	exit(0);
-
-	delete_test();
-	exit(0);
-
-	//hbond_plot_test();
-	//exit(0);
+		//hbond_plot_test();
+		//exit(0);
 
 
-	set_stub_transform_test();
-	exit(0);
+		set_stub_transform_test();
+		exit(0);
 
-	bk_test2();
-	exit(0);
+		bk_test2();
+		exit(0);
 
-	proclose_test();
-	exit(0);
+		proclose_test();
+		exit(0);
 
-	ligrot_test();
-	exit(0);
+		ligrot_test();
+		exit(0);
 
-	bk_test();
-	exit(0);
+		bk_test();
+		exit(0);
 
-	backrub_min_test();
-	exit(0);
+		backrub_min_test();
+		exit(0);
 
-	start_file_test();
-	exit(0);
+		start_file_test();
+		exit(0);
 
-	ss_test();
-	exit(0);
+		ss_test();
+		exit(0);
 
-	pack_rotamers_test();
-	exit( 0 );
-
-	rb_test();
-	exit(0);
-
-	test_gb();
-	exit(0);
-
-	//dna_io_test();
-	//exit(0);
-
-	//list_dihedrals();
-	//mm_library_test();
-	//mm_score_test();
-	mm_pack_test();
-	exit(0);
-
-	// rotamer_trials_test(  );
-	// Wed Oct 10 10:03:07 EDT 2007 @627 /Internet Time/
-	// rotamer_trials_test was moved to test/core/pack/RotamerTrials.cxxtest.hh
-	pack_rotamers_test(  );
-	exit(0);
-
-	test_scorefxn_io();
-	exit(0);
-
-	dna_coupled_rotamer_design_test();
-	exit(0);
-
-	dna_deriv_test();
-	exit(0);
-
-	dna_design_test();
-	exit(0);
-
-	{ // loops graphics
-		protocols::viewer::viewer_main( simple_loop_modeling_test_wrapper );
+		pack_rotamers_test();
 		exit( 0 );
-	}
 
-	simple_loop_modeling_test();
-	exit(0);
+		rb_test();
+		exit(0);
+
+		test_gb();
+		exit(0);
+
+		//dna_io_test();
+		//exit(0);
+
+		//list_dihedrals();
+		//mm_library_test();
+		//mm_score_test();
+		mm_pack_test();
+		exit(0);
+
+		// rotamer_trials_test(  );
+		// Wed Oct 10 10:03:07 EDT 2007 @627 /Internet Time/
+		// rotamer_trials_test was moved to test/core/pack/RotamerTrials.cxxtest.hh
+		pack_rotamers_test(  );
+		exit(0);
+
+		test_scorefxn_io();
+		exit(0);
+
+		dna_coupled_rotamer_design_test();
+		exit(0);
+
+		dna_deriv_test();
+		exit(0);
+
+		dna_design_test();
+		exit(0);
+
+		{ // loops graphics
+			protocols::viewer::viewer_main( simple_loop_modeling_test_wrapper );
+			exit( 0 );
+		}
+
+		simple_loop_modeling_test();
+		exit(0);
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

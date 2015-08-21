@@ -49,9 +49,9 @@ AddGood2BPairEnergyRotamers::AddGood2BPairEnergyRotamers(
 	utility::vector1< core::Size > const & target_seqpos,
 	Real score_cutoff,
 	bool drop_rots_above_cutoff
-)	: parent(),
-		seqpos_(seqpos), ex_level_(ex_level),
-		target_seqpos_(target_seqpos), score_cutoff_(score_cutoff),
+) : parent(),
+	seqpos_(seqpos), ex_level_(ex_level),
+	target_seqpos_(target_seqpos), score_cutoff_(score_cutoff),
 	drop_rots_above_cutoff_(drop_rots_above_cutoff), debug_(false),
 	disabled_(false)
 {}
@@ -99,12 +99,12 @@ AddGood2BPairEnergyRotamers::alter_rotamer_set(
 	core::pack::rotamer_set::RotamerSet & rotamer_set
 ){
 
-	if( this->disabled_ ) return;
+	if ( this->disabled_ ) return;
 	core::Size this_pdbpos( pose.pdb_info()->number( seqpos_ ) );
 
 	//1.
 	Real existing_score(0.0);
-	for( Size i(1); i <= target_seqpos_.size(); ++i){
+	for ( Size i(1); i <= target_seqpos_.size(); ++i ) {
 		existing_score += this->get_res_res_score( pose.residue( seqpos_), pose.residue( target_seqpos_[i]), pose, sfxn );
 	}
 
@@ -129,55 +129,55 @@ AddGood2BPairEnergyRotamers::alter_rotamer_set(
 	//utlility::vector1< core::conformation::ResidueCOP > rots_to_keep;
 	std::list< std::pair< Real, core::conformation::ResidueCOP > > rots_to_keep;
 	Size number_passing_cutoff(0);
-	for( Size i(1); i <= extra_rotset->num_rotamers(); ++i){
+	for ( Size i(1); i <= extra_rotset->num_rotamers(); ++i ) {
 		Real this_score(0.0);
 		core::conformation::ResidueCOP candidate_rot( extra_rotset->rotamer( i ) );
-		for( Size j(1); j <= target_seqpos_.size(); ++j){
+		for ( Size j(1); j <= target_seqpos_.size(); ++j ) {
 			this_score += this->get_res_res_score( *candidate_rot, pose.residue( target_seqpos_[j]), pose, sfxn );
 		}
-		if( this_score <= score_cutoff_ ){
+		if ( this_score <= score_cutoff_ ) {
 			number_passing_cutoff++;
 			//4. checking for rotamers existing twice
-			if( ! this->rotamer_set_contains_rotamer( rotamer_set, *candidate_rot ) ){
+			if ( ! this->rotamer_set_contains_rotamer( rotamer_set, *candidate_rot ) ) {
 				rots_to_keep.push_back( std::pair< Real, core::conformation::ResidueCOP > (this_score,candidate_rot) );
 			}
 		}
 	}//loop over all extra rotamers
 
-	for( std::list< std::pair< Real, core::conformation::ResidueCOP > >::const_iterator list_it( rots_to_keep.begin() ), list_end( rots_to_keep.end() ); list_it != list_end; list_it++){
+	for ( std::list< std::pair< Real, core::conformation::ResidueCOP > >::const_iterator list_it( rots_to_keep.begin() ), list_end( rots_to_keep.end() ); list_it != list_end; list_it++ ) {
 		rotamer_set.add_rotamer( *(list_it->second) );
 	}
 	tr << "At pdb position " <<  this_pdbpos << ", " << rots_to_keep.size() << " additional rotamers were added. The standard set already contained " << number_passing_cutoff - rots_to_keep.size() << " rotamers passing the desired score cutoff." << std::endl;
 
 
 	//5.
-	if( debug_ ){
+	if ( debug_ ) {
 
 		std::string targetpdbpos_string;
-		for( Size i(1); i <= target_seqpos_.size(); ++i){
+		for ( Size i(1); i <= target_seqpos_.size(); ++i ) {
 			targetpdbpos_string += utility::to_string(  pose.pdb_info()->number( target_seqpos_[i] ) ) + utility::to_string(  pose.pdb_info()->chain( target_seqpos_[i] ) );
 		}
 
 		rots_to_keep.sort( pair_first_sort_helper );
 		std::map< std::string, std::list< std::pair< Real, core::conformation::ResidueCOP > > > restype_map;
-		for( std::list< std::pair< Real, core::conformation::ResidueCOP > >::const_iterator list_it( rots_to_keep.begin() ), list_end( rots_to_keep.end() ); list_it != list_end; list_it++){
+		for ( std::list< std::pair< Real, core::conformation::ResidueCOP > >::const_iterator list_it( rots_to_keep.begin() ), list_end( rots_to_keep.end() ); list_it != list_end; list_it++ ) {
 
 			std::string cur_name3( list_it->second->name3() );
 			std::map< std::string, std::list< std::pair< Real, core::conformation::ResidueCOP > > >::iterator map_it( restype_map.find( cur_name3 ) );
-			if( map_it == restype_map.end() ){
+			if ( map_it == restype_map.end() ) {
 				restype_map.insert( std::pair< std::string, std::list< std::pair< Real, core::conformation::ResidueCOP > > >( cur_name3, std::list< std::pair< Real, core::conformation::ResidueCOP > > () ) );
 				map_it = restype_map.find( cur_name3 );
 			}
 			map_it->second.push_back( *list_it );
 		}
 
-		for( std::map< std::string, std::list< std::pair< Real, core::conformation::ResidueCOP > > >::const_iterator map_it( restype_map.begin() ), map_end( restype_map.end() ); map_it != map_end; ++map_it ){
+		for ( std::map< std::string, std::list< std::pair< Real, core::conformation::ResidueCOP > > >::const_iterator map_it( restype_map.begin() ), map_end( restype_map.end() ); map_it != map_end; ++map_it ) {
 			std::string filename( "ExpRot_"+targetpdbpos_string+"_"+utility::to_string( this_pdbpos)+map_it->first+".pdb");
 			std::ofstream file_out(filename.c_str() );
 			Size atcounter(0);
 			Size modelcounter(0);
 			std::list< std::pair< Real, core::conformation::ResidueCOP > >::const_iterator list_it( map_it->second.begin() ), list_end( map_it->second.end() );
-	    for( ; list_it != list_end; ++list_it ){
+			for ( ; list_it != list_end; ++list_it ) {
 				modelcounter++;
 				core::conformation::Residue curres( *(list_it->second) );
 				curres.seqpos( this_pdbpos );
@@ -211,11 +211,11 @@ AddGood2BPairEnergyRotamers::get_res_res_score(
 	sfxn.eval_cd_2b( rsd1, rsd2, pose, tbemap );
 
 	for ( ScoreFunction::CI_LR_2B_Methods::const_iterator iter = sfxn.ci_lr_2b_methods_begin(),
-					iter_end = sfxn.ci_lr_2b_methods_end(); iter != iter_end; ++iter ) {
+			iter_end = sfxn.ci_lr_2b_methods_end(); iter != iter_end; ++iter ) {
 		(*iter)->residue_pair_energy( rsd1, rsd2, pose, sfxn, tbemap );
 	}
 	for ( ScoreFunction::CD_LR_2B_Methods::const_iterator iter = sfxn.cd_lr_2b_methods_begin(),
-					iter_end = sfxn.cd_lr_2b_methods_end(); iter != iter_end; ++iter ) {
+			iter_end = sfxn.cd_lr_2b_methods_end(); iter != iter_end; ++iter ) {
 		(*iter)->residue_pair_energy( rsd1, rsd2, pose, sfxn, tbemap );
 	}
 
@@ -230,24 +230,24 @@ AddGood2BPairEnergyRotamers::rotamer_set_contains_rotamer(
 {
 	Size num_resgroups( rotamer_set.get_n_residue_groups() );
 
-	for( Size resgroup(1); resgroup <= num_resgroups; ++resgroup ){
+	for ( Size resgroup(1); resgroup <= num_resgroups; ++resgroup ) {
 		Size cur_rot_id( rotamer_set.get_residue_group_begin( resgroup ) );
 
 		core::conformation::ResidueCOP cur_rot( rotamer_set.rotamer( cur_rot_id ) );
-		if( candidate_rot.name3() != cur_rot->name3() ) continue;
+		if ( candidate_rot.name3() != cur_rot->name3() ) continue;
 
 		Size resgroup_end( resgroup == num_resgroups ? rotamer_set.num_rotamers() : rotamer_set.get_residue_group_begin( resgroup + 1 ) - 1 );
 
-		for( ; cur_rot_id <= resgroup_end; ++cur_rot_id ){
+		for ( ; cur_rot_id <= resgroup_end; ++cur_rot_id ) {
 			cur_rot = rotamer_set.rotamer( cur_rot_id );
 			bool all_chi_identical(true);
-			for( Size chi_id(1); chi_id <= candidate_rot.nchi(); ++chi_id ){
-				if( candidate_rot.chi()[ chi_id ] != cur_rot->chi()[ chi_id ] ){
+			for ( Size chi_id(1); chi_id <= candidate_rot.nchi(); ++chi_id ) {
+				if ( candidate_rot.chi()[ chi_id ] != cur_rot->chi()[ chi_id ] ) {
 					all_chi_identical = false;
 					break;
 				}
 			}
-			if( all_chi_identical ) return true;
+			if ( all_chi_identical ) return true;
 		} //loop over rotamers in resgroup
 	} //loop over resgroups
 	return false;

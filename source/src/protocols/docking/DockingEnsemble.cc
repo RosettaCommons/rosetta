@@ -89,9 +89,9 @@ DockingEnsemble::DockingEnsemble(
 	runtime_assert((end_res_ - start_res_ + 1) == conf_size_);
 
 	TR << "ensemble summary: start_res_ " << start_res_ <<
-		  " end_res_ " << end_res_ <<
-		  " conf_size_ " << conf_size_ <<
-		  " ensemble_size_ " << ensemble_size_ << std::endl;
+		" end_res_ " << end_res_ <<
+		" conf_size_ " << conf_size_ <<
+		" ensemble_size_ " << ensemble_size_ << std::endl;
 }
 
 void DockingEnsemble::load_ensemble()
@@ -102,29 +102,31 @@ void DockingEnsemble::load_ensemble()
 	TR << "Loading Ensemble" << std::endl;
 
 	// read file names
-	while( getline(file, line) ) {
+	while ( getline(file, line) ) {
 		// read pdb file names into filename array
-		if ( line.find("pdb") != std::string::npos )
+		if ( line.find("pdb") != std::string::npos ) {
 			pdb_filenames_.push_back( line );
+		} else data.push_back( atof( line.c_str() ) );
 		// read the rest of the data as Reals into data array
-		else data.push_back( atof( line.c_str() ) );
 	}
 
 	if ( data.size() > 1 ) {
 		core::Size count = 1;
-		for ( Size i=count; i<count+pdb_filenames_.size(); ++i )
+		for ( Size i=count; i<count+pdb_filenames_.size(); ++i ) {
 			lowres_reference_energies_.push_back( data[i] );
+		}
 
 		count = count+pdb_filenames_.size();
-		for ( Size i=count; i<count+pdb_filenames_.size(); ++i )
+		for ( Size i=count; i<count+pdb_filenames_.size(); ++i ) {
 			highres_reference_energies_.push_back( data[i] );
+		}
 	}
 
 	ensemble_list_ = core::import_pose::poses_from_pdbs( pdb_filenames_ );
-	ensemble_list_cen_ = core::import_pose::poses_from_pdbs( pdb_filenames_ );	// Add by DK
+	ensemble_list_cen_ = core::import_pose::poses_from_pdbs( pdb_filenames_ ); // Add by DK
 
 	//Add by DK
-	for (Size i = 1; i <= ensemble_list_cen_.size(); i++){
+	for ( Size i = 1; i <= ensemble_list_cen_.size(); i++ ) {
 		protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
 		to_centroid.apply( ensemble_list_cen_[i] );
 	}
@@ -138,7 +140,7 @@ void DockingEnsemble::recover_conformer_sidechains( core::pose::Pose & pose )
 	recover_mover->apply( pose );
 
 	// make sure that the pose has ARBITRARY_FLOAT_DATA in the DataCache
-	if ( !pose.data().has( ( CacheableDataType::ARBITRARY_FLOAT_DATA ) ) ){
+	if ( !pose.data().has( ( CacheableDataType::ARBITRARY_FLOAT_DATA ) ) ) {
 		using namespace basic::datacache;
 		pose.data().set(
 			CacheableDataType::ARBITRARY_FLOAT_DATA,
@@ -153,7 +155,7 @@ void DockingEnsemble::recover_conformer_sidechains( core::pose::Pose & pose )
 	data->map()[ partner_ ] = highres_reference_energies_[conf_num_];
 	pose.data().set( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA, data );
 
-    //jjg: need to cache pointer to this function in the pose too!
+	//jjg: need to cache pointer to this function in the pose too!
 }
 
 void DockingEnsemble::calculate_lowres_ref_energy( core::pose::Pose & pose )
@@ -200,8 +202,9 @@ void DockingEnsemble::update_pdblist_file()
 		core::Real ref_energy = lowres_reference_energies_[i];
 		adjustment = std::min( ref_energy, adjustment );
 	}
-	for ( core::Size i=1; i<= lowres_reference_energies_.size(); ++i )
+	for ( core::Size i=1; i<= lowres_reference_energies_.size(); ++i ) {
 		lowres_reference_energies_[i] = lowres_reference_energies_[i] - adjustment;
+	}
 
 	// write out centroid reference energies
 	conf = 1;

@@ -220,7 +220,7 @@ ResiduePairJump::generate_frame()
 
 	diversify_dof_conformers();
 
-	for( Size i = 1; i <= dof_conformers_.size(); ++i ) {
+	for ( Size i = 1; i <= dof_conformers_.size(); ++i ) {
 		apply_dof_conformer( dof_conformers_[i] );
 		//miniPose_->dump_pdb("chutmp_div"+right_string_of(i,4, '0') + ".pdb");
 		ResiduePairJumpFrame->steal( *miniPose_ );
@@ -239,20 +239,20 @@ ResiduePairJump::init_mini_pose()
 	miniPose_ = core::pose::PoseOP( new core::pose::Pose() );
 
 	// initial configuration for how these two residues are connected
-// 	Real init_phi = numeric::conversions::radians(180.0);
-// 	Real init_theta = numeric::conversions::radians(60.0);
-// 	Real init_d = 2.0;
-// 	// connection numbers for new connections added to these residues
-// 	Size anchor_connection, root_connection;
+	//  Real init_phi = numeric::conversions::radians(180.0);
+	//  Real init_theta = numeric::conversions::radians(60.0);
+	//  Real init_d = 2.0;
+	//  // connection numbers for new connections added to these residues
+	//  Size anchor_connection, root_connection;
 	// operation for each of the two residues created and added
 	for ( Size i = 1; i <= 2; ++i ) {
 		ResiduePairJumpSingleOP rsd = residues_[i];
-	// 	// create atomIcoord
-// 		chemical::AtomICoor icoor( init_phi, init_theta, init_d,
-// 			rsd->cstAtoms(1), rsd->cstAtoms(2), rsd->cstAtoms(3), *(rsd->residueType()) );
-// 		// add a residue connection
-// 		Size connection = rsd->residueType()->add_residue_connection( rsd->cstAtoms(1) );
-// 		rsd->residueType()->residue_connection(connection).icoor( icoor );
+		//  // create atomIcoord
+		//   chemical::AtomICoor icoor( init_phi, init_theta, init_d,
+		//    rsd->cstAtoms(1), rsd->cstAtoms(2), rsd->cstAtoms(3), *(rsd->residueType()) );
+		//   // add a residue connection
+		//   Size connection = rsd->residueType()->add_residue_connection( rsd->cstAtoms(1) );
+		//   rsd->residueType()->residue_connection(connection).icoor( icoor );
 		conformation::ResidueOP new_residue( conformation::ResidueFactory::create_residue( *( rsd->residueType() ) ) );
 
 		if ( i == 1 ) {
@@ -279,61 +279,61 @@ ResiduePairJump::init_mini_pose()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // void ResiduePairJump::setup_cstTypeToDofMap()
 // {
-// 	// erase any existing data
-// 	cstTypeToDofMap_.clear();
+//  // erase any existing data
+//  cstTypeToDofMap_.clear();
 
-// 	// six cst types will be mapped to DOFs of the three atoms in residue 2
-// 	ResiduePairJumpSingleOP rsd = residues_[2];
-// 	core::chemical::ResidueTypeOP rsd_type = rsd->residueType();
-// 	core::id::AtomID atom_id1( rsd_type->atom_index(rsd->cstAtoms(1)), 2 );
-// 	core::id::AtomID atom_id2( rsd_type->atom_index(rsd->cstAtoms(2)), 2 );
-// 	core::id::AtomID atom_id3( rsd_type->atom_index(rsd->cstAtoms(3)), 2 );
-// 	core::id::AtomID bogus_id( 0, 0 );
+//  // six cst types will be mapped to DOFs of the three atoms in residue 2
+//  ResiduePairJumpSingleOP rsd = residues_[2];
+//  core::chemical::ResidueTypeOP rsd_type = rsd->residueType();
+//  core::id::AtomID atom_id1( rsd_type->atom_index(rsd->cstAtoms(1)), 2 );
+//  core::id::AtomID atom_id2( rsd_type->atom_index(rsd->cstAtoms(2)), 2 );
+//  core::id::AtomID atom_id3( rsd_type->atom_index(rsd->cstAtoms(3)), 2 );
+//  core::id::AtomID bogus_id( 0, 0 );
 
-// 	core::id::DOF_ID dof_id12( miniPose_->atom_tree().bond_length_dof_id( atom_id1, atom_id2 ) );
-// 	core::id::DOF_ID dof_id23( miniPose_->atom_tree().bond_length_dof_id( atom_id2, atom_id3 ) );
-// 	core::id::DOF_ID dof_id13( miniPose_->atom_tree().bond_length_dof_id( atom_id1, atom_id3 ) );
-// 	// sanity check: downstream cstAtoms 1 2 and 3 have to be connected in atom_tree, either 1->2->3 or 2<-1->3
-// 	if ( ! ( dof_id12.valid() && ( dof_id23.valid() || dof_id13.valid() ) ) ) {
-// 		utility_exit_with_message("setup_cstTypeToDofMap() downstream cstAtoms are not connected in atom tree!\n");
-// 	}
+//  core::id::DOF_ID dof_id12( miniPose_->atom_tree().bond_length_dof_id( atom_id1, atom_id2 ) );
+//  core::id::DOF_ID dof_id23( miniPose_->atom_tree().bond_length_dof_id( atom_id2, atom_id3 ) );
+//  core::id::DOF_ID dof_id13( miniPose_->atom_tree().bond_length_dof_id( atom_id1, atom_id3 ) );
+//  // sanity check: downstream cstAtoms 1 2 and 3 have to be connected in atom_tree, either 1->2->3 or 2<-1->3
+//  if ( ! ( dof_id12.valid() && ( dof_id23.valid() || dof_id13.valid() ) ) ) {
+//   utility_exit_with_message("setup_cstTypeToDofMap() downstream cstAtoms are not connected in atom tree!\n");
+//  }
 
-// 	for ( cstInfoMapIterator it = cstInfoMap_.begin(), it_end = cstInfoMap_.end(); it != it_end; ++it ) {
-// 		cstType cst_type = it->first;
-// 		core::id::AtomID atom_id;
-// 		core::id::DOF_Type dof_type;
-// 		if ( cst_type == disAB )  {
-// 			atom_id = atom_id1;
-// 			dof_type = core::id::D;
-// 		} else if ( cst_type == angleA ) {
-// 			atom_id = atom_id1;
-// 			dof_type = core::id::THETA;
-// 		} else if ( cst_type == dihedralA ) {
-// 			atom_id = atom_id1;
-// 			dof_type = core::id::PHI;
-// 		} else if ( cst_type == angleB ) {
-// 			atom_id = atom_id2;
-// 			dof_type = core::id::THETA;
-// 		} else if ( cst_type == dihedralAB ) {
-// 			atom_id = atom_id2;
-// 			dof_type = core::id::PHI;
-// 		} else if ( cst_type == dihedralB ) {
-// 			runtime_assert( dof_id23.valid() ); // dihedralB only meaningful when atom3 is connected atom2
-// 			atom_id = atom_id3;
-// 			dof_type = core::id::PHI;
-// 		} else if ( cst_type == rot1 || cst_type == rot2 ) {
-// 			// for sidechain rot1 and rot2, they do not correspond to one single DOF
-// 			// so set it as BOGUS_ID to prevent accidental lookup
-// 			atom_id = bogus_id;
-// 			dof_type = core::id::PHI;
-// 		} else {
-// 			utility_exit_with_message("unknown cstType defined in ResiduePairJump\n" );
-// 		}
-// 		core::id::DOF_ID dof_id( atom_id, dof_type);
-// 		cstTypeToDofMap_.insert( std::make_pair( cst_type, dof_id ) );
-// 	}
+//  for ( cstInfoMapIterator it = cstInfoMap_.begin(), it_end = cstInfoMap_.end(); it != it_end; ++it ) {
+//   cstType cst_type = it->first;
+//   core::id::AtomID atom_id;
+//   core::id::DOF_Type dof_type;
+//   if ( cst_type == disAB )  {
+//    atom_id = atom_id1;
+//    dof_type = core::id::D;
+//   } else if ( cst_type == angleA ) {
+//    atom_id = atom_id1;
+//    dof_type = core::id::THETA;
+//   } else if ( cst_type == dihedralA ) {
+//    atom_id = atom_id1;
+//    dof_type = core::id::PHI;
+//   } else if ( cst_type == angleB ) {
+//    atom_id = atom_id2;
+//    dof_type = core::id::THETA;
+//   } else if ( cst_type == dihedralAB ) {
+//    atom_id = atom_id2;
+//    dof_type = core::id::PHI;
+//   } else if ( cst_type == dihedralB ) {
+//    runtime_assert( dof_id23.valid() ); // dihedralB only meaningful when atom3 is connected atom2
+//    atom_id = atom_id3;
+//    dof_type = core::id::PHI;
+//   } else if ( cst_type == rot1 || cst_type == rot2 ) {
+//    // for sidechain rot1 and rot2, they do not correspond to one single DOF
+//    // so set it as BOGUS_ID to prevent accidental lookup
+//    atom_id = bogus_id;
+//    dof_type = core::id::PHI;
+//   } else {
+//    utility_exit_with_message("unknown cstType defined in ResiduePairJump\n" );
+//   }
+//   core::id::DOF_ID dof_id( atom_id, dof_type);
+//   cstTypeToDofMap_.insert( std::make_pair( cst_type, dof_id ) );
+//  }
 
-// 	return;
+//  return;
 // }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -386,10 +386,10 @@ ResiduePairJump::apply_dof_conformer(
 )
 {
 	for ( std::map< dofType, core::Size >::const_iterator it = conformer_map.begin(), it_end = conformer_map.end();
-				it != it_end; ++it ) {
+			it != it_end; ++it ) {
 		dofType type = it->first;
 		core::Size index = it->second;
-		if ( ( type == rot1 ) || (type == rot2) ) {// sidechain rotamer dofs
+		if ( ( type == rot1 ) || (type == rot2) ) { // sidechain rotamer dofs
 			core::Size seqpos = (type==rot1) ? 1 : 2;
 			core::conformation::ResidueCOP rotamer = rotsets_[seqpos]->rotamer(index);
 			for ( core::Size i = 1; i <= rotamer->nchi(); ++i ) {
@@ -420,7 +420,7 @@ ResiduePairJump::build_sidechain_rotamers()
 	for ( core::Size which = 1; which <= residues_.size(); ++which ) {
 		ResiduePairJumpSingleOP rsd = residues_[which];
 
-	// create one residue pose and generate an empty rotset
+		// create one residue pose and generate an empty rotset
 		core::pack::rotamer_set::RotamerSetFactory rsf;
 		core::pack::rotamer_set::RotamerSetOP rotset = rsf.create_rotamer_set( miniPose_->residue(which) );
 		rotset->set_resid(which);

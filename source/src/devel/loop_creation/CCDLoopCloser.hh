@@ -33,7 +33,7 @@ public:
 
 	/// @brief default constructor
 	CCDLoopCloser();
-	
+
 	/// @brief explicit constructor
 	CCDLoopCloser(
 		core::Size max_closure_attempts,
@@ -46,22 +46,22 @@ public:
 		core::Real max_total_delta_loop,
 		core::Real early_exit_cutoff
 	);
-	
+
 	protocols::moves::MoverOP
 	clone() const;
 
 	protocols::moves::MoverOP
 	fresh_instance() const;
-		
+
 	std::string
 	get_name() const;
-	
+
 	void
 	init();
-	
+
 	void
 	apply ( core::pose::Pose & );
-	
+
 	/// @brief parse tag for use in RosettaScripts
 	void
 	parse_my_tag(
@@ -71,17 +71,17 @@ public:
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/
 	);
-	
+
 	void
 	prepare_fold_tree(
 		core::pose::Pose & pose
 	);
-	
+
 private:
 
 	//Max number of CCD calls to make before giving up
 	core::Size max_closure_attempts_;
-	
+
 	//Number of CCD moves per call to CCD closure
 	core::Size max_ccd_moves_per_closure_attempt_;
 

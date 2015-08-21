@@ -50,7 +50,7 @@ using namespace protocols::toolbox::match_enzdes_util;
 
 class LigandConformerTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	typedef core::Real Real;
 	typedef core::Size Size;

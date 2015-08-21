@@ -44,7 +44,7 @@ using namespace numeric::interpolation::spline;
 void NVlookup::set_up_spline_from_data(core::chemical::AA const & aa_type, utility::vector1<core::Real> const & bin_centers, utility::vector1<core::Real> const & data)
 {
 
-debug_assert(bin_centers.size() == data.size()); //You need to have the same number of bin centers and spline points
+	debug_assert(bin_centers.size() == data.size()); //You need to have the same number of bin centers and spline points
 
 	Real lower_bound_x = 0;
 	Real upper_bound_x = 1.1;
@@ -57,8 +57,7 @@ debug_assert(bin_centers.size() == data.size()); //You need to have the same num
 
 	SplineGenerator spline(lower_bound_x,lower_bound_y,0,upper_bound_x,upper_bound_y,0);
 
-	for(Size potential_index = 1; potential_index <= data.size(); ++potential_index)
-	{
+	for ( Size potential_index = 1; potential_index <= data.size(); ++potential_index ) {
 		Real x_value = bin_centers[potential_index];
 		Real y_value = data[potential_index];
 		spline.add_known_value(x_value,y_value);
@@ -84,8 +83,7 @@ NVlookup::NVlookup(std::string filename) : lookup_table_(core::chemical::num_can
 	utility::vector1<core::Real> bin_centers;
 
 	//the rest of the code expects a vector of reals, so we convert the array to one
-	for(core::Size i =0; i < bin_array_data.size();++i)
-	{
+	for ( core::Size i =0; i < bin_array_data.size(); ++i ) {
 		bin_centers.push_back(bin_array_data[i].get_real());
 	}
 
@@ -93,18 +91,16 @@ NVlookup::NVlookup(std::string filename) : lookup_table_(core::chemical::num_can
 	utility::json_spirit::mObject const & spline_objects = histogram_object.get_obj()["scores"].get_obj();
 
 	utility::json_spirit::mObject::const_iterator spline_object_iterator = spline_objects.begin();
-	for(; spline_object_iterator != spline_objects.end();++spline_object_iterator)
-	{
+	for ( ; spline_object_iterator != spline_objects.end(); ++spline_object_iterator ) {
 		std::string aa_name_string = spline_object_iterator->first;
-	debug_assert(aa_name_string.size() == 1); //The key should be a single letter amino acid
+		debug_assert(aa_name_string.size() == 1); //The key should be a single letter amino acid
 		char aa_name = aa_name_string[0];
 
 		core::chemical::AA aa_type(core::chemical::aa_from_oneletter_code(aa_name));
 
 		utility::json_spirit::mArray const & spline_array_data = spline_object_iterator->second.get_array();
 		utility::vector1<core::Real> spline_values;
-		for(core::Size i = 0; i < spline_array_data.size(); ++i)
-		{
+		for ( core::Size i = 0; i < spline_array_data.size(); ++i ) {
 			spline_values.push_back(spline_array_data[i].get_real());
 		}
 		set_up_spline_from_data(aa_type,bin_centers,spline_values);
@@ -118,8 +114,7 @@ NVlookup::NVlookup(std::string filename) : lookup_table_(core::chemical::num_can
 core::Real NVlookup::get_potentials(core::chemical::AA const & aa_type, core::Real const & score) const
 {
 
-	if(aa_type <= core::chemical::num_canonical_aas)
-	{
+	if ( aa_type <= core::chemical::num_canonical_aas ) {
 		InterpolatorOP row(lookup_table_[aa_type]);
 		Real potential_energy;
 		Real delta_potential_energy;

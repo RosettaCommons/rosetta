@@ -42,23 +42,23 @@ public:
 	protocols::moves::MoverOP fresh_instance() const;
 
 
-core::Size
-chain_cut( core::pose::Pose & pose);
+	core::Size
+	chain_cut( core::pose::Pose & pose);
 
-core::Size
-chain_cut( core::pose::Pose & pose, core::Size start_res,core::Size end_res);
+	core::Size
+	chain_cut( core::pose::Pose & pose, core::Size start_res,core::Size end_res);
 
-void
-create_subpose(core::pose::Pose & pose );
+	void
+	create_subpose(core::pose::Pose & pose );
 
-void
-foldTree (core::pose::Pose & pose);
+	void
+	foldTree (core::pose::Pose & pose);
 
-core::Real bond_length() const;
-core::Size chain_id() const;
+	core::Real bond_length() const;
+	core::Size chain_id() const;
 
-void bond_length(core::Real const);
-void chain_id(core::Size const);
+	void bond_length(core::Real const);
+	void chain_id(core::Size const);
 
 private:
 	core::Real bond_length_;

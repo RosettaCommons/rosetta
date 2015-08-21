@@ -18,30 +18,30 @@
 #include <utility/pointer/access_ptr.hh>
 
 namespace core {
-namespace scoring{
-  class APBSWrapper;
-  typedef utility::pointer::shared_ptr< APBSWrapper > APBSWrapperOP;
-  typedef utility::pointer::shared_ptr< APBSWrapper const > APBSWrapperCOP;
-  typedef utility::pointer::weak_ptr< APBSWrapper > APBSWrapperAP;
-  typedef utility::pointer::weak_ptr< APBSWrapper const > APBSWrapperCAP;
+namespace scoring {
+class APBSWrapper;
+typedef utility::pointer::shared_ptr< APBSWrapper > APBSWrapperOP;
+typedef utility::pointer::shared_ptr< APBSWrapper const > APBSWrapperCOP;
+typedef utility::pointer::weak_ptr< APBSWrapper > APBSWrapperAP;
+typedef utility::pointer::weak_ptr< APBSWrapper const > APBSWrapperCAP;
 
-  class APBSConfig;
-  typedef utility::pointer::shared_ptr< APBSConfig > APBSConfigOP;
-  typedef utility::pointer::shared_ptr< APBSConfig const > APBSConfigCOP;
-  typedef utility::pointer::weak_ptr< APBSConfig > APBSConfigAP;
-  typedef utility::pointer::weak_ptr< APBSConfig const > APBSConfigCAP;
+class APBSConfig;
+typedef utility::pointer::shared_ptr< APBSConfig > APBSConfigOP;
+typedef utility::pointer::shared_ptr< APBSConfig const > APBSConfigCOP;
+typedef utility::pointer::weak_ptr< APBSConfig > APBSConfigAP;
+typedef utility::pointer::weak_ptr< APBSConfig const > APBSConfigCAP;
 
-  class APBSResult;
-  typedef utility::pointer::shared_ptr< APBSResult > APBSResultOP;
-  typedef utility::pointer::shared_ptr< APBSResult const > APBSResultCOP;
-  typedef utility::pointer::weak_ptr< APBSResult > APBSResultAP;
-  typedef utility::pointer::weak_ptr< APBSResult const > APBSResultCAP;
+class APBSResult;
+typedef utility::pointer::shared_ptr< APBSResult > APBSResultOP;
+typedef utility::pointer::shared_ptr< APBSResult const > APBSResultCOP;
+typedef utility::pointer::weak_ptr< APBSResult > APBSResultAP;
+typedef utility::pointer::weak_ptr< APBSResult const > APBSResultCAP;
 
-  class PQR;
-  typedef utility::pointer::shared_ptr< PQR > PQROP;
-  typedef utility::pointer::shared_ptr< PQR const > PQRCOP;
-  typedef utility::pointer::weak_ptr< PQR > PQRAP;
-  typedef utility::pointer::weak_ptr< PQR const > PQRCAP;
+class PQR;
+typedef utility::pointer::shared_ptr< PQR > PQROP;
+typedef utility::pointer::shared_ptr< PQR const > PQRCOP;
+typedef utility::pointer::weak_ptr< PQR > PQRAP;
+typedef utility::pointer::weak_ptr< PQR const > PQRCAP;
 }
 }
 #endif

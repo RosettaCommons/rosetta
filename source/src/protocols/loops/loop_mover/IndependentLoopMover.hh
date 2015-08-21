@@ -42,13 +42,13 @@ class IndependentLoopMover : public LoopMover {
 public:
 	IndependentLoopMover();
 	IndependentLoopMover( LoopsOP loops_in );
-  IndependentLoopMover( utility::vector1< bool > const& selection );
+	IndependentLoopMover( utility::vector1< bool > const& selection );
 	IndependentLoopMover( LoopsFileData const & lfd );
 	IndependentLoopMover( GuardedLoopsFromFileOP guarded_loops );
-	
+
 	//destructor
 	virtual ~IndependentLoopMover();
-	
+
 	void set_defaults();
 
 	/// @brief Apply the loop-build protocol to the input pose
@@ -102,7 +102,7 @@ private:
 	bool all_loops_closed_;
 	/// Loop combine rate
 	core::Real loop_combine_rate_;
-    
+
 protected:
 	virtual
 	LoopResult

@@ -34,8 +34,9 @@ void MC_Comb::init() {
 	runtime_assert( !rotamer_list_.empty() );
 	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
 		rotamer_list_[i]->init();
-		if ( !rotamer_list_[i]->not_end() )
-				TR << "Got a null rotamer sampler!" << std::endl;
+		if ( !rotamer_list_[i]->not_end() ) {
+			TR << "Got a null rotamer sampler!" << std::endl;
+		}
 	}
 	set_init( true );
 	reset();
@@ -43,8 +44,9 @@ void MC_Comb::init() {
 ///////////////////////////////////////////////////////////////////////////
 void MC_Comb::reset() {
 	runtime_assert( is_init() );
-	for ( Size i = 1; i <= rotamer_list_.size(); ++i )
-			rotamer_list_[i]->reset();
+	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
+		rotamer_list_[i]->reset();
+	}
 }
 ///////////////////////////////////////////////////////////////////////////
 void MC_Comb::operator++() {
@@ -54,20 +56,23 @@ void MC_Comb::operator++() {
 ///////////////////////////////////////////////////////////////////////////
 void MC_Comb::update() {
 	runtime_assert( is_init() );
-	for ( Size i = 1; i <= rotamer_list_.size(); ++i )
-			rotamer_list_[i]->update();
+	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
+		rotamer_list_[i]->update();
+	}
 }
 ///////////////////////////////////////////////////////////////////////////
 void MC_Comb::apply( Pose & pose ) {
 	runtime_assert( is_init() );
-	for ( Size i = 1; i <= rotamer_list_.size(); ++i )
-			rotamer_list_[i]->apply( pose );
+	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
+		rotamer_list_[i]->apply( pose );
+	}
 }
 ///////////////////////////////////////////////////////////////////////////
 void MC_Comb::set_uniform_modeler( bool const setting ) {
 	MC_StepWiseSampler::set_uniform_modeler( setting );
-	for ( Size i = 1; i <= rotamer_list_.size(); ++i )
-			rotamer_list_[i]->set_uniform_modeler( setting );
+	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
+		rotamer_list_[i]->set_uniform_modeler( setting );
+	}
 }
 ///////////////////////////////////////////////////////////////////////////
 } //sampler

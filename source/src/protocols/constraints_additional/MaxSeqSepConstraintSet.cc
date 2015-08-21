@@ -75,7 +75,7 @@ using namespace core;
 /// between residue pair constraints.
 MaxSeqSepConstraintSet::~MaxSeqSepConstraintSet() {}
 MaxSeqSepConstraintSet::MaxSeqSepConstraintSet( ConstraintSet const & other, core::kinematics::FoldTree const & f ) :
-		ConstraintSet( other )
+	ConstraintSet( other )
 {
 	tr.Trace << f << std::endl;
 	shortest_path_ = core::kinematics::ShortestPathInFoldTreeOP( new ShortestPathInFoldTree( f ) );
@@ -83,10 +83,10 @@ MaxSeqSepConstraintSet::MaxSeqSepConstraintSet( ConstraintSet const & other, cor
 
 /// @copy constructor. Does nothing.
 MaxSeqSepConstraintSet::MaxSeqSepConstraintSet( MaxSeqSepConstraintSet const &other )
-  : ConstraintSet( other ),
-    max_seq_sep_ ( other.max_seq_sep_ ),
-    shortest_path_( other.shortest_path_ )
-{	}
+: ConstraintSet( other ),
+	max_seq_sep_ ( other.max_seq_sep_ ),
+	shortest_path_( other.shortest_path_ )
+{ }
 
 MaxSeqSepConstraintSet::MaxSeqSepConstraintSet( ConstraintSet const &other, ShortestPathInFoldTreeOP sp ) :
 	ConstraintSet( other ),
@@ -94,9 +94,9 @@ MaxSeqSepConstraintSet::MaxSeqSepConstraintSet( ConstraintSet const &other, Shor
 {}
 
 ConstraintSetOP MaxSeqSepConstraintSet::remapped_clone(
-    core::pose::Pose const& src,
-		core::pose::Pose const& dest,
-		core::id::SequenceMappingCOP smap
+	core::pose::Pose const& src,
+	core::pose::Pose const& dest,
+	core::id::SequenceMappingCOP smap
 ) const {
 	MaxSeqSepConstraintSetOP clone_ptr( new MaxSeqSepConstraintSet( *Parent::remapped_clone( src, dest, smap ), shortest_path_ ) );
 	clone_ptr->set_max_seq_sep( max_seq_sep() );
@@ -106,21 +106,21 @@ ConstraintSetOP MaxSeqSepConstraintSet::remapped_clone(
 
 void
 MaxSeqSepConstraintSet::residue_pair_energy(
-   Residue const & rsd1,
-   Residue const & rsd2,
-   Pose const & pose,
-   core::scoring::ScoreFunction const & scorefxn,
-   core::scoring::EnergyMap & emap
+	Residue const & rsd1,
+	Residue const & rsd2,
+	Pose const & pose,
+	core::scoring::ScoreFunction const & scorefxn,
+	core::scoring::EnergyMap & emap
 ) const
 {
-  int const pos1( rsd1.seqpos() ), pos2 ( rsd2.seqpos() );
-  //	if ( tr.Trace.visible() ) tr.Trace << "max_seq_sep(): " << max_seq_sep() << " check seqsep for residues " << rsd1.seqpos() << "  and  " << rsd2.seqpos() << "....";
-  if ( too_far( pos1, pos2 ) ) {
-    //if ( tr.Trace.visible() ) tr.Trace << "\n";
-    return; //cast avoids warning
-  }
-  //	if ( tr.Trace.visible() ) tr.Trace << "evaluated\n";
-  ConstraintSet::residue_pair_energy( rsd1, rsd2, pose, scorefxn, emap );
+	int const pos1( rsd1.seqpos() ), pos2 ( rsd2.seqpos() );
+	// if ( tr.Trace.visible() ) tr.Trace << "max_seq_sep(): " << max_seq_sep() << " check seqsep for residues " << rsd1.seqpos() << "  and  " << rsd2.seqpos() << "....";
+	if ( too_far( pos1, pos2 ) ) {
+		//if ( tr.Trace.visible() ) tr.Trace << "\n";
+		return; //cast avoids warning
+	}
+	// if ( tr.Trace.visible() ) tr.Trace << "evaluated\n";
+	ConstraintSet::residue_pair_energy( rsd1, rsd2, pose, scorefxn, emap );
 }
 
 void
@@ -142,28 +142,28 @@ MaxSeqSepConstraintSet::setup_for_minimizing_for_residue_pair(
 
 Size
 MaxSeqSepConstraintSet::show_violations( std::ostream& out, pose::Pose& pose, Size verbose_level, Real threshold ) {
-  out << " total constr: " << get_all_constraints().size() << "  ";
-  out << " max_seq_sep: " << max_seq_sep() << " ";
-  return Parent::show_violations( out, pose, verbose_level, threshold );
+	out << " total constr: " << get_all_constraints().size() << "  ";
+	out << " max_seq_sep: " << max_seq_sep() << " ";
+	return Parent::show_violations( out, pose, verbose_level, threshold );
 }
 
 bool
 MaxSeqSepConstraintSet::too_far( int const pos1, int const pos2 ) const {
-  if ( shortest_path_ ) return max_seq_sep() < shortest_path_->dist( pos1, pos2 );
-  return max_seq_sep() < (core::Size) std::abs( pos1 - pos2 );
+	if ( shortest_path_ ) return max_seq_sep() < shortest_path_->dist( pos1, pos2 );
+	return max_seq_sep() < (core::Size) std::abs( pos1 - pos2 );
 }
 
 Size
 MaxSeqSepConstraintSet::largest_possible_sequence_sep( core::pose::Pose const& pose ) const {
-  if ( shortest_path_ ) return shortest_path_->max_dist();
-  return pose.total_residue();
+	if ( shortest_path_ ) return shortest_path_->max_dist();
+	return pose.total_residue();
 }
 
 /// Does *NOT* zero the emap values, just adds the additional contribution to the
 /// existing emap energies (so can be called inside finalize_total_energies)
 void
 MaxSeqSepConstraintSet::eval_non_residue_pair_energy(
-  core::pose::Pose const & pose,
+	core::pose::Pose const & pose,
 	core::scoring::ScoreFunction const & sfxn,
 	core::scoring::EnergyMap & emap
 ) const

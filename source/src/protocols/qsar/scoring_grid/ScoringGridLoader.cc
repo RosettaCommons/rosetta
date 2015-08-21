@@ -56,20 +56,19 @@ void ScoringGridLoader::load_data(
 
 	qsar::scoring_grid::GridManager* grid_manager(qsar::scoring_grid::GridManager::get_instance());
 
-	if( tag->hasOption("width") ) {
+	if ( tag->hasOption("width") ) {
 		grid_manager->set_width(tag->getOption<core::Real>("width"));
 
 	}
-	if( tag->hasOption("resolution") ){
+	if ( tag->hasOption("resolution") ) {
 		grid_manager->set_resolution(tag->getOption<core::Real>("resolution"));
 	}
 
-	if(tag->hasOption("ligand_chain") ) {
+	if ( tag->hasOption("ligand_chain") ) {
 		grid_manager->set_chain(tag->getOption<char>("ligand_chain"));
 	}
 
-	if(tag->hasOption("normalize_mode"))
-	{
+	if ( tag->hasOption("normalize_mode") ) {
 		std::string normalize_mode = tag->getOption<std::string>("normalize_mode");
 		grid_manager->set_normalization_function(normalize_mode);
 	}
@@ -77,11 +76,11 @@ void ScoringGridLoader::load_data(
 	/// Add grids to the scoring grid manager
 
 	TagCOPs const grid_tags( tag->getTags() );
-	if (grid_tags.size()==0){
+	if ( grid_tags.size()==0 ) {
 		TR <<"WARNING WARNING grid manager will be empty" <<std::endl;
 	}
 
-	BOOST_FOREACH(TagCOP tag, grid_tags){
+	BOOST_FOREACH ( TagCOP tag, grid_tags ) {
 		grid_manager->make_new_grid(tag);
 	}
 

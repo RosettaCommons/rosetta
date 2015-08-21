@@ -26,61 +26,61 @@
 #include <map>
 
 
-namespace core{
+namespace core {
 namespace io {
-namespace PositionDdGInfo{
+namespace PositionDdGInfo {
 
-	using namespace core;
-	using namespace scoring;
+using namespace core;
+using namespace scoring;
 
-	// the following functions added by flo may '11 to read in ddg prediction output files
-	// so that this info can be used in other protocols
+// the following functions added by flo may '11 to read in ddg prediction output files
+// so that this info can be used in other protocols
 
-	/// @brief small helper class  that stores the ddGs for mutations
-	/// at a given position. camel case gets weird when trying to write
-	/// words containing ddG...
-	class PositionDdGInfo : public utility::pointer::ReferenceCount {
+/// @brief small helper class  that stores the ddGs for mutations
+/// at a given position. camel case gets weird when trying to write
+/// words containing ddG...
+class PositionDdGInfo : public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		PositionDdGInfo(
-						core::Size seqpos,
-						core::chemical::AA wt_aa
-						);
+	PositionDdGInfo(
+		core::Size seqpos,
+		core::chemical::AA wt_aa
+	);
 
-		virtual ~PositionDdGInfo();
+	virtual ~PositionDdGInfo();
 
-		void
-		add_mutation_ddG(
-						 core::chemical::AA aa,
-						 core::Real ddG
-						 );
+	void
+	add_mutation_ddG(
+		core::chemical::AA aa,
+		core::Real ddG
+	);
 
-		core::Size
-		seqpos() const {
-			return seqpos_; }
+	core::Size
+	seqpos() const {
+		return seqpos_; }
 
-		core::chemical::AA
-		wt_aa() const {
-			return wt_aa_; }
+	core::chemical::AA
+	wt_aa() const {
+		return wt_aa_; }
 
-		std::map< core::chemical::AA, core::Real > const &
-		mutation_ddGs() const {
-			return mutation_ddGs_; }
-
-
-	private:
-		core::Size seqpos_;
-		core::chemical::AA wt_aa_;
-		std::map< core::chemical::AA, core::Real > mutation_ddGs_;
-
-	};
+	std::map< core::chemical::AA, core::Real > const &
+	mutation_ddGs() const {
+		return mutation_ddGs_; }
 
 
-	/// @brief function that reads in a ddg predictions out file
-	/// and returns the info in it as a map of PositionDdGInfo
-	const std::map< core::Size, PositionDdGInfoOP >
-	read_ddg_predictions_file( std::string filename );
+private:
+	core::Size seqpos_;
+	core::chemical::AA wt_aa_;
+	std::map< core::chemical::AA, core::Real > mutation_ddGs_;
+
+};
+
+
+/// @brief function that reads in a ddg predictions out file
+/// and returns the info in it as a map of PositionDdGInfo
+const std::map< core::Size, PositionDdGInfoOP >
+read_ddg_predictions_file( std::string filename );
 
 
 }//namespace ddG

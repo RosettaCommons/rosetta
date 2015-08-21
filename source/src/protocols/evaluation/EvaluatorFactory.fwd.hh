@@ -14,8 +14,8 @@
 #ifndef INCLUDED_protocols_evaluation_EvaluatorFactory_fwd_hh
 #define INCLUDED_protocols_evaluation_EvaluatorFactory_fwd_hh
 
-namespace protocols{
-namespace evaluation{
+namespace protocols {
+namespace evaluation {
 
 class EvaluatorFactory;
 

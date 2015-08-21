@@ -9,7 +9,7 @@
 
 /// @file   protocols/generalized_kinematic_closure/filter/GeneralizedKICfilter.hh
 /// @brief  Headers for GeneralizedKICfilter class (helper class for the GeneralizedKIC mover that defines filters to accept/reject closure solutions).
-///	        Filters must be pass/fail (i.e. there are no shades of grey, here.)
+///         Filters must be pass/fail (i.e. there are no shades of grey, here.)
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 #ifndef INCLUDED_protocols_generalized_kinematic_closure_filter_GeneralizedKICfilter_hh
@@ -81,7 +81,7 @@ public:
 
 	/// @brief Given a filter type, return its name.  Returns "unknown_filter" if not recognized.
 	std::string get_filter_type_name( core::Size const filter_type ) const;
-	
+
 	///
 	/// @brief Given the name of a filter type, return the filter type enum.  Returns unknown_filter if not recognized.
 	filter_type get_filter_type_by_name( std::string const &filtername ) const;
@@ -129,7 +129,7 @@ public:
 	/// @brief Get a string-valued filter parameter.
 	/// @details Returns false if the parameter couldn't be found.
 	bool get_filter_param( std::string const &param_name, std::string &outvalue ) const;
-	
+
 	/// @brief Set the residue number that this filter acts on.
 	/// @details Only used by some filters.
 	void set_resnum( core::Size const val ) { resnum_ = val; return; }
@@ -137,15 +137,15 @@ public:
 	/// @brief Get the residue number that this filter acts on.
 	/// @details Only used by some filters.
 	core::Size resnum( ) const { return resnum_; }
-	
+
 	/// @brief Set the bin name for this filter.
 	/// @details Only used by some filters.
 	void set_binname( std::string const &name_in ) {bin_ = name_in; return; }
-	
+
 	/// @brief Get the bin name for this filter.
 	/// @details Only used by some filters.
 	std::string binname( ) const { return bin_; }
-	
+
 	/// @brief Initializes the BinTransitionCalculator object and loads a bin_params file.
 	///
 	void load_bin_params( std::string const &bin_params_file );
@@ -154,13 +154,13 @@ public:
 	/// and return pass or fail.
 	/// @details
 	/// @param[in] original_pose -- The full, initial pose.
-  /// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
+	/// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
 	/// @param[in] residue_map -- The mapping of (residue index in loop_pose, residue index in original_pose).
 	/// @param[in] tail_residue_map -- The mapping of (tail residue index in loop_pose, tail residue index in original_pose).
 	/// @param[in] atomlist -- A list of atoms making the chain that was closed by bridgeObjects, with residue indices corresponding to loop_pose.
-  /// @param[in] torsions -- A vector of dihedral angles that the bridgeObjects function spat out.
-  /// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
-  /// @param[in] bondlengths -- A vector of bond lengths that the bridgeObjects function spat out.
+	/// @param[in] torsions -- A vector of dihedral angles that the bridgeObjects function spat out.
+	/// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
+	/// @param[in] bondlengths -- A vector of bond lengths that the bridgeObjects function spat out.
 	bool apply(
 		core::pose::Pose const &original_pose,
 		core::pose::Pose const &loop_pose,
@@ -174,9 +174,9 @@ public:
 
 
 private:
-////////////////////////////////////////////////////////////////////////////////
-//          PRIVATE VARIABLES                                                 //
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	//          PRIVATE VARIABLES                                                 //
+	////////////////////////////////////////////////////////////////////////////////
 
 
 	/// @brief The filter type for this filter (see the filter_type enum for all types).
@@ -206,14 +206,14 @@ private:
 	/// @brief A parameter specifically for the backbone_bin filter.  The bin
 	/// that the residue must lie within.
 	std::string bin_;
-	
+
 	/// @brief A parameter specifically for the backbone_bin filter.  The residue
 	/// that must lie within the mainchain torsion bin specified.
 	core::Size resnum_;
 
-////////////////////////////////////////////////////////////////////////////////
-//          PRIVATE FUNCTIONS                                                 //
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	//          PRIVATE FUNCTIONS                                                 //
+	////////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Given an index in the original pose and a mapping from loop to pose,
 	/// return the index in the loop.
@@ -222,21 +222,21 @@ private:
 		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map
 	) const;
 
-////////////////////////////////////////////////////////////////////////////////
-//          PRIVATE APPLY FUNCTIONS FOR EACH FILTER                           //
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	//          PRIVATE APPLY FUNCTIONS FOR EACH FILTER                           //
+	////////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Applies the loop_bump_check filter, which checks for clashes between the atoms in the chain
 	/// to be closed and the rest of the structure (or for clashes within these atoms).
 	/// @details Returns "true" for pass and "false" for fail.  Does NOT check for clashes with tail residues.
 	/// @param[in] original_pose -- The full, initial pose.
-  /// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
+	/// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
 	/// @param[in] residue_map -- The mapping of (residue index in loop_pose, residue index in original_pose).
 	/// @param[in] tail_residue_map -- The mapping of (tail residue index in loop_pose, tail residue index in original_pose).
 	/// @param[in] atomlist -- A list of atoms making the chain that was closed by bridgeObjects, with residue indices corresponding to loop_pose.
-  /// @param[in] torsions -- A vector of dihedral angles that the bridgeObjects function spat out.
-  /// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
-  /// @param[in] bondlengths -- A vector of bond lengths that the bridgeObjects function spat out.
+	/// @param[in] torsions -- A vector of dihedral angles that the bridgeObjects function spat out.
+	/// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
+	/// @param[in] bondlengths -- A vector of bond lengths that the bridgeObjects function spat out.
 	bool apply_loop_bump_check(
 		core::pose::Pose const &original_pose,
 		core::pose::Pose const &loop_pose,
@@ -259,13 +259,13 @@ private:
 	/// "res2" (integer-valued, mandatory, based on original pose numbering)
 	/// "greater_than" (boolean, optional, false by default)
 	/// @param[in] original_pose -- The full, initial pose.
-  /// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
+	/// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
 	/// @param[in] residue_map -- The mapping of (residue index in loop_pose, residue index in original_pose).
 	/// @param[in] tail_residue_map -- The mapping of (tail residue index in loop_pose, tail residue index in original_pose).
 	/// @param[in] atomlist -- A list of atoms making the chain that was closed by bridgeObjects, with residue indices corresponding to loop_pose.
-  /// @param[in] torsions -- A vector of dihedral angles that the bridgeObjects function spat out.
-  /// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
-  /// @param[in] bondlengths -- A vector of bond lengths that the bridgeObjects function spat out.
+	/// @param[in] torsions -- A vector of dihedral angles that the bridgeObjects function spat out.
+	/// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
+	/// @param[in] bondlengths -- A vector of bond lengths that the bridgeObjects function spat out.
 	bool apply_atom_pair_distance(
 		core::pose::Pose const &original_pose,
 		core::pose::Pose const &loop_pose,
@@ -276,19 +276,19 @@ private:
 		utility::vector1 < core::Real > const &bondangles,
 		utility::vector1 < core::Real > const &bondlengths
 	) const;
-	
+
 	/// @brief Applies the backbone_bin filter, checking that a given residue lies within a defined
 	/// mainchain torsion bin and failing if it does not.
 	/// @details Returns "true" for pass and "false" for fail.  The user needs to have set a bin
 	/// transition probabilities file, a bin, and a residue.
 	/// @param[in] original_pose -- The full, initial pose.
-  /// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
+	/// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
 	/// @param[in] residue_map -- The mapping of (residue index in loop_pose, residue index in original_pose).
 	/// @param[in] tail_residue_map -- The mapping of (tail residue index in loop_pose, tail residue index in original_pose).
 	/// @param[in] atomlist -- A list of atoms making the chain that was closed by bridgeObjects, with residue indices corresponding to loop_pose.
-  /// @param[in] torsions -- A vector of dihedral angles that the bridgeObjects function spat out.
-  /// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
-  /// @param[in] bondlengths -- A vector of bond lengths that the bridgeObjects function spat out.
+	/// @param[in] torsions -- A vector of dihedral angles that the bridgeObjects function spat out.
+	/// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
+	/// @param[in] bondlengths -- A vector of bond lengths that the bridgeObjects function spat out.
 	bool apply_backbone_bin(
 		core::pose::Pose const &original_pose,
 		core::pose::Pose const &loop_pose,

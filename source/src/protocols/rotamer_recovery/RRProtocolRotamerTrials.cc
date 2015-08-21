@@ -73,11 +73,11 @@ RRProtocolRotamerTrials::get_parameters() const {
 /// compared to where it started
 void
 RRProtocolRotamerTrials::run(
-  RRComparerOP comparer,
-  RRReporterOP reporter,
-  Pose const & pose,
+	RRComparerOP comparer,
+	RRReporterOP reporter,
+	Pose const & pose,
 	ScoreFunction const & score_function,
-  PackerTask const & packer_task
+	PackerTask const & packer_task
 ) {
 
 	using core::chemical::aa_unk;
@@ -94,7 +94,7 @@ RRProtocolRotamerTrials::run(
 
 	// For each residue in the packer task,
 	// rtmin residue -> and measure recovery
-	for( Size ii = 1; ii <= pose.total_residue(); ++ii ){
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		if ( !packer_task.pack_residue(ii) ) continue;
 
 		one_res_task->temporarily_set_pack_residue( ii, true );

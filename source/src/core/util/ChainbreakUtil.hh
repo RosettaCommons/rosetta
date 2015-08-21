@@ -24,12 +24,12 @@ namespace core {
 namespace util {
 
 class ChainbreakUtil {
- public:
-  /// @brief Returns true if `pose` has a chainbreak, false otherwise
-  static bool has_chainbreak(const core::pose::Pose& pose);
+public:
+	/// @brief Returns true if `pose` has a chainbreak, false otherwise
+	static bool has_chainbreak(const core::pose::Pose& pose);
 
- private:
-  static core::scoring::ScoreFunctionOP score_;
+private:
+	static core::scoring::ScoreFunctionOP score_;
 };
 
 }  // namespace util

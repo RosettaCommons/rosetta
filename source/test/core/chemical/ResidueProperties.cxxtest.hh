@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	 ResidueProperties.cxxtest.hh
+/// @file  ResidueProperties.cxxtest.hh
 /// @brief   Test suite for ResidueProperties
 /// @author  Labonte <JWLabonte@jhu.edu>
 
@@ -71,11 +71,11 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 		test_properties_->set_property( LIPID, true );
 		TS_ASSERT_THROWS_EQUALS(
-				test_properties_->set_property( "FAT", true ),
-				EXCN_Base const & e,
-				e.msg().substr( e.msg().find( "ERROR: " ) ),
-				"ERROR: Rosetta does not recognize the property: FAT; "
-				"has it been added to general_properties.list?\n\n" );
+			test_properties_->set_property( "FAT", true ),
+			EXCN_Base const & e,
+			e.msg().substr( e.msg().find( "ERROR: " ) ),
+			"ERROR: Rosetta does not recognize the property: FAT; "
+			"has it been added to general_properties.list?\n\n" );
 
 		TS_ASSERT( test_properties_->has_property( LIPID ) );
 		TS_ASSERT( test_properties_->has_property( "LIPID") );
@@ -100,21 +100,21 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 		test_properties_->set_variant_type( SC_FRAGMENT, true );
 		TS_ASSERT_THROWS_EQUALS(
-				test_properties_->set_variant_type( "BIZARRO", true ),
-				EXCN_Base const & e,
-				e.msg().substr( e.msg().find( "ERROR: " ) ),
-				"ERROR: Rosetta does not recognize the variant: BIZARRO; "
-				"has it been added to variant_types.list?\n\n" );
+			test_properties_->set_variant_type( "BIZARRO", true ),
+			EXCN_Base const & e,
+			e.msg().substr( e.msg().find( "ERROR: " ) ),
+			"ERROR: Rosetta does not recognize the variant: BIZARRO; "
+			"has it been added to variant_types.list?\n\n" );
 		test_properties_->enable_custom_variant_types();
 		TS_ASSERT( test_properties_->has_custom_variant_types() );
 		test_properties_->set_variant_type( "WHACKY", true );
 		test_properties_->set_variant_type( "BIZARRO", true );
 		test_properties_->set_variant_type( "WHACKY", false );
 		TS_ASSERT_THROWS_EQUALS(
-				test_properties_->set_variant_type( "GNARLY", false ),
-				EXCN_Base const & e,
-				e.msg().substr( e.msg().find( "ERROR: " ) ),
-				"ERROR: Rosetta does not recognize the custom variant GNARLY in test_residue\n\n" );
+			test_properties_->set_variant_type( "GNARLY", false ),
+			EXCN_Base const & e,
+			e.msg().substr( e.msg().find( "ERROR: " ) ),
+			"ERROR: Rosetta does not recognize the custom variant GNARLY in test_residue\n\n" );
 
 		TS_ASSERT( test_properties_->is_variant_type( SC_FRAGMENT ) );
 		TS_ASSERT( test_properties_->is_variant_type( "SC_FRAGMENT" ) );

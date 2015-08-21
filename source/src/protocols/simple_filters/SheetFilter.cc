@@ -10,7 +10,7 @@
 /// @file SheetFilter.cc
 /// @brief runs reject or accept filters on pose
 /// @details
-///	  Contains currently: SheetFilter
+///   Contains currently: SheetFilter
 ///
 ///
 /// @author Robert Vernon
@@ -63,12 +63,12 @@ bool SheetFilter::apply( core::pose::Pose const & pose ) const {
 	//car sheet_filter disable
 	if ( beta_ < 20 || beta_ratio_ <= 0.2 ) return true;
 
-// 	now the ss-type is read in apply():
-// and the disable decision is made here
-// std::string sstype = get_protein_sstype( pose );
-// 	if ( disable_sheet_filter_ ) {
-// 		return true;
-// 	}
+	//  now the ss-type is read in apply():
+	// and the disable decision is made here
+	// std::string sstype = get_protein_sstype( pose );
+	//  if ( disable_sheet_filter_ ) {
+	//   return true;
+	//  }
 
 	//SHEET FILTER
 	float const distance_cutoff = { 6.5 };
@@ -94,7 +94,7 @@ bool SheetFilter::apply( core::pose::Pose const & pose ) const {
 
 	FArray2D_float position( 3, max_pos*max_res );
 
-	for ( int i = 1; i <= max_res; i += 1) {
+	for ( int i = 1; i <= max_res; i += 1 ) {
 		int const itemp = max_pos*(i-1)+1;
 		pose.residue(i).atom("N").xyz().x();
 		position(1,itemp)   = pose.residue(i).xyz("N").x();
@@ -147,7 +147,7 @@ bool SheetFilter::apply( core::pose::Pose const & pose ) const {
 
 	for ( int i = 1; i <= max_res; ++i ) {
 
-		if ( pose.secstruct(i) == 'H') {
+		if ( pose.secstruct(i) == 'H' ) {
 			ss(i) = 1;
 		} else if ( pose.secstruct(i) == 'E' ) {
 			ss(i) = 2;
@@ -161,13 +161,13 @@ bool SheetFilter::apply( core::pose::Pose const & pose ) const {
 	int result = 0;
 
 	ingo_sheet_stuff(max_res, ss, max_res*max_pos, position, isN, isCA, isC,
-			res_num, distance_cutoff, nstrands, nsheets, max_distance,
-			min_dotprod, local_pairs, nonlocal_pairs, result);
+		res_num, distance_cutoff, nstrands, nsheets, max_distance,
+		min_dotprod, local_pairs, nonlocal_pairs, result);
 
-//$$$	if ( result > 0 ) sheet_filter = false;
-//$$$	if ( result == 2 ) sheet_filter = true;  // pass toblerone (not possible)
-//$$$	if ( result == 5 ) sheet_filter = true;  // pass dotprod (not possible)
-//$$$	if ( result == 8 ) sheet_filter = true;  // pass large barrels
+	//$$$ if ( result > 0 ) sheet_filter = false;
+	//$$$ if ( result == 2 ) sheet_filter = true;  // pass toblerone (not possible)
+	//$$$ if ( result == 5 ) sheet_filter = true;  // pass dotprod (not possible)
+	//$$$ if ( result == 8 ) sheet_filter = true;  // pass large barrels
 
 	if ( result == 3 ) return false;
 	if ( result == 4 ) return false;
@@ -179,7 +179,7 @@ bool SheetFilter::apply( core::pose::Pose const & pose ) const {
 }
 
 // std::string SheetFilter::get_protein_sstype() {
-// 	return "misc::sstype::sstype??";
+//  return "misc::sstype::sstype??";
 // }
 
 
@@ -229,7 +229,7 @@ SheetFilter::ingo_diamers(
 ) const
 {
 	strnm.dimension( nres );
-//	atmps.dimension( 3, natm );
+	// atmps.dimension( 3, natm );
 	rnm.dimension( natm );
 	indC.dimension( natm );
 	indN.dimension( natm );
@@ -325,39 +325,39 @@ SheetFilter::ingo_find_dir(
 	FArray2D_float centers( max_nstr, 3 );
 	int cnt = 0;
 
-//js finding strands that are in the sheet
+	//js finding strands that are in the sheet
 
 	for ( int j = 1; j <= nstr; ++j ) {
 		if ( strlbl(j) == shnm ) {
-//js count them
+			//js count them
 			++cnt;
-//js put them in an array
+			//js put them in an array
 			slct(cnt) = j;
 		}
 	}
-//js centers holds the vectors from the start to stop
-//js of each strand.
+	//js centers holds the vectors from the start to stop
+	//js of each strand.
 	for ( int i = 1; i <= hm; ++i ) {
 		for ( int j = 1; j <= 3; ++j ) {
 			centers(i,j) = strdr(slct(i),j);
 		}
 	}
 
-//js pretty sure this order thing is screwing things up in ingo_hand.
-//js The directions array is later accessed according the strand
-//js number, but it is being filled according to the order of the strands
-//js in the sheet.
-//js Easiest fix seems to me to be to put the order(i) in reference to
-//js directions here.  Then later calls to directions should do the
-//js right thing?
-//rhiju Double checked -- jack's fix look ok!
+	//js pretty sure this order thing is screwing things up in ingo_hand.
+	//js The directions array is later accessed according the strand
+	//js number, but it is being filled according to the order of the strands
+	//js in the sheet.
+	//js Easiest fix seems to me to be to put the order(i) in reference to
+	//js directions here.  Then later calls to directions should do the
+	//js right thing?
+	//rhiju Double checked -- jack's fix look ok!
 	directions(order(1)) = 0;
 
 	for ( int i = 2; i <= hm; ++i ) {
 		float dot_prod =
-		 centers(order(i),1) * centers(order(i-1),1) +
-		 centers(order(i),2) * centers(order(i-1),2) +
-		 centers(order(i),3) * centers(order(i-1),3);
+			centers(order(i),1) * centers(order(i-1),1) +
+			centers(order(i),2) * centers(order(i-1),2) +
+			centers(order(i),3) * centers(order(i-1),3);
 		if ( dot_prod < 0.0 ) {
 			int const dir1 = directions(order(i-1)) - 1;
 			directions(order(i)) = dir1 * dir1;
@@ -418,13 +418,13 @@ SheetFilter::ingo_find_ord(
 	sequence.dimension( hm );
 	slct.dimension( hm );
 
-//---- local:
+	//---- local:
 	int cnt,cnt1,cnt2,i,j,proper;//,token;
 	FArray1D_int nghbrs_cnt( max_nstr );
 	FArray1D_int taken( max_nstr );
 	FArray2D_float nghbrs( max_nstr, max_nstr );
 	FArray2D_float nghbrs_d( max_nstr, max_nstr );
-//------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------
 
 	cnt = 0;
 	for ( j = 1; j <= nstr; ++j ) {
@@ -434,7 +434,7 @@ SheetFilter::ingo_find_ord(
 		}
 	}
 
-//     std::cout << "slc " << slct << std::endl;
+	//     std::cout << "slc " << slct << std::endl;
 
 	for ( i = 1; i <= hm; ++i ) {
 		nghbrs_cnt(i) = 0;
@@ -489,16 +489,16 @@ SheetFilter::ingo_find_ord(
 		}
 	}
 
-//     std::cout << "ord" << std::endl;
-//     std::cout << order << std::endl;
-//     std::cout << sequence << std::endl;
+	//     std::cout << "ord" << std::endl;
+	//     std::cout << order << std::endl;
+	//     std::cout << sequence << std::endl;
 
 	if ( proper != 1 ) rubbish = 7;
-//  addition to distinguish between barrel-types
-//car a quick fix per ingo:
-//car assigns the value 8 to the rubbish variable for all non-open sheets
-//car (ie they don't have 2 strands with only one neighbour, and the other
-//car strands all have 2).
+	//  addition to distinguish between barrel-types
+	//car a quick fix per ingo:
+	//car assigns the value 8 to the rubbish variable for all non-open sheets
+	//car (ie they don't have 2 strands with only one neighbour, and the other
+	//car strands all have 2).
 	if ( ( proper != 1 ) && ( hm > 4 ) ) rubbish = 8;
 
 }
@@ -567,49 +567,49 @@ SheetFilter::ingo_hand(
 	scstr.dimension( nres );
 	lctn.dimension( nres, 3 );
 
-//---- local:
+	//---- local:
 	int cnt, /*hel_ib,*/ i, j, ll, str_ib;
 	float dot_prod;
-//      float dpr,ln1,ln2;
+	//      float dpr,ln1,ln2;
 	FArray1D_float midpoint( 3 );
 	FArray1D_float midpoint_loop( 3 );
 	FArray1D_float vector0( 3 );
 	FArray1D_float vector1( 3 );
 	FArray1D_float vector2( 3 );
 	FArray1D_float vector3( 3 );
-//------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------
 
 
-//  -  loop length between strands has to be at least 5 residues
+	//  -  loop length between strands has to be at least 5 residues
 	ll = strtpt(str2) - stpppt(str1) - 1;
 
 
 	if ( ll < 5 ) return;
 
-//     std::cout << ll << std::endl;
+	//     std::cout << ll << std::endl;
 
 
-//  -  strands must be parallel
-//      std::cout << SS( shnm ) << SS( k ) << SS( directions(sequence(k-1)) ) <<
-//       SS( directions(sequence(k)) ) << SS( sequence(k-1) ) <<
-//       SS( sequence(k) ) << std::endl;
-//      if ( directions(sequence(k-1))/=directions(sequence(k)) ) return;
+	//  -  strands must be parallel
+	//      std::cout << SS( shnm ) << SS( k ) << SS( directions(sequence(k-1)) ) <<
+	//       SS( directions(sequence(k)) ) << SS( sequence(k-1) ) <<
+	//       SS( sequence(k) ) << std::endl;
+	//      if ( directions(sequence(k-1))/=directions(sequence(k)) ) return;
 	if ( directions(k-1) != directions(k) ) return;
 
-//      if ( directions(order(k-1))/=directions(order(k)) ) return;
+	//      if ( directions(order(k-1))/=directions(order(k)) ) return;
 
-//  -  straight dot-product between the two strands
-//     did not work well to define handedness
-//      goto L2222:
-//      dpr = strdr(str1,1)*strdr(str2,1)+strdr(str1,2)*strdr(str2,2)+
-//       strdr(str1,3)*strdr(str2,3);
-//      ln1 = std::sqrt(square( strdr(str1,1) )+square( strdr(str1,2) )+square( strdr(str1,3) ));
-//      ln2 = std::sqrt(square( strdr(str2,1) )+square( strdr(str2,2) )+square( strdr(str2,3) ));
-//      dpr /= (ln1*ln2);
-// L2222:;
+	//  -  straight dot-product between the two strands
+	//     did not work well to define handedness
+	//      goto L2222:
+	//      dpr = strdr(str1,1)*strdr(str2,1)+strdr(str1,2)*strdr(str2,2)+
+	//       strdr(str1,3)*strdr(str2,3);
+	//      ln1 = std::sqrt(square( strdr(str1,1) )+square( strdr(str1,2) )+square( strdr(str1,3) ));
+	//      ln2 = std::sqrt(square( strdr(str2,1) )+square( strdr(str2,2) )+square( strdr(str2,3) ));
+	//      dpr /= (ln1*ln2);
+	// L2222:;
 
-//  -  check for helix or strands from other sheets in between strands
-//     must be consecutive strands
+	//  -  check for helix or strands from other sheets in between strands
+	//     must be consecutive strands
 	//hel_ib = 0; // js helix in between
 	str_ib = 0; // js strand in between
 	for ( j = stpppt(str1) + 1; j <= strtpt(str2) - 1; ++j ) {
@@ -618,9 +618,9 @@ SheetFilter::ingo_hand(
 	}
 	if ( str_ib == 1 ) return;
 
-//js finding position of the intervening segment
+	//js finding position of the intervening segment
 
-	if (!use_whole_helix) {
+	if ( !use_whole_helix ) {
 		//default behavior is to just look at regions near strands ("takeoff" points)
 		for ( i = 1; i <= 3; ++i ) {
 			midpoint_loop(i) = 0.0;
@@ -637,7 +637,7 @@ SheetFilter::ingo_hand(
 			}
 			midpoint_loop(i) /= cnt;
 		}
-	}else {
+	} else {
 		for ( i = 1; i <= 3; ++i ) {
 			midpoint_loop(i) = 0.0;
 			cnt = 0;
@@ -651,24 +651,24 @@ SheetFilter::ingo_hand(
 	}
 
 	for ( i = 1; i <= 3; ++i ) {
-//js  last residue of the first strand,
-//js  first residue of the second strand
+		//js  last residue of the first strand,
+		//js  first residue of the second strand
 		midpoint(i) = lctn(strtpt(str1),i) + lctn(strtpt(str2),i) +
-		 lctn(stpppt(str1),i) + lctn(stpppt(str2),i);
+			lctn(stpppt(str1),i) + lctn(stpppt(str2),i);
 		midpoint(i) /= 4.0;
-//js vector0 is the difference between the center of mass of
-//js the CA postions of 3 residues at either end of the loop (midpoint_loop)
-//js and the center of mass of the CA positions of the start and stop
-//js residues of each strand.
+		//js vector0 is the difference between the center of mass of
+		//js the CA postions of 3 residues at either end of the loop (midpoint_loop)
+		//js and the center of mass of the CA positions of the start and stop
+		//js residues of each strand.
 		vector0(i) = midpoint_loop(i)-midpoint(i);
 	}
 
 	for ( i = 1; i <= 3; ++i ) {
 		vector1(i) = lctn(stpppt(str1),i) + lctn(stpppt(str2),i) -
-		 lctn(strtpt(str1),i) - lctn(strtpt(str2),i);
+			lctn(strtpt(str1),i) - lctn(strtpt(str2),i);
 		vector1(i) /= 2.0;
 		vector2(i) = lctn(strtpt(str2),i) + lctn(stpppt(str2),i) -
-		 lctn(strtpt(str1),i) - lctn(stpppt(str1),i);
+			lctn(strtpt(str1),i) - lctn(stpppt(str1),i);
 		vector2(i) /= 2.0;
 	}
 
@@ -678,11 +678,11 @@ SheetFilter::ingo_hand(
 
 	dot_prod = vector0(1)*vector3(1)+vector0(2)*vector3(2)+vector0(3)*vector3(3);
 
-//	hand = 0;
-//	if ( dot_prod > 0 ) hand = 1;
+	// hand = 0;
+	// if ( dot_prod > 0 ) hand = 1;
 	if ( dot_prod < 0 ) rubbish = 6;
 
-	if (dot_prod < 0 && use_whole_helix) {
+	if ( dot_prod < 0 && use_whole_helix ) {
 		rubbish = 9;
 		handedness_score_ += 0.1*std::fabs(dot_prod); // Arbitrary penalty for wrong handedness.
 	}
@@ -734,12 +734,12 @@ SheetFilter::ingo_ident_sheets(
 	strsht.dimension( nstr );
 	strlbl.dimension( nstr );
 
-//---- local:
+	//---- local:
 	int cnt,lb1,lb2,lbmn,memo,strsm;//,smm;
 	FArray1D_int fnlbl( max_nstr, 0 );
 	FArray1D_int fncnt( max_nstr, 0 );
 	FArray1D_int strlblord( nstr, 0 );
-//------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------
 
 	strprs = 0;
 
@@ -754,28 +754,28 @@ SheetFilter::ingo_ident_sheets(
 	for ( int i = 1; i <= nstr; ++i ) {
 		//int smm = 0;
 		//for ( int j = 1; j <= nstr; ++j ) {
-		//	smm += strprs(i,j);
+		// smm += strprs(i,j);
 		//}
-//js commenting out filter number 2.  It checks whether strands
-//js have more than 3 neighbors.  This should not be a filter,
-//js because native proteins can have strands with 3 neighbors.
-//js *Dimers* shouldn't be able to have more than 2 strands as
-//js neighbors.  That would require more work to fix.  For now
-//js we just comment out this filter.
-//js         if ( smm > 2 ) {
-//js            rubbish = 2;
-//js            goto L1234;
-//js         }
+		//js commenting out filter number 2.  It checks whether strands
+		//js have more than 3 neighbors.  This should not be a filter,
+		//js because native proteins can have strands with 3 neighbors.
+		//js *Dimers* shouldn't be able to have more than 2 strands as
+		//js neighbors.  That would require more work to fix.  For now
+		//js we just comment out this filter.
+		//js         if ( smm > 2 ) {
+		//js            rubbish = 2;
+		//js            goto L1234;
+		//js         }
 	}
 
 
-//      rubbish = 0
-//      for ( int i = 1; i <= nstr; ++i ) {
-//         if ( SUM(strprs(i,1:nstr)) > 2 ) {
-//            rubbish = 2;
-//            goto L1234;
-//         }
-//      }
+	//      rubbish = 0
+	//      for ( int i = 1; i <= nstr; ++i ) {
+	//         if ( SUM(strprs(i,1:nstr)) > 2 ) {
+	//            rubbish = 2;
+	//            goto L1234;
+	//         }
+	//      }
 
 	nsht = nstr;
 	for ( int j = 1; j <= nstr; ++j ) {
@@ -803,7 +803,7 @@ SheetFilter::ingo_ident_sheets(
 	}
 
 
-// --- SORTING
+	// --- SORTING
 
 	for ( int j = 1; j <= nstr; ++j ) {
 		fnlbl(j) = 0;
@@ -936,7 +936,7 @@ SheetFilter::ingo_locations(
 ) const
 {
 	indCA.dimension( natm );
-//	atmps.dimension( 3, natm );
+	// atmps.dimension( 3, natm );
 	lctn.dimension( nres, 3 );
 
 	int cnt = 0;
@@ -1059,14 +1059,14 @@ SheetFilter::ingo_proper_sheets(
 	FArray1D_float dir1( 3 );
 	FArray1D_float dir2( 3 );
 
-//------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------
 
 	rubbish = 0;
 
-//      std::cout << SS( nstr ) << SS( nsht ) << std::endl;
+	//      std::cout << SS( nstr ) << SS( nsht ) << std::endl;
 	if ( nstr < 2 ) rubbish = 3;
 
-//         std::cout << strsht(1:nsht) << std::endl;
+	//         std::cout << strsht(1:nsht) << std::endl;
 
 	for ( int j = 1; j <= nsht; ++j ) {
 		if ( strsht(j) < 2 ) rubbish = 4;
@@ -1088,8 +1088,8 @@ SheetFilter::ingo_proper_sheets(
 						maxdist = std::max(dstrmin(j,k),maxdist);
 						float dot_prod = 0.0;
 						for ( int l = 1; l <= 3; ++l ) {
-//                 std::cout << SS( locdsm(j,k) ) << SS( nres ) << std::endl;
-//                 std::cout << SS( locdsm(k,j) ) << SS( nres ) << std::endl;
+							//                 std::cout << SS( locdsm(j,k) ) << SS( nres ) << std::endl;
+							//                 std::cout << SS( locdsm(k,j) ) << SS( nres ) << std::endl;
 							int pick1 = locdsm(j,k);
 							int pick2 = locdsm(k,j);
 							if ( locdsm(j,k) <= 3 ) pick1 = 4;
@@ -1101,19 +1101,19 @@ SheetFilter::ingo_proper_sheets(
 						}
 						dot_prod = dir1(1)*dir2(1) + dir1(2)*dir2(2) + dir1(3)*dir2(3);
 						float ln1 = std::sqrt(
-						 ( dir1(1) * dir1(1) ) +
-						 ( dir1(2) * dir1(2) ) +
-						 ( dir1(3) * dir1(3) ) );
+							( dir1(1) * dir1(1) ) +
+							( dir1(2) * dir1(2) ) +
+							( dir1(3) * dir1(3) ) );
 						float ln2 = std::sqrt(
-						 ( dir2(1) * dir2(1) ) +
-						 ( dir2(2) * dir2(2) ) +
-						 ( dir2(3) * dir2(3) ) );
+							( dir2(1) * dir2(1) ) +
+							( dir2(2) * dir2(2) ) +
+							( dir2(3) * dir2(3) ) );
 						dot_prod /= (ln1*ln2);
 						if ( std::abs(dot_prod) < mindotprodabs ) {
 							mindotprodabs = std::abs(dot_prod);
 						}
-//                 std::cout << SS( dot_prod ) << std::endl;
-//                 if ( dot_prod > -dotcut && dot_prod < dotcut ) rubbish = 5;
+						//                 std::cout << SS( dot_prod ) << std::endl;
+						//                 if ( dot_prod > -dotcut && dot_prod < dotcut ) rubbish = 5;
 					}
 				}
 			}
@@ -1121,7 +1121,7 @@ SheetFilter::ingo_proper_sheets(
 
 	}
 
-//      std::cout << "rub " << rubbish << std::endl;
+	//      std::cout << "rub " << rubbish << std::endl;
 
 }
 
@@ -1184,65 +1184,65 @@ SheetFilter::ingo_sheet_stuff(
 	//using namespace param;
 
 	scstr.dimension( nres );
-//	atmps.dimension( 3, natm );
+	// atmps.dimension( 3, natm );
 	indN.dimension( natm );
 	indCA.dimension( natm );
 	indC.dimension( natm );
 	rnm.dimension( natm );
 
-//------------------------------------------------------------------------------
-//     atmps       array of atom positions
-//     directions  directions of the strands in a sheet
-//     dotcut      cutoff for minimum dotproduct in proper sheets
-//     dstrmin     matrix of (minimum diamer) distances of strands
-//     ind*        vector of indicators (0/1) for type of atom
-//     inddm       vector of indicators (0/1) for strand diamers
-//     lctn        array of residue (CA) positions
-//     locdsm      matrix of locations of (minimum diamer) distances of strands
-//     maxdt       maximum distance between two neighbour strands
-//     mindp       minimum dotproduct between two neighbour strands
-//     natm        number of atoms in the protein
-//     ngbhct      cutoff for strand distances that define neighbours
-//     nloc        number of local strand pairs (one sheet proteins only)
-//     nmamac      name of amino acid (single letter abbrev)
-//     nmatom      name of atom (standard abbrev)
-//     nnloc       number of non-local strand pairs (one sheet proteins only)
-//     nres        number of residues in the protein
-//     nsht        number of sheets in the protein
-//     nstr        number of strands in the protein
-//     order       order of the strands in a sheet
-//     proper      indicator sheet violations (1 no, 0 yes)
-//     rnm         vector of residue numbers of atoms
-//     rubbish     indicator (0 good structure; bigger 0 not)
-//     scstr       vector of secondary structure information
-//                 (1 helix, 2 strand, 3 turn)
-//     slct        array of strand numbers (in sequence) that are
-//                 involved in the sheet under consideration
-//     sequence    sequence of the strands in a sheet
-//     stpppt      vector of positions of strand ends
-//     strdm       array of diamer positions
-//     strdr       array of strand directions (3D)
-//     strlbl      labels of strands, indicating which sheet they belong to
-//     strnm       vector of strand number of residues
-//     strprs      matrix indicating which strands are neighbours (1 yes, 0 no)
-//     strsht      vector with numbers of strands in sheets
-//                 (is of length nstr for simplicity, but actually only the
-//                 first nsh integers are considered, rest is 0)
-//     strtpt      vector of positions of strand starts
-//     indN        vector of 0/1 for each atom in atmps  0=not N, 1=is N
-//     indCA,indC    like indN
+	//------------------------------------------------------------------------------
+	//     atmps       array of atom positions
+	//     directions  directions of the strands in a sheet
+	//     dotcut      cutoff for minimum dotproduct in proper sheets
+	//     dstrmin     matrix of (minimum diamer) distances of strands
+	//     ind*        vector of indicators (0/1) for type of atom
+	//     inddm       vector of indicators (0/1) for strand diamers
+	//     lctn        array of residue (CA) positions
+	//     locdsm      matrix of locations of (minimum diamer) distances of strands
+	//     maxdt       maximum distance between two neighbour strands
+	//     mindp       minimum dotproduct between two neighbour strands
+	//     natm        number of atoms in the protein
+	//     ngbhct      cutoff for strand distances that define neighbours
+	//     nloc        number of local strand pairs (one sheet proteins only)
+	//     nmamac      name of amino acid (single letter abbrev)
+	//     nmatom      name of atom (standard abbrev)
+	//     nnloc       number of non-local strand pairs (one sheet proteins only)
+	//     nres        number of residues in the protein
+	//     nsht        number of sheets in the protein
+	//     nstr        number of strands in the protein
+	//     order       order of the strands in a sheet
+	//     proper      indicator sheet violations (1 no, 0 yes)
+	//     rnm         vector of residue numbers of atoms
+	//     rubbish     indicator (0 good structure; bigger 0 not)
+	//     scstr       vector of secondary structure information
+	//                 (1 helix, 2 strand, 3 turn)
+	//     slct        array of strand numbers (in sequence) that are
+	//                 involved in the sheet under consideration
+	//     sequence    sequence of the strands in a sheet
+	//     stpppt      vector of positions of strand ends
+	//     strdm       array of diamer positions
+	//     strdr       array of strand directions (3D)
+	//     strlbl      labels of strands, indicating which sheet they belong to
+	//     strnm       vector of strand number of residues
+	//     strprs      matrix indicating which strands are neighbours (1 yes, 0 no)
+	//     strsht      vector with numbers of strands in sheets
+	//                 (is of length nstr for simplicity, but actually only the
+	//                 first nsh integers are considered, rest is 0)
+	//     strtpt      vector of positions of strand starts
+	//     indN        vector of 0/1 for each atom in atmps  0=not N, 1=is N
+	//     indCA,indC    like indN
 
-//     rubbish     filter indicator, note that if a structure fails at
-//                 one level, higher level filters are never evaluated
-//$$$  0: passed
-//$$$  1: no strands
-//$$$  2: a strand with more than 2 neighbours
-//$$$  3: a decoy with only one strand
-//$$$  4: a one-stranded sheet
-//$$$  5: bad dotproduct    // no longer a possible result
-//$$$  6: left handed connection between parallel neighbours
-//$$$  7: barrel type sheet
-//------------------------------------------------------------------------------
+	//     rubbish     filter indicator, note that if a structure fails at
+	//                 one level, higher level filters are never evaluated
+	//$$$  0: passed
+	//$$$  1: no strands
+	//$$$  2: a strand with more than 2 neighbours
+	//$$$  3: a decoy with only one strand
+	//$$$  4: a one-stranded sheet
+	//$$$  5: bad dotproduct    // no longer a possible result
+	//$$$  6: left handed connection between parallel neighbours
+	//$$$  7: barrel type sheet
+	//------------------------------------------------------------------------------
 
 	nstr = 0;
 	nsht = 0;
@@ -1282,20 +1282,20 @@ SheetFilter::ingo_sheet_stuff(
 		ingo_strand_dirs(nres,nstr,strtpt,stpppt,lctn,strdr);
 		ingo_strand_dists_min(nres,nstr,inddm,strnm,strdm,dstrmin,locdsm);
 		ingo_ident_sheets(nstr,dstrmin,ngbhct,strprs,nsht,strsht,strlbl,
-		 rubbish);
+			rubbish);
 		//rhiju  Rather than escape, want handedness to always be evaluated...
 		//if ( rubbish > 0 ) goto L1234;
 		ingo_proper_sheets(nstr,nsht,ngbhct,dstrmin,strdr,strsht,strlbl,
-		 rubbish,maxdt,mindp,strtpt,stpppt,locdsm,lctn,nres);
+			rubbish,maxdt,mindp,strtpt,stpppt,locdsm,lctn,nres);
 		//rhiju  Rather than escape, want handedness to always be evaluated...
 		//if ( rubbish > 0 ) goto L1234;
 
 		for ( int j = 1; j <= nsht; ++j ) {
-//js possible bug causing spurious rejections of native structures with
-//js code 7: sends strsht (an array) but expects hm, an integer.
-//js logically it looks like it should be strsh(j), the number of strands
-//js in sheet j.
-//js I am adding index (j) to strsht:
+			//js possible bug causing spurious rejections of native structures with
+			//js code 7: sends strsht (an array) but expects hm, an integer.
+			//js logically it looks like it should be strsh(j), the number of strands
+			//js in sheet j.
+			//js I am adding index (j) to strsht:
 			int const hm = strsht(j);
 			for ( int k = 1; k <= hm; ++k ) {
 				order(k) = 0;
@@ -1304,7 +1304,7 @@ SheetFilter::ingo_sheet_stuff(
 				directions(k) = 0;
 			}
 			ingo_find_ord(j,hm,nstr,strlbl,dstrmin,ngbhct,order,sequence,slct,
-			 rubbish);
+				rubbish);
 			//rhiju ingo_find_ord doesn't assign strand order and directions if the sheet
 			//rhiju forms a barrel. this might be worth fixing in the future, since we'd like to check
 			//rhiju handedness of BAB's in the barrel.
@@ -1314,7 +1314,7 @@ SheetFilter::ingo_sheet_stuff(
 			bool use_whole_helix (false);
 			for ( int k = 2; k <= hm; ++k ) {
 				ingo_hand(k,hm,stpppt,strtpt,slct(k-1),slct(k),order,strdr,
-				 nstr,nres,sequence,directions,scstr,lctn,use_whole_helix,rubbish);
+					nstr,nres,sequence,directions,scstr,lctn,use_whole_helix,rubbish);
 			}
 			// Following is new; slightly different computation of handedness, where
 			// the whole body of the helix (rather than just the regions closest to
@@ -1324,10 +1324,10 @@ SheetFilter::ingo_sheet_stuff(
 			use_whole_helix = true;
 			for ( int k = 2; k <= hm; ++k ) {
 				ingo_hand(k,hm,stpppt,strtpt,slct(k-1),slct(k),order,strdr,
-				 nstr,nres,sequence,directions,scstr,lctn,use_whole_helix,rubbish);
+					nstr,nres,sequence,directions,scstr,lctn,use_whole_helix,rubbish);
 			}
 		}
-//L1234:;
+		//L1234:;
 	}
 
 }
@@ -1510,7 +1510,7 @@ SheetFilter::ingo_strand_dists_min(
 					float const sd2 = si2 - strdm(j,2);
 					float const sd3 = si3 - strdm(j,3);
 					float const dist =
-					 std::sqrt( ( sd1 * sd1 ) + ( sd2 * sd2 ) + ( sd3 * sd3 ) );
+						std::sqrt( ( sd1 * sd1 ) + ( sd2 * sd2 ) + ( sd3 * sd3 ) );
 					if ( dist < dstrmin(strnm(i),strnm(j)) ) {
 						dstrmin(strnm(i),strnm(j)) = dist;
 						locdsm(strnm(i),strnm(j)) = i;
@@ -1521,19 +1521,19 @@ SheetFilter::ingo_strand_dists_min(
 		}
 	}
 
-//	std::cout << std::endl;
-//	for ( int i = 1; i <= nstr; ++i ) {
-//		for ( int j = 1; j <= nstr; ++j ) {
-//			std::cout << F( 9, 2, dstrmin(i,j) );
-//		} std::cout << std::endl;
-//	}
-//	std::cout << std::endl;
-//	for ( int i = 1; i <= nstr; ++i ) {
-//		for ( int j = 1; j <= nstr; ++j ) {
-//			std::cout << I( 5, locdsm(i,j) );
-//		} std::cout << std::endl;
-//	}
-//	std::cout << std::endl;
+	// std::cout << std::endl;
+	// for ( int i = 1; i <= nstr; ++i ) {
+	//  for ( int j = 1; j <= nstr; ++j ) {
+	//   std::cout << F( 9, 2, dstrmin(i,j) );
+	//  } std::cout << std::endl;
+	// }
+	// std::cout << std::endl;
+	// for ( int i = 1; i <= nstr; ++i ) {
+	//  for ( int j = 1; j <= nstr; ++j ) {
+	//   std::cout << I( 5, locdsm(i,j) );
+	//  } std::cout << std::endl;
+	// }
+	// std::cout << std::endl;
 
 }
 
@@ -1588,7 +1588,7 @@ SheetFilter::ingo_clean_ss(
 {
 	scstr.dimension( nres );
 
-// --- first and last residue strand check
+	// --- first and last residue strand check
 	if ( scstr(nres) == 2 && scstr(nres-1) != 2 ) {
 		scstr(nres) = 3;
 	}
@@ -1596,7 +1596,7 @@ SheetFilter::ingo_clean_ss(
 		scstr(1) = 3;
 	}
 
-// --- single residue strand checks
+	// --- single residue strand checks
 	for ( int j = 2; j <= (nres-1); ++j ) {
 		if ( scstr(j-1) == 2 && scstr(j) != 2 && scstr(j+1) == 2 ) {
 			scstr(j) = 2;

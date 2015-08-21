@@ -10,7 +10,7 @@
 /// @file       protocols/relax/membrane/MPFastRelaxMoverCreator.hh
 ///
 /// @brief      Membrane Fast Relax Protocol - Relax with minimization of mem position
-/// @details	Apply the standard fast relax protocol. Enable minimization of the memrbane
+/// @details Apply the standard fast relax protocol. Enable minimization of the memrbane
 ///             jump and relax from the center of mass. Also use the smoothed
 ///             full atom membrane energy function.
 ///
@@ -29,13 +29,13 @@ namespace membrane {
 
 /// @brief Mover Creator
 class MPFastRelaxMoverCreator : public protocols::moves::MoverCreator {
-    
+
 public:
-    
-    virtual protocols::moves::MoverOP create_mover() const;
-    virtual std::string keyname() const;
-    static std::string mover_name();
-    
+
+	virtual protocols::moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
+	static std::string mover_name();
+
 };
 
 } // membrane

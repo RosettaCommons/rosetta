@@ -236,9 +236,9 @@ void BDR::apply( Pose & pose ) {
 	CalculatorFactory::Instance().register_calculator(
 		loops_buns_polar_calc_name(),
 		PoseMetricCalculatorOP( new BuriedUnsatisfiedPolarsCalculator(
-			"default",
-			"default",
-			manager_.union_of_intervals_containing_undefined_positions()
+		"default",
+		"default",
+		manager_.union_of_intervals_containing_undefined_positions()
 		) )
 	);
 
@@ -247,9 +247,9 @@ void BDR::apply( Pose & pose ) {
 	CalculatorFactory::Instance().register_calculator(
 		neighborhood_buns_polar_calc_name(),
 		PoseMetricCalculatorOP( new BuriedUnsatisfiedPolarsCalculator(
-			"default",
-			"default",
-			loops_neighborhood.value()
+		"default",
+		"default",
+		loops_neighborhood.value()
 		) )
 	);
 }
@@ -524,14 +524,14 @@ void BDR::process_continuous_design_string(
 		utility::vector1< bool > allowed_aa_types( 20, false );
 
 		switch ( design_str.at( i ) ) {
-			case 's': // surface case, no CFWY
-				allowed_aa_types = allowed_surface_aa();
-				break;
-			case '.': // protocol default design
-				continue;
-			default: // regular case, single aa type
-				allowed_aa_types[ aa_from_oneletter_code( design_str.at( i ) ) ] = true;
-				break;
+		case 's' : // surface case, no CFWY
+			allowed_aa_types = allowed_surface_aa();
+			break;
+		case '.' : // protocol default design
+			continue;
+		default : // regular case, single aa type
+			allowed_aa_types[ aa_from_oneletter_code( design_str.at( i ) ) ] = true;
+			break;
 		}
 
 		design_tf->push_back( TaskOperationCOP( new RestrictAbsentCanonicalAAS( i + offset, allowed_aa_types ) ) );

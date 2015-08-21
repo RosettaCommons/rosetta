@@ -51,7 +51,7 @@ public:
 
 	/// @brief constructor with arguments
 	ModelCDRH3(  AntibodyInfoOP antibody_info ,
-	             core::scoring::ScoreFunctionCOP lowres_scorefxn);
+		core::scoring::ScoreFunctionCOP lowres_scorefxn);
 
 	/// @brief default destructor
 	~ModelCDRH3();
@@ -151,7 +151,7 @@ private:
 	std::string remodel_;
 	bool extend_h3_;
 	bool idealize_h3_stems_;
-    
+
 }; // class ModelCDRH3
 
 

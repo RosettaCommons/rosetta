@@ -7,26 +7,26 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/PcsInputCenterManager.cc
- ///
- /// @brief Singleton that hold everything about the input PCS
- /// This avoid multiple reading of the input file.
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/PcsInputCenterManager.cc
+///
+/// @brief Singleton that hold everything about the input PCS
+/// This avoid multiple reading of the input file.
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 
 // Unit headers
@@ -43,10 +43,10 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs2{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs2 {
 
 static thread_local basic::Tracer TR_PcsInputCenterManager( "protocols.scoring.methods.pcs.PcsInputCenterManager" );
 
@@ -65,13 +65,13 @@ operator<<(std::ostream& out, const PcsInputCenterManager &me){
 	out << "Number of paramagnetic center: "<<  n << std::endl;
 
 	i = 1;
-	for ( it = junk.begin(); it != junk.end(); ++it) {
+	for ( it = junk.begin(); it != junk.end(); ++it ) {
 		out << "Paramagnetic center " << i << " / " << n << std::endl;
 		out << "Filename(s) " << it->first <<std::endl;
 		out << it->second ;
 		i++;
 	}
-	//	out << std::endl;
+	// out << std::endl;
 
 	return out;
 }
@@ -80,43 +80,43 @@ operator<<(std::ostream& out, const PcsInputCenterManager &me){
 void
 PcsInputCenterManager::re_init(){
 
-	//	core::Size n(PcsInputCenter_all_.size());
-	//	core::Size i(1);
+	// core::Size n(PcsInputCenter_all_.size());
+	// core::Size i(1);
 
 	PcsInputCenter_all_.clear();
-	//	std::cerr <<"CHECKING aa 0 = " << PcsInputCenter_all_.size();
+	// std::cerr <<"CHECKING aa 0 = " << PcsInputCenter_all_.size();
 
 }
 
-	//TODO Why don't I give back a reference?
+//TODO Why don't I give back a reference?
 PcsInputCenter
 PcsInputCenterManager::get_PcsInputCenter_for(utility::vector1<std::string> const & filenames, utility::vector1<core::Real> const & weight){
 	std::string id;
 	core::Size i;
 
-	for(i = 1; i <= filenames.size(); ++i){
+	for ( i = 1; i <= filenames.size(); ++i ) {
 		id += filenames[i];
 	}
 
 	std::map< std::string, PcsInputCenter >::iterator it;
 
 	for ( it = PcsInputCenter_all_.begin(); it != PcsInputCenter_all_.end(); ++it ) {
-		if(it->first == id){
+		if ( it->first == id ) {
 			return(it->second);
 		}
 	}
 
-	//	PcsInputCenter pcs_i_c;
+	// PcsInputCenter pcs_i_c;
 	//  pcs_i_c = new PcsInputCenter(filenames, weight);
 
 	PcsInputCenter pcs_i_c(filenames, weight);
 
-	//	PcsInputCenter pcs_i_c = new PcsInputCenter(filenames, weight);
+	// PcsInputCenter pcs_i_c = new PcsInputCenter(filenames, weight);
 
 	it = PcsInputCenter_all_.begin();
 	PcsInputCenter_all_.insert(it, std::pair< std::string , PcsInputCenter >( id ,pcs_i_c));
 
-	//	TR_PcsInputCenterManager << pcs_i_c << std::endl;
+	// TR_PcsInputCenterManager << pcs_i_c << std::endl;
 
 	return(pcs_i_c);
 }

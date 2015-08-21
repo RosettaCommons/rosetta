@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/magnesium/MgMonteCarlo.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -20,12 +20,12 @@
 
 namespace protocols {
 namespace magnesium {
-	
-	class MgMonteCarlo;
-	typedef utility::pointer::shared_ptr< MgMonteCarlo > MgMonteCarloOP;
-	typedef utility::pointer::shared_ptr< MgMonteCarlo const > MgMonteCarloCOP;
-	
-} //magnesium 
-} //protocols 
+
+class MgMonteCarlo;
+typedef utility::pointer::shared_ptr< MgMonteCarlo > MgMonteCarloOP;
+typedef utility::pointer::shared_ptr< MgMonteCarlo const > MgMonteCarloCOP;
+
+} //magnesium
+} //protocols
 
 #endif

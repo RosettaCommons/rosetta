@@ -55,7 +55,7 @@ public:
 			gap_open(),
 			gap_extend(),
 			scoring_schemes()
-		) );
+			) );
 	}
 
 	utility::vector1< ScoringSchemeOP > scoring_schemes() const {

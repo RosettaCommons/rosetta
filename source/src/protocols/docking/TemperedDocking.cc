@@ -75,10 +75,10 @@
 bool protocols::docking::TemperedDocking::options_registered_( false );
 
 void protocols::docking::TemperedDocking::register_options() {
-  using namespace basic::options;
-  using namespace OptionKeys;
-  if ( options_registered_ ) return;
-  options_registered_ = true;
+	using namespace basic::options;
+	using namespace OptionKeys;
+	if ( options_registered_ ) return;
+	options_registered_ = true;
 	protocols::canonical_sampling::SimulatedTempering::register_options();
 	protocols::canonical_sampling::ParallelTempering::register_options();
 	protocols::canonical_sampling::SilentTrajectoryRecorder::register_options();
@@ -139,7 +139,7 @@ TemperedDocking::TemperedDocking( TemperedDocking const & rhs ) :
 /// @brief assignment operator
 TemperedDocking & TemperedDocking::operator=( TemperedDocking const & rhs ){
 	//abort self-assignment
-	if (this == &rhs) return *this;
+	if ( this == &rhs ) return *this;
 	Mover::operator=(rhs);
 	copy(*this, rhs);
 	return *this;
@@ -164,7 +164,7 @@ void TemperedDocking::copy(TemperedDocking & lhs, TemperedDocking const & rhs){
 
 	lhs.to_centroid_ = rhs.to_centroid_->clone();
 
-	if( rhs.docking_constraint_ )	lhs.docking_constraint_ = rhs.docking_constraint_->clone();
+	if ( rhs.docking_constraint_ ) lhs.docking_constraint_ = rhs.docking_constraint_->clone();
 }
 
 //// ----------------------------------- END CONSTRUCTORS --------------------------------------------------
@@ -173,7 +173,7 @@ void TemperedDocking::copy(TemperedDocking & lhs, TemperedDocking const & rhs){
 void
 TemperedDocking::finalize_setup( pose::Pose & pose ) //setup objects requiring pose during apply
 {
-	if( autofoldtree_ ) {
+	if ( autofoldtree_ ) {
 		tr.Info << "Setting docking foldtree" << std::endl;
 		tr.Info << "old fold tree: " << pose.fold_tree() << std::endl;
 		setup_foldtree( pose, partners_, movable_jumps_ );
@@ -198,17 +198,17 @@ void
 TemperedDocking::apply( pose::Pose & pose )
 {
 	/// -------------- any changes ? ------------------------------------------------------
-	if ( !flags_and_objects_are_in_sync_ ){
+	if ( !flags_and_objects_are_in_sync_ ) {
 		sync_objects_with_flags();
 	}
 
 	/// ---------------- do we have to call finalize_setup() again ? -------------------------////
-	if ( previous_sequence_.compare( pose.sequence() ) != 0 ){
+	if ( previous_sequence_.compare( pose.sequence() ) != 0 ) {
 		first_apply_with_current_setup_ = true;
 		previous_sequence_ = pose.sequence();
 	}
 
-	if ( first_apply_with_current_setup_ ){
+	if ( first_apply_with_current_setup_ ) {
 		finalize_setup( pose );
 		first_apply_with_current_setup_ = false;
 	}
@@ -282,7 +282,7 @@ protocols::moves::MoverCOP TemperedDocking::to_centroid() const {
 void
 TemperedDocking::show( std::ostream & out ) const {
 	/*if ( !flags_and_objects_are_in_sync_ ){
-		sync_objects_with_flags();
+	sync_objects_with_flags();
 	}*/  // show() should be const.
 	out << *this;
 }
@@ -301,18 +301,17 @@ std::ostream & operator<<(std::ostream& out, const TemperedDocking & dp )
 
 	core::Size spaces_so_far = 23;
 	bool first = true;
-	for ( DockJumps::const_iterator it = dp.movable_jumps_.begin() ; it != dp.movable_jumps_.end() ; ++it ){
-		if (!first) {
+	for ( DockJumps::const_iterator it = dp.movable_jumps_.begin() ; it != dp.movable_jumps_.end() ; ++it ) {
+		if ( !first ) {
 			out << ", ";
 			spaces_so_far += 2;
-		}
-		else first = false;
+		} else first = false;
 
 		out << I( 1, *it );
 		spaces_so_far += 1;
 	}
 	core::Size remaining_spaces = 80 - spaces_so_far;
-	if ( remaining_spaces > 0 )	out << space( 80 - spaces_so_far );
+	if ( remaining_spaces > 0 ) out << space( 80 - spaces_so_far );
 	out << line_marker << std::endl;
 
 	// Close the box I have drawn
@@ -394,18 +393,18 @@ TemperedDocking::init_from_options()
 	}
 
 	// check for movable jumps option
-	if( option[ OptionKeys::docking::multibody ].user() ) {
+	if ( option[ OptionKeys::docking::multibody ].user() ) {
 		set_movable_jumps( option[ OptionKeys::docking::multibody ]() );
 	}
 
 	// Sets the member directly so sync_objects_with_flags won't be triggered prematurely.
 	// A public setter exists for this member.
-	if( option[ OptionKeys::docking::sc_min ].user() ) {
+	if ( option[ OptionKeys::docking::sc_min ].user() ) {
 		sc_min_ = option[ OptionKeys::docking::sc_min ]();
 	}
 
 	// This defaults to "_"
-	if( option[ OptionKeys::docking::partners ].user() ) {
+	if ( option[ OptionKeys::docking::partners ].user() ) {
 		set_partners(option[ OptionKeys::docking::partners ]());
 	}
 
@@ -441,18 +440,18 @@ TemperedDocking::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & dat
 {
 	using namespace core::scoring;
 
-	if( tag->hasOption("docking_score_low" ) ){
+	if ( tag->hasOption("docking_score_low" ) ) {
 		std::string const score_low( tag->getOption<std::string>( "docking_score_low" ) );
 		ScoreFunctionOP scorelo = data.get< ScoreFunction * >( "scorefxns", score_low )->clone();
 		set_lowres_scorefxn(scorelo);
 	}
-	if( tag->hasOption("docking_score_high" ) ){
+	if ( tag->hasOption("docking_score_high" ) ) {
 		std::string const score_high( tag->getOption<std::string>( "docking_score_high" ) );
 		ScoreFunctionOP scorehi = data.get< ScoreFunction * >( "scorefxns", score_high )->clone();
 		set_highres_scorefxn(scorehi);
 	}
 	//get through partners
-	if( tag->hasOption( "partners" ) ){
+	if ( tag->hasOption( "partners" ) ) {
 		std::string const partners( tag->getOption<std::string>( "partners") );
 		set_partners(partners);
 	}

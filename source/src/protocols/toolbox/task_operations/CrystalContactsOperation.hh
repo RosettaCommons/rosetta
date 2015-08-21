@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/toolbox/task_operations/CrystalContactsOperation.hh 
-/// @brief  Exclude crystal contacts from design 
-/// @author Patrick Conway (ptconway@uw.edu) 
+/// @file   protocols/toolbox/task_operations/CrystalContactsOperation.hh
+/// @brief  Exclude crystal contacts from design
+/// @author Patrick Conway (ptconway@uw.edu)
 
 #ifndef INCLUDED_protocols_toolbox_task_operations_CrystalContactsOperation_hh
 #define INCLUDED_protocols_toolbox_task_operations_CrystalContactsOperation_hh
@@ -31,7 +31,7 @@
 
 // C++ Headers
 
-namespace protocols { 
+namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
@@ -43,8 +43,8 @@ public:
 		core::Real max_buried_sasa_ = 0.01,
 		bool invert = false,
 		bool nbr_radius_to_nbr_radius = false,
-  	bool nbr_radius_to_atoms = true,
-  	bool atoms_to_atoms = false);
+		bool nbr_radius_to_atoms = true,
+		bool atoms_to_atoms = false);
 
 	virtual ~CrystalContactsOperation();
 
@@ -66,12 +66,12 @@ private:
 	bool invert_;
 
 	bool nbr_radius_to_nbr_radius_;
-  bool nbr_radius_to_atoms_;
-  bool atoms_to_atoms_;
+	bool nbr_radius_to_atoms_;
+	bool atoms_to_atoms_;
 };
 
 } //namespace task_operations
 } //namespace toolbox
 } //namespace protocols
 
-#endif 
+#endif

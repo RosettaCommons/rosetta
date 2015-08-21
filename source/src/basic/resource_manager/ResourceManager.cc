@@ -89,7 +89,7 @@ ResourceManager::find_resource(
 ) {
 	ResourcesMap::const_iterator resource(
 		resources_.find(resource_tag));
-	if(resource == resources_.end()){
+	if ( resource == resources_.end() ) {
 		stringstream err_msg;
 		err_msg
 			<< "Unable to find resource for the resource tag '"
@@ -110,7 +110,7 @@ void
 ResourceManager::free_resource(
 	ResourceTag const & resource_tag
 ) {
-	if(!has_resource(resource_tag)){
+	if ( !has_resource(resource_tag) ) {
 		stringstream err_msg;
 		err_msg
 			<< "Attempting to free resource with tag '" << resource_tag << "' "
@@ -128,9 +128,9 @@ ResourceManager::show(
 	out
 		<< "ResourceManager.resources:" << endl
 		<< std::setiosflags(std::ios::left) << setw(16) << "ResourceTag" << "ResourceExists" << endl;
-	for(
-		ResourceManager::ResourcesMap::const_iterator
-			r = resources_.begin(), re = resources_.end(); r != re; ++r){
+	for (
+			ResourceManager::ResourcesMap::const_iterator
+			r = resources_.begin(), re = resources_.end(); r != re; ++r ) {
 		out
 			<< std::setiosflags(std::ios::left) << setw(16) << r->first
 			<< (r->second ? "true" : "false") << endl;

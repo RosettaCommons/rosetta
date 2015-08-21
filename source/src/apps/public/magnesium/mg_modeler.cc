@@ -94,13 +94,13 @@ mg_modeler_test()
 		// mg_res usually is alist of all mg(2+) in one pose. But if there are multiple poses, assume a single res specified
 		// for each -- makes benchmark code easy.
 		vector1< Size > pdb_mg_res( input_pdb_mg_res );
-		if ( input_pdb_files.size() > 0 && pdb_mg_res.size() > 0 ){
+		if ( input_pdb_files.size() > 0 && pdb_mg_res.size() > 0 ) {
 			runtime_assert( input_pdb_files.size() == input_pdb_mg_res.size() );
 			pdb_mg_res = utility::tools::make_vector1( input_pdb_mg_res[ q ] );
 		}
 
 		std::string tag;
-		if ( option[ magnesium::fixup ]() ){
+		if ( option[ magnesium::fixup ]() ) {
 			fixup_magnesiums( pose );
 			TR << TR.Blue << "Just did basic fixup -- mg frame orientation & water-bound mg repacking." << TR.Reset << std::endl;
 			TR << TR.Blue << "If you want to build mg2+-bound waters, run this app with -hydrate flag." << TR.Reset << std::endl;
@@ -126,8 +126,8 @@ mg_modeler_test()
 			}
 			// produce some diagnostic output.
 			get_hydration_stats( pose, *reference_pose, pdb_mg_res,
-													 option[ out::file::o ].user() ? option[ out::file::o ]() : "default.out" );
-		} else if ( option[ magnesium::monte_carlo ]() ){
+				option[ out::file::o ].user() ? option[ out::file::o ]() : "default.out" );
+		} else if ( option[ magnesium::monte_carlo ]() ) {
 			MgMonteCarlo mg_monte_carlo;
 			mg_monte_carlo.set_cycles( option[ magnesium::montecarlo::cycles ]() );
 			mg_monte_carlo.set_temperature( option[ magnesium::montecarlo::temperature ]() );
@@ -183,7 +183,7 @@ my_main( void* )
 	mg_modeler_test();
 	protocols::viewer::clear_conformation_viewers();
 	std::cout << "Total time to run " << static_cast<Real>( clock() - my_main_time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
-  exit( 0 );
+	exit( 0 );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

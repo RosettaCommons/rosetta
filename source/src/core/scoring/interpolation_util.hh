@@ -43,16 +43,16 @@ interpolate_value_and_deriv(
 	value = 0.0;
 	deriv = 0.0;
 
-	if (r_bin_lo > NUM_BINS ) return;
+	if ( r_bin_lo > NUM_BINS ) return;
 
-	if (r_bin_hi > NUM_BINS ){
+	if ( r_bin_hi > NUM_BINS ) {
 		value = potential( NUM_BINS );
-	} else if (r_bin_lo < 1 ) {
+	} else if ( r_bin_lo < 1 ) {
 		value = potential( 1 );
 	} else {
 		Real const fraction = (r/bin_width + 0.5) - r_bin_lo;
 		value = ( (1 - fraction ) * potential( r_bin_lo ) +
-							fraction * potential( r_bin_hi ) );
+			fraction * potential( r_bin_hi ) );
 		deriv = ( potential( r_bin_hi ) - potential( r_bin_lo ) ) / bin_width;
 	}
 

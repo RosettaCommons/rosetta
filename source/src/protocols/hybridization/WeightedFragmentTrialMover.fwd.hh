@@ -21,14 +21,14 @@
 namespace protocols {
 //namespace comparative_modeling {
 namespace hybridization {
-			
+
 class WeightedFragmentTrialMover;
 typedef utility::pointer::shared_ptr< WeightedFragmentTrialMover > WeightedFragmentTrialMoverOP;
 typedef utility::pointer::shared_ptr< WeightedFragmentTrialMover const > WeightedFragmentTrialMoverCOP;
 
 
-} // hybridize 
-//} // comparative_modeling 
+} // hybridize
+//} // comparative_modeling
 } // protocols
 
 #endif

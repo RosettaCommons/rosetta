@@ -87,38 +87,38 @@ AtomTreeDiff::AtomTreeDiff(std::string filename):
 }
 
 void AtomTreeDiff::read_file(std::string filename){
-debug_assert( ! file_read_ ); // only read file once, by constructor or elsewhere. can't read multiple files yet
+	debug_assert( ! file_read_ ); // only read file once, by constructor or elsewhere. can't read multiple files yet
 	in_.open(filename.c_str());
 	core::pose::PoseOP ref_pose;
 	std::set<std::string> used_tags;
-	while(true) {
+	while ( true ) {
 		std::string tag;
 		std::map< std::string, core::Real > scores;
 		// in_ is now positioned just after the SCORES line of the *previous* structure
 		// If we use this position, we must call header_from_atom_tree_diff() when re-reading.
 		long curr_pos = in_.tellg();
-		if( ! header_from_atom_tree_diff(in_, tag, scores) ) break;
+		if ( ! header_from_atom_tree_diff(in_, tag, scores) ) break;
 		// in_ is now positioned just after the SCORES line of *this* structure
 		// If we use this position, we must NOT call header_from_atom_tree_diff() when re-reading.
 		//long curr_pos = in_.tellg();
 
-		if( used_tags.count(tag) > 0 ) {
+		if ( used_tags.count(tag) > 0 ) {
 			basic::Error() << "Tag " << tag << " appears at least twice in the atom_tree_diff file!  Discarding structure..." << std::endl;
 			continue;
 		}
 		core::Size const end= tag.find_last_of('_');
-		if( end == std::string::npos){
+		if ( end == std::string::npos ) {
 			utility_exit_with_message(tag+" doesn't end with a 4-digit code");
 		}
 		std::string ref_tag= tag.substr(0, end);
-		if( scores.find("is_reference_pose") != scores.end() ) {
+		if ( scores.find("is_reference_pose") != scores.end() ) {
 			core::pose::Pose empty_pose;
 			ref_pose = core::pose::PoseOP( new core::pose::Pose() );
 			core::import_pose::atom_tree_diffs::pose_from_atom_tree_diff(in_, empty_pose, *ref_pose);
 			unique_ref_poses_.push_back(ref_pose);
 			core::Size const start= ref_tag.find_first_of('_');
 			ref_tag= ref_tag.substr(start+1);
-			if( ref_tags_.find(ref_tag) != ref_tags_.end() ){
+			if ( ref_tags_.find(ref_tag) != ref_tags_.end() ) {
 				basic::Error() << "Tag " << ref_tag << " appears at least twice in the atom_tree_diff file!  Discarding reference structure..." << std::endl;
 				continue;
 			}
@@ -172,7 +172,7 @@ void AtomTreeDiff::sort_by(
 
 void AtomTreeDiff::read_pose(std::string const & tag, core::pose::Pose & pose_out)
 {
-	if( ref_poses_.find(tag) == ref_poses_.end() || ref_poses_[tag].get() == NULL ) {
+	if ( ref_poses_.find(tag) == ref_poses_.end() || ref_poses_[tag].get() == NULL ) {
 		utility_exit_with_message("No reference pose available for "+tag);
 	}
 	read_pose( tag, pose_out, *(ref_poses_[tag]) );
@@ -183,13 +183,13 @@ void AtomTreeDiff::read_pose(std::string const & tag, core::pose::Pose & pose_ou
 	//std::cout << "Seeking to " << offsets_[tag] << std::endl;
 	in_.seekg( offsets_[tag] );
 	//std::cout << "Now at " << in_.tellg() << std::endl;
-	if( offsets_[tag] != (long)in_.tellg() ) {
+	if ( offsets_[tag] != (long)in_.tellg() ) {
 		utility_exit_with_message("Unable to seek in input file!");
 	}
 
 	std::string tag_reread;
 	Scores scores_reread;
-	if( !core::import_pose::atom_tree_diffs::header_from_atom_tree_diff(in_, tag_reread, scores_reread) || tag != tag_reread ) {
+	if ( !core::import_pose::atom_tree_diffs::header_from_atom_tree_diff(in_, tag_reread, scores_reread) || tag != tag_reread ) {
 		utility_exit_with_message("Seek took us to the wrong entry!");
 	}
 	pose_from_atom_tree_diff( in_, ref_pose, pose_out );
@@ -199,7 +199,7 @@ void AtomTreeDiff::read_pose(std::string const & tag, core::pose::Pose & pose_ou
 // For reasons I don't understand, GCC will not compile this if I mark this "const":
 core::pose::PoseCOP AtomTreeDiff::ref_pose_for(std::string const & tag)
 {
-	if( ref_poses_.find(tag) == ref_poses_.end() || ref_poses_[tag].get() == NULL ) {
+	if ( ref_poses_.find(tag) == ref_poses_.end() || ref_poses_[tag].get() == NULL ) {
 		utility_exit_with_message("No reference pose available for "+tag);
 	}
 	return ref_poses_[tag];
@@ -215,13 +215,13 @@ void dump_score_line(
 	// Repeating the pose tag in the score line is a great convenience
 	// for grepping out score data and later correlating it with a model.
 	out << "SCORES " << pose_tag;
-	BOOST_FOREACH(ScorePair pair, scores){
+	BOOST_FOREACH ( ScorePair pair, scores ) {
 		// Scores that are very near zero have artificially high precision
 		// when rendered in scientific notation, leading to numerical instability in benchmarks.
 		// Stupid C++ doesn't seem to have a fixed-point output mode
 		// that doesn't also append extra (unneeded) zeros to the end of every float.
 		core::Real val = pair.second;
-		if( std::abs(val) < 1e-8 ) val = 0.0;
+		if ( std::abs(val) < 1e-8 ) val = 0.0;
 		out << ' ' << pair.first << ' ' << val;
 	}
 	out << '\n';
@@ -251,7 +251,7 @@ void dump_reference_pose(
 
 	// Some variants introduce extra DOFs but do not change the three-letter name.
 	// Useless MUTATE entries will be ignored when reading in.
-	for(Size rsd = 1, rsd_end = pose.total_residue(); rsd <= rsd_end; ++rsd) {
+	for ( Size rsd = 1, rsd_end = pose.total_residue(); rsd <= rsd_end; ++rsd ) {
 		out << "MUTATE " << rsd << " " << pose.residue_type(rsd).name() << "\n";
 	}
 
@@ -290,11 +290,11 @@ void dump_atom_tree_diff(
 	using namespace core::id;
 	using namespace core::scoring;
 
-	if(bb_precision < sc_precision) Warning() << "Crazy fool, bb_precision should be >= sc_precision!" << std::endl;
+	if ( bb_precision < sc_precision ) Warning() << "Crazy fool, bb_precision should be >= sc_precision!" << std::endl;
 	Real bb_tol = 1.0, sc_tol = 1.0, bondlen_tol = 1.0;
-	for(int i = 0; i < bb_precision; ++i) bb_tol /= 10.0;
-	for(int i = 0; i < sc_precision; ++i) sc_tol /= 10.0;
-	for(int i = 0; i < bondlen_precision; ++i) bondlen_tol /= 10.0;
+	for ( int i = 0; i < bb_precision; ++i ) bb_tol /= 10.0;
+	for ( int i = 0; i < sc_precision; ++i ) sc_tol /= 10.0;
+	for ( int i = 0; i < bondlen_precision; ++i ) bondlen_tol /= 10.0;
 
 	core::kinematics::AtomTree const & atom_tree = pose.atom_tree();
 	core::kinematics::FoldTree const & foldtree = pose.fold_tree();
@@ -305,8 +305,8 @@ void dump_atom_tree_diff(
 	// Also diff sequence, by transforming copy of ref_pose
 	// to match seq. of pose, then computing atom_tree diffs.
 	core::pose::Pose ref_pose(ref_pose_in);
-	for(Size rsd = 1, rsd_end = pose.total_residue(); rsd <= rsd_end; ++rsd) {
-		if( pose.residue_type(rsd).name() == ref_pose.residue_type(rsd).name() ) continue;
+	for ( Size rsd = 1, rsd_end = pose.total_residue(); rsd <= rsd_end; ++rsd ) {
+		if ( pose.residue_type(rsd).name() == ref_pose.residue_type(rsd).name() ) continue;
 		using namespace core::conformation;
 		ResidueOP newres = ResidueFactory::create_residue(pose.residue_type(rsd), ref_pose.residue(rsd), ref_pose.conformation());
 		ref_pose.replace_residue(rsd, *newres, true /*orient backbone*/);
@@ -325,12 +325,12 @@ void dump_atom_tree_diff(
 	out.setf( std::ios_base::fixed );
 
 	// DOFs for bonded atoms
-	for(Size rsd = 1, rsd_end = pose.total_residue(); rsd <= rsd_end; ++rsd) {
+	for ( Size rsd = 1, rsd_end = pose.total_residue(); rsd <= rsd_end; ++rsd ) {
 		bool const is_jump_residue = foldtree.is_jump_point(rsd);
-		for(Size atom = 1, atom_end = pose.residue(rsd).natoms(); atom <= atom_end; ++atom) {
+		for ( Size atom = 1, atom_end = pose.residue(rsd).natoms(); atom <= atom_end; ++atom ) {
 			AtomID aid(atom, rsd);
 			DOF_ID dof_phi(aid, PHI), dof_theta(aid, THETA), dof_d(aid, D);
-			if( atom_tree.atom(aid).is_jump() ) {
+			if ( atom_tree.atom(aid).is_jump() ) {
 				// Jump atoms have the rbN values all set to zero -- maybe vestigal part of atom tree?
 			} else {
 				// Backbone heavyatoms have to be very precise, or else a lot of error
@@ -351,14 +351,14 @@ void dump_atom_tree_diff(
 				bool const changed_phi = (std::abs(numeric::nearest_angle_radians(after_phi, before_phi) - before_phi) > tol); // otherwise get bogus diffs near pi
 				bool const changed_theta = (std::abs(after_theta - before_theta) > tol); // rarely near pi, so I haven't put in the check
 				bool const changed_d = (std::abs(after_d - before_d) > bondlen_tol);
-				if( changed_phi || changed_theta || changed_d ) {
+				if ( changed_phi || changed_theta || changed_d ) {
 					out.precision( precision );
 					out << rsd << ' ' << atom;
 					//out << ' ' << pose.residue(rsd).name() << ' ' << pose.residue(rsd).atom_name(atom); // debugging
 					out << ' ' << after_phi;
-					if( changed_theta || changed_d ) {
+					if ( changed_theta || changed_d ) {
 						out << ' ' << after_theta;
-						if( changed_d ) {
+						if ( changed_d ) {
 							out.precision( bondlen_precision );
 							out << ' ' << after_d;
 						}
@@ -370,7 +370,7 @@ void dump_atom_tree_diff(
 	}// end loop over residues
 
 	// DOFs for jumps
-	for(int jump = 1, jump_end = pose.num_jump(); jump <= jump_end; ++jump) {
+	for ( int jump = 1, jump_end = pose.num_jump(); jump <= jump_end; ++jump ) {
 		out << "JUMP " << jump;
 		out.precision( 12 ); // matrix needs to be very exact
 		for ( int i = 1; i <= 3; ++i ) {
@@ -408,22 +408,22 @@ bool header_from_atom_tree_diff(
 {
 	scores_out.clear();
 	bool found_tag = false, found_scores = false;
-	while( in.good() && !( found_tag && found_scores ) ) {
+	while ( in.good() && !( found_tag && found_scores ) ) {
 		std::string line, key;
 		core::Real value;
 		getline(in, line);
-		if( in.fail() ) return false;
+		if ( in.fail() ) return false;
 		std::istringstream is(line);
 		is >> key;
-		if( key == "POSE_TAG" ) {
+		if ( key == "POSE_TAG" ) {
 			found_tag = true;
 			is >> pose_tag_out;
 		} else if ( key == "SCORES" ) {
 			is >> key; // discard redundant pose_tag field
 			found_scores = true;
-			while( is.good() ) {
+			while ( is.good() ) {
 				is >> key >> value;
-				if( is.fail() ) break;
+				if ( is.fail() ) break;
 				scores_out[ key ] = value;
 			}
 		}
@@ -452,10 +452,10 @@ bool pose_from_atom_tree_diff(
 	pose = ref_pose; // deep copy
 
 	basic::Tracer TR( "core.import_pose.atom_tree_diffs.atom_tree_diff.pose_from_atom_tree_diff" );
-	while( in.good() ) {
+	while ( in.good() ) {
 		std::string line, key;
 		getline(in, line);
-		if( in.fail() ) {
+		if ( in.fail() ) {
 			TR << "getline() failed" << std::endl;
 			return false;
 		}
@@ -464,19 +464,19 @@ bool pose_from_atom_tree_diff(
 		// Start by assuming it will be an atom line, then backtrack if not
 		core::Size rsd_no, atom_no;
 		is >> rsd_no >> atom_no;
-		if( is.fail() ) {
+		if ( is.fail() ) {
 			//TR << "oops, not an atom line!" << std::endl;
 			//TR << ">> " << line << std::endl;
 			is.clear();
 			is.seekg(0, std::ios::beg);
 			is >> key;
-			if( key == "END_POSE_TAG" ) return true;
+			if ( key == "END_POSE_TAG" ) return true;
 			// I changed to uppercase for format consistency on 6 Dec 2007.
 			// Check for the deprecated lowercase version could eventually be removed.
-			else if( key == "JUMP" || key == "jump" ) {
+			else if ( key == "JUMP" || key == "jump" ) {
 				core::Size jump_no;
 				is >> jump_no;
-				if( is.fail() || jump_no < 1 || jump_no > pose.num_jump() ) {
+				if ( is.fail() || jump_no < 1 || jump_no > pose.num_jump() ) {
 					TR << "uh-oh, pose doesn't have a jump " << jump_no << std::endl;
 				} else {
 					Jump::Matrix mat;
@@ -490,7 +490,7 @@ bool pose_from_atom_tree_diff(
 					for ( int i = 1; i <= 3; ++i ) {
 						is >> vec(i);
 					}
-					if( is.fail() ) {
+					if ( is.fail() ) {
 						TR << "error reading in jump data for jump " << jump_no << std::endl;
 					} else {
 						jump.set_rotation(mat);
@@ -498,18 +498,18 @@ bool pose_from_atom_tree_diff(
 						pose.set_jump(jump_no, jump);
 					}
 				}
-			} else if( key == "MUTATE" ) {
+			} else if ( key == "MUTATE" ) {
 				core::Size resnum;
 				std::string resname;
 				is >> resnum >> resname;
 				resname = chemical::fixup_patches( resname );
-				if( is.fail() ) {
+				if ( is.fail() ) {
 					TR << "error reading sequence mutation data" << std::endl;
-				} else if( resnum < 1 || resnum > pose.total_residue() ) {
+				} else if ( resnum < 1 || resnum > pose.total_residue() ) {
 					TR << "d'oh, pose doesn't have a residue " << resnum << std::endl;
-				} else if( !pose.residue(resnum).residue_type_set().has_name(resname) ) {
+				} else if ( !pose.residue(resnum).residue_type_set().has_name(resname) ) {
 					TR << "unrecognized residue type name '" << resname << "'" << std::endl;
-				} else if( pose.residue_type(resnum).name() == resname ) {
+				} else if ( pose.residue_type(resnum).name() == resname ) {
 					// These will happen routinely when reading a reference pose,
 					// where the entire sequence is specified explicitly.
 					TR.Debug << "ignoring no-op mutation: MUTATE " << resnum << " " << resname << std::endl;
@@ -521,18 +521,18 @@ bool pose_from_atom_tree_diff(
 						pose.residue(resnum), pose.conformation());
 					pose.replace_residue(resnum, *newres, true /*orient backbone*/);
 				}
-			} else if( key == "FOLD_TREE" ) {
+			} else if ( key == "FOLD_TREE" ) {
 				// This is typically present only when using embedded PDB format (see below).
 				core::kinematics::FoldTree foldtree;
 				is.clear();
 				is.seekg(0, std::ios::beg);
 				is >> foldtree;
-				if( !is.fail() && Size(foldtree.nres()) == pose.total_residue() ) {
+				if ( !is.fail() && Size(foldtree.nres()) == pose.total_residue() ) {
 					pose.fold_tree(foldtree);
 				} else {
 					TR << "danger danger, error reading fold tree" << std::endl;
 				}
-			} else if( key == "BEGIN_PDB_FORMAT" ) {
+			} else if ( key == "BEGIN_PDB_FORMAT" ) {
 				// Just an embedded PDB-format file, separated by delimiters.
 				// This is currently used for writing reference structures for the diffs,
 				// but could also be used in cases where a diff just isn't efficient.
@@ -540,16 +540,16 @@ bool pose_from_atom_tree_diff(
 				using namespace core::import_pose;
 				std::string const end_pdb_key = "END_PDB_FORMAT";
 				std::vector< io::pdb::Record > pdb_data;
-				while( in.good() ) {
+				while ( in.good() ) {
 					getline(in, line);
-					if( in.fail() ) {
+					if ( in.fail() ) {
 						TR << "getline() failed while reading embedded PDB" << std::endl;
 						return false;
 					}
-					if( line.size() >= end_pdb_key.size() && line.compare(0, end_pdb_key.size(), end_pdb_key) == 0 ) break; // my kingdom for startswith()!
+					if ( line.size() >= end_pdb_key.size() && line.compare(0, end_pdb_key.size(), end_pdb_key) == 0 ) break; // my kingdom for startswith()!
 					// I can't figure out if getline() might leave behind a \n or \r\n,
 					// but all real PDB records are longer than 2 characters anyway.
-					else if( line.size() > 2 ) pdb_data.push_back( io::pdb::PDB_DReader::mapStringToRecord(line) );
+					else if ( line.size() > 2 ) pdb_data.push_back( io::pdb::PDB_DReader::mapStringToRecord(line) );
 				}
 				core::io::pdb::FileData fd = core::io::pdb::PDB_DReader::createFileData(pdb_data);
 				fd.filename = "atom_tree_diff.pdb"; // I'm afraid to leave this empty...
@@ -557,9 +557,9 @@ bool pose_from_atom_tree_diff(
 				core::import_pose::build_pose(fd, pose, *(ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )));
 			}
 		} else { // it's an atom line...
-			if( rsd_no < 1 || rsd_no > pose.total_residue() ) {
+			if ( rsd_no < 1 || rsd_no > pose.total_residue() ) {
 				TR << "uh-oh, pose doesn't have a residue " << rsd_no << std::endl;
-			} else if( atom_no < 1 || atom_no > pose.residue_type(rsd_no).natoms() ) {
+			} else if ( atom_no < 1 || atom_no > pose.residue_type(rsd_no).natoms() ) {
 				TR << "uh-oh, residue " << rsd_no << " doesn't have an atom " << atom_no << std::endl;
 			} else {
 				core::Real phi_value, theta_value, d_value;
@@ -567,21 +567,20 @@ bool pose_from_atom_tree_diff(
 				AtomID aid(atom_no, rsd_no);
 				DOF_ID dof_phi(aid, PHI), dof_theta(aid, THETA), dof_d(aid, D);
 				is >> phi_value;
-				if( !is.fail() ) {
+				if ( !is.fail() ) {
 					//TR << " phi";
 					pose.set_dof( dof_phi, phi_value );
 					is >> theta_value;
-					if( !is.fail() ) {
+					if ( !is.fail() ) {
 						//TR << " theta";
 						pose.set_dof( dof_theta, theta_value );
 						is >> d_value;
-						if( !is.fail() ) {
+						if ( !is.fail() ) {
 							//TR << " d (!)";
 							pose.set_dof( dof_d, d_value );
 						}
 					}
-				}
-				else TR << "somebody screwed up ... no phi to set for " << rsd_no << " " << atom_no << " !" << std::endl;
+				} else TR << "somebody screwed up ... no phi to set for " << rsd_no << " " << atom_no << " !" << std::endl;
 				//TR << std::endl;
 			}
 		}
@@ -607,13 +606,13 @@ void map_of_weighted_scores(
 	// Which score terms to use
 	typedef utility::vector1<ScoreType> ScoreTypeVec;
 	ScoreTypeVec score_types;
-	for(int i = 1; i <= n_score_types; ++i) {
+	for ( int i = 1; i <= n_score_types; ++i ) {
 		ScoreType ii = ScoreType(i);
 		if ( sfxn.has_nonzero_weight(ii) ) score_types.push_back(ii);
 	}
 
 	scores_out.clear();
-	BOOST_FOREACH(ScoreType score_type, score_types){
+	BOOST_FOREACH ( ScoreType score_type, score_types ) {
 		scores_out[ name_from_score_type(score_type) ] = ( sfxn.get_weight(score_type) * pose.energies().total_energies()[ score_type ] );
 	}
 	scores_out[ name_from_score_type(core::scoring::total_score) ] = tot_score;
@@ -648,21 +647,21 @@ void rms_error_with_noise(
 	using namespace core::id;
 	using namespace core::scoring;
 
-	if(bb_precision < sc_precision) Warning() << "Crazy fool, bb_precision should be >= sc_precision!" << std::endl;
+	if ( bb_precision < sc_precision ) Warning() << "Crazy fool, bb_precision should be >= sc_precision!" << std::endl;
 	Real bb_tol = 1.0, sc_tol = 1.0;
-	for(int i = 0; i < bb_precision; ++i) bb_tol /= 10.0;
-	for(int i = 0; i < sc_precision; ++i) sc_tol /= 10.0;
+	for ( int i = 0; i < bb_precision; ++i ) bb_tol /= 10.0;
+	for ( int i = 0; i < sc_precision; ++i ) sc_tol /= 10.0;
 
 	core::pose::Pose pose(ref_pose);
 	core::kinematics::AtomTree const & atom_tree = pose.atom_tree();
 	core::kinematics::FoldTree const & foldtree = pose.fold_tree();
 
-	for(Size rsd = 1, rsd_end = pose.total_residue(); rsd <= rsd_end; ++rsd) {
+	for ( Size rsd = 1, rsd_end = pose.total_residue(); rsd <= rsd_end; ++rsd ) {
 		bool const is_jump_residue = foldtree.is_jump_point(rsd);
-		for(Size atom = 1, atom_end = pose.residue(rsd).natoms(); atom <= atom_end; ++atom) {
+		for ( Size atom = 1, atom_end = pose.residue(rsd).natoms(); atom <= atom_end; ++atom ) {
 			AtomID aid(atom, rsd);
 			DOF_ID dof_phi(aid, PHI), dof_theta(aid, THETA), dof_d(aid, D);
-			if( atom_tree.atom(aid).is_jump() ) {
+			if ( atom_tree.atom(aid).is_jump() ) {
 				// Jump atoms have the rbN values all set to zero -- maybe vestigal part of atom tree?
 			} else {
 				// Backbone heavyatoms have to be very precise, or else a lot of error

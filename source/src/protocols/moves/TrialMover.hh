@@ -66,7 +66,7 @@ namespace moves {
 enum StatsType {
 	all_stats = 1, // scores, accepts and rejects
 	accept_reject, // only accept and reject counts
-	no_stats	     // no stats. Always keep last.
+	no_stats      // no stats. Always keep last.
 };
 
 

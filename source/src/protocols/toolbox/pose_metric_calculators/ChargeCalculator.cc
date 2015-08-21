@@ -35,7 +35,7 @@ using namespace core::pose;
 using namespace core::pose::metrics;
 
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 
@@ -48,9 +48,9 @@ ChargeCalculator::ChargeCalculator()
 ChargeCalculator::ChargeCalculator(
 	std::set< core::Size > const & special_region
 ) : total_charge_(0.0), total_pos_charges_(0),
-		total_neg_charges_(0), SR_total_charge_(0.0),
-		SR_total_pos_charges_(0), SR_total_neg_charges_(0),
-		special_region_(special_region)
+	total_neg_charges_(0), SR_total_charge_(0.0),
+	SR_total_pos_charges_(0), SR_total_neg_charges_(0),
+	special_region_(special_region)
 {}
 
 
@@ -59,8 +59,8 @@ ChargeCalculator::~ChargeCalculator(){}
 
 void
 ChargeCalculator::lookup(
-  std::string const & key,
-  basic::MetricValueBase * valptr
+	std::string const & key,
+	basic::MetricValueBase * valptr
 ) const
 {
 
@@ -87,9 +87,7 @@ ChargeCalculator::lookup(
 	} else if ( key == "SR_total_neg_charges" ) {
 		basic::check_cast( valptr, &SR_total_neg_charges_, "SR_total_neg_charges expects to return a Size" );
 		(static_cast<basic::MetricValue<Size> *>(valptr))->set( SR_total_neg_charges_ );
-	}
-
-	else {
+	} else {
 		basic::Error() << "ChargeCalculator cannot compute the requested metric " << key << std::endl;
 		utility_exit();
 	}
@@ -102,9 +100,9 @@ ChargeCalculator::print( std::string const & key ) const
 {
 
 
-  basic::Error() << "ChargeCalculator print function not written yet, developer too lazy, cannot compute metric " << key << std::endl;
-  utility_exit();
-  return "";
+	basic::Error() << "ChargeCalculator print function not written yet, developer too lazy, cannot compute metric " << key << std::endl;
+	utility_exit();
+	return "";
 
 } //print
 
@@ -121,22 +119,21 @@ ChargeCalculator::recompute( Pose const & this_pose )
 	SR_total_charge_ = 0.0; SR_total_pos_charges_ = 0; SR_total_neg_charges_ = 0;
 
 
-	for( core::Size i = 1; i <= this_pose.total_residue(); ++i ){
-		if( !this_pose.residue_type(i).is_protein() ) continue;
+	for ( core::Size i = 1; i <= this_pose.total_residue(); ++i ) {
+		if ( !this_pose.residue_type(i).is_protein() ) continue;
 		AA i_aa( this_pose.residue_type(i).aa() );
 
-		if( (i_aa == aa_glu) || (i_aa == aa_asp) ){
+		if ( (i_aa == aa_glu) || (i_aa == aa_asp) ) {
 			total_charge_ -= 1.0;
 			total_neg_charges_++;
-			if( special_region_.find( i ) != special_region_.end() ){
+			if ( special_region_.find( i ) != special_region_.end() ) {
 				SR_total_charge_ -= 1.0;
 				SR_total_neg_charges_++;
 			}
-		}
-		else if( (i_aa == aa_arg) || (i_aa == aa_lys) ){
+		} else if ( (i_aa == aa_arg) || (i_aa == aa_lys) ) {
 			total_charge_ += 1.0;
 			total_pos_charges_++;
-			if( special_region_.find( i ) != special_region_.end() ){
+			if ( special_region_.find( i ) != special_region_.end() ) {
 				SR_total_charge_ += 1.0;
 				SR_total_pos_charges_++;
 			}

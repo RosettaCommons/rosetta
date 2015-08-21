@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief
-/// @author 
+/// @author
 //
 // Unit headers
 #include <protocols/hotspot_hashing/SearchPattern.hh>

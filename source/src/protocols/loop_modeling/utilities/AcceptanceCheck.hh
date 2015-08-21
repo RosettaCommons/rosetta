@@ -27,10 +27,10 @@ namespace utilities {
 
 /// @brief Apply an additional Monte Carlo acceptance check.
 ///
-/// @details This class is meant to be used when you have a complex loop 
-/// sampling protocol (e.g. when you are stringing together a large number of 
-/// loop movers) and you want to add intermediate acceptance checks.  Note that 
-/// you don't usually have to use this class, because LoopProtocol always makes 
+/// @details This class is meant to be used when you have a complex loop
+/// sampling protocol (e.g. when you are stringing together a large number of
+/// loop movers) and you want to add intermediate acceptance checks.  Note that
+/// you don't usually have to use this class, because LoopProtocol always makes
 /// an acceptance check after all the loop movers have been applied.
 
 class AcceptanceCheck : public LoopMover {
@@ -38,14 +38,14 @@ class AcceptanceCheck : public LoopMover {
 public:
 	/// @brief Constructor with optional name argument.
 	AcceptanceCheck(
-			protocols::moves::MonteCarloOP monte_carlo,
-			string name="loop_move");
+		protocols::moves::MonteCarloOP monte_carlo,
+		string name="loop_move");
 
 	/// @copydoc LoopMover::get_name
 	string get_name() const { return "AcceptanceCheck"; }
 
 protected:
-	/// @brief Apply the Metropolis criterion to the given pose and return true 
+	/// @brief Apply the Metropolis criterion to the given pose and return true
 	/// if the pose was accepted.
 	bool do_apply(Pose & pose);
 

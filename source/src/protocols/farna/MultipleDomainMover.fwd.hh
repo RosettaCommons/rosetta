@@ -20,8 +20,8 @@
 namespace protocols {
 namespace farna {
 
-	class MultipleDomainMover;
-	typedef utility::pointer::shared_ptr< MultipleDomainMover > MultipleDomainMoverOP;
+class MultipleDomainMover;
+typedef utility::pointer::shared_ptr< MultipleDomainMover > MultipleDomainMoverOP;
 
 } //farna
 } //protocols

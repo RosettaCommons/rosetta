@@ -35,7 +35,7 @@
 
 // C++ Headers
 
-namespace protocols { 
+namespace protocols {
 namespace simple_moves {
 namespace symmetry {
 
@@ -43,45 +43,45 @@ namespace symmetry {
 class TaskAwareSymMinMover : public protocols::simple_moves::TaskAwareMinMover { //Jeliazkov experiment
 public:
 
-  // default constructor
+	// default constructor
 	TaskAwareSymMinMover();
-	
+
 	// constructor with arguments
 	TaskAwareSymMinMover(
 		protocols::simple_moves::MinMoverOP minmover_in,
 		core::pack::task::TaskFactoryCOP factory_in
 	);
-	
+
 
 	TaskAwareSymMinMover(const TaskAwareSymMinMover& rval);
 
 	virtual std::string get_name() const { return "TaskAwareSymMinMover"; }
-  virtual void apply( core::pose::Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
-  virtual protocols::moves::MoverOP clone() const;
-  virtual protocols::moves::MoverOP fresh_instance() const;
+	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 
-  void parse_my_tag(
-      utility::tag::TagCOP tag,
-      basic::datacache::DataMap &data,
-      protocols::filters::Filters_map const &filters,
-      protocols::moves::Movers_map const &movers,
-      core::pose::Pose const & pose );
+	void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &data,
+		protocols::filters::Filters_map const &filters,
+		protocols::moves::Movers_map const &movers,
+		core::pose::Pose const & pose );
 	void parse_def( utility::lua::LuaObject const & def,
-			utility::lua::LuaObject const & score_fxns,
-			utility::lua::LuaObject const & tasks,
-			protocols::moves::MoverCacheSP cache );
+		utility::lua::LuaObject const & score_fxns,
+		utility::lua::LuaObject const & tasks,
+		protocols::moves::MoverCacheSP cache );
 
 private:
 
-	std::string scorefxn_name_;  
-  core::scoring::ScoreFunctionOP scorefxn_;
-  bool min_chi_;
-  bool min_bb_;
-  bool min_rb_; //jump
-  std::string min_type_;
-  core::Real tolerance_;
-  //core::pack::task::TaskFactoryOP task_factory_;
+	std::string scorefxn_name_;
+	core::scoring::ScoreFunctionOP scorefxn_;
+	bool min_chi_;
+	bool min_bb_;
+	bool min_rb_; //jump
+	std::string min_type_;
+	core::Real tolerance_;
+	//core::pack::task::TaskFactoryOP task_factory_;
 	/// @brief OP for MinMover
 	protocols::simple_moves::MinMoverOP minmover_;
 	/// @brief OP for constant task factory for nonconstant tasks, if present
@@ -91,7 +91,7 @@ private:
 };
 
 } //namespace symmetry
-} //namespace simple_moves 
+} //namespace simple_moves
 } //namespace protocols
 
-#endif 
+#endif

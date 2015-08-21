@@ -75,11 +75,11 @@ void SilentFileJobOutputter::write_all_structs() {
 	SFD_MAP sfds;
 	// Only write structures if the user hasn't disabled it - otherwise it totally breaks
 	// the user's expectation.
-	if( !bWriteNoStructures_ ){
+	if ( !bWriteNoStructures_ ) {
 		tr.Debug << "writing " << saved_structs_.size() << " structs." << std::endl;
 		for ( iter it = saved_structs_.begin(), end = saved_structs_.end();
-					it != end; ++it
-		) {
+				it != end; ++it
+				) {
 			//tr.Debug << "writing struct " << ss->decoy_tag() << std::endl;
 			//tr.Debug << "writing struct " << (*it->first)->decoy_tag() << std::endl;
 			//SilentStructOP ss = it->first;
@@ -102,11 +102,11 @@ void SilentFileJobOutputter::set_defaults() {
 	using namespace basic::options::OptionKeys;
 	forced_silent_struct_type_ = "any";
 	silent_file_ = option[ out::file::silent ]();
-	if(silent_file_().compare("") == 0){
+	if ( silent_file_().compare("") == 0 ) {
 		utility_exit_with_message("Please supply a file name with the -out:file:silent flag. If you specify a path the -out:path:all flag, the -out:file:silent file name will be relative to it.");
 	}
 
-	if (! silent_file_.absolute() ) {
+	if ( ! silent_file_.absolute() ) {
 		silent_file_.path( option[ out::path::all ]().path() + "/" + silent_file_.path() );
 		//FileName takes care of platform-specific path seperator, i.e.,  "/" or "\" ...
 	}
@@ -128,8 +128,9 @@ void SilentFileJobOutputter::set_defaults() {
 	// silent files are also an option
 	// and protein-style too, if that's my choice? -JRP 2012
 	if ( option[ basic::options::OptionKeys::jd2::dd_parser ]() ) {
-		if ( option[ out::file::silent_struct_type ]() != "score")
+		if ( option[ out::file::silent_struct_type ]() != "score" ) {
 			option[ out::file::silent_struct_type ].def( "binary" );
+		}
 	}
 
 	//default is 1
@@ -145,21 +146,22 @@ void SilentFileJobOutputter::set_defaults() {
 
 	bWriteNoStructures_ = false;
 
-	if ( option[ OptionKeys::out::file::scorefile ].user() ){
+	if ( option[ OptionKeys::out::file::scorefile ].user() ) {
 		write_separate_scorefile_ = true;
-	}	else write_separate_scorefile_ = false;
+	} else write_separate_scorefile_ = false;
 }
 
 void SilentFileJobOutputter::read_done_jobs() {
 	core::io::silent::SilentFileData sfd;
 	if ( utility::file::file_exists( silent_file_ ) ) {
 		silent_file_tags_ = sfd.read_tags_fast( silent_file_ );
-		BOOST_FOREACH( std::string & tag, silent_file_tags_ ) {
-		/// eliminate the FAILURE_ prefix so that jobs know to start from
-		/// the 'next' nstruct on restart. This is important to avoid duplicate
-		/// entries
-			if( tag.substr( 0, 8 ) == "FAILURE_" )
+		BOOST_FOREACH ( std::string & tag, silent_file_tags_ ) {
+			/// eliminate the FAILURE_ prefix so that jobs know to start from
+			/// the 'next' nstruct on restart. This is important to avoid duplicate
+			/// entries
+			if ( tag.substr( 0, 8 ) == "FAILURE_" ) {
 				tag = tag.substr( 8, 1000 );
+			}
 		} //foreach
 	} //fi
 }
@@ -176,12 +178,12 @@ void SilentFileJobOutputter::final_pose(
 
 	// only write a scorefile if specified by the user
 	if ( write_separate_scorefile_ ) {
-		
+
 		// Adding Luki & Brian's JD2 Patch (@ralford 8/23/14)
 		core::pose::Pose pose_copy( pose );
 		ss->energies_into_pose( pose_copy );
 		scorefile(job, pose_copy, "", (tag.empty() ? "" : std::string("_") + tag));
-		
+
 		//scorefile(job, pose, "", (tag.empty() ? "" : std::string("_") + tag));
 	}
 }
@@ -253,7 +255,7 @@ core::io::silent::SilentStructOP SilentFileJobOutputter::dump_pose(
 		tag << '_' << std::setfill('0') << std::setw(8) << copy_count;
 	}
 
-	if(!suffix.empty()) {
+	if ( !suffix.empty() ) {
 		tag << "_" << suffix;
 	}
 
@@ -354,12 +356,12 @@ SilentFileJobOutputter::set_write_separate_scorefile( bool write_separate_scoref
 std::string
 SilentFileJobOutputterCreator::keyname() const
 {
-        return "SilentFileJobOutputter";
+	return "SilentFileJobOutputter";
 }
 
 protocols::jd2::JobOutputterOP
 SilentFileJobOutputterCreator::create_JobOutputter() const {
-        return protocols::jd2::JobOutputterOP( new SilentFileJobOutputter );
+	return protocols::jd2::JobOutputterOP( new SilentFileJobOutputter );
 }
 
 } //jd2

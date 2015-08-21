@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   basic/resource_manager/SurfaceVectorFallbackConfigurationCreator.hh
-/// @brief  
+/// @brief
 /// @author Michael Pacella mpacella88@gmail.com
 
 #ifndef INCLUDED_protocols_surface_docking_surface_vector_fallback_configuration_creator_HH

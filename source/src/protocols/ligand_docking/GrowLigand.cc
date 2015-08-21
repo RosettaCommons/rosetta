@@ -69,24 +69,24 @@ GrowLigandCreator::mover_name()
 }
 
 GrowLigand::GrowLigand():
-		Mover("GrowLigand"),
-		chain_("")
+	Mover("GrowLigand"),
+	chain_("")
 {
 	set_fragments();
 }
 
 GrowLigand::GrowLigand(std::string chain):
-		Mover("GrowLigand"),
-		chain_(chain)
+	Mover("GrowLigand"),
+	chain_(chain)
 {
 	set_fragments();
 }
 
 GrowLigand::GrowLigand(GrowLigand const & that):
-	    //utility::pointer::ReferenceCount(),
-		protocols::moves::Mover( that ),
-		chain_(that.chain_),
-		fragments_(that.fragments_)
+	//utility::pointer::ReferenceCount(),
+	protocols::moves::Mover( that ),
+	chain_(that.chain_),
+	fragments_(that.fragments_)
 {}
 
 GrowLigand::~GrowLigand() {}
@@ -101,7 +101,7 @@ GrowLigand::set_fragments(){
 	rsd_set->select_residues_DO_NOT_USE( rs, fragment_types );
 	grow_ligand_tracer<< fragment_types.size()<< " fragment_types"<< std::endl;
 
-	BOOST_FOREACH(core::chemical::ResidueTypeCOP fragment_type, fragment_types){
+	BOOST_FOREACH ( core::chemical::ResidueTypeCOP fragment_type, fragment_types ) {
 		fragments_.push_back( core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue(*fragment_type, true) ) ) );
 		grow_ligand_tracer<< "frag_name: "<< fragment_type->name()<< std::endl;
 	}
@@ -122,11 +122,11 @@ std::string GrowLigand::get_name() const{
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 GrowLigand::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & /*datamap*/,
-		protocols::filters::Filters_map const & /*filters*/,
-		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & /*pose*/
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & /*datamap*/,
+	protocols::filters::Filters_map const & /*filters*/,
+	protocols::moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/
 )
 {
 	if ( tag->getName() != "GrowLigand" ) {
@@ -136,7 +136,7 @@ GrowLigand::parse_my_tag(
 	}
 	if ( tag->hasOption("chain") ) {
 		chain_ = tag->getOption<std::string>("chain");
-	}else{
+	} else {
 		throw utility::excn::EXCN_RosettaScriptsOption("HeavyAtom filter needs a 'chain' option");
 	}
 }
@@ -164,21 +164,21 @@ GrowLigand::apply( core::pose::Pose & pose )
 	bool const lookup_bond_length = true;
 
 	pose.append_residue_by_bond(
-			*growth,
-			build_ideal_geometry,
-			growth_connection,
-			grow_from,
-			grow_from_connection,
-			start_new_chain,
-			lookup_bond_length
+		*growth,
+		build_ideal_geometry,
+		growth_connection,
+		grow_from,
+		grow_from_connection,
+		start_new_chain,
+		lookup_bond_length
 	);
 	return;
 }
 
 void GrowLigand::fragments_to_string() const{
-	for(core::Size i=1; i <= fragments_.size(); ++i){
+	for ( core::Size i=1; i <= fragments_.size(); ++i ) {
 		utility::vector1< core::conformation::ResidueCOP>::const_iterator  begin= fragments_.begin();
-		for(; begin != fragments_.end(); ++begin){
+		for ( ; begin != fragments_.end(); ++begin ) {
 			//core::conformation::Residue const & res= *begin;
 			//core::Size connect_id= begin;
 			//std::string name= begin->name();

@@ -44,14 +44,14 @@ public:
 	}
 
 	void test_SymmDataLoader(){
-	  std::string symm_def1_filename("core/conformation/symmetry/symm_def1.dat");
+		std::string symm_def1_filename("core/conformation/symmetry/symm_def1.dat");
 		do_test_SymmDataLoader(symm_def1_filename);
 	}
 
 	// @brief test default options and default locator
 	void do_test_SymmDataLoader(
 		std::string const & symm_data_filename
-) {
+	) {
 		// Prepare the resource manager so we can ask it for the symmetry
 		// definition
 		ResourceTag rTag = "symm_def1";

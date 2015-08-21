@@ -78,27 +78,27 @@ public:
 
 
 	//DO NOT USE unless you add a vertex constructor with this!!!!!!
-/*	/// @brief constructor with atom index number and AtomICoor
+	/* /// @brief constructor with atom index number and AtomICoor
 	ResidueConnection(
-		int const atomno_in,
-		AtomICoor const & icoor_in
+	int const atomno_in,
+	AtomICoor const & icoor_in
 	):
-		atomno_( atomno_in ),
-		icoor_( icoor_in ),
-		index_( 0 )
+	atomno_( atomno_in ),
+	icoor_( icoor_in ),
+	index_( 0 )
 	{}*/
 
 
 	//DO NOT USE unless you add a vertex constructor with this!!!!!!
 	/// @brief constructor with atom index number, AtomICoor, and connection index
-/*	ResidueConnection(
-		int const atomno_in,
-		AtomICoor const & icoor_in,
-		int const index
+	/* ResidueConnection(
+	int const atomno_in,
+	AtomICoor const & icoor_in,
+	int const index
 	):
-		atomno_( atomno_in ),
-		icoor_( icoor_in ),
-		index_( index )
+	atomno_( atomno_in ),
+	icoor_( icoor_in ),
+	index_( index )
 	{}*/
 
 	/// @brief get atom index number

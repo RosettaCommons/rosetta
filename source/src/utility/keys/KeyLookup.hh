@@ -306,7 +306,7 @@ public: // Properties
 	{
 		Map const & m_( m() );
 		typename Map::const_iterator const i( m_.find( stripped_whitespace( id ) ) );
-	debug_assert( i != m_.end() );
+		debug_assert( i != m_.end() );
 		return *( i->second );
 	}
 
@@ -356,7 +356,7 @@ private: // Methods
 		if ( not_blank( id ) ) { // Don't insert if identifier is blank
 			std::string const sid( stripped_whitespace( id ) );
 			Map & m_( m() );
-		debug_assert( ( m_.find( sid ) == m_.end() ) || ( *( m_.find( sid )->second ) == key ) ); // Catch repeat identifiers with unequal keys
+			debug_assert( ( m_.find( sid ) == m_.end() ) || ( *( m_.find( sid )->second ) == key ) ); // Catch repeat identifiers with unequal keys
 			m_.insert( std::make_pair( sid, &key ) );
 		}
 	}

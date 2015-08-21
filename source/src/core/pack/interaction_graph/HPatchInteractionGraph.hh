@@ -65,7 +65,7 @@ namespace pack {
 namespace interaction_graph {
 
 struct
-exposed_hydrophobic_data
+	exposed_hydrophobic_data
 {
 	exposed_hydrophobic_data( Size fc_bg, Size node_ind, Size exhphobe_ind ) :
 		fc_bg_( fc_bg ),
@@ -109,168 +109,168 @@ template < typename V, typename E, typename G > class HPatchInteractionGraph;
 template < typename V, typename E, typename G >
 class HPatchNode : public FirstClassNode< V, E, G > {
 
-	public:
-		typedef FirstClassNode< V, E, G > parent;
-		typedef V grandparent;
+public:
+	typedef FirstClassNode< V, E, G > parent;
+	typedef V grandparent;
 
-	public:
-		HPatchNode( G* owner, int node_index, int num_states );
-		virtual ~HPatchNode();
+public:
+	HPatchNode( G* owner, int node_index, int num_states );
+	virtual ~HPatchNode();
 
-		// setter for the rotamers object. called at the very beginning of the HIG::initialize() method
-		void set_rotamers( rotamer_set::RotamerSetCOP rotamers );
-		conformation::ResidueCOP get_rotamer( int state ) const;
-		conformation::ResidueCOP curr_state_rotamer() const {
-			return rotamers_vector_[ parent::get_current_state() ];
-		}
+	// setter for the rotamers object. called at the very beginning of the HIG::initialize() method
+	void set_rotamers( rotamer_set::RotamerSetCOP rotamers );
+	conformation::ResidueCOP get_rotamer( int state ) const;
+	conformation::ResidueCOP curr_state_rotamer() const {
+		return rotamers_vector_[ parent::get_current_state() ];
+	}
 
-		conformation::ResidueCOP alt_state_rotamer() const {
-			return rotamers_vector_[ parent::get_alternate_state() ];
-		}
+	conformation::ResidueCOP alt_state_rotamer() const {
+		return rotamers_vector_[ parent::get_alternate_state() ];
+	}
 
-		virtual void set_rotamer_dots_for_state( Size state, RotamerDots const & rd );
+	virtual void set_rotamer_dots_for_state( Size state, RotamerDots const & rd );
 
-		bool overlaps( HPatchNode< V, E, G >* neighbor );
-		bool detect_any_overlap_with_rotamer( RotamerDots const & rotamer ) const;
+	bool overlaps( HPatchNode< V, E, G >* neighbor );
+	bool detect_any_overlap_with_rotamer( RotamerDots const & rotamer ) const;
 
-		virtual void prepare_for_simulated_annealing();
-		void initialize_overlap_with_background(
-			RotamerDots const & bg_rotamer,
-			std::vector< RotamerDotsCache > & overlap,
-			std::vector< utility::vector1< utility::vector1< bool > > > & states_atom_atom_overlap_on_bg_res
-		);
+	virtual void prepare_for_simulated_annealing();
+	void initialize_overlap_with_background(
+		RotamerDots const & bg_rotamer,
+		std::vector< RotamerDotsCache > & overlap,
+		std::vector< utility::vector1< utility::vector1< bool > > > & states_atom_atom_overlap_on_bg_res
+	);
 
-		// for HIG entry point blanket_assign_state_0()
-		virtual void assign_zero_state();
-		void acknowledge_neighbors_substitution();
+	// for HIG entry point blanket_assign_state_0()
+	virtual void assign_zero_state();
+	void acknowledge_neighbors_substitution();
 
-		core::PackerEnergy calculate_PD_deltaE_for_substitution( int alternate_state, core::PackerEnergy & prev_PDenergies_for_node );
-		core::PackerEnergy get_pd_energy_delta();
-		Real consider_alternate_state();
-		Real get_current_state_sasa() const;
-		Real get_current_state_sasa( Size atom_index ) const;
-		Real get_alternate_state_sasa( Size atom_index ) const;
+	core::PackerEnergy calculate_PD_deltaE_for_substitution( int alternate_state, core::PackerEnergy & prev_PDenergies_for_node );
+	core::PackerEnergy get_pd_energy_delta();
+	Real consider_alternate_state();
+	Real get_current_state_sasa() const;
+	Real get_current_state_sasa( Size atom_index ) const;
+	Real get_alternate_state_sasa( Size atom_index ) const;
 
-		utility::vector1< utility::vector1< bool > > const & get_atom_atom_self_overlaps_for_state( Size state ) const;
+	utility::vector1< utility::vector1< bool > > const & get_atom_atom_self_overlaps_for_state( Size state ) const;
 
-		inline Size get_current_state_num_atoms() const { return current_state_rotamer_dots_.get_num_atoms(); }
-		inline Size get_alt_state_num_atoms() const { return alt_state_rotamer_dots_.get_num_atoms(); }
+	inline Size get_current_state_num_atoms() const { return current_state_rotamer_dots_.get_num_atoms(); }
+	inline Size get_alt_state_num_atoms() const { return alt_state_rotamer_dots_.get_num_atoms(); }
 
-		inline
-		int wt_seqpos_for_node() const {
-			return get_hpatch_owner()->rotamer_sets().moltenres_2_resid( parent::get_node_index() );
-		}
+	inline
+	int wt_seqpos_for_node() const {
+		return get_hpatch_owner()->rotamer_sets().moltenres_2_resid( parent::get_node_index() );
+	}
 
-		inline
-		conformation::Residue const & wt_residue_for_node() const {
-			return get_hpatch_owner()->pose().residue( (get_hpatch_owner()->rotamer_sets().moltenres_2_resid( parent::get_node_index() )) );
-		}
+	inline
+	conformation::Residue const & wt_residue_for_node() const {
+		return get_hpatch_owner()->pose().residue( (get_hpatch_owner()->rotamer_sets().moltenres_2_resid( parent::get_node_index() )) );
+	}
 
-		Real update_state_for_neighbors_substitution( HPatchNode<V,E,G>* node_considering_substitution,
-			RotamerDots & neighbors_alternate_state,
-			RotamerDotsCache const & neighbors_curr_state_overlap_with_this,
-			RotamerDotsCache & this_overlap_with_neighbors_alternate,
-			RotamerDotsCache & neighbors_alternate_overlap_with_this,
-			utility::vector1< utility::vector1< bool > > & alt_state_atom_atom_overlaps_cache
-		);
+	Real update_state_for_neighbors_substitution( HPatchNode<V,E,G>* node_considering_substitution,
+		RotamerDots & neighbors_alternate_state,
+		RotamerDotsCache const & neighbors_curr_state_overlap_with_this,
+		RotamerDotsCache & this_overlap_with_neighbors_alternate,
+		RotamerDotsCache & neighbors_alternate_overlap_with_this,
+		utility::vector1< utility::vector1< bool > > & alt_state_atom_atom_overlaps_cache
+	);
 
-		void reset_alt_state_dots();
+	void reset_alt_state_dots();
 
-		void commit_considered_substitution();
+	void commit_considered_substitution();
 
-		virtual unsigned int getMemoryUsageInBytes() const;
-		virtual unsigned int count_static_memory() const;
-		virtual unsigned int count_dynamic_memory() const;
+	virtual unsigned int getMemoryUsageInBytes() const;
+	virtual unsigned int count_static_memory() const;
+	virtual unsigned int count_dynamic_memory() const;
 
-		//void write_dot_kinemage( std::ofstream & output_kin );
-		virtual void print() const;
+	//void write_dot_kinemage( std::ofstream & output_kin );
+	virtual void print() const;
 
-		// Extra methods only used only for the unit tests.
-		RotamerDots const & get_current_state_rotamer_dots();
-		RotamerDots const & get_alt_state_rotamer_dots();
+	// Extra methods only used only for the unit tests.
+	RotamerDots const & get_current_state_rotamer_dots();
+	RotamerDots const & get_alt_state_rotamer_dots();
 
-		InvRotamerDots const & curr_state_inv_dots() const {
+	InvRotamerDots const & curr_state_inv_dots() const {
 		debug_assert( curr_state_inv_dots_.rotamer() == current_state_rotamer_dots_.rotamer() );
-			return curr_state_inv_dots_;
-		}
-		InvRotamerDots const & alt_state_inv_dots() const {
+		return curr_state_inv_dots_;
+	}
+	InvRotamerDots const & alt_state_inv_dots() const {
 		debug_assert( alt_state_inv_dots_.rotamer() == alt_state_rotamer_dots_.rotamer() );
-			return alt_state_inv_dots_;
-		}
+		return alt_state_inv_dots_;
+	}
 
-		Size
-		max_hphobe_atoms_any_restype() const {
-			return max_hphobes_;
-		}
+	Size
+	max_hphobe_atoms_any_restype() const {
+		return max_hphobes_;
+	}
 
-		utility::vector1< Size > const &
-		curr_state_hphobes() const {
-			return hphobe_ats_for_restype_group_[ restype_group_for_rotamers_[ grandparent::get_current_state() ]];
-		}
+	utility::vector1< Size > const &
+	curr_state_hphobes() const {
+		return hphobe_ats_for_restype_group_[ restype_group_for_rotamers_[ grandparent::get_current_state() ]];
+	}
 
-		utility::vector1< Size > const &
-		alt_state_hphobes() const {
-			return hphobe_ats_for_restype_group_[ restype_group_for_rotamers_[ grandparent::get_alternate_state() ]];
-		}
+	utility::vector1< Size > const &
+	alt_state_hphobes() const {
+		return hphobe_ats_for_restype_group_[ restype_group_for_rotamers_[ grandparent::get_alternate_state() ]];
+	}
 
-		Size n_curr_state_hphobes() const { return curr_state_hphobes().size(); }
-		Size n_alt_state_hphobes() const { return alt_state_hphobes().size(); }
+	Size n_curr_state_hphobes() const { return curr_state_hphobes().size(); }
+	Size n_alt_state_hphobes() const { return alt_state_hphobes().size(); }
 
-		utility::vector1< Size > const & curr_state_exp_hphobes() const { return curr_state_exp_hphobes_; }
-		utility::vector1< Size > const & alt_state_exp_hphobes() const { return alt_state_exp_hphobes_; }
-		Size n_curr_state_exp_hphobes() const { return curr_state_exp_hphobes_.size(); }
-		Size n_alt_state_exp_hphobes() const { return alt_state_exp_hphobes_.size(); }
+	utility::vector1< Size > const & curr_state_exp_hphobes() const { return curr_state_exp_hphobes_; }
+	utility::vector1< Size > const & alt_state_exp_hphobes() const { return alt_state_exp_hphobes_; }
+	Size n_curr_state_exp_hphobes() const { return curr_state_exp_hphobes_.size(); }
+	Size n_alt_state_exp_hphobes() const { return alt_state_exp_hphobes_.size(); }
 
-	protected:
-		inline
-		HPatchEdge< V, E, G >* get_incident_hpatch_edge( int index ) const {
-			return (HPatchEdge< V, E, G > *) parent::get_incident_edge( index );
-		}
+protected:
+	inline
+	HPatchEdge< V, E, G >* get_incident_hpatch_edge( int index ) const {
+		return (HPatchEdge< V, E, G > *) parent::get_incident_edge( index );
+	}
 
-		inline
-		HPatchBackgroundEdge< V, E, G >* get_edge_to_hpatch_bg_node( int index ) const {
-			return (HPatchBackgroundEdge< V, E, G > *) parent::get_edge_to_bg_node( index );
-		}
+	inline
+	HPatchBackgroundEdge< V, E, G >* get_edge_to_hpatch_bg_node( int index ) const {
+		return (HPatchBackgroundEdge< V, E, G > *) parent::get_edge_to_bg_node( index );
+	}
 
-		inline
-		HPatchInteractionGraph< V, E, G >* get_hpatch_owner() const {
-			return (HPatchInteractionGraph< V, E, G > *) parent::get_owner();
-		}
+	inline
+	HPatchInteractionGraph< V, E, G >* get_hpatch_owner() const {
+		return (HPatchInteractionGraph< V, E, G > *) parent::get_owner();
+	}
 
-		Real get_sasa_difference() const;
+	Real get_sasa_difference() const;
 
-	private:
-		void update_alt_state_exphphobes();
-		void initialize_self_overlap();
-		void initialize_atom_atom_overlap_cache();
+private:
+	void update_alt_state_exphphobes();
+	void initialize_self_overlap();
+	void initialize_atom_atom_overlap_cache();
 
-		// no default constructor, uncopyable
-		HPatchNode();
-		HPatchNode( HPatchNode< V, E, G > const & );
-		HPatchNode< V, E, G > & operator = ( HPatchNode< V, E, G > const & );
+	// no default constructor, uncopyable
+	HPatchNode();
+	HPatchNode( HPatchNode< V, E, G > const & );
+	HPatchNode< V, E, G > & operator = ( HPatchNode< V, E, G > const & );
 
-	private:
-		utility::vector1< conformation::ResidueCOP > rotamers_vector_;
-		utility::vector1< Size > restype_group_for_rotamers_;
-		utility::vector1< utility::vector1< Size > > hphobe_ats_for_restype_group_;
-		Size max_hphobes_;
+private:
+	utility::vector1< conformation::ResidueCOP > rotamers_vector_;
+	utility::vector1< Size > restype_group_for_rotamers_;
+	utility::vector1< utility::vector1< Size > > hphobe_ats_for_restype_group_;
+	Size max_hphobes_;
 
-		// outer vector is all states possible at this Node, inner two vectors are ii and jj atoms
-		utility::vector1< utility::vector1< utility::vector1< bool > > > self_atom_atom_overlaps_;
+	// outer vector is all states possible at this Node, inner two vectors are ii and jj atoms
+	utility::vector1< utility::vector1< utility::vector1< bool > > > self_atom_atom_overlaps_;
 
-		// vector1 of RotamerDots objects. for every state on every molten residue there is a RotamerDots object.
-		utility::vector1< RotamerDots > self_and_bg_dots_for_states_;
+	// vector1 of RotamerDots objects. for every state on every molten residue there is a RotamerDots object.
+	utility::vector1< RotamerDots > self_and_bg_dots_for_states_;
 
-		RotamerDots current_state_rotamer_dots_;
-		RotamerDots alt_state_rotamer_dots_;
+	RotamerDots current_state_rotamer_dots_;
+	RotamerDots alt_state_rotamer_dots_;
 
-		InvRotamerDots curr_state_inv_dots_;
-		InvRotamerDots alt_state_inv_dots_;
+	InvRotamerDots curr_state_inv_dots_;
+	InvRotamerDots alt_state_inv_dots_;
 
-		utility::vector1< Size > curr_state_exp_hphobes_;
-		utility::vector1< Size > alt_state_exp_hphobes_;
+	utility::vector1< Size > curr_state_exp_hphobes_;
+	utility::vector1< Size > alt_state_exp_hphobes_;
 
-		bool alt_state_dots_matches_current_state_dots_;
+	bool alt_state_dots_matches_current_state_dots_;
 
 };
 
@@ -283,109 +283,109 @@ class HPatchNode : public FirstClassNode< V, E, G > {
 /// @brief
 /// Defines a Background Node which will contribute to changes in SASA/hpatchE due to state changes on neighboring nodes,
 /// and not because of state changes to it.
-///	No default constructor makes this class uncopyable
+/// No default constructor makes this class uncopyable
 ///
 template < typename V, typename E, typename G >
 class HPatchBackgroundNode : public BackgroundNode< V, E, G > {
 
-	public:
-		typedef BackgroundNode< V, E, G > parent;
+public:
+	typedef BackgroundNode< V, E, G > parent;
 
-	public:
-		HPatchBackgroundNode( AdditionalBackgroundNodesInteractionGraph< V, E, G >* owner, int node_index );
-		virtual ~HPatchBackgroundNode();
+public:
+	HPatchBackgroundNode( AdditionalBackgroundNodesInteractionGraph< V, E, G >* owner, int node_index );
+	virtual ~HPatchBackgroundNode();
 
-		void set_rotamer( conformation::ResidueOP const & rotamer );
-		conformation::ResidueCOP get_rotamer() const;
+	void set_rotamer( conformation::ResidueOP const & rotamer );
+	conformation::ResidueCOP get_rotamer() const;
 
-		void set_rotamer_dots( RotamerDots const & bg_rd );
+	void set_rotamer_dots( RotamerDots const & bg_rd );
 
-		bool detect_overlap( HPatchNode< V, E, G >* node ) const;
-		virtual void prepare_for_simulated_annealing();
+	bool detect_overlap( HPatchNode< V, E, G >* node ) const;
+	virtual void prepare_for_simulated_annealing();
 
-		void initialize_bg_bg_overlap( HPatchBackgroundNode< V, E, G > & other );
+	void initialize_bg_bg_overlap( HPatchBackgroundNode< V, E, G > & other );
 
-		Real update_state_for_substitution(
-			HPatchNode< V, E, G >* fc_node_changing,
-			RotamerDotsCache const & nodes_curr_overlap_with_bg_res,
-			RotamerDotsCache const & nodes_alt_overlap_with_bg_res
-		);
+	Real update_state_for_substitution(
+		HPatchNode< V, E, G >* fc_node_changing,
+		RotamerDotsCache const & nodes_curr_overlap_with_bg_res,
+		RotamerDotsCache const & nodes_alt_overlap_with_bg_res
+	);
 
-		void reset_alt_state_dots();
-		void acknowledge_substitution();
-		Real get_current_sasa() const;
-		Real get_current_sasa( Size atom_index ) const;
-		Real get_alternate_sasa() const;
-		Real get_alternate_sasa( Size atom_index ) const;
+	void reset_alt_state_dots();
+	void acknowledge_substitution();
+	Real get_current_sasa() const;
+	Real get_current_sasa( Size atom_index ) const;
+	Real get_alternate_sasa() const;
+	Real get_alternate_sasa( Size atom_index ) const;
 
-		utility::vector1< utility::vector1< bool > > const & get_atom_atom_self_overlaps() const;
-		utility::vector1< Size > const & get_hphobes() const { return hphobe_ats_; }
-		Size n_hphobes() const { return n_hphobes_; }
+	utility::vector1< utility::vector1< bool > > const & get_atom_atom_self_overlaps() const;
+	utility::vector1< Size > const & get_hphobes() const { return hphobe_ats_; }
+	Size n_hphobes() const { return n_hphobes_; }
 
-		virtual unsigned int count_static_memory() const;
-		virtual unsigned int count_dynamic_memory() const;
+	virtual unsigned int count_static_memory() const;
+	virtual unsigned int count_dynamic_memory() const;
 
-		//void write_dot_kinemage( std::ofstream & output_kin );
-		virtual void print() const;
+	//void write_dot_kinemage( std::ofstream & output_kin );
+	virtual void print() const;
 
-		// Only used for the unit tests.
-		RotamerDots const & get_current_state_rotamer_dots();
-		RotamerDots const & get_alt_state_rotamer_dots();
+	// Only used for the unit tests.
+	RotamerDots const & get_current_state_rotamer_dots();
+	RotamerDots const & get_alt_state_rotamer_dots();
 
-		InvRotamerDots const & curr_state_inv_dots() const {
+	InvRotamerDots const & curr_state_inv_dots() const {
 		debug_assert( curr_state_inv_dots_.rotamer() == alt_state_rotamer_dots_.rotamer() );
-			return curr_state_inv_dots_;
-		}
+		return curr_state_inv_dots_;
+	}
 
-		InvRotamerDots const & alt_state_inv_dots() const {
+	InvRotamerDots const & alt_state_inv_dots() const {
 		debug_assert( alt_state_inv_dots_.rotamer() == alt_state_rotamer_dots_.rotamer() );
-			return alt_state_inv_dots_;
-		}
+		return alt_state_inv_dots_;
+	}
 
-		utility::vector1< Size > const & curr_state_exp_hphobes() const { return curr_state_exp_hphobes_; }
-		utility::vector1< Size > const & alt_state_exp_hphobes() const { return alt_state_exp_hphobes_; }
+	utility::vector1< Size > const & curr_state_exp_hphobes() const { return curr_state_exp_hphobes_; }
+	utility::vector1< Size > const & alt_state_exp_hphobes() const { return alt_state_exp_hphobes_; }
 
-		Size n_curr_state_exp_hphobes() const { return curr_state_exp_hphobes_.size(); }
-		Size n_alt_state_exp_hphobes() const { return alt_state_exp_hphobes_.size(); }
+	Size n_curr_state_exp_hphobes() const { return curr_state_exp_hphobes_.size(); }
+	Size n_alt_state_exp_hphobes() const { return alt_state_exp_hphobes_.size(); }
 
-	protected:
-		inline
-		HPatchBackgroundEdge< V, E, G > * get_hpatch_bg_edge( int index ) {
-			return (HPatchBackgroundEdge< V, E, G > *) parent::get_incident_edge( index );
-		}
+protected:
+	inline
+	HPatchBackgroundEdge< V, E, G > * get_hpatch_bg_edge( int index ) {
+		return (HPatchBackgroundEdge< V, E, G > *) parent::get_incident_edge( index );
+	}
 
-		inline
-		HPatchInteractionGraph< V, E, G >* get_hpatch_owner() const {
-			return (HPatchInteractionGraph< V, E, G > *) parent::get_owner();
-		}
+	inline
+	HPatchInteractionGraph< V, E, G >* get_hpatch_owner() const {
+		return (HPatchInteractionGraph< V, E, G > *) parent::get_owner();
+	}
 
-	private:
-		void update_alt_state_exphphobes();
-		void initialize_self_overlap();
-		void initialize_atom_atom_overlaps();
+private:
+	void update_alt_state_exphphobes();
+	void initialize_self_overlap();
+	void initialize_atom_atom_overlaps();
 
-		conformation::ResidueOP rotamer_;
-		utility::vector1< Size > hphobe_ats_;
-		Size n_hphobes_;
+	conformation::ResidueOP rotamer_;
+	utility::vector1< Size > hphobe_ats_;
+	Size n_hphobes_;
 
-		bool prepared_for_simA_;
+	bool prepared_for_simA_;
 
-		RotamerDots current_state_rotamer_dots_;
-		RotamerDots alt_state_rotamer_dots_;
+	RotamerDots current_state_rotamer_dots_;
+	RotamerDots alt_state_rotamer_dots_;
 
-		InvRotamerDots curr_state_inv_dots_;
-		InvRotamerDots alt_state_inv_dots_;
+	InvRotamerDots curr_state_inv_dots_;
+	InvRotamerDots alt_state_inv_dots_;
 
-		utility::vector1< Size > curr_state_exp_hphobes_;
-		utility::vector1< Size > alt_state_exp_hphobes_;
+	utility::vector1< Size > curr_state_exp_hphobes_;
+	utility::vector1< Size > alt_state_exp_hphobes_;
 
-		bool alt_state_dots_matches_current_state_dots_;
+	bool alt_state_dots_matches_current_state_dots_;
 
-		utility::vector1< utility::vector1< bool > > self_atom_atom_overlaps_;
+	utility::vector1< utility::vector1< bool > > self_atom_atom_overlaps_;
 
-		HPatchBackgroundNode();
-		HPatchBackgroundNode( HPatchBackgroundNode< V, E, G > const & );
-		HPatchBackgroundNode< V, E, G > & operator= ( HPatchBackgroundNode< V, E, G > const & );
+	HPatchBackgroundNode();
+	HPatchBackgroundNode( HPatchBackgroundNode< V, E, G > const & );
+	HPatchBackgroundNode< V, E, G > & operator= ( HPatchBackgroundNode< V, E, G > const & );
 
 };
 
@@ -402,66 +402,66 @@ class HPatchBackgroundNode : public BackgroundNode< V, E, G > {
 template < typename V, typename E, typename G >
 class  HPatchEdge : public FirstClassEdge< V, E, G > {
 
-	public:
-		typedef  FirstClassEdge< V, E, G >  parent;
+public:
+	typedef  FirstClassEdge< V, E, G >  parent;
 
-	public:
-		HPatchEdge( G * owner, int node1, int node2 );
-		virtual ~HPatchEdge();
+public:
+	HPatchEdge( G * owner, int node1, int node2 );
+	virtual ~HPatchEdge();
 
-		virtual void prepare_for_simulated_annealing();
+	virtual void prepare_for_simulated_annealing();
 
-		void acknowledge_state_zeroed( int node_index );
+	void acknowledge_state_zeroed( int node_index );
 
-		Real update_state_at_neighbor(
-			int node_considering_substitution,
-			int alt_state,
-			RotamerDots & alt_state_dots
-		);
+	Real update_state_at_neighbor(
+		int node_considering_substitution,
+		int alt_state,
+		RotamerDots & alt_state_dots
+	);
 
-		void acknowledge_substitution();
+	void acknowledge_substitution();
 
-		utility::vector1< utility::vector1< bool > > const & get_current_state_atom_atom_overlaps() const;
-		utility::vector1< utility::vector1< bool > > const & get_alt_state_atom_atom_overlaps() const;
+	utility::vector1< utility::vector1< bool > > const & get_current_state_atom_atom_overlaps() const;
+	utility::vector1< utility::vector1< bool > > const & get_alt_state_atom_atom_overlaps() const;
 
-		// Virtual methods from EdgeBase
-		virtual void declare_energies_final();
+	// Virtual methods from EdgeBase
+	virtual void declare_energies_final();
 
-		virtual unsigned int getMemoryUsageInBytes() const;
-		virtual unsigned int count_static_memory() const;
-		virtual unsigned int count_dynamic_memory() const;
+	virtual unsigned int getMemoryUsageInBytes() const;
+	virtual unsigned int count_static_memory() const;
+	virtual unsigned int count_dynamic_memory() const;
 
-		Real get_current_two_body_energy() const;
+	Real get_current_two_body_energy() const;
 
-	protected:
-		inline
-		HPatchNode< V, E, G >* get_hpatch_node( int index ) {
-			return (HPatchNode< V, E, G >*) E::get_node( index );
-		}
+protected:
+	inline
+	HPatchNode< V, E, G >* get_hpatch_node( int index ) {
+		return (HPatchNode< V, E, G >*) E::get_node( index );
+	}
 
-	private:
-		void inform_non_changing_node_of_neighbors_change();
+private:
+	void inform_non_changing_node_of_neighbors_change();
 
-		//no default constructor, uncopyable
-		HPatchEdge();
-		HPatchEdge( HPatchEdge< V, E, G > const & );
-		HPatchEdge< V, E, G > & operator = ( HPatchEdge< V, E, G > const & );
+	//no default constructor, uncopyable
+	HPatchEdge();
+	HPatchEdge( HPatchEdge< V, E, G > const & );
+	HPatchEdge< V, E, G > & operator = ( HPatchEdge< V, E, G > const & );
 
-	private:
-		int node_changing_;
-		int node_not_changing_;
-		int nodes_curr_states_[2];
-		int nodes_alt_states_[2];
+private:
+	int node_changing_;
+	int node_not_changing_;
+	int nodes_curr_states_[2];
+	int nodes_alt_states_[2];
 
-		RotamerDotsCache nodes_curr_pair_dot_counts_[2];
-		RotamerDotsCache nodes_alt_pair_dot_counts_[2];
+	RotamerDotsCache nodes_curr_pair_dot_counts_[2];
+	RotamerDotsCache nodes_alt_pair_dot_counts_[2];
 
-		utility::vector1< utility::vector1< bool > > current_state_atom_atom_overlaps_;
-		utility::vector1< utility::vector1< bool > > alt_state_atom_atom_overlaps_;
+	utility::vector1< utility::vector1< bool > > current_state_atom_atom_overlaps_;
+	utility::vector1< utility::vector1< bool > > alt_state_atom_atom_overlaps_;
 
-		/// pairs of hphobes that have exposed overlap
-		utility::vector1< std::pair< Size, Size > > curr_state_exolap_hphobes_;
-		utility::vector1< std::pair< Size, Size > > alt_state_exolap_hphobes_;
+	/// pairs of hphobes that have exposed overlap
+	utility::vector1< std::pair< Size, Size > > curr_state_exolap_hphobes_;
+	utility::vector1< std::pair< Size, Size > > alt_state_exolap_hphobes_;
 
 };
 
@@ -481,62 +481,62 @@ class  HPatchEdge : public FirstClassEdge< V, E, G > {
 template < typename V, typename E, typename G >
 class HPatchBackgroundEdge : public BackgroundToFirstClassEdge< V, E, G > {
 
-	public:
-		typedef  BackgroundToFirstClassEdge< V, E, G >  parent;
+public:
+	typedef  BackgroundToFirstClassEdge< V, E, G >  parent;
 
-	public:
-		HPatchBackgroundEdge( AdditionalBackgroundNodesInteractionGraph< V, E, G >* owner, int first_class_node_index, int background_node_index );
-		virtual ~HPatchBackgroundEdge();
+public:
+	HPatchBackgroundEdge( AdditionalBackgroundNodesInteractionGraph< V, E, G >* owner, int first_class_node_index, int background_node_index );
+	virtual ~HPatchBackgroundEdge();
 
-		void prepare_for_simulated_annealing();
-		void initialize_overlap_cache( RotamerDots const & bg_residue );
+	void prepare_for_simulated_annealing();
+	void initialize_overlap_cache( RotamerDots const & bg_residue );
 
-		void acknowledge_state_change( int new_state );
+	void acknowledge_state_change( int new_state );
 
-		Real update_state_at_neighbor( int alt_state );
-		void acknowledge_substitution();
+	Real update_state_at_neighbor( int alt_state );
+	void acknowledge_substitution();
 
-		utility::vector1< utility::vector1< bool > > const & get_atom_atom_overlaps_for_state( Size state ) const;
+	utility::vector1< utility::vector1< bool > > const & get_atom_atom_overlaps_for_state( Size state ) const;
 
-		virtual unsigned int count_static_memory() const;
-		virtual unsigned int count_dynamic_memory() const;
+	virtual unsigned int count_static_memory() const;
+	virtual unsigned int count_dynamic_memory() const;
 
-	protected:
-		inline
-		HPatchNode< V, E, G >* get_hpatch_node() const {
-			return ( HPatchNode< V, E, G >* ) parent::get_first_class_node();
-		}
+protected:
+	inline
+	HPatchNode< V, E, G >* get_hpatch_node() const {
+		return ( HPatchNode< V, E, G >* ) parent::get_first_class_node();
+	}
 
-		inline
-		HPatchBackgroundNode< V, E, G >* get_hpatch_bg_node() const {
-			return ( HPatchBackgroundNode< V, E, G >* ) parent::get_background_node();
-		}
+	inline
+	HPatchBackgroundNode< V, E, G >* get_hpatch_bg_node() const {
+		return ( HPatchBackgroundNode< V, E, G >* ) parent::get_background_node();
+	}
 
-	private:
-		//no default constructor, uncopyable
-		HPatchBackgroundEdge();
-		HPatchBackgroundEdge( HPatchBackgroundEdge< V, E, G > const & );
-		HPatchBackgroundEdge< V, E, G > & operator= ( HPatchBackgroundEdge< V, E, G > const & );
+private:
+	//no default constructor, uncopyable
+	HPatchBackgroundEdge();
+	HPatchBackgroundEdge( HPatchBackgroundEdge< V, E, G > const & );
+	HPatchBackgroundEdge< V, E, G > & operator= ( HPatchBackgroundEdge< V, E, G > const & );
 
-	private:
-		bool prepared_for_simA_;
-		Size bg_res_num_atoms_;
+private:
+	bool prepared_for_simA_;
+	Size bg_res_num_atoms_;
 
-		//uses index 0; do not change to utility::vector1
-		std::vector< RotamerDotsCache > node_states_coverage_of_bg_res_;
+	//uses index 0; do not change to utility::vector1
+	std::vector< RotamerDotsCache > node_states_coverage_of_bg_res_;
 
-		int nodes_curr_state_;
-		int nodes_alt_state_;
+	int nodes_curr_state_;
+	int nodes_alt_state_;
 
-		RotamerDotsCache curr_dots_cache_;
-		RotamerDotsCache alt_dots_cache_;
+	RotamerDotsCache curr_dots_cache_;
+	RotamerDotsCache alt_dots_cache_;
 
-		// uses index 0; do not change
-		std::vector< utility::vector1< utility::vector1< bool > > > node_states_overlap_with_bg_res_;
+	// uses index 0; do not change
+	std::vector< utility::vector1< utility::vector1< bool > > > node_states_overlap_with_bg_res_;
 
-		/// pairs of hphobes that have exposed overlap
-		utility::vector1< std::pair< Size, Size > > curr_state_exolap_hphobes_;
-		utility::vector1< std::pair< Size, Size > > alt_state_exolap_hphobes_;
+	/// pairs of hphobes that have exposed overlap
+	utility::vector1< std::pair< Size, Size > > curr_state_exolap_hphobes_;
+	utility::vector1< std::pair< Size, Size > > alt_state_exolap_hphobes_;
 
 };
 
@@ -556,222 +556,222 @@ class HPatchBackgroundEdge : public BackgroundToFirstClassEdge< V, E, G > {
 template < typename V, typename E, typename G >
 class HPatchInteractionGraph : public AdditionalBackgroundNodesInteractionGraph< V, E, G > {
 
-	public:
-		typedef  AdditionalBackgroundNodesInteractionGraph< V, E, G >  parent;
+public:
+	typedef  AdditionalBackgroundNodesInteractionGraph< V, E, G >  parent;
 
-	public:
-		HPatchInteractionGraph( int num_nodes );
-		virtual ~HPatchInteractionGraph();
+public:
+	HPatchInteractionGraph( int num_nodes );
+	virtual ~HPatchInteractionGraph();
 
-		pose::Pose const & pose() const { return *pose_; }
-		void set_pose( pose::Pose const & pose );
+	pose::Pose const & pose() const { return *pose_; }
+	void set_pose( pose::Pose const & pose );
 
-		task::PackerTask const & packer_task() const { return *packer_task_; }
-		void set_packer_task( task::PackerTask const & task );
+	task::PackerTask const & packer_task() const { return *packer_task_; }
+	void set_packer_task( task::PackerTask const & task );
 
-		rotamer_set::RotamerSets const & rotamer_sets() const { return *rotamer_sets_; }
-		void set_rotamer_sets( rotamer_set::RotamerSets const & rotsets );
+	rotamer_set::RotamerSets const & rotamer_sets() const { return *rotamer_sets_; }
+	void set_rotamer_sets( rotamer_set::RotamerSets const & rotsets );
 
-		void set_score_weight( Real weight ) { hpatch_score_weight_ = weight; }
+	void set_score_weight( Real weight ) { hpatch_score_weight_ = weight; }
 
-		void initialize( rotamer_set::RotamerSetsBase const & rot_sets );
+	void initialize( rotamer_set::RotamerSetsBase const & rot_sets );
 
-		void set_num_residues_in_protein( Size num_res );
-		void set_num_background_residues( Size num_background_residues );
-		void set_residue_as_background_residue( int residue );
-		void set_background_residue_rotamer_dots( Size residue, conformation::Residue const & rotamer );
-		void set_rotamer_dots_for_node_state( Size node_index, Size state, conformation::Residue const & rotamer );
+	void set_num_residues_in_protein( Size num_res );
+	void set_num_background_residues( Size num_background_residues );
+	void set_residue_as_background_residue( int residue );
+	void set_background_residue_rotamer_dots( Size residue, conformation::Residue const & rotamer );
+	void set_rotamer_dots_for_node_state( Size node_index, Size state, conformation::Residue const & rotamer );
 
-		virtual void prepare_for_simulated_annealing();
+	virtual void prepare_for_simulated_annealing();
 
-		virtual void blanket_assign_state_0();
-		Real get_hpatch_score();
-		virtual void set_errorfull_deltaE_threshold( core::PackerEnergy deltaE );
+	virtual void blanket_assign_state_0();
+	Real get_hpatch_score();
+	virtual void set_errorfull_deltaE_threshold( core::PackerEnergy deltaE );
 
-		static void print_hpatch_avoidance_stats();
-		static void reset_hpatch_avoidance_stats();
+	static void print_hpatch_avoidance_stats();
+	static void reset_hpatch_avoidance_stats();
 
-		virtual void consider_substitution( int node_ind, int new_state, core::PackerEnergy & delta_energy, core::PackerEnergy & prev_energy_for_node );
-		core::PackerEnergy calculate_hpatch_deltaE();
+	virtual void consider_substitution( int node_ind, int new_state, core::PackerEnergy & delta_energy, core::PackerEnergy & prev_energy_for_node );
+	core::PackerEnergy calculate_hpatch_deltaE();
 
-		void register_fc_node_in_state0();
-		void register_fc_node_affected_by_rotsub( int fc_node_ind );
-		void register_bg_node_affected_by_rotsub( int bg_node_ind );
+	void register_fc_node_in_state0();
+	void register_fc_node_affected_by_rotsub( int fc_node_ind );
+	void register_bg_node_affected_by_rotsub( int bg_node_ind );
 
-		// used only for intra-residue connections
-		void update_disjoint_sets_using_cache(
-			conformation::Residue const & rsd,
-			InvRotamerDots const & invdots,
-			utility::vector1< Size > const & exp_hphobes,
-			Size residue_djs_offset,
-			utility::vector1< utility::vector1< bool > > const & atom_atom_self_overlap,
-			graph::DisjointSets & ds
-		);
+	// used only for intra-residue connections
+	void update_disjoint_sets_using_cache(
+		conformation::Residue const & rsd,
+		InvRotamerDots const & invdots,
+		utility::vector1< Size > const & exp_hphobes,
+		Size residue_djs_offset,
+		utility::vector1< utility::vector1< bool > > const & atom_atom_self_overlap,
+		graph::DisjointSets & ds
+	);
 
-		// used for inter-residue connections
-		void update_disjoint_sets_using_cache(
-			conformation::Residue const & rsd1,
-			InvRotamerDots const & invdots1,
-			utility::vector1< Size > const & exp_hphobes1,
-			Size djs_offset_1,
-			conformation::Residue const & rsd2,
-			InvRotamerDots const & invdots2,
-			utility::vector1< Size > const & exp_hphobes2,
-			Size djs_offset_2,
-			utility::vector1< utility::vector1< bool > > const & atom_atom_overlaps,
-			graph::DisjointSets & ds
-		);
+	// used for inter-residue connections
+	void update_disjoint_sets_using_cache(
+		conformation::Residue const & rsd1,
+		InvRotamerDots const & invdots1,
+		utility::vector1< Size > const & exp_hphobes1,
+		Size djs_offset_1,
+		conformation::Residue const & rsd2,
+		InvRotamerDots const & invdots2,
+		utility::vector1< Size > const & exp_hphobes2,
+		Size djs_offset_2,
+		utility::vector1< utility::vector1< bool > > const & atom_atom_overlaps,
+		graph::DisjointSets & ds
+	);
 
-		Real calculate_alt_state_hpatch_score();
-		//void blanket_reset_alt_state_dots();
+	Real calculate_alt_state_hpatch_score();
+	//void blanket_reset_alt_state_dots();
 
-		virtual core::PackerEnergy commit_considered_substitution();
+	virtual core::PackerEnergy commit_considered_substitution();
 
-		virtual core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int & node_states );
+	virtual core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int & node_states );
 
-		virtual core::PackerEnergy get_energy_current_state_assignment();
-		virtual int get_edge_memory_usage() const;
-		virtual unsigned int count_static_memory() const;
-		virtual unsigned int count_dynamic_memory() const;
+	virtual core::PackerEnergy get_energy_current_state_assignment();
+	virtual int get_edge_memory_usage() const;
+	virtual unsigned int count_static_memory() const;
+	virtual unsigned int count_dynamic_memory() const;
 
-		using parent::get_energy_sum_for_vertex_group;
+	using parent::get_energy_sum_for_vertex_group;
 
-		//virtual void print_current_state_assignment() const;
-		virtual Real get_energy_sum_for_vertex_group( Size group_id );
+	//virtual void print_current_state_assignment() const;
+	virtual Real get_energy_sum_for_vertex_group( Size group_id );
 
-		void print_internal_energies_for_current_state_assignment();
-		//void write_dot_kinemage( std::ofstream & output_kin );
+	void print_internal_energies_for_current_state_assignment();
+	//void write_dot_kinemage( std::ofstream & output_kin );
 
-		void print() const;
+	void print() const;
 
-		// method used only by unit tests
-		int bg_node_2_resid( Size node_index );
-		std::vector<int> get_network_state() const;
-		void set_observed_sufficient_boolean_true();
-		void get_all_sasas( utility::vector1< Real > & node_sasas, utility::vector1< Real > & bgnode_sasas );
+	// method used only by unit tests
+	int bg_node_2_resid( Size node_index );
+	std::vector<int> get_network_state() const;
+	void set_observed_sufficient_boolean_true();
+	void get_all_sasas( utility::vector1< Real > & node_sasas, utility::vector1< Real > & bgnode_sasas );
 
-		/*utility::vector1< Size > const & get_fc_nodes_near_rotsub();
-		utility::vector1< bool > const & get_fc_nodes_near_rotsub_bool();
-		utility::vector1< Size > const & get_bg_nodes_near_rotsub();
-		utility::vector1< bool > const & get_bg_nodes_near_rotsub_bool();
+	/*utility::vector1< Size > const & get_fc_nodes_near_rotsub();
+	utility::vector1< bool > const & get_fc_nodes_near_rotsub_bool();
+	utility::vector1< Size > const & get_bg_nodes_near_rotsub();
+	utility::vector1< bool > const & get_bg_nodes_near_rotsub_bool();
 
-		utility::vector1< Size > const & get_fc_n_exp_hphobes();
-		utility::vector1< Size > const & get_bg_n_exp_hphobes();
+	utility::vector1< Size > const & get_fc_n_exp_hphobes();
+	utility::vector1< Size > const & get_bg_n_exp_hphobes();
 
-		utility::vector1< Size > const & get_fc_exp_hphobe_djs_offsets();
-		utility::vector1< Size > const & get_bg_exp_hphobe_djs_offsets();*/
+	utility::vector1< Size > const & get_fc_exp_hphobe_djs_offsets();
+	utility::vector1< Size > const & get_bg_exp_hphobe_djs_offsets();*/
 
-		// need to make these method public for the unit tests
-		inline
-		HPatchNode< V, E, G >* get_hpatch_node( int index ) const {
-			return (HPatchNode< V, E, G > *) G::get_node( index );
-		}
+	// need to make these method public for the unit tests
+	inline
+	HPatchNode< V, E, G >* get_hpatch_node( int index ) const {
+		return (HPatchNode< V, E, G > *) G::get_node( index );
+	}
 
-		inline
-		HPatchBackgroundNode< V, E, G >* get_hpatch_bg_node( int index ) const {
-			return (HPatchBackgroundNode< V, E, G > *) parent::get_background_node( index );
-		}
+	inline
+	HPatchBackgroundNode< V, E, G >* get_hpatch_bg_node( int index ) const {
+		return (HPatchBackgroundNode< V, E, G > *) parent::get_background_node( index );
+	}
 
-	protected:
-		virtual NodeBase* create_new_node( int node_index, int num_states);
-		virtual EdgeBase* create_new_edge( int index1, int index2);
-		virtual BackgroundNode< V, E, G >* create_background_node( int node_index );
-		virtual BackgroundToFirstClassEdge< V, E, G >* create_background_edge( int fc_node_index, int bg_node_index);
+protected:
+	virtual NodeBase* create_new_node( int node_index, int num_states);
+	virtual EdgeBase* create_new_edge( int index1, int index2);
+	virtual BackgroundNode< V, E, G >* create_background_node( int node_index );
+	virtual BackgroundToFirstClassEdge< V, E, G >* create_background_edge( int fc_node_index, int bg_node_index);
 
-		void track_hpatch_E_min();
+	void track_hpatch_E_min();
 
-		void update_internal_energy_totals_hpatch();
+	void update_internal_energy_totals_hpatch();
 
-	private:
-		void reset_from_previous_deltaHpatch_comp();
-		bool decide_procrastinate_hpatch_computations( Real const pd_deltaE, Real const threshold ) const;
+private:
+	void reset_from_previous_deltaHpatch_comp();
+	bool decide_procrastinate_hpatch_computations( Real const pd_deltaE, Real const threshold ) const;
 
-		void detect_background_residue_and_first_class_residue_overlap();
-		void initialize_bg_bg_overlaps();
-		void initialize_bg_bg_atom_atom_overlaps();
-		utility::vector1< utility::vector1< bool > > const & get_bg_bg_atom_atom_overlaps( Size node1_index, Size node2_index );
+	void detect_background_residue_and_first_class_residue_overlap();
+	void initialize_bg_bg_overlaps();
+	void initialize_bg_bg_atom_atom_overlaps();
+	utility::vector1< utility::vector1< bool > > const & get_bg_bg_atom_atom_overlaps( Size node1_index, Size node2_index );
 
-		void init_SASA_radii_from_database();
+	void init_SASA_radii_from_database();
 
 #ifdef DOUBLE_CHECK_COUNTS
 		void verify_sasas_correct();
 #endif
 
-		HPatchInteractionGraph();
-		HPatchInteractionGraph( HPatchInteractionGraph< V, E, G > const & );
-		HPatchInteractionGraph< V, E, G > & operator = ( HPatchInteractionGraph< V, E, G > const & );
+	HPatchInteractionGraph();
+	HPatchInteractionGraph( HPatchInteractionGraph< V, E, G > const & );
+	HPatchInteractionGraph< V, E, G > & operator = ( HPatchInteractionGraph< V, E, G > const & );
 
-	private:
-		pose::PoseOP pose_;
-		task::PackerTaskOP packer_task_;
-		rotamer_set::RotamerSetsOP rotamer_sets_;
+private:
+	pose::PoseOP pose_;
+	task::PackerTaskOP packer_task_;
+	rotamer_set::RotamerSetsOP rotamer_sets_;
 
-		core::Real hpatch_score_weight_;
+	core::Real hpatch_score_weight_;
 
-		Size num_total_residues_;
-		Size num_residues_assigned_as_background_;
-		utility::vector1< Size > resid_2_bgenumeration_;
-		utility::vector1< Size > bgenumeration_2_resid_;
+	Size num_total_residues_;
+	Size num_residues_assigned_as_background_;
+	utility::vector1< Size > resid_2_bgenumeration_;
+	utility::vector1< Size > bgenumeration_2_resid_;
 
-		utility::vector1< utility::vector1< Size > > bg_bg_respairs_w_hphobe_olap_;
-		utility::vector1< utility::vector1< utility::vector1< utility::vector1< bool > > > > bg_bg_atom_atom_overlaps_;
-		utility::vector1< utility::vector1< utility::vector1< utility::vector1< bool > > > > curr_bg_bg_exhpobeolap_;
-		utility::vector1< utility::vector1< utility::vector1< utility::vector1< bool > > > > alt_bg_bg_exhpobeolap_;
+	utility::vector1< utility::vector1< Size > > bg_bg_respairs_w_hphobe_olap_;
+	utility::vector1< utility::vector1< utility::vector1< utility::vector1< bool > > > > bg_bg_atom_atom_overlaps_;
+	utility::vector1< utility::vector1< utility::vector1< utility::vector1< bool > > > > curr_bg_bg_exhpobeolap_;
+	utility::vector1< utility::vector1< utility::vector1< utility::vector1< bool > > > > alt_bg_bg_exhpobeolap_;
 
-		// keep track of which residues are effected by a considered rotamer substitution
-		bool some_node_in_state_0_;
-		utility::vector1< Size > fc_nodes_near_rotsub_;
-		utility::vector1< bool > fc_nodes_near_rotsub_bool_;
-		utility::vector1< Size > bg_nodes_near_rotsub_;
-		utility::vector1< bool > bg_nodes_near_rotsub_bool_;
+	// keep track of which residues are effected by a considered rotamer substitution
+	bool some_node_in_state_0_;
+	utility::vector1< Size > fc_nodes_near_rotsub_;
+	utility::vector1< bool > fc_nodes_near_rotsub_bool_;
+	utility::vector1< Size > bg_nodes_near_rotsub_;
+	utility::vector1< bool > bg_nodes_near_rotsub_bool_;
 
-		/// "djs" for DisJoint Sets.  An abuse of the idea of an acronym.
-		utility::vector1< Size > fc_exp_hphobe_djs_offsets_;
-		utility::vector1< Size > fc_n_exp_hphobes_;
-		utility::vector1< Size > bg_exp_hphobe_djs_offsets_;
-		utility::vector1< Size > bg_n_exp_hphobes_;
+	/// "djs" for DisJoint Sets.  An abuse of the idea of an acronym.
+	utility::vector1< Size > fc_exp_hphobe_djs_offsets_;
+	utility::vector1< Size > fc_n_exp_hphobes_;
+	utility::vector1< Size > bg_exp_hphobe_djs_offsets_;
+	utility::vector1< Size > bg_n_exp_hphobes_;
 
-		utility::vector1< exposed_hydrophobic_data > djs_id_2_hphobe_index_;
-		//utility::vector1< Real > sasa_for_djs_node_;
-		utility::vector1< Real > ep_sasa_for_djs_node_;
+	utility::vector1< exposed_hydrophobic_data > djs_id_2_hphobe_index_;
+	//utility::vector1< Real > sasa_for_djs_node_;
+	utility::vector1< Real > ep_sasa_for_djs_node_;
 
-		/// extract the disjoint sets connected component information by hand (faster)
-		utility::vector1< Size > reps_for_nonzero_rank_ccs_;
-		utility::vector1< Size > djs_rep_node_index_2_cc_index_;
-		utility::vector1< Real > sasa_for_cc_;
+	/// extract the disjoint sets connected component information by hand (faster)
+	utility::vector1< Size > reps_for_nonzero_rank_ccs_;
+	utility::vector1< Size > djs_rep_node_index_2_cc_index_;
+	utility::vector1< Real > sasa_for_cc_;
 
-		bool prepared_for_simulated_annealing_;
+	bool prepared_for_simulated_annealing_;
 
-		bool observed_sufficient_hpatch_E_to_predict_min_;
+	bool observed_sufficient_hpatch_E_to_predict_min_;
 
-		static Size num_state_substitutions_considered_;
-		static Size num_hpatch_comps_procrastinated_;
-		static Size num_hpatch_comps_later_made_;
+	static Size num_state_substitutions_considered_;
+	static Size num_hpatch_comps_procrastinated_;
+	static Size num_hpatch_comps_later_made_;
 
-		Real hpatch_score_min_last_100_;
-		Real hpatch_score_min_recent_;
-		Size num_substitutions_since_hpatch_min_update_;
+	Real hpatch_score_min_last_100_;
+	Real hpatch_score_min_recent_;
+	Size num_substitutions_since_hpatch_min_update_;
 
-		bool calculated_hpatch_deltaE_;
-		core::PackerEnergy deltaE_for_substitution_;
+	bool calculated_hpatch_deltaE_;
+	core::PackerEnergy deltaE_for_substitution_;
 
-		Size node_considering_alt_state_;
-		Size alt_state_being_considered_;
-		Real total_energy_current_state_assignment_;
-		Real total_energy_alternate_state_assignment_;
+	Size node_considering_alt_state_;
+	Size alt_state_being_considered_;
+	Real total_energy_current_state_assignment_;
+	Real total_energy_alternate_state_assignment_;
 
-		Real hpatch_energy_current_state_assignment_;
-		Real hpatch_energy_alternate_state_assignment_;
+	Real hpatch_energy_current_state_assignment_;
+	Real hpatch_energy_alternate_state_assignment_;
 
-		int num_commits_since_last_update_;
-		float deltaE_threshold_for_avoiding_hpatch_calcs_;
+	int num_commits_since_last_update_;
+	float deltaE_threshold_for_avoiding_hpatch_calcs_;
 
-		static utility::vector1< Real > radii_;
-		static bool initialized_SASA_radii;
-		static const int COMMIT_LIMIT_BETWEEN_UPDATES = 4096;
+	static utility::vector1< Real > radii_;
+	static bool initialized_SASA_radii;
+	static const int COMMIT_LIMIT_BETWEEN_UPDATES = 4096;
 
-		static std::string carbon_atom;
-		static std::string sulfur_atom;
+	static std::string carbon_atom;
+	static std::string sulfur_atom;
 };
 
 
@@ -785,10 +785,10 @@ class HPatchInteractionGraph : public AdditionalBackgroundNodesInteractionGraph<
 ///
 template < typename V, typename E, typename G >
 HPatchNode< V, E, G >::HPatchNode( G* owner, int node_index, int num_states ) :
-	FirstClassNode< V, E, G > ( owner, node_index, num_states ),
-	current_state_rotamer_dots_(), // does this call the RD constructor? Yes!
-	alt_state_rotamer_dots_(),
-	alt_state_dots_matches_current_state_dots_( true )
+FirstClassNode< V, E, G > ( owner, node_index, num_states ),
+current_state_rotamer_dots_(), // does this call the RD constructor? Yes!
+alt_state_rotamer_dots_(),
+alt_state_dots_matches_current_state_dots_( true )
 {
 	rotamers_vector_.resize( num_states );
 	restype_group_for_rotamers_.resize( num_states, 0 );
@@ -826,34 +826,34 @@ void HPatchNode< V, E, G >::set_rotamers( rotamer_set::RotamerSetCOP rotamers ) 
 	}
 
 	{ // scope -- I should make this a function
-	std::string carbon( "C" ), sulfur( "S" );
-	max_hphobes_ = 0;
+		std::string carbon( "C" ), sulfur( "S" );
+		max_hphobes_ = 0;
 
-	// here we set every index of hphobe_ats_for_restype_group_ with the atom ids of the hydrophobic atoms in that restype.
-	// this is done by first looking at that residue type and counting up the number of C and S atoms to reserve that number
-	// of elements in the inner vector and then going back over the list of heavy atoms and setting the index of that atom id.
-	// this can't be done in one loop because we also want to set the max_hphobes_ variable and this function only runs once
-	// at initializations so it's ok.
+		// here we set every index of hphobe_ats_for_restype_group_ with the atom ids of the hydrophobic atoms in that restype.
+		// this is done by first looking at that residue type and counting up the number of C and S atoms to reserve that number
+		// of elements in the inner vector and then going back over the list of heavy atoms and setting the index of that atom id.
+		// this can't be done in one loop because we also want to set the max_hphobes_ variable and this function only runs once
+		// at initializations so it's ok.
 
-	hphobe_ats_for_restype_group_.resize( restype_group_for_rotamers_[ rotamers->num_rotamers() ] );
-	for ( Size ii = 1; ii <= hphobe_ats_for_restype_group_.size(); ++ii ) {
-		chemical::ResidueType const & ii_restype = rotamers_vector_[ rotamers->get_residue_type_begin( ii ) ]->type();
-		Size count_cs = 0;
-		for ( Size jj = 1; jj <= ii_restype.nheavyatoms(); ++jj ) {
-			if ( ii_restype.atom_type( jj ).element() == carbon || ii_restype.atom_type( jj ).element() == sulfur ) {
-				++count_cs;
+		hphobe_ats_for_restype_group_.resize( restype_group_for_rotamers_[ rotamers->num_rotamers() ] );
+		for ( Size ii = 1; ii <= hphobe_ats_for_restype_group_.size(); ++ii ) {
+			chemical::ResidueType const & ii_restype = rotamers_vector_[ rotamers->get_residue_type_begin( ii ) ]->type();
+			Size count_cs = 0;
+			for ( Size jj = 1; jj <= ii_restype.nheavyatoms(); ++jj ) {
+				if ( ii_restype.atom_type( jj ).element() == carbon || ii_restype.atom_type( jj ).element() == sulfur ) {
+					++count_cs;
+				}
+			}
+			if ( max_hphobes_ < count_cs ) {
+				max_hphobes_ = count_cs;
+			}
+			hphobe_ats_for_restype_group_[ ii ].reserve( count_cs );
+			for ( Size jj = 1; jj <= ii_restype.nheavyatoms(); ++jj ) {
+				if ( ii_restype.atom_type( jj ).element() == carbon || ii_restype.atom_type( jj ).element() == sulfur ) {
+					hphobe_ats_for_restype_group_[ ii ].push_back( jj );
+				}
 			}
 		}
-		if ( max_hphobes_ < count_cs ) {
-			max_hphobes_ = count_cs;
-		}
-		hphobe_ats_for_restype_group_[ ii ].reserve( count_cs );
-		for ( Size jj = 1; jj <= ii_restype.nheavyatoms(); ++jj ) {
-			if ( ii_restype.atom_type( jj ).element() == carbon || ii_restype.atom_type( jj ).element() == sulfur ) {
-				hphobe_ats_for_restype_group_[ ii ].push_back( jj );
-			}
-		}
-	}
 	} // end scope
 
 	curr_state_exp_hphobes_.reserve( max_hphobes_ );
@@ -896,7 +896,7 @@ HPatchNode< V, E, G >::get_rotamer( int state ) const {
 ///
 template < typename V, typename E, typename G >
 void HPatchNode< V, E, G >::set_rotamer_dots_for_state( Size state, RotamerDots const & rd ) {
-debug_assert( state > 0 && state <= (Size)parent::get_num_states() );
+	debug_assert( state > 0 && state <= (Size)parent::get_num_states() );
 	self_and_bg_dots_for_states_[ state ] = rd;
 }
 
@@ -923,14 +923,15 @@ bool HPatchNode< V, E, G >::overlaps( HPatchNode< V, E, G >* neighbor ) {
 	//std::clock_t starttime = clock();
 	for ( Size ii = 1; ii <= (Size)parent::get_num_states(); ++ii ) {
 		//for (Size jj = 1; jj <= (Size)parent::get_num_states(); ++jj ) { // WRONG!
-		for (Size jj = 1; jj <= (Size)neighbor->get_num_states(); ++jj ) {
+		for ( Size jj = 1; jj <= (Size)neighbor->get_num_states(); ++jj ) {
 			if ( self_and_bg_dots_for_states_[ ii ].overlaps( neighbor->self_and_bg_dots_for_states_[ jj ] ) ) {
 				found_overlap = true;
 				break;
 			}
 		}
-		if (found_overlap)
+		if ( found_overlap ) {
 			break;
+		}
 	}
 	//std::clock_t stoptime = clock();
 	//time_spent_here += ((double)(stoptime - starttime)) / CLOCKS_PER_SEC;
@@ -1041,15 +1042,17 @@ void HPatchNode< V, E, G >::initialize_atom_atom_overlap_cache() {
 
 		for ( Size iia=1; iia <= rotamer_->nheavyatoms(); ++iia ) {
 			// immediately continue if not a hydrophobic atom; no point in computing overlaps for polar atoms
-			if ( rotamer_->atom_type( iia ).element() != carbon_atom && rotamer_->atom_type( iia ).element() != sulfur_atom )
+			if ( rotamer_->atom_type( iia ).element() != carbon_atom && rotamer_->atom_type( iia ).element() != sulfur_atom ) {
 				continue;
+			}
 
 			Real const iia_atom_radius = rd.get_atom_radius( iia ) + probe_radius;
 
 			// for intra-residue we only have iterate over the greater-indexed heavyatoms
 			for ( Size jja = iia + 1; jja <= rotamer_->nheavyatoms(); ++jja ) {
-				if ( rotamer_->atom_type( jja ).element() != carbon_atom && rotamer_->atom_type( jja ).element() != sulfur_atom )
+				if ( rotamer_->atom_type( jja ).element() != carbon_atom && rotamer_->atom_type( jja ).element() != sulfur_atom ) {
 					continue;
+				}
 
 				Real const jja_atom_radius = rd.get_atom_radius( jja ) + probe_radius;
 
@@ -1081,23 +1084,23 @@ void HPatchNode< V, E, G >::initialize_atom_atom_overlap_cache() {
 	} // for loop over all states
 
 
-/*
+	/*
 #ifdef FILE_DEBUG
 	TR_NODE << "node " << parent::get_node_index() << std::endl;
 	for ( Size state = 1; state <= (Size)parent::get_num_states(); ++state ) {
-		TR_NODE << "state " << state << " self_atom_atom_overlaps_: [ " << std::endl;
-		for ( Size aa=1; aa <= self_atom_atom_overlaps_[ state ].size(); ++aa ) {
-			TR_NODE << "self_atom_atom_overlaps_[ " << aa << " ]: [ ";
-			for ( Size bb=1; bb <= self_atom_atom_overlaps_[ state ][ aa ].size(); ++bb ) {
-				TR_NODE << self_atom_atom_overlaps_[ state ][ aa ][ bb ] << ", ";
-			}
-			TR_NODE << "]" << std::endl;
-		}
-		TR_NODE << "]" << std::endl;
+	TR_NODE << "state " << state << " self_atom_atom_overlaps_: [ " << std::endl;
+	for ( Size aa=1; aa <= self_atom_atom_overlaps_[ state ].size(); ++aa ) {
+	TR_NODE << "self_atom_atom_overlaps_[ " << aa << " ]: [ ";
+	for ( Size bb=1; bb <= self_atom_atom_overlaps_[ state ][ aa ].size(); ++bb ) {
+	TR_NODE << self_atom_atom_overlaps_[ state ][ aa ][ bb ] << ", ";
+	}
+	TR_NODE << "]" << std::endl;
+	}
+	TR_NODE << "]" << std::endl;
 	}
 	TR_NODE << std::endl;
 #endif
-*/
+	*/
 
 }
 
@@ -1289,7 +1292,7 @@ HPatchNode< V, E, G >::get_atom_atom_self_overlaps_for_state( Size state ) const
 template < typename V, typename E, typename G >
 core::PackerEnergy HPatchNode< V, E, G >::calculate_PD_deltaE_for_substitution( int alternate_state, core::PackerEnergy & prev_PDenergies_for_node ) {
 
-debug_assert( alternate_state > 0  && alternate_state <= parent::get_num_states() );
+	debug_assert( alternate_state > 0  && alternate_state <= parent::get_num_states() );
 
 	prev_PDenergies_for_node = parent::get_curr_pd_energy_total();
 
@@ -1340,7 +1343,7 @@ Real HPatchNode< V, E, G >::consider_alternate_state() {
 	// self_and_bg_dots_for_states has the RotamerDots object for a state, with the overlap counts set for all BG nodes
 	// that overlap with that state
 	//runtime_assert_msg( alt_state_dots_matches_current_state_dots_, "alt_state_dots and current_state_dots do not match for FC node " + ObjexxFCL::format::I( 3, parent::get_node_index() ) ); // causes crash in pmut_scan run
-debug_assert( alt_state_dots_matches_current_state_dots_ );
+	debug_assert( alt_state_dots_matches_current_state_dots_ );
 	alt_state_dots_matches_current_state_dots_ = false;
 
 	alt_state_rotamer_dots_ = self_and_bg_dots_for_states_[ parent::get_alternate_state() ];
@@ -1423,7 +1426,7 @@ void HPatchNode< V, E, G >::update_alt_state_exphphobes() {
 /// will have its alt state count reset but what about all the other nodes in the previous set.  how will their counts get
 /// reset to the current state count?  perhaps a check in the commit method can be added.  nope, a new method has been
 /// added to Nodes and BGNodes to handle this case.
-///	alt_state_total_hASA_ = curr_state_total_hASA_;
+/// alt_state_total_hASA_ = curr_state_total_hASA_;
 ///
 ///
 template < typename V, typename E, typename G >
@@ -1456,7 +1459,7 @@ Real HPatchNode< V, E, G >::update_state_for_neighbors_substitution (
 
 	// everything has to start from the current state. then we'll update the alt state to be correct.
 	//runtime_assert_msg( alt_state_dots_matches_current_state_dots_, "alt_state_dots and current_state_dots do not match for FC node " + ObjexxFCL::format::I( 3, parent::get_node_index() ) ); // causes crash in pmut_scan run
-debug_assert( alt_state_dots_matches_current_state_dots_ );
+	debug_assert( alt_state_dots_matches_current_state_dots_ );
 	/// APL -- this should be unnecessary
 	/// APL TEMP alt_state_rotamer_dots_ = current_state_rotamer_dots_;
 	alt_state_dots_matches_current_state_dots_ = false;
@@ -1522,12 +1525,13 @@ debug_assert( alt_state_dots_matches_current_state_dots_ );
 template < typename V, typename E, typename G >
 Real HPatchNode< V, E, G >::get_sasa_difference() const {
 
-	if ( parent::get_current_state() == 0 && parent::get_alternate_state() == 0 )
+	if ( parent::get_current_state() == 0 && parent::get_alternate_state() == 0 ) {
 		return 0.0;
-	else if ( parent::get_current_state() != 0 && parent::get_alternate_state() == 0 )
+	} else if ( parent::get_current_state() != 0 && parent::get_alternate_state() == 0 ) {
 		return -1 * current_state_rotamer_dots_.get_sasa();
-	else if ( parent::get_current_state() == 0 && parent::get_alternate_state() != 0 )
+	} else if ( parent::get_current_state() == 0 && parent::get_alternate_state() != 0 ) {
 		return alt_state_rotamer_dots_.get_sasa();
+	}
 
 	// both current and alt are nonzero
 	return alt_state_rotamer_dots_.get_sasa() - current_state_rotamer_dots_.get_sasa();
@@ -1589,7 +1593,7 @@ void HPatchNode< V, E, G >::reset_alt_state_dots() {
 template < typename V, typename E, typename G >
 void HPatchNode< V, E, G >::commit_considered_substitution() {
 
-debug_assert( parent::considering_alternate_state() );
+	debug_assert( parent::considering_alternate_state() );
 
 	if ( parent::get_alternate_state() == 0 ) {
 		assign_zero_state();
@@ -1611,7 +1615,7 @@ debug_assert( parent::considering_alternate_state() );
 	for ( int ii = 1; ii <= parent::get_num_incident_edges(); ++ii ) {
 		get_incident_hpatch_edge(ii)->acknowledge_substitution();
 	}
-	for (int ii = 1; ii <= parent::get_num_edges_to_background_nodes(); ++ii) {
+	for ( int ii = 1; ii <= parent::get_num_edges_to_background_nodes(); ++ii ) {
 		get_edge_to_hpatch_bg_node( ii )->acknowledge_substitution();
 	}
 
@@ -1655,7 +1659,7 @@ unsigned int HPatchNode< V, E, G >::count_dynamic_memory() const {
 ///
 //template < typename V, typename E, typename G >
 //void HPatchNode< V, E, G >::write_dot_kinemage( std::ofstream & output_kin ) {
-//	current_state_rotamer_dots_.write_dot_kinemage( output_kin );
+// current_state_rotamer_dots_.write_dot_kinemage( output_kin );
 //}
 
 ///
@@ -1665,7 +1669,7 @@ unsigned int HPatchNode< V, E, G >::count_dynamic_memory() const {
 template < typename V, typename E, typename G >
 void HPatchNode< V, E, G >::print() const {
 	TR_NODE << "node " << parent::get_node_index() << ", current_state: " << parent::get_current_state()
-			<< ", one body energy: " << parent::get_one_body_energy_current_state() << std::endl;
+		<< ", one body energy: " << parent::get_one_body_energy_current_state() << std::endl;
 	current_state_rotamer_dots_.print( std::cout );
 	alt_state_rotamer_dots_.print( std::cout );
 }
@@ -1681,11 +1685,11 @@ void HPatchNode< V, E, G >::print() const {
 ///
 template < typename V, typename E, typename G >
 HPatchBackgroundNode< V, E, G >::HPatchBackgroundNode( AdditionalBackgroundNodesInteractionGraph< V, E, G >* owner, int node_index ) :
-	BackgroundNode< V, E, G > ( owner, node_index ),
-	prepared_for_simA_( false ),
-	current_state_rotamer_dots_(),
-	alt_state_rotamer_dots_(),
-	alt_state_dots_matches_current_state_dots_( true )
+BackgroundNode< V, E, G > ( owner, node_index ),
+prepared_for_simA_( false ),
+current_state_rotamer_dots_(),
+alt_state_rotamer_dots_(),
+alt_state_dots_matches_current_state_dots_( true )
 {}
 
 ///
@@ -1702,20 +1706,20 @@ template < typename V, typename E, typename G >
 void HPatchBackgroundNode< V, E, G >::set_rotamer( conformation::ResidueOP const & rotamer ) {
 	rotamer_ = rotamer;
 	{ // scope -- I should make this a function
-	std::string carbon( "C" ), sulfur( "S" );
-	n_hphobes_ = 0;
-	chemical::ResidueType const & restype = rotamer_->type();
-	for ( Size ii = 1; ii <= restype.nheavyatoms(); ++ii ) {
-		if ( restype.atom_type( ii ).element() == carbon || restype.atom_type( ii ).element() == sulfur ) {
-			++n_hphobes_;
+		std::string carbon( "C" ), sulfur( "S" );
+		n_hphobes_ = 0;
+		chemical::ResidueType const & restype = rotamer_->type();
+		for ( Size ii = 1; ii <= restype.nheavyatoms(); ++ii ) {
+			if ( restype.atom_type( ii ).element() == carbon || restype.atom_type( ii ).element() == sulfur ) {
+				++n_hphobes_;
+			}
 		}
-	}
-	hphobe_ats_.reserve( n_hphobes_ );
-	for ( Size ii = 1; ii <= restype.nheavyatoms(); ++ii ) {
-		if ( restype.atom_type( ii ).element() == carbon || restype.atom_type( ii ).element() == sulfur ) {
-			hphobe_ats_.push_back( ii );
+		hphobe_ats_.reserve( n_hphobes_ );
+		for ( Size ii = 1; ii <= restype.nheavyatoms(); ++ii ) {
+			if ( restype.atom_type( ii ).element() == carbon || restype.atom_type( ii ).element() == sulfur ) {
+				hphobe_ats_.push_back( ii );
+			}
 		}
-	}
 	} // end scope
 	curr_state_exp_hphobes_.reserve( n_hphobes_ );
 	alt_state_exp_hphobes_.reserve( n_hphobes_ );
@@ -1769,22 +1773,23 @@ template < typename V, typename E, typename G >
 void HPatchBackgroundNode< V, E, G >::prepare_for_simulated_annealing() {
 
 	if ( ! prepared_for_simA_ ) {
-		if ( ! parent::get_edge_vector_up_to_date() )
+		if ( ! parent::get_edge_vector_up_to_date() ) {
 			parent::update_edge_vector();
+		}
 
 		prepared_for_simA_ = true;
 	}
 
 	// this call is not necessary the first time through packing, but is necessary the 2nd and higher times through because
 	// the current state rotamer dots will have overlap from FC nodes mixed in with self and bg node overlap.
- 	current_state_rotamer_dots_.zero();
+	current_state_rotamer_dots_.zero();
 	alt_state_dots_matches_current_state_dots_ = false;
 
 	initialize_self_overlap();
 	initialize_atom_atom_overlaps();
-//#ifdef FILE_DEBUG
-//	TR_BGNODE << "prepare_for_simulated_annealing(): initializing overlap on bg node " << parent::get_node_index() << std::endl;
-//#endif
+	//#ifdef FILE_DEBUG
+	// TR_BGNODE << "prepare_for_simulated_annealing(): initializing overlap on bg node " << parent::get_node_index() << std::endl;
+	//#endif
 	for ( Size ii = 1; ii <= (Size)parent::get_num_incident_edges(); ++ii ) {
 		get_hpatch_bg_edge( ii )->initialize_overlap_cache( current_state_rotamer_dots_ );
 	}
@@ -1797,22 +1802,22 @@ void HPatchBackgroundNode< V, E, G >::prepare_for_simulated_annealing() {
 ///
 template < typename V, typename E, typename G >
 void HPatchBackgroundNode< V, E, G >::initialize_self_overlap() {
-//#ifdef FILE_DEBUG
-//	if ( parent::get_node_index() == 5 ) {
-//		TR_BGNODE << "initialize_self_overlap(): current_state_rotamer_dots_: " << std::endl;
-//		current_state_rotamer_dots_.print( std::cout );
-//	}
-//#endif
+	//#ifdef FILE_DEBUG
+	// if ( parent::get_node_index() == 5 ) {
+	//  TR_BGNODE << "initialize_self_overlap(): current_state_rotamer_dots_: " << std::endl;
+	//  current_state_rotamer_dots_.print( std::cout );
+	// }
+	//#endif
 
 	alt_state_dots_matches_current_state_dots_ = false;
 	current_state_rotamer_dots_.increment_self_overlap();
 
-//#ifdef FILE_DEBUG
-//	if ( parent::get_node_index() == 5 ) {
-//		TR_BGNODE << "initialize_self_overlap(): current_state_rotamer_dots_ after increment_self_overlap: " << std::endl;
-//		current_state_rotamer_dots_.print( std::cout );
-//	}
-//#endif
+	//#ifdef FILE_DEBUG
+	// if ( parent::get_node_index() == 5 ) {
+	//  TR_BGNODE << "initialize_self_overlap(): current_state_rotamer_dots_ after increment_self_overlap: " << std::endl;
+	//  current_state_rotamer_dots_.print( std::cout );
+	// }
+	//#endif
 
 }
 
@@ -1831,15 +1836,17 @@ void HPatchBackgroundNode< V, E, G >::initialize_atom_atom_overlaps() {
 
 	for ( Size iia=1; iia <= rotamer_->nheavyatoms(); ++iia ) {
 		// immediately continue if not a hydrophobic atom; no point in computing overlaps for polar atoms
-		if ( rotamer_->atom_type( iia ).element() != carbon_atom && rotamer_->atom_type( iia ).element() != sulfur_atom )
+		if ( rotamer_->atom_type( iia ).element() != carbon_atom && rotamer_->atom_type( iia ).element() != sulfur_atom ) {
 			continue;
+		}
 
 		Real const iia_atom_radius = current_state_rotamer_dots_.get_atom_radius( iia ) + probe_radius;
 
 		// for intra-residue we only have iterate over the greater-indexed heavyatoms
 		for ( Size jja = iia + 1; jja <= rotamer_->nheavyatoms(); ++jja ) {
-			if ( rotamer_->atom_type( jja ).element() != carbon_atom && rotamer_->atom_type( jja ).element() != sulfur_atom )
+			if ( rotamer_->atom_type( jja ).element() != carbon_atom && rotamer_->atom_type( jja ).element() != sulfur_atom ) {
 				continue;
+			}
 
 			Real const jja_atom_radius = current_state_rotamer_dots_.get_atom_radius( jja ) + probe_radius;
 
@@ -1867,19 +1874,19 @@ void HPatchBackgroundNode< V, E, G >::initialize_atom_atom_overlaps() {
 	} // for loop over all ii heavyatoms
 
 
-/*
+	/*
 #ifdef FILE_DEBUG
 	TR_BGNODE << "background node " << parent::get_node_index() << " self_atom_atom_overlaps_: [ " << std::endl;
 	for ( Size aa=1; aa <= self_atom_atom_overlaps_.size(); ++aa ) {
-		TR_BGNODE << "self_atom_atom_overlaps_[ " << aa << " ]: [ ";
-		for ( Size bb=1; bb <= self_atom_atom_overlaps_[ aa ].size(); ++bb ) {
-			TR_BGNODE << self_atom_atom_overlaps_[ aa ][ bb ] << ", ";
-		}
-		TR_BGNODE << "]" << std::endl;
+	TR_BGNODE << "self_atom_atom_overlaps_[ " << aa << " ]: [ ";
+	for ( Size bb=1; bb <= self_atom_atom_overlaps_[ aa ].size(); ++bb ) {
+	TR_BGNODE << self_atom_atom_overlaps_[ aa ][ bb ] << ", ";
+	}
+	TR_BGNODE << "]" << std::endl;
 	}
 	TR_BGNODE << std::endl;
 #endif
-*/
+	*/
 
 }
 
@@ -1892,12 +1899,12 @@ void HPatchBackgroundNode< V, E, G >::initialize_bg_bg_overlap( HPatchBackground
 	current_state_rotamer_dots_.increment_both( other.current_state_rotamer_dots_ );
 	alt_state_dots_matches_current_state_dots_ = false;
 
-//#ifdef FILE_DEBUG
-//	if ( parent::get_node_index() == 5 ) {
-//		TR_BGNODE << "initialize_bg_bg_overlap(): current_state_rotamer_dots_ after adding in others overlap: " << std::endl;
-//		current_state_rotamer_dots_.print( std::cout );
-//	}
-//#endif
+	//#ifdef FILE_DEBUG
+	// if ( parent::get_node_index() == 5 ) {
+	//  TR_BGNODE << "initialize_bg_bg_overlap(): current_state_rotamer_dots_ after adding in others overlap: " << std::endl;
+	//  current_state_rotamer_dots_.print( std::cout );
+	// }
+	//#endif
 }
 
 ///
@@ -2072,7 +2079,7 @@ unsigned int HPatchBackgroundNode< V, E, G >::count_dynamic_memory() const {
 /// used only for debugging
 //template < typename V, typename E, typename G >
 //void HPatchBackgroundNode< V, E, G >::write_dot_kinemage( std::ofstream & output_kin ) {
-//	current_state_rotamer_dots_.write_dot_kinemage( output_kin );
+// current_state_rotamer_dots_.write_dot_kinemage( output_kin );
 //}
 
 ///
@@ -2101,13 +2108,13 @@ void HPatchBackgroundNode< V, E, G >::print() const {
 ///
 template < typename V, typename E, typename G >
 HPatchEdge< V, E, G >::HPatchEdge( G* owner, int node1, int node2 ) :
-	FirstClassEdge< V, E, G > ( owner, node1, node2 ),
-	node_changing_( -1 ),
-	node_not_changing_( -1 )
-	//nodes_curr_pair_dot_counts_ // calls default RDC constructor, which is fine
-	//nodes_alt_pair_dot_counts_ // calls default RDC constructor, which is fine
-	//current_state_atom_atom_overlaps_ // vectors are init'd to nothing
-	//alt_state_atom_atom_overlaps_;
+FirstClassEdge< V, E, G > ( owner, node1, node2 ),
+node_changing_( -1 ),
+node_not_changing_( -1 )
+//nodes_curr_pair_dot_counts_ // calls default RDC constructor, which is fine
+//nodes_alt_pair_dot_counts_ // calls default RDC constructor, which is fine
+//current_state_atom_atom_overlaps_ // vectors are init'd to nothing
+//alt_state_atom_atom_overlaps_;
 {
 	nodes_curr_states_[ 0 ] = nodes_curr_states_[ 1 ] = 0;
 	nodes_alt_states_[ 0 ] = nodes_alt_states_[ 1 ] = 0;
@@ -2239,7 +2246,7 @@ Real HPatchEdge< V, E, G >::update_state_at_neighbor( int node_considering_subst
 	// have to invalidate/resize the caches stored on the Edge since they will both change
 	nodes_alt_pair_dot_counts_[ node_changing_ ].resize( changing_node_alt_state_dots.get_num_atoms() );
 	//if ( get_hpatch_node( node_not_changing_ )->get_current_state() != 0 )
-		nodes_alt_pair_dot_counts_[ node_not_changing_ ].resize( get_hpatch_node( node_not_changing_ )->get_current_state_num_atoms() );
+	nodes_alt_pair_dot_counts_[ node_not_changing_ ].resize( get_hpatch_node( node_not_changing_ )->get_current_state_num_atoms() );
 	// the RDC object for the node_not_changing may get resized to 0, but it doesn't matter because the method update_state_
 	// for_neighbors_sub will immediately return if the current state on the non_changing node is 0.
 
@@ -2275,7 +2282,7 @@ Real HPatchEdge< V, E, G >::update_state_at_neighbor( int node_considering_subst
 
 	// in get_hpatch_deltaE_for_nbs_state_sub(), non-changing node calls...
 	// alt_state_rotamer_dots_.increment_both_and_cache( neighbors_alternate_state, this_overlap_with_neighbors_alternate,
-	//	neighbors_alternate_overlap_with_this, mask_this_covered_by_other, mask_other_covered_by_this );
+	// neighbors_alternate_overlap_with_this, mask_this_covered_by_other, mask_other_covered_by_this );
 
 #ifdef FILE_DEBUG
 	// this line just generates waaaay too much output...
@@ -2323,23 +2330,23 @@ void HPatchEdge< V, E, G >::acknowledge_substitution() {
 		}
 
 		// debug
-	debug_assert( get_hpatch_node( node_changing_ )->get_alt_state_num_atoms() <= alt_state_atom_atom_overlaps_.size() );
-	debug_assert( get_hpatch_node( node_not_changing_ )->get_current_state_num_atoms() <= alt_state_atom_atom_overlaps_[1].size() );
+		debug_assert( get_hpatch_node( node_changing_ )->get_alt_state_num_atoms() <= alt_state_atom_atom_overlaps_.size() );
+		debug_assert( get_hpatch_node( node_not_changing_ )->get_current_state_num_atoms() <= alt_state_atom_atom_overlaps_[1].size() );
 
 		if ( current_state_atom_atom_overlaps_.size() < alt_state_atom_atom_overlaps_[1].size() ) {
 			current_state_atom_atom_overlaps_.resize( alt_state_atom_atom_overlaps_[1].size() );
 		}
 
 		for ( Size ii=1; ii <= alt_state_atom_atom_overlaps_[1].size(); ++ii ) {
-			if ( current_state_atom_atom_overlaps_[ii].size() < alt_state_atom_atom_overlaps_.size() ){
+			if ( current_state_atom_atom_overlaps_[ii].size() < alt_state_atom_atom_overlaps_.size() ) {
 				current_state_atom_atom_overlaps_[ii].resize( alt_state_atom_atom_overlaps_.size() );
 			}
 		}
 
 		for ( Size ii=1; ii <= alt_state_atom_atom_overlaps_.size(); ++ii ) {
 			/// strict monotone growth
-		debug_assert( alt_state_atom_atom_overlaps_[ ii ].size() <= alt_state_atom_atom_overlaps_[ 1 ].size() );
-		debug_assert( ii > get_hpatch_node( node_changing_ )->get_alt_state_num_atoms()  ||
+			debug_assert( alt_state_atom_atom_overlaps_[ ii ].size() <= alt_state_atom_atom_overlaps_[ 1 ].size() );
+			debug_assert( ii > get_hpatch_node( node_changing_ )->get_alt_state_num_atoms()  ||
 				get_hpatch_node( node_not_changing_ )->get_current_state_num_atoms() <= alt_state_atom_atom_overlaps_[ii].size() );
 			for ( Size jj = 1; jj <= alt_state_atom_atom_overlaps_[ ii ].size(); ++jj ) {
 				current_state_atom_atom_overlaps_[ jj ][ ii ] = alt_state_atom_atom_overlaps_[ ii ][ jj ];
@@ -2412,7 +2419,7 @@ unsigned int HPatchEdge< V, E, G >::count_dynamic_memory() const {
 
 	unsigned int total_memory = parent::count_dynamic_memory();
 
-//debug_assert( alt_state_atom_atom_overlaps_.size() == current_state_atom_atom_overlaps_.size() );
+	//debug_assert( alt_state_atom_atom_overlaps_.size() == current_state_atom_atom_overlaps_.size() );
 	total_memory += sizeof( utility::vector1< bool > ) * alt_state_atom_atom_overlaps_.size();
 	for ( Size ii = 1; ii <= alt_state_atom_atom_overlaps_.size(); ++ii ) {
 		total_memory += sizeof( bool ) * alt_state_atom_atom_overlaps_[ii].size();
@@ -2436,14 +2443,14 @@ unsigned int HPatchEdge< V, E, G >::count_dynamic_memory() const {
 ///
 template < typename V, typename E, typename G >
 HPatchBackgroundEdge< V, E, G >::HPatchBackgroundEdge( AdditionalBackgroundNodesInteractionGraph < V, E, G >* owner, int first_class_node_index, int background_node_index ) :
-	BackgroundToFirstClassEdge< V, E, G >( owner, first_class_node_index, background_node_index ),
-	prepared_for_simA_( false ),
-	node_states_coverage_of_bg_res_(),
-	nodes_curr_state_( 0 ),
-	nodes_alt_state_( 0 ),
-	node_states_overlap_with_bg_res_()
-	//curr_dots_cache_( 0 ), // default constructed, which means they need to be sized before use
-	//alt_dots_cache_( 0 ) // default constructed
+BackgroundToFirstClassEdge< V, E, G >( owner, first_class_node_index, background_node_index ),
+prepared_for_simA_( false ),
+node_states_coverage_of_bg_res_(),
+nodes_curr_state_( 0 ),
+nodes_alt_state_( 0 ),
+node_states_overlap_with_bg_res_()
+//curr_dots_cache_( 0 ), // default constructed, which means they need to be sized before use
+//alt_dots_cache_( 0 ) // default constructed
 {}
 
 ///
@@ -2515,8 +2522,9 @@ void HPatchBackgroundEdge< V, E, G >::initialize_overlap_cache( RotamerDots cons
 template < typename V, typename E, typename G >
 void HPatchBackgroundEdge< V, E, G >::acknowledge_state_change( int new_state ) {
 
-	if ( new_state == nodes_curr_state_ ) // in the case of the 0-state, just return - don't calculate deltaE
+	if ( new_state == nodes_curr_state_ ) { // in the case of the 0-state, just return - don't calculate deltaE
 		return;
+	}
 
 	update_state_at_neighbor( new_state );
 	acknowledge_substitution();
@@ -2578,7 +2586,7 @@ void HPatchBackgroundEdge< V, E, G >::acknowledge_substitution() {
 template < typename V, typename E, typename G >
 utility::vector1< utility::vector1 < bool > > const &
 HPatchBackgroundEdge< V, E, G >::get_atom_atom_overlaps_for_state( Size state ) const {
-debug_assert( state <= node_states_overlap_with_bg_res_.size() );
+	debug_assert( state <= node_states_overlap_with_bg_res_.size() );
 	return node_states_overlap_with_bg_res_[ state ];
 }
 
@@ -2630,30 +2638,30 @@ std::string HPatchInteractionGraph< V, E, G >::sulfur_atom = "S";
 ///
 template < typename V, typename E, typename G >
 HPatchInteractionGraph< V, E, G >::HPatchInteractionGraph( int num_nodes ) :
-	AdditionalBackgroundNodesInteractionGraph< V, E, G > ( num_nodes ),
-	hpatch_score_weight_( 1.0 ),
-	num_total_residues_( 0 ),
-	num_residues_assigned_as_background_( 0 ),
-	some_node_in_state_0_( true ),
-	fc_nodes_near_rotsub_( num_nodes, 0 ),
-	fc_nodes_near_rotsub_bool_( num_nodes, true ),
-	fc_exp_hphobe_djs_offsets_( num_nodes, 0 ),
-	fc_n_exp_hphobes_( num_nodes, 0 ),
-	prepared_for_simulated_annealing_( false ),
-	observed_sufficient_hpatch_E_to_predict_min_( false ),
-	hpatch_score_min_last_100_( 0 ),
-	hpatch_score_min_recent_( 0 ),
-	num_substitutions_since_hpatch_min_update_( 0 ),
-	calculated_hpatch_deltaE_( false ),
-	deltaE_for_substitution_( 0.0f ),
-	node_considering_alt_state_( 0 ),
-	alt_state_being_considered_( 0 ),
-	total_energy_current_state_assignment_( 0 ),
-	total_energy_alternate_state_assignment_( 0 ),
-	hpatch_energy_current_state_assignment_( 0 ),
-	hpatch_energy_alternate_state_assignment_( 0 ),
-	num_commits_since_last_update_( 0 ),
-	deltaE_threshold_for_avoiding_hpatch_calcs_( -1.0f )
+AdditionalBackgroundNodesInteractionGraph< V, E, G > ( num_nodes ),
+hpatch_score_weight_( 1.0 ),
+num_total_residues_( 0 ),
+num_residues_assigned_as_background_( 0 ),
+some_node_in_state_0_( true ),
+fc_nodes_near_rotsub_( num_nodes, 0 ),
+fc_nodes_near_rotsub_bool_( num_nodes, true ),
+fc_exp_hphobe_djs_offsets_( num_nodes, 0 ),
+fc_n_exp_hphobes_( num_nodes, 0 ),
+prepared_for_simulated_annealing_( false ),
+observed_sufficient_hpatch_E_to_predict_min_( false ),
+hpatch_score_min_last_100_( 0 ),
+hpatch_score_min_recent_( 0 ),
+num_substitutions_since_hpatch_min_update_( 0 ),
+calculated_hpatch_deltaE_( false ),
+deltaE_for_substitution_( 0.0f ),
+node_considering_alt_state_( 0 ),
+alt_state_being_considered_( 0 ),
+total_energy_current_state_assignment_( 0 ),
+total_energy_alternate_state_assignment_( 0 ),
+hpatch_energy_current_state_assignment_( 0 ),
+hpatch_energy_alternate_state_assignment_( 0 ),
+num_commits_since_last_update_( 0 ),
+deltaE_threshold_for_avoiding_hpatch_calcs_( -1.0f )
 {
 	/// set all nodes as participating in a rotamer substitution if any node's state is 0 (unassigned)
 	for ( Size ii = 1; ii <= fc_nodes_near_rotsub_.size(); ++ii ) { fc_nodes_near_rotsub_[ ii ] = ii; }
@@ -2738,7 +2746,7 @@ HPatchInteractionGraph<V, E, G>::set_rotamer_sets( rotamer_set::RotamerSets cons
 /// to the Pose, the Task, and the RotamerSets objects since it needs all of these things to do tasks 1) and 2).
 /// (For the port of this HPatchIG, we might not need the task and rotamer sets objects.)
 ///
-///	prepare_for_simulated_annealing gets called by the FixbbSA::run() method.  Before this method, the
+/// prepare_for_simulated_annealing gets called by the FixbbSA::run() method.  Before this method, the
 /// rotamersets object has called compute_energies() (the whole process being started in pack_rotamers)
 /// which calls initialize() on the IG.  I need to place the HIG init method directly after the IG init
 /// method that the RS object calls.
@@ -2807,7 +2815,7 @@ void HPatchInteractionGraph< V, E, G >::initialize( rotamer_set::RotamerSetsBase
 	int nbackground = pose().total_residue() - rot_sets.nmoltenres();
 	set_num_background_residues( nbackground );
 
-	for ( Size ii = 1; ii <= pose().total_residue(); ++ii) {
+	for ( Size ii = 1; ii <= pose().total_residue(); ++ii ) {
 
 		// in our case, first class residues are residues that are designable or packable (see notes in function comment).
 		if ( packer_task().being_packed(ii) || packer_task().being_designed(ii) ) {
@@ -2933,8 +2941,9 @@ void HPatchInteractionGraph< V, E, G >::set_num_background_residues( Size num_ba
 #endif
 
 	parent::set_num_background_nodes( num_background_residues );
-	if ( parent::get_num_background_nodes() == 0)
+	if ( parent::get_num_background_nodes() == 0 ) {
 		return;
+	}
 
 	bgenumeration_2_resid_.resize( parent::get_num_background_nodes() );
 	bg_nodes_near_rotsub_.resize( parent::get_num_background_nodes() );
@@ -2954,7 +2963,7 @@ void HPatchInteractionGraph< V, E, G >::set_num_background_residues( Size num_ba
 template < typename V, typename E, typename G >
 void HPatchInteractionGraph< V, E, G >::set_residue_as_background_residue( int residue ) {
 
-debug_assert( resid_2_bgenumeration_[ residue ] == 0 );
+	debug_assert( resid_2_bgenumeration_[ residue ] == 0 );
 
 	++num_residues_assigned_as_background_;
 	resid_2_bgenumeration_[ residue ] = num_residues_assigned_as_background_;
@@ -3139,7 +3148,7 @@ utility::vector1< utility::vector1< bool > > const &
 HPatchInteractionGraph< V, E, G >::get_bg_bg_atom_atom_overlaps( Size node1_index, Size node2_index ) {
 
 	// only the positions where node2_index is greater than node1_index will have atom-atom overlap information
-debug_assert( node1_index < node2_index );
+	debug_assert( node1_index < node2_index );
 
 	return bg_bg_atom_atom_overlaps_[ node1_index ][ node2_index ];
 
@@ -3478,12 +3487,13 @@ void HPatchInteractionGraph< V, E, G >::set_errorfull_deltaE_threshold( core::Pa
 template < typename V, typename E, typename G >
 void HPatchInteractionGraph< V, E, G >::print_hpatch_avoidance_stats() {
 
-	if ( num_state_substitutions_considered_ == 0 )
+	if ( num_state_substitutions_considered_ == 0 ) {
 		return;
+	}
 
 	TR_STATS << "num state substitutions considered: " << num_state_substitutions_considered_ << ", "
-			<< "num hpatch calcs procrastinated: " << num_hpatch_comps_procrastinated_ << ", "
-			<< "num hpatch calcs later computed: " << num_hpatch_comps_later_made_ << std::endl;
+		<< "num hpatch calcs procrastinated: " << num_hpatch_comps_procrastinated_ << ", "
+		<< "num hpatch calcs later computed: " << num_hpatch_comps_later_made_ << std::endl;
 	TR_STATS << "Percent Avoided: " << (double) (num_hpatch_comps_procrastinated_ - num_hpatch_comps_later_made_) / num_state_substitutions_considered_ << ", ";
 
 	if ( num_hpatch_comps_procrastinated_ != 0 ) {
@@ -3528,7 +3538,7 @@ void HPatchInteractionGraph< V, E, G >::reset_hpatch_avoidance_stats() {
 /// node_ind - [in] - the index of the (first class) node
 /// new_state - [in] - the alternate state that the node should consider
 /// delta_energy - [out] - the change in energy induced on the entire graph by substituting a node's current state with the alternate.
-///							This energy may be inaccurate if it exceeds a threshold set by the sim-annealer.
+///       This energy may be inaccurate if it exceeds a threshold set by the sim-annealer.
 /// prev_energy_for_node - [out] - the sum of the pair-wise decomposable portion of the energy function for the node's currently assigned state
 ///
 ///
@@ -3636,9 +3646,9 @@ void HPatchInteractionGraph< V, E, G >:: register_fc_node_in_state0() {
 template < typename V, typename E, typename G >
 void HPatchInteractionGraph< V, E, G >::register_fc_node_affected_by_rotsub( int fc_node_ind ) {
 
-//#ifdef FILE_DEBUG
+	//#ifdef FILE_DEBUG
 	//TR_HIG << "register_fc_node_affected_by_rotsub(): node " << fc_node_ind << " registered as being affected by substitution being considered." << std::endl;
-//#endif
+	//#endif
 
 	// not sure this conditional makes sense. why would we ever have a first class node try to register themselves twice with the IG?  if the IG is
 	// keeping track of nodes/bgnodes correctly, a single FC node should only ever get a chance to call this method one time. also, because fc_nodes_near_rotsub_bool_
@@ -3649,8 +3659,8 @@ void HPatchInteractionGraph< V, E, G >::register_fc_node_affected_by_rotsub( int
 	// unit tests with a more appropriate test. or figure out why the unit tests fail when they are commented out and fix the IG.
 
 	//if ( ! fc_nodes_near_rotsub_bool_[ fc_node_ind ] ) {
-		fc_nodes_near_rotsub_.push_back( fc_node_ind );
-		fc_nodes_near_rotsub_bool_[ fc_node_ind ] = true;
+	fc_nodes_near_rotsub_.push_back( fc_node_ind );
+	fc_nodes_near_rotsub_bool_[ fc_node_ind ] = true;
 	//}
 
 	// we instead could place an if statement above that says if any node is in the unassigned state, then don't bother updating either of these vectors. but
@@ -3672,12 +3682,12 @@ void HPatchInteractionGraph< V, E, G >::register_fc_node_affected_by_rotsub( int
 template < typename V, typename E, typename G >
 void HPatchInteractionGraph< V, E, G >::register_bg_node_affected_by_rotsub( int bg_node_ind ) {
 
-//#ifdef FILE_DEBUG
+	//#ifdef FILE_DEBUG
 	//TR_HIG << "register_bg_node_affected_by_rotsub(): bgnode " << bg_node_ind << " registered as being affected by substitution being considered." << std::endl;
-//#endif
+	//#endif
 	//if ( ! bg_nodes_near_rotsub_bool_[ bg_node_ind ] ) {
-		bg_nodes_near_rotsub_.push_back( bg_node_ind );
-		bg_nodes_near_rotsub_bool_[ bg_node_ind ] = true;
+	bg_nodes_near_rotsub_.push_back( bg_node_ind );
+	bg_nodes_near_rotsub_bool_[ bg_node_ind ] = true;
 	//}
 }
 
@@ -3729,16 +3739,16 @@ void HPatchInteractionGraph< V, E, G >::update_disjoint_sets_using_cache(
 			if ( atom_atom_overlaps[ iia ][ jja ] ) {
 
 				/*TR_HIG << "update_disjoint_sets_using_cache(): overlapping atom pair: "
-					<< rsd.aa() << " " << node_index << "/" << utility::trim( rsd.atom_name( iia ) ) << " - "
-					<< rsd.aa() << " " << node_index << "/" << utility::trim( rsd.atom_name( jja ) ) << std::endl;
+				<< rsd.aa() << " " << node_index << "/" << utility::trim( rsd.atom_name( iia ) ) << " - "
+				<< rsd.aa() << " " << node_index << "/" << utility::trim( rsd.atom_name( jja ) ) << std::endl;
 
 				Real const ii_rad = RotamerDots::radius_for_attype( rsd.atom(iia).type() ) + 1.4;
 				Real const jj_rad = RotamerDots::radius_for_attype( rsd.atom(jja).type() ) + 1.4;
 				if ( rsd.xyz( iia ).distance_squared( rsd.xyz( jja ) ) > (ii_rad+jj_rad)*(ii_rad+jj_rad) ) {
-					std::cerr << "ERROR discrepancy between atom_atom_overlaps array and actual overlap information" << std::endl;
-					std::cerr << "rsd.seqpos() " << rsd.seqpos() << std::endl;
-					std::cerr << "Atom ii= " << iia << " rad: " << ii_rad << " Atom jj= " << jja << " rad: " << jj_rad << " sum: " << ii_rad+jj_rad << std::endl;
-					std::cerr << "Distance " << rsd.xyz(iia).distance( rsd.xyz(jja) ) << std::endl;
+				std::cerr << "ERROR discrepancy between atom_atom_overlaps array and actual overlap information" << std::endl;
+				std::cerr << "rsd.seqpos() " << rsd.seqpos() << std::endl;
+				std::cerr << "Atom ii= " << iia << " rad: " << ii_rad << " Atom jj= " << jja << " rad: " << jj_rad << " sum: " << ii_rad+jj_rad << std::endl;
+				std::cerr << "Distance " << rsd.xyz(iia).distance( rsd.xyz(jja) ) << std::endl;
 				}*/
 
 				if ( ds.ds_find( ii_djs_id ) == ds.ds_find( jj_djs_id ) ) continue; // fast
@@ -3785,8 +3795,8 @@ void HPatchInteractionGraph< V, E, G >::update_disjoint_sets_using_cache(
 			if ( atom_atom_overlaps[ iia ][ jja ] ) {
 
 				/*TR_HIG << "update_disjoint_sets_using_cache(): overlapping atom pair: "
-					<< rsd1.aa() << " " << rsd1.seqpos() << "/" << utility::trim( rsd1.atom_name( iia ) ) << " - "
-					<< rsd2.aa() << " " << rsd2.seqpos() << "/" << utility::trim( rsd2.atom_name( jja ) ) << std::endl;
+				<< rsd1.aa() << " " << rsd1.seqpos() << "/" << utility::trim( rsd1.atom_name( iia ) ) << " - "
+				<< rsd2.aa() << " " << rsd2.seqpos() << "/" << utility::trim( rsd2.atom_name( jja ) ) << std::endl;
 
 				//Real const ii_rad = RotamerDots::radius_for_attype( rsd1.atom(iia).type() ) + 1.4;
 				//Real const jj_rad = RotamerDots::radius_for_attype( rsd2.atom(jja).type() ) + 1.4;
@@ -3795,19 +3805,19 @@ void HPatchInteractionGraph< V, E, G >::update_disjoint_sets_using_cache(
 				Real const jj_rad = RotamerDots::epradius_for_attype( rsd2.atom(jja).type() ) + 1.4;
 
 				if ( rsd1.xyz( iia ).distance_squared( rsd2.xyz( jja ) ) > (ii_rad + jj_rad) * (ii_rad + jj_rad) ) {
-					std::cerr << "ERROR discrepancy between atom_atom_overlaps array and actual overlap information" << std::endl;
-					std::cerr << "rsd1.seqpos() " << rsd1.seqpos() << std::endl;
-					std::cerr << "rsd2.seqpos() " << rsd2.seqpos() << std::endl;
-					std::cerr << "Atom ii= " << iia << " rad: " << ii_rad << " Atom jj= " << jja << " rad: " << jj_rad << " sum: " << ii_rad+jj_rad << std::endl;
-					std::cerr << "Distance " << rsd1.xyz(iia).distance( rsd2.xyz(jja) ) << std::endl;
-					std::cerr << "Distance swapped? ";
-					if ( iia <= rsd2.natoms() && jja <= rsd1.natoms() ) {
-						std::cerr << rsd2.xyz(iia).distance( rsd1.xyz(jja) ) << " w/ iirad = " <<
-						RotamerDots::radius_for_attype( rsd2.atom(iia).type() ) + 1.4 << " and jjrad = " <<
-						RotamerDots::radius_for_attype( rsd1.atom(jja).type() ) + 1.4 << " sum: " <<
-						RotamerDots::radius_for_attype( rsd2.atom(iia).type() ) + 1.4 + RotamerDots::radius_for_attype( rsd1.atom(jja).type() ) + 1.4;
-					}
-					std::cerr << std::endl;
+				std::cerr << "ERROR discrepancy between atom_atom_overlaps array and actual overlap information" << std::endl;
+				std::cerr << "rsd1.seqpos() " << rsd1.seqpos() << std::endl;
+				std::cerr << "rsd2.seqpos() " << rsd2.seqpos() << std::endl;
+				std::cerr << "Atom ii= " << iia << " rad: " << ii_rad << " Atom jj= " << jja << " rad: " << jj_rad << " sum: " << ii_rad+jj_rad << std::endl;
+				std::cerr << "Distance " << rsd1.xyz(iia).distance( rsd2.xyz(jja) ) << std::endl;
+				std::cerr << "Distance swapped? ";
+				if ( iia <= rsd2.natoms() && jja <= rsd1.natoms() ) {
+				std::cerr << rsd2.xyz(iia).distance( rsd1.xyz(jja) ) << " w/ iirad = " <<
+				RotamerDots::radius_for_attype( rsd2.atom(iia).type() ) + 1.4 << " and jjrad = " <<
+				RotamerDots::radius_for_attype( rsd1.atom(jja).type() ) + 1.4 << " sum: " <<
+				RotamerDots::radius_for_attype( rsd2.atom(iia).type() ) + 1.4 + RotamerDots::radius_for_attype( rsd1.atom(jja).type() ) + 1.4;
+				}
+				std::cerr << std::endl;
 
 				}*/
 
@@ -4321,11 +4331,13 @@ bool HPatchInteractionGraph< V, E, G >::decide_procrastinate_hpatch_computations
 
 	Real hpatch_deltaE_max = 0;
 
-	if ( ! observed_sufficient_hpatch_E_to_predict_min_ )
+	if ( ! observed_sufficient_hpatch_E_to_predict_min_ ) {
 		return false;
+	}
 
-	if ( threshold < 0 || pd_deltaE < 0 )
+	if ( threshold < 0 || pd_deltaE < 0 ) {
 		return false;
+	}
 
 	hpatch_deltaE_max += hpatch_energy_current_state_assignment_ - hpatch_score_min_last_100_;
 
@@ -4374,7 +4386,7 @@ void HPatchInteractionGraph< V, E, G >::reset_from_previous_deltaHpatch_comp() {
 
 	for ( Size ii = 1; ii <= fc_nodes_near_rotsub_.size(); ++ii ) {
 		Size const ii_fc_node = fc_nodes_near_rotsub_[ ii ];
-	debug_assert( fc_nodes_near_rotsub_bool_[ ii_fc_node ] );
+		debug_assert( fc_nodes_near_rotsub_bool_[ ii_fc_node ] );
 		get_hpatch_node( ii_fc_node )->reset_alt_state_dots();
 	}
 
@@ -4398,7 +4410,7 @@ void HPatchInteractionGraph< V, E, G >::reset_from_previous_deltaHpatch_comp() {
 
 	for ( Size ii = 1; ii <= bg_nodes_near_rotsub_.size(); ++ii ) {
 		Size const ii_bg_node = bg_nodes_near_rotsub_[ ii ];
-	debug_assert( bg_nodes_near_rotsub_bool_[ ii_bg_node ] );
+		debug_assert( bg_nodes_near_rotsub_bool_[ ii_bg_node ] );
 		get_hpatch_bg_node( ii_bg_node )->reset_alt_state_dots();
 	}
 
@@ -4464,13 +4476,15 @@ void HPatchInteractionGraph< V, E, G >::track_hpatch_E_min() {
 
 	Real alt_hpatchE = hpatch_energy_current_state_assignment_;
 
-	if ( hpatch_score_min_recent_ > alt_hpatchE )
+	if ( hpatch_score_min_recent_ > alt_hpatchE ) {
 		hpatch_score_min_recent_ = alt_hpatchE;
+	}
 
 	if ( num_substitutions_since_hpatch_min_update_ == 100 ) { // only update min every 100 calls to track_hpatchE_min (aka commits)
 		hpatch_score_min_last_100_ = hpatch_score_min_recent_;
-		if ( hpatch_energy_current_state_assignment_ < hpatch_score_min_last_100_ )
+		if ( hpatch_energy_current_state_assignment_ < hpatch_score_min_last_100_ ) {
 			hpatch_score_min_last_100_ = hpatch_energy_current_state_assignment_;
+		}
 		observed_sufficient_hpatch_E_to_predict_min_ = true;
 		num_substitutions_since_hpatch_min_update_ = 0;
 	}
@@ -4500,7 +4514,7 @@ core::PackerEnergy HPatchInteractionGraph< V, E, G >::set_network_state( ObjexxF
 
 	// not necessary because the code above goes through the consider/commit process which updates the internal
 	// energy totals.
- 	//update_internal_energy_totals_hpatch();
+	//update_internal_energy_totals_hpatch();
 
 	return total_energy_current_state_assignment_;
 
@@ -4523,37 +4537,37 @@ core::PackerEnergy HPatchInteractionGraph< V, E, G >::get_energy_current_state_a
 /*template < typename V, typename E, typename G >
 void HPatchInteractionGraph< V, E, G >::print_current_state_assignment() const {
 
-	// print out the one-body and hpatch energies for all first class nodes
-	TR_HIG << "internal energies: " << std::endl;
-	for (int ii = 1; ii <= parent::get_num_nodes(); ++ii) {
-		Real one_body = get_hpatch_node( ii )->get_curr_state_one_body_energy();
-		TR_HIG << "node " << ii << " 1b: " << one_body;
-		Real sasa = get_hpatch_node( ii )->get_current_state_sasa();
-		TR_HIG << ", sasa = " << sasa;
+// print out the one-body and hpatch energies for all first class nodes
+TR_HIG << "internal energies: " << std::endl;
+for (int ii = 1; ii <= parent::get_num_nodes(); ++ii) {
+Real one_body = get_hpatch_node( ii )->get_curr_state_one_body_energy();
+TR_HIG << "node " << ii << " 1b: " << one_body;
+Real sasa = get_hpatch_node( ii )->get_current_state_sasa();
+TR_HIG << ", sasa = " << sasa;
 
-		if ( ii % 3 == 0) {
-			TR_HIG << std::endl;
-		}
-	}
+if ( ii % 3 == 0) {
+TR_HIG << std::endl;
+}
+}
 
-	TR_HIG << std::endl;
+TR_HIG << std::endl;
 
-	// print out the hpatch energies for all background nodes
-	//for ( Size ii = 1; ii <= (Size)parent::get_num_background_nodes(); ++ii ) {
-	//	Real bg_sasa = get_hpatch_bg_node( ii )->get_current_sasa();
-	//	TR_HIG << "bg res: " << bgenumeration_2_resid_[ ii ] << " sasa: " << bg_sasa << std::endl;
-	//}
+// print out the hpatch energies for all background nodes
+//for ( Size ii = 1; ii <= (Size)parent::get_num_background_nodes(); ++ii ) {
+// Real bg_sasa = get_hpatch_bg_node( ii )->get_current_sasa();
+// TR_HIG << "bg res: " << bgenumeration_2_resid_[ ii ] << " sasa: " << bg_sasa << std::endl;
+//}
 
-	// print out the two-body energies for all edges between first-class nodes only?
-	int count_edges = 0;
-	for (std::list< core::pack::interaction_graph::EdgeBase*>::const_iterator iter = parent::get_edge_list_begin(); iter != parent::get_edge_list_end(); ++iter) {
-		Real edge_energy = ((HPatchEdge< V, E, G >*) (*iter))->get_current_two_body_energy();
-		TR_HIG << "edge: " << edge_energy << " ";
+// print out the two-body energies for all edges between first-class nodes only?
+int count_edges = 0;
+for (std::list< core::pack::interaction_graph::EdgeBase*>::const_iterator iter = parent::get_edge_list_begin(); iter != parent::get_edge_list_end(); ++iter) {
+Real edge_energy = ((HPatchEdge< V, E, G >*) (*iter))->get_current_two_body_energy();
+TR_HIG << "edge: " << edge_energy << " ";
 
-		if ( count_edges % 5 == 0)
-			TR_HIG << std::endl;
-		++count_edges;
-	}
+if ( count_edges % 5 == 0)
+TR_HIG << std::endl;
+++count_edges;
+}
 
 }*/
 
@@ -4607,26 +4621,27 @@ void HPatchInteractionGraph< V, E, G >::print_internal_energies_for_current_stat
 		Real sasa = get_hpatch_node( ii )->get_current_state_sasa();
 		TR_HIG << ", sasa = " << sasa;
 
-		if ( ii % 3 == 0) {
+		if ( ii % 3 == 0 ) {
 			TR_HIG << std::endl;
 		}
 	}
 	TR_HIG << std::endl;
 
 	// print out the hpatch energies for all background nodes
-	for (int ii = 1; ii <= parent::get_num_background_nodes(); ++ii) {
+	for ( int ii = 1; ii <= parent::get_num_background_nodes(); ++ii ) {
 		Real bg_sasa = get_hpatch_bg_node( ii )->get_current_sasa();
 		TR_HIG << "bg res: " << bgenumeration_2_resid_[ ii ] << " sasa: " << bg_sasa << std::endl;
 	}
 
 	// print out the two-body energies for all edges between first-class nodes only?
 	int count_edges = 0;
-	for (std::list< core::pack::interaction_graph::EdgeBase*>::const_iterator iter = parent::get_edge_list_begin(); iter != parent::get_edge_list_end(); ++iter) {
+	for ( std::list< core::pack::interaction_graph::EdgeBase*>::const_iterator iter = parent::get_edge_list_begin(); iter != parent::get_edge_list_end(); ++iter ) {
 		Real edge_energy = ((HPatchEdge< V, E, G >*) (*iter))->get_current_two_body_energy();
 		TR_HIG << "edge: " << edge_energy << " ";
 
-		if ( count_edges % 5 == 0)
+		if ( count_edges % 5 == 0 ) {
 			TR_HIG << std::endl;
+		}
 		++count_edges;
 	}
 }
@@ -4635,17 +4650,17 @@ void HPatchInteractionGraph< V, E, G >::print_internal_energies_for_current_stat
 /*template < typename V, typename E, typename G >
 void HPatchInteractionGraph< V, E, G >::write_dot_kinemage( std::ofstream & output_kin ) {
 
-	output_kin << "@group {dots} off" << std::endl;
-	output_kin << "@subgroup {molten_residues} dominant" << std::endl;
+output_kin << "@group {dots} off" << std::endl;
+output_kin << "@subgroup {molten_residues} dominant" << std::endl;
 
-	for (int ii = 1; ii <= parent::get_num_nodes(); ++ii) {
-		get_hpatch_node( ii )->write_dot_kinemage( output_kin );
-	}
+for (int ii = 1; ii <= parent::get_num_nodes(); ++ii) {
+get_hpatch_node( ii )->write_dot_kinemage( output_kin );
+}
 
-	output_kin << "@subgroup {background_residues} dominant" << std::endl;
-	for (int ii = 1; ii <= parent::get_num_background_nodes(); ++ii) {
-		get_hpatch_bg_node( ii )->write_dot_kinemage( output_kin );
-	}
+output_kin << "@subgroup {background_residues} dominant" << std::endl;
+for (int ii = 1; ii <= parent::get_num_background_nodes(); ++ii) {
+get_hpatch_bg_node( ii )->write_dot_kinemage( output_kin );
+}
 
 }*/
 
@@ -4659,12 +4674,12 @@ HPatchInteractionGraph<V, E, G>::print() const {
 
 	std::cout << "HPatch Interaction Graph state: " << std::endl;
 	std::cout << "nodes: " << std::endl;
-	for (int jj = 1; jj <= parent::get_num_nodes(); ++jj) {
+	for ( int jj = 1; jj <= parent::get_num_nodes(); ++jj ) {
 		get_hpatch_node( jj )->print();
 	}
 
 	std::cout << "bgnodes: " << std::endl;
-	for (int ii = 1; ii <= parent::get_num_background_nodes(); ++ii) {
+	for ( int ii = 1; ii <= parent::get_num_background_nodes(); ++ii ) {
 		get_hpatch_bg_node( ii )->print();
 	}
 }
@@ -4764,7 +4779,7 @@ int HPatchInteractionGraph< V, E, G >::bg_node_2_resid( Size node_index ) {
 ///
 template < typename V, typename E, typename G >
 utility::vector1< Size > const & HPatchInteractionGraph< V, E, G >::get_fc_nodes_near_rotsub() {
-	return fc_nodes_near_rotsub_;
+return fc_nodes_near_rotsub_;
 }
 
 ///
@@ -4773,7 +4788,7 @@ utility::vector1< Size > const & HPatchInteractionGraph< V, E, G >::get_fc_nodes
 ///
 template < typename V, typename E, typename G >
 utility::vector1< bool > const & HPatchInteractionGraph< V, E, G >::get_fc_nodes_near_rotsub_bool() {
-	return fc_nodes_near_rotsub_bool_;
+return fc_nodes_near_rotsub_bool_;
 }
 
 ///
@@ -4782,7 +4797,7 @@ utility::vector1< bool > const & HPatchInteractionGraph< V, E, G >::get_fc_nodes
 ///
 template < typename V, typename E, typename G >
 utility::vector1< Size > const & HPatchInteractionGraph< V, E, G >::get_bg_nodes_near_rotsub() {
-	return bg_nodes_near_rotsub_;
+return bg_nodes_near_rotsub_;
 }
 
 ///
@@ -4791,7 +4806,7 @@ utility::vector1< Size > const & HPatchInteractionGraph< V, E, G >::get_bg_nodes
 ///
 template < typename V, typename E, typename G >
 utility::vector1< bool > const & HPatchInteractionGraph< V, E, G >::get_bg_nodes_near_rotsub_bool() {
-	return bg_nodes_near_rotsub_bool_;
+return bg_nodes_near_rotsub_bool_;
 }
 
 ///
@@ -4800,7 +4815,7 @@ utility::vector1< bool > const & HPatchInteractionGraph< V, E, G >::get_bg_nodes
 ///
 template < typename V, typename E, typename G >
 utility::vector1< Size > const & HPatchInteractionGraph< V, E, G >::get_fc_exp_hphobe_djs_offsets() {
-	return fc_exp_hphobe_djs_offsets_;
+return fc_exp_hphobe_djs_offsets_;
 }
 
 ///
@@ -4809,7 +4824,7 @@ utility::vector1< Size > const & HPatchInteractionGraph< V, E, G >::get_fc_exp_h
 ///
 template < typename V, typename E, typename G >
 utility::vector1< Size > const & HPatchInteractionGraph< V, E, G >::get_bg_exp_hphobe_djs_offsets() {
-	return bg_exp_hphobe_djs_offsets_;
+return bg_exp_hphobe_djs_offsets_;
 }
 
 ///
@@ -4818,7 +4833,7 @@ utility::vector1< Size > const & HPatchInteractionGraph< V, E, G >::get_bg_exp_h
 ///
 template < typename V, typename E, typename G >
 utility::vector1< Size > const & HPatchInteractionGraph< V, E, G >::get_fc_n_exp_hphobes() {
-	return fc_n_exp_hphobes_;
+return fc_n_exp_hphobes_;
 }
 
 ///
@@ -4827,7 +4842,7 @@ utility::vector1< Size > const & HPatchInteractionGraph< V, E, G >::get_fc_n_exp
 ///
 template < typename V, typename E, typename G >
 utility::vector1< Size > const & HPatchInteractionGraph< V, E, G >::get_bg_n_exp_hphobes() {
-	return bg_n_exp_hphobes_;
+return bg_n_exp_hphobes_;
 }*/
 
 

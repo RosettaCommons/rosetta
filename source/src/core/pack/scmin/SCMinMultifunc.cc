@@ -223,7 +223,7 @@ SCMinMultifunc::dfunc( Multivec const & chi, Multivec & dE_dchi ) const
 		optimization::DOF_Node & iidofnode( scminmap_.dof_node( ii ) );
 		//fpd  we assume that torsion-defined funcs have no derivatives w.r.t. d or theta DOFs
 		Real dofderiv = 0.0;
-		if (iidofnode.type() == core::id::PHI) {
+		if ( iidofnode.type() == core::id::PHI ) {
 			id::TorsionID torid = scminmap_.tor_for_dof( iidofnode.dof_id() );
 			/// 4. Evaluate chi-dof derivatives
 			dofderiv = eval_dof_deriv_for_minnode( * g_.get_minimization_node( iidofnode.rsd() ),
@@ -280,7 +280,7 @@ SCMinMultifunc::scmin_numerical_derivative_check( Multivec const & start_vars, M
 
 	Multivec vars( start_vars );
 
-	for ( Size ii=1; ii<=ndofs; ++ii) {
+	for ( Size ii=1; ii<=ndofs; ++ii ) {
 		Real deriv_dev = 10000.0;
 
 		vars[ii] = start_vars[ii] + factor;
@@ -299,11 +299,11 @@ SCMinMultifunc::scmin_numerical_derivative_check( Multivec const & start_vars, M
 			if ( !ratio_header_output ) {
 				ratio_header_output = true;
 				TR << "ratio" << A( 6, "dofid" ) << A( 10, "doftype" ) <<
-							A( 10, "numeric" ) << A( 10, "analytic" ) << A( 10, "ratio" ) << A( 10, "vars[ii]" ) << std::endl;
+					A( 10, "numeric" ) << A( 10, "analytic" ) << A( 10, "ratio" ) << A( 10, "vars[ii]" ) << std::endl;
 			}
 			TR << "ratio" <<  I( 6, ii ) << I( 10, scminmap_.dof_node(ii).type() ) <<
-						F( 10, 4, deriv ) <<  F( 10, 4, dE_dvars[ii] ) <<  F( 10, 4, ratio ) <<
-						F( 10, 4, start_vars[ii] ) << std::endl;
+				F( 10, 4, deriv ) <<  F( 10, 4, dE_dvars[ii] ) <<  F( 10, 4, ratio ) <<
+				F( 10, 4, start_vars[ii] ) << std::endl;
 		}
 	}
 
@@ -332,9 +332,9 @@ SCMinMultifunc::scmin_numerical_derivative_check( Multivec const & start_vars, M
 	Real const cos_theta( dot / ( norm * norm_numeric) );
 
 	TR << " norm: " << F(12,4,norm) <<
-				" norm_numeric: " << F(12,4,norm_numeric) <<
-				" cos_theta: " << F(7,4,cos_theta) <<
-				" log_norm_ratio: " << F(9,4,log_norm_ratio) << std::endl;
+		" norm_numeric: " << F(12,4,norm_numeric) <<
+		" cos_theta: " << F(7,4,cos_theta) <<
+		" log_norm_ratio: " << F(9,4,log_norm_ratio) << std::endl;
 }
 
 } // namespace scmin

@@ -69,7 +69,7 @@ namespace rna {
 methods::EnergyMethodOP
 RNA_SuiteEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
-) const {	return methods::EnergyMethodOP( new RNA_SuiteEnergy( options.rna_options() ) ); }
+) const { return methods::EnergyMethodOP( new RNA_SuiteEnergy( options.rna_options() ) ); }
 
 ScoreTypes
 RNA_SuiteEnergyCreator::score_types_for_method() const {
@@ -107,8 +107,9 @@ RNA_SuiteEnergy::setup_for_scoring(
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
 		PeptideBondedEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::PeptideBondedEnergyContainer > ( lrc ) );
 		Size nres = pose.total_residue();
-		if( core::pose::symmetry::is_symmetric(pose) )
+		if ( core::pose::symmetry::is_symmetric(pose) ) {
 			nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
+		}
 		if ( dec->size() != nres ) {
 			create_new_lre_container = true;
 		}
@@ -116,8 +117,9 @@ RNA_SuiteEnergy::setup_for_scoring(
 
 	if ( create_new_lre_container ) {
 		Size nres = pose.total_residue();
-		if( core::pose::symmetry::is_symmetric(pose) )
+		if ( core::pose::symmetry::is_symmetric(pose) ) {
 			nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
+		}
 		utility::vector1< ScoreType > s_types;
 		s_types.push_back( rna_suite );
 		s_types.push_back( suiteness_bonus );
@@ -177,20 +179,20 @@ RNA_SuiteEnergy::eval_residue_pair_derivatives(
 	using namespace core::id;
 
 	if ( weight == 0.0 ) return;
-	if ( !rna_suite_potential->eval_score( rsd1, rsd2, pose ) )	return;
+	if ( !rna_suite_potential->eval_score( rsd1, rsd2, pose ) ) return;
 
 	utility::vector1<Real> const & deriv( rna_suite_potential->get_deriv() );
 	utility::vector1<TorsionID> const & torsion_ids(
-			rna_suite_potential->get_torsion_ids() );
+		rna_suite_potential->get_torsion_ids() );
 
 	conformation::Residue const & rsd_lo(
-			( rsd1.seqpos() < rsd2.seqpos() ) ? rsd1 : rsd2 );
+		( rsd1.seqpos() < rsd2.seqpos() ) ? rsd1 : rsd2 );
 	conformation::Residue const & rsd_hi(
-			( rsd1.seqpos() < rsd2.seqpos() ) ? rsd2 : rsd1 );
+		( rsd1.seqpos() < rsd2.seqpos() ) ? rsd2 : rsd1 );
 	utility::vector1< DerivVectorPair > & r_lo_derivs(
-			( rsd1.seqpos() < rsd2.seqpos() ) ? r1_atom_derivs : r2_atom_derivs );
+		( rsd1.seqpos() < rsd2.seqpos() ) ? r1_atom_derivs : r2_atom_derivs );
 	utility::vector1< DerivVectorPair > & r_hi_derivs(
-			( rsd1.seqpos() < rsd2.seqpos() ) ? r2_atom_derivs : r1_atom_derivs );
+		( rsd1.seqpos() < rsd2.seqpos() ) ? r2_atom_derivs : r1_atom_derivs );
 	Size const rsdnum_lo( rsd_lo.seqpos() ), rsdnum_hi( rsd_hi.seqpos() );
 
 	for ( Size i = 1; i <= torsion_ids.size(); ++i ) {
@@ -203,14 +205,14 @@ RNA_SuiteEnergy::eval_residue_pair_derivatives(
 				// Not sure why the "degrees" is needed. But in practice it works
 				// correctly.
 				r_lo_derivs[ atom_ids[j].atomno() ].f1() +=
-						degrees( deriv[i] ) * f1s[j] * weight;
+					degrees( deriv[i] ) * f1s[j] * weight;
 				r_lo_derivs[ atom_ids[j].atomno() ].f2() +=
-						degrees( deriv[i] ) * f2s[j] * weight;
+					degrees( deriv[i] ) * f2s[j] * weight;
 			} else if ( atom_ids[j].rsd() == rsdnum_hi ) {
 				r_hi_derivs[ atom_ids[j].atomno() ].f1() +=
-						degrees( deriv[i] ) * f1s[j] * weight;
+					degrees( deriv[i] ) * f1s[j] * weight;
 				r_hi_derivs[ atom_ids[j].atomno() ].f2() +=
-						degrees( deriv[i] ) * f2s[j] * weight;
+					degrees( deriv[i] ) * f2s[j] * weight;
 			} else {
 				// Should not happen. Exit here just in case.
 				utility_exit_with_message("Invalid Torsion!!");
@@ -227,7 +229,7 @@ RNA_SuiteEnergy::get_f1_f2(
 	utility::vector1< id::AtomID > & atom_ids,
 	utility::vector1< Vector > & f1s,
 	utility::vector1< Vector > & f2s
-) const	{
+) const {
 	atom_ids.clear();
 	f1s.clear();
 	f2s.clear();
@@ -242,8 +244,8 @@ RNA_SuiteEnergy::get_f1_f2(
 	atom_ids.push_back( id4 );
 
 	Vector const &
-			x1( conf.xyz( id1 ) ), x2( conf.xyz( id2 ) ),
-			x3( conf.xyz( id3 ) ), x4( conf.xyz( id4 ) );
+		x1( conf.xyz( id1 ) ), x2( conf.xyz( id2 ) ),
+		x3( conf.xyz( id3 ) ), x4( conf.xyz( id4 ) );
 
 	Real theta;
 	Vector f1, f2;

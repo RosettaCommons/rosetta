@@ -125,8 +125,8 @@ Example Tag syntax for parser as of Summer 2009
 or
 
 <OperateOnCertainResidues name=PROTEINnopack>
-	<PreventRepackingRLT/>
-	<ResidueHasProperty property=PROTEIN/>
+<PreventRepackingRLT/>
+<ResidueHasProperty property=PROTEIN/>
 </OperateOnCertainResidues>
 
 */
@@ -145,8 +145,9 @@ TaskOperationFactory::newTaskOperation(
 		return task_operation;
 	} else {
 		TR<<"Available options: ";
-		for( TaskOperationCreatorMap::const_iterator to_iter = task_operation_creator_map_.begin(); to_iter != task_operation_creator_map_.end(); ++to_iter )
+		for ( TaskOperationCreatorMap::const_iterator to_iter = task_operation_creator_map_.begin(); to_iter != task_operation_creator_map_.end(); ++to_iter ) {
 			TR<<to_iter->first<<", ";
+		}
 		TR<<std::endl;
 		utility_exit_with_message( type + " is not known to the TaskOperationFactory. Was its taskOperationCreator class registered at initialization?" );
 		return NULL;
@@ -163,7 +164,7 @@ TaskOperationFactory::newTaskOperations( TaskOperationOPs & tops, basic::datacac
 	else TR.Trace << std::endl;
 	TagCOPs const subtags( tag->getTags() );
 	if ( tag->getName() == "TASKOPERATIONS" ) {
-		for( TagCOPs::const_iterator tp( subtags.begin() ), tp_e( subtags.end() ); tp != tp_e; ++tp ) {
+		for ( TagCOPs::const_iterator tp( subtags.begin() ), tp_e( subtags.end() ); tp != tp_e; ++tp ) {
 			std::string const type( (*tp)->getName() );
 			TaskOperationOP new_to = newTaskOperation( type, datamap, *tp );
 			runtime_assert( new_to != 0 );
@@ -172,7 +173,7 @@ TaskOperationFactory::newTaskOperations( TaskOperationOPs & tops, basic::datacac
 		}
 	}
 	// recurse
-	for( TagCOPs::const_iterator tp( subtags.begin() ), tp_e( subtags.end() ); tp != tp_e; ++tp ) {
+	for ( TagCOPs::const_iterator tp( subtags.begin() ), tp_e( subtags.end() ); tp != tp_e; ++tp ) {
 		newTaskOperations( tops, datamap, *tp );
 	}
 }

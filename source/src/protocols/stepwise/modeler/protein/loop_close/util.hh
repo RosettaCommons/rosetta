@@ -27,17 +27,17 @@ namespace modeler {
 namespace protein {
 namespace loop_close {
 
-	void
-	kic_close_loops_in_samples( sampler::StepWiseSamplerSizedOP & sampler,
-															core::pose::Pose const & pose,
-															working_parameters::StepWiseWorkingParametersCOP working_parameters_,
-															options::StepWiseModelerOptionsCOP options_ );
+void
+kic_close_loops_in_samples( sampler::StepWiseSamplerSizedOP & sampler,
+	core::pose::Pose const & pose,
+	working_parameters::StepWiseWorkingParametersCOP working_parameters_,
+	options::StepWiseModelerOptionsCOP options_ );
 
-	void
-	enable_sampling_of_loop_takeoff( sampler::StepWiseSamplerSizedOP & sampler,
-																	 core::pose::Pose & pose,
-																	 working_parameters::StepWiseWorkingParametersCOP working_parameters_,
-																	 options::StepWiseModelerOptionsCOP options_ );
+void
+enable_sampling_of_loop_takeoff( sampler::StepWiseSamplerSizedOP & sampler,
+	core::pose::Pose & pose,
+	working_parameters::StepWiseWorkingParametersCOP working_parameters_,
+	options::StepWiseModelerOptionsCOP options_ );
 
 
 } //loop_close

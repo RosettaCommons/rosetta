@@ -25,36 +25,36 @@
 
 namespace devel {
 
-  namespace inv_kin_lig_loop_design {
+namespace inv_kin_lig_loop_design {
 
-    using namespace std;
+using namespace std;
 
-    // ===============================================
-    // ==================== ResID ====================
-    // ===============================================
+// ===============================================
+// ==================== ResID ====================
+// ===============================================
 
-    struct ResID;
-    typedef map<ResID,core::conformation::Residue*> resids_type;
+struct ResID;
+typedef map<ResID,core::conformation::Residue*> resids_type;
 
-    struct ResID {
-      char chain_id;
-      int res_num;
+struct ResID {
+	char chain_id;
+	int res_num;
 
-      ResID();
-      ResID( char chain_id, int res_num );
-      ResID( core::conformation::Residue const& r );
+	ResID();
+	ResID( char chain_id, int res_num );
+	ResID( core::conformation::Residue const& r );
 
-      bool operator==(ResID const& other ) const;
-      bool operator<(ResID const& other ) const;
+	bool operator==(ResID const& other ) const;
+	bool operator<(ResID const& other ) const;
 
-      static resids_type get_resids( core::pose::Pose& pose );
-    };
+	static resids_type get_resids( core::pose::Pose& pose );
+};
 
-    istream& operator>>(istream& in, ResID& res_id );
-    ostream& operator<<(ostream& out, ResID const& res_id );
+istream& operator>>(istream& in, ResID& res_id );
+ostream& operator<<(ostream& out, ResID const& res_id );
 
 
-  }
+}
 
 }
 

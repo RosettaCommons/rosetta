@@ -62,24 +62,24 @@ namespace conformation {
 
 /// @brief  Instance Residue class, used for placed residues and rotamers
 /**
-	@details This class is designed to be lightweight.  It holds a const-reference ("rsd_type_")
-	to a ResidueType object for access to information common to all instances
-	of a single type, e.g., Alanine or Thymine.  Residue stores any data unique
-	to a placed residue or rotamer, currently:
+@details This class is designed to be lightweight.  It holds a const-reference ("rsd_type_")
+to a ResidueType object for access to information common to all instances
+of a single type, e.g., Alanine or Thymine.  Residue stores any data unique
+to a placed residue or rotamer, currently:
 
-	- a vector1 of Atoms, which holds the positions (and also the atom-types for
-		fast access during scoring);
+- a vector1 of Atoms, which holds the positions (and also the atom-types for
+fast access during scoring);
 
-	- the sequence position and chain, both integers
+- the sequence position and chain, both integers
 
-	- the backbone, side-chain, and internal ring (if applicable) torsion angles (of course backbone torsions are
-		not unique to a rotamer, and the chi angles are derivable from the coordinates,
-		but storing them in the residue is convenient for scoring purposes).
+- the backbone, side-chain, and internal ring (if applicable) torsion angles (of course backbone torsions are
+not unique to a rotamer, and the chi angles are derivable from the coordinates,
+but storing them in the residue is convenient for scoring purposes).
 
-	- the coordinates of an interaction center or centroid, used e.g., in the
-		knowledge-based full-atom pair term ("actcoord_").  Maybe this will also
-		hold the centroid position for centroid-mode scoring??
- **/
+- the coordinates of an interaction center or centroid, used e.g., in the
+knowledge-based full-atom pair term ("actcoord_").  Maybe this will also
+hold the centroid position for centroid-mode scoring??
+**/
 class Residue : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Residue >
 {
 public:
@@ -94,14 +94,14 @@ public:
 
 	// this is for boost serialize
 	//Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/, bool const /*dummy_arg2*/ ) :
-	//	utility::pointer::ReferenceCount(), rsd_type_(rsd_type_in) {}
+	// utility::pointer::ReferenceCount(), rsd_type_(rsd_type_in) {}
 
 	/// @brief  Rotamer-style constructor; orients ideal coords onto backbone of current_rsd
 	Residue(
-			ResidueType const & rsd_type_in,
-			Residue const & current_rsd,
-			Conformation const & conformation,
-			bool preserve_c_beta = false
+		ResidueType const & rsd_type_in,
+		Residue const & current_rsd,
+		Conformation const & conformation,
+		bool preserve_c_beta = false
 	);
 
 	Residue( Residue const & src );
@@ -916,8 +916,8 @@ public:
 	/// used for building missing atoms
 	Vector
 	build_atom_ideal(
-			int const atomno,
-			Conformation const & conformation // necessary for context, eg the C of the preceding residue for HN
+		int const atomno,
+		Conformation const & conformation // necessary for context, eg the C of the preceding residue for HN
 	) const
 	{
 		return icoor( atomno ).build( *this, conformation );
@@ -968,7 +968,7 @@ public:
 	Vector
 	build_orbital_xyz( Size const orbital_index ) const
 	{
-/*		core::chemical::orbitals::ICoorOrbitalData orb_icoor(rsd_type_.orbital_icoor_data(orbital_index));
+		/*  core::chemical::orbitals::ICoorOrbitalData orb_icoor(rsd_type_.orbital_icoor_data(orbital_index));
 		Vector stub1_xyz(this->atom(orb_icoor.stub1()).xyz());
 		Vector stub2_xyz(this->atom(orb_icoor.stub2()).xyz());
 		Vector stub3_xyz(this->atom(orb_icoor.stub3()).xyz());
@@ -1033,19 +1033,19 @@ public:
 
 	void
 	update_orbital_coords() {
-		for(
-			utility::vector1<core::Size>::const_iterator
-			atoms_with_orb_index = rsd_type_.atoms_with_orb_index().begin(),
-			atoms_with_orb_index_end = rsd_type_.atoms_with_orb_index().end();
-			atoms_with_orb_index != atoms_with_orb_index_end; ++atoms_with_orb_index
-		){
+		for (
+				utility::vector1<core::Size>::const_iterator
+				atoms_with_orb_index = rsd_type_.atoms_with_orb_index().begin(),
+				atoms_with_orb_index_end = rsd_type_.atoms_with_orb_index().end();
+				atoms_with_orb_index != atoms_with_orb_index_end; ++atoms_with_orb_index
+				) {
 			utility::vector1<core::Size> orbital_indices(rsd_type_.bonded_orbitals(*atoms_with_orb_index));
-			for(
+			for (
 					utility::vector1< core::Size >::const_iterator
 					orbital_index = orbital_indices.begin(),
 					orbital_index_end = orbital_indices.end();
 					orbital_index != orbital_index_end; ++orbital_index
-			){
+					) {
 				Vector orb_xyz(this->build_orbital_xyz(*orbital_index));
 				this->set_orbital_xyz(*orbital_index, orb_xyz );
 			}
@@ -1193,7 +1193,7 @@ public:
 	/// @brief Returns true is  <atomno>  has complete connectivity?
 	bool
 	has_incomplete_connection(
-			core::Size const atomno
+		core::Size const atomno
 	) const;
 
 	bool
@@ -1236,17 +1236,17 @@ public:
 	/// @brief set a connection to this residue by adding its partner's residue number
 	void
 	residue_connection_partner(
-			Size const resconn_index, // ie, our connid
-			Size const otherres,
-			Size const other_connid
+		Size const resconn_index, // ie, our connid
+		Size const otherres,
+		Size const other_connid
 	);
 
 	/// @brief Distance between a potential residue connection match and the position of the expected atom
 	Distance
 	connection_distance(
-			conformation::Conformation const & conf,
-			Size const resconn_index,
-			Vector const & matchpoint
+		conformation::Conformation const & conf,
+		Size const resconn_index,
+		Vector const & matchpoint
 	) const;
 
 	/// @brief Am I bonded to other?
@@ -1293,7 +1293,7 @@ public:
 	utility::vector1< Size > const &
 	connections_to_residue( Size const other_resid ) const
 	{
-	debug_assert( connections_to_residues_.find( other_resid ) != connections_to_residues_.end() );
+		debug_assert( connections_to_residues_.find( other_resid ) != connections_to_residues_.end() );
 		return connections_to_residues_.find( other_resid )->second;
 	}
 
@@ -1329,8 +1329,8 @@ public:
 	/// @brief Returns the number of atoms bonded to  <atomno>  in all residues?
 	core::Size
 	n_bonded_neighbor_all_res(
-			core::Size const atomno,
-			bool virt = false
+		core::Size const atomno,
+		bool virt = false
 	) const;
 
 
@@ -1578,7 +1578,7 @@ public:
 	{
 		if ( ! is_polymer() ||  ! other.is_polymer() ) return Size( -1 );
 		return ( chain_ == other.chain() ?
-				( seqpos_ <= other.seqpos_ ? other.seqpos_ - seqpos_ : seqpos_ - other.seqpos_ ) : Size( -1 ) );
+			( seqpos_ <= other.seqpos_ ? other.seqpos_ - seqpos_ : seqpos_ - other.seqpos_ ) : Size( -1 ) );
 	}
 
 	/// @brief Returns the sequence separation distance between this residue and  <other>
@@ -1661,13 +1661,13 @@ public:
 	{
 		return rsd_type_.is_peptoid();
 	}
-	
+
 	/// @brief Is this one of SRI's special heteropolymer building blocks?
 	bool is_sri() const
 	{
 		return rsd_type_.is_sri();
 	}
-	
+
 	/// @brief Returns true if and only if this residue is a triazolemer
 	///
 	bool is_triazolemer() const
@@ -1754,9 +1754,9 @@ public:
 	bool
 	is_apolar() const
 	{
-		if(rsd_type_.is_polar() || rsd_type_.is_aromatic() || rsd_type_.is_charged()){
+		if ( rsd_type_.is_polar() || rsd_type_.is_aromatic() || rsd_type_.is_charged() ) {
 			return false;
-		}else {
+		} else {
 			return true;
 		}
 	}
@@ -1827,10 +1827,9 @@ public:
 	is_similar_aa( Residue const & other ) const
 	{
 
-		if (rsd_type_.aa() != other.aa()){
+		if ( rsd_type_.aa() != other.aa() ) {
 			return false;
-		}
-		else {
+		} else {
 			return true;
 		}
 	}
@@ -1903,8 +1902,8 @@ public:
 	}
 
 	/// @brief Returns this residue's backbone_aa type, if any.
-  /// @details  This is used for noncanonical alpha-amino acids that are templated on canonicals.
-  /// For example, 4,5-dihydroxyisoleucine uses the ramachandran and p_aa_pp scoring of isoleucine.
+	/// @details  This is used for noncanonical alpha-amino acids that are templated on canonicals.
+	/// For example, 4,5-dihydroxyisoleucine uses the ramachandran and p_aa_pp scoring of isoleucine.
 	chemical::AA const &
 	backbone_aa() const
 	{
@@ -1960,16 +1959,16 @@ public:
 	/// assuming ideal internal coordinates
 	void
 	fill_missing_atoms(
-			utility::vector1< bool > missing,
-			Conformation const & conformation
+		utility::vector1< bool > missing,
+		Conformation const & conformation
 	);
 
 	/// @brief Selects three atoms for orienting this residue
 	void
 	select_orient_atoms(
-			Size & center,
-			Size & nbr1,
-			Size & nbr2
+		Size & center,
+		Size & nbr1,
+		Size & nbr2
 	) const;
 
 	/// @brief Orient our coords onto those of  <src>, using the atoms from select_orient_atoms
@@ -1978,12 +1977,12 @@ public:
 
 	/// @brief Orient our coords onto those of  <src>, using the three atom pairs specified in the input
 	/// @param atom_pairs
-	//		Atom pairs used for alignment of the form:
-	//		{ src_center : center, src_nbr1 : nbr1, src_nbr2 : nbr1 }
+	//  Atom pairs used for alignment of the form:
+	//  { src_center : center, src_nbr1 : nbr1, src_nbr2 : nbr1 }
 	void
 	orient_onto_residue(
-			Residue const & src,
-			utility::vector1< std::pair< std::string, std::string > > const & atom_pairs
+		Residue const & src,
+		utility::vector1< std::pair< std::string, std::string > > const & atom_pairs
 	);
 
 	/// @brief Orient our coords onto those of src, uses hard coded atom names (yuck) and will work for peptoid on to peptoid/peptide
@@ -1994,17 +1993,17 @@ public:
 	/// by reorienting the ideal side chain coordinates to match
 	void
 	place(
-			Residue const & src,
-			Conformation const & conformation,
-			bool preserve_c_beta = false
+		Residue const & src,
+		Conformation const & conformation,
+		bool preserve_c_beta = false
 	);
 
 	/// @brief Applies a transform of the form Rx + v, where R is a rotation
 	/// matrix, V is a vector, and x is the original position in xyz space
 	void
 	apply_transform_Rx_plus_v(
-			numeric::xyzMatrix< Real > R,
-			Vector v
+		numeric::xyzMatrix< Real > R,
+		Vector v
 	);
 
 	/// @brief Return the RNA_residueType object. This is RNA specific.
@@ -2043,9 +2042,9 @@ private:
 	/// folding the whole atom tree.
 	void
 	apply_transform_downstream(
-			int const atomno,
-			numeric::xyzMatrix< Real > const & R,
-			Vector const & v
+		int const atomno,
+		numeric::xyzMatrix< Real > const & R,
+		Vector const & v
 	);
 
 
@@ -2059,9 +2058,9 @@ private:
 
 	/// @brief Orient coords onto those of <src>, using the specified atoms
 	void orient_onto_residue(
-			Residue const & src,
-			Size center, Size nbr1, Size nbr2,
-			Size src_center, Size src_nbr1, Size src_nbr2);
+		Residue const & src,
+		Size center, Size nbr1, Size nbr2,
+		Size src_center, Size src_nbr1, Size src_nbr2);
 
 	/////////////////////////////////////////////////////////////////////////////
 	// data

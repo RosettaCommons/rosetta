@@ -123,11 +123,11 @@ void ChainSelector::select_chain_by_pdb_chain_char(
 	char ch
 ) const
 {
-  if ( !pose.pdb_info() ){
-    std::ostringstream err;
-    err << get_name() << "Selector recieved a pose without a valid PDBInfo--chains cannot be selected.";
-    throw utility::excn::EXCN_NullPointer( err.str() );
-  }
+	if ( !pose.pdb_info() ) {
+		std::ostringstream err;
+		err << get_name() << "Selector recieved a pose without a valid PDBInfo--chains cannot be selected.";
+		throw utility::excn::EXCN_NullPointer( err.str() );
+	}
 
 	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		if ( pose.pdb_info()->chain( ii ) == ch ) subset[ ii ] = true;

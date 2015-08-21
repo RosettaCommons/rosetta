@@ -46,7 +46,7 @@ set_extended_torsions_and_idealize_loops( core::pose::Pose& pose, loops::Loops l
 /// behavior surrounding empty loops.
 void
 safe_set_extended_torsions_and_idealize_loops(const protocols::loops::Loops& loops,
-                                                   core::pose::Pose* pose);
+	core::pose::Pose* pose);
 
 void
 addScoresForLoopParts(
@@ -83,21 +83,21 @@ define_scorable_core_from_secondary_structure( core::fragment::SecondaryStructur
 /// @brief Extract secondary structure chunks from the pose, using multiple secondary structure types
 /// this function requires that the pose object already have secstruct information
 /// to get this information from structure (DSSP), call
-/// protocols::jumping::Dssp dssp_obj( *pose );	dssp_obj.insert_ss_into_pose( *pose );
+/// protocols::jumping::Dssp dssp_obj( *pose ); dssp_obj.insert_ss_into_pose( *pose );
 /// or from secondary structure prediction (psipred_ss2 file), call
-///	core::pose::read_psipred_ss2_file(pose);
+/// core::pose::read_psipred_ss2_file(pose);
 Loops
 extract_secondary_structure_chunks(core::pose::Pose const & pose,
-														   std::string extracted_ss_types = "HE",
-														   core::Size gap_size = 1,
-														   core::Size minimum_length_of_chunk_helix = 5,
-														   core::Size minimum_length_of_chunk_strand = 3,
-														   core::Real CA_CA_distance_cutoff = 4);
+	std::string extracted_ss_types = "HE",
+	core::Size gap_size = 1,
+	core::Size minimum_length_of_chunk_helix = 5,
+	core::Size minimum_length_of_chunk_strand = 3,
+	core::Real CA_CA_distance_cutoff = 4);
 
 /// @brief Extract secondary structure chunks from the pose, using a given secondary structure type
 Loops
 extract_secondary_structure_chunks(core::pose::Pose const & pose,
-														   char const extracted_ss_type);
+	char const extracted_ss_type);
 
 Loops
 split_by_resSeq(core::pose::Pose const & pose);
@@ -111,8 +111,8 @@ find_non_protein_chunks(core::pose::Pose const & pose);
 /// @brief Split into separate chunks if CA-CA distance is over the cutoff
 Loops
 split_by_ca_ca_dist(core::pose::Pose const & pose,
-		Loops const & input_chunks,
-		core::Real const CA_CA_distance_cutoff = 4);
+	Loops const & input_chunks,
+	core::Real const CA_CA_distance_cutoff = 4);
 
 /// @brief If two chunks are separated by a small gap of size <= <gap_size>, combine them
 Loops
@@ -124,8 +124,8 @@ remove_short_chunks(Loops const & input_chunks, core::Size min_length = 3);
 
 Loops
 extract_continuous_chunks(core::pose::Pose const & pose,
-		core::Size const minimum_size = 3,
-		core::Real const CA_CA_distance_cutoff = 4);
+	core::Size const minimum_size = 3,
+	core::Real const CA_CA_distance_cutoff = 4);
 
 
 /// @brief Measures C-N distance and N-Ca-C, C-N-CA bond angles to detect chainbreak/poory resolved loop residues if outside cutoff.
@@ -169,8 +169,8 @@ has_severe_pep_bond_geom_issues(
 	core::Real max_c_n_dis = 2.0,
 	core::Real allowed_ca_c_n_deviation = 25.0,
 	core::Real allowed_c_n_ca_deviation = 25.0);
-	
-	
+
+
 } //loops
 } //protocols
 

@@ -74,7 +74,7 @@ Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 	// Assign atoms.
 	for ( Size i=1; i<= rsd_type_.natoms(); ++i ) {
 		atoms_.push_back( Atom( rsd_type_.atom(i).ideal_xyz(), rsd_type_.atom(i).atom_type_index(),
-				rsd_type_.atom(i).mm_atom_type_index() ) );
+			rsd_type_.atom(i).mm_atom_type_index() ) );
 	}
 
 	// Assign nus.
@@ -84,18 +84,18 @@ Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 
 		// Calculate the current nu angle from the coordinates.
 		Angle const current_nu( numeric::dihedral_degrees(
-				atom( nu_atoms[ 1 ] ).xyz(),
-				atom( nu_atoms[ 2 ] ).xyz(),
-				atom( nu_atoms[ 3 ] ).xyz(),
-				atom( nu_atoms[ 4 ] ).xyz() ) );
+			atom( nu_atoms[ 1 ] ).xyz(),
+			atom( nu_atoms[ 2 ] ).xyz(),
+			atom( nu_atoms[ 3 ] ).xyz(),
+			atom( nu_atoms[ 4 ] ).xyz() ) );
 
 		nus_[ i ] = current_nu;
 	}
 
 	// Assign orbitals.
-	BOOST_FOREACH(core::Size atom_with_orbitals, rsd_type_.atoms_with_orb_index()){
+	BOOST_FOREACH ( core::Size atom_with_orbitals, rsd_type_.atoms_with_orb_index() ) {
 		utility::vector1<core::Size> const & orbital_indices(rsd_type_.bonded_orbitals(atom_with_orbitals));
-		BOOST_FOREACH(core::Size orbital_index, orbital_indices){
+		BOOST_FOREACH ( core::Size orbital_index, orbital_indices ) {
 			Vector orb_xyz(this->build_orbital_xyz(orbital_index));
 			core::Size type = rsd_type_.orbital(orbital_index).orbital_type_index();
 			orbitals_.push_back(orbitals::OrbitalXYZCoords(orb_xyz, type));
@@ -132,7 +132,7 @@ Residue::Residue(
 	// Assign atoms.
 	for ( Size i=1; i<= rsd_type_.natoms(); ++i ) {
 		atoms_.push_back( Atom( rsd_type_.atom(i).ideal_xyz(), rsd_type_.atom(i).atom_type_index(),
-				rsd_type_.atom(i).mm_atom_type_index() ));
+			rsd_type_.atom(i).mm_atom_type_index() ));
 	}
 
 	debug_assert( current_rsd.mainchain_torsions().size() == rsd_type_.mainchain_atoms().size() );
@@ -163,10 +163,10 @@ Residue::Residue(
 
 		// get the current chi angle
 		Real const current_chi(numeric::dihedral_degrees(
-				atom( chi_atoms[1] ).xyz(),
-				atom( chi_atoms[2] ).xyz(),
-				atom( chi_atoms[3] ).xyz(),
-				atom( chi_atoms[4] ).xyz()));
+			atom( chi_atoms[1] ).xyz(),
+			atom( chi_atoms[2] ).xyz(),
+			atom( chi_atoms[3] ).xyz(),
+			atom( chi_atoms[4] ).xyz()));
 		chi_[ chino ] = current_chi;
 	}
 
@@ -177,18 +177,18 @@ Residue::Residue(
 
 		// Calculate the current nu angle from the coordinates.
 		Angle const current_nu( numeric::dihedral_degrees(
-				atom( nu_atoms[ 1 ] ).xyz(),
-				atom( nu_atoms[ 2 ] ).xyz(),
-				atom( nu_atoms[ 3 ] ).xyz(),
-				atom( nu_atoms[ 4 ] ).xyz() ) );
+			atom( nu_atoms[ 1 ] ).xyz(),
+			atom( nu_atoms[ 2 ] ).xyz(),
+			atom( nu_atoms[ 3 ] ).xyz(),
+			atom( nu_atoms[ 4 ] ).xyz() ) );
 
 		nus_[ i ] = current_nu;
 	}
 
 	// Assign orbitals.
-	BOOST_FOREACH(core::Size atom_with_orbitals, rsd_type_.atoms_with_orb_index()){
+	BOOST_FOREACH ( core::Size atom_with_orbitals, rsd_type_.atoms_with_orb_index() ) {
 		utility::vector1<core::Size> const & orbital_indices(rsd_type_.bonded_orbitals(atom_with_orbitals));
-		BOOST_FOREACH(core::Size orbital_index, orbital_indices){
+		BOOST_FOREACH ( core::Size orbital_index, orbital_indices ) {
 			Vector orb_xyz(this->build_orbital_xyz(orbital_index));
 			core::Size type = rsd_type_.orbital(orbital_index).orbital_type_index();
 			orbitals_.push_back(orbitals::OrbitalXYZCoords(orb_xyz, type));
@@ -216,7 +216,7 @@ Residue::Residue( Residue const & src ) :
 	pseudobonds_(src.pseudobonds_)
 {
 	if ( src.data_cache_ != 0 ) {
-		if ( data_cache_ != 0 ) (*data_cache_) = (*src.data_cache_);
+		if ( data_cache_ != 0 ) ( *data_cache_) = (*src.data_cache_);
 		else data_cache_ = basic::datacache::BasicDataCacheOP( new basic::datacache::BasicDataCache( *src.data_cache_) );
 	}
 }
@@ -299,7 +299,7 @@ Residue::set_xyz( std::string const & atm_name, Vector const & xyz_in )
 core::chemical::carbohydrates::CarbohydrateInfoCOP
 Residue::carbohydrate_info() const
 {
-debug_assert(rsd_type_.is_carbohydrate());
+	debug_assert(rsd_type_.is_carbohydrate());
 	PyAssert(rsd_type_.is_carbohydrate(), "Residue::carbohydrate_info(): This residue is not a carbohydrate!");
 
 	return rsd_type_.carbohydrate_info();
@@ -344,14 +344,13 @@ Residue::is_similar_rotamer( Residue const & other ) const
 	utility::vector1< Real > this_chi = chi_;
 	utility::vector1< Real > other_chi = other.chi();
 	bool match = true;
-	if (chi_.size() != other_chi.size() || rsd_type_.aa() != other.aa() || rsd_type_.name3() != other.name3() ){
+	if ( chi_.size() != other_chi.size() || rsd_type_.aa() != other.aa() || rsd_type_.name3() != other.name3() ) {
 		return false;
-	}
-	else {
-		for (Size i = 1; i<= chi_.size(); ++i){
-				if ( std::abs( this_chi[i] - other_chi[i]) >= 5){
-					match = false;
-				}
+	} else {
+		for ( Size i = 1; i<= chi_.size(); ++i ) {
+			if ( std::abs( this_chi[i] - other_chi[i]) >= 5 ) {
+				match = false;
+			}
 		}
 	}
 	return match;
@@ -367,13 +366,14 @@ Residue::is_similar_rotamer( Residue const & other ) const
 void
 Residue::update_connections_to_other_residue( Residue const &other_rsd)
 {
-	for(core::Size ic=1, ic_max=other_rsd.type().n_residue_connections(); ic<=ic_max; ++ic) {
-		if(other_rsd.connected_residue_at_resconn(ic)==seqpos()) { //If the other's connection lists this residue's sequence position
+	for ( core::Size ic=1, ic_max=other_rsd.type().n_residue_connections(); ic<=ic_max; ++ic ) {
+		if ( other_rsd.connected_residue_at_resconn(ic)==seqpos() ) { //If the other's connection lists this residue's sequence position
 			core::Size const this_conn_id = other_rsd.connect_map(ic).connid();
 			//TR << "this_res=" << seqpos() << "other_res=" << other_rsd.seqpos() << " this_conn_id=" << this_conn_id << std::endl; //DELETE ME
 			runtime_assert_string_msg(connect_map_size() >= this_conn_id, "Residue::update_connections_to_other_residue() error:  Connection id reported by other residue doesn't exist in current residue!");
-			if(connected_residue_at_resconn(this_conn_id)!=other_rsd.seqpos())
-					TR.Warning << "Warning!  While updating residue " << seqpos() << "'s connections to residue " << other_rsd.seqpos() << ", a connection to residue " << connected_residue_at_resconn(this_conn_id) << " was overwritten!" << std::endl;
+			if ( connected_residue_at_resconn(this_conn_id)!=other_rsd.seqpos() ) {
+				TR.Warning << "Warning!  While updating residue " << seqpos() << "'s connections to residue " << other_rsd.seqpos() << ", a connection to residue " << connected_residue_at_resconn(this_conn_id) << " was overwritten!" << std::endl;
+			}
 			residue_connection_partner( this_conn_id, other_rsd.seqpos(), ic ); //Set this residue's connection appropriately for the other residue's connection indices.
 		}
 	}
@@ -420,7 +420,7 @@ Residue::copy_residue_connections( Residue const & src_rsd )
 		// Find correspondence between src_rsd's connection atoms and atoms on *this.
 		for ( Size ii = 1; ii <= src_rsd.type().n_residue_connections(); ++ii ) {
 			Size const ii_connatom = src_rsd.type().residue_connection( ii ).atomno();
-			if ( has( src_rsd.atom_name( ii_connatom ) )) {
+			if ( has( src_rsd.atom_name( ii_connatom ) ) ) {
 
 				Size const this_connatom = atom_index( src_rsd.atom_name( ii_connatom ));
 
@@ -476,7 +476,7 @@ Residue::copy_residue_connections( Residue const & src_rsd )
 						/// Warn, we've just dropped a residue connection.  Was that intentional?
 						/// Actually -- common occurrence when converting a mid-residue to a terminal residue.
 						/// std::cerr << "WARNING: Not copying residue connection " << ii << " from " << src_rsd.name()
-						///	<< " to " << name() << " at position " << seqpos() << std::endl;
+						/// << " to " << name() << " at position " << seqpos() << std::endl;
 					}
 				}
 			}
@@ -508,9 +508,9 @@ Residue::orient_onto_residue( Residue const & src )
 
 	Size center, nbr1, nbr2;
 	select_orient_atoms( center, nbr1, nbr2 );
-	//	std::cout << " CENTER " << atom_name( center ) << "   NBR1 " << atom_name( nbr1 ) << "    NBR2 " << atom_name( nbr2 ) << std::endl;
+	// std::cout << " CENTER " << atom_name( center ) << "   NBR1 " << atom_name( nbr1 ) << "    NBR2 " << atom_name( nbr2 ) << std::endl;
 
-debug_assert( center && nbr1 && nbr2 );
+	debug_assert( center && nbr1 && nbr2 );
 	// this will fail if src doesnt have these atoms -- think more about this!
 	//
 	orient_onto_residue(
@@ -534,24 +534,24 @@ Residue::orient_onto_residue(
 	using kinematics::Stub;
 
 	// Verify that three atom pairs have been provided
-	if( atom_pairs.size() != 3 ){
+	if ( atom_pairs.size() != 3 ) {
 		utility_exit_with_message( "Three atom pairs must be provided in Residue::orient_onto_residue.");
 	}
 
 	orient_onto_residue(
-			src,
-			atom_index( atom_pairs[1].second ),
-			atom_index( atom_pairs[2].second ),
-			atom_index( atom_pairs[3].second ),
-			src.atom_index( atom_pairs[1].first ),
-			src.atom_index( atom_pairs[2].first ),
-			src.atom_index( atom_pairs[3].first ));
+		src,
+		atom_index( atom_pairs[1].second ),
+		atom_index( atom_pairs[2].second ),
+		atom_index( atom_pairs[3].second ),
+		src.atom_index( atom_pairs[1].first ),
+		src.atom_index( atom_pairs[2].first ),
+		src.atom_index( atom_pairs[3].first ));
 } //orient_onto_residue( Residue src, atom_pairs )
 
 void Residue::orient_onto_residue(
-			Residue const & src,
-			Size center, Size nbr1, Size nbr2,
-			Size src_center, Size src_nbr1, Size src_nbr2)
+	Residue const & src,
+	Size center, Size nbr1, Size nbr2,
+	Size src_center, Size src_nbr1, Size src_nbr2)
 {
 	using kinematics::Stub;
 
@@ -565,12 +565,12 @@ void Residue::orient_onto_residue(
 		src_midpoint ( 0.5 * ( src.atom( src_nbr1 ).xyz() + src.atom( src_nbr2 ).xyz() ) );
 
 	Stub rot_stub( atom( center ).xyz(),
-								 rot_midpoint,
-								 atom( nbr1 ).xyz() );
+		rot_midpoint,
+		atom( nbr1 ).xyz() );
 
 	Stub src_stub( src.atom( src_center ).xyz(),
-								 src_midpoint,
-								 src.atom( src_nbr1 ).xyz() );
+		src_midpoint,
+		src.atom( src_nbr1 ).xyz() );
 
 	// this could be made faster by getting the composite rotation and translation
 
@@ -597,12 +597,12 @@ Residue::orient_onto_residue_peptoid (
 	using namespace conformation;
 	using namespace chemical;
 
-//	// DEBUG DEBUG DEBUG
-//  using namespace pose;
-// 	Pose before_pose;
-// 	before_pose.append_residue_by_jump( *this, 1 );
-// 	std::string before_filename("before.pdb");
-// 	before_pose.dump_pdb( before_filename );
+	// // DEBUG DEBUG DEBUG
+	//  using namespace pose;
+	//  Pose before_pose;
+	//  before_pose.append_residue_by_jump( *this, 1 );
+	//  std::string before_filename("before.pdb");
+	//  before_pose.dump_pdb( before_filename );
 
 	// static strings to cut down on object creation penelty
 	static std::string const bb_ca( " CA " );
@@ -631,8 +631,8 @@ Residue::orient_onto_residue_peptoid (
 		//std::cout << "DEBUG LT" << std::endl;
 		// NtermConnect (cyclic)
 		Residue const cterm_residue = ( conformation.num_chains() == 2 || src.chain() == conformation.num_chains() - 1 ) ?
-				conformation.residue( conformation.size() ) :
-				conformation.residue( conformation.chain_end( src.chain() ) );
+			conformation.residue( conformation.size() ) :
+			conformation.residue( conformation.chain_end( src.chain() ) );
 		if ( /*!(*this).type().is_lower_terminus() && */src.has_variant_type( chemical::NTERM_CONNECT ) && cterm_residue.has_variant_type( chemical::CTERM_CONNECT ) ) {
 			//std::cout << "DEBUG LT CYCLIC" << std::endl;
 			// cent: peptoid N, src N
@@ -669,7 +669,7 @@ Residue::orient_onto_residue_peptoid (
 			src_nbr1_xyz = src.atom( src.atom_index( bb_ac ) ).xyz();
 
 			// NtermPeptoidFull ( peptoid on peptoid ). All peptoids have at least one sidechain atom called CA1
-		} else if( src.type().is_peptoid() ) {
+		} else if ( src.type().is_peptoid() ) {
 			// std::cout << "DEBUG LT PEPTOID" << std::endl;
 			// cent: peptoid N, src N
 			cent_xyz = atom( atom_index( bb_nx ) ).xyz();
@@ -717,13 +717,13 @@ Residue::orient_onto_residue_peptoid (
 		nbr1_xyz = stub.spherical(icoor.phi(), icoor.theta(), icoor.d() );
 	}
 
-// 	std::cout
-//		<< "rot_cent_xyz " << cent_xyz[1] << " " << cent_xyz[2] << " " << cent_xyz[3] << std::endl
-//		<< "rot_nbr1_xyz " << nbr1_xyz[1] << " " << nbr1_xyz[2] << " " << nbr1_xyz[3] << std::endl
-//		<< "rot_nbr2_xyz " << nbr2_xyz[1] << " " << nbr2_xyz[1] << " " << nbr2_xyz[1] << std::endl
-//		<< "src_cent_xyz " << src_cent_xyz[1] << " " << src_cent_xyz[2] << " " << src_cent_xyz[3] << std::endl
-//		<< "src_nbr1_xyz " << src_nbr1_xyz[1] << " " << src_nbr1_xyz[2] << " " << src_nbr1_xyz[3] << std::endl
-//		<< "src_nbr2_xyz " << src_nbr2_xyz[1] << " " << src_nbr2_xyz[2] << " " << src_nbr2_xyz[3] << std::endl;
+	//  std::cout
+	//  << "rot_cent_xyz " << cent_xyz[1] << " " << cent_xyz[2] << " " << cent_xyz[3] << std::endl
+	//  << "rot_nbr1_xyz " << nbr1_xyz[1] << " " << nbr1_xyz[2] << " " << nbr1_xyz[3] << std::endl
+	//  << "rot_nbr2_xyz " << nbr2_xyz[1] << " " << nbr2_xyz[1] << " " << nbr2_xyz[1] << std::endl
+	//  << "src_cent_xyz " << src_cent_xyz[1] << " " << src_cent_xyz[2] << " " << src_cent_xyz[3] << std::endl
+	//  << "src_nbr1_xyz " << src_nbr1_xyz[1] << " " << src_nbr1_xyz[2] << " " << src_nbr1_xyz[3] << std::endl
+	//  << "src_nbr2_xyz " << src_nbr2_xyz[1] << " " << src_nbr2_xyz[2] << " " << src_nbr2_xyz[3] << std::endl;
 
 	// get midpoint
 	Vector rot_midpoint( 0.5 * ( nbr1_xyz + nbr2_xyz ) );
@@ -746,11 +746,11 @@ Residue::orient_onto_residue_peptoid (
 }
 
 /// @details Place/orient "this" Residue onto "src" Residue by backbone superimposition
-///	Since rotamer is represented by Residue in mini now, this function is mainly used to place a rotamer
-///	onto the backbone of "src" residue. Meanwhile, it can also be used to add sidechains to one pose/conformation
-///	from another pose/conformation.\n
-///	current logic: find backbone atom with bonded neighbors in sidechain,
-///	and which is the base_atom of those neighbors. Take that backbone atom
+/// Since rotamer is represented by Residue in mini now, this function is mainly used to place a rotamer
+/// onto the backbone of "src" residue. Meanwhile, it can also be used to add sidechains to one pose/conformation
+/// from another pose/conformation.\n
+/// current logic: find backbone atom with bonded neighbors in sidechain,
+/// and which is the base_atom of those neighbors. Take that backbone atom
 /// and find two neighboring backbone heavyatoms. The three atoms to be superimposed with
 /// are the center/base atom, the backbone neighbor 1 and the mid-point of backbone neighbor 1 and 2. This way,
 /// we can avoid large perturbation on backbone neighbor 2 after superimpostion if the two sets of backbone atoms
@@ -767,7 +767,7 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 	Size first_scatom( rsd_type_.first_sidechain_atom() );
 	if ( first_scatom >= 1 && first_scatom <= rsd_type_.nheavyatoms() ) {
 		// not all backbone -- need to do some orienting
-		if ( (*this).type().is_peptoid() ){
+		if ( (*this).type().is_peptoid() ) {
 			orient_onto_residue_peptoid( src, conformation );
 		} else {
 			orient_onto_residue( src );
@@ -797,10 +797,10 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 
 	if ( preserve_c_beta ) {
 		// after superposition, adjust the sidechain atoms by aligning the CA-CB bond
-		//		std::cout << "preserving c-beta... " << std::endl;
+		//  std::cout << "preserving c-beta... " << std::endl;
 		std::string root("CA"), mobile_new("CB"), mobile_src("CB");
 
-		if ( is_RNA() ){
+		if ( is_RNA() ) {
 			root = " C1'";
 			mobile_new = atom_name( chi_atoms( 1 )[ 3 ] ); //First atom in base...
 			mobile_src = src.atom_name( src.chi_atoms( 1 )[ 3 ] ); //First atom in base...
@@ -808,17 +808,17 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 
 		// only try this when both the src and the new residue types contain both atom types
 		if ( type().has( root ) && type().has( mobile_new ) &&
-				 src.type().has( root ) && src.type().has( mobile_src ) ) {
-		debug_assert( xyz( root ) == src.xyz( root ) ); // roots should be aligned by now
+				src.type().has( root ) && src.type().has( mobile_src ) ) {
+			debug_assert( xyz( root ) == src.xyz( root ) ); // roots should be aligned by now
 			// common 'pseudoatom' vector, perpendicular to the plane defined by the two bonds
 			Vector const pseudoatom(
 				cross( xyz( mobile_new ) - xyz( root ), src.xyz( mobile_src ) - src.xyz( root ) ) + xyz( root )
 			);
 
-			if (pseudoatom==xyz(root)) return;
+			if ( pseudoatom==xyz(root) ) return;
 
 			Stub new_stub(     xyz( root ), pseudoatom,     xyz( mobile_new ) ),
-					 src_stub( src.xyz( root ), pseudoatom, src.xyz( mobile_src ) );
+				src_stub( src.xyz( root ), pseudoatom, src.xyz( mobile_src ) );
 			// adjust sidechain coordinates by superposition of the bond 'stubs'
 			// would need a smarter way to propagate through all child atoms of 'root' to generalize this
 			for ( Size atom_index(1); atom_index <= type().natoms(); ++atom_index ) {
@@ -853,9 +853,9 @@ Residue::fill_missing_atoms(
 			if ( missing[i] ) {
 				chemical::AtomICoor const & ic( icoor(i) );
 				if ( ( (seqpos_ == 1 || conformation.fold_tree().is_cutpoint(seqpos_-1))
-							 && ic.depends_on_polymer_lower()) ||
-						 ( ( Size(seqpos_) == conformation.size() || conformation.fold_tree().is_cutpoint(seqpos_) )
-							 && ic.depends_on_polymer_upper()) ) {
+						&& ic.depends_on_polymer_lower()) ||
+						( ( Size(seqpos_) == conformation.size() || conformation.fold_tree().is_cutpoint(seqpos_) )
+						&& ic.depends_on_polymer_upper()) ) {
 					missing[i] = false;
 					TR.Warning << "[ WARNING ] missing an atom: " << seqpos_ << " " << atom_name(i) << " that depends on a nonexistent polymer connection! "
 						<< std::endl <<  " --> generating it using idealized coordinates." << std::endl;
@@ -881,7 +881,7 @@ Residue::fill_missing_atoms(
 					// no stub atoms missing: build our ideal coordinates
 					missing[i] = false;
 					//std::cout << "Residue::fill_missing_atoms: rebuild backbone atom: " << name() << ' ' <<
-					//	atom_name(i) << std::endl;
+					// atom_name(i) << std::endl;
 					set_xyz( i, build_atom_ideal( i, conformation ) );
 				}
 			}
@@ -932,8 +932,8 @@ Residue::has_incomplete_connection(
 {
 	Size const num_connections(n_residue_connections());
 
-	for (Size i = 1; i <= num_connections; ++i) {
-		if (residue_connect_atom_index(i) == atomno && connection_incomplete(i)) return true;
+	for ( Size i = 1; i <= num_connections; ++i ) {
+		if ( residue_connect_atom_index(i) == atomno && connection_incomplete(i) ) return true;
 	}
 
 	return false;
@@ -959,26 +959,26 @@ Residue::residue_connection_partner(
 	connect_map_[ resconn_index ].resid(otherres);
 	connect_map_[ resconn_index ].connid( other_connid );
 	update_connections_to_residues();
-// 	utility::vector1< Size > newlist;
-// 	if (  connections_to_residues_.find( otherres ) != connections_to_residues_.end() ) {
-// 		newlist = connections_to_residues_[ otherres ];
-// 	}
-// 	if ( newlist.size() != 0 ) {
-// 		for ( Size ii = 1; ii <= newlist.size(); ++ii ) {
-// 			if ( newlist[ ii ] == resconn_index  ) {
-// 				//std::cout << "Setting residue connection partner on residue " << seqpos_ << " to residue " << otherres << " twice!" << std::endl;
-// 				break;
-// 			}
-// 			else if ( ii == newlist.size() ) {
-// 				newlist.push_back( resconn_index );
-// 				connections_to_residues_[ otherres ] = newlist;
-// 				break;
-// 			}
-// 		}
-// 	} else {
-// 		newlist.push_back( resconn_index );
-// 		connections_to_residues_[ otherres ] = newlist;
-// 	}
+	//  utility::vector1< Size > newlist;
+	//  if (  connections_to_residues_.find( otherres ) != connections_to_residues_.end() ) {
+	//   newlist = connections_to_residues_[ otherres ];
+	//  }
+	//  if ( newlist.size() != 0 ) {
+	//   for ( Size ii = 1; ii <= newlist.size(); ++ii ) {
+	//    if ( newlist[ ii ] == resconn_index  ) {
+	//     //std::cout << "Setting residue connection partner on residue " << seqpos_ << " to residue " << otherres << " twice!" << std::endl;
+	//     break;
+	//    }
+	//    else if ( ii == newlist.size() ) {
+	//     newlist.push_back( resconn_index );
+	//     connections_to_residues_[ otherres ] = newlist;
+	//     break;
+	//    }
+	//   }
+	//  } else {
+	//   newlist.push_back( resconn_index );
+	//   connections_to_residues_[ otherres ] = newlist;
+	//  }
 	determine_nonstandard_polymer_status();
 }
 
@@ -1016,12 +1016,12 @@ Residue::update_sequence_numbering( utility::vector1< Size > const & old2new )
 
 		// If the partner disappears, partner atomid should be zero too. Otherwise if you add and
 		// then delete a residue to a pose, a neighboring residue does not stay invariant.
-		if( new_resid == 0 ) connect_map_[i].connid( 0 );
+		if ( new_resid == 0 ) connect_map_[i].connid( 0 );
 
 
-// 		if ( new_resid ) {
-// 			connections_to_residues_[ new_resid ] = connections_to_residues_copy[ old_resid ];
-// 		}
+		//   if ( new_resid ) {
+		//    connections_to_residues_[ new_resid ] = connections_to_residues_copy[ old_resid ];
+		//   }
 	}
 	update_connections_to_residues();
 	if ( ! pseudobonds_.empty() ) {
@@ -1078,18 +1078,18 @@ Residue::is_bonded( Size const other_index ) const
 bool
 Residue::is_polymer_bonded( Residue const & other ) const
 {
-  return is_polymer_bonded( other.seqpos() );
+	return is_polymer_bonded( other.seqpos() );
 }
 
 /// @details  Am I polymer bonded to other_index?
 bool
 Residue::is_polymer_bonded( Size const other_index ) const
 {
-  if ( rsd_type_.is_polymer() ) {
-    Size const lower_id( rsd_type_.lower_connect_id() ), upper_id( rsd_type_.upper_connect_id() );
-    return ( ( lower_id && residue_connection_partner( lower_id ) == other_index ) ||
-             ( upper_id && residue_connection_partner( upper_id ) == other_index ) );
-  } else return false;
+	if ( rsd_type_.is_polymer() ) {
+		Size const lower_id( rsd_type_.lower_connect_id() ), upper_id( rsd_type_.upper_connect_id() );
+		return ( ( lower_id && residue_connection_partner( lower_id ) == other_index ) ||
+			( upper_id && residue_connection_partner( upper_id ) == other_index ) );
+	} else return false;
 }
 
 /// @brief  Returns the atom-index of my atom which is connected to the other residue
@@ -1167,15 +1167,15 @@ Residue::n_bonded_neighbor_all_res(
 	Size num_neighbors(0);
 
 	chemical::AtomIndices const & intrares_atomnos(bonded_neighbor(atomno));
-	for (Size i = 1; i <= intrares_atomnos.size(); ++i) {
-		if (virt || ! is_virtual(intrares_atomnos[i]) ) ++num_neighbors;
+	for ( Size i = 1; i <= intrares_atomnos.size(); ++i ) {
+		if ( virt || ! is_virtual(intrares_atomnos[i]) ) ++num_neighbors;
 	}
 
 	Size const num_connections(n_residue_connections());
 
-	for (Size i = 1; i <= num_connections; ++i) {
+	for ( Size i = 1; i <= num_connections; ++i ) {
 		// this doesn't check the other residue to see if it is connected to a virtual atom
-		if (residue_connect_atom_index(i) == atomno && ! connection_incomplete(i)) ++num_neighbors;
+		if ( residue_connect_atom_index(i) == atomno && ! connection_incomplete(i) ) ++num_neighbors;
 	}
 
 	return num_neighbors;
@@ -1197,7 +1197,7 @@ Residue::set_d( int const chino, Real const setting ) {
 	// get the current d
 	Real const current_d( ( atom(chi_atoms[baseatom+1]).xyz() - atom(chi_atoms[baseatom]).xyz() ).length() );
 
-debug_assert( rsd_type_.atom_base( chi_atoms[baseatom] ) == chi_atoms[baseatom] );
+	debug_assert( rsd_type_.atom_base( chi_atoms[baseatom] ) == chi_atoms[baseatom] );
 	numeric::xyzMatrix< Real > const R(numeric::xyzMatrix<Real>::identity());
 
 	Vector const axis (( atom(chi_atoms[baseatom+1]).xyz() - atom(chi_atoms[baseatom]).xyz() ).normalized());
@@ -1207,7 +1207,7 @@ debug_assert( rsd_type_.atom_base( chi_atoms[baseatom] ) == chi_atoms[baseatom] 
 	apply_transform_downstream( chi_atoms[baseatom+1], R, v );
 
 	ASSERT_ONLY(Real const new_d( ( atom(chi_atoms[baseatom+1]).xyz() - atom(chi_atoms[baseatom]).xyz() ).length() );)
-debug_assert( std::abs( new_d - setting ) < 1e-2 );
+		debug_assert( std::abs( new_d - setting ) < 1e-2 );
 
 	update_actcoord();//ek added 4/28/10
 }
@@ -1227,10 +1227,10 @@ Residue::set_theta( int const chino, Real const setting ) {
 
 	Vector const v12( atom(chi_atoms[baseatom]).xyz() - atom(chi_atoms[baseatom-1]).xyz() );
 	Vector const v23( atom(chi_atoms[baseatom+1]).xyz() - atom(chi_atoms[baseatom]).xyz() );
-	Vector const axis	(v12.cross(v23).normalized());
+	Vector const axis (v12.cross(v23).normalized());
 
 	// debug ordering of chi atoms
-debug_assert( ( rsd_type_.atom_base( chi_atoms[baseatom] ) == chi_atoms[baseatom-1]  ) &&
+	debug_assert( ( rsd_type_.atom_base( chi_atoms[baseatom] ) == chi_atoms[baseatom-1]  ) &&
 		( rsd_type_.atom_base( chi_atoms[baseatom+1] ) == chi_atoms[baseatom]  ) );
 
 	numeric::xyzMatrix< Real > const R
@@ -1243,8 +1243,8 @@ debug_assert( ( rsd_type_.atom_base( chi_atoms[baseatom] ) == chi_atoms[baseatom
 	apply_transform_downstream( chi_atoms[baseatom], R, v );
 
 	ASSERT_ONLY(Real const new_th(numeric::angle_degrees(
-	              atom( chi_atoms[baseatom-1] ).xyz(), atom( chi_atoms[baseatom] ).xyz(), atom( chi_atoms[baseatom+1] ).xyz() )); )
-debug_assert( std::abs( basic::subtract_degree_angles( new_th, setting ) ) < 1e-2 );
+		atom( chi_atoms[baseatom-1] ).xyz(), atom( chi_atoms[baseatom] ).xyz(), atom( chi_atoms[baseatom+1] ).xyz() )); )
+		debug_assert( std::abs( basic::subtract_degree_angles( new_th, setting ) ) < 1e-2 );
 
 	update_actcoord();
 }
@@ -1264,14 +1264,14 @@ Residue::set_chi( int const chino, Real const setting )
 	// get the current chi angle
 	Real const current_chi
 		( numeric::dihedral_degrees( atom( chi_atoms[1] ).xyz(),
-			atom( chi_atoms[2] ).xyz(),
-			atom( chi_atoms[3] ).xyz(),
-			atom( chi_atoms[4] ).xyz() ) );
+		atom( chi_atoms[2] ).xyz(),
+		atom( chi_atoms[3] ).xyz(),
+		atom( chi_atoms[4] ).xyz() ) );
 
 	Vector const axis
 		(( atom(chi_atoms[3]).xyz() - atom(chi_atoms[2]).xyz() ).normalized());
 	// debug ordering of chi atoms
-debug_assert( ( rsd_type_.atom_base( chi_atoms[3] ) == chi_atoms[2]  ) &&
+	debug_assert( ( rsd_type_.atom_base( chi_atoms[3] ) == chi_atoms[2]  ) &&
 		( rsd_type_.atom_base( chi_atoms[4] ) == chi_atoms[3]  ) );
 
 	numeric::xyzMatrix< Real > const R
@@ -1285,12 +1285,12 @@ debug_assert( ( rsd_type_.atom_base( chi_atoms[3] ) == chi_atoms[2]  ) &&
 
 
 	ASSERT_ONLY(Real const new_chi
-			( numeric::dihedral_degrees( atom( chi_atoms[1] ).xyz(),
-				atom( chi_atoms[2] ).xyz(),
-				atom( chi_atoms[3] ).xyz(),
-				atom( chi_atoms[4] ).xyz() ) );)
-debug_assert( std::abs( basic::subtract_degree_angles( new_chi, setting ) ) <
-			1e-2 );
+		( numeric::dihedral_degrees( atom( chi_atoms[1] ).xyz(),
+		atom( chi_atoms[2] ).xyz(),
+		atom( chi_atoms[3] ).xyz(),
+		atom( chi_atoms[4] ).xyz() ) );)
+		debug_assert( std::abs( basic::subtract_degree_angles( new_chi, setting ) ) <
+		1e-2 );
 
 	update_actcoord();//ek added 4/28/10
 }
@@ -1300,7 +1300,7 @@ void
 Residue::set_all_chi( utility::vector1< Real > const & chis )
 {
 	// This works for now, but there's probably a faster implementation which only runs the coordinate update once.
-	for(Size i=1; i<= nchi(); ++i) {
+	for ( Size i=1; i<= nchi(); ++i ) {
 		set_chi( i, chis[i] );
 	}
 }
@@ -1336,7 +1336,7 @@ Residue::apply_transform_downstream(
 			if ( my_atom_base != nbr ) {
 				apply_transform_downstream( nbr, R, v );
 			} else {
-				if(atomno!=1 && atomno!=2) TR.Warning << "DANGER: almost got stuck in infinite loop!  Atom " << atomno << " is apparently a parent AND child of atom " << nbr << "." << std::endl;
+				if ( atomno!=1 && atomno!=2 ) TR.Warning << "DANGER: almost got stuck in infinite loop!  Atom " << atomno << " is apparently a parent AND child of atom " << nbr << "." << std::endl;
 				//Note: atom 1 and atom 2 have a weird relationship, and that leads to bogus warning messages here.
 			}
 		}
@@ -1359,16 +1359,16 @@ Residue::determine_nonstandard_polymer_status()
 {
 	if ( is_polymer() ) {
 		if ( ! is_upper_terminus() &&
-				 ( type().upper_connect_id() == 0 ||
-					connect_map_[ type().upper_connect_id() ].incomplete() ||
-					connect_map_[ type().upper_connect_id() ].resid() != seqpos() + Size( 1 )) ) {
+				( type().upper_connect_id() == 0 ||
+				connect_map_[ type().upper_connect_id() ].incomplete() ||
+				connect_map_[ type().upper_connect_id() ].resid() != seqpos() + Size( 1 )) ) {
 			nonstandard_polymer_ = true;
 			return;
 		}
 		if ( ! is_lower_terminus() &&
-				 ( type().lower_connect_id() == 0 ||
-					 connect_map_[ type().lower_connect_id() ].incomplete() ||
-					 connect_map_[ type().lower_connect_id() ].resid() != seqpos() - Size( 1 )) ) {
+				( type().lower_connect_id() == 0 ||
+				connect_map_[ type().lower_connect_id() ].incomplete() ||
+				connect_map_[ type().lower_connect_id() ].resid() != seqpos() - Size( 1 )) ) {
 			nonstandard_polymer_ = true;
 			return;
 		}

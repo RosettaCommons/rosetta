@@ -78,16 +78,17 @@ static thread_local basic::Tracer tr( "core.fragment" );
 using namespace ObjexxFCL::format;
 
 void retain_top(core::Size k, FragSetOP fragments) {
-	for (FrameIterator i = fragments->nonconst_begin(); i != fragments->nonconst_end(); ++i) {
+	for ( FrameIterator i = fragments->nonconst_begin(); i != fragments->nonconst_end(); ++i ) {
 		FrameOP existing_frame = *i;
 
 		// create a new frame containing only the desired fragments
 		Frame new_frame(existing_frame->start(),
-										existing_frame->stop(),
-										existing_frame->length());
+			existing_frame->stop(),
+			existing_frame->length());
 
-		for (core::Size j = 1; j <= std::min(k, existing_frame->nr_frags()); ++j)
+		for ( core::Size j = 1; j <= std::min(k, existing_frame->nr_frags()); ++j ) {
 			new_frame.add_fragment(existing_frame->fragment_ptr(j));
+		}
 
 		*existing_frame = new_frame;
 	}
@@ -107,7 +108,7 @@ void steal_constant_length_frag_set_from_pose ( pose::Pose const& pose_in, Const
 		bool free_of_cut = true;
 		for ( Size icut = 1; icut <= (Size) pose.fold_tree().num_cutpoint(); icut++ ) {
 			Size const cut ( pose.fold_tree().cutpoint( icut ) );
-			if (cut >= pos && cut < pos+len-1 ) {
+			if ( cut >= pos && cut < pos+len-1 ) {
 				free_of_cut = false;
 				break;
 			}
@@ -151,7 +152,7 @@ void steal_frag_set_from_pose ( pose::Pose const& pose_in, Size const begin, Siz
 }
 
 void steal_frag_set_from_pose (
-  pose::Pose const& pose_in,
+	pose::Pose const& pose_in,
 	FragSet& fragset,
 	core::fragment::FragDataCOP frag_type,
 	std::set< core::Size > const& selected_residues )
@@ -163,7 +164,7 @@ void steal_frag_set_from_pose (
 	pose::Pose pose = pose_in;
 	pose::set_ss_from_phipsi( pose );
 	for ( std::set< core::Size >::const_iterator pos = selected_residues.begin();
-				pos != selected_residues.end(); ++pos ) {
+			pos != selected_residues.end(); ++pos ) {
 		frame = FrameOP( new Frame( *pos, frag_type ) );
 		frame->steal( pose );
 		fragset.add( frame );
@@ -213,10 +214,10 @@ void compute_per_residue_coverage( core::fragment::FragSet const& _frags, utilit
 
 void flatten_list( FrameList& frames, FragID_List& frag_ids ) {
 	frag_ids.reserve( frag_ids.size() + frames.flat_size() );
-  for ( FragID_Iterator it = frames.begin(), eit=frames.end();
-				it!=eit; ++it) {
-    frag_ids.push_back( *it );
-  }
+	for ( FragID_Iterator it = frames.begin(), eit=frames.end();
+			it!=eit; ++it ) {
+		frag_ids.push_back( *it );
+	}
 }
 
 FragSetOP
@@ -250,7 +251,7 @@ merge_frags( FragSet const& good_frags, FragSet const& filling, Size min_nr_frag
 			}
 
 			for ( FragID_List::iterator it = frag_ids.begin(), eit = frag_ids.end();
-						it != eit && nr_fill; ++it, --nr_fill ) {
+					it != eit && nr_fill; ++it, --nr_fill ) {
 				merged_frags->add( *it );
 				// book keeping: raise counter for affected residues
 				runtime_assert( it->frame().is_continuous() );
@@ -276,7 +277,7 @@ apply_best_scoring_fragdata(
 )
 {
 
-	if( frame.nr_frags() < 1 ) return;
+	if ( frame.nr_frags() < 1 ) return;
 
 	frame.apply( 1, pose );
 
@@ -286,14 +287,14 @@ apply_best_scoring_fragdata(
 
 	//tr << "frag 1 has score " << best_score << std::endl;
 
-	for( core::Size i = 2; i <= frame.nr_frags(); ++i ){
+	for ( core::Size i = 2; i <= frame.nr_frags(); ++i ) {
 
 		frame.apply( i, pose );
 
 		core::Real cur_score( sfxn( pose ) );
 		//tr << "frag " << i << " has score " << cur_score << std::endl;
 
-		if( cur_score < best_score ){
+		if ( cur_score < best_score ) {
 			best_frag = i;
 			best_score = cur_score;
 		}
@@ -310,7 +311,7 @@ apply_best_scoring_fragdata(
 void dump_frames_as_pdb(
 	pose::Pose const & pose,
 	utility::vector1< FrameOP > const & frames,
- 	std::string const & filename,
+	std::string const & filename,
 	Size const start_frag
 )
 {
@@ -323,15 +324,15 @@ void dump_frames_as_pdb(
 	outfile << "REMARK  666  Fragment set for outtag pose \n";
 
 	//now let's go through every fragment of every frame and dump to pdb
-	for( utility::vector1< FrameOP >::const_iterator frame_it = frames.begin(); frame_it != frames.end(); ++frame_it ){
+	for ( utility::vector1< FrameOP >::const_iterator frame_it = frames.begin(); frame_it != frames.end(); ++frame_it ) {
 
-		for( Size frag = start_frag; frag <= (*frame_it)->nr_frags(); ++frag){
+		for ( Size frag = start_frag; frag <= (*frame_it)->nr_frags(); ++frag ) {
 
 			(*frame_it)->apply( frag, frame_pose );
 
 			outfile << "MODEL" << I(9, model_count) << "\n";
 
-			for( Size rescount = (*frame_it)->start(); rescount <= (*frame_it)->end(); ++rescount ){
+			for ( Size rescount = (*frame_it)->start(); rescount <= (*frame_it)->end(); ++rescount ) {
 
 				core::io::pdb::dump_pdb_residue( frame_pose.residue( rescount ), atom_counter, outfile );
 
@@ -370,7 +371,7 @@ bool fill_template_frames_from_pdb(
 	bool return_val( true );
 	pose::Pose frag_pose = pose;
 
-	for( utility::vector1< pose::Pose >::const_iterator pose_it = in_poses.begin(); pose_it != in_poses.end(); ++pose_it){
+	for ( utility::vector1< pose::Pose >::const_iterator pose_it = in_poses.begin(); pose_it != in_poses.end(); ++pose_it ) {
 
 		//first we need to figure out which residues we are dealing with
 		Size pdb_start_res( pose_it->pdb_info()->number( 1 ) );
@@ -380,7 +381,7 @@ bool fill_template_frames_from_pdb(
 		char pdb_stop_res_icode( pose_it->pdb_info()->icode( pose_it->total_residue() ) );
 
 		//safety check
-		if( pose_it->pdb_info()->chain( pose_it->total_residue() ) != pdb_res_chain ){
+		if ( pose_it->pdb_info()->chain( pose_it->total_residue() ) != pdb_res_chain ) {
 			utility_exit_with_message("PDB file containing fragments is corrupted, one model contains multiple chains");
 		}
 
@@ -388,13 +389,13 @@ bool fill_template_frames_from_pdb(
 		Size frame_stop = pose.pdb_info()->pdb2pose( pdb_res_chain, pdb_stop_res, pdb_stop_res_icode );
 
 
-		while( pose_it->total_residue() != template_frames[ frame_counter ]->length()
-			&& frame_start != template_frames[ frame_counter ]->start()
-			&& frame_stop != template_frames[ frame_counter]->stop() )
-			{
-				frame_counter++;
-				if ( frame_counter > template_frames.size() ) return false; //means there were input poses not compatible with the requested frames.
-			}
+		while ( pose_it->total_residue() != template_frames[ frame_counter ]->length()
+				&& frame_start != template_frames[ frame_counter ]->start()
+				&& frame_stop != template_frames[ frame_counter]->stop() )
+				{
+			frame_counter++;
+			if ( frame_counter > template_frames.size() ) return false; //means there were input poses not compatible with the requested frames.
+		}
 
 		frag_pose.copy_segment( template_frames[ frame_counter ]->length(), *pose_it, template_frames[ frame_counter ]->start(), 1 );
 		template_frames[ frame_counter ]->steal( frag_pose );
@@ -412,29 +413,29 @@ void read_std_frags_from_cmd( FragSetOP& fragset_large, FragSetOP& fragset_small
 
 	std::string frag_large_file( "NoFile" );
 	std::string frag_small_file( "NoFile" );
-	if (option[ in::file::frag9 ].user()) {
+	if ( option[ in::file::frag9 ].user() ) {
 		frag_large_file  = option[ in::file::frag9 ]();
 	}
 
-	if (option[ in::file::frag3 ].user()) {
+	if ( option[ in::file::frag3 ].user() ) {
 		frag_small_file  = option[ in::file::frag3 ]();
 	}
 
 	if ( frag_large_file != "NoFile" ) {
-		//	fragset_large_ = FragmentIO().read( frag_large_file );
+		// fragset_large_ = FragmentIO().read( frag_large_file );
 		fragset_large = FragmentIO(
-															 option[ OptionKeys::abinitio::number_9mer_frags ](),
-															 option[ OptionKeys::frags::nr_large_copies ](),
-															 option[ OptionKeys::frags::annotate ]()
-		).read_data( frag_large_file );
+			option[ OptionKeys::abinitio::number_9mer_frags ](),
+			option[ OptionKeys::frags::nr_large_copies ](),
+			option[ OptionKeys::frags::annotate ]()
+			).read_data( frag_large_file );
 	}
 
 	if ( frag_small_file != "NoFile" ) {
 		fragset_small = FragmentIO(
-															 option[ OptionKeys::abinitio::number_3mer_frags ],
-															 1, //nr_copies
-															 option[ OptionKeys::frags::annotate ]
-		).read_data( frag_small_file );
+			option[ OptionKeys::abinitio::number_3mer_frags ],
+			1, //nr_copies
+			option[ OptionKeys::frags::annotate ]
+			).read_data( frag_small_file );
 	}
 
 	if ( option[ OptionKeys::abinitio::steal_3mers ]() || option[ OptionKeys::abinitio::steal_9mers ]() ) {
@@ -447,14 +448,14 @@ void read_std_frags_from_cmd( FragSetOP& fragset_large, FragSetOP& fragset_small
 			utility_exit_with_message(" can't steal natie fragments without in:file:native " );
 		}
 		tr.Info << " stealing fragments from native pose: ATTENTION: native pose has to be IDEALIZED!!! " << std::endl;
-		//		utility_exit_with_message(" stealing fragments from pose: currently not supported! ask Oliver " );
+		//  utility_exit_with_message(" stealing fragments from pose: currently not supported! ask Oliver " );
 		if ( option[ OptionKeys::abinitio::steal_9mers ]() ) {
 			if ( !fragset_large ) fragset_large = FragSetOP( new ConstantLengthFragSet( 9 ) );
-			steal_frag_set_from_pose( *native_pose, *fragset_large,	core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large->max_frag_length() ) ) ) );
+			steal_frag_set_from_pose( *native_pose, *fragset_large, core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large->max_frag_length() ) ) ) );
 		}
 		if ( option[ OptionKeys::abinitio::steal_3mers ]() ) {
 			if ( !fragset_small ) fragset_small = FragSetOP( new ConstantLengthFragSet( 3 ) );
-			steal_frag_set_from_pose( *native_pose, *fragset_small,	core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small->max_frag_length() ) ) ) );
+			steal_frag_set_from_pose( *native_pose, *fragset_small, core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small->max_frag_length() ) ) ) );
 		}
 	}
 
@@ -512,7 +513,7 @@ void make_simple_fold_tree_from_jump_frame( Frame const& frame, Size total_resid
 	}
 	ObjexxFCL::FArray2D_int jump_point( 2, ups.size(), 0 );
 	ObjexxFCL::FArray1D_int cut_point( ups.size() );
-	for ( Size i = 1; i <= ups.size() ; ++i ){
+	for ( Size i = 1; i <= ups.size() ; ++i ) {
 		jump_point( 1, i ) = ups[ i ];
 		jump_point( 2, i ) = downs[ i ];
 		cut_point( i ) = cuts[ i ];
@@ -531,7 +532,7 @@ void fragment_set_slice ( ConstantLengthFragSetOP & fragset, Size const & min_re
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 fragment_set_slice( core::fragment::ConstantLengthFragSetOP & fragset,
-										utility::vector1< core::Size > const & slice_res ) {
+	utility::vector1< core::Size > const & slice_res ) {
 
 	using namespace core::fragment;
 
@@ -553,7 +554,7 @@ fragment_set_slice( core::fragment::ConstantLengthFragSetOP & fragset,
 		fragset->frames( pos, frames );
 
 		// CURRENTLY ONLY WORKS FOR CONST FRAG LENGTH SETS!!!! ASSUMES ONE FRAME!!!
-	debug_assert( frames.size() == 1 );
+		debug_assert( frames.size() == 1 );
 
 		FrameOP & frame( frames[1] );
 		FrameOP frame_new( new Frame( n, len ) );
@@ -574,22 +575,24 @@ fragment_set_slice( core::fragment::ConstantLengthFragSetOP & fragset,
 /// @brief Finds the fold tree boundaries to the left and right of <pos>.
 void FindBoundaries(const core::kinematics::FoldTree& tree, core::Size pos, core::Size* left, core::Size* right) {
 	using core::Size;
-debug_assert(left);
-debug_assert(right);
+	debug_assert(left);
+	debug_assert(right);
 
 	Size lower_cut = 0;
 	Size upper_cut = tree.nres();
 	Size num_cutpoints = tree.num_cutpoint();
-	for (Size i = 1; i <= num_cutpoints; ++i) {
+	for ( Size i = 1; i <= num_cutpoints; ++i ) {
 		Size cutpoint = tree.cutpoint(i);
 
 		// find the upper boundary (inclusive)
-		if (cutpoint >= pos && cutpoint < upper_cut)
+		if ( cutpoint >= pos && cutpoint < upper_cut ) {
 			upper_cut = cutpoint;
+		}
 
 		// find the lower boundary (exclusive)
-		if (cutpoint < pos && cutpoint > lower_cut)
+		if ( cutpoint < pos && cutpoint > lower_cut ) {
 			lower_cut = cutpoint;
+		}
 	}
 
 	// set output parameters
@@ -598,11 +601,11 @@ debug_assert(right);
 }
 
 core::kinematics::Stub getxform(numeric::xyzVector<core::Real> m1,
-				numeric::xyzVector<core::Real> m2,
-				numeric::xyzVector<core::Real> m3,
-				numeric::xyzVector<core::Real> f1,
-				numeric::xyzVector<core::Real> f2,
-				numeric::xyzVector<core::Real> f3 ) {
+	numeric::xyzVector<core::Real> m2,
+	numeric::xyzVector<core::Real> m3,
+	numeric::xyzVector<core::Real> f1,
+	numeric::xyzVector<core::Real> f2,
+	numeric::xyzVector<core::Real> f3 ) {
 	core::kinematics::Stub s;
 	s.M = alignVectorSets(m1-m2, m3-m2, f1-f2, f3-f2);
 	s.v = f2-s.M*m2;
@@ -610,13 +613,13 @@ core::kinematics::Stub getxform(numeric::xyzVector<core::Real> m1,
 }
 
 void xform_pose(core::pose::Pose& pose,
-		const core::kinematics::Stub& s,
-		core::Size sres,
-		core::Size eres ) {
+	const core::kinematics::Stub& s,
+	core::Size sres,
+	core::Size eres ) {
 	using core::id::AtomID;
-	if(eres==0) eres = pose.n_residue();
-	for (core::Size ir = sres; ir <= eres; ++ir) {
-		for (core::Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
+	if ( eres==0 ) eres = pose.n_residue();
+	for ( core::Size ir = sres; ir <= eres; ++ir ) {
+		for ( core::Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 			AtomID aid(AtomID(ia,ir));
 			pose.set_xyz(aid, s.local2global(pose.xyz(aid)));
 		}
@@ -637,25 +640,25 @@ void make_pose_from_frags( pose::Pose & pose, std::string sequence, utility::vec
 	Real const init_psi  (  150.0 );
 	Real const init_omega(  180.0 );
 	for ( Size pos = 1; pos<=pose.total_residue(); pos++ ) {
-		if( pos != 1 )	pose.set_phi( pos,  init_phi );
-		if( pos != pose.total_residue() ) pose.set_psi( pos,  init_psi );
-		if( ( pos != 1 ) && ( pos != pose.total_residue() ) ) pose.set_omega( pos,  init_omega );
+		if ( pos != 1 ) pose.set_phi( pos,  init_phi );
+		if ( pos != pose.total_residue() ) pose.set_psi( pos,  init_psi );
+		if ( ( pos != 1 ) && ( pos != pose.total_residue() ) ) pose.set_omega( pos,  init_omega );
 	}
 	// insert the torsions from the fragments
 	Size insert_pos = 1;
-	for (Size i = 1; i <= frags.size(); ++i) {
+	for ( Size i = 1; i <= frags.size(); ++i ) {
 		FragDataCOP frag = frags[i];
 		frag->apply(pose, insert_pos, insert_pos + frag->size() - 1);
 		insert_pos += frag->size();
 	}
 
 	// if single fragment, reorientation is not necessary so just return
-	if (frags.size() == 1) return;
+	if ( frags.size() == 1 ) return;
 
 	// construct fold tree
 	core::kinematics::FoldTree tree(pose.fold_tree());
 	Size total_size = 0;
-	for (Size i = 1; i < frags.size(); ++i) {
+	for ( Size i = 1; i < frags.size(); ++i ) {
 		FragDataCOP frag_1 = frags[i];
 		FragDataCOP frag_2 = frags[i+1];
 		Size midpoint_1 = static_cast<Size>(ceil(frag_1->size() / 2.0)) + total_size;
@@ -667,11 +670,11 @@ void make_pose_from_frags( pose::Pose & pose, std::string sequence, utility::vec
 	pose.fold_tree(tree);
 
 	// Ensure that the FoldTree is left in a consistent state
-debug_assert(pose.fold_tree().check_fold_tree());
+	debug_assert(pose.fold_tree().check_fold_tree());
 
 	// orient the fragments in the pose based on CA fragment data
 	total_size = 0;
-	for (Size i = 1; i <= frags.size(); ++i) {
+	for ( Size i = 1; i <= frags.size(); ++i ) {
 		FragDataCOP frag = frags[i];
 		// Construct stubs from the 3 central CA atoms
 		Size central_residue = static_cast< Size >(ceil(frag->size() / 2.0));
@@ -694,7 +697,7 @@ debug_assert(pose.fold_tree().check_fold_tree());
 		core::Size region_start, region_stop;
 		FindBoundaries(tree, midpoint_pose, &region_start, &region_stop);
 		xform_pose(pose, x, region_start, region_stop);
-		if (chains && i < frags.size()) pose.conformation().insert_chain_ending( total_size );
+		if ( chains && i < frags.size() ) pose.conformation().insert_chain_ending( total_size );
 	}
 }
 

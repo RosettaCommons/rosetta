@@ -25,12 +25,12 @@ namespace perturb {
 /// @brief creator for the LoopMover_Perturb_KICCreator class
 class LoopMover_Perturb_KICCreator : public moves::MoverCreator {
 public:
-  LoopMover_Perturb_KICCreator() {}
-  virtual ~LoopMover_Perturb_KICCreator();
+	LoopMover_Perturb_KICCreator() {}
+	virtual ~LoopMover_Perturb_KICCreator();
 
-  virtual moves::MoverOP create_mover() const;
+	virtual moves::MoverOP create_mover() const;
 
-  virtual std::string keyname() const;
+	virtual std::string keyname() const;
 
 };
 

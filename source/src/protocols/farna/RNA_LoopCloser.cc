@@ -108,7 +108,7 @@ void RNA_LoopCloser::apply( core::pose::Pose & pose, std::map< Size, Size> const
 
 	// Loop through all residues and look for potential chainbreaks to close --
 	// marked by CUTPOINT_LOWER and CUTPOINT_UPPER variants.
-	for (Size i = 1; i < pose.total_residue(); i++ ) {
+	for ( Size i = 1; i < pose.total_residue(); i++ ) {
 
 		if ( !pose.residue( i   ).has_variant_type( chemical::CUTPOINT_LOWER )  ) continue;
 		if ( !pose.residue( i+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  ) continue;
@@ -139,22 +139,22 @@ RNA_LoopCloser::get_name() const {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
-Real RNA_LoopCloser::apply( core::pose::Pose & pose, std::map< Size, Size > const & connections, Size const & cutpoint	)
+Real RNA_LoopCloser::apply( core::pose::Pose & pose, std::map< Size, Size > const & connections, Size const & cutpoint )
 {
 
-	if (verbose_) TR << "Closing loop at: " << cutpoint << std::endl;
-	//	TR << "Closing loop at: " << cutpoint << std::endl;
+	if ( verbose_ ) TR << "Closing loop at: " << cutpoint << std::endl;
+	// TR << "Closing loop at: " << cutpoint << std::endl;
 
 	// In the future might have a separate option, e.g., for kinematic loop closure.
 	return rna_ccd_close( pose, connections, cutpoint );
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
-Real RNA_LoopCloser::apply( core::pose::Pose & pose, Size const & cutpoint	)
+Real RNA_LoopCloser::apply( core::pose::Pose & pose, Size const & cutpoint )
 {
 
-	if (verbose_) TR << "Closing loop at: " << cutpoint << std::endl;
-	//	TR << "Closing loop at: " << cutpoint << std::endl;
+	if ( verbose_ ) TR << "Closing loop at: " << cutpoint << std::endl;
+	// TR << "Closing loop at: " << cutpoint << std::endl;
 
 	std::map< Size, Size > connections; /* empty*/
 
@@ -164,9 +164,9 @@ Real RNA_LoopCloser::apply( core::pose::Pose & pose, Size const & cutpoint	)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_LoopCloser::apply( core::pose::Pose & pose, utility::vector1< Size > const & cutpoints	)
+RNA_LoopCloser::apply( core::pose::Pose & pose, utility::vector1< Size > const & cutpoints )
 {
-	for ( Size n = 1; n <= cutpoints.size(); n++ ){
+	for ( Size n = 1; n <= cutpoints.size(); n++ ) {
 		apply( pose, cutpoints[ n ] );
 	}
 }
@@ -180,27 +180,27 @@ RNA_LoopCloser::passes_fast_scan( core::pose::Pose & pose, Size const i ) const
 	core::kinematics::DomainMap domain_map;
 	pose.conformation().update_domain_map( domain_map );
 	if ( domain_map( i ) == domain_map( i+1 ) ) {
-		if (verbose_) TR << "Skipping " << i << " due to domain map."  << std::endl;
+		if ( verbose_ ) TR << "Skipping " << i << " due to domain map."  << std::endl;
 		return false;
 	}
 
 	Real const current_dist_err =   get_dist_err( pose, i );
 	//Don't bother if chain is really bad...
-	if ( current_dist_err > attempt_closure_cutoff_ )		{
-		if (verbose_) TR << "Cutpoint " << i << " will be tough to close: " << current_dist_err << std::endl;
+	if ( current_dist_err > attempt_closure_cutoff_ )  {
+		if ( verbose_ ) TR << "Cutpoint " << i << " will be tough to close: " << current_dist_err << std::endl;
 		return false;
 	}
 
 	Real const current_gap_distance =   get_gap_distance( pose, i );
 	//Don't bother if chain is really bad...
-	if ( current_gap_distance > gap_distance_cutoff_ )		{
-		if (verbose_) TR << "Cutpoint " << i << " will be tough to close since gap is : " << current_gap_distance << std::endl;
+	if ( current_gap_distance > gap_distance_cutoff_ )  {
+		if ( verbose_ ) TR << "Cutpoint " << i << " will be tough to close since gap is : " << current_gap_distance << std::endl;
 		return false;
 	}
 
 	//Don't bother if chain already closed...
-	if ( current_dist_err < absolute_ccd_tolerance_ )		{
-		if (verbose_) TR << "Cutpoint " << i << " already pretty close to closed: " << current_dist_err << std::endl;
+	if ( current_dist_err < absolute_ccd_tolerance_ )  {
+		if ( verbose_ ) TR << "Cutpoint " << i << " already pretty close to closed: " << current_dist_err << std::endl;
 		return false;
 	}
 
@@ -217,7 +217,7 @@ RNA_LoopCloser::check_closure( core::pose::Pose const & pose, core::Size const i
 	runtime_assert( pose.residue( i+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  );
 
 	Real const current_dist_err =  get_dist_err( pose, i );
-	//	TR << "CURRENT_DIST_ERR  " << current_dist_err << " " << ccd_tolerance << std::endl;
+	// TR << "CURRENT_DIST_ERR  " << current_dist_err << " " << ccd_tolerance << std::endl;
 
 	return ( current_dist_err < ccd_tolerance );
 }
@@ -230,9 +230,9 @@ RNA_LoopCloser::check_closure( core::pose::Pose const & pose, Real ccd_tolerance
 
 	// Loop through all residues and look for potential chainbreaks to close --
 	// marked by CUTPOINT_LOWER and CUTPOINT_UPPER variants.
-	for (Size i = 1; i < pose.total_residue(); i++ ) {
- 	if ( !pose.residue( i   ).has_variant_type( chemical::CUTPOINT_LOWER )  ) continue;
-	if ( !pose.residue( i+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  ) continue;
+	for ( Size i = 1; i < pose.total_residue(); i++ ) {
+		if ( !pose.residue( i   ).has_variant_type( chemical::CUTPOINT_LOWER )  ) continue;
+		if ( !pose.residue( i+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  ) continue;
 		if ( !check_closure( pose, i, ccd_tolerance ) ) return false;
 	}
 
@@ -247,12 +247,12 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 	using namespace core::id;
 
 	if ( !input_pose.residue( cutpoint ).is_RNA() ||
-			 !input_pose.residue( cutpoint+1 ).is_RNA() ) {
+			!input_pose.residue( cutpoint+1 ).is_RNA() ) {
 		utility_exit_with_message( "RNA CCD closure at "+string_of( cutpoint )+" but residues are not RNA?");
 	}
 
 	if ( !input_pose.residue( cutpoint ).has_variant_type( chemical::CUTPOINT_LOWER ) ||
-			 !input_pose.residue( cutpoint+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {
+			!input_pose.residue( cutpoint+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {
 		utility_exit_with_message( "RNA CCD closure at "+string_of( cutpoint )+" but CUTPOINT_LOWER or CUTPOINT_UPPER variants not properly set up." );
 	}
 
@@ -273,47 +273,47 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 	Size cutpoint_partner( 0 ), cutpoint_next_partner( 0 );
 
 	if ( connections.find( cutpoint ) != connections.end() &&
-			 connections.find( cutpoint+1 ) != connections.end() ) {
+			connections.find( cutpoint+1 ) != connections.end() ) {
 
 		cutpoint_partner = connections.find( cutpoint )->second;
 		cutpoint_next_partner = connections.find( cutpoint+1 )->second;
 
-		if (cutpoint_partner == cutpoint_next_partner + 1 ) {
+		if ( cutpoint_partner == cutpoint_next_partner + 1 ) {
 			close_two_base_pairs = true;
 		}
 	}
- 	if ( close_two_base_pairs ) {
+	if ( close_two_base_pairs ) {
 		TR << "Also including some torsions in partners in CCD: " << cutpoint_partner << " " << cutpoint_next_partner << std::endl;
 	}
 
 	// This is totally hard-wired and hacky -- should be easy to fix though.
-	if (close_two_base_pairs ) {
+	if ( close_two_base_pairs ) {
 		pose.append_residue_by_jump( input_pose.residue( cutpoint_next_partner /* 9 */ ), 1 );
 		pose.append_residue_by_jump( input_pose.residue( cutpoint_partner /* 10 */ ), 1 );
 	}
 
 	kinematics::FoldTree f( pose.total_residue() );
 	if ( close_two_base_pairs ) {
-	// This is totally hard-wired and hacky -- should be easy to fix though.
+		// This is totally hard-wired and hacky -- should be easy to fix though.
 		f.new_jump( 1, 4, 1 );
 		f.set_jump_atoms( 1,
-											core::chemical::rna::chi1_torsion_atom( pose.residue(1) ),
-											core::chemical::rna::chi1_torsion_atom( pose.residue(4) )   );
+			core::chemical::rna::chi1_torsion_atom( pose.residue(1) ),
+			core::chemical::rna::chi1_torsion_atom( pose.residue(4) )   );
 		f.new_jump( 2, 3, 2 );
 		f.set_jump_atoms( 2,
-											core::chemical::rna::chi1_torsion_atom( pose.residue(2) ),
-											core::chemical::rna::chi1_torsion_atom( pose.residue(3) )   );
+			core::chemical::rna::chi1_torsion_atom( pose.residue(2) ),
+			core::chemical::rna::chi1_torsion_atom( pose.residue(3) )   );
 
 	} else {
 		f.new_jump( 1, 2, 1 );
 		f.set_jump_atoms( 1,
-											core::chemical::rna::chi1_torsion_atom( pose.residue(1) ),
-											core::chemical::rna::chi1_torsion_atom( pose.residue(2) )   );
+			core::chemical::rna::chi1_torsion_atom( pose.residue(1) ),
+			core::chemical::rna::chi1_torsion_atom( pose.residue(2) )   );
 	}
 
 	pose.fold_tree( f );
 
-//	pose.dump_pdb( "scratch.pdb" );
+	// pose.dump_pdb( "scratch.pdb" );
 
 	//Vectors of the three atoms upstream or downstream of the cutpoint that need to be matched.
 	utility::vector1 <Vector> upstream_xyzs, downstream_xyzs;
@@ -325,33 +325,33 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 	utility::vector1< TorsionID > tor_ids, input_tor_ids;
 
 	// epsilon and zeta before the cutpoint.
-	for (Size j = 5; j <=6; ++ j){
+	for ( Size j = 5; j <=6; ++ j ) {
 		tor_ids.push_back( TorsionID( 1 /*cutpoint*/, BB, j ) );
 		input_tor_ids.push_back( TorsionID( cutpoint, BB, j ) );
 	}
 
 	// alpha, beta, gamma, delta after the cutpoint?
-	for (Size j = 1; j <=3; ++ j){
+	for ( Size j = 1; j <=3; ++ j ) {
 		tor_ids.push_back( TorsionID( 2 /*cutpoint+1*/, BB, j ) );
 		input_tor_ids.push_back( TorsionID( cutpoint+1, BB, j ) );
 	}
 
 	//Parin May 5, 2009
 	// Also include delta (sugar pucker!) from second residue if its a free floater (cutpoints before and after)
-//	if ( input_pose.residue( cutpoint+1 ).has_variant_type( chemical::CUTPOINT_LOWER )  ||
-//			 input_pose.residue( cutpoint+1 ).has_variant_type( chemical::UPPER_TERMINUS )  ) {
-//		Size const j = 4;
-//		tor_ids.push_back( TorsionID( 2 /*cutpoint+1*/, BB, j ) );
-//		input_tor_ids.push_back( TorsionID( cutpoint+1, BB, j ) );
-//	}
+	// if ( input_pose.residue( cutpoint+1 ).has_variant_type( chemical::CUTPOINT_LOWER )  ||
+	//    input_pose.residue( cutpoint+1 ).has_variant_type( chemical::UPPER_TERMINUS )  ) {
+	//  Size const j = 4;
+	//  tor_ids.push_back( TorsionID( 2 /*cutpoint+1*/, BB, j ) );
+	//  input_tor_ids.push_back( TorsionID( cutpoint+1, BB, j ) );
+	// }
 
 	// Also include delta (sugar pucker!) from second residue if its a free floater (cutpoints before and after)
-	//	if ( input_pose.residue( cutpoint+1 ).has_variant_type( chemical::CUTPOINT_LOWER )  ||
-	//			 input_pose.residue( cutpoint+1 ).has_variant_type( chemical::UPPER_TERMINUS )  ) {
-	//		Size const j = 4;
-	//		tor_ids.push_back( TorsionID( 2 /*cutpoint+1*/, BB, j ) );
-	//		input_tor_ids.push_back( TorsionID( cutpoint+1, BB, j ) );
-	//	}
+	// if ( input_pose.residue( cutpoint+1 ).has_variant_type( chemical::CUTPOINT_LOWER )  ||
+	//    input_pose.residue( cutpoint+1 ).has_variant_type( chemical::UPPER_TERMINUS )  ) {
+	//  Size const j = 4;
+	//  tor_ids.push_back( TorsionID( 2 /*cutpoint+1*/, BB, j ) );
+	//  input_tor_ids.push_back( TorsionID( cutpoint+1, BB, j ) );
+	// }
 
 
 	//Need to make following user-settable.
@@ -362,8 +362,8 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 
 	while ( nrounds++ < NUM_ROUNDS_ ) {
 
-		if (check_tolerance_ && ( (mean_dist_err_prev - mean_dist_err) < ccd_tolerance_ ) ) {
-			if (verbose_ ) TR << "Reached tolerance of " << ccd_tolerance_ << " after " << nrounds << " rounds. " << std::endl;
+		if ( check_tolerance_ && ( (mean_dist_err_prev - mean_dist_err) < ccd_tolerance_ ) ) {
+			if ( verbose_ ) TR << "Reached tolerance of " << ccd_tolerance_ << " after " << nrounds << " rounds. " << std::endl;
 			break;
 		}
 		mean_dist_err_prev = mean_dist_err;
@@ -374,8 +374,7 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 		// and also biased towards "moveable torsions" (i.e., not beta or epsilon)
 		// Also to do? -- check on beta/epsilon -- could perhaps make use of
 		//   torsion potential as a simple and general screen.
-		for (Size n = 1; n <= tor_ids.size(); n++ )
-		{
+		for ( Size n = 1; n <= tor_ids.size(); n++ ) {
 			TorsionID const & tor_id( tor_ids[ n ] );
 			AtomID id1,id2,id3,id4;
 			pose.conformation().get_torsion_angle_atom_ids( tor_id, id1, id2, id3, id4 );
@@ -383,7 +382,7 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 			//Is this torsion before or after the chainbreak?
 			AtomID my_id;
 			Real dir( 0.0 );
-			if ( Size( tor_id.rsd() ) == 1 /*cutpoint*/ ){
+			if ( Size( tor_id.rsd() ) == 1 /*cutpoint*/ ) {
 				my_id = id3;
 				dir = 1;
 			} else {
@@ -398,7 +397,7 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 			Vector const & x_i = M_i.col_x();
 
 			Real weighted_sine( 0.0 ), weighted_cosine( 0.0 );
-			for (Size m = 1; m <= upstream_xyzs.size(); m++ ){
+			for ( Size m = 1; m <= upstream_xyzs.size(); m++ ) {
 				Vector const current_xyz( current_atom.xyz() );
 
 				Vector const r1 = upstream_xyzs[m] - current_xyz;
@@ -409,17 +408,17 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 
 				Real const current_sine   = dir * dot( x_i, cross( rho1, rho2 ) );
 				Real const current_cosine = dot( rho1, rho2 );
-				//				std::cout << "PREFERRED ANGLE: " << numeric::conversions::degrees( std::atan2( current_sine, current_cosine) ) << std::endl;
+				//    std::cout << "PREFERRED ANGLE: " << numeric::conversions::degrees( std::atan2( current_sine, current_cosine) ) << std::endl;
 
 				weighted_sine += current_sine;
 				weighted_cosine += current_cosine;
 
 				mean_dist_err = get_chainbreak_xyz( pose, 1 /*cutpoint*/, upstream_xyzs, downstream_xyzs );
-		}
+			}
 
 			Real const twist_torsion = numeric::conversions::degrees( std::atan2( weighted_sine, weighted_cosine) );
 
-			//			std::cout << "CHECK: " << twist_torsion << std::endl;
+			//   std::cout << "CHECK: " << twist_torsion << std::endl;
 
 			Real const current_val = pose.torsion( tor_id );
 			pose.set_torsion( tor_id, current_val + twist_torsion );
@@ -431,15 +430,15 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 
 	}
 
-	if (verbose_) pose.dump_pdb( "scratch_close.pdb" );
+	if ( verbose_ ) pose.dump_pdb( "scratch_close.pdb" );
 
 	/////////////////////////////////////////////////////////////////////
 	// OK, done with mini_pose ... copy torsions back into main pose.
-	for (Size n = 1; n <= tor_ids.size(); n++ ) {
+	for ( Size n = 1; n <= tor_ids.size(); n++ ) {
 		input_pose.set_torsion( input_tor_ids[n], pose.torsion( tor_ids[n] ) );
 	}
 
-	if (verbose_) input_pose.dump_pdb( "pose_close.pdb" );
+	if ( verbose_ ) input_pose.dump_pdb( "pose_close.pdb" );
 
 	return mean_dist_err;
 
@@ -449,8 +448,8 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 ///////////////////////////////////////////////////////////////
 Real
 RNA_LoopCloser::get_dist_err( pose::Pose const & pose,
-															Size const cutpoint
-															) const
+	Size const cutpoint
+) const
 {
 	utility::vector1< Vector > upstream_xyzs;
 	utility::vector1< Vector > downstream_xyzs;
@@ -460,10 +459,10 @@ RNA_LoopCloser::get_dist_err( pose::Pose const & pose,
 ///////////////////////////////////////////////////////////////
 Real
 RNA_LoopCloser::get_chainbreak_xyz( pose::Pose const & pose,
-																		Size const cutpoint,
-																		utility::vector1< Vector > & upstream_xyzs,
-																		utility::vector1< Vector > & downstream_xyzs
-										) const
+	Size const cutpoint,
+	utility::vector1< Vector > & upstream_xyzs,
+	utility::vector1< Vector > & downstream_xyzs
+) const
 {
 	upstream_xyzs.clear();
 	downstream_xyzs.clear();
@@ -477,7 +476,7 @@ RNA_LoopCloser::get_chainbreak_xyz( pose::Pose const & pose,
 	downstream_xyzs.push_back( pose.residue( cutpoint+1 ).xyz( " O5'" ) );
 
 	Real mean_dist_err( 0.0 );
-	for (Size m = 1; m <= upstream_xyzs.size(); m++ ){
+	for ( Size m = 1; m <= upstream_xyzs.size(); m++ ) {
 		mean_dist_err += ( upstream_xyzs[m]  - downstream_xyzs[m] ).length();
 	}
 	mean_dist_err /= upstream_xyzs.size();
@@ -488,8 +487,8 @@ RNA_LoopCloser::get_chainbreak_xyz( pose::Pose const & pose,
 ///////////////////////////////////////////////////////////////
 Real
 RNA_LoopCloser::get_gap_distance( pose::Pose & pose,
-										Size const cutpoint
-										) const
+	Size const cutpoint
+) const
 {
 	return ( pose.residue(cutpoint).xyz( " O3'" ) - pose.residue(cutpoint).xyz(" C5'" ) ).length();
 }
@@ -506,12 +505,12 @@ RNA_LoopCloser::get_extra_cutpoints( pose::Pose const & pose ) const
 
 	utility::vector1< Size > extra_cutpoints;
 
-	for ( Size cutpos = 1; cutpos < pose.total_residue(); cutpos++ ){
+	for ( Size cutpos = 1; cutpos < pose.total_residue(); cutpos++ ) {
 
 		if ( ! f.is_cutpoint( cutpos ) ) continue;
 
 		if ( !pose.residue( cutpos   ).has_variant_type( chemical::CUTPOINT_LOWER )  ||
-				 !pose.residue( cutpos+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  ) {
+				!pose.residue( cutpos+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  ) {
 
 			// go through pose constraints -- was there any constraint holding residue i's O3'  to i+1's P?
 			bool cst_found( false );
@@ -527,10 +526,10 @@ RNA_LoopCloser::get_extra_cutpoints( pose::Pose const & pose ) const
 					Size const j = cst->atom( 2 ).rsd();
 					std::string const name2 = pose.residue( j ).atom_name( cst->atom( 2 ).atomno() );
 
-					if ( i == cutpos && j == cutpos+1 && name1 == " O3'" && name2 == " P  " ){
+					if ( i == cutpos && j == cutpos+1 && name1 == " O3'" && name2 == " P  " ) {
 						cst_found = true; break;
 					}
-					if ( j == cutpos && i == cutpos+1 && name2 == " O3'" && name1 == " P  " ){
+					if ( j == cutpos && i == cutpos+1 && name2 == " O3'" && name1 == " P  " ) {
 						cst_found = true; break;
 					}
 
@@ -538,7 +537,7 @@ RNA_LoopCloser::get_extra_cutpoints( pose::Pose const & pose ) const
 
 			}
 
-			if (!cst_found) continue;
+			if ( !cst_found ) continue;
 
 			extra_cutpoints.push_back( cutpos );
 		}
@@ -560,8 +559,8 @@ RNA_LoopCloser::setup_variants_at_extra_cutpoints( pose::Pose & pose, utility::v
 
 		core::pose::correctly_add_cutpoint_variants( pose, cutpos );
 
-		for (Size i = cutpos; i <= cutpos + 1; i++ ){
-			for (Size j = 1; j <= chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; j++ ) {
+		for ( Size i = cutpos; i <= cutpos + 1; i++ ) {
+			for ( Size j = 1; j <= chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; j++ ) {
 				id::TorsionID torsion_id( i, id::BB, j );
 				pose.set_torsion( torsion_id, pose_copy.torsion( torsion_id ) ) ;
 			} // j
@@ -583,8 +582,8 @@ RNA_LoopCloser::remove_variants_at_extra_cutpoints( pose::Pose & pose, utility::
 		core::pose::remove_variant_type_from_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpos   );
 		core::pose::remove_variant_type_from_pose_residue( pose, chemical::CUTPOINT_UPPER, cutpos+1 );
 
-		for (Size i = cutpos; i <= cutpos + 1; i++ ){
-			for (Size j = 1; j <= chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; j++ ) {
+		for ( Size i = cutpos; i <= cutpos + 1; i++ ) {
+			for ( Size j = 1; j <= chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; j++ ) {
 				id::TorsionID torsion_id( i, id::BB, j );
 				pose.set_torsion( torsion_id, pose_copy.torsion( torsion_id ) ) ;
 			} // j
@@ -599,14 +598,14 @@ RNA_LoopCloser::remove_variants_at_extra_cutpoints( pose::Pose & pose, utility::
 // RNA_LoopCloser::close_loops_carefully(
 //   core::pose::Pose & pose,
 //   core::scoring::ScoreFunctionOP const & scorefxn,
-// 	Size close_loops_rounds )
+//  Size close_loops_rounds )
 // {
 
-// 	for (Size k = 1; k <= close_loops_rounds; k++ ) {
-// 		std::cout << "ROUND " << k << " of " << close_loops_rounds << ": " << std::endl;
-// 		scorefxn->show( std::cout, pose );
-// 		close_loops_carefully_one_round( pose, scorefxn );
-// 	}
+//  for (Size k = 1; k <= close_loops_rounds; k++ ) {
+//   std::cout << "ROUND " << k << " of " << close_loops_rounds << ": " << std::endl;
+//   scorefxn->show( std::cout, pose );
+//   close_loops_carefully_one_round( pose, scorefxn );
+//  }
 
 // }
 
@@ -616,7 +615,7 @@ RNA_LoopCloser::remove_variants_at_extra_cutpoints( pose::Pose & pose, utility::
 //   core::pose::Pose & pose,
 //   core::scoring::ScoreFunctionOP const & scorefxn )
 // {
-// 	close_loops_carefully( pose, scorefxn, 1 );
+//  close_loops_carefully( pose, scorefxn, 1 );
 // }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -625,13 +624,13 @@ RNA_LoopCloser::close_loops_carefully( core::pose::Pose & pose,  std::map< Size,
 {
 	using namespace core::scoring;
 
-	//	ScoreFunctionOP scorefxn_local( scorefxn->clone() );
+	// ScoreFunctionOP scorefxn_local( scorefxn->clone() );
 
 	// A quick minimization
 	//static protocols::farna::RNA_Minimizer rna_minimizer;
-	//	rna_minimizer.set_score_function( scorefxn_local );
-	//	rna_minimizer.apply( pose );
-	//	pose.dump_pdb( "dump1.pdb" );
+	// rna_minimizer.set_score_function( scorefxn_local );
+	// rna_minimizer.apply( pose );
+	// pose.dump_pdb( "dump1.pdb" );
 
 	// OK, close the loops...
 	// Look through constraints -- there may be some cutpoints to close that are not
@@ -642,35 +641,35 @@ RNA_LoopCloser::close_loops_carefully( core::pose::Pose & pose,  std::map< Size,
 	// Now locally minimize around chainbreaks -- ignore chainbreak atoms because they're
 	// probably in crazy places (wait until CCD).
 	//scorefxn_local->set_weight( linear_chainbreak, 0.0 );
-	//	local_minimize_at_chainbreaks( pose, scorefxn_local );
-	//	pose.dump_pdb( "dump2.pdb" );
+	// local_minimize_at_chainbreaks( pose, scorefxn_local );
+	// pose.dump_pdb( "dump2.pdb" );
 
 	// CCD loop close.
-	//	bool fast_scan_save( fast_scan_ );
-	//	fast_scan_ = false;
+	// bool fast_scan_save( fast_scan_ );
+	// fast_scan_ = false;
 	apply( pose, connections );
-	//	fast_scan_ = fast_scan_save;
-	//	pose.dump_pdb( "dump3.pdb" );
+	// fast_scan_ = fast_scan_save;
+	// pose.dump_pdb( "dump3.pdb" );
 
 
 	// Now minimize with strong coordinate constraints.
 	tight_minimize( pose );
 
-	//	local_minimize_at_chainbreaks( pose, scorefxn_local );
+	// local_minimize_at_chainbreaks( pose, scorefxn_local );
 
 	// Leave the pose sequence/variants as we received it.
 	remove_variants_at_extra_cutpoints( pose, extra_cutpoints );
-	//	pose.dump_pdb( "dump4.pdb" );
+	// pose.dump_pdb( "dump4.pdb" );
 
 	//In case the pose is about to be output ...
-	//	pose.constraint_set( cst_set_save );
-	//	(*scorefxn)( pose );
+	// pose.constraint_set( cst_set_save );
+	// (*scorefxn)( pose );
 
 }
 
 //////////////////////////////////////////////////////////////////////////////////
 void
-RNA_LoopCloser::tight_minimize( core::pose::Pose & pose	) const
+RNA_LoopCloser::tight_minimize( core::pose::Pose & pose ) const
 {
 	using namespace core::optimization;
 	using namespace core::kinematics;
@@ -700,8 +699,8 @@ RNA_LoopCloser::tight_minimize( core::pose::Pose & pose	) const
 /////////////////////////////////////////////////////////////////////////////////
 void
 RNA_LoopCloser::local_minimize_at_chainbreaks(
-  core::pose::Pose & pose,
-  core::scoring::ScoreFunctionOP & scorefxn_local ) const
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunctionOP & scorefxn_local ) const
 {
 
 	using namespace core::optimization;
@@ -720,14 +719,14 @@ RNA_LoopCloser::local_minimize_at_chainbreaks(
 
 	kinematics::FoldTree const & f( pose.fold_tree() );
 
-	for ( Size cutpos = 1; cutpos < pose.total_residue(); cutpos++ ){
+	for ( Size cutpos = 1; cutpos < pose.total_residue(); cutpos++ ) {
 
 		mm.set_bb( false );
 
 		if ( ! f.is_cutpoint( cutpos ) ) continue;
 
 		if ( !pose.residue( cutpos   ).has_variant_type( chemical::CUTPOINT_LOWER )  ||
-				 !pose.residue( cutpos+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  ) continue;
+				!pose.residue( cutpos+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  ) continue;
 
 		mm.set_bb( cutpos, true );
 		mm.set_bb( cutpos+1, true );

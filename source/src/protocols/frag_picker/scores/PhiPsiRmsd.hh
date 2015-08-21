@@ -42,7 +42,7 @@ public:
 	/// @brief  creates a Phi-Psi-based scoring function.
 	/// @details Phi-Psi angles from a fragment will be compared to relevant angles in a given pose, which should have the same number of residues a the query sequence
 	PhiPsiRmsd(Size priority, Real lowest_acceptable_value, bool use_lowest,
-			core::pose::PoseOP reference_pose);
+		core::pose::PoseOP reference_pose);
 	PhiPsiRmsd(Size, Real, bool, PhiPsiTalosIO&);
 	void do_caching(VallChunkOP);
 	void clean_up();

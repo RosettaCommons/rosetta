@@ -37,7 +37,7 @@
 namespace protocols {
 namespace ligand_docking {
 namespace rdf {
-	
+
 using std::endl;
 using std::string;
 using std::stringstream;
@@ -85,7 +85,7 @@ RDFFunctionFactory::get_rdf_function(std::string const & type_name)
 {
 	tr.Trace << "generate RDF function of type " << type_name << std::endl;
 	RDFFunctionCreatorMap::const_iterator iter = types_.find( type_name );
-	if (iter != types_.end()) {
+	if ( iter != types_.end() ) {
 		return iter->second->create_rdf_function();
 	} else {
 		stringstream error_msg;
@@ -96,7 +96,7 @@ RDFFunctionFactory::get_rdf_function(std::string const & type_name)
 			<< "register a new RDF Function in the RDFFunctionFactory" << endl
 			<< "known RDF Function types are:" << endl;
 
-		BOOST_FOREACH(const RDFFunctionCreatorMap::value_type& type, types_){
+		BOOST_FOREACH ( const RDFFunctionCreatorMap::value_type& type, types_ ) {
 			error_msg << "\t" << type.first << endl;
 		}
 		utility_exit_with_message(error_msg.str());
@@ -122,7 +122,7 @@ RDFFunctionFactory::get_rdf_function(
 	assert(tag->getName() == "RDF");
 
 	string type_name;
-	if(!tag->hasOption("name")){
+	if ( !tag->hasOption("name") ) {
 		utility_exit_with_message("'RDF' tags require a name field");
 	} else {
 		type_name = tag->getOption<string>("name");
@@ -133,7 +133,7 @@ RDFFunctionFactory::get_rdf_function(
 	rdf_function->parse_my_tag(tag, data);
 	return rdf_function;
 }
-	
+
 }
 } // namespace
 } // namespace

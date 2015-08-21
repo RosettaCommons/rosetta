@@ -73,7 +73,7 @@ public:
 	template< class T >
 	void
 	setOption(std::string const& key, T const& value) {
-		if( mOptions_.find(key) != mOptions_.end() ) {
+		if ( mOptions_.find(key) != mOptions_.end() ) {
 			//runtime_assert( false );
 		}
 		std::ostringstream out;
@@ -90,12 +90,12 @@ public:
 	T
 	getOption(std::string const& key, T const& t_default) const {
 		options_t::const_iterator i = mOptions_.find(key);
-		if( i == mOptions_.end() ) {
+		if ( i == mOptions_.end() ) {
 			accessed_options_[key]= key;
 			return t_default;
 		}
 		accessed_options_[key]= i->second;
-		//		T t = t_default; // not used?
+		//  T t = t_default; // not used?
 		try{
 			return boost::lexical_cast<T>(i->second);
 		} catch(boost::bad_lexical_cast &) {
@@ -114,7 +114,7 @@ public:
 	T
 	getOption(std::string const& key) const {
 		options_t::const_iterator i = mOptions_.find(key);
-		if( i == mOptions_.end() ) {
+		if ( i == mOptions_.end() ) {
 			std::stringstream error_message;
 			error_message << "Option " << key << " not found.\n";
 			throw utility::excn::EXCN_Msg_Exception( error_message.str() );

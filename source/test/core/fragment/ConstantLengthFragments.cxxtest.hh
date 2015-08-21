@@ -58,18 +58,18 @@ using namespace ObjexxFCL;
 
 // // hacky test code ---  should live somewhere else
 // void steal_constant_length_frag_set_from_pose ( pose::Pose const& pose, ConstantLengthFragSet& fragset ) {
-// 	Size nbb ( 3 ); // three backbone torsions for Protein
-// 	Size len = fragset.max_frag_length();
-// 	for ( Size pos = 1; pos <= pose.total_residue() - len + 1; ++pos ) {
-// 		FragDataOP frag_raw = new FragData;
-// 		for ( Size i = 1; i<= len; i++ ) {
-// 			frag_raw->add_residue( new BBTorsionSRFD( nbb, pose.secstruct(pos), oneletter_code_from_aa(pose.residue( pos ).aa() ) ) );
-// 		};
-// 		FrameOP frame = new Frame( pos, len );
-// 		frag_raw->steal( pose, *frame );
-// 		frame->add_fragment ( frag_raw );
-// 		fragset.add( frame );
-// 	};
+//  Size nbb ( 3 ); // three backbone torsions for Protein
+//  Size len = fragset.max_frag_length();
+//  for ( Size pos = 1; pos <= pose.total_residue() - len + 1; ++pos ) {
+//   FragDataOP frag_raw = new FragData;
+//   for ( Size i = 1; i<= len; i++ ) {
+//    frag_raw->add_residue( new BBTorsionSRFD( nbb, pose.secstruct(pos), oneletter_code_from_aa(pose.residue( pos ).aa() ) ) );
+//   };
+//   FrameOP frame = new Frame( pos, len );
+//   frag_raw->steal( pose, *frame );
+//   frame->add_fragment ( frag_raw );
+//   fragset.add( frame );
+//  };
 //  }
 
 
@@ -168,7 +168,7 @@ void FragmentConstantLengthTest::test_frag_cache() {
 		};
 		FragCache< Real > empty_cache("NO_VALUES_HERE");
 		FragCache< Size > another_silly_cache("ULTIMATE_SILLINESS");
-		for ( Size pos = 1; pos <=  pose_.total_residue(); pos++) {
+		for ( Size pos = 1; pos <=  pose_.total_residue(); pos++ ) {
 			FrameList frames;
 			if ( fragset.region( movemap, pos, pos, len, len, frames ) ) {
 				Frame const& frame ( * ( frames[ 1 ] ) );
@@ -214,7 +214,7 @@ void FragmentConstantLengthTest::test_frag_cache() {
 		};
 		FragStore< Real > empty_cache("NO_VALUES_HERE_STORE");
 		FragStore< Size > another_silly_cache("ULTIMATE_SILLINESS_STORE");
-		for ( Size pos = 1; pos <=  pose_.total_residue(); pos++) {
+		for ( Size pos = 1; pos <=  pose_.total_residue(); pos++ ) {
 			FrameList frames;
 			if ( fragset.region( movemap, pos, pos+len-1, len, len, frames ) ) {
 				Frame const& frame ( * ( frames[ 1 ] ) );
@@ -222,7 +222,7 @@ void FragmentConstantLengthTest::test_frag_cache() {
 				TS_ASSERT( silly_cache.retrieve(frame, 1, val) ); //there should be a value ( return true )
 				TS_ASSERT_EQUALS( val , pos );
 				//Real data;
-				//	TS_ASSERT( empty_cache.retrieve(frame, 1, data)); // this will break since no value has been stored
+				// TS_ASSERT( empty_cache.retrieve(frame, 1, data)); // this will break since no value has been stored
 				Size val2;
 				TS_ASSERT( another_silly_cache.retrieve(frame, 1, val2) ); //there should be a value ( return true )
 				TS_ASSERT_EQUALS( val2 , pos );
@@ -263,7 +263,7 @@ void FragmentConstantLengthTest::test_frag_iterator() {
 		ConstFrameIterator it = bfragset.begin();
 		ConstFrameIterator eit= bfragset.end();
 
-		for ( Size pos = 1; pos <=  pose_.total_residue(); pos++) {
+		for ( Size pos = 1; pos <=  pose_.total_residue(); pos++ ) {
 			FrameList frames;
 			if ( fragset.region( movemap, pos, pos, len, len, frames ) ) {
 				Frame const& frame ( * ( frames[ 1 ] ) );
@@ -309,7 +309,7 @@ void FragmentConstantLengthTest::test_frag_iterator() {
 			FragID_List list;
 			for ( int i = 1; i<= (int) scored_frags.size(); i++ ) {
 				tr.Info << "score: "<< scored_frags[ i ].second << " frag_ID: " << scored_frags[ i ].first.first << std::endl;
-				if (numeric::mod( i,2 ) ) list.push_back(scored_frags[i].first );
+				if ( numeric::mod( i,2 ) ) list.push_back(scored_frags[i].first );
 			}
 			ConstantLengthFragSet new_frag_set( len );
 			new_frag_set.insert_fragID_list( list );
@@ -358,58 +358,58 @@ void FragmentConstantLengthTest::test_insertmap() {
 		tr.Info << "active residue " << *it << std::endl;
 		TS_ASSERT_EQUALS( *it, ++pos );
 		TS_ASSERT_EQUALS( insert_size[ *it ], std::min( std::min( 3, 30-pos+1 ) , pos-17 ) )
-	}
-	TS_ASSERT_EQUALS( pos, 30 ); // that should be the last number
+			}
+			TS_ASSERT_EQUALS( pos, 30 ); // that should be the last number
 
-	//let's check that it doesn't find anything if we have less than 3 residues
-	{
-		movemap.set_bb( false );
-		movemap.set_bb( 20, true ); //2mer
-		movemap.set_bb( 21, true );
+		//let's check that it doesn't find anything if we have less than 3 residues
+		{
+			movemap.set_bb( false );
+			movemap.set_bb( 20, true ); //2mer
+			movemap.set_bb( 21, true );
 
-		movemap.set_bb( 30, true ); //1mer
+			movemap.set_bb( 30, true ); //1mer
 
-		InsertMap insert_map; InsertSize insert_size;
-		fragset.generate_insert_map( movemap, insert_map, insert_size );
-		TS_ASSERT_EQUALS( insert_map.size(), 7 );
-		TS_ASSERT_EQUALS( insert_size[ 20 ], 2 );
-		TS_ASSERT_EQUALS( insert_size[ 21 ], 1 );
-		TS_ASSERT_EQUALS( insert_size[ 30 ], 1 );
-		TS_ASSERT_EQUALS( insert_size[ 14 ], 0 );
-		TS_ASSERT_EQUALS( insert_size[ 19 ], 2 );
-	}
-
-	//let's check that it doesn't find anything if we have less than 3 residues
-	{
-		movemap.set_bb( false );
-		movemap.set_bb( 20, true ); //3mer
-		movemap.set_bb( 21, true );
-		movemap.set_bb( 22, true );
-
-		movemap.set_bb( 30, true ); //3mer
-		movemap.set_bb( 31, true ); //
-		movemap.set_bb( 32, true ); //
-
-		InsertMap insert_map; InsertSize insert_size;
-		fragset.generate_insert_map( movemap, insert_map, insert_size );
-
-		tr.Info << "==============================================" << std::endl;
-		for ( InsertMap::const_iterator it=insert_map.begin(), eit=insert_map.end(); it!=eit; ++it ) {
-			tr.Info << "active residue " << *it << std::endl;
+			InsertMap insert_map; InsertSize insert_size;
+			fragset.generate_insert_map( movemap, insert_map, insert_size );
+			TS_ASSERT_EQUALS( insert_map.size(), 7 );
+			TS_ASSERT_EQUALS( insert_size[ 20 ], 2 );
+			TS_ASSERT_EQUALS( insert_size[ 21 ], 1 );
+			TS_ASSERT_EQUALS( insert_size[ 30 ], 1 );
+			TS_ASSERT_EQUALS( insert_size[ 14 ], 0 );
+			TS_ASSERT_EQUALS( insert_size[ 19 ], 2 );
 		}
 
-		TS_ASSERT_EQUALS( insert_map.size(), 10 );
-		if ( insert_map.size() == 6 ) {
-			TS_ASSERT_EQUALS( insert_map[ 1 ], 18 );
-			TS_ASSERT_EQUALS( insert_map[ 6 ], 28 );
+		//let's check that it doesn't find anything if we have less than 3 residues
+		{
+			movemap.set_bb( false );
+			movemap.set_bb( 20, true ); //3mer
+			movemap.set_bb( 21, true );
+			movemap.set_bb( 22, true );
+
+			movemap.set_bb( 30, true ); //3mer
+			movemap.set_bb( 31, true ); //
+			movemap.set_bb( 32, true ); //
+
+			InsertMap insert_map; InsertSize insert_size;
+			fragset.generate_insert_map( movemap, insert_map, insert_size );
+
+			tr.Info << "==============================================" << std::endl;
+			for ( InsertMap::const_iterator it=insert_map.begin(), eit=insert_map.end(); it!=eit; ++it ) {
+				tr.Info << "active residue " << *it << std::endl;
+			}
+
+			TS_ASSERT_EQUALS( insert_map.size(), 10 );
+			if ( insert_map.size() == 6 ) {
+				TS_ASSERT_EQUALS( insert_map[ 1 ], 18 );
+				TS_ASSERT_EQUALS( insert_map[ 6 ], 28 );
+			}
 		}
+
 	}
 
-}
 
-
-void FragmentConstantLengthTest::sub_insertion( Size size, fragment::FragSet const& fragsetNmer ) {
-	using namespace conformation;
+	void FragmentConstantLengthTest::sub_insertion( Size size, fragment::FragSet const& fragsetNmer ) {
+		using namespace conformation;
 	using namespace chemical;
 	using namespace scoring;
 	using namespace pose;

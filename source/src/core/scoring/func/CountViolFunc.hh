@@ -33,45 +33,45 @@ namespace core {
 namespace scoring {
 namespace func {
 
-	class CountViolFunc : public Func {
-	public:
-		CountViolFunc(
-			Real const weight,
-			FuncOP myfunc
-		): weight_( weight ),
-			 count_viols_( 0 ),
-			 func_to_weight_( myfunc ) {}
+class CountViolFunc : public Func {
+public:
+	CountViolFunc(
+		Real const weight,
+		FuncOP myfunc
+	): weight_( weight ),
+		count_viols_( 0 ),
+		func_to_weight_( myfunc ) {}
 
-		~CountViolFunc() {};
+	~CountViolFunc() {};
 
-		FuncOP
-		clone() const { return FuncOP( new CountViolFunc( *this ) ); }
+	FuncOP
+	clone() const { return FuncOP( new CountViolFunc( *this ) ); }
 
-		Real func( Real const x ) const;
-		Real dfunc( Real const x ) const;
+	Real func( Real const x ) const;
+	Real dfunc( Real const x ) const;
 
-		void read_data( std::istream& );
+	void read_data( std::istream& );
 
 	/// @brief show some sort of stringified representation of the violations for this constraint.
-		virtual core::Size show_violations( std::ostream& out, Real r, core::Size verbose_level, Real threshold = 1 ) const;
+	virtual core::Size show_violations( std::ostream& out, Real r, core::Size verbose_level, Real threshold = 1 ) const;
 
 	/// @brief shows the definition of this function, usually the string type of function and the
 	/// parameters passed in to the constructor.
 	virtual void show_definition( std::ostream & out ) const;
 
-		Size viols() const {
-			return count_viols_;
-		}
+	Size viols() const {
+		return count_viols_;
+	}
 
-	private:
-		Real weight_;
-		mutable core::Size count_viols_;
-		FuncOP func_to_weight_;
+private:
+	Real weight_;
+	mutable core::Size count_viols_;
+	FuncOP func_to_weight_;
 
-  	//typedef std::map< std::string, scoring::func::FuncOP > FuncTypes;
-		//	static FuncTypes func_types_;
+	//typedef std::map< std::string, scoring::func::FuncOP > FuncTypes;
+	// static FuncTypes func_types_;
 
-	};
+};
 } // constraints
 } // scoring
 } // core

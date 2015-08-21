@@ -102,7 +102,7 @@ LoopMover_Perturb_QuickCCD_Moves::get_name() const {
 
 LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	core::pose::Pose & pose,
-  protocols::loops::Loop const & loop
+	protocols::loops::Loop const & loop
 ){
 	using namespace kinematics;
 	using namespace scoring;
@@ -117,7 +117,7 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	core::Size const nres =  pose.total_residue();
 
 	// store starting fold tree and cut pose
- 	kinematics::FoldTree f_orig=pose.fold_tree();
+	kinematics::FoldTree f_orig=pose.fold_tree();
 	set_single_loop_fold_tree( pose, loop );
 
 	// generate movemap after fold_tree is set
@@ -137,11 +137,11 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	// special case ... vrt res at last position
 	//chainbreak_present &= ( loop.stop() != nres-1 || pose.residue( nres ).aa() != core::chemical::aa_vrt );
 	bool chainbreak_present = ( loop.start() != 1 && loop.stop() != nres &&
-	                            !pose.residue( loop.start() ).is_lower_terminus() &&
-	                            !pose.residue( loop.stop() ).is_upper_terminus() );
+		!pose.residue( loop.start() ).is_lower_terminus() &&
+		!pose.residue( loop.stop() ).is_upper_terminus() );
 
 	// set loop.cut() variant residue for chainbreak score if chanbreak is present
-	if( chainbreak_present ){
+	if ( chainbreak_present ) {
 		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, loop.cut() );
 		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, loop.cut()+1 );
 	}
@@ -152,7 +152,7 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 
 
 	// either extend or at least idealize the loop (just in case).
-	if( loop.is_extended() ) set_extended_torsions( pose, loop );
+	if ( loop.is_extended() ) set_extended_torsions( pose, loop );
 	else                     idealize_loop(  pose, loop );
 
 	// omega needs to be moveable for FragmentMovers, so use a separate movemap
@@ -161,8 +161,8 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 
 	utility::vector1< FragmentMoverOP > fragmover;
 	for ( utility::vector1< core::fragment::FragSetOP >::const_iterator
-				it = frag_libs().begin(), it_end = frag_libs().end();
-				it != it_end; ++it ) {
+			it = frag_libs().begin(), it_end = frag_libs().end();
+			it != it_end; ++it ) {
 		ClassicFragmentMoverOP cfm( new ClassicFragmentMover( *it, frag_mover_movemap ) );
 		cfm->set_check_ss( false );
 		cfm->enable_end_bias_check( false );
@@ -172,11 +172,11 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	core::Real m_Temperature_ = 2.0;
 	moves::MonteCarloOP mc_( new moves::MonteCarlo( pose, *scorefxn(), m_Temperature_ ) );
 
-	if( randomize_loop_ ){
+	if ( randomize_loop_ ) {
 		// insert random fragment as many times as the loop is long (not quite the exact same as the old code)
 		for ( Size i = loop.start(); i <= loop.stop(); ++i ) {
 			for ( std::vector< FragmentMoverOP >::const_iterator
-						it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it ) {
+					it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it ) {
 				(*it)->apply( pose );
 			}
 		}
@@ -197,7 +197,7 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	// Set up MonteCarlo Object
 	core::Real const init_temp = 2.0;
 	core::Real temperature = init_temp;
- 	mc_->reset( pose );
+	mc_->reset( pose );
 	mc_->set_temperature( temperature );
 
 	int   frag_count   = 0;
@@ -206,7 +206,7 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	float final_chain_break_weight = 5.0;
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		core::conformation::symmetry::SymmetricConformation const & symm_conf (
-					dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation()) );
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation()) );
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 		final_chain_break_weight = 5.0*symm_info->subunits();
 	}
@@ -216,14 +216,14 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	scorefxn()->set_weight( chainbreak, 0.0 ); //not evaluating quadratic chainbreak
 	mc_->score_function( *scorefxn() );
 
-	bool 	has_constraints                  = pose.constraint_set()->has_constraints();
+	bool  has_constraints                  = pose.constraint_set()->has_constraints();
 	float final_constraint_weight          = option[ basic::options::OptionKeys::constraints::cst_weight ]();
 	for ( core::Size c2 = 1; c2 <= cycles2; ++c2 ) {
 		mc_->recover_low( pose );
 
 		// ramp up constraints
-		if( has_constraints ) {
-			if( c2 != cycles2 ) {
+		if ( has_constraints ) {
+			if ( c2 != cycles2 ) {
 				scorefxn()->set_weight( core::scoring::atom_pair_constraint, final_constraint_weight*float(c2)/float( cycles2 ) );
 			} else {
 				scorefxn()->set_weight( core::scoring::atom_pair_constraint, final_constraint_weight * 0.2 );
@@ -240,23 +240,22 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 		tr() << std::endl;
 
 		for ( core::Size c3 = 1; c3 <= cycles3; ++c3 ) {
-			if(( !chainbreak_present || uniform()*cycles2 > c2 ))
-			{
+			if ( ( !chainbreak_present || uniform()*cycles2 > c2 ) ) {
 				//do fragment moves here
 				for ( std::vector< FragmentMoverOP >::const_iterator
-							it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it ) {
+						it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it ) {
 
 
-					if( ((*it)->fragments()->max_frag_length() == 1 ) && (uniform() < option[OptionKeys::loops::skip_1mers ]() ) ) continue;
-					if( ((*it)->fragments()->max_frag_length() == 3 ) && (uniform() < option[OptionKeys::loops::skip_3mers ]() ) ) continue;
-					if( ((*it)->fragments()->max_frag_length() == 9 ) && (uniform() < option[OptionKeys::loops::skip_9mers ]() ) ) continue;
+					if ( ((*it)->fragments()->max_frag_length() == 1 ) && (uniform() < option[OptionKeys::loops::skip_1mers ]() ) ) continue;
+					if ( ((*it)->fragments()->max_frag_length() == 3 ) && (uniform() < option[OptionKeys::loops::skip_3mers ]() ) ) continue;
+					if ( ((*it)->fragments()->max_frag_length() == 9 ) && (uniform() < option[OptionKeys::loops::skip_9mers ]() ) ) continue;
 
 					(*it)->apply( pose );
 					frag_count++;
 				}
 			} else {
 				//do ccd_moves here
-				if( ! option[OptionKeys::loops::skip_ccd_moves ]() ){
+				if ( ! option[OptionKeys::loops::skip_ccd_moves ]() ) {
 					loop_closure::ccd::CCDLoopClosureMover ccd_mover( loop, mm_one_loop );
 					ccd_mover.max_cycles( 25 );  // Used to be 5 moves, which would result in 25 "tries" in the old code. ~Labonte
 					ccd_mover.apply( pose );
@@ -269,10 +268,9 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 
 	// now ensure the loop is properly closed!
 	float chain_break_score = std::max( (float)pose.energies().total_energies()[ scoring::chainbreak ],
-																(float)pose.energies().total_energies()[ scoring::linear_chainbreak ] );
+		(float)pose.energies().total_energies()[ scoring::linear_chainbreak ] );
 
-	if( ( chain_break_score > 0.1 ) && chainbreak_present )
-	{
+	if ( ( chain_break_score > 0.1 ) && chainbreak_present ) {
 		mc_->recover_low( pose );
 		tr() << "--" << std::endl;
 		( *scorefxn() )(pose);
@@ -292,14 +290,14 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	mc_->show_counters();
 
 	// CHeck chain break !
-	if( chainbreak_present ){
+	if ( chainbreak_present ) {
 		( *scorefxn() )( pose );
 		core::Real chain_break_score = std::max( (float)pose.energies().total_energies()[ scoring::chainbreak ],
-																	(float)pose.energies().total_energies()[ scoring::linear_chainbreak ] );
+			(float)pose.energies().total_energies()[ scoring::linear_chainbreak ] );
 
 		core::Real chain_break_tol = option[ basic::options::OptionKeys::loops::chain_break_tol ]();
 		tr().Info << "Chainbreak: " << chain_break_score << " Max: " << chain_break_tol << std::endl;
-		if( chain_break_score > chain_break_tol ) return Failure;
+		if ( chain_break_score > chain_break_tol ) return Failure;
 	}
 
 	// return to original fold tree
@@ -310,18 +308,18 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 
 basic::Tracer & LoopMover_Perturb_QuickCCD_Moves::tr() const
 {
-    return TR;
+	return TR;
 }
 
 LoopMover_Perturb_QuickCCD_MovesCreator::~LoopMover_Perturb_QuickCCD_MovesCreator() {}
 
 
 moves::MoverOP LoopMover_Perturb_QuickCCD_MovesCreator::create_mover() const {
-  return moves::MoverOP( new LoopMover_Perturb_QuickCCD_Moves() );
+	return moves::MoverOP( new LoopMover_Perturb_QuickCCD_Moves() );
 }
 
 std::string LoopMover_Perturb_QuickCCD_MovesCreator::keyname() const {
-  return "LoopMover_Perturb_QuickCCD_Moves";
+	return "LoopMover_Perturb_QuickCCD_Moves";
 }
 
 } // namespace perturb

@@ -46,42 +46,42 @@ namespace frag_picker {
 namespace scores {
 
 static thread_local basic::Tracer trInterbondAngleScore(
-		"fragment.picking.scores.InterbondAngleScore");
+	"fragment.picking.scores.InterbondAngleScore");
 
 InterbondAngleScore::InterbondAngleScore(Size priority,
-		Real lowest_acceptable_value, bool use_lowest, std::string constraints_file_name,
-		Size query_size, utility::vector1<std::string> constrainable_atoms) :
+	Real lowest_acceptable_value, bool use_lowest, std::string constraints_file_name,
+	Size query_size, utility::vector1<std::string> constrainable_atoms) :
 	AtomBasedConstraintsScore(priority, lowest_acceptable_value, use_lowest, query_size,
-			constrainable_atoms, "InterbondAngleScore") {
+	constrainable_atoms, "InterbondAngleScore") {
 
 	utility::vector1<Real> x0(2);
 	utility::vector1<Real> sd(2);
 	using core::scoring::func::FuncOP;
 	factory_.add_type("MINMULTIHARMONIC", FuncOP( new core::scoring::func::MinMultiHarmonicFunc(
-			x0,sd) ));
+		x0,sd) ));
 
 	data_.resize(get_query_size());
 	read_constraints(constraints_file_name);
 }
 
 InterbondAngleScore::InterbondAngleScore(Size priority,
-		Real lowest_acceptable_value, bool use_lowest, std::string constraints_file_name,
-		Size query_size) :
+	Real lowest_acceptable_value, bool use_lowest, std::string constraints_file_name,
+	Size query_size) :
 	AtomBasedConstraintsScore(priority, lowest_acceptable_value, use_lowest, query_size,
-			"InterbondAngleScore") {
+	"InterbondAngleScore") {
 
 	utility::vector1<Real> x0(2);
 	utility::vector1<Real> sd(2);
 	using core::scoring::func::FuncOP;
 	factory_.add_type("MINMULTIHARMONIC", FuncOP( new core::scoring::func::MinMultiHarmonicFunc(
-			x0,sd) ));
+		x0,sd) ));
 
 	data_.resize(get_query_size());
 	read_constraints(constraints_file_name);
 }
 
 bool InterbondAngleScore::cached_score(FragmentCandidateOP fragment,
-		FragmentScoreMapOP scores) {
+	FragmentScoreMapOP scores) {
 
 	PROF_START( basic::FRAGMENTPICKING_DIHEDRALCONSTR_SCORE );
 	Size frag_len = fragment->get_length();
@@ -89,31 +89,38 @@ bool InterbondAngleScore::cached_score(FragmentCandidateOP fragment,
 	Size qi = fragment->get_first_index_in_query();
 
 	Real total_score = 0;
-	for (Size i = 0; i < frag_len; ++i) {
-		for (Size c = 1; c <= data_[i + qi].size(); ++c) {
+	for ( Size i = 0; i < frag_len; ++i ) {
+		for ( Size c = 1; c <= data_[i + qi].size(); ++c ) {
 			Size firstQueryResidueIndex = qi + i;
 			Size firstVallResidueIndex = vi + i;
 			FourAtomsConstraintDataOP r = data_[firstQueryResidueIndex][c];
-			if (r->get_second_offset() >= frag_len - i)
+			if ( r->get_second_offset() >= frag_len - i ) {
 				continue;
-			if (r->get_third_offset() >= frag_len - i)
+			}
+			if ( r->get_third_offset() >= frag_len - i ) {
 				continue;
-			if (r->get_fourth_offset() >= frag_len - i)
+			}
+			if ( r->get_fourth_offset() >= frag_len - i ) {
 				continue;
+			}
 			Size secondVallResidueIndex = firstVallResidueIndex
-					+ r->get_second_offset();
+				+ r->get_second_offset();
 			Size thirdVallResidueIndex = firstVallResidueIndex
-					+ r->get_third_offset();
+				+ r->get_third_offset();
 			Size fourthVallResidueIndex = firstVallResidueIndex
-					+ r->get_fourth_offset();
-			if (!has_atom(firstVallResidueIndex, r->get_first_atom()))
+				+ r->get_fourth_offset();
+			if ( !has_atom(firstVallResidueIndex, r->get_first_atom()) ) {
 				continue;
-			if (!has_atom(secondVallResidueIndex, r->get_second_atom()))
+			}
+			if ( !has_atom(secondVallResidueIndex, r->get_second_atom()) ) {
 				continue;
-			if (!has_atom(thirdVallResidueIndex, r->get_third_atom()))
+			}
+			if ( !has_atom(thirdVallResidueIndex, r->get_third_atom()) ) {
 				continue;
-			if (!has_atom(fourthVallResidueIndex, r->get_fourth_atom()))
+			}
+			if ( !has_atom(fourthVallResidueIndex, r->get_fourth_atom()) ) {
 				continue;
+			}
 			numeric::xyzVector<Real> v1(
 				get_atom_coordinates(secondVallResidueIndex, r->get_second_atom()) -
 				get_atom_coordinates(firstVallResidueIndex, r->get_first_atom())
@@ -131,10 +138,10 @@ bool InterbondAngleScore::cached_score(FragmentCandidateOP fragment,
 	scores->set_score_component(total_score, id_);
 	PROF_STOP( basic::FRAGMENTPICKING_DIHEDRALCONSTR_SCORE );
 
-	if ((total_score > lowest_acceptable_value_) && (use_lowest_ == true)) {
+	if ( (total_score > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		trInterbondAngleScore.Debug << "Trashing a fragment: "
-				<< *fragment << " because its score is: " << total_score
-				<< std::endl;
+			<< *fragment << " because its score is: " << total_score
+			<< std::endl;
 		return false;
 	}
 
@@ -142,102 +149,102 @@ bool InterbondAngleScore::cached_score(FragmentCandidateOP fragment,
 }
 
 void InterbondAngleScore::read_constraints(
-		std::string constraints_file_name) {
+	std::string constraints_file_name) {
 	utility::io::izstream data(constraints_file_name.c_str());
 	trInterbondAngleScore.Info << "read constraints from "
-			<< constraints_file_name << std::endl;
-	if (!data) {
+		<< constraints_file_name << std::endl;
+	if ( !data ) {
 		utility_exit_with_message("[ERROR] Unable to open constraints file: "
-				+ constraints_file_name);
+			+ constraints_file_name);
 	}
 
 	std::string line;
 	getline(data, line); // header line
 	std::string tag;
 	Size n_constr = 0;
-	while (!data.fail()) {
+	while ( !data.fail() ) {
 		char c = data.peek();
-		if (c == '#' || c == '\n') {
+		if ( c == '#' || c == '\n' ) {
 			getline(data, line); //comment
 			continue;
 		}
 		data >> tag;
-		if (data.fail()) {
+		if ( data.fail() ) {
 			trInterbondAngleScore.Debug << constraints_file_name
-					<< " end of file reached" << std::endl;
+				<< " end of file reached" << std::endl;
 			break;
 		}
-		if (tag == "InterbondAngleScore") {
+		if ( tag == "InterbondAngleScore" ) {
 			Size res1, res2, res3, res4;
 			std::string name1, name2, name3, name4;
 			std::string func_type;
 			//std::string type;
 
 			data >> name1 >> res1 >> name2 >> res2 >> name3 >> res3 >> name4
-					>> res4 >> func_type;
+				>> res4 >> func_type;
 
 			trInterbondAngleScore.Debug << "read: " << name1 << " "
-					<< name2 << " " << name3 << " " << name4 << " " << res1
-					<< " " << res2 << " " << res3 << " " << res4 << " func: "
-					<< func_type << std::endl;
+				<< name2 << " " << name3 << " " << name4 << " " << res1
+				<< " " << res2 << " " << res3 << " " << res4 << " func: "
+				<< func_type << std::endl;
 			core::scoring::func::FuncOP func = factory_.new_func(
-					func_type);
+				func_type);
 			func->read_data(data);
 			std::map<std::string, Size> constr_atoms =
-					get_constrainable_atoms_map();
+				get_constrainable_atoms_map();
 			std::map<std::string, Size>::iterator it = constr_atoms.find(name1);
-			if (it == constr_atoms.end()) {
+			if ( it == constr_atoms.end() ) {
 				trInterbondAngleScore.Warning << "Unknown atom: " << name1
-						<< "\nThe following constraint will NOT be used:\n"
-						<< line << std::endl;
+					<< "\nThe following constraint will NOT be used:\n"
+					<< line << std::endl;
 				continue;
 			}
 			Size a1 = it->second;
 			it = constr_atoms.find(name2);
-			if (it == constr_atoms.end()) {
+			if ( it == constr_atoms.end() ) {
 				trInterbondAngleScore.Warning << "Unknown  atom: "
-						<< name2
-						<< "\nThe following constraint will NOT be used:\n"
-						<< line << std::endl;
+					<< name2
+					<< "\nThe following constraint will NOT be used:\n"
+					<< line << std::endl;
 				continue;
 			}
 			Size a2 = it->second;
 			it = constr_atoms.find(name3);
-			if (it == constr_atoms.end()) {
+			if ( it == constr_atoms.end() ) {
 				trInterbondAngleScore.Warning << "Unknown atom: " << name3
-						<< "\nThe following constraint will NOT be used:\n"
-						<< line << std::endl;
+					<< "\nThe following constraint will NOT be used:\n"
+					<< line << std::endl;
 				continue;
 			}
 			Size a3 = it->second;
 			it = constr_atoms.find(name4);
-			if (it == constr_atoms.end()) {
+			if ( it == constr_atoms.end() ) {
 				trInterbondAngleScore.Warning << "Unknown  atom: "
-						<< name4
-						<< "\nThe following constraint will NOT be used:\n"
-						<< line << std::endl;
+					<< name4
+					<< "\nThe following constraint will NOT be used:\n"
+					<< line << std::endl;
 				continue;
 			}
 			Size a4 = it->second;
 			Size o2 = res2 - res1;
 			Size o3 = res3 - res1;
 			Size o4 = res4 - res1;
-			if ((res2 < res1) || (res3 < res1) || (res4 < res1)) {
+			if ( (res2 < res1) || (res3 < res1) || (res4 < res1) ) {
 				trInterbondAngleScore.Warning
-						<< "The residue of the first constrained atoms must precede all the other three.\n\t\t"
-						<< "Check residue indexes && redefine the constraint if necessary.\n\t\t"
-						<< "The following constraint will NOT be used:\n"
-						<< line << std::endl;
+					<< "The residue of the first constrained atoms must precede all the other three.\n\t\t"
+					<< "Check residue indexes && redefine the constraint if necessary.\n\t\t"
+					<< "The following constraint will NOT be used:\n"
+					<< line << std::endl;
 				continue;
 			}
 
 			FourAtomsConstraintDataOP dat;
 			dat = FourAtomsConstraintDataOP( new FourAtomsConstraintData(func, a1, o2, a2, o3, a3, o4, a4) );
-			if (res1 > data_.size()) {
+			if ( res1 > data_.size() ) {
 				trInterbondAngleScore.Warning
-						<< "Skipping a constraint that involves residue "
-						<< res1 << " that does not exist in a query"
-						<< std::endl;
+					<< "Skipping a constraint that involves residue "
+					<< res1 << " that does not exist in a query"
+					<< std::endl;
 				continue;
 			}
 			data_[res1].push_back(dat);
@@ -245,32 +252,32 @@ void InterbondAngleScore::read_constraints(
 		}
 	}
 	trInterbondAngleScore << n_constr << " constraints loaded from a file"
-			<< std::endl;
+		<< std::endl;
 }
 
 FragmentScoringMethodOP MakeInterbondAngleScore::make(Size priority,
-		Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string) {
+	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-        // Hack for VEAN experiment scoring. In the future atom names should come from command-line
-        utility::vector1<std::string> constrainable_atoms;
+	// Hack for VEAN experiment scoring. In the future atom names should come from command-line
+	utility::vector1<std::string> constrainable_atoms;
 	constrainable_atoms.push_back("N");
 	constrainable_atoms.push_back("CA");
 	constrainable_atoms.push_back("H");
 	constrainable_atoms.push_back("HA");
 
-	if (option[constraints::cst_file].user()) {
+	if ( option[constraints::cst_file].user() ) {
 		trInterbondAngleScore << "Constraints loaded from: "
-				<< option[constraints::cst_file]()[1] << std::endl;
+			<< option[constraints::cst_file]()[1] << std::endl;
 
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new InterbondAngleScore(priority,
-				lowest_acceptable_value, use_lowest, option[constraints::cst_file]()[1],
-				picker->size_of_query(),constrainable_atoms) );
+			lowest_acceptable_value, use_lowest, option[constraints::cst_file]()[1],
+			picker->size_of_query(),constrainable_atoms) );
 	}
 	utility_exit_with_message(
-			"Can't read a constraints file. Provide it with constraints::cst_file flag");
+		"Can't read a constraints file. Provide it with constraints::cst_file flag");
 
 	return NULL;
 }

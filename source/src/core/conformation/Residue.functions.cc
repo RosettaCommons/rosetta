@@ -36,7 +36,7 @@ idealize_hydrogens(
 	Conformation const & conf
 )
 {
-//debug_assert( res.seqpos() != -1 ); // commented out: seqpos is Size, so can number be negative
+	//debug_assert( res.seqpos() != -1 ); // commented out: seqpos is Size, so can number be negative
 	utility::vector1< bool > atoms_placed( res.natoms(), false );
 	for ( Size ii = 1; ii <= res.nheavyatoms(); ++ii ) atoms_placed[ ii ] = true;
 	int n_remaining = res.natoms() - res.nheavyatoms();
@@ -57,7 +57,7 @@ idealize_hydrogens(
 				// assume that all atoms on neighboring residues have been placed
 				// but check for all internal atoms whether they have been placed.
 				if ( res.icoor( ii ).stub_atom( jj ).is_internal() &&
-					! atoms_placed[ res.icoor( ii ).stub_atom( jj ).atomno() ] ) {
+						! atoms_placed[ res.icoor( ii ).stub_atom( jj ).atomno() ] ) {
 					all_stubs_placed = false;
 					break;
 				}
@@ -104,9 +104,7 @@ void set_chi_according_to_coordinates(
 			rotamer.xyz( ii_chi_atoms[ 4 ]) );
 		rotamer.chi()[ ii ] = ii_chi;
 	}
-	if ( rotamer.is_protein() ) {
-
-	}
+	if ( rotamer.is_protein() ) {}
 }
 
 }

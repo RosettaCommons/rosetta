@@ -53,14 +53,14 @@ static thread_local basic::Tracer tr( "core.chemical" );
 ////////////////////////////////////////////////////////////////////////////////
 
 AtomTypeSet::AtomTypeSet( std::string const & directory ):
-directory_( directory)
+	directory_( directory)
 {
 	read_file( directory + "/atom_properties.txt" );
 
 	utility::io::izstream data( ( directory+"/extras.txt" ).c_str() );
 	if ( data.good() ) { // add extra data
 		std::string line;
-		while( getline( data, line ) ) {
+		while ( getline( data, line ) ) {
 			if ( line.size() && line[0] == '#' ) continue;
 			add_parameters_from_file( directory+"/"+line );
 		}
@@ -89,11 +89,11 @@ AtomTypeSet::AtomTypeSet(
 		cppdb::result res(basic::database::safely_read_from_database(stmt));
 
 		std::string atom_type_name;
-		while(res.next()) {
+		while ( res.next() ) {
 			res >> atom_type_name;
 			AtomType & atom_type(
 				create_atom_type_from_database(
-					name, atom_type_name, db_session));
+				name, atom_type_name, db_session));
 			read_atom_type_properties_table(
 				name, atom_type, db_session);
 			read_atom_type_extra_parameters_table(
@@ -104,13 +104,13 @@ AtomTypeSet::AtomTypeSet(
 	{ // set the extra parameter indices
 		std::string stmt_string =
 			"SELECT DISTINCT\n"
-			"	parameter\n"
+			"\tparameter\n"
 			"FROM\n"
-			"	atom_type_extra_parameters\n"
+			"\tatom_type_extra_parameters\n"
 			"WHERE\n"
-			"	atom_type_set_name = ?\n"
+			"\tatom_type_set_name = ?\n"
 			"ORDER BY\n"
-			"	parameter\n";
+			"\tparameter\n";
 		cppdb::statement stmt(
 			basic::database::safely_prepare_statement(stmt_string, db_session));
 		stmt.bind(1, name);
@@ -119,7 +119,7 @@ AtomTypeSet::AtomTypeSet(
 
 		Size extra_parameter_index(1);
 		std::string extra_parameter_name;
-		while(res.next()){
+		while ( res.next() ) {
 			res >> extra_parameter_name;
 			extra_parameter_indices_[extra_parameter_name] = extra_parameter_index;
 			++extra_parameter_index;
@@ -131,7 +131,7 @@ AtomTypeSet::AtomTypeSet(
 AtomTypeSet::~AtomTypeSet() {
 	// The atoms in the atom type set are kept with raw pointers so they
 	// must be deleted to prevent memory leaks
-	for(Size i=1; i <= atom_type_index_.size(); ++i){
+	for ( Size i=1; i <= atom_type_index_.size(); ++i ) {
 		delete atoms_[i];
 	}
 }
@@ -142,10 +142,10 @@ AtomTypeSet::~AtomTypeSet() {
 std::string
 AtomTypeSet::name() const {
 	Size const last_char_pos(directory_.find_last_not_of('/'));
-	if(last_char_pos == std::string::npos || last_char_pos == 0) return directory_;
+	if ( last_char_pos == std::string::npos || last_char_pos == 0 ) return directory_;
 
 	Size first_char_pos(directory_.find_last_of('/', last_char_pos - 1) + 1);
-	if(first_char_pos == std::string::npos) first_char_pos = 0;
+	if ( first_char_pos == std::string::npos ) first_char_pos = 0;
 
 	return directory_.substr(first_char_pos, last_char_pos - first_char_pos + 1);
 }
@@ -188,7 +188,7 @@ AtomTypeSet::read_file( std::string const & filename )
 		std::istringstream l( line );
 		l >> tag >> tag2;
 		if ( tag != "NAME" || tag2 != "ATOM" ) {
-			utility_exit_with_message("AtomTypeSet::read_file: bad first line: "+	line );
+			utility_exit_with_message("AtomTypeSet::read_file: bad first line: "+ line );
 		}
 		l >> tag;
 		while ( !l.fail() ) {
@@ -212,7 +212,7 @@ AtomTypeSet::read_file( std::string const & filename )
 				utility_exit_with_message("bad line: "+line);
 			}
 
-			//			std::string const name( line.substr(0,4) );
+			//   std::string const name( line.substr(0,4) );
 			std::string const element( tag );
 			AtomType* atom_type_ptr( new AtomType( name_wo_whitespace, element ) );
 
@@ -230,14 +230,14 @@ AtomTypeSet::read_file( std::string const & filename )
 			l >> tag;
 			// AMW: fixing up cppcheck errors
 			// string::find here is unnecessary because you are just checking the first character
-			while ( !l.fail() && tag.length() != 0 && tag[0] != '#') {//tag.find("#",0) != 0 ) {
+			while ( !l.fail() && tag.length() != 0 && tag[0] != '#' ) {//tag.find("#",0) != 0 ) {
 				atom_type_ptr->set_property( tag, true );
 				l >> tag;
 			}
 
 			// add this to the list
 			atoms_.push_back( atom_type_ptr );
-			//		atom_type_index_[ name ] = atoms_.size();
+			//  atom_type_index_[ name ] = atoms_.size();
 			if ( atom_type_index_.count( name_wo_whitespace ) ) {
 				utility_exit_with_message("AtomTypeSet:: duplicate atom name "+name_wo_whitespace);
 			}
@@ -344,7 +344,7 @@ AtomTypeSet::add_parameters_from_file( std::string const & filename )
 			l >> tag; // name_wo_whitespace
 			if ( tag.find("#",0) == 0 ) continue; // skip comment lines
 
-			//			std::string const name( line.substr(0,4) );
+			//   std::string const name( line.substr(0,4) );
 
 			// now parse the parameters
 			utility::vector1< Real > parameters;
@@ -363,7 +363,7 @@ AtomTypeSet::add_parameters_from_file( std::string const & filename )
 
 	// now fill in the data
 	for ( std::map< std::string, int >::const_iterator
-					iter = atom_type_index_.begin(), iter_end = atom_type_index_.end(); iter != iter_end; ++iter ) {
+			iter = atom_type_index_.begin(), iter_end = atom_type_index_.end(); iter != iter_end; ++iter ) {
 		std::string const & name( iter->first );
 		int const atom_index( iter->second );
 
@@ -393,8 +393,8 @@ AtomTypeSet::add_parameters_from_file( std::string const & filename )
 		} else {
 			paramsrc = "from_file";
 			params = iter2->second;
-      //pbadebug
-      //std::cout << "params " << params << std::endl;
+			//pbadebug
+			//std::cout << "params " << params << std::endl;
 		}
 		//utility::vector1< Real > const & params( iter2->second );
 		runtime_assert( params.size() == tags.size() );
@@ -420,16 +420,16 @@ AtomTypeSet::create_atom_type_from_database(
 ) {
 	std::string stmt_string =
 		"SELECT\n"
-		"	element,\n"
-		"	lennard_jones_radius REAL,\n"
-		"	lennard_jones_well_depth REAL,\n"
-		"	lazaridis_karplus_lambda REAL,\n"
-		"	lazaridis_karplus_degrees_of_freedom REAL,\n"
-		"	lazaridis_karplus_volume REAL\n"
+		"\telement,\n"
+		"\tlennard_jones_radius REAL,\n"
+		"\tlennard_jones_well_depth REAL,\n"
+		"\tlazaridis_karplus_lambda REAL,\n"
+		"\tlazaridis_karplus_degrees_of_freedom REAL,\n"
+		"\tlazaridis_karplus_volume REAL\n"
 		"FROM\n"
-		"	atom_types\n"
+		"\tatom_types\n"
 		"WHERE\n"
-		"	atom_type_set_name = ? AND name = ?;";
+		"\tatom_type_set_name = ? AND name = ?;";
 
 	cppdb::statement stmt(
 		basic::database::safely_prepare_statement(stmt_string, db_session));
@@ -437,7 +437,7 @@ AtomTypeSet::create_atom_type_from_database(
 	stmt.bind(2, atom_type_name);
 	cppdb::result res(basic::database::safely_read_from_database(stmt));
 
-	if(!res.next()) {
+	if ( !res.next() ) {
 		utility_exit_with_message(
 			"could not find atom '" + atom_type_name + "' in '" +
 			atom_type_set_name + "'.");
@@ -479,11 +479,11 @@ AtomTypeSet::read_atom_type_properties_table(
 ) {
 	std::string stmt_string =
 		"SELECT\n"
-		"	property\n"
+		"\tproperty\n"
 		"FROM\n"
-		"	atom_type_properties\n"
+		"\tatom_type_properties\n"
 		"WHERE\n"
-		"	atom_type_set_name = ? AND name = ?;";
+		"\tatom_type_set_name = ? AND name = ?;";
 
 	cppdb::statement stmt(basic::database::safely_prepare_statement(stmt_string, db_session));
 	stmt.bind(1, atom_type_set_name);
@@ -491,8 +491,8 @@ AtomTypeSet::read_atom_type_properties_table(
 	cppdb::result res(basic::database::safely_read_from_database(stmt));
 
 	std::string property;
-	while(res.next()){
-		res	>> property;
+	while ( res.next() ) {
+		res >> property;
 		atom_type.add_property(property);
 	}
 }
@@ -505,13 +505,13 @@ AtomTypeSet::read_atom_type_extra_parameters_table(
 ) {
 	std::string stmt_string =
 		"SELECT\n"
-		"	value\n"
+		"\tvalue\n"
 		"FROM\n"
-		"	atom_type_extra_parameters\n"
+		"\tatom_type_extra_parameters\n"
 		"WHERE\n"
-		"	atom_type_set_name = ? AND name = ?\n"
+		"\tatom_type_set_name = ? AND name = ?\n"
 		"ORDER BY\n"
-		"	parameter;";
+		"\tparameter;";
 
 	cppdb::statement stmt(basic::database::safely_prepare_statement(stmt_string, db_session));
 	stmt.bind(1, atom_type_set_name);
@@ -521,7 +521,7 @@ AtomTypeSet::read_atom_type_extra_parameters_table(
 	//std::string parameter;
 	Real value;
 	Size parameter_index(1);
-	while(res.next()){
+	while ( res.next() ) {
 		res >> value;
 		atom_type.set_extra_parameter(parameter_index, value);
 		++parameter_index;

@@ -74,46 +74,46 @@ EvaluatedTrialMover::apply( pose::Pose& pose ) {
 	/// it's true. code duplication is totally ok when it's just a hack. :P
 	using namespace protocols::moves;
 
-  using scoring::total_score;
-  /// get the initial scores
-  if ( keep_stats_type() == all_stats ) {
-    stats_.add_score( mc_->last_accepted_score() ); ///< initial_last_accepted_score
-    stats_.add_score( pose.energies().total_energy() ); ///< initial_pose_score
-  }
+	using scoring::total_score;
+	/// get the initial scores
+	if ( keep_stats_type() == all_stats ) {
+		stats_.add_score( mc_->last_accepted_score() ); ///< initial_last_accepted_score
+		stats_.add_score( pose.energies().total_energy() ); ///< initial_pose_score
+	}
 
-  /// make the move
-  mover_->apply( pose );
+	/// make the move
+	mover_->apply( pose );
 
-  PROF_START( basic::TEST3 );
-  SilentStructOP pss( new io::silent::ProteinSilentStruct );
-  evaluator_->apply( pose, tag_, *pss );
-  PROF_STOP( basic::TEST3 );
+	PROF_START( basic::TEST3 );
+	SilentStructOP pss( new io::silent::ProteinSilentStruct );
+	evaluator_->apply( pose, tag_, *pss );
+	PROF_STOP( basic::TEST3 );
 
-  if ( keep_stats_type() == all_stats ) { //// score and get residue energies
-    //Real newscore =
-    mc_->score_function()( pose );
-    //std::cout << "newscore: " << newscore << std::endl;
-    /// Now handled automatically.  mc_->score_function().accumulate_residue_total_energies( pose );
-    stats_.add_score( pose.energies().total_energy() ); ///< score_after_move
-    //if ( newscore != pose.energies().total_energy() ) {
-    //	std::cout << " newscore != perceived newscore: " << newscore << " != " <<
-    //		pose.energies().total_energy() << std::endl;
-    //}
-  }
+	if ( keep_stats_type() == all_stats ) { //// score and get residue energies
+		//Real newscore =
+		mc_->score_function()( pose );
+		//std::cout << "newscore: " << newscore << std::endl;
+		/// Now handled automatically.  mc_->score_function().accumulate_residue_total_energies( pose );
+		stats_.add_score( pose.energies().total_energy() ); ///< score_after_move
+		//if ( newscore != pose.energies().total_energy() ) {
+		// std::cout << " newscore != perceived newscore: " << newscore << " != " <<
+		//  pose.energies().total_energy() << std::endl;
+		//}
+	}
 
-  /// test if MC accepts or rejects it
-  bool accepted_move = mc_->boltzmann( pose, mover_->type() );
+	/// test if MC accepts or rejects it
+	bool accepted_move = mc_->boltzmann( pose, mover_->type() );
 
-  PROF_START( basic::TEST3 );
-  pss->add_energy( "acceptance", accepted_move );
-  evals_.push_back( pss );
-  PROF_STOP( basic::TEST3 );
+	PROF_START( basic::TEST3 );
+	pss->add_energy( "acceptance", accepted_move );
+	evals_.push_back( pss );
+	PROF_STOP( basic::TEST3 );
 
-  if ( keep_stats_type() > no_stats ) {
-    stats_.accepted( accepted_move );
-    stats_.print( mc_, mover_->type() );
-    // std::cout << "Acceptance rate: " << stats_.acceptance_rate() << std::endl;
-  }
+	if ( keep_stats_type() > no_stats ) {
+		stats_.accepted( accepted_move );
+		stats_.print( mc_, mover_->type() );
+		// std::cout << "Acceptance rate: " << stats_.acceptance_rate() << std::endl;
+	}
 
 
 }
@@ -125,22 +125,22 @@ EvaluatedTrialMover::get_name() const {
 
 void
 EvaluatedTrialMover::dump_file( std::string file ) {
-  //copy some of the functionality of SilentFileData::write_silent_struct
-  // want to avoid opening/closing of file for each line of data ... write as burst
-  // might add this to SilentFileData
-  if ( evals_.size() ) {
-    utility::io::ozstream output;
-    if ( !utility::file::file_exists( file ) ) {
-      output.open( file );
-      evals_[ 1 ]->print_header( output );
-    } else {
-      output.open_append( file );
-    }
+	//copy some of the functionality of SilentFileData::write_silent_struct
+	// want to avoid opening/closing of file for each line of data ... write as burst
+	// might add this to SilentFileData
+	if ( evals_.size() ) {
+		utility::io::ozstream output;
+		if ( !utility::file::file_exists( file ) ) {
+			output.open( file );
+			evals_[ 1 ]->print_header( output );
+		} else {
+			output.open_append( file );
+		}
 
-    for ( SilentInfoList::const_iterator it=evals_.begin(), eit=evals_.end(); it!=eit; ++it ) {
-      (*it)->print_scores( output );
-    }
-  }
+		for ( SilentInfoList::const_iterator it=evals_.begin(), eit=evals_.end(); it!=eit; ++it ) {
+			(*it)->print_scores( output );
+		}
+	}
 }
 
 

@@ -53,8 +53,8 @@
 #include <cmath>
 #include <sstream>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::string;
 using core::Size;
@@ -77,7 +77,7 @@ ResidueConformationFeatures::ResidueConformationFeatures()
 }
 
 ResidueConformationFeatures::ResidueConformationFeatures(
-		ResidueConformationFeatures const & ) : FeaturesReporter()
+	ResidueConformationFeatures const & ) : FeaturesReporter()
 {
 	compact_residue_schema_ = basic::options::option[basic::options::OptionKeys::inout::dbms::use_compact_residue_schema]();
 }
@@ -139,8 +139,7 @@ ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP
 
 	nonprotein_residue_angles.write(db_session);
 
-	if(compact_residue_schema_)
-	{
+	if ( compact_residue_schema_ ) {
 		//******compact_residue_atom_coords*****//
 		Column coord_data("coord_data",DbDataTypeOP( new DbText() ));
 		Column atom_count("atom_count",DbDataTypeOP( new DbInteger() ),false);
@@ -156,8 +155,7 @@ ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP
 		compact_residue_atom_coords.add_foreign_key(ForeignKey(fkey_cols, "residues", fkey_reference_cols, true));
 		compact_residue_atom_coords.write(db_session);
 
-	}else
-	{
+	} else {
 		//******residue_atom_coords******//
 		Column atomno("atomno", DbDataTypeOP( new DbInteger() ), false);
 		Column x("x", DbDataTypeOP( new DbDouble() ), false);
@@ -199,19 +197,17 @@ ResidueConformationFeatures::report_features(
 	//check to see if this structure is ideal
 
 	bool ideal = true;
-	if(!basic::options::option[basic::options::OptionKeys::out::file::force_nonideal_structure]())
-	{
+	if ( !basic::options::option[basic::options::OptionKeys::out::file::force_nonideal_structure]() ) {
 		core::conformation::Conformation const & conformation(pose.conformation());
-		for(core::Size resn=1; resn <= pose.n_residue();++resn){
-			if(!check_relevant_residues(relevant_residues, resn)) continue;
+		for ( core::Size resn=1; resn <= pose.n_residue(); ++resn ) {
+			if ( !check_relevant_residues(relevant_residues, resn) ) continue;
 			bool residue_status(core::conformation::is_ideal_position(resn,conformation));
-			if(!residue_status){
+			if ( !residue_status ) {
 				ideal = false;
 				break;
 			}
 		}
-	}else
-	{
+	} else {
 		ideal = false;
 	}
 
@@ -246,18 +242,18 @@ ResidueConformationFeatures::report_features(
 	compact_residue_insert.add_column("coord_data");
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
-	for (Size i = 1; i <= pose.total_residue(); ++i) {
-		if(!check_relevant_residues(relevant_residues, i)) continue;
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( !check_relevant_residues(relevant_residues, i) ) continue;
 
 		Residue const & resi = pose.residue(i);
-		if(resi.aa() <= num_canonical_aas){
+		if ( resi.aa() <= num_canonical_aas ) {
 			continue;
 		}
 		//runtime_assert(resi.aa() <= num_canonical_aas);
 		Real phi  (0.0);
 		Real psi  (0.0);
 		Real omega(0.0);
-		if(!resi.is_ligand()){
+		if ( !resi.is_ligand() ) {
 			phi  = resi.mainchain_torsion(1);
 			psi  = resi.mainchain_torsion(2);
 			omega= resi.mainchain_torsion(3);
@@ -272,7 +268,7 @@ ResidueConformationFeatures::report_features(
 			utility::tools::make_vector(struct_id_data,seqpos_data,phi_data,psi_data,omega_data));
 
 
-		for(core::Size chi_num = 1; chi_num <= resi.nchi();++chi_num){
+		for ( core::Size chi_num = 1; chi_num <= resi.nchi(); ++chi_num ) {
 			core::Real chi_angle = resi.chi(chi_num);
 
 			RowDataBaseOP chinum_data( new RowData<Size>("chinum",chi_num) );
@@ -281,18 +277,16 @@ ResidueConformationFeatures::report_features(
 				struct_id_data,seqpos_data,chinum_data,chiangle_data));
 
 		}
-		if(!ideal || resi.is_ligand()){ // always store coords for a ligand
+		if ( !ideal || resi.is_ligand() ) { // always store coords for a ligand
 
-			if(compact_residue_schema_)
-			{
+			if ( compact_residue_schema_ ) {
 
 				std::string residue_data_string(serialize_residue_xyz_coords(resi));
 				RowDataBaseOP atom_count( new RowData<core::Size>("atom_count",resi.natoms()) );
 				RowDataBaseOP residue_data( new RowData<std::string>("coord_data",residue_data_string) );
 				compact_residue_insert.add_row(utility::tools::make_vector(struct_id_data,atom_count,seqpos_data,residue_data));
-			}else
-			{
-				for(Size atom = 1; atom <= resi.natoms(); ++atom){
+			} else {
+				for ( Size atom = 1; atom <= resi.natoms(); ++atom ) {
 					core::Vector coords = resi.xyz(atom);
 
 					RowDataBaseOP atom_data( new RowData<Size>("atomno",atom) );
@@ -309,11 +303,9 @@ ResidueConformationFeatures::report_features(
 
 	conformation_insert.write_to_database(db_session);
 	angle_insert.write_to_database(db_session);
-	if(compact_residue_schema_)
-	{
+	if ( compact_residue_schema_ ) {
 		compact_residue_insert.write_to_database(db_session);
-	}else
-	{
+	} else {
 		atom_insert.write_to_database(db_session);
 	}
 
@@ -332,14 +324,12 @@ ResidueConformationFeatures::delete_record(
 	statement angle_stmt(basic::database::safely_prepare_statement("DELETE FROM nonprotein_residue_angles WHERE struct_id = ?;\n",db_session));
 	angle_stmt.bind(1,struct_id);
 	basic::database::safely_write_to_database(angle_stmt);
-	if(compact_residue_schema_)
-	{
-		
+	if ( compact_residue_schema_ ) {
+
 		statement compact_coords_stmt(basic::database::safely_prepare_statement("DELETE FROM compact_residue_atom_coords WHERE struct_id = ?;",db_session));
 		compact_coords_stmt.bind(1,struct_id);
 		basic::database::safely_write_to_database(compact_coords_stmt);
-	}else
-	{
+	} else {
 		statement coords_stmt(basic::database::safely_prepare_statement("DELETE FROM residue_atom_coords WHERE struct_id = ?;",db_session));
 		coords_stmt.bind(1,struct_id);
 		basic::database::safely_write_to_database(coords_stmt);
@@ -361,98 +351,94 @@ ResidueConformationFeatures::load_conformation(
 	StructureID struct_id,
 	Pose & pose
 ){
-	if(!table_exists(db_session, "nonprotein_residue_conformation")) return;
-	if(!table_exists(db_session, "nonprotein_residue_angles")) return;
+	if ( !table_exists(db_session, "nonprotein_residue_conformation") ) return;
+	if ( !table_exists(db_session, "nonprotein_residue_angles") ) return;
 
-	if(pose.is_fullatom()){
+	if ( pose.is_fullatom() ) {
 
 		std::string protein_string =
 			"SELECT\n"
-			"	seqpos,\n"
-			"	phi,\n"
-			"	psi,\n"
-			"	omega\n"
+			"\tseqpos,\n"
+			"\tphi,\n"
+			"\tpsi,\n"
+			"\tomega\n"
 			"FROM\n"
-			"	nonprotein_residue_conformation\n"
+			"\tnonprotein_residue_conformation\n"
 			"WHERE\n"
-			"	nonprotein_residue_conformation.struct_id=?;";
+			"\tnonprotein_residue_conformation.struct_id=?;";
 
 		statement protein_stmt(basic::database::safely_prepare_statement(protein_string,db_session));
 		protein_stmt.bind(1,struct_id);
 
 		std::string conformation_string =
 			"SELECT\n"
-			"	seqpos,\n"
-			"	chinum,\n"
-			"	chiangle\n"
+			"\tseqpos,\n"
+			"\tchinum,\n"
+			"\tchiangle\n"
 			"FROM\n"
-			"	nonprotein_residue_angles\n"
+			"\tnonprotein_residue_angles\n"
 			"WHERE\n"
-			"	nonprotein_residue_angles.struct_id=?;";
+			"\tnonprotein_residue_angles.struct_id=?;";
 
 		statement conformation_stmt(basic::database::safely_prepare_statement(conformation_string,db_session));
 		conformation_stmt.bind(1,struct_id);
 
 
 		result protein_res(basic::database::safely_read_from_database(protein_stmt));
-		while(protein_res.next()){
+		while ( protein_res.next() ) {
 			Size seqpos;
 			Real phi,psi,omega;
 			protein_res >> seqpos >> phi >> psi >> omega;
-			if (pose.residue_type(seqpos).is_protein()){
+			if ( pose.residue_type(seqpos).is_protein() ) {
 				pose.set_phi(seqpos,phi);
 				pose.set_psi(seqpos,psi);
 				pose.set_omega(seqpos,omega);
 			}
 		}
 		result res_conformation(basic::database::safely_read_from_database(conformation_stmt));
-		while(res_conformation.next()){
+		while ( res_conformation.next() ) {
 			//Size nchi(pose.residue_type(seqpos).nchi());
 			Size seqpos;
 			Size chinum;
 			Real chiangle;
 			res_conformation >> seqpos >> chinum >> chiangle;
-			if(compact_residue_schema_)
-			{
+			if ( compact_residue_schema_ ) {
 				set_coords_for_residue_from_compact_schema(db_session,struct_id,seqpos,pose);
-			}else
-			{
+			} else {
 				set_coords_for_residue(db_session,struct_id,seqpos,pose);
 
 			}
 			pose.set_chi(chinum,seqpos,chiangle);
 		}
 
-	}else{
+	} else {
 
 		std::string protein_string  =
 			"SELECT\n"
-			"	seqpos,\n"
-			"	phi,\n"
-			"	psi,\n"
-			"	omega\n"
+			"\tseqpos,\n"
+			"\tphi,\n"
+			"\tpsi,\n"
+			"\tomega\n"
 			"FROM\n"
-			"	nonprotein_residue_conformation\n"
+			"\tnonprotein_residue_conformation\n"
 			"WHERE\n"
-			"	nonprotein_residue_conformation.struct_id=?;";
+			"\tnonprotein_residue_conformation.struct_id=?;";
 
 		statement protein_stmt(basic::database::safely_prepare_statement(protein_string,db_session));
 		protein_stmt.bind(1,struct_id);
 
 		result protein_res(basic::database::safely_read_from_database(protein_stmt));
-		while(protein_res.next()){
+		while ( protein_res.next() ) {
 			Size seqpos;
 			Real phi,psi,omega;
 			protein_res >> seqpos >> phi >> psi >> omega;
-			if (!pose.residue_type(seqpos).is_protein()){
+			if ( !pose.residue_type(seqpos).is_protein() ) {
 				// WARNING why are you storing non-protein in the ProteinSilentReport?
 				continue;
 			}
-			if(compact_residue_schema_)
-			{
+			if ( compact_residue_schema_ ) {
 				set_coords_for_residue_from_compact_schema(db_session,struct_id,seqpos,pose);
-			}else
-			{
+			} else {
 				set_coords_for_residue(db_session,struct_id,seqpos,pose);
 
 			}
@@ -466,20 +452,20 @@ ResidueConformationFeatures::load_conformation(
 
 //This should be factored out into a non-member function.
 void ResidueConformationFeatures::set_coords_for_residue(
-		sessionOP db_session,
-		StructureID struct_id,
-		Size seqpos,
-		Pose & pose
+	sessionOP db_session,
+	StructureID struct_id,
+	Size seqpos,
+	Pose & pose
 ){
 
 	std::string statement_string =
 		"SELECT\n"
-		"	atomno,\n"
-		"	x,\n"
-		"	y,\n"
-		"	z\n"
+		"\tatomno,\n"
+		"\tx,\n"
+		"\ty,\n"
+		"\tz\n"
 		"FROM\n"
-		"	residue_atom_coords\n"
+		"\tresidue_atom_coords\n"
 		"WHERE\n"
 		"residue_atom_coords.struct_id=? AND residue_atom_coords.seqpos=?;";
 
@@ -488,7 +474,7 @@ void ResidueConformationFeatures::set_coords_for_residue(
 	stmt.bind(2,seqpos);
 
 	result res(basic::database::safely_read_from_database(stmt));
-	while(res.next()){
+	while ( res.next() ) {
 		Size atomno;
 		Real x,y,z;
 		res >> atomno >> x >> y >> z;
@@ -511,26 +497,25 @@ ResidueConformationFeatures::set_coords_for_residue_from_compact_schema(
 
 	std::string statement_string =
 		"SELECT\n"
-		"	coord_data,\n"
-		"	atom_count\n"
+		"\tcoord_data,\n"
+		"\tatom_count\n"
 		"FROM\n"
-		"	compact_residue_atom_coords\n"
+		"\tcompact_residue_atom_coords\n"
 		"WHERE\n"
-		"	compact_residue_atom_coords.struct_id=? AND compact_residue_atom_coords.seqpos=?";
+		"\tcompact_residue_atom_coords.struct_id=? AND compact_residue_atom_coords.seqpos=?";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,struct_id);
 	stmt.bind(2,seqpos);
 
 	result res(basic::database::safely_read_from_database(stmt));
-	while(res.next()){
+	while ( res.next() ) {
 		std::string coords;
 		core::Size atom_count;
 		res >> coords >>atom_count;
 
 
-		utility::vector1<numeric::xyzVector<core::Real> > residue_coords(deserialize_xyz_coords(coords,atom_count)	);
-		for(core::Size atomno = 1; atomno <= residue_coords.size();++atomno)
-		{
+		utility::vector1<numeric::xyzVector<core::Real> > residue_coords(deserialize_xyz_coords(coords,atom_count) );
+		for ( core::Size atomno = 1; atomno <= residue_coords.size(); ++atomno ) {
 			core::id::AtomID atom_id(atomno,seqpos);
 			pose.set_xyz(atom_id,residue_coords[atomno]);
 		}

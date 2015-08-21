@@ -95,14 +95,12 @@ AsymFoldandDockRbTrialMover::apply( core::pose::Pose & pose )
 	}
 
 	// overrriding constructor or default values
-	if ( option[ OptionKeys::fold_and_dock::rb_rot_magnitude ].user() )
-	{
+	if ( option[ OptionKeys::fold_and_dock::rb_rot_magnitude ].user() ) {
 		rot_mag_ = ( option[ OptionKeys::fold_and_dock::rb_rot_magnitude ] );
 	}
 
 	// overrriding constructor or default values
-	if ( option[ OptionKeys::fold_and_dock::rb_trans_magnitude ].user() )
-	{
+	if ( option[ OptionKeys::fold_and_dock::rb_trans_magnitude ].user() ) {
 		trans_mag_ = ( option[ OptionKeys::fold_and_dock::rb_trans_magnitude ] );
 	}
 
@@ -110,13 +108,11 @@ AsymFoldandDockRbTrialMover::apply( core::pose::Pose & pose )
 	core::Real trans_mag_trial = smooth_move_ ? trans_mag_smooth : trans_mag_;
 
 	// overrriding constructor or default values
-	if ( option[ OptionKeys::fold_and_dock::rigid_body_cycles ].user() )
-	{
+	if ( option[ OptionKeys::fold_and_dock::rigid_body_cycles ].user() ) {
 		rigid_body_cycles_ = ( option[ OptionKeys::fold_and_dock::rigid_body_cycles ] );
 	}
 
-	if ( option[ OptionKeys::fold_and_dock::rigid_body_disable_mc ].user() )
-	{
+	if ( option[ OptionKeys::fold_and_dock::rigid_body_disable_mc ].user() ) {
 		mc_filter_ = false;
 	}
 
@@ -133,8 +129,8 @@ AsymFoldandDockRbTrialMover::apply( core::pose::Pose & pose )
 	//set up mover for docking
 	protocols::rigid::RigidBodyPerturbMover rb_perturb =
 		protocols::rigid::RigidBodyPerturbMover(
-			pose,	*movemap, rot_mag_trial, trans_mag_trial,
-			rigid::partner_downstream, false );
+		pose, *movemap, rot_mag_trial, trans_mag_trial,
+		rigid::partner_downstream, false );
 
 	for ( Size i = 1; i <= rigid_body_cycles_; ++i ) {
 		rb_perturb.apply( pose );

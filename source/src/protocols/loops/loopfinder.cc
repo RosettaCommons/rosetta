@@ -58,16 +58,16 @@ loopfinder( core::pose::Pose & pose , loops::Loops & loops ){
 
 	utility::vector1< utility::vector1< core::Size > >all_loops;
 	utility::vector1< core::Size > ind_loops;
-	for( core::Size ii = 1; ii < pose.total_residue(); ++ii ){
-		if( pose.secstruct(ii) == 'L' && pose.secstruct(ii+1) == 'L' ) {
+	for ( core::Size ii = 1; ii < pose.total_residue(); ++ii ) {
+		if ( pose.secstruct(ii) == 'L' && pose.secstruct(ii+1) == 'L' ) {
 			ind_loops.push_back(ii);
 		}
-		if( pose.residue(ii).chain() != pose.residue(ii+1).chain() )  { // separate loops spanning multiple chains
+		if ( pose.residue(ii).chain() != pose.residue(ii+1).chain() )  { // separate loops spanning multiple chains
 			all_loops.push_back(ind_loops);
 			ind_loops.clear();
 			continue; // make sure we skip all further conditionals so that we don't double-add the loop
 		}
-		if( pose.secstruct(ii) == 'L' && pose.secstruct(ii+1) != 'L' ) {
+		if ( pose.secstruct(ii) == 'L' && pose.secstruct(ii+1) != 'L' ) {
 			ind_loops.push_back(ii);
 			all_loops.push_back(ind_loops);
 			ind_loops.clear();
@@ -75,7 +75,7 @@ loopfinder( core::pose::Pose & pose , loops::Loops & loops ){
 
 	}
 
-	if( pose.secstruct( lastres ) == 'L' ){
+	if ( pose.secstruct( lastres ) == 'L' ) {
 		ind_loops.push_back( lastres );
 		all_loops.push_back(ind_loops);
 
@@ -83,7 +83,7 @@ loopfinder( core::pose::Pose & pose , loops::Loops & loops ){
 	}
 
 
-	for( core::Size ii = 1; ii <= all_loops.size(); ++ii ){
+	for ( core::Size ii = 1; ii <= all_loops.size(); ++ii ) {
 		core::Size const lastlooppos = all_loops[ii].size();
 		core::Size const chain_firstpos = pose.residue( all_loops[ii][1] ).chain();
 		core::Size const chain_lastpos = pose.residue( all_loops[ii][lastlooppos] ).chain();
@@ -94,10 +94,10 @@ loopfinder( core::pose::Pose & pose , loops::Loops & loops ){
 		// dont include terminal loops
 		if ( all_loops[ii][1] == 1 || all_loops[ii][lastlooppos] == lastres ) { continue; }
 		if ( all_loops[ii][1] == chain_begin || all_loops[ii][lastlooppos] == chain_end ) { continue; } // skip chain begin/end for multimers
-		else{
+		else {
 
 			// make sure loop is at least 3 residues long
-			if( all_loops[ii][lastlooppos] - all_loops[ii][1] < 3 ){
+			if ( all_loops[ii][lastlooppos] - all_loops[ii][1] < 3 ) {
 				TR << "increasing loop from" << all_loops[ii][1] << " " << all_loops[ii][lastlooppos] << std::endl;
 				TR << "increasing loop to  " << all_loops[ii][1]-1 << " " << all_loops[ii][lastlooppos]+1 << std::endl;
 				// this may seem sloopy but it catches the case where loop size is 1 and other cases as well

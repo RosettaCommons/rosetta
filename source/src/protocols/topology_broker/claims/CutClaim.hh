@@ -62,7 +62,7 @@ class CutClaim : public DofClaim {
 	//this class could also specify which atoms to use for the jumps --- but I never used this so far.... might be necessary for Zn jumps.
 public:
 	CutClaim( TopologyClaimerAP tc, std::pair< std::string, core::Size > position,
-						ClaimRight right = DofClaim::CAN_INIT ) :
+		ClaimRight right = DofClaim::CAN_INIT ) :
 		DofClaim( tc, right ),
 		position_( position )
 	{}
@@ -87,14 +87,14 @@ public:
 		return "CUT";
 	}
 
-//    virtual std::string to_string() const {
-//        std::ostringstream str_stream;
-//        str_stream << "(CutClaim; owner, " << owner()->type() << "; pos, " << pos1_ << ")" ;
-//        return str_stream.str();
-//    }
+	//    virtual std::string to_string() const {
+	//        std::ostringstream str_stream;
+	//        str_stream << "(CutClaim; owner, " << owner()->type() << "; pos, " << pos1_ << ")" ;
+	//        return str_stream.str();
+	//    }
 
 private:
-	//	bool permanent_; //true if this cut should still be present after loop-closing
+	// bool permanent_; //true if this cut should still be present after loop-closing
 	std::pair< std::string, core::Size > position_;
 }; //CutClaim
 

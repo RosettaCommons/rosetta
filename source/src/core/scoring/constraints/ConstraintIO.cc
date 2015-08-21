@@ -94,7 +94,7 @@ ConstraintIO::read_cst_atom_pairs(
 ) {
 	tr.Debug << "ConstraintIO::read_cst_atom_pairs" << std::endl;
 	std::string line;
-	while( getline( data, line ) ) {
+	while ( getline( data, line ) ) {
 		Size res1, res2;
 		std::string tempres1, tempres2;
 		std::string name1, name2;
@@ -113,17 +113,17 @@ ConstraintIO::read_cst_atom_pairs(
 			next_section_name = line;
 			return;
 		}
-		tr.Debug 	<< "read: " << name1 << " " << name2 << " "
-							<< res1 << " " << res2 << " func: " << func_type
-							<< std::endl;
+		tr.Debug  << "read: " << name1 << " " << name2 << " "
+			<< res1 << " " << res2 << " func: " << func_type
+			<< std::endl;
 
 		if ( res1>pose.total_residue() || res2> pose.total_residue() ||
-		     ( !pose.residue_type( res1 ).has( name1 ) ) ||
-		     ( !pose.residue_type( res2 ).has( name2 ) )
-		){
+				( !pose.residue_type( res1 ).has( name1 ) ) ||
+				( !pose.residue_type( res2 ).has( name2 ) )
+				) {
 
 			tr.Error << "error in constraint (no such atom in pose!)"
-									<< name1 << " " << name2 << " " << res1 << " " << res2 << " func: " << func_type << std::endl;
+				<< name1 << " " << name2 << " " << res1 << " " << res2 << " func: " << func_type << std::endl;
 			utility_exit_with_message ("Constraint data referred to atom which is not present in pose");
 		}
 
@@ -161,12 +161,12 @@ ConstraintOP ConstraintIO::parse_atom_pair_constraint(
 	parse_residue( pose, tempres1, res1 );
 	parse_residue( pose, tempres2, res2 );
 
-	tr.Info 	<< "read: " << name1 << " " << name2 << " "
-						<< res1 << " " << res2 << " func: " << func_type
-						<< std::endl;
+	tr.Info  << "read: " << name1 << " " << name2 << " "
+		<< res1 << " " << res2 << " func: " << func_type
+		<< std::endl;
 	if ( res1>pose.total_residue() || res2> pose.total_residue() ) {
-		tr.Warning 	<< "ignored constraint (no such atom in pose!)"
-								<< name1 << " " << name2 << " " << res1 << " " << res2 << std::endl;
+		tr.Warning  << "ignored constraint (no such atom in pose!)"
+			<< name1 << " " << name2 << " " << res1 << " " << res2 << std::endl;
 		return NULL;
 	}
 
@@ -194,39 +194,39 @@ ConstraintIO::read_cst_coordinates(
 
 	tr.Debug << "ConstraintIO::read_cst_coordinate" << std::endl;
 	std::string line;
-	while( getline( data, line ) ) {
+	while ( getline( data, line ) ) {
 
-	Real x, y, z;
-	Size res1, res2;
-	std::string name1, name2;
-	std::string func_type;
+		Real x, y, z;
+		Size res1, res2;
+		std::string name1, name2;
+		std::string func_type;
 
-	std::istringstream line_stream( line );
+		std::istringstream line_stream( line );
 
-	line_stream
-		>> name1;
+		line_stream
+			>> name1;
 
-	if ( name1.find("[" )!=std::string::npos ) { //end of this section
-		tr.Debug << "section end detected in line " << line << std::endl;
-		next_section_name = line;
-		return;
-	}
+		if ( name1.find("[" )!=std::string::npos ) { //end of this section
+			tr.Debug << "section end detected in line " << line << std::endl;
+			next_section_name = line;
+			return;
+		}
 
-	line_stream >> res1
-							>> name2 >> res2
-							>> x >> y >> z
-							>> func_type;
+		line_stream >> res1
+			>> name2 >> res2
+			>> x >> y >> z
+			>> func_type;
 
-	tr.Debug 	<< "read: " << name1 << " " << name2 << " "
-							<< res1 << " " << res2 << " func: " << func_type
-							<< std::endl;
+		tr.Debug  << "read: " << name1 << " " << name2 << " "
+			<< res1 << " " << res2 << " func: " << func_type
+			<< std::endl;
 
 		if ( res1>pose.total_residue() || res2> pose.total_residue() ||
-		     ( !pose.residue_type( res1 ).has( name1 ) ) ||
-		     ( !pose.residue_type( res2 ).has( name2 ) )
-		){
+				( !pose.residue_type( res1 ).has( name1 ) ) ||
+				( !pose.residue_type( res2 ).has( name2 ) )
+				) {
 			tr.Error << "error in constraint (no such atom in pose!)"
-									<< name1 << " " << name2 << " " << res1 << " " << res2 << " func: " << func_type << std::endl;
+				<< name1 << " " << name2 << " " << res1 << " " << res2 << " func: " << func_type << std::endl;
 			utility_exit_with_message ("Constraint data referred to atom which is not present in pose");
 		}
 
@@ -237,9 +237,9 @@ ConstraintIO::read_cst_coordinates(
 		func::FuncOP aFunc = get_instance()->func_factory_.new_func( func_type );
 		aFunc->read_data( line_stream );
 
-		//		if ( tr.Debug.visible() ) {
-			aFunc->show_definition( std::cout ); std::cout<<std::endl;
-			//		}
+		//  if ( tr.Debug.visible() ) {
+		aFunc->show_definition( std::cout ); std::cout<<std::endl;
+		//  }
 
 		Vector transform( x, y, z );
 		cst_set.add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( atom1, atom2, transform, aFunc ) ) ) );
@@ -268,12 +268,12 @@ ConstraintOP ConstraintIO::parse_coordinate_constraint(
 	parse_residue( pose, tempfixed_res, fixed_res );
 	parse_residue( pose, tempother_res, other_res );
 
-	tr.Debug 	<< "read: " << fixed_res_name << " " << other_res_name << " "
-						<< fixed_res << " " << other_res << " func: " << func_type << std::endl;
+	tr.Debug  << "read: " << fixed_res_name << " " << other_res_name << " "
+		<< fixed_res << " " << other_res << " func: " << func_type << std::endl;
 	if ( fixed_res > pose.total_residue() || other_res > pose.total_residue() ) {
-		tr.Warning 	<< "ignored constraint (no such atom in pose!)"
-								<< fixed_res_name << " " << other_res_name << " "
-								<< fixed_res << " " << other_res << std::endl;
+		tr.Warning  << "ignored constraint (no such atom in pose!)"
+			<< fixed_res_name << " " << other_res_name << " "
+			<< fixed_res << " " << other_res << std::endl;
 		return NULL;
 	}
 
@@ -302,7 +302,7 @@ ConstraintIO::read_cst_angles(
 ) {
 	tr.Debug << "ConstraintIO::read_cst_angles" << std::endl;
 	std::string line;
-	while( getline( data, line ) ) {
+	while ( getline( data, line ) ) {
 		Size res1, res2, res3;
 		std::string tempres1, tempres2, tempres3;
 		std::string name1, name2, name3;
@@ -327,8 +327,8 @@ ConstraintIO::read_cst_angles(
 		id::AtomID atom2( pose.residue_type( res2 ).atom_index( name2 ), res2 );
 		id::AtomID atom3( pose.residue_type( res3 ).atom_index( name3 ), res3 );
 
-		tr.Debug	<< "read: " << name1 << " " << res1 << " "  <<  name2 << " "
-							<< res2 << " " << name3 << " " << res3 << std::endl;
+		tr.Debug << "read: " << name1 << " " << res1 << " "  <<  name2 << " "
+			<< res2 << " " << name3 << " " << res3 << std::endl;
 		func::FuncOP aFunc = get_instance()->func_factory_.new_func( func_type );
 		aFunc->read_data( line_stream );
 
@@ -338,7 +338,7 @@ ConstraintIO::read_cst_angles(
 
 		if ( res1 > pose.total_residue() || res2 > pose.total_residue() || res3 > pose.total_residue() ) {
 			tr.Warning << "ignored constraint" << name1 << " " << name2 << " "
-									<< res1 << " " << res2 << std::endl;
+				<< res1 << " " << res2 << std::endl;
 			continue;
 		}
 
@@ -378,14 +378,14 @@ get_section_name ( std::string line ) {
 
 void
 ConstraintIO::read_cst_bindingsites(
-   std::istream & data,
-	 std::string & next_section_name,
-	 ConstraintSet & cst_set,
-	 pose::Pose const & pose
+	std::istream & data,
+	std::string & next_section_name,
+	ConstraintSet & cst_set,
+	pose::Pose const & pose
 ) {
 	tr.Debug << "ConstraintIO::read_cst_angles" << std::endl;
 	std::string line;
-	while( getline( data, line ) ) {
+	while ( getline( data, line ) ) {
 		std::istringstream line_stream( line );
 		if ( line.find("[" )!=std::string::npos ) { //end of this section
 			tr.Debug << "section end detected in line " << line << std::endl;
@@ -423,12 +423,12 @@ ConstraintSetOP ConstraintIO::read_constraints(
 			read_cst_bindingsites( data, pre_read, *cset, pose );
 		} else if ( section == "NO_SECTION" ) {
 			tr.Info << " no section header [ xxx ] found, try reading line-based format... DON'T MIX"
-							<< std::endl;
+				<< std::endl;
 			/// izstreams cannot be rewound with seekg()
 			/// never call this function if you have constructed an izstream
 			/// and you haven't deteremined that indeed the file format its representing
 			/// is the old style (as opposed to the new style) constraint format.
-		debug_assert( dynamic_cast< zlib_stream::zip_istream * > ( &data ) == 0 );
+			debug_assert( dynamic_cast< zlib_stream::zip_istream * > ( &data ) == 0 );
 
 			data.seekg( original_pos );
 			return read_constraints_new( data, cset, pose );
@@ -440,7 +440,7 @@ ConstraintSetOP ConstraintIO::read_constraints(
 		tr.Trace << "pre_read: " << pre_read << std::endl;
 		section = get_section_name ( pre_read );
 	}
-//	pose.constraint_set( cset );
+	// pose.constraint_set( cset );
 	return cset;
 }
 
@@ -462,7 +462,7 @@ ConstraintIO::read_constraints(
 	}
 
 	std::string line;
-  getline(data,line); // header line
+	getline(data,line); // header line
 	std::string section = get_section_name( line );
 	data.seek_beg();
 	if ( section == "NO_SECTION" ) {
@@ -496,7 +496,7 @@ ConstraintIO::read_constraints_new(
 	pose::Pose const & pose
 ) {
 	Size count_constraints(0);
-	while( data.good() ) { // check if we reach the end of file or not
+	while ( data.good() ) { // check if we reach the end of file or not
 		// read in each constraint and add it constraint_set
 		ConstraintOP cst_op;
 		cst_op = read_individual_constraint_new( data, pose, get_func_factory() );
@@ -529,16 +529,16 @@ ConstraintIO::read_individual_constraint_new(
 	cst_op = get_cst_factory().newConstraint( tag );
 
 	std::string error_msg("");
-	//	bool error_seen( false );
+	// bool error_seen( false );
 
 	if ( cst_op ) {
-		//		try {
+		//  try {
 		cst_op->read_def( data, pose, func_factory );
 		// } catch ( utility::excn::EXCN_Exception &excn  ) {
-// 			tr.Error << "ERROR: reading of " + tag + " failed.\n" << excn << std::endl;
-// 			cst_op = NULL;
-			//}
-		if ( !data.good() && !data.eof()) {
+		//    tr.Error << "ERROR: reading of " + tag + " failed.\n" << excn << std::endl;
+		//    cst_op = NULL;
+		//}
+		if ( !data.good() && !data.eof() ) {
 			error_msg += "ERROR: reading of " + tag + " failed.\n";
 			tr.Error << error_msg << std::endl;
 			cst_op = NULL;
@@ -576,12 +576,12 @@ ConstraintIO::read_individual_constraint_new(
 	func::FuncFactory const & func_factory
 )
 {
- 	std::string tag;
+	std::string tag;
 	// get the ConstraintType tag
-	while( true ) {
+	while ( true ) {
 		char c = data.peek(); // get first char of the line but not moving istream pointer
 		if ( c == '#' || c == '\n' ) { //ignore # comment line and empty line
-			while( data.good() && (data.get() != '\n') ) {}
+			while ( data.good() && (data.get() != '\n') ) {}
 			continue;
 		}
 		if ( data.eof() ) return NULL;
@@ -592,7 +592,7 @@ ConstraintIO::read_individual_constraint_new(
 		}
 		break;
 	}
-	if (( tag.substr(0,3) == "END" )||( tag.substr(0,3) == "End" )) return NULL; // stopper for MultiConstraint or AmbiguousConstraint
+	if ( ( tag.substr(0,3) == "END" )||( tag.substr(0,3) == "End" ) ) return NULL; // stopper for MultiConstraint or AmbiguousConstraint
 	return read_individual_constraint_new( data, pose, func_factory, tag );
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -610,15 +610,15 @@ ConstraintIO::write_constraints( std::string const& filename, ConstraintSet cons
 
 //ConstraintForestOP
 //ConstraintIO::read_constraint_forest( std::string const & fname, pose::Pose & pose ) {
-//	utility::io::izstream data( fname.c_str() );
-//	tr.Info << "read ConstraintForest from " << fname << std::endl;
-//	if ( !data ) {
-//		utility_exit_with_message( "[ERROR] Unable to open ConstraintForest file: "+fname );
-//	}
+// utility::io::izstream data( fname.c_str() );
+// tr.Info << "read ConstraintForest from " << fname << std::endl;
+// if ( !data ) {
+//  utility_exit_with_message( "[ERROR] Unable to open ConstraintForest file: "+fname );
+// }
 //
-//	ConstraintForestOP cf = new ConstraintForest();
-//	cf->read_forest(data, pose);
-//	return cf;
+// ConstraintForestOP cf = new ConstraintForest();
+// cf->read_forest(data, pose);
+// return cf;
 //}
 
 

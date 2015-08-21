@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/simple_moves/SuperimposeMoverCreator.hh
-/// @brief 
+/// @brief
 /// @author Javier Castellanos javiercv@uw.edu
 
 #ifndef INCLUDED_protocols_simple_moves_SuperimposeMoverCreator_hh

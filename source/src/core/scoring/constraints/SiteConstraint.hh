@@ -45,34 +45,34 @@ namespace constraints {
 class SiteConstraint : public AmbiguousConstraint {
 public:
 
-    /// @brief Constructor
-    SiteConstraint();
+	/// @brief Constructor
+	SiteConstraint();
 
-    /// @brief Constructor
-    SiteConstraint( ConstraintCOPs & cst_in ) ;
+	/// @brief Constructor
+	SiteConstraint( ConstraintCOPs & cst_in ) ;
 
 
-    virtual
-    ConstraintOP clone() const {
-        return ConstraintOP( new SiteConstraint(*this) );
-    }
+	virtual
+	ConstraintOP clone() const {
+		return ConstraintOP( new SiteConstraint(*this) );
+	}
 
-    std::string type() const {
-        return "SiteConstraint";
-    }
+	std::string type() const {
+		return "SiteConstraint";
+	}
 
-    /// @brief read in constraint defiinition
-    void
-    read_def( std::istream& data, pose::Pose const& pose,func::FuncFactory const& func_factory );
+	/// @brief read in constraint defiinition
+	void
+	read_def( std::istream& data, pose::Pose const& pose,func::FuncFactory const& func_factory );
 
-    void show( std::ostream& out) const;
-	
-    /// @brief Sets up SiteConstaint between the residue of interest and a chain
-    void setup_csts( Size res, std::string name, std::string chain, core::pose::Pose const & pose, func::FuncOP const & func );
-	
-    /// @brief Sets up SiteConstraint between the residue of interest and a subset of residues
-    void setup_csts(Size res, std::string name, utility::vector1<bool> const & residues, core::pose::Pose const & pose, func::FuncOP const & func);
-	
+	void show( std::ostream& out) const;
+
+	/// @brief Sets up SiteConstaint between the residue of interest and a chain
+	void setup_csts( Size res, std::string name, std::string chain, core::pose::Pose const & pose, func::FuncOP const & func );
+
+	/// @brief Sets up SiteConstraint between the residue of interest and a subset of residues
+	void setup_csts(Size res, std::string name, utility::vector1<bool> const & residues, core::pose::Pose const & pose, func::FuncOP const & func);
+
 private:
 
 

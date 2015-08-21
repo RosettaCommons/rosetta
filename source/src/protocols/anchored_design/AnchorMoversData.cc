@@ -78,8 +78,8 @@ using basic::Warning;
 
 static thread_local basic::Tracer TR( "protocols.AnchoredDesign.AnchorMoversData" );
 
-namespace protocols{
-namespace anchored_design{
+namespace protocols {
+namespace anchored_design {
 
 std::string const EMPTY_STRING("");
 core::Real const VDW_WEIGHT(2.0);
@@ -101,7 +101,7 @@ protocols::anchored_design::AnchorMoversData::AnchorMoversData() :
 	movemap_cen_all_( core::kinematics::MoveMapOP( new core::kinematics::MoveMap() ) ),
 	//loops_and_fa_mms_( ), //er, not really possible to initialize
 	//loops_and_cen_mms_( ),
- 	//loops_( ),
+	//loops_( ),
 	fragset_( /* 0 */ ),
 	task_factory_( /* 0 */ ),
 	late_factory_( /* 0 */ ),
@@ -164,7 +164,7 @@ protocols::anchored_design::AnchorMoversData::AnchorMoversData(
 
 
 	//read commandline options
-	if(options) read_options();
+	if ( options ) read_options();
 
 	//set up loops and anchor internal data
 	set_loops_and_anchor(anchor, loops);
@@ -246,7 +246,7 @@ AnchorMoversData::AnchorMoversData( AnchorMoversData const & rhs ) :
 AnchorMoversData & AnchorMoversData::operator=( AnchorMoversData const & rhs ){
 
 	//abort self-assignment
-	if (this == &rhs) return *this;
+	if ( this == &rhs ) return *this;
 
 	//some data does not need to be copied; handled by set_loops_and_anchor below; required because loops_and_x_mms_ objects cannot be cloned
 	//anchor_ = ;
@@ -291,9 +291,9 @@ void protocols::anchored_design::AnchorMoversData::pick_new_cutpoints(bool reset
 	TR << "checking/(re)setting loop cutpoints; loops become:" << std::endl;
 
 	core::Size const numloop = num_loops();
-	for (core::Size i = 1; i <= numloop; ++i){
+	for ( core::Size i = 1; i <= numloop; ++i ) {
 		core::Size const loopstart(loop(i).start()), loopend(loop(i).stop()), loopcut(loop(i).cut());
-		if(reset_always || (loopcut < loopstart) || (loopcut > loopend) || ((anchor_->start() <= loopcut) && (anchor_->end() >= loopcut))){
+		if ( reset_always || (loopcut < loopstart) || (loopcut > loopend) || ((anchor_->start() <= loopcut) && (anchor_->end() >= loopcut)) ) {
 			core::Size cut(pick_new_cutpoint(loopstart, loopend));
 			loops_and_fa_mms_[ i ].key1().set_cut(cut);
 			loops_and_cen_mms_[ i ].key1().set_cut(cut);
@@ -309,7 +309,7 @@ core::Size protocols::anchored_design::AnchorMoversData::pick_new_cutpoint( core
 	core::Size newcutpoint(0);
 	do{
 		newcutpoint = (loopstart) + int( numeric::random::rg().uniform()*(loopend-loopstart+1) );
-	}	while( ((anchor_->start()) <= newcutpoint) && ((anchor_->end()) >= newcutpoint) ); //the cutpoint is in the anchor
+	} while( ((anchor_->start()) <= newcutpoint) && ((anchor_->end()) >= newcutpoint) ); //the cutpoint is in the anchor
 	return newcutpoint;
 }
 
@@ -408,7 +408,7 @@ core::scoring::ScoreFunctionOP protocols::anchored_design::AnchorMoversData::get
 { return centroid_scorefunction_min_; }
 /// @details runs the member factory to create a task
 core::pack::task::PackerTaskOP protocols::anchored_design::AnchorMoversData::get_task( core::pose::Pose const & pose) const
-{	return task_factory_->create_task_and_apply_taskoperations( pose ); }
+{ return task_factory_->create_task_and_apply_taskoperations( pose ); }
 
 
 ////////////////////////private functions generate internal data from input and defaults///////////////
@@ -417,18 +417,18 @@ void protocols::anchored_design::AnchorMoversData::input_loops_into_tuples(proto
 {
 	loops_and_fa_mms_.clear();
 	loops_and_cen_mms_.clear();
-	for( protocols::loops::Loops::const_iterator it=loops.begin(), it_end=loops.end(); it != it_end; ++it ){
+	for ( protocols::loops::Loops::const_iterator it=loops.begin(), it_end=loops.end(); it != it_end; ++it ) {
 		//instantiate tuple
 		loops_and_fa_mms_.push_back( Loop_mm_tuple(
-				*it,
-				core::kinematics::MoveMapOP( new core::kinematics::MoveMap() ),
-				core::kinematics::MoveMapOP( new core::kinematics::MoveMap() )
+			*it,
+			core::kinematics::MoveMapOP( new core::kinematics::MoveMap() ),
+			core::kinematics::MoveMapOP( new core::kinematics::MoveMap() )
 			) );
 
 		loops_and_cen_mms_.push_back( Loop_mm_tuple(
-				*it,
-				core::kinematics::MoveMapOP( new core::kinematics::MoveMap() ),
-				core::kinematics::MoveMapOP( new core::kinematics::MoveMap() )
+			*it,
+			core::kinematics::MoveMapOP( new core::kinematics::MoveMap() ),
+			core::kinematics::MoveMapOP( new core::kinematics::MoveMap() )
 			) );
 	}
 }
@@ -438,26 +438,26 @@ void protocols::anchored_design::AnchorMoversData::locate_anchor_loop()
 {
 	core::Size const numloop = num_loops();
 	core::Size const anchorstart(anchor_->start()), anchorend(anchor_->end());
-	for (core::Size i = 1; i <= numloop; ++i){
+	for ( core::Size i = 1; i <= numloop; ++i ) {
 		core::Size const loopstart(loop(i).start()), loopend(loop(i).stop());
-		if ( (loopstart < anchorstart) && (loopend > anchorend) ){
+		if ( (loopstart < anchorstart) && (loopend > anchorend) ) {
 			TR << "anchor start/end " << anchorstart << "/" << anchorend
-			<< " fits within loop start/end " << loopstart << "/" << loopend << std::endl;
+				<< " fits within loop start/end " << loopstart << "/" << loopend << std::endl;
 			anchor_loop_index_ = i;
 			return;
 		}// end if-anchor-is-in-this-loop
 	}//end iterate over all loops
 
-	if(get_super_secret_fixed_interface_mode()) {
+	if ( get_super_secret_fixed_interface_mode() ) {
 		anchor_loop_index_ = 0; //I don't know what this will do, but it should cause bounds errors if something untoward happens (good except bad)
 		TR << "anchor start/end " << anchorstart << "/" << anchorend
-		<< " not within a loop; appropriate for super_secret_fixed_interface_mode" << std::endl;
+			<< " not within a loop; appropriate for super_secret_fixed_interface_mode" << std::endl;
 		return;
 	}
 
 	//if we did not return above
 	Error() << "Anchor does not reside completely within a loop.  Anchor start and end: " << anchorstart
-	<< " " << anchorend << std::endl;
+		<< " " << anchorend << std::endl;
 	utility_exit();
 }
 
@@ -469,7 +469,7 @@ void protocols::anchored_design::AnchorMoversData::setup_movemaps()
 	core::Size const numloop = num_loops();
 
 	//for each loop, modify that pair's mm and modify movemap_all_
-	for (core::Size i = 1; i <= numloop; ++i){
+	for ( core::Size i = 1; i <= numloop; ++i ) {
 		core::Size loopstart(loop(i).start()), loopend(loop(i).stop());
 		movemap_fa(i)->clear();
 		movemap_fa_omegafixed(i)->clear();
@@ -477,7 +477,7 @@ void protocols::anchored_design::AnchorMoversData::setup_movemaps()
 		movemap_cen_omegafixed(i)->clear();
 
 		//set this loop's mm, and in movemap_all_
-		for (core::Size j = loopstart; j <= loopend; ++j){
+		for ( core::Size j = loopstart; j <= loopend; ++j ) {
 			set_movemap( movemap_fa( i ), j );
 			set_movemap( movemap_fa_omegafixed( i ), j, true );
 			set_movemap( movemap_fa_all_, j );
@@ -489,7 +489,7 @@ void protocols::anchored_design::AnchorMoversData::setup_movemaps()
 
 	}//for each loop
 
-	if( !get_super_secret_fixed_interface_mode() ) {
+	if ( !get_super_secret_fixed_interface_mode() ) {
 		fix_anchor( movemap_fa( anchor_loop_index_ ), false );
 		fix_anchor( movemap_fa_omegafixed( anchor_loop_index_ ), false );
 		fix_anchor( movemap_fa_all_, false );
@@ -505,10 +505,10 @@ void protocols::anchored_design::AnchorMoversData::setup_movemaps()
 void protocols::anchored_design::AnchorMoversData::set_movemap(core::kinematics::MoveMapOP movemap, core::Size seqpos, bool omega)
 {
 	//this if statement protects noncanonical dye residues; see AnchoredDesign application documentation.
-	if(seqpos == akash_dyepos_) return;
+	if ( seqpos == akash_dyepos_ ) return;
 	using namespace core::id;
 	movemap->set_bb(seqpos, true); //backbone mobile
-	if (omega) movemap->set( TorsionID(seqpos, BB, omega_torsion), false ); //fixes omega angle
+	if ( omega ) movemap->set( TorsionID(seqpos, BB, omega_torsion), false ); //fixes omega angle
 	movemap->set_chi(seqpos, true); // chi of loop residues
 	//movemap->set_jump(false); // call in fix_anchor (more efficient)
 }
@@ -516,23 +516,23 @@ void protocols::anchored_design::AnchorMoversData::set_movemap(core::kinematics:
 void protocols::anchored_design::AnchorMoversData::fix_anchor( core::kinematics::MoveMapOP movemap, bool const centroid )
 {
 	//skip this function in unbound mode or super_secret_fixed_interface_mode_ or anchors_via_constraints mode
-	if( unbound_mode_ || get_super_secret_fixed_interface_mode() ) return;
-	if( anchor_via_constraints_ && !centroid ) { //if we have constraints, and this is NOT for the centroid phase...
+	if ( unbound_mode_ || get_super_secret_fixed_interface_mode() ) return;
+	if ( anchor_via_constraints_ && !centroid ) { //if we have constraints, and this is NOT for the centroid phase...
 		movemap->set_jump(1, true); //magic number: the anchor-target jump is 1; TODO: make this a named variable
 		//do NOT re-fix the anchor residues
 		return;
 	}
 
-	for (core::Size i = anchor_->start(); i <= anchor_->end(); ++i){
+	for ( core::Size i = anchor_->start(); i <= anchor_->end(); ++i ) {
 		movemap->set_bb(i, false); //fix the backbones
 		movemap->set_chi(i, false); // and the chi
 	}
 
 	using namespace core::id;
- 	movemap->set( TorsionID(anchor_->start(), BB, phi_torsion), true);
- 	movemap->set( TorsionID(anchor_->end(), BB, psi_torsion), true);
- 	const bool omega(movemap->get(TorsionID(anchor_->end()+1, BB, omega_torsion)));//are omegas free in this mm?
- 	movemap->set( TorsionID(anchor_->end(), BB, omega_torsion), omega);
+	movemap->set( TorsionID(anchor_->start(), BB, phi_torsion), true);
+	movemap->set( TorsionID(anchor_->end(), BB, psi_torsion), true);
+	const bool omega(movemap->get(TorsionID(anchor_->end()+1, BB, omega_torsion)));//are omegas free in this mm?
+	movemap->set( TorsionID(anchor_->end(), BB, omega_torsion), omega);
 
 	movemap->set_jump(false); //perhaps this call should be in set_movemap()?
 }
@@ -574,7 +574,7 @@ void protocols::anchored_design::AnchorMoversData::set_unset_scorefunctions()
 	fullatom_scorefunction_->set_weight( chainbreak, chainbreak_weight_ );
 	core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn( *fullatom_scorefunction_ ); //protected if(option) internally
 	TR << "Using default fullatom scorefunction (TALARIS_2013 plus chainbreak @ a lot)\n"
-			 << *fullatom_scorefunction_ << std::flush;
+		<< *fullatom_scorefunction_ << std::flush;
 
 	return;
 }
@@ -588,9 +588,9 @@ void protocols::anchored_design::AnchorMoversData::set_unset_packertask_factory(
 	//set up interface-plus-neighbors-positions operation
 	core::Size const numloop = num_loops();
 	std::set< core::Size > loop_posns;
-	for (core::Size i = 1; i <= numloop; ++i){
+	for ( core::Size i = 1; i <= numloop; ++i ) {
 		core::Size loopstart(loop(i).start()), loopend(loop(i).stop());
-		for (core::Size j = loopstart; j <= loopend; ++j){
+		for ( core::Size j = loopstart; j <= loopend; ++j ) {
 			loop_posns.insert(j);
 		}//for each residue in loop
 	}//for each loop
@@ -599,14 +599,14 @@ void protocols::anchored_design::AnchorMoversData::set_unset_packertask_factory(
 	//std::string const neighborhood_calc("AnchoredDesign_NeighborhoodByDistanceCalculator");
 	//NOTE that these calculators ASSUME your interface is between chains 1 and 2, because most of the rest of AnchoredDesign carries the same assumption
 
-	if( core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( interface_calc_ ) ){
+	if ( core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( interface_calc_ ) ) {
 		Warning() << "In AnchoredDesign, calculator " << interface_calc_ << " already exists.  "
-							<< "Given the two-chain restriction, this is hopefully correct for your purposes" << std::endl;
+			<< "Given the two-chain restriction, this is hopefully correct for your purposes" << std::endl;
 	} else {
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc_, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(2) ) ) );
 	}
 
-	if( core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( neighborhood_calc_ ) ){
+	if ( core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( neighborhood_calc_ ) ) {
 		Warning() << "In AnchoredDesign, calculator " << neighborhood_calc_ << " already exists.  If you have multiple instances of AnchoredDesign with different loops coexisting in the same program, this is going to cause problems, because you will have the wrong loop definitions for determining what residues to pack" << std::endl;
 	} else {
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc_, PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_posns ) ) );
@@ -625,9 +625,9 @@ void protocols::anchored_design::AnchorMoversData::set_unset_packertask_factory(
 
 	//operation to protect anchor
 	operation::PreventRepackingOP prop( new operation::PreventRepacking );
-	if (!allow_anchor_repack_ && !get_super_secret_fixed_interface_mode()){
+	if ( !allow_anchor_repack_ && !get_super_secret_fixed_interface_mode() ) {
 		TR << "autogenerated TaskFactory will prevent repacking for anchor" << std::endl;
-		for( core::Size i(anchor_->start()); i<= anchor_->end(); ++i){
+		for ( core::Size i(anchor_->start()); i<= anchor_->end(); ++i ) {
 			prop->include_residue(i);
 		}
 	}
@@ -642,9 +642,9 @@ void protocols::anchored_design::AnchorMoversData::set_unset_packertask_factory(
 	}
 	task_factory_->push_back( initop );
 	task_factory_->push_back( rbcop );
-	if(!allow_anchor_repack_) task_factory_->push_back( prop );
+	if ( !allow_anchor_repack_ ) task_factory_->push_back( prop );
 	TR << "Using default TaskFactory.  Inits from command line and second resfile, then restricts "
-		 << "to the loop/interface area" << std::endl;
+		<< "to the loop/interface area" << std::endl;
 
 	//'late' factory
 	if ( (resfile_2_ != EMPTY_STRING) ) {
@@ -655,12 +655,11 @@ void protocols::anchored_design::AnchorMoversData::set_unset_packertask_factory(
 
 		late_factory_->push_back( initop );
 		late_factory_->push_back( rbcop );
-		if(!allow_anchor_repack_) late_factory_->push_back( prop );
+		if ( !allow_anchor_repack_ ) late_factory_->push_back( prop );
 
 		TR << "Using default late TaskFactory.  Inits from command line and second resfile, then restricts "
-			 << "to the loop/interface area" << std::endl;
-	}
-	else {
+			<< "to the loop/interface area" << std::endl;
+	} else {
 		late_factory_ = task_factory_;
 		TR << "Not using separate late TaskFactory." << std::endl;
 	}
@@ -679,10 +678,10 @@ core::fragment::FragSetCOP protocols::anchored_design::AnchorMoversData::autogen
 
 	core::Size const numloop = num_loops();
 	//std::set< core::Size > loop_posns;
-	for (core::Size i = 1; i <= numloop; ++i){
+	for ( core::Size i = 1; i <= numloop; ++i ) {
 		core::Size loopstart(loop(i).start()), loopend(loop(i).stop());
-		for (core::Size j = loopstart; j <= loopend - frags_length+1; ++j){
-			if( !( (j >anchor_->start() - frags_length) && (j <= anchor_->end()) ) ){
+		for ( core::Size j = loopstart; j <= loopend - frags_length+1; ++j ) {
+			if ( !( (j >anchor_->start() - frags_length) && (j <= anchor_->end()) ) ) {
 				TR << "adding frame, start at " << j << " go for " << frags_length << " to " << j+frags_length << std::endl;
 				core::fragment::FrameOP frame;
 				frame = core::fragment::FrameOP( new core::fragment::Frame( j ) );
@@ -711,10 +710,10 @@ core::fragment::FragSetCOP protocols::anchored_design::AnchorMoversData::autogen
 
 	core::Size const numloop = num_loops();
 	//std::set< core::Size > loop_posns;
-	for (core::Size i = 1; i <= numloop; ++i){
+	for ( core::Size i = 1; i <= numloop; ++i ) {
 		core::Size loopstart(loop(i).start()), loopend(loop(i).stop());
-		for (core::Size j = loopstart; j <= loopend - frags_length+1; ++j){
-			if( !( (j >anchor_->start() - frags_length) && (j <= anchor_->end()) ) ){
+		for ( core::Size j = loopstart; j <= loopend - frags_length+1; ++j ) {
+			if ( !( (j >anchor_->start() - frags_length) && (j <= anchor_->end()) ) ) {
 				std::string const seqsubstr(seq, j-1, frags_length);
 				TR << "adding frame, start at " << j << " go for " << frags_length << " to " << j+frags_length << " seq " << seqsubstr << std::endl;
 				list =  core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa( ss_string, seqsubstr, 200, false ); //magic number: 200 fragments per position (not duplicated - this will be like robetta server fragments)
@@ -742,16 +741,16 @@ void protocols::anchored_design::AnchorMoversData::autogenerate_frags( core::pos
 	core::fragment::ConstantLengthFragSetOP fragset3mer;
 	bool const frags_file( !(frag3_ == EMPTY_STRING) );//basic::options::option[ basic::options::OptionKeys::in::file::frag3].user() );
 	//bool const no_frags( basic::options::option[ basic::options::OptionKeys::AnchoredDesign::no_frags ].value() );
-	if( frags_file && no_frags_ ){
+	if ( frags_file && no_frags_ ) {
 		utility_exit_with_message("you've specified a fragments file and requested no_frags - please choose only one");
-	}	else if ( frags_file ){
+	} else if ( frags_file ) {
 		TR << "reading from fragments file " << frag3_ << std::endl;
 		fragset3mer = core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( 3 ) );
 		fragset3mer->read_fragment_file( frag3_ );//basic::options::option[ basic::options::OptionKeys::in::file::frag3].value() );
 		set_frags( fragset3mer );
-	} else if ( !no_frags_ ){
+	} else if ( !no_frags_ ) {
 		//strange logic: are we designing or not?  To determine, we must run a TaskFactory to get a Task and ask it!
-		if(get_task_factory()->create_task_and_apply_taskoperations(pose)->design_any()) {
+		if ( get_task_factory()->create_task_and_apply_taskoperations(pose)->design_any() ) {
 			TR << "creating sequence-generic loop fragments (LLLLL...)" << std::endl;
 			autogenerate_design_frags();
 		} else {
@@ -826,7 +825,7 @@ void protocols::anchored_design::AnchorMoversData::read_options() {
 	using namespace basic::options::OptionKeys::AnchoredDesign;
 
 	//core::Size akash_dyepos_;
-	if(option[akash::dyepos].user()) {
+	if ( option[akash::dyepos].user() ) {
 		akash_dyepos_ =  option[akash::dyepos].value();
 	} else {
 		akash_dyepos_ = 0;
@@ -848,26 +847,26 @@ void protocols::anchored_design::AnchorMoversData::read_options() {
 	allow_anchor_repack_ = option[allow_anchor_repack].value();
 
 	//std::string resfile_1_;
-	if(option[OptionKeys::packing::resfile].user()) {
+	if ( option[OptionKeys::packing::resfile].user() ) {
 		resfile_1_ = option[OptionKeys::packing::resfile].value().at(1);
 	} else {
 		resfile_1_ = EMPTY_STRING; //empty string flag for don't use resfile
- 	}
+	}
 
 	//std::string resfile_2_;
-	if(option[OptionKeys::packing::resfile].user() && (option[ OptionKeys::packing::resfile ].value().size() > 1)) {
+	if ( option[OptionKeys::packing::resfile].user() && (option[ OptionKeys::packing::resfile ].value().size() > 1) ) {
 		resfile_2_ = option[OptionKeys::packing::resfile].value().at(2);
 	} else {
 		resfile_2_ = EMPTY_STRING; //empty string flag for don't use resfile
- 	}
+	}
 
 	//std::string loop_file_;
-	if(option[OptionKeys::loops::loop_file].user()) {
+	if ( option[OptionKeys::loops::loop_file].user() ) {
 		loop_file_ = option[OptionKeys::loops::loop_file].value().at(1);
 	}
 
 	//std::string frag3_;
-	if(option[OptionKeys::in::file::frag3].user()) {
+	if ( option[OptionKeys::in::file::frag3].user() ) {
 		frag3_ = option[OptionKeys::in::file::frag3].value();
 	}
 
@@ -891,8 +890,9 @@ std::string const & protocols::anchored_design::AnchorMoversData::interface_calc
 void protocols::anchored_design::AnchorMoversData::anchor_noise_constraints_setup( core::pose::Pose & pose )
 {
 	//exclusion condition: can't use this mode with multi-residue anchor
-	if(anchor_start() != anchor_end())
+	if ( anchor_start() != anchor_end() ) {
 		utility_exit_with_message("You can only use one-residue anchors with anchor_noise_constraints_mode");
+	}
 
 	//Calculate CA-CA distances between anchor residue and all other atoms
 	core::Size const anchor(anchor_start());
@@ -902,8 +902,9 @@ void protocols::anchored_design::AnchorMoversData::anchor_noise_constraints_setu
 
 	//we'll need to know which is the opposite chain (we are assuming there is only one)
 	core::Size const chain1end(pose.conformation().chain_end(1));
-	if( pose.conformation().num_chains() != 2 ) //2 is the value we expect
+	if ( pose.conformation().num_chains() != 2 ) { //2 is the value we expect
 		utility_exit_with_message("cannot use anchor_noise_constraints_mode with more than two chains");
+	}
 	core::Size const oppchain( anchor > chain1end ? 1 : 2);
 
 	//Data object type to hold resid, distance pairs
@@ -911,7 +912,7 @@ void protocols::anchored_design::AnchorMoversData::anchor_noise_constraints_setu
 	std::set< dist_resid > distances;
 
 	//loop to generate distances
-	for(core::Size i(pose.conformation().chain_begin(oppchain)), end(pose.conformation().chain_end(oppchain)); i<=end; ++i){
+	for ( core::Size i(pose.conformation().chain_begin(oppchain)), end(pose.conformation().chain_end(oppchain)); i<=end; ++i ) {
 		//if the friend function version of distance worked, I bet I could fit this all on one line of code
 		core::id::AtomID const target_atomID(CA, i);
 		distances.insert(std::make_pair( anchor_xyz.distance(pose.xyz(target_atomID)), target_atomID) );
@@ -921,7 +922,7 @@ void protocols::anchored_design::AnchorMoversData::anchor_noise_constraints_setu
 	core::Size const this_many_constraints(4);
 	core::Real const sd(sqrt(0.5));
 	std::set< dist_resid >::const_iterator opp_CA(distances.begin());
-	for(core::Size i(1); i<=this_many_constraints; ++i, ++opp_CA){
+	for ( core::Size i(1); i<=this_many_constraints; ++i, ++opp_CA ) {
 		using namespace core::scoring::constraints;
 
 		core::scoring::func::HarmonicFuncOP anchor_func( new core::scoring::func::HarmonicFunc(opp_CA->first, sd) );
@@ -944,7 +945,7 @@ void protocols::anchored_design::AnchorMoversData::anchor_noise_constraints_setu
 	movemap_fa_all_->set_jump(1, true);
 	movemap_cen_all_->set_jump(1, true);
 	core::Size const numloop = num_loops();
-	for (core::Size i = 1; i <= numloop; ++i){
+	for ( core::Size i = 1; i <= numloop; ++i ) {
 		movemap_fa(i)->set_jump(1, true);
 		movemap_fa_omegafixed(i)->set_jump(1, true);
 		movemap_cen(i)->set_jump(1, true);

@@ -168,9 +168,9 @@ public:
 
 	rna::RNA_LowResolutionPotential const & get_RNA_LowResolutionPotential() const;
 
-	//	rna::RNA_TorsionPotential const & get_RNA_TorsionPotential() const;
+	// rna::RNA_TorsionPotential const & get_RNA_TorsionPotential() const;
 
-	//	rna::RNA_SuitePotential const & get_RNA_SuitePotential( bool const calculate_suiteness_bonus = false ) const;
+	// rna::RNA_SuitePotential const & get_RNA_SuitePotential( bool const calculate_suiteness_bonus = false ) const;
 
 	rna::chemical_shift::RNA_ChemicalShiftPotential const & get_RNA_ChemicalShiftPotential() const;
 
@@ -301,9 +301,9 @@ private:
 	mutable dna::DNA_BasePotentialOP DNA_base_potential_;
 	mutable carbon_hbonds::CarbonHBondPotentialOP carbon_hbond_potential_;
 	mutable rna::RNA_LowResolutionPotentialOP rna_low_resolution_potential_;
-	//	mutable rna::RNA_TorsionPotentialOP rna_torsion_potential_;
-	//	mutable rna::RNA_SuitePotentialOP rna_suite_potential_;
-	//	mutable rna::RNA_SuitePotentialOP rna_suite_potential_for_suiteness_bonus_;
+	// mutable rna::RNA_TorsionPotentialOP rna_torsion_potential_;
+	// mutable rna::RNA_SuitePotentialOP rna_suite_potential_;
+	// mutable rna::RNA_SuitePotentialOP rna_suite_potential_for_suiteness_bonus_;
 	mutable rna::chemical_shift::RNA_ChemicalShiftPotentialOP rna_chemical_shift_potential_;
 	mutable rna::data::RNA_DMS_PotentialOP rna_dms_potential_;
 	mutable rna::data::RNA_DMS_LowResolutionPotentialOP rna_dms_low_resolution_potential_;

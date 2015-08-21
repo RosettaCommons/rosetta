@@ -176,15 +176,15 @@ void
 MonteCarlo::show_state() const
 {
 	TR << "MC: " << temperature_
-	    << "  " << (*score_function_)(*last_accepted_pose_)
-	    << "  " << (*score_function_)(*lowest_score_pose_)
-			<< "  " << last_accepted_score()
-			<< "  " << lowest_score()
-	    << "  " << last_accept_
-	    << "  " << autotemp_
-	    << "  " << quench_temp_
-		  << "  " << to_string( mc_accepted_ )
-	    << std::endl;
+		<< "  " << (*score_function_)(*last_accepted_pose_)
+		<< "  " << (*score_function_)(*lowest_score_pose_)
+		<< "  " << last_accepted_score()
+		<< "  " << lowest_score()
+		<< "  " << last_accept_
+		<< "  " << autotemp_
+		<< "  " << quench_temp_
+		<< "  " << to_string( mc_accepted_ )
+		<< std::endl;
 	show_counters();
 }
 
@@ -240,7 +240,7 @@ MonteCarlo::score_function( ScoreFunction const & scorefxn )
 		copy_pose.energies().clear();
 		TR << "score copy" << std::endl;
 		Real const copy_score = (*score_function_)( copy_pose );
-		if ( std::abs( copy_score - lowest_score_ ) > 1E-6) {
+		if ( std::abs( copy_score - lowest_score_ ) > 1E-6 ) {
 			TR << "Score discrepancy.  lowest_score: " << lowest_score_ << " vs copy score: " << copy_score << std::endl;
 			TR << "pose score: ";
 			lowest_score_pose_->energies().total_energies().show_if_nonzero_weight( TR , score_function_->weights() );
@@ -273,7 +273,7 @@ MonteCarlo::score_function( ScoreFunction const & scorefxn )
 		copy_pose.energies().clear();
 		TR << "score copy" << std::endl;
 		Real const copy_score = (*score_function_)( copy_pose );
-		if ( std::abs( copy_score - last_accepted_score_ ) > 1E-6) {
+		if ( std::abs( copy_score - last_accepted_score_ ) > 1E-6 ) {
 			TR << "Score discrepancy.  last_accepted_score: " << last_accepted_score_ << " vs copy score: " << copy_score << std::endl;
 			TR << "pose score: ";
 			last_accepted_pose_->energies().total_energies().show_if_nonzero_weight( TR, score_function_->weights() );
@@ -314,11 +314,11 @@ MonteCarlo::score_function( ScoreFunction const & scorefxn )
 //
 // return true for an accept, false otherwise
 //
-// 	mc_accepted
-// 		3 = accepted:score beat low score and last_accepted score
-// 		2 = accepted:score beat last_accepted score
-// 		1 = thermally accepted: score worse than last_accepted score
-// 		0 = not accepted
+//  mc_accepted
+//   3 = accepted:score beat low score and last_accepted score
+//   2 = accepted:score beat last_accepted score
+//   1 = thermally accepted: score worse than last_accepted score
+//   0 = not accepted
 //
 // Optional inputs:
 //
@@ -344,10 +344,11 @@ MonteCarlo::boltzmann(
 )
 {
 
-// Work around a current bug in the pose observer classes..
+	// Work around a current bug in the pose observer classes..
 #ifdef BOINC_GRAPHICS
-	  if( update_boinc_ )
+	if ( update_boinc_ ) {
 		boinc::Boinc::update_graphics_current( pose );
+	}
 #endif
 
 	// score the pose:
@@ -368,13 +369,14 @@ MonteCarlo::boltzmann(
 
 	// print out the scores for each decoy to cmd out, if you pass a flag
 	// nice for testing
-	if ( basic::options::option[ basic::options::OptionKeys::mc::log_scores_in_MC ].user() && basic::options::option[ basic::options::OptionKeys::mc::log_scores_in_MC ]() == true ){
+	if ( basic::options::option[ basic::options::OptionKeys::mc::log_scores_in_MC ].user() && basic::options::option[ basic::options::OptionKeys::mc::log_scores_in_MC ]() == true ) {
 		score_function_->show( pose );
 	}
 
 #ifdef BOINC_GRAPHICS
-	if( update_boinc_ )
+	if ( update_boinc_ ) {
 		boinc::Boinc::update_graphics_last_accepted( pose, last_accepted_score() );
+	}
 #endif
 
 	if ( mc_accepted_ == MCA_accepted_score_beat_low ) {
@@ -382,8 +384,9 @@ MonteCarlo::boltzmann(
 		evaluate_convergence_checks( pose, false /*not reject*/, false /*not final*/ );
 
 #ifdef BOINC_GRAPHICS
-		if( update_boinc_ )
+		if ( update_boinc_ ) {
 			boinc::Boinc::update_graphics_low_energy( pose, lowest_score() );
+		}
 #endif
 
 	} //MCA_accepted_score_beat_low
@@ -409,8 +412,9 @@ MonteCarlo::boltzmann(
 	counter_->count_trial( move_type );
 
 #ifdef BOINC_GRAPHICS
-	if( update_boinc_ )
+	if ( update_boinc_ ) {
 		boinc::Boinc::update_mc_trial_info( counter_->trial( move_type ), move_type );
+	}
 #endif
 
 	Real const score_delta( score - last_accepted_score_ );
@@ -503,10 +507,9 @@ MonteCarlo::eval_lowest_score_pose(
 {
 	//Get or calculate energy
 	Real score;
-	if (score_pose){
+	if ( score_pose ) {
 		score = (*score_function_)(pose);
-	}
-	else{
+	} else {
 		score =  pose.energies().total_energy();
 	}
 
@@ -515,7 +518,7 @@ MonteCarlo::eval_lowest_score_pose(
 	if ( score < lowest_score() ) {
 		*lowest_score_pose_ = pose;
 		lowest_score_ = score;
-		if (update_stats){
+		if ( update_stats ) {
 			counter_->count_accepted( move_type );
 			counter_->count_energy_drop( move_type, score - last_accepted_score() );
 			last_accepted_score_ = score;
@@ -525,9 +528,8 @@ MonteCarlo::eval_lowest_score_pose(
 		}
 
 		return true;
-	}
-	else{
-		if (update_stats){
+	} else {
+		if ( update_stats ) {
 			mc_accepted_ = MCA_rejected; // rejected
 		}
 		return false;
@@ -544,7 +546,7 @@ Real
 MonteCarlo::last_accepted_score() const
 {
 	//if (last_accepted_pose_->energies().total_energy() != last_accepted_score_) {
-	//	TR << "Last: " << last_accepted_pose_->energies().total_energy() << " != " << last_accepted_score_ << " diff " << last_accepted_pose_->energies().total_energy() - last_accepted_score_ << std::endl;
+	// TR << "Last: " << last_accepted_pose_->energies().total_energy() << " != " << last_accepted_score_ << " diff " << last_accepted_pose_->energies().total_energy() - last_accepted_score_ << std::endl;
 	//}
 	//return last_accepted_pose_->energies().total_energy();
 	return last_accepted_score_;
@@ -555,7 +557,7 @@ Real
 MonteCarlo::lowest_score() const
 {
 	//if (lowest_score_pose_->energies().total_energy() != lowest_score_) {
-	//	TR << "Low: " << lowest_score_pose_->energies().total_energy() << " != " << lowest_score_ << " diff " << lowest_score_pose_->energies().total_energy() - lowest_score_ << std::endl;
+	// TR << "Low: " << lowest_score_pose_->energies().total_energy() << " != " << lowest_score_ << " diff " << lowest_score_pose_->energies().total_energy() - lowest_score_ << std::endl;
 	//}
 	//return lowest_score_pose_->energies().total_energy();
 	return lowest_score_;
@@ -582,7 +584,7 @@ MonteCarlo::mc_accepted_string() const
 void
 MonteCarlo::autotemp_reject()
 {
-	//	int const heat_after_cycles( 150 );
+	// int const heat_after_cycles( 150 );
 	Real const heat_delta( quench_temp_ * 0.5 );
 	Real const max_temperature( quench_temp_ * 10.0 );
 

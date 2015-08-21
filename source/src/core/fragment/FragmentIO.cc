@@ -140,7 +140,7 @@ void FragmentIO::read_frag_data( std::istream& data, std::string& next_line, Fra
 		line_stream >> pos >> pdb_pos >> pdb_id >> tag;
 		if ( line_stream.fail() ) break; //e.g., we have a line that starts with a tag
 
-		//	bIgnoreFragments if we have already top_ -- but don't forget to eat all lines until next "FRAME"
+		// bIgnoreFragments if we have already top_ -- but don't forget to eat all lines until next "FRAME"
 		if ( top_ && (*new_frames.begin())->nr_frags() >= top_ * ncopies_ ) continue;
 
 		if ( !current_fragment ) {
@@ -164,7 +164,7 @@ void FragmentIO::read_frag_data( std::istream& data, std::string& next_line, Fra
 			current_fragment->set_valid();
 			tr.Trace << "read FragData" << std::endl << *current_fragment << std::endl;
 			for ( FrameList::iterator frame = new_frames.begin(), eframe = new_frames.end();
-						frame != eframe; ++frame ) {
+					frame != eframe; ++frame ) {
 
 				//jump out if top_ fragments have been read
 				if ( !(*frame)->add_fragment( current_fragment ) ) {
@@ -191,7 +191,7 @@ void FragmentIO::read_frag_data( std::istream& data, std::string& next_line, Fra
 
 void FragmentIO::read_data( std::istream& data, FrameList& all_frames ) {
 	tr.Info << " read fragments options: top = " << top_ << " copies: " << ncopies_
-					<< " annotate: " << ( bAnnotate_ ? "yes" : "no" ) << std::endl;
+		<< " annotate: " << ( bAnnotate_ ? "yes" : "no" ) << std::endl;
 
 	std::string next_line;
 	while ( data.good() ) {
@@ -206,7 +206,7 @@ void FragmentIO::read_data( std::istream& data, FrameList& all_frames ) {
 		if ( data.fail() ) break;
 
 		for ( FrameList::iterator frame = new_frames.begin(), eframe = new_frames.end();
-					frame != eframe; ++frame ) {
+				frame != eframe; ++frame ) {
 			if ( (*frame)->nr_frags() ) {
 				all_frames.push_back( *frame );
 			}
@@ -228,8 +228,9 @@ FragSetOP FragmentIO::read_data( std::string const& filename ) {
 
 		// format check...
 		utility::io::izstream data( filename );
-		if ( !data.good() )
+		if ( !data.good() ) {
 			utility_exit_with_message("ERROR: FragmentIO: could not open file " + filename );
+		}
 
 		tr.Info << "reading fragments from file: " << filename << " ... " << std::endl;
 		getline( data, line );
@@ -238,7 +239,7 @@ FragSetOP FragmentIO::read_data( std::string const& filename ) {
 		str >> tag;
 		if ( tag == "position:" ) {
 			tr.Info << "rosetta++ fileformat detected! Calling legacy reader... "
-							<< std::endl;
+				<< std::endl;
 
 			ConstantLengthFragSetOP frags( new ConstantLengthFragSet );
 			frags->read_fragment_file( filename, top_, ncopies_, bAnnotate_ );
@@ -264,10 +265,10 @@ void FragmentIO::clean_frag_cache() {
 	/// Commenting out for now.
 	/*
 	for ( FragFileCache::iterator it = frag_cache_.begin(); it != frag_cache_.end();  ) {
-		if ( it->second->ref_count() == 1 ) {
-			tr.Info << "GARBAGE COLLECTION: remove " << it->first << " from frag_cache " << std::endl;
-			frag_cache_.erase( it++ ); //doesn't return iterator ... help with post-fix iterator
-		} else ++it;
+	if ( it->second->ref_count() == 1 ) {
+	tr.Info << "GARBAGE COLLECTION: remove " << it->first << " from frag_cache " << std::endl;
+	frag_cache_.erase( it++ ); //doesn't return iterator ... help with post-fix iterator
+	} else ++it;
 	}
 	*/
 }

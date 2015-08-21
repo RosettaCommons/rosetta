@@ -34,7 +34,7 @@ class SurfaceParameters: public utility::pointer::ReferenceCount  {
 public:
 
 	SurfaceParameters( numeric::xyzVector< core::Real > SURFA0,
-			numeric::xyzVector< core::Real > SURFA1, numeric::xyzVector< core::Real > SURFA2);
+		numeric::xyzVector< core::Real > SURFA1, numeric::xyzVector< core::Real > SURFA2);
 
 	SurfaceParameters( SurfaceParameters const & src );
 
@@ -46,17 +46,17 @@ public:
 	{
 		return slide_axis_;
 	}
-	
+
 	core::Vector vecAB()
 	{
 		return vecAB_;
 	}
-	
+
 	core::Vector vecAC()
 	{
 		return vecAC_;
 	}
-	
+
 	void set_slide_axis(core::Vector slide_axis_in)
 	{
 		slide_axis_ = slide_axis_in;

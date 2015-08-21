@@ -54,7 +54,7 @@
 
 
 #ifdef WIN32
-	#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.hh>
 #endif
 
 
@@ -90,7 +90,7 @@ void RmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval 
 			core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() );
 		}
 
-    typedef utility::vector1< std::string > RmsdVector;
+		typedef utility::vector1< std::string > RmsdVector;
 		RmsdVector const& rmsd( option[ OptionKeys::evaluation::rmsd ]() );
 
 		//the ultimate in RMSD technology:
@@ -119,21 +119,21 @@ void RmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval 
 				if ( key=="heavy" && value=="yes" ) {
 					tr.Info << "switching to full-atom RMSD " << std::endl;
 					CA=false;
-				} else if ( key == "loop") {
+				} else if ( key == "loop" ) {
 					loop_rms = true;
-				} else if ( key == "superimpose") {
+				} else if ( key == "superimpose" ) {
 					superimpose_for_looprms = (value=="yes");
 				} else if ( key == "core" ) {
 					std::ifstream is( value.c_str() );
-					
-					if (!is.good()) {
+
+					if ( !is.good() ) {
 						utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + value + "'" );
 					}
 					loops::PoseNumberedLoopFileReader reader;
 					reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
 					loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file(is, value, false );
 					core = loops::Loops( loops );
-			} else {
+				} else {
 					utility_exit_with_message( "key not recognized: "+key+" possible keys: { heavy }" );
 				}
 				tr.Info << "detected option: " << key << " : " << value << std::endl;
@@ -143,14 +143,14 @@ void RmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval 
 				column = *it;
 			} else {
 				utility_exit_with_message(
-							 "need to specify tripletts <target> [key/value pairs] <column> <selection/FULL> with option -evaluation:rmsd   last read: "+fname );
+					"need to specify tripletts <target> [key/value pairs] <column> <selection/FULL> with option -evaluation:rmsd   last read: "+fname );
 			}
 			++it;
 			if ( it != rmsd.end() ) {
 				selection_file = *it;
 			} else {
 				utility_exit_with_message(
-							 "need to specify tripletts <target> <column> <selection/FULL> with option -evaluation:rmsd   last read: "+column );
+					"need to specify tripletts <target> <column> <selection/FULL> with option -evaluation:rmsd   last read: "+column );
 			}
 			if ( fname == "NATIVE" ) target_pose = native_pose;
 			else if ( fname != "IRMS" ) {
@@ -179,7 +179,7 @@ void RmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval 
 					utility_exit_with_message(
 						"need to find END_INLINE after INLINE in option -evaluation:rmsd    last read: "+column );
 				} //error condition
-				while( next_tag != "END_INLINE" ) {
+				while ( next_tag != "END_INLINE" ) {
 					selection.push_back( utility::string2int( next_tag ) );
 					++it;
 					if ( it != rmsd.end() ) {
@@ -191,8 +191,8 @@ void RmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval 
 				}
 			} else if ( selection_file != "FULL" ) {
 				std::ifstream is( selection_file.c_str() );
-				
-				if (!is.good()) {
+
+				if ( !is.good() ) {
 					utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + selection_file + "'" );
 				}
 				loops::SerializedLoopList list_of_loops;
@@ -210,14 +210,14 @@ void RmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval 
 			}
 			if ( invert ) {
 				utility::vector1< Size > inverted_selection;
-				for ( Size i = 1; i<=target_pose->total_residue(); ++i) {
+				for ( Size i = 1; i<=target_pose->total_residue(); ++i ) {
 					bool found( false );
 					for ( Size j = 1; j<=selection.size() && !found; ++j ) {
 						if ( selection[ j ]==i ) {
 							found = true;
 						}
 					}
-					if ( !found) inverted_selection.push_back( i );
+					if ( !found ) inverted_selection.push_back( i );
 				}
 				selection = inverted_selection;
 			}

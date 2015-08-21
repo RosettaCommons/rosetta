@@ -27,7 +27,7 @@ namespace splice {
 class AlignEndsMover : public protocols::moves::Mover {
 public:
 	AlignEndsMover();
-    ~AlignEndsMover();
+	~AlignEndsMover();
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
@@ -42,46 +42,46 @@ public:
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose );
 
-		core::Real distance_threshold() const{ return distance_threshold_; }
-		void distance_threshold( core::Real const r ){ distance_threshold_ = r;}
+	core::Real distance_threshold() const{ return distance_threshold_; }
+	void distance_threshold( core::Real const r ){ distance_threshold_ = r;}
 
-		core::Size neighbors() const{ return neighbors_; }
-		void neighbors( core::Size n ){ neighbors_ = n; }
+	core::Size neighbors() const{ return neighbors_; }
+	void neighbors( core::Size n ){ neighbors_ = n; }
 
-		core::Size N_terminal_count() const{ return N_terminal_count_; }
-		void N_terminal_count( core::Size n ){ N_terminal_count_ = n; }
+	core::Size N_terminal_count() const{ return N_terminal_count_; }
+	void N_terminal_count( core::Size n ){ N_terminal_count_ = n; }
 
-		bool odd() const{ return odd_; }
-		void odd( bool const b ) { odd_ = b; }
+	bool odd() const{ return odd_; }
+	void odd( bool const b ) { odd_ = b; }
 
-		bool even() const{ return even_; }
-		void even( bool const b ) { even_ = b; }
+	bool even() const{ return even_; }
+	void even( bool const b ) { even_ = b; }
 
-		core::pose::PoseOP template_pose() const;
-		void template_pose( core::pose::PoseOP p );
+	core::pose::PoseOP template_pose() const;
+	void template_pose( core::pose::PoseOP p );
 
-		core::Size stagger() const{ return stagger_; }
-		void stagger( core::Size const s ){ stagger_ = s; }
+	core::Size stagger() const{ return stagger_; }
+	void stagger( core::Size const s ){ stagger_ = s; }
 
-		core::Size strand_length() const{ return strand_length_; }
-		void strand_length( core::Size const s ){ strand_length_ = s; }
+	core::Size strand_length() const{ return strand_length_; }
+	void strand_length( core::Size const s ){ strand_length_ = s; }
 
-		core::Size max_strands() const{ return max_strands_; }// how many strands to consider (if I see more than this number of strands, I ignore them
-		void max_strands( core::Size const m ){ max_strands_ = m; }
+	core::Size max_strands() const{ return max_strands_; }// how many strands to consider (if I see more than this number of strands, I ignore them
+	void max_strands( core::Size const m ){ max_strands_ = m; }
 
-		bool parallel() const{ return parallel_; }
-		void parallel( bool const p ){ parallel_ = p; }
+	bool parallel() const{ return parallel_; }
+	void parallel( bool const p ){ parallel_ = p; }
 
-		void chain( core::Size const c ){ chain_ = c;}
-		core::Size chain() const{ return chain_ ; }
+	void chain( core::Size const c ){ chain_ = c;}
+	core::Size chain() const{ return chain_ ; }
 
-		void sequence_separation( core::Size const c ){ sequence_separation_ = c;}
-		core::Size sequence_separation() const{ return sequence_separation_; }
+	void sequence_separation( core::Size const c ){ sequence_separation_ = c;}
+	core::Size sequence_separation() const{ return sequence_separation_; }
 
-		void residues_to_align_on_pose( utility::vector1< core::Size > r ){ residues_to_align_on_pose_ = r; }
-		void residues_to_align_on_template( utility::vector1< core::Size > r ){ residues_to_align_on_template_ = r; }
+	void residues_to_align_on_pose( utility::vector1< core::Size > r ){ residues_to_align_on_pose_ = r; }
+	void residues_to_align_on_template( utility::vector1< core::Size > r ){ residues_to_align_on_template_ = r; }
 private:
-  utility::vector1< core::Size > reference_positions( core::pose::Pose const & p ) const;
+	utility::vector1< core::Size > reference_positions( core::pose::Pose const & p ) const;
 	core::Real distance_threshold_; // dflt 16;
 	core::Size strand_length_, neighbors_, N_terminal_count_, max_strands_; //dflt 3, 6, 3, 10. Strand length: min number of contiguous residues in 'E' to count as a strand; neighbors: how many neighbors at distance_threshold does each N-terminal residue need to have to count in barrle; N-terminal count: How many residues should be aligned from each strand; max_strands: how many strands to align (specify 100000 to align all).
 	bool odd_, even_; // dflt true, true; align even or odd (or both) strands

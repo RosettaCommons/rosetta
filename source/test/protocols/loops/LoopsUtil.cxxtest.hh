@@ -110,40 +110,41 @@ using protocols::loops::Loops;
 class LoopsUtilTest : public CxxTest::TestSuite {
 
 private:
-  bool equal_torsions(const Pose& p1, const Pose& p2) {
-    if (p1.total_residue() != p2.total_residue())
-      return false;
+	bool equal_torsions(const Pose& p1, const Pose& p2) {
+		if ( p1.total_residue() != p2.total_residue() ) {
+			return false;
+		}
 
-    for (Size i = 1; i <= p1.total_residue(); ++i) {
-      if (p1.phi(i) != p2.phi(i)) {
-        return false;
-      } else if (p1.psi(i) != p2.psi(i)) {
-        return false;
-      } else if (p1.omega(i) != p2.omega(i)) {
-        return false;
-      }
-    }
+		for ( Size i = 1; i <= p1.total_residue(); ++i ) {
+			if ( p1.phi(i) != p2.phi(i) ) {
+				return false;
+			} else if ( p1.psi(i) != p2.psi(i) ) {
+				return false;
+			} else if ( p1.omega(i) != p2.omega(i) ) {
+				return false;
+			}
+		}
 
-    return true;
-  }
+		return true;
+	}
 
 public:
-  void setUp() {
-    protocols_init();
-  }
+	void setUp() {
+		protocols_init();
+	}
 
-  void testSafeExtendLoopsAndIdealize() {
-    PoseOP pose = core::import_pose::pose_from_pdb("protocols/loops/2GB3.pdb");
-    Pose other = *pose;
+	void testSafeExtendLoopsAndIdealize() {
+		PoseOP pose = core::import_pose::pose_from_pdb("protocols/loops/2GB3.pdb");
+		Pose other = *pose;
 
-    Loops loops;
-    protocols::loops::safe_set_extended_torsions_and_idealize_loops(loops, &other);
-    TS_ASSERT(equal_torsions(*pose, other));
+		Loops loops;
+		protocols::loops::safe_set_extended_torsions_and_idealize_loops(loops, &other);
+		TS_ASSERT(equal_torsions(*pose, other));
 
-    loops.push_back(Loop(1,5));
-    protocols::loops::safe_set_extended_torsions_and_idealize_loops(loops, &other);
-    TS_ASSERT(!equal_torsions(*pose, other));
-  }
+		loops.push_back(Loop(1,5));
+		protocols::loops::safe_set_extended_torsions_and_idealize_loops(loops, &other);
+		TS_ASSERT(!equal_torsions(*pose, other));
+	}
 };
 
 }  // anonymous namespace

@@ -42,8 +42,8 @@ public:
 	/// @brief constructor with arguments
 
 	LHRepulsiveRamp( docking::DockJumps const movable_jumps,
-	                 core::scoring::ScoreFunctionCOP dock_scorefxn,
-	                 core::scoring::ScoreFunctionCOP pack_scorefxn );
+		core::scoring::ScoreFunctionCOP dock_scorefxn,
+		core::scoring::ScoreFunctionCOP pack_scorefxn );
 
 	virtual protocols::moves::MoverOP clone() const;
 

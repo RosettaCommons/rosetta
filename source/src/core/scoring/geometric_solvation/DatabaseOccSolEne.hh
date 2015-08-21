@@ -59,10 +59,10 @@ public:
 	{
 		// note: min cos_angle can be negative
 		if ( polar_atom_donates ) {
-		debug_assert ( donor_occ_data_[ polar_atom_type_index][occ_atom_type_index][des_param] > -1.1 );
+			debug_assert ( donor_occ_data_[ polar_atom_type_index][occ_atom_type_index][des_param] > -1.1 );
 			return donor_occ_data_[ polar_atom_type_index][occ_atom_type_index][des_param];
 		}
-	debug_assert ( acc_occ_data_[ polar_atom_type_index][occ_atom_type_index][des_param] > -1.1 );
+		debug_assert ( acc_occ_data_[ polar_atom_type_index][occ_atom_type_index][des_param] > -1.1 );
 		return acc_occ_data_[ polar_atom_type_index][occ_atom_type_index][des_param];
 	}
 
@@ -77,12 +77,12 @@ private:
 
 private:
 
-  // hold all data here, indexed by 1) polar_atom_type_index, 2) occ_atom_type_index, 3) parameter type
+	// hold all data here, indexed by 1) polar_atom_type_index, 2) occ_atom_type_index, 3) parameter type
 	// jk note: we don't want to change the first index to donor/acceptor hybridization, since then we'd lose atomic charge info from the fits
 	// jk note: we could switch the second index to element type / radius, it's just that at present we can only look this up via a string compare
 	// jk note: at the moment we have two tables, because we're indexing on polar_atom_type_index and Ser/Thr/Tyr can be donor or acceptor
-  utility::vector1< utility::vector1< utility::vector1< Real > > > donor_occ_data_;
-  utility::vector1< utility::vector1< utility::vector1< Real > > > acc_occ_data_;
+	utility::vector1< utility::vector1< utility::vector1< Real > > > donor_occ_data_;
+	utility::vector1< utility::vector1< utility::vector1< Real > > > acc_occ_data_;
 
 	// energies below this can be neglected, used in determining jumpout geometry conditions
 	Real const min_occ_energy_;

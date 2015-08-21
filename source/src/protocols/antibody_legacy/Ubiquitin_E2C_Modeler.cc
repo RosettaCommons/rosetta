@@ -105,7 +105,7 @@ ubi_e2c_modeler::ubi_e2c_modeler() : Mover(),
 	fullatom_non_CSP_weight_( 1000.0 ),
 	cen_vdw_( 1.00 ),
 	cen_constraint_( 10.00 ),
-  // full_vdw_( 1.00 ),
+	// full_vdw_( 1.00 ),
 	refinement_mode_( false ), // false for initial run
 	cov_bond_only_flag_( true ), // false for initial run
 	monoub_mode_( false ), // false for our model system ::: SET THIS TO FALSE
@@ -158,81 +158,83 @@ void ubi_e2c_modeler::set_default() {
 	min_type_ = std::string( "dfpmin_armijo_nonmonotone" );
 	nb_list_ = true;
 
-	if( cov_bond_only_flag_ )
+	if ( cov_bond_only_flag_ ) {
 		full_constraint_ = 100000.00;
-	else
+	} else {
 		full_constraint_ = 100.00;
+	}
 
-	if( monoub_mode_ )
+	if ( monoub_mode_ ) {
 		fullatom_constraint_cutoff_ = 3 * 1.5;
-	else
+	} else {
 		fullatom_constraint_cutoff_ = 1.5;
+	}
 
 	dock_lowres_scorefxn_ = core::scoring::ScoreFunctionFactory::
-	                        create_score_function("interchain_cen");
+		create_score_function("interchain_cen");
 	dock_lowres_scorefxn_->set_weight( core::scoring::interchain_vdw, cen_vdw_ );
 	dock_lowres_scorefxn_->set_weight( core::scoring::interchain_contact,
-	                                   cen_constraint_ );
+		cen_constraint_ );
 
 	lowres_scorefxn_ = core::scoring::ScoreFunctionFactory::
-	                   create_score_function( "cen_std" );
+		create_score_function( "cen_std" );
 	lowres_scorefxn_->set_weight( core::scoring::vdw, cen_vdw_ );
 	lowres_scorefxn_->set_weight( core::scoring::cbeta, cen_vdw_ );
 
 	dock_lowres_cst_scorefxn_ = core::scoring::ScoreFunctionFactory::
-	                            create_score_function("interchain_cen");
+		create_score_function("interchain_cen");
 	// adding constraints
 	dock_lowres_cst_scorefxn_->set_weight( core::scoring::atom_pair_constraint,
-	                                       cen_constraint_ );
+		cen_constraint_ );
 	dock_lowres_cst_scorefxn_->set_weight( core::scoring::interchain_vdw,cen_vdw_);
 	dock_lowres_cst_scorefxn_->set_weight( core::scoring::interchain_contact,
-	                                       cen_vdw_ );
+		cen_vdw_ );
 
 	lowres_cst_scorefxn_ = core::scoring::ScoreFunctionFactory::
-	                       create_score_function( "cen_std" );
+		create_score_function( "cen_std" );
 	// adding constraints
 	lowres_cst_scorefxn_->set_weight( core::scoring::atom_pair_constraint,
-	                                  cen_constraint_ );
+		cen_constraint_ );
 	lowres_cst_scorefxn_->set_weight( core::scoring::vdw, cen_vdw_ );
 	lowres_cst_scorefxn_->set_weight( core::scoring::cbeta, cen_vdw_ );
 
 	pack_scorefxn_ = core::scoring::get_score_function_legacy("pre_talaris_2013_standard.wts");
 
 	dockfa_scorefxn_ = core::scoring::ScoreFunctionFactory::
-	                   create_score_function( "docking" );
+		create_score_function( "docking" );
 	//dockfa_scorefxn_->set_weight( core::scoring::fa_sol, full_vdw_ );
 	//dockfa_scorefxn_->set_weight( core::scoring::fa_rep, full_vdw_ );
 
 	dockfa_min_scorefxn_ = core::scoring::ScoreFunctionFactory::
-	                       create_score_function( "docking", "docking_min" );
+		create_score_function( "docking", "docking_min" );
 	//dockfa_min_scorefxn_->set_weight( core::scoring::fa_sol, full_vdw_ );
 	//dockfa_min_scorefxn_->set_weight( core::scoring::fa_rep, full_vdw_ );
 
 	dockfa_cst_scorefxn_ = core::scoring::ScoreFunctionFactory::
-	                       create_score_function( "docking" );
+		create_score_function( "docking" );
 	//dockfa_cst_scorefxn_->set_weight( core::scoring::fa_sol, full_vdw_ );
 	//dockfa_cst_scorefxn_->set_weight( core::scoring::fa_rep, full_vdw_ );
 	dockfa_cst_scorefxn_->set_weight( core::scoring::atom_pair_constraint,
-	                                  full_constraint_ );
+		full_constraint_ );
 
 	dockfa_cst_min_scorefxn_ = core::scoring::ScoreFunctionFactory::
-	                           create_score_function( "docking", "docking_min" );
+		create_score_function( "docking", "docking_min" );
 	//dockfa_cst_min_scorefxn_->set_weight( core::scoring::fa_sol, full_vdw_ );
 	//dockfa_cst_min_scorefxn_->set_weight( core::scoring::fa_rep, full_vdw_ );
 	dockfa_cst_min_scorefxn_->set_weight( core::scoring::atom_pair_constraint,
-	                                      full_constraint_ );
+		full_constraint_ );
 
 	pack_cst_scorefxn_ = core::scoring::get_score_function("pre_talaris_2013_standard.wts");
 	// adding constraints
 	pack_cst_scorefxn_->set_weight( core::scoring::atom_pair_constraint,
-	                                full_constraint_ );
+		full_constraint_ );
 	// pack_cst_scorefxn_->set_weight( core::scoring::fa_sol, full_vdw_ );
 
 	output_cen_scorefxn_ = core::scoring::ScoreFunctionFactory::
-	                       create_score_function( "cen_std" );
+		create_score_function( "cen_std" );
 
 	output_full_scorefxn_ = core::scoring::ScoreFunctionFactory::
-	                        create_score_function( "docking" );
+		create_score_function( "docking" );
 
 	TR <<  "UBI Done:Setting up default settings" << std::endl;
 
@@ -243,18 +245,20 @@ void ubi_e2c_modeler::compute_trim_CSPs() {
 
 	TR << "UBI Assigning Trimmed CSPs" << std::endl;
 
-	for( Size i = 1; i <= CSP_.size(); i++ ) {
-		if( CSP_[i] <= ( k48r_end_ - ( flex_cter_ + 1)))
+	for ( Size i = 1; i <= CSP_.size(); i++ ) {
+		if ( CSP_[i] <= ( k48r_end_ - ( flex_cter_ + 1)) ) {
 			CSP_trim_.push_back( CSP_[i] );
-		else if( CSP_[i] <= ( e2_end_ - ( flex_cter_ + 1)))
+		} else if ( CSP_[i] <= ( e2_end_ - ( flex_cter_ + 1)) ) {
 			CSP_trim_.push_back( CSP_[i] - (flex_cter_ + 1));
+		}
 	}
 
-	for( Size i = 1; i <= non_CSP_.size(); i++ ) {
-		if( non_CSP_[i] <= ( k48r_end_ - ( flex_cter_ + 1)))
+	for ( Size i = 1; i <= non_CSP_.size(); i++ ) {
+		if ( non_CSP_[i] <= ( k48r_end_ - ( flex_cter_ + 1)) ) {
 			non_CSP_trim_.push_back( non_CSP_[i] );
-		else if( non_CSP_[i] <= ( e2_end_ - ( flex_cter_ + 1)))
+		} else if ( non_CSP_[i] <= ( e2_end_ - ( flex_cter_ + 1)) ) {
 			non_CSP_trim_.push_back( CSP_[i] - (flex_cter_ + 1));
+		}
 	}
 
 	TR << "UBI Done: Assigning Trimmed CSPs" << std::endl;
@@ -268,22 +272,24 @@ void ubi_e2c_modeler::compute_swap_trim_CSPs() {
 
 	Size ub_trim = d77_trim_end_ - k48r_trim_end_;
 
-	for( Size i = 1; i <= CSP_.size(); i++ ) {
-		if( CSP_[i] <= e2_end_ )
+	for ( Size i = 1; i <= CSP_.size(); i++ ) {
+		if ( CSP_[i] <= e2_end_ ) {
 			CSP_swap_trim_.push_back( CSP_[i] );
-		else if( CSP_[i] <= k48r_end_ - (flex_cter_ + 1 ))
+		} else if ( CSP_[i] <= k48r_end_ - (flex_cter_ + 1 ) ) {
 			CSP_swap_trim_.push_back( CSP_[i] + ub_trim );
-		else if( CSP_[i] <= d77_end_ - (flex_cter_ + 1 ))
+		} else if ( CSP_[i] <= d77_end_ - (flex_cter_ + 1 ) ) {
 			CSP_swap_trim_.push_back( CSP_[i] - ( ub_trim  + flex_cter_ + 1));
+		}
 	}
 
-	for( Size i = 1; i <= non_CSP_.size(); i++ ) {
-		if( non_CSP_[i] <= e2_end_ )
+	for ( Size i = 1; i <= non_CSP_.size(); i++ ) {
+		if ( non_CSP_[i] <= e2_end_ ) {
 			non_CSP_swap_trim_.push_back( non_CSP_[i] );
-		else if( non_CSP_[i] <= k48r_end_ - (flex_cter_ + 1 ))
+		} else if ( non_CSP_[i] <= k48r_end_ - (flex_cter_ + 1 ) ) {
 			non_CSP_swap_trim_.push_back( non_CSP_[i] + ub_trim );
-		else if( non_CSP_[i] <= d77_end_ - (flex_cter_ + 1 ))
+		} else if ( non_CSP_[i] <= d77_end_ - (flex_cter_ + 1 ) ) {
 			non_CSP_swap_trim_.push_back( non_CSP_[i]-(ub_trim + flex_cter_ +1));
+		}
 	}
 
 	TR << "UBI Done: Assigning Swap Trimmed CSPs" << std::endl;
@@ -292,7 +298,7 @@ void ubi_e2c_modeler::compute_swap_trim_CSPs() {
 } // compute_swap_trim_CSPs
 
 void ubi_e2c_modeler::assign_CSPs(
-    const pose::Pose & pose_in ) {
+	const pose::Pose & pose_in ) {
 
 	TR << "UBI Assigning CSPs" << std::endl;
 
@@ -384,7 +390,7 @@ void ubi_e2c_modeler::assign_CSPs(
 } // assign_CSPs
 
 void ubi_e2c_modeler::assign_non_CSPs(
-    const pose::Pose & pose_in ) {
+	const pose::Pose & pose_in ) {
 
 	TR << "UBI Assigning non CSPs" << std::endl;
 
@@ -616,15 +622,15 @@ void ubi_e2c_modeler::apply( pose::Pose & pose_in ) {
 	using utility::file::FileName;
 
 	// control monoubiquitin monomer
-	if( monoub_mode_ ) {
+	if ( monoub_mode_ ) {
 		monoub_apply( pose_in );
 		return;
 	}
 
 	/*
 	{
-		evaluate_native( pose_in );
-		return;
+	evaluate_native( pose_in );
+	return;
 	}
 	*/
 
@@ -652,13 +658,13 @@ void ubi_e2c_modeler::apply( pose::Pose & pose_in ) {
 	Real ubi_cov_bond_dist( 100.00 );
 	Size tries = 0;
 
-	if( !cov_bond_only_flag_ ) {
+	if ( !cov_bond_only_flag_ ) {
 		//start loop of decoy creation until filters are all passed
-		for (Size r = 1; r <= max_repeats_; r++) {
+		for ( Size r = 1; r <= max_repeats_; r++ ) {
 			tries = r;
 			pose_in = start_pose;
 
-			if( !refinement_mode_ ) {
+			if ( !refinement_mode_ ) {
 				// convert to centroid mode
 				to_centroid.apply( pose_in );
 				ubi_cov_bond_dist = centroid_mode_perturbation( pose_in );
@@ -675,10 +681,10 @@ void ubi_e2c_modeler::apply( pose::Pose & pose_in ) {
 			applied_fullatom_pert_ = false;
 
 			// fullatom mode
-			if( passed_centroid_filter_ || r == max_repeats_ || refinement_mode_ ) {
+			if ( passed_centroid_filter_ || r == max_repeats_ || refinement_mode_ ) {
 				//pose_in.dump_pdb( "main_passed_centroid.pdb" );
 				// convert to full atom
-				if( !refinement_mode_ ) {
+				if ( !refinement_mode_ ) {
 					to_all_atom.apply( pose_in );
 					recover_sidechains.apply( pose_in );
 				} // if( !refinement_mode_ )
@@ -701,14 +707,14 @@ void ubi_e2c_modeler::apply( pose::Pose & pose_in ) {
 		} // for max_repeats_
 	}
 
-	if( !refinement_mode_ ) {
+	if ( !refinement_mode_ ) {
 		optimize_cov_bond( pose_in );
 		( *dockfa_cst_scorefxn_ )( pose_in );
 		fullatom_filter( pose_in );
 	} // if ( !refinement_mode_ )
 
 	// add scores to map for output
-	if( applied_fullatom_pert_ || cov_bond_only_flag_ ) {
+	if ( applied_fullatom_pert_ || cov_bond_only_flag_ ) {
 		( *output_full_scorefxn_ )( pose_in );
 		protocols::jd2::ScoreMap::nonzero_energies(score_map_, output_full_scorefxn_, pose_in);
 	} else {
@@ -716,16 +722,17 @@ void ubi_e2c_modeler::apply( pose::Pose & pose_in ) {
 		protocols::jd2::ScoreMap::nonzero_energies( score_map_, output_cen_scorefxn_, pose_in);
 	}
 
-	if( !cov_bond_only_flag_ ) {
+	if ( !cov_bond_only_flag_ ) {
 		score_map_["AJ_k48r_rms"] = calc_Lrmsd( pose_in, start_pose,
-		                                        e2_k48r_jump_ );
+			e2_k48r_jump_ );
 		score_map_["AK_d77_rms"] = calc_Lrmsd( pose_in, start_pose,
-		                                       e2_d77_jump_ );
+			e2_d77_jump_ );
 		score_map_["AI_rms"] = score_map_["AJ_k48r_rms"] +
-		                       score_map_["AK_d77_rms"];;
-	} else
+			score_map_["AK_d77_rms"];;
+	} else {
 		score_map_["AL_k48r_tail_rmsg"] = calc_Lrmsd( pose_in, start_pose,
-		                                  flex_cter_ ); // option
+			flex_cter_ ); // option
+	}
 
 	using namespace basic::datacache;
 	pose_in.data().set( core::pose::datacache::CacheableDataType::SCORE_MAP, DataCache_CacheableData::DataOP( new basic::datacache::DiagnosticData(score_map_) ) );
@@ -745,7 +752,7 @@ ubi_e2c_modeler::get_name() const {
 
 void
 ubi_e2c_modeler::setup_key_residues(
-    const pose::Pose & pose_in ) {
+	const pose::Pose & pose_in ) {
 
 	TR << "UBI Setting Up Key Residues" << std::endl;
 
@@ -755,14 +762,15 @@ ubi_e2c_modeler::setup_key_residues(
 	//char chain = '_';
 	char old_chain = '_';
 	Size next_chain( 0 );
-	for( Size i = 1; i <= d77_end_; i++ ) {
+	for ( Size i = 1; i <= d77_end_; i++ ) {
 		char chain = pdb_info->chain( i );
 
 		// if initial condition
-		if( i == 1 )
+		if ( i == 1 ) {
 			old_chain = pdb_info->chain( i );
+		}
 
-		if( chain != old_chain ) {
+		if ( chain != old_chain ) {
 			if ( next_chain == 0  ) {
 				next_chain = 1;
 				e2_end_ = i - 1;
@@ -774,13 +782,13 @@ ubi_e2c_modeler::setup_key_residues(
 	}// for i <= d77_end_
 
 	e2_ctr_of_mass_ = core::pose::residue_center_of_mass( pose_in, 1,
-	                  e2_end_ );
+		e2_end_ );
 	k48r_ctr_of_mass_ = core::pose::residue_center_of_mass( pose_in,
-	                    e2_end_ + 1,
-	                    k48r_end_ );
+		e2_end_ + 1,
+		k48r_end_ );
 	d77_ctr_of_mass_ = core::pose::residue_center_of_mass( pose_in,
-	                   k48r_end_ + 1,
-	                   d77_end_ );
+		k48r_end_ + 1,
+		d77_end_ );
 
 	// C-terminal trimmed parameters default
 	k48r_trim_end_ = k48r_end_;
@@ -802,7 +810,7 @@ ubi_e2c_modeler::setup_move_maps() {
 	using namespace core;
 	using namespace kinematics;
 
-	if( init_all_dof_map_ ) {
+	if ( init_all_dof_map_ ) {
 		all_dof_map_ = core::kinematics::MoveMapOP( new MoveMap( *init_all_dof_map_ ) );
 		k48r_docking_map_ = core::kinematics::MoveMapOP( new MoveMap( *init_k48r_docking_map_ ) );
 		d77_docking_map_ = core::kinematics::MoveMapOP( new MoveMap( *init_d77_docking_map_ ) );
@@ -845,12 +853,12 @@ ubi_e2c_modeler::setup_move_maps() {
 	flex_cter_map_->set_bb( bb );
 	flex_cter_map_->set_jump( e2_k48r_jump_, false );
 	flex_cter_map_->set_jump( e2_d77_jump_, false );
-	for( Size i = 0; i <= flex_cter_; i++ ) {
+	for ( Size i = 0; i <= flex_cter_; i++ ) {
 		flex_cter_map_->set_bb( k48r_end_ - i, true );
 		flex_cter_map_->set_bb( d77_end_ - i, true );
 	}
 
-	if( cov_bond_only_flag_ ) {
+	if ( cov_bond_only_flag_ ) {
 		// allow 2 additional residues of d77 C-terminal tail to move
 		flex_cter_map_->set_bb( d77_end_ - ( flex_cter_ + 1 ), true );
 		flex_cter_map_->set_bb( d77_end_ - ( flex_cter_ + 2 ), true );
@@ -862,7 +870,7 @@ ubi_e2c_modeler::setup_move_maps() {
 	all_dof_map_->set_bb( bb );
 	all_dof_map_->set_jump( e2_k48r_jump_, true );
 	all_dof_map_->set_jump( e2_d77_jump_, true );
-	for( Size i = 0; i <= flex_cter_; i++ ) {
+	for ( Size i = 0; i <= flex_cter_; i++ ) {
 		all_dof_map_->set_bb( k48r_end_ - i, true );
 		all_dof_map_->set_bb( d77_end_ - i, true );
 	}
@@ -880,8 +888,8 @@ ubi_e2c_modeler::setup_move_maps() {
 
 void
 ubi_e2c_modeler::setup_complex_fold_tree(
-    pose::Pose & pose_in,
-    bool trim ) {
+	pose::Pose & pose_in,
+	bool trim ) {
 
 	using namespace kinematics;
 
@@ -896,7 +904,7 @@ ubi_e2c_modeler::setup_complex_fold_tree(
 	Size cutpoint1 = e2_end_;
 	Size cutpoint2 = k48r_end_;
 
-	if( trim ) {
+	if ( trim ) {
 		nres = d77_end_ - ( 2 * ( flex_cter_ + 1 ));
 		jumppoint1 = e2_ctr_of_mass_;
 		jumppoint2 = k48r_ctr_of_mass_;
@@ -923,7 +931,7 @@ ubi_e2c_modeler::setup_complex_fold_tree(
 
 void
 ubi_e2c_modeler::initial_cter_perturbation(
-    pose::Pose & pose_in ) {
+	pose::Pose & pose_in ) {
 	using namespace protocols::moves;
 
 	TR << "UBI Initial C-Terminal Perturbation" << std::endl;
@@ -931,11 +939,11 @@ ubi_e2c_modeler::initial_cter_perturbation(
 	setup_complex_fold_tree( pose_in );
 
 	// idealize c-terminals
-	for( Size i = 0; i <= flex_cter_; i++ ) {
+	for ( Size i = 0; i <= flex_cter_; i++ ) {
 		conformation::idealize_position( k48r_end_ - ( flex_cter_ - i ),
-		                                 pose_in.conformation());
+			pose_in.conformation());
 		conformation::idealize_position( d77_end_ - ( flex_cter_ - i),
-		                                 pose_in.conformation());
+			pose_in.conformation());
 	}
 
 	// pose_in.dump_pdb( "idealized.pdb" );
@@ -945,8 +953,8 @@ ubi_e2c_modeler::initial_cter_perturbation(
 	Real const init_psi  (  150.0 );
 	Real const init_omega(  180.0 );
 
-	for( Size i = 0; i <= flex_cter_; i++ ) {
-		if ( i != flex_cter_ )	{
+	for ( Size i = 0; i <= flex_cter_; i++ ) {
+		if ( i != flex_cter_ ) {
 			pose_in.set_phi( k48r_end_ - i, init_phi );
 			pose_in.set_phi( d77_end_ - i, init_phi );
 		}
@@ -967,7 +975,7 @@ ubi_e2c_modeler::initial_cter_perturbation(
 	ub_cter_map->clear();
 	ub_cter_map->set_chi( true );
 	ub_cter_map->set_bb( false );
-	for( Size i = 0; i <= flex_cter_; i++ ) {
+	for ( Size i = 0; i <= flex_cter_; i++ ) {
 		ub_cter_map->set_bb( k48r_end_ - i, true );
 		ub_cter_map->set_bb( d77_end_ - i, true );
 	}
@@ -975,15 +983,15 @@ ubi_e2c_modeler::initial_cter_perturbation(
 	SequenceMoverOP perturb_min_cter( new SequenceMover() );
 
 	protocols::simple_moves::BackboneMoverOP small_mover( new protocols::simple_moves::SmallMover(ub_cter_map,
-	        temperature_, 8 ) );
+		temperature_, 8 ) );
 	small_mover->angle_max( 90.0 );
 	protocols::simple_moves::BackboneMoverOP shear_mover( new protocols::simple_moves::ShearMover(ub_cter_map,
-	        temperature_, 8 ) );
+		temperature_, 8 ) );
 
 	shear_mover->angle_max( 90.0 );
 
 	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover ( ub_cter_map, lowres_cst_scorefxn_,
-	        "linmin",	min_tolerance_, nb_list_, false, false ) );
+		"linmin", min_tolerance_, nb_list_, false, false ) );
 
 	perturb_min_cter->add_mover( small_mover );
 	perturb_min_cter->add_mover( shear_mover );
@@ -1004,11 +1012,11 @@ ubi_e2c_modeler::initial_cter_perturbation(
 
 void
 ubi_e2c_modeler::setup_simple_fold_tree(
-    Size jumppoint1,
-    Size cutpoint,
-    Size jumppoint2,
-    Size nres,
-    pose::Pose & pose_in ) {
+	Size jumppoint1,
+	Size cutpoint,
+	Size jumppoint2,
+	Size nres,
+	pose::Pose & pose_in ) {
 
 	using namespace kinematics;
 
@@ -1032,15 +1040,17 @@ ubi_e2c_modeler::setup_simple_fold_tree(
 
 void
 ubi_e2c_modeler::trim_cter(
-    pose::Pose & pose_in ) {
+	pose::Pose & pose_in ) {
 
 	TR << "UBI Trimming C-terminal" << std::endl;
 
-	for( Size i = 0; i <= flex_cter_; i++ )
+	for ( Size i = 0; i <= flex_cter_; i++ ) {
 		pose_in.delete_polymer_residue( d77_end_ - i );
+	}
 
-	for( Size i = 0; i <= flex_cter_; i++ )
+	for ( Size i = 0; i <= flex_cter_; i++ ) {
 		pose_in.delete_polymer_residue( k48r_end_ - i );
+	}
 
 	k48r_trim_end_ = k48r_end_ - ( flex_cter_ + 1 );
 	d77_trim_end_ = pose_in.total_residue();
@@ -1053,8 +1063,8 @@ ubi_e2c_modeler::trim_cter(
 
 void
 ubi_e2c_modeler::restore_cter(
-    pose::Pose & pose_in,
-    pose::Pose without_cter ) {
+	pose::Pose & pose_in,
+	pose::Pose without_cter ) {
 
 	TR << "UBI Restoring C-terminal" << std::endl;
 
@@ -1064,13 +1074,13 @@ ubi_e2c_modeler::restore_cter(
 	pose::Pose k48r( without_cter, e2_end_ + 1, k48r_trim_end_ );
 	pose::Pose d77( without_cter, k48r_trim_end_ + 1, d77_trim_end_ );
 
-	for( Size i = 0, j = 0; i <= flex_cter_; i++, j++ ) {
+	for ( Size i = 0, j = 0; i <= flex_cter_; i++, j++ ) {
 		k48r.conformation().safely_append_polymer_residue_after_seqpos(
-		    pose_in.residue( k48r_end_  - (flex_cter_ - i ) ), ub_trim_size +
-		    j, true);
+			pose_in.residue( k48r_end_  - (flex_cter_ - i ) ), ub_trim_size +
+			j, true);
 		d77.conformation().safely_append_polymer_residue_after_seqpos(
-		    pose_in.residue( d77_end_  - (flex_cter_ - i ) ), ub_trim_size +
-		    j, true);
+			pose_in.residue( d77_end_  - (flex_cter_ - i ) ), ub_trim_size +
+			j, true);
 	}
 
 	pose_in.copy_segment( ub_size, k48r, e2_end_ + 1, 1 );
@@ -1089,7 +1099,7 @@ ubi_e2c_modeler::restore_cter(
 
 void
 ubi_e2c_modeler::init_k48r_perturbation(
-    pose::Pose & pose_in ) {
+	pose::Pose & pose_in ) {
 	//using pose::datacache::CacheableDataType::INTERFACE_INFO;
 	using namespace core::scoring;
 	using namespace protocols::docking;
@@ -1112,28 +1122,29 @@ ubi_e2c_modeler::init_k48r_perturbation(
 
 	// make starting perturbations based on command-line flags
 	DockingInitialPerturbationOP init_e2_mono_ub_dock( new
-	        DockingInitialPerturbation( e2_k48r_jump_,true/*slide into contact*/) );
+		DockingInitialPerturbation( e2_k48r_jump_,true/*slide into contact*/) );
 	// pose_in.dump_pdb( "pre.pdb" );
-	if( higher_d77_pert_mode_ && k48r_swap_ ) {
+	if ( higher_d77_pert_mode_ && k48r_swap_ ) {
 		rigid::RigidBodyPerturbMover mover( e2_k48r_jump_,
-		                                    15, // rot magnitude
-		                                    5 ); // trans magnitude
+			15, // rot magnitude
+			5 ); // trans magnitude
 		mover.apply( e2_k48r );
 		rigid::RigidBodySpinMover spin( e2_k48r_jump_ );
 		spin.apply( e2_k48r );
 		DockingSlideIntoContact slide( e2_k48r_jump_ );
 		slide.apply( e2_k48r );
-	} else
+	} else {
 		init_e2_mono_ub_dock->apply( e2_k48r );
+	}
 
 	{
 		// dock movers
 		rigid::RigidBodyPerturbNoCenterMoverOP dock_e2_mono_ub( new
-		        rigid::RigidBodyPerturbNoCenterMover( e2_k48r_jump_, 10.0, // rot_magnitude
-		                1.0 ) ); // trans_magnitude_
+			rigid::RigidBodyPerturbNoCenterMover( e2_k48r_jump_, 10.0, // rot_magnitude
+			1.0 ) ); // trans_magnitude_
 		MonteCarloOP mc;
 		mc = MonteCarloOP( new moves::MonteCarlo( e2_k48r, *dock_lowres_scorefxn_,
-		                            temperature_ ) );
+			temperature_ ) );
 		TrialMoverOP dock_trial( new TrialMover( dock_e2_mono_ub, mc ) );
 		Size const cycles( 50 );
 		RepeatMoverOP rbp_cycle( new RepeatMover( dock_trial, cycles ) );
@@ -1144,7 +1155,7 @@ ubi_e2c_modeler::init_k48r_perturbation(
 	to_centroid.apply( pose_in );
 
 	Size e2_k48r_ctr_of_mass = core::pose::residue_center_of_mass( pose_in,
-	                           1, k48r_trim_end_ );
+		1, k48r_trim_end_ );
 	// pose_in.dump_pdb( "mid.pdb" );
 
 	jumppoint1 = e2_k48r_ctr_of_mass;
@@ -1152,21 +1163,22 @@ ubi_e2c_modeler::init_k48r_perturbation(
 	jumppoint2 = d77_trim_ctr_mass_;
 	nres = d77_trim_end_;
 	setup_simple_fold_tree( jumppoint1, cutpoint, jumppoint2, nres, pose_in);
-	if( higher_d77_pert_mode_ && !k48r_swap_ ) {
+	if ( higher_d77_pert_mode_ && !k48r_swap_ ) {
 		rigid::RigidBodyPerturbMover mover( e2_k48r_jump_,
-		                                    15, // rot magnitude
-		                                    5 ); // trans magnitude
+			15, // rot magnitude
+			5 ); // trans magnitude
 		mover.apply( pose_in );
 		rigid::RigidBodySpinMover spin( e2_k48r_jump_ );
 		spin.apply( pose_in );
 		DockingSlideIntoContact slide( e2_k48r_jump_ );
 		slide.apply( pose_in );
-	} else
+	} else {
 		init_e2_mono_ub_dock->apply( pose_in );
+	}
 	{
 		// dock movers
-		rigid::RigidBodyPerturbNoCenterMoverOP dock_e2_mono_ub( new	rigid::RigidBodyPerturbNoCenterMover( e2_k48r_jump_, 10.0, // rot_magnitude
-		            1.0 ) ); // trans_magnitude_
+		rigid::RigidBodyPerturbNoCenterMoverOP dock_e2_mono_ub( new rigid::RigidBodyPerturbNoCenterMover( e2_k48r_jump_, 10.0, // rot_magnitude
+			1.0 ) ); // trans_magnitude_
 
 		setup_complex_fold_tree( pose_in, true );
 		protocols::scoring::InterfaceInfoOP tri_interface( new protocols::scoring::InterfaceInfo( e2_k48r_jump_ ) );
@@ -1174,25 +1186,25 @@ ubi_e2c_modeler::init_k48r_perturbation(
 		pose_in.data().set( core::pose::datacache::CacheableDataType::INTERFACE_INFO, tri_interface );
 		Real score = ( *dock_lowres_scorefxn_ )( pose_in );
 		Real current_CSP_fraction = CSP_fraction( pose_in,
-		                            false, // non_CSP
-		                            true, // trim
-		                            k48r_swap_);
+			false, // non_CSP
+			true, // trim
+			k48r_swap_);
 		Real current_non_CSP_fraction = CSP_fraction( pose_in,
-		                                true, // non_CSP
-		                                true, // trim
-		                                k48r_swap_);
+			true, // non_CSP
+			true, // trim
+			k48r_swap_);
 		Real last_accepted_CSP_score = score
-		                               + ( centroid_non_CSP_weight_ * current_non_CSP_fraction)
-		                               - ( centroid_CSP_weight_ * current_CSP_fraction );
+			+ ( centroid_non_CSP_weight_ * current_non_CSP_fraction)
+			- ( centroid_CSP_weight_ * current_CSP_fraction );
 		Real lowest_CSP_score = last_accepted_CSP_score;
 		setup_simple_fold_tree( jumppoint1, cutpoint, jumppoint2, nres,
-		                        pose_in);
+			pose_in);
 		protocols::scoring::InterfaceInfoOP one_interface( new protocols::scoring::InterfaceInfo( e2_k48r_jump_ ) );
 		pose_in.data().set( core::pose::datacache::CacheableDataType::INTERFACE_INFO, one_interface );
 		pose::Pose best_CSP_pose( pose_in );
 		pose::Pose lowest_CSP_score_pose( pose_in );
 
-		for( Size i = 1; i <= 50 ; i++ ) {
+		for ( Size i = 1; i <= 50 ; i++ ) {
 			dock_e2_mono_ub->apply( pose_in );
 			( *dock_lowres_scorefxn_ )( pose_in );
 			setup_complex_fold_tree( pose_in, true );
@@ -1201,30 +1213,30 @@ ubi_e2c_modeler::init_k48r_perturbation(
 			current_CSP_fraction = CSP_fraction(pose_in, false, true,k48r_swap_);
 			current_non_CSP_fraction=CSP_fraction(pose_in,true,true, k48r_swap_);
 			Real current_CSP_score = score
-			                         +	( centroid_non_CSP_weight_ * current_non_CSP_fraction )
-			                         -	( centroid_CSP_weight_ * current_CSP_fraction );
-			Real boltz_factor = ( last_accepted_CSP_score -	current_CSP_score ) /
-			                    temperature_;
+				+ ( centroid_non_CSP_weight_ * current_non_CSP_fraction )
+				- ( centroid_CSP_weight_ * current_CSP_fraction );
+			Real boltz_factor = ( last_accepted_CSP_score - current_CSP_score ) /
+				temperature_;
 			Real probability = std::exp( std::min (40.0, std::max(-40.0,
-			                                       boltz_factor)));
+				boltz_factor)));
 			Real random = numeric::random::rg().uniform();
-			if( (current_CSP_score < last_accepted_CSP_score) ||
-			        ( random < probability ) ) {
+			if ( (current_CSP_score < last_accepted_CSP_score) ||
+					( random < probability ) ) {
 				last_accepted_CSP_score = current_CSP_score;
 				best_CSP_pose = pose_in;
-				if( current_CSP_score < lowest_CSP_score ) {
+				if ( current_CSP_score < lowest_CSP_score ) {
 					lowest_CSP_score = current_CSP_score;
 					lowest_CSP_score_pose = pose_in;
 				}
 			}
 			pose_in = best_CSP_pose;
 			setup_simple_fold_tree( jumppoint1, cutpoint, jumppoint2, nres,
-			                        pose_in);
+				pose_in);
 			pose_in.data().set( core::pose::datacache::CacheableDataType::INTERFACE_INFO, one_interface );
 		}
 		pose_in = lowest_CSP_score_pose;
 		setup_simple_fold_tree( jumppoint1, cutpoint, jumppoint2, nres,
-		                        pose_in);
+			pose_in);
 		pose_in.data().set( core::pose::datacache::CacheableDataType::INTERFACE_INFO, one_interface );
 	}
 
@@ -1238,7 +1250,7 @@ ubi_e2c_modeler::init_k48r_perturbation(
 
 void
 ubi_e2c_modeler::init_d77_perturbation(
-    pose::Pose & pose_in ) {
+	pose::Pose & pose_in ) {
 
 	TR << "UBI Initial D77 Perturbation" << std::endl;
 
@@ -1246,7 +1258,7 @@ ubi_e2c_modeler::init_d77_perturbation(
 	pose::Pose e2_d77( e2_k48r );
 	Size ub_trim_size = d77_trim_end_ - k48r_trim_end_;
 	e2_d77.copy_segment( ub_trim_size, pose_in, e2_end_ + 1,
-	                     k48r_trim_end_ + 1 );
+		k48r_trim_end_ + 1 );
 
 	protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
 	to_centroid.apply( e2_d77 );
@@ -1261,11 +1273,11 @@ ubi_e2c_modeler::init_d77_perturbation(
 	pose::Pose pseudo_e2_k48r( pose_in, 1, k48r_trim_end_ );
 	pose::Pose pseudo_e2_d77( e2_k48r );
 	pseudo_e2_d77.copy_segment( ub_trim_size, pose_in,e2_end_ + 1,
-	                            k48r_trim_end_ + 1 );
+		k48r_trim_end_ + 1 );
 	to_centroid.apply( pseudo_e2_d77 );
 
 	pose_in.copy_segment( ub_trim_size, pseudo_e2_k48r, k48r_trim_end_ + 1,
-	                      e2_end_ + 1 );
+		e2_end_ + 1 );
 	to_centroid.apply( pose_in );
 	pose_in.copy_segment( ub_trim_size,pseudo_e2_d77,e2_end_+1, e2_end_ + 1);
 	to_centroid.apply( pose_in );
@@ -1277,7 +1289,7 @@ ubi_e2c_modeler::init_d77_perturbation(
 
 Real
 ubi_e2c_modeler::initial_perturbation(
-    pose::Pose & pose_in ) {
+	pose::Pose & pose_in ) {
 	//using pose::datacache::CacheableDataType::INTERFACE_INFO;
 	using namespace core::scoring;
 	using namespace protocols::docking;
@@ -1295,7 +1307,7 @@ ubi_e2c_modeler::initial_perturbation(
 	trim_cter( without_cter );
 
 	Real k48r_vs_d77 = numeric::random::rg().uniform();
-	if( k48r_vs_d77 < 0.5 ) {
+	if ( k48r_vs_d77 < 0.5 ) {
 		k48r_swap_ = false;
 		init_k48r_perturbation( without_cter );
 	} else {
@@ -1309,11 +1321,11 @@ ubi_e2c_modeler::initial_perturbation(
 	/*
 	// make starting perturbations based on command-line flags
 	DockingInitialPerturbationOP init_e2_k48r_dock( new
-		DockingInitialPerturbation( e2_k48r_jump_,
-		true)); // slide into contact
+	DockingInitialPerturbation( e2_k48r_jump_,
+	true)); // slide into contact
 	DockingInitialPerturbationOP init_e2_d77_dock( new
-		DockingInitialPerturbation( e2_d77_jump_,
-		true)); // slide into contact
+	DockingInitialPerturbation( e2_d77_jump_,
+	true)); // slide into contact
 
 	SequenceMoverOP init_e2_k48r_d77_docker( new SequenceMover() );
 	init_e2_k48r_d77_docker->add_mover( init_e2_k48r_dock );
@@ -1333,8 +1345,8 @@ ubi_e2c_modeler::initial_perturbation(
 
 	Real current_ubi_cov_bond_dist( 100.00 );
 	numeric::xyzVector_float d77_lys_CA(
-	    pose_in.residue( d77_48_lys_ ).xyz( CA ) ),
-	                     k48r_gly_CA( pose_in.residue( k48r_end_ ).xyz( CA ) );
+		pose_in.residue( d77_48_lys_ ).xyz( CA ) ),
+		k48r_gly_CA( pose_in.residue( k48r_end_ ).xyz( CA ) );
 	current_ubi_cov_bond_dist = d77_lys_CA.distance( k48r_gly_CA );
 
 	// Resetting Interfaces to three
@@ -1349,7 +1361,7 @@ ubi_e2c_modeler::initial_perturbation(
 
 Real
 ubi_e2c_modeler::centroid_mode_perturbation(
-    pose::Pose & pose_in ) {
+	pose::Pose & pose_in ) {
 
 	//using pose::datacache::CacheableDataType::INTERFACE_INFO;
 	using namespace core::scoring;
@@ -1370,13 +1382,13 @@ ubi_e2c_modeler::centroid_mode_perturbation(
 	Real current_ubi_cov_bond_dist( 100.00 );
 
 	Size init_trials(0);
-	while( current_ubi_cov_bond_dist > max_di_ubi_dist ) {
+	while ( current_ubi_cov_bond_dist > max_di_ubi_dist ) {
 		init_trials++;
 		pose_in = start_pose;
 		current_ubi_cov_bond_dist = initial_perturbation( pose_in );
 		TR << "UBI Init Trial: " << init_trials
-		   << "\t" << "Cov Bond Distance: "
-		   << current_ubi_cov_bond_dist << std::endl;
+			<< "\t" << "Cov Bond Distance: "
+			<< current_ubi_cov_bond_dist << std::endl;
 	}
 
 	//pose_in.dump_pdb( "final_init.pdb" );
@@ -1384,9 +1396,9 @@ ubi_e2c_modeler::centroid_mode_perturbation(
 	// movers
 	// dock movers
 	rigid::RigidBodyPerturbNoCenterMoverOP dock_e2_k48r( new rigid::RigidBodyPerturbNoCenterMover( e2_k48r_jump_, 5.0, // rot_magnitude
-	            0.7 ) ); // trans_magnitude_
-	rigid::RigidBodyPerturbNoCenterMoverOP dock_k48r_d77( new	rigid::RigidBodyPerturbNoCenterMover( e2_d77_jump_, 5.0, // rot_magnitude
-	            0.7 ) ); // trans_magnitude_
+		0.7 ) ); // trans_magnitude_
+	rigid::RigidBodyPerturbNoCenterMoverOP dock_k48r_d77( new rigid::RigidBodyPerturbNoCenterMover( e2_d77_jump_, 5.0, // rot_magnitude
+		0.7 ) ); // trans_magnitude_
 
 	RandomMoverOP docker( new RandomMover() );
 	//docker->add_mover( dock_e2_k48r, 0.5 );
@@ -1399,16 +1411,16 @@ ubi_e2c_modeler::centroid_mode_perturbation(
 		SequenceMoverOP perturb_min_cter( new SequenceMover() );
 
 		protocols::simple_moves::BackboneMoverOP small_mover( new protocols::simple_moves::SmallMover( flex_cter_map_,
-		        temperature_, 5 /*n_moves*/ ) );
+			temperature_, 5 /*n_moves*/ ) );
 		small_mover->angle_max( 90.0 );
 
 		protocols::simple_moves::BackboneMoverOP shear_mover( new protocols::simple_moves::ShearMover( flex_cter_map_,
-		        temperature_, 5 /*n_moves*/ ) );
+			temperature_, 5 /*n_moves*/ ) );
 		shear_mover->angle_max( 90.0 );
 
 		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(flex_cter_map_, lowres_cst_scorefxn_,
-		        "linmin",	min_tolerance_,	nb_list_, false /*deriv_check*/,
-		        false /* non verbose-deriv-check, default*/ ) );
+			"linmin", min_tolerance_, nb_list_, false /*deriv_check*/,
+			false /* non verbose-deriv-check, default*/ ) );
 
 		perturb_min_cter->add_mover( small_mover );
 		perturb_min_cter->add_mover( shear_mover );
@@ -1416,9 +1428,9 @@ ubi_e2c_modeler::centroid_mode_perturbation(
 
 		MonteCarloOP c_ter_mc;
 		c_ter_mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *lowres_cst_scorefxn_,
-		                                  temperature_ ) );
+			temperature_ ) );
 		TrialMoverOP cter_pert_trial( new TrialMover( perturb_min_cter,
-		        c_ter_mc ) );
+			c_ter_mc ) );
 		cter_cycle = RepeatMoverOP( new RepeatMover( cter_pert_trial, 10 ) ); // cycles
 	}
 
@@ -1432,7 +1444,7 @@ ubi_e2c_modeler::centroid_mode_perturbation(
 
 	//MonteCarloOP mc;
 	//mc = new moves::MonteCarlo( pose_in, *dock_lowres_cst_scorefxn_,
-	//														temperature_ );
+	//              temperature_ );
 	//
 	//TrialMoverOP dock_pert_trial = new TrialMover( dock_n_perturb, mc );
 	//
@@ -1444,30 +1456,30 @@ ubi_e2c_modeler::centroid_mode_perturbation(
 
 	Real score = ( *dock_lowres_cst_scorefxn_ )( pose_in );
 	Real last_accepted_CSP_score = score
-	                               + ( centroid_non_CSP_weight_ * CSP_fraction(	pose_in, true ) )
-	                               - ( centroid_CSP_weight_ * CSP_fraction(	pose_in ) );
+		+ ( centroid_non_CSP_weight_ * CSP_fraction( pose_in, true ) )
+		- ( centroid_CSP_weight_ * CSP_fraction( pose_in ) );
 	Real lowest_CSP_score = last_accepted_CSP_score;
 	pose::Pose best_CSP_pose( pose_in );
 	pose::Pose lowest_CSP_score_pose( pose_in );
 
-	for( Size i = 1; i <= 50 ; i++ ) {
+	for ( Size i = 1; i <= 50 ; i++ ) {
 		docker->apply( pose_in );
 		score = ( *dock_lowres_cst_scorefxn_ )( pose_in );
-		Real current_CSP_fraction = CSP_fraction(	pose_in );
-		Real current_non_CSP_fraction = CSP_fraction(	pose_in, true );
+		Real current_CSP_fraction = CSP_fraction( pose_in );
+		Real current_non_CSP_fraction = CSP_fraction( pose_in, true );
 		Real current_CSP_score = score
-		                         + ( centroid_non_CSP_weight_ * current_non_CSP_fraction )
-		                         -	( centroid_CSP_weight_ * current_CSP_fraction );
-		Real boltz_factor = ( last_accepted_CSP_score -	current_CSP_score ) /
-		                    temperature_;
+			+ ( centroid_non_CSP_weight_ * current_non_CSP_fraction )
+			- ( centroid_CSP_weight_ * current_CSP_fraction );
+		Real boltz_factor = ( last_accepted_CSP_score - current_CSP_score ) /
+			temperature_;
 		Real probability = std::exp( std::min (40.0, std::max(-40.0,
-		                                       boltz_factor)));
+			boltz_factor)));
 		Real random = numeric::random::rg().uniform();
-		if( (current_CSP_score < last_accepted_CSP_score) ||
-		        ( random < probability ) ) {
+		if ( (current_CSP_score < last_accepted_CSP_score) ||
+				( random < probability ) ) {
 			last_accepted_CSP_score = current_CSP_score;
 			best_CSP_pose = pose_in;
-			if( current_CSP_score < lowest_CSP_score ) {
+			if ( current_CSP_score < lowest_CSP_score ) {
 				lowest_CSP_score = current_CSP_score;
 				lowest_CSP_score_pose = pose_in;
 			}
@@ -1478,8 +1490,8 @@ ubi_e2c_modeler::centroid_mode_perturbation(
 
 	// pose_in.dump_pdb( "post_centroid.pdb" );
 	numeric::xyzVector_float d77_lys_CA(
-	    pose_in.residue( d77_48_lys_ ).xyz( CA ) ),
-	                     k48r_gly_CA( pose_in.residue( k48r_end_ ).xyz( CA ) );
+		pose_in.residue( d77_48_lys_ ).xyz( CA ) ),
+		k48r_gly_CA( pose_in.residue( k48r_end_ ).xyz( CA ) );
 	current_ubi_cov_bond_dist = d77_lys_CA.distance( k48r_gly_CA );
 	TR << "UBI Done: Centroid Mode Perturbation" << std::endl;
 
@@ -1488,7 +1500,7 @@ ubi_e2c_modeler::centroid_mode_perturbation(
 
 Real
 ubi_e2c_modeler::fullatom_mode_perturbation(
-    pose::Pose & pose_in ) {
+	pose::Pose & pose_in ) {
 	using namespace moves;
 	using namespace pack::task;
 	using namespace pack::task::operation;
@@ -1500,7 +1512,7 @@ ubi_e2c_modeler::fullatom_mode_perturbation(
 	SequenceMoverOP fullatom_optimizer( new SequenceMover() ); // **MAIN**
 
 	protocols::simple_moves::PackRotamersMoverOP pack_interface_repack( new protocols::simple_moves::PackRotamersMover(
-	    pack_scorefxn_ ) );
+		pack_scorefxn_ ) );
 	pack_interface_repack->task_factory(tf_);
 
 	//fullatom_optimizer->add_mover( pack_interface_repack ); // **MAIN**
@@ -1508,31 +1520,31 @@ ubi_e2c_modeler::fullatom_mode_perturbation(
 
 	//set up minimizer movers
 	protocols::simple_moves::MinMoverOP k48r_dock_min_mover( new protocols::simple_moves::MinMover( k48r_docking_map_,
-	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
+		dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
 	protocols::simple_moves::MinMoverOP d77_dock_min_mover( new protocols::simple_moves::MinMover( d77_docking_map_,
-	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
+		dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
 	protocols::simple_moves::MinMoverOP dock_min_mover( new protocols::simple_moves::MinMover( docking_map_,
-	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
+		dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
 	protocols::simple_moves::MinMoverOP flex_cter_min_mover( new protocols::simple_moves::MinMover( flex_cter_map_,
-	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
+		dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
 	protocols::simple_moves::MinMoverOP all_dof_min_mover( new protocols::simple_moves::MinMover( all_dof_map_,
-	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
+		dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
 
 	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin( new protocols::simple_moves::RotamerTrialsMinMover(
-	    pack_scorefxn_, tf_ ) );
+		pack_scorefxn_, tf_ ) );
 
 	// set up rigid body movers
 	Real trans_magnitude = 0.1; // default high-res docking values
 	Real rot_magnitude = 5.0; // default high-res docking values
 	rigid::RigidBodyPerturbMoverOP k48r_perturb( new rigid::RigidBodyPerturbMover(
-	    e2_k48r_jump_, rot_magnitude, trans_magnitude , rigid::partner_downstream,
-	    true ) );
+		e2_k48r_jump_, rot_magnitude, trans_magnitude , rigid::partner_downstream,
+		true ) );
 	rigid::RigidBodyPerturbMoverOP d77_perturb( new rigid::RigidBodyPerturbMover(
-	    e2_d77_jump_, rot_magnitude, trans_magnitude, rigid::partner_downstream,
-	    true ) );
+		e2_d77_jump_, rot_magnitude, trans_magnitude, rigid::partner_downstream,
+		true ) );
 
 	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover(
-	    pack_scorefxn_, tf_ ) );
+		pack_scorefxn_, tf_ ) );
 
 	MonteCarloOP mc;
 	mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *dockfa_cst_scorefxn_,temperature_) );
@@ -1544,10 +1556,10 @@ ubi_e2c_modeler::fullatom_mode_perturbation(
 	SequenceMoverOP perturb_min_cter( new SequenceMover() );
 
 	protocols::simple_moves::BackboneMoverOP small_mover( new protocols::simple_moves::SmallMover( flex_cter_map_,
-	        temperature_,	5 ) );
+		temperature_, 5 ) );
 	small_mover->angle_max( 5.0 );
 	protocols::simple_moves::BackboneMoverOP shear_mover( new protocols::simple_moves::ShearMover( flex_cter_map_,
-	        temperature_,	5 ) );
+		temperature_, 5 ) );
 	shear_mover->angle_max( 5.0 );
 
 	perturb_min_cter->add_mover( small_mover );
@@ -1589,42 +1601,43 @@ ubi_e2c_modeler::fullatom_mode_perturbation(
 
 	//CycleMoverOP mover_min_trial  = new CycleMover;
 	//for ( Size i=1; i < 8; ++i )
-	//	mover_min_trial->add_mover( mover_trial );
+	// mover_min_trial->add_mover( mover_trial );
 	//mover_min_trial->add_mover( min_n_repack );
 
 	//RepeatMoverOP multi_cycles = new RepeatMover( mover_min_trial, 50 );
 
 	Real score = ( *dockfa_cst_scorefxn_ )( pose_in );
 	Real last_accepted_CSP_score = score
-	                               + ( fullatom_non_CSP_weight_ * CSP_fraction( pose_in, true ) )
-	                               - ( fullatom_CSP_weight_ * CSP_fraction( pose_in ) );
+		+ ( fullatom_non_CSP_weight_ * CSP_fraction( pose_in, true ) )
+		- ( fullatom_CSP_weight_ * CSP_fraction( pose_in ) );
 	Real lowest_CSP_score = last_accepted_CSP_score;
 	pose::Pose best_CSP_pose( pose_in );
 	pose::Pose lowest_CSP_score_pose( pose_in );
 
-	for( Size i = 1; i <= 100 ; i++ ) {
-		if( i == 1 )
+	for ( Size i = 1; i <= 100 ; i++ ) {
+		if ( i == 1 ) {
 			perturb_min_cter->apply( pose_in ); // **REAL** FIRST MIN CTER
-		else if( i%8 == 0 )
+		} else if ( i%8 == 0 ) {
 			min_n_repack->apply( pose_in ); // **REAL** OCCASIONAL REPACK
-		else
+		} else {
 			random_moves->apply( pose_in ); // **REAL** RANDOM MOVE SELECTION
+		}
 		score = ( *dockfa_cst_scorefxn_ )( pose_in );
 		Real current_CSP_fraction = CSP_fraction( pose_in );
 		Real current_non_CSP_fraction = CSP_fraction( pose_in, true );
 		Real current_CSP_score = score
-		                         + ( fullatom_non_CSP_weight_ * current_non_CSP_fraction )
-		                         - ( fullatom_CSP_weight_ * current_CSP_fraction );
-		Real boltz_factor = ( last_accepted_CSP_score -	current_CSP_score ) /
-		                    temperature_;
+			+ ( fullatom_non_CSP_weight_ * current_non_CSP_fraction )
+			- ( fullatom_CSP_weight_ * current_CSP_fraction );
+		Real boltz_factor = ( last_accepted_CSP_score - current_CSP_score ) /
+			temperature_;
 		Real probability = std::exp( std::min (40.0, std::max(-40.0,
-		                                       boltz_factor)));
+			boltz_factor)));
 		Real random = numeric::random::rg().uniform();
-		if( ( current_CSP_score < last_accepted_CSP_score ) ||
-		        ( random < probability ) ) {
+		if ( ( current_CSP_score < last_accepted_CSP_score ) ||
+				( random < probability ) ) {
 			last_accepted_CSP_score = current_CSP_score;
 			best_CSP_pose = pose_in;
-			if( current_CSP_score < lowest_CSP_score ) {
+			if ( current_CSP_score < lowest_CSP_score ) {
 				lowest_CSP_score = current_CSP_score;
 				lowest_CSP_score_pose = pose_in;
 			}
@@ -1646,8 +1659,8 @@ ubi_e2c_modeler::fullatom_mode_perturbation(
 	Real current_ubi_cov_bond_dist( 100.00 );
 
 	numeric::xyzVector_float d77_lys_CA(
-	    pose_in.residue( d77_48_lys_ ).xyz( CA ) ),
-	                     k48r_gly_CA( pose_in.residue( k48r_end_ ).xyz( CA ) );
+		pose_in.residue( d77_48_lys_ ).xyz( CA ) ),
+		k48r_gly_CA( pose_in.residue( k48r_end_ ).xyz( CA ) );
 	current_ubi_cov_bond_dist = d77_lys_CA.distance( k48r_gly_CA );
 
 	applied_fullatom_pert_ = true;
@@ -1660,7 +1673,7 @@ ubi_e2c_modeler::fullatom_mode_perturbation(
 
 void
 ubi_e2c_modeler::initial_repack(
-    pose::Pose & pose_in ) {
+	pose::Pose & pose_in ) {
 	using namespace moves;
 	using namespace pack::task;
 	using namespace pack::task::operation;
@@ -1674,13 +1687,14 @@ ubi_e2c_modeler::initial_repack(
 	// restrict_to_interfacial_loop_packing( pose_in );
 
 	protocols::simple_moves::PackRotamersMoverOP pack_interface_repack( new protocols::simple_moves::PackRotamersMover(
-	    pack_scorefxn_ ) );
+		pack_scorefxn_ ) );
 	pack_interface_repack->task_factory(tf_);
 	TrialMoverOP pack_interface_and_loops_trial( new TrialMover(
-	    pack_interface_repack, mc ) );
+		pack_interface_repack, mc ) );
 
-	if( !refinement_mode_ )
+	if ( !refinement_mode_ ) {
 		pack_interface_and_loops_trial->apply( pose_in );
+	}
 	//pose_in.dump_pdb( "post_initial_repack" );
 	TR << "UBI Done: Initial Repack" << std::endl;
 
@@ -1689,18 +1703,19 @@ ubi_e2c_modeler::initial_repack(
 
 void
 ubi_e2c_modeler::setup_packer_task(
-    pose::Pose & pose_in ) {
+	pose::Pose & pose_in ) {
 	// using namespace basic::options;
 	using namespace pack::task;
 	using namespace pack::task::operation;
 
 
-	if( init_task_factory_ ) {
+	if ( init_task_factory_ ) {
 		tf_ = core::pack::task::TaskFactoryOP( new TaskFactory( *init_task_factory_ ) );
 		TR << "UBI Reinitializing Packer Task" << std::endl;
 		return;
-	} else
+	} else {
 		tf_ = core::pack::task::TaskFactoryOP( new TaskFactory );
+	}
 
 	TR << "UBI Setting Up Packer Task" << std::endl;
 
@@ -1727,7 +1742,7 @@ ubi_e2c_modeler::setup_packer_task(
 
 void
 ubi_e2c_modeler::restrict_to_interfacial_loop_packing(
-    pose::Pose & pose_in ) {
+	pose::Pose & pose_in ) {
 	using namespace pack::task;
 	using namespace pack::task::operation;
 
@@ -1737,7 +1752,7 @@ ubi_e2c_modeler::restrict_to_interfacial_loop_packing(
 
 	// selecting movable c-terminal residues
 	ObjexxFCL::FArray1D_bool loop_residues( pose_in.total_residue(), false );
-	for( Size i = 0; i <= flex_cter_; i++ ) {
+	for ( Size i = 0; i <= flex_cter_; i++ ) {
 		loop_residues( k48r_end_ - i) = true;
 		loop_residues( d77_end_ - i) = true;
 	}
@@ -1754,7 +1769,7 @@ ubi_e2c_modeler::restrict_to_interfacial_loop_packing(
 
 void
 ubi_e2c_modeler::set_e2g2_diubi_fold_tree(
-    pose::Pose & pose_in ) {
+	pose::Pose & pose_in ) {
 
 	using namespace kinematics;
 
@@ -1765,7 +1780,7 @@ ubi_e2c_modeler::set_e2g2_diubi_fold_tree(
 	Size nres = d77_end_;
 	Size jumppoint1 = e2_ctr_of_mass_;
 	Size diubi_center_of_mass = core::pose::residue_center_of_mass( pose_in,
-	                            e2_end_ + 1, nres );
+		e2_end_ + 1, nres );
 	Size jumppoint2 = diubi_center_of_mass;
 	Size cutpoint = e2_end_;
 
@@ -1785,8 +1800,8 @@ ubi_e2c_modeler::set_e2g2_diubi_fold_tree(
 
 Real
 ubi_e2c_modeler::calc_interaction_energy(
-    const pose::Pose & pose_in,
-    bool dimer ) {
+	const pose::Pose & pose_in,
+	bool dimer ) {
 	using namespace core::scoring;
 
 	TR << "UBI Calculating Interaction Energy" << std::endl;
@@ -1796,7 +1811,7 @@ ubi_e2c_modeler::calc_interaction_energy(
 
 	moves::SequenceMoverOP separate( new moves::SequenceMover() );
 	Real trans_magnitude = 1000;
-	if( dimer ) {
+	if ( dimer ) {
 		set_e2g2_diubi_fold_tree( complex_pose );
 		rigid::RigidBodyTransMoverOP translate_away_diubi( new rigid::RigidBodyTransMover( complex_pose, 1 ) );
 		translate_away_diubi->step_size( trans_magnitude );
@@ -1813,61 +1828,67 @@ ubi_e2c_modeler::calc_interaction_energy(
 
 	if ( pose_in.is_fullatom() ) {
 		docking_scorefxn = ScoreFunctionFactory::create_score_function(
-		                       "docking" );
+			"docking" );
 	} else {
 		docking_scorefxn = ScoreFunctionFactory::create_score_function(
-		                       "interchain_cen" );
+			"interchain_cen" );
 	}
 
 	Real bound_energy = ( *docking_scorefxn )( complex_pose );
 	separate->apply( complex_pose );
 	Real unbound_energy = ( *docking_scorefxn )( complex_pose );
 
-	if( dimer )
+	if ( dimer ) {
 		TR << "UBI Done: Calculating Dimer Interaction Energy" << std::endl;
-	else
+	} else {
 		TR << "UBI Done: Calculating Trimer Interaction Energy" << std::endl;
+	}
 
 	return (bound_energy - unbound_energy);
 } // calc_interaction_energy
 
 core::Real
 ubi_e2c_modeler::CSP_fraction(
-    const core::pose::Pose & pose_in,
-    bool non_CSP,
-    bool trim,
-    bool swap ) {
+	const core::pose::Pose & pose_in,
+	bool non_CSP,
+	bool trim,
+	bool swap ) {
 
-	if( non_CSP && ( ( fullatom_non_CSP_weight_ == 0.00 ) ||
-	                 ( centroid_non_CSP_weight_ == 0.00 ) ) )
+	if ( non_CSP && ( ( fullatom_non_CSP_weight_ == 0.00 ) ||
+			( centroid_non_CSP_weight_ == 0.00 ) ) ) {
 		return( 0.00 );
+	}
 
 	/*
-		bool fullatom = pose_in.is_fullatom();
+	bool fullatom = pose_in.is_fullatom();
 
-		if( fullatom )
-			TR << "UBI Calculating Fullatom CSP Fraction" << std::endl;
-		else
-			TR << "UBI Calculating Centroid CSP Fraction" << std::endl;
-		*/
+	if( fullatom )
+	TR << "UBI Calculating Fullatom CSP Fraction" << std::endl;
+	else
+	TR << "UBI Calculating Centroid CSP Fraction" << std::endl;
+	*/
 
 	utility::vector1<Size> current_CSP;
-	if( !non_CSP ) {
-		if( trim ) {
-			if( swap )
+	if ( !non_CSP ) {
+		if ( trim ) {
+			if ( swap ) {
 				current_CSP = CSP_swap_trim_;
-			else
+			} else {
 				current_CSP = CSP_trim_;
-		} else
+			}
+		} else {
 			current_CSP = CSP_;
+		}
 	} else  {
-		if( trim ) {
-			if( swap )
+		if ( trim ) {
+			if ( swap ) {
 				current_CSP = non_CSP_swap_trim_;
-			else
+			} else {
 				current_CSP = non_CSP_trim_;
-		} else
+			}
+		} else {
 			current_CSP = non_CSP_;
+		}
 	}
 
 	Size total_CSPs = current_CSP.size();
@@ -1876,32 +1897,36 @@ ubi_e2c_modeler::CSP_fraction(
 	utility::vector1<bool> is_interface( nres, false );
 
 	Size num_jump = 2;
-	for( Size jj = 1; jj <= num_jump; jj++ ) {
+	for ( Size jj = 1; jj <= num_jump; jj++ ) {
 		// "interface" is a reserved c++ keyword (on VC++ )
 		protocols::scoring::Interface _interface( jj );
 		// distance decided by inspection of PDB 2FUH
 		_interface.distance( 8.0 );
 		_interface.calculate( pose_in );
 
-		for ( Size ii=1; ii <= nres; ++ii )
-			if( _interface.is_interface(ii) )
+		for ( Size ii=1; ii <= nres; ++ii ) {
+			if ( _interface.is_interface(ii) ) {
 				is_interface[ii] = true;
+			}
+		}
 	}
 
 	Size satisfied_CSPs = 0;
-	for ( Size ii = 1; ii <= total_CSPs; ++ii )
-		if( is_interface[ current_CSP[ii] ] )
+	for ( Size ii = 1; ii <= total_CSPs; ++ii ) {
+		if ( is_interface[ current_CSP[ii] ] ) {
 			satisfied_CSPs++;
+		}
+	}
 
 	Real CSP_fraction = ( (Real) satisfied_CSPs ) / ( (Real) total_CSPs);
 
 	/*
 	if( fullatom )
-		TR << "UBI Done: Calculating Fullatom CSP Fraction " << CSP_fraction
-			 << std::endl;
+	TR << "UBI Done: Calculating Fullatom CSP Fraction " << CSP_fraction
+	<< std::endl;
 	else
-		TR << "UBI Done: Calculating Centroid CSP Fraction " << CSP_fraction
-			 << std::endl;
+	TR << "UBI Done: Calculating Centroid CSP Fraction " << CSP_fraction
+	<< std::endl;
 	*/
 
 	return( CSP_fraction );
@@ -1916,33 +1941,34 @@ ubi_e2c_modeler::centroid_filter( pose::Pose & pose_in ) {
 
 	bool passed_filter = true;
 
-	if ( score_map_[ "AD_k48_CA_CA" ] >= max_k48_cter_dist_) {
+	if ( score_map_[ "AD_k48_CA_CA" ] >= max_k48_cter_dist_ ) {
 		passed_filter = false;
 		TR << "UBI Failed Centroid Filter K48_CA_CA: "
-		   << score_map_[ "AD_k48_CA_CA" ] << std::endl;
+			<< score_map_[ "AD_k48_CA_CA" ] << std::endl;
 	} else {
 		TR << "UBI Success Centroid Filter K48_CA_CA: "
-		   << score_map_[ "AD_k48_CA_CA" ] << std::endl;
+			<< score_map_[ "AD_k48_CA_CA" ] << std::endl;
 	}
 
 	dock_lowres_cst_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 1);
 	( *dock_lowres_cst_scorefxn_ )( pose_in );
 	Real constraint_score = pose_in.energies().total_energies()[
-	                            atom_pair_constraint ];
+		atom_pair_constraint ];
 	score_map_[ "AC_constraint" ] = constraint_score;
-	if( passed_filter && ( constraint_score >= fullatom_constraint_cutoff_)) {
+	if ( passed_filter && ( constraint_score >= fullatom_constraint_cutoff_) ) {
 		passed_filter = false;
 		TR << "UBI Failed Centroid Filter Constraint Score: "
-		   << constraint_score
-		   << std::endl;
+			<< constraint_score
+			<< std::endl;
 	} else {
-		if ( constraint_score	< fullatom_constraint_cutoff_ )
+		if ( constraint_score < fullatom_constraint_cutoff_ ) {
 			TR << "UBI Success Centroid Filter Constraint Score: "
-			   << constraint_score
-			   << std::endl;
+				<< constraint_score
+				<< std::endl;
+		}
 	}
 	dock_lowres_cst_scorefxn_->set_weight( core::scoring::atom_pair_constraint,
-	                                       cen_constraint_ );
+		cen_constraint_ );
 	( *dock_lowres_cst_scorefxn_ )( pose_in );
 
 	Real CSP_fraction_ratio = CSP_fraction( pose_in );
@@ -1950,33 +1976,36 @@ ubi_e2c_modeler::centroid_filter( pose::Pose & pose_in ) {
 	Real non_CSP_fraction_ratio = CSP_fraction( pose_in, true );
 	score_map_[ "AB_non_CSP_fraction" ] = non_CSP_fraction_ratio;
 
-	if( passed_filter && ( CSP_fraction_ratio <
-	                       centroid_allowed_CSP_fraction_ ) ) {
+	if ( passed_filter && ( CSP_fraction_ratio <
+			centroid_allowed_CSP_fraction_ ) ) {
 		passed_filter = false;
 		TR << "UBI Failed Centroid Filter CSP Fraction: "
-		   << CSP_fraction_ratio << std::endl;
+			<< CSP_fraction_ratio << std::endl;
 	} else {
-		if( CSP_fraction_ratio >= centroid_allowed_CSP_fraction_ )
+		if ( CSP_fraction_ratio >= centroid_allowed_CSP_fraction_ ) {
 			TR << "UBI Success Centroid Filter CSP Fraction: "
-			   << CSP_fraction_ratio << std::endl;
+				<< CSP_fraction_ratio << std::endl;
+		}
 	}
 
 	Real cen_score( 10000.00 );
-	if( passed_filter ) {
+	if ( passed_filter ) {
 		cen_score = ( *output_cen_scorefxn_ )( pose_in );
 	}
-	if( passed_filter && ( cen_score > 0.00 ) ) {
+	if ( passed_filter && ( cen_score > 0.00 ) ) {
 		passed_filter = false;
 		TR << "UBI Failed Centroid Score: " << cen_score << std::endl;
 	} else {
-		if( cen_score <= 0.00 )
+		if ( cen_score <= 0.00 ) {
 			TR << "UBI Success Centroid Score: " << cen_score << std::endl;
+		}
 	}
 
-	if ( !passed_filter )
+	if ( !passed_filter ) {
 		TR << "UBI STRUCTURE FAILED LOW-RES FILTER" << std::endl;
-	else
+	} else {
 		TR << "UBI Done: Successfully Passed Centroid Filter" << std::endl;
+	}
 
 	return( passed_filter );
 } // centroid_filter
@@ -1990,86 +2019,90 @@ ubi_e2c_modeler::fullatom_filter( pose::Pose & pose_in ) {
 
 	bool passed_filter = true;
 
-	if (passed_filter && (score_map_["AD_k48_CA_CA"] >= max_k48_cter_dist_)) {
+	if ( passed_filter && (score_map_["AD_k48_CA_CA"] >= max_k48_cter_dist_) ) {
 		passed_filter = false;
 		TR << "UBI Failed Fullatom Filter K48_CA_CA: "
-		   << score_map_[ "AD_k48_CA_CA" ] << std::endl;
+			<< score_map_[ "AD_k48_CA_CA" ] << std::endl;
 	} else {
 		TR << "UBI Success Fullatom Filter K48_CA_CA: "
-		   << score_map_[ "AD_k48_CA_CA" ] << std::endl;
+			<< score_map_[ "AD_k48_CA_CA" ] << std::endl;
 	}
 
 	dockfa_cst_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 1 );
 	( *dockfa_cst_scorefxn_ )( pose_in );
 	Real constraint_score = pose_in.energies().total_energies()[
-	                            atom_pair_constraint ];
-	if( refinement_mode_ )
+		atom_pair_constraint ];
+	if ( refinement_mode_ ) {
 		constraint_score = constraint_score / 1000000;
+	}
 	score_map_[ "AC_constraint" ] = constraint_score;
 	if ( passed_filter &&  ( constraint_score >= fullatom_constraint_cutoff_
-	                         && !refinement_mode_ ) ) {
+			&& !refinement_mode_ ) ) {
 		passed_filter = false;
 		TR << "UBI Failed Fullatom Filter Constraint Score: "
-		   << constraint_score
-		   << std::endl;
+			<< constraint_score
+			<< std::endl;
 	} else {
-		if( constraint_score < fullatom_constraint_cutoff_ )
+		if ( constraint_score < fullatom_constraint_cutoff_ ) {
 			TR << "UBI Success Fullatom Filter Constraint Score: "
-			   << constraint_score
-			   << std::endl;
+				<< constraint_score
+				<< std::endl;
+		}
 	}
 	dockfa_cst_scorefxn_->set_weight( core::scoring::atom_pair_constraint,
-	                                  full_constraint_ );
+		full_constraint_ );
 	( *dockfa_cst_scorefxn_ )( pose_in );
 
 	Real CSP_fraction_ratio = CSP_fraction( pose_in );
 	score_map_[ "AA_CSP_fraction" ] = CSP_fraction_ratio;
 	Real non_CSP_fraction_ratio = CSP_fraction( pose_in, true  );
 	score_map_[ "AB_non_CSP_fraction" ] = non_CSP_fraction_ratio;
-	if( passed_filter && ( CSP_fraction_ratio <
-	                       fullatom_allowed_CSP_fraction_ ) ) {
+	if ( passed_filter && ( CSP_fraction_ratio <
+			fullatom_allowed_CSP_fraction_ ) ) {
 		passed_filter = false;
 		TR << "UBI Failed Fullatom Filter CSP Fraction: "
-		   << CSP_fraction_ratio << std::endl;
+			<< CSP_fraction_ratio << std::endl;
 	} else {
-		if( CSP_fraction_ratio >= fullatom_allowed_CSP_fraction_ )
+		if ( CSP_fraction_ratio >= fullatom_allowed_CSP_fraction_ ) {
 			TR << "UBI Success Fullatom Filter CSP Fraction: "
-			   <<	CSP_fraction_ratio << std::endl;
+				<< CSP_fraction_ratio << std::endl;
+		}
 	}
 
 	score_map_[ "AH_I_sc_trimer" ] = 10.00;
 	//if( passed_filter )
 	score_map_[ "AH_I_sc_trimer" ] = calc_interaction_energy( pose_in,
-	                                 false ); //dimer
+		false ); //dimer
 
 	score_map_[ "AG_I_sc_e2_ubi" ] = calc_interaction_energy( pose_in );
 
 	/*
 	if ( passed_filter && score_map_[ "A_I_sc" ] >= 0.0) {
-		passed_filter = false;
-		TR << "UBI Failed Fullatom Filter I_sc: "
-			 << score_map_[ "A_I_sc" ] << std::endl;
+	passed_filter = false;
+	TR << "UBI Failed Fullatom Filter I_sc: "
+	<< score_map_[ "A_I_sc" ] << std::endl;
 	}
 	else {
-		if( score_map_[ "A_I_sc" ] < 0.0)
-			TR << "UBI Success Fullatom Filter I_sc: "
-				 << score_map_ [ "A_I_sc" ] << std::endl;
+	if( score_map_[ "A_I_sc" ] < 0.0)
+	TR << "UBI Success Fullatom Filter I_sc: "
+	<< score_map_ [ "A_I_sc" ] << std::endl;
 	}
 	*/
 
-	if ( !passed_filter )
+	if ( !passed_filter ) {
 		TR << "UBI STRUCTURE FAILED HIGH-RES FILTER" << std::endl;
-	else
+	} else {
 		TR << "UBI Done: Successfully Passed Fullatom Filter" << std::endl;
+	}
 
 	return passed_filter;
 } // fullatom_filter
 
 core::Real
 ubi_e2c_modeler::calc_Lrmsd (
-    const pose::Pose & pose_in,
-    const pose::Pose & native_pose,
-    Size ubiquitin ) {
+	const pose::Pose & pose_in,
+	const pose::Pose & native_pose,
+	Size ubiquitin ) {
 
 	using namespace core::scoring;
 
@@ -2077,10 +2110,10 @@ ubi_e2c_modeler::calc_Lrmsd (
 
 	Size compute_rmsd_start(0), compute_rmsd_end(0);
 
-	if( ubiquitin == e2_k48r_jump_ ) {
+	if ( ubiquitin == e2_k48r_jump_ ) {
 		compute_rmsd_start = e2_end_ + 1;
 		compute_rmsd_end = k48r_end_;
-	} else if( ubiquitin == e2_d77_jump_ ) {
+	} else if ( ubiquitin == e2_d77_jump_ ) {
 		compute_rmsd_start = k48r_end_ + 1;
 		compute_rmsd_end = d77_end_;
 	} else {
@@ -2088,11 +2121,12 @@ ubi_e2c_modeler::calc_Lrmsd (
 		compute_rmsd_end = k48r_end_;
 	}
 
-	for ( Size i = compute_rmsd_start; i <= compute_rmsd_end; ++i )
+	for ( Size i = compute_rmsd_start; i <= compute_rmsd_end; ++i ) {
 		superpos_partner(i) = true;
+	}
 
 	Real Lrmsd = rmsd_no_super_subset( native_pose, pose_in,
-	                                   superpos_partner, is_protein_CA );
+		superpos_partner, is_protein_CA );
 	return ( Lrmsd );
 } // calc_Lrmsd
 
@@ -2120,11 +2154,11 @@ ubi_e2c_modeler::evaluate_native( pose::Pose & pose_in ) {
 	core::scoring::ScoreFunctionOP dockfa_score;
 
 	dock_lowres_score = core::scoring::ScoreFunctionFactory::
-	                    create_score_function("interchain_cen");
+		create_score_function("interchain_cen");
 	lowres_score = core::scoring::ScoreFunctionFactory::
-	               create_score_function( "cen_std" );
+		create_score_function( "cen_std" );
 	dockfa_score = core::scoring::ScoreFunctionFactory::
-	               create_score_function( "docking"  );
+		create_score_function( "docking"  );
 	pack_score = core::scoring::get_score_function("pre_talaris_2013_standard.wts");
 
 	setup_key_residues( pose_in );
@@ -2160,7 +2194,7 @@ ubi_e2c_modeler::evaluate_native( pose::Pose & pose_in ) {
 	TR << "Native Pack Score    : " << score << std::endl;
 
 	setup_packer_task( pose_in );
-	protocols::simple_moves::PackRotamersMoverOP repack( new protocols::simple_moves::PackRotamersMover(	pack_score ) );
+	protocols::simple_moves::PackRotamersMoverOP repack( new protocols::simple_moves::PackRotamersMover( pack_score ) );
 	repack->task_factory( tf_ );
 	repack->apply( pose_in );
 
@@ -2181,14 +2215,14 @@ ubi_e2c_modeler::evaluate_native( pose::Pose & pose_in ) {
 	Real unbound_energy = ( *dockfa_score )( start_pose );
 
 	TR << "Interaction Score    : " << bound_energy - unbound_energy
-	   << std::endl;
+		<< std::endl;
 
 	return;
 } // evaluate_native
 
 void
 ubi_e2c_modeler::optimize_cov_bond(
-    pose::Pose & pose_in ) {
+	pose::Pose & pose_in ) {
 	using namespace kinematics;
 	//using pose::datacache::CacheableDataType::INTERFACE_INFO;
 	using namespace core::scoring;
@@ -2199,11 +2233,11 @@ ubi_e2c_modeler::optimize_cov_bond(
 
 	Real const local_full_constraint( 100000.00 );
 	dockfa_cst_scorefxn_->set_weight( atom_pair_constraint,
-	                                  local_full_constraint );
+		local_full_constraint );
 	dockfa_cst_min_scorefxn_->set_weight( atom_pair_constraint,
-	                                      local_full_constraint );
+		local_full_constraint );
 	pack_cst_scorefxn_->set_weight( atom_pair_constraint,
-	                                local_full_constraint );
+		local_full_constraint );
 
 
 	setup_complex_fold_tree( pose_in );
@@ -2214,15 +2248,15 @@ ubi_e2c_modeler::optimize_cov_bond(
 
 	setup_packer_task( pose_in );
 
-	protocols::simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover(	pack_cst_scorefxn_ ) );
+	protocols::simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover( pack_cst_scorefxn_ ) );
 	packer->task_factory(tf_);
 
 	//set up minimizer
 	protocols::simple_moves::MinMoverOP flex_cter_min_mover( new protocols::simple_moves::MinMover( flex_cter_map_,
-	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
+		dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
 
 	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover(
-	    pack_cst_scorefxn_, tf_ ) );
+		pack_cst_scorefxn_, tf_ ) );
 
 	flex_cter_min_mover->apply( pose_in ); // **REAL** MINIMIZE C TER
 
@@ -2230,10 +2264,10 @@ ubi_e2c_modeler::optimize_cov_bond(
 	SequenceMoverOP perturb_min_cter( new SequenceMover() );
 
 	protocols::simple_moves::BackboneMoverOP small_mover( new protocols::simple_moves::SmallMover( flex_cter_map_,
-	        temperature_,	5 ) );
+		temperature_, 5 ) );
 	small_mover->angle_max( 5.0 );
 	protocols::simple_moves::BackboneMoverOP shear_mover( new protocols::simple_moves::ShearMover( flex_cter_map_,
-	        temperature_,	5 ) );
+		temperature_, 5 ) );
 	shear_mover->angle_max( 5.0 );
 
 	perturb_min_cter->add_mover( small_mover );
@@ -2243,33 +2277,34 @@ ubi_e2c_modeler::optimize_cov_bond(
 
 	Real score = ( *dockfa_cst_scorefxn_ )( pose_in );
 	Real last_accepted_CSP_score = score
-	                               +	( fullatom_non_CSP_weight_ * CSP_fraction( pose_in, true ) )
-	                               - ( fullatom_CSP_weight_ * CSP_fraction( pose_in ) );
+		+ ( fullatom_non_CSP_weight_ * CSP_fraction( pose_in, true ) )
+		- ( fullatom_CSP_weight_ * CSP_fraction( pose_in ) );
 	Real lowest_CSP_score = last_accepted_CSP_score;
 	pose::Pose best_CSP_pose( pose_in );
 	pose::Pose lowest_CSP_score_pose( pose_in );
 
-	for( Size i = 1; i <= 100 ; i++ ) {
-		if( i%8 == 0 )
+	for ( Size i = 1; i <= 100 ; i++ ) {
+		if ( i%8 == 0 ) {
 			packer->apply( pose_in );
-		else
+		} else {
 			perturb_min_cter->apply( pose_in ); // **REAL** C-TER MIN
+		}
 		score = ( *dockfa_cst_scorefxn_ )( pose_in );
 		Real current_CSP_fraction = CSP_fraction( pose_in );
 		Real current_non_CSP_fraction = CSP_fraction( pose_in, true );
 		Real current_CSP_score = score +
-		                         ( fullatom_non_CSP_weight_ * current_non_CSP_fraction ) -
-		                         ( fullatom_CSP_weight_ *	current_CSP_fraction );
-		Real boltz_factor = ( last_accepted_CSP_score -	current_CSP_score ) /
-		                    temperature_;
+			( fullatom_non_CSP_weight_ * current_non_CSP_fraction ) -
+			( fullatom_CSP_weight_ * current_CSP_fraction );
+		Real boltz_factor = ( last_accepted_CSP_score - current_CSP_score ) /
+			temperature_;
 		Real probability = std::exp( std::min (40.0, std::max(-40.0,
-		                                       boltz_factor)));
+			boltz_factor)));
 		Real random = numeric::random::rg().uniform();
-		if( ( current_CSP_score < last_accepted_CSP_score ) ||
-		        ( random < probability ) ) {
+		if ( ( current_CSP_score < last_accepted_CSP_score ) ||
+				( random < probability ) ) {
 			last_accepted_CSP_score = current_CSP_score;
 			best_CSP_pose = pose_in;
-			if( current_CSP_score < lowest_CSP_score ) {
+			if ( current_CSP_score < lowest_CSP_score ) {
 				lowest_CSP_score = current_CSP_score;
 				lowest_CSP_score_pose = pose_in;
 			}
@@ -2283,8 +2318,8 @@ ubi_e2c_modeler::optimize_cov_bond(
 	Real ubi_cov_bond_dist( 100.00 );
 
 	numeric::xyzVector_float d77_lys_CA(
-	    pose_in.residue( d77_48_lys_ ).xyz( CA ) ),
-	                     k48r_gly_CA( pose_in.residue( k48r_end_ ).xyz( CA ) );
+		pose_in.residue( d77_48_lys_ ).xyz( CA ) ),
+		k48r_gly_CA( pose_in.residue( k48r_end_ ).xyz( CA ) );
 
 	ubi_cov_bond_dist = d77_lys_CA.distance( k48r_gly_CA );
 
@@ -2294,8 +2329,8 @@ ubi_e2c_modeler::optimize_cov_bond(
 	Size const O_atom (4);
 
 	numeric::xyzVector_float d77_lys_NZ(
-	    pose_in.residue( d77_48_lys_ ).xyz( NZ_atom ) ),
-	                     k48r_gly_O( pose_in.residue( k48r_end_ ).xyz( O_atom ) );
+		pose_in.residue( d77_48_lys_ ).xyz( NZ_atom ) ),
+		k48r_gly_O( pose_in.residue( k48r_end_ ).xyz( O_atom ) );
 	ubi_cov_bond_dist = d77_lys_NZ.distance( k48r_gly_O );
 
 	score_map_[ "AE_k48_O_NZ" ] = ubi_cov_bond_dist;
@@ -2304,11 +2339,11 @@ ubi_e2c_modeler::optimize_cov_bond(
 
 	// Restoring full atom constraint weights
 	dockfa_cst_scorefxn_->set_weight( atom_pair_constraint,
-	                                  full_constraint_ );
+		full_constraint_ );
 	dockfa_cst_min_scorefxn_->set_weight( atom_pair_constraint,
-	                                      full_constraint_ );
+		full_constraint_ );
 	pack_cst_scorefxn_->set_weight( atom_pair_constraint,
-	                                full_constraint_ );
+		full_constraint_ );
 
 	TR << "UBI Done: Optimizing Covalent Bond" << std::endl;
 
@@ -2317,7 +2352,7 @@ ubi_e2c_modeler::optimize_cov_bond(
 } // optimize_cov_bond
 
 void ubi_e2c_modeler::monoub_assign_CSPs(
-    const pose::Pose & pose_in ) {
+	const pose::Pose & pose_in ) {
 
 	TR << "UBI Mono Ubi Assigning CSPs" << std::endl;
 
@@ -2425,7 +2460,7 @@ void ubi_e2c_modeler::monoub_apply( pose::Pose & pose_in ) {
 	Size tries = 0;
 
 	//start loop of decoy creation until filters are all passed
-	for (Size r = 1; r <= max_repeats_; r++) {
+	for ( Size r = 1; r <= max_repeats_; r++ ) {
 		tries = r;
 		pose_in = start_pose;
 
@@ -2441,7 +2476,7 @@ void ubi_e2c_modeler::monoub_apply( pose::Pose & pose_in ) {
 		applied_fullatom_pert_ = false;
 
 		// fullatom mode
-		if( passed_centroid_filter_ || r == max_repeats_ ) {
+		if ( passed_centroid_filter_ || r == max_repeats_ ) {
 			// convert to full atom
 			to_all_atom.apply( pose_in );
 			recover_sidechains.apply( pose_in );
@@ -2458,12 +2493,14 @@ void ubi_e2c_modeler::monoub_apply( pose::Pose & pose_in ) {
 		} // if fullatom mode
 
 		if ( passed_centroid_filter_ && passed_fullatom_filter_ ) break;
-		else  TR <<"UBI Mono Ubi Repeating structure " << r << " times"
-			         << std::endl;
+		else {
+			TR <<"UBI Mono Ubi Repeating structure " << r << " times"
+				<< std::endl;
+		}
 	} // for max_repeats_
 
 	// add scores to map for output
-	if( applied_fullatom_pert_ ) {
+	if ( applied_fullatom_pert_ ) {
 		( *output_full_scorefxn_ )( pose_in );
 		protocols::jd2::ScoreMap::nonzero_energies(score_map_, output_full_scorefxn_, pose_in);
 	} else {
@@ -2473,17 +2510,17 @@ void ubi_e2c_modeler::monoub_apply( pose::Pose & pose_in ) {
 
 	score_map_["AJ_monoub_rms"] = monoub_calc_Lrmsd( pose_in, start_pose );
 
-	pose_in.data().set( core::pose::datacache::CacheableDataType::SCORE_MAP, 
+	pose_in.data().set( core::pose::datacache::CacheableDataType::SCORE_MAP,
 		DataCache_CacheableData::DataOP( new basic::datacache::DiagnosticData(score_map_) ));
 
 	TR << "UBI Mono Ubi Outputing structure after " << tries << " times"
-	   << std::endl;
+		<< std::endl;
 
 }// end monoub_apply
 
 void
 ubi_e2c_modeler::monoub_setup_key_residues(
-    const pose::Pose & pose_in ) {
+	const pose::Pose & pose_in ) {
 
 	TR << "UBI Mono Ubi Setting Up Key Residues" << std::endl;
 
@@ -2492,14 +2529,15 @@ ubi_e2c_modeler::monoub_setup_key_residues(
 
 	//char chain = '_';
 	char old_chain = '_';
-	for( Size i = 1; i <= monoub_end_; i++ ) {
+	for ( Size i = 1; i <= monoub_end_; i++ ) {
 		char chain = pdb_info->chain( i );
 
 		// if initial condition
-		if( i == 1 )
+		if ( i == 1 ) {
 			old_chain = pdb_info->chain( i );
+		}
 
-		if( chain != old_chain ) {
+		if ( chain != old_chain ) {
 			e2_end_ = i - 1;
 			break;
 		}
@@ -2507,10 +2545,10 @@ ubi_e2c_modeler::monoub_setup_key_residues(
 	}// for i <= monoub_end_
 
 	e2_ctr_of_mass_ = core::pose::residue_center_of_mass( pose_in, 1,
-	                  e2_end_ );
+		e2_end_ );
 	monoub_ctr_of_mass_ = core::pose::residue_center_of_mass( pose_in,
-	                      e2_end_ + 1,
-	                      monoub_end_ );
+		e2_end_ + 1,
+		monoub_end_ );
 
 	TR << "UBI Done: Mono Ubi Setting Up Key Residues" << std::endl;
 
@@ -2521,7 +2559,7 @@ ubi_e2c_modeler::monoub_setup_move_maps() {
 	using namespace core;
 	using namespace kinematics;
 
-	if( init_all_dof_map_ ) {
+	if ( init_all_dof_map_ ) {
 		monoub_all_dof_map_ = core::kinematics::MoveMapOP( new MoveMap( *init_monoub_all_dof_map_ ) );
 		monoub_docking_map_ = core::kinematics::MoveMapOP( new MoveMap( *init_monoub_docking_map_ ) );
 		monoub_flex_cter_map_ = core::kinematics::MoveMapOP( new MoveMap( *init_monoub_flex_cter_map_ ) );
@@ -2546,7 +2584,7 @@ ubi_e2c_modeler::monoub_setup_move_maps() {
 	monoub_flex_cter_map_->set_chi( chi );
 	monoub_flex_cter_map_->set_bb( bb );
 	monoub_flex_cter_map_->set_jump( 1, false );
-	for( Size i = 0; i <= flex_cter_; i++ ) {
+	for ( Size i = 0; i <= flex_cter_; i++ ) {
 		monoub_flex_cter_map_->set_bb( monoub_end_ - i, true );
 	}
 
@@ -2555,7 +2593,7 @@ ubi_e2c_modeler::monoub_setup_move_maps() {
 	monoub_all_dof_map_->set_chi( chi );
 	monoub_all_dof_map_->set_bb( bb );
 	monoub_all_dof_map_->set_jump( 1, true );
-	for( Size i = 0; i <= flex_cter_; i++ ) {
+	for ( Size i = 0; i <= flex_cter_; i++ ) {
 		monoub_all_dof_map_->set_bb( monoub_end_ - i, true );
 	}
 
@@ -2570,7 +2608,7 @@ ubi_e2c_modeler::monoub_setup_move_maps() {
 
 void
 ubi_e2c_modeler::monoub_fold_tree(
-    pose::Pose & pose_in ) {
+	pose::Pose & pose_in ) {
 
 	using namespace kinematics;
 
@@ -2598,15 +2636,15 @@ ubi_e2c_modeler::monoub_fold_tree(
 
 void
 ubi_e2c_modeler::monoub_initial_cter_perturbation(
-    pose::Pose & pose_in ) {
+	pose::Pose & pose_in ) {
 	using namespace protocols::moves;
 
 	TR << "UBI Mono Ubi Initial C-Terminal Perturbation" << std::endl;
 
 	// idealize c-terminals
-	for( Size i = 0; i <= flex_cter_; i++ ) {
+	for ( Size i = 0; i <= flex_cter_; i++ ) {
 		conformation::idealize_position( monoub_end_ - ( flex_cter_ - i ),
-		                                 pose_in.conformation());
+			pose_in.conformation());
 	}
 
 	// pose_in.dump_pdb( "idealized.pdb" );
@@ -2616,8 +2654,8 @@ ubi_e2c_modeler::monoub_initial_cter_perturbation(
 	Real const init_psi  (  150.0 );
 	Real const init_omega(  180.0 );
 
-	for( Size i = 0; i <= flex_cter_; i++ ) {
-		if ( i != flex_cter_ )	{
+	for ( Size i = 0; i <= flex_cter_; i++ ) {
+		if ( i != flex_cter_ ) {
 			pose_in.set_phi( monoub_end_ - i, init_phi );
 		}
 		if ( i != 0 ) {
@@ -2635,22 +2673,22 @@ ubi_e2c_modeler::monoub_initial_cter_perturbation(
 	ub_cter_map->clear();
 	ub_cter_map->set_chi( true );
 	ub_cter_map->set_bb( false );
-	for( Size i = 0; i <= flex_cter_; i++ ) {
+	for ( Size i = 0; i <= flex_cter_; i++ ) {
 		ub_cter_map->set_bb( monoub_end_ - i, true );
 	}
 
 	SequenceMoverOP perturb_min_cter( new SequenceMover() );
 
 	protocols::simple_moves::BackboneMoverOP small_mover( new protocols::simple_moves::SmallMover( ub_cter_map,
-	        temperature_, 8 ) );
+		temperature_, 8 ) );
 	small_mover->angle_max( 90.0 );
 	protocols::simple_moves::BackboneMoverOP shear_mover( new protocols::simple_moves::ShearMover( ub_cter_map,
-	        temperature_, 8 ) );
+		temperature_, 8 ) );
 
 	shear_mover->angle_max( 90.0 );
 
 	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover ( ub_cter_map, lowres_cst_scorefxn_,
-	        "linmin",	min_tolerance_, nb_list_, false, false ) );
+		"linmin", min_tolerance_, nb_list_, false, false ) );
 
 	perturb_min_cter->add_mover( small_mover );
 	perturb_min_cter->add_mover( shear_mover );
@@ -2670,7 +2708,7 @@ ubi_e2c_modeler::monoub_initial_cter_perturbation(
 
 void
 ubi_e2c_modeler::monoub_first_perturbation(
-    pose::Pose & pose_in ) {
+	pose::Pose & pose_in ) {
 	//using pose::datacache::CacheableDataType::INTERFACE_INFO;
 	using namespace core::scoring;
 	using namespace protocols::docking;
@@ -2683,42 +2721,42 @@ ubi_e2c_modeler::monoub_first_perturbation(
 
 	// make starting perturbations based on command-line flags
 	DockingInitialPerturbationOP init_e2_mono_ub_dock( new
-	        DockingInitialPerturbation( 1 ,true/*slide into contact*/) );
+		DockingInitialPerturbation( 1 ,true/*slide into contact*/) );
 	// pose_in.dump_pdb( "pre.pdb" );
 	init_e2_mono_ub_dock->apply( pose_in );
 
 	// dock movers
 	rigid::RigidBodyPerturbNoCenterMoverOP dock_e2_mono_ub( new
-	        rigid::RigidBodyPerturbNoCenterMover( 1 , 10.0, // rot_magnitude
-	                1.0 ) ); // trans_magnitude_
+		rigid::RigidBodyPerturbNoCenterMover( 1 , 10.0, // rot_magnitude
+		1.0 ) ); // trans_magnitude_
 
 	protocols::scoring::InterfaceInfoOP one_interface( new protocols::scoring::InterfaceInfo( 1 ) );
 	pose_in.data().set( core::pose::datacache::CacheableDataType::INTERFACE_INFO, one_interface );
 	Real score = ( *dock_lowres_scorefxn_ )( pose_in );
 	Real current_CSP_fraction = monoub_CSP_fraction( pose_in );
 	Real last_accepted_CSP_score = score
-	                               - ( centroid_CSP_weight_ * current_CSP_fraction );
+		- ( centroid_CSP_weight_ * current_CSP_fraction );
 	Real lowest_CSP_score = last_accepted_CSP_score;
 	pose::Pose best_CSP_pose( pose_in );
 	pose::Pose lowest_CSP_score_pose( pose_in );
 
-	for( Size i = 1; i <= 50 ; i++ ) {
+	for ( Size i = 1; i <= 50 ; i++ ) {
 		dock_e2_mono_ub->apply( pose_in );
 		( *dock_lowres_scorefxn_ )( pose_in );
 		score = ( *dock_lowres_scorefxn_ )( pose_in );
 		current_CSP_fraction = monoub_CSP_fraction( pose_in );
 		Real current_CSP_score = score
-		                         -	( centroid_CSP_weight_ * current_CSP_fraction );
-		Real boltz_factor = ( last_accepted_CSP_score -	current_CSP_score ) /
-		                    temperature_;
+			- ( centroid_CSP_weight_ * current_CSP_fraction );
+		Real boltz_factor = ( last_accepted_CSP_score - current_CSP_score ) /
+			temperature_;
 		Real probability = std::exp( std::min (40.0, std::max(-40.0,
-		                                       boltz_factor)));
+			boltz_factor)));
 		Real random = numeric::random::rg().uniform();
-		if( (current_CSP_score < last_accepted_CSP_score) ||
-		        ( random < probability ) ) {
+		if ( (current_CSP_score < last_accepted_CSP_score) ||
+				( random < probability ) ) {
 			last_accepted_CSP_score = current_CSP_score;
 			best_CSP_pose = pose_in;
-			if( current_CSP_score < lowest_CSP_score ) {
+			if ( current_CSP_score < lowest_CSP_score ) {
 				lowest_CSP_score = current_CSP_score;
 				lowest_CSP_score_pose = pose_in;
 			}
@@ -2733,7 +2771,7 @@ ubi_e2c_modeler::monoub_first_perturbation(
 
 void
 ubi_e2c_modeler::monoub_initial_perturbation(
-    pose::Pose & pose_in ) {
+	pose::Pose & pose_in ) {
 	//using pose::datacache::CacheableDataType::INTERFACE_INFO;
 	using namespace core::scoring;
 	using namespace protocols::docking;
@@ -2754,7 +2792,7 @@ ubi_e2c_modeler::monoub_initial_perturbation(
 
 void
 ubi_e2c_modeler::monoub_centroid_mode_perturbation(
-    pose::Pose & pose_in ) {
+	pose::Pose & pose_in ) {
 
 	//using pose::datacache::CacheableDataType::INTERFACE_INFO;
 	using namespace core::scoring;
@@ -2775,8 +2813,8 @@ ubi_e2c_modeler::monoub_centroid_mode_perturbation(
 	// movers
 	// dock movers
 	rigid::RigidBodyPerturbNoCenterMoverOP dock_e2_monoub( new
-	        rigid::RigidBodyPerturbNoCenterMover( 1, 5.0, // rot_magnitude
-	                0.7 ) ); // trans_magnitude_
+		rigid::RigidBodyPerturbNoCenterMover( 1, 5.0, // rot_magnitude
+		0.7 ) ); // trans_magnitude_
 
 	RandomMoverOP docker( new RandomMover() );
 
@@ -2787,16 +2825,16 @@ ubi_e2c_modeler::monoub_centroid_mode_perturbation(
 		SequenceMoverOP perturb_min_cter( new SequenceMover() );
 
 		protocols::simple_moves::BackboneMoverOP small_mover( new protocols::simple_moves::SmallMover( monoub_flex_cter_map_,
-		        temperature_, 5 /*n_moves*/ ) );
+			temperature_, 5 /*n_moves*/ ) );
 		small_mover->angle_max( 90.0 );
 
 		protocols::simple_moves::BackboneMoverOP shear_mover( new protocols::simple_moves::ShearMover( monoub_flex_cter_map_,
-		        temperature_, 5 /*n_moves*/ ) );
+			temperature_, 5 /*n_moves*/ ) );
 		shear_mover->angle_max( 90.0 );
 
 		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( monoub_flex_cter_map_,
-		        lowres_cst_scorefxn_, "linmin",	min_tolerance_,	nb_list_,
-		        false /*deriv_check*/,false /* non verbose-deriv-check,default*/) );
+			lowres_cst_scorefxn_, "linmin", min_tolerance_, nb_list_,
+			false /*deriv_check*/,false /* non verbose-deriv-check,default*/) );
 
 		perturb_min_cter->add_mover( small_mover );
 		perturb_min_cter->add_mover( shear_mover );
@@ -2804,9 +2842,9 @@ ubi_e2c_modeler::monoub_centroid_mode_perturbation(
 
 		MonteCarloOP c_ter_mc;
 		c_ter_mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *lowres_cst_scorefxn_,
-		                                  temperature_ ) );
+			temperature_ ) );
 		TrialMoverOP cter_pert_trial( new TrialMover( perturb_min_cter,
-		        c_ter_mc ) );
+			c_ter_mc ) );
 		cter_cycle = RepeatMoverOP( new RepeatMover( cter_pert_trial, 10 ) ); // cycles
 	}
 
@@ -2815,27 +2853,27 @@ ubi_e2c_modeler::monoub_centroid_mode_perturbation(
 
 	Real score = ( *dock_lowres_cst_scorefxn_ )( pose_in );
 	Real last_accepted_CSP_score = score
-	                               - ( centroid_CSP_weight_ * monoub_CSP_fraction(	pose_in ) );
+		- ( centroid_CSP_weight_ * monoub_CSP_fraction( pose_in ) );
 	Real lowest_CSP_score = last_accepted_CSP_score;
 	pose::Pose best_CSP_pose( pose_in );
 	pose::Pose lowest_CSP_score_pose( pose_in );
 
-	for( Size i = 1; i <= 50 ; i++ ) {
+	for ( Size i = 1; i <= 50 ; i++ ) {
 		docker->apply( pose_in );
 		score = ( *dock_lowres_cst_scorefxn_ )( pose_in );
-		Real current_CSP_fraction = monoub_CSP_fraction(	pose_in );
+		Real current_CSP_fraction = monoub_CSP_fraction( pose_in );
 		Real current_CSP_score = score
-		                         -	( centroid_CSP_weight_ * current_CSP_fraction );
-		Real boltz_factor = ( last_accepted_CSP_score -	current_CSP_score ) /
-		                    temperature_;
+			- ( centroid_CSP_weight_ * current_CSP_fraction );
+		Real boltz_factor = ( last_accepted_CSP_score - current_CSP_score ) /
+			temperature_;
 		Real probability = std::exp( std::min (40.0, std::max(-40.0,
-		                                       boltz_factor)));
+			boltz_factor)));
 		Real random = numeric::random::rg().uniform();
-		if( (current_CSP_score < last_accepted_CSP_score) ||
-		        ( random < probability ) ) {
+		if ( (current_CSP_score < last_accepted_CSP_score) ||
+				( random < probability ) ) {
 			last_accepted_CSP_score = current_CSP_score;
 			best_CSP_pose = pose_in;
-			if( current_CSP_score < lowest_CSP_score ) {
+			if ( current_CSP_score < lowest_CSP_score ) {
 				lowest_CSP_score = current_CSP_score;
 				lowest_CSP_score_pose = pose_in;
 			}
@@ -2851,7 +2889,7 @@ ubi_e2c_modeler::monoub_centroid_mode_perturbation(
 
 void
 ubi_e2c_modeler::monoub_fullatom_mode_perturbation(
-    pose::Pose & pose_in ) {
+	pose::Pose & pose_in ) {
 	using namespace moves;
 	using namespace pack::task;
 	using namespace pack::task::operation;
@@ -2863,28 +2901,28 @@ ubi_e2c_modeler::monoub_fullatom_mode_perturbation(
 	SequenceMoverOP fullatom_optimizer( new SequenceMover() ); // **MAIN**
 
 	protocols::simple_moves::PackRotamersMoverOP pack_interface_repack( new protocols::simple_moves::PackRotamersMover(
-	    pack_scorefxn_ ) );
+		pack_scorefxn_ ) );
 	pack_interface_repack->task_factory(tf_);
 
 	//set up minimizer movers
 	protocols::simple_moves::MinMoverOP monoub_dock_min_mover( new protocols::simple_moves::MinMover( monoub_docking_map_,
-	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
+		dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
 	protocols::simple_moves::MinMoverOP flex_cter_min_mover( new protocols::simple_moves::MinMover( monoub_flex_cter_map_,
-	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
+		dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
 	protocols::simple_moves::MinMoverOP all_dof_min_mover( new protocols::simple_moves::MinMover( monoub_all_dof_map_,
-	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
+		dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
 
 	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin( new protocols::simple_moves::RotamerTrialsMinMover(
-	    pack_scorefxn_, tf_ ) );
+		pack_scorefxn_, tf_ ) );
 
 	// set up rigid body movers
 	Real trans_magnitude = 0.1; // default high-res docking values
 	Real rot_magnitude = 5.0; // default high-res docking values
 	rigid::RigidBodyPerturbMoverOP monoub_perturb( new rigid::RigidBodyPerturbMover(
-	    1, rot_magnitude, trans_magnitude , rigid::partner_downstream,
-	    true ) );
+		1, rot_magnitude, trans_magnitude , rigid::partner_downstream,
+		true ) );
 	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover(
-	    pack_scorefxn_, tf_ ) );
+		pack_scorefxn_, tf_ ) );
 
 	MonteCarloOP mc;
 	mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *dockfa_cst_scorefxn_,temperature_) );
@@ -2896,10 +2934,10 @@ ubi_e2c_modeler::monoub_fullatom_mode_perturbation(
 	SequenceMoverOP perturb_min_cter( new SequenceMover() );
 
 	protocols::simple_moves::BackboneMoverOP small_mover( new protocols::simple_moves::SmallMover( monoub_flex_cter_map_,
-	        temperature_,	5 ) );
+		temperature_, 5 ) );
 	small_mover->angle_max( 5.0 );
 	protocols::simple_moves::BackboneMoverOP shear_mover( new protocols::simple_moves::ShearMover( monoub_flex_cter_map_,
-	        temperature_,	5 ) );
+		temperature_, 5 ) );
 	shear_mover->angle_max( 5.0 );
 
 	perturb_min_cter->add_mover( small_mover );
@@ -2931,32 +2969,33 @@ ubi_e2c_modeler::monoub_fullatom_mode_perturbation(
 
 	Real score = ( *dockfa_cst_scorefxn_ )( pose_in );
 	Real last_accepted_CSP_score = score
-	                               - ( fullatom_CSP_weight_ * monoub_CSP_fraction( pose_in ) );
+		- ( fullatom_CSP_weight_ * monoub_CSP_fraction( pose_in ) );
 	Real lowest_CSP_score = last_accepted_CSP_score;
 	pose::Pose best_CSP_pose( pose_in );
 	pose::Pose lowest_CSP_score_pose( pose_in );
 
-	for( Size i = 1; i <= 100 ; i++ ) {
-		if( i == 1 )
+	for ( Size i = 1; i <= 100 ; i++ ) {
+		if ( i == 1 ) {
 			perturb_min_cter->apply( pose_in ); // **REAL** FIRST MIN CTER
-		else if( i%8 == 0 )
+		} else if ( i%8 == 0 ) {
 			min_n_repack->apply( pose_in ); // **REAL** OCCASIONAL REPACK
-		else
+		} else {
 			random_moves->apply( pose_in ); // **REAL** RANDOM MOVE SELECTION
+		}
 		score = ( *dockfa_cst_scorefxn_ )( pose_in );
 		Real current_CSP_fraction = monoub_CSP_fraction( pose_in );
 		Real current_CSP_score = score
-		                         - ( fullatom_CSP_weight_ * current_CSP_fraction );
-		Real boltz_factor = ( last_accepted_CSP_score -	current_CSP_score ) /
-		                    temperature_;
+			- ( fullatom_CSP_weight_ * current_CSP_fraction );
+		Real boltz_factor = ( last_accepted_CSP_score - current_CSP_score ) /
+			temperature_;
 		Real probability = std::exp( std::min (40.0, std::max(-40.0,
-		                                       boltz_factor)));
+			boltz_factor)));
 		Real random = numeric::random::rg().uniform();
-		if( ( current_CSP_score < last_accepted_CSP_score ) ||
-		        ( random < probability ) ) {
+		if ( ( current_CSP_score < last_accepted_CSP_score ) ||
+				( random < probability ) ) {
 			last_accepted_CSP_score = current_CSP_score;
 			best_CSP_pose = pose_in;
-			if( current_CSP_score < lowest_CSP_score ) {
+			if ( current_CSP_score < lowest_CSP_score ) {
 				lowest_CSP_score = current_CSP_score;
 				lowest_CSP_score_pose = pose_in;
 			}
@@ -2978,7 +3017,7 @@ ubi_e2c_modeler::monoub_fullatom_mode_perturbation(
 
 Real
 ubi_e2c_modeler::monoub_calc_interaction_energy(
-    const pose::Pose & pose_in ) {
+	const pose::Pose & pose_in ) {
 	using namespace core::scoring;
 
 	TR << "UBI Mono Ubi Calculating Interaction Energy" << std::endl;
@@ -2996,10 +3035,10 @@ ubi_e2c_modeler::monoub_calc_interaction_energy(
 
 	if ( pose_in.is_fullatom() ) {
 		docking_scorefxn = ScoreFunctionFactory::create_score_function(
-		                       "docking" );
+			"docking" );
 	} else {
 		docking_scorefxn = ScoreFunctionFactory::create_score_function(
-		                       "interchain_cen" );
+			"interchain_cen" );
 	}
 
 	Real bound_energy = ( *docking_scorefxn )( complex_pose );
@@ -3013,12 +3052,12 @@ ubi_e2c_modeler::monoub_calc_interaction_energy(
 
 core::Real
 ubi_e2c_modeler::monoub_CSP_fraction(
-    const core::pose::Pose & pose_in ) {
+	const core::pose::Pose & pose_in ) {
 
 	/*
 	if( non_CSP && ( ( fullatom_non_CSP_weight_ == 0.00 ) ||
-									 ( centroid_non_CSP_weight_ == 0.00 ) ) )
-	  return( 0.00 );
+	( centroid_non_CSP_weight_ == 0.00 ) ) )
+	return( 0.00 );
 	*/
 
 	utility::vector1<Size> current_CSP;
@@ -3033,14 +3072,18 @@ ubi_e2c_modeler::monoub_CSP_fraction(
 	_interface.distance( 8.0 );
 	_interface.calculate( pose_in );
 
-	for ( Size ii=1; ii <= nres; ++ii )
-		if( _interface.is_interface(ii) )
+	for ( Size ii=1; ii <= nres; ++ii ) {
+		if ( _interface.is_interface(ii) ) {
 			is_interface[ii] = true;
+		}
+	}
 
 	Size satisfied_CSPs = 0;
-	for ( Size ii = 1; ii <= total_CSPs; ++ii )
-		if( is_interface[ current_CSP[ii] ] )
+	for ( Size ii = 1; ii <= total_CSPs; ++ii ) {
+		if ( is_interface[ current_CSP[ii] ] ) {
 			satisfied_CSPs++;
+		}
+	}
 
 	Real CSP_fraction = ( (Real) satisfied_CSPs ) / ( (Real) total_CSPs);
 
@@ -3059,53 +3102,57 @@ ubi_e2c_modeler::monoub_centroid_filter( pose::Pose & pose_in ) {
 	dock_lowres_cst_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 1);
 	( *dock_lowres_cst_scorefxn_ )( pose_in );
 	Real constraint_score = pose_in.energies().total_energies()[
-	                            atom_pair_constraint ];
+		atom_pair_constraint ];
 	score_map_[ "AC_constraint" ] = constraint_score;
-	if( passed_filter && ( constraint_score >= fullatom_constraint_cutoff_)) {
+	if ( passed_filter && ( constraint_score >= fullatom_constraint_cutoff_) ) {
 		passed_filter = false;
 		TR << "UBI Failed Centroid Filter Constraint Score: "
-		   << constraint_score
-		   << std::endl;
+			<< constraint_score
+			<< std::endl;
 	} else {
-		if ( constraint_score	< fullatom_constraint_cutoff_ )
+		if ( constraint_score < fullatom_constraint_cutoff_ ) {
 			TR << "UBI Success Centroid Filter Constraint Score: "
-			   << constraint_score
-			   << std::endl;
+				<< constraint_score
+				<< std::endl;
+		}
 	}
 	dock_lowres_cst_scorefxn_->set_weight( core::scoring::atom_pair_constraint,
-	                                       cen_constraint_ );
+		cen_constraint_ );
 	( *dock_lowres_cst_scorefxn_ )( pose_in );
 
 	Real CSP_fraction_ratio = monoub_CSP_fraction( pose_in );
 	score_map_[ "AA_CSP_fraction" ] = CSP_fraction_ratio;
 
-	if( passed_filter && ( CSP_fraction_ratio <
-	                       centroid_allowed_CSP_fraction_ ) ) {
+	if ( passed_filter && ( CSP_fraction_ratio <
+			centroid_allowed_CSP_fraction_ ) ) {
 		passed_filter = false;
 		TR << "UBI Failed Centroid Filter CSP Fraction: "
-		   << CSP_fraction_ratio << std::endl;
+			<< CSP_fraction_ratio << std::endl;
 	} else {
-		if( CSP_fraction_ratio >= centroid_allowed_CSP_fraction_ )
+		if ( CSP_fraction_ratio >= centroid_allowed_CSP_fraction_ ) {
 			TR << "UBI Success Centroid Filter CSP Fraction: "
-			   << CSP_fraction_ratio << std::endl;
+				<< CSP_fraction_ratio << std::endl;
+		}
 	}
 
 	Real cen_score( 10000.00 );
-	if( passed_filter ) {
+	if ( passed_filter ) {
 		cen_score = ( *output_cen_scorefxn_ )( pose_in );
 	}
-	if( passed_filter && ( cen_score > 0.00 ) ) {
+	if ( passed_filter && ( cen_score > 0.00 ) ) {
 		passed_filter = false;
 		TR << "UBI Failed Centroid Score: " << cen_score << std::endl;
 	} else {
-		if( cen_score <= 0.00 )
+		if ( cen_score <= 0.00 ) {
 			TR << "UBI Success Centroid Score: " << cen_score << std::endl;
+		}
 	}
 
-	if ( !passed_filter )
+	if ( !passed_filter ) {
 		TR << "UBI MONO UBI STRUCTURE FAILED LOW-RES FILTER" << std::endl;
-	else
+	} else {
 		TR << "UBI Done: Mono Ubi Successfully Passed Centroid Filter" << std::endl;
+	}
 
 	return( passed_filter );
 } // monoub_centroid_filter
@@ -3122,52 +3169,55 @@ ubi_e2c_modeler::monoub_fullatom_filter( pose::Pose & pose_in ) {
 	dockfa_cst_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 1 );
 	( *dockfa_cst_scorefxn_ )( pose_in );
 	Real constraint_score = pose_in.energies().total_energies()[
-	                            atom_pair_constraint ];
+		atom_pair_constraint ];
 	score_map_[ "AC_constraint" ] = constraint_score;
 	if ( passed_filter &&  ( constraint_score >= fullatom_constraint_cutoff_
-	                         && !refinement_mode_ ) ) {
+			&& !refinement_mode_ ) ) {
 		passed_filter = false;
 		TR << "UBI Failed Fullatom Filter Constraint Score: "
-		   << constraint_score
-		   << std::endl;
+			<< constraint_score
+			<< std::endl;
 	} else {
-		if( constraint_score < fullatom_constraint_cutoff_ )
+		if ( constraint_score < fullatom_constraint_cutoff_ ) {
 			TR << "UBI Success Fullatom Filter Constraint Score: "
-			   << constraint_score
-			   << std::endl;
+				<< constraint_score
+				<< std::endl;
+		}
 	}
 	dockfa_cst_scorefxn_->set_weight( core::scoring::atom_pair_constraint,
-	                                  full_constraint_ );
+		full_constraint_ );
 	( *dockfa_cst_scorefxn_ )( pose_in );
 
 	Real CSP_fraction_ratio = monoub_CSP_fraction( pose_in );
 	score_map_[ "AA_CSP_fraction" ] = CSP_fraction_ratio;
-	if( passed_filter && ( CSP_fraction_ratio <
-	                       fullatom_allowed_CSP_fraction_ ) ) {
+	if ( passed_filter && ( CSP_fraction_ratio <
+			fullatom_allowed_CSP_fraction_ ) ) {
 		passed_filter = false;
 		TR << "UBI Failed Fullatom Filter CSP Fraction: "
-		   << CSP_fraction_ratio << std::endl;
+			<< CSP_fraction_ratio << std::endl;
 	} else {
-		if( CSP_fraction_ratio >= fullatom_allowed_CSP_fraction_ )
+		if ( CSP_fraction_ratio >= fullatom_allowed_CSP_fraction_ ) {
 			TR << "UBI Success Fullatom Filter CSP Fraction: "
-			   <<	CSP_fraction_ratio << std::endl;
+				<< CSP_fraction_ratio << std::endl;
+		}
 	}
 
 	score_map_[ "AG_I_sc" ] = monoub_calc_interaction_energy( pose_in );
 
-	if ( !passed_filter )
+	if ( !passed_filter ) {
 		TR << "UBI MONO UBI STRUCTURE FAILED HIGH-RES FILTER" << std::endl;
-	else
+	} else {
 		TR << "UBI Done: Mono Ubi Successfully Passed Fullatom Filter"
-		   << std::endl;
+			<< std::endl;
+	}
 
 	return( passed_filter );
 } // monoub_fullatom_filter
 
 core::Real
 ubi_e2c_modeler::monoub_calc_Lrmsd (
-    const pose::Pose & pose_in,
-    const pose::Pose & native_pose ) {
+	const pose::Pose & pose_in,
+	const pose::Pose & native_pose ) {
 
 	using namespace core::scoring;
 
@@ -3177,11 +3227,12 @@ ubi_e2c_modeler::monoub_calc_Lrmsd (
 
 	compute_rmsd_start = e2_end_ + 1;
 	compute_rmsd_end = monoub_end_;
-	for ( Size i = compute_rmsd_start; i <= compute_rmsd_end; ++i )
+	for ( Size i = compute_rmsd_start; i <= compute_rmsd_end; ++i ) {
 		superpos_partner(i) = true;
+	}
 
 	Real Lrmsd = rmsd_no_super_subset( native_pose, pose_in,
-	                                   superpos_partner, is_protein_CA );
+		superpos_partner, is_protein_CA );
 	return ( Lrmsd );
 } // monoub_calc_Lrmsd
 #endif

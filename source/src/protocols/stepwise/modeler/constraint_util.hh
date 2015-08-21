@@ -25,15 +25,15 @@ namespace protocols {
 namespace stepwise {
 namespace modeler {
 
-	core::scoring::constraints::ConstraintSetOP
-	constraint_set_slice( core::scoring::constraints::ConstraintSetOP & cst_set,
-												utility::vector1< core::Size > const & slice_res,
-												core::pose::Pose const & pose,
-												core::pose::Pose const & full_pose );
+core::scoring::constraints::ConstraintSetOP
+constraint_set_slice( core::scoring::constraints::ConstraintSetOP & cst_set,
+	utility::vector1< core::Size > const & slice_res,
+	core::pose::Pose const & pose,
+	core::pose::Pose const & full_pose );
 
-	void
-	check_scorefxn_has_constraint_terms_if_pose_has_constraints( core::pose::Pose const & pose,
-																															 core::scoring::ScoreFunctionOP & scorefxn );
+void
+check_scorefxn_has_constraint_terms_if_pose_has_constraints( core::pose::Pose const & pose,
+	core::scoring::ScoreFunctionOP & scorefxn );
 
 
 } //modeler

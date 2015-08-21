@@ -73,7 +73,7 @@ public:
 	void record_annealer_trajectory( bool setting );
 	void trajectory_file_name( std::string const & setting );
 
- private:
+private:
 	InteractionGraphBaseOP ig_;
 	bool record_annealer_trajectory_;
 	std::string trajectory_file_name_;

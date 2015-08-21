@@ -45,7 +45,7 @@ SingleResidueDunbrackLibraryCreator::create( core::chemical::ResidueType const &
 
 	core::chemical::AA aa( dun_libspec->get_aa() );
 	// TODO: Split D_aas into their own Rotamer library set (wrapper of l-aas)
-	if( core::chemical::is_canonical_D_aa( aa ) ) {
+	if ( core::chemical::is_canonical_D_aa( aa ) ) {
 		aa = core::chemical::get_L_equivalent( aa );
 	}
 	assert( aa <= core::chemical::num_canonical_aas );

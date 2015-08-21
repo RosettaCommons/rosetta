@@ -44,8 +44,8 @@
 #include <cppdb/frontend.h>
 #include <boost/lexical_cast.hpp>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::string;
 using cppdb::statement;
@@ -61,7 +61,7 @@ static thread_local basic::Tracer TR( "protocols.features.ProteinBondGeometry" )
 ProteinBondGeometryFeatures::ProteinBondGeometryFeatures(){
 	// if flag _or_ energy method wants a linear potential, make the potential linear - ptc: just the flag here
 	linear_bonded_potential_ =
-	basic::options::option[ basic::options::OptionKeys::score::linear_bonded_potential ]();
+		basic::options::option[ basic::options::OptionKeys::score::linear_bonded_potential ]();
 
 	// initialize databases
 	db_ = core::scoring::methods::IdealParametersDatabaseOP( new core::scoring::methods::IdealParametersDatabase(-1.0,-1.0,-1.0,-1.0,-1.0) );
@@ -371,11 +371,11 @@ ProteinBondGeometryFeatures::report_intrares_angles(
 
 	Real energy_angle = 0;
 
-	for (Size i = 1; i <= pose.total_residue(); ++i) {
-		if(!check_relevant_residues(relevant_residues, i)) continue;
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( !check_relevant_residues(relevant_residues, i) ) continue;
 
 		Residue const & rsd = pose.residue(i);
-		if(!rsd.is_protein()) continue;
+		if ( !rsd.is_protein() ) continue;
 
 		//following code ripped off from core/scoring/methods/CartesianBondedEnergy.cc
 		//energy computations are not up to date with current cart_bonded - the rest is ok
@@ -394,28 +394,29 @@ ProteinBondGeometryFeatures::report_intrares_angles(
 			//if ( rsd_type.atom_type(rt1).is_virtual()
 			//       || rsd_type.atom_type(rt2).is_virtual()
 			//       || rsd_type.atom_type(rt3).is_virtual() )
-			if ( rsd_type.aa() == core::chemical::aa_vrt)
+			if ( rsd_type.aa() == core::chemical::aa_vrt ) {
 				continue;
+			}
 
 			// lookup Ktheta and theta0
 			Real Ktheta, theta0;
 			db_->lookup_angle_legacy( pose, rsd, rt1, rt2, rt3, Ktheta, theta0 );
-			if (Ktheta == 0.0) continue;
+			if ( Ktheta == 0.0 ) continue;
 
 			// get angle
 			Real const angle = numeric::angle_radians(
-														rsd.atom( rt1 ).xyz(),
-														rsd.atom( rt2 ).xyz(),
-														rsd.atom( rt3 ).xyz() );
+				rsd.atom( rt1 ).xyz(),
+				rsd.atom( rt2 ).xyz(),
+				rsd.atom( rt3 ).xyz() );
 
-			if (linear_bonded_potential_ && std::fabs(angle - theta0)>1) {
+			if ( linear_bonded_potential_ && std::fabs(angle - theta0)>1 ) {
 				energy_angle = 0.5*Ktheta*std::fabs(angle-theta0);
 				//TR << "intrares_angles - linear_bonded energy: " << energy_angle << std::endl;
 			} else {
 				energy_angle = 0.5*Ktheta*(angle-theta0) * (angle-theta0);
 				//TR << "intrares_angles - energy: " << energy_angle << std::endl;
 				/*TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd.seqpos() << " pdbpos: " << pose.pdb_info()->number(rsd.seqpos()) << " intrares angle: " <<
- 				rsd_type.name() << " : " <<
+				rsd_type.name() << " : " <<
 				rsd.atom_name( rt1 ) << " , " << rsd.atom_name( rt2 ) << " , " <<
 				rsd.atom_name( rt3 ) << "   " << angle << "  " << theta0 << "     " <<
 				Ktheta << " " << 0.5*Ktheta*(angle-theta0) * (angle-theta0) << std::endl;*/
@@ -451,20 +452,20 @@ ProteinBondGeometryFeatures::report_interres_angles(
 	std::string statement_string ="INSERT INTO bond_interres_angles (struct_id, cenresNum, connResNum, cenAtmNum, outAtmCenNum, outAtmConnNum, cenAtmName, outAtmCenName, outAtmConnName, ideal, observed, difference, energy) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
-	for (Size i = 1; i <= pose.total_residue(); ++i) {
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 		Residue const & rsd1 = pose.residue(i);
-		if(!rsd1.is_protein()) continue;
+		if ( !rsd1.is_protein() ) continue;
 
-		for (Size j = i+1; j <= pose.total_residue(); ++j) {
-			if(!check_relevant_residues(relevant_residues, i, j)) continue;
+		for ( Size j = i+1; j <= pose.total_residue(); ++j ) {
+			if ( !check_relevant_residues(relevant_residues, i, j) ) continue;
 			Residue const & rsd2 = pose.residue(j);
-			if(!rsd2.is_protein()) continue;
+			if ( !rsd2.is_protein() ) continue;
 
 			//following code ripped off from core/scoring/methods/CartesianBondedEnergy.cc
-		  //energy computations are not up to date with current cart_bonded - the rest is ok
+			//energy computations are not up to date with current cart_bonded - the rest is ok
 
 			// bail out if the residues aren't bonded
-			if (!rsd1.is_bonded(rsd2)) continue;
+			if ( !rsd1.is_bonded(rsd2) ) continue;
 
 			//fpd chainbreak variants also mess things up
 			//fpd check for chainbreaks
@@ -487,25 +488,25 @@ ProteinBondGeometryFeatures::report_interres_angles(
 				/// compute the bond-angle energies from pairs of atoms within-1 bond on rsd1 with
 				/// the the connection atom on rsd2.
 				utility::vector1< core::chemical::two_atom_set > const & rsd1_atoms_wi1_bond_of_ii(
-																							 rsd1_type.atoms_within_one_bond_of_a_residue_connection( resconn_id1 ));
+					rsd1_type.atoms_within_one_bond_of_a_residue_connection( resconn_id1 ));
 				for ( Size jj = 1; jj <= rsd1_atoms_wi1_bond_of_ii.size(); ++jj ) {
 					assert( rsd1_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno1 );
 					Size const res1_lower_atomno = rsd1_atoms_wi1_bond_of_ii[ jj ].key2();
 
 					Real const angle = numeric::angle_radians(
-																rsd1.atom( res1_lower_atomno ).xyz(),
-																rsd1.atom( resconn_atomno1 ).xyz(),
-																rsd2.atom( resconn_atomno2 ).xyz() );
+						rsd1.atom( res1_lower_atomno ).xyz(),
+						rsd1.atom( resconn_atomno1 ).xyz(),
+						rsd2.atom( resconn_atomno2 ).xyz() );
 
 					// lookup Ktheta and theta0
 					Real Ktheta, theta0;
 					db_->lookup_angle_legacy( pose, rsd1, res1_lower_atomno, resconn_atomno1, -resconn_id1, Ktheta, theta0 );
 
-					if (Ktheta == 0.0) continue;
+					if ( Ktheta == 0.0 ) continue;
 
 					// accumulate the energy
-					Real energy_angle = 0;		//ptc - don't accumulate, report each angle on it's own
-					if (linear_bonded_potential_ && std::fabs(angle-theta0)>1) {
+					Real energy_angle = 0;  //ptc - don't accumulate, report each angle on it's own
+					if ( linear_bonded_potential_ && std::fabs(angle-theta0)>1 ) {
 						energy_angle += 0.5*Ktheta*std::fabs(angle-theta0);
 					} else {
 						energy_angle += 0.5*Ktheta*(angle-theta0) * (angle-theta0);
@@ -531,7 +532,7 @@ ProteinBondGeometryFeatures::report_interres_angles(
 				/// compute the bond-angle energies from pairs of atoms within-1 bond on rsd2 with
 				/// the the connection atom on rsd1.
 				utility::vector1< core::chemical::two_atom_set > const & rsd2_atoms_wi1_bond_of_ii(
-																							 rsd2_type.atoms_within_one_bond_of_a_residue_connection( resconn_id2 ));
+					rsd2_type.atoms_within_one_bond_of_a_residue_connection( resconn_id2 ));
 				for ( Size jj = 1; jj <= rsd2_atoms_wi1_bond_of_ii.size(); ++jj ) {
 					assert( rsd2_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno2 );
 					Size const res2_lower_atomno = rsd2_atoms_wi1_bond_of_ii[ jj ].key2();
@@ -540,15 +541,15 @@ ProteinBondGeometryFeatures::report_interres_angles(
 					Real Ktheta, theta0;
 					db_->lookup_angle_legacy( pose, rsd2, res2_lower_atomno, resconn_atomno2, -resconn_id2, Ktheta, theta0 );
 
-					if (Ktheta == 0.0) continue;
+					if ( Ktheta == 0.0 ) continue;
 					Real const angle = numeric::angle_radians(
-																rsd2.atom( res2_lower_atomno ).xyz(),
-																rsd2.atom( resconn_atomno2 ).xyz(),
-																rsd1.atom( resconn_atomno1 ).xyz() );
+						rsd2.atom( res2_lower_atomno ).xyz(),
+						rsd2.atom( resconn_atomno2 ).xyz(),
+						rsd1.atom( resconn_atomno1 ).xyz() );
 
 					// accumulate the energy
-					Real energy_angle = 0;		//ptc - don't accumulate, report each angle on it's own
-					if (linear_bonded_potential_ && std::fabs(angle-theta0)>1) {
+					Real energy_angle = 0;  //ptc - don't accumulate, report each angle on it's own
+					if ( linear_bonded_potential_ && std::fabs(angle-theta0)>1 ) {
 						energy_angle += 0.5*Ktheta*std::fabs(angle-theta0);
 					} else {
 						energy_angle += 0.5*Ktheta*(angle-theta0) * (angle-theta0);
@@ -585,11 +586,11 @@ ProteinBondGeometryFeatures::report_intrares_lengths(
 	std::string statement_string ="INSERT INTO bond_intrares_lengths (struct_id, resNum, atm1Num, atm2Num, atm1Name, atm2Name, ideal, observed, difference, energy) VALUES (?,?,?,?,?,?,?,?,?,?)";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
-	for (Size i = 1; i <= pose.total_residue(); ++i) {
-		if(!check_relevant_residues(relevant_residues, i)) continue;
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( !check_relevant_residues(relevant_residues, i) ) continue;
 
 		Residue const & rsd = pose.residue(i);
-		if(!rsd.is_protein()) continue;
+		if ( !rsd.is_protein() ) continue;
 
 		//following code ripped off from core/scoring/methods/CartesianBondedEnergy.cc
 		//energy computations are not up to date with current cart_bonded - the rest is ok
@@ -598,26 +599,27 @@ ProteinBondGeometryFeatures::report_intrares_lengths(
 
 		// for each bond in the residue
 		// for each bonded atom
-		for (Size atm_i=1; atm_i<=rsd_type.natoms(); ++atm_i) {
+		for ( Size atm_i=1; atm_i<=rsd_type.natoms(); ++atm_i ) {
 			core::chemical::AtomIndices atm_nbrs = rsd_type.nbrs( atm_i );
-			for (Size j=1; j<=atm_nbrs.size(); ++j) {
+			for ( Size j=1; j<=atm_nbrs.size(); ++j ) {
 				Size atm_j = atm_nbrs[j];
 				if ( atm_i<atm_j ) { // only score each bond once -- use restype index to define ordering
 					// check for vrt
 					//if ( rsd_type.atom_type(atm_i).is_virtual() || rsd_type.atom_type(atm_j).is_virtual() )
-					if ( rsd_type.aa() == core::chemical::aa_vrt)
+					if ( rsd_type.aa() == core::chemical::aa_vrt ) {
 						continue;
+					}
 
 					// lookup Ktheta and theta0
 					Real Kd, d0;
 					db_->lookup_length_legacy( pose, rsd, atm_i, atm_j, Kd, d0 );
-					if (Kd == 0.0) continue;
+					if ( Kd == 0.0 ) continue;
 
 					Real const d = ( rsd.atom( atm_i ).xyz()-rsd.atom( atm_j ).xyz() ).length();
 
 					// accumulate the energy
-					Real energy_length = 0;		//ptc - don't accumulate, report each length on it's own
-					if (linear_bonded_potential_ && std::fabs(d - d0)>1) {
+					Real energy_length = 0;  //ptc - don't accumulate, report each length on it's own
+					if ( linear_bonded_potential_ && std::fabs(d - d0)>1 ) {
 						energy_length += 0.5*Kd*std::fabs(d-d0);
 					} else {
 						energy_length += 0.5*Kd*(d-d0)*(d-d0);
@@ -652,20 +654,20 @@ ProteinBondGeometryFeatures::report_interres_lengths(
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
 
-	for (Size i = 1; i <= pose.total_residue(); ++i) {
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 		Residue const & rsd1 = pose.residue(i);
-		if(!rsd1.is_protein()) continue;
+		if ( !rsd1.is_protein() ) continue;
 
-		for (Size j = i+1; j <= pose.total_residue(); ++j) {
-			if(!check_relevant_residues(relevant_residues, i, j)) continue;
+		for ( Size j = i+1; j <= pose.total_residue(); ++j ) {
+			if ( !check_relevant_residues(relevant_residues, i, j) ) continue;
 			Residue const & rsd2 = pose.residue(j);
-			if(!rsd2.is_protein()) continue;
+			if ( !rsd2.is_protein() ) continue;
 
 			//following code ripped off from core/scoring/methods/CartesianBondedEnergy.cc
-		  //energy computations are not up to date with current cart_bonded - the rest is ok
+			//energy computations are not up to date with current cart_bonded - the rest is ok
 
 			// bail out if the residues aren't bonded
-			if (!rsd1.is_bonded(rsd2)) continue;
+			if ( !rsd1.is_bonded(rsd2) ) continue;
 
 			//fpd chainbreak variants also mess things up
 			//fpd check for chainbreaks
@@ -684,15 +686,15 @@ ProteinBondGeometryFeatures::report_interres_lengths(
 
 				/// finally, compute the bondlength across the interface
 				Real length =
-				( rsd2.atom( resconn_atomno2 ).xyz() - rsd1.atom( resconn_atomno1 ).xyz() ).length();
+					( rsd2.atom( resconn_atomno2 ).xyz() - rsd1.atom( resconn_atomno1 ).xyz() ).length();
 
 				// lookup Ktheta and theta0
 				Real Kd, d0;
 				db_->lookup_length_legacy( pose, rsd1, resconn_atomno1, -resconn_id1, Kd, d0 );
 
 				// accumulate the energy
-				Real energy_length = 0;			//ptc - dont accumulate energy, report each length on it's own.
-				if (linear_bonded_potential_ && std::fabs(length-d0)>1) {
+				Real energy_length = 0;   //ptc - dont accumulate energy, report each length on it's own.
+				if ( linear_bonded_potential_ && std::fabs(length-d0)>1 ) {
 					energy_length += 0.5*Kd*std::fabs(length-d0);
 				} else {
 					energy_length += 0.5*Kd*(length-d0)*(length-d0);
@@ -726,11 +728,11 @@ ProteinBondGeometryFeatures::report_intrares_torsions(
 	std::string statement_string ="INSERT INTO bond_intrares_torsions (struct_id, resNum, atm1Num, atm2Num, atm3Num, atm4Num, atm1Name, atm2Name, atm3Name, atm4Name, ideal, observed, difference, energy) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
-	for (Size i = 1; i <= pose.total_residue(); ++i) {
-		if(!check_relevant_residues(relevant_residues, i)) continue;
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( !check_relevant_residues(relevant_residues, i) ) continue;
 
 		Residue const & rsd = pose.residue(i);
-		if(!rsd.is_protein()) continue;
+		if ( !rsd.is_protein() ) continue;
 
 		//following code ripped off from core/scoring/methods/CartesianBondedEnergy.cc
 		//energy computations are not up to date with current cart_bonded - the rest is ok
@@ -738,7 +740,7 @@ ProteinBondGeometryFeatures::report_intrares_torsions(
 		core::chemical::ResidueType const & rsd_type = rsd.type();
 
 		// for each torsion _that doesn't correspond to a DOF_ID in the pose_
-		for ( Size dihe = 1; dihe <= rsd_type.ndihe(); ++dihe ){
+		for ( Size dihe = 1; dihe <= rsd_type.ndihe(); ++dihe ) {
 			// get ResidueType ints
 			int rt1 = ( rsd_type.dihedral( dihe ) ).key1();
 			int rt2 = ( rsd_type.dihedral( dihe ) ).key2();
@@ -748,22 +750,23 @@ ProteinBondGeometryFeatures::report_intrares_torsions(
 			// lookup Ktheta and theta0
 			Real Kphi, phi0, phi_step;
 			db_->lookup_torsion_legacy( rsd.type(), rt1, rt2, rt3, rt4, Kphi, phi0, phi_step );
-			if (Kphi == 0.0) continue;
+			if ( Kphi == 0.0 ) continue;
 
 			// get angle
 			Real angle = numeric::dihedral_radians
-			( rsd.atom( rt1 ).xyz(), rsd.atom( rt2 ).xyz(),
-			 rsd.atom( rt3 ).xyz(), rsd.atom( rt4 ).xyz() );
+				( rsd.atom( rt1 ).xyz(), rsd.atom( rt2 ).xyz(),
+				rsd.atom( rt3 ).xyz(), rsd.atom( rt4 ).xyz() );
 
 			// accumulate the energy
-			Real energy_torsion = 0;			//ptc - dont accumulate energy, report each torsion on it's own
+			Real energy_torsion = 0;   //ptc - dont accumulate energy, report each torsion on it's own
 			Real del_phi = basic::subtract_radian_angles(angle, phi0);
-			if (phi_step>0) del_phi = basic::periodic_range( del_phi, phi_step );
+			if ( phi_step>0 ) del_phi = basic::periodic_range( del_phi, phi_step );
 
-			if (linear_bonded_potential_ && std::fabs(del_phi)>1)
+			if ( linear_bonded_potential_ && std::fabs(del_phi)>1 ) {
 				energy_torsion += 0.5*Kphi*std::fabs(del_phi);
-			else
+			} else {
 				energy_torsion += 0.5*Kphi*del_phi*del_phi;
+			}
 
 			//report results here
 			stmt.bind(1,struct_id);

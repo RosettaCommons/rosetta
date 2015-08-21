@@ -23,17 +23,17 @@ namespace chemical {
 void
 MMAtomType::set_parameter( std::string const & param, Real const setting )
 {
-  if ( param == "LJ_RADIUS" ) {
-    lj_radius_ = setting;
-  } else if ( param == "LJ_WDEPTH" ) {
-    lj_wdepth_ = setting;
-  } else if ( param == "LJ_3B_RADIUS" ) {
-    lj_three_bond_radius_ = setting;
-  } else if ( param == "LJ_3B_WDEPTH" ) {
-    lj_three_bond_wdepth_ = setting;
-  } else {
-    utility_exit_with_message( "unrecognized atomtype parameter "+param );
-  }
+	if ( param == "LJ_RADIUS" ) {
+		lj_radius_ = setting;
+	} else if ( param == "LJ_WDEPTH" ) {
+		lj_wdepth_ = setting;
+	} else if ( param == "LJ_3B_RADIUS" ) {
+		lj_three_bond_radius_ = setting;
+	} else if ( param == "LJ_3B_WDEPTH" ) {
+		lj_three_bond_wdepth_ = setting;
+	} else {
+		utility_exit_with_message( "unrecognized atomtype parameter "+param );
+	}
 }
 
 } // chemical

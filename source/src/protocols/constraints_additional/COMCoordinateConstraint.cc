@@ -55,49 +55,49 @@ using namespace core;
 
 ///c-tor
 COMCoordinateConstraint::COMCoordinateConstraint(
-		utility::vector1< AtomID > const & atms,
-		Vector const & COM_target,
-		Real stdv,
-		Real interval,
-		scoring::ScoreType scoretype  // TODO -- give own scoretype
+	utility::vector1< AtomID > const & atms,
+	Vector const & COM_target,
+	Real stdv,
+	Real interval,
+	scoring::ScoreType scoretype  // TODO -- give own scoretype
 ) :
-		Constraint( scoretype ),
-		COM_target_(COM_target),
-		atms_(atms),
-		stdv_(stdv),
-		interval_(interval)
+	Constraint( scoretype ),
+	COM_target_(COM_target),
+	atms_(atms),
+	stdv_(stdv),
+	interval_(interval)
 {}
 
 COMCoordinateConstraint::COMCoordinateConstraint(
-		utility::vector1< AtomID > const & atms,
-		Vector const & COM_target,
-		Real stdv,
-		scoring::ScoreType scoretype  // TODO -- give own scoretype
+	utility::vector1< AtomID > const & atms,
+	Vector const & COM_target,
+	Real stdv,
+	scoring::ScoreType scoretype  // TODO -- give own scoretype
 ) : Constraint( scoretype ),
-		COM_target_(COM_target),
-		atms_(atms),
-		stdv_(stdv),
-		interval_(0.0)
+	COM_target_(COM_target),
+	atms_(atms),
+	stdv_(stdv),
+	interval_(0.0)
 {}
 
 COMCoordinateConstraint::COMCoordinateConstraint(
-		utility::vector1< AtomID > const & atms,
-		Vector const & COM_target,
-		scoring::ScoreType scoretype  // TODO -- give own scoretype
+	utility::vector1< AtomID > const & atms,
+	Vector const & COM_target,
+	scoring::ScoreType scoretype  // TODO -- give own scoretype
 ) : Constraint( scoretype ),
-		COM_target_(COM_target),
-		atms_(atms),
-		stdv_(1.0),
-		interval_(0.0)
+	COM_target_(COM_target),
+	atms_(atms),
+	stdv_(1.0),
+	interval_(0.0)
 {}
 
 void
 COMCoordinateConstraint::score( scoring::func::XYZ_Func const& xyz,
-																scoring::EnergyMap const &,
-																scoring::EnergyMap & emap ) const
+	scoring::EnergyMap const &,
+	scoring::EnergyMap & emap ) const
 {
 	Vector COM_pose( 0.0, 0.0, 0.0 );
-	for (Size i=1; i<=(Size)atms_.size(); ++i) {
+	for ( Size i=1; i<=(Size)atms_.size(); ++i ) {
 		COM_pose += xyz(atms_[i]);
 	}
 
@@ -106,7 +106,7 @@ COMCoordinateConstraint::score( scoring::func::XYZ_Func const& xyz,
 	Real dist2 = dCOM_.dot_product( dCOM_ );
 	Real dist = sqrt( dist2 );
 	Real score_val = -1;
-	if( dist < interval_ ) score_val = 0;
+	if ( dist < interval_ ) score_val = 0;
 	else score_val = pow( (dist - interval_)/stdv_ , 2 ) ;
 
 	tr.Debug << "HARMONIC-func std("<<stdv_<<") interval("<<interval_<<") dist: "<<dist<<" constaint_score: "<<score_val<<std::endl;
@@ -117,10 +117,10 @@ COMCoordinateConstraint::score( scoring::func::XYZ_Func const& xyz,
 
 void
 COMCoordinateConstraint::setup_for_scoring( scoring::func::XYZ_Func const & xyz,
-																						scoring::ScoreFunction const & ) const
+	scoring::ScoreFunction const & ) const
 {
 	// Take care of Centroid models
-	for (Size i=1; i<=(Size)atms_.size(); ++i) {
+	for ( Size i=1; i<=(Size)atms_.size(); ++i ) {
 		chemical::ResidueType const & rsd_type = xyz.residue( atms_[i].rsd()  ).type();
 		id::AtomID atm_i;
 
@@ -147,9 +147,9 @@ COMCoordinateConstraint::fill_f1_f2(
 	Vector & F1,
 	Vector & F2,
 	scoring::EnergyMap const & weights
-) const	{
+) const {
 
-	if ( std::find( atms_.begin() , atms_.end() , atom ) == atms_.end()) return;
+	if ( std::find( atms_.begin() , atms_.end() , atom ) == atms_.end() ) return;
 
 	Vector Ivec( 1.0, 1.0, 1.0 );
 
@@ -181,10 +181,11 @@ COMCoordinateConstraint::natoms() const
 id::AtomID const &
 COMCoordinateConstraint::atom( Size const n ) const
 {
-	if ( n >= 1 && n <= atms_.size() )
+	if ( n >= 1 && n <= atms_.size() ) {
 		return atms_[n];
-	else
+	} else {
 		utility_exit_with_message( "COMCoordinateConstraint::atom() bad argument" );
+	}
 
 	return atms_[1]; // stop the compiler from complaining
 }
@@ -233,9 +234,9 @@ COMCoordinateConstraint::read_def(
 }
 
 scoring::constraints::ConstraintOP COMCoordinateConstraint::remapped_clone(
-			pose::Pose const& src,
-			pose::Pose const& dest,
-			id::SequenceMappingCOP smap
+	pose::Pose const& src,
+	pose::Pose const& dest,
+	id::SequenceMappingCOP smap
 ) const {
 
 	using namespace core;
@@ -245,23 +246,23 @@ scoring::constraints::ConstraintOP COMCoordinateConstraint::remapped_clone(
 
 	bool validity = true;
 
-	for (utility::vector1< AtomID >::const_iterator it = atms_.begin(), ite = atms_.end(); it != ite; ++it){
+	for ( utility::vector1< AtomID >::const_iterator it = atms_.begin(), ite = atms_.end(); it != ite; ++it ) {
 		id::NamedAtomID atom_temp( atom_id_to_named_atom_id( *it, src ) );
-		if ( smap ){
+		if ( smap ) {
 			atom_temp.rsd() = (*smap)[ atom_temp.rsd() ];
 		}
 
 		id::AtomID new_id( named_atom_id_to_atom_id( atom_temp, dest, false /*exception*/) );
 
-		if (new_id.valid()){
-		} else {
+		if ( new_id.valid() ) {}
+		else {
 			validity = false;
 			break;
 		}
 		map_atom.push_back( new_id );
 	}
 
-	if (!validity) {
+	if ( !validity ) {
 		return NULL;
 	} else {
 		return scoring::constraints::ConstraintOP( new COMCoordinateConstraint( map_atom, COM_target_, stdv_, interval_ ) );

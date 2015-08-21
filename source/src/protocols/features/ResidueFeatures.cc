@@ -48,8 +48,8 @@
 // C++ Headers
 //#include <cmath>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 static thread_local basic::Tracer TR( "protocols.features.ResidueFeatures" );
 
@@ -139,8 +139,8 @@ ResidueFeatures::insert_residue_rows(
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
-	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
-		if(!check_relevant_residues(relevant_residues, resNum)) continue;
+	for ( Size resNum=1; resNum <= pose.total_residue(); ++resNum ) {
+		if ( !check_relevant_residues(relevant_residues, resNum) ) continue;
 		Residue res = pose.residue(resNum);
 
 		string const name3( res.name3() );

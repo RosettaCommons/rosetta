@@ -58,29 +58,29 @@ struct bin_index_hasher
 
 /// @brief Returns a list of offsets corresponding to the bins in a hypershell with radius x
 class SixDOffsetTree {
-	public:
-		typedef numeric::Real                               Real;
-		typedef numeric::Size                               Size;
-		typedef platform::SSize                              SSize;
+public:
+	typedef numeric::Real                               Real;
+	typedef numeric::Size                               Size;
+	typedef platform::SSize                              SSize;
 
-		SixDOffsetTree();
+	SixDOffsetTree();
 
-		// returns only offsets within bounds
-		std::vector< SBin6D > lookup( Size radius, const Bin6D & center, const Bin6D & bounds ) const;
+	// returns only offsets within bounds
+	std::vector< SBin6D > lookup( Size radius, const Bin6D & center, const Bin6D & bounds ) const;
 
-		//don't put this in the constructor because it will add overhead to anyone using the 6dhasher without the radial tree
-		void init( Size max_radius );
-		Size sum_radius( SBin6D & input, Size range = 6);
+	//don't put this in the constructor because it will add overhead to anyone using the 6dhasher without the radial tree
+	void init( Size max_radius );
+	Size sum_radius( SBin6D & input, Size range = 6);
 
 
-	private:
-		bool insert( SBin6D & input, Size depth = 1, Size caller = 0);
+private:
+	bool insert( SBin6D & input, Size depth = 1, Size caller = 0);
 
-		// Holds the offsets
-		// instead of pointers we use integer offsets
-		// format: data_[radius][random idx][depth]
-		// either points to the next depth or 0/1 if depth=6
-		std::vector < std:: vector < boost::unordered_map < SSize, Size > > > data_;
+	// Holds the offsets
+	// instead of pointers we use integer offsets
+	// format: data_[radius][random idx][depth]
+	// either points to the next depth or 0/1 if depth=6
+	std::vector < std:: vector < boost::unordered_map < SSize, Size > > > data_;
 };
 
 
@@ -179,7 +179,7 @@ public:
 		for ( Size ii = 1; ii <= 6; ++ii ) {
 			bin[ ii ] = index / dimprods_[ ii ];
 			index = index % dimprods_[ ii ];
-		//std::cout << "bin:  " << bin[ii] << std::endl;
+			//std::cout << "bin:  " << bin[ii] << std::endl;
 		}
 		return bin;
 	}

@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @brief  Restrict design to residues with electron density correlation above threshold value 
-/// @author Patrick Conway 
+/// @brief  Restrict design to residues with electron density correlation above threshold value
+/// @author Patrick Conway
 
 #ifndef INCLUDED_protocols_toolbox_task_operations_SelectByDensityFitOperationCreator_hh
 #define INCLUDED_protocols_toolbox_task_operations_SelectByDensityFitOperationCreator_hh

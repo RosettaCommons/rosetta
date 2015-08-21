@@ -51,7 +51,7 @@
 #include <utility/excn/Exceptions.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 
@@ -64,12 +64,12 @@ set_ligpose_rotamer( core::pose::Pose & ligpose );
 int main( int argc, char * argv [] )
 {
 	try {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-	match_main();
+		match_main();
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
@@ -100,7 +100,7 @@ match_main()
 	MatcherTaskOP mtask( new MatcherTask );
 
 	utility::vector1< std::string > input_jobs = basic::options::start_files();
-	if( input_jobs.size() == 0 ) utility_exit_with_message("No input scaffold structures specified for matcher. Check for -s <pdbfile> in arguments.");
+	if ( input_jobs.size() == 0 ) utility_exit_with_message("No input scaffold structures specified for matcher. Check for -s <pdbfile> in arguments.");
 
 
 	pose::Pose scaffold;
@@ -110,7 +110,7 @@ match_main()
 	pose::Pose ligpose;
 	core::conformation::ResidueOP ligres = core::conformation::ResidueFactory::create_residue(
 		core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )->name_map(
-			option[ basic::options::OptionKeys::match::lig_name ] )
+		option[ basic::options::OptionKeys::match::lig_name ] )
 	);
 	ligpose.append_residue_by_jump( *ligres, 1 );
 
@@ -142,14 +142,13 @@ match_main()
 	matcher->initialize_from_task( *mtask );
 	MatchProcessorOP processor = ProcessorFactory::create_processor( matcher, mtask );
 
-	if( matcher->find_hits() ){
+	if ( matcher->find_hits() ) {
 		find_hits_end_time = time(NULL);
 		time_t process_start_time( time(NULL) );
 		matcher->process_matches( *processor );
 		processing_time = (long) (time(NULL) - process_start_time);
 
-	}
-	else{
+	} else {
 		find_hits_end_time = time(NULL);
 	}
 	long find_hits_time = (long)(find_hits_end_time - matcher_start_time );

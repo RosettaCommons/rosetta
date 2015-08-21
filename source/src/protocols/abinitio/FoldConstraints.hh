@@ -74,7 +74,7 @@ namespace abinitio {
 ///     method min_trial() is called each time the max_seq_sep is changed. ( inhibit: -no_minimize )
 class FoldConstraints : public ClassicAbinitio {
 public:
-  typedef ClassicAbinitio Parent;
+	typedef ClassicAbinitio Parent;
 
 public:
 	/// @brief c'stor from Movers
@@ -98,114 +98,114 @@ public:
 	/// @brief Explicit destructor to handle OPs
 	~FoldConstraints();
 
-  /// @brief ...
-  virtual moves::MoverOP clone() const;
+	/// @brief ...
+	virtual moves::MoverOP clone() const;
 
 	/// @brief run the protocol
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 
-  /// @brief sets the usual scores ( score0,score1, score2/5 etc. ) and additionally atom_pair_constraints to 1.0
-  void set_default_scores();
+	/// @brief sets the usual scores ( score0,score1, score2/5 etc. ) and additionally atom_pair_constraints to 1.0
+	void set_default_scores();
 
-  /// @brief
-  void set_constraint_weight( core::Real setting ) {
-    constraint_weight_ = setting;
-    set_score_weight( core::scoring::atom_pair_constraint, constraint_weight_ );
-  };
+	/// @brief
+	void set_constraint_weight( core::Real setting ) {
+		constraint_weight_ = setting;
+		set_score_weight( core::scoring::atom_pair_constraint, constraint_weight_ );
+	};
 
-  virtual void set_default_options();
-  static void register_options();
+	virtual void set_default_options();
+	static void register_options();
 
-  void set_show_viol_level( core::Size setting ) {
-    show_viol_level_ = setting;
-  }
+	void set_show_viol_level( core::Size setting ) {
+		show_viol_level_ = setting;
+	}
 protected:
-  //overload some methods of ClassicAbinitio to change the MaxSeqSep of the Constraints throughout the protocol
-  bool prepare_stage1( core::pose::Pose& pose );
-  bool prepare_stage2( core::pose::Pose& pose );
-  bool prepare_stage4( core::pose::Pose& pose );
-  bool prepare_loop_in_stage3( core::pose::Pose &pose, Size loop_iteration, Size total_iterations );
-  bool prepare_loop_in_stage4( core::pose::Pose &pose, Size loop_iteration, Size total_iterations );
+	//overload some methods of ClassicAbinitio to change the MaxSeqSep of the Constraints throughout the protocol
+	bool prepare_stage1( core::pose::Pose& pose );
+	bool prepare_stage2( core::pose::Pose& pose );
+	bool prepare_stage4( core::pose::Pose& pose );
+	bool prepare_loop_in_stage3( core::pose::Pose &pose, Size loop_iteration, Size total_iterations );
+	bool prepare_loop_in_stage4( core::pose::Pose &pose, Size loop_iteration, Size total_iterations );
 
-  bool do_stage1_cycles( core::pose::Pose& pose );
-  bool do_stage2_cycles( core::pose::Pose& pose );
+	bool do_stage1_cycles( core::pose::Pose& pose );
+	bool do_stage2_cycles( core::pose::Pose& pose );
 
-  virtual void setup_default_min_move();
+	virtual void setup_default_min_move();
 
-  //@brief change the movemap ( is propagated to mover-objects )
-  virtual void set_movemap ( core::kinematics::MoveMapCOP mm );
+	//@brief change the movemap ( is propagated to mover-objects )
+	virtual void set_movemap ( core::kinematics::MoveMapCOP mm );
 
-  void set_min_move( protocols::simple_moves::MinMoverOP mm);
+	void set_min_move( protocols::simple_moves::MinMoverOP mm);
 
-  protocols::simple_moves::MinMover& min_move() {
-    return *min_move_;
-  }
+	protocols::simple_moves::MinMover& min_move() {
+		return *min_move_;
+	}
 
-  void min_trial( core::pose::Pose& pose );
+	void min_trial( core::pose::Pose& pose );
 
-  virtual void set_max_seq_sep( core::pose::Pose& pose, Size setting );
+	virtual void set_max_seq_sep( core::pose::Pose& pose, Size setting );
 
-  core::Real max_seq_sep_fudge() const {
-    return max_seq_sep_fudge_;
-  }
+	core::Real max_seq_sep_fudge() const {
+		return max_seq_sep_fudge_;
+	}
 
-  void max_seq_sep_fudge( core::Real setting ) {
-    max_seq_sep_fudge_ = setting;
-  }
+	void max_seq_sep_fudge( core::Real setting ) {
+		max_seq_sep_fudge_ = setting;
+	}
 
-  constraints_additional::MaxSeqSepConstraintSet const& constraints() {
-    return *constraints_;
-  }
+	constraints_additional::MaxSeqSepConstraintSet const& constraints() {
+		return *constraints_;
+	}
 
-  void
-  bIgnoreSequenceSeparation( bool setting ) {
-    bIgnoreSequenceSeparation_ = setting;
-  }
+	void
+	bIgnoreSequenceSeparation( bool setting ) {
+		bIgnoreSequenceSeparation_ = setting;
+	}
 
-  bool
-  bIgnoreSequenceSeparation() {
-    return bIgnoreSequenceSeparation_;
-  }
+	bool
+	bIgnoreSequenceSeparation() {
+		return bIgnoreSequenceSeparation_;
+	}
 
-  Size total_res( core::pose::Pose const& pose ) const;
+	Size total_res( core::pose::Pose const& pose ) const;
 
-  void set_seq_sep_stage1 ( core::Real setting ) {
-    seq_sep_stage1_ = setting;
-  }
+	void set_seq_sep_stage1 ( core::Real setting ) {
+		seq_sep_stage1_ = setting;
+	}
 
-  void set_seq_sep_stage3 ( core::Real setting ) {
-    seq_sep_stage3_ = setting;
-  }
+	void set_seq_sep_stage3 ( core::Real setting ) {
+		seq_sep_stage3_ = setting;
+	}
 
 private:
-  core::Real
-  evaluate_constraint_energy( core::pose::Pose& pose, core::scoring::ScoreFunction const& ) const;
+	core::Real
+	evaluate_constraint_energy( core::pose::Pose& pose, core::scoring::ScoreFunction const& ) const;
 
-  protocols::simple_moves::MinMoverOP min_move_;
+	protocols::simple_moves::MinMoverOP min_move_;
 
-  constraints_additional::MaxSeqSepConstraintSetOP constraints_;
-  core::Real constraint_weight_;
+	constraints_additional::MaxSeqSepConstraintSetOP constraints_;
+	core::Real constraint_weight_;
 
-  bool bMinTrial_;
-  bool bIgnoreSequenceSeparation_;
-  Size run_;
+	bool bMinTrial_;
+	bool bIgnoreSequenceSeparation_;
+	Size run_;
 
-  core::Real max_seq_sep_fudge_;
-  core::Real seq_sep_stage1_;
-  core::Real seq_sep_stage3_;
-  core::Real seq_sep_stage4_;
+	core::Real max_seq_sep_fudge_;
+	core::Real seq_sep_stage1_;
+	core::Real seq_sep_stage3_;
+	core::Real seq_sep_stage4_;
 
-  core::Real start_ramp_cstweight_;
-  core::Size ramp_cst_cycles_;
-  core::Size ramp_iterations_;
-  bool bSkipOnNoViolation_;
+	core::Real start_ramp_cstweight_;
+	core::Size ramp_cst_cycles_;
+	core::Size ramp_iterations_;
+	bool bSkipOnNoViolation_;
 
-  //just for screen output: how verbose should it be
-  Size show_viol_level_;
+	//just for screen output: how verbose should it be
+	Size show_viol_level_;
 
-  //abolish run in stage2 if constraint threshold is violated -- '0' = inactive
-  Size constraint_threshold_;
+	//abolish run in stage2 if constraint threshold is violated -- '0' = inactive
+	Size constraint_threshold_;
 };
 
 

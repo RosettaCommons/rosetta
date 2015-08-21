@@ -70,7 +70,7 @@ DumpPdb::DumpPdb():
 
 DumpPdb::DumpPdb( std::string const fname ) :
 	protocols::moves::Mover( DumpPdbCreator::mover_name() ),
-  fname_(fname),
+	fname_(fname),
 	scorefxn_(/* 0 */),
 	addtime_(false)
 {}
@@ -79,14 +79,14 @@ DumpPdb::~DumpPdb() {}
 
 void DumpPdb::apply( core::pose::Pose & pose ) {
 	std::string name( fname_ );
-	if (bfactor_){ /* Added by gideonla june13, prints out the the bfactor column */
-		 utility::io::ozstream out(name);
+	if ( bfactor_ ) { /* Added by gideonla june13, prints out the the bfactor column */
+		utility::io::ozstream out(name);
 		core::id::AtomID_Map< Real > bfactors;
 		core::pose::initialize_atomid_map( bfactors, pose, 0.0 );
-		for (core::Size seqpos=1;seqpos<=pose.total_residue();++seqpos) { // go over all pose residues
-			for( core::Size idx = 1; idx <= pose.residue( seqpos ).natoms(); ++idx ){
-		 	  core::id::AtomID atom_id(idx,seqpos);
-		 	 bfactors[atom_id] = pose.pdb_info()->temperature (  seqpos, idx);
+		for ( core::Size seqpos=1; seqpos<=pose.total_residue(); ++seqpos ) { // go over all pose residues
+			for ( core::Size idx = 1; idx <= pose.residue( seqpos ).natoms(); ++idx ) {
+				core::id::AtomID atom_id(idx,seqpos);
+				bfactors[atom_id] = pose.pdb_info()->temperature (  seqpos, idx);
 			}
 		} //end for loop over residues
 		core::io::pdb::dump_bfactor_pdb( pose, bfactors, out );
@@ -101,7 +101,7 @@ void DumpPdb::apply( core::pose::Pose & pose ) {
 	}
 	if ( scorefxn_ ) {
 		pose.dump_scored_pdb( name, *scorefxn_ );
-	}	else {
+	} else {
 		pose.dump_pdb( name );
 	}
 }

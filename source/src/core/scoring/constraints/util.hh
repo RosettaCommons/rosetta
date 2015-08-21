@@ -93,13 +93,13 @@ cull_violators(
 ////////// Centroid constraints (add and replace)
 
 std::string get_cst_file_option();
-//// @brief 	add constraints if specified by user.
+//// @brief  add constraints if specified by user.
 void add_constraints_from_cmdline_to_pose( core::pose::Pose & pose );
-//// @brief 	add constraints if specified by user.
+//// @brief  add constraints if specified by user.
 void add_constraints_from_cmdline_to_scorefxn(
 	core::scoring::ScoreFunction & scorefxn_
 );
-//// @brief 	add constraints if specified by user.
+//// @brief  add constraints if specified by user.
 void add_constraints_from_cmdline(
 	core::pose::Pose & pose, core::scoring::ScoreFunction & scorefxn_
 );
@@ -155,7 +155,7 @@ void merge_fa_constraints_from_cmdline(
 
 /////////////////Coordinate Constraints
 
-/// @brief	handy function for tethering pose to starting coordinates.
+/// @brief handy function for tethering pose to starting coordinates.
 void
 add_coordinate_constraints( core::pose::Pose & pose, core::Real const coord_sdev = 10.0, bool include_sc = true);
 
@@ -183,7 +183,7 @@ void choose_effective_sequence_separation( core::kinematics::ShortestPathInFoldT
 
 /// @brief combine constraints randomly into Ambiguous constraints...
 void combine_constraints(
-  ConstraintCOPs& in,
+	ConstraintCOPs& in,
 	core::Size combine_ratio,
 	utility::vector1< bool > exclude_res,
 	core::kinematics::ShortestPathInFoldTree const& sp

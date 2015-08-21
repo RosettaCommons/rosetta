@@ -45,7 +45,7 @@ using namespace core;
 class FA_ElecEnergyTests : public CxxTest::TestSuite {
 
 public:
-  void setUp() {
+	void setUp() {
 		core_init();
 	}
 
@@ -74,11 +74,11 @@ public:
 		EnergyMap emap;
 
 		TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-																												 pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ), 0, TOL ); // CB-CB sits at 5.56174
+			pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ), 0, TOL ); // CB-CB sits at 5.56174
 		TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-																												 pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ), -0.006643886, TOL ); // CB-CA at 4.49784 (no count pair)
+			pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ), -0.006643886, TOL ); // CB-CA at 4.49784 (no count pair)
 		TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
-																												 pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ), -3.175849739, TOL ); // C-N at 1.29914 (no count pair)
+			pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ), -3.175849739, TOL ); // C-N at 1.29914 (no count pair)
 
 		core::scoring::elec::FA_ElecEnergy elec( options );
 		elec.residue_pair_energy( pose.residue(1), pose.residue(2), pose, sfxn, emap );
@@ -112,26 +112,26 @@ public:
 		//std::cout.precision( 6 );
 		//std::cout << "TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index(\"CB\") ), -0.18," << std::endl;
 		//std::cout << "pose.residue(2).xyz(pose.residue(1).atom_index(\"CB\") ), -0.18 ), " <<
-		//	coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-		//	pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ) <<
-		//	", TOL ); // CB-CB sits at 5.56174" << std::endl;
+		// coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
+		// pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ) <<
+		// ", TOL ); // CB-CB sits at 5.56174" << std::endl;
 		//std::cout << "TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index(\"CB\") ), -0.18," << std::endl;
 		//std::cout << "pose.residue(2).xyz(pose.residue(1).atom_index(\"CA\") ), 0.07 ), " <<
-		//	coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-		//	pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ) <<
-		//	", TOL ); // CB-CA at 4.49784 (no count pair)" << std::endl;
+		// coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
+		// pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ) <<
+		// ", TOL ); // CB-CA at 4.49784 (no count pair)" << std::endl;
 		//std::cout << "TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index(\"C\") ), 0.51," << std::endl;
 		//std::cout << "pose.residue(2).xyz(pose.residue(1).atom_index(\"N\") ), -0.47 ), " <<
-		//	coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
-		//	pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ) <<
-		//	", TOL ); // C-N at 1.29914 (no count pair)" << std::endl;
+		// coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
+		// pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ) <<
+		// ", TOL ); // C-N at 1.29914 (no count pair)" << std::endl;
 
 		TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-																												pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ), 0, TOL ); // CB-CB sits at 5.56174
+			pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ), 0, TOL ); // CB-CB sits at 5.56174
 		TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-																												pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ), -0.00664392, TOL ); // CB-CA at 4.49784 (no count pair)
+			pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ), -0.00664392, TOL ); // CB-CA at 4.49784 (no count pair)
 		TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
-																												pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ), -2.76037, TOL ); // C-N at 1.29914 (no count pair)
+			pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ), -2.76037, TOL ); // C-N at 1.29914 (no count pair)
 
 		core::scoring::elec::FA_ElecEnergy elec( options );
 		elec.residue_pair_energy( pose.residue(1), pose.residue(2), pose, sfxn, emap );
@@ -171,28 +171,28 @@ public:
 		//std::cout.precision( 6 );
 		//std::cout << "TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index(\"CB\") ), -0.18," << std::endl;
 		//std::cout << "pose.residue(2).xyz(pose.residue(1).atom_index(\"CB\") ), -0.18 ), " <<
-		//	coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-		//	pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ) <<
-		//	", TOL ); // CB-CB sits at 5.56174" << std::endl;
+		// coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
+		// pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ) <<
+		// ", TOL ); // CB-CB sits at 5.56174" << std::endl;
 		//std::cout << "TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index(\"CB\") ), -0.18," << std::endl;
 		//std::cout << "pose.residue(2).xyz(pose.residue(1).atom_index(\"CA\") ), 0.07 ), " <<
-		//	coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-		//	pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ) <<
-		//	", TOL ); // CB-CA at 4.49784 (no count pair)" << std::endl;
+		// coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
+		// pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ) <<
+		// ", TOL ); // CB-CA at 4.49784 (no count pair)" << std::endl;
 		//std::cout << "TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index(\"C\") ), 0.51," << std::endl;
 		//std::cout << "pose.residue(2).xyz(pose.residue(1).atom_index(\"N\") ), -0.47 ), " <<
-		//	coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
-		//	pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ) <<
-		//	", TOL ); // C-N at 1.29914 (no count pair)" << std::endl;
+		// coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
+		// pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ) <<
+		// ", TOL ); // C-N at 1.29914 (no count pair)" << std::endl;
 
 		//TR << "Distance : " << pose.residue(1).xyz(pose.residue(1).atom_index("CB")).distance(pose.residue(2).xyz(pose.residue(2).atom_index("CB"))) << std::endl;
 
 		TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-																												pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ), 0.0115767, TOL ); // CB-CB sits at 5.56174
+			pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ), 0.0115767, TOL ); // CB-CB sits at 5.56174
 		TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-																												pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ), -0.0117772, TOL ); // CB-CA at 4.49784 (no count pair)
+			pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ), -0.0117772, TOL ); // CB-CA at 4.49784 (no count pair)
 		TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
-																												pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ), -2.85802, TOL ); // C-N at 1.29914 (no count pair)
+			pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ), -2.85802, TOL ); // C-N at 1.29914 (no count pair)
 
 		core::scoring::elec::FA_ElecEnergy elec( options );
 
@@ -234,26 +234,26 @@ public:
 		//std::cout.precision( 6 );
 		//std::cout << "TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index(\"CB\") ), -0.18," << std::endl;
 		//std::cout << "pose.residue(2).xyz(pose.residue(1).atom_index(\"CB\") ), -0.18 ), " <<
-		//	coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-		//	pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ) <<
-		//	", TOL ); // CB-CB sits at 5.56174" << std::endl;
+		// coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
+		// pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ) <<
+		// ", TOL ); // CB-CB sits at 5.56174" << std::endl;
 		//std::cout << "TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index(\"CB\") ), -0.18," << std::endl;
 		//std::cout << "pose.residue(2).xyz(pose.residue(1).atom_index(\"CA\") ), 0.07 ), " <<
-		//	coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-		//	pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ) <<
-		//	", TOL ); // CB-CA at 4.49784 (no count pair)" << std::endl;
+		// coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
+		// pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ) <<
+		// ", TOL ); // CB-CA at 4.49784 (no count pair)" << std::endl;
 		//std::cout << "TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index(\"C\") ), 0.51," << std::endl;
 		//std::cout << "pose.residue(2).xyz(pose.residue(1).atom_index(\"N\") ), -0.47 ), " <<
-		//	coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
-		//	pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ) <<
-		//	", TOL ); // C-N at 1.29914 (no count pair)" << std::endl;
+		// coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
+		// pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ) <<
+		// ", TOL ); // C-N at 1.29914 (no count pair)" << std::endl;
 
 		TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-																												pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ), 0, TOL ); // CB-CB sits at 5.56174
+			pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ), 0, TOL ); // CB-CB sits at 5.56174
 		TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-																												pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ), -0.00664392, TOL ); // CB-CA at 4.49784 (no count pair)
+			pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ), -0.00664392, TOL ); // CB-CA at 4.49784 (no count pair)
 		TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
-																												pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ), -0.602561, TOL ); // C-N at 1.29914 (no count pair)
+			pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ), -0.602561, TOL ); // C-N at 1.29914 (no count pair)
 
 		core::scoring::elec::FA_ElecEnergy elec( options );
 		elec.residue_pair_energy( pose.residue(1), pose.residue(2), pose, sfxn, emap );
@@ -294,27 +294,27 @@ public:
 		//std::cout.precision( 6 );
 		//std::cout << "TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index(\"CB\") ), -0.18," << std::endl;
 		//std::cout << "pose.residue(2).xyz(pose.residue(1).atom_index(\"CB\") ), -0.18 ), " <<
-		//	coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-		//	pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ) <<
-		//	", TOL ); // CB-CB sits at 5.56174" << std::endl;
+		// coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
+		// pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ) <<
+		// ", TOL ); // CB-CB sits at 5.56174" << std::endl;
 		//std::cout << "TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index(\"CB\") ), -0.18," << std::endl;
 		//std::cout << "pose.residue(2).xyz(pose.residue(1).atom_index(\"CA\") ), 0.07 ), " <<
-		//	coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-		//	pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ) <<
-		//	", TOL ); // CB-CA at 4.49784 (no count pair)" << std::endl;
+		// coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
+		// pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ) <<
+		// ", TOL ); // CB-CA at 4.49784 (no count pair)" << std::endl;
 		//std::cout << "TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index(\"C\") ), 0.51," << std::endl;
 		//std::cout << "pose.residue(2).xyz(pose.residue(1).atom_index(\"N\") ), -0.47 ), " <<
-		//	coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
-		//	pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ) <<
-		//	", TOL ); // C-N at 1.29914 (no count pair)" << std::endl;
+		// coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
+		// pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ) <<
+		// ", TOL ); // C-N at 1.29914 (no count pair)" << std::endl;
 
 
 		TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-																												pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ), 0, TOL ); // CB-CB sits at 5.56174
+			pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ), 0, TOL ); // CB-CB sits at 5.56174
 		TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-																												pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ), -0.0166098, TOL ); // CB-CA at 4.49784 (no count pair)
+			pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ), -0.0166098, TOL ); // CB-CA at 4.49784 (no count pair)
 		TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
-																												pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ), -6.90093, TOL ); // C-N at 1.29914 (no count pair)
+			pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ), -6.90093, TOL ); // C-N at 1.29914 (no count pair)
 
 		core::scoring::elec::FA_ElecEnergy elec( options );
 		elec.residue_pair_energy( pose.residue(1), pose.residue(2), pose, sfxn, emap );
@@ -355,27 +355,27 @@ public:
 		//std::cout.precision( 6 );
 		//std::cout << "TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index(\"CB\") ), -0.18," << std::endl;
 		//std::cout << "pose.residue(2).xyz(pose.residue(1).atom_index(\"CB\") ), -0.18 ), " <<
-		//	coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-		//	pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ) <<
-		//	", TOL ); // CB-CB sits at 5.56174" << std::endl;
+		// coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
+		// pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ) <<
+		// ", TOL ); // CB-CB sits at 5.56174" << std::endl;
 		//std::cout << "TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index(\"CB\") ), -0.18," << std::endl;
 		//std::cout << "pose.residue(2).xyz(pose.residue(1).atom_index(\"CA\") ), 0.07 ), " <<
-		//	coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-		//	pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ) <<
-		//	", TOL ); // CB-CA at 4.49784 (no count pair)" << std::endl;
+		// coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
+		// pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ) <<
+		// ", TOL ); // CB-CA at 4.49784 (no count pair)" << std::endl;
 		//std::cout << "TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index(\"C\") ), 0.51," << std::endl;
 		//std::cout << "pose.residue(2).xyz(pose.residue(1).atom_index(\"N\") ), -0.47 ), " <<
-		//	coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
-		//	pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ) <<
-		//	", TOL ); // C-N at 1.29914 (no count pair)" << std::endl;
+		// coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
+		// pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ) <<
+		// ", TOL ); // C-N at 1.29914 (no count pair)" << std::endl;
 
 
 		TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-																												pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ), 0, TOL ); // CB-CB sits at 5.56174
+			pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ), 0, TOL ); // CB-CB sits at 5.56174
 		TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-																												pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ), -0.0164394, TOL ); // CB-CA at 4.49784 (no count pair)
+			pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ), -0.0164394, TOL ); // CB-CA at 4.49784 (no count pair)
 		TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
-																												pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ), -3.4213, TOL ); // C-N at 1.29914 (no count pair)
+			pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ), -3.4213, TOL ); // C-N at 1.29914 (no count pair)
 
 
 		core::scoring::elec::FA_ElecEnergy elec( options );

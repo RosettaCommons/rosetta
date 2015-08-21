@@ -29,9 +29,9 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace forge{
-namespace constraints{
+namespace protocols {
+namespace forge {
+namespace constraints {
 
 class RemoveCsts : public protocols::moves::Mover {
 public:
@@ -46,20 +46,20 @@ public:
 
 	RemoveCsts( RemoveCsts const & rval );
 
-  RemoveCsts( protocols::forge::remodel::RemodelConstraintGeneratorOP generator );
+	RemoveCsts( protocols::forge::remodel::RemodelConstraintGeneratorOP generator );
 
 	virtual ~RemoveCsts();
 
-  /// @brief this function looks up the constraints created by the object with the given generator and removes them
-  virtual void
+	/// @brief this function looks up the constraints created by the object with the given generator and removes them
+	virtual void
 	apply( core::pose::Pose & pose );
 
 	virtual void
 	parse_my_tag( TagCOP tag,
-								basic::datacache::DataMap & data,
-								protocols::filters::Filters_map const & filters,
-								protocols::moves::Movers_map const & movers,
-								core::pose::Pose const & pose );
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose );
 
 	virtual std::string
 	get_name() const;

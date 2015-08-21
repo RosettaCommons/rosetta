@@ -49,45 +49,45 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-namespace core{
-namespace chemical{
-namespace orbitals{
+namespace core {
+namespace chemical {
+namespace orbitals {
 
 /// @brief construct ICoorOrbitalData.
 ICoorOrbitalData::ICoorOrbitalData():
-			phi_(0.0),
-			theta_(0.0),
-			distance_(0.0),
-			stub1_(0),
-			stub2_(0),
-			stub3_(0),
-			vertex1_(0),
-			vertex2_(0),
-			vertex3_(0)
+	phi_(0.0),
+	theta_(0.0),
+	distance_(0.0),
+	stub1_(0),
+	stub2_(0),
+	stub3_(0),
+	vertex1_(0),
+	vertex2_(0),
+	vertex3_(0)
 {}
 
 
 //Testing size orbitals
 ICoorOrbitalData::ICoorOrbitalData(
-		Real phi,
-		Real theta,
-		Real distance,
-		Size stub1,
-		Size stub2,
-		Size stub3,
-		VD vertex1,
-		VD vertex2,
-		VD vertex3
+	Real phi,
+	Real theta,
+	Real distance,
+	Size stub1,
+	Size stub2,
+	Size stub3,
+	VD vertex1,
+	VD vertex2,
+	VD vertex3
 ):
-phi_(phi),
-theta_(theta),
-distance_(distance),
-stub1_(stub1),
-stub2_(stub2),
-stub3_(stub3),
-vertex1_(vertex1),
-vertex2_(vertex2),
-vertex3_(vertex3)
+	phi_(phi),
+	theta_(theta),
+	distance_(distance),
+	stub1_(stub1),
+	stub2_(stub2),
+	stub3_(stub3),
+	vertex1_(vertex1),
+	vertex2_(vertex2),
+	vertex3_(vertex3)
 {
 
 }
@@ -118,13 +118,13 @@ Real ICoorOrbitalData::distance() const
 /// must be actual atoms and not orbitals!!!!11111!!!!!!!11111!(design feature or flaw? you decide)
 Vector
 ICoorOrbitalData::build(
-		Vector stub1_xyz,
-		Vector stub2_xyz,
-		Vector stub3_xyz) const
+	Vector stub1_xyz,
+	Vector stub2_xyz,
+	Vector stub3_xyz) const
 {
-debug_assert( kinematics::Stub( stub1_xyz,
-			stub2_xyz,
-			stub3_xyz).is_orthogonal( 0.001 ) );
+	debug_assert( kinematics::Stub( stub1_xyz,
+		stub2_xyz,
+		stub3_xyz).is_orthogonal( 0.001 ) );
 
 	return kinematics::Stub(stub1_xyz, stub2_xyz, stub3_xyz).spherical(phi_, theta_, distance_);
 }

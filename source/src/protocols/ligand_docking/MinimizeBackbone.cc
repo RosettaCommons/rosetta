@@ -83,19 +83,19 @@ MinimizeBackboneCreator::mover_name()
 }
 
 MinimizeBackbone::MinimizeBackbone():
-		protocols::moves::Mover(),
-		interface_builder_()
+	protocols::moves::Mover(),
+	interface_builder_()
 {}
 
 MinimizeBackbone::MinimizeBackbone(InterfaceBuilderOP interface_builder):
-		protocols::moves::Mover(),
-		interface_builder_(interface_builder)
+	protocols::moves::Mover(),
+	interface_builder_(interface_builder)
 {}
 
 MinimizeBackbone::MinimizeBackbone(MinimizeBackbone const & that):
-	    //utility::pointer::ReferenceCount(),
-		protocols::moves::Mover( that ),
-		interface_builder_(that.interface_builder_)
+	//utility::pointer::ReferenceCount(),
+	protocols::moves::Mover( that ),
+	interface_builder_(that.interface_builder_)
 {}
 
 MinimizeBackbone::~MinimizeBackbone() {}
@@ -115,11 +115,11 @@ std::string MinimizeBackbone::get_name() const{
 //@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 MinimizeBackbone::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & datamap,
-		protocols::filters::Filters_map const & /*filters*/,
-		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & /*pose*/
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & datamap,
+	protocols::filters::Filters_map const & /*filters*/,
+	protocols::moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/
 )
 {
 	if ( tag->getName() != "MinimizeBackbone" ) throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
@@ -145,8 +145,8 @@ MinimizeBackbone::apply( core::pose::Pose & pose ){
 }
 
 void MinimizeBackbone::reorder_foldtree_around_mobile_regions(
-		ligand_options::Interface const & interface,
-		core::pose::Pose & pose
+	ligand_options::Interface const & interface,
+	core::pose::Pose & pose
 ) {
 	assert(pose.fold_tree().check_edges_for_atom_info());
 	core::kinematics::FoldTree const & fold_tree_copy = pose.fold_tree();
@@ -164,7 +164,7 @@ void MinimizeBackbone::reorder_foldtree_around_mobile_regions(
 	assert(with_cutpoints->check_edges_for_atom_info());
 	reorder_with_first_non_mobile_as_root(with_cutpoints, interface, pose);
 	minimize_backbone_tracer.Debug << "Final loops foldtree " << *with_cutpoints << std::endl;
-	if (!with_cutpoints->check_fold_tree()) {
+	if ( !with_cutpoints->check_fold_tree() ) {
 		utility_exit_with_message("Invalid fold tree after trying to set up for minimization!");
 	}
 	assert(with_cutpoints->check_edges_for_atom_info());
@@ -173,12 +173,12 @@ void MinimizeBackbone::reorder_foldtree_around_mobile_regions(
 }
 
 void reorder_with_first_non_mobile_as_root(
-		core::kinematics::FoldTreeOP f,
-		ligand_options::Interface const & interface,
-		core::pose::Pose & pose
+	core::kinematics::FoldTreeOP f,
+	ligand_options::Interface const & interface,
+	core::pose::Pose & pose
 ) {
-	for (core::Size i = 1; i <= pose.n_residue(); ++i) {
-		if (pose.residue(i).is_polymer() && interface[i].type == ligand_options::InterfaceInfo::non_interface) {
+	for ( core::Size i = 1; i <= pose.n_residue(); ++i ) {
+		if ( pose.residue(i).is_polymer() && interface[i].type == ligand_options::InterfaceInfo::non_interface ) {
 			f->reorder(i);
 			return;
 		}
@@ -187,21 +187,21 @@ void reorder_with_first_non_mobile_as_root(
 }
 
 core::kinematics::FoldTreeOP MinimizeBackbone::create_fold_tree_with_cutpoints(
-		core::kinematics::FoldTreeCOP f,
-		ligand_options::Interface const & interface,
-		core::pose::Pose & pose
+	core::kinematics::FoldTreeCOP f,
+	ligand_options::Interface const & interface,
+	core::pose::Pose & pose
 ) {
 	core::kinematics::FoldTreeOP f_new( new core::kinematics::FoldTree() );// Deleting edges is bad so add them to a new foldtree
 
 	int new_jump = f->num_jump();
 
 	for (
-				core::kinematics::FoldTree::const_iterator edge_itr = f->begin();
+			core::kinematics::FoldTree::const_iterator edge_itr = f->begin();
 			edge_itr != f->end();
 			++edge_itr
-		) {
+			) {
 
-		if (!edge_itr->is_polymer()) {
+		if ( !edge_itr->is_polymer() ) {
 			f_new->add_edge(*edge_itr);
 			continue; // only subdivide "peptide" edges of the fold tree
 		}
@@ -212,11 +212,11 @@ core::kinematics::FoldTreeOP MinimizeBackbone::create_fold_tree_with_cutpoints(
 		const int e_stop = edge_itr->stop();
 
 		int last_rigid = e_start;
-		for (Size i = 1; i <= loops.size(); ++i) {
+		for ( Size i = 1; i <= loops.size(); ++i ) {
 			protocols::loops::Loop const & l = loops[i];
 			int first = std::max(int(e_start), int(l.start() - 1));
 			int last = std::min(int(e_stop), int(l.stop() + 1));
-			if (first != last_rigid) {
+			if ( first != last_rigid ) {
 				f_new->add_edge(last_rigid, first, core::kinematics::Edge::PEPTIDE);
 			}
 			f_new->add_edge(first, l.cut(), core::kinematics::Edge::PEPTIDE);
@@ -226,7 +226,7 @@ core::kinematics::FoldTreeOP MinimizeBackbone::create_fold_tree_with_cutpoints(
 			last_rigid = last;
 		}
 
-		if (last_rigid != int(e_stop)) {
+		if ( last_rigid != int(e_stop) ) {
 			f_new->add_edge(last_rigid, e_stop, core::kinematics::Edge::PEPTIDE);
 		}
 	}
@@ -234,28 +234,29 @@ core::kinematics::FoldTreeOP MinimizeBackbone::create_fold_tree_with_cutpoints(
 }
 
 utility::vector1< protocols::loops::Loop> MinimizeBackbone::add_cut_points(
-		core::kinematics::Edge const & edge,
-		ligand_options::Interface const & interface,
-		core::pose::Pose & pose
+	core::kinematics::Edge const & edge,
+	ligand_options::Interface const & interface,
+	core::pose::Pose & pose
 ) {
-	if (edge.start() > edge.stop())
+	if ( edge.start() > edge.stop() ) {
 		utility_exit_with_message("Not prepared to deal with backwards fold tree edges!");
+	}
 	utility::vector1< protocols::loops::Loop> loops;
 
 	core::Size start= interface.find_first_interface_residue(edge.start(), edge.stop());
 	core::Size stop= 0;
 
-	while(start){
+	while ( start ) {
 		stop= interface.find_stop_of_this_interface_region(start, edge.stop());
 
 		minimize_backbone_tracer.Debug << "start,stop:"<< start << ','<< stop << std::endl;
 		minimize_backbone_tracer.Debug << "edge.start,edge.stop:"<< edge.start() << ','<< edge.stop() << std::endl;
 		runtime_assert( stop >= start );
-		if ((stop - start + 1) < 4) {
+		if ( (stop - start + 1) < 4 ) {
 			minimize_backbone_tracer.Debug
-					<< "WARNING: for backbone minimization to work properly, a stretch of at least 4 residues needs to be allowed to move. Stretch between "
-					<< start << " and " << stop << " is too short.  This should never happen after extending the interface"
-					<< std::endl;
+				<< "WARNING: for backbone minimization to work properly, a stretch of at least 4 residues needs to be allowed to move. Stretch between "
+				<< start << " and " << stop << " is too short.  This should never happen after extending the interface"
+				<< std::endl;
 			continue;
 		}
 
@@ -273,7 +274,7 @@ utility::vector1< protocols::loops::Loop> MinimizeBackbone::add_cut_points(
 		core::pose::add_variant_type_to_pose_residue(pose, core::chemical::CUTPOINT_LOWER, cutpt);
 		core::pose::add_variant_type_to_pose_residue(pose, core::chemical::CUTPOINT_UPPER, cutpt + 1);
 
-		if( static_cast<int>(stop) == edge.stop()) break; // cast the stop as an int
+		if ( static_cast<int>(stop) == edge.stop() ) break; // cast the stop as an int
 		start= interface.find_start_of_next_interface_region(stop+1,  edge.stop());
 	}
 	return loops;
@@ -281,9 +282,9 @@ utility::vector1< protocols::loops::Loop> MinimizeBackbone::add_cut_points(
 
 core::kinematics::FoldTreeOP
 MinimizeBackbone::create_fold_tree_with_ligand_jumps_from_attach_pts(
-		core::kinematics::FoldTree const & f_const,
-		ligand_options::Interface const & interface,
-		core::pose::Pose & pose
+	core::kinematics::FoldTree const & f_const,
+	ligand_options::Interface const & interface,
+	core::pose::Pose & pose
 
 ) const {
 	std::map<core::Size, core::Size> jump_to_attach = find_attach_pts(interface, pose);
@@ -295,9 +296,9 @@ MinimizeBackbone::create_fold_tree_with_ligand_jumps_from_attach_pts(
 			edge_end = f_const.end();
 			e != edge_end;
 			++e
-	) {
+			) {
 		std::map<core::Size, core::Size>::const_iterator const jump_attach = jump_to_attach.find(e->label());
-		if (jump_attach != jump_to_attach.end()) {
+		if ( jump_attach != jump_to_attach.end() ) {
 			core::Size const jump_id = jump_attach->first;
 			core::Size const attach_pt = jump_attach->second;
 			core::Size const ligand_residue_id = pose.fold_tree().downstream_jump_residue(jump_id);
@@ -305,53 +306,57 @@ MinimizeBackbone::create_fold_tree_with_ligand_jumps_from_attach_pts(
 		} else {
 			core::Size const attach_pt= find_peptide_attach_pt(e->start(), e->stop(), jump_to_attach);
 
-			if (e->label() == core::kinematics::Edge::PEPTIDE && attach_pt != 0) {
+			if ( e->label() == core::kinematics::Edge::PEPTIDE && attach_pt != 0 ) {
 				new_fold_tree->add_edge(e->start(), attach_pt, core::kinematics::Edge::PEPTIDE);
 				new_fold_tree->add_edge(attach_pt, e->stop(), core::kinematics::Edge::PEPTIDE);
-			} else if (e->label() == core::kinematics::Edge::CHEMICAL){
+			} else if ( e->label() == core::kinematics::Edge::CHEMICAL ) {
 				new_fold_tree->add_edge(e->start(), e->stop(), e->start_atom(), e->stop_atom());
-			} else {// add a jump edge
+			} else { // add a jump edge
 				new_fold_tree->add_edge(e->start(), e->stop(), e->label());
 			}
 		}
 	}
 
-	if (!new_fold_tree->check_fold_tree())
+	if ( !new_fold_tree->check_fold_tree() ) {
 		utility_exit_with_message("Fold tree did not pass check!");
-	if (!new_fold_tree->check_edges_for_atom_info())
+	}
+	if ( !new_fold_tree->check_edges_for_atom_info() ) {
 		utility_exit_with_message("Fold tree has chemical edge problems!");
-	if (f_const.nres() != new_fold_tree->nres())
+	}
+	if ( f_const.nres() != new_fold_tree->nres() ) {
 		utility_exit_with_message("Number of residues changed?!");
-	if (f_const.num_jump() != new_fold_tree->num_jump())
+	}
+	if ( f_const.num_jump() != new_fold_tree->num_jump() ) {
 		utility_exit_with_message("Number of jumps changed?!");
-	if (!new_fold_tree->connected())
+	}
+	if ( !new_fold_tree->connected() ) {
 		utility_exit_with_message("Fold tree not connected?!");
+	}
 	return new_fold_tree;
 }
 
 /// @detail: residues that are near the interface residues will be allowed to move with restraint
 void MinimizeBackbone::restrain_protein_Calphas(
-		ligand_options::Interface const & interface,
-		core::pose::Pose & pose
+	ligand_options::Interface const & interface,
+	core::pose::Pose & pose
 ) {
 	core::id::AtomID fixed_pt(pose.atom_tree().root()->atom_id());
 	minimize_backbone_tracer.Debug << interface << std::endl;
-	for (core::Size residue_id = 1; residue_id <= interface.size(); ++residue_id) { // didn't use an iterator because pose needs a #
-		if (interface[residue_id].type != ligand_options::InterfaceInfo::non_interface) {
+	for ( core::Size residue_id = 1; residue_id <= interface.size(); ++residue_id ) { // didn't use an iterator because pose needs a #
+		if ( interface[residue_id].type != ligand_options::InterfaceInfo::non_interface ) {
 			restrain_protein_Calpha(interface, pose, residue_id, fixed_pt);
 		}
 	}
 }
 
 void MinimizeBackbone::restrain_protein_Calpha(
-		ligand_options::Interface const & interface,
-		core::pose::Pose & pose,
-		core::Size residue_id,
-		core::id::AtomID const & fixed_pt
+	ligand_options::Interface const & interface,
+	core::pose::Pose & pose,
+	core::Size residue_id,
+	core::id::AtomID const & fixed_pt
 ) {
 	core::conformation::Residue const & residue = pose.residue(residue_id);
-	if(!residue.is_protein())
-	{
+	if ( !residue.is_protein() ) {
 		//Skip non-protein residues even if they are part of an interface
 		return;
 	}
@@ -363,27 +368,27 @@ void MinimizeBackbone::restrain_protein_Calpha(
 	core::id::AtomID const atom_ID(residue.atom_index("CA"), residue_id);
 	core::scoring::func::FuncOP const harmonic_function( new core::scoring::func::HarmonicFunc(0, ligand_area->Calpha_restraints_) );
 	core::scoring::constraints::ConstraintOP const constraint( new core::scoring::constraints::CoordinateConstraint(
-					atom_ID,
-					fixed_pt,
-					residue.xyz("CA"),
-					harmonic_function
-			) )
-	;
+		atom_ID,
+		fixed_pt,
+		residue.xyz("CA"),
+		harmonic_function
+		) )
+		;
 	minimize_backbone_tracer.Debug << "Restraining C-alpha of residue " << residue_id << " with "<< ligand_area->Calpha_restraints_<< std::endl;
 	pose.add_constraint(constraint);
 }
 
 std::map<core::Size, core::Size> MinimizeBackbone::find_attach_pts(
-		ligand_options::Interface const interface,
-		core::pose::Pose const & pose
+	ligand_options::Interface const interface,
+	core::pose::Pose const & pose
 ) const {
 	std::map<core::Size, core::Size> jumpToAttach;
 	std::map<char, LigandAreaOP> const ligand_areas= interface_builder_->get_ligand_areas();
 	//std::map<char, LigandAreaOP>::const_iterator index = ligand_areas.begin();
-	BOOST_FOREACH(LigandAreas::value_type ligand_area_pair, ligand_areas){
-	//for (; index != ligand_areas.end(); ++index) { // these are just the ligand chains to dock
+	BOOST_FOREACH ( LigandAreas::value_type ligand_area_pair, ligand_areas ) {
+		//for (; index != ligand_areas.end(); ++index) { // these are just the ligand chains to dock
 		utility::vector1<core::Size> jump_ids = core::pose::get_jump_ids_from_chain(ligand_area_pair.first, pose);
-		BOOST_FOREACH(core::Size jump_id, jump_ids){
+		BOOST_FOREACH ( core::Size jump_id, jump_ids ) {
 			jumpToAttach[jump_id] = find_attach_pt(jump_id, interface, pose);
 		}
 	}
@@ -392,25 +397,25 @@ std::map<core::Size, core::Size> MinimizeBackbone::find_attach_pts(
 
 //std::map<char, LigandArea>
 //MinimizeBackbone::get_ligand_areas(){
-//	return interface_builder_->get_ligand_areas();
+// return interface_builder_->get_ligand_areas();
 //}
 
 core::Size find_peptide_attach_pt (
-		int const & start,
-		int const & stop,
-		std::map<core::Size, core::Size> const & jump_to_attach
+	int const & start,
+	int const & stop,
+	std::map<core::Size, core::Size> const & jump_to_attach
 ){
 	std::map<core::Size, core::Size>::const_iterator index =
-			jump_to_attach.begin();
+		jump_to_attach.begin();
 	std::map<core::Size, core::Size>::const_iterator const end =
-			jump_to_attach.end();
-	for (; index != end; ++index) {
+		jump_to_attach.end();
+	for ( ; index != end; ++index ) {
 		int const attach_pt = (int) index->second;
 
-		if (start < attach_pt && attach_pt < stop){
+		if ( start < attach_pt && attach_pt < stop ) {
 			return index->second;
 		}
-		if (stop < attach_pt && attach_pt < start){
+		if ( stop < attach_pt && attach_pt < start ) {
 			return index->second;
 		}
 	}
@@ -419,9 +424,9 @@ core::Size find_peptide_attach_pt (
 
 
 core::Size find_attach_pt(
-		core::Size const jump_id,
-		ligand_options::Interface const interface,
-		core::pose::Pose const & pose
+	core::Size const jump_id,
+	ligand_options::Interface const interface,
+	core::pose::Pose const & pose
 ){
 	core::Size attach_pt = 1; // for now, attach ligand to residue 1
 	core::Real shortest_dist2 = 1e99;
@@ -430,19 +435,17 @@ core::Size find_attach_pt(
 	const core::conformation::Residue & residue = pose.residue(residue_id);
 	const core::Vector lig_nbr_vector = residue.nbr_atom_xyz();
 	//for(core::Size i = 1; i <= pose.n_residue(); ++i) { // only look at upstream residues, else multi-residue ligand will attach to itself
-	for (core::Size i = 1; i < residue_id; ++i) {
-		if (!pose.residue(i).is_protein() && interface[i].type != ligand_options::InterfaceInfo::non_interface) {
+	for ( core::Size i = 1; i < residue_id; ++i ) {
+		if ( !pose.residue(i).is_protein() && interface[i].type != ligand_options::InterfaceInfo::non_interface ) {
 			core::Vector res_coords;
-			if(pose.residue(i).has("CA"))
-			{
+			if ( pose.residue(i).has("CA") ) {
 				res_coords = pose.residue(i).xyz("CA");
-			}else
-			{
+			} else {
 				res_coords = pose.residue(i).nbr_atom_xyz();
 			}
 			core::Real const new_dist2 = lig_nbr_vector.distance_squared(
-					res_coords);
-			if (new_dist2 < shortest_dist2) {
+				res_coords);
+			if ( new_dist2 < shortest_dist2 ) {
 				shortest_dist2 = new_dist2;
 				attach_pt = i;
 			}
@@ -453,13 +456,13 @@ core::Size find_attach_pt(
 }
 
 void restrict_to_protein_residues(
-		ligand_options::Interface & interface,
-		core::pose::Pose const & pose
+	ligand_options::Interface & interface,
+	core::pose::Pose const & pose
 ){
-	for(core::Size i=1; i <= interface.size(); ++i){
-		if(interface[i].type == ligand_options::InterfaceInfo::is_interface
+	for ( core::Size i=1; i <= interface.size(); ++i ) {
+		if ( interface[i].type == ligand_options::InterfaceInfo::is_interface
 				&& pose.residue(i).is_ligand()
-		){
+				) {
 			interface[i].type = ligand_options::InterfaceInfo::non_interface;
 		}
 	}

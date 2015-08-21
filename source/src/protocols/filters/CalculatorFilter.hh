@@ -42,7 +42,7 @@ public:
 	virtual bool apply( core::pose::Pose const & pose ) const;
 	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-  core::Real compute( core::pose::Pose const & pose ) const;
+	core::Real compute( core::pose::Pose const & pose ) const;
 
 	virtual protocols::filters::FilterOP clone() const {
 		return protocols::filters::FilterOP( new CalculatorFilter( *this ) );
@@ -60,7 +60,7 @@ public:
 
 	void add_filter( std::string name, protocols::filters::FilterOP filter );
 
-  void add_constant( std::string name, core::Real value );
+	void add_constant( std::string name, core::Real value );
 
 private:
 	numeric::CalculatorOP calc_;

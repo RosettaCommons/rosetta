@@ -24,7 +24,7 @@ static basic::Tracer TR("core.scoring.hbonds.HBondsFadeEnergy");
 class HBondsFadeEnergy : public CxxTest::TestSuite {
 
 public:
-  void setUp() {
+	void setUp() {
 		core_init();
 	}
 
@@ -34,9 +34,9 @@ public:
 	void test_fade_energy() {
 		using namespace core;
 		using namespace scoring;
-    using namespace hbonds;
+		using namespace hbonds;
 
-		for(Real raw_energy=-.2; raw_energy < .2; raw_energy +=.05){
+		for ( Real raw_energy=-.2; raw_energy < .2; raw_energy +=.05 ) {
 			Real energy(raw_energy);
 			fade_energy(energy);
 			TR
@@ -55,7 +55,7 @@ public:
 	void test_fade_energy_derivs() {
 		using namespace core;
 		using namespace scoring;
-    using namespace hbonds;
+		using namespace hbonds;
 
 		Real dE_dr(1.0), dE_dxD(1.0), dE_dxH(1.0), dE_dBAH(1.0), dE_dchi(1.0);
 		Real delta( 1e-5 );

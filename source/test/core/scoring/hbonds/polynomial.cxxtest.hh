@@ -37,48 +37,48 @@
 class HBPolyTest : public CxxTest::TestSuite {
 
 public:
-  void setUp() {
-    core_init();
-  }
+	void setUp() {
+		core_init();
+	}
 
-  void tearDown(){}
+	void tearDown(){}
 
 
-  void test_Polynomial_1d_model(){
+	void test_Polynomial_1d_model(){
 
-    test::UTracer UT("core/scoring/hbonds/Polynomial_1d_model.u");
+		test::UTracer UT("core/scoring/hbonds/Polynomial_1d_model.u");
 
-    UT << "let p(x) = 5x^2 - 1" << std::endl;
-    utility::vector1< core::Real > coefs;
-    coefs.push_back(5);
+		UT << "let p(x) = 5x^2 - 1" << std::endl;
+		utility::vector1< core::Real > coefs;
+		coefs.push_back(5);
 		coefs.push_back(0);
-    coefs.push_back(-1);
+		coefs.push_back(-1);
 
-    core::scoring::hbonds::Polynomial_1d p(
-      "test_polynomial",
-      core::scoring::hbonds::hbgd_AHdist,
-      -3 /*xmin*/,
-      3 /*xmax*/,
-      10.0 /*min_val*/,
-      10.0 /*max_val*/,
-      -.2 /*root1*/,
-      .2 /*root2*/,
-      3 /*degree*/,
-      coefs);
+		core::scoring::hbonds::Polynomial_1d p(
+			"test_polynomial",
+			core::scoring::hbonds::hbgd_AHdist,
+			-3 /*xmin*/,
+			3 /*xmax*/,
+			10.0 /*min_val*/,
+			10.0 /*max_val*/,
+			-.2 /*root1*/,
+			.2 /*root2*/,
+			3 /*degree*/,
+			coefs);
 
 		core::Real value, deriv;
-    p(0, value, deriv);
+		p(0, value, deriv);
 		UT << "p(0) = " << value << ", p'(0) = " << deriv << std::endl;
-    TS_ASSERT(value == -1);
-    TS_ASSERT(deriv == 0);
+		TS_ASSERT(value == -1);
+		TS_ASSERT(deriv == 0);
 
-    p(2, value, deriv);
+		p(2, value, deriv);
 		UT << "p(2) = " << value << ", p'(2) = " << deriv << std::endl;
-    TS_ASSERT(value == 19);
-    TS_ASSERT(deriv == 20);
+		TS_ASSERT(value == 19);
+		TS_ASSERT(deriv == 20);
 
-    UT << p;
-  }
+		UT << p;
+	}
 
 
 	void test_read_polynomials_from_database(){
@@ -95,7 +95,7 @@ public:
 		basic::database::open(s, HBPoly1D_fname.str());
 		std::string line;
 		core::scoring::hbonds::Polynomial_1dCOP p;
-		while (getline( s, line)){
+		while ( getline( s, line) ) {
 			std::istringstream l(line);
 			utility::vector1<std::string> tokens;
 			tokens = utility::string_split( line, ',');

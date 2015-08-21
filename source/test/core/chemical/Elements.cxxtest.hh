@@ -22,7 +22,7 @@ using namespace core::chemical;
 
 class ElementsTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	ElementsTests() {}
 

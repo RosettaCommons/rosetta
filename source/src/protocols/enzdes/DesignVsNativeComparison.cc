@@ -64,7 +64,7 @@ DesignVsNativeComparison::compare_to_native(
 
 	std::map<  std::string, core::pose::PoseOP >::iterator map_it = native_poses_.find( pdb_code );
 
-	if( map_it == native_poses_.end() ){
+	if ( map_it == native_poses_.end() ) {
 
 		std::string native_path = basic::options::option[basic::options::OptionKeys::enzdes::compare_native].value();
 
@@ -109,18 +109,17 @@ DesignVsNativeComparison::compare_to_native(
 
 	core::Real poseval, nativeval;
 
-	for( utility::vector1< std::pair< std::string, std::string > >::const_iterator calc_it = calculators.begin();
-			 calc_it != calculators.end(); ++calc_it ){
+	for ( utility::vector1< std::pair< std::string, std::string > >::const_iterator calc_it = calculators.begin();
+			calc_it != calculators.end(); ++calc_it ) {
 
 
-		if( calc_it->first == "hbond_pm" || calc_it->first == "burunsat_pm" || calc_it->first == "NLconts_pm" || calc_it->second == "total_pos_charges" || calc_it->second == "total_neg_charges" ){
+		if ( calc_it->first == "hbond_pm" || calc_it->first == "burunsat_pm" || calc_it->first == "NLconts_pm" || calc_it->second == "total_pos_charges" || calc_it->second == "total_neg_charges" ) {
 			pureprotpose->metric( calc_it->first, calc_it->second, mval_size );
 			poseval = mval_size.value();
 
 			native->metric( calc_it->first, calc_it->second, mval_size );
 			nativeval = mval_size.value();
-		}
-		else{
+		} else {
 			pureprotpose->metric( calc_it->first, calc_it->second, mval_real );
 			poseval = mval_real.value();
 
@@ -133,7 +132,7 @@ DesignVsNativeComparison::compare_to_native(
 		//now create a silent energy out of the calculated value
 		core::Real native_diff = poseval - nativeval;
 		std::string se_name = "NaCo_"+calc_it->first;
-		if( calc_it->first == "charges_pm" ) se_name = "NaCo_" + calc_it->second;
+		if ( calc_it->first == "charges_pm" ) se_name = "NaCo_" + calc_it->second;
 		int width = std::max( 10, (int) se_name.length() + 3 );
 
 		//core::io::SilentEnergy se( se_name , native_diff, 1, width );

@@ -100,7 +100,7 @@ void FileDataOptions::set_exit_if_missing_heavy_atoms( bool exit_if_missing_heav
 void FileDataOptions::set_ignore_unrecognized_res( bool ignore_unrecognized_res )
 {
 	ignore_unrecognized_res_ = ignore_unrecognized_res;
-  if ( ignore_unrecognized_res_ ) {
+	if ( ignore_unrecognized_res_ ) {
 		// Move this warning into file_data -- only show if HOH is actually ignored.
 		// TR << TR.Red << "For backwards compatibility, setting -ignore_unrecognized_res leads ALSO to -ignore_waters. You can set -ignore_waters false to get waters." << TR.Reset << std::endl;
 		ignore_waters_ = true;
@@ -167,7 +167,7 @@ void FileDataOptions::init_from_options()
 	// Now allow user to -ignore_unrecognized_res but to also restore HOH through "-ignore_waters false".
 	set_ignore_waters( false );
 	set_ignore_unrecognized_res( option[ in::ignore_unrecognized_res ]()); // this can change ignore_waters
-  if ( option[ in::ignore_waters ].user() ) set_ignore_waters( option[ in::ignore_waters ]()); // overrides ignore_waters
+	if ( option[ in::ignore_waters ].user() ) set_ignore_waters( option[ in::ignore_waters ]()); // overrides ignore_waters
 
 	set_ignore_zero_occupancy( option[ run::ignore_zero_occupancy ]());
 	set_keep_input_protonation_state( option[ pH::keep_input_protonation_state ]());
@@ -179,7 +179,7 @@ void FileDataOptions::init_from_options()
 	set_remember_unrecognized_water( option[ in::remember_unrecognized_water ]());
 	set_write_pdb_link_records(option[out::file::write_pdb_link_records]());
 	set_chains_whose_residues_are_separate_chemical_entities( option[ in::file::treat_residues_in_these_chains_as_separate_chemical_entities].user_or(""));
-	if( option[ in::file::remap_pdb_atom_names_for ].active() ) {
+	if ( option[ in::file::remap_pdb_atom_names_for ].active() ) {
 		set_residues_for_atom_name_remapping( option[ in::file::remap_pdb_atom_names_for ] );
 	}
 	set_write_pdb_parametric_info( option[out::file::write_pdb_parametric_info]() );

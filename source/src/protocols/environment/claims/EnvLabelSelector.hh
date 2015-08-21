@@ -36,46 +36,46 @@ namespace environment {
 namespace claims {
 
 class EnvLabelSelector : public core::pack::task::residue_selector::ResidueSelector {
-  typedef core::pack::task::residue_selector::ResidueSubset ResidueSubset;
-  typedef core::environment::LocalPositions LocalPositions;
-  typedef core::environment::LocalPosition LocalPosition;
+	typedef core::pack::task::residue_selector::ResidueSubset ResidueSubset;
+	typedef core::environment::LocalPositions LocalPositions;
+	typedef core::environment::LocalPosition LocalPosition;
 
 public:
-  // derived from base class
-  EnvLabelSelector();
+	// derived from base class
+	EnvLabelSelector();
 
-  EnvLabelSelector( LocalPositions const& );
+	EnvLabelSelector( LocalPositions const& );
 
-  EnvLabelSelector( LocalPosition const& );
+	EnvLabelSelector( LocalPosition const& );
 
-  EnvLabelSelector( std::string const& label,
-                    std::pair< core::Size, core::Size > const& range );
+	EnvLabelSelector( std::string const& label,
+		std::pair< core::Size, core::Size > const& range );
 
-  virtual ~EnvLabelSelector();
+	virtual ~EnvLabelSelector();
 
-  virtual
+	virtual
 	core::pack::task::residue_selector::ResidueSubset
 	apply( core::pose::Pose const & pose ) const;
 
-  virtual void parse_my_tag(
-    utility::tag::TagCOP tag,
-    basic::datacache::DataMap & datamap
-  );
+	virtual void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & datamap
+	);
 
-  void set_local_positions( LocalPositions const& );
+	void set_local_positions( LocalPositions const& );
 
-  LocalPositions const& local_positions() const{ return positions_; }
+	LocalPositions const& local_positions() const{ return positions_; }
 
-  void add_position( LocalPosition const& p ){ positions_.push_back( utility::pointer::shared_ptr<class core::environment::LocalPosition>( new LocalPosition( p ) ) ); }
+	void add_position( LocalPosition const& p ){ positions_.push_back( utility::pointer::shared_ptr<class core::environment::LocalPosition>( new LocalPosition( p ) ) ); }
 
-  virtual
-  std::string
-  get_name() const;
+	virtual
+	std::string
+	get_name() const;
 
-  static std::string class_name();
+	static std::string class_name();
 
 private: // data members
-  LocalPositions positions_;
+	LocalPositions positions_;
 };
 
 } //namespace claims

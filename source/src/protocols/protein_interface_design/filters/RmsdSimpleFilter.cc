@@ -104,40 +104,40 @@ RmsdSimpleFilter::compute( core::pose::Pose const & pose ) const
 
 	TR << boost::format("apply to poses, Target=%s vs residues> ") % (this_target_pose.n_residue(), this_refe_pose.n_residue() )<< std::endl;
 	//Apply to a particular chain
-	if ( this_target_pose.n_residue() != this_refe_pose.n_residue() ){
+	if ( this_target_pose.n_residue() != this_refe_pose.n_residue() ) {
 		utility_exit_with_message("Error, reference pose and current pose have different size ");
 	}
-	if (b_target_chain_){
+	if ( b_target_chain_ ) {
 		TR <<  "Target chain: " << target_chain_ << ", of a pose with #Chains: " << pose.conformation().num_chains() << std::endl;
-		if( target_chain_ > pose.conformation().num_chains() ){
+		if ( target_chain_ > pose.conformation().num_chains() ) {
 			utility_exit_with_message(" FragmentLookupFilter invalid chain" );
 		}
 		this_target_pose = *this_target_pose.split_by_chain(target_chain_);
 		this_refe_pose = *this_refe_pose.split_by_chain(target_chain_);
 		TR << boost::format("apply to poses, Target=%s vs residues> ") % (this_target_pose.n_residue(), this_refe_pose.n_residue() )<< std::endl;
-		if ( this_target_pose.n_residue() != this_refe_pose.n_residue() ){
+		if ( this_target_pose.n_residue() != this_refe_pose.n_residue() ) {
 			utility_exit_with_message("Error, reference pose and current pose have different size " );
 		}
 	}
 	utility::vector1< core::Size > positions_to_alignA;
 	utility::vector1< core::Size > positions_to_alignB;
-	for ( core::Size i=1; i <= this_target_pose.n_residue(); ++i ){
+	for ( core::Size i=1; i <= this_target_pose.n_residue(); ++i ) {
 		positions_to_alignA.push_back(i);
 		positions_to_alignB.push_back(i);
 	}
 	//Do simple distance
-	if(do_align_ == 0){
+	if ( do_align_ == 0 ) {
 		rmsd = dist_bb( this_target_pose,
-						positions_to_alignA,
-						this_refe_pose,
-						positions_to_alignB );
-	}else if(do_align_ == 1){ //do real RMSD
+			positions_to_alignA,
+			this_refe_pose,
+			positions_to_alignB );
+	} else if ( do_align_ == 1 ) { //do real RMSD
 		rmsd = rmsd_bb( this_target_pose,
-						positions_to_alignA,
-						this_refe_pose,
-						positions_to_alignB );
+			positions_to_alignA,
+			this_refe_pose,
+			positions_to_alignB );
 
-	}else{
+	} else {
 		utility_exit_with_message("Error, incorrect align mode" );
 	}
 	return rmsd;
@@ -168,10 +168,10 @@ void RmsdSimpleFilter::superposition_transform(
 }
 
 /**@brief Function that performs alignment of the protein BB on the selected aminoacids.
- **Returns the RMSD,
- **Uses a reference to the rotation Matrix and Translation Vector,
- **Will fail if both poses are not protein <-This can be fixed by adding a list of the atoms to align to the function, but I am not doing it now.
- **Will fail if the number of residues to align is not the same in the two poses. **/
+**Returns the RMSD,
+**Uses a reference to the rotation Matrix and Translation Vector,
+**Will fail if both poses are not protein <-This can be fixed by adding a list of the atoms to align to the function, but I am not doing it now.
+**Will fail if the number of residues to align is not the same in the two poses. **/
 core::Real RmsdSimpleFilter::rmsd_bb(
 	core::pose::Pose const & poseA,
 	utility::vector1< core::Size > const & positions_to_alignA,
@@ -181,7 +181,7 @@ core::Real RmsdSimpleFilter::rmsd_bb(
 	core::Size sizeA=positions_to_alignA.size();
 	core::Size sizeB=positions_to_alignB.size();
 	//Check if the align size vectors are equivalent in size, if not die with error(-1.0)
-	if(sizeA != sizeB) return -1.0;
+	if ( sizeA != sizeB ) return -1.0;
 
 	//To store the RMSD
 	core::Real RMSD;
@@ -194,7 +194,7 @@ core::Real RmsdSimpleFilter::rmsd_bb(
 	utility::vector1< numeric::xyzVector< core::Real > > matrixB;
 	utility::vector1< bool > v_isNorC_expandedFormat;
 	//Copy the BB atoms XYZ positions for pose A and B
-	for( core::Size i = 1; i <= sizeA ; ++i){
+	for ( core::Size i = 1; i <= sizeA ; ++i ) {
 		matrixA.push_back(poseA.residue(positions_to_alignA[i]).xyz( "CA" ));
 		matrixB.push_back(poseB.residue(positions_to_alignB[i]).xyz( "CA" ));
 		matrixA.push_back(poseA.residue(positions_to_alignA[i]).xyz( "C" ));
@@ -208,8 +208,8 @@ core::Real RmsdSimpleFilter::rmsd_bb(
 	ObjexxFCL::FArray2D< numeric::Real > FmatrixA( 3, (sizeA*4) );
 	ObjexxFCL::FArray2D< numeric::Real > FmatrixB( 3, (sizeA*4) );
 	//??Alex: are this post-increments particulary Roseta-coding-standars correct?
-	for (core::Size i = 1; i <= (sizeA*4); i++){
-		for (core::Size j = 1; j <= 3; j++){
+	for ( core::Size i = 1; i <= (sizeA*4); i++ ) {
+		for ( core::Size j = 1; j <= 3; j++ ) {
 			FmatrixA(j,i) = matrixA[i](j);
 			FmatrixB(j,i) = matrixB[i](j);
 		}
@@ -224,9 +224,9 @@ core::Real RmsdSimpleFilter::rmsd_bb(
 	//Storage for d^2
 	core::Real tmpDistSqr;
 	//Calculate the RMSD
-	for (core::Size i = 1; i <= (sizeA*4); i++){
+	for ( core::Size i = 1; i <= (sizeA*4); i++ ) {
 		tmpDistSqr=0.0;
-		for (int j = 1; j <= 3; j++){
+		for ( int j = 1; j <= 3; j++ ) {
 			tmpDistSqr+=(FmatrixA(j,i)-FmatrixB(j,i))*(FmatrixA(j,i)-FmatrixB(j,i));
 		}
 		RMSD+=tmpDistSqr;
@@ -247,14 +247,14 @@ core::Real RmsdSimpleFilter::dist_bb(
 	core::Size sizeA=positions_to_alignA.size();
 	core::Size sizeB=positions_to_alignB.size();
 	//Check if the align size vectors are equivalent in size, if not die with error(-1.0)
-	if(sizeA != sizeB) return -1.0;
+	if ( sizeA != sizeB ) return -1.0;
 	//To store the RMSD
 	core::Real RMSD;
 	//To store the positions of the atoms that we want to measure
 	utility::vector1< numeric::xyzVector< core::Real > > matrixA;
 	utility::vector1< numeric::xyzVector< core::Real > > matrixB;
 	//Copy the BB atoms XYZ positions for pose A and B
-	for( core::Size i = 1; i <= sizeA ; ++i){
+	for ( core::Size i = 1; i <= sizeA ; ++i ) {
 		matrixA.push_back(poseA.residue(positions_to_alignA[i]).xyz( "CA" ));
 		matrixB.push_back(poseB.residue(positions_to_alignB[i]).xyz( "CA" ));
 		matrixA.push_back(poseA.residue(positions_to_alignA[i]).xyz( "C" ));
@@ -268,8 +268,8 @@ core::Real RmsdSimpleFilter::dist_bb(
 	ObjexxFCL::FArray2D< numeric::Real > FmatrixA( 3, (sizeA*4) );
 	ObjexxFCL::FArray2D< numeric::Real > FmatrixB( 3, (sizeA*4) );
 	//??Alex: are this post-increments particulary Roseta-coding-standars correct?
-	for (core::Size i = 1; i <= (sizeA*4); i++){
-		for (core::Size j = 1; j <= 3; j++){
+	for ( core::Size i = 1; i <= (sizeA*4); i++ ) {
+		for ( core::Size j = 1; j <= 3; j++ ) {
 			FmatrixA(j,i) = matrixA[i](j);
 			FmatrixB(j,i) = matrixB[i](j);
 		}
@@ -278,10 +278,10 @@ core::Real RmsdSimpleFilter::dist_bb(
 	RMSD=0.0;
 	core::Real tmpDistSqr=0.0;
 	//Calculate the RMSD
-	for (core::Size i = 1; i <= (sizeA*4); i++){
+	for ( core::Size i = 1; i <= (sizeA*4); i++ ) {
 		//Storage for d^2
 		tmpDistSqr=0.0;
-		for (int j = 1; j <= 3; j++){
+		for ( int j = 1; j <= 3; j++ ) {
 			tmpDistSqr+=(FmatrixA(j,i)-FmatrixB(j,i))*(FmatrixA(j,i)-FmatrixB(j,i));
 		}
 		RMSD+=tmpDistSqr;
@@ -297,12 +297,12 @@ bool RmsdSimpleFilter::apply( core::pose::Pose const & pose ) const {
 
 	TR << "Calculating BB RMSD." ;
 	core::Real const rmsd( compute( pose ));
-	if( rmsd <= threshold_ ) {
+	if ( rmsd <= threshold_ ) {
 		TR<<" RMSD Filter Pass: "<< rmsd <<std::endl;
 		return( true );
 	} else {
-	TR<<" RMSD Filter Fail:"<< rmsd << std::endl;
-	return( false );
+		TR<<" RMSD Filter Fail:"<< rmsd << std::endl;
+		return( false );
 	}
 }
 
@@ -319,45 +319,45 @@ core::Real RmsdSimpleFilter::report_sm( core::pose::Pose const & pose ) const {
 }
 
 void RmsdSimpleFilter::parse_my_tag( utility::tag::TagCOP tag,
-											basic::datacache::DataMap & data_map,
-											protocols::filters::Filters_map const &,
-											protocols::moves::Movers_map const &,
-											core::pose::Pose const & pose )
+	basic::datacache::DataMap & data_map,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & pose )
 {
 	/// @brief
 	reference_pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
 	target_chain_ = 0;
 	threshold_ = 0.0;
 
-	if( tag->hasOption("reference_name") ){
+	if ( tag->hasOption("reference_name") ) {
 		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag, data_map );
-	}else if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ){
-			core::import_pose::pose_from_pdb( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] );
-	}else{
+	} else if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
+		core::import_pose::pose_from_pdb( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] );
+	} else {
 		utility_exit_with_message("Not reference structure defined! Use [reference_name] or [-in::file::native] ");
 	}
-	if( tag->hasOption("chain") ){
+	if ( tag->hasOption("chain") ) {
 		target_chain_ = tag->getOption<core::Size>( "chain" );
 		b_target_chain_ = true;
-	}else{
+	} else {
 		TR.Warning << "No chain specified, using them all for calculation" << std::endl;
 	}
 
-	if( tag->hasOption("threshold") ){
+	if ( tag->hasOption("threshold") ) {
 		threshold_ = tag->getOption<core::Real>( "threshold");
-	}else{
+	} else {
 		TR.Warning << "Threshold option not specified, using default" << threshold_ << std::endl;
 	}
-	if( tag->hasOption("align") ){
+	if ( tag->hasOption("align") ) {
 		do_align_ = tag->getOption<core::Size>( "align");
-		if(do_align_ == 0){
+		if ( do_align_ == 0 ) {
 			TR.Info << "Align mode is disabled, therefore the result will be the euclidean distance" << std::endl;
-		}else if(do_align_ == 1){
+		} else if ( do_align_ == 1 ) {
 			TR.Info << "Align mode is enabled, therefore the result will be RMSD" << std::endl;
-		}else{
+		} else {
 			utility_exit_with_message("Align option is boolean, allowed values are 0 and 1 (deactivated/activated)");
 		}
-	}else{
+	} else {
 		TR.Warning << "Align option not specified, using default (activated)" << threshold_ << std::endl;
 	}
 }
@@ -368,7 +368,7 @@ protocols::filters::FilterOP RmsdSimpleFilterCreator::create_filter() const {
 
 std::string RmsdSimpleFilterCreator::keyname() const {
 	return "RmsdSimple";
-	}
+}
 
 
 } // filters

@@ -78,15 +78,15 @@ public:// accessor
 
 	String name() const;
 
-	inline Size helix() const { return helix_;	}
+	inline Size helix() const { return helix_; }
 
-	inline Size strand1() const { return strand1_;	}
+	inline Size strand1() const { return strand1_; }
 
-	inline Size strand2() const { return strand2_;	}
+	inline Size strand2() const { return strand2_; }
 
-	inline Size cross_over() const {	return cross_over_;	}
+	inline Size cross_over() const { return cross_over_; }
 
-	inline bool is_lefthanded() const { return left_handed_;	}
+	inline bool is_lefthanded() const { return left_handed_; }
 
 	inline Real hsheet_dist() const { return hs_dist_; }
 
@@ -210,13 +210,13 @@ public:// accessor
 
 
 	/// @brief
-	BetaAlphaBetaMotifs const &	bab_motifs() const;
+	BetaAlphaBetaMotifs const & bab_motifs() const;
 
 	/// @brief
 	BetaAlphaBetaMotifOP bab_motif( Size const & i ) const;
 
 	/// @brief
-	friend	std::ostream & operator<<( std::ostream & out, const BetaAlphaBetaMotifSet & s );
+	friend std::ostream & operator<<( std::ostream & out, const BetaAlphaBetaMotifSet & s );
 
 
 public:

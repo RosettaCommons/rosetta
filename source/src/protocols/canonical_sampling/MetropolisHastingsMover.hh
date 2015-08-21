@@ -35,8 +35,8 @@
 #include <protocols/canonical_sampling/ThermodynamicObserver.fwd.hh>
 
 #ifdef WIN32
-	#include <protocols/canonical_sampling/ThermodynamicMover.hh>
-	#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
+#include <protocols/canonical_sampling/ThermodynamicMover.hh>
+#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
 #endif
 
 

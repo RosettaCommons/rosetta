@@ -111,7 +111,7 @@ closest_larger_peptide_vertex(
 	std::sort( peptide_vertices.begin(), peptide_vertices.end() );
 	std::vector< Size >::iterator last = std::unique( peptide_vertices.begin(), peptide_vertices.end() );
 	peptide_vertices.erase( last, peptide_vertices.end() );
-	
+
 	for ( std::vector< Size >::const_iterator i = peptide_vertices.begin(), ie = peptide_vertices.end(); i != ie; ++i ) {
 		if ( *i > v ) {
 			++count;
@@ -306,12 +306,12 @@ bool remove_cutpoint(
 	// Jump edges were ordered when collecting them, so the start() must correspond
 	// to the left set and the stop() must correspond to the right set.
 	EdgeList::const_iterator j = jump_edges.begin(), je = jump_edges.end();
-	while(
-		j != je &&
-		uf.ds_find( j->start() ) != left_root &&
-		uf.ds_find( j->stop() ) != right_root
-	)
-	{
+	while (
+			j != je &&
+			uf.ds_find( j->start() ) != left_root &&
+			uf.ds_find( j->stop() ) != right_root
+			)
+			{
 		++j;
 	}
 
@@ -369,12 +369,12 @@ void remove_cutpoints(
 		// Jump edges were ordered when collecting them, so the start() must correspond
 		// to the left set and the stop() must correspond to the right set.
 		EdgeList::const_iterator j = jump_edges.begin(), je = jump_edges.end();
-		while(
-			j != je &&
-			uf.ds_find( j->start() ) != left_root &&
-			uf.ds_find( j->stop() ) != right_root
-		)
-		{
+		while (
+				j != je &&
+				uf.ds_find( j->start() ) != left_root &&
+				uf.ds_find( j->stop() ) != right_root
+				)
+				{
 			++j;
 		}
 
@@ -563,9 +563,9 @@ fold_tree_from_pose(
 						// uses implicit chemical edge constructor
 						ft.add_edge(
 							Edge(
-								r, cr,
-								res.atom_name( res.connect_atom( cres ) ),
-								cres.atom_name( cres.connect_atom( res ) ) )
+							r, cr,
+							res.atom_name( res.connect_atom( cres ) ),
+							cres.atom_name( cres.connect_atom( res ) ) )
 						);
 
 						uf.ds_union( cr, r );
@@ -660,20 +660,20 @@ fold_tree_from_pose(
 
 					// add polymer edges, there are only three cases
 					switch ( vertices.size() ) {
-						case 3:
-							ft.add_edge( Edge( *vertices.begin(), *( ++vertices.begin() ), Edge::PEPTIDE ) );
-							ft.add_edge( Edge( *( ++vertices.begin() ), *( ++( ++vertices.begin() ) ), Edge::PEPTIDE ) );
-							break;
-						case 2:
-							ft.add_edge( Edge( *vertices.begin(), *( ++vertices.begin() ), Edge::PEPTIDE ) );
-							break;
-						case 1:
-							// do nothing
-							break;
-						default:
-							TR.Fatal << "FATAL: fold_tree_from_pose() : vertices.size() not in [1, 3]" << std::endl;
-							utility_exit_with_message( "should not be here" );
-							break;
+					case 3 :
+						ft.add_edge( Edge( *vertices.begin(), *( ++vertices.begin() ), Edge::PEPTIDE ) );
+						ft.add_edge( Edge( *( ++vertices.begin() ), *( ++( ++vertices.begin() ) ), Edge::PEPTIDE ) );
+						break;
+					case 2 :
+						ft.add_edge( Edge( *vertices.begin(), *( ++vertices.begin() ), Edge::PEPTIDE ) );
+						break;
+					case 1 :
+						// do nothing
+						break;
+					default :
+						TR.Fatal << "FATAL: fold_tree_from_pose() : vertices.size() not in [1, 3]" << std::endl;
+						utility_exit_with_message( "should not be here" );
+						break;
 					}
 
 					// add jump edge
@@ -839,10 +839,10 @@ merge(
 	// add new jump
 	new_ft.add_edge(
 		Edge(
-			jleft, jright,
-			left_tree.num_jump() + right_tree.num_jump() + 1,
-			left_jump_atom, right_jump_atom,
-			keep_stub_in_residue
+		jleft, jright,
+		left_tree.num_jump() + right_tree.num_jump() + 1,
+		left_jump_atom, right_jump_atom,
+		keep_stub_in_residue
 		)
 	);
 
@@ -892,8 +892,8 @@ replace(
 	Size const replace_length = replace_end - replace_begin + 1;
 	Size const final_nres = original_tree.nres() - replace_length + replacement_tree.nres();
 	Size const final_ft_root = original_tree.root() < replace_begin ?
-	                           original_tree.root() :
-	                           original_tree.root() - replace_length + replacement_tree.nres();
+		original_tree.root() :
+		original_tree.root() - replace_length + replacement_tree.nres();
 
 	// create altered fold tree and delete the section to be replaced
 	FoldTree aft = original_tree;
@@ -910,8 +910,7 @@ replace(
 
 	// left section
 	for ( FoldTree::const_iterator e = static_cast< FoldTree const & >( aft ).begin(),
-	      ee = static_cast< FoldTree const & >( aft ).end(); e != ee; ++e )
-	{
+			ee = static_cast< FoldTree const & >( aft ).end(); e != ee; ++e ) {
 		if ( e->label() < 0 && e->start() < replace_begin && e->stop() < replace_begin ) {
 			Edge new_edge = *e;
 			order( new_edge ); // for union_interval
@@ -927,8 +926,7 @@ replace(
 
 	// right section, shifted to take into account replacement tree
 	for ( FoldTree::const_iterator e = static_cast< FoldTree const & >( aft ).begin(),
-	      ee = static_cast< FoldTree const & >( aft ).end(); e != ee; ++e )
-	{
+			ee = static_cast< FoldTree const & >( aft ).end(); e != ee; ++e ) {
 		if ( e->label() < 0 && e->start() >= replace_begin && e->stop() >= replace_begin ) {
 			Edge new_edge = *e;
 			order( new_edge ); // for union_interval
@@ -946,8 +944,7 @@ replace(
 
 	// jumps
 	for ( FoldTree::const_iterator e = static_cast< FoldTree const & >( aft ).begin(),
-	      ee = static_cast< FoldTree const & >( aft ).end(); e != ee; ++e )
-	{
+			ee = static_cast< FoldTree const & >( aft ).end(); e != ee; ++e ) {
 		if ( e->label() > 0 ) {
 			Edge new_edge = *e;
 
@@ -972,8 +969,7 @@ replace(
 
 	// run through remaining edges, splitting if necessary
 	for ( FoldTree::const_iterator e = static_cast< FoldTree const & >( tracking_ft ).begin(),
-	      ee = static_cast< FoldTree const & >( tracking_ft ).end(); e != ee; ++e )
-	{
+			ee = static_cast< FoldTree const & >( tracking_ft ).end(); e != ee; ++e ) {
 		Edge edge = *e;
 		order( edge ); // for union_interval
 
@@ -1127,9 +1123,9 @@ replace(
 
 // set up star foldtree for special manipulation
 void make_star_foldtree(
-		core::pose::Pose & pose,
-		//core::kinematics::MoveMap & mm,
-		protocols::loops::Loops loops ) {
+	core::pose::Pose & pose,
+	//core::kinematics::MoveMap & mm,
+	protocols::loops::Loops loops ) {
 	using namespace core::chemical;
 	using namespace core::kinematics;
 
@@ -1145,33 +1141,37 @@ void make_star_foldtree(
 		bool start_is_cut = pose.fold_tree().is_cutpoint( loop_start-1 );
 		bool end_is_cut = pose.fold_tree().is_cutpoint( loop_end );
 
-		if ( loop_start == 1) continue;
-		if ( loop_end == nres) continue;
+		if ( loop_start == 1 ) continue;
+		if ( loop_end == nres ) continue;
 
 		/// some really weird cases
-		if ( start_is_cut && !end_is_cut && prev_cut == loop_start-1 )
+		if ( start_is_cut && !end_is_cut && prev_cut == loop_start-1 ) {
 			continue;
+		}
 		if ( start_is_cut && end_is_cut && prev_cut != loop_start-1 ) {
 			// need to add two cuts for this loop
 			this_cut   = loop_start-1;
 			//out_midpt  = (prev_cut + this_cut+1)/4;
 			out_midpt  = prev_cut +1; // try to root the jump at beginning
 			newF.add_edge( nres+1, out_midpt, njump );
-			if (out_midpt != prev_cut+1)
+			if ( out_midpt != prev_cut+1 ) {
 				newF.add_edge( out_midpt, prev_cut+1, Edge::PEPTIDE );
-			if (out_midpt != this_cut)
+			}
+			if ( out_midpt != this_cut ) {
 				newF.add_edge( out_midpt, this_cut  , Edge::PEPTIDE );
+			}
 			prev_cut = this_cut;
 
 			njump++;
 		}
 
-		if ( start_is_cut && !end_is_cut && prev_cut != loop_start-1 )
+		if ( start_is_cut && !end_is_cut && prev_cut != loop_start-1 ) {
 			this_cut = loop_start-1;
-		else if ( end_is_cut )
+		} else if ( end_is_cut ) {
 			this_cut = loop_end;
-		else
+		} else {
 			this_cut = loops[i].cut();
+		}
 
 		//out_midpt  = (prev_cut + this_cut+1)/2;
 		out_midpt = prev_cut + 1; //try to root the jump at beginning.
@@ -1181,10 +1181,12 @@ void make_star_foldtree(
 			core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, this_cut+1 );
 		}
 		newF.add_edge( nres+1, out_midpt, njump );
-		if (out_midpt != prev_cut+1)
+		if ( out_midpt != prev_cut+1 ) {
 			newF.add_edge( out_midpt, prev_cut+1, Edge::PEPTIDE );
-		if (out_midpt != this_cut)
+		}
+		if ( out_midpt != this_cut ) {
 			newF.add_edge( out_midpt, this_cut  , Edge::PEPTIDE );
+		}
 		TR << "add edge " << njump << " : " << prev_cut+1 << "..." << out_midpt << "..." << this_cut << std::endl;
 
 		njump++;
@@ -1192,7 +1194,7 @@ void make_star_foldtree(
 	}
 
 	// c term
-	if (prev_cut != nres) {
+	if ( prev_cut != nres ) {
 		out_midpt  = (prev_cut + nres+1)/2;
 		newF.add_edge( prev_cut+1, nres+1, njump );
 		newF.add_edge( prev_cut+1, nres  , Edge::PEPTIDE );
@@ -1209,11 +1211,11 @@ void jumps_and_cuts_from_pose( core::pose::Pose & pose, utility::vector1< std::p
 	core::kinematics::FoldTree f_orig = pose.fold_tree();
 
 	for ( core::Size i = 1; i<= f_orig.num_jump(); ++i ) {
-    core::Size down ( f_orig.downstream_jump_residue(i) );
-    core::Size up ( f_orig.upstream_jump_residue(i) );
-        jumps.push_back( std::pair<int,int>( down, up ) );
+		core::Size down ( f_orig.downstream_jump_residue(i) );
+		core::Size up ( f_orig.upstream_jump_residue(i) );
+		jumps.push_back( std::pair<int,int>( down, up ) );
 	}
- cuts =  f_orig.cutpoints();
+	cuts =  f_orig.cutpoints();
 }
 
 

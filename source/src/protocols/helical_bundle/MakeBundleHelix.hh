@@ -57,18 +57,18 @@ namespace helical_bundle {
 class MakeBundleHelix : public protocols::moves::Mover
 {
 public:
-		//Typedefs:
-		typedef core::conformation::parametric::Parameters Parameters;
-		typedef core::conformation::parametric::ParametersOP ParametersOP;
-		typedef core::conformation::parametric::ParametersSet ParametersSet;
-		typedef core::conformation::parametric::ParametersSetOP ParametersSetOP;
+	//Typedefs:
+	typedef core::conformation::parametric::Parameters Parameters;
+	typedef core::conformation::parametric::ParametersOP ParametersOP;
+	typedef core::conformation::parametric::ParametersSet ParametersSet;
+	typedef core::conformation::parametric::ParametersSetOP ParametersSetOP;
 
-		typedef protocols::helical_bundle::parameters::BundleParameters BundleParameters;
-		typedef protocols::helical_bundle::parameters::BundleParametersOP BundleParametersOP;
-		typedef protocols::helical_bundle::parameters::BundleParametersCOP BundleParametersCOP;
-		typedef protocols::helical_bundle::parameters::BundleParametersSet BundleParametersSet;
-		typedef protocols::helical_bundle::parameters::BundleParametersSetOP BundleParametersSetOP;
-		typedef protocols::helical_bundle::parameters::BundleParametersSetCOP BundleParametersSetCOP;
+	typedef protocols::helical_bundle::parameters::BundleParameters BundleParameters;
+	typedef protocols::helical_bundle::parameters::BundleParametersOP BundleParametersOP;
+	typedef protocols::helical_bundle::parameters::BundleParametersCOP BundleParametersCOP;
+	typedef protocols::helical_bundle::parameters::BundleParametersSet BundleParametersSet;
+	typedef protocols::helical_bundle::parameters::BundleParametersSetOP BundleParametersSetOP;
+	typedef protocols::helical_bundle::parameters::BundleParametersSetCOP BundleParametersSetCOP;
 
 public:
 	MakeBundleHelix();
@@ -85,11 +85,11 @@ public:
 	virtual std::string get_name() const;
 
 	/*virtual void parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const &
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const &
 	);*/
 
 	/// @brief Set whether the input pose should be reset prior to building a helix.
@@ -219,7 +219,7 @@ public:
 
 	/// @brief Get the delta_t value.
 	core::Real delta_t() const { return bundle_parameters_->delta_t(); }
-	
+
 	/// @brief Set the major helix parameters
 	void set_major_helix_params (
 		core::Real const &r0_in,
@@ -249,7 +249,7 @@ public:
 		bundle_parameters_->set_delta_z1(delta_z1_in);
 		return;
 	}
-	
+
 	/// @brief Set z1_offset, the offset along the minor helix axis for the whole helix.
 	///
 	void set_z1_offset ( core::Real const &val ) { bundle_parameters_->set_z1_offset(val); return; }
@@ -275,7 +275,7 @@ public:
 	/// @brief Get the residues per repeat.
 	///
 	inline core::Size residues_per_repeat() const { return bundle_parameters_->residues_per_repeat(); }
-	
+
 	/// @brief Get the atoms per residue vector (const-access).
 	///
 	inline utility::vector1 < core::Size > const & atoms_per_residue() const { return bundle_parameters_->atoms_per_residue(); }
@@ -284,7 +284,7 @@ public:
 	/// @details An offset of 0 means that the first residue of the helix is the first residue of the repeating unit.  An offset
 	/// of 1 means that the first residue of the helix is the SECOND residue of the repeating unit, etc.
 	void set_repeating_unit_offset( core::Size const val ) { bundle_parameters_->set_repeating_unit_offset(val); return; }
-	
+
 	/// @brief Get the repeating unit offset.
 	/// @details An offset of 0 means that the first residue in the helix is the first
 	/// residue of the repeating unit.  An offset of 1 means that the first residue in
@@ -352,9 +352,9 @@ public:
 	void set_bundle_parameters( BundleParametersOP newparams ) {  bundle_parameters_ = newparams; return; }
 
 private:
-////////////////////////////////////////////////////////////////////////////////
-//          PRIVATE DATA                                                      //
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	//          PRIVATE DATA                                                      //
+	////////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Should the input pose be reset?
 	/// @details Default true.
@@ -383,9 +383,9 @@ private:
 	/// @details Initialized to "false"; "true" if the last apply failed.
 	bool last_apply_failed_;
 
-////////////////////////////////////////////////////////////////////////////////
-//          PRIVATE FUNCTIONS                                                 //
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	//          PRIVATE FUNCTIONS                                                 //
+	////////////////////////////////////////////////////////////////////////////////
 
 	/// @brief If there are tail residues, set their backbone dihedral angles
 	/// to something reasonable (a helical conformation).

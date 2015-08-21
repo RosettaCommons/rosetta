@@ -47,13 +47,13 @@ public:
 	/// @brief Associates relevant options with the TemperedDocking class.
 	static void register_options();
 
-	virtual	protocols::moves::MoverOP	clone() const;
+	virtual protocols::moves::MoverOP clone() const;
 
-	virtual	protocols::moves::MoverOP	fresh_instance() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 
-	virtual	std::string	get_name() const;
+	virtual std::string get_name() const;
 
-	virtual	void parse_my_tag(
+	virtual void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
@@ -67,25 +67,25 @@ public:
 		core::Size cycle   //non-zero if trajectory is restarted
 	);
 
-	virtual	void observe_after_metropolis(
+	virtual void observe_after_metropolis(
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
 	virtual
 	bool
 	restart_simulation(
-			 core::pose::Pose & pose,
-			 protocols::canonical_sampling::MetropolisHastingsMover& metropolis_hastings_mover,
-			 core::Size& cycle,
-			 core::Size& temp_level,
-			 core::Real& temperature
+		core::pose::Pose & pose,
+		protocols::canonical_sampling::MetropolisHastingsMover& metropolis_hastings_mover,
+		core::Size& cycle,
+		core::Size& temp_level,
+		core::Real& temperature
 	);
 
 protected:
 
-	/// @brief Append the given model to the silent file trajectory being 
+	/// @brief Append the given model to the silent file trajectory being
 	/// written.
-	virtual void 	write_model(
+	virtual void  write_model(
 		core::pose::Pose const & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = 0
 	);

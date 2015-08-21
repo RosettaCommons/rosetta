@@ -75,88 +75,88 @@ namespace rna {
 ///////////////////////////////////////////////////////////////////
 void
 update_edge_hbond_numbers(
-   conformation::Residue const & rsd,
-	 Size const & atm,
-	 Size & N_W,
-	 Size & N_H,
-	 Size & N_S )
+	conformation::Residue const & rsd,
+	Size const & atm,
+	Size & N_W,
+	Size & N_H,
+	Size & N_S )
 {
 	using namespace core::chemical;
 
 	//std::cout << atm << std::endl;
 	std::string atom_name = rsd.atom_name( atm );
-	//	std::cout << atom_name << std::endl;
+	// std::cout << atom_name << std::endl;
 
 	if ( rsd.aa() == na_rad ) {
 
 		if ( atom_name == " N1 "  ||
-				 atom_name == " C2 "  ||
-				 atom_name == " N6 "  ) N_W++;
+				atom_name == " C2 "  ||
+				atom_name == " N6 "  ) N_W++;
 
 		if ( atom_name == " N6 "  ||
-				 atom_name == " C5 "  ||
-				 atom_name == " C8 "  ||
-				 atom_name == " N7 "  ) N_H++;
+				atom_name == " C5 "  ||
+				atom_name == " C8 "  ||
+				atom_name == " N7 "  ) N_H++;
 
 		if ( atom_name == " N3 "  ||
-				 atom_name == " C2 "  ||
-				 atom_name == " C4 "  ||
-				 atom_name == " C1'"  ||
-				 atom_name == " C3'"  ||
-				 atom_name == " O3'"  ||
-				 atom_name == " O2'"   ) N_S++;
+				atom_name == " C2 "  ||
+				atom_name == " C4 "  ||
+				atom_name == " C1'"  ||
+				atom_name == " C3'"  ||
+				atom_name == " O3'"  ||
+				atom_name == " O2'"   ) N_S++;
 
 	} else if ( rsd.aa() == na_rcy ) {
 
 		if ( atom_name == " O2 "  ||
-				 atom_name == " N3 "  ||
-				 atom_name == " N4 " ) N_W++;
+				atom_name == " N3 "  ||
+				atom_name == " N4 " ) N_W++;
 
 		if ( atom_name == " N4 "  ||
-				 atom_name == " C5 "  ||
-				 atom_name == " C6 "  ) N_H++;
+				atom_name == " C5 "  ||
+				atom_name == " C6 "  ) N_H++;
 
 		if ( atom_name == " O2 "  ||
-				 atom_name == " N1 "  ||
-				 atom_name == " C1'"  ||
-				 atom_name == " C3'"  ||
-				 atom_name == " O3'"  ||
-				 atom_name == " O2'"   ) N_S++;
+				atom_name == " N1 "  ||
+				atom_name == " C1'"  ||
+				atom_name == " C3'"  ||
+				atom_name == " O3'"  ||
+				atom_name == " O2'"   ) N_S++;
 
 	} else if ( rsd.aa() == na_rgu ) {
 
 		if ( atom_name == " N1 "  ||
-				 atom_name == " N2 "  ||
-				 atom_name == " O6 "  ) N_W++;
+				atom_name == " N2 "  ||
+				atom_name == " O6 "  ) N_W++;
 
 		if ( atom_name == " O6 "  ||
-				 atom_name == " C5 "  ||
-				 atom_name == " C8 "  ||
-				 atom_name == " N7 "  ) N_H++;
+				atom_name == " C5 "  ||
+				atom_name == " C8 "  ||
+				atom_name == " N7 "  ) N_H++;
 
 		if ( atom_name == " N3 "  ||
-				 atom_name == " N2 "  ||
-				 atom_name == " C4 "  ||
-				 atom_name == " N9 "  ||
-				 atom_name == " C1'"  ||
-				 atom_name == " O2'"   ) N_S++;
+				atom_name == " N2 "  ||
+				atom_name == " C4 "  ||
+				atom_name == " N9 "  ||
+				atom_name == " C1'"  ||
+				atom_name == " O2'"   ) N_S++;
 
 	} else if ( rsd.aa() == na_ura ) {
 
 		if ( atom_name == " O2 "  ||
-				 atom_name == " N3 "  ||
-				 atom_name == " O4 " ) N_W++;
+				atom_name == " N3 "  ||
+				atom_name == " O4 " ) N_W++;
 
 		if ( atom_name == " O4 "  ||
-				 atom_name == " C5 "  ||
-				 atom_name == " C6 "  ) N_H++;
+				atom_name == " C5 "  ||
+				atom_name == " C6 "  ) N_H++;
 
 		if ( atom_name == " O2 "  ||
-				 atom_name == " N1 "  ||
-				 atom_name == " C1'"  ||
-				 atom_name == " C3'"  ||
-				 atom_name == " O3'"  ||
-				 atom_name == " O2'"   ) N_S++;
+				atom_name == " N1 "  ||
+				atom_name == " C1'"  ||
+				atom_name == " C3'"  ||
+				atom_name == " O3'"  ||
+				atom_name == " O2'"   ) N_S++;
 
 	} else {
 		std::cout << "PROBLEM !!!! " << rsd.aa() << std::endl;
@@ -167,43 +167,43 @@ update_edge_hbond_numbers(
 ///////////////////////////////////
 void
 update_edge_hbond_numbers_careful_hydrogen(
-   conformation::Residue const & rsd,
-	 Size const & atm,
-   conformation::Residue const & other_rsd,
-	 Size const & other_atm,
-	 Size & N_W,
-	 Size & N_H,
-	 Size & N_S )
+	conformation::Residue const & rsd,
+	Size const & atm,
+	conformation::Residue const & other_rsd,
+	Size const & other_atm,
+	Size & N_W,
+	Size & N_H,
+	Size & N_S )
 {
 	using namespace core::chemical;
 
 	std::string atom_name = rsd.atom_name( atm );
 
-	if (rsd.aa() == na_rad && atom_name == " N6 ") {
+	if ( rsd.aa() == na_rad && atom_name == " N6 " ) {
 		//std::cout << "CHECKING " << rsd.seqpos() << std::endl;
 		if ( (rsd.xyz( rsd.atom_index(" H61") ) - other_rsd.xyz( other_atm )).length()  <
-				 (rsd.xyz( rsd.atom_index(" H62") ) - other_rsd.xyz( other_atm )).length() ) {
+				(rsd.xyz( rsd.atom_index(" H62") ) - other_rsd.xyz( other_atm )).length() ) {
 			N_W++;
 		} else {
 			N_H++;
 		}
 	}
 
-	if (rsd.aa() == na_rcy && atom_name == " N4 ") {
-		//		TR << "cyt check " << rsd.seqpos() << " to " << other_rsd.seqpos() << " atom " << other_rsd.atom_name( other_atm ) <<
-		//			"  dist to H42 " << (rsd.xyz( rsd.atom_index(" H42") ) - other_rsd.xyz( other_atm )).length() <<
-		//			" dist to H41 " << (rsd.xyz( rsd.atom_index(" H41") ) - other_rsd.xyz( other_atm )).length()  << std::endl;
+	if ( rsd.aa() == na_rcy && atom_name == " N4 " ) {
+		//  TR << "cyt check " << rsd.seqpos() << " to " << other_rsd.seqpos() << " atom " << other_rsd.atom_name( other_atm ) <<
+		//   "  dist to H42 " << (rsd.xyz( rsd.atom_index(" H42") ) - other_rsd.xyz( other_atm )).length() <<
+		//   " dist to H41 " << (rsd.xyz( rsd.atom_index(" H41") ) - other_rsd.xyz( other_atm )).length()  << std::endl;
 		if ( (rsd.xyz( rsd.atom_index(" H42") ) - other_rsd.xyz( other_atm )).length()  <
-				 (rsd.xyz( rsd.atom_index(" H41") ) - other_rsd.xyz( other_atm )).length() ) {
+				(rsd.xyz( rsd.atom_index(" H41") ) - other_rsd.xyz( other_atm )).length() ) {
 			N_H++;
 		} else {
 			N_W++;
 		}
 	}
 
-	if (rsd.aa() == na_rgu && atom_name == " N2 ") {
+	if ( rsd.aa() == na_rgu && atom_name == " N2 " ) {
 		if ( (rsd.xyz( rsd.atom_index(" H22") ) - other_rsd.xyz( other_atm )).length()  <
-				 (rsd.xyz( rsd.atom_index(" H21") ) - other_rsd.xyz( other_atm )).length() ) {
+				(rsd.xyz( rsd.atom_index(" H21") ) - other_rsd.xyz( other_atm )).length() ) {
 			N_S++;
 		} else {
 			N_W++;
@@ -217,8 +217,8 @@ bool
 atom_is_polar( core::conformation::Residue const & rsd, Size const & atm )
 {
 	for ( chemical::AtomIndices::const_iterator
-					anum  = rsd.Hpos_polar().begin(),
-					anume = rsd.Hpos_polar().end(); anum != anume; ++anum ) {
+			anum  = rsd.Hpos_polar().begin(),
+			anume = rsd.Hpos_polar().end(); anum != anume; ++anum ) {
 		Size const H_atm( *anum );
 		if ( H_atm == atm ) return true;
 	}
@@ -231,8 +231,8 @@ bool
 heavy_atom_is_polar( core::conformation::Residue const & rsd, Size const & atm )
 {
 	for ( chemical::AtomIndices::const_iterator
-					anum  = rsd.Hpos_polar().begin(),
-					anume = rsd.Hpos_polar().end(); anum != anume; ++anum ) {
+			anum  = rsd.Hpos_polar().begin(),
+			anume = rsd.Hpos_polar().end(); anum != anume; ++anum ) {
 		Size const H_atm( *anum );
 		if ( rsd.atom_base( H_atm ) == atm ) return true;
 	}
@@ -245,8 +245,8 @@ bool
 atom_is_acceptor( core::conformation::Residue const & rsd, Size const & atm )
 {
 	for ( chemical::AtomIndices::const_iterator
-					anum  = rsd.accpt_pos().begin(),
-					anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
+			anum  = rsd.accpt_pos().begin(),
+			anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
 		Size const H_atm( *anum );
 		if ( H_atm == atm ) return true;
 	}
@@ -268,27 +268,27 @@ figure_out_number_base_contacts(
 	using namespace core::scoring::rna;
 
 	static Real const DIST_CUTOFF(  4.2 );
-	//	static Real const ANGLE_CUTOFF( numeric::conversions::radians( 100.0 ) );
+	// static Real const ANGLE_CUTOFF( numeric::conversions::radians( 100.0 ) );
 	//Size n_hbonds( 0 );
 	Size N_W( 0 ), N_H( 0 ), N_S( 0 );
 
-	//	Size const i = rsd_i.seqpos();
-	//	Size const j = rsd_j.seqpos();
+	// Size const i = rsd_i.seqpos();
+	// Size const j = rsd_j.seqpos();
 
 	//std::cout << i << " <--> " << j << std::endl;
 	// heavy atom on base j; heavy atom on i.
 	for ( Size k = rsd_j.first_sidechain_atom()+1 ; k <= rsd_j.nheavyatoms(); k++ ) {
 
-		//		if ( k <= rsd_j.first_sidechain_atom() ) continue;
+		//  if ( k <= rsd_j.first_sidechain_atom() ) continue;
 
 		for ( Size m = 1; m <= rsd_i.nheavyatoms(); m++ ) {
 
 			Real const dist_ij = ( rsd_i.xyz( m ) - rsd_j.xyz( k ) ).length();
 
-			//			Real const angle_ij = angle_radians( rsd_i.xyz( acc_atm ),
-			//																					 rsd_j.xyz( don_h_atm ),
-			//																					 rsd_j.xyz( don_atm ) );
-			if ( dist_ij < DIST_CUTOFF  /*&& angle_ij > ANGLE_CUTOFF*/ )				{
+			//   Real const angle_ij = angle_radians( rsd_i.xyz( acc_atm ),
+			//                      rsd_j.xyz( don_h_atm ),
+			//                      rsd_j.xyz( don_atm ) );
+			if ( dist_ij < DIST_CUTOFF  /*&& angle_ij > ANGLE_CUTOFF*/ )    {
 				update_edge_hbond_numbers( rsd_i, m, N_W, N_H, N_S );
 
 				if ( atom_is_acceptor( rsd_j, k ) && heavy_atom_is_polar( rsd_i, m) ) {
@@ -305,39 +305,39 @@ figure_out_number_base_contacts(
 	//std::cout << i << " <--> " << j << std::endl;
 
 	// acceptor on base j; donor on i.
-	//	for ( Size acc_atm = 1; acc_atm <= rsd_j.nheavyatoms(); acc_atm++ ) {
+	// for ( Size acc_atm = 1; acc_atm <= rsd_j.nheavyatoms(); acc_atm++ ) {
 	//
-	//		if ( acc_atm <= rsd_j.first_sidechain_atom() ) continue;
+	//  if ( acc_atm <= rsd_j.first_sidechain_atom() ) continue;
 	//
-	//		for ( Size k = rsd_i.nheavyatoms() + 1; k <= rsd_i.natoms(); k++ ) {
+	//  for ( Size k = rsd_i.nheavyatoms() + 1; k <= rsd_i.natoms(); k++ ) {
 	//
-	//			Size const & don_h_atm = k;
-	//			Size const & don_atm = rsd_i.atom_base( k );
+	//   Size const & don_h_atm = k;
+	//   Size const & don_atm = rsd_i.atom_base( k );
 	//
-	//			if ( ( rsd_j.xyz( acc_atm ) - rsd_i.xyz( don_h_atm ) ).length() < DIST_CUTOFF  /*&&
-	//					 angle_radians( rsd_j.xyz( acc_atm ),
-	//													rsd_i.xyz( don_h_atm ),
-	//													rsd_i.xyz( don_atm ) ) > ANGLE_CUTOFF*/ )				{
-	//				update_edge_hbond_numbers( rsd_i, don_atm, N_W, N_H, N_S );
-	//				//if ( atom_is_polar( rsd_i, k ) && atom_is_acceptor( rsd_j, acc_atm) &&
-	//				//						 don_atm > rsd_i.first_sidechain_atom() )  {
-	//					//					if( (i == 4 && j ==9) ||  (i == 9 && j ==4)  )std::cout << "2. FOUND H-BOND " << i << " " << j << " " << rsd_i.atom_name( k ) << " " << rsd_j.atom_name( acc_atm ) << std::endl;
-	//				//					n_hbonds++;
-	//				//				}
-	//			}
+	//   if ( ( rsd_j.xyz( acc_atm ) - rsd_i.xyz( don_h_atm ) ).length() < DIST_CUTOFF  /*&&
+	//      angle_radians( rsd_j.xyz( acc_atm ),
+	//             rsd_i.xyz( don_h_atm ),
+	//             rsd_i.xyz( don_atm ) ) > ANGLE_CUTOFF*/ )    {
+	//    update_edge_hbond_numbers( rsd_i, don_atm, N_W, N_H, N_S );
+	//    //if ( atom_is_polar( rsd_i, k ) && atom_is_acceptor( rsd_j, acc_atm) &&
+	//    //       don_atm > rsd_i.first_sidechain_atom() )  {
+	//     //     if( (i == 4 && j ==9) ||  (i == 9 && j ==4)  )std::cout << "2. FOUND H-BOND " << i << " " << j << " " << rsd_i.atom_name( k ) << " " << rsd_j.atom_name( acc_atm ) << std::endl;
+	//    //     n_hbonds++;
+	//    //    }
+	//   }
 	//
-	//		}
-	//	}
+	//  }
+	// }
 
 	if ( N_W >= N_H && N_W >= N_S ) {
 		edge_classification = core::chemical::rna::WATSON_CRICK;
-	} else if (N_H >= N_S ) {
+	} else if ( N_H >= N_S ) {
 		edge_classification = core::chemical::rna::HOOGSTEEN;
 	} else {
 		edge_classification = core::chemical::rna::SUGAR;
 	}
 
-	//	return n_hbonds;
+	// return n_hbonds;
 
 }
 
@@ -348,7 +348,7 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 /////////////////////////////////////////////////////////////////////////////
 Size
 figure_out_base_pair_orientation(
-  core::pose::Pose & pose,
+	core::pose::Pose & pose,
 	Size const & i,
 	Size const & j )
 {
@@ -359,7 +359,7 @@ figure_out_base_pair_orientation(
 	rna_centroid_info.update( pose );
 
 	//utility::vector1< Vector > const & base_centroids( rna_centroid_info.base_centroids() );
-  utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
+	utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
 
 	kinematics::Stub const & stub_i( base_stubs[i] );
 	Matrix const & M_i( stub_i.M );
@@ -388,7 +388,7 @@ residue_is_bulge( pose::Pose const & pose, Size const i )
 			if ( i == j ) continue;
 			for ( Size m = 1; m <= pose.residue( j ).nheavyatoms(); m++ ) {
 				if ( ( rsd_i.xyz( k ) - pose.residue( j ).xyz( m ) ).length() < DIST_CUTOFF ) {
-					//					std::cout << "Residue " << i << " --> " << j << " " << pose.residue(j).atom_name( m ) << std::endl;
+					//     std::cout << "Residue " << i << " --> " << j << " " << pose.residue(j).atom_name( m ) << std::endl;
 					return false;
 				}
 			}
@@ -402,15 +402,15 @@ residue_is_bulge( pose::Pose const & pose, Size const i )
 /////////////////////////////////////////////////////////////////////////////
 Size
 bases_form_a_hydrogen_bond( core::scoring::hbonds::HBondSetOP const & hbond_set,
-														core::pose::Pose & pose,
-														Size const & i,
-														Size const & j )
+	core::pose::Pose & pose,
+	Size const & i,
+	Size const & j )
 {
 
 	Size num_hbonds = 0;
 
 	static Real const HBOND_CUTOFF( -0.1 );
-	for (Size n = 1; n <= hbond_set->nhbonds(); n++ ) {
+	for ( Size n = 1; n <= hbond_set->nhbonds(); n++ ) {
 		core::scoring::hbonds::HBond const & hbond( hbond_set->hbond( n ) );
 
 		Size const & don_res_num = hbond.don_res();
@@ -421,27 +421,27 @@ bases_form_a_hydrogen_bond( core::scoring::hbonds::HBondSetOP const & hbond_set,
 
 		if ( don_res_num == i && acc_res_num == j ) {
 			if ( pose.residue( i ).atom_base( don_hatm ) > pose.residue( i ).first_sidechain_atom() &&
-					 acc_atm > pose.residue( j ).first_sidechain_atom() ) {
+					acc_atm > pose.residue( j ).first_sidechain_atom() ) {
 
-				//if ( ( i == 4  && j == 10 ) || ( i==10 && j==4) )		std::cout << i << "--" << j << "  -> " << pose.residue( i ).atom_name( don_hatm) << " " << pose.residue( j ).atom_name( acc_atm ) << hbond.energy() << std::endl;
-				if ( hbond.energy() <= HBOND_CUTOFF )	num_hbonds++;
+				//if ( ( i == 4  && j == 10 ) || ( i==10 && j==4) )  std::cout << i << "--" << j << "  -> " << pose.residue( i ).atom_name( don_hatm) << " " << pose.residue( j ).atom_name( acc_atm ) << hbond.energy() << std::endl;
+				if ( hbond.energy() <= HBOND_CUTOFF ) num_hbonds++;
 
 			}
 		}
 
 		if ( don_res_num == j && acc_res_num == i ) {
 			if ( pose.residue( j ).atom_base( don_hatm ) > pose.residue( j ).first_sidechain_atom() &&
-					 acc_atm > pose.residue( i ).first_sidechain_atom() ) {
+					acc_atm > pose.residue( i ).first_sidechain_atom() ) {
 
-				//if ( ( i == 4  && j == 10 ) || ( i==10 && j==4) )		 std::cout << j << "--" << i << "  -> " << pose.residue( j ).atom_name( don_hatm) << " " << pose.residue( i ).atom_name( acc_atm ) << hbond.energy() << std::endl;
-				if ( hbond.energy() <= HBOND_CUTOFF )	num_hbonds++;
+				//if ( ( i == 4  && j == 10 ) || ( i==10 && j==4) )   std::cout << j << "--" << i << "  -> " << pose.residue( j ).atom_name( don_hatm) << " " << pose.residue( i ).atom_name( acc_atm ) << hbond.energy() << std::endl;
+				if ( hbond.energy() <= HBOND_CUTOFF ) num_hbonds++;
 
 			}
 		}
 
 	}
 
-	if (num_hbonds > 0 ) return num_hbonds;
+	if ( num_hbonds > 0 ) return num_hbonds;
 
 	// Last check -- there may be unusually *close* contacts in lo-res structures that don't get good hbond scores.
 	static Real const DIST_CUTOFF( 3.0 );
@@ -449,21 +449,21 @@ bases_form_a_hydrogen_bond( core::scoring::hbonds::HBondSetOP const & hbond_set,
 	conformation::Residue const & rsd_j( pose.residue( j ) ) ;
 
 	for ( chemical::AtomIndices::const_iterator
-					anum  = rsd_i.accpt_pos().begin(),
-					anume = rsd_i.accpt_pos().end(); anum != anume; ++anum ) {
+			anum  = rsd_i.accpt_pos().begin(),
+			anume = rsd_i.accpt_pos().end(); anum != anume; ++anum ) {
 
 		Size const aatm( *anum ) ;
 		if ( aatm <= rsd_i.first_sidechain_atom() ) continue;
 
 		for ( chemical::AtomIndices::const_iterator
-						hnum  = rsd_j.Hpos_polar().begin(),
-						hnume = rsd_j.Hpos_polar().end(); hnum != hnume; ++hnum ) {
+				hnum  = rsd_j.Hpos_polar().begin(),
+				hnume = rsd_j.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 			Size const hatm( *hnum );
 
 			if ( rsd_j.atom_base( hatm ) <= rsd_j.first_sidechain_atom() ) continue;
 
 			if ( ( rsd_i.xyz( aatm ) - rsd_j.xyz( hatm ) ).length() < DIST_CUTOFF  ) {
-				//				if ( ( i == 4  && j == 10 ) || ( i==10 && j==4) )		 std::cout << j << "--" << i << "  -> " << pose.residue( j ).atom_name( hatm) << " " << pose.residue( i ).atom_name( aatm ) << " blah" << std::endl;
+				//    if ( ( i == 4  && j == 10 ) || ( i==10 && j==4) )   std::cout << j << "--" << i << "  -> " << pose.residue( j ).atom_name( hatm) << " " << pose.residue( i ).atom_name( aatm ) << " blah" << std::endl;
 				return 1;
 			}
 		}
@@ -471,21 +471,21 @@ bases_form_a_hydrogen_bond( core::scoring::hbonds::HBondSetOP const & hbond_set,
 
 
 	for ( chemical::AtomIndices::const_iterator
-					anum  = rsd_j.accpt_pos().begin(),
-					anume = rsd_j.accpt_pos().end(); anum != anume; ++anum ) {
+			anum  = rsd_j.accpt_pos().begin(),
+			anume = rsd_j.accpt_pos().end(); anum != anume; ++anum ) {
 
 		Size const aatm( *anum ) ;
 		if ( aatm <= rsd_j.first_sidechain_atom() ) continue;
 
 		for ( chemical::AtomIndices::const_iterator
-						hnum  = rsd_i.Hpos_polar().begin(),
-						hnume = rsd_i.Hpos_polar().end(); hnum != hnume; ++hnum ) {
+				hnum  = rsd_i.Hpos_polar().begin(),
+				hnume = rsd_i.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 			Size const hatm( *hnum );
 
 			if ( rsd_i.atom_base( hatm ) <= rsd_i.first_sidechain_atom() ) continue;
 
 			if ( ( rsd_j.xyz( aatm ) - rsd_i.xyz( hatm ) ).length()  < DIST_CUTOFF  ) {
-				//				if ( ( i == 4  && j == 10 ) || ( i==10 && j==4) )		 std::cout << i << "--" << j << "  -> " << pose.residue( i ).atom_name( hatm) << " " << pose.residue( j ).atom_name( aatm ) << " blah " << dist << std::endl;
+				//    if ( ( i == 4  && j == 10 ) || ( i==10 && j==4) )   std::cout << i << "--" << j << "  -> " << pose.residue( i ).atom_name( hatm) << " " << pose.residue( j ).atom_name( aatm ) << " blah " << dist << std::endl;
 				return 1;
 			}
 		}
@@ -498,9 +498,9 @@ bases_form_a_hydrogen_bond( core::scoring::hbonds::HBondSetOP const & hbond_set,
 //////////////////////////////////////////////////
 bool
 bases_are_coplanar(
-										core::pose::Pose & pose,
-										Size const & i,
-										Size const & j )
+	core::pose::Pose & pose,
+	Size const & i,
+	Size const & j )
 {
 
 	using namespace core::scoring::rna;
@@ -510,7 +510,7 @@ bases_are_coplanar(
 	rna_centroid_info.update( pose );
 
 	utility::vector1< Vector > const & base_centroids( rna_centroid_info.base_centroids() );
-  utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
+	utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
 
 	Vector const & centroid_i( base_centroids[i] );
 	kinematics::Stub const & stub_i( base_stubs[i] );
@@ -524,16 +524,16 @@ bases_are_coplanar(
 
 	Vector d_ij = centroid_j - centroid_i;
 	//Real const dist_x = dot_product( d_ij, x_i );
-	//	Real const dist_y = dot_product( d_ij, y_i );
+	// Real const dist_y = dot_product( d_ij, y_i );
 	Real const dist_z = dot_product( d_ij, z_i );
 
 	Matrix const & M_j( stub_j.M );
 	Vector const & z_j = M_j.col_z();
 	Real const cos_theta = dot_product( z_i, z_j );
 
-	//	if ( i == 8  && j == 11 )		std::cout << "DIST_Z COS_THETA " << dist_z << " " << cos_theta << std::endl;
-	//	if ( i == 5  && j == 8 )		std::cout << "DIST_Z COS_THETA " << dist_z << " " << cos_theta << std::endl;
-	//	if ( j == 5  && i == 8 )		std::cout << "DIST_Z COS_THETA " << dist_z << " " << cos_theta << std::endl;
+	// if ( i == 8  && j == 11 )  std::cout << "DIST_Z COS_THETA " << dist_z << " " << cos_theta << std::endl;
+	// if ( i == 5  && j == 8 )  std::cout << "DIST_Z COS_THETA " << dist_z << " " << cos_theta << std::endl;
+	// if ( j == 5  && i == 8 )  std::cout << "DIST_Z COS_THETA " << dist_z << " " << cos_theta << std::endl;
 
 
 	static Real const rna_basepair_stagger_cutoff_( 2.8 );
@@ -541,9 +541,9 @@ bases_are_coplanar(
 	if ( std::abs(dist_z) < rna_basepair_stagger_cutoff_  && std::abs( cos_theta ) > COS_THETA_CUTOFF ) return true;
 
 
-	//	static Real const rna_basepair_stagger_cutoff_loose_( 3.5 );
-	//	static Real const COS_THETA_CUTOFF_STRICT( 0.65 );
-	//	if ( std::abs(dist_z) < rna_basepair_stagger_cutoff_loose_ && std::abs( cos_theta ) > COS_THETA_CUTOFF_STRICT ) return true;
+	// static Real const rna_basepair_stagger_cutoff_loose_( 3.5 );
+	// static Real const COS_THETA_CUTOFF_STRICT( 0.65 );
+	// if ( std::abs(dist_z) < rna_basepair_stagger_cutoff_loose_ && std::abs( cos_theta ) > COS_THETA_CUTOFF_STRICT ) return true;
 
 	return false;
 }
@@ -554,9 +554,9 @@ bases_are_coplanar(
 /////////////////////////////////////////////////////////////////////////////
 void
 classify_base_pairs(
-    core::pose::Pose const & pose_input,
-		utility::vector1< core::pose::rna::BasePair> & base_pair_list,
-		utility::vector1< bool > & is_bulged
+	core::pose::Pose const & pose_input,
+	utility::vector1< core::pose::rna::BasePair> & base_pair_list,
+	utility::vector1< bool > & is_bulged
 )
 {
 	using namespace core::scoring;
@@ -582,12 +582,12 @@ classify_base_pairs(
 
 	hbonds::fill_hbond_set( pose, false /*calc deriv*/, *hbond_set );
 
-	//	std::cout << "---------" << std::endl;
+	// std::cout << "---------" << std::endl;
 
 	//////////////////////////////////////////////////////////////
-	for (Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 		if ( ! pose.residue(i).is_RNA()  ) continue;
-		for (Size j = i+1; j <= pose.total_residue(); j++ ) {
+		for ( Size j = i+1; j <= pose.total_residue(); j++ ) {
 			if ( ! pose.residue(j).is_RNA()  ) continue;
 
 			Size const num_hbonds = bases_form_a_hydrogen_bond( hbond_set, pose, i, j );
@@ -602,19 +602,19 @@ classify_base_pairs(
 			Size const orientation = figure_out_base_pair_orientation( pose, i, j );
 
 			//These pernicious bifurcated hydrogen bonds.
-			//			if ( num_hbonds == 1 &&
-			//					 ( pose.residue(i).aa() == na_rad  || pose.residue(i).aa() == na_rgu ) &&
-			//					 ( pose.residue(j).aa() == na_rad  || pose.residue(j).aa() == na_rgu ) ) {
-			//				edge_classification_i = WATSON_CRICK;
-			//				edge_classification_j = WATSON_CRICK;
-			//			}
+			//   if ( num_hbonds == 1 &&
+			//      ( pose.residue(i).aa() == na_rad  || pose.residue(i).aa() == na_rgu ) &&
+			//      ( pose.residue(j).aa() == na_rad  || pose.residue(j).aa() == na_rgu ) ) {
+			//    edge_classification_i = WATSON_CRICK;
+			//    edge_classification_j = WATSON_CRICK;
+			//   }
 
 
-			//			if ( n_i > 0 && n_j > 0 ) {
+			//   if ( n_i > 0 && n_j > 0 ) {
 			base_pair_list.push_back( core::pose::rna::BasePair( i, j, edge_classification_i, edge_classification_j , orientation ) );
 			if ( false ) std::cout << pose.residue( i ).name1() << i << " " << pose.residue(j).name1() << j << "  " << core::chemical::rna::get_edge_from_num( edge_classification_i ) << " " << core::chemical::rna::get_edge_from_num( edge_classification_j ) << " " << orientation << std::endl;
 
-				//			}
+			//   }
 
 		}
 	}
@@ -634,7 +634,7 @@ classify_base_pairs(
 //////////////////////////////////////////////////////////////////////
 Size
 get_number_base_stacks(
-	 core::pose::Pose const & pose_input
+	core::pose::Pose const & pose_input
 )
 {
 	using namespace core::scoring;

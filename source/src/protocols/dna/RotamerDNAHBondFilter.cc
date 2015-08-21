@@ -82,9 +82,9 @@ RotamerDNAHBondFilter::operator() (
 
 	Size const nchi( ex_chi_steps.size() );
 	if ( ( nchi > 0 && rtask.operate_on_ex1() && ex_chi_steps[1] != 0. ) ||
-		   ( nchi > 1 && rtask.operate_on_ex2() && ex_chi_steps[2] != 0. ) ||
-		   ( nchi > 2 && rtask.operate_on_ex3() && ex_chi_steps[3] != 0. ) ||
-		   ( nchi > 3 && rtask.operate_on_ex4() && ex_chi_steps[4] != 0. ) ) filter = true;
+			( nchi > 1 && rtask.operate_on_ex2() && ex_chi_steps[2] != 0. ) ||
+			( nchi > 2 && rtask.operate_on_ex3() && ex_chi_steps[3] != 0. ) ||
+			( nchi > 3 && rtask.operate_on_ex4() && ex_chi_steps[4] != 0. ) ) filter = true;
 
 	if ( !filter ) return true;
 	++nfiltered_;
@@ -96,17 +96,17 @@ RotamerDNAHBondFilter::operator() (
 
 		Real hbE_total(0.0);
 		for ( Size ratom_i( rotamer->first_sidechain_atom() ), ratom_end( rotamer->natoms() );
-		      ratom_i <= ratom_end; ++ratom_i ) {
+				ratom_i <= ratom_end; ++ratom_i ) {
 			Atom const & ratom( rotamer->atom( ratom_i ) );
 			Size const datom_start( base_only_ ? dnares.first_sidechain_atom() : 1 );
 			for ( Size datom_i( datom_start ), datom_end( dnares.natoms() );
-			      datom_i <= datom_end; ++datom_i ) {
+					datom_i <= datom_end; ++datom_i ) {
 				Atom const & datom( dnares.atom( datom_i ) );
 
 				// rotamer donor, dna acceptor
 				if ( rotamer->atom_type( ratom_i ).is_hydrogen() &&
-					   rotamer->atom_type( rotamer->atom_base( ratom_i ) ).is_donor() &&
-					   dnares.atom_type( datom_i ).is_acceptor() ) {
+						rotamer->atom_type( rotamer->atom_base( ratom_i ) ).is_donor() &&
+						dnares.atom_type( datom_i ).is_acceptor() ) {
 					Real dis2( ratom.xyz().distance_squared( datom.xyz() ) );
 					if ( dis2 > MAX_R2 || dis2 < MIN_R2 ) continue;
 					HBEvalTuple hbtype(rotamer->atom_base(ratom_i), *rotamer, datom_i, dnares);
@@ -120,10 +120,10 @@ RotamerDNAHBondFilter::operator() (
 						false /*evaluate_derivative*/, DUMMY_DERIVS );
 					hbE_total += hbE * scorefxn.get_weight( hbond_sc );
 				} else if (
-				// rotamer acceptor, dna donor
-					   dnares.atom_type( datom_i ).is_hydrogen() &&
-					   dnares.atom_type( dnares.atom_base( datom_i ) ).is_donor() &&
-					   rotamer->atom_type( ratom_i ).is_acceptor() ) {
+						// rotamer acceptor, dna donor
+						dnares.atom_type( datom_i ).is_hydrogen() &&
+						dnares.atom_type( dnares.atom_base( datom_i ) ).is_donor() &&
+						rotamer->atom_type( ratom_i ).is_acceptor() ) {
 					Real dis2( ratom.xyz().distance_squared( datom.xyz() ) );
 					if ( dis2 > MAX_R2 || dis2 < MIN_R2 ) continue;
 					HBEvalTuple hbtype( dnares.atom_base(datom_i), dnares, ratom_i, *rotamer );
@@ -137,11 +137,10 @@ RotamerDNAHBondFilter::operator() (
 						false /*evaluate_derivative*/, DUMMY_DERIVS );
 					hbE_total += hbE * scorefxn.get_weight( hbond_sc );
 
-				}
-				else continue;
+				} else continue;
 
 				if ( hbE_total < threshold_ ) {
-//					TR << "rotamer type " << rotamer->name() << " passed hbE threshold" << std::endl;
+					//     TR << "rotamer type " << rotamer->name() << " passed hbE threshold" << std::endl;
 					++naccepted_;
 					return true;
 				}

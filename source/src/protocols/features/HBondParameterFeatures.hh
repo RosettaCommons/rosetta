@@ -36,8 +36,8 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class HBondParameterFeatures : public protocols::features::FeaturesReporter {
 public:

@@ -71,11 +71,11 @@ public:
 	virtual
 	core::Size
 	report_features(
-					core::pose::Pose const & pose,
-					utility::vector1<bool> const & relevant_residues,
-					StructureID struct_id,
-					utility::sql_database::sessionOP db_session
-					);
+		core::pose::Pose const & pose,
+		utility::vector1<bool> const & relevant_residues,
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session
+	);
 };
 
 }

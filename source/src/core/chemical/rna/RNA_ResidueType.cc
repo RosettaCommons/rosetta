@@ -79,9 +79,9 @@ RNA_ResidueType::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 
 	is_virtual_.clear();
 	for ( Size i = 1; i <= residue_type->natoms(); i++ ) {
-		if ( residue_type->is_virtual( i ) ){
+		if ( residue_type->is_virtual( i ) ) {
 			is_virtual_.push_back( true );
-		} else{
+		} else {
 			is_virtual_.push_back( false );
 		}
 	}
@@ -105,7 +105,7 @@ RNA_ResidueType::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 
 	for ( Size i = 1; i <= residue_type->natoms(); i++ ) {
 		/*assume that chi # 1 is the base chi. chi_atoms_in[ 1 ][ 3 ] is the first base atom (either N1 or N9)*/
-		if ( residue_type->last_controlling_chi( i ) == 1 || ( i == residue_type->chi_atoms( 1 )[ 3 ] ) ){
+		if ( residue_type->last_controlling_chi( i ) == 1 || ( i == residue_type->chi_atoms( 1 )[ 3 ] ) ) {
 			base_atom_list_.push_back( i );
 		}
 	}
@@ -125,9 +125,9 @@ RNA_ResidueType::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 		is_phosphate_.push_back( is_phosphate_atom );
 
 		/*assume that chi # 1 is the base chi, chi_atoms_in[ 1 ][3] is the index of the first RNA_base atom */
-		if ( ( residue_type->last_controlling_chi( i ) ) == 1 || ( i == residue_type->chi_atoms( 1 )[3] ) ){
+		if ( ( residue_type->last_controlling_chi( i ) ) == 1 || ( i == residue_type->chi_atoms( 1 )[3] ) ) {
 			is_RNA_base_.push_back( true );
-		} else{
+		} else {
 			is_RNA_base_.push_back( false );
 		}
 
@@ -136,7 +136,7 @@ RNA_ResidueType::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 	runtime_assert( is_RNA_base_.size() == residue_type->natoms() );
 	runtime_assert( is_phosphate_.size() == residue_type->natoms() );
 
-	if ( ( residue_type->atoms_last_controlled_by_chi( 1 ).size() + 1 ) != base_atom_list_.size() ){
+	if ( ( residue_type->atoms_last_controlled_by_chi( 1 ).size() + 1 ) != base_atom_list_.size() ) {
 		std::cout << "residue_type_->atoms_last_controlled_by_chi( 1 ).size() = " << residue_type->atoms_last_controlled_by_chi( 1 ).size() << std::endl;
 		std::cout << "base_atom_list_.size() = " << base_atom_list_.size() << std::endl;
 		utility_exit_with_message( "( residue_type_->atoms_last_controlled_by_chi( 1 ).size() + 1 ) != base_atom_list_.size()" );
@@ -150,15 +150,15 @@ RNA_ResidueType::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 
 	for ( Size ii = 1; ii <= residue_type->nchi(); ii++ ) {
 		std::string const chi_atom_name = residue_type->atom_name( residue_type->chi_atoms( ii )[ 4 ] );
-		if ( chi_atom_name == "XO5'" ){
+		if ( chi_atom_name == "XO5'" ) {
 			chi_number_pseudogamma_ = ii;
-		} else if ( chi_atom_name == "XP  " ){
+		} else if ( chi_atom_name == "XP  " ) {
 			chi_number_pseudobeta_ = ii;
-		} else if ( chi_atom_name == "XO3'" ){
+		} else if ( chi_atom_name == "XO3'" ) {
 			chi_number_pseudoalpha_ = ii;
-		} else if ( chi_atom_name == "YP  " ){
+		} else if ( chi_atom_name == "YP  " ) {
 			chi_number_pseudoepsilon_ = ii;
-		} else if ( chi_atom_name == "YO5'" ){
+		} else if ( chi_atom_name == "YO5'" ) {
 			chi_number_pseudozeta_ = ii;
 		}
 	}
@@ -192,8 +192,8 @@ RNA_ResidueType::figure_out_chi_order() const {
 ///ALSO SHOULD MAKE THIS FUNCTION A CONST FUNCTION!
 void
 RNA_ResidueType::rna_note_chi_controls_atom( Size const chi, Size const atomno,
-																						 utility::vector1< core::Size >  & last_controlling_chi,
-																						 utility::vector1< Size > const & chi_order ){
+	utility::vector1< core::Size >  & last_controlling_chi,
+	utility::vector1< Size > const & chi_order ){
 
 	//RNA require special treatment: Parin Sripakdeevong, June 26, 2011
 	//1) there are 4 chi torsions.
@@ -205,7 +205,7 @@ RNA_ResidueType::rna_note_chi_controls_atom( Size const chi, Size const atomno,
 	runtime_assert ( chi <= residue_type->nchi() );
 	runtime_assert ( chi >= 1 );
 
-	if ( last_controlling_chi[ atomno ] != 0 ){
+	if ( last_controlling_chi[ atomno ] != 0 ) {
 		if ( chi_order[ last_controlling_chi[ atomno ] ] > chi_order[ chi ] ) return;
 	}
 
@@ -220,7 +220,7 @@ RNA_ResidueType::rna_note_chi_controls_atom( Size const chi, Size const atomno,
 	for ( Size ii = 1; ii <= nbrs.size(); ++ii ) {
 		if ( residue_type->atom_base( nbrs[ ii ] ) == atomno ) {
 			rna_note_chi_controls_atom( chi, nbrs[ ii ],
-																	last_controlling_chi, chi_order );
+				last_controlling_chi, chi_order );
 		}
 	}
 
@@ -232,8 +232,8 @@ RNA_ResidueType::rna_note_chi_controls_atom( Size const chi, Size const atomno,
 ///ALSO SHOULD MAKE THIS FUNCTION A CONST FUNCTION!
 void
 RNA_ResidueType::rna_update_last_controlling_chi( ResidueTypeCAP residue_type_in,
-																									utility::vector1< core::Size >  & last_controlling_chi,
-																									utility::vector1< AtomIndices > & atoms_last_controlled_by_chi ){
+	utility::vector1< core::Size >  & last_controlling_chi,
+	utility::vector1< AtomIndices > & atoms_last_controlled_by_chi ){
 	residue_type_ = residue_type_in;
 	ResidueTypeCOP residue_type( residue_type_ );
 
@@ -259,11 +259,11 @@ RNA_ResidueType::rna_update_last_controlling_chi( ResidueTypeCAP residue_type_in
 		for ( Size jj = 1; jj <= ii_nbrs.size(); ++jj ) {
 			Size const jj_atom = ii_nbrs[ jj ];
 			if ( residue_type->atom_base( jj_atom ) == iiat3 &&
-					 iiat3base != jj_atom  &&
-					 iiat2 != jj_atom ) {
+					iiat3base != jj_atom  &&
+					iiat2 != jj_atom ) {
 				rna_note_chi_controls_atom( ii, jj_atom,
-																		last_controlling_chi,
-																		chi_order );
+					last_controlling_chi,
+					chi_order );
 			}
 		}
 
@@ -293,15 +293,15 @@ RNA_ResidueType::rna_update_last_controlling_chi( ResidueTypeCAP residue_type_in
 	}
 
 	// if ( nchi > 8 ){
-	// 	TR << residue_type_->name() << std::endl;
-	// 	for ( Size ii = 1; ii <= nchi; ++ii ) {
-	// 		TR << "chi " << ii << " controls: ";
-	// 		for ( Size jj = 1; jj <= atoms_last_controlled_by_chi[ ii ].size(); jj++ ){
-	// 			TR << ' ' << residue_type_->atom_name( atoms_last_controlled_by_chi[ ii ][ jj ] );
-	// 		}
-	// 		TR << std::endl;
-	// 	}
-	// 	TR << std::endl;
+	//  TR << residue_type_->name() << std::endl;
+	//  for ( Size ii = 1; ii <= nchi; ++ii ) {
+	//   TR << "chi " << ii << " controls: ";
+	//   for ( Size jj = 1; jj <= atoms_last_controlled_by_chi[ ii ].size(); jj++ ){
+	//    TR << ' ' << residue_type_->atom_name( atoms_last_controlled_by_chi[ ii ][ jj ] );
+	//   }
+	//   TR << std::endl;
+	//  }
+	//  TR << std::endl;
 	// }
 
 }

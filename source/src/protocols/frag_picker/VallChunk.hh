@@ -95,7 +95,7 @@ public:
 	core::pose::PoseOP get_pose();
 
 	/// @brief  returns a string that is unique for each chunk in vall
-	std::string & chunk_key() { if(!has_key_) { create_key(); } return chunk_key_; }
+	std::string & chunk_key() { if ( !has_key_ ) { create_key(); } return chunk_key_; }
 
 private:
 	utility::vector1<VallResidueOP> residues_;

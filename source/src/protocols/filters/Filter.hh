@@ -38,7 +38,7 @@
 #include <string>
 
 #ifdef WIN32
-	#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.hh>
 #endif
 
 #include <utility/lua/LuaObject.hh>
@@ -64,11 +64,11 @@ public:
 	Filter( std::string const  & );
 	Filter( Filter const & );
 	virtual ~Filter();
-  // allows reporting of filter values to a stream
+	// allows reporting of filter values to a stream
 	virtual void report( std::ostream &, core::pose::Pose const & ) const {}
 
 	/// @brief used to report filter internals through a score or silent file
-  // to determine that derived class has not overridden }
+	// to determine that derived class has not overridden }
 	virtual core::Real report_sm( core::pose::Pose const & ) const { return -99999; }
 
 	virtual std::string get_type() const{ return type_; }
@@ -95,8 +95,8 @@ public:
 	virtual void score( core::io::serialization::PipeMap & pmap);
 	virtual core::Real score( core::pose::Pose & pose);
 	virtual void parse_def( utility::lua::LuaObject const & def,
-					utility::lua::LuaObject const & score_fxns,
-					utility::lua::LuaObject const & tasks );
+		utility::lua::LuaObject const & score_fxns,
+		utility::lua::LuaObject const & tasks );
 #ifdef USELUA
 	virtual void lregister( lua_State * lstate ){ lregister_Filter(lstate);}
 #endif

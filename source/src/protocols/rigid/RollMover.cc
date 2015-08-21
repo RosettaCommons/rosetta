@@ -51,15 +51,15 @@ namespace rigid {
 
 /// @details
 void RollMover::apply( core::pose::Pose & pose ){
-	
+
 	utility::vector1< utility::vector1< numeric::xyzVector< core::Real> > >  coords; // some of these will change for sure
-	
+
 	// now we have a vector1 of vector1s with a numeric::xyzVector
 	// access will look like coords[residue][atom] to get xyz
-	
+
 	core::Size const nres( pose.total_residue() );
 	coords.resize( nres );
-	
+
 	for ( Size i=1; i<= nres; ++i ) {
 		core::conformation::Residue const & rsd( pose.residue(i) );
 		core::Size const number_atoms_this_residue( rsd.natoms() );
@@ -70,24 +70,24 @@ void RollMover::apply( core::pose::Pose & pose ){
 			}
 		}
 	}
-	
+
 	angle_ = min_angle_ + ( max_angle_ - min_angle_ ) * numeric::random::rg().uniform();
 	numeric::xyzMatrix< core::Real > rotation_matrix( numeric::rotation_matrix_degrees(axis_, angle_ ) );
 	//move to origin
 	for ( core::Size i =start_res_; i <= stop_res_; ++i ) {
 		for ( core::Size j = 1; j <= coords[i].size(); ++j ) {
-			
+
 			// this may look strange but in a global coordinate system
 			// rotation about an axis is easily done by movement to the origin
 			// rotation and then movement back
-			
+
 			coords[i][j] = coords[i][j] - translate_; // translate to origin
 			coords[i][j] = rotation_matrix * coords[i][j]; // rotate atom
 			coords[i][j] = coords[i][j] + translate_; // reverse translate
-			
+
 		}
 	}
-	
+
 	// now update pose with new coordinates
 	for ( core::Size i =start_res_; i <= stop_res_; ++i ) {
 		for ( core::Size j = 1; j <= coords[i].size(); ++j ) {
@@ -95,9 +95,9 @@ void RollMover::apply( core::pose::Pose & pose ){
 			pose.set_xyz( id, coords[i][j]);
 		}
 	}
-	
-	
-	
+
+
+
 }//apply
 
 
@@ -113,26 +113,26 @@ RollMover::get_name() const {
 }
 
 void
-RollMover::parse_my_tag( 
+RollMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & /*datamap*/,
 	Filters_map const & /*filters*/,
 	moves::Movers_map const & /*movers*/,
 	Pose const & pose )
-{       
+{
 
 	start_res_ = ( tag->hasOption("start_res") ) ?  tag->getOption<core::Size>("start_res") : 1;
 	stop_res_ = ( tag->hasOption("stop_res") ) ?  tag->getOption<core::Size>("stop_res") : pose.total_residue();
 
 	/*parse min_angle*/
-	if( tag->hasOption("min_angle") ) {
+	if ( tag->hasOption("min_angle") ) {
 		min_angle_ = tag->getOption<core::Real>("min_angle");
 	} else {
 		throw utility::excn::EXCN_RosettaScriptsOption("RollMover requires min_angle option");
 	}
 
 	/*parse max_angle*/
-	if( tag->hasOption("max_angle") ) {
+	if ( tag->hasOption("max_angle") ) {
 		max_angle_ = tag->getOption<core::Real>("max_angle");
 	} else {
 		throw utility::excn::EXCN_RosettaScriptsOption("RollMover requires max_angle option");
@@ -141,29 +141,29 @@ RollMover::parse_my_tag(
 	bool axis_option_parsed = false;
 	bool translate_option_parsed = false;
 
-	if( tag->hasOption("axis") ) {	
+	if ( tag->hasOption("axis") ) {
 		switch(tag->getOption<char>("axis")) {
-			case 'x':
-				axis_ = numeric::xyzVector< core::Real >( 1.0, 0.0, 0.0 );
-				break;
-			case 'y':
-				axis_ = numeric::xyzVector< core::Real >( 0.0, 1.0, 0.0 );
-				break;
-			case 'z':
-				axis_ = numeric::xyzVector< core::Real >( 0.0, 0.0, 1.0 );
-				break;
+		case 'x' :
+			axis_ = numeric::xyzVector< core::Real >( 1.0, 0.0, 0.0 );
+			break;
+		case 'y' :
+			axis_ = numeric::xyzVector< core::Real >( 0.0, 1.0, 0.0 );
+			break;
+		case 'z' :
+			axis_ = numeric::xyzVector< core::Real >( 0.0, 0.0, 1.0 );
+			break;
 		}
 		axis_option_parsed = true;
 	}
 
-	BOOST_FOREACH( utility::tag::TagCOP const child_tag, tag->getTags() ){
+	BOOST_FOREACH ( utility::tag::TagCOP const child_tag, tag->getTags() ) {
 		std::string name= child_tag->getName();
 
-		if( name == "axis" ) {
+		if ( name == "axis" ) {
 			/*parse axis x,y,z*/
 			axis_ = protocols::rosetta_scripts::parse_xyz_vector(child_tag);
 			axis_option_parsed = true;
-		} else if ( name == "translate") {
+		} else if ( name == "translate" ) {
 			/*parse translate x,y,z*/
 			translate_ = protocols::rosetta_scripts::parse_xyz_vector(child_tag);
 			translate_option_parsed = true;
@@ -179,7 +179,7 @@ RollMover::parse_my_tag(
 		TR << "No translation given, using the pose's center of mass" << std::endl;
 		translate_ = core::pose::center_of_mass(pose, start_res_, stop_res_);
 	}
-	
+
 }
 
 std::string

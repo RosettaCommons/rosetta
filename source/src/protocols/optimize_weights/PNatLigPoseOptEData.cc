@@ -117,7 +117,7 @@ PNatLigPoseOptEData::do_score(
 	Multivec dpartition( vars.size(), 0.0 ), dnumerator( vars.size(), 0.0 );
 
 	Real const neginv_kT = (-1.0 / kT_);
-	for( Size ii(1); ii <= natives_.size(); ++ii ) {
+	for ( Size ii(1); ii <= natives_.size(); ++ii ) {
 
 		// Limit the improbability of each native to 1 in a million.
 		// This prevents numerator ~ 0, which causes NANs and INFs in the derivatives.
@@ -127,7 +127,7 @@ PNatLigPoseOptEData::do_score(
 		numerator += exp_term;
 		partition += exp_term;
 
-		for( Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
+		for ( Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
 			// note for derivatives: d/dw( e^-(E*w+...) ) = -E * e^-(E*w+...)
 			Real e_dof_deriv( neginv_kT * natives_[ ii ]->free_data()[ e_dof ] * exp_term );
 			//if( std::isinf(e_dof_deriv) || std::isnan(e_dof_deriv) ) std::cout << "[" << tag() << "," << e_dof << "] native e_dof_deriv = " << e_dof_deriv << "; Eterm = " << natives_[ ii ]->free_data()[ e_dof ]<< std::endl;
@@ -135,7 +135,7 @@ PNatLigPoseOptEData::do_score(
 			dpartition[ e_dof ] += e_dof_deriv;
 		}
 	}
-	for( Size ii(1); ii <= decoys_.size(); ++ii ) {
+	for ( Size ii(1); ii <= decoys_.size(); ++ii ) {
 
 		// Because partition >= numerator in all cases, there is no minimum value for this term:
 		Real const exp_term( std::exp( neginv_kT * decoy_energies[ ii ] ) );
@@ -143,7 +143,7 @@ PNatLigPoseOptEData::do_score(
 		partition += exp_term;
 
 		// partitions for energy derivatives
-		for( Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
+		for ( Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
 			// note for derivatives: d/dw( e^-(E*w+...) ) = -E * e^-(E*w+...)
 			Real e_dof_deriv( neginv_kT * decoys_[ ii ]->free_data()[ e_dof ] * exp_term );
 			//if( std::isinf(e_dof_deriv) || std::isnan(e_dof_deriv) ) std::cout << "[" << tag() << "," << e_dof << "] decoy e_dof_deriv = " << e_dof_deriv << "; Eterm = " << decoys_[ ii ]->free_data()[ e_dof ]<< std::endl;
@@ -158,7 +158,7 @@ PNatLigPoseOptEData::do_score(
 
 	// If score is small enough, don't compute derivatives -- just say they're zero.
 	// This may help protect us from weird minimizer run-away when "perfection" is attainable.
-	if( total_score >= 1e-2 ) {
+	if ( total_score >= 1e-2 ) {
 		// accumulate to passed-in derivative sums -- excludes reference energies
 		//std::cout << "vars (dvars): ";
 		for ( Size dof(1); dof <= num_energy_dofs; ++dof ) {
@@ -167,8 +167,8 @@ PNatLigPoseOptEData::do_score(
 			Real const dE_dvar = multiplier_ * (dP_P - dN_N);
 			// This error *should* never occur, thanks to the minimum value for numerator (above).
 #ifndef WIN32
-// std::isinf and std::isnan seem to give Visual Studio problems for some reason.
-			if( std::isinf(dE_dvar) || std::isnan(dE_dvar) ) std::cout << "[" << tag() << "," << dof << "] final deriv = " << dE_dvar << "; " << dpartition[ dof ] << "/" << partition << " - " << dnumerator[ dof ] << "/" << numerator << std::endl;
+			// std::isinf and std::isnan seem to give Visual Studio problems for some reason.
+			if ( std::isinf(dE_dvar) || std::isnan(dE_dvar) ) std::cout << "[" << tag() << "," << dof << "] final deriv = " << dE_dvar << "; " << dpartition[ dof ] << "/" << partition << " - " << dnumerator[ dof ] << "/" << numerator << std::endl;
 			else dE_dvars[ dof ] += component_weights[ type() ] * dE_dvar;
 			//std::cout << " " << vars[ dof ] << "(" << dE_dvar << ")";
 #endif
@@ -177,10 +177,10 @@ PNatLigPoseOptEData::do_score(
 
 	if ( print ) {
 		ostr << "PNatLigPose " << tag() << X(1)
-				<< " num: " << F(7,3,numerator) << " part: " << F(7,3,partition)
-				<< " p: " << F(7,5,numerator / partition)
-				<< " -lnp: " << F(6,4,-1.0 * std::log( numerator / partition ))
-				<< " -compwt_lnp: " << F(6, 4, component_weights[ type() ] * (-1.0 * std::log( numerator / partition )) ) << std::endl;
+			<< " num: " << F(7,3,numerator) << " part: " << F(7,3,partition)
+			<< " p: " << F(7,5,numerator / partition)
+			<< " -lnp: " << F(6,4,-1.0 * std::log( numerator / partition ))
+			<< " -compwt_lnp: " << F(6, 4, component_weights[ type() ] * (-1.0 * std::log( numerator / partition )) ) << std::endl;
 	}
 
 	return component_weights[ type() ] * total_score;

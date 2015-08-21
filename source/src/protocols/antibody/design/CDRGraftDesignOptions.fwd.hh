@@ -22,7 +22,7 @@
 namespace protocols {
 namespace antibody {
 namespace design {
-			
+
 
 
 
@@ -42,7 +42,7 @@ typedef utility::pointer::shared_ptr< CDRGraftDesignOptionsParser const > CDRGra
 }
 
 
-#endif	//INCLUDED_ TestClass2.fwd.hh
+#endif //INCLUDED_ TestClass2.fwd.hh
 
 
 

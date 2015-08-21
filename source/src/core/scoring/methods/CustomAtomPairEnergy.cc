@@ -94,7 +94,7 @@ void swap_seqpos(
 	core::Size & seqpos2
 ) {
 	if ( seqpos1 > seqpos2 ) {
-		//		Size temp = seqpos2;
+		//  Size temp = seqpos2;
 		seqpos2 = seqpos1;
 		seqpos1 = seqpos2;
 	}
@@ -138,7 +138,7 @@ CustomAtomPairEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const 
 	);
 
 	string line;
-	while( getline(data,line) ) {
+	while ( getline(data,line) ) {
 		if ( line.substr(0,1) == "#" ) continue;
 		std::istringstream line_stream(line);
 		string atomi, atomj, cst_tag, func_tag;
@@ -229,8 +229,8 @@ CustomAtomPairEnergy::residue_pair_energy(
 	if ( dist > interaction_cutoff() ) {
 		emap[ custom_atom_pair ] += dist - interaction_cutoff();
 	} //else {
-		//Real const score( funcs_[seqpos1][seqpos2].func( dist ) );
-		//emap[ custom_atom_pair ] += funcs_[seqpos1][seqpos2].func( dist );
+	//Real const score( funcs_[seqpos1][seqpos2].func( dist ) );
+	//emap[ custom_atom_pair ] += funcs_[seqpos1][seqpos2].func( dist );
 } // residue_pair_energy
 
 /////////////////////////////////////////////////////////////////////////////
@@ -257,7 +257,7 @@ CustomAtomPairEnergy::eval_atom_derivative(
 
 			Real dist(0.0);
 			Vector f1(0.0), f2(0.0);
- 			numeric::deriv::distance_f1_f2_deriv(
+			numeric::deriv::distance_f1_f2_deriv(
 				pose.conformation().xyz( atom_id ), pose.conformation().xyz( other_atom ),
 				dist, f1, f2
 			);
@@ -268,9 +268,9 @@ CustomAtomPairEnergy::eval_atom_derivative(
 				F1 += f1 * wderiv;
 				F2 += f2 * wderiv;
 			} //else {
-				//Real const wderiv( weights[ custom_atom_pair ] );
-				//F1 += f1 * wderiv;
-				//F2 += f2 * wderiv;
+			//Real const wderiv( weights[ custom_atom_pair ] );
+			//F1 += f1 * wderiv;
+			//F2 += f2 * wderiv;
 			//}
 		}
 	}

@@ -79,7 +79,7 @@ public:
 	virtual
 	void
 	make_chi_move(
-	  core::conformation::Residue const& residue,
+		core::conformation::Residue const& residue,
 		ChiVector const& old_chi,
 		ChiVector&  new_chi
 	);

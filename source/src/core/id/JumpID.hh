@@ -44,95 +44,95 @@ class JumpID
 public: // Creation
 
 	/// @brief Default constructor
-  inline
-  JumpID() :
-    rsd1_( 0 ),
-    rsd2_( 0 )
-  {};
+	inline
+	JumpID() :
+		rsd1_( 0 ),
+		rsd2_( 0 )
+	{};
 
-  /// @brief Property constructor
-  inline
-  JumpID(
-	 Size const rsd1_in,
-	 Size const rsd2_in
-  )
-  {
-    rsd1_ = rsd1_in < rsd2_in ? rsd1_in : rsd2_in;
-    rsd2_ = rsd1_in >= rsd2_in ? rsd1_in : rsd2_in;
-  }
+	/// @brief Property constructor
+	inline
+	JumpID(
+		Size const rsd1_in,
+		Size const rsd2_in
+	)
+	{
+		rsd1_ = rsd1_in < rsd2_in ? rsd1_in : rsd2_in;
+		rsd2_ = rsd1_in >= rsd2_in ? rsd1_in : rsd2_in;
+	}
 
 public: // Properties
 
-  inline
-  Size
-  rsd1() const { return rsd1_; }
+	inline
+	Size
+	rsd1() const { return rsd1_; }
 
-  inline
-  Size &
-  rsd2() { return rsd2_; }
+	inline
+	Size &
+	rsd2() { return rsd2_; }
 
-  /// @brief Is this id valid?
-  /// \note Must return false for BOGUS_TORSION_ID
-  inline
-  bool
-  valid() const { return ( rsd1_ > 0 && rsd2_ > rsd1_ ); }
+	/// @brief Is this id valid?
+	/// \note Must return false for BOGUS_TORSION_ID
+	inline
+	bool
+	valid() const { return ( rsd1_ > 0 && rsd2_ > rsd1_ ); }
 
 public: // Friends
 
-  friend
-  inline
-  std::ostream &
-  operator <<(
-	      std::ostream & os,
-	      JumpID const & a
-  )
-  {
-    os << "JumpID " << a.rsd1_ << ' ' << a.rsd2_;
-    return os;
-  }
+	friend
+	inline
+	std::ostream &
+	operator <<(
+		std::ostream & os,
+		JumpID const & a
+	)
+	{
+		os << "JumpID " << a.rsd1_ << ' ' << a.rsd2_;
+		return os;
+	}
 
-  friend
-  inline
-  bool
-  operator ==(
-				JumpID const & a,
-	      JumpID const & b
-  )
-  {
-    return a.rsd1_ == b.rsd1_ && a.rsd2_ == b.rsd2_;
-  }
+	friend
+	inline
+	bool
+	operator ==(
+		JumpID const & a,
+		JumpID const & b
+	)
+	{
+		return a.rsd1_ == b.rsd1_ && a.rsd2_ == b.rsd2_;
+	}
 
-  friend
-  inline
-  bool
-  operator !=(
-	      JumpID const & a,
-	      JumpID const & b
-  )
-  {
-    return a.rsd1_ != b.rsd1_ || a.rsd2_ != b.rsd2_;
-  }
+	friend
+	inline
+	bool
+	operator !=(
+		JumpID const & a,
+		JumpID const & b
+	)
+	{
+		return a.rsd1_ != b.rsd1_ || a.rsd2_ != b.rsd2_;
+	}
 
-  friend
-  inline
-  bool
-  operator <(
-	     JumpID const & a,
-	     JumpID const & b
-  )
-  {
-    if      ( a.rsd1_ < b.rsd1_     ) return true;
-    else if ( a.rsd1_ ==  b.rsd1_ && a.rsd2_ < b.rsd2_  ) return true;
+	friend
+	inline
+	bool
+	operator <(
+		JumpID const & a,
+		JumpID const & b
+	)
+	{
+		if      ( a.rsd1_ < b.rsd1_     ) return true;
+		else if ( a.rsd1_ ==  b.rsd1_ && a.rsd2_ < b.rsd2_  ) return true;
 
-    return false;
-  }
+		return false;
+	}
 
 private: // Fields
 
 
-  /// @brief Residue number within the complex
-  Size rsd1_;
-  Size rsd2_;
+	/// @brief Residue number within the complex
+	Size rsd1_;
+	Size rsd2_;
 
 }; // JumpID
 

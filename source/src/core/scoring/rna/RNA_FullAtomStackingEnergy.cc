@@ -136,14 +136,14 @@ RNA_FullAtomStackingEnergy::RNA_FullAtomStackingEnergy() :
 	lr_prefactor_       ( option[ fa_stack_lr_prefactor ]()    /*-0.05*/ ), // water-mediated stacking
 	lr_stack_cutoff_    ( option[ fa_stack_lr_stack_cutoff ]() /*6.5*/   ), //
 	lr_dist_cutoff_     ( option[ fa_stack_lr_dist_cutoff ]()  /*7.5*/  ),//
-	base_base_only_(	option[ fa_stack_base_base_only ]() /* true */ )
+	base_base_only_( option[ fa_stack_base_base_only ]() /* true */ )
 {}
 
 //clone
 methods::EnergyMethodOP
 RNA_FullAtomStackingEnergy::clone() const
 {
-  return methods::EnergyMethodOP( new RNA_FullAtomStackingEnergy );
+	return methods::EnergyMethodOP( new RNA_FullAtomStackingEnergy );
 }
 
 
@@ -152,39 +152,39 @@ RNA_FullAtomStackingEnergy::clone() const
 /////////////////////////////////////////////////////////////////////////////
 void
 RNA_FullAtomStackingEnergy::setup_for_minimizing(
-    pose::Pose & pose,
-    ScoreFunction const & sfxn,
-    kinematics::MinimizerMapBase const & min_map
+	pose::Pose & pose,
+	ScoreFunction const & sfxn,
+	kinematics::MinimizerMapBase const & min_map
 ) const
 {
-    //set_nres_mono(pose);
+	//set_nres_mono(pose);
 
-    if ( pose.energies().use_nblist() ) {
-			  // stash our nblist inside the pose's energies object
-        Energies & energies( pose.energies() );
+	if ( pose.energies().use_nblist() ) {
+		// stash our nblist inside the pose's energies object
+		Energies & energies( pose.energies() );
 
-        // setup the atom-atom nblist
-        NeighborListOP nblist;
-        Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? basic::options::option[ basic::options::OptionKeys::run::nblist_autoupdate_narrow ] : 1.5;
-        Real const XX = dist_cutoff_ + 2 * tolerated_motion;
-        nblist = NeighborListOP( new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX ) );
-        if ( pose.energies().use_nblist_auto_update() ) {
-            nblist->set_auto_update( tolerated_motion );
-        }
-        nblist->setup( pose, sfxn, *this );
-        energies.set_nblist( EnergiesCacheableDataType::FA_STACK_NBLIST, nblist );
-    }
+		// setup the atom-atom nblist
+		NeighborListOP nblist;
+		Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? basic::options::option[ basic::options::OptionKeys::run::nblist_autoupdate_narrow ] : 1.5;
+		Real const XX = dist_cutoff_ + 2 * tolerated_motion;
+		nblist = NeighborListOP( new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX ) );
+		if ( pose.energies().use_nblist_auto_update() ) {
+			nblist->set_auto_update( tolerated_motion );
+		}
+		nblist->setup( pose, sfxn, *this );
+		energies.set_nblist( EnergiesCacheableDataType::FA_STACK_NBLIST, nblist );
+	}
 }
 
 
 void
 RNA_FullAtomStackingEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn ) const
 {
-  pose.update_residue_neighbors();
+	pose.update_residue_neighbors();
 
-  rna::RNA_ScoringInfo  & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
-  rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
-  rna_centroid_info.update( pose );
+	rna::RNA_ScoringInfo  & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
+	rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
+	rna_centroid_info.update( pose );
 
 	pose.update_residue_neighbors();
 	if ( pose.energies().use_nblist() ) {
@@ -197,11 +197,11 @@ RNA_FullAtomStackingEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction 
 void
 RNA_FullAtomStackingEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
 {
-  pose.update_residue_neighbors();
+	pose.update_residue_neighbors();
 
-  rna::RNA_ScoringInfo  & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
-  rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
-  rna_centroid_info.update( pose );
+	rna::RNA_ScoringInfo  & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
+	rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
+	rna_centroid_info.update( pose );
 
 }
 
@@ -219,11 +219,11 @@ RNA_FullAtomStackingEnergy::residue_pair_energy(
 	Real const score1 = residue_pair_energy_one_way( rsd1, rsd2, pose, score_aro1, prefactor_, stack_cutoff_, dist_cutoff_ );
 	Real const score2 = residue_pair_energy_one_way( rsd2, rsd1, pose, score_aro2, prefactor_, stack_cutoff_, dist_cutoff_ ) ;
 
-  emap[ fa_stack ]       += score1 + score2;
-  emap[ fa_stack_ext ]   += score1 + score2;
-  emap[ fa_stack_aro ]   += score_aro1 + score_aro2;
+	emap[ fa_stack ]       += score1 + score2;
+	emap[ fa_stack_ext ]   += score1 + score2;
+	emap[ fa_stack_aro ]   += score_aro1 + score_aro2;
 
-	if( rsd1.seqpos() <= rsd2.seqpos() ) {
+	if ( rsd1.seqpos() <= rsd2.seqpos() ) {
 		emap[ fa_stack_lower ]  += score1;
 		emap[ fa_stack_upper ]  += score2;
 	} else {
@@ -241,14 +241,14 @@ RNA_FullAtomStackingEnergy::residue_pair_energy(
 	emap[ fa_stack_lr  ] += lr_score1 + lr_score2;
 	emap[ fa_stack_ext ] += lr_score1 + lr_score2;
 
-	//	TR << rsd1.name3()  << rsd1.seqpos() << "---" << rsd2.name3() << rsd2.seqpos() << ": " << (score1+score2) << std::endl;
+	// TR << rsd1.name3()  << rsd1.seqpos() << "---" << rsd2.name3() << rsd2.seqpos() << ": " << (score1+score2) << std::endl;
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
 Real
 RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
-  conformation::Residue const & rsd1, // residue with nucleobase
+	conformation::Residue const & rsd1, // residue with nucleobase
 	conformation::Residue const & rsd2, // occluding residue
 	pose::Pose const & pose,
 	Real & score_aro,
@@ -263,51 +263,51 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
 	if ( !rsd1.is_RNA() ) return score;
 	if ( base_base_only_ && !rsd2.is_RNA() ) return score;
 
-  rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
-  rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
-	//	utility::vector1< Vector > const & base_centroids( rna_centroid_info.base_centroids() );
-  utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
+	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
+	rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
+	// utility::vector1< Vector > const & base_centroids( rna_centroid_info.base_centroids() );
+	utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
 
-  Size const i( rsd1.seqpos() );
-  kinematics::Stub const & stub_i( base_stubs[i] );
-  Matrix const M_i ( stub_i.M );
+	Size const i( rsd1.seqpos() );
+	kinematics::Stub const & stub_i( base_stubs[i] );
+	Matrix const M_i ( stub_i.M );
 
-  // Loop over base heavy atoms.
-  // If I want to generalize this to proteins, maybe could loop over "aromatic" atoms.
+	// Loop over base heavy atoms.
+	// If I want to generalize this to proteins, maybe could loop over "aromatic" atoms.
 	Real const dist_cutoff2( dist_cutoff * dist_cutoff );
-  for ( Size m = rsd1.first_sidechain_atom(); m <= rsd1.nheavyatoms(); ++m ) {
-	//Need to be careful nheavyatoms count includes hydrogen! when the hydrogen is made virtual..
+	for ( Size m = rsd1.first_sidechain_atom(); m <= rsd1.nheavyatoms(); ++m ) {
+		//Need to be careful nheavyatoms count includes hydrogen! when the hydrogen is made virtual..
 
 		if ( rsd1.is_virtual( m ) ) continue;
 		if ( m == rsd1.first_sidechain_atom() ) continue; // 2'-OH for RNA
 
-    Vector const heavy_atom_i( rsd1.xyz( m ) );
+		Vector const heavy_atom_i( rsd1.xyz( m ) );
 
 		//Look for occlusion by other base atoms? Or all other heavy atoms?
 		Size const atom_num_start = base_base_only_ ? rsd2.first_sidechain_atom() : 1 ;
 
-    for ( Size n = atom_num_start; n <= rsd2.nheavyatoms(); ++n ) {
+		for ( Size n = atom_num_start; n <= rsd2.nheavyatoms(); ++n ) {
 
 			if ( rsd2.is_virtual( n ) ) continue;
 			if ( base_base_only_ && n == rsd2.first_sidechain_atom() ) continue; // 2'-OH for RNA
 
 			runtime_assert( check_base_base_OK( rsd1, rsd2, m, n ) );
 
-      Vector const heavy_atom_j( rsd2.xyz( n ) );
-      Vector r = heavy_atom_j - heavy_atom_i;
-      Real const dist2 = r.length_squared();
+			Vector const heavy_atom_j( rsd2.xyz( n ) );
+			Vector r = heavy_atom_j - heavy_atom_i;
+			Real const dist2 = r.length_squared();
 
-      if ( dist2 < dist_cutoff2 ) {
+			if ( dist2 < dist_cutoff2 ) {
 
 				Real const fa_stack_score = get_fa_stack_score( r, M_i, prefactor, stack_cutoff, dist_cutoff );
 				score += fa_stack_score;
 
 				if ( rsd1.atom_type( m ).is_aromatic() && rsd2.atom_type( n ).is_aromatic() ) score_aro += fa_stack_score;
 
-      }
+			}
 
-    }
-  }
+		}
+	}
 
 	return score;
 }
@@ -319,9 +319,9 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
 //
 bool
 RNA_FullAtomStackingEnergy::check_base_base_OK(
-  conformation::Residue const & rsd1, // harbors nucleobase
+	conformation::Residue const & rsd1, // harbors nucleobase
 	conformation::Residue const & rsd2,
-  Size const & m, Size const & n ) const {
+	Size const & m, Size const & n ) const {
 
 	// must be in RNA base.
 	if ( m < rsd1.first_sidechain_atom()  || m > rsd1.nheavyatoms() ) return false;
@@ -339,14 +339,14 @@ RNA_FullAtomStackingEnergy::check_base_base_OK(
 //////////////////////////////////////////////////////////////////////////////
 void
 RNA_FullAtomStackingEnergy::eval_atom_derivative(
-		id::AtomID const & atom_id,
- 		pose::Pose const & pose,
-		kinematics::DomainMap const & domain_map,
- 		ScoreFunction const &,
- 		EnergyMap const & weights,
- 		Vector & F1,
- 		Vector & F2
- 	) const
+	id::AtomID const & atom_id,
+	pose::Pose const & pose,
+	kinematics::DomainMap const & domain_map,
+	ScoreFunction const &,
+	EnergyMap const & weights,
+	Vector & F1,
+	Vector & F2
+) const
 {
 
 	Size const i( atom_id.rsd() );
@@ -357,12 +357,12 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 	if ( m > rsd1.nheavyatoms() ) return;
 	if ( rsd1.is_virtual( m ) ) return;
 
-  rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
-  rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
-  utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
-  kinematics::Stub const & stub_i( base_stubs[i] );
+	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
+	rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
+	utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
+	kinematics::Stub const & stub_i( base_stubs[i] );
 
-  Matrix const M_i ( stub_i.M );
+	Matrix const M_i ( stub_i.M );
 	Vector const heavy_atom_i( rsd1.xyz( m ) );
 
 	bool const pos1_fixed( domain_map( i ) != 0 );
@@ -394,7 +394,7 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 
 			if ( rsd2.is_virtual( n ) ) continue;
 
-			//			if ( !check_base_base_OK( rsd1, rsd2, m, n ) && !check_base_base_OK( rsd2, rsd1, n, m ) ) continue;
+			//   if ( !check_base_base_OK( rsd1, rsd2, m, n ) && !check_base_base_OK( rsd2, rsd1, n, m ) ) continue;
 
 			Vector const heavy_atom_j( rsd2.xyz( n ) );
 			Vector r = heavy_atom_j - heavy_atom_i;
@@ -448,33 +448,33 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 //This function is called by residue_pair_energy_one_way
 Real
 RNA_FullAtomStackingEnergy::get_fa_stack_score( Vector const r_vec, Matrix const M_i,
-																								Real const prefactor,
-																								Distance const stack_cutoff, Distance const dist_cutoff) const
+	Real const prefactor,
+	Distance const stack_cutoff, Distance const dist_cutoff) const
 {
 
-  Vector const z_i = M_i.col_z();
+	Vector const z_i = M_i.col_z();
 
 	Real const r = r_vec.length();
 	Real const z = dot( z_i, r_vec );
 	Real const cos_kappa = z / r;
 
-  Real score  = prefactor;
+	Real score  = prefactor;
 
-  //Orientation dependence
-  score *= cos_kappa * cos_kappa ;
+	//Orientation dependence
+	score *= cos_kappa * cos_kappa ;
 
-  Distance b = r - stack_cutoff;
+	Distance b = r - stack_cutoff;
 
-  //Just use a simple cubic spline to fade from 1 to 0,
-  // and to force derivatives to be continuous.
-  if ( b > 0.0 ) {
-    b /= ( dist_cutoff - stack_cutoff );
-    Real const b2 = b*b;
-    Real const b3 = b2*b;
-    score *= ( 2 * b3 - 3 * b2 + 1 );
-  }
+	//Just use a simple cubic spline to fade from 1 to 0,
+	// and to force derivatives to be continuous.
+	if ( b > 0.0 ) {
+		b /= ( dist_cutoff - stack_cutoff );
+		Real const b2 = b*b;
+		Real const b3 = b2*b;
+		score *= ( 2 * b3 - 3 * b2 + 1 );
+	}
 
-  return score;
+	return score;
 
 }
 
@@ -493,9 +493,9 @@ RNA_FullAtomStackingEnergy::get_fa_stack_deriv( Vector const r_vec, Matrix const
 	//      dE/dy = dE/dr (y/r)   +   ( - y * z / r^3 ) ( dE/dcos(theta) )
 	//      dE/dz = dE/dr (z/r)   +   ( (r^2 - z^2) / r^3 ) ( dE/dcos(theta) )
 
-  Vector const x_i = M_i.col_x();
-  Vector const y_i = M_i.col_y();
-  Vector const z_i = M_i.col_z();
+	Vector const x_i = M_i.col_x();
+	Vector const y_i = M_i.col_y();
+	Vector const z_i = M_i.col_z();
 
 	Real const r = r_vec.length();
 	Real const x = dot( x_i, r_vec );
@@ -506,38 +506,38 @@ RNA_FullAtomStackingEnergy::get_fa_stack_deriv( Vector const r_vec, Matrix const
 	/////////////////////////////////
 	//dE_dcoskappa
 	/////////////////////////////////
-  Real dE_dcoskappa  = prefactor_;
+	Real dE_dcoskappa  = prefactor_;
 
-  //Orientation dependence
-  dE_dcoskappa *= 2 * cos_kappa ;
+	//Orientation dependence
+	dE_dcoskappa *= 2 * cos_kappa ;
 
-  Distance b = r - stack_cutoff_;
+	Distance b = r - stack_cutoff_;
 	Distance distance_scale = ( dist_cutoff_ - stack_cutoff_ );
 	b /= distance_scale;
 
 	Real b2( 0.0 ), b3( 0.0 );
-  //Just use a simple cubic spline to fade from 1 to 0,
-  // and to force derivatives to be continuous.
-  if ( b > 0.0 && b < 1.0 ) {
-    b2 = b*b;
-    b3 = b2*b;
-    dE_dcoskappa *= ( 2 * b3 - 3 * b2 + 1 );
-  }
+	//Just use a simple cubic spline to fade from 1 to 0,
+	// and to force derivatives to be continuous.
+	if ( b > 0.0 && b < 1.0 ) {
+		b2 = b*b;
+		b3 = b2*b;
+		dE_dcoskappa *= ( 2 * b3 - 3 * b2 + 1 );
+	}
 
 	/////////////////////////////////
 	//dE_dr
 	/////////////////////////////////
-  Real dE_dr  = prefactor_;
+	Real dE_dr  = prefactor_;
 
-  //Orientation dependence
-  dE_dr *= cos_kappa * cos_kappa ;
+	//Orientation dependence
+	dE_dr *= cos_kappa * cos_kappa ;
 
-  //Just use a simple cubic spline to fade from 1 to 0,
-  // and to force derivatives to be continuous.
-  if ( b > 0.0 && b < 1.0 ) {
-    dE_dr *= ( 6 * b2 - 6 * b );
+	//Just use a simple cubic spline to fade from 1 to 0,
+	// and to force derivatives to be continuous.
+	if ( b > 0.0 && b < 1.0 ) {
+		dE_dr *= ( 6 * b2 - 6 * b );
 		dE_dr /= distance_scale;
-  } else {
+	} else {
 		dE_dr = 0.0;
 	}
 
@@ -545,7 +545,7 @@ RNA_FullAtomStackingEnergy::get_fa_stack_deriv( Vector const r_vec, Matrix const
 	Real const dE_dy = ( dE_dr ) * ( y/r ) - ( dE_dcoskappa ) * ( y * z )/ ( r*r*r ) ;
 	Real const dE_dz = ( dE_dr ) * ( z/r ) + ( dE_dcoskappa ) * ( x*x + y*y )/ ( r*r*r );
 
-  return ( dE_dx * x_i + dE_dy * y_i + dE_dz * z_i );
+	return ( dE_dx * x_i + dE_dy * y_i + dE_dz * z_i );
 
 }
 
@@ -559,9 +559,9 @@ RNA_FullAtomStackingEnergy::finalize_total_energy(
 ) const
 {
 
-  rna::RNA_ScoringInfo  & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
-  rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
-  rna_centroid_info.calculated() = false;
+	rna::RNA_ScoringInfo  & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
+	rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
+	rna_centroid_info.calculated() = false;
 
 }
 
@@ -570,13 +570,13 @@ Distance
 RNA_FullAtomStackingEnergy::atomic_interaction_cutoff() const
 {
 	//  return dist_cutoff_ + 2 * chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH; //Similar to FA_ElecEnergy
-  return lr_dist_cutoff_ + 2 * chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH; //Similar to FA_ElecEnergy
+	return lr_dist_cutoff_ + 2 * chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH; //Similar to FA_ElecEnergy
 }
 
 core::Size
 RNA_FullAtomStackingEnergy::version() const
 {
-       return 1; // Initial versioning
+	return 1; // Initial versioning
 }
 
 etable::count_pair::CountPairFunctionCOP

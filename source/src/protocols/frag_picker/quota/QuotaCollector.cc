@@ -32,59 +32,64 @@ namespace frag_picker {
 namespace quota {
 
 static thread_local basic::Tracer trQuotaCollector(
-		"protocols.frag_picker.quota.QuotaCollector");
+	"protocols.frag_picker.quota.QuotaCollector");
 
 bool QuotaCollector::add(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> candidate) {
 
-    Size pos = candidate.first->get_first_index_in_query();
-    bool if_inserted = false;
-    for(Size j=1;j<=storage_[pos].size();++j) {
-//	    trQuotaCollector.Debug<< "Trying: "<<storage_[pos][j]->get_pool_name()<<" pos: "<<pos<<" pool_id: "<<j<<" of "<<storage_[pos].size()<<std::endl;
-	    bool tmp = storage_[pos][j]->add(candidate);
-	    if_inserted = if_inserted || tmp;
-    }
+	Size pos = candidate.first->get_first_index_in_query();
+	bool if_inserted = false;
+	for ( Size j=1; j<=storage_[pos].size(); ++j ) {
+		//     trQuotaCollector.Debug<< "Trying: "<<storage_[pos][j]->get_pool_name()<<" pos: "<<pos<<" pool_id: "<<j<<" of "<<storage_[pos].size()<<std::endl;
+		bool tmp = storage_[pos][j]->add(candidate);
+		if_inserted = if_inserted || tmp;
+	}
 
-    return if_inserted;
+	return if_inserted;
 }
 
 void QuotaCollector::list_pools(std::ostream & where) const {
 
-    for(Size i=1;i<storage_.size();++i) {
-	where << std::setw(3) << i;
-        for(Size j=1;j<storage_[i].size();++j) {
-	    where << std::setw(10) << storage_[i][j]->get_pool_name() << "(" << std::setw(3) << storage_[i][j]->total_size() << ") ";
+	for ( Size i=1; i<storage_.size(); ++i ) {
+		where << std::setw(3) << i;
+		for ( Size j=1; j<storage_[i].size(); ++j ) {
+			where << std::setw(10) << storage_[i][j]->get_pool_name() << "(" << std::setw(3) << storage_[i][j]->total_size() << ") ";
+		}
+		where << std::endl;
 	}
-	where << std::endl;
-    }
 }
 
 
 void QuotaCollector::clear() {
 
-    for(Size i=1;i<=storage_.size();++i)
-	for(Size j=1;j<storage_[i].size();++j)
-	    storage_[i][j]->clear();
+	for ( Size i=1; i<=storage_.size(); ++i ) {
+		for ( Size j=1; j<storage_[i].size(); ++j ) {
+			storage_[i][j]->clear();
+		}
+	}
 }
 
 Size QuotaCollector::count_candidates(Size pos) const {
 
-    Size cnt = 0;
-    for(Size j=1;j<storage_[pos].size();++j)
-        cnt += storage_[pos][j]->count_candidates();
-
-    return cnt;
-}
-
-Size QuotaCollector::count_candidates() const {
 	Size cnt = 0;
-	for(Size i=1;i<=storage_.size();++i)
-		for(Size j=1;j<storage_[i].size();++j)
-	    cnt += storage_[i][j]->count_candidates();
+	for ( Size j=1; j<storage_[pos].size(); ++j ) {
+		cnt += storage_[pos][j]->count_candidates();
+	}
 
 	return cnt;
 }
 
-	/// @brief Describes what has been collected
+Size QuotaCollector::count_candidates() const {
+	Size cnt = 0;
+	for ( Size i=1; i<=storage_.size(); ++i ) {
+		for ( Size j=1; j<storage_[i].size(); ++j ) {
+			cnt += storage_[i][j]->count_candidates();
+		}
+	}
+
+	return cnt;
+}
+
+/// @brief Describes what has been collected
 void QuotaCollector::print_report(
 	std::ostream & output,
 	scores::FragmentScoreManagerOP //scoring
@@ -93,11 +98,11 @@ void QuotaCollector::print_report(
 	using namespace ObjexxFCL::format;
 
 	output<<"QuotaCollector contains the following number of fragments at each position:\n";
-	for(Size i=1;i<=storage_.size();++i) {
+	for ( Size i=1; i<=storage_.size(); ++i ) {
 		output<< I(4, i);
-		for(Size j=1;j<=storage_[i].size();++j) {
-	    output<<" "<<RJ(10,storage_[i][j]->get_pool_name())
-						<<" "<<I(3,storage_[i][j]->current_size());
+		for ( Size j=1; j<=storage_[i].size(); ++j ) {
+			output<<" "<<RJ(10,storage_[i][j]->get_pool_name())
+				<<" "<<I(3,storage_[i][j]->current_size());
 		}
 		output<<"\n";
 	}
@@ -106,29 +111,32 @@ void QuotaCollector::print_report(
 
 ScoredCandidatesVector1 & QuotaCollector::get_candidates(Size position_in_query) {
 
-		frags_for_pos_.clear();
-		for(Size j=1;j<=storage_[position_in_query].size();++j) {
-		    for(Size k=1;k<=storage_[position_in_query][j]->count_candidates();k++) {
+	frags_for_pos_.clear();
+	for ( Size j=1; j<=storage_[position_in_query].size(); ++j ) {
+		for ( Size k=1; k<=storage_[position_in_query][j]->count_candidates(); k++ ) {
 			ScoredCandidatesVector1 & content = storage_[position_in_query][j]->get_candidates(0);
-			for(Size l=1;l<=content.size();l++)
-			    frags_for_pos_.push_back( content[l] );
-		    }
+			for ( Size l=1; l<=content.size(); l++ ) {
+				frags_for_pos_.push_back( content[l] );
+			}
 		}
-		trQuotaCollector << frags_for_pos_.size()<<" candidates collected for pos. "<<position_in_query<<std::endl;
+	}
+	trQuotaCollector << frags_for_pos_.size()<<" candidates collected for pos. "<<position_in_query<<std::endl;
 
-		return frags_for_pos_;
+	return frags_for_pos_;
 }
 
 
 void QuotaCollector::renormalize_quota_pools() {
 
-    for(Size i=1;i<=storage_.size();++i) {
-	Real sum = 0.0;
-	for(Size j=1;j<=i;++j)
-	    sum += storage_[i][j]->get_fraction();
-	for(Size j=1;j<=i;++j)
-	    storage_[i][j]->set_fraction( storage_[i][j]->get_fraction()/sum );
-    }
+	for ( Size i=1; i<=storage_.size(); ++i ) {
+		Real sum = 0.0;
+		for ( Size j=1; j<=i; ++j ) {
+			sum += storage_[i][j]->get_fraction();
+		}
+		for ( Size j=1; j<=i; ++j ) {
+			storage_[i][j]->set_fraction( storage_[i][j]->get_fraction()/sum );
+		}
+	}
 }
 
 
@@ -142,61 +150,64 @@ void QuotaCollector::attach_secondary_structure_pools(
 	Size n_scores
 ) {
 
-    Size n;
-    Real f;
-    Size middle = frag_size_ / 2 + 1;
-    for(Size i=1;i<=storage_.size();++i) {
+	Size n;
+	Real f;
+	Size middle = frag_size_ / 2 + 1;
+	for ( Size i=1; i<=storage_.size(); ++i ) {
 
-			trQuotaCollector.Trace << "Quota pools at pos: "<<i<<std::endl;
-			f = prediction->helix_fraction(i+middle-1)*prediction_fraction;
-			n = (Size) (n_candidates * f );
-			Size buffer_factor = 3;
-			if(n == 0)
-				trQuotaCollector.Debug << "Pool >"<<name<<"< for H would have size 0, not created"<<std::endl;
-			else {
-				SecondaryStructurePoolOP pool( new SecondaryStructurePool(n_candidates,name+":H",'H',components,weights,f,n_scores,buffer_factor) );
-				storage_[i].push_back( pool );
-			    if(trQuotaCollector.Trace.visible()) {
+		trQuotaCollector.Trace << "Quota pools at pos: "<<i<<std::endl;
+		f = prediction->helix_fraction(i+middle-1)*prediction_fraction;
+		n = (Size) (n_candidates * f );
+		Size buffer_factor = 3;
+		if ( n == 0 ) {
+			trQuotaCollector.Debug << "Pool >"<<name<<"< for H would have size 0, not created"<<std::endl;
+		} else {
+			SecondaryStructurePoolOP pool( new SecondaryStructurePool(n_candidates,name+":H",'H',components,weights,f,n_scores,buffer_factor) );
+			storage_[i].push_back( pool );
+			if ( trQuotaCollector.Trace.visible() ) {
 				trQuotaCollector.Trace << "Pool >"<<name<<":E< added at query pos: "<<i<<" as number: "<<storage_[i].size()<<std::endl;
 				trQuotaCollector.Trace<<"Scoring scheme for the quota pool sorting is:";
-				for(Size l=1;l<=weights.size();l++)
-				    trQuotaCollector.Trace<<"\n\t"<<components[l]<<"\t"<<weights[l];
+				for ( Size l=1; l<=weights.size(); l++ ) {
+					trQuotaCollector.Trace<<"\n\t"<<components[l]<<"\t"<<weights[l];
+				}
 				trQuotaCollector.Trace<<std::endl;
-			    }
 			}
+		}
 
-			f = prediction->sheet_fraction(i+middle-1)*prediction_fraction;
-			n = (Size) (n_candidates * f );
-			if(n == 0)
-				trQuotaCollector.Debug << "Pool >"<<name<<"< for E would have size 0, not created"<<std::endl;
-			else {
-			    SecondaryStructurePoolOP pool( new SecondaryStructurePool(n_candidates,name+":E",'E',components,weights,f,n_scores,buffer_factor) );
-			    storage_[i].push_back( pool );
-			    if(trQuotaCollector.Trace.visible()) {
+		f = prediction->sheet_fraction(i+middle-1)*prediction_fraction;
+		n = (Size) (n_candidates * f );
+		if ( n == 0 ) {
+			trQuotaCollector.Debug << "Pool >"<<name<<"< for E would have size 0, not created"<<std::endl;
+		} else {
+			SecondaryStructurePoolOP pool( new SecondaryStructurePool(n_candidates,name+":E",'E',components,weights,f,n_scores,buffer_factor) );
+			storage_[i].push_back( pool );
+			if ( trQuotaCollector.Trace.visible() ) {
 				trQuotaCollector.Trace << "Pool >"<<name<<":E< added at query pos: "<<i<<" as number: "<<storage_[i].size()<<std::endl;
 				trQuotaCollector.Trace<<"Scoring scheme for the quota pool sorting is:";
-				for(Size l=1;l<=weights.size();l++)
-				    trQuotaCollector.Trace<<"\n\t"<<components[l]<<"\t"<<weights[l];
+				for ( Size l=1; l<=weights.size(); l++ ) {
+					trQuotaCollector.Trace<<"\n\t"<<components[l]<<"\t"<<weights[l];
+				}
 				trQuotaCollector.Trace<<std::endl;
-			    }
 			}
+		}
 
-			f = prediction->loop_fraction(i+middle-1)*prediction_fraction;
-			n = (Size) (n_candidates * f );
-			if(n == 0)
-				trQuotaCollector.Debug << "Pool >"<<name<<"< for L would have size 0, not created"<<std::endl;
-			else {
-				SecondaryStructurePoolOP pool( new SecondaryStructurePool(n_candidates,name+":L",'L',components,weights,f,n_scores,buffer_factor) );
-				storage_[i].push_back( pool );
-			    if(trQuotaCollector.Trace.visible()) {
+		f = prediction->loop_fraction(i+middle-1)*prediction_fraction;
+		n = (Size) (n_candidates * f );
+		if ( n == 0 ) {
+			trQuotaCollector.Debug << "Pool >"<<name<<"< for L would have size 0, not created"<<std::endl;
+		} else {
+			SecondaryStructurePoolOP pool( new SecondaryStructurePool(n_candidates,name+":L",'L',components,weights,f,n_scores,buffer_factor) );
+			storage_[i].push_back( pool );
+			if ( trQuotaCollector.Trace.visible() ) {
 				trQuotaCollector.Trace << "Pool >"<<name<<":E< added at query pos: "<<i<<" as number: "<<storage_[i].size()<<std::endl;
 				trQuotaCollector.Trace<<"Scoring scheme for the quota pool sorting is:";
-				for(Size l=1;l<=weights.size();l++)
-				    trQuotaCollector.Trace<<"\n\t"<<components[l]<<"\t"<<weights[l];
+				for ( Size l=1; l<=weights.size(); l++ ) {
+					trQuotaCollector.Trace<<"\n\t"<<components[l]<<"\t"<<weights[l];
+				}
 				trQuotaCollector.Trace<<std::endl;
-			    }
 			}
-    }
+		}
+	}
 }
 
 } // quota

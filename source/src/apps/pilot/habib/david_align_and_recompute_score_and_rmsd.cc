@@ -78,24 +78,24 @@ core::Size lig_res_num;
 void define_interface( core::pose::Pose & ref_pose ) {
 	lig_res_num =0;
 	for ( int j = 1, resnum = ref_pose.total_residue(); j <= resnum; ++j ) {
-		if (!ref_pose.residue(j).is_protein()){
+		if ( !ref_pose.residue(j).is_protein() ) {
 			lig_res_num = j;
 			break;
 		}
 	}
-	if (lig_res_num == 0){
+	if ( lig_res_num == 0 ) {
 		TR << "No ligand given in reference PDB structure.  Cannot identify interface."<<std::endl;
 		exit (1);
 	}
 
 	TR <<"sele ";
 	scoring::ScoreFunctionOP scorefxn( get_score_function() );
-        (*scorefxn)(ref_pose);
+	(*scorefxn)(ref_pose);
 	EnergyGraph & energy_graph(ref_pose.energies().energy_graph());
 	for ( graph::Graph::EdgeListIter
-                                iru  = energy_graph.get_node( lig_res_num )->lower_edge_list_begin(),
-                                irue = energy_graph.get_node( lig_res_num )->lower_edge_list_end();
-                                iru != irue; ++iru ) {
+			iru  = energy_graph.get_node( lig_res_num )->lower_edge_list_begin(),
+			irue = energy_graph.get_node( lig_res_num )->lower_edge_list_end();
+			iru != irue; ++iru ) {
 		EnergyEdge * edge( static_cast< EnergyEdge *> (*iru) );
 		Size const j( edge->get_first_node_ind() );
 
@@ -103,13 +103,13 @@ void define_interface( core::pose::Pose & ref_pose ) {
 		EnergyMap const & emap( edge->fill_energy_map());
 		Real const attr( emap[ fa_atr ] );
 		//TR<<"\n"<<j<<": "<<attr<<"\n";
-		if (attr < -.2){
+		if ( attr < -.2 ) {
 			// create string id to store in set
 			std::ostringstream residuestream;
 
 			TR << "resi "<< ref_pose.pdb_info()->number(j)<<" or ";
 
-	        	residuestream << ref_pose.pdb_info()->chain(j) << ref_pose.pdb_info()->number(j);
+			residuestream << ref_pose.pdb_info()->chain(j) << ref_pose.pdb_info()->number(j);
 			std::string res_id = residuestream.str();
 			interface.insert(res_id);
 
@@ -121,13 +121,13 @@ void define_interface( core::pose::Pose & ref_pose ) {
 	TR << lig_res_num<< std::endl;
 
 
-//	ref_pose.delete_polymer_residue(lig_res_num);
+	// ref_pose.delete_polymer_residue(lig_res_num);
 }
 
 bool
 is_interface_heavyatom(
 	core::pose::Pose const & pose,
-	 core::pose::Pose const & ,//pose2,
+	core::pose::Pose const & ,//pose2,
 	core::Size resno,
 	core::Size atomno
 )
@@ -147,7 +147,7 @@ is_interface_heavyatom(
 bool
 is_interface_bbatom(
 	core::pose::Pose const & pose,
-	 core::pose::Pose const & ,//pose2,
+	core::pose::Pose const & ,//pose2,
 	core::Size resno,
 	core::Size atomno
 )
@@ -166,78 +166,78 @@ is_interface_bbatom(
 
 Real
 calpha_pdb_superimpose_pose(
-        pose::Pose & mod_pose,
-        pose::Pose const & ref_pose
+	pose::Pose & mod_pose,
+	pose::Pose const & ref_pose
 )
 {
-  id::AtomID_Map< id::AtomID > atom_map;
-  core::pose::initialize_atomid_map( atom_map, mod_pose, id::BOGUS_ATOM_ID );
-  for ( Size ii = 1; ii <= mod_pose.total_residue(); ++ii ) {
-    if ( ! mod_pose.residue(ii).has("CA") ) continue;
-    if ( ! mod_pose.residue(ii).is_protein() ) continue;
-    for ( Size jj = 1; jj <= ref_pose.total_residue(); ++jj ) {
-      if ( ! ref_pose.residue(jj).has("CA") ) continue;
-      if ( ! ref_pose.residue(jj).is_protein() ) continue;
-      if ( mod_pose.pdb_info()->chain(ii) != ref_pose.pdb_info()->chain(jj)) continue;
-      if ( mod_pose.pdb_info()->number(ii) != ref_pose.pdb_info()->number(jj)) continue;
-      id::AtomID const id1( mod_pose.residue(ii).atom_index("CA"), ii );
-      id::AtomID const id2( ref_pose.residue(jj).atom_index("CA"), jj );
-      atom_map.set( id1, id2 );
-      break;
-    }
+	id::AtomID_Map< id::AtomID > atom_map;
+	core::pose::initialize_atomid_map( atom_map, mod_pose, id::BOGUS_ATOM_ID );
+	for ( Size ii = 1; ii <= mod_pose.total_residue(); ++ii ) {
+		if ( ! mod_pose.residue(ii).has("CA") ) continue;
+		if ( ! mod_pose.residue(ii).is_protein() ) continue;
+		for ( Size jj = 1; jj <= ref_pose.total_residue(); ++jj ) {
+			if ( ! ref_pose.residue(jj).has("CA") ) continue;
+			if ( ! ref_pose.residue(jj).is_protein() ) continue;
+			if ( mod_pose.pdb_info()->chain(ii) != ref_pose.pdb_info()->chain(jj) ) continue;
+			if ( mod_pose.pdb_info()->number(ii) != ref_pose.pdb_info()->number(jj) ) continue;
+			id::AtomID const id1( mod_pose.residue(ii).atom_index("CA"), ii );
+			id::AtomID const id2( ref_pose.residue(jj).atom_index("CA"), jj );
+			atom_map.set( id1, id2 );
+			break;
+		}
 
-  }
-  return superimpose_pose( mod_pose, ref_pose, atom_map );
+	}
+	return superimpose_pose( mod_pose, ref_pose, atom_map );
 }
 
 template< class T >
 Real
 interface_rmsd(
-        pose::Pose & mod_pose,
-        pose::Pose const & ref_pose,
+	pose::Pose & mod_pose,
+	pose::Pose const & ref_pose,
 	T* predicate
 )
 {
-  std::vector< core::Vector > p1_coords;
-  std::vector< core::Vector > p2_coords;
+	std::vector< core::Vector > p1_coords;
+	std::vector< core::Vector > p2_coords;
 
-  for ( Size ii = 1; ii <= ref_pose.total_residue(); ++ii ) {
-    if ( ! ref_pose.residue(ii).has("CA") ) continue;
-    if ( ! ref_pose.residue(ii).is_protein() ) continue;
-    for ( Size jj = 1; jj <= mod_pose.total_residue(); ++jj ) {
-      if ( ! ref_pose.residue(ii).has("CA") ) continue;
-      if ( ! ref_pose.residue(ii).is_protein() ) continue;
-      if ( mod_pose.pdb_info()->chain(jj) != ref_pose.pdb_info()->chain(ii)) continue;
-      if ( mod_pose.pdb_info()->number(jj) != ref_pose.pdb_info()->number(ii)) continue;
-      Size num_atoms ( ref_pose.residue(ii).natoms() );
+	for ( Size ii = 1; ii <= ref_pose.total_residue(); ++ii ) {
+		if ( ! ref_pose.residue(ii).has("CA") ) continue;
+		if ( ! ref_pose.residue(ii).is_protein() ) continue;
+		for ( Size jj = 1; jj <= mod_pose.total_residue(); ++jj ) {
+			if ( ! ref_pose.residue(ii).has("CA") ) continue;
+			if ( ! ref_pose.residue(ii).is_protein() ) continue;
+			if ( mod_pose.pdb_info()->chain(jj) != ref_pose.pdb_info()->chain(ii) ) continue;
+			if ( mod_pose.pdb_info()->number(jj) != ref_pose.pdb_info()->number(ii) ) continue;
+			Size num_atoms ( ref_pose.residue(ii).natoms() );
 
-      for ( core::Size i = 1; i <= num_atoms; ++i ) {
-        if ( predicate ( ref_pose, mod_pose, ii, i) ){
-      	  Size num_atoms2 ( mod_pose.residue(jj).natoms() );
-      	  for ( core::Size j = 1; j <= num_atoms2; ++j ) {
- 	    if (!ref_pose.residue(ii).atom_name(i).compare(mod_pose.residue(jj).atom_name(j))){
-	      p1_coords.push_back(ref_pose.residue(ii).xyz(i));
-	      p2_coords.push_back(mod_pose.residue(jj).xyz(j));
-	    }
-	  }
+			for ( core::Size i = 1; i <= num_atoms; ++i ) {
+				if ( predicate ( ref_pose, mod_pose, ii, i) ) {
+					Size num_atoms2 ( mod_pose.residue(jj).natoms() );
+					for ( core::Size j = 1; j <= num_atoms2; ++j ) {
+						if ( !ref_pose.residue(ii).atom_name(i).compare(mod_pose.residue(jj).atom_name(j)) ) {
+							p1_coords.push_back(ref_pose.residue(ii).xyz(i));
+							p2_coords.push_back(mod_pose.residue(jj).xyz(j));
+						}
+					}
+				}
+			}
+
+		}
 	}
-      }
+	assert( p1_coords.size() == p2_coords.size() );
 
-    }
-  }
-  assert( p1_coords.size() == p2_coords.size() );
+	int const natoms = p1_coords.size();
+	ObjexxFCL::FArray2D< core::Real > p1a( 3, natoms );
+	ObjexxFCL::FArray2D< core::Real > p2a( 3, natoms );
+	for ( int i = 0; i < natoms; ++i ) {
+		for ( int k = 0; k < 3; ++k ) { // k = X, Y and Z
+			p1a(k+1,i+1) = p1_coords[i][k];
+			p2a(k+1,i+1) = p2_coords[i][k];
+		}
+	}
 
-  int const natoms = p1_coords.size();
-  ObjexxFCL::FArray2D< core::Real > p1a( 3, natoms );
-  ObjexxFCL::FArray2D< core::Real > p2a( 3, natoms );
-  for ( int i = 0; i < natoms; ++i ) {
-    for ( int k = 0; k < 3; ++k ) { // k = X, Y and Z
-       p1a(k+1,i+1) = p1_coords[i][k];
-       p2a(k+1,i+1) = p2_coords[i][k];
-    }
-  }
-
-  return numeric::model_quality::rms_wrapper( natoms, p1a, p2a );
+	return numeric::model_quality::rms_wrapper( natoms, p1a, p2a );
 
 }
 
@@ -248,82 +248,82 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	NEW_OPT( ref_decoy, "the structure to compute RMSD and relative score to", "" );
-  	NEW_OPT ( contact_list, "File name for optional list of contact residues to check","");
-	core::init::init(argc, argv);
+		NEW_OPT( ref_decoy, "the structure to compute RMSD and relative score to", "" );
+		NEW_OPT ( contact_list, "File name for optional list of contact residues to check","");
+		core::init::init(argc, argv);
 
-	TR << "Starting recomputing scores and rmsds" << std::endl;
+		TR << "Starting recomputing scores and rmsds" << std::endl;
 
-	std::string const ref_decoy_fname = option[ ref_decoy ];
-
-
-	// create pose from pdb
-	pose::Pose ref_pose;
-	core::import_pose::pose_from_pdb( ref_pose, ref_decoy_fname );
-
-  	std::string const cfilename = option[ contact_list ];
-  	if ( cfilename != "" ){
-    	  std::ifstream ifs(cfilename.c_str(), std::ifstream::in);
-    	  if (!ifs.is_open()){
-    	    std::cout<< "Error opening contact list file "<<cfilename<<std::endl;
-    	    return -100;
-    	  }
-    	  //ifb.open (cfilename,std::ios::in);
-    	  //std::ostream ios(&ifb);
-    	  std::string intres;
-    	  while (ifs.good()){
-    	    ifs >> intres;
-      	    interface.insert(intres);
-    	  }
+		std::string const ref_decoy_fname = option[ ref_decoy ];
 
 
-  	}else{
-    	  define_interface(ref_pose);
-  	}
+		// create pose from pdb
+		pose::Pose ref_pose;
+		core::import_pose::pose_from_pdb( ref_pose, ref_decoy_fname );
 
-	TR << "Defined interface" << std::endl;
-
-	std::string outfname;
-	if (!option[ OptionKeys::out::output_tag ]().empty()){
-    	  outfname = "alignedrmsd." + option[ OptionKeys::out::output_tag ]() + ".out";
-  	}else{
- 	  outfname = "alignedrmsd.out";
-	}
-        //std::cout<<outfname<<" output_tag: "<<option[ OptionKeys::out::output_tag ]()<<std::endl;
-  	utility::io::ozstream outstream;
-	outstream.open(outfname, std::ios::out);
-
-	//outstream << "fname allatom_rms iface_rms" << std::endl;
-
-	for (core::Size f=1; f <= basic::options::start_files().size(); f++) {
-
-		std::string const curr_decoy_fname = basic::options::start_files().at(f);
-		TR << "Processing decoy " << curr_decoy_fname << std::endl;
-
-		pose::Pose curr_pose;
-		core::import_pose::pose_from_pdb( curr_pose, curr_decoy_fname );
-
-	 	core::Real CA_rms = calpha_pdb_superimpose_pose( curr_pose, ref_pose);
-  		CA_rms = core::scoring::CA_rmsd( curr_pose, ref_pose );
-  		std::cout << "superimpose to native. Rms to native: " << CA_rms << std::endl;
+		std::string const cfilename = option[ contact_list ];
+		if ( cfilename != "" ) {
+			std::ifstream ifs(cfilename.c_str(), std::ifstream::in);
+			if ( !ifs.is_open() ) {
+				std::cout<< "Error opening contact list file "<<cfilename<<std::endl;
+				return -100;
+			}
+			//ifb.open (cfilename,std::ios::in);
+			//std::ostream ios(&ifb);
+			std::string intres;
+			while ( ifs.good() ) {
+				ifs >> intres;
+				interface.insert(intres);
+			}
 
 
-		//core::Real CA_rms = rmsd_with_super( ref_pose, curr_pose, is_protein_CA );
-  		//std::cout << "CA_rms to native: " << CA_rms << std::endl;
-		//core::Real heavyatom_rms = rmsd_with_super( ref_pose, curr_pose, is_interface_heavyatom );
-		core::Real heavyatom_rms = interface_rmsd( ref_pose, curr_pose, is_interface_heavyatom );
-		core::Real bbatom_rms = interface_rmsd( ref_pose, curr_pose, is_interface_bbatom );
-  		std::cout << "Interface rmsd: " << heavyatom_rms << " " << bbatom_rms << std::endl;
+		} else {
+			define_interface(ref_pose);
+		}
 
-		//outstream << curr_decoy_fname << ' ' << CA_rms << ' ' << heavyatom_rms << ' ' << score_diff << ' ' << p_score_diff <<std::endl;
-		outstream << curr_decoy_fname << ' ' << CA_rms << ' ' << heavyatom_rms << ' ' << bbatom_rms << std::endl;
+		TR << "Defined interface" << std::endl;
 
-	}
+		std::string outfname;
+		if ( !option[ OptionKeys::out::output_tag ]().empty() ) {
+			outfname = "alignedrmsd." + option[ OptionKeys::out::output_tag ]() + ".out";
+		} else {
+			outfname = "alignedrmsd.out";
+		}
+		//std::cout<<outfname<<" output_tag: "<<option[ OptionKeys::out::output_tag ]()<<std::endl;
+		utility::io::ozstream outstream;
+		outstream.open(outfname, std::ios::out);
 
-	TR << "Done recomputing scores and rmsds" << std::endl;
+		//outstream << "fname allatom_rms iface_rms" << std::endl;
 
-	outstream.close();
-	outstream.clear();
+		for ( core::Size f=1; f <= basic::options::start_files().size(); f++ ) {
+
+			std::string const curr_decoy_fname = basic::options::start_files().at(f);
+			TR << "Processing decoy " << curr_decoy_fname << std::endl;
+
+			pose::Pose curr_pose;
+			core::import_pose::pose_from_pdb( curr_pose, curr_decoy_fname );
+
+			core::Real CA_rms = calpha_pdb_superimpose_pose( curr_pose, ref_pose);
+			CA_rms = core::scoring::CA_rmsd( curr_pose, ref_pose );
+			std::cout << "superimpose to native. Rms to native: " << CA_rms << std::endl;
+
+
+			//core::Real CA_rms = rmsd_with_super( ref_pose, curr_pose, is_protein_CA );
+			//std::cout << "CA_rms to native: " << CA_rms << std::endl;
+			//core::Real heavyatom_rms = rmsd_with_super( ref_pose, curr_pose, is_interface_heavyatom );
+			core::Real heavyatom_rms = interface_rmsd( ref_pose, curr_pose, is_interface_heavyatom );
+			core::Real bbatom_rms = interface_rmsd( ref_pose, curr_pose, is_interface_bbatom );
+			std::cout << "Interface rmsd: " << heavyatom_rms << " " << bbatom_rms << std::endl;
+
+			//outstream << curr_decoy_fname << ' ' << CA_rms << ' ' << heavyatom_rms << ' ' << score_diff << ' ' << p_score_diff <<std::endl;
+			outstream << curr_decoy_fname << ' ' << CA_rms << ' ' << heavyatom_rms << ' ' << bbatom_rms << std::endl;
+
+		}
+
+		TR << "Done recomputing scores and rmsds" << std::endl;
+
+		outstream.close();
+		outstream.clear();
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

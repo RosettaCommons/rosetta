@@ -30,8 +30,8 @@
 // C++ Headers
 #include <string>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class AtomTypesFeatures : public protocols::features::FeaturesReporter {
 public:

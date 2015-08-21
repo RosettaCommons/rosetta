@@ -124,19 +124,19 @@ static thread_local basic::Tracer TR( "protocols.symmetric_docking.SymDockProtoc
 
 void SymDock_main() {
 	using namespace protocols::simple_moves::symmetry;
-  SetupForSymmetryMoverOP setup_mover( new SetupForSymmetryMover );
-  SymDockProtocolOP dock_mover( new SymDockProtocol );
-  protocols::moves::SequenceMoverOP seq_mover( new protocols::moves::SequenceMover );
-  seq_mover->add_mover( setup_mover );
-  seq_mover->add_mover( dock_mover );
-  protocols::jd2::JobDistributor::get_instance()->go( seq_mover );
+	SetupForSymmetryMoverOP setup_mover( new SetupForSymmetryMover );
+	SymDockProtocolOP dock_mover( new SymDockProtocol );
+	protocols::moves::SequenceMoverOP seq_mover( new protocols::moves::SequenceMover );
+	seq_mover->add_mover( setup_mover );
+	seq_mover->add_mover( dock_mover );
+	protocols::jd2::JobDistributor::get_instance()->go( seq_mover );
 }
 
 
 SymDockProtocol::SymDockProtocol():
-  Mover()
+	Mover()
 {
-  Mover::type( "SymDockProtocol" );
+	Mover::type( "SymDockProtocol" );
 
 	set_default();
 	register_options();
@@ -144,17 +144,17 @@ SymDockProtocol::SymDockProtocol():
 }
 
 SymDockProtocol::SymDockProtocol(
-		bool const fullatom,
-		bool const local_refine,
-		bool const view
-	  ) : Mover()
+	bool const fullatom,
+	bool const local_refine,
+	bool const view
+) : Mover()
 {
-		Mover::type( "SymDockProtocol" );
-		set_default();
-		set_fullatom(fullatom);
-		set_local_refine(local_refine);
-		set_view(view);
-		register_options();
+	Mover::type( "SymDockProtocol" );
+	set_default();
+	set_fullatom(fullatom);
+	set_local_refine(local_refine);
+	set_view(view);
+	register_options();
 }
 
 SymDockProtocol::SymDockProtocol(
@@ -183,8 +183,8 @@ SymDockProtocol::~SymDockProtocol() {}
 //clone
 protocols::moves::MoverOP
 SymDockProtocol::clone() const {
-		return( protocols::moves::MoverOP( new SymDockProtocol(  fullatom_, local_refine_, view_, docking_score_low_, docking_score_high_ ) ) );
-	}
+	return( protocols::moves::MoverOP( new SymDockProtocol(  fullatom_, local_refine_, view_, docking_score_low_, docking_score_high_ ) ) );
+}
 
 //set functions
 void SymDockProtocol::set_dock_rtmin( bool dock_rtmin_in ) { rtmin_=dock_rtmin_in; }
@@ -196,13 +196,13 @@ void SymDockProtocol::set_view( bool view_in ) { view_=view_in; }
 void SymDockProtocol::set_fullatom( bool const fullatom_in )
 {
 	fullatom_ = fullatom_in;
-	if (!fullatom_) passed_highres_filter_ = true;
+	if ( !fullatom_ ) passed_highres_filter_ = true;
 }
 
 void SymDockProtocol::set_local_refine( bool const local_refine_in )
 {
 	local_refine_ = local_refine_in;
-	if (local_refine_){
+	if ( local_refine_ ) {
 		set_fullatom(true);
 		passed_lowres_filter_ = true;
 	}
@@ -246,30 +246,30 @@ SymDockProtocol::set_default()
 	docking_score_high_min_ = ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
 	docking_score_pack_ = get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 
-	if ( option[ OptionKeys::constraints::cst_file ].user() || option[ OptionKeys::constraints::cst_fa_file ].user() ){
+	if ( option[ OptionKeys::constraints::cst_file ].user() || option[ OptionKeys::constraints::cst_fa_file ].user() ) {
 		docking_score_low_->set_weight(core::scoring::atom_pair_constraint, 1.0);
 		docking_score_high_->set_weight(core::scoring::atom_pair_constraint, 1.0);
 		docking_score_high_min_->set_weight(core::scoring::atom_pair_constraint, 1.0);
 	}
 
-		if ( option[ OptionKeys::docking::low_patch ].user() ) {
+	if ( option[ OptionKeys::docking::low_patch ].user() ) {
 		//docking_score_low_  = ScoreFunctionFactory::create_score_function(  "interchain_cen", option[ OptionKeys::docking::low_patch ] );
-    docking_score_low_->apply_patch_from_file(option[ OptionKeys::docking::low_patch ]);
+		docking_score_low_->apply_patch_from_file(option[ OptionKeys::docking::low_patch ]);
 	}
 
 	if ( option[ OptionKeys::docking::high_patch ].user() ) {
 		//docking_score_high_  = ScoreFunctionFactory::create_score_function( "docking", option[ OptionKeys::docking::high_patch ] );
-    docking_score_high_->apply_patch_from_file(option[ OptionKeys::docking::high_patch ]);
+		docking_score_high_->apply_patch_from_file(option[ OptionKeys::docking::high_patch ]);
 	}
 
 	if ( option[ OptionKeys::docking::high_min_patch ].user() ) {
 		//docking_score_high_min_ = ScoreFunctionFactory::create_score_function( "docking",  option[ OptionKeys::docking::high_min_patch ] );
-    docking_score_high_min_->apply_patch_from_file(option[ OptionKeys::docking::high_min_patch ]);
+		docking_score_high_min_->apply_patch_from_file(option[ OptionKeys::docking::high_min_patch ]);
 	}
 
 	if ( option[ OptionKeys::docking::pack_patch ].user() ) {
 		//docking_score_pack_ = ScoreFunctionFactory::create_score_function(  "standard", option[ OptionKeys::docking::pack_patch ] );
-    docking_score_pack_->apply_patch_from_file(option[ OptionKeys::docking::pack_patch ]);
+		docking_score_pack_->apply_patch_from_file(option[ OptionKeys::docking::pack_patch ]);
 	}
 
 	// score function setup
@@ -305,7 +305,7 @@ SymDockProtocol::register_options()
 	set_dock_ppk(option[ OptionKeys::docking::dock_ppk ]());
 
 	//set native pose
-	if( basic::options::option[basic::options::OptionKeys::in::file::native].user() ){
+	if ( basic::options::option[basic::options::OptionKeys::in::file::native].user() ) {
 		core::pose::PoseOP native_pose( new core::pose::Pose() );
 		core::import_pose::pose_from_pdb( *native_pose, basic::options::option[basic::options::OptionKeys::in::file::native].value() );
 		this->set_native_pose( native_pose );
@@ -326,8 +326,8 @@ SymDockProtocol::apply( pose::Pose & pose )
 	add_conformation_viewer( pose.conformation(), "start_pose", 450, 450 );
 
 	//initialize docking protocol movers
-	if (!docking_low_) docking_low_ = protocols::symmetric_docking::SymDockingLowResOP( new SymDockingLowRes( docking_score_low_ ) );
-	if (!docking_high_) docking_high_ = protocols::symmetric_docking::SymDockingHiResOP( new SymDockingHiRes( docking_score_high_min_, docking_score_pack_ ) );
+	if ( !docking_low_ ) docking_low_ = protocols::symmetric_docking::SymDockingLowResOP( new SymDockingLowRes( docking_score_low_ ) );
+	if ( !docking_high_ ) docking_high_ = protocols::symmetric_docking::SymDockingHiResOP( new SymDockingHiRes( docking_score_high_min_, docking_score_pack_ ) );
 
 	// make sure the input pose has the right size
 	core::pose::PoseOP input_pose( new core::pose::Pose() );
@@ -336,11 +336,11 @@ SymDockProtocol::apply( pose::Pose & pose )
 	docking_high_->set_input_pose( input_pose );
 	set_input_pose( input_pose );
 
-	if( init_task_factory_ ) {
+	if ( init_task_factory_ ) {
 		TR << "Setting non-default TaskFactory." << std::endl;
 		docking_high_->task_factory( init_task_factory_ );
 	}
-	if( design_ ) {
+	if ( design_ ) {
 		TR << "Setting design to " << design_ << std::endl;
 		docking_high_->design( design_ );
 	}
@@ -365,16 +365,16 @@ SymDockProtocol::apply( pose::Pose & pose )
 	core::Size const max_repeats( option[ OptionKeys::docking::max_repeats ]() );
 
 	//start loop of decoy creation until filters are all passed
-	for (Size r = 1; r <= max_repeats; r++){
+	for ( Size r = 1; r <= max_repeats; r++ ) {
 		pose = starting_pose;
 
-	//MonteCarloOP mc;
+		//MonteCarloOP mc;
 		if ( !local_refine_ ) {
 			docking_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *docking_score_low_ ) ;
 
 			// first convert to centroid mode
 			to_centroid.apply( pose );
-			if ( option[ OptionKeys::constraints::cst_file ].user() || option[ OptionKeys::constraints::cst_fa_file ].user() ){
+			if ( option[ OptionKeys::constraints::cst_file ].user() || option[ OptionKeys::constraints::cst_fa_file ].user() ) {
 				protocols::simple_moves::ConstraintSetMover().apply(pose);
 			}
 
@@ -383,7 +383,7 @@ SymDockProtocol::apply( pose::Pose & pose )
 			initial.apply( pose );
 
 			TR << "finished initial perturbation" << std::endl;
-			if( !hurry_ && get_native_pose() ){
+			if ( !hurry_ && get_native_pose() ) {
 				Real st_rmsd = calc_rms( pose );
 				score_map_["st_rmsd"] = st_rmsd;//jd1
 				job->add_string_real_pair("st_rmsd", st_rmsd);
@@ -395,11 +395,11 @@ SymDockProtocol::apply( pose::Pose & pose )
 			docking_low_->apply( pose );
 
 			//check low res filter to see if it should repeat low res or not
-			if( !hurry_ ) passed_lowres_filter_ = docking_lowres_filter( pose );
+			if ( !hurry_ ) passed_lowres_filter_ = docking_lowres_filter( pose );
 
 			// add scores to map for output
-			if( !hurry_ ) protocols::jd2::ScoreMap::nonzero_energies( score_map_, docking_scorefxn, pose );
-			if( !hurry_ && get_native_pose() ){
+			if ( !hurry_ ) protocols::jd2::ScoreMap::nonzero_energies( score_map_, docking_scorefxn, pose );
+			if ( !hurry_ && get_native_pose() ) {
 				Real cen_rms = calc_rms( pose );
 				score_map_["cen_rms"] = cen_rms; //jd1
 				job->add_string_real_pair("cen_rms", cen_rms);
@@ -411,20 +411,20 @@ SymDockProtocol::apply( pose::Pose & pose )
 
 			docking_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *docking_score_high_ ) ;
 
-			if (!local_refine_ || !pose.is_fullatom()){
+			if ( !local_refine_ || !pose.is_fullatom() ) {
 				to_all_atom.apply( pose );
-				if ( option[ OptionKeys::constraints::cst_file ].user() || option[ OptionKeys::constraints::cst_fa_file ].user() ){
+				if ( option[ OptionKeys::constraints::cst_file ].user() || option[ OptionKeys::constraints::cst_fa_file ].user() ) {
 					protocols::simple_moves::ConstraintSetMover().apply(pose);
 				}
 				recover_sidechains.apply( pose );
-			//	recover_sidechains( pose, *get_input_pose());
+				// recover_sidechains( pose, *get_input_pose());
 			}
 
 			// run high resolution docking
 			TR.Debug << "DockingHighRes object created" << std::endl;
 			docking_high_->apply( pose );
 
-			if( !hurry_ ) {
+			if ( !hurry_ ) {
 				Real interface_score = calc_interaction_energy( pose );
 				// add scores to map for output
 				protocols::jd2::ScoreMap::nonzero_energies( score_map_, docking_scorefxn, pose );//jd1
@@ -436,16 +436,16 @@ SymDockProtocol::apply( pose::Pose & pose )
 				}
 			}
 
-			if(passed_highres_filter_ && option[ OptionKeys::docking::kick_relax ].user()) {
+			if ( passed_highres_filter_ && option[ OptionKeys::docking::kick_relax ].user() ) {
 				protocols::relax::relax_pose( pose, core::scoring::get_score_function(), "s" );
 			}
 		}
 
 		if ( passed_lowres_filter_ && passed_highres_filter_ ) break; // defaults true. filter methods can set false
-	  	else  TR<<"REPEAT STRUCTURE "<< r <<std::endl;
+		else  TR<<"REPEAT STRUCTURE "<< r <<std::endl;
 	}//end of repeat decoy creation
 
-	if( !hurry_ ) {
+	if ( !hurry_ ) {
 		// calculate and store the rms no matter which mode was used
 		if ( get_native_pose() ) {
 			Real rms = calc_rms( pose );
@@ -453,17 +453,17 @@ SymDockProtocol::apply( pose::Pose & pose )
 			job->add_string_real_pair("rms", rms);
 		}
 
-		if ( pose.is_fullatom() ){
+		if ( pose.is_fullatom() ) {
 			Real interface_score_ = calc_interaction_energy( pose );
 			score_map_["I_sc"] = interface_score_; //jd1
 			job->add_string_real_pair("I_sc", interface_score_);
-		  if ( get_native_pose() ){
+			if ( get_native_pose() ) {
 				//Real Irms = calc_rms(pose, *get_native_pose(), docking_score_high_, movable_jumps_ );
 				//score_map_["Irms"] = Irms; //jd1
 				//job->add_string_real_pair("Irms", Irms);
 				//job->add_string_real_pair("Fnat", Fnat);
 			}
-		}else{
+		} else {
 			score_map_["I_sc"] = calc_interaction_energy( pose );
 		}
 	}
@@ -472,7 +472,7 @@ SymDockProtocol::apply( pose::Pose & pose )
 
 	// cache the score map to the pose
 	using namespace basic::datacache;
-	if( !hurry_ ) pose.data().set(core::pose::datacache::CacheableDataType::SCORE_MAP, DataCache_CacheableData::DataOP( new basic::datacache::DiagnosticData(score_map_) ) );
+	if ( !hurry_ ) pose.data().set(core::pose::datacache::CacheableDataType::SCORE_MAP, DataCache_CacheableData::DataOP( new basic::datacache::DiagnosticData(score_map_) ) );
 
 }
 
@@ -486,15 +486,15 @@ SymDockProtocol::docking_lowres_filter( core::pose::Pose & pose){
 	bool passed_filter = true;
 
 	//criterion for failure
-	Real interchain_contact_cutoff	= 10.0;
+	Real interchain_contact_cutoff = 10.0;
 	Real interchain_vdw_cutoff = 1.0;
 	Real distance_constraint_cutoff = 1.0; //distance constraint is soft for now
 
-	if( option[ OptionKeys::docking::dock_lowres_filter ].user() ) {
+	if ( option[ OptionKeys::docking::dock_lowres_filter ].user() ) {
 		utility::vector1< Real > dock_filters = option[ OptionKeys::docking::dock_lowres_filter ]();
 		interchain_contact_cutoff = dock_filters[1];
 		interchain_vdw_cutoff = dock_filters[2];
-		if (dock_filters.size() > 2) {
+		if ( dock_filters.size() > 2 ) {
 			distance_constraint_cutoff = dock_filters[3];
 		}
 	}
@@ -510,20 +510,21 @@ SymDockProtocol::docking_lowres_filter( core::pose::Pose & pose){
 	icvdw_score = icvdw_sf(pose);
 	cst_score = cst_sf(pose);
 
-	if (icc_score >= interchain_contact_cutoff ) passed_filter = false;
-	if (icvdw_score >= interchain_vdw_cutoff ) passed_filter = false;
-	if (cst_score >= distance_constraint_cutoff ) passed_filter = false;
+	if ( icc_score >= interchain_contact_cutoff ) passed_filter = false;
+	if ( icvdw_score >= interchain_vdw_cutoff ) passed_filter = false;
+	if ( cst_score >= distance_constraint_cutoff ) passed_filter = false;
 
-	if( ( option[basic::options::OptionKeys::filters::set_saxs_filter ].user() ) &&
-	    ( option[basic::options::OptionKeys::score::saxs::ref_spectrum ].user() ) ) {
+	if ( ( option[basic::options::OptionKeys::filters::set_saxs_filter ].user() ) &&
+			( option[basic::options::OptionKeys::score::saxs::ref_spectrum ].user() ) ) {
 		protocols::simple_filters::SAXSScoreFilterOP saxs_filter( new protocols::simple_filters::SAXSScoreFilter() );
-    if( ! saxs_filter->apply(pose) )
+		if ( ! saxs_filter->apply(pose) ) {
 			passed_filter = false;
+		}
 		core::pose::setPoseExtraScore( pose, "saxs_score", saxs_filter->recent_score());
 	}
 
 
-	if (!passed_filter) {
+	if ( !passed_filter ) {
 		TR << "STRUCTURE FAILED LOW-RES FILTER" << std::endl;
 		//TR << " scores: " << pose.energies().total_energies()[ interchain_contact ] << "  " << pose.energies().total_energies()[ interchain_vdw ]
 		//   << "  " << pose.energies().total_energies()[ atom_pair_constraint ] << std::endl;
@@ -547,10 +548,10 @@ SymDockProtocol::docking_highres_filter( core::pose::Pose & pose){
 
 	Real score_cutoff = option[ OptionKeys::cluster::output_score_filter ]();
 	//criterion for failure
-	if (pose.energies().total_energy() >= score_cutoff) passed_filter = false;
-	if (score_map_["I_sc"] >= 0.0) passed_filter = false;
+	if ( pose.energies().total_energy() >= score_cutoff ) passed_filter = false;
+	if ( score_map_["I_sc"] >= 0.0 ) passed_filter = false;
 
-	if (!passed_filter) TR << "STRUCTURE FAILED HIGH-RES FILTER " << pose.energies().total_energy() << " " << score_map_["I_sc"] << std::endl;
+	if ( !passed_filter ) TR << "STRUCTURE FAILED HIGH-RES FILTER " << pose.energies().total_energy() << " " << score_map_["I_sc"] << std::endl;
 
 	return passed_filter;
 }
@@ -572,28 +573,28 @@ SymDockProtocol::recover_sidechains( core::pose::Pose & pose, const core::pose::
 	using core::pack::task::operation::TaskOperationOP;
 
 	// pack over each movable interface
-		TaskFactoryOP tf( new TaskFactory );
-		tf->push_back( TaskOperationCOP( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueLacksProperty("PROTEIN") ) ) ) );
-		tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
-		tf->push_back( TaskOperationCOP( new IncludeCurrent ) );
-		tf->push_back( TaskOperationCOP( new RestrictToRepacking ) );
-		tf->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
-		if( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) tf->push_back( TaskOperationCOP( new ReadResfile ) );
-		//tf->push_back( new SymRestrictTaskForDocking( docking_score_pack_, true, 1000 ) );
-		tf->push_back( TaskOperationCOP( new RestrictToInterface( 1 ) ) );
+	TaskFactoryOP tf( new TaskFactory );
+	tf->push_back( TaskOperationCOP( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueLacksProperty("PROTEIN") ) ) ) );
+	tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+	tf->push_back( TaskOperationCOP( new IncludeCurrent ) );
+	tf->push_back( TaskOperationCOP( new RestrictToRepacking ) );
+	tf->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
+	if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) tf->push_back( TaskOperationCOP( new ReadResfile ) );
+	//tf->push_back( new SymRestrictTaskForDocking( docking_score_pack_, true, 1000 ) );
+	tf->push_back( TaskOperationCOP( new RestrictToInterface( 1 ) ) );
 
-		protocols::simple_moves::PackRotamersMoverOP dock_pack( new protocols::simple_moves::symmetry::SymPackRotamersMover(docking_score_pack_) );
-		dock_pack->task_factory( tf );
-		dock_pack->apply( pose );
+	protocols::simple_moves::PackRotamersMoverOP dock_pack( new protocols::simple_moves::symmetry::SymPackRotamersMover(docking_score_pack_) );
+	dock_pack->task_factory( tf );
+	dock_pack->apply( pose );
 
-		if (rtmin_){
-	//		protocols::simple_moves::RotamerTrialsMinMoverOP rtmin_trial = new protocols::simple_moves::RotamerTrialsMinMover( docking_score_pack_, tf);
-	//		rtmin_trial->apply( pose );
-		}
-		if (basic::options::option[ basic::options::OptionKeys::docking::sc_min ]()){
-			SymInterfaceSidechainMinMoverOP scmin_mover( new SymInterfaceSidechainMinMover(docking_score_pack_, 1000) );
-			scmin_mover->apply(pose);
-		}
+	if ( rtmin_ ) {
+		//  protocols::simple_moves::RotamerTrialsMinMoverOP rtmin_trial = new protocols::simple_moves::RotamerTrialsMinMover( docking_score_pack_, tf);
+		//  rtmin_trial->apply( pose );
+	}
+	if ( basic::options::option[ basic::options::OptionKeys::docking::sc_min ]() ) {
+		SymInterfaceSidechainMinMoverOP scmin_mover( new SymInterfaceSidechainMinMover(docking_score_pack_, 1000) );
+		scmin_mover->apply(pose);
+	}
 }
 
 std::string
@@ -613,21 +614,21 @@ SymDockProtocol::calc_interaction_energy( core::pose::Pose & pose ){
 	Real trans_magnitude = 1000;
 
 	assert( core::pose::symmetry::is_symmetric( pose ) );
-  SymmetricConformation & symm_conf (
-        dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
+	SymmetricConformation & symm_conf (
+		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
 	std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 	rigid::RigidBodyDofSeqTransMoverOP translate_away( new rigid::RigidBodyDofSeqTransMover( dofs ) );
 	translate_away->step_size( trans_magnitude );
 
 	//Don't use patches for computer Isc, problematic with constraints for unbound
-	if ( fullatom_ ){
+	if ( fullatom_ ) {
 		docking_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *docking_score_pack_ ) ;
-    docking_scorefxn->set_weight(core::scoring::atom_pair_constraint, 0.0);
+		docking_scorefxn->set_weight(core::scoring::atom_pair_constraint, 0.0);
 		//docking_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "docking" );
 	} else {
 		docking_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *docking_score_low_ ) ;
-    docking_scorefxn->set_weight(core::scoring::atom_pair_constraint, 0.0);
+		docking_scorefxn->set_weight(core::scoring::atom_pair_constraint, 0.0);
 		//docking_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen" );
 	}
 
@@ -646,13 +647,12 @@ SymDockProtocol::calc_rms( core::pose::Pose & pose ){
 	using namespace basic::options;
 
 	assert( core::pose::symmetry::is_symmetric( pose ) );
-  SymmetricConformation & SymmConf (
+	SymmetricConformation & SymmConf (
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
-  SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
+	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
-  FArray1D_bool superpos ( pose.total_residue(), false );
-	for (Size res=1; res <= symm_info->num_total_residues_without_pseudo(); ++res )
-	{
+	FArray1D_bool superpos ( pose.total_residue(), false );
+	for ( Size res=1; res <= symm_info->num_total_residues_without_pseudo(); ++res ) {
 		superpos(res) = true;
 	}
 	if ( get_native_pose() ) {
@@ -716,15 +716,15 @@ SymDockProtocol::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & dat
 {
 	using namespace core::scoring;
 
-	if( tag->hasOption( "task_operations" ) ){
+	if ( tag->hasOption( "task_operations" ) ) {
 		task_factory(protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	}
 
-	if( tag->hasOption("docking_score_low" ) ){
+	if ( tag->hasOption("docking_score_low" ) ) {
 		std::string const score_low( tag->getOption<std::string>( "docking_score_low" ) );
 		set_lowres_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data, score_low ) );
 	}
-	if( tag->hasOption("docking_score_high" ) ){
+	if ( tag->hasOption("docking_score_high" ) ) {
 		std::string const score_high( tag->getOption<std::string>( "docking_score_high" ) );
 		set_highres_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data, score_high ) );
 	}
@@ -733,49 +733,49 @@ SymDockProtocol::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & dat
 	//initialize other flags to control behavior
 
 	//void set_dock_rtmin( bool dock_rtmin_in );
-	if( tag->hasOption("dock_rtmin" ) ){
+	if ( tag->hasOption("dock_rtmin" ) ) {
 		bool const dock_rtmin( tag->getOption<bool>( "dock_rtmin" ) );
 		set_dock_rtmin(dock_rtmin);
 	}
 
 
 	//void set_sc_min( bool sc_min_in );
-	if( tag->hasOption("sc_min" ) ){
+	if ( tag->hasOption("sc_min" ) ) {
 		bool const sc_min( tag->getOption<bool>( "sc_min" ) );
 		set_sc_min(sc_min);
 	}
 
 
 	//void set_max_repeats( Size const max_repeats_in );
-	if( tag->hasOption("max_repeats" ) ){
+	if ( tag->hasOption("max_repeats" ) ) {
 		bool const max_repeats( tag->getOption<bool>( "max_repeats" ) );
 		set_max_repeats(max_repeats);
 	}
 
 
 	//void set_dock_ppk( bool dock_ppk_in );
-	if( tag->hasOption("dock_ppk" ) ){
+	if ( tag->hasOption("dock_ppk" ) ) {
 		bool const dock_ppk( tag->getOption<bool>( "dock_ppk" ) );
 		set_dock_ppk(dock_ppk);
 	}
 
 
 	//void set_fullatom( bool const fullatom_in );
-	if( tag->hasOption("fullatom" ) ){
+	if ( tag->hasOption("fullatom" ) ) {
 		bool const fullatom( tag->getOption<bool>( "fullatom" ) );
 		set_fullatom(fullatom);
 	}
 
 
 	//void set_local_refine( bool const local_refine_in );
-	if( tag->hasOption("local_refine" ) ){
+	if ( tag->hasOption("local_refine" ) ) {
 		bool const local_refine( tag->getOption<bool>( "local_refine" ) );
 		set_local_refine(local_refine);
 	}
 
 
 	//void set_view( bool view_in );
-	if( tag->hasOption("view" ) ){
+	if ( tag->hasOption("view" ) ) {
 		bool const view( tag->getOption<bool>( "view" ) );
 		set_view(view);
 	}
@@ -787,18 +787,18 @@ SymDockProtocol::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & dat
 std::string
 SymDockProtocolCreator::keyname() const
 {
-    return SymDockProtocolCreator::mover_name();
+	return SymDockProtocolCreator::mover_name();
 }
 
 protocols::moves::MoverOP
 SymDockProtocolCreator::create_mover() const {
-    return protocols::moves::MoverOP( new SymDockProtocol() );
+	return protocols::moves::MoverOP( new SymDockProtocol() );
 }
 
 std::string
 SymDockProtocolCreator::mover_name()
 {
-    return "SymDockProtocol";
+	return "SymDockProtocol";
 }
 
 

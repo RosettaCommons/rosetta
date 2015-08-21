@@ -27,7 +27,7 @@ namespace protein_interface_design {
 using namespace protocols::filters;
 
 DockDesignFilterFactory::DockDesignFilterFactory()
-	: utility::pointer::ReferenceCount()
+: utility::pointer::ReferenceCount()
 {
 	// no Filters are registered by default
 	// they must be registered using the add_type method
@@ -57,7 +57,7 @@ DockDesignFilterFactory::add_type( std::string const & type, FilterOP dock_desig
 
 /// @brief return new Filter by key lookup in dock_design_filter_map_ (new Filter parses Tag if provided)
 FilterOP
-DockDesignFilterFactory::newFilter(	std::string const & type )
+DockDesignFilterFactory::newFilter( std::string const & type )
 {
 	filters::Filters_map::const_iterator iter( dock_design_filter_map_.find( type ) );
 	if ( iter != dock_design_filter_map_.end() ) {
@@ -65,8 +65,7 @@ DockDesignFilterFactory::newFilter(	std::string const & type )
 			utility_exit_with_message( "Error: FilterOP prototype for " + type + " is NULL!" );
 		}
 		return iter->second->fresh_instance();
-	}
-	else {
+	} else {
 		utility_exit_with_message( type + " is not known to the FilterFactory. Was it registered via the add_type method?" );
 		return NULL;
 	}
@@ -83,8 +82,9 @@ DockDesignFilterFactory::newFilter(
 {
 	FilterOP filter( newFilter( tag->getName() ) );
 	runtime_assert( filter != 0 );
-	if ( ! tag->hasOption("name") )
+	if ( ! tag->hasOption("name") ) {
 		utility_exit_with_message("Can't define unnamed Filter");
+	}
 	filter->set_user_defined_name( tag->getOption<std::string>("name") );
 	filter->parse_my_tag( tag, data, filters, movers, pose );
 	// if confidence specified, link to StochasticFilter and wrap inside CompoundFilter

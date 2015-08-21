@@ -42,40 +42,40 @@ namespace simple_filters {
 
 using namespace core;
 
-#ifdef  __native_client__ 
+#ifdef  __native_client__
 #define system(a) 1
 #endif
 
 
 CamShiftEvaluator::CamShiftEvaluator( std::string tag, std::string cs_file )
-  : ExternalEvaluator( tag )
+: ExternalEvaluator( tag )
 {
-	#ifdef WIN32
+#ifdef WIN32
 	utility_exit_with_message("don't use CamShiftEvaluator on a BillBox");
-  #endif
-	//	if (!utility::file::file_exists( scratch_dir()+"/SPARTA" ) ) {
+#endif
+	// if (!utility::file::file_exists( scratch_dir()+"/SPARTA" ) ) {
 	// std::string command( "cp -Rf $HOME/SPARTA "+scratch_dir());
 	std::string command( "rsync -azvu $HOME/camshift-1.35.0 "+scratch_dir());
 	int ret(system(command.c_str()));
-	if( ret ){
+	if ( ret ) {
 		utility_exit_with_message("System command failed:'" + command + "'" );
 	}
 
 
-  std::string command2( "rsync -azvu $HOME/scripts/calculate_cs_rms.pl "+scratch_dir());
-  int ret2(system(command2.c_str()));
-  if( ret2 ){
-    utility_exit_with_message("System command failed:'" + command2 + "'" );
-  }
+	std::string command2( "rsync -azvu $HOME/scripts/calculate_cs_rms.pl "+scratch_dir());
+	int ret2(system(command2.c_str()));
+	if ( ret2 ) {
+		utility_exit_with_message("System command failed:'" + command2 + "'" );
+	}
 
-		//}
+	//}
 	set_command( "export CAMSHIFT_DIR="+scratch_dir()+
 		"/camshift-1.35.0; $CAMSHIFT_DIR/bin/camshift --data ~/camshift-1.35.0/data/ --pdb __POSE.pdb >tmpc_RESULT "
-    "; perl " +scratch_dir()+"/calculate_cs_rms.pl "+cs_file+" tmpc_RESULT > __RESULT" );
+		"; perl " +scratch_dir()+"/calculate_cs_rms.pl "+cs_file+" tmpc_RESULT > __RESULT" );
 }
 
 bool CamShiftEvaluator::applicable( pose::Pose const& pose ) const {
-  return pose.is_fullatom();
+	return pose.is_fullatom();
 }
 
 

@@ -126,66 +126,66 @@ Vector
 HackAroEnergy::get_centroid( conformation::Residue const & rsd ) const
 {
 
-  Vector centroid( 0.0 );
-  Size numatoms = 0;
-  for ( Size i=rsd.first_sidechain_atom(); i<= rsd.nheavyatoms(); ++i ) {
-    centroid += rsd.xyz(i);
-    numatoms++;
-  }
-  if (numatoms > 0 ) {
+	Vector centroid( 0.0 );
+	Size numatoms = 0;
+	for ( Size i=rsd.first_sidechain_atom(); i<= rsd.nheavyatoms(); ++i ) {
+		centroid += rsd.xyz(i);
+		numatoms++;
+	}
+	if ( numatoms > 0 ) {
 		centroid /= static_cast< Real >( numatoms );
 	} else { //Yo, is this a glycine?
-	debug_assert( rsd.aa() == chemical::aa_gly );
+		debug_assert( rsd.aa() == chemical::aa_gly );
 		centroid = rsd.xyz( "CA" );
 	}
 
-  return centroid;
+	return centroid;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 kinematics::Stub
 HackAroEnergy::get_base_coordinate_system( conformation::Residue const & rsd, Vector const & centroid ) const
 {
-  using namespace chemical;
-  Size res_type = rsd.aa();
+	using namespace chemical;
+	Size res_type = rsd.aa();
 
-  Vector x,y,z;
+	Vector x,y,z;
 
-  // Make an axis pointing from base centroid to Watson-Crick edge.
-  std::string WC_atom;
-  if ( res_type == aa_phe ) WC_atom = " CZ ";
-  if ( res_type == aa_tyr ) WC_atom = " CZ ";
-  if ( res_type == aa_trp ) WC_atom = " CZ2";
+	// Make an axis pointing from base centroid to Watson-Crick edge.
+	std::string WC_atom;
+	if ( res_type == aa_phe ) WC_atom = " CZ ";
+	if ( res_type == aa_tyr ) WC_atom = " CZ ";
+	if ( res_type == aa_trp ) WC_atom = " CZ2";
 
-  Vector const WC_coord (rsd.xyz( WC_atom ) );
-  x = WC_coord - centroid;
-  x.normalize();
+	Vector const WC_coord (rsd.xyz( WC_atom ) );
+	x = WC_coord - centroid;
+	x.normalize();
 
-  // Make a perpendicular axis pointing from centroid towards
-  // Hoogstein edge (e.g., major groove in a double helix).
-  std::string H_atom;
-  if ( res_type == aa_phe ) H_atom = " CD1";
-  if ( res_type == aa_tyr ) H_atom = " CD1";
-  if ( res_type == aa_trp ) H_atom = " CD1";
+	// Make a perpendicular axis pointing from centroid towards
+	// Hoogstein edge (e.g., major groove in a double helix).
+	std::string H_atom;
+	if ( res_type == aa_phe ) H_atom = " CD1";
+	if ( res_type == aa_tyr ) H_atom = " CD1";
+	if ( res_type == aa_trp ) H_atom = " CD1";
 
-  Vector const H_coord (rsd.xyz( H_atom ) );
-  y = H_coord - centroid; //not orthonormal yet...
-  z = cross(x, y);
-  z.normalize(); // Should poSize roughly 5' to 3' if in a double helix.
+	Vector const H_coord (rsd.xyz( H_atom ) );
+	y = H_coord - centroid; //not orthonormal yet...
+	z = cross(x, y);
+	z.normalize(); // Should poSize roughly 5' to 3' if in a double helix.
 
-  y = cross(z, x);
-  y.normalize(); //not necessary but doesn't hurt.
+	y = cross(z, x);
+	y.normalize(); //not necessary but doesn't hurt.
 
-  //  std::cout << "WC : " << WC_coord << "   H : " << H_coord << "    centroid: " << centroid << std::endl;
+	//  std::cout << "WC : " << WC_coord << "   H : " << H_coord << "    centroid: " << centroid << std::endl;
 
-  return kinematics::Stub( Matrix::cols( x, y, z ), centroid );
+	return kinematics::Stub( Matrix::cols( x, y, z ), centroid );
 }
 
 ///////////////////////////////////////////////////////////////
 Real
 HackAroEnergy::get_aro_axis_score_ANGLE(
-   Real const cos_theta,
-	 Real & deriv ) const{
+	Real const cos_theta,
+	Real & deriv ) const{
 
 	//Size cos_theta_bin;
 
@@ -198,15 +198,15 @@ HackAroEnergy::get_aro_axis_score_ANGLE(
 
 	// DON'T KEEP THIS AROUND!
 	//deriv = 0.0;
-	//	return 1.0;
+	// return 1.0;
 
 }
 
 ///////////////////////////////////////////////////////////////
 Real
 HackAroEnergy::get_aro_axis_score_DIST(
-   Real const dist,
-	 Real & deriv ) const{
+	Real const dist,
+	Real & deriv ) const{
 
 	using namespace core::scoring::constraints;
 
@@ -235,8 +235,8 @@ HackAroEnergy::residue_pair_energy_aro_aro(
 ) const
 {
 
-debug_assert( rsd1.is_aromatic() );
-debug_assert( rsd2.is_aromatic() );
+	debug_assert( rsd1.is_aromatic() );
+	debug_assert( rsd2.is_aromatic() );
 
 	Vector centroid1 = get_centroid( rsd1 );
 	kinematics::Stub stub1 = get_base_coordinate_system( rsd1, centroid1 );
@@ -275,7 +275,7 @@ HackAroEnergy::eval_atom_derivative(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
- 	) const
+) const
 {
 
 	using namespace chemical;
@@ -287,7 +287,7 @@ HackAroEnergy::eval_atom_derivative(
 	if ( !rsd1.is_aromatic() ) return;
 
 	// Only works for proteins!!!!!!!!!!!!
-	if (i != chi2_torsion_atom_index( rsd1 ) ) return;
+	if ( i != chi2_torsion_atom_index( rsd1 ) ) return;
 
 	int const pos1_map( domain_map( pos1 ) );
 	bool const pos1_fixed( pos1_map != 0 );
@@ -311,7 +311,7 @@ HackAroEnergy::eval_atom_derivative(
 
 		if ( !rsd2.is_aromatic() ) continue;
 
-	debug_assert( pos2 != pos1 );
+		debug_assert( pos2 != pos1 );
 
 		eval_atom_derivative_aro_aro( rsd1, rsd2, weights, F1, F2 );
 
@@ -328,11 +328,11 @@ HackAroEnergy::eval_atom_derivative_aro_aro(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
- 	) const
+) const
 {
 
-debug_assert( rsd1.is_aromatic() );
-debug_assert( rsd2.is_aromatic() );
+	debug_assert( rsd1.is_aromatic() );
+	debug_assert( rsd2.is_aromatic() );
 
 	Vector centroid1 = get_centroid( rsd1 );
 	kinematics::Stub stub1 = get_base_coordinate_system( rsd1, centroid1 );

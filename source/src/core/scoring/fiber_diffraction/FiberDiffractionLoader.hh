@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/fiber_diffraction/FiberDiffractionLoader.hh
-/// @brief  Options for constructing fiber diffraction layer lines 
+/// @brief  Options for constructing fiber diffraction layer lines
 /// @author Wojciech Potrzebowski and Ingemar Andre
 
 #ifndef INCLUDED_core_scoring_fiber_diffraction_FiberDiffractionLoader_hh

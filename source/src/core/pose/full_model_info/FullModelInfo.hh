@@ -47,28 +47,28 @@ public:
 
 
 	FullModelInfo( std::string const & full_sequence,
-								 utility::vector1< Size > const & cutpoint_open_in_full_model,
-								 utility::vector1< Size > const & res_numbers_in_pose );
+		utility::vector1< Size > const & cutpoint_open_in_full_model,
+		utility::vector1< Size > const & res_numbers_in_pose );
 
 	FullModelInfo( FullModelParametersCOP full_model_parameters );
 
 	FullModelInfo( pose::Pose & pose );
 
-  FullModelInfo( FullModelInfo const & src );
+	FullModelInfo( FullModelInfo const & src );
 
-  ~FullModelInfo();
+	~FullModelInfo();
 
 	basic::datacache::CacheableDataOP
-  clone() const
-  {
-    return basic::datacache::CacheableDataOP( new FullModelInfo( *this ) );
-  }
+	clone() const
+	{
+		return basic::datacache::CacheableDataOP( new FullModelInfo( *this ) );
+	}
 
 	FullModelInfoOP
-  clone_info() const
-  {
-    return FullModelInfoOP( new FullModelInfo( *this ) );
-  }
+	clone_info() const
+	{
+		return FullModelInfoOP( new FullModelInfo( *this ) );
+	}
 
 	// properties of full model.
 	FullModelParametersCOP full_model_parameters() const;
@@ -138,8 +138,8 @@ private:
 
 	void
 	get_sequence_with_gaps_filled_with_n( pose::Pose const & pose,
-																				std::string & sequence,
-																				utility::vector1< Size > & full_numbering ) const;
+		std::string & sequence,
+		utility::vector1< Size > & full_numbering ) const;
 
 private:
 

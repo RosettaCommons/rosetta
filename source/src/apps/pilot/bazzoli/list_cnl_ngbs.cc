@@ -11,29 +11,29 @@
 /// @brief Lists the residues that are neighbor to a given constellation.
 ///
 /// @param[in] -s <PDBFIL>, where <PDBFIL> is the path to the PDB file
-/// 	containing the protein.
+///  containing the protein.
 ///
 /// @param[in] -cnl_resfile <CNLFIL>, where <CNLFIL> is the path to a file
-/// 	enumerating the residues that form the constellation. The file has the
-/// 	following format:
-/// 	I1 C1\n
-/// 	...
-/// 	IN CN\n ,
-/// 	where Ii and Ci are the residue index and the chain ID, respectively, of
-/// 	the ith residue forming the constellation (i=1,...,N).
+///  enumerating the residues that form the constellation. The file has the
+///  following format:
+///  I1 C1\n
+///  ...
+///  IN CN\n ,
+///  where Ii and Ci are the residue index and the chain ID, respectively, of
+///  the ith residue forming the constellation (i=1,...,N).
 ///
 /// @details The ith output line contains the identifier of the ith residue in
-/// 	the pose that is neighbor to the constellation (i=1,...,M, where M is the
-/// 	number of neighbors).
+///  the pose that is neighbor to the constellation (i=1,...,M, where M is the
+///  number of neighbors).
 ///
 /// @details In the current implementation, a residue is neighbor to the
-/// 	constellation iff it is neighbor to at least one residue in the
-/// 	constellation; in particular, residue B is neighbor to constellation
-/// 	residue A iff protocols::neighbor::in_ngbat_sphere(A, B, pose) returns
-/// 	true.
+///  constellation iff it is neighbor to at least one residue in the
+///  constellation; in particular, residue B is neighbor to constellation
+///  residue A iff protocols::neighbor::in_ngbat_sphere(A, B, pose) returns
+///  true.
 ///
 /// @details A chain identifier in <CNLFIL> that is equal to '_' indicates a
-/// 	chain identifier of ' ' in <PDBFIL>.
+///  chain identifier of ' ' in <PDBFIL>.
 ///
 /// @author Andrea Bazzoli (bazzoli@ku.edu)
 
@@ -76,9 +76,11 @@ OPT_KEY(String, cnl_resfile)
 ///
 Size get_pose_resnum(int const pdbnum, char const pdbchn, Pose& ps) {
 
-	for ( Size j = 1; j <= ps.total_residue(); ++j )
-		if ( ( ps.pdb_info()->chain(j) == pdbchn ) && (ps.pdb_info()->number(j) == pdbnum) )
+	for ( Size j = 1; j <= ps.total_residue(); ++j ) {
+		if ( ( ps.pdb_info()->chain(j) == pdbchn ) && (ps.pdb_info()->number(j) == pdbnum) ) {
 			return j;
+		}
+	}
 
 	// residue not found
 	TR << "ERROR!! Could not find residue" << pdbnum << " and chain " << pdbchn << std::endl;
@@ -88,7 +90,7 @@ Size get_pose_resnum(int const pdbnum, char const pdbchn, Pose& ps) {
 
 /// @brief: prints the identifiers of a set of residues
 ///
-///	@param[in]: vec indexes of the residues in the pose
+/// @param[in]: vec indexes of the residues in the pose
 /// @param[in]: ps the pose
 /// @param[in]: tr output tracer
 ///
@@ -97,7 +99,7 @@ Size get_pose_resnum(int const pdbnum, char const pdbchn, Pose& ps) {
 ///
 void print_res_ids(vector1<Size> const& vec, Pose const& ps, basic::Tracer& tr) {
 
-	for(Size i=1; i<=vec.size(); ++i) {
+	for ( Size i=1; i<=vec.size(); ++i ) {
 		Size ri = vec[i];
 		tr << ri << '(' << ps.pdb_info()->chain(ri) << ps.pdb_info()->number(ri) <<
 			ps.pdb_info()->icode(ri) << ')' << std::endl;
@@ -108,40 +110,41 @@ void print_res_ids(vector1<Size> const& vec, Pose const& ps, basic::Tracer& tr) 
 int main( int argc, char * argv [] )
 {
 
-  try {
+	try {
 
-	NEW_OPT( cnl_resfile, "set of residues forming the constellation", "cnl_resfile.txt" );
+		NEW_OPT( cnl_resfile, "set of residues forming the constellation", "cnl_resfile.txt" );
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	// create pose from pdb
-	core::pose::Pose ps;
-	std::string const input_pdb_name( basic::options::start_file() );
-	core::import_pose::pose_from_pdb( ps, input_pdb_name );
+		// create pose from pdb
+		core::pose::Pose ps;
+		std::string const input_pdb_name( basic::options::start_file() );
+		core::import_pose::pose_from_pdb( ps, input_pdb_name );
 
-	// load constellation: cnl[i] contains the pose index of the ith residue in
-	// the constellation input file (i=1,...,N, where N is the number of residues
-	// in the file)
-	std::string const cnlf = basic::options::option[cnl_resfile];
-	std::ifstream cnlfs(cnlf.c_str());
-	vector1<Size> cnl;
-	int ri;
-	char rc;
-	while(cnlfs >> ri >> rc) {
-		if(rc == '_')
-			rc = ' ';
-		cnl.push_back(get_pose_resnum(ri, rc, ps));
+		// load constellation: cnl[i] contains the pose index of the ith residue in
+		// the constellation input file (i=1,...,N, where N is the number of residues
+		// in the file)
+		std::string const cnlf = basic::options::option[cnl_resfile];
+		std::ifstream cnlfs(cnlf.c_str());
+		vector1<Size> cnl;
+		int ri;
+		char rc;
+		while ( cnlfs >> ri >> rc ) {
+			if ( rc == '_' ) {
+				rc = ' ';
+			}
+			cnl.push_back(get_pose_resnum(ri, rc, ps));
+		}
+
+		// find neighbors and list them on screen
+		protocols::neighbor::Neighborhood n(cnl, ps,
+			protocols::neighbor::in_ngbat_sphere);
+
+		print_res_ids(n.get(), ps, TR);
+
 	}
-
-	// find neighbors and list them on screen
-	protocols::neighbor::Neighborhood n(cnl, ps,
-		protocols::neighbor::in_ngbat_sphere);
-
-	print_res_ids(n.get(), ps, TR);
-
-	}
-	catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
-		return -1;
-  }
+catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+	return -1;
+}
 }

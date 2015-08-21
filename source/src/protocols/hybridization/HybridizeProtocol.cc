@@ -273,7 +273,7 @@ HybridizeProtocol::init() {
 	relax_repeats_ = option[ basic::options::OptionKeys::relax::default_repeats ]();
 
 	// disulfide file
-	if (option[ in::fix_disulf ].user()) {
+	if ( option[ in::fix_disulf ].user() ) {
 		disulf_file_ = option[ in::fix_disulf ]();
 	}
 
@@ -292,10 +292,9 @@ HybridizeProtocol::init() {
 	// native
 	if ( option[ in::file::native ].user() ) {
 		native_ = core::pose::PoseOP( new core::pose::Pose );
-		if (option[in::file::fullatom]()){
+		if ( option[in::file::fullatom]() ) {
 			core::import_pose::pose_from_pdb( *native_, option[ in::file::native ]() );
-		}
-		else {
+		} else {
 			core::chemical::ResidueTypeSetCOP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 			core::import_pose::pose_from_pdb( *native_, *residue_set, option[ in::file::native ]()  );
 		}
@@ -306,7 +305,7 @@ HybridizeProtocol::init() {
 	}
 
 	// strand pairings
- 	pairings_file_ = option[jumps::pairing_file]();
+	pairings_file_ = option[jumps::pairing_file]();
 	if ( option[jumps::sheets].user() ) {
 		sheets_ = option[jumps::sheets]();
 	} else {
@@ -317,11 +316,11 @@ HybridizeProtocol::init() {
 
 void
 HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
-	if (fragments_big_.size() > 0 && fragments_small_.size() > 0) return;
+	if ( fragments_big_.size() > 0 && fragments_small_.size() > 0 ) return;
 
 	core::Size fragbiglen=9;
 
-	if (!fragments_big_.size()) {
+	if ( !fragments_big_.size() ) {
 		// number of residues
 		core::Size nres_tgt = pose.total_residue();
 		core::conformation::symmetry::SymmetryInfoCOP symm_info;
@@ -331,8 +330,8 @@ HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
 			symm_info = SymmConf.Symmetry_Info();
 			nres_tgt = symm_info->num_independent_residues();
 		}
-		if (pose.residue(nres_tgt).aa() == core::chemical::aa_vrt) nres_tgt--;
-		while (!pose.residue(nres_tgt).is_protein()) nres_tgt--;
+		if ( pose.residue(nres_tgt).aa() == core::chemical::aa_vrt ) nres_tgt--;
+		while ( !pose.residue(nres_tgt).is_protein() ) nres_tgt--;
 
 		fragbiglen = std::min( fragbiglen, nres_tgt );
 
@@ -344,30 +343,30 @@ HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
 
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
-		if (option[ OptionKeys::in::file::psipred_ss2 ].user()) {
+		if ( option[ OptionKeys::in::file::psipred_ss2 ].user() ) {
 			utility::vector1< char > psipred = read_psipred_ss2_file( pose );
 			for ( core::Size j=1; j<=nres_tgt; ++j ) {
 				tgt_ss[j-1] = psipred[j];
 			}
 		} else {
 			// templates vote on secstruct
-			for (core::Size i=1; i<=templates_.size(); ++i) {
-				for (core::Size j=1; j<=templates_[i]->total_residue(); ++j ) {
-					if (!templates_[i]->residue(j).is_protein()) continue;
+			for ( core::Size i=1; i<=templates_.size(); ++i ) {
+				for ( core::Size j=1; j<=templates_[i]->total_residue(); ++j ) {
+					if ( !templates_[i]->residue(j).is_protein() ) continue;
 					core::Size tgt_pos = templates_[i]->pdb_info()->number(j);
 
 					runtime_assert( tgt_pos<=nres_tgt );
 					char tgt_ss_j = templates_[i]->secstruct(j);
 
-					if (tgt_ss[tgt_pos-1] == '0') {
+					if ( tgt_ss[tgt_pos-1] == '0' ) {
 						tgt_ss[tgt_pos-1] = tgt_ss_j;
-					} else if (tgt_ss[tgt_pos-1] != tgt_ss_j) {
+					} else if ( tgt_ss[tgt_pos-1] != tgt_ss_j ) {
 						tgt_ss[tgt_pos-1] = 'D'; // templates disagree
 					}
 				}
 			}
 			for ( core::Size j=1; j<=nres_tgt; ++j ) {
-				if (tgt_ss[j-1] == '0') tgt_ss[j-1] = 'D';
+				if ( tgt_ss[j-1] == '0' ) tgt_ss[j-1] = 'D';
 			}
 		}
 
@@ -376,12 +375,12 @@ HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
 			core::fragment::FrameOP frame( new core::fragment::Frame( j, fragbiglen ) );
 			frame->add_fragment(
 				core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa(
-						tgt_ss.substr( j-1, fragbiglen ), tgt_seq.substr( j-1, fragbiglen ), 25, true, core::fragment::IndependentBBTorsionSRFD() ) );
+				tgt_ss.substr( j-1, fragbiglen ), tgt_seq.substr( j-1, fragbiglen ), 25, true, core::fragment::IndependentBBTorsionSRFD() ) );
 			frags->add( frame );
 		}
 		fragments_big_.push_back( frags );
 	}
-	if (!fragments_small_.size()) {
+	if ( !fragments_small_.size() ) {
 		core::fragment::FragSetOP frags( new core::fragment::ConstantLengthFragSet( 3 ) );
 
 		// make them from big fragments
@@ -398,59 +397,59 @@ HybridizeProtocol::add_fragment_csts( core::pose::Pose &pose ) {
 	core::fragment::FragSetOP frags = fragments_small_[1];
 
 	// stolen from SecondaryStructure.cc
-  if ( frags->global_offset() != 0 ){
-    TR.Error << "[ERROR] SecondaryStructure computations must be carried out with local coordinates (global offset of fragments must be 0)." << std::endl;
-    runtime_assert( false );
-  }
+	if ( frags->global_offset() != 0 ) {
+		TR.Error << "[ERROR] SecondaryStructure computations must be carried out with local coordinates (global offset of fragments must be 0)." << std::endl;
+		runtime_assert( false );
+	}
 
 	// 1 - collect fragment statistics
-  Size frag_nres = frags->max_pos();
+	Size frag_nres = frags->max_pos();
 	utility::vector1< utility::vector1< core::Real > > phi_distr( frag_nres, utility::vector1< core::Real >(36,0.0) );
 	utility::vector1< utility::vector1< core::Real > > psi_distr( frag_nres, utility::vector1< core::Real >(36,0.0) );
 	utility::vector1< int > N( frag_nres, 0 );
 
-  for ( core::fragment::FragID_Iterator it=frags->begin(), eit=frags->end(); it!=eit; ++it ) { //carefully checked that I don't change FrameData
-    core::Size loop_start = 1;
-    core::Size loop_end = it->frame().length();
-    for ( core::Size fpos = loop_start; fpos <= loop_end; ++fpos ) {
-      core::fragment::BBTorsionSRFDCOP res_i =
-					utility::pointer::dynamic_pointer_cast<const core::fragment::BBTorsionSRFD> (it->fragment().get_residue( fpos ) );
+	for ( core::fragment::FragID_Iterator it=frags->begin(), eit=frags->end(); it!=eit; ++it ) { //carefully checked that I don't change FrameData
+		core::Size loop_start = 1;
+		core::Size loop_end = it->frame().length();
+		for ( core::Size fpos = loop_start; fpos <= loop_end; ++fpos ) {
+			core::fragment::BBTorsionSRFDCOP res_i =
+				utility::pointer::dynamic_pointer_cast<const core::fragment::BBTorsionSRFD> (it->fragment().get_residue( fpos ) );
 
-      Size pos = it->frame().seqpos( fpos );
-			core::Real phi = std::fmod( res_i->torsion(1), 360.0 ); if (phi<0) phi +=360.0;
-			core::Real psi = std::fmod( res_i->torsion(2), 360.0 ); if (psi<0) psi +=360.0;
+			Size pos = it->frame().seqpos( fpos );
+			core::Real phi = std::fmod( res_i->torsion(1), 360.0 ); if ( phi<0 ) phi +=360.0;
+			core::Real psi = std::fmod( res_i->torsion(2), 360.0 ); if ( psi<0 ) psi +=360.0;
 
-			core::Size phibin = (core::Size) std::floor( phi/10.0 ); if (phibin == 36) phibin=0;
-			core::Size psibin = (core::Size) std::floor( psi/10.0 ); if (psibin == 36) psibin=0;
+			core::Size phibin = (core::Size) std::floor( phi/10.0 ); if ( phibin == 36 ) phibin=0;
+			core::Size psibin = (core::Size) std::floor( psi/10.0 ); if ( psibin == 36 ) psibin=0;
 
 			phi_distr[pos][phibin+1]+=1.0;
 			psi_distr[pos][psibin+1]+=1.0;
 			N[pos]++;
-    }
-  }
+		}
+	}
 
 	// smoothing
 	//core::Real smoothing[7] = {0.09, 0.14, 0.175, 0.19, 0.175, 0.14, 0.09};  // very soft
 	core::Real smoothing[7] = {0.01, 0.05, 0.24, 0.40, 0.24, 0.05, 0.01}; // less soft
-	for (int i=1; i<=(int)frag_nres; ++i) {
+	for ( int i=1; i<=(int)frag_nres; ++i ) {
 		utility::vector1< core::Real > phi_i = phi_distr[i];
 		utility::vector1< core::Real > psi_i = psi_distr[i];
-		for (int j=1; j<=36; ++j) {
+		for ( int j=1; j<=36; ++j ) {
 			phi_distr[i][j] = smoothing[0]*phi_i[1+((j+32)%36)]
-			                + smoothing[1]*phi_i[1+((j+33)%36)]
-			                + smoothing[2]*phi_i[1+((j+34)%36)]
-			                + smoothing[3]*phi_i[1+((j+35)%36)]
-			                + smoothing[4]*phi_i[1+((j+0)%36)]
-			                + smoothing[5]*phi_i[1+((j+1)%36)]
-			                + smoothing[6]*phi_i[1+((j+2)%36)];
+				+ smoothing[1]*phi_i[1+((j+33)%36)]
+				+ smoothing[2]*phi_i[1+((j+34)%36)]
+				+ smoothing[3]*phi_i[1+((j+35)%36)]
+				+ smoothing[4]*phi_i[1+((j+0)%36)]
+				+ smoothing[5]*phi_i[1+((j+1)%36)]
+				+ smoothing[6]*phi_i[1+((j+2)%36)];
 
 			psi_distr[i][j] = smoothing[0]*psi_i[1+((j+32)%36)]
-			                + smoothing[1]*psi_i[1+((j+33)%36)]
-			                + smoothing[2]*psi_i[1+((j+34)%36)]
-			                + smoothing[3]*psi_i[1+((j+35)%36)]
-			                + smoothing[4]*psi_i[1+((j+0)%36)]
-			                + smoothing[5]*psi_i[1+((j+1)%36)]
-			                + smoothing[6]*psi_i[1+((j+2)%36)];
+				+ smoothing[1]*psi_i[1+((j+33)%36)]
+				+ smoothing[2]*psi_i[1+((j+34)%36)]
+				+ smoothing[3]*psi_i[1+((j+35)%36)]
+				+ smoothing[4]*psi_i[1+((j+0)%36)]
+				+ smoothing[5]*psi_i[1+((j+1)%36)]
+				+ smoothing[6]*psi_i[1+((j+2)%36)];
 
 			phi_distr[i][j] /= N[i];
 			psi_distr[i][j] /= N[i];
@@ -459,8 +458,8 @@ HybridizeProtocol::add_fragment_csts( core::pose::Pose &pose ) {
 
 	// convert to energy
 	core::Real mest=0.1;
-	for (int i=1; i<=(int)frag_nres; ++i) {
-		for (int j=1; j<=36; ++j) {
+	for ( int i=1; i<=(int)frag_nres; ++i ) {
+		for ( int j=1; j<=36; ++j ) {
 			// shift so max is 0
 			phi_distr[i][j] = -std::log( mest/36.0 + (1-mest)*phi_distr[i][j] ) + std::log( mest/36.0 ) ;
 			psi_distr[i][j] = -std::log( mest/36.0 + (1-mest)*psi_distr[i][j] ) + std::log( mest/36.0 ) ;
@@ -476,23 +475,23 @@ HybridizeProtocol::add_fragment_csts( core::pose::Pose &pose ) {
 	}
 
 	// finally .. add constraints
-	for (int i=1; i<=(int)frag_nres; ++i) {
+	for ( int i=1; i<=(int)frag_nres; ++i ) {
 		using namespace core::scoring::func;
 		using namespace core::scoring::constraints;
 
-		if (!pose.residue(i).is_protein()) continue;
+		if ( !pose.residue(i).is_protein() ) continue;
 
-		if (i>1 && pose.residue(i-1).is_protein()) {
+		if ( i>1 && pose.residue(i-1).is_protein() ) {
 			FuncOP phi_func( new CircularSplineFunc( 1.0, phi_distr[i] ) );
 			ConstraintOP phi_cst( new DihedralConstraint(
-					core::id::AtomID(3,i-1),core::id::AtomID(1,i),core::id::AtomID(2,i),core::id::AtomID(3,i), phi_func  ) );
+				core::id::AtomID(3,i-1),core::id::AtomID(1,i),core::id::AtomID(2,i),core::id::AtomID(3,i), phi_func  ) );
 			pose.add_constraint( scoring::constraints::ConstraintCOP( phi_cst ) );
 		}
 
-		if (i<(int)frag_nres && pose.residue(i+1).is_protein()) {
+		if ( i<(int)frag_nres && pose.residue(i+1).is_protein() ) {
 			FuncOP psi_func( new CircularSplineFunc( 1.0, psi_distr[i] ) );
 			ConstraintOP psi_cst( new DihedralConstraint(
-					core::id::AtomID(1,i),core::id::AtomID(2,i),core::id::AtomID(3,i),core::id::AtomID(1,i+1), psi_func  ) );
+				core::id::AtomID(1,i),core::id::AtomID(2,i),core::id::AtomID(3,i),core::id::AtomID(1,i+1), psi_func  ) );
 			pose.add_constraint( scoring::constraints::ConstraintCOP( psi_cst ) );
 		}
 	}
@@ -500,20 +499,21 @@ HybridizeProtocol::add_fragment_csts( core::pose::Pose &pose ) {
 
 void
 HybridizeProtocol::initialize_and_sample_loops(
-		core::pose::Pose &pose,
-		core::pose::PoseOP chosen_templ,
-		protocols::loops::Loops template_contigs,
-		core::scoring::ScoreFunctionOP scorefxn)
+	core::pose::Pose &pose,
+	core::pose::PoseOP chosen_templ,
+	protocols::loops::Loops template_contigs,
+	core::scoring::ScoreFunctionOP scorefxn)
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
 	// xyz copy starting model
-	for (Size i=1; i<=chosen_templ->total_residue(); ++i)
-		for (Size j=1; j<=chosen_templ->residue(i).natoms(); ++j) {
+	for ( Size i=1; i<=chosen_templ->total_residue(); ++i ) {
+		for ( Size j=1; j<=chosen_templ->residue(i).natoms(); ++j ) {
 			core::id::AtomID src(j,i), tgt(j, chosen_templ->pdb_info()->number(i));
 			pose.set_xyz( tgt, chosen_templ->xyz( src ) );
 		}
+	}
 
 	// make loops as inverse of template_contigs
 	TR << "CONTIGS" << std::endl << template_contigs << std::endl;
@@ -529,25 +529,25 @@ HybridizeProtocol::initialize_and_sample_loops(
 		nres_tgt = symm_info->num_independent_residues();
 	}
 
-	if (pose.residue(nres_tgt).aa() == core::chemical::aa_vrt) nres_tgt--;
+	if ( pose.residue(nres_tgt).aa() == core::chemical::aa_vrt ) nres_tgt--;
 
 	protocols::loops::LoopsOP loops( new protocols::loops::Loops );
 	utility::vector1< bool > templ_coverage(nres_tgt, false);
 
-	for (Size i=1; i<=chosen_templ->total_residue(); ++i) {
+	for ( Size i=1; i<=chosen_templ->total_residue(); ++i ) {
 		core::Size cres = chosen_templ->pdb_info()->number(i);
 		templ_coverage[cres] = true;
 	}
 
 	// remove 1-3 residue "segments"
-	for (Size i=1; i<=nres_tgt-2; ++i) {
-		if (!templ_coverage[i] && templ_coverage[i+1] && !templ_coverage[i+2]) {
+	for ( Size i=1; i<=nres_tgt-2; ++i ) {
+		if ( !templ_coverage[i] && templ_coverage[i+1] && !templ_coverage[i+2] ) {
 			templ_coverage[i+1]=false;
-		} else if(i<=nres_tgt-3 && !templ_coverage[i] && templ_coverage[i+1] && templ_coverage[i+2] && !templ_coverage[i+3]) {
+		} else if ( i<=nres_tgt-3 && !templ_coverage[i] && templ_coverage[i+1] && templ_coverage[i+2] && !templ_coverage[i+3] ) {
 			templ_coverage[i+1]=false;
 			templ_coverage[i+2]=false;
-		} else if(i<=nres_tgt-4 &&
-		          !templ_coverage[i] && templ_coverage[i+1] && templ_coverage[i+2] && templ_coverage[i+3] && !templ_coverage[i+4]) {
+		} else if ( i<=nres_tgt-4 &&
+				!templ_coverage[i] && templ_coverage[i+1] && templ_coverage[i+2] && templ_coverage[i+3] && !templ_coverage[i+4] ) {
 			templ_coverage[i+1]=false;
 			templ_coverage[i+2]=false;
 			templ_coverage[i+3]=false;
@@ -556,31 +556,31 @@ HybridizeProtocol::initialize_and_sample_loops(
 	// make loopfile
 	bool inloop=!templ_coverage[1];
 	core::Size loopstart=1, loopstop;
-	for (Size i=2; i<=nres_tgt; ++i) {
-		if (templ_coverage[i] && inloop) {
+	for ( Size i=2; i<=nres_tgt; ++i ) {
+		if ( templ_coverage[i] && inloop ) {
 			inloop = false;
 			loopstop = i;
-			if (loopstop < loopstart + 2) {
-				if (loopstart>1) loopstart--;
-				if (loopstop<nres_tgt) loopstop++;
+			if ( loopstop < loopstart + 2 ) {
+				if ( loopstart>1 ) loopstart--;
+				if ( loopstop<nres_tgt ) loopstop++;
 			}
 			loops->add_loop( loopstart,loopstop );
-		} else if (!templ_coverage[i] && !inloop) {
+		} else if ( !templ_coverage[i] && !inloop ) {
 			// start loop
 			inloop = true;
 			loopstart = i-1;
 		}
 	}
-	if (inloop) {
+	if ( inloop ) {
 		// end loop
 		loopstop = nres_tgt;
-		while (loopstop < loopstart + 2) { loopstart--; }
+		while ( loopstop < loopstart + 2 ) { loopstart--; }
 		loops->add_loop( loopstart,loopstop );
 	}
 	TR << "LOOPS" << std::endl << *loops << std::endl;
 
 	// now do insertions
-	if (loops->size() != 0) {
+	if ( loops->size() != 0 ) {
 		// set foldtree + variants
 		loops->auto_choose_cutpoints(pose);
 		core::kinematics::FoldTree f_in=pose.fold_tree(), f_new;
@@ -590,8 +590,8 @@ HybridizeProtocol::initialize_and_sample_loops(
 
 		// set movemap
 		core::kinematics::MoveMapOP mm_loop( new core::kinematics::MoveMap() );
-		for( protocols::loops::Loops::const_iterator it=loops->begin(), it_end=loops->end(); it!=it_end; ++it ) {
-			for( Size i=it->start(); i<=it->stop(); ++i ) {
+		for ( protocols::loops::Loops::const_iterator it=loops->begin(), it_end=loops->end(); it!=it_end; ++it ) {
+			for ( Size i=it->start(); i<=it->stop(); ++i ) {
 				mm_loop->set_bb(i, true);
 				mm_loop->set_chi(i, true); // chi of loop residues
 			}
@@ -609,7 +609,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 		frag9mover->set_check_ss( false ); frag9mover->enable_end_bias_check( false );
 
 		// extend + idealize loops
-		for( protocols::loops::Loops::const_iterator it=loops->begin(), it_end=loops->end(); it!=it_end; ++it ) {
+		for ( protocols::loops::Loops::const_iterator it=loops->begin(), it_end=loops->end(); it!=it_end; ++it ) {
 			protocols::loops::Loop to_idealize( *it );
 			protocols::loops::set_extended_torsions( pose, *it );
 		}
@@ -620,11 +620,11 @@ HybridizeProtocol::initialize_and_sample_loops(
 		protocols::moves::MonteCarloOP mc1( new protocols::moves::MonteCarlo( pose, *scorefxn, 2.0 ) );
 
 		core::Size neffcycles = (core::Size)(1000*option[cm::hybridize::stage1_increase_cycles]());
-		for (Size n=1; n<=neffcycles; ++n) {
+		for ( Size n=1; n<=neffcycles; ++n ) {
 			frag9mover->apply( pose ); (*scorefxn)(pose); mc1->boltzmann( pose , "frag9" );
 			frag3mover->apply( pose ); (*scorefxn)(pose); mc1->boltzmann( pose , "frag3" );
 
-			if (n%100 == 0) {
+			if ( n%100 == 0 ) {
 				mc1->show_scores();
 				mc1->show_counters();
 			}
@@ -634,11 +634,11 @@ HybridizeProtocol::initialize_and_sample_loops(
 		scorefxn->set_weight( core::scoring::linear_chainbreak, 2.0 );
 		(*scorefxn)(pose);
 		protocols::moves::MonteCarloOP mc2( new protocols::moves::MonteCarlo( pose, *scorefxn, 2.0 ) );
-		for (Size n=1; n<=neffcycles; ++n) {
+		for ( Size n=1; n<=neffcycles; ++n ) {
 			frag9mover->apply( pose ); (*scorefxn)(pose); mc2->boltzmann( pose , "frag9" );
 			frag3mover->apply( pose ); (*scorefxn)(pose); mc2->boltzmann( pose , "frag3" );
 
-			if (n%100 == 0) {
+			if ( n%100 == 0 ) {
 				mc2->show_scores();
 				mc2->show_counters();
 			}
@@ -661,12 +661,12 @@ void HybridizeProtocol::add_template(
 {
 	core::chemical::ResidueTypeSetCOP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 
-	if (template_fn == "extended") {
+	if ( template_fn == "extended" ) {
 		//
 		core::pose::PoseOP template_pose( new core::pose::Pose() );
 
 		// auto constraints make no sense
-		if (cst_fn == "AUTO") {
+		if ( cst_fn == "AUTO" ) {
 			TR.Error << "Warning!  Turning off auto constraints for extended pose" << std::endl;
 			cst_fn = "NONE";
 		}
@@ -714,8 +714,9 @@ void HybridizeProtocol::add_template(
 	protocols::loops::Loops contigs = protocols::loops::extract_continuous_chunks(*template_pose);
 	protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose, "HE", 3, 6, 3, 4);
 
-	if (chunks.num_loop() == 0)
+	if ( chunks.num_loop() == 0 ) {
 		chunks = contigs;
+	}
 
 	TR.Debug << "Chunks from template\n" << chunks << std::endl;
 	TR.Debug << "Contigs from template\n" << contigs << std::endl;
@@ -736,25 +737,25 @@ void HybridizeProtocol::add_template(
 // validate input templates match input sequence
 // TO DO: if only sequences mismatch try realigning
 void HybridizeProtocol::validate_template(
-		std::string filename,
-		std::string fasta,
-		core::pose::PoseOP template_pose)
+	std::string filename,
+	std::string fasta,
+	core::pose::PoseOP template_pose)
 {
 	core::Size nres_fasta = fasta.length(), nres_templ = template_pose->total_residue();
 	core::Size next_ligand = nres_fasta+1; // ligands must be sequentially numbered
 
-	for (core::Size i=1; i<=nres_templ; ++i) {
+	for ( core::Size i=1; i<=nres_templ; ++i ) {
 		char templ_aa = template_pose->residue(i).name1();
 		core::Size i_fasta = template_pose->pdb_info()->number(i);
 
 		// ligands
-		if (i_fasta > nres_fasta) {
+		if ( i_fasta > nres_fasta ) {
 			bool number_correct = (i_fasta==next_ligand);
 			bool is_ligand = !template_pose->residue(i).is_protein();
-			if (!(number_correct && is_ligand)) {
+			if ( !(number_correct && is_ligand) ) {
 				TR.Error << "Error in input numbering in template " << filename
 					<< " while reading residue " << i << std::endl;
-				if (!is_ligand) {
+				if ( !is_ligand ) {
 					TR.Error << "   Residue number " << i_fasta << " is outside of input fasta range." << std::endl;
 					utility_exit();
 				} else {
@@ -766,7 +767,7 @@ void HybridizeProtocol::validate_template(
 			next_ligand++;
 		} else {
 			char fasta_aa = fasta[i_fasta-1];
-			if (fasta_aa != templ_aa) {
+			if ( fasta_aa != templ_aa ) {
 				TR.Error << "Sequence mismatch between input fasta and template " << filename
 					<< " at residue " << i_fasta << std::endl;
 				TR.Error << "   Expected: " << fasta_aa << "   Saw: " << templ_aa << std::endl;
@@ -787,14 +788,15 @@ core::Size HybridizeProtocol::pick_starting_template( ) {
 }
 
 void HybridizeProtocol::domain_parse_templates(core::Size nres) {
-	if (domains_all_templ_.size() == templates_.size())
+	if ( domains_all_templ_.size() == templates_.size() ) {
 		return;
+	}
 
 	DDomainParse ddom(pcut_,hcut_,length_);
 
 	domains_all_templ_.resize( templates_.size() );
-	for (Size i_template=1; i_template<=templates_.size(); ++i_template) {
-		if (templates_[i_template]->total_residue() < 3) {
+	for ( Size i_template=1; i_template<=templates_.size(); ++i_template ) {
+		if ( templates_[i_template]->total_residue() < 3 ) {
 			continue;  // ???
 		}
 
@@ -802,8 +804,8 @@ void HybridizeProtocol::domain_parse_templates(core::Size nres) {
 
 		// convert domain numbering to target pose numbering
 		protocols::loops::Loops all_domains;
-		for (Size iloops=1; iloops<=domains_all_templ_[i_template].size(); ++iloops) {
-			for (Size iloop=1; iloop<=domains_all_templ_[i_template][iloops].num_loop(); ++iloop) {
+		for ( Size iloops=1; iloops<=domains_all_templ_[i_template].size(); ++iloops ) {
+			for ( Size iloop=1; iloop<=domains_all_templ_[i_template][iloops].num_loop(); ++iloop ) {
 				Size seqpos_start_pose = templates_[i_template]->pdb_info()->number(domains_all_templ_[i_template][iloops][iloop].start());
 				domains_all_templ_[i_template][iloops][iloop].set_start( seqpos_start_pose );
 
@@ -817,19 +819,19 @@ void HybridizeProtocol::domain_parse_templates(core::Size nres) {
 		// extend to cover full-length seq
 		// assumes no overlap in domain defs!
 		all_domains.sequential_order();
-		if (all_domains.num_loop() == 0) continue;
+		if ( all_domains.num_loop() == 0 ) continue;
 
 		std::map<core::Size,core::Size> remap_endpoints;
 		remap_endpoints [ all_domains[1].start() ] = 1;
 		remap_endpoints [ all_domains[all_domains.num_loop()].stop() ] = nres;
-		for (Size iloops=2; iloops<=all_domains.size(); ++iloops) {
+		for ( Size iloops=2; iloops<=all_domains.size(); ++iloops ) {
 			core::Size start_i = (all_domains[iloops-1].stop() + all_domains[iloops].start() + 1)/2;
 			remap_endpoints [ all_domains[iloops-1].stop() ] = start_i-1;
 			remap_endpoints [ all_domains[iloops].start() ] = start_i;
 		}
 
-		for (Size iloops=1; iloops<=domains_all_templ_[i_template].size(); ++iloops) {
-			for (Size iloop=1; iloop<=domains_all_templ_[i_template][iloops].num_loop(); ++iloop) {
+		for ( Size iloops=1; iloops<=domains_all_templ_[i_template].size(); ++iloops ) {
+			for ( Size iloop=1; iloop<=domains_all_templ_[i_template][iloops].num_loop(); ++iloop ) {
 				Size seqpos_start_pose = remap_endpoints[ domains_all_templ_[i_template][iloops][iloop].start() ];
 				domains_all_templ_[i_template][iloops][iloop].set_start( seqpos_start_pose );
 
@@ -839,7 +841,7 @@ void HybridizeProtocol::domain_parse_templates(core::Size nres) {
 		}
 
 		TR << "Found " << domains_all_templ_[i_template].size() << " domains using template " << template_fn_[i_template] << std::endl;
-		for (Size i=1; i<=domains_all_templ_[i_template].size(); ++i) {
+		for ( Size i=1; i<=domains_all_templ_[i_template].size(); ++i ) {
 			TR << "domain " << i << ": " << domains_all_templ_[i_template][i] << std::endl;
 		}
 	}
@@ -866,17 +868,17 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		nres_tgt = symm_info->num_independent_residues();
 		nres_protein_tgt = symm_info->num_independent_residues();
 	}
-	if (pose.residue(nres_tgt).aa() == core::chemical::aa_vrt) nres_tgt--;
-	while (!pose.residue(nres_protein_tgt).is_protein()) nres_protein_tgt--;
+	if ( pose.residue(nres_tgt).aa() == core::chemical::aa_vrt ) nres_tgt--;
+	while ( !pose.residue(nres_protein_tgt).is_protein() ) nres_protein_tgt--;
 
 	//save necessary constraint in pose
-  core::scoring::constraints::ConstraintSetOP save_pose_constraint_set( new core::scoring::constraints::ConstraintSet() ) ;
-  if ( keep_pose_constraint_ ) {
+	core::scoring::constraints::ConstraintSetOP save_pose_constraint_set( new core::scoring::constraints::ConstraintSet() ) ;
+	if ( keep_pose_constraint_ ) {
 		save_pose_constraint_set = pose.constraint_set()->clone();
 		core::scoring::constraints::remove_nonbb_constraints(pose);
 	}
 
-	if (pose.is_fullatom()) {
+	if ( pose.is_fullatom() ) {
 		protocols::moves::MoverOP tocen( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
 		tocen->apply(pose);
 	}
@@ -899,7 +901,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 	// main centroid generation loop
 	core::Real gdtmm = 0.0;
-	while(need_more_samples) {
+	while ( need_more_samples ) {
 		need_more_samples = false;
 
 		// pick starting template
@@ -908,13 +910,13 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 		// (1) steal hetatms from template
 		utility::vector1< std::pair< core::Size,core::Size > > hetatms;
-		if (add_hetatm_) {
+		if ( add_hetatm_ ) {
 			for ( Size ires=1; ires <= templates_[initial_template_index]->total_residue(); ++ires ) {
-				if (templates_[initial_template_index]->pdb_info()->number(ires) > (int)nres_tgt) {
+				if ( templates_[initial_template_index]->pdb_info()->number(ires) > (int)nres_tgt ) {
 					TR.Debug << "Insert hetero residue: " << templates_[initial_template_index]->residue(ires).name3() << std::endl;
 					if ( templates_[initial_template_index]->residue(ires).is_polymer()
-								&& !templates_[initial_template_index]->residue(ires).is_lower_terminus()
-								&& !pose.residue(pose.total_residue()).is_upper_terminus()) {
+							&& !templates_[initial_template_index]->residue(ires).is_lower_terminus()
+							&& !pose.residue(pose.total_residue()).is_upper_terminus() ) {
 						pose.append_residue_by_bond(templates_[initial_template_index]->residue(ires));
 					} else {
 						pose.append_residue_by_jump(templates_[initial_template_index]->residue(ires), 1);
@@ -925,13 +927,13 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		}
 
 		// (2) realign structures per-domain
-		if (realign_domains_) {
+		if ( realign_domains_ ) {
 			//
 			if ( std::find( non_null_template_indices_.begin(), non_null_template_indices_.end(), initial_template_index )
-						!= non_null_template_indices_.end() ) {
+					!= non_null_template_indices_.end() ) {
 				align_templates_by_domain(templates_[initial_template_index], domains_all_templ_[initial_template_index]);
 			} else {
-				if (non_null_template_indices_.size() == 0) {
+				if ( non_null_template_indices_.size() == 0 ) {
 					TR << "No non-extended templates.  Skipping alignment." << std::endl;
 				} else {
 					TR << "Cannot align to extended template! Choosing a random template instead." << std::endl;
@@ -943,7 +945,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 		// (3) apply symmetry
 		std::string symmdef_file = symmdef_files_[initial_template_index];
-		if (!symmdef_file.empty() && symmdef_file != "NULL") {
+		if ( !symmdef_file.empty() && symmdef_file != "NULL" ) {
 			protocols::simple_moves::symmetry::SetupForSymmetryMover makeSymm( symmdef_file );
 			makeSymm.apply(pose);
 
@@ -951,10 +953,10 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			basic::options::option[basic::options::OptionKeys::symmetry::symmetry_definition].value( "dummy" );
 
 			// xyz copy hetatms (properly handle cases where scoring subunit is not the first)
-			if (add_hetatm_) {
+			if ( add_hetatm_ ) {
 				for ( Size ihet=1; ihet <= hetatms.size(); ++ihet ) {
 					core::conformation::Residue const &res_in = templates_[initial_template_index]->residue(hetatms[ihet].first);
-					for (Size iatm=1; iatm<=res_in.natoms(); ++iatm) {
+					for ( Size iatm=1; iatm<=res_in.natoms(); ++iatm ) {
 						core::id::AtomID tgt(iatm,hetatms[ihet].second);
 						pose.set_xyz( tgt, res_in.xyz( iatm ) );
 					}
@@ -965,7 +967,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		// (4) add a virtual if we have a map or coord csts
 		//     keep after symm
 		//     should we check if a map is loaded (or density scoring is on) instead??
-		if ( option[ OptionKeys::edensity::mapfile ].user() || user_csts_.size() > 0) {
+		if ( option[ OptionKeys::edensity::mapfile ].user() || user_csts_.size() > 0 ) {
 			MoverOP dens( new protocols::electron_density::SetupForDensityScoringMover );
 			dens->apply( pose );
 		}
@@ -978,14 +980,14 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 		// (6) allowed movement
 		utility::vector1<bool> allowed_to_move;
-    allowed_to_move.resize(pose.total_residue(),true);
-		for (int i=1; i<=(int)residue_sample_template_.size(); ++i) allowed_to_move[i] = allowed_to_move[i] && residue_sample_template_[i];
-		for (int i=1; i<=(int)residue_sample_abinitio_.size(); ++i) allowed_to_move[i] = allowed_to_move[i] && residue_sample_abinitio_[i];
+		allowed_to_move.resize(pose.total_residue(),true);
+		for ( int i=1; i<=(int)residue_sample_template_.size(); ++i ) allowed_to_move[i] = allowed_to_move[i] && residue_sample_template_[i];
+		for ( int i=1; i<=(int)residue_sample_abinitio_.size(); ++i ) allowed_to_move[i] = allowed_to_move[i] && residue_sample_abinitio_[i];
 
 		// (7) steal crystal parameters (if specified)
 		if ( templates_[initial_template_index]->pdb_info() ) {
 			core::pose::CrystInfo ci = templates_[initial_template_index]->pdb_info()->crystinfo();
-			if (ci.A()*ci.B()*ci.C() != 0) {
+			if ( ci.A()*ci.B()*ci.C() != 0 ) {
 				pose.pdb_info()->set_crystinfo( ci );
 			}
 		}
@@ -1001,7 +1003,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		// An empty string is treated as equivalent to "NONE"
 
 		// fold tree hybridize
-		if (numeric::random::rg().uniform() < stage1_probability_) {
+		if ( numeric::random::rg().uniform() < stage1_probability_ ) {
 
 			for ( core::Size repeatstage1=0; repeatstage1 < jump_move_repeat_; ++repeatstage1 ) {
 
@@ -1009,8 +1011,8 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 				FoldTreeHybridizeOP ft_hybridize(
 					new FoldTreeHybridize(
-						initial_template_index, templates_aln_, template_weights_,
-						template_chunks_, frags_small, frags_big) ) ;
+					initial_template_index, templates_aln_, template_weights_,
+					template_chunks_, frags_small, frags_big) ) ;
 
 				ft_hybridize->set_constraint_file( cst_fn );
 				ft_hybridize->set_scorefunction( stage1_scorefxn_ );
@@ -1056,8 +1058,9 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 				//jump perturbation and minimization
 				//fpd!  these docking moves should be incorporated as part of stage 1!
-				if ( jump_move_ )
+				if ( jump_move_ ) {
 					do_intrastage_docking( pose );
+				}
 			} //end of repeatstage1
 
 		} else {
@@ -1068,14 +1071,14 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		}
 
 		// realign domains to the output of stage 1
-		if (jump_move_ || realign_domains_stage2_) {
+		if ( jump_move_ || realign_domains_stage2_ ) {
 			TR << "Realigning template domains to stage1 pose." << std::endl;
 			core::pose::PoseOP stage1pose( new core::pose::Pose( pose ) );
 			align_templates_by_domain(stage1pose); // don't use stored domains; recompute parse from model
 		}
 
 		//write gdtmm to output
-		if (native_ && native_->total_residue()) {
+		if ( native_ && native_->total_residue() ) {
 			gdtmm = get_gdtmm(*native_, pose, aln_);
 			core::pose::setPoseExtraScore( pose, "GDTMM_after_stage1", gdtmm);
 			TR << "GDTMM_after_stage1" << F(8,3,gdtmm) << std::endl;
@@ -1085,29 +1088,33 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		// apply constraints
 		if ( stage2_scorefxn_->get_weight( core::scoring::atom_pair_constraint ) != 0 ) {
 			std::string cst_fn = template_cst_fn_[initial_template_index];
-			if (!keep_pose_constraint_ )
-					setup_centroid_constraints( pose, templates_aln_, template_weights_, cst_fn );
-			if (add_hetatm_)
+			if ( !keep_pose_constraint_ ) {
+				setup_centroid_constraints( pose, templates_aln_, template_weights_, cst_fn );
+			}
+			if ( add_hetatm_ ) {
 				add_non_protein_cst(pose, *templates_aln_[initial_template_index], hetatm_self_cst_weight_, hetatm_prot_cst_weight_);
-			if (strand_pairs_.size())
+			}
+			if ( strand_pairs_.size() ) {
 				add_strand_pairs_cst(pose, strand_pairs_);
+			}
 		}
 
 		// add torsion constraints derived from fragments
-		if (csts_from_frags_) {
-			if (stage2_scorefxn_->get_weight( core::scoring::dihedral_constraint ) != 0 ) {
+		if ( csts_from_frags_ ) {
+			if ( stage2_scorefxn_->get_weight( core::scoring::dihedral_constraint ) != 0 ) {
 				add_fragment_csts( pose );
 			} else {
 				TR << "Warning! csts_from_frags is on but dihedral_constraint weight=0.  Ignoring!" << std::endl;
 			}
 		}
 
-		if ( stage2_scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0) {
-			if ( user_csts_.size() > 0 )
+		if ( stage2_scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0 ) {
+			if ( user_csts_.size() > 0 ) {
 				setup_user_coordinate_constraints(pose,user_csts_);
+			}
 		}
 
-		if (!option[cm::hybridize::skip_stage2]()) {
+		if ( !option[cm::hybridize::skip_stage2]() ) {
 			core::scoring::ScoreFunctionOP stage2_scorefxn_clone = stage2_scorefxn_->clone();
 
 			core::scoring::methods::EnergyMethodOptions lowres_options(stage2_scorefxn_clone->energy_method_options());
@@ -1115,12 +1122,12 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			stage2_scorefxn_clone->set_energy_method_options(lowres_options);
 
 			CartesianHybridizeOP cart_hybridize(
-					new CartesianHybridize( templates_aln_, template_weights_, template_chunks_,template_contigs_, frags_big ) );
+				new CartesianHybridize( templates_aln_, template_weights_, template_chunks_,template_contigs_, frags_big ) );
 
 			// default scorefunctions (cenrot-compatable)
-			if (stage2_scorefxn_!=NULL) cart_hybridize->set_scorefunction( stage2_scorefxn_ );
-			if (stage2pack_scorefxn_!=NULL) cart_hybridize->set_pack_scorefunction( stage2pack_scorefxn_ );
-			if (stage2min_scorefxn_!=NULL) cart_hybridize->set_min_scorefunction( stage2min_scorefxn_ );
+			if ( stage2_scorefxn_!=NULL ) cart_hybridize->set_scorefunction( stage2_scorefxn_ );
+			if ( stage2pack_scorefxn_!=NULL ) cart_hybridize->set_pack_scorefunction( stage2pack_scorefxn_ );
+			if ( stage2min_scorefxn_!=NULL ) cart_hybridize->set_min_scorefunction( stage2min_scorefxn_ );
 
 			// set options
 			cart_hybridize->set_increase_cycles( stage2_increase_cycles_ );
@@ -1143,7 +1150,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		}
 
 		//write gdtmm to output
-		if (native_ && native_->total_residue()) {
+		if ( native_ && native_->total_residue() ) {
 			gdtmm = get_gdtmm(*native_, pose, aln_);
 			core::pose::setPoseExtraScore( pose, "GDTMM_after_stage2", gdtmm);
 			TR << "GDTMM_after_stage2" << ObjexxFCL::format::F(8,3,gdtmm) << std::endl;
@@ -1153,10 +1160,10 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		history = utility::pointer::static_pointer_cast< TemplateHistory >( pose.data().get_ptr( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) );
 
 		TR << "History :";
-		for (Size i=1; i<= history->size(); ++i ) { TR << I(4,i); }
+		for ( Size i=1; i<= history->size(); ++i ) { TR << I(4,i); }
 		TR << std::endl;
 		TR << "History :";
-		for (Size i=1; i<= history->size(); ++i ) { TR << I(4, history->get(i)); }
+		for ( Size i=1; i<= history->size(); ++i ) { TR << I(4, history->get(i)); }
 		TR << std::endl;
 
 		core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
@@ -1165,21 +1172,22 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		mm->set_jump( true );
 
 		// stage "2.5" .. minimize with centroid energy + full-strength cart bonded
-		if (!option[cm::hybridize::skip_stage2]()) {
+		if ( !option[cm::hybridize::skip_stage2]() ) {
 			core::optimization::MinimizerOptions options_lbfgs( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
 			core::optimization::CartesianMinimizer minimizer;
 			core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
-			if (core::pose::symmetry::is_symmetric(pose) )
+			if ( core::pose::symmetry::is_symmetric(pose) ) {
 				core::pose::symmetry::make_symmetric_movemap( pose, *mm );
+			}
 			Size n_min_cycles =(Size) (200.*stage25_increase_cycles_);
 			options_lbfgs.max_iter(n_min_cycles);
 			(*stage2_scorefxn_)(pose); minimizer.run( pose, *mm, *stage2_scorefxn_, options_lbfgs );
 		}
 
 		// STAGE 3: RELAX
-		if (batch_relax_ > 0) {
+		if ( batch_relax_ > 0 ) {
 			// set disulfides before going to FA
-			if (disulf_file_.length() > 0) {
+			if ( disulf_file_.length() > 0 ) {
 				// manual disulfide
 				TR << " add disulfide: " << std::endl;
 				basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].value(disulf_file_);
@@ -1197,36 +1205,37 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			// apply fa constraints
 			std::string cst_fn = template_cst_fn_[initial_template_index];
 			if ( fa_scorefxn_->get_weight( core::scoring::atom_pair_constraint ) != 0 ) {
-				if (!keep_pose_constraint_ ) {
+				if ( !keep_pose_constraint_ ) {
 					setup_fullatom_constraints( pose, templates_aln_, template_weights_, cst_fn, fa_cst_fn_ );
 				} else {
 					pose.constraint_set(save_pose_constraint_set);
 				}
-				if (add_hetatm_) {
+				if ( add_hetatm_ ) {
 					add_non_protein_cst(pose, *templates_aln_[initial_template_index], hetatm_self_cst_weight_, hetatm_prot_cst_weight_);
 				}
-				if (strand_pairs_.size()) {
+				if ( strand_pairs_.size() ) {
 					add_strand_pairs_cst(pose, strand_pairs_);
 				}
 			}
 
 			// add torsion constraints derived from fragments
-			if (csts_from_frags_) {
-				if (fa_scorefxn_->get_weight( core::scoring::dihedral_constraint ) != 0 ) {
+			if ( csts_from_frags_ ) {
+				if ( fa_scorefxn_->get_weight( core::scoring::dihedral_constraint ) != 0 ) {
 					add_fragment_csts( pose );
 				} else {
 					TR << "Warning! csts_from_frags is on but dihedral_constraint weight=0.  Ignoring!" << std::endl;
 				}
 			}
 
-			if ( stage2_scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0) {
+			if ( stage2_scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0 ) {
 				// note that CSTs are updated based on stage 1 movement
 				//   this may or may not be desirable
-				if ( user_csts_.size() > 0 )
+				if ( user_csts_.size() > 0 ) {
 					setup_user_coordinate_constraints(pose,user_csts_);
+				}
 			}
 
-			if (batch_relax_ == 1) {
+			if ( batch_relax_ == 1 ) {
 				// standard relax
 				// do relax _without_ ramping down coordinate constraints
 				TR << " batch_relax 1 : " << std::endl;
@@ -1241,7 +1250,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				new_struct->energies_from_pose( pose );
 				post_centroid_structs.push_back( new_struct );
 
-				if (post_centroid_structs.size() == batch_relax_) {
+				if ( post_centroid_structs.size() == batch_relax_ ) {
 					protocols::relax::FastRelax relax_prot( fa_scorefxn_ );
 					relax_prot.min_type("lbfgs_armijo_nonmonotone");
 					relax_prot.set_force_nonideal(true);
@@ -1270,7 +1279,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			(*stage2_scorefxn_)(pose);
 		}
 	}
-	if (native_ && native_->total_residue()) {
+	if ( native_ && native_->total_residue() ) {
 		gdtmm = get_gdtmm(*native_, pose, aln_);
 		core::pose::setPoseExtraScore( pose, "GDTMM_final", gdtmm);
 		TR << "GDTMM_final" << ObjexxFCL::format::F(8,3,gdtmm) << std::endl;
@@ -1283,27 +1292,27 @@ HybridizeProtocol::align_templates_by_domain(core::pose::PoseOP & ref_pose, util
 {
 	// get domain parse if not specified
 	core::pose::PoseOP working_pose;
-	if (core::pose::symmetry::is_symmetric(*ref_pose) ) {
+	if ( core::pose::symmetry::is_symmetric(*ref_pose) ) {
 		working_pose = core::pose::PoseOP(new core::pose::Pose);
 		core::pose::symmetry::extract_asymmetric_unit(*ref_pose, *working_pose);
 	} else {
 		working_pose = ref_pose;
 	}
 
-	if (domains.size() == 0) {
+	if ( domains.size() == 0 ) {
 		DDomainParse ddom(pcut_,hcut_,length_);
 		utility::vector1 <Loops> domains = ddom.split( *working_pose );
 	}
 
 	// clone original poses -> copies for alignment
 	templates_aln_.clear();
-	for (Size i_pose=1; i_pose <= templates_.size(); ++i_pose) {
+	for ( Size i_pose=1; i_pose <= templates_.size(); ++i_pose ) {
 		templates_aln_.push_back(
 			core::pose::PoseOP( new core::pose::Pose( *templates_[i_pose] ) ) );
 	}
 
-	for (Size i_pose=1; i_pose <= templates_aln_.size(); ++i_pose) {
-		if (templates_aln_[i_pose] == ref_pose) continue; // compare pointers
+	for ( Size i_pose=1; i_pose <= templates_aln_.size(); ++i_pose ) {
+		if ( templates_aln_[i_pose] == ref_pose ) continue; // compare pointers
 		align_by_domain(*templates_aln_[i_pose], *working_pose, domains);
 		//std::string out_fn = template_fn_[i_pose] + "_realigned.pdb";
 		//poses[i_pose]->dump_pdb(out_fn);
@@ -1326,17 +1335,17 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 
 	// find corresepondance of ligands to nearest residues (in moving pose)
 	core::Size last_protein_residue=pose.total_residue();
-	while (last_protein_residue>0 && !pose.residue_type(last_protein_residue).is_protein()) last_protein_residue--;
+	while ( last_protein_residue>0 && !pose.residue_type(last_protein_residue).is_protein() ) last_protein_residue--;
 
-	if (last_protein_residue == 0) return;
+	if ( last_protein_residue == 0 ) return;
 
 	std::map< core::Size, core::Size > ligres_map;
-	for (core::Size i=last_protein_residue+1; i<=pose.total_residue(); ++i) {
+	for ( core::Size i=last_protein_residue+1; i<=pose.total_residue(); ++i ) {
 		core::Real mindist = 999.0;
 		core::Size minj = 1;
-		for (core::Size j=1; j<=last_protein_residue; ++j) {
+		for ( core::Size j=1; j<=last_protein_residue; ++j ) {
 			core::Real dist_ij = (pose.residue(i).xyz(1) - pose.residue(j).xyz(1)).length(); // hacky (using atom 1 only)
-			if (dist_ij < mindist) {
+			if ( dist_ij < mindist ) {
 				mindist = dist_ij;
 				minj = (pose.pdb_info()) ? pose.pdb_info()->number(j) : j;
 			}
@@ -1345,17 +1354,17 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 	}
 
 
-	for (Size i_domain = 1; i_domain <= domains.size() ; ++i_domain) {
+	for ( Size i_domain = 1; i_domain <= domains.size() ; ++i_domain ) {
 		core::id::AtomID_Map< core::id::AtomID > atom_map;
 		core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID );
 
 		// find all residues in moving pose corresponding to this domain
 		std::list <Size> residue_list;
 		core::Size n_mapped_residues=0;
-		for (core::Size ires=1; ires<=pose.total_residue(); ++ires) {
-			if (!pose.residue_type(ires).is_protein()) continue;
+		for ( core::Size ires=1; ires<=pose.total_residue(); ++ires ) {
+			if ( !pose.residue_type(ires).is_protein() ) continue;
 			int pose_res = (pose.pdb_info()) ? pose.pdb_info()->number(ires) : ires;
-			for (core::Size iloop=1; iloop<=domains[i_domain].num_loop(); ++iloop) {
+			for ( core::Size iloop=1; iloop<=domains[i_domain].num_loop(); ++iloop ) {
 				if ( pose_res < (int)domains[i_domain][iloop].start() || pose_res > (int)domains[i_domain][iloop].stop() ) continue;
 				residue_list.push_back(ires);
 			}
@@ -1363,10 +1372,10 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 
 		// find all residues in reference pose corresponding to this domain
 		std::list <Size> ref_residue_list;
-		for (core::Size jres=1; jres<=ref_pose.total_residue(); ++jres) {
-			if (!ref_pose.residue_type(jres).is_protein()) continue;
+		for ( core::Size jres=1; jres<=ref_pose.total_residue(); ++jres ) {
+			if ( !ref_pose.residue_type(jres).is_protein() ) continue;
 			int ref_pose_res = (ref_pose.pdb_info()) ? ref_pose.pdb_info()->number(jres) : jres;
-			for (core::Size iloop=1; iloop<=domains[i_domain].num_loop(); ++iloop) {
+			for ( core::Size iloop=1; iloop<=domains[i_domain].num_loop(); ++iloop ) {
 				if ( ref_pose_res < (int)domains[i_domain][iloop].start() || ref_pose_res > (int)domains[i_domain][iloop].stop() ) continue;
 				ref_residue_list.push_back(jres);
 			}
@@ -1376,7 +1385,7 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 		TMalign tm_align;
 		std::string seq_pose, seq_ref, aligned;
 		int reval = tm_align.apply(pose, ref_pose, residue_list, ref_residue_list);
-		if (reval != 0) continue;  // TO DO: remove this domain
+		if ( reval != 0 ) continue;  // TO DO: remove this domain
 
 		tm_align.alignment2AtomMap(pose, ref_pose, residue_list, ref_residue_list, n_mapped_residues, atom_map);
 		tm_align.alignment2strings(seq_pose, seq_ref, aligned);
@@ -1388,12 +1397,12 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 		TR << aligned << std::endl;
 		TR << seq_ref << std::endl;
 
-		if (n_mapped_residues < 6) continue;  // TO DO: remove this domain
+		if ( n_mapped_residues < 6 ) continue;  // TO DO: remove this domain
 
 		// add in ligand residues
-		for (core::Size i=last_protein_residue+1; i<=pose.total_residue(); ++i) {
+		for ( core::Size i=last_protein_residue+1; i<=pose.total_residue(); ++i ) {
 			core::Size res_controlling_i = ligres_map[i];
-			for (core::Size iloop=1; iloop<=domains[i_domain].num_loop(); ++iloop) {
+			for ( core::Size iloop=1; iloop<=domains[i_domain].num_loop(); ++iloop ) {
 				if ( res_controlling_i < domains[i_domain][iloop].start() || res_controlling_i > domains[i_domain][iloop].stop() ) continue;
 				residue_list.push_back(i);
 			}
@@ -1407,7 +1416,7 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 void
 HybridizeProtocol::do_intrastage_docking(core::pose::Pose & pose) {
 	// call docking or symm docking
-	if (core::pose::symmetry::is_symmetric(pose) ) {
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		/////
 		/////  SYMM LOGIC
 		protocols::symmetric_docking::SymDockingLowResOP docking_lowres_mover( new protocols::symmetric_docking::SymDockingLowRes(stage1_scorefxn_) );
@@ -1444,11 +1453,11 @@ HybridizeProtocol::get_name() const {
 
 void
 HybridizeProtocol::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		filters::Filters_map const &,
-		moves::Movers_map const &,
-		core::pose::Pose const & pose )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	filters::Filters_map const &,
+	moves::Movers_map const &,
+	core::pose::Pose const & pose )
 {
 	// basic options
 	stage1_increase_cycles_ = tag->getOption< core::Real >( "stage1_increase_cycles", 1. );
@@ -1470,96 +1479,126 @@ HybridizeProtocol::parse_my_tag(
 	//FPD   removed this option; it is redundant with weights! (set weight to 0 for templates we do not start with)
 
 
-	if( tag->hasOption( "csts_from_frags" ) )
+	if ( tag->hasOption( "csts_from_frags" ) ) {
 		csts_from_frags_ = tag->getOption< bool >( "csts_from_frags" );
-	if( tag->hasOption( "max_contig_insertion" ) )
+	}
+	if ( tag->hasOption( "max_contig_insertion" ) ) {
 		max_contig_insertion_ = tag->getOption< int >( "max_contig_insertion" );
+	}
 
-	if( tag->hasOption( "min_after_stage1" ) )
+	if ( tag->hasOption( "min_after_stage1" ) ) {
 		min_after_stage1_ = tag->getOption< bool >( "min_after_stage1" );
-	if( tag->hasOption( "fragprob_stage2" ) )
+	}
+	if ( tag->hasOption( "fragprob_stage2" ) ) {
 		fragprob_stage2_ = tag->getOption< core::Real >( "fragprob_stage2" );
-	if( tag->hasOption( "randfragprob_stage2" ) )
+	}
+	if ( tag->hasOption( "randfragprob_stage2" ) ) {
 		randfragprob_stage2_ = tag->getOption< core::Real >( "randfragprob_stage2" );
+	}
 
 
 	// tons of ab initio options
-	if( tag->hasOption( "stage1_1_cycles" ) )
+	if ( tag->hasOption( "stage1_1_cycles" ) ) {
 		stage1_1_cycles_ = tag->getOption< core::Size >( "stage1_1_cycles" );
-	if( tag->hasOption( "stage1_2_cycles" ) )
+	}
+	if ( tag->hasOption( "stage1_2_cycles" ) ) {
 		stage1_2_cycles_ = tag->getOption< core::Size >( "stage1_2_cycles" );
-	if( tag->hasOption( "stage1_3_cycles" ) )
+	}
+	if ( tag->hasOption( "stage1_3_cycles" ) ) {
 		stage1_3_cycles_ = tag->getOption< core::Size >( "stage1_3_cycles" );
-	if( tag->hasOption( "stage1_4_cycles" ) )
+	}
+	if ( tag->hasOption( "stage1_4_cycles" ) ) {
 		stage1_4_cycles_ = tag->getOption< core::Size >( "stage1_4_cycles" );
-	if( tag->hasOption( "stage1_probability" ) )
+	}
+	if ( tag->hasOption( "stage1_probability" ) ) {
 		stage1_probability_ = tag->getOption< core::Real >( "stage1_probability" );
-	if( tag->hasOption( "add_hetatm" ) )
+	}
+	if ( tag->hasOption( "add_hetatm" ) ) {
 		add_hetatm_ = tag->getOption< bool >( "add_hetatm" );
-	if( tag->hasOption( "hetatm_cst_weight" ) )
+	}
+	if ( tag->hasOption( "hetatm_cst_weight" ) ) {
 		hetatm_self_cst_weight_ = tag->getOption< core::Real >( "hetatm_cst_weight" );
-	if( tag->hasOption( "hetatm_to_protein_cst_weight" ) )
+	}
+	if ( tag->hasOption( "hetatm_to_protein_cst_weight" ) ) {
 		hetatm_prot_cst_weight_ = tag->getOption< core::Real >( "hetatm_to_protein_cst_weight" );
-	if( tag->hasOption( "realign_domains" ) )
+	}
+	if ( tag->hasOption( "realign_domains" ) ) {
 		realign_domains_ = tag->getOption< bool >( "realign_domains" );
-	if( tag->hasOption( "realign_domains_stage2" ) )
+	}
+	if ( tag->hasOption( "realign_domains_stage2" ) ) {
 		realign_domains_stage2_ = tag->getOption< bool >( "realign_domains_stage2" );
-	if( tag->hasOption( "add_non_init_chunks" ) )
+	}
+	if ( tag->hasOption( "add_non_init_chunks" ) ) {
 		add_non_init_chunks_ = tag->getOption< core::Size >( "add_non_init_chunks" );
-	if( tag->hasOption( "frag_1mer_insertion_weight" ) )
+	}
+	if ( tag->hasOption( "frag_1mer_insertion_weight" ) ) {
 		frag_1mer_insertion_weight_ = tag->getOption< core::Real >( "frag_1mer_insertion_weight" );
-	if( tag->hasOption( "small_frag_insertion_weight" ) )
+	}
+	if ( tag->hasOption( "small_frag_insertion_weight" ) ) {
 		small_frag_insertion_weight_ = tag->getOption< core::Real >( "small_frag_insertion_weight" );
-	if( tag->hasOption( "big_frag_insertion_weight" ) )
+	}
+	if ( tag->hasOption( "big_frag_insertion_weight" ) ) {
 		big_frag_insertion_weight_ = tag->getOption< core::Real >( "big_frag_insertion_weight" );
-	if( tag->hasOption( "chunk_insertion_weight" ) )
+	}
+	if ( tag->hasOption( "chunk_insertion_weight" ) ) {
 		chunk_insertion_weight_ = tag->getOption< core::Real >( "chunk_insertion_weight" );
-	if( tag->hasOption( "frag_weight_aligned" ) )
+	}
+	if ( tag->hasOption( "frag_weight_aligned" ) ) {
 		frag_weight_aligned_ = tag->getOption< core::Real >( "frag_weight_aligned" );
-	if( tag->hasOption( "auto_frag_insertion_weight" ) )
+	}
+	if ( tag->hasOption( "auto_frag_insertion_weight" ) ) {
 		auto_frag_insertion_weight_ = tag->getOption< bool >( "auto_frag_insertion_weight" );
-	if( tag->hasOption( "max_registry_shift" ) )
+	}
+	if ( tag->hasOption( "max_registry_shift" ) ) {
 		max_registry_shift_ = tag->getOption< core::Size >( "max_registry_shift" );
-	if( tag->hasOption( "repeats" ) )
+	}
+	if ( tag->hasOption( "repeats" ) ) {
 		relax_repeats_ = tag->getOption< core::Size >( "repeats" );
-	if( tag->hasOption( "disulf_file" ) )
+	}
+	if ( tag->hasOption( "disulf_file" ) ) {
 		disulf_file_ = tag->getOption< std::string >( "disulf_file" );
+	}
 
 	// stage 2-specific options
-	if( tag->hasOption( "no_global_frame" ) )
+	if ( tag->hasOption( "no_global_frame" ) ) {
 		no_global_frame_ = tag->getOption< bool >( "no_global_frame" );
-	if( tag->hasOption( "linmin_only" ) )
+	}
+	if ( tag->hasOption( "linmin_only" ) ) {
 		linmin_only_ = tag->getOption< bool >( "linmin_only" );
-	if( tag->hasOption( "cartfrag_overlap" ) )
+	}
+	if ( tag->hasOption( "cartfrag_overlap" ) ) {
 		cartfrag_overlap_ = tag->getOption< core::Size >( "cartfrag_overlap" );
-	if( tag->hasOption( "seqfrags_only" ) )
+	}
+	if ( tag->hasOption( "seqfrags_only" ) ) {
 		seqfrags_only_ = tag->getOption< core::Size >( "seqfrags_only" );
-	if( tag->hasOption( "skip_long_min" ) )
+	}
+	if ( tag->hasOption( "skip_long_min" ) ) {
 		skip_long_min_ = tag->getOption< core::Size >( "skip_long_min" );
+	}
 
 
 	// scorefxns
-	if( tag->hasOption( "stage1_scorefxn" ) ) {
+	if ( tag->hasOption( "stage1_scorefxn" ) ) {
 		std::string const scorefxn_name( tag->getOption<std::string>( "stage1_scorefxn" ) );
 		stage1_scorefxn_ = (data.get< ScoreFunction * >( "scorefxns", scorefxn_name ))->clone();
 	}
-	if( tag->hasOption( "stage2_scorefxn" ) ) {
+	if ( tag->hasOption( "stage2_scorefxn" ) ) {
 		std::string const scorefxn_name( tag->getOption<std::string>( "stage2_scorefxn" ) );
 		stage2_scorefxn_ = (data.get< ScoreFunction * >( "scorefxns", scorefxn_name ))->clone();
 	}
-	if( tag->hasOption( "stage2_min_scorefxn" ) ) {
+	if ( tag->hasOption( "stage2_min_scorefxn" ) ) {
 		std::string const scorefxn_name( tag->getOption<std::string>( "stage2_min_scorefxn" ) );
 		stage2min_scorefxn_ = (data.get< ScoreFunction * >( "scorefxns", scorefxn_name ))->clone();
 	}
-	if( tag->hasOption( "stage2_pack_scorefxn" ) ) {
-		if (!cenrot_) {
+	if ( tag->hasOption( "stage2_pack_scorefxn" ) ) {
+		if ( !cenrot_ ) {
 			TR << "Warning! Ignoring stage2_pack_scorefxn declaration since cenrot is not set." << std::endl;
 		} else {
 			std::string const scorefxn_name( tag->getOption<std::string>( "stage2_pack_scorefxn" ) );
 			stage2pack_scorefxn_ = (data.get< ScoreFunction * >( "scorefxns", scorefxn_name ))->clone();
 		}
 	}
-	if( tag->hasOption( "fa_scorefxn" ) ) {
+	if ( tag->hasOption( "fa_scorefxn" ) ) {
 		std::string const scorefxn_name( tag->getOption<std::string>( "fa_scorefxn" ) );
 		fa_scorefxn_ = (data.get< ScoreFunction * >( "scorefxns", scorefxn_name ))->clone();
 	}
@@ -1570,12 +1609,12 @@ HybridizeProtocol::parse_my_tag(
 	length_ = tag->getOption< core::Size >( "domain_length" , 38);
 
 	// user constraints
-	if( tag->hasOption( "coord_cst_res" ) ) {
+	if ( tag->hasOption( "coord_cst_res" ) ) {
 		user_csts_ = core::pose::get_resnum_list_ordered( tag->getOption<std::string>( "coord_cst_res" ), pose );
 	}
 
 	// if user constraints are defined, make sure coord_csts are defined in at least one stage
-	if (user_csts_.size() > 0) {
+	if ( user_csts_.size() > 0 ) {
 		runtime_assert(
 			stage1_scorefxn_->get_weight( core::scoring::coordinate_constraint ) > 0 ||
 			stage2_scorefxn_->get_weight( core::scoring::coordinate_constraint ) > 0 ||
@@ -1585,7 +1624,7 @@ HybridizeProtocol::parse_my_tag(
 	// fragments
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
 	utility::vector1< utility::tag::TagCOP >::const_iterator tag_it;
-	for (tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it) {
+	for ( tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it ) {
 		if ( (*tag_it)->getName() == "Fragments" ) {
 			using namespace core::fragment;
 			if ( (*tag_it)->hasOption( "3mers" ) ) {
@@ -1593,16 +1632,18 @@ HybridizeProtocol::parse_my_tag(
 				fragments_small_.push_back(frags);
 			} else if ( (*tag_it)->hasOption( "small" ) ) {
 				utility::vector1<std::string> frag_files = utility::string_split((*tag_it)->getOption<std::string>( "small" ), ',');
-				for (core::Size i=1; i<= frag_files.size(); ++i )
+				for ( core::Size i=1; i<= frag_files.size(); ++i ) {
 					fragments_small_.push_back(core::fragment::FragmentIO().read_data( frag_files[i] ));
+				}
 			}
 			if ( (*tag_it)->hasOption( "9mers" ) ) {
 				core::fragment::FragSetOP frags = core::fragment::FragmentIO().read_data( (*tag_it)->getOption<std::string>( "9mers" ) );
 				fragments_big_.push_back(frags);
 			} else if ( (*tag_it)->hasOption( "big" ) ) {
 				utility::vector1<std::string> frag_files = utility::string_split((*tag_it)->getOption<std::string>( "big" ), ',');
-				for (core::Size i=1; i<= frag_files.size(); ++i )
+				for ( core::Size i=1; i<= frag_files.size(); ++i ) {
 					fragments_big_.push_back(core::fragment::FragmentIO().read_data( frag_files[i] ));
+				}
 			}
 		}
 
@@ -1643,12 +1684,12 @@ HybridizeProtocol::parse_my_tag(
 			residue_sample_template_.resize(nres_nonvirt, true);
 			residue_sample_abinitio_.resize(nres_nonvirt, true);
 
-			if( (*tag_it)->hasOption( "task_operations" ) ){
+			if ( (*tag_it)->hasOption( "task_operations" ) ) {
 				core::pack::task::TaskFactoryOP task_factory = protocols::rosetta_scripts::parse_task_operations( *tag_it, data );
 				core::pack::task::PackerTaskOP task = task_factory->create_task_and_apply_taskoperations( pose );
 
-				for( core::Size ires = 1; ires <= nres_nonvirt; ++ires ){
-					if( !task->residue_task( ires ).being_packed() ) {
+				for ( core::Size ires = 1; ires <= nres_nonvirt; ++ires ) {
+					if ( !task->residue_task( ires ).being_packed() ) {
 						residue_sample_template_[ires] = false;
 						residue_sample_abinitio_[ires] = false;
 					}
@@ -1656,15 +1697,15 @@ HybridizeProtocol::parse_my_tag(
 			} else {
 				core::Size start_res = (*tag_it)->getOption<core::Size>( "start_res", 1 );
 				core::Size stop_res = (*tag_it)->getOption<core::Size>( "stop_res", nres_nonvirt );
-				if( (*tag_it)->hasOption( "sample_template" ) ){
+				if ( (*tag_it)->hasOption( "sample_template" ) ) {
 					bool sample_template = (*tag_it)->getOption<bool>( "sample_template", true );
-					for (core::Size ires=start_res; ires<=stop_res; ++ires) {
+					for ( core::Size ires=start_res; ires<=stop_res; ++ires ) {
 						residue_sample_template_[ires] = sample_template;
 					}
 				}
-				if( (*tag_it)->hasOption( "sample_abinitio" ) ){
+				if ( (*tag_it)->hasOption( "sample_abinitio" ) ) {
 					bool sample_abinitio = (*tag_it)->getOption<bool>( "sample_abinitio", true );
-					for (core::Size ires=start_res; ires<=stop_res; ++ires) {
+					for ( core::Size ires=start_res; ires<=stop_res; ++ires ) {
 						residue_sample_abinitio_[ires] = sample_abinitio;
 					}
 				}

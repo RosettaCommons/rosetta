@@ -72,8 +72,8 @@
 //#include <sys/time.h>
 
 #ifdef WIN32
-  #define _USE_MATH_DEFINES
-  #include <math.h>
+#define _USE_MATH_DEFINES
+#include <math.h>
 #endif
 
 namespace core {
@@ -107,62 +107,62 @@ methods::EnergyMethodOP FiberDiffractionEnergyDens::clone() const {
 
 void FiberDiffractionEnergyDens::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {
 
-  //timeval t1, t2;
-  //double elapsedTime;
+	//timeval t1, t2;
+	//double elapsedTime;
 	//gettimeofday(&t1, NULL);
 
-	if (!core::pose::symmetry::is_symmetric(pose)) {
+	if ( !core::pose::symmetry::is_symmetric(pose) ) {
 		utility_exit_with_message("Structure needs to be symmetric! Aborting...");
 	}
 
-  // load fiber diffraction data
+	// load fiber diffraction data
 	utility::vector0< utility::vector1< core::Real > >::iterator layer_lines_I;
-  utility::vector0< utility::vector1< core::Real > >::iterator layer_lines_R;
+	utility::vector0< utility::vector1< core::Real > >::iterator layer_lines_R;
 	utility::vector0 < utility::vector0 < int > >::iterator nvals;
-	
+
 	core::Size lmax, Rmax;
 
-	if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::a ].user()) {
+	if ( basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::a ].user() ) {
 		a_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::a ]();
 	}
 
-	if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b ].user()) {
+	if ( basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b ].user() ) {
 		b_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b ]();
 	}
 
-	if ( !(a_ > 0 ) ){
+	if ( !(a_ > 0 ) ) {
 		utility_exit_with_message("The number of subunits per repeat, score::fiber_diffraction::a, must be set!");
 	}
 
-	if ( !(b_ > 0 ) ){
+	if ( !(b_ > 0 ) ) {
 		utility_exit_with_message("The number of turns, score::fiber_diffraction::b, must be set!");
 	}
 
-	if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::p ].user()) {
-          p_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::p ]();
-  } else {
-          find_pitch( pose, p_ );
-  }
+	if ( basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::p ].user() ) {
+		p_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::p ]();
+	} else {
+		find_pitch( pose, p_ );
+	}
 	c_ = p_*a_;
 
-  core::Real  res_cutoff_low_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_low ]();
+	core::Real  res_cutoff_low_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_low ]();
 
-  core::Real res_cutoff_high_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_high ]();
+	core::Real res_cutoff_high_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_high ]();
 
 	getFiberDiffractionData(c_, res_cutoff_high_, res_cutoff_low_).getAllFiberData(layer_lines_I, layer_lines_R, nvals, lmax, Rmax);
-  TR << "Rmax : lmax " << "( " << Rmax << " : " << lmax << " )" << std::endl;
+	TR << "Rmax : lmax " << "( " << Rmax << " : " << lmax << " )" << std::endl;
 
 	core::Size grid_r_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::grid_r ]();
-	core::Size	grid_phi_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::grid_phi ]();
+	core::Size grid_phi_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::grid_phi ]();
 	core::Size grid_z_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::grid_z ]();
 
-  core::Real qfht_K1_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::qfht_K1 ]();
+	core::Real qfht_K1_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::qfht_K1 ]();
 	core::Real qfht_K2_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::qfht_K2 ]();
 
 	Size max_bessel_orders(0);
 	for ( Size l=0; l <= lmax; ++l ) {
 		Size max_b_order( nvals[l].size() );
-		if (max_b_order > max_bessel_orders) max_bessel_orders = max_b_order;
+		if ( max_b_order > max_bessel_orders ) max_bessel_orders = max_b_order;
 	}
 
 	ObjexxFCL::FArray1D< float > rc, phic, zc, Rinv_ht;
@@ -176,27 +176,27 @@ void FiberDiffractionEnergyDens::setup_for_scoring( pose::Pose & pose, ScoreFunc
 	find_max_r( pose, max_r_value );
 	double PAD_R (5 );
 	max_r_value += PAD_R;
-        
-  //Hankel transform functions: 
+
+	//Hankel transform functions:
 	set_r_array( grid_r_, qfht_K1_, qfht_K2_, max_r_value, rc );
 	set_r_inv_array( grid_r_, qfht_K1_, qfht_K2_, max_r_value, Rinv_ht );
 
-	// calculate rho      
-  //Setting up cylindrical coordinates 
-	for( Size i=0; i<grid_phi_; i++) {
+	// calculate rho
+	//Setting up cylindrical coordinates
+	for ( Size i=0; i<grid_phi_; i++ ) {
 		phic(i+1)=float(i)/float(grid_phi_)*2*M_PI;
 	}
 
-	for( Size i=0; i<grid_z_; i++) {
+	for ( Size i=0; i<grid_z_; i++ ) {
 		zc(i+1)=i*c_/grid_z_;
 	}
-        
-  calculate_rho_fast2( pose, rc, phic, zc, c_ );
+
+	calculate_rho_fast2( pose, rc, phic, zc, c_ );
 
 	ObjexxFCL::FArray3D< std::complex<float> > Gnl;
 	Gnl.dimension( grid_r_, lmax+1, max_bessel_orders );
-	
-  gnl_R_qfht( rho_cylindrical_, nvals, lmax, max_r_value, qfht_K1_, qfht_K2_, Gnl );
+
+	gnl_R_qfht( rho_cylindrical_, nvals, lmax, max_r_value, qfht_K1_, qfht_K2_, Gnl );
 
 	I.resize(lmax+1);
 	for ( Size l=0; l<= lmax; ++l ) {
@@ -214,7 +214,7 @@ void FiberDiffractionEnergyDens::setup_for_scoring( pose::Pose & pose, ScoreFunc
 			ObjexxFCL::FArray1D < float > Ia, Ra;
 			Ia.dimension(grid_r_);
 			Ra.dimension(grid_r_);
-			for (Size Rinv=1; Rinv <= grid_r_; ++Rinv ) {
+			for ( Size Rinv=1; Rinv <= grid_r_; ++Rinv ) {
 				std::complex< float > GNLR = Gnl( Rinv,l+1,b_order);
 				double absval = abs(GNLR);
 				Ra(Rinv) = Rinv_ht(Rinv);
@@ -225,13 +225,13 @@ void FiberDiffractionEnergyDens::setup_for_scoring( pose::Pose & pose, ScoreFunc
 		}
 		lsum +=max_b_order;
 	}
-	//	outdebug.close();
+	// outdebug.close();
 
 	core::Size total_b_order(0);
 	for ( Size l=0; l <= lmax; ++l ) {
 		Size max_b_order( nvals[l].size() );
 		for ( Size b_order=1; b_order <= max_b_order; ++b_order ) {
-			for (Size R=1; R <= layer_lines_R[l].size(); ++R ) {
+			for ( Size R=1; R <= layer_lines_R[l].size(); ++R ) {
 				utility::pointer::shared_ptr< numeric::interpolation::spline::Interpolator > inter = bessel_order_splines[total_b_order];
 				Real Ival;
 				Real dy = 0;
@@ -247,10 +247,10 @@ void FiberDiffractionEnergyDens::setup_for_scoring( pose::Pose & pose, ScoreFunc
 	sum_obs_ = 0;
 	for ( Size l=0; l <= lmax; ++l ) {
 		for ( Size R=1; R<=layer_lines_R[l].size(); ++R ) {
-				Real F_obs_square ( layer_lines_I[l][R]*layer_lines_I[l][R] );
-				prod += I[l][R]*F_obs_square;
-				square_obs_ +=  F_obs_square*F_obs_square;
-				sum_obs_ +=  F_obs_square;
+			Real F_obs_square ( layer_lines_I[l][R]*layer_lines_I[l][R] );
+			prod += I[l][R]*F_obs_square;
+			square_obs_ +=  F_obs_square*F_obs_square;
+			sum_obs_ +=  F_obs_square;
 		}
 	}
 
@@ -258,32 +258,32 @@ void FiberDiffractionEnergyDens::setup_for_scoring( pose::Pose & pose, ScoreFunc
 	TR << scale_factor_ << std::endl;
 
 	bool output_fiber_spectra_(false);
-  if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::output_fiber_spectra ].user()) {
-          output_fiber_spectra_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::output_fiber_spectra ]();
-  }
-  std::ofstream out;
-  if ( output_fiber_spectra_ ) {
-          std::string outfile = "IntensityDens.txt";
-          out.open(outfile.c_str(), std::ios::out);
-  }
+	if ( basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::output_fiber_spectra ].user() ) {
+		output_fiber_spectra_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::output_fiber_spectra ]();
+	}
+	std::ofstream out;
+	if ( output_fiber_spectra_ ) {
+		std::string outfile = "IntensityDens.txt";
+		out.open(outfile.c_str(), std::ios::out);
+	}
 
 	chi2_=0;
 	for ( Size l=0; l <= lmax; ++l ) {
 		for ( Size R=1; R<=layer_lines_R[l].size(); ++R ) {
 			chi2_ +=  (scale_factor_*I[l][R]-layer_lines_I[l][R]*layer_lines_I[l][R])*(scale_factor_*I[l][R]-layer_lines_I[l][R]*layer_lines_I[l][R]);
-			if (output_fiber_spectra_) {
-      	out << I[l][R] << " " << layer_lines_R[l][R] <<" "<< l << std::endl;
-     	}
+			if ( output_fiber_spectra_ ) {
+				out << I[l][R] << " " << layer_lines_R[l][R] <<" "<< l << std::endl;
+			}
 		}
 	}
 	chi2_ /=square_obs_;
-        
-  //gettimeofday(&t2, NULL);
+
+	//gettimeofday(&t2, NULL);
 	//elapsedTime = (t2.tv_sec - t1.tv_sec) * 1000.0;      // sec to ms
 	//elapsedTime += (t2.tv_usec - t1.tv_usec) / 1000.0;   // us to ms
 	//TR << " Scoring time " << elapsedTime << " ms." << std::endl;
 	TR << "chi2 " << chi2_ << " sum_obs_ " << sum_obs_ << std::endl;
-	if (output_fiber_spectra_) {
+	if ( output_fiber_spectra_ ) {
 		out.close();
 	}
 }
@@ -300,13 +300,13 @@ void FiberDiffractionEnergyDens::finalize_total_energy(pose::Pose & /*pose*/, Sc
 }
 
 void FiberDiffractionEnergyDens::eval_atom_derivative(
-	id::AtomID const & id,
-	pose::Pose const & pose,
-	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const & ,
-	EnergyMap const & weights,
-	Vector & F1,
-	Vector & F2
+id::AtomID const & id,
+pose::Pose const & pose,
+kinematics::DomainMap const &, // domain_map,
+ScoreFunction const & ,
+EnergyMap const & weights,
+Vector & F1,
+Vector & F2
 ) const {
 }*/
 
@@ -322,25 +322,25 @@ FiberDiffractionEnergyDens::calculate_rho_fast2(
 
 	// Are we symmetric?
 	const core::conformation::symmetry::SymmetryInfo *symminfo=NULL;
-	if (core::pose::symmetry::is_symmetric(pose)) {
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >(
-		              pose.conformation()).Symmetry_Info().get();
+			pose.conformation()).Symmetry_Info().get();
 	}
 
-	if (!symminfo) {
-    utility_exit_with_message("Structure needs to be symmetric! Aborting...");
-  }
+	if ( !symminfo ) {
+		utility_exit_with_message("Structure needs to be symmetric! Aborting...");
+	}
 
 	utility::vector1< OneGaussianScattering > sig_centroid_(setup_centroid_scatter( pose ));
 	utility::vector1< OneGaussianScattering >::iterator sig_centroid( sig_centroid_.begin() );
-	
+
 	core::Real minX, minY, minZ, maxX, maxY, maxZ;
 
 	find_min_xyz(pose, minX, minY, minZ, maxX, maxY, maxZ);
-	
-	if( fabs(maxZ-minZ) > c_) maxZ = minZ+c_;
+
+	if ( fabs(maxZ-minZ) > c_ ) maxZ = minZ+c_;
 	core::Real minZZ(minZ), maxZZ(maxZ);
-	
+
 	core::Real pad(5);
 
 	minX -= pad;
@@ -353,8 +353,8 @@ FiberDiffractionEnergyDens::calculate_rho_fast2(
 
 	// initialize grid and density
 	core::Real grid_reso = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::grid_reso ]();
-  //core::Real grid_reso(0.5);
-        
+	//core::Real grid_reso(0.5);
+
 	core::Real maxDelta( fabs(maxX-minX) );
 	if ( fabs(maxY-minY)  > maxDelta ) maxDelta = fabs(maxY-minY);
 	if ( fabs(maxZ-minZ)  > maxDelta ) maxDelta = fabs(maxZ-minZ);
@@ -366,18 +366,18 @@ FiberDiffractionEnergyDens::calculate_rho_fast2(
 	Size nscatterers(0);
 	find_num_scattering_atoms( pose, nscatterers );
 
-	for (int i=0; i< rho_cartesian.u1()*rho_cartesian.u2()*rho_cartesian.u3(); ++i) rho_cartesian[i]=0.0;
-	for (int i=0; i< rho_cylindrical_.u1()*rho_cylindrical_.u2()*rho_cylindrical_.u3(); ++i) rho_cylindrical_[i]=0.0;
+	for ( int i=0; i< rho_cartesian.u1()*rho_cartesian.u2()*rho_cartesian.u3(); ++i ) rho_cartesian[i]=0.0;
+	for ( int i=0; i< rho_cylindrical_.u1()*rho_cylindrical_.u2()*rho_cylindrical_.u3(); ++i ) rho_cylindrical_[i]=0.0;
 
 	// B factor...
-  core::Real	b_factor_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor ]();
+	core::Real b_factor_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor ]();
 
 	// Sidechain weight
 	core::Real SC_scaling = 0.92;
-	if ( basic::options::option[ basic::options::OptionKeys::edensity::sc_scaling ].user()) {
+	if ( basic::options::option[ basic::options::OptionKeys::edensity::sc_scaling ].user() ) {
 		SC_scaling = basic::options::option[ basic::options::OptionKeys::edensity::sc_scaling ]();
 	}
-  if ( pose.is_fullatom() ) SC_scaling = 1.0;
+	if ( pose.is_fullatom() ) SC_scaling = 1.0;
 
 	TR.Debug << "SC_scaling: " << SC_scaling << std::endl;
 
@@ -402,70 +402,70 @@ FiberDiffractionEnergyDens::calculate_rho_fast2(
 	numeric::xyzVector< core::Real > atmi_xyz_(0.0,0.0,0.0);
 	int zr(0);
 
-	for (int i=1 ; i<=nres; ++i) {
-		if (! symminfo->bb_is_independent( i ) ) continue;
+	for ( int i=1 ; i<=nres; ++i ) {
+		if ( ! symminfo->bb_is_independent( i ) ) continue;
 		conformation::Residue const &rsd_i (pose.residue(i));
-     // skip vrts & masked reses
-    if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
-    //    if ( scoring_mask_.find(i) != scoring_mask_.end() ) continue;
-    int nheavyatoms = rsd_i.nheavyatoms();
-    for (int j=1 ; j<=nheavyatoms; ++j) {
-			//			id::AtomID id( j, i ); //deriv
-    	conformation::Atom const &atm_i( rsd_i.atom(j) ); //(pose.residue(i).atom("CA"));
-    	chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
-    	std::string elt_i = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
-    	OneGaussianScattering sig_j;
-    	if ( elt_i == "X" ) {
-      	int aa_num ( rsd_i.aa() -1 );
-      	sig_j = sig_centroid[ aa_num  ];
-      } else {
-      	sig_j = core::scoring::fiber_diffraction::get_A( elt_i );
-      }
-      core::Real k = sig_j.k( b_factor_, grid_reso);
-      core::Real C = sig_j.C( k );
-      // sidechain weight
-      if ( (Size) j > rsd_i.last_backbone_atom())
-      	C *= SC_scaling;
-            
-			if (atm_i.xyz()[2]>maxZZ) {	
+		// skip vrts & masked reses
+		if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
+		//    if ( scoring_mask_.find(i) != scoring_mask_.end() ) continue;
+		int nheavyatoms = rsd_i.nheavyatoms();
+		for ( int j=1 ; j<=nheavyatoms; ++j ) {
+			//   id::AtomID id( j, i ); //deriv
+			conformation::Atom const &atm_i( rsd_i.atom(j) ); //(pose.residue(i).atom("CA"));
+			chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
+			std::string elt_i = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
+			OneGaussianScattering sig_j;
+			if ( elt_i == "X" ) {
+				int aa_num ( rsd_i.aa() -1 );
+				sig_j = sig_centroid[ aa_num  ];
+			} else {
+				sig_j = core::scoring::fiber_diffraction::get_A( elt_i );
+			}
+			core::Real k = sig_j.k( b_factor_, grid_reso);
+			core::Real C = sig_j.C( k );
+			// sidechain weight
+			if ( (Size) j > rsd_i.last_backbone_atom() ) {
+				C *= SC_scaling;
+			}
+
+			if ( atm_i.xyz()[2]>maxZZ ) {
 				zr = int(fabs(atm_i.xyz()[2]-minZZ)/c_);
-				
-        //core::Real phicalc_ = zr*2*M_PI/cn_symmetry_;
-        //core::Real xrot = atm_i.xyz()[0]*cos(phicalc_) - atm_i.xyz()[1]*sin(phicalc_);
-        //core::Real yrot = atm_i.xyz()[0]*sin(phicalc_) + atm_i.xyz()[1]*cos(phicalc_);
+
+				//core::Real phicalc_ = zr*2*M_PI/cn_symmetry_;
+				//core::Real xrot = atm_i.xyz()[0]*cos(phicalc_) - atm_i.xyz()[1]*sin(phicalc_);
+				//core::Real yrot = atm_i.xyz()[0]*sin(phicalc_) + atm_i.xyz()[1]*cos(phicalc_);
 
 				atmi_xyz_[0] =  atm_i.xyz()[0];
-       	atmi_xyz_[1] =  atm_i.xyz()[1];
+				atmi_xyz_[1] =  atm_i.xyz()[1];
 				atmi_xyz_[2] =  atm_i.xyz()[2]-zr*c_;
-			} 
-			else {
+			} else {
 				atmi_xyz_[0] =  atm_i.xyz()[0];
 				atmi_xyz_[1] =  atm_i.xyz()[1];
 				atmi_xyz_[2] =  atm_i.xyz()[2];
 			}
 			int gridX =  int( ( atmi_xyz_[0] - minX )/grid_reso + 0.5 );
-      int gridY =  int( ( atmi_xyz_[1] - minY )/grid_reso + 0.5 );
-      int gridZ =  int( ( atmi_xyz_[2] - minZ )/grid_reso + 0.5 );
-		
+			int gridY =  int( ( atmi_xyz_[1] - minY )/grid_reso + 0.5 );
+			int gridZ =  int( ( atmi_xyz_[2] - minZ )/grid_reso + 0.5 );
 
-			for (core::Size pos = 0; pos < grid_pos_x.size(); ++pos ) {
-      	int x = grid_pos_x[pos];
-      	int y = grid_pos_y[pos];
-      	int z = grid_pos_z[pos];
-      	if (gridX + x  > grid_points || gridX + x < 0 ) continue;
-      	if (gridY + y  > grid_points || gridY + y < 0 ) continue;
-      	if (gridZ + z  > grid_points || gridZ + z < 0 ) continue;
-      	numeric::xyzVector< core::Real > gridpos( (gridX+x)*grid_reso + minX, (gridY+y)*grid_reso + minY, (gridZ+z)*grid_reso + minZ );
+
+			for ( core::Size pos = 0; pos < grid_pos_x.size(); ++pos ) {
+				int x = grid_pos_x[pos];
+				int y = grid_pos_y[pos];
+				int z = grid_pos_z[pos];
+				if ( gridX + x  > grid_points || gridX + x < 0 ) continue;
+				if ( gridY + y  > grid_points || gridY + y < 0 ) continue;
+				if ( gridZ + z  > grid_points || gridZ + z < 0 ) continue;
+				numeric::xyzVector< core::Real > gridpos( (gridX+x)*grid_reso + minX, (gridY+y)*grid_reso + minY, (gridZ+z)*grid_reso + minZ );
 				//numeric::xyzVector< core::Real > dist (gridpos - atm_i.xyz());
 				numeric::xyzVector< core::Real > dist (gridpos - atmi_xyz_);
-        double d2 = dist.length_squared();
-        core::Real atm = C*exp(-k*d2);
-        rho_cartesian( gridX + x, gridY + y, gridZ + z) += atm;
-    	}
+				double d2 = dist.length_squared();
+				core::Real atm = C*exp(-k*d2);
+				rho_cartesian( gridX + x, gridY + y, gridZ + z) += atm;
+			}
 		}
- 	}
+	}
 
-	if (basic::options::option[ basic::options::OptionKeys::edensity::debug ]()) {
+	if ( basic::options::option[ basic::options::OptionKeys::edensity::debug ]() ) {
 		core::scoring::electron_density::ElectronDensity(rho_cartesian,grid_reso, numeric::xyzVector< core::Real >(0,0,0), false).writeMRC( "rho_calc.mrc" );
 	}
 
@@ -481,16 +481,16 @@ FiberDiffractionEnergyDens::calculate_rho_fast2(
 				core::Real z = zc(k) + minZZ;
 
 				int xindex = int(( x - minX )/grid_reso + 0.5 );
-                                int yindex = int(( y - minY )/grid_reso + 0.5 );
+				int yindex = int(( y - minY )/grid_reso + 0.5 );
 				int zindex = int(( z - minZ )/grid_reso + 0.5 );
-				
-				if (	xindex > grid_points ||
-					yindex > grid_points ||
-					zindex > grid_points ||
-					xindex < 1 ||
-					yindex < 1 ||
-					zindex < 1 
-						) {	rho_cylindrical_(i,j,k) = 0.0;}
+
+				if ( xindex > grid_points ||
+						yindex > grid_points ||
+						zindex > grid_points ||
+						xindex < 1 ||
+						yindex < 1 ||
+						zindex < 1
+						) { rho_cylindrical_(i,j,k) = 0.0;}
 				else {
 					rho_cylindrical_(i,j,k) = rho_cartesian(xindex,yindex,zindex);
 				}
@@ -523,13 +523,13 @@ void gnl_R_qfht(
 	}
 	Size total_rvals ( fourier_in.size1() );
 	ObjexxFCL::FArray3D< std::complex<float> > fourier_out(total_rvals, lmax+1, max_n_val );
-        
-  //This is  NFFT part /////////////////////////////////
-  ft_nfft(fourier_in, nvals, lmax, total_rvals, fourier_out);
+
+	//This is  NFFT part /////////////////////////////////
+	ft_nfft(fourier_in, nvals, lmax, total_rvals, fourier_out);
 	///////////////////////////////////////////////////////////
 
 	double fder[] = {0,0};
-  double *f;			/* f traverses the Hankel data array. */
+	double *f;   /* f traverses the Hankel data array. */
 	for ( Size lindex=1; lindex<=lmax; ++lindex ) {
 		for ( Size nindex=1; nindex<=nvals[lindex-1].size() ; ++nindex ) {
 			int n ( nvals[lindex-1][nindex-1] );
@@ -537,7 +537,7 @@ void gnl_R_qfht(
 			p_hankel = hankel_make_input( total_rvals , qfht_K1 , qfht_K2 , max_r_value , 0 , fder , fourier_out , lindex, nindex, n );
 			hankel_trans_no_lec( p_hankel );
 			f = p_hankel->f;
-			for(core::Size pt = 0 ; pt < p_hankel->n ; pt++ ){
+			for ( core::Size pt = 0 ; pt < p_hankel->n ; pt++ ) {
 				std::complex<float> val( *f, *(f + 1)  );
 				Gnl(pt+1,lindex,nindex) = val;
 				f += 2;
@@ -559,17 +559,17 @@ fit_layer_lines_with_splines(
 
 	minX = maxX = xvals(1);
 	maxY = minY = yvals(1);
-	for(Size i=2;i<=xvals.size();i++) {
-		if( xvals(i) < minX) minX = xvals(i);
-		if( xvals(i) > maxX) maxX = xvals(i);
-		if( yvals(i) < minY) minY = yvals(i);
-		if( yvals(i) > maxY) maxY = yvals(i);
+	for ( Size i=2; i<=xvals.size(); i++ ) {
+		if ( xvals(i) < minX ) minX = xvals(i);
+		if ( xvals(i) > maxX ) maxX = xvals(i);
+		if ( yvals(i) < minY ) minY = yvals(i);
+		if ( yvals(i) > maxY ) maxY = yvals(i);
 	}
 
 	Real deltaR = 1;
 	Real deltaD = minY/10;
 	numeric::interpolation::spline::SplineGenerator gen( minX-deltaR, minY+deltaD, 0, maxX+deltaR, maxY-deltaD, 0 );
-	for (Size i = 1; i <= xvals.size(); ++i) {
+	for ( Size i = 1; i <= xvals.size(); ++i ) {
 		gen.add_known_value( xvals(i),yvals(i) );
 	}
 	utility::pointer::shared_ptr< numeric::interpolation::spline::Interpolator > spline_interpolator = gen.get_interpolator();

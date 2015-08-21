@@ -20,16 +20,16 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
 
-namespace basic{
-namespace database{
-namespace schema_generator{
-	
-	class DbDataType;
-	typedef utility::vector1< DbDataType > DbDataTypes;
-	
-	typedef utility::pointer::shared_ptr< DbDataType > DbDataTypeOP;
-	typedef utility::pointer::shared_ptr< DbDataType const > DbDataTypeCOP;
-	
+namespace basic {
+namespace database {
+namespace schema_generator {
+
+class DbDataType;
+typedef utility::vector1< DbDataType > DbDataTypes;
+
+typedef utility::pointer::shared_ptr< DbDataType > DbDataTypeOP;
+typedef utility::pointer::shared_ptr< DbDataType const > DbDataTypeCOP;
+
 } //namesapce
 } //namespace
 } //namespace

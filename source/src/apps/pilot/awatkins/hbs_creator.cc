@@ -108,30 +108,30 @@ using utility::file::FileName;
 static basic::Tracer TR("HBS_Creator");
 
 // application specific options
-namespace hbs_creator{
-	// pert options
-	StringOptionKey const hbs_chain ( "hbs_creator::hbs_chain" );
-	IntegerOptionKey const hbs_final_res ( "hbs_creator::hbs_final_res" );
-	IntegerOptionKey const hbs_length ( "hbs_creator::hbs_length" );
-	BooleanOptionKey const final_repack( "hbs_creator::final_repack" );
-	BooleanOptionKey const final_minimize( "hbs_creator::final_minimize" );
-	BooleanOptionKey const final_mc ( "hbs_creator::final_mc" );
-	// BooleanOptionKey const correct_hbs_dihedrals ( "hbs_creator::correct_hbs_dihedrals" ); to be implemented if possible
+namespace hbs_creator {
+// pert options
+StringOptionKey const hbs_chain ( "hbs_creator::hbs_chain" );
+IntegerOptionKey const hbs_final_res ( "hbs_creator::hbs_final_res" );
+IntegerOptionKey const hbs_length ( "hbs_creator::hbs_length" );
+BooleanOptionKey const final_repack( "hbs_creator::final_repack" );
+BooleanOptionKey const final_minimize( "hbs_creator::final_minimize" );
+BooleanOptionKey const final_mc ( "hbs_creator::final_mc" );
+// BooleanOptionKey const correct_hbs_dihedrals ( "hbs_creator::correct_hbs_dihedrals" ); to be implemented if possible
 
 }
 
 class HbsCreatorMover : public Mover {
 
-	public:
+public:
 
-		//default ctor
-		HbsCreatorMover(): Mover("HbsCreatorMover"){}
+	//default ctor
+	HbsCreatorMover(): Mover("HbsCreatorMover"){}
 
-		//default dtor
-		virtual ~HbsCreatorMover(){}
+	//default dtor
+	virtual ~HbsCreatorMover(){}
 
-		virtual void apply( core::pose::Pose & pose );
-		virtual std::string get_name() const { return "HbsCreatorMover"; }
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const { return "HbsCreatorMover"; }
 
 };
 
@@ -143,25 +143,25 @@ int
 main( int argc, char* argv[] )
 {
 	try {
-	utility::vector1< core::Size > empty_vector(0);
+		utility::vector1< core::Size > empty_vector(0);
 
-	option.add( hbs_creator::hbs_chain, "Chain from PDB to be mimicked. Default 'A'. Use letters." ).def("A");
-	option.add( hbs_creator::hbs_final_res, "Residue number of the final residue for mimicry. Default 1." ).def(1);
-	option.add( hbs_creator::hbs_length, "Number of residues to mimic. Default 12." ).def(12);
-	option.add( hbs_creator::final_repack, "Do a final repack. Default false" ).def(false);
-	option.add( hbs_creator::final_minimize, "Do a final minimization. Default false" ).def(false);
-	option.add( hbs_creator::final_mc, "Do a final monte carlo on hbs. Default false" ).def(false);
-	//option.add( hbs_creator::correct_hbs_dihedrals, "Correct hbs dihedral to low energy well. Default false" ).def(false);
+		option.add( hbs_creator::hbs_chain, "Chain from PDB to be mimicked. Default 'A'. Use letters." ).def("A");
+		option.add( hbs_creator::hbs_final_res, "Residue number of the final residue for mimicry. Default 1." ).def(1);
+		option.add( hbs_creator::hbs_length, "Number of residues to mimic. Default 12." ).def(12);
+		option.add( hbs_creator::final_repack, "Do a final repack. Default false" ).def(false);
+		option.add( hbs_creator::final_minimize, "Do a final minimization. Default false" ).def(false);
+		option.add( hbs_creator::final_mc, "Do a final monte carlo on hbs. Default false" ).def(false);
+		//option.add( hbs_creator::correct_hbs_dihedrals, "Correct hbs dihedral to low energy well. Default false" ).def(false);
 
-	// init command line options
-	//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
-	devel::init(argc, argv);
+		// init command line options
+		//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
+		devel::init(argc, argv);
 
-	//create mover instance
-	HbsCreatorMoverOP HC_mover( new HbsCreatorMover );
+		//create mover instance
+		HbsCreatorMoverOP HC_mover( new HbsCreatorMover );
 
-	//call job distributor
-	protocols::jd2::JobDistributor::get_instance()->go( HC_mover );
+		//call job distributor
+		protocols::jd2::JobDistributor::get_instance()->go( HC_mover );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
@@ -181,15 +181,18 @@ HbsCreatorMover::apply(
 
 	scoring::constraints::add_fa_constraints_from_cmdline_to_pose(pose);
 
-	if( score_fxn->has_zero_weight( atom_pair_constraint ) )
+	if ( score_fxn->has_zero_weight( atom_pair_constraint ) ) {
 		score_fxn->set_weight( atom_pair_constraint, 0.1 );
-	
-	if( score_fxn->has_zero_weight( dihedral_constraint ) )
+	}
+
+	if ( score_fxn->has_zero_weight( dihedral_constraint ) ) {
 		score_fxn->set_weight( dihedral_constraint, 0.1 );
-	
-	if( score_fxn->has_zero_weight( angle_constraint ) )
+	}
+
+	if ( score_fxn->has_zero_weight( angle_constraint ) ) {
 		score_fxn->set_weight( angle_constraint, 0.1 );
-	
+	}
+
 	chemical::ResidueTypeSetCOP restype_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	char hbs_chain = option[hbs_creator::hbs_chain].value()[0];
@@ -200,12 +203,12 @@ HbsCreatorMover::apply(
 	core::kinematics::FoldTree f = pose.fold_tree();
 	f.slide_jump( 1, 1, pose.pdb_info()->pdb2pose( hbs_chain, final_res+1 ) );
 	pose.fold_tree( f );
-	
-	for ( Size i = 1; i <= pose.total_residue(); ++i) {
+
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 		char chn = pdb_info->chain(i);
 		TR << "evaluating residue " << chn  << " " << pdb_info->number(i) << std::endl;
 
-		if ( chn != hbs_chain) {
+		if ( chn != hbs_chain ) {
 			continue;
 		}
 		// correct chain to be truncated and prepped
@@ -221,7 +224,7 @@ HbsCreatorMover::apply(
 			}
 			hbs::HbsPatcherOP hbs_patcher( new hbs::HbsPatcher( i ) );
 			hbs_patcher->apply( pose );
-			
+
 		} else if ( pdb_res_num > final_res + option[hbs_creator::hbs_length].value() ) {
 			//TR << "deleting residue " << pdb_res_num << std::endl;
 			while ( chn == hbs_chain && i <= pose.total_residue() ) {
@@ -229,17 +232,17 @@ HbsCreatorMover::apply(
 				pose.delete_polymer_residue(i);
 			}
 		}
-		
+
 		/*if (pdb_res_num == final_res) {
-			pose.set_phi(i, -78);
-			pose.set_psi(i, -48);
+		pose.set_phi(i, -78);
+		pose.set_psi(i, -48);
 		}
 		else if (pdb_res_num == final_res + 1) {
-			pose.set_phi(i+1, -72);
-			pose.set_psi(i+1, -47);
+		pose.set_phi(i+1, -72);
+		pose.set_psi(i+1, -47);
 		}*/
 	}
-	
+
 	setup_pert_foldtree(pose);
 
 	// presently the final residue in the pose is the terminal residue of the hbs
@@ -247,11 +250,11 @@ HbsCreatorMover::apply(
 	conformation::Residue term( restype_set->get_residue_type_with_variant_added(pose.residue(pose.total_residue()).type(), chemical::METHYLATED_CTERMINUS_VARIANT), true );
 	term.set_all_chi(pose.residue(pose.total_residue()).chi());
 	//replace_res_post.mainchain_torsions(pose.residue(oop_post_pos_).mainchain_torsions());
-	
+
 	pose.replace_residue( pose.total_residue(), term, true );
 	conformation::idealize_position( pose.total_residue(), pose.conformation() );
-	
-	
+
+
 	//pose.set_phi(i+3, -40);
 	//pose.set_psi(i+3, -58);
 
@@ -271,21 +274,21 @@ HbsCreatorMover::apply(
 	littlemm->set_bb( false );
 	littlemm->set_chi( true );
 	//mm->set_jump( 1, true );
-	
+
 	// create minimization mover
 	simple_moves::MinMoverOP littlemin( new protocols::simple_moves::MinMover( littlemm, score_fxn, option[ OptionKeys::run::min_type ].value(), 1, true ) );
-	
+
 	littlemin->apply( pose );
-	
-	if( option[ hbs_creator::final_mc ].value() ) {
+
+	if ( option[ hbs_creator::final_mc ].value() ) {
 		moves::SequenceMoverOP pert_sequence( new moves::SequenceMover() );
 		moves::MonteCarloOP pert_mc( new moves::MonteCarlo( pose, *score_fxn, 0.2 ) );
 
 		kinematics::MoveMapOP pert_pep_mm( new kinematics::MoveMap() );
-		
+
 		// core::Size hbs_position = 1;
-		
-		for( Size i = 1; i <= pose.total_residue(); ++i ) {
+
+		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 			if ( pdb_info->chain(i) == hbs_chain ) { //i != ( ( unsigned ) ( option[ hbs_creator::hbs_final_res ].value() ) ) ) {
 				//if ( pose.residue_type( i ).is_l_aa() ) {
 				TR << "setting small movable resid: "<< i<<std::endl;
@@ -294,7 +297,7 @@ HbsCreatorMover::apply(
 				//}
 			}
 		}
-		
+
 		simple_moves::SmallMoverOP pert_pep_small( new simple_moves::SmallMover( pert_pep_mm, 0.2, 1 ) );
 		pert_pep_small->angle_max( 'H', 2.0 );
 		pert_pep_small->angle_max( 'L', 2.0 );
@@ -316,7 +319,7 @@ HbsCreatorMover::apply(
 	}
 	pose.dump_pdb( "postmc.pdb");
 
-	if( option[ hbs_creator::final_repack ].value() ) {
+	if ( option[ hbs_creator::final_repack ].value() ) {
 
 		// create a task factory and task operations
 		TaskFactoryOP tf(new TaskFactory());
@@ -327,8 +330,7 @@ HbsCreatorMover::apply(
 			operation::ReadResfileOP rrop( new operation::ReadResfile() );
 			rrop->default_filename();
 			tf->push_back( rrop );
-		}
-		else {
+		} else {
 			//kdrew: do not do design, makes NATAA if res file is not specified
 			operation::RestrictToRepackingOP rtrp( new operation::RestrictToRepacking() );
 			tf->push_back( rtrp );
@@ -354,16 +356,16 @@ HbsCreatorMover::apply(
 		mm->set_bb( true );
 		mm->set_chi( true );
 		//mm->set_jump( 1, true );
-		
+
 		score_fxn->set_weight( atom_pair_constraint, 0.5 );
 		score_fxn->set_weight( dihedral_constraint, 0.5 );
 		score_fxn->set_weight( angle_constraint, 0.5 );
-		
+
 		// create minimization mover
-		simple_moves::MinMoverOP minM( new protocols::simple_moves::MinMover( mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.01,	true ) );
+		simple_moves::MinMoverOP minM( new protocols::simple_moves::MinMover( mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.01, true ) );
 		minM->cartesian( true );
 		minM->apply( pose );
-		
+
 		score_fxn->set_weight( atom_pair_constraint, 1 );
 		score_fxn->set_weight( dihedral_constraint, 1 );
 		score_fxn->set_weight( angle_constraint, 1 );

@@ -76,82 +76,82 @@ int
 main( int argc, char* argv [] ) {
 	try {
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	using std::map;
-	using core::Size;
-	using core::Real;
-	using std::string;
-	using utility::vector1;
-	using core::pose::Pose;
-	using utility::file::FileName;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::chemical;
-	using namespace core::sequence;
-	using namespace core::import_pose::pose_stream;
+		using std::map;
+		using core::Size;
+		using core::Real;
+		using std::string;
+		using utility::vector1;
+		using core::pose::Pose;
+		using utility::file::FileName;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::chemical;
+		using namespace core::sequence;
+		using namespace core::import_pose::pose_stream;
 
-	//basic::Tracer tr( "ss_features" );
+		//basic::Tracer tr( "ss_features" );
 
-	std::ostream& output( std::cout );
-	Size const width( 10 );
-	//Size const precision( 3 );  // unused ~Labonte
-	Real dist_cutoff( std::numeric_limits< Real >::max() );
-	if ( option[ james::dist_thresholds ].user() ) {
-		dist_cutoff = option[ james::dist_thresholds ]().front();
-	}
+		std::ostream& output( std::cout );
+		Size const width( 10 );
+		//Size const precision( 3 );  // unused ~Labonte
+		Real dist_cutoff( std::numeric_limits< Real >::max() );
+		if ( option[ james::dist_thresholds ].user() ) {
+			dist_cutoff = option[ james::dist_thresholds ]().front();
+		}
 
-	//Size min_seqsep = option[ james::min_seqsep ]();
+		//Size min_seqsep = option[ james::min_seqsep ]();
 
-	using namespace ObjexxFCL::format;
+		using namespace ObjexxFCL::format;
 
-	map< string, Pose > poses = protocols::comparative_modeling::poses_from_cmd_line( option[ in::file::template_pdb ]() );
+		map< string, Pose > poses = protocols::comparative_modeling::poses_from_cmd_line( option[ in::file::template_pdb ]() );
 
-	output
-		<< A( width, "q_resi" )
-		<< A( width, "q_resj" )
-		<< A( 6, "aa_i" )
-		<< A( 6, "aa_j" )
-		<< A( 8, "atomi" )
-		<< A( 8, "atomj" )
-		<< A( width, "buriali" )
-		<< A( width, "burialj" )
-		<< A( width, "distance" )
-		<< A( width, "aln_id" )
-		<< std::endl;
+		output
+			<< A( width, "q_resi" )
+			<< A( width, "q_resj" )
+			<< A( 6, "aa_i" )
+			<< A( 6, "aa_j" )
+			<< A( 8, "atomi" )
+			<< A( 8, "atomj" )
+			<< A( width, "buriali" )
+			<< A( width, "burialj" )
+			<< A( width, "distance" )
+			<< A( width, "aln_id" )
+			<< std::endl;
 
-	vector1< FileName > aln_files( option[ in::file::alignment ]() );
-	for ( vector1< FileName >::const_iterator file_it = aln_files.begin(),
+		vector1< FileName > aln_files( option[ in::file::alignment ]() );
+		for ( vector1< FileName >::const_iterator file_it = aln_files.begin(),
 				file_end = aln_files.end(); file_it != file_end; ++file_it
-	) {
+				) {
 
-		vector1< SequenceAlignment > alns(
-			read_aln( option[ cm::aln_format ](), *file_it )
-		);
-		//tr.Debug << "read " << alns.size() << " alignments from " << *file_it
-		//	<< std::endl;
+			vector1< SequenceAlignment > alns(
+				read_aln( option[ cm::aln_format ](), *file_it )
+			);
+			//tr.Debug << "read " << alns.size() << " alignments from " << *file_it
+			// << std::endl;
 
-		typedef vector1< SequenceAlignment >::iterator align_iter;
-		for ( align_iter it = alns.begin(), end = alns.end(); it != end; ++it ) {
-			//tr.Debug << "processing alignment between " << it->sequence(1)->id()
-			//	<< " and " << it->sequence(2)->id() << std::endl;
+			typedef vector1< SequenceAlignment >::iterator align_iter;
+			for ( align_iter it = alns.begin(), end = alns.end(); it != end; ++it ) {
+				//tr.Debug << "processing alignment between " << it->sequence(1)->id()
+				// << " and " << it->sequence(2)->id() << std::endl;
 
-			std::string const aln_id = it->sequence(2)->id();
-			std::string const template_id = aln_id.substr(0,5);
+				std::string const aln_id = it->sequence(2)->id();
+				std::string const template_id = aln_id.substr(0,5);
 
-			map< string, Pose >::iterator pose_it = poses.find( template_id );
-			if ( pose_it == poses.end() ) {
-				//print_seq_map( std::cerr, seqs );
-				string msg( "Error: can't find seq (id = " + template_id + ")" );
-				//utility_exit_with_message(msg);
-				//tr.Error << msg << std::endl;
-				//continue;
-			} else {
-				core::pose::Pose pose = pose_it->second;;
-				utility::vector1< int > burial = calculate_burial( pose, 8 );
+				map< string, Pose >::iterator pose_it = poses.find( template_id );
+				if ( pose_it == poses.end() ) {
+					//print_seq_map( std::cerr, seqs );
+					string msg( "Error: can't find seq (id = " + template_id + ")" );
+					//utility_exit_with_message(msg);
+					//tr.Error << msg << std::endl;
+					//continue;
+				} else {
+					core::pose::Pose pose = pose_it->second;;
+					utility::vector1< int > burial = calculate_burial( pose, 8 );
 
-				for ( Size ii = 1; ii <= it->length(); ++ii ) {
+					for ( Size ii = 1; ii <= it->length(); ++ii ) {
 						for ( Size jj = ii+1; jj <= it->length(); ++jj ) {
 							if ( it->is_gapped( ii ) || it->is_gapped(jj) ) continue;
 
@@ -168,49 +168,53 @@ main( int argc, char* argv [] ) {
 							const core::conformation::Residue& resj = pose.residue(t_resj);
 
 							for ( Size m = 1; m <= resi.natoms(); ++m ) {
-									for ( Size n = 1; n <= resj.natoms(); ++n ) {
+								for ( Size n = 1; n <= resj.natoms(); ++n ) {
 
-										// skip hydrogen atoms
-										if ( resi.atom_type(m).is_hydrogen() || resj.atom_type(n).is_hydrogen() )
-											continue;
+									// skip hydrogen atoms
+									if ( resi.atom_type(m).is_hydrogen() || resj.atom_type(n).is_hydrogen() ) {
+										continue;
+									}
 
-										// only take sc-sc and bb-bb pairs
-										if ( resi.atom_is_backbone(m) != resj.atom_is_backbone(n) )
-											continue;
+									// only take sc-sc and bb-bb pairs
+									if ( resi.atom_is_backbone(m) != resj.atom_is_backbone(n) ) {
+										continue;
+									}
 
-										// skip non-identical side-chain atoms
-										if ( (!resi.atom_is_backbone(m) || !resj.atom_is_backbone(n)) && !identity )
-											continue;
+									// skip non-identical side-chain atoms
+									if ( (!resi.atom_is_backbone(m) || !resj.atom_is_backbone(n)) && !identity ) {
+										continue;
+									}
 
-										// only keep CA backbone atoms for now
-										std::string const & atom_m( resi.atom_type(m).name() );
-										std::string const & atom_n( resj.atom_type(n).name() );
-										if ( resi.atom_is_backbone(m) && resj.atom_is_backbone(n) && (atom_m != "CAbb" || atom_n != "CAbb" ) )
-											continue;
+									// only keep CA backbone atoms for now
+									std::string const & atom_m( resi.atom_type(m).name() );
+									std::string const & atom_n( resj.atom_type(n).name() );
+									if ( resi.atom_is_backbone(m) && resj.atom_is_backbone(n) && (atom_m != "CAbb" || atom_n != "CAbb" ) ) {
+										continue;
+									}
 
-										// determine whether distance is below threshold
-										core::Real const distance(resi.xyz(m).distance(resj.xyz(n)));
-										if ( distance > dist_cutoff ) continue;
+									// determine whether distance is below threshold
+									core::Real const distance(resi.xyz(m).distance(resj.xyz(n)));
+									if ( distance > dist_cutoff ) continue;
 
-										output
-												<< I( 10, q_resi)
-												<< I( 10, q_resj)
-												<< A(  6, resi.name1() )
-												<< A(  6, resj.name1() )
-												<< A(  8, resi.atom_name(m) )
-												<< A(  8, resj.atom_name(n) )
-												<< I( 10, burial[t_resi] )
-												<< I( 10, burial[t_resj] )
-												<< F( 10, 4, distance )
-												<< A( 14, aln_id )
-												<< std::endl;
-							} // n
-						} // m
-					} // jj
-				} // ii
-			} // found a pose
-		} // for alns
-	} // for aln_files
+									output
+										<< I( 10, q_resi)
+										<< I( 10, q_resj)
+										<< A(  6, resi.name1() )
+										<< A(  6, resj.name1() )
+										<< A(  8, resi.atom_name(m) )
+										<< A(  8, resj.atom_name(n) )
+										<< I( 10, burial[t_resi] )
+										<< I( 10, burial[t_resj] )
+										<< F( 10, 4, distance )
+										<< A( 14, aln_id )
+										<< std::endl;
+								} // n
+							} // m
+						} // jj
+					} // ii
+				} // found a pose
+			} // for alns
+		} // for aln_files
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

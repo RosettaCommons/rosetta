@@ -7,20 +7,20 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/scoring/membrane/MPCbetaEnergy.fwd.hh
+/// @file  core/scoring/membrane/MPCbetaEnergy.fwd.hh
 ///
-///	@brief		Membrane Environemnt CBeta Energy
-///	@details	One Body Term - Score packing density in the membrane. Scores centroids for within
-///				6A and 12A radius. Derived from Membrane base potential and uses mpframework data
-///				Last Modified: 4/2/14
+/// @brief  Membrane Environemnt CBeta Energy
+/// @details One Body Term - Score packing density in the membrane. Scores centroids for within
+///    6A and 12A radius. Derived from Membrane base potential and uses mpframework data
+///    Last Modified: 4/2/14
 ///
-///	@author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_scoring_membrane_MPCbetaEnergy_fwd_hh
 #define INCLUDED_core_scoring_membrane_MPCbetaEnergy_fwd_hh
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh> 
+#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace scoring {

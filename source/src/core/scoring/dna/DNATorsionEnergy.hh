@@ -56,19 +56,19 @@ public:
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
- 	virtual
- 	void
- 	setup_for_scoring( pose::Pose &pose, ScoreFunction const &scfxn ) const;
+	virtual
+	void
+	setup_for_scoring( pose::Pose &pose, ScoreFunction const &scfxn ) const;
 
 	// call the cst setup_for_derivatives wrapper
- 	virtual
- 	void
- 	setup_for_derivatives( pose::Pose &pose, ScoreFunction const &scfxn ) const;
+	virtual
+	void
+	setup_for_derivatives( pose::Pose &pose, ScoreFunction const &scfxn ) const;
 
 
-//	virtual
-//	void
-//	setup_for_packing( pose::Pose & pose, pack::task::PackerTask const & ) const;
+	// virtual
+	// void
+	// setup_for_packing( pose::Pose & pose, pack::task::PackerTask const & ) const;
 
 	/// @brief Evaluate the intra-residue constraint energy for a given residue
 	virtual
@@ -111,8 +111,8 @@ public:
 
 	/// called during gradient-based minimization inside dfunc
 	/**
-		 F1 and F2 are not zeroed -- contributions from this atom are
-		 just summed in
+	F1 and F2 are not zeroed -- contributions from this atom are
+	just summed in
 	**/
 	virtual
 	void

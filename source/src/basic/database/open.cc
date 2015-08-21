@@ -59,11 +59,11 @@ open(
 {
 	using namespace utility::excn;
 
-	if(db_stream.good()){
+	if ( db_stream.good() ) {
 		db_stream.close();
 		db_stream.clear();
 	}
-	if(db_file.length() == 0){
+	if ( db_file.length() == 0 ) {
 		throw EXCN_Msg_Exception("Unable to open database file ''");
 		return false;
 	}
@@ -99,13 +99,13 @@ full_name(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	for(size_t i = 1, i_end = option[ in::path::database ]().size(); i <= i_end; ++i) {
+	for ( size_t i = 1, i_end = option[ in::path::database ]().size(); i <= i_end; ++i ) {
 		std::string fname = option[ in::path::database ](i).name() + db_file;
-		if( utility::file::file_exists(fname) || utility::file::file_exists(fname + ".gz") ) return fname;
+		if ( utility::file::file_exists(fname) || utility::file::file_exists(fname + ".gz") ) return fname;
 	}
 	// Don't exit -- sometimes caller wants to check if file exists (e.g. Dunbrack .bin file)
 	//utility_exit_with_message("Unable to locate database file "+db_file);
-	if (warn) Warning() << "Unable to locate database file " << db_file << std::endl;
+	if ( warn ) Warning() << "Unable to locate database file " << db_file << std::endl;
 	return option[ in::path::database ](1).name() + db_file;
 }
 

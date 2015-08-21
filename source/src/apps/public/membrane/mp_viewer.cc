@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		apps/pilot/membrane/mp_viewer.cc
+/// @file  apps/pilot/membrane/mp_viewer.cc
 ///
-/// @brief		RosettaMP Real time visualization of membrane proteins
-/// @details	Use the PyMOL viewer to visualize the membrane planes based on position
+/// @brief  RosettaMP Real time visualization of membrane proteins
+/// @details Use the PyMOL viewer to visualize the membrane planes based on position
 ///
-/// @author 	Rebecca Faye Alford (rfalford12@gmail.com)
-/// @author		Julia Koehler Leman (julia.koehler1982@gmail.com)
-/// @note 		Last Updated: 5/18/15
+/// @author  Rebecca Faye Alford (rfalford12@gmail.com)
+/// @author  Julia Koehler Leman (julia.koehler1982@gmail.com)
+/// @note   Last Updated: 5/18/15
 
 // Unit Headers
 #include <devel/init.hh>
@@ -23,8 +23,8 @@
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/MembranePositionFromTopologyMover.hh>
 
-#include <core/conformation/Conformation.hh> 
-#include <core/conformation/membrane/MembraneInfo.hh> 
+#include <core/conformation/Conformation.hh>
+#include <core/conformation/membrane/MembraneInfo.hh>
 
 #include <protocols/moves/PyMolMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -41,7 +41,7 @@
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <basic/options/keys/mp.OptionKeys.gen.hh> 
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
 // C++ headers
@@ -52,38 +52,38 @@ using namespace protocols::moves;
 
 /// @brief Quick Container Mover: Visualize Membrane Protein Using the PyMol Viewer
 class ViewMembraneProteinMover : public Mover {
-	
+
 public:
 
 	/// @brief Default Constructor
 	ViewMembraneProteinMover() :
 		Mover() {}
-	
+
 	/// @brief Get Mover Name
 	std::string get_name() const { return "ViewMembraneProteinMover"; }
-	
+
 	/// @brief Setup the Membrane Framework. Flags should take care of the rest
 	/// of visualization
 	void apply( Pose & pose ) {
-	
-        using namespace basic::options;
+
+		using namespace basic::options;
 		using namespace protocols::membrane;
 		using namespace protocols::moves;
-		
+
 		// Add Membrane
 		AddMembraneMoverOP add_memb( new AddMembraneMover() );
 		add_memb->apply( pose );
-				
+
 		// Send a set of viewable planes to pymol
-		PyMolMoverOP pymol_mover( new PyMolMover() ); 
+		PyMolMoverOP pymol_mover( new PyMolMover() );
 		pymol_mover->apply( pose );
-        
-        if ( option[ OptionKeys::mp::setup::position_from_topo ].user() ) {
-          
-            // Initialize Membrane
-            MembranePositionFromTopologyMoverOP init_memb( new MembranePositionFromTopologyMover() );
-            init_memb->apply( pose );
-        }
+
+		if ( option[ OptionKeys::mp::setup::position_from_topo ].user() ) {
+
+			// Initialize Membrane
+			MembranePositionFromTopologyMoverOP init_memb( new MembranePositionFromTopologyMover() );
+			init_memb->apply( pose );
+		}
 	}
 };
 
@@ -96,20 +96,20 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-		
+
 		devel::init(argc, argv);
-		
+
 		using namespace protocols::moves;
 		using namespace protocols::membrane;
-		
+
 		protocols::jd2::register_options();
-		
+
 		// Create and kick off a new load membrane mover
 		ViewMembraneProteinMoverOP view_memb( new ViewMembraneProteinMover() );
 		protocols::jd2::JobDistributor::get_instance()->go( view_memb );
-		
+
 		return 0;
-		
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

@@ -54,37 +54,37 @@ namespace hybridization {
 class DomainAssembly : public protocols::moves::Mover {
 
 public:
-DomainAssembly(
-			   utility::vector1 < core::pose::PoseOP > & poses,
-			   utility::vector1 < core::Real > & domain_assembly_weights
-			   );
+	DomainAssembly(
+		utility::vector1 < core::pose::PoseOP > & poses,
+		utility::vector1 < core::Real > & domain_assembly_weights
+	);
 
-void run();
+	void run();
 
-DomainAssembly(core::pose::PoseOP pose1,
-	core::pose::PoseOP pose2,
-	core::scoring::ScoreFunctionOP scorefxn)
-{
-	pose1_ = pose1;
-	pose2_ = pose2;
-	scorefxn_ = scorefxn;
-}
-	
-void apply(
-		   core::pose::Pose & pose
-		   );
-	
-std::string
-get_name() const {
-	return "DomainAssembly";
-}
+	DomainAssembly(core::pose::PoseOP pose1,
+		core::pose::PoseOP pose2,
+		core::scoring::ScoreFunctionOP scorefxn)
+	{
+		pose1_ = pose1;
+		pose2_ = pose2;
+		scorefxn_ = scorefxn;
+	}
+
+	void apply(
+		core::pose::Pose & pose
+	);
+
+	std::string
+	get_name() const {
+		return "DomainAssembly";
+	}
 
 private:
 	utility::vector1 < core::pose::PoseOP > poses_;
 
 	core::pose::PoseOP pose1_;
-    core::pose::PoseOP pose2_;
-    core::scoring::ScoreFunctionOP scorefxn_;
+	core::pose::PoseOP pose2_;
+	core::scoring::ScoreFunctionOP scorefxn_;
 }; // class DomainAssembly
 
 }  //  namespace hybridization

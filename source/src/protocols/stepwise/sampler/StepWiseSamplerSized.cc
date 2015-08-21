@@ -42,7 +42,7 @@ StepWiseSamplerSized::~StepWiseSamplerSized(){}
 void StepWiseSamplerSized::init() {
 	id_ = 0;
 	set_init( true );
-	//	reset();
+	// reset();
 }
 ///////////////////////////////////////////////////////////////////////////
 void StepWiseSamplerSized::reset() {

@@ -32,13 +32,13 @@ namespace frag_picker {
 class ContactCounts : public utility::pointer::ReferenceCount {
 public:
 
-  ContactCounts() {}
+	ContactCounts() {}
 
-  ~ContactCounts(){};
+	~ContactCounts(){};
 
-  void iterate_neighbor( std::pair<Size,Size> & query_pair, std::pair<Size,Size> & neighbor_pair ) {
+	void iterate_neighbor( std::pair<Size,Size> & query_pair, std::pair<Size,Size> & neighbor_pair ) {
 		neighbor_counts_[query_pair][neighbor_pair]++;
-  }
+	}
 
 	void iterate( std::pair<Size,Size> & query_pair ) {
 		counts_[query_pair]++;

@@ -44,7 +44,7 @@ using namespace core::scoring::methods;
 
 class UnfoldedStateEnergyTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	PoseOP the_pose;
 	Real TOLERATED_ERROR;
@@ -84,7 +84,7 @@ class UnfoldedStateEnergyTests : public CxxTest::TestSuite {
 		// WEIGHT 0.8 0.44 0.65 0.004 1.0 0.49  0.585 1.17 1.17 1.1 0.2 0.5 0.56 0.32
 		// PHE 3.6792 -0.7291 -1.7340 -6.6803 -0.0053 0.0000 0.4257 0.0216 0.0055 0.0000 0.1227 -0.2181 -1.0325 0.1014
 		// GLY 1.6906 -0.4879 -1.2009 -0.0181 -0.0033 0.0000 0.3093 0.0139 0.0093 0.0000 -0.6594 -0.1474 0.0000 1.0637
-		
+
 		UnfoldedStateEnergyOP unweighted_unf_energy( new UnfoldedStateEnergy( scoring::UNFOLDED_SCORE12 ) );
 
 		EnergyMap emap;

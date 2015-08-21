@@ -43,9 +43,9 @@
 // std Headers
 
 /* Just a mad thought: with fragments becoming ever more "Residue" like one might want to use the
-	 packer to choose a combination of good fragments instead of makeing independent choices.
-	 I guess, it is only a question of keeping the combinatorics in control...
-	 maybe it makes sense to pack with only "unconfident" regions of the backbone flexible ..
+packer to choose a combination of good fragments instead of makeing independent choices.
+I guess, it is only a question of keeping the combinatorics in control...
+maybe it makes sense to pack with only "unconfident" regions of the backbone flexible ..
 */
 
 namespace core {
@@ -65,7 +65,7 @@ namespace fragment {
 ///     ClassicFragmentMover
 class ConstantLengthFragSet : public FragSet {
 	typedef FragSet Parent;
-// ConstantLengthFragSet is a FragSet with only one frame per position!
+	// ConstantLengthFragSet is a FragSet with only one frame per position!
 public:
 
 	ConstantLengthFragSet( Size frag_length ) {
@@ -115,25 +115,25 @@ public:
 		core::Size , //min_length not used
 		FrameList &frames
 	) const;
-    
-    /// @brief returns the number and list of all fragment alignment frames that somehow overlap with the given region
-    ///(also allows those frames that start before the region and reach into it)
-    Size overlapping_with_region(
-        kinematics::MoveMap const& mm,
-        core::Size start,
-        core::Size end,
-        core::Size min_overlap,
-        core::Size min_length,
-        FrameList &frames
-    ) const;
 
-    
-// 	/// @brief Accessor for the Frames at the specified insertion position. Returns 0=false if
-// 	/// there is no frame at the specified position.
-// 	virtual Size frames(
-// 		Size pos,
-// 		FrameList & frame
-// 	);
+	/// @brief returns the number and list of all fragment alignment frames that somehow overlap with the given region
+	///(also allows those frames that start before the region and reach into it)
+	Size overlapping_with_region(
+		kinematics::MoveMap const& mm,
+		core::Size start,
+		core::Size end,
+		core::Size min_overlap,
+		core::Size min_length,
+		FrameList &frames
+	) const;
+
+
+	//  /// @brief Accessor for the Frames at the specified insertion position. Returns 0=false if
+	//  /// there is no frame at the specified position.
+	//  virtual Size frames(
+	//   Size pos,
+	//   FrameList & frame
+	//  );
 
 	/// @brief iterate over contents
 	ConstFrameIterator begin() const;

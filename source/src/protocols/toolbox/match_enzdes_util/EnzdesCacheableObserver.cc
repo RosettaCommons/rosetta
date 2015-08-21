@@ -62,7 +62,7 @@ get_enzdes_observer(
 	//using namespace core::pose::datacache::CacheableObserverType;
 	using namespace core::pose::datacache;
 
-	if( !pose.observer_cache().has( core::pose::datacache::CacheableObserverType::ENZDES_OBSERVER ) ){
+	if ( !pose.observer_cache().has( core::pose::datacache::CacheableObserverType::ENZDES_OBSERVER ) ) {
 
 		EnzdesCacheableObserverOP enz_obs( new EnzdesCacheableObserver() );
 		pose.observer_cache().set( core::pose::datacache::CacheableObserverType::ENZDES_OBSERVER, enz_obs, true );
@@ -83,7 +83,7 @@ get_enzdes_observer(
 	using namespace core::pose::datacache;
 
 	//const access: if cacheable observer hasn't been set, return NULL pointer
-	if( !pose.observer_cache().has( core::pose::datacache::CacheableObserverType::ENZDES_OBSERVER ) ) return NULL;
+	if ( !pose.observer_cache().has( core::pose::datacache::CacheableObserverType::ENZDES_OBSERVER ) ) return NULL;
 
 	CacheableObserverCOP enz_obs = pose.observer_cache().get_const_ptr( core::pose::datacache::CacheableObserverType::ENZDES_OBSERVER );
 	//std::cout << " returning const enzdes observer with val " << enz_obs << std::endl;
@@ -92,25 +92,25 @@ get_enzdes_observer(
 }
 
 EnzdesCacheableObserver::EnzdesCacheableObserver()
-	: CacheableObserver(),
-		cst_cache_(/* NULL */),
-		seq_recovery_cache_(/* NULL */),
-		enz_loops_file_(/* NULL */)
+: CacheableObserver(),
+	cst_cache_(/* NULL */),
+	seq_recovery_cache_(/* NULL */),
+	enz_loops_file_(/* NULL */)
 {
 	favor_native_constraints_.clear();
 	lig_rigid_body_confs_.clear();
 }
 
 EnzdesCacheableObserver::EnzdesCacheableObserver( EnzdesCacheableObserver const & other )
-	: CacheableObserver( other ),
-		cst_cache_( /* NULL */ ),
-		seq_recovery_cache_(/* NULL */),
-		favor_native_constraints_(other.favor_native_constraints_),
-		enz_loops_file_(other.enz_loops_file_ ),
-		lig_rigid_body_confs_( other.lig_rigid_body_confs_ )
+: CacheableObserver( other ),
+	cst_cache_( /* NULL */ ),
+	seq_recovery_cache_(/* NULL */),
+	favor_native_constraints_(other.favor_native_constraints_),
+	enz_loops_file_(other.enz_loops_file_ ),
+	lig_rigid_body_confs_( other.lig_rigid_body_confs_ )
 {
-	if( other.cst_cache_ ) cst_cache_ = toolbox::match_enzdes_util::EnzdesCstCacheOP( new toolbox::match_enzdes_util::EnzdesCstCache( *(other.cst_cache_) ) );
-	if( other.seq_recovery_cache_ ) seq_recovery_cache_ = EnzdesSeqRecoveryCacheOP( new EnzdesSeqRecoveryCache( *(other.seq_recovery_cache_) ) );
+	if ( other.cst_cache_ ) cst_cache_ = toolbox::match_enzdes_util::EnzdesCstCacheOP( new toolbox::match_enzdes_util::EnzdesCstCache( *(other.cst_cache_) ) );
+	if ( other.seq_recovery_cache_ ) seq_recovery_cache_ = EnzdesSeqRecoveryCacheOP( new EnzdesSeqRecoveryCache( *(other.seq_recovery_cache_) ) );
 }
 
 EnzdesCacheableObserver::~EnzdesCacheableObserver(){}
@@ -152,18 +152,18 @@ EnzdesCacheableObserver::on_length_change( core::conformation::signals::LengthEv
 		return;
 	}
 	core::id::SequenceMapping smap( event );
-	if( cst_cache_ ) cst_cache_->remap_resid( smap );
-	if( seq_recovery_cache_ ) seq_recovery_cache_ -> remap_residues( smap );
+	if ( cst_cache_ ) cst_cache_->remap_resid( smap );
+	if ( seq_recovery_cache_ ) seq_recovery_cache_ -> remap_residues( smap );
 
 	//remap favor native constraints (if they exist)
 	//note: in case residues were deleted, the constraints
 	//will be null pointers, so the vector might change size
-	if( favor_native_constraints_.size() > 0 ){
+	if ( favor_native_constraints_.size() > 0 ) {
 		utility::vector1< core::scoring::constraints::ConstraintCOP > new_favor_native_csts;
-		for( core::scoring::constraints::ConstraintCOPs::iterator cst_it = favor_native_constraints_.begin();
-				 cst_it != favor_native_constraints_.end(); ++cst_it ){
+		for ( core::scoring::constraints::ConstraintCOPs::iterator cst_it = favor_native_constraints_.begin();
+				cst_it != favor_native_constraints_.end(); ++cst_it ) {
 			core::scoring::constraints::ConstraintCOP remappedcst = (*cst_it)->remap_resid( smap );
-			if( remappedcst ) new_favor_native_csts.push_back( remappedcst );
+			if ( remappedcst ) new_favor_native_csts.push_back( remappedcst );
 		}
 		favor_native_constraints_.clear();
 		favor_native_constraints_ = new_favor_native_csts;
@@ -199,12 +199,12 @@ EnzdesCacheableObserver::lig_rigid_body_confs() const{
 void
 EnzdesCacheableObserver::set_rigid_body_confs_for_lig(
 	core::Size seqpos,
- 	utility::vector1< core::conformation::ResidueCOP > const & rg_confs
+	utility::vector1< core::conformation::ResidueCOP > const & rg_confs
 )
 {
 	erase_rigid_body_confs_for_lig( seqpos );
 	utility::vector1< core::conformation::ResidueCOP > resvec;
-	for( core::Size i = 1; i <= rg_confs.size(); ++i ){
+	for ( core::Size i = 1; i <= rg_confs.size(); ++i ) {
 		core::conformation::ResidueOP res( rg_confs[i]->clone());
 		res->seqpos( seqpos ); //security measure
 		resvec.push_back( res );
@@ -220,7 +220,7 @@ EnzdesCacheableObserver::erase_rigid_body_confs_for_lig(
 	core::Size seqpos )
 {
 	std::map< core::Size, utility::vector1< core::conformation::ResidueCOP > >::iterator conf_it( lig_rigid_body_confs_.find( seqpos ) );
-	if( conf_it != lig_rigid_body_confs_.end() ) lig_rigid_body_confs_.erase( conf_it );
+	if ( conf_it != lig_rigid_body_confs_.end() ) lig_rigid_body_confs_.erase( conf_it );
 }
 
 EnzdesSeqRecoveryCacheOP EnzdesCacheableObserver::get_seq_recovery_cache(){
@@ -258,26 +258,26 @@ EnzdesCacheableObserver::setup_favor_native_constraints(
 	core::pose::Pose const & native_pose
 )
 {
- using namespace basic::options;
+	using namespace basic::options;
 
- if( option[OptionKeys::enzdes::favor_native_res].user() ) {
-	  using namespace core::scoring::constraints;
+	if ( option[OptionKeys::enzdes::favor_native_res].user() ) {
+		using namespace core::scoring::constraints;
 
 		core::Real bonus = option[OptionKeys::enzdes::favor_native_res].value();
 
 		tr.Info << "favor_native_res: adding a bonus of " << bonus << " for native residues to pose." << std::endl;
 
 		//safety check first
-		if( favor_native_constraints_.size() != 0 ){
+		if ( favor_native_constraints_.size() != 0 ) {
 			tr.Info << "Warning: when setting up favor native constraints, there might already be some previously generated favor_native constraints in the pose, trying to remove these first." << std::endl;
 			remove_favor_native_constraints( pose );
 
 		}
 
 		favor_native_constraints_.clear();
-		for( core::Size i = 1; i <= pose.total_residue(); ++i){
+		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 
-			if( task->design_residue(i) ){
+			if ( task->design_residue(i) ) {
 
 				ConstraintOP resconstraint( new ResidueTypeConstraint( native_pose, i, bonus ) );
 				favor_native_constraints_.push_back( resconstraint );
@@ -285,8 +285,8 @@ EnzdesCacheableObserver::setup_favor_native_constraints(
 			}
 		}
 		favor_native_constraints_ = pose.add_constraints( favor_native_constraints_ );
- } else if (option[ OptionKeys::in::file::pssm ].user() ) {
-  	//multiple sequence aligniment (adapted from MSA app)
+	} else if ( option[ OptionKeys::in::file::pssm ].user() ) {
+		//multiple sequence aligniment (adapted from MSA app)
 
 		using namespace core;
 		using namespace scoring;
@@ -295,29 +295,29 @@ EnzdesCacheableObserver::setup_favor_native_constraints(
 
 		using namespace protocols;
 
-  	tr << " Starting MSA design " << std::endl;
+		tr << " Starting MSA design " << std::endl;
 
-  	// register SequenceProfileConstraint with the ConstraintFactory so that it can be constructed from a constraint file
-    	//ConstraintIO::get_cst_factory().add_type(
-    	//new core::scoring::constraints::SequenceProfileConstraint( Size(), utility::vector1< id::AtomID >(), NULL ) );
+		// register SequenceProfileConstraint with the ConstraintFactory so that it can be constructed from a constraint file
+		//ConstraintIO::get_cst_factory().add_type(
+		//new core::scoring::constraints::SequenceProfileConstraint( Size(), utility::vector1< id::AtomID >(), NULL ) );
 
-   	 // add constraints to bias design toward a sequence profile
-    	SequenceProfileOP profile( new SequenceProfile );
-    	utility::file::FileName filename( option[ OptionKeys::in::file::pssm ]().front() );
+		// add constraints to bias design toward a sequence profile
+		SequenceProfileOP profile( new SequenceProfile );
+		utility::file::FileName filename( option[ OptionKeys::in::file::pssm ]().front() );
 
-     	profile->read_from_file( filename );
-			profile->convert_profile_to_probs( 1 ); // was previously implicit in read_from_file()
+		profile->read_from_file( filename );
+		profile->convert_profile_to_probs( 1 ); // was previously implicit in read_from_file()
 
-      tr << *profile << std::endl;
+		tr << *profile << std::endl;
 
-    	for ( Size seqpos(1), end( pose.total_residue() ); seqpos <= end; ++seqpos ) {
-      	// add individual profile constraint for each residue position
-      	// because of the underlying constraint implementation, this enures that the constraint is
-				// a context-independent 1-body energy, or (intra)residue constraint
-      	pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) ) ) );
-			}
-  	}// else if ( option[ OptionKeys::constraints::in::file::pssm ].user() ){
- //}
+		for ( Size seqpos(1), end( pose.total_residue() ); seqpos <= end; ++seqpos ) {
+			// add individual profile constraint for each residue position
+			// because of the underlying constraint implementation, this enures that the constraint is
+			// a context-independent 1-body energy, or (intra)residue constraint
+			pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) ) ) );
+		}
+	}// else if ( option[ OptionKeys::constraints::in::file::pssm ].user() ){
+	//}
 
 }//setup_favor_native_constraints
 
@@ -327,7 +327,7 @@ EnzdesCacheableObserver::remove_favor_native_constraints(
 	core::pose::Pose & pose
 )
 {
-	if( !( pose.remove_constraints( favor_native_constraints_ ) ) ){
+	if ( !( pose.remove_constraints( favor_native_constraints_ ) ) ) {
 		tr.Info << "Warning: some of the favor native constraints that were previously added to the pose are not there anymore, something's a little unclean somewhere." << std::endl;
 	}
 	favor_native_constraints_.clear();

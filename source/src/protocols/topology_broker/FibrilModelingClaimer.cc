@@ -115,8 +115,8 @@ FibrilModelingClaimer::make_fibril( pose::Pose & pose )
 	// Setup symmetry if we have not already done it
 	if ( !core::pose::symmetry::is_symmetric( pose ) ) {
 		protocols::fibril::SetupForFibrilMoverOP setup_mover( new protocols::fibril::SetupForFibrilMover );
-		if( bAlign_ ) {
-		  setup_mover->align( pose, input_pose_ , rigid_core_, input_rigid_core_ );
+		if ( bAlign_ ) {
+			setup_mover->align( pose, input_pose_ , rigid_core_, input_rigid_core_ );
 		}
 		setup_mover->apply( pose );
 	}
@@ -129,11 +129,11 @@ FibrilModelingClaimer::make_fibril( pose::Pose & pose )
 
 void
 FibrilModelingClaimer::add_mover(
-    moves::RandomMover& random_mover,
-		core::pose::Pose const& /*pose*/,
-		abinitio::StageID /*stageID,  abinitio sampler stage */,
-		core::scoring::ScoreFunction const& scorefxn,
-		core::Real /*progress  progress within stage */
+	moves::RandomMover& random_mover,
+	core::pose::Pose const& /*pose*/,
+	abinitio::StageID /*stageID,  abinitio sampler stage */,
+	core::scoring::ScoreFunction const& scorefxn,
+	core::Real /*progress  progress within stage */
 )
 {
 	using namespace basic::options;
@@ -141,7 +141,7 @@ FibrilModelingClaimer::add_mover(
 
 	core::Real move_anchor_weight(1.0), rb_weight, slide_weight;
 
-	if( option( move_anchor_points ).user() ) {
+	if ( option( move_anchor_points ).user() ) {
 		moves::MoverOP move_anchor_mover( new symmetric_docking::SymFoldandDockMoveRbJumpMover );
 		random_mover.add_mover( move_anchor_mover, move_anchor_weight );
 	}
@@ -152,7 +152,7 @@ FibrilModelingClaimer::add_mover(
 
 	slide_weight = option( slide_contact_frequency );
 	moves::MoverOP slide_mover( new symmetric_docking::SymFoldandDockSlideTrialMover );
-  random_mover.add_mover( slide_mover, slide_weight );
+	random_mover.add_mover( slide_mover, slide_weight );
 
 }
 
@@ -170,29 +170,29 @@ void FibrilModelingClaimer::initialize_dofs(
 	protocols::simple_moves::symmetry::SymDockingInitialPerturbation initial( false /*slide into contact*/ );
 	initial.apply( pose );
 	// Setup the movemap
-  //SymmetricConformation & symm_conf (
+	//SymmetricConformation & symm_conf (
 	//     dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
-  kinematics::MoveMapOP movemap( new kinematics::MoveMap() );
-  movemap->set_bb( true );
-  movemap->set_jump( false );
+	kinematics::MoveMapOP movemap( new kinematics::MoveMap() );
+	movemap->set_bb( true );
+	movemap->set_jump( false );
 	core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
 
 	for ( claims::DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
-        it != eit; ++it ) {
-    if ( (*it)->owner().lock().get() == this ) {
-      (*it)->toggle( *movemap, true );
+			it != eit; ++it ) {
+		if ( (*it)->owner().lock().get() == this ) {
+			(*it)->toggle( *movemap, true );
 		}
 	}
 }
 
 void FibrilModelingClaimer::generate_claims( claims::DofClaims& new_claims ) {
-  // Set all cuts to real cuts. We don't want to close any of them...
+	// Set all cuts to real cuts. We don't want to close any of them...
 	utility::vector1< int > cuts( input_pose_.conformation().fold_tree().cutpoints() );
 	for ( Size i = 1; i <= cuts.size(); ++i ) {
-    new_claims.push_back( claims::DofClaimOP( new claims::CutClaim( get_self_weak_ptr(), std::make_pair( Parent::label(), cuts[i]),
-																								claims::DofClaim::INIT /* for now... eventually CAN_INIT ? */ ) ) );
-  }
+		new_claims.push_back( claims::DofClaimOP( new claims::CutClaim( get_self_weak_ptr(), std::make_pair( Parent::label(), cuts[i]),
+			claims::DofClaim::INIT /* for now... eventually CAN_INIT ? */ ) ) );
+	}
 }
 
 
@@ -213,13 +213,13 @@ bool FibrilModelingClaimer::allow_claim( claims::DofClaim const& foreign_claim )
 		} // DofClaim::BB
 
 		//if ( foreign_claim.type() == DofClaim::JUMP ) {
-		//	return false;
+		// return false;
 		//}
 
 		//if ( foreign_claim.type() == DofClaim::CUT) {
-		//	if( ! input_symminfo_.bb_is_independent( foreign_claim.pos( 1 ) ) ) return false;
+		// if( ! input_symminfo_.bb_is_independent( foreign_claim.pos( 1 ) ) ) return false;
 		//}
-  }
+	}
 
 	return true;
 } // FibrilModelingClaimer::allow_claim()

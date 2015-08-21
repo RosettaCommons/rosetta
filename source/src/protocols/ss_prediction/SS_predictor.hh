@@ -38,13 +38,13 @@ using utility::vector1;
 using namespace utility::libsvm;
 
 class SS_predictor : public utility::pointer::ReferenceCount {
- public:
+public:
 	/// @brief Reads in models for SS prediction etc.
 	SS_predictor(string type);
 	~SS_predictor();
 	vector1<vector1 <Real> > predict_ss(string fasta);
 
- private:
+private:
 	Svm_rosettaOP rd1_model;
 	Svm_rosettaOP rd2_model;
 	string ss_type;

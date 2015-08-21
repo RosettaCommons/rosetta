@@ -24,39 +24,39 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class IntegrationTestBreaker: public StepWiseScreener {
+class IntegrationTestBreaker: public StepWiseScreener {
 
-	public:
+public:
 
-		//constructor
-		IntegrationTestBreaker( StepWiseScreenerOP screener_whose_counts_to_check,
-														StepWiseScreenerOP final_screener /*total_count -- for turning on align screen*/,
-														AlignRMSD_ScreenerOP align_rmsd_screener );
+	//constructor
+	IntegrationTestBreaker( StepWiseScreenerOP screener_whose_counts_to_check,
+		StepWiseScreenerOP final_screener /*total_count -- for turning on align screen*/,
+		AlignRMSD_ScreenerOP align_rmsd_screener );
 
-		//destructor
-		~IntegrationTestBreaker();
+	//destructor
+	~IntegrationTestBreaker();
 
-	public:
+public:
 
-		bool
-		check_screen();
+	bool
+	check_screen();
 
-		std::string
-		name() const { return "IntegrationTestBreaker"; }
+	std::string
+	name() const { return "IntegrationTestBreaker"; }
 
-		StepWiseScreenerType
-		type() const { return INTEGRATION_TEST; }
+	StepWiseScreenerType
+	type() const { return INTEGRATION_TEST; }
 
-		void
-		fast_forward( sampler::StepWiseSamplerBaseOP sampler );
+	void
+	fast_forward( sampler::StepWiseSamplerBaseOP sampler );
 
-	private:
+private:
 
-		StepWiseScreenerOP screener_whose_counts_to_check_;
-		StepWiseScreenerOP final_screener_;
-		AlignRMSD_ScreenerOP align_rmsd_screener_;
+	StepWiseScreenerOP screener_whose_counts_to_check_;
+	StepWiseScreenerOP final_screener_;
+	AlignRMSD_ScreenerOP align_rmsd_screener_;
 
-	};
+};
 
 } //screener
 } //stepwise

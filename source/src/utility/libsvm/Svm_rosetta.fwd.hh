@@ -17,8 +17,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace utility{
-namespace libsvm{
+namespace utility {
+namespace libsvm {
 class Svm_node_rosetta;
 typedef utility::pointer::shared_ptr< Svm_node_rosetta > Svm_node_rosettaOP;
 

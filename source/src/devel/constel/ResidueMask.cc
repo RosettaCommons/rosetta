@@ -28,27 +28,28 @@ namespace constel {
 /// @param[in] fname path to the input file
 ///
 /// @details The input file lists the residues whose bit must be set to true.
-/// 	The format of the file is the following:
-/// 	I1 C1\n
-/// 	...
-/// 	IN CN\n ,
-/// 	where Ii and Ci are the residue index and the chain ID, respectively, of
-/// 	the ith residue whose bit must be set to true (i=1,...,N).
+///  The format of the file is the following:
+///  I1 C1\n
+///  ...
+///  IN CN\n ,
+///  where Ii and Ci are the residue index and the chain ID, respectively, of
+///  the ith residue whose bit must be set to true (i=1,...,N).
 ///
 ResidueMask::ResidueMask(Pose& ps, std::string const &fname) :
 	mask(ps.total_residue(), false) {
 
 	std::ifstream ifs(fname.c_str());
-	if(!ifs) {
+	if ( !ifs ) {
 		TR << "can't open " << fname << std::endl;
 		throw utility::excn::EXCN_BadInput(fname);
 	}
 
 	int ri;
 	char rc;
-	while(ifs >> ri >> rc) {
-		if(rc == '_')
+	while ( ifs >> ri >> rc ) {
+		if ( rc == '_' ) {
 			rc = ' ';
+		}
 		mask[get_pose_resnum(ri, rc, ps)] = true;
 	}
 }
@@ -64,7 +65,7 @@ ResidueMask::ResidueMask(Pose& ps, std::string const &fname) :
 void ResidueMask::print(std::ostream& os) const {
 
 	Size const SIZ = mask.size();
-	for(Size i=1; i<=SIZ; ++i) {
+	for ( Size i=1; i<=SIZ; ++i ) {
 		os << (mask[i] ? "1" : "0");
 	}
 }

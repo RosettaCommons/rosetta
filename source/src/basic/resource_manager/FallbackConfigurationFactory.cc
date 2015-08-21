@@ -55,7 +55,7 @@ FallbackConfigurationFactory::FallbackConfigurationFactory() :
 {}
 
 FallbackConfigurationOP
-FallbackConfigurationFactory::create_fallback_configuration( std::string const & resource_description	) const
+FallbackConfigurationFactory::create_fallback_configuration( std::string const & resource_description ) const
 {
 	FallbackConfigurationCreatorsMap::const_iterator iter = creators_map_.find( resource_description );
 	if ( iter == creators_map_.end() ) {

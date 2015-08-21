@@ -198,7 +198,7 @@ PoseMetricCalculatorOP PoseMetricContainer::get_calculator( std::string const & 
 		process_structure_change();
 	}
 
-	//	if ( sequence_is_outdated_ ) process_sequence_change();
+	// if ( sequence_is_outdated_ ) process_sequence_change();
 
 	if ( energies_are_outdated_ ) {
 		process_energy_change();
@@ -207,11 +207,11 @@ PoseMetricCalculatorOP PoseMetricContainer::get_calculator( std::string const & 
 	// call the "get" function for the appropriate metric
 	Name2Calculator::const_iterator calculator_iter;
 	calculator_iter = metric_calculators_.find( calculator_name );
-	if (calculator_iter == metric_calculators_.end() ) {
+	if ( calculator_iter == metric_calculators_.end() ) {
 		// this calculator has not yet been setup, add it
 		add_calculator( calculator_name );
 		calculator_iter = metric_calculators_.find( calculator_name );
-		if (calculator_iter == metric_calculators_.end() ) {
+		if ( calculator_iter == metric_calculators_.end() ) {
 			basic::Error() << "Could not lookup calculator " << calculator_name << " despite trying to add it" << std::endl;
 			utility_exit();
 		}
@@ -237,14 +237,14 @@ void PoseMetricContainer::clone_calculators( Name2Calculator const & calcs ) {
 
 /*
 void PoseMetricContainer::process_sequence_change() {
-	// notify all calculators that the sequence is outdated
-	Name2Calculator:iterator iter_calculators;
-	for ( iter_calculators = metric_calculators_.begin(); iter_calculators != metric_calculators_.end(); ++iter_calculators ) {
-		iter_calculators->second->notify_sequence_change();
-	}
-	// reset global flag
-	sequence_is_outdated_ = false;
-	return;
+// notify all calculators that the sequence is outdated
+Name2Calculator:iterator iter_calculators;
+for ( iter_calculators = metric_calculators_.begin(); iter_calculators != metric_calculators_.end(); ++iter_calculators ) {
+iter_calculators->second->notify_sequence_change();
+}
+// reset global flag
+sequence_is_outdated_ = false;
+return;
 }
 */
 

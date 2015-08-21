@@ -29,14 +29,14 @@ namespace func {
 class CircularSigmoidalFunc : public Func {
 public:
 	CircularSigmoidalFunc(
-			Real const center_radians, Real const width_radians, Real const slope_radians
-											 ) : xC_( center_radians ), m_( slope_radians ),
-													o1_( -width_radians/2 ), o2_( width_radians/2 ), offset_( 1.0 ) {}
+		Real const center_radians, Real const width_radians, Real const slope_radians
+	) : xC_( center_radians ), m_( slope_radians ),
+		o1_( -width_radians/2 ), o2_( width_radians/2 ), offset_( 1.0 ) {}
 
 	CircularSigmoidalFunc(
-		  Real const center_radians, Real const width_radians, Real const slope_radians,
-			Real const offset								 ) : xC_( center_radians ), m_( slope_radians ),
-								  o1_( -width_radians/2 ), o2_( width_radians/2 ), offset_( offset ) {}
+		Real const center_radians, Real const width_radians, Real const slope_radians,
+		Real const offset         ) : xC_( center_radians ), m_( slope_radians ),
+		o1_( -width_radians/2 ), o2_( width_radians/2 ), offset_( offset ) {}
 
 	FuncOP clone() const { return FuncOP( new CircularSigmoidalFunc( *this ) ); }
 

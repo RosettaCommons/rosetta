@@ -57,7 +57,7 @@ enum mmt_message
 };
 
 struct StateInputData {
-	typedef	std::list< std::pair< core::Size, std::string > > required_npds;
+	typedef std::list< std::pair< core::Size, std::string > > required_npds;
 
 	core::Size  state_index;
 	std::string pdb_name;

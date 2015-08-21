@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/modeler/rna/o2prime/O2PrimePacker.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -23,11 +23,11 @@ namespace stepwise {
 namespace modeler {
 namespace rna {
 namespace o2prime {
-	
-	class O2PrimePacker;
-	typedef utility::pointer::shared_ptr< O2PrimePacker > O2PrimePackerOP;
-	typedef utility::pointer::shared_ptr< O2PrimePacker const > O2PrimePackerCOP;
-	
+
+class O2PrimePacker;
+typedef utility::pointer::shared_ptr< O2PrimePacker > O2PrimePackerOP;
+typedef utility::pointer::shared_ptr< O2PrimePacker const > O2PrimePackerCOP;
+
 } //o2prime
 } //rna
 } //modeler

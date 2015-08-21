@@ -84,39 +84,41 @@ ProteinInterfaceDesignOperation::apply( core::pose::Pose const & pose, core::pac
 	using namespace protocols::toolbox::task_operations;
 
 	core::Size const chains( pose.conformation().num_chains() );
-	if (chains<2){
-		   TR << "WARNING WARNING WARNING!!! I'm calling ProteinInterfaceDesignOperation but I have only chain in pose. No interface to design!!" << std::endl; 
+	if ( chains<2 ) {
+		TR << "WARNING WARNING WARNING!!! I'm calling ProteinInterfaceDesignOperation but I have only chain in pose. No interface to design!!" << std::endl;
 	}
 	DesignAroundOperation dao1, dao2;
 	dao1.design_shell( interface_distance_cutoff_ ); dao2.design_shell( interface_distance_cutoff_ );
-	for( core::Size resi = 1; resi <= pose.total_residue(); ++resi ){
-		if( resi <= pose.conformation().chain_end( jump() ) ){
+	for ( core::Size resi = 1; resi <= pose.total_residue(); ++resi ) {
+		if ( resi <= pose.conformation().chain_end( jump() ) ) {
 			dao1.include_residue( resi );
-		}
-		else
+		} else {
 			dao2.include_residue( resi );
+		}
 	}
-	if( modify_after_jump() )
+	if ( modify_after_jump() ) {
 		dao1.apply( pose, task );
-	if( modify_before_jump() )
+	}
+	if ( modify_before_jump() ) {
 		dao2.apply( pose, task );
+	}
 
-	for( core::Size chain=1; chain<=chains; ++chain ){
+	for ( core::Size chain=1; chain<=chains; ++chain ) {
 		PreventChainFromRepackingOperation pcfr;
-		if( chain<=jump() && !repack_chain1_ && modify_before_jump() ){
+		if ( chain<=jump() && !repack_chain1_ && modify_before_jump() ) {
 			pcfr.chain( chain );
 			pcfr.apply( pose, task );
 		}
-		if( chain > jump() && !repack_chain2_ && modify_after_jump() ){
+		if ( chain > jump() && !repack_chain2_ && modify_after_jump() ) {
 			pcfr.chain( chain );
 			pcfr.apply( pose, task );
 		}
 		RestrictChainToRepackingOperation rctr;
-		if( chain<=jump() && !design_chain1_ && modify_before_jump() ){
+		if ( chain<=jump() && !design_chain1_ && modify_before_jump() ) {
 			rctr.chain( chain );
 			rctr.apply( pose, task );
 		}
-		if( chain > jump() && !design_chain2_ && modify_after_jump() ){
+		if ( chain > jump() && !design_chain2_ && modify_after_jump() ) {
 			rctr.chain( chain );
 			rctr.apply( pose, task );
 		}
@@ -128,26 +130,26 @@ ProteinInterfaceDesignOperation::apply( core::pose::Pose const & pose, core::pac
 	using namespace core::chemical;
 	utility::vector1< bool > allowed_aas( core::chemical::num_canonical_aas, true );
 	// check if we are allowing design of all cannonical aas
-	if( !allow_all_aas_ ){
+	if ( !allow_all_aas_ ) {
 		allowed_aas[ aa_cys ] = false;
 		allowed_aas[ aa_gly ] = false;
 		allowed_aas[ aa_pro ] = false;
 	}
-	for( core::Size i = 1; i<=pose.total_residue(); ++i ){
+	for ( core::Size i = 1; i<=pose.total_residue(); ++i ) {
 		utility::vector1< bool > specific_allowed_aas( allowed_aas );
-		if( pose.residue( i ).aa() == aa_cys ) specific_allowed_aas[ aa_cys ] = true; // allow a native cystein in packer task
+		if ( pose.residue( i ).aa() == aa_cys ) specific_allowed_aas[ aa_cys ] = true; // allow a native cystein in packer task
 		RestrictAbsentCanonicalAAS racaas( i, specific_allowed_aas );
 		racaas.apply( pose, task );
 		//check if we are designing all residues
-		if ( !design_all_aas_ ){
-			if( pose.residue( i ).aa() == aa_pro || pose.residue( i ).aa() == aa_gly ){
+		if ( !design_all_aas_ ) {
+			if ( pose.residue( i ).aa() == aa_pro || pose.residue( i ).aa() == aa_gly ) {
 				residues.push_back( i );
 			}
 		}
 	}
 	// needed because OperateOnCertainResidues will act on all residues in
 	// the pose if the vector of indices is empty
-	if( residues.size() != 0 ){
+	if ( residues.size() != 0 ) {
 		OperateOnCertainResidues oocr;
 		oocr.op( ResLvlTaskOperationCOP( new PreventRepackingRLT ) );
 		oocr.residue_indices( residues );
@@ -205,14 +207,14 @@ ProteinInterfaceDesignOperation::jump() const
 void
 ProteinInterfaceDesignOperation::parse_tag( TagCOP tag , DataMap & )
 {
-  repack_chain1( tag->getOption< core::Size >( "repack_chain1", 1 ) );
-  repack_chain2( tag->getOption< core::Size >( "repack_chain2", 1 ) );
+	repack_chain1( tag->getOption< core::Size >( "repack_chain1", 1 ) );
+	repack_chain2( tag->getOption< core::Size >( "repack_chain2", 1 ) );
 	design_chain1( tag->getOption< core::Size >( "design_chain1", 0 ) );
-  design_chain2( tag->getOption< core::Size >( "design_chain2", 1 ) );
+	design_chain2( tag->getOption< core::Size >( "design_chain2", 1 ) );
 	allow_all_aas( tag->getOption< core::Size >( "allow_all_aas", 0 ) );
 	design_all_aas( tag->getOption< core::Size >( "design_all_aas", 0 ) );
 	jump( tag->getOption< core::Size >( "jump", 1 ) );
-  interface_distance_cutoff( tag->getOption< core::Real >( "interface_distance_cutoff", 8.0 ) );
+	interface_distance_cutoff( tag->getOption< core::Real >( "interface_distance_cutoff", 8.0 ) );
 	modify_before_jump( tag->getOption< bool >( "modify_before_jump", 1 ) );
 	modify_after_jump(  tag->getOption< bool >( "modify_after_jump",  1 ) );
 }

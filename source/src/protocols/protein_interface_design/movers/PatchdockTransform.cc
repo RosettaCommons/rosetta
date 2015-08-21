@@ -62,11 +62,11 @@ PatchdockTransform::~PatchdockTransform() {}
 void
 PatchdockTransform::apply( core::pose::Pose & pose )
 {
-	if( pd_reader()->random_entry() ){//randomize the entry number
-	  core::Size const actual_last_entry( std::min( pd_reader()->to_entry(), pd_reader()->number_of_patchdock_entries() ) );
-    TR<<"sampling a number between "<<pd_reader()->from_entry()<<" and "<<actual_last_entry<<std::endl;
+	if ( pd_reader()->random_entry() ) { //randomize the entry number
+		core::Size const actual_last_entry( std::min( pd_reader()->to_entry(), pd_reader()->number_of_patchdock_entries() ) );
+		TR<<"sampling a number between "<<pd_reader()->from_entry()<<" and "<<actual_last_entry<<std::endl;
 
-    pd_reader()->patchdock_entry_num( ( core::Size ) floor( numeric::random::rg().uniform() * ( actual_last_entry - pd_reader()->from_entry() + 1 ) ) + pd_reader()->from_entry() );
+		pd_reader()->patchdock_entry_num( ( core::Size ) floor( numeric::random::rg().uniform() * ( actual_last_entry - pd_reader()->from_entry() + 1 ) ) + pd_reader()->from_entry() );
 		TR<<"Patchdock entry: "<<pd_reader()->patchdock_entry_num()<<std::endl;
 	}
 	protocols::protein_interface_design::Transformation t( pd_reader()->read_patchdock_entry() );
@@ -80,7 +80,7 @@ PatchdockTransform::get_name() const {
 
 void
 PatchdockTransform::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+	protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	pd_reader()->patchdock_fname( tag->getOption< std::string >( "fname", pd_reader()->patchdock_fname() ) );
 	pd_reader()->from_entry( tag->getOption< core::Size >( "from_entry", pd_reader()->from_entry() ) );
@@ -88,8 +88,8 @@ PatchdockTransform::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &,
 	pd_reader()->random_entry( tag->getOption< bool > ( "random_entry", pd_reader()->random_entry() ) );
 
 	TR << "PatchdockTransform parsed with parameters: fname " << pd_reader()->patchdock_fname() << " random_entry: " <<
-			pd_reader()->random_entry() << " from_entry: " << pd_reader()->from_entry() << " to entry: " <<
-			pd_reader()->to_entry() << std::endl;
+		pd_reader()->random_entry() << " from_entry: " << pd_reader()->from_entry() << " to entry: " <<
+		pd_reader()->to_entry() << std::endl;
 	runtime_assert( pd_reader()->from_entry() <= pd_reader()->to_entry() );
 	runtime_assert( pd_reader()->from_entry() >= 1 );
 	runtime_assert( pd_reader()->patchdock_fname() != "" );
@@ -97,7 +97,7 @@ PatchdockTransform::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &,
 
 protocols::moves::MoverOP
 PatchdockTransform::clone() const {
-    return( protocols::moves::MoverOP( new PatchdockTransform( *this ) ));
+	return( protocols::moves::MoverOP( new PatchdockTransform( *this ) ));
 }
 
 PatchdockReaderOP

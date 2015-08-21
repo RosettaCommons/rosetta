@@ -149,42 +149,42 @@
 
 namespace basic {
 /**
-	 not intended for profiling inside tight loops
-	 the clock() routine currently being used has fairly crappy
-	 resolution and it will introduce some small overhead with the
-	 function calls and the if-check even if not using -profile on
-	 the command line
+not intended for profiling inside tight loops
+the clock() routine currently being used has fairly crappy
+resolution and it will introduce some small overhead with the
+function calls and the if-check even if not using -profile on
+the command line
 
-	 you can wrap it around large-ish chunks of code, like fullatom_energy
-	 or rotamer_trials...
+you can wrap it around large-ish chunks of code, like fullatom_energy
+or rotamer_trials...
 
-	 A simple setup for timing code fragments. Probably not optimal timing
-	 functions -- I'm open to suggestions.
+A simple setup for timing code fragments. Probably not optimal timing
+functions -- I'm open to suggestions.
 
-	 looks like (see eg fullatom_energy or scorefxn)
+looks like (see eg fullatom_energy or scorefxn)
 
-	 PROF_START( prof::TAG );
+PROF_START( prof::TAG );
 
-	 <function call>
+<function call>
 
-	 PROF_STOP( prof::TAG );
+PROF_STOP( prof::TAG );
 
-	 where TAG is in the enum "Prof_tag" below (feel free to add new ones)
-	 also add to tag2string if you want friendly output.
+where TAG is in the enum "Prof_tag" below (feel free to add new ones)
+also add to tag2string if you want friendly output.
 
-	 PROF_STOP checks the time and increments the total time assigned to TAG
+PROF_STOP checks the time and increments the total time assigned to TAG
 
 
-	 2. later on, in your simulation code you can do:
+2. later on, in your simulation code you can do:
 
-	 prof_reset();
+prof_reset();
 
-	 -- miscellaneous simulation --
+-- miscellaneous simulation --
 
-	 prof_show();
+prof_show();
 
-	 The final call to prof::show() will display the time usage measured
-	 by all the PROF_* calls between reset() and show()
+The final call to prof::show() will display the time usage measured
+by all the PROF_* calls between reset() and show()
 **/
 
 #ifdef NO_PROF
@@ -284,7 +284,7 @@ enum ProfTag {
 	ARCHIVE_SYNC_BATCHES,
 	ARCHIVE_JOBSCOMPLETE,
 	ARCHIVE_BLOCK_FILE,
- 	SAVE_ARCHIVE,
+	SAVE_ARCHIVE,
 	ARCHIVE_CRITICAL_JOBSCOMPLETE,
 	ARCHIVE_GEN_BATCH,
 	ARCHIVE_READ_DECOYS,
@@ -301,15 +301,15 @@ enum ProfTag {
 
 	SAXS,
 	FRAGMENTPICKING_CS_SCORE,
-  FRAGMENTPICKING_PROFILE_SCORE,
-  FRAGMENTPICKING_PROFILE_CAHING,
-  FRAGMENTPICKING_SECONDARY_SCORE,
-  FRAGMENTPICKING_READ_VALL,
-  FRAGMENTPICKING,
-  FRAGMENTPICKING_CANDIDATES_COLLECTING,
-  FRAGMENTPICKING_ATOMPAIR_SCORE,
-  FRAGMENTPICKING_PHIPSI_SCORE,
-  FRAGMENTPICKING_DIHEDRALCONSTR_SCORE,
+	FRAGMENTPICKING_PROFILE_SCORE,
+	FRAGMENTPICKING_PROFILE_CAHING,
+	FRAGMENTPICKING_SECONDARY_SCORE,
+	FRAGMENTPICKING_READ_VALL,
+	FRAGMENTPICKING,
+	FRAGMENTPICKING_CANDIDATES_COLLECTING,
+	FRAGMENTPICKING_ATOMPAIR_SCORE,
+	FRAGMENTPICKING_PHIPSI_SCORE,
+	FRAGMENTPICKING_DIHEDRALCONSTR_SCORE,
 
 	MPICANONICALSAMPLING,
 	MPIPOOLCOMMUNICATION,
@@ -415,7 +415,7 @@ enum ProfTag {
 	NOESY_ASSIGN_DIST_MAKE_POSE,
 	NOESY_ASSIGN_DIST_CST_EVAL,
 	NOESY_ASSIGN_DIST_CST_CAST,
-	//	NOESY_ASSIGN_DIST_,
+	// NOESY_ASSIGN_DIST_,
 	SILENT_FILL_POSE,
 	SILENT_SET_POSE_COORDS,
 	SILENT_FILL_STRUCT,
@@ -438,12 +438,13 @@ inline
 void
 prof_start_function_body( ProfTag const tag )
 {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	// don't profile unless instructed to via the option -run:profile
-	if (!option[basic::options::OptionKeys::run::profile])
+	if ( !option[basic::options::OptionKeys::run::profile] ) {
 		return;
+	}
 
 	start_clock[ tag ] = clock() / SHRINK_FACTOR;
 	++calls[ tag ];
@@ -454,12 +455,13 @@ inline
 void
 prof_stop_function_body( ProfTag const tag )
 {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	// don't profile unless instructed to via the option -run:profile
-	if (!option[basic::options::OptionKeys::run::profile])
+	if ( !option[basic::options::OptionKeys::run::profile] ) {
 		return;
+	}
 
 	clock_t const current( clock() / SHRINK_FACTOR );
 	clock_t const start( start_clock[tag] );

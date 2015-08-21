@@ -27,11 +27,11 @@ static thread_local basic::Tracer TR( "apps.public.scenarios.FloppyTail" );
 int main( int argc, char* argv[] )
 {
 	try {
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new protocols::floppy_tail::FloppyTailMover ));
+		protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new protocols::floppy_tail::FloppyTailMover ));
 
-	TR << "************************d**o**n**e**************************************" << std::endl;
+		TR << "************************d**o**n**e**************************************" << std::endl;
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

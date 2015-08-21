@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		apps/pilot/membrane/mp_transform.cc
+/// @file  apps/pilot/membrane/mp_transform.cc
 ///
-/// @brief		RosettaMP Transform protein into a membrane
+/// @brief  RosettaMP Transform protein into a membrane
 ///
-/// @author		Julia Koehler Leman (julia.koehler1982@gmail.com)
-/// @author 	Rebecca Faye Alford (rfalford12@gmail.com)
-/// @note 		Last Updated: 5/18/15
+/// @author  Julia Koehler Leman (julia.koehler1982@gmail.com)
+/// @author  Rebecca Faye Alford (rfalford12@gmail.com)
+/// @note   Last Updated: 5/18/15
 
 // App headers
 #include <devel/init.hh>
@@ -58,20 +58,20 @@ main( int argc, char * argv [] ) {
 
 		using namespace protocols::jd2;
 		using namespace protocols::membrane;
-		
+
 		devel::init(argc, argv);
-		
+
 		// create two movers and concatenate them in a sequence mover
 		AddMembraneMoverOP addmem( new AddMembraneMover() );
 		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover() );
 		SequenceMoverOP seq( new SequenceMover( addmem, transform ) );
-		
+
 		// call jobdistributor on sequence mover
 		JobDistributor::get_instance()->go( seq );
 	}
-	catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
-		return -1;
-	}
+catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+	return -1;
+}
 
 }

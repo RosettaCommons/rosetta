@@ -105,7 +105,7 @@ utility::vector1< KDPointOP > KDPointList::sorted_values() {
 void KDPointList::merge( KDPointList const & other ) {
 	for ( const_iterator it = other.begin(), end = other.end();
 			it != end; ++it
-	) {
+			) {
 		KDPointOP tmp = *it;
 		insert( tmp );
 	}
@@ -114,8 +114,8 @@ void KDPointList::merge( KDPointList const & other ) {
 void KDPointList::show( std::ostream & out ) const {
 	out << "KDPointList with " << size() << " points." << std::endl;
 	for ( const_iterator it = container_.begin(), end = container_.end();
-				it != end; ++it
-	) {
+			it != end; ++it
+			) {
 		(*it)->show( out );
 		out << std::endl;
 	}

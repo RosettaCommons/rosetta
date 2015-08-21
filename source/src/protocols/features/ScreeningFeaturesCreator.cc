@@ -34,5 +34,5 @@ std::string ScreeningFeaturesCreator::type_name() const {
 	return "ScreeningFeatures";
 }
 
-	} //namespace features
+} //namespace features
 } //namespace protocols

@@ -37,11 +37,11 @@ namespace scoring {
 
 Real SmoothScoreTermCoeffs::func( Real x ) const {
 	Real y = shift_;
-	for (core::Size i=1; i<=sigmoid_coeffs_.size(); ++i) {
+	for ( core::Size i=1; i<=sigmoid_coeffs_.size(); ++i ) {
 		numeric::xyzVector< Real > const &q = sigmoid_coeffs_[i];
 		y += q[0] / (1 + exp( -q[2]*x - q[1] ));
 	}
-	for (core::Size i=1; i<=gaussian_coeffs_.size(); ++i) {
+	for ( core::Size i=1; i<=gaussian_coeffs_.size(); ++i ) {
 		numeric::xyzVector< Real > const &n = gaussian_coeffs_[i];
 		y += n[0] * exp( -(x-n[1])*(x-n[1]) / (2*n[2]*n[2]) );
 	}
@@ -51,13 +51,13 @@ Real SmoothScoreTermCoeffs::func( Real x ) const {
 
 Real SmoothScoreTermCoeffs::dfunc( Real x ) const {
 	Real dy = 0;
-	for (core::Size i=1; i<=sigmoid_coeffs_.size(); ++i) {
+	for ( core::Size i=1; i<=sigmoid_coeffs_.size(); ++i ) {
 		numeric::xyzVector< Real > const &q = sigmoid_coeffs_[i];
 		Real e = exp( -q[2]*x - q[1] );
 		Real d = (1 + e);
 		dy += q[0]*q[2]*e / (d*d);
 	}
-	for (core::Size i=1; i<=gaussian_coeffs_.size(); ++i) {
+	for ( core::Size i=1; i<=gaussian_coeffs_.size(); ++i ) {
 		numeric::xyzVector< Real > const &n = gaussian_coeffs_[i];
 		dy += n[0] * (n[1]-x) / (n[2]*n[2]) * exp( -(n[1]-x)*(n[1]-x) / (2*n[2]*n[2]) );
 	}
@@ -84,78 +84,82 @@ SmoothEnvPairPotential::SmoothEnvPairPotential() {
 	while ( getline( stream, line ) ) {
 		std::istringstream l(line);
 		l >> tag;
-		if (tag == "CBETA6:") {
+		if ( tag == "CBETA6:" ) {
 			// do cbeta stuff
 			l >> tag;
-			if (tag == "SHIFT") {
+			if ( tag == "SHIFT" ) {
 				Real shift; l >> shift;
 				cbeta6_.shift(shift);
-			} else if (tag == "GAUSSIAN" || tag == "SIGMOID") {
+			} else if ( tag == "GAUSSIAN" || tag == "SIGMOID" ) {
 				Size ngauss; l >> ngauss;
 				numeric::xyzVector<Real> g;
-				for (core::Size i=1; i<=ngauss; ++i) {
+				for ( core::Size i=1; i<=ngauss; ++i ) {
 					l >> g[0] >> g[1] >> g[2];
-					if (tag == "GAUSSIAN")
+					if ( tag == "GAUSSIAN" ) {
 						cbeta6_.add_gaussian(g);
-					else
+					} else {
 						cbeta6_.add_sigmoid(g);
+					}
 				}
 			}
-		} else if (tag == "CBETA12:") {
+		} else if ( tag == "CBETA12:" ) {
 			// do cbeta stuff
 			l >> tag;
-			if (tag == "SHIFT") {
+			if ( tag == "SHIFT" ) {
 				Real shift; l >> shift;
 				cbeta12_.shift(shift);
-			} else if (tag == "GAUSSIAN" || tag == "SIGMOID") {
+			} else if ( tag == "GAUSSIAN" || tag == "SIGMOID" ) {
 				Size ngauss; l >> ngauss;
 				numeric::xyzVector<Real> g;
-				for (core::Size i=1; i<=ngauss; ++i) {
+				for ( core::Size i=1; i<=ngauss; ++i ) {
 					l >> g[0] >> g[1] >> g[2];
-					if (tag == "GAUSSIAN")
+					if ( tag == "GAUSSIAN" ) {
 						cbeta12_.add_gaussian(g);
-					else
+					} else {
 						cbeta12_.add_sigmoid(g);
+					}
 				}
 			}
-		} else if (tag == "CENPACK:") {
+		} else if ( tag == "CENPACK:" ) {
 			// do cenpack stuff
 			l >> tag;
-			if (tag == "SHIFT") {
+			if ( tag == "SHIFT" ) {
 				Real shift; l >> shift;
 				cenpack_.shift(shift);
-			} else if (tag == "GAUSSIAN" || tag == "SIGMOID") {
+			} else if ( tag == "GAUSSIAN" || tag == "SIGMOID" ) {
 				Size ngauss; l >> ngauss;
 				numeric::xyzVector<Real> g;
-				for (core::Size i=1; i<=ngauss; ++i) {
+				for ( core::Size i=1; i<=ngauss; ++i ) {
 					l >> g[0] >> g[1] >> g[2];
-					if (tag == "GAUSSIAN")
+					if ( tag == "GAUSSIAN" ) {
 						cenpack_.add_gaussian(g);
-					else
+					} else {
 						cenpack_.add_sigmoid(g);
+					}
 				}
 			}
-		} else if (tag == "ENV:") {
+		} else if ( tag == "ENV:" ) {
 			// do env stuff
 			l >> aa1;
 			SmoothScoreTermCoeffs & currEnv = env_[aa1];
 
 			l >> tag;
-			if (tag == "SHIFT") {
+			if ( tag == "SHIFT" ) {
 				Real shift; l >> shift;
 				currEnv.shift(shift);
-			} else if (tag == "GAUSSIAN" || tag == "SIGMOID") {
+			} else if ( tag == "GAUSSIAN" || tag == "SIGMOID" ) {
 				Size ngauss; l >> ngauss;
 				numeric::xyzVector<Real> g;
-				for (core::Size i=1; i<=ngauss; ++i) {
+				for ( core::Size i=1; i<=ngauss; ++i ) {
 					l >> g[0] >> g[1] >> g[2];
-					if (tag == "GAUSSIAN")
+					if ( tag == "GAUSSIAN" ) {
 						currEnv.add_gaussian(g);
-					else
+					} else {
 						currEnv.add_sigmoid(g);
+					}
 				}
 			}
-		} else if (tag == "PAIR:") {
+		} else if ( tag == "PAIR:" ) {
 			// do pair stuff
 			// do env stuff
 			l >> aa1 >> aa2;
@@ -163,21 +167,22 @@ SmoothEnvPairPotential::SmoothEnvPairPotential() {
 				pair_[std::min(aa1,aa2)][std::max(aa1,aa2)];  // symmetrical; just store one half
 
 			l >> tag;
-			if (tag == "SHIFT") {
+			if ( tag == "SHIFT" ) {
 				Real shift; l >> shift;
 				currPair.shift(shift);
-			} else if (tag == "GAUSSIAN" || tag == "SIGMOID") {
+			} else if ( tag == "GAUSSIAN" || tag == "SIGMOID" ) {
 				Size ngauss; l >> ngauss;
 				numeric::xyzVector<Real> g;
-				for (core::Size i=1; i<=ngauss; ++i) {
+				for ( core::Size i=1; i<=ngauss; ++i ) {
 					l >> g[0] >> g[1] >> g[2];
-					if (tag == "GAUSSIAN")
+					if ( tag == "GAUSSIAN" ) {
 						currPair.add_gaussian(g);
-					else
+					} else {
 						currPair.add_sigmoid(g);
+					}
 				}
 			}
-		} else if (tag != "#") {
+		} else if ( tag != "#" ) {
 			utility_exit_with_message("bad format for cen_smooth_params.txt");
 		}
 
@@ -194,32 +199,35 @@ SmoothEnvPairPotential::fill_smooth_cenlist(
 ) const {
 	Real interp6, interp10, interp12, z;
 	z = SIGMOID_SLOPE*(cendist-6);
-	if (z<-20)
+	if ( z<-20 ) {
 		interp6 = 1;
-	else if (z>20)
+	} else if ( z>20 ) {
 		interp6 = 0;
-	else
+	} else {
 		interp6 = 1 / (1+exp(z));
+	}
 	cenlist.fcen6(res1) += interp6;
 	cenlist.fcen6(res2) += interp6;
 
 	z = SIGMOID_SLOPE*(cendist-10);
-	if (z<-20)
+	if ( z<-20 ) {
 		interp10 = 1;
-	else if (z>20)
+	} else if ( z>20 ) {
 		interp10 = 0;
-	else
+	} else {
 		interp10 = 1 / (1+exp(z));
+	}
 	cenlist.fcen10(res1) += interp10;
 	cenlist.fcen10(res2) += interp10;
 
 	z = SIGMOID_SLOPE*(cendist-12);
-	if (z<-20)
+	if ( z<-20 ) {
 		interp12 = 1;
-	else if (z>20)
+	} else if ( z>20 ) {
 		interp12 = 0;
-	else
+	} else {
 		interp12 = 1 / (1+exp(z));
+	}
 	cenlist.fcen12(res1) += interp12 - interp6;  // from 6->12 A
 	cenlist.fcen12(res2) += interp12 - interp6;  // from 6->12 A
 }
@@ -236,8 +244,8 @@ SmoothEnvPairPotential::fill_smooth_dcenlist(
 	numeric::xyzVector<Real> gradx = cenvec/x;
 
 	Real d6, d12 , z;
-	z = 	SIGMOID_SLOPE*(x-6);
-	if (z>-20 && z<20) {
+	z =  SIGMOID_SLOPE*(x-6);
+	if ( z>-20 && z<20 ) {
 		Real e6 = exp(z);
 		d6 = SIGMOID_SLOPE*e6 / ((1+e6)*(1+e6));
 	} else {
@@ -247,7 +255,7 @@ SmoothEnvPairPotential::fill_smooth_dcenlist(
 	dcenlist.fcen6(res2) -= d6*gradx;
 
 	z = SIGMOID_SLOPE*(x-10);
-	if (z>-20 && z<20) {
+	if ( z>-20 && z<20 ) {
 		Real e10 = exp(z);
 		Real d10 = SIGMOID_SLOPE*e10 / ((1+e10)*(1+e10));
 		dcenlist.fcen10(res1) += d10*gradx;
@@ -255,7 +263,7 @@ SmoothEnvPairPotential::fill_smooth_dcenlist(
 	}
 
 	z = SIGMOID_SLOPE*(x-12);
-	if (z>-20 && z<20) {
+	if ( z>-20 && z<20 ) {
 		Real e12 = exp(z);
 		d12 = SIGMOID_SLOPE*e12 / ((1+e12)*(1+e12));
 	} else {
@@ -270,7 +278,7 @@ void
 SmoothEnvPairPotential::compute_centroid_environment(
 	pose::Pose & pose
 ) const {
-	//	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
+	// basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
 	SigmoidWeightedCenList<Real> & cenlist( nonconst_cenlist_from_pose( pose ));
 
@@ -312,7 +320,7 @@ void
 SmoothEnvPairPotential::compute_dcentroid_environment(
 	pose::Pose & pose
 ) const {
-	//	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
+	// basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
 	nonconst_cenlist_from_pose( pose );
 	SigmoidWeightedCenList< numeric::xyzVector< Real > > & dcenlist( nonconst_dcenlist_from_pose( pose ));
@@ -320,7 +328,7 @@ SmoothEnvPairPotential::compute_dcentroid_environment(
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 	Size const nres( energy_graph.num_nodes() );
 
-	if ( !dcenlist.calculated()) {
+	if ( !dcenlist.calculated() ) {
 		dcenlist.initialize( pose.total_residue(), numeric::xyzVector< Real >(0,0,0) );
 
 		for ( Size i = 1; i <= nres; ++i ) {
@@ -366,7 +374,7 @@ SmoothEnvPairPotential::evaluate_env_and_cbeta_scores(
 	Real & cb_score6,
 	Real & cb_score12
 ) const {
-	//	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
+	// basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
 	env_score = 0.0;
 	cb_score6  = 0.0;
@@ -389,13 +397,13 @@ SmoothEnvPairPotential::evaluate_env_and_cbeta_scores(
 
 void
 SmoothEnvPairPotential::evaluate_env_and_cbeta_deriv(
-		pose::Pose const & pose,
-		conformation::Residue const & rsd,
-		numeric::xyzVector<Real> & d_env_score,
-		numeric::xyzVector<Real> & d_cb_score6,
-		numeric::xyzVector<Real> & d_cb_score12
-	) const {
-	//	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
+	pose::Pose const & pose,
+	conformation::Residue const & rsd,
+	numeric::xyzVector<Real> & d_env_score,
+	numeric::xyzVector<Real> & d_cb_score6,
+	numeric::xyzVector<Real> & d_cb_score12
+) const {
+	// basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
 	d_env_score = numeric::xyzVector<Real>(0.0,0.0,0.0);
 	d_cb_score6  = numeric::xyzVector<Real>(0.0,0.0,0.0);
@@ -441,8 +449,8 @@ SmoothEnvPairPotential::evaluate_env_and_cbeta_deriv(
 			numeric::xyzVector<Real> gradx = cenvec/x;
 
 			Real d6,d10,d12, z;
-			z = 	SIGMOID_SLOPE*(x-6);
-			if (z>-20 && z<20) {
+			z =  SIGMOID_SLOPE*(x-6);
+			if ( z>-20 && z<20 ) {
 				Real e6 = exp(z);
 				d6 = SIGMOID_SLOPE*e6 / ((1+e6)*(1+e6));
 			} else {
@@ -450,7 +458,7 @@ SmoothEnvPairPotential::evaluate_env_and_cbeta_deriv(
 			}
 
 			z = SIGMOID_SLOPE*(x-10);
-			if (z>-20 && z<20) {
+			if ( z>-20 && z<20 ) {
 				Real e10 = exp(z);
 				d10 = SIGMOID_SLOPE*e10 / ((1+e10)*(1+e10));
 			} else {
@@ -458,7 +466,7 @@ SmoothEnvPairPotential::evaluate_env_and_cbeta_deriv(
 			}
 
 			z = SIGMOID_SLOPE*(x-12);
-			if (z>-20 && z<20) {
+			if ( z>-20 && z<20 ) {
 				Real e12 = exp(z);
 				d12 = SIGMOID_SLOPE*e12 / ((1+e12)*(1+e12));
 			} else {
@@ -481,7 +489,7 @@ SmoothEnvPairPotential::evaluate_pair_and_cenpack_score(
 	Real & pair_contribution,
 	Real & cenpack_contribution
 ) const {
-	//	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
+	// basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
 	pair_contribution    = 0.0;
 	cenpack_contribution = 0.0;
@@ -493,8 +501,8 @@ SmoothEnvPairPotential::evaluate_pair_and_cenpack_score(
 
 	//CAR  no pair score if a disulfide
 	if ( aa1 == chemical::aa_cys && aa2 == chemical::aa_cys &&
-			 rsd1.is_bonded( rsd2 ) && rsd1.polymeric_sequence_distance( rsd2 ) > 1 &&
-			 rsd1.has_variant_type( chemical::DISULFIDE ) && rsd2.has_variant_type( chemical::DISULFIDE ) ) return;
+			rsd1.is_bonded( rsd2 ) && rsd1.polymeric_sequence_distance( rsd2 ) > 1 &&
+			rsd1.has_variant_type( chemical::DISULFIDE ) && rsd2.has_variant_type( chemical::DISULFIDE ) ) return;
 
 	// no pair score for residues closer than 9 in sequence
 	if ( rsd1.polymeric_sequence_distance( rsd2 ) /* j - i */ <= 8 ) return;
@@ -505,9 +513,9 @@ SmoothEnvPairPotential::evaluate_pair_and_cenpack_score(
 
 	// smooth pair by an additional sigmoid so pair_score->0 as dist->inf
 	Real z = SIGMOID_SLOPE*(cendist-10.5);
-	if (z>20) {
+	if ( z>20 ) {
 		pair_contribution = 0;
-	} else if (z>-20) {
+	} else if ( z>-20 ) {
 		pair_contribution *= 1 / (1+exp(z));
 	}
 	cenpack_contribution = cenpack_.func( cendist * 10 + 0.5 );
@@ -516,13 +524,13 @@ SmoothEnvPairPotential::evaluate_pair_and_cenpack_score(
 
 void
 SmoothEnvPairPotential::evaluate_pair_and_cenpack_deriv(
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		Real const cendist2,
-		Real & d_pair,
-		Real & d_cenpack
-	) const {
-	//	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	Real const cendist2,
+	Real & d_pair,
+	Real & d_cenpack
+) const {
+	// basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
 	d_pair = 0.0;
 	d_cenpack = 0.0;
@@ -533,8 +541,8 @@ SmoothEnvPairPotential::evaluate_pair_and_cenpack_deriv(
 	chemical::AA const aa2( rsd2.aa() );
 
 	if ( aa1 == chemical::aa_cys && aa2 == chemical::aa_cys &&
-			 rsd1.is_bonded( rsd2 ) && rsd1.polymeric_sequence_distance( rsd2 ) > 1 &&
-			 rsd1.has_variant_type( chemical::DISULFIDE ) && rsd2.has_variant_type( chemical::DISULFIDE ) ) return;
+			rsd1.is_bonded( rsd2 ) && rsd1.polymeric_sequence_distance( rsd2 ) > 1 &&
+			rsd1.has_variant_type( chemical::DISULFIDE ) && rsd2.has_variant_type( chemical::DISULFIDE ) ) return;
 	if ( rsd1.polymeric_sequence_distance( rsd2 ) <= 8 ) return;
 
 	// pair
@@ -542,10 +550,10 @@ SmoothEnvPairPotential::evaluate_pair_and_cenpack_deriv(
 	SmoothScoreTermCoeffs const & currPair = pair_[std::min(aa1,aa2)][std::max(aa1,aa2)];
 	Real pair = currPair.func( cendist );
 	Real z = SIGMOID_SLOPE*(cendist-10.5), sigmoid, d_sigmoid;
-	if (z<-20) {
+	if ( z<-20 ) {
 		sigmoid=1;
 		d_sigmoid=0;
-	} else if (z>20) {
+	} else if ( z>20 ) {
 		sigmoid=0;
 		d_sigmoid =0;
 	} else {
@@ -558,7 +566,7 @@ SmoothEnvPairPotential::evaluate_pair_and_cenpack_deriv(
 
 	// cenpack
 	d_cenpack = 10 * cenpack_.dfunc( cendist * 10 + 0.5 );
-		// 10 x because cenpack_smooth was fit to original function on 0.1A grid
+	// 10 x because cenpack_smooth was fit to original function on 0.1A grid
 }
 
 
@@ -575,7 +583,7 @@ SmoothEnvPairPotential::cenlist_from_pose( pose::Pose const & pose ) const {
 /// a non-const reference to it.
 SigmoidWeightedCenList< Real > &
 SmoothEnvPairPotential::nonconst_cenlist_from_pose( pose::Pose & pose ) const {
-	if ( pose.data().has( core::pose::datacache::CacheableDataType::SIGMOID_WEIGHTED_CEN_LIST )) {
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::SIGMOID_WEIGHTED_CEN_LIST ) ) {
 		return static_cast< SigmoidWeightedCenList< Real > & >
 			( pose.data().get( core::pose::datacache::CacheableDataType::SIGMOID_WEIGHTED_CEN_LIST ));
 	}
@@ -598,7 +606,7 @@ SmoothEnvPairPotential::dcenlist_from_pose( pose::Pose const & pose ) const {
 /// a non-const reference to it.
 SigmoidWeightedCenList< numeric::xyzVector< Real > > &
 SmoothEnvPairPotential::nonconst_dcenlist_from_pose( pose::Pose & pose ) const {
-	if ( pose.data().has( core::pose::datacache::CacheableDataType::SIGMOID_WEIGHTED_D_CEN_LIST )) {
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::SIGMOID_WEIGHTED_D_CEN_LIST ) ) {
 		return static_cast< SigmoidWeightedCenList< numeric::xyzVector< Real > > & >
 			( pose.data().get( core::pose::datacache::CacheableDataType::SIGMOID_WEIGHTED_D_CEN_LIST ));
 	}

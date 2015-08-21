@@ -90,7 +90,7 @@ LoopMover_SlidingWindow::LoopMover_SlidingWindow(
 	core::scoring::ScoreFunctionOP  scorefxn
 ) : IndependentLoopMover( loops_in )
 {
-	if( scorefxn ){
+	if ( scorefxn ) {
 		set_scorefxn( scorefxn );
 	} else {
 		set_scorefxn( loops::get_cen_scorefxn() );
@@ -104,7 +104,7 @@ LoopMover_SlidingWindow::LoopMover_SlidingWindow(
 
 loops::loop_mover::LoopResult LoopMover_SlidingWindow::model_loop(
 	core::pose::Pose & pose,
-  protocols::loops::Loop const & loop
+	protocols::loops::Loop const & loop
 ){
 	using namespace kinematics;
 	using namespace scoring;
@@ -115,8 +115,8 @@ loops::loop_mover::LoopResult LoopMover_SlidingWindow::model_loop(
 
 
 	// store starting fold tree and cut pose
- 	kinematics::FoldTree f_orig=pose.fold_tree();
- 	kinematics::FoldTree f_empty;
+	kinematics::FoldTree f_orig=pose.fold_tree();
+	kinematics::FoldTree f_empty;
 	f_empty.simple_tree( pose.total_residue() );
 	core::pose::Pose closedpose = pose;
 	set_single_loop_fold_tree( pose, loop );
@@ -131,23 +131,23 @@ loops::loop_mover::LoopResult LoopMover_SlidingWindow::model_loop(
 	//bool chainbreak_present =  ( loop.start() != 1 && loop.stop() != nres );
 	//chainbreak_present &= (loop.stop() != nres-1 || pose.residue( nres ).aa() != core::chemical::aa_vrt );
 	bool chainbreak_present = ( loop.start() != 1 && loop.stop() != nres &&
-	                            !pose.residue( loop.start() ).is_lower_terminus() &&
-	                            !pose.residue( loop.stop() ).is_upper_terminus() );
+		!pose.residue( loop.start() ).is_lower_terminus() &&
+		!pose.residue( loop.stop() ).is_upper_terminus() );
 
 	// set loop.cut() variant residue for chainbreak score if chanbreak is present
-	if( chainbreak_present ){
+	if ( chainbreak_present ) {
 		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, loop.cut() );
 		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, loop.cut()+1 );
 	}
 
 	// either extend or at least idealize the loop (just in case).
-	if( loop.is_extended() ) set_extended_torsions( pose, loop );
+	if ( loop.is_extended() ) set_extended_torsions( pose, loop );
 	else                     idealize_loop(  pose, loop );
 
 	core::fragment::FragSetOP fragset_small_;
 
-	     if( frag_libs_.size() == 0 ){ utility_exit_with_message("Fragments needed for LoopMover_SlidingWindow"); }
-	else if( frag_libs_.size() == 1 ){ fragset_small_ = frag_libs_[0]; }
+	if ( frag_libs_.size() == 0 ) { utility_exit_with_message("Fragments needed for LoopMover_SlidingWindow"); }
+	else if ( frag_libs_.size() == 1 ) { fragset_small_ = frag_libs_[0]; }
 	else                             { fragset_small_ = frag_libs_[ frag_libs_.size() - 2]; }
 
 
@@ -155,7 +155,7 @@ loops::loop_mover::LoopResult LoopMover_SlidingWindow::model_loop(
 
 	if ( option[ OptionKeys::loops::alternative_closure_protocol ]() ) {
 		closure_protocol = loops::loop_closure::ccd::SlidingWindowLoopClosureOP( new loops::loop_closure::ccd::WidthFirstSlidingWindowLoopClosure );
-	}else{
+	} else {
 		closure_protocol = loops::loop_closure::ccd::SlidingWindowLoopClosureOP( new loops::loop_closure::ccd::SlidingWindowLoopClosure );
 	}
 
@@ -166,24 +166,24 @@ loops::loop_mover::LoopResult LoopMover_SlidingWindow::model_loop(
 	closure_protocol->set_chainbreak_max( option[ OptionKeys::loops::chainbreak_max_accept ]() );
 
 	protocols::jumping::close_chainbreaks(
-		  closure_protocol,
-		  pose,
-		  *get_checkpoints(),
-			get_current_tag(),
-		  f_empty
+		closure_protocol,
+		pose,
+		*get_checkpoints(),
+		get_current_tag(),
+		f_empty
 	);
 
 	// Check chain break !
-	if( chainbreak_present ){
+	if ( chainbreak_present ) {
 		( *scorefxn() )( pose );
 		core::Real chain_break_score = std::max( (float)pose.energies().total_energies()[ scoring::chainbreak ],
-																	(float)pose.energies().total_energies()[ scoring::linear_chainbreak ] );
+			(float)pose.energies().total_energies()[ scoring::linear_chainbreak ] );
 
 		core::Real chain_break_tol = option[ basic::options::OptionKeys::loops::chain_break_tol ]();
 		tr().Info << "Chainbreak: " << chain_break_score << " Max: " << chain_break_tol << std::endl;
 
-		if( chain_break_score > (chain_break_tol*10) ) return loops::loop_mover::ExtendFailure;   // if we have a really bad chain break, go  and extend
-		if( chain_break_score > chain_break_tol )      return loops::loop_mover::Failure;         // if we only have a slight chainbreak problem, try again
+		if ( chain_break_score > (chain_break_tol*10) ) return loops::loop_mover::ExtendFailure;   // if we have a really bad chain break, go  and extend
+		if ( chain_break_score > chain_break_tol )      return loops::loop_mover::Failure;         // if we only have a slight chainbreak problem, try again
 	}
 
 	// return to original fold tree
@@ -200,7 +200,7 @@ LoopMover_SlidingWindow::get_name() const {
 
 basic::Tracer & LoopMover_SlidingWindow::tr() const
 {
-    return TR;
+	return TR;
 }
 
 } // namespace loop_build

@@ -121,17 +121,19 @@ void MutateResidue::apply( Pose & pose ) {
 	// since the string might refer to a residue in a reference pose.
 	core::Size const rosetta_target( core::pose::parse_resnum( target(), pose, true /*"true" must be specified to check for refpose numbering when parsing the string*/ ) );
 
-	if( rosetta_target < 1 ) {
+	if ( rosetta_target < 1 ) {
 		// Do nothing for 0
 		return;
 	}
-	if( rosetta_target > pose.total_residue() ) {
+	if ( rosetta_target > pose.total_residue() ) {
 		TR.Error << "Error: Residue "<< rosetta_target <<" is out of bounds." << std::endl;
 		utility_exit();
 	}
 
-	if(TR.Debug.visible()) TR.Debug << "Mutating residue " << rosetta_target << " from "
-		<< pose.residue( rosetta_target ).name3() << " to " << res_name_ <<" ." << std::endl;
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Mutating residue " << rosetta_target << " from "
+			<< pose.residue( rosetta_target ).name3() << " to " << res_name_ <<" ." << std::endl;
+	}
 
 	chemical::ResidueTypeSet const& restype_set( pose.residue( rosetta_target ).residue_type_set() );
 
@@ -153,20 +155,20 @@ MutateResidue::get_name() const {
 
 
 /**
- * @brief Reinitialize this protocols::moves::Mover with parameters from the specified tags.
- * @details Parameters recognized:
- *  - target_pdb_num or target_res_num. A single target residue to form disulfides to
- *  - target_pdb_nums or target_res_nums. A list of possible target residues
- */
+* @brief Reinitialize this protocols::moves::Mover with parameters from the specified tags.
+* @details Parameters recognized:
+*  - target_pdb_num or target_res_num. A single target residue to form disulfides to
+*  - target_pdb_nums or target_res_nums. A list of possible target residues
+*/
 void MutateResidue::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		Pose const & /*pose*/)
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	Pose const & /*pose*/)
 {
 
 	// Set target to the residue specified by "target_pdb_num" or "target_res_num":
-	if( !tag->hasOption("target") ){
+	if ( !tag->hasOption("target") ) {
 		TR.Error << "Error: no 'target' parameter specified." << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption("");
 	}
@@ -174,15 +176,15 @@ void MutateResidue::parse_my_tag( utility::tag::TagCOP tag,
 	//set_target( core::pose::parse_resnum( tag->getOption<string>("target"), pose ) );
 
 	//Set the identity of the new residue:
-	if( !tag->hasOption("new_res") ){
+	if ( !tag->hasOption("new_res") ) {
 		TR.Error << "Error: no 'new_res' parameter specified." << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption("");
 	}
 	set_res_name( tag->getOption<string>("new_res") );
-	
+
 	//Set whether the mover should try to preserve atom XYZ coordinates or not.  (Default false).
 	set_preserve_atom_coords( tag->getOption<bool>("preserve_atom_coords", false) );
-	
+
 	return;
 }
 

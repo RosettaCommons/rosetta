@@ -17,16 +17,16 @@
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
-	namespace simple_moves {
+namespace simple_moves {
 
-		class StorePoseSnapshotCreator : public protocols::moves::MoverCreator {
-			public:
-				virtual protocols::moves::MoverOP create_mover() const;
-				virtual std::string keyname() const;
-				static std::string mover_name();
-		};
+class StorePoseSnapshotCreator : public protocols::moves::MoverCreator {
+public:
+	virtual protocols::moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
+	static std::string mover_name();
+};
 
-	}
+}
 }
 
 #endif

@@ -188,7 +188,7 @@ private:
 	void finalize_setup( core::pose::Pose & pose );
 
 	/// @brief Sets up the instance of AntibodyModeler and initializes all members based on values passed in at construction
-	///		or via the command line.
+	///  or via the command line.
 	void init();
 
 	void setup_objects();

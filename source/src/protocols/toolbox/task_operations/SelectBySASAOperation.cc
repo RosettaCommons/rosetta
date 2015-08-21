@@ -52,8 +52,8 @@ SelectBySASAOperationCreator::create_task_operation() const
 }
 
 SelectBySASAOperation::SelectBySASAOperation( std::string mode, std::string state, core::Real probe_radius, core::Real core_asa, core::Real surface_asa, std::string jump_nums, std::string sym_dof_names, bool core, bool boundary, bool surface, bool verbose ):
-  mode_(mode),
-  state_(state),
+	mode_(mode),
+	state_(state),
 	probe_radius_(probe_radius),
 	core_asa_(core_asa),
 	surface_asa_(surface_asa),
@@ -75,31 +75,31 @@ core::pack::task::operation::TaskOperationOP SelectBySASAOperation::clone() cons
 void
 SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {
-  using core::id::AtomID;
+	using core::id::AtomID;
 	std::string layername = "";
 	bool prev = 0;
-	if( core_ ){
+	if ( core_ ) {
 		layername.append("core");
 		prev = 1;
 	}
-	if( boundary_ ){
-		if( prev ){
-		layername.append("_boundary");
+	if ( boundary_ ) {
+		if ( prev ) {
+			layername.append("_boundary");
 		} else {
-		layername.append("boundary");
+			layername.append("boundary");
 		}
 		prev = 1;
 	}
-	if( surface_ ){
-		if( prev ){
-		layername.append("_surface");
+	if ( surface_ ) {
+		if ( prev ) {
+			layername.append("_surface");
 		} else {
-		layername.append("surface");
+			layername.append("surface");
 		}
 		prev = 1;
 	}
 
-	if( !prev ) {
+	if ( !prev ) {
 		utility_exit_with_message("The layers are not set properly. Core, boundary, and surface are all set to false. At least one layer needs to be selected.");
 	}
 
@@ -108,10 +108,10 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 	std::string boundary_pos("select boundary, resi ");
 	std::string surface_pos("select surface, resi ");
 	core::pose::Pose mono, sasa_pose;
-	
+
 	core::Size nsubposes = 1;
-	if( state_ == "monomer") {
-		if(core::pose::symmetry::is_symmetric(pose)) {
+	if ( state_ == "monomer" ) {
+		if ( core::pose::symmetry::is_symmetric(pose) ) {
 			core::pose::symmetry::extract_asymmetric_unit( pose, mono , false );
 		} else {
 			mono = pose;
@@ -120,23 +120,23 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 	}
 
 	core::Size res_count = 0;
-	for (core::Size i = 1; i <= nsubposes; i++) {
+	for ( core::Size i = 1; i <= nsubposes; i++ ) {
 		utility::vector1<bool> indy_resi;
-	
-		if( state_ == "monomer" ) {
+
+		if ( state_ == "monomer" ) {
 			sasa_pose = *mono.split_by_chain(i);
-		}	else {
-			sasa_pose = pose; 
-			if (core::pose::symmetry::is_symmetric(sasa_pose)) {
-				indy_resi = core::pose::symmetry::symmetry_info(sasa_pose)->independent_residues(); 
+		} else {
+			sasa_pose = pose;
+			if ( core::pose::symmetry::is_symmetric(sasa_pose) ) {
+				indy_resi = core::pose::symmetry::symmetry_info(sasa_pose)->independent_residues();
 			}
 		}
 
-		if( state_ == "unbound" ) {
+		if ( state_ == "unbound" ) {
 			int sym_aware_jump_id = 0;
 			if ( sym_dof_names_ != "" ) {
 				utility::vector1<std::string> sym_dof_name_list = utility::string_split( sym_dof_names_ , ',' );
-				for (Size i = 1; i <= sym_dof_name_list.size(); i++) {
+				for ( Size i = 1; i <= sym_dof_name_list.size(); i++ ) {
 					sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( sasa_pose, sym_dof_name_list[i] );
 					protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( sasa_pose, sym_aware_jump_id ) );
 					translate->step_size( 1000.0 );
@@ -144,7 +144,7 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 				}
 			} else {
 				utility::vector1<core::Size> jump_list = utility::string_split( jump_nums_ , ',',core::Size());
-				for (Size i = 1; i <= jump_list.size(); i++) {
+				for ( Size i = 1; i <= jump_list.size(); i++ ) {
 					sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num( sasa_pose, jump_list[i] );
 					protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( sasa_pose, sym_aware_jump_id ) );
 					translate->step_size( 1000.0 );
@@ -159,17 +159,17 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 		core::id::AtomID_Map< core::Real > atom_sasa;
 		utility::vector1< core::Real > sasas, final_sasas;
 		core::pose::initialize_atomid_map( atom_mask, sasa_pose, false );
-  	core::pose::initialize_atomid_map( atom_sasa, sasa_pose, 0.0);
+		core::pose::initialize_atomid_map( atom_sasa, sasa_pose, 0.0);
 		core::Size itype;
 
 		for ( core::Size i = 1; i <= sasa_pose.n_residue(); ++i ) {
-			if ( sasa_pose.residue(i).name3()=="GLY") { // Don't try CBs with GLYs
+			if ( sasa_pose.residue(i).name3()=="GLY" ) { // Don't try CBs with GLYs
 				itype = 4;
 			} else {
 				itype = 5;
 			}
 			for ( core::Size j = 1; j<=sasa_pose.residue(i).nheavyatoms(); ++j ) {
-				if ((mode_ == "mc") && (j > itype)) {
+				if ( (mode_ == "mc") && (j > itype) ) {
 					continue;
 				} else {
 					core::id::AtomID atom( j, i );
@@ -182,14 +182,14 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 		core::scoring::calc_per_atom_sasa( sasa_pose, atom_sasa, sasas, probe_radius_, false, atom_mask );
 
 		if ( mode_ == "sc" ) {
-  		utility::vector1<core::Real> sc_sasas(sasa_pose.n_residue(),0.0);
-  		for(Size i = 1; i <= sasa_pose.n_residue(); i++) {
-    		// Use CA as the side chain for Glys
-    		if(sasa_pose.residue(i).name3()=="GLY") sc_sasas[i] += atom_sasa[AtomID(2,i)];
-    		for(Size j = 5; j <= sasa_pose.residue(i).nheavyatoms(); j++) {
-      		sc_sasas[i] += atom_sasa[AtomID(j,i)];
-    		}
-  		}
+			utility::vector1<core::Real> sc_sasas(sasa_pose.n_residue(),0.0);
+			for ( Size i = 1; i <= sasa_pose.n_residue(); i++ ) {
+				// Use CA as the side chain for Glys
+				if ( sasa_pose.residue(i).name3()=="GLY" ) sc_sasas[i] += atom_sasa[AtomID(2,i)];
+				for ( Size j = 5; j <= sasa_pose.residue(i).nheavyatoms(); j++ ) {
+					sc_sasas[i] += atom_sasa[AtomID(j,i)];
+				}
+			}
 			final_sasas = sc_sasas;
 		} else {
 			final_sasas = sasas;
@@ -197,48 +197,48 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 
 		// Prevent repacking at resis that do match the user-specified parameters.
 		//bool prevent_repacking;
-		for( Size iaa=1; iaa<=sasa_pose.n_residue(); iaa++ ) {
-			if (core::pose::symmetry::is_symmetric(sasa_pose)) {
-				if (!indy_resi[iaa]) {
+		for ( Size iaa=1; iaa<=sasa_pose.n_residue(); iaa++ ) {
+			if ( core::pose::symmetry::is_symmetric(sasa_pose) ) {
+				if ( !indy_resi[iaa] ) {
 					continue;
 				}
 			}
-			if (sasa_pose.residue( iaa ).is_protein()) {
+			if ( sasa_pose.residue( iaa ).is_protein() ) {
 				bool prevent_repacking = 1;
 				res_count++;
 				core::Size output_resi = res_count;
 				if ( !basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {
-				  if ( pose.pdb_info() ) {
+					if ( pose.pdb_info() ) {
 						output_resi = pose.pdb_info()->number( res_count );
-				  }
+					}
 				}
 				TR.Debug << iaa << " res_count = " << res_count << " sasa = " << final_sasas[iaa] << std::endl;
-				if (final_sasas[ iaa ] <= core_asa_) {
-					if( core_ ){
+				if ( final_sasas[ iaa ] <= core_asa_ ) {
+					if ( core_ ) {
 						selected_pos.append(ObjexxFCL::string_of(output_resi) + "+");
 						prevent_repacking = 0;
 					}
-					core_pos.append(ObjexxFCL::string_of(output_resi) + "+");   
-				} else if (final_sasas[iaa] >= surface_asa_) {
-					if( surface_ ){
-						selected_pos.append(ObjexxFCL::string_of(output_resi) + "+");   
+					core_pos.append(ObjexxFCL::string_of(output_resi) + "+");
+				} else if ( final_sasas[iaa] >= surface_asa_ ) {
+					if ( surface_ ) {
+						selected_pos.append(ObjexxFCL::string_of(output_resi) + "+");
 						prevent_repacking = 0;
 					}
 					surface_pos.append(ObjexxFCL::string_of(res_count) + "+");
-				} else if ((final_sasas[iaa] >= core_asa_) && (final_sasas[iaa] <= surface_asa_)) {
-					if( boundary_ ){
-						selected_pos.append(ObjexxFCL::string_of(output_resi) + "+");   
+				} else if ( (final_sasas[iaa] >= core_asa_) && (final_sasas[iaa] <= surface_asa_) ) {
+					if ( boundary_ ) {
+						selected_pos.append(ObjexxFCL::string_of(output_resi) + "+");
 						prevent_repacking = 0;
 					}
 					boundary_pos.append(ObjexxFCL::string_of(output_resi) + "+");
 				}
-				if( prevent_repacking ){
+				if ( prevent_repacking ) {
 					task.nonconst_residue_task(res_count).prevent_repacking();
 				}
 			}
 		}
 	}
-	if( verbose_ ){
+	if ( verbose_ ) {
 		TR << selected_pos << std::endl;
 		TR << core_pos << std::endl;
 		TR << boundary_pos << std::endl;
@@ -251,9 +251,9 @@ SelectBySASAOperation::parse_tag( TagCOP tag , DataMap & )
 {
 	mode_ = tag->getOption< std::string >("mode", "sc" );
 	state_ = tag->getOption< std::string >("state", "monomer" );
-  probe_radius_ = tag->getOption<core::Real>("probe_radius", 2.2);
-  core_asa_ = tag->getOption<core::Real>("core_asa", 0);
-  surface_asa_ = tag->getOption<core::Real>("surface_asa", 30);
+	probe_radius_ = tag->getOption<core::Real>("probe_radius", 2.2);
+	core_asa_ = tag->getOption<core::Real>("core_asa", 0);
+	surface_asa_ = tag->getOption<core::Real>("surface_asa", 30);
 	jump_nums_ = tag->getOption<std::string>("jumps", "1");
 	sym_dof_names_ = tag->getOption<std::string>("sym_dof_names","");
 	core_ = tag->getOption< bool >("core", 0 );

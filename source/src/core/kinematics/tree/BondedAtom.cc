@@ -120,7 +120,7 @@ BondedAtom::update_xyz_coords(
 	using numeric::constants::d::pi;
 
 	// TODO: Add PyAssert?
-debug_assert( stub.is_orthogonal( 1e-3 ) );
+	debug_assert( stub.is_orthogonal( 1e-3 ) );
 
 	stub.M *= x_rotation_matrix_radians( phi_ ); // this gets passed out
 
@@ -138,7 +138,7 @@ debug_assert( stub.is_orthogonal( 1e-3 ) );
 	position( new_stub.v );
 
 	for ( Atoms_Iterator it=atoms_begin(), it_end = atoms_end();
-				it != it_end; ++it ) {
+			it != it_end; ++it ) {
 		(*it)->update_xyz_coords( new_stub );
 	}
 
@@ -164,7 +164,7 @@ BondedAtom::update_internal_coords(
 	using numeric::z_rotation_matrix_radians;
 	using numeric::constants::d::pi;
 
-debug_assert( stub.is_orthogonal( 1e-3 ) );
+	debug_assert( stub.is_orthogonal( 1e-3 ) );
 
 	numeric::xyzVector< core::Real > w( position() - stub.v );
 
@@ -173,12 +173,12 @@ debug_assert( stub.is_orthogonal( 1e-3 ) );
 	bool flip_stub( false );
 	if ( d_ < 1e-2 ) {
 		// phi, theta don't make much sense
-		//	std::cerr << "WARNING:: very small d= " << d_ << ' ' << id() << std::endl;
+		// std::cerr << "WARNING:: very small d= " << d_ << ' ' << id() << std::endl;
 		phi_ = 0.0;
 		theta_ = 0.0;
 	} else {
 		//if ( d_ < 1e-1 ) {
-			//std::cerr << "WARNING:: small d but we are calculating phi,theta: " << d_ << std::endl;
+		//std::cerr << "WARNING:: small d but we are calculating phi,theta: " << d_ << std::endl;
 		//}
 		w.normalize();
 		Real const x( dot( w, stub.M.col_x() ) );
@@ -204,9 +204,9 @@ debug_assert( stub.is_orthogonal( 1e-3 ) );
 		} else {
 			theta_ = std::acos( x ); // DANGER
 			//if ( theta_ < 1e-2 || pi - theta_ < 1e-2 ) {
-				// less than 0.57 degrees
-				//std::cout << "WARNING:: small theta but we are calculating phi: " <<
-				//	theta_ << std::endl;
+			// less than 0.57 degrees
+			//std::cout << "WARNING:: small theta but we are calculating phi: " <<
+			// theta_ << std::endl;
 			//}
 			phi_  = std::atan2( z, y );
 		} // small theta
@@ -224,7 +224,7 @@ debug_assert( stub.is_orthogonal( 1e-3 ) );
 		}
 
 		for ( Atoms_Iterator it=atoms_begin(), it_end = atoms_end();
-					it != it_end; ++it ) {
+				it != it_end; ++it ) {
 			(*it)->update_internal_coords( new_stub );
 		}
 	}
@@ -321,7 +321,7 @@ BondedAtom::clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const
 
 	// copy atoms
 	for ( Atoms_ConstIterator a=atoms_begin(), a_end = atoms_end();
-				a != a_end; ++a ) {
+			a != a_end; ++a ) {
 		new_me->append_atom( (*a)->clone( AtomAP(new_me) /*the new parent*/, atom_pointer ) );
 	}
 
@@ -370,7 +370,7 @@ BondedAtom::setup_min_map(
 	min_map.add_atom( id(), last_torsion_local );
 
 	for ( Atoms_ConstIterator it=atoms_begin(), it_end = atoms_end();
-				it != it_end; ++it ) {
+			it != it_end; ++it ) {
 		(*it)->setup_min_map( last_torsion_local, allow_move, min_map );
 	}
 }
@@ -436,22 +436,22 @@ BondedAtom::keep_dof_fixed(
 		return ( parent->is_jump() && id() == parent->stub_atom2_id() );
 	} else if ( type == PHI ) {
 		AtomCOP parent( parent_ ); // must have parent
-		if( ( parent->is_jump() &&
+		if ( ( parent->is_jump() &&
 				( id() == parent->stub_atom2_id() ||
-					id() == parent->stub_atom3_id() ) ) ) {
-				return true;
+				id() == parent->stub_atom3_id() ) ) ) {
+			return true;
 		}
 
 		AtomCOP parent_parent = parent->parent();
-		if( parent_parent && parent_parent->is_jump() && id() == parent_parent->stub_atom3_id() ) {
+		if ( parent_parent && parent_parent->is_jump() && id() == parent_parent->stub_atom3_id() ) {
 			return true;
 		}
 		return false;
-		
+
 	} else {
 		std::cout << "BondedAtom::keep_dof_fixed: BAD_TYPE: " <<type <<
 			std::endl;
-	debug_assert( false );
+		debug_assert( false );
 		utility_exit();
 	}
 	return false;
@@ -473,12 +473,12 @@ BondedAtom::copy_coords( Atom const & src )
 	Super::operator= ( static_cast< Atom_ const & > ( src ));
 
 	// check for topology mismatch
-debug_assert( atom_id() == src.atom_id() && n_children() == src.n_children() );
+	debug_assert( atom_id() == src.atom_id() && n_children() == src.n_children() );
 
 	// call recursively for my children
 	int i(0);
 	for ( Atoms_Iterator it=atoms_begin(), it_end = atoms_end();
-				it != it_end; ++it, ++i ) {
+			it != it_end; ++it, ++i ) {
 		(*it)->copy_coords( *(src.child(i)) );
 	}
 }
@@ -501,7 +501,7 @@ BondedAtom::raw_stub_atom3() const
 	//std::cout << "stub_atom3: " << this << ' ' << parent_ << std::endl();
 	Atom const * parent_ptr = raw_parent(); // must have parent
 	if ( parent_ptr->is_jump() ) {
-	debug_assert( parent_ptr->stub_defined() ); // weird behavior otherwise
+		debug_assert( parent_ptr->stub_defined() ); // weird behavior otherwise
 		Atom const * p_stub2( parent_ptr->raw_stub_atom2() );
 		AtomID const & p_stub2_id( p_stub2->id() );
 		if ( id() == p_stub2_id ) {

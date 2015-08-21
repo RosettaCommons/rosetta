@@ -108,16 +108,15 @@ MembraneCbetaEnergy::residue_energy(
 		return;
 	}
 
-	if(MembraneTopology_from_pose( pose ).allow_scoring(rsd.seqpos()))
-	{
+	if ( MembraneTopology_from_pose( pose ).allow_scoring(rsd.seqpos()) ) {
 
-//	potential_.evaluate_env( pose, rsd,	env_score);
+		// potential_.evaluate_env( pose, rsd, env_score);
 		potential_.evaluate_cbeta( pose, rsd,cb_score);
 
-	//env_score *= 2.019;
+		//env_score *= 2.019;
 		cb_score = 2.667 * ( cb_score ) * 0.3;
 	}
-		//bw is this something we like?
+	//bw is this something we like?
 	//core::Real rsd_wt = get_residue_weight_by_ss( pose.conformation().secstruct( rsd.seqpos() ) );
 
 	///emap[ Menv   ] = env_score;// * rsd_wt;
@@ -137,13 +136,13 @@ MembraneCbetaEnergy::finalize_total_energy(
 }
 
 /*
-	bool
-	MembraneCbetaEnergy::allow_scoring(Size const seqpos) const
-	{
+bool
+MembraneCbetaEnergy::allow_scoring(Size const seqpos) const
+{
 
-		return ((*( static_cast< MembraneTopology const * >( pose.data().get_const_ptr( basic::MEMBRANE_TOPOLOGY )() ))).allow_scoring(seqpos));
-	}
-	*/
+return ((*( static_cast< MembraneTopology const * >( pose.data().get_const_ptr( basic::MEMBRANE_TOPOLOGY )() ))).allow_scoring(seqpos));
+}
+*/
 MembraneTopology const &
 MembraneCbetaEnergy::MembraneTopology_from_pose( pose::Pose const & pose ) const
 {

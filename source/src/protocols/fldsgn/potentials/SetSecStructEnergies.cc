@@ -201,10 +201,10 @@ SetSecStructEnergies::symmetric_secstruct( SymmetryInfoOP const syminfo, String 
 	runtime_assert( ss.length() == syminfo->num_independent_residues() );
 
 	String secstruct("");
-	for( Size i=1; i<= syminfo->subunits(); i++ ) {
+	for ( Size i=1; i<= syminfo->subunits(); i++ ) {
 		secstruct += ss;
 	}
-	for( Size i=1; i<=syminfo->num_virtuals(); i++ ) {
+	for ( Size i=1; i<=syminfo->num_virtuals(); i++ ) {
 		secstruct += "L";
 	}
 
@@ -241,22 +241,22 @@ void SetSecStructEnergies::apply( Pose & pose )
 	using protocols::simple_moves::symmetry::SetupForSymmetryMover;
 	using protocols::simple_moves::symmetry::SetupForSymmetryMoverOP;
 
-	if( loaded_ ) return;
+	if ( loaded_ ) return;
 
 	runtime_assert( blueprint_ != 0 );
 	runtime_assert( sfx_ != 0 );
 
 	// assign secondary structure
-	if( !ss_from_blueprint_ ){
+	if ( !ss_from_blueprint_ ) {
 		Dssp dssp( pose );
 		dssp.insert_ss_into_pose( pose );
-	}else{
+	} else {
 		blueprint_->insert_ss_into_pose( pose );
 	}
 
 	Pose scratch( pose );
 	String ss("");
-	if( option[ basic::options::OptionKeys::symmetry::symmetry_definition ].active() ) {
+	if ( option[ basic::options::OptionKeys::symmetry::symmetry_definition ].active() ) {
 
 		if ( !is_symmetric( scratch ) ) {
 			SetupForSymmetryMoverOP symm_setup_mover( new SetupForSymmetryMover );
@@ -286,9 +286,9 @@ void SetSecStructEnergies::apply( Pose & pose )
 	hspot_->show_params();
 
 	sspot.native_secstruct( ss );
-	if( ss_weight_ != 0.0 ) sspot.set_natbias_spairpot( spairpot );
-	if( hs_weight_ != 0.0 ) sspot.set_natbias_helices_sheet_pot( hspot_ );
-	if( hh_weight_ != 0.0 ) sspot.set_natbias_hpairpot( hpairpot_ );
+	if ( ss_weight_ != 0.0 ) sspot.set_natbias_spairpot( spairpot );
+	if ( hs_weight_ != 0.0 ) sspot.set_natbias_helices_sheet_pot( hspot_ );
+	if ( hh_weight_ != 0.0 ) sspot.set_natbias_hpairpot( hpairpot_ );
 
 	// turn Original SecondaryStructureEnergy off
 	std::map< ScoreType, Real > new_weights;
@@ -299,17 +299,17 @@ void SetSecStructEnergies::apply( Pose & pose )
 	sfx_->add_extra_method( new_weights, sspot );
 
 	sfx_->set_weight( core::scoring::hs_pair, hs_pair_weight_ );
-	if( hs_pair_weight_ <= 0.0 ) {
+	if ( hs_pair_weight_ <= 0.0 ) {
 		TR << "original hs_pair term was turned off." << std::endl;
 	}
 
 	sfx_->set_weight( core::scoring::ss_pair, ss_pair_weight_ );
-	if( ss_pair_weight_ <= 0.0 ) {
+	if ( ss_pair_weight_ <= 0.0 ) {
 		TR << "original ss_pair term was turned off." << std::endl;
 	}
 
 	sfx_->set_weight( core::scoring::rsigma, rsigma_weight_ );
-	if( rsigma_weight_ <= 0.0 ) {
+	if ( rsigma_weight_ <= 0.0 ) {
 		TR << "original rsigma term was turned off." << std::endl;
 	}
 
@@ -335,7 +335,7 @@ SetSecStructEnergies::parse_my_tag(
 	Pose const & )
 {
 	std::string const blueprint( tag->getOption<std::string>( "blueprint", "" ) );
-	if( blueprint == "" ){
+	if ( blueprint == "" ) {
 		TR << "No input of blueprint file ! " << std::endl;
 		runtime_assert( false );
 	}
@@ -346,7 +346,7 @@ SetSecStructEnergies::parse_my_tag(
 
 	// set scorefxn
 	String const sfxn ( tag->getOption<String>( "scorefxn", "" ) );
-	if( sfxn == "" ) {
+	if ( sfxn == "" ) {
 		TR << "[ERROR] No input of scorefxn !"  << std::endl;
 		runtime_assert( false );
 	}
@@ -355,69 +355,69 @@ SetSecStructEnergies::parse_my_tag(
 	TR << "score function, " << sfxn << ", is used. " << std::endl;
 
 
-	if( tag->hasOption( "natbias_ss" ) ) ss_weight_ = tag->getOption< Real >( "natbias_ss" );
-	if( tag->hasOption( "natbias_hh" ) ) hh_weight_ = tag->getOption< Real >( "natbias_hh" );
-	if( tag->hasOption( "natbias_hs" ) ) hs_weight_ = tag->getOption< Real >( "natbias_hs" );
-	if( tag->hasOption( "natbias_stwist" ) ) stwist_weight_ = tag->getOption< Real >( "natbias_stwist" );
+	if ( tag->hasOption( "natbias_ss" ) ) ss_weight_ = tag->getOption< Real >( "natbias_ss" );
+	if ( tag->hasOption( "natbias_hh" ) ) hh_weight_ = tag->getOption< Real >( "natbias_hh" );
+	if ( tag->hasOption( "natbias_hs" ) ) hs_weight_ = tag->getOption< Real >( "natbias_hs" );
+	if ( tag->hasOption( "natbias_stwist" ) ) stwist_weight_ = tag->getOption< Real >( "natbias_stwist" );
 
 	/// original secondary structure potential except for sheet potential
-	if( tag->hasOption( "hs_pair" ) ) hs_pair_weight_ = tag->getOption< Real >( "hs_pair" );
-	if( tag->hasOption( "ss_pair" ) ) ss_pair_weight_ = tag->getOption< Real >( "ss_pair" );
-	if( tag->hasOption( "rsigma"  ) ) rsigma_weight_  = tag->getOption< Real >( "rsigma" );
+	if ( tag->hasOption( "hs_pair" ) ) hs_pair_weight_ = tag->getOption< Real >( "hs_pair" );
+	if ( tag->hasOption( "ss_pair" ) ) ss_pair_weight_ = tag->getOption< Real >( "ss_pair" );
+	if ( tag->hasOption( "rsigma"  ) ) rsigma_weight_  = tag->getOption< Real >( "rsigma" );
 
 	// params for NatbiasHelixPairPotential
-	if( tag->hasOption( "hh_dist_wts" ) ) {
+	if ( tag->hasOption( "hh_dist_wts" ) ) {
 		hpairpot_->set_dist_wts( tag->getOption< Real >( "hh_dist_wts" ) );
 	}
-	if( tag->hasOption( "hh_dist" ) ) {
+	if ( tag->hasOption( "hh_dist" ) ) {
 		hpairpot_->set_dist( tag->getOption< Real >( "hh_dist" ) );
 	}
-	if( tag->hasOption( "hh_dist_s2" ) ) {
+	if ( tag->hasOption( "hh_dist_s2" ) ) {
 		hpairpot_->set_dist_sigma2( tag->getOption< Real >( "hh_dist_s2" ) );
 	}
 
-	if( tag->hasOption( "hh_cross_angle_wts" ) ) {
+	if ( tag->hasOption( "hh_cross_angle_wts" ) ) {
 		hpairpot_->set_angle_wts( tag->getOption< Real >( "hh_cross_angle_wts" ) );
 	}
-	if( tag->hasOption( "hh_cross_angle" ) ) {
+	if ( tag->hasOption( "hh_cross_angle" ) ) {
 		hpairpot_->set_angle( tag->getOption< Real >( "hh_cross_angle" ) );
 	}
-	if( tag->hasOption( "hh_cross_angle_s2" ) ) {
+	if ( tag->hasOption( "hh_cross_angle_s2" ) ) {
 		hpairpot_->set_angle_sigma2( tag->getOption< Real >( "hh_cross_angle_s2" ) );
 	}
 
 	// params for NatbiasHelicesSheetPotential
-	if( tag->hasOption( "hs_atr_dist_wts" ) )	{
+	if ( tag->hasOption( "hs_atr_dist_wts" ) ) {
 		hspot_->set_hs_atr_dist_wts( tag->getOption< Real >( "hs_atr_dist_wts" ) );
 	}
-	if( tag->hasOption( "hs_atr_dist" ) ) {
+	if ( tag->hasOption( "hs_atr_dist" ) ) {
 		hspot_->set_hs_atr_dist( tag->getOption< Real >( "hs_atr_dist" ) );
 	}
-	if( tag->hasOption( "hs_atr_dist_s2" ) ) {
+	if ( tag->hasOption( "hs_atr_dist_s2" ) ) {
 		hspot_->set_hs_atr_dist_sigma2( tag->getOption< Real >( "hs_atr_dist_s2" ) );
 	}
 
-	if( tag->hasOption( "hs_angle_wts" ) ) {
+	if ( tag->hasOption( "hs_angle_wts" ) ) {
 		hspot_->set_hs_angle_wts( tag->getOption< Real >( "hs_angle_wts" ) );
 	}
-	if( tag->hasOption( "hs_angle" ) ) {
+	if ( tag->hasOption( "hs_angle" ) ) {
 		hspot_->set_hs_angle( tag->getOption< Real >( "hs_angle" ) );
 	}
-	if( tag->hasOption( "hs_angle_s2") ) {
+	if ( tag->hasOption( "hs_angle_s2") ) {
 		hspot_->set_hs_angle_sigma2( tag->getOption< Real >( "hs_angle_s2" ) );
 	}
 
-	if( tag->hasOption( "hsheet_repl_dist" ) ) {
+	if ( tag->hasOption( "hsheet_repl_dist" ) ) {
 		hspot_->set_hsheet_repl_dist( tag->getOption< Real >( "hsheet_repl_dist" ) );
 	}
 
-	if( tag->hasOption( "hh_align_angle_wts" ) ) {
+	if ( tag->hasOption( "hh_align_angle_wts" ) ) {
 		hspot_->set_hh_angle_wts( tag->getOption< Real >( "hh_align_angle_wts" ) );
 	}
-	if( tag->hasOption( "hh_align_angle" ) ) {
+	if ( tag->hasOption( "hh_align_angle" ) ) {
 		hspot_->set_hh_angle( tag->getOption< Real >( "hh_align_angle" ) );
 	}
-	if( tag->hasOption( "hh_align_angle_s2" ) ) {
+	if ( tag->hasOption( "hh_align_angle_s2" ) ) {
 		hspot_->set_hh_angle_sigma2( tag->getOption< Real >( "hh_align_angle_s2" ) );
 	}
 

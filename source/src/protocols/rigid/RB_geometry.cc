@@ -110,7 +110,7 @@ centroids_by_jump(
 	downstream_ctrd = 0;
 	int upstream_atoms = 0, downstream_atoms = 0;
 
-	for(int ii = 1, ii_end = pose.total_residue(); ii <= ii_end; ++ii) {
+	for ( int ii = 1, ii_end = pose.total_residue(); ii <= ii_end; ++ii ) {
 		// Use a reference so we have to evaluate is_upstream only once per residue
 		// but still increment the correct variable.
 		int & natoms = ( is_upstream(ii) ? upstream_atoms : downstream_atoms );
@@ -118,11 +118,11 @@ centroids_by_jump(
 		core::conformation::Residue const & rsd = pose.residue(ii);
 
 		if ( ok_for_centroid_calculation.size() > 0 && !ok_for_centroid_calculation[ ii ] ) {
-			//			std::cout << "skipping res  "<< ii << std::endl;
+			//   std::cout << "skipping res  "<< ii << std::endl;
 			continue;
 		}
 
-		for(int jj = 1, jj_end = rsd.natoms(); jj <= jj_end; ++jj) {
+		for ( int jj = 1, jj_end = rsd.natoms(); jj <= jj_end; ++jj ) {
 			//if ( rsd.is_virtual( jj ) ) continue;
 			ctrd += rsd.xyz(jj);
 			natoms += 1;
@@ -133,7 +133,7 @@ centroids_by_jump(
 	// natoms to add to either upstream or downstream atoms depending on the residue's location
 	// This is definitely opaque and I will add a comment indicating such
 	// AMW: oh, I see: what if there are zero atoms in all? Take an empty pose (somehow) or a pose with two zero-atom residues (somehow) or...
-	// so I will make a clear modification 
+	// so I will make a clear modification
 	if ( upstream_atoms > 0 ) upstream_ctrd /= upstream_atoms;
 	else TR << "critical error: upstream_atoms was zero; could not divide!" << std::endl;
 	//TR << "upstream_ctrd:  " << upstream_ctrd.x() << " " << upstream_ctrd.y() << " " << upstream_ctrd.z() << std::endl;
@@ -145,8 +145,8 @@ centroids_by_jump(
 }
 
 std::pair< core::Vector, core::Vector > centroid_pair_by_jump(
-		core::pose::Pose const & pose,
-		core::Size jump_id
+	core::pose::Pose const & pose,
+	core::Size jump_id
 ){
 	std::pair<core::Vector, core::Vector > centroids;
 	centroids_by_jump(pose, jump_id, centroids.first, centroids.second);
@@ -194,15 +194,15 @@ centroids_by_jump_int(
 	Size int_res_num = 0;
 	Real int_distance = 8.0;
 
-  //increments the interface distance until an interface is found, starting from 8A
-	for( Size ll = 1; ll <= 5; ll++){
-		if (int_res_num == 0){
+	//increments the interface distance until an interface is found, starting from 8A
+	for ( Size ll = 1; ll <= 5; ll++ ) {
+		if ( int_res_num == 0 ) {
 			interface.distance( int_distance );
 			interface.calculate( pose );
 
 			//count interface residues
-			for(Size kk = 1; kk <= pose.total_residue(); kk++){
-				if (interface.is_interface( kk )) int_res_num++;
+			for ( Size kk = 1; kk <= pose.total_residue(); kk++ ) {
+				if ( interface.is_interface( kk ) ) int_res_num++;
 			}
 
 			//increment interface distance by 2A
@@ -222,7 +222,7 @@ centroids_by_jump_int(
 		}
 	}
 
-	if ( upstream_atoms == 0 || downstream_atoms == 0 ){
+	if ( upstream_atoms == 0 || downstream_atoms == 0 ) {
 		TR.Warning << "centroids_by_jump_int called but no interface detected!!" << std::endl;
 		TR.Warning << "calling centroids_by_jump..." << std::endl;
 		centroids_by_jump( pose, jump_id, upstream_ctrd, downstream_ctrd);

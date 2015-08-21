@@ -79,7 +79,7 @@ public:// virtual constructor
 	virtual filters::FilterOP clone() const { return filters::FilterOP( new RangeFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual filters::FilterOP fresh_instance() const {	return filters::FilterOP( new RangeFilter() ); }
+	virtual filters::FilterOP fresh_instance() const { return filters::FilterOP( new RangeFilter() ); }
 
 
 public:// mutator
@@ -95,10 +95,10 @@ public:// accessor
 public:// parser
 
 	virtual void parse_my_tag( TagCOP tag,
-														 basic::datacache::DataMap &,
-														 filters::Filters_map const &,
-														 Movers_map const &,
-														 Pose const & );
+		basic::datacache::DataMap &,
+		filters::Filters_map const &,
+		Movers_map const &,
+		Pose const & );
 
 
 public:// virtual main operation

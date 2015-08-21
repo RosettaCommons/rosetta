@@ -34,12 +34,12 @@ using numeric::random::gaussian;
 using numeric::conversions::DEGREES;
 
 WalkingPerturber::WalkingPerturber(Real magnitude)
-	: magnitude_ (magnitude) {}
+: magnitude_ (magnitude) {}
 
 void WalkingPerturber::perturb_subset(
-		Pose const &, IndexList const & residues, ClosureProblemOP problem) {
+	Pose const &, IndexList const & residues, ClosureProblemOP problem) {
 
-	BOOST_FOREACH(Size residue, residues) {
+	BOOST_FOREACH ( Size residue, residues ) {
 		Real phi = problem->phi(residue, DEGREES) + magnitude_ * gaussian();
 		Real psi = problem->psi(residue, DEGREES) + magnitude_ * gaussian();
 
@@ -49,9 +49,9 @@ void WalkingPerturber::perturb_subset(
 }
 
 void WalkingPerturber::perturb_subset_with_balance(
-		Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
+	Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
 
-	// Each move makes a gaussian step in a random direction.  Since the choice 
+	// Each move makes a gaussian step in a random direction.  Since the choice
 	// of direction is unbiased, the overall move satisfies detailed balance.
 
 	perturb_subset(pose, residues, problem);

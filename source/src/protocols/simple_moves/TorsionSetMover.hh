@@ -28,29 +28,29 @@
 namespace protocols {
 namespace simple_moves {
 
-	class TorsionSetMover: public moves::Mover {
+class TorsionSetMover: public moves::Mover {
 
-	public:
+public:
 
-		//constructor
-		TorsionSetMover(
-										utility::vector1< core::id::TorsionID >  torsion_ids,
-										utility::vector1< core::Real > torsion_values );
+	//constructor
+	TorsionSetMover(
+		utility::vector1< core::id::TorsionID >  torsion_ids,
+		utility::vector1< core::Real > torsion_values );
 
-		//destructor
-		~TorsionSetMover();
+	//destructor
+	~TorsionSetMover();
 
-	public:
+public:
 
-		virtual void apply( core::pose::Pose & pose );
-		virtual std::string get_name() const { return "TorsionSetMover"; }
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const { return "TorsionSetMover"; }
 
-	private:
+private:
 
-		utility::vector1< core::id::TorsionID >  torsion_ids_;
-		utility::vector1< core::Real > torsion_values_;
+	utility::vector1< core::id::TorsionID >  torsion_ids_;
+	utility::vector1< core::Real > torsion_values_;
 
-	};
+};
 
 } //simple_moves
 } //protocols

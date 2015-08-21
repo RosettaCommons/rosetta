@@ -48,13 +48,13 @@ public:
 
 	/// @brief constructor with arguments
 	RefineOneCDRLoop(AntibodyInfoOP antibody_info, std::string refine_mode,
-	                 core::scoring::ScoreFunctionCOP scorefxn );
+		core::scoring::ScoreFunctionCOP scorefxn );
 
 	/// @brief constructor with arguments
 	RefineOneCDRLoop(AntibodyInfoOP antibody_info,
-	                 CDRNameEnum const & cdr_loop_name,
-	                 std::string refine_mode,
-	                 core::scoring::ScoreFunctionCOP scorefxn );
+		CDRNameEnum const & cdr_loop_name,
+		std::string refine_mode,
+		core::scoring::ScoreFunctionCOP scorefxn );
 
 	/// @brief default destructor
 	~RefineOneCDRLoop();

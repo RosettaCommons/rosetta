@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/scoring/membrane/FaMPEnvSmoothEnergyCreator.hh
+/// @file  core/scoring/membrane/FaMPEnvSmoothEnergyCreator.hh
 ///
-///	@brief		Fullatom Smoothed Membrane Environment Energy
-///	@details	Updated residue-environment energy (fullatom) by Vladmir in 2010 - smoothed
-///				derivatives based on updated statistics. Adapted for mpframework by Rebecca
-///				@GrayLab.
-///				Last Modified: 7/6/14
+/// @brief  Fullatom Smoothed Membrane Environment Energy
+/// @details Updated residue-environment energy (fullatom) by Vladmir in 2010 - smoothed
+///    derivatives based on updated statistics. Adapted for mpframework by Rebecca
+///    @GrayLab.
+///    Last Modified: 7/6/14
 ///
-///	@author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_scoring_membrane_FaMPEnvSmoothEnergyCreator_hh
 #define INCLUDED_core_scoring_membrane_FaMPEnvSmoothEnergyCreator_hh
@@ -44,20 +44,20 @@ using namespace core::scoring::methods;
 class FaMPEnvSmoothEnergyCreator : public methods::EnergyMethodCreator
 {
 public:
-	
+
 	/// @brief Instantiate a new FaMPEnvSmoothEnergy
 	virtual
 	methods::EnergyMethodOP
 	create_energy_method(
-						 methods::EnergyMethodOptions const &
-						 ) const;
-	
+		methods::EnergyMethodOptions const &
+	) const;
+
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
 	virtual
 	ScoreTypes
 	score_types_for_method() const;
-	
+
 };
 
 } // membrane

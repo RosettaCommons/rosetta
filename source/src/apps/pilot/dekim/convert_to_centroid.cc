@@ -67,7 +67,7 @@ public:
 		return MoverOP( new MyMover( *this ) );
 	}
 
-	virtual	MoverOP	fresh_instance() const {
+	virtual MoverOP fresh_instance() const {
 		return MoverOP( new MyMover );
 	}
 
@@ -82,18 +82,18 @@ MyMover::MyMover()
 }
 
 void MyMover::apply( core::pose::Pose& pose ) {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core;
 
-  core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
+	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
 
 }
 
 int
 main( int argc, char * argv [] )
 {
-  try {
+	try {
 		using namespace protocols;
 		using namespace protocols::jd2;
 

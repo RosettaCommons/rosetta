@@ -21,10 +21,10 @@ namespace protocols {
 namespace environment {
 
 class AutoCutDataCreator : public basic::datacache::WriteableCacheableDataCreator {
-  typedef basic::datacache::WriteableCacheableDataOP WriteableCacheableDataOP;
+	typedef basic::datacache::WriteableCacheableDataOP WriteableCacheableDataOP;
 public:
-  virtual WriteableCacheableDataOP create_data( std::istream &in ) const;
-  virtual std::string keyname() const;
+	virtual WriteableCacheableDataOP create_data( std::istream &in ) const;
+	virtual std::string keyname() const;
 };
 
 }

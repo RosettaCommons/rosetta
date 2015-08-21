@@ -25,7 +25,7 @@
 #include <core/pack/task/residue_selector/ResidueSelector.hh>
 
 #ifdef WIN32
-  #include <basic/datacache/WriteableCacheableMap.hh>
+#include <basic/datacache/WriteableCacheableMap.hh>
 #endif
 
 // Project headers
@@ -39,80 +39,80 @@ namespace abinitio {
 namespace abscript {
 
 class RigidChunkCM : public protocols::environment::ClientMover {
-  typedef ClientMover Parent;
-  typedef environment::claims::EnvClaims EnvClaims;
+	typedef ClientMover Parent;
+	typedef environment::claims::EnvClaims EnvClaims;
 
 public:
-  RigidChunkCM();
+	RigidChunkCM();
 
-  RigidChunkCM( core::pack::task::residue_selector::ResidueSelectorCOP selector,
-                core::pose::Pose const& template_pose );
+	RigidChunkCM( core::pack::task::residue_selector::ResidueSelectorCOP selector,
+		core::pose::Pose const& template_pose );
 
-  virtual ~RigidChunkCM() {};
+	virtual ~RigidChunkCM() {};
 
-  virtual EnvClaims yield_claims( core::pose::Pose const&,
-                                  basic::datacache::WriteableCacheableMapOP );
+	virtual EnvClaims yield_claims( core::pose::Pose const&,
+		basic::datacache::WriteableCacheableMapOP );
 
-  virtual std::string get_name() const;
+	virtual std::string get_name() const;
 
-  void sim_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector );
+	void sim_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector );
 
-  core::pack::task::residue_selector::ResidueSelectorCOP sim_selector() const;
+	core::pack::task::residue_selector::ResidueSelectorCOP sim_selector() const;
 
-  void templ_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector );
+	void templ_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector );
 
-  core::pack::task::residue_selector::ResidueSelectorCOP templ_selector() const;
+	core::pack::task::residue_selector::ResidueSelectorCOP templ_selector() const;
 
-  virtual void initialize( Pose& pose );
+	virtual void initialize( Pose& pose );
 
-  virtual void apply( core::pose::Pose& );
+	virtual void apply( core::pose::Pose& );
 
-  virtual void
-  parse_my_tag( utility::tag::TagCOP tag,
-               basic::datacache::DataMap & data,
-               protocols::filters::Filters_map const & filters,
-               protocols::moves::Movers_map const & movers,
-               core::pose::Pose const & pose );
+	virtual void
+	parse_my_tag( utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose );
 
-  virtual
-  moves::MoverOP clone() const;
+	virtual
+	moves::MoverOP clone() const;
 
-  loops::Loops select_parts( loops::Loops const& rigid_core,
-                             core::Size random_grow_loops_by );
+	loops::Loops select_parts( loops::Loops const& rigid_core,
+		core::Size random_grow_loops_by );
 
-//  void rigid_core( loops::Loops rigid_core );
+	//  void rigid_core( loops::Loops rigid_core );
 
-//  loops::Loops const& rigid_core() const;
+	//  loops::Loops const& rigid_core() const;
 
-  core::pose::Pose const& templ() const { return *template_; }
+	core::pose::Pose const& templ() const { return *template_; }
 
-  std::map< core::Size, core::Size > const& sim_origin() const { return sim_origin_; }
+	std::map< core::Size, core::Size > const& sim_origin() const { return sim_origin_; }
 
-  std::map< core::Size, core::Size > const& templ_target() const { return templ_target_; }
+	std::map< core::Size, core::Size > const& templ_target() const { return templ_target_; }
 
 protected:
-  virtual void passport_updated();
+	virtual void passport_updated();
 
 private:
-  void configure( core::pose::Pose const& in_p,
-                  utility::vector1< bool > const selection );
+	void configure( core::pose::Pose const& in_p,
+		utility::vector1< bool > const selection );
 
-  void templ_target( std::map< core::Size, core::Size > const& in ){ assert( templ_target_.empty() ); templ_target_ = in; }
+	void templ_target( std::map< core::Size, core::Size > const& in ){ assert( templ_target_.empty() ); templ_target_ = in; }
 
-  void sim_origin( std::map< core::Size, core::Size > const& in ){ assert( sim_origin_.empty() ); sim_origin_ = in; }
+	void sim_origin( std::map< core::Size, core::Size > const& in ){ assert( sim_origin_.empty() ); sim_origin_ = in; }
 
 
-  EnvClaims claims_;
-//  loops::Loops rigid_core_;
-  core::pose::PoseCOP template_;
-  core::pack::task::residue_selector::ResidueSelectorCOP sim_selector_;
-  core::pack::task::residue_selector::ResidueSelectorCOP templ_selector_;
+	EnvClaims claims_;
+	//  loops::Loops rigid_core_;
+	core::pose::PoseCOP template_;
+	core::pack::task::residue_selector::ResidueSelectorCOP sim_selector_;
+	core::pack::task::residue_selector::ResidueSelectorCOP templ_selector_;
 
-  std::string xml_name_;
+	std::string xml_name_;
 
-  // configured during claiming
-  std::map< core::Size, core::Size > templ_target_;
-  std::map< core::Size, core::Size > sim_origin_;
+	// configured during claiming
+	std::map< core::Size, core::Size > templ_target_;
+	std::map< core::Size, core::Size > sim_origin_;
 
 }; // end RigidChunkCM base class
 

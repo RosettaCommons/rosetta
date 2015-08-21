@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/antibody_design/util.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_antibody_constraints_UTIL_HH
@@ -26,8 +26,8 @@
 namespace protocols {
 namespace antibody {
 namespace constraints {
-	
-	
+
+
 // AMW: do not pass constraint_type by reference; it'll break a unit test
 ///@brief Check if all residues already have a specific constraint type.  Useful for coordinate and dihedral constraints.
 bool
@@ -49,4 +49,4 @@ add_harmonic_dihedral_cst_general(
 }
 }
 
-#endif	//#ifndef INCLUDED_protocols/antibody_design_UTIL_HH
+#endif //#ifndef INCLUDED_protocols/antibody_design_UTIL_HH

@@ -47,11 +47,11 @@ namespace protocols {
 namespace simple_moves {
 
 using namespace core;
-	using namespace basic::options;
-	using namespace pack;
-		using namespace task;
-			using namespace operation;
-	using namespace scoring;
+using namespace basic::options;
+using namespace pack;
+using namespace task;
+using namespace operation;
+using namespace scoring;
 
 using basic::Warning;
 using basic::t_warning;
@@ -162,8 +162,7 @@ PackRotamersMover::show(std::ostream & output) const
 	Mover::show(output);
 	if ( score_function() != 0 ) {
 		output << "Score function: " << score_function()->get_name() << std::endl;
-	}
-	else { output << "Score function: none" << std::endl; }
+	} else { output << "Score function: none" << std::endl; }
 }
 
 /// @brief when the PackerTask was not generated locally, verify compatibility with pose
@@ -180,22 +179,22 @@ PackRotamersMover::task_is_valid( Pose const & pose ) const
 }
 
 void PackRotamersMover::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & score_fxns,
-				utility::lua::LuaObject const & tasks,
-				protocols::moves::MoverCacheSP /*cache*/ ) {
-	if( def["nloop"] ) {
+	utility::lua::LuaObject const & score_fxns,
+	utility::lua::LuaObject const & tasks,
+	protocols::moves::MoverCacheSP /*cache*/ ) {
+	if ( def["nloop"] ) {
 		nloop_ = def["nloop"].to<Size>();
 		runtime_assert( nloop_ > 0 );
 	}
 
-	if( def["scorefxn"] ) {
+	if ( def["scorefxn"] ) {
 		score_function( protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns ) );
 	} else {
 		score_function( score_fxns["score12"].to<ScoreFunctionSP>()->clone()  );
 	}
-	if( def["tasks"] ) {
+	if ( def["tasks"] ) {
 		TaskFactoryOP new_task_factory( protocols::elscripts::parse_taskdef( def["tasks"], tasks ));
-		if ( new_task_factory == 0) return;
+		if ( new_task_factory == 0 ) return;
 		task_factory( new_task_factory );
 	}
 }
@@ -212,9 +211,9 @@ PackRotamersMover::parse_my_tag(
 {
 	//fpd (commenting out below) classes derived from PackRotamers may call this function
 	//if ( tag->getName() != "PackRotamersMover" ) {
-	//	TR(t_warning) << " received incompatible Tag " << tag << std::endl;
-	//	assert(false);
-	//	return;
+	// TR(t_warning) << " received incompatible Tag " << tag << std::endl;
+	// assert(false);
+	// return;
 	//}
 	if ( tag->hasOption("nloop") ) {
 		nloop_ = tag->getOption<Size>("nloop",1);
@@ -250,7 +249,7 @@ PackRotamersMover::parse_task_operations(
 )
 {
 	TaskFactoryOP new_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
-	if ( new_task_factory == 0) return;
+	if ( new_task_factory == 0 ) return;
 	task_factory( new_task_factory );
 }
 
@@ -285,9 +284,8 @@ void PackRotamersMover::setup( Pose & pose )
 	} else if ( task_ == 0 ) {
 		Warning() << "undefined PackerTask -- creating a default one" << std::endl;
 		task_ = TaskFactory::create_packer_task( pose );
-	}
+	} else runtime_assert( task_is_valid( pose ) );
 	// in case PackerTask was not generated locally, verify compatibility with pose
-	else runtime_assert( task_is_valid( pose ) );
 
 	note_packertask_settings( pose );
 

@@ -18,8 +18,8 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace fldsgn{
+namespace protocols {
+namespace fldsgn {
 
 class SheetConstraintsRCG;
 typedef utility::pointer::shared_ptr< SheetConstraintsRCG > SheetConstraintsRCGOP;

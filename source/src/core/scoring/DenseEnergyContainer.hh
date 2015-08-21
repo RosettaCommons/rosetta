@@ -136,7 +136,7 @@ private:
 class DenseEnergyContainer : public LREnergyContainer
 {
 public:
-	virtual	~DenseEnergyContainer();
+	virtual ~DenseEnergyContainer();
 
 	virtual
 	LREnergyContainerOP clone() const;

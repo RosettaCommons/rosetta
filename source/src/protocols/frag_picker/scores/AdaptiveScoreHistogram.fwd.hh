@@ -26,9 +26,9 @@ namespace scores {
 class AdaptiveScoreHistogram;
 
 typedef utility::pointer::shared_ptr<AdaptiveScoreHistogram>
-		AdaptiveScoreHistogramOP;
+	AdaptiveScoreHistogramOP;
 typedef utility::pointer::shared_ptr<AdaptiveScoreHistogram const>
-		AdaptiveScoreHistogramCOP;
+	AdaptiveScoreHistogramCOP;
 
 } // scores
 } // frag_picker

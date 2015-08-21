@@ -18,15 +18,15 @@
 #include <utility/pointer/owning_ptr.fwd.hh>
 
 namespace core {
-	namespace scoring {
-		namespace func {
+namespace scoring {
+namespace func {
 
 class SplineFunc;
 typedef utility::pointer::shared_ptr< SplineFunc > SplineFuncOP;
 typedef utility::pointer::shared_ptr< SplineFunc const > SplineFuncCOP;
 
-		} // constraints
-	} // scoring
+} // constraints
+} // scoring
 } // core
 
 #endif

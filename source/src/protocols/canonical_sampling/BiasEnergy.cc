@@ -263,7 +263,7 @@ BiasEnergy::parse_my_tag(
 	count_grid_ = HistogramIntOP( new Histogram<int>( grid_min, grid_max, grid_size ) );
 	grid_output_file_ = tag->getOption< std::string >( "wte_output", "wte_bias.grid" );
 }
-	///ntrials
+///ntrials
 
 } //moves
 } //protocols

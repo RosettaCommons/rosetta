@@ -49,11 +49,11 @@ using basic::Warning;
 
 //constructor
 PDBDumpMover::PDBDumpMover(std::string name_in)
-	 : Mover(), name_(name_in), num_(0)
+: Mover(), name_(name_in), num_(0)
 {
-		//tracer_.init(tr);
+	//tracer_.init(tr);
 
-		Mover::type("PDBDump");
+	Mover::type("PDBDump");
 }
 
 //destructor
@@ -61,10 +61,10 @@ PDBDumpMover::~PDBDumpMover() {}
 
 void PDBDumpMover::apply( core::pose::Pose & pose )
 {
-		num_+=1;
-		std::string filename ( name_+ObjexxFCL::right_string_of(num_,2,'0')+".pdb" );
-		//core::io::pdb::traced_dump_pdb( tracer_, pose, filename );
-		core::io::pdb::dump_pdb( pose, filename );
+	num_+=1;
+	std::string filename ( name_+ObjexxFCL::right_string_of(num_,2,'0')+".pdb" );
+	//core::io::pdb::traced_dump_pdb( tracer_, pose, filename );
+	core::io::pdb::dump_pdb( pose, filename );
 }
 
 std::string
@@ -74,8 +74,8 @@ PDBDumpMover::get_name() const {
 
 void PDBDumpMover::name( std::string name_in )
 {
-		name_ = name_in;
-	  clear();
+	name_ = name_in;
+	clear();
 }
 
 void PDBDumpMover::clear() { num_=0; }
@@ -84,7 +84,7 @@ void PDBDumpMover::clear() { num_=0; }
 ProfilerMover::ProfilerMover() :
 	Mover()
 {
-		Mover::type( "Profiler" );
+	Mover::type( "Profiler" );
 }
 
 //destructor
@@ -92,7 +92,7 @@ ProfilerMover::~ProfilerMover() {}
 
 void ProfilerMover::apply( core::pose::Pose & /*pose*/ )
 {
-		basic::prof_show();
+	basic::prof_show();
 }
 
 std::string
@@ -104,7 +104,7 @@ ProfilerMover::get_name() const {
 MCShowMover::MCShowMover( MonteCarloOP mc_in ) :
 	Mover(), mc_( mc_in )
 {
-		Mover::type( "MCShow" );
+	Mover::type( "MCShow" );
 }
 
 //destructor
@@ -112,16 +112,16 @@ MCShowMover::~MCShowMover() {}
 
 void MCShowMover::apply( core::pose::Pose & pose )
 {
-		using namespace ObjexxFCL::format;
-		mc_->show_scores();
-		mc_->score_function()( pose );
-		/// Now handled automatically.  mc_->score_function().accumulate_residue_total_energies( pose );
-		for ( core::scoring::EnergyMap::const_iterator it=pose.energies().total_energies().begin(),
-						it_end = pose.energies().total_energies().end(); it != it_end; ++it ) {
-			if ( *it != 0.0 ) {
-				std::cout << "total_energy " << core::scoring::ScoreType( it - pose.energies().total_energies().begin() + 1 ) << ' ' << F(12,3,*it) << std::endl;
-			}
+	using namespace ObjexxFCL::format;
+	mc_->show_scores();
+	mc_->score_function()( pose );
+	/// Now handled automatically.  mc_->score_function().accumulate_residue_total_energies( pose );
+	for ( core::scoring::EnergyMap::const_iterator it=pose.energies().total_energies().begin(),
+			it_end = pose.energies().total_energies().end(); it != it_end; ++it ) {
+		if ( *it != 0.0 ) {
+			std::cout << "total_energy " << core::scoring::ScoreType( it - pose.energies().total_energies().begin() + 1 ) << ' ' << F(12,3,*it) << std::endl;
 		}
+	}
 }
 
 std::string

@@ -10,7 +10,7 @@
 /// @file FragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -58,7 +58,7 @@ namespace noesy_assign {
 using namespace core;
 
 //PeakFileFormat_Sparky::PeakFileFormat_Sparky( ResonanceListOP const& res )  :
-//	PeakFileFormat( res )
+// PeakFileFormat( res )
 //{}
 
 void PeakFileFormat_Sparky::write_peak( std::ostream& os, Size ct, CrossPeak const& cp ) const {
@@ -67,9 +67,9 @@ void PeakFileFormat_Sparky::write_peak( std::ostream& os, Size ct, CrossPeak con
 	if ( cp.eliminated( false /*recompute*/, true /*do_not_compute*/) ) line_end << " #eliminated: " << cp.elimination_reason();
 
 
-  // cp.write_to_stream( os );
-  write_assignments( os, cp, "" );
-  write_resonances( os, cp );
+	// cp.write_to_stream( os );
+	write_assignments( os, cp, "" );
+	write_resonances( os, cp );
 	os << "# Peak " << ObjexxFCL::format::RJ( 6, ct ) << " ";
 	//  write_strength( os, cp );
 
@@ -79,30 +79,30 @@ void PeakFileFormat_Sparky::write_peak( std::ostream& os, Size ct, CrossPeak con
 }
 
 void PeakFileFormat_Sparky::set_format_from_peak( CrossPeak const& cp ) {
-  info1_ = CrossPeakInfoOP( new CrossPeakInfo( cp.info( 1 ) ) );
-  info2_ = CrossPeakInfoOP( new CrossPeakInfo( cp.info( 2 ) ) );
-  col2proton_.clear();
-  col2islabel_.clear();
+	info1_ = CrossPeakInfoOP( new CrossPeakInfo( cp.info( 1 ) ) );
+	info2_ = CrossPeakInfoOP( new CrossPeakInfo( cp.info( 2 ) ) );
+	col2proton_.clear();
+	col2islabel_.clear();
 
 	//dimension 2 - label
-  if ( info2_->has_label() ) {
-    col2proton_.push_back( 2 );
-    col2islabel_.push_back( true );
-  }
+	if ( info2_->has_label() ) {
+		col2proton_.push_back( 2 );
+		col2islabel_.push_back( true );
+	}
 
-  //dimension 2
-  col2proton_.push_back( 2 );
-  col2islabel_.push_back( false );
+	//dimension 2
+	col2proton_.push_back( 2 );
+	col2islabel_.push_back( false );
 
 	//dimension 1 - label
-  if ( info1_->has_label() ) {
-    col2proton_.push_back( 1 );
-    col2islabel_.push_back( true );
-  }
+	if ( info1_->has_label() ) {
+		col2proton_.push_back( 1 );
+		col2islabel_.push_back( true );
+	}
 
-  //dimension 1
-  col2proton_.push_back( 1 );
-  col2islabel_.push_back( false );
+	//dimension 1
+	col2proton_.push_back( 1 );
+	col2islabel_.push_back( false );
 
 }
 
@@ -133,7 +133,7 @@ void PeakFileFormat_Sparky::write_header( std::ostream& ) {}
 
 void PeakFileFormat_Sparky::write_assignment_indent( std::ostream& os, CrossPeak const&) const {
 	os << std::endl;// << "                                                        ";
-	//	if ( cp.has_label( 1 ) && cp.has_label( 2 ) ) os << "         ";
+	// if ( cp.has_label( 1 ) && cp.has_label( 2 ) ) os << "         ";
 }
 
 void PeakFileFormat_Sparky::write_nil_assignment( std::ostream& os ) const {

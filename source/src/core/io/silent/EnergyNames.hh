@@ -53,7 +53,7 @@ public:
 	} // EnergyNames( std::string const & line )
 
 	void energy_names( utility::vector1< std::string > new_e_names ) {
-		 energy_names_ = new_e_names;
+		energy_names_ = new_e_names;
 	}
 
 	utility::vector1< std::string > energy_names() const {
@@ -70,9 +70,9 @@ public:
 		}
 
 		for ( vector1< string >::const_iterator it1 = energy_names_.begin(), it2 = other_names.begin(),
-					end1 = energy_names_.end(), end2 = other_names.end();
-					it1 != end1 && it2 != end2; ++it1, ++it2
-		) {
+				end1 = energy_names_.end(), end2 = other_names.end();
+				it1 != end1 && it2 != end2; ++it1, ++it2
+				) {
 			if ( *it1 != *it2 ) return false;
 		}
 

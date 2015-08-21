@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/rosetta_scripts/MultiplePoseMover.hh
-/// @brief	This mover accepts multiple poses from a previous mover,
-///   performs selection using a provided pose selector, 
+/// @brief This mover accepts multiple poses from a previous mover,
+///   performs selection using a provided pose selector,
 ///   applies contained ROSETTASCRIPTS protocol (ParsedProtocol),
 ///   and output multiple poses to the next mover of JD2.
 /// @author Luki Goldschmidt (lugo@uw.edu)

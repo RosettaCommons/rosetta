@@ -85,7 +85,7 @@ private: // data
 	mutable docking::DockingProtocolOP docking_;
 
 	std::string loop_refinement_method_;
-	
+
 	// H3 filter options
 	bool h3_filter_;
 	Size h3_filter_tolerance_;

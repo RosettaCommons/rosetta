@@ -27,8 +27,8 @@ namespace pack {
 
 void
 make_symmetric_PackerTask_by_truncation(
-  pose::Pose const & pose,
-  pack::task::PackerTaskOP task
+	pose::Pose const & pose,
+	pack::task::PackerTaskOP task
 );
 
 // @brief make_union_symmetric_task

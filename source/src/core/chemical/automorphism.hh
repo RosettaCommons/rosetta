@@ -80,7 +80,7 @@ public:
 		empty_list_()
 	{
 		natoms_ = (includeH ? restype_.natoms() : restype_.nheavyatoms());
-		core::Size natoms2 = 	(includeH ? restype2_.natoms() : restype2_.nheavyatoms());
+		core::Size natoms2 =  (includeH ? restype2_.natoms() : restype2_.nheavyatoms());
 		runtime_assert( natoms_ == natoms2 );
 		curr_.assign(natoms_, 1); // = [1, 1, 1, ..., 1]
 	}
@@ -111,10 +111,10 @@ private:
 	bool
 	edges_match(Size i) {
 		AtomIndices const & nbrs = restype_.nbrs(i);
-		for( Size idx = 1, end = nbrs.size(); idx <= end; ++idx ) {
+		for ( Size idx = 1, end = nbrs.size(); idx <= end; ++idx ) {
 			Size const j = nbrs[idx];
-			if( j > i ) continue;
-			if( !bonded2( curr_[i], curr_[j] ) ) return false;
+			if ( j > i ) continue;
+			if ( !bonded2( curr_[i], curr_[j] ) ) return false;
 		}
 		return true;
 	}

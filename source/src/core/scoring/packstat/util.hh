@@ -28,9 +28,9 @@ namespace packstat {
 
 // searches for sphere/ball in vector sorted by x value
 inline std::size_t search_x( Spheres  const & spheres, PackstatReal const x, std::size_t begin, std::size_t end ) {
-	if( end - begin < 2 ) return begin;
+	if ( end - begin < 2 ) return begin;
 	size_t mid = ( end - begin ) / 2 + begin;
-	if( spheres[mid].xyz.x() <= x ) {
+	if ( spheres[mid].xyz.x() <= x ) {
 		return search_x( spheres, x, mid,  end  );
 	} else {
 		return search_x( spheres, x,  1 , mid-1 );
@@ -42,9 +42,9 @@ inline std::size_t search_x( Spheres  const & spheres, PackstatReal const x ) {
 }
 
 inline std::size_t search_x( CavBalls const & cbs    , PackstatReal const x, std::size_t begin, std::size_t end ) {
-	if( end - begin < 2 ) return begin;
+	if ( end - begin < 2 ) return begin;
 	std::size_t mid = ( end - begin ) / 2 + begin;
-	if( cbs[mid].xyz().x() <= x ) {
+	if ( cbs[mid].xyz().x() <= x ) {
 		return search_x( cbs, x, mid,  end  );
 	} else {
 		return search_x( cbs, x,  1 , mid-1 );
@@ -57,16 +57,16 @@ inline std::size_t search_x( CavBalls const & cbs    , PackstatReal const x ) {
 
 inline PackstatReal max_rad( Spheres const & s ) {
 	PackstatReal maxrad = 0;
-	for( SphereCIter i = s.begin(); i != s.end(); ++i ) {
-		if( maxrad < i->radius ) maxrad = i->radius;
+	for ( SphereCIter i = s.begin(); i != s.end(); ++i ) {
+		if ( maxrad < i->radius ) maxrad = i->radius;
 	}
 	return maxrad;
 }
 
 inline PackstatReal max_rad( CavBalls const & s ) {
 	PackstatReal maxrad = 0;
-	for( CavBallCIter i = s.begin(); i != s.end(); ++i ) {
-		if( maxrad < i->radius() ) maxrad = i->radius();
+	for ( CavBallCIter i = s.begin(); i != s.end(); ++i ) {
+		if ( maxrad < i->radius() ) maxrad = i->radius();
 	}
 	return maxrad;
 }

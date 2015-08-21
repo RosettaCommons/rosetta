@@ -25,36 +25,36 @@ namespace stepwise {
 namespace modeler {
 namespace packer {
 
-	class SideChainCopier: public protocols::moves::Mover {
+class SideChainCopier: public protocols::moves::Mover {
 
-	public:
+public:
 
-		//constructor
-		SideChainCopier( core::pose::Pose const & reference_pose,
-										 bool const copy_o2prime_hydrogens = false  );
+	//constructor
+	SideChainCopier( core::pose::Pose const & reference_pose,
+		bool const copy_o2prime_hydrogens = false  );
 
-		//constructor
-		SideChainCopier( core::pose::Pose const & reference_pose,
-										 utility::vector1< Size > const & copy_res,
-										 bool const copy_o2prime_hydrogens = false  );
+	//constructor
+	SideChainCopier( core::pose::Pose const & reference_pose,
+		utility::vector1< Size > const & copy_res,
+		bool const copy_o2prime_hydrogens = false  );
 
-		//destructor
-		~SideChainCopier();
+	//destructor
+	~SideChainCopier();
 
-	public:
+public:
 
-		void
-		apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose );
 
-		std::string get_name() const { return "SideChainCopier"; }
+	std::string get_name() const { return "SideChainCopier"; }
 
-	private:
+private:
 
-		core::pose::Pose const & reference_pose_;
-		utility::vector1< Size > copy_res_;
-		bool copy_o2prime_hydrogens_;
+	core::pose::Pose const & reference_pose_;
+	utility::vector1< Size > copy_res_;
+	bool copy_o2prime_hydrogens_;
 
-	};
+};
 
 } //packer
 } //modeler

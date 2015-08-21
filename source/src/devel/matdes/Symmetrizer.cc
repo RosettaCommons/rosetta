@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //
-/// @file 
-/// @brief 
+/// @file
+/// @brief
 /// @author Neil King ( neilking@uw.edu )
 /// @author Javier Castellanos ( javiercv@uw.edu )
 
@@ -83,40 +83,42 @@ Symmetrizer::Symmetrizer() :
 	sampling_mode_("single_dock")
 { }
 
-protocols::moves::MoverOP 
+protocols::moves::MoverOP
 Symmetrizer::clone() const {
 	return protocols::moves::MoverOP( new Symmetrizer( *this ) );
 }
 
-protocols::moves::MoverOP 
+protocols::moves::MoverOP
 Symmetrizer::fresh_instance() const {
-				return protocols::moves::MoverOP( new Symmetrizer() );
+	return protocols::moves::MoverOP( new Symmetrizer() );
 }
 
 
 Real
-Symmetrizer::get_angle() { 
-	if(explore_grid_ || sampling_mode_ == "grid" )
+Symmetrizer::get_angle() {
+	if ( explore_grid_ || sampling_mode_ == "grid" ) {
 		return SymmetrizerSampler::get_instance().get_angle();
-	else if(sampling_mode_ == "uniform")
+	} else if ( sampling_mode_ == "uniform" ) {
 		return angle_min_ + ( angle_max_ - angle_min_) * numeric::random::rg().uniform();
-	else if(sampling_mode_ == "gaussian")
+	} else if ( sampling_mode_ == "gaussian" ) {
 		return angle_ + angle_delta_ * numeric::random::rg().gaussian();
-	else
+	} else {
 		return angle_;
+	}
 }
 
 
 Real
-Symmetrizer::get_radial_disp() { 
-	if(explore_grid_ || sampling_mode_ == "grid" )
+Symmetrizer::get_radial_disp() {
+	if ( explore_grid_ || sampling_mode_ == "grid" ) {
 		return SymmetrizerSampler::get_instance().get_radial_disp();
-	else if(sampling_mode_ == "uniform") 
+	} else if ( sampling_mode_ == "uniform" ) {
 		return radial_disp_min_ + ( radial_disp_max_ - radial_disp_min_) * numeric::random::rg().uniform();
-	else if(sampling_mode_ == "gaussian")
+	} else if ( sampling_mode_ == "gaussian" ) {
 		return radial_disp_ + radial_disp_delta_ * numeric::random::rg().gaussian();
-	else
+	} else {
 		return radial_disp_;
+	}
 }
 
 void
@@ -130,21 +132,22 @@ Symmetrizer::apply(Pose & pose) {
 	core::pose::symmetry::make_symmetric_pose(pose, symm_file_);
 	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 	std::map<Size,SymDof> dofs = sym_info->get_dofs();
- 	int sym_jump = 0;
- 	for(std::map<Size,SymDof>::iterator i = dofs.begin(), end = dofs.end(); i != end; ++i ) {
-   	Size jump_num = i->first;
-   	if (sym_jump == 0) {
-	 		sym_jump = jump_num;
-   	} else {
-   		utility_exit_with_message("Can only handle one subunit!");
-   	}
- 	}
- 	if (sym_jump == 0)
-   	utility_exit_with_message("No jump defined!");
+	int sym_jump = 0;
+	for ( std::map<Size,SymDof>::iterator i = dofs.begin(), end = dofs.end(); i != end; ++i ) {
+		Size jump_num = i->first;
+		if ( sym_jump == 0 ) {
+			sym_jump = jump_num;
+		} else {
+			utility_exit_with_message("Can only handle one subunit!");
+		}
+	}
+	if ( sym_jump == 0 ) {
+		utility_exit_with_message("No jump defined!");
+	}
 
 	core::kinematics::Jump j = pose.jump(sym_jump);
 
-	const	Vec init_trans = pose.jump(sym_jump).get_translation();
+	const Vec init_trans = pose.jump(sym_jump).get_translation();
 	const Mat init_rot = pose.jump(sym_jump).get_rotation();
 
 	Real radial_disp = get_radial_disp();
@@ -155,44 +158,45 @@ Symmetrizer::apply(Pose & pose) {
 	Vec translation;
 	Mat rotation;
 	switch(symmetry_axis_) {
-				case 'x' : 
-					translation = Vec(get_radial_disp(),0,0) + init_trans;
-					rotation = Mat(numeric::x_rotation_matrix_degrees( angle ) * init_rot);
-					break;
+	case 'x' :
+		translation = Vec(get_radial_disp(),0,0) + init_trans;
+		rotation = Mat(numeric::x_rotation_matrix_degrees( angle ) * init_rot);
+		break;
 
-				case 'y' : 
-					translation = Vec(0, get_radial_disp(), 0) + init_trans;
-					rotation = Mat(numeric::y_rotation_matrix_degrees( angle )* init_rot);
-					break;
+	case 'y' :
+		translation = Vec(0, get_radial_disp(), 0) + init_trans;
+		rotation = Mat(numeric::y_rotation_matrix_degrees( angle )* init_rot);
+		break;
 
-				case 'z' : 
-					translation = Vec(0,0, get_radial_disp()) + init_trans;
-					rotation = Mat(numeric::z_rotation_matrix_degrees( angle ) * init_rot);
-					break;
+	case 'z' :
+		translation = Vec(0,0, get_radial_disp()) + init_trans;
+		rotation = Mat(numeric::z_rotation_matrix_degrees( angle ) * init_rot);
+		break;
 
-				default:
-					utility_exit_with_message(std::string(1, symmetry_axis_) +
-							" is not a valid axis (x,y or z). Use lower case");
+	default :
+		utility_exit_with_message(std::string(1, symmetry_axis_) +
+			" is not a valid axis (x,y or z). Use lower case");
 	}
 	j.set_translation( translation );
 	j.set_rotation( rotation );
-	pose.set_jump(sym_jump,j); 
-	
-	if(explore_grid_) {
+	pose.set_jump(sym_jump,j);
+
+	if ( explore_grid_ ) {
 		SymmetrizerSampler::get_instance().step();
 	}
 }
 
-void 
+void
 Symmetrizer::parse_my_tag( TagCOP const tag,
-										 basic::datacache::DataMap &,
-										 Filters_map const &,
-										 Movers_map const &,
-										 Pose const & ) {
+	basic::datacache::DataMap &,
+	Filters_map const &,
+	Movers_map const &,
+	Pose const & ) {
 
 	// Turn symmetry hacks on
-	if( !basic::options::option[basic::options::OptionKeys::symmetry::symmetry_definition].user() )
+	if ( !basic::options::option[basic::options::OptionKeys::symmetry::symmetry_definition].user() ) {
 		basic::options::option[basic::options::OptionKeys::symmetry::symmetry_definition].value( "dummy" );
+	}
 
 	using std::string;
 	symm_file_ = tag->getOption<string>( "symm_file" );
@@ -205,24 +209,24 @@ Symmetrizer::parse_my_tag( TagCOP const tag,
 	sampling_mode_= tag->getOption<std::string>("sampling_mode", "uniform");
 	TR << "Setting sampling mode to " << sampling_mode_ << std::endl;
 	explore_grid_ = tag->getOption<bool>("grid", false);
-	if( sampling_mode_ == "grid" || explore_grid_) {
+	if ( sampling_mode_ == "grid" || explore_grid_ ) {
 		Real angle_step = tag->getOption<Real>("angle_step");
 		Real radial_disp_step = tag->getOption<Real>("radial_disp_step");
 		TR << "Setting the exploration grid." << std::endl;
 		SymmetrizerSampler::get_instance().set_angle_range(angle_min_, angle_max_, angle_step);
 		SymmetrizerSampler::get_instance().set_radial_disp_range(radial_disp_min_, radial_disp_max_, radial_disp_step);
-	} else if (sampling_mode_ == "gaussian") {
+	} else if ( sampling_mode_ == "gaussian" ) {
 		angle_delta_ = tag->getOption<Real>("angle_delta", 0.0);
-	radial_disp_delta_ = tag->getOption<Real>("radial_disp_delta", 0.0);
+		radial_disp_delta_ = tag->getOption<Real>("radial_disp_delta", 0.0);
 	}
 	radial_disp_ = tag->getOption<Real>( "radial_disp" ,0.0);
 	angle_ = tag->getOption<Real>( "angle",0.0 );
 
 }
 void Symmetrizer::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & ,
-				utility::lua::LuaObject const & ,
-				protocols::moves::MoverCacheSP ) {
+	utility::lua::LuaObject const & ,
+	utility::lua::LuaObject const & ,
+	protocols::moves::MoverCacheSP ) {
 
 	// Turn symmetry hacks on
 	basic::options::option[basic::options::OptionKeys::symmetry::symmetry_definition].value( "dummy" );
@@ -231,7 +235,7 @@ void Symmetrizer::parse_def( utility::lua::LuaObject const & def,
 	symmetry_axis_ = def["axis"] ? def["axis"].to<std::string>()[0] : 'z';
 
 	explore_grid_ = def["grid"] ? def["grid"].to<bool>() : false;
-	if(explore_grid_) {
+	if ( explore_grid_ ) {
 		Real angle_min = def["angle_min"].to<Real>();
 		Real angle_max = def["angle_max"].to<Real>();
 		Real angle_step = def["angle_step"].to<Real>();

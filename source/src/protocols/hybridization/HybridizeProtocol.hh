@@ -194,7 +194,7 @@ private:
 	utility::vector1<bool> residue_sample_abinitio_; // using torsion-based ab initio fragments
 	utility::vector1<core::Size> residue_max_registry_shift_; // restraints between chains
 
-  // local docking ater stage 1
+	// local docking ater stage 1
 	//    this should be incorporated in stage 1 rather than after for fold and dock style sampling!
 	bool jump_move_;
 	core::Size jump_move_repeat_;

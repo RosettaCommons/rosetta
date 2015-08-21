@@ -36,15 +36,15 @@ class CombinePoseMover : public protocols::moves::Mover
 {
 public:
 	//constructor
-  CombinePoseMover( core::scoring::ScoreFunctionCOP sfxn,
-										pose::Pose const &pose_ref );
+	CombinePoseMover( core::scoring::ScoreFunctionCOP sfxn,
+		pose::Pose const &pose_ref );
 
-  virtual ~CombinePoseMover();
+	virtual ~CombinePoseMover();
 
-	virtual 
+	virtual
 	void apply( pose::Pose &pose2 );
 
-	virtual 
+	virtual
 	std::string get_name() const { return "CombinePoseMover"; }
 
 	void set_default();
@@ -60,7 +60,7 @@ public:
 
 	Size max_struct() const { return max_struct_; }
 	Size max_struct_try() const { return max_struct_try_; }
- 
+
 	pose::Pose const pose_ref() const { return pose_ref_; }
 
 	std::string pose_tag() const { return pose_tag_; }
@@ -71,12 +71,12 @@ public:
 	// Structures / history
 	std::vector< io::silent::SilentStructOP >
 	return_silent() const { return sampled_structures_; }
-	
+
 	void clear_combine_history() { combine_history_.resize( 0 ); }
 	void append_combine_history( std::vector< Size > const v )
 	{ combine_history_.push_back( v ); }
 
-	std::vector< std::vector< Size > > 
+	std::vector< std::vector< Size > >
 	return_combine_history() const { return combine_history_; }
 
 private:

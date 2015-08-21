@@ -33,9 +33,9 @@ namespace qsar {
 struct ColorGradient
 {
 	ColorGradient(numeric::xyzVector<core::Real> const & value,
-			core::Real const & lower,
-			core::Real const & upper,
-			std::string const & name );
+		core::Real const & lower,
+		core::Real const & upper,
+		std::string const & name );
 
 	numeric::xyzVector<core::Real> color_value;
 	core::Real lower_bound;
@@ -54,11 +54,11 @@ public:
 	virtual std::string get_name() const;
 	virtual void apply(core::pose::Pose & pose);
 	virtual void parse_my_tag(utility::tag::TagCOP tag,
-			basic::datacache::DataMap & data,
-			filters::Filters_map const & filters,
-			protocols::moves::Movers_map const & movers,
-			core::pose::Pose const & pose
-			);
+		basic::datacache::DataMap & data,
+		filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose
+	);
 private:
 
 	void setup_colors();

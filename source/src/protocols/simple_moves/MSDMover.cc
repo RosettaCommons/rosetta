@@ -73,11 +73,11 @@ MSDMover::MSDMover() :
 {}
 
 MSDMover::MSDMover( protocols::moves::MoverOP mover, utility::vector1< std::string > resfiles ) :
-		design_mover_( mover ),
-		resfiles_( resfiles ),
-		weight_(0.5),
-		current_pose_( 1 ),
-		debug_( false )
+	design_mover_( mover ),
+	resfiles_( resfiles ),
+	weight_(0.5),
+	current_pose_( 1 ),
+	debug_( false )
 {}
 
 MSDMover::~MSDMover() {}
@@ -167,7 +167,7 @@ void MSDMover::parse_my_tag(
 		std::string const design_mover_key = tag->getOption<std::string>("design_mover");
 		moves::Movers_map::const_iterator  find_mover = movers.find( design_mover_key );
 
-		if( find_mover == movers.end() && design_mover_key != "" ) {
+		if ( find_mover == movers.end() && design_mover_key != "" ) {
 			throw utility::excn::EXCN_RosettaScriptsOption("Mover " + design_mover_key + " not found in data map");
 		}
 
@@ -192,9 +192,9 @@ void MSDMover::parse_my_tag(
 
 	debug_ = tag->getOption<bool>( "debug", false );
 
-	#ifndef NDEBUG
-		debug_ = true;
-	#endif
+#ifndef NDEBUG
+	debug_ = true;
+#endif
 
 }
 
@@ -203,7 +203,7 @@ MSDMover::parse_resfile ( core::pack::task::PackerTaskCOP design_task )
 {
 	utility::vector1< core::Size > vector;
 	utility::vector1<bool> designing = design_task->designing_residues();
-	for (core::Size i = 1; i <= designing.size(); ++i ) {
+	for ( core::Size i = 1; i <= designing.size(); ++i ) {
 		if ( designing[ i ] ) {
 			vector.push_back( i );
 		}
@@ -218,27 +218,25 @@ MSDMover::apply_linked_constraints( core::pose::Pose & pose )
 	utility::vector1< ConstraintCOP > constraints;
 	if ( weight_ != 0 ) { // If we are applying a constraint weight
 		/* Iterate through poses in the outer loop */
-		for (core::Size i = 1; i <= poses_.size(); ++i)
-		{
+		for ( core::Size i = 1; i <= poses_.size(); ++i ) {
 			if ( i == current_pose_ ) continue;
 
 			/* Iterate through residues to be linked */
-			for (core::Size k = 1; k <= res_links_[ current_pose_ ].size(); ++k)
-			{
+			for ( core::Size k = 1; k <= res_links_[ current_pose_ ].size(); ++k ) {
 
 				if ( debug_ ) {
 					TR << "adding linking constraint to position " <<
-							res_links_[ current_pose_ ][ k ] <<
-							" for residue " <<
-							poses_[ i ]->residue_type( res_links_[ i ][ k ] ).name3() <<
-							" of magnitude " << weight_ << std::endl;
+						res_links_[ current_pose_ ][ k ] <<
+						" for residue " <<
+						poses_[ i ]->residue_type( res_links_[ i ][ k ] ).name3() <<
+						" of magnitude " << weight_ << std::endl;
 				}
 				ResidueTypeConstraintCOP temp_cst ( new ResidueTypeConstraint(
-						pose,
-						res_links_[ current_pose_ ][ k ], //seqpos
-						poses_[ i ]->residue_type( res_links_[ i ][ k ] ).name3(), //AAname
-						weight_ //favor native bonus
-						) );
+					pose,
+					res_links_[ current_pose_ ][ k ], //seqpos
+					poses_[ i ]->residue_type( res_links_[ i ][ k ] ).name3(), //AAname
+					weight_ //favor native bonus
+					) );
 				// When I add a constraint to the pose it returns a const copy - I return this vector so that later
 				// I can remove these specific constraints
 				constraints.push_back( pose.add_constraint( temp_cst ) );
@@ -254,7 +252,7 @@ MSDMover::parse_resfiles ()
 {
 	res_links_.clear();
 	utility::vector1< core::pack::task::PackerTaskOP > design_tasks ( poses_.size() );
-	for (core::Size ii = 1; ii <= poses_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= poses_.size(); ++ii ) {
 		design_tasks[ ii ] = core::pack::task::TaskFactory::create_packer_task( *poses_[ ii ] );
 		core::pack::task::parse_resfile( *poses_[ ii ], *design_tasks[ ii ], resfile_at( ii ) );
 
@@ -262,7 +260,7 @@ MSDMover::parse_resfiles ()
 	core::Size designable_residues = -1;
 	for ( core::Size i = 1; i <= design_tasks.size(); ++i ) {
 		res_links_.push_back( parse_resfile( design_tasks[ i ]) );
-		if ( i == 1)  designable_residues = res_links_[ 1 ].size();
+		if ( i == 1 )  designable_residues = res_links_[ 1 ].size();
 		else {
 			if ( res_links_[ i ].size() != designable_residues ) {
 				utility_exit_with_message( "All resfiles must have the same number of designable residues");
@@ -279,7 +277,7 @@ MSDMover::update_packer_task () {
 
 		// If mover already has task factory modify it -> otherwise create a new one
 		core::pack::task::TaskFactoryOP factory;
-		if ( design_packer->task_factory() == 0) {
+		if ( design_packer->task_factory() == 0 ) {
 			factory = core::pack::task::TaskFactoryOP ( new core::pack::task::TaskFactory );
 		} else {
 			factory =  design_packer->task_factory()->clone();
@@ -293,7 +291,7 @@ MSDMover::update_packer_task () {
 
 std::string
 MSDMover::resfile_at ( core::Size index ) {
-	if ( resfiles_.size() == 1) {
+	if ( resfiles_.size() == 1 ) {
 		return resfiles_[ 1 ];
 	} else if ( resfiles_.size() == 0 ) {
 		utility_exit_with_message("No resfiles set - make sure to set resfiles before updating packer task");

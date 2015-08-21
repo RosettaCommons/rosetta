@@ -22,55 +22,57 @@ namespace scores {
 
 void create_cache(utility::vector1<Size> & frag_sizes,Size query_len,Size longest_vall_chunk,utility::vector1<Matrix> & cache) {
 
-	    std::sort(frag_sizes.begin(),frag_sizes.end());
-	    cache.resize(frag_sizes[frag_sizes.size()]);
-	    for(Size i=1;i<=frag_sizes.size();i++) {
+	std::sort(frag_sizes.begin(),frag_sizes.end());
+	cache.resize(frag_sizes[frag_sizes.size()]);
+	for ( Size i=1; i<=frag_sizes.size(); i++ ) {
 		Matrix m;
 		allocate_matrix(query_len,longest_vall_chunk,m);
 		cache[frag_sizes[i]] = m;
-	    }
+	}
 }
 
 void allocate_matrix(Size i_size,Size j_size,Matrix & dst) {
 
-	    dst.clear();
-	    for(Size i = 1; i <= i_size;i++) {
+	dst.clear();
+	for ( Size i = 1; i <= i_size; i++ ) {
 		utility::vector1<Real> row(j_size);
 		dst.push_back( row );
-	    }
+	}
 }
 
 void do_one_line(Size start_i,Size start_j,Matrix & small_scores,Size frag_len,Matrix & frag_scores) {
 
-    Size stop_i = start_i + frag_len - 1;
-    Size stop_j = start_j + frag_len - 1;
-    Real last_score = small_scores[start_i][start_j];
+	Size stop_i = start_i + frag_len - 1;
+	Size stop_j = start_j + frag_len - 1;
+	Real last_score = small_scores[start_i][start_j];
 
-    for(Size i=1;i<frag_len;i++) {
-	last_score += small_scores[start_i+i][start_j+i];
-    }
-    frag_scores[start_i][start_j] = last_score;
-    int max_steps = std::min((int) small_scores.size() - (int) start_i - (int) frag_len,
-		    (int) small_scores[1].size() - (int) start_j - (int) frag_len) + 1;
-    int cnt = 1;
-    while(cnt<=max_steps) {
-	stop_i++;
-	stop_j++;
-	last_score += small_scores[stop_i][stop_j] - small_scores[start_i][start_j];
-	start_i++;
-	start_j++;
+	for ( Size i=1; i<frag_len; i++ ) {
+		last_score += small_scores[start_i+i][start_j+i];
+	}
 	frag_scores[start_i][start_j] = last_score;
-	cnt++;
-    }
+	int max_steps = std::min((int) small_scores.size() - (int) start_i - (int) frag_len,
+		(int) small_scores[1].size() - (int) start_j - (int) frag_len) + 1;
+	int cnt = 1;
+	while ( cnt<=max_steps ) {
+		stop_i++;
+		stop_j++;
+		last_score += small_scores[stop_i][stop_j] - small_scores[start_i][start_j];
+		start_i++;
+		start_j++;
+		frag_scores[start_i][start_j] = last_score;
+		cnt++;
+	}
 }
 
 void rolling_score(Matrix & small_scores,Size frag_len,Matrix & frag_scores) {
 
-    do_one_line(1,1,small_scores,frag_len,frag_scores);
-    for(Size i=2;i<=small_scores.size()-frag_len+1;i++)
-	do_one_line(i,1,small_scores,frag_len,frag_scores);
-    for(Size i=2;i<=small_scores[1].size()-frag_len+1;i++)
-	do_one_line(1,i,small_scores,frag_len,frag_scores);
+	do_one_line(1,1,small_scores,frag_len,frag_scores);
+	for ( Size i=2; i<=small_scores.size()-frag_len+1; i++ ) {
+		do_one_line(i,1,small_scores,frag_len,frag_scores);
+	}
+	for ( Size i=2; i<=small_scores[1].size()-frag_len+1; i++ ) {
+		do_one_line(1,i,small_scores,frag_len,frag_scores);
+	}
 }
 
 

@@ -10,7 +10,7 @@
 /// @file NoesyModule.cc
 /// @brief main hook-up for the automatic NOESY assignment module
 /// @details
-///	  handling of input-output options
+///   handling of input-output options
 ///   class NoesyModule:
 ///       read input files
 ///       write assignments, constraints
@@ -99,20 +99,20 @@ void protocols::noesy_assign::NoesyModule::register_options() {
 
 	PeakAssignmentParameters::register_options();
 	PeakFileFormat_xeasy::register_options();
-  if ( options_registered_ ) return;
-  options_registered_ = true;
+	if ( options_registered_ ) return;
+	options_registered_ = true;
 
 	//....
 	NEW_OPT( noesy::in::resonances, "file with assigned chemical shifts", "" );
 
 	NEW_OPT( noesy::in::peaks, "file with noesy peaks", "" );
 	NEW_OPT( noesy::in::peak_resonance_pairs, "pairs of files that belong together: cc.peaks cc.prot ilv.peaks ilv.prot", "" );
-  NEW_OPT( noesy::in::use_assignments, "when reading peaks the already existing assignments are not ignored", false );
-  NEW_OPT( noesy::in::decoys, "silent file with decoys used for 3D structural compatibility test", "" );
+	NEW_OPT( noesy::in::use_assignments, "when reading peaks the already existing assignments are not ignored", false );
+	NEW_OPT( noesy::in::decoys, "silent file with decoys used for 3D structural compatibility test", "" );
 	NEW_OPT( noesy::in::local_dist_table, "file with distances determined for instances with FragToAtomDist ", "" );
 
 	NEW_OPT( noesy::out::resonances, "the parsed resonances file with translated atom names etc.", "cs_out.dat" );
-  NEW_OPT( noesy::out::peaks, "the parsed peaks file with assignments", "NOE_out.dat" );
+	NEW_OPT( noesy::out::peaks, "the parsed peaks file with assignments", "NOE_out.dat" );
 	NEW_OPT( noesy::out::talos, "write the resonances also as talos file", "cs_prot.tab" );
 	NEW_OPT( noesy::out::names, "write atom-names rather then resonance ID for assignments", true );
 	NEW_OPT( noesy::out::separate_peak_files, "write peaks to independent files with out::peaks as prefix", false );
@@ -120,7 +120,7 @@ void protocols::noesy_assign::NoesyModule::register_options() {
 	NEW_OPT( noesy::out::minVC, "write only assignments that contribute more than X to the peak-volume", 0.0 );
 	NEW_OPT( noesy::out::format, "write as xeasy or sparky file", "xeasy" );
 	NEW_OPT( noesy::out::padding, "add padding of X Angstrom to final constraints", 0.0 );
-  NEW_OPT( noesy::no_decoys, "check comp. with decoys", false );
+	NEW_OPT( noesy::no_decoys, "check comp. with decoys", false );
 
 }
 
@@ -142,21 +142,21 @@ NoesyModule::~NoesyModule() {}
 
 ///Constructor   - read input files / requires options to be initialized
 NoesyModule::NoesyModule( std::string const& fasta_sequence ) :
-  crosspeaks_( /* NULL */ ),
+	crosspeaks_( /* NULL */ ),
 	sequence_( fasta_sequence )
 	//  main_resonances_( new ResonanceList( fasta_sequence ) )
 {
 	read_input_files();
 	runtime_assert( options_registered_ );
 	// moved this option into PeakAssignmentParameters.cc
-	//	skip_network_analysis_ = basic::options::option[  options::OptionKeys::noesy::no_network ]();
+	// skip_network_analysis_ = basic::options::option[  options::OptionKeys::noesy::no_network ]();
 }
 
 
 ///delete all data and read input files again...  aka fresh_instance()
 void NoesyModule::reset() {
 	crosspeaks_ = NULL;
-	//	main_resonances_ = new ResonanceList( main_resonances_->sequence() );
+	// main_resonances_ = new ResonanceList( main_resonances_->sequence() );
 	read_input_files();
 }
 
@@ -182,7 +182,7 @@ void NoesyModule::read_input_files() {
 		}
 	}
 
-  { //scope
+	{ //scope
 		//read peak lists
 		crosspeaks_ = CrossPeakListOP( new CrossPeakList() );
 		Size nfiles( option[ OptionKeys::noesy::in::peaks ]().size() );
@@ -252,7 +252,7 @@ void NoesyModule::add_dist_viol_to_assignments( core::pose::Pose native_pose) {
 		if ( (*it)->eliminated() ) continue;
 		if ( (*it)->min_seq_separation_residue_assignment( 0.1 ) < 1 ) continue;
 		for ( CrossPeak::iterator ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
-			core::scoring::func::FuncOP func( new BoundFunc(1.5,	(*it)->distance_bound(), 1, "NOE Peak " ) );
+			core::scoring::func::FuncOP func( new BoundFunc(1.5, (*it)->distance_bound(), 1, "NOE Peak " ) );
 			ConstraintOP new_cst( (*ait)->create_constraint( native_pose, func ) );
 			(*ait)->set_native_distance_viol( new_cst->score( native_pose ) );
 		}
@@ -288,12 +288,12 @@ void NoesyModule::write_assignments( std::string file_name ) {
 
 /// @brief assign peaks ( no explicit decoys - wrapper )
 void NoesyModule::assign() {
-  using namespace basic::options;
-  using namespace OptionKeys;
+	using namespace basic::options;
+	using namespace OptionKeys;
 
-  core::io::silent::SilentFileData sfd;
+	core::io::silent::SilentFileData sfd;
 	std::string file_name("NO_FILE");
-  if ( !option[ noesy::no_decoys ]() ) {
+	if ( !option[ noesy::no_decoys ]() ) {
 		if ( option[ noesy::in::decoys ].user() ) {
 			file_name = option[ noesy::in::decoys ]();
 			sfd.read_file( file_name );
@@ -312,44 +312,44 @@ void NoesyModule::assign() {
 			utility_exit_with_message( str.str() );
 		}
 	}
-  assign( sfd.begin(), sfd.end() );
+	assign( sfd.begin(), sfd.end() );
 }
 
 /// @brief generate constraint files from assignments
 void NoesyModule::generate_constraint_files(
-	 core::pose::Pose const& pose,
-	 std::string const& cst_fa_file,
-	 std::string const& cst_centroid_file,
-   core::Size min_seq_separation,
-	 core::Size min_quali,
-	 core::Size max_quali,
-	 bool ignore_elimination_candidates, /*default = true*/
-	 bool elimination_candidates /*default = false */
+	core::pose::Pose const& pose,
+	std::string const& cst_fa_file,
+	std::string const& cst_centroid_file,
+	core::Size min_seq_separation,
+	core::Size min_quali,
+	core::Size max_quali,
+	bool ignore_elimination_candidates, /*default = true*/
+	bool elimination_candidates /*default = false */
 ) const {
 
 	PROF_START( NOESY_ASSIGN_GEN_CST );
 
 	using namespace core::scoring::constraints;
 	using namespace basic::options;
-  using namespace OptionKeys;
+	using namespace OptionKeys;
 
-  core::pose::Pose centroid_pose = pose;
+	core::pose::Pose centroid_pose = pose;
 	core::util::switch_to_residue_type_set( centroid_pose, core::chemical::CENTROID );
 
 	ConstraintSetOP cstset( new ConstraintSet );
 	ConstraintSetOP centroid_cstset( new ConstraintSet );
 	tr.Info << "generate constraints..." << std::endl;
 	crosspeaks_->generate_fa_and_cen_constraints(
-	   	 cstset,
-			 centroid_cstset,
-			 pose,
-			 centroid_pose,
-			 min_seq_separation,
-			 min_quali,
-			 max_quali,
-			 option[ noesy::out::padding ](),
-			 ignore_elimination_candidates,
-			 elimination_candidates
+		cstset,
+		centroid_cstset,
+		pose,
+		centroid_pose,
+		min_seq_separation,
+		min_quali,
+		max_quali,
+		option[ noesy::out::padding ](),
+		ignore_elimination_candidates,
+		elimination_candidates
 	);
 
 	PROF_STOP( NOESY_ASSIGN_GEN_CST );
@@ -358,7 +358,7 @@ void NoesyModule::generate_constraint_files(
 	PROF_START( NOESY_ASSIGN_WRITE_CST );
 
 	ConstraintIO::write_constraints( cst_fa_file, *cstset, pose );
-  ConstraintIO::write_constraints( cst_centroid_file, *centroid_cstset, centroid_pose );
+	ConstraintIO::write_constraints( cst_centroid_file, *centroid_cstset, centroid_pose );
 
 	PROF_STOP( NOESY_ASSIGN_WRITE_CST );
 }

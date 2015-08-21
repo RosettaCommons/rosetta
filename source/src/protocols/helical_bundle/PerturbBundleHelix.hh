@@ -60,18 +60,18 @@ namespace helical_bundle {
 class PerturbBundleHelix : public protocols::moves::Mover
 {
 public:
-		//Typedefs:
-		typedef core::conformation::parametric::Parameters Parameters;
-		typedef core::conformation::parametric::ParametersOP ParametersOP;
-		typedef core::conformation::parametric::ParametersSet ParametersSet;
-		typedef core::conformation::parametric::ParametersSetOP ParametersSetOP;
+	//Typedefs:
+	typedef core::conformation::parametric::Parameters Parameters;
+	typedef core::conformation::parametric::ParametersOP ParametersOP;
+	typedef core::conformation::parametric::ParametersSet ParametersSet;
+	typedef core::conformation::parametric::ParametersSetOP ParametersSetOP;
 
-		typedef protocols::helical_bundle::parameters::BundleParameters BundleParameters;
-		typedef protocols::helical_bundle::parameters::BundleParametersOP BundleParametersOP;
-		typedef protocols::helical_bundle::parameters::BundleParametersCOP BundleParametersCOP;
-		typedef protocols::helical_bundle::parameters::BundleParametersSet BundleParametersSet;
-		typedef protocols::helical_bundle::parameters::BundleParametersSetOP BundleParametersSetOP;
-		typedef protocols::helical_bundle::parameters::BundleParametersSetCOP BundleParametersSetCOP;
+	typedef protocols::helical_bundle::parameters::BundleParameters BundleParameters;
+	typedef protocols::helical_bundle::parameters::BundleParametersOP BundleParametersOP;
+	typedef protocols::helical_bundle::parameters::BundleParametersCOP BundleParametersCOP;
+	typedef protocols::helical_bundle::parameters::BundleParametersSet BundleParametersSet;
+	typedef protocols::helical_bundle::parameters::BundleParametersSetOP BundleParametersSetOP;
+	typedef protocols::helical_bundle::parameters::BundleParametersSetCOP BundleParametersSetCOP;
 
 public:
 	PerturbBundleHelix();
@@ -87,11 +87,11 @@ public:
 	virtual std::string get_name() const;
 
 	/*virtual void parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const &
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const &
 	);*/
 
 public: //Setters:
@@ -117,9 +117,9 @@ public: //Getters:
 
 	bool last_apply_failed() const { return last_apply_failed_; }
 
-////////////////////////////////////////////////////////////////////////////////
-//          PRIVATE DATA                                                      //
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	//          PRIVATE DATA                                                      //
+	////////////////////////////////////////////////////////////////////////////////
 
 private:
 
@@ -135,9 +135,9 @@ private:
 	///
 	bool last_apply_failed_;
 
-////////////////////////////////////////////////////////////////////////////////
-//          PRIVATE FUNCTIONS                                                 //
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	//          PRIVATE FUNCTIONS                                                 //
+	////////////////////////////////////////////////////////////////////////////////
 
 private:
 

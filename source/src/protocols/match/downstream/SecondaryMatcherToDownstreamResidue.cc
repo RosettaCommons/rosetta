@@ -55,13 +55,13 @@ namespace downstream {
 static thread_local basic::Tracer TR( "protocols.match.downstream.SecondaryMatcherToDownstreamResidue" );
 
 SecondaryMatcherToDownstreamResidue::SecondaryMatcherToDownstreamResidue(
-		core::pose::PoseCOP upstream_pose,
-		Size geom_cst_id
+	core::pose::PoseCOP upstream_pose,
+	Size geom_cst_id
 ) :
-		parent( geom_cst_id ),
-		upstream_pose_(upstream_pose)
+	parent( geom_cst_id ),
+	upstream_pose_(upstream_pose)
 {
-	for( core::Size ii=1; ii<=4; ++ii ){ catalytic_atoms_.push_back(0); }
+	for ( core::Size ii=1; ii<=4; ++ii ) { catalytic_atoms_.push_back(0); }
 }
 
 SecondaryMatcherToDownstreamResidue::~SecondaryMatcherToDownstreamResidue() {}
@@ -95,7 +95,7 @@ SecondaryMatcherToDownstreamResidue::build_hits_at_all_positions(
 			( matcher.per_constraint_build_points( focused_geomcst_id_ ) );
 
 		for ( Size jj = 1; jj <= target_build_points.size(); ++jj ) {
-			if ( ! prepare_for_hit_generation_at_target_build_point( matcher, ii, *target_build_points[ jj ] )) {
+			if ( ! prepare_for_hit_generation_at_target_build_point( matcher, ii, *target_build_points[ jj ] ) ) {
 				continue;
 			}
 			TR << "Secondary matching against geomcst " << ii << " hits from build point " << target_build_points[ jj ]->original_insertion_point() << std::endl;
@@ -110,7 +110,7 @@ SecondaryMatcherToDownstreamResidue::build_hits_at_all_positions(
 				//std::cout << "APL DEBUG build points SecondaryMatcherToDownstreamResidue::build_hits_at_all_positions " << kk << " matcher.upstream_builder: " << matcher.upstream_builder( geom_cst_id() )() << std::endl;
 				std::list< Hit > kk_hits = matcher.upstream_builder( geom_cst_id() )->build( * my_build_points[ kk ] );
 				hits[ kk ].splice( hits[ kk ].end(), kk_hits );
-			  //}
+				//}
 			}
 		}
 	}
@@ -223,7 +223,7 @@ SecondaryMatcherToDownstreamResidue::build(
 	core::conformation::Residue target_residue_clash_check( *downstream_restype_, false );
 	utility::vector1< core::Vector > ds_coords( ( target_downstream_coords_->get_ds_atom_ids_needed() ).size()  );
 
-  // flo oct 09: moderate hack assuming that the ligand will always be last
+	// flo oct 09: moderate hack assuming that the ligand will always be last
 	target_residue.seqpos( upstream_pose_->total_residue() + 1);
 
 	for ( Size ii = 1; ii <= target_downstream_coords_->n_rotamers_for_restype( 1 ); ++ii ) {
@@ -241,20 +241,20 @@ SecondaryMatcherToDownstreamResidue::build(
 			if ( eval_iter->first->evaluate_residues( upstream_residue, target_residue ) ) {
 				//detect collision between downstream evaluator atoms
 				//and heavy sidechain atoms
-				 if ( ! are_colliding( upstream_residue, target_residue, downstream_atom_coordinates_needed_, catalytic_atoms_ ) ) {
+				if ( ! are_colliding( upstream_residue, target_residue, downstream_atom_coordinates_needed_, catalytic_atoms_ ) ) {
 
 					//get coordinates from the downstream otherwise build and store them
 					if ( target_downstream_coords_->get_clash_checking( ii ) ) {
 						ds_coords = target_downstream_coords_->get_coords_for_clash_check( ii );
 					} else {
-  	    	  get_dsbuilder()->coordinates_from_hit( target_downstream_coords_->hit(1,ii), target_downstream_coords_->get_ds_atom_ids_needed(), ds_coords );
+						get_dsbuilder()->coordinates_from_hit( target_downstream_coords_->hit(1,ii), target_downstream_coords_->get_ds_atom_ids_needed(), ds_coords );
 						target_downstream_coords_->set_coords_for_clash_check( ii, ds_coords );
 						target_downstream_coords_->set_clash_checking( ii );
 					}
 					//fills downstream residue with coordinates for clash checking atoms
-    			for ( Size ll = 1; ll <= ( target_downstream_coords_->get_ds_atom_ids_needed() ).size(); ++ll ) 	{
-      			target_residue_clash_check.set_xyz( target_downstream_coords_->get_ds_atom_ids_needed()[ ll ].atomno(), ds_coords[ ll ] );
-    			}
+					for ( Size ll = 1; ll <= ( target_downstream_coords_->get_ds_atom_ids_needed() ).size(); ++ll )  {
+						target_residue_clash_check.set_xyz( target_downstream_coords_->get_ds_atom_ids_needed()[ ll ].atomno(), ds_coords[ ll ] );
+					}
 
 					if ( ! are_colliding( upstream_residue, target_residue_clash_check, target_downstream_coords_->get_ds_atom_ids_needed(), catalytic_atoms_ ) ) {
 						Hit hit;
@@ -411,7 +411,7 @@ SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation_for_geomcst(
 )
 {
 	focused_geomcst_id_ = target_geomcst_id;
-  set_dsbuilder( matcher.downstream_builder( focused_geomcst_id_ ) );
+	set_dsbuilder( matcher.downstream_builder( focused_geomcst_id_ ) );
 
 	hits_for_focused_geomcst_and_build_point_begin_ = matcher.hits( focused_geomcst_id_ ).begin();
 	hits_for_focused_geomcst_and_build_point_end_ = hits_for_focused_geomcst_and_build_point_begin_;
@@ -431,18 +431,19 @@ SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation_for_geomcst(
 			//and also downstreambuilders that are needed to get coordinates
 			//clash checking
 			other->set_ds_coords_needed( downstream_atom_coordinates_needed_);
-      other->set_dsbuilder( matcher.downstream_builder( focused_geomcst_id_ ) );
+			other->set_dsbuilder( matcher.downstream_builder( focused_geomcst_id_ ) );
 		}
 	}
 
-  toolbox::match_enzdes_util::LigandConformer lig_confs =  toolbox::match_enzdes_util::LigandConformer( * get_dsbuilder()->get_lig_conformers( 1 ) );
+	toolbox::match_enzdes_util::LigandConformer lig_confs =  toolbox::match_enzdes_util::LigandConformer( * get_dsbuilder()->get_lig_conformers( 1 ) );
 	utility::vector1< core::id::AtomID > downstream_atoms_for_clash_checking;
 
-  for ( Size natoms_ds = 1; natoms_ds <= lig_confs.n_collision_check_atoms(); ++natoms_ds ) {
-    Size id = lig_confs.collision_check_id_2_restype_id( natoms_ds );
-		if ( ! ds_atom_present(id) )
+	for ( Size natoms_ds = 1; natoms_ds <= lig_confs.n_collision_check_atoms(); ++natoms_ds ) {
+		Size id = lig_confs.collision_check_id_2_restype_id( natoms_ds );
+		if ( ! ds_atom_present(id) ) {
 			downstream_atoms_for_clash_checking.push_back( core::id::AtomID(id,1) );
-  }
+		}
+	}
 
 	target_downstream_coords_->set_ds_atom_ids_needed(downstream_atoms_for_clash_checking);
 
@@ -452,7 +453,7 @@ bool
 SecondaryMatcherToDownstreamResidue::ds_atom_present(
 	Size index
 ) const {
-	for ( Size ii = 1; ii <= downstream_atom_coordinates_needed_.size(); ++ii ){
+	for ( Size ii = 1; ii <= downstream_atom_coordinates_needed_.size(); ++ii ) {
 		if ( index == downstream_atom_coordinates_needed_[ii].atomno() ) return true;
 	}
 	return false;
@@ -498,8 +499,8 @@ SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation_at_target_build_
 	target_downstream_coords_->set_num_target_rotamers( 1, count_target_hits );
 	target_downstream_coords_->set_clash_check_types( count_target_hits );
 
-//	DownstreamBuilderOP dsbuilder = matcher.downstream_builder( focused_geomcst_id_ );
-  //set_dsbuilder( matcher.downstream_builder( focused_geomcst_id_ ) );
+	// DownstreamBuilderOP dsbuilder = matcher.downstream_builder( focused_geomcst_id_ );
+	//set_dsbuilder( matcher.downstream_builder( focused_geomcst_id_ ) );
 	runtime_assert( get_dsbuilder() != 0 );
 
 	core::conformation::Residue dsrescoords( *downstream_restype_, false );

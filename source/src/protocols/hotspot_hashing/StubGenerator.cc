@@ -43,58 +43,57 @@ static thread_local basic::Tracer tr( "protocols.hotspot_hashing.StubGenerator" 
 
 core::conformation::ResidueOP StubGenerator::getStubByName( std::string name )
 {
-  using namespace core::conformation;
-  using namespace core::chemical;
-  
-  ResidueOP residue = ResidueFactory::create_residue(
-      rsd_set_from_cmd_line().lock()->name_map( name ) ); // FIXME: potential null pointer from lock()
+	using namespace core::conformation;
+	using namespace core::chemical;
 
-  moveFromStubFrame(residue, residueStubCentroidFrame(residue));
+	ResidueOP residue = ResidueFactory::create_residue(
+		rsd_set_from_cmd_line().lock()->name_map( name ) ); // FIXME: potential null pointer from lock()
+
+	moveFromStubFrame(residue, residueStubCentroidFrame(residue));
 
 	return residue;
 }
 
 void StubGenerator::placeResidueAtTransform( core::pose::Pose & pose, core::conformation::ResidueCOP sourceResidue, core::kinematics::Stub transform, core::Size & residuejumpindex, core::Size & residueindex)
 {
-  tr.Debug << "Placing at transform: " << transform << std::endl;
+	tr.Debug << "Placing at transform: " << transform << std::endl;
 
 	core::conformation::ResidueOP new_residue( new core::conformation::Residue(*sourceResidue) );
 	moveIntoStubFrame(new_residue, transform);
 
-  // Places residue at last jump & residue number
-  placeResidueOnPose(pose, new_residue);
-  residueindex = pose.total_residue();
-  residuejumpindex = pose.num_jump();
+	// Places residue at last jump & residue number
+	placeResidueOnPose(pose, new_residue);
+	residueindex = pose.total_residue();
+	residuejumpindex = pose.num_jump();
 
-  tr.Debug << "Placed residue at anchor location: " << pose.residue(residueindex).xyz("CA") << std::endl;
+	tr.Debug << "Placed residue at anchor location: " << pose.residue(residueindex).xyz("CA") << std::endl;
 }
 
 void StubGenerator::placeResidueOnPose(core::pose::Pose & pose, core::conformation::ResidueCOP residue)
 {
-  pose.append_residue_by_jump(
-      *residue,
-      pose.total_residue(),
-      "",
-      residue->atom_name(residue->nbr_atom()),
-      true );
+	pose.append_residue_by_jump(
+		*residue,
+		pose.total_residue(),
+		"",
+		residue->atom_name(residue->nbr_atom()),
+		true );
 
-	if(pose.num_jump() != 0)
-	{
+	if ( pose.num_jump() != 0 ) {
 		// Adjust jump to realign residue
 		core::Size atom_center;
 		core::Size atom_a;
 		core::Size atom_b;
 		residue->select_orient_atoms(atom_center, atom_a, atom_b);
-		
+
 		core::kinematics::Stub source_stub(
-				residue->xyz(atom_center),
-				residue->xyz(atom_a),
-				residue->xyz(atom_b));
+			residue->xyz(atom_center),
+			residue->xyz(atom_a),
+			residue->xyz(atom_b));
 
 		core::kinematics::Stub current_stub(
-				pose.residue(pose.total_residue()).xyz(atom_center),
-				pose.residue(pose.total_residue()).xyz(atom_a),
-				pose.residue(pose.total_residue()).xyz(atom_b));
+			pose.residue(pose.total_residue()).xyz(atom_center),
+			pose.residue(pose.total_residue()).xyz(atom_a),
+			pose.residue(pose.total_residue()).xyz(atom_b));
 
 		core::kinematics::RT transform(source_stub, current_stub);
 
@@ -103,8 +102,7 @@ void StubGenerator::placeResidueOnPose(core::pose::Pose & pose, core::conformati
 		core::kinematics::Jump newjump(residuejump);
 
 		newjump.rotation_by_matrix(upstreamstub, source_stub.v, transform.get_rotation());
-		if (transform.get_translation().length() != 0)
-		{
+		if ( transform.get_translation().length() != 0 ) {
 			newjump.translation_along_axis(upstreamstub, transform.get_translation(), transform.get_translation().length());
 		}
 
@@ -112,23 +110,21 @@ void StubGenerator::placeResidueOnPose(core::pose::Pose & pose, core::conformati
 	}
 
 
-  tr.Debug << "Appended residue on pose. Residue: " << pose.total_residue() << " Jump: " << pose.num_jump() << " Anchor atom: " << residue->atom_name(residue->nbr_atom()) << std::endl;
+	tr.Debug << "Appended residue on pose. Residue: " << pose.total_residue() << " Jump: " << pose.num_jump() << " Anchor atom: " << residue->atom_name(residue->nbr_atom()) << std::endl;
 }
 
 void StubGenerator::moveIntoStubFrame( core::conformation::ResidueOP residue, core::kinematics::Stub transform )
 {
-  for (core::Size i = 1; i <= residue->natoms(); i++) 
-  {
-    residue->set_xyz(i, transform.local2global(residue->xyz(i)));
-  }
+	for ( core::Size i = 1; i <= residue->natoms(); i++ ) {
+		residue->set_xyz(i, transform.local2global(residue->xyz(i)));
+	}
 }
 
 void StubGenerator::moveFromStubFrame( core::conformation::ResidueOP residue, core::kinematics::Stub transform )
 {
-  for (core::Size i = 1; i <= residue->natoms(); i++) 
-  {
-    residue->set_xyz(i, transform.global2local(residue->xyz(i)));
-  }
+	for ( core::Size i = 1; i <= residue->natoms(); i++ ) {
+		residue->set_xyz(i, transform.global2local(residue->xyz(i)));
+	}
 }
 
 core::kinematics::Stub StubGenerator::residueStubOrientFrame(core::conformation::ResidueCOP const residue)
@@ -142,40 +138,38 @@ core::kinematics::Stub StubGenerator::residueStubOrientFrame(core::conformation:
 
 core::kinematics::Stub StubGenerator::residueStubCentroidFrame(core::conformation::ResidueCOP const residue)
 {
-	// Obtain the stub needed to generate 
-  // Canonical transform aligns CA atom to <0, 0, 0>
-  // CA->SC heavyatom centroid vector along <1,0,0>
-  // CA->C vector on the XY plane (<CA->C> * <0,0,1> == 0)
-	
+	// Obtain the stub needed to generate
+	// Canonical transform aligns CA atom to <0, 0, 0>
+	// CA->SC heavyatom centroid vector along <1,0,0>
+	// CA->C vector on the XY plane (<CA->C> * <0,0,1> == 0)
+
 	core::kinematics::Stub result;
 
 	result.from_four_points(
-			residue->xyz(residue->atom_index("CA")),
-			residueStubCentroid(residue),
-			residue->xyz(residue->atom_index("CA")),
-			residue->xyz(residue->atom_index("C")));
+		residue->xyz(residue->atom_index("CA")),
+		residueStubCentroid(residue),
+		residue->xyz(residue->atom_index("CA")),
+		residue->xyz(residue->atom_index("C")));
 
 	return result;
 }
 
 StubGenerator::Vector StubGenerator::residueStubCentroid(core::conformation::ResidueCOP const residue)
 {
-  Vector centroid;
-  centroid = 0;
+	Vector centroid;
+	centroid = 0;
 
-  if (residue->first_sidechain_atom() > residue->nheavyatoms())
-  {
-    return residue->xyz(residue->nbr_atom());
-  }
+	if ( residue->first_sidechain_atom() > residue->nheavyatoms() ) {
+		return residue->xyz(residue->nbr_atom());
+	}
 
-  for (core::Size i = residue->first_sidechain_atom(); i <= residue->nheavyatoms(); ++i)
-  {
-    centroid += residue->xyz(i);
-  }
+	for ( core::Size i = residue->first_sidechain_atom(); i <= residue->nheavyatoms(); ++i ) {
+		centroid += residue->xyz(i);
+	}
 
-  centroid /= (1 + residue->nheavyatoms() - residue->first_sidechain_atom());
+	centroid /= (1 + residue->nheavyatoms() - residue->first_sidechain_atom());
 
-  return centroid;
+	return centroid;
 }
 
 } // namespace hotspot_hashing

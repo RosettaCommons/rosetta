@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   basic/resource_manager/ResourceManagerCreator.hh
-/// @brief  
-/// @author 
+/// @brief
+/// @author
 
 #ifndef INCLUDED_basic_resource_manager_ResourceManagerCreator_FWD_HH
 #define INCLUDED_basic_resource_manager_ResourceManagerCreator_FWD_HH

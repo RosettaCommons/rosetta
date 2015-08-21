@@ -33,7 +33,7 @@
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 
@@ -41,60 +41,60 @@ class NonlocalContactsCalculator : public core::pose::metrics::EnergyDependentCa
 
 public:
 
-  NonlocalContactsCalculator(
-    core::Size min_sequence_separation = basic::options::option[basic::options::OptionKeys::pose_metrics::min_sequence_separation],
-    core::Real contact_cutoffE = basic::options::option[basic::options::OptionKeys::pose_metrics::contact_cutoffE]
-  );
+	NonlocalContactsCalculator(
+		core::Size min_sequence_separation = basic::options::option[basic::options::OptionKeys::pose_metrics::min_sequence_separation],
+		core::Real contact_cutoffE = basic::options::option[basic::options::OptionKeys::pose_metrics::contact_cutoffE]
+	);
 
 
-  NonlocalContactsCalculator(
-    std::set< core::Size > const & special_region,
-    core::Size min_sequence_separation = basic::options::option[basic::options::OptionKeys::pose_metrics::min_sequence_separation],
-    core::Real contact_cutoffE = basic::options::option[basic::options::OptionKeys::pose_metrics::contact_cutoffE]
-  );
+	NonlocalContactsCalculator(
+		std::set< core::Size > const & special_region,
+		core::Size min_sequence_separation = basic::options::option[basic::options::OptionKeys::pose_metrics::min_sequence_separation],
+		core::Real contact_cutoffE = basic::options::option[basic::options::OptionKeys::pose_metrics::contact_cutoffE]
+	);
 
-  NonlocalContactsCalculator(
-    std::set< core::Size > const & special_region1,
-    std::set< core::Size > const & special_region2,
-    core::Size min_sequence_separation = basic::options::option[basic::options::OptionKeys::pose_metrics::min_sequence_separation],
-    core::Real contact_cutoffE = basic::options::option[basic::options::OptionKeys::pose_metrics::contact_cutoffE]
-  );
+	NonlocalContactsCalculator(
+		std::set< core::Size > const & special_region1,
+		std::set< core::Size > const & special_region2,
+		core::Size min_sequence_separation = basic::options::option[basic::options::OptionKeys::pose_metrics::min_sequence_separation],
+		core::Real contact_cutoffE = basic::options::option[basic::options::OptionKeys::pose_metrics::contact_cutoffE]
+	);
 
-  ~NonlocalContactsCalculator();
+	~NonlocalContactsCalculator();
 
 
-  core::pose::metrics::PoseMetricCalculatorOP clone() const {
-    return core::pose::metrics::PoseMetricCalculatorOP( new NonlocalContactsCalculator( special_region1_, special_region2_, min_seq_separation_, cutoffE_) ); };
+	core::pose::metrics::PoseMetricCalculatorOP clone() const {
+		return core::pose::metrics::PoseMetricCalculatorOP( new NonlocalContactsCalculator( special_region1_, special_region2_, min_seq_separation_, cutoffE_) ); };
 
 protected:
 
-  virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-  virtual std::string print( std::string const & key ) const;
-  virtual void recompute( core::pose::Pose const & this_pose );
+	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
+	virtual std::string print( std::string const & key ) const;
+	virtual void recompute( core::pose::Pose const & this_pose );
 
 
 private:
 
-  core::Size total_nlcontacts_;
-  core::Size special_region1_nlcontacts_;
-  core::Size special_region2_nlcontacts_;
-  core::Size special_region1_intra_nlcontacts_;
-  core::Size special_region1_to_other_nlcontacts_;
-  core::Size region1_region2_nlcontacts_;
+	core::Size total_nlcontacts_;
+	core::Size special_region1_nlcontacts_;
+	core::Size special_region2_nlcontacts_;
+	core::Size special_region1_intra_nlcontacts_;
+	core::Size special_region1_to_other_nlcontacts_;
+	core::Size region1_region2_nlcontacts_;
 
-  utility::vector1< core::Size > residue_nlcontacts_;
-  utility::vector1< core::Real > residue_nlscore_;
+	utility::vector1< core::Size > residue_nlcontacts_;
+	utility::vector1< core::Real > residue_nlscore_;
 
-  core::graph::GraphOP nlcontacts_graph_;
+	core::graph::GraphOP nlcontacts_graph_;
 
-  //how far two residues need to be apart in sequence to count as nonlocal
-  core::Size min_seq_separation_;
+	//how far two residues need to be apart in sequence to count as nonlocal
+	core::Size min_seq_separation_;
 
-  //minimum energy between two residues to count as interacting
-  core::Real cutoffE_;
+	//minimum energy between two residues to count as interacting
+	core::Real cutoffE_;
 
-  std::set< core::Size > special_region1_;
-  std::set< core::Size > special_region2_;
+	std::set< core::Size > special_region1_;
+	std::set< core::Size > special_region2_;
 
 };
 

@@ -55,7 +55,7 @@
 #endif
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 #ifdef BOINC_GRAPHICS
@@ -130,7 +130,7 @@ RestrictRegion::RestrictRegion( RestrictRegion const & rval ) :
 	regions_to_mutate_( rval.regions_to_mutate_ ),
 	last_type_( rval.last_type_ ),
 	metric_stats_( rval.metric_stats_ ),
-	highestEnergyRegionOperation_ops_	(rval.highestEnergyRegionOperation_ops_)
+	highestEnergyRegionOperation_ops_ (rval.highestEnergyRegionOperation_ops_)
 {}
 
 /// @brief destructor - this class has no dynamic allocation, so
@@ -166,37 +166,38 @@ RestrictRegion::parse_my_tag(
 	}
 	if ( tag->hasOption( "scorefxn" ) ) {
 		scorefxn_ = data.get_ptr< core::scoring::ScoreFunction >( "scorefxns",
-																														tag->getOption< std::string >( "scorefxn" ) )->clone();
+			tag->getOption< std::string >( "scorefxn" ) )->clone();
 		assert( scorefxn_ );
 	}
 	bool tmpOpSet = false;
 	std::string type( type_ );
-	if((type == "psipred")||( type == "random" )){
+	if ( (type == "psipred")||( type == "random" ) ) {
 		task_operations::HighestEnergyRegionOperationOP op( new task_operations::DesignBySecondaryStructureOperation(
-					blueprint_file_,psipred_cmd_,false,false ) );
+			blueprint_file_,psipred_cmd_,false,false ) );
 		highestEnergyRegionOperation_ops_.push_back(op);
 		tmpOpSet = true;
 	}
-	if(type == "score"){
+	if ( type == "score" ) {
 		task_operations::HighestEnergyRegionOperationOP op( new task_operations::HighestEnergyRegionOperation() );
 		op->set_scorefxn( scorefxn_ );
 		highestEnergyRegionOperation_ops_.push_back(op);
 		tmpOpSet = true;
 	}
-	if((type == "packstat") ||(type == "random" )){
+	if ( (type == "packstat") ||(type == "random" ) ) {
 		task_operations::HighestEnergyRegionOperationOP op( new task_operations::DesignByPackStatOperation() );
 		highestEnergyRegionOperation_ops_.push_back(op);
 		tmpOpSet = true;
 	}
-	if((type == "random_mutation")||(type == "random" )){
+	if ( (type == "random_mutation")||(type == "random" ) ) {
 		task_operations::HighestEnergyRegionOperationOP op( new task_operations::DesignRandomRegionOperation() );
 		highestEnergyRegionOperation_ops_.push_back(op);
 		tmpOpSet = true;
 	}
-	if(tmpOpSet == false)
+	if ( tmpOpSet == false ) {
 		utility_exit_with_message( "Bad type specified to RestrictRegion op: " + type  );
+	}
 	//initialize metric calculator. maybe not the best location for this?
-	for(core::Size ii=1; ii<=highestEnergyRegionOperation_ops_.size(); ++ii){
+	for ( core::Size ii=1; ii<=highestEnergyRegionOperation_ops_.size(); ++ii ) {
 		std::string opName = highestEnergyRegionOperation_ops_[ii]->get_name();
 		metric_stats_[opName] = std::pair< core::Size, core::Size >( 0, 0 );
 	}
@@ -222,7 +223,7 @@ RestrictRegion::apply( core::pose::Pose & pose )
 		}
 	}
 
- 	if ( permanently_restricted_residues_.size() != pose.total_residue() ) {
+	if ( permanently_restricted_residues_.size() != pose.total_residue() ) {
 		utility_exit_with_message( "WARNING: pose size changed! Pose size=" + boost::lexical_cast< std::string >( pose.total_residue() ) + ", cache size=" + boost::lexical_cast< std::string >( permanently_restricted_residues_.size() ) );
 	}
 
@@ -233,7 +234,7 @@ RestrictRegion::apply( core::pose::Pose & pose )
 		restricted_residues_.push_back( permanently_restricted_residues_[i] );
 	}
 
- 	if ( restricted_residues_.size() != pose.total_residue() ) {
+	if ( restricted_residues_.size() != pose.total_residue() ) {
 		utility_exit_with_message( "WARNING: pose size changed! Pose size=" + boost::lexical_cast< std::string >( pose.total_residue() ) + ", cache size=" + boost::lexical_cast< std::string >( restricted_residues_.size() ) );
 	}
 
@@ -274,13 +275,14 @@ RestrictRegion::apply( core::pose::Pose & pose )
 	}
 	previous_pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
 	// set operation to find worst region
- 	task_operations::HighestEnergyRegionOperationOP op = highestEnergyRegionOperation_ops_[numeric::random::random_range(1,highestEnergyRegionOperation_ops_.size())];
+	task_operations::HighestEnergyRegionOperationOP op = highestEnergyRegionOperation_ops_[numeric::random::random_range(1,highestEnergyRegionOperation_ops_.size())];
 	type_ = op->get_name();
 	//output stats on types
 	TR << "type=" << type_ << std::endl;
 	std::map< std::string, std::pair< core::Size, core::Size > >::iterator itr;
-	for(itr = metric_stats_.begin(); itr!= metric_stats_.end(); ++itr)
+	for ( itr = metric_stats_.begin(); itr!= metric_stats_.end(); ++itr ) {
 		TR << itr->first << ": " << itr->second.first << " / " << itr->second.second << " ; ";
+	}
 	TR << std::endl;
 	last_type_ = type_;
 	++(metric_stats_[ type_ ].second);
@@ -315,7 +317,7 @@ RestrictRegion::apply( core::pose::Pose & pose )
 
 		// if we are done
 		if ( restrict_count >= regions_to_mutate_ ||
-				 ( i >= 1 && i == residues.size() ) ) {
+				( i >= 1 && i == residues.size() ) ) {
 			// re-create task after mutation to make sure task ops haven't changed and write resfile
 			core::pack::task::PackerTaskOP task;
 			if ( task_factory_ ) {
@@ -328,7 +330,7 @@ RestrictRegion::apply( core::pose::Pose & pose )
 			if ( enable_max_trp_ ) {
 				utility::vector1< bool > allowed_aa( 20, true );
 				core::Size trp_count( 0 );
-				for( core::Size j=1; j<=pose.total_residue(); ++j ) {
+				for ( core::Size j=1; j<=pose.total_residue(); ++j ) {
 					if ( pose.residue( j ).name1() == 'W' ) {
 						++trp_count;
 					}
@@ -382,7 +384,7 @@ RestrictRegion::initialize_resfile( std::string const & orig_resfile )
 		resfile_ = orig_resfile.substr( pos+1, orig_resfile.size() );
 	}
 	/*if ( resfile_ == orig_resfile ) {
-		resfile_ += "_out";
+	resfile_ += "_out";
 	}*/
 	TR << "Resfile=" << resfile_ << std::endl;
 	std::string resfile_string;
@@ -422,7 +424,7 @@ RestrictRegion::write_resfile( core::pose::Pose const & pose,  core::pack::task:
 		// note that allowing an amino acid in this way will remove it from the restricted list, which means that mutation
 		// may be restricted again in a later call to this mover.
 		bool const native_allowed( residue_is_allowed( task, i, pose.residue( i ).aa() ) &&
-															 ! is_restricted( pose.residue( i ).name1(), i ) );
+			! is_restricted( pose.residue( i ).name1(), i ) );
 
 		// find the minimum distance to a residue that is being restricted. If it is far, it may not fall into the design shell and should be set to repack, which means the native AA must be allowed
 		core::Real min_dist( 100000 ); // ridiculously huge distance
@@ -434,7 +436,7 @@ RestrictRegion::write_resfile( core::pose::Pose const & pose,  core::pack::task:
 		}
 		std::string const allowed_resis( residues_allowed( task, i ) );
 		bool const repacking_nonnative( !native_allowed &&
-																		(  min_dist >= distance_cutoff || allowed_resis.size() == 0 ) );
+			(  min_dist >= distance_cutoff || allowed_resis.size() == 0 ) );
 		std::string cmd( " PIKAA " );
 		cmd += allowed_resis;
 		std::string notaa( restricted_residues_[i] );
@@ -499,7 +501,7 @@ RestrictRegion::permanently_restrict_aa( core::pose::Pose const & pose, core::pa
 {
 	// if the amino acid is not found in the string of permanently restricted residues, add it in there
 	if ( permanently_restricted_residues_[ seqpos ].find( pose.residue( seqpos ).name1() ) == std::string::npos ) {
-			permanently_restricted_residues_[ seqpos ] += pose.residue( seqpos ).name1();
+		permanently_restricted_residues_[ seqpos ] += pose.residue( seqpos ).name1();
 	}
 }
 
@@ -522,8 +524,8 @@ RestrictRegion::previous_pose()
 /// basically, this function counts the number of amino acids in each fragment that are compatible with the task
 core::Size
 RestrictRegion::compatible_with_task( core::pack::task::PackerTaskOP task,
-																					 core::Size const frag_id,
-																					 core::fragment::FrameOP frame ) const
+	core::Size const frag_id,
+	core::fragment::FrameOP frame ) const
 {
 	core::Size const task_start_seqpos( frame->start() );
 	std::string const frag_seq( frame->fragment_ptr( frag_id )->sequence() );

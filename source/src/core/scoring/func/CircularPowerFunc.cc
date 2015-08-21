@@ -33,8 +33,8 @@ CircularPowerFunc::CircularPowerFunc(
 	power_( power ),
 	weight_( weight )
 {
-debug_assert( std::abs( std::pow(3.0,2) - 9.0 ) < 1e-3 );
-debug_assert( power_ != 1 && power_ != 0 );
+	debug_assert( std::abs( std::pow(3.0,2) - 9.0 ) < 1e-3 );
+	debug_assert( power_ != 1 && power_ != 0 );
 }
 
 FuncOP

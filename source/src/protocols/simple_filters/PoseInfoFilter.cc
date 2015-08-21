@@ -62,10 +62,10 @@ PoseInfoFilter::report_sm( core::pose::Pose const & pose ) const
 void PoseInfoFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
 	out << "Pose Information: " << pose.total_residue() << " residues " << std::endl;
-  pose.pdb_info()->show( out );
+	pose.pdb_info()->show( out );
 
 	out << pose.fold_tree(); // Has implicit internal std::endl;
-  pose.fold_tree().show( out );
+	pose.fold_tree().show( out );
 
 	{
 		using core::pose::datacache::CacheableDataType;
@@ -81,19 +81,19 @@ void PoseInfoFilter::report( std::ostream & out, core::pose::Pose const & pose )
 		out << std::endl; // To flush the Cached data list.
 	}
 
-  // Feel free to add additional pose-related information.
-  // The main reason I stopped where I did was I didn't necessarily know how to access relevant others.
-   out << "Constraints: ";
-   pose.constraint_set()->show(out);
-   pose.constraint_set()->show_definition(out,pose);
-   pose.constraint_set()->show_numbers(out);
+	// Feel free to add additional pose-related information.
+	// The main reason I stopped where I did was I didn't necessarily know how to access relevant others.
+	out << "Constraints: ";
+	pose.constraint_set()->show(out);
+	pose.constraint_set()->show_definition(out,pose);
+	pose.constraint_set()->show_numbers(out);
 }
 
 void PoseInfoFilter::parse_my_tag( utility::tag::TagCOP const,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & /*pose*/)
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & /*pose*/)
 {
 	// Right now we don't have any options to control, so don't bother doing anything.
 }

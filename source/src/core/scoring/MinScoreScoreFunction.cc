@@ -36,7 +36,7 @@ MinScoreScoreFunction::MinScoreScoreFunction():
 	ScoreFunction(),
 	// RM 2013-11-18: Make it work like regular scorefunction if min not specified.
 	min_score_( -1 * std::numeric_limits< core::Real >::max() )
-	{}
+{}
 
 ///////////////////////////////////////////////////////////////////////////////
 ScoreFunctionOP
@@ -84,7 +84,7 @@ MinScoreScoreFunction::MinScoreScoreFunction( core::Real min_score )
 Real
 MinScoreScoreFunction::operator()( pose::Pose & pose ) const
 {
- 	ScoreFunction::operator()( pose ); //score -- but without atom_pair_constraints..
+	ScoreFunction::operator()( pose ); //score -- but without atom_pair_constraints..
 	// is probably cheaper to not apply a completely new scorefunction...
 	EnergyMap cst_free_weights( weights() );
 	Real cst_weight = cst_free_weights.get( atom_pair_constraint );

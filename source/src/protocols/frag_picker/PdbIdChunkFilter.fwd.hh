@@ -29,11 +29,11 @@ class DenyPdbIdFilter;
 
 typedef utility::pointer::shared_ptr<PdbIdChunkFilter> PdbIdChunkFilterOP;
 typedef utility::pointer::shared_ptr<PdbIdChunkFilter const>
-		PdbIdChunkFilterCOP;
+	PdbIdChunkFilterCOP;
 
 typedef utility::pointer::shared_ptr<AllowPdbIdFilter> AllowPdbIdFilterOP;
 typedef utility::pointer::shared_ptr<AllowPdbIdFilter const>
-		AllowPdbIdFilterCOP;
+	AllowPdbIdFilterCOP;
 
 typedef utility::pointer::shared_ptr<DenyPdbIdFilter> DenyPdbIdFilterOP;
 typedef utility::pointer::shared_ptr<DenyPdbIdFilter const> DenyPdbIdFilterCOP;

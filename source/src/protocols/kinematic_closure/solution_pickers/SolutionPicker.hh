@@ -28,7 +28,7 @@ class SolutionPicker
 	: public utility::pointer::ReferenceCount, private boost::noncopyable {
 
 public:
-	/// @brief Pick a solution from the given list, and if apply it to the given 
+	/// @brief Pick a solution from the given list, and if apply it to the given
 	/// pose.  If no solution is satisfactory, don't do anything.
 	virtual bool pick_and_apply(Pose & pose, SolutionList const & solutions) = 0;
 

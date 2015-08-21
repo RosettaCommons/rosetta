@@ -108,7 +108,7 @@ bool RepackTrial::reinitialize_for_new_input() const
 void RepackTrial::register_options()
 {
 	///  PUT THE LIST OF OPTIONS THAT ARE USED HERE  ///
-	
+
 	///  RECURSIVELY CALL REGISTER OPTIONS ON ALL MOVERS THAT THIS CLASS HAS AN OWNING_PTR TO  ///
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -137,8 +137,7 @@ void RepackTrial::apply( Pose & pose )
 	//main_repack_trial
 	LoopMover_Refine_CCDOP loop_mover_op( loop_mover() ); // lock AP
 	if ( (loop_mover_op->current_cycle_number() % loop_mover_op->repack_period() ) == 0 ||
-		loop_mover_op->current_cycle_number() == loop_mover_op->inner_cycles() )
-	{
+			loop_mover_op->current_cycle_number() == loop_mover_op->inner_cycles() ) {
 		// repack trial
 		pack::task::PackerTaskOP task = task_factory()->create_task_and_apply_taskoperations( pose );
 		task->set_bump_check( true );
@@ -196,11 +195,11 @@ std::ostream & operator<<(std::ostream& out, RepackTrial const & repack_trial )
 RepackTrialCreator::~RepackTrialCreator() {}
 
 moves::MoverOP RepackTrialCreator::create_mover() const {
-  return moves::MoverOP( new RepackTrial() );
+	return moves::MoverOP( new RepackTrial() );
 }
 
 std::string RepackTrialCreator::keyname() const {
-  return "RepackTrial";
+	return "RepackTrial";
 }
 
 } // namespace refine

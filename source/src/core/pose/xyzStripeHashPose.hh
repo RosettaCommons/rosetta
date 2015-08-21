@@ -63,18 +63,18 @@ public:
 	void
 	init_posehash();
 
-	static void 
+	static void
 	extract_pose_balls(
-			core::pose::Pose const & p,
-			utility::vector1<numeric::geometry::hashing::Ball> & balls,
-			PoseCoordPickMode m = PoseCoordPickMode_BB
+		core::pose::Pose const & p,
+		utility::vector1<numeric::geometry::hashing::Ball> & balls,
+		PoseCoordPickMode m = PoseCoordPickMode_BB
 	);
 
-	static void 
+	static void
 	extract_pose_balls(
-			core::pose::Pose const & p,
-			utility::vector1<numeric::geometry::hashing::Ball> & balls,
-			core::id::AtomID_Map<platform::Real> const & amap
+		core::pose::Pose const & p,
+		utility::vector1<numeric::geometry::hashing::Ball> & balls,
+		core::id::AtomID_Map<platform::Real> const & amap
 	);
 
 private:

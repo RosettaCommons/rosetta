@@ -31,8 +31,8 @@
 #include <string>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class UnrecognizedAtomFeatures : public protocols::features::FeaturesReporter {
 public:

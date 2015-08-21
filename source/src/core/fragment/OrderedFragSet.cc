@@ -62,18 +62,18 @@ FragSetOP OrderedFragSet::empty_clone() const {
 
 /// @brief get fragments that start somewhere between start and end
 Size OrderedFragSet::region(
-  MoveMap const&,
-  core::Size start,
-  core::Size end, //not used
-  core::Size, //min_overlap not used
-  core::Size, //min_length not used
-  FrameList &frame_list
+	MoveMap const&,
+	core::Size start,
+	core::Size end, //not used
+	core::Size, //min_overlap not used
+	core::Size, //min_length not used
+	FrameList &frame_list
 ) const {
-  Size count( 0 );
-  for ( Size pos=start; pos<=end; pos++ ) {
-    count += frames( pos, frame_list );
-  }
-  return count;
+	Size count( 0 );
+	for ( Size pos=start; pos<=end; pos++ ) {
+		count += frames( pos, frame_list );
+	}
+	return count;
 }
 
 
@@ -92,19 +92,19 @@ Size OrderedFragSet::frames( Size pos, FrameList &out_frames ) const
 }
 
 ConstFrameIterator OrderedFragSet::begin() const {
- return ConstFrameIterator( FrameIteratorWorker_OP( new OrderedFragSetIterator_( frames_.begin(), frames_.end() ) ) );
+	return ConstFrameIterator( FrameIteratorWorker_OP( new OrderedFragSetIterator_( frames_.begin(), frames_.end() ) ) );
 }
 
 ConstFrameIterator OrderedFragSet::end() const {
- return ConstFrameIterator( FrameIteratorWorker_OP( new OrderedFragSetIterator_( frames_.end(), frames_.end() ) ) );
+	return ConstFrameIterator( FrameIteratorWorker_OP( new OrderedFragSetIterator_( frames_.end(), frames_.end() ) ) );
 }
 
 FrameIterator OrderedFragSet::nonconst_begin() {
- return FrameIterator( FrameIteratorWorker_OP( new OrderedFragSetIterator_( frames_.begin(), frames_.end() ) ) );
+	return FrameIterator( FrameIteratorWorker_OP( new OrderedFragSetIterator_( frames_.begin(), frames_.end() ) ) );
 }
 
 FrameIterator OrderedFragSet::nonconst_end() {
- return FrameIterator( FrameIteratorWorker_OP( new OrderedFragSetIterator_( frames_.end(), frames_.end() ) ) );
+	return FrameIterator( FrameIteratorWorker_OP( new OrderedFragSetIterator_( frames_.end(), frames_.end() ) ) );
 }
 
 bool OrderedFragSet::empty() const {
@@ -114,8 +114,8 @@ bool OrderedFragSet::empty() const {
 
 void OrderedFragSet::add_( FrameOP aframe )
 {
-  Size seqpos( aframe->start() );
-  frames_[ seqpos ].push_back( aframe );
+	Size seqpos( aframe->start() );
+	frames_[ seqpos ].push_back( aframe );
 }
 
 }//fragment

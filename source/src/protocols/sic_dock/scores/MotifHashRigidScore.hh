@@ -36,7 +36,7 @@ class MotifHashRigidScore : public RigidScore {
 	typedef std::map<std::string,Real> Stats;
 	typedef std::pair<int,int> intint;
 	typedef std::pair<numeric::xyzVector<float>,int> VecIR;
- public:
+public:
 	MotifHashRigidScore(Pose const & pose1, Pose const & pose2);
 	virtual ~MotifHashRigidScore();
 	core::Real score     ( Xforms const & x1, Xforms const & x2 ) const;

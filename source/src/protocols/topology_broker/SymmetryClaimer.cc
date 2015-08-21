@@ -61,7 +61,7 @@ SymmetryClaimer::SymmetryClaimer( SymmetryClaimer const& src ) :
 
 bool SymmetryClaimer::read_tag( std::string tag, std::istream& in ){
 
-	if ( tag == "symmetry_definition" ){
+	if ( tag == "symmetry_definition" ) {
 		std::string symdef_filename;
 		in >> symdef_filename;
 		tr.Debug << "Symmetry Definition filename read: " << symdef_filename << std::endl;
@@ -74,63 +74,63 @@ bool SymmetryClaimer::read_tag( std::string tag, std::istream& in ){
 }
 
 void SymmetryClaimer::generate_symmetry_claims( claims::SymmetryClaims& symm_claims ){
-    symm_claims.push_back( claims::SymmetryClaimOP( new claims::SymmetryClaim( get_self_weak_ptr(), symm_data_,
-                           symm_data_->get_symmetry_name(),
-                           claims::DofClaim::INIT ) ) );
+	symm_claims.push_back( claims::SymmetryClaimOP( new claims::SymmetryClaim( get_self_weak_ptr(), symm_data_,
+		symm_data_->get_symmetry_name(),
+		claims::DofClaim::INIT ) ) );
 }
 
 void SymmetryClaimer::symmetry_duplicate( claims::DofClaims& pre_accepted,
-                                                  core::pose::Pose& pose ){
-    asymmetric_res_ = pose.total_residue();
+	core::pose::Pose& pose ){
+	asymmetric_res_ = pose.total_residue();
 
-    utility::vector1< claims::SequenceClaimOP > original_claims;
-    for ( claims::DofClaims::iterator claim = pre_accepted.begin();
-         claim != pre_accepted.end(); ++claim ) {
+	utility::vector1< claims::SequenceClaimOP > original_claims;
+	for ( claims::DofClaims::iterator claim = pre_accepted.begin();
+			claim != pre_accepted.end(); ++claim ) {
 		claims::SequenceClaimOP seq_ptr( utility::pointer::dynamic_pointer_cast< claims::SequenceClaim >( *claim ) );
 		runtime_assert( seq_ptr != 0 );
 		original_claims.push_back( seq_ptr );
 	}
 
-    //Copy sequence claims (j-1) times to get j subunits in total.
-    for (Size j=1; j<symm_data_->get_subunits(); ++j){
-    	//Copy each pre accepted sequence claim (first n_asymm_claims in pre_accepted) and add them to pre_accepted
-    	for (Size i=1; i<= original_claims.size(); ++i){
-            claims::SequenceClaimOP old_claim = original_claims.at(i);
-    		std::ostringstream new_label_stream;
-    		new_label_stream << old_claim->label() << ":Symm" << j;
+	//Copy sequence claims (j-1) times to get j subunits in total.
+	for ( Size j=1; j<symm_data_->get_subunits(); ++j ) {
+		//Copy each pre accepted sequence claim (first n_asymm_claims in pre_accepted) and add them to pre_accepted
+		for ( Size i=1; i<= original_claims.size(); ++i ) {
+			claims::SequenceClaimOP old_claim = original_claims.at(i);
+			std::ostringstream new_label_stream;
+			new_label_stream << old_claim->label() << ":Symm" << j;
 
-    		pre_accepted.push_back( claims::DofClaimOP( new claims::SequenceClaim( get_self_weak_ptr(),
-                    				old_claim->annotated_sequence(),
-                    				new_label_stream.str() ) ) );
-    	}
-    }
+			pre_accepted.push_back( claims::DofClaimOP( new claims::SequenceClaim( get_self_weak_ptr(),
+				old_claim->annotated_sequence(),
+				new_label_stream.str() ) ) );
+		}
+	}
 
-    //Use annotated sequence to duplicate
-    std::string sequence = "";
-    for (Size i=1; i<=symm_data_->get_subunits(); ++i){
-        sequence += pose.annotated_sequence();
-    }
+	//Use annotated sequence to duplicate
+	std::string sequence = "";
+	for ( Size i=1; i<=symm_data_->get_subunits(); ++i ) {
+		sequence += pose.annotated_sequence();
+	}
 
-    core::pose::make_pose_from_sequence( pose, sequence,
-                                        *( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID )));
+	core::pose::make_pose_from_sequence( pose, sequence,
+		*( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID )));
 
-    //Build symmetry-related virtual residues
-    for ( Size i=1; i<=symm_data_->get_num_virtual(); ++i ){
-        // create the new residue
-        core::chemical::ResidueTypeSet const & rsd_set( pose.conformation().residue(1).residue_type_set() );
-        core::conformation::ResidueOP rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map( "VRT" ) ) );
+	//Build symmetry-related virtual residues
+	for ( Size i=1; i<=symm_data_->get_num_virtual(); ++i ) {
+		// create the new residue
+		core::chemical::ResidueTypeSet const & rsd_set( pose.conformation().residue(1).residue_type_set() );
+		core::conformation::ResidueOP rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map( "VRT" ) ) );
 
-        std::string tag = symm_data_->get_virtual_num_to_id().find(i)->second;
+		std::string tag = symm_data_->get_virtual_num_to_id().find(i)->second;
 
-        core::conformation::symmetry::VirtualCoordinate virt_coord( symm_data_->get_virtual_coordinates().find(tag)->second );
-        rsd->set_xyz( "ORIG", virt_coord.get_origin() );
-        rsd->set_xyz( "X", virt_coord.get_x().normalized() + virt_coord.get_origin() );
-        rsd->set_xyz( "Y", virt_coord.get_y().normalized() + virt_coord.get_origin() );
-        //append it to the end of the monomer i
-        pose.append_residue_by_jump( *rsd, pose.total_residue() );
+		core::conformation::symmetry::VirtualCoordinate virt_coord( symm_data_->get_virtual_coordinates().find(tag)->second );
+		rsd->set_xyz( "ORIG", virt_coord.get_origin() );
+		rsd->set_xyz( "X", virt_coord.get_x().normalized() + virt_coord.get_origin() );
+		rsd->set_xyz( "Y", virt_coord.get_y().normalized() + virt_coord.get_origin() );
+		//append it to the end of the monomer i
+		pose.append_residue_by_jump( *rsd, pose.total_residue() );
 
-        pre_accepted.push_back( claims::DofClaimOP( new claims::SequenceClaim( get_self_weak_ptr(), "X", tag ) ));
-    }
+		pre_accepted.push_back( claims::DofClaimOP( new claims::SequenceClaim( get_self_weak_ptr(), "X", tag ) ));
+	}
 
 }
 

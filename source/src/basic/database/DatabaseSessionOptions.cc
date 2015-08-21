@@ -33,7 +33,7 @@ DatabaseSessionOptions::DatabaseSessionOptions() {}
 
 DatabaseSessionOptions::DatabaseSessionOptions(
 	std::string const & name) :
-ResourceOptions(name)
+	ResourceOptions(name)
 {}
 
 DatabaseSessionOptions::~DatabaseSessionOptions() {}

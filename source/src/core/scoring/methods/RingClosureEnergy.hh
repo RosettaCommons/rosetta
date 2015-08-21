@@ -84,17 +84,17 @@ public:
 	/// be maintained by class Energies
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const;
-	
+
 private:
 
 	//Private data:
-	
+
 	/// @brief Square of the standard deviation of the harmonic
 	/// potential that holds virtual atoms atop real atoms.
 	core::Real std_dev_sq_;
 
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

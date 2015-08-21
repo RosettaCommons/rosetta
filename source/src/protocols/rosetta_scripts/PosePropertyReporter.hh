@@ -45,7 +45,7 @@ public:
 	}
 
 	/// @brief Each derived selector must specify its name
-	virtual std::string get_name() const = 0;	
+	virtual std::string get_name() const = 0;
 
 	/// @brief Reports a specific property for the provided pose
 	virtual core::Real report_property( core::pose::Pose & p ) const;
@@ -62,7 +62,7 @@ public:
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
 	);
-	
+
 protected:
 
 private:

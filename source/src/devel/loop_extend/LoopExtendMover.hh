@@ -34,7 +34,7 @@ namespace loop_extend {
 class LoopExtendMover : public protocols::moves::Mover {
 
 public:
-  //@brief constructor with arguments
+	//@brief constructor with arguments
 
 	//virtual ~LoopExtendMover();
 	//LoopExtendMover() {}

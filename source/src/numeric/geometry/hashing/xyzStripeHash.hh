@@ -51,14 +51,14 @@ struct Counter {
 	int count;
 	Counter():count(0){}
 	void visit( numeric::xyzVector<float> const &, numeric::xyzVector<float> const & ){ ++count; }
- };
+};
 
 class xyzStripeHash : public utility::pointer::ReferenceCount {
 	short  short_min( short const a,  short const b) { return (a < b) ? a : b; }
 	short  short_max( short const a,  short const b) { return (a > b) ? a : b; }
 	short ushort_min(unsigned short const a, unsigned short const b) { return (a < b) ? a : b; }
 	short ushort_max(unsigned short const a, unsigned short const b) { return (a > b) ? a : b; }
- public:
+public:
 	typedef unsigned short ushort;
 	typedef struct { unsigned short x,y; } ushort2;
 	typedef numeric::xyzVector<float> Vec;
@@ -81,18 +81,18 @@ class xyzStripeHash : public utility::pointer::ReferenceCount {
 		float radius() { return this->p_->radius(); }
 	};
 
- public:
+public:
 	xyzStripeHash(
 		float grid_size = 0.0,
-	    utility::vector1<Ball> const & balls=utility::vector1<Ball>()
+		utility::vector1<Ball> const & balls=utility::vector1<Ball>()
 	);
 
 	void init( utility::vector1<Ball> const & balls );
 
 	virtual ~xyzStripeHash() {
-		if(grid_balls_)  delete grid_balls_;
-		if(grid_stripe_) delete grid_stripe_;
-	 }
+		if ( grid_balls_ )  delete grid_balls_;
+		if ( grid_stripe_ ) delete grid_stripe_;
+	}
 
 	const_iterator begin() const { return const_iterator(grid_balls_       ) ; }
 	const_iterator end()   const { return const_iterator(grid_balls_+nballs_) ; }
@@ -116,8 +116,8 @@ class xyzStripeHash : public utility::pointer::ReferenceCount {
 	int clash_check_ball( Ball const & b ) const;
 
 	// @brief Generate residue mapping (r_t, r) where:
-	// 	any(dist(b_t, b) < (b_t.radius + b.radius)) for
-	// 		{b_t in target_balls | b_t.resi = r_t}, {b in this | b.resi == r}
+	//  any(dist(b_t, b) < (b_t.radius + b.radius)) for
+	//   {b_t in target_balls | b_t.resi = r_t}, {b in this | b.resi == r}
 	//
 	// Populated residue_pairs with the first identified clash per r_t, meaning that
 	// all clashing resi in test_balls are included in mapping, however not all clashing
@@ -128,8 +128,8 @@ class xyzStripeHash : public utility::pointer::ReferenceCount {
 	//
 	// @returns true if any clashing pair was identified, false otherwise.
 	bool clash_check_residue_pairs(
-			utility::vector1<Ball> const & test_balls,
-			std::map<Size, Size> & residue_pairs
+		utility::vector1<Ball> const & test_balls,
+		std::map<Size, Size> & residue_pairs
 	) const;
 
 	void fill_pairs(
@@ -137,13 +137,13 @@ class xyzStripeHash : public utility::pointer::ReferenceCount {
 		int const & ir,
 		utility::vector1<std::pair<int,int> > & pairs,
 		float maxd2=0.0
-	 ) const;
+	) const;
 
-	template<typename Visitor> void	visit( Vec const & v_in, Visitor & visitor ) const {
+	template<typename Visitor> void visit( Vec const & v_in, Visitor & visitor ) const {
 		Vec const v = v_in+translation_;
 		float x = v.x(); float y = v.y(); float z = v.z();
-		if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return; // worth it iff
-		if( x > xmx_        || y > ymx_        || z > zmx_        ) return;                      // worth it iff
+		if ( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return; // worth it iff
+		if ( x > xmx_        || y > ymx_        || z > zmx_        ) return;                      // worth it iff
 		int const ix   = (x<0) ? 0 : numeric::min(xdim_-1,(int)(x/grid_size_));
 		int const iy0  = (y<0) ? 0 : y/grid_size_;
 		int const iz0  = (z<0) ? 0 : z/grid_size_;
@@ -151,8 +151,8 @@ class xyzStripeHash : public utility::pointer::ReferenceCount {
 		int const izl = numeric::max(0,iz0-1);
 		int const iyu = numeric::min((int)ydim_,iy0+2);
 		int const izu = numeric::min((int)zdim_,(int)iz0+2);
-		for(int iy = iyl; iy < iyu; ++iy) {
-			for(int iz = izl; iz < izu; ++iz) {
+		for ( int iy = iyl; iy < iyu; ++iy ) {
+			for ( int iz = izl; iz < izu; ++iz ) {
 				int const ig = ix+xdim_*iy+xdim_*ydim_*iz;
 				assert(ig < xdim_*ydim_*zdim_);
 				assert(ix < xdim_);
@@ -160,21 +160,21 @@ class xyzStripeHash : public utility::pointer::ReferenceCount {
 				assert(iz < zdim_);
 				int const & igl = grid_stripe_[ig].x;
 				int const & igu = grid_stripe_[ig].y;
-				for(int i = igl; i < igu; ++i) {
+				for ( int i = igl; i < igu; ++i ) {
 					Vec const & c = *((Vec*)(grid_balls_+i));
 					float const d2 = (x-c.x())*(x-c.x()) + (y-c.y())*(y-c.y()) + (z-c.z())*(z-c.z());
-					if( d2 <= grid_size2_ ) {
+					if ( d2 <= grid_size2_ ) {
 						visitor.visit(v,c,d2);
 					}
 				}
 			}
 		}
-	 }
-	template<typename Visitor> void	visit_lax( Vec const & v_in, float const vr, Visitor & visitor ) const {
+	}
+	template<typename Visitor> void visit_lax( Vec const & v_in, float const vr, Visitor & visitor ) const {
 		Vec const v = v_in+translation_;
 		float x = v.x(); float y = v.y(); float z = v.z();
-		if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return; // worth it iff
-		if( x > xmx_        || y > ymx_        || z > zmx_        ) return;                      // worth it iff
+		if ( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return; // worth it iff
+		if ( x > xmx_        || y > ymx_        || z > zmx_        ) return;                      // worth it iff
 		int const ix   = (x<0) ? 0 : numeric::min(xdim_-1, static_cast<int>(x/grid_size_));
 		int const iy0  = (y<0) ? 0 : static_cast<int>(y/grid_size_);
 		int const iz0  = (z<0) ? 0 : static_cast<int>(z/grid_size_);
@@ -182,8 +182,8 @@ class xyzStripeHash : public utility::pointer::ReferenceCount {
 		int const izl = numeric::max(0,iz0-1);
 		int const iyu = numeric::min(static_cast<int>(ydim_), iy0+2);
 		int const izu = numeric::min(static_cast<int>(zdim_), static_cast<int>(iz0+2));
-		for(int iy = iyl; iy < iyu; ++iy) {
-			for(int iz = izl; iz < izu; ++iz) {
+		for ( int iy = iyl; iy < iyu; ++iy ) {
+			for ( int iz = izl; iz < izu; ++iz ) {
 				int const ig = ix+xdim_*iy+xdim_*ydim_*iz;
 				assert(ig < xdim_*ydim_*zdim_);
 				assert(ix < xdim_);
@@ -191,14 +191,14 @@ class xyzStripeHash : public utility::pointer::ReferenceCount {
 				assert(iz < zdim_);
 				int const & igl = grid_stripe_[ig].x;
 				int const & igu = grid_stripe_[ig].y;
-				for(int i = igl; i < igu; ++i) {
+				for ( int i = igl; i < igu; ++i ) {
 					Vec const & c = *((Vec*)(grid_balls_+i));
 					float cr = grid_balls_[i].radius();
 					visitor.visit(v,c,vr,cr);
 				}
 			}
 		}
-	 }
+	}
 
 	Ball const * grid_atoms() const { return grid_balls_; }
 	Size size() const { return nballs_; }
@@ -217,7 +217,7 @@ class xyzStripeHash : public utility::pointer::ReferenceCount {
 	xyzVector_float xyz(Size const & ib) const { assert(1ul<=ib&&ib<=(Size)nballs_); return grid_balls_[ib-1].xyz()-translation_; }
 	Size           resi(Size const & ib) const { assert(1ul<=ib&&ib<=(Size)nballs_); return grid_balls_[ib-1].resi(); }
 
- private:
+private:
 	float grid_size_,grid_size2_;
 	int nballs_;
 	Ball  const * grid_balls_;
@@ -227,7 +227,7 @@ class xyzStripeHash : public utility::pointer::ReferenceCount {
 	//numeric::xyzMatrix<Real> rotation_;
 	numeric::xyzVector<float> translation_;
 	// neighbor_iterator neighbor_end_;
- };
+};
 
 
 } // namespace hashing

@@ -88,7 +88,7 @@ ConsensusDesignMover::ConsensusDesignMover(
 	core::pack::task::PackerTaskCOP ptask,
 	core::scoring::ScoreFunctionCOP sfxn
 )
-	: ptask_(ptask), task_factory_(/* NULL */),
+: ptask_(ptask), task_factory_(/* NULL */),
 	sfxn_(sfxn), invert_task_(false),
 	use_seqprof_constraints_(false), sasa_cutoff_(0.0),
 	seqprof_(/* NULL */), ignore_pose_profile_length_mismatch_(false)
@@ -117,8 +117,8 @@ void
 ConsensusDesignMover::apply( core::pose::Pose & pose )
 {
 	//first two safeguards
-	if( !sfxn_) sfxn_ = core::scoring::get_score_function();
-	if( use_seqprof_constraints_ && sfxn_->has_zero_weight( core::scoring::res_type_constraint ) ){
+	if ( !sfxn_ ) sfxn_ = core::scoring::get_score_function();
+	if ( use_seqprof_constraints_ && sfxn_->has_zero_weight( core::scoring::res_type_constraint ) ) {
 		core::scoring::ScoreFunctionOP newsfxn = sfxn_->clone();
 		newsfxn->set_weight( core::scoring::res_type_constraint, 1.0 );
 		sfxn_ = newsfxn;
@@ -128,21 +128,20 @@ ConsensusDesignMover::apply( core::pose::Pose & pose )
 
 	core::scoring::constraints::ConstraintCOPs seqprof_constraints;
 
-	if( use_seqprof_constraints_ ){
+	if ( use_seqprof_constraints_ ) {
 		seqprof_constraints = pose.add_constraints( create_sequence_profile_constraints( pose, *task ) );
 	}
 
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		protocols::simple_moves::symmetry::SymPackRotamersMover packer( sfxn_, task );
 		packer.apply( pose );
-	}
-	else{
+	} else {
 		protocols::simple_moves::PackRotamersMover packer( sfxn_, task );
 		packer.apply( pose );
 	}
 
-	if( use_seqprof_constraints_ ){
-		if( !pose.remove_constraints( seqprof_constraints ) ) utility_exit_with_message("Couldn't remove sequence profile constraints after ConsensusDesignMover packing step.");
+	if ( use_seqprof_constraints_ ) {
+		if ( !pose.remove_constraints( seqprof_constraints ) ) utility_exit_with_message("Couldn't remove sequence profile constraints after ConsensusDesignMover packing step.");
 	}
 
 	(*sfxn_)(pose);
@@ -158,11 +157,11 @@ ConsensusDesignMover::create_consensus_design_task(
 )
 {
 
-	if( !ptask_ ){
-		if( task_factory_ ) ptask_ = task_factory_->create_task_and_apply_taskoperations( pose );
-		else{
+	if ( !ptask_ ) {
+		if ( task_factory_ ) ptask_ = task_factory_->create_task_and_apply_taskoperations( pose );
+		else {
 			ptask_ = core::pack::task::PackerTaskCOP( core::pack::task::PackerTaskOP( new core::pack::task::PackerTask_( pose ) ) );
-			if( invert_task_) utility_exit_with_message("invert_task_ set to true even though no task or task_factory was passed in. something probably unclean somewhere.");
+			if ( invert_task_ ) utility_exit_with_message("invert_task_ set to true even though no task or task_factory was passed in. something probably unclean somewhere.");
 		}
 	}
 
@@ -171,16 +170,16 @@ ConsensusDesignMover::create_consensus_design_task(
 	toolbox::task_operations::SeqprofConsensusOperation seqprof_to;
 	seqprof_to.set_ignore_pose_profile_length_mismatch( ignore_pose_profile_length_mismatch_);
 	seqprof_to.apply( pose, *consensus_task );
-	if( use_seqprof_constraints_ ) seqprof_ = seqprof_to.seqprof();
+	if ( use_seqprof_constraints_ ) seqprof_ = seqprof_to.seqprof();
 
-	if( core::pose::symmetry::is_symmetric(pose) ){
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		consensus_task = core::pack::make_new_symmetric_PackerTask_by_requested_method( pose, consensus_task );
 		ptask_ = core::pack::make_new_symmetric_PackerTask_by_requested_method( pose, ptask_ );
 	}
 
 	utility::vector1< core::Real > residue_sasa;
 	bool use_sasa( sasa_cutoff_ > 0.0 );
-	if( use_sasa ){
+	if ( use_sasa ) {
 		core::id::AtomID_Map< core::Real > dummy;
 		core::scoring::calc_per_atom_sasa( pose, dummy, residue_sasa, basic::options::option[ basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius]);
 	}
@@ -188,15 +187,15 @@ ConsensusDesignMover::create_consensus_design_task(
 	std::string touched_residues;
 	core::Size num_design_residues(0);
 
-	for( core::Size i = 1; i <= pose.total_residue(); ++i){
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 
 		bool this_residue_allowed( invert_task_ ? !ptask_->residue_task(i).being_packed() : ptask_->residue_task(i).being_designed() );
-		if( !pose.residue_type( i ).is_protein() ) this_residue_allowed = false;
-		if( use_sasa && (residue_sasa[i] < sasa_cutoff_ ) ) this_residue_allowed = false;
+		if ( !pose.residue_type( i ).is_protein() ) this_residue_allowed = false;
+		if ( use_sasa && (residue_sasa[i] < sasa_cutoff_ ) ) this_residue_allowed = false;
 
-		if( !this_residue_allowed )  consensus_task->nonconst_residue_task(i).restrict_to_repacking();
-		else{
-			if( consensus_task->residue_task( i ).being_designed() ){
+		if ( !this_residue_allowed )  consensus_task->nonconst_residue_task(i).restrict_to_repacking();
+		else {
+			if ( consensus_task->residue_task( i ).being_designed() ) {
 				touched_residues = touched_residues + utility::to_string( i ) + "+";
 				num_design_residues++;
 			}
@@ -216,9 +215,10 @@ ConsensusDesignMover::create_sequence_profile_constraints(
 {
 	core::scoring::constraints::ConstraintCOPs csts;
 	core::sequence::SequenceProfileOP temp_sp( new core::sequence::SequenceProfile(*seqprof_) ); //dumb nonconstness of seqprofile in SequenceProfileConstraint makes this necessary :(
-	for( core::Size i = 1; i <= pose.total_residue(); ++i){
-		if( pose.residue_type(i).is_protein() && task.residue_task(i).being_designed() )
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( pose.residue_type(i).is_protein() && task.residue_task(i).being_designed() ) {
 			csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( pose, i, temp_sp ) ) );
+		}
 	}
 	return csts;
 }
@@ -232,13 +232,13 @@ void
 ConsensusDesignMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data_map );
-	if( tag->hasOption("invert_task") ) invert_task_ = tag->getOption< bool >("invert_task",1);
-	if( tag->hasOption("use_seqprof_constraints") ) use_seqprof_constraints_ = tag->getOption< bool >("use_seqprof_constraints",1);
-	if( tag->hasOption("sasa_cutoff") ) sasa_cutoff_ = tag->getOption< core::Real >("sasa_cutoff",1.0);
+	if ( tag->hasOption("invert_task") ) invert_task_ = tag->getOption< bool >("invert_task",1);
+	if ( tag->hasOption("use_seqprof_constraints") ) use_seqprof_constraints_ = tag->getOption< bool >("use_seqprof_constraints",1);
+	if ( tag->hasOption("sasa_cutoff") ) sasa_cutoff_ = tag->getOption< core::Real >("sasa_cutoff",1.0);
 	//if( tag->hasOption("scorefxn") ) sfxn_ = new core::scoring::ScoreFunction( *data_map.get< core::scoring::ScoreFunction * >("scorefxns", tag->getOption< std::string >("scorefxn")) );
-	if( tag->hasOption("scorefxn") ) sfxn_ = protocols::rosetta_scripts::parse_score_function( tag, data_map );
+	if ( tag->hasOption("scorefxn") ) sfxn_ = protocols::rosetta_scripts::parse_score_function( tag, data_map );
 
-	if( tag->hasOption("ignore_pose_profile_length_mismatch") ) ignore_pose_profile_length_mismatch_ = tag->getOption< bool >("ignore_pose_profile_length_mismatch");
+	if ( tag->hasOption("ignore_pose_profile_length_mismatch") ) ignore_pose_profile_length_mismatch_ = tag->getOption< bool >("ignore_pose_profile_length_mismatch");
 }
 
 }  // namespace simple_moves

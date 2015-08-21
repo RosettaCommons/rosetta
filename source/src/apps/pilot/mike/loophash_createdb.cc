@@ -42,20 +42,20 @@ static thread_local basic::Tracer TR( "main" );
 int
 main( int argc, char * argv [] )
 {
-    try {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core;
-	using namespace protocols;
+	try {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core;
+		using namespace protocols;
 
 
-	// initialize core
-	devel::init(argc, argv);
+		// initialize core
+		devel::init(argc, argv);
 
-   // Shouldn't these ints be core::size?
-   // Default num_partitions = 1
-    int num_partitions = option[lh::num_partitions]();
-    int assigned_num = 1;
+		// Shouldn't these ints be core::size?
+		// Default num_partitions = 1
+		int num_partitions = option[lh::num_partitions]();
+		int assigned_num = 1;
 
 #ifdef USEMPI
 	int mpi_rank_, mpi_npes_;
@@ -72,16 +72,16 @@ main( int argc, char * argv [] )
         assigned_num = mpi_rank_;
     }
 #endif
-	utility::vector1 < core::Size > loop_sizes = option[lh::loopsizes]();
-	loophash::LoopHashLibraryOP loop_hash_library( new loophash::LoopHashLibrary( loop_sizes, num_partitions, assigned_num ) );
-	loop_hash_library->create_db();
-	loop_hash_library->save_db();
-	TR << "Finished creating loophash library" << std::endl;
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+		utility::vector1 < core::Size > loop_sizes = option[lh::loopsizes]();
+		loophash::LoopHashLibraryOP loop_hash_library( new loophash::LoopHashLibrary( loop_sizes, num_partitions, assigned_num ) );
+		loop_hash_library->create_db();
+		loop_hash_library->save_db();
+		TR << "Finished creating loophash library" << std::endl;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }
 
 

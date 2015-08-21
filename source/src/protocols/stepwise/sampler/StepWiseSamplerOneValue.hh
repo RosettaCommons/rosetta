@@ -39,7 +39,7 @@ public:
 	StepWiseSamplerOneValue(
 		ValueList const & allowed_values,
 		std::string const & name
-  );
+	);
 
 	virtual ~StepWiseSamplerOneValue();
 
@@ -74,7 +74,7 @@ public:
 	}
 
 	/// @brief Set the allowed values in sampler
-	virtual void set_values( ValueList const & setting	) {
+	virtual void set_values( ValueList const & setting ) {
 		set_and_reinit( values_, setting );
 	}
 

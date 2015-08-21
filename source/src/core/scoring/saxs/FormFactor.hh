@@ -43,24 +43,24 @@ public:
 
 	/// @brief  Constructor reads a file with a spline function
 	FormFactor(std::string,std::string);
-	
+
 	/// @brief  evaluates an atomic form factor for a given scattering angle (defined in 1/A)
 	Real ff(Real q) const {
 
-	    Real y = 0.0;
-	    Real dy = 0.0;
-	    spline_interpolator_->interpolate(q, y, dy);
+		Real y = 0.0;
+		Real dy = 0.0;
+		spline_interpolator_->interpolate(q, y, dy);
 
-	    return y;
+		return y;
 	}
-	
+
 	/// @brief Returns tabulated ff-value (computed for i-th value of q-argument)
 	Real get(Size q_index) { return ff_values_[q_index]; }
 
 	std::string & name() { return name_; }
-	
+
 	void is_glob(bool flag) { glob_flag_ = flag; }
-	
+
 	bool is_glob() const { return glob_flag_; }
 
 	void tabulate(const utility::vector1<Real> & q);

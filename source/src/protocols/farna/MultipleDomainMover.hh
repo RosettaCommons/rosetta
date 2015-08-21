@@ -104,7 +104,7 @@ private:
 	numeric::xyzVector< core::Real >
 	get_centroid( core::pose::Pose const & pose );
 
- private:
+private:
 
 	bool verbose_;
 	Real rot_mag_;

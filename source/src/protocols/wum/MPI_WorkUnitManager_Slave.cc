@@ -34,7 +34,7 @@
 
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 using namespace ObjexxFCL::format;
@@ -74,7 +74,7 @@ MPI_WorkUnitManager_Slave::go()
 		TRDEBUG << "Slave: Processing outbound queue..." << std::endl;
 		process_outbound_wus();
 
-		if( terminate_ ) break;
+		if ( terminate_ ) break;
 
 		print_stats_auto();
 	} while ( true );
@@ -90,12 +90,12 @@ MPI_WorkUnitManager_Slave::process_inbound_wus()
 {
 	start_timer( TIMING_CPU );
 	// for every workunit on the stack send execute it and transfer it to the outbound queue
-	while( inbound().size() > 0 ){
+	while ( inbound().size() > 0 ) {
 
 		TRDEBUG << "inbound: " << inbound().next()->get_wu_type() << std::endl;
 
 		// Terminate if gets termination WU from Master
-		if( inbound().next()->get_wu_type() == "terminate" ){
+		if ( inbound().next()->get_wu_type() == "terminate" ) {
 			TRDEBUG << "Received termination sigal from Master." << std::endl;
 			//Important to send back to Master that I'm terminating...
 			outbound().add( inbound().next() );
@@ -112,7 +112,7 @@ MPI_WorkUnitManager_Slave::process_inbound_wus()
 
 		// special rule for wait workunit. Basically count execution of a wait workunit as
 		// IDLING and that of every other one as CPU time
-		if( inbound().next()->get_wu_type() == "waitwu") start_timer( TIMING_IDLE );
+		if ( inbound().next()->get_wu_type() == "waitwu" ) start_timer( TIMING_IDLE );
 
 		inbound().next()->set_run_start();        // record starting time of run for stat analysis
 		inbound().next()->run();                  // execute the workunit - i.e. do the work
@@ -126,7 +126,7 @@ MPI_WorkUnitManager_Slave::process_inbound_wus()
 
 		// Don't add waitwu on outbound!
 		// waitwu will attempt to send useless info to master and will prevent having any "real" inbound from master
-		//if( inbound().next()->get_wu_type() != "waitwu" )	outbound().add( inbound().next() );
+		//if( inbound().next()->get_wu_type() != "waitwu" ) outbound().add( inbound().next() );
 		outbound().add( inbound().next() );
 		inbound().pop_next();
 	}
@@ -137,7 +137,7 @@ void
 MPI_WorkUnitManager_Slave::process_outbound_wus()
 {
 	// For each item in the outbound queue, send the WorkUnit back to who ever sent it
-	while( outbound().size() > 0 ){
+	while ( outbound().size() > 0 ) {
 		send_MPI_workunit( outbound().next(), (int)outbound().next()->last_received_from() );
 		// ERROR behaviour here ?
 		outbound().pop_next();  // This clears the WU just sent from the stack

@@ -33,7 +33,7 @@
 #include <set>
 
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 
@@ -45,47 +45,47 @@ choose_hbond_parameter_set();
 class NumberHBondsCalculator : public core::pose::metrics::EnergyDependentCalculator {
 public:
 
-  NumberHBondsCalculator();
-  NumberHBondsCalculator( std::set< core::Size > special_region );
+	NumberHBondsCalculator();
+	NumberHBondsCalculator( std::set< core::Size > special_region );
 
-  core::pose::metrics::PoseMetricCalculatorOP clone() const;
+	core::pose::metrics::PoseMetricCalculatorOP clone() const;
 
-  static core::Real
-  sum_Hbond_terms( core::scoring::EnergyMap const & emap );
+	static core::Real
+	sum_Hbond_terms( core::scoring::EnergyMap const & emap );
 
 protected:
 
-  virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-  virtual std::string print( std::string const & key ) const;
-  virtual void recompute( core::pose::Pose const & this_pose );
+	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
+	virtual std::string print( std::string const & key ) const;
+	virtual void recompute( core::pose::Pose const & this_pose );
 
-  void
-  determine_res_to_recompute(
-    core::pose::Pose const & pose,
-    utility::vector1< bool > & res_to_recompute
-  );
+	void
+	determine_res_to_recompute(
+		core::pose::Pose const & pose,
+		utility::vector1< bool > & res_to_recompute
+	);
 
-  void
-  compute_Hbonds_for_residue(
-    core::pose::Pose const & pose,
-    core::Size i,
-    utility::vector1< bool > const & res_to_recompute,
-    core::scoring::hbonds::HBondSet & hb_set
-  );
+	void
+	compute_Hbonds_for_residue(
+		core::pose::Pose const & pose,
+		core::Size i,
+		utility::vector1< bool > const & res_to_recompute,
+		core::scoring::hbonds::HBondSet & hb_set
+	);
 
 private:
 
-  core::scoring::hbonds::HBondDatabaseCOP hb_database;
-  core::Size all_Hbonds_;
-  core::Size special_region_Hbonds_;
+	core::scoring::hbonds::HBondDatabaseCOP hb_database;
+	core::Size all_Hbonds_;
+	core::Size special_region_Hbonds_;
 
-  core::id::AtomID_Map< core::Size > atom_Hbonds_;
-  utility::vector1< core::Size > residue_Hbonds_;
+	core::id::AtomID_Map< core::Size > atom_Hbonds_;
+	utility::vector1< core::Size > residue_Hbonds_;
 
-  //holds the calculated energies to prevent unnecessary recalculation
-  utility::vector1< core::Real > ref_residue_total_energies_;
+	//holds the calculated energies to prevent unnecessary recalculation
+	utility::vector1< core::Real > ref_residue_total_energies_;
 
-  std::set< core::Size > special_region_;
+	std::set< core::Size > special_region_;
 };
 
 

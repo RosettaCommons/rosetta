@@ -68,9 +68,9 @@ WriteLigandMolFile::~WriteLigandMolFile()
 
 WriteLigandMolFile::WriteLigandMolFile(WriteLigandMolFile const & that) :
 	Mover("WriteLigandMolFile"),chain_(that.chain_),
-    directory_(that.directory_),
-    prefix_(that.prefix_),
-    hash_file_names_(that.hash_file_names_)
+	directory_(that.directory_),
+	prefix_(that.prefix_),
+	hash_file_names_(that.hash_file_names_)
 {
 
 }
@@ -98,82 +98,75 @@ void WriteLigandMolFile::parse_my_tag(
 	core::pose::Pose const &
 )
 {
-	if(!tag->hasOption("chain"))
-	{
+	if ( !tag->hasOption("chain") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("'WriteLigandMolFile' requires the option 'chain'");
 	}
 
-	if(!tag->hasOption("directory"))
-	{
+	if ( !tag->hasOption("directory") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("'WriteLigandMolFile' requires the option 'directory'");
 	}
-    if(!tag->hasOption("prefix"))
-    {
-        throw utility::excn::EXCN_RosettaScriptsOption("'WriteLigandMolFile' requires the option 'prefix'");
-    }
+	if ( !tag->hasOption("prefix") ) {
+		throw utility::excn::EXCN_RosettaScriptsOption("'WriteLigandMolFile' requires the option 'prefix'");
+	}
 
 	std::string hash_status = tag->getOption<std::string>("hash_file_names","false");
-	if(hash_status == "true")
-	{
+	if ( hash_status == "true" ) {
 		hash_file_names_ = true;
-	}else
-	{
+	} else {
 		hash_file_names_ = false;
 	}
 
 	chain_ = tag->getOption<std::string>("chain");
 	directory_ = tag->getOption<std::string>("directory");
-    prefix_ = tag->getOption<std::string>("prefix");
+	prefix_ = tag->getOption<std::string>("prefix");
 
 }
 
 void WriteLigandMolFile::apply(core::pose::Pose & pose)
 {
 
-    
+
 	jd2::JobDistributor* job_dist(jd2::JobDistributor::get_instance());
 	jd2::JobOP current_job(job_dist->current_job());
 
-    core::chemical::sdf::MolWriter mol_writer("V2000");
-    
+	core::chemical::sdf::MolWriter mol_writer("V2000");
+
 	jd2::Job::StringStringPairs string_string_data(job_dist->current_job()->get_string_string_pairs());
 	jd2::Job::StringRealPairs string_real_data(job_dist->current_job()->get_string_real_pairs());
-    
+
 	std::map<std::string,std::string> job_data;
-    
-	for(jd2::Job::StringStringPairs::const_iterator it = string_string_data.begin(); it != string_string_data.end();++it )
-	{
+
+	for ( jd2::Job::StringStringPairs::const_iterator it = string_string_data.begin(); it != string_string_data.end(); ++it ) {
 		job_data.insert(std::make_pair(it->first,it->second));
 	}
-    
-	for(jd2::Job::StringRealPairs::const_iterator it = string_real_data.begin(); it != string_real_data.end();++it )
-	{
+
+	for ( jd2::Job::StringRealPairs::const_iterator it = string_real_data.begin(); it != string_real_data.end(); ++it ) {
 		job_data.insert(std::make_pair(it->first,utility::to_string(it->second)));
 	}
-    
+
 	mol_writer.set_job_data(job_data);
-    
+
 	core::Size chain_id = core::pose::get_chain_id_from_chain(chain_,pose);
 	core::Size residue_index = pose.conformation().chain_begin(chain_id);
 	core::conformation::ResidueCOP ligand_residue(pose.conformation().residue(residue_index).get_self_ptr());
-    
-    utility::file::create_directory(directory_);
-    
+
+	utility::file::create_directory(directory_);
+
 #ifdef USEMPI
 	int mpi_rank;
 	MPI_Comm_rank (MPI_COMM_WORLD, &mpi_rank);/* get current process id */
     std::string mpi_rank_string(utility::to_string(mpi_rank));
     std::string output_file = directory_+"/"+prefix_+"_"+mpi_rank_string+".sdf.gz";
 #else
-    std::string output_file = directory_+"/"+prefix_+".sdf.gz";
+	std::string output_file = directory_+"/"+prefix_+".sdf.gz";
 #endif
-    utility::io::ozstream output;
-    std::stringstream header;
-    output.open_append_if_existed( output_file, header);
-    
-    write_ligand_tracer << "Writing ligand to " << output_file <<std::endl;
+	utility::io::ozstream output;
+	std::stringstream header;
+	output.open_append_if_existed( output_file, header);
+
+	write_ligand_tracer << "Writing ligand to " << output_file <<std::endl;
 	mol_writer.output_residue(output,ligand_residue);
-    
+
 }
 
 }

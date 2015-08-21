@@ -153,7 +153,7 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 	for ( Size seqpos = 1; seqpos <= one_letter_sequence.length(); ++seqpos ) {
 		char aa = one_letter_sequence[ seqpos-1 ]; // string indexing is zero-based!
 
-		if (aa == '/') continue;  //fpd: force a chainbreak
+		if ( aa == '/' ) continue;  //fpd: force a chainbreak
 
 		chemical::AA my_aa = chemical::aa_from_oneletter_code( aa );
 
@@ -179,8 +179,10 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 
 			ResidueTypeCOP rsd_type = get_rsd_type_from_aa( residue_set, my_aa, is_lower_terminus, is_upper_terminus );
 
-			if ( rsd_type == 0 ) utility_exit_with_message( " can't find residue type at pos " + ObjexxFCL::string_of(seqpos) +
-																											" in sequence "+ sequence_in);
+			if ( rsd_type == 0 ) {
+				utility_exit_with_message( " can't find residue type at pos " + ObjexxFCL::string_of(seqpos) +
+					" in sequence "+ sequence_in);
+			}
 
 			// REMOVE AFTER 2015.
 			if ( basic::options::option[ basic::options::OptionKeys::chemical::check_rsd_type_finder ]() ) {
@@ -262,7 +264,7 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 						// Peek backwards to grab the connectivity of this branch.
 						if ( sequence_with_hyphen[ chr_num - 1 ] != ')' ) {  // The previous character must be a right parenthesis.
 							utility_exit_with_message( "Saccharide sequence input error: "
-									"a branch must specify its connectivity to its parent chain." );
+								"a branch must specify its connectivity to its parent chain." );
 						}
 						branch_points.push_back( atoi( &sequence_with_hyphen[ chr_num - 2 ] ) );
 						// TODO: Set the proper VariantType below.
@@ -283,28 +285,28 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 			} else if ( morpheme == "" ) {
 				;  // We just came out of a branch or else the user typed two hyphens in a row; ignore.
 
-			// Linkage indication, second half
+				// Linkage indication, second half
 			} else if ( morpheme[ 0 ] == '>' ) {
 				if ( linkage_assigned ) {
 					utility_exit_with_message( "Saccharide sequence input error: "
-							"the linkage notation cannot be specified twice!" );
+						"the linkage notation cannot be specified twice!" );
 				} else if ( anomer_assigned || L_or_D_assigned ) {
 					utility_exit_with_message( "Saccharide sequence input error: "
-							"the linkage notation must precede other prefixes." );
+						"the linkage notation must precede other prefixes." );
 				} else {
 					residue_type_name += '-' + morpheme + '-';
 					linkage_assigned = true;
 					morpheme = "";
 				}
 
-			// Anomer indication
+				// Anomer indication
 			} else if ( morpheme == "alpha" || morpheme == "beta" || morpheme == "a" || morpheme == "b" ) {
 				if ( anomer_assigned ) {
 					utility_exit_with_message( "Saccharide sequence input error: "
-							"the anomer notation cannot be specified twice!" );
+						"the anomer notation cannot be specified twice!" );
 				} else if ( L_or_D_assigned ) {
 					utility_exit_with_message( "Saccharide sequence input error: "
-							"alpha/beta notation must precede L- or D- prefixes." );
+						"alpha/beta notation must precede L- or D- prefixes." );
 				} else {
 					// Set default linkage if missed.
 					if ( ! linkage_assigned ) {
@@ -318,11 +320,11 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 					morpheme = "";
 				}
 
-			// L/D indication
+				// L/D indication
 			} else if ( morpheme == "L" || morpheme == "D" ) {
 				if ( L_or_D_assigned ) {
 					utility_exit_with_message( "Saccharide sequence input error: "
-							"the L or D notation cannot be specified twice!" );
+						"the L or D notation cannot be specified twice!" );
 				} else {
 					// Set other defaults if missed.
 					if ( ! linkage_assigned ) {
@@ -338,14 +340,14 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 					morpheme = "";
 				}
 
-			// 3-Letter code (must be found in map of allowed 3-letter codes) and suffix(es)
+				// 3-Letter code (must be found in map of allowed 3-letter codes) and suffix(es)
 			} else if ( morpheme.length() >= 3 ) {
 				string const code( morpheme.substr( 0, 3 ) );
 				string suffix( morpheme.substr( 3 ) );
 
 				if ( ! CarbohydrateInfo::code_to_root_map().count( code ) ) {
 					utility_exit_with_message( "Saccharide sequence input error: "
-							"Unrecognized sugar 3-letter code." );
+						"Unrecognized sugar 3-letter code." );
 				}
 
 				// Set defaults if missed.
@@ -378,7 +380,7 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 							residue_type_name += ":2-NH3+";
 						} else {
 							utility_exit_with_message( "Saccharide sequence input error: "
-									"Unrecognized modified sugar indicated by suffix(es)." );
+								"Unrecognized modified sugar indicated by suffix(es)." );
 						}
 					}
 				}
@@ -395,10 +397,10 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 				anomer_assigned = false;
 				L_or_D_assigned = false;
 
-			// Unrecognized morpheme
+				// Unrecognized morpheme
 			} else {
 				utility_exit_with_message( "Saccharide sequence input error: "
-						"Unrecognized sugar and/or notation in sequence." );
+					"Unrecognized sugar and/or notation in sequence." );
 			}
 		}
 	}  // next chr_num
@@ -408,9 +410,9 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 
 
 void make_pose_from_sequence(
-		pose::Pose & pose,
-		chemical::ResidueTypeCOPs requested_types,
-		bool const /* auto_termini=true */)
+	pose::Pose & pose,
+	chemical::ResidueTypeCOPs requested_types,
+	bool const /* auto_termini=true */)
 {
 	// clear the pose
 	pose.clear();
@@ -427,15 +429,15 @@ void make_pose_from_sequence(
 
 		// do the actual append
 		if ( rsd_type.is_lower_terminus(  ) ||
-				 rsd_type.has_variant_type( chemical::N_ACETYLATION ) ||
-				 new_rsd->aa() == chemical::aa_unk ||
-				 new_rsd->aa() == chemical::aa_vrt ||
-				 new_rsd->aa() == chemical::aa_h2o ||
-				 jump_to_next ) {
+				rsd_type.has_variant_type( chemical::N_ACETYLATION ) ||
+				new_rsd->aa() == chemical::aa_unk ||
+				new_rsd->aa() == chemical::aa_vrt ||
+				new_rsd->aa() == chemical::aa_h2o ||
+				jump_to_next ) {
 			if ( new_rsd->aa() == chemical::aa_unk  || new_rsd->aa() == chemical::aa_vrt ) {
 				//fpd tr.Warning << "found unknown aminoacid or X in sequence at position " << i <<  std::endl;
 				//fpd if ( i< ie ) {
-				//fpd 	utility_exit_with_message( "found unknown aminoacid or X in sequence\n this leads to a seg-fault if we keep going...\n");
+				//fpd  utility_exit_with_message( "found unknown aminoacid or X in sequence\n this leads to a seg-fault if we keep going...\n");
 				//fpd }
 
 				// if you don't think so ... make the code more stable and remove this
@@ -447,8 +449,9 @@ void make_pose_from_sequence(
 				jump_to_next = true;
 			} else if ( jump_to_next ) {
 				jump_to_next = false;
-				if ( !rsd_type.is_lower_terminus(  ) )
+				if ( !rsd_type.is_lower_terminus(  ) ) {
 					tr.Debug << "Residue! following X, Z, or an upper terminus is _not_ a lower terminus type!  Continuing ..." << std::endl;
+				}
 			}
 			pose.append_residue_by_jump( *new_rsd, 1, "", "", true ); // each time this happens, a new chain should be started
 		} else {
@@ -456,7 +459,7 @@ void make_pose_from_sequence(
 
 			//fpd If res i is an upper terminus but (i+1) is not a lower terminus, the code exits on a failed assertion
 			//fpd Don't let this happen; always jump in these cases
-			if (rsd_type.is_upper_terminus(  )) jump_to_next = true;
+			if ( rsd_type.is_upper_terminus(  ) ) jump_to_next = true;
 		}
 	}
 
@@ -486,10 +489,10 @@ void make_pose_from_sequence(
 {
 	// grab residue types
 	chemical::ResidueTypeCOPs requested_types = core::pose::residue_types_from_sequence( sequence_in, residue_set, auto_termini );
-debug_assert( core::pose::annotated_to_oneletter_sequence( sequence_in ).length() == requested_types.size() );
+	debug_assert( core::pose::annotated_to_oneletter_sequence( sequence_in ).length() == requested_types.size() );
 
 	make_pose_from_sequence(
-		pose,	requested_types, auto_termini);
+		pose, requested_types, auto_termini);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -539,9 +542,9 @@ void make_pose_from_sequence(
 /// At present time, param files only exist for a limited number of sugars! ~ Labonte
 void
 make_pose_from_saccharide_sequence( pose::Pose & pose,
-		std::string const & sequence,
-		chemical::ResidueTypeSet const & residue_set,
-		bool const auto_termini )
+	std::string const & sequence,
+	chemical::ResidueTypeSet const & residue_set,
+	bool const auto_termini )
 {
 	using namespace std;
 	using namespace chemical;
@@ -573,7 +576,7 @@ make_pose_from_saccharide_sequence( pose::Pose & pose,
 	// for Rosetta.  (The default setting is 0.0, which sucks.) ~ Labonte
 	Size const n_residues( pose.total_residue() );
 	/*for ( uint res_num( 2 ); res_num <= n_residues; ++res_num ) {
-		pose.set_phi( res_num, -120.0 );
+	pose.set_phi( res_num, -120.0 );
 	}*/
 
 	if ( auto_termini ) {
@@ -594,9 +597,9 @@ make_pose_from_saccharide_sequence( pose::Pose & pose,
 /// set instead of a ResidueTypeSet object.  A convenience method for PyRosetta.
 void
 make_pose_from_saccharide_sequence( pose::Pose & pose,
-		std::string const & sequence,
-		std::string const & type_set_name /*"fa_standard"*/,
-		bool const auto_termini /*true*/ )
+	std::string const & sequence,
+	std::string const & type_set_name /*"fa_standard"*/,
+	bool const auto_termini /*true*/ )
 {
 	using namespace chemical;
 
@@ -609,8 +612,8 @@ make_pose_from_saccharide_sequence( pose::Pose & pose,
 /// @details A convenience method for PyRosetta.
 pose::PoseOP
 pose_from_saccharide_sequence( std::string const & sequence,
-		std::string const & type_set_name /*"fa_standard"*/,
-		bool const auto_termini /*true*/ )
+	std::string const & type_set_name /*"fa_standard"*/,
+	bool const auto_termini /*true*/ )
 {
 	using namespace pose;
 
@@ -641,7 +644,7 @@ std::string annotated_to_oneletter_sequence(
 ///          get_rsd_type_from_aa_legacy, which was the old style. -- rhiju.
 chemical::ResidueTypeCOP
 get_rsd_type_from_aa( chemical::ResidueTypeSet const & residue_set,
-											chemical::AA const & my_aa, bool const & is_lower_terminus, bool const & is_upper_terminus )
+	chemical::AA const & my_aa, bool const & is_lower_terminus, bool const & is_upper_terminus )
 {
 	using namespace core::chemical;
 	ResidueTypeCOP rsd_type = ResidueTypeFinder( residue_set ).aa( my_aa ).get_representative_type();
@@ -659,7 +662,7 @@ get_rsd_type_from_aa( chemical::ResidueTypeSet const & residue_set,
 // for non-annotated sequence, assume single chain for now
 chemical::ResidueTypeCOP
 get_rsd_type_from_aa_legacy( chemical::ResidueTypeSet const & residue_set,
-														 chemical::AA const & my_aa, bool const & is_lower_terminus, bool const & is_upper_terminus )
+	chemical::AA const & my_aa, bool const & is_lower_terminus, bool const & is_upper_terminus )
 {
 
 	bool const is_terminus( is_lower_terminus || is_upper_terminus ); // redundant, but for convenience
@@ -676,7 +679,7 @@ get_rsd_type_from_aa_legacy( chemical::ResidueTypeSet const & residue_set,
 		Size nvariants = rsd_type.properties().get_list_of_variants().size();
 		if ( is_polymer && ( is_terminus && ( nvariants == 0 ) ) ) continue;
 		if ( is_polymer && ( is_lower_terminus != rsd_type.has_variant_type( chemical::LOWER_TERMINUS_VARIANT ) ||
-												 is_upper_terminus != rsd_type.has_variant_type( chemical::UPPER_TERMINUS_VARIANT ) ) ) continue;
+				is_upper_terminus != rsd_type.has_variant_type( chemical::UPPER_TERMINUS_VARIANT ) ) ) continue;
 
 		best_index = j;
 		break;
@@ -697,7 +700,7 @@ get_rsd_type_from_aa_legacy( chemical::ResidueTypeSet const & residue_set,
 // you are brilliant enough to add the :disulfide yourself?
 chemical::ResidueTypeCOP
 handle_disulfide_variant_name_for_backwards_compatibility( chemical::ResidueTypeSet const & residue_set,
-																													 std::string const &fullname )
+	std::string const &fullname )
 {
 
 	tr << tr.Red << "If you really need to use this code and want to speed it up, please contact rhiju [at] stanford.edu about quickly rewriting using chemical::ResidueTypeFinder." << tr.Reset << std::endl;
@@ -713,8 +716,8 @@ handle_disulfide_variant_name_for_backwards_compatibility( chemical::ResidueType
 
 	chemical::ResidueTypeCOPs possible_types = residue_set.name3_map_DO_NOT_USE( "CYS" );
 	// Run through all possible new residue types.
-	for ( chemical::ResidueTypeCOPs::const_iterator	type_iter = possible_types.begin(), type_end = possible_types.end();
-				type_iter != type_end; ++type_iter ) {
+	for ( chemical::ResidueTypeCOPs::const_iterator type_iter = possible_types.begin(), type_end = possible_types.end();
+			type_iter != type_end; ++type_iter ) {
 		bool perfect_match( true );
 
 		for ( Size kk = 1; kk <= variant_types.size(); ++kk ) {

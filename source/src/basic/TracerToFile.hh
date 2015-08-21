@@ -42,15 +42,15 @@ namespace basic {
 class TracerToFile : public basic::otstream
 {
 public:
-  TracerToFile( std::string const & file_name );
-  virtual ~TracerToFile();
+	TracerToFile( std::string const & file_name );
+	virtual ~TracerToFile();
 
 
 protected:
-  void t_flush( std::string const & s );
+	void t_flush( std::string const & s );
 
 private:
-  std::ofstream file_;
+	std::ofstream file_;
 };
 
 

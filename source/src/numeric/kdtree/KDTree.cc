@@ -83,9 +83,9 @@ void KDTree::root( KDNodeOP new_root ) {
 
 void KDTree::extend_bounds( utility::vector1< numeric::Real > const & pt ) {
 	//if ( ! bounds() ) {
-	//	bounds_ = new HyperRectangle( pt, pt );
+	// bounds_ = new HyperRectangle( pt, pt );
 	//} else {
-	//	bounds_->extend( pt );
+	// bounds_->extend( pt );
 	//}
 	bounds_->extend( pt );
 }

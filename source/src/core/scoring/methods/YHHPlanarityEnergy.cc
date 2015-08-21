@@ -84,8 +84,8 @@ YHHPlanarityEnergy::residue_energy(
 	using numeric::constants::d::pi;
 
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ){
-			return;
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) {
+		return;
 	}
 	if ( defines_score_for_rsd(rsd) ) {
 		emap[ yhh_planarity ] += 0.5 * (std::cos( pi - 2*rsd.chi(3)*degrees_to_radians)+1);
@@ -113,8 +113,8 @@ YHHPlanarityEnergy::eval_residue_dof_derivative(
 	using numeric::constants::d::degrees_to_radians;
 	using numeric::constants::d::pi;
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ){
-			return 0.0;
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) {
+		return 0.0;
 	}
 
 	if ( ! tor_id.valid() ) return 0.0;

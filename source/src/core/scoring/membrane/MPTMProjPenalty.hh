@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/scoring/membrane/MPTMProjPenalty.hh
+/// @file  core/scoring/membrane/MPTMProjPenalty.hh
 ///
-///	@brief		Membrane Protein TM Proj Penalty
-///	@details	Whole structure energy - Penalty for unreasonable tm-helix length compared to predicted
-///				helix length (from topology) and uses mpframework data
-///				Last Modified: 4/3/14
+/// @brief  Membrane Protein TM Proj Penalty
+/// @details Whole structure energy - Penalty for unreasonable tm-helix length compared to predicted
+///    helix length (from topology) and uses mpframework data
+///    Last Modified: 4/3/14
 ///
-///	@author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_scoring_membrane_MPTMProjPenalty_hh
 #define INCLUDED_core_scoring_membrane_MPTMProjPenalty_hh
@@ -46,55 +46,55 @@ using namespace core::scoring::methods;
 namespace core {
 namespace scoring {
 namespace membrane {
-	
+
 /// @brief Class Membrane TM proj Penalty
 class MPTMProjPenalty : public methods::WholeStructureEnergy {
-	
+
 public: // typedefs
-	
+
 	typedef WholeStructureEnergy  parent;
-	
+
 public: // constructors
-	
+
 	/// @brief Default Constructor
 	MPTMProjPenalty();
-	
+
 	/// @brief Clone
 	virtual
 	EnergyMethodOP
 	clone() const;
-	
+
 	/// @brief Finalize total energy method (for whole structure
 	void
 	finalize_total_energy(
-						  pose::Pose & pose,
-						  ScoreFunction const &,
-						  EnergyMap & totals
-						  ) const;
-	
+		pose::Pose & pose,
+		ScoreFunction const &,
+		EnergyMap & totals
+	) const;
+
 	void
 	indicate_required_context_graphs( utility::vector1< bool > & ) const {}
-	
+
 public: // penalty method
-	
+
 	/// @brief Compute Penalty for Length of Helix
 	core::Real
 	compute_tmproj_penalty(
-						   core::Real start_z_pos,
-						   core::Real end_z_pos,
-						   core::Real dist
-						   ) const;
-	
+		core::Real start_z_pos,
+		core::Real end_z_pos,
+		core::Real dist
+	) const;
+
 private:
-	
+
 	/// @brief Version
 	core::Size version() const { return (core::Size)2.0; }
-	
+
 	// MP Base potential (database)
 	MembraneData const & mpdata_;
-	
+
 }; // MPTMProjPenalty
-	
+
 } // membrane
 } // scoring
 } // core

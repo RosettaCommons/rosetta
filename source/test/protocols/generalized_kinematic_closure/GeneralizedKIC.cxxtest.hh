@@ -50,8 +50,8 @@ public:
 	/// @brief Test GenKIC as applied to an L-alpha backbone loop.
 	/// @details This uses residues 5-13 from the 1ubq structure, and
 	/// samples conformations for resiudes 6-12.  It then double-checks
-  /// that (a) at least one solution was found, and (b) that all
-  /// peptide bond lengths are the same as in the original structure.
+	/// that (a) at least one solution was found, and (b) that all
+	/// peptide bond lengths are the same as in the original structure.
 	void test_GeneralizedKIC_L_alpha_backbone()
 	{
 		using namespace protocols::generalized_kinematic_closure;
@@ -59,14 +59,14 @@ public:
 		GeneralizedKICOP genkic( new GeneralizedKIC ); //Create the mover.
 
 		//Add the loop residues:
-		for( core::Size i=2; i<=8; ++i ) genkic->add_loop_residue(i);
+		for ( core::Size i=2; i<=8; ++i ) genkic->add_loop_residue(i);
 
 		//Set the pivots:
 		genkic->set_pivot_atoms( 2, "CA", 4, "CA", 8, "CA" );
 
 		//Add a randomizing-by-rama perturber:
 		genkic->add_perturber( "randomize_alpha_backbone_by_rama" );
-		for( core::Size i=2; i<=8; ++i ) genkic->add_residue_to_perturber_residue_list( i );
+		for ( core::Size i=2; i<=8; ++i ) genkic->add_residue_to_perturber_residue_list( i );
 
 		//Add a loop bump check:
 		genkic->add_filter( "loop_bump_check" );
@@ -90,7 +90,7 @@ public:
 		TS_ASSERT(genkic->last_run_successful());
 
 		//CHECK B: Are all the bond lengths as before?
-		for(core::Size i=1; i<9; ++i) { //Loop through all residues
+		for ( core::Size i=1; i<9; ++i ) { //Loop through all residues
 			core::Real peplength1 = testpose_->residue(i).xyz("C").distance( testpose_->residue(i+1).xyz("N") );
 			core::Real peplength2 = testpose2->residue(i).xyz("C").distance( testpose2->residue(i+1).xyz("N") );
 			TS_ASSERT_DELTA( peplength1, peplength2, 1.0e-3 );
@@ -102,8 +102,8 @@ public:
 	/// @brief Test GenKIC as applied to an alpha backbone loop containing a D-residue.
 	/// @details This uses residues 5-13 from the 1ubq structure with G10 mutated to
 	/// DALA, and samples conformations for resiudes 6-12.  It then double-checks
-  /// that (a) at least one solution was found, and (b) that all
-  /// peptide bond lengths are the same as in the original structure.
+	/// that (a) at least one solution was found, and (b) that all
+	/// peptide bond lengths are the same as in the original structure.
 	void test_GeneralizedKIC_mixed_DL_alpha_backbone()
 	{
 		using namespace protocols::generalized_kinematic_closure;
@@ -115,16 +115,16 @@ public:
 		core::pose::PoseOP testpose2 = testpose_->clone();
 		protocols::simple_moves::MutateResidue mutres(6, "DALA");
 		mutres.apply(*testpose2);
-		
+
 		//Add the loop residues:
-		for( core::Size i=2; i<=8; ++i ) genkic->add_loop_residue(i);
+		for ( core::Size i=2; i<=8; ++i ) genkic->add_loop_residue(i);
 
 		//Set the pivots:
 		genkic->set_pivot_atoms( 2, "CA", 4, "CA", 8, "CA" );
 
 		//Add a randomizing-by-rama perturber:
 		genkic->add_perturber( "randomize_alpha_backbone_by_rama" );
-		for( core::Size i=2; i<=8; ++i ) genkic->add_residue_to_perturber_residue_list( i );
+		for ( core::Size i=2; i<=8; ++i ) genkic->add_residue_to_perturber_residue_list( i );
 
 		//Add a loop bump check:
 		genkic->add_filter( "loop_bump_check" );
@@ -145,7 +145,7 @@ public:
 		TS_ASSERT(genkic->last_run_successful());
 
 		//CHECK B: Are all the bond lengths as before?
-		for(core::Size i=1; i<9; ++i) { //Loop through all residues
+		for ( core::Size i=1; i<9; ++i ) { //Loop through all residues
 			core::Real peplength1 = testpose_->residue(i).xyz("C").distance( testpose_->residue(i+1).xyz("N") );
 			core::Real peplength2 = testpose2->residue(i).xyz("C").distance( testpose2->residue(i+1).xyz("N") );
 			TS_ASSERT_DELTA( peplength1, peplength2, 1.0e-3 );

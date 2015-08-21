@@ -59,8 +59,8 @@
 #include <utility/vector0.hh>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 static thread_local basic::Tracer TR( "protocols.features.StructureScoresFeatures" );
 
@@ -184,7 +184,7 @@ StructureScoresFeatures::parse_my_tag(
 	Movers_map const & /*movers*/,
 	Pose const & /*pose*/
 ) {
-	if(tag->hasOption("scorefxn")){
+	if ( tag->hasOption("scorefxn") ) {
 		string scorefxn_name = tag->getOption<string>("scorefxn");
 		scfxn_ = data.get_ptr<ScoreFunction>("scorefxns", scorefxn_name);
 	} else {
@@ -242,7 +242,7 @@ StructureScoresFeatures::compute_energies(
 	// two-body scores.
 	bool all_residues(true);
 
-	if(relevant_residues_mode_ == RelevantResiduesMode::Inclusive){
+	if ( relevant_residues_mode_ == RelevantResiduesMode::Inclusive ) {
 		TR.Warning << "StructureScoresFeatures is currently not compatible with inclusive RelevantResiduesMode::Inclusive, treating as Explicit." << std::endl;
 	}
 
@@ -250,14 +250,14 @@ StructureScoresFeatures::compute_energies(
 	// use virtual residues to be compatible with the two-body scoring
 	// framework, include virtual residues with the relevant residues so
 	// these scores get computed.
-	for(Size i = 1; i <= pose.total_residue(); ++i){
-		if(pose.residue( i ).aa() == aa_vrt){
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( pose.residue( i ).aa() == aa_vrt ) {
 			relevant_and_virtual_residues[i] = true;
-		} else if (relevant_and_virtual_residues[i] == false){
+		} else if ( relevant_and_virtual_residues[i] == false ) {
 			all_residues = false;
 		}
 	}
-	if(all_residues){
+	if ( all_residues ) {
 		emap = pose.energies().total_energies();
 	} else {
 		scfxn_->get_sub_score(pose, relevant_and_virtual_residues, emap);
@@ -287,10 +287,10 @@ StructureScoresFeatures::insert_structure_score_rows(
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 	RowDataBaseOP batch_id_data( new RowData<Size>("batch_id",batch_id) );
 
-	for(Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id){
+	for ( Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id ) {
 		ScoreType type(static_cast<ScoreType>(score_type_id));
 		Real const score_value( (*scfxn_)[type] * emap[type] );
-		if(!score_value) continue;
+		if ( !score_value ) continue;
 		total_score_value += score_value;
 
 		RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id",score_type_id) );
@@ -308,7 +308,7 @@ StructureScoresFeatures::insert_structure_score_rows(
 	structure_scores_insert.add_row(
 		utility::tools::make_vector(batch_id_data,struct_id_data,total_id_data,total_score_data));
 	structure_scores_insert.write_to_database(db_session);
-	}
+}
 
 } // namesapce
 } // namespace

@@ -91,7 +91,7 @@ public:
 	virtual
 	void
 	eval_intrares_energy(
-	  conformation::Residue const & rsd,
+		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
@@ -149,8 +149,8 @@ private:
 	core::scoring::mm::MMBondAngleResidueTypeParamSetOP param_set_;
 	core::scoring::mm::MMBondAngleScore potential_;
 	utility::vector1<std::string> central_atoms_to_score_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

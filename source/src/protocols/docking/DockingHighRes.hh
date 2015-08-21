@@ -10,9 +10,9 @@
 /// @file docking_initialization_protocols
 /// @brief initialization protocols for docking
 /// @details
-///		This contains the functions that create initial positions for docking
-///		You can either randomize partner 1 or partner 2, spin partner 2, or
-///		perform a simple perturbation.
+///  This contains the functions that create initial positions for docking
+///  You can either randomize partner 1 or partner 2, spin partner 2, or
+///  perform a simple perturbation.
 /// @author Monica Berrondo
 /// @author Modified by Sergey Lyskov
 
@@ -47,7 +47,7 @@ namespace docking {
 
 class DockingHighRes : public moves::Mover
 {
-typedef core::Real Real;
+	typedef core::Real Real;
 public:
 
 	/// @brief Default constructor
@@ -59,14 +59,14 @@ public:
 	);
 
 	/// @brief Constructor with two arguments.  The first is thejump number, the second is a scorefunction that will be
-	///		used for docking and packing.
+	///  used for docking and packing.
 	DockingHighRes(
 		core::Size const rb_jump,
 		core::scoring::ScoreFunctionOP scorefxn
 	);
 
 	/// @brief Constructor with three arguments.  The first is the jump number, the second is a scorefunction that will
-	///		be used for docking and the third is a scorefunction that will be used for packing.
+	///  be used for docking and the third is a scorefunction that will be used for packing.
 	DockingHighRes(
 		core::Size const rb_jump,
 		core::scoring::ScoreFunctionOP scorefxn,
@@ -74,7 +74,7 @@ public:
 	);
 
 	/// @brief Constructor with three arguments.  The first is the DockJumps, the second is a scorefunction that will
-	///		be used for docking and the third is a scorefunction that will be used for packing.
+	///  be used for docking and the third is a scorefunction that will be used for packing.
 	DockingHighRes(
 		DockJumps const movable_jumps,
 		core::scoring::ScoreFunctionOP scorefxn,
@@ -108,12 +108,12 @@ public:
 	void set_sc_min( bool sc_min ){ sc_min_ = sc_min; }
 	void set_rt_min( bool rt_min ){ rt_min_ = rt_min; }
 	void set_partners( std::string partners ) { partners_ = partners; }
-    void set_interface_definition_task_operation( protocols::toolbox::task_operations::InterfaceTaskOperationOP interface_definition );
-    void set_additional_task_operarations( utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations );
-    void add_additional_task_operaration( core::pack::task::operation::TaskOperationOP task_operation );
-    utility::vector1< core::pack::task::operation::TaskOperationOP > get_additional_task_operarations();
+	void set_interface_definition_task_operation( protocols::toolbox::task_operations::InterfaceTaskOperationOP interface_definition );
+	void set_additional_task_operarations( utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations );
+	void add_additional_task_operaration( core::pack::task::operation::TaskOperationOP task_operation );
+	utility::vector1< core::pack::task::operation::TaskOperationOP > get_additional_task_operarations();
 
-    
+
 	bool sc_min() { return sc_min_; }
 	bool rt_min() { return rt_min_; }
 	std::string partners() { return partners_; }

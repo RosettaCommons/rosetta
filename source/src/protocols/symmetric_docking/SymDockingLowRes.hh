@@ -45,7 +45,7 @@ public:
 	SymDockingLowRes( core::scoring::ScoreFunctionCOP scorefxn_in );
 	// default constructor
 
-		moves::MoverOP clone() const;
+	moves::MoverOP clone() const;
 
 	~SymDockingLowRes();
 

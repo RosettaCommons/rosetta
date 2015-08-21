@@ -22,9 +22,9 @@
 //C++ Headers
 #include <string>
 
-namespace basic{
-namespace database{
-namespace schema_generator{
+namespace basic {
+namespace database {
+namespace schema_generator {
 
 class ForeignKey
 {

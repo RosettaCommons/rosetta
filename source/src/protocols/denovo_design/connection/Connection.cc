@@ -107,19 +107,21 @@ Connection::~Connection() {}
 /// @brief setup the parameters via an xml tag
 void
 Connection::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const & pose )
 {
 	components::NamedMover::parse_my_tag( tag, data, filters, movers, pose );
 	comp1_ids_.clear();
 	comp2_ids_.clear();
-	if ( tag->hasOption( "segment1" ) )
+	if ( tag->hasOption( "segment1" ) ) {
 		set_comp1_ids( tag->getOption< std::string >( "segment1" ) );
-	if ( tag->hasOption( "segment2" ) )
+	}
+	if ( tag->hasOption( "segment2" ) ) {
 		set_comp2_ids( tag->getOption< std::string >( "segment2" ) );
+	}
 
 	if ( tag->hasOption( "chain1" ) && tag->hasOption( "segment1" ) ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "chain and comp can't both be specified in " + id() );
@@ -202,8 +204,9 @@ void
 Connection::set_comp1_ids( utility::vector1< std::string > const & id_list )
 {
 	comp1_ids_.clear();
-	if ( ! id_list.empty() )
+	if ( ! id_list.empty() ) {
 		comp1_ids_ = id_list;
+	}
 }
 
 /// @brief sets the list of options for component 1
@@ -211,8 +214,9 @@ void
 Connection::set_comp2_ids( utility::vector1< std::string > const & id_list )
 {
 	comp2_ids_.clear();
-	if ( ! id_list.empty() )
+	if ( ! id_list.empty() ) {
 		comp2_ids_ = id_list;
+	}
 }
 
 /// @brief sets the list of acceptable lengths by parsing a string
@@ -223,10 +227,10 @@ Connection::set_lengths( std::string const & length_str )
 }
 
 void note_fwd_element_extensions(
-		std::string & ss,
-		std::string const & abego,
-		char const sschar,
-		char const element_abego )
+	std::string & ss,
+	std::string const & abego,
+	char const sschar,
+	char const element_abego )
 {
 	assert( ss.size() == abego.size() );
 	// starting at beginning, locate extending elements
@@ -239,10 +243,10 @@ void note_fwd_element_extensions(
 }
 
 void note_rev_element_extensions(
-		std::string & ss,
-		std::string const & abego,
-		char const sschar,
-		char const element_abego )
+	std::string & ss,
+	std::string const & abego,
+	char const sschar,
+	char const element_abego )
 {
 	assert( ss.size() == abego.size() );
 	// starting at end, locate extending elements
@@ -256,56 +260,56 @@ void note_rev_element_extensions(
 /// @brief Given desired lengths, compute a set of idealized loop motifs via Nobu/Rie/YuRu rules
 Connection::MotifList
 Connection::calc_idealized_motifs(
-		std::string const & abego1,
-		std::string const & abego2,
-		std::set< core::Size > const & lenset ) const
+	std::string const & abego1,
+	std::string const & abego2,
+	std::set< core::Size > const & lenset ) const
 {
 	static std::string const ab[] = {
-			   "GB" ,    "GBA" ,    "BAA" , // Basic loops
-			   "GBB",    "GBAB",    "BAAB", // Extend strand by one residue
-			  "AGB" ,   "AGBA" ,   "ABAA" , // Extend helix by one residue
-			  "AGBB",   "AGBAB",   "ABAAB",
-			 "AAGB" ,  "AAGBA" ,  "AABAA" , // Extend helix by two residues
-			 "AAGBB",  "AAGBAB",  "AABAAB",
-			"AAAGB" , "AAAGBA" , "AAABAA" , // Extend helix by three residues
-			"AAAGBB", "AAAGBAB", "AAABAAB" };
+		"GB" ,    "GBA" ,    "BAA" , // Basic loops
+		"GBB",    "GBAB",    "BAAB", // Extend strand by one residue
+		"AGB" ,   "AGBA" ,   "ABAA" , // Extend helix by one residue
+		"AGBB",   "AGBAB",   "ABAAB",
+		"AAGB" ,  "AAGBA" ,  "AABAA" , // Extend helix by two residues
+		"AAGBB",  "AAGBAB",  "AABAAB",
+		"AAAGB" , "AAAGBA" , "AAABAA" , // Extend helix by three residues
+		"AAAGBB", "AAAGBAB", "AAABAAB" };
 	static core::Size const numAB = 24;
 
 	static std::string const ba[] = {
-			"AB"   , "GBB"   , "BAB"   , "BGBB"   ,  // Basic loops plus extend strand by one residue
-			"ABA"  , "GBBA"  , "BABA"  , "BGBBA"  ,  // Extend helix by one residue
-			"ABAA" , "GBBAA" , "BABAA" , "BGBBAA" ,  // Extend helix by two residues
-			"ABAAA", "BGGAAA", "BABAAA", "BGBBAAA" };
+		"AB"   , "GBB"   , "BAB"   , "BGBB"   ,  // Basic loops plus extend strand by one residue
+		"ABA"  , "GBBA"  , "BABA"  , "BGBBA"  ,  // Extend helix by one residue
+		"ABAA" , "GBBAA" , "BABAA" , "BGBBAA" ,  // Extend helix by two residues
+		"ABAAA", "BGGAAA", "BABAAA", "BGBBAAA" };
 	static core::Size const numBA = 16;
 
 	static std::string const bb[] = {
-		 "GG" ,  "EA" ,  "AA" ,  "AAG" ,   // Basic loops
+		"GG" ,  "EA" ,  "AA" ,  "AAG" ,   // Basic loops
 		"BGG" , "BEA" , "BAA" , "BAAG" ,   // Extend first strand by one
-		 "GGB",  "EAB",  "AAB",  "AAGB",   // Extend second strand by one
+		"GGB",  "EAB",  "AAB",  "AAGB",   // Extend second strand by one
 		"BGGB", "BEAB", "BAAB", "BAAGB" }; // Extend both strands by one
 	static core::Size const numBB = 16;
 
 	static std::string const alpha_alpha[] = {
-			   "B", "AB", "AAB", "AAAB", "BA", "ABA", "AABA", "AAABA", "BAA", "ABAA",   // one-residue B and extensions
-			 "AABAA", "AAABAA", "BAAA", "ABAAA", "AABAAA", "AAABAAA",
-			   "G", "AG", "AAG", "AAAG", "GA", "AGA", "AAGA", "AAAGA", "GAA", "AGAA",   // one-residue G and extensions
-			 "AAGAA", "AAAGAA", "GAAA", "AGAAA", "AAGAAA", "AAAGAAA",
-		     "BB"   ,    "BG"   ,    "GB"   ,    "BAB"   ,    "BAG"   ,    "GAB"   ,  //loops not containing E or start/ending with A
-			   "BBA"  ,    "BGA"  ,    "GBA"  ,    "BABA"  ,    "BAGA"  ,    "GABA"  ,  // Extend h2 by one residue
-			   "BBAA" ,    "BGAA" ,    "GBAA" ,    "BABAA" ,    "BAGAA" ,    "GABAA" ,  // Extend h2 by two residues
-			   "BBAAA",    "BGAAA",    "GBAAA",    "BABAAA",    "BAGAAA",    "GABAAA",  // Extend h2 by three residues
-			  "ABB"   ,   "ABG"   ,   "AGB"   ,   "ABAB"   ,   "ABAG"   ,   "AGAB"   ,  // Extend h1 by one residue
-			  "ABBA"  ,   "ABGA"  ,   "AGBA"  ,   "ABABA"  ,   "ABAGA"  ,   "AGABA"  ,  //
-			  "ABBAA" ,   "ABGAA" ,   "AGBAA" ,   "ABABAA" ,   "ABAGAA" ,   "AGABAA" ,  //
-			  "ABBAAA",   "ABGAAA",   "AGBAAA",   "ABABAAA",   "ABAGAAA",   "AGABAAA",  //
-			 "AABB"   ,  "AABG"   ,  "AAGB"   ,  "AABAB"   ,  "AABAG"   ,  "AAGAB"   ,  // Extend h1 by two residue
-			 "AABBA"  ,  "AABGA"  ,  "AAGBA"  ,  "AABABA"  ,  "AABAGA"  ,  "AAGABA"  ,  //
-			 "AABBAA" ,  "AABGAA" ,  "AAGBAA" ,  "AABABAA" ,  "AABAGAA" ,  "AAGABAA" ,  //
-			 "AABBAAA",  "AABGAAA",  "AAGBAAA",  "AABABAAA",  "AABAGAAA",  "AAGABAAA",  //
-			"AAABB"   , "AAABG"   , "AAAGB"   , "AAABAB"   , "AAABAG"   , "AAAGAB"   ,  // Extend h1 by three residue
-			"AAABBA"  , "AAABGA"  , "AAAGBA"  , "AAABABA"  , "AAABAGA"  , "AAAGABA"  ,  //
-			"AAABBAA" , "AAABGAA" , "AAAGBAA" , "AAABABAA" , "AAABAGAA" , "AAAGABAA" ,  //
-			"AAABBAAA", "AAABGAAA", "AAAGBAAA", "AAABABAAA", "AAABAGAAA", "AAAGABAAA" };
+		"B", "AB", "AAB", "AAAB", "BA", "ABA", "AABA", "AAABA", "BAA", "ABAA",   // one-residue B and extensions
+		"AABAA", "AAABAA", "BAAA", "ABAAA", "AABAAA", "AAABAAA",
+		"G", "AG", "AAG", "AAAG", "GA", "AGA", "AAGA", "AAAGA", "GAA", "AGAA",   // one-residue G and extensions
+		"AAGAA", "AAAGAA", "GAAA", "AGAAA", "AAGAAA", "AAAGAAA",
+		"BB"   ,    "BG"   ,    "GB"   ,    "BAB"   ,    "BAG"   ,    "GAB"   ,  //loops not containing E or start/ending with A
+		"BBA"  ,    "BGA"  ,    "GBA"  ,    "BABA"  ,    "BAGA"  ,    "GABA"  ,  // Extend h2 by one residue
+		"BBAA" ,    "BGAA" ,    "GBAA" ,    "BABAA" ,    "BAGAA" ,    "GABAA" ,  // Extend h2 by two residues
+		"BBAAA",    "BGAAA",    "GBAAA",    "BABAAA",    "BAGAAA",    "GABAAA",  // Extend h2 by three residues
+		"ABB"   ,   "ABG"   ,   "AGB"   ,   "ABAB"   ,   "ABAG"   ,   "AGAB"   ,  // Extend h1 by one residue
+		"ABBA"  ,   "ABGA"  ,   "AGBA"  ,   "ABABA"  ,   "ABAGA"  ,   "AGABA"  ,  //
+		"ABBAA" ,   "ABGAA" ,   "AGBAA" ,   "ABABAA" ,   "ABAGAA" ,   "AGABAA" ,  //
+		"ABBAAA",   "ABGAAA",   "AGBAAA",   "ABABAAA",   "ABAGAAA",   "AGABAAA",  //
+		"AABB"   ,  "AABG"   ,  "AAGB"   ,  "AABAB"   ,  "AABAG"   ,  "AAGAB"   ,  // Extend h1 by two residue
+		"AABBA"  ,  "AABGA"  ,  "AAGBA"  ,  "AABABA"  ,  "AABAGA"  ,  "AAGABA"  ,  //
+		"AABBAA" ,  "AABGAA" ,  "AAGBAA" ,  "AABABAA" ,  "AABAGAA" ,  "AAGABAA" ,  //
+		"AABBAAA",  "AABGAAA",  "AAGBAAA",  "AABABAAA",  "AABAGAAA",  "AAGABAAA",  //
+		"AAABB"   , "AAABG"   , "AAAGB"   , "AAABAB"   , "AAABAG"   , "AAAGAB"   ,  // Extend h1 by three residue
+		"AAABBA"  , "AAABGA"  , "AAAGBA"  , "AAABABA"  , "AAABAGA"  , "AAAGABA"  ,  //
+		"AAABBAA" , "AAABGAA" , "AAAGBAA" , "AAABABAA" , "AAABAGAA" , "AAAGABAA" ,  //
+		"AAABBAAA", "AAABGAAA", "AAAGBAAA", "AAABABAAA", "AAABAGAAA", "AAAGABAAA" };
 	static core::Size const numAA = 96;
 
 	MotifList retval;
@@ -660,7 +664,7 @@ Connection::apply_permutation( components::StructureData & perm )
 		<< " ss=" << perm.segment(c1).ss() << " " << perm.segment(c2).ss() << std::endl;
 	perm.connect_segments( c1, c2 );
 	if ( ( c2 == c1 + "_1" ) &&
-			( perm.segment(c1).cterm_resi()+1 == perm.segment(c2).nterm_resi() ) )	{
+			( perm.segment(c1).cterm_resi()+1 == perm.segment(c2).nterm_resi() ) ) {
 		perm.merge_segments( c1, c2, c1 );
 	}
 
@@ -693,11 +697,11 @@ Connection::setup( components::StructureData & perm )
 /// @brief does jump setup work and creates loop residues
 void
 Connection::setup(
-		components::StructureData & perm,
-		std::string const & comp1_n,
-		std::string const & comp1_c,
-		std::string const & comp2_n,
-		std::string const & comp2_c )
+	components::StructureData & perm,
+	std::string const & comp1_n,
+	std::string const & comp1_c,
+	std::string const & comp2_n,
+	std::string const & comp2_c )
 {
 	// primary root is component 1, secondary root is component 2
 	utility::vector1< std::string > roots;
@@ -741,8 +745,9 @@ Connection::find_available_upper_termini( components::StructureData const & perm
 			mod.push_back( *i );
 		} else {
 			std::string const segname = add_parent_prefix( *i );
-			if ( perm.has_free_upper_terminus( segname ) )
+			if ( perm.has_free_upper_terminus( segname ) ) {
 				mod.push_back( segname );
+			}
 		}
 	}
 	TR.Debug << "Available upper termini: " << mod << std::endl;
@@ -764,8 +769,9 @@ Connection::find_available_lower_termini( components::StructureData const & perm
 			mod.push_back( *i );
 		} else {
 			std::string const segname = add_parent_prefix( *i );
-			if ( perm.has_free_lower_terminus( segname ) )
+			if ( perm.has_free_lower_terminus( segname ) ) {
 				mod.push_back( segname );
+			}
 		}
 	}
 	TR.Debug << "Available lower termini: " << mod << std::endl;
@@ -870,9 +876,9 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 			MotifList motifs;
 			if ( idealized_abego_ ) {
 				motifs = calc_idealized_motifs(
-						perm.abego()[ perm.segment( local_comp1_ids[i] ).stop() ],
-						perm.abego()[ perm.segment( local_comp2_ids[j] ).start() ],
-						lenset );
+					perm.abego()[ perm.segment( local_comp1_ids[i] ).stop() ],
+					perm.abego()[ perm.segment( local_comp2_ids[j] ).start() ],
+					lenset );
 			} else {
 				motifs = motifs_;
 			}
@@ -883,18 +889,18 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 				core::Real avg_dist = 0.0;
 				if ( use_distance ) {
 					avg_dist = calc_approx_loop_length(
-							perm.abego()[ perm.segment( local_comp1_ids[i] ).stop() ] +
-							motifs[k].abego +
-							perm.abego()[ perm.segment( local_comp2_ids[j] ).start() ] );
+						perm.abego()[ perm.segment( local_comp1_ids[i] ).stop() ] +
+						motifs[k].abego +
+						perm.abego()[ perm.segment( local_comp2_ids[j] ).start() ] );
 					avg_dist /= static_cast< core::Real >( motifs[k].len );
 				}
 				if ( perm.are_connectable(
-							local_comp1_ids[i],
-							local_comp2_ids[j],
-							motifs[k].len,
-							use_distance,
-							performs_orientation(),
-							allow_cyclic_, connecting_bond_dist(), avg_dist ) ) {
+						local_comp1_ids[i],
+						local_comp2_ids[j],
+						motifs[k].len,
+						use_distance,
+						performs_orientation(),
+						allow_cyclic_, connecting_bond_dist(), avg_dist ) ) {
 					TR << "c1, c2, len : connectable " << local_comp1_ids[i] << ", " << local_comp2_ids[j] << ", " << motifs[k] << std::endl;
 					utility::vector1< core::Size > params;
 					params.push_back( i );
@@ -923,9 +929,9 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 	MotifList motifs;
 	if ( idealized_abego_ ) {
 		motifs = calc_idealized_motifs(
-				perm.abego()[ perm.segment(c1).stop() ],
-				perm.abego()[ perm.segment(c2).start() ],
-				lenset );
+			perm.abego()[ perm.segment(c1).stop() ],
+			perm.abego()[ perm.segment(c2).start() ],
+			lenset );
 	} else {
 		motifs = motifs_;
 	}
@@ -980,19 +986,19 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 /// @brief adds loop residues in extended conformation
 void
 Connection::add_loop_residues(
-		components::StructureData & perm,
-		std::string const & comp,
-		std::string const & loop_name,
-		core::Size const num_residues,
-		std::string const & ss,
-		utility::vector1< std::string > const & abego,
-		bool const prepend = false ) const
+	components::StructureData & perm,
+	std::string const & comp,
+	std::string const & loop_name,
+	core::Size const num_residues,
+	std::string const & ss,
+	utility::vector1< std::string > const & abego,
+	bool const prepend = false ) const
 {
 	core::conformation::ResidueCOP newres;
 	if ( perm.pose() ) {
 		assert( perm.pose()->total_residue() > 2 );
 		newres = core::conformation::ResidueFactory::create_residue(
-				perm.pose()->residue(2).residue_type_set().name_map("VAL") );
+			perm.pose()->residue(2).residue_type_set().name_map("VAL") );
 	}
 	if ( prepend ) {
 		perm.prepend_extended_loop( comp, loop_name, num_residues, ss, abego, newres );
@@ -1004,11 +1010,11 @@ Connection::add_loop_residues(
 /// @brief adds loop residues based on build_len and cut_resi
 void
 Connection::create_loop(
-		components::StructureData & perm,
-		std::string const & comp1_n,
-		std::string const & comp1_c,
-		std::string const & comp2_n,
-		std::string const & comp2_c )
+	components::StructureData & perm,
+	std::string const & comp1_n,
+	std::string const & comp1_c,
+	std::string const & comp2_n,
+	std::string const & comp2_c )
 {
 	// list of loop residues to propagate
 	utility::vector1< core::Size > loop_residues;
@@ -1081,10 +1087,10 @@ Connection::check( components::StructureData const & perm ) const
 			utility::vector1< std::string > abego = protocols::denovo_design::abego_vector( build_abego(perm) );
 			TR << "about to check for " << abego << std::endl;
 			return check_insert(
-					*(perm.pose()),
-					build_ss(perm),
-					abego,
-					build_left(perm) );
+				*(perm.pose()),
+				build_ss(perm),
+				abego,
+				build_left(perm) );
 		}
 	}
 	return true;
@@ -1093,10 +1099,10 @@ Connection::check( components::StructureData const & perm ) const
 /// @brief checks the inserted region vs. the desired ss/abego.  True if it matches, false otherwise
 bool
 Connection::check_insert(
-		core::pose::Pose const & pose,
-		std::string const & build_ss,
-		utility::vector1< std::string > const & build_abego,
-		core::Size const left ) const
+	core::pose::Pose const & pose,
+	std::string const & build_ss,
+	utility::vector1< std::string > const & build_abego,
+	core::Size const left ) const
 {
 	std::string const & pose_ss( pose.secstruct() );
 	utility::vector1< std::string > pose_abego = core::sequence::get_abego( pose, 2 );
@@ -1239,11 +1245,11 @@ StapleTomponents::clone() const
 /// @brief setup the parameters via an xml tag
 void
 StapleTomponents::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const & pose )
 {
 	Connection::parse_my_tag( tag, data, filters, movers, pose );
 }
@@ -1257,7 +1263,7 @@ StapleTomponents::setup_permutation( components::StructureData & perm ) const
 	set_cut_resi( perm, 0 );
 	if ( perm.segment( lower_segment_id( perm ) ).movable_group == perm.segment( upper_segment_id( perm ) ).movable_group ) {
 		TR.Error << "Neither of the chains specified to the connection " << id() << " are movable with respect to one another. If you are using TomponentAssembly, this may be because both components specified are subcomponents of components of the assembly. Group for " << lower_segment_id(perm) << " = " << perm.segment(lower_segment_id(perm)).movable_group << " and " << upper_segment_id(perm) << " = " << perm.segment(upper_segment_id(perm)).movable_group << std::endl;
-		runtime_assert( false	);
+		runtime_assert( false );
 	}
 	return retval;
 }
@@ -1358,11 +1364,11 @@ BridgeTomponents::clone() const
 /// @brief setup the parameters via an xml tag
 void
 BridgeTomponents::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const & pose )
 {
 	protocols::generalized_kinematic_closure::GeneralizedKICOP kic =
 		protocols::generalized_kinematic_closure::GeneralizedKICOP( new protocols::generalized_kinematic_closure::GeneralizedKIC() );
@@ -1386,7 +1392,7 @@ BridgeTomponents::set_selector_scorefxn( core::scoring::ScoreFunctionCOP scorefx
 {
 	assert( kic_template_ );
 	protocols::generalized_kinematic_closure::GeneralizedKICOP newkic(
-			new protocols::generalized_kinematic_closure::GeneralizedKIC( *kic_template_ ) );
+		new protocols::generalized_kinematic_closure::GeneralizedKIC( *kic_template_ ) );
 	newkic->set_selector_scorefunction( scorefxn->clone() );
 	set_kic_mover( newkic );
 }
@@ -1459,10 +1465,10 @@ BridgeTomponents::apply_connection( components::StructureData & perm )
 /// @brief setup kic for simple closure
 void
 BridgeTomponents::setup_kic_closure(
-		components::StructureData const & perm,
-		protocols::generalized_kinematic_closure::GeneralizedKICOP kic,
-		utility::vector1< core::Size > const & lres,
-		core::Size const pre_overlap ) const
+	components::StructureData const & perm,
+	protocols::generalized_kinematic_closure::GeneralizedKICOP kic,
+	utility::vector1< core::Size > const & lres,
+	core::Size const pre_overlap ) const
 {
 	// add pivots to KIC
 	core::Size const loop_midpoint = lres[(lres.size()/2)+1];
@@ -1472,27 +1478,27 @@ BridgeTomponents::setup_kic_closure(
 	assert( cut_idx );
 	assert( cut_idx < lres.size() );
 	kic->close_bond( lres[cut_idx], "C", lres[cut_idx+1], "N",
-			lres[cut_idx], "CA", //prioratom
-			lres[cut_idx+1], "CA", //followingatom
-			1.32, //bondlength
-			123, 114, //angle1, angle2
-			180, // torsion
-			false,
-			false );
+		lres[cut_idx], "CA", //prioratom
+		lres[cut_idx+1], "CA", //followingatom
+		1.32, //bondlength
+		123, 114, //angle1, angle2
+		180, // torsion
+		false,
+		false );
 }
 
 /// @brief creates and configures kic mover -- assumes loop_residues vector has been set up
 protocols::generalized_kinematic_closure::GeneralizedKICOP
 BridgeTomponents::create_kic_mover(
-		components::StructureData const & perm,
-		utility::vector1< core::Size > const & lres,
-		core::Size const pre_overlap ) const
+	components::StructureData const & perm,
+	utility::vector1< core::Size > const & lres,
+	core::Size const pre_overlap ) const
 {
 	assert( kic_template_ );
 	assert( lres.size() );
 	protocols::generalized_kinematic_closure::GeneralizedKICOP kic =
 		protocols::generalized_kinematic_closure::GeneralizedKICOP(
-				new protocols::generalized_kinematic_closure::GeneralizedKIC( *kic_template_ ) );
+		new protocols::generalized_kinematic_closure::GeneralizedKIC( *kic_template_ ) );
 	kic->clear_loop_residues();
 	kic->clear_perturber_residue_lists();
 	for ( core::Size i=1; i<=lres.size(); ++i ) {
@@ -1574,14 +1580,14 @@ ConnectTerminiWithDisulfide::create_cyd_pair( components::StructureData & perm, 
 	perm.apply_mover( make_cyd2 );
 	utility::pointer::shared_ptr< protocols::cyclic_peptide::DeclareBond > disulf =
 		utility::pointer::shared_ptr< protocols::cyclic_peptide::DeclareBond >(
-				new protocols::cyclic_peptide::DeclareBond() );
+		new protocols::cyclic_peptide::DeclareBond() );
 	disulf->set(
-			pos1, "SG", // res1, atom1
-			pos2, "SG", // res2, atom2
-			true, // add termini
-			false, // run kic
-			0, 0, // kic_res1, kic_res2
-			false ); //rebuild_fold_tree
+		pos1, "SG", // res1, atom1
+		pos2, "SG", // res2, atom2
+		true, // add termini
+		false, // run kic
+		0, 0, // kic_res1, kic_res2
+		false ); //rebuild_fold_tree
 	perm.apply_mover( disulf );
 	return std::pair< core::Size, core::Size >( pos1, pos2 );
 }
@@ -1589,21 +1595,21 @@ ConnectTerminiWithDisulfide::create_cyd_pair( components::StructureData & perm, 
 /// @brief setup kic for simple closure
 void
 ConnectTerminiWithDisulfide::setup_disulf_kic_closure(
-		protocols::generalized_kinematic_closure::GeneralizedKICOP kic,
-		utility::vector1< core::Size > const & loop_residues,
-		std::pair< core::Size, core::Size > const & disulf_pos ) const
+	protocols::generalized_kinematic_closure::GeneralizedKICOP kic,
+	utility::vector1< core::Size > const & loop_residues,
+	std::pair< core::Size, core::Size > const & disulf_pos ) const
 {
 	TR << "Disulfide residues are " << disulf_pos.first << " and " << disulf_pos.second << " loop=" << loop_residues << std::endl;
 	// add pivots to KIC
 	kic->set_pivot_atoms( loop_residues[1], "CA", disulf_pos.first, "SG", loop_residues[loop_residues.size()], "CA" );
 	kic->close_bond( disulf_pos.first, "SG", disulf_pos.second, "SG",
-			disulf_pos.first, "CB", //prioratom
-			disulf_pos.second, "CB", //followingatom
-			2.05, //bondlength
-			103, 103, //angle1, angle2
-			0.0, // torsion
-			false,
-			false );
+		disulf_pos.first, "CB", //prioratom
+		disulf_pos.second, "CB", //followingatom
+		2.05, //bondlength
+		103, 103, //angle1, angle2
+		0.0, // torsion
+		false,
+		false );
 	kic->add_perturber( "randomize_dihedral" );
 
 	utility::vector1 < core::id::NamedAtomID > atomset;
@@ -1642,7 +1648,7 @@ ConnectTerminiWithDisulfide::apply_connection( components::StructureData & perm 
 	set_build_len( perm, build_len(perm)+2 );
 	set_cut_resi( perm, cut_resi(perm)+1 );
 
-	std::pair< utility::vector1< core::Size >, core::Size >	new_loop_residues =
+	std::pair< utility::vector1< core::Size >, core::Size > new_loop_residues =
 		compute_loop_residues( perm );
 
 	// create CYD pair
@@ -1665,10 +1671,10 @@ ConnectTerminiWithDisulfide::apply_connection( components::StructureData & perm 
 /// @brief setup kic for simple closure
 void
 ConnectTerminiWithDisulfide::setup_kic_closure(
-		components::StructureData const &,
-		protocols::generalized_kinematic_closure::GeneralizedKICOP,
-		utility::vector1< core::Size > const &,
-		core::Size const ) const
+	components::StructureData const &,
+	protocols::generalized_kinematic_closure::GeneralizedKICOP,
+	utility::vector1< core::Size > const &,
+	core::Size const ) const
 {
 }
 
@@ -1710,11 +1716,11 @@ calc_approx_loop_length( std::string const & abego )
 
 /// @brief compares desired insert ss and abego to pose values, returns number of mismatches
 core::Size compare_insert_ss_and_abego(
-		std::string const & pose_ss,
-		utility::vector1< std::string > const & pose_abego,
-		std::string const & build_ss,
-		utility::vector1< std::string > const & build_abego,
-		core::Size const left )
+	std::string const & pose_ss,
+	utility::vector1< std::string > const & pose_abego,
+	std::string const & build_ss,
+	utility::vector1< std::string > const & build_abego,
+	core::Size const left )
 {
 	core::Size mismatches = 0;
 	TR.Debug << "Going to compare " << pose_ss << " left=" << left << " with " << build_ss << std::endl;
@@ -1723,8 +1729,8 @@ core::Size compare_insert_ss_and_abego(
 		bool broken = pose_ss[i+left-2] != build_ss[i-1];
 		// H is acceptable in loops almost always, so I allow it here
 		/*if ( ( pose_ss[i+left-2] == 'H' ) && ( build_ss[i-1] == 'L' ) ) {
-			broken = false;
-			}*/
+		broken = false;
+		}*/
 		// E is also acceptable in loops almost always, so it's also allowed.
 		if ( ( pose_ss[i+left-2] == 'E' ) && ( build_ss[i-1] == 'L' ) ) {
 			broken = false;
@@ -1741,11 +1747,11 @@ core::Size compare_insert_ss_and_abego(
 }
 
 bool check_insert_ss_and_abego(
-		std::string const & pose_ss,
-		utility::vector1< std::string > const & pose_abego,
-		std::string const & build_ss,
-		utility::vector1< std::string > const & build_abego,
-		core::Size const left )
+	std::string const & pose_ss,
+	utility::vector1< std::string > const & pose_abego,
+	std::string const & build_ss,
+	utility::vector1< std::string > const & build_abego,
+	core::Size const left )
 {
 	if ( compare_insert_ss_and_abego( pose_ss, pose_abego, build_ss, build_abego, left ) ) {
 		return false;

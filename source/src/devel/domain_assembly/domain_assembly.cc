@@ -89,13 +89,13 @@ using namespace chemical;
 
 // protocol specific options
 // namespace DomainAssembly{
-// 	//FileOptionKey const da_setup_option_file( "DomainAssembly::da_setup_option_file" );
-// 	//FileOptionKey const da_setup_output_pdb( "DomainAssembly::da_setup_output_pdb" );
+//  //FileOptionKey const da_setup_option_file( "DomainAssembly::da_setup_option_file" );
+//  //FileOptionKey const da_setup_output_pdb( "DomainAssembly::da_setup_output_pdb" );
 //   FileOptionKey const da_start_pdb( "DomainAssembly::da_start_pdb" );
-// 	FileOptionKey const da_linker_file( "DomainAssembly::da_linker_file" );
-// 	IntegerOptionKey const da_start_pdb_num( "DomainAssembly::da_start_pdb_num" );
-// 	IntegerOptionKey const da_nruns( "DomainAssembly::da_nruns" );
-// 	FileOptionKey const da_setup_output_pdb( "DomainAssembly::da_setup_output_pdb" );
+//  FileOptionKey const da_linker_file( "DomainAssembly::da_linker_file" );
+//  IntegerOptionKey const da_start_pdb_num( "DomainAssembly::da_start_pdb_num" );
+//  IntegerOptionKey const da_nruns( "DomainAssembly::da_nruns" );
+//  FileOptionKey const da_setup_output_pdb( "DomainAssembly::da_setup_output_pdb" );
 // }
 
 namespace devel {
@@ -108,7 +108,7 @@ read_movemap_from_da_linker_file()
 	std::string filename_linkers = option[ OptionKeys::DomainAssembly::da_linker_file ]();
 	utility::vector1< std::pair < Size, Size > >  linker_ranges;
 	read_linker_file( filename_linkers, linker_ranges );
-  kinematics::MoveMapOP mm( new kinematics::MoveMap );
+	kinematics::MoveMapOP mm( new kinematics::MoveMap );
 	set_movemap_for_linkers ( linker_ranges, mm );
 	return mm;
 }
@@ -118,47 +118,47 @@ read_movemap_from_da_linker_file()
 ///  Each line of the file should have the start and end position for a linker region
 bool
 read_linker_file(
-  std::string const & filename,
+	std::string const & filename,
 	utility::vector1< std::pair < Size, Size > > & linker_ranges
 )
 {
 	utility::io::izstream data( filename );
-  if ( !data ) {
+	if ( !data ) {
 		std::cerr << " can not open linker file: " << filename << std::endl;
-    return false;
-  }
+		return false;
+	}
 
 	std::string line;
-  while ( getline( data, line ) ) {
+	while ( getline( data, line ) ) {
 		std::istringstream line_stream( line );
-    Size begin, end;
-    line_stream >> begin >> end;
-    if ( line_stream.fail() ) {
+		Size begin, end;
+		line_stream >> begin >> end;
+		if ( line_stream.fail() ) {
 			std::cout << " can not parse line in linker file: " << line << std::endl;
-      return false;
-    }
+			return false;
+		}
 		std::pair < Size, Size > range ( begin, end );
 		linker_ranges.push_back( range );
-  }
-  data.close();
-  data.clear();
-  return true;
+	}
+	data.close();
+	data.clear();
+	return true;
 }
 
 /// @brief function that parses the rna regions specified into a boolean array to be used by a RNA Fragment Mover Object
 ObjexxFCL::FArray1D_bool
 set_moveable_rna(
-  pose::Pose & full_pose,
-  utility::vector1< std::pair < Size, Size > > & linker_rna
+	pose::Pose & full_pose,
+	utility::vector1< std::pair < Size, Size > > & linker_rna
 )
 {
 	//FArray1D used to maintain RNA_FragmentMover compatability with other RNA protocols
 	ObjexxFCL::FArray1D_bool moveable_rna(full_pose.total_residue(), false);
-	for( Size i = 1; i <= full_pose.total_residue(); ++i){
-		if( full_pose.residue_type(i).is_RNA() ){
+	for ( Size i = 1; i <= full_pose.total_residue(); ++i ) {
+		if ( full_pose.residue_type(i).is_RNA() ) {
 			//If the residue is RNA and a linker range, set it as moveable, otherwise it will remain immobile
-			for( Size ii = 1; ii <= linker_rna.size(); ++ii){
-				if( i >= linker_rna[ii].first && i <= linker_rna[ii].second ){
+			for ( Size ii = 1; ii <= linker_rna.size(); ++ii ) {
+				if ( i >= linker_rna[ii].first && i <= linker_rna[ii].second ) {
 					moveable_rna(i) = true;
 					//If it's true for one linker range don't bother testing the following ranges
 					break;
@@ -173,8 +173,8 @@ set_moveable_rna(
 /// @brief sets movemap true for regions specified in linker file
 void
 set_movemap_for_linkers(
-  utility::vector1< std::pair < Size, Size > > const & linker_ranges,
-  kinematics::MoveMapOP & mm
+	utility::vector1< std::pair < Size, Size > > const & linker_ranges,
+	kinematics::MoveMapOP & mm
 )
 {
 	for ( Size i = 1; i <= linker_ranges.size(); ++i ) {
@@ -189,11 +189,11 @@ set_movemap_for_linkers(
 /// @brief centroid mode optimization of linkers
 void
 optimize_linkers_centroid_mode(
-  kinematics::MoveMapOP & mm,
+	kinematics::MoveMapOP & mm,
 	pose::Pose & full_pose
-	)
+)
 {
-	//	Size inside_steps_stage1 ( 200 );
+	// Size inside_steps_stage1 ( 200 );
 	//Size outside_steps_stage1 ( 10 );
 	//Size inside_steps_stage2 ( 100 );
 	//Size outside_steps_stage2 ( 5 );
@@ -210,7 +210,7 @@ optimize_linkers_centroid_mode(
 
 	// read fragments file
 	core::fragment::ConstantLengthFragSetOP fragset3mer = NULL;
-	if (basic::options::option[ basic::options::OptionKeys::in::file::frag3].user()){
+	if ( basic::options::option[ basic::options::OptionKeys::in::file::frag3].user() ) {
 		fragset3mer = core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( 3 ) );
 		fragset3mer->read_fragment_file( basic::options::option[ basic::options::OptionKeys::in::file::frag3 ]() );
 	}
@@ -270,8 +270,8 @@ optimize_linkers_centroid_mode(
 ///residues near linkers and domain interfaces for repacking
 void
 da_residues_to_repack(
-  kinematics::MoveMapOP & mm,
-  utility::vector1< std::pair < Size, Size > > & nearest_movable_residues,
+	kinematics::MoveMapOP & mm,
+	utility::vector1< std::pair < Size, Size > > & nearest_movable_residues,
 	pose::Pose & pose,
 	utility::vector1<bool> & repack_residues
 )
@@ -308,8 +308,8 @@ da_residues_to_repack(
 /// in the input movemap)
 void
 find_nearest_movable_residues(
-  kinematics::MoveMapOP & mm,
-  pose::Pose & pose,
+	kinematics::MoveMapOP & mm,
+	pose::Pose & pose,
 	utility::vector1< std::pair < Size, Size > > & nearest_movable_residues
 )
 {
@@ -337,7 +337,7 @@ find_nearest_movable_residues(
 
 void
 optimize_linkers_fullatom_mode(
-  kinematics::MoveMapOP & mm,
+	kinematics::MoveMapOP & mm,
 	pose::Pose & full_pose
 )
 {
@@ -364,10 +364,10 @@ optimize_linkers_fullatom_mode(
 	MonteCarloOP mc( new MonteCarlo( full_pose, *scorefxn, 0.8 /*temperature*/ ) );
 
 	// MOVER: small moves
-  protocols::simple_moves::SmallMoverOP small_mover( new protocols::simple_moves::SmallMover( mm, 0.8/*temp*/, 1 ) );
-  small_mover->angle_max( 'H', 2.0 );
-  small_mover->angle_max( 'E', 3.0 );
-  small_mover->angle_max( 'L', 4.0 );
+	protocols::simple_moves::SmallMoverOP small_mover( new protocols::simple_moves::SmallMover( mm, 0.8/*temp*/, 1 ) );
+	small_mover->angle_max( 'H', 2.0 );
+	small_mover->angle_max( 'E', 3.0 );
+	small_mover->angle_max( 'L', 4.0 );
 
 	// MOVER: rotamer trials
 	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn, *base_packer_task, mc, 0.01 /*energycut*/ ) );
@@ -427,7 +427,7 @@ optimize_linkers_fullatom_mode(
 
 void
 optimize_linkers_rna_fullatom_mode(
-  kinematics::MoveMapOP & mm,
+	kinematics::MoveMapOP & mm,
 	pose::Pose & full_pose,
 	protocols::farna::RNA_FragmentsOP & all_rna_fragments,
 	utility::vector1< std::pair< Size, Size > > linker_rna
@@ -466,7 +466,7 @@ optimize_linkers_rna_fullatom_mode(
 	// Create a rna fragment mover, set its fragsize, and then do an initialization move
 	RNA_FragmentMoverOP rna_fragment_mover = RNA_FragmentMoverOP( new RNA_FragmentMover( all_rna_fragments, set_moveable_rna( full_pose, linker_rna), full_pose ) );
 	rna_fragment_mover -> set_frag_size( Size(1) );
-	for( Size i = 1; i <= rna_normalize_step; ++i){
+	for ( Size i = 1; i <= rna_normalize_step; ++i ) {
 		rna_fragment_mover -> apply(full_pose);
 		mc_nocont -> boltzmann( full_pose, "frag" + SS( Size(1) ));
 	}
@@ -482,10 +482,10 @@ optimize_linkers_rna_fullatom_mode(
 	MonteCarloOP mc( new MonteCarlo( full_pose, *scorefxn_cont, 0.8) );
 
 	// MOVER: small moves
-  protocols::simple_moves::SmallMoverOP small_mover( new protocols::simple_moves::SmallMover( mm, 0.8, 1 ) );
-  small_mover->angle_max( 'H', 2.0 );
-  small_mover->angle_max( 'E', 4.0 );
-  small_mover->angle_max( 'L', 4.0 );
+	protocols::simple_moves::SmallMoverOP small_mover( new protocols::simple_moves::SmallMover( mm, 0.8, 1 ) );
+	small_mover->angle_max( 'H', 2.0 );
+	small_mover->angle_max( 'E', 4.0 );
+	small_mover->angle_max( 'L', 4.0 );
 
 	// MOVER: rotamer trials
 	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn_cont, *base_packer_task, mc, 0.01 ) );
@@ -499,14 +499,14 @@ optimize_linkers_rna_fullatom_mode(
 	coarse_small_mover->angle_max( 'E', 180.0 );
 	coarse_small_mover->angle_max( 'L', 180.0 );
 
-		// MOVER: coarse small moves
+	// MOVER: coarse small moves
 	protocols::simple_moves::SmallMoverOP semi_small_mover( new protocols::simple_moves::SmallMover( mm, 0.8, 1 ) );
 	semi_small_mover->angle_max( 'H', 45.0 );  // max angle displacement 180 degrees
 	semi_small_mover->angle_max( 'E', 45.0 );
 	semi_small_mover->angle_max( 'L', 45.0 );
 
 
-		//// STAGE 1 ////
+	//// STAGE 1 ////
 	min_mover -> apply( full_pose );
 	SequenceMoverOP stage1_seq( new SequenceMover );
 	stage1_seq -> add_mover( coarse_small_mover );
@@ -595,7 +595,7 @@ optimize_linkers_rna_fullatom_mode(
 
 	std::cout << "   Current  Low " << std::endl;
 	for ( Size i = 1; i <= outside_steps_stage1; ++i ) {
-	  stage4_inner_loop -> apply( full_pose );
+		stage4_inner_loop -> apply( full_pose );
 		utility::vector1<bool> repack_residues( full_pose.total_residue(), false );
 		da_residues_to_repack( mm, nearest_movable_residues, full_pose, repack_residues );
 		pack::task::PackerTaskOP this_packer_task( base_packer_task->clone() );
@@ -618,29 +618,29 @@ void
 assemble_domains_optimize()
 {
 	pose::Pose full_pose, start_pose;
-  std::string filename_start = option[ OptionKeys::DomainAssembly::da_start_pdb ]();
+	std::string filename_start = option[ OptionKeys::DomainAssembly::da_start_pdb ]();
 	core::import_pose::pose_from_pdb( start_pose, filename_start );
 	RNA_FragmentsOP all_rna_fragments;
 	utility::vector1< std::pair < Size, Size > > linker_ranges_rna;
 	full_pose = start_pose;
 	std::string filename_linkers_rna = option[ OptionKeys::DomainAssembly::da_linker_file_rna]();
 	//If a rna linker file is passed, fill the fragment library and the rna linker ranges
-	if( filename_linkers_rna != "--" ) {
+	if ( filename_linkers_rna != "--" ) {
 		all_rna_fragments = RNA_FragmentsOP( new FullAtomRNA_Fragments( basic::database::full_name("sampling/rna/1jj2.torsions"  ) ) );
 		read_linker_file( filename_linkers_rna, linker_ranges_rna);
 	}
 
 	// read in linkers and set move map true for linker regions
-  kinematics::MoveMapOP mm = read_movemap_from_da_linker_file();
+	kinematics::MoveMapOP mm = read_movemap_from_da_linker_file();
 
 	int nruns = option[ OptionKeys::DomainAssembly::da_nruns ];
 	int start_pdb_num = option[ OptionKeys::DomainAssembly::da_start_pdb_num ];
 
-	for( int i = 0; i < nruns; ++i ){
+	for ( int i = 0; i < nruns; ++i ) {
 		using namespace std;
 		full_pose = start_pose;
 		//IMPORTANT: If your start structure contains RNA, even if it is immobile, you must specify a rna linker file.  For immobile just point to an empty file
-		if( filename_linkers_rna == "--"  ){
+		if ( filename_linkers_rna == "--"  ) {
 			//TR << " --------- Centroid mode optimization -------------------- " << std::endl;
 			optimize_linkers_centroid_mode( mm, full_pose );
 			//ostringstream outputfilename;
@@ -648,7 +648,7 @@ assemble_domains_optimize()
 			//full_pose.dump_pdb( outputfilename.str() );
 			//TR << " ---------- Fullatom mode optimization -------------------- " << std::endl;
 			optimize_linkers_fullatom_mode( mm, full_pose );
-		}else{
+		} else {
 			optimize_linkers_rna_fullatom_mode( mm, full_pose, all_rna_fragments, linker_ranges_rna );
 		}
 

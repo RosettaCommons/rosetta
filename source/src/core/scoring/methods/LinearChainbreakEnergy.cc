@@ -48,159 +48,160 @@ namespace methods {
 using core::Size;
 static thread_local basic::Tracer tr( "core.scoring.LinearChainbreak", basic::t_info );
 
-  LinearChainbreakEnergy::LinearChainbreakEnergy()
-    : parent(methods::EnergyMethodCreatorOP( new LinearChainbreakEnergyCreator )) {
-    initialize( std::numeric_limits<core::Size>::max() );
-  }
+LinearChainbreakEnergy::LinearChainbreakEnergy()
+: parent(methods::EnergyMethodCreatorOP( new LinearChainbreakEnergyCreator )) {
+	initialize( std::numeric_limits<core::Size>::max() );
+}
 
-  LinearChainbreakEnergy::LinearChainbreakEnergy(Size allowable_sequence_sep)
-    : parent(methods::EnergyMethodCreatorOP( new LinearChainbreakEnergyCreator )) {
-    initialize(allowable_sequence_sep);
-  }
+LinearChainbreakEnergy::LinearChainbreakEnergy(Size allowable_sequence_sep)
+: parent(methods::EnergyMethodCreatorOP( new LinearChainbreakEnergyCreator )) {
+	initialize(allowable_sequence_sep);
+}
 
-  LinearChainbreakEnergy::LinearChainbreakEnergy(const LinearChainbreakEnergy& o)
-    : parent(o) {
-    // assignment to non-cache-related variables
-    allowable_sequence_sep_ = o.allowable_sequence_sep_;
+LinearChainbreakEnergy::LinearChainbreakEnergy(const LinearChainbreakEnergy& o)
+: parent(o) {
+	// assignment to non-cache-related variables
+	allowable_sequence_sep_ = o.allowable_sequence_sep_;
 
-    // assign cache-related variables to their default values. this will trigger
-    // a cache miss on their first use, but greatly simplifies the design and
-    // improves reasoning about code paths in the event of copying/cloning
-    shortest_paths_.reset();
-    previous_hash_value_ = 0;
-  }
+	// assign cache-related variables to their default values. this will trigger
+	// a cache miss on their first use, but greatly simplifies the design and
+	// improves reasoning about code paths in the event of copying/cloning
+	shortest_paths_.reset();
+	previous_hash_value_ = 0;
+}
 
-  LinearChainbreakEnergy& LinearChainbreakEnergy::operator=(const LinearChainbreakEnergy& o) {
-    if (this != &o) {
-      // base class assignments
-      parent::operator=(o);
+LinearChainbreakEnergy& LinearChainbreakEnergy::operator=(const LinearChainbreakEnergy& o) {
+	if ( this != &o ) {
+		// base class assignments
+		parent::operator=(o);
 
-      // assignment to non-cache-related variables
-      allowable_sequence_sep_ = o.allowable_sequence_sep_;
+		// assignment to non-cache-related variables
+		allowable_sequence_sep_ = o.allowable_sequence_sep_;
 
-      // assign cache-related variables to their default values. this will trigger
-      // a cache miss on their first use, but greatly simplifies the design and
-      // improves reasoning about code paths in the event of copying/cloning
-      shortest_paths_.reset();
-      previous_hash_value_ = 0;
-    }
-    return *this;
-  }
+		// assign cache-related variables to their default values. this will trigger
+		// a cache miss on their first use, but greatly simplifies the design and
+		// improves reasoning about code paths in the event of copying/cloning
+		shortest_paths_.reset();
+		previous_hash_value_ = 0;
+	}
+	return *this;
+}
 
-  LinearChainbreakEnergy::~LinearChainbreakEnergy() {}
+LinearChainbreakEnergy::~LinearChainbreakEnergy() {}
 
-  void LinearChainbreakEnergy::initialize(Size allowable_sequence_sep) {
-    allowable_sequence_sep_ = allowable_sequence_sep;
-    previous_hash_value_ = 0;
-    shortest_paths_.reset();
-  }
+void LinearChainbreakEnergy::initialize(Size allowable_sequence_sep) {
+	allowable_sequence_sep_ = allowable_sequence_sep;
+	previous_hash_value_ = 0;
+	shortest_paths_.reset();
+}
 
 core::Real LinearChainbreakEnergy::do_score_dev(const core::conformation::Residue& lower_rsd,
-                                                const core::conformation::Residue& upper_rsd,
-                                                const core::Size nbb) const {
-  // virtual N and CA on lower_rsd (OVL1 and OVL2) and a virtual C on upper_rsd "OVU1"
-  return (upper_rsd.atom(upper_rsd.mainchain_atoms()[1]).xyz().distance(lower_rsd.atom("OVL1").xyz()) +
-          upper_rsd.atom(upper_rsd.mainchain_atoms()[2]).xyz().distance(lower_rsd.atom("OVL2").xyz()) +
-          lower_rsd.atom(lower_rsd.mainchain_atoms()[nbb]).xyz().distance(upper_rsd.atom("OVU1").xyz()));
+	const core::conformation::Residue& upper_rsd,
+	const core::Size nbb) const {
+	// virtual N and CA on lower_rsd (OVL1 and OVL2) and a virtual C on upper_rsd "OVU1"
+	return (upper_rsd.atom(upper_rsd.mainchain_atoms()[1]).xyz().distance(lower_rsd.atom("OVL1").xyz()) +
+		upper_rsd.atom(upper_rsd.mainchain_atoms()[2]).xyz().distance(lower_rsd.atom("OVL2").xyz()) +
+		lower_rsd.atom(lower_rsd.mainchain_atoms()[nbb]).xyz().distance(upper_rsd.atom("OVU1").xyz()));
 }
 
 core::Real LinearChainbreakEnergy::do_score_ovp(const core::conformation::Residue& lower_rsd,
-                                                const core::conformation::Residue& upper_rsd,
-                                                const core::Size nbb,
-                                                const core::Size cutpoint,
-                                                const core::pose::Pose& pose) const {
-  using core::id::AtomID;
-  using core::kinematics::Stub;
+	const core::conformation::Residue& upper_rsd,
+	const core::Size nbb,
+	const core::Size cutpoint,
+	const core::pose::Pose& pose) const {
+	using core::id::AtomID;
+	using core::kinematics::Stub;
 
-  // now compute the overlap score: this is done by comparing the stub   (lower side )  C, | N, CA (upper side)
-  // the stub for the lower_rsd is already in the atom-tree at atom "OVL2 == CA*"
-  Stub lower_stub(pose.conformation().atom_tree().atom(AtomID(pose.residue(cutpoint).atom_index("OVL2"), cutpoint)).get_stub());
+	// now compute the overlap score: this is done by comparing the stub   (lower side )  C, | N, CA (upper side)
+	// the stub for the lower_rsd is already in the atom-tree at atom "OVL2 == CA*"
+	Stub lower_stub(pose.conformation().atom_tree().atom(AtomID(pose.residue(cutpoint).atom_index("OVL2"), cutpoint)).get_stub());
 
-  // the upper stub... let's just compute it for now...
-  // could be gained from AtomID( NamedAtomID( "OVU1", cutpoint+1 ).get_stub()
-  // and then the correct reversal...
-  Stub upper_stub(upper_rsd.atom(upper_rsd.mainchain_atoms()[2]).xyz(),  // CA
-                  upper_rsd.atom(upper_rsd.mainchain_atoms()[1]).xyz(),  // N
-                  upper_rsd.atom("OVU1" ).xyz());                        // virtual C
+	// the upper stub... let's just compute it for now...
+	// could be gained from AtomID( NamedAtomID( "OVU1", cutpoint+1 ).get_stub()
+	// and then the correct reversal...
+	Stub upper_stub(upper_rsd.atom(upper_rsd.mainchain_atoms()[2]).xyz(),  // CA
+		upper_rsd.atom(upper_rsd.mainchain_atoms()[1]).xyz(),  // N
+		upper_rsd.atom("OVU1" ).xyz());                        // virtual C
 
-  //for double-checking... ( debug )
-  Stub manual_lower_stub(lower_rsd.atom("OVL2").xyz(),                                         // virtual CA
-                                     lower_rsd.atom("OVL1").xyz(),                             // virtual N
-                                     lower_rsd.atom(lower_rsd.mainchain_atoms()[nbb]).xyz());  // C
+	//for double-checking... ( debug )
+	Stub manual_lower_stub(lower_rsd.atom("OVL2").xyz(),                                         // virtual CA
+		lower_rsd.atom("OVL1").xyz(),                             // virtual N
+		lower_rsd.atom(lower_rsd.mainchain_atoms()[nbb]).xyz());  // C
 
-  if (distance(lower_stub, manual_lower_stub) > 0.01)
-    tr.Warning << "WARNING: mismatch between manual computed and atom-tree stub: "
-               << lower_stub << " " << manual_lower_stub << std::endl;
+	if ( distance(lower_stub, manual_lower_stub) > 0.01 ) {
+		tr.Warning << "WARNING: mismatch between manual computed and atom-tree stub: "
+			<< lower_stub << " " << manual_lower_stub << std::endl;
+	}
 
-  return
-      manual_lower_stub.M.col_x().distance(upper_stub.M.col_x()) +
-      manual_lower_stub.M.col_y().distance(upper_stub.M.col_y()) +
-      manual_lower_stub.M.col_z().distance(upper_stub.M.col_z());
+	return
+		manual_lower_stub.M.col_x().distance(upper_stub.M.col_x()) +
+		manual_lower_stub.M.col_y().distance(upper_stub.M.col_y()) +
+		manual_lower_stub.M.col_z().distance(upper_stub.M.col_z());
 }
 
-  /// called at the end of energy evaluation
-  /// In this case (LinearChainbreakEnergy), all the calculation is done here
-  void LinearChainbreakEnergy::finalize_total_energy(pose::Pose& pose,
-                                                     ScoreFunction const &,
-                                                     EnergyMap& totals) const {
-    using core::Size;
-    using conformation::Residue;
-    using core::kinematics::FoldTree;
-    using core::kinematics::ShortestPathInFoldTree;
-    using utility::vector1;
+/// called at the end of energy evaluation
+/// In this case (LinearChainbreakEnergy), all the calculation is done here
+void LinearChainbreakEnergy::finalize_total_energy(pose::Pose& pose,
+	ScoreFunction const &,
+	EnergyMap& totals) const {
+	using core::Size;
+	using conformation::Residue;
+	using core::kinematics::FoldTree;
+	using core::kinematics::ShortestPathInFoldTree;
+	using utility::vector1;
 
-    Real total_dev = 0.0;
-    Real total_ovp = 0.0;
+	Real total_dev = 0.0;
+	Real total_ovp = 0.0;
 
-    // Cached ShortestPathInFoldTree instance is invalid and must be recomputed
-    const FoldTree& tree = pose.fold_tree();
-    size_t hash_value = tree.hash_value();
-    if (!shortest_paths_.get() || previous_hash_value_ != hash_value) {
-      shortest_paths_.reset(new ShortestPathInFoldTree(tree));
-      previous_hash_value_ = hash_value;
-    }
+	// Cached ShortestPathInFoldTree instance is invalid and must be recomputed
+	const FoldTree& tree = pose.fold_tree();
+	size_t hash_value = tree.hash_value();
+	if ( !shortest_paths_.get() || previous_hash_value_ != hash_value ) {
+		shortest_paths_.reset(new ShortestPathInFoldTree(tree));
+		previous_hash_value_ = hash_value;
+	}
 
-    // Identify all cutpoint variants defined by the caller
-    vector1<int> cutpoints;
-    find_cutpoint_variants(pose, tree, &cutpoints);
+	// Identify all cutpoint variants defined by the caller
+	vector1<int> cutpoints;
+	find_cutpoint_variants(pose, tree, &cutpoints);
 
-    for (Size i = 1; i <= cutpoints.size(); ++i) {
-      const int cutpoint = cutpoints[i];
-      const Residue& lower_rsd = pose.residue(cutpoint);
-      const Residue& upper_rsd = pose.residue(cutpoint + 1);
-      const Size nbb = lower_rsd.mainchain_atoms().size();
+	for ( Size i = 1; i <= cutpoints.size(); ++i ) {
+		const int cutpoint = cutpoints[i];
+		const Residue& lower_rsd = pose.residue(cutpoint);
+		const Residue& upper_rsd = pose.residue(cutpoint + 1);
+		const Size nbb = lower_rsd.mainchain_atoms().size();
 
-      if (!lower_rsd.has_variant_type(core::chemical::CUTPOINT_LOWER) ||
-          !upper_rsd.has_variant_type(core::chemical::CUTPOINT_UPPER)) {
-        continue;
-      }
+		if ( !lower_rsd.has_variant_type(core::chemical::CUTPOINT_LOWER) ||
+				!upper_rsd.has_variant_type(core::chemical::CUTPOINT_UPPER) ) {
+			continue;
+		}
 
-      // Determine whether the separation between <lowed_rsd> and <upper_rsd>,
-      // as computed by ShortestPathInFoldTree, exceeds the current allowable
-      // sequence separation
-      const Size separation = shortest_paths_->dist(cutpoint, cutpoint + 1);
-      if (separation > allowable_sequence_sep_) {
-        tr.Trace << "Chainbreak skipped-- "
-                 << separation << " > " << allowable_sequence_sep_
-                 << std::endl;
-        continue;
-      }
+		// Determine whether the separation between <lowed_rsd> and <upper_rsd>,
+		// as computed by ShortestPathInFoldTree, exceeds the current allowable
+		// sequence separation
+		const Size separation = shortest_paths_->dist(cutpoint, cutpoint + 1);
+		if ( separation > allowable_sequence_sep_ ) {
+			tr.Trace << "Chainbreak skipped-- "
+				<< separation << " > " << allowable_sequence_sep_
+				<< std::endl;
+			continue;
+		}
 
-      // Scoring
-      total_dev += do_score_dev(lower_rsd, upper_rsd, nbb);
-      total_ovp += do_score_ovp(lower_rsd, upper_rsd, nbb, cutpoint, pose);
-    }
+		// Scoring
+		total_dev += do_score_dev(lower_rsd, upper_rsd, nbb);
+		total_ovp += do_score_ovp(lower_rsd, upper_rsd, nbb, cutpoint, pose);
+	}
 
-   debug_assert(std::abs(totals[linear_chainbreak]) < 1e-3 );
-    totals[linear_chainbreak] = total_dev / 3.0;  // average over 3 distances
-    totals[overlap_chainbreak] = total_ovp;
-  }
+	debug_assert(std::abs(totals[linear_chainbreak]) < 1e-3 );
+	totals[linear_chainbreak] = total_dev / 3.0;  // average over 3 distances
+	totals[overlap_chainbreak] = total_ovp;
+}
 
 
 /// called during gradient-based minimization inside dfunc
 /**
-   F1 and F2 are not zeroed -- contributions from this atom are
-   just summed in
+F1 and F2 are not zeroed -- contributions from this atom are
+just summed in
 **/
 void LinearChainbreakEnergy::eval_atom_derivative(
 	id::AtomID const & id,
@@ -211,77 +212,77 @@ void LinearChainbreakEnergy::eval_atom_derivative(
 	Vector & F1,
 	Vector & F2
 ) const {
-		using namespace basic::options;
-		using namespace basic::options::OptionKeys;
-		using core::Size;
-		using conformation::Residue;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using core::Size;
+	using conformation::Residue;
 
-		// This method is called on a per-residue basis, which means that we could
-		// be looking at a residue with no cutpoint variants, a lower cutpoint
-		// variant, or an upper cutpoint variant. This method must address both
-		// possibilities.
+	// This method is called on a per-residue basis, which means that we could
+	// be looking at a residue with no cutpoint variants, a lower cutpoint
+	// variant, or an upper cutpoint variant. This method must address both
+	// possibilities.
 
-		// CASE 1: left-hand side of chainbreak (CUTPOINT_LOWER)
-		Size const residue = id.rsd();
-		if ( is_lower_cutpoint(residue,pose) ) {
-			Residue const & lower_rsd( pose.residue(residue));
-			Residue const & upper_rsd( pose.residue(residue + 1));
-			Vector const & xyz_moving( pose.xyz( id ) );
+	// CASE 1: left-hand side of chainbreak (CUTPOINT_LOWER)
+	Size const residue = id.rsd();
+	if ( is_lower_cutpoint(residue,pose) ) {
+		Residue const & lower_rsd( pose.residue(residue));
+		Residue const & upper_rsd( pose.residue(residue + 1));
+		Vector const & xyz_moving( pose.xyz( id ) );
 
-			bool match( true );
-			Vector xyz_fixed;
-			Size const nbb( lower_rsd.mainchain_atoms().size() );
-			if ( id.atomno() == lower_rsd.mainchain_atoms()[nbb] ) {
-				xyz_fixed = upper_rsd.atom( "OVU1" ).xyz();
-			} else if ( lower_rsd.atom_name( id.atomno() ) == "OVL1" ) {
-				xyz_fixed = upper_rsd.atom( upper_rsd.mainchain_atoms()[1] ).xyz();
-			} else if ( lower_rsd.atom_name( id.atomno() ) == "OVL2" ) {
-				xyz_fixed = upper_rsd.atom( upper_rsd.mainchain_atoms()[2] ).xyz();
-			} else {
-				match = false;
-			}
-
-			if ( match ) {
-				Vector const f2 ( xyz_moving - xyz_fixed );
-				Real const dist ( f2.length() );
-				if ( dist >= 0.01 ) {	// avoid getting too close to singularity...
-					Real const invdist( 1.0 / dist );
-					F1 += weights[ linear_chainbreak ] * invdist * cross( xyz_moving, xyz_fixed ) / 3;
-					F2 += weights[ linear_chainbreak ] * invdist * ( xyz_moving - xyz_fixed ) / 3;
-				}
-			}
+		bool match( true );
+		Vector xyz_fixed;
+		Size const nbb( lower_rsd.mainchain_atoms().size() );
+		if ( id.atomno() == lower_rsd.mainchain_atoms()[nbb] ) {
+			xyz_fixed = upper_rsd.atom( "OVU1" ).xyz();
+		} else if ( lower_rsd.atom_name( id.atomno() ) == "OVL1" ) {
+			xyz_fixed = upper_rsd.atom( upper_rsd.mainchain_atoms()[1] ).xyz();
+		} else if ( lower_rsd.atom_name( id.atomno() ) == "OVL2" ) {
+			xyz_fixed = upper_rsd.atom( upper_rsd.mainchain_atoms()[2] ).xyz();
+		} else {
+			match = false;
 		}
 
-		// CASE 2: right-hand side of chainbreak (CUTPOINT_UPPER)
-		if (is_upper_cutpoint(residue,pose)) {
-			Residue const & lower_rsd( pose.residue(residue - 1));
-			Residue const & upper_rsd( pose.residue(residue));
-			Vector const & xyz_moving( pose.xyz( id ) );
-
-			bool match( true );
-			Vector xyz_fixed;
-			Size const nbb( lower_rsd.mainchain_atoms().size() );
-			if ( id.atomno() == upper_rsd.mainchain_atoms()[1] ) {
-				xyz_fixed = lower_rsd.atom( "OVL1" ).xyz();
-			} else if ( id.atomno() == upper_rsd.mainchain_atoms()[2] ) {
-				xyz_fixed = lower_rsd.atom( "OVL2" ).xyz();
-			} else if ( upper_rsd.atom_name( id.atomno() ) == "OVU1" ) {
-				xyz_fixed = lower_rsd.atom( lower_rsd.mainchain_atoms()[nbb] ).xyz();
-			} else {
-				match = false;
-			}
-
-			if ( match ) {
-				Vector const f2 ( xyz_moving - xyz_fixed );
-				Real const dist ( f2.length() );
-				if ( dist >= 0.01 ) {	// avoid getting too close to singularity...
-					Real const invdist( 1.0 / dist );
-					F1 += weights[ linear_chainbreak ] * invdist * cross( xyz_moving, xyz_fixed ) / 3;
-					F2 += weights[ linear_chainbreak ] * invdist * ( xyz_moving - xyz_fixed ) / 3;
-				}
+		if ( match ) {
+			Vector const f2 ( xyz_moving - xyz_fixed );
+			Real const dist ( f2.length() );
+			if ( dist >= 0.01 ) { // avoid getting too close to singularity...
+				Real const invdist( 1.0 / dist );
+				F1 += weights[ linear_chainbreak ] * invdist * cross( xyz_moving, xyz_fixed ) / 3;
+				F2 += weights[ linear_chainbreak ] * invdist * ( xyz_moving - xyz_fixed ) / 3;
 			}
 		}
 	}
+
+	// CASE 2: right-hand side of chainbreak (CUTPOINT_UPPER)
+	if ( is_upper_cutpoint(residue,pose) ) {
+		Residue const & lower_rsd( pose.residue(residue - 1));
+		Residue const & upper_rsd( pose.residue(residue));
+		Vector const & xyz_moving( pose.xyz( id ) );
+
+		bool match( true );
+		Vector xyz_fixed;
+		Size const nbb( lower_rsd.mainchain_atoms().size() );
+		if ( id.atomno() == upper_rsd.mainchain_atoms()[1] ) {
+			xyz_fixed = lower_rsd.atom( "OVL1" ).xyz();
+		} else if ( id.atomno() == upper_rsd.mainchain_atoms()[2] ) {
+			xyz_fixed = lower_rsd.atom( "OVL2" ).xyz();
+		} else if ( upper_rsd.atom_name( id.atomno() ) == "OVU1" ) {
+			xyz_fixed = lower_rsd.atom( lower_rsd.mainchain_atoms()[nbb] ).xyz();
+		} else {
+			match = false;
+		}
+
+		if ( match ) {
+			Vector const f2 ( xyz_moving - xyz_fixed );
+			Real const dist ( f2.length() );
+			if ( dist >= 0.01 ) { // avoid getting too close to singularity...
+				Real const invdist( 1.0 / dist );
+				F1 += weights[ linear_chainbreak ] * invdist * cross( xyz_moving, xyz_fixed ) / 3;
+				F2 += weights[ linear_chainbreak ] * invdist * ( xyz_moving - xyz_fixed ) / 3;
+			}
+		}
+	}
+}
 
 /// @brief LinearChainbreak Energy is context independent and thus indicates that no context graphs need to
 /// be maintained by class Energies

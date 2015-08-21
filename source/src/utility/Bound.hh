@@ -174,7 +174,7 @@ public: // Properties
 	Value const &
 	operator ()() const
 	{
-	debug_assert( active_ );
+		debug_assert( active_ );
 		return value_;
 	}
 
@@ -184,7 +184,7 @@ public: // Properties
 	Value const &
 	value() const
 	{
-	debug_assert( active_ );
+		debug_assert( active_ );
 		return value_;
 	}
 

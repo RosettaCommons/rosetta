@@ -46,7 +46,7 @@ EtableOptions::EtableOptions() :
 	using namespace basic::options::OptionKeys;
 	analytic_etable_evaluation = option[ score::analytic_etable_evaluation ];
 	max_dis = option[ score::fa_max_dis ];
-	if( option[ score::no_smooth_etables ] && !option[ score::fa_max_dis ].user() ) {
+	if ( option[ score::no_smooth_etables ] && !option[ score::fa_max_dis ].user() ) {
 		basic::T("core.scoring.etable") << "no_smooth_etables requested and fa_max_dis not specified: using 5.5 as default" << std::endl;
 		max_dis = 5.5;
 	}
@@ -89,11 +89,11 @@ EtableOptions::operator=( EtableOptions const & src )
 bool
 operator < ( EtableOptions const & a, EtableOptions const & b )
 {
-	if      (a.etable_type < b.etable_type )  { return true;  }
-	else if (a.etable_type != b.etable_type ) { return false; }
+	if      ( a.etable_type < b.etable_type )  { return true;  }
+	else if ( a.etable_type != b.etable_type ) { return false; }
 
-	if      (a.analytic_etable_evaluation < b.analytic_etable_evaluation ) { return true; }
-	else if (a.analytic_etable_evaluation != b.analytic_etable_evaluation ) { return false; }
+	if      ( a.analytic_etable_evaluation < b.analytic_etable_evaluation ) { return true; }
+	else if ( a.analytic_etable_evaluation != b.analytic_etable_evaluation ) { return false; }
 
 	if      ( a.max_dis < b.max_dis )  { return true;  }
 	else if ( a.max_dis != b.max_dis ) { return false; }
@@ -162,11 +162,11 @@ void
 EtableOptions::parse_my_tag(
 	utility::tag::TagCOP tag
 ) {
-	if( tag->hasOption( "lj_hbond_OH_donor_dis" )) {
+	if ( tag->hasOption( "lj_hbond_OH_donor_dis" ) ) {
 		lj_hbond_OH_donor_dis = tag->getOption<core::Real>( "lj_hbond_OH_donor_dis" );
 	}
 
-	if( tag->hasOption( "lj_hbond_hdis" )) {
+	if ( tag->hasOption( "lj_hbond_hdis" ) ) {
 		lj_hbond_hdis = tag->getOption<core::Real>( "lj_hbond_hdis" );
 	}
 }

@@ -62,22 +62,22 @@ std::set <std::string> interface;
 core::Size lig_res_num;
 
 bool is_interface_heavyatom(
-		       core::pose::Pose const & pose,
-		       core::pose::Pose const & ,//pose2,
-		       core::Size resno,
-		       core::Size atomno
-		       )
+	core::pose::Pose const & pose,
+	core::pose::Pose const & ,//pose2,
+	core::Size resno,
+	core::Size atomno
+)
 {
-  // ws get residue "key" for set
-  std::ostringstream residuestream;
-  residuestream << pose.pdb_info()->chain(resno) << pose.pdb_info()->number(resno);
-  std::string res_id = residuestream.str();
+	// ws get residue "key" for set
+	std::ostringstream residuestream;
+	residuestream << pose.pdb_info()->chain(resno) << pose.pdb_info()->number(resno);
+	std::string res_id = residuestream.str();
 
-  core::conformation::Residue const & rsd = pose.residue(resno);
+	core::conformation::Residue const & rsd = pose.residue(resno);
 
-  if ( interface.count( res_id ) > 0 ) return rsd.is_protein() && !rsd.atom_is_hydrogen(atomno);
+	if ( interface.count( res_id ) > 0 ) return rsd.is_protein() && !rsd.atom_is_hydrogen(atomno);
 
-  return false;
+	return false;
 }
 
 /// General testing code
@@ -86,53 +86,53 @@ main( int argc, char * argv [] ){
 
 	try{
 
-  NEW_OPT( interface_list, "interface residues", "interface residues" );
-  NEW_OPT( first_structure, "first structure", "-1" );
-  NEW_OPT( second_structure, "comparison structure", "-1" );
+		NEW_OPT( interface_list, "interface residues", "interface residues" );
+		NEW_OPT( first_structure, "first structure", "-1" );
+		NEW_OPT( second_structure, "comparison structure", "-1" );
 
-  devel::init(argc, argv);
+		devel::init(argc, argv);
 
-  std::string const ifilename = option[ interface_list ];
-  if ( ifilename != "" ){
-    std::ifstream ifs(ifilename.c_str(), std::ifstream::in);
-    if (!ifs.is_open()){
-      std::cout<< "Error opening contact list file "<<ifilename<<std::endl;
-      return -100;
-    }
-    std::string intres;
-    while (ifs.good()){
-      ifs >> intres;
-      interface.insert(intres);
-    }
-  }
+		std::string const ifilename = option[ interface_list ];
+		if ( ifilename != "" ) {
+			std::ifstream ifs(ifilename.c_str(), std::ifstream::in);
+			if ( !ifs.is_open() ) {
+				std::cout<< "Error opening contact list file "<<ifilename<<std::endl;
+				return -100;
+			}
+			std::string intres;
+			while ( ifs.good() ) {
+				ifs >> intres;
+				interface.insert(intres);
+			}
+		}
 
-  std::string const structure1 = option[ first_structure ] ;
-  std::string const structure2 = option[ second_structure ] ;
+		std::string const structure1 = option[ first_structure ] ;
+		std::string const structure2 = option[ second_structure ] ;
 
-  TR << "Starting recomputing scores and rmsds" << std::endl;
+		TR << "Starting recomputing scores and rmsds" << std::endl;
 
-  // create pose from pdb
-  pose::Pose pose1;
-  core::import_pose::pose_from_pdb( pose1, structure1 );
-  pose::Pose pose2;
-  core::import_pose::pose_from_pdb( pose2, structure2 );
-
-
-  TR << "Defined interface" << std::endl;
-
-core::Real CA_rms = rmsd_with_super( pose1, pose2, is_protein_CA );
-core::Real heavyatom_rms = rmsd_with_super( pose1, pose2, is_interface_heavyatom );
-
-TR << "All residue rmsd: " << CA_rms << " Interface rmsd: " << heavyatom_rms <<std::endl;
+		// create pose from pdb
+		pose::Pose pose1;
+		core::import_pose::pose_from_pdb( pose1, structure1 );
+		pose::Pose pose2;
+		core::import_pose::pose_from_pdb( pose2, structure2 );
 
 
-TR << "Done computing rmsds" << std::endl;
+		TR << "Defined interface" << std::endl;
 
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
+		core::Real CA_rms = rmsd_with_super( pose1, pose2, is_protein_CA );
+		core::Real heavyatom_rms = rmsd_with_super( pose1, pose2, is_interface_heavyatom );
+
+		TR << "All residue rmsd: " << CA_rms << " Interface rmsd: " << heavyatom_rms <<std::endl;
+
+
+		TR << "Done computing rmsds" << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
-    }
+	}
 
-return 0;
+	return 0;
 
 }

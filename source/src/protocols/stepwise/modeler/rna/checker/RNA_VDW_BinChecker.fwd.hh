@@ -22,9 +22,9 @@ namespace modeler {
 namespace rna {
 namespace checker {
 
-	class RNA_VDW_BinChecker;
-	typedef utility::pointer::shared_ptr< RNA_VDW_BinChecker > RNA_VDW_BinCheckerOP;
-	typedef utility::pointer::shared_ptr< RNA_VDW_BinChecker const > RNA_VDW_BinCheckerCOP;
+class RNA_VDW_BinChecker;
+typedef utility::pointer::shared_ptr< RNA_VDW_BinChecker > RNA_VDW_BinCheckerOP;
+typedef utility::pointer::shared_ptr< RNA_VDW_BinChecker const > RNA_VDW_BinCheckerCOP;
 
 } //checker
 } //rna

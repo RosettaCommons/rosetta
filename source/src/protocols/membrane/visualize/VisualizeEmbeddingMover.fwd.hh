@@ -6,13 +6,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	    protocols/membrane/VisualizeEmbeddingMoverCreator.hh
+/// @file     protocols/membrane/VisualizeEmbeddingMoverCreator.hh
 /// @brief      Visualize Embedding normal and center with Virtual Residues
 /// @details    Add a set of virtual residues as an additional chain to the
-///				membrane pose. This tool is strictly for visualization of
-///				the implicit membrane and should not be present in modeling.
-///				Last Modified: 11/20/14
-/// @author		JKLeman (julia.koehler1982@gmail.com)
+///    membrane pose. This tool is strictly for visualization of
+///    the implicit membrane and should not be present in modeling.
+///    Last Modified: 11/20/14
+/// @author  JKLeman (julia.koehler1982@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_visualize_VisualizeEmbeddingMover_fwd_hh
 #define INCLUDED_protocols_membrane_visualize_VisualizeEmbeddingMover_fwd_hh

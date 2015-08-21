@@ -64,8 +64,8 @@ InterfaceHolesFilter::compute( core::pose::Pose const & pose ) const
 	// 8-19-09: this now appears to be done internally by the scoretype. No need to do it myself
 	//core::Size nheavyatoms=0;
 	//for( core::Size i=1; i<= copy_pose.total_residue(); ++i ) {
-	//	nheavyatoms += copy_pose.residue(i).nheavyatoms();
-//	}
+	// nheavyatoms += copy_pose.residue(i).nheavyatoms();
+	// }
 	//delta_holes /= nheavyatoms;
 	return delta_holes;
 }
@@ -76,12 +76,10 @@ bool
 InterfaceHolesFilter::apply( core::pose::Pose const & pose ) const {
 	core::Real const iface_holes( compute( pose ));
 	TR << "delta holes score: " << iface_holes ;
-	if( iface_holes <= threshold_ )
-	{
+	if ( iface_holes <= threshold_ ) {
 		TR<<" passing."<<std::endl;
 		return( true );
-	}
-	else TR<<" failing." << std::endl;
+	} else TR<<" failing." << std::endl;
 	return( false );
 }
 

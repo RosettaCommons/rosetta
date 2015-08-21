@@ -73,8 +73,8 @@ private:
 
 
 	void init(AntibodyInfoOP antibody_info, bool camelid, bool benchmark);
-//    void setup_objects();
-//    void finalize_setup( core::pose::Pose & pose );
+	//    void setup_objects();
+	//    void finalize_setup( core::pose::Pose & pose );
 
 
 	std::string H3_ter_library_filename_;

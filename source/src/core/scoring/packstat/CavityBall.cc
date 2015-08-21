@@ -35,7 +35,7 @@ using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
 CavityBall::CavityBall( int const id, int const sphere,
-		numeric::xyzVector<PackstatReal> const xyz, PackstatReal const r ) :
+	numeric::xyzVector<PackstatReal> const xyz, PackstatReal const r ) :
 	id_(id),
 	sphere_(sphere),
 	cluster_(id),
@@ -73,11 +73,11 @@ CavityBall::CavityBall( int const id, int const sphere,
 }
 
 // bool CavityBall::cmp( CavityBall * a, CavityBall * b ) {
-// 	return a->radius() > b->radius();
+//  return a->radius() > b->radius();
 // }
 //
 // bool CavityBall::overlaps( CavityBall const *b ) const {
-// 	return distto(b) < -0.5;
+//  return distto(b) < -0.5;
 // }
 
 string const CavityBall::str() const {
@@ -94,7 +94,7 @@ string const CavityBall::str() const {
 		<< ' ' << xyz_.x() << ',' << xyz_.y() << ',' << xyz_.z()
 		<< ' ';
 	// for (int ii=1; ii <= (int)big_buried_neighboring_cavity_balls_.size(); ii++) {
-	// 	oss<< big_buried_neighboring_cavity_balls_[ii]->id_ << ' ';
+	//  oss<< big_buried_neighboring_cavity_balls_[ii]->id_ << ' ';
 	// }
 	return oss.str();
 }
@@ -107,39 +107,39 @@ string const CavityBall::hetero_atom_line( int const hetresnum, int const /*chai
 {
 	// string CAV = ObjexxFCL::string_of(cluster_);
 	// if( CAV.size() == 1 ) {
-	// 	CAV = "C0"+CAV;
+	//  CAV = "C0"+CAV;
 	// } else if( CAV.size() == 2 ) {
-	// 	CAV = "C"+CAV;
+	//  CAV = "C"+CAV;
 	// } else {
-	// 	CAV = CAV.substr(0,3);
+	//  CAV = CAV.substr(0,3);
 	// }
 	std::string alpha = "ZYXWVUTSRQPONMLKJIHGFEDCBA";
-	for(int i = 1; i <= 6; ++i) alpha += alpha; // 64 x
+	for ( int i = 1; i <= 6; ++i ) alpha += alpha; // 64 x
 	return "HETATM" + I( 5, ( min( 9999, id_) ) ) + "  V   CAV "+alpha[cluster_-1]
 		+ I( 4, hetresnum ) + "    "
 		+ F( 8, 3, xyz_.x() ) + F( 8, 3, xyz_.y() ) + F( 8, 3, xyz_.z() )
 		+ F( 6, 2, exposed_radius ) + ' ' + F( 5, 2, max(0.1,radius_-radsub) );
-		//+ F( 6, 2, evdw ) + ' ' + F( 5, 2, max(0.1,radius_-radsub) );
+	//+ F( 6, 2, evdw ) + ' ' + F( 5, 2, max(0.1,radius_-radsub) );
 }
 
 
 // int CavityBall::recursive_mark_hole_neighbors( vector1<CavityBall> & holes, int const cluster ) {
-// 	if ( cluster_id_ != -1234 ) {
-// 		return 0;
-// 	}
-// 	cluster_id_ = cluster;
-// 	int count = 1;
-// 	for ( int ii=1; ii<=(int)big_buried_neighboring_cavity_balls_.size(); ii++) {
-// 		/*cerr << "PACKING: add hole "
-// 		     << big_buried_neighboring_cavity_balls_[ii]->id_
-// 		     << " to cluster "
-// 		     << cluster
-// 		     << " base atom "
-// 		     << id_
-// 		     << endl; */
-// 		count += big_buried_neighboring_cavity_balls_[ii]->recursive_mark_hole_neighbors( holes, cluster );
-// 	}
-// 	return count;
+//  if ( cluster_id_ != -1234 ) {
+//   return 0;
+//  }
+//  cluster_id_ = cluster;
+//  int count = 1;
+//  for ( int ii=1; ii<=(int)big_buried_neighboring_cavity_balls_.size(); ii++) {
+//   /*cerr << "PACKING: add hole "
+//        << big_buried_neighboring_cavity_balls_[ii]->id_
+//        << " to cluster "
+//        << cluster
+//        << " base atom "
+//        << id_
+//        << endl; */
+//   count += big_buried_neighboring_cavity_balls_[ii]->recursive_mark_hole_neighbors( holes, cluster );
+//  }
+//  return count;
 // }
 
 

@@ -66,12 +66,12 @@ public:
 	virtual bool finished() const = 0;
 
 	//this is probably obsoleted
-	//	virtual bool ready_for_batch() const = 0;
+	// virtual bool ready_for_batch() const = 0;
 	virtual void initialize() = 0;
 
 	/// @brief old-batches might be outdated and should not be computed anymore
 	/// return true for this query if this is the case for old_batch
- 	virtual bool still_interested( jd2::archive::Batch const& /*old_batch*/ ) const { return true; };
+	virtual bool still_interested( jd2::archive::Batch const& /*old_batch*/ ) const { return true; };
 
 	/// @brief create a new batch with manager().start_new_batch() and manager().finalize_batch();
 	virtual void generate_batch() = 0;
@@ -85,9 +85,9 @@ public:
 
 	/// @brief read 'returned_decoys' from 'batch' into archive.
 	virtual void read_structures(
-     core::io::silent::SilentFileData& returned_decoys,
-		 core::io::silent::SilentFileData& alternative_decoys,
-		 Batch const& batch
+		core::io::silent::SilentFileData& returned_decoys,
+		core::io::silent::SilentFileData& alternative_decoys,
+		Batch const& batch
 	) = 0;
 
 	/// @brief save archive to file .. you can put 'suffix' at end of dirname to save other snapshots than the 'current'
@@ -142,7 +142,7 @@ public:
 	virtual bool finished() const { return true; };
 
 	//obsolet ?
-	//	virtual bool ready_for_batch() const { return false; };
+	// virtual bool ready_for_batch() const { return false; };
 	virtual void initialize() {};
 
 	virtual void generate_batch() = 0;
@@ -165,9 +165,9 @@ public:
 
 	/// @brief helper routine to save decoys properly
 	void save_decoys(
-			std::string const& dirname,
-			std::string const& name,
-			SilentStructs const& decoys
+		std::string const& dirname,
+		std::string const& name,
+		SilentStructs const& decoys
 	);
 
 	void load_decoys(
@@ -189,7 +189,7 @@ public:
 
 	/// @brief SilentFileData contains the new structures belonging to this batch.
 	virtual void read_structures(
-    core::io::silent::SilentFileData&,
+		core::io::silent::SilentFileData&,
 		core::io::silent::SilentFileData& alternative_decoys,
 		Batch const& batch
 	);
@@ -200,12 +200,12 @@ public:
 	core::Size& accepts_since_last_batch() { return accepts_since_last_batch_; };
 	core::Size accepts_since_last_batch() const { return accepts_since_last_batch_; };
 
-	//	core::Size& proposed_since_last_batch() { return accepts_since_last_batch_; };
+	// core::Size& proposed_since_last_batch() { return accepts_since_last_batch_; };
 	core::Size proposed_since_last_batch() const { return proposed_since_last_batch_; };
 	core::Real current_acceptance_ratio() const {
 		return floating_acceptance_ratio_; //will always be upper bound of true acceptance rtio
-		//	statistics_valid() ? floating_acceptance_ratio_ : 1.0;
-		//		return proposed_since_last_batch_ ? 1.0*accepts_since_last_batch_ / proposed_since_last_batch_ : 1.0;
+		// statistics_valid() ? floating_acceptance_ratio_ : 1.0;
+		//  return proposed_since_last_batch_ ? 1.0*accepts_since_last_batch_ / proposed_since_last_batch_ : 1.0;
 	}
 
 	void reset_accept_counter() {
@@ -235,13 +235,13 @@ protected:
 
 	/// @brief call to insert structure at position given by iterator
 	virtual void add_structure_at_position (
-    SilentStructs::iterator iss,
+		SilentStructs::iterator iss,
 		core::io::silent::SilentStructOP new_decoy,
 		core::io::silent::SilentStructOP alternative_decoy
 	);
 
 	virtual void erase_decoy(
- 	  std::string const& tag
+		std::string const& tag
 	);
 
 private:
@@ -250,8 +250,8 @@ private:
 
 	SilentStructs decoys_;
 
-  core::Size accepts_since_last_batch_;
-  core::Size total_accepts_;
+	core::Size accepts_since_last_batch_;
+	core::Size total_accepts_;
 
 	core::Size proposed_since_last_batch_;
 	core::Size total_proposed_;

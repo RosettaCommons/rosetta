@@ -114,7 +114,7 @@ public:
 				"Failed to find a data description (desc) amongst the options pairs listed reading a 'Data' tag in a Job tag.\n A desc option must always be given.\n"
 				"Error:  'pdb' tag given for a non-'startstruct' option in the 'Data' tag of a Job tag.\nProblem encountered for job named 'firstjob'.\n"
 				"Options given:\n"
-				"	(pdb, 1ten.pdb)\n"
+				"\t(pdb, 1ten.pdb)\n"
 				"Thrown from protocols::jd2::JD2ResourceManagerJobInputter::parse_job_tag\n";
 			if ( e.msg() != expected_error ) {
 				std::cout << "expected error: '" << expected_error << "'" << std::endl;
@@ -150,7 +150,7 @@ public:
 				"Failed to find a resource name or a pdb name reading a 'Data' tag in a Job tag.  Either a 'resource_tag' or a 'pdb' option must be provided.\n"
 				"Problem encountered for job named 'firstjob'.\n"
 				"Options given:\n"
-				"	(desc, startstruct)\n"
+				"\t(desc, startstruct)\n"
 				"Thrown from protocols::jd2::JD2ResourceManagerJobInputter::parse_job_tag\n";
 			if ( e.msg() != expected_error ) {
 				std::cout << "expected error: '" << expected_error << "'" << std::endl;
@@ -185,9 +185,9 @@ public:
 			std::string expected_error =
 				"Error: Both a 'resource_tag' and a 'pdb' tag were found for a 'Data' tag in the Job tag.\nProblem encountered for job named 'firstjob'.\n"
 				"Options given:\n"
-				"	(desc, startstruct)\n"
-				"	(pdb, 1ten.pdb)\n"
-				"	(resource_tag, 1ten_native)\n"
+				"\t(desc, startstruct)\n"
+				"\t(pdb, 1ten.pdb)\n"
+				"\t(resource_tag, 1ten_native)\n"
 				"Thrown from protocols::jd2::JD2ResourceManagerJobInputter::parse_job_tag\n";
 			if ( e.msg() != expected_error ) {
 				std::cout << "expected error: '" << expected_error << "'" << std::endl;
@@ -223,8 +223,8 @@ public:
 			std::string expected_error =
 				"Error:  'pdb' tag given for a non-'startstruct' option in the 'Data' tag of a Job tag.\nProblem encountered for job named 'firstjob'.\n"
 				"Options given:\n"
-				"	(desc, whatever)\n"
-				"	(pdb, 1ten.pdb)\n"
+				"\t(desc, whatever)\n"
+				"\t(pdb, 1ten.pdb)\n"
 				"Thrown from protocols::jd2::JD2ResourceManagerJobInputter::parse_job_tag\n";
 			if ( e.msg() != expected_error ) {
 				std::cout << "expected error: '" << expected_error << "'" << std::endl;

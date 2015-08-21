@@ -21,7 +21,7 @@
 namespace protocols {
 namespace simple_moves {
 
-/// @brief Add an arbitrary piece of data to the current Job, which will be output in the silent file, database, etc. 
+/// @brief Add an arbitrary piece of data to the current Job, which will be output in the silent file, database, etc.
 /// This is useful for adding metadata to keep track of data generated using multiple experimental conditions.
 /// Currently ONLY RosettaScript interface supported.
 /// @details The data appended to the Job consists of a key and a value. The key is a string, and the value can be either a real or string.
@@ -38,11 +38,11 @@ public:
 	virtual moves::MoverOP fresh_instance() const;
 
 	virtual void parse_my_tag(
-			TagCOP tag,
-			basic::datacache::DataMap &,
-			Filters_map const &,
-			moves::Movers_map const &,
-			Pose const & );
+		TagCOP tag,
+		basic::datacache::DataMap &,
+		Filters_map const &,
+		moves::Movers_map const &,
+		Pose const & );
 
 private:
 

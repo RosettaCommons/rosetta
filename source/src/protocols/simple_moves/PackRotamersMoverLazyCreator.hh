@@ -21,8 +21,8 @@ namespace protocols {
 namespace simple_moves {
 
 class PackRotamersMoverLazyCreator : public protocols::simple_moves::PackRotamersMoverCreator {
-	public:
-		static std::string mover_name();
+public:
+	static std::string mover_name();
 
 };
 

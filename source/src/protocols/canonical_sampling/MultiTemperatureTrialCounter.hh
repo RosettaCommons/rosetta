@@ -26,55 +26,55 @@ namespace protocols {
 namespace canonical_sampling {
 
 /// @brief Keep track of trial statistics for any number of replicas.
-/// @details This class helps MetropolisHastingsMover keep track of move 
-/// statistics.  At the end of a simulation, operator[]() can be used to access 
-/// the TrialCounter objects kept for each temperature level.  Alternatively, 
-/// the show() and write_to_file() methods can also be used to directly output 
+/// @details This class helps MetropolisHastingsMover keep track of move
+/// statistics.  At the end of a simulation, operator[]() can be used to access
+/// the TrialCounter objects kept for each temperature level.  Alternatively,
+/// the show() and write_to_file() methods can also be used to directly output
 /// acceptance rates to a stream or file.
 class MultiTemperatureTrialCounter {
 public:
 
-	/// @brief Default constructor.  A temperature controller must be set before 
+	/// @brief Default constructor.  A temperature controller must be set before
 	/// the trial counter can be used.
-  MultiTemperatureTrialCounter() {};
+	MultiTemperatureTrialCounter() {};
 
 	/// @brief Fully construct the counter with a temperature controller.
-  MultiTemperatureTrialCounter( TemperatureController const * );
+	MultiTemperatureTrialCounter( TemperatureController const * );
 
 	/// @brief Set all counters for all temperatures to zero.
-  void reset();
+	void reset();
 
 	/// @brief Note that a move of the given type was attempted.
-  void count_trial( std::string const& );
+	void count_trial( std::string const& );
 
 	/// @brief Note that a move of the given type was accepted.
-  void count_accepted( std::string const& );
+	void count_accepted( std::string const& );
 
 	/// @brief Note that a move of the given type led to the given energy drop.
-  void count_energy_drop( std::string const&, core::Real );
+	void count_energy_drop( std::string const&, core::Real );
 
-	/// @brief Return const access to the TrialCounter for the given temperature 
+	/// @brief Return const access to the TrialCounter for the given temperature
 	/// level.
-  protocols::moves::TrialCounter const& operator[]( core::Size ) const;
+	protocols::moves::TrialCounter const& operator[]( core::Size ) const;
 
-	/// @brief Return non-const access to the TrialCounter for the given 
+	/// @brief Return non-const access to the TrialCounter for the given
 	/// temperature level.
-  protocols::moves::TrialCounter& operator[]( core::Size );
+	protocols::moves::TrialCounter& operator[]( core::Size );
 
-	/// @brief Write acceptance rates for each move at each temperature to the 
+	/// @brief Write acceptance rates for each move at each temperature to the
 	/// given stream.
-  void show( std::ostream& ) const;
+	void show( std::ostream& ) const;
 
-	/// @brief Write acceptance rates for each move at each temperature to this 
+	/// @brief Write acceptance rates for each move at each temperature to this
 	/// module's tracer.
-  void show() const;
+	void show() const;
 
-	/// @brief Write acceptance rates for each move at each temperature to the 
+	/// @brief Write acceptance rates for each move at each temperature to the
 	/// given file.
-  void write_to_file( std::string const& file, std::string const& tag ) const;
+	void write_to_file( std::string const& file, std::string const& tag ) const;
 
 	/// @brief Set the temperature controller.
-  void set_temperature_observer( TemperatureController const * );
+	void set_temperature_observer( TemperatureController const * );
 
 private:
 
@@ -83,8 +83,8 @@ private:
 	/// @see write_to_file()
 	void _write_to_stream( std::ostream&, std::string const& tag ) const;
 
-  TemperatureController const * tempering_;
-  utility::vector1< protocols::moves::TrialCounter > counters_;
+	TemperatureController const * tempering_;
+	utility::vector1< protocols::moves::TrialCounter > counters_;
 };
 
 

@@ -99,12 +99,12 @@ JobInputterInputSource::Enum PoseInputStreamJobInputter::input_source() const {
 std::string
 PoseInputStreamJobInputterCreator::keyname() const
 {
-        return "PoseInputStreamJobInputter";
+	return "PoseInputStreamJobInputter";
 }
 
 protocols::jd2::JobInputterOP
 PoseInputStreamJobInputterCreator::create_JobInputter() const {
-        return protocols::jd2::JobInputterOP( new PoseInputStreamJobInputter );
+	return protocols::jd2::JobInputterOP( new PoseInputStreamJobInputter );
 }
 
 } // jd2

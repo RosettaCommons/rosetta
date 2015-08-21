@@ -9,7 +9,7 @@
 
 /// @file       mpdocking_setup.cc
 /// @brief      Uses MPDockingSetup mover
-///				CURRENTLY ONLY WORKS FOR 2 POSES!!!
+///    CURRENTLY ONLY WORKS FOR 2 POSES!!!
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 /// @note       Last Modified (10/16/14)
 
@@ -33,17 +33,17 @@ main( int argc, char * argv [] )
 	try {
 
 		using namespace protocols::docking::membrane;
-		
-			// initialize options, RNG, and factory-registrators
+
+		// initialize options, RNG, and factory-registrators
 		devel::init(argc, argv);
-		
-			// create empty pose
+
+		// create empty pose
 		core::pose::Pose pose;
-		
-			// create MPdockingSetup mover and apply to pose
+
+		// create MPdockingSetup mover and apply to pose
 		MPDockingSetupMoverOP mpdsm( new MPDockingSetupMover() );
 		mpdsm->apply(pose);
-		
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

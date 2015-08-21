@@ -44,30 +44,30 @@ namespace domain_assembly {
 
 void AddAssemblyConstraints::apply( core::pose::Pose & pose ) {
 
-		using core::Real;
-		using std::string;
-		using core::id::AtomID;
-		string const atom_name("CA");
-		using namespace core::scoring::constraints;
-		Real const dist_cutoff(3), range(1.5), slope(3.0),
-			score(-40);
-			//score( -1 * pose.total_residue() * 0.25 );
+	using core::Real;
+	using std::string;
+	using core::id::AtomID;
+	string const atom_name("CA");
+	using namespace core::scoring::constraints;
+	Real const dist_cutoff(3), range(1.5), slope(3.0),
+		score(-40);
+	//score( -1 * pose.total_residue() * 0.25 );
 
-		ConstraintSetOP cst_set( new ConstraintSet );
-		char const first_chain( pose.pdb_info()->chain(1) );
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-			char const chain_ii( pose.pdb_info()->chain(ii) );
-			if ( first_chain != chain_ii ) {
-				AtomID atom1( pose.residue_type(ii-1).atom_index(atom_name), ii-1 ),
-					atom2( pose.residue_type(ii).atom_index(atom_name), ii );
-				core::scoring::func::FuncOP func( new core::scoring::func::LinearPenaltyFunction( dist_cutoff, score, range, slope ) );
+	ConstraintSetOP cst_set( new ConstraintSet );
+	char const first_chain( pose.pdb_info()->chain(1) );
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		char const chain_ii( pose.pdb_info()->chain(ii) );
+		if ( first_chain != chain_ii ) {
+			AtomID atom1( pose.residue_type(ii-1).atom_index(atom_name), ii-1 ),
+				atom2( pose.residue_type(ii).atom_index(atom_name), ii );
+			core::scoring::func::FuncOP func( new core::scoring::func::LinearPenaltyFunction( dist_cutoff, score, range, slope ) );
 
-				ConstraintOP cst( new AtomPairConstraint(atom1,atom2,func) );
-				cst_set->add_constraint(cst);
-				break;
-			}
+			ConstraintOP cst( new AtomPairConstraint(atom1,atom2,func) );
+			cst_set->add_constraint(cst);
+			break;
 		}
-		pose.constraint_set(cst_set);
+	}
+	pose.constraint_set(cst_set);
 } // apply
 
 }//namespace domain_assembly

@@ -28,7 +28,7 @@
 // Unit headers
 
 namespace protocols {
-namespace protein_interface_design{
+namespace protein_interface_design {
 namespace filters {
 
 class Torsion : public protocols::filters::Filter
@@ -65,7 +65,7 @@ public:
 	bool task_factory_set() const { return task_factory_set_; }
 private:
 
-  core::Real lower_, upper_;
+	core::Real lower_, upper_;
 	core::Size resnum_;
 	std::string torsion_;
 	core::pack::task::TaskFactoryOP task_factory_;

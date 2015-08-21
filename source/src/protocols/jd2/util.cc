@@ -83,18 +83,18 @@ void output_intermediate_pose(
 	int copy_count,
 	bool score_only
 ) {
-  JobDistributor* jd
-  	= JobDistributor::get_instance();
-  if ( jd && jd->job_outputter() && jd->current_job() ) {
-    jd->job_outputter()->other_pose( jd->current_job(), pose, stage_tag, copy_count, score_only );
-  } else {
-    TR.Warning << "can't output intermediate pose if not running with  jobdistributor ( jd2 / 2008 )" << std::endl;
-  }
+	JobDistributor* jd
+		= JobDistributor::get_instance();
+	if ( jd && jd->job_outputter() && jd->current_job() ) {
+		jd->job_outputter()->other_pose( jd->current_job(), pose, stage_tag, copy_count, score_only );
+	} else {
+		TR.Warning << "can't output intermediate pose if not running with  jobdistributor ( jd2 / 2008 )" << std::endl;
+	}
 }
 
 std::string current_output_name() {
 	JobDistributor* jd
-  	= JobDistributor::get_instance();
+		= JobDistributor::get_instance();
 	if ( jd && jd->job_outputter() && jd->current_job() ) {
 		return jd->job_outputter()->output_name( jd->current_job() );
 	} else return "NoTag";
@@ -102,7 +102,7 @@ std::string current_output_name() {
 
 std::string current_batch() {
 	JobDistributor* jd
-  	= JobDistributor::get_instance();
+		= JobDistributor::get_instance();
 	if ( jd ) {
 		return jd->get_current_batch();
 	} else return "NoJD2";
@@ -110,12 +110,12 @@ std::string current_batch() {
 
 bool jd2_used() {
 	JobDistributor* jd
-  	= JobDistributor::get_instance();
+		= JobDistributor::get_instance();
 	return ( jd && jd->job_outputter() && jd->current_job()->inner_job() != JD2_BOGUS_JOB->inner_job());
 }
 
 std::string current_output_filename() {
-	jd2::JobDistributor* jd 	= jd2::JobDistributor::get_instance();
+	jd2::JobDistributor* jd  = jd2::JobDistributor::get_instance();
 	if ( jd && jd->job_outputter() ) {
 		JobOP job = jd->current_job();
 		if ( job ) {
@@ -133,10 +133,10 @@ write_score_tracer( core::pose::Pose const& pose_in, std::string tracer_point ) 
 
 	JobDistributor* jd = JobDistributor::get_instance();
 
-  if ( !jd || !jd->job_outputter()) {
-    tr_score.Warning << "can't output intermediate pose if not running with  jobdistributor ( jd2 / 2008 )" << std::endl;
+	if ( !jd || !jd->job_outputter() ) {
+		tr_score.Warning << "can't output intermediate pose if not running with  jobdistributor ( jd2 / 2008 )" << std::endl;
 		return;
-  }
+	}
 
 	using core::io::silent::SilentStructFactory;
 	core::io::silent::SilentStructOP ss;
@@ -161,16 +161,15 @@ write_score_tracer( core::pose::Pose const& pose_in, std::string tracer_point ) 
 
 JobOP get_current_job() {
 	JobDistributor* jd
-  	= JobDistributor::get_instance();
+		= JobDistributor::get_instance();
 	if ( jd && jd->job_inputter() ) {
 		return jd->current_job();
-	}
-	else return NULL;
+	} else return NULL;
 }
 
 core::pose::PoseCOP get_current_jobs_starting_pose() {
 	JobDistributor* jd
-  	= JobDistributor::get_instance();
+		= JobDistributor::get_instance();
 	core::pose::PoseCOP pose( NULL );
 	if ( jd && jd->job_outputter() && jd->job_inputter() && jd->current_job() ) {
 		JobOP job = jd->current_job();
@@ -186,34 +185,34 @@ void add_job_data_to_ss( core::io::silent::SilentStructOP ss, JobCOP job_op ) {
 
 	typedef Job::StringStringPairs::const_iterator str_iter;
 	for ( str_iter iter = job_op->output_string_string_pairs_begin(),
-				end = job_op->output_string_string_pairs_end();
-				iter != end; ++iter
-	) {
+			end = job_op->output_string_string_pairs_end();
+			iter != end; ++iter
+			) {
 		ss->add_string_value(iter->first, iter->second );
 	}
 
 	typedef Job::StringRealPairs::const_iterator real_iter;
 	for ( real_iter iter = job_op->output_string_real_pairs_begin(),
-				end = job_op->output_string_real_pairs_end();
-				iter != end; ++iter
-	) {
+			end = job_op->output_string_real_pairs_end();
+			iter != end; ++iter
+			) {
 		ss->add_energy( iter->first, iter->second, 1.0 );
 	}
 }
 
 
 void set_native_in_mover( protocols::moves::Mover &mover ){
- 	using namespace basic::options;
- 	using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	if ( option[ in::file::native ].user() ) {
 		core::pose::PoseOP native_pose( new core::pose::Pose );
 		core::chemical::ResidueTypeSetCOP rsd_set;
- 		if ( option[ in::file::fullatom ]() ) {
- 			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
- 		} else {
- 			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
- 		}
+		if ( option[ in::file::fullatom ]() ) {
+			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+		} else {
+			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
+		}
 		std::string native_pdb_file  = option[ in::file::native ]();
 		core::import_pose::pose_from_pdb( *native_pose, *rsd_set, native_pdb_file );
 		mover.set_native_pose( native_pose );

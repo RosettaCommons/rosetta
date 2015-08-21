@@ -49,11 +49,11 @@ public:
 
 	/// @brief Parses the BridgeChainsTags
 	virtual void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & data,
-			protocols::filters::Filters_map const &,
-			protocols::moves::Movers_map const &,
-			core::pose::Pose const & );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & );
 
 	/// @brief Mover virtuals
 	virtual std::string get_name() const;
@@ -68,7 +68,7 @@ public:
 
 	/// @brief configures based on a permutation and saves info for building
 	virtual protocols::moves::MoverStatus
-		setup_permutation( components::StructureData & perm ) const;
+	setup_permutation( components::StructureData & perm ) const;
 
 	// accessor/mutator
 public:
@@ -82,43 +82,43 @@ public:
 	/// @details result is a ready-to-call mover
 	virtual protocols::moves::MoverOP
 	create_remodel_mover(
-			core::pose::Pose const & pose,
-			protocols::loops::LoopsOP loops,
-			bool const const_fold_tree,
-			std::string const & complete_ss,
-			StringVec const & complete_abego,
-			core::Size const left,
-			core::Size const right );
+		core::pose::Pose const & pose,
+		protocols::loops::LoopsOP loops,
+		bool const const_fold_tree,
+		std::string const & complete_ss,
+		StringVec const & complete_abego,
+		core::Size const left,
+		core::Size const right );
 
 	/// @brief checks to ensure that both pieces being connected are fixed relative to one another
 	bool segments_fixed( components::StructureData const & perm ) const;
 
 	/// @brief using the motif list, find the desired abego for each position in the connection
 	utility::vector1< std::string > abego_insert(
-			StringVec const & complete_abego,
-			std::string const & connection_abego,
-			core::Size const left,
-			core::Size const right,
-			core::Size const end1,
-			core::Size const start2 ) const;
+		StringVec const & complete_abego,
+		std::string const & connection_abego,
+		core::Size const left,
+		core::Size const right,
+		core::Size const end1,
+		core::Size const start2 ) const;
 
 	/// @brief using the motif list and input pose, find the desired aa sequence for each position in the connection. default="V"
 	std::string aa_insert(
-			core::pose::Pose const & pose,
-			core::Size const connection_len,
-			core::Size const left,
-			core::Size const right,
-			core::Size const end1,
-			core::Size const start2 ) const;
+		core::pose::Pose const & pose,
+		core::Size const connection_len,
+		core::Size const left,
+		core::Size const right,
+		core::Size const end1,
+		core::Size const start2 ) const;
 
 	/// @brief using the motif list and input pose, find the desired secondary structure for each position in the connection
 	std::string ss_insert(
-			core::pose::Pose const & pose,
-			std::string const & connection_ss,
-			core::Size const left,
-			core::Size const right,
-			core::Size const end1,
-			core::Size const start2 ) const;
+		core::pose::Pose const & pose,
+		std::string const & connection_ss,
+		core::Size const left,
+		core::Size const right,
+		core::Size const end1,
+		core::Size const start2 ) const;
 
 	/// @brief builds the loop
 	void build_loop( components::StructureData & perm );

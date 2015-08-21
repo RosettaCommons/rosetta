@@ -24,21 +24,21 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	//Constructor
-	StepWiseResiduePairScreener::StepWiseResiduePairScreener( Size const res1, Size const res2 ):
-		res1_( res1 ),
-		res2_( res2 )
-	{}
+//Constructor
+StepWiseResiduePairScreener::StepWiseResiduePairScreener( Size const res1, Size const res2 ):
+	res1_( res1 ),
+	res2_( res2 )
+{}
 
-	//Destructor
-	StepWiseResiduePairScreener::~StepWiseResiduePairScreener()
-	{}
+//Destructor
+StepWiseResiduePairScreener::~StepWiseResiduePairScreener()
+{}
 
-	////////////////////////////////////////////////////////////////////////////
-	void
-	StepWiseResiduePairScreener::fast_forward( sampler::StepWiseSamplerBaseOP sampler ){
-		fast_forward_to_next_residue_pair( sampler, res1_, res2_ ); // in screener util.
-	}
+////////////////////////////////////////////////////////////////////////////
+void
+StepWiseResiduePairScreener::fast_forward( sampler::StepWiseSamplerBaseOP sampler ){
+	fast_forward_to_next_residue_pair( sampler, res1_, res2_ ); // in screener util.
+}
 
 } //screener
 } //stepwise

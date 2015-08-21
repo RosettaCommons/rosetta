@@ -46,65 +46,65 @@ namespace rotamers {
 class SingleResidueRotamerLibrary : public utility::pointer::ReferenceCount
 {
 public:
-  virtual
-  ~SingleResidueRotamerLibrary();
+	virtual
+	~SingleResidueRotamerLibrary();
 
-  virtual
-  Real
-  rotamer_energy_deriv(
+	virtual
+	Real
+	rotamer_energy_deriv(
 		conformation::Residue const & rsd,
-    dunbrack::RotamerLibraryScratchSpace & scratch
-  ) const = 0;
+		dunbrack::RotamerLibraryScratchSpace & scratch
+	) const = 0;
 
-  virtual
-  Real
-  rotamer_energy(
-    conformation::Residue const & rsd,
-    dunbrack::RotamerLibraryScratchSpace & scratch
-  ) const = 0;
+	virtual
+	Real
+	rotamer_energy(
+		conformation::Residue const & rsd,
+		dunbrack::RotamerLibraryScratchSpace & scratch
+	) const = 0;
 
-  /// @brief Returns the energy of the lowest-energy rotamer accessible to the given residue
-  /// (based on e.g. its current phi and psi values).
-  /// If curr_rotamer_only is true, then consider only the idealized version of the
-  /// residue's current rotamer (local optimum); otherwise, consider all rotamers (global optimum).
-  virtual
-  Real
-  best_rotamer_energy(
-    conformation::Residue const & rsd,
-    bool curr_rotamer_only,
-    dunbrack::RotamerLibraryScratchSpace & scratch
-  ) const = 0;
+	/// @brief Returns the energy of the lowest-energy rotamer accessible to the given residue
+	/// (based on e.g. its current phi and psi values).
+	/// If curr_rotamer_only is true, then consider only the idealized version of the
+	/// residue's current rotamer (local optimum); otherwise, consider all rotamers (global optimum).
+	virtual
+	Real
+	best_rotamer_energy(
+		conformation::Residue const & rsd,
+		bool curr_rotamer_only,
+		dunbrack::RotamerLibraryScratchSpace & scratch
+	) const = 0;
 
-  /// @brief Pick a rotamer for the input residue according to the rotamer probability
-  /// distribution and assign chi angles to the input rsd.  If perturb_from_rotamer_center
-  /// is true, then push the rotamer off from the center; for chi angles with a normal
-  /// distribution, the perturbation is taken from a Gaussian random number with a standard
-  /// deviation matching the chi angle's standard deviation.  For chi angles that are not
-  /// normally distributed, the behavior is open to the derived classe's interpretation.
-  virtual
-  void
-  assign_random_rotamer_with_bias(
-    conformation::Residue const & rsd,
+	/// @brief Pick a rotamer for the input residue according to the rotamer probability
+	/// distribution and assign chi angles to the input rsd.  If perturb_from_rotamer_center
+	/// is true, then push the rotamer off from the center; for chi angles with a normal
+	/// distribution, the perturbation is taken from a Gaussian random number with a standard
+	/// deviation matching the chi angle's standard deviation.  For chi angles that are not
+	/// normally distributed, the behavior is open to the derived classe's interpretation.
+	virtual
+	void
+	assign_random_rotamer_with_bias(
+		conformation::Residue const & rsd,
 		pose::Pose const & pose, // DOUG MAY CAUSE PROBLEMS BUILDONG
-    dunbrack::RotamerLibraryScratchSpace & scratch,
-    numeric::random::RandomGenerator & RG,
-    dunbrack::ChiVector & new_chi_angles,
-    bool perturb_from_rotamer_center
-  ) const = 0;
+		dunbrack::RotamerLibraryScratchSpace & scratch,
+		numeric::random::RandomGenerator & RG,
+		dunbrack::ChiVector & new_chi_angles,
+		bool perturb_from_rotamer_center
+	) const = 0;
 
-  virtual
-  void
-  fill_rotamer_vector(
-    pose::Pose const & pose,
-    scoring::ScoreFunction const & scorefxn,
-    pack::task::PackerTask const & task,
-    graph::GraphCOP packer_neighbor_graph,
-    chemical::ResidueTypeCOP concrete_residue,
-    conformation::Residue const& existing_residue,
-    utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
-    bool buried,
-    RotamerVector & rotamers
-  ) const = 0;
+	virtual
+	void
+	fill_rotamer_vector(
+		pose::Pose const & pose,
+		scoring::ScoreFunction const & scorefxn,
+		pack::task::PackerTask const & task,
+		graph::GraphCOP packer_neighbor_graph,
+		chemical::ResidueTypeCOP concrete_residue,
+		conformation::Residue const& existing_residue,
+		utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
+		bool buried,
+		RotamerVector & rotamers
+	) const = 0;
 
 	/// @brief Filter a RotamerVector by "bump energy" of a rotamer:
 	/// All rotamers with bump energies over a certain threshold will be discarded
@@ -177,17 +177,17 @@ public:
 		conformation::Residue const & existing_residue
 	) const;
 
-  //XRW_B_T1
-  /*
-    virtual
-    SingleResidueRotamerLibraryOP
-    coarsify(coarse::Translator const &map) const = 0;
-  */
-  //XRW_E_T1
+	//XRW_B_T1
+	/*
+	virtual
+	SingleResidueRotamerLibraryOP
+	coarsify(coarse::Translator const &map) const = 0;
+	*/
+	//XRW_E_T1
 
-  virtual
-  void
-  write_to_file( utility::io::ozstream &out ) const = 0;
+	virtual
+	void
+	write_to_file( utility::io::ozstream &out ) const = 0;
 
 	/// @brief Equality test for equivalence.
 	/// Two SingleResidueRotamerLibraries test equal if and only if they represent the exact same behavior

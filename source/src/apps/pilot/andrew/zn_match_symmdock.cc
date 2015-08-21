@@ -128,8 +128,8 @@ void initialize_initalizeZNcst(
 		);
 	}
 	init_zn->set_matcher_constraint_file_name(
-			basic::options::option[ basic::options::OptionKeys::zn_match_symmdock::two_residue_match_constraint_file]
-		);
+		basic::options::option[ basic::options::OptionKeys::zn_match_symmdock::two_residue_match_constraint_file]
+	);
 
 	init_zn->set_reference_pdb( basic::options::option[ basic::options::OptionKeys::zn_match_symmdock::reference_pdb] );
 
@@ -148,83 +148,83 @@ int main( int argc, char * argv [] )
 {
 	try {
 
-	//using namespace core;
-	//using namespace core::chemical;
-	//using namespace core::id;
-	//usng namespace core::io::pdb;
-	//using namespace core::pose;
+		//using namespace core;
+		//using namespace core::chemical;
+		//using namespace core::id;
+		//usng namespace core::io::pdb;
+		//using namespace core::pose;
 
-	//using namespace basic::options;
-	//using namespace basic::options::OptionKeys::measure;
+		//using namespace basic::options;
+		//using namespace basic::options::OptionKeys::measure;
 
-	NEW_OPT( zn_match_symmdock::zn_tworesidue_matches_list, "REQUIRED: File listing the output-match .pdb files", "");
-	NEW_OPT( zn_match_symmdock::reference_pdb, "REQUIRED: Reference PDB file that was used to generate the matches", "");
-	NEW_OPT( zn_match_symmdock::two_residue_match_constraint_file, "REQUIRED: Enzyme Design / Matcher / Geometric Constraint file that was used generate the matches.  This should have two residues coordinating zinc", "");
-	NEW_OPT( zn_match_symmdock::four_residue_match_constraint_file, "REQUIRED: Enzyme Design / Matcher / Geometric Constraint file similar to the one that was used to generate the matches except that it contains information for how four residues coordinating zinc simultaneously", "");
-	NEW_OPT( zn_match_symmdock::metalhash_constraint_weight, "Strength of the constraint weight", 1.0 );
-	NEW_OPT( zn_match_symmdock::clash_weight, "Strength of the clash weight in the constraint weight", 1.0 );
-	NEW_OPT( zn_match_symmdock::znreach, "Strength of the clash weight in the constraint weight", 1.0 );
-	NEW_OPT( zn_match_symmdock::orbital_dist, "Strength of the clash weight in the constraint weight", 1.0 );
-	NEW_OPT( zn_match_symmdock::orbital_reach, "Strength of the clash weight in the constraint weight", 1.0 );
-	NEW_OPT( zn_match_symmdock::znwelldepth, "Strength of the clash weight in the constraint weight", 1.0 );
-	NEW_OPT( zn_match_symmdock::require_3H, "Strength of the clash weight in the constraint weight", false );
-	NEW_OPT( zn_match_symmdock::preserve_input_virtual_atoms, "Use the coordinates for zinc virtual atoms in the match PDB instead of idealizing those coordinates", false );
-	NEW_OPT( zn_match_symmdock::final_cstscore_limit, "Upper limit for the constraint score after the final refinemen stage, above which a trajectory is said to have failed", 25.0 );
-
-
-	devel::init( argc, argv );
-
-	/// stolen from SymDockProtocol.cc
-	using namespace protocols::simple_moves::symmetry;
-	using namespace protocols::symmetric_docking;
-
-	/// Sequence mover will hold three movers for this protocol.
-	protocols::moves::SequenceMoverOP seq_mover( new protocols::moves::SequenceMover );
-
-	/// 1. prep for symmetry
-	SetupForSymmetryMoverOP setup_mover( new SetupForSymmetryMover );
-	seq_mover->add_mover( setup_mover );
-
-	/// 2. initialize the Zn coordination constraint
-	devel::znhash::InitializeZNCoordinationConstraintMoverOP init_zn( new devel::znhash::InitializeZNCoordinationConstraintMover );
-	initialize_initalizeZNcst( init_zn );
-	seq_mover->add_mover( init_zn );
-
-	/// 3. Perform low-resolution docking.
-	protocols::symmetric_docking::SymDockProtocolOP dock_mover( new protocols::symmetric_docking::SymDockProtocol );
-	core::scoring::ScoreFunctionOP docking_sfxn;
-	if ( basic::options::option[ basic::options::OptionKeys::docking::low_patch ].user() ) {
-		docking_sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen",
-			basic::options::option[ basic::options::OptionKeys::docking::low_patch ] );
-	} else {
-		docking_sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen" );
-	}
-	docking_sfxn->set_weight( core::scoring::metalhash_constraint,
-		basic::options::option[ basic::options::OptionKeys::zn_match_symmdock::metalhash_constraint_weight] );
-	dock_mover->set_lowres_scorefxn( docking_sfxn );
-	dock_mover->set_fullatom( false );
-	seq_mover->add_mover( dock_mover );
-
-	using protocols::moves::MoverOP;
-
-	// 4. Go to full atom
-	seq_mover->add_mover( MoverOP( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD ) ));
-
-	// 5. ZNCoordinationConstraintReporterMover to report on which residues are zn coordinated
-	seq_mover->add_mover( MoverOP( new devel::znhash::ZNCoordinationConstraintReporterMover( init_zn ) ) );
+		NEW_OPT( zn_match_symmdock::zn_tworesidue_matches_list, "REQUIRED: File listing the output-match .pdb files", "");
+		NEW_OPT( zn_match_symmdock::reference_pdb, "REQUIRED: Reference PDB file that was used to generate the matches", "");
+		NEW_OPT( zn_match_symmdock::two_residue_match_constraint_file, "REQUIRED: Enzyme Design / Matcher / Geometric Constraint file that was used generate the matches.  This should have two residues coordinating zinc", "");
+		NEW_OPT( zn_match_symmdock::four_residue_match_constraint_file, "REQUIRED: Enzyme Design / Matcher / Geometric Constraint file similar to the one that was used to generate the matches except that it contains information for how four residues coordinating zinc simultaneously", "");
+		NEW_OPT( zn_match_symmdock::metalhash_constraint_weight, "Strength of the constraint weight", 1.0 );
+		NEW_OPT( zn_match_symmdock::clash_weight, "Strength of the clash weight in the constraint weight", 1.0 );
+		NEW_OPT( zn_match_symmdock::znreach, "Strength of the clash weight in the constraint weight", 1.0 );
+		NEW_OPT( zn_match_symmdock::orbital_dist, "Strength of the clash weight in the constraint weight", 1.0 );
+		NEW_OPT( zn_match_symmdock::orbital_reach, "Strength of the clash weight in the constraint weight", 1.0 );
+		NEW_OPT( zn_match_symmdock::znwelldepth, "Strength of the clash weight in the constraint weight", 1.0 );
+		NEW_OPT( zn_match_symmdock::require_3H, "Strength of the clash weight in the constraint weight", false );
+		NEW_OPT( zn_match_symmdock::preserve_input_virtual_atoms, "Use the coordinates for zinc virtual atoms in the match PDB instead of idealizing those coordinates", false );
+		NEW_OPT( zn_match_symmdock::final_cstscore_limit, "Upper limit for the constraint score after the final refinemen stage, above which a trajectory is said to have failed", 25.0 );
 
 
-	// 6. Place best match on the pose and restore the native sidechains
-	devel::znhash::ZNCoordinationConstraintPlacerMoverOP znplacer( new devel::znhash::ZNCoordinationConstraintPlacerMover( init_zn ) );
-	if ( basic::options::option[ basic::options::OptionKeys::zn_match_symmdock::final_cstscore_limit ].user() ) {
-		znplacer->set_constraint_energy_cutoff( basic::options::option[ basic::options::OptionKeys::zn_match_symmdock::final_cstscore_limit ] );
-	}
-	znplacer->set_four_residue_cst_fname( basic::options::option[ basic::options::OptionKeys::zn_match_symmdock::four_residue_match_constraint_file] );
+		devel::init( argc, argv );
 
-	seq_mover->add_mover( znplacer );
+		/// stolen from SymDockProtocol.cc
+		using namespace protocols::simple_moves::symmetry;
+		using namespace protocols::symmetric_docking;
 
-	// GO!
-	protocols::jd2::JobDistributor::get_instance()->go( seq_mover );
+		/// Sequence mover will hold three movers for this protocol.
+		protocols::moves::SequenceMoverOP seq_mover( new protocols::moves::SequenceMover );
+
+		/// 1. prep for symmetry
+		SetupForSymmetryMoverOP setup_mover( new SetupForSymmetryMover );
+		seq_mover->add_mover( setup_mover );
+
+		/// 2. initialize the Zn coordination constraint
+		devel::znhash::InitializeZNCoordinationConstraintMoverOP init_zn( new devel::znhash::InitializeZNCoordinationConstraintMover );
+		initialize_initalizeZNcst( init_zn );
+		seq_mover->add_mover( init_zn );
+
+		/// 3. Perform low-resolution docking.
+		protocols::symmetric_docking::SymDockProtocolOP dock_mover( new protocols::symmetric_docking::SymDockProtocol );
+		core::scoring::ScoreFunctionOP docking_sfxn;
+		if ( basic::options::option[ basic::options::OptionKeys::docking::low_patch ].user() ) {
+			docking_sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen",
+				basic::options::option[ basic::options::OptionKeys::docking::low_patch ] );
+		} else {
+			docking_sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen" );
+		}
+		docking_sfxn->set_weight( core::scoring::metalhash_constraint,
+			basic::options::option[ basic::options::OptionKeys::zn_match_symmdock::metalhash_constraint_weight] );
+		dock_mover->set_lowres_scorefxn( docking_sfxn );
+		dock_mover->set_fullatom( false );
+		seq_mover->add_mover( dock_mover );
+
+		using protocols::moves::MoverOP;
+
+		// 4. Go to full atom
+		seq_mover->add_mover( MoverOP( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD ) ));
+
+		// 5. ZNCoordinationConstraintReporterMover to report on which residues are zn coordinated
+		seq_mover->add_mover( MoverOP( new devel::znhash::ZNCoordinationConstraintReporterMover( init_zn ) ) );
+
+
+		// 6. Place best match on the pose and restore the native sidechains
+		devel::znhash::ZNCoordinationConstraintPlacerMoverOP znplacer( new devel::znhash::ZNCoordinationConstraintPlacerMover( init_zn ) );
+		if ( basic::options::option[ basic::options::OptionKeys::zn_match_symmdock::final_cstscore_limit ].user() ) {
+			znplacer->set_constraint_energy_cutoff( basic::options::option[ basic::options::OptionKeys::zn_match_symmdock::final_cstscore_limit ] );
+		}
+		znplacer->set_four_residue_cst_fname( basic::options::option[ basic::options::OptionKeys::zn_match_symmdock::four_residue_match_constraint_file] );
+
+		seq_mover->add_mover( znplacer );
+
+		// GO!
+		protocols::jd2::JobDistributor::get_instance()->go( seq_mover );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

@@ -86,7 +86,7 @@ ProcessorFactory::create_processor(
 
 	if ( mtask->consolidate_matches() ) {
 		TR << "Matches will be consolidated before output." << std::endl;
-		if( mtask->output_writer_name()  == "CloudPDB" ) TR << "NOTICE: match consolidation and CloudPDB writing are both active. This is fine but somewhat redundant. In this case, the -output_matches_per_group parameter should be set to a higher number than without cloud pdb writing, say 100 or so." << std::endl;
+		if ( mtask->output_writer_name()  == "CloudPDB" ) TR << "NOTICE: match consolidation and CloudPDB writing are both active. This is fine but somewhat redundant. In this case, the -output_matches_per_group parameter should be set to a higher number than without cloud pdb writing, say 100 or so." << std::endl;
 		MatchConsolidatorOP consolidator( new MatchConsolidator );
 		consolidator->set_grouper( create_grouper( matcher, mtask, cacher ) );
 		consolidator->set_output_writer( create_output_writer( matcher, mtask, cacher ) );
@@ -105,15 +105,15 @@ ProcessorFactory::create_processor(
 	// Right now this isn't that helpful, but could be more helpful if DownstreamRMSEvaluator is changed to be able to score match_dpos1
 	processor->set_evaluator( create_evaluator( matcher, mtask, cacher ) );
 	MatchScoreWriterOP match_score_writer = create_match_score_writer();
-	if( mtask->output_scores() ) {
+	if ( mtask->output_scores() ) {
 		match_score_writer->set_output_filename( mtask->score_output_file_name() );
 	}
 	processor->set_match_score_writer( match_score_writer );
 
 	std::list< MatchFilterOP > filters( create_filters( matcher, mtask, cacher ) );
 	for ( std::list< MatchFilterOP >::const_iterator
-					iter = filters.begin(), iter_end = filters.end();
-				iter != iter_end; ++iter ) {
+			iter = filters.begin(), iter_end = filters.end();
+			iter != iter_end; ++iter ) {
 		processor->add_filter( *iter );
 	}
 	return processor;
@@ -127,7 +127,7 @@ ProcessorFactory::create_grouper(
 	UpstreamHitCacherOP cacher
 )
 {
-	if (mtask->grouper_name() == "SameChiBinComboGrouper" ) {
+	if ( mtask->grouper_name() == "SameChiBinComboGrouper" ) {
 		SameChiBinComboGrouperOP chibin_grouper( new SameChiBinComboGrouper );
 		chibin_grouper->set_n_geometric_constraints( matcher->n_geometric_constraints() );
 		chibin_grouper->set_hit_cacher( cacher );
@@ -137,7 +137,7 @@ ProcessorFactory::create_grouper(
 		seq_grouper->set_n_geometric_constraints( matcher->n_geometric_constraints() );
 		seq_grouper->set_hit_cacher( cacher );
 		return seq_grouper;
-	}else if ( mtask->grouper_name() == "SameSequenceAndDSPositionGrouper" ) {
+	} else if ( mtask->grouper_name() == "SameSequenceAndDSPositionGrouper" ) {
 		SameSequenceAndDSPositionGrouperOP seq_ds_grouper( new SameSequenceAndDSPositionGrouper );
 		seq_ds_grouper->set_n_geometric_constraints( matcher->n_geometric_constraints() );
 		seq_ds_grouper->set_hit_cacher( cacher );
@@ -168,11 +168,11 @@ ProcessorFactory::create_evaluator(
 	if ( mtask->evaluator_name() == "DownstreamRMSEvaluator" ) {
 		DownstreamRMSEvaluatorOP rms_eval( new DownstreamRMSEvaluator );
 		rms_eval->set_n_geometric_constraints( matcher->n_geometric_constraints() );
-        for ( Size ii = 1; ii <= matcher->n_geometric_constraints(); ++ii ) {
+		for ( Size ii = 1; ii <= matcher->n_geometric_constraints(); ++ii ) {
 			/// HACK -- all RigidLigandBuilders are equivalent -- FIX THIS!
 			rms_eval->set_downstream_builder( ii, matcher->downstream_builder( ii ) );
 		}
-        rms_eval->set_downstream_pose(matcher->downstream_pose());
+		rms_eval->set_downstream_pose(matcher->downstream_pose());
 		return rms_eval;
 	} else {
 		utility_exit_with_message( "Could not recognize requested MatchEvaluator named: " + mtask->evaluator_name() );
@@ -275,13 +275,11 @@ ProcessorFactory::create_output_writer(
 
 	} else if ( (mtask->output_writer_name()  == "PDB" ) || (mtask->output_writer_name()  == "pdb" )  || (mtask->output_writer_name()  == "CloudPDB" ) || ( mtask->output_writer_name() == "PoseMatchOutputWriter" ) ) {
 		output::PDBWriterOP pdb_writer;
-		if ( (mtask->output_writer_name()  == "PDB" ) || (mtask->output_writer_name()  == "pdb" ) ){
+		if ( (mtask->output_writer_name()  == "PDB" ) || (mtask->output_writer_name()  == "pdb" ) ) {
 			pdb_writer = output::PDBWriterOP( new output::PDBWriter );
-		}
-		else if( mtask->output_writer_name() == "PoseMatchOutputWriter" ){
+		} else if ( mtask->output_writer_name() == "PoseMatchOutputWriter" ) {
 			pdb_writer = output::PDBWriterOP( new output::PoseMatchOutputWriter( create_grouper( matcher, mtask, cacher) ) );
-		}
-		else{
+		} else {
 			pdb_writer = output::PDBWriterOP( new output::CloudPDBWriter( create_grouper( matcher, mtask, cacher) ) );
 		}
 		pdb_writer->set_coordinate_cacher( cacher );
@@ -298,9 +296,7 @@ ProcessorFactory::create_output_writer(
 			pdb_writer->set_downstream_builder( ii, matcher->downstream_builder( ii ) );
 		}
 		return pdb_writer;
-	}
-
-	else {
+	} else {
 		utility_exit_with_message( "Could not recognize requested OutputWriter named: '" + mtask->output_writer_name() + "'" );
 		return 0;
 

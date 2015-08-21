@@ -64,19 +64,19 @@ make_symmetric_pose(
 
 void
 make_symmetric_pose(
-  pose::Pose & pose,
-  conformation::symmetry::SymmData & symmdata
+	pose::Pose & pose,
+	conformation::symmetry::SymmData & symmdata
 );
 
 void
 make_symmetric_pose(
-  pose::Pose & pose,
+	pose::Pose & pose,
 	std::string symmdef_file=""
 );
 
 void
 make_asymmetric_pose(
-  pose::Pose & pose
+	pose::Pose & pose
 );
 
 /// @brief extract the asu from a pose... unlike previous function symmetric clones are thrown out
@@ -86,7 +86,7 @@ extract_asymmetric_unit(core::pose::Pose const& pose_in, core::pose::Pose & pose
 
 core::pose::Pose
 get_asymmetric_pose_copy_from_symmetric_pose(
-  pose::Pose const & pose
+	pose::Pose const & pose
 );
 
 // @details make symmetric PDBIinfo
@@ -107,8 +107,8 @@ extract_asymmetric_unit_pdb_info(
 
 void
 make_symmetric_movemap(
-  pose::Pose const & pose,
-  kinematics::MoveMap & movemap
+	pose::Pose const & pose,
+	kinematics::MoveMap & movemap
 );
 
 int

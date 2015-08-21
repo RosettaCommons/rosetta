@@ -55,44 +55,44 @@ int
 main( int argc, char * argv [] ) {
 	try {
 
-	using namespace protocols;
-	using namespace protocols::domain_assembly;
-	using namespace protocols::jd2;
-	using namespace protocols::moves;
-	using namespace protocols::relax;
-	using namespace protocols::docking::stateless;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::scoring;
+		using namespace protocols;
+		using namespace protocols::domain_assembly;
+		using namespace protocols::jd2;
+		using namespace protocols::moves;
+		using namespace protocols::relax;
+		using namespace protocols::docking::stateless;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::scoring;
 
-	devel::init(argc, argv);
-	CompositionMoverOP container( new CompositionMover );
+		devel::init(argc, argv);
+		CompositionMoverOP container( new CompositionMover );
 
-	get_score_function();
+		get_score_function();
 
-	// docking
-	container->add_mover( MoverOP( new AddAssemblyConstraints ) );
-	container->add_mover( MoverOP( new SaneDockingProtocol ) );
+		// docking
+		container->add_mover( MoverOP( new AddAssemblyConstraints ) );
+		container->add_mover( MoverOP( new SaneDockingProtocol ) );
 
-//	container->add_mover( new CombineChainsMover() );
+		// container->add_mover( new CombineChainsMover() );
 
-	// scoring
-	container->add_mover( MoverOP( new PostDockAssemblyScorer("pre_rebuild_dist") ) );
+		// scoring
+		container->add_mover( MoverOP( new PostDockAssemblyScorer("pre_rebuild_dist") ) );
 
-	// loop remodeling
-	if ( option[ OptionKeys::loops::frag_files ].user() ) {
-		using core::Size;
-		Size const min_loop_size( option[ cm::min_loop_size ]() );
-		utility::vector1< core::fragment::FragSetOP > frag_libs;
-		protocols::loops::read_loop_fragments( frag_libs );
-		MoverOP builder( new AssembleLinkerMover( "quick_ccd", min_loop_size, frag_libs ) );
-		container->add_mover(builder);
-		container->add_mover( MoverOP( new FastRelax( get_score_function() ) ) );
-		container->add_mover( MoverOP( new PostDockAssemblyScorer( "post_rebuild_dist" ) ) );
-	}
+		// loop remodeling
+		if ( option[ OptionKeys::loops::frag_files ].user() ) {
+			using core::Size;
+			Size const min_loop_size( option[ cm::min_loop_size ]() );
+			utility::vector1< core::fragment::FragSetOP > frag_libs;
+			protocols::loops::read_loop_fragments( frag_libs );
+			MoverOP builder( new AssembleLinkerMover( "quick_ccd", min_loop_size, frag_libs ) );
+			container->add_mover(builder);
+			container->add_mover( MoverOP( new FastRelax( get_score_function() ) ) );
+			container->add_mover( MoverOP( new PostDockAssemblyScorer( "post_rebuild_dist" ) ) );
+		}
 
-	// execution
-	JobDistributor::get_instance()->go(container);
+		// execution
+		JobDistributor::get_instance()->go(container);
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

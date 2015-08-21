@@ -394,8 +394,8 @@ void ZnCoordinationScorer::add_match_from_file(
 
 
 	/*core::chemical::ResidueType const & znx_restype =
-		core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->
-		name_map( "ZNX" ); */ // Unused variable causes warning.
+	core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->
+	name_map( "ZNX" ); */ // Unused variable causes warning.
 
 	core::pose::Pose match_pose;
 	core::import_pose::pose_from_pdb( match_pose, match_file_name );
@@ -445,9 +445,9 @@ void ZnCoordinationScorer::add_match_from_file(
 			core::id::AtomID iiatid = reporter.constrained_nonligand_atoms()[ ii ];
 			assert( iiatid.rsd() == 1 || iiatid.rsd() == 2 );
 			//std::cout << "Constraint to ligand #" << ii << " Res " <<
-			//	iiatid.rsd() << " atom " <<
-			//	match_pose.residue( iiatid.rsd() ).atom_name( iiatid.atomno() ) <<
-			//	std::endl;
+			// iiatid.rsd() << " atom " <<
+			// match_pose.residue( iiatid.rsd() ).atom_name( iiatid.atomno() ) <<
+			// std::endl;
 			core::Real const d2 = match_pose.xyz(zn_atom_id).distance_squared( match_pose.xyz( iiatid ) );
 			if ( closest_atoms[ iiatid.rsd() ].second < 0 || d2 < closest_atoms[ iiatid.rsd() ].second ) {
 				closest_atoms[ iiatid.rsd() ].first = iiatid;
@@ -456,9 +456,9 @@ void ZnCoordinationScorer::add_match_from_file(
 		}
 
 		//for ( core::Size ii = 1; ii <= 2; ++ii ) {
-		//	std::cout << "Closest atom rsd: " << closest_atoms[ii].first.rsd() << " " <<
-		//		match_pose.residue( closest_atoms[ii].first.rsd() ).atom_name( closest_atoms[ii].first.atomno() ) <<
-		//		" with distance " << std::sqrt( closest_atoms[ii].second ) << std::endl;
+		// std::cout << "Closest atom rsd: " << closest_atoms[ii].first.rsd() << " " <<
+		//  match_pose.residue( closest_atoms[ii].first.rsd() ).atom_name( closest_atoms[ii].first.atomno() ) <<
+		//  " with distance " << std::sqrt( closest_atoms[ii].second ) << std::endl;
 		//}
 
 		core::Vector r1coord_atom = match_pose.xyz( closest_atoms[1].first );
@@ -771,32 +771,32 @@ ZnCoordinationScorer::clash_score(
 
 
 	/*for ( Size ii = 1; ii <= r1m1.natoms(); ++ii ) {
-		std::cout << " r1m1 atom " << ii
-			<< " " << r1m1.xyz(ii).x()
-			<< " " << r1m1.xyz(ii).y()
-			<< " " << r1m1.xyz(ii).z() << std::endl;
+	std::cout << " r1m1 atom " << ii
+	<< " " << r1m1.xyz(ii).x()
+	<< " " << r1m1.xyz(ii).y()
+	<< " " << r1m1.xyz(ii).z() << std::endl;
 	}
 	for ( Size ii = 1; ii <= r2m1.natoms(); ++ii ) {
-		std::cout << " r2m1 atom " << ii
-			<< " " << r1m1.xyz(ii).x()
-			<< " " << r1m1.xyz(ii).y()
-			<< " " << r1m1.xyz(ii).z() << std::endl;
+	std::cout << " r2m1 atom " << ii
+	<< " " << r1m1.xyz(ii).x()
+	<< " " << r1m1.xyz(ii).y()
+	<< " " << r1m1.xyz(ii).z() << std::endl;
 	}*/
 
 	for ( Size ii = 1; ii <= r1m2.natoms(); ++ii ) {
 		symmclone_coords_res1[ ii ] = to_hash_frame_transform*r1m2.xyz(ii);
 		//std::cout << " r1m2 atom " << ii
-		//	<< " " << symmclone_coords_res1[ ii ].x()
-		//	<< " " << symmclone_coords_res1[ ii ].y()
-		//	<< " " << symmclone_coords_res1[ ii ].z() << std::endl;
+		// << " " << symmclone_coords_res1[ ii ].x()
+		// << " " << symmclone_coords_res1[ ii ].y()
+		// << " " << symmclone_coords_res1[ ii ].z() << std::endl;
 
 	}
 	for ( Size ii = 1; ii <= r2m2.natoms(); ++ii ) {
 		symmclone_coords_res2[ ii ] = to_hash_frame_transform*r2m2.xyz(ii);
 		//std::cout << " r2m2 atom " << ii
-		//	<< " " << symmclone_coords_res2[ ii ].x()
-		//	<< " " << symmclone_coords_res2[ ii ].y()
-		//	<< " " << symmclone_coords_res2[ ii ].z() << std::endl;
+		// << " " << symmclone_coords_res2[ ii ].x()
+		// << " " << symmclone_coords_res2[ ii ].y()
+		// << " " << symmclone_coords_res2[ ii ].z() << std::endl;
 
 	}
 
@@ -822,7 +822,7 @@ ZnCoordinationScorer::clash_score_residue_pair(
 		for ( Size jj = 1; jj <= jjend; ++jj ) {
 			//Real d2 = r1.xyz(ii).distance_squared( r2coords[ jj ] );
 			//if ( d2 < 100 ) {
-			//	std::cout << " d2 : " << ii << " " << jj << " " << d2 << std::endl;
+			// std::cout << " d2 : " << ii << " " << jj << " " << d2 << std::endl;
 			//}
 			Real d2_minus_hvd2 = r1.xyz(ii).distance_squared( r2coords[ jj ] ) - hvd2;
 			if ( d2_minus_hvd2 < 0 ) {
@@ -885,16 +885,16 @@ ZnCoordinationScorer::insert_match_onto_pose(
 		// find the appropriate residue type for this position
 		core::chemical::ResidueTypeCOP newrestype( matchres.type().get_self_ptr() );
 		utility::vector1< std::string > const & matchres_variants =
-				matchres.type().properties().get_list_of_variants();
+			matchres.type().properties().get_list_of_variants();
 		for ( Size jj = 1; jj <= matchres_variants.size(); ++jj ) {
-			if ( ! dstres.type().has_variant_type( matchres_variants[ jj ]  )) {
+			if ( ! dstres.type().has_variant_type( matchres_variants[ jj ]  ) ) {
 				core::chemical::ResidueTypeCOP variantfree_newrestype;
 				// TODO: Refactor this to avoid working with strings.
 				variantfree_newrestype =
-						restypeset.get_residue_type_with_variant_removed(
-								*newrestype,
-								core::chemical::ResidueProperties::get_variant_from_string( matchres_variants[ jj ] )
-						).get_self_ptr();
+					restypeset.get_residue_type_with_variant_removed(
+					*newrestype,
+					core::chemical::ResidueProperties::get_variant_from_string( matchres_variants[ jj ] )
+					).get_self_ptr();
 				if ( ! variantfree_newrestype  ) {
 					std::cerr << "Error could not remove variant " << matchres_variants[ jj ] << " from restype " <<
 						newrestype->name() << std::endl;
@@ -905,16 +905,16 @@ ZnCoordinationScorer::insert_match_onto_pose(
 			}
 		}
 		utility::vector1< std::string > const & dstres_variants =
-				dstres.type().properties().get_list_of_variants();
+			dstres.type().properties().get_list_of_variants();
 		for ( Size jj = 1; jj <= dstres_variants.size(); ++jj ) {
-			if ( ! newrestype->has_variant_type( dstres_variants[ jj ]  )) {
+			if ( ! newrestype->has_variant_type( dstres_variants[ jj ]  ) ) {
 				core::chemical::ResidueTypeCOP variantful_newrestype;
 				// TODO: Refactor this to avoid working with strings.
 				variantful_newrestype =
-						restypeset.get_residue_type_with_variant_added(
-								*newrestype,
-								core::chemical::ResidueProperties::get_variant_from_string( dstres_variants[ jj ] )
-						).get_self_ptr();
+					restypeset.get_residue_type_with_variant_added(
+					*newrestype,
+					core::chemical::ResidueProperties::get_variant_from_string( dstres_variants[ jj ] )
+					).get_self_ptr();
 				if ( ! variantful_newrestype  ) {
 					std::cerr << "Error could not add variant " << dstres_variants[ jj ] << " to restype " <<
 						newrestype->name() << std::endl;
@@ -952,7 +952,7 @@ ZnCoordinationScorer::insert_match_onto_pose(
 
 		utility::vector1< Size > newcoords_calculated( newres->natoms(), 0 );
 		for ( Size jj = 1; jj <= matchres.natoms(); ++jj ) {
-			if ( newres->has( matchres.atom_name( jj ) )) {
+			if ( newres->has( matchres.atom_name( jj ) ) ) {
 				Size newres_atind = newres->atom_index( matchres.atom_name( jj ) );
 				newcoords_calculated[ newres_atind ] = 1;
 				newres->set_xyz( newres_atind, transform * matchres.xyz(jj) );
@@ -1068,7 +1068,7 @@ ZnCoordinationConstraint::atom( Size const index ) const
 	assert( index <= natoms() );
 	if ( index <= 3 ) {
 		return zn_score_->asymm_atids()[ index ];
-	} else if (index <= 6 ) {
+	} else if ( index <= 6 ) {
 		return zn_score_->focused_clone_atids()[ index-3 ];
 	} else {
 		// The seventh atom qualifies this as a non-pairwise decomposable score term

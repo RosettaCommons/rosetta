@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/toolbox/task_operations/CrystalContactsOperation.fwd.hh
-/// @brief  Exclude crystal contacts from design 
-/// @author Patrick Conway (ptconway@uw.edu) 
+/// @brief  Exclude crystal contacts from design
+/// @author Patrick Conway (ptconway@uw.edu)
 
 #ifndef INCLUDED_protocols_toolbox_task_operations_CrystalContactsOperation_fwd_hh
 #define INCLUDED_protocols_toolbox_task_operations_CrystalContactsOperation_fwd_hh

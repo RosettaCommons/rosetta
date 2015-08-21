@@ -51,11 +51,11 @@ public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~B2();
 
-/*	B2();
+	/* B2();
 	~B2();
 	B2( B2 const & );
 	B2 const & operator = ( B2 );
-*/
+	*/
 
 	void set_default();
 	void set_a( A const & a );
@@ -64,7 +64,7 @@ public:
 	B2OP clone() const { return B2OP( new B2( *this ) ); }
 
 private:
-   int some_int_;
+	int some_int_;
 	A a_instance_;
 
 };

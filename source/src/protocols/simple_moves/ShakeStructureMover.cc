@@ -330,7 +330,7 @@ ShakeStructureMover::apply(core::pose::Pose & pose){
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
 
-	if(!is_properly_initialized){
+	if ( !is_properly_initialized ) {
 		setup_for_run(pose);
 	}
 
@@ -352,7 +352,7 @@ ShakeStructureMover::reduce_fa_rep(float fraction_fa_rep, core::scoring::ScoreFu
 
 void
 ShakeStructureMover::setup_for_run(core::pose::Pose & p){
-	if(!scorefunction_initialized){
+	if ( !scorefunction_initialized ) {
 		core::scoring::ScoreFunctionOP s( new core::scoring::ScoreFunction() );
 		//std::cout << "[DEBUG]: scorefunction being initialized"<< std::endl;
 		s->set_weight(core::scoring::score_type_from_name("rama"), 4.0);
@@ -363,19 +363,19 @@ ShakeStructureMover::setup_for_run(core::pose::Pose & p){
 	}
 	setup_ca_constraints(p,(*scorefxn),9.0,harmonic_ca_cst_std_dev);
 
-	if(min_cst || sc_min_only){
+	if ( min_cst || sc_min_only ) {
 		min_scorefxn = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	}
 
-	if(mc_temp <= 0 && ensemble_ca_rmsd > 0){
+	if ( mc_temp <= 0 && ensemble_ca_rmsd > 0 ) {
 		//set mc_temp based on ensemble_ca_rmsd
 		testing_phase=true;
 		mc_temp = set_temp_based_on_ens_diversity(p,(*scorefxn));
 		is_properly_initialized = true;
-	}else if(mc_temp > 0 && ensemble_ca_rmsd < 0){
+	} else if ( mc_temp > 0 && ensemble_ca_rmsd < 0 ) {
 		//ready to go!
 		is_properly_initialized = true;
-	}else{
+	} else {
 		//what to do, what to do?
 		is_properly_initialized = false;
 	}
@@ -385,7 +385,7 @@ ShakeStructureMover::setup_for_run(core::pose::Pose & p){
 
 void
 ShakeStructureMover::minimize_with_constraints(core::pose::Pose & p,
-															  core::scoring::ScoreFunction & s){
+	core::scoring::ScoreFunction & s){
 
 	core::optimization::AtomTreeMinimizer min_struc;
 	float const minimizer_tol = 0.0000001;
@@ -398,14 +398,14 @@ ShakeStructureMover::minimize_with_constraints(core::pose::Pose & p,
 	options.nblist_auto_update( true );
 	//      options.max_iter(5000);
 	core::kinematics::MoveMap mm;
-	if(!sc_min_only){
+	if ( !sc_min_only ) {
 		mm.set_bb(true);
-	}else{
+	} else {
 		mm.set_bb(false);
 	}
 	mm.set_chi(true);
 
-	if(ramp_fa_rep){
+	if ( ramp_fa_rep ) {
 		core::scoring::ScoreFunctionOP one_tenth_orig(s.clone());
 		reduce_fa_rep(0.1,*one_tenth_orig);
 		min_struc.run(p,mm,*one_tenth_orig,options);
@@ -432,14 +432,14 @@ ShakeStructureMover::setup_ca_constraints(
 	//type: HARMONIC
 	//static float const CA_cutoff(9.0);
 	int nres = core::pose::nres_protein( pose );  // only looks at protein residues, no virts
-	for(int i = 1; i <= nres; i++){
+	for ( int i = 1; i <= nres; i++ ) {
 		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
 		Vector const CA_i( pose.residue(i).xyz(" CA "));
-		for(int j = 1; j <=nres; j++){
+		for ( int j = 1; j <=nres; j++ ) {
 			if ( pose.residue(j).aa() == core::chemical::aa_vrt ) continue;
 			Vector const CA_j(pose.residue(j).xyz(" CA "));
 			Real const CA_dist = (CA_i - CA_j).length();
-			if(CA_dist < CA_cutoff){
+			if ( CA_dist < CA_cutoff ) {
 				ConstraintCOP cst( ConstraintOP( new AtomPairConstraint( AtomID(pose.residue(i).atom_index(" CA "),i),AtomID(pose.residue(j).atom_index(" CA "),j), core::scoring::func::FuncOP(new core::scoring::func::HarmonicFunc(CA_dist, cst_tol)) ) ) );
 				pose.add_constraint(cst);
 			}
@@ -510,16 +510,16 @@ ShakeStructureMover::run_mc(
 	protocols::moves::MonteCarloOP mc( new moves::MonteCarlo(p,s,temperature) );
 	//time_t time_per_decoy = time(NULL);
 
-	//			mc->reset_counters();
-	//			mc->reset(p);
+	//   mc->reset_counters();
+	//   mc->reset(p);
 	mc->set_temperature(temperature);
 
 	moves::TrialMoverOP tm( new moves::TrialMover(apply_random_move,mc) );
 	RepeatMoverOP full_cycle( new moves::RepeatMover( tm, nrounds ) );
 	full_cycle->apply( p );
-	//			mc->show_counters();
+	//   mc->show_counters();
 
-	if(!skip_low_temp_phase){
+	if ( !skip_low_temp_phase ) {
 		mc->reset_counters();
 
 		mc->set_lowest_score_pose(mc->last_accepted_pose()); //high energy mark for annealing back to native
@@ -535,7 +535,7 @@ ShakeStructureMover::run_mc(
 		p = mc->last_accepted_pose();
 	}
 
-	if(min_cst && !testing_phase){
+	if ( min_cst && !testing_phase ) {
 		//remove constraints
 		p.remove_constraints((p.constraint_set())->get_all_constraints());
 
@@ -547,7 +547,7 @@ ShakeStructureMover::run_mc(
 		//std::cout << " CA rmsd of current: " << core::scoring::CA_rmsd(p,init) << std::endl;
 		//time_t time_per_decoy_finish = time(NULL);
 		//std::cout << "time to finish decoy " << (time_per_decoy_finish-time_per_decoy) << std::endl;
-	}else{
+	} else {
 		//time_t time_per_decoy_finish = time(NULL);
 		//std::cout << " CA rmsd of current: " << core::scoring::CA_rmsd(p,init) << std::endl;
 		//std::cout << "time to finish decoy " << (time_per_decoy_finish-time_per_decoy) << std::endl;
@@ -567,20 +567,19 @@ ShakeStructureMover::set_temp_based_on_ens_diversity(
 
 	core::pose::Pose init(p);
 	core::pose::Pose test(p);
-	while((avg_ca_rmsd) > (ensemble_ca_rmsd+ensemble_ca_rmsd_tolerance) || (avg_ca_rmsd) < (ensemble_ca_rmsd-ensemble_ca_rmsd_tolerance)){
+	while ( (avg_ca_rmsd) > (ensemble_ca_rmsd+ensemble_ca_rmsd_tolerance) || (avg_ca_rmsd) < (ensemble_ca_rmsd-ensemble_ca_rmsd_tolerance) ) {
 		double avg_ca_rmsd=0;
-		for(int i =0;i<numstruct;i++){
+		for ( int i =0; i<numstruct; i++ ) {
 			test = init;
 			run_mc(test, s,temperature);
 			//std::cout << "[DEBUG]: rmsd in set temp " << core::scoring::CA_rmsd(test,init) << std::endl;
 			avg_ca_rmsd+=core::scoring::CA_rmsd(test,init);
 		}
 		avg_ca_rmsd = avg_ca_rmsd /numstruct;
-		if(avg_ca_rmsd > (ensemble_ca_rmsd+ensemble_ca_rmsd_tolerance)){
+		if ( avg_ca_rmsd > (ensemble_ca_rmsd+ensemble_ca_rmsd_tolerance) ) {
 			temperature -= increment;
 			//std::cout <<  "avg rmsd is " << avg_ca_rmsd << " which is greater than upper bound: " << ensemble_ca_rmsd+ensemble_ca_rmsd_tolerance << " so temp is decreased to " << temperature << std::endl;
-		}
-		else if(avg_ca_rmsd < (ensemble_ca_rmsd-ensemble_ca_rmsd_tolerance)){
+		} else if ( avg_ca_rmsd < (ensemble_ca_rmsd-ensemble_ca_rmsd_tolerance) ) {
 			temperature += increment;
 			//std::cout <<  "avg rmsd is " << avg_ca_rmsd << " which is less than lower bound: " << ensemble_ca_rmsd-ensemble_ca_rmsd_tolerance << " so temp is increased to " << temperature << std::endl;
 		}

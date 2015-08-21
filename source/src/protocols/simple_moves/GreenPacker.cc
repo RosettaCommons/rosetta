@@ -283,7 +283,7 @@ MinimalRotamer::same_nonideal_geometry( MinimalRotamer const & other ) const
 				internal_geometry_[ ii ][ phi ] - other.internal_geometry_[ ii ][ phi ],
 				numeric::constants::d::pi ) ) > 1e-8 ) {
 			//TR << "same nonideal geometry phi failed: " << residue_type_.name() << " " << other.residue_type_.name() << " " << ii << " " << internal_geometry_[ ii ][ phi ] << " " << other.internal_geometry_[ ii ][ phi ]  << " " <<
-			//	basic::periodic_range( internal_geometry_[ ii ][ phi ] - other.internal_geometry_[ ii ][ phi ], numeric::constants::d::pi ) << std::endl;
+			// basic::periodic_range( internal_geometry_[ ii ][ phi ] - other.internal_geometry_[ ii ][ phi ], numeric::constants::d::pi ) << std::endl;
 			return false;
 		}
 	}
@@ -325,7 +325,7 @@ ChainGroupDiscriminator::group_id( Pose const & pose, Size seqpos ) const
 }
 
 
-	//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 UserDefinedGroupDiscriminator::~UserDefinedGroupDiscriminator() {}
 
 GroupDiscriminatorOP UserDefinedGroupDiscriminator::clone() const
@@ -604,7 +604,7 @@ GreenPacker::drop_inter_group_edges(
 			Graph::EdgeListIter irunext = iru;
 			++irunext;
 			if ( ii_grp != group_ids_[ (*iru)->get_second_node_ind() ] ||
-				ii_grp == 0 /* implies other group also 0*/ ) {
+					ii_grp == 0 /* implies other group also 0*/ ) {
 				packer_neighbor_graph->delete_edge( *iru ); // invalidates iterator
 			}
 			iru = irunext; // increment;
@@ -695,7 +695,7 @@ GreenPacker::find_reference_and_current_rotamer_correspondence(
 		while ( orig_id <= ii_orig_nrots && curr_id <= ii_curr_nrots ) {
 			protocols::simple_moves::MinimalRotamerOP orig_rot = original_rotamers_[ ii ][ orig_id ];
 			protocols::simple_moves::MinimalRotamerOP curr_rot = current_rotamers_[ ii ][ curr_id ];
-			if ( orig_rot->same_residue_type( *curr_rot )) {
+			if ( orig_rot->same_residue_type( *curr_rot ) ) {
 				if ( orig_rot->same( *curr_rot ) ) {
 					curr_rot_2_orig_rot_[ ii ][ curr_id ] = orig_id;
 					orig_rot_2_curr_rot_[ ii ][ orig_id ] = curr_id;
@@ -863,7 +863,7 @@ GreenPacker::add_precomputed_energies(
 			PrecomputedPairEnergiesEdge const & precomp_edge(
 				static_cast< PrecomputedPairEnergiesEdge const & > ( edge ) );
 
-			if ( !pig->get_edge_exists( ii_moltenres_curr, jj_moltenres_curr )) {
+			if ( !pig->get_edge_exists( ii_moltenres_curr, jj_moltenres_curr ) ) {
 				pig->add_edge( ii_moltenres_curr, jj_moltenres_curr );
 			}
 
@@ -953,9 +953,9 @@ GreenPacker::compute_absent_energies(
 			Size const ii_nnew_rots = curr_rotamers_without_correspondence_[ ii ].size();
 
 			for ( ResidueNeighborConstIteratorOP
-						rni = lrec->const_upper_neighbor_iterator_begin( ii ),
-						rniend = lrec->const_upper_neighbor_iterator_end( ii );
-						(*rni) != (*rniend); ++(*rni) ) {
+					rni = lrec->const_upper_neighbor_iterator_begin( ii ),
+					rniend = lrec->const_upper_neighbor_iterator_end( ii );
+					(*rni) != (*rniend); ++(*rni) ) {
 				Size const jj = rni->upper_neighbor_id();
 
 				Size const jj_moltenres_curr = current_rotamer_sets_->resid_2_moltenres( jj );
@@ -1144,8 +1144,8 @@ void GreenPacker::compare_input_pose_geometry_to_reference( Pose & pose )
 	for ( Size ii = 1; ii <= orig_bb_tors_.size(); ++ii ) {
 		for ( Size jj = 1; jj <= orig_bb_tors_[ ii ].size(); ++jj ) {
 			if ( std::abs( basic::periodic_range(
-				orig_bb_tors_[ ii ][ jj ] - pose.residue( ii ).mainchain_torsions()[ jj ],
-				180 ) ) > 1e-8 ) {
+					orig_bb_tors_[ ii ][ jj ] - pose.residue( ii ).mainchain_torsions()[ jj ],
+					180 ) ) > 1e-8 ) {
 				std::cerr << "Critical Error in GreenPacker -- Backbone torsions have changed since original packing" << std::endl;
 				std::cerr << "Residue " << ii << " torsion " << jj << " originally: " << orig_bb_tors_[ ii ][ jj ];
 				std::cerr << " currently: " << pose.residue( ii ).mainchain_torsions()[ jj ] << std::endl;

@@ -61,7 +61,7 @@ public:
 private:
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
 	// Real cutoff_;
-//	utility::vector1< core::pose::PoseOP > various_length_poses_;
+	// utility::vector1< core::pose::PoseOP > various_length_poses_;
 };
 
 

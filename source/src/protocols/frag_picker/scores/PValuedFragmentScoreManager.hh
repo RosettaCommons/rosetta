@@ -47,7 +47,7 @@ public:
 	/// @brief prints a flat table with all scores for all the fragments in a given vector
 	/// @details If the manager allows for annotations, they will be printed as well
 	void describe_fragments(utility::vector1<std::pair<FragmentCandidateOP,
-			scores::FragmentScoreMapOP> > const&, std::ostream&);
+		scores::FragmentScoreMapOP> > const&, std::ostream&);
 
 private:
 	utility::vector1<utility::vector1<AdaptiveScoreHistogramOP> > statistics_;

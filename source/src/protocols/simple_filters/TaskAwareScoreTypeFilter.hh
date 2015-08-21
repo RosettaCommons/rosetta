@@ -40,7 +40,7 @@ private:
 	typedef protocols::filters::Filter parent;
 public:
 	/// @brief default ctor
-		TaskAwareScoreTypeFilter();
+	TaskAwareScoreTypeFilter();
 	/// @brief Constructor with a single target residue
 	virtual bool apply( core::pose::Pose const & pose ) const;
 	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
@@ -55,9 +55,9 @@ public:
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );
 	void parse_def( utility::lua::LuaObject const & def,
-					utility::lua::LuaObject const & score_fxns,
-					utility::lua::LuaObject const & tasks );
-	core::pack::task::TaskFactoryOP task_factory() const;	
+		utility::lua::LuaObject const & score_fxns,
+		utility::lua::LuaObject const & tasks );
+	core::pack::task::TaskFactoryOP task_factory() const;
 	core::scoring::ScoreFunctionOP scorefxn() const;
 	core::scoring::ScoreType score_type() const;
 	core::Real threshold() const;
@@ -85,13 +85,13 @@ public:
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::scoring::ScoreFunctionOP scorefxn_;
-	core::scoring::ScoreType score_type_; // scoretype of interest, defaults to total_energy 
+	core::scoring::ScoreType score_type_; // scoretype of interest, defaults to total_energy
 	std::string score_type_name_;
-	core::Real threshold_; // If mode is individual, then this threshold is for the maximum number of failing residues. If mode is average, then this is the maximum average score over all considered positions. If mode is total, then this is the maximum total score for the given scoretype over all considered positions. 
+	core::Real threshold_; // If mode is individual, then this threshold is for the maximum number of failing residues. If mode is average, then this is the maximum average score over all considered positions. If mode is total, then this is the maximum total score for the given scoretype over all considered positions.
 	bool bb_bb_; // if one wants to evaluate backbone - backbone hydrogen bonding energies (short and long range)
 	bool unbound_; // For evaluating energies in the unbound state
 	bool write2pdb_; //Output per residue information to the PDB file for residues that fail the user-defined threshold
-	bool individual_hbonds_; //Caution. Under development. Calculate energies for individual hbonds between the sidechains of the residues specified by the task operations and backbone polars. 
+	bool individual_hbonds_; //Caution. Under development. Calculate energies for individual hbonds between the sidechains of the residues specified by the task operations and backbone polars.
 	std::string sym_dof_names_; // For generating the unbound pose
 	core::Size jump_; // Alternative method of generating the unbound pose
 	std::string mode_; // This filter can be set to operate in three different modes: total, average, or individual

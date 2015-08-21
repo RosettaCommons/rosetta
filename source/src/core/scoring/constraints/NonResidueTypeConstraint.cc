@@ -60,10 +60,10 @@ NonResidueTypeConstraint::NonResidueTypeConstraint(
 {}
 
 NonResidueTypeConstraint::NonResidueTypeConstraint(
-		Size seqpos,
-		std::string aa_in,
-		std::string name3_in,
-		core::Real bonus_in
+	Size seqpos,
+	std::string aa_in,
+	std::string name3_in,
+	core::Real bonus_in
 ):
 	Constraint( core::scoring::res_type_constraint ),
 	seqpos_( seqpos ),
@@ -100,11 +100,11 @@ ConstraintOP
 NonResidueTypeConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const
 {
 	core::Size newseqpos = seqmap[ seqpos_ ];
-  if ( newseqpos != 0 ) {
-		return ConstraintOP( new NonResidueTypeConstraint(	newseqpos, AAname, rsd_type_name3_, favor_non_native_bonus_ ) );
-  } else {
-    return NULL;
-  }
+	if ( newseqpos != 0 ) {
+		return ConstraintOP( new NonResidueTypeConstraint( newseqpos, AAname, rsd_type_name3_, favor_non_native_bonus_ ) );
+	} else {
+		return NULL;
+	}
 }
 
 
@@ -115,11 +115,12 @@ void
 NonResidueTypeConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const
 {
 	Real const weight(weights[ this->score_type() ] );
-	if( weight == 0 ) return; // what's the point?
+	if ( weight == 0 ) return; // what's the point?
 
 	conformation::Residue const & rsd( xyz_func.residue(seqpos_) );
-	if( rsd.type().name3() == rsd_type_name3_ )
+	if ( rsd.type().name3() == rsd_type_name3_ ) {
 		emap[ this->score_type() ] -= favor_non_native_bonus_;
+	}
 	// no match, don't adjust score
 }
 

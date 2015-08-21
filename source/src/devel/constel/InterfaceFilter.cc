@@ -19,7 +19,7 @@ namespace constel {
 
 
 /// @brief Returns true if a constellation is shared by multiple chains;
-/// 	returns false otherwise.
+///  returns false otherwise.
 ///
 /// @param[in] ps pose containing the constellation
 /// @param[in] cnl pose indexes of the residues forming the constellation
@@ -29,9 +29,10 @@ bool at_interface(Pose const& ps, utility::vector1<Size> const& cnl) {
 	char const CID1 = ps.pdb_info()->chain(cnl[1]);
 	Size N = cnl.size();
 
-	for(Size i=2; i<=N; ++i) {
-		if(CID1 != ps.pdb_info()->chain(cnl[i]))
+	for ( Size i=2; i<=N; ++i ) {
+		if ( CID1 != ps.pdb_info()->chain(cnl[i]) ) {
 			return true;
+		}
 	}
 
 	return false;

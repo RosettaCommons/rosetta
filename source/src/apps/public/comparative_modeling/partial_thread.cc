@@ -92,109 +92,109 @@ poses_from_cmd_line(
 int
 main( int argc, char* argv [] ) {
 	try{
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	using std::map;
-	using std::string;
-	using core::Real;
-	using core::Size;
-	using core::pose::Pose;
-	using core::pose::PoseOP;
-	using utility::vector1;
-	using core::import_pose::pose_from_pdb;
-	using core::pose::make_pose_from_sequence;
-	using protocols::comparative_modeling::PartialThreadingMover;
+		using std::map;
+		using std::string;
+		using core::Real;
+		using core::Size;
+		using core::pose::Pose;
+		using core::pose::PoseOP;
+		using utility::vector1;
+		using core::import_pose::pose_from_pdb;
+		using core::pose::make_pose_from_sequence;
+		using protocols::comparative_modeling::PartialThreadingMover;
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::chemical;
-	using namespace core::sequence;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::chemical;
+		using namespace core::sequence;
 
-	basic::Tracer tr( "partial_thread" );
+		basic::Tracer tr( "partial_thread" );
 
-	SequenceOP fasta_seq = core::sequence::read_fasta_file(
-		option[ in::file::fasta ]()[1]
-	)[1];
+		SequenceOP fasta_seq = core::sequence::read_fasta_file(
+			option[ in::file::fasta ]()[1]
+			)[1];
 
 
-	vector1< string > align_fns = option[ in::file::alignment ]();
+		vector1< string > align_fns = option[ in::file::alignment ]();
 
-	map< string, Pose > poses = poses_from_cmd_line(
+		map< string, Pose > poses = poses_from_cmd_line(
 			option[ in::file::template_pdb ]()
-	);
-
-	typedef vector1< string >::const_iterator aln_iter;
-	// in this block, when compiler sees aln_iter, it converts to
-	// vector1< string >::const_iterator. We could have used this:
-	// vector1< string >::iterator. We do not, because we don't want
-	// to change the vector1< string >. This is called "const-correctness"
-	// in C++, and is a very important topic.
-	//
-	// equivalent to:
-	//for ( vector1< string >::const_iterator aln_fn = aln_fns.begin(),
-	//			aln_end = aln_fns.end();
-	//			aln_fn != aln_end; ++aln_fn )
-	for ( aln_iter aln_fn = align_fns.begin(), aln_end = align_fns.end();
-				aln_fn != aln_end; ++aln_fn
-	) {
-		vector1< SequenceAlignment > alns = core::sequence::read_aln(
-			option[ cm::aln_format ](), *aln_fn
 		);
 
-		for ( vector1< SequenceAlignment >::iterator it = alns.begin(),
-				end = alns.end();
-				it != end; ++it
-		) {
-			string const template_id( it->sequence(2)->id().substr(0,5) );
-			tr << *it << std::endl;
-			tr << "id " << it->sequence(2)->id() << " => " << template_id
-				<< std::endl;
-			string const ungapped_query( it->sequence(1)->ungapped_sequence() );
+		typedef vector1< string >::const_iterator aln_iter;
+		// in this block, when compiler sees aln_iter, it converts to
+		// vector1< string >::const_iterator. We could have used this:
+		// vector1< string >::iterator. We do not, because we don't want
+		// to change the vector1< string >. This is called "const-correctness"
+		// in C++, and is a very important topic.
+		//
+		// equivalent to:
+		//for ( vector1< string >::const_iterator aln_fn = aln_fns.begin(),
+		//   aln_end = aln_fns.end();
+		//   aln_fn != aln_end; ++aln_fn )
+		for ( aln_iter aln_fn = align_fns.begin(), aln_end = align_fns.end();
+				aln_fn != aln_end; ++aln_fn
+				) {
+			vector1< SequenceAlignment > alns = core::sequence::read_aln(
+				option[ cm::aln_format ](), *aln_fn
+			);
 
-			// calc rmsd/gdt stats
-			map< string, Pose >::iterator pose_it = poses.find( template_id );
-			if ( pose_it == poses.end() ) {
-				string msg( "Error: can't find pose (id = "
-					+ template_id + ")"
-				);
-				//utility_exit_with_message(msg);
-				tr.Error << msg << std::endl;
-			} else {
-				Pose query_pose, template_pose;
-				make_pose_from_sequence(
-					query_pose,
-					//ungapped_query,
-					fasta_seq->sequence(),
-					*(rsd_set_from_cmd_line().lock())
-				);
-				template_pose = pose_it->second;
-				PartialThreadingMover mover(*it,template_pose);
-				mover.apply(query_pose);
-				// line below is equivalent to this:
-				//(*(*it).sequence(2)).id();
-				// so the object->method() is syntax for saying (*object).method()
-				string const id_out( it->sequence(2)->id() );
-				//query_pose.dump_pdb(id_out + ".pdb");
+			for ( vector1< SequenceAlignment >::iterator it = alns.begin(),
+					end = alns.end();
+					it != end; ++it
+					) {
+				string const template_id( it->sequence(2)->id().substr(0,5) );
+				tr << *it << std::endl;
+				tr << "id " << it->sequence(2)->id() << " => " << template_id
+					<< std::endl;
+				string const ungapped_query( it->sequence(1)->ungapped_sequence() );
 
-				// print out query-anchored alignment
-				utility::io::ozstream output( id_out + ".pdb" );
-				core::id::SequenceMapping map( it->sequence_mapping(1,2) );
-				output << "REMARK query_anchored_aln ";
-				for ( core::Size ii = 1; ii <= fasta_seq->sequence().size(); ++ii ) {
-					if ( map[ii] ) output << fasta_seq->at(ii);
-					else           output << "-";
-				}
-				output << std::endl;
-				core::io::pdb::dump_pdb( query_pose, output );
-				output.close();
+				// calc rmsd/gdt stats
+				map< string, Pose >::iterator pose_it = poses.find( template_id );
+				if ( pose_it == poses.end() ) {
+					string msg( "Error: can't find pose (id = "
+						+ template_id + ")"
+					);
+					//utility_exit_with_message(msg);
+					tr.Error << msg << std::endl;
+				} else {
+					Pose query_pose, template_pose;
+					make_pose_from_sequence(
+						query_pose,
+						//ungapped_query,
+						fasta_seq->sequence(),
+						*(rsd_set_from_cmd_line().lock())
+					);
+					template_pose = pose_it->second;
+					PartialThreadingMover mover(*it,template_pose);
+					mover.apply(query_pose);
+					// line below is equivalent to this:
+					//(*(*it).sequence(2)).id();
+					// so the object->method() is syntax for saying (*object).method()
+					string const id_out( it->sequence(2)->id() );
+					//query_pose.dump_pdb(id_out + ".pdb");
 
-			} // template pdb check
-		} // alns
-	} // for ( it in aligns )
+					// print out query-anchored alignment
+					utility::io::ozstream output( id_out + ".pdb" );
+					core::id::SequenceMapping map( it->sequence_mapping(1,2) );
+					output << "REMARK query_anchored_aln ";
+					for ( core::Size ii = 1; ii <= fasta_seq->sequence().size(); ++ii ) {
+						if ( map[ii] ) output << fasta_seq->at(ii);
+						else           output << "-";
+					}
+					output << std::endl;
+					core::io::pdb::dump_pdb( query_pose, output );
+					output.close();
 
-	tr.Debug << "finished building partial models." << std::endl;
-	tr.flush_all_channels();
+				} // template pdb check
+			} // alns
+		} // for ( it in aligns )
+
+		tr.Debug << "finished building partial models." << std::endl;
+		tr.flush_all_channels();
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

@@ -23,48 +23,48 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class SugarInstantiator: public SampleApplier {
+class SugarInstantiator: public SampleApplier {
 
-	public:
+public:
 
-		//constructor
-		SugarInstantiator( pose::Pose & screening_pose,
-											 Size const moving_res,
-											 Distance const o2prime_instantiation_distance_cutoff = 6.0 );
+	//constructor
+	SugarInstantiator( pose::Pose & screening_pose,
+		Size const moving_res,
+		Distance const o2prime_instantiation_distance_cutoff = 6.0 );
 
-		//destructor
-		~SugarInstantiator();
+	//destructor
+	~SugarInstantiator();
 
-	public:
+public:
 
-		virtual
-		bool
-		check_screen();
+	virtual
+	bool
+	check_screen();
 
-		virtual
-		std::string
-		name() const { return "SugarInstantiator"; }
+	virtual
+	std::string
+	name() const { return "SugarInstantiator"; }
 
-		virtual
-		StepWiseScreenerType
-		type() const { return SUGAR_INSTANTIATOR; }
+	virtual
+	StepWiseScreenerType
+	type() const { return SUGAR_INSTANTIATOR; }
 
-		virtual
-		void
-		add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
+	virtual
+	void
+	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
 
-	private:
+private:
 
-		bool check_moving_sugar( pose::Pose & pose, Size const moving_res );
+	bool check_moving_sugar( pose::Pose & pose, Size const moving_res );
 
-	private:
+private:
 
-		pose::Pose & screening_pose_;
-		Size const moving_res_;
-		Distance const o2prime_instantiation_distance_cutoff_;
+	pose::Pose & screening_pose_;
+	Size const moving_res_;
+	Distance const o2prime_instantiation_distance_cutoff_;
 
-		bool instantiate_sugar_;
-	};
+	bool instantiate_sugar_;
+};
 
 } //screener
 } //stepwise

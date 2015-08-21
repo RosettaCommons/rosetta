@@ -54,7 +54,7 @@
 #include <map>
 #include <string>
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 // option key includes
 
@@ -95,28 +95,30 @@ utility::vector1< BasicJobOP > load_s_and_l()
 
 	// concatenate -s and -l flags together to get total list of PDB files
 	vector1< FileName > pdb_file_names;
-	if ( option[ in::file::s ].active() )
+	if ( option[ in::file::s ].active() ) {
 		pdb_file_names = option[ in::file::s ]().vector(); // make a copy (-s)
+	}
 
 	vector1< FileName > list_file_names;
-	if ( option[ in::file::l ].active() )
+	if ( option[ in::file::l ].active() ) {
 		list_file_names = option[ in::file::l ]().vector(); // make a copy (-l)
-	if ( option[ in::file::list ].active() ){
+	}
+	if ( option[ in::file::list ].active() ) {
 		vector1< FileName > better_list_file_names;
 		better_list_file_names= option[in::file::list ]().vector(); // make a copy (-list)
-		for(vector1< FileName >::iterator i = better_list_file_names.begin(), i_end = better_list_file_names.end(); i != i_end; ++i) {
+		for ( vector1< FileName >::iterator i = better_list_file_names.begin(), i_end = better_list_file_names.end(); i != i_end; ++i ) {
 			list_file_names.push_back(*i); // make a copy (-l)
 		}
 	}
 
-	for(vector1< FileName >::iterator i = list_file_names.begin(), i_end = list_file_names.end(); i != i_end; ++i) {
+	for ( vector1< FileName >::iterator i = list_file_names.begin(), i_end = list_file_names.end(); i != i_end; ++i ) {
 		std::string filename( i->name() );
 		utility::io::izstream data( filename.c_str() );
 		if ( !data.good() ) {
 			utility_exit_with_message( "Unable to open file: " + filename + '\n' );
 		}
 		std::string line;
-		while( getline(data, line) ) {
+		while ( getline(data, line) ) {
 			pdb_file_names.push_back( FileName(line) );
 		}
 		data.close();
@@ -125,7 +127,7 @@ utility::vector1< BasicJobOP > load_s_and_l()
 	vector1< BasicJobOP > jobs;
 	int const nstruct_flag = option[ out::nstruct ];
 	int const nstruct = std::max( 1, nstruct_flag );
-	for(vector1< FileName >::iterator i = pdb_file_names.begin(), i_end = pdb_file_names.end(); i != i_end; ++i) {
+	for ( vector1< FileName >::iterator i = pdb_file_names.begin(), i_end = pdb_file_names.end(); i != i_end; ++i ) {
 		std::string native_file (i->base()+".native.pdb");
 		//TR << "Looking for native: " << native_file << " ... ";
 		if ( option[ in::file::native ].user() ) {
@@ -151,7 +153,7 @@ std::string get_output_tag(core::pose::Pose const & pose)
 	//using core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG;
 	using basic::datacache::CacheableString;
 
-	if( !pose.data().has( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ) return "NO_OUTPUT_TAG_CACHED_SORRY";
+	if ( !pose.data().has( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ) return "NO_OUTPUT_TAG_CACHED_SORRY";
 	runtime_assert( dynamic_cast< CacheableString const *>( &( pose.data().get( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ))));
 	return ( static_cast< CacheableString const &>(    pose.data().get( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ))).str();
 }
@@ -163,7 +165,7 @@ std::map < std::string, core::Real > get_score_map(core::pose::Pose const & pose
 	//using core::pose::datacache::CacheableDataType::SCORE_MAP;
 	using basic::datacache::DiagnosticData;
 
-	if( !pose.data().has( core::pose::datacache::CacheableDataType::SCORE_MAP ) ) {
+	if ( !pose.data().has( core::pose::datacache::CacheableDataType::SCORE_MAP ) ) {
 		std::map < std::string, core::Real > map;
 		map[ "NO_OUTPUT_TAG_CACHED_SORRY" ] = 0.0;
 		return map;
@@ -178,21 +180,21 @@ std::map < std::string, core::Real > get_score_map(core::pose::Pose const & pose
 void register_options_universal_main(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-  option.add_relevant( in::file::centroid_input      );
-  option.add_relevant( in::file::fullatom            );
-  option.add_relevant( in::file::l                   );
-  option.add_relevant( in::file::native              );
-  option.add_relevant( in::file::s                   );
-  option.add_relevant( in::file::silent              );
-  option.add_relevant( in::file::silent_struct_type  );
-  option.add_relevant( in::file::silent_list         );
-  option.add_relevant( in::file::tags                );
-  option.add_relevant( out::file::scorefile          );
-  option.add_relevant( out::file::silent             );
-  option.add_relevant( out::nooutput                 );
-  option.add_relevant( out::nstruct                  );
-  option.add_relevant( out::prefix                   );
-  option.add_relevant( run::repeat                   );
+	option.add_relevant( in::file::centroid_input      );
+	option.add_relevant( in::file::fullatom            );
+	option.add_relevant( in::file::l                   );
+	option.add_relevant( in::file::native              );
+	option.add_relevant( in::file::s                   );
+	option.add_relevant( in::file::silent              );
+	option.add_relevant( in::file::silent_struct_type  );
+	option.add_relevant( in::file::silent_list         );
+	option.add_relevant( in::file::tags                );
+	option.add_relevant( out::file::scorefile          );
+	option.add_relevant( out::file::silent             );
+	option.add_relevant( out::nooutput                 );
+	option.add_relevant( out::nstruct                  );
+	option.add_relevant( out::prefix                   );
+	option.add_relevant( run::repeat                   );
 }
 
 int universal_main(
@@ -208,7 +210,7 @@ int universal_main(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace utility::file;
-	
+
 	using core::pose::PoseCOP;
 	using core::pose::PoseOP;
 
@@ -218,7 +220,7 @@ int universal_main(
 
 	// open native pose if it exists
 	core::pose::Pose native_pose;
-	if (option[ in::file::native ].user()) {
+	if ( option[ in::file::native ].user() ) {
 		core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]() );
 		// Set the native pose into the mover
 		mover.set_native_pose( PoseCOP( PoseOP( new core::pose::Pose(native_pose) ) ) );
@@ -230,7 +232,7 @@ int universal_main(
 
 	/// ---------- SILENT ----------------------------------
 	// Are we reading a silent file here ?
-	if( option[ in::file::silent ].user() ||  option[ in::file::silent_list ].user()  ){
+	if ( option[ in::file::silent ].user() ||  option[ in::file::silent_list ].user()  ) {
 
 		// setup residue types
 		core::chemical::ResidueTypeSetCOP rsd_set;
@@ -257,20 +259,22 @@ int universal_main(
 
 		// Grab silent filenames from -in:file:silent option
 		utility::vector1< FileName > input_silent_files;
-		if ( option[ in::file::silent ].active() )
+		if ( option[ in::file::silent ].active() ) {
 			input_silent_files = option[ in::file::silent ]();
+		}
 
 		// Grab lists of silent filenames from -in:file:silent_list option
 		utility::vector1< FileName > list_file_names;
-		if ( option[ in::file::silent_list ].active() )
+		if ( option[ in::file::silent_list ].active() ) {
 			list_file_names = option[ in::file::silent_list ]();
+		}
 
-		for(utility::vector1< FileName >::iterator i = list_file_names.begin(), i_end = list_file_names.end(); i != i_end; ++i) {
+		for ( utility::vector1< FileName >::iterator i = list_file_names.begin(), i_end = list_file_names.end(); i != i_end; ++i ) {
 			std::string filename( i->name() );
 			utility::io::izstream data( filename.c_str() );
-			if ( !data.good() ) {	utility_exit_with_message( "Unable to open file: " + filename + '\n' );	}
+			if ( !data.good() ) { utility_exit_with_message( "Unable to open file: " + filename + '\n' ); }
 			std::string line;
-			while( getline(data, line) ) {
+			while ( getline(data, line) ) {
 				input_silent_files.push_back( FileName(line) );
 			}
 			data.close();
@@ -279,17 +283,17 @@ int universal_main(
 		int const nstruct_flag = option[ out::nstruct ];
 		int const nstruct = std::max( 1, nstruct_flag );
 
-//		utility::vector1< FileName >::iterator silent_file_it = input_silent_files.begin(), silent_file_it_end = input_silent_files.end();
-//		// Loop over all the silent input files
-//		for ( ; silent_file_it != silent_file_it_end; ++silent_file_it ) {
+		//  utility::vector1< FileName >::iterator silent_file_it = input_silent_files.begin(), silent_file_it_end = input_silent_files.end();
+		//  // Loop over all the silent input files
+		//  for ( ; silent_file_it != silent_file_it_end; ++silent_file_it ) {
 
-		if( input_silent_files.size() > 1 ){
+		if ( input_silent_files.size() > 1 ) {
 			utility_exit_with_message( "Sorry - extracitng/reading multiple silent files is disabled.");
 		}
 
 		std::string infile  = *input_silent_files.begin();
 
-		//	Read the silent structures
+		// Read the silent structures
 		core::io::silent::SilentFileData sfd;
 		sfd.read_file( infile );
 
@@ -303,7 +307,7 @@ int universal_main(
 
 		// create joblist
 		for ( core::io::silent::SilentFileData::iterator iter = sfd.begin(), end = sfd.end(); iter != end; ++iter ) {
-			if( numeric::random::rg().uniform() < thinout_factor ){
+			if ( numeric::random::rg().uniform() < thinout_factor ) {
 				//std::cout << "Thinout: Skipping " << iter->decoy_tag() << std::endl;
 				continue; // ignore structures if thinout is required!
 			}
@@ -314,12 +318,12 @@ int universal_main(
 				bool foundtag = false;
 				utility::vector1< std::string >::iterator it = requested_tags.begin(), end = requested_tags.end();
 				for ( ; it != end; ++it ) {
-					if( iter->decoy_tag() ==  (*it) ){
+					if ( iter->decoy_tag() ==  (*it) ) {
 						foundtag = true; break;
 					}
 				}
-				if( foundtag  ) requested_tags.erase( it );
-				if( !foundtag ) continue; // skip this structure if none of the tags match
+				if ( foundtag  ) requested_tags.erase( it );
+				if ( !foundtag ) continue; // skip this structure if none of the tags match
 			}
 
 			// if the user requested specific tags then check for them
@@ -329,12 +333,12 @@ int universal_main(
 				utility::vector1< std::string >::iterator it = requested_user_tags.begin(), end = requested_user_tags.end();
 				std::cout << iter->get_comment("user_tag") << std::endl;
 				for ( ; it != end; ++it ) {
-					if( iter->get_comment("user_tag") == (*it) ){
+					if ( iter->get_comment("user_tag") == (*it) ) {
 						std::cerr << "FOUND: " << iter->get_comment("user_tag") << std::endl;
 						founduser_tag = true; break;
 					}
 				}
-				if( !founduser_tag ) continue; // skip this structure if none of the user_tags match
+				if ( !founduser_tag ) continue; // skip this structure if none of the user_tags match
 			}
 
 			BasicJobOP job( new BasicJob( iter->decoy_tag() , "", nstruct) );
@@ -344,19 +348,19 @@ int universal_main(
 
 		bool const silent_output = option[ out::file::silent ].user();
 		if ( silent_output ) {
-		#ifdef BOINC
+#ifdef BOINC
 			std::cerr << "Silent Output Mode " << std::endl;
-		#endif
+#endif
 			TR << "Silent Output Mode " << std::endl;
 			jobdist = BaseJobDistributorOP( new PlainSilentFileJobDistributor(input_jobs) );
 		} else {
-		#ifdef BOINC
+#ifdef BOINC
 			std::cerr << "PDB Output Mode " << std::endl;
-		#endif
+#endif
 			TR << "PDB Output Mode " << std::endl;
 			jobdist = BaseJobDistributorOP( new PlainPdbJobDistributor(input_jobs, "none") );
 		}
-		if( option[ out::nooutput ]() ){
+		if ( option[ out::nooutput ]() ) {
 			jobdist->disable_output();
 			jobdist->enable_ignorefinished();
 		}
@@ -367,22 +371,22 @@ int universal_main(
 
 		BasicJobOP curr_job, prev_job;
 		int curr_nstruct;//, num_structures_processed = 0;
-		#ifdef BOINC
+#ifdef BOINC
 		std::cerr << "Jobdist startup.." << std::endl;
-		#endif
+#endif
 		jobdist->startup();
-		while( jobdist->next_job(curr_job, curr_nstruct) ) {
+		while ( jobdist->next_job(curr_job, curr_nstruct) ) {
 
 			// Now loop over each structure in that silent file
 			for ( core::io::silent::SilentFileData::iterator iter = sfd.begin(), end = sfd.end(); iter != end; ++iter ) {
 
-				if( iter->decoy_tag() != curr_job->input_tag() ) continue;
+				if ( iter->decoy_tag() != curr_job->input_tag() ) continue;
 
 				time_t pdb_start_time = time(NULL);
 
 				std::string curr_job_tag = curr_job->output_tag(curr_nstruct);
-				#ifdef BOINC
-				#endif
+#ifdef BOINC
+#endif
 				std::cerr << "Starting work on structure: " << curr_job_tag << " <--- " << curr_job->input_tag() << std::endl;
 				// SilentStruct
 				core::pose::Pose input_pose;
@@ -390,20 +394,20 @@ int universal_main(
 				setPoseExtraScore( input_pose, "silent_score", iter->get_energy( "score" ) );
 
 				std::string user_tag( iter->get_comment( "user_tag" ) );
-	    	if ( user_tag == "" ) user_tag = iter->get_comment( "user_ta" );
-	    	if ( user_tag == "" ) user_tag = iter->get_comment( "user_t" );
+				if ( user_tag == "" ) user_tag = iter->get_comment( "user_ta" );
+				if ( user_tag == "" ) user_tag = iter->get_comment( "user_t" );
 
 				std::string alignment_id( iter->get_comment( "alignment_id" ) );
 
 				std::cout << "USERTAGS: " << alignment_id << "  " <<  user_tag  << std::endl;
 
 				// are we a centroid scoring function but the input is fullatom ? )
-				if (( (option[ OptionKeys::score::weights ]() == "score0") ||
-							(option[ OptionKeys::score::weights ]() == "score2") ||
-							(option[ OptionKeys::score::weights ]() == "score3") ||
-							(option[ OptionKeys::score::weights ]() == "score5") ||
-							(option[ OptionKeys::score::weights ]() == "score_membrane"))
-			        && ( input_pose.is_fullatom() ) ) {
+				if ( ( (option[ OptionKeys::score::weights ]() == "score0") ||
+						(option[ OptionKeys::score::weights ]() == "score2") ||
+						(option[ OptionKeys::score::weights ]() == "score3") ||
+						(option[ OptionKeys::score::weights ]() == "score5") ||
+						(option[ OptionKeys::score::weights ]() == "score_membrane"))
+						&& ( input_pose.is_fullatom() ) ) {
 					std::cout << "switching to centroid" << std::endl;
 					core::util::switch_to_residue_type_set( input_pose, core::chemical::CENTROID );
 				}
@@ -415,12 +419,12 @@ int universal_main(
 				TR << "Working on: " << tag << std::endl;
 
 				core::pose::PoseOP the_pose( new core::pose::Pose( input_pose ) );
-				if( the_pose->is_fullatom() ) core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose( *the_pose );
+				if ( the_pose->is_fullatom() ) core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose( *the_pose );
 				else                     core::scoring::constraints::add_constraints_from_cmdline_to_pose( *the_pose );
 				the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, DataCache_CacheableData::DataOP( new CacheableString(curr_job->output_tag(curr_nstruct)) ));
 
 				// Membrane protein specific scoring - only centroid score function here:
-				if ( option[ OptionKeys::score::weights ]() == "score_membrane" && option[in::file::spanfile].user() && option[ in::file::centroid_input ].user() )	{
+				if ( option[ OptionKeys::score::weights ]() == "score_membrane" && option[in::file::spanfile].user() && option[ in::file::centroid_input ].user() ) {
 					std::string const spanfile = option[ in::file::spanfile ]();
 					core::scoring::MembraneTopologyOP topologyOP( new core::scoring::MembraneTopology );
 					the_pose->data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, topologyOP );
@@ -442,36 +446,36 @@ int universal_main(
 				}
 
 				// run the mover !!!!
-				for(int repeat = 0; repeat < int(option[ run::repeat ]()); ++repeat ){
+				for ( int repeat = 0; repeat < int(option[ run::repeat ]()); ++repeat ) {
 					mover.apply( *the_pose );
 				}
 
-		    // Statistics
-	      core::pose::setPoseExtraScore( *the_pose, "irms",  core::scoring::CA_rmsd( input_pose, *the_pose ) );
-	      if ( option[ in::file::native ].user() ){
-	        core::pose::setPoseExtraScore( *the_pose, "rms",   core::scoring::native_CA_rmsd( native_pose, *the_pose ) );
-	        core::pose::setPoseExtraScore( *the_pose, "srms",  core::scoring::native_CA_rmsd( native_pose, input_pose ) );
+				// Statistics
+				core::pose::setPoseExtraScore( *the_pose, "irms",  core::scoring::CA_rmsd( input_pose, *the_pose ) );
+				if ( option[ in::file::native ].user() ) {
+					core::pose::setPoseExtraScore( *the_pose, "rms",   core::scoring::native_CA_rmsd( native_pose, *the_pose ) );
+					core::pose::setPoseExtraScore( *the_pose, "srms",  core::scoring::native_CA_rmsd( native_pose, input_pose ) );
 				}
 
-				if( ! option[ out::nooutput ]() ){
+				if ( ! option[ out::nooutput ]() ) {
 					// for now, output pdbs
-					if (!silent_output) {
+					if ( !silent_output ) {
 						jobdist->dump_pose_and_map( curr_job_tag, *the_pose );    // output PDB
 					} else {
 						PlainSilentFileJobDistributorOP jd =
-						 utility::pointer::dynamic_pointer_cast< protocols::jobdist::PlainSilentFileJobDistributor > ( jobdist );
+							utility::pointer::dynamic_pointer_cast< protocols::jobdist::PlainSilentFileJobDistributor > ( jobdist );
 						core::io::silent::SilentStructOP pss;
 						//if (option[ out::file::binary_silentfile ].user()) {
-						//	pss = new core::io::silent::BinarySilentStruct;
+						// pss = new core::io::silent::BinarySilentStruct;
 						//} else {
-						//	pss = new core::io::silent::ProteinSilentStruct;
+						// pss = new core::io::silent::ProteinSilentStruct;
 						//}
 						pss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
 						pss->fill_struct( *the_pose, curr_job_tag );
 						// run PoseEvaluators
 						evaluator->apply( *the_pose, curr_job_tag, *pss );
-	    			if ( user_tag != "" ) pss->add_string_value("user_tag", user_tag  );
-	    			if ( alignment_id != "" ) pss->add_string_value("alignment_id", alignment_id  );
+						if ( user_tag != "" ) pss->add_string_value("user_tag", user_tag  );
+						if ( alignment_id != "" ) pss->add_string_value("alignment_id", alignment_id  );
 						jd->dump_silent( curr_nstruct, *pss );
 					}
 				}
@@ -482,8 +486,8 @@ int universal_main(
 					ss->fill_struct( *the_pose );
 					// run PoseEvaluators
 					evaluator->apply( *the_pose, curr_job_tag, *ss );
-	    		if ( user_tag != "" ) ss->add_string_value("user_tag", user_tag  );
-	    		if ( alignment_id != "" ) ss->add_string_value("alignment_id", alignment_id  );
+					if ( user_tag != "" ) ss->add_string_value("user_tag", user_tag  );
+					if ( alignment_id != "" ) ss->add_string_value("alignment_id", alignment_id  );
 
 					core::io::silent::SilentFileData sfd_out;
 					sfd_out.write_silent_struct( *ss, option[ out::file::scorefile ]() );
@@ -500,14 +504,14 @@ int universal_main(
 
 		// Announce any un-found tags !!
 		for ( utility::vector1< std::string >::const_iterator it = requested_tags.begin(),
-					end = requested_tags.end(); it != end; ++it ) {
+				end = requested_tags.end(); it != end; ++it ) {
 			std::cerr << "WARNING: Cannot find tag: " << (*it) << std::endl;
 		}
 
 	} // SILENT done
 
 	/// -------------------------- PDB ----------------------------------------------
-	if( option[ in::file::s ].user() ||  option[ in::file::l ].user()  ){
+	if ( option[ in::file::s ].user() ||  option[ in::file::l ].user()  ) {
 
 		// are we reading PDBs ?
 		time_t overall_start_time = time(NULL);
@@ -528,7 +532,7 @@ int universal_main(
 			jobdist = BaseJobDistributorOP( new PlainPdbJobDistributor(input_jobs, "none") );
 		}
 
-		if( option[ out::nooutput ]() ){
+		if ( option[ out::nooutput ]() ) {
 			jobdist->disable_output();
 			jobdist->enable_ignorefinished();
 		}
@@ -537,9 +541,9 @@ int universal_main(
 		int curr_nstruct, num_structures_processed = 0;
 		core::pose::PoseOP input_pose; // starts NULL, coords *never* modified!
 		jobdist->startup();
-		while( jobdist->next_job(curr_job, curr_nstruct) ) {
+		while ( jobdist->next_job(curr_job, curr_nstruct) ) {
 
-			if( numeric::random::rg().uniform() < thinout_factor ){
+			if ( numeric::random::rg().uniform() < thinout_factor ) {
 				//std::cout << "Thinout: Skipping " << curr_job->output_tag(curr_nstruct) << std::endl;
 				continue; // ignore structures if thinout is required!
 			}
@@ -567,7 +571,7 @@ int universal_main(
 			TR << "Starting " << curr_job->output_tag(curr_nstruct) << " ..." << std::endl;
 
 			// we read each PDB just once to save on disk I/O
-			if( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
+			if ( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
 				input_pose = core::pose::PoseOP( new core::pose::Pose() );
 				if ( option[ in::file::centroid_input ].user() ) {
 					core::import_pose::centroid_pose_from_pdb( *input_pose, curr_job->input_tag() );
@@ -576,19 +580,19 @@ int universal_main(
 				}
 			}
 
-			if( input_pose->total_residue() == 0 ){
+			if ( input_pose->total_residue() == 0 ) {
 				utility_exit_with_message( "Unable to read PDB file: " + curr_job->input_tag() + '\n' );
 			}
 
 			// Make a modifiable copy of the pose read from disk
 			core::pose::PoseOP the_pose( new core::pose::Pose( *input_pose ) );
-			if( the_pose->is_fullatom() ) core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose( *the_pose );
+			if ( the_pose->is_fullatom() ) core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose( *the_pose );
 			else                          core::scoring::constraints::add_constraints_from_cmdline_to_pose( *the_pose );
 
 			the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, DataCache_CacheableData::DataOP( new CacheableString(curr_job->output_tag(curr_nstruct)) ));
 
 			// Membrane protein specific scoring - only centroid score function here:
-			if ( option[ OptionKeys::score::weights ]() == "score_membrane" && option[in::file::spanfile].user() && option[ in::file::centroid_input ].user() )	{
+			if ( option[ OptionKeys::score::weights ]() == "score_membrane" && option[in::file::spanfile].user() && option[ in::file::centroid_input ].user() ) {
 				std::string const spanfile = option[ in::file::spanfile ]();
 				core::scoring::MembraneTopologyOP topologyOP( new core::scoring::MembraneTopology );
 				the_pose->data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, topologyOP );
@@ -600,34 +604,35 @@ int universal_main(
 			// attach boinc graphics pose observer
 			protocols::boinc::Boinc::attach_graphics_current_pose_observer( *the_pose );
 #endif
-				//////////////////////////////////////////////////////////////////////////////////////
-				////  Maybe idealize the structure before relax ?
-				if ( option[ OptionKeys::run::idealize_before_protocol ].user() ) {
-					protocols::idealize::IdealizeMover idealizer;
-					idealizer.fast( false );
-					idealizer.apply( *the_pose );
-				}
+			//////////////////////////////////////////////////////////////////////////////////////
+			////  Maybe idealize the structure before relax ?
+			if ( option[ OptionKeys::run::idealize_before_protocol ].user() ) {
+				protocols::idealize::IdealizeMover idealizer;
+				idealizer.fast( false );
+				idealizer.apply( *the_pose );
+			}
 
-			for(int repeat = 0; repeat < int(option[ run::repeat ]()); ++repeat ){
+			for ( int repeat = 0; repeat < int(option[ run::repeat ]()); ++repeat ) {
 				mover.apply( *the_pose );
 			}
 
 			// Statistics
 			core::pose::setPoseExtraScore( *the_pose, "irms",  core::scoring::CA_rmsd( *input_pose, *the_pose ) );
-			if ( option[ in::file::native ].user() )
+			if ( option[ in::file::native ].user() ) {
 				core::pose::setPoseExtraScore( *the_pose, "rms",   core::scoring::native_CA_rmsd( native_pose, *the_pose ) );
+			}
 
 			// for now, output pdbs
-			if (!silent_output) {
+			if ( !silent_output ) {
 				jobdist->dump_pose_and_map( curr_job_tag, *the_pose );    // output PDB
 			} else {
 				PlainSilentFileJobDistributorOP jd =
-				 utility::pointer::dynamic_pointer_cast< protocols::jobdist::PlainSilentFileJobDistributor > ( jobdist );
+					utility::pointer::dynamic_pointer_cast< protocols::jobdist::PlainSilentFileJobDistributor > ( jobdist );
 				core::io::silent::SilentStructOP pss;
 				//if (option[ out::file::binary_silentfile ].user()) {
-				//	pss = new core::io::silent::BinarySilentStruct;
+				// pss = new core::io::silent::BinarySilentStruct;
 				//} else {
-				//	pss = new core::io::silent::ProteinSilentStruct;
+				// pss = new core::io::silent::ProteinSilentStruct;
 				//}
 				pss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
 				pss->fill_struct( *the_pose, curr_job_tag );
@@ -650,8 +655,9 @@ int universal_main(
 
 		time_t overall_end_time = time(NULL);
 		TR << "Finished all " << num_structures_processed << " structures in " << (long)(overall_end_time - overall_start_time) << " seconds." << std::endl;
-		if ( num_structures_processed == 0 )
+		if ( num_structures_processed == 0 ) {
 			basic::Warning() << "No structures processed.  Existing output files may have been skipped, did you mean to delete them or to use the -overwrite flag?" << std::endl;
+		}
 		return 0;
 	} // PDB done
 
@@ -691,7 +697,7 @@ int main_plain_mover(
 #ifndef USEMPI
 	// Reduce read contention between processes by randomizing the order in which structures are processed
 	// Do not randomize, though, if job distribution is controlled by MPI
-	if( random_permutation ) {
+	if ( random_permutation ) {
 		numeric::random::random_permutation( input_jobs, numeric::random::rg() );
 	}
 #endif
@@ -706,7 +712,7 @@ int main_plain_mover(
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 
- 	// What on earth is "raw" ? Surely these are called silent files ?
+	// What on earth is "raw" ? Surely these are called silent files ?
 	bool const is_raw = option[ out::file::raw ]();
 	bool const silent_output = option[ out::file::silent ].user();
 	if ( is_raw || silent_output ) {
@@ -715,7 +721,7 @@ int main_plain_mover(
 		jobdist = BaseJobDistributorOP( new PlainPdbJobDistributor(input_jobs, "score") );
 	}
 
-	if( option[ out::nooutput ]() ){
+	if ( option[ out::nooutput ]() ) {
 		jobdist->disable_output();
 		jobdist->enable_ignorefinished();
 	}
@@ -723,13 +729,13 @@ int main_plain_mover(
 	std::map < std::string, core::Real > score_map;
 
 	jobdist->startup();
-	while( jobdist->next_job(curr_job, curr_nstruct) ) {
+	while ( jobdist->next_job(curr_job, curr_nstruct) ) {
 		time_t pdb_start_time = time(NULL);
 		TR << "Starting " << curr_job->output_tag(curr_nstruct) << " ..." << std::endl;
 		jobdist->temp_file( curr_job->output_tag(curr_nstruct) );
 
 		// we read each PDB just once to save on disk I/O
-		if( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
+		if ( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
 			input_pose = core::pose::PoseOP( new core::pose::Pose() );
 			if ( option[ in::file::centroid_input ].user() ) {
 				core::import_pose::centroid_pose_from_pdb( *input_pose, curr_job->input_tag() );
@@ -757,9 +763,9 @@ int main_plain_mover(
 
 		score_map = get_score_map( *the_pose );
 
-		if ( option[ run::timer ].user() ){
+		if ( option[ run::timer ].user() ) {
 			score_map["time"] = pdb_end_time - pdb_start_time;
-			}
+		}
 
 		jobdist->score_map( score_map );
 		jobdist->dump_pose_and_map( curr_job->output_tag(curr_nstruct), *the_pose );
@@ -769,8 +775,9 @@ int main_plain_mover(
 
 	time_t overall_end_time = time(NULL);
 	TR << "Finished all " << num_structures_processed << " structures in " << (long)(overall_end_time - overall_start_time) << " seconds." << std::endl;
-	if ( num_structures_processed == 0 )
+	if ( num_structures_processed == 0 ) {
 		basic::Warning() << "No structures processed.  Existing output files may have been skipped, did you mean to delete them?" << std::endl;
+	}
 	return 0;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -814,7 +821,7 @@ int main_plain_pdb_mover(
 		jobdist = BaseJobDistributorOP( new PlainPdbJobDistributor(input_jobs, "score") );
 	}
 
-	if( option[ out::nooutput ]() ){
+	if ( option[ out::nooutput ]() ) {
 		jobdist->disable_output();
 		jobdist->enable_ignorefinished();
 	}
@@ -829,12 +836,12 @@ int main_plain_pdb_mover(
 	int curr_nstruct, num_structures_processed = 0;
 	core::pose::PoseOP input_pose; // starts NULL, coords *never* modified!
 	jobdist->startup();
-	while( jobdist->next_job(curr_job, curr_nstruct) ) {
+	while ( jobdist->next_job(curr_job, curr_nstruct) ) {
 		time_t pdb_start_time = time(NULL);
 		TR << "Starting " << curr_job->output_tag(curr_nstruct) << " ..." << std::endl;
 
 		// we read each PDB just once to save on disk I/O
-		if( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
+		if ( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
 			input_pose = core::pose::PoseOP( new core::pose::Pose() );
 			if ( option[ in::file::centroid_input ].user() ) {
 				core::import_pose::centroid_pose_from_pdb( *input_pose, curr_job->input_tag() );
@@ -847,7 +854,7 @@ int main_plain_pdb_mover(
 		core::pose::PoseOP the_pose( new core::pose::Pose( *input_pose ) );
 		the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, DataCache_CacheableData::DataOP( new CacheableString(curr_job->output_tag(curr_nstruct)) ));
 
-		for(int repeat = 0; repeat < int(option[ run::repeat ]()); ++repeat ){
+		for ( int repeat = 0; repeat < int(option[ run::repeat ]()); ++repeat ) {
 			mover.apply( *the_pose );
 		}
 
@@ -861,15 +868,16 @@ int main_plain_pdb_mover(
 		// Statistics
 		core::pose::setPoseExtraScore( *the_pose, "irms",  core::scoring::CA_rmsd( *input_pose, *the_pose ) );
 
-		if ( option[ in::file::native ].user() )
+		if ( option[ in::file::native ].user() ) {
 			core::pose::setPoseExtraScore( *the_pose, "rms",   core::scoring::native_CA_rmsd( native_pose, *the_pose ) );
+		}
 
 		// for now, output pdbs
-		if (!silent_output) {
+		if ( !silent_output ) {
 			jobdist->dump_pose_and_map( curr_job->output_tag(curr_nstruct), *the_pose );    // output PDB
 		} else {
 			protocols::jobdist::PlainSilentFileJobDistributorOP jd =
-			     utility::pointer::dynamic_pointer_cast< protocols::jobdist::PlainSilentFileJobDistributor > ( jobdist );
+				utility::pointer::dynamic_pointer_cast< protocols::jobdist::PlainSilentFileJobDistributor > ( jobdist );
 			core::io::silent::ProteinSilentStruct pss;
 			pss.fill_struct( *the_pose, curr_job->output_tag(curr_nstruct) );
 			jd->dump_silent( curr_nstruct, pss );
@@ -884,8 +892,9 @@ int main_plain_pdb_mover(
 
 	time_t overall_end_time = time(NULL);
 	TR << "Finished all " << num_structures_processed << " structures in " << (long)(overall_end_time - overall_start_time) << " seconds." << std::endl;
-	if ( num_structures_processed == 0 )
+	if ( num_structures_processed == 0 ) {
 		basic::Warning() << "No structures processed.  Existing output files may have been skipped, did you mean to delete them or to use the -overwrite flag?" << std::endl;
+	}
 	return 0;
 }
 
@@ -914,14 +923,14 @@ int main_atom_tree_diff_mover(
 	int curr_nstruct, num_structures_processed = 0;
 	core::pose::PoseOP input_pose; // starts NULL, coords *never* modified!
 	jobdist.startup();
-	while( jobdist.next_job(curr_job, curr_nstruct) ) {
+	while ( jobdist.next_job(curr_job, curr_nstruct) ) {
 		time_t pdb_start_time = time(NULL);
 		TR << "Starting " << curr_job->output_tag(curr_nstruct) << " ..." << std::endl;
 
 		// we read each PDB just once to save on disk I/O
-		if( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
-				input_pose = core::pose::PoseOP( new core::pose::Pose() );
-				core::import_pose::pose_from_pdb( *input_pose, curr_job->input_tag() );
+		if ( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
+			input_pose = core::pose::PoseOP( new core::pose::Pose() );
+			core::import_pose::pose_from_pdb( *input_pose, curr_job->input_tag() );
 		}
 
 		// Make a modifiable copy of the pose read from disk
@@ -943,8 +952,9 @@ int main_atom_tree_diff_mover(
 
 	time_t overall_end_time = time(NULL);
 	TR << "Finished all " << num_structures_processed << " structures in " << (long)(overall_end_time - overall_start_time) << " seconds." << std::endl;
-	if ( num_structures_processed == 0 )
+	if ( num_structures_processed == 0 ) {
 		basic::Warning() << "No structures processed.  Existing output files may have been skipped, did you mean to delete them or use the -overwrite flag?" << std::endl;
+	}
 	return 0;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////

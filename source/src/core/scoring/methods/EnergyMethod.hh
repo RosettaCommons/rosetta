@@ -185,15 +185,15 @@ public:
 	) const;
 
 
-/*	/// @brief Evaluate the derivative for a DOF in the atom tree.
+	/* /// @brief Evaluate the derivative for a DOF in the atom tree.
 	virtual
 	Real
 	eval_dof_derivative(
-		id::DOF_ID const &,
-		id::TorsionID const &,
-		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap const &
+	id::DOF_ID const &,
+	id::TorsionID const &,
+	pose::Pose const &,
+	ScoreFunction const &,
+	EnergyMap const &
 	) const;*/
 
 	/// @brief called by the ScoreFunction at the end of energy evaluation.

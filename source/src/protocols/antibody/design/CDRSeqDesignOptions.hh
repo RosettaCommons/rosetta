@@ -29,7 +29,7 @@ namespace protocols {
 namespace antibody {
 namespace design {
 
-	typedef utility::vector1<CDRSeqDesignOptionsOP> AntibodyCDRSeqDesignOptions;
+typedef utility::vector1<CDRSeqDesignOptionsOP> AntibodyCDRSeqDesignOptions;
 
 class CDRSeqDesignOptions : public utility::pointer::ReferenceCount {
 public:
@@ -64,20 +64,20 @@ public:
 	design_strategy() const {
 		return design_strategy_;
 	}
-	
+
 	///@brief Set the fallback strategy - which will be used if using a profile-based primary strategy, and there is not enough data
 	void
 	fallback_strategy(SeqDesignStrategyEnum strategy);
-	
+
 	SeqDesignStrategyEnum
 	fallback_strategy() const {
 		return fallback_strategy_;
 	}
-	
-	
+
+
 	bool
 	fallback() const;
-	
+
 public:
 	CDRSeqDesignOptionsOP
 	clone() const;
@@ -91,7 +91,7 @@ private:
 
 	SeqDesignStrategyEnum design_strategy_;
 	SeqDesignStrategyEnum fallback_strategy_;
-	
+
 };
 
 
@@ -143,7 +143,7 @@ private:
 
 	void
 	set_cdr_design_fallback_option(std::string const option);
-	
+
 private:
 	std::string instructions_path_;
 	AntibodyEnumManagerOP ab_manager_;
@@ -159,4 +159,4 @@ private:
 }
 
 
-#endif	//INCLUDED_ CDRSeqDesignOptions.hh
+#endif //INCLUDED_ CDRSeqDesignOptions.hh

@@ -38,10 +38,10 @@ public:
 	SSPredictionFilter();
 	SSPredictionFilter( SSPredictionFilter const & rval );
 	SSPredictionFilter( core::Real const threshold,
-											std::string const cmd,
-											std::string const blueprint_filename,
-											bool const use_probability,
-											bool const mismatch_probability );
+		std::string const cmd,
+		std::string const blueprint_filename,
+		bool const use_probability,
+		bool const mismatch_probability );
 	virtual ~SSPredictionFilter();
 	bool apply( core::pose::Pose const & pose ) const;
 	protocols::filters::FilterOP clone() const;

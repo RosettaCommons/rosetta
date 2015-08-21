@@ -31,7 +31,7 @@
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
 
-namespace core{
+namespace core {
 namespace pose {
 namespace metrics {
 namespace simple_calculators {

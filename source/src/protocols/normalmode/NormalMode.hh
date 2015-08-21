@@ -52,46 +52,46 @@ class NormalMode
 {
 public:
 
-  NormalMode();
+	NormalMode();
 
-  NormalMode(	std::string const mode,
-							Real distcut );
+	NormalMode( std::string const mode,
+		Real distcut );
 
-  ~NormalMode();
+	~NormalMode();
 
 	// Option setups
-  void set_harmonic_constants( Real const &k_uniform );
+	void set_harmonic_constants( Real const &k_uniform );
 
-  void set_harmonic_constants( Real const &k_short,
-			       Real const &k_SS,
-			       Real const &k_long );
+	void set_harmonic_constants( Real const &k_short,
+		Real const &k_SS,
+		Real const &k_long );
 
-	void set_torsions_using( Size const seqpos ){ 
+	void set_torsions_using( Size const seqpos ){
 		torsions_using_assigned_ = true;
-		torsions_using_.push_back( seqpos ); 
+		torsions_using_.push_back( seqpos );
 	}
 
-	void clear_torsions_using(){ 
+	void clear_torsions_using(){
 		torsions_using_assigned_ = false;
 		torsions_using_.resize( 0 );
 	}
 
 	void torsion( bool const bool_in,
-								bool const use_phi = true,
-								bool const use_psi = true,
-								bool const eckart_correction = true );
+		bool const use_phi = true,
+		bool const use_psi = true,
+		bool const eckart_correction = true );
 
 	void eckart_correction( bool const bool_in ){ eckart_correction_ = bool_in; }
 
-  void solve( core::pose::Pose const & pose );
+	void solve( core::pose::Pose const & pose );
 
-  // Accessors
+	// Accessors
 	bool torsion() const { return torsion_; }
 	Size natm() const { return xyz_.size(); }
 	Size ntor() const { return e_.size(); }
 
 	Size nmode() const {
-		if( torsion() ){
+		if ( torsion() ) {
 			return ntor();
 		} else {
 			return 3*natm()-6;
@@ -114,11 +114,11 @@ public:
 	utility::vector1< Real > get_eigvec_tor( Size const imode ) const { return eigvec_tor_[imode]; }
 
 	utility::vector1< Real > get_eigval() const { return eigval_; }
-	Real get_eigval( Size const imode ) const { 
-		if( torsion() ){
+	Real get_eigval( Size const imode ) const {
+		if ( torsion() ) {
 			return eigval_[imode];
 		} else {
-			return eigval_[imode+6]; 
+			return eigval_[imode+6];
 		}
 	}
 
@@ -135,57 +135,57 @@ public:
 private:
 
 	void prepare_coord( pose::Pose const &pose );
-	
+
 	void set_harmonic_constant_map( pose::Pose const &pose );
 
 	utility::vector1< utility::vector1< Real > > make_Hessian_ANM();
 	utility::vector1< utility::vector1< Real > > make_Hessian_TNM();
-	
+
 	utility::vector1< utility::vector1< Real > >
 	convert_to_torsion_crd( utility::vector1< utility::vector1< Real > > const &U );
 
-	void 
-	update_inertia_tensor( Size const a, 
-												 Real &Ma,
-												 Vector &Ra, 
-												 numeric::MathMatrix< Real > &Icorr, 
-												 numeric::MathMatrix< Real > &Ia, 
-												 utility::vector1< Vector > const xyz_com );
+	void
+	update_inertia_tensor( Size const a,
+		Real &Ma,
+		Vector &Ra,
+		numeric::MathMatrix< Real > &Icorr,
+		numeric::MathMatrix< Real > &Ia,
+		utility::vector1< Vector > const xyz_com );
 
 	void
 	calculate_Jacobi_correction( Size const a,
-															 Real const &Ma,
-															 Vector const &Ra, 
-															 Real const &Msum,
-															 numeric::MathMatrix< Real > const &Ia, 
-															 numeric::MathMatrix< Real > const &i_Isum,
-															 Vector &Aa,
-															 Vector &ta );
-		
-	numeric::MathMatrix< Real >	
-	calc_inertia_tensor( numeric::MathMatrix< Real > const Icorr, 
-											 Vector const &Ra,
-											 Real const Msum );
+		Real const &Ma,
+		Vector const &Ra,
+		Real const &Msum,
+		numeric::MathMatrix< Real > const &Ia,
+		numeric::MathMatrix< Real > const &i_Isum,
+		Vector &Aa,
+		Vector &ta );
+
+	numeric::MathMatrix< Real >
+	calc_inertia_tensor( numeric::MathMatrix< Real > const Icorr,
+		Vector const &Ra,
+		Real const Msum );
 
 
-	Real 
+	Real
 	pythag( Real a, Real b );
 
 	inline
 	Real
 	sign( Real a, Real b )
-	{	return b >= 0.0 ? std::fabs(a) : -std::fabs(a);	}
+	{ return b >= 0.0 ? std::fabs(a) : -std::fabs(a); }
 
-	void 
-	svdcmp( utility::vector1< utility::vector1< Real > > &a, 
-	    Size const m, Size const n, 
-	    utility::vector1< Real > &w,
-			utility::vector1< utility::vector1< Real > > &v );
+	void
+	svdcmp( utility::vector1< utility::vector1< Real > > &a,
+		Size const m, Size const n,
+		utility::vector1< Real > &w,
+		utility::vector1< utility::vector1< Real > > &v );
 
 	void
 	eigsrt( utility::vector1< utility::vector1 < Real > > &eigvec,
-					utility::vector1< Real > &eigval );
-	
+		utility::vector1< Real > &eigval );
+
 public:
 
 private:
@@ -216,8 +216,8 @@ private:
 	utility::vector1< Real > importance_;
 
 	// Index
- 	utility::vector1< id::AtomID > atomID_;
- 	utility::vector1< id::TorsionID > torID_;
+	utility::vector1< id::AtomID > atomID_;
+	utility::vector1< id::TorsionID > torID_;
 
 	utility::vector1< Real > eigval_;
 	utility::vector1< utility::vector1< Vector > > eigvec_cart_;

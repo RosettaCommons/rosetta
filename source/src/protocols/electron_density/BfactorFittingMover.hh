@@ -41,13 +41,13 @@ public:
 
 	virtual ~BfactorMultifunc() {}
 
-	virtual	core::Real
+	virtual core::Real
 	operator ()( core::optimization::Multivec const & vars ) const;
 
-	virtual	void
+	virtual void
 	dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const;
 
-	virtual	void
+	virtual void
 	dump( core::optimization::Multivec const & x1, core::optimization::Multivec const & x2 ) const;
 
 	// helper functions

@@ -35,7 +35,7 @@ Real
 SquareWell2Func::func( Real const x ) const
 {
 	Real const z = ( numeric::nearest_angle_radians(x,x0_)-x0_ );
-//	TR<<"x="<<x<<"   x0_="<<x0_<<"   |x-x0|="<<std::fabs(z) <<"  x_range_="<<x_range_<<std::endl;
+	// TR<<"x="<<x<<"   x0_="<<x0_<<"   |x-x0|="<<std::fabs(z) <<"  x_range_="<<x_range_<<std::endl;
 	if ( std::fabs(z) > x_range_ ) {
 		return well_depth_;
 	}
@@ -52,11 +52,11 @@ void
 SquareWell2Func::read_data( std::istream& in ) {
 	in >> x0_ >> x_range_ >>well_depth_;
 	// check for optional DEGREES tag
-	while (in.peek() == ' ' || in.peek() == '\t') { in.get(); }
+	while ( in.peek() == ' ' || in.peek() == '\t' ) { in.get(); }
 	if ( in.peek() == 'D' ) {
 		std::string degrees;
 		in >> degrees;
-		if (degrees == "DEGREES") {
+		if ( degrees == "DEGREES" ) {
 			x0_      *= numeric::constants::r::deg2rad;
 			x_range_ *= numeric::constants::r::deg2rad;
 		}
@@ -70,7 +70,7 @@ SquareWell2Func::show_definition( std::ostream &out ) const {
 
 Size
 SquareWell2Func::show_violations( std::ostream& out, Real x, Size verbose_level, Real threshold) const {
-	if (verbose_level > 100 ) {
+	if ( verbose_level > 100 ) {
 		out << "SQUARE_WELL_2 " <<  ( x < x0_ ) << std::endl;
 	}
 	return Func::show_violations( out, x, verbose_level, threshold);

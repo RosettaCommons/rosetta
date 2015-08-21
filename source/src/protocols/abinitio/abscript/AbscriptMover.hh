@@ -35,7 +35,7 @@
 #include <core/pose/Pose.hh>
 
 #ifdef WIN32
-  #include <basic/datacache/WriteableCacheableMap.hh>
+#include <basic/datacache/WriteableCacheableMap.hh>
 #endif
 
 // Utility Headers
@@ -53,67 +53,67 @@ namespace abinitio {
 namespace abscript {
 
 class AbscriptMover : public protocols::environment::ClientMover {
-  typedef environment::claims::EnvClaims EnvClaims;
-  typedef environment::ClientMoverOP ClientMoverOP;
-  typedef std::set<ClientMoverOP> MoverSet;
-  typedef std::map< StageID, MoverSet > IDMoverSetMap;
+	typedef environment::claims::EnvClaims EnvClaims;
+	typedef environment::ClientMoverOP ClientMoverOP;
+	typedef std::set<ClientMoverOP> MoverSet;
+	typedef std::map< StageID, MoverSet > IDMoverSetMap;
 
 
 public:
-  AbscriptMover();
+	AbscriptMover();
 
-  AbscriptMover( AbscriptMover const& );
+	AbscriptMover( AbscriptMover const& );
 
-  virtual void apply( core::pose::Pose& pose );
+	virtual void apply( core::pose::Pose& pose );
 
-  virtual std::string get_name() const;
+	virtual std::string get_name() const;
 
-  virtual EnvClaims yield_claims( core::pose::Pose const&,
-                                  basic::datacache::WriteableCacheableMapOP );
+	virtual EnvClaims yield_claims( core::pose::Pose const&,
+		basic::datacache::WriteableCacheableMapOP );
 
-  virtual void yield_submovers( std::set< ClientMoverOP >& ) const;
+	virtual void yield_submovers( std::set< ClientMoverOP >& ) const;
 
-  // the Abscript mover does not make any claims, and should never be given
-  // initialization rights
-  virtual void initialize( Pose& ){ runtime_assert( false ); }
+	// the Abscript mover does not make any claims, and should never be given
+	// initialization rights
+	virtual void initialize( Pose& ){ runtime_assert( false ); }
 
-  virtual void
-  parse_my_tag( utility::tag::TagCOP tag,
-                basic::datacache::DataMap & data,
-                protocols::filters::Filters_map const & filters,
-                protocols::moves::Movers_map const & movers,
-                core::pose::Pose const & pose );
+	virtual void
+	parse_my_tag( utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose );
 
-  virtual
-  moves::MoverOP fresh_instance() const;
+	virtual
+	moves::MoverOP fresh_instance() const;
 
-  virtual
-  moves::MoverOP clone() const;
+	virtual
+	moves::MoverOP clone() const;
 
 private:
 
-  class StageTracker;
+	class StageTracker;
 
-  void add_frags( std::string const& small_frags,
-                  std::string const& large_frags,
-                  core::pack::task::residue_selector::ResidueSelectorCOP = NULL );
+	void add_frags( std::string const& small_frags,
+		std::string const& large_frags,
+		core::pack::task::residue_selector::ResidueSelectorCOP = NULL );
 
-  void parse_subtags( utility::vector0< utility::tag::TagPtr > const&,
-                      protocols::moves::Movers_map const& );
+	void parse_subtags( utility::vector0< utility::tag::TagPtr > const&,
+		protocols::moves::Movers_map const& );
 
-  void register_submover( protocols::moves::MoverOP, StageIDs const&, core::Real weight );
+	void register_submover( protocols::moves::MoverOP, StageIDs const&, core::Real weight );
 
-  void register_preparer( protocols::moves::MoverOP, StageIDs const& );
+	void register_preparer( protocols::moves::MoverOP, StageIDs const& );
 
-  std::map< Size, Size > calculate_iterations( core::pose::Pose const& );
+	std::map< Size, Size > calculate_iterations( core::pose::Pose const& );
 
-  StageIDs parse_stage_id( std::string const& ) const;
+	StageIDs parse_stage_id( std::string const& ) const;
 
-  std::map< std::string, StageID > id_map_;
-  std::map< StageID, AbscriptStageMoverOP > stage_movers_;
-  moves::MonteCarloOP mc_;
+	std::map< std::string, StageID > id_map_;
+	std::map< StageID, AbscriptStageMoverOP > stage_movers_;
+	moves::MonteCarloOP mc_;
 
-  environment::claims::EnvClaims claims_; // list for dynamically made claims to be pushed onto during setup
+	environment::claims::EnvClaims claims_; // list for dynamically made claims to be pushed onto during setup
 }; // end AbscriptMover base class
 
 } // abscript

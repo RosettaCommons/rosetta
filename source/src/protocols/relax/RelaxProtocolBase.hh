@@ -10,7 +10,7 @@
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
 /// @details
-///	  Contains currently: Relax Baseclass
+///   Contains currently: Relax Baseclass
 ///
 ///
 /// @author Mike Tyka
@@ -48,11 +48,11 @@ public:
 	RelaxProtocolBase( std::string const & movername, core::scoring::ScoreFunctionOP );
 	~RelaxProtocolBase();
 
-	virtual	protocols::moves::MoverOP	fresh_instance() const { return clone(); };
+	virtual protocols::moves::MoverOP fresh_instance() const { return clone(); };
 
 	static void register_options();
 
-  void apply_disulfides( core::pose::Pose & pose );
+	void apply_disulfides( core::pose::Pose & pose );
 
 	// Default options -------------------------------------
 	void set_defaults();
@@ -64,7 +64,7 @@ public:
 	core::kinematics::MoveMapOP get_movemap() { return movemap_; }
 	const core::scoring::ScoreFunctionCOP get_scorefxn() const { return scorefxn_; }
 	core::pack::task::TaskFactoryOP const & get_task_factory() const { return task_factory_; }
-	
+
 	bool cartesian() const { return cartesian_; }
 	std::string min_type() const { return min_type_; }
 	Size max_iter() const { return max_iter_; }
@@ -76,10 +76,10 @@ public:
 	bool explicit_ramp_constraints() const { return explicit_ramp_constraints_; }
 	bool ramp_down_constraints() const { return ramp_down_constraints_; }
 	bool constrain_relax_segments() const { return constrain_relax_segments_; }
-	
+
 	bool minimize_bond_lengths() const { return minimize_bond_lengths_; }
 	bool minimize_bond_angles() const { return minimize_bond_angles_; }
-	
+
 	// Public mutators
 	void set_movemap( core::kinematics::MoveMapOP movemap ) { movemap_ = movemap; }
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn ) { scorefxn_ = scorefxn; }
@@ -119,10 +119,10 @@ protected:
 
 	// Mutators -------------------------------------
 	void fix_omega( bool fix_omega ) { fix_omega_ = fix_omega; }
-  
+
 	void minimize_bondangle_subset( int minimize_bondangle_subset ) { minimize_bondangle_subset_ = minimize_bondangle_subset; }
 	void minimize_bondlength_subset( int minimize_bondlength_subset ) { minimize_bondlength_subset_ = minimize_bondlength_subset; }
-	
+
 
 	void initialize_movemap( core::pose::Pose const & pose, core::kinematics::MoveMap & movemap );
 	void set_up_constraints( core::pose::Pose &pose,  core::kinematics::MoveMap & local_movemap );
@@ -131,14 +131,14 @@ protected:
 
 
 private:
-  // Essentially MoveMap settings
+	// Essentially MoveMap settings
 	bool fix_omega_;
 	bool minimize_bond_lengths_;
 	bool minimize_bond_angles_;
 	int minimize_bondangle_subset_;
 	int minimize_bondlength_subset_;
 
-  // Constraint settings
+	// Constraint settings
 	bool constrain_relax_to_native_coords_;
 	bool constrain_relax_to_start_coords_;
 	bool constrain_coords_;
@@ -149,9 +149,9 @@ private:
 	utility::vector1< std::string > cst_files_;
 
 	// The minimizer algorithm
-  std::string min_type_;
+	std::string min_type_;
 
-  /// Do cartesian-space minimization?
+	/// Do cartesian-space minimization?
 	bool cartesian_;
 
 	/// maximum minimizer iterations

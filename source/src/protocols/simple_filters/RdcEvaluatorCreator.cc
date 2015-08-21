@@ -52,7 +52,7 @@
 
 
 #ifdef WIN32
-	#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.hh>
 #endif
 
 
@@ -80,7 +80,7 @@ void RdcEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval )
 
 
 	if ( option[ OptionKeys::evaluation::rdc ].user() ) {
-    typedef utility::vector1< std::string > RdcVector;
+		typedef utility::vector1< std::string > RdcVector;
 		RdcVector const& rdc( option[ OptionKeys::evaluation::rdc ]() );
 		utility::vector1< core::Size> empty_selection;
 		for ( RdcVector::const_iterator it=rdc.begin(); it!=rdc.end(); ++it ) {
@@ -91,7 +91,7 @@ void RdcEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval )
 				column = *it;
 			} else {
 				utility_exit_with_message(
-							 "need to specify dupletts <rdcs> <column> with option -evaluation:rdc   last read: "+fname );
+					"need to specify dupletts <rdcs> <column> with option -evaluation:rdc   last read: "+fname );
 			}
 			eval.add_evaluation( PoseEvaluatorOP( new simple_filters::SelectRDC_Evaluator( empty_selection, column, fname ) ) );
 		} // iterate over tripletts in option -rmsd

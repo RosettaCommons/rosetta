@@ -90,7 +90,7 @@ public:
 	inline
 	void send( Signal s ) {
 		if ( valid && !blocked ) {
-		debug_assert( fn );
+			debug_assert( fn );
 			fref< Function >()( s );
 		}
 	}

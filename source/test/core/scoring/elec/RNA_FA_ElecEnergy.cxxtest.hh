@@ -45,7 +45,7 @@ using namespace core;
 class RNA_FA_ElecEnergyTests : public CxxTest::TestSuite {
 
 public:
-  void setUp() {
+	void setUp() {
 		core_init();
 	}
 

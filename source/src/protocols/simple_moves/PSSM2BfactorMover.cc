@@ -57,15 +57,15 @@ PSSM2BfactorMoverCreator::mover_name()
 
 PSSM2BfactorMover::PSSM2BfactorMover()
 : moves::Mover("PSSM2Bfactor"),
-  min_value_( -1.0 ),
-  max_value_( 5.0 )
+	min_value_( -1.0 ),
+	max_value_( 5.0 )
 {
 }
 
 PSSM2BfactorMover::PSSM2BfactorMover(core::Real const min_in , core::Real const max_in)
 : moves::Mover("PSSM2Bfactor"),
-  min_value_( min_in ),
-  max_value_( max_in )
+	min_value_( min_in ),
+	max_value_( max_in )
 {
 }
 
@@ -86,8 +86,8 @@ PSSM2BfactorMover::apply( Pose & pose )
 
 	core::pose::add_comment(pose,"PSSMSTYLE residueNo", " A C D E F G H I K L M N P Q R S T V W Y");
 
-	BOOST_FOREACH( ConstraintCOP const c, constraints ){
-		if( c->type() == "SequenceProfile" ){
+	BOOST_FOREACH ( ConstraintCOP const c, constraints ) {
+		if ( c->type() == "SequenceProfile" ) {
 			SequenceProfileConstraintCOP seqprof_cst( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::SequenceProfileConstraint const > ( c ) );
 			runtime_assert( seqprof_cst != 0 );
 			runtime_assert( seqprof_cst->profile_mapping() != 0 );
@@ -95,7 +95,7 @@ PSSM2BfactorMover::apply( Pose & pose )
 			TR<<"sepos="<<seqpos<<std::endl;
 			core::id::SequenceMappingCOP SM = seqprof_cst->profile_mapping();
 			core::id::SequenceMapping tempSM = *SM;
-			if (SM==0) {
+			if ( SM==0 ) {
 				TR << "asdfasd" << std::endl;
 			}
 			TR<<"seqpos_mapping:"<<tempSM[seqpos]<<std::endl;
@@ -113,8 +113,7 @@ PSSM2BfactorMover::apply( Pose & pose )
 			if ( tmpscore >= max_value_ ) {
 				TR<<tmpscore<<" greater than "<<max_value_<<std::endl;
 				tmpscore = max_value_;
-			}
-			else if ( tmpscore <= min_value_ ) {
+			} else if ( tmpscore <= min_value_ ) {
 				tmpscore = min_value_;
 			}
 
@@ -122,7 +121,7 @@ PSSM2BfactorMover::apply( Pose & pose )
 			TR<<"Position: "<<seqpos<<" pssm_val: "<<PSSM_score<<" min val: "<<min_value_<<" max val: "<<max_value_<<" tmpscore: "<<tmpscore<<" transformed score: "<<transformed_score<<" alpha: "<<alpha<<" beta: "<<beta<<std::endl;
 
 			std::ostringstream residuesSpecificPSSMScores;
-			for (int i = 1; i<=20; ++i){
+			for ( int i = 1; i<=20; ++i ) {
 				residuesSpecificPSSMScores << seqprof_pos->prof_row( tempSM[seqpos] )[i] << " ";
 			}
 
@@ -131,7 +130,7 @@ PSSM2BfactorMover::apply( Pose & pose )
 			core::pose::add_comment(pose,PSSM_resNo.str(),residuesSpecificPSSMScores.str());
 
 
-			for( core::Size idx = 1; idx <= pose.residue( seqpos ).natoms(); ++idx ){
+			for ( core::Size idx = 1; idx <= pose.residue( seqpos ).natoms(); ++idx ) {
 				pose.pdb_info()->temperature( seqpos, idx, transformed_score );
 			}
 			cst_num++;
@@ -159,11 +158,11 @@ PSSM2BfactorMover::fresh_instance() const
 
 void
 PSSM2BfactorMover::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & )
 {
 	max_value( tag->getOption< core::Real >( "Value_for_blue", 5.0 ) );
 	chain_num( tag->getOption< core::Real >( "chain_num", 1 ) );

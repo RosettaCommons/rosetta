@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSamplerComb.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -22,11 +22,11 @@ namespace protocols {
 namespace stepwise {
 namespace sampler {
 namespace copy_dofs {
-	
-	class ResidueAlternativeStepWiseSamplerComb;
-	typedef utility::pointer::shared_ptr< ResidueAlternativeStepWiseSamplerComb > ResidueAlternativeStepWiseSamplerCombOP;
-	typedef utility::pointer::shared_ptr< ResidueAlternativeStepWiseSamplerComb const > ResidueAlternativeStepWiseSamplerCombCOP;
-	
+
+class ResidueAlternativeStepWiseSamplerComb;
+typedef utility::pointer::shared_ptr< ResidueAlternativeStepWiseSamplerComb > ResidueAlternativeStepWiseSamplerCombOP;
+typedef utility::pointer::shared_ptr< ResidueAlternativeStepWiseSamplerComb const > ResidueAlternativeStepWiseSamplerCombCOP;
+
 } //copy_dofs
 } //sampler
 } //stepwise

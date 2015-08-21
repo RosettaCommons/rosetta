@@ -59,7 +59,7 @@
 #include <numeric/random/random_permutation.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 
@@ -126,17 +126,14 @@ LoophashLoopInserter::init(
 	using namespace basic::resource_manager;
 	using namespace basic::options;
 
-	if(!lh_initialized_)
-	{
+	if ( !lh_initialized_ ) {
 		if ( ResourceManager::get_instance()->has_resource("LoopHashLibrary") ) {
 			TR << "Retrieving lh library from resource manager." << std::endl;
 			lh_library_ = get_resource<LoopHashLibrary>( "LoopHashLibrary" );
-		}
-		else{
+		} else {
 			TR << "Initializing lh library from command line" << std::endl;
 			utility::vector1<core::Size> actual_lh_fragment_sizes(loop_sizes_.size());
-			for(core::Size i=1; i<=loop_sizes_.size(); ++i)
-			{
+			for ( core::Size i=1; i<=loop_sizes_.size(); ++i ) {
 				actual_lh_fragment_sizes[i]=loop_sizes_[i]+(2*num_flanking_residues_to_match_);
 			}
 			lh_library_ = protocols::loophash::LoopHashLibraryOP( new LoopHashLibrary( actual_lh_fragment_sizes ) );
@@ -146,14 +143,12 @@ LoophashLoopInserter::init(
 	}
 
 	//Sanity checks
-	if(loop_anchor()<=0 || loop_anchor()>pose.total_residue()-1)
-	{
+	if ( loop_anchor()<=0 || loop_anchor()>pose.total_residue()-1 ) {
 		std::stringstream err;
 		err << "Loop anchor " << loop_anchor() << " is invalid" << std::endl;
 		utility_exit_with_message(err.str());
 	}
-	if(lh_library_->hash_sizes().size()<=0)
-	{
+	if ( lh_library_->hash_sizes().size()<=0 ) {
 		std::stringstream err;
 		err << "No loop sizes for loophash" << std::endl;
 		utility_exit_with_message(err.str());
@@ -179,11 +174,10 @@ LoophashLoopInserter::apply(
 	core::Size lh_fragment_end = loop_anchor()+num_flanking_residues_to_match_;
 
 	HashBuckets hash_buckets = find_fragments(pose, lh_fragment_begin, lh_fragment_end);
-	if(hash_buckets.size()==0)
-	{
+	if ( hash_buckets.size()==0 ) {
 		std::stringstream err;
 		err << "No loophash fragments found for transform between residues " << loop_anchor() << " and " << loop_anchor()+1
-		<< " consider loosening torsion rmsd or increasing max loophash radius size." << std::endl;
+			<< " consider loosening torsion rmsd or increasing max loophash radius size." << std::endl;
 		utility_exit_with_message(err.str());
 	}
 
@@ -209,8 +203,7 @@ LoophashLoopInserter::get_random_fragment(
 
 	//iterate this random number of times
 	HashBuckets::const_iterator it=hash_buckets.begin();
-	for(core::Size i=1; i<=random_key_index; ++i)
-	{
+	for ( core::Size i=1; i<=random_key_index; ++i ) {
 		++it;
 	}
 	//Get the vector of retreival indexes corresponding to this random key
@@ -233,8 +226,7 @@ LoophashLoopInserter::find_fragments(
 ){
 	core::Size max_size=0;
 	core::Size min_size=100000;
-	for( core::Size i = 0; i < lh_library_->hash_sizes().size(); i++ )
-	{
+	for ( core::Size i = 0; i < lh_library_->hash_sizes().size(); i++ ) {
 		max_size = std::max(max_size, lh_library_->hash_sizes()[i]);
 		min_size = std::min(min_size, lh_library_->hash_sizes()[i]);
 	}
@@ -270,18 +262,17 @@ LoophashLoopInserter::find_fragments(
 
 	numeric::geometry::hashing::Real6 loop_transform;
 	TR << "Getting transform from residues " << lh_fragment_begin << " and " << lh_fragment_end+1 << std::endl;
-	if(!get_rt_over_leap_without_foldtree_bs( centroid_pose, lh_fragment_begin, lh_fragment_end+1, loop_transform )){
+	if ( !get_rt_over_leap_without_foldtree_bs( centroid_pose, lh_fragment_begin, lh_fragment_end+1, loop_transform ) ) {
 		utility_exit_with_message("Unable to find rigid body transform over jump");
 	}
 	TR << "Max lh fragment size: " << max_fragment_size << std::endl;
 
 	HashBuckets hash_buckets;
 	core::Size num_filtered_fragments = 0;
-	for( core::Size i = 0; i < lh_library_->hash_sizes().size(); i++ )
-	{
+	for ( core::Size i = 0; i < lh_library_->hash_sizes().size(); i++ ) {
 		core::Size loop_size = lh_library_->hash_sizes()[ i ];
-		if(loop_size > max_fragment_size){ continue; }
-		if(loop_size < min_fragment_size){ continue; }
+		if ( loop_size > max_fragment_size ) { continue; }
+		if ( loop_size < min_fragment_size ) { continue; }
 
 		LoopHashMap &hashmap = lh_library_->gethash( loop_size );
 
@@ -291,10 +282,9 @@ LoophashLoopInserter::find_fragments(
 		TR.Debug << "radius, loop_size, lookup_size = " << max_lh_radius_ << ", " <<
 			loop_size << "," << leap_index_bucket.size() << std::endl;
 
-		for(  std::vector<core::Size>::const_iterator it = leap_index_bucket.begin();
-			it != leap_index_bucket.end();
-			++it )
-		{
+		for (  std::vector<core::Size>::const_iterator it = leap_index_bucket.begin();
+				it != leap_index_bucket.end();
+				++it ) {
 			// Get the actual strucure index (not just the bin index)
 			core::Size retrieve_index = (core::Size) (*it);
 			LeapIndex cp = hashmap.get_peptide( retrieve_index );
@@ -316,9 +306,8 @@ LoophashLoopInserter::find_fragments(
 			core::Real bb_rms_1 = get_rmsd( pose_bs_1, new_bs_1 );
 			core::Real bb_rms_2 = get_rmsd( pose_bs_2, new_bs_2 );
 
-			if( (bb_rms_1 > min_torsion_rms_) && (bb_rms_1 < max_torsion_rms_ ) &&
-				(bb_rms_2 > min_torsion_rms_) && (bb_rms_2 < max_torsion_rms_ ) )
-			{
+			if ( (bb_rms_1 > min_torsion_rms_) && (bb_rms_1 < max_torsion_rms_ ) &&
+					(bb_rms_2 > min_torsion_rms_) && (bb_rms_2 < max_torsion_rms_ ) ) {
 				hash_buckets[loop_size].push_back( *it );
 				num_filtered_fragments++;
 			}
@@ -378,14 +367,14 @@ LoophashLoopInserter::build_loop(
 	//append idealized residues to the pose
 	//TODO: use the rotamer id from the backbone db extra data
 	chemical::ResidueTypeSetCOP restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-	for(core::Size i=0; i<n_term_append_size; ++i){
+	for ( core::Size i=0; i<n_term_append_size; ++i ) {
 
 		core::Size append_seqpos = loop_anchor()+i;
 
 		char aa_char = sequence[seq_offset+i];
 		chemical::AA aa = chemical::aa_from_oneletter_code(aa_char);
 		chemical::ResidueTypeCOP rsd_type( restype_set->get_representative_type_aa( aa ) );
-		if( ! rsd_type ){
+		if ( ! rsd_type ) {
 			std::string err = "Could not find residue type for AA: ";
 			err+=aa_char;
 			utility_exit_with_message(err);
@@ -399,13 +388,13 @@ LoophashLoopInserter::build_loop(
 
 	//Prevent Size wrap around
 	core::Size prepend_seqpos = loop_anchor()+loop_size-c_term_append_size+1;
-	if(loop_size-c_term_append_size > 0){
-		for(core::Size i=loop_size-1; i>=loop_size-c_term_append_size; --i){
+	if ( loop_size-c_term_append_size > 0 ) {
+		for ( core::Size i=loop_size-1; i>=loop_size-c_term_append_size; --i ) {
 
 			char aa_char = sequence[seq_offset+i];
 			chemical::AA aa = chemical::aa_from_oneletter_code(aa_char);
 			chemical::ResidueTypeCOP rsd_type( restype_set->get_representative_type_aa( aa ) );
-			if( ! rsd_type ){
+			if ( ! rsd_type ) {
 				std::string err = "Could not find residue type for AA: ";
 				err+=aa_char;
 				utility_exit_with_message(err);
@@ -425,7 +414,7 @@ LoophashLoopInserter::build_loop(
 	);
 
 	//Apply the torsions of the loop residue to the pose
-	if(modify_flanking_regions_){
+	if ( modify_flanking_regions_ ) {
 		modified_range(lh_fragment_begin, lh_fragment_end);
 		protocols::loops::Loop extended_loop(lh_fragment_begin, lh_fragment_end, loop.cut());
 		protocols::loops::set_single_loop_fold_tree(pose, extended_loop);
@@ -433,8 +422,7 @@ LoophashLoopInserter::build_loop(
 
 		TR.Debug << "Applying " << lh_fragment_bs.length() << " lh fragment torsions starting at residue " << lh_fragment_begin << std::endl;
 		lh_fragment_bs.apply_to_pose(pose, lh_fragment_begin, false);
-	}
-	else{
+	} else {
 		modified_range(loop.start(), loop.stop());
 		protocols::loops::set_single_loop_fold_tree(pose, loop);
 
@@ -470,60 +458,52 @@ LoophashLoopInserter::parse_my_tag(
 	parse_loop_anchor(tag);
 
 	//Maximum RMSD of torsion angles to flanking residues
-	if(tag->hasOption("max_torsion_rms") || option[lh::max_bbrms].user()){
+	if ( tag->hasOption("max_torsion_rms") || option[lh::max_bbrms].user() ) {
 		max_torsion_rms_ =
 			tag->getOption<core::Real>("max_torsion_rms", option[lh::max_bbrms].value());
-	}
-	else{
+	} else {
 		utility_exit_with_message("You must specify the maximum torsion rmsd using the max_torsion_rms tag or the lh::max_bbrms option");
 	}
 
 	//Minimum RMSD of torsion angles to flanking residues
-	if(tag->hasOption("min_torsion_rms") || option[lh::min_bbrms].user()){
+	if ( tag->hasOption("min_torsion_rms") || option[lh::min_bbrms].user() ) {
 		min_torsion_rms_ =
 			tag->getOption<core::Real>("min_torsion_rms", option[lh::min_bbrms].value());
-	}
-	else{
+	} else {
 		utility_exit_with_message("You must specify the minimum torsion rmsd using the min_torsion_rms tag or the lh::min_bbrms option");
 	}
 
 	max_closure_deviation_ =
-			tag->getOption<core::Real>("max_closure_deviation", 1);
+		tag->getOption<core::Real>("max_closure_deviation", 1);
 
-	if(tag->hasOption("loop_sizes") || option[lh::loopsizes].user()){
-		if(tag->hasOption("loop_sizes"))
-		{
+	if ( tag->hasOption("loop_sizes") || option[lh::loopsizes].user() ) {
+		if ( tag->hasOption("loop_sizes") ) {
 			loop_sizes_.clear();
 			utility::vector1<std::string> loop_sizes_strings =
 				utility::string_split(tag->getOption< std::string >("loop_sizes"), ',');
-			for(core::Size i=1; i<=loop_sizes_strings.size(); ++i)
-			{
+			for ( core::Size i=1; i<=loop_sizes_strings.size(); ++i ) {
 				loop_sizes_.push_back(utility::string2int(loop_sizes_strings[i]));
 			}
-		}
-		else
-		{
+		} else {
 			loop_sizes_=option[lh::loopsizes].value();
 		}
-	}
-	else{
+	} else {
 		utility_exit_with_message("You must specify desired loop sizes through either the loop_sizes tag or the lh::loopsizes option");
 	}
 
-	if(tag->hasOption("max_lh_radius") || option[lh::max_radius].user()){
+	if ( tag->hasOption("max_lh_radius") || option[lh::max_radius].user() ) {
 		max_lh_radius_ =
 			tag->getOption<core::Size>("max_lh_radius", option[lh::max_radius].value());
-	}
-	else{
+	} else {
 		utility_exit_with_message("You must specify max radius for loophash through either the max_radius tag or the lh::max_radius option");
 	}
 
-	if(tag->hasOption("modify_flanking_regions")){
+	if ( tag->hasOption("modify_flanking_regions") ) {
 		modify_flanking_regions_ =
 			tag->getOption<bool>("modify_flanking_regions");
 	}
 
-	if(tag->hasOption("num_flanking_residues_to_match")){
+	if ( tag->hasOption("num_flanking_residues_to_match") ) {
 		num_flanking_residues_to_match_ =
 			tag->getOption<core::Size>("num_flanking_residues_to_match");
 	}

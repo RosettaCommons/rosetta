@@ -36,92 +36,92 @@ namespace func {
 Real USOGFunc::background_prob = exp(-10.); // the maximum constraint penalty == -log(background_prob)
 
 USOGFunc::USOGFunc(const utility::vector1<core::Real>& means,
-                   const utility::vector1<core::Real>& std_devs,
-                   const utility::vector1<core::Real>& weights)
-    : means_(means), std_devs_(std_devs), weights_(weights) {
-  if (means_.size() != std_devs_.size() || means_.size() != weights_.size()) {
-    utility_exit_with_message("Unequal number of means, std_devs, weights");
-  }
+	const utility::vector1<core::Real>& std_devs,
+	const utility::vector1<core::Real>& weights)
+: means_(means), std_devs_(std_devs), weights_(weights) {
+	if ( means_.size() != std_devs_.size() || means_.size() != weights_.size() ) {
+		utility_exit_with_message("Unequal number of means, std_devs, weights");
+	}
 }
 
 USOGFunc::USOGFunc(core::Real mean, core::Real std_dev, core::Real weight) {
-  means_.push_back( mean );
+	means_.push_back( mean );
 	std_devs_.push_back( std_dev );
 	weights_.push_back( weight );
 }
 
 FuncOP USOGFunc::clone() const {
-  return FuncOP( new USOGFunc(*this) );
+	return FuncOP( new USOGFunc(*this) );
 }
 
 core::Real USOGFunc::func(const core::Real x) const {
 	Real score = 0;
-  for (core::Size i = 1; i <= numGaussians(); ++i) {
+	for ( core::Size i = 1; i <= numGaussians(); ++i ) {
 		Real Z = (x - means_[i])/std_devs_[i];
 		score += ( weights_[i] / (std_devs_[i] * SQRT_2PI)) * exp( -0.5 * Z * Z );
 	}
-  return -std::log(score + background_prob);
+	return -std::log(score + background_prob);
 }
 
 core::Real USOGFunc::dfunc(const core::Real x) const {
 	Real score = 0, dscore = 0;
-  for (core::Size i = 1; i <= numGaussians(); ++i) {
+	for ( core::Size i = 1; i <= numGaussians(); ++i ) {
 		Real Z = (x - means_[i])/std_devs_[i];
 		Real score_i = ( weights_[i] / (std_devs_[i] * SQRT_2PI)) * exp( -0.5 * Z * Z );
 		score += score_i;
 		dscore += score * (-Z/std_devs_[i]);
 	}
-  return (-dscore / (score + background_prob));
+	return (-dscore / (score + background_prob));
 }
 
 core::Size USOGFunc::numGaussians() const {
-  return means_.size();
+	return means_.size();
 }
 
 void USOGFunc::show_definition(std::ostream& out) const {
-  out << "USOGFUNC " << numGaussians();
-  for (core::Size i = 1; i <= numGaussians(); ++i) {
-    out << " " << means_[i] << " " << std_devs_[i] << " " << weights_[i];
-  }
+	out << "USOGFUNC " << numGaussians();
+	for ( core::Size i = 1; i <= numGaussians(); ++i ) {
+		out << " " << means_[i] << " " << std_devs_[i] << " " << weights_[i];
+	}
 }
 
 void USOGFunc::resetInstance() {
-  means_.clear();
-  weights_.clear();
-  std_devs_.clear();
+	means_.clear();
+	weights_.clear();
+	std_devs_.clear();
 }
 
 // Format: USOGFunc <num_gaussians> <mean_1> <std_dev1> <weight_1> ... <mean_n> <std_dev_n> <weight_n>
 void USOGFunc::read_data(std::istream& in) {
-  resetInstance();
+	resetInstance();
 
-  core::Size num_gaussians = 0;
-  in >> num_gaussians;
+	core::Size num_gaussians = 0;
+	in >> num_gaussians;
 
-  for (core::Size i = 1; i <= num_gaussians; ++i) {
-    core::Real m = readValueOrDie(in);
-    core::Real s = readValueOrDie(in);
-    core::Real w = readValueOrDie(in);
+	for ( core::Size i = 1; i <= num_gaussians; ++i ) {
+		core::Real m = readValueOrDie(in);
+		core::Real s = readValueOrDie(in);
+		core::Real w = readValueOrDie(in);
 
-   debug_assert(s > 0);
-   debug_assert(w > 0);
+		debug_assert(s > 0);
+		debug_assert(w > 0);
 
-    means_.push_back(m);
-    weights_.push_back(w);
-    std_devs_.push_back(s);
-  }
+		means_.push_back(m);
+		weights_.push_back(w);
+		std_devs_.push_back(s);
+	}
 }
 
 // Utility functions
 core::Real readValueOrDie(std::istream& in) {
-  core::Real x;
-  in >> x;
+	core::Real x;
+	in >> x;
 
-  if (in.fail()) {
-    utility_exit_with_message("Failed to read floating point value ");
-  }
+	if ( in.fail() ) {
+		utility_exit_with_message("Failed to read floating point value ");
+	}
 
-  return x;
+	return x;
 }
 
 }  // namespace constraints

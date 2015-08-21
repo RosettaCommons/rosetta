@@ -19,8 +19,8 @@
 /// @note       Last Modified: 2/9/15
 
 // Unit Headers
-#include <protocols/symmetric_docking/membrane/MPSymDockMover.hh> 
-#include <protocols/symmetric_docking/membrane/MPSymDockMoverCreator.hh> 
+#include <protocols/symmetric_docking/membrane/MPSymDockMover.hh>
+#include <protocols/symmetric_docking/membrane/MPSymDockMoverCreator.hh>
 
 #include <protocols/moves/Mover.hh>
 
@@ -74,19 +74,19 @@ static basic::Tracer TR( "protocols.symmetric_docking.membrane.MPSymDockMover" )
 namespace protocols {
 namespace symmetric_docking {
 namespace membrane {
-    
+
 /////////////////////
 /// Constructors  ///
 /////////////////////
-    
+
 /// @brief Defualt constructor for the membrane protein symmetric
 /// docking protocol
 MPSymDockMover::MPSymDockMover() :
-    protocols::moves::Mover() {}
-    
+	protocols::moves::Mover() {}
+
 /// @brief Destructor
 MPSymDockMover::~MPSymDockMover() {}
-    
+
 ///////////////////////////////
 /// Rosetta Scripts Methods ///
 ///////////////////////////////
@@ -94,129 +94,129 @@ MPSymDockMover::~MPSymDockMover() {}
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 MPSymDockMover::clone() const {
-    return ( protocols::moves::MoverOP( new MPSymDockMover( *this ) ) );
+	return ( protocols::moves::MoverOP( new MPSymDockMover( *this ) ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 MPSymDockMover::fresh_instance() const {
-    return protocols::moves::MoverOP( new MPSymDockMover );
+	return protocols::moves::MoverOP( new MPSymDockMover );
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
 void
 MPSymDockMover::parse_my_tag(
-    utility::tag::TagCOP,
-    basic::datacache::DataMap &,
-    protocols::filters::Filters_map const &,
-    protocols::moves::Movers_map const &,
-    core::pose::Pose const &
-    ) {
+	utility::tag::TagCOP,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
+) {
 }
 
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
 MPSymDockMoverCreator::create_mover() const {
-    return protocols::moves::MoverOP( new MPSymDockMover );
+	return protocols::moves::MoverOP( new MPSymDockMover );
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
 std::string
 MPSymDockMoverCreator::keyname() const {
-    return MPSymDockMoverCreator::mover_name();
+	return MPSymDockMoverCreator::mover_name();
 }
 
 /// @brief Mover name for Rosetta Scripts
 std::string
 MPSymDockMoverCreator::mover_name() {
-    return "MPSymDockMover";
+	return "MPSymDockMover";
 }
 
 //////////////////////
 /// Mover Methods  ///
 //////////////////////
-    
+
 /// @brief Return the name of this mover (MPSymDockMover)
 std::string
 MPSymDockMover::get_name() const {
-    return "MPSymDockMover";
+	return "MPSymDockMover";
 }
-    
+
 /// @brief Apply Method: Symmetric Docking in the membrane
 /// @details Setup pose for symmetry, add the membrane components to the total pose,
 /// and then perform symmetric docking
 void
 MPSymDockMover::apply( Pose & pose ) {
-        
-    using namespace core::conformation::symmetry;
-    using namespace core::pose::symmetry;
-    using namespace core::scoring;
-    using namespace protocols::simple_moves::symmetry;
-    using namespace protocols::membrane::symmetry;
-    using namespace protocols::symmetric_docking;
-    
-    // Check that the pose is neither symmetric nor a membrane protein
-    // Protocol is not that advanced yet - build a clean new conf every time
-    if ( is_symmetric( pose ) || pose.conformation().is_membrane() ) {
-        utility_exit_with_message( "Cannot setup a new symmetric membrane protein if the conformation is already symmetric and/or a membrane pose" );
-    }
-    
-    // Setup the pose for symmetry based on inputs
-    SetupForSymmetryMoverOP setup_for_symm = SetupForSymmetryMoverOP( new SetupForSymmetryMover() );
-    setup_for_symm->apply( pose );
-    
-    SymmetricAddMembraneMoverOP add_symm_memb = SymmetricAddMembraneMoverOP( new SymmetricAddMembraneMover() );
-    add_symm_memb->apply( pose );
 
-    // Position the membrane at the center of mass of transmembrane spans
-    // of the full symmetric complex
-    position_membrane_at_topology_com( pose );
+	using namespace core::conformation::symmetry;
+	using namespace core::pose::symmetry;
+	using namespace core::scoring;
+	using namespace protocols::simple_moves::symmetry;
+	using namespace protocols::membrane::symmetry;
+	using namespace protocols::symmetric_docking;
 
-    // Configure Symmetric MP Docking. Rosetta will symmetrize the
-    // score functions automatically
-    ScoreFunctionOP sfxn_high = ScoreFunctionFactory::create_score_function( "mpframework_symdock_fa_2015" );
-    ScoreFunctionOP sfxn_low = ScoreFunctionFactory::create_score_function( "mpframework_symdock_cen_2015" );
-    
-    // Setup repulsives based slide criteria (better for membranes than
-    // initial contact scoring)
-    SymmetricConformation & symm_conf ( dynamic_cast< SymmetricConformation & > ( pose.conformation()) );
-    symm_conf.Symmetry_Info()->get_slide_info().set_SlideCriteriaType( FA_REP_SCORE );
-    
-    // Setup a docking protocol, don't apply filters during docking runs
-    // for now
-    SymDockProtocolOP symdock( new SymDockProtocol( true, false, false, sfxn_low, sfxn_high ) );
-    symdock->apply( pose );  
-    
-    // Done!
+	// Check that the pose is neither symmetric nor a membrane protein
+	// Protocol is not that advanced yet - build a clean new conf every time
+	if ( is_symmetric( pose ) || pose.conformation().is_membrane() ) {
+		utility_exit_with_message( "Cannot setup a new symmetric membrane protein if the conformation is already symmetric and/or a membrane pose" );
+	}
+
+	// Setup the pose for symmetry based on inputs
+	SetupForSymmetryMoverOP setup_for_symm = SetupForSymmetryMoverOP( new SetupForSymmetryMover() );
+	setup_for_symm->apply( pose );
+
+	SymmetricAddMembraneMoverOP add_symm_memb = SymmetricAddMembraneMoverOP( new SymmetricAddMembraneMover() );
+	add_symm_memb->apply( pose );
+
+	// Position the membrane at the center of mass of transmembrane spans
+	// of the full symmetric complex
+	position_membrane_at_topology_com( pose );
+
+	// Configure Symmetric MP Docking. Rosetta will symmetrize the
+	// score functions automatically
+	ScoreFunctionOP sfxn_high = ScoreFunctionFactory::create_score_function( "mpframework_symdock_fa_2015" );
+	ScoreFunctionOP sfxn_low = ScoreFunctionFactory::create_score_function( "mpframework_symdock_cen_2015" );
+
+	// Setup repulsives based slide criteria (better for membranes than
+	// initial contact scoring)
+	SymmetricConformation & symm_conf ( dynamic_cast< SymmetricConformation & > ( pose.conformation()) );
+	symm_conf.Symmetry_Info()->get_slide_info().set_SlideCriteriaType( FA_REP_SCORE );
+
+	// Setup a docking protocol, don't apply filters during docking runs
+	// for now
+	SymDockProtocolOP symdock( new SymDockProtocol( true, false, false, sfxn_low, sfxn_high ) );
+	symdock->apply( pose );
+
+	// Done!
 }
-    
+
 /////////////////////
 /// Setup Methods ///
 /////////////////////
-    
+
 /// @brief Position Pose at TopologyCOM
 /// @details Position the initial pose at the center of mass of
 /// predicted transmembrane spanning regions of the whole complex
 void
 MPSymDockMover::position_membrane_at_topology_com( core::pose::Pose & pose ) {
-    
-    using namespace core::conformation::membrane;
-    using namespace protocols::membrane::geometry;
-    using namespace protocols::membrane;
-    using namespace protocols::membrane::symmetry; 
-    
-    // Symmetrize the spanning topology
-    SpanningTopologyOP symmetrized_topology = symmetrize_spans( pose, *pose.conformation().membrane_info()->spanning_topology() );
-    symmetrized_topology->show();
-    Embedding embeddings = Embedding( *symmetrized_topology, pose );
-    EmbeddingDefOP final_embed = embeddings.total_embed();
-    
-    // Set Initial Membrane position to be the symmetrized position
-    SetMembranePositionMoverOP set_initial_position( new SetMembranePositionMover( final_embed->center(), final_embed->normal() ) );
-    set_initial_position->apply( pose );
+
+	using namespace core::conformation::membrane;
+	using namespace protocols::membrane::geometry;
+	using namespace protocols::membrane;
+	using namespace protocols::membrane::symmetry;
+
+	// Symmetrize the spanning topology
+	SpanningTopologyOP symmetrized_topology = symmetrize_spans( pose, *pose.conformation().membrane_info()->spanning_topology() );
+	symmetrized_topology->show();
+	Embedding embeddings = Embedding( *symmetrized_topology, pose );
+	EmbeddingDefOP final_embed = embeddings.total_embed();
+
+	// Set Initial Membrane position to be the symmetrized position
+	SetMembranePositionMoverOP set_initial_position( new SetMembranePositionMover( final_embed->center(), final_embed->normal() ) );
+	set_initial_position->apply( pose );
 
 }
-    
+
 } // membrane
 } // symmetric_docking
 } // protocols

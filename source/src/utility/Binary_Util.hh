@@ -28,13 +28,13 @@ namespace utility {
 // Only works with aligned 4-byte quantities, will cause a bus error
 //    on some platforms if used on unaligned data.
 inline void swap4_aligned(void *v, long ndata) {
-  int *data = (int *) v;
-  long i;
-  int *N;
-  for (i=0; i<ndata; i++) {
-    N = data + i;
-    *N=(((*N>>24)&0xff) | ((*N&0xff)<<24) | ((*N>>8)&0xff00) | ((*N&0xff00)<<8));
-  }
+	int *data = (int *) v;
+	long i;
+	int *N;
+	for ( i=0; i<ndata; i++ ) {
+		N = data + i;
+		*N=(((*N>>24)&0xff) | ((*N&0xff)<<24) | ((*N>>8)&0xff00) | ((*N&0xff00)<<8));
+	}
 }
 
 
@@ -50,10 +50,10 @@ inline unsigned char code_to_6bit(unsigned char _6bit) {
 
 inline unsigned char code_from_6bit(unsigned char _8bit) {
 	//return _8bit;
-	if( ( _8bit >= 'A') && (_8bit <= 'Z') ) return _8bit - 'A';
-	if( ( _8bit >= 'a') && (_8bit <= 'z') ) return _8bit - 'a' + 26;
-	if( ( _8bit >= '0') && (_8bit <= '9') ) return _8bit - '0' + 52;
-	if(   _8bit == '+'  ) return 62;
+	if ( ( _8bit >= 'A') && (_8bit <= 'Z') ) return _8bit - 'A';
+	if ( ( _8bit >= 'a') && (_8bit <= 'z') ) return _8bit - 'a' + 26;
+	if ( ( _8bit >= '0') && (_8bit <= '9') ) return _8bit - '0' + 52;
+	if (   _8bit == '+'  ) return 62;
 	return 63;
 }
 

@@ -35,10 +35,10 @@ void put_line3(double* data, int dim, int x1, int x2, double line[], int dims[])
 	int i, inc;
 	double* ptr;
 
-	if (dim == 0) {          // x1 == y, x2 == z
+	if ( dim == 0 ) {          // x1 == y, x2 == z
 		ptr = &data[x1*dims[2] + x2];
 		inc = dims[1]*dims[2];
-	} else if (dim == 1) {   // x1 == x, x2 == z
+	} else if ( dim == 1 ) {   // x1 == x, x2 == z
 		ptr = &data[x1*dims[1]*dims[2] + x2];
 		inc = dims[2];
 	} else {                 // x1 == x, x2 == y
@@ -46,7 +46,7 @@ void put_line3(double* data, int dim, int x1, int x2, double line[], int dims[])
 		inc = 1;
 	}
 
-	for (i=0; i<dims[dim]; i++) {
+	for ( i=0; i<dims[dim]; i++ ) {
 		*ptr = line[i] ;
 		ptr = &ptr[inc];
 	}
@@ -57,10 +57,10 @@ void get_line3(double* data, int dim, int x1, int x2, double line[], int dims[])
 	int i, inc;
 	double* ptr;
 
-	if (dim == 0) {          // x1 == y, x2 == z
+	if ( dim == 0 ) {          // x1 == y, x2 == z
 		ptr = &data[x1*dims[2] + x2];
 		inc = dims[1]*dims[2];
-	} else if (dim == 1) {   // x1 == x, x2 == z
+	} else if ( dim == 1 ) {   // x1 == x, x2 == z
 		ptr = &data[x1*dims[1]*dims[2] + x2];
 		inc = dims[2];
 	} else {                 // x1 == x, x2 == y
@@ -68,7 +68,7 @@ void get_line3(double* data, int dim, int x1, int x2, double line[], int dims[])
 		inc = 1;
 	}
 
-	for (i=0; i<dims[dim]; i++) {
+	for ( i=0; i<dims[dim]; i++ ) {
 		line[i] = *ptr;
 		ptr = &ptr[inc];
 	}
@@ -78,13 +78,13 @@ void put_line4(double* data, int dim, int x1, int x2, int x3, double line[], int
 	int i, inc;
 	double* ptr;
 
-	if (dim == 0) {          // x1 == y, x2 == z, x3 == w
+	if ( dim == 0 ) {          // x1 == y, x2 == z, x3 == w
 		ptr = &data[x1*dims[2]*dims[3] + x2*dims[3] + x3];
 		inc = dims[1]*dims[2]*dims[3];
-	} else if (dim == 1) {   // x1 == x, x2 == z, x3 == w
+	} else if ( dim == 1 ) {   // x1 == x, x2 == z, x3 == w
 		ptr = &data[x1*dims[1]*dims[2]*dims[3] + x2*dims[3]+ x3];
 		inc = dims[2]*dims[3];
-	} else if (dim == 2) {   // x1 == x, x2 == y, x3 == w
+	} else if ( dim == 2 ) {   // x1 == x, x2 == y, x3 == w
 		ptr = &data[x1*dims[1]*dims[2]*dims[3] + x2*dims[2]*dims[3]+ x3];
 		inc = dims[3];
 	} else {                 // x1 == x, x2 == y, x3 == z
@@ -92,7 +92,7 @@ void put_line4(double* data, int dim, int x1, int x2, int x3, double line[], int
 		inc = 1;
 	}
 
-	for (i=0; i<dims[dim]; i++) {
+	for ( i=0; i<dims[dim]; i++ ) {
 		*ptr = line[i] ;
 		ptr = &ptr[inc];
 	}
@@ -103,13 +103,13 @@ void get_line4(double* data, int dim, int x1, int x2, int x3, double line[], int
 	int i, inc;
 	double* ptr;
 
-	if (dim == 0) {          // x1 == y, x2 == z, x3 == w
+	if ( dim == 0 ) {          // x1 == y, x2 == z, x3 == w
 		ptr = &data[x1*dims[2]*dims[3] + x2*dims[3] + x3];
 		inc = dims[1]*dims[2]*dims[3];
-	} else if (dim == 1) {   // x1 == x, x2 == z, x3 == w
+	} else if ( dim == 1 ) {   // x1 == x, x2 == z, x3 == w
 		ptr = &data[x1*dims[1]*dims[2]*dims[3] + x2*dims[3]+ x3];
 		inc = dims[2]*dims[3];
-	} else if (dim == 2) {   // x1 == x, x2 == y, x3 == w
+	} else if ( dim == 2 ) {   // x1 == x, x2 == y, x3 == w
 		ptr = &data[x1*dims[1]*dims[2]*dims[3] + x2*dims[2]*dims[3]+ x3];
 		inc = dims[3];
 	} else {                 // x1 == x, x2 == y, x3 == z
@@ -117,35 +117,35 @@ void get_line4(double* data, int dim, int x1, int x2, int x3, double line[], int
 		inc = 1;
 	}
 
-	for (i=0; i<dims[dim]; i++) {
+	for ( i=0; i<dims[dim]; i++ ) {
 		line[i] = *ptr;
 		ptr = &ptr[inc];
 	}
 }
 
-static double	InitialCausalCoefficient (
-		double c[],       // coefficients
-		long DataLength,  // number of coefficients
-		double z,         // actual pole
-		double Tolerance, // admissible relative error
-		bool Mirrored     // mirror boundary?
+static double InitialCausalCoefficient (
+	double c[],       // coefficients
+	long DataLength,  // number of coefficients
+	double z,         // actual pole
+	double Tolerance, // admissible relative error
+	bool Mirrored     // mirror boundary?
 ) {
-	double	Sum, zn, iz, z2n;
-	long	n, Horizon;
+	double Sum, zn, iz, z2n;
+	long n, Horizon;
 
 	// this initialization corresponds to mirror boundaries
 	// modified FPD -- periodic boundaries
 	Horizon = DataLength;
-	if (Tolerance > 0.0) {
+	if ( Tolerance > 0.0 ) {
 		Horizon = (long)ceil(log(Tolerance) / log(fabs(z)));
 	}
 
-	if (!Mirrored) {
-		if (Horizon < DataLength) {
+	if ( !Mirrored ) {
+		if ( Horizon < DataLength ) {
 			// accelerated loop
 			zn = z;
 			Sum = c[0];
-			for (n = 1L; n < Horizon; n++) {
+			for ( n = 1L; n < Horizon; n++ ) {
 				Sum += zn * c[DataLength - n];
 				zn *= z;
 			}
@@ -154,31 +154,30 @@ static double	InitialCausalCoefficient (
 			// full loop
 			zn = z;
 			Sum = c[0];
-			for (n = 1L; n < DataLength; n++) {
+			for ( n = 1L; n < DataLength; n++ ) {
 				Sum += zn * c[DataLength - n];
 				zn *= z;
 			}
 			return(Sum / (1.0 - zn));
 		}
 	} else {
-		if (Horizon < DataLength) {
+		if ( Horizon < DataLength ) {
 			// accelerated loop
 			zn = z;
 			Sum = c[0];
-			for (n = 1L; n < Horizon; n++) {
+			for ( n = 1L; n < Horizon; n++ ) {
 				Sum += zn * c[n];
 				zn *= z;
 			}
 			return(Sum);
-		}
-		else {
+		} else {
 			// full loop
 			zn = z;
 			iz = 1.0 / z;
 			z2n = std::pow(z, (double)(DataLength - 1));
 			Sum = c[0] + z2n * c[DataLength - 1];
 			z2n *= z2n * iz;
-			for (n = 1L; n <= DataLength - 2; n++) {
+			for ( n = 1L; n <= DataLength - 2; n++ ) {
 				Sum += (zn + z2n) * c[n];
 				zn *= z;
 				z2n *= iz;
@@ -189,34 +188,33 @@ static double	InitialCausalCoefficient (
 }
 
 
-static double	InitialAntiCausalCoefficient (
-		double c[],       // coefficients
-		long DataLength,  // number of coefficients
-		double z,         // actual pole
-		double Tolerance, // admissible relative error
-		bool Mirrored     // mirror boundary?
+static double InitialAntiCausalCoefficient (
+	double c[],       // coefficients
+	long DataLength,  // number of coefficients
+	double z,         // actual pole
+	double Tolerance, // admissible relative error
+	bool Mirrored     // mirror boundary?
 ) {
-	if (!Mirrored) {
-		
+	if ( !Mirrored ) {
+
 		int Horizon = DataLength;
-		
-		if (Tolerance > 0.0) {
+
+		if ( Tolerance > 0.0 ) {
 			Horizon = (long)ceil(log(Tolerance) / log(fabs(z)));
 		}
-		
-		if (Horizon < DataLength) {
+
+		if ( Horizon < DataLength ) {
 			double zn = z;
 			double Sum = c[DataLength-1];
-			for (int n = 0L; n < Horizon; n++) {
+			for ( int n = 0L; n < Horizon; n++ ) {
 				Sum += zn * c[n];
 				zn *= z;
 			}
 			return(-z*Sum);
-		}
-		else {
+		} else {
 			double zn = z;
 			double Sum = c[DataLength-1];
-			for (int n = 0L; n < DataLength-1; n++) {
+			for ( int n = 0L; n < DataLength-1; n++ ) {
 				Sum += zn * c[n];
 				zn *= z;
 			}
@@ -229,40 +227,40 @@ static double	InitialAntiCausalCoefficient (
 
 
 void ConvertToInterpolationCoefficients (
-		double c[],		    // input samples --> output coefficients
-		long   DataLength,// number of samples or coefficients
-		double z[],       // poles
-		long   NbPoles,   // number of poles
-		double Tolerance, // admissible relative error
-		bool   Mirrored   // mirror boundary?
+	double c[],      // input samples --> output coefficients
+	long   DataLength,// number of samples or coefficients
+	double z[],       // poles
+	long   NbPoles,   // number of poles
+	double Tolerance, // admissible relative error
+	bool   Mirrored   // mirror boundary?
 ) {
-	double	Lambda = 1.0;
-	long	n, k;
+	double Lambda = 1.0;
+	long n, k;
 
 	// special case required by mirror boundaries
-	if (DataLength == 1L) {
+	if ( DataLength == 1L ) {
 		return;
 	}
 	// compute the overall gain
-	for (k = 0L; k < NbPoles; k++) {
+	for ( k = 0L; k < NbPoles; k++ ) {
 		Lambda = Lambda * (1.0 - z[k]) * (1.0 - 1.0 / z[k]);
 	}
 	// apply the gain
-	for (n = 0L; n < DataLength; n++) {
+	for ( n = 0L; n < DataLength; n++ ) {
 		c[n] *= Lambda;
 	}
 	// loop over all poles
-	for (k = 0L; k < NbPoles; k++) {
+	for ( k = 0L; k < NbPoles; k++ ) {
 		// causal initialization
 		c[0] = InitialCausalCoefficient(c, DataLength, z[k], Tolerance, Mirrored);
 		// causal recursion
-		for (n = 1L; n < DataLength; n++) {
+		for ( n = 1L; n < DataLength; n++ ) {
 			c[n] += z[k] * c[n - 1L];
 		}
 		// anticausal initialization
 		c[DataLength - 1L] = InitialAntiCausalCoefficient(c, DataLength, z[k], Tolerance, Mirrored);
 		// anticausal recursion
-		for (n = DataLength - 2L; 0 <= n; n--) {
+		for ( n = DataLength - 2L; 0 <= n; n-- ) {
 			c[n] = z[k] * (c[n + 1L] - c[n]);
 		}
 	}
@@ -283,9 +281,9 @@ int compute_coefficients3(double *data, int dims[3]) {
 	// in-place separable process, along x
 	//line = (double *)malloc((size_t)(dims[0] * sizeof(double)));
 	line.resize( dims[0] );
-	if ((int)line.size() != dims[0]) { std::cerr << "Row allocation failed\n"; return(1); }
-	for (y = 0L; y < dims[1]; y++) {
-		for (z = 0L; z < dims[2]; z++) {
+	if ( (int)line.size() != dims[0] ) { std::cerr << "Row allocation failed\n"; return(1); }
+	for ( y = 0L; y < dims[1]; y++ ) {
+		for ( z = 0L; z < dims[2]; z++ ) {
 			get_line3(data, 0, y, z, &line[0], dims);
 			ConvertToInterpolationCoefficients(&line[0], dims[0], Pole, NbPoles, DBL_EPSILON, false);
 			put_line3(data, 0, y, z, &line[0], dims);
@@ -295,9 +293,9 @@ int compute_coefficients3(double *data, int dims[3]) {
 	// in-place separable process, along y
 	//line = (double *)malloc((size_t)(dims[1] * sizeof(double)));
 	line.resize( dims[1] );
-	if ((int)line.size() != dims[1]) { std::cerr << "Row allocation failed\n"; return(1); }
-	for (x = 0L; x < dims[0]; x++) {
-		for (z = 0L; z < dims[2]; z++) {
+	if ( (int)line.size() != dims[1] ) { std::cerr << "Row allocation failed\n"; return(1); }
+	for ( x = 0L; x < dims[0]; x++ ) {
+		for ( z = 0L; z < dims[2]; z++ ) {
 			get_line3(data, 1, x, z, &line[0], dims);
 			ConvertToInterpolationCoefficients(&line[0], dims[1], Pole, NbPoles, DBL_EPSILON, false);
 			put_line3(data, 1, x, z, &line[0], dims);
@@ -307,9 +305,9 @@ int compute_coefficients3(double *data, int dims[3]) {
 	// in-place separable process, along z
 	//line = (double *)malloc((size_t)(dims[2] * sizeof(double)));
 	line.resize( dims[2] );
-	if ((int)line.size() != dims[2]) { std::cerr << "Row allocation failed\n"; return(1); }
-	for (x = 0L; x < dims[0]; x++) {
-		for (y = 0L; y < dims[1]; y++) {
+	if ( (int)line.size() != dims[2] ) { std::cerr << "Row allocation failed\n"; return(1); }
+	for ( x = 0L; x < dims[0]; x++ ) {
+		for ( y = 0L; y < dims[1]; y++ ) {
 			get_line3(data, 2, x, y, &line[0], dims);
 			ConvertToInterpolationCoefficients(&line[0], dims[2], Pole, NbPoles, DBL_EPSILON, false);
 			put_line3(data, 2, x, y, &line[0], dims);
@@ -328,44 +326,47 @@ int grad3(double grad[3], double *Bcoeff, int dims[3], double X[3]) {
 	int i,j,k, pt, dim, gradDim;
 
 	// compute interpolation indexes
-	for (gradDim=0; gradDim<3; gradDim++) {
-		for (dim=0; dim<3; dim++) {
+	for ( gradDim=0; gradDim<3; gradDim++ ) {
+		for ( dim=0; dim<3; dim++ ) {
 			pt = (int)floor(X[dim] - (3-1) / 2.0);
-			for (i = 0L; i <= 3; i++)
+			for ( i = 0L; i <= 3; i++ ) {
 				idx[dim][i] = pt++;
+			}
 
 			// compute the interpolation weights
-			if (dim == gradDim) {
-					w = X[dim] - (double)idx[dim][1];
-					wt[dim][3] = (1.0 / 2.0) * w * w;
-					wt[dim][0] = (w - 1.0/2.0) - wt[dim][3];
-					wt[dim][2] = 1.0 + wt[dim][0] - 2.0 * wt[dim][3];
-					wt[dim][1] = - wt[dim][0] - wt[dim][2] - wt[dim][3];
+			if ( dim == gradDim ) {
+				w = X[dim] - (double)idx[dim][1];
+				wt[dim][3] = (1.0 / 2.0) * w * w;
+				wt[dim][0] = (w - 1.0/2.0) - wt[dim][3];
+				wt[dim][2] = 1.0 + wt[dim][0] - 2.0 * wt[dim][3];
+				wt[dim][1] = - wt[dim][0] - wt[dim][2] - wt[dim][3];
 			} else {
-					w = X[dim] - (double)idx[dim][1];
-					wt[dim][3] = (1.0 / 6.0) * w * w * w;
-					wt[dim][0] = (1.0 / 6.0) + (1.0 / 2.0) * w * (w - 1.0) - wt[dim][3];
-					wt[dim][2] = w + wt[dim][0] - 2.0 * wt[dim][3];
-					wt[dim][1] = 1.0 - wt[dim][0] - wt[dim][2] - wt[dim][3];
+				w = X[dim] - (double)idx[dim][1];
+				wt[dim][3] = (1.0 / 6.0) * w * w * w;
+				wt[dim][0] = (1.0 / 6.0) + (1.0 / 2.0) * w * (w - 1.0) - wt[dim][3];
+				wt[dim][2] = w + wt[dim][0] - 2.0 * wt[dim][3];
+				wt[dim][1] = 1.0 - wt[dim][0] - wt[dim][2] - wt[dim][3];
 			}
 
 			// _periodic_ boundary conditions
-			for (i = 0L; i <= 3; i++) {
-				if (dims[dim] == 1)
+			for ( i = 0L; i <= 3; i++ ) {
+				if ( dims[dim] == 1 ) {
 					idx[dim][i] = 0;
-				else
+				} else {
 					idx[dim][i] = idx[dim][i] % dims[dim];
-				if (idx[dim][i] < 0)
+				}
+				if ( idx[dim][i] < 0 ) {
 					idx[dim][i] += dims[dim];
+				}
 			}
 		}
 
 		grad[gradDim] = 0.0;
-		for (i = 0; i <= 3; i++) {  // x
+		for ( i = 0; i <= 3; i++ ) {  // x
 			sum_jk = 0.0;
-			for (j = 0; j <= 3; j++) {  // y
+			for ( j = 0; j <= 3; j++ ) {  // y
 				sum_k = 0.0;
-				for (k = 0; k <= 3; k++) {  // z
+				for ( k = 0; k <= 3; k++ ) {  // z
 					sum_k += wt[2][k] * Bcoeff[idx[0][i]*dims[1]*dims[2] + idx[1][j]*dims[2] + idx[2][k]];
 				}
 				sum_jk += wt[1][j] * sum_k;
@@ -386,10 +387,11 @@ double interp3(double *Bcoeff, int dims[3], double X[3]) {
 	int i,j,k, dim;
 
 	// interpolation indexes
-	for (dim=0; dim<3; dim++) {
+	for ( dim=0; dim<3; dim++ ) {
 		int pt = (int)floor(X[dim] - (3-1) / 2.0);
-		for (i = 0L; i <= 3; i++)
+		for ( i = 0L; i <= 3; i++ ) {
 			idx[dim][i] = pt++;
+		}
 
 		// interpolation weights
 		double w = X[dim] - (double)idx[dim][1];
@@ -399,22 +401,24 @@ double interp3(double *Bcoeff, int dims[3], double X[3]) {
 		wt[dim][1] = 1.0 - wt[dim][0] - wt[dim][2] - wt[dim][3];
 
 		// _periodic_ boundary conditions
-		for (i = 0L; i <= 3; i++) {
-			if (dims[dim] == 1)
+		for ( i = 0L; i <= 3; i++ ) {
+			if ( dims[dim] == 1 ) {
 				idx[dim][i] = 0;
-			else
+			} else {
 				idx[dim][i] = idx[dim][i] % dims[dim];
-			if (idx[dim][i] < 0)
+			}
+			if ( idx[dim][i] < 0 ) {
 				idx[dim][i] += dims[dim];
+			}
 		}
 	}
 
 	value = 0.0;
-	for (i = 0; i <= 3; i++) {  // x
+	for ( i = 0; i <= 3; i++ ) {  // x
 		double sum_jk = 0.0;
-		for (j = 0; j <= 3; j++) {  // y
+		for ( j = 0; j <= 3; j++ ) {  // y
 			sum_k = 0.0;
-			for (k = 0; k <= 3; k++) {  // z
+			for ( k = 0; k <= 3; k++ ) {  // z
 				sum_k += wt[2][k] * Bcoeff[idx[0][i]*dims[1]*dims[2] + idx[1][j]*dims[2] + idx[2][k]];
 			}
 			sum_jk += wt[1][j] * sum_k;
@@ -438,10 +442,10 @@ int compute_coefficients4(double *data, int dims[4]) {
 	// convert the image samples into interpolation coefficients
 	// in-place separable process, along x
 	line.resize( dims[0] );
-	if ((int)line.size() != dims[0]) { std::cerr << "Row allocation failed\n"; return(1); }
-	for (y = 0L; y < dims[1]; y++) {
-		for (z = 0L; z < dims[2]; z++) {
-			for (w = 0L; w < dims[3]; w++) {
+	if ( (int)line.size() != dims[0] ) { std::cerr << "Row allocation failed\n"; return(1); }
+	for ( y = 0L; y < dims[1]; y++ ) {
+		for ( z = 0L; z < dims[2]; z++ ) {
+			for ( w = 0L; w < dims[3]; w++ ) {
 				get_line4(data, 0, y, z, w, &line[0], dims);
 				ConvertToInterpolationCoefficients(&line[0], dims[0], Pole, NbPoles, DBL_EPSILON, true);
 				put_line4(data, 0, y, z, w, &line[0], dims);
@@ -451,10 +455,10 @@ int compute_coefficients4(double *data, int dims[4]) {
 
 	// in-place separable process, along y
 	line.resize( dims[1] );
-	if ((int)line.size() != dims[1]) { std::cerr << "Row allocation failed\n"; return(1); }
-	for (x = 0L; x < dims[0]; x++) {
-		for (z = 0L; z < dims[2]; z++) {
-			for (w = 0L; w < dims[3]; w++) {
+	if ( (int)line.size() != dims[1] ) { std::cerr << "Row allocation failed\n"; return(1); }
+	for ( x = 0L; x < dims[0]; x++ ) {
+		for ( z = 0L; z < dims[2]; z++ ) {
+			for ( w = 0L; w < dims[3]; w++ ) {
 				get_line4(data, 1, x, z, w, &line[0], dims);
 				ConvertToInterpolationCoefficients(&line[0], dims[1], Pole, NbPoles, DBL_EPSILON, false);
 				put_line4(data, 1, x, z, w, &line[0], dims);
@@ -464,10 +468,10 @@ int compute_coefficients4(double *data, int dims[4]) {
 
 	// in-place separable process, along z
 	line.resize( dims[2] );
-	if ((int)line.size() != dims[2]) { std::cerr << "Row allocation failed\n"; return(1); }
-	for (x = 0L; x < dims[0]; x++) {
-		for (y = 0L; y < dims[1]; y++) {
-			for (w = 0L; w < dims[3]; w++) {
+	if ( (int)line.size() != dims[2] ) { std::cerr << "Row allocation failed\n"; return(1); }
+	for ( x = 0L; x < dims[0]; x++ ) {
+		for ( y = 0L; y < dims[1]; y++ ) {
+			for ( w = 0L; w < dims[3]; w++ ) {
 				get_line4(data, 2, x, y, w, &line[0], dims);
 				ConvertToInterpolationCoefficients(&line[0], dims[2], Pole, NbPoles, DBL_EPSILON, false);
 				put_line4(data, 2, x, y, w, &line[0], dims);
@@ -477,10 +481,10 @@ int compute_coefficients4(double *data, int dims[4]) {
 
 	// in-place separable process, along w
 	line.resize( dims[3] );
-	if ((int)line.size() != dims[3]) { std::cerr << "Row allocation failed\n"; return(1); }
-	for (x = 0L; x < dims[0]; x++) {
-		for (y = 0L; y < dims[1]; y++) {
-			for (z = 0L; z < dims[2]; z++) {
+	if ( (int)line.size() != dims[3] ) { std::cerr << "Row allocation failed\n"; return(1); }
+	for ( x = 0L; x < dims[0]; x++ ) {
+		for ( y = 0L; y < dims[1]; y++ ) {
+			for ( z = 0L; z < dims[2]; z++ ) {
 				get_line4(data, 3, x, y, z, &line[0], dims);
 				ConvertToInterpolationCoefficients(&line[0], dims[3], Pole, NbPoles, DBL_EPSILON, false);
 				put_line4(data, 3, x, y, z, &line[0], dims);
@@ -500,58 +504,64 @@ int grad4(double grad[4], double *Bcoeff, int dims[4], double X[4]) {
 	int i,j,k,l, pt, dim, gradDim;
 
 	// compute interpolation indexes
-	for (gradDim=0; gradDim<4; gradDim++) {
-		for (dim=0; dim<4; dim++) {
+	for ( gradDim=0; gradDim<4; gradDim++ ) {
+		for ( dim=0; dim<4; dim++ ) {
 			pt = (int)floor(X[dim] - (3-1) / 2.0);
-			for (i = 0L; i <= 3; i++)
+			for ( i = 0L; i <= 3; i++ ) {
 				idx[dim][i] = pt++;
-
-			// compute the interpolation weights
-			if (dim == gradDim) {
-					w = X[dim] - (double)idx[dim][1];
-					wt[dim][3] = (1.0 / 2.0) * w * w;
-					wt[dim][0] = (w - 1.0/2.0) - wt[dim][3];
-					wt[dim][2] = 1.0 + wt[dim][0] - 2.0 * wt[dim][3];
-					wt[dim][1] = - wt[dim][0] - wt[dim][2] - wt[dim][3];
-			} else {
-					w = X[dim] - (double)idx[dim][1];
-					wt[dim][3] = (1.0 / 6.0) * w * w * w;
-					wt[dim][0] = (1.0 / 6.0) + (1.0 / 2.0) * w * (w - 1.0) - wt[dim][3];
-					wt[dim][2] = w + wt[dim][0] - 2.0 * wt[dim][3];
-					wt[dim][1] = 1.0 - wt[dim][0] - wt[dim][2] - wt[dim][3];
 			}
 
-			if (dim > 0) {
+			// compute the interpolation weights
+			if ( dim == gradDim ) {
+				w = X[dim] - (double)idx[dim][1];
+				wt[dim][3] = (1.0 / 2.0) * w * w;
+				wt[dim][0] = (w - 1.0/2.0) - wt[dim][3];
+				wt[dim][2] = 1.0 + wt[dim][0] - 2.0 * wt[dim][3];
+				wt[dim][1] = - wt[dim][0] - wt[dim][2] - wt[dim][3];
+			} else {
+				w = X[dim] - (double)idx[dim][1];
+				wt[dim][3] = (1.0 / 6.0) * w * w * w;
+				wt[dim][0] = (1.0 / 6.0) + (1.0 / 2.0) * w * (w - 1.0) - wt[dim][3];
+				wt[dim][2] = w + wt[dim][0] - 2.0 * wt[dim][3];
+				wt[dim][1] = 1.0 - wt[dim][0] - wt[dim][2] - wt[dim][3];
+			}
+
+			if ( dim > 0 ) {
 				// _periodic_ boundary conditions
-				for (i = 0L; i <= 3; i++) {
-					if (dims[dim] == 1)
+				for ( i = 0L; i <= 3; i++ ) {
+					if ( dims[dim] == 1 ) {
 						idx[dim][i] = 0;
-					else
+					} else {
 						idx[dim][i] = idx[dim][i] % dims[dim];
-					if (idx[dim][i] < 0)
+					}
+					if ( idx[dim][i] < 0 ) {
 						idx[dim][i] += dims[dim];
+					}
 				}
 			} else {
 				// flat boundary
-				for (i = 0L; i <= 3; i++) {
-					if (dims[dim] == 1)
+				for ( i = 0L; i <= 3; i++ ) {
+					if ( dims[dim] == 1 ) {
 						idx[dim][i] = 0;
-					if (idx[dim][i] < 0)
+					}
+					if ( idx[dim][i] < 0 ) {
 						idx[dim][i] = 0;
-					if (idx[dim][i] > dims[dim]-1)
+					}
+					if ( idx[dim][i] > dims[dim]-1 ) {
 						idx[dim][i] = dims[dim]-1;
+					}
 				}
 			}
 		}
 
 		grad[gradDim] = 0.0;
-		for (i = 0; i <= 3; i++) {  // x
+		for ( i = 0; i <= 3; i++ ) {  // x
 			sum_jkl = 0.0;
-			for (j = 0; j <= 3; j++) {  // y
+			for ( j = 0; j <= 3; j++ ) {  // y
 				sum_kl = 0.0;
-				for (k = 0; k <= 3; k++) {  // z
+				for ( k = 0; k <= 3; k++ ) {  // z
 					sum_l = 0;
-					for (l = 0; l <= 3; l++) {  // w
+					for ( l = 0; l <= 3; l++ ) {  // w
 						sum_l += wt[3][l] * Bcoeff[idx[0][i]*dims[1]*dims[2]*dims[3] + idx[1][j]*dims[2]*dims[3] + idx[2][k]*dims[3] + idx[3][l]];
 					}
 					sum_kl += wt[2][k] * sum_l;
@@ -574,10 +584,11 @@ double interp4(double *Bcoeff, int dims[4], double X[4]) {
 	int i,j,k,l, dim;
 
 	// interpolation indexes
-	for (dim=0; dim<4; dim++) {
+	for ( dim=0; dim<4; dim++ ) {
 		int pt = (int)floor(X[dim] - (3-1) / 2.0);
-		for (i = 0L; i <= 3; i++)
+		for ( i = 0L; i <= 3; i++ ) {
 			idx[dim][i] = pt++;
+		}
 
 		// interpolation weights
 		double w = X[dim] - (double)idx[dim][1];
@@ -586,34 +597,38 @@ double interp4(double *Bcoeff, int dims[4], double X[4]) {
 		wt[dim][2] = w + wt[dim][0] - 2.0 * wt[dim][3];
 		wt[dim][1] = 1.0 - wt[dim][0] - wt[dim][2] - wt[dim][3];
 
-		if (dim > 0) {
+		if ( dim > 0 ) {
 			// _periodic_ boundary conditions
-			for (i = 0L; i <= 3; i++) {
-				if (dims[dim] == 1)
+			for ( i = 0L; i <= 3; i++ ) {
+				if ( dims[dim] == 1 ) {
 					idx[dim][i] = 0;
-				else
+				} else {
 					idx[dim][i] = idx[dim][i] % dims[dim];
-				if (idx[dim][i] < 0)
+				}
+				if ( idx[dim][i] < 0 ) {
 					idx[dim][i] += dims[dim];
+				}
 			}
 		} else {
-			for (i = 0L; i <= 3; i++) {
-				if (idx[dim][i] < 0)
+			for ( i = 0L; i <= 3; i++ ) {
+				if ( idx[dim][i] < 0 ) {
 					idx[dim][i] = 0;
-				if (idx[dim][i] > dims[dim]-1)
+				}
+				if ( idx[dim][i] > dims[dim]-1 ) {
 					idx[dim][i] = dims[dim]-1;
+				}
 			}
 		}
 	}
 
 	value = 0.0;
-	for (i = 0; i <= 3; i++) {  // x
+	for ( i = 0; i <= 3; i++ ) {  // x
 		double sum_jkl = 0.0;
-		for (j = 0; j <= 3; j++) {  // y
+		for ( j = 0; j <= 3; j++ ) {  // y
 			double sum_kl = 0.0;
-			for (k = 0; k <= 3; k++) {  // z
+			for ( k = 0; k <= 3; k++ ) {  // z
 				double sum_l = 0;
-				for (l = 0; l <= 3; l++) {  // w
+				for ( l = 0; l <= 3; l++ ) {  // w
 					sum_l += wt[3][l] * Bcoeff[idx[0][i]*dims[1]*dims[2]*dims[3] + idx[1][j]*dims[2]*dims[3] + idx[2][k]*dims[3] + idx[3][l]];
 				}
 				sum_kl += wt[2][k] * sum_l;

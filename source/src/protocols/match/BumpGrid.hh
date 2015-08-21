@@ -251,14 +251,14 @@ public:
 
 	static Real probe_radius( ProbeRadius radtype ) {
 		switch ( radtype ) {
-			case ZERO  : return 0.0;
-			case H_ARO : return 1.0;
-			case H_ALA : return 1.17;
-			case OXY   : return 1.40;
-			case NIT   : return 1.55;
-			case C_CAR : return 1.65;
-			case C_ALA : return 1.75;
-			case SULPH : return 1.85;
+		case ZERO  : return 0.0;
+		case H_ARO : return 1.0;
+		case H_ALA : return 1.17;
+		case OXY   : return 1.40;
+		case NIT   : return 1.55;
+		case C_CAR : return 1.65;
+		case C_ALA : return 1.75;
+		case SULPH : return 1.85;
 		}
 		return 0.0;
 	}

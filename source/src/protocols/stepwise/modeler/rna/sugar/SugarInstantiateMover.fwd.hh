@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/modeler/rna/sugar/SugarInstantiateMover.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -23,11 +23,11 @@ namespace stepwise {
 namespace modeler {
 namespace rna {
 namespace sugar {
-	
-	class SugarInstantiateMover;
-	typedef utility::pointer::shared_ptr< SugarInstantiateMover > SugarInstantiateMoverOP;
-	typedef utility::pointer::shared_ptr< SugarInstantiateMover const > SugarInstantiateMoverCOP;
-	
+
+class SugarInstantiateMover;
+typedef utility::pointer::shared_ptr< SugarInstantiateMover > SugarInstantiateMoverOP;
+typedef utility::pointer::shared_ptr< SugarInstantiateMover const > SugarInstantiateMoverCOP;
+
 } //sugar
 } //rna
 } //modeler

@@ -51,9 +51,9 @@
 
 
 using namespace core;
-	using namespace conformation;
-	using namespace scoring;
-		using namespace hbonds;
+using namespace conformation;
+using namespace scoring;
+using namespace hbonds;
 
 using pose::Pose;
 using conformation::Residue;
@@ -97,7 +97,7 @@ public:
 		Real xH(0.2);
 
 		Size n_steps = 100;
-		for(Size i=0; i < n_steps; ++i){
+		for ( Size i=0; i < n_steps; ++i ) {
 			Real chi(numeric::constants::d::pi_2 * i / n_steps);
 
 			hbond_compute_energy(
@@ -167,9 +167,9 @@ public:
 
 		HBEvalTuple hbt = HBEvalTuple( hbdon_PBA, hbacc_PBA, seq_sep_other );
 		Real xD(1.0-.02);
-		for (Real AHdis = 1.7; AHdis <= 1.9; AHdis += .1){
-			for (Real xH = MAX_xH - 0.02; xH > MIN_xH + 0.02; xH -= .3){
-				for (Real chi = 0.0; chi < 2*numeric::constants::d::pi; chi += 0.3){
+		for ( Real AHdis = 1.7; AHdis <= 1.9; AHdis += .1 ) {
+			for ( Real xH = MAX_xH - 0.02; xH > MIN_xH + 0.02; xH -= .3 ) {
+				for ( Real chi = 0.0; chi < 2*numeric::constants::d::pi; chi += 0.3 ) {
 					do_hbond_deriv_test(database, hboptions, hbt, AHdis, xD, xH, chi);
 				}
 			}
@@ -191,9 +191,9 @@ public:
 
 		HBEvalTuple hbt = HBEvalTuple( hbdon_PBA, hbacc_PBA, seq_sep_other );
 		Real xD(1.0-.02);
-		for (Real AHdis = 1.7; AHdis <= 1.9; AHdis += .1){
-			for (Real xH = MAX_xH - 0.02; xH > MIN_xH + 0.02; xH -= .3){
-				for (Real chi = 0.0; chi < 2*numeric::constants::d::pi; chi += 0.5){
+		for ( Real AHdis = 1.7; AHdis <= 1.9; AHdis += .1 ) {
+			for ( Real xH = MAX_xH - 0.02; xH > MIN_xH + 0.02; xH -= .3 ) {
+				for ( Real chi = 0.0; chi < 2*numeric::constants::d::pi; chi += 0.5 ) {
 					do_hbond_deriv_test(database, hboptions, hbt, AHdis, xD, xH, chi, .00005, 5, false, .001);
 				}
 			}
@@ -234,14 +234,14 @@ public:
 			dE_dr, dE_dxD, dE_dxH, dE_dBAH, dE_dchi);
 
 		// Only check derivatives that have a hope of becoming an hbond
-		if(energy > .1) return;
+		if ( energy > .1 ) return;
 
 		Real BAH(numeric::constants::d::pi - acos(xH));
 		Real e_low, e_high, dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH, dummy_dE_dBAH, dummy_dE_dchi;
 		Real numeric_deriv, deriv, deriv_dev;
 
-		if(verbose){
-			if(!analytic_apply_chi_torsion_penalty){
+		if ( verbose ) {
+			if ( !analytic_apply_chi_torsion_penalty ) {
 				TR
 					<< "Coordinates:"
 					<< "AHdis: " << AHdis << ", "
@@ -265,7 +265,7 @@ public:
 		Real test_AHdis;
 		deriv_dev = 10000.0;
 		deriv = dE_dr;
-		for ( Size j = 1, factor=1; j <= n_increment; ++j ){
+		for ( Size j = 1, factor=1; j <= n_increment; ++j ) {
 			factor*=2;
 			test_AHdis = AHdis - factor * increment;
 			hbond_compute_energy(
@@ -291,7 +291,7 @@ public:
 			Real const ratio( std::abs( numeric_deriv ) < .001 ? 0.0 :
 				deriv / numeric_deriv );
 			if ( verbose &&
-				( std::abs(numeric_deriv) > 0.001 || std::abs(deriv) > 0.001 ) ){
+					( std::abs(numeric_deriv) > 0.001 || std::abs(deriv) > 0.001 ) ) {
 				TR
 					<< "dim:AHdis"
 					<< "\tstep:" << factor*increment
@@ -303,17 +303,17 @@ public:
 			}
 		}
 
-		if (deriv_dev > deriv_tolerance){
+		if ( deriv_dev > deriv_tolerance ) {
 			TR << "DERIV ERROR: dim:AHdis derivative deviation:" << deriv_dev << std::endl;
 			TS_ASSERT(false);
 		}
 
-		if(analytic_apply_chi_torsion_penalty){
+		if ( analytic_apply_chi_torsion_penalty ) {
 			// Check BAH
 			Real test_xH;
 			deriv_dev = 10000.0;
 			deriv = dE_dxH + dE_dBAH / sqrt( 1 - xH * xH);
-			for ( Size j = 1, factor=1; j <= n_increment; ++j ){
+			for ( Size j = 1, factor=1; j <= n_increment; ++j ) {
 
 				factor*=2;
 				test_xH = xH - factor * increment;
@@ -338,9 +338,9 @@ public:
 				numeric_deriv = ( e_high - e_low ) / ( factor * 2 * increment );
 				deriv_dev = std::min( deriv_dev, std::abs( deriv - numeric_deriv ) );
 				Real const ratio( std::abs( numeric_deriv ) < .001 ? 0.0 :
-													deriv / numeric_deriv );
+					deriv / numeric_deriv );
 				if ( verbose &&
-					( std::abs(numeric_deriv) > 0.001 || std::abs(deriv) > 0.001 ) ){
+						( std::abs(numeric_deriv) > 0.001 || std::abs(deriv) > 0.001 ) ) {
 					TR << "dim:BAH"
 						<< "\tstep:" << factor*increment
 						<< "\tanalyitic_deriv: " << deriv
@@ -351,7 +351,7 @@ public:
 				}
 			}
 
-			if (deriv_dev > deriv_tolerance){
+			if ( deriv_dev > deriv_tolerance ) {
 				TR << "DERIV ERROR: dim:BAH derivative deviation:" << deriv_dev << std::endl;
 				TS_ASSERT(false);
 			}
@@ -360,7 +360,7 @@ public:
 			Real test_chi;
 			deriv_dev = 10000.0;
 			deriv = dE_dchi;
-			for ( Size j = 1, factor=1; j <= n_increment; ++j ){
+			for ( Size j = 1, factor=1; j <= n_increment; ++j ) {
 
 				factor*=2;
 				test_chi = chi - factor * increment;
@@ -385,9 +385,9 @@ public:
 				numeric_deriv = ( e_high - e_low ) / ( factor * 2 * increment );
 				deriv_dev = std::min( deriv_dev, std::abs( deriv - numeric_deriv ) );
 				Real const ratio( std::abs( numeric_deriv ) < .001 ? 0.0 :
-													deriv / numeric_deriv );
+					deriv / numeric_deriv );
 				if ( verbose &&
-					( std::abs(numeric_deriv) > 0.001 || std::abs(deriv) > 0.001 ) ){
+						( std::abs(numeric_deriv) > 0.001 || std::abs(deriv) > 0.001 ) ) {
 					TR << "dim:chi"
 						<< "\tstep:" << factor*increment
 						<< "\tanalyitic_deriv: " << deriv
@@ -398,7 +398,7 @@ public:
 				}
 			}
 
-			if (deriv_dev > deriv_tolerance){
+			if ( deriv_dev > deriv_tolerance ) {
 				TR << "DERIV ERROR: dim:chi derivative deviation:" << deriv_dev << std::endl;
 				TS_ASSERT(false);
 			}
@@ -410,7 +410,7 @@ public:
 			Real test_xH;
 			deriv_dev = 10000.0;
 			deriv = dE_dxH;
-			for ( Size j = 1, factor=1; j <= n_increment; ++j ){
+			for ( Size j = 1, factor=1; j <= n_increment; ++j ) {
 				factor*=2;
 				test_xH = xH - factor * increment;
 				hbond_compute_energy(
@@ -434,9 +434,9 @@ public:
 				numeric_deriv = ( e_high - e_low ) / ( factor * 2 * increment );
 				deriv_dev = std::min( deriv_dev, std::abs( deriv - numeric_deriv ) );
 				Real const ratio( std::abs( numeric_deriv ) < .001 ? 0.0 :
-													deriv / numeric_deriv );
+					deriv / numeric_deriv );
 				if ( verbose &&
-					( std::abs(numeric_deriv) > 0.001 || std::abs(deriv) > 0.001 ) ){
+						( std::abs(numeric_deriv) > 0.001 || std::abs(deriv) > 0.001 ) ) {
 					TR
 						<< "dim:cosBAH"
 						<< "\tstep:" << factor*increment
@@ -448,18 +448,18 @@ public:
 				}
 			}
 
-			if (deriv_dev > deriv_tolerance){
+			if ( deriv_dev > deriv_tolerance ) {
 				TR << "DERIV ERROR: dim:cosBAH derivative deviation:" << deriv_dev << std::endl;
 				TS_ASSERT(false);
 			}
 		}
 
-		if(AHD_geometric_dimension == hbgd_cosAHD){
+		if ( AHD_geometric_dimension == hbgd_cosAHD ) {
 			// Check cosAHD
 			Real test_xD;
 			deriv_dev = 10000.0;
 			deriv = dE_dxD;
-			for ( Size j = 1, factor=1; j <= n_increment; ++j ){
+			for ( Size j = 1, factor=1; j <= n_increment; ++j ) {
 				factor*=2;
 				test_xD = xD - factor * increment;
 				hbond_compute_energy(
@@ -485,7 +485,7 @@ public:
 				Real const ratio( std::abs( numeric_deriv ) < .001 ? 0.0 :
 					deriv / numeric_deriv );
 				if ( verbose &&
-					( std::abs(numeric_deriv) > 0.001 || std::abs(deriv) > 0.001 ) ){
+						( std::abs(numeric_deriv) > 0.001 || std::abs(deriv) > 0.001 ) ) {
 					TR
 						<< "dim:cosAHD"
 						<< "\tstep:" << factor*increment
@@ -497,18 +497,18 @@ public:
 				}
 			}
 
-			if (deriv_dev > deriv_tolerance){
+			if ( deriv_dev > deriv_tolerance ) {
 				TR << "DERIV ERROR: dim:cosAHD derivative deviation:" << deriv_dev << std::endl;
 				TS_ASSERT(false);
 			}
-		} else if(AHD_geometric_dimension == hbgd_AHD){
+		} else if ( AHD_geometric_dimension == hbgd_AHD ) {
 			// Check AHD
 			Real test_xD;
 			Real test_AHD;
 			deriv_dev = 10000.0;
 			Real AHD( numeric::constants::d::pi - acos(xD) );
 			deriv = dE_dxD; // the dE_dxD value is actually dE/dAHD
-			for ( Size j = 1, factor=1; j <= n_increment; ++j ){
+			for ( Size j = 1, factor=1; j <= n_increment; ++j ) {
 				factor*=2;
 				test_AHD = AHD - factor * increment;
 				test_xD = cos(numeric::constants::d::pi - test_AHD);
@@ -536,7 +536,7 @@ public:
 				Real const ratio( std::abs( numeric_deriv ) < .001 ? 0.0 :
 					deriv / numeric_deriv );
 				if ( verbose &&
-					( std::abs(numeric_deriv) > 0.001 || std::abs(deriv) > 0.001 ) ){
+						( std::abs(numeric_deriv) > 0.001 || std::abs(deriv) > 0.001 ) ) {
 					TR
 						<< "dim:AHD"
 						<< "\tstep:" << factor*increment
@@ -548,7 +548,7 @@ public:
 				}
 			}
 
-			if (deriv_dev > deriv_tolerance){
+			if ( deriv_dev > deriv_tolerance ) {
 				TR << "DERIV ERROR: dim:cosAHD derivative deviation:" << deriv_dev << std::endl;
 				TS_ASSERT(false);
 			}
@@ -564,10 +564,10 @@ public:
 		HBondSet hbond_set( pose.n_residue() );
 
 		fill_hbond_set(pose,
-									 true,
-									 hbond_set);
+			true,
+			hbond_set);
 
-		for( Size i=1; i <= hbond_set.nhbonds(); ++i ){
+		for ( Size i=1; i <= hbond_set.nhbonds(); ++i ) {
 			TR << "HBond " << hbond_set.hbond(i) << std::endl;
 			do_f1f2_deriv_test(database, hbond_set.hbond_options(), pose, hbond_set.hbond(i));
 			TR << std::endl;
@@ -642,7 +642,7 @@ public:
 				get_hbe_acc_hybrid( hbond.eval_type() ) == chemical::SP2_HYBRID &&
 				B2xyz != Vector(-1.0, -1.0, -1.0) ) {
 			chi = numeric::dihedral_radians( Hxyz, Axyz, Bxyz, B2xyz );
-		} else if(hbond.eval_tuple().acc_type() == hbacc_AHX || hbond.eval_tuple().acc_type() == hbacc_HXL){
+		} else if ( hbond.eval_tuple().acc_type() == hbacc_AHX || hbond.eval_tuple().acc_type() == hbacc_HXL ) {
 			/// Bxyz really is the heavy atom base and B2xyz really is the hydroxyl hydrogen
 			/// this is guaranteed by the hbond_measure_sp3acc_BAH_from_hvy flag.
 			chi = numeric::dihedral_radians( Hxyz, Axyz, Bxyz, B2xyz );
@@ -687,7 +687,7 @@ public:
 		Real theta;
 		angle_p1_deriv(  Axyz, Hxyz, Hxyz-HDunit, theta, temp_f1, temp_f2);
 
-		if(AHD_geometric_dimension == hbgd_cosAHD){
+		if ( AHD_geometric_dimension == hbgd_cosAHD ) {
 
 			Real comp_xD(- cos(pi - theta ) );
 			TS_ASSERT( abs( xD - comp_xD ) < 0.001);
@@ -699,7 +699,7 @@ public:
 			Vector new_xD_f2( temp_f2*dE_dxD*sin(theta));
 
 			TR << "new_xD_f1: " << new_xD_f1[0] << " "<< new_xD_f1[1] << " " << new_xD_f1[2] << " new_xD_f2:" << new_xD_f2[0] << " " << new_xD_f2[1] << " " << new_xD_f2[2] << std::endl;
-		} else if (AHD_geometric_dimension == hbgd_AHD) {
+		} else if ( AHD_geometric_dimension == hbgd_AHD ) {
 
 			TS_ASSERT( abs( xD - theta ) < 0.001);
 

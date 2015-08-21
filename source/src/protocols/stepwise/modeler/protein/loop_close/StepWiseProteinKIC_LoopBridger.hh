@@ -33,97 +33,97 @@ namespace modeler {
 namespace protein {
 namespace loop_close {
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  class StepWiseProteinKIC_LoopBridger: public protocols::moves::Mover {
-  public:
+/////////////////////////////////////////////////////////////////////////////////////////////////
+class StepWiseProteinKIC_LoopBridger: public protocols::moves::Mover {
+public:
 
-    //constructor!
-		StepWiseProteinKIC_LoopBridger( sampler::StepWiseSamplerSizedOP sampler,
-																protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters );
+	//constructor!
+	StepWiseProteinKIC_LoopBridger( sampler::StepWiseSamplerSizedOP sampler,
+		protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters );
 
-    //destructor -- necessary?
-    ~StepWiseProteinKIC_LoopBridger();
+	//destructor -- necessary?
+	~StepWiseProteinKIC_LoopBridger();
 
-    /// @brief Apply the minimizer to one pose
-    virtual void apply( core::pose::Pose & pose_to_visualize );
+	/// @brief Apply the minimizer to one pose
+	virtual void apply( core::pose::Pose & pose_to_visualize );
 
 	virtual std::string get_name() const;
 
 
-		utility::vector1< utility::vector1< core::Real > > const & main_chain_torsion_set_lists() const;
-		utility::vector1< core::id::TorsionID > const & which_torsions() const;
+	utility::vector1< utility::vector1< core::Real > > const & main_chain_torsion_set_lists() const;
+	utility::vector1< core::id::TorsionID > const & which_torsions() const;
 
-	private:
+private:
 
-		void
-		setup_torsions( core::pose::Pose const & pose );
+	void
+	setup_torsions( core::pose::Pose const & pose );
 
-		void
-		figure_out_loop( core::pose::Pose const & pose );
+	void
+	figure_out_loop( core::pose::Pose const & pose );
 
-		void
-		output_chainTORS( utility::vector1< core::Real > const & dt_ang,
-											utility::vector1< core::Real > const & db_ang,
-											utility::vector1< core::Real > const & db_len ) const;
+	void
+	output_chainTORS( utility::vector1< core::Real > const & dt_ang,
+		utility::vector1< core::Real > const & db_ang,
+		utility::vector1< core::Real > const & db_len ) const;
 
-		void
-		fill_chainTORS_info( core::pose::Pose const & pose,
-												 utility::vector1<utility::vector1<core::Real> > & atoms,
-												 utility::vector1<core::Real> & dt_ang,
-												 utility::vector1<core::Real> & db_ang,
-												 utility::vector1<core::Real> & db_len,
-												 core::Size const & start_res_ ,
-												 core::Size const & end_res_ ) const;
+	void
+	fill_chainTORS_info( core::pose::Pose const & pose,
+		utility::vector1<utility::vector1<core::Real> > & atoms,
+		utility::vector1<core::Real> & dt_ang,
+		utility::vector1<core::Real> & db_ang,
+		utility::vector1<core::Real> & db_len,
+		core::Size const & start_res_ ,
+		core::Size const & end_res_ ) const;
 
-		void
-		KIC_loop_close_with_perturbations( core::pose::Pose & pose );
+	void
+	KIC_loop_close_with_perturbations( core::pose::Pose & pose );
 
-		void
-		KIC_loop_close( core::pose::Pose & pose );
+	void
+	KIC_loop_close( core::pose::Pose & pose );
 
-		void
-		grab_main_chain_torsion_set_list( core::pose::Pose const & pose );
+	void
+	grab_main_chain_torsion_set_list( core::pose::Pose const & pose );
 
-		void save_phi_psi_offsets( core::pose::Pose const & pose );
-		void fix_phi_psi_offsets( core::pose::Pose & pose ) const;
+	void save_phi_psi_offsets( core::pose::Pose const & pose );
+	void fix_phi_psi_offsets( core::pose::Pose & pose ) const;
 
-		void
-		sample_omega_recursively( core::pose::Pose & pose, int const offset, utility::vector1<utility::vector1< core::Real> > & atoms, utility::vector1< core::Real> & dt_ang, utility::vector1< core::Real> & db_ang, utility::vector1< core::Real> & db_len, utility::vector1< core::Size > const & pivots, utility::vector1< core::Size > const & order );
+	void
+	sample_omega_recursively( core::pose::Pose & pose, int const offset, utility::vector1<utility::vector1< core::Real> > & atoms, utility::vector1< core::Real> & dt_ang, utility::vector1< core::Real> & db_ang, utility::vector1< core::Real> & db_len, utility::vector1< core::Size > const & pivots, utility::vector1< core::Size > const & order );
 
-		void
-		initialize_is_fixed_res( utility::vector1< core::Size > const & fixed_res, std::string const & working_sequence );
+	void
+	initialize_is_fixed_res( utility::vector1< core::Size > const & fixed_res, std::string const & working_sequence );
 
-	private:
+private:
 
-		sampler::StepWiseSamplerSizedOP sampler_;
+	sampler::StepWiseSamplerSizedOP sampler_;
 
-		utility::vector1< Size > working_bridge_res_;
-		utility::vector1< bool > is_pre_proline_;
-		utility::vector1< bool > is_fixed_res_;
+	utility::vector1< Size > working_bridge_res_;
+	utility::vector1< bool > is_pre_proline_;
+	utility::vector1< bool > is_fixed_res_;
 
-		loops::Loop loop_;
+	loops::Loop loop_;
 
-		utility::vector1< core::id::TorsionID >  which_torsions_;
+	utility::vector1< core::id::TorsionID >  which_torsions_;
 
-		utility::vector1< utility::vector1< core::Real > > main_chain_torsion_sets_for_moving_residues_;
+	utility::vector1< utility::vector1< core::Real > > main_chain_torsion_sets_for_moving_residues_;
 
-		core::scoring::Ramachandran ramachandran_;
+	core::scoring::Ramachandran ramachandran_;
 
-		int const num_perturb_steps_;
-		core::Real const perturb_torsion_;
+	int const num_perturb_steps_;
+	core::Real const perturb_torsion_;
 
-		core::Real const idl_CA_C_N_, idl_C_N_CA_, idl_C_N_, OMEGA_MEAN_;
-		bool const use_icoor_geometry_;
+	core::Real const idl_CA_C_N_, idl_C_N_CA_, idl_C_N_, OMEGA_MEAN_;
+	bool const use_icoor_geometry_;
 
-		bool const verbose_;
+	bool const verbose_;
 
-		utility::vector1< core::Real > phi_offsets_;
-		utility::vector1< core::Real > psi_offsets_;
+	utility::vector1< core::Real > phi_offsets_;
+	utility::vector1< core::Real > psi_offsets_;
 
-		Size start_res_, middle_res_, end_res_, middle_offset_, seg_len_;
-		Size pose_count_;
+	Size start_res_, middle_res_, end_res_, middle_offset_, seg_len_;
+	Size pose_count_;
 
-  };
+};
 
 } //loop_close
 } //protein

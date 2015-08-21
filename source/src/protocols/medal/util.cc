@@ -43,102 +43,104 @@ typedef utility::vector1<double> Probabilities;
 
 /// @brief Lower sampling probability near termini
 void end_bias_probabilities(const unsigned num_residues, Probabilities* p) {
-  assert(p);
+	assert(p);
 
-  // Penalize 10% lowest, highest residues
-  const unsigned offset_left = static_cast<unsigned>(std::ceil(0.1 * num_residues));
-  const unsigned offset_right = num_residues - offset_left + 1;
+	// Penalize 10% lowest, highest residues
+	const unsigned offset_left = static_cast<unsigned>(std::ceil(0.1 * num_residues));
+	const unsigned offset_right = num_residues - offset_left + 1;
 
-  p->clear();
-  for (unsigned i = 1; i <= num_residues; ++i) {
-    bool near_terminus = i <= offset_left || i >= offset_right;
-    p->push_back(near_terminus ? 0.2 : 0.8);
-  }
-  numeric::normalize(p->begin(), p->end());
+	p->clear();
+	for ( unsigned i = 1; i <= num_residues; ++i ) {
+		bool near_terminus = i <= offset_left || i >= offset_right;
+		p->push_back(near_terminus ? 0.2 : 0.8);
+	}
+	numeric::normalize(p->begin(), p->end());
 }
 
 void alignment_probabilities(const unsigned num_residues,
-                             const core::sequence::SequenceAlignment& alignment,
-                             Probabilities* p) {
-  assert(p);
+	const core::sequence::SequenceAlignment& alignment,
+	Probabilities* p) {
+	assert(p);
 
-  p->clear();
-  core::id::SequenceMapping mapping = alignment.sequence_mapping(1, 2);
-  for (unsigned i = 1; i <= num_residues; ++i) {
-    p->push_back(mapping[i] > 0 ? 0.2 : 0.8);
-  }
-  numeric::normalize(p->begin(), p->end());
+	p->clear();
+	core::id::SequenceMapping mapping = alignment.sequence_mapping(1, 2);
+	for ( unsigned i = 1; i <= num_residues; ++i ) {
+		p->push_back(mapping[i] > 0 ? 0.2 : 0.8);
+	}
+	numeric::normalize(p->begin(), p->end());
 }
 
 /// @detail Linear voting based on chunk length
 /// Assumes <chunks> are in ascending order
 void chunk_probabilities(const protocols::loops::Loops& chunks, Probabilities* p) {
-  using protocols::loops::Loop;
-  using protocols::loops::Loops;
-  assert(p);
+	using protocols::loops::Loop;
+	using protocols::loops::Loops;
+	assert(p);
 
-  p->clear();
-  for (Loops::const_iterator i = chunks.begin(); i != chunks.end(); ++i) {
-    const Loop& chunk = *i;
-    for (unsigned j = chunk.start(); j <= chunk.stop(); ++j) {
-      p->push_back(chunk.length());
-    }
-  }
-  numeric::normalize(p->begin(), p->end());
+	p->clear();
+	for ( Loops::const_iterator i = chunks.begin(); i != chunks.end(); ++i ) {
+		const Loop& chunk = *i;
+		for ( unsigned j = chunk.start(); j <= chunk.stop(); ++j ) {
+			p->push_back(chunk.length());
+		}
+	}
+	numeric::normalize(p->begin(), p->end());
 }
 
 void cutpoint_probabilities(const unsigned num_residues, const core::kinematics::FoldTree& tree, Probabilities* p) {
-  assert(p);
+	assert(p);
 
-  // List of cutpoints sorted by position
-  std::set<unsigned> cutpoints;
-  for (int i = 1; i <= tree.num_cutpoint(); ++i) {
-    unsigned cutpoint = tree.cutpoint(i);
-    if (cutpoint == num_residues)  // cutpoint at end of chain
-      continue;
+	// List of cutpoints sorted by position
+	std::set<unsigned> cutpoints;
+	for ( int i = 1; i <= tree.num_cutpoint(); ++i ) {
+		unsigned cutpoint = tree.cutpoint(i);
+		if ( cutpoint == num_residues ) {  // cutpoint at end of chain
+			continue;
+		}
 
-    cutpoints.insert((unsigned)cutpoint);
-  }
+		cutpoints.insert((unsigned)cutpoint);
+	}
 
-  p->clear();
-  for (unsigned residue = 1; residue <= num_residues; ++residue) {
-    const double nearest_cutpoint = *utility::find_closest(cutpoints.begin(), cutpoints.end(), residue);
-    const double distance = std::abs(nearest_cutpoint - residue);
-    p->push_back(std::pow(distance + 1, -3));
-  }
-  numeric::normalize(p->begin(), p->end());
+	p->clear();
+	for ( unsigned residue = 1; residue <= num_residues; ++residue ) {
+		const double nearest_cutpoint = *utility::find_closest(cutpoints.begin(), cutpoints.end(), residue);
+		const double distance = std::abs(nearest_cutpoint - residue);
+		p->push_back(std::pow(distance + 1, -3));
+	}
+	numeric::normalize(p->begin(), p->end());
 }
 
 /// @detail Given a fold tree and fragment library, zero out residues whose modification
 /// would span a cutpoint boundary
 void invalidate_residues_spanning_cuts(const core::kinematics::FoldTree& tree,
-                                       const core::Size fragment_len,
-                                       Probabilities* probs) {
-  for (int i = 1; i <= tree.num_cutpoint(); ++i) {
-    const unsigned cutpoint = tree.cutpoint(i);
-    for (unsigned j = (cutpoint - fragment_len + 2); j <= cutpoint; ++j) {
-      (*probs)[j] = 0;
-    }
-  }
+	const core::Size fragment_len,
+	Probabilities* probs) {
+	for ( int i = 1; i <= tree.num_cutpoint(); ++i ) {
+		const unsigned cutpoint = tree.cutpoint(i);
+		for ( unsigned j = (cutpoint - fragment_len + 2); j <= cutpoint; ++j ) {
+			(*probs)[j] = 0;
+		}
+	}
 }
 
 void as_set(protocols::loops::LoopsCOP loops, boost::unordered_set<core::Size>* s) {
-  assert(s);
-  assert(loops);
+	assert(s);
+	assert(loops);
 
-  s->clear();
+	s->clear();
 
-  for (protocols::loops::Loops::const_iterator i = loops->begin(); i != loops->end(); ++i) {
-    for (core::Size j = i->start(); j <= i->stop(); ++j) {
-      s->insert(j);
-    }
-  }
+	for ( protocols::loops::Loops::const_iterator i = loops->begin(); i != loops->end(); ++i ) {
+		for ( core::Size j = i->start(); j <= i->stop(); ++j ) {
+			s->insert(j);
+		}
+	}
 }
 
 void to_centroid(core::pose::Pose* pose) {
-  assert(pose);
-  if (!pose->is_centroid())
-    core::util::switch_to_residue_type_set(*pose, core::chemical::CENTROID);
+	assert(pose);
+	if ( !pose->is_centroid() ) {
+		core::util::switch_to_residue_type_set(*pose, core::chemical::CENTROID);
+	}
 }
 
 }  // namespace medal

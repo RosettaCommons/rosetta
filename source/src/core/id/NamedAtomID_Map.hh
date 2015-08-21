@@ -323,7 +323,7 @@ public: // Properties
 	has( NamedAtomID const & id ) const
 	{
 		return ( ( id.rsd() >= 1 ) && ( Size( id.rsd() ) <= res_map_.size() ) &&
-						( res_map_[ id.rsd() ].count( id.atom() ) ) );
+			( res_map_[ id.rsd() ].count( id.atom() ) ) );
 	}
 
 public: // Indexers
@@ -371,7 +371,7 @@ public: // Indexers
 	ConstReference
 	operator ()( Size const i_res, std::string const atom ) const
 	{
-		if( res_map_[ i_res ].count( atom ) ) {
+		if ( res_map_[ i_res ].count( atom ) ) {
 			return res_map_[ i_res ].find( atom )->second;
 		} else {
 			return default_value_;
@@ -384,7 +384,7 @@ public: // Indexers
 	Reference
 	operator ()( Size const i_res, std::string const atom )
 	{
-		if( res_map_[ i_res ].count( atom ) == 0 ) {
+		if ( res_map_[ i_res ].count( atom ) == 0 ) {
 			res_map_[ i_res ][ atom ] = default_value_;
 		}
 		return res_map_[ i_res ][ atom ];

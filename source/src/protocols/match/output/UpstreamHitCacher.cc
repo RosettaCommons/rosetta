@@ -70,13 +70,13 @@ UpstreamHitCacher::upstream_conformation_for_hit( Size cst_id, Hit const & hit )
 	#pragma omp critical ( upstream_hit_cacher_upstream_conformation_for_hit )
 #endif
 	{
-	ScaffoldRotamerPair srp; srp[ 1 ] = hit.scaffold_build_id(); srp[ 2 ] = hit.upstream_conf_id();
-	ScaffoldRotamerTuple srt( srp );
-	Size index = already_in_queue( cst_id, srt );
-	if ( index == 0 ) {
-		index = fetch( cst_id, srt );
-	}
-	residue = upstream_confs_[ cst_id ][ index ];
+		ScaffoldRotamerPair srp; srp[ 1 ] = hit.scaffold_build_id(); srp[ 2 ] = hit.upstream_conf_id();
+		ScaffoldRotamerTuple srt( srp );
+		Size index = already_in_queue( cst_id, srt );
+		if ( index == 0 ) {
+			index = fetch( cst_id, srt );
+		}
+		residue = upstream_confs_[ cst_id ][ index ];
 	}
 	return residue;
 }
@@ -178,16 +178,16 @@ UpstreamHitCacher::fetch( Size cst_id, ScaffoldRotamerTuple const & rotid )
 
 /*
 private:
-	MatcherCOP matcher_;
+MatcherCOP matcher_;
 
-	Size n_geometric_constraints_;
-	Size n_confs_to_cache_;
+Size n_geometric_constraints_;
+Size n_confs_to_cache_;
 
-	utility::vector1< std::map< ScaffRotamerTuple, Size > > index_for_rotamer_;
+utility::vector1< std::map< ScaffRotamerTuple, Size > > index_for_rotamer_;
 
-	utility::vector1< Size > queue_head_;
-	utility::vector1< utility::vector1< ScaffoldRotamerTuple > >           scafrot_pair_for_conf_;
-	utility::vector1< utility::vector1< core::conformation::ResidueCOP > > upstream_confs_;
+utility::vector1< Size > queue_head_;
+utility::vector1< utility::vector1< ScaffoldRotamerTuple > >           scafrot_pair_for_conf_;
+utility::vector1< utility::vector1< core::conformation::ResidueCOP > > upstream_confs_;
 
 };
 */

@@ -33,12 +33,12 @@ namespace nonlocal {
 
 
 UniformPolicy::UniformPolicy(core::fragment::FragSetCOP fragments)
-    : Policy(fragments) {}
+: Policy(fragments) {}
 
 core::Size UniformPolicy::choose(const core::fragment::Frame& frame,
-                                 const core::pose::Pose&) {
-  assert(frame.nr_frags() > 0);
-  return numeric::random::rg().random_range(1, frame.nr_frags());
+	const core::pose::Pose&) {
+	assert(frame.nr_frags() > 0);
+	return numeric::random::rg().random_range(1, frame.nr_frags());
 }
 
 }  // namespace nonlocal

@@ -32,47 +32,47 @@ namespace core {
 namespace scoring {
 namespace func {
 
-	class SumFunc : public Func {
-	public:
-		// general func
-		SumFunc() {}
+class SumFunc : public Func {
+public:
+	// general func
+	SumFunc() {}
 
-		//SumFunc operator =( SumFunc const & other ):
-		//	Func()
-		//{
-		//	funcs_ = other.funcs();
-		//	return *this;
-		//}
+	//SumFunc operator =( SumFunc const & other ):
+	// Func()
+	//{
+	// funcs_ = other.funcs();
+	// return *this;
+	//}
 
-		//SumFunc( SumFunc const & src )
-		//{
-		//	*this = src;
-		//}
+	//SumFunc( SumFunc const & src )
+	//{
+	// *this = src;
+	//}
 
-		FuncOP
-		clone() const { return FuncOP( new SumFunc( *this ) ); }
+	FuncOP
+	clone() const { return FuncOP( new SumFunc( *this ) ); }
 
-		Real func( Real const x ) const;
-		Real dfunc( Real const x ) const;
+	Real func( Real const x ) const;
+	Real dfunc( Real const x ) const;
 
-		void read_data( std::istream& );
+	void read_data( std::istream& );
 
-		// class-specific accessors
-		utility::vector1< FuncOP > funcs() const {
-			return funcs_;
-		}
+	// class-specific accessors
+	utility::vector1< FuncOP > funcs() const {
+		return funcs_;
+	}
 
-		void funcs( utility::vector1< FuncOP > funcs ) {
-			funcs_ = funcs;
-		}
+	void funcs( utility::vector1< FuncOP > funcs ) {
+		funcs_ = funcs;
+	}
 
-		void add_func( FuncOP f ) {
-			funcs_.push_back( f );
-		}
+	void add_func( FuncOP f ) {
+		funcs_.push_back( f );
+	}
 
-	private:
-  	utility::vector1< FuncOP > funcs_;
-	};
+private:
+	utility::vector1< FuncOP > funcs_;
+};
 } // constraints
 } // scoring
 } // core

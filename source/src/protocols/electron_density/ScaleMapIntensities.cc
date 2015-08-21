@@ -81,19 +81,19 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 		symm_info = SymmConf.Symmetry_Info();
 	}
 
-	if (b_sharpen_ == 0) {
-		for (core::Size i = 1; i <= pose.total_residue(); ++i) {
-			if (asymm_only_ && symm_info && !symm_info->bb_is_independent( i ) ) continue;
+	if ( b_sharpen_ == 0 ) {
+		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+			if ( asymm_only_ && symm_info && !symm_info->bb_is_independent( i ) ) continue;
 			core::conformation::Residue const & rsd_i ( pose.residue(i) );
 			if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
 
 			core::Size natoms = rsd_i.nheavyatoms();
-			for (core::Size j = 1; j <= natoms; ++j) {
+			for ( core::Size j = 1; j <= natoms; ++j ) {
 				core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 
 				poseCoord coord_j;
 				coord_j.x_ = rsd_i.xyz( j );
-				if (ignore_bs_) {
+				if ( ignore_bs_ ) {
 					coord_j.B_ = 0.0;
 				} else {
 					coord_j.B_ = pose.pdb_info()->temperature( i, j );
@@ -113,7 +113,7 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 
 	core::scoring::electron_density::getDensityMap().getResolutionBins(nresbins_, 0.0, 0.0, resobins, counts, bin_squared_);
 
-	if (b_sharpen_ == 0) {
+	if ( b_sharpen_ == 0 ) {
 		////
 		//// use model
 		////
@@ -122,7 +122,7 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 		core::scoring::electron_density::getDensityMap().calcRhoC( litePose, res_high_, rhoC, rhoMask );  // truncate mask at highres limit
 		numeric::fourier::fft3(rhoC, Frho);
 
-		if (outmap_name_.length()>0) {
+		if ( outmap_name_.length()>0 ) {
 			core::scoring::electron_density::ElectronDensity tmp = core::scoring::electron_density::getDensityMap();
 			tmp.set_data( rhoC );
 			tmp.writeMRC( outmap_name_+"_rho_calc.mrc" );
@@ -132,42 +132,45 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 		core::scoring::electron_density::getDensityMap().getIntensities( Frho, nresbins_, 0.0, 0.0, modelI, bin_squared_ );
 
 		// reuse rhoC
-		if (mask_) {
-			for (int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i)
+		if ( mask_ ) {
+			for ( int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i ) {
 				rhoC[i] = rhoMask[i] * core::scoring::electron_density::getDensityMap().data()[i];
-			if (mask_output_) core::scoring::electron_density::getDensityMap().set_data( rhoC );
+			}
+			if ( mask_output_ ) core::scoring::electron_density::getDensityMap().set_data( rhoC );
 		} else {
-			for (int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i) rhoC[i] = core::scoring::electron_density::getDensityMap().data()[i];
+			for ( int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i ) rhoC[i] = core::scoring::electron_density::getDensityMap().data()[i];
 		}
 		numeric::fourier::fft3(rhoC, Frho);
 		core::scoring::electron_density::getDensityMap().getIntensities( Frho, nresbins_, 0.0, 0.0, mapI, bin_squared_ );
 
-		for (Size i=1; i<=nresbins_; ++i) {
-			if ( mapI[i] > 0 )
+		for ( Size i=1; i<=nresbins_; ++i ) {
+			if ( mapI[i] > 0 ) {
 				rescale_factor[i] = sqrt(modelI[i] / mapI[i]);
+			}
 		}
-	} else if (!truncate_only_) {
+	} else if ( !truncate_only_ ) {
 		////
 		//// bfactor sharpen
 		////
 		ObjexxFCL::FArray3D< std::complex<double> > Frho;
 		numeric::fourier::fft3(core::scoring::electron_density::getDensityMap().data(), Frho);
- 		core::scoring::electron_density::getDensityMap().getIntensities( Frho, nresbins_, 0.0, 0.0, mapI, bin_squared_);
+		core::scoring::electron_density::getDensityMap().getIntensities( Frho, nresbins_, 0.0, 0.0, mapI, bin_squared_);
 
-		for (Size i=1; i<=nresbins_; ++i) {
+		for ( Size i=1; i<=nresbins_; ++i ) {
 			rescale_factor[i] = std::sqrt( exp(-b_sharpen_*resobins[i]*resobins[i]) );
 		}
 	}
 
 	TR << "SCALING MAP:" << std::endl;
 	TR << "resbin   model   map   rescale" << std::endl;
-	for (Size i=1; i<=nresbins_; ++i)
+	for ( Size i=1; i<=nresbins_; ++i ) {
 		TR << resobins[i] << "  " << modelI[i] << " " << mapI[i] << " " << rescale_factor[i] << std::endl;
+	}
 
 	core::scoring::electron_density::getDensityMap().scaleIntensities( rescale_factor, 0.0, 0.0, bin_squared_ );
 	core::scoring::electron_density::getDensityMap().reciprocalSpaceFilter( res_low_, res_high_, fade_width_);
 
-	if (outmap_name_.length()>0) {
+	if ( outmap_name_.length()>0 ) {
 		core::scoring::electron_density::getDensityMap().writeMRC( outmap_name_+"_scaled.mrc" );
 	}
 }
@@ -175,11 +178,11 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 ScaleMapIntensities::parse_my_tag(
-		TagCOP const tag,
-		basic::datacache::DataMap &,
-		Filters_map const &,
-		moves::Movers_map const &,
-		Pose const &)
+	TagCOP const tag,
+	basic::datacache::DataMap &,
+	Filters_map const &,
+	moves::Movers_map const &,
+	Pose const &)
 {
 	if ( tag->hasOption("res_low") ) {
 		res_low_ = tag->getOption<core::Real>("res_low");

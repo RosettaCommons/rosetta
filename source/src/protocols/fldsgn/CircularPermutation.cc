@@ -72,7 +72,7 @@ CircularPermutationCreator::mover_name()
 
 /// @brief default constructor
 CircularPermutation::CircularPermutation() :
-  Mover( "CircularPermutation" ),
+	Mover( "CircularPermutation" ),
 	new_terminal_pos_( 0 ),
 	ignore_chain_( false ),
 	split_( 0 )
@@ -81,9 +81,9 @@ CircularPermutation::CircularPermutation() :
 
 /// @Brief copy constructor
 CircularPermutation::CircularPermutation( CircularPermutation const & rval ) :
-  //utility::pointer::ReferenceCount(),
-  Super( rval ),
-  new_terminal_pos_( rval.new_terminal_pos_ ),
+	//utility::pointer::ReferenceCount(),
+	Super( rval ),
+	new_terminal_pos_( rval.new_terminal_pos_ ),
 	split_( rval.split_ )
 {}
 
@@ -96,7 +96,7 @@ CircularPermutation::~CircularPermutation() {}
 CircularPermutation::MoverOP
 CircularPermutation::clone() const
 {
-  return CircularPermutation::MoverOP( new CircularPermutation( *this ) );
+	return CircularPermutation::MoverOP( new CircularPermutation( *this ) );
 }
 
 
@@ -104,7 +104,7 @@ CircularPermutation::clone() const
 CircularPermutation::MoverOP
 CircularPermutation::fresh_instance() const
 {
-  return CircularPermutation::MoverOP( new CircularPermutation() );
+	return CircularPermutation::MoverOP( new CircularPermutation() );
 }
 
 
@@ -127,12 +127,12 @@ CircularPermutation::new_terminal_pos() const
 CircularPermutation::Size
 CircularPermutation::which_chain( Size const pos, Pose const pose ) const
 {
-	for( Size i=1; i<=pose.conformation().num_chains(); i++ ) {
+	for ( Size i=1; i<=pose.conformation().num_chains(); i++ ) {
 
 		Size chain_begin( pose.conformation().chain_begin( i ) );
 		Size chain_end( pose.conformation().chain_end( i ) );
 
-		if( chain_begin <= pos && chain_end >= pos ) {
+		if ( chain_begin <= pos && chain_end >= pos ) {
 			return i;
 		}
 
@@ -160,26 +160,26 @@ CircularPermutation::split_chains( Pose & pose, utility::vector1< Size > const &
 	FoldTree ft = fold_tree_from_pose( pose, pose.fold_tree().root(), MoveMap() );
 
 	// insert chain endings
-	for( Size i=1; i<=pos.size(); i++ ) {
+	for ( Size i=1; i<=pos.size(); i++ ) {
 		Size position = pos[ i ];
 		runtime_assert( position >= 1 && position <= pose.total_residue() );
 		pose.conformation().insert_chain_ending( position );
 	}
 
 	// add terminals
-	for( Size i=1; i<=pose.conformation().num_chains(); i++ ) {
+	for ( Size i=1; i<=pose.conformation().num_chains(); i++ ) {
 		Size begin = pose.conformation().chain_begin( i );
 		Size end = pose.conformation().chain_end( i );
-		if( pose.residue( begin ).is_protein() && !pose.residue( begin ).is_lower_terminus() ) {
+		if ( pose.residue( begin ).is_protein() && !pose.residue( begin ).is_lower_terminus() ) {
 			core::pose::add_lower_terminus_type_to_pose_residue( pose, begin );
 		}
-		if( pose.residue( end ).is_protein() && !pose.residue( end ).is_upper_terminus() ) {
+		if ( pose.residue( end ).is_protein() && !pose.residue( end ).is_upper_terminus() ) {
 			core::pose::add_upper_terminus_type_to_pose_residue( pose, end );
 		}
 	}
 
 	// add jumps
-	for( Size i=2; i<=pose.conformation().num_chains(); i++ ) {
+	for ( Size i=2; i<=pose.conformation().num_chains(); i++ ) {
 		Size begin = pose.conformation().chain_begin( i );
 		Size end = pose.conformation().chain_end( i-1 );
 		ft.new_jump( end, begin, end );
@@ -206,14 +206,14 @@ void CircularPermutation::apply( Pose & pose )
 	using core::pose::symmetry::get_asymmetric_pose_copy_from_symmetric_pose;
 
 	// make sure position of new terminal within chain lengths
-	if( new_terminal_pos_ == 0 ) {
+	if ( new_terminal_pos_ == 0 ) {
 		TR << "No position to be permutated was specified. " << std::endl;
 		return;
 	}
 	runtime_assert( new_terminal_pos_ > 1 && new_terminal_pos_ <= pose.total_residue() );
 
 	// make pose asymmetric if pose is symmetric
-	if( is_symmetric( pose ) ) {
+	if ( is_symmetric( pose ) ) {
 		Pose work_pose( pose );
 		pose = get_asymmetric_pose_copy_from_symmetric_pose( work_pose );
 	}
@@ -224,12 +224,12 @@ void CircularPermutation::apply( Pose & pose )
 	// determine begin and end positions of chain to be swapped
 	Size chain_begin;
 	Size chain( 0 );
-	if( ignore_chain_ ) {
+	if ( ignore_chain_ ) {
 
 		chain_begin = 1;
 		// find final chains
-		for( Size i=1; i<=pose.total_residue(); i++ ) {
-			if( pose.residue( i ).is_protein() && static_cast< int >( chain )< pose.chain( i ) ) {
+		for ( Size i=1; i<=pose.total_residue(); i++ ) {
+			if ( pose.residue( i ).is_protein() && static_cast< int >( chain )< pose.chain( i ) ) {
 				chain = pose.chain( i );
 			}
 		}
@@ -244,7 +244,7 @@ void CircularPermutation::apply( Pose & pose )
 	// add 4 residues at the end of chain
 	ResidueTypeSet const & rsd_set( pose.residue(1).residue_type_set() );
 	ResidueOP ala( ResidueFactory::create_residue( rsd_set.name_map( "ALA" ) ) );
-	for( Size i=1; i<=4; i++ ) {
+	for ( Size i=1; i<=4; i++ ) {
 		Size pos = pose.conformation().chain_end( chain );
 		pose.conformation().safely_append_polymer_residue_after_seqpos( *ala, pos, true );
 	}
@@ -254,7 +254,7 @@ void CircularPermutation::apply( Pose & pose )
 
 	// Blow away the latter parts of swap_in pose
 	swap_in.conformation().delete_residue_range_slow( new_terminal_pos_, swap_in.total_residue() );
-	if( chain_begin > 1 ) {
+	if ( chain_begin > 1 ) {
 		// Blow away the former parts of swap_in pose
 		swap_in.conformation().delete_residue_range_slow( 1, chain_begin - 1 );
 	}
@@ -281,7 +281,7 @@ void CircularPermutation::apply( Pose & pose )
 
 	TR << "FoldTree after circular permutation: " << pose.fold_tree() << std::endl;
 
-	if( split_ != 0 ) {
+	if ( split_ != 0 ) {
 		utility::vector1< Size > positions;
 		positions.push_back( split_ );
 		pose.conformation().reset_chain_endings();
@@ -303,14 +303,14 @@ CircularPermutation::parse_my_tag(
 	Pose const & )
 {
 
-  // set positions of new N- and C- terminal
-  new_terminal_pos_ = ( tag->getOption<Size>( "pos", 0 ) );
+	// set positions of new N- and C- terminal
+	new_terminal_pos_ = ( tag->getOption<Size>( "pos", 0 ) );
 
-  // ignore chain
-  ignore_chain_ = ( tag->getOption<bool>( "ignore_chain", 0 ) );
+	// ignore chain
+	ignore_chain_ = ( tag->getOption<bool>( "ignore_chain", 0 ) );
 
-  // split chain
-  split_ = ( tag->getOption<Size>( "split_chain", 0 ) );
+	// split chain
+	split_ = ( tag->getOption<Size>( "split_chain", 0 ) );
 
 }
 

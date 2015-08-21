@@ -98,7 +98,7 @@ PlacementMinimizationMover::refresh_bbstub_constraints( core::pose::Pose & pose 
 	using namespace core::pack::task;
 	using namespace core::kinematics;
 
-//setting up a deflt foldtree for the constraints to work with
+	//setting up a deflt foldtree for the constraints to work with
 	FoldTree const orig_foldtree( pose.fold_tree() );
 	FoldTree new_ft;
 	new_ft.clear();
@@ -109,45 +109,49 @@ PlacementMinimizationMover::refresh_bbstub_constraints( core::pose::Pose & pose 
 	pose.fold_tree( new_ft );
 	remove_hotspot_constraints_from_pose( pose );
 	core::Size fixed_res(1);
-	if( host_chain_ == 1 ) fixed_res = pose.total_residue();
+	if ( host_chain_ == 1 ) fixed_res = pose.total_residue();
 	core::id::AtomID const fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
 	HotspotStubSetOP all_stubs( new HotspotStubSet );
-	BOOST_FOREACH( StubSetStubPos const stubset_pos_pair, stub_sets_ )
+	BOOST_FOREACH ( StubSetStubPos const stubset_pos_pair, stub_sets_ ) {
 		all_stubs->add_stub_set( *stubset_pos_pair.first );
+	}
 
 	PackerTaskOP restricted_packer_task;
-	if( task_factory() )
+	if ( task_factory() ) {
 		restricted_packer_task = task_factory()->create_task_and_apply_taskoperations( pose );
-	else
+	} else {
 		restricted_packer_task = TaskFactory::create_packer_task( pose );
+	}
 	core::pack::task::PackerTaskOP stub_task = all_stubs->prepare_hashing_packer_task_( pose, host_chain_ );
 	core::Size const host_chain_begin( pose.conformation().chain_begin( host_chain_ ) );
 	core::Size const host_chain_end  ( pose.conformation().chain_end  ( host_chain_ ) );
 
-	for( core::Size resi( host_chain_begin ); resi<=host_chain_end; ++resi ){
+	for ( core::Size resi( host_chain_begin ); resi<=host_chain_end; ++resi ) {
 		using namespace core::chemical;
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
-		if( std::find( prevent_repacking_.begin(), prevent_repacking_.end(), resi ) != prevent_repacking_.end() ||
-			  !restricted_packer_task->nonconst_residue_task( resi ).being_packed() )
+		if ( std::find( prevent_repacking_.begin(), prevent_repacking_.end(), resi ) != prevent_repacking_.end() ||
+				!restricted_packer_task->nonconst_residue_task( resi ).being_packed() ) {
 			stub_task->nonconst_residue_task( resi ).prevent_repacking();
-		if( (pose.residue( resi ).aa() == aa_gly && !option[hotspot::allow_gly]() ) || ( pose.residue( resi ).aa() == aa_pro && !option[hotspot::allow_proline ] ))
+		}
+		if ( (pose.residue( resi ).aa() == aa_gly && !option[hotspot::allow_gly]() ) || ( pose.residue( resi ).aa() == aa_pro && !option[hotspot::allow_proline ] ) ) {
 			stub_task->nonconst_residue_task( resi ).prevent_repacking();
+		}
 	}
 
 	runtime_assert( cb_force_ > -0.000001 );
 	all_stubs->add_hotspot_constraints_to_pose( pose, fixed_atom_id, stub_task, all_stubs, cb_force_, 0/*worst allowed stub bonus*/, false/*apply self energies*/, 10.0/*bump cutoff*/, true/*apply ambiguous constraints*/ );
 
 	core::scoring::constraints::ConstraintCOPs stub_constraints( pose.add_constraints( all_stubs->constraints() ) );
- 	core::Size const constraint_num( stub_constraints.size() );
- 	TR<<"adding "<<constraint_num<<" stub constraints to pose"<<std::endl;
+	core::Size const constraint_num( stub_constraints.size() );
+	TR<<"adding "<<constraint_num<<" stub constraints to pose"<<std::endl;
 	pose.fold_tree( orig_foldtree );
 }
 
 void
 PlacementMinimizationMover::apply( core::pose::Pose & pose )
 {
-  core::pose::Pose const saved_pose( pose ); // the pose should not actually be changed within this function
+	core::pose::Pose const saved_pose( pose ); // the pose should not actually be changed within this function
 
 	using namespace protocols::hotspot_hashing;
 	using namespace core::scoring;
@@ -163,8 +167,8 @@ PlacementMinimizationMover::apply( core::pose::Pose & pose )
 	// Switch to Ala unless we are doing place scaffold as a replacement for docking
 	BuildAlaPose toAla( host_chain_ == 1/*partner1*/, host_chain_ == 2 /*partner2*/ );
 	utility::vector1< core::Size > no_repack;
-	if( !prevent_repacking().empty() ) no_repack = prevent_repacking();
-	if( !no_repack.empty() ){
+	if ( !prevent_repacking().empty() ) no_repack = prevent_repacking();
+	if ( !no_repack.empty() ) {
 		std::sort( no_repack.begin(), no_repack.end() );
 		utility::vector1< core::Size >::iterator last = std::unique( no_repack.begin(), no_repack.end() );
 		no_repack.erase( last, no_repack.end() );
@@ -202,19 +206,20 @@ PlacementMinimizationMover::stub_sets( utility::vector1< StubSetStubPos > const 
 
 void
 PlacementMinimizationMover::parse_my_tag( TagCOP const tag,
-		basic::datacache::DataMap &data,
-		protocols::filters::Filters_map const &,
-		Movers_map const &,
-		core::pose::Pose const & pose )
+	basic::datacache::DataMap &data,
+	protocols::filters::Filters_map const &,
+	Movers_map const &,
+	core::pose::Pose const & pose )
 {
 	host_chain( tag->getOption<core::Size>( "host_chain", 2 ) );
 	cb_force( tag->getOption< core::Real >( "cb_force", 0.5 ) );
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
-/// PlaceSim calls this parse_my_tag with its own tag, and there, cb_force is
-/// set within a child tag
-	BOOST_FOREACH( TagCOP const btag, branch_tags ){
-		if( btag->hasOption( "cb_force" ) )
+	/// PlaceSim calls this parse_my_tag with its own tag, and there, cb_force is
+	/// set within a child tag
+	BOOST_FOREACH ( TagCOP const btag, branch_tags ) {
+		if ( btag->hasOption( "cb_force" ) ) {
 			cb_force( btag->getOption< core::Real >( "cb_force" ) );
+		}
 	}
 	runtime_assert( cb_force_ >= -0.000001 );
 	design_partner1_ = host_chain_ == 1 ? true : false;
@@ -231,7 +236,7 @@ PlacementMinimizationMover::parse_my_tag( TagCOP const tag,
 
 protocols::moves::MoverOP
 PlacementMinimizationMover::fresh_instance() const {
-   return protocols::moves::MoverOP( new PlacementMinimizationMover );
+	return protocols::moves::MoverOP( new PlacementMinimizationMover );
 }
 
 PlacementMinimizationMover::~PlacementMinimizationMover(){}

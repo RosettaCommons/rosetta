@@ -38,19 +38,19 @@ ChemicalShiftAnisotropyCOP retrieve_CSA_from_pose(core::pose::Pose const&);
 ///                         ChemicalShiftAnisotropyEnergy -- an energy method which triggers computations handled by this class.
 ///
 class ChemicalShiftAnisotropy: public basic::datacache::CacheableData {
-	//	friend class ChemicalShiftAnisotropyEnergy;
+	// friend class ChemicalShiftAnisotropyEnergy;
 public:
 	// typedefs
 	typedef core::Size Size;
 	typedef utility::vector1<core::scoring::CSA> CSA_lines;
 
 public:
-//need to make sure it reads as the flags
+	//need to make sure it reads as the flags
 	/// @brief standard c'stor -- will access option -in:file:csa to read CSA data
 	ChemicalShiftAnisotropy( std::string const& filename ="" ) {
-		if (filename != "" ) {
+		if ( filename != "" ) {
 			read_CSA_file( filename );
-			}else {
+		} else {
 			read_CSA_file( );
 		}
 	}
@@ -74,10 +74,10 @@ public:
 
 	void show(std::ostream&) const;
 
-  /// @brief get the raw CSA data
-  inline CSA_lines const& get_CSA_data() const {
-    return All_CSA_lines_;
-  }
+	/// @brief get the raw CSA data
+	inline CSA_lines const& get_CSA_data() const {
+		return All_CSA_lines_;
+	}
 
 private:
 	/// @brief read CSA data from file
@@ -127,104 +127,104 @@ public:
 		return res1_;
 	}
 
-  inline Size res2() const {
-    return res2_;
-  }
+	inline Size res2() const {
+		return res2_;
+	}
 
-  inline Size res3() const {
-    return res3_;
-  }
+	inline Size res3() const {
+		return res3_;
+	}
 
-  std::string const& atom1() const {
-    return atom1_;
-  }
+	std::string const& atom1() const {
+		return atom1_;
+	}
 
-  std::string const& atom2() const {
-    return atom2_;
-  }
+	std::string const& atom2() const {
+		return atom2_;
+	}
 
-  std::string const& atom3() const {
-    return atom3_;
-  }
+	std::string const& atom3() const {
+		return atom3_;
+	}
 
-  inline Real sigma1() const {
-    return sigma1_;
-  }
+	inline Real sigma1() const {
+		return sigma1_;
+	}
 
-  inline Real sigma2() const {
-    return sigma2_;
-  }
+	inline Real sigma2() const {
+		return sigma2_;
+	}
 
-  inline Real sigma3() const {
-    return sigma3_;
-  }
+	inline Real sigma3() const {
+		return sigma3_;
+	}
 
-  inline Real alpha() const {
-    return alpha_;
-  }
+	inline Real alpha() const {
+		return alpha_;
+	}
 
-  inline Real beta() const {
-    return beta_;
-  }
+	inline Real beta() const {
+		return beta_;
+	}
 
-  inline Real gamma() const {
-    return gamma_;
-  }
+	inline Real gamma() const {
+		return gamma_;
+	}
 
-  inline Real CSAval() const {
-    return CSAval_;
-  }
+	inline Real CSAval() const {
+		return CSAval_;
+	}
 
-  inline Real CSAerr() const {
-    return CSAerr_;
-  }
+	inline Real CSAerr() const {
+		return CSAerr_;
+	}
 
-  Real const& CSAcomputed() const {
-    return CSAval_computed_;
-  }
+	Real const& CSAcomputed() const {
+		return CSAval_computed_;
+	}
 
-  Real& CSAcomputed() {
-    return CSAval_computed_;
-  }
+	Real& CSAcomputed() {
+		return CSAval_computed_;
+	}
 
-  Vector f1ij() const {
-    return f1ij_;
-  }
+	Vector f1ij() const {
+		return f1ij_;
+	}
 
-  Vector f2ij() const {
-    return f2ij_;
-  }
+	Vector f2ij() const {
+		return f2ij_;
+	}
 
-  Vector f3ij() const {
-    return f3ij_;
-  }
+	Vector f3ij() const {
+		return f3ij_;
+	}
 
 
-  Real weight() const {
-    return weight_;
-  }
+	Real weight() const {
+		return weight_;
+	}
 
-  void set_weight(Real w_in) {
-    weight_ = w_in;
-  }
+	void set_weight(Real w_in) {
+		weight_ = w_in;
+	}
 
-  friend class ChemicalShiftAnisotropy;
+	friend class ChemicalShiftAnisotropy;
 
-  void show(std::ostream&) const;
+	void show(std::ostream&) const;
 
 public :
-  Real CSAval_computed_;
-  core::Vector f1ij_;
-  core::Vector f2ij_;
-  core::Vector f3ij_;
+	Real CSAval_computed_;
+	core::Vector f1ij_;
+	core::Vector f2ij_;
+	core::Vector f3ij_;
 
 private:
-  Size res1_, res2_, res3_;
-  std::string atom1_,atom2_,atom3_;
-  Real sigma1_, sigma2_, sigma3_;
-  Real alpha_, beta_, gamma_;
-  Real CSAval_, CSAerr_;
-  Real weight_;
+	Size res1_, res2_, res3_;
+	std::string atom1_,atom2_,atom3_;
+	Real sigma1_, sigma2_, sigma3_;
+	Real alpha_, beta_, gamma_;
+	Real CSAval_, CSAerr_;
+	Real weight_;
 
 };
 

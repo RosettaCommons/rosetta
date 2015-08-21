@@ -25,16 +25,16 @@ namespace protocols {
 namespace features {
 namespace helixAssembly {
 
-	/// @brief creator for the HelixBundleFeatures class
-	class ConcurrencyTestCreator : public FeaturesReporterCreator
-	{
-	public:
-		ConcurrencyTestCreator();
-		virtual ~ConcurrencyTestCreator();
+/// @brief creator for the HelixBundleFeatures class
+class ConcurrencyTestCreator : public FeaturesReporterCreator
+{
+public:
+	ConcurrencyTestCreator();
+	virtual ~ConcurrencyTestCreator();
 
-		virtual FeaturesReporterOP create_features_reporter() const;
-		virtual std::string type_name() const;
-	};
+	virtual FeaturesReporterOP create_features_reporter() const;
+	virtual std::string type_name() const;
+};
 
 } //namespace helixAssembly
 } //namespace features

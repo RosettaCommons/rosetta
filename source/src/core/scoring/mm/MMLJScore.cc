@@ -40,11 +40,11 @@ namespace scoring {
 namespace mm {
 
 MMLJScore::MMLJScore() :
-  mm_lj_library_( scoring::ScoringManager::get_instance()->get_MMLJLibrary() )
+	mm_lj_library_( scoring::ScoringManager::get_instance()->get_MMLJLibrary() )
 { }
 
 MMLJScore::MMLJScore( MMLJLibrary const & mmljl ) :
-  mm_lj_library_( mmljl )
+	mm_lj_library_( mmljl )
 { }
 
 MMLJScore::~MMLJScore() {}
@@ -53,23 +53,20 @@ MMLJScore::~MMLJScore() {}
 Energy
 MMLJScore::score( Size atom1, Size atom2, Size path_distance, Real distance ) const
 {
-  // lookup params
-  mm_lj_param_set atom1_params, atom2_params;
-  if( path_distance == 3 )
-    {
-      atom1_params = mm_lj_library_.lookup_three_bond( atom1 );
-      atom2_params = mm_lj_library_.lookup_three_bond( atom2 );
-    }
-  else
-    {
-      atom1_params = mm_lj_library_.lookup( atom1 );
-      atom2_params = mm_lj_library_.lookup( atom2 );
-    }
+	// lookup params
+	mm_lj_param_set atom1_params, atom2_params;
+	if ( path_distance == 3 ) {
+		atom1_params = mm_lj_library_.lookup_three_bond( atom1 );
+		atom2_params = mm_lj_library_.lookup_three_bond( atom2 );
+	} else {
+		atom1_params = mm_lj_library_.lookup( atom1 );
+		atom2_params = mm_lj_library_.lookup( atom2 );
+	}
 
-  // calc score
-  Real epsilon( sqrt( atom1_params.key2() * atom2_params.key2() ) );
-  Real rmin_over_dist( ( atom1_params.key1() + atom2_params.key1() ) / distance );
-  Real score( epsilon * ( pow( rmin_over_dist, 12 ) - 2 * pow( rmin_over_dist, 6 ) ) );
+	// calc score
+	Real epsilon( sqrt( atom1_params.key2() * atom2_params.key2() ) );
+	Real rmin_over_dist( ( atom1_params.key1() + atom2_params.key1() ) / distance );
+	Real score( epsilon * ( pow( rmin_over_dist, 12 ) - 2 * pow( rmin_over_dist, 6 ) ) );
 
 	return score;
 }
@@ -78,43 +75,37 @@ MMLJScore::score( Size atom1, Size atom2, Size path_distance, Real distance ) co
 Energy
 MMLJScore::deriv_score( Size atom1, Size atom2, Size path_distance, Real distance ) const
 {
-  // lookup params
-  mm_lj_param_set atom1_params, atom2_params;
-  if( path_distance == 3 )
-    {
-      atom1_params = mm_lj_library_.lookup_three_bond( atom1 );
-      atom2_params = mm_lj_library_.lookup_three_bond( atom2 );
-    }
-  else
-    {
-      atom1_params = mm_lj_library_.lookup( atom1 );
-      atom2_params = mm_lj_library_.lookup( atom2 );
-    }
+	// lookup params
+	mm_lj_param_set atom1_params, atom2_params;
+	if ( path_distance == 3 ) {
+		atom1_params = mm_lj_library_.lookup_three_bond( atom1 );
+		atom2_params = mm_lj_library_.lookup_three_bond( atom2 );
+	} else {
+		atom1_params = mm_lj_library_.lookup( atom1 );
+		atom2_params = mm_lj_library_.lookup( atom2 );
+	}
 
 	// calc deriv
 	Real epsilon( sqrt( atom1_params.key2() * atom2_params.key2() ) );
 	Real rmin ( atom1_params.key1() + atom2_params.key1() );
 	Real deriv( 12 * epsilon * ( ( pow( rmin, 6 ) / pow( distance, 7 ) ) - ( pow( rmin, 12 ) / pow( distance, 13 ) ) ) );
 
- 	return deriv;
+	return deriv;
 }
 
 /// @derails blah
 Real
 MMLJScore::min_dist( Size atom1, Size atom2, Size path_distance ) const
 {
-  // lookup params
-  mm_lj_param_set atom1_params, atom2_params;
-  if( path_distance == 3 )
-    {
-      atom1_params = mm_lj_library_.lookup_three_bond( atom1 );
-      atom2_params = mm_lj_library_.lookup_three_bond( atom2 );
-    }
-  else
-    {
-      atom1_params = mm_lj_library_.lookup( atom1 );
-      atom2_params = mm_lj_library_.lookup( atom2 );
-    }
+	// lookup params
+	mm_lj_param_set atom1_params, atom2_params;
+	if ( path_distance == 3 ) {
+		atom1_params = mm_lj_library_.lookup_three_bond( atom1 );
+		atom2_params = mm_lj_library_.lookup_three_bond( atom2 );
+	} else {
+		atom1_params = mm_lj_library_.lookup( atom1 );
+		atom2_params = mm_lj_library_.lookup( atom2 );
+	}
 
 	// calc min
 	Real rmin ( atom1_params.key1() + atom2_params.key1() );

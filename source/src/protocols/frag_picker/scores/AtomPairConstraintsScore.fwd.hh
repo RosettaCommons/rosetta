@@ -26,16 +26,16 @@ namespace scores {
 class AtomPairConstraintsScore;
 
 typedef utility::pointer::shared_ptr<AtomPairConstraintsScore>
-		AtomPairConstraintsScoreOP;
+	AtomPairConstraintsScoreOP;
 typedef utility::pointer::shared_ptr<AtomPairConstraintsScore const>
-		AtomPairConstraintsScoreCOP;
+	AtomPairConstraintsScoreCOP;
 
 class AtomPairConstraintsData;
 
 typedef utility::pointer::shared_ptr<AtomPairConstraintsData>
-		AtomPairConstraintsDataOP;
+	AtomPairConstraintsDataOP;
 typedef utility::pointer::shared_ptr<AtomPairConstraintsData const>
-		AtomPairConstraintsDataCOP;
+	AtomPairConstraintsDataCOP;
 
 } // scores
 } // frag_picker

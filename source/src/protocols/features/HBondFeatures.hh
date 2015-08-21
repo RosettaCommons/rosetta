@@ -39,8 +39,8 @@
 // C++ Headers
 #include <string>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 /// @brief How a hydrogen bond should be defined See note for
 /// definition_type_ below.

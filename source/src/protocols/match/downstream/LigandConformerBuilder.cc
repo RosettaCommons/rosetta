@@ -103,8 +103,8 @@ LigandConformerBuilder::LigandConformerBuilder( LigandConformerBuilder const & o
 //{
 //  for ( Size ii = 1; ii <= lig_conformers_.size(); ++ii ) {
 //    lig_conformers_[ ii ] = new LigandConformer( * other.lig_conformers_[ ii ] );
-//		//TR << "Nr of n_collision_check_atoms: " << lig_conformers_[ ii ]->n_collision_check_atoms()  << std::endl;
-//		runtime_assert(lig_conformers_[ ii ]);
+//  //TR << "Nr of n_collision_check_atoms: " << lig_conformers_[ ii ]->n_collision_check_atoms()  << std::endl;
+//  runtime_assert(lig_conformers_[ ii ]);
 //  }
 //
 //  initialize_upstream_residue( upstream_restype );
@@ -151,19 +151,19 @@ LigandConformerBuilder::determine_redundant_conformer_groups(
 	conformer_group_for_conformer_.push_back( 1 ); //the conformer group for the first conformer is always 1
 	HTReal identity_ht;
 
-	for( Size ii = 2; ii <= lig_conformers_.size(); ++ii ){
+	for ( Size ii = 2; ii <= lig_conformers_.size(); ++ii ) {
 
 		ObjexxFCL::FArray2D< numeric::Real > queryconf_coord( 3, num_relevant_atoms );
 		lig_conformers_[ii]->get_global_coords_as_FArray2D( queryconf_coord, identity_ht, relevant_atom_indices );
 
 		bool conformer_unique(true);
-		for( Size jj = 1; jj <= conformer_group_indices_.size(); ++jj){
+		for ( Size jj = 1; jj <= conformer_group_indices_.size(); ++jj ) {
 
 			ObjexxFCL::FArray2D< numeric::Real > uniqueconf_coord( 3, num_relevant_atoms );
 			lig_conformers_[ conformer_group_indices_[jj][1] ]->get_global_coords_as_FArray2D( uniqueconf_coord, identity_ht, relevant_atom_indices );
 
 			Real rmsd_this_pair = numeric::model_quality::rms_wrapper( num_relevant_atoms, queryconf_coord, uniqueconf_coord );
-			if( rmsd_this_pair < rmsd_unique_cutoff_ ){
+			if ( rmsd_this_pair < rmsd_unique_cutoff_ ) {
 				conformer_group_indices_[jj].push_back( ii );
 				conformer_group_for_conformer_.push_back( jj );
 				//std::cerr << "lig conf " << ii << " identical to conf " << conformer_group_indices_[jj][1] << std::endl;
@@ -172,7 +172,7 @@ LigandConformerBuilder::determine_redundant_conformer_groups(
 			}
 		} //loop over conformer groups
 
-		if( conformer_unique ){
+		if ( conformer_unique ) {
 			conformer_group_indices_.push_back( utility::vector1< Size >() );
 			conformer_group_indices_[ conformer_group_indices_.size() ].push_back( ii );
 			conformer_group_for_conformer_.push_back( conformer_group_indices_.size() );
@@ -198,7 +198,7 @@ LigandConformerBuilder::assign_conformer_group_to_residue(
 
 	//first we have to convert the coordinates to stupid FArray2D format
 	ObjexxFCL::FArray2D< numeric::Real > queryconf_coord( 3, num_relevant_atoms ), uniqueconf_coord( 3, num_relevant_atoms );
-	for( core::Size i(1); i <= num_relevant_atoms; ++i ){
+	for ( core::Size i(1); i <= num_relevant_atoms; ++i ) {
 		queryconf_coord(1,i) = residue.atom( relevant_atom_indices[i] ).xyz().x();
 		queryconf_coord(2,i) = residue.atom( relevant_atom_indices[i] ).xyz().y();
 		queryconf_coord(3,i) = residue.atom( relevant_atom_indices[i] ).xyz().z();
@@ -207,10 +207,10 @@ LigandConformerBuilder::assign_conformer_group_to_residue(
 	core::Real low_rms = numeric::model_quality::rms_wrapper( num_relevant_atoms, queryconf_coord, uniqueconf_coord );
 	core::Size low_conf_group = 1;
 
-	for( Size ii = 2; ii <= conformer_group_indices_.size(); ++ii){
+	for ( Size ii = 2; ii <= conformer_group_indices_.size(); ++ii ) {
 		lig_conformers_[ conformer_group_indices_[ii][1] ]->get_global_coords_as_FArray2D( uniqueconf_coord, identity_ht, relevant_atom_indices );
 		core::Real this_rms = numeric::model_quality::rms_wrapper( num_relevant_atoms, queryconf_coord, uniqueconf_coord );
-		if( this_rms < low_rms ){
+		if ( this_rms < low_rms ) {
 			low_rms = this_rms;
 			low_conf_group = ii;
 		}
@@ -232,7 +232,7 @@ LigandConformerBuilder::set_bb_grid(
 bool
 LigandConformerBuilder::hits_potentially_incompatible() const
 {
-	if( conformer_group_indices_.size() > 1 ) return true;
+	if ( conformer_group_indices_.size() > 1 ) return true;
 	return false;
 }
 
@@ -257,7 +257,7 @@ LigandConformerBuilder::compatible(
 	bool //first_dispatch
 ) const
 {
-	if( conformer_group_for_conformer_[ my_hit.downstream_conf_id() ] == other.conformer_group_for_conformer_[ other_hit.downstream_conf_id() ] )	return true;
+	if ( conformer_group_for_conformer_[ my_hit.downstream_conf_id() ] == other.conformer_group_for_conformer_[ other_hit.downstream_conf_id() ] ) return true;
 	return false;
 }
 
@@ -478,7 +478,7 @@ LigandConformerBuilder::initialize_upstream_residue(
 			if ( jj > upstream_restype_->natoms() ) break;
 			Real weight( 1.0 );
 			Size path_dist( 0 );
-			if ( count_pair && ( ! count_pair->count( jj, ii_restype_id, weight, path_dist ) || weight != 1.0 )) {
+			if ( count_pair && ( ! count_pair->count( jj, ii_restype_id, weight, path_dist ) || weight != 1.0 ) ) {
 				/// WITHIN STRIKING DISTANCE OF BACKBONE!  DO NOT COLLISON-CHECK THIS ATOM
 				atom_radii_[ ii_restype_id ] = ZERO;
 			}
@@ -560,8 +560,8 @@ LigandConformerBuilder::build_conformer_group(
 		Size ii_conf_id = conformer_group_indices_[ confgrp_id ][ ii ];
 		//std::cout << "LigandConformerBuilder::build" << std::endl;
 		//for ( Size jj = 1; jj <= 3; ++jj ) {
-			//Vector const jjloc = atom3_frame * ats123_in_atom3_frame_[ jj ];
-			//std::cout << "Atom D" << jj << " coordinate: " << jjloc.x() << " " << jjloc.y() << " " << jjloc.z() << std::endl;
+		//Vector const jjloc = atom3_frame * ats123_in_atom3_frame_[ jj ];
+		//std::cout << "Atom D" << jj << " coordinate: " << jjloc.x() << " " << jjloc.y() << " " << jjloc.z() << std::endl;
 		//}
 
 		/// collision detection and active-site containment enforcement.
@@ -571,7 +571,7 @@ LigandConformerBuilder::build_conformer_group(
 
 			Vector const jjloc = lig_conformers_[ ii_conf_id ]->coordinate_in_D3_frame( jj_restype_id, atom3_frame );
 			//std::cout << "   " << downstream_restype_->atom_name( at3_frame_id_2_restype_id_[ jj ] ) << " ";
-				//std::cout << jjloc.x() << "  " << jjloc.y() << " " << jjloc.z() << std::endl;
+			//std::cout << jjloc.x() << "  " << jjloc.y() << " " << jjloc.z() << std::endl;
 			if ( atom_radii_[ jj_restype_id ] > ZERO && bbgrid().occupied( atom_radii_[ jj_restype_id ], jjloc ) ) {
 				ii_good = false;
 				break;
@@ -727,7 +727,7 @@ LigandConformerBuilder::initialize_conformers( core::conformation::Residue const
 					rms += rot_vector[ ii ]->xyz(jj).distance_squared( ligpose.residue(1).xyz(jj) );
 				}
 				Real rms_this_rot( std::sqrt( rms ) / residue.nheavyatoms() );
-				if( rms_this_rot >= 0.1 )  TR << "WARNING: Ligand rotamer " << ii << " has idealized RMS of " << rms_this_rot <<". Usually this number is < 0.1. Check whether ligand rotamers have the same bond lengths/bond angles as specified in the ligand .params file."  << std::endl;
+				if ( rms_this_rot >= 0.1 )  TR << "WARNING: Ligand rotamer " << ii << " has idealized RMS of " << rms_this_rot <<". Usually this number is < 0.1. Check whether ligand rotamers have the same bond lengths/bond angles as specified in the ligand .params file."  << std::endl;
 
 				lig_conformers_[ ii ]->initialize_from_residue(
 					atoms_123_[ 1 ], atoms_123_[ 2 ], atoms_123_[ 3 ],
@@ -837,9 +837,9 @@ LigandConformerBuilder::initialize_conformers( core::conformation::Residue const
 		lig_conformers_[ 1 ] = protocols::toolbox::match_enzdes_util::LigandConformerOP( new toolbox::match_enzdes_util::LigandConformer );
 		lig_conformers_[ 1 ]->ignore_h_collisions( ignore_h_collisions_ );
 		lig_conformers_[ 1 ]->initialize_from_residue(
-					atoms_123_[ 1 ], atoms_123_[ 2 ], atoms_123_[ 3 ],
-					orientation_atoms_[ 1 ], orientation_atoms_[ 2 ], orientation_atoms_[ 3 ],
-					residue );
+			atoms_123_[ 1 ], atoms_123_[ 2 ], atoms_123_[ 3 ],
+			orientation_atoms_[ 1 ], orientation_atoms_[ 2 ], orientation_atoms_[ 3 ],
+			residue );
 
 		//utility_exit_with_message( "Failed to find ligand rotamer library for " +
 		//residue.name() + ". Did you mean to remove the -match::enumerate_ligand_rotamers flag from your command line?" );
@@ -850,19 +850,19 @@ LigandConformerBuilder::initialize_conformers( core::conformation::Residue const
 toolbox::match_enzdes_util::LigandConformerOP
 LigandConformerBuilder::get_lig_conformers(core::Size conf_id) const
 {
- 	return  lig_conformers_[ conf_id ] ;
+	return  lig_conformers_[ conf_id ] ;
 }
 
 //utility::vector1< utility::vector1< std::pair< core::Size, core::Real > > >
 //LigandConformerBuilder::get_min_sep_d2_from_upstream_atoms() const
 //{
-//	return min_sep_d2_from_upstream_atoms_;
+// return min_sep_d2_from_upstream_atoms_;
 //}
 
 core::chemical::ResidueTypeCOP
 LigandConformerBuilder::get_upstream_restype() const
 {
-  return upstream_restype_;
+	return upstream_restype_;
 }
 
 }

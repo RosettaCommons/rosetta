@@ -54,29 +54,29 @@ using basic::Warning;
 
 void MoverStatistics::print ( MonteCarloOP mc, std::string const type )
 {
-  //clear_score();
-  //return;
+	//clear_score();
+	//return;
 
-  //T("protocols.moves.TrialMover.energies") << "trialE ";
-  if ( TR.Trace.visible() ) { //change from Debug --> Trace since it produces output every step!
-      std::ostringstream outstring;
+	//T("protocols.moves.TrialMover.energies") << "trialE ";
+	if ( TR.Trace.visible() ) { //change from Debug --> Trace since it produces output every step!
+		std::ostringstream outstring;
 
-      for ( Size ii = 0; ii < score_.size(); ++ii ) {
-	outstring << F( 9, 3, score_[ ii ] ) << " ";
-      }
-      outstring << F( 9, 3, mc->last_accepted_score() ) << "  " << F( 9, 3, mc->lowest_score() ) << "  " << type << "   ";
+		for ( Size ii = 0; ii < score_.size(); ++ii ) {
+			outstring << F( 9, 3, score_[ ii ] ) << " ";
+		}
+		outstring << F( 9, 3, mc->last_accepted_score() ) << "  " << F( 9, 3, mc->lowest_score() ) << "  " << type << "   ";
 
-      switch( mc->mc_accepted() ) {
-      case 0: outstring << "reject             "; break;
-      case 1: outstring << "thermal accept     "; break;
-      case 2: outstring << "downhill accept    "; break;
-      case 3: outstring << "lowest accept      "; break;
-      }
-      //TR.Debug << outstring.str() << "\n";
-      TR.Trace << outstring.str() << std::endl;
-  }
-  clear_score();
-  return;
+		switch( mc->mc_accepted() ) {
+		case 0 : outstring << "reject             "; break;
+		case 1 : outstring << "thermal accept     "; break;
+		case 2 : outstring << "downhill accept    "; break;
+		case 3 : outstring << "lowest accept      "; break;
+		}
+		//TR.Debug << outstring.str() << "\n";
+		TR.Trace << outstring.str() << std::endl;
+	}
+	clear_score();
+	return;
 }
 
 

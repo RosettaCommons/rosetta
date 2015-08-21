@@ -36,9 +36,9 @@ class RNA_O2PrimeMover: public protocols::moves::Mover {
 public:
 
 	RNA_O2PrimeMover( core::scoring::ScoreFunctionOP scorefxn,
-									 bool const sample_all_o2prime,
-									 core::Real const sample_range_small,
-									 core::Real const sample_range_large );
+		bool const sample_all_o2prime,
+		core::Real const sample_range_small,
+		core::Real const sample_range_large );
 
 	//destructor -- necessary? -- YES destructors are necessary.
 	~RNA_O2PrimeMover();
@@ -50,7 +50,7 @@ public:
 	virtual void apply( core::pose::Pose & pose_to_visualize );
 	virtual std::string get_name() const;
 
-  void
+	void
 	apply( core::pose::Pose & pose, std::string & move_type );
 
 private:

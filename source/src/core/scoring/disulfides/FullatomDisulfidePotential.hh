@@ -160,7 +160,7 @@ private:
 		Real & cs_bond_angle_2,
 		Real & disulf_dihedral_angle, // dihedral (torsion) angle, cbeta-s-s-cbeta
 		Real & disulf_ca_dihedral_angle_1,
-		 // dihedral (torsion) angle, calpha1-cbeta1-s1-s2
+		// dihedral (torsion) angle, calpha1-cbeta1-s1-s2
 		Real & disulf_ca_dihedral_angle_2 // dihedral (torsion) angle, calpha2-cbeta2-s2-s1
 	) const;
 

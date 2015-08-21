@@ -54,7 +54,7 @@ void ReadWriteMutex::obtain_write_lock()
 	// Release the mutexes without unlocking them and exit this function
 
 	prevent_more_reads.release();
-  no_more_readers.release();
+	no_more_readers.release();
 }
 
 void ReadWriteMutex::release_write_lock()

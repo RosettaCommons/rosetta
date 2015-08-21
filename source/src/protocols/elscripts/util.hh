@@ -26,17 +26,17 @@ namespace protocols {
 namespace elscripts {
 
 core::scoring::ScoreFunctionOP parse_scoredef( utility::lua::LuaObject const & scoredef,
-		utility::lua::LuaObject const & score_fxns );
+	utility::lua::LuaObject const & score_fxns );
 
-void parse_movemapdef( utility::lua::LuaObject const & movemapdef, core::kinematics::MoveMapOP mm );	
+void parse_movemapdef( utility::lua::LuaObject const & movemapdef, core::kinematics::MoveMapOP mm );
 
 core::pack::task::TaskFactoryOP
 parse_taskdef( utility::lua::LuaObject const & taskdef,
-		utility::lua::LuaObject const & tasks );
+	utility::lua::LuaObject const & tasks );
 
 core::pack::task::TaskFactorySP
 sp_parse_taskdef( utility::lua::LuaObject const & taskdef,
-		utility::lua::LuaObject const & tasks );
+	utility::lua::LuaObject const & tasks );
 
 } // protocols
 } // elscripts

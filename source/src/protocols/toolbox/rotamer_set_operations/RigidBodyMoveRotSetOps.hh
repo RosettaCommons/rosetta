@@ -49,7 +49,7 @@ namespace rotamer_set_operations {
 ///
 ///   Subclasses must implement get_rigid_body_confs.
 ///
-///   Subclasses may implement increase_packer_residue_radius to 
+///   Subclasses may implement increase_packer_residue_radius to
 /// optimize this calculation. Default implementation calls get_rigid_body_confs
 /// and calculates the maximum nbr_atom delta.
 ///
@@ -57,7 +57,7 @@ class RigidBodyMoveBaseRSO : public core::pack::rotamer_set::RotamerSetOperation
 {
 	typedef core::pack::rotamer_set::RotamerSetOperation parent;
 
-	protected:
+protected:
 	RigidBodyMoveBaseRSO() :
 		parent()
 	{}
@@ -68,7 +68,7 @@ class RigidBodyMoveBaseRSO : public core::pack::rotamer_set::RotamerSetOperation
 	{}
 
 
-	public:
+public:
 	/// @brief Adds additional rotamers at each rb conf.
 	///
 	/// @details
@@ -95,7 +95,7 @@ class RigidBodyMoveBaseRSO : public core::pack::rotamer_set::RotamerSetOperation
 	);
 
 	/// @brief returns the largest possible change in nbr atoms location
-	/// 
+	///
 	/// Default implementation calls determine_larget_nbr_atom_distance with
 	/// results of get_rigid_body_confs. Override this function if calculation
 	/// can be optimized without call call to get_rigid_body_confs.
@@ -124,12 +124,12 @@ class RigidBodyMoveBaseRSO : public core::pack::rotamer_set::RotamerSetOperation
 		core::conformation::Residue const & target_res,
 		utility::vector1< core::conformation::ResidueCOP > alternate_confs);
 
-	private:
-		core::pack::rotamer_set::BumpSelector bump_selector_;
+private:
+	core::pack::rotamer_set::BumpSelector bump_selector_;
 };
 
 /// @details
-/// Basic implementation of alternate rb conf set operation. 
+/// Basic implementation of alternate rb conf set operation.
 /// The alternative positions are set externally before packing.
 class RigidBodyMoveRSO : public RigidBodyMoveBaseRSO
 {

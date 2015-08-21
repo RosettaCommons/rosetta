@@ -57,8 +57,8 @@ public:
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );
 	void parse_def( utility::lua::LuaObject const & def,
-					utility::lua::LuaObject const & score_fxns,
-					utility::lua::LuaObject const & tasks );
+		utility::lua::LuaObject const & score_fxns,
+		utility::lua::LuaObject const & tasks );
 
 	utility::vector1< core::Size > first_pass_ala_scan( core::pose::Pose const & pose ) const; // return a list of residues that pass the ddG threshold
 	core::Real compute_Boltzmann_weight( core::pose::Pose const & pose, core::Size const resi ) const;
@@ -84,7 +84,7 @@ public:
 	bool compute_entropy_reduction() const;
 	void compute_entropy_reduction( bool const cer );
 	void repack( bool const repack );
-  bool repack() const;
+	bool repack() const;
 	bool skip_ala_scan() const;
 	void skip_ala_scan( bool const s );
 	std::string type() const;
@@ -107,9 +107,9 @@ private:
 
 	bool compute_entropy_reduction_; //dflt false; compute the difference between the bound and unbound states
 	bool repack_; //dflt true; carry out ddG (true) or dG (false) calculations
-/// the following are mutable b/c they only sum up data in the filter. They do not affect
-/// how the filter is run (so the filter will remain logically constant, despite these variables)
-/// Mutability here allows the variables to be changed even in const methods.
+	/// the following are mutable b/c they only sum up data in the filter. They do not affect
+	/// how the filter is run (so the filter will remain logically constant, despite these variables)
+	/// Mutability here allows the variables to be changed even in const methods.
 	mutable std::map< core::Size, core::Real > ddGs_;//save the ddG values for a final report
 	mutable std::map< core::Size, core::Real > rotamer_probabilities_;//ditto for the probabilities
 	std::string type_;

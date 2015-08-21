@@ -27,23 +27,24 @@ namespace ligand_options {
 static thread_local basic::Tracer interface_distance_tracer( "protocols.ligand_docking.ligand_options.InterfaceBuilder", basic::t_debug );
 
 bool check_all_ligand_atoms(
-		core::conformation::Residue const & ligand_interface_residue,
-		core::Vector const potential_interface_vector,
-		core::Real const cutoff
+	core::conformation::Residue const & ligand_interface_residue,
+	core::Vector const potential_interface_vector,
+	core::Real const cutoff
 ){
 	core::Real cutoff_squared= cutoff*cutoff;
-	for(core::Size i = 1, i_end = ligand_interface_residue.nheavyatoms(); i <= i_end; ++i) {
+	for ( core::Size i = 1, i_end = ligand_interface_residue.nheavyatoms(); i <= i_end; ++i ) {
 		core::Vector ligand_vector= ligand_interface_residue.xyz(i);
-		if( is_interface_vector(potential_interface_vector, ligand_vector, cutoff_squared) )
+		if ( is_interface_vector(potential_interface_vector, ligand_vector, cutoff_squared) ) {
 			return true;
+		}
 	}
 	return false;
 }
 
 bool check_neighbor_ligand_atom(
-		core::conformation::Residue const & ligand_interface_residue,
-		core::Vector const potential_interface_vector,
-		core::Real const cutoff
+	core::conformation::Residue const & ligand_interface_residue,
+	core::Vector const potential_interface_vector,
+	core::Real const cutoff
 ){
 	core::Real cutoff_squared= cutoff*cutoff;
 	core::Size ligand_neighbor_atom_id= ligand_interface_residue.nbr_atom();
@@ -53,16 +54,15 @@ bool check_neighbor_ligand_atom(
 }
 
 bool is_interface_vector(
-		core::Vector const & questionable_vector,
-		core::Vector const & ligand_vector,
-		core::Real const cutoff_squared
+	core::Vector const & questionable_vector,
+	core::Vector const & ligand_vector,
+	core::Real const cutoff_squared
 ){
 
 	double distance_squared = ligand_vector.distance_squared(questionable_vector);
 	if ( distance_squared <= cutoff_squared ) {
 		return true; // don't need to go through all atoms
-	}
-	else{
+	} else {
 		return false;
 	}
 }

@@ -198,14 +198,14 @@ public:
 	/// @brief Set if threshold is an upper (false/default) or lower (true) limit
 	void set_lower_threshold( bool floor = false ) { floor_ = floor; }
 
-/// @brief Add a condition to the test.
-/// If testfilter evaluates true, then this filter evaluates to valuefilter.
-/// If valuefilter is NULL, then return value instead.
-/// Conditions are evaluated in the order they were added.
+	/// @brief Add a condition to the test.
+	/// If testfilter evaluates true, then this filter evaluates to valuefilter.
+	/// If valuefilter is NULL, then return value instead.
+	/// Conditions are evaluated in the order they were added.
 	void add_condition( FilterCOP testfilter, FilterCOP valuefilter, core::Real value = 0, bool invert = false, core::Real weight = 1 );
 
-/// @brief Add evaluation if no conditions trigger
-/// If elsefilter is Null, use absolute value value instead.
+	/// @brief Add evaluation if no conditions trigger
+	/// If elsefilter is Null, use absolute value value instead.
 	void set_else( FilterCOP elsefilter, core::Real value = 0, core::Real elseweight = 1 );
 
 	void parse_my_tag(

@@ -31,23 +31,23 @@ qsarOptFunc::qsarOptFunc(
 {
 	std::string value_string =
 		"SELECT job_string_real_data.data_value\n"
-		"	FROM job_string_real_data\n"
-		"	WHERE\n"
-		"		job_string_real_data.data_key = ?\n"
-		"	AND\n"
-		"		job_string_real_data.struct_id = ?;";
+		"\tFROM job_string_real_data\n"
+		"\tWHERE\n"
+		"\t\tjob_string_real_data.data_key = ?\n"
+		"\tAND\n"
+		"\t\tjob_string_real_data.struct_id = ?;";
 
 	score_selection_ = basic::database::safely_prepare_statement(value_string,db_session);
 
-    std::string struct_id_string = "SELECT structures.struct_id FROM structures;";
+	std::string struct_id_string = "SELECT structures.struct_id FROM structures;";
 
 	struct_id_selection_ = basic::database::safely_prepare_statement(struct_id_string,db_session);
 
 	std::string tag_activity_string =
 		"SELECT structures.tag, structure_activity.activity\n"
-		"	FROM structures\n"
-		"	INNER JOIN structure_activity ON structures.input_tag = structure_activity.input_tag\n"
-		"	WHERE structures.struct_id = ?;";
+		"\tFROM structures\n"
+		"\tINNER JOIN structure_activity ON structures.input_tag = structure_activity.input_tag\n"
+		"\tWHERE structures.struct_id = ?;";
 
 	tag_activity_selection_ =  basic::database::safely_prepare_statement(tag_activity_string,db_session);
 
@@ -58,8 +58,8 @@ void qsarOptFunc::setup_data_map()
 	data_map_.clear();
 
 	cppdb::result struct_id_result(basic::database::safely_read_from_database(struct_id_selection_));
-	while(struct_id_result.next())
-	{
+	while ( struct_id_result.next() )
+			{
 		core::Size struct_id;
 		struct_id_result >> struct_id;
 		data_map_.push_back(get_struct_data(struct_id));
@@ -78,13 +78,11 @@ core::Real qsarOptFunc::operator() (core::optimization::Multivec const & vars) c
 
 	numeric::RocCurve roc_curve;
 
-	for(std::list<qsarOptData>::const_iterator data_it = data_map_.begin(); data_it != data_map_.end();++data_it)
-	{
+	for ( std::list<qsarOptData>::const_iterator data_it = data_map_.begin(); data_it != data_map_.end(); ++data_it ) {
 
 		core::Real total_score = 0.0;
 
-		for(std::map<std::string,core::Real>::const_iterator score_it = data_it->score_map.begin(); score_it != data_it->score_map.end();++score_it)
-		{
+		for ( std::map<std::string,core::Real>::const_iterator score_it = data_it->score_map.begin(); score_it != data_it->score_map.end(); ++score_it ) {
 			core::Size vec_index = grid_indices_.find(score_it->first)->second;
 			core::Real initial_weight = initial_values_[vec_index];
 			core::Real current_weight = vars[vec_index];
@@ -119,20 +117,17 @@ qsarOptData qsarOptFunc::get_struct_data(core::Size const & struct_id )
 	std::string tag;
 	core::Size activity;
 	cppdb::result tag_activity_result(basic::database::safely_read_from_database(tag_activity_selection_));
-	if(tag_activity_result.next())
-	{
+	if ( tag_activity_result.next() ) {
 		tag_activity_result >> tag >> activity;
 	}
 
 	score_selection_.bind(2,struct_id);
 	std::map<std::string,core::Real> score_map;
 
-	for(std::map<std::string,core::Size>::iterator grid_it = grid_indices_.begin(); grid_it != grid_indices_.end(); ++grid_it)
-	{
+	for ( std::map<std::string,core::Size>::iterator grid_it = grid_indices_.begin(); grid_it != grid_indices_.end(); ++grid_it ) {
 		score_selection_.bind(1,grid_it->first+"_score_X");
 		cppdb::result score_result(basic::database::safely_read_from_database(score_selection_));
-		if(score_result.next())
-		{
+		if ( score_result.next() ) {
 			core::Real component_score;
 			score_result >> component_score;
 			score_map.insert(std::make_pair(grid_it->first,component_score));

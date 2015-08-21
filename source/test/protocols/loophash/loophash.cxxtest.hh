@@ -44,33 +44,33 @@ using namespace protocols;
 using namespace protocols::loophash;
 
 class LoophashTest: public CxxTest::TestSuite {
- public:
+public:
 
 	void setUp() {
 		core_init();
 	}
-	
-	
+
+
 	void test_database() {
 		TR << "Testing..." << std::endl;
-		core::pose::Pose	sample_pose;
+		core::pose::Pose sample_pose;
 
-		std::string seq = "TAKESMEFCKANDSMSHITMAKEAFCKSHITSTACKAFCKSHITSTACK"; 
+		std::string seq = "TAKESMEFCKANDSMSHITMAKEAFCKSHITSTACKAFCKSHITSTACK";
 		make_pose_from_sequence(sample_pose, seq ,"fa_standard");
 
 		// make an alpha helix
-		for( core::Size ir = 1; ir < sample_pose.total_residue(); ir ++ ) {
+		for ( core::Size ir = 1; ir < sample_pose.total_residue(); ir ++ ) {
 			sample_pose.set_phi( ir, numeric::random::rg().uniform()*360.0 - 180.0 );
 			sample_pose.set_psi( ir, numeric::random::rg().uniform()*360.0 - 180.0 );
 			sample_pose.set_omega( ir, numeric::random::rg().uniform()*360.0 - 180.0 );
 		}
-		
+
 		TR << "Importing test pose ..." << std::endl;
 
 		utility::vector1 < core::Size > loop_sizes;
 		loop_sizes.push_back( 10 );
 		loophash::LoopHashLibraryOP loop_hash_library( new loophash::LoopHashLibrary( loop_sizes, 0 , 1 ) );
-		
+
 		TS_ASSERT(loop_hash_library->test_saving_library( sample_pose, 14, true ));
 
 		TR << "Save Library: " << std::endl;
@@ -81,14 +81,14 @@ class LoophashTest: public CxxTest::TestSuite {
 
 		loophash::LoopHashLibraryOP read_loop_hash_library( new loophash::LoopHashLibrary( loop_sizes, 0 , 1 ) );
 		read_loop_hash_library->load_db();
-		
+
 		TR << "Retesting Library: " << std::endl;
 
 		TS_ASSERT(read_loop_hash_library->test_saving_library( sample_pose, 14, false  ) );
-		
+
 		TR << "Done test" << std::endl;
 
-}
+	}
 
 };
 

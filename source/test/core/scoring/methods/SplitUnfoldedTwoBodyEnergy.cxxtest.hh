@@ -48,7 +48,7 @@ using namespace core::scoring::methods;
 
 class SplitUnfoldedReferenceEnergyTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	PoseOP the_pose;
 	Real TOLERATED_ERROR;

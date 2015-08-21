@@ -23,93 +23,93 @@
 
 namespace devel {
 
-  namespace inv_kin_lig_loop_design {
+namespace inv_kin_lig_loop_design {
 
-    using namespace std;
+using namespace std;
 
-    namespace Fragment {
+namespace Fragment {
 
-      // ____________________ Entry ____________________
+// ____________________ Entry ____________________
 
-      class ResEntry {
-      public:
-				string pdbid;
-				char aa, ss;
-				float phi,psi,ohm;
+class ResEntry {
+public:
+	string pdbid;
+	char aa, ss;
+	float phi,psi,ohm;
 
-				void reportRama(ostream& out) const;
+	void reportRama(ostream& out) const;
 
-      }; // class ResEntry
+}; // class ResEntry
 
-      istream& operator>>(istream& in, ResEntry& e);
-      ostream& operator<<(ostream& in, const ResEntry& e);
+istream& operator>>(istream& in, ResEntry& e);
+ostream& operator<<(ostream& in, const ResEntry& e);
 
-      // ____________________ Entry ____________________
+// ____________________ Entry ____________________
 
-      class Entry {
-      public:
-				vector<ResEntry> vResEntries;
-      }; // class Entry
+class Entry {
+public:
+	vector<ResEntry> vResEntries;
+}; // class Entry
 
-      istream& operator>>(istream& in, Entry& e);
-      ostream& operator<<(ostream& in, const Entry& e);
+istream& operator>>(istream& in, Entry& e);
+ostream& operator<<(ostream& in, const Entry& e);
 
-      // ____________________ File ____________________
+// ____________________ File ____________________
 
-      class File {
-      private:
-				map<int,vector<Entry> > mEntries;
+class File {
+private:
+	map<int,vector<Entry> > mEntries;
 
-      public:
+public:
 
-				File();
-				File(const string& file);
+	File();
+	File(const string& file);
 
-				void clear();
-				void addEntry(const Entry& e);
-				const Entry& getEntry(const int len) const;
-				const map<int,vector<Entry> >& getEntries() const { return mEntries; }
+	void clear();
+	void addEntry(const Entry& e);
+	const Entry& getEntry(const int len) const;
+	const map<int,vector<Entry> >& getEntries() const { return mEntries; }
 
-				// XXX would like a filter method in File
+	// XXX would like a filter method in File
 
-				void convertEntries(const int frag_len_from, const int frag_len_to);
+	void convertEntries(const int frag_len_from, const int frag_len_to);
 
-				void filter(const double max_rama, const int len);
-				void report(ostream& out) const;
+	void filter(const double max_rama, const int len);
+	void report(ostream& out) const;
 
-				const File getFile(const int frag_len) const;
+	const File getFile(const int frag_len) const;
 
-				void reportRama(ostream& out) const;
-				void reportRama(const string& outfile) const;
+	void reportRama(ostream& out) const;
+	void reportRama(const string& outfile) const;
 
-      }; // class File
+}; // class File
 
-      istream& operator>>(istream& in, File& f);
-      ostream& operator<<(ostream& in, const File& f);
+istream& operator>>(istream& in, File& f);
+ostream& operator<<(ostream& in, const File& f);
 
-    } // namespace Fragment
+} // namespace Fragment
 
-    struct Librarian {
+struct Librarian {
 
-      static const Fragment::File* getFragmentFile_loop();
-      static const Fragment::File* getFragmentFile_sheet();
-      static const Fragment::File* getFragmentFile_helix();
-      static const Fragment::File* getFragmentFile(const char ss);
-      static const Fragment::File* getFragmentFile(const string& ss0);
+	static const Fragment::File* getFragmentFile_loop();
+	static const Fragment::File* getFragmentFile_sheet();
+	static const Fragment::File* getFragmentFile_helix();
+	static const Fragment::File* getFragmentFile(const char ss);
+	static const Fragment::File* getFragmentFile(const string& ss0);
 
-    private:
-      static string get(string const& name);
+private:
+	static string get(string const& name);
 
-      static map<string,Fragment::File*> mFragfiles_ss;
+	static map<string,Fragment::File*> mFragfiles_ss;
 
-      static Fragment::File* frag_file_loop;
-      static Fragment::File* frag_file_sheet;
-      static Fragment::File* frag_file_helix;
+	static Fragment::File* frag_file_loop;
+	static Fragment::File* frag_file_sheet;
+	static Fragment::File* frag_file_helix;
 
-    };
+};
 
 
-  } // namespace LoopDesign
+} // namespace LoopDesign
 
 } // namespace Util
 

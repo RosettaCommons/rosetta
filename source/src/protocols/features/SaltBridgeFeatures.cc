@@ -49,8 +49,8 @@
 #include <string>
 #include <sstream>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::string;
 using std::stringstream;
@@ -181,13 +181,13 @@ SaltBridgeFeatures::report_features(
 	// just the ones involved in hydrogen bonds
 	std::string hbond_string =
 		"SELECT\n"
-		"	acc.site_id, acc.resNum, acc.atmNum, don.resNum\n"
+		"\tacc.site_id, acc.resNum, acc.atmNum, don.resNum\n"
 		"FROM\n"
-		"	hbond_sites AS acc, residues AS don\n"
+		"\thbond_sites AS acc, residues AS don\n"
 		"WHERE\n"
-		"	don.struct_id = ? AND acc.struct_id = ? AND\n"
+		"\tdon.struct_id = ? AND acc.struct_id = ? AND\n"
 		" (don.name3 = 'ARG' OR don.name3 = 'LYS' OR don.name3 = 'HIS') AND\n"
-		"	(acc.HBChemType = 'hbacc_CXA' OR acc.HBChemType = 'hbacc_CXL');\n";
+		"\t(acc.HBChemType = 'hbacc_CXA' OR acc.HBChemType = 'hbacc_CXL');\n";
 	statement hbond_stmt(basic::database::safely_prepare_statement(hbond_string,db_session));
 	hbond_stmt.bind(1,struct_id);
 	hbond_stmt.bind(2,struct_id);
@@ -203,7 +203,7 @@ SaltBridgeFeatures::report_features(
 	statement salt_bridge_statement(basic::database::safely_prepare_statement(salt_bridge_string,db_session));
 
 
-	while(res.next()){
+	while ( res.next() ) {
 		res >> acc_site_id >> acc_resNum >> acc_atmNum >> don_resNum;
 
 		Residue const & d(pose.residue(don_resNum));
@@ -216,11 +216,11 @@ SaltBridgeFeatures::report_features(
 		//instance, the CtermProteinFull patch inserts the OXT atom after
 		//the O at position 5 for otherwise unmodified protein backbones.
 		switch(d.aa()){
-		case aa_lys:
+		case aa_lys :
 			n = d.atom(d.atom_index(" NZ ")).xyz();
 			c = d.atom(d.atom_index(" NZ ")).xyz();
 			rho = c.distance(o);
-			if(rho > distance_cutoff_) continue;
+			if ( rho > distance_cutoff_ ) continue;
 
 			bb = d.atom(d.atom_index(" CD ")).xyz();
 			b = d.atom(d.atom_index(" CE ")).xyz();
@@ -228,12 +228,12 @@ SaltBridgeFeatures::report_features(
 			psi = dihedral_radians(bb, b, c, o);
 			theta = angle_of(b, c, o) - pi/2;
 			break;
-		case aa_his:
+		case aa_his :
 			n = d.atom(d.atom_index(" ND1")).xyz();
 
 			c = (n + d.atom(d.atom_index(" NE2")).xyz())/2;
 			rho = c.distance(o);
-			if(rho > distance_cutoff_) continue;
+			if ( rho > distance_cutoff_ ) continue;
 
 			b = d.atom(d.atom_index(" CG ")).xyz();
 			don_frame.from_four_points(c,c,b,n);
@@ -241,30 +241,30 @@ SaltBridgeFeatures::report_features(
 			psi = local_o.phi()*pi_over_180;
 			theta = local_o.theta()*pi_over_180 - pi_over_2;
 			break;
-		case aa_arg:
+		case aa_arg :
 			c = d.atom(d.atom_index(" CZ ")).xyz();
 			rho = c.distance(o);
-			if(rho > distance_cutoff_) continue;
+			if ( rho > distance_cutoff_ ) continue;
 
 			b = d.atom(d.atom_index(" NE ")).xyz();
 
 			{
-				PointPosition const & n0(d.atom(d.atom_index(" NE ")).xyz());
-				PointPosition const & n1(d.atom(d.atom_index(" NH1")).xyz());
-				PointPosition const & n2(d.atom(d.atom_index(" NH2")).xyz());
+			PointPosition const & n0(d.atom(d.atom_index(" NE ")).xyz());
+			PointPosition const & n1(d.atom(d.atom_index(" NH1")).xyz());
+			PointPosition const & n2(d.atom(d.atom_index(" NH2")).xyz());
 
-				n = n0.distance(o) < n1.distance(o) ?
-					(n0.distance(o) < n2.distance(o) ? n0 : n2) :
-					(n1.distance(o) < n2.distance(o) ? n1 : n2);
+			n = n0.distance(o) < n1.distance(o) ?
+				(n0.distance(o) < n2.distance(o) ? n0 : n2) :
+				(n1.distance(o) < n2.distance(o) ? n1 : n2);
 
-				don_frame.from_four_points(c,c,b,n1);
-			}
+			don_frame.from_four_points(c,c,b,n1);
+		}
 
 			local_o = xyz_to_spherical(don_frame.global2local(o));
 			psi = local_o.phi()*pi_over_180;
 			theta = local_o.theta()*pi_over_180 - pi_over_2;
 			break;
-		default:
+		default :
 			stringstream err_msg;
 			err_msg
 				<< "Unrecognized salt bridging donor group on rsd: (" << d.name3() << ", " << don_resNum << ")" << endl;

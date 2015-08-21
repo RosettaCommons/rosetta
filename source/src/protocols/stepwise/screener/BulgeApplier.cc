@@ -29,45 +29,45 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	//Constructor
-	BulgeApplier::BulgeApplier( RNA_AtrRepCheckerOP atr_rep_checker,
-															RNA_BaseCentroidCheckerOP base_centroid_checker,
-															Size const moving_res ):
-		atr_rep_checker_( atr_rep_checker ),
-		base_centroid_checker_( base_centroid_checker ),
-		bulge_apply_mover_( modeler::rna::bulge::BulgeApplyMoverOP( new modeler::rna::bulge::BulgeApplyMover( moving_res ) ) ),
-		bulge_unapply_mover_( modeler::rna::bulge::BulgeUnApplyMoverOP( new modeler::rna::bulge::BulgeUnApplyMover( moving_res ) ) )
-	{}
+//Constructor
+BulgeApplier::BulgeApplier( RNA_AtrRepCheckerOP atr_rep_checker,
+	RNA_BaseCentroidCheckerOP base_centroid_checker,
+	Size const moving_res ):
+	atr_rep_checker_( atr_rep_checker ),
+	base_centroid_checker_( base_centroid_checker ),
+	bulge_apply_mover_( modeler::rna::bulge::BulgeApplyMoverOP( new modeler::rna::bulge::BulgeApplyMover( moving_res ) ) ),
+	bulge_unapply_mover_( modeler::rna::bulge::BulgeUnApplyMoverOP( new modeler::rna::bulge::BulgeUnApplyMover( moving_res ) ) )
+{}
 
-	//Destructor
-	BulgeApplier::~BulgeApplier()
-	{}
+//Destructor
+BulgeApplier::~BulgeApplier()
+{}
 
-	////////////////////////////////////////////////////////////////////////////////////////
-	void
-	BulgeApplier::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
-		using namespace protocols::stepwise::modeler::rna::bulge;
-		if ( bulge_variant_decision() ){
-			update_mover->add_mover( bulge_apply_mover_ );
-			restore_mover->add_mover( bulge_unapply_mover_ );
-		} else {
-			update_mover->add_mover( 0 );
-			restore_mover->add_mover( 0 );
-		}
+////////////////////////////////////////////////////////////////////////////////////////
+void
+BulgeApplier::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
+	using namespace protocols::stepwise::modeler::rna::bulge;
+	if ( bulge_variant_decision() ) {
+		update_mover->add_mover( bulge_apply_mover_ );
+		restore_mover->add_mover( bulge_unapply_mover_ );
+	} else {
+		update_mover->add_mover( 0 );
+		restore_mover->add_mover( 0 );
 	}
+}
 
-	////////////////////////////////////////////////////////////////////////////////////////
-	bool
-	BulgeApplier::bulge_variant_decision(){
+////////////////////////////////////////////////////////////////////////////////////////
+bool
+BulgeApplier::bulge_variant_decision(){
 
-		if ( base_centroid_checker_->found_centroid_interaction() ) return false;
+	if ( base_centroid_checker_->found_centroid_interaction() ) return false;
 
-		static Real const atr_cutoff_for_bulge( -999999.0 ); //Feb 02, 2012
-		Real const delta_atr_score = atr_rep_checker_->delta_atr_score();
-		runtime_assert ( delta_atr_score <= (  + 0.01 ) );
+	static Real const atr_cutoff_for_bulge( -999999.0 ); //Feb 02, 2012
+	Real const delta_atr_score = atr_rep_checker_->delta_atr_score();
+	runtime_assert ( delta_atr_score <= (  + 0.01 ) );
 
-		return ( delta_atr_score >= atr_cutoff_for_bulge );
-	}
+	return ( delta_atr_score >= atr_cutoff_for_bulge );
+}
 
 
 } //screener

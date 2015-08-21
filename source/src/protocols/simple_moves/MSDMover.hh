@@ -35,12 +35,12 @@ class MSDMover : public moves::VectorPoseMover {
 
 public:
 	/// @brief
-	/// 	empty constructor fills values with the values
-	///		read in from the commandline
+	///  empty constructor fills values with the values
+	///  read in from the commandline
 	MSDMover();
 
 	MSDMover( protocols::moves::MoverOP mover,
-			utility::vector1< std::string > resfiles);
+		utility::vector1< std::string > resfiles);
 
 	~MSDMover();
 

@@ -65,13 +65,13 @@ public:
 		std::string const& label,
 		core::Real priority = 0.0
 	) : DofClaim( tc, NEED_TO_KNOW ),
-			label_( label ),
-			annotated_sequence_(annotated_sequence),
-			priority_( priority )
-    {}
+		label_( label ),
+		annotated_sequence_(annotated_sequence),
+		priority_( priority )
+	{}
 
 private:
-	//	core::Size pos_;
+	// core::Size pos_;
 	std::string label_;
 	core::sequence::AnnotatedSequence annotated_sequence_;
 	core::Real priority_; //lower first
@@ -101,27 +101,27 @@ public:
 		Parent::show( os );
 	};
 
- 	virtual std::string str_type() const {
- 		return "SEQUENCE";
- 	}
+	virtual std::string str_type() const {
+		return "SEQUENCE";
+	}
 
 };
-	//	core::Size position() const {
-	//		return pos_;
-	//	}
+// core::Size position() const {
+//  return pos_;
+// }
 
-	/// @brief if you want to have a residue (eg., for a new ligand) you will be given a number...
-	//	void set_offset( core::Size pos ) {
-	//		pos_ = pos;
-	//	}
+/// @brief if you want to have a residue (eg., for a new ligand) you will be given a number...
+// void set_offset( core::Size pos ) {
+//  pos_ = pos;
+// }
 
-	//	core::Size offset() const {
-	//		return pos_;
-	//	}
+// core::Size offset() const {
+//  return pos_;
+// }
 
-// 	core::Size last_residue() const {
-// 		return pos_+length_-1;
-// 	}
+//  core::Size last_residue() const {
+//   return pos_+length_-1;
+//  }
 
 //    virtual std::string to_string() const {
 //        std::ostringstream str_stream;

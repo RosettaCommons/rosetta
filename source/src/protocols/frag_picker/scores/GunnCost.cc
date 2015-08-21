@@ -61,14 +61,14 @@ void GunnCost::compute_gunn( core::pose::Pose const& pose, core::Size begin, cor
 	p2 = pose.xyz ( CAj );
 	p3 = pose.xyz ( Cj );
 	/*{
-		Vector d1,d2,d3;
-		d1 = p1-p2;
-		d2 = p1-p3;
-		d3 = p2-p3;
-		trGunnCost.Trace << "N-CA " << d1.length() << " N-C" << d2.length() << " CA-C " << d3.length()<< std::endl;
-		trGunnCost.Trace << p1[0] << " " << p1[1] << " " << p1[2] << std::endl;
-		trGunnCost.Trace << p2[0] << " " << p2[1] << " " << p2[2] << std::endl;
-		trGunnCost.Trace << p3[0] << " " << p3[1] << " " << p3[2] << std::endl;
+	Vector d1,d2,d3;
+	d1 = p1-p2;
+	d2 = p1-p3;
+	d3 = p2-p3;
+	trGunnCost.Trace << "N-CA " << d1.length() << " N-C" << d2.length() << " CA-C " << d3.length()<< std::endl;
+	trGunnCost.Trace << p1[0] << " " << p1[1] << " " << p1[2] << std::endl;
+	trGunnCost.Trace << p2[0] << " " << p2[1] << " " << p2[2] << std::endl;
+	trGunnCost.Trace << p3[0] << " " << p3[1] << " " << p3[2] << std::endl;
 	}*/
 	x1 = p1 - p2;
 	x1.normalize();
@@ -102,7 +102,7 @@ void GunnCost::compute_gunn( core::pose::Pose const& pose, core::Size begin, cor
 
 	//  compute inter residue vector
 	R = pose.xyz( CAk ) - pose.xyz( CAj );
-    	/* trGunnCost.Trace  << R[0] << " " << R[1] << " " << R[2]  << std::endl; */
+	/* trGunnCost.Trace  << R[0] << " " << R[1] << " " << R[2]  << std::endl; */
 	//  compute gunn quantities
 
 	data.q6 = R.length();

@@ -33,68 +33,68 @@
 #include <utility> //pair
 
 
-namespace protocols{
-namespace toolbox{
-namespace task_operations{
+namespace protocols {
+namespace toolbox {
+namespace task_operations {
 
 class RestrictInterGroupVectorOperation : public core::pack::task::operation::TaskOperation {
 public:
-  typedef core::pack::task::operation::TaskOperation parent;
-  typedef std::set< core::Size > one_group;
-  typedef std::pair< one_group, one_group > group_pair;
-  typedef utility::vector1< group_pair > group_vector;
+	typedef core::pack::task::operation::TaskOperation parent;
+	typedef std::set< core::Size > one_group;
+	typedef std::pair< one_group, one_group > group_pair;
+	typedef utility::vector1< group_pair > group_vector;
 public:
 
-  /// @brief default constructor
-  RestrictInterGroupVectorOperation();
+	/// @brief default constructor
+	RestrictInterGroupVectorOperation();
 
-  /// @brief full constructor
-  RestrictInterGroupVectorOperation(
-    group_vector const & group,
-    core::Real CB_dist_cutoff,
-    core::Real nearby_atom_cutoff,
-    core::Real vector_angle_cutoff,
-    core::Real vector_dist_cutoff);
+	/// @brief full constructor
+	RestrictInterGroupVectorOperation(
+		group_vector const & group,
+		core::Real CB_dist_cutoff,
+		core::Real nearby_atom_cutoff,
+		core::Real vector_angle_cutoff,
+		core::Real vector_dist_cutoff);
 
-  //@brief convienience contstuctor for one pair
-  RestrictInterGroupVectorOperation(
-    group_pair const & one_group,
-    core::Real CB_dist_cutoff,
-    core::Real nearby_atom_cutoff,
-    core::Real vector_angle_cutoff,
-    core::Real vector_dist_cutoff);
+	//@brief convienience contstuctor for one pair
+	RestrictInterGroupVectorOperation(
+		group_pair const & one_group,
+		core::Real CB_dist_cutoff,
+		core::Real nearby_atom_cutoff,
+		core::Real vector_angle_cutoff,
+		core::Real vector_dist_cutoff);
 
-  /// @brief destructor
-  ~RestrictInterGroupVectorOperation();
+	/// @brief destructor
+	~RestrictInterGroupVectorOperation();
 
-  /// @brief make clone
-  virtual core::pack::task::operation::TaskOperationOP clone() const;
+	/// @brief make clone
+	virtual core::pack::task::operation::TaskOperationOP clone() const;
 
 public:
-  /// @brief parse_tag
-  //parse_tag(
-  //  utility::tag::TagCOP tag,
-  // core::pose::Pose const & pose);
+	/// @brief parse_tag
+	//parse_tag(
+	//  utility::tag::TagCOP tag,
+	// core::pose::Pose const & pose);
 
-  /// @brief apply
-  virtual void apply( Pose const & pose, core::pack::task::PackerTask & task ) const;
+	/// @brief apply
+	virtual void apply( Pose const & pose, core::pack::task::PackerTask & task ) const;
 
-// /// @brief parse_tag
-// void parse_tag(utility::tag::TagCOP tag);
+	// /// @brief parse_tag
+	// void parse_tag(utility::tag::TagCOP tag);
 
-  /// @brief setters for member data
-  void insert_pair( group_pair  pair);
-  void CB_dist_cutoff( core::Real  CB_dist_cutoff);
-  void nearby_atom_cutoff(core::Real  nearby_atom_cutoff);
-  void vector_angle_cutoff(core::Real  vector_angle_cutoff);
-  void vector_dist_cutoff(core::Real  vector_dist_cutoff);
+	/// @brief setters for member data
+	void insert_pair( group_pair  pair);
+	void CB_dist_cutoff( core::Real  CB_dist_cutoff);
+	void nearby_atom_cutoff(core::Real  nearby_atom_cutoff);
+	void vector_angle_cutoff(core::Real  vector_angle_cutoff);
+	void vector_dist_cutoff(core::Real  vector_dist_cutoff);
 
 private:
-  group_vector pair_vector_;
-  core::Real CB_dist_cutoff_;
-  core::Real nearby_atom_cutoff_;
-  core::Real vector_angle_cutoff_;
-  core::Real vector_dist_cutoff_;
+	group_vector pair_vector_;
+	core::Real CB_dist_cutoff_;
+	core::Real nearby_atom_cutoff_;
+	core::Real vector_angle_cutoff_;
+	core::Real vector_dist_cutoff_;
 };
 
 

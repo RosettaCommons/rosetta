@@ -17,23 +17,23 @@
 #include <utility/pointer/owning_ptr.hh>
 
 
-namespace protocols{
-namespace toolbox{
-	class Node;
-	typedef utility::pointer::shared_ptr< Node > NodeOP;
-	typedef utility::pointer::shared_ptr< Node const > NodeCOP;
+namespace protocols {
+namespace toolbox {
+class Node;
+typedef utility::pointer::shared_ptr< Node > NodeOP;
+typedef utility::pointer::shared_ptr< Node const > NodeCOP;
 
-	class ResidueNetwork;
-	typedef utility::pointer::shared_ptr< ResidueNetwork > ResidueNetworkOP;
-	typedef utility::pointer::shared_ptr< ResidueNetwork const > ResidueNetworkCOP;
+class ResidueNetwork;
+typedef utility::pointer::shared_ptr< ResidueNetwork > ResidueNetworkOP;
+typedef utility::pointer::shared_ptr< ResidueNetwork const > ResidueNetworkCOP;
 
-	class DistanceResidueNetwork;
-	typedef utility::pointer::shared_ptr< DistanceResidueNetwork > DistanceResidueNetworkOP;
-	typedef utility::pointer::shared_ptr< DistanceResidueNetwork const > DistanceResidueNetworkCOP;
+class DistanceResidueNetwork;
+typedef utility::pointer::shared_ptr< DistanceResidueNetwork > DistanceResidueNetworkOP;
+typedef utility::pointer::shared_ptr< DistanceResidueNetwork const > DistanceResidueNetworkCOP;
 
-	class CovalentResidueNetwork;
-	typedef utility::pointer::shared_ptr< CovalentResidueNetwork > CovalentResidueNetworkOP;
-	typedef utility::pointer::shared_ptr< CovalentResidueNetwork const > CovalentResidueNetworkCOP;
+class CovalentResidueNetwork;
+typedef utility::pointer::shared_ptr< CovalentResidueNetwork > CovalentResidueNetworkOP;
+typedef utility::pointer::shared_ptr< CovalentResidueNetwork const > CovalentResidueNetworkCOP;
 
 }
 }

@@ -112,7 +112,7 @@ InnerJob::show(
 		<< "nstruct max: " << nstruct_max_ << std::endl
 		<< "bad: " << (bad_ ? "true" : "false" ) << std::endl
 		<< "Pose:";
-	if( pose_ ){
+	if ( pose_ ) {
 		out << std::endl << *pose_ << std::endl;
 	} else {
 		out << " NULL" << std::endl;

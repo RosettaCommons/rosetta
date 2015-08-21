@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/modeler/rna/phosphate/PhosphateMove.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -23,11 +23,11 @@ namespace stepwise {
 namespace modeler {
 namespace rna {
 namespace phosphate {
-	
-	class PhosphateMove;
-	typedef utility::pointer::shared_ptr< PhosphateMove > PhosphateMoveOP;
-	typedef utility::pointer::shared_ptr< PhosphateMove const > PhosphateMoveCOP;
-	
+
+class PhosphateMove;
+typedef utility::pointer::shared_ptr< PhosphateMove > PhosphateMoveOP;
+typedef utility::pointer::shared_ptr< PhosphateMove const > PhosphateMoveCOP;
+
 } //phosphate
 } //rna
 } //modeler

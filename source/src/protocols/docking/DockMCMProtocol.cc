@@ -10,10 +10,10 @@
 /// @file DockMCMProtocol
 /// @brief protocols that are specific to high resolution docking
 /// @details
-///		This contains the functions that create initial positions for docking
-///		You can either randomize partner 1 or partner 2, spin partner 2, or
-///		perform a simple perturbation.
-/// 	Also contains docking mcm protocol
+///  This contains the functions that create initial positions for docking
+///  You can either randomize partner 1 or partner 2, spin partner 2, or
+///  perform a simple perturbation.
+///  Also contains docking mcm protocol
 /// @author Monica Berrondo
 /// @author Modified by Sergey Lyskov
 /// @author Modified by Sid Chaudhury
@@ -135,19 +135,19 @@ DockMCMProtocol::init()
 {
 	moves::Mover::type( "DockMCMProtocol" );
 	filter_ = DockingHighResFilterOP( new DockingHighResFilter() );
-    movemap_reset_ = false;
+	movemap_reset_ = false;
 	num_of_first_cycle_=4;
 	num_of_second_cycle_=45;
 
-    using namespace basic::options;
-    using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-    if ( option[ OptionKeys::docking::dock_mcm_first_cycles ].user() ) {
-        set_first_cycle(option[ OptionKeys::docking::dock_mcm_first_cycles ]() );
-    }
-    if ( option[ OptionKeys::docking::dock_mcm_second_cycles ].user() ) {
-        set_second_cycle(option[ OptionKeys::docking::dock_mcm_second_cycles ]() );
-    }
+	if ( option[ OptionKeys::docking::dock_mcm_first_cycles ].user() ) {
+		set_first_cycle(option[ OptionKeys::docking::dock_mcm_first_cycles ]() );
+	}
+	if ( option[ OptionKeys::docking::dock_mcm_second_cycles ].user() ) {
+		set_second_cycle(option[ OptionKeys::docking::dock_mcm_second_cycles ]() );
+	}
 
 
 }
@@ -157,7 +157,7 @@ DockMCMProtocol::init()
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief
 /// @details
-///		decides what to call according to options
+///  decides what to call according to options
 void DockMCMProtocol::apply( core::pose::Pose& pose )
 {
 
@@ -169,23 +169,22 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 	jd2::write_score_tracer( pose, "DockMCM_start" );
 
 	dock_mcm_ = DockMCMCycleOP( new DockMCMCycle( movable_jumps(), scorefxn(), scorefxn_pack() ) );
-    if(movemap_reset_){
-        dock_mcm_->set_move_map(movemap_);
-    }
-	//check if we are ignoring the default docking task
-	if( !ignore_default_task() ){
-	 	TR << "Using the DockingTaskFactory." << std::endl;
-	 	tf2()->create_and_attach_task_factory( this, pose );
+	if ( movemap_reset_ ) {
+		dock_mcm_->set_move_map(movemap_);
 	}
-	else {
-	 	TR <<"The default DockingTaskFactory is being ignored." << std::endl;
+	//check if we are ignoring the default docking task
+	if ( !ignore_default_task() ) {
+		TR << "Using the DockingTaskFactory." << std::endl;
+		tf2()->create_and_attach_task_factory( this, pose );
+	} else {
+		TR <<"The default DockingTaskFactory is being ignored." << std::endl;
 	}
 	//Need a check to make sure there is a task HERE!!!
-	if( task_factory() != 0 ){
+	if ( task_factory() != 0 ) {
 		dock_mcm_->set_task_factory( task_factory() );
 	}
 	//exit if you chose to ignore the default task but didn't provide one of your own.
-	if( ignore_default_task() && !task_factory() ){
+	if ( ignore_default_task() && !task_factory() ) {
 		utility_exit_with_message( "Exiting DockMCMProtocol you chose to ignore_default_task but no alternate task was given to docking, " );
 	}
 
@@ -196,29 +195,29 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 	if ( dock_mcm_->get_mc()->last_accepted_pose().empty() ) { dock_mcm_->init_mc(pose); } //JQX: use the dock_mcm_'s "mc_" object
 	moves::TrialMoverOP initial_pack_trial( new moves::TrialMover(initial_pack, dock_mcm_->get_mc() ) );
 
-    
-    
-    //JQX: rt_min and sc_min options were ignored in the extreme coding week, put them back now     
-    protocols::moves::SequenceMoverOP initial_repack_sequence( new protocols::moves::SequenceMover() );
-    initial_repack_sequence->add_mover(initial_pack_trial);
-    
-    if ( rt_min() ){ 
-        simple_moves::RotamerTrialsMinMoverOP rtmin( new simple_moves::RotamerTrialsMinMover( scorefxn_pack(), task_factory() ) );
-        moves::TrialMoverOP rtmin_trial( new moves::TrialMover( rtmin, dock_mcm_->get_mc() ) );
-        initial_repack_sequence->add_mover(rtmin_trial); 
-        dock_mcm_->set_rtmin(true);
-    }
-    if ( sc_min() ){ 
-        docking::SidechainMinMoverOP scmin_mover( new docking::SidechainMinMover( scorefxn_pack(), task_factory() ) );
-        moves::TrialMoverOP scmin_trial( new moves::TrialMover( scmin_mover, dock_mcm_->get_mc() ) );
-        initial_repack_sequence->add_mover(scmin_trial); 
-        dock_mcm_->set_scmin(true);
-    }
-    
-    
-    initial_repack_sequence->apply( pose );
-    
-    
+
+
+	//JQX: rt_min and sc_min options were ignored in the extreme coding week, put them back now
+	protocols::moves::SequenceMoverOP initial_repack_sequence( new protocols::moves::SequenceMover() );
+	initial_repack_sequence->add_mover(initial_pack_trial);
+
+	if ( rt_min() ) {
+		simple_moves::RotamerTrialsMinMoverOP rtmin( new simple_moves::RotamerTrialsMinMover( scorefxn_pack(), task_factory() ) );
+		moves::TrialMoverOP rtmin_trial( new moves::TrialMover( rtmin, dock_mcm_->get_mc() ) );
+		initial_repack_sequence->add_mover(rtmin_trial);
+		dock_mcm_->set_rtmin(true);
+	}
+	if ( sc_min() ) {
+		docking::SidechainMinMoverOP scmin_mover( new docking::SidechainMinMover( scorefxn_pack(), task_factory() ) );
+		moves::TrialMoverOP scmin_trial( new moves::TrialMover( scmin_mover, dock_mcm_->get_mc() ) );
+		initial_repack_sequence->add_mover(scmin_trial);
+		dock_mcm_->set_scmin(true);
+	}
+
+
+	initial_repack_sequence->apply( pose );
+
+
 
 	jd2::write_score_tracer( pose, "DockMCM_pack_trialed" );
 
@@ -227,35 +226,35 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 	minimize_trial->apply( pose );
 	jd2::write_score_tracer( pose, "DockMCM_minimized" );
 
-//	filter_->set_score_margin( 10.0 );
-//	if ( filter_->apply( pose ) )
-//	{
-		for ( Size i=1; i<=num_of_first_cycle_; ++i ) {
-			dock_mcm_->apply( pose );
-			jd2::write_score_tracer( pose, "DockMCM_cycle_"+ObjexxFCL::format::I(1, i ) );
-		}
+	// filter_->set_score_margin( 10.0 );
+	// if ( filter_->apply( pose ) )
+	// {
+	for ( Size i=1; i<=num_of_first_cycle_; ++i ) {
+		dock_mcm_->apply( pose );
+		jd2::write_score_tracer( pose, "DockMCM_cycle_"+ObjexxFCL::format::I(1, i ) );
+	}
 
-//		filter_->set_score_margin( 5.0 );
+	//  filter_->set_score_margin( 5.0 );
 
-		dock_mcm_->reset_cycle_index(); //JQX: reset the CycleMover index to 0
+	dock_mcm_->reset_cycle_index(); //JQX: reset the CycleMover index to 0
 
 
-//		if ( filter_->apply( pose ) )
-//		{
-			for ( Size i=1; i<=num_of_second_cycle_; ++i ) {
-				dock_mcm_->apply( pose );
-				jd2::write_score_tracer( pose, "DockMCM_cycle_"+ObjexxFCL::format::I(1, i+4 ) );
-			}
-//		}
-//	}
+	//  if ( filter_->apply( pose ) )
+	//  {
+	for ( Size i=1; i<=num_of_second_cycle_; ++i ) {
+		dock_mcm_->apply( pose );
+		jd2::write_score_tracer( pose, "DockMCM_cycle_"+ObjexxFCL::format::I(1, i+4 ) );
+	}
+	//  }
+	// }
 
-//	filter_->set_score_margin( 0.0 );
+	// filter_->set_score_margin( 0.0 );
 
 
 	minimize_trial->set_min_tolerance( 0.01 );
 	minimize_trial->apply( pose );
 
-//JQX:	get the smallest energy pose memorized in the "mc_" object
+	//JQX: get the smallest energy pose memorized in the "mc_" object
 	dock_mcm_-> get_mc()->recover_low( pose );
 
 	jd2::write_score_tracer( pose, "DockMCM_final" );
@@ -264,23 +263,23 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 
 
 void DockMCMProtocol::set_move_map(core::kinematics::MoveMapOP movemap){
-    movemap_reset_ = true;
-    movemap_ = movemap;
+	movemap_reset_ = true;
+	movemap_ = movemap;
 }
 
 void DockMCMProtocol::set_first_cycle(Size const & num){
-		    num_of_first_cycle_ = num;
+	num_of_first_cycle_ = num;
 }
 void DockMCMProtocol::set_second_cycle(Size const & num){
-		    num_of_second_cycle_ = num;
+	num_of_second_cycle_ = num;
 }
 
-core::scoring::ScoreFunctionCOP DockMCMProtocol::scorefxn_docking() const { 
-	return scorefxn(); 
+core::scoring::ScoreFunctionCOP DockMCMProtocol::scorefxn_docking() const {
+	return scorefxn();
 }
 
-core::scoring::ScoreFunctionCOP DockMCMProtocol::scorefxn_packing() const { 
-	return scorefxn_pack(); 
+core::scoring::ScoreFunctionCOP DockMCMProtocol::scorefxn_packing() const {
+	return scorefxn_pack();
 }
 
 std::string
@@ -292,11 +291,11 @@ std::ostream & operator<<(std::ostream& out, const DockMCMProtocol & dmp )
 {
 	// Display the state of the filters (on or off)
 	out << "High Resolution Filter: " << ( (dmp.filter_) ? "on" : "off" ) << std::endl;
-	out << "Docking Scorefunction:  " << dmp.scorefxn_docking()->get_name() << std::endl; 
-	out << "Packing Scorefunction:  " << dmp.scorefxn_packing()->get_name() << std::endl; 
-	out << "Movemap: "; 
-	if (dmp.movemap_ != 0) { out << std::endl; dmp.movemap_->show(); }
-	else { out << "none"; } 
+	out << "Docking Scorefunction:  " << dmp.scorefxn_docking()->get_name() << std::endl;
+	out << "Packing Scorefunction:  " << dmp.scorefxn_packing()->get_name() << std::endl;
+	out << "Movemap: ";
+	if ( dmp.movemap_ != 0 ) { out << std::endl; dmp.movemap_->show(); }
+	else { out << "none"; }
 	return out;
 }
 

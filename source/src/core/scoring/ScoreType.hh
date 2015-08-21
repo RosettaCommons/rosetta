@@ -21,13 +21,13 @@
 namespace core {
 namespace scoring {
 
-	/////////////////////////////////////////////////////////////////////////////////
-	/////// WARNING WARNING WARNING
-	///////
-	/////// if you add a new ScoreType please also add its string name in ScoreTypeManager.cc
-	///////
-	/////// WARNING WARNING WARNING
-	/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+/////// WARNING WARNING WARNING
+///////
+/////// if you add a new ScoreType please also add its string name in ScoreTypeManager.cc
+///////
+/////// WARNING WARNING WARNING
+/////////////////////////////////////////////////////////////////////////////////
 
 /// @brief Type for looking up cached energies
 /// @remark I guess we could get rid of the fa_ prefix, except maybe for
@@ -71,7 +71,7 @@ enum ScoreType {
 	lk_nonpolar,
 	lk_polar_intra_RNA,    //RNA specific score term -- to be deprecated in late 2015
 	lk_nonpolar_intra_RNA, //RNA specific score term -- to be deprecated in late 2015
-//	csd_torsion, //commenting out until it is implemented
+	// csd_torsion, //commenting out until it is implemented
 	fa_elec,
 	fa_elec_bb_bb,
 	fa_elec_bb_sc,
@@ -96,9 +96,9 @@ enum ScoreType {
 
 	fiberdiffraction, // fiber diffraction score
 	fiberdiffractiondens, // fiber diffraction density score
-	#ifdef USECUDA
+#ifdef USECUDA
 	fiberdiffractiongpu, // fiber diffraction gpu score
-	#endif
+#endif
 
 	//pba Membrane all atom terms
 	fa_mbenv,       // depth dependent reference term
@@ -175,17 +175,17 @@ enum ScoreType {
 	rna_mg_point_indirect, //knowledge-based term for mg(2+)/RNA interactions for use in low res modeling.
 
 	mg,      // total hi-res term for mg(2+), including potential h2o ligands.
-  mg_lig,  // mg -- ligand interactions
+	mg_lig,  // mg -- ligand interactions
 	mg_sol,  // cost of blocking fluid h2o
 	mg_ref,  // chemical potential for mg(2+) ('reference weight' in Rosetta lingo)
-  hoh_ref, // may remove later in favor of h2o_intra, or pointwater.
+	hoh_ref, // may remove later in favor of h2o_intra, or pointwater.
 
 	// High resolution
 	rna_torsion,       // RNA torsional potential.
 	rna_torsion_sc,    // RNA torsional potential, just side-chain component.
-	rna_suite,			   // RNA suite torsional potential -- 0.0 at suite centers, specified in suite_torsion/ files
-	rna_jr_suite,			 // RNA suite torsional potential based on distance to closest suite, hard-coded in RNA_SuiteName
-	suiteness_bonus,	 // Energy bonuses for suites specified in a file; suite centers hard-coded in RNA_SuiteName
+	rna_suite,      // RNA suite torsional potential -- 0.0 at suite centers, specified in suite_torsion/ files
+	rna_jr_suite,    // RNA suite torsional potential based on distance to closest suite, hard-coded in RNA_SuiteName
+	suiteness_bonus,  // Energy bonuses for suites specified in a file; suite centers hard-coded in RNA_SuiteName
 	rna_sugar_close,   // constraints to keep RNA sugar closed, and with reasonably ideal geometry
 
 	fa_stack,          // extra nucleobase stacking interaction modeled as pairwise orientation-dependent atom-atom interactions
@@ -218,10 +218,10 @@ enum ScoreType {
 	pci_salt_bridge,
 	pci_hbond,
 
-	#ifdef PYROSETTA
+#ifdef PYROSETTA
 		PyRosettaTwoBodyContextIndepenedentEnergy_first,
 		PyRosettaTwoBodyContextIndepenedentEnergy_last = PyRosettaTwoBodyContextIndepenedentEnergy_first + 10,
-	#endif
+#endif
 
 	// for in-python runtime-defined methods: most inclusive positioning in the
 	// score type enum: user may define any kind of energy method
@@ -249,10 +249,10 @@ enum ScoreType {
 	hbond, // all hbonds summed together with same weight.
 	fa_grpelec,
 
-	#ifdef PYROSETTA
+#ifdef PYROSETTA
 		PyRosettaTwoBodyContextDependentEnergy_first,
 		PyRosettaTwoBodyContextDependentEnergy_last = PyRosettaTwoBodyContextDependentEnergy_first + 10,
-	#endif
+#endif
 
 	// protein-protein interface scores
 	interface_dd_pair,
@@ -556,10 +556,10 @@ enum ScoreType {
 	aa_repeat_energy, //A wholebody score term for penalizing long stretches of repeat sequence (e.g. poly-Q sequences).
 	aa_composition, //A wholebody score term for penalizing deviation from a desired amino acid composition.
 
-	#ifdef PYROSETTA
+#ifdef PYROSETTA
 		PyRosettaEnergy_first,
 		PyRosettaEnergy_last = PyRosettaEnergy_first + 10,
-	#endif
+#endif
 
 	// etc etc
 	// Why is there a total score?
@@ -615,12 +615,12 @@ score_type_from_name( std::string const & name );
 std::string
 name_from_score_type( ScoreType  score_type );
 
-	/// @brief input operator for ScoreType enum type
+/// @brief input operator for ScoreType enum type
 std::istream & operator >>( std::istream & is, ScoreType & t );
-	/// @brief output operator for ScoreType enum type
+/// @brief output operator for ScoreType enum type
 std::ostream & operator <<( std::ostream & os, ScoreType const & t );
 
-	/// @brief output operator for ScoreTypes list
+/// @brief output operator for ScoreTypes list
 std::ostream & operator <<( std::ostream & os, ScoreTypes const & score_types );
 
 } // namespace scoring

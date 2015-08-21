@@ -45,11 +45,11 @@ static thread_local basic::Tracer TR( "protocols.InterfaceFeatures" );
 namespace protocols {
 namespace features {
 
-	using utility::vector1;
-	using cppdb::statement;
-	using cppdb::result;
-	using std::string;
-	using namespace core::scoring;
+using utility::vector1;
+using cppdb::statement;
+using cppdb::result;
+using std::string;
+using namespace core::scoring;
 
 InterfaceFeatures::InterfaceFeatures() :
 	FeaturesReporter()
@@ -115,33 +115,33 @@ InterfaceFeatures::type_name() const {
 
 void
 InterfaceFeatures::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap& data,
-		protocols::filters::Filters_map const & /*data*/,
-		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & /*pose*/)
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap& data,
+	protocols::filters::Filters_map const & /*data*/,
+	protocols::moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/)
 {
 	pack_separated_ = tag->getOption<bool>("pack_separated", true);
 	pack_together_ = tag->getOption<bool>("pack_together", false);
 	dSASA_cutoff_ = tag->getOption<core::Real>("dSASA_cutoff", 100);
 	compute_packstat_ = tag->getOption<bool>("compute_packstat", true);
 
-	if(tag->hasOption("scorefxn")){
+	if ( tag->hasOption("scorefxn") ) {
 		string const scorefxn_name(tag->getOption<std::string>("scorefxn"));
 		scorefxn_ = data.get_ptr<core::scoring::ScoreFunction>("scorefxns", scorefxn_name);
 	}
 
-	if (tag->hasOption("interfaces") && tag->hasOption("interface")){
+	if ( tag->hasOption("interfaces") && tag->hasOption("interface") ) {
 		utility_exit_with_message("Cannot specify both interface and interfaces option for InterfaceFeatures Reporter");
 	}
 
-	if (tag->hasOption("interface")){
+	if ( tag->hasOption("interface") ) {
 		std::string interface = tag->getOption<std::string>("interface");
-		if (interface.find(",") != std::string::npos){utility_exit_with_message("Only one interface should be specified using the interface option");}
+		if ( interface.find(",") != std::string::npos ) { utility_exit_with_message("Only one interface should be specified using the interface option");}
 		interfaces_.push_back(interface);
 	}
 
-	if (tag->hasOption("interfaces")){
+	if ( tag->hasOption("interfaces") ) {
 		std::string interfaces = tag->getOption<std::string>("interfaces");
 		interfaces_ = utility::string_split_multi_delim(interfaces, ":,'`~+*&|;.");//Why not?
 	}
@@ -167,16 +167,16 @@ InterfaceFeatures::features_reporter_dependencies() const{
 
 core::Size
 InterfaceFeatures::report_features(
-		core::pose::Pose const & pose,
-		const utility::vector1<bool>& relevant_residues,
-		StructureID struct_id,
-		utility::sql_database::sessionOP db_session) {
+	core::pose::Pose const & pose,
+	const utility::vector1<bool>& relevant_residues,
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session) {
 
-	if (interfaces_.empty()){
+	if ( interfaces_.empty() ) {
 		make_interface_combos(pose, interfaces_);
 	}
 
-	for (core::Size i = 1; i <= interfaces_.size(); ++i){
+	for ( core::Size i = 1; i <= interfaces_.size(); ++i ) {
 
 		std::string interface = interfaces_[i];
 		report_all_interface_features(pose, relevant_residues, struct_id, db_session, interface, interface);
@@ -186,41 +186,41 @@ InterfaceFeatures::report_features(
 
 void
 InterfaceFeatures::report_all_interface_features(
-		core::pose::Pose const & pose,
-		utility::vector1<bool> const & relevant_residues,
-		StructureID struct_id,
-		utility::sql_database::sessionOP db_session,
-		std::string const interface,
-		std::string const db_interface)
+	core::pose::Pose const & pose,
+	utility::vector1<bool> const & relevant_residues,
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
+	std::string const interface,
+	std::string const db_interface)
 {
-		TR << "reporting features for: "<< interface << std::endl;
-		//Check to make sure interface/chain definition is solid.
-		if (! interface.find('_') || !db_interface.find('_')){
-			utility_exit_with_message("Unrecognized interface: "+interface+" must have side1 and side2, ex: LH_A or L_H to calculate interface data");
-		}
+	TR << "reporting features for: "<< interface << std::endl;
+	//Check to make sure interface/chain definition is solid.
+	if ( ! interface.find('_') || !db_interface.find('_') ) {
+		utility_exit_with_message("Unrecognized interface: "+interface+" must have side1 and side2, ex: LH_A or L_H to calculate interface data");
+	}
 
-		if (!chains_exist_in_pose(pose, interface)){
-			TR <<"All chains do not exist in the given pose.  Skipping interface: " << interface << std::endl;
-			return;
-		}
+	if ( !chains_exist_in_pose(pose, interface) ) {
+		TR <<"All chains do not exist in the given pose.  Skipping interface: " << interface << std::endl;
+		return;
+	}
 
-		vector1<std::string> interface_sides = utility::string_split(db_interface, '_');
-		std::string interface_side1 = interface_sides[1];
-		std::string interface_side2 = interface_sides[2];
-		interface_analyzer_ = protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover(interface, true, scorefxn_, compute_packstat_, pack_together_, pack_separated_) );
-		interface_analyzer_->set_use_centroid_dG(false); //Uses score3 by default without rg - used in zinc homodimer design .  Used for clash detection
-		interface_analyzer_->apply_const(pose);
+	vector1<std::string> interface_sides = utility::string_split(db_interface, '_');
+	std::string interface_side1 = interface_sides[1];
+	std::string interface_side2 = interface_sides[2];
+	interface_analyzer_ = protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover(interface, true, scorefxn_, compute_packstat_, pack_together_, pack_separated_) );
+	interface_analyzer_->set_use_centroid_dG(false); //Uses score3 by default without rg - used in zinc homodimer design .  Used for clash detection
+	interface_analyzer_->apply_const(pose);
 
-		if (interface_analyzer_->get_interface_delta_sasa() < dSASA_cutoff_){
-			TR << "Interface dSASA lower than set cutoff value of "<< dSASA_cutoff_ << " : not including data in database..." << std::endl;
-			return;
-		}
-		report_interface_features(pose, struct_id, db_session, interface_side1, interface_side2);
-		report_interface_residue_features(pose, relevant_residues, struct_id, db_session, interface_side1, interface_side2);
+	if ( interface_analyzer_->get_interface_delta_sasa() < dSASA_cutoff_ ) {
+		TR << "Interface dSASA lower than set cutoff value of "<< dSASA_cutoff_ << " : not including data in database..." << std::endl;
+		return;
+	}
+	report_interface_features(pose, struct_id, db_session, interface_side1, interface_side2);
+	report_interface_residue_features(pose, relevant_residues, struct_id, db_session, interface_side1, interface_side2);
 
-		report_interface_side_features(pose, struct_id, db_session, interface_side1, interface_side2, total, "total");
-		report_interface_side_features(pose, struct_id, db_session, interface_side1, interface_side2, side1, "side1");
-		report_interface_side_features(pose, struct_id, db_session, interface_side1, interface_side2, side2,  "side2");
+	report_interface_side_features(pose, struct_id, db_session, interface_side1, interface_side2, total, "total");
+	report_interface_side_features(pose, struct_id, db_session, interface_side1, interface_side2, side1, "side1");
+	report_interface_side_features(pose, struct_id, db_session, interface_side1, interface_side2, side2,  "side2");
 }
 
 
@@ -235,7 +235,7 @@ InterfaceFeatures::make_interface_combos(const core::pose::Pose& pose, vector1< 
 	std::string chains = get_all_pose_chains(pose);
 	get_length_combos(chains, size_combos);
 
-	for (core::Size i = 1; i <= size_combos.size(); ++i){
+	for ( core::Size i = 1; i <= size_combos.size(); ++i ) {
 		get_all_string_combos(size_combos[i], "", chain_combos);
 	}
 
@@ -244,16 +244,16 @@ InterfaceFeatures::make_interface_combos(const core::pose::Pose& pose, vector1< 
 	chain_combos.erase(std::unique(chain_combos.begin(), chain_combos.end()), chain_combos.end());
 
 	TR << std::endl;
-	for (core::Size i = 1; i<= chain_combos.size(); ++i){
-		for (core::Size s = 1; s <= chain_combos[i].length()-1; ++s){
+	for ( core::Size i = 1; i<= chain_combos.size(); ++i ) {
+		for ( core::Size s = 1; s <= chain_combos[i].length()-1; ++s ) {
 			std::string dock_chains = chain_combos[i].substr(0, s)+"_"+chain_combos[i].substr(s);
-			if (! interface_exists(interfaces, dock_chains)){
+			if ( ! interface_exists(interfaces, dock_chains) ) {
 				interfaces.push_back(dock_chains);
 			}
 		}
 	}
 	std::sort(interfaces.begin(), interfaces.end());
-	for (core::Size i = 1; i<= interfaces.size(); ++i){
+	for ( core::Size i = 1; i<= interfaces.size(); ++i ) {
 		TR << "added interface:  " + interfaces[i] << std::endl;
 	}
 
@@ -261,14 +261,14 @@ InterfaceFeatures::make_interface_combos(const core::pose::Pose& pose, vector1< 
 
 void
 InterfaceFeatures::get_length_combos(std::string current, vector1<std::string> & sizes) const {
-	if (current.length() >=2){
+	if ( current.length() >=2 ) {
 		sizes.push_back(current);
-		if (current.length() == 2){
+		if ( current.length() == 2 ) {
 			return;
 		}
 	}
 
-	for (std::size_t k = 1; k <= current.length(); ++k){
+	for ( std::size_t k = 1; k <= current.length(); ++k ) {
 		std::string new_string(current);
 		//char chain = current.at(k-1);
 		new_string.erase(k-1, 1); //Remove the chain from the interface
@@ -280,15 +280,15 @@ InterfaceFeatures::get_length_combos(std::string current, vector1<std::string> &
 void
 InterfaceFeatures::get_all_string_combos(std::string& interface, std::string current, vector1<std::string>& chains) const {
 
-	if (interface.length() == current.length()){
+	if ( interface.length() == current.length() ) {
 		chains.push_back(current);
 		//TR << "Chain added: "<<current << std::endl;
 		return;
 	}
-	for (core::Size i = 1; i<=interface.length(); ++i){
+	for ( core::Size i = 1; i<=interface.length(); ++i ) {
 
 		std::string letter = interface.substr(i-1, 1);
-		if (current.find(letter) != std::string::npos){
+		if ( current.find(letter) != std::string::npos ) {
 			continue;
 		}
 
@@ -303,9 +303,9 @@ InterfaceFeatures::chains_exist_in_pose(core::pose::Pose const & pose, std::stri
 	std::string chains = interfaceSP[1]+interfaceSP[2];
 
 	bool has_all_chains = true;
-	for (core::Size i = 1; i<=chains.length(); ++i){
+	for ( core::Size i = 1; i<=chains.length(); ++i ) {
 		char chain = chains.at(i-1);
-		if(! core::pose::has_chain(chain, pose)){
+		if ( ! core::pose::has_chain(chain, pose) ) {
 			has_all_chains = false;
 			break;
 		}
@@ -317,7 +317,7 @@ std::string
 InterfaceFeatures::get_all_pose_chains(core::pose::Pose const & pose){
 
 	std::string chains = "";
-	for (core::Size i = 1; i <= pose.conformation().num_chains(); ++i){
+	for ( core::Size i = 1; i <= pose.conformation().num_chains(); ++i ) {
 		char chain_c = core::pose::get_chain_from_chain_id(i, pose);
 		std::string chain = utility::to_string(chain_c);
 		chains = chains+chain;
@@ -335,19 +335,17 @@ InterfaceFeatures::interface_exists(vector1<std::string> & interfaces, std::stri
 	std::sort(newSP[1].begin(), newSP[1].end());
 	std::sort(newSP[2].begin(), newSP[2].end());
 
-	for (core::Size i = 1; i <= interfaces.size(); ++i){
+	for ( core::Size i = 1; i <= interfaces.size(); ++i ) {
 		utility::vector1<std::string> oldSP = utility::string_split(interfaces[i], '_');
 		std::sort(oldSP[1].begin(), oldSP[1].end());
 		std::sort(oldSP[2].begin(), oldSP[2].end());
 
 
-		if (oldSP[1] == newSP[2] && oldSP[2] == newSP[1] ){
+		if ( oldSP[1] == newSP[2] && oldSP[2] == newSP[1] ) {
 			return true; //LH_AB == AB_LH
-		}
-		else if (oldSP[1] == newSP[1] && oldSP[2] == newSP[2]){
+		} else if ( oldSP[1] == newSP[1] && oldSP[2] == newSP[2] ) {
 			return true; // LH_AB == LH_AB
-		}
-		else {
+		} else {
 			continue;
 		}
 
@@ -371,14 +369,13 @@ InterfaceFeatures::report_interface_residue_features(
 
 	protocols::analysis::PerResidueInterfaceData interface_data = interface_analyzer_->get_all_per_residue_data();
 	protocols::analysis::InterfaceData all_data = interface_analyzer_->get_all_data();
-	for (core::Size i = 1; i <= pose.total_residue(); ++i){
-		if (check_relevant_residues(relevant_residues, i) && interface_data.interface_residues[i]){
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( check_relevant_residues(relevant_residues, i) && interface_data.interface_residues[i] ) {
 			protocols::analysis::InterfaceRegion side;
 			//Check the side.  Can only be either side1 or side2
-			if (all_data.interface_residues[side1][i]){
+			if ( all_data.interface_residues[side1][i] ) {
 				side = side1;
-			}
-			else {
+			} else {
 				side = side2;
 			}
 			write_interface_residue_data_row_to_db(struct_id, db_session, chains_side1, chains_side2, regions[side],i, interface_data);
@@ -459,27 +456,27 @@ InterfaceFeatures::report_interface_features(
 	using namespace protocols::analysis;
 
 	std::string stmt_string = "INSERT INTO interfaces ("
-			"struct_id,"
-			"interface,"
-			"chains_side1,"
-			"chains_side2,"
-			"nchains_side1,"
-			"nchains_side2,"
-			"dSASA,"
-			"dSASA_hphobic,"
-			"dSASA_polar,"
-			"dG,"
-			"dG_cross,"
-			"dG_dev_dSASAx100,"
-			"dG_cross_dev_dSASAx100,"
-			"delta_unsatHbonds,"
-			"hbond_E_fraction,"
-			"sc_value,"
-			"packstat,"
-			"nres_int,"
-			"nres_all,"
-			"complex_normalized)"
-			" VALUES "+get_question_mark_string(20);
+		"struct_id,"
+		"interface,"
+		"chains_side1,"
+		"chains_side2,"
+		"nchains_side1,"
+		"nchains_side2,"
+		"dSASA,"
+		"dSASA_hphobic,"
+		"dSASA_polar,"
+		"dG,"
+		"dG_cross,"
+		"dG_dev_dSASAx100,"
+		"dG_cross_dev_dSASAx100,"
+		"delta_unsatHbonds,"
+		"hbond_E_fraction,"
+		"sc_value,"
+		"packstat,"
+		"nres_int,"
+		"nres_all,"
+		"complex_normalized)"
+		" VALUES "+get_question_mark_string(20);
 
 	statement stmt(basic::database::safely_prepare_statement(stmt_string, db_session));
 
@@ -605,33 +602,33 @@ InterfaceFeatures::report_interface_side_features(
 {
 
 	std::string stmt_string = "INSERT INTO interface_sides ("
-			"struct_id,"
-			"interface,"
-			"side,"
-			"chains_side1,"
-			"chains_side2,"
-			"interface_nres,"
-			"dSASA,"
-			"dSASA_sc,"
-			"dhSASA,"
-			"dhSASA_sc,"
-			"dhSASA_rel_by_charge,"
-			"dG,"
-			"energy_int,"
-			"energy_sep,"
-			"avg_per_residue_energy_dG,"
-			"avg_per_residue_energy_int,"
-			"avg_per_residue_energy_sep,"
-			"avg_per_residue_dSASA,"
-			"avg_per_residue_SASA_int,"
-			"avg_per_residue_SASA_sep,"
-			"aromatic_fraction,"
-			"aromatic_dSASA_fraction,"
-			"aromatic_dG_fraction,"
-			"interface_to_surface_fraction,"
-			"ss_sheet_fraction,"
-			"ss_helix_fraction,"
-			"ss_loop_fraction) VALUES "+get_question_mark_string(27);
+		"struct_id,"
+		"interface,"
+		"side,"
+		"chains_side1,"
+		"chains_side2,"
+		"interface_nres,"
+		"dSASA,"
+		"dSASA_sc,"
+		"dhSASA,"
+		"dhSASA_sc,"
+		"dhSASA_rel_by_charge,"
+		"dG,"
+		"energy_int,"
+		"energy_sep,"
+		"avg_per_residue_energy_dG,"
+		"avg_per_residue_energy_int,"
+		"avg_per_residue_energy_sep,"
+		"avg_per_residue_dSASA,"
+		"avg_per_residue_SASA_int,"
+		"avg_per_residue_SASA_sep,"
+		"aromatic_fraction,"
+		"aromatic_dSASA_fraction,"
+		"aromatic_dG_fraction,"
+		"interface_to_surface_fraction,"
+		"ss_sheet_fraction,"
+		"ss_helix_fraction,"
+		"ss_loop_fraction) VALUES "+get_question_mark_string(27);
 
 	statement stmt(basic::database::safely_prepare_statement(stmt_string, db_session));
 
@@ -663,10 +660,9 @@ InterfaceFeatures::report_interface_side_features(
 	stmt.bind(i+=1, res_data.regional_avg_per_residue_dSASA[region]);
 	stmt.bind(i+=1, res_data.regional_avg_per_residue_SASA_int[region]);
 	stmt.bind(i+=1, res_data.regional_avg_per_residue_SASA_sep[region]);
-	if (data.interface_nres[region] > 0){
+	if ( data.interface_nres[region] > 0 ) {
 		stmt.bind(i+=1, data.aromatic_nres[region]/(core::Real)data.interface_nres[region]);
-	}
-	else{
+	} else {
 		stmt.bind(i+=1, 0.0);
 	}
 
@@ -756,23 +752,23 @@ InterfaceFeatures::write_interface_residue_data_row_to_db(
 
 
 	std::string stmnt_string = "INSERT INTO interface_residues ("
-			"struct_id,"
-			"interface,"
-			"resNum,"
-			"chains_side1,"
-			"chains_side2,"
-			"side,"
-			"dSASA,"
-			"dSASA_sc,"
-			"dhSASA,"
-			"dhSASA_sc,"
-			"dhSASA_rel_by_charge,"
-			"SASA_int,"
-			"SASA_sep,"
-			"relative_dSASA_fraction,"
-			"dG,"
-			"energy_int,"
-			"energy_sep) VALUES "+get_question_mark_string(17);
+		"struct_id,"
+		"interface,"
+		"resNum,"
+		"chains_side1,"
+		"chains_side2,"
+		"side,"
+		"dSASA,"
+		"dSASA_sc,"
+		"dhSASA,"
+		"dhSASA_sc,"
+		"dhSASA_rel_by_charge,"
+		"SASA_int,"
+		"SASA_sep,"
+		"relative_dSASA_fraction,"
+		"dG,"
+		"energy_int,"
+		"energy_sep) VALUES "+get_question_mark_string(17);
 
 	statement stmnt(basic::database::safely_prepare_statement(stmnt_string, db_session));
 
@@ -794,10 +790,9 @@ InterfaceFeatures::write_interface_residue_data_row_to_db(
 	stmnt.bind(i+=1, interface_data.dhSASA_rel_by_charge[resnum]);
 	stmnt.bind(i+=1, interface_data.complexed_sasa[resnum]);
 	stmnt.bind(i+=1, interface_data.separated_sasa[resnum]);
-	if (interface_data.separated_sasa[resnum]>0){
+	if ( interface_data.separated_sasa[resnum]>0 ) {
 		stmnt.bind(i+=1, interface_data.dSASA[resnum]/interface_data.separated_sasa[resnum]);
-	}
-	else{
+	} else {
 		stmnt.bind(i+=1, 0);
 	}
 	stmnt.bind(i+=1, interface_data.dG[resnum]);

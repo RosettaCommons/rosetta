@@ -39,7 +39,7 @@ using namespace core::scoring::methods;
 
 class P_AA_EnergyTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	PoseOP the_pose;
 	P_AA_EnergyOP paa_energy;
@@ -89,7 +89,7 @@ class P_AA_EnergyTests : public CxxTest::TestSuite {
 			2.5328, 3.2146, 2.7931, 2.7905, 3.2863, 3.2863, 2.8335, 2.4973, 2.8335, 3.0664, 2.8335, 3.2146, 2.8163,
 			3.0597, 3.2995, 3.2146, 2.8283, 2.6607, 3.0627, 3.0627, 3.8162, 2.8163, 3.2995, 3.0664, 3.8614, 2.8335,
 			3.0597, 3.8614, 3.2863, 2.5328, 2.7931, 2.7905, 3.0664, 3.2146, 2.4973
-		};
+			};
 
 		EnergyMap emap;
 		for ( int ii = 1; ii <= 113; ++ii ) {

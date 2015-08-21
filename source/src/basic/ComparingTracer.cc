@@ -172,7 +172,7 @@ ComparingTracer::ComparingTracer(std::string const & file_name)
 
 	dry_run_ = basic::options::option[ out::dry_run ]();
 
-	if( dry_run_ ) {
+	if ( dry_run_ ) {
 		file_.open(file_name.c_str(), std::fstream::out);
 	} else {
 		file_.open(file_name.c_str(), std::fstream::in);
@@ -190,12 +190,11 @@ ComparingTracer::~ComparingTracer()
 
 void ComparingTracer::t_flush(std::string const & s)
 {
-	if( dry_run_ ) {
+	if ( dry_run_ ) {
 		file_ << s;
-	}
-	else {
-		for(size_t i=0; i<s.size(); i++) {
-			if( file_.get() != s[i] ) {
+	} else {
+		for ( size_t i=0; i<s.size(); i++ ) {
+			if ( file_.get() != s[i] ) {
 				std::cerr << "ComparingTracer:: Output is differnet from the original: " << s << std::endl;
 				assert(false);
 			}

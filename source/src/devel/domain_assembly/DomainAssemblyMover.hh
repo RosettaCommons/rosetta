@@ -35,8 +35,8 @@
 #include <utility/vector1.hh>
 
 
-namespace devel{
-namespace domain_assembly{
+namespace devel {
+namespace domain_assembly {
 
 class DomainAssemblyMover : public protocols::moves::Mover
 {
@@ -46,7 +46,7 @@ public:
 	virtual ~DomainAssemblyMover();
 	virtual void apply( core::pose::Pose & pose );
 	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP	fresh_instance() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 	virtual std::string get_name() const;
 
 protected: // protocol stages

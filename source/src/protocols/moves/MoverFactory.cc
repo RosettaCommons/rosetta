@@ -91,7 +91,7 @@ MoverFactory::factory_register( MoverCreatorOP creator )
 	if ( mover_type == "UNDEFINED NAME" ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("Can't map derived Mover with undefined type name.");
 	}
-	if( forbidden_names_.find( mover_type ) != forbidden_names_.end() ){
+	if ( forbidden_names_.find( mover_type ) != forbidden_names_.end() ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("Name "+mover_type+" is not an allowed mover name, probably because it has historical meaning.");
 	}
 	if ( mover_creator_map_.find( mover_type ) != mover_creator_map_.end() ) {
@@ -103,7 +103,7 @@ MoverFactory::factory_register( MoverCreatorOP creator )
 
 /// @brief return new Mover by key lookup in mover_prototype_map_ (new Mover parses Tag if provided)
 MoverOP
-MoverFactory::newMover(	std::string const & mover_type )
+MoverFactory::newMover( std::string const & mover_type )
 {
 	MoverMap::const_iterator iter( mover_creator_map_.find( mover_type ) );
 	if ( iter != mover_creator_map_.end() ) {
@@ -114,11 +114,11 @@ MoverFactory::newMover(	std::string const & mover_type )
 		//return iter->second->clone();
 		// fresh_instance prevents propagation of pre-initialized prototypes, which may be safer(?)
 		return iter->second->create_mover();
-	}
-	else {
+	} else {
 		TR<<"Available movers: ";
-		for( MoverMap::const_iterator mover_it = mover_creator_map_.begin(); mover_it != mover_creator_map_.end(); ++mover_it )
+		for ( MoverMap::const_iterator mover_it = mover_creator_map_.begin(); mover_it != mover_creator_map_.end(); ++mover_it ) {
 			TR<<mover_it->first<<", ";
+		}
 		TR<<std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption( mover_type + " is not known to the MoverFactory. Was it registered via a MoverRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
 		return NULL;

@@ -97,8 +97,9 @@ public:
 			ft_cuts,              // cuts
 			1                     // root
 		);
- 		if (!status)
+		if ( !status ) {
 			utility_exit_with_message("failed to build fold tree from cuts and jumps");
+		}
 		std::cout << "ft = " << ft << std::endl;
 		pose.fold_tree(ft);
 
@@ -132,69 +133,69 @@ int
 main( int argc, char * argv [] ) {
 	try {
 
-	using namespace protocols;
-	using namespace protocols::jobdist;
-	using namespace protocols::moves;
-	using namespace basic::options;
-	using namespace core::scoring::constraints;
-	using namespace basic::options::OptionKeys;
+		using namespace protocols;
+		using namespace protocols::jobdist;
+		using namespace protocols::moves;
+		using namespace basic::options;
+		using namespace core::scoring::constraints;
+		using namespace basic::options::OptionKeys;
 
-	using core::pose::Pose;
-	using core::Real;
-	using core::Size;
+		using core::pose::Pose;
+		using core::Real;
+		using core::Size;
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb(pose, option[ in::file::s ]()[1]);
-	core::pose::Pose const orig_pose(pose);
+		core::pose::Pose pose;
+		core::import_pose::pose_from_pdb(pose, option[ in::file::s ]()[1]);
+		core::pose::Pose const orig_pose(pose);
 
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
-	//scorefxn->set_weight( core::scoring::chainbreak, 1.0 );
-	scorefxn->set_weight( core::scoring::linear_chainbreak, 1.0 );
-	//scorefxn->set_weight( core::scoring::overlap_chainbreak, 1.0 );
-	//scorefxn->set_weight( core::scoring::distance_chainbreak, 1.0 );
+		core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
+		//scorefxn->set_weight( core::scoring::chainbreak, 1.0 );
+		scorefxn->set_weight( core::scoring::linear_chainbreak, 1.0 );
+		//scorefxn->set_weight( core::scoring::overlap_chainbreak, 1.0 );
+		//scorefxn->set_weight( core::scoring::distance_chainbreak, 1.0 );
 
-	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
-	mm->set_bb (false);
-	mm->set_chi(false);
-	mm->set_jump(1,true);
-	mm->set_jump(2,false);
+		core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
+		mm->set_bb (false);
+		mm->set_chi(false);
+		mm->set_jump(1,true);
+		mm->set_jump(2,false);
 
-	SetupMover setup;
-	pose.dump_pdb("pre_setup.pdb");
-	scorefxn->show(pose);
-	setup.apply(pose);
-	pose.dump_pdb("post_setup.pdb");
-	scorefxn->show(pose);
-	core::optimization::MinimizerOptionsOP min_options( new core::optimization::MinimizerOptions( "dfpmin", 1e-2, true ) );
+		SetupMover setup;
+		pose.dump_pdb("pre_setup.pdb");
+		scorefxn->show(pose);
+		setup.apply(pose);
+		pose.dump_pdb("post_setup.pdb");
+		scorefxn->show(pose);
+		core::optimization::MinimizerOptionsOP min_options( new core::optimization::MinimizerOptions( "dfpmin", 1e-2, true ) );
 
-	//runtime_assert( option[ run::nblist_autoupdate ]() );
+		//runtime_assert( option[ run::nblist_autoupdate ]() );
 
-	if ( !option[ james::debug ]() ) {
-		// case 1: 100 rounds of 20 iterations each.
-		min_options->max_iter(20);
-		for ( Size ii = 1; ii <= 100; ++ii ) {
+		if ( !option[ james::debug ]() ) {
+			// case 1: 100 rounds of 20 iterations each.
+			min_options->max_iter(20);
+			for ( Size ii = 1; ii <= 100; ++ii ) {
+				protocols::simple_moves::SaneMinMover min_mover( mm, scorefxn, min_options );
+				min_mover.apply(pose);
+
+				std::string tag( "case_1." + ObjexxFCL::string_of(ii) );
+				dump_pose(tag,pose,orig_pose,scorefxn);
+			}
+		} else {
+			// case 2: 1 round of 2000 iterations
+			min_options->max_iter(2000);
 			protocols::simple_moves::SaneMinMover min_mover( mm, scorefxn, min_options );
+			std::string tag( "case_2.final" );
 			min_mover.apply(pose);
-
-			std::string tag( "case_1." + ObjexxFCL::string_of(ii) );
 			dump_pose(tag,pose,orig_pose,scorefxn);
 		}
-	} else {
-		// case 2: 1 round of 2000 iterations
-		min_options->max_iter(2000);
-		protocols::simple_moves::SaneMinMover min_mover( mm, scorefxn, min_options );
-		std::string tag( "case_2.final" );
-		min_mover.apply(pose);
-		dump_pose(tag,pose,orig_pose,scorefxn);
-	}
-	scorefxn->show(pose);
+		scorefxn->show(pose);
 
-	protocols::simple_moves::SaneMinMover min_mover( mm, scorefxn, min_options );
-	min_mover.apply(pose);
-	std::string const fn_out( "post_min_final.pdb" );
-	pose.dump_pdb(fn_out);
+		protocols::simple_moves::SaneMinMover min_mover( mm, scorefxn, min_options );
+		min_mover.apply(pose);
+		std::string const fn_out( "post_min_final.pdb" );
+		pose.dump_pdb(fn_out);
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

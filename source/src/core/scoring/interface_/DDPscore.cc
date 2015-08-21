@@ -26,9 +26,9 @@
 
 #include <core/kinematics/Jump.hh>
 
-namespace core{
-namespace scoring{
-namespace interface_{
+namespace core {
+namespace scoring {
+namespace interface_ {
 
 
 methods::EnergyMethodOP
@@ -47,8 +47,8 @@ DDPscoreCreator::score_types_for_method() const {
 
 
 DDPscore::DDPscore() :
-		parent( methods::EnergyMethodCreatorOP( new DDPscoreCreator ) ),
-		lookup_table_( core::scoring::ScoringManager::get_instance()->get_DDPLookupTable() )
+	parent( methods::EnergyMethodCreatorOP( new DDPscoreCreator ) ),
+	lookup_table_( core::scoring::ScoringManager::get_instance()->get_DDPLookupTable() )
 { }
 
 methods::EnergyMethodOP DDPscore::clone() const
@@ -76,15 +76,15 @@ void DDPscore::setup_for_derivatives(pose::Pose&, const ScoreFunction& ) const
 
 bool DDPscore::defines_intrares_energy(core::scoring::EnergyMap const &) const
 {
-        return false;
+	return false;
 }
 
 void DDPscore::eval_intrares_energy(
-                        const core::conformation::Residue &,
-                        const core::pose::Pose &,
-                        const core::scoring::ScoreFunction &,
-                        core::scoring::EnergyMap &
-                        ) const {}
+	const core::conformation::Residue &,
+	const core::pose::Pose &,
+	const core::scoring::ScoreFunction &,
+	core::scoring::EnergyMap &
+) const {}
 
 
 void DDPscore::residue_pair_energy(
@@ -95,9 +95,9 @@ void DDPscore::residue_pair_energy(
 	core::scoring::EnergyMap & emap
 ) const
 {
-debug_assert (rsd1.seqpos() != rsd2.seqpos()); //only call for distinct residues
+	debug_assert (rsd1.seqpos() != rsd2.seqpos()); //only call for distinct residues
 
-	if (rsd1.chain() != rsd2.chain()) { // Only score contacts across the interface
+	if ( rsd1.chain() != rsd2.chain() ) { // Only score contacts across the interface
 		core::Real distance = 1e3;
 		for ( core::conformation::Atoms::const_iterator atom_it_1 = rsd1.atom_begin(), end1 = rsd1.heavyAtoms_end(); atom_it_1 != end1; ++atom_it_1 ) {
 			for ( core::conformation::Atoms::const_iterator atom_it_2 = rsd2.atom_begin(), end2 = rsd2.heavyAtoms_end(); atom_it_2 != end2; ++atom_it_2 ) {
@@ -110,12 +110,10 @@ debug_assert (rsd1.seqpos() != rsd2.seqpos()); //only call for distinct residues
 		if ( distance >= 10. || distance < 1.5 ||
 				lookup_table_.get_potentials( rsd1.aa(), rsd2.aa(), distance ) > 0. ) {
 			emap[ interface_dd_pair ] += 0.; // noop
-		}
-		else {
+		} else {
 			emap[ interface_dd_pair ] += lookup_table_.get_potentials( rsd1.aa(), rsd2.aa(), distance );
 		}
-	}
-	else {
+	} else {
 		emap[ interface_dd_pair ] += 0.; // noop
 	}
 

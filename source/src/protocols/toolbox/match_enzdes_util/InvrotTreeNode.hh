@@ -99,7 +99,7 @@ public:
 	get_fixed_pt( core::pose::Pose const & pose ) const;
 
 	utility::vector1< std::list< core::conformation::ResidueCOP > >
-  all_target_residues( InvrotTreeNodeBaseCAP child_node ) const;
+	all_target_residues( InvrotTreeNodeBaseCAP child_node ) const;
 
 
 	void

@@ -40,8 +40,8 @@
 #include <string>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class ReportToDB : public protocols::moves::Mover {
 
@@ -79,7 +79,7 @@ public:
 	virtual moves::MoverOP clone() const;
 
 	virtual std::string name() { return "ReportToDB"; }
- 	virtual std::string get_name() const { return "ReportToDB"; }
+	virtual std::string get_name() const { return "ReportToDB"; }
 
 	void
 	set_batch_name(
@@ -148,12 +148,12 @@ public:
 
 	/* Undefined, commenting out to fix PyRosetta build  void
 	parse_struct_id_type_tag_item(
-		utility::tag::TagCOP tag);
+	utility::tag::TagCOP tag);
 	*/
 
 	/* Undefined, commenting out to fix PyRosetta build  void
 	parse_first_struct_id_tag_item(
-		utility::tag::TagCOP tag);
+	utility::tag::TagCOP tag);
 	*/
 
 	void

@@ -51,7 +51,7 @@ NeighborhoodResidueSelector::~NeighborhoodResidueSelector() {}
 ResidueSubset
 NeighborhoodResidueSelector::apply( core::pose::Pose const & pose ) const
 {
-debug_assert( focus_set_ );
+	debug_assert( focus_set_ );
 
 	ResidueSubset subset( pose.total_residue(), false );
 	std::set< Size > focus_tmp;
@@ -61,17 +61,16 @@ debug_assert( focus_set_ );
 
 	Real const dst_squared = distance_ * distance_;
 	// go through each residue of the pose and check if it's near anything in the focus set
-	for( Size ii = 1; ii < subset.size() ; ++ii )
-	{
-		if( subset[ ii ] ) continue;
+	for ( Size ii = 1; ii < subset.size() ; ++ii ) {
+		if ( subset[ ii ] ) continue;
 		conformation::Residue const & r1( pose.residue( ii ) );
-		for( std::set< Size >::const_iterator it = focus_tmp.begin();
-            it != focus_tmp.end(); ++it )
-		{
+		for ( std::set< Size >::const_iterator it = focus_tmp.begin();
+				it != focus_tmp.end(); ++it ) {
 			conformation::Residue const & r2( pose.residue( *it ) );
 			Real const d_sq( r1.xyz( r1.nbr_atom() ).distance_squared( r2.xyz( r2.nbr_atom() ) ) );
-			if(d_sq <= dst_squared)
+			if ( d_sq <= dst_squared ) {
 				subset[ ii ] = true;
+			}
 		} // focus set
 	} // subset
 
@@ -83,11 +82,11 @@ NeighborhoodResidueSelector::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap)
 {
-	if( tag->hasOption("selector") ) {
-		if(tag->hasOption("resnums")) {
+	if ( tag->hasOption("selector") ) {
+		if ( tag->hasOption("resnums") ) {
 			throw utility::excn::EXCN_Msg_Exception( "NeighborhoodResidueSelector takes EITHER 'selector' OR 'resnum' options, not both!\n" );
 		}
-		if( tag->size() > 1 ) { // 1 if no subtags exist
+		if ( tag->size() > 1 ) { // 1 if no subtags exist
 			throw utility::excn::EXCN_Msg_Exception( "NeighborhoodResidueSelector can only have one ResidueSelector loaded!\n" );
 		}
 		// grab the ResidueSelector from the selector option
@@ -111,20 +110,20 @@ NeighborhoodResidueSelector::parse_my_tag(
 			error_msg << e.msg();
 			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
 		}
-	} else if (tag->size() > 1 ) { // get focus selector from tag
-		if( tag->hasOption("resnums") ) {
+	} else if ( tag->size() > 1 ) { // get focus selector from tag
+		if ( tag->hasOption("resnums") ) {
 			throw utility::excn::EXCN_Msg_Exception( "NeighborhoodResidueSelector takes EITHER a 'resnums' tag or a selector subtag, not both!\n" );
 		}
 
 		utility::vector0< utility::tag::TagCOP > const & tags = tag->getTags();
-		if(tags.size() > 1) {
+		if ( tags.size() > 1 ) {
 			throw utility::excn::EXCN_Msg_Exception( "NeighborhoodResidueSelector takes at most one ResidueSelector to determine the focus!\n" );
 		}
 		ResidueSelectorCOP rs = ResidueSelectorFactory::get_instance()->new_residue_selector(
-				tags.front()->getName(),
-				tags.front(),
-				datamap
-			);
+			tags.front()->getName(),
+			tags.front(),
+			datamap
+		);
 		set_focus_selector( rs );
 
 	} else { // do not get focus from ResidueSelectors but load resnums string instead
@@ -160,8 +159,8 @@ NeighborhoodResidueSelector::get_focus(
 	if ( focus_selector_ && use_focus_selector_ ) {
 		subset = focus_selector_->apply( pose );
 
-		for( Size ii = 1; ii <= subset.size(); ++ii ) {
-			if( subset[ ii ] ) {
+		for ( Size ii = 1; ii <= subset.size(); ++ii ) {
+			if ( subset[ ii ] ) {
 				focus.insert( ii );
 			}
 		}
@@ -169,10 +168,9 @@ NeighborhoodResidueSelector::get_focus(
 		std::set< Size > const res_vec( get_resnum_list( focus_str_, pose ) );
 		focus.insert( focus_.begin(), focus_.end() );
 		focus.insert( res_vec.begin(), res_vec.end() );
-		for( std::set< Size >::const_iterator it = focus.begin();
-			it != focus.end(); ++it )
-		{
-			if(*it == 0 || *it > subset.size()) {
+		for ( std::set< Size >::const_iterator it = focus.begin();
+				it != focus.end(); ++it ) {
+			if ( *it == 0 || *it > subset.size() ) {
 				std::stringstream err_msg;
 				err_msg << "Residue " << *it << " not found in pose!\n";
 				throw utility::excn::EXCN_Msg_Exception( err_msg.str() );
@@ -217,7 +215,7 @@ std::string NeighborhoodResidueSelector::get_name() const {
 }
 
 std::string NeighborhoodResidueSelector::class_name() {
-		  return "Neighborhood";
+	return "Neighborhood";
 }
 
 ResidueSelectorOP

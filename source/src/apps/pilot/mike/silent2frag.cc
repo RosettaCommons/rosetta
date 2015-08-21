@@ -59,8 +59,8 @@ class FragCaptureMover : public moves::Mover
 {
 public:
 	/// @brief
-	/// 	empty constructor fills values with the values
-	///		read in from the commandline
+	///  empty constructor fills values with the values
+	///  read in from the commandline
 	FragCaptureMover( core::Size length) :
 		Mover(),
 		fragset_( length )
@@ -108,35 +108,35 @@ void FragCaptureMover::write( const std::string &filename )
 int
 main( int argc, char * argv [] )
 {
-    try {
-    	using namespace basic::options;
-    	using namespace basic::options::OptionKeys;
-    	using namespace protocols::moves;
+	try {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace protocols::moves;
 
-    	devel::init(argc, argv);
-    	jd2::register_options();
+		devel::init(argc, argv);
+		jd2::register_options();
 
-    	FragCaptureMoverOP capture3mers( new FragCaptureMover(3) );
-    	FragCaptureMoverOP capture9mers( new FragCaptureMover(9) );
+		FragCaptureMoverOP capture3mers( new FragCaptureMover(3) );
+		FragCaptureMoverOP capture9mers( new FragCaptureMover(9) );
 
-    	SequenceMoverOP seqmov( new SequenceMover );
-    	if ( option[ run::idealize_before_protocol ]() ) {
-    		seqmov->add_mover( MoverOP( new protocols::idealize::IdealizeMover ) );
-    	}
+		SequenceMoverOP seqmov( new SequenceMover );
+		if ( option[ run::idealize_before_protocol ]() ) {
+			seqmov->add_mover( MoverOP( new protocols::idealize::IdealizeMover ) );
+		}
 
-    	seqmov->add_mover( capture3mers );
-    	seqmov->add_mover( capture9mers );
-    	MoverOP mover = seqmov;
-    	protocols::jd2::JobDistributor::get_instance()->go( seqmov );
+		seqmov->add_mover( capture3mers );
+		seqmov->add_mover( capture9mers );
+		MoverOP mover = seqmov;
+		protocols::jd2::JobDistributor::get_instance()->go( seqmov );
 
-    	std::string prefix = "";
-    	if ( option[ out::prefix ].user() ) prefix = option[ out::prefix ]() + "_" ;
-    	capture3mers->write( prefix + "aa3mer.1_3" );
-    	capture9mers->write( prefix + "aa9mer.1_3" );
+		std::string prefix = "";
+		if ( option[ out::prefix ].user() ) prefix = option[ out::prefix ]() + "_" ;
+		capture3mers->write( prefix + "aa3mer.1_3" );
+		capture9mers->write( prefix + "aa9mer.1_3" );
 
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }

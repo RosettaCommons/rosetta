@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/matdes/MatDesGreedyOptMutationMoverMatDesGreedyOptMutationMoverCreator.hh
-/// @brief	This is a modified version of Chris King's GreedyOptMutationMover with additional functionality that is currently not compatible with all of the ParetoOpt functionality. Please note that this has been checked into master in its current state in response to requests from others to use this modified version of Chris King's GreedyOptMutationMover. Although this is still a somewhat developmental piece of code, it has currently been left in src/protocols/matdes/ to avoid issues with intra-library level dependencies.  
+/// @brief This is a modified version of Chris King's GreedyOptMutationMover with additional functionality that is currently not compatible with all of the ParetoOpt functionality. Please note that this has been checked into master in its current state in response to requests from others to use this modified version of Chris King's GreedyOptMutationMover. Although this is still a somewhat developmental piece of code, it has currently been left in src/protocols/matdes/ to avoid issues with intra-library level dependencies.
 /// @author Jacob Bale (balej@uw.edu)
 
 #ifndef INCLUDED_protocols_matdes_MatDesGreedyOptMutationMoverCreator_hh

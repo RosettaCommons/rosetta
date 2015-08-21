@@ -122,9 +122,9 @@ SymMinimizerMap::SymMinimizerMap(
 	// setup the domain_map which indicates what rsd pairs are fixed/moving
 	id::AtomID_Mask moving_dof, moving_xyz;
 	core::pose::initialize_atomid_map( moving_xyz, pose, false );
-   	core::pose::initialize_atomid_map( moving_dof, pose, false );
+	core::pose::initialize_atomid_map( moving_dof, pose, false );
 	for ( const_iterator it = dof_nodes_.begin(), it_end = dof_nodes_.end();
-				it != it_end; ++it ) {
+			it != it_end; ++it ) {
 		moving_dof[ (**it).atom_id() ] = true;
 	}
 
@@ -149,11 +149,11 @@ SymMinimizerMap::add_torsion(
 	id::TorsionID const & tor_id( dof_id2torsion_id_[ new_torsion ] );
 
 	bool const independent( tor_id.valid() ? symm_info_->torsion_is_independent( tor_id ) :
-													symm_info_->dof_is_independent( new_torsion, pose_.conformation() ) );
+		symm_info_->dof_is_independent( new_torsion, pose_.conformation() ) );
 
 	// std::cout << "add torsion: " << new_torsion.atomno() << " " << new_torsion.rsd() << " " << new_torsion.type() <<
-	// 	' ' << tor_id <<
-	// 	" ind: " << independent << " parent: " << parent.atomno() << " " << parent.rsd() << " " << parent.type() << std::endl;
+	//  ' ' << tor_id <<
+	//  " ind: " << independent << " parent: " << parent.atomno() << " " << parent.rsd() << " " << parent.type() << std::endl;
 
 	if ( new_sym_min_ ) {
 		// add everything in the new approach
@@ -168,7 +168,7 @@ SymMinimizerMap::add_torsion(
 			if ( new_torsion.type() >= id::RB1 ) { // We have a jump
 				conformation::symmetry::SymmetricConformation const & symm_conf (
 					dynamic_cast< conformation::symmetry::SymmetricConformation const & > ( pose_.conformation()) );
-			debug_assert( conformation::symmetry::is_symmetric( symm_conf ) );
+				debug_assert( conformation::symmetry::is_symmetric( symm_conf ) );
 				if ( symm_info_->get_dof_derivative_weight( new_torsion, symm_conf ) != 0.0 ) {
 					DOF_ID parent_dof( id::BOGUS_DOF_ID );
 					add_new_dof_node( new_torsion, parent_dof, true );
@@ -189,18 +189,18 @@ SymMinimizerMap::add_atom(
 	//std::cout << "add atom? atom " << atom_id << " dof " << dof_id.rsd() << " " << dof_id.atomno() << " " << dof_id.type() << std::endl;
 	//std::cout << "    last_cloned_jump_?: "<< last_cloned_jump_.rsd() << " " << last_cloned_jump_.atomno() << " " << last_cloned_jump_.type() << std::endl;
 
-debug_assert( dof_node_pointer_[ dof_id ] );
+	debug_assert( dof_node_pointer_[ dof_id ] );
 	dof_node_pointer_[ dof_id ]->add_atom( atom_id );
 
 	/*if ( symm_info_->dof_is_independent( dof_id, pose_.conformation() ) ) {
-		dof_node_pointer_[ dof_id ]->add_atom( atom_id );
-		std::cout << "    added to independ dof" << std::endl;
+	dof_node_pointer_[ dof_id ]->add_atom( atom_id );
+	std::cout << "    added to independ dof" << std::endl;
 	} else if ( dof_node_pointer_[ dof_id ] ) {
 	//debug_assert( dof_id == last_cloned_jump_ );
 	debug_assert( ! symm_info_->dof_is_independent( dof_id, pose_.conformation() ) );
 	//debug_assert( dof_node_pointer_[ last_cloned_jump_ ] );
-		dof_node_pointer_[ dof_id ] ->add_atom( atom_id );
-		std::cout << "    added to last_cloned_jump_: "<< last_cloned_jump_.rsd() << " " << last_cloned_jump_.atomno() << " " << last_cloned_jump_.type() << std::endl;
+	dof_node_pointer_[ dof_id ] ->add_atom( atom_id );
+	std::cout << "    added to last_cloned_jump_: "<< last_cloned_jump_.rsd() << " " << last_cloned_jump_.atomno() << " " << last_cloned_jump_.type() << std::endl;
 	}  */
 }
 
@@ -218,7 +218,7 @@ SymMinimizerMap::copy_dofs_from_pose(
 {
 	int imap = 1;
 	for ( const_iterator it=dof_nodes_.begin(), it_end = dof_nodes_.end();
-				it != it_end; ++it, ++imap ) {
+			it != it_end; ++it, ++imap ) {
 		DOF_Node const & dof_node( **it );
 		if ( new_sym_min_ && dof_node.dependent() ) { --imap; continue; }
 		dofs[ imap ] = torsion_scale_factor( dof_node ) *
@@ -281,7 +281,7 @@ SymMinimizerMap::link_torsion_vectors()
 	for ( const_iterator it=dof_nodes_.begin(),
 			it_end=dof_nodes_.end(); it != it_end; ++it ) {
 		DOF_Node & dof_node( **it );
-	debug_assert( last_depth == -1 || dof_node.depth() <= last_depth );
+		debug_assert( last_depth == -1 || dof_node.depth() <= last_depth );
 #ifndef NDEBUG
 		last_depth = dof_node.depth();
 #endif
@@ -354,21 +354,21 @@ SymMinimizerMap::add_new_dof_node(
 {
 	//id::TorsionID const & parent_tor_id( parent.valid() ? dof_id2torsion_id_[ parent ] : id::BOGUS_TORSION_ID );
 	// std::cout << "add new dof node: " << new_torsion.atomno() << " " << new_torsion.rsd() << " " << new_torsion.type() <<
-	// 	' ' << new_tor_id << ' ' <<new_tor_id.valid() << ' ' << symm_info_->bb_follows( new_torsion.rsd() ) << ' ' <<
-	// 	(  new_tor_id.valid() && symm_info_->torsion_is_independent( new_tor_id ) ) << ' ' <<
-	// 	( !new_tor_id.valid() && symm_info_->bb_follows( new_torsion.rsd() ) == 0 ) << std::endl;
+	//  ' ' << new_tor_id << ' ' <<new_tor_id.valid() << ' ' << symm_info_->bb_follows( new_torsion.rsd() ) << ' ' <<
+	//  (  new_tor_id.valid() && symm_info_->torsion_is_independent( new_tor_id ) ) << ' ' <<
+	//  ( !new_tor_id.valid() && symm_info_->bb_follows( new_torsion.rsd() ) == 0 ) << std::endl;
 
 	// std::cout << "add new dof node parent: " << parent.atomno() << " " << parent.rsd() << " " << parent.type() << ' ' <<
-	// 	parent_tor_id << std::endl;
+	//  parent_tor_id << std::endl;
 
 	// this will not necessarily be true when we have cloned jumps put in the map due to a non-zero jump_clone_wt
 	// or at any rate I don't think it will be OK with -new_sym_min. But email me (pbradley@fhcrc.org) to chat about it.
 	// runtime_assert( ! parent.valid() ||
-	// 								(  parent_tor_id.valid() && symm_info_->torsion_is_independent( parent_tor_id ) ) ||
-	// 								( !parent_tor_id.valid() && symm_info_->bb_follows( parent.rsd() ) == 0 ) );
+	//         (  parent_tor_id.valid() && symm_info_->torsion_is_independent( parent_tor_id ) ) ||
+	//         ( !parent_tor_id.valid() && symm_info_->bb_follows( parent.rsd() ) == 0 ) );
 
 	// runtime_assert( (  new_tor_id.valid() && symm_info_->torsion_is_independent( new_tor_id ) ) ||
-	// 								( !new_tor_id.valid() && symm_info_->bb_follows( new_torsion.rsd() ) == 0 ) );
+	//         ( !new_tor_id.valid() && symm_info_->bb_follows( new_torsion.rsd() ) == 0 ) );
 
 	DOF_NodeOP dof_node( new DOF_Node( new_torsion, DOF_NodeOP( 0 ) ) );
 	dof_node->dependent( false ); // only used if new_sym_min_
@@ -402,13 +402,13 @@ SymMinimizerMap::asymmetric_dof( DOF_ID const & cloned_dof ) const
 	if ( cloned_dof.type() >= id::RB1 ) {
 		/// we have a jump
 		Size cloned_jumpno = pose_.conformation().fold_tree().get_jump_that_builds_residue( cloned_dof.rsd() );
-	debug_assert( symm_info_->jump_follows( cloned_jumpno ) != 0 );
+		debug_assert( symm_info_->jump_follows( cloned_jumpno ) != 0 );
 		Size asymm_jumpno = symm_info_->jump_follows( cloned_jumpno );
 		Size asymm_resno = pose_.conformation().fold_tree().jump_edge( asymm_jumpno ).stop();
 		id::AtomID asymmatom( cloned_dof.atomno(), asymm_resno );
 		return DOF_ID( asymmatom, cloned_dof.type() );
 	} else {
-	debug_assert( symm_info_->bb_follows( cloned_dof.rsd() ) != 0 );
+		debug_assert( symm_info_->bb_follows( cloned_dof.rsd() ) != 0 );
 		id::AtomID asymmatom( cloned_dof.atomno(), symm_info_->bb_follows( cloned_dof.rsd() ) );
 
 		return DOF_ID( asymmatom, cloned_dof.type() );
@@ -420,12 +420,12 @@ SymMinimizerMap::assign_rosetta_torsions()
 {
 	// mapping from AtomTree DOF ID's to bb/chi torsion angle ids
 	//id::DOF_ID_Map< id::TorsionID > dof_map
-	//	( id::BOGUS_TORSION_ID);
+	// ( id::BOGUS_TORSION_ID);
 	//pose::setup_dof_to_torsion_map( pose, dof_map ); // we already did this
 	id::DOF_ID_Map< id::TorsionID > const & dof_map( dof_id2torsion_id_ );
 
 	for ( const_iterator it = dof_nodes_.begin(), it_end = dof_nodes_.end();
-				it != it_end; ++it ) {
+			it != it_end; ++it ) {
 		DOF_Node & dof_node( **it );
 
 		if ( dof_node.type() == id::PHI ) {

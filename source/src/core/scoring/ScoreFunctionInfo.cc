@@ -74,8 +74,7 @@ ScoreFunctionInfo::initialize_from( ScoreFunction const & scorefxn ) {
 
 	max_context_neighbor_cutoff_ = 0;
 	for ( uint ii = 1; ii <= num_context_graph_types; ++ii ) {
-		if ( context_graphs_required_[ ii ] )
-		{
+		if ( context_graphs_required_[ ii ] ) {
 			ContextGraphOP example_graph = ContextGraphFactory::create_context_graph( ContextGraphType(ii) );
 			if ( example_graph->neighbor_cutoff() > max_context_neighbor_cutoff_ ) {
 				max_context_neighbor_cutoff_ = example_graph->neighbor_cutoff();
@@ -98,7 +97,7 @@ ScoreFunctionInfo::initialize_from( ScoreFunction const & scorefxn ) {
 bool
 operator==( ScoreFunctionInfo const & a, ScoreFunctionInfo const & b ) /* PHIL */ {
 
-	if ( a.max_atomic_interaction_distance_ != b.max_atomic_interaction_distance_) return false;
+	if ( a.max_atomic_interaction_distance_ != b.max_atomic_interaction_distance_ ) return false;
 	if ( a.max_context_neighbor_cutoff_ != b.max_context_neighbor_cutoff_ ) return false;
 	for ( uint ii = 1; ii <= num_context_graph_types; ++ii ) {
 		if ( a.context_graphs_required_[ ii ] != b.context_graphs_required_[ ii ] ) return false;

@@ -65,7 +65,7 @@ public:
 	/// intermediate-output pose (not the final pose) to not have the aggregated
 	/// accessory data in the "real" Job object.
 	JobOP copy_without_output() const;
-	
+
 	/// @brief Return an owning pointer to a copy of this object.
 	///
 	JobOP clone() const;
@@ -131,7 +131,7 @@ public:
 
 	/// @brief add a string/real pair
 	void add_string_real_pair( std::string const & string_in, core::Real const real_in );
-	
+
 	/// @brief Delete the output strings, string/string pairs, and string/real pairs.
 	///
 	void clear_output();
@@ -175,7 +175,7 @@ public:
 	bool to_do() const {
 		return !completed_ && !bad();
 	}
-	
+
 	/// @brief Returns true iff this job can be deleted to free up memory.
 	/// @details Should only be true if the job has completed, is bad, or has failed.
 	bool can_be_deleted() const {
@@ -193,10 +193,10 @@ public:
 
 	void set_completed(bool value = true)  {
 		completed_ = value;
-		if(completed_) can_be_deleted_ = true; //If the job has completed, it can be deleted; if not, it may or may not be deletable.
+		if ( completed_ ) can_be_deleted_ = true; //If the job has completed, it can be deleted; if not, it may or may not be deletable.
 		return;
 	}
-	
+
 	/// @brief Set whether this job can be deleted to free up memory.
 	///
 	void set_can_be_deleted( bool value=true ) {

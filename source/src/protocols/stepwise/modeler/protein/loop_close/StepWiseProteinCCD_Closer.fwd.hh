@@ -24,9 +24,9 @@ namespace modeler {
 namespace protein {
 namespace loop_close {
 
-	class StepWiseProteinCCD_Closer;
-	typedef utility::pointer::shared_ptr< StepWiseProteinCCD_Closer > StepWiseProteinCCD_CloserOP;
-	typedef utility::pointer::shared_ptr< StepWiseProteinCCD_Closer const > StepWiseProteinCCD_CloserCOP;
+class StepWiseProteinCCD_Closer;
+typedef utility::pointer::shared_ptr< StepWiseProteinCCD_Closer > StepWiseProteinCCD_CloserOP;
+typedef utility::pointer::shared_ptr< StepWiseProteinCCD_Closer const > StepWiseProteinCCD_CloserCOP;
 
 } //loop_close
 } //protein

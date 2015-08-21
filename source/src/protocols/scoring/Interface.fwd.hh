@@ -20,7 +20,7 @@
 // C++ headers
 
 namespace protocols {
-namespace scoring{
+namespace scoring {
 class Interface;
 typedef  utility::pointer::shared_ptr< Interface >  InterfaceOP;
 typedef  utility::pointer::shared_ptr< Interface const >  InterfaceCOP;

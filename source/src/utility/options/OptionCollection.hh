@@ -125,7 +125,7 @@ public: // Creation
 	/// @brief Default constructor
 	inline
 	OptionCollection()
-		: argv_copy_("")
+	: argv_copy_("")
 	{}
 
 
@@ -448,20 +448,20 @@ public: // Methods
 	}
 
 
-//	/// @brief Specify mutually exclusive options
-//	void
-//	exclusive(
-//		OptionKey const & key1,
-//		OptionKey const & key2
-//	);
+	// /// @brief Specify mutually exclusive options
+	// void
+	// exclusive(
+	//  OptionKey const & key1,
+	//  OptionKey const & key2
+	// );
 
 
-//	/// @brief Specify an option that requires a second option to also be specified
-//	void
-//	requires(
-//		OptionKey const & key1,
-//		OptionKey const & key2
-//	);
+	// /// @brief Specify an option that requires a second option to also be specified
+	// void
+	// requires(
+	//  OptionKey const & key1,
+	//  OptionKey const & key2
+	// );
 
 	/// @brief Check for problems in the option specifications
 	void
@@ -483,11 +483,11 @@ public: // Methods
 	);
 
 	/// @brief Load the user-specified option values
-  void
-  load(
+	void
+	load(
 		std::string executable_name, // usually argv[ 0 ]
 		ValueStrings& arg_strings,
-    bool const free_args // Support free argument (without - prefix)?
+		bool const free_args // Support free argument (without - prefix)?
 	);
 
 	/// @brief Load all options in a flags file
@@ -504,7 +504,7 @@ public: // Methods
 
 	/// @brief Load all options in a flags file
 	void load_options_from_stream(
-    std::istream& stream,
+		std::istream& stream,
 		std::string const & file_string="STREAM", //for error msg, set if stream is connected to file_string
 		std::string const & cid=""
 	);
@@ -1444,52 +1444,52 @@ public: // Indexers
 		runtime_assert( all_.has( key ) );
 		Option const * option;
 		switch ( all_[ key ] ) {
-		case BOOLEAN_OPTION:
+		case BOOLEAN_OPTION :
 			option = &booleans_[ down_cast< BooleanOptionKey const & >( key ) ];
 			break;
-		case INTEGER_OPTION:
+		case INTEGER_OPTION :
 			option = &integers_[ down_cast< IntegerOptionKey const & >( key ) ];
 			break;
-		case REAL_OPTION:
+		case REAL_OPTION :
 			option = &reals_[ down_cast< RealOptionKey const & >( key ) ];
 			break;
-		case STRING_OPTION:
+		case STRING_OPTION :
 			option = &strings_[ down_cast< StringOptionKey const & >( key ) ];
 			break;
-		case FILE_OPTION:
+		case FILE_OPTION :
 			option = &files_[ down_cast< FileOptionKey const & >( key ) ];
 			break;
-		case PATH_OPTION:
+		case PATH_OPTION :
 			option = &paths_[ down_cast< PathOptionKey const & >( key ) ];
 			break;
-		case ANY_OPTION:
+		case ANY_OPTION :
 			option = anys_[ down_cast< AnyOptionKey const & >( key ) ];
 			break;
-		case BOOLEAN_VECTOR_OPTION:
+		case BOOLEAN_VECTOR_OPTION :
 			option = &boolean_vectors_[ down_cast< BooleanVectorOptionKey const & >( key ) ];
 			break;
-		case INTEGER_VECTOR_OPTION:
+		case INTEGER_VECTOR_OPTION :
 			option = &integer_vectors_[ down_cast< IntegerVectorOptionKey const & >( key ) ];
 			break;
-		case REAL_VECTOR_OPTION:
+		case REAL_VECTOR_OPTION :
 			option = &real_vectors_[ down_cast< RealVectorOptionKey const & >( key ) ];
 			break;
-		case RESIDUE_CHAIN_VECTOR_OPTION:
+		case RESIDUE_CHAIN_VECTOR_OPTION :
 			option = &residue_chain_vectors_[ down_cast< ResidueChainVectorOptionKey const & >( key ) ];
 			break;
-		case STRING_VECTOR_OPTION:
+		case STRING_VECTOR_OPTION :
 			option = &string_vectors_[ down_cast< StringVectorOptionKey const & >( key ) ];
 			break;
-		case FILE_VECTOR_OPTION:
+		case FILE_VECTOR_OPTION :
 			option = &file_vectors_[ down_cast< FileVectorOptionKey const & >( key ) ];
 			break;
-		case PATH_VECTOR_OPTION:
+		case PATH_VECTOR_OPTION :
 			option = &path_vectors_[ down_cast< PathVectorOptionKey const & >( key ) ];
 			break;
-		case ANY_VECTOR_OPTION:
+		case ANY_VECTOR_OPTION :
 			option = any_vectors_[ down_cast< AnyVectorOptionKey const & >( key ) ];
 			break;
-		case UNKNOWN_OPTION:
+		case UNKNOWN_OPTION :
 			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
 			runtime_assert( false ); // Shouldn't get here
 			return *booleans_.begin(); // Keep compiler happy
@@ -1515,52 +1515,52 @@ public: // Indexers
 		runtime_assert( all_.has( key ) );
 		Option * option;
 		switch ( all_[ key ] ) {
-		case BOOLEAN_OPTION:
+		case BOOLEAN_OPTION :
 			option = &booleans_[ down_cast< BooleanOptionKey const & >( key ) ];
 			break;
-		case INTEGER_OPTION:
+		case INTEGER_OPTION :
 			option = &integers_[ down_cast< IntegerOptionKey const & >( key ) ];
 			break;
-		case REAL_OPTION:
+		case REAL_OPTION :
 			option = &reals_[ down_cast< RealOptionKey const & >( key ) ];
 			break;
-		case STRING_OPTION:
+		case STRING_OPTION :
 			option = &strings_[ down_cast< StringOptionKey const & >( key ) ];
 			break;
-		case FILE_OPTION:
+		case FILE_OPTION :
 			option = &files_[ down_cast< FileOptionKey const & >( key ) ];
 			break;
-		case PATH_OPTION:
+		case PATH_OPTION :
 			option = &paths_[ down_cast< PathOptionKey const & >( key ) ];
 			break;
-		case ANY_OPTION:
+		case ANY_OPTION :
 			option = anys_[ down_cast< AnyOptionKey const & >( key ) ];
 			break;
-		case BOOLEAN_VECTOR_OPTION:
+		case BOOLEAN_VECTOR_OPTION :
 			option = &boolean_vectors_[ down_cast< BooleanVectorOptionKey const & >( key ) ];
 			break;
-		case INTEGER_VECTOR_OPTION:
+		case INTEGER_VECTOR_OPTION :
 			option = &integer_vectors_[ down_cast< IntegerVectorOptionKey const & >( key ) ];
 			break;
-		case REAL_VECTOR_OPTION:
+		case REAL_VECTOR_OPTION :
 			option = &real_vectors_[ down_cast< RealVectorOptionKey const & >( key ) ];
 			break;
-		case RESIDUE_CHAIN_VECTOR_OPTION:
+		case RESIDUE_CHAIN_VECTOR_OPTION :
 			option = &residue_chain_vectors_[ down_cast< ResidueChainVectorOptionKey const & >( key ) ];
 			break;
-		case STRING_VECTOR_OPTION:
+		case STRING_VECTOR_OPTION :
 			option = &string_vectors_[ down_cast< StringVectorOptionKey const & >( key ) ];
 			break;
-		case FILE_VECTOR_OPTION:
+		case FILE_VECTOR_OPTION :
 			option = &file_vectors_[ down_cast< FileVectorOptionKey const & >( key ) ];
 			break;
-		case PATH_VECTOR_OPTION:
+		case PATH_VECTOR_OPTION :
 			option = &path_vectors_[ down_cast< PathVectorOptionKey const & >( key ) ];
 			break;
-		case ANY_VECTOR_OPTION:
+		case ANY_VECTOR_OPTION :
 			option = any_vectors_[ down_cast< AnyVectorOptionKey const & >( key ) ];
 			break;
-		case UNKNOWN_OPTION:
+		case UNKNOWN_OPTION :
 			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
 			runtime_assert( false ); // Shouldn't get here
 			return *booleans_.begin(); // Keep compiler happy
@@ -1986,52 +1986,52 @@ public: // Indexers
 		runtime_assert( all_.has( key ) );
 		Option const * option;
 		switch ( all_[ key ] ) {
-		case BOOLEAN_OPTION:
+		case BOOLEAN_OPTION :
 			option = &booleans_[ down_cast< BooleanOptionKey const & >( key ) ];
 			break;
-		case INTEGER_OPTION:
+		case INTEGER_OPTION :
 			option = &integers_[ down_cast< IntegerOptionKey const & >( key ) ];
 			break;
-		case REAL_OPTION:
+		case REAL_OPTION :
 			option = &reals_[ down_cast< RealOptionKey const & >( key ) ];
 			break;
-		case STRING_OPTION:
+		case STRING_OPTION :
 			option = &strings_[ down_cast< StringOptionKey const & >( key ) ];
 			break;
-		case FILE_OPTION:
+		case FILE_OPTION :
 			option = &files_[ down_cast< FileOptionKey const & >( key ) ];
 			break;
-		case PATH_OPTION:
+		case PATH_OPTION :
 			option = &paths_[ down_cast< PathOptionKey const & >( key ) ];
 			break;
-		case ANY_OPTION:
+		case ANY_OPTION :
 			option = anys_[ down_cast< AnyOptionKey const & >( key ) ];
 			break;
-		case BOOLEAN_VECTOR_OPTION:
+		case BOOLEAN_VECTOR_OPTION :
 			option = &boolean_vectors_[ down_cast< BooleanVectorOptionKey const & >( key ) ];
 			break;
-		case INTEGER_VECTOR_OPTION:
+		case INTEGER_VECTOR_OPTION :
 			option = &integer_vectors_[ down_cast< IntegerVectorOptionKey const & >( key ) ];
 			break;
-		case REAL_VECTOR_OPTION:
+		case REAL_VECTOR_OPTION :
 			option = &real_vectors_[ down_cast< RealVectorOptionKey const & >( key ) ];
 			break;
-		case RESIDUE_CHAIN_VECTOR_OPTION:
+		case RESIDUE_CHAIN_VECTOR_OPTION :
 			option = &residue_chain_vectors_[ down_cast< ResidueChainVectorOptionKey const & >( key ) ];
 			break;
-		case STRING_VECTOR_OPTION:
+		case STRING_VECTOR_OPTION :
 			option = &string_vectors_[ down_cast< StringVectorOptionKey const & >( key ) ];
 			break;
-		case FILE_VECTOR_OPTION:
+		case FILE_VECTOR_OPTION :
 			option = &file_vectors_[ down_cast< FileVectorOptionKey const & >( key ) ];
 			break;
-		case PATH_VECTOR_OPTION:
+		case PATH_VECTOR_OPTION :
 			option = &path_vectors_[ down_cast< PathVectorOptionKey const & >( key ) ];
 			break;
-		case ANY_VECTOR_OPTION:
+		case ANY_VECTOR_OPTION :
 			option = any_vectors_[ down_cast< AnyVectorOptionKey const & >( key ) ];
 			break;
-		case UNKNOWN_OPTION:
+		case UNKNOWN_OPTION :
 			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
 			runtime_assert( false ); // Shouldn't get here
 			return *booleans_.begin(); // Keep compiler happy
@@ -2057,52 +2057,52 @@ public: // Indexers
 		runtime_assert( all_.has( key ) );
 		Option * option;
 		switch ( all_[ key ] ) {
-		case BOOLEAN_OPTION:
+		case BOOLEAN_OPTION :
 			option = &booleans_[ down_cast< BooleanOptionKey const & >( key ) ];
 			break;
-		case INTEGER_OPTION:
+		case INTEGER_OPTION :
 			option = &integers_[ down_cast< IntegerOptionKey const & >( key ) ];
 			break;
-		case REAL_OPTION:
+		case REAL_OPTION :
 			option = &reals_[ down_cast< RealOptionKey const & >( key ) ];
 			break;
-		case STRING_OPTION:
+		case STRING_OPTION :
 			option = &strings_[ down_cast< StringOptionKey const & >( key ) ];
 			break;
-		case FILE_OPTION:
+		case FILE_OPTION :
 			option = &files_[ down_cast< FileOptionKey const & >( key ) ];
 			break;
-		case PATH_OPTION:
+		case PATH_OPTION :
 			option = &paths_[ down_cast< PathOptionKey const & >( key ) ];
 			break;
-		case ANY_OPTION:
+		case ANY_OPTION :
 			option = anys_[ down_cast< AnyOptionKey const & >( key ) ];
 			break;
-		case BOOLEAN_VECTOR_OPTION:
+		case BOOLEAN_VECTOR_OPTION :
 			option = &boolean_vectors_[ down_cast< BooleanVectorOptionKey const & >( key ) ];
 			break;
-		case INTEGER_VECTOR_OPTION:
+		case INTEGER_VECTOR_OPTION :
 			option = &integer_vectors_[ down_cast< IntegerVectorOptionKey const & >( key ) ];
 			break;
-		case REAL_VECTOR_OPTION:
+		case REAL_VECTOR_OPTION :
 			option = &real_vectors_[ down_cast< RealVectorOptionKey const & >( key ) ];
 			break;
-		case RESIDUE_CHAIN_VECTOR_OPTION:
+		case RESIDUE_CHAIN_VECTOR_OPTION :
 			option = &residue_chain_vectors_[ down_cast< ResidueChainVectorOptionKey const & >( key ) ];
 			break;
-		case STRING_VECTOR_OPTION:
+		case STRING_VECTOR_OPTION :
 			option = &string_vectors_[ down_cast< StringVectorOptionKey const & >( key ) ];
 			break;
-		case FILE_VECTOR_OPTION:
+		case FILE_VECTOR_OPTION :
 			option = &file_vectors_[ down_cast< FileVectorOptionKey const & >( key ) ];
 			break;
-		case PATH_VECTOR_OPTION:
+		case PATH_VECTOR_OPTION :
 			option = &path_vectors_[ down_cast< PathVectorOptionKey const & >( key ) ];
 			break;
-		case ANY_VECTOR_OPTION:
+		case ANY_VECTOR_OPTION :
 			option = any_vectors_[ down_cast< AnyVectorOptionKey const & >( key ) ];
 			break;
-		case UNKNOWN_OPTION:
+		case UNKNOWN_OPTION :
 			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
 			runtime_assert( false ); // Shouldn't get here
 			return *booleans_.begin(); // Keep compiler happy

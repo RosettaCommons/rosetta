@@ -74,7 +74,7 @@ public:
 	}
 
 	/// @brief number of atoms involved in this MultiConstraint container
-  Size natoms() const
+	Size natoms() const
 	{
 		return member_atoms_.size();
 	}
@@ -101,7 +101,7 @@ public:
 
 	virtual
 	AtomID const & atom( Size const n ) const{
-	debug_assert( n <= member_atoms_.size() );
+		debug_assert( n <= member_atoms_.size() );
 		return member_atoms_[n];
 	}
 
@@ -128,7 +128,7 @@ public:
 		AtomID const & atom,
 		func::XYZ_Func const & xyz,
 		Vector & F1,
- 		Vector & F2,
+		Vector & F2,
 		EnergyMap const & weights
 	) const;
 

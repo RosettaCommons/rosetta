@@ -27,7 +27,7 @@
 #include <map>
 
 #ifdef WIN32
-	#include <core/id/AtomID.hh>
+#include <core/id/AtomID.hh>
 #endif
 
 
@@ -103,21 +103,21 @@ public:
 
 	void
 	set_phosphate_domain( core::Size const & i,
-												core::pose::Pose const & pose,
-												Size const & setting );
+		core::pose::Pose const & pose,
+		Size const & setting );
 	void
 	set_phosphate( core::Size const & i,
-								 core::pose::Pose const & pose,
-								 bool const & setting );
+		core::pose::Pose const & pose,
+		bool const & setting );
 
 	void
 	set_sugar_domain( core::Size const & i,
-										core::pose::Pose const & pose,
-										Size const & setting );
+		core::pose::Pose const & pose,
+		Size const & setting );
 	void
 	set_sugar( core::Size const & i,
-						 core::pose::Pose const & pose,
-						 bool const & setting );
+		core::pose::Pose const & pose,
+		bool const & setting );
 
 	void
 	set( Size const & i, bool const & setting  );
@@ -145,26 +145,26 @@ public:
 
 	void
 	calculate_atom_id_map(
-												core::pose::Pose const & pose,
-												std::map< core::Size, core::Size > const & res_map,
-												core::kinematics::FoldTree const & scratch_fold_tree,
-												std::map< core::id::AtomID, core::id::AtomID > & atom_id_map );
+		core::pose::Pose const & pose,
+		std::map< core::Size, core::Size > const & res_map,
+		core::kinematics::FoldTree const & scratch_fold_tree,
+		std::map< core::id::AtomID, core::id::AtomID > & atom_id_map );
 
 	void
 	set_force_ideal_chainbreak( bool const & setting ){ force_ideal_chainbreak_ = setting; }
 
 	void
 	append_residue( core::pose::Pose const & pose,
-									Size const & i,
-									bool const & setting );
+		Size const & i,
+		bool const & setting );
 
 	void
 	setup_movemap( core::kinematics::MoveMap & mm,
-								 core::pose::Pose const & pose );
+		core::pose::Pose const & pose );
 
 private:
 	void
-	initialize( core::pose::Pose const & pose	);
+	initialize( core::pose::Pose const & pose );
 
 private:
 

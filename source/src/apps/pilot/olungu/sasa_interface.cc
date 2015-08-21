@@ -49,30 +49,30 @@ main( int argc, char* argv[] ){
 
 	try{
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	//-s read in PDB
-  core::pose::Pose pose;
-  std::string pdbname(basic::options::option[ basic::options::OptionKeys::in::file::s ].value()[1]);
-  core::import_pose::pose_from_pdb( pose, pdbname );
-	protocols::antibody::AntibodyInfo abinfo( pose );
+		//-s read in PDB
+		core::pose::Pose pose;
+		std::string pdbname(basic::options::option[ basic::options::OptionKeys::in::file::s ].value()[1]);
+		core::import_pose::pose_from_pdb( pose, pdbname );
+		protocols::antibody::AntibodyInfo abinfo( pose );
 
-	std::pair<ParatopeMetric< core::Real >, ParatopeMetric<core::Real> > sasa_result = paratope_sasa(pose, abinfo);
-	//std::cout << loop << " CDR_sasa " << loop_sasa << std::endl;
-	//std::cout << loop <<" CDR hydrophobic sasa " << hydrop_loop_sasa << std::endl;
-	//std::cout << "peritope_sasa " << sasa_result.first.paratope << std::endl;
-	//std::cout << "peritope hydrophobic sasa " << hydrophobic_sasa << std::endl;
-	//std::cout << "Total SASA is: " <<	Real mr.value() << std::endl;
-	//std::cout << "Total hydrophobic SASA is: " << hSASA << std::endl;
+		std::pair<ParatopeMetric< core::Real >, ParatopeMetric<core::Real> > sasa_result = paratope_sasa(pose, abinfo);
+		//std::cout << loop << " CDR_sasa " << loop_sasa << std::endl;
+		//std::cout << loop <<" CDR hydrophobic sasa " << hydrop_loop_sasa << std::endl;
+		//std::cout << "peritope_sasa " << sasa_result.first.paratope << std::endl;
+		//std::cout << "peritope hydrophobic sasa " << hydrophobic_sasa << std::endl;
+		//std::cout << "Total SASA is: " << Real mr.value() << std::endl;
+		//std::cout << "Total hydrophobic SASA is: " << hSASA << std::endl;
 
-	core::SSize total_charge = pose_charge( pose );
-	std::cout << "Total charge " << total_charge << std::endl;
-	ParatopeMetric< core::SSize>p_charge = paratope_charge( pose, abinfo );
-	std::cout << "peritope charge " << p_charge.paratope << std::endl;
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
+		core::SSize total_charge = pose_charge( pose );
+		std::cout << "Total charge " << total_charge << std::endl;
+		ParatopeMetric< core::SSize>p_charge = paratope_charge( pose, abinfo );
+		std::cout << "peritope charge " << p_charge.paratope << std::endl;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 	return 0;
 }
 

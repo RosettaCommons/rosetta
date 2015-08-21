@@ -21,24 +21,24 @@ namespace core {
 namespace scoring {
 namespace func {
 
-	void
-	ConstantFunc::read_data( std::istream & in ) {
-		in 	>> return_val_;
-	}
+void
+ConstantFunc::read_data( std::istream & in ) {
+	in  >> return_val_;
+}
 
-	Real
-	ConstantFunc::func( Real const ) const	{
-		return return_val_;
-	} // func
+Real
+ConstantFunc::func( Real const ) const {
+	return return_val_;
+} // func
 
-	Real
-	ConstantFunc::dfunc( Real const ) const {
-		return 0;
-	} // dfunc
+Real
+ConstantFunc::dfunc( Real const ) const {
+	return 0;
+} // dfunc
 
-	void ConstantFunc::show_definition( std::ostream & out ) const {
-		out << "CONSTANTFUNC " << return_val_ << "\n";
-	}
+void ConstantFunc::show_definition( std::ostream & out ) const {
+	out << "CONSTANTFUNC " << return_val_ << "\n";
+}
 
 } // namespace constraints
 } // namespace scoring

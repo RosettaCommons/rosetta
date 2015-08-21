@@ -61,7 +61,7 @@ public:
 		typename TMap::const_iterator iter( map_.find( frag_id ) );
 		if ( iter == map_.end() ) {
 			return false;
-		}	else {
+		} else {
 			value = iter->second;
 			return true;
 		};
@@ -148,7 +148,7 @@ public:
 	T retrieve( core::Size frag_id ) const {
 		T val;
 		if ( retrieve( frag_id, val ) ) {
-				return val;
+			return val;
 		} else {
 			throw utility::excn::EXCN_RangeError( "no "+tag_+ "entry found for fragment: ");
 		}
@@ -157,16 +157,16 @@ public:
 	T retrieve( FragID const& frag_id ) const {
 		T val;
 		if ( retrieve( frag_id, val ) ) {
-				return val;
+			return val;
 		} else {
 			throw utility::excn::EXCN_RangeError( "no "+tag_+ "entry found for fragment: ");
 		}
 	}
 
-T retrieve( Frame const& frame, core::Size frag_num ) const {
+	T retrieve( Frame const& frame, core::Size frag_num ) const {
 		T val;
 		if ( retrieve( frame, frag_num, val ) ) {
-				return val;
+			return val;
 		} else {
 			throw utility::excn::EXCN_RangeError( "no "+tag_+ "entry found for fragment");
 		}
@@ -184,9 +184,9 @@ T retrieve( Frame const& frame, core::Size frag_num ) const {
 	void scored_frag_ids( ScoredList &frag_ids, FragID_Iterator begin, FragID_Iterator end, T* empty = NULL ) const {
 		for ( FragID_Iterator it = begin; it!=end; ++it ) {
 			T score;
-			if ( retrieve( *it, score ) )
+			if ( retrieve( *it, score ) ) {
 				frag_ids.push_back( ScoredFrag( *it,  score ) );
-			else if ( empty ) {
+			} else if ( empty ) {
 				frag_ids.push_back( ScoredFrag( *it, *empty ) );
 			}
 		};
@@ -226,7 +226,7 @@ T retrieve( Frame const& frame, core::Size frag_num ) const {
 template < class T >
 class FragCache : public CacheWrapper< T, MapCacheUnit< T> > {
 	typedef CacheWrapper< T, MapCacheUnit< T> > Parent;
-	//	typedef Parent::TCacheUnit TCacheUnit;
+	// typedef Parent::TCacheUnit TCacheUnit;
 	typedef T ValueType;
 public:
 	FragCache( std::string tag ) : Parent( tag ) {};
@@ -235,7 +235,7 @@ public:
 template < class T >
 class FragStore : public CacheWrapper< T, VectorCacheUnit< T> > {
 	typedef CacheWrapper< T, VectorCacheUnit< T> > Parent;
-	//	typedef Parent::TCacheUnit TCacheUnit;
+	// typedef Parent::TCacheUnit TCacheUnit;
 	typedef T ValueType;
 public:
 	FragStore( std::string tag ) : Parent( tag ) {};

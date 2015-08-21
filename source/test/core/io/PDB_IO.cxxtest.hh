@@ -74,7 +74,7 @@ public:
 
 		// now test if residue information is the same
 		bool should_exit = false;
-		for(Size i=1; i<=pose.total_residue(); ++i) {
+		for ( Size i=1; i<=pose.total_residue(); ++i ) {
 			conformation::Residue const & R1( pose.residue(i) );
 			conformation::Residue const & R2( P2.residue(i) );
 
@@ -83,24 +83,24 @@ public:
 
 			TS_ASSERT_EQUALS( R1.name3(), R2.name3());
 
-			for(Size a=1; a<=R1.natoms(); a++) {
+			for ( Size a=1; a<=R1.natoms(); a++ ) {
 				conformation::Atom const & A1( R1.atom(a) );
 				conformation::Atom const & A2( R2.atom(a) );
 
 				TS_ASSERT_EQUALS( R1.atom_name(a), R2.atom_name(a));
-				if( R1.atom_name(a) != R2.atom_name(a) ) should_exit=true;
+				if ( R1.atom_name(a) != R2.atom_name(a) ) should_exit=true;
 
 				TS_ASSERT_EQUALS( A1.xyz().x(), A2.xyz().x());
 				TS_ASSERT_EQUALS( A1.xyz().y(), A2.xyz().y());
 				TS_ASSERT_EQUALS( A1.xyz().z(), A2.xyz().z());
 
-				if( A1.xyz().x() != A2.xyz().x() ) should_exit=true;
-				if( A1.xyz().y() != A2.xyz().y() ) should_exit=true;
-				if( A1.xyz().z() != A2.xyz().z() ) should_exit=true;
+				if ( A1.xyz().x() != A2.xyz().x() ) should_exit=true;
+				if ( A1.xyz().y() != A2.xyz().y() ) should_exit=true;
+				if ( A1.xyz().z() != A2.xyz().z() ) should_exit=true;
 
-				if( should_exit ) break;
+				if ( should_exit ) break;
 			}
-			if( should_exit ) break;
+			if ( should_exit ) break;
 		}
 	}
 
@@ -111,6 +111,6 @@ public:
 		TS_ASSERT_EQUALS( pose.total_residue(), 89 );
 		TS_TRACE(pose.annotated_sequence());
 		TS_ASSERT_EQUALS( pose.annotated_sequence(),
-				"L[LEU:NtermProteinFull]DAPSQIEVKDVTDTTALITWFKPLAEIDGIELTYGIKDVPGDRTTIDLTEDENQYSIGNLKPDTEYEVSLISRRGDMSSNPAKETFTT[THR:CtermProteinFull]" );
+			"L[LEU:NtermProteinFull]DAPSQIEVKDVTDTTALITWFKPLAEIDGIELTYGIKDVPGDRTTIDLTEDENQYSIGNLKPDTEYEVSLISRRGDMSSNPAKETFTT[THR:CtermProteinFull]" );
 	}
 };

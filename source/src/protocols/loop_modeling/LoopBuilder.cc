@@ -100,15 +100,15 @@ LoopBuilder::LoopBuilder() { // {{{1
 
 	minimizer_ = add_child( MinimizationRefinerOP( new MinimizationRefiner ) );
 }
-    
+
 LoopBuilder::~LoopBuilder() {} // {{{1
-    
+
 void LoopBuilder::parse_my_tag( // {{{1
-		TagCOP tag,
-		DataMap & data,
-		Filters_map const & filters,
-		Movers_map const & movers,
-		Pose const & pose) {
+	TagCOP tag,
+	DataMap & data,
+	Filters_map const & filters,
+	Movers_map const & movers,
+	Pose const & pose) {
 
 	LoopMover::parse_my_tag(tag, data, filters, movers, pose);
 	utilities::set_scorefxn_from_tag(*this, tag, data);
@@ -116,7 +116,7 @@ void LoopBuilder::parse_my_tag( // {{{1
 }
 
 void LoopBuilder::use_fragments( // {{{1
-		utility::vector1<core::fragment::FragSetCOP> const & frag_libs) {
+	utility::vector1<core::fragment::FragSetCOP> const & frag_libs) {
 
 	using protocols::kinematic_closure::perturbers::IdealizeNonPhiPsi;
 	using protocols::kinematic_closure::perturbers::Rama2bPerturber;
@@ -131,9 +131,9 @@ void LoopBuilder::use_fragments( // {{{1
 	// For the benchmarks mentioned above, where the input loop is also the
 	// target loop, this is a subtle but effective form of cheating.
 	//
-	// In production runs, the Rama2bPerturber doesn't really need to be here.  
-	// But there's also no reason for it not to be here, since it takes a 
-	// negligible amount of time to run.  And it's probably best to use the same 
+	// In production runs, the Rama2bPerturber doesn't really need to be here.
+	// But there's also no reason for it not to be here, since it takes a
+	// negligible amount of time to run.  And it's probably best to use the same
 	// algorithm in the production runs as in the benchmark runs.
 
 	kic_mover_->clear_perturbers();
@@ -147,12 +147,12 @@ bool LoopBuilder::do_apply(Pose & pose, Loop const & loop) { // {{{1
 
 	// Only attempt to rebuild loops that are marked as "extended".
 
-	if (! loop.is_extended()) return true;
+	if ( ! loop.is_extended() ) return true;
 
-	// Idealize all the backbone atoms.  This is especially important if the 
-	// backbone atoms were missing in the first place and had to be rebuilt from 
+	// Idealize all the backbone atoms.  This is especially important if the
+	// backbone atoms were missing in the first place and had to be rebuilt from
 	// scratch.  This command makes sure everything looks reasonable.
-	
+
 	loops::idealize_loop(pose, loop);
 
 	// Setup the loop movers.
@@ -162,12 +162,12 @@ bool LoopBuilder::do_apply(Pose & pose, Loop const & loop) { // {{{1
 
 	// Make a strong effort to rebuild the loop with KIC.
 
-	for (Size i = 1; i <= max_attempts_ && ! kic_mover_->was_successful(); i++) {
+	for ( Size i = 1; i <= max_attempts_ && ! kic_mover_->was_successful(); i++ ) {
 		tr << "Loop building attempt: " << i << endl;
 		kic_mover_->apply(pose);
 	}
 
-	if (! kic_mover_->was_successful()) return false;
+	if ( ! kic_mover_->was_successful() ) return false;
 
 	// Minimize the loop if it was successfully built.
 

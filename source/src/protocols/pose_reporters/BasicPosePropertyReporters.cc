@@ -53,7 +53,7 @@ namespace pose_reporters {
 
 // Creator
 protocols::rosetta_scripts::PosePropertyReporterOP EnergyReporterCreator::create_reporter() const {
-  return protocols::rosetta_scripts::PosePropertyReporterOP( new EnergyReporter() );
+	return protocols::rosetta_scripts::PosePropertyReporterOP( new EnergyReporter() );
 }
 
 // Reporter
@@ -67,10 +67,11 @@ core::Real EnergyReporter::report_property( core::pose::Pose & p ) const
 {
 	core::Real r = 0;
 
-	if(scoretype_ < core::scoring::dummy_score_type)	{
+	if ( scoretype_ < core::scoring::dummy_score_type ) {
 		r = scorefxn_->score_by_scoretype(p, scoretype_);
-	} else
+	} else {
 		r = scorefxn_->score(p);
+	}
 
 	return r;
 }
@@ -87,8 +88,9 @@ void EnergyReporter::parse_my_tag(
 		core::scoring::ScoreFunctionFactory::create_score_function( tag->getOption<std::string>("scorefunction") ) :
 		core::scoring::get_score_function();
 
-	if(tag->hasOption("term"))
+	if ( tag->hasOption("term") ) {
 		scoretype_ = core::scoring::ScoreTypeManager::score_type_from_name(tag->getOption<std::string>("term"));
+	}
 }
 
 
@@ -97,7 +99,7 @@ void EnergyReporter::parse_my_tag(
 
 // Creator
 protocols::rosetta_scripts::PosePropertyReporterOP FilterReporterCreator::create_reporter() const {
-  return protocols::rosetta_scripts::PosePropertyReporterOP( new FilterReporter() );
+	return protocols::rosetta_scripts::PosePropertyReporterOP( new FilterReporter() );
 }
 
 // Reporter
@@ -110,11 +112,12 @@ core::Real FilterReporter::report_property( core::pose::Pose & pose ) const
 {
 	core::Real r = 0;
 
-	if(filter_) {
+	if ( filter_ ) {
 		r = filter_->report_sm(pose);
 		setPoseExtraScore(pose, filter_->get_user_defined_name(), (float)r);
-	} else
+	} else {
 		TR << "No filter instance; cannot score pose!" << std::endl;
+	}
 
 	return r;
 }
@@ -132,33 +135,35 @@ void FilterReporter::parse_my_tag(
 
 	TagCOP filter_tag(NULL);
 
-	if(tag->hasOption("filter")) {
+	if ( tag->hasOption("filter") ) {
 		// Find a filter by name defined somewhere upstream in the script
 		std::string filter_name( tag->getOption<std::string>("filter") );
 		RosettaScriptsParser parser;
 		filter_tag = parser.find_rosettascript_tag(
-				tag,
-				"FILTERS",
-				"name",
-				filter_name
+			tag,
+			"FILTERS",
+			"name",
+			filter_name
 		);
 
-		if(!filter_tag)
+		if ( !filter_tag ) {
 			throw utility::excn::EXCN_RosettaScriptsOption("Cannot find filter named \"" + filter_name + "\"");
+		}
 
 	} else {
 		// Filter is defined inline (first child tag)
 		utility::vector0< TagCOP > tags( tag->getTags() );
-		for(utility::vector0< TagCOP >::const_iterator it = tags.begin(); it != tags.end(); ++it) {
+		for ( utility::vector0< TagCOP >::const_iterator it = tags.begin(); it != tags.end(); ++it ) {
 			filter_tag = *it;
 			break;
 		}
 	}
 
-	if(filter_tag)
+	if ( filter_tag ) {
 		filter_  = protocols::filters::FilterFactory::get_instance()->newFilter( filter_tag, data, filters, movers, pose );
+	}
 
-	if(!filter_) {
+	if ( !filter_ ) {
 		std::ostringstream s;
 		s << "Cannot create filter from script tag: " << tag;
 		throw utility::excn::EXCN_RosettaScriptsOption(s.str());
@@ -170,7 +175,7 @@ void FilterReporter::parse_my_tag(
 
 // Creator
 protocols::rosetta_scripts::PosePropertyReporterOP RMSDReporterCreator::create_reporter() const {
-  return protocols::rosetta_scripts::PosePropertyReporterOP( new RMSDReporter() );
+	return protocols::rosetta_scripts::PosePropertyReporterOP( new RMSDReporter() );
 }
 
 // Reporter
@@ -186,26 +191,28 @@ core::Real RMSDReporter::report_property( core::pose::Pose & p1, core::pose::Pos
 	core::Real r = 0;
 
 	switch(mode_) {
-		case MODE_CA_rmsd:
-			if(residues_.size() > 0)
-				r = core::scoring::CA_rmsd( p1, p2, residues_ );
-			else
-				r = core::scoring::CA_rmsd( p1, p2 );
-			break;
+	case MODE_CA_rmsd :
+		if ( residues_.size() > 0 ) {
+			r = core::scoring::CA_rmsd( p1, p2, residues_ );
+		} else {
+			r = core::scoring::CA_rmsd( p1, p2 );
+		}
+		break;
 
-		case MODE_all_atom_rmsd:
-			if(residues_.size() > 0)
-				r = core::scoring::all_atom_rmsd( p1, p2, residues_ );
-			else
-				r = core::scoring::all_atom_rmsd( p1, p2 );
-			break;
+	case MODE_all_atom_rmsd :
+		if ( residues_.size() > 0 ) {
+			r = core::scoring::all_atom_rmsd( p1, p2, residues_ );
+		} else {
+			r = core::scoring::all_atom_rmsd( p1, p2 );
+		}
+		break;
 
-		default:
-			TR.Warning << "Unknown RMSD report mode! This should not happen." << std::endl;
+	default :
+		TR.Warning << "Unknown RMSD report mode! This should not happen." << std::endl;
 	}
 
 	TR.Debug << p1.sequence() << " :: " << p2.sequence() << " RMSD: " << r << std::endl;
-	
+
 	return r;
 }
 
@@ -219,28 +226,28 @@ void RMSDReporter::parse_my_tag(
 {
 	using namespace utility::tag;
 
-	if(tag->hasOption("mode")) {
+	if ( tag->hasOption("mode") ) {
 		std::string mode = tag->getOption<std::string>("mode");
-		if(mode == "CA") {
+		if ( mode == "CA" ) {
 			mode_ = MODE_CA_rmsd;
-		} else if(mode == "all_atom") {
+		} else if ( mode == "all_atom" ) {
 			mode_ = MODE_all_atom_rmsd;
 		} else {
 			throw utility::excn::EXCN_RosettaScriptsOption("Unknown RMSD reporter mode: " + mode);
 		}
 	}
 
-	if(tag->hasOption("residues")) {
+	if ( tag->hasOption("residues") ) {
 		std::string residues = tag->getOption<std::string>("residues");
 		// Why do we have std::set in some places and std::list elsewhere?
 		std::set< core::Size > residues_list ( core::pose::get_resnum_list(residues, pose) );
 		residues_.clear();
-		BOOST_FOREACH(core::Size r, residues_list) {
+		BOOST_FOREACH ( core::Size r, residues_list ) {
 			residues_.push_back(r);
 		}
 	}
 
-	if(mode_ == MODE_NONE) {
+	if ( mode_ == MODE_NONE ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("RMSD reporter mode not specified. Choose form: CA, all_atom");
 	}
 }

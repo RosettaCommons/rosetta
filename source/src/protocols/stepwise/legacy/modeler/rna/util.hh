@@ -73,13 +73,13 @@ print_backbone_torsions( pose::Pose const & pose, Size five_prime_chainbreak );
 
 core::Size
 setup_chain_break_jump_point( core::pose::Pose & pose,
-															core::Size const moving_res,
-															core::Size const reference_res );
+	core::Size const moving_res,
+	core::Size const reference_res );
 
 void
 remove_chain_break_jump_point( core::pose::Pose & pose,
-															 core::Size const moving_res,
-															 core::Size const reference_res );
+	core::Size const moving_res,
+	core::Size const reference_res );
 
 Size
 setup_bulge_jump_point( pose::Pose & pose, Size const & moving_base, Size const & reference_base, bool verbose = false );
@@ -95,17 +95,17 @@ setup_simple_fold_tree( pose::Pose & pose );
 
 void
 import_pose_from_silent_file(
-    pose::Pose & import_pose,
-    std::string const & silent_file,
-    std::string const & input_tag );
+	pose::Pose & import_pose,
+	std::string const & silent_file,
+	std::string const & input_tag );
 
 std::string
 get_tag_from_pdb_filename( std::string const & pdb_filename );
 
 void
 move_jump_atom_to_base(
-    kinematics::FoldTree & fold_tree,
-    std::string const & working_sequence );
+	kinematics::FoldTree & fold_tree,
+	std::string const & working_sequence );
 
 void
 print_WorkingParameters_info( protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersOP const & WP, std::string const & WP_name, std::ostream & outstream = std::cout, bool const is_simple_full_length_WP = false );

@@ -53,13 +53,13 @@ core::Size
 SequenceNumberResolver::offset( std::string const& label ) const {
 	OffsetMap::const_iterator p = offset_map_.find(label);
 
-	if( p != offset_map_.end() ) { return p->second; }
-	else if( label == "" ) {
+	if ( p != offset_map_.end() ) { return p->second; }
+	else if ( label == "" ) {
 		tr.Warning << "Warning: Attempting to resolve a sequence number with an empty claim label - assuming zero offset." << std::endl;
 		return 0;
 	} else {
 		throw utility::excn::EXCN_BadInput( "SequenceNumberResolver asked to resolve SequenceClaim label '"
-						+ label + "', which does not match any SequenceClaim labels." );
+			+ label + "', which does not match any SequenceClaim labels." );
 	}
 }
 
@@ -69,14 +69,14 @@ void SequenceNumberResolver::register_label_offset( std::string const& label, co
 
 	std::pair<std::map< std::string, core::Size >::iterator,bool> ret;
 	ret = offset_map_.insert( std::pair < std::string, core::Size >( label,offset ) );
-	if ( ret.second == false ){
+	if ( ret.second == false ) {
 		throw utility::excn::EXCN_BadInput( "Multiple sequence claims with label " + label );
 	}
 
 	//Store entry as well in reversed map (key=offset, value=label)
 	std::pair<std::map< core::Size, std::string  >::iterator,bool> ret_rev;
 	ret_rev = offset_map_reversed_.insert( std::pair < core::Size, std::string >( offset, label ) );
-	if ( ret_rev.second == false ){
+	if ( ret_rev.second == false ) {
 		std::ostringstream msg;
 		msg << "Multiple sequence claims with offset " << offset;
 		throw utility::excn::EXCN_BadInput( msg.str() );
@@ -127,8 +127,8 @@ std::map<core::Size, std::string>::const_iterator SequenceNumberResolver::search
 }
 
 // void SequenceNumberResolver::clear(){
-// 	offset_map_.clear();
-// 	offset_map_reversed_.clear();
+//  offset_map_.clear();
+//  offset_map_reversed_.clear();
 // }
 
 }

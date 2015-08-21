@@ -33,8 +33,8 @@
 
 
 #ifdef WIN32
-	#include <protocols/ligand_docking/ResidueTorsionRestraints.hh>
-	#include <protocols/ligand_docking/MinimizeLigand.hh>
+#include <protocols/ligand_docking/ResidueTorsionRestraints.hh>
+#include <protocols/ligand_docking/MinimizeLigand.hh>
 #endif
 
 namespace protocols {
@@ -52,15 +52,15 @@ public:
 	LigandDockProtocol();
 
 	LigandDockProtocol(
-			std::string const protocol,
-			bool const minimize_ligand,
-			bool const minimize_backbone,
-			bool const tether_ligand,
-			bool const mutate_same_name3,
-			core::Real const ligand_chi_stddev_deg,
-			core::Real const protein_CA_stddev_Ang,
-			core::Real const ligand_tether_stddev_Ang_=-1,
-			core::Size const ligand_shear_moves=0
+		std::string const protocol,
+		bool const minimize_ligand,
+		bool const minimize_backbone,
+		bool const tether_ligand,
+		bool const mutate_same_name3,
+		core::Real const ligand_chi_stddev_deg,
+		core::Real const protein_CA_stddev_Ang,
+		core::Real const ligand_tether_stddev_Ang_=-1,
+		core::Size const ligand_shear_moves=0
 	);
 
 	virtual ~LigandDockProtocol();

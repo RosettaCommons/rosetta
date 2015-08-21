@@ -113,11 +113,11 @@ void ConformerSwitchMover::apply( core::pose::Pose & pose )
 
 	// the conformer used can either be random, or generated from the probability table of energies of the conformers
 	// to use a random conformer, random_conformer must be set to true
-	if ( !random_conformer_ && lowres_filter_->apply( pose ) ){		//only calculate partition function if filters are passed
+	if ( !random_conformer_ && lowres_filter_->apply( pose ) ) {  //only calculate partition function if filters are passed
 		GenerateProbTable( pose );
 		core::Real rand_num( numeric::random::rg().uniform() );
-		for (Size i = 1; i <= ensemble_->size(); i++){
-			if( (rand_num >= prob_table_[i]) ) conf_num++;
+		for ( Size i = 1; i <= ensemble_->size(); i++ ) {
+			if ( (rand_num >= prob_table_[i]) ) conf_num++;
 		}
 	} else {
 		conf_num = numeric::random::rg().random_range( 1, ensemble_->size() );
@@ -129,7 +129,7 @@ void ConformerSwitchMover::apply( core::pose::Pose & pose )
 	ensemble_->set_current_confnum( conf_num );
 
 	// make sure that the pose has ARBITRARY_FLOAT_DATA in the DataCache
-	if ( !pose.data().has( ( CacheableDataType::ARBITRARY_FLOAT_DATA ) ) ){
+	if ( !pose.data().has( ( CacheableDataType::ARBITRARY_FLOAT_DATA ) ) ) {
 		using namespace basic::datacache;
 		pose.data().set(
 			CacheableDataType::ARBITRARY_FLOAT_DATA,
@@ -149,7 +149,7 @@ void ConformerSwitchMover::show(std::ostream & output) const
 {
 	Mover::show(output);
 	output << "Temperature:           " << get_temperature() << std::endl <<
-			"Use random conformer?: " << (use_random_conformer() ? "True" : "False") << std::endl;
+		"Use random conformer?: " << (use_random_conformer() ? "True" : "False") << std::endl;
 }
 
 void ConformerSwitchMover::GenerateProbTable( core::pose::Pose & pose )
@@ -161,7 +161,7 @@ void ConformerSwitchMover::GenerateProbTable( core::pose::Pose & pose )
 
 	prob_table_.clear();
 
-	for( core::Size i = 1; i <= ensemble_->size(); i++){
+	for ( core::Size i = 1; i <= ensemble_->size(); i++ ) {
 		switch_conformer( complex_pose, i );
 		// the score takes the reference energy into consideration
 		core::Real complex_score = (*(ensemble_->scorefxn_low()))(complex_pose) - ensemble_->lowres_reference_energy(i);
@@ -170,17 +170,17 @@ void ConformerSwitchMover::GenerateProbTable( core::pose::Pose & pose )
 	}
 
 	core::Real min_energy(0.0);
-	for ( core::Size i = 1; i <= ensemble_->size(); i++){
-		if (e_table[i] <= min_energy) min_energy = e_table[i];
+	for ( core::Size i = 1; i <= ensemble_->size(); i++ ) {
+		if ( e_table[i] <= min_energy ) min_energy = e_table[i];
 	}
 
-	for ( core::Size i = 1; i <= ensemble_->size(); i++){
+	for ( core::Size i = 1; i <= ensemble_->size(); i++ ) {
 		e_table[i] = std::exp((-1*(e_table[i] - min_energy))/temperature_);
 		partition_sum += e_table[i];
 	}
 
 	prob_table_.push_back( e_table[1]/partition_sum );
-	for (core::Size i = 2; i <=ensemble_->size(); i++){
+	for ( core::Size i = 2; i <=ensemble_->size(); i++ ) {
 		prob_table_.push_back( prob_table_[i-1] + (e_table[i]/partition_sum) );
 	}
 
@@ -189,9 +189,9 @@ void ConformerSwitchMover::GenerateProbTable( core::pose::Pose & pose )
 void ConformerSwitchMover::switch_conformer(
 	core::pose::Pose & pose,
 	core::Size conf_num
-	)
+)
 {
-	core::pose::Pose new_conf = ensemble_->get_conformer_cen(conf_num);	// new_conf is centroid
+	core::pose::Pose new_conf = ensemble_->get_conformer_cen(conf_num); // new_conf is centroid
 
 	(*(ensemble_->scorefxn_low()))(pose);
 	scoring::Interface interface( ensemble_->jump_id() );
@@ -199,13 +199,13 @@ void ConformerSwitchMover::switch_conformer(
 	interface.calculate( pose );
 
 	utility::vector1<Size>conf_interface;
-	for (Size i = ensemble_->start_res(); i <= ensemble_->end_res(); i++){
-		if (interface.is_interface(i)) conf_interface.push_back( i );
+	for ( Size i = ensemble_->start_res(); i <= ensemble_->end_res(); i++ ) {
+		if ( interface.is_interface(i) ) conf_interface.push_back( i );
 	}
 
-	if (conf_interface.size() <= 5){
+	if ( conf_interface.size() <= 5 ) {
 		conf_interface.clear();
-		for (Size i = ensemble_->start_res(); i <= ensemble_->end_res(); i++){
+		for ( Size i = ensemble_->start_res(); i <= ensemble_->end_res(); i++ ) {
 			conf_interface.push_back( i );
 		}
 	}
@@ -213,7 +213,7 @@ void ConformerSwitchMover::switch_conformer(
 	core::id::AtomID_Map< core::id::AtomID > atom_map;
 	core::pose::initialize_atomid_map( atom_map, new_conf, core::id::BOGUS_ATOM_ID ); // maps every atomid to bogus
 
-	for (Size i = 1; i <= conf_interface.size(); i++){
+	for ( Size i = 1; i <= conf_interface.size(); i++ ) {
 		Size new_conf_resnum = conf_interface[i]-ensemble_->start_res()+1;
 		Size pose_resnum = conf_interface[i];
 		core::id::AtomID const id1( new_conf.residue(new_conf_resnum).atom_index("CA"), new_conf_resnum );

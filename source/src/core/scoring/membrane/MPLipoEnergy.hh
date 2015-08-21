@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/scoring/membrane/MPLipoEnergy.hh
+/// @file  core/scoring/membrane/MPLipoEnergy.hh
 ///
-///	@brief		Membrane Lipophibicity Term
-///	@details	Whole Structure Energy - Evaluate structure based on derived
-///				lipophobicities from input in lips file.
-///				Last Modified: 3/28/14
+/// @brief  Membrane Lipophibicity Term
+/// @details Whole Structure Energy - Evaluate structure based on derived
+///    lipophobicities from input in lips file.
+///    Last Modified: 3/28/14
 ///
-///	@author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_scoring_membrane_MPLipoEnergy_hh
 #define INCLUDED_core_scoring_membrane_MPLipoEnergy_hh
@@ -43,54 +43,54 @@ using namespace core::scoring::methods;
 
 /// @brief Membrane Lipophilicity term
 class MPLipoEnergy : public WholeStructureEnergy  {
-	
+
 public:
 
 	typedef WholeStructureEnergy  parent;
-	
+
 public:
-	
+
 	/// Energy Method Creators /////////////////
-	
+
 	/// @brief Defalt Constructor
 	MPLipoEnergy();
-	
+
 	/// @brief Clone Method
 	virtual
 	EnergyMethodOP
 	clone() const;
-	
+
 	/// Scoring Methods ////////////////////////
-	
+
 	/// @brief Score WHole Structure Energy
 	void
 	finalize_total_energy(
-						  pose::Pose & pose,
-						  ScoreFunction const &,
-						  EnergyMap & totals
-						  ) const;
-	
+		pose::Pose & pose,
+		ScoreFunction const &,
+		EnergyMap & totals
+	) const;
+
 	/// @brief Setup for Scoring
 	virtual
 	void
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
-	
+
 	void
 	indicate_required_context_graphs( utility::vector1< bool > & ) const {}
-	
+
 private:
-	
+
 	// const-ref to scoring database
 	MembraneData const & mpdata_;
-	
+
 	// Include lips in scoring
 	bool include_lips_;
-	
+
 	// versioning
 	virtual
 	core::Size version() const;
 };
-	
+
 } // membrane
 } // scoring
 } // core

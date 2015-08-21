@@ -62,7 +62,7 @@ motif_dna_packer_design()
 	if ( basic::options::option[basic::options::OptionKeys::dna::design::minimize].user() ) minimize = basic::options::option[ basic::options::OptionKeys::dna::design::minimize ]();
 
 	for ( utility::vector1< std::string >::const_iterator pdb_file( pdb_files.begin() );
-	      pdb_file != pdb_files.end(); ++pdb_file ) {
+			pdb_file != pdb_files.end(); ++pdb_file ) {
 		std::string pdb_name( *pdb_file );
 
 		TR << "Working on file: " << pdb_name << std::endl;
@@ -94,8 +94,8 @@ main( int argc, char * argv [] )
 
 	try {
 
-	devel::init( argc, argv );
-	motif_dna_packer_design();
+		devel::init( argc, argv );
+		motif_dna_packer_design();
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

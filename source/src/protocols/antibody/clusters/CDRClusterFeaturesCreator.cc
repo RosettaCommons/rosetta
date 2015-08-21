@@ -18,7 +18,7 @@
 namespace protocols {
 namespace antibody {
 namespace clusters {
-	using namespace protocols::features;
+using namespace protocols::features;
 
 CDRClusterFeaturesCreator::CDRClusterFeaturesCreator(){}
 CDRClusterFeaturesCreator::~CDRClusterFeaturesCreator(){}

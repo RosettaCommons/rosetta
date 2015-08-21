@@ -9,7 +9,7 @@
 
 /// @file   core/util/metalloprotein_import_test.cxxtest.hh
 /// @brief  Test suite for import of metalloproteins using the -in:auto_setup_metals flag.
-/// @details  The -in:auto_setup_metals flag is intended for automatic setup of covalent bonds and 
+/// @details  The -in:auto_setup_metals flag is intended for automatic setup of covalent bonds and
 /// distance and angle constraints between metal-binding residues and metals in metalloprotein
 /// structures.  Failure of this unit test means that something has been changed which prevents
 /// this automatic setup.  Relevant files include:

@@ -32,10 +32,10 @@ class EtableFunc : public Func {
 public:
 
 	/*!
-	 * Constuctor for EtableFunc. Arguments to the constructor are:
-	 * - mean: parameter representing the mean of this function.
-	 * - sd: parameter representing the standard deviation of this function.
-	 */
+	* Constuctor for EtableFunc. Arguments to the constructor are:
+	* - mean: parameter representing the mean of this function.
+	* - sd: parameter representing the standard deviation of this function.
+	*/
 
 	EtableFunc (
 		Real const min_,

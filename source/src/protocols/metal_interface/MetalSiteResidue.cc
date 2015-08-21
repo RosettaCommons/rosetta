@@ -22,8 +22,8 @@
 
 typedef numeric::xyzVector<core::Real> point;
 
-namespace protocols{
-namespace metal_interface{
+namespace protocols {
+namespace metal_interface {
 
 MetalSiteResidue::MetalSiteResidue()
 {

@@ -72,12 +72,12 @@ public:
 
 	void init_from_options();
 
-	virtual	void initialize();
+	virtual void initialize();
 
 	/// @brief add decoy to Archive
 	/// @detail evaluate decoy and call add_evaluated_structure
 	virtual bool add_evaluated_structure(
-    core::io::silent::SilentStructOP from_batch,
+		core::io::silent::SilentStructOP from_batch,
 		core::io::silent::SilentStructOP alternative_decoy,
 		Batch const&
 	);

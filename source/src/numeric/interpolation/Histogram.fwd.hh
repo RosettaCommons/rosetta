@@ -26,10 +26,10 @@ template< typename, typename>
 class Histogram;
 
 /*
- * Templated typedef hack
- * To call, declare like
- *    HistogramOP<X,Y>::Type hist_ptr = new Histogram<X,Y>()
- */
+* Templated typedef hack
+* To call, declare like
+*    HistogramOP<X,Y>::Type hist_ptr = new Histogram<X,Y>()
+*/
 template<class X, class Y>
 struct HistogramOP {
 	typedef utility::pointer::shared_ptr< Histogram<X,Y> > Type;

@@ -68,12 +68,10 @@ GridFactory::factory_register(GridCreatorOP creator)
 	runtime_assert(creator != 0 );
 	std::string grid_type( creator->keyname());
 	//qsarType grid_enum = qsarTypeManager::qsar_type_from_name(grid_type);
-	if(grid_type == "UNDEFINED NAME")
-	{
+	if ( grid_type == "UNDEFINED NAME" ) {
 		utility_exit_with_message("can't map derived grid with undefined type name.");
 	}
-	if (grid_creator_map_.find(grid_type) != grid_creator_map_.end())
-	{
+	if ( grid_creator_map_.find(grid_type) != grid_creator_map_.end() ) {
 		utility_exit_with_message("GridFactory::factory_register already has a move creator with name \"" + grid_type + "\". Conflicting grid names");
 	}
 	grid_creator_map_.insert(std::pair<std::string,GridCreatorOP>(grid_type,creator));
@@ -86,17 +84,13 @@ GridBaseOP GridFactory::new_grid(utility::tag::TagCOP tag) const
 	std::string const type = tag->getOption<std::string>("grid_type");
 
 	GridMap::const_iterator iter(grid_creator_map_.find(type));
-	if( iter != grid_creator_map_.end())
-	{
-		if(!iter->second)
-		{
+	if ( iter != grid_creator_map_.end() ) {
+		if ( !iter->second ) {
 			utility_exit_with_message("Error: GridCreatorOP prototype for "+type+ " is NULL!");
 			return NULL;
 		}
 		return iter->second->create_grid(tag);
-	}
-	else
-	{
+	} else {
 		utility_exit_with_message(type + " is not known to the GridFactory.  Was it registered via a GridRegistrator in one of the init.cc files");
 		return NULL;
 	}
@@ -111,13 +105,11 @@ GridBaseOP GridFactory::new_grid(utility::json_spirit::mObject data ) const
 	std::string type;
 
 	utility::json_spirit::mObject::iterator type_it(data.find("type"));
-	if(type_it != data.end())
-	{
+	if ( type_it != data.end() ) {
 		//If this is a metagrid then we can find a type tag in the top level
 		type = type_it->second.get_str();
 
-	}else
-	{
+	} else {
 		//OK, it's not a metagrid, Everything that inherits from SingleGrid has a "base_data" tag, and "type" is under that.
 		utility::json_spirit::mObject base_data(data["base_data"].get_obj());
 		type = base_data["type"].get_str();
@@ -126,16 +118,12 @@ GridBaseOP GridFactory::new_grid(utility::json_spirit::mObject data ) const
 	//make a new grid
 	GridBaseOP new_grid;
 	GridMap::const_iterator iter(grid_creator_map_.find(type));
-	if( iter != grid_creator_map_.end())
-	{
-		if(!iter->second)
-		{
+	if ( iter != grid_creator_map_.end() ) {
+		if ( !iter->second ) {
 			utility_exit_with_message("Error: GridCreatorOP prototype for "+type+ " is NULL!");
 		}
 		new_grid = iter->second->create_grid();
-	}
-	else
-	{
+	} else {
 		utility_exit_with_message(type + " is not known to the GridFactory.  Was it registered via a GridRegistrator in one of the init.cc files");
 	}
 

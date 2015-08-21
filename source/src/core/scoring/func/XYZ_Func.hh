@@ -127,11 +127,11 @@ private:
 //
 // public:
 //
-// 	virtual
-// 	~BBTorsionXYZ;
+//  virtual
+//  ~BBTorsionXYZ;
 //
 // private:
-// 	Residue const & rsd_;
+//  Residue const & rsd_;
 // };
 
 

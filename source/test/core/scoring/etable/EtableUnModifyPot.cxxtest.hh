@@ -129,116 +129,116 @@ public:
 
 	//void dont_test_etable_analytic_evaluation()
 	//{
-	//	using namespace core;
-	//	using namespace core::pose;
-	//	using namespace core::scoring;
-	//	using namespace core::scoring::etable;
-	//	using namespace core::scoring::methods;
+	// using namespace core;
+	// using namespace core::pose;
+	// using namespace core::scoring;
+	// using namespace core::scoring::etable;
+	// using namespace core::scoring::methods;
 	//
-	//	Pose pose = create_trpcage_ideal_pose();
-	//	EnergyMethodOptions options; // default is fine
+	// Pose pose = create_trpcage_ideal_pose();
+	// EnergyMethodOptions options; // default is fine
 	//
-	//	Etable const & etable( *( ScoringManager::get_instance()->etable( options.etable_type() )) );
-	//	TableLookupEtableEnergy tab_lj_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
-	//	AnalyticEtableEnergy    ana_lj_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
+	// Etable const & etable( *( ScoringManager::get_instance()->etable( options.etable_type() )) );
+	// TableLookupEtableEnergy tab_lj_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
+	// AnalyticEtableEnergy    ana_lj_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
 	//
-	//	conformation::Atom at1, at2;
-	//	at1.type(1); at2.type(2);
-	//	at1.xyz( Vector(0,0,0) ); at2.xyz( Vector(0,0,1) );
+	// conformation::Atom at1, at2;
+	// at1.type(1); at2.type(2);
+	// at1.xyz( Vector(0,0,0) ); at2.xyz( Vector(0,0,1) );
 	//
-	//	Real step = 1e-2;
-	//	Real range = tab_lj_energy.atomic_interaction_cutoff();
-	//	Size nsteps = Size( range / step ) + 1;
-	//	Real d2;
-	//	//int const OCbb_idx = etable.atom_set()->atom_type_index("OCbb");
-	//	int const Hha_idx = etable.atom_set()->atom_type_index("Hha" );
-	//	int const HREPS_idx = etable.atom_set()->atom_type_index("HREPS" );
+	// Real step = 1e-2;
+	// Real range = tab_lj_energy.atomic_interaction_cutoff();
+	// Size nsteps = Size( range / step ) + 1;
+	// Real d2;
+	// //int const OCbb_idx = etable.atom_set()->atom_type_index("OCbb");
+	// int const Hha_idx = etable.atom_set()->atom_type_index("Hha" );
+	// int const HREPS_idx = etable.atom_set()->atom_type_index("HREPS" );
 	//
-	//	Size count_failures = 0;
-	//	ifstream infile( "save_etable_values.txt"  );
-	//	for ( Size ii = 1; ii <= etable.n_atomtypes(); ++ii ) {
-	//		at1.type(ii);
-	//		for ( Size jj = ii; jj <= etable.n_atomtypes(); ++jj ) {
-	//			at2.type(jj);
-	//			//std::cout << "looking at " << (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << std::endl;
+	// Size count_failures = 0;
+	// ifstream infile( "save_etable_values.txt"  );
+	// for ( Size ii = 1; ii <= etable.n_atomtypes(); ++ii ) {
+	//  at1.type(ii);
+	//  for ( Size jj = ii; jj <= etable.n_atomtypes(); ++jj ) {
+	//   at2.type(jj);
+	//   //std::cout << "looking at " << (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << std::endl;
 	//
-	//			for ( Size kk = 1; kk <= nsteps; ++kk ) {
-	//				bool failed = false;
-	//				Real dummy;
+	//   for ( Size kk = 1; kk <= nsteps; ++kk ) {
+	//    bool failed = false;
+	//    Real dummy;
 	//
-	//				// 1. Make sure the table lookup still works.
-	//				emap.zero();
-	//				emap2.zero();
-	//				at2.xyz( Vector(step*kk,0,0) );
+	//    // 1. Make sure the table lookup still works.
+	//    emap.zero();
+	//    emap2.zero();
+	//    at2.xyz( Vector(step*kk,0,0) );
 	//
-	//				tab_lj_energy.atom_pair_energy( at1, at2, 1.0, emap, d2 );
-	//				tab_lj_energy.atom_pair_energy( at2, at1, 1.0, emap2, d2 );
-	//				TS_ASSERT_DELTA( emap[ fa_atr ], emap2[ fa_atr ], 1e-16 );
-	//				TS_ASSERT_DELTA( emap[ fa_rep ], emap2[ fa_rep ], 1e-16 );
-	//				TS_ASSERT_DELTA( emap[ fa_sol ], emap2[ fa_sol ], 1e-16 );
+	//    tab_lj_energy.atom_pair_energy( at1, at2, 1.0, emap, d2 );
+	//    tab_lj_energy.atom_pair_energy( at2, at1, 1.0, emap2, d2 );
+	//    TS_ASSERT_DELTA( emap[ fa_atr ], emap2[ fa_atr ], 1e-16 );
+	//    TS_ASSERT_DELTA( emap[ fa_rep ], emap2[ fa_rep ], 1e-16 );
+	//    TS_ASSERT_DELTA( emap[ fa_sol ], emap2[ fa_sol ], 1e-16 );
 	//
-	//				//std::cout.precision(16);
-	//				//std::cout << ii << " " << jj << " " << step*kk << " " << emap[fa_atr] << " " << emap[fa_rep] << " " << emap[ fa_sol ] << std::endl;
-	//				Real inii, injj, instep, infaatr, infarep, infasol;
-	//				infile >> inii >> injj >> instep >> infaatr >> infarep >> infasol;
-	//				TS_ASSERT( inii == ii );
-	//				TS_ASSERT( injj == jj );
-	//				TS_ASSERT_DELTA( instep, step*kk, 1e-6 );
-	//				TS_ASSERT_DELTA( emap[fa_atr], infaatr, 1e-3 );
-	//				TS_ASSERT_DELTA( emap[fa_rep], infarep, 1e-3 );
-	//				TS_ASSERT_DELTA( emap[fa_sol], infasol, 1e-3 );
+	//    //std::cout.precision(16);
+	//    //std::cout << ii << " " << jj << " " << step*kk << " " << emap[fa_atr] << " " << emap[fa_rep] << " " << emap[ fa_sol ] << std::endl;
+	//    Real inii, injj, instep, infaatr, infarep, infasol;
+	//    infile >> inii >> injj >> instep >> infaatr >> infarep >> infasol;
+	//    TS_ASSERT( inii == ii );
+	//    TS_ASSERT( injj == jj );
+	//    TS_ASSERT_DELTA( instep, step*kk, 1e-6 );
+	//    TS_ASSERT_DELTA( emap[fa_atr], infaatr, 1e-3 );
+	//    TS_ASSERT_DELTA( emap[fa_rep], infarep, 1e-3 );
+	//    TS_ASSERT_DELTA( emap[fa_sol], infasol, 1e-3 );
 	//
-	//				EnergyMap emap_ana;
-	//				Real ana_vs_table_percent_diff_tolerance = ( ii==Size(Hha_idx) &&  ( jj==Size(Hha_idx) || jj == Size(HREPS_idx) ) ) ? 1 : ( d2 < 1 ) ? 1e-1 : 5e-2;
-	//				ana_lj_energy.atom_pair_energy( at1, at2, 1.0, emap_ana, d2 );
+	//    EnergyMap emap_ana;
+	//    Real ana_vs_table_percent_diff_tolerance = ( ii==Size(Hha_idx) &&  ( jj==Size(Hha_idx) || jj == Size(HREPS_idx) ) ) ? 1 : ( d2 < 1 ) ? 1e-1 : 5e-2;
+	//    ana_lj_energy.atom_pair_energy( at1, at2, 1.0, emap_ana, d2 );
 	//
-	//				if ( ! (( emap[ fa_atr ] < 0.01 && emap_ana[ fa_atr ] < 0.01 ) ||
-	//						( std::abs( emap[ fa_atr ] - emap_ana[ fa_atr ] ) / std::max( std::abs( emap[ fa_atr ]), std::abs(emap_ana[ fa_atr ])) < ana_vs_table_percent_diff_tolerance )) ) {
-	//					std::cout <<  (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << " " << step * kk << " fa_atr " <<
-	//						emap[ fa_atr ] << " " << emap_ana[ fa_atr ] << " " <<
-	//						std::abs( emap[ fa_atr ] - emap_ana[ fa_atr ] ) / std::max( std::abs( emap[ fa_atr ]), std::abs(emap_ana[ fa_atr ])) << std::endl;
-	//				}
+	//    if ( ! (( emap[ fa_atr ] < 0.01 && emap_ana[ fa_atr ] < 0.01 ) ||
+	//      ( std::abs( emap[ fa_atr ] - emap_ana[ fa_atr ] ) / std::max( std::abs( emap[ fa_atr ]), std::abs(emap_ana[ fa_atr ])) < ana_vs_table_percent_diff_tolerance )) ) {
+	//     std::cout <<  (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << " " << step * kk << " fa_atr " <<
+	//      emap[ fa_atr ] << " " << emap_ana[ fa_atr ] << " " <<
+	//      std::abs( emap[ fa_atr ] - emap_ana[ fa_atr ] ) / std::max( std::abs( emap[ fa_atr ]), std::abs(emap_ana[ fa_atr ])) << std::endl;
+	//    }
 	//
-	//				if ( ! ( ( emap[ fa_rep ] < 0.01 && emap_ana[ fa_rep ] < 0.01 ) ||
-	//						std::abs( emap[ fa_rep ] - emap_ana[ fa_rep ] ) / std::max( std::abs( emap[ fa_rep ]), std::abs(emap_ana[ fa_rep ])) < ana_vs_table_percent_diff_tolerance )) {
-	//					std::cout <<  (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << " " << step * kk << " fa_rep " <<
-	//						emap[ fa_rep ] << " " << emap_ana[ fa_rep ] << " " <<
-	//						std::abs( emap[ fa_rep ] - emap_ana[ fa_rep ] ) / std::max( std::abs( emap[ fa_rep ]), std::abs(emap_ana[ fa_rep ])) << std::endl;
-  //        }
-	//				if ( ! ( ( emap[ fa_sol ] < 0.01 && emap_ana[ fa_sol ] < 0.01 ) ||
-	//						std::abs( emap[ fa_sol ] - emap_ana[ fa_sol ] ) / std::max( std::abs( emap[ fa_sol ]), std::abs(emap_ana[ fa_sol ])) < ana_vs_table_percent_diff_tolerance ) ) {
-	//					std::cout <<  (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << " " << step * kk << " fa_sol " <<
-	//						emap[ fa_sol ] << " " << emap_ana[ fa_sol ] << " " <<
-	//						std::abs( emap[ fa_sol ] - emap_ana[ fa_sol ] ) / std::max( std::abs( emap[ fa_sol ]), std::abs(emap_ana[ fa_sol ])) << std::endl;
-	//				}
+	//    if ( ! ( ( emap[ fa_rep ] < 0.01 && emap_ana[ fa_rep ] < 0.01 ) ||
+	//      std::abs( emap[ fa_rep ] - emap_ana[ fa_rep ] ) / std::max( std::abs( emap[ fa_rep ]), std::abs(emap_ana[ fa_rep ])) < ana_vs_table_percent_diff_tolerance )) {
+	//     std::cout <<  (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << " " << step * kk << " fa_rep " <<
+	//      emap[ fa_rep ] << " " << emap_ana[ fa_rep ] << " " <<
+	//      std::abs( emap[ fa_rep ] - emap_ana[ fa_rep ] ) / std::max( std::abs( emap[ fa_rep ]), std::abs(emap_ana[ fa_rep ])) << std::endl;
+	//        }
+	//    if ( ! ( ( emap[ fa_sol ] < 0.01 && emap_ana[ fa_sol ] < 0.01 ) ||
+	//      std::abs( emap[ fa_sol ] - emap_ana[ fa_sol ] ) / std::max( std::abs( emap[ fa_sol ]), std::abs(emap_ana[ fa_sol ])) < ana_vs_table_percent_diff_tolerance ) ) {
+	//     std::cout <<  (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << " " << step * kk << " fa_sol " <<
+	//      emap[ fa_sol ] << " " << emap_ana[ fa_sol ] << " " <<
+	//      std::abs( emap[ fa_sol ] - emap_ana[ fa_sol ] ) / std::max( std::abs( emap[ fa_sol ]), std::abs(emap_ana[ fa_sol ])) << std::endl;
+	//    }
 	//
-	//				//if ( ii==OCbb_idx && jj==OCbb_idx && step*kk >= 2.1 && step*kk <=3.6 ) {
-	//				//	std::cout << "OCbb vs OCbb " << step*kk << " " << emap[fa_atr] << " " << emap[fa_rep] << " " << emap[ fa_sol ] << std::endl;
-	//				//}
-	//				Real an_ljatrE, an_ljrepE, an_fasolE;
-	//				etable.interpolated_analytic_etable_evaluation( at1, at2, an_ljatrE, an_ljrepE, an_fasolE, dummy );
-	//				if ( std::abs( an_ljatrE - emap[ fa_atr ]) > 1e-6 ) {
-	//					failed = true;
-	//					std::cout << (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << " " << step * kk <<
-	//						"   Atr: " << an_ljatrE << " " << emap[ fa_atr ] << " diff: " << an_ljatrE - emap[ fa_atr ] << std::endl;
-	//					//std::cout << (*etable.atom_set())[jj].name() << " " <<  (*etable.atom_set())[jj].name() << " e.ljatr_final_weight " << etable.ljatr_final_weight(ii,jj) <<  std::endl;
-	//				}
-	//				if ( std::abs( an_ljrepE - emap[ fa_rep ]) > 1e-6 ) {
-	//					failed = true;
-	//					std::cout << (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << " " << step * kk <<
-	//						"   Rep: " << an_ljrepE << " " << emap[ fa_rep ] << " diff: " << an_ljrepE - emap[ fa_rep ] << std::endl;
-	//				}
-	//				if ( std::abs( an_fasolE - emap[ fa_sol ]) > 1e-4 ) {
-	//					failed = true;
-	//					std::cout << (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << " " << step * kk <<
-	//						"   Sol: " << an_fasolE << " " << emap[ fa_sol ] << " diff: " << an_fasolE - emap[ fa_sol ] << std::endl;
-	//					//std::cout << (*etable.atom_set())[ii].name() << " " <<  (*etable.atom_set())[jj].name() << " e.fasol_final_weight " << etable.fasol_final_weight(ii,jj) << std::endl;
-	//				}
-	//				if ( failed ) ++count_failures;
-	//			}
-	//		}
-	//	}
-	//	std::cout << "nfailed: " << count_failures << std::endl;
+	//    //if ( ii==OCbb_idx && jj==OCbb_idx && step*kk >= 2.1 && step*kk <=3.6 ) {
+	//    // std::cout << "OCbb vs OCbb " << step*kk << " " << emap[fa_atr] << " " << emap[fa_rep] << " " << emap[ fa_sol ] << std::endl;
+	//    //}
+	//    Real an_ljatrE, an_ljrepE, an_fasolE;
+	//    etable.interpolated_analytic_etable_evaluation( at1, at2, an_ljatrE, an_ljrepE, an_fasolE, dummy );
+	//    if ( std::abs( an_ljatrE - emap[ fa_atr ]) > 1e-6 ) {
+	//     failed = true;
+	//     std::cout << (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << " " << step * kk <<
+	//      "   Atr: " << an_ljatrE << " " << emap[ fa_atr ] << " diff: " << an_ljatrE - emap[ fa_atr ] << std::endl;
+	//     //std::cout << (*etable.atom_set())[jj].name() << " " <<  (*etable.atom_set())[jj].name() << " e.ljatr_final_weight " << etable.ljatr_final_weight(ii,jj) <<  std::endl;
+	//    }
+	//    if ( std::abs( an_ljrepE - emap[ fa_rep ]) > 1e-6 ) {
+	//     failed = true;
+	//     std::cout << (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << " " << step * kk <<
+	//      "   Rep: " << an_ljrepE << " " << emap[ fa_rep ] << " diff: " << an_ljrepE - emap[ fa_rep ] << std::endl;
+	//    }
+	//    if ( std::abs( an_fasolE - emap[ fa_sol ]) > 1e-4 ) {
+	//     failed = true;
+	//     std::cout << (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << " " << step * kk <<
+	//      "   Sol: " << an_fasolE << " " << emap[ fa_sol ] << " diff: " << an_fasolE - emap[ fa_sol ] << std::endl;
+	//     //std::cout << (*etable.atom_set())[ii].name() << " " <<  (*etable.atom_set())[jj].name() << " e.fasol_final_weight " << etable.fasol_final_weight(ii,jj) << std::endl;
+	//    }
+	//    if ( failed ) ++count_failures;
+	//   }
+	//  }
+	// }
+	// std::cout << "nfailed: " << count_failures << std::endl;
 	//}
 
 };

@@ -35,7 +35,7 @@ namespace scores {
 class RDCScore: public CachingScoringMethod {
 public:
 	/// @brief  creates a RDC-based scoring function.
-  RDCScore( Size, Real, bool);
+	RDCScore( Size, Real, bool);
 
 	void do_caching( VallChunkOP );
 	void clean_up();

@@ -48,7 +48,7 @@ public:
 	}
 
 	/// @brief Get the pucker state (NORTH / SOUTH)
-  PuckerState pucker_state() { return pucker_state_; }
+	PuckerState pucker_state() { return pucker_state_; }
 
 	/// @brief Set the pucker state (NORTH / SOUTH)
 	void set_pucker_state( PuckerState const setting ) {

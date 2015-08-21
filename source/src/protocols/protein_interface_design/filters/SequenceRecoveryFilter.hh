@@ -29,7 +29,7 @@
 // Unit headers
 
 namespace protocols {
-namespace protein_interface_design{
+namespace protein_interface_design {
 namespace filters {
 
 class SequenceRecoveryFilter : public protocols::filters::Filter
@@ -72,8 +72,8 @@ public:
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );
 	void parse_def( utility::lua::LuaObject const & def,
-					utility::lua::LuaObject const & score_fxns,
-					utility::lua::LuaObject const & tasks );
+		utility::lua::LuaObject const & score_fxns,
+		utility::lua::LuaObject const & tasks );
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::pose::PoseCOP reference_pose_;

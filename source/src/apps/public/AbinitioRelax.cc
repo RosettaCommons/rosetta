@@ -41,11 +41,11 @@ main( int argc, char * argv [] )
 	using utility::vector1;
 
 	try {
-	  //YL, move the options register functions out of the boinc section
-	  // has to be called before devel::init. Which is really stupid.
-	  protocols::abinitio::AbrelaxApplication::register_options();
+		//YL, move the options register functions out of the boinc section
+		// has to be called before devel::init. Which is really stupid.
+		protocols::abinitio::AbrelaxApplication::register_options();
 
-	  // options, random initialization
+		// options, random initialization
 		devel::init( argc, argv );
 		if ( option[ run::checkpoint ] || option[ run::checkpoint_interval ].user() ) {
 			protocols::checkpoint::checkpoint_with_interval( option[ run::checkpoint_interval ] );
@@ -53,12 +53,12 @@ main( int argc, char * argv [] )
 
 		//YL, create abrelax application then run it.
 		protocols::abinitio::AbrelaxApplication abrelax;
-	  try{
+		try{
 			abrelax.run();
-	  } catch ( utility::excn::EXCN_Base& excn ) {
+		} catch ( utility::excn::EXCN_Base& excn ) {
 			std::cerr << "Exception : " << std::endl;
 			excn.show( std::cerr );
-	  }
+		}
 	} catch ( utility::excn::EXCN_Base& excn ) {
 		std::cerr << "Exception : " << std::endl;
 		excn.show( std::cerr );

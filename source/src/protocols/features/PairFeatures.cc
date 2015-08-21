@@ -38,8 +38,8 @@
 // External Headers
 #include <cppdb/frontend.h>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::string;
 using core::chemical::AtomIndices;
@@ -156,8 +156,8 @@ PairFeatures::report_residue_pairs(
 
 	// assert pose.update_residue_neighbors() has been called:
 	runtime_assert(
-		 !pose.conformation().structure_moved() &&
-		 pose.energies().residue_neighbors_updated());
+		!pose.conformation().structure_moved() &&
+		pose.energies().residue_neighbors_updated());
 
 	// I would like to assert that the actcoords are up to date but that
 	// isn't currently possible.
@@ -168,20 +168,20 @@ PairFeatures::report_residue_pairs(
 	std::string statement_string = "INSERT INTO residue_pairs (struct_id, resNum1, resNum2, res1_10A_neighbors, res2_10A_neighbors, actcoord_dist, polymeric_sequence_dist) VALUES (?,?,?,?,?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
-	for(Size resNum1=1; resNum1 <= pose.total_residue(); ++resNum1){
+	for ( Size resNum1=1; resNum1 <= pose.total_residue(); ++resNum1 ) {
 		Residue const & res1( pose.residue(resNum1) );
 
 		Size res1_10A_neighbors(
 			tenA.get_node(resNum1)->num_neighbors_counting_self_static());
 
 		// TODO: just iterate over the neighbors of res1
-		for(Size resNum2=resNum1+1; resNum2 <= pose.total_residue(); ++resNum2){
-			if(!check_relevant_residues( relevant_residues, resNum1, resNum2 )) continue;
+		for ( Size resNum2=resNum1+1; resNum2 <= pose.total_residue(); ++resNum2 ) {
+			if ( !check_relevant_residues( relevant_residues, resNum1, resNum2 ) ) continue;
 			Residue const & res2( pose.residue(resNum2) );
 
 			Distance const actcoord_dist( res1.actcoord().distance( res2.actcoord() ) );
 
-			if( actcoord_dist > 10 ) continue;
+			if ( actcoord_dist > 10 ) continue;
 
 			Size res2_10A_neighbors(
 				tenA.get_node(resNum2)->num_neighbors_counting_self_static());

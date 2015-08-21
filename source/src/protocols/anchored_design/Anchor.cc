@@ -44,8 +44,8 @@ using basic::Warning;
 
 static thread_local basic::Tracer TR( "protocols.AnchoredDesign.Anchor" );
 
-namespace protocols{
-namespace anchored_design{
+namespace protocols {
+namespace anchored_design {
 
 std::string const bad_anchorfile("YOU_FORGOT_TO_SPECIFY_AN_ANCHOR_FILE");
 
@@ -64,7 +64,7 @@ protocols::anchored_design::Anchor::Anchor( core::Size const start, core::Size c
 {}
 
 // input constructor from pose and anchorfile
-protocols::anchored_design::Anchor::Anchor( core::pose::Pose const & pose,	std::string const & filename):
+protocols::anchored_design::Anchor::Anchor( core::pose::Pose const & pose, std::string const & filename):
 	start_(0),
 	end_(0),
 	anchorfile_(filename)
@@ -96,7 +96,7 @@ Anchor::Anchor( Anchor const & rhs ) :
 Anchor & Anchor::operator=( Anchor const & rhs ){
 
 	//abort self-assignment
-	if (this == &rhs) return *this;
+	if ( this == &rhs ) return *this;
 
 	start_ = rhs.start();
 	end_ = rhs.end();
@@ -106,15 +106,15 @@ Anchor & Anchor::operator=( Anchor const & rhs ){
 
 /// @details read_anchorfile from internally stored anchorfile (from the option system)
 void protocols::anchored_design::Anchor::read_anchorfile(
-			     core::pose::Pose const & pose)
+	core::pose::Pose const & pose)
 {
 	read_anchorfile(pose, anchorfile_);
 }
 
 /// @details read_anchorfile reads in an anchor file (formatted as whitespace-delineated PDB-relevant start end chain information).  It queries the pose('s members) for the mapping from PDB numbers to pose resids.
 void protocols::anchored_design::Anchor::read_anchorfile(
-			     core::pose::Pose const & pose,
-			     std::string const & filename )
+	core::pose::Pose const & pose,
+	std::string const & filename )
 {
 
 	//find the anchor file, open it, handle error
@@ -132,15 +132,15 @@ void protocols::anchored_design::Anchor::read_anchorfile(
 	anchorfile >> chain >> PDBstart >> PDBend;
 
 	//if the stream fails, bad formatting
-	if( anchorfile.fail() ){
+	if ( anchorfile.fail() ) {
 		Error() << "Can't parse anchor file.  Using the PDB numbering, format is:\n    chain start end \n  "
-						<< "Only the first line is read." << std::endl;
+			<< "Only the first line is read." << std::endl;
 		utility_exit();
 	}
 	//use info to modify Anchor's data members
 	using core::pose::PDBInfo;
 	using core::pose::PDBPoseMap;
-	if( !pose.pdb_info() ){ //if that's not a NULL pointer
+	if ( !pose.pdb_info() ) { //if that's not a NULL pointer
 		utility_exit_with_message("Cannot read anchor file because pose has no PDBInfo");
 	}
 

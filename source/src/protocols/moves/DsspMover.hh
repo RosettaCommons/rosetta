@@ -26,7 +26,7 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-	#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.hh>
 #endif
 
 
@@ -52,10 +52,10 @@ public:
 	~DsspMover();
 
 	/// @brief clone this object
-	virtual	MoverOP clone() const;
+	virtual MoverOP clone() const;
 
 	/// @brief create this type of object
-	virtual	MoverOP fresh_instance() const;
+	virtual MoverOP fresh_instance() const;
 
 	// @brief virtual main operation
 	virtual void apply( core::pose::Pose & pose );
@@ -64,7 +64,7 @@ public:
 	void parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, Pose const & );
 
 private:
-  bool reduced_IG_as_L_;
+	bool reduced_IG_as_L_;
 
 
 };

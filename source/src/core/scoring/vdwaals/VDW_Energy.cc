@@ -139,7 +139,7 @@ VDW_Energy::residue_pair_energy(
 {
 	using namespace etable::count_pair;
 	Real score(0.0);
-	//	basic::ProfileThis doit( basic::VDW_ENERGY );
+	// basic::ProfileThis doit( basic::VDW_ENERGY );
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		// assuming only a single bond right now -- generalizing to arbitrary topology
 		// also assuming crossover of 4, should be closest (?) to classic rosetta
@@ -155,15 +155,15 @@ VDW_Energy::residue_pair_energy(
 				Size path_dist( 0 );
 				if ( cpfxn->count( i, j, weight, path_dist ) ) {
 					if ( weight < 0.99 ) continue; // don't count half-weight interxns in vdw_compute
-					if ( rsd2.atom_type_index(j) <= i_atom_vdw.size() ){
+					if ( rsd2.atom_type_index(j) <= i_atom_vdw.size() ) {
 						Real const bump_dsq( i_atom_vdw[ rsd2.atom_type_index(j) ] );
 						Real const clash( bump_dsq - i_xyz.distance_squared( rsd2.xyz(j) ) );
 						if ( clash > 0.0 ) {
 							score += ( clash * clash ) / bump_dsq;
 						}
-					}else{
+					} else {
 						std::cerr << "Etable: "  <<  rsd2.atom_type_index(j) << " " <<  i_atom_vdw.size() << "  " << i << " " <<  j << std::endl;
-					  utility_exit_with_message( "Fatal Error in VDW_Energy" );
+						utility_exit_with_message( "Fatal Error in VDW_Energy" );
 					}
 				}
 			}
@@ -175,29 +175,29 @@ VDW_Energy::residue_pair_energy(
 			Size const i_type( rsd1.atom_type_index(i) );
 			utility::vector1< Real > const & i_atom_vdw( atom_vdw_( i_type ) );
 			for ( Size j = 1, j_end = rsd2.natoms(); j <= j_end; ++j ) {
-				if ( rsd2.atom_type_index(j) <= i_atom_vdw.size() ){
+				if ( rsd2.atom_type_index(j) <= i_atom_vdw.size() ) {
 					Real const bump_dsq( i_atom_vdw[ rsd2.atom_type_index(j) ] );
 					Real const clash( bump_dsq - i_xyz.distance_squared( rsd2.xyz(j) ) );
 					if ( clash > 0.0 ) {
 						score += ( clash * clash ) / bump_dsq;
-//  					std::cout << "BUMP: " << I(4,rsd1.seqpos() ) << I(4,rsd2.seqpos() )
-// 										<<' ' << rsd1.atom_name(i) << ' ' << rsd2.atom_name(j) << ' '
-// 										<< ( clash * clash ) / bump_dsq * vdw_scale_factor_
-// 										<< ' ' << i_xyz.distance_squared( rsd2.xyz(j) ) <<  std::endl;
+						//       std::cout << "BUMP: " << I(4,rsd1.seqpos() ) << I(4,rsd2.seqpos() )
+						//           <<' ' << rsd1.atom_name(i) << ' ' << rsd2.atom_name(j) << ' '
+						//           << ( clash * clash ) / bump_dsq * vdw_scale_factor_
+						//           << ' ' << i_xyz.distance_squared( rsd2.xyz(j) ) <<  std::endl;
 					}
-				}else{
+				} else {
 					std::cerr << "Etable: " <<  rsd2.atom_type_index(j) << " " <<  i_atom_vdw.size() << "  " << i << " " <<  j << std::endl;
-				  utility_exit_with_message( "Fatal Error in VDW_Energy" );
+					utility_exit_with_message( "Fatal Error in VDW_Energy" );
 				}
 			}
 		}
 	}
 	emap[ vdw ] += score * vdw_scale_factor_; // vdw prefactor!
 
-// 	if ( score*0.8 > 0.001 && rsd1.seqpos() <= rsd2.seqpos() ) {
-// 		using namespace ObjexxFCL::format;
-// 		std::cout << "vdw_ij: " << I(4,rsd1.seqpos() ) << I(4,rsd2.seqpos() ) << F(9,3,score*0.8) << std::endl;
-// 	}
+	//  if ( score*0.8 > 0.001 && rsd1.seqpos() <= rsd2.seqpos() ) {
+	//   using namespace ObjexxFCL::format;
+	//   std::cout << "vdw_ij: " << I(4,rsd1.seqpos() ) << I(4,rsd2.seqpos() ) << F(9,3,score*0.8) << std::endl;
+	//  }
 }
 
 
@@ -210,10 +210,10 @@ VDW_Energy::eval_atom_derivative(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
- 	) const
+) const
 {
 	using namespace etable::count_pair;
-	//	basic::ProfileThis doit( basic::VDW_ENERGY );
+	// basic::ProfileThis doit( basic::VDW_ENERGY );
 	// what is my charge?
 	Size const pos1( atom_id.rsd() );
 	Size const i   ( atom_id.atomno() );
@@ -243,7 +243,7 @@ VDW_Energy::eval_atom_derivative(
 
 		conformation::Residue const & rsd2( pose.residue( pos2 ) );
 
-	debug_assert( pos2 != pos1 );
+		debug_assert( pos2 != pos1 );
 
 		if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 			// generalizing to arbitrary topology
@@ -316,7 +316,7 @@ VDW_Energy::evaluate_rotamer_pair_energies(
 	ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 ) const
 {
-debug_assert( set1.resid() != set2.resid() );
+	debug_assert( set1.resid() != set2.resid() );
 
 	using namespace methods;
 	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table1( energy_table );

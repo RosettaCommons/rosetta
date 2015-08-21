@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	devel/buns/BuriedUnsatPolarsFinder2.hh
+/// @file devel/buns/BuriedUnsatPolarsFinder2.hh
 /// @brief
 /// @details
-/// @author	Kevin Houlihan (khouli@unc.edu)
-/// @author	Bryan Der
+/// @author Kevin Houlihan (khouli@unc.edu)
+/// @author Bryan Der
 
 #ifndef INCLUDED_devel_buns_BuriedUnsatisfiedPolarsCalculator2_hh
 #define INCLUDED_devel_buns_BuriedUnsatisfiedPolarsCalculator2_hh
@@ -35,26 +35,26 @@
 
 namespace devel {
 namespace buns {
-			
+
 class BuriedUnsatisfiedPolarsCalculator2 : public core::pose::metrics::EnergyDependentCalculator {
 
 public:
-	
+
 	BuriedUnsatisfiedPolarsCalculator2(
 		std::string weak_bunsat_calc_
 	);
-	
+
 	BuriedUnsatisfiedPolarsCalculator2(
 		std::string weak_bunsat_calc,
 		std::set< Size > const & special_region
 	);
-	
+
 	core::pose::metrics::PoseMetricCalculatorOP clone()
 	const
 	{
 		return core::pose::metrics::PoseMetricCalculatorOP( new BuriedUnsatisfiedPolarsCalculator2( name_of_weak_bunsat_calc_ ) );
 	};
-	
+
 	std::string const & name_of_weak_bunsat_calc()
 	const
 	{
@@ -116,7 +116,7 @@ public:
 		metal_dist_cutoff_ = val;
 		this->notify_energy_change();
 	}
-	
+
 protected:
 	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
 	virtual std::string print( std::string const & key ) const;
@@ -124,18 +124,18 @@ protected:
 
 private:
 	virtual void generous_hbond() const;
-	
+
 	virtual void bunsats_thorough_check(
 		core::pose::Pose const & pose,
 		core::id::AtomID_Map< bool > & bunsat_thorough_atomid_map);
-	
+
 	virtual
 	bool
 	single_bunsat_thorough_check(
 		core::pose::Pose const & pose,
 		core::id::AtomID const & bunsat_candidate_atom_id
-		);
-	
+	);
+
 	virtual
 	void
 	bunsat_donor_nbr_residue_check(
@@ -145,8 +145,8 @@ private:
 		numeric::xyzVector< core::Real > const & bunsat_xyz,
 		Size const test_resi,
 		Size & num_hbonds
-		);
-	
+	);
+
 	virtual
 	void
 	bunsat_acc_nbr_residue_check(
@@ -156,15 +156,15 @@ private:
 		numeric::xyzVector< core::Real > const & bunsat_xyz,
 		Size const & test_resi,
 		Size & num_hbonds
-		);
-	
+	);
+
 	bool
 	metal_check(
 		core::conformation::Residue const & test_rsd,
 		numeric::xyzVector< core::Real > const & bunsat_xyz,
 		numeric::xyzVector< core::Real > const & test_xyz
 	) const;
-	
+
 	bool
 	adjacent_bbbb_check(
 		Size const & bunsat_resi,
@@ -172,7 +172,7 @@ private:
 		Size const & test_resi,
 		std::string const & test_atom_name
 	) const;
-	
+
 	bool
 	self_scsc(
 		core::conformation::Residue const & bunsat_rsd,
@@ -182,7 +182,7 @@ private:
 		Size const & test_resi,
 		Size const & test_atom_num
 	) const;
-	
+
 	bool
 	sulphur_bond_check(
 		core::conformation::Residue const & test_rsd,
@@ -215,15 +215,15 @@ private:
 
 	void
 	show();
-	
+
 	Size all_bur_unsat_polars_;
 	Size special_region_bur_unsat_polars_;
 	core::id::AtomID_Map< bool > atom_bur_unsat_;
 	utility::vector1< Size > residue_bur_unsat_polars_;
-	
+
 private:
-  static
-  core::Size satisfaction_cutoff( std::string atom_type );
+	static
+	core::Size satisfaction_cutoff( std::string atom_type );
 	std::string name_of_weak_bunsat_calc_;
 	std::set< Size > special_region_;
 	bool layered_sasa_;
@@ -234,9 +234,9 @@ private:
 	core::Real hxl_dist_cutoff_;
 	core::Real sulph_dist_cutoff_;
 	core::Real metal_dist_cutoff_;
-			
+
 }; // BuriedUnsatisfiedPolarsCalculator2
-	
+
 } // namespace buns
 } // namespace devel
 

@@ -82,7 +82,7 @@ linear_chainbreak(
 	using core::scoring::ScoreType;
 	using core::scoring::methods::LinearChainbreakEnergy;
 
-	if (pose.fold_tree().num_cutpoint() == 0){
+	if ( pose.fold_tree().num_cutpoint() == 0 ) {
 		return 0;
 	}
 	assert( pos > 0 );

@@ -51,31 +51,31 @@ class MMLJLibrary  : public utility::pointer::ReferenceCount
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~MMLJLibrary();
-  /// @brief ctor
-  MMLJLibrary( core::chemical::MMAtomTypeSetCOP mm_atom_set );
+	/// @brief ctor
+	MMLJLibrary( core::chemical::MMAtomTypeSetCOP mm_atom_set );
 
-  /// @brief blah
+	/// @brief blah
 	inline
-  mm_lj_param_set
-  lookup_three_bond( Size atom ) const
+	mm_lj_param_set
+	lookup_three_bond( Size atom ) const
 	{ return mm_lj_three_bond_library_[ atom ]; }
 
-  /// @brief blah
+	/// @brief blah
 	inline
-  mm_lj_param_set
-  lookup_three_bond( std::string atom ) const
+	mm_lj_param_set
+	lookup_three_bond( std::string atom ) const
 	{ return mm_lj_three_bond_library_[ mm_atom_set_.lock()->atom_type_index( atom ) ]; }
 
-  /// @brief blah
+	/// @brief blah
 	inline
 	mm_lj_param_set
-  lookup( Size atom ) const
+	lookup( Size atom ) const
 	{ return mm_lj_library_[ atom ]; }
 
-  /// @brief blah
+	/// @brief blah
 	inline
 	mm_lj_param_set
-  lookup( std::string atom ) const
+	lookup( std::string atom ) const
 	{ return mm_lj_library_[ mm_atom_set_.lock()->atom_type_index( atom ) ]; }
 
 	/// @brief blah
@@ -83,30 +83,30 @@ public:
 	mm_atom_set() const
 	{ return mm_atom_set_; }
 
-  /// @brief blah
+	/// @brief blah
 	Real
 	nblist_dis2_cutoff_XX() const
 	{ return nblist_dis2_cutoff_XX_; }
 
-  /// @brief blah
+	/// @brief blah
 	Real
 	nblist_dis2_cutoff_XH() const
 	{ return nblist_dis2_cutoff_XH_; }
 
-  /// @brief blah
+	/// @brief blah
 	Real
 	nblist_dis2_cutoff_HH() const
 	{ return nblist_dis2_cutoff_HH_; }
 
 private:
-  /// @brief library that contains lj params for sets in which atoms are seperated by 3 or bonds
-  utility::vector1<mm::mm_lj_param_set> mm_lj_three_bond_library_;
+	/// @brief library that contains lj params for sets in which atoms are seperated by 3 or bonds
+	utility::vector1<mm::mm_lj_param_set> mm_lj_three_bond_library_;
 
-  /// @brief library that contains lj params for sets in which atoms are seperated by 4 or more bonds
-  utility::vector1<mm::mm_lj_param_set> mm_lj_library_;
+	/// @brief library that contains lj params for sets in which atoms are seperated by 4 or more bonds
+	utility::vector1<mm::mm_lj_param_set> mm_lj_library_;
 
-  /// @brief the MMAtomTypeSet associated with the library
-  core::chemical::MMAtomTypeSetCAP mm_atom_set_;
+	/// @brief the MMAtomTypeSet associated with the library
+	core::chemical::MMAtomTypeSetCAP mm_atom_set_;
 
 	/// @brief the cutoff distance at which the neighbor list will count two atoms as being neighbors
 	/// given that those atom are both heavy, a heavy and a hydrogen, or a hydrogen and  hydrogen

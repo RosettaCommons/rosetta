@@ -99,10 +99,10 @@ bool PosType::operator <  ( EntityElement const & rhs ) const
 bool PosType::operator == ( EntityElement const & rhs ) const
 {
 	if ( parent::operator == ( rhs ) ) {
-    if ( ! dynamic_cast< PosType const * > ( &rhs ) ) {
-      utility_exit_with_message( "operator < unable to compare a " + name() + " object to a " + rhs.name() + " object!" );
-    }
-    PosType const & pt_rhs( static_cast< PosType const & > ( rhs ) );
+		if ( ! dynamic_cast< PosType const * > ( &rhs ) ) {
+			utility_exit_with_message( "operator < unable to compare a " + name() + " object to a " + rhs.name() + " object!" );
+		}
+		PosType const & pt_rhs( static_cast< PosType const & > ( rhs ) );
 		if ( type_ == pt_rhs.type_ ) {
 			return true;
 		}
@@ -116,10 +116,10 @@ PosType::operator =  ( EntityElement const & rhs )
 	if ( this != &rhs ) {
 		parent::operator = ( rhs );
 
-    if ( ! dynamic_cast< PosType const * > ( &rhs ) ) {
-      utility_exit_with_message( "operator < unable to compare a " + name() + " object to a " + rhs.name() + " object!" );
-    }
-    PosType const & pt_rhs( static_cast< PosType const & > ( rhs ) );
+		if ( ! dynamic_cast< PosType const * > ( &rhs ) ) {
+			utility_exit_with_message( "operator < unable to compare a " + name() + " object to a " + rhs.name() + " object!" );
+		}
+		PosType const & pt_rhs( static_cast< PosType const & > ( rhs ) );
 
 		type_ = pt_rhs.type_;
 	}
@@ -158,7 +158,7 @@ void
 MultiStatePacker::single_state_design( bool restrict_to_canonical /* = true */ )
 {
 	for ( SingleStateOPs::iterator ss( states().begin() ), end( states().end() );
-	      ss != end; ++ss ) {
+			ss != end; ++ss ) {
 		PackingStateOP state = utility::pointer::dynamic_pointer_cast< PackingState >( (*ss) );
 		runtime_assert( state != 0 );
 		utility::vector0< int > rot_to_pack;
@@ -199,8 +199,8 @@ MultiStatePacker::evaluate(
 				protocols::multistate_design::MultiStateEntity & multi_state_entity =
 					static_cast< protocols::multistate_design::MultiStateEntity & >( entity );
 				multi_state_entity.single_state_entity_data()[single_state_num].fitness(E);
-				for (MetricValueGetterMap::const_iterator iter = metric_value_getters().begin();
-				     iter != metric_value_getters().end(); ++iter) {
+				for ( MetricValueGetterMap::const_iterator iter = metric_value_getters().begin();
+						iter != metric_value_getters().end(); ++iter ) {
 					multi_state_entity.single_state_entity_data()[single_state_num].metric_value(
 						iter->first,
 						iter->second.get(state->pose())
@@ -214,9 +214,9 @@ MultiStatePacker::evaluate(
 
 void
 limit_rotamer_set(
-  utility::vector0< int > & rot_to_pack,
-  PackingState const & state,
-  genetic_algorithm::EntityElements const & seq
+	utility::vector0< int > & rot_to_pack,
+	PackingState const & state,
+	genetic_algorithm::EntityElements const & seq
 )
 {
 	rot_to_pack.clear();
@@ -251,7 +251,7 @@ limit_rotamer_set(
 			rot_to_pack.push_back( rot_i );
 		} else {
 			// this is not a position whose mutation is controlled by genetic algorithm:
-				// accept this rotamer only if its identity matches that which is specified in seq
+			// accept this rotamer only if its identity matches that which is specified in seq
 			if ( rot_type->aa() == seq_type ) rot_to_pack.push_back( rot_i );
 		}
 	}
@@ -275,8 +275,7 @@ restrict_to_canonical_aas(
 					state.pose().residue( rotsets.res_for_rotamer(i) ).type().name3() ) {
 				rot_to_pack.push_back(i);
 			}
-		}
-		else rot_to_pack.push_back(i);
+		} else rot_to_pack.push_back(i);
 	}
 }
 

@@ -43,70 +43,70 @@ namespace moves {
 static thread_local basic::Tracer TR( "protocols.moves.IfMover" );
 
 std::string IfMoverCreator::mover_name() {
-  return "If";
+	return "If";
 }
 
 std::string IfMoverCreator::keyname() const {
-  return mover_name();
+	return mover_name();
 }
 
 protocols::moves::MoverOP IfMoverCreator::create_mover() const {
-  return protocols::moves::MoverOP( new IfMover() );
+	return protocols::moves::MoverOP( new IfMover() );
 }
 
 void IfMover::apply(core::pose::Pose& pose) {
-  moves::MoverStatus status;
+	moves::MoverStatus status;
 
-  if( filter_->apply(pose) ){
-    true_mover_->apply(pose);
-    status = true_mover_->get_last_move_status();
-  } else {
-    false_mover_->apply(pose);
-    status = false_mover_->get_last_move_status();
-  }
+	if ( filter_->apply(pose) ) {
+		true_mover_->apply(pose);
+		status = true_mover_->get_last_move_status();
+	} else {
+		false_mover_->apply(pose);
+		status = false_mover_->get_last_move_status();
+	}
 
-  // update this mover's status
-  protocols::moves::Mover::set_last_move_status(status);
+	// update this mover's status
+	protocols::moves::Mover::set_last_move_status(status);
 }
 
 core::pose::PoseOP IfMover::get_additional_output_true_mover() {
-  return true_mover_->get_additional_output();
+	return true_mover_->get_additional_output();
 }
 
 core::pose::PoseOP IfMover::get_additional_output_false_mover() {
-  return false_mover_->get_additional_output();
+	return false_mover_->get_additional_output();
 }
 
 // backwards compatibility
 core::pose::PoseOP IfMover::get_additional_output() {
-  return get_additional_output_true_mover();
+	return get_additional_output_true_mover();
 }
 
 std::string IfMover::get_name() const {
-  return IfMoverCreator::mover_name();
+	return IfMoverCreator::mover_name();
 }
 
 void IfMover::parse_my_tag( utility::tag::TagCOP tag,
-                            basic::datacache::DataMap &,
-                            protocols::filters::Filters_map const &filters,
-                            protocols::moves::Movers_map const &movers,
-                            core::pose::Pose const & ) {
-  using namespace protocols::filters;
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &filters,
+	protocols::moves::Movers_map const &movers,
+	core::pose::Pose const & ) {
+	using namespace protocols::filters;
 
-  TR<<"If mover\n";
-  std::string const true_mover_name( tag->getOption< std::string >( "true_mover_name" ));
-  std::string const false_mover_name( tag->getOption< std::string >( "false_mover_name", "null" ));
-  std::string const filter_name( tag->getOption< std::string >( "filter_name" ) );
+	TR<<"If mover\n";
+	std::string const true_mover_name( tag->getOption< std::string >( "true_mover_name" ));
+	std::string const false_mover_name( tag->getOption< std::string >( "false_mover_name", "null" ));
+	std::string const filter_name( tag->getOption< std::string >( "filter_name" ) );
 
 	/// see: protocols/moves/util.hh
-  filter_ = find_filter_or_die(filter_name, tag, filters);
-  true_mover_ = find_mover_or_die(true_mover_name, tag, movers);
-  false_mover_ = find_mover_or_die(false_mover_name, tag, movers);
+	filter_ = find_filter_or_die(filter_name, tag, filters);
+	true_mover_ = find_mover_or_die(true_mover_name, tag, movers);
+	false_mover_ = find_mover_or_die(false_mover_name, tag, movers);
 
-  TR << "with true_mover \"" << true_mover_name
-     << "\" and false_mover \"" << false_mover_name
-     << "\" filter \"" << filter_name
-     << std::endl;
+	TR << "with true_mover \"" << true_mover_name
+		<< "\" and false_mover \"" << false_mover_name
+		<< "\" filter \"" << filter_name
+		<< std::endl;
 }
 
 } //moves

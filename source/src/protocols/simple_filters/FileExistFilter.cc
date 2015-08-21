@@ -20,7 +20,7 @@
 #include <basic/Tracer.hh>
 #include <fstream>
 #include <iostream>
-namespace protocols{
+namespace protocols {
 namespace simple_filters {
 
 using namespace core;
@@ -36,9 +36,9 @@ FileExistFilterCreator::keyname() const { return "FileExist"; }
 
 //default ctor
 FileExistFilter::FileExistFilter() :
-protocols::filters::Filter( "FileExist" ),
-filename_( "" ),
-ignore_zero_byte_( false )
+	protocols::filters::Filter( "FileExist" ),
+	filename_( "" ),
+	ignore_zero_byte_( false )
 {}
 
 FileExistFilter::~FileExistFilter() {}
@@ -73,13 +73,15 @@ FileExistFilter::compute(
 
 	ifstream infile;
 	infile.open( filename_.c_str(), ios::in );
-	if( !infile.good() )
+	if ( !infile.good() ) {
 		return false;
+	}
 
-	if( !ignore_zero_byte() )
+	if ( !ignore_zero_byte() ) {
 		return true;
+	}
 
-/// if the file is there and we're ignoring zero-byte files, we return true only if the file contains information
+	/// if the file is there and we're ignoring zero-byte files, we return true only if the file contains information
 	core::Size const begin = infile.tellg();
 	infile.seekg( 0, ios::end );
 	core::Size const end = infile.tellg();

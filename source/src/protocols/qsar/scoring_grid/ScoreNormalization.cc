@@ -21,10 +21,10 @@ namespace scoring_grid {
 
 ScoreNormalizationOP get_score_normalization_function(std::string norm_tag)
 {
-	if(norm_tag == "HeavyAtomNormalization") return ScoreNormalizationOP( new HeavyAtomNormalization );
-	if(norm_tag == "AllAtomNormalization") return ScoreNormalizationOP( new AllAtomNormalization );
-	if(norm_tag == "ChiAngleNormalization") return ScoreNormalizationOP( new ChiAngleNormalization );
-	if(norm_tag == "MolecularWeightNormalization") return ScoreNormalizationOP( new MolecularWeightNormalization );
+	if ( norm_tag == "HeavyAtomNormalization" ) return ScoreNormalizationOP( new HeavyAtomNormalization );
+	if ( norm_tag == "AllAtomNormalization" ) return ScoreNormalizationOP( new AllAtomNormalization );
+	if ( norm_tag == "ChiAngleNormalization" ) return ScoreNormalizationOP( new ChiAngleNormalization );
+	if ( norm_tag == "MolecularWeightNormalization" ) return ScoreNormalizationOP( new MolecularWeightNormalization );
 
 	throw utility::excn::EXCN_RosettaScriptsOption(norm_tag+" is not a valid Score Normalization method");
 	return NULL;
@@ -33,8 +33,7 @@ ScoreNormalizationOP get_score_normalization_function(std::string norm_tag)
 core::Real HeavyAtomNormalization::operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues)
 {
 	core::Size n_atoms = 0;
-	for(core::Size i = 1; i <= residues.size();++i)
-	{
+	for ( core::Size i = 1; i <= residues.size(); ++i ) {
 		n_atoms += residues[i]->nheavyatoms();
 	}
 
@@ -49,8 +48,7 @@ core::Real HeavyAtomNormalization::operator()(core::Real const & input_score, co
 core::Real AllAtomNormalization::operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues)
 {
 	core::Size n_atoms = 0;
-	for(core::Size i = 1; i <= residues.size();++i)
-	{
+	for ( core::Size i = 1; i <= residues.size(); ++i ) {
 		n_atoms += residues[i]->natoms();
 	}
 
@@ -65,30 +63,30 @@ core::Real AllAtomNormalization::operator()(core::Real const & input_score, core
 core::Real ChiAngleNormalization::operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues)
 {
 	core::Size n_chi = 0;
-	for(core::Size i = 1; i <= residues.size();++i)
-	{
+	for ( core::Size i = 1; i <= residues.size(); ++i ) {
 		n_chi += residues[i]->nchi();
 	}
 
-	if(n_chi > 0)
+	if ( n_chi > 0 ) {
 		return input_score/static_cast<core::Real>(n_chi);
-	else
+	} else {
 		return input_score;
+	}
 }
 
 core::Real ChiAngleNormalization::operator()(core::Real const & input_score, core::conformation::Residue const & residue)
 {
-	if(residue.nchi() > 0)
+	if ( residue.nchi() > 0 ) {
 		return input_score/static_cast<core::Real>(residue.nchi());
-	else
+	} else {
 		return input_score;
+	}
 }
 
 core::Real MolecularWeightNormalization::operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues)
 {
 	core::Real total_mass = 0.0;
-	for(core::Size i = 1; i <= residues.size(); ++i)
-	{
+	for ( core::Size i = 1; i <= residues.size(); ++i ) {
 		total_mass += residues[i]->type().mass();
 	}
 	return input_score/total_mass;

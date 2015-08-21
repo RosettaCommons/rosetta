@@ -61,7 +61,7 @@ vl_vh_orientation_coords ( const pose::Pose & pose_in, const protocols::antibody
 	vector1< Size > vl_vh_residues = ab_info.get_PackingAngleResidues();
 
 	//Check if camelid antibody.
-	if (ab_info.is_camelid()){
+	if ( ab_info.is_camelid() ) {
 		TR << "Could not obtain Vl Vh coords as antibody is a camelid antibody.  Setting coords to zero" << std::endl;
 		return angle_set;
 	}
@@ -69,25 +69,25 @@ vl_vh_orientation_coords ( const pose::Pose & pose_in, const protocols::antibody
 
 
 	vector1< numeric::xyzVector< Real > > vl_coord_set;
-	for (Size i=1; i<=8; ++i) {
+	for ( Size i=1; i<=8; ++i ) {
 		vl_coord_set.push_back( pose_in.residue( vl_vh_residues[i] ).xyz( "CA" ) );
 	}
 
 	vector1< numeric::xyzVector< Real > > vh_coord_set;
-	for (Size i=9; i<=16; ++i) {
+	for ( Size i=9; i<=16; ++i ) {
 		vh_coord_set.push_back( pose_in.residue( vl_vh_residues[i] ).xyz( "CA" ) );
 	}
 
 	Size vl_n_res = vl_coord_set.size();
 	numeric::xyzVector< Real > vl_centroid(0.0);
-	for (Size i = 1; i <= vl_n_res; ++i) {
+	for ( Size i = 1; i <= vl_n_res; ++i ) {
 		vl_centroid += vl_coord_set[i];
 	}
 	vl_centroid /= vl_n_res;
 
 	Size vh_n_res = vh_coord_set.size();
 	numeric::xyzVector< Real > vh_centroid(0.0);
-	for (Size i = 1; i <= vh_n_res; ++i) {
+	for ( Size i = 1; i <= vh_n_res; ++i ) {
 		vh_centroid += vh_coord_set[i];
 	}
 	vh_centroid /= vh_n_res;
@@ -145,9 +145,9 @@ kink_dihedral(const core::pose::Pose & pose, const protocols::antibody::Antibody
 	core::conformation::Residue kr1 = pose.residue(kb+1);
 	core::conformation::Residue kr2 = pose.residue(kb+2);
 	core::conformation::Residue kr3 = pose.residue(kb+3);
-	if (debug) {
-		//		std::string kseq = std::string(kr0.name1()) + std::string(kr1.name1()) +
-		//                 std::string(kr2.name1()) +	std::string(kr3.name1());
+	if ( debug ) {
+		//  std::string kseq = std::string(kr0.name1()) + std::string(kr1.name1()) +
+		//                 std::string(kr2.name1()) + std::string(kr3.name1());
 		TR << "Kink is defined from pose residues " << kb << "-" << kb+3 << ": " << kr0.name1() << std::endl;
 	}
 
@@ -191,12 +191,12 @@ kink_RD_Hbond(const core::pose::Pose & pose, const protocols::antibody::Antibody
 	std::vector<Vector> Catoms = ab_info.kink_cation_atoms(pose); // 0
 
 	Real HBdist = 100.0;
-	for (std::vector<Vector>::iterator Aa = Aatoms.begin(); Aa != Aatoms.end(); ++Aa) {
-		for (std::vector<Vector>::iterator Ca = Catoms.begin(); Ca != Catoms.end(); ++Ca) {
+	for ( std::vector<Vector>::iterator Aa = Aatoms.begin(); Aa != Aatoms.end(); ++Aa ) {
+		for ( std::vector<Vector>::iterator Ca = Catoms.begin(); Ca != Catoms.end(); ++Ca ) {
 			HBdist = std::min( HBdist, (*Aa - *Ca).norm());
 		}
 	}
-	if (HBdist == 100.0) {
+	if ( HBdist == 100.0 ) {
 		HBdist = 0;
 	}
 	return HBdist;
@@ -208,7 +208,7 @@ kink_Trp_Hbond(const core::pose::Pose & pose, const protocols::antibody::Antibod
 
 	Size Wi = ab_info.kink_trp(pose); // N+1
 	core::conformation::Residue W  = pose.residue(Wi);
-	if (W.name3() != "TRP") return 0.0;
+	if ( W.name3() != "TRP" ) return 0.0;
 	Vector W_NE1 = W.xyz("NE1");
 
 	Size kb1 = ab_info.kink_begin(pose); // N-2
@@ -258,7 +258,7 @@ paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::Antibod
 	TR << "Total polar SASA is: " << total_polar_sasa << std::endl;
 
 	////////iterate to define antibody paratope/////////////////////////////////////////////
-	for (core::Size i=1; i<=core::Size(ab_info.get_total_num_CDRs(include_de_loop)); ++i){
+	for ( core::Size i=1; i<=core::Size(ab_info.get_total_num_CDRs(include_de_loop)); ++i ) {
 		CDRNameEnum loop = static_cast<CDRNameEnum>(i);
 		Size loop_start = ab_info.get_CDR_start(loop, pose);
 		Size loop_end = ab_info.get_CDR_end(loop, pose);
@@ -269,7 +269,7 @@ paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::Antibod
 		Real hydrop_loop_sasa = 0;
 		Real loop_sasa = 0;
 		Real polar_loop_sasa = 0;
-		for (Size ii=loop_start; ii<=loop_end; ++ii){
+		for ( Size ii=loop_start; ii<=loop_end; ++ii ) {
 			core::conformation::Residue const & irsd( pose.residue( ii ) );
 			loop_sasa += res_sasa[ii];
 			paratope_sasa += res_sasa[ii];
@@ -285,8 +285,8 @@ paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::Antibod
 		/////////////////////out CDR values//////////////////////////////////////////////
 		TR << "Loop " << ab_info.get_CDR_name(loop) << ": CDR  sasa " << loop_sasa
 
-			 << "\tCDR hydrophobic sasa: " << hydrop_loop_sasa
-		   << "\tCDR polar sasa:  " << polar_loop_sasa << std::endl;
+			<< "\tCDR hydrophobic sasa: " << hydrop_loop_sasa
+			<< "\tCDR polar sasa:  " << polar_loop_sasa << std::endl;
 		///////////////////////////////out paratope values////////////////////////////////////
 	}
 	TR << "Paratope_sasa " << paratope_sasa << std::endl;
@@ -304,13 +304,12 @@ paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::Antibod
 core::SSize
 pose_charge( core::pose::Pose const & pose ) {  // not really an antibody fn
 	SSize pose_net_charge(0);
-	for(Size i(1); i<=pose.total_residue(); ++i) {
+	for ( Size i(1); i<=pose.total_residue(); ++i ) {
 		std::string name3 = pose.residue(i).name3();
-		if(name3 == "ARG" || name3 == "LYS") {
+		if ( name3 == "ARG" || name3 == "LYS" ) {
 			//TR << name3 << std::endl;
 			pose_net_charge++;
-		}
-		else if(name3 == "ASP" || name3 == "GLU") {
+		} else if ( name3 == "ASP" || name3 == "GLU" ) {
 			pose_net_charge--;
 			//TR << name3 << std::endl;
 		}
@@ -326,7 +325,7 @@ paratope_charge( core::pose::Pose const & pose, const protocols::antibody::Antib
 	charge_results.cdr.resize(ab_info.get_total_num_CDRs( include_de_loop ), 0);
 	core::SSize paratope_charge = 0;
 
-	for(core::Size ia=1; ia<=core::Size(ab_info.get_total_num_CDRs( include_de_loop ) ); ++ia){
+	for ( core::Size ia=1; ia<=core::Size(ab_info.get_total_num_CDRs( include_de_loop ) ); ++ia ) {
 		CDRNameEnum loop = static_cast<CDRNameEnum>(ia);
 		Size loop_start = ab_info.get_CDR_start(loop, pose);
 		Size loop_end = ab_info.get_CDR_end(loop, pose);
@@ -335,12 +334,11 @@ paratope_charge( core::pose::Pose const & pose, const protocols::antibody::Antib
 		SSize minus_charge(0);
 		SSize loop_charge(0);
 
-		for(Size ib=loop_start; ib<=loop_end; ++ib) {
+		for ( Size ib=loop_start; ib<=loop_end; ++ib ) {
 			std::string name3 = pose.residue(ib).name3();
-			if(name3 == "ARG" || name3 == "LYS") {
+			if ( name3 == "ARG" || name3 == "LYS" ) {
 				plus_charge++;
-			}
-			else if(name3 == "ASP" || name3 == "GLU") {
+			} else if ( name3 == "ASP" || name3 == "GLU" ) {
 				minus_charge--;
 			}
 		}
@@ -349,9 +347,9 @@ paratope_charge( core::pose::Pose const & pose, const protocols::antibody::Antib
 		charge_results.cdr[ia] = loop_charge;
 
 		TR << "Loop " << ab_info.get_CDR_name(loop) << ": "
-		   << std::setw(3) << minus_charge << " anions, "
-			 << std::setw(3) << plus_charge  << " cations = "
-		   << std::setw(3) << loop_charge  << " total charge" << std::endl;
+			<< std::setw(3) << minus_charge << " anions, "
+			<< std::setw(3) << plus_charge  << " cations = "
+			<< std::setw(3) << loop_charge  << " total charge" << std::endl;
 	}
 	charge_results.paratope = paratope_charge;
 	return charge_results;
@@ -372,7 +370,7 @@ cdr_energy(core::pose::Pose const & pose, AntibodyInfoCOP ab_info, core::scoring
 	core::Size cdr_start = ab_info->get_CDR_start(cdr, pose);
 	core::Size cdr_end  = ab_info->get_CDR_end(cdr, pose);
 	core::Real energy = 0.0;
-	for( core::Size i = cdr_start; i <= cdr_end; ++i){
+	for ( core::Size i = cdr_start; i <= cdr_end; ++i ) {
 		energy = energy + new_pose.energies().residue_total_energy(i);
 	}
 

@@ -76,7 +76,7 @@ public:
 
 	virtual void show( std::ostream& out ) const;
 
-/// @brief returns the private member seqpos_
+	/// @brief returns the private member seqpos_
 	core::Size seqpos() const;
 	virtual
 	ConstraintOP clone() const;

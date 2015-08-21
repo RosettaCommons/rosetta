@@ -37,13 +37,13 @@ static thread_local basic::Tracer TR("protocols.antibody.task_operations.AddCDRP
 namespace protocols {
 namespace antibody {
 namespace task_operations {
-	using namespace core::pack::task::operation;
-	using namespace core::pack::task;
-	using namespace protocols::toolbox::task_operations;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace protocols::antibody::design;
-	
+using namespace core::pack::task::operation;
+using namespace core::pack::task;
+using namespace protocols::toolbox::task_operations;
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
+using namespace protocols::antibody::design;
+
 AddCDRProfileSetsOperation::AddCDRProfileSetsOperation():
 	TaskOperation(),
 	ab_info_(/* NULL */)
@@ -123,12 +123,12 @@ AddCDRProfileSetsOperation::set_defaults(){
 	std::string numbering_scheme = option [OptionKeys::antibody::numbering_scheme]();
 	//std::string cdr_definition = option [OptionKeys::antibody::cdr_definition]();
 	numbering_scheme_ = manager.numbering_scheme_string_to_enum(numbering_scheme);
-	
+
 }
 
 void
 AddCDRProfileSetsOperation::parse_tag(utility::tag::TagCOP tag, basic::datacache::DataMap&){
-	if (tag->hasOption("cdrs")){
+	if ( tag->hasOption("cdrs") ) {
 		TR << "Setting CDRs from settings" << std::endl;
 		cdrs_ = get_cdr_bool_from_tag(tag, "cdrs");
 	}
@@ -142,15 +142,15 @@ AddCDRProfileSetsOperation::parse_tag(utility::tag::TagCOP tag, basic::datacache
 	include_native_restype_ = tag->getOption< bool>("include_native_restype", include_native_restype_);
 	picking_rounds_ = tag->getOption< core::Size >("picking_rounds", picking_rounds_);
 	cutoff_ = tag->getOption< core::Size >("cutoff", cutoff_);
-	
-	if (tag->hasOption("numbering_scheme")){
 
-		
+	if ( tag->hasOption("numbering_scheme") ) {
+
+
 		AntibodyEnumManager manager = AntibodyEnumManager();
 		numbering_scheme_ = manager.numbering_scheme_string_to_enum(tag->getOption<std::string>("numbering_scheme"));
 
 	}
-	if (tag->hasOption("cdr_definition") && tag->getOption<std::string>("cdr_definition") != "North"){
+	if ( tag->hasOption("cdr_definition") && tag->getOption<std::string>("cdr_definition") != "North" ) {
 		TR <<"This operation only works with the North CDR definition." <<std::endl;
 	}
 
@@ -210,24 +210,24 @@ AddCDRProfileSetsOperation::set_cutoff(core::Size cutoff){
 
 utility::vector1<bool>
 AddCDRProfileSetsOperation::pre_load_data(const core::pose::Pose& pose){
-	if (! ab_info_){
+	if ( ! ab_info_ ) {
 		ab_info_ = AntibodyInfoOP(new AntibodyInfo(pose, numbering_scheme_, North));
 	}
-	
+
 	AntibodyDatabaseManager manager = AntibodyDatabaseManager(ab_info_, force_north_paper_db_);
 	manager.set_outlier_use(use_outliers_);
 	manager.use_light_chain_type(use_light_chain_type_);
 	sequences_ = manager.load_cdr_sequences(cdrs_, pose, limit_only_to_length_);
-	
+
 	pre_loaded_data_ = true;
-	
+
 	utility::vector1<bool> no_data_cdrs(6, false);
-	
-	for (core::Size i = 1; i <= 6; ++i){
+
+	for ( core::Size i = 1; i <= 6; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
-		if (! cdrs_[ i ]) continue;
-		
-		if (  sequences_.count(cdr) == 0 || (  sequences_.count(cdr) != 0  &&  sequences_[ cdr ].size() <= cutoff_ )){
+		if ( ! cdrs_[ i ] ) continue;
+
+		if (  sequences_.count(cdr) == 0 || (  sequences_.count(cdr) != 0  &&  sequences_[ cdr ].size() <= cutoff_ ) ) {
 			no_data_cdrs[ i ] = true;
 		}
 	}
@@ -238,41 +238,39 @@ void
 AddCDRProfileSetsOperation::apply(const core::pose::Pose& pose, core::pack::task::PackerTask& task) const{
 	//This is due to const apply and no pose in parse_my_tag.
 	AntibodyInfoOP local_ab_info;
-	if (! ab_info_){
+	if ( ! ab_info_ ) {
 		local_ab_info = AntibodyInfoOP(new AntibodyInfo(pose, numbering_scheme_, North));
-	}
-	else {
+	} else {
 		local_ab_info = ab_info_->clone();
 	}
 
 	CDRDBSequenceSet sequences;
-	
-	if (pre_loaded_data_){
+
+	if ( pre_loaded_data_ ) {
 		sequences = sequences_;
 
-	}
-	else{
+	} else {
 		AntibodyDatabaseManager manager = AntibodyDatabaseManager(local_ab_info, force_north_paper_db_);
 		manager.set_outlier_use(use_outliers_);
 		manager.use_light_chain_type(use_light_chain_type_);
 		sequences = manager.load_cdr_sequences(cdrs_, pose, limit_only_to_length_);
 	}
-	
+
 	MutationSetDesignOperation mut_set_op = MutationSetDesignOperation();
-	
-	for (core::Size i_cdr = 1; i_cdr <= core::Size(local_ab_info->get_total_num_CDRs()); ++i_cdr){
+
+	for ( core::Size i_cdr = 1; i_cdr <= core::Size(local_ab_info->get_total_num_CDRs()); ++i_cdr ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i_cdr );
-		if (sequences.count(cdr) == 0 || sequences[ cdr ].size() <= cutoff_) continue;
+		if ( sequences.count(cdr) == 0 || sequences[ cdr ].size() <= cutoff_ ) continue;
 		TR << "applying profile set operation for " << local_ab_info->get_CDR_name(cdr) << std::endl;
 		utility::vector1< std::map< core::Size, core::chemical::AA > > mutation_sets;
-		for (core::Size i = 1; i <= sequences[ cdr ].size(); ++i){
+		for ( core::Size i = 1; i <= sequences[ cdr ].size(); ++i ) {
 			std::string sequence = sequences[ cdr ][ i ].sequence;
 			//TR << sequence << std::endl;
 			std::map< core::Size, core::chemical::AA> mutation_set = design::transform_sequence_to_mutation_set(local_ab_info, pose, cdr, sequence);
 			mutation_sets.push_back(mutation_set);
 		}
-		if (mutation_sets.size() == 0) continue;
-		
+		if ( mutation_sets.size() == 0 ) continue;
+
 		//Apply the task for each CDR
 		mut_set_op.set_mutation_sets(mutation_sets);
 		mut_set_op.add_to_allowed_aas(keep_task_allowed_aas_);

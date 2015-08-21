@@ -52,21 +52,21 @@ public:// constructor/destructor
 
 public:// virtual constructor
 	/// @brief make clone
-  core::pose::metrics::PoseMetricCalculatorOP
+	core::pose::metrics::PoseMetricCalculatorOP
 	clone() const { return core::pose::metrics::PoseMetricCalculatorOP( new CavityCalculator( *this ) ); }
 
 public:// mutators
 
 protected:
-  virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-  virtual std::string print( std::string const & key ) const;
-  virtual void recompute( core::pose::Pose const & this_pose );
+	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
+	virtual std::string print( std::string const & key ) const;
+	virtual void recompute( core::pose::Pose const & this_pose );
 
 private: // private member functions
 
 private:// member variables
 	core::Real total_volume_;
-  utility::vector1< core::scoring::packstat::CavityBallCluster > clusters_;
+	utility::vector1< core::scoring::packstat::CavityBallCluster > clusters_;
 }; //CavityCalculator
 
 

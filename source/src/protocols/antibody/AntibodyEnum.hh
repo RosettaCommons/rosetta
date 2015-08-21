@@ -37,13 +37,13 @@ enum CDRNameEnum {
 	l1,
 	l2,
 	l3,
-	
+
 	/// Proto, not quite CDR loops for design and analysis ///
 	/// Also known as the DE loop ///
-	
+
 	proto_h4,
 	proto_l4,
-	
+
 	///////// Convenience //////////////////
 	start_cdr_loop = h1,
 	H_chain_last_loop = h3,
@@ -52,13 +52,13 @@ enum CDRNameEnum {
 	num_cdr_loops = l3,
 	CDRNameEnum_start = h1,
 	CDRNameEnum_total = l3,
-	
+
 	//Proto CDR Loops
 	CDRNameEnum_proto_start = proto_h4,
 	CDRNameEnum_proto_total = proto_l4,
 	l4 = proto_l4,
 	h4 = proto_h4
-	
+
 };
 
 enum AntibodyNumberingSchemeEnum {
@@ -79,10 +79,10 @@ enum CDRDefinitionEnum {
 	Kabat,
 	Martin,
 	North,
-	
+
 	CDRDefinitionEnum_start = Chothia,
 	CDRDefinitionEnum_total = North
-	
+
 };
 
 //Light chain types
@@ -96,7 +96,7 @@ enum LightChainTypeEnum {
 };
 
 //Overall region of the antibody.
-// Note: 
+// Note:
 //  _region designation helps for unique variable naming (aka cdr variable is passed around all over)
 enum AntibodyRegionEnum {
 	antigen_region = 1,
@@ -133,8 +133,8 @@ enum PackingAngleEnum {
 	PackingAngleEnum_total = VH_sheet_2
 };
 
-	
+
 }//antibody
 }//protocols
-#endif	//#ifndef INCLUDED_protocols/antibody/AntibodyEnum_HH
+#endif //#ifndef INCLUDED_protocols/antibody/AntibodyEnum_HH
 

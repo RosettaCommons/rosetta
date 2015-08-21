@@ -32,15 +32,15 @@
 namespace numeric {
 namespace random {
 
-	// All of the following should be ordered to match the header
+// All of the following should be ordered to match the header
 
-	// Static (class) constants
+// Static (class) constants
 
-	// Static (class) variables
+// Static (class) variables
 
-	// Private _inline_ methods -- and definitions
+// Private _inline_ methods -- and definitions
 
-	// Methods
+// Methods
 
 
 WeightedSampler::WeightedSampler() :
@@ -130,14 +130,14 @@ WeightedSampler::update_cumulative_distribution() const {
 
 	numeric::Real weight_sum(0);
 
-	for (numeric::Size i = 1; i <= weights_.size(); ++i) {
+	for ( numeric::Size i = 1; i <= weights_.size(); ++i ) {
 		assert(weights_[i] >= 0);
 		weight_sum += weights_[i];
 	}
 
 	cumulative_distribution_[1] = weights_[1]/weight_sum;
 
-	for (numeric::Size i = 2; i < weights_.size(); ++i) {
+	for ( numeric::Size i = 2; i < weights_.size(); ++i ) {
 		cumulative_distribution_[i] = cumulative_distribution_[i-1] + weights_[i]/weight_sum;
 	}
 

@@ -55,7 +55,7 @@ Obsolet_NamedAtomPairConstraint::~Obsolet_NamedAtomPairConstraint() {}
 /// to the new object. Intended to be implemented by derived classes.
 ConstraintOP NamedAtomPairConstraint::remapped_clone( pose::Pose const&, pose::Pose const& dest, id::SequenceMappingCOP smap ) const {
 	id::NamedAtomID atom1( named_atom1_ );
-  id::NamedAtomID atom2( named_atom2_ );
+	id::NamedAtomID atom2( named_atom2_ );
 
 	if ( smap ) {
 		atom1.rsd() = (*smap)[ atom1_.rsd() ];
@@ -124,7 +124,7 @@ NamedAtomPairConstraint::read_def(
 
 	tr.Debug << "read: " << name1 << " " << name2 << " " << res1 << " " << res2 << " func: " << func_type << std::endl;
 	if ( res1 > pose.total_residue() || res2 > pose.total_residue() ) {
-		tr.Warning 	<< "ignored constraint (no such atom in pose!)"
+		tr.Warning  << "ignored constraint (no such atom in pose!)"
 			<< name1 << " " << name2 << " " << res1 << " " << res2 << std::endl;
 		data.setstate( std::ios_base::failbit );
 		return;
@@ -138,15 +138,15 @@ NamedAtomPairConstraint::read_def(
 		tr.Warning << "Error reading atoms: read in atom names("
 			<< name1 << "," << name2 << "), "
 			<< "and found AtomIDs (" << atom1_ << "," << atom2_ << ")" << std::endl;
-			data.setstate( std::ios_base::failbit );
-			return;
+		data.setstate( std::ios_base::failbit );
+		return;
 	}
 
 	func_ = func_factory.new_func( func_type );
 	func_->read_data( data );
 
 	//chu skip the rest of line since this is a single line defintion.
-	while( data.good() && (data.get() != '\n') ) {}
+	while ( data.good() && (data.get() != '\n') ) {}
 
 	if ( tr.Debug.visible() ) {
 		func_->show_definition( tr.Debug );
@@ -156,57 +156,57 @@ NamedAtomPairConstraint::read_def(
 
 
 Obsolet_NamedAtomPairConstraint::Obsolet_NamedAtomPairConstraint(
- AtomPairConstraintOP cst_in,
- pose::Pose const& ref_pose ) :
-  atom1_( core::pose::atom_id_to_named_atom_id(cst_in->atom( 1 ), ref_pose )),
-  atom2_( core::pose::atom_id_to_named_atom_id(cst_in->atom( 2 ), ref_pose )),
-  cst_( cst_in )
+	AtomPairConstraintOP cst_in,
+	pose::Pose const& ref_pose ) :
+	atom1_( core::pose::atom_id_to_named_atom_id(cst_in->atom( 1 ), ref_pose )),
+	atom2_( core::pose::atom_id_to_named_atom_id(cst_in->atom( 2 ), ref_pose )),
+	cst_( cst_in )
 {}
 
 Obsolet_NamedAtomPairConstraint::Obsolet_NamedAtomPairConstraint(
-   NamedAtomID const& atom1,
-   NamedAtomID const& atom2,
-   AtomPairConstraintOP cst ) :
-  atom1_( atom1 ),
-  atom2_( atom2 ),
-  cst_( cst )
+	NamedAtomID const& atom1,
+	NamedAtomID const& atom2,
+	AtomPairConstraintOP cst ) :
+	atom1_( atom1 ),
+	atom2_( atom2 ),
+	cst_( cst )
 {}
 
 AtomPairConstraintOP
 Obsolet_NamedAtomPairConstraint::mapto(
-   id::SequenceMapping const& map,
-   pose::Pose const& pose ) const
+	id::SequenceMapping const& map,
+	pose::Pose const& pose ) const
 {
-  //get AtomIDs for target sequence and target pose
-  id::AtomID id1( core::pose::named_atom_id_to_atom_id( NamedAtomID( atom1_.atom(), map[ atom1_.rsd() ] ), pose ));
-  id::AtomID id2( core::pose::named_atom_id_to_atom_id( NamedAtomID( atom2_.atom(), map[ atom2_.rsd() ] ), pose ));
-  if ( id1.valid() && id2.valid() ) {
-    return AtomPairConstraintOP( new AtomPairConstraint( id1, id2, cst_->get_func().clone(), cst_->score_type() ) );
-  }
-  return NULL; // if translation not possible
+	//get AtomIDs for target sequence and target pose
+	id::AtomID id1( core::pose::named_atom_id_to_atom_id( NamedAtomID( atom1_.atom(), map[ atom1_.rsd() ] ), pose ));
+	id::AtomID id2( core::pose::named_atom_id_to_atom_id( NamedAtomID( atom2_.atom(), map[ atom2_.rsd() ] ), pose ));
+	if ( id1.valid() && id2.valid() ) {
+		return AtomPairConstraintOP( new AtomPairConstraint( id1, id2, cst_->get_func().clone(), cst_->score_type() ) );
+	}
+	return NULL; // if translation not possible
 }
 
 Obsolet_NamedAtomPairConstraintOP
 Obsolet_NamedAtomPairConstraint::mapto( id::SequenceMapping const& map ) const
 {
-  NamedAtomID id1 ( atom1_ );
-  NamedAtomID id2 ( atom2_ );
-  id1.rsd() = map[ id1.rsd() ];
-  id2.rsd() = map[ id2.rsd() ];
-  if ( id1.valid() && id2.valid() ) {
-    return Obsolet_NamedAtomPairConstraintOP( new Obsolet_NamedAtomPairConstraint( id1, id2, cst_ ) );
-  }
-  return NULL;
+	NamedAtomID id1 ( atom1_ );
+	NamedAtomID id2 ( atom2_ );
+	id1.rsd() = map[ id1.rsd() ];
+	id2.rsd() = map[ id2.rsd() ];
+	if ( id1.valid() && id2.valid() ) {
+		return Obsolet_NamedAtomPairConstraintOP( new Obsolet_NamedAtomPairConstraint( id1, id2, cst_ ) );
+	}
+	return NULL;
 }
 
 AtomPairConstraintOP
 Obsolet_NamedAtomPairConstraint::mapto( core::pose::Pose const& pose ) const {
-  id::AtomID id1( core::pose::named_atom_id_to_atom_id(atom1_, pose ));
-  id::AtomID id2( core::pose::named_atom_id_to_atom_id(atom2_, pose ));
-  if ( id1.valid() && id2.valid() ) {
-    return AtomPairConstraintOP( new AtomPairConstraint( id1, id2, cst_->get_func().clone(), cst_->score_type() ) );
-  }
-  return NULL;
+	id::AtomID id1( core::pose::named_atom_id_to_atom_id(atom1_, pose ));
+	id::AtomID id2( core::pose::named_atom_id_to_atom_id(atom2_, pose ));
+	if ( id1.valid() && id2.valid() ) {
+		return AtomPairConstraintOP( new AtomPairConstraint( id1, id2, cst_->get_func().clone(), cst_->score_type() ) );
+	}
+	return NULL;
 }
 
 std::ostream& operator<< ( std::ostream& out, Obsolet_NamedAtomPairConstraint const& cst ) {

@@ -10,25 +10,25 @@
 #ifndef INCLUDED_core_conformation_membrane_MembraneParams_hh
 #define INCLUDED_core_conformation_membrane_MembraneParams_hh
 
-/// @file		core/conformation/membrane/MembraneParams.hh
+/// @file  core/conformation/membrane/MembraneParams.hh
 ///
-/// @brief		Membrane Params Enum - map Atom indices to atom types
-/// @details	Map membrane atom indices to human readable parameters as
-///				they are listed in MEM.params
-///				Last Modified: 6/28/14
+/// @brief  Membrane Params Enum - map Atom indices to atom types
+/// @details Map membrane atom indices to human readable parameters as
+///    they are listed in MEM.params
+///    Last Modified: 6/28/14
 ///
-/// @author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 namespace core {
 namespace conformation {
 namespace membrane {
-	
+
 enum MEM {
 	thickness = 1,
 	center = 2,
 	normal = 3
 };
-	
+
 } // membrane
 } // conformation
 } // core

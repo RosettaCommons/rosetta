@@ -69,9 +69,9 @@ HolesEnergyRes::HolesEnergyRes() :
 //////////////////////////////////////////////////////
 void
 HolesEnergyRes::finalize_total_energy(
-  pose::Pose & pose,
-  ScoreFunction const &,
-  EnergyMap & totals
+	pose::Pose & pose,
+	ScoreFunction const &,
+	EnergyMap & totals
 ) const
 {
 	totals[ holes ] = compute_holes_score_res(pose,params_);
@@ -97,7 +97,7 @@ HolesEnergyRes::setup_for_derivatives(
 	using namespace id;
 	using namespace numeric;
 	using basic::datacache::DataCache_CacheableData;
-	if( !pose.data().has( core::pose::datacache::CacheableDataType::HOLES_POSE_INFO ) ) {
+	if ( !pose.data().has( core::pose::datacache::CacheableDataType::HOLES_POSE_INFO ) ) {
 		pose.data().set( core::pose::datacache::CacheableDataType::HOLES_POSE_INFO, DataCache_CacheableData::DataOP( new CacheableAtomID_MapVector ) );
 	}
 	CacheableDataOP dat( pose.data().get_ptr( core::pose::datacache::CacheableDataType::HOLES_POSE_INFO ) );
@@ -130,14 +130,14 @@ HolesEnergyRes::eval_atom_derivative(
 	CacheableAtomID_MapVectorCOP cachemap = utility::pointer::static_pointer_cast< core::id::CacheableAtomID_MapVector const > ( dat );
 	AtomID_Map<xyzVector<Real> > const & derivs(cachemap->map());
 
-	if( aid.rsd() > derivs.n_residue() || aid.atomno() > derivs.n_atom(aid.rsd()) ) {
+	if ( aid.rsd() > derivs.n_residue() || aid.atomno() > derivs.n_atom(aid.rsd()) ) {
 		return;
 	}
 	// std::cerr << "eval_atom_derivative " << aid << " " << derivs[aid].x() << " " << derivs[aid].y() << " " << derivs[aid].z() << std::endl;
 	// F2 += weights * derivs[aid];
 	// F1 += weights * derivs[aid].cross(xyzVector<Real>(1,0,0));
 
-  	numeric::xyzVector<core::Real> atom_x = pose.xyz(aid);
+	numeric::xyzVector<core::Real> atom_x = pose.xyz(aid);
 	numeric::xyzVector<core::Real> const f2( derivs[aid] );
 	numeric::xyzVector<core::Real> const atom_y = atom_x - f2;   // a "fake" atom in the direcion of the gradient
 	numeric::xyzVector<core::Real> const f1( atom_x.cross( atom_y ) );

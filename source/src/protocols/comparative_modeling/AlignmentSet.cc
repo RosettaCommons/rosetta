@@ -34,8 +34,8 @@ AlignmentSet::alignments() const {
 	using core::sequence::SequenceAlignment;
 	typedef set< SequenceAlignment >::const_iterator iter;
 	for ( iter it = align_set_.begin(), end = align_set_.end();
-				it != end; ++it
-	) {
+			it != end; ++it
+			) {
 		SequenceAlignment copy( *it );
 		alignments_.push_back( copy );
 	}

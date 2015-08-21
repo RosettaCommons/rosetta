@@ -39,13 +39,13 @@ public:
 
 	/// @brief  creates a hydrophobicity-based scoring function.
 	HydrophobicitySimilarity(Size priority, Real lowest_acceptable_value, bool use_lowest,
-				std::string & fastaQuerySequence) :
-			CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
-				"HydrophobicitySimilarity"),  query_(fastaQuerySequence) {
+		std::string & fastaQuerySequence) :
+		CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
+		"HydrophobicitySimilarity"),  query_(fastaQuerySequence) {
 
 		// initialize hydrophobic aa map
 		// V, I, L, F, Y, W, M
-		if (is_hydrophobic_.empty()) {
+		if ( is_hydrophobic_.empty() ) {
 			is_hydrophobic_['A'] = false;
 			is_hydrophobic_['C'] = false;
 			is_hydrophobic_['D'] = false;
@@ -112,10 +112,10 @@ public:
 	}
 
 	FragmentScoringMethodOP make(Size priority, Real lowest_acceptable_value, bool use_lowest,
-				FragmentPickerOP picker, std::string) {
+		FragmentPickerOP picker, std::string) {
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new HydrophobicitySimilarity(priority,
-        lowest_acceptable_value, use_lowest, picker->get_query_seq_string()) );
-  }
+			lowest_acceptable_value, use_lowest, picker->get_query_seq_string()) );
+	}
 
 };
 

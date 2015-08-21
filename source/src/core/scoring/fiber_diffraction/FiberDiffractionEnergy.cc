@@ -61,8 +61,8 @@
 //#include <sys/time.h>
 
 #ifdef WIN32
-  #define _USE_MATH_DEFINES
-  #include <math.h>
+#define _USE_MATH_DEFINES
+#include <math.h>
 #endif
 
 namespace core {
@@ -96,60 +96,60 @@ methods::EnergyMethodOP FiberDiffractionEnergy::clone() const {
 
 void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {
 
-	if (!pose.is_fullatom()) return;
+	if ( !pose.is_fullatom() ) return;
 
 	//timeval t1, t2;
 	//double elapsedTime;
 	//gettimeofday(&t1, NULL);
-	
-	if (!core::pose::symmetry::is_symmetric(pose)) {
+
+	if ( !core::pose::symmetry::is_symmetric(pose) ) {
 		utility_exit_with_message("Structure needs to be symmetric! Aborting...");
 	}
 
 	// load fiber diffraction data and bessel functions orders.
 	// Bessel orders satisfies helix selection rule
 	utility::vector0< utility::vector1< core::Real > >::iterator layer_lines_I;
-  utility::vector0< utility::vector1< core::Real > >::iterator layer_lines_R;
+	utility::vector0< utility::vector1< core::Real > >::iterator layer_lines_R;
 	utility::vector0< utility::vector0 < int > >::iterator nvals;
 	core::Size lmax, Rmax;
 
-	if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::a ].user()) {
+	if ( basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::a ].user() ) {
 		a_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::a ]();
 	}
 
-	if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b ].user()) {
+	if ( basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b ].user() ) {
 		b_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b ]();
 	}
 
-	if ( !(a_ > 0 ) ){
+	if ( !(a_ > 0 ) ) {
 		utility_exit_with_message("The number of subunits per repeat, score::fiber_diffraction::a, must be set!");
 	}
 
-	if ( !(b_ > 0 ) ){
+	if ( !(b_ > 0 ) ) {
 		utility_exit_with_message("The number of turns per repeat, score::fiber_diffraction::b, must be set!");
 	}
 
-	if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::p ].user()) {
+	if ( basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::p ].user() ) {
 		p_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::p ]();
 	} else {
-		find_pitch( pose, p_ );	
-	}	
+		find_pitch( pose, p_ );
+	}
 	c_ = p_*a_;
 
 	core::Real  res_cutoff_low_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_low ]();
-  core::Real  res_cutoff_high_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_high ]();
+	core::Real  res_cutoff_high_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_high ]();
 
-  core::Real b_factor_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor ]();
-  core::Real b_factor_solv_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor_solv ]();
-  core::Real b_factor_solv_K_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor_solv_K ]();
+	core::Real b_factor_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor ]();
+	core::Real b_factor_solv_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor_solv ]();
+	core::Real b_factor_solv_K_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor_solv_K ]();
 
 	getFiberDiffractionData(c_, res_cutoff_high_, res_cutoff_low_).getAllFiberData(layer_lines_I, layer_lines_R, nvals, lmax, Rmax);
-  TR << "Rmax : lmax " << "( " << Rmax << " : " << lmax << " )" << std::endl;
-	
+	TR << "Rmax : lmax " << "( " << Rmax << " : " << lmax << " )" << std::endl;
+
 	utility::vector0< utility::vector1< utility::vector1< core::Real > > > form_factors_(
-	setup_form_factors( pose, lmax, layer_lines_R, c_, b_factor_, b_factor_solv_, b_factor_solv_K_ ));
+		setup_form_factors( pose, lmax, layer_lines_R, c_, b_factor_, b_factor_solv_, b_factor_solv_K_ ));
 	utility::vector0< utility::vector1< utility::vector1< core::Real > > >::iterator form_factors(form_factors_.begin());
-	
+
 	core::Real max_r_value;
 	find_max_r( pose, max_r_value );
 	TR<<"Max r value "<<max_r_value<<std::endl;
@@ -158,8 +158,8 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 		I[l].resize(Rmax);
 		for ( Size i=1; i<= Rmax; ++i ) I[l][i] = 0.0;
 	}
-	
-	
+
+
 	TR << "Preparing fiber model data..." << std::endl;
 	Size natoms(0);
 	utility::vector1< Size > atom_type_number;
@@ -181,10 +181,10 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 			// Precalculate phases. Initialize vector
 			utility::vector1< utility::vector1 < Real > > phases;
 			phases.resize(natoms);
-			for (Size atom=1; atom <= natoms; ++atom ) phases[atom].resize(natoms);
+			for ( Size atom=1; atom <= natoms; ++atom ) phases[atom].resize(natoms);
 
 			// store phases for each value of n
-			for (Size atom1=1; atom1 <= natoms; ++atom1 ) {
+			for ( Size atom1=1; atom1 <= natoms; ++atom1 ) {
 				for ( Size atom2=atom1+1; atom2 <= natoms; ++atom2 ) {
 					Real phase ( cos( n*(phi[atom2]-phi[atom1] )+2*M_PI*l/c_*( z[atom1]-z[atom2] ) ) );
 					phases[atom1][atom2] = phase;
@@ -200,13 +200,13 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 				utility::vector1< Real > jn_vec;
 				jn_vec.resize(natoms);
 				// Calculate scattering...
-				
-				for (Size atom1=1; atom1 <= natoms; ++atom1 ) {
+
+				for ( Size atom1=1; atom1 <= natoms; ++atom1 ) {
 					// Calculate only the jn values once.
 					if ( atom1 == 1 ) {
-						for (Size at=1; at <= natoms; ++at) {
+						for ( Size at=1; at <= natoms; ++at ) {
 							jn_vec[at] = jn(n,x_factor*r[at]);
-//						jn_vec[at] = boost::math::cyl_bessel_j(n, x_factor*r[at]);
+							//      jn_vec[at] = boost::math::cyl_bessel_j(n, x_factor*r[at]);
 						}
 					}
 					Real X1 (x_factor*r[atom1]);
@@ -216,7 +216,7 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 					Size atom_type_index1 ( atom_type_number[atom1] );
 					//////////B factors//////////////////////////////////////
 					//Real D_2=Rinv*Rinv + l*l/(c_*c_);
-          //Real B_factor_exp( exp( -bfactors[atom1]*D_2/4 ) );
+					//Real B_factor_exp( exp( -bfactors[atom1]*D_2/4 ) );
 					////////////////////////////////////////////////////////
 					//Real dummy(  B_factor_exp*form_factors[l][atom_type_index1][R]*jn1 );
 					Real dummy(  form_factors[l][atom_type_index1][R]*jn1 );
@@ -237,12 +237,12 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 			} // b_order
 		}
 	}
-	
+
 
 	Real prod(0);
 	square_obs_ = 0;
 	sum_obs_ = 0;
-	
+
 	for ( Size l=0; l <= lmax; ++l ) {
 		for ( Size R=1; R<=layer_lines_R[l].size(); ++R ) {
 			if ( I[l][R] < -10.0 ) { utility_exit_with_message("Intensity below -10. Something went wrong...");}
@@ -257,65 +257,64 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 	scale_factor_ = square_obs_/prod;
 
 	bool output_fiber_spectra_(false);
-  if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::output_fiber_spectra ].user()) {
-          output_fiber_spectra_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::output_fiber_spectra ]();
-  }
-  std::ofstream out;
-  if ( output_fiber_spectra_ ) {
-          std::string outfile = "Intensity.txt";
-          out.open(outfile.c_str(), std::ios::out);
-  }
+	if ( basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::output_fiber_spectra ].user() ) {
+		output_fiber_spectra_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::output_fiber_spectra ]();
+	}
+	std::ofstream out;
+	if ( output_fiber_spectra_ ) {
+		std::string outfile = "Intensity.txt";
+		out.open(outfile.c_str(), std::ios::out);
+	}
 
 	/////////////////////////////Rfacor//////////////////////////////////
 	bool rfactor_refinement_=false;
-  if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::rfactor_refinement ].user()) {
-          rfactor_refinement_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::rfactor_refinement ]();
-  }
+	if ( basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::rfactor_refinement ].user() ) {
+		rfactor_refinement_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::rfactor_refinement ]();
+	}
 
-	if (rfactor_refinement_) {
+	if ( rfactor_refinement_ ) {
 		Rsum_obs = 0;
 		Real Rfactor(0);
 		Real Rprod(0);
 		Real Rsquare_obs(0);
 		for ( Size l=0; l <= lmax; ++l ) {
-    	for ( Size R=1; R<=layer_lines_R[l].size(); ++R ) {
-				if (I[l][R] > 0.0) {
+			for ( Size R=1; R<=layer_lines_R[l].size(); ++R ) {
+				if ( I[l][R] > 0.0 ) {
 					Rprod += sqrt(I[l][R])*fabs(layer_lines_I[l][R]);
 					Rsquare_obs += layer_lines_I[l][R]*layer_lines_I[l][R];
-                        		Rsum_obs += fabs(layer_lines_I[l][R]);
+					Rsum_obs += fabs(layer_lines_I[l][R]);
 				}
 			}
 		}
 		Rscale_factor =Rsquare_obs/Rprod;
 		for ( Size l=0; l <= lmax; ++l ) {
-    	for ( Size R=1; R<=layer_lines_R[l].size(); ++R ) {
-				if (I[l][R] > 0.0) {
-					Rfactor +=  fabs(Rscale_factor*sqrt(I[l][R])-fabs(layer_lines_I[l][R]));	
+			for ( Size R=1; R<=layer_lines_R[l].size(); ++R ) {
+				if ( I[l][R] > 0.0 ) {
+					Rfactor +=  fabs(Rscale_factor*sqrt(I[l][R])-fabs(layer_lines_I[l][R]));
 				}
 			}
 		}
 		TR<<"Rfactor (unnormalized): "<<Rfactor << std::endl;
 		Rfactor /=Rsum_obs;
 		TR<<"Rfactor: "<<Rfactor << " scale factor " << Rscale_factor <<" sum obsreved " << Rsum_obs << std::endl;
-		scale_factor_ = Rscale_factor;	
+		scale_factor_ = Rscale_factor;
 		chi2_ = Rfactor;
-	}
-	///////////////////////////END Rfactor/////////////////////////////	
-	else {
+	} else {
+		///////////////////////////END Rfactor/////////////////////////////
 		chi2_=0;
 		for ( Size l=0; l <= lmax; ++l ) {
 			for ( Size R=1; R<=layer_lines_R[l].size(); ++R ) {
 				chi2_ +=  (scale_factor_*I[l][R]-layer_lines_I[l][R]*layer_lines_I[l][R])*(scale_factor_*I[l][R]-layer_lines_I[l][R]*layer_lines_I[l][R]);
-				if (output_fiber_spectra_) {
+				if ( output_fiber_spectra_ ) {
 					out << scale_factor_*I[l][R] << " " << layer_lines_R[l][R] <<" "<< l << std::endl;
 				}
 			}
 		}
 		chi2_ /=square_obs_;
 	}
-	
+
 	TR << "chi2 " << chi2_ << " sum_obs_ " << sum_obs_ << " scale_factor " <<  scale_factor_ << std::endl;
-	
+
 	TR << " number of iterations " << n_iter  << std::endl;
 	//gettimeofday(&t2, NULL);
 
@@ -325,36 +324,36 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 	//TR << " end score time" << elapsedTime << " ms."<<std::endl;
 
 	////////////////////////////////////////////
-	
+
 	core::Size chi_iterations_(0);
-  if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::chi_iterations ].user()) {
-  	chi_iterations_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::chi_iterations ]();
-  }
-	
-	if (chi_iterations_ > 0) {
-		
-    core::Real max_r_value;
-    find_max_r( pose, max_r_value );
-	
-    utility::vector0< utility::vector1< core::Real > >::iterator  sampling_points_lE;
-    utility::vector0< core::Size > ::iterator  sampling_points_number_l;
-    utility::vector0< core::Size > ::iterator  lowest_bessel_orders_l;
-    utility::vector0< core::Size > ::iterator  lowest_resolution_l;
-    utility::vector0< core::Size > ::iterator  highest_resolution_l;
-    utility::vector0< utility::vector1< core::Real > >::iterator  selected_Rinv_l;
+	if ( basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::chi_iterations ].user() ) {
+		chi_iterations_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::chi_iterations ]();
+	}
+
+	if ( chi_iterations_ > 0 ) {
+
+		core::Real max_r_value;
+		find_max_r( pose, max_r_value );
+
+		utility::vector0< utility::vector1< core::Real > >::iterator  sampling_points_lE;
+		utility::vector0< core::Size > ::iterator  sampling_points_number_l;
+		utility::vector0< core::Size > ::iterator  lowest_bessel_orders_l;
+		utility::vector0< core::Size > ::iterator  lowest_resolution_l;
+		utility::vector0< core::Size > ::iterator  highest_resolution_l;
+		utility::vector0< utility::vector1< core::Real > >::iterator  selected_Rinv_l;
 
 		core::Real chi_free(0);
-	
+
 		chi_free = calculate_chi2_free(pose, chi_iterations_,lmax,\
 			layer_lines_I,layer_lines_R,natoms,c_,nvals,\
 			atom_type_number,phi,z,r,b_factor_, b_factor_solv_, b_factor_solv_K_);
 
-	TR<<"Chi free: "<<chi_free<<" after "<<chi_iterations_<<" iterations."<<std::endl;
-	///////////////////////////////////////////
-	
+		TR<<"Chi free: "<<chi_free<<" after "<<chi_iterations_<<" iterations."<<std::endl;
+		///////////////////////////////////////////
+
 	}
 
-	if (output_fiber_spectra_) {
+	if ( output_fiber_spectra_ ) {
 		out.close();
 	}
 
@@ -370,7 +369,7 @@ void FiberDiffractionEnergy::finalize_total_energy(pose::Pose & /*pose*/, ScoreF
 
 void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const {
 
-	if (!pose.is_fullatom()) return;
+	if ( !pose.is_fullatom() ) return;
 
 	utility::vector0< utility::vector1< core::Real > >::iterator layer_lines_I;
 	utility::vector0< utility::vector1< core::Real > >::iterator layer_lines_R;
@@ -378,44 +377,44 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 	core::Size lmax, Rmax;
 
 
-   if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::a ].user()) {
-   		a_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::a ]();
-   }
+	if ( basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::a ].user() ) {
+		a_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::a ]();
+	}
 
-   if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b ].user()) {
-   		b_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b ]();
-   }
+	if ( basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b ].user() ) {
+		b_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b ]();
+	}
 
-   if ( !(a_ > 0 ) ){
-   		utility_exit_with_message("The number of subunits per repeat, score::fiber_diffraction::a, must be set!");
-   }
+	if ( !(a_ > 0 ) ) {
+		utility_exit_with_message("The number of subunits per repeat, score::fiber_diffraction::a, must be set!");
+	}
 
-   if ( !(b_ > 0 ) ){
-			utility_exit_with_message("The number of turns per repeat, score::fiber_diffraction::b, must be set!");
-   }
+	if ( !(b_ > 0 ) ) {
+		utility_exit_with_message("The number of turns per repeat, score::fiber_diffraction::b, must be set!");
+	}
 
-	if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::p ].user()) {
-  	p_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::p ]();
-  } else {
+	if ( basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::p ].user() ) {
+		p_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::p ]();
+	} else {
 		find_pitch( pose, p_ );
-  }
+	}
 	c_ = p_*a_;
-      
-  core::Real	res_cutoff_low_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_low ]();
-  core::Real	res_cutoff_high_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_high ]();
+
+	core::Real res_cutoff_low_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_low ]();
+	core::Real res_cutoff_high_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_high ]();
 	//core::Size n_max_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::max_bessel_order ]();
-		
-  core::Real b_factor_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor ]();
-  core::Real b_factor_solv_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor_solv ]();
-  core::Real b_factor_solv_K_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor_solv_K ]();
- 
+
+	core::Real b_factor_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor ]();
+	core::Real b_factor_solv_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor_solv ]();
+	core::Real b_factor_solv_K_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor_solv_K ]();
+
 	getFiberDiffractionData(c_, res_cutoff_high_, res_cutoff_low_).getAllFiberData(layer_lines_I, layer_lines_R, nvals, lmax, Rmax);
-  TR << "Rmax : lmax " << "( " << Rmax << " : " << lmax << " )" << std::endl;
+	TR << "Rmax : lmax " << "( " << Rmax << " : " << lmax << " )" << std::endl;
 
 
 	utility::vector0< utility::vector1< utility::vector1< core::Real > > > form_factors_(
-  setup_form_factors( pose, lmax, layer_lines_R, c_, b_factor_, b_factor_solv_, b_factor_solv_K_ ));
-  utility::vector0< utility::vector1< utility::vector1< core::Real > > >::iterator form_factors(form_factors_.begin());
+		setup_form_factors( pose, lmax, layer_lines_R, c_, b_factor_, b_factor_solv_, b_factor_solv_K_ ));
+	utility::vector0< utility::vector1< utility::vector1< core::Real > > >::iterator form_factors(form_factors_.begin());
 
 	TR << "Preparing fiber model data for deriv calculation..." << std::endl;
 	//timeval t1, t2;
@@ -428,20 +427,20 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 	setup_cylindrical_coords( pose, natoms, atom_type_number, AtomID_to_atomnbr_, phi, z, r, bfactors);
 
 	bool rfactor_refinement_=false;
-	if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::rfactor_refinement ].user()) {
+	if ( basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::rfactor_refinement ].user() ) {
 		rfactor_refinement_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::rfactor_refinement ]();
 	}
-	
-	
+
+
 	TR << "Calculating deriv Chi2..." << std::endl;
-	if (rfactor_refinement_) {
+	if ( rfactor_refinement_ ) {
 		TR << "Scale factor deriv? " << Rscale_factor <<" square_obs " << Rsum_obs << std::endl;
 	} else {
 		TR << "Scale factor deriv? " << scale_factor_ <<" square_obs " <<square_obs_ << std::endl;
 	}
 	dchi2_d.resize(natoms);
 	dchi2_d_cross_R.resize(natoms);
-	for ( Size i=1; i <= natoms; ++i) {
+	for ( Size i=1; i <= natoms; ++i ) {
 		dchi2_d[i] = 0.0;
 		dchi2_d_cross_R[i] = 0.0;
 	}
@@ -451,7 +450,7 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 	Real Rinv(0);
 	for ( Size l=0; l <= lmax; ++l ) {
 		Size max_b_order( nvals[l].size() );
-		
+
 		for ( Size b_order=1; b_order <= max_b_order; ++b_order ) {
 
 			int n( nvals[l][b_order-1] );
@@ -460,13 +459,13 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 			utility::vector1< utility::vector1 < Real > > phases, phases_prime;
 			phases.resize(natoms);
 			phases_prime.resize(natoms);
-			for (Size atom=1; atom <= natoms; ++atom ) {
+			for ( Size atom=1; atom <= natoms; ++atom ) {
 				phases[atom].resize(natoms);
 				phases_prime[atom].resize(natoms);
 			}
 
 			// store phases for each value of n
-			for (Size atom1=1; atom1 <= natoms; ++atom1 ) {
+			for ( Size atom1=1; atom1 <= natoms; ++atom1 ) {
 				for ( Size atom2=atom1+1; atom2 <= natoms; ++atom2 ) {
 					Real dummy( n*(phi[atom2]-phi[atom1] )+2*M_PI*l/c_*( z[atom1]-z[atom2] ) );
 					Real phase ( cos( dummy) );
@@ -488,10 +487,10 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 				jn_vec.resize(natoms);
 				jn_vec_plus_1.resize(natoms);
 				// Calculate scattering...
-				for (Size atom1=1; atom1 <= natoms; ++atom1 ) {
+				for ( Size atom1=1; atom1 <= natoms; ++atom1 ) {
 					// Calculate only the jn values once.
 					if ( atom1 == 1 ) {
-						for (Size at=1; at <= natoms; ++at ) {
+						for ( Size at=1; at <= natoms; ++at ) {
 							jn_vec[at] = jn(n, x_factor*r[at]);
 							jn_vec_plus_1[at] = jn(n+1, x_factor*r[at]);
 						}
@@ -529,13 +528,14 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 						Real dphi( n*jn1*fact*phases_prime[atom1][atom2] );
 						Real dz ( 2*M_PI*l/c_*jn1*fact*phases_prime[atom1][atom2] );
 						numeric::xyzVector< core::Real > D_tmp(0,0,0);
-            numeric::xyzVector< core::Real > dphi_vec(0,0,0);
+						numeric::xyzVector< core::Real > dphi_vec(0,0,0);
 						if ( r[atom1] >= 1e-2 ) {
-           		if (fabs(sin(phi[atom1])) > 1e-3 ) 
-            		dphi_vec = (unit_x-cos(phi[atom1])*unit_r)/(sin(phi[atom1])*r[atom1]);
-            else 
-            		dphi_vec = numeric::xyzVector< core::Real > (0,-1/r[atom1],0);
-           	}
+							if ( fabs(sin(phi[atom1])) > 1e-3 ) {
+								dphi_vec = (unit_x-cos(phi[atom1])*unit_r)/(sin(phi[atom1])*r[atom1]);
+							} else {
+								dphi_vec = numeric::xyzVector< core::Real > (0,-1/r[atom1],0);
+							}
+						}
 						D_tmp += 2*(dr*unit_r + dz*unit_z + dphi*dphi_vec);
 						numeric::xyzVector< core::Real > t1( dr*unit_r);
 						numeric::xyzVector< core::Real > t2( dz*unit_z );
@@ -545,16 +545,15 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 						D_cross_R += D_tmp.cross(cartesian_coord_atom1);
 						++n_iter;
 					} // atoms2
-					if (rfactor_refinement_) {
-						if (I[l][R]>0.0) {
+					if ( rfactor_refinement_ ) {
+						if ( I[l][R]>0.0 ) {
 							Real F_diff (Rscale_factor*sqrt(I[l][R]) - fabs(layer_lines_I[l][R]));
 							D *= scale_factor_*F_diff/(2*Rsum_obs*fabs(F_diff)*sqrt(I[l][R]));
-              D_cross_R *= scale_factor_*F_diff/(2*Rsum_obs*fabs(F_diff)*sqrt(I[l][R]));
-							}
+							D_cross_R *= scale_factor_*F_diff/(2*Rsum_obs*fabs(F_diff)*sqrt(I[l][R]));
 						}
-					else {
+					} else {
 						Real dummy3( layer_lines_I[l][R]*layer_lines_I[l][R] );
-            Real I_diff (( scale_factor_*I[l][R] - dummy3 ));
+						Real I_diff (( scale_factor_*I[l][R] - dummy3 ));
 						D *= 2*scale_factor_*I_diff/square_obs_;
 						D_cross_R *= 2*scale_factor_*I_diff/square_obs_;
 					}
@@ -584,7 +583,7 @@ void FiberDiffractionEnergy::eval_atom_derivative(
 	Vector & F2
 ) const {
 
-	if (!pose.is_fullatom()) return;
+	if ( !pose.is_fullatom() ) return;
 
 	int resid = id.rsd();
 	int atmid = id.atomno();
@@ -601,7 +600,7 @@ void FiberDiffractionEnergy::eval_atom_derivative(
 	numeric::xyzVector<core::Real> f1( dchi2_d_cross_R[atomnbr] );
 	numeric::xyzVector<core::Real> f2( dchi2_d[atomnbr] );
 
-//	std::cout << " sum f1 f2 " << resid << " " << rsd_i.aa() << " " << atmid << " " << rsd_i.atom_name(atmid) << " " << f1(1) << " " << f1(2) << " " << f1(3) << " f2 " << f2(1) << " " << f2(2) << " " << f2(3) << " " << std::endl;
+	// std::cout << " sum f1 f2 " << resid << " " << rsd_i.aa() << " " << atmid << " " << rsd_i.atom_name(atmid) << " " << f1(1) << " " << f1(2) << " " << f1(3) << " f2 " << f2(1) << " " << f2(2) << " " << f2(3) << " " << std::endl;
 	F1 += weights[ fiberdiffraction ] * f1;
 	F2 += weights[ fiberdiffraction ] * f2;
 }

@@ -120,7 +120,7 @@ public:
 			pos  = int_of(temp1);
 			nchi = int_of(temp2);
 
-            TS_ASSERT( pose.residue( pos ).nchi() == nchi );
+			TS_ASSERT( pose.residue( pos ).nchi() == nchi );
 			utility::vector1< Real > chis;
 			chi_gold.push_back( chis );
 			for ( Size ii = 1; ii <= nchi; ++ii ) {
@@ -138,7 +138,7 @@ public:
 		graph::GraphOP dummy_graph( new graph::Graph() );
 		scoring::ScoreFunction dummy_scorefxn;
 		Size ct( 1 );
-		for (Size pos = 1; pos <= pose.total_residue(); pos++ ) {
+		for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
 			Residue const & residue( pose.residue( pos ) );
 
 			utility::vector1< ResidueOP > suggested_rotamers;
@@ -147,23 +147,23 @@ public:
 			utility::vector1< utility::vector1< Real > > extra_chi_steps( residue.nchi() );
 
 			SingleResidueRotamerLibraryCOP rotlib = core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( residue.type() );
-			if (rotlib) {
+			if ( rotlib ) {
 				rotlib->fill_rotamer_vector( pose, dummy_scorefxn, *task, dummy_graph, residue.type().get_self_ptr(), residue, extra_chi_steps, false /*buried*/, suggested_rotamers);
 			}
 
-            bool bOut ( false  );//switch to true to produce a new test_input file
+			bool bOut ( false  );//switch to true to produce a new test_input file
 			for ( utility::vector1< ResidueOP >::const_iterator it = suggested_rotamers.begin(),
-							eit = suggested_rotamers.end();
-						it!=eit;
-						++it ) {
+					eit = suggested_rotamers.end();
+					it!=eit;
+					++it ) {
 
 				// if the number of rotamers built does not match the number in the "gold" files, quit
 				if ( ct > chi_gold.size() ) {
-                    TS_ASSERT( ct <= chi_gold.size() ); // tell the user that something is wrong
+					TS_ASSERT( ct <= chi_gold.size() ); // tell the user that something is wrong
 					break;
 				}
 
-				if ( bOut )	std::cout << pos << " " << residue.nchi() << " ";
+				if ( bOut ) std::cout << pos << " " << residue.nchi() << " ";
 				else {
 					if ( chi_gold[ct].size() != residue.nchi() ) {
 
@@ -176,8 +176,7 @@ public:
 				for ( Size n = 1; n <= residue.nchi(); ++n ) {
 					if ( bOut ) {
 						std::cout << (*it)->chi()[ n ] << " " ;
-					}
-					else {
+					} else {
 						TS_ASSERT_DELTA( chi_gold[ ct ][ n ],  (*it)->chi()[ n ] , 0.001);
 					}
 				}
@@ -207,10 +206,10 @@ public:
 		pose::Pose pose(create_test_in_pdb_pose() );
 		//core::import_pose::pose_from_pdb( pose, "core/scoring/test_in.pdb" );
 
-		for (Size pos = 1; pos <= pose.total_residue(); pos++ ) {
+		for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
 			Residue const & residue( pose.residue( pos ) );
 			SingleResidueRotamerLibraryCOP rotlib = core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( residue.type() );
-			if( ! rotlib ) continue;
+			if ( ! rotlib ) continue;
 
 			RotamerLibraryScratchSpace scratch;
 			Real const this_rotamerE = rotlib->best_rotamer_energy(residue, true /*current well only*/, scratch);
@@ -250,11 +249,11 @@ public:
 			}
 
 			Size const ii_nrots = aa_dunlib->n_rotamer_bins();
-            utility::vector1< DunbrackRotamerSampleData > aa_samples = aa_dunlib->get_all_rotamer_samples( bbs );
+			utility::vector1< DunbrackRotamerSampleData > aa_samples = aa_dunlib->get_all_rotamer_samples( bbs );
 
 			TS_ASSERT( aa_samples.size() <= ii_nrots );
 			for ( Size jj = 1; jj <= aa_samples.size(); ++jj ) {
-                Real const jj_prob = aa_dunlib->get_probability_for_rotamer( phi_example, psi_example, jj );
+				Real const jj_prob = aa_dunlib->get_probability_for_rotamer( phi_example, psi_example, jj );
 				TS_ASSERT_DELTA( aa_samples[ jj ].probability(), jj_prob, 1e-10 );
 			}
 		}
@@ -341,10 +340,11 @@ public:
 			NumDerivCheckData const & iidata( deriv_check_result->deriv_check_result( ii ) );
 			TS_ASSERT( iidata.nsteps() >= 1 );
 			for ( Size jj = 1; jj <= iidata.nangles(); ++jj ) {
-                if ( jj % 3 == 1 ) // new res
-                    std::cout << "Now looking at residue " << ( ( jj+2 )/3 ) << " which is a " << pose.residue_type( (jj+2)/3 ).name() << std::endl;
-                else
-                    std::cout << "Angle jj " << jj << " or for this residue, specifically " << (jj%3 ) << std::endl;
+				if ( jj % 3 == 1 ) { // new res
+					std::cout << "Now looking at residue " << ( ( jj+2 )/3 ) << " which is a " << pose.residue_type( (jj+2)/3 ).name() << std::endl;
+				} else {
+					std::cout << "Angle jj " << jj << " or for this residue, specifically " << (jj%3 ) << std::endl;
+				}
 
 				TS_ASSERT_DELTA( iidata.dof_step_data( jj, 1 ).num_deriv(), iidata.dof_step_data( jj, 1 ).ana_deriv(), 1e-6 );
 			}

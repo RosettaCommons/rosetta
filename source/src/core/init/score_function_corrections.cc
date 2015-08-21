@@ -147,7 +147,7 @@ void revert_to_pre_talaris_2013_defaults() {
 	if ( ! option[ score::elec_min_dis ].user() ) {
 		option[ score::elec_min_dis ].default_value( restore_sc12_settings.elec_min_dis );
 	}
-	if( ! option[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
+	if ( ! option[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
 		utility::vector1< std::string > params;
 		params.push_back("fa_standard:ONH2:LK_DGFREE:-10.0000");
 		params.push_back("fa_standard:NH2O:LK_DGFREE:-10.0000");
@@ -171,44 +171,44 @@ void revert_to_pre_talaris_2013_defaults() {
 	}
 	if ( ! option[ score::pack_weights ].user() ) {
 		option[ score::pack_weights ].default_value( restore_sc12_settings.score_weights );
-  }
+	}
 }
 
 
 void
 init_hbond_sp2_correction() {
-	if( option[ corrections::hbond_sp2_correction ]) {
+	if ( option[ corrections::hbond_sp2_correction ] ) {
 		TR.Warning << "The -hbond_sp2_correction is deprecated.  The default talaris2013 score function should be relied upon instead." << std::endl;
 
 
 		// Note, the weight sets that go with the hbond_sp2_correction
 		// flag are handled in core/scoring/ScorefunctionFactory.hh
 
-		if( ! option[ corrections::score::hb_sp2_chipen ].user() ) {
+		if ( ! option[ corrections::score::hb_sp2_chipen ].user() ) {
 			option[ corrections::score::hb_sp2_chipen ].value( true );
 		}
 
-		if( ! option[ corrections::score::hb_sp2_BAH180_rise ].user() ) {
+		if ( ! option[ corrections::score::hb_sp2_BAH180_rise ].user() ) {
 			option[ corrections::score::hb_sp2_BAH180_rise ].value( 0.75 );
 		}
 
-		if( ! option[ corrections::score::hb_sp2_outer_width ].user() ) {
+		if ( ! option[ corrections::score::hb_sp2_outer_width ].user() ) {
 			option[ corrections::score::hb_sp2_outer_width ].value( 0.357 );
 		}
 
-		if( ! option[ corrections::score::hb_fade_energy ].user() ) {
+		if ( ! option[ corrections::score::hb_fade_energy ].user() ) {
 			option[ corrections::score::hb_fade_energy ].value( true );
 		}
 
-		if( ! option[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].user() ) {
+		if ( ! option[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].user() ) {
 			option[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].value( true );
 		}
 
-		if( ! option[ corrections::score::lj_hbond_hdis ].user() ) {
+		if ( ! option[ corrections::score::lj_hbond_hdis ].user() ) {
 			option[ corrections::score::lj_hbond_hdis ].value( 1.75 );
 		}
 
-		if( ! option[ corrections::score::lj_hbond_OH_donor_dis ].user() ) {
+		if ( ! option[ corrections::score::lj_hbond_OH_donor_dis ].user() ) {
 			option[ corrections::score::lj_hbond_OH_donor_dis ].value( 2.6 );
 		}
 
@@ -216,23 +216,23 @@ init_hbond_sp2_correction() {
 			option[ corrections::chemical::expand_st_chi2sampling ].value( true );
 		}
 
-		if( ! option[ score::hbond_params ].user() ) {
+		if ( ! option[ score::hbond_params ].user() ) {
 			option[ score::hbond_params ].value( "sp2_elec_params" );
 		}
 
-		if( ! option[ score::smooth_fa_elec ].user() ) {
+		if ( ! option[ score::smooth_fa_elec ].user() ) {
 			option[ score::smooth_fa_elec ].value( true );
 		}
 
-		if( ! option[ score::elec_min_dis ].user() ) {
+		if ( ! option[ score::elec_min_dis ].user() ) {
 			option[ score::elec_min_dis ].value( 1.6 );
 		}
 
-		if( ! option[ score::elec_r_option ].user() ) {
+		if ( ! option[ score::elec_r_option ].user() ) {
 			option[ score::elec_r_option ].value( false );
 		}
 
-		if( ! option[ basic::options::OptionKeys::chemical::set_atom_properties ].user() || option[ mistakes::restore_pre_talaris_2013_behavior ] ) {
+		if ( ! option[ basic::options::OptionKeys::chemical::set_atom_properties ].user() || option[ mistakes::restore_pre_talaris_2013_behavior ] ) {
 			std::cout << "overriding sc12 changes to the LK_DGFREEs" << std::endl;
 			utility::vector1< std::string > params;
 			params.push_back("fa_standard:ONH2:LK_DGFREE:-5.85");
@@ -254,25 +254,25 @@ init_hbond_sp2_correction() {
 			option[ score::weights ].value( "sp2_correction" );
 		}
 
-		if( option[corrections::correct] ){
+		if ( option[corrections::correct] ) {
 			throw utility::excn::EXCN_BadInput( "The -corrections::hbond_sp2_correction is incompatible with the -corrections:correct flag.");
 		}
 
- 		if( option[ corrections::facts_default ]) {
- 			throw utility::excn::EXCN_BadInput( "The -corrections::hbond_sp2_correction is incompatible with the -corrections:facts_default flag.");
+		if ( option[ corrections::facts_default ] ) {
+			throw utility::excn::EXCN_BadInput( "The -corrections::hbond_sp2_correction is incompatible with the -corrections:facts_default flag.");
 		}
 	}
 }
 
 void
 init_facts_correction() {
- 	// corrections specific for FACTS: this has to precede -correct
- 	if( option[corrections::facts_default]) {
- 		// Call all the corrections from -correct
- 		option[corrections::correct].value(true);
+	// corrections specific for FACTS: this has to precede -correct
+	if ( option[corrections::facts_default] ) {
+		// Call all the corrections from -correct
+		option[corrections::correct].value(true);
 
- 		/// Below are FACTS specific flags
- 		// Hbond LJ parameters
+		/// Below are FACTS specific flags
+		// Hbond LJ parameters
 		if ( ! option[ corrections::score::lj_hbond_hdis ].user() ) {
 			option[corrections::score::lj_hbond_hdis].value(2.3);
 		}
@@ -281,11 +281,12 @@ init_facts_correction() {
 			option[corrections::score::lj_hbond_OH_donor_dis].value(3.4);
 		}
 
- 		// FACTS options - these are not fully optimized, can be changed in the future
- 		if ( ! option[score::facts_GBpair_cut].user() )
+		// FACTS options - these are not fully optimized, can be changed in the future
+		if ( ! option[score::facts_GBpair_cut].user() ) {
 			option[score::facts_GBpair_cut].value(10.0);
+		}
 
- 		if ( ! option[score::facts_dshift].user() ){
+		if ( ! option[score::facts_dshift].user() ) {
 			utility::vector1< Real > params;
 			params.push_back( 0.0 );
 			params.push_back( 1.5 );
@@ -294,35 +295,44 @@ init_facts_correction() {
 			option[score::facts_dshift].value( params );
 		}
 
- 		if ( ! option[score::facts_die].user() )
+		if ( ! option[score::facts_die].user() ) {
 			option[score::facts_die].value(1.0);
+		}
 
- 		if ( ! option[score::facts_kappa].user() )
+		if ( ! option[score::facts_kappa].user() ) {
 			option[score::facts_kappa].value(12.0);
+		}
 
- 		if ( ! option[score::facts_plane_to_self].user() )
+		if ( ! option[score::facts_plane_to_self].user() ) {
 			option[score::facts_plane_to_self].value(true);
+		}
 
- 		if ( ! option[score::facts_asp_patch].user() )
+		if ( ! option[score::facts_asp_patch].user() ) {
 			option[score::facts_asp_patch].value(3);
+		}
 
- 		// Below are default for sp2correction which are FACTS defaults too
- 		if ( ! option[ corrections::score::use_bicubic_interpolation ].user() )
+		// Below are default for sp2correction which are FACTS defaults too
+		if ( ! option[ corrections::score::use_bicubic_interpolation ].user() ) {
 			option[corrections::score::use_bicubic_interpolation].value(true);
+		}
 
- 		if ( ! option[score::hbond_params].user() )
+		if ( ! option[score::hbond_params].user() ) {
 			option[score::hbond_params ].value( "sp2_params" );
+		}
 
- 		if ( ! option[corrections::score::hb_sp2_chipen].user() )
+		if ( ! option[corrections::score::hb_sp2_chipen].user() ) {
 			option[corrections::score::hb_sp2_chipen].value(true);
+		}
 
- 		if ( ! option[corrections::score::hbond_measure_sp3acc_BAH_from_hvy].user() )
+		if ( ! option[corrections::score::hbond_measure_sp3acc_BAH_from_hvy].user() ) {
 			option[corrections::score::hbond_measure_sp3acc_BAH_from_hvy].value(true);
+		}
 
-		if( ! option[ corrections::score::hb_fade_energy ].user() )
+		if ( ! option[ corrections::score::hb_fade_energy ].user() ) {
 			option[ corrections::score::hb_fade_energy ].value( true );
+		}
 
- 	} // end facts_default
+	} // end facts_default
 }
 
 //MaximCode:
@@ -330,7 +340,7 @@ void
 init_correct_correction() {
 
 	// set default corrections
-	if( option[corrections::correct]) {
+	if ( option[corrections::correct] ) {
 
 		/// Legacy warning
 		if ( ! option[ mistakes::restore_pre_talaris_2013_behavior ] ) {
@@ -386,117 +396,77 @@ void
 init_shapovalov_lib_fixes_enable_correction()
 {
 	// set default corrections
-	if( option[corrections::shapovalov_lib_fixes_enable])
-	{
-		if (option[corrections::shapovalov_lib::shap_dun10_enable])
-		{
-			if ( ! option[ corrections::shapovalov_lib::shap_dun10_dir ].user() )
-			{
+	if ( option[corrections::shapovalov_lib_fixes_enable] ) {
+		if ( option[corrections::shapovalov_lib::shap_dun10_enable] ) {
+			if ( ! option[ corrections::shapovalov_lib::shap_dun10_dir ].user() ) {
 				std::string _smoothingRequsted = option[ corrections::shapovalov_lib::shap_dun10_smooth_level ];
-				if (_smoothingRequsted.compare("1")==0 || _smoothingRequsted.compare("lowest_smooth")==0)
-				{
+				if ( _smoothingRequsted.compare("1")==0 || _smoothingRequsted.compare("lowest_smooth")==0 ) {
 					option[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_0-0-0");
 					option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("1");
-				}
-				else if (_smoothingRequsted.compare("2")==0 || _smoothingRequsted.compare("lower_smooth")==0)
-				{
+				} else if ( _smoothingRequsted.compare("2")==0 || _smoothingRequsted.compare("lower_smooth")==0 ) {
 					option[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_2-2-2");
 					option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("2");
-				}
-				else if (_smoothingRequsted.compare("3")==0 || _smoothingRequsted.compare("low_smooth")==0)
-				{
+				} else if ( _smoothingRequsted.compare("3")==0 || _smoothingRequsted.compare("low_smooth")==0 ) {
 					option[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_5-5-5");
 					option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("3");
-				}
-				else if (_smoothingRequsted.compare("4")==0 || _smoothingRequsted.compare("average_smooth")==0)
-				{
+				} else if ( _smoothingRequsted.compare("4")==0 || _smoothingRequsted.compare("average_smooth")==0 ) {
 					option[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_10-10-10");
 					option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("4");
-				}
-				else if (_smoothingRequsted.compare("5")==0 || _smoothingRequsted.compare("higher_smooth")==0)
-				{
+				} else if ( _smoothingRequsted.compare("5")==0 || _smoothingRequsted.compare("higher_smooth")==0 ) {
 					option[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_20-20-20");
 					option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("5");
-				}
-				else if (_smoothingRequsted.compare("6")==0 || _smoothingRequsted.compare("highest_smooth")==0)
-				{
+				} else if ( _smoothingRequsted.compare("6")==0 || _smoothingRequsted.compare("highest_smooth")==0 ) {
 					option[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_25-25-25");
 					option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("6");
-				}
-				else
-				{
+				} else {
 					option[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_5-5-5");
 					option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("3");
 				}
-			}
-			else
-			{
+			} else {
 				option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("overriden");
 			}
 		}
 
 
-		if (option[corrections::shapovalov_lib::shap_rama_enable])
-		{
-			if ( ! option[ corrections::shapovalov_lib::shap_rama_map ].user() )
-			{
+		if ( option[corrections::shapovalov_lib::shap_rama_enable] ) {
+			if ( ! option[ corrections::shapovalov_lib::shap_rama_map ].user() ) {
 				std::string _smoothingRequsted = option[ corrections::shapovalov_lib::shap_rama_smooth_level ];
-				if (_smoothingRequsted.compare("1")==0 || _smoothingRequsted.compare("lowest_smooth")==0)
-				{
+				if ( _smoothingRequsted.compare("1")==0 || _smoothingRequsted.compare("lowest_smooth")==0 ) {
 					option[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa75/all.ramaProb");
 					option[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("1");
-				}
-				else if (_smoothingRequsted.compare("2")==0 || _smoothingRequsted.compare("lower_smooth")==0)
-				{
+				} else if ( _smoothingRequsted.compare("2")==0 || _smoothingRequsted.compare("lower_smooth")==0 ) {
 					option[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa50/all.ramaProb");
 					option[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("2");
-				}
-				else if (_smoothingRequsted.compare("3")==0 || _smoothingRequsted.compare("higher_smooth")==0)
-				{
+				} else if ( _smoothingRequsted.compare("3")==0 || _smoothingRequsted.compare("higher_smooth")==0 ) {
 					option[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa37.5/all.ramaProb");
 					option[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("3");
-				}
-				else if (_smoothingRequsted.compare("4")==0 || _smoothingRequsted.compare("highest_smooth")==0)
-				{
+				} else if ( _smoothingRequsted.compare("4")==0 || _smoothingRequsted.compare("highest_smooth")==0 ) {
+					option[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa25/all.ramaProb");
+					option[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("4");
+				} else {
 					option[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa25/all.ramaProb");
 					option[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("4");
 				}
-				else
-				{
-					option[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa25/all.ramaProb");
-					option[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("4");
-				}
-			}
-			else
-			{
+			} else {
 				option[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("overriden");
 			}
 		}
 
 
-		if (option[corrections::shapovalov_lib::shap_p_aa_pp_enable])
-		{
-			if ( ! option[ corrections::shapovalov_lib::shap_p_aa_pp ].user() )
-			{
+		if ( option[corrections::shapovalov_lib::shap_p_aa_pp_enable] ) {
+			if ( ! option[ corrections::shapovalov_lib::shap_p_aa_pp ].user() ) {
 				std::string _smoothingRequsted = option[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ];
-				if (_smoothingRequsted.compare("1")==0 || _smoothingRequsted.compare("low_smooth")==0)
-				{
+				if ( _smoothingRequsted.compare("1")==0 || _smoothingRequsted.compare("low_smooth")==0 ) {
 					option[ corrections::shapovalov_lib::shap_p_aa_pp ].value("scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa131/a20.prop");
 					option[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("1");
-				}
-				else if (_smoothingRequsted.compare("2")==0 || _smoothingRequsted.compare("high_smooth")==0)
-				{
+				} else if ( _smoothingRequsted.compare("2")==0 || _smoothingRequsted.compare("high_smooth")==0 ) {
+					option[ corrections::shapovalov_lib::shap_p_aa_pp ].value("scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa50/a20.prop");
+					option[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("2");
+				} else {
 					option[ corrections::shapovalov_lib::shap_p_aa_pp ].value("scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa50/a20.prop");
 					option[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("2");
 				}
-				else
-				{
-					option[ corrections::shapovalov_lib::shap_p_aa_pp ].value("scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa50/a20.prop");
-					option[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("2");
-				}
-			}
-			else
-			{
+			} else {
 				option[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("overriden");
 			}
 		}
@@ -509,7 +479,7 @@ init_shapovalov_lib_fixes_enable_correction()
 void
 init_crystal_refinement_correction() {
 	//fpd  crystal-refinement specific changes
-	if( option[cryst::crystal_refine]) {
+	if ( option[cryst::crystal_refine] ) {
 		// use -correct rama fixes
 		if ( ! option[ corrections::score::rama_not_squared ].user() ) {
 			option[corrections::score::rama_not_squared].value( true );
@@ -542,9 +512,9 @@ init_crystal_refinement_correction() {
 
 void
 init_beta_correction() {
-  if( option[corrections::beta_july15]() || option[corrections::beta_july15_cart]() ) {
+	if ( option[corrections::beta_july15]() || option[corrections::beta_july15_cart]() ) {
 		// atom clone
-		if( ! option[ basic::options::OptionKeys::chemical::clone_atom_types ].user() ) {
+		if ( ! option[ basic::options::OptionKeys::chemical::clone_atom_types ].user() ) {
 			utility::vector1< std::string > params;
 			params.push_back( "fa_standard:CH1:CH0" );
 			params.push_back( "fa_standard:CH1:CH0R" );
@@ -563,7 +533,7 @@ init_beta_correction() {
 		}
 
 		// atom reassign
-		if( ! option[ basic::options::OptionKeys::chemical::reassign_atom_types ].user() ) {
+		if ( ! option[ basic::options::OptionKeys::chemical::reassign_atom_types ].user() ) {
 			utility::vector1< std::string > params;
 			params.push_back( "fa_standard:ARG:CZ:CH0R" );
 			params.push_back( "fa_standard:ARG:NE:NtrR" );
@@ -591,7 +561,7 @@ init_beta_correction() {
 		}
 
 		// atom properties
-		if( ! option[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
+		if ( ! option[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
 			utility::vector1< std::string > params;
 			params.push_back( "fa_standard:aroC:LJ_RADIUS:1.99917604399492");
 			params.push_back( "fa_standard:aroC:LJ_WDEPTH:0.119406055088945");
@@ -731,7 +701,7 @@ init_beta_correction() {
 		}
 
 		// hbonds
-		if( ! option[ basic::options::OptionKeys::score::hb_acc_strength ].user() ) {
+		if ( ! option[ basic::options::OptionKeys::score::hb_acc_strength ].user() ) {
 			utility::vector1< std::string > params;
 			params.push_back( "hbacc_AHX:0.94");
 			params.push_back( "hbacc_CXA:1.08");
@@ -744,7 +714,7 @@ init_beta_correction() {
 		} else {
 			TR.Warning << "Flag -beta_july15 is set but -hb_acc_strength are also specified.  Not changing atom properties!" << std::endl;
 		}
-		if( ! option[ basic::options::OptionKeys::score::hb_don_strength ].user() ) {
+		if ( ! option[ basic::options::OptionKeys::score::hb_don_strength ].user() ) {
 			utility::vector1< std::string > params;
 			params.push_back( "hbdon_AHX:0.92");
 			params.push_back( "hbdon_AMO:1.01");
@@ -762,32 +732,32 @@ init_beta_correction() {
 		}
 
 		// unmodifypot
-		if( ! option[ basic::options::OptionKeys::score::unmodifypot ].user() ) {
+		if ( ! option[ basic::options::OptionKeys::score::unmodifypot ].user() ) {
 			option[ basic::options::OptionKeys::score::unmodifypot ].value(true);
 		}
 
 		// sigmoidal dielectric
-		if( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die ].user() ) {
+		if ( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die ].user() ) {
 			option[ basic::options::OptionKeys::score::elec_sigmoidal_die ].value(true);
 		}
-		if( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].user() ) {
+		if ( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].user() ) {
 			option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].value(137.0);
 		}
-		if( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].user() ) {
+		if ( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].user() ) {
 			option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].value(9.75);
 		}
-		if( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].user() ) {
+		if ( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].user() ) {
 			option[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].value(0.44);
 		}
 
 		// weights file
-    if ( ! option[ score::weights ].user() ) {
-			if( option[corrections::beta_july15_cart]() || option[optimization::nonideal]() ) {
+		if ( ! option[ score::weights ].user() ) {
+			if ( option[corrections::beta_july15_cart]() || option[optimization::nonideal]() ) {
 				option[ score::weights ].value( "beta_july15_cart.wts" );
 			} else {
 				option[ score::weights ].value( "beta_july15.wts" );
 			}
-    } else {
+		} else {
 			TR.Warning << "Flag -beta_july15 is set but -weights are also specified.  Not changing input weights file!" << std::endl;
 		}
 
@@ -798,7 +768,7 @@ init_beta_correction() {
 void
 init_nonideal_correction() {
 	//PTC set up for flexible bond geometries
-	if( option[optimization::nonideal]) {
+	if ( option[optimization::nonideal] ) {
 		// add jumps to missing densities so cart_bonded_length behaves correctly
 		if ( ! option[ in::missing_density_to_jump ].user() ) {
 			option[ in::missing_density_to_jump ].value( true );
@@ -827,55 +797,55 @@ init_nonideal_correction() {
 		// talaris2013_cart.wts - enables cart_bonded, disables pro_close, new reference weights
 		if ( ! option[ score::weights ].user() ) {
 			option[ score::weights ].value( "talaris2013_cart.wts" );
-		}
-		else {
+		} else {
 			scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
-			if ( !sfxn->ready_for_nonideal_scoring() )
+			if ( !sfxn->ready_for_nonideal_scoring() ) {
 				TR.Warning << "option[ optimization::nonideal ] - scorefunction not set up for nonideal/Cartesian scoring (safe to ignore this warning if setting weights via RosettaScripts)" << std::endl;
+			}
 		}
 	}
 }
 
 //void
 //revert_hbond_sp2_correction_to_score12() {
-//	if( ! option[ corrections::score::hb_sp2_chipen ].user() ) {
-//		option[ corrections::score::hb_sp2_chipen ].value( false );
-//	}
+// if( ! option[ corrections::score::hb_sp2_chipen ].user() ) {
+//  option[ corrections::score::hb_sp2_chipen ].value( false );
+// }
 //
-//	if( ! option[ corrections::score::hb_sp2_outer_width ].user() ) {
-//		option[ corrections::score::hb_sp2_outer_width ].value( 0.33333 );
-//	}
+// if( ! option[ corrections::score::hb_sp2_outer_width ].user() ) {
+//  option[ corrections::score::hb_sp2_outer_width ].value( 0.33333 );
+// }
 //
-//	if( ! option[ corrections::score::hb_fade_energy ].user() ) {
-//		option[ corrections::score::hb_fade_energy ].value( false );
-//	}
+// if( ! option[ corrections::score::hb_fade_energy ].user() ) {
+//  option[ corrections::score::hb_fade_energy ].value( false );
+// }
 //
-//	if( ! option[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].user() ) {
-//		option[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].value( false );
-//	}
+// if( ! option[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].user() ) {
+//  option[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].value( false );
+// }
 //
-//	if ( ! option[ corrections::chemical::expand_st_chi2sampling ].user() ) {
-//		option[ corrections::chemical::expand_st_chi2sampling ].value( false );
-//	}
+// if ( ! option[ corrections::chemical::expand_st_chi2sampling ].user() ) {
+//  option[ corrections::chemical::expand_st_chi2sampling ].value( false );
+// }
 //
-//	if( ! option[ score::hbond_params ].user() ) {
-//		option[ score::hbond_params ].value( "score12_params" );
-//	}
+// if( ! option[ score::hbond_params ].user() ) {
+//  option[ score::hbond_params ].value( "score12_params" );
+// }
 //
-//	if( ! option[ score::smooth_fa_elec ].user() ) {
-//		option[ score::smooth_fa_elec ].value( false );
-//	}
+// if( ! option[ score::smooth_fa_elec ].user() ) {
+//  option[ score::smooth_fa_elec ].value( false );
+// }
 //
-//	if( ! option[ score::elec_min_dis ].user() ) {
-//		option[ score::elec_min_dis ].value( 1.5 );
-//	}
+// if( ! option[ score::elec_min_dis ].user() ) {
+//  option[ score::elec_min_dis ].value( 1.5 );
+// }
 //
 //}
 
 
 void
 init_restore_score12prime() {
-	if (option[ corrections::score::score12prime ] ) {
+	if ( option[ corrections::score::score12prime ] ) {
 		revert_to_pre_talaris_2013_defaults();
 		option[ score::weights ].value( "score12prime.wts" );
 		option[ score::patch ].value( "" );
@@ -902,8 +872,8 @@ check_score_function_sanity(
 	std::string const & scorefxn_key,
 	bool only_warn
 ) {
-	if( scorefxn_key == "score12" ){
-		if( ! option[ mistakes::restore_pre_talaris_2013_behavior ] ) {
+	if ( scorefxn_key == "score12" ) {
+		if ( ! option[ mistakes::restore_pre_talaris_2013_behavior ] ) {
 			TR.Error
 				<< "**********************************************" << std::endl
 				<< "To use the '" << scorefxn_key << "' score function" << std::endl
@@ -913,12 +883,12 @@ check_score_function_sanity(
 				<< std::endl
 				<< "flag on the command line." << std::endl
 				<< "**********************************************" << std::endl;
-			if(!only_warn){
+			if ( !only_warn ) {
 				throw utility::excn::EXCN_BadInput("Missing -restore_pre_talaris_2013_behavior flag.");
 			}
 		}
-	} else if( scorefxn_key == "talaris2013" ){
-		if( option[ mistakes::restore_pre_talaris_2013_behavior ] ) {
+	} else if ( scorefxn_key == "talaris2013" ) {
+		if ( option[ mistakes::restore_pre_talaris_2013_behavior ] ) {
 			TR.Error
 				<< "**********************************************" << std::endl
 				<< "To use the '" << scorefxn_key << "' score function" << std::endl
@@ -928,7 +898,7 @@ check_score_function_sanity(
 				<< std::endl
 				<< "flag on the command line." << std::endl
 				<< "**********************************************" << std::endl;
-			if(!only_warn){
+			if ( !only_warn ) {
 				throw utility::excn::EXCN_BadInput("Using -restore_pre_talaris_2013_behavior flag with talaris2013 energy function");
 			}
 		}
@@ -1030,7 +1000,7 @@ init_dna_correction()
 
 			utility::vector1< std::string > mods;
 
-			for( Size ii=1; ii<= dna_residue_types.size(); ++ii ) {
+			for ( Size ii=1; ii<= dna_residue_types.size(); ++ii ) {
 				std::string const & resname( dna_residue_types[ii]);
 				/// the default way is to have O4 as the torsion atom for H2'' but that's not as good as this:
 				/// not sure why H2' follows H2'' but this is how it is in the params files right now...

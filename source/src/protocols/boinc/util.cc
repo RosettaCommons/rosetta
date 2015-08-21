@@ -63,9 +63,9 @@ static thread_local basic::Tracer tr( "core.boinc.util" );
 
 
 /////////////////////////////////////////////////////////////////
-//@details Takes the output and filters to limit the number of structures.  This code's primary use is boinc where you don't want to generate more than 1 structure every 60 seconds. 
+//@details Takes the output and filters to limit the number of structures.  This code's primary use is boinc where you don't want to generate more than 1 structure every 60 seconds.
 // ***This also does a core cut. You want all boinc servers to get the same amount of credit for work-done. So the PRIMARY CUT IS SCORE. The time cut is mandatory for VERY fast computers that
-// generate more than 1 model every 60 seconds even with the score cut.  NOTE IF CENTOID be sure you use -in:file:centroid_input 
+// generate more than 1 model every 60 seconds even with the score cut.  NOTE IF CENTOID be sure you use -in:file:centroid_input
 void boincOutputFilter(core::Real runTime, core::Real minTimePerModel){
 	using namespace core::chemical;
 	using namespace core::import_pose::pose_stream;
@@ -87,29 +87,31 @@ void boincOutputFilter(core::Real runTime, core::Real minTimePerModel){
 	SilentStructOP localOutputSS( new core::io::silent::BinarySilentStruct );
 	SilentFileData sfd;
 	string outputFileName = option[out::file::silent]();
-	if(option[out::silent_gz]()){
+	if ( option[out::silent_gz]() ) {
 		string tmpOutputFileName = outputFileName + ".gz";
-		if(!file_exists(tmpOutputFileName))
+		if ( !file_exists(tmpOutputFileName) ) {
 			utility_exit_with_message( "could not find " + tmpOutputFileName);
+		}
 		utility::file::gunzip(tmpOutputFileName,true);
 	}
-	if(!file_exists(outputFileName))
+	if ( !file_exists(outputFileName) ) {
 		utility_exit_with_message( "could not find " + outputFileName);
+	}
 	vector1< string> tempSilentVectorOrig;
 	tempSilentVectorOrig.push_back(outputFileName);
 	LazySilentFilePoseInputStreamOP tempSilentStreamOrig( new LazySilentFilePoseInputStream(tempSilentVectorOrig) );
 	MetaPoseInputStream input;
 	input.add_pose_input_stream(tempSilentStreamOrig);
-	while(input.has_another_pose()){
+	while ( input.has_another_pose() ) {
 		core::pose::PoseOP input_poseOP;
 		input_poseOP = core::pose::PoseOP( new core::pose::Pose() );
 		input.fill_pose(*input_poseOP,*rsd_set);
 		std::string tag = core::pose::tag_from_pose(*input_poseOP);
-		if("fa_standard" == rsd_set->name()){
+		if ( "fa_standard" == rsd_set->name() ) {
 			core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(TALARIS_2013 ));
 			Real score = scorefxn->score(*input_poseOP);
 			scores.push_back(score);
-		}else{
+		} else {
 			core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function("score3"));
 			Real score = scorefxn->score(*input_poseOP);
 			scores.push_back(score);
@@ -123,13 +125,16 @@ void boincOutputFilter(core::Real runTime, core::Real minTimePerModel){
 	//figure out the score cut
 	Size keepNumb = (Size)floor( ( (Real) scores.size() )*(1-scoreCutPct) );
 	Size maxByTime = keepNumb;
-	//in boinc maxtime should be set.  
-	if(runTime!=-1)
-		 maxByTime= (Size)floor(runTime/minTimePerModel);
-	if(maxByTime < keepNumb)
+	//in boinc maxtime should be set.
+	if ( runTime!=-1 ) {
+		maxByTime= (Size)floor(runTime/minTimePerModel);
+	}
+	if ( maxByTime < keepNumb ) {
 		keepNumb = maxByTime;
-	if(keepNumb < 1)
+	}
+	if ( keepNumb < 1 ) {
 		keepNumb = 1;
+	}
 	Real scoreThreshold = scores[keepNumb];
 
 
@@ -143,28 +148,29 @@ void boincOutputFilter(core::Real runTime, core::Real minTimePerModel){
 	//filter round 2
 	MetaPoseInputStream input_rd2;
 	input_rd2.add_pose_input_stream(tempSilentStream);
-	while(input_rd2.has_another_pose()){
+	while ( input_rd2.has_another_pose() ) {
 		core::pose::PoseOP input_poseOP;
 		input_poseOP = core::pose::PoseOP( new core::pose::Pose() );
 		input_rd2.fill_pose(*input_poseOP,*rsd_set);
 		std::string tag = core::pose::tag_from_pose(*input_poseOP);
 		Real tmpScore;
-		if("fa_standard" == rsd_set->name()){
+		if ( "fa_standard" == rsd_set->name() ) {
 			core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(TALARIS_2013 ));
 			tmpScore = scorefxn->score(*input_poseOP);
 
-		}else{
+		} else {
 			core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function("score3"));
 			tmpScore = scorefxn->score(*input_poseOP);
 		}
-		if(tmpScore<=scoreThreshold){
+		if ( tmpScore<=scoreThreshold ) {
 			localOutputSS->fill_struct(*input_poseOP);
 			localOutputSS->decoy_tag(tag);
 			sfd.write_silent_struct(*localOutputSS,outputFileName);
 		}
 	}
-	if(option[out::silent_gz]())
+	if ( option[out::silent_gz]() ) {
 		utility::file::gzip(outputFileName,true);
+	}
 }
 
 } // namespace protocols

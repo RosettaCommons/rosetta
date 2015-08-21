@@ -23,7 +23,7 @@
 namespace protocols {
 namespace antibody {
 namespace task_operations {
-			
+
 
 // Forward
 class DisableAntibodyRegionOperation;
@@ -36,7 +36,7 @@ typedef utility::pointer::shared_ptr< DisableAntibodyRegionOperation const > Dis
 } //antibody
 } //protocols
 
-#endif	
+#endif
 
 
 

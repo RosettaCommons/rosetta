@@ -58,15 +58,15 @@ public:
 	Real *deriv_psi_;
 
 private:
-	Real prob_;		/// probability for sidechain showing in this well
-	Real distance_;	/// CEN-CB bond length
-	Real angle_;	/// CEN-CB-CA bond angle
-	Real dihedral_;	/// CEN-CB-CA-N dihedral angle chi1
-	Real sd_dis_; 		/// standard deviation of dis
-	Real sd_ang_; 		/// standard deviation of ang
-	Real sd_dih_; 		/// standard deviation of dih
+	Real prob_;  /// probability for sidechain showing in this well
+	Real distance_; /// CEN-CB bond length
+	Real angle_; /// CEN-CB-CA bond angle
+	Real dihedral_; /// CEN-CB-CA-N dihedral angle chi1
+	Real sd_dis_;   /// standard deviation of dis
+	Real sd_ang_;   /// standard deviation of ang
+	Real sd_dih_;   /// standard deviation of dih
 
-	Real energy_;	/// -ln(P)
+	Real energy_; /// -ln(P)
 	Real norm_factor_; /// normalization factor sigma=sqrt(2pi)
 
 public:
@@ -86,21 +86,21 @@ public:
 
 	CentroidRotamerSampleData( const CentroidRotamerSampleData &cs )
 	{
-		prob_		=cs.prob();
-		energy_ 	=cs.energy();
-		distance_	=cs.distance();
-		angle_		=cs.angle();
-		dihedral_	=cs.dihedral();
-		sd_dis_	=cs.sd_dis();
-		sd_ang_	=cs.sd_ang();
-		sd_dih_	=cs.sd_dih();
+		prob_  =cs.prob();
+		energy_  =cs.energy();
+		distance_ =cs.distance();
+		angle_  =cs.angle();
+		dihedral_ =cs.dihedral();
+		sd_dis_ =cs.sd_dis();
+		sd_ang_ =cs.sd_ang();
+		sd_dih_ =cs.sd_dih();
 		norm_factor_ = cs.norm_factor();
 
 		data_ = new Real [NUMBER_OF_PARAMS];
 		deriv_phi_ = new Real [NUMBER_OF_PARAMS];
 		deriv_psi_ = new Real [NUMBER_OF_PARAMS];
 
-		for (Size i=0; i<NUMBER_OF_PARAMS; i++) {
+		for ( Size i=0; i<NUMBER_OF_PARAMS; i++ ) {
 			data_[i] = cs.data_[i];
 			deriv_phi_[i] = cs.deriv_phi_[i];
 			deriv_psi_[i] = cs.deriv_psi_[i];
@@ -151,7 +151,7 @@ public:
 	Real cal_delta_internal_coordinates(
 		const conformation::Residue & rsd,
 		Real & delta_d, Real & delta_a, Real & delta_w ) const;
-	
+
 	/// generate a random rot inside the well
 	void assign_random_rotamer( DOF3 &sample, numeric::random::RandomGenerator &RG ) const;
 	/// generate the best rot (mean of the well)
@@ -163,145 +163,145 @@ public:
 class SingleResidueCenrotLibrary : public core::pack::rotamers::SingleResidueRotamerLibrary {
 
 public:
-typedef chemical::AA AA;
+	typedef chemical::AA AA;
 
 public:
-SingleResidueCenrotLibrary(AA const aa);
-virtual ~SingleResidueCenrotLibrary();
+	SingleResidueCenrotLibrary(AA const aa);
+	virtual ~SingleResidueCenrotLibrary();
 
 public:
-AA aa() const { return aa_; }
-std::string read_from_file(
-	utility::io::izstream & infile,
-	bool first_line_three_letter_code_already_read );
+	AA aa() const { return aa_; }
+	std::string read_from_file(
+		utility::io::izstream & infile,
+		bool first_line_three_letter_code_already_read );
 
-const utility::vector1< CentroidRotamerSampleData >
-get_rotamer_samples(conformation::Residue const & rsd) const;
+	const utility::vector1< CentroidRotamerSampleData >
+	get_rotamer_samples(conformation::Residue const & rsd) const;
 
-/// Virtual functions required by the base classes
-virtual
-Real rotamer_energy(
-	conformation::Residue const & rsd,
-	RotamerLibraryScratchSpace & scratch
-) const;
+	/// Virtual functions required by the base classes
+	virtual
+	Real rotamer_energy(
+		conformation::Residue const & rsd,
+		RotamerLibraryScratchSpace & scratch
+	) const;
 
-virtual
-Real rotamer_energy_deriv(
-	conformation::Residue const & rsd,
-	RotamerLibraryScratchSpace & scratch
-) const;
+	virtual
+	Real rotamer_energy_deriv(
+		conformation::Residue const & rsd,
+		RotamerLibraryScratchSpace & scratch
+	) const;
 
-//eval cart version
-Real eval_rotameric_energy_deriv(
-	conformation::Residue const & rsd,
-	RotamerLibraryScratchSpace & scratch,
-	bool eval_deriv
-) const;
+	//eval cart version
+	Real eval_rotameric_energy_deriv(
+		conformation::Residue const & rsd,
+		RotamerLibraryScratchSpace & scratch,
+		bool eval_deriv
+	) const;
 
-//eval internal version (bb only)
-Real eval_rotameric_energy_bb_dof_deriv(
-	conformation::Residue const & rsd,
-	RotamerLibraryScratchSpace & scratch
-) const;
+	//eval internal version (bb only)
+	Real eval_rotameric_energy_bb_dof_deriv(
+		conformation::Residue const & rsd,
+		RotamerLibraryScratchSpace & scratch
+	) const;
 
-/// @brief Returns the energy of the lowest-energy rotamer accessible to the given residue
-/// (based on e.g. its current phi and psi values).
-/// If curr_rotamer_only is true, then consider only the idealized version of the
-/// residue's current rotamer (local optimum); otherwise, consider all rotamers (global optimum).
-virtual
-Real best_rotamer_energy(
-	conformation::Residue const & rsd,
-	bool curr_rotamer_only,
-	RotamerLibraryScratchSpace & scratch
-) const;
+	/// @brief Returns the energy of the lowest-energy rotamer accessible to the given residue
+	/// (based on e.g. its current phi and psi values).
+	/// If curr_rotamer_only is true, then consider only the idealized version of the
+	/// residue's current rotamer (local optimum); otherwise, consider all rotamers (global optimum).
+	virtual
+	Real best_rotamer_energy(
+		conformation::Residue const & rsd,
+		bool curr_rotamer_only,
+		RotamerLibraryScratchSpace & scratch
+	) const;
 
-virtual void
-assign_random_rotamer_with_bias(
-	conformation::Residue const & rsd,
-	pose::Pose const & pose,
-	RotamerLibraryScratchSpace & scratch,
-	numeric::random::RandomGenerator & RG,
-	ChiVector & new_chi_angles,
-	bool perturb_from_rotamer_center
-) const;
+	virtual void
+	assign_random_rotamer_with_bias(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		RotamerLibraryScratchSpace & scratch,
+		numeric::random::RandomGenerator & RG,
+		ChiVector & new_chi_angles,
+		bool perturb_from_rotamer_center
+	) const;
 
-virtual void
-fill_rotamer_vector(
-	pose::Pose const & pose,
-	scoring::ScoreFunction const & scorefxn,
-	pack::task::PackerTask const & task,
-	graph::GraphCOP packer_neighbor_graph,
-	chemical::ResidueTypeCOP concrete_residue,
-	conformation::Residue const & existing_residue,
-	utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
-	bool buried,
-	rotamers::RotamerVector & rotamers
-) const;
+	virtual void
+	fill_rotamer_vector(
+		pose::Pose const & pose,
+		scoring::ScoreFunction const & scorefxn,
+		pack::task::PackerTask const & task,
+		graph::GraphCOP packer_neighbor_graph,
+		chemical::ResidueTypeCOP concrete_residue,
+		conformation::Residue const & existing_residue,
+		utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
+		bool buried,
+		rotamers::RotamerVector & rotamers
+	) const;
 
-virtual void write_to_file( utility::io::ozstream &out ) const;
+	virtual void write_to_file( utility::io::ozstream &out ) const;
 
-CentroidRotamerSampleData const & get_closest_rotamer(
-	conformation::Residue const & rsd, Size &nrot, Real &dis) const;
+	CentroidRotamerSampleData const & get_closest_rotamer(
+		conformation::Residue const & rsd, Size &nrot, Real &dis) const;
 
 private:
-void get_phipsi_bins(
-	Real phi,
-	Real psi,
-	Size & phibin,
-	Size & psibin,
-	Size & phibin_next,
-	Size & psibin_next,
-	Real & phi_alpha,
-	Real & psi_alpha
-) const;
+	void get_phipsi_bins(
+		Real phi,
+		Real psi,
+		Size & phibin,
+		Size & psibin,
+		Size & phibin_next,
+		Size & psibin_next,
+		Real & phi_alpha,
+		Real & psi_alpha
+	) const;
 
-void get_phipsi_bins(
-	Real phi,
-	Real psi,
-	Size & phibin,
-	Size & psibin ) const;
+	void get_phipsi_bins(
+		Real phi,
+		Real psi,
+		Size & phibin,
+		Size & psibin ) const;
 
-Real get_phi_from_rsd(
-	conformation::Residue const & rsd
-) const;
+	Real get_phi_from_rsd(
+		conformation::Residue const & rsd
+	) const;
 
-Real get_psi_from_rsd(
-	conformation::Residue const & rsd
-) const;
+	Real get_psi_from_rsd(
+		conformation::Residue const & rsd
+	) const;
 
-void verify_phipsi_bins(
-	Real phi,
-	Real psi,
-	Size const phibin,
-	Size const psibin,
-	Size const phibin_next,
-	Size const psibin_next
-) const;
+	void verify_phipsi_bins(
+		Real phi,
+		Real psi,
+		Size const phibin,
+		Size const psibin,
+		Size const phibin_next,
+		Size const psibin_next
+	) const;
 
-/// @brief This is not the right place for this code, but the numeric interpolation library
-/// uselessly indexes by 0 and the basic functions aren't inlined...
-inline
-void bin_angle(
-	Real const angle_start,
-	Real const angle_step,
-	Real const ASSERT_ONLY( angle_range ),
-	Size const nbins,
-	Real const ang,
-	Size & bin_lower,
-	Size & bin_upper,
-	Real & angle_alpha
-) const {
-	/// very, very rarely, periodic_range( angle, 360 ) will return 180 instead of -180.
-	/// though it is supposed to return values in the range [-180, 180).
-debug_assert( angle_start <= ang && ang <= angle_start + angle_range );
-debug_assert( std::abs( nbins * angle_step - angle_range ) < 1e-15 );
+	/// @brief This is not the right place for this code, but the numeric interpolation library
+	/// uselessly indexes by 0 and the basic functions aren't inlined...
+	inline
+	void bin_angle(
+		Real const angle_start,
+		Real const angle_step,
+		Real const ASSERT_ONLY( angle_range ),
+		Size const nbins,
+		Real const ang,
+		Size & bin_lower,
+		Size & bin_upper,
+		Real & angle_alpha
+	) const {
+		/// very, very rarely, periodic_range( angle, 360 ) will return 180 instead of -180.
+		/// though it is supposed to return values in the range [-180, 180).
+		debug_assert( angle_start <= ang && ang <= angle_start + angle_range );
+		debug_assert( std::abs( nbins * angle_step - angle_range ) < 1e-15 );
 
-	Real real_bin_lower = ( ang - angle_start ) / angle_step;
-	Size bin_prev = static_cast< Size > ( real_bin_lower );
-	bin_lower = 1 + numeric::mod( bin_prev, nbins );
-	bin_upper = numeric::mod( bin_lower, nbins ) + 1;
-	angle_alpha = ( (ang - angle_start ) - ( bin_prev * angle_step ) ) / angle_step;
-}
+		Real real_bin_lower = ( ang - angle_start ) / angle_step;
+		Size bin_prev = static_cast< Size > ( real_bin_lower );
+		bin_lower = 1 + numeric::mod( bin_prev, nbins );
+		bin_upper = numeric::mod( bin_lower, nbins ) + 1;
+		angle_alpha = ( (ang - angle_start ) - ( bin_prev * angle_step ) ) / angle_step;
+	}
 
 protected:
 	static Size const N_PHIPSI_BINS;

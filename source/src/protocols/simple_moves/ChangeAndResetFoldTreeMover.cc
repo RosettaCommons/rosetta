@@ -27,10 +27,10 @@ static thread_local basic::Tracer TR("ChangeAndResetFoldTreeMover");
 namespace protocols {
 namespace simple_moves {
 
-	using namespace protocols::moves;
-	using core::scoring::ScoreFunctionOP;
-	using core::scoring::ScoreFunctionCOP;
-	
+using namespace protocols::moves;
+using core::scoring::ScoreFunctionOP;
+using core::scoring::ScoreFunctionCOP;
+
 ChangeAndResetFoldTreeMover::ChangeAndResetFoldTreeMover() :
 	MoverApplyingMover("ChangeAndResetFoldTreeMover"),
 	main_mover_(/* NULL */),
@@ -59,7 +59,7 @@ ChangeAndResetFoldTreeMover::ChangeAndResetFoldTreeMover(MoverOP main_mover, Cha
 }
 
 ChangeAndResetFoldTreeMover::ChangeAndResetFoldTreeMover(
-MoverOP main_mover, ChangeFoldTreeMoverOP ft_mover, core::scoring::ScoreFunctionCOP scorefxn):
+	MoverOP main_mover, ChangeFoldTreeMoverOP ft_mover, core::scoring::ScoreFunctionCOP scorefxn):
 	MoverApplyingMover("ChangeAndResetFoldTreeMover"),
 	main_mover_(main_mover),
 	ft_mover_(ft_mover),
@@ -85,7 +85,7 @@ ChangeAndResetFoldTreeMover::clone() const {
 }
 
 //ChangeAndResetFoldTreeMover & operator=(ChangeAndResetFoldTreeMover const & src) {
-//	return ChangeAndResetFoldTreeMover(src);
+// return ChangeAndResetFoldTreeMover(src);
 //}
 
 MoverOP
@@ -115,11 +115,11 @@ ChangeAndResetFoldTreeMoverCreator::mover_name() {
 
 //void
 //ChangeAndResetFoldTreeMover::parse_my_tag(
-//		TagCOP tag,
-//		basic::datacache::DataMap&,
-//		const Filters_map&,
-//		const Movers_map&,
-//		const Pose&) {
+//  TagCOP tag,
+//  basic::datacache::DataMap&,
+//  const Filters_map&,
+//  const Movers_map&,
+//  const Pose&) {
 //
 //}
 
@@ -156,7 +156,7 @@ ChangeAndResetFoldTreeMover::set_scorefxn(core::scoring::ScoreFunctionCOP scoref
 void
 ChangeAndResetFoldTreeMover::apply(core::pose::Pose& pose) {
 
-	if ((! main_mover_) || (! ft_mover_)){
+	if ( (! main_mover_) || (! ft_mover_) ) {
 		utility_exit_with_message("mover or FT mover not set in ChangeAndResetFoldTreeMover!");
 	}
 
@@ -164,19 +164,19 @@ ChangeAndResetFoldTreeMover::apply(core::pose::Pose& pose) {
 	TR << "Applying: " << main_mover_->get_name() << std::endl;
 
 	//Print score info before
-	if (scorefxn_){
+	if ( scorefxn_ ) {
 		TR << "start: "<< scorefxn_->score(pose) << std::endl;
 	}
 
 	core::kinematics::FoldTree original_ft = pose.fold_tree();
-	if (ft_mover_){
+	if ( ft_mover_ ) {
 		ft_mover_->apply(pose);
 	}
 	main_mover_->apply(pose);
 	pose.fold_tree(original_ft);
 
 	//Print score info after
-	if (scorefxn_){
+	if ( scorefxn_ ) {
 		TR << "end: " << scorefxn_->score(pose) << std::endl;
 	}
 

@@ -42,8 +42,8 @@ public:
 	MiniPose( core::pose::Pose const & pose );
 
 	MiniPose( utility::vector1< utility::vector1< PointPosition > > const & coords,
-						core::kinematics::FoldTree const & fold_tree,
-						std::string const & sequence );
+		core::kinematics::FoldTree const & fold_tree,
+		std::string const & sequence );
 
 	virtual ~MiniPose(); // auto-removing definition from header{};
 

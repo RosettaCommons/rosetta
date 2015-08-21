@@ -62,8 +62,8 @@ ResidueIndexDescription::ResidueIndexDescription() :
 	pose_numbered_( false ),
 	pose_index_( 0 ),
 	chain_( ' ' ),
-  resindex_( 0 ),
-  insertion_code_( ' ' )
+	resindex_( 0 ),
+	insertion_code_( ' ' )
 {}
 
 ResidueIndexDescription::ResidueIndexDescription(
@@ -73,8 +73,8 @@ ResidueIndexDescription::ResidueIndexDescription(
 	pose_numbered_( true ),
 	pose_index_( pose_index ),
 	chain_( ' ' ),
-  resindex_( 0 ),
-  insertion_code_( ' ' )
+	resindex_( 0 ),
+	insertion_code_( ' ' )
 {}
 
 ResidueIndexDescription::ResidueIndexDescription(
@@ -456,8 +456,8 @@ std::ostream & operator<< ( std::ostream & os, const LoopsFileIO & /*loops*/ ) {
 	/*
 	os << "LOOP  begin  end  cut  skip_rate  extended" << std::endl;
 	for ( Loops::const_iterator it = loops.begin(), it_end = loops.end();
-		 it != it_end; ++it ) {
-		os << *it << std::endl;
+	it != it_end; ++it ) {
+	os << *it << std::endl;
 	}
 	*/
 	return os;
@@ -472,7 +472,7 @@ LoopsFileIO::read_loop_file(
 {
 	std::ifstream infile( filename.c_str() );
 
-	if (!infile.good()) {
+	if ( !infile.good() ) {
 		utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + filename + "'" );
 	}
 	return read_loop_file_stream( infile, filename, prohibit_single_residue_loops );
@@ -536,7 +536,7 @@ PoseNumberedLoopFileReader::read_pose_numbered_loops_file(
 
 	SerializedLoopList loops;
 
-	while( getline( is, line) ) {
+	while ( getline( is, line) ) {
 		linecount++;
 		utility::vector1< std::string > tokens ( utility::split( line ) );
 
@@ -557,19 +557,21 @@ PoseNumberedLoopFileReader::read_pose_numbered_loops_file(
 				//std::string extend_loop_str;
 				bool extend_loop = false;
 
-				if (tokens.size() > 3)
+				if ( tokens.size() > 3 ) {
 					current_loop.cut = (core::Size) atoi(tokens[4].c_str());
-				if (tokens.size() > 4)
+				}
+				if ( tokens.size() > 4 ) {
 					current_loop.skip_rate = atof(tokens[5].c_str());
-				if (tokens.size() > 5){
-					if ( tokens[6] == "X" ){
+				}
+				if ( tokens.size() > 5 ) {
+					if ( tokens[6] == "X" ) {
 						tr.Error << "[ERROR] Error parsing " + filename + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + "[WARNING] DEPRECATED old style extended marker X is used" << std::endl;
 						extend_loop = true;
 						if ( errcount > 0 ) errcount--;
 						else {
 							utility_exit_with_message( "too many errors in loop-file " + filename );
 						}
-					}else{
+					} else {
 						int extended_token = atoi(tokens[6].c_str());
 						if  ( extended_token == 0 ) extend_loop = false;
 						else                        extend_loop = true;
@@ -580,7 +582,7 @@ PoseNumberedLoopFileReader::read_pose_numbered_loops_file(
 				validate_loop_start_stop( strict_looprelax_checks, current_loop.start, current_loop.stop, filename, linecount );
 				loops.push_back( current_loop );
 			} else if ( tokens[1][0] != '#' ) {
-				if (tokens.size() >= 2) {
+				if ( tokens.size() >= 2 ) {
 					tr.Error << "[ERROR] Error parsing " + filename + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + "DEPRECATED r++ style loopfile" << std::endl;
 
 					if ( errcount>0 ) {
@@ -594,14 +596,14 @@ PoseNumberedLoopFileReader::read_pose_numbered_loops_file(
 					current_loop.cut = 0;        // default - let LoopRebuild choose cutpoint
 					current_loop.skip_rate = 0.0;  // default - never skip
 					bool extend_loop = false;    // default - not extended
-					if (tokens.size() > 2) {
+					if ( tokens.size() > 2 ) {
 						current_loop.cut = (core::Size) atoi(tokens[3].c_str());
 					}
-					if (tokens.size() > 3) {
+					if ( tokens.size() > 3 ) {
 						current_loop.skip_rate = atof(tokens[4].c_str());
 					}
-					if (tokens.size() > 4) {
-						if ( tokens[5] == "X" ){
+					if ( tokens.size() > 4 ) {
+						if ( tokens[5] == "X" ) {
 							tr.Error << "[ERROR] Error parsing " + filename + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + "[WARNING] DEPRECATED old style extended marker X is used" << std::endl;
 							extend_loop = true;
 						} else {
@@ -619,7 +621,7 @@ PoseNumberedLoopFileReader::read_pose_numbered_loops_file(
 					tr.Warning << "[WARNING] Skipping line '" << line << "'" << std::endl;
 				}
 			}
- 		}
+		}
 	} //while
 
 	return loops;
@@ -668,8 +670,7 @@ JSONFormattedLoopsFileReader::parse_json_formatted_data(
 
 	LoopsFileDataOP loops( new LoopsFileData );
 	core::Size count_lines_approximate = linecount_offset_;
-	for ( core::Size i=0; i < array.size(); ++i )
-	{
+	for ( core::Size i=0; i < array.size(); ++i ) {
 		ensure_all_fields_are_valid( array[ i ], filename );
 		LoopFromFileData current_loop = LoopFromFileData();
 
@@ -687,17 +688,14 @@ JSONFormattedLoopsFileReader::parse_json_formatted_data(
 void
 JSONFormattedLoopsFileReader::ensure_all_fields_are_valid( utility::json_spirit::mValue & json_data, std::string const & fname )
 {
-	if ( json_data.type() != utility::json_spirit::obj_type )
-	{
+	if ( json_data.type() != utility::json_spirit::obj_type ) {
 		utility_exit_with_message( "The loop file '" + fname + "' is not formatted correctly.  Please see the documenation.");
 	}
 
 	setup_residue_type_map();
-	for (std::map<std::string,utility::json_spirit::mValue>::iterator it = json_data.get_obj().begin(); it != json_data.get_obj().end(); ++it )
-	{
+	for ( std::map<std::string,utility::json_spirit::mValue>::iterator it = json_data.get_obj().begin(); it != json_data.get_obj().end(); ++it ) {
 
-		if ( std::find( valid_loop_file_keys_.begin(), valid_loop_file_keys_.end(), it->first ) == valid_loop_file_keys_.end() )
-		{
+		if ( std::find( valid_loop_file_keys_.begin(), valid_loop_file_keys_.end(), it->first ) == valid_loop_file_keys_.end() ) {
 			utility_exit_with_message( "Unknown key \"" + it->first + ".\"  Please check your input file." );
 		}
 	}
@@ -722,7 +720,7 @@ JSONFormattedLoopsFileReader::parse_json_residue_info(
 	bool usesPDBNumbering = false;
 
 	std::string res_identity =  name_from_residue_identifier( residue_identifier );
-	if (json_loop_data.get_obj().count( res_identity ) ) {
+	if ( json_loop_data.get_obj().count( res_identity ) ) {
 		++approximate_linenumber; // we found the token, ergo, increment the approximate linenumber
 
 		ensure_all_fields_are_valid( json_loop_data.get_obj()[ res_identity ], filename );
@@ -742,7 +740,7 @@ JSONFormattedLoopsFileReader::parse_json_residue_info(
 		// chainID - One letter chainID for the residue number.  This is necessary when using PDB numbering.
 		std::string chain_identifier = name_from_loop_configuration( chainID );
 		if ( json_representation_of_residue_data.count( chain_identifier ) ) {
-			if ( json_representation_of_residue_data[ chain_identifier ].type() != utility::json_spirit::str_type ){
+			if ( json_representation_of_residue_data[ chain_identifier ].type() != utility::json_spirit::str_type ) {
 				utility_exit_with_message( "The \"chainID\" field must be a one character string.  Please check your input file, '" +filename + "'." );
 			}
 			std::string tmp_chainID = json_representation_of_residue_data[ chain_identifier ].get_str();
@@ -755,7 +753,7 @@ JSONFormattedLoopsFileReader::parse_json_residue_info(
 
 		// iCode - insertion codes are sometimes used in PDBs.  This allows any PDB residue to be used to define the loop.
 		std::string insertion_code = name_from_loop_configuration( iCode );
-		if (json_representation_of_residue_data.count( insertion_code ) ) {
+		if ( json_representation_of_residue_data.count( insertion_code ) ) {
 			if ( ! usesPDBNumbering ) {
 				utility_exit_with_message( "Using an insertion code requires specifying the residue's chainID.  Please check your input file, '" + filename + "'." );
 			}
@@ -768,7 +766,7 @@ JSONFormattedLoopsFileReader::parse_json_residue_info(
 			}
 			insert_code = char( tmp_iCode[0] );
 		}
-	} else if ( res_identity.compare( name_from_residue_identifier( cut_point ) )!= 0 ){
+	} else if ( res_identity.compare( name_from_residue_identifier( cut_point ) )!= 0 ) {
 		utility_exit_with_message( "The \"" + res_identity + "\" residue must be specified.  Please check your input file '" + filename + "'." );
 	}
 
@@ -782,7 +780,7 @@ JSONFormattedLoopsFileReader::parse_configuration_options(
 	utility::json_spirit::mValue & json_loop_data,
 	LoopFromFileData & loop
 ){
-	if (json_loop_data.get_obj().count( name_from_loop_configuration( extras ) ) ) {
+	if ( json_loop_data.get_obj().count( name_from_loop_configuration( extras ) ) ) {
 
 		utility::json_spirit::mObject json_representation_of_residue_data = json_loop_data.get_obj()[ name_from_loop_configuration( extras ) ].get_obj();
 
@@ -818,7 +816,7 @@ JSONFormattedLoopsFileReader::parse_configuration_options(
 
 				/// Talk to Andrew about this stuff.
 				/*if ( ! loop.start_res().pose_numbered() || loop.start_res().pose_numbered() != loop.end_res().pose_numbered() || loop.start_res().pose_numbered() != loop.cutpoint_res().pose_numbered() ) {
-					utility_exit_with_message( "Unable to reconcile the mixture of Rosetta and PDB numbering.  Please check your input file to ensure the correct numbering scheme is being used." );
+				utility_exit_with_message( "Unable to reconcile the mixture of Rosetta and PDB numbering.  Please check your input file to ensure the correct numbering scheme is being used." );
 				}
 				return;
 				*/
@@ -831,7 +829,7 @@ JSONFormattedLoopsFileReader::parse_configuration_options(
 
 	// make sure the numbering scheme is consistent
 	/*if ( loop.start_res().pose_numbered() || loop.start_res().pose_numbered() != loop.end_res().pose_numbered() || loop.start_res().pose_numbered() != loop.cutpoint_res().pose_numbered() ) ) {
-		utility_exit_with_message( "Unable to reconcile the mixture of Rosetta and PDB numbering.  Please check your input file to ensure the correct numbering scheme is being used." );
+	utility_exit_with_message( "Unable to reconcile the mixture of Rosetta and PDB numbering.  Please check your input file to ensure the correct numbering scheme is being used." );
 	} */
 	return;
 }

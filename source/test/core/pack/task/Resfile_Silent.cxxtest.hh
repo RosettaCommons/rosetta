@@ -79,23 +79,23 @@ public:
 	}
 
 	// ------------------------------------------ //
- 	/// @brief test how RESFILE IO
+	/// @brief test how RESFILE IO
 
 	bool compare_packertasks( PackerTask const & tA, PackerTask const & tB )
 	{
 		TR << tA << std::endl;
 		TS_ASSERT_EQUALS( tA.total_residue(), tA.total_residue() );
-		for ( int i=1, it_end = tA.total_residue(); i <= it_end; ++i){
+		for ( int i=1, it_end = tA.total_residue(); i <= it_end; ++i ) {
 			TS_ASSERT_EQUALS( tA.pack_residue( i ), tB.pack_residue( i ) );
 			TS_ASSERT_EQUALS( tA.design_residue( i ), tB.design_residue( i ) );
 			ResidueLevelTask::ResidueTypeCOPListConstIter itA( tA.residue_task( i ).allowed_residue_types_begin() );
 			ResidueLevelTask::ResidueTypeCOPListConstIter itB( tB.residue_task( i ).allowed_residue_types_begin() );
-			while( itA != tA.residue_task( i ).allowed_residue_types_end() )
-				{
-					TS_ASSERT_EQUALS( (*itA)->name(), (*itB)->name() );
-					++itA;
-					++itB;
-				}
+			while ( itA != tA.residue_task( i ).allowed_residue_types_end() )
+					{
+				TS_ASSERT_EQUALS( (*itA)->name(), (*itB)->name() );
+				++itA;
+				++itB;
+			}
 		}
 		TR << tB << std::endl;
 		return true;
@@ -114,11 +114,11 @@ public:
 		PoseOP silent_pose;
 		const std::string silent_file_name( "core/pack/task/test_in.silent" );
 		SilentFilePoseInputStreamOP silent_input( new SilentFilePoseInputStream( silent_file_name ) );
-		silent_pose =	silent_input->get_all_poses( *residue_set )[ 1 ];
+		silent_pose = silent_input->get_all_poses( *residue_set )[ 1 ];
 		PackerTaskOP task_silent( TaskFactory::create_packer_task( *silent_pose ) );
 		rrop->apply( *silent_pose, *task_silent );
 
-		if( compare_packertasks( *task_pdb, *task_silent ) ){
+		if ( compare_packertasks( *task_pdb, *task_silent ) ) {
 			TR << "END_OF_TEST" << std::endl;
 		}
 	}

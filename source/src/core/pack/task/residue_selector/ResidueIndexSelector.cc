@@ -35,7 +35,7 @@ namespace task {
 namespace residue_selector {
 
 ResidueIndexSelector::ResidueIndexSelector():
-index_str_() {}
+	index_str_() {}
 
 ResidueIndexSelector::ResidueIndexSelector( std::string const & index_str )
 {
@@ -48,7 +48,7 @@ ResidueIndexSelector::~ResidueIndexSelector() {}
 ResidueSubset
 ResidueIndexSelector::apply( core::pose::Pose const & pose ) const
 {
-debug_assert( !index_str_.empty() );
+	debug_assert( !index_str_.empty() );
 
 	ResidueSubset subset( pose.total_residue(), false );
 	std::set< Size > const res_set( get_resnum_list( index_str_, pose ) );
@@ -67,8 +67,8 @@ debug_assert( !index_str_.empty() );
 
 void
 ResidueIndexSelector::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &)
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &)
 {
 	try {
 		set_index( tag->getOption< std::string >( "resnums" ) );
@@ -91,7 +91,7 @@ std::string ResidueIndexSelector::get_name() const {
 }
 
 std::string ResidueIndexSelector::class_name() {
-		  return "Index";
+	return "Index";
 }
 
 ResidueSelectorOP

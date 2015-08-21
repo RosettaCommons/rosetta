@@ -42,8 +42,8 @@
 // C++ Headers
 #include <string>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::string;
 using core::Size;
@@ -128,23 +128,23 @@ GeometricSolvationFeatures::report_features(
 
 	std::string select_string =
 		"SELECT\n"
-		"	site.site_id,\n"
-		"	site.resNum,\n"
-		"	site.atmNum\n"
+		"\tsite.site_id,\n"
+		"\tsite.resNum,\n"
+		"\tsite.atmNum\n"
 		"FROM\n"
-		"	hbond_sites as site\n"
+		"\thbond_sites as site\n"
 		"WHERE\n"
-		"	site.struct_id = ?;";
+		"\tsite.struct_id = ?;";
 	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
 	select_statement.bind(1,struct_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	while(res.next()){
+	while ( res.next() ) {
 		Size site_id, resNum, atmNum;
 		res >> site_id >> resNum >> atmNum;
 
 		Real const geometric_solvation_exact(
-		  geo_sol_energy_.compute_polar_group_sol_energy(
+			geo_sol_energy_.compute_polar_group_sol_energy(
 			pose,
 			pose.residue(resNum),
 			atmNum));

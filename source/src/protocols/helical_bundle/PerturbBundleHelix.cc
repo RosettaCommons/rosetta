@@ -72,10 +72,10 @@ PerturbBundleHelixCreator::mover_name()
 
 /// @brief Creator for PerturbBundleHelix mover.
 PerturbBundleHelix::PerturbBundleHelix():
-		Mover("PerturbBundleHelix"),
-		parameters_set_index_(0),
-		parameters_index_(0),
-		last_apply_failed_(false)
+	Mover("PerturbBundleHelix"),
+	parameters_set_index_(0),
+	parameters_index_(0),
+	last_apply_failed_(false)
 {
 }
 
@@ -103,7 +103,7 @@ protocols::moves::MoverOP PerturbBundleHelix::fresh_instance() const {
 /// @brief Actually apply the mover to the pose.
 void PerturbBundleHelix::apply (core::pose::Pose & pose)
 {
-	if(TR.visible()) TR << "Perturbing a helix in a helical bundle using the Crick equations." << std::endl;
+	if ( TR.visible() ) TR << "Perturbing a helix in a helical bundle using the Crick equations." << std::endl;
 
 	runtime_assert_string_msg( parameters_set_index()>0  && parameters_set_index()<=pose.conformation().n_parameters_sets(),
 		"In protocols::helical_bundle::PerturbBundleHelix::apply() : The index of the ParametersSet object is not an index that exists in the pose." );
@@ -145,41 +145,41 @@ void PerturbBundleHelix::apply (core::pose::Pose & pose)
 	);
 
 	set_last_apply_failed(failed);
-	if(failed) {
-		if(TR.visible()) TR << "Mover failed.  The Crick parameters do not generate a sensible helix.  Returning input pose." << std::endl;
+	if ( failed ) {
+		if ( TR.visible() ) TR << "Mover failed.  The Crick parameters do not generate a sensible helix.  Returning input pose." << std::endl;
 		return; //At this point, the input pose has not been modified.
 	}
 
 	// Make a temporary pose copy and place the atoms using the Crick equations.
-	if(TR.Debug.visible()) TR.Debug << "Placing atoms." << std::endl;
+	if ( TR.Debug.visible() ) TR.Debug << "Placing atoms." << std::endl;
 	core::pose::Pose pose_copy(pose);
 	place_atom_positions(pose_copy, atom_positions, params->first_residue()->seqpos(), params->last_residue()->seqpos());
 
 	//Copy the bond length values from the pose in which we set the x,y,z coordinates of mainchain atoms based on the Crick equations
 	//to the ideal pose.
-	if(params->allow_bondlengths()) {
-		if(TR.Debug.visible()) TR.Debug << "Copying bond length values." << std::endl;
+	if ( params->allow_bondlengths() ) {
+		if ( TR.Debug.visible() ) TR.Debug << "Copying bond length values." << std::endl;
 		copy_helix_bondlengths(pose, pose_copy, params->first_residue()->seqpos(), params->last_residue()->seqpos());
 	}
 
 	//Copy the bond angle values from the pose in which we set the x,y,z coordinates of mainchain atoms based on the Crick equations
 	//to the ideal pose.
-	if(params->allow_bondangles()) {
-		if(TR.Debug.visible()) TR.Debug << "Copying bond angle values." << std::endl;
+	if ( params->allow_bondangles() ) {
+		if ( TR.Debug.visible() ) TR.Debug << "Copying bond angle values." << std::endl;
 		copy_helix_bondangles(pose, pose_copy, params->first_residue()->seqpos(), params->last_residue()->seqpos());
 	}
 
 	//Copy the dihedral values from the pose in which we set the x,y,z coordinates of mainchain atoms based on the Crick equations
 	//to the ideal pose.
-	if(params->allow_dihedrals()) {
-		if(TR.Debug.visible()) TR.Debug << "Copying dihedral values." << std::endl;
+	if ( params->allow_dihedrals() ) {
+		if ( TR.Debug.visible() ) TR.Debug << "Copying dihedral values." << std::endl;
 		copy_helix_dihedrals(pose, pose_copy, params->first_residue()->seqpos(), params->last_residue()->seqpos());
 	}
 
 	//TODO align perturbed helix to ideal helix position.
 	align_mainchain_atoms_of_residue_range( pose, pose_copy, params->first_residue()->seqpos(), params->last_residue()->seqpos());
 
-	if(TR.Debug.visible()) TR.Debug << "Finished apply function." << std::endl;
+	if ( TR.Debug.visible() ) TR.Debug << "Finished apply function." << std::endl;
 
 	return;
 }
@@ -199,15 +199,15 @@ std::string PerturbBundleHelix::get_name() const{
 ///
 /*void
 PerturbBundleHelix::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data_map,
-		protocols::filters::Filters_map const &filters,
-		protocols::moves::Movers_map const &movers,
-		core::pose::Pose const & pose
+utility::tag::TagCOP tag,
+basic::datacache::DataMap & data_map,
+protocols::filters::Filters_map const &filters,
+protocols::moves::Movers_map const &movers,
+core::pose::Pose const & pose
 ) {
 
 
-	return;
+return;
 }*/
 
 

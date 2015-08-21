@@ -21,31 +21,31 @@ namespace solution_pickers {
 
 /// @brief Apply rama and bump checks to quickly filter out bad solutions.
 ///
-/// @details The rama check only considers the pivot torsions, since it is 
-/// assumed that the non-pivot torsions were set as desired.  This check  
-/// employs a Monte Carlo acceptance step, which means that the pivot torsions 
-/// will really be sampled from a rama distribution (ignoring the inherent 
-/// geometric biases in the closure algorithm) when this check is enabled.  
-/// However, note that the rama distribution will be double-counted if the 
+/// @details The rama check only considers the pivot torsions, since it is
+/// assumed that the non-pivot torsions were set as desired.  This check
+/// employs a Monte Carlo acceptance step, which means that the pivot torsions
+/// will really be sampled from a rama distribution (ignoring the inherent
+/// geometric biases in the closure algorithm) when this check is enabled.
+/// However, note that the rama distribution will be double-counted if the
 /// score function also contains a rama term, which it usually does.
 ///
-/// The bump check checks for clashes between the N, CA, C, O, and CB atoms of 
-/// every residue in the loop versus every other residue in the protein.  This 
-/// filter is O(n^2) and is much slower than the constant time rama check.  The 
-/// rama check is also very selective; it usually filters out more than 90% of 
-/// proposed solutions.  For these reasons, it is important that the rama check 
-/// be run before the bump check.  You can disable the rama check, but this 
+/// The bump check checks for clashes between the N, CA, C, O, and CB atoms of
+/// every residue in the loop versus every other residue in the protein.  This
+/// filter is O(n^2) and is much slower than the constant time rama check.  The
+/// rama check is also very selective; it usually filters out more than 90% of
+/// proposed solutions.  For these reasons, it is important that the rama check
+/// be run before the bump check.  You can disable the rama check, but this
 /// would probably lead to a noticeable drop in performance.
 
 class FilteredSolutions : public SolutionPicker {
 
 public:
-	/// @brief Constructor which can enable or disable any of the filters used by 
+	/// @brief Constructor which can enable or disable any of the filters used by
 	/// this algorithm.
 	FilteredSolutions(
-			bool check_rama=true,
-			bool check_overlap=true,
-			bool be_lenient=false);
+		bool check_rama=true,
+		bool check_overlap=true,
+		bool be_lenient=false);
 
 public:
 	/// @copydoc SolutionPicker::pick_and_apply

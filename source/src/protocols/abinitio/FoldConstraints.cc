@@ -91,12 +91,12 @@ using namespace core;
 
 /// @brief c'stor from Movers
 FoldConstraints::FoldConstraints(
-	 simple_moves::FragmentMoverOP brute_move_small,
-	 simple_moves::FragmentMoverOP brute_move_large,
-	 simple_moves::FragmentMoverOP smooth_move_small,
-	 int dummy /* otherwise the two constructors are ambigous */
+	simple_moves::FragmentMoverOP brute_move_small,
+	simple_moves::FragmentMoverOP brute_move_large,
+	simple_moves::FragmentMoverOP smooth_move_small,
+	int dummy /* otherwise the two constructors are ambigous */
 ) : ClassicAbinitio( brute_move_small, brute_move_large, smooth_move_small, dummy ),
-			constraint_weight_( 1.0 ), run_( 0 )
+	constraint_weight_( 1.0 ), run_( 0 )
 {
 	BaseClass::type( "FoldConstraints" );
 	set_default_options();
@@ -104,11 +104,11 @@ FoldConstraints::FoldConstraints(
 
 /// @brief c'stor from FragSets --- ClassicFragmentMover and SmoothFragmentMover will be created
 FoldConstraints::FoldConstraints(
-	 	core::fragment::FragSetCOP fragset3mer,
-		core::fragment::FragSetCOP fragset9mer,
-		core::kinematics::MoveMapCOP movemap
+	core::fragment::FragSetCOP fragset3mer,
+	core::fragment::FragSetCOP fragset9mer,
+	core::kinematics::MoveMapCOP movemap
 ) : ClassicAbinitio( fragset3mer, fragset9mer, movemap ),
-		constraint_weight_( 1.0 ), run_( 0 )
+	constraint_weight_( 1.0 ), run_( 0 )
 {
 	BaseClass::type( "FoldConstraints" );
 	set_default_options();
@@ -142,7 +142,7 @@ FoldConstraints::~FoldConstraints() {}
 
 moves::MoverOP
 FoldConstraints::clone() const {
- return moves::MoverOP( new FoldConstraints(*this) );
+	return moves::MoverOP( new FoldConstraints(*this) );
 }
 
 
@@ -168,7 +168,7 @@ void FoldConstraints::set_default_options() {
 	}
 
 	start_ramp_cstweight_ = option[ fold_cst::reramp_start_cstweight ];
-  ramp_cst_cycles_ =  option[ fold_cst::reramp_cst_cycles ];
+	ramp_cst_cycles_ =  option[ fold_cst::reramp_cst_cycles ];
 	bSkipOnNoViolation_ = option[ fold_cst::skip_on_noviolation_in_stage1 ];
 	constraint_threshold_ = option[ fold_cst::stage2_constraint_threshold ];
 }
@@ -202,7 +202,7 @@ FoldConstraints::set_max_seq_sep( core::pose::Pose& pose, Size setting ) {
 			}
 			constraints_->set_max_seq_sep( setting );
 			pose.constraint_set( constraints_ );
-			if ( !bMinTrial_ ) 	mc().reset( pose ); //is also done by min_trial... don't do it twice
+			if ( !bMinTrial_ )  mc().reset( pose ); //is also done by min_trial... don't do it twice
 		}
 	} else if ( !option[ OptionKeys::fold_cst::force_minimize ] ) return; //jump out if no constraints and no force_minimize
 	if ( bMinTrial_ ) {
@@ -229,12 +229,12 @@ FoldConstraints::do_stage1_cycles( pose::Pose& pose ) {
 	if ( pose.constraint_set()->has_residue_pair_constraints() ) {
 		// Now ramp up the seq_sep of the constraints... still on score0
 		for ( Size jk = 3; jk <= noe_stage( total_res( pose ), seq_sep_stage1_); jk += 2 ) {
-			//		mc().recover_low( pose ); superfluous -- done in set_max_seq_sep if constraints are actually present
+			//  mc().recover_low( pose ); superfluous -- done in set_max_seq_sep if constraints are actually present
 			set_max_seq_sep( pose, jk);
 			if ( tr.visible() ) pose.constraint_set()->show_violations( tr, pose, show_viol_level_ );
 			if ( old_constraint_score == evaluate_constraint_energy ( pose, mc().score_function() ) ) continue;
 			for ( Size j = 1; j <= cycles; ++j, ++total_cycles ) {
-				//			if ( evaluate_constraint_energy( pose, mc().score_function() ) < 10.0 ) break; this is unlikely to be triggered for cnc and always triggered for james-cst
+				//   if ( evaluate_constraint_energy( pose, mc().score_function() ) < 10.0 ) break; this is unlikely to be triggered for cnc and always triggered for james-cst
 				if ( numeric::mod( j, (Size)10)==0 && bSkipOnNoViolation_ && pose.constraint_set()->show_violations( tr, pose, 0 ) == 0 ) break;
 				trial->apply( pose );
 			}
@@ -249,7 +249,7 @@ FoldConstraints::prepare_stage2( core::pose::Pose& pose ) {
 	set_max_seq_sep( pose, noe_stage( total_res( pose ), seq_sep_stage1_ ) );
 	Parent::prepare_stage2( pose );
 	if ( tr.visible() ) pose.constraint_set()->show_violations( tr, pose, show_viol_level_ );
-	//	if ( bMinTrial_ ) min_trial( pose ); done in set_max_seq_sep now
+	// if ( bMinTrial_ ) min_trial( pose ); done in set_max_seq_sep now
 	return true;
 }
 
@@ -281,14 +281,14 @@ FoldConstraints::do_stage2_cycles( pose::Pose& pose ) {
 bool
 FoldConstraints::prepare_loop_in_stage3( core::pose::Pose &pose, Size loop_iteration, Size total_iterations ) {
 	/* stage3 rosetta++
-		 noe_stage = 15 + (total_residue/2-15)*kk/nloop;
-		 classical_constraints::BOUNDARY::set_max_seqSep(noe_stage);
+	noe_stage = 15 + (total_residue/2-15)*kk/nloop;
+	classical_constraints::BOUNDARY::set_max_seqSep(noe_stage);
 	*/
 	bool success = Parent::prepare_loop_in_stage3( pose, loop_iteration, total_iterations );
 
 	if ( constraints_ ) {
-		//		mc().recover_low( pose ); superfluous -- recover low in set_max_seq_sep if actually necessary
-		core::Real const noe_fact ( seq_sep_stage1_ + ( seq_sep_stage3_	- seq_sep_stage1_) * 1.0*loop_iteration/ total_iterations );
+		//  mc().recover_low( pose ); superfluous -- recover low in set_max_seq_sep if actually necessary
+		core::Real const noe_fact ( seq_sep_stage1_ + ( seq_sep_stage3_ - seq_sep_stage1_) * 1.0*loop_iteration/ total_iterations );
 		tr.Debug << "current noe_fact is " << noe_fact << std::endl;
 		set_max_seq_sep( pose, noe_stage( total_res( pose ), noe_fact) );
 		if ( tr.Info.visible() ) pose.constraint_set()->show_violations( tr, pose, show_viol_level_ );
@@ -312,11 +312,11 @@ FoldConstraints::prepare_loop_in_stage3( core::pose::Pose &pose, Size loop_itera
 bool
 FoldConstraints::prepare_loop_in_stage4( core::pose::Pose &pose, Size loop_iteration, Size total_iterations ) {
 	/* stage3 rosetta++
-		 noe_stage = 15 + (total_residue/2-15)*kk/nloop;
-		 classical_constraints::BOUNDARY::set_max_seqSep(noe_stage);
+	noe_stage = 15 + (total_residue/2-15)*kk/nloop;
+	classical_constraints::BOUNDARY::set_max_seqSep(noe_stage);
 	*/
 	bool success = Parent::prepare_loop_in_stage4( pose, loop_iteration, total_iterations );
-	//	if ( bMinTrial_ ) min_trial( pose ); done in set_max_seq_sep now
+	// if ( bMinTrial_ ) min_trial( pose ); done in set_max_seq_sep now
 	if ( constraints_ ) {
 		Real const noe_fact ( seq_sep_stage3_ + ( seq_sep_stage4_ - seq_sep_stage3_ ) * 1.0*loop_iteration / total_iterations );
 		tr.Debug << "current noe_fact is " << noe_fact << std::endl;
@@ -343,7 +343,7 @@ FoldConstraints::set_default_scores() {
 	Parent::set_default_scores();
 	tr.Debug << "switch constraints on..." << std::endl;
 	set_score_weight( atom_pair_constraint, constraint_weight_ );
-	//	set_score_weight( angle_constraint, constraint_weight_ );
+	// set_score_weight( angle_constraint, constraint_weight_ );
 }
 
 

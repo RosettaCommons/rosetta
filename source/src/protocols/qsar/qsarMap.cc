@@ -33,7 +33,7 @@ static thread_local basic::Tracer qsarMapTracer( "protocols.qsar.qsarMap" );
 
 
 qsarPoint::qsarPoint(std::string type, core::Real value, std::string name, core::conformation::ResidueOP residue ):
-		type_(type), value_(value), atom_name_(name), residue_(residue)
+	type_(type), value_(value), atom_name_(name), residue_(residue)
 {}
 
 void qsarPoint::set_value(core::Real value)
@@ -62,7 +62,7 @@ core::conformation::ResidueOP qsarPoint::get_residue()
 }
 
 qsarMap::qsarMap(std::string map_name, core::conformation::ResidueOP residue) :
-		map_name_(map_name), residue_(residue)
+	map_name_(map_name), residue_(residue)
 { }
 
 core::Size qsarMap::size()
@@ -76,11 +76,9 @@ void qsarMap::fill_with_value(core::Size value,utility::vector1<std::string> gri
 	core::Size const heavy_atom_size(residue_->nheavyatoms());
 	//std::cout << "atom size" << heavy_atom_size <<std::endl;
 
-	for(core::Size atom_index = 1; atom_index <= heavy_atom_size; ++atom_index)
-	{
+	for ( core::Size atom_index = 1; atom_index <= heavy_atom_size; ++atom_index ) {
 		std::string atom_name(residue_->atom_name(atom_index));
-		for(core::Size grid_index = 1; grid_index <= grids_to_use.size(); ++grid_index)
-		{
+		for ( core::Size grid_index = 1; grid_index <= grids_to_use.size(); ++grid_index ) {
 			//qsarType current_type(static_cast<qsarType>(enum_index));
 			qsarPointOP current_point( new qsarPoint(grids_to_use[grid_index],value,atom_name,residue_) );
 			std::string point_name(grids_to_use[grid_index]+"_"+atom_name);
@@ -94,35 +92,35 @@ void qsarMap::fill_with_value(core::Size value,utility::vector1<std::string> gri
 // MolData no longer exists - if you need this, look into the string properties of the restype
 //bool qsarMap::fill_from_mol_data(core::chemical::sdf::MolData mol_data)
 //{
-//	//the mol data line has type qsar_map.  it is a collection of lines like this:
-//	//atomno\tqsar_type\tqsar_weight
-//	//atomno is a Size, qsar_type is a string, qsar_weight is a float
-//	this->clear();
-//	utility::vector1<std::string> data_lines(mol_data.get_mol_data_string_vector("qsar_map", '\n'));
-//	if(data_lines.size() == 0)
-//	{
-//		return false;
-//	}
+// //the mol data line has type qsar_map.  it is a collection of lines like this:
+// //atomno\tqsar_type\tqsar_weight
+// //atomno is a Size, qsar_type is a string, qsar_weight is a float
+// this->clear();
+// utility::vector1<std::string> data_lines(mol_data.get_mol_data_string_vector("qsar_map", '\n'));
+// if(data_lines.size() == 0)
+// {
+//  return false;
+// }
 //
-//	for(core::Size index = 1; index <= data_lines.size(); ++index)
-//	{
-//		std::string line(data_lines[index]);
+// for(core::Size index = 1; index <= data_lines.size(); ++index)
+// {
+//  std::string line(data_lines[index]);
 //
-//		utility::vector1<std::string> line_fields(utility::string_split(line, '\t'));
-//		if(line_fields.size() != 3)
-//		{
-//			utility_exit_with_message("a qsar_map data line doesn't have 3 fields. something is wrong. Aborting.");
-//		}
+//  utility::vector1<std::string> line_fields(utility::string_split(line, '\t'));
+//  if(line_fields.size() != 3)
+//  {
+//   utility_exit_with_message("a qsar_map data line doesn't have 3 fields. something is wrong. Aborting.");
+//  }
 //
-//		std::string atom_name(residue_->atom_name(utility::string2int(line_fields[1])));
-//		std::string qsar_type(line_fields[2]);
-//		//qsarType qsar_type(qsarTypeManager::qsar_type_from_name(line_fields[2]));
-//		core::Real qsar_weight(utility::string2float(line_fields[3]));
-//		qsarPointOP current_point(new qsarPoint(qsar_type,qsar_weight,atom_name,residue_));
-//		std::string point_name(line_fields[3]+"_"+atom_name);
-//		this->add_point(point_name,current_point);
-//	}
-//	return true;
+//  std::string atom_name(residue_->atom_name(utility::string2int(line_fields[1])));
+//  std::string qsar_type(line_fields[2]);
+//  //qsarType qsar_type(qsarTypeManager::qsar_type_from_name(line_fields[2]));
+//  core::Real qsar_weight(utility::string2float(line_fields[3]));
+//  qsarPointOP current_point(new qsarPoint(qsar_type,qsar_weight,atom_name,residue_));
+//  std::string point_name(line_fields[3]+"_"+atom_name);
+//  this->add_point(point_name,current_point);
+// }
+// return true;
 //}
 
 void qsarMap::add_point(std::string point_name, qsarPointOP new_point)
@@ -154,11 +152,9 @@ void qsarMap::clear()
 qsarPointOP qsarMap::get_point(std::string const point_name)
 {
 	std::map<std::string,qsarPointOP>::iterator point(qsar_map_.find(point_name));
-	if(point == qsar_map_.end())
-	{
+	if ( point == qsar_map_.end() ) {
 		return 0;
-	}else
-	{
+	} else {
 		return point->second;
 	}
 }
@@ -169,11 +165,9 @@ qsarPointOP qsarMap::get_point(core::Size const atom_id, std::string const type)
 	std::multimap<core::Size, qsarPointOP>::iterator upper_bound(atom_map_.upper_bound(atom_id));
 
 	std::multimap<core::Size,qsarPointOP>::iterator current_point(lower_bound);
-	for(; current_point !=upper_bound; ++current_point)
-	{
+	for ( ; current_point !=upper_bound; ++current_point ) {
 		qsarPointOP point = current_point->second;
-		if(point->get_type() == type)
-		{
+		if ( point->get_type() == type ) {
 			return point;
 		}
 	}
@@ -195,8 +189,7 @@ utility::vector1<qsarPointOP> qsarMap::find_points_for_atom(core::Size const ato
 	std::multimap<core::Size, qsarPointOP>::iterator upper_bound(atom_map_.upper_bound(atom_id));
 
 	std::multimap<core::Size,qsarPointOP>::iterator current_point(lower_bound);
-	for(; current_point != upper_bound; ++current_point)
-	{
+	for ( ; current_point != upper_bound; ++current_point ) {
 		points.push_back(current_point->second);
 	}
 
@@ -212,8 +205,7 @@ utility::vector1<qsarPointOP> qsarMap::find_points_of_type(std::string const typ
 	std::multimap<std::string, qsarPointOP>::iterator upper_bound(type_map_.upper_bound(type));
 
 	std::multimap<std::string,qsarPointOP>::iterator current_point(lower_bound);
-	for(; current_point != upper_bound; ++current_point)
-	{
+	for ( ; current_point != upper_bound; ++current_point ) {
 		points.push_back(current_point->second);
 	}
 

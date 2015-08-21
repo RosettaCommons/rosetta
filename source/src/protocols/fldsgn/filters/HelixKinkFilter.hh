@@ -81,7 +81,7 @@ public:// virtual constructor
 	virtual FilterOP clone() const { return FilterOP( new HelixKinkFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const {	return FilterOP( new HelixKinkFilter() ); }
+	virtual FilterOP fresh_instance() const { return FilterOP( new HelixKinkFilter() ); }
 
 
 public:// accessor
@@ -95,10 +95,10 @@ public:// parser
 
 
 	virtual void parse_my_tag( TagCOP tag,
-														 basic::datacache::DataMap &,
-														 Filters_map const &,
-														 Movers_map const &,
-														 Pose const & );
+		basic::datacache::DataMap &,
+		Filters_map const &,
+		Movers_map const &,
+		Pose const & );
 
 
 public:// virtual main operation
@@ -120,8 +120,8 @@ private:
 
 	/// @brief
 	String string_resnums_;
-  bool select_resnums_;
-  bool select_range_;
+	bool select_resnums_;
+	bool select_range_;
 	core::Size helix_start_;
 	core::Size helix_end_;
 

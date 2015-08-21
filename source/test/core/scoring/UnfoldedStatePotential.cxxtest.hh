@@ -48,7 +48,7 @@ using namespace core::chemical;
 
 class UnfoldedStatePotentialTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	PoseOP pose;
 	UnfoldedStatePotentialOP unfE_potential;
@@ -90,7 +90,7 @@ class UnfoldedStatePotentialTests : public CxxTest::TestSuite {
 		// atr  rep  sol  intra_rep  pro_close  pair  hb_sr_bb  hb_lr_bb  hb_bb_sc  hb_sc  rama  omega  dun  paapp
 		// GLY 1.6906 -0.4879 -1.2009 -0.0181 -0.0033 0.0000 0.3093 0.0139 0.0093 0.0000 -0.6594 -0.1474 0.0000 1.0637
 		// LEU 3.2405 -0.6543 -1.7746 -2.0520 -0.0049 0.0000 0.5425 0.0343 0.0046 0.0000 0.1254 -0.1717 -0.6123 0.1728
-		
+
 		EnergyMap emap;
 		emap.zero();
 		unfE_potential->raw_unfolded_state_energymap( (pose->residue(3)).type().name3(), emap );

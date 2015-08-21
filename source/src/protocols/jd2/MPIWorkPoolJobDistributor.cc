@@ -101,9 +101,9 @@ MPIWorkPoolJobDistributor::go( protocols::moves::MoverOP mover )
 #endif
 
 	if ( rank_ == 0 ) {
-	master_go( mover );
+		master_go( mover );
 	} else {
-	slave_go( mover );
+		slave_go( mover );
 	}
 
 	// ideally these would be called in the dtor but the way we have the singleton pattern set up the dtors don't get
@@ -313,9 +313,9 @@ void
 MPIWorkPoolJobDistributor::slave_go( protocols::moves::MoverOP mover )
 {
 	runtime_assert( !( rank_ == 0 ) );
-	
-	if( sequential_distribution() && rank_ == 1 ) set_starter_for_sequential_distribution( true );
-	
+
+	if ( sequential_distribution() && rank_ == 1 ) set_starter_for_sequential_distribution( true );
+
 	go_main( mover );
 }
 
@@ -326,9 +326,9 @@ MPIWorkPoolJobDistributor::get_new_job_id()
 	core::Size temp( 0 );
 
 	if ( rank_ == 0 ) {
-	temp = master_get_new_job_id();
+		temp = master_get_new_job_id();
 	} else {
-	temp = slave_get_new_job_id();
+		temp = slave_get_new_job_id();
 	}
 
 	return temp;
@@ -343,17 +343,17 @@ MPIWorkPoolJobDistributor::master_get_new_job_id()
 	JobsContainer & jobs( get_jobs_nonconst() ); //Must be non-const access in case jobs list needs to be updated.
 	JobOutputterOP outputter = job_outputter();
 
-	while( next_job_to_assign_ <= jobs.size()) {
+	while ( next_job_to_assign_ <= jobs.size() ) {
 		++next_job_to_assign_;
 		if ( next_job_to_assign_ > jobs.size() ) {
-			if(TR.visible()) TR << "Master Node: No more jobs to assign, setting next job id to zero" << std::endl;
+			if ( TR.visible() ) TR << "Master Node: No more jobs to assign, setting next job id to zero" << std::endl;
 			next_job_to_assign_ = 0;
 			return 0;
-		}	else if ( !outputter->job_has_completed( jobs[ next_job_to_assign_ ] ) ) {
-			if(TR.visible()) TR << "Master Node: Getting next job to assign from list id " << next_job_to_assign_ << " of " << jobs.size() << std::endl;
+		} else if ( !outputter->job_has_completed( jobs[ next_job_to_assign_ ] ) ) {
+			if ( TR.visible() ) TR << "Master Node: Getting next job to assign from list id " << next_job_to_assign_ << " of " << jobs.size() << std::endl;
 			return next_job_to_assign_; //not used by callers
 		} else if ( outputter->job_has_completed( jobs[ next_job_to_assign_ ] ) && option[ out::overwrite ].value() ) {
-			if(TR.visible()) TR << "Master Node: Getting next job to assign from list, overwriting id " << next_job_to_assign_ << " of " << jobs.size() << std::endl;
+			if ( TR.visible() ) TR << "Master Node: Getting next job to assign from list, overwriting id " << next_job_to_assign_ << " of " << jobs.size() << std::endl;
 			return next_job_to_assign_; //not used by callers
 		}
 	}
@@ -366,7 +366,7 @@ MPIWorkPoolJobDistributor::slave_get_new_job_id()
 {
 #ifdef USEMPI
 	runtime_assert( !( rank_ == 0 ) );
-	
+
 	if( sequential_distribution() && !starter_for_sequential_distribution()) wait_for_go_signal();
 
 	if ( repeat_job_ == true ) {
@@ -382,7 +382,7 @@ MPIWorkPoolJobDistributor::slave_get_new_job_id()
 		MPI_Send( &empty_data, 1, MPI_UNSIGNED_LONG, 0, NEW_JOB_ID_TAG, MPI_COMM_WORLD );
 
 		MPI_Recv( &current_job_id_, 1, MPI_UNSIGNED_LONG, 0, NEW_JOB_ID_TAG, MPI_COMM_WORLD, &status );
-		
+
 		//If we're using the LargeNstructJobInputter, which limits the number of jobs held in memory at any given time, then we need to ensure that
 		//the slave knows that lower-numbered jobs can be deleted:		
 		JobsContainer & jobs( get_jobs_nonconst() ); //Must be nonconst to mark jobs as deletable.
@@ -400,9 +400,9 @@ MPIWorkPoolJobDistributor::slave_get_new_job_id()
 			TR << std::endl;
 		}		
 	}
-	
+
 	if( sequential_distribution() ) send_go_signal();
-	
+
 #endif
 	return current_job_id_;
 }
@@ -412,9 +412,9 @@ void
 MPIWorkPoolJobDistributor::mark_current_job_id_for_repetition()
 {
 	if ( rank_ == 0 ) {
-	master_mark_current_job_id_for_repetition();
+		master_mark_current_job_id_for_repetition();
 	} else {
-	slave_mark_current_job_id_for_repetition();
+		slave_mark_current_job_id_for_repetition();
 	}
 	clear_current_job_output();
 }
@@ -423,7 +423,7 @@ void
 MPIWorkPoolJobDistributor::master_mark_current_job_id_for_repetition()
 {
 	runtime_assert( rank_ == 0 );
-	if(TR.visible()) TR << "Master Node: Mark current job for repetition" << std::endl;
+	if ( TR.visible() ) TR << "Master Node: Mark current job for repetition" << std::endl;
 	utility_exit_with_message( "Master Node: master_mark_current_job_id_for_repetition() should never be called" );
 
 }
@@ -432,7 +432,7 @@ void
 MPIWorkPoolJobDistributor::slave_mark_current_job_id_for_repetition()
 {
 	runtime_assert( !( rank_ == 0 ) );
-	if(TR.visible()) TR << "Slave Node " << rank_ << ": Mark current job for repetition, id " << current_job_id_ << std::endl;
+	if ( TR.visible() ) TR << "Slave Node " << rank_ << ": Mark current job for repetition, id " << current_job_id_ << std::endl;
 	repeat_job_ = true;
 }
 
@@ -441,9 +441,9 @@ void
 MPIWorkPoolJobDistributor::remove_bad_inputs_from_job_list()
 {
 	if ( rank_ == 0 ) {
-	master_remove_bad_inputs_from_job_list();
+		master_remove_bad_inputs_from_job_list();
 	} else {
-	slave_remove_bad_inputs_from_job_list();
+		slave_remove_bad_inputs_from_job_list();
 	}
 }
 
@@ -457,11 +457,11 @@ MPIWorkPoolJobDistributor::master_remove_bad_inputs_from_job_list()
 
 	std::string const & bad_job_id_input_tag( jobs[ bad_job_id_ ]->input_tag() );
 
-	if(TR.visible()) TR << "Master Node: Job id " << bad_job_id_ << " failed, reporting bad input; other jobs of same input will be canceled: " << job_outputter()->output_name( jobs[ bad_job_id_ ] ) << std::endl;
+	if ( TR.visible() ) TR << "Master Node: Job id " << bad_job_id_ << " failed, reporting bad input; other jobs of same input will be canceled: " << job_outputter()->output_name( jobs[ bad_job_id_ ] ) << std::endl;
 	jobs[bad_job_id_]->set_can_be_deleted(true);
 
-	while( next_job_to_assign_ <= jobs.size() && jobs[ next_job_to_assign_ ]->input_tag() == bad_job_id_input_tag ) {
-		if(TR.visible()) TR << "Master Node: Job canceled without trying due to previous bad input: " << job_outputter()->output_name( jobs[ next_job_to_assign_ ] ) << " id " << next_job_to_assign_ << std::endl;
+	while ( next_job_to_assign_ <= jobs.size() && jobs[ next_job_to_assign_ ]->input_tag() == bad_job_id_input_tag ) {
+		if ( TR.visible() ) TR << "Master Node: Job canceled without trying due to previous bad input: " << job_outputter()->output_name( jobs[ next_job_to_assign_ ] ) << " id " << next_job_to_assign_ << std::endl;
 		jobs[next_job_to_assign_]->set_can_be_deleted(true);
 		++next_job_to_assign_;
 	}
@@ -489,17 +489,17 @@ void
 MPIWorkPoolJobDistributor::job_succeeded(core::pose::Pose &pose, core::Real /*run_time*/, std::string const & tag)
 {
 	if ( rank_ == 0 ) {
-	master_job_succeeded( pose, tag );
+		master_job_succeeded( pose, tag );
 	} else {
-	slave_job_succeeded( pose, tag );
+		slave_job_succeeded( pose, tag );
 	}
 }
 
 /// @brief Called if the job failed.
 ///
 void MPIWorkPoolJobDistributor::job_failed(
-		core::pose::Pose & /*pose*/,
-		bool /*will_retry*/
+	core::pose::Pose & /*pose*/,
+	bool /*will_retry*/
 ) {
 #ifdef USEMPI
 	if(rank_==0) {

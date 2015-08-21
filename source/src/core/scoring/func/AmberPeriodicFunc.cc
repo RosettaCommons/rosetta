@@ -27,35 +27,35 @@ namespace func {
 Real
 AmberPeriodicFunc::func( Real const x ) const
 {
-  return k_ * (1 + cos( ( n_periodic_ * x ) - x0_ ) );
+	return k_ * (1 + cos( ( n_periodic_ * x ) - x0_ ) );
 }
 
 Real
 AmberPeriodicFunc::dfunc( Real const x ) const
 {
-  return -1.0 * k_ * n_periodic_ * sin( ( n_periodic_ * x ) - x0_ );
+	return -1.0 * k_ * n_periodic_ * sin( ( n_periodic_ * x ) - x0_ );
 }
 
 void
 AmberPeriodicFunc::read_data( std::istream& in )
 {
-  in >> x0_ >> n_periodic_ >> k_;
+	in >> x0_ >> n_periodic_ >> k_;
 }
 
 void
 AmberPeriodicFunc::show_definition(std::ostream &out ) const
 {
-  out << "AMBER_PERIODIC " << x0_ << " " << n_periodic_ << " " << k_ << std::endl;
+	out << "AMBER_PERIODIC " << x0_ << " " << n_periodic_ << " " << k_ << std::endl;
 }
 
 //copied from HarmonicFunc.cc
 Size
 AmberPeriodicFunc::show_violations( std::ostream& out, Real x, Size verbose_level, Real threshold) const
 {
-  if (verbose_level > 100 ) {
-    out << "AMBER PERIODIC " <<  func(x) << std::endl;
-  }
-  return Func::show_violations( out, x, verbose_level, threshold);
+	if ( verbose_level > 100 ) {
+		out << "AMBER PERIODIC " <<  func(x) << std::endl;
+	}
+	return Func::show_violations( out, x, verbose_level, threshold);
 
 }
 

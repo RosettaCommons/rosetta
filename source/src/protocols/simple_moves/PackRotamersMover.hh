@@ -89,7 +89,7 @@ public:
 	/// @brief Performs side-chain packing based on the input PackerTask
 	/// using the input ScoreFunction
 	///
-	///	example(s):
+	/// example(s):
 	///     packmover.apply(pose)
 	/// See Also:
 	///     PackerTask
@@ -103,9 +103,9 @@ public:
 	bool task_is_valid( Pose const & pose ) const; // should this be virtual?
 
 	virtual void parse_def( utility::lua::LuaObject const & def,
-			utility::lua::LuaObject const & score_fxns,
-			utility::lua::LuaObject const & tasks,
-			protocols::moves::MoverCacheSP cache );
+		utility::lua::LuaObject const & score_fxns,
+		utility::lua::LuaObject const & tasks,
+		protocols::moves::MoverCacheSP cache );
 
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 	virtual void parse_my_tag(
@@ -205,7 +205,7 @@ protected:
 	/// @brief get rotamers, energies. Also performs lazy initialization of ScoreFunction, PackerTask.
 	virtual void setup( Pose & pose );
 
-// need a more elegant rot_to_pack implementation than this
+	// need a more elegant rot_to_pack implementation than this
 	virtual core::PackerEnergy run(
 		Pose & pose,
 		utility::vector0< int > rot_to_pack = utility::vector0< int >()

@@ -95,19 +95,19 @@ public:
 	/// @brief creates a Ca coordinate constraint for residue resi
 	core::scoring::constraints::ConstraintOP
 	create_coordinate_cst( core::pose::Pose const & pose,
-			core::Size const resi ) const
+		core::Size const resi ) const
 	{
 		core::Size atom( pose.residue_type(resi).nbr_atom() );
-		if( pose.residue_type(resi).has("CA") ) {
+		if ( pose.residue_type(resi).has("CA") ) {
 			atom = pose.residue_type(resi).atom_index("CA");
 		}
 
 		return core::scoring::constraints::ConstraintOP(
-				new core::scoring::constraints::CoordinateConstraint(
-					core::id::AtomID(atom,resi),
-					core::id::AtomID(pose.residue(1).nbr_atom(),1),
-					pose.residue(resi).xyz(atom),
-					core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(0.0, 0.5) ) ) );
+			new core::scoring::constraints::CoordinateConstraint(
+			core::id::AtomID(atom,resi),
+			core::id::AtomID(pose.residue(1).nbr_atom(),1),
+			pose.residue(resi).xyz(atom),
+			core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(0.0, 0.5) ) ) );
 	}
 
 private:
@@ -175,11 +175,11 @@ BridgeChains::get_name() const
 
 void
 BridgeChains::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const & pose )
 {
 	Connection::parse_my_tag( tag, data, filters, movers, pose );
 
@@ -311,13 +311,13 @@ BridgeChains::build_loop( components::StructureData & perm )
 
 	protocols::moves::MoverOP remodel =
 		create_remodel_mover(
-				pose,
-				loops,
-				const_fold_tree,
-				complete_ss,
-				complete_abego,
-				left,
-				right );
+		pose,
+		loops,
+		const_fold_tree,
+		complete_ss,
+		complete_abego,
+		left,
+		right );
 
 	// switch to centroid if necessary
 	bool const input_centroid = perm.pose()->is_centroid();
@@ -355,13 +355,13 @@ BridgeChains::build_loop( components::StructureData & perm )
 /// @brief creates mover that does remodeling of loop residues
 protocols::moves::MoverOP
 BridgeChains::create_remodel_mover(
-		core::pose::Pose const & pose,
-		protocols::loops::LoopsOP loops,
-		bool const const_fold_tree,
-		std::string const & complete_ss,
-		StringVec const & complete_abego,
-		core::Size const left,
-		core::Size const right )
+	core::pose::Pose const & pose,
+	protocols::loops::LoopsOP loops,
+	bool const const_fold_tree,
+	std::string const & complete_ss,
+	StringVec const & complete_abego,
+	core::Size const left,
+	core::Size const right )
 {
 	// setup fragment picker if necessary
 	if ( !frag_picker_ ) {
@@ -370,8 +370,8 @@ BridgeChains::create_remodel_mover(
 	debug_assert( frag_picker_ );
 
 	protocols::forge::remodel::RemodelLoopMoverOP remodel(
-			new protocols::forge::remodel::RemodelLoopMover( loops )
-			);
+		new protocols::forge::remodel::RemodelLoopMover( loops )
+	);
 	debug_assert( remodel );
 	remodel->set_keep_input_foldtree( const_fold_tree );
 
@@ -475,12 +475,12 @@ BridgeChains::segments_fixed( components::StructureData const & perm ) const
 /// @brief using the motif list, find the desired abego for each position in the connection
 utility::vector1< std::string >
 BridgeChains::abego_insert(
-		StringVec const & complete_abego,
-		std::string const & connection_abego,
-		core::Size const left,
-		core::Size const right,
-		core::Size const end1,
-		core::Size const start2 ) const
+	StringVec const & complete_abego,
+	std::string const & connection_abego,
+	core::Size const left,
+	core::Size const right,
+	core::Size const end1,
+	core::Size const start2 ) const
 {
 	debug_assert( ! complete_abego.empty() );
 	debug_assert( complete_abego.size() >= right );
@@ -504,12 +504,12 @@ BridgeChains::abego_insert(
 /// @brief using the motif list and input pose, find the desired aa sequence for each position in the connection. default="V"
 std::string
 BridgeChains::aa_insert(
-		core::pose::Pose const & pose,
-		core::Size const connection_len,
-		core::Size const left,
-		core::Size const right,
-		core::Size const end1,
-		core::Size const start2 ) const
+	core::pose::Pose const & pose,
+	core::Size const connection_len,
+	core::Size const left,
+	core::Size const right,
+	core::Size const end1,
+	core::Size const start2 ) const
 {
 	std::string retval;
 	for ( core::Size i=left; i<end1; ++i ) {
@@ -527,12 +527,12 @@ BridgeChains::aa_insert(
 /// @brief using the motif list and input pose, find the desired secondary structure for each position in the connection
 std::string
 BridgeChains::ss_insert(
-		core::pose::Pose const & pose,
-		std::string const & connection_ss,
-		core::Size const left,
-		core::Size const right,
-		core::Size const end1,
-		core::Size const start2 ) const
+	core::pose::Pose const & pose,
+	std::string const & connection_ss,
+	core::Size const left,
+	core::Size const right,
+	core::Size const end1,
+	core::Size const start2 ) const
 {
 	assert( right <= pose.total_residue() );
 	assert( left >= 1 );

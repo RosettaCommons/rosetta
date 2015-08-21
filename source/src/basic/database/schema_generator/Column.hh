@@ -28,9 +28,9 @@
 //C++ Headers
 #include <string>
 
-namespace basic{
-namespace database{
-namespace schema_generator{
+namespace basic {
+namespace database {
+namespace schema_generator {
 
 class Column : public utility::pointer::ReferenceCount {
 public:
@@ -60,7 +60,7 @@ private:
 	DbDataTypeOP type_;
 	bool allow_null_;
 	bool auto_increment_;
-  platform::Size auto_increment_base_;
+	platform::Size auto_increment_base_;
 };
 
 } // schema_generator

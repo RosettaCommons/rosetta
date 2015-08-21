@@ -41,7 +41,7 @@ TenANeighborNode::TenANeighborNode( graph::Graph * owner, Size node_id )
 void
 TenANeighborNode::copy_from( Node const * source )
 {
-debug_assert( dynamic_cast< TenANeighborNode const * > (source) );
+	debug_assert( dynamic_cast< TenANeighborNode const * > (source) );
 	TenANeighborNode const * tAsource( static_cast< TenANeighborNode const * > (source) );
 	neighbor_mass_           = tAsource->neighbor_mass_;
 	sum_of_neighbors_masses_ = tAsource->sum_of_neighbors_masses_;
@@ -110,7 +110,7 @@ TenANeighborEdge::TenANeighborEdge(
 
 void TenANeighborEdge::copy_from( Edge const * /*source*/ )
 {
-//debug_assert( dynamic_cast< TenNeighborEdge const * > ( source ) );
+	//debug_assert( dynamic_cast< TenNeighborEdge const * > ( source ) );
 }
 
 Size TenANeighborEdge::count_static_memory() const
@@ -192,7 +192,7 @@ TenANeighborGraph::update_from_pose(
 void TenANeighborGraph::delete_edge( graph::Edge * edge )
 {
 	//delete edge;
-debug_assert( dynamic_cast< TenANeighborEdge* > (edge) );
+	debug_assert( dynamic_cast< TenANeighborEdge* > (edge) );
 	tenA_edge_pool_->destroy( static_cast< TenANeighborEdge* > (edge) );
 
 }

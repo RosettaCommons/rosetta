@@ -39,19 +39,19 @@ namespace jd2 {
 std::string const BatchJobInputter::BOGUS_BATCH_ID( "NO_BATCH" );
 
 BatchJobInputter::BatchJobInputter( std::string batch1 ) :
-  current_batch_( batch1 ),
-  vanilla_options_( basic::options::option )
+	current_batch_( batch1 ),
+	vanilla_options_( basic::options::option )
 {
 	if ( batch1 != BOGUS_BATCH_ID ) {
 		tr.Debug << "Instantiate BatchJobInputter with batch" << current_batch_ << std::endl;
-    read_batch();
-  } else {
-    this_batch_job_inputter_ = JobDistributorFactory::create_job_inputter();
-  }
+		read_batch();
+	} else {
+		this_batch_job_inputter_ = JobDistributorFactory::create_job_inputter();
+	}
 }
 
 BatchJobInputter::~BatchJobInputter() {
-  basic::options::option=vanilla_options_;
+	basic::options::option=vanilla_options_;
 }
 
 /// @brief Return the type of input source that the BatchJobInputter is currently
@@ -62,19 +62,19 @@ JobInputterInputSource::Enum BatchJobInputter::input_source() const {
 }
 
 void BatchJobInputter::check_batch() {
-  JobDistributor* jd( protocols::jd2::JobDistributor::get_instance() );
-  if ( jd != NULL && current_batch_ != jd->get_current_batch() ) {
-    current_batch_ = jd->get_current_batch();
-    read_batch();
-  }
+	JobDistributor* jd( protocols::jd2::JobDistributor::get_instance() );
+	if ( jd != NULL && current_batch_ != jd->get_current_batch() ) {
+		current_batch_ = jd->get_current_batch();
+		read_batch();
+	}
 }
 
 void BatchJobInputter::read_batch() {
-  using namespace basic::options;
+	using namespace basic::options;
 	option=vanilla_options_;
-  option.load_options_from_file(current_batch_);
-  //unfortunately I have to copy code from the JobDistributor factory unless I can remove "in:file:batch" from options...
-  this_batch_job_inputter_ = JobDistributorFactory::create_job_inputter();
+	option.load_options_from_file(current_batch_);
+	//unfortunately I have to copy code from the JobDistributor factory unless I can remove "in:file:batch" from options...
+	this_batch_job_inputter_ = JobDistributorFactory::create_job_inputter();
 }
 
 } // jd2

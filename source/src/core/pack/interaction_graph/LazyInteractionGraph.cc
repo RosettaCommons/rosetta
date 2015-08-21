@@ -106,9 +106,9 @@ LazyNode::~LazyNode()
 void
 LazyNode::prepare_for_simulated_annealing()
 {
-	if (! get_edge_vector_up_to_date() ) update_internal_vectors();
+	if ( ! get_edge_vector_up_to_date() ) update_internal_vectors();
 	/*for (int ii = 1; ii <= get_num_states(); ++ii) {
-		mark_coordinates_current( ii ); /// What did this used to to?
+	mark_coordinates_current( ii ); /// What did this used to to?
 	}*/
 	return;
 }
@@ -143,7 +143,7 @@ LazyNode::print() const
 	std::cout << curr_state_sparse_mat_info_.get_state_ind_for_this_aa_type() << " ";
 	std::cout << "Curr One Body Energy: " << curr_state_one_body_energy_ << std::endl;
 	std::cout << "Curr Two Body Energies:";
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii) {
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		std::cout << " " << get_index_of_adjacent_node(ii) << ":" << curr_state_two_body_energies_[ ii ];
 	}
 	std::cout << std::endl;
@@ -151,7 +151,7 @@ LazyNode::print() const
 	if ( ! alternate_state_is_being_considered_ ) return;
 	std::cout << "Alt One Body Energy: " << alternate_state_one_body_energy_ << std::endl;
 	std::cout << "Alt Two Body Energies:";
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii) {
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		std::cout << " " << get_index_of_adjacent_node(ii) << ":" << alternate_state_two_body_energies_[ ii ];
 	}
 	std::cout << std::endl  << "-----------------" << std::endl;
@@ -243,7 +243,7 @@ LazyNode::assign_zero_state()
 	std::fill( position1, curr_state_two_body_energies_.end(), core::PackerEnergy( 0.0 ));
 	curr_state_total_energy_ = core::PackerEnergy( 0.0 );
 
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		get_incident_lazy_edge(ii)->acknowledge_state_zeroed( get_node_index() );
 	}
 
@@ -272,9 +272,9 @@ LazyNode::assign_zero_state()
 void
 LazyNode::assign_state(int new_state)
 {
-debug_assert( new_state >= 0 && new_state <= get_num_states());
+	debug_assert( new_state >= 0 && new_state <= get_num_states());
 
-	if (new_state == 0) {
+	if ( new_state == 0 ) {
 		assign_zero_state();
 	} else {
 		//std::cout << "assign_state: node -  " << get_node_index() <<
@@ -285,7 +285,7 @@ debug_assert( new_state >= 0 && new_state <= get_num_states());
 		curr_state_total_energy_ = curr_state_one_body_energy_;
 		alternate_state_is_being_considered_ = false;
 
-		for (int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
+		for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 			get_incident_lazy_edge(ii)->acknowledge_state_change(
 				get_node_index(),
 				current_state_,
@@ -321,7 +321,7 @@ debug_assert( new_state >= 0 && new_state <= get_num_states());
 void
 LazyNode::partial_assign_state( int new_state )
 {
-	if (new_state == 0 ) {
+	if ( new_state == 0 ) {
 		assign_zero_state();
 		return;
 	}
@@ -329,7 +329,7 @@ LazyNode::partial_assign_state( int new_state )
 	current_state_ = new_state;
 	curr_state_sparse_mat_info_ =
 		get_sparse_mat_info_for_state( current_state_ );
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		get_incident_lazy_edge(ii)->acknowledge_partial_state_change(
 			get_node_index(),
 			current_state_,
@@ -364,7 +364,7 @@ void LazyNode::complete_state_assignment()
 
 	curr_state_total_energy_ = curr_state_one_body_energy_ =
 		get_one_body_energy( current_state_ );
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii) {
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		curr_state_two_body_energies_[ ii ] =
 			get_incident_lazy_edge( ii )->
 			get_energy_following_partial_state_assignment();
@@ -395,7 +395,7 @@ void LazyNode::complete_state_assignment()
 void
 LazyNode::commit_considered_substitution()
 {
-debug_assert( alternate_state_is_being_considered_ );
+	debug_assert( alternate_state_is_being_considered_ );
 
 	current_state_ = alternate_state_;
 	curr_state_sparse_mat_info_ = alt_state_sparse_mat_info_;
@@ -414,17 +414,17 @@ debug_assert( alternate_state_is_being_considered_ );
 
 	//if ( procrastinated_ )
 	//{
-	//	curr_state_total_energy_ = curr_state_one_body_energy_;
-	//	for (int ii = 1; ii <= get_num_incident_edges(); ++ii)
-	//	{
-	//		if ( curr_state_two_body_energies_[ ii ] == LazyEdge::NOT_YET_COMPUTED_ENERGY )
-	//		{
-	//			curr_state_two_body_energies_[ ii ] = compute_pair_energy_for_current_state( ii );
-	//		}
-	//		curr_state_total_energy_ += curr_state_two_body_energies_[ ii ];
-	//	}
-	//	procrastinated_ = false;
-	//	++num_procrastinated_committed;
+	// curr_state_total_energy_ = curr_state_one_body_energy_;
+	// for (int ii = 1; ii <= get_num_incident_edges(); ++ii)
+	// {
+	//  if ( curr_state_two_body_energies_[ ii ] == LazyEdge::NOT_YET_COMPUTED_ENERGY )
+	//  {
+	//   curr_state_two_body_energies_[ ii ] = compute_pair_energy_for_current_state( ii );
+	//  }
+	//  curr_state_total_energy_ += curr_state_two_body_energies_[ ii ];
+	// }
+	// procrastinated_ = false;
+	// ++num_procrastinated_committed;
 	//}
 
 
@@ -535,7 +535,7 @@ LazyNode::print_internal_energies() const
 	std::cout << "curr_state_one_body_energy_ ";
 	std::cout << curr_state_one_body_energy_ << " ";
 	std::cout << "curr_state_total_energy_" << curr_state_total_energy_ << " ";
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii) {
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		std::cout << "(" << curr_state_two_body_energies_[ ii ] << ") ";
 	}
 	std::cout << std::endl;
@@ -563,9 +563,9 @@ LazyNode::print_internal_energies() const
 void
 LazyNode::update_internal_energy_sums()
 {
-debug_assert( get_edge_vector_up_to_date() );
+	debug_assert( get_edge_vector_up_to_date() );
 	curr_state_total_energy_ = 0;
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii) {
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		curr_state_total_energy_ += get_incident_lazy_edge(ii)->get_current_two_body_energy();
 	}
 	curr_state_total_energy_ += curr_state_one_body_energy_;
@@ -609,7 +609,7 @@ void LazyNode::update_internal_vectors()
 
 	//copy offsets from edges
 	//int neighb_aa_offset =
-	//	num_states_for_aa_type_for_higher_indexed_neighbor_.index(1,1);
+	// num_states_for_aa_type_for_higher_indexed_neighbor_.index(1,1);
 	int count_neighbs_with_higher_indices = 0;
 	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		neighbors_curr_state_sparse_info_[ii].set_aa_type( 1 );
@@ -692,8 +692,8 @@ LazyEdge::LazyEdge(
 	OnTheFlyEdge( owner, first_node_ind, second_node_ind),
 	//energy_table_size_(0)
 	two_body_energies_(
-		get_lazy_node(0)->get_num_states_for_aa_types(),
-		get_lazy_node(1)->get_num_states_for_aa_types()
+	get_lazy_node(0)->get_num_states_for_aa_types(),
+	get_lazy_node(1)->get_num_states_for_aa_types()
 	),
 	curr_state_energy_( 0.0f ),
 	partial_state_assignment_( false ),
@@ -859,13 +859,13 @@ LazyEdge::prepare_for_simulated_annealing()
 		return;
 	} else {
 		/*for (int ii = 0; ii < 2; ++ii) {
-			if ( get_lazy_node( ii )->get_any_coordinates_not_current() ) {
-				for (int jj = 1; jj <= get_lazy_node( ii )->get_num_states(); ++jj ) {
-					if ( ! get_lazy_node( ii )->get_coordinates_current( jj ) ) {
-						wipe_two_body_energies_for_node_state( ii, jj );
-					}
-				}
-			}
+		if ( get_lazy_node( ii )->get_any_coordinates_not_current() ) {
+		for (int jj = 1; jj <= get_lazy_node( ii )->get_num_states(); ++jj ) {
+		if ( ! get_lazy_node( ii )->get_coordinates_current( jj ) ) {
+		wipe_two_body_energies_for_node_state( ii, jj );
+		}
+		}
+		}
 		}*/
 	}
 }
@@ -1101,11 +1101,11 @@ void LazyEdge::acknowledge_partial_state_change(
 core::PackerEnergy
 LazyEdge::get_energy_following_partial_state_assignment()
 {
-	if (partial_state_assignment_) {
+	if ( partial_state_assignment_ ) {
 		int nodes_curr_states[2];
 		SparseMatrixIndex nodes_curr_states_sparse_info[2];
 
-		for (int ii = 0; ii < 2; ++ii) {
+		for ( int ii = 0; ii < 2; ++ii ) {
 			nodes_curr_states[ ii ] =
 				get_lazy_node( ii )->get_current_state();
 			nodes_curr_states_sparse_info[ ii ] =
@@ -1139,7 +1139,7 @@ LazyEdge::get_energy_following_partial_state_assignment()
 ////////////////////////////////////////////////////////////////////////////////
 core::PackerEnergy & LazyEdge::get_edge_table_ptr()
 {
-	 return two_body_energies_.getMatrixPointer();
+	return two_body_energies_.getMatrixPointer();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1306,7 +1306,7 @@ LazyEdge::wipe_two_body_energies_for_node_state(
 	int const other_node_num_states =
 		get_lazy_node( other_node )->get_num_states();
 
-	for (int ii = 1; ii <= other_node_num_states; ++ii) {
+	for ( int ii = 1; ii <= other_node_num_states; ++ii ) {
 		states[ other_node ] = get_lazy_node( other_node )
 			->get_sparse_mat_info_for_state( ii );
 		two_body_energies_.set( states[ 0 ], states[ 1 ], NOT_YET_COMPUTED_ENERGY );
@@ -1527,7 +1527,7 @@ LazyInteractionGraph::commit_considered_substitution()
 		total_energy_alternate_state_assignment_;
 
 	++num_commits_since_last_update_;
-	if (num_commits_since_last_update_ == COMMIT_LIMIT_BETWEEN_UPDATES) {
+	if ( num_commits_since_last_update_ == COMMIT_LIMIT_BETWEEN_UPDATES ) {
 		update_internal_energy_totals();
 	}
 
@@ -1586,8 +1586,8 @@ int
 LazyInteractionGraph::get_edge_memory_usage() const
 {
 	int sum = 0;
-	for (std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
-			iter != get_edge_list_end(); ++iter) {
+	for ( std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
+			iter != get_edge_list_end(); ++iter ) {
 		sum += ((LazyEdge*) *iter)->get_two_body_table_size();
 	}
 	return sum;
@@ -1621,8 +1621,8 @@ LazyInteractionGraph::print_current_state_assignment() const
 		get_lazy_node(ii)->print();
 	}
 
-	for (std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
-			iter != get_edge_list_end(); ++iter) {
+	for ( std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
+			iter != get_edge_list_end(); ++iter ) {
 		((LazyEdge*) (*iter))->print_current_energy();
 	}
 	std::cout << "Energy: " << total_energy_current_state_assignment_ << std::endl;
@@ -1693,7 +1693,7 @@ LazyInteractionGraph::get_energy_sum_for_vertex_group( int group_id )
 		int second_node_ind = (*edge_iter)->get_second_node_ind();
 
 		if ( get_vertex_member_of_energy_sum_group( first_node_ind, group_id )
-				&& get_vertex_member_of_energy_sum_group( second_node_ind, group_id )) {
+				&& get_vertex_member_of_energy_sum_group( second_node_ind, group_id ) ) {
 			esum += ((LazyEdge*) (*edge_iter))->get_current_two_body_energy();
 		}
 	}
@@ -1840,7 +1840,7 @@ LazyInteractionGraph::update_internal_energy_totals()
 			get_one_body_energy_current_state();
 	}
 
-	for (std::list<EdgeBase*>::iterator iter = get_edge_list_begin();
+	for ( std::list<EdgeBase*>::iterator iter = get_edge_list_begin();
 			iter != get_edge_list_end(); ++iter ) {
 		total_energy_current_state_assignment_ +=
 			((LazyEdge*) *iter)->get_current_two_body_energy();

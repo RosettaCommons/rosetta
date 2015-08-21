@@ -59,12 +59,12 @@ public:
 
 	virtual void run(core::Real scaleFactor) {
 		core::Size reps( (core::Size)(TScale*scaleFactor) );
-		if( reps == 0 ) { reps = 1; } // do at least one rep, regardless of scale factor
-		for(core::Size i=0; i<reps; i++) {
+		if ( reps == 0 ) { reps = 1; } // do at least one rep, regardless of scale factor
+		for ( core::Size i=0; i<reps; i++ ) {
 			std::string stype = "unknow";
-			if( sft == SFT_dfpmin ) stype = "dfpmin";
-			if( sft == SFT_dfpmin_armijo ) stype = "dfpmin_armijo";
-			if( sft == SFT_dfpmin_armijo_nonmonotone ) stype = "dfpmin_armijo_nonmonotone";
+			if ( sft == SFT_dfpmin ) stype = "dfpmin";
+			if ( sft == SFT_dfpmin_armijo ) stype = "dfpmin_armijo";
+			if ( sft == SFT_dfpmin_armijo_nonmonotone ) stype = "dfpmin_armijo_nonmonotone";
 			core::optimization::MinimizerOptions options( stype/*"dfpmin"*/, 0, true );
 			core::pose::Pose pose;
 			pose = *start_pose;
@@ -83,23 +83,23 @@ typedef MinimizerBenchmark<SFT_dfpmin_armijo_nonmonotone, 1> MinimizerBenchmark_
 //class MinimizerBenchmark_dfpmin : public MinimizerBenchmark
 
 /*
-				{ // armijo
-						MinimizerOptions options( "dfpmin_armijo", 1e-1, true, true );
-						Pose pose;
-						pose = start_pose;
-						minimizer.run( pose, mm, *scorefxn, options );
-						core::Real score = (*scorefxn)( pose );
-						TR << "dfpmin_armijo/standard: " << score << "\n";
-						TS_ASSERT_DELTA(score, 385.767, err_tol);
-				}
+{ // armijo
+MinimizerOptions options( "dfpmin_armijo", 1e-1, true, true );
+Pose pose;
+pose = start_pose;
+minimizer.run( pose, mm, *scorefxn, options );
+core::Real score = (*scorefxn)( pose );
+TR << "dfpmin_armijo/standard: " << score << "\n";
+TS_ASSERT_DELTA(score, 385.767, err_tol);
+}
 
-				{ // non-monotone
-						MinimizerOptions options( "dfpmin_armijo_nonmonotone", 1e-1, true, true );
-						Pose pose;
-						pose = start_pose;
-						minimizer.run( pose, mm, *scorefxn, options );
-						core::Real score = (*scorefxn)( pose );
-						TR << "dfpmin_armijo_nonmonotone/standard: " << score << "\n";
-						TS_ASSERT_DELTA(score, 385.945, err_tol);
-				} */
+{ // non-monotone
+MinimizerOptions options( "dfpmin_armijo_nonmonotone", 1e-1, true, true );
+Pose pose;
+pose = start_pose;
+minimizer.run( pose, mm, *scorefxn, options );
+core::Real score = (*scorefxn)( pose );
+TR << "dfpmin_armijo_nonmonotone/standard: " << score << "\n";
+TS_ASSERT_DELTA(score, 385.945, err_tol);
+} */
 

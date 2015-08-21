@@ -45,13 +45,13 @@ parse_adduct_string(
 	// it is an integer
 	Size index( 1 );
 	Size over_index( add_vec.size() + 1 );
-	while( index != over_index ) {
+	while ( index != over_index ) {
 		// Always store as lower for ease of comparison
 		std::string this_adduct( add_vec[ index ]  );
 		ObjexxFCL::lowercase( this_adduct );
 		index++;
 		int max_uses_for_this_adduct( 9999 );
-		if( index != over_index && ObjexxFCL::is_int( add_vec[ index ] ) ) {
+		if ( index != over_index && ObjexxFCL::is_int( add_vec[ index ] ) ) {
 			max_uses_for_this_adduct = ObjexxFCL::int_of( add_vec[ index ] );
 			index++;
 		}
@@ -60,10 +60,10 @@ parse_adduct_string(
 	}
 
 	// Debug - remove later
-//	for( std::map< std::string, int >::iterator iter = add_map.begin() ;
-//				iter != add_map.end() ; iter++ ) {
-//		TR << "Adduct map " << iter->first << "\t" << iter->second << std::endl;
-//	}
+	// for( std::map< std::string, int >::iterator iter = add_map.begin() ;
+	//    iter != add_map.end() ; iter++ ) {
+	//  TR << "Adduct map " << iter->first << "\t" << iter->second << std::endl;
+	// }
 
 
 	return add_map;
@@ -73,39 +73,39 @@ parse_adduct_string(
 /// @brief Make sure any adducts requested actually exist
 void
 error_check_requested_adducts( std::map< std::string, int > const & add_map,
-	 ResidueTypeCOPs const & rsd_types ) {
+	ResidueTypeCOPs const & rsd_types ) {
 
-	for( std::map< std::string, int >::const_iterator this_add = add_map.begin() ;
-				this_add != add_map.end() ; ++this_add ) {
+	for ( std::map< std::string, int >::const_iterator this_add = add_map.begin() ;
+			this_add != add_map.end() ; ++this_add ) {
 		bool not_found( true );
 
 		for ( ResidueTypeCOPs::const_iterator this_rsd = rsd_types.begin(),
-					end_rsd = rsd_types.end(); this_rsd != end_rsd ; ++this_rsd ) {
-					// shortcircuit if we've already found an instance of the adduct
+				end_rsd = rsd_types.end(); this_rsd != end_rsd ; ++this_rsd ) {
+			// shortcircuit if we've already found an instance of the adduct
 			ResidueType const & rsd( **this_rsd );
-			if( not_found == false ) break;
+			if ( not_found == false ) break;
 
 			for ( utility::vector1< Adduct >::const_iterator rsd_add = rsd.defined_adducts().begin(),
-						end_rsd_add = rsd.defined_adducts().end() ;
-						rsd_add != end_rsd_add ; ++rsd_add ) {
+					end_rsd_add = rsd.defined_adducts().end() ;
+					rsd_add != end_rsd_add ; ++rsd_add ) {
 				std::string check_name( rsd_add->adduct_name() );
 				// compare case-insensitively for convenience
-				if( ObjexxFCL::equali( this_add->first, check_name ) ) {
+				if ( ObjexxFCL::equali( this_add->first, check_name ) ) {
 					not_found = false;
 					break;
 				}
 			}
 		}
 
-		if( not_found ) {
+		if ( not_found ) {
 			utility_exit_with_message( "Requested undefined adduct: " + this_add->first + '\n' );
 		}
-	}	// Done with adduct name error-checking
+	} // Done with adduct name error-checking
 }
 
 /// @brief Apply adducts to residue using a boolean mask
 ResidueTypeOP apply_adducts_to_residue( ResidueType const & rsd,
-		utility::vector1< bool > & add_mask
+	utility::vector1< bool > & add_mask
 )
 {
 	using numeric::conversions::radians;
@@ -118,12 +118,12 @@ ResidueTypeOP apply_adducts_to_residue( ResidueType const & rsd,
 
 	// Throw in all the applicable adducts
 	utility::vector1< bool >::iterator mask_iter = add_mask.begin();
-	for( utility::vector1< Adduct >::const_iterator add_iter = rsd.defined_adducts().begin() ,
-				end_add_iter = rsd.defined_adducts().end() ; add_iter != end_add_iter ;
-				++add_iter, ++mask_iter )  {
+	for ( utility::vector1< Adduct >::const_iterator add_iter = rsd.defined_adducts().begin() ,
+			end_add_iter = rsd.defined_adducts().end() ; add_iter != end_add_iter ;
+			++add_iter, ++mask_iter )  {
 
 		// Skip adducts if dictated by the mask
-		if( !(*mask_iter) ) continue;
+		if ( !(*mask_iter) ) continue;
 
 		// Add the adduct and it's information
 #if defined(WIN32) && !defined(WIN_PYROSETTA)

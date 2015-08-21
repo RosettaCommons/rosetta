@@ -92,7 +92,7 @@ dihedral_deriv_second(
 	// unsigned version of theta
 	ASSERT_ONLY(Real const thetaU( numeric::arccos( x ));)
 
-	theta = dihedral_radians( p1, p2, p3, p4 );
+		theta = dihedral_radians( p1, p2, p3, p4 );
 
 	assert( std::abs( std::abs( theta ) - thetaU ) < 1e-2 );
 

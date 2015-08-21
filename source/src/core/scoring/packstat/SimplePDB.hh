@@ -29,25 +29,25 @@ namespace core {
 namespace scoring {
 namespace packstat {
 
-  typedef utility::vector1<SimplePDB_Atom> SPAtoms;
-  typedef utility::vector1<SimplePDB_Atom>::iterator SPAtomIter;
-  typedef utility::vector1<SimplePDB_Atom>::const_iterator SPAtomCIter;
+typedef utility::vector1<SimplePDB_Atom> SPAtoms;
+typedef utility::vector1<SimplePDB_Atom>::iterator SPAtomIter;
+typedef utility::vector1<SimplePDB_Atom>::const_iterator SPAtomCIter;
 
-	/// @brief
+/// @brief
 class SimplePDB
 {
 
-  friend std::istream & operator>> ( std::istream & in , SimplePDB       & pdb  );
-  friend std::ostream & operator<< ( std::ostream & out, SimplePDB const & pdb  );
+	friend std::istream & operator>> ( std::istream & in , SimplePDB       & pdb  );
+	friend std::ostream & operator<< ( std::ostream & out, SimplePDB const & pdb  );
 
 public: // Creation
 
 	SimplePDB() {}
 	~SimplePDB() {}
 
-  Spheres get_spheres( AtomRadiusMap const & arm ) const;
+	Spheres get_spheres( AtomRadiusMap const & arm ) const;
 
-  utility::vector1< numeric::xyzVector<PackstatReal> > get_res_centers() const;
+	utility::vector1< numeric::xyzVector<PackstatReal> > get_res_centers() const;
 
 	void remove_surface_waters();
 
@@ -59,15 +59,15 @@ public: // Creation
 
 private: // fields
 
-    utility::vector1<SimplePDB_Atom> atoms_;
+	utility::vector1<SimplePDB_Atom> atoms_;
 
 public: // accessors
 
-  std::size_t natom() const { return atoms_.size(); }
-  utility::vector1<SimplePDB_Atom>       & atoms()       { return atoms_; }
-  utility::vector1<SimplePDB_Atom> const & atoms() const { return atoms_; }
-  SimplePDB_Atom       & atom( std::size_t const i )       { return atoms_[i]; }
-  SimplePDB_Atom const & atom( std::size_t const i ) const { return atoms_[i]; }
+	std::size_t natom() const { return atoms_.size(); }
+	utility::vector1<SimplePDB_Atom>       & atoms()       { return atoms_; }
+	utility::vector1<SimplePDB_Atom> const & atoms() const { return atoms_; }
+	SimplePDB_Atom       & atom( std::size_t const i )       { return atoms_[i]; }
+	SimplePDB_Atom const & atom( std::size_t const i ) const { return atoms_[i]; }
 	mutable utility::vector1<std::string> res_labels_;
 
 

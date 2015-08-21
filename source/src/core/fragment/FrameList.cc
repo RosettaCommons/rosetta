@@ -37,32 +37,29 @@ namespace fragment {
 static thread_local basic::Tracer tr( "core.fragment" );
 
 FragID FrameList::fragID ( Size flat_nr ) {
-  Size passed_frags( 0 );
-  iterator it = begin(), eit=end();
+	Size passed_frags( 0 );
+	iterator it = begin(), eit=end();
 
-	while (it!=eit && (passed_frags + (*it)->nr_frags()) < flat_nr)
-	{
-    passed_frags += (*it)->nr_frags();
+	while ( it!=eit && (passed_frags + (*it)->nr_frags()) < flat_nr )
+			{
+		passed_frags += (*it)->nr_frags();
 		++it;
 	}
 
-  if ( it!=eit )
-	{
-    return FragID( *it, flat_nr - passed_frags );
-  }
-	else
-	{
+	if ( it!=eit ) {
+		return FragID( *it, flat_nr - passed_frags );
+	} else {
 		runtime_assert( 0 ); //out of bounds
 		return FragID();
 	}
 }
 
 Size FrameList::flat_size() const {
-  Size frags( 0 );
-  for (const_iterator it=begin(), eit=end(); it!=eit ; ++it) {
-    frags += (*it)->nr_frags();
-  }
-  return frags;
+	Size frags( 0 );
+	for ( const_iterator it=begin(), eit=end(); it!=eit ; ++it ) {
+		frags += (*it)->nr_frags();
+	}
+	return frags;
 }
 
 utility::vector1<FrameOP> FrameList::frame_vector()
@@ -71,9 +68,9 @@ utility::vector1<FrameOP> FrameList::frame_vector()
 }
 
 std::ostream& operator<< ( std::ostream& out, FrameList const& frags) {
-  for ( FrameList::const_iterator it=frags.begin(), eit=frags.end(); it!=eit; ++it ) {
-    (*it)->show( out );
-  }
+	for ( FrameList::const_iterator it=frags.begin(), eit=frags.end(); it!=eit; ++it ) {
+		(*it)->show( out );
+	}
 	return out;
 }
 

@@ -29,7 +29,7 @@ namespace frag_picker {
 class FragmentCandidate;
 
 typedef utility::pointer::shared_ptr<FragmentCandidate> FragmentCandidateOP;
-typedef utility::pointer::shared_ptr<FragmentCandidate const>	FragmentCandidateCOP;
+typedef utility::pointer::shared_ptr<FragmentCandidate const> FragmentCandidateCOP;
 typedef std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> ScoredCandidate;
 typedef utility::vector1<ScoredCandidate> ScoredCandidatesVector1;
 

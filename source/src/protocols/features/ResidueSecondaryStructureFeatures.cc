@@ -39,8 +39,8 @@
 // External Headers
 #include <cppdb/frontend.h>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::string;
 using core::scoring::dssp::Dssp;
@@ -139,15 +139,15 @@ ResidueSecondaryStructureFeatures::report_features(
 
 	//Create the statement strings outside the loops so we don't need to rcreate them for every residue
 	std::string sec_structure_statement_string = "INSERT INTO residue_secondary_structure (struct_id, resNum, dssp) VALUES (?,?,?);";
-	
+
 	core::Size adjusted_resnum=0;
-	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
-		if(!check_relevant_residues( relevant_residues, resNum )) continue;
+	for ( Size resNum=1; resNum <= pose.total_residue(); ++resNum ) {
+		if ( !check_relevant_residues( relevant_residues, resNum ) ) continue;
 
 
 		//If this is not a protein residue then skip it. Keep a counter
 		//of protein-only residues to reference DSSP
-		if(!pose.residue(resNum).is_protein()){
+		if ( !pose.residue(resNum).is_protein() ) {
 			continue;
 		}
 		adjusted_resnum++;

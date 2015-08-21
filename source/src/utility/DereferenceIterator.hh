@@ -16,7 +16,7 @@
 
 /// if you have a container of OPs: i.e., typedef std::list< SilentStructOP > SilentStructs;
 /// you can now call this function with the SilentStructs container instead of the SilentFileData objects by
-/// 	  my_func(    DereferenceIterator< SilentStructs >( decoys().begin() ),
+///    my_func(    DereferenceIterator< SilentStructs >( decoys().begin() ),
 ///                   DereferenceIterator< SilentStructs >( decoys().end() ) );
 
 
@@ -34,57 +34,57 @@ namespace utility {
 /// @brief const_iterator class for SilentFileData container.
 template< typename Container >
 class DereferenceIterator {
-  typedef typename Container::value_type value_type;
-  typedef typename Container::const_iterator const_iterator;
-  typedef value_type* pointer;
-  typedef value_type& reference;
-  typedef std::ptrdiff_t       difference_type;
-  typedef std::bidirectional_iterator_tag iterator_category;
+	typedef typename Container::value_type value_type;
+	typedef typename Container::const_iterator const_iterator;
+	typedef value_type* pointer;
+	typedef value_type& reference;
+	typedef std::ptrdiff_t       difference_type;
+	typedef std::bidirectional_iterator_tag iterator_category;
 
 public:
-  /// @brief empty constructor
-  DereferenceIterator() {}
+	/// @brief empty constructor
+	DereferenceIterator() {}
 
-  /// @brief Constructor, given an iterator into the Structure_Map.
-  DereferenceIterator( const_iterator s_iter ) {
-    it_ = s_iter;
-  }
+	/// @brief Constructor, given an iterator into the Structure_Map.
+	DereferenceIterator( const_iterator s_iter ) {
+		it_ = s_iter;
+	}
 
-  ~DereferenceIterator() {}
+	~DereferenceIterator() {}
 
-  DereferenceIterator& operator=( const DereferenceIterator& src ) {
-    it_ = src.it_;
-    return (*this);
-  }
+	DereferenceIterator& operator=( const DereferenceIterator& src ) {
+		it_ = src.it_;
+		return (*this);
+	}
 
-  bool operator==( const DereferenceIterator& other ) const {
-    return ( it_ == other.it_ );
-  }
+	bool operator==( const DereferenceIterator& other ) const {
+		return ( it_ == other.it_ );
+	}
 
-  bool operator!=( const DereferenceIterator& other ) const {
-    return ( it_ != other.it_ );
-  }
+	bool operator!=( const DereferenceIterator& other ) const {
+		return ( it_ != other.it_ );
+	}
 
-  DereferenceIterator& operator++() {
-    it_++;
-    return (*this);
-  }
+	DereferenceIterator& operator++() {
+		it_++;
+		return (*this);
+	}
 
-  DereferenceIterator& operator--() {
-    it_--;
-    return (*this);
-  }
+	DereferenceIterator& operator--() {
+		it_--;
+		return (*this);
+	}
 
-  value_type operator->() const {
-    return *it_;
-  }
+	value_type operator->() const {
+		return *it_;
+	}
 
-  value_type operator*() const {
-    return *it_;
-  }
+	value_type operator*() const {
+		return *it_;
+	}
 
 private:
-  const_iterator it_; // keeps track of my place in a Structure_Map
+	const_iterator it_; // keeps track of my place in a Structure_Map
 }; // class iterator
 
 }

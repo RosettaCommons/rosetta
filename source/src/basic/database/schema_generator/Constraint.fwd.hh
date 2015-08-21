@@ -17,9 +17,9 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace basic{
-namespace database{
-namespace schema_generator{
+namespace basic {
+namespace database {
+namespace schema_generator {
 
 // Forward declarations
 class Constraint;

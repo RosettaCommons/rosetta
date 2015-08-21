@@ -42,13 +42,13 @@ namespace hotspot_hashing {
 static thread_local basic::Tracer TR( "protocols.hotspot_hashing.SearchPatternRotSetOp" );
 
 SearchPatternRotSetOp::SearchPatternRotSetOp( SearchPatternOP pattern ) :
-		protocols::toolbox::rotamer_set_operations::RigidBodyMoveBaseRSO(),
-		search_stubs_(pattern->Searchpoints())
+	protocols::toolbox::rotamer_set_operations::RigidBodyMoveBaseRSO(),
+	search_stubs_(pattern->Searchpoints())
 {}
 
 SearchPatternRotSetOp::SearchPatternRotSetOp( SearchPatternRotSetOp const & other ) :
-		protocols::toolbox::rotamer_set_operations::RigidBodyMoveBaseRSO(),
-		search_stubs_(other.search_stubs_)
+	protocols::toolbox::rotamer_set_operations::RigidBodyMoveBaseRSO(),
+	search_stubs_(other.search_stubs_)
 {}
 
 core::pack::rotamer_set::RotamerSetOperationOP
@@ -59,9 +59,9 @@ SearchPatternRotSetOp::clone() const
 
 
 utility::vector1< core::conformation::ResidueCOP > SearchPatternRotSetOp::get_rigid_body_confs(
-  core::pose::Pose const & pose,
-  core::pack::task::PackerTask const & /*ptask*/,
-  core::Size residue_index)
+	core::pose::Pose const & pose,
+	core::pack::task::PackerTask const & /*ptask*/,
+	core::Size residue_index)
 {
 	utility::vector1< core::conformation::ResidueCOP > result_residues;
 
@@ -69,23 +69,21 @@ utility::vector1< core::conformation::ResidueCOP > SearchPatternRotSetOp::get_ri
 	// Create residue copy in centroid frame
 	core::conformation::ResidueOP source_residue( new core::conformation::Residue(pose.residue(residue_index)) );
 	TR.Debug << "Setting rigid body confs for residue: " << residue_index << " " << source_residue->name() << std::endl;
-  core::kinematics::Stub source_frame = StubGenerator::residueStubCentroidFrame(source_residue);
+	core::kinematics::Stub source_frame = StubGenerator::residueStubCentroidFrame(source_residue);
 	TR.Trace << "Generated target residue centroid frame: ";
 	stub_to_points(TR.Trace, source_frame) << std::endl;
 
 	StubGenerator::moveFromStubFrame(source_residue, source_frame);
-	
-	for(core::Size i = 1; i <= search_stubs_.size(); ++i)
-	{
+
+	for ( core::Size i = 1; i <= search_stubs_.size(); ++i ) {
 		// Create residue copies translating the search frame into the centroid frame
-		
+
 		core::conformation::ResidueOP search_residue( new core::conformation::Residue(*source_residue) );
 
 		StubGenerator::moveIntoStubFrame(search_residue, search_stubs_[i]);
 		StubGenerator::moveIntoStubFrame(search_residue, source_frame);
 
-		if (TR.Trace.visible())
-		{
+		if ( TR.Trace.visible() ) {
 			core::kinematics::Stub search_frame = StubGenerator::residueStubCentroidFrame(search_residue);
 			TR.Trace << "Generated alt rb residue: " << search_residue->name() << std::endl;
 			TR.Trace << "Generated alt rb residue residue centroid frame: ";
@@ -101,41 +99,39 @@ utility::vector1< core::conformation::ResidueCOP > SearchPatternRotSetOp::get_ri
 }
 
 core::Real SearchPatternRotSetOp::increase_packer_residue_radius(
-  core::pose::Pose const & pose,
-  core::pack::task::PackerTaskCOP,
-  core::Size residue_index
+	core::pose::Pose const & pose,
+	core::pack::task::PackerTaskCOP,
+	core::Size residue_index
 )
 {
-  // Calculate the centroid frame and centroid location in the centroid frame
+	// Calculate the centroid frame and centroid location in the centroid frame
 	core::conformation::ResidueCOP source_residue( core::conformation::ResidueOP( new core::conformation::Residue(pose.residue(residue_index)) ) );
 	TR.Debug << "Increasing packer residue radius for residue: " << residue_index << " " << source_residue->name() << std::endl;
 
-  core::kinematics::Stub centroid_frame = StubGenerator::residueStubCentroidFrame(source_residue);
+	core::kinematics::Stub centroid_frame = StubGenerator::residueStubCentroidFrame(source_residue);
 	Vector centroid_nbr_location = centroid_frame.global2local(source_residue->xyz(source_residue->nbr_atom()));
 
 	// Calculate centroid frame coords of nbr atom location translated into all search frames
 	core::Real max_sq_dist(0.0);
-	for(core::Size i = 1; i <= search_stubs_.size(); ++i)
-	{
+	for ( core::Size i = 1; i <= search_stubs_.size(); ++i ) {
 		core::Vector search_nbr_location = search_stubs_[i].local2global(centroid_nbr_location);
 		core::Real sq_dist = (centroid_nbr_location - search_nbr_location).length_squared();
 
-		if( sq_dist > max_sq_dist )
-		{
+		if ( sq_dist > max_sq_dist ) {
 			max_sq_dist = sq_dist;
 		}
 	}
 
 	core::Real max_distance = std::sqrt( max_sq_dist );
 
-	// Return largest nbr_atom location displacement 
+	// Return largest nbr_atom location displacement
 	TR.Debug << "Increased packer residue radius size: " << max_distance << std::endl;
 	return max_distance;
 }
 
 AddSearchPatternRotSetOp::AddSearchPatternRotSetOp(
-		core::Size target_residue,
-		SearchPatternOP pattern) :
+	core::Size target_residue,
+	SearchPatternOP pattern) :
 	target_residue_(target_residue),
 	pattern_(pattern)
 {}
@@ -161,8 +157,7 @@ AddSearchPatternRotSetOp::apply(
 	core::pack::task::PackerTask & task
 ) const
 {
-	if( !task.being_packed( target_residue_) )
-	{
+	if ( !task.being_packed( target_residue_) ) {
 		return;
 	}
 

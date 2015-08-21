@@ -113,10 +113,10 @@ show_dna_geometry( pose::Pose const & pose )
 // score_test( pose::Pose & pose )
 // {
 
-// 	{ // intra-dna scoring
-// 		ScoreFunction scorefxn;
+//  { // intra-dna scoring
+//   ScoreFunction scorefxn;
 
-// 	}
+//  }
 
 
 // }
@@ -159,7 +159,7 @@ repack_test( pose::Pose & pose )
 			task->nonconst_residue_task( ii ).restrict_to_repacking();
 			task->nonconst_residue_task( ii ).restrict_to_repacking();
 			assert( task->pack_residue(ii) );
-		} else {			// repack_DNA
+		} else {   // repack_DNA
 			task->nonconst_residue_task( ii ).restrict_to_repacking();
 		}
 
@@ -194,7 +194,7 @@ run_tests()
 	show_dna_geometry( pose );
 
 	// static scoring
-// 	score_test( pose );
+	//  score_test( pose );
 
 	// repack test
 	repack_test( pose );

@@ -108,7 +108,7 @@ static thread_local basic::Tracer tr( "core.scoring.custom_pair_distance.Fullato
 FullatomCustomPairDistanceEnergy::FullatomCustomPairDistanceEnergy() :
 	parent( methods::EnergyMethodCreatorOP( new FullatomCustomPairDistanceEnergyCreator ) )
 {
-  set_pair_and_func_map();
+	set_pair_and_func_map();
 }
 
 FullatomCustomPairDistanceEnergy::FullatomCustomPairDistanceEnergy( FullatomCustomPairDistanceEnergy const & src ):
@@ -141,20 +141,20 @@ FullatomCustomPairDistanceEnergy::residue_pair_energy(
 
 	PairFuncMap::const_iterator respairiter = find( rsd1, rsd2 );
 	if ( respairiter == pair_and_func_map_.end() ) return;
-debug_assert( (*respairiter).second ); // there should be no null-pointing elements in the pair_and_func_map_
+	debug_assert( (*respairiter).second ); // there should be no null-pointing elements in the pair_and_func_map_
 	Energy score = 0.0;
-	for (	std::list<atoms_and_func_struct>::const_iterator
+	for ( std::list<atoms_and_func_struct>::const_iterator
 			atom_func_iter     = (*respairiter).second->ats_n_func_list().begin(),
 			atom_func_iter_end = (*respairiter).second->ats_n_func_list().end();
-			atom_func_iter != atom_func_iter_end; ++atom_func_iter) {
+			atom_func_iter != atom_func_iter_end; ++atom_func_iter ) {
 		Vector const& atom_a_xyz( rsd1.xyz((*atom_func_iter).resA_atom_index_));
 		Vector const& atom_b_xyz( rsd2.xyz((*atom_func_iter).resB_atom_index_));
 		score += (*atom_func_iter).func_->func(atom_a_xyz.distance_squared(atom_b_xyz));
 
 		//if ((*atom_func_iter).func_->func(atom_a_xyz.distance_squared(atom_b_xyz)) > 0)
 		//tr.Debug << rsd1.name() << " " << rsd1.seqpos() << " " << rsd1.atom_name((*atom_func_iter).resA_atom_index_) << " " <<
-		//	rsd2.name() << " " << " " << rsd2.seqpos() << " " << rsd2.atom_name((*atom_func_iter).resB_atom_index_) <<
-		//	" score: " << (*atom_func_iter).func_->func(atom_a_xyz.distance_squared(atom_b_xyz)) << " dist_sq: " << atom_a_xyz.distance_squared(atom_b_xyz) << std::endl;
+		// rsd2.name() << " " << " " << rsd2.seqpos() << " " << rsd2.atom_name((*atom_func_iter).resB_atom_index_) <<
+		// " score: " << (*atom_func_iter).func_->func(atom_a_xyz.distance_squared(atom_b_xyz)) << " dist_sq: " << atom_a_xyz.distance_squared(atom_b_xyz) << std::endl;
 	}
 	emap[ fa_cust_pair_dist ] += score;
 }
@@ -195,15 +195,15 @@ FullatomCustomPairDistanceEnergy::residue_pair_energy_ext(
 	EnergyMap & emap
 ) const
 {
-debug_assert( rsd1.seqpos() < rsd2.seqpos() );
-debug_assert( utility::pointer::dynamic_pointer_cast< RespairInteractions const > (pair_data.get_data( fa_custom_pair_dist_data ) ));
+	debug_assert( rsd1.seqpos() < rsd2.seqpos() );
+	debug_assert( utility::pointer::dynamic_pointer_cast< RespairInteractions const > (pair_data.get_data( fa_custom_pair_dist_data ) ));
 
 	RespairInteractions const & respair_intxns( static_cast< RespairInteractions const & > (pair_data.get_data_ref( fa_custom_pair_dist_data ) ));
 	Energy score( 0.0 );
-	for (	std::list< atoms_and_func_struct >::const_iterator
+	for ( std::list< atoms_and_func_struct >::const_iterator
 			atom_func_iter     = respair_intxns.apfc_list().ats_n_func_list().begin(),
 			atom_func_iter_end = respair_intxns.apfc_list().ats_n_func_list().end();
-			atom_func_iter != atom_func_iter_end; ++atom_func_iter) {
+			atom_func_iter != atom_func_iter_end; ++atom_func_iter ) {
 		Vector const& atom_a_xyz( rsd1.xyz((*atom_func_iter).resA_atom_index_));
 		Vector const& atom_b_xyz( rsd2.xyz((*atom_func_iter).resB_atom_index_));
 		score += (*atom_func_iter).func_->func(atom_a_xyz.distance_squared(atom_b_xyz));
@@ -223,14 +223,14 @@ FullatomCustomPairDistanceEnergy::setup_for_minimizing_for_residue_pair(
 	ResPairMinimizationData & pair_data
 ) const
 {
-debug_assert( rsd1.seqpos() < rsd2.seqpos() );
+	debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 
 	// update the existing respair_intxns object if one is already present in the pair_data object
 	RespairInteractionsOP respair_intxns = utility::pointer::static_pointer_cast< core::scoring::custom_pair_distance::RespairInteractions > ( pair_data.get_data( fa_custom_pair_dist_data ) );
 	if ( ! respair_intxns ) respair_intxns = RespairInteractionsOP( new RespairInteractions );
 
 	AtomPairFuncListCOP apfclist = find( rsd1, rsd2 )->second;
-debug_assert( apfclist );
+	debug_assert( apfclist );
 	respair_intxns->apfc_list( apfclist );
 	pair_data.set_data( fa_custom_pair_dist_data, respair_intxns );
 }
@@ -249,15 +249,15 @@ FullatomCustomPairDistanceEnergy::eval_residue_pair_derivatives(
 	utility::vector1< DerivVectorPair > & r2_atom_derivs
 ) const
 {
-debug_assert( rsd1.seqpos() < rsd2.seqpos() );
-debug_assert( rsd1.seqpos() < rsd2.seqpos() );
-debug_assert( utility::pointer::dynamic_pointer_cast< RespairInteractions const > (pair_data.get_data( fa_custom_pair_dist_data ) ));
+	debug_assert( rsd1.seqpos() < rsd2.seqpos() );
+	debug_assert( rsd1.seqpos() < rsd2.seqpos() );
+	debug_assert( utility::pointer::dynamic_pointer_cast< RespairInteractions const > (pair_data.get_data( fa_custom_pair_dist_data ) ));
 
 	RespairInteractions const & respair_intxns( static_cast< RespairInteractions const & > (pair_data.get_data_ref( fa_custom_pair_dist_data ) ));
-	for (	std::list< atoms_and_func_struct >::const_iterator
+	for ( std::list< atoms_and_func_struct >::const_iterator
 			atom_func_iter     = respair_intxns.apfc_list().ats_n_func_list().begin(),
 			atom_func_iter_end = respair_intxns.apfc_list().ats_n_func_list().end();
-			atom_func_iter != atom_func_iter_end; ++atom_func_iter) {
+			atom_func_iter != atom_func_iter_end; ++atom_func_iter ) {
 		Vector const & atom_a_xyz = rsd1.xyz( atom_func_iter->resA_atom_index_ );
 		Vector const & atom_b_xyz = rsd2.xyz( atom_func_iter->resB_atom_index_ );
 
@@ -294,89 +294,89 @@ debug_assert( utility::pointer::dynamic_pointer_cast< RespairInteractions const 
 
 /*void
 FullatomCustomPairDistanceEnergy::setup_for_minimizing(
-	pose::Pose & pose,
-	ScoreFunction const &,
-	kinematics::MinimizerMapBase const &
+pose::Pose & pose,
+ScoreFunction const &,
+kinematics::MinimizerMapBase const &
 ) const
 {
-	using namespace basic::datacache;
+using namespace basic::datacache;
 
-  if( !pose.data().has( pose::datacache::CacheableDataType::CUSTOM_PAIR_DIST_SCORE_INFO ) ) {
-    pose.data().set( pose::datacache::CacheableDataType::CUSTOM_PAIR_DIST_SCORE_INFO, new CacheableAtomPairFuncMap );
-  }
-  CacheableDataOP dat( pose.data().get_ptr( pose::datacache::CacheableDataType::CUSTOM_PAIR_DIST_SCORE_INFO ) );
-  CacheableAtomPairFuncMap *cachemap = (CacheableAtomPairFuncMap*)dat();
-  ResAtomIndexFuncMap & resatomfuncmap(cachemap->map());
+if( !pose.data().has( pose::datacache::CacheableDataType::CUSTOM_PAIR_DIST_SCORE_INFO ) ) {
+pose.data().set( pose::datacache::CacheableDataType::CUSTOM_PAIR_DIST_SCORE_INFO, new CacheableAtomPairFuncMap );
+}
+CacheableDataOP dat( pose.data().get_ptr( pose::datacache::CacheableDataType::CUSTOM_PAIR_DIST_SCORE_INFO ) );
+CacheableAtomPairFuncMap *cachemap = (CacheableAtomPairFuncMap*)dat();
+ResAtomIndexFuncMap & resatomfuncmap(cachemap->map());
 
-	// Identify which residue and atom pairs to evaluate in the pose by looping
-	// through the pair_and_func_map keys (residue pairs to evaluate).
-	// Save the data in the pose data cache for evaluating derivative.
-	for (PairFuncMap::const_iterator respairiter = pair_and_func_map_.begin(),
-	     respairiter_end = pair_and_func_map_.end();
-			 respairiter != respairiter_end; ++respairiter) {
-		ResTypePair respair = (*respairiter).first.data();
-		for ( Size i=1; i<=pose.total_residue(); ++i ) {
-			if ( & (pose.residue_type(i)) == respair[1] ) {
-				for ( Size j=1; j<=pose.total_residue(); ++j ) {
-						if ( & (pose.residue_type(j)) == respair[2] ) {
-							for ( std::list<atoms_and_func_struct>::const_iterator iter_a = (*respairiter).second.begin(),
-										iter_end_a = (*respairiter).second.end(); iter_a != iter_end_a; ++iter_a) {
-								if ( i == j && (*iter_a).resA_atom_index_ == (*iter_a).resB_atom_index_ ) continue; // skip same atom
-								// add pair
-								resatom_and_func_struct resatom_b;
-								ResAtomIndex rai_a;
-								rai_a[1] = i;
-								rai_a[2] = (*iter_a).resA_atom_index_;
-								resatom_b.res_index_ = j;
-								resatom_b.atom_index_ = (*iter_a).resB_atom_index_;
-								resatom_b.func_ = (*iter_a).func_;
-								resatomfuncmap[rai_a].push_back( resatom_b );
-						}
-					}
-				}
-			}
-		}
-	}
+// Identify which residue and atom pairs to evaluate in the pose by looping
+// through the pair_and_func_map keys (residue pairs to evaluate).
+// Save the data in the pose data cache for evaluating derivative.
+for (PairFuncMap::const_iterator respairiter = pair_and_func_map_.begin(),
+respairiter_end = pair_and_func_map_.end();
+respairiter != respairiter_end; ++respairiter) {
+ResTypePair respair = (*respairiter).first.data();
+for ( Size i=1; i<=pose.total_residue(); ++i ) {
+if ( & (pose.residue_type(i)) == respair[1] ) {
+for ( Size j=1; j<=pose.total_residue(); ++j ) {
+if ( & (pose.residue_type(j)) == respair[2] ) {
+for ( std::list<atoms_and_func_struct>::const_iterator iter_a = (*respairiter).second.begin(),
+iter_end_a = (*respairiter).second.end(); iter_a != iter_end_a; ++iter_a) {
+if ( i == j && (*iter_a).resA_atom_index_ == (*iter_a).resB_atom_index_ ) continue; // skip same atom
+// add pair
+resatom_and_func_struct resatom_b;
+ResAtomIndex rai_a;
+rai_a[1] = i;
+rai_a[2] = (*iter_a).resA_atom_index_;
+resatom_b.res_index_ = j;
+resatom_b.atom_index_ = (*iter_a).resB_atom_index_;
+resatom_b.func_ = (*iter_a).func_;
+resatomfuncmap[rai_a].push_back( resatom_b );
+}
+}
+}
+}
+}
+}
 }
 
 
 void
 FullatomCustomPairDistanceEnergy::eval_atom_derivative(
-	id::AtomID const & id,
-	pose::Pose const & pose,
-	kinematics::DomainMap const &, //domain_map,
-	ScoreFunction const &, // sfxn,
-	EnergyMap const & emap,
-	Vector & F1,
-	Vector & F2
+id::AtomID const & id,
+pose::Pose const & pose,
+kinematics::DomainMap const &, //domain_map,
+ScoreFunction const &, // sfxn,
+EnergyMap const & emap,
+Vector & F1,
+Vector & F2
 ) const
 {
-	using namespace basic::datacache;
-	ResAtomIndex resatom;
-	resatom[1] = id.rsd();
-	resatom[2] = id.atomno();
-	CacheableDataCOP dat( pose.data().get_const_ptr( pose::datacache::CacheableDataType::CUSTOM_PAIR_DIST_SCORE_INFO ) );
-	CacheableAtomPairFuncMap const *cachemap = (CacheableAtomPairFuncMap const *)dat();
-  ResAtomIndexFuncMap const & resatomfuncmap(cachemap->map());
-	ResAtomIndexFuncMap::const_iterator resatomiter = resatomfuncmap.find( resatom );
-  if ( resatomiter == resatomfuncmap.end() ) return;
+using namespace basic::datacache;
+ResAtomIndex resatom;
+resatom[1] = id.rsd();
+resatom[2] = id.atomno();
+CacheableDataCOP dat( pose.data().get_const_ptr( pose::datacache::CacheableDataType::CUSTOM_PAIR_DIST_SCORE_INFO ) );
+CacheableAtomPairFuncMap const *cachemap = (CacheableAtomPairFuncMap const *)dat();
+ResAtomIndexFuncMap const & resatomfuncmap(cachemap->map());
+ResAtomIndexFuncMap::const_iterator resatomiter = resatomfuncmap.find( resatom );
+if ( resatomiter == resatomfuncmap.end() ) return;
 
-	for ( std::list<resatom_and_func_struct>::const_iterator iter_a = (*resatomiter).second.begin(),
-				iter_end_a = (*resatomiter).second.end(); iter_a != iter_end_a; ++iter_a) {
-		// determine distance squared
-		Vector const& atom_a_xyz( pose.residue(id.rsd()).atom(id.atomno()).xyz() );
-		Vector const& atom_b_xyz( pose.residue((*iter_a).res_index_).atom((*iter_a).atom_index_).xyz() );
-		Real dist_sq = atom_a_xyz.distance_squared(atom_b_xyz);
-		if (dist_sq < (*iter_a).func_->min_dis() || dist_sq > (*iter_a).func_->max_dis()) continue;
-		Vector const f1( atom_a_xyz.cross( atom_b_xyz ));
-		Vector const f2( atom_a_xyz - atom_b_xyz );
-		Real const dist( f2.length() );
-	debug_assert(dist != 0);
-		Real deriv = (*iter_a).func_->dfunc(dist_sq);
-		F1 += ( deriv / dist ) * emap[ fa_cust_pair_dist ] * f1;
-		F2 += ( deriv / dist ) * emap[ fa_cust_pair_dist ] * f2;
+for ( std::list<resatom_and_func_struct>::const_iterator iter_a = (*resatomiter).second.begin(),
+iter_end_a = (*resatomiter).second.end(); iter_a != iter_end_a; ++iter_a) {
+// determine distance squared
+Vector const& atom_a_xyz( pose.residue(id.rsd()).atom(id.atomno()).xyz() );
+Vector const& atom_b_xyz( pose.residue((*iter_a).res_index_).atom((*iter_a).atom_index_).xyz() );
+Real dist_sq = atom_a_xyz.distance_squared(atom_b_xyz);
+if (dist_sq < (*iter_a).func_->min_dis() || dist_sq > (*iter_a).func_->max_dis()) continue;
+Vector const f1( atom_a_xyz.cross( atom_b_xyz ));
+Vector const f2( atom_a_xyz - atom_b_xyz );
+Real const dist( f2.length() );
+debug_assert(dist != 0);
+Real deriv = (*iter_a).func_->dfunc(dist_sq);
+F1 += ( deriv / dist ) * emap[ fa_cust_pair_dist ] * f1;
+F2 += ( deriv / dist ) * emap[ fa_cust_pair_dist ] * f2;
 
-	}
+}
 }*/
 
 FullatomCustomPairDistanceEnergy::PairFuncMap::const_iterator
@@ -415,8 +415,9 @@ FullatomCustomPairDistanceEnergy::set_pair_and_func_map()
 	tr.Debug << "Reading fa_custom_pair_distance_file: " << pairfuncfile << std::endl;
 
 	utility::io::izstream in( pairfuncfile );
-	if ( !in.good() )
+	if ( !in.good() ) {
 		utility_exit_with_message( "Unable to open fa_custom_pair_distance file: " + pairfuncfile );
+	}
 
 	std::string line, residue_type_set, score_function_name;
 	utility::vector1< std::string > resA, resB, atomA, atomB;
@@ -427,19 +428,19 @@ FullatomCustomPairDistanceEnergy::set_pair_and_func_map()
 		std::istringstream l( line );
 		std::string tag;
 		l >> tag;
-		if (tag == "RESIDUE_TYPE_SET") {
+		if ( tag == "RESIDUE_TYPE_SET" ) {
 			resA.clear(); resB.clear(); atomA.clear(); atomB.clear();
 			l >> residue_type_set;
 			tr.Debug << "Residue type set: " <<  residue_type_set << std::endl;
 			continue;
 		}
-		if (tag == "PAIR") {
+		if ( tag == "PAIR" ) {
 			std::string buf;
 			utility::vector1< std::string > pair_cols;
-			while( l >> buf ) {
+			while ( l >> buf ) {
 				pair_cols.push_back( buf );
 			}
-			if (pair_cols.size() == 4) {
+			if ( pair_cols.size() == 4 ) {
 				resA.push_back( pair_cols[1] );
 				atomA.push_back( pair_cols[2] );
 				resB.push_back( pair_cols[3] );
@@ -448,13 +449,14 @@ FullatomCustomPairDistanceEnergy::set_pair_and_func_map()
 				continue;
 			}
 		}
-		if (tag == "SCORE_FUNCTION") {
+		if ( tag == "SCORE_FUNCTION" ) {
 			l >> score_function_name;
 
 			atoms_and_func_struct pair_func;
 			pair_func.func_ = DistanceFuncCOP( DistanceFuncOP( new DistanceFunc( score_function_name ) ) );
-			if (pair_func.func_->max_dis() > max_dis_)
+			if ( pair_func.func_->max_dis() > max_dis_ ) {
 				max_dis_ = pair_func.func_->max_dis();
+			}
 			tr.Debug << "SCORE_FUNCTION: " << score_function_name << " (min: " <<
 				pair_func.func_->min_dis() << " max: " << pair_func.func_->max_dis() << ")" << std::endl;
 
@@ -462,7 +464,7 @@ FullatomCustomPairDistanceEnergy::set_pair_and_func_map()
 				ChemicalManager::get_instance()->residue_type_set( residue_type_set );
 
 			// get all possible residue types for each residue pair
-			for (Size i = 1; i <= resA.size(); ++i) {
+			for ( Size i = 1; i <= resA.size(); ++i ) {
 				ResidueTypeCOPs const & possible_res_types_a = restype_set->name3_map_DO_NOT_USE( resA[i] );
 				ResidueTypeCOPs const & possible_res_types_b = restype_set->name3_map_DO_NOT_USE( resB[i] );
 				for ( Size j = 1; j <= possible_res_types_a.size(); ++j ) {
@@ -491,7 +493,7 @@ FullatomCustomPairDistanceEnergy::set_pair_and_func_map()
 						// BA gets passed to residue_pair_energy they'll be evaluated.
 						// I tried to prevent having to do this by sorting the pair but
 						// couldn't get it to work
-						if (rsd_type_a != rsd_type_b) {
+						if ( rsd_type_a != rsd_type_b ) {
 							respair[1] = rsd_type_b.get();
 							respair[2] = rsd_type_a.get();
 							pair_func.resA_atom_index_ =  atom_index_b;
@@ -527,17 +529,17 @@ DistanceFunc::DistanceFunc( std::string const name ) {
 
 DistanceFunc::~DistanceFunc() {}
 Real DistanceFunc::func( Real const dist_sq ) const {
-		Real e(0.0);
-		if ( dist_sq < scores_hist_->minimum() ||
-			   dist_sq > scores_hist_->maximum() ) return e;
-		scores_hist_->interpolate(dist_sq,e);
-		return e;
+	Real e(0.0);
+	if ( dist_sq < scores_hist_->minimum() ||
+			dist_sq > scores_hist_->maximum() ) return e;
+	scores_hist_->interpolate(dist_sq,e);
+	return e;
 }
 
 Real DistanceFunc::dfunc( Real const dist_sq ) const {
 	Real df(0.0), e(0.0);
-  if ( dist_sq < scores_hist_->minimum() ||
-		dist_sq > scores_hist_->maximum() ) return df;
+	if ( dist_sq < scores_hist_->minimum() ||
+			dist_sq > scores_hist_->maximum() ) return df;
 	scores_hist_->interpolate(dist_sq,e,df);
 	return df;
 }

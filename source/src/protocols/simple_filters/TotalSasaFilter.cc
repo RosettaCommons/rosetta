@@ -94,14 +94,13 @@ TotalSasaFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 	polar_ = tag->getOption<bool>( "polar", false );
 	report_per_residue_sasa_ = tag->getOption<bool>( "report_per_residue_sasa", false );
 
-	if( tag->hasOption("task_operations") ) {
+	if ( tag->hasOption("task_operations") ) {
 		task_factory( protocols::rosetta_scripts::parse_task_operations(tag, data) );
 	} else {
 		task_factory( 0 ); // No task factory - use all residues.
 	}
 
-	if( polar_ && hydrophobic_ )
-	{
+	if ( polar_ && hydrophobic_ ) {
 		TR.Error << "Polar and hydrophobic both flags specified in TotalSasa filter: " << tag << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption( "Polar and hydrophobic flags specified in TotalSasa filter." );
 	}
@@ -120,11 +119,10 @@ TotalSasaFilter::apply( core::pose::Pose const & pose ) const {
 	core::Real const sasa( compute( pose ) );
 
 	TR<<"sasa is "<<sasa<<". ";
-	if( sasa >= lower_threshold_ && sasa <= upper_threshold_ ){
+	if ( sasa >= lower_threshold_ && sasa <= upper_threshold_ ) {
 		TR<<"passing." <<std::endl;
 		return true;
-	}
-	else {
+	} else {
 		TR<<"failing."<<std::endl;
 		return false;
 	}
@@ -135,20 +133,20 @@ TotalSasaFilter::report( std::ostream & out, core::pose::Pose const & pose ) con
 	core::Real const sasa( compute( pose ));
 	out<<"Sasa= "<< sasa<<'\n';
 
-	if( report_per_residue_sasa_ ){
+	if ( report_per_residue_sasa_ ) {
 
 		std::string threshold_string = "The following residues have sasa within the desired threshold range: \n";
 
 		basic::MetricValue< utility::vector1< core::Real > > residue_sasa;
-    pose.metric( "sasa", "residue_sasa", residue_sasa ); //this does not represent a new calculation since pose metric calculators are smart enough to figure it out
+		pose.metric( "sasa", "residue_sasa", residue_sasa ); //this does not represent a new calculation since pose metric calculators are smart enough to figure it out
 
 		runtime_assert( pose.total_residue() == (residue_sasa.value()).size() );
-		for( core::Size i = 1; i<=pose.total_residue(); ++i){
+		for ( core::Size i = 1; i<=pose.total_residue(); ++i ) {
 			char res_chain = pose.pdb_info()->chain(i);
 			int res_pdbnum = pose.pdb_info()->number(i);
 			core::Real this_sasa = residue_sasa.value()[i];
 			out << pose.residue( i ).name3() << res_pdbnum << " " << res_chain << " : " << this_sasa << '\n';
-			if( (this_sasa > lower_threshold_) && (this_sasa < upper_threshold_) ){
+			if ( (this_sasa > lower_threshold_) && (this_sasa < upper_threshold_) ) {
 				threshold_string = threshold_string + utility::to_string(res_pdbnum) + "+";
 			}
 		}
@@ -170,12 +168,12 @@ TotalSasaFilter::compute( core::pose::Pose const & pose ) const {
 	using namespace core;
 	using namespace protocols::moves;
 
-	if( !core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ) {
+	if ( !core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ) {
 		utility_exit_with_message("Must define core::pose::metrics::simple_calculators::SasaCalculatorLegacy with name 'sasa' in order to use TotalSasaFilter.");
 	}
 
 	runtime_assert( ! (hydrophobic_ && polar_) );
-	if( !hydrophobic_ && !polar_ && !taskfactory_) {
+	if ( !hydrophobic_ && !polar_ && !taskfactory_ ) {
 		// Complete Sasa
 		MetricValue< core::Real > mv_sasa;
 
@@ -184,38 +182,38 @@ TotalSasaFilter::compute( core::pose::Pose const & pose ) const {
 		TR.Debug << "Sasa: " << total_sasa << std::endl;
 
 		return( total_sasa );
-	} else if( !hydrophobic_ && !polar_ ) {
+	} else if ( !hydrophobic_ && !polar_ ) {
 		// Per residue Sasa
 		assert( taskfactory_ );
 		core::Real sasa( 0.0 );
 		core::pack::task::PackerTaskOP task( taskfactory_->create_task_and_apply_taskoperations(pose) );
-    MetricValue< utility::vector1< core::Real > > residue_sasa;
-    pose.metric( "sasa", "residue_sasa", residue_sasa );
-		for( core::Size ii(1); ii <= pose.total_residue(); ++ii ) {
-			if( task->being_packed(ii) ) {
+		MetricValue< utility::vector1< core::Real > > residue_sasa;
+		pose.metric( "sasa", "residue_sasa", residue_sasa );
+		for ( core::Size ii(1); ii <= pose.total_residue(); ++ii ) {
+			if ( task->being_packed(ii) ) {
 				sasa += residue_sasa.value()[ii];
 			}
 		}
 		return sasa;
-	}	else {
+	} else {
 		//Split sasa
 		core::pack::task::PackerTaskOP task;
-		if( taskfactory_ ) {
+		if ( taskfactory_ ) {
 			task = taskfactory_->create_task_and_apply_taskoperations(pose);
 		}
 		MetricValue< id::AtomID_Map< core::Real > > atom_sasa;
 		pose.metric( "sasa", "atom_sasa", atom_sasa );
 		core::Real polar_sasa( 0.0 ), hydrophobic_sasa( 0.0 );
-		for( core::Size pos(1); pos<=pose.total_residue(); ++pos ){
+		for ( core::Size pos(1); pos<=pose.total_residue(); ++pos ) {
 			core::Real pos_polar_sasa( 0.0 ), pos_hydrophobic_sasa( 0.0 );
 
-			if( task && ! task->being_packed(pos) ) { continue; }
-			for( core::Size atomi( 1 ); atomi <= atom_sasa.value().n_atom( pos ); ++atomi ){
+			if ( task && ! task->being_packed(pos) ) { continue; }
+			for ( core::Size atomi( 1 ); atomi <= atom_sasa.value().n_atom( pos ); ++atomi ) {
 				core::Real const atomi_sasa( atom_sasa.value()( pos, atomi ) );
 				core::conformation::Residue const pos_rsd( pose.residue( pos ) );
 				core::chemical::AtomType const atom_type( pos_rsd.atom_type( atomi ) );
 				bool const is_polar( atom_type.is_donor() || atom_type.is_acceptor() || atom_type.is_polar_hydrogen() );
-				if( is_polar ) {
+				if ( is_polar ) {
 					polar_sasa += atomi_sasa;
 					pos_polar_sasa += atomi_sasa;
 				} else {
@@ -223,22 +221,22 @@ TotalSasaFilter::compute( core::pose::Pose const & pose ) const {
 					pos_hydrophobic_sasa += atomi_sasa;
 				}
 			}
-			
-			if (report_per_residue_sasa_ && (polar_ || hydrophobic_)) {
+
+			if ( report_per_residue_sasa_ && (polar_ || hydrophobic_) ) {
 				char res_chain = pose.pdb_info()->chain(pos);
 				int res_pdbnum = pose.pdb_info()->number(pos);
 
 				TR << pose.residue( pos ).name3() << res_pdbnum << " " << res_chain << " ";
-				if (polar_) { TR << "POLAR SASA : " << pos_polar_sasa << std::endl; }
-				if (hydrophobic_) { TR << "HYDROPHOBIC SASA : " << pos_hydrophobic_sasa << std::endl; }
+				if ( polar_ ) { TR << "POLAR SASA : " << pos_polar_sasa << std::endl; }
+				if ( hydrophobic_ ) { TR << "HYDROPHOBIC SASA : " << pos_hydrophobic_sasa << std::endl; }
 			}
 
 
 		}
 
-		
-		if( hydrophobic_ ) return hydrophobic_sasa;
-		if( polar_ ) return polar_sasa;
+
+		if ( hydrophobic_ ) return hydrophobic_sasa;
+		if ( polar_ ) return polar_sasa;
 	}
 	utility_exit_with_message( "Execution should never have reached this point." );
 	return( 0 );

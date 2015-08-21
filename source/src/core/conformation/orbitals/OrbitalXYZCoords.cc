@@ -13,9 +13,9 @@
 
 #include <core/conformation/orbitals/OrbitalXYZCoords.hh>
 
-namespace core{
-namespace conformation{
-namespace orbitals{
+namespace core {
+namespace conformation {
+namespace orbitals {
 
 
 }

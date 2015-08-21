@@ -7,24 +7,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/PseudocontactShiftInput.fwd.hh
- ///
- /// @brief Read input .npc input file
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/PseudocontactShiftInput.fwd.hh
+///
+/// @brief Read input .npc input file
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs_PseudocontactShiftInput_fwd_hh
 #define INCLUDED_protocols_scoring_methods_pcs_PseudocontactShiftInput_fwd_hh
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs {
 
 class PCS_line_data;
 

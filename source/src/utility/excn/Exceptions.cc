@@ -23,7 +23,7 @@ namespace utility {
 namespace excn {
 
 void EXCN_Msg_Exception::show( std::ostream& os ) const {
-  os << msg() << std::endl;
+	os << msg() << std::endl;
 }
 
 }

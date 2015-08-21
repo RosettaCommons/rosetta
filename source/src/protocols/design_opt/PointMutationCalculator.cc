@@ -72,8 +72,8 @@ PointMutationCalculator::PointMutationCalculator() :
 	task_factory_( /* NULL */ ),
 	scorefxn_( /* NULL */ ),
 	relax_mover_( /* NULL */ ),
-//	filters_( NULL ), /*TODO: this throws a warning!*/
-//	sample_type_( "low" )
+	// filters_( NULL ), /*TODO: this throws a warning!*/
+	// sample_type_( "low" )
 	dump_pdb_( false ),
 	rtmin_( false ),
 	parallel_( false ),
@@ -106,8 +106,8 @@ PointMutationCalculator::PointMutationCalculator(
 	design_shell_ = design_shell;
 	repack_shell_ = repack_shell;
 
-	for( Size isamp = 1; isamp <= sample_types.size(); ++isamp ){
-		if( sample_types_[ isamp ] != "high" && sample_types_[ isamp ] != "low" ){
+	for ( Size isamp = 1; isamp <= sample_types.size(); ++isamp ) {
+		if ( sample_types_[ isamp ] != "high" && sample_types_[ isamp ] != "low" ) {
 			TR << "WARNING: the sample type, " << sample_types_[ isamp ] << ", is not defined. Use \'high\' or \'low\'." << std::endl;
 			runtime_assert( false );
 		}
@@ -144,8 +144,8 @@ PointMutationCalculator::PointMutationCalculator(
 	design_shell_ = design_shell;
 	repack_shell_ = repack_shell;
 
-	for( Size isamp = 1; isamp <= sample_types.size(); ++isamp ){
-		if( sample_types_[ isamp ] != "high" && sample_types_[ isamp ] != "low" ){
+	for ( Size isamp = 1; isamp <= sample_types.size(); ++isamp ) {
+		if ( sample_types_[ isamp ] != "high" && sample_types_[ isamp ] != "low" ) {
 			TR << "WARNING: the sample type, " << sample_types_[ isamp ] << ", is not defined. Use \'high\' or \'low\'." << std::endl;
 			runtime_assert( false );
 		}
@@ -195,22 +195,22 @@ PointMutationCalculator::task_factory() const
 
 void
 PointMutationCalculator::dump_pdb( bool const dump_pdb ){
-  dump_pdb_ = dump_pdb;
+	dump_pdb_ = dump_pdb;
 }
 
 bool
 PointMutationCalculator::dump_pdb() const{
-  return dump_pdb_;
+	return dump_pdb_;
 }
 
 void
 PointMutationCalculator::sample_types( vector1< std::string > const sample_types ){
-  sample_types_ = sample_types;
+	sample_types_ = sample_types;
 }
 
 vector1< std::string >
 PointMutationCalculator::sample_types() const{
-  return sample_types_;
+	return sample_types_;
 }
 
 void
@@ -253,26 +253,26 @@ PointMutationCalculator::parallel( bool const r ){ parallel_ = r;}
 //utility funxns for comparing values in sort
 bool
 cmp_pair_by_second(
-	pair< AA, Real > const pair1,
-	pair< AA, Real > const pair2 )
+pair< AA, Real > const pair1,
+pair< AA, Real > const pair2 )
 {
-	return pair1.second < pair2.second;
+return pair1.second < pair2.second;
 }
 
 bool
 cmp_triple_by_third(
-	pair< Size, pair< AA, Real > > const pair1,
-	pair< Size, pair< AA, Real > > const pair2 )
+pair< Size, pair< AA, Real > > const pair1,
+pair< Size, pair< AA, Real > > const pair2 )
 {
-	return pair1.second.second < pair2.second.second;
+return pair1.second.second < pair2.second.second;
 }
 
 bool
 cmp_pair_vec_by_first_vec_val(
-  pair< Size, vector1< pair< AA, Real > > > const pair1,
-  pair< Size, vector1< pair< AA, Real > > > const pair2 )
+pair< Size, vector1< pair< AA, Real > > > const pair1,
+pair< Size, vector1< pair< AA, Real > > > const pair2 )
 {
-  return pair1.second[ 1 ].second < pair2.second[ 1 ].second;
+return pair1.second[ 1 ].second < pair2.second[ 1 ].second;
 }
 */
 
@@ -322,16 +322,16 @@ PointMutationCalculator::mutate_and_relax(
 	//run PackRotamers with mutate_residue task
 	protocols::simple_moves::PackRotamersMoverOP pack;
 	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin;
-	if( core::pose::symmetry::is_symmetric( pose ) ) {
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		mutate_residue->request_symmetrize_by_union();
 		pack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue ) );
 	} else {
 		pack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue ) );
 	}
 	pack->apply( pose );
-	if( rtmin ){
-		 // definition/allocation of RTmin mover must flag dependant, as some scoreterms are incompatable with RTmin initilization
-		if( core::pose::symmetry::is_symmetric( pose ) ) {
+	if ( rtmin ) {
+		// definition/allocation of RTmin mover must flag dependant, as some scoreterms are incompatable with RTmin initilization
+		if ( core::pose::symmetry::is_symmetric( pose ) ) {
 			utility_exit_with_message("Cannot currently use PointMutationCalculator (GreedyOptMutation/ParetoOptMutation) with rtmin on a symmetric pose!");
 		}
 		rtmin = protocols::simple_moves::RotamerTrialsMinMoverOP( new protocols::simple_moves::RotamerTrialsMinMover( scorefxn(), *mutate_residue ) );
@@ -340,7 +340,7 @@ PointMutationCalculator::mutate_and_relax(
 	}
 	TR<<pose.residue( resi ).name3()<<". Now relaxing..."<<std::endl;
 	//then run input relax mover
-	if( relax_mover() ) {
+	if ( relax_mover() ) {
 		relax_mover()->apply( pose );
 	}
 }
@@ -399,7 +399,7 @@ PointMutationCalculator::eval_filters(
 	//now run filters
 	filter_pass = true;
 	vals.clear();
-	for( Size ifilt = 1; ifilt <= filters_.size(); ++ifilt ){
+	for ( Size ifilt = 1; ifilt <= filters_.size(); ++ifilt ) {
 		//check if this filter passes, AND it with current value of pass/fail
 		bool this_filter_pass( ( filters_[ ifilt ] )->apply( pose ) );
 		filter_pass = filter_pass && this_filter_pass;
@@ -408,7 +408,7 @@ PointMutationCalculator::eval_filters(
 		Real const val( flip_sign * ( filters_[ ifilt ] )->report_sm( pose ) );
 		//TODO: option to bail at first fail??
 		TR<< " :: Filter " << ifilt;
-		if( !this_filter_pass ) TR << " fail, ";
+		if ( !this_filter_pass ) TR << " fail, ";
 		else TR << " pass, ";
 		TR << " value "<< val << " ::";
 		vals.push_back( val );
@@ -430,27 +430,27 @@ insert_point_mut_filter_vals(
 	//first check if we've assigned anything for seqpos
 	//if we have, just append this aa,vals pair onto that seqpos' data
 	bool new_pos( true ); // It's a new position unless we find it
-	for( Size iseq = 1; iseq <= seqpos_aa_vals_vec.size(); ++iseq ){
-		if( seqpos == seqpos_aa_vals_vec[ iseq ].first ){
+	for ( Size iseq = 1; iseq <= seqpos_aa_vals_vec.size(); ++iseq ) {
+		if ( seqpos == seqpos_aa_vals_vec[ iseq ].first ) {
 			new_pos = false;
 			bool replaced( false );
 			//we need to check if we already have vals for this seqpos,aa in our data
-			for( core::Size iaa = 1; iaa <= seqpos_aa_vals_vec[ iseq ].second.size(); ++iaa ){
+			for ( core::Size iaa = 1; iaa <= seqpos_aa_vals_vec[ iseq ].second.size(); ++iaa ) {
 				char this_aa_char( chemical::oneletter_code_from_aa( seqpos_aa_vals_vec[ iseq ].second[ iaa ].first ) );
-				if( this_aa_char == chemical::oneletter_code_from_aa( aa ) ){
+				if ( this_aa_char == chemical::oneletter_code_from_aa( aa ) ) {
 					seqpos_aa_vals_vec[ iseq ].second[ iaa ].second = vals;
 					replaced = true;
 				}
 			}
 			//dont append new data if we're just replacing
-			if( replaced ) break;
+			if ( replaced ) break;
 			seqpos_aa_vals_vec[ iseq ].second.push_back( aa_vals_pair );
 			break;
 		}
 	}
 	//if this is the first instance of data at seqpos,
 	//create a 1-element vector and add to the ptmut data
-	if( new_pos ){
+	if ( new_pos ) {
 		vector1< pair< AA, vector1< Real > > > aa_vals_vec( 1, aa_vals_pair );
 		seqpos_aa_vals_vec.push_back( pair< Size, vector1< pair< AA, vector1< Real > > > >( seqpos, aa_vals_vec ) );
 	}
@@ -459,22 +459,22 @@ insert_point_mut_filter_vals(
 //backcompatibility; overloaded interface that allows the same data struct but wth one val/aa instead of a vector
 void
 PointMutationCalculator::calc_point_mut_filters(
-		pose::Pose const & pose,
-		vector1< pair< Size, vector1< pair< AA, Real > > > > & seqpos_aa_val_vec
+	pose::Pose const & pose,
+	vector1< pair< Size, vector1< pair< AA, Real > > > > & seqpos_aa_val_vec
 )
 {
 	//call the default with a new tmp container
 	vector1< pair< Size, vector1< pair< AA, vector1< Real > > > > > seqpos_aa_vals_vec;
 	calc_point_mut_filters( pose, seqpos_aa_vals_vec );
 	//iter thru tmp container and use vals to populate input container
-	for( vector1< pair< core::Size, vector1< pair< AA, vector1< Real > > > > >::iterator seqpos_aa_vals = seqpos_aa_vals_vec.begin();
-			seqpos_aa_vals != seqpos_aa_vals_vec.end(); ++seqpos_aa_vals ){
+	for ( vector1< pair< core::Size, vector1< pair< AA, vector1< Real > > > > >::iterator seqpos_aa_vals = seqpos_aa_vals_vec.begin();
+			seqpos_aa_vals != seqpos_aa_vals_vec.end(); ++seqpos_aa_vals ) {
 		Size seqpos( seqpos_aa_vals->first );
 		//seqpos_aa_vals->second is a seqpos' vector of aa/vals pairs
 		assert( !seqpos_aa_vals->second.empty() );
 		vector1< pair< AA, Real > > aa_val;
-		for( vector1< pair< AA, vector1< Real > > >::iterator aa_vals = seqpos_aa_vals->second.begin();
-				aa_vals != seqpos_aa_vals->second.end(); ++aa_vals ){
+		for ( vector1< pair< AA, vector1< Real > > >::iterator aa_vals = seqpos_aa_vals->second.begin();
+				aa_vals != seqpos_aa_vals->second.end(); ++aa_vals ) {
 			//aa_vals->second is an aa's vector of vals
 			assert( !aa_vals->second.empty() );
 			aa_val.push_back( pair< AA, Real >( aa_vals->first, aa_vals->second[ 1 ] ) );
@@ -497,9 +497,9 @@ PointMutationCalculator::calc_point_mut_filters(
 	//clear the input first!
 	seqpos_aa_vals_vec.clear();
 	//apply input task factory to pose
-//	PackerTaskCOP task = task_factory()->create_task_and_apply_taskoperations( start_pose );
+	// PackerTaskCOP task = task_factory()->create_task_and_apply_taskoperations( start_pose );
 	PackerTaskOP tmptask = task_factory_->create_task_and_apply_taskoperations( start_pose );
-	if(core::pose::symmetry::is_symmetric(start_pose)) {
+	if ( core::pose::symmetry::is_symmetric(start_pose) ) {
 		tmptask->request_symmetrize_by_union();
 		tmptask = core::pack::make_new_symmetric_PackerTask_by_requested_method(start_pose,tmptask);
 	}
@@ -508,20 +508,20 @@ PointMutationCalculator::calc_point_mut_filters(
 	vector1< core::Size > being_designed;
 	utility::vector1< Size > group_ids;
 	being_designed.clear();
-	for( core::Size resi = 1; resi <= start_pose.total_residue(); ++resi ){
-		if(core::pose::symmetry::is_symmetric(start_pose)) {
-			if( resi > core::pose::symmetry::symmetry_info(start_pose)->num_independent_residues() ) {
+	for ( core::Size resi = 1; resi <= start_pose.total_residue(); ++resi ) {
+		if ( core::pose::symmetry::is_symmetric(start_pose) ) {
+			if ( resi > core::pose::symmetry::symmetry_info(start_pose)->num_independent_residues() ) {
 				break;
 			}
 		}
-		if( task->residue_task( resi ).being_designed() && start_pose.residue(resi).is_protein() ){
+		if ( task->residue_task( resi ).being_designed() && start_pose.residue(resi).is_protein() ) {
 			being_designed.push_back( resi );
 			group_ids.push_back( 0 );
-		} else{
+		} else {
 			group_ids.push_back( 1 );
 		}
 	}
-	if( being_designed.empty() ) {
+	if ( being_designed.empty() ) {
 		TR.Warning << "WARNING: No residues are listed as designable." << std::endl;
 	}
 
@@ -529,14 +529,14 @@ PointMutationCalculator::calc_point_mut_filters(
 	//dont use green packer if symmetric (symm not supported for green packer)
 	//dont use green packer if user specifies linmem interaxn graph (is calc on the fly)
 	bool use_precomp_rot_pair_nrgs( true );
-	if( basic::options::option[ basic::options::OptionKeys::packing::linmem_ig ].user() ){
+	if ( basic::options::option[ basic::options::OptionKeys::packing::linmem_ig ].user() ) {
 		TR << "Note: you are using linmem_ig in your options: " <<
-				"packing will be slower because GreedyOpt can't use GreenPacker precomputed rotamer pair energies" << std::endl;
+			"packing will be slower because GreedyOpt can't use GreenPacker precomputed rotamer pair energies" << std::endl;
 		use_precomp_rot_pair_nrgs = false;
 	}
-	if( core::pose::symmetry::is_symmetric( start_pose ) ){
+	if ( core::pose::symmetry::is_symmetric( start_pose ) ) {
 		TR << "Note: you are using symmetry: " <<
-				"packing will be slower because GreedyOpt can't use GreenPacker precomputed rotamer pair energies" << std::endl;
+			"packing will be slower because GreedyOpt can't use GreenPacker precomputed rotamer pair energies" << std::endl;
 		use_precomp_rot_pair_nrgs = false;
 	}
 	protocols::simple_moves::UserDefinedGroupDiscriminatorOP user_defined_group_discriminator( new protocols::simple_moves::UserDefinedGroupDiscriminator );
@@ -602,24 +602,24 @@ PointMutationCalculator::calc_point_mut_filters(
 
 	//make a single list of seqpos,aa pairs
 	vector1< pair< Size, AA > > all_muts;
-	for( Size iresi = 1; iresi <= being_designed.size(); ++iresi ){
+	for ( Size iresi = 1; iresi <= being_designed.size(); ++iresi ) {
 		Size const resi( being_designed[ iresi ] );
 		//create vector< AA > of allowed residue types at seqpos
 		typedef std::list< ResidueTypeCOP > ResidueTypeCOPList;
 		ResidueTypeCOPList const & allowed( task->residue_task( resi ).allowed_residue_types() );
 		vector1< AA > allow_temp;
-		BOOST_FOREACH( ResidueTypeCOP const t, allowed ){
-			if(std::find(allow_temp.begin(),allow_temp.end(),t->aa())!=allow_temp.end()) continue;
+		BOOST_FOREACH ( ResidueTypeCOP const t, allowed ) {
+			if ( std::find(allow_temp.begin(),allow_temp.end(),t->aa())!=allow_temp.end() ) continue;
 			allow_temp.push_back( t->aa() );
 		}
 		//for each allowed AA
-		BOOST_FOREACH( AA const target_aa, allow_temp ){
+		BOOST_FOREACH ( AA const target_aa, allow_temp ) {
 			all_muts.push_back( pair< Size, AA >( resi, target_aa ) );
 		}
 	}
 
 	vector1< pair< Size, AA > > my_muts( all_muts );
-	if( parallel() ){
+	if ( parallel() ) {
 #ifdef USEMPI
 		//split up my_muts into smaller sublists for diff procs
 		my_muts.clear();
@@ -637,7 +637,7 @@ PointMutationCalculator::calc_point_mut_filters(
 #endif
 	}
 
-	for( Size imut = 1; imut <= my_muts.size(); ++imut ){
+	for ( Size imut = 1; imut <= my_muts.size(); ++imut ) {
 		Size seqpos( my_muts[ imut ].first );
 		AA target_aa( my_muts[ imut ].second );
 		//make copy of original
@@ -646,16 +646,16 @@ PointMutationCalculator::calc_point_mut_filters(
 		//then check if passes input filter, bail out if it doesn't
 		bool filter_pass;
 		vector1< Real > vals;
-		if( use_precomp_rot_pair_nrgs ) mutate_and_relax( pose, seqpos, target_aa, green_packer );
+		if ( use_precomp_rot_pair_nrgs ) mutate_and_relax( pose, seqpos, target_aa, green_packer );
 		else mutate_and_relax( pose, seqpos, target_aa );
-//			mutate_and_relax( pose, seqpos, target_aa );
+		//   mutate_and_relax( pose, seqpos, target_aa );
 		eval_filters( pose, filter_pass, vals );
 
 		//don't store this aa/val if any filter failed
-		if( !filter_pass ) continue;
+		if ( !filter_pass ) continue;
 		assert( !vals.empty() );
 		//dump pdb? (only if filter passes)
-		if( dump_pdb() ){
+		if ( dump_pdb() ) {
 			std::stringstream fname;
 			fname << protocols::jd2::current_output_name() << start_pose.residue( seqpos ).name3() << seqpos << pose.residue( seqpos ).name3()<<".pdb";
 			TR<<"Saving pose "<<fname.str() << std::endl;
@@ -665,7 +665,7 @@ PointMutationCalculator::calc_point_mut_filters(
 		insert_point_mut_filter_vals( seqpos, target_aa, vals, seqpos_aa_vals_vec );
 	}//for mut
 
-	if( parallel() ){
+	if ( parallel() ) {
 #ifdef USEMPI
 		//MPI_Barrier( MPI_COMM_POOL );
 		//sync everybody's mutation filter data
@@ -753,27 +753,27 @@ PointMutationCalculator::calc_point_mut_filters(
 #endif
 	}
 
-/*
+	/*
 	//this part sorts the seqpos/aa/val data
 	//first over each seqpos by aa val, then over all seqpos by best aa val
 	for( vector1< pair< core::Size, vector1< pair< AA, Real > > > >::iterator aa_vals = seqpos_aa_vals_vec.begin();
-			aa_vals != seqpos_aa_vals_vec.end(); ++aa_vals ){
-		//skip if aa_vals vector is empty
-		if( aa_vals->second.empty() ) continue;
-		//sort aa_vals in incr val order
-		std::sort( aa_vals->second.begin(), aa_vals->second.end(), cmp_pair_by_second );
-		//best val is lowest, store all in sorted_seqpos_aa_vals_vec
-//		pair< AA, Real > best_resid_val( aa_vals->second[ 1 ] );
-		//create the pair of seqpos and sorted AA/val pairs
-		pair< Size, vector1< pair< AA, Real > > > sorted_aa_vals( aa_vals->first, aa_vals->second );
-		seqpos_aa_vals_vec.push_back( sorted_aa_vals );
+	aa_vals != seqpos_aa_vals_vec.end(); ++aa_vals ){
+	//skip if aa_vals vector is empty
+	if( aa_vals->second.empty() ) continue;
+	//sort aa_vals in incr val order
+	std::sort( aa_vals->second.begin(), aa_vals->second.end(), cmp_pair_by_second );
+	//best val is lowest, store all in sorted_seqpos_aa_vals_vec
+	//  pair< AA, Real > best_resid_val( aa_vals->second[ 1 ] );
+	//create the pair of seqpos and sorted AA/val pairs
+	pair< Size, vector1< pair< AA, Real > > > sorted_aa_vals( aa_vals->first, aa_vals->second );
+	seqpos_aa_vals_vec.push_back( sorted_aa_vals );
 	}
 
 	//now sort seqpos_aa_vals_vec by *first* (lowest) val in each seqpos vector, low to high
 	//uses cmp_pair_vec_by_first_vec_val to sort based on second val in
 	//first pair element of pair( size, vec( pair ) )
 	std::sort( seqpos_aa_vals_vec.begin(), seqpos_aa_vals_vec.end(), cmp_pair_vec_by_first_vec_val );
-*/
+	*/
 
 }
 

@@ -15,9 +15,9 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace simple_moves{
-namespace a3b_hbs{
+namespace protocols {
+namespace simple_moves {
+namespace a3b_hbs {
 
 
 //Forwards and OP typedefs

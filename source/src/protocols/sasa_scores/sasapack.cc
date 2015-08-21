@@ -178,7 +178,7 @@ std::istream & operator >>( std::istream & is, PPoly & pp )
 	}
 	return is;
 }
-	
+
 void
 help_load_data(
 	utility::vector1< PPoly > & polys,
@@ -209,7 +209,7 @@ load_avge_polynomial_coefficients(
 	string const datafile( "scoring/sasa_scores/avge_datafile_score12prime_v1.txt" );// TO DO: make this an option
 	help_load_data( polys, avg_sasa14s, datafile, "PPOLY_NORME", "PPOLYVAL_NORME", "load_avge_polynomial_coefficients" );
 }
-	
+
 ///////////////////////////////////////////////////////////////////////////////
 /// helper function to open a file and respond to appropriate flags
 void
@@ -225,13 +225,13 @@ help_load_data(
 	polys.resize( num_canonical_aas );
 	avg_sasa14s.clear();
 	avg_sasa14s.resize( num_canonical_aas );
-	
+
 	utility::io::izstream data;
 	//string const datafile( "scoring/sasa_scores/avge_datafile_score12prime_v1.txt" );// TO DO: make this an option
 	basic::database::open( data, datafile );
-	
+
 	map< std::pair< AA, Size >, vector1< std::pair< Real, Real > > > all_polyvals;
-	
+
 	string line;
 	bool found_avg_sasa( false );
 	while ( getline( data,line ) ) {
@@ -261,13 +261,13 @@ help_load_data(
 		}
 	}
 	runtime_assert( found_avg_sasa );
-	
+
 	for ( Size i=1; i<= 20; ++i ) {
 		AA const aa = AA(i);
 		PPoly const & p( polys[i] );
 		Size const degree( p.max_degree() );
 		cout << function_name << ": using degree " << degree << " polynomial for " << aa <<
-		" datafile: " << datafile << endl; /// NOTE: cout
+			" datafile: " << datafile << endl; /// NOTE: cout
 		vector1< std::pair< Real, Real > > const polyvals( all_polyvals[ make_pair( aa, degree ) ] );
 		Size count(0);
 		Real err( 0.0 );
@@ -278,7 +278,7 @@ help_load_data(
 		}
 		if ( count ) err /= count;
 		TR.Trace << "polyval_err: " << aa << ' ' << degree << " npoints: " << I(4,count) << " err-per-point: " <<
-		F(9,3,err) << endl;
+			F(9,3,err) << endl;
 		runtime_assert( err < 1e-3 );
 	}
 	data.close();
@@ -289,10 +289,10 @@ help_load_data(
 /// NOTE: this does not include the probe radius in the sasa value, hence somewhat specialized for sasapack
 void
 compute_residue_sasas_for_sasa_scores(
-																			Real const probe_radius,
-																			Pose const & pose,
-																			Reals & rsd_sasa
-																			)
+	Real const probe_radius,
+	Pose const & pose,
+	Reals & rsd_sasa
+)
 {
 	bool const use_big_polar_H( false ), use_naccess_sasa_radii( false ), expand_polar_radii( false ),
 		include_probe_radius_in_atom_radii( false ), use_lj_radii( true ); // NOTE -- LJ RADII
@@ -304,8 +304,8 @@ compute_residue_sasas_for_sasa_scores(
 	core::pose::initialize_atomid_map( atom_subset, pose, true );
 
 	calc_per_atom_sasa( pose,   atom_sasa,   rsd_sasa, probe_radius, use_big_polar_H,
-											atom_subset, use_naccess_sasa_radii, expand_polar_radii, polar_expansion_radius_unused,
-											include_probe_radius_in_atom_radii, use_lj_radii );
+		atom_subset, use_naccess_sasa_radii, expand_polar_radii, polar_expansion_radius_unused,
+		include_probe_radius_in_atom_radii, use_lj_radii );
 
 }
 
@@ -315,12 +315,12 @@ compute_residue_sasas_for_sasa_scores(
 ///
 void
 compute_avge_scores(
-										Pose const & pose_in,
-										Reals & residue_avge,
-										Reals & residue_normsasa,
-										Real & average_avge, // over all residues that were counted
-										Real & average_normsasa
-										)
+	Pose const & pose_in,
+	Reals & residue_avge,
+	Reals & residue_normsasa,
+	Real & average_avge, // over all residues that were counted
+	Real & average_normsasa
+)
 {
 	bool const ignore_gly_paa( true ), ignore_pro_close( true ), ignore_omega( true ), ignore_fa_dun( true ),
 		ignore_fa_rep( true );
@@ -398,12 +398,12 @@ compute_avge_scores(
 ///////////////////////////////////////////////////////////////////////////////
 void
 compute_sasapack_scores(
-												Pose const & pose,
-												Reals & residue_sasapack,
-												Reals & residue_normsasa,
-												Real & average_sasapack,
-												Real & average_normsasa
-												)
+	Pose const & pose,
+	Reals & residue_sasapack,
+	Reals & residue_normsasa,
+	Real & average_sasapack,
+	Real & average_normsasa
+)
 {
 	static vector1< PPoly > polys;
 	static Reals avg_sasa14s;

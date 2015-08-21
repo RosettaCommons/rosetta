@@ -59,7 +59,7 @@ AnnealerFactory::create_annealer(
 			rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, ig,
 			rotamer_sets, current_rot_index, calc_rot_freq, rot_freq,
 			task->rotamer_couplings() ) );
-	} else if ( task->rotamer_links_exist() ){
+	} else if ( task->rotamer_links_exist() ) {
 		TR.Debug << "Creating FixbbLinkingRotamerSimAnnealer" << std::endl;
 		return SimAnnealerBaseOP( new FixbbLinkingRotamerSimAnnealer(
 			rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, ig,

@@ -54,7 +54,7 @@ SymFoldandDockRbTrialMover::SymFoldandDockRbTrialMover() :
 
 SymFoldandDockRbTrialMover::SymFoldandDockRbTrialMover(
 	core::scoring::ScoreFunctionCOP scorefxn
-) :	Mover( "SymFoldandDockRbTrialMover" ) {
+) : Mover( "SymFoldandDockRbTrialMover" ) {
 	init();
 	scorefxn_ = scorefxn;
 }
@@ -62,7 +62,7 @@ SymFoldandDockRbTrialMover::SymFoldandDockRbTrialMover(
 SymFoldandDockRbTrialMover::SymFoldandDockRbTrialMover(
 	core::scoring::ScoreFunctionCOP scorefxn,
 	bool smooth_move
-) :	Mover( "SymFoldandDockRbTrialMover" )
+) : Mover( "SymFoldandDockRbTrialMover" )
 {
 	init();
 	scorefxn_ = scorefxn;
@@ -74,7 +74,7 @@ SymFoldandDockRbTrialMover::SymFoldandDockRbTrialMover(
 	bool smooth_move,
 	core::Real rot_mag,
 	core::Real trans_mag
-) :	Mover( "SymFoldandDockRbTrialMover" )
+) : Mover( "SymFoldandDockRbTrialMover" )
 {
 	init();
 	scorefxn_ = scorefxn;
@@ -126,8 +126,9 @@ SymFoldandDockRbTrialMover::apply( core::pose::Pose & pose )
 	protocols::rigid::RigidBodyDofSeqPerturbMover rb_perturb =
 		protocols::rigid::RigidBodyDofSeqPerturbMover( dofs , rot_mag_trial, trans_mag_trial );
 
-	if ( rotate_anchor_to_x_ )
+	if ( rotate_anchor_to_x_ ) {
 		core::pose::symmetry::rotate_anchor_to_x_axis( pose );
+	}
 
 	for ( Size i = 1; i <= rigid_body_cycles_; ++i ) {
 		rb_perturb.apply( pose );
@@ -136,28 +137,28 @@ SymFoldandDockRbTrialMover::apply( core::pose::Pose & pose )
 }
 
 void
-SymFoldandDockRbTrialMover::parse_my_tag( 
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & ,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & )
+SymFoldandDockRbTrialMover::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & ,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & )
 {
 	using namespace core::scoring;
 
-	if( tag->hasOption( "rot_mag" ) ){
+	if ( tag->hasOption( "rot_mag" ) ) {
 		rot_mag_ = tag->getOption<core::Real>( "rot_mag" );
 	}
-	if( tag->hasOption( "trans_mag" ) ){
+	if ( tag->hasOption( "trans_mag" ) ) {
 		trans_mag_ = tag->getOption<core::Real>( "trans_mag" );
 	}
-	if( tag->hasOption( "cycles" ) ){
+	if ( tag->hasOption( "cycles" ) ) {
 		rigid_body_cycles_ = tag->getOption<int>( "cycles" );
 	}
-	if( tag->hasOption( "use_mc" ) ){
+	if ( tag->hasOption( "use_mc" ) ) {
 		mc_filter_ = !tag->getOption<bool>( "use_mc" );
 	}
-	if( tag->hasOption( "rotate_anchor_to_x" ) ){
+	if ( tag->hasOption( "rotate_anchor_to_x" ) ) {
 		rotate_anchor_to_x_ = tag->getOption<bool>( "rotate_anchor_to_x" );
 	}
 }
@@ -170,17 +171,17 @@ SymFoldandDockRbTrialMover::get_name() const {
 
 std::string
 SymFoldandDockRbTrialMoverCreator::keyname() const {
-    return SymFoldandDockRbTrialMoverCreator::mover_name();
+	return SymFoldandDockRbTrialMoverCreator::mover_name();
 }
 
 protocols::moves::MoverOP
 SymFoldandDockRbTrialMoverCreator::create_mover() const {
-    return protocols::moves::MoverOP( new SymFoldandDockRbTrialMover() );
+	return protocols::moves::MoverOP( new SymFoldandDockRbTrialMover() );
 }
 
 std::string
 SymFoldandDockRbTrialMoverCreator::mover_name() {
-    return "SymFoldandDockRbTrialMover";
+	return "SymFoldandDockRbTrialMover";
 }
 
 

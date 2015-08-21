@@ -10,7 +10,7 @@
 /// @file AbrelaxApplication
 /// @brief Application-level code for Abrelax, fold_cst and JumpingFoldCst protocols
 /// @details
-///	   use -help to see options
+///    use -help to see options
 ///    usage of class:
 ///    call AbrelaxApplication::register_options() before core::init::init
 ///    in main program make instance and call run() method.
@@ -132,11 +132,11 @@ public:
 
 	/// @brief relax multiple structures that are stored in abinitio_protocol.structure_store
 	bool multi_fast_relax(
-	 Protocol& abinitio_protocol,
-	 core::scoring::ScoreFunctionOP,
-	 jobdist::PlainSilentFileJobDistributor jobdist,
-	 int& curr_nstruct,
-	 jobdist::BasicJobOP& curr_job
+		Protocol& abinitio_protocol,
+		core::scoring::ScoreFunctionOP,
+		jobdist::PlainSilentFileJobDistributor jobdist,
+		int& curr_nstruct,
+		jobdist::BasicJobOP& curr_job
 	);
 
 	/// @brief little helper: minimize structure to have lower chainbreak score
@@ -203,7 +203,7 @@ private:
 	// if specified the structures are projected to PCA-eigenvector
 	evaluation::PCA_OP pca_;
 
-		// are we doing fa-relax ?
+	// are we doing fa-relax ?
 	bool bRelax_;
 
 	// the sequence of the target protein
@@ -238,7 +238,7 @@ private:
 	// pure template fragments... or merged with fragset_large_ only used if vary_frag_size == true
 	core::fragment::FragSetOP fragset_templates_;
 
-// a bunch of PoseEvaluators for process_decoy() --- if available
+	// a bunch of PoseEvaluators for process_decoy() --- if available
 	evaluation::MetaPoseEvaluatorOP evaluator_;
 
 	// checkpoints for close_loop

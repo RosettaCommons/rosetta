@@ -91,11 +91,11 @@ public:
 
 		/*TR << "sets: [ " << std::endl;
 		for ( it = sets.begin() ; it != sets.end(); it++ ) {
-			TR << "representative: " << (*it).first << " => nodes in connected component: [ ";
-			for ( Size ii=1; ii <= (*it).second.size(); ++ii ) {
-				TR << (*it).second[ ii ] << ", ";
-			}
-			TR << "]" << std::endl;
+		TR << "representative: " << (*it).first << " => nodes in connected component: [ ";
+		for ( Size ii=1; ii <= (*it).second.size(); ++ii ) {
+		TR << (*it).second[ ii ] << ", ";
+		}
+		TR << "]" << std::endl;
 		}
 		TR << "]" << std::endl;*/
 

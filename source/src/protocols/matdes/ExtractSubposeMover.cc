@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //
 /// @file src/protocols/matdes/ExtractSubposeMover.cc
-/// @brief  Extract primary component associated with symdofs and all neighboring components.	Note: Currently just dumps extracted PDB and does not modify pose.
+/// @brief  Extract primary component associated with symdofs and all neighboring components. Note: Currently just dumps extracted PDB and does not modify pose.
 /// @author Jacob Bale ( balej@uw.edu )
 
 // Unit headers
@@ -68,28 +68,28 @@ ExtractSubposeMoverCreator::mover_name()
 // -------------  Mover Creator -------------
 
 ExtractSubposeMover::ExtractSubposeMover() :
-  sym_dof_names_(""),
+	sym_dof_names_(""),
 	prefix_(""),
 	suffix_(""),
-  contact_dist_(10.0),
-  extras_( 0 )
+	contact_dist_(10.0),
+	extras_( 0 )
 { }
 
 ExtractSubposeMover::ExtractSubposeMover(const ExtractSubposeMover& rval) :
 	protocols::moves::Mover(),
-  sym_dof_names_( rval.sym_dof_names_ ),
+	sym_dof_names_( rval.sym_dof_names_ ),
 	prefix_( rval.prefix_ ),
 	suffix_( rval.suffix_ ),
-  contact_dist_( rval.contact_dist_ ),
-  extras_( rval.extras_ )
+	contact_dist_( rval.contact_dist_ ),
+	extras_( rval.extras_ )
 { }
 
-protocols::moves::MoverOP 
+protocols::moves::MoverOP
 ExtractSubposeMover::clone() const {
 	return protocols::moves::MoverOP( new ExtractSubposeMover( *this ) );
 }
 
-protocols::moves::MoverOP 
+protocols::moves::MoverOP
 ExtractSubposeMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new ExtractSubposeMover() );
 }
@@ -119,17 +119,17 @@ ExtractSubposeMover::apply(Pose & pose) {
 		utility::vector1<char> secondary_comps;
 		Size n_sec_tert_subs = 0;
 
-		for (Size i = 1; i <= all_names.size(); i++) {
+		for ( Size i = 1; i <= all_names.size(); i++ ) {
 			comp_subs.insert(std::make_pair(get_jump_name_to_components(pose,all_names[i])[1],get_jump_name_to_subunits(pose, all_names[i])));
 		}
 
 		// Use first sym_dof by default.
-		if ( sym_dof_name_list.size() == 0) sym_dof_name_list.push_back(all_names[1]);
+		if ( sym_dof_name_list.size() == 0 ) sym_dof_name_list.push_back(all_names[1]);
 
 		// Get all of the indices for the subunits associated with each sym_dof
-		for (Size i = 1; i <= sym_dof_name_list.size(); i++) {
+		for ( Size i = 1; i <= sym_dof_name_list.size(); i++ ) {
 			Sizes intra_subs = get_jump_name_to_subunits(pose,sym_dof_name_list[i]);
-			for (Size j = 1; j <= intra_subs.size(); j++) {
+			for ( Size j = 1; j <= intra_subs.size(); j++ ) {
 				std::string s = ObjexxFCL::string_of(intra_subs[j]) + get_jump_name_to_components(pose,sym_dof_name_list[i])[1];
 				primary_sub_strings.push_back(s);
 				TR << "Primary subunit " << s << " extracted from pose" << std::endl;
@@ -137,40 +137,40 @@ ExtractSubposeMover::apply(Pose & pose) {
 		}
 
 		//Get primary subs and all contacting subunits
-		for(Size i=1; i<=sym_info->num_total_residues_without_pseudo(); i++) {
-			if(find(primary_sub_strings.begin(),primary_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(i)) + ObjexxFCL::string_of(get_component_of_residue(pose,i)) )==primary_sub_strings.end()) continue;
+		for ( Size i=1; i<=sym_info->num_total_residues_without_pseudo(); i++ ) {
+			if ( find(primary_sub_strings.begin(),primary_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(i)) + ObjexxFCL::string_of(get_component_of_residue(pose,i)) )==primary_sub_strings.end() ) continue;
 			std::string atom_i = (pose.residue(i).name3() == "GLY") ? "CA" : "CB";
-			for(Size j=1; j<=sym_info->num_total_residues_without_pseudo(); j++) {
-				if(find(primary_sub_strings.begin(),primary_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(j)) + ObjexxFCL::string_of(get_component_of_residue(pose,j)) )!=primary_sub_strings.end()) continue;
-				if(find(secondary_sub_strings.begin(),secondary_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(j)) + ObjexxFCL::string_of(get_component_of_residue(pose,j)) )!=secondary_sub_strings.end()) continue;
+			for ( Size j=1; j<=sym_info->num_total_residues_without_pseudo(); j++ ) {
+				if ( find(primary_sub_strings.begin(),primary_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(j)) + ObjexxFCL::string_of(get_component_of_residue(pose,j)) )!=primary_sub_strings.end() ) continue;
+				if ( find(secondary_sub_strings.begin(),secondary_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(j)) + ObjexxFCL::string_of(get_component_of_residue(pose,j)) )!=secondary_sub_strings.end() ) continue;
 				std::string atom_j = (pose.residue(j).name3() == "GLY") ? "CA" : "CB";
-				if(pose.residue(i).xyz(atom_i).distance_squared(pose.residue(j).xyz(atom_j)) <= contact_dist_sq) {
+				if ( pose.residue(i).xyz(atom_i).distance_squared(pose.residue(j).xyz(atom_j)) <= contact_dist_sq ) {
 					std::string s = ObjexxFCL::string_of(sym_info->subunit_index(j)) + ObjexxFCL::string_of(get_component_of_residue(pose,j)) ;
 					secondary_sub_strings.push_back(s);
 					TR << "Secondary subunit " << s << " extracted from pose" << std::endl;
-					if(find(secondary_comps.begin(),secondary_comps.end(),get_component_of_residue(pose,j))!=secondary_comps.end()) continue;
+					if ( find(secondary_comps.begin(),secondary_comps.end(),get_component_of_residue(pose,j))!=secondary_comps.end() ) continue;
 					secondary_comps.push_back(get_component_of_residue(pose,j));
 					n_sec_tert_subs += primary_sub_strings.size() * comp_subs.find(get_component_of_residue(pose,j))->second.size();
-					}
 				}
 			}
-		
+		}
+
 		//Get other subunits of secondary components
-		for(Size i=1; i<=sym_info->num_total_residues_without_pseudo(); i++) {
-			if(find(secondary_sub_strings.begin(),secondary_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(i)) + ObjexxFCL::string_of(get_component_of_residue(pose,i)) )==secondary_sub_strings.end()) continue;
-			if(find(primary_sub_strings.begin(),primary_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(i)) + ObjexxFCL::string_of(get_component_of_residue(pose,i)) )!=primary_sub_strings.end()) continue;
+		for ( Size i=1; i<=sym_info->num_total_residues_without_pseudo(); i++ ) {
+			if ( find(secondary_sub_strings.begin(),secondary_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(i)) + ObjexxFCL::string_of(get_component_of_residue(pose,i)) )==secondary_sub_strings.end() ) continue;
+			if ( find(primary_sub_strings.begin(),primary_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(i)) + ObjexxFCL::string_of(get_component_of_residue(pose,i)) )!=primary_sub_strings.end() ) continue;
 			std::string atom_i = (pose.residue(i).name3() == "GLY") ? "CA" : "CB";
 			//Stop extracting subunits once all COMPONENTS in contact with the primary subunits have been extracted.
-			if( (secondary_sub_strings.size() + tertiary_sub_strings.size())==n_sec_tert_subs) break;
-			for(Size j=1; j<=sym_info->num_total_residues_without_pseudo(); j++) {
+			if ( (secondary_sub_strings.size() + tertiary_sub_strings.size())==n_sec_tert_subs ) break;
+			for ( Size j=1; j<=sym_info->num_total_residues_without_pseudo(); j++ ) {
 				//Stop extracting subunits once all COMPONENTS in contact with the primary subunits have been extracted.
-				if( (secondary_sub_strings.size() + tertiary_sub_strings.size())==n_sec_tert_subs) break;
-				if(get_component_of_residue(pose,i)!=get_component_of_residue(pose,j)) continue;
-				if(find(secondary_sub_strings.begin(),secondary_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(j)) + ObjexxFCL::string_of(get_component_of_residue(pose,j)) )!=secondary_sub_strings.end()) continue;
-				if(find(primary_sub_strings.begin(),primary_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(j)) + ObjexxFCL::string_of(get_component_of_residue(pose,j)) )!=primary_sub_strings.end()) continue;
-				if(find(tertiary_sub_strings.begin(),tertiary_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(j)) + ObjexxFCL::string_of(get_component_of_residue(pose,j)) )!=tertiary_sub_strings.end()) continue;
+				if ( (secondary_sub_strings.size() + tertiary_sub_strings.size())==n_sec_tert_subs ) break;
+				if ( get_component_of_residue(pose,i)!=get_component_of_residue(pose,j) ) continue;
+				if ( find(secondary_sub_strings.begin(),secondary_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(j)) + ObjexxFCL::string_of(get_component_of_residue(pose,j)) )!=secondary_sub_strings.end() ) continue;
+				if ( find(primary_sub_strings.begin(),primary_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(j)) + ObjexxFCL::string_of(get_component_of_residue(pose,j)) )!=primary_sub_strings.end() ) continue;
+				if ( find(tertiary_sub_strings.begin(),tertiary_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(j)) + ObjexxFCL::string_of(get_component_of_residue(pose,j)) )!=tertiary_sub_strings.end() ) continue;
 				std::string atom_j = (pose.residue(j).name3() == "GLY") ? "CA" : "CB";
-				if(pose.residue(i).xyz(atom_i).distance_squared(pose.residue(j).xyz(atom_j)) <= contact_dist_sq) {
+				if ( pose.residue(i).xyz(atom_i).distance_squared(pose.residue(j).xyz(atom_j)) <= contact_dist_sq ) {
 					std::string s = ObjexxFCL::string_of(sym_info->subunit_index(j)) + ObjexxFCL::string_of(get_component_of_residue(pose,j));
 					tertiary_sub_strings.push_back(s);
 					TR << "Tertiary subunit " << s << " extracted from pose" << std::endl;
@@ -178,22 +178,22 @@ ExtractSubposeMover::apply(Pose & pose) {
 			}
 		}
 
-		for(Size i=1; i<=primary_sub_strings.size() ; i++) {
+		for ( Size i=1; i<=primary_sub_strings.size() ; i++ ) {
 			all_sub_strings.push_back(primary_sub_strings[i]);
-		}	
-		for(Size i=1; i<=secondary_sub_strings.size() ; i++) {
+		}
+		for ( Size i=1; i<=secondary_sub_strings.size() ; i++ ) {
 			all_sub_strings.push_back(secondary_sub_strings[i]);
-		}	
-		for(Size i=1; i<=tertiary_sub_strings.size() ; i++) {
+		}
+		for ( Size i=1; i<=tertiary_sub_strings.size() ; i++ ) {
 			all_sub_strings.push_back(tertiary_sub_strings[i]);
-		}	
+		}
 
 		//Generate a new pose with the residues from the primary, secondary, and tertiary subunits
 
-		for(Size i=1; i<=sym_info->num_total_residues_without_pseudo(); i++) {
-			if(find(all_sub_strings.begin(),all_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(i)) + ObjexxFCL::string_of(get_component_of_residue(pose,i)) )==all_sub_strings.end()) continue;
+		for ( Size i=1; i<=sym_info->num_total_residues_without_pseudo(); i++ ) {
+			if ( find(all_sub_strings.begin(),all_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(i)) + ObjexxFCL::string_of(get_component_of_residue(pose,i)) )==all_sub_strings.end() ) continue;
 			resis.push_back(i);
-			}
+		}
 	} else {
 		resis = core::pose::symmetry::get_intracomponent_and_neighbor_resis(pose, sym_dof_name_list[1], contact_dist_);
 	}
@@ -204,12 +204,12 @@ ExtractSubposeMover::apply(Pose & pose) {
 	//TODO: JBB Make version that can generate a new trimmed-down symmetric pose/symmetry definition file.
 }
 
-void 
+void
 ExtractSubposeMover::parse_my_tag( utility::tag::TagCOP tag,
-										 basic::datacache::DataMap & /*data*/,
-										 protocols::filters::Filters_map const &,
-										 protocols::moves::Movers_map const &,
-										 core::pose::Pose const & ) {
+	basic::datacache::DataMap & /*data*/,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & ) {
 
 	sym_dof_names_ = tag->getOption< std::string >( "sym_dof_names","" );
 	prefix_ = tag->getOption< std::string >( "prefix", "" );

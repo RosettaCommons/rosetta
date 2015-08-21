@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 	 protocols/membrane/geometry/EmbeddingDef.cxxtest.hh
-/// @brief 	 Unit test for EmbeddingDef class
+/// @file   protocols/membrane/geometry/EmbeddingDef.cxxtest.hh
+/// @brief   Unit test for EmbeddingDef class
 /// @author  JKLeman (julia.koehler1982@gmail.com)
 /// @author  Updated by Rebecca Alford (rfalford12@gmail.com)
 
@@ -41,34 +41,34 @@
 using namespace core;
 using namespace core::conformation;
 using namespace core::conformation::membrane;
-using namespace protocols::membrane; 
+using namespace protocols::membrane;
 using namespace protocols::membrane::geometry;
 
 class EmbeddingDefTest : public CxxTest::TestSuite {
-	
-public: // test functions
-    
-    /// Test Setup Functions ////////
-    
-    /// @brief Setup Test
-    void setUp(){
-	
-        // Initialize
-        core_init();
-	}
-    
-    /// @brief Standard Tear Down
-    void tearDown() {}
-	    
-    ///// Test Methods /////////////
 
-////////////////////////////////////////////////////////////////////////////////
+public: // test functions
+
+	/// Test Setup Functions ////////
+
+	/// @brief Setup Test
+	void setUp(){
+
+		// Initialize
+		core_init();
+	}
+
+	/// @brief Standard Tear Down
+	void tearDown() {}
+
+	///// Test Methods /////////////
+
+	////////////////////////////////////////////////////////////////////////////////
 
 	// default constructor
 	void test_default_constructor() {
-		
+
 		TS_TRACE("Test default constructor");
-				
+
 		// define vectors and object
 		Vector center( 0, 0, 0 );
 		Vector normal( 0, 0,1 );
@@ -78,10 +78,10 @@ public: // test functions
 		TS_ASSERT( position_equal_within_delta( embed->center(), center, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed->normal(), normal, 0.001 ) );
 	}
-	
+
 	// standard constructor
 	void test_standard_constructor() {
-	  
+
 		TS_TRACE("Test constructor from center and normal");
 
 		// define vectors and object
@@ -96,18 +96,18 @@ public: // test functions
 
 	// from span
 	void test_from_span() {
-		
+
 		TS_TRACE("Test from_span function");
-		
+
 		// read in pose
 		core::pose::Pose pose;
 		core::import_pose::pose_from_pdb( pose, "protocols/membrane/geometry/1AFO_AB.pdb" );
-		
+
 		// create object
 		Size res1(15);
 		Size res2(32);
 		EmbeddingDefOP embed( new EmbeddingDef( pose, res1, res2 ) );
-		
+
 		// define start, end, center and normal
 		Vector start(-0.97, -1.864, -12.281);
 		Vector end(-1.246, -7.692, 13.217);
@@ -119,7 +119,7 @@ public: // test functions
 		TS_ASSERT( position_equal_within_delta( pose.residue( res2 ).atom( 2 ).xyz(), end, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed->center(), center, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed->normal(), normal, 0.001 ) );
-		
+
 	}
 
 	// translate by
@@ -134,7 +134,7 @@ public: // test functions
 		Vector add2normal(8, 4, 1);
 		EmbeddingDefOP embed( new EmbeddingDef( center, normal ) );
 		EmbeddingDefOP translation( new EmbeddingDef( add2center, add2normal ) );
-		
+
 		// define new center and normal
 		Vector new_center(7, 7, 7);
 		Vector new_normal(9, 9, 9);
@@ -145,7 +145,7 @@ public: // test functions
 		TS_ASSERT( position_equal_within_delta( embed->center(), new_center, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed->normal(), new_normal, 0.001 ) );
 	}
-	
+
 	// equals
 	void test_equals() {
 
@@ -164,16 +164,16 @@ public: // test functions
 		TS_ASSERT( embed->equals( *embed1 ) );
 		TS_ASSERT( ! embed->equals( *embed2 ) );
 	}
-			
-////////////////////////////////////////////////////////////////////////////////
+
+	////////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Position equal within delta (helper method)
 	bool position_equal_within_delta( Vector a, Vector b, Real delta ) {
-		
+
 		TS_ASSERT_DELTA( a.x(), b.x(), delta );
 		TS_ASSERT_DELTA( a.y(), b.y(), delta );
 		TS_ASSERT_DELTA( a.z(), b.z(), delta );
-		
+
 		return true;
 	}
 };

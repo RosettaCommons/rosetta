@@ -82,13 +82,13 @@ OPT_1GRP_KEY( Boolean, calc, rmsd )
 void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-  OPT( in::file::s );
+	OPT( in::file::s );
 	OPT( in::file::silent );
 	OPT( in::file::native );
 	OPT( out::pdb );
 	NEW_OPT( wRMSD, "compute wRMSD with this sigma", 2 );
 	NEW_OPT( tolerance, "stop wRMSD iteration if <tolearance change in wSum", 0.00001);
-	//	NEW_OPT( dump_fit, "output pdbs of fitted structures ", false );
+	// NEW_OPT( dump_fit, "output pdbs of fitted structures ", false );
 	NEW_OPT( rigid::in, "residues that are considered for wRMSD or clustering", "rigid.loop");
 	NEW_OPT( rmsf::out, "write rmsf into this file", "rmsf.dat" );
 	NEW_OPT( rigid::out, "write a RIGID definition", "rigid.loops" );
@@ -149,7 +149,7 @@ void FitMover::apply( core::pose::Pose &pose ) {
 void read_structures( RmsfMoverOP rmsf_tool ) {
 	//get silent-file job-inputter if available
 	SilentFileJobInputterOP sfd_inputter (
-							utility::pointer::dynamic_pointer_cast< protocols::jd2::SilentFileJobInputter > ( JobDistributor::get_instance()->job_inputter() ) );
+		utility::pointer::dynamic_pointer_cast< protocols::jd2::SilentFileJobInputter > ( JobDistributor::get_instance()->job_inputter() ) );
 	if ( sfd_inputter ) {
 		//this allows very fast reading of CA coords
 		io::silent::SilentFileData const& sfd( sfd_inputter->silent_file_data() );
@@ -164,16 +164,15 @@ core::Size read_input_weights( FArray1D_double& weights, Size natoms) {
 	loops::PoseNumberedLoopFileReader loop_file_reader;
 	loop_file_reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
 	std::ifstream is( option[ rigid::in ]().name().c_str() );
-	if (!is) utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ rigid::in ]().name() + "'" );
+	if ( !is ) utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ rigid::in ]().name() + "'" );
 	loops::SerializedLoopList loops = loop_file_reader.read_pose_numbered_loops_file(is, option[ rigid::in ](), false );
 	loops::Loops rigid = loops::Loops( loops );
 	core::Size count_expected( 0 );
-	for ( Size i=1;i<=natoms; ++i ) {
-		if (rigid.is_loop_residue( i ) ) {
+	for ( Size i=1; i<=natoms; ++i ) {
+		if ( rigid.is_loop_residue( i ) ) {
 			weights( i )=1.0;
 			++count_expected;
-		}
-		else weights( i )=0.0;
+		} else weights( i )=0.0;
 	}
 	return count_expected;
 }
@@ -219,10 +218,10 @@ void run() {
 	utility::vector1< Real > rmsf_result;
 	Size icenter=0;
 	if ( option[ rmsf::out ].user()
-		|| option[ rigid::out ].user()
-		|| option[ out::pdb ].user()
-		|| option[ calc::rmsd ].user()
-	) {//output rmsf file
+			|| option[ rigid::out ].user()
+			|| option[ out::pdb ].user()
+			|| option[ calc::rmsd ].user()
+			) { //output rmsf file
 		icenter=superimpose( rmsf_tool->eval_, rmsf_result, weights );
 	}
 
@@ -236,7 +235,7 @@ void run() {
 	}
 
 	///write rigid-out loops file
-	if ( option[ rigid::out ].user() ) {//create RIGID output
+	if ( option[ rigid::out ].user() ) { //create RIGID output
 		Real const cutoff ( option[ rigid::cutoff ] );
 		tr.Info << "make rigid with cutoff " << cutoff << " and write to file... " << option[ rigid::out ]() << std::endl;
 		loops::Loops rigid;
@@ -262,11 +261,11 @@ void run() {
 		JobDistributor::get_instance()->restart();
 		JobDistributor::get_instance()->go( fit_tool );
 		if ( option[ in::file::native ].user() ) {
-				pose::Pose native_pose;
-				core::import_pose::pose_from_pdb( native_pose,
-					*core::chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID ), option[ in::file::native ]() );
-				fit_tool->apply( native_pose );
-				native_pose.dump_pdb( "fit_native.pdb");
+			pose::Pose native_pose;
+			core::import_pose::pose_from_pdb( native_pose,
+				*core::chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID ), option[ in::file::native ]() );
+			fit_tool->apply( native_pose );
+			native_pose.dump_pdb( "fit_native.pdb");
 		}
 	}
 
@@ -324,15 +323,15 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-	register_options();
-	devel::init( argc, argv );
+		register_options();
+		devel::init( argc, argv );
 
-	try{
-		run();
-	} catch ( utility::excn::EXCN_Base& excn ) {
-		excn.show( std::cerr );
-	}
-	 } catch ( utility::excn::EXCN_Base const & e ) {
+		try{
+			run();
+		} catch ( utility::excn::EXCN_Base& excn ) {
+			excn.show( std::cerr );
+		}
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

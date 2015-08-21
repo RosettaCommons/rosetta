@@ -80,8 +80,8 @@ public: // scoring
 		Real & rsigma_score,
 		Real & sheet_score
 	) const;
-	
-	
+
+
 	static
 	void
 	rsigma_dot_initializer(
@@ -110,11 +110,11 @@ private:
 	float
 	hairpin_killing_score(
 		pose::Pose const & pose,
-	  Size const & pos1,
+		Size const & pos1,
 		Size const & pos2,
 		Real const & theta,
 		float const & ss_score
-  ) const;
+	) const;
 
 	/// @brief This function takes a set of dimer neighbors, and determines how
 	/// many sheets there, and how many strands are in each sheet
@@ -260,7 +260,7 @@ private: // initializers for static data
 	/*static
 	void
 	rsigma_dot_initializer(
-		FArray4D_real & rsigma_dot
+	FArray4D_real & rsigma_dot
 	);*/
 
 	static

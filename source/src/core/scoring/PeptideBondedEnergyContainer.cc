@@ -36,7 +36,7 @@ PeptideBondedNeighborIterator::PeptideBondedNeighborIterator(
 {}
 
 ResidueNeighborIterator const & PeptideBondedNeighborIterator::operator = ( ResidueNeighborIterator const & src ) {
-debug_assert( dynamic_cast< PeptideBondedNeighborIterator const * >( &src ) );
+	debug_assert( dynamic_cast< PeptideBondedNeighborIterator const * >( &src ) );
 	PeptideBondedNeighborIterator const & my_src( static_cast< PeptideBondedNeighborIterator const & >( src ) );
 	base_ = my_src.base_;
 	pos_ = my_src.pos_;
@@ -47,14 +47,14 @@ debug_assert( dynamic_cast< PeptideBondedNeighborIterator const * >( &src ) );
 
 ResidueNeighborIterator const & PeptideBondedNeighborIterator::operator ++ () {
 	++pos_;
-	if (pos_ == base_) ++pos_;
+	if ( pos_ == base_ ) ++pos_;
 	return *this;
 }
 
 bool PeptideBondedNeighborIterator::operator == ( ResidueNeighborIterator const & other ) const
 {
 	return ( residue_iterated_on() == other.residue_iterated_on() &&
-					 neighbor_id() == other.neighbor_id() );
+		neighbor_id() == other.neighbor_id() );
 }
 
 bool PeptideBondedNeighborIterator::operator != ( ResidueNeighborIterator const & other ) const
@@ -79,21 +79,22 @@ Size PeptideBondedNeighborIterator::neighbor_id() const {
 }
 
 void PeptideBondedNeighborIterator::save_energy( EnergyMap const & emap ) {
-	for (Size i=1; i<=score_types_.size(); ++i)
-	{
+	for ( Size i=1; i<=score_types_.size(); ++i ) {
 		Real const energy( emap[ score_types_[i] ] );
 		(*tables_)[ std::min(pos_,base_) ][i] = energy;
 	}
 }
 
 void PeptideBondedNeighborIterator::retrieve_energy( EnergyMap & emap ) const {
-	for (Size i=1; i<=score_types_.size(); ++i)
+	for ( Size i=1; i<=score_types_.size(); ++i ) {
 		emap[ score_types_[i] ] = (*tables_)[std::min(pos_,base_)][i];
+	}
 }
 
 void PeptideBondedNeighborIterator::accumulate_energy( EnergyMap & emap ) const {
-	for (Size i=1; i<=score_types_.size(); ++i)
+	for ( Size i=1; i<=score_types_.size(); ++i ) {
 		emap[ score_types_[i] ] += (*tables_)[std::min(pos_,base_)][i];
+	}
 }
 
 void PeptideBondedNeighborIterator::mark_energy_computed() {
@@ -128,7 +129,7 @@ PeptideBondedNeighborConstIterator::PeptideBondedNeighborConstIterator(
 {}
 
 ResidueNeighborConstIterator const & PeptideBondedNeighborConstIterator::operator = ( ResidueNeighborConstIterator const & src ) {
-debug_assert( dynamic_cast< PeptideBondedNeighborConstIterator const * >( &src ) );
+	debug_assert( dynamic_cast< PeptideBondedNeighborConstIterator const * >( &src ) );
 	PeptideBondedNeighborConstIterator const & my_src( static_cast< PeptideBondedNeighborConstIterator const & >( src ) );
 	pos_ = my_src.pos_;
 	tables_ = my_src.tables_;
@@ -138,13 +139,13 @@ debug_assert( dynamic_cast< PeptideBondedNeighborConstIterator const * >( &src )
 
 ResidueNeighborConstIterator const & PeptideBondedNeighborConstIterator::operator ++ () {
 	++pos_;
-	if (pos_ == base_) ++pos_;
+	if ( pos_ == base_ ) ++pos_;
 	return *this;
 }
 
 bool PeptideBondedNeighborConstIterator::operator == ( ResidueNeighborConstIterator const & other ) const {
 	return ( residue_iterated_on() == other.residue_iterated_on() &&
-					 neighbor_id() == other.neighbor_id() );
+		neighbor_id() == other.neighbor_id() );
 }
 
 bool PeptideBondedNeighborConstIterator::operator != ( ResidueNeighborConstIterator const & other ) const {
@@ -168,13 +169,15 @@ Size PeptideBondedNeighborConstIterator::neighbor_id() const {
 }
 
 void PeptideBondedNeighborConstIterator::retrieve_energy( EnergyMap & emap ) const {
-	for (Size i=1; i<=score_types_.size(); ++i)
+	for ( Size i=1; i<=score_types_.size(); ++i ) {
 		emap[ score_types_[i] ] = (*tables_)[std::min(pos_,base_)][i];
+	}
 }
 
 void PeptideBondedNeighborConstIterator::accumulate_energy( EnergyMap & emap ) const {
-	for (Size i=1; i<=score_types_.size(); ++i)
+	for ( Size i=1; i<=score_types_.size(); ++i ) {
 		emap[ score_types_[i] ] += (*tables_)[std::min(pos_,base_)][i];
+	}
 }
 
 bool PeptideBondedNeighborConstIterator::energy_computed() const {
@@ -236,25 +239,25 @@ PeptideBondedEnergyContainer::size() const {
 ResidueNeighborConstIteratorOP
 PeptideBondedEnergyContainer::const_neighbor_iterator_begin( int resid ) const {
 	int beginat = std::min( resid-1, (int)(offset_+size_+1) );
-	if (resid==(int)(offset_+1)) beginat = offset_+2;
-	if (resid<=(int)(offset_)) beginat = 1; // sometimes arises in symmetry
-	if (resid> (int)(offset_+size_)) beginat = 1; // sometimes arises in symmetry
+	if ( resid==(int)(offset_+1) ) beginat = offset_+2;
+	if ( resid<=(int)(offset_) ) beginat = 1; // sometimes arises in symmetry
+	if ( resid> (int)(offset_+size_) ) beginat = 1; // sometimes arises in symmetry
 	return ResidueNeighborConstIteratorOP( new PeptideBondedNeighborConstIterator( resid, beginat, score_types_, &tables_, &computed_ ) );
 }
 
 ResidueNeighborConstIteratorOP
 PeptideBondedEnergyContainer::const_neighbor_iterator_end( int resid ) const {
 	int endat = std::min( resid+2, (int)(offset_+size_+1) );
-	if (resid<=(int)(offset_)) endat = 1; // sometimes arises in symmetry
-	if (resid>(int)(offset_+size_)) endat = 1; // sometimes arises in symmetry
+	if ( resid<=(int)(offset_) ) endat = 1; // sometimes arises in symmetry
+	if ( resid>(int)(offset_+size_) ) endat = 1; // sometimes arises in symmetry
 	return ResidueNeighborConstIteratorOP( new PeptideBondedNeighborConstIterator( resid, endat, score_types_, &tables_, &computed_ ) );
 }
 
 ResidueNeighborConstIteratorOP
 PeptideBondedEnergyContainer::const_upper_neighbor_iterator_begin( int resid ) const {
 	int beginat = std::min( resid+1, (int)(offset_+size_+1) );
-	if (resid<=(int)(offset_)) beginat = 1; // sometimes arises in symmetry
-	if (resid> (int)(offset_+size_)) beginat = 1; // sometimes arises in symmetry
+	if ( resid<=(int)(offset_) ) beginat = 1; // sometimes arises in symmetry
+	if ( resid> (int)(offset_+size_) ) beginat = 1; // sometimes arises in symmetry
 	return ResidueNeighborConstIteratorOP( new PeptideBondedNeighborConstIterator( resid, beginat, score_types_, &tables_, &computed_ ) );
 }
 
@@ -267,17 +270,17 @@ PeptideBondedEnergyContainer::const_upper_neighbor_iterator_end( int resid ) con
 ResidueNeighborIteratorOP
 PeptideBondedEnergyContainer::neighbor_iterator_begin( int resid ) {
 	int beginat = std::min( resid-1, (int)(offset_+size_+1) );
-	if (resid==(int)(offset_+1)) beginat = offset_+2;
-	if (resid<=(int)(offset_)) beginat = 1; // sometimes arises in symmetry
-	if (resid> (int)(offset_+size_)) beginat = 1; // sometimes arises in symmetry
+	if ( resid==(int)(offset_+1) ) beginat = offset_+2;
+	if ( resid<=(int)(offset_) ) beginat = 1; // sometimes arises in symmetry
+	if ( resid> (int)(offset_+size_) ) beginat = 1; // sometimes arises in symmetry
 	return ResidueNeighborIteratorOP( new PeptideBondedNeighborIterator( resid, beginat, score_types_, &tables_, &computed_ ) );
 }
 
 ResidueNeighborIteratorOP
 PeptideBondedEnergyContainer::neighbor_iterator_end( int resid ) {
 	int endat = std::min( resid+2, (int)(offset_+size_+1) );
-	if (resid<=(int)(offset_)) endat = 1; // sometimes arises in symmetry
-	if (resid>(int)(offset_+size_)) endat = 1; // sometimes arises in symmetry
+	if ( resid<=(int)(offset_) ) endat = 1; // sometimes arises in symmetry
+	if ( resid>(int)(offset_+size_) ) endat = 1; // sometimes arises in symmetry
 	return ResidueNeighborIteratorOP( new PeptideBondedNeighborIterator( resid, endat, score_types_, &tables_, &computed_ ) );
 }
 
@@ -285,8 +288,8 @@ ResidueNeighborIteratorOP
 PeptideBondedEnergyContainer::upper_neighbor_iterator_begin( int resid )
 {
 	int beginat = std::min( resid+1, (int)(offset_+size_+1) );
-	if (resid<=(int)(offset_)) beginat = 1; // sometimes arises in symmetry
-	if (resid> (int)(offset_+size_)) beginat = 1; // sometimes arises in symmetry
+	if ( resid<=(int)(offset_) ) beginat = 1; // sometimes arises in symmetry
+	if ( resid> (int)(offset_+size_) ) beginat = 1; // sometimes arises in symmetry
 	return ResidueNeighborIteratorOP( new PeptideBondedNeighborIterator( resid, beginat, score_types_, &tables_, &computed_ ) );
 }
 

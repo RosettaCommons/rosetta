@@ -27,38 +27,38 @@ namespace stepwise {
 namespace sampler {
 namespace protein {
 
-	class ProteinMainChainStepWiseSampler: public protocols::stepwise::sampler::StepWiseSamplerSized {
+class ProteinMainChainStepWiseSampler: public protocols::stepwise::sampler::StepWiseSamplerSized {
 
-	public:
+public:
 
-		//constructor
-		ProteinMainChainStepWiseSampler( utility::vector1< core::id::TorsionID > const & which_torsions,
-														 utility::vector1< utility::vector1< core::Real > > const & main_chain_torsion_set_lists,
-														 bool const choose_random = false );
+	//constructor
+	ProteinMainChainStepWiseSampler( utility::vector1< core::id::TorsionID > const & which_torsions,
+		utility::vector1< utility::vector1< core::Real > > const & main_chain_torsion_set_lists,
+		bool const choose_random = false );
 
-		ProteinMainChainStepWiseSampler();
+	ProteinMainChainStepWiseSampler();
 
-		//destructor
-		~ProteinMainChainStepWiseSampler();
+	//destructor
+	~ProteinMainChainStepWiseSampler();
 
-		/// @brief Get the total number of rotamers in sampler
-		virtual core::Size size() const { return main_chain_torsion_set_lists_.size(); }
+	/// @brief Get the total number of rotamers in sampler
+	virtual core::Size size() const { return main_chain_torsion_set_lists_.size(); }
 
-		/// @brief Apply the i-th rotamer to pose
-		virtual void apply( core::pose::Pose&, core::Size const );
+	/// @brief Apply the i-th rotamer to pose
+	virtual void apply( core::pose::Pose&, core::Size const );
 
-		/// @brief Name of the class
-		virtual std::string get_name() const { return "ProteinMainChainStepWiseSampler"; }
+	/// @brief Name of the class
+	virtual std::string get_name() const { return "ProteinMainChainStepWiseSampler"; }
 
-		/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-		virtual StepWiseSamplerType type() const { return PROTEIN_MAIN_CHAIN; }
+	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
+	virtual StepWiseSamplerType type() const { return PROTEIN_MAIN_CHAIN; }
 
-	private:
+private:
 
-		utility::vector1< core::id::TorsionID > const which_torsions_;
-		utility::vector1< utility::vector1< core::Real > > const main_chain_torsion_set_lists_;
+	utility::vector1< core::id::TorsionID > const which_torsions_;
+	utility::vector1< utility::vector1< core::Real > > const main_chain_torsion_set_lists_;
 
-	};
+};
 
 } //protein
 } //sampler

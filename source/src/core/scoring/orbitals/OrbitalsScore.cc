@@ -45,13 +45,13 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
-namespace core{
-namespace scoring{
-namespace orbitals{
+namespace core {
+namespace scoring {
+namespace orbitals {
 
 methods::EnergyMethodOP
 OrbitalsScoreCreator::create_energy_method(
-		methods::EnergyMethodOptions const & options
+	methods::EnergyMethodOptions const & options
 ) const
 {
 	return methods::EnergyMethodOP( new OrbitalsScore(options) );
@@ -79,7 +79,7 @@ OrbitalsScore::OrbitalsScore() :
 	max_orbital_dist_squared_(9),
 	max_dist_squared_(36)
 {
-	if(basic::options::option[ basic::options::OptionKeys::in::add_orbitals] != 1){
+	if ( basic::options::option[ basic::options::OptionKeys::in::add_orbitals] != 1 ) {
 		utility_exit_with_message( "Trying to run features test without orbitals! Pass the flag -add_orbitals!" );
 	}
 }
@@ -90,7 +90,7 @@ OrbitalsScore::OrbitalsScore( methods::EnergyMethodOptions const & ) :
 	max_orbital_dist_squared_(9),
 	max_dist_squared_(36)
 {
-	if(basic::options::option[ basic::options::OptionKeys::in::add_orbitals] != 1){
+	if ( basic::options::option[ basic::options::OptionKeys::in::add_orbitals] != 1 ) {
 		utility_exit_with_message( "Trying to run features test without orbitals! Pass the flag -add_orbitals!" );
 	}
 }
@@ -109,7 +109,7 @@ void OrbitalsScore::setup_for_scoring(pose::Pose & pose, ScoreFunction const & )
 
 void OrbitalsScore::setup_for_derivatives(pose::Pose & pose , ScoreFunction const &) const
 {
-	for(core::Size resid=1; resid <= pose.n_residue(); ++resid){
+	for ( core::Size resid=1; resid <= pose.n_residue(); ++resid ) {
 		pose.update_orbital_coords(resid);
 	}
 
@@ -117,14 +117,14 @@ void OrbitalsScore::setup_for_derivatives(pose::Pose & pose , ScoreFunction cons
 
 void
 OrbitalsScore::setup_for_minimizing_for_residue_pair(
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		pose::Pose const &,
-		ScoreFunction const &,
-		kinematics::MinimizerMapBase const &,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData &
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	pose::Pose const &,
+	ScoreFunction const &,
+	kinematics::MinimizerMapBase const &,
+	ResSingleMinimizationData const &,
+	ResSingleMinimizationData const &,
+	ResPairMinimizationData &
 ) const{
 	//std::cout << "we got to setup for minimizeing" << std::endl;
 	conformation::Residue *res1_ptr = const_cast<conformation::Residue *>(&rsd1);
@@ -137,7 +137,7 @@ OrbitalsScore::setup_for_minimizing_for_residue_pair(
 
 void
 OrbitalsScore::finalize_after_derivatives( pose::Pose & pose, ScoreFunction const &  ) const{
-	for(core::Size resid=1; resid <= pose.n_residue(); ++resid){
+	for ( core::Size resid=1; resid <= pose.n_residue(); ++resid ) {
 		pose.update_orbital_coords(resid);
 	}
 }
@@ -145,11 +145,11 @@ OrbitalsScore::finalize_after_derivatives( pose::Pose & pose, ScoreFunction cons
 
 void
 OrbitalsScore::finalize_total_energy(
-		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap &
+	pose::Pose & pose,
+	ScoreFunction const &,
+	EnergyMap &
 ) const{
-	for(core::Size resid=1; resid <= pose.n_residue(); ++resid){
+	for ( core::Size resid=1; resid <= pose.n_residue(); ++resid ) {
 		pose.update_orbital_coords(resid);
 	}
 }
@@ -157,11 +157,11 @@ OrbitalsScore::finalize_total_energy(
 
 void
 OrbitalsScore::setup_for_minimizing(
-		pose::Pose & pose,
-		ScoreFunction const & ,
-		kinematics::MinimizerMapBase const &
+	pose::Pose & pose,
+	ScoreFunction const & ,
+	kinematics::MinimizerMapBase const &
 ) const{
-	for(core::Size resid=1; resid <= pose.n_residue(); ++resid){
+	for ( core::Size resid=1; resid <= pose.n_residue(); ++resid ) {
 		pose.update_orbital_coords(resid);
 	}
 }
@@ -172,10 +172,10 @@ bool OrbitalsScore::defines_intrares_energy(core::scoring::EnergyMap const &) co
 
 
 void OrbitalsScore::eval_intrares_energy(
-		core::conformation::Residue const &,
-		core::pose::Pose const &,
-		core::scoring::ScoreFunction const &,
-		core::scoring::EnergyMap &
+	core::conformation::Residue const &,
+	core::pose::Pose const &,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &
 ) const {}
 
 /// This is very wrong.
@@ -190,8 +190,8 @@ void OrbitalsScore::indicate_required_context_graphs(utility::vector1< bool > & 
 
 void
 OrbitalsScore::prepare_rotamers_for_packing(
-		pose::Pose const & /*pose*/,
-		conformation::RotamerSetBase & set
+	pose::Pose const & /*pose*/,
+	conformation::RotamerSetBase & set
 ) const
 {
 	for ( Size ii = 1; ii <= set.num_rotamers(); ++ii ) {
@@ -201,8 +201,8 @@ OrbitalsScore::prepare_rotamers_for_packing(
 
 void
 OrbitalsScore::update_residue_for_packing(
-		pose::Pose & pose,
-		Size resid
+	pose::Pose & pose,
+	Size resid
 ) const
 {
 	pose.update_orbital_coords( resid );
@@ -255,21 +255,21 @@ score_type_for_orb_params(
 			return orbitals_hpol_bb;
 		}
 
-		if ( orbtype1 == 1 ) {//c.pi.sp2 orbital type
+		if ( orbtype1 == 1 ) { //c.pi.sp2 orbital type
 			if ( htype == lookup_table.Hpol_scOrbH ) return pci_cation_pi;  //polar hydrogen
 			if ( htype == lookup_table.Haro_scOrbH ) return pci_pi_pi; //aromatic hydrogen
 			if ( htype == lookup_table.Hpol_bbOrbH ) return orbitals_hpol_bb; //bb hydrogen
 		}
-		if ( orbtype1 == 2 ) {//n.pi.sp2 orbtal type. Do nothing with hydrogen...no energy associated with this
+		if ( orbtype1 == 2 ) { //n.pi.sp2 orbtal type. Do nothing with hydrogen...no energy associated with this
 		}
-		if ( orbtype1 == 3 ) {//n.p.sp2 orbital type
+		if ( orbtype1 == 3 ) { //n.p.sp2 orbital type
 			if ( htype == lookup_table.Hpol_scOrbH ) return pci_hbond; //polar hydrogen
 			//if ( htype == 2 ) return pci_pi_pi; //aromatic hydrogen
 			//if ( htype == 3 ) return pci_pi_pi; //bb hydrogen
 		}
-    if ( orbtype1 == 4 ) {
-      if ( htype == lookup_table.Hpol_scOrbH ) return pci_salt_bridge;
-    }
+		if ( orbtype1 == 4 ) {
+			if ( htype == lookup_table.Hpol_scOrbH ) return pci_salt_bridge;
+		}
 		if ( orbtype1 == 5 ) {
 			if ( htype == lookup_table.Hpol_scOrbH ) return pci_salt_bridge;
 		}
@@ -280,15 +280,15 @@ score_type_for_orb_params(
 			if ( htype == lookup_table.Hpol_bbOrbH ) return orbitals_hpol_bb;
 		}
 	} else {
-		if ( orbtype1 == static_cast <core::Size>(core::chemical::orbitals::C_pi_sp2)){
-			if(orbtype2 == static_cast <core::Size>(core::chemical::orbitals::C_pi_sp2) ){
+		if ( orbtype1 == static_cast <core::Size>(core::chemical::orbitals::C_pi_sp2) ) {
+			if ( orbtype2 == static_cast <core::Size>(core::chemical::orbitals::C_pi_sp2) ) {
 				return pci_pi_pi;
 			} //c.pi.sp2 to c.pi.sp2
 		}
-		if ( orbtype1 == 1 && orbtype2 == 2 ){ return pci_cation_pi;}//c.pi.sp2 to n.pi.sp2
-		if ( orbtype1 == 2 && orbtype2 == 1 ){ return pci_cation_pi;}//c.pi.sp2 to n.pi.sp2
-		if ( orbtype1 == 1 && orbtype2 == 3 ){ return pci_cation_pi;}//c.pi.sp2 to n.p.sp2
-		if ( orbtype1 == 3 && orbtype2 == 1 ){ return pci_cation_pi;}//c.pi.sp2 to n.p.sp2
+		if ( orbtype1 == 1 && orbtype2 == 2 ) { return pci_cation_pi;}//c.pi.sp2 to n.pi.sp2
+		if ( orbtype1 == 2 && orbtype2 == 1 ) { return pci_cation_pi;}//c.pi.sp2 to n.pi.sp2
+		if ( orbtype1 == 1 && orbtype2 == 3 ) { return pci_cation_pi;}//c.pi.sp2 to n.p.sp2
+		if ( orbtype1 == 3 && orbtype2 == 1 ) { return pci_cation_pi;}//c.pi.sp2 to n.p.sp2
 
 	}
 	return fa_atr;
@@ -308,8 +308,8 @@ void OrbitalsScore::scfxn_rules_for_energy(
 {
 	ScoreType which_st = score_type_for_orb_params( lookup_table_, hydrogen_interaction, backbone, orbtype1, htype, orbtype2 );
 	if ( which_st != fa_atr ) {
-		//		if ( energy != 0 ) {
-		//	std::cout << "scfxn_rules_for_energy: " << hydrogen_interaction << " " << backbone << " " << orbtype1 << " " << orbtype2 << " " << energy << " " << which_st << std::endl;
+		//  if ( energy != 0 ) {
+		// std::cout << "scfxn_rules_for_energy: " << hydrogen_interaction << " " << backbone << " " << orbtype1 << " " << orbtype2 << " " << energy << " " << which_st << std::endl;
 		//}
 		emap[ which_st ] += energy;
 	}
@@ -338,35 +338,37 @@ bool OrbitalsScore::orb_orb_rules(
 )const
 {
 
-	if(atype1==6){//atype 6 is aroC, which would be for C.pi -> C.pi interactions
-		if(atype2==11 || atype2==6)     {//atype 11 is Narg, which would be for N.pi -> C.pi interactions
+	if ( atype1==6 ) { //atype 6 is aroC, which would be for C.pi -> C.pi interactions
+		if ( atype2==11 || atype2==6 )     { //atype 11 is Narg, which would be for N.pi -> C.pi interactions
 			return true;
-		}else {return false;}
+		} else { return false; }
 	}
-	if(atype1==11){
-		if(atype2==11 || atype2==6)     {//atype 11 is Narg, which would be for N.pi -> C.pi interactions
+	if ( atype1==11 ) {
+		if ( atype2==11 || atype2==6 )     { //atype 11 is Narg, which would be for N.pi -> C.pi interactions
 			return true;
-		}else {return false;}   }
-	if(atype2==6){//atype 6 is aroC, which would be for C.pi -> C.pi interactions
-		if(atype1==11 || atype1==6)     {//atype 11 is Narg, which would be for N.pi -> C.pi interactions
-			return true;
-		}else {return false;}
+		} else { return false; }
 	}
-	if(atype2==11){
-		if(atype1==11 || atype1==6)     {//atype 11 is Narg, which would be for N.pi -> C.pi interactions
+	if ( atype2==6 ) { //atype 6 is aroC, which would be for C.pi -> C.pi interactions
+		if ( atype1==11 || atype1==6 )     { //atype 11 is Narg, which would be for N.pi -> C.pi interactions
 			return true;
-		}else {return false;}   }
+		} else { return false; }
+	}
+	if ( atype2==11 ) {
+		if ( atype1==11 || atype1==6 )     { //atype 11 is Narg, which would be for N.pi -> C.pi interactions
+			return true;
+		} else { return false; }
+	}
 	return false;
 }
 
 
 void
 OrbitalsScore::residue_pair_energy(
-		core::conformation::Residue const & res1,
-		core::conformation::Residue const & res2,
-		core::pose::Pose const &,
-		core::scoring::ScoreFunction const &,
-		EnergyMap & emap
+	core::conformation::Residue const & res1,
+	core::conformation::Residue const & res2,
+	core::pose::Pose const &,
+	core::scoring::ScoreFunction const &,
+	EnergyMap & emap
 ) const
 {
 	get_E_haro_one_way(res2, res1, emap);
@@ -424,7 +426,7 @@ void OrbitalsScore::compute_orb_orb_E(
 	numeric::xyzVector< core::Real > const & res1_Orbxyz(res1.orbital_xyz(res1_orb) );
 	numeric::xyzVector< core::Real > const & res2_Orbxyz(res2.orbital_xyz(res2_orb) );
 	core::Real const orb1_orb2_dist= res1_Orbxyz.distance_squared(res2_Orbxyz);
-	if(orb1_orb2_dist < 9){
+	if ( orb1_orb2_dist < 9 ) {
 		core::Size const & orbital_type1(res1.orbital_type_index(res1_orb));
 		core::Size const & orbital_type2(res2.orbital_type_index(res2_orb));
 		core::Real const dist(std::sqrt(orb1_orb2_dist));
@@ -455,29 +457,28 @@ void OrbitalsScore::get_orb_orb_E(
 {
 	core::conformation::Residue const & res1(pose.conformation().residue(atom1.rsd()));
 	core::conformation::Residue const & res2(pose.conformation().residue(atom2.rsd()));
-	if(
-		!res1.type().atom_is_backbone(atom1.atomno()) &&
-		!res2.type().atom_is_backbone(atom2.atomno()) &&
-		res1.type().atom_type(atom1.atomno()).atom_has_orbital() &&
-		res2.type().atom_type(atom2.atomno()).atom_has_orbital() &&
-		orb_orb_rules(res1.atom_type_index(atom1.atomno()), res2.atom_type_index(atom2.atomno()))
-	)
-	{
+	if (
+			!res1.type().atom_is_backbone(atom1.atomno()) &&
+			!res2.type().atom_is_backbone(atom2.atomno()) &&
+			res1.type().atom_type(atom1.atomno()).atom_has_orbital() &&
+			res2.type().atom_type(atom2.atomno()).atom_has_orbital() &&
+			orb_orb_rules(res1.atom_type_index(atom1.atomno()), res2.atom_type_index(atom2.atomno()))
+			) {
 		utility::vector1< core::Size > const & res1_orbs(res1.bonded_orbitals(atom1.atomno()));
-		for(
+		for (
 				utility::vector1< core::Size >::const_iterator
 				res1_orb = res1_orbs.begin(),
 				res1_orb_end = res1_orbs.end();
 				res1_orb != res1_orb_end; ++res1_orb
-		){
+				) {
 
 			utility::vector1< core::Size > const & res2_orbs(res2.bonded_orbitals(atom2.atomno()));
-			for(
+			for (
 					utility::vector1< core::Size >::const_iterator
 					res2_orb = res2_orbs.begin(),
 					res2_orb_end = res2_orbs.end();
 					res2_orb != res2_orb_end; ++res2_orb
-			){
+					) {
 
 				compute_orb_orb_E(res1,res2,*res1_orb,*res2_orb,atom1.atomno(),atom2.atomno(),emap);
 			}
@@ -488,85 +489,85 @@ void OrbitalsScore::get_orb_orb_E(
 
 /*
 void OrbitalsScore::cycle_through_orb_orb_interactions(
-		core::conformation::Residue const & res1,
-		core::conformation::Residue const & res2,
-		EnergyMap & emap
+core::conformation::Residue const & res1,
+core::conformation::Residue const & res2,
+EnergyMap & emap
 ){
 
-	for (
-			chemical::AtomIndices::const_iterator
-			Aindex = res1.atoms_with_orb_index().begin(),
-			Aindex_end = res1.atoms_with_orb_index().end();
-			Aindex != Aindex_end; ++Aindex
-	){
-		if ( !res1.atom_is_backbone(*Aindex) ) {
-			for (
-					chemical::AtomIndices::const_iterator
-					Dindex = res2.atoms_with_orb_index().begin(),
-					Dindex_end = res2.atoms_with_orb_index().end();
-					Dindex != Dindex_end; ++Dindex
-			)
-			{
-				if(!res2.atom_is_backbone(*Dindex)){
-					if(orb_orb_rules(res1.atom_type_index(*Aindex),res2.atom_type_index(*Dindex) )){
-						utility::vector1< core::Size > const & res1_orbs(res1.bonded_orbitals(*Aindex));
-						for(
-								utility::vector1< core::Size >::const_iterator
-								res1_orb = res1_orbs.begin(),
-								res1_orb_end = res1_orbs.end();
-								res1_orb != res1_orb_end; ++res1_orb
-						){
-							utility::vector1< core::Size > const & res2_orbs(res2.bonded_orbitals(*Dindex));
-							for(
-									utility::vector1< core::Size >::const_iterator
-									res2_orb = res2_orbs.begin(),
-									res2_orb_end = res2_orbs.end();
-									res2_orb != res2_orb_end; ++res2_orb
-							){
-								numeric::xyzVector< core::Real > const & res1_Orbxyz(res1.orbital_xyz(*res1_orb) );
-								numeric::xyzVector< core::Real > const & res2_Orbxyz(res2.orbital_xyz(*res2_orb) );
-								core::Real const orb1_orb2_dist= res1_Orbxyz.distance_squared(res2_Orbxyz);
-								if(orb1_orb2_dist < 16){
-									calculate_orb_orb_info_for_E(res1, res2, *res1_orb, *res2_orb, *Aindex, *Dindex, orb1_orb2_dist, emap);
+for (
+chemical::AtomIndices::const_iterator
+Aindex = res1.atoms_with_orb_index().begin(),
+Aindex_end = res1.atoms_with_orb_index().end();
+Aindex != Aindex_end; ++Aindex
+){
+if ( !res1.atom_is_backbone(*Aindex) ) {
+for (
+chemical::AtomIndices::const_iterator
+Dindex = res2.atoms_with_orb_index().begin(),
+Dindex_end = res2.atoms_with_orb_index().end();
+Dindex != Dindex_end; ++Dindex
+)
+{
+if(!res2.atom_is_backbone(*Dindex)){
+if(orb_orb_rules(res1.atom_type_index(*Aindex),res2.atom_type_index(*Dindex) )){
+utility::vector1< core::Size > const & res1_orbs(res1.bonded_orbitals(*Aindex));
+for(
+utility::vector1< core::Size >::const_iterator
+res1_orb = res1_orbs.begin(),
+res1_orb_end = res1_orbs.end();
+res1_orb != res1_orb_end; ++res1_orb
+){
+utility::vector1< core::Size > const & res2_orbs(res2.bonded_orbitals(*Dindex));
+for(
+utility::vector1< core::Size >::const_iterator
+res2_orb = res2_orbs.begin(),
+res2_orb_end = res2_orbs.end();
+res2_orb != res2_orb_end; ++res2_orb
+){
+numeric::xyzVector< core::Real > const & res1_Orbxyz(res1.orbital_xyz(*res1_orb) );
+numeric::xyzVector< core::Real > const & res2_Orbxyz(res2.orbital_xyz(*res2_orb) );
+core::Real const orb1_orb2_dist= res1_Orbxyz.distance_squared(res2_Orbxyz);
+if(orb1_orb2_dist < 16){
+calculate_orb_orb_info_for_E(res1, res2, *res1_orb, *res2_orb, *Aindex, *Dindex, orb1_orb2_dist, emap);
 
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+}
+}
+}
+}
+}
+}
+}
+}
 }
 
 
 void OrbitalsScore::calculate_orb_orb_info_for_E(
-		core::conformation::Residue const & res1,
-		core::conformation::Residue const & res2,
-		core::Size const & res1_orb,
-		core::Size const & res2_orb,
-		core::Size const & Aindex,
-		core::Size const & Dindex,
-		core::Real const & dist_squared,
-		EnergyMap & emap
+core::conformation::Residue const & res1,
+core::conformation::Residue const & res2,
+core::Size const & res1_orb,
+core::Size const & res2_orb,
+core::Size const & Aindex,
+core::Size const & Dindex,
+core::Real const & dist_squared,
+EnergyMap & emap
 ){
-	numeric::xyzVector< core::Real > const & res1_Orbxyz(res1.orbital_xyz(res1_orb) );
-	numeric::xyzVector< core::Real > const & res2_Orbxyz(res2.orbital_xyz(res2_orb) );
-	core::Size const & orbital_type1(res1.orbital_type_index(res1_orb));
-	core::Size const & orbital_type2(res2.orbital_type_index(res2_orb));
-	core::Real const dist(std::sqrt(dist_squared));
-	numeric::xyzVector< core::Real > const & Axyz(res1.xyz(Aindex));
-	numeric::xyzVector< core::Real > const & Dxyz(res2.xyz(Dindex));
-	core::Real const cosAOD(cos_of(Axyz, res1_Orbxyz, Dxyz));
-	core::Real const cosDOA(cos_of(Dxyz, res2_Orbxyz, Axyz));
-	core::Real d_deriv(0.0);
-	core::Real a_deriv(0.0);
-	lookup_table_.OrbOrbDist_cosAOD_energy(orbital_type1, orbital_type2, dist, cosAOD, orb_orb_E, d_deriv, a_deriv, false);
-	scfxn_rules_for_energy(false, false, orbital_type1, lookup_table_.Hpol_scOrbH, orbital_type2, orb_orb_E, emap ); //dummy value for htype given
-	orb_orb_E=0.0;
-	lookup_table_.OrbOrbDist_cosDOA_energy(orbital_type1, orbital_type2, dist, cosDOA, orb_orb_E, d_deriv, a_deriv, false);
-	scfxn_rules_for_energy(false, false, orbital_type1, lookup_table_.Hpol_scOrbH, orbital_type2, orb_orb_E,  emap ); //dummy value for htype given
-	orb_orb_E=0.0;
+numeric::xyzVector< core::Real > const & res1_Orbxyz(res1.orbital_xyz(res1_orb) );
+numeric::xyzVector< core::Real > const & res2_Orbxyz(res2.orbital_xyz(res2_orb) );
+core::Size const & orbital_type1(res1.orbital_type_index(res1_orb));
+core::Size const & orbital_type2(res2.orbital_type_index(res2_orb));
+core::Real const dist(std::sqrt(dist_squared));
+numeric::xyzVector< core::Real > const & Axyz(res1.xyz(Aindex));
+numeric::xyzVector< core::Real > const & Dxyz(res2.xyz(Dindex));
+core::Real const cosAOD(cos_of(Axyz, res1_Orbxyz, Dxyz));
+core::Real const cosDOA(cos_of(Dxyz, res2_Orbxyz, Axyz));
+core::Real d_deriv(0.0);
+core::Real a_deriv(0.0);
+lookup_table_.OrbOrbDist_cosAOD_energy(orbital_type1, orbital_type2, dist, cosAOD, orb_orb_E, d_deriv, a_deriv, false);
+scfxn_rules_for_energy(false, false, orbital_type1, lookup_table_.Hpol_scOrbH, orbital_type2, orb_orb_E, emap ); //dummy value for htype given
+orb_orb_E=0.0;
+lookup_table_.OrbOrbDist_cosDOA_energy(orbital_type1, orbital_type2, dist, cosDOA, orb_orb_E, d_deriv, a_deriv, false);
+scfxn_rules_for_energy(false, false, orbital_type1, lookup_table_.Hpol_scOrbH, orbital_type2, orb_orb_E,  emap ); //dummy value for htype given
+orb_orb_E=0.0;
 
 }
 */
@@ -582,32 +583,31 @@ void OrbitalsScore::get_orb_orb_E(
 			Aindex = res1.atoms_with_orb_index().begin(),
 			Aindex_end = res1.atoms_with_orb_index().end();
 			Aindex != Aindex_end; ++Aindex
-	){
+			) {
 		if ( !res1.atom_is_backbone(*Aindex) ) {
 			for (
 					chemical::AtomIndices::const_iterator
 					Dindex = res2.atoms_with_orb_index().begin(),
 					Dindex_end = res2.atoms_with_orb_index().end();
 					Dindex != Dindex_end; ++Dindex
-			)
-			{
-				if(!res2.atom_is_backbone(*Dindex)){
-					if(orb_orb_rules(res1.atom_type_index(*Aindex),res2.atom_type_index(*Dindex) )){
+					) {
+				if ( !res2.atom_is_backbone(*Dindex) ) {
+					if ( orb_orb_rules(res1.atom_type_index(*Aindex),res2.atom_type_index(*Dindex) ) ) {
 						utility::vector1< core::Size > const & res1_orbs(res1.bonded_orbitals(*Aindex));
-						for(
+						for (
 								utility::vector1< core::Size >::const_iterator
 								res1_orb = res1_orbs.begin(),
 								res1_orb_end = res1_orbs.end();
 								res1_orb != res1_orb_end; ++res1_orb
-						){
+								) {
 
 							utility::vector1< core::Size > const & res2_orbs(res2.bonded_orbitals(*Dindex));
-							for(
+							for (
 									utility::vector1< core::Size >::const_iterator
 									res2_orb = res2_orbs.begin(),
 									res2_orb_end = res2_orbs.end();
 									res2_orb != res2_orb_end; ++res2_orb
-							){
+									) {
 								compute_orb_orb_E(res1,res2,*res1_orb,*res2_orb,*Aindex,*Dindex,emap);
 							}
 						}
@@ -627,7 +627,7 @@ void OrbitalsScore::get_E_haro_one_way(
 	core::id::AtomID const & atom1,
 	core::id::AtomID const & atom2,
 	EnergyMap & emap
-	) const
+) const
 {
 	core::conformation::Residue const & res1(pose.conformation().residue(atom1.rsd()));
 	core::conformation::Residue const & res2(pose.conformation().residue(atom2.rsd()));
@@ -635,16 +635,15 @@ void OrbitalsScore::get_E_haro_one_way(
 	core::Real dummy_E1(0.0);//needed for generalized function get_orb_H_distance_and_energy
 	core::Real energy(0.0);
 
-	if(
-		res1.type().atom_type(atom1.atomno()).atom_has_orbital() && // Acceptor has orbital
-		res2.type().atom_type(atom2.atomno()).name() == "Haro" &&  // Donor atom is Haro
-		res1.atom_is_backbone(atom1.atomno()) //Acceptor is backbone
-	)
-	{
+	if (
+			res1.type().atom_type(atom1.atomno()).atom_has_orbital() && // Acceptor has orbital
+			res2.type().atom_type(atom2.atomno()).name() == "Haro" &&  // Donor atom is Haro
+			res1.atom_is_backbone(atom1.atomno()) //Acceptor is backbone
+			) {
 		numeric::xyzVector<core::Real> const & Axyz = res1.atom(atom1.atomno()).xyz();
 		numeric::xyzVector<core::Real> const & Hxyz = res2.atom(atom2.atomno()).xyz();
 		core::Real const temp_dist = Axyz.distance_squared(Hxyz);
-		if (temp_dist < max_dist_squared_) {
+		if ( temp_dist < max_dist_squared_ ) {
 			core::Size const donor_index(res2.bonded_neighbor(atom2.atomno())[1]);
 			numeric::xyzVector<core::Real> const & Dxyz(res2.xyz(donor_index));
 			get_orb_H_distance_and_energy(res1, atom1.atomno(), Axyz, Hxyz, Dxyz, energy, dummy_E1, lookup_table_.Haro_scOrbH, false, emap);
@@ -653,21 +652,20 @@ void OrbitalsScore::get_E_haro_one_way(
 }
 
 void OrbitalsScore::get_E_haro_one_way(
-		core::conformation::Residue const & res1,
-		core::conformation::Residue const & res2,
-		EnergyMap & emap
+	core::conformation::Residue const & res1,
+	core::conformation::Residue const & res2,
+	EnergyMap & emap
 ) const
 {
 
 	core::Real dummy_E1(0.0);//needed for generalized function get_orb_H_distance_and_energy
 	core::Real energy(0.0);
-	for(
+	for (
 			chemical::AtomIndices::const_iterator
 			atoms_with_orb_index = res1.atoms_with_orb_index().begin(),
 			atoms_with_orb_index_end = res1.atoms_with_orb_index().end();
 			atoms_with_orb_index != atoms_with_orb_index_end; ++atoms_with_orb_index
-	)
-	{
+			) {
 		core::Size const Aindex(*atoms_with_orb_index); //acceptor index
 		if ( !res1.atom_is_backbone(Aindex) ) {
 			numeric::xyzVector<core::Real> const & Axyz = res1.atom(*atoms_with_orb_index).xyz();//acceptor xyz
@@ -676,8 +674,7 @@ void OrbitalsScore::get_E_haro_one_way(
 					haro_index = res2.Haro_index().begin(),
 					haro_end = res2.Haro_index().end();
 					haro_index != haro_end; ++haro_index
-			)
-			{
+					) {
 				numeric::xyzVector<core::Real> const & Hxyz = res2.atom(*haro_index).xyz(); //hydrogen xyz
 				core::Real const temp_dist = Axyz.distance_squared(Hxyz);
 				if ( temp_dist < max_dist_squared_ ) {
@@ -694,10 +691,10 @@ void OrbitalsScore::get_E_haro_one_way(
 // Just call this function, provided that the extra function call, AtomID construction and
 // if statement evalution don't cause measurable slow down.  It would improve the maintainability of the code.
 void OrbitalsScore::get_E_hpol_one_way(
-		core::pose::Pose const & pose,
-		core::id::AtomID const & atom1,
-		core::id::AtomID const & atom2,
-		EnergyMap & emap
+	core::pose::Pose const & pose,
+	core::id::AtomID const & atom1,
+	core::id::AtomID const & atom2,
+	EnergyMap & emap
 ) const
 {
 	core::Real HPOL_sc_H_sc_orb_E(0.0);
@@ -707,24 +704,22 @@ void OrbitalsScore::get_E_hpol_one_way(
 	core::conformation::Residue const & res2(pose.conformation().residue(atom2.rsd()));
 
 	core::Size const donor_index(res2.bonded_neighbor(atom2.atomno())[1]);
-	if(
-		res1.type().atom_type(atom1.atomno()).atom_has_orbital() && // Acceptor has orbital
-		res2.type().atom_type(atom2.atomno()).name() == "Hpol" &&  // Donor atom is Haro
-		!(
+	if (
+			res1.type().atom_type(atom1.atomno()).atom_has_orbital() && // Acceptor has orbital
+			res2.type().atom_type(atom2.atomno()).name() == "Hpol" &&  // Donor atom is Haro
+			!(
 			res1.atom_is_backbone(atom1.atomno()) &&
 			res2.atom_is_backbone(donor_index)
-		)
-	)
-	{
+			)
+			) {
 		numeric::xyzVector<core::Real> const & Axyz(res1.atom(atom1.atomno()).xyz());
 		numeric::xyzVector<core::Real> const & Hxyz(res2.atom(atom2.atomno()).xyz());
 
-		if( Axyz.distance_squared(Hxyz) < max_dist_squared_)
-		{
+		if ( Axyz.distance_squared(Hxyz) < max_dist_squared_ ) {
 			numeric::xyzVector<core::Real> const & Dxyz(res2.xyz(donor_index));
-			if(res2.atom_is_backbone(donor_index) || res1.atom_is_backbone(atom1.atomno())){
+			if ( res2.atom_is_backbone(donor_index) || res1.atom_is_backbone(atom1.atomno()) ) {
 				get_orb_H_distance_and_energy(res1, atom1.atomno(), Axyz, Hxyz, Dxyz, HPOL_sc_H_sc_orb_E, HPOL_bb_H_sc_orb_energy, lookup_table_.Hpol_bbOrbH, true, emap);
-			}else{
+			} else {
 				get_orb_H_distance_and_energy(res1, atom1.atomno(), Axyz, Hxyz, Dxyz, HPOL_sc_H_sc_orb_E, HPOL_bb_H_sc_orb_energy, lookup_table_.Hpol_scOrbH, false, emap);
 			}
 		}
@@ -734,9 +729,9 @@ void OrbitalsScore::get_E_hpol_one_way(
 
 
 void OrbitalsScore::get_E_hpol_one_way(
-		core::conformation::Residue const & res1,
-		core::conformation::Residue const & res2,
-		EnergyMap & emap
+	core::conformation::Residue const & res1,
+	core::conformation::Residue const & res2,
+	EnergyMap & emap
 ) const
 {
 	core::Real HPOL_sc_H_sc_orb_E(0.0);
@@ -746,29 +741,27 @@ void OrbitalsScore::get_E_hpol_one_way(
 			atoms_with_orb_index = res1.atoms_with_orb_index().begin(),
 			atoms_with_orb_index_end = res1.atoms_with_orb_index().end();
 			atoms_with_orb_index != atoms_with_orb_index_end; ++atoms_with_orb_index
-	)
-	{
+			) {
 		numeric::xyzVector<core::Real> const & Axyz = res1.atom(*atoms_with_orb_index).xyz(); //acceptor xyz
 		for (
 				chemical::AtomIndices::const_iterator
 				hpol_index = res2.Hpol_index().begin(),
 				hpol_end = res2.Hpol_index().end();
 				hpol_index != hpol_end; ++hpol_index
-		)
-		{
+				) {
 			//this check is to look at bb orbital bb hydrogen. This potential does not calculate it.
 			//The hbond_lr_bb and hbond_sr_bb scoring terms look into this.
 			core::Size const donor_index(res2.bonded_neighbor(*hpol_index)[1]);
-			if(res1.atom_is_backbone(*atoms_with_orb_index) && res2.atom_is_backbone(donor_index)){
+			if ( res1.atom_is_backbone(*atoms_with_orb_index) && res2.atom_is_backbone(donor_index) ) {
 				continue;
 			}
 			numeric::xyzVector<core::Real> const & Hxyz = res2.atom(*hpol_index).xyz(); //hydrogen xyz
 			if ( Axyz.distance_squared(Hxyz) < max_dist_squared_ ) {
 				core::Size const Aindex(*atoms_with_orb_index);
 				numeric::xyzVector<core::Real> const & Dxyz(res2.xyz(donor_index)); //donor xyz
-				if(res2.atom_is_backbone(donor_index) || res1.atom_is_backbone(Aindex)){
+				if ( res2.atom_is_backbone(donor_index) || res1.atom_is_backbone(Aindex) ) {
 					get_orb_H_distance_and_energy(res1, Aindex, Axyz, Hxyz, Dxyz, HPOL_sc_H_sc_orb_E, HPOL_bb_H_sc_orb_energy, lookup_table_.Hpol_bbOrbH, true, emap);
-				}else{
+				} else {
 					get_orb_H_distance_and_energy(res1, Aindex, Axyz, Hxyz, Dxyz, HPOL_sc_H_sc_orb_E, HPOL_bb_H_sc_orb_energy, lookup_table_.Hpol_scOrbH, false, emap);
 				}
 			}
@@ -780,36 +773,35 @@ core::chemical::orbitals::orbital_type_enum
 lookup_type_for_orbital_type( core::chemical::orbitals::orbital_type_enum orbital_type )
 {
 	switch ( orbital_type ) {
-		case core::chemical::orbitals::O_pi_sp2_bb : return core::chemical::orbitals::O_pi_sp2;
-		case core::chemical::orbitals::O_p_sp2_bb : return core::chemical::orbitals::O_p_sp2;
-		default : return orbital_type;
+	case core::chemical::orbitals::O_pi_sp2_bb : return core::chemical::orbitals::O_pi_sp2;
+	case core::chemical::orbitals::O_p_sp2_bb : return core::chemical::orbitals::O_p_sp2;
+	default : return orbital_type;
 	}
 }
 
 
 void OrbitalsScore::get_orb_H_distance_and_energy(
-		core::conformation::Residue const & res1,
-		core::Size const & Aindex,
-		numeric::xyzVector<core::Real> const & Axyz, //acceptor xyz
-		numeric::xyzVector<core::Real> const & Hxyz,//hydrogen xyz
-		numeric::xyzVector<core::Real> const & Dxyz, //donor xyz
-		core::Real & sc_energy,
-		core::Real & bb_h_energy,
-		OrbitalsLookup::h_type htype,
-		bool bb_h_flag,
-		EnergyMap & emap
+	core::conformation::Residue const & res1,
+	core::Size const & Aindex,
+	numeric::xyzVector<core::Real> const & Axyz, //acceptor xyz
+	numeric::xyzVector<core::Real> const & Hxyz,//hydrogen xyz
+	numeric::xyzVector<core::Real> const & Dxyz, //donor xyz
+	core::Real & sc_energy,
+	core::Real & bb_h_energy,
+	OrbitalsLookup::h_type htype,
+	bool bb_h_flag,
+	EnergyMap & emap
 ) const
 {
 	core::Real d_deriv(0.0);
 	core::Real a_deriv(0.0);
 	utility::vector1< core::Size > const & orbital_indices(res1.bonded_orbitals(Aindex));
-	for(
+	for (
 			utility::vector1< core::Size >::const_iterator
 			orbital_index = orbital_indices.begin(),
 			orbital_index_end = orbital_indices.end();
 			orbital_index != orbital_index_end; ++orbital_index
-	)
-	{
+			) {
 		numeric::xyzVector< core::Real > const & Orbxyz(res1.orbital_xyz(*orbital_index) );
 		core::Real const temp_dist_squared = Orbxyz.distance_squared( Hxyz );
 		if ( temp_dist_squared < max_orbital_dist_squared_ ) {
@@ -848,15 +840,15 @@ void OrbitalsScore::get_orb_H_distance_and_energy(
 
 void
 OrbitalsScore::eval_residue_pair_derivatives(
-		conformation::Residue const & res1,
-		conformation::Residue const & res2,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData const &,
-		pose::Pose const &, // provides context
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+	conformation::Residue const & res1,
+	conformation::Residue const & res2,
+	ResSingleMinimizationData const &,
+	ResSingleMinimizationData const &,
+	ResPairMinimizationData const &,
+	pose::Pose const &, // provides context
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< DerivVectorPair > & r2_atom_derivs
 ) const {
 
 	assign_haro_derivs_one_way(res2, res1, weights, r2_atom_derivs, r1_atom_derivs);
@@ -870,11 +862,11 @@ OrbitalsScore::eval_residue_pair_derivatives(
 
 
 void OrbitalsScore::assign_haro_derivs_one_way(
-		core::conformation::Residue const & res1,
-		core::conformation::Residue const & res2,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::conformation::Residue const & res1,
+	core::conformation::Residue const & res2,
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< DerivVectorPair > & r2_atom_derivs
 ) const
 {
 	for (
@@ -882,24 +874,22 @@ void OrbitalsScore::assign_haro_derivs_one_way(
 			atoms_with_orb_index = res1.atoms_with_orb_index().begin(),
 			atoms_with_orb_index_end = res1.atoms_with_orb_index().end();
 			atoms_with_orb_index != atoms_with_orb_index_end; ++atoms_with_orb_index
-	)
-	{
+			) {
 		if ( !res1.atom_is_backbone(*atoms_with_orb_index) ) {
 			for (
 					chemical::AtomIndices::const_iterator
 					haro_index = res2.Haro_index().begin(),
 					haro_end = res2.Haro_index().end();
 					haro_index != haro_end; ++haro_index
-			)
-			{
+					) {
 				numeric::xyzVector<core::Real> const & Axyz = res1.atom(*atoms_with_orb_index).xyz();
 				numeric::xyzVector<core::Real> const & Hxyz = res2.atom(*haro_index).xyz();
 				if ( Axyz.distance_squared(Hxyz) < max_dist_squared_ ) {
 					core::Size atom_index(*atoms_with_orb_index);
 					core::Size H_index(*haro_index);
 					assign_orb_H_derivs(
-							res1, res2, atom_index, Axyz, H_index, Hxyz,
-							lookup_table_.Haro_scOrbH, weights, r1_atom_derivs, r2_atom_derivs
+						res1, res2, atom_index, Axyz, H_index, Hxyz,
+						lookup_table_.Haro_scOrbH, weights, r1_atom_derivs, r2_atom_derivs
 					);
 				}
 			}
@@ -908,11 +898,11 @@ void OrbitalsScore::assign_haro_derivs_one_way(
 }
 
 void OrbitalsScore::assign_hpol_derivs_one_way(
-		core::conformation::Residue const & res1,
-		core::conformation::Residue const & res2,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::conformation::Residue const & res1,
+	core::conformation::Residue const & res2,
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< DerivVectorPair > & r2_atom_derivs
 
 ) const
 {
@@ -921,17 +911,15 @@ void OrbitalsScore::assign_hpol_derivs_one_way(
 			atoms_with_orb_index = res1.atoms_with_orb_index().begin(),
 			atoms_with_orb_index_end = res1.atoms_with_orb_index().end();
 			atoms_with_orb_index != atoms_with_orb_index_end; ++atoms_with_orb_index
-	)
-	{
+			) {
 		for (
 				chemical::AtomIndices::const_iterator
 				hpol_index = res2.Hpol_index().begin(),
 				hpol_end = res2.Hpol_index().end();
 				hpol_index != hpol_end; ++hpol_index
-		)
-		{
+				) {
 			core::Size const donor_index(res2.bonded_neighbor(*hpol_index)[1]);
-			if(res1.atom_is_backbone(*atoms_with_orb_index) && res2.atom_is_backbone(donor_index)){
+			if ( res1.atom_is_backbone(*atoms_with_orb_index) && res2.atom_is_backbone(donor_index) ) {
 				continue;
 			}
 
@@ -940,15 +928,15 @@ void OrbitalsScore::assign_hpol_derivs_one_way(
 			if ( Axyz.distance_squared(Hxyz) < max_dist_squared_ ) {
 				core::Size atom_index(*atoms_with_orb_index);
 				core::Size H_index(*hpol_index);
-				if(res2.atom_is_backbone(donor_index) || res1.atom_is_backbone(atom_index)){
+				if ( res2.atom_is_backbone(donor_index) || res1.atom_is_backbone(atom_index) ) {
 					assign_orb_H_derivs(
-							res1, res2, atom_index, Axyz, H_index, Hxyz,
-							lookup_table_.Hpol_bbOrbH, weights, r1_atom_derivs, r2_atom_derivs
+						res1, res2, atom_index, Axyz, H_index, Hxyz,
+						lookup_table_.Hpol_bbOrbH, weights, r1_atom_derivs, r2_atom_derivs
 					);
-				}else{
+				} else {
 					assign_orb_H_derivs(
-							res1, res2, atom_index, Axyz, H_index, Hxyz,
-							lookup_table_.Hpol_scOrbH, weights, r1_atom_derivs, r2_atom_derivs
+						res1, res2, atom_index, Axyz, H_index, Hxyz,
+						lookup_table_.Hpol_scOrbH, weights, r1_atom_derivs, r2_atom_derivs
 					);
 				}
 			}
@@ -1065,31 +1053,30 @@ OrbitalsScore::assign_orb_orb_derivs(
 			Aindex = res1.atoms_with_orb_index().begin(),
 			Aindex_end = res1.atoms_with_orb_index().end();
 			Aindex != Aindex_end; ++Aindex
-	){
+			) {
 		if ( !res1.atom_is_backbone(*Aindex) ) {
 			for (
 					chemical::AtomIndices::const_iterator
 					Dindex = res2.atoms_with_orb_index().begin(),
 					Dindex_end = res2.atoms_with_orb_index().end();
 					Dindex != Dindex_end; ++Dindex
-			)
-			{
-				if(!res2.atom_is_backbone(*Dindex)){
-					if(orb_orb_rules(res1.atom_type_index(*Aindex),res2.atom_type_index(*Dindex))  ){
+					) {
+				if ( !res2.atom_is_backbone(*Dindex) ) {
+					if ( orb_orb_rules(res1.atom_type_index(*Aindex),res2.atom_type_index(*Dindex))  ) {
 						utility::vector1< core::Size > const & res1_orbs(res1.bonded_orbitals(*Aindex));
-						for(
+						for (
 								utility::vector1< core::Size >::const_iterator
 								res1_orb = res1_orbs.begin(),
 								res1_orb_end = res1_orbs.end();
 								res1_orb != res1_orb_end; ++res1_orb
-						){
+								) {
 							utility::vector1< core::Size > const & res2_orbs(res2.bonded_orbitals(*Dindex));
-							for(
+							for (
 									utility::vector1< core::Size >::const_iterator
 									res2_orb = res2_orbs.begin(),
 									res2_orb_end = res2_orbs.end();
 									res2_orb != res2_orb_end; ++res2_orb
-							){
+									) {
 								numeric::xyzVector< core::Real > const pD(res2.xyz(*Dindex)); // the xyz of the donor
 								numeric::xyzVector< core::Real > const pA(res1.xyz(*Aindex)); // the xyz of the acceptor
 								numeric::xyzVector< core::Real > const pAO(res1.orbital_xyz(*res1_orb) ); // the xyz of the acceptor orbital
@@ -1101,7 +1088,7 @@ OrbitalsScore::assign_orb_orb_derivs(
 								core::Size orbital_type2 = res2.orbital_type_index(*res2_orb);
 								core::Size const orbital2_surrogate_atom = surrogate_atom_for_orbital( res2, *Dindex, chemical::orbitals::orbital_type_enum( orbital_type2 ) );
 								core::Real const orb1_orb2_dist= pAO.distance_squared(pDO);
-								if(orb1_orb2_dist < 9){
+								if ( orb1_orb2_dist < 9 ) {
 									core::Real const dist(std::sqrt(orb1_orb2_dist));
 
 									core::Real const cosAOD(cos_of(pA, pAO, pD));
@@ -1198,16 +1185,16 @@ OrbitalsScore::assign_orb_orb_derivs(
 
 
 void OrbitalsScore::assign_orb_H_derivs(
-		core::conformation::Residue const & res1,
-		core::conformation::Residue const & res2,
-		core::Size  & atom_index, // the atom on residue 1 with the set of orbitals we are considering
-		numeric::xyzVector<core::Real> const & Axyz,
-		core::Size const & H_index, // the hydrogen atom on residue 2
-		numeric::xyzVector<core::Real> const & Hxyz,
-		OrbitalsLookup::h_type htype,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::conformation::Residue const & res1,
+	core::conformation::Residue const & res2,
+	core::Size  & atom_index, // the atom on residue 1 with the set of orbitals we are considering
+	numeric::xyzVector<core::Real> const & Axyz,
+	core::Size const & H_index, // the hydrogen atom on residue 2
+	numeric::xyzVector<core::Real> const & Hxyz,
+	OrbitalsLookup::h_type htype,
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< DerivVectorPair > & r2_atom_derivs
 )const
 {
 	core::Real energy(0.0);
@@ -1217,13 +1204,12 @@ void OrbitalsScore::assign_orb_H_derivs(
 	bool const backbone_interaction = res1.atom_is_backbone( atom_index ) || res2.atom_is_backbone( H_index );
 
 	utility::vector1< core::Size > const & orbital_indices(res1.bonded_orbitals(atom_index));
-	for(
+	for (
 			utility::vector1< core::Size >::const_iterator
 			orbital_index = orbital_indices.begin(),
 			orbital_index_end = orbital_indices.end();
 			orbital_index != orbital_index_end; ++orbital_index
-	)
-	{
+			) {
 		numeric::xyzVector< core::Real > const Orbxyz(res1.orbital_xyz(*orbital_index) );
 		core::Real const temp_dist_squared = Orbxyz.distance_squared( Hxyz );
 		if ( temp_dist_squared < max_orbital_dist_squared_ ) {

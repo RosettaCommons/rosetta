@@ -55,7 +55,7 @@ class Loop : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~Loop();
-  /// default constructor
+	/// default constructor
 	Loop():
 		start_(0),
 		stop_(0),
@@ -63,7 +63,7 @@ public:
 		skip_rate_( 0.0 ),
 		extended_(false)
 	{}
-	
+
 	Loop( SerializedLoop loop ):
 		start_( loop.start ),
 		stop_( loop.stop ),
@@ -71,7 +71,7 @@ public:
 		skip_rate_( loop.skip_rate ),
 		extended_( loop.extended )
 	{}
-	
+
 	/// input constructor
 	Loop(
 		core::Size const start_in, core::Size const stop_in,
@@ -110,17 +110,17 @@ public:
 	bool increasing() const {
 		return start() <= stop();
 	}
-	
+
 	/// @brief Returns true if the loop's elements are decreasing
 	bool decreasing() const {
 		return !increasing();
 	}
-	
+
 	/// @brief Returns the midpoint of the loop
 	core::Size midpoint() const {
 		return increasing() ? start() + length() / 2 : stop() - length() / 2;
 	}
-	
+
 	bool operator< ( Loop const& larger ) const {
 		return ( size() < larger.size() ? true :
 			( start() < larger.start() ? true : ( cut() < larger.cut() ) ) );
@@ -164,7 +164,7 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 std::ostream & operator<<( std::ostream & os, Loop const & loop );
-	
+
 /// @brief Orders loops by start position
 class RationalLoopComparator : public std::binary_function<double, double, bool> {
 public:

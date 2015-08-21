@@ -110,15 +110,15 @@ MembraneTopologyClaimer::pre_process(core::pose::Pose& pose)
 
 void
 MembraneTopologyClaimer::add_mover(
-    moves::RandomMover& random_mover,
-		core::pose::Pose const& pose,
-		abinitio::StageID /*stageID,  abinitio sampler stage */,
-		core::scoring::ScoreFunction const& /*scorefxn*/,
-		core::Real /*progress  progress within stage */
+	moves::RandomMover& random_mover,
+	core::pose::Pose const& pose,
+	abinitio::StageID /*stageID,  abinitio sampler stage */,
+	core::scoring::ScoreFunction const& /*scorefxn*/,
+	core::Real /*progress  progress within stage */
 )
 {
 	if ( basic::options::option[basic::options::OptionKeys::membrane::fixed_membrane] ) {
-		//moves::MoverOP move_pose_to_membrane  =	new moves::MovePoseToMembraneCenterMover;
+		//moves::MoverOP move_pose_to_membrane  = new moves::MovePoseToMembraneCenterMover;
 		//core::Real move_pose_to_membrane_weight(1.0);
 		//random_mover.add_mover( move_pose_to_membrane, move_pose_to_membrane_weight);
 
@@ -142,26 +142,21 @@ MembraneTopologyClaimer::generate_claims( claims::DofClaims& dof_claims )
 	core::pose::Pose pose = broker().current_pose();
 	ObjexxFCL::FArray2D_int jump_array(2,pose.fold_tree().num_jump());
 
-	for(core::Size jump_array_index = 1;jump_array_index <= pose.fold_tree().num_jump(); ++jump_array_index)
-	{
+	for ( core::Size jump_array_index = 1; jump_array_index <= pose.fold_tree().num_jump(); ++jump_array_index ) {
 		jump_array(1,jump_array_index) = pose.fold_tree().jump_edge(jump_array_index).start();
 		jump_array(2,jump_array_index) = pose.fold_tree().jump_edge(jump_array_index).stop();
 	}
 
-	if(TR.Trace.visible()){pose.fold_tree().show(TR.Trace);}
-	for(core::Size i=1;i<=pose.fold_tree().nres();++i)
-	{
-		if(static_cast<int>(i) == pose.fold_tree().root())
-		{
+	if ( TR.Trace.visible() ) { pose.fold_tree().show(TR.Trace);}
+	for ( core::Size i=1; i<=pose.fold_tree().nres(); ++i ) {
+		if ( static_cast<int>(i) == pose.fold_tree().root() ) {
 			dof_claims.push_back(claims::DofClaimOP( new claims::LegacyRootClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ));
 			dof_claims.push_back(claims::DofClaimOP( new claims::BBClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ));
-		}else if(pose.residue(i).is_virtual_residue() || pose.residue(i).name3() == "XXX" || pose.residue(i).name3() == "VRT")
-		{
+		} else if ( pose.residue(i).is_virtual_residue() || pose.residue(i).name3() == "XXX" || pose.residue(i).name3() == "VRT" ) {
 			dof_claims.push_back(claims::DofClaimOP( new claims::BBClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ));
 		}
 	}
-	for(Size jump_num = 1; jump_num <= pose.fold_tree().num_jump(); ++jump_num)
-	{
+	for ( Size jump_num = 1; jump_num <= pose.fold_tree().num_jump(); ++jump_num ) {
 		dof_claims.push_back(claims::DofClaimOP( new claims::JumpClaim(get_self_weak_ptr(),jump_array(1,jump_num),jump_array(2,jump_num),claims::DofClaim::CAN_INIT) ));
 	}
 }
@@ -195,14 +190,13 @@ void MembraneTopologyClaimer::addVirtualResAsRootMembrane( core::pose::Pose & po
 	core::scoring::MembraneTopology const & topology( core::scoring::MembraneTopology_from_pose(pose) );
 
 	// return if the pose is empty (otherwise will segfault)
-	if (nres == 0) {
+	if ( nres == 0 ) {
 		TR.Warning << "addVirtualResAsRootMembrane() called with empty pose!" << std::endl;
 		return;
 	}
 
 	//only add the virtual residue as the root once
-	if(pose.residue(pose.fold_tree().root()).name3() == "XXX")
-	{
+	if ( pose.residue(pose.fold_tree().root()).name3() == "XXX" ) {
 		return;
 	}
 
@@ -216,7 +210,7 @@ void MembraneTopologyClaimer::addVirtualResAsRootMembrane( core::pose::Pose & po
 	core::chemical::ResidueTypeSetCOP const &residue_set(
 		core::chemical::ChemicalManager::get_instance()->residue_type_set
 		( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
-		);
+	);
 	core::chemical::ResidueTypeCOP rsd_type( residue_set->get_representative_type_name3("VRT") );
 	core::conformation::ResidueOP new_virt_res( core::conformation::ResidueFactory::create_residue( *rsd_type ) );
 
@@ -235,15 +229,13 @@ void MembraneTopologyClaimer::addVirtualResAsRootMembrane( core::pose::Pose & po
 	core::pose::Pose closed_loops_pose( pose );
 	//TR << "closed_loops_pose FoldTree is:  ";
 	//closed_loops_pose.fold_tree().show(TR);
-	if(broker().does_final_fold_tree_exist())
-	{
+	if ( broker().does_final_fold_tree_exist() ) {
 		closed_loops_pose.fold_tree( broker().final_fold_tree() );
 	}
 	pose.append_residue_by_jump( *new_virt_res , jump_res );
 	closed_loops_pose.append_residue_by_jump( *new_virt_res, jump_res );
 
-	if(TR.Trace.visible())
-	{
+	if ( TR.Trace.visible() ) {
 		TR.Trace << "before fold tree...jump_res:  " << jump_res << " virt res:  " << new_virt_res->seqpos() << " " << new_virt_res->name() << std::endl;
 		TR.Trace << "before reordering...beginning of fold tree: " << pose.fold_tree().begin()->start() << std::endl;
 	}
@@ -258,15 +250,13 @@ void MembraneTopologyClaimer::addVirtualResAsRootMembrane( core::pose::Pose & po
 
 	kinematics::FoldTree finalF( closed_loops_pose.fold_tree() );
 	finalF.reorder( nres+1 );
-	if(broker().does_final_fold_tree_exist()==true)
-	{
+	if ( broker().does_final_fold_tree_exist()==true ) {
 		broker().final_fold_tree() = finalF;
-	}else{
+	} else {
 		TR << "Broker says final fold tree does not exist!" << std::endl;
 	}
 
-	if(TR.Debug.visible())
-	{
+	if ( TR.Debug.visible() ) {
 		TR.Debug << "after reordering...beginning of fold tree: " << pose.fold_tree().begin()->start() << std::endl;
 		TR.Debug << "position of virtual res:  " << new_virt_res->seqpos() << std::endl;
 
@@ -274,8 +264,7 @@ void MembraneTopologyClaimer::addVirtualResAsRootMembrane( core::pose::Pose & po
 			pose.residue(pose.fold_tree().root()).is_virtual_residue() << " is residue type:  " <<
 			pose.residue(pose.fold_tree().root()).name() << std::endl;
 		core::Size root(pose.fold_tree().root());
-		for(core::Size i = 1; i <= pose.residue(root).natoms(); i++)
-		{
+		for ( core::Size i = 1; i <= pose.residue(root).natoms(); i++ ) {
 			std::string atom_name = pose.residue(root).atom_name(i);
 			TR.Debug << pose.residue(root).name() << " " << atom_name << " " << pose.residue(root).atom(atom_name) << std::endl;
 		}

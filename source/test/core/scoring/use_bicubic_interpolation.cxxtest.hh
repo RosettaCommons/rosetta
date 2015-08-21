@@ -67,9 +67,9 @@ public:
 
 		core::scoring::Ramachandran rama_term(rama_map_filename, true);
 		Real phi_min(0), phi_max(360), psi_min(0), psi_max(360);
-		for(Size aa = 1; aa <= num_canonical_aas; aa++){
-			for(Real phi=phi_min; phi <= phi_max; phi = phi + sample_step_size) {
-				for(Real psi=psi_min; psi <= psi_max; psi = psi + sample_step_size) {
+		for ( Size aa = 1; aa <= num_canonical_aas; aa++ ) {
+			for ( Real phi=phi_min; phi <= phi_max; phi = phi + sample_step_size ) {
+				for ( Real psi=psi_min; psi <= psi_max; psi = psi + sample_step_size ) {
 
 					Real rama, drama_dphi, drama_dpsi;
 					rama_term.eval_rama_score_residue(
@@ -116,7 +116,7 @@ public:
 		TS_ASSERT_EQUALS(drama_dphi, drama_dphi);
 		TS_ASSERT_EQUALS(drama_dpsi, drama_dpsi);
 		TR
-			<<	"at (phi=" << phi << ", psi=" << psi << "): "
+			<< "at (phi=" << phi << ", psi=" << psi << "): "
 			<< rama << " " << drama_dphi << " " << drama_dpsi << std::endl;
 	}
 

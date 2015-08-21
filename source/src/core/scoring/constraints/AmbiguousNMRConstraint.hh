@@ -51,9 +51,9 @@ public:
 	/// @brief Constructor
 	AmbiguousNMRConstraint( const ConstraintCOPs & cst_in, func::FuncOP func );
 
-// 	/// @brief
-// 	void
-// 	init_cst_score_types();
+	//  /// @brief
+	//  void
+	//  init_cst_score_types();
 
 
 	virtual
@@ -115,7 +115,7 @@ public:
 		AtomID const & atom,
 		func::XYZ_Func const & xyz,
 		Vector & F1,
- 		Vector & F2,
+		Vector & F2,
 		EnergyMap const & weights
 	) const;
 
@@ -132,11 +132,11 @@ public:
 	}
 
 
-// 	virtual
-// 	void show( std::ostream& out ) const;
+	//  virtual
+	//  void show( std::ostream& out ) const;
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @details read definition of a multiconstraint. Since a MultiConstraint is essentially a vector of
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// @details read definition of a multiconstraint. Since a MultiConstraint is essentially a vector of
 	virtual void
 	read_def(
 		std::istream& data,

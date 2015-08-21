@@ -10,7 +10,7 @@
 /// @file protocols/filters/ConstraintScoreCutoffFilter.cc
 /// @brief
 /// @details
-///	  Contains currently:
+///   Contains currently:
 ///
 ///
 /// @author Oliver Lange
@@ -101,10 +101,10 @@ ConstraintScoreCutoffFilter::get_score( core::pose::Pose const & pose_in ) const
 
 void
 ConstraintScoreCutoffFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & , protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &  ) {
-	if (tag->hasOption("cutoff")) {
+	if ( tag->hasOption("cutoff") ) {
 		cutoff_ = tag->getOption<core::Real>("cutoff", 10000.0 );
 	}
-	if (tag->hasOption("report_name") ) {
+	if ( tag->hasOption("report_name") ) {
 		set_user_defined_name( tag->getOption<std::string>("report_name") );
 	} else {
 		set_user_defined_name( "cst_cutoff_filter" );

@@ -29,47 +29,47 @@ namespace modeler {
 namespace protein {
 namespace checker {
 
-	class ProteinAtrRepChecker: public utility::pointer::ReferenceCount {
+class ProteinAtrRepChecker: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//Constructor
-		ProteinAtrRepChecker( pose::Pose const & pose,
-													utility::vector1< Size > const & moving_res_list );
+	//Constructor
+	ProteinAtrRepChecker( pose::Pose const & pose,
+		utility::vector1< Size > const & moving_res_list );
 
-		~ProteinAtrRepChecker();
+	~ProteinAtrRepChecker();
 
-		Real delta_atr_score() const{ return delta_atr_score_; }
-		Real delta_rep_score() const{ return delta_rep_score_; }
-		Real base_atr_score() const{ return base_atr_score_; }
-		Real base_rep_score() const{ return base_rep_score_; }
+	Real delta_atr_score() const{ return delta_atr_score_; }
+	Real delta_rep_score() const{ return delta_rep_score_; }
+	Real base_atr_score() const{ return base_atr_score_; }
+	Real base_rep_score() const{ return base_rep_score_; }
 
-	public:
+public:
 
-		bool
-		check_screen( pose::Pose & current_pose_screen );
+	bool
+	check_screen( pose::Pose & current_pose_screen );
 
-	private:
+private:
 
-		void
-		get_base_atr_rep_score( core::pose::Pose const & pose );
+	void
+	get_base_atr_rep_score( core::pose::Pose const & pose );
 
-		void
-		initialize_scorefxn();
+	void
+	initialize_scorefxn();
 
-	private:
+private:
 
-		utility::vector1< Size > const moving_res_list_;
+	utility::vector1< Size > const moving_res_list_;
 
-		Real rep_cutoff_, atr_cutoff_;
-		Real base_atr_score_;
-		Real base_rep_score_;
-		Real delta_atr_score_;
-		Real delta_rep_score_;
+	Real rep_cutoff_, atr_cutoff_;
+	Real base_atr_score_;
+	Real base_rep_score_;
+	Real delta_atr_score_;
+	Real delta_rep_score_;
 
-		core::scoring::ScoreFunctionOP atr_rep_screening_scorefxn_;
+	core::scoring::ScoreFunctionOP atr_rep_screening_scorefxn_;
 
-	};
+};
 
 } //checker
 } //protein

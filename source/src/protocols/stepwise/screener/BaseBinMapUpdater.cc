@@ -28,58 +28,58 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	//Constructor
-	BaseBinMapUpdater::BaseBinMapUpdater( BaseBinMap & base_bin_map ):
-		base_bin_map_( base_bin_map )
-	{}
+//Constructor
+BaseBinMapUpdater::BaseBinMapUpdater( BaseBinMap & base_bin_map ):
+	base_bin_map_( base_bin_map )
+{}
 
-	//Destructor
-	BaseBinMapUpdater::~BaseBinMapUpdater()
-	{}
+//Destructor
+BaseBinMapUpdater::~BaseBinMapUpdater()
+{}
 
-	// diagnostics.
-	void
-	BaseBinMapUpdater::get_update( sampler::StepWiseSamplerBaseOP sampler ){
+// diagnostics.
+void
+BaseBinMapUpdater::get_update( sampler::StepWiseSamplerBaseOP sampler ){
 
-		if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_LIST ){
-			RigidBodyStepWiseSamplerWithResidueList & rigid_body_rotamer_with_copy_dofs = *( static_cast< RigidBodyStepWiseSamplerWithResidueList * >( sampler.get() ) );
-			update_base_bin_map( rigid_body_rotamer_with_copy_dofs.get_rigid_body_values() );
-			return;
-		}
-		if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ){
-			RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
-			update_base_bin_map( rigid_body_rotamer_with_residue_alternatives.get_rigid_body_values() );
-			return;
-		}
-
-		runtime_assert( sampler->type() == RIGID_BODY );
-		RigidBodyStepWiseSampler & rigid_body_rotamer = *( static_cast< RigidBodyStepWiseSampler * >( sampler.get() ) );
-		update_base_bin_map( rigid_body_rotamer.get_values() );
+	if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_LIST ) {
+		RigidBodyStepWiseSamplerWithResidueList & rigid_body_rotamer_with_copy_dofs = *( static_cast< RigidBodyStepWiseSamplerWithResidueList * >( sampler.get() ) );
+		update_base_bin_map( rigid_body_rotamer_with_copy_dofs.get_rigid_body_values() );
+		return;
+	}
+	if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ) {
+		RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
+		update_base_bin_map( rigid_body_rotamer_with_residue_alternatives.get_rigid_body_values() );
+		return;
 	}
 
+	runtime_assert( sampler->type() == RIGID_BODY );
+	RigidBodyStepWiseSampler & rigid_body_rotamer = *( static_cast< RigidBodyStepWiseSampler * >( sampler.get() ) );
+	update_base_bin_map( rigid_body_rotamer.get_values() );
+}
 
-	/////////////////////////////////////////////////////////////////////////////////////
-	// diagnostics
-	void
-	BaseBinMapUpdater::update_base_bin_map( BaseBin const & base_bin ){
-		std::map< BaseBin, int, compare_base_bin > ::const_iterator it = base_bin_map_.find( base_bin );
-		if ( it == base_bin_map_.end() )	base_bin_map_[base_bin] = 0;
-		base_bin_map_[base_bin] ++;
-	}
 
-	/////////////////////////////////////////////////////////////////////////////////////
-	// diagnostics
-	void
-	BaseBinMapUpdater::update_base_bin_map( utility::vector1< Real > const & rigid_body_values ){
-		BaseBin base_bin;
-		base_bin.centroid_x  = (int)(rigid_body_values[6]);
-		base_bin.centroid_y  = (int)(rigid_body_values[5]);
-		base_bin.centroid_z  = (int)(rigid_body_values[4]);
-		base_bin.euler_alpha = (int)(rigid_body_values[3]);
-		base_bin.euler_z     = (int)(rigid_body_values[2]);
-		base_bin.euler_gamma = (int)(rigid_body_values[1]);
-		update_base_bin_map( base_bin );
-	}
+/////////////////////////////////////////////////////////////////////////////////////
+// diagnostics
+void
+BaseBinMapUpdater::update_base_bin_map( BaseBin const & base_bin ){
+	std::map< BaseBin, int, compare_base_bin > ::const_iterator it = base_bin_map_.find( base_bin );
+	if ( it == base_bin_map_.end() ) base_bin_map_[base_bin] = 0;
+	base_bin_map_[base_bin] ++;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+// diagnostics
+void
+BaseBinMapUpdater::update_base_bin_map( utility::vector1< Real > const & rigid_body_values ){
+	BaseBin base_bin;
+	base_bin.centroid_x  = (int)(rigid_body_values[6]);
+	base_bin.centroid_y  = (int)(rigid_body_values[5]);
+	base_bin.centroid_z  = (int)(rigid_body_values[4]);
+	base_bin.euler_alpha = (int)(rigid_body_values[3]);
+	base_bin.euler_z     = (int)(rigid_body_values[2]);
+	base_bin.euler_gamma = (int)(rigid_body_values[1]);
+	update_base_bin_map( base_bin );
+}
 
 
 } //screener

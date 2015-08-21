@@ -364,7 +364,7 @@ private:
 	bool partial_state_assignment_;
 	bool preped_for_sim_annealing_;
 
-		//no default constructor, uncopyable
+	//no default constructor, uncopyable
 	LinearMemEdge();
 	LinearMemEdge( LinearMemEdge const & );
 	LinearMemEdge & operator = ( LinearMemEdge const & );

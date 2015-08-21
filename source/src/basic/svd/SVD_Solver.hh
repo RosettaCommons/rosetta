@@ -104,8 +104,8 @@
 #include <string>
 #include <vector>
 
-namespace basic{
-namespace svd{
+namespace basic {
+namespace svd {
 
 using namespace ObjexxFCL;
 

@@ -32,7 +32,7 @@ public:
 	/// @brief Instantiate a new DirectReadoutEnergy
 	virtual
 	methods::EnergyMethodOP
-		create_energy_method(
+	create_energy_method(
 		methods::EnergyMethodOptions const &
 	) const;
 

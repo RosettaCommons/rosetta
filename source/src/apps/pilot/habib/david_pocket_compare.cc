@@ -86,36 +86,36 @@ int main( int argc, char * argv [] ) {
 
 	try{
 
-	NEW_OPT( pocket1_fname, "pocket1_fname", "fname" );
-	NEW_OPT( pocket2_fname, "pocket2_fname", "fname" );
+		NEW_OPT( pocket1_fname, "pocket1_fname", "fname" );
+		NEW_OPT( pocket2_fname, "pocket2_fname", "fname" );
 
-	//initializes Rosetta functions
-	devel::init(argc, argv);
+		//initializes Rosetta functions
+		devel::init(argc, argv);
 
-	std::string const fname1 ( option[ pocket1_fname ] );
-	std::string const fname2 ( option[ pocket2_fname ] );
+		std::string const fname1 ( option[ pocket1_fname ] );
+		std::string const fname2 ( option[ pocket2_fname ] );
 
-	TR << "Starting pocket compare" << std::endl;
+		TR << "Starting pocket compare" << std::endl;
 
-	protocols::pockets::TargetPocketGrid pocket1( fname1 );
-	protocols::pockets::TargetPocketGrid pocket2( fname2 );
+		protocols::pockets::TargetPocketGrid pocket1( fname1 );
+		protocols::pockets::TargetPocketGrid pocket2( fname2 );
 
 
-	// call function to compare template and comparison Pockets, report score
-	core::Real d1 = pocket1.get_pocket_distance( pocket2 );
-	TR << "Distance is: " << d1 << std::endl;
+		// call function to compare template and comparison Pockets, report score
+		core::Real d1 = pocket1.get_pocket_distance( pocket2 );
+		TR << "Distance is: " << d1 << std::endl;
 
-	//utility::io::ozstream fout;
-	//fout.open("distance.txt", std::ios::out);
-	//fout << d1 << std::endl;
-	//fout.close();
-	//		fout.clear();
+		//utility::io::ozstream fout;
+		//fout.open("distance.txt", std::ios::out);
+		//fout << d1 << std::endl;
+		//fout.close();
+		//  fout.clear();
 
-	TR << "Done!" << std::endl;
-    } catch ( utility::excn::EXCN_Base const & e ) {
+		TR << "Done!" << std::endl;
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
-    }
+	}
 	return 0;
 
 }

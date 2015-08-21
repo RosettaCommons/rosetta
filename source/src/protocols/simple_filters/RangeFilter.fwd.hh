@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   src/protocols/simple_filters/RangeFilter.fwd.hh
-/// @brief  
+/// @brief
 /// @author Javier Castellanos (javiercv@uw.edu)
 
 

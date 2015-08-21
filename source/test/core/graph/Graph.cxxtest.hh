@@ -30,7 +30,7 @@ using namespace core::graph;
 
 class GraphTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	// Shared data elements go here.
 	GraphOP g;

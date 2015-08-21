@@ -46,7 +46,7 @@ public:
 		return ScoringSchemeOP( new DPScoringScheme(
 			gap_open(),
 			gap_extend()
-		) );
+			) );
 	}
 
 	/// @brief dtor

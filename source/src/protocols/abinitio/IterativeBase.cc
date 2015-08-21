@@ -200,7 +200,7 @@ void protocols::abinitio::IterativeBase::register_options() {
 		NEW_OPT( iterative::enumerate::Naccept, "use enumerated pairings until Naccept decoys were added to archive", 5000 );
 		NEW_OPT( iterative::enumerate::broker, "broker-file for enumerated_pairings", "" );
 		NEW_OPT( iterative::enumerate::skip_half, "run half of the batches without enumerated pairings -- even before Naccept is reached", false );
-		//		NEW_OPT( iterative::turnover_rate, "exchange of X percent of archive before new batch is started", 0.1 );
+		//  NEW_OPT( iterative::turnover_rate, "exchange of X percent of archive before new batch is started", 0.1 );
 		NEW_OPT( iterative::accept_ratio, "switch to new stage if accept_ratio is lower than", 0.2 );
 		NEW_OPT( iterative::rmsf_nstruct, "how many structures of pool used for computations of cores", 30 );
 		NEW_OPT( iterative::cen_score, "energy function for centroid pool", "score3" );
@@ -258,7 +258,7 @@ void protocols::abinitio::IterativeBase::register_options() {
 	}
 }
 
-#define OBSOLETE(key)														\
+#define OBSOLETE(key)              \
 	if ( option[ key ].user() ) {									\
 		tr.Warning << "WARNING: Option "<< #key<< " is deprecated!" << std::endl; \
 	}
@@ -266,9 +266,9 @@ void protocols::abinitio::IterativeBase::register_options() {
 void warn_obsolete_flags() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	//	if ( option[ iterative::copy_pool_for_convergence_check ].user() ) {
-	//		tr.Warning << "WARNING: Option -iterative::copy_pool_for_convergence_check is deprecated!"  << std::endl;
-	//	}
+	// if ( option[ iterative::copy_pool_for_convergence_check ].user() ) {
+	//  tr.Warning << "WARNING: Option -iterative::copy_pool_for_convergence_check is deprecated!"  << std::endl;
+	// }
 	OBSOLETE(iterative::copy_pool_for_convergence_check);
 	OBSOLETE(iterative::fix_core);
 	OBSOLETE(iterative::enumerate::Naccept);
@@ -284,28 +284,28 @@ void warn_obsolete_flags() {
 	OBSOLETE( iterative::cluster);
 
 
-//OBSOLETE( iterative::cenpool_chemicalshift_weight);
-//OBSOLETE( iterative::chemicalshift_column);
-//OBSOLETE( iterative::super_quick_relax_protocol);
-//OBSOLETE( iterative::centroid_before_quickrelax_weight);
-//OBSOLETE( iterative::fullatom_after_quickrelax_weight);
-//OBSOLETE( iterative::limit_decoys_for_noe_assign);
-//OBSOLETE( iterative::centroid_quickrelax);
+	//OBSOLETE( iterative::cenpool_chemicalshift_weight);
+	//OBSOLETE( iterative::chemicalshift_column);
+	//OBSOLETE( iterative::super_quick_relax_protocol);
+	//OBSOLETE( iterative::centroid_before_quickrelax_weight);
+	//OBSOLETE( iterative::fullatom_after_quickrelax_weight);
+	//OBSOLETE( iterative::limit_decoys_for_noe_assign);
+	//OBSOLETE( iterative::centroid_quickrelax);
 
-//noesy
-//OBSOLETE( iterative::skip_redundant_constraints);
-//OBSOLETE( iterative::cenpool_noesy_cst_weight);
-//OBSOLETE( iterative::delay_noesy_reassign);
-//OBSOLETE( iterative::initial_noe_auto_assign_csts);
-//OBSOLETE( iterative::auto_assign_scheme);
-//OBSOLETE( iterative::dcut);
+	//noesy
+	//OBSOLETE( iterative::skip_redundant_constraints);
+	//OBSOLETE( iterative::cenpool_noesy_cst_weight);
+	//OBSOLETE( iterative::delay_noesy_reassign);
+	//OBSOLETE( iterative::initial_noe_auto_assign_csts);
+	//OBSOLETE( iterative::auto_assign_scheme);
+	//OBSOLETE( iterative::dcut);
 
-//OBSOLETE( iterative::initial_beta_topology);
-//OBSOLETE( iterative::force_topology_resampling);
-//OBSOLETE( iterative::recompute_beta_Naccept);
+	//OBSOLETE( iterative::initial_beta_topology);
+	//OBSOLETE( iterative::force_topology_resampling);
+	//OBSOLETE( iterative::recompute_beta_Naccept);
 
-//OBSOLETE( iterative::flags_fullatom);
-//OBSOLETE( iterative::normalize::sampling);
+	//OBSOLETE( iterative::flags_fullatom);
+	//OBSOLETE( iterative::normalize::sampling);
 
 }
 
@@ -325,8 +325,8 @@ void fix_chainbreak_patch( scoring::ScoreFunctionOP scorefxn, std::string const&
 		core::Real overlap_wgt( 1.0 * extra_chainbreak_weight );
 		core::Real quad_wgt( 1.0 * extra_chainbreak_weight );
 		tr.Info << "no chainbreaks specified in  " << patch_name << ",..."
-						<< " set chainbreaks to " << lin_wgt << " and "
-						<< overlap_wgt <<" for linear- and overlap-chainbreak, respectively" << std::endl;
+			<< " set chainbreaks to " << lin_wgt << " and "
+			<< overlap_wgt <<" for linear- and overlap-chainbreak, respectively" << std::endl;
 		scorefxn->set_weight( scoring::chainbreak, quad_wgt );
 		scorefxn->set_weight( scoring::linear_chainbreak, lin_wgt );
 		scorefxn->set_weight( scoring::overlap_chainbreak, overlap_wgt );
@@ -337,7 +337,7 @@ bool decide_on_beta_jumping_from_frags() {
 	/// determine if we have enough strands to do jumping...
 	bool bDoBetaJumping(true);
 	using namespace core::fragment;
-	FragSetOP frags_s = FragmentIO( option[ OptionKeys::abinitio::number_3mer_frags ]()	).read_data( option[ in::file::frag3 ] );
+	FragSetOP frags_s = FragmentIO( option[ OptionKeys::abinitio::number_3mer_frags ]() ).read_data( option[ in::file::frag3 ] );
 	core::fragment::SecondaryStructure ss_def( *frags_s, true /*no JustUseCentralResidue */ );
 	Size ct_E( 0 );
 	Size ct_H( 0 );
@@ -363,37 +363,37 @@ bool decide_on_beta_jumping_from_frags() {
 
 
 IterativeBase::IterativeBase(std::string name_in )
-	: Parent(),
+: Parent(),
 
-		stage_( ENUMERATION ),
-		finish_stage_( LAST_CENTROID_START ),
-		first_batch_this_stage_ ( 1 ),
-		first_fullatom_batch_( 100000 ),
-		//		min_structures_for_accept_statistics_( 500 ),
+	stage_( ENUMERATION ),
+	finish_stage_( LAST_CENTROID_START ),
+	first_batch_this_stage_ ( 1 ),
+	first_fullatom_batch_( 100000 ),
+	//  min_structures_for_accept_statistics_( 500 ),
 
-		bEnumeratedLastTime_( false ),
+	bEnumeratedLastTime_( false ),
 
-		last_accepted_decoys_in_idle_( 0 ),
+	last_accepted_decoys_in_idle_( 0 ),
 
-		reference_pose_( /* NULL */ ),
+	reference_pose_( /* NULL */ ),
 
-		cen_score_( option[ iterative::cen_score ]() ),
-		cen_score_patch_( option[ iterative::cen_score_patch ]() ),
+	cen_score_( option[ iterative::cen_score ]() ),
+	cen_score_patch_( option[ iterative::cen_score_patch ]() ),
 
-		fa_score_( option[ iterative::fa_score ]() ),
-		fa_score_patch_( option[ iterative::fa_score_patch ]() ),
-		noesy_assign_float_cycle_( 1.0 ), //changed OCT 20th 2010 ... start only in generation 3 of STAGE2_RESAMPLE with cyana-cycle 2
-		first_noesy_cst_file_( "n/a" ),
-		first_noesy_fa_cst_file_ ("n/a" ),
-		current_noesy_sampling_file_( "n/a" ),
-		bCombineNoesyCst_( true ),
-		super_quick_relax_of_centroids_( option[ iterative::centroid_quickrelax ]() ),
-		use_dynamic_weights_for_sampling_( option[ iterative::normalize::sampling ]() ),
-		delay_noesy_reassign_( option[ iterative::delay_noesy_reassign ]() ),
-		rdc_data_( /* NULL */ ),
-		cst_data_( /* NULL */ ),
-		cst_fa_data_( /* NULL */ ),
-		vanilla_options_( basic::options::option )
+	fa_score_( option[ iterative::fa_score ]() ),
+	fa_score_patch_( option[ iterative::fa_score_patch ]() ),
+	noesy_assign_float_cycle_( 1.0 ), //changed OCT 20th 2010 ... start only in generation 3 of STAGE2_RESAMPLE with cyana-cycle 2
+	first_noesy_cst_file_( "n/a" ),
+	first_noesy_fa_cst_file_ ("n/a" ),
+	current_noesy_sampling_file_( "n/a" ),
+	bCombineNoesyCst_( true ),
+	super_quick_relax_of_centroids_( option[ iterative::centroid_quickrelax ]() ),
+	use_dynamic_weights_for_sampling_( option[ iterative::normalize::sampling ]() ),
+	delay_noesy_reassign_( option[ iterative::delay_noesy_reassign ]() ),
+	rdc_data_( /* NULL */ ),
+	cst_data_( /* NULL */ ),
+	cst_fa_data_( /* NULL */ ),
+	vanilla_options_( basic::options::option )
 {
 	never_switched_noe_filter_=true;
 	warn_obsolete_flags();
@@ -404,13 +404,13 @@ IterativeBase::IterativeBase(std::string name_in )
 	//changes for debug mode
 	if ( option[ run::test_cycles ] || option[ run::dry_run ] ) {
 		delay_noesy_reassign_ = 50;
-		//		min_structures_for_accept_statistics_ = 20;
+		//  min_structures_for_accept_statistics_ = 20;
 	}
 
 	//name is e.g., centroid_pool or fullatom_pool
 	set_name( name_in );
 
-// --- setup stage-steering parameters
+	// --- setup stage-steering parameters
 	// maximum of sampled structures per stage
 	max_nstruct_list_ = option[ iterative::max_nstruct ]();
 	if ( max_nstruct_list_.size() != ( FINISHED-1 ) ) {
@@ -474,8 +474,8 @@ void IterativeBase::initialize() {
 	core::scoring::ScoreFunctionOP scorefxn =
 		core::scoring::ScoreFunctionFactory::create_score_function( cen_score(), cen_score_patch() );
 	tr.Info << "create Archive Scorefunction with: "
-					<<  option[ iterative::cen_score]() << " "
-					<<  option[ iterative::cen_score_patch ]() << std::endl;
+		<<  option[ iterative::cen_score]() << " "
+		<<  option[ iterative::cen_score_patch ]() << std::endl;
 
 	mem_tr << "setup cen-scorefxn" << std::endl;
 
@@ -491,9 +491,9 @@ void IterativeBase::initialize() {
 	if ( evaluate_local() ) {
 		set_weight( "score", 1.0 );
 		//setup constraint-evaluation for filter-cst from the ConstraintClaimers ( -broker:setup )
-	/// @brief set scorefxn used for evaluation
+		/// @brief set scorefxn used for evaluation
 		setup_filter_cst( overall_cstfilter_weight() );
-		//		set_weight( "prefa_clean_score3", option[ iterative::centroid_before_quickrelax_weight ]() );
+		//  set_weight( "prefa_clean_score3", option[ iterative::centroid_before_quickrelax_weight ]() );
 		add_evaluation( evaluation::PoseEvaluatorCOP( evaluation::PoseEvaluatorOP( new simple_filters::RDC_Evaluator("rdc") ) ), scorefxn->get_weight( scoring::rdc ) );
 		scorefxn->set_weight( scoring::rdc, 0 );
 	} else {
@@ -542,9 +542,9 @@ IterativeBase::~IterativeBase() {}
 ///  logic here: new batch at beginning, but only if we are in startup phase ( not a reload of a full archive )
 ///              otherwise make new batch if sufficiently many structures have been accepted since last batch
 // bool IterativeBase::ready_for_batch() const {
-// 	if ( !bStartedInitBatch_ && decoys().size() <= nstruct() ) return true;
-// 	if ( decoys().size() >= nstruct() && accepts_since_last_batch() > nstruct_accept_before_rerun_ && proposed_since_last_batch() > min_structures_for_accept_statistics_ ) return true;
-// 	return false;
+//  if ( !bStartedInitBatch_ && decoys().size() <= nstruct() ) return true;
+//  if ( decoys().size() >= nstruct() && accepts_since_last_batch() > nstruct_accept_before_rerun_ && proposed_since_last_batch() > min_structures_for_accept_statistics_ ) return true;
+//  return false;
 // }
 
 void IterativeBase::idle() {
@@ -562,12 +562,12 @@ void IterativeBase::idle() {
 
 	//if we are in remote-evaluation mode we want to switch the noesy-filter restraints once after stage3
 	if ( !evaluate_local()
-		&& option[ iterative::update_noesy_filter_cst ]()
-		&& stage_ >= STAGE2_RESAMPLING
-		&& noesy_assign::NoesyModule::cmdline_options_activated()
-		&& never_switched_noe_filter_
-		&& decoys().begin() != decoys().end()
-	) {
+			&& option[ iterative::update_noesy_filter_cst ]()
+			&& stage_ >= STAGE2_RESAMPLING
+			&& noesy_assign::NoesyModule::cmdline_options_activated()
+			&& never_switched_noe_filter_
+			&& decoys().begin() != decoys().end()
+			) {
 		basic::show_time( tr,  "non-local scoring replace noesy_filter constraints: start..." );
 		never_switched_noe_filter_=false;
 		replace_noesy_filter_constraints();
@@ -583,9 +583,9 @@ bool IterativeBase::still_interested( Batch const& batch ) const {
 
 //after reading new structures we test for energy-saturation
 void IterativeBase::read_structures(
-   core::io::silent::SilentFileData& sfd,
-	 core::io::silent::SilentFileData& alternative_decoys,
-	 Batch const& batch
+	core::io::silent::SilentFileData& sfd,
+	core::io::silent::SilentFileData& alternative_decoys,
+	Batch const& batch
 ) {
 	basic::show_time( tr,  "read structures into "+name()+"..." );
 	Parent::read_structures( sfd, alternative_decoys, batch );
@@ -597,17 +597,17 @@ void IterativeBase::read_structures(
 void IterativeBase::test_for_stage_end() {
 	//switch to next stage ? want to have some significance to this ratio --- hence at least 1000 proposals
 	tr.Info << "current accept ratio: " << current_acceptance_ratio() << " this is "
-					<< ( current_acceptance_ratio() < target_accept_ratio() ? "" : "not" )
-					<< " lower than " << target_accept_ratio()
-					<< "\n"
-					<< proposed_since_last_batch() << " proposed decoys since last batch "
-					<< std::endl;
+		<< ( current_acceptance_ratio() < target_accept_ratio() ? "" : "not" )
+		<< " lower than " << target_accept_ratio()
+		<< "\n"
+		<< proposed_since_last_batch() << " proposed decoys since last batch "
+		<< std::endl;
 
 	int last_stage_N( 0 );
 	if ( stage_ > 1 ) last_stage_N = max_nstruct_list_[ stage_ - 1 ];
 	if ( max_nstruct_list_[ stage_ ] && ( (int) total_proposed() - last_stage_N ) > max_nstruct_list_[ stage_ ] ) {
 		tr.Info << "maximum number of " << max_nstruct_list_[ stage_ ]
-						<< " decoys for stage " << stage_ << " is reached...switching!" << std::endl;
+			<< " decoys for stage " << stage_ << " is reached...switching!" << std::endl;
 		increment_stage();
 	}
 
@@ -622,7 +622,7 @@ void IterativeBase::increment_stage() {
 	save_to_file( "_stage" + ObjexxFCL::string_of( stage_ ) );
 
 	//save current number of structures:
-	max_nstruct_list_[ stage_ ] = total_proposed(); 	//used in test_for_stage_end to no how-many new structures since last stage
+	max_nstruct_list_[ stage_ ] = total_proposed();  //used in test_for_stage_end to no how-many new structures since last stage
 
 	//switch to next possible stage
 	stage_ = IterationStage( 1 + (int) stage_ );
@@ -651,18 +651,18 @@ void IterativeBase::increment_stage() {
 /// ------------------------ end stage control
 /// @detail rescore and sort archive
 void  IterativeBase::rescore() {
-  Parent::rescore();
-  if ( hedge_archive_ ) {
-    hedge_archive_->set_evaluators( evaluators(), weights() );
+	Parent::rescore();
+	if ( hedge_archive_ ) {
+		hedge_archive_->set_evaluators( evaluators(), weights() );
 		hedge_archive_->set_weights( weights() );
-    hedge_archive_->set_scorefxn( scorefxn().clone() );
-    hedge_archive_->rescore();
-  }
+		hedge_archive_->set_scorefxn( scorefxn().clone() );
+		hedge_archive_->rescore();
+	}
 }
 
 
 void IterativeBase::collect_hedge_structures( core::io::silent::SilentStructOP evaluated_decoy, Batch const& batch ) {
-	//	if ( !evaluate_local() ) return;
+	// if ( !evaluate_local() ) return;
 	if ( !hedge_archive_ ) {
 		hedge_archive_ = HedgeArchiveOP( new HedgeArchive( name()+"_hedge" ) );
 		hedge_archive_->initialize();
@@ -724,10 +724,10 @@ bool IterativeBase::add_structure(
 				core::Real const delta_max=max_score-min_score;
 				core::Real const delta_score=new_score-old_score;
 				tr.Debug << "swap " << evaluated_decoy->decoy_tag() << " for " << (*it)->decoy_tag()
-								 << " new-score " << new_score << " check: " << check_score
-								 << " score-improvement: " << delta_score
-								 << " at spread of " << delta_max
-								 << " ratio " << delta_score/delta_max << std::endl;
+					<< " new-score " << new_score << " check: " << check_score
+					<< " score-improvement: " << delta_score
+					<< " at spread of " << delta_max
+					<< " ratio " << delta_score/delta_max << std::endl;
 				if ( delta_score/delta_max < -0.05 ) {
 					erase_decoy( tag );
 					return Parent::add_evaluated_structure( evaluated_decoy, alternative_decoy, batch );
@@ -739,9 +739,9 @@ bool IterativeBase::add_structure(
 		}//improve score block
 
 		tr.Trace << "decoy " << evaluated_decoy->decoy_tag() << " with original tag " << evaluated_decoy->get_comment( "tag_in_file" )
-						 << " declined because of min_diversity: rmsd is " << rmsd_to_pool
-						 << " limit: " << min_diversity_list_[ stage() ]
-						 << std::endl;
+			<< " declined because of min_diversity: rmsd is " << rmsd_to_pool
+			<< " limit: " << min_diversity_list_[ stage() ]
+			<< std::endl;
 
 		return false; //declined ... either tag not found or score not improved...
 	}
@@ -756,7 +756,7 @@ bool IterativeBase::add_structure(
 core::Size IterativeBase::generate_batch( jd2::archive::Batch& batch, core::Size repeat_id ) {
 
 	if ( repeat_id == 0 ) return repeat_id;
- 	mem_tr << "IterativeBase::generate_batch " << stage_ << " " << batch.batch() << std::endl;
+	mem_tr << "IterativeBase::generate_batch " << stage_ << " " << batch.batch() << std::endl;
 	tr.Info << "\ngenerate batch from " <<name() << " " << batch.batch() << std::endl;
 
 	//want intermediate structures from abinitio runs
@@ -790,7 +790,7 @@ core::Size IterativeBase::generate_batch( jd2::archive::Batch& batch, core::Size
 			gen_cen2fullatom_non_pool_decoys( batch );
 			--repeat_id;
 		}
-		//	gen_resample_fragments( batch );
+		// gen_resample_fragments( batch );
 		batch.set_intermediate_structs( false ); //otherwise the intermediate (centroid) structures will be scored by score_13_envhb
 		result_is_fullatom = true;
 	}
@@ -806,12 +806,12 @@ core::Size IterativeBase::generate_batch( jd2::archive::Batch& batch, core::Size
 }
 
 void IterativeBase::generate_batch() {
-	//OBSOLET	cluster();
+	//OBSOLET cluster();
 	basic::show_time( tr,  "generate_batch" );
 	//initialize batch
 	mem_tr << "IterativeBase::start_new_batch " << std::endl;
-  Size repeat=1;
-	while (repeat) {
+	Size repeat=1;
+	while ( repeat ) {
 		Batch& batch( manager().start_new_batch() );
 		if ( basic::options::option[ basic::options::OptionKeys::iterative::nolazy_noesy_reassign ]() ) {
 			reassign_noesy_data( batch );
@@ -886,7 +886,7 @@ void IterativeBase::do_dynamic_patching( jd2::archive::Batch& batch, utility::io
 		patch_fd << patches.str() << std::endl;
 		tr.Info << "dynamic patching: write to flag-file " << key.id() << " " << patch_file << std::endl;
 		flags << "-" << key.id() << " " << patch_file << std::endl;
-		//		std::cerr << "dynamic patching for " << key.id() << std::endl;
+		//  std::cerr << "dynamic patching for " << key.id() << std::endl;
 	}
 }
 
@@ -912,18 +912,18 @@ void IterativeBase::gen_evaluation_output( Batch& batch, bool fullatom ) {
 	if ( !fullatom && !super_quick_relax_of_centroids_ ) { //centroid
 		// the standard 'score_final' score column
 		flags << "-evaluation:extra_score " << option[ iterative::cen_score]() << std::endl
-					<< "-evaluation:extra_score_column _final" << std::endl;
+			<< "-evaluation:extra_score_column _final" << std::endl;
 		flags << "-evaluation:extra_score_patch " << option[ iterative::cen_score_patch ]() << std::endl;
 	} else { //fullatom
 		if ( super_quick_relax_of_centroids_ ) {
 			//obtain 'empty' score for 'score_final' and put normal fullatom score into 'score_fa'
 			flags << "-evaluation:extra_score " << "empty " << option[ iterative::fa_score]() << std::endl
-						<< "-evaluation:extra_score_column _final _fa" << std::endl;
+				<< "-evaluation:extra_score_column _final _fa" << std::endl;
 			flags << "-evaluation:extra_score_patch " << option[ iterative::fa_score_patch ]() << " NOPATCH " << std::endl;
 		} else {
 			//score-final standard fullatom mode
 			flags << "-evaluation:extra_score " << option[ iterative::fa_score]() << std::endl
-						<< "-evaluation:extra_score_column _final" << std::endl;
+				<< "-evaluation:extra_score_column _final" << std::endl;
 			flags << "-evaluation:extra_score_patch " << option[ iterative::fa_score_patch ]() << std::endl;
 		}
 	}
@@ -945,9 +945,9 @@ void IterativeBase::gen_evaluation_output( Batch& batch, bool fullatom ) {
 			}
 			flags << "-relax:sequence" << std::endl;
 			flags << "-out:user_tag centroid" << std::endl;
-			//			utility::io::ozstream patch_file( batch.dir()+"/super_quick_relax.patch" );
-			//			patch_file << "atom_pair_constraint = 0.1" << std::endl;
-			//			patch_file << "rdc = 0.1" << std::endl;
+			//   utility::io::ozstream patch_file( batch.dir()+"/super_quick_relax.patch" );
+			//   patch_file << "atom_pair_constraint = 0.1" << std::endl;
+			//   patch_file << "rdc = 0.1" << std::endl;
 			if ( option[ iterative::super_quick_relax_patch ].user() ) {
 				flags << "-score:patch " << option[ iterative::super_quick_relax_patch ]() << std::endl;
 			}
@@ -1010,21 +1010,21 @@ void IterativeBase::gen_diversity_pool( jd2::archive::Batch& batch, bool ) {
 /// provide start-structures for this as -in:file:silent
 void IterativeBase::gen_start_structures( Batch& /*batch*/ ) {
 	// OBSOLETE
-// 	batch.set_has_silent_in();
-// 	io::silent::SilentFileData sfd;
-// 	for ( SilentStructs::const_iterator it = decoys().begin(); it != decoys().end(); ++it ) {
-// 		sfd.add_structure( *it ); //not a copy, only adds OP to sfd
-// 	}
-// 	sfd.write_all( batch.silent_in() );
+	//  batch.set_has_silent_in();
+	//  io::silent::SilentFileData sfd;
+	//  for ( SilentStructs::const_iterator it = decoys().begin(); it != decoys().end(); ++it ) {
+	//   sfd.add_structure( *it ); //not a copy, only adds OP to sfd
+	//  }
+	//  sfd.write_all( batch.silent_in() );
 
-// 	utility::io::ozstream broker( batch.broker_file(), std::ios::app );
-// 	broker << "\nUSE_INPUT_POSE\n" << std::endl;
-// 	broker << "CLAIMER RigidChunkClaimer" << std::endl
-// 				 << "REGION_FILE " << option[ iterative::fix_core ]() << std::endl
-// 				 << "END_CLAIMER" << std::endl;
+	//  utility::io::ozstream broker( batch.broker_file(), std::ios::app );
+	//  broker << "\nUSE_INPUT_POSE\n" << std::endl;
+	//  broker << "CLAIMER RigidChunkClaimer" << std::endl
+	//      << "REGION_FILE " << option[ iterative::fix_core ]() << std::endl
+	//      << "END_CLAIMER" << std::endl;
 
-// 	//compute nstruct such that we get the usual amount of total structures
-// 	batch.nstruct() = std::max( 1, int( 1.0*batch.nstruct() / ( 1.0*decoys().size() ) ) );
+	//  //compute nstruct such that we get the usual amount of total structures
+	//  batch.nstruct() = std::max( 1, int( 1.0*batch.nstruct() / ( 1.0*decoys().size() ) ) );
 }
 
 //creation of the random-ss samplign stage
@@ -1047,9 +1047,11 @@ void IterativeBase::gen_enumerate_pairings( Batch& batch ) {
 	//look for an explicit broker file for enumeration stage...
 	if ( option[ iterative::enumerate::broker ].user() ) {
 		utility::io::izstream enum_broker( option[ iterative::enumerate::broker ]() );
-		if ( !enum_broker.good() ) throw ( utility::excn::EXCN_FileNotFound
-			( "-iterative::enumerate::broker: File "
+		if ( !enum_broker.good() ) {
+			throw ( utility::excn::EXCN_FileNotFound
+				( "-iterative::enumerate::broker: File "
 				+std::string( option[ iterative::enumerate::broker ]())+" not found! ") );
+		}
 		std::string line;
 		while ( getline( enum_broker, line ) ) broker << line << std::endl;
 	} else {
@@ -1059,14 +1061,14 @@ void IterativeBase::gen_enumerate_pairings( Batch& batch ) {
 
 		using namespace core::fragment;
 		FragSetOP frags_s = FragmentIO(
-																	 option[ OptionKeys::abinitio::number_3mer_frags ]()
-		).read_data( option[ in::file::frag3 ] );
+			option[ OptionKeys::abinitio::number_3mer_frags ]()
+			).read_data( option[ in::file::frag3 ] );
 		guess_pairings_from_secondary_structure( *frags_s, pairings_file, frag_ss_file );
 		broker << "CLAIMER TemplateJumpClaimer\n"
-					 << "RANDOM_SHEETS 2\n"
-					 << "SS_INFO " << frag_ss_file << "\n"
-					 << "PAIRING_FILE " << pairings_file << "\n"
-					 << "END_CLAIMER" << std::endl;
+			<< "RANDOM_SHEETS 2\n"
+			<< "SS_INFO " << frag_ss_file << "\n"
+			<< "PAIRING_FILE " << pairings_file << "\n"
+			<< "END_CLAIMER" << std::endl;
 	} //else (not enumerate::broker)
 }
 
@@ -1078,19 +1080,19 @@ void IterativeBase::gen_resample_topologies( Batch& batch) {
 
 	utility::io::ozstream broker( batch.broker_file(), std::ios::app );
 	broker << "\nCLAIMER TemplateJumpClaimer \n"
-		     << "NO_USE_INPUT_POSE\n"
-				 << "topol_file "<< batch.dir() << "beta.top\n"
-				 << "END_CLAIMER\n\n" << std::endl;
+		<< "NO_USE_INPUT_POSE\n"
+		<< "topol_file "<< batch.dir() << "beta.top\n"
+		<< "END_CLAIMER\n\n" << std::endl;
 	broker.close();
 
 	//read beta-topology from start file -fix_topol --- use this file for first recompute_beta_Naccept decoys
 	if ( option[ iterative::initial_beta_topology ].user() &&
-		(int) total_accepts() < option[ iterative::recompute_beta_Naccept ]() ) {
+			(int) total_accepts() < option[ iterative::recompute_beta_Naccept ]() ) {
 		//copy file to batch.dir() + "beta.top"
 		std::string input( option[ iterative::initial_beta_topology ]() );
 
 		utility::io::izstream beta_input( input );
-		if( beta_input.good() ) {
+		if ( beta_input.good() ) {
 			std::string line;
 			utility::io::ozstream beta_batch( batch.dir()+"beta.top" );
 			while ( getline( beta_input, line ) ) beta_batch << line << std::endl;
@@ -1114,54 +1116,54 @@ void IterativeBase::gen_resample_stage2( jd2::archive::Batch& batch ) {
 	collect_alternative_decoys( decoys(), "decoys_stage2.out", start_decoys );
 
 
-// 	typedef std::map< std::string, utility::vector1< std::string > > SourceFiles;
-// 	typedef std::map< std::string, utility::vector1< core::io::silent::SilentStructOP > > AlternativeDecoys;
+	//  typedef std::map< std::string, utility::vector1< std::string > > SourceFiles;
+	//  typedef std::map< std::string, utility::vector1< core::io::silent::SilentStructOP > > AlternativeDecoys;
 
-// 	SourceFiles sources;
-// 	AlternativeDecoys alternative_decoys;
-// 	Size ct_in( 0 );
+	//  SourceFiles sources;
+	//  AlternativeDecoys alternative_decoys;
+	//  Size ct_in( 0 );
 
-// 	//to find the stage2 structures collect first all tags for a specific file
-// 	for ( const_decoy_iterator it = decoys().begin(); it != decoys().end(); ++it ) {
-// 		runtime_assert( (*it)->has_comment( TAG_IN_FILE ) );
-// 		std::string tag( (*it)->get_comment( TAG_IN_FILE ) );
-// 		utility::file::FileName file( (*it)->get_comment( SOURCE_FILE ) );
-// 		std::string stage2_file( file.path()+file.base() + "_stage2." + file.ext() );
+	//  //to find the stage2 structures collect first all tags for a specific file
+	//  for ( const_decoy_iterator it = decoys().begin(); it != decoys().end(); ++it ) {
+	//   runtime_assert( (*it)->has_comment( TAG_IN_FILE ) );
+	//   std::string tag( (*it)->get_comment( TAG_IN_FILE ) );
+	//   utility::file::FileName file( (*it)->get_comment( SOURCE_FILE ) );
+	//   std::string stage2_file( file.path()+file.base() + "_stage2." + file.ext() );
 
-// 		//creates map <filename> <list of tags>
-// 		sources[ stage2_file ].push_back( tag );
-// 		alternative_decoys[ stage2_file ].push_back( (*it) );
-// 		++ct_in;
-// 	}
+	//   //creates map <filename> <list of tags>
+	//   sources[ stage2_file ].push_back( tag );
+	//   alternative_decoys[ stage2_file ].push_back( (*it) );
+	//   ++ct_in;
+	//  }
 
-// 	//read selected structures from each file
-// 	Size ct_read( 0 );
-// 	io::silent::SilentStructOPs start_decoys;
-// 	for ( SourceFiles::const_iterator it = sources.begin(); it != sources.end(); ++it ) {
-// 		/// it->first is filename, it->second are all tags collected for this file
-// 		io::silent::SilentFileData sfd;
-// 		try { //read structures
-// 			sfd._read_file( it->first, it->second, true /*throw exceptions */ );
-// 			if ( sfd.size() != it->second.size() ) {
-// 				tr.Warning << "[WARNING] multiple decoys with same tag detected in file " << it->first << std::endl;
-// 			}
-// 			copy( sfd.begin(), sfd.end(), std::back_inserter( start_decoys ) );
-// 			ct_read += sfd.size();
-// 		} catch ( utility::excn::EXCN_IO& excn ) { //ERROR
-// 			tr.Warning << "[WARNING] Problem reading silent-file " << it->first << " for " << it->second.size() << " structures " << std::endl;
-// 			excn.show( tr.Warning );
-// 			tr.Warning << std::endl;
-// 			tr.Warning << "use the respective structures in the pool as starting structure instead" << std::endl;
-// 			copy( alternative_decoys[ it->first ].begin(), alternative_decoys[ it->first ].end(), std::back_inserter( start_decoys ) );
-// 			ct_read += alternative_decoys[ it->first ].size();
-// 		}
-// 	}
+	//  //read selected structures from each file
+	//  Size ct_read( 0 );
+	//  io::silent::SilentStructOPs start_decoys;
+	//  for ( SourceFiles::const_iterator it = sources.begin(); it != sources.end(); ++it ) {
+	//   /// it->first is filename, it->second are all tags collected for this file
+	//   io::silent::SilentFileData sfd;
+	//   try { //read structures
+	//    sfd._read_file( it->first, it->second, true /*throw exceptions */ );
+	//    if ( sfd.size() != it->second.size() ) {
+	//     tr.Warning << "[WARNING] multiple decoys with same tag detected in file " << it->first << std::endl;
+	//    }
+	//    copy( sfd.begin(), sfd.end(), std::back_inserter( start_decoys ) );
+	//    ct_read += sfd.size();
+	//   } catch ( utility::excn::EXCN_IO& excn ) { //ERROR
+	//    tr.Warning << "[WARNING] Problem reading silent-file " << it->first << " for " << it->second.size() << " structures " << std::endl;
+	//    excn.show( tr.Warning );
+	//    tr.Warning << std::endl;
+	//    tr.Warning << "use the respective structures in the pool as starting structure instead" << std::endl;
+	//    copy( alternative_decoys[ it->first ].begin(), alternative_decoys[ it->first ].end(), std::back_inserter( start_decoys ) );
+	//    ct_read += alternative_decoys[ it->first ].size();
+	//   }
+	//  }
 
-// 	tr.Debug << "structures from pool" << ct_in << " structure retrieved from stage2-files "
-// 					 << ct_read << " start structs: " << start_decoys.size() << std::endl;
-// 	if ( start_decoys.size() != decoys().size() ) {
-// 		tr.Warning << "[WARNING] why do we have a different number of decoys in pool and start_decoys ? " << std::endl;
-// 	}
+	//  tr.Debug << "structures from pool" << ct_in << " structure retrieved from stage2-files "
+	//       << ct_read << " start structs: " << start_decoys.size() << std::endl;
+	//  if ( start_decoys.size() != decoys().size() ) {
+	//   tr.Warning << "[WARNING] why do we have a different number of decoys in pool and start_decoys ? " << std::endl;
+	//  }
 
 	///write flags and broker-file
 	if ( start_decoys.size() ) {
@@ -1169,7 +1171,7 @@ void IterativeBase::gen_resample_stage2( jd2::archive::Batch& batch ) {
 		batch.set_has_silent_in();
 		core::io::silent::SilentFileData sfd;
 		for ( SilentStructVector::const_iterator
-						it = start_decoys.begin(); it != start_decoys.end(); ++it ) {
+				it = start_decoys.begin(); it != start_decoys.end(); ++it ) {
 			sfd.add_structure( **it );
 		}
 		sfd.write_all( batch.silent_in() );
@@ -1177,11 +1179,11 @@ void IterativeBase::gen_resample_stage2( jd2::archive::Batch& batch ) {
 		//make broker file for RESTART calculations
 		utility::io::ozstream broker( batch.broker_file(), std::ios::app );
 		broker << "\nUSE_INPUT_POSE\n"
-					 << "CLAIMER StartStructClaimer\n"
-			     << "PERTURB " << option[ iterative::perturb_resampling ] << std::endl
-					 << "END_CLAIMER\n\n"
-					 << "CLAIMER FragmentJumpClaimer\n"
-					 << "END_CLAIMER\n\n" << std::endl;
+			<< "CLAIMER StartStructClaimer\n"
+			<< "PERTURB " << option[ iterative::perturb_resampling ] << std::endl
+			<< "END_CLAIMER\n\n"
+			<< "CLAIMER FragmentJumpClaimer\n"
+			<< "END_CLAIMER\n\n" << std::endl;
 
 		//skip stage 1
 		utility::io::ozstream flags( batch.flag_file(), std::ios::app );
@@ -1208,11 +1210,11 @@ void IterativeBase::gen_resample_fragments( Batch& batch ) {
 	Size const max_frags( 500 );
 	if ( option[ iterative::mix_frags ]() ) {
 		FragSetOP frags_l = FragmentIO(
-		   option[ OptionKeys::abinitio::number_9mer_frags ]()
-	  ).read_data( option[ in::file::frag9 ] );
+			option[ OptionKeys::abinitio::number_9mer_frags ]()
+			).read_data( option[ in::file::frag9 ] );
 		FragSetOP frags_s = FragmentIO(
-		   option[ OptionKeys::abinitio::number_3mer_frags ]()
-	  ).read_data( option[ in::file::frag3 ] );
+			option[ OptionKeys::abinitio::number_3mer_frags ]()
+			).read_data( option[ in::file::frag3 ] );
 		frags_9mer.add( *frags_l );//assuming we really have read 9mers and 3mers.
 		frags_3mer.add( *frags_s );
 	}
@@ -1230,17 +1232,17 @@ void IterativeBase::gen_resample_fragments( Batch& batch ) {
 
 	utility::io::ozstream flags( batch.flag_file(), std::ios::app );
 	flags << "-frag3 " << file_3mer << std::endl
-				<< "-frag9 " << file_9mer << std::endl
-				<< "-abinitio:number_3mer_frags 0" << std::endl
-				<< "-abinitio:number_9mer_frags 0" << std::endl;
+		<< "-frag9 " << file_9mer << std::endl
+		<< "-abinitio:number_3mer_frags 0" << std::endl
+		<< "-abinitio:number_9mer_frags 0" << std::endl;
 
 	mem_tr << "IterativeBase::gen_resample_fragments end" << std::endl;
 }
 
 
 void IterativeBase::update_noesy_filter_files(
-		std::string const& current,
-		bool fullatom
+	std::string const& current,
+	bool fullatom
 ) {
 	current_noesy_sampling_file_ = current;
 	if ( first_noesy_cst_file_ == "n/a" ) {
@@ -1274,21 +1276,21 @@ void IterativeBase::gen_noe_assignments( Batch& batch ) {
 	//if just started IterativeFullatom we are in a new instance and the first_noesy_cst_file and
 	// the current_noesy_sampling_file_ are not set .. go through backward through past batches and take first (i.e., youngest) file.
 	if ( batch.id() > 1 && stage() > CEN2FULLATOM && first_noesy_cst_file_ == "n/a"  ) {
-		tr.Info << "Figure out current NOESY CST File by going backwards from " << batch.id() << std::endl;
-		for ( Size back = batch.id() - 1; back >= 1; --back ) {
-			Batch last_batch( back );
-			runtime_assert( last_batch.id() < batch.id() );
-			current_noesy_sampling_file_ = last_batch.dir()+"/"+NOESY_CST_FILE_NAME;
-			if ( utility::file::file_exists( current_noesy_sampling_file_ ) ) break;
-			current_noesy_sampling_file_ = option[ iterative::initial_noe_auto_assign_csts ]();
-		}
-		//		if ( option[ iterative::update_noesy_filter_cst ]() ) {
-		first_noesy_cst_file_ = current_noesy_sampling_file_+".filter";
-		first_noesy_fa_cst_file_ = current_noesy_sampling_file_+".filter";
-			//} else {
-			//first_noesy_cst_file_ = option[ iterative::initial_noe_auto_assign_csts ]()+".filter";
-			//first_noesy_fa_cst_file_ = option[ iterative::initial_noe_auto_assign_csts ]()+".filter";
-			//}
+	tr.Info << "Figure out current NOESY CST File by going backwards from " << batch.id() << std::endl;
+	for ( Size back = batch.id() - 1; back >= 1; --back ) {
+	Batch last_batch( back );
+	runtime_assert( last_batch.id() < batch.id() );
+	current_noesy_sampling_file_ = last_batch.dir()+"/"+NOESY_CST_FILE_NAME;
+	if ( utility::file::file_exists( current_noesy_sampling_file_ ) ) break;
+	current_noesy_sampling_file_ = option[ iterative::initial_noe_auto_assign_csts ]();
+	}
+	//  if ( option[ iterative::update_noesy_filter_cst ]() ) {
+	first_noesy_cst_file_ = current_noesy_sampling_file_+".filter";
+	first_noesy_fa_cst_file_ = current_noesy_sampling_file_+".filter";
+	//} else {
+	//first_noesy_cst_file_ = option[ iterative::initial_noe_auto_assign_csts ]()+".filter";
+	//first_noesy_fa_cst_file_ = option[ iterative::initial_noe_auto_assign_csts ]()+".filter";
+	//}
 	}
 	*/
 	//
@@ -1311,63 +1313,63 @@ void IterativeBase::gen_noe_assignments( Batch& batch ) {
 	if ( stage() >= CEN2FULLATOM ) { //don't add fa constraints in early stages... slows down super-quick relax to much...
 		if ( bSplitted ) {
 			broker << "\nCLAIMER ConstraintClaimer \n"
-						 << "CST_FILE " << best_cst_file << "\n"
-						 << "NO_CENTROID\n"
-						 << "FULLATOM\n"
-						 << "SKIP_REDUNDANT "<<option[ iterative::skip_redundant_constraints ]() << "\n";
+				<< "CST_FILE " << best_cst_file << "\n"
+				<< "NO_CENTROID\n"
+				<< "FULLATOM\n"
+				<< "SKIP_REDUNDANT "<<option[ iterative::skip_redundant_constraints ]() << "\n";
 			broker << "COMBINE_RATIO 1" << std::endl;
 			broker << "END_CLAIMER\n" << std::endl;
 		}
 		broker << "\nCLAIMER ConstraintClaimer \n"
-					 << "CST_FILE " << cst_file << "\n"
-					 << "NO_CENTROID\n"
-					 << "FULLATOM\n"
-					 << "SKIP_REDUNDANT "<<option[ iterative::skip_redundant_constraints ]() << "\n";
+			<< "CST_FILE " << cst_file << "\n"
+			<< "NO_CENTROID\n"
+			<< "FULLATOM\n"
+			<< "SKIP_REDUNDANT "<<option[ iterative::skip_redundant_constraints ]() << "\n";
 		if ( bCombine || bSplitted ) {
 			broker << "COMBINE_RATIO " << option[ basic::options::OptionKeys::constraints::combine ]() << std::endl;
 		}
 		broker << "END_CLAIMER\n" << std::endl;
 		if ( bRandomRestraints ) {
 			broker << "\nCLAIMER ConstraintClaimer \n"
-						 << "CST_FILE " << drop_candidates << "\n"
-						 << "NO_CENTROID\n"
-						 << "FULLATOM\n"
-						 << "DROP_RANDOM_RATE " << option[ iterative::randomize_elimination_candidates ]() << "\n"
-						 << "SKIP_REDUNDANT "<<option[ iterative::skip_redundant_constraints ]() << "\n";
+				<< "CST_FILE " << drop_candidates << "\n"
+				<< "NO_CENTROID\n"
+				<< "FULLATOM\n"
+				<< "DROP_RANDOM_RATE " << option[ iterative::randomize_elimination_candidates ]() << "\n"
+				<< "SKIP_REDUNDANT "<<option[ iterative::skip_redundant_constraints ]() << "\n";
 			if ( bCombine || bSplitted ) {
 				broker << "COMBINE_RATIO " << option[ basic::options::OptionKeys::constraints::combine ]() << std::endl;
 			}
 			broker << "END_CLAIMER\n" << std::endl;
 		} //bRandom
 	}
-	//	if ( bCombine ) broker << "COMBINE_RATIO " << basic::options::option[ basic::options::OptionKeys::constraints::combine ]() << "\n";
+	// if ( bCombine ) broker << "COMBINE_RATIO " << basic::options::option[ basic::options::OptionKeys::constraints::combine ]() << "\n";
 	if ( bSplitted ) {
 		broker << "\nCLAIMER ConstraintClaimer \n"
-					 << "CST_FILE " << best_cst_centroid_file << "\n"
-					 << "CENTROID\n"
-					 << "SKIP_REDUNDANT "<<option[ iterative::skip_redundant_constraints ]() << "\n";
+			<< "CST_FILE " << best_cst_centroid_file << "\n"
+			<< "CENTROID\n"
+			<< "SKIP_REDUNDANT "<<option[ iterative::skip_redundant_constraints ]() << "\n";
 		broker << "COMBINE_RATIO 1" << std::endl;
 		broker << "END_CLAIMER\n" << std::endl;
 	}
 	broker << "\nCLAIMER ConstraintClaimer \n"
-				 << "CST_FILE " << cst_centroid_file << "\n"
-				 << "CENTROID\n"
-				 << "SKIP_REDUNDANT "<<option[ iterative::skip_redundant_constraints ]() << "\n";
+		<< "CST_FILE " << cst_centroid_file << "\n"
+		<< "CENTROID\n"
+		<< "SKIP_REDUNDANT "<<option[ iterative::skip_redundant_constraints ]() << "\n";
 	if ( bCombine || bSplitted ) {
 		broker << "COMBINE_RATIO " << option[ basic::options::OptionKeys::constraints::combine ]() << std::endl;
 	}
 	broker << "END_CLAIMER\n" << std::endl;
 
 	if ( bRandomRestraints ) {
-			broker << "\nCLAIMER ConstraintClaimer \n"
-						 << "CST_FILE " << drop_candidates_centroid << "\n"
-						 << "CENTROID\n"
-						 << "DROP_RANDOM_RATE " << option[ iterative::randomize_elimination_candidates ]() << "\n"
-						 << "SKIP_REDUNDANT "<<option[ iterative::skip_redundant_constraints ]() << "\n";
-			if ( bCombine || bSplitted ) {
-				broker << "COMBINE_RATIO " << option[ basic::options::OptionKeys::constraints::combine ]() << std::endl;
-			}
-			broker << "END_CLAIMER\n" << std::endl;
+		broker << "\nCLAIMER ConstraintClaimer \n"
+			<< "CST_FILE " << drop_candidates_centroid << "\n"
+			<< "CENTROID\n"
+			<< "DROP_RANDOM_RATE " << option[ iterative::randomize_elimination_candidates ]() << "\n"
+			<< "SKIP_REDUNDANT "<<option[ iterative::skip_redundant_constraints ]() << "\n";
+		if ( bCombine || bSplitted ) {
+			broker << "COMBINE_RATIO " << option[ basic::options::OptionKeys::constraints::combine ]() << std::endl;
+		}
+		broker << "END_CLAIMER\n" << std::endl;
 	} //bRandom
 
 	mem_tr << "IterativeBase::gen_noe_assignments end" << std::endl;
@@ -1377,10 +1379,10 @@ void IterativeBase::gen_noe_assignments( Batch& batch ) {
 void IterativeBase::gen_cen2fullatom( Batch& batch ) {
 	utility::io::ozstream broker( batch.broker_file(), std::ios::app );
 	broker << "\nUSE_INPUT_POSE\n"
-				 << "CLAIMER StartStructClaimer\n"
-				 << "END_CLAIMER\n\n"
-				 << "CLAIMER FragmentJumpClaimer\n"
-				 << "END_CLAIMER\n\n" << std::endl;
+		<< "CLAIMER StartStructClaimer\n"
+		<< "END_CLAIMER\n\n"
+		<< "CLAIMER FragmentJumpClaimer\n"
+		<< "END_CLAIMER\n\n" << std::endl;
 
 
 	utility::io::ozstream flags( batch.flag_file(), std::ios::app );
@@ -1394,7 +1396,7 @@ void IterativeBase::gen_cen2fullatom( Batch& batch ) {
 		batch.set_has_silent_in();
 		core::io::silent::SilentFileData sfd;
 		for ( core::io::silent::SilentStructOPs::const_iterator
-						it = start_decoys.begin(); it != start_decoys.end(); ++it ) {
+				it = start_decoys.begin(); it != start_decoys.end(); ++it ) {
 			sfd.add_structure( **it );
 		}
 		sfd.write_all( batch.silent_in() );
@@ -1406,9 +1408,9 @@ void IterativeBase::gen_cen2fullatom( Batch& batch ) {
 
 
 void IterativeBase::collect_hedgeing_decoys_from_batches(
-   Batch const& batch,
-	 core::io::silent::SilentStructOPs& start_decoys,
-	 Real score_cut_per_batch
+	Batch const& batch,
+	core::io::silent::SilentStructOPs& start_decoys,
+	Real score_cut_per_batch
 ) {
 	using namespace core::io::silent;
 
@@ -1427,7 +1429,7 @@ void IterativeBase::collect_hedgeing_decoys_from_batches(
 		if ( it->id() >= first_fullatom_batch_ ) break;
 		if ( !it->has_silent_in() ) continue; //usually only the resampling decoys are interesting...
 		if ( !it->decoys_returned() ) continue; //avoid looking for empty files
-		//		it->silent_out();
+		//  it->silent_out();
 		basic::show_time( tr,  "generate safety_hatch: access batch "+it->batch() );
 		SilentFileData sfd;
 		std::list< std::pair< core::Real, SilentStructOP > > score_cut_decoys;
@@ -1455,7 +1457,7 @@ void IterativeBase::collect_hedgeing_decoys_from_batches(
 		while ( score_cut_per_batch < percentage_per_batch ) {
 			Size ind_max( static_cast< Size > ( score_cut_decoys.size()*score_cut_per_batch ) );
 			for ( std::list< std::pair< core::Real, core::io::silent::SilentStructOP > >::const_iterator sit = score_cut_decoys.begin();
-						sit != score_cut_decoys.end(); ++sit ) {
+					sit != score_cut_decoys.end(); ++sit ) {
 				start_decoys.push_back( sit->second );
 				if ( --ind_max <= 1 ) break;
 			}
@@ -1466,7 +1468,7 @@ void IterativeBase::collect_hedgeing_decoys_from_batches(
 		if ( percentage_per_batch > 0.01 ) {
 			Size ind_max( static_cast< Size > ( score_cut_decoys.size()*score_cut_per_batch ) );
 			for ( std::list< std::pair< core::Real, core::io::silent::SilentStructOP > >::const_iterator sit = score_cut_decoys.begin();
-						sit != score_cut_decoys.end(); ++sit ) {
+					sit != score_cut_decoys.end(); ++sit ) {
 				if ( numeric::random::rg().uniform() < ( percentage_per_batch / score_cut_per_batch ) ) {
 					start_decoys.push_back( sit->second );
 				}
@@ -1481,10 +1483,10 @@ void IterativeBase::gen_cen2fullatom_non_pool_decoys( Batch& batch ) {
 	using namespace core::io::silent;
 	utility::io::ozstream broker( batch.broker_file(), std::ios::app );
 	broker << "\nUSE_INPUT_POSE\n"
-				 << "CLAIMER StartStructClaimer\n"
-				 << "END_CLAIMER\n\n"
-				 << "CLAIMER FragmentJumpClaimer\n"
-				 << "END_CLAIMER\n\n" << std::endl;
+		<< "CLAIMER StartStructClaimer\n"
+		<< "END_CLAIMER\n\n"
+		<< "CLAIMER FragmentJumpClaimer\n"
+		<< "END_CLAIMER\n\n" << std::endl;
 
 
 	utility::io::ozstream flags( batch.flag_file(), std::ios::app );
@@ -1510,7 +1512,7 @@ void IterativeBase::gen_cen2fullatom_non_pool_decoys( Batch& batch ) {
 		core::io::silent::SilentFileData sfd;
 		Size ct( 0 );
 		for ( core::io::silent::SilentStructOPs::const_iterator
-						it = start_decoys.begin(); it != start_decoys.end(); ++it ) {
+				it = start_decoys.begin(); it != start_decoys.end(); ++it ) {
 			if ( ++ct > batch.nstruct() ) break;
 			sfd.add_structure( **it );
 		}
@@ -1529,7 +1531,7 @@ void IterativeBase::reassign_noesy_data( Batch& batch ) {
 	if ( !noesy_assign::NoesyModule::cmdline_options_activated() ) return;
 	Size const n_decoys( option[ iterative::limit_decoys_for_noe_assign ] );
 	if ( batch.id() == 1 || ( total_proposed() < delay_noesy_reassign_ && stage() < CEN2FULLATOM )
-		|| ( stage() >= CEN2FULLATOM && total_proposed() < 2*n_decoys ) ) return; //don't do this at very beginning
+			|| ( stage() >= CEN2FULLATOM && total_proposed() < 2*n_decoys ) ) return; //don't do this at very beginning
 	//this takes a while... make sure that backedup version of archive is up-to-date
 	manager().save_archive();
 
@@ -1640,11 +1642,11 @@ void IterativeBase::reassign_noesy_data( Batch& batch ) {
 	using namespace basic::options::OptionKeys;
 
 	//make constraints
-	core::pose::Pose aPose; 	//make a pose to make constraint-files
+	core::pose::Pose aPose;  //make a pose to make constraint-files
 	core::pose::make_pose_from_sequence(
-				aPose,
-				target_sequence_,
-				*( chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ))
+		aPose,
+		target_sequence_,
+		*( chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ))
 	);
 	std::string cst_file( batch.dir()+"/"+NOESY_CST_FILE_NAME ); //cst-file names
 	std::string cst_centroid_file( cst_file + ".centroid");
@@ -1710,7 +1712,7 @@ void IterativeBase::guess_pairings_from_secondary_structure(
 	for ( int pos=1; pos <= (int) ss_def.total_residue(); pos++ ) {
 		if ( ss_def.sheet_fraction( pos ) >= 0.7 ) {
 			if ( pos - 1 != last_sheet_pos ) {
-				if ( new_sheet_start > 0 && (last_sheet_pos - new_sheet_start >= 3 )) {
+				if ( new_sheet_start > 0 && (last_sheet_pos - new_sheet_start >= 3 ) ) {
 					strands.push_back( new_sheet_start, last_sheet_pos );
 				}
 				new_sheet_start = pos;
@@ -1809,14 +1811,14 @@ void IterativeBase::rescore_nonlocal_archive() {
 		core::Real overlap_wgt( 1.0 * extra_chainbreak_weight );
 		core::Real quad_wgt( 1.0 * extra_chainbreak_weight );
 		tr.Info << "no chainbreaks specified in  " << score_patch << ",..."
-						<< " set chainbreaks to " << lin_wgt << " and "
-						<< overlap_wgt <<" for linear- and overlap-chainbreak, respectively" << std::endl;
+			<< " set chainbreaks to " << lin_wgt << " and "
+			<< overlap_wgt <<" for linear- and overlap-chainbreak, respectively" << std::endl;
 		scfxn->set_weight( scoring::chainbreak, quad_wgt );
 		scfxn->set_weight( scoring::linear_chainbreak, lin_wgt );
 		scfxn->set_weight( scoring::overlap_chainbreak, overlap_wgt );
 	}
 
-	if ( super_quick_relax_of_centroids_ && stage_ < CEN2FULLATOM) {
+	if ( super_quick_relax_of_centroids_ && stage_ < CEN2FULLATOM ) {
 		std::string score_patch=option[ iterative::fa_score_patch ]();
 		if ( score_patch != "NOPATCH" ) {
 			scfxn = core::scoring::ScoreFunctionFactory::create_score_function( "empty", score_patch );
@@ -1824,10 +1826,10 @@ void IterativeBase::rescore_nonlocal_archive() {
 			scfxn = core::scoring::ScoreFunctionFactory::create_score_function( "empty" );
 		}
 		// cannot compute this from fullatom-pose... keep energy term around in rescore...
-		// 			std::string cen_score = option[ iterative::cen_score ]();
-		// 			core::scoring::ScoreFunctionOP cen_scfxn( NULL );
-		// 			cen_scfxn = core::scoring::ScoreFunctionFactory::create_score_function( cen_score );
-		// 			add_evaluation( new evaluation::TruncatedScoreEvaluator( "prefa_centroid_score", selection, cen_scfxn, true /*fullname*/ ), 1.0 );
+		//    std::string cen_score = option[ iterative::cen_score ]();
+		//    core::scoring::ScoreFunctionOP cen_scfxn( NULL );
+		//    cen_scfxn = core::scoring::ScoreFunctionFactory::create_score_function( cen_score );
+		//    add_evaluation( new evaluation::TruncatedScoreEvaluator( "prefa_centroid_score", selection, cen_scfxn, true /*fullname*/ ), 1.0 );
 
 		std::string fa_score = option[ iterative::fa_score ]();
 		core::scoring::ScoreFunctionOP fa_scfxn( NULL );
@@ -1850,7 +1852,7 @@ void IterativeBase::add_fullatom_flags( jd2::archive::Batch& batch ) {
 	if ( first_fullatom_batch_ > batch.id() ) first_fullatom_batch_ = batch.id();
 	utility::io::ozstream flags( batch.flag_file(), std::ios::app );
 	//these are many.... should there be some input file ?
-	//	flags << "@../flags_fullatom" << std::endl;
+	// flags << "@../flags_fullatom" << std::endl;
 	if ( !option[ iterative::flags_fullatom ].user() ) {
 		utility_exit_with_message( "option -iterative:flags_fullatom is required !!! ");
 	}
@@ -1859,21 +1861,21 @@ void IterativeBase::add_fullatom_flags( jd2::archive::Batch& batch ) {
 	if ( option[ constraints::cst_fa_file ].user() ) {
 		utility::io::ozstream broker( batch.broker_file(), std::ios::app );
 		broker << "\nCLAIMER ConstraintClaimer \n"
-					 << "CMD_FLAG\n"
-					 << "FULLATOM\n"
-					 << "NO_CENTROID\n";
+			<< "CMD_FLAG\n"
+			<< "FULLATOM\n"
+			<< "NO_CENTROID\n";
 		broker << "END_CLAIMER\n"
-					 << std::endl;
+			<< std::endl;
 	}
 	if ( option[ constraints::cst_file ].user() ) {
 		utility::io::ozstream broker( batch.broker_file(), std::ios::app );
 		broker << "\nCLAIMER ConstraintClaimer \n"
-					 << "CMD_FLAG\n"
-			//					 << "FULLATOM\n"
-			//			if ( option[ constraints::cst_fa_file ].user() ) {
-					 << "CENTROID \n"
-					 << "END_CLAIMER\n"
-					 << std::endl;
+			<< "CMD_FLAG\n"
+			//      << "FULLATOM\n"
+			//   if ( option[ constraints::cst_fa_file ].user() ) {
+			<< "CENTROID \n"
+			<< "END_CLAIMER\n"
+			<< std::endl;
 	}
 }
 
@@ -1942,14 +1944,14 @@ void IterativeBase::compute_cores() {
 	toolbox::DecoySetEvaluation eval;
 	eval.reserve( nstruct );
 	//Size nres( (*decoys().begin())->nres() );
-	//	Size ct( 1 );
+	// Size ct( 1 );
 	//for ( const_decoy_iterator iss = decoys().begin(); iss != decoys().end(); ++iss, ++ct ) {
-	//		if ( ct > nstruct ) break;
-	//		pose::Pose pose;
-	//		(*iss)->fill_pose( pose );
-	//		eval.push_back( pose );
-	//		nres = pose.total_residue();
-	//	}
+	//  if ( ct > nstruct ) break;
+	//  pose::Pose pose;
+	//  (*iss)->fill_pose( pose );
+	//  eval.push_back( pose );
+	//  nres = pose.total_residue();
+	// }
 	typedef toolbox::OP_const_iterator<SilentStructs::const_iterator, core::io::silent::SilentStructOP > decoy_iterator;
 	eval.push_back_CA_xyz_from_silent_file( nstruct, decoy_iterator( decoys().begin() ), decoy_iterator( decoys().end() ), false );
 
@@ -2007,7 +2009,7 @@ void IterativeBase::restore_status( std::istream& is ) {
 		//should get rid of all these different options, as we have now worked out the optimal algorithm
 		//but for now, a hack at this point
 
-		//		this will update the fullatom_pool to have the initial sampling restraints rather than an n/a
+		//  this will update the fullatom_pool to have the initial sampling restraints rather than an n/a
 		update_noesy_filter_files( current_noesy_sampling_file_, true );
 	}
 
@@ -2065,56 +2067,56 @@ void IterativeBase::setup_default_evaluators() {
 
 void IterativeBase::cluster() {
 	///OBSOLET
-// 	using namespace protocols::cluster;
-// 	//	using namespace basic::options::OptionKeys;
-// 	using namespace basic::options::OptionKeys::cluster;
-// 	using namespace basic::options;
-// 	using namespace toolbox;
+	//  using namespace protocols::cluster;
+	//  // using namespace basic::options::OptionKeys;
+	//  using namespace basic::options::OptionKeys::cluster;
+	//  using namespace basic::options;
+	//  using namespace toolbox;
 
-// 	//jump out if inactive
-// 	if ( !option[ iterative::cluster ]() ) return;
-// 	if ( decoys().size() < 50 ) return;
-//   if ( min_diversity_list_[ stage() ] == 0 ) return;
+	//  //jump out if inactive
+	//  if ( !option[ iterative::cluster ]() ) return;
+	//  if ( decoys().size() < 50 ) return;
+	//   if ( min_diversity_list_[ stage() ] == 0 ) return;
 
-// 	mem_tr << "IterativeBase cluster-start" << std::endl;
+	//  mem_tr << "IterativeBase cluster-start" << std::endl;
 
-// 	SilentStructs kept_decoys;
-// 	toolbox::ClusterOptions cluster_opts( false /*don't change tags to c.XXX.NNN */ );
-// 	cluster_opts.cluster_radius = min_diversity_list_[ stage() ];
-// 	cluster_opts.keep_center = false; /* keep the lowest energy structures -- not interested in the most central structure */
+	//  SilentStructs kept_decoys;
+	//  toolbox::ClusterOptions cluster_opts( false /*don't change tags to c.XXX.NNN */ );
+	//  cluster_opts.cluster_radius = min_diversity_list_[ stage() ];
+	//  cluster_opts.keep_center = false; /* keep the lowest energy structures -- not interested in the most central structure */
 
-//  //read CA coords into DecoySetEvaluation
-//   DecoySetEvaluation CA_set;
-// 	CA_set.push_back_CA_xyz_from_silent_file( decoys().size(),
-// 		utility::DereferenceIterator< SilentStructs >( decoys().begin() ),
-// 		utility::DereferenceIterator< SilentStructs >( decoys().end() ),
-// 		false /*don't store plain energies */
-// 	);
+	//  //read CA coords into DecoySetEvaluation
+	//   DecoySetEvaluation CA_set;
+	//  CA_set.push_back_CA_xyz_from_silent_file( decoys().size(),
+	//   utility::DereferenceIterator< SilentStructs >( decoys().begin() ),
+	//   utility::DereferenceIterator< SilentStructs >( decoys().end() ),
+	//   false /*don't store plain energies */
+	//  );
 
-// 	//we have our special score... so need to gather this information
-// 	utility::vector1< core::Real > all_energies;
-// 	all_energies.reserve( decoys().size() );
-// 	for ( SilentStructs::const_iterator it = decoys().begin(); it != decoys().end(); ++it ) {
-// 		all_energies.push_back( select_score( *it ) );
-// 	}
-// 	CA_set.set_all_energies( all_energies );
+	//  //we have our special score... so need to gather this information
+	//  utility::vector1< core::Real > all_energies;
+	//  all_energies.reserve( decoys().size() );
+	//  for ( SilentStructs::const_iterator it = decoys().begin(); it != decoys().end(); ++it ) {
+	//   all_energies.push_back( select_score( *it ) );
+	//  }
+	//  CA_set.set_all_energies( all_energies );
 
-// 	//now do the clustering
-// 	toolbox::cluster_silent_structs( CA_set,
-//   	utility::DereferenceIterator< SilentStructs >( decoys().begin() ),
-// 		utility::DereferenceIterator< SilentStructs >( decoys().end() ),
-// 		kept_decoys,
-// 		cluster_opts
-// 	);
+	//  //now do the clustering
+	//  toolbox::cluster_silent_structs( CA_set,
+	//    utility::DereferenceIterator< SilentStructs >( decoys().begin() ),
+	//   utility::DereferenceIterator< SilentStructs >( decoys().end() ),
+	//   kept_decoys,
+	//   cluster_opts
+	//  );
 
-// 	//how many were removed ?
-// 	Size n_removed = decoys().size() - kept_decoys.size();
-// 	tr.Info << "removed " << n_removed << " structures.   " << kept_decoys.size() << " structures remaining after clustering " << std::endl;
-// 	decoys()=kept_decoys;
-// 	count_removed_structures( n_removed );
+	//  //how many were removed ?
+	//  Size n_removed = decoys().size() - kept_decoys.size();
+	//  tr.Info << "removed " << n_removed << " structures.   " << kept_decoys.size() << " structures remaining after clustering " << std::endl;
+	//  decoys()=kept_decoys;
+	//  count_removed_structures( n_removed );
 
-// 	//finally...
-// 	mem_tr << "IterativeBase cluster-end" << std::endl;
+	//  //finally...
+	//  mem_tr << "IterativeBase cluster-end" << std::endl;
 }
 
 
@@ -2136,7 +2138,7 @@ void
 IterativeBase::test_broker_settings( Batch const& batch ) {
 	tr.Debug << "test broker settings...." << std::endl;
 	OptionCollection vanilla_options( option );
-  option.load_options_from_file( batch.flag_file() );
+	option.load_options_from_file( batch.flag_file() );
 	try {
 		topology_broker::TopologyBrokerOP topology_broker( new topology_broker::TopologyBroker() );
 		topology_broker::add_cmdline_claims( *topology_broker );
@@ -2188,12 +2190,12 @@ void IterativeBase::setup_filter_cst( core::Real overall_weight ) {
 	tr.Trace << "topology_broker is initiailized with " << topology_broker->num_claimers() << " claimers "<< std::endl;
 	core::Size ct( 1 );
 	for ( TopologyBroker::const_iterator it = topology_broker->begin();
-				it != topology_broker->end(); ++it, ++ct ) {
+			it != topology_broker->end(); ++it, ++ct ) {
 		tr.Trace << "found claimer of type " << (*it)->type() << "trying to cast now..."<< std::endl;
 		ConstraintClaimerCOP cst_claimer = utility::pointer::dynamic_pointer_cast< ConstraintClaimer const >( *it );
 		if ( cst_claimer ) {
 			tr.Info << "found cst-claimer with filter_name " << cst_claimer->filter_name()
-							<< " filter_weight " << cst_claimer->filter_weight() << std::endl;
+				<< " filter_weight " << cst_claimer->filter_weight() << std::endl;
 			if ( cst_claimer->filter_weight() < 0.01 ) continue;
 			std::string name( cst_claimer->filter_name() );
 			core::Real weight( cst_claimer->filter_weight() );

@@ -28,16 +28,16 @@
 #include <core/scoring/hbonds/hbtrie/HBCPData.hh> // we need full header here because we have inline template function with HBCPData as template specifier
 
 #ifdef WIN32 //VC++ needs full class declaration
- #include <core/scoring/etable/etrie/EtableAtom.hh> // WIN32 INCLUDE
- #include <core/scoring/hbonds/hbtrie/HBAtom.hh> // WIN32 INCLUDE
- #include <core/scoring/mm/mmtrie/MMEnergyTableAtom.hh> // WIN32 INCLUDE
- #include <core/scoring/etable/etrie/CountPairData_1_1.hh> // WIN32 INCLUDE
- #include <core/scoring/etable/etrie/CountPairData_1_2.hh> // WIN32 INCLUDE
- #include <core/scoring/etable/etrie/CountPairData_1_3.hh> // WIN32 INCLUDE
- #include <core/scoring/etable/etrie/CountPairDataGeneric.hh> // WIN32 INCLUDE
- #include <core/scoring/elec/ElecAtom.hh> // WIN32 INCLUDE
- #include <core/scoring/hbonds/hbtrie/HBCPData.hh> // WIN32 INCLUDE
- #include <core/scoring/vdwaals/VDWTrie.hh>
+#include <core/scoring/etable/etrie/EtableAtom.hh> // WIN32 INCLUDE
+#include <core/scoring/hbonds/hbtrie/HBAtom.hh> // WIN32 INCLUDE
+#include <core/scoring/mm/mmtrie/MMEnergyTableAtom.hh> // WIN32 INCLUDE
+#include <core/scoring/etable/etrie/CountPairData_1_1.hh> // WIN32 INCLUDE
+#include <core/scoring/etable/etrie/CountPairData_1_2.hh> // WIN32 INCLUDE
+#include <core/scoring/etable/etrie/CountPairData_1_3.hh> // WIN32 INCLUDE
+#include <core/scoring/etable/etrie/CountPairDataGeneric.hh> // WIN32 INCLUDE
+#include <core/scoring/elec/ElecAtom.hh> // WIN32 INCLUDE
+#include <core/scoring/hbonds/hbtrie/HBCPData.hh> // WIN32 INCLUDE
+#include <core/scoring/vdwaals/VDWTrie.hh>
 #endif
 // Project Headers
 #include <core/scoring/etable/EtableEnergy.fwd.hh>
@@ -1035,8 +1035,7 @@ public:
 	void print() const
 	{
 		std::cout << "RotamerTrie with parameters:" << std::endl;
-		for ( Size ii = 1; ii <= num_total_atoms_; ++ii )
-		{
+		for ( Size ii = 1; ii <= num_total_atoms_; ++ii ) {
 			trie_[ ii ].print();
 		}
 	}
@@ -1087,16 +1086,14 @@ private: // Functions
 		utility::vector1< Size > node_stack( max_atoms_per_rotamer_ );
 		// index ii represents the number of atoms rotamer ii has with ii-1
 		utility::vector1< Size >  num_shared_atoms( num_total_rotamers_, 1);
-		for ( Size jj = 2; jj <= num_total_rotamers_; ++jj )
-		{
+		for ( Size jj = 2; jj <= num_total_rotamers_; ++jj ) {
 			num_shared_atoms[jj] = rotamers[jj].count_atoms_in_common(rotamers[jj-1]);
 			//std::cout << "num_shared_atoms[" << jj << "]: " << num_shared_atoms[jj] << ", natoms[ " << jj-1 << "]: " << rotamers[ jj -1 ].natoms() << std::endl;
 		}
 
 		Size count_num_shared_atoms = 0;
 		Size num_atoms_in_trie = rotamers[1].natoms();
-		for ( Size jj = 2; jj <= num_total_rotamers_; ++jj )
-		{
+		for ( Size jj = 2; jj <= num_total_rotamers_; ++jj ) {
 			num_atoms_in_trie += rotamers[jj].natoms() - num_shared_atoms[jj];
 			count_num_shared_atoms += num_shared_atoms[jj];
 		}
@@ -1113,13 +1110,13 @@ private: // Functions
 		add_atom_to_trie( 1, rotamers[1].atom(1) );
 
 		trie_[1].first_atom_in_branch( true );
-		if (! trie_[1].is_hydrogen()) ++num_heavyatoms_;
+		if ( ! trie_[1].is_hydrogen() ) ++num_heavyatoms_;
 		node_stack[1] = 1;
 
 		for ( Size jj = 2; jj <= rotamers[first_rotamer].natoms(); ++jj ) {
 			//cerr << "atom : " << ii << endl;
 			add_atom_to_trie( jj, rotamers[first_rotamer].atom(jj));
-			if (! trie_[jj].is_hydrogen()) ++num_heavyatoms_;
+			if ( ! trie_[jj].is_hydrogen() ) ++num_heavyatoms_;
 			node_stack[jj] = jj;
 		}
 		trie_[ rotamers[first_rotamer].natoms() ].is_rotamer_terminal( true );
@@ -1133,8 +1130,7 @@ private: // Functions
 			Size jj_first_distinguished  = jj_num_shared_with_prev + 1;
 			//cerr << "rotamer : " << jj << endl;
 
-			if (jj_num_shared_with_prev == jj_num_atoms)
-			{
+			if ( jj_num_shared_with_prev == jj_num_atoms ) {
 				//duplicate rotamer
 
 				total_rotamers_2_unique_rotamers_[rotamers[jj].rotamer_id()] = count_unique_rotamers;
@@ -1149,9 +1145,9 @@ private: // Functions
 				trie_[count_atoms_placed].first_atom_in_branch( true );
 			}
 
-			if (! trie_[count_atoms_placed].is_hydrogen() ) ++num_heavyatoms_;
+			if ( ! trie_[count_atoms_placed].is_hydrogen() ) ++num_heavyatoms_;
 
-		debug_assert(  node_stack[jj_first_distinguished]  <= num_atoms_in_trie
+			debug_assert(  node_stack[jj_first_distinguished]  <= num_atoms_in_trie
 				&& (node_stack[jj_first_distinguished]  > 0 || num_shared_atoms[jj] == rotamers[ jj - 1 ].natoms()) );
 
 			if ( node_stack[ jj_first_distinguished] != 0 ) {
@@ -1159,12 +1155,12 @@ private: // Functions
 			}
 			node_stack[jj_first_distinguished] = count_atoms_placed;
 
-			for ( Size kk = jj_num_shared_with_prev + 2; kk <= jj_num_atoms; ++kk )
-			{	//cerr << "atom : " << kk << endl;
+			for ( Size kk = jj_num_shared_with_prev + 2; kk <= jj_num_atoms; ++kk ) {
+				//cerr << "atom : " << kk << endl;
 				++count_atoms_placed;
 				add_atom_to_trie( count_atoms_placed, rotamers[jj].atom(kk) );
 
-				if (! trie_[count_atoms_placed].is_hydrogen()) ++num_heavyatoms_;
+				if ( ! trie_[count_atoms_placed].is_hydrogen() ) ++num_heavyatoms_;
 				node_stack[ kk ] = count_atoms_placed;
 			}
 
@@ -1221,8 +1217,8 @@ private: // Functions
 			}
 
 		}
-	//debug_assert( max_branch_depth_ <= max_atoms_per_rotamer_ );
-		if( max_branch_depth_ > max_atoms_per_rotamer_+1 ) {
+		//debug_assert( max_branch_depth_ <= max_atoms_per_rotamer_ );
+		if ( max_branch_depth_ > max_atoms_per_rotamer_+1 ) {
 			utility_exit_with_message("max_branch_depth_ should have triggered index-out-of-bounds assertion!");
 		}
 
@@ -1243,14 +1239,12 @@ private: // Functions
 		heavy_depth_stack[1] = 0;
 		Size stack_top = 2;
 
-		for ( Size ii = 1; ii <= num_total_atoms_; ++ii )
-		{
-			if ( trie_[ii].first_atom_in_branch() )
-			{	for ( Size jj = heavy_depth_stack[stack_top-1] + 1;
-					jj <= heavy_depth_stack[stack_top]; ++jj )
-				{
+		for ( Size ii = 1; ii <= num_total_atoms_; ++ii ) {
+			if ( trie_[ii].first_atom_in_branch() ) {
+				for ( Size jj = heavy_depth_stack[stack_top-1] + 1;
+						jj <= heavy_depth_stack[stack_top]; ++jj ) {
 					//apl test
-				debug_assert ( heavyatom_stack[jj] <= num_total_atoms_ && heavyatom_stack[jj] > 0 );
+					debug_assert ( heavyatom_stack[jj] <= num_total_atoms_ && heavyatom_stack[jj] > 0 );
 
 					trie_[ heavyatom_stack[ jj ]].num_rotamers_in_subtree(
 						rotamers_in_subtree_stack[jj]);
@@ -1264,19 +1258,19 @@ private: // Functions
 				heavy_depth_stack[ stack_top ] = heavy_depth_stack[ stack_top - 1 ];
 			}
 
-			if (! trie_[ii].is_hydrogen() ) {
+			if ( ! trie_[ii].is_hydrogen() ) {
 				++heavy_depth_stack[stack_top];
 				heavyatom_stack[ heavy_depth_stack[stack_top] ] = ii;
 			}
 
-			if ( trie_[ii].is_rotamer_terminal() )	{
+			if ( trie_[ii].is_rotamer_terminal() ) {
 				for ( Size jj = 1; jj <= heavy_depth_stack[stack_top]; ++jj ) {
 					++rotamers_in_subtree_stack[jj];
 				}
 			}
 		}
 		for ( Size ii = 1; ii <= heavy_depth_stack[ stack_top]; ++ii ) {
-		debug_assert ( heavyatom_stack[ii] <= num_total_atoms_ && heavyatom_stack[ii] > 0 );
+			debug_assert ( heavyatom_stack[ii] <= num_total_atoms_ && heavyatom_stack[ii] > 0 );
 			trie_[ heavyatom_stack[ii] ].num_rotamers_in_subtree( rotamers_in_subtree_stack[ii] );
 		}
 
@@ -1304,11 +1298,10 @@ private: // Functions
 
 		utility::vector1< core::Real > maxd2_in_subtree_stack( max_atoms_per_rotamer_, 0.0 );
 
-		for ( Size ii = 1; ii <= num_total_atoms_; ++ii )
-		{
+		for ( Size ii = 1; ii <= num_total_atoms_; ++ii ) {
 			if ( trie_[ii].first_atom_in_branch() ) {
 				for ( Size jj = heavy_depth_stack[stack_top-1] + 1;
-					jj <= heavy_depth_stack[stack_top]; ++jj ) {
+						jj <= heavy_depth_stack[stack_top]; ++jj ) {
 					core::Real subtree_plus_interaction_diameter =
 						std::sqrt(maxd2_in_subtree_stack[ jj ]) + interaction_distance;
 
@@ -1333,7 +1326,7 @@ private: // Functions
 					core::Real const d2 =
 						heavyatom_centers[jj].distance_squared(
 						heavyatom_centers[heavy_depth_stack[stack_top]] );
-					if (d2 > maxd2_in_subtree_stack[jj]) {
+					if ( d2 > maxd2_in_subtree_stack[jj] ) {
 						maxd2_in_subtree_stack[jj] = d2;
 					}
 				}

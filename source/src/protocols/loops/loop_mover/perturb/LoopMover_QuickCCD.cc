@@ -55,7 +55,7 @@
 #include <map>
 #include <string>
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 // option key includes
@@ -144,7 +144,7 @@ LoopMover_Perturb_QuickCCD::get_name() const {
 
 //clone
 protocols::moves::MoverOP LoopMover_Perturb_QuickCCD::clone() const {
-		return protocols::moves::MoverOP( new LoopMover_Perturb_QuickCCD( *this ) );
+	return protocols::moves::MoverOP( new LoopMover_Perturb_QuickCCD( *this ) );
 }
 
 LoopResult LoopMover_Perturb_QuickCCD::model_loop(
@@ -165,7 +165,7 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 	core::Size const nres =  pose.total_residue();
 
 	// store starting fold tree and cut pose
- 	kinematics::FoldTree f_orig=pose.fold_tree();
+	kinematics::FoldTree f_orig=pose.fold_tree();
 	set_single_loop_fold_tree( pose, loop );
 
 	// generate movemap after fold_tree is set
@@ -191,8 +191,8 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 	// special case ... vrt res at last position
 	//chainbreak_present &= (loop.stop() != nres-1 || pose.residue( nres ).aa() != core::chemical::aa_vrt );
 	bool chainbreak_present = ( loop.start() != 1 && loop.stop() != nres &&
-	                            !pose.residue( loop.start() ).is_lower_terminus() &&
-	                            !pose.residue( loop.stop() ).is_upper_terminus() );
+		!pose.residue( loop.start() ).is_lower_terminus() &&
+		!pose.residue( loop.stop() ).is_upper_terminus() );
 
 	// set loop.cut() variant residue for chainbreak score if chanbreak is present
 	if ( chainbreak_present ) {
@@ -220,8 +220,8 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 
 	utility::vector1< FragmentMoverOP > fragmover;
 	for ( utility::vector1< core::fragment::FragSetOP >::const_iterator
-				it = frag_libs().begin(), it_end = frag_libs().end();
-				it != it_end; ++it ) {
+			it = frag_libs().begin(), it_end = frag_libs().end();
+			it != it_end; ++it ) {
 		ClassicFragmentMoverOP cfm( new ClassicFragmentMover( *it, frag_mover_movemap ) );
 		cfm->set_check_ss( false );
 		cfm->enable_end_bias_check( false );
@@ -237,7 +237,7 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 		for ( Size i = loop.start(); i <= loop.stop(); ++i ) {
 			for ( utility::vector1< FragmentMoverOP >::const_iterator
 					it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it
-			) {
+					) {
 				(*it)->apply( pose );
 			}
 		}
@@ -258,11 +258,11 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 	// Set up MonteCarlo Object
 	core::Real const init_temp = 2.0;
 	core::Real temperature = init_temp;
- 	mc_->reset( pose );
+	mc_->reset( pose );
 	mc_->set_temperature( temperature );
 
-  int   starttime    = time(NULL);
-  int   frag_count   = 0;
+	int   starttime    = time(NULL);
+	int   frag_count   = 0;
 	scorefxn()->show_line_headers( tr().Info );
 	tr().Info << std::endl;
 
@@ -271,7 +271,7 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 		(final_temp/init_temp), (1.0/(cycles2*cycles3))
 	);
 
-	bool 	has_constraints         = pose.constraint_set()->has_constraints();
+	bool  has_constraints         = pose.constraint_set()->has_constraints();
 	float final_constraint_weight = option[ basic::options::OptionKeys::constraints::cst_weight ](); // this is really stupid.
 
 	if ( chainbreak_present ) scorefxn()->set_weight( chainbreak, 1.0 );
@@ -279,17 +279,17 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 	// for symmetric case, upweight the chainbreak by # of monomers
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		core::conformation::symmetry::SymmetricConformation const & symm_conf (
-					dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation()) );
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation()) );
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 		scorefxn()->set_weight( chainbreak, symm_info->subunits() );
 	}
 
-	for( int c2 = 1; c2 <= cycles2; ++c2 ) {
+	for ( int c2 = 1; c2 <= cycles2; ++c2 ) {
 		mc_->recover_low( pose );
 
 		// ramp up constraints
 		if ( has_constraints ) {
-			if( c2 != cycles2 ) {
+			if ( c2 != cycles2 ) {
 				scorefxn()->set_weight( core::scoring::atom_pair_constraint, final_constraint_weight*float(c2)/float( cycles2 ) );
 			} else {
 				scorefxn()->set_weight( core::scoring::atom_pair_constraint, final_constraint_weight * 0.2 );
@@ -307,7 +307,7 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 			for ( utility::vector1< FragmentMoverOP >::const_iterator
 					it = fragmover.begin(),it_end = fragmover.end();
 					it != it_end; ++it
-			) {
+					) {
 				(*it)->apply( pose );
 				if ( chainbreak_present ) {
 					fast_ccd_close_loops( pose, loop,  *mm_one_loop );
@@ -358,7 +358,7 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 		loops::remove_cutpoint_variants( pose );
 		pose.fold_tree( f_orig );
 
-		if ( chain_break_score > (chain_break_tol*10) )	return ExtendFailure;   // if we have a really bad chain break, extend loop definitions
+		if ( chain_break_score > (chain_break_tol*10) ) return ExtendFailure;   // if we have a really bad chain break, extend loop definitions
 		if ( chain_break_score > chain_break_tol )      return Failure;         // if we only have a slight chainbreak problem, try again
 	} // if ( chainbreak_present )
 
@@ -370,17 +370,17 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 
 basic::Tracer & LoopMover_Perturb_QuickCCD::tr() const
 {
-    return TR;
+	return TR;
 }
 
 LoopMover_Perturb_QuickCCDCreator::~LoopMover_Perturb_QuickCCDCreator() {}
 
 moves::MoverOP LoopMover_Perturb_QuickCCDCreator::create_mover() const {
-  return moves::MoverOP( new LoopMover_Perturb_QuickCCD() );
+	return moves::MoverOP( new LoopMover_Perturb_QuickCCD() );
 }
 
 std::string LoopMover_Perturb_QuickCCDCreator::keyname() const {
-  return "LoopMover_Perturb_QuickCCD";
+	return "LoopMover_Perturb_QuickCCD";
 }
 
 
@@ -396,15 +396,16 @@ void fast_ccd_close_loops(
 )
 {
 	loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover(
-			loop, kinematics::MoveMapCOP( kinematics::MoveMapOP( new kinematics::MoveMap( mm ) ) ) );
+		loop, kinematics::MoveMapCOP( kinematics::MoveMapOP( new kinematics::MoveMap( mm ) ) ) );
 	ccd_loop_closure_mover.check_rama_scores( false );
 	ccd_loop_closure_mover.apply( pose );
 
 	// fix secondary structure??
-	for (core::Size i=loop.start(); i<=loop.stop(); ++i) {
+	for ( core::Size i=loop.start(); i<=loop.stop(); ++i ) {
 		char ss_i = pose.conformation().secstruct( i );
-		if ( ss_i != 'L' && ss_i != 'H' && ss_i != 'E')
+		if ( ss_i != 'L' && ss_i != 'H' && ss_i != 'E' ) {
 			pose.set_secstruct( i , 'L' );
+		}
 	}
 }
 

@@ -75,8 +75,8 @@
 #include <algorithm>
 #include <cctype>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 std::string
 ReportToDBCreator::keyname() const
@@ -213,7 +213,7 @@ ReportToDB::ReportToDB(
 	features_reporters_(),
 	initialized( false )
 {
-	if(batch_name == ""){
+	if ( batch_name == "" ) {
 		utility::excn::EXCN_BadInput("Failed to create ReportToDB instance because the batch name must not be ''.");
 	}
 
@@ -248,7 +248,7 @@ ReportToDB::ReportToDB(
 	features_reporters_(),
 	initialized( false )
 {
-	if(batch_name == ""){
+	if ( batch_name == "" ) {
 		utility::excn::EXCN_BadInput("Failed to create ReportToDB instance because the batch name must not be ''.");
 	}
 
@@ -305,7 +305,7 @@ void
 ReportToDB::set_batch_name(
 	std::string const & name
 ) {
-	if(name == ""){
+	if ( name == "" ) {
 		utility::excn::EXCN_BadInput("Setting the batch name for a ReporToDB instance to '' is not allowed.");
 	}
 
@@ -411,26 +411,26 @@ ReportToDB::parse_batch_description_tag_item(
 
 void
 ReportToDB::parse_batch_name_tag_item(TagCOP const tag){
-		if( tag->hasOption("name") ){
-			batch_name_ = tag->getOption<string>("name");
-			utility::replace_in(batch_name_, ' ', "_");
-		} else {
-				TR << "Field 'name' required for use of ReportToDB in Rosetta Scripts and it will be used as the name field in the batches table." << endl;
-		}
+	if ( tag->hasOption("name") ) {
+		batch_name_ = tag->getOption<string>("name");
+		utility::replace_in(batch_name_, ' ', "_");
+	} else {
+		TR << "Field 'name' required for use of ReportToDB in Rosetta Scripts and it will be used as the name field in the batches table." << endl;
+	}
 }
 
 void
 ReportToDB::parse_protocol_id_tag_item(
 	TagCOP const tag){
 
-	if(tag->hasOption("protocol_id")){
-//#ifdef USEMPI
-//		int mpi_rank(0);
-//		MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
-//		protocol_id_ = tag->getOption<Size>("protocol_id") + mpi_rank;
-//#else
+	if ( tag->hasOption("protocol_id") ) {
+		//#ifdef USEMPI
+		//  int mpi_rank(0);
+		//  MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+		//  protocol_id_ = tag->getOption<Size>("protocol_id") + mpi_rank;
+		//#else
 		protocol_id_ = tag->getOption<Size>("protocol_id");
-//#endif
+		//#endif
 	}
 #ifdef USEMPI
 	else {
@@ -444,14 +444,14 @@ void
 ReportToDB::parse_batch_id_tag_item(
 	TagCOP const tag){
 
-	if(tag->hasOption("batch_id")){
-//#ifdef USEMPI
-//		int mpi_rank(0);
-//		MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
-//		batch_id_ = tag->getOption<Size>("batch_id") + mpi_rank;
-//#else
+	if ( tag->hasOption("batch_id") ) {
+		//#ifdef USEMPI
+		//  int mpi_rank(0);
+		//  MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+		//  batch_id_ = tag->getOption<Size>("batch_id") + mpi_rank;
+		//#else
 		batch_id_ = tag->getOption<Size>("batch_id");
-//#endif
+		//#endif
 	}
 #ifdef USEMPI
 	else {
@@ -464,7 +464,7 @@ ReportToDB::parse_batch_id_tag_item(
 void
 ReportToDB::parse_use_transactions_tag_item(
 	TagCOP const tag) {
-	if(tag->hasOption("use_transactions")){
+	if ( tag->hasOption("use_transactions") ) {
 		use_transactions_ = tag->getOption<bool>("use_transactions");
 	}
 }
@@ -472,7 +472,7 @@ ReportToDB::parse_use_transactions_tag_item(
 void
 ReportToDB::parse_cache_size_tag_item(
 	TagCOP const tag) {
-	if(tag->hasOption("cache_size")){
+	if ( tag->hasOption("cache_size") ) {
 		cache_size_ = tag->getOption<bool>("cache_size");
 	}
 }
@@ -480,7 +480,7 @@ ReportToDB::parse_cache_size_tag_item(
 void
 ReportToDB::parse_remove_xray_virt_tag_item(
 	TagCOP const tag) {
-	if(tag->hasOption("remove_xray_virt")){
+	if ( tag->hasOption("remove_xray_virt") ) {
 		remove_xray_virt_ = tag->getOption<bool>("remove_xray_virt");
 	}
 }
@@ -489,14 +489,14 @@ void
 ReportToDB::parse_relevant_residues_mode_tag_item(
 	TagCOP const tag) {
 	string rel_res_mode = tag->getOption<string>(
-			"relevant_residues_mode", "explicit");
+		"relevant_residues_mode", "explicit");
 	std::transform(
 		rel_res_mode.begin(), rel_res_mode.end(), rel_res_mode.begin(),
 		::toupper);
 
-	if(rel_res_mode == "EXPLICIT"){
+	if ( rel_res_mode == "EXPLICIT" ) {
 		relevant_residues_mode_ = RelevantResiduesMode::Exclusive;
-	} else if(rel_res_mode == "IMPLICIT") {
+	} else if ( rel_res_mode == "IMPLICIT" ) {
 		relevant_residues_mode_ = RelevantResiduesMode::Inclusive;
 	} else {
 		throw utility::excn::EXCN_RosettaScriptsOption
@@ -514,36 +514,34 @@ ReportToDB::parse_my_tag(
 	Movers_map const & movers,
 	Pose const & pose )
 {
-	if(tag->hasOption("db")){
+	if ( tag->hasOption("db") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("The 'db' tag has been deprecated. Please use 'database_name' instead.");
 	}
 
-	if(tag->hasOption("db_mode")){
+	if ( tag->hasOption("db_mode") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("The 'db_mode' tag has been deprecated. Please use 'database_mode' instead.");
 	}
 
-	if(tag->hasOption("separate_db_per_mpi_process")){
+	if ( tag->hasOption("separate_db_per_mpi_process") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("The 'parse_separate_db_per_mpi_process' tag has been deprecated. Please use 'database_parse_separate_db_per_mpi_process' instead.");
 	}
 
-	if(tag->hasOption("sample_source")){
+	if ( tag->hasOption("sample_source") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("The 'sample_source' tag has been deprecated. Please use 'batch_description' instead.");
 	}
 
 	// Name of output features database:
 	// EXAMPLE: db=features_<batch_description>.db3
 	// REQUIRED
-	if(tag->hasOption("resource_description")){
+	if ( tag->hasOption("resource_description") ) {
 		std::string resource_description = tag->getOption<string>("resource_description");
-		if ( ! basic::resource_manager::ResourceManager::get_instance()->has_resource_with_description( resource_description ) )
-		{
+		if ( ! basic::resource_manager::ResourceManager::get_instance()->has_resource_with_description( resource_description ) ) {
 			throw utility::excn::EXCN_Msg_Exception
 				( "You specified a resource_description of " + resource_description +
-					" for ReportToDB, but the ResourceManager doesn't have a resource with that description" );
+				" for ReportToDB, but the ResourceManager doesn't have a resource with that description" );
 		}
 		db_session_ = basic::resource_manager::get_resource< utility::sql_database::session >( resource_description );
-	}
-	else{
+	} else {
 		db_session_ = parse_database_connection(tag);
 	}
 
@@ -596,11 +594,11 @@ ReportToDB::parse_my_tag(
 	vector0< TagCOP >::const_iterator begin=tag->getTags().begin();
 	vector0< TagCOP >::const_iterator end=tag->getTags().end();
 
-	for(; begin != end; ++begin){
+	for ( ; begin != end; ++begin ) {
 		TagCOP feature_tag= *begin;
-		//	BOOST_FOREACH(TagCOP const & feature_tag, tag->getTags()){
+		// BOOST_FOREACH(TagCOP const & feature_tag, tag->getTags()){
 
-		if(feature_tag->getName() != "feature"){
+		if ( feature_tag->getName() != "feature" ) {
 			TR.Error << "Please include only tags with name 'feature' as subtags of ReportToDB" << endl;
 			TR.Error << "Tag with name '" << feature_tag->getName() << "' is invalid" << endl;
 			throw utility::excn::EXCN_RosettaScriptsOption("");
@@ -608,7 +606,7 @@ ReportToDB::parse_my_tag(
 
 		FeaturesReporterOP features_reporter(
 			features_reporter_factory_->get_features_reporter(
-				feature_tag, data, filters, movers, pose));
+			feature_tag, data, filters, movers, pose));
 		features_reporter->set_relevant_residues_mode(relevant_residues_mode_);
 
 		add_features_reporter(features_reporter);
@@ -621,22 +619,22 @@ ReportToDB::check_features_reporter_dependencies(
 	FeaturesReporterOP test_features_reporter
 ) const {
 
-	BOOST_FOREACH(string const dependency,
-		test_features_reporter->features_reporter_dependencies()){
+	BOOST_FOREACH ( string const dependency,
+			test_features_reporter->features_reporter_dependencies() ) {
 
 		// These are defined by default
-		if(dependency == "ProtocolFeatures" || dependency == "BatchFeatures" || dependency == "StructureFeatures"){
+		if ( dependency == "ProtocolFeatures" || dependency == "BatchFeatures" || dependency == "StructureFeatures" ) {
 			continue;
 		}
 
 		bool exists(false);
-		BOOST_FOREACH(FeaturesReporterOP features_reporter, features_reporters_){
-			if(features_reporter->type_name() == dependency){
+		BOOST_FOREACH ( FeaturesReporterOP features_reporter, features_reporters_ ) {
+			if ( features_reporter->type_name() == dependency ) {
 				exists = true;
 				break;
 			}
 		}
-		if(!exists){
+		if ( !exists ) {
 			stringstream error_msg;
 			error_msg
 				<< "For batch '" << batch_name_ << "'," << endl
@@ -645,7 +643,7 @@ ReportToDB::check_features_reporter_dependencies(
 				<< "These are the FeaturesReporters that have been defined:" << endl
 				<< "\tProtocolFeatures (included by default)" << endl
 				<< "\tStructureFeatures (included by default)" << endl;
-			BOOST_FOREACH(FeaturesReporterOP features_reporter, features_reporters_){
+			BOOST_FOREACH ( FeaturesReporterOP features_reporter, features_reporters_ ) {
 				error_msg
 					<< "\t" << features_reporter->type_name() << endl;
 			}
@@ -669,8 +667,8 @@ ReportToDB::initialize_reporters()
 void
 ReportToDB::initialize_database(){
 
-	if( basic::options::option[basic::options::OptionKeys::out::database_protocol_id].user() ){
-		if(protocol_id_ != 0){
+	if ( basic::options::option[basic::options::OptionKeys::out::database_protocol_id].user() ) {
+		if ( protocol_id_ != 0 ) {
 			utility_exit_with_message("You have specified a protocol id in both the ReportToDB tag and the options system. Please use only one.");
 		}
 		protocol_id_ = basic::options::option[basic::options::OptionKeys::out::database_protocol_id];
@@ -679,24 +677,25 @@ ReportToDB::initialize_database(){
 	// KAB - check if db_session_ has been set.
 	// Necessary if parse_my_tag not called because mover is being called
 	// outside of RosettaScripts
-	if ( !db_session_ )
+	if ( !db_session_ ) {
 		db_session_ = basic::database::get_db_session();
+	}
 
-	if (!initialized){
-//		if(use_transactions_) db_session_->begin();
+	if ( !initialized ) {
+		//  if(use_transactions_) db_session_->begin();
 
 		protocol_features_->write_schema_to_db(db_session_, protocol_id_);
 		batch_features_->write_schema_to_db(db_session_, batch_id_);
 		structure_features_->write_schema_to_db(db_session_);
 
 		//deferred until after batch_id has been set
-//		write_linking_tables();
+		//  write_linking_tables();
 
-		BOOST_FOREACH( FeaturesReporterOP const & reporter, features_reporters_ ){
+		BOOST_FOREACH ( FeaturesReporterOP const & reporter, features_reporters_ ) {
 			reporter->write_schema_to_db(db_session_);
 		}
 
-//		if(use_transactions_) db_session_->commit();
+		//  if(use_transactions_) db_session_->commit();
 
 		initialized = true;
 	}
@@ -707,10 +706,10 @@ ReportToDB::initialize_pose(
 	Pose & pose
 ) const {
 	pose.update_residue_neighbors(); // As some of the sub-features may need neighbor information
-	if (remove_xray_virt_) {
+	if ( remove_xray_virt_ ) {
 		TR << "Removing virtual residue left behind by xray refinement" << endl;
-		while (pose.residue( pose.total_residue() ).aa() == core::chemical::aa_vrt )
-			pose.conformation().delete_residue_slow( pose.total_residue() );
+		while ( pose.residue( pose.total_residue() ).aa() == core::chemical::aa_vrt )
+				pose.conformation().delete_residue_slow( pose.total_residue() );
 	}
 }
 
@@ -718,13 +717,13 @@ vector1< bool >
 ReportToDB::initialize_relevant_residues(
 	Pose const & pose
 ) {
-	if(relevant_residues_.size() && task_factory_){
+	if ( relevant_residues_.size() && task_factory_ ) {
 		TR.Warning
 			<< "Both relevant_residues and task_factory has been specified;"
 			<< " using the relevant residues." << std::endl;
 	}
-	if(relevant_residues_.size()){
-		if(relevant_residues_.size() != pose.total_residue()){
+	if ( relevant_residues_.size() ) {
+		if ( relevant_residues_.size() != pose.total_residue() ) {
 			TR.Warning
 				<< "The size of relevant_residues is: " << relevant_residues_.size()
 				<< " while the pose has '" << pose.total_residue() << "' residues,"
@@ -762,23 +761,22 @@ ReportToDB::apply( Pose& pose ){
 
 	try{
 		//If no protcol and batch id were set by the user, let them be autogenerated
-		if(protocol_id_==0 && batch_id_==0){
+		if ( protocol_id_==0 && batch_id_==0 ) {
 			std::pair<Size, Size> ids = get_protocol_and_batch_id(batch_name_, batch_description_, features_reporters_, db_session_);
 			protocol_id_ = ids.first;
 			batch_id_ = ids.second;
-		}
-		else{
+		} else {
 			set_protocol_and_batch_id(protocol_id_, batch_id_, batch_name_, batch_description_, features_reporters_, db_session_);
 		}
 	}
-	catch(cppdb::cppdb_error & except)
-	{
-		TR.Warning << "There was an error writing protocol and batch id. You are likely using MPI mode "
-			<< "with a user-specified protocol_id and/or batch_id. This workflow is for advanced users "
-			<< "only and is not recommended. The cppdb error is: " << except.what() << std::endl;
-	}
-	//Write linking tables after we have a valid batch_id
-//	write_linking_tables();
+catch(cppdb::cppdb_error & except)
+{
+	TR.Warning << "There was an error writing protocol and batch id. You are likely using MPI mode "
+		<< "with a user-specified protocol_id and/or batch_id. This workflow is for advanced users "
+		<< "only and is not recommended. The cppdb error is: " << except.what() << std::endl;
+}
+//Write linking tables after we have a valid batch_id
+// write_linking_tables();
 
 	ensure_structure_tags_are_ready();
 	StructureID struct_id = report_structure_features();
@@ -790,11 +788,11 @@ ReportToDB::apply( Pose& pose ){
 void
 ReportToDB::ensure_structure_tags_are_ready()
 {
-	if( (!custom_structure_tag_) || (structure_tag_ == "") ) {
+	if ( (!custom_structure_tag_) || (structure_tag_ == "") ) {
 		structure_tag_ = JobDistributor::get_instance()->current_output_name();
 	}
 
-	if( (!custom_structure_input_tag_) || (structure_input_tag_ == "") ) {
+	if ( (!custom_structure_input_tag_) || (structure_input_tag_ == "") ) {
 		structure_input_tag_ = JobDistributor::get_instance()->current_job()->input_tag();
 	}
 }
@@ -803,7 +801,7 @@ StructureID
 ReportToDB::report_structure_features() const {
 	StructureID struct_id;
 	try {
-		if(use_transactions_){
+		if ( use_transactions_ ) {
 			db_session_->begin_transaction();
 		}
 
@@ -811,7 +809,7 @@ ReportToDB::report_structure_features() const {
 			batch_id_, db_session_, structure_tag_, structure_input_tag_
 		);
 
-		if(use_transactions_){
+		if ( use_transactions_ ) {
 			db_session_->commit_transaction();
 		}
 	} catch (cppdb_error & error){
@@ -826,7 +824,7 @@ ReportToDB::report_structure_features() const {
 			<< "Error Message:" << endl << error.what() << endl;
 		utility_exit_with_message(err_msg.str());
 	} catch (utility::excn::EXCN_Base & error){
-		if(use_transactions_){
+		if ( use_transactions_ ) {
 			db_session_->rollback();
 		}
 		stringstream err_msg;
@@ -849,19 +847,18 @@ ReportToDB::report_features(
 	utility::vector1<bool> const & relevant_residues
 ) const {
 
-	for(Size i=1; i <= features_reporters_.size(); ++i){
+	for ( Size i=1; i <= features_reporters_.size(); ++i ) {
 		string report_name = features_reporters_[i]->type_name();
 
 		TR << "Reporting " << report_name << std::endl;
 
 		try {
-			if(use_transactions_){
+			if ( use_transactions_ ) {
 				db_session_->begin_transaction();
 				features_reporters_[i]->report_features(
 					pose, relevant_residues, struct_id, db_session_);
 				db_session_->commit_transaction();
-			}
-			else{
+			} else {
 				features_reporters_[i]->report_features(
 					pose, relevant_residues, struct_id, db_session_);
 			}

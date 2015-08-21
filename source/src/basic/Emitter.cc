@@ -68,18 +68,18 @@ void Emitter::start_map(const char * label, bool indent/*=true*/)
 
 void Emitter::end_list()
 {
-	if(assert_in(false, "Tried to end list inside map")) end_raw();
+	if ( assert_in(false, "Tried to end list inside map") ) end_raw();
 }
 
 void Emitter::end_map()
 {
-	if(assert_in(true, "Tried to end map inside list")) end_raw();
+	if ( assert_in(true, "Tried to end map inside list") ) end_raw();
 }
 
 void Emitter::end(size_t desired_depth/*=0*/)
 {
 	//while( depth() > desired_depth ) end_raw();
-	for(size_t i = depth(); i > desired_depth; --i) end_raw();
+	for ( size_t i = depth(); i > desired_depth; --i ) end_raw();
 }
 
 /// @details Anything but the most basic characters needs to be quoted and escaped.
@@ -95,20 +95,20 @@ std::string Emitter::escape_string(std::string const & s, bool & needs_quotes_ou
 	// If all chars in s are also in bare_chars, no quotes are needed in YAML
 	needs_quotes_out = !(s.find_first_not_of(bare_chars) == string::npos);
 	// Special cases: starts/ends with whitespace, zero length
-	if( s.empty() || s[0] == ' ' || s[s.size()-1] == ' ' ) needs_quotes_out = true;
-	if( !needs_quotes_out ) return s;
+	if ( s.empty() || s[0] == ' ' || s[s.size()-1] == ' ' ) needs_quotes_out = true;
+	if ( !needs_quotes_out ) return s;
 
 	std::ostringstream o;
 
-	BOOST_FOREACH(char ch, s){
-		if( ' ' <= ch && ch <= '~' ) o << ch; // the range of printable ASCII characters
-		else if( ch == '"'  ) o << "\\\"";
-		else if( ch == '\\' ) o << "\\\\";
-		else if( ch == '\n' ) o << "\\n";
-		else if( ch == '\r' ) o << "\\r";
-		else if( ch == '\t' ) o << "\\t";
-		else if( ch == '\f' ) o << "\\f";
-		else if( ch == '\b' ) o << "\\b";
+	BOOST_FOREACH ( char ch, s ) {
+		if ( ' ' <= ch && ch <= '~' ) o << ch; // the range of printable ASCII characters
+		else if ( ch == '"'  ) o << "\\\"";
+		else if ( ch == '\\' ) o << "\\\\";
+		else if ( ch == '\n' ) o << "\\n";
+		else if ( ch == '\r' ) o << "\\r";
+		else if ( ch == '\t' ) o << "\\t";
+		else if ( ch == '\f' ) o << "\\f";
+		else if ( ch == '\b' ) o << "\\b";
 		else { // Unicode escape
 			o << "\\u";
 			o << hex[ ((ch>>24)&0x000F) ];

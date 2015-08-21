@@ -102,7 +102,7 @@ public:
 	int & get_file_states_2_instance_states_array();
 
 	bool get_node_corresponded_to_file_node();
-	 */
+	*/
 
 	virtual unsigned int count_static_memory() const;
 	virtual unsigned int count_dynamic_memory() const;
@@ -230,9 +230,9 @@ public:
 	);
 
 	void acknowledge_state_change(
-			int node_ind,
-			int new_state,
-			core::PackerEnergy & new_energy
+		int node_ind,
+		int new_state,
+		core::PackerEnergy & new_energy
 	);
 	void acknowledge_state_zeroed( int node_ind );
 
@@ -477,9 +477,9 @@ FASTERInteractionGraph       * FASTERNode::get_fasterig_owner()
 /// @brief updates bookkeeping arrays for when a neighbor has changed its state
 ///
 /// @param edge_to_altered_neighbor - [in] - the index for the edge that connects
-/// 	this node to the node that just changed its state
+///  this node to the node that just changed its state
 /// @param new_edge_energ - [in] - the pair energy between this node in its current
-///	state and the new state of the node that just changed its state
+/// state and the new state of the node that just changed its state
 /// @param other_node_new_state - [in] - the state the neighbor just adopted
 inline
 void FASTERNode::acknowledge_neighbors_state_substitution(
@@ -493,7 +493,7 @@ void FASTERNode::acknowledge_neighbors_state_substitution(
 	curr_state_two_body_energies_[edge_to_altered_neighbor] = new_edge_energy;
 	neighbors_curr_state_[ edge_to_altered_neighbor ] = other_node_new_state;
 	//neighbors_curr_state_plus_offset_[ edge_to_altered_neighbor ]
-	//	= other_node_new_state + neighbors_rotindex_offset_[ edge_to_altered_neighbor ];
+	// = other_node_new_state + neighbors_rotindex_offset_[ edge_to_altered_neighbor ];
 	return;
 }
 
@@ -503,7 +503,7 @@ void FASTERNode::acknowledge_neighbors_state_substitution(
 /// @param first_node_alt_state - [in] - the alternate state for the lower-indexed node
 /// @param second_node_orig_state - [in] - the current state for the higher-indexed node
 /// @param edge_energy_table - [in] - the proxy FArray pointing at the edge table
-/// 	connecting the two nodes.
+///  connecting the two nodes.
 inline
 core::PackerEnergy
 FASTEREdge::get_alternate_state_energy(
@@ -512,7 +512,7 @@ FASTEREdge::get_alternate_state_energy(
 	ObjexxFCL::FArray2< core::PackerEnergy > & edge_energy_table
 )
 {
-	if (first_node_state == 0 || second_node_state == 0) {
+	if ( first_node_state == 0 || second_node_state == 0 ) {
 		return core::PackerEnergy( 0.0 );
 	} else {
 		return edge_energy_table( second_node_state, first_node_state );
@@ -583,9 +583,9 @@ FASTERNode::project_deltaE_for_substitution(
 	for ( int ii = 1; ii <= get_num_edges_to_smaller_indexed_nodes(); ++ii ) {
 		alternate_state_two_body_energies_[ ii ] =
 			FASTEREdge::get_alternate_state_energy(
-				neighbors_curr_state_[ii],
-				alternate_state_,
-				edge_matrix_ptrs_[ii]
+			neighbors_curr_state_[ii],
+			alternate_state_,
+			edge_matrix_ptrs_[ii]
 		);
 		alternate_state_total_energy_ += alternate_state_two_body_energies_[ ii ];
 	}
@@ -593,9 +593,9 @@ FASTERNode::project_deltaE_for_substitution(
 	for ( int ii = get_num_edges_to_smaller_indexed_nodes() + 1; ii <= get_num_incident_edges(); ++ii ) {
 		alternate_state_two_body_energies_[ ii ] =
 			FASTEREdge::get_alternate_state_energy(
-				alternate_state_,
-				neighbors_curr_state_[ii],
-				edge_matrix_ptrs_[ii]
+			alternate_state_,
+			neighbors_curr_state_[ii],
+			edge_matrix_ptrs_[ii]
 		);
 		alternate_state_total_energy_ += alternate_state_two_body_energies_[ ii ];
 	}

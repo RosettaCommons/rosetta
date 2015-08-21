@@ -29,7 +29,7 @@
 namespace protocols {
 namespace membrane {
 namespace symmetry {
-    
+
 class SymmetricAddMembraneMover;
 typedef utility::pointer::shared_ptr< SymmetricAddMembraneMover > SymmetricAddMembraneMoverOP;
 typedef utility::pointer::shared_ptr< SymmetricAddMembraneMover const > SymmetricAddMembraneMoverCOP;

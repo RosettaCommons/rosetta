@@ -31,16 +31,16 @@ namespace nonlocal {
 /// @class Implements the Policy interface. Chooses uniformly among the set of
 /// possible fragments at a given position.
 class UniformPolicy : public Policy {
-  typedef core::fragment::FragSetCOP FragSetCOP;
+	typedef core::fragment::FragSetCOP FragSetCOP;
 
- public:
-  /// @brief Provides derived classes with the opportunity to precompute various
-  /// properties of the fragment set from which they will have to make choices.
-  explicit UniformPolicy(FragSetCOP fragments);
+public:
+	/// @brief Provides derived classes with the opportunity to precompute various
+	/// properties of the fragment set from which they will have to make choices.
+	explicit UniformPolicy(FragSetCOP fragments);
 
-  /// @brief Selects uniformly among the set of possible fragments in <frame>
-  virtual core::Size choose(const core::fragment::Frame& frame,
-                            const core::pose::Pose&);
+	/// @brief Selects uniformly among the set of possible fragments in <frame>
+	virtual core::Size choose(const core::fragment::Frame& frame,
+		const core::pose::Pose&);
 };
 
 }  // namespace nonlocal

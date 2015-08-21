@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/feature/HelixCapFeaturesCreator.cc
-/// @brief  
+/// @brief
 /// @author Ben Borgo
 /// @author Jim Havranek
 
@@ -24,7 +24,7 @@
 
 namespace protocols {
 namespace features {
-	
+
 HelixCapFeaturesCreator::HelixCapFeaturesCreator() {}
 HelixCapFeaturesCreator::~HelixCapFeaturesCreator() {}
 FeaturesReporterOP HelixCapFeaturesCreator::create_features_reporter() const {
@@ -34,6 +34,6 @@ FeaturesReporterOP HelixCapFeaturesCreator::create_features_reporter() const {
 std::string HelixCapFeaturesCreator::type_name() const {
 	return "HelixCapFeatures";
 }
-	
+
 } //namespace features
 } //namespace protocols

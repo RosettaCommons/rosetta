@@ -170,26 +170,26 @@ OptEMultifunc::operator()( Multivec const & vars ) const
 	Multivec dummy( local_vars.size(), 0.0 );
 
 	// Summing over positions
-	for( OptEPositionDataOPs::const_iterator itr = opte_data_.position_data_begin(),
+	for ( OptEPositionDataOPs::const_iterator itr = opte_data_.position_data_begin(),
 			e_itr = opte_data_.position_data_end() ; itr != e_itr ; ++itr  ) {
 		Real const s = (*itr)->get_score( component_weights_, local_vars, dummy,
 			num_energy_dofs_, num_ref_dofs_, num_total_dofs_,
 			fixed_terms_, score_list_, fixed_score_list_ );
 #ifndef WIN32
 		bool bad = false;
-		if(      std::isinf(s) ) { std::cerr << "Introduced INF score with " << OptEPositionDataFactory::optE_type_name( (*itr)->type() ) << " " << (*itr)->tag() << std::endl; bad=true; }
-		else if( std::isnan(s) ) { std::cerr << "Introduced NAN score with " << OptEPositionDataFactory::optE_type_name( (*itr)->type() ) << " " << (*itr)->tag() << std::endl; bad=true; }
+		if (      std::isinf(s) ) { std::cerr << "Introduced INF score with " << OptEPositionDataFactory::optE_type_name( (*itr)->type() ) << " " << (*itr)->tag() << std::endl; bad=true; }
+		else if ( std::isnan(s) ) { std::cerr << "Introduced NAN score with " << OptEPositionDataFactory::optE_type_name( (*itr)->type() ) << " " << (*itr)->tag() << std::endl; bad=true; }
 		else
 #endif
-			score += s;
+		score += s;
 #ifndef WIN32
 		if ( bad ) {
-			if ( basic::options::option[ basic::options::OptionKeys::optE::limit_bad_scores ].user() )					//NaN and inf errors can accumulate into the gigabytes if optE is left unattended
-			{	
-				static Size count = 0;																
+			if ( basic::options::option[ basic::options::OptionKeys::optE::limit_bad_scores ].user() ) {     //NaN and inf errors can accumulate into the gigabytes if optE is left unattended
+				static Size count = 0;
 				++count;
-				if (count > 100000)
+				if ( count > 100000 ) {
 					utility::exit(__FILE__,__LINE__, "Counted over 100,000 inf/NaN scores. Admitting defeat now.");
+				}
 			}
 			std::cerr << "vars: " << std::endl;
 			for ( Size ii = 1; ii <= local_vars.size(); ++ii ) {
@@ -250,15 +250,15 @@ OptEMultifunc::dfunc( Multivec const & vars, Multivec & dE_dvars ) const
 
 	// over positions
 	Real score( 0.0 );
-	for( OptEPositionDataOPs::const_iterator itr = opte_data_.position_data_begin(),
+	for ( OptEPositionDataOPs::const_iterator itr = opte_data_.position_data_begin(),
 			e_itr = opte_data_.position_data_end() ; itr != e_itr ; ++itr  ) {
 		score += (*itr)->get_score( component_weights_, local_vars, local_dE_dvars,
 			num_energy_dofs_, num_ref_dofs_, num_total_dofs_,
 			fixed_terms_, score_list_, fixed_score_list_ );
-		for( Size ii = 1 ; ii <= local_dE_dvars.size() ; ++ii ) {
+		for ( Size ii = 1 ; ii <= local_dE_dvars.size() ; ++ii ) {
 #ifndef WIN32
-			if(      std::isinf(local_dE_dvars[ ii ]) ) std::cerr << "Introduced INF deriv at " << ii << " with " << OptEPositionDataFactory::optE_type_name( (*itr)->type() ) << " " << (*itr)->tag() << std::endl;
-			else if( std::isnan(local_dE_dvars[ ii ]) ) std::cerr << "Introduced NAN deriv at " << ii << " with " << OptEPositionDataFactory::optE_type_name( (*itr)->type() ) << " " << (*itr)->tag() << std::endl;
+			if (      std::isinf(local_dE_dvars[ ii ]) ) std::cerr << "Introduced INF deriv at " << ii << " with " << OptEPositionDataFactory::optE_type_name( (*itr)->type() ) << " " << (*itr)->tag() << std::endl;
+			else if ( std::isnan(local_dE_dvars[ ii ]) ) std::cerr << "Introduced NAN deriv at " << ii << " with " << OptEPositionDataFactory::optE_type_name( (*itr)->type() ) << " " << (*itr)->tag() << std::endl;
 #endif
 		}
 	}
@@ -296,7 +296,7 @@ OptEMultifunc::get_dofs_from_energy_map( EnergyMap const & start_vals ) const
 	Multivec dofs( fix_reference_energies_ ? num_energy_dofs_ : num_total_dofs_, 0.0 );
 
 	Size dof_index( 1 );
-	for( ScoreTypes::const_iterator itr = score_list_.begin(),
+	for ( ScoreTypes::const_iterator itr = score_list_.begin(),
 			end_itr = score_list_.end(); itr != end_itr; ++itr ) {
 		dofs[ dof_index++ ] = start_vals[ *itr ];
 	}
@@ -320,7 +320,7 @@ OptEMultifunc::get_energy_map_from_dofs( Multivec const & dofs) const
 
 	// This covers the variable weights
 	Size dof_index( 1 );
-	for( ScoreTypes::const_iterator itr = score_list_.begin(),
+	for ( ScoreTypes::const_iterator itr = score_list_.begin(),
 			end_itr = score_list_.end() ;
 			itr != end_itr ; ++itr ) {
 		return_map[ *itr ] = dofs[ dof_index++ ];
@@ -328,7 +328,7 @@ OptEMultifunc::get_energy_map_from_dofs( Multivec const & dofs) const
 
 	// Now the fixed weights - but I think we should have them from the
 	// copy constructor above, so this is probably a total waste....
-	for( ScoreTypes::const_iterator itr = fixed_score_list_.begin(),
+	for ( ScoreTypes::const_iterator itr = fixed_score_list_.begin(),
 			end_itr = fixed_score_list_.end() ;
 			itr != end_itr ; ++itr ) {
 		return_map[ *itr ] = fixed_terms_[ *itr ];
@@ -744,7 +744,7 @@ WrapperOptEMultifunc::dfunc(
 	}
 	if ( TR.visible() ) {
 		TR << "WrapperOptEMultifunc dfuncs:";
-		for( Size ii = 1 ; ii <= dE_dvars.size() ; ++ii ) TR << " " << F(7,2,dE_dvars[ ii ]);
+		for ( Size ii = 1 ; ii <= dE_dvars.size() ; ++ii ) TR << " " << F(7,2,dE_dvars[ ii ]);
 		TR << std::endl;
 	}
 }
@@ -882,7 +882,7 @@ WrappedOptEExpressionCreator::WrappedOptEExpressionCreator()
 WrappedOptEExpressionCreator::WrappedOptEExpressionCreator(
 	WrapperOptEMultifuncAP multifunc
 )
-	: multifunc_( multifunc )
+: multifunc_( multifunc )
 {}
 
 WrappedOptEExpressionCreator::~WrappedOptEExpressionCreator() {}

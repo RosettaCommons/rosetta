@@ -124,14 +124,14 @@ public:// parser
 public:// virtual main operation
 
 	// @brief always returns true.
-  virtual bool apply( Pose const & pose ) const;
+	virtual bool apply( Pose const & pose ) const;
 
 	/// @brief
-  virtual core::Real report_sm( Pose const & pose ) const;
-  virtual void report( std::ostream & out, Pose const & pose ) const;
+	virtual core::Real report_sm( Pose const & pose ) const;
+	virtual void report( std::ostream & out, Pose const & pose ) const;
 
 	/// @brief get the translation and rotation for a user specified jump
-  core::Real compute( Pose const & pose, bool const & verb, std::string const & dof_name, int const & jump, char const & ax, bool const & disp, bool const & ang, core::Real const & init_d, core::Real const & init_a, bool const & get_init ) const;
+	core::Real compute( Pose const & pose, bool const & verb, std::string const & dof_name, int const & jump, char const & ax, bool const & disp, bool const & ang, core::Real const & init_d, core::Real const & init_a, bool const & get_init ) const;
 
 private:
 

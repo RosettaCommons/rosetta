@@ -175,7 +175,7 @@ nucleobase_probe_score_test()
 
 	if ( sample_water_ ) {
 		new_res = ( core::conformation::ResidueFactory::create_residue ( *(residue_set.get_representative_type_name3( "HOH" )) ) );
-	} else if ( sample_another_adenosine_ ){
+	} else if ( sample_another_adenosine_ ) {
 		new_res = pose.residue(1).clone();
 	} else if ( sample_phosphate_ ) {
 		new_res = pose.residue(1).clone(); // tricky -- will add a packable phosphate and some other shenanigans later.
@@ -184,9 +184,9 @@ nucleobase_probe_score_test()
 	}
 
 	// doing some checks for hbonds & geom_sol are being calculated -- or not calculated.
-	if ( sample_water_ || sample_another_adenosine_ ){
+	if ( sample_water_ || sample_another_adenosine_ ) {
 
-		for (Size n = 1; n <= new_res->natoms(); n++ ){
+		for ( Size n = 1; n <= new_res->natoms(); n++ ) {
 
 			std::cout << "PROBE ATOM:  " << n << ' ' << new_res->atom_name( n ); // << ' ' << new_res->atom_base( n ) << ' ' << new_res->abase2( n ) << std::endl;
 			if ( new_res->atom_base( n ) > 0 ) std::cout << "   base: " << new_res->atom_name( new_res->atom_base( n ) );
@@ -203,13 +203,13 @@ nucleobase_probe_score_test()
 	// Set up fold tree -- "chain break" between two ligands, right?
 	kinematics::FoldTree f ( pose.fold_tree() );
 	std::string probe_atom_name = " C1 ";
-	if (sample_water_) probe_atom_name = " O  ";
-	if (sample_another_adenosine_ || sample_phosphate_ ) probe_atom_name = "ORIG"; // tricky -- the jump is from one coordinate system to the next one!
+	if ( sample_water_ ) probe_atom_name = " O  ";
+	if ( sample_another_adenosine_ || sample_phosphate_ ) probe_atom_name = "ORIG"; // tricky -- the jump is from one coordinate system to the next one!
 	f.set_jump_atoms( 2,"ORIG",probe_atom_name);
 	if ( sample_phosphate_ ) f.set_jump_atoms( 3, "ORIG", " P  " ); // hope this works.
 	pose.fold_tree( f );
 
-	if ( sample_phosphate_ ){ // "ghost phosphate" at 5' end.
+	if ( sample_phosphate_ ) { // "ghost phosphate" at 5' end.
 		Size n = 4;
 		pose::remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, n );
 		pose::add_variant_type_to_pose_residue( pose, VIRTUAL_BASE,  n );
@@ -219,7 +219,7 @@ nucleobase_probe_score_test()
 
 	std::cout << pose.annotated_sequence() << std::endl;
 
-	if ( option[ copy_adenosine_adenosine_file ].user() ){
+	if ( option[ copy_adenosine_adenosine_file ].user() ) {
 		pose::Pose pose_reference;
 		import_pose::pose_from_pdb( pose_reference, *rsd_set_op, option[copy_adenosine_adenosine_file]() );
 		rotate_into_nucleobase_frame( pose_reference );
@@ -228,7 +228,7 @@ nucleobase_probe_score_test()
 		Residue const & rsd_ref = pose_reference.residue( 2 );
 		Size pos2( 4 ); // the sequence of the working pose is... nucleobase-virtual-virtual-nucleobase
 
-		for( Size i_ref = 1; i_ref <= rsd_ref.natoms(); i_ref++ ){
+		for ( Size i_ref = 1; i_ref <= rsd_ref.natoms(); i_ref++ ) {
 			Size i = pose.residue( pos2 ).atom_index(   rsd_ref.atom_name( i_ref ) );
 			pose.set_xyz( AtomID( i, pos2 ),  rsd_ref.xyz( i_ref ) );
 		}
@@ -258,26 +258,26 @@ nucleobase_probe_score_test()
 
 	/// This is a code snippet to test if we are sampling water rotations properly -- could make this a little class,
 	//  and then include within translation scan.
-	//	if ( sample_water_ )		sample_all_rotations_at_jump( pose, probe_jump_num );
+	// if ( sample_water_ )  sample_all_rotations_at_jump( pose, probe_jump_num );
 	bool const sample_rotations = sample_water_ || sample_phosphate_;
 
 	//////////////////////////////////////////////////////////////////
 	// OK, how about a score function?
 	ScoreFunctionOP scorefxn;
-	if ( option[ score::weights ].user() ){
+	if ( option[ score::weights ].user() ) {
 		scorefxn = scoring::get_score_function();
 	} else {
 		scorefxn = ScoreFunctionFactory::create_score_function( "farna/rna_hires" );
 		scorefxn->set_weight( rna_sugar_close, 0.0 ); //still computed with virtual sugar? weird.
 	}
 
-//	jump.set_translation( Vector( 3.75, 1.75, 1.5 ) );
-//	pose.set_jump( probe_jump_num, jump );
-//	sample_all_rotations_at_jump( pose, probe_jump_num, scorefxn );
-//	pose.dump_pdb( "test.pdb" );
-//	exit(0);
-// 	(*scorefxn)( pose );
-//	scorefxn->show( std::cout, pose );
+	// jump.set_translation( Vector( 3.75, 1.75, 1.5 ) );
+	// pose.set_jump( probe_jump_num, jump );
+	// sample_all_rotations_at_jump( pose, probe_jump_num, scorefxn );
+	// pose.dump_pdb( "test.pdb" );
+	// exit(0);
+	//  (*scorefxn)( pose );
+	// scorefxn->show( std::cout, pose );
 
 	//////////////////////////////////////////////////////////////////
 	// compute scores on a plane for now.
@@ -290,13 +290,13 @@ nucleobase_probe_score_test()
 	SilentFileData silent_file_data;
 	utility::io::ozstream out;
 
-	if ( !option[ just_xy ]() || option[ just_z ]() ){
+	if ( !option[ just_xy ]() || option[ just_z ]() ) {
 		//////////////////////////////////////////////
 		std::cout << "Doing Z scan..." << std::endl;
 		out.open( "score_z.table" );
 		Size count( 0 );
 		std::string const silent_file( option[ out::file::silent ]() );
-		for (int i = -box_bins; i <= box_bins; ++i) {
+		for ( int i = -box_bins; i <= box_bins; ++i ) {
 			Real const x = 0.0;
 			Real const y = 0.0;
 			Real const z = i * translation_increment;
@@ -335,16 +335,16 @@ nucleobase_probe_score_test()
 	do_xy_scan( pose, scorefxn, "score_xy_4.table", 4.0, probe_jump_num, box_bins, translation_increment, sample_rotations );
 	// Following are exactly the same as +1.0 and +3.0 when modeling nucleobase.
 	//std::cout << "Doing XY scan... Z = -1.0" << std::endl;
-	//	do_xy_scan( pose, scorefxn, "score_para_0_table", 1.0, probe_jump_num, box_bins, translation_increment, sample_rotations );
+	// do_xy_scan( pose, scorefxn, "score_para_0_table", 1.0, probe_jump_num, box_bins, translation_increment, sample_rotations );
 
-	//	std::cout << "Doing XY scan... Z = -3.0" << std::endl;
-	//	do_xy_scan( pose, scorefxn, "score_para_0_table", 3.0, probe_jump_num, box_bins, translation_increment, sample_rotations );
+	// std::cout << "Doing XY scan... Z = -3.0" << std::endl;
+	// do_xy_scan( pose, scorefxn, "score_para_0_table", 3.0, probe_jump_num, box_bins, translation_increment, sample_rotations );
 
 	//////////////////////////////////////////////
 	std::cout << "Doing XZ scan..." << std::endl;
 	out.open( "score_xz.table" );
-	for (int i = -box_bins; i <= box_bins; ++i) {
-		for (int j = -box_bins; j <= box_bins; ++j) {
+	for ( int i = -box_bins; i <= box_bins; ++i ) {
+		for ( int j = -box_bins; j <= box_bins; ++j ) {
 			Real const x = j * translation_increment;
 			Real const z = i * translation_increment;
 			Real const y = 0.0;
@@ -359,8 +359,8 @@ nucleobase_probe_score_test()
 	//////////////////////////////////////////////
 	std::cout << "Doing YZ scan..." << std::endl;
 	out.open( "score_yz.table" );
-	for (int i = -box_bins; i <= box_bins; ++i) {
-		for (int j = -box_bins; j <= box_bins; ++j) {
+	for ( int i = -box_bins; i <= box_bins; ++i ) {
+		for ( int j = -box_bins; j <= box_bins; ++j ) {
 			Real const y = j * translation_increment;
 			Real const z = i * translation_increment;
 			Real const x = 0.0;
@@ -394,15 +394,15 @@ quick_score_test(){
 	std::string infile  = option[ in ::file::s ][1];
 	import_pose::pose_from_pdb( pose, *rsd_set, infile );
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ){
-		if (pose.residue(i).is_RNA() ){
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		if ( pose.residue(i).is_RNA() ) {
 			pose::add_variant_type_to_pose_residue( pose, VIRTUAL_PHOSPHATE, i );
 			pose::add_variant_type_to_pose_residue( pose, VIRTUAL_RIBOSE, i );
 		}
 	}
 
 	ScoreFunctionOP scorefxn;
-	if ( option[ score::weights ].user() ){
+	if ( option[ score::weights ].user() ) {
 		scorefxn = scoring::get_score_function();
 	} else {
 		scorefxn = ScoreFunctionFactory::create_score_function( "farna/rna_hires" );
@@ -419,7 +419,7 @@ void*
 my_main( void* )
 {
 
-	if ( option[quick_score]() ){
+	if ( option[quick_score]() ) {
 		quick_score_test();
 	} else {
 		nucleobase_probe_score_test();

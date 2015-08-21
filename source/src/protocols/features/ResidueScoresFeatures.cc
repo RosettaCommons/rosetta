@@ -53,8 +53,8 @@
 #include <utility/excn/Exceptions.hh>
 #include <sstream>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::endl;
 using std::string;
@@ -184,7 +184,7 @@ ResidueScoresFeatures::write_residue_scores_2b_table_schema_helper(
 	sessionOP db_session
 ) const {
 	using namespace basic::database::schema_generator;
-	
+
 	Column batch_id("batch_id", DbDataTypeOP( new DbInteger() ));
 	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
 	Column resNum1("resNum1", DbDataTypeOP( new DbInteger() ));
@@ -192,7 +192,7 @@ ResidueScoresFeatures::write_residue_scores_2b_table_schema_helper(
 	Column score_type_id("score_type_id", DbDataTypeOP( new DbInteger() ));
 	Column score_value("score_value", DbDataTypeOP( new DbReal() ));
 	Column context_dependent("context_dependent", DbDataTypeOP( new DbInteger() ));
-	
+
 	Columns primary_key_columns;
 	primary_key_columns.push_back(batch_id);
 	primary_key_columns.push_back(struct_id);
@@ -200,7 +200,7 @@ ResidueScoresFeatures::write_residue_scores_2b_table_schema_helper(
 	primary_key_columns.push_back(resNum2);
 	primary_key_columns.push_back(score_type_id);
 	PrimaryKey primary_key(primary_key_columns);
-	
+
 	Columns foreign_key_columns1;
 	foreign_key_columns1.push_back(struct_id);
 	foreign_key_columns1.push_back(resNum1);
@@ -208,7 +208,7 @@ ResidueScoresFeatures::write_residue_scores_2b_table_schema_helper(
 	reference_columns1.push_back("struct_id");
 	reference_columns1.push_back("resNum");
 	ForeignKey foreign_key1(foreign_key_columns1, "residues", reference_columns1, true);
-	
+
 	Columns foreign_key_columns2;
 	foreign_key_columns2.push_back(struct_id);
 	foreign_key_columns2.push_back(resNum2);
@@ -216,7 +216,7 @@ ResidueScoresFeatures::write_residue_scores_2b_table_schema_helper(
 	reference_columns2.push_back("struct_id");
 	reference_columns2.push_back("resNum");
 	ForeignKey foreign_key2(foreign_key_columns2, "residues", reference_columns2, true);
-	
+
 	Columns foreign_key_columns3;
 	foreign_key_columns3.push_back(batch_id);
 	foreign_key_columns3.push_back(score_type_id);
@@ -224,15 +224,15 @@ ResidueScoresFeatures::write_residue_scores_2b_table_schema_helper(
 	reference_columns3.push_back("batch_id");
 	reference_columns3.push_back("score_type_id");
 	ForeignKey foreign_key3(foreign_key_columns3, "score_types", reference_columns3, true);
-	
-	
+
+
 	Schema table(name, primary_key);
 	table.add_foreign_key(foreign_key1);
 	table.add_foreign_key(foreign_key2);
 	table.add_foreign_key(foreign_key3);
 	table.add_column(score_value);
 	table.add_column(context_dependent);
-	
+
 	table.write(db_session);
 }
 
@@ -252,7 +252,7 @@ ResidueScoresFeatures::parse_my_tag(
 	Movers_map const & /*movers*/,
 	Pose const & /*pose*/
 ) {
-	if(tag->hasOption("scorefxn")){
+	if ( tag->hasOption("scorefxn") ) {
 		string const scorefxn_name(tag->getOption<string>("scorefxn"));
 		scfxn_ = data.get_ptr<ScoreFunction>("scorefxns", scorefxn_name);
 	} else {
@@ -330,8 +330,8 @@ ResidueScoresFeatures::insert_residue_scores_rows(
 	// use virtual residues to be compatible with the two-body scoring
 	// framework, include virtual residues with the relevant residues so
 	// these scores get computed.
-	for(Size i = 1; i <= pose.total_residue(); ++i){
-		if(pose.residue( i ).aa() == aa_vrt){
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( pose.residue( i ).aa() == aa_vrt ) {
 			relevant_and_virtual_residues[i] = true;
 		}
 	}
@@ -373,8 +373,8 @@ ResidueScoresFeatures::insert_one_body_residue_score_rows(
 
 	EnergyMap emap;
 
-	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
-		if(!check_relevant_residues( relevant_residues, resNum )) continue;
+	for ( Size resNum=1; resNum <= pose.total_residue(); ++resNum ) {
+		if ( !check_relevant_residues( relevant_residues, resNum ) ) continue;
 		Residue const & rsd( pose.residue(resNum) );
 
 		RowDataBaseOP resNum_data( new RowData<Size>("resNum", resNum) );
@@ -384,16 +384,16 @@ ResidueScoresFeatures::insert_one_body_residue_score_rows(
 
 			emap.clear();
 			scfxn_->eval_ci_1b(rsd, pose, emap);
-			for(ScoreTypes::const_iterator st = ci_1b.begin(), ste = ci_1b.end(); st != ste; ++st){
-				if(!emap[*st]) continue;
+			for ( ScoreTypes::const_iterator st = ci_1b.begin(), ste = ci_1b.end(); st != ste; ++st ) {
+				if ( !emap[*st] ) continue;
 
 				RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", *st) );
 				RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[*st]) );
 
 				insert_onebody.add_row(
 					make_vector(
-						batch_id_data, struct_id_data, resNum_data,
-						score_type_id_data, score_value_data, context_dependent_data));
+					batch_id_data, struct_id_data, resNum_data,
+					score_type_id_data, score_value_data, context_dependent_data));
 			}
 		}
 		{ // Context Dependent One Body Energies
@@ -401,19 +401,19 @@ ResidueScoresFeatures::insert_one_body_residue_score_rows(
 
 			emap.clear();
 			scfxn_->eval_cd_1b(rsd, pose, emap);
-			for(ScoreTypes::const_iterator
-				st = cd_1b.begin(), ste = cd_1b.end();
-				st != ste; ++st){
+			for ( ScoreTypes::const_iterator
+					st = cd_1b.begin(), ste = cd_1b.end();
+					st != ste; ++st ) {
 
-				if(!emap[*st]) continue;
+				if ( !emap[*st] ) continue;
 
 				RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", *st) );
 				RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[*st]) );
 
 				insert_onebody.add_row(
 					make_vector(
-						batch_id_data, struct_id_data, resNum_data,
-						score_type_id_data, score_value_data, context_dependent_data));
+					batch_id_data, struct_id_data, resNum_data,
+					score_type_id_data, score_value_data, context_dependent_data));
 
 			}
 		}
@@ -452,7 +452,7 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 	RowDataBaseOP batch_id_data( new RowData<Size>("batch_id", batch_id) );
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id", struct_id) );
 
-	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
+	for ( Size resNum=1; resNum <= pose.total_residue(); ++resNum ) {
 		Residue const & rsd( pose.residue(resNum) );
 
 		// Two Body Energies
@@ -463,10 +463,10 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 			EnergyEdge const & edge( static_cast< EnergyEdge const &> (**iru) );
 			Size const otherResNum( edge.get_second_node_ind() );
 
-			if(!check_relevant_residues( relevant_residues, resNum, otherResNum )) continue;
+			if ( !check_relevant_residues( relevant_residues, resNum, otherResNum ) ) continue;
 
 			Size resNum1, resNum2;
-			if( resNum < otherResNum ){
+			if ( resNum < otherResNum ) {
 				resNum1 = resNum;
 				resNum2 = otherResNum;
 			} else {
@@ -485,16 +485,16 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 
 				emap.clear();
 				scfxn_->eval_ci_2b(rsd, otherRsd, pose, emap);
-				for(ScoreTypes::const_iterator st = ci_2b.begin(), ste = ci_2b.end(); st != ste; ++st){
-					if(!emap[*st]) continue;
+				for ( ScoreTypes::const_iterator st = ci_2b.begin(), ste = ci_2b.end(); st != ste; ++st ) {
+					if ( !emap[*st] ) continue;
 
 					RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", *st) );
 					RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[*st]) );
 
 					insert_twobody.add_row(
 						make_vector(
-							batch_id_data, struct_id_data, resNum1_data, resNum2_data,
-							score_type_id_data, score_value_data, context_dependent_data));
+						batch_id_data, struct_id_data, resNum1_data, resNum2_data,
+						score_type_id_data, score_value_data, context_dependent_data));
 
 				}
 			}
@@ -503,16 +503,16 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 
 				EnergyMap emap;
 				scfxn_->eval_cd_2b(rsd, otherRsd, pose, emap);
-				for(ScoreTypes::const_iterator st = cd_2b.begin(), ste = cd_2b.end(); st != ste; ++st){
-					if(!emap[*st]) continue;
+				for ( ScoreTypes::const_iterator st = cd_2b.begin(), ste = cd_2b.end(); st != ste; ++st ) {
+					if ( !emap[*st] ) continue;
 
 					RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", *st) );
 					RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[*st]) );
 
 					insert_twobody.add_row(
 						make_vector(
-							batch_id_data, struct_id_data, resNum1_data, resNum2_data,
-							score_type_id_data, score_value_data, context_dependent_data));
+						batch_id_data, struct_id_data, resNum1_data, resNum2_data,
+						score_type_id_data, score_value_data, context_dependent_data));
 				}
 			}
 		}
@@ -551,26 +551,26 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 	{ // Context Independent Long Range Two Body Energies
 		RowDataBaseOP context_dependent_data( new RowData<bool>("context_dependent", false) );
 
-		for(ScoreFunction::CI_LR_2B_Methods::const_iterator
-					iter = scfxn_->ci_lr_2b_methods_begin(),
-					iter_end = scfxn_->ci_lr_2b_methods_end();
+		for ( ScoreFunction::CI_LR_2B_Methods::const_iterator
+				iter = scfxn_->ci_lr_2b_methods_begin(),
+				iter_end = scfxn_->ci_lr_2b_methods_end();
 				iter != iter_end; ++iter ) {
 			LREnergyContainerCOP lrec =
 				pose.energies().long_range_container((*iter)->long_range_type());
-			if( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
+			if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
 
 			// Potentially O(N^2) operation...
-			for( Size resNum = 1; resNum <= pose.total_residue(); ++resNum ) {
+			for ( Size resNum = 1; resNum <= pose.total_residue(); ++resNum ) {
 
-				for( ResidueNeighborConstIteratorOP
-							 rni = lrec->const_upper_neighbor_iterator_begin( resNum ),
-							 rniend = lrec->const_upper_neighbor_iterator_end( resNum );
-						 (*rni) != (*rniend); ++(*rni) ) {
+				for ( ResidueNeighborConstIteratorOP
+						rni = lrec->const_upper_neighbor_iterator_begin( resNum ),
+						rniend = lrec->const_upper_neighbor_iterator_end( resNum );
+						(*rni) != (*rniend); ++(*rni) ) {
 					Size const otherResNum(rni->upper_neighbor_id());
-					if(!check_relevant_residues( relevant_residues, resNum, otherResNum )) continue;
+					if ( !check_relevant_residues( relevant_residues, resNum, otherResNum ) ) continue;
 
 					Size resNum1, resNum2;
-					if( resNum < otherResNum ){
+					if ( resNum < otherResNum ) {
 						resNum1 = resNum;
 						resNum2 = otherResNum;
 					} else {
@@ -585,19 +585,19 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 					RowDataBaseOP resNum1_data( new RowData<Size>("resNum1", resNum1) );
 					RowDataBaseOP resNum2_data( new RowData<Size>("resNum2", resNum2) );
 
-					for(
-						ScoreTypes::const_iterator
+					for (
+							ScoreTypes::const_iterator
 							st = ci_lr_2b.begin(), ste = ci_lr_2b.end();
-						st != ste; ++st ){
-						if(!emap[*st]) continue;
+							st != ste; ++st ) {
+						if ( !emap[*st] ) continue;
 
 						RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", *st) );
 						RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[*st]) );
 
 						insert_twobody_longrange.add_row(
 							make_vector(
-								batch_id_data, struct_id_data, resNum1_data, resNum2_data,
-								score_type_id_data, score_value_data, context_dependent_data));
+							batch_id_data, struct_id_data, resNum1_data, resNum2_data,
+							score_type_id_data, score_value_data, context_dependent_data));
 					}
 				}
 			}
@@ -609,27 +609,27 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 	{
 		RowDataBaseOP context_dependent_data( new RowData<bool>("context_dependent", true) );
 
-		for(ScoreFunction::CD_LR_2B_Methods::const_iterator
-					iter = scfxn_->cd_lr_2b_methods_begin(),
-					iter_end = scfxn_->cd_lr_2b_methods_end();
+		for ( ScoreFunction::CD_LR_2B_Methods::const_iterator
+				iter = scfxn_->cd_lr_2b_methods_begin(),
+				iter_end = scfxn_->cd_lr_2b_methods_end();
 				iter != iter_end; ++iter ) {
 			LREnergyContainerCOP lrec =
 				pose.energies().long_range_container((*iter)->long_range_type());
-			if( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
+			if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
 
 			// Potentially O(N^2) operation...
-			for( Size resNum = 1; resNum <= pose.total_residue(); ++resNum ) {
-				if(!relevant_residues[resNum]) continue;
+			for ( Size resNum = 1; resNum <= pose.total_residue(); ++resNum ) {
+				if ( !relevant_residues[resNum] ) continue;
 
-				for( ResidueNeighborConstIteratorOP
-							 rni = lrec->const_upper_neighbor_iterator_begin( resNum ),
-							 rniend = lrec->const_upper_neighbor_iterator_end( resNum );
-						 (*rni) != (*rniend); ++(*rni) ) {
+				for ( ResidueNeighborConstIteratorOP
+						rni = lrec->const_upper_neighbor_iterator_begin( resNum ),
+						rniend = lrec->const_upper_neighbor_iterator_end( resNum );
+						(*rni) != (*rniend); ++(*rni) ) {
 					Size const otherResNum(rni->upper_neighbor_id());
-					if(!relevant_residues[otherResNum]) continue;
+					if ( !relevant_residues[otherResNum] ) continue;
 
 					Size resNum1, resNum2;
-					if( resNum < otherResNum ){
+					if ( resNum < otherResNum ) {
 						resNum1 = resNum;
 						resNum2 = otherResNum;
 					} else {
@@ -644,19 +644,19 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 					RowDataBaseOP resNum1_data( new RowData<Size>("resNum1", resNum1) );
 					RowDataBaseOP resNum2_data( new RowData<Size>("resNum2", resNum2) );
 
-					for(
-						ScoreTypes::const_iterator
+					for (
+							ScoreTypes::const_iterator
 							st = ci_lr_2b.begin(), ste = cd_lr_2b.end();
-						st != ste; ++st ){
-						if(!emap[*st]) continue;
+							st != ste; ++st ) {
+						if ( !emap[*st] ) continue;
 
 						RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", *st) );
 						RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[*st]) );
 
 						insert_twobody_longrange.add_row(
 							make_vector(
-								batch_id_data, struct_id_data, resNum1_data, resNum2_data,
-								score_type_id_data, score_value_data, context_dependent_data));
+							batch_id_data, struct_id_data, resNum1_data, resNum2_data,
+							score_type_id_data, score_value_data, context_dependent_data));
 					}
 				}
 			}

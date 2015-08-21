@@ -31,43 +31,43 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	//Constructor
-	CentroidDistanceScreener::CentroidDistanceScreener(  pose::Pose & screening_pose,
-																											 Size const moving_res,
-																											 Vector const & reference_centroid,
-																											 core::Real const max_distance_squared ):
-		screening_pose_( screening_pose ),
-		moving_res_( moving_res ),
-		reference_centroid_( reference_centroid ),
-		max_distance_squared_( max_distance_squared )
-	{}
+//Constructor
+CentroidDistanceScreener::CentroidDistanceScreener(  pose::Pose & screening_pose,
+	Size const moving_res,
+	Vector const & reference_centroid,
+	core::Real const max_distance_squared ):
+	screening_pose_( screening_pose ),
+	moving_res_( moving_res ),
+	reference_centroid_( reference_centroid ),
+	max_distance_squared_( max_distance_squared )
+{}
 
-	//Destructor
-	CentroidDistanceScreener::~CentroidDistanceScreener()
-	{}
+//Destructor
+CentroidDistanceScreener::~CentroidDistanceScreener()
+{}
 
 
-	//////////////////////////////////////////
-	bool
-	CentroidDistanceScreener::check_screen() {
-		Vector const moving_centroid = core::chemical::rna::get_rna_base_centroid( screening_pose_.residue( moving_res_ ) );
-		return ( ( moving_centroid - reference_centroid_ ).length_squared() <= max_distance_squared_ );
+//////////////////////////////////////////
+bool
+CentroidDistanceScreener::check_screen() {
+	Vector const moving_centroid = core::chemical::rna::get_rna_base_centroid( screening_pose_.residue( moving_res_ ) );
+	return ( ( moving_centroid - reference_centroid_ ).length_squared() <= max_distance_squared_ );
+}
+
+//////////////////////////////////////////
+void
+CentroidDistanceScreener::fast_forward( sampler::StepWiseSamplerBaseOP sampler ){
+	if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_LIST ) {
+		RigidBodyStepWiseSamplerWithResidueList & rigid_body_rotamer_with_copy_dofs = *( static_cast< RigidBodyStepWiseSamplerWithResidueList * >( sampler.get() ) );
+		rigid_body_rotamer_with_copy_dofs.fast_forward_to_next_translation();
+	} else if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ) {
+		RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
+		rigid_body_rotamer_with_residue_alternatives.fast_forward_to_next_translation();
+	} else if ( sampler->type() == RIGID_BODY ) {
+		RigidBodyStepWiseSampler & rigid_body_rotamer = *( static_cast< RigidBodyStepWiseSampler * >( sampler.get() ) );
+		rigid_body_rotamer.fast_forward_to_next_translation();
 	}
-
-	//////////////////////////////////////////
-	void
-	CentroidDistanceScreener::fast_forward( sampler::StepWiseSamplerBaseOP sampler ){
-		if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_LIST ){
-			RigidBodyStepWiseSamplerWithResidueList & rigid_body_rotamer_with_copy_dofs = *( static_cast< RigidBodyStepWiseSamplerWithResidueList * >( sampler.get() ) );
-			rigid_body_rotamer_with_copy_dofs.fast_forward_to_next_translation();
-		} else if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ){
-			RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
-			rigid_body_rotamer_with_residue_alternatives.fast_forward_to_next_translation();
-		} else if ( sampler->type() == RIGID_BODY ){
-			RigidBodyStepWiseSampler & rigid_body_rotamer = *( static_cast< RigidBodyStepWiseSampler * >( sampler.get() ) );
-			rigid_body_rotamer.fast_forward_to_next_translation();
-		}
-	}
+}
 
 
 } //screener

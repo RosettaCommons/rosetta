@@ -10,7 +10,7 @@
 /// @file src/protocols/topology_broker/TMHTopologySamplerClaimer.hh
 /// @brief header file for TMHTopologySamplerClaimer, to be used by the TopologyBroker for de novo folding of TM proteins
 /// @details header for sampling protocol that treats transmembrane helices as rigid bodies and moves them around to improve
-/// 	sampling of membrane protein topologies
+///  sampling of membrane protein topologies
 ///
 /// @author Stephanie H. DeLuca (stephanie.h.deluca@vanderbilt.edu)
 
@@ -44,8 +44,8 @@
 #include <string>
 #include <vector>
 
-namespace protocols{
-namespace topology_broker{
+namespace protocols {
+namespace topology_broker {
 
 class TMHTopologySamplerClaimer : public TopologyClaimer{
 	typedef TopologyClaimer Parent;
@@ -104,7 +104,7 @@ public:
 	/// if you don't want to do anything special --- don't overload this method!
 	/// default: adds mover given by virtual call get_mover()  with stage-dependent weight given by abinitio_mover_weight_
 	virtual void add_mover(
-    moves::RandomMover& /* random_mover */,
+		moves::RandomMover& /* random_mover */,
 		core::pose::Pose const& /*pose*/,
 		abinitio::StageID /*stageID*/, /* abinitio sampler stage */
 		core::scoring::ScoreFunction const& /*scorefxn*/,

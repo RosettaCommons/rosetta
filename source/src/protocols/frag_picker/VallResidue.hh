@@ -102,11 +102,11 @@ public:
 		return ss_;
 	}
 
-  /// @brief one letter secondary structure STR code
-  inline
-  char ss_str() const {
-    return ss_str_;
-  }
+	/// @brief one letter secondary structure STR code
+	inline
+	char ss_str() const {
+		return ss_str_;
+	}
 
 	/// @brief residue sequence number in source
 	inline Size resi() const {
@@ -128,65 +128,65 @@ public:
 		return z_;
 	}
 
-  /// @brief x-coordinate of C-beta
-  inline Real cbx() const {
-    return cbx_;
-  }
+	/// @brief x-coordinate of C-beta
+	inline Real cbx() const {
+		return cbx_;
+	}
 
-  /// @brief y-coordinate of C-beta
-  inline Real cby() const {
-    return cby_;
-  }
+	/// @brief y-coordinate of C-beta
+	inline Real cby() const {
+		return cby_;
+	}
 
-  /// @brief z-coordinate of C-beta
-  inline Real cbz() const {
-    return cbz_;
-  }
+	/// @brief z-coordinate of C-beta
+	inline Real cbz() const {
+		return cbz_;
+	}
 
-  /// @brief x-coordinate of centroid
-  inline Real cenx() const {
-    return cenx_;
-  }
+	/// @brief x-coordinate of centroid
+	inline Real cenx() const {
+		return cenx_;
+	}
 
-  /// @brief y-coordinate of centroid
-  inline Real ceny() const {
-    return ceny_;
-  }
+	/// @brief y-coordinate of centroid
+	inline Real ceny() const {
+		return ceny_;
+	}
 
-  /// @brief z-coordinate of centroid
-  inline Real cenz() const {
-    return cenz_;
-  }
+	/// @brief z-coordinate of centroid
+	inline Real cenz() const {
+		return cenz_;
+	}
 
-  /// @brief solvent accessible area
-  inline Real sa() const {
-    return sa_;
-  }
+	/// @brief solvent accessible area
+	inline Real sa() const {
+		return sa_;
+	}
 
 	/// @brief solvent accessible area normalized
 	inline Real sa_norm() const {
 		return sa_norm_;
 	}
 
-  /// @brief phi backbone torsion in degrees from DSSP
-  inline Real dssp_phi() const {
-    return dssp_phi_;
-  }
+	/// @brief phi backbone torsion in degrees from DSSP
+	inline Real dssp_phi() const {
+		return dssp_phi_;
+	}
 
-  /// @brief psi backbone torsion in degrees from DSSP
-  inline Real dssp_psi() const {
-    return dssp_psi_;
-  }
+	/// @brief psi backbone torsion in degrees from DSSP
+	inline Real dssp_psi() const {
+		return dssp_psi_;
+	}
 
 	/// @brief all-atom residue depth
 	inline Real depth() const {
 		return all_atom_residue_depth_;
 	}
 
-  /// @brief number of alignments
-  inline Size nali() const {
-    return nali_;
-  }
+	/// @brief number of alignments
+	inline Size nali() const {
+		return nali_;
+	}
 
 	/// @brief phi backbone torsion in degrees
 	inline Real phi() const {
@@ -266,47 +266,47 @@ public:
 		ss_ = c;
 	}
 
-  /// @brief one letter secondary structure STR code
-  inline
-  void ss_str(char const c) {
-    ss_str_ = c;
-  }
+	/// @brief one letter secondary structure STR code
+	inline
+	void ss_str(char const c) {
+		ss_str_ = c;
+	}
 
 	inline
 	void set_ss_from_str() {
 		switch(ss_str_) {
-			case 'H':
-				ss_ = 'H';
-				break;
-			case 'G':
-				ss_ = 'H';
-				break;
-			case 'I':
-				ss_ = 'H';
-				break;
-			case 'A':
-				ss_ = 'E';
-				break;
-			case 'E':
-				ss_ = 'E';
-				break;
-			case 'M':
-				ss_ = 'E';
-				break;
-			case 'P':
-				ss_ = 'E';
-				break;
-			case 'Q':
-				ss_ = 'E';
-				break;
-			case 'Z':
-				ss_ = 'E';
-				break;
-			case 'B':
-				ss_ = 'E';
-				break;
-			default:
-				ss_ = 'L';
+		case 'H' :
+			ss_ = 'H';
+			break;
+		case 'G' :
+			ss_ = 'H';
+			break;
+		case 'I' :
+			ss_ = 'H';
+			break;
+		case 'A' :
+			ss_ = 'E';
+			break;
+		case 'E' :
+			ss_ = 'E';
+			break;
+		case 'M' :
+			ss_ = 'E';
+			break;
+		case 'P' :
+			ss_ = 'E';
+			break;
+		case 'Q' :
+			ss_ = 'E';
+			break;
+		case 'Z' :
+			ss_ = 'E';
+			break;
+		case 'B' :
+			ss_ = 'E';
+			break;
+		default :
+			ss_ = 'L';
 		}
 	}
 
@@ -335,54 +335,54 @@ public:
 	}
 
 
-  /// @brief x-coordinate of C-beta
-  inline
-  void cbx(Real const val) {
-    cbx_ = val;
-  }
+	/// @brief x-coordinate of C-beta
+	inline
+	void cbx(Real const val) {
+		cbx_ = val;
+	}
 
-  /// @brief y-coordinate of C-beta
-  inline
-  void cby(Real const val) {
-    cby_ = val;
-  }
+	/// @brief y-coordinate of C-beta
+	inline
+	void cby(Real const val) {
+		cby_ = val;
+	}
 
-  /// @brief z-coordinate of C-beta
-  inline
-  void cbz(Real const val) {
-    cbz_ = val;
-  }
+	/// @brief z-coordinate of C-beta
+	inline
+	void cbz(Real const val) {
+		cbz_ = val;
+	}
 
-  /// @brief x-coordinate of centroid
-  inline
-  void cenx(Real const val) {
-    cenx_ = val;
-  }
+	/// @brief x-coordinate of centroid
+	inline
+	void cenx(Real const val) {
+		cenx_ = val;
+	}
 
-  /// @brief y-coordinate of centroid
-  inline
-  void ceny(Real const val) {
-    ceny_ = val;
-  }
+	/// @brief y-coordinate of centroid
+	inline
+	void ceny(Real const val) {
+		ceny_ = val;
+	}
 
-  /// @brief z-coordinate of centroid
-  inline
-  void cenz(Real const val) {
-    cenz_ = val;
-  }
+	/// @brief z-coordinate of centroid
+	inline
+	void cenz(Real const val) {
+		cenz_ = val;
+	}
 
 
-  /// @brief solvent accessible area
-  inline
-  void sa(Real const val) {
-    sa_ = val;
-  }
+	/// @brief solvent accessible area
+	inline
+	void sa(Real const val) {
+		sa_ = val;
+	}
 
-  /// @brief number of alignments
-  inline
-  void nali(Size const val) {
-    nali_ = val;
-  }
+	/// @brief number of alignments
+	inline
+	void nali(Size const val) {
+		nali_ = val;
+	}
 
 	/// @brief all-atom residue depth
 	inline

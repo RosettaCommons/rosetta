@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/scoring/membrane/MPTMProjPenalty.fwd.hh
+/// @file  core/scoring/membrane/MPTMProjPenalty.fwd.hh
 ///
-///	@brief		Membrane Protein TM Proj Penalty
-///	@details	Whole structure energy - Penalty for unreasonable tm-helix length compared to predicted
-///				helix length (from topology) and uses mpframework data
-///				Last Modified: 4/3/14
+/// @brief  Membrane Protein TM Proj Penalty
+/// @details Whole structure energy - Penalty for unreasonable tm-helix length compared to predicted
+///    helix length (from topology) and uses mpframework data
+///    Last Modified: 4/3/14
 ///
-///	@author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_scoring_membrane_MPTMProjPenalty_fwd_hh
 #define INCLUDED_core_scoring_membrane_MPTMProjPenalty_fwd_hh
@@ -25,11 +25,11 @@
 namespace core {
 namespace scoring {
 namespace membrane {
-	
+
 class MPTMProjPenalty;
 typedef utility::pointer::shared_ptr< MPTMProjPenalty > MPTMProjPenaltyOP;
 typedef utility::pointer::shared_ptr< MPTMProjPenalty const > MPTMProjPenaltyCOP;
-	
+
 } // membrane
 } // scoring
 } // core

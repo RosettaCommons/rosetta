@@ -9,7 +9,7 @@
 
 
 //kdrew: based on code from mini/src/apps/public/scenarios/doug_dock_design_min_mod2_cal_cal.cc
-//			and https://svn.rosettacommons.org/source/branches/releases/rosetta-3.1/manual/advanced/example_protocol.cc
+//   and https://svn.rosettacommons.org/source/branches/releases/rosetta-3.1/manual/advanced/example_protocol.cc
 
 //Headers are generally organized by either what they do or where they come from.  This organization is first core library headers, then protocols library, then utility stuff.
 
@@ -116,28 +116,28 @@ static thread_local basic::Tracer TR( "OopDesign" );
 
 // application specific options
 namespace oop_design {
-	// pert options
-	
-	IntegerOptionKey const pert_num( "oop_design::pert_num" );
-	IntegerOptionKey const design_loop_num( "oop_design::design_loop_num" );
+// pert options
 
-	IntegerVectorOptionKey const oop_design_positions( "oop_design::oop_design_positions" );
+IntegerOptionKey const pert_num( "oop_design::pert_num" );
+IntegerOptionKey const design_loop_num( "oop_design::design_loop_num" );
+
+IntegerVectorOptionKey const oop_design_positions( "oop_design::oop_design_positions" );
 
 }
 
 class OopDesignMover : public Mover {
 
-	public:
+public:
 
-		//default ctor
-		OopDesignMover(): Mover("OopDesignMover"){}
+	//default ctor
+	OopDesignMover(): Mover("OopDesignMover"){}
 
-		//default dtor
-		virtual ~OopDesignMover(){}
+	//default dtor
+	virtual ~OopDesignMover(){}
 
-		//methods
-		virtual void apply( core::pose::Pose & pose );
-		virtual std::string get_name() const { return "OopDesignMover"; }
+	//methods
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const { return "OopDesignMover"; }
 
 };
 
@@ -151,30 +151,30 @@ main( int argc, char* argv[] )
 	try {
 
 
-	/*********************************************************************************************************************
-	Common Setup
-	**********************************************************************************************************************/
+		/*********************************************************************************************************************
+		Common Setup
+		**********************************************************************************************************************/
 
-	// add application specific options to options system
-	// There are far more options here than you will realistically need for a program of this complexity - but this gives you an idea of how to fine-grain option-control everything
+		// add application specific options to options system
+		// There are far more options here than you will realistically need for a program of this complexity - but this gives you an idea of how to fine-grain option-control everything
 
-	option.add( oop_design::pert_num, "Number of iterations of perturbation loop per design" ).def(10);
-	option.add( oop_design::design_loop_num, "Number of iterations of pertubation and design" ).def(10);
+		option.add( oop_design::pert_num, "Number of iterations of perturbation loop per design" ).def(10);
+		option.add( oop_design::design_loop_num, "Number of iterations of pertubation and design" ).def(10);
 
-	utility::vector1< core::Size > empty_vector(0);
-	option.add( oop_design::oop_design_positions, "Positions of oop to design" ).def( empty_vector );
+		utility::vector1< core::Size > empty_vector(0);
+		option.add( oop_design::oop_design_positions, "Positions of oop to design" ).def( empty_vector );
 
-	// init command line options
-	//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
-	devel::init(argc, argv);
+		// init command line options
+		//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
+		devel::init(argc, argv);
 
-	//create mover instance
-	OopDesignMoverOP OD_mover( new OopDesignMover() );
+		//create mover instance
+		OopDesignMoverOP OD_mover( new OopDesignMover() );
 
-	setup_filter_stats();
+		setup_filter_stats();
 
-	//call job distributor
-	protocols::jd2::JobDistributor::get_instance()->go( OD_mover );
+		//call job distributor
+		protocols::jd2::JobDistributor::get_instance()->go( OD_mover );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
@@ -221,8 +221,9 @@ OopDesignMover::apply(
 	for ( Size i = 1; i <= oop_seq_positions.size(); i++  ) {
 		pert_pep_mm->set_bb( oop_seq_positions[i], false );
 
-		if ( score_fxn->has_zero_weight( core::scoring::atom_pair_constraint ) )
+		if ( score_fxn->has_zero_weight( core::scoring::atom_pair_constraint ) ) {
 			score_fxn->set_weight( core::scoring::atom_pair_constraint, 1.0 );
+		}
 
 	}
 
@@ -282,7 +283,7 @@ OopDesignMover::apply(
 	desn_mm->set_jump( 1, true );
 
 	// create minimization mover
-	simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( desn_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
+	simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( desn_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 
 	//definitely want sidechain minimization here
 	using protocols::simple_moves::TaskAwareMinMoverOP;
@@ -294,18 +295,18 @@ OopDesignMover::apply(
 	**********************************************************************************************************************/
 
 	TR << "Main loop..." << std::endl;
-	
+
 	ncbb_design_main_loop( Size( option[ oop_design::design_loop_num ].value() ),
-						  Size( option[ oop_design::pert_num ].value() ),
-						  pose,
-						  pert_trial,
-						  option[ oop_design::oop_design_positions ].value(),
-						  pep_start,
-						  pep_end,
-						  desn_ta_min,
-						  score_fxn,
-						  mc
-						  );
+		Size( option[ oop_design::pert_num ].value() ),
+		pose,
+		pert_trial,
+		option[ oop_design::oop_design_positions ].value(),
+		pep_start,
+		pep_end,
+		desn_ta_min,
+		score_fxn,
+		mc
+	);
 
 	protocols::jd2::JobOP curr_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 

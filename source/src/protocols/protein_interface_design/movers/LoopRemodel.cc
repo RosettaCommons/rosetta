@@ -162,17 +162,16 @@ LoopRemodel::apply( core::pose::Pose & pose )
 {
 	using namespace protocols::loops;
 	using core::pack::task::operation::TaskOperationCOP;
-	
+
 	core::pose::Pose native_pose = pose;
 
 	LoopsOP loops( new protocols::loops::Loops( *loops_ ) ); // loops_ gets set in parse_my_tag
-	if( loops->size() == 0)  {
+	if ( loops->size() == 0 )  {
 		TR << "No loops found!" << std::endl;
 		return; // bounce out if we didn't define any loops
-	}
-	else TR << *loops << std::endl;
+	} else TR << *loops << std::endl;
 
-	if( loops->size() > 0 ) {
+	if ( loops->size() > 0 ) {
 		// set up temporary fold tree for loop closure
 		TR.Debug << "Original FoldTree " << pose.fold_tree() << std::endl;
 		core::kinematics::FoldTree old_ft( pose.fold_tree() );
@@ -186,50 +185,49 @@ LoopRemodel::apply( core::pose::Pose & pose )
 		task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 		task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::IncludeCurrent ) );
 		task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::NoRepackDisulfides ) );
-			// perturbation and closure
-		if( hurry_ ) {
+		// perturbation and closure
+		if ( hurry_ ) {
 			core::Real mc_kt( 1.0 );
-			if( basic::options::option[ basic::options::OptionKeys::loops::remodel_init_temp ].user() ) mc_kt = basic::options::option[ basic::options::OptionKeys::loops::remodel_init_temp ]();
+			if ( basic::options::option[ basic::options::OptionKeys::loops::remodel_init_temp ].user() ) mc_kt = basic::options::option[ basic::options::OptionKeys::loops::remodel_init_temp ]();
 			core::Size const outer_cycles( cycles_ );
 			protocols::moves::MonteCarlo outer_mc( pose, *hires_score_, mc_kt );
 			outer_mc.set_autotemp( true, mc_kt );
-			for( core::Size i = 1; i <= outer_cycles; ++i ) {
+			for ( core::Size i = 1; i <= outer_cycles; ++i ) {
 				TR.Debug << "outer_cycle " << i << " kt=" << outer_mc.temperature() << std::endl;
-					core::Size const inner_cycles( 20 );
-					protocols::moves::MonteCarlo inner_mc( pose, *hires_score_, mc_kt );
-					inner_mc.set_autotemp( true, mc_kt );
-					for( core::Size j = 1; j <= inner_cycles; ++j ) {
-						TR.Debug << "inner_cycle " << j << " kt=" << inner_mc.temperature() << std::endl;
-						for( Loops::iterator it = loops->v_begin(); it != loops->v_end(); ++it ) {
-							// make a temporary loop/loops set to use in this scope
-							Loop loop( *it );
+				core::Size const inner_cycles( 20 );
+				protocols::moves::MonteCarlo inner_mc( pose, *hires_score_, mc_kt );
+				inner_mc.set_autotemp( true, mc_kt );
+				for ( core::Size j = 1; j <= inner_cycles; ++j ) {
+					TR.Debug << "inner_cycle " << j << " kt=" << inner_mc.temperature() << std::endl;
+					for ( Loops::iterator it = loops->v_begin(); it != loops->v_end(); ++it ) {
+						// make a temporary loop/loops set to use in this scope
+						Loop loop( *it );
 
-							loops::loop_closure::kinematic_closure::KinematicMoverOP kinmover( new loops::loop_closure::kinematic_closure::KinematicMover );
-							if( perturb_ ) kinmover->set_idealize_loop_first( true );
-							core::Size const cycles = 100;
-							kinmover->set_temperature( mc_kt );
-							kinmover->set_sfxn(hires_score_);
-							kinmover->set_vary_bondangles( true );
-							kinmover->set_sample_nonpivot_torsions( true );
-							kinmover->set_rama_check( true );
+						loops::loop_closure::kinematic_closure::KinematicMoverOP kinmover( new loops::loop_closure::kinematic_closure::KinematicMover );
+						if ( perturb_ ) kinmover->set_idealize_loop_first( true );
+						core::Size const cycles = 100;
+						kinmover->set_temperature( mc_kt );
+						kinmover->set_sfxn(hires_score_);
+						kinmover->set_vary_bondangles( true );
+						kinmover->set_sample_nonpivot_torsions( true );
+						kinmover->set_rama_check( true );
 
-							protocols::loops::loop_closure::kinematic_closure::KinematicWrapper kinwrapper( kinmover, loop, cycles );
-							kinwrapper.apply( pose );
-						} // for all loops
-						inner_mc.boltzmann( pose );
-					} // for inner_cycles
-					inner_mc.show_counters();
-					if( basic::options::option[ basic::options::OptionKeys::loops::kic_recover_last ].value() ) {
-						pose = inner_mc.last_accepted_pose();
-					}
-					else inner_mc.recover_low( pose );
+						protocols::loops::loop_closure::kinematic_closure::KinematicWrapper kinwrapper( kinmover, loop, cycles );
+						kinwrapper.apply( pose );
+					} // for all loops
+					inner_mc.boltzmann( pose );
+				} // for inner_cycles
+				inner_mc.show_counters();
+				if ( basic::options::option[ basic::options::OptionKeys::loops::kic_recover_last ].value() ) {
+					pose = inner_mc.last_accepted_pose();
+				} else inner_mc.recover_low( pose );
 
 				//} // if perturb
 
 				(*hires_score_)(pose); // score the pose (for safety & to get a good graph state)
 				// repack to relieve clashes
 
-				if( prevent_repacking().size() ){
+				if ( prevent_repacking().size() ) {
 					using namespace core::pack::task::operation;
 					OperateOnCertainResiduesOP prevent_repacking_on_certain_res( new OperateOnCertainResidues );
 					prevent_repacking_on_certain_res->residue_indices( prevent_repacking() );
@@ -237,17 +235,17 @@ LoopRemodel::apply( core::pose::Pose & pose )
 					task_factory->push_back( prevent_repacking_on_certain_res );
 				}
 
-				if( basic::options::option[ basic::options::OptionKeys::packing::resfile ].user() ) {
+				if ( basic::options::option[ basic::options::OptionKeys::packing::resfile ].user() ) {
 					task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::ReadResfile ) );
 				}
-				if( !design() ) task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+				if ( !design() ) task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
 				core::pack::task::PackerTaskOP task = task_factory->create_task_and_apply_taskoperations( pose );
 
-				if( design() ) {
-					for( Loops::iterator it = loops->v_begin(); it != loops->v_end(); ++it ) {
+				if ( design() ) {
+					for ( Loops::iterator it = loops->v_begin(); it != loops->v_end(); ++it ) {
 						Loop loop( *it );
-						for( core::Size i = 1; i <= pose.total_residue(); ++i ) {
-							if( i >= loop.start() && i <= loop.stop() ) continue; // design
+						for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+							if ( i >= loop.start() && i <= loop.stop() ) continue; // design
 							else task->nonconst_residue_task( i ).restrict_to_repacking(); // repack only
 						}
 					}
@@ -255,7 +253,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 				protocols::simple_moves::PackRotamersMover pack( hires_score_, task );
 				pack.apply( pose );
 
-				if( refine_ ) {
+				if ( refine_ ) {
 					loops_set_move_map( pose, *loops, refine_, *movemap ); // bb, except for omega and all sidechains
 					core::scoring::ScoreFunctionOP copy_score( hires_score_->clone() );
 					copy_score->set_weight( core::scoring::chainbreak, 10.0 ); // upweight chainbreak, to strongly disfavor breaks
@@ -267,17 +265,15 @@ LoopRemodel::apply( core::pose::Pose & pose )
 			} // for outer_cycles
 			outer_mc.recover_low( pose );
 			outer_mc.show_counters();
-		} // if hurry
-
-		else { // !hurry
+		} else { // if hurry // !hurry
 			// pose will always start full atom
 			//protocols::moves::MonteCarlo mc( pose, *scorefxn_repack_, mc_kt );
 			SaveAndRetrieveSidechains retrieve_sc( pose );
 			retrieve_sc.allsc( true );
 			core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID);
-			if( protocol_ == "kinematic" ) {
-				if( perturb_ ) {
-					for( Loops::iterator it = loops->v_begin(); it != loops->v_end(); ++it ) {
+			if ( protocol_ == "kinematic" ) {
+				if ( perturb_ ) {
+					for ( Loops::iterator it = loops->v_begin(); it != loops->v_end(); ++it ) {
 						it->set_extended( true ); // set all loops to extended (needed for kinematic mover to really perturb)
 					}
 					protocols::loops::loop_mover::perturb::LoopMover_Perturb_KIC perturb( loops, lores_score_ );
@@ -286,7 +282,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 				}
 				core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
 				retrieve_sc.apply( pose ); // recover sidechains from pre-centroid pose
-				if( refine_ ) {
+				if ( refine_ ) {
 					protocols::loops::loop_mover::refine::LoopMover_Refine_KIC refine( loops, hires_score_ );
 					refine.set_redesign_loop( design() ); // design?
 					//if( task_factory() ) refine.set_task_factory( task_factory() ); // if we have a task factory set, then we should pass it to the loop mover
@@ -294,8 +290,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 					pose.update_residue_neighbors();
 					refine.apply( pose );
 				}
-			} // protocol == kinematic
-			else if( protocol_ == "ccd" ) {
+			} else if ( protocol_ == "ccd" ) { // protocol == kinematic
 				pose.update_residue_neighbors();
 				core::scoring::dssp::Dssp dssp( pose );
 				dssp.insert_ss_into_pose( pose );
@@ -303,15 +298,15 @@ LoopRemodel::apply( core::pose::Pose & pose )
 				std::string const full_sequence = pose.sequence();
 
 				bool const pick_status = pick_loop_frags( loops, full_sequence, full_ss );
-				if( !pick_status ) {
+				if ( !pick_status ) {
 					set_last_move_status( protocols::moves::FAIL_RETRY );
 					return;
 				}
-				if( perturb_ ) {
+				if ( perturb_ ) {
 					//protocols::loops::LoopMover_Perturb_QuickCCD perturb(*loops, lores_score_ );
-					for( Loops::iterator it = loops->v_begin(); it != loops->v_end(); ++it ) {
-                                                it->set_extended( true ); // set all loops to extended (needed for CCD mover to really perturb)
-                                        }
+					for ( Loops::iterator it = loops->v_begin(); it != loops->v_end(); ++it ) {
+						it->set_extended( true ); // set all loops to extended (needed for CCD mover to really perturb)
+					}
 					protocols::loops::loop_mover::perturb::LoopMover_Perturb_CCD perturb( loops, lores_score_ );
 					perturb.add_fragments( frag1_ );
 					perturb.add_fragments( frag3_ );
@@ -323,7 +318,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 				}
 				core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
 				retrieve_sc.apply( pose ); // recover sidechains from pre-centroid pose
-				if( refine_ ) {
+				if ( refine_ ) {
 					protocols::loops::loop_mover::refine::LoopMover_Refine_CCD refine( loops, hires_score_ );
 					refine.add_fragments( frag1_ );
 					refine.add_fragments( frag3_ );
@@ -333,8 +328,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 					refine.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
 					refine.apply( pose );
 				}
-			} // protocol == ccd
-			else if( protocol_ == "remodel" ) {
+			} else if ( protocol_ == "remodel" ) { // protocol == ccd
 				// remodel starts as fa
 				core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
 				retrieve_sc.apply( pose ); // recover sidechains from pre-centroid pose
@@ -344,7 +338,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 				std::string const full_ss = pose.secstruct();
 				std::string const full_sequence = pose.sequence();
 				bool const pick_status = pick_loop_frags( loops, full_sequence, full_ss );
-				if( !pick_status ) {
+				if ( !pick_status ) {
 					set_last_move_status( protocols::moves::FAIL_RETRY );
 					return;
 				}
@@ -354,9 +348,9 @@ LoopRemodel::apply( core::pose::Pose & pose )
 				remodel.add_fragments( frag3_ );
 				remodel.add_fragments( frag9_ );
 				remodel.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
-				for( core::Size i = 1; i <= cycles_; ++i ) {
+				for ( core::Size i = 1; i <= cycles_; ++i ) {
 					remodel.apply( pose );
-					if( (remodel.get_last_move_status() == protocols::moves::MS_SUCCESS) || (remodel.get_last_move_status() == protocols::moves::FAIL_DO_NOT_RETRY) ) break;
+					if ( (remodel.get_last_move_status() == protocols::moves::MS_SUCCESS) || (remodel.get_last_move_status() == protocols::moves::FAIL_DO_NOT_RETRY) ) break;
 				}
 			}
 		}
@@ -365,8 +359,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 		remove_cutpoint_variants( pose, true );
 		pose.fold_tree( old_ft );
 		TR.Debug << "Reverted FoldTree " << pose.fold_tree() << std::endl;
-	}
-	else TR << "No loops found!" << std::endl;
+	} else TR << "No loops found!" << std::endl;
 }
 
 std::string
@@ -384,17 +377,17 @@ LoopRemodel::pick_loop_frags( protocols::loops::LoopsCOP loops_in, std::string c
 	using namespace protocols::loops;
 
 	LoopsCOP loops( LoopsOP( new Loops( *loops_in ) ) );
-	for( core::Size frag_length = 3; frag_length <= 9; frag_length+=6 ) { // frag3 and frag9
+	for ( core::Size frag_length = 3; frag_length <= 9; frag_length+=6 ) { // frag3 and frag9
 		TR << "Finding " << frag_length <<"mer loop fragments..." << std::endl;
-		if( frag_length == 3 ) frag3_ = core::fragment::FragSetOP( new ConstantLengthFragSet( frag_length ) );
-		else if( frag_length == 9 ) frag9_ = core::fragment::FragSetOP( new ConstantLengthFragSet( frag_length ) );
+		if ( frag_length == 3 ) frag3_ = core::fragment::FragSetOP( new ConstantLengthFragSet( frag_length ) );
+		else if ( frag_length == 9 ) frag9_ = core::fragment::FragSetOP( new ConstantLengthFragSet( frag_length ) );
 
-		for( Loops::const_iterator it = loops->begin(); it != loops->end(); ++it ) {
+		for ( Loops::const_iterator it = loops->begin(); it != loops->end(); ++it ) {
 			// make a temporary loop/loops set to use in this scope
 			LoopCOP loop( LoopOP( new Loop(*it ) ) );
-			if( loop->size() < frag_length ) continue; // fragment extends past loop
+			if ( loop->size() < frag_length ) continue; // fragment extends past loop
 
-			for( core::Size i=loop->start(); i <= loop->stop() - frag_length; ++i ) {
+			for ( core::Size i=loop->start(); i <= loop->stop() - frag_length; ++i ) {
 
 				// figure out ss and sequence that we're currently working on
 				std::string ss = full_ss.substr( i - 1, frag_length); // subtract 1 to get string indexing -> pose indexing
@@ -410,9 +403,9 @@ LoopRemodel::pick_loop_frags( protocols::loops::LoopsCOP loops_in, std::string c
 
 				// pick fragments
 				FragDataOPs list;
-				if( design() ) list =  picking_old::vall::pick_fragments_by_ss( ss, 4000, true /*add random noise*/ ); //magic number: 4000 fragments
+				if ( design() ) list =  picking_old::vall::pick_fragments_by_ss( ss, 4000, true /*add random noise*/ ); //magic number: 4000 fragments
 				else list = picking_old::vall::pick_fragments_by_ss_plus_aa( ss, aa, 4000, true );
-				for( FragDataOPs::const_iterator it = list.begin(); it != list.end(); ++it ) {
+				for ( FragDataOPs::const_iterator it = list.begin(); it != list.end(); ++it ) {
 					TR.Debug << (*it)->size() << " " << (*it)->sequence() << std::endl;
 				}
 
@@ -420,19 +413,19 @@ LoopRemodel::pick_loop_frags( protocols::loops::LoopsCOP loops_in, std::string c
 				TR.Debug << "Adding frame: "<< i << "-" << i+frag_length << ": " << ss << " " << aa << std::endl;
 				core::fragment::FrameOP frame( new core::fragment::Frame( i, frag_length ) );
 				frame->add_fragment( list );
-				if( frag_length == 3 ) frag3_->add( frame );
-				else if( frag_length == 9 ) frag9_->add( frame );
+				if ( frag_length == 3 ) frag3_->add( frame );
+				else if ( frag_length == 9 ) frag9_->add( frame );
 			} // for all residues in each loop
 		} // for all loops
 	} // frag3 and frag9
-	if( frag3_->size() ) {
+	if ( frag3_->size() ) {
 		frag1_ = core::fragment::FragSetOP( new ConstantLengthFragSet( 1 ) );
 		frag1_->add( *protocols::forge::methods::smallmer_from_largemer( frag3_->begin(), frag3_->end(), 1 ) );
 	}
 
 	// WARNING WARNING WARNING! THREAD UNSAFE!  WHY WOULD YOU THINK THIS IS A GOOD IDEA?
 	picking_old::FragmentLibraryManager::get_instance()->clear_Vall();
-	if( (frag1_->size() > 0) || (frag3_->size() > 0) || (frag9_->size() > 0) ) return true;
+	if ( (frag1_->size() > 0) || (frag3_->size() > 0) || (frag9_->size() > 0) ) return true;
 	else return false;
 }
 
@@ -461,15 +454,13 @@ LoopRemodel::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, p
 	loop_end_ = 0;
 
 	// populate loops
-	if( auto_loops_ ) {
-		if( !data.has( "loops", "found_loops" ) )
-		{
+	if ( auto_loops_ ) {
+		if ( !data.has( "loops", "found_loops" ) ) {
 			TR << "Loops not present in basic::datacache::DataMap! Be sure to add LoopFinder before LoopRemodel!" << std::endl;
 			return;
 		}
 		loops_ = data.get_ptr<protocols::loops::Loops>( "loops", "found_loops" ); // from LoopFinder
-	}
-	else {
+	} else {
 		loop_start_ = core::pose::get_resnum( tag, pose, "loop_start_" );
 		loop_end_   = core::pose::get_resnum( tag, pose, "loop_end_" );
 		core::Size const cutpt = (loop_start_+loop_end_)/2; // put cutpoint in the middle of the loop
@@ -479,7 +470,7 @@ LoopRemodel::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, p
 	}
 
 	runtime_assert( auto_loops_ || (loop_start_ && loop_end_) );
-	if( (loop_start_ && loop_end_) && !auto_loops_ ) {
+	if ( (loop_start_ && loop_end_) && !auto_loops_ ) {
 		runtime_assert( loop_end_ > loop_start_ );
 		runtime_assert( (loop_end_ - loop_start_) >= 3 );
 		runtime_assert( loop_start_ > 1 );

@@ -11,7 +11,7 @@
 /// @brief Prepacking of the bound structure before
 ///        docking
 /// @author Robin A Thottungal (raugust1@jhu.edu)
-///			added to: JKLeman (julia.koehler1982@gmail.com)
+///   added to: JKLeman (julia.koehler1982@gmail.com)
 #ifndef INCLUDED_protocols_docking_DockingPrepackProtocol_hh
 #define INCLUDED_protocols_docking_DockingPrepackProtocol_hh
 
@@ -38,7 +38,7 @@
 
 
 namespace protocols {
-namespace docking{
+namespace docking {
 
 using namespace protocols::moves;
 
@@ -70,7 +70,7 @@ private:
 	utility::vector1< rigid::RigidBodyTransMoverOP > trans_back_vec_;
 
 	core::Real trans_magnitude_;
-	
+
 	/// @brief membrane for translating in the membrane plane
 	bool membrane_;
 
@@ -79,13 +79,13 @@ private:
 	SidechainMinMoverOP scmin_mover_;
 	SequenceMoverOP pack_operations_;
 	bool dock_ppk_;
-    FaDockingSlideIntoContactOP fa_dock_slide_into_contact_;
+	FaDockingSlideIntoContactOP fa_dock_slide_into_contact_;
 
 	/// @brief Performs setup that requires a pose
 	void finalize_setup( core::pose::Pose & );
 	void register_options();
 	void init_from_options();
-	
+
 };
 
 }

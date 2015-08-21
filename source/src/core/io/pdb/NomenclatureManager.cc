@@ -155,9 +155,9 @@ NomenclatureManager::find_alternate_codes_file( std::string filename )
 					return path + filename + ext;
 				} else {
 					utility_exit_with_message( "Unable to open alternative codes file. Neither ./" + filename +
-							" nor " + "./" + filename + ext +
-							" nor " + path + filename +
-							" nor " + path + filename + ext + " exists." );
+						" nor " + "./" + filename + ext +
+						" nor " + path + filename +
+						" nor " + path + filename + ext + " exists." );
 				}
 			}
 		}

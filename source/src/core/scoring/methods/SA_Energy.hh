@@ -58,8 +58,8 @@ public:
 		ScoreFunction const &,
 		EnergyMap & totals
 	) const;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 	void
 	indicate_required_context_graphs(

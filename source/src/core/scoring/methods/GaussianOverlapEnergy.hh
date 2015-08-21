@@ -115,8 +115,8 @@ public:
 private:
 
 	numeric::interpolation::spline::InterpolatorOP interp_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

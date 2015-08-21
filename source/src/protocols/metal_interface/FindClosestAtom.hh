@@ -19,8 +19,8 @@
 #include <core/types.hh>
 #include <string>
 
-namespace protocols{
-namespace metal_interface{
+namespace protocols {
+namespace metal_interface {
 
 //helper function - iterates over all sidechain non-carbon heavy atoms of res to find the one closest to xyz
 std::string find_closest_atom( core::conformation::Residue const & res, core::Vector const & xyz );

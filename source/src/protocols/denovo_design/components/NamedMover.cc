@@ -57,11 +57,11 @@ NamedMover::NamedMover( std::string const & idval, std::string const & parent_id
 /// @brief setup the parameters via an xml tag
 void
 NamedMover::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & )
 {
 	if ( tag->hasOption( "name" ) ) {
 		set_id( tag->getOption< std::string >( "name" ) );
@@ -108,8 +108,9 @@ void
 NamedMover::set_parent_id( std::string const & parentid )
 {
 	parent_id_ = parentid;
-	if ( ! id_.empty() )
+	if ( ! id_.empty() ) {
 		set_id( id() );
+	}
 }
 
 } // namespace components

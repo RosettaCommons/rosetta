@@ -70,7 +70,7 @@ public:
 
 	virtual void setUp() {
 		pose_ = core::pose::PoseOP( new core::pose::Pose );
-		if (centroid_) {
+		if ( centroid_ ) {
 			core::chemical::ResidueTypeSetCOP rts = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
 			core::import_pose::pose_from_pdb(*pose_, *rts, in_file_);
 		} else {
@@ -95,9 +95,9 @@ public:
 			scorefxn_->set_weight(score_type_, 1);
 			// Run for testing of score value *and* side-effects of calling
 			// Exact equality here is intended. Close-to-zero implies substantial calculations
-			if( scorefxn_->score(*pose_) == 0 ) {
+			if ( scorefxn_->score(*pose_) == 0 ) {
 				TR.Warning << "WARNING: Performance test for score term '" << score_type_
-						<< "' gives zero energy with test structure. Timing values may not be informative." << std::endl;
+					<< "' gives zero energy with test structure. Timing values may not be informative." << std::endl;
 			}
 			setup_successful_ = true;
 		} catch (utility::excn::EXCN_Base& excn){
@@ -113,7 +113,7 @@ public:
 	virtual void run(core::Real scaleFactor) {
 		using namespace core::scoring::methods;
 
-		if(!setup_successful_){
+		if ( !setup_successful_ ) {
 			TR.Error
 				<< "Skipping running this test becuase the setup was not completed successfully." << std::endl;
 			return;
@@ -130,8 +130,8 @@ public:
 			core::scoring::ScoreFunction scorefxn;
 			try{
 				core::Size reps( (core::Size)(base_scale_factor_*scaleFactor) );
-				if( reps == 0 ) { reps = 1; } // Do at least one repetion, regardless of scaling.
-				for(core::Size i=0; i < reps; i++) {
+				if ( reps == 0 ) { reps = 1; } // Do at least one repetion, regardless of scaling.
+				for ( core::Size i=0; i < reps; i++ ) {
 					scorefxn.set_weight(score_type_, 1);
 					scorefxn.score(*pose_);
 					pose_->energies().clear();
@@ -167,7 +167,7 @@ public:
 		OneBodyEnergy const & e1b( static_cast< OneBodyEnergy const & > ( *enmeth_ ));
 		EnergyMap emap;
 		core::Size reps( (core::Size)(base_scale_factor_*scaleFactor) );
-		if( reps == 0 ) { reps = 1; } // Do at least one repetion, regardless of scaling.
+		if ( reps == 0 ) { reps = 1; } // Do at least one repetion, regardless of scaling.
 		for ( core::Size ii = 1; ii <= reps; ++ii ) {
 			emap.zero( e1b.score_types() );
 			for ( core::Size jj = 1; jj <= pose_->total_residue(); ++jj ) {
@@ -196,7 +196,7 @@ public:
 		ShortRangeTwoBodyEnergy const & e2b( static_cast< ShortRangeTwoBodyEnergy const & > (*enmeth_) );
 		EnergyMap emap;
 		core::Size reps( (core::Size)(base_scale_factor_*scaleFactor) );
-		if( reps == 0 ) { reps = 1; } // Do at least one repetion, regardless of scaling.
+		if ( reps == 0 ) { reps = 1; } // Do at least one repetion, regardless of scaling.
 		for ( Size ii = 1; ii <= reps; ++ii ) {
 			emap.zero( e2b.score_types() );
 			for ( Size jj = 1; jj <= pose_->total_residue(); ++jj ) {
@@ -232,7 +232,7 @@ public:
 		LREnergyContainerOP lrec = pose_->energies().nonconst_long_range_container( e2b.long_range_type() );
 
 		core::Size reps( (core::Size)(base_scale_factor_*scaleFactor) );
-		if( reps == 0 ) { reps = 1; } // Do at least one repetion, regardless of scaling.
+		if ( reps == 0 ) { reps = 1; } // Do at least one repetion, regardless of scaling.
 		for ( Size ii = 1; ii <= reps; ++ii ) {
 			emap.zero( e2b.score_types() );
 			for ( Size jj = 1; jj <= pose_->total_residue(); ++jj ) {

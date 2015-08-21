@@ -113,8 +113,8 @@ public:
 		ScoreFunction sfxn;
 		sfxn.set_weight( dihedral_constraint, 1.0 );
 		kinematics::MoveMap movemap;
-    movemap.set_bb( true );
-    movemap.set_chi( true );
+		movemap.set_bb( true );
+		movemap.set_chi( true );
 
 		for ( Size ii = 1; ii <= ubqstump->total_residue(); ++ii ) {
 			core::chemical::ResidueType const & rsd_type( ubqstump->residue_type( ii ));
@@ -181,7 +181,7 @@ public:
 			AtomID(chi_idx[3], which_res),
 			AtomID(chi_idx[4], which_res),
 			restr_func
-		) );
+			) );
 		constraints->add_constraint( constraint );
 		pose.constraint_set( constraints );
 		TR << "Constraint: " << constraint->atom(1) << " " << constraint->atom(2) << " " << constraint->atom(3) << " " << constraint->atom(4) << std::endl;
@@ -202,14 +202,14 @@ public:
 		mm->set_chi( which_res, true );
 
 		TR << "Minimizing..." << std::endl;
-	// BAD!  We are in core, not protocols!  protocols lib is not even linked here!
-	//protocols::simple_moves::MinMover min_mover( mm, scorefxn, "dfpmin_armijo_nonmonotone_atol", 0.001, true /*use_nblist*/ );
+		// BAD!  We are in core, not protocols!  protocols lib is not even linked here!
+		//protocols::simple_moves::MinMover min_mover( mm, scorefxn, "dfpmin_armijo_nonmonotone_atol", 0.001, true /*use_nblist*/ );
 
 		core::optimization::AtomTreeMinimizer minimizer;
 		core::optimization::MinimizerOptionsOP min_options( new core::optimization::MinimizerOptions( "dfpmin_armijo_nonmonotone_atol", 0.001, true, true, false ) );
 		minimizer.run( pose, *mm, *scorefxn, *min_options );
 
-	//	min_mover.apply( pose );
+		// min_mover.apply( pose );
 		(*scorefxn)( pose );
 		TR << "New position " << rsd.chi(which_chi) << " degrees" << std::endl;
 		TS_ASSERT_DELTA( start_chi_degrees, rsd.chi(which_chi), 0.5 );
@@ -225,7 +225,7 @@ public:
 		utility::vector1< ConstraintCOP > constraints_copy = pose_copy.constraint_set()->get_all_constraints();
 		TS_ASSERT( constraints_orig.size() == 1 );
 		TS_ASSERT( constraints_orig.size() == constraints_copy.size() );
-		for(core::Size i = 1; i <= constraints_orig.size(); ++i) {
+		for ( core::Size i = 1; i <= constraints_orig.size(); ++i ) {
 			TR << "Original " << i << ": " << constraints_orig[i]->to_string() << std::endl;
 			TR << "Copy " << i << ": " << constraints_copy[i]->to_string() << std::endl;
 			//[old behavior] Objects are equivalent (same data) but not identical (different places in memory)

@@ -106,7 +106,7 @@ figure_out_fold_tree( pose::Pose & pose )
 
 	Size m( 0 );
 
-	for (Size i=1; i < nres; ++i) {
+	for ( Size i=1; i < nres; ++i ) {
 
 		Residue const & current_rsd( pose.residue( i   ) ) ;
 		Residue const &    next_rsd( pose.residue( i+1 ) ) ;
@@ -115,7 +115,7 @@ figure_out_fold_tree( pose::Pose & pose )
 		Real const dist2 =
 			( current_rsd.atom( atom_C ).xyz() - next_rsd.atom( atom_N ).xyz() ).length_squared();
 
-		if ( dist2 > dist2_cutoff ){
+		if ( dist2 > dist2_cutoff ) {
 			std::cout << "Jump from " << i << " to " << i+1 << std::endl;
 			f.new_jump( i, i+1, i );
 			m++;
@@ -154,7 +154,7 @@ minimize_test()
 
 	////////////////////////////////
 	// Personal fold tree.
-/*
+	/*
 	Size const nres = pose.total_residue();
 
 	int my_anchor = 20;
@@ -195,7 +195,7 @@ minimize_test()
 	f.tree_from_jumps_and_cuts( nres, num_jump_in, jump_point, cuts );
 	f.reorder( my_anchor );
 	pose.fold_tree( f );
-*/
+	*/
 
 
 	Size const nres = pose.total_residue();
@@ -240,11 +240,11 @@ minimize_test()
 
 			Real angle = numeric::dihedral_radians
 				( current_atom->xyz(), stub_atom1->xyz(),
-					stub_atom2->xyz(), stub_atom3->xyz() );
+				stub_atom2->xyz(), stub_atom3->xyz() );
 
 			core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( angle, dihedral_sdev ) );
 			cst_set->add_constraint( ConstraintCOP( ConstraintOP( new DihedralConstraint( current_atom->id(), stub_atom1->id(),
-															 stub_atom2->id(), stub_atom3->id(), fx ) ) ) );
+				stub_atom2->id(), stub_atom3->id(), fx ) ) ) );
 
 		}
 
@@ -298,7 +298,7 @@ minimize_test()
 	minimizer.run( pose, mm, *scorefxn, options );
 
 	scorefxn->set_weight( coordinate_constraint, 0.0 );
- 	minimizer.run( pose, mm, *scorefxn, options );
+	minimizer.run( pose, mm, *scorefxn, options );
 
 	Energy minimize_score = (*scorefxn)( pose );
 
@@ -343,10 +343,10 @@ repack_test () {
 	} else {
 		utility::vector1< bool > const allowed_aas (chemical::num_canonical_aas, false);
 		std::string const beta_peptide_names [21] = {"B3A", "B3C", "B3D", "B3E", "B3F", "B3G", "B3H", "B3I", "B3K", "B3L", "B3M", "B3N",
-		"B3O","B3P", "B3Q", "B3R", "B3S", "B3T", "B3V", "B3W", "B3Y"};
+			"B3O","B3P", "B3Q", "B3R", "B3S", "B3T", "B3V", "B3W", "B3Y"};
 
-		for(Size i = 1; i <= pose.total_residue(); ++i) {
-			for (Size j = 0; j != 21; ++j) {
+		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+			for ( Size j = 0; j != 21; ++j ) {
 				designtask->nonconst_residue_task(i).allow_noncanonical_aa( beta_peptide_names[j] );
 			}
 			designtask->nonconst_residue_task(i).restrict_absent_canonical_aas( allowed_aas );
@@ -367,18 +367,18 @@ repack_test () {
 	links->resize( nres );
 	std::cout << "residue rebuilding:" << std::endl;
 
-	for (Size i = 1; i <= repack_res_list.size(); ++i) {
+	for ( Size i = 1; i <= repack_res_list.size(); ++i ) {
 		Size const first_res = repack_res_list[i];
 		utility::vector1< Size > linked_res;
-		for (Size j = 0; j < repeats; ++j) {
+		for ( Size j = 0; j < repeats; ++j ) {
 			Size const curr_res = first_res + repeat_unit * j;
-			if (curr_res > nres) {
+			if ( curr_res > nres ) {
 				std::cerr << "ERROR!!! Residue " << curr_res << " outside the pose total residues!!!" << std::endl;
 				exit(1);
 			}
 			std::cout << curr_res << ' ';
 			residues_to_repack[ curr_res ] = true;
-			for (Size k = 1; k <= linked_res.size(); ++k) {
+			for ( Size k = 1; k <= linked_res.size(); ++k ) {
 				links->set_equiv(linked_res[k], curr_res);
 				links->set_equiv(curr_res, linked_res[k]);
 			}
@@ -387,9 +387,9 @@ repack_test () {
 		std::cout << std::endl;
 	}
 	designtask->restrict_to_residues( residues_to_repack );
-	if (repeats > 1 && (! is_no_symmetry)) designtask->rotamer_links( links );
+	if ( repeats > 1 && (! is_no_symmetry) ) designtask->rotamer_links( links );
 
-/*
+	/*
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Only repack core residues -- in Schepartz designs these are all beta3_leucine.
@@ -397,8 +397,8 @@ repack_test () {
 	utility::vector1< bool > residues_to_repack( nres, false );
 
 	for ( Size ii = 1; ii <= nres ; ++ii ) {
-		if ( ii > 96 ) continue;
-		if ( ii % 3 == 2 ) residues_to_repack[ ii ] = true;
+	if ( ii > 96 ) continue;
+	if ( ii % 3 == 2 ) residues_to_repack[ ii ] = true;
 	}
 
 	designtask->restrict_to_residues( residues_to_repack );
@@ -408,32 +408,32 @@ repack_test () {
 	links->resize( nres );
 	Size const res_list1 [4] = {2, 5, 8, 11};
 	for (Size i = 0; i != 4; ++i) {
-		Size const curr_res = res_list1[i];
-		Size const link_res_list [4] = {curr_res, curr_res+36, curr_res+48, curr_res+84};
-		for (Size j = 0; j != 4; ++j) {
-			Size const res1 = link_res_list[j];
-			for (Size k = 0; k != 4; ++k) {
-				Size const res2 = link_res_list[k];
-				if (res1 != res2) links->set_equiv(res1, res2);
-			}
-		}
+	Size const curr_res = res_list1[i];
+	Size const link_res_list [4] = {curr_res, curr_res+36, curr_res+48, curr_res+84};
+	for (Size j = 0; j != 4; ++j) {
+	Size const res1 = link_res_list[j];
+	for (Size k = 0; k != 4; ++k) {
+	Size const res2 = link_res_list[k];
+	if (res1 != res2) links->set_equiv(res1, res2);
+	}
+	}
 	}
 
 	Size const res_list2 [4] = {14, 17, 20, 23};
 	for (Size i = 0; i != 4; ++i) {
-		Size const curr_res = res_list2[i];
-		Size const link_res_list [4] = {curr_res, curr_res+12, curr_res+48, curr_res+60};
-		for (Size j = 0; j != 4; ++j) {
-			Size const res1 = link_res_list[j];
-			for (Size k = 0; k != 4; ++k) {
-				Size const res2 = link_res_list[k];
-				if (res1 != res2) links->set_equiv(res1, res2);
-			}
-		}
+	Size const curr_res = res_list2[i];
+	Size const link_res_list [4] = {curr_res, curr_res+12, curr_res+48, curr_res+60};
+	for (Size j = 0; j != 4; ++j) {
+	Size const res1 = link_res_list[j];
+	for (Size k = 0; k != 4; ++k) {
+	Size const res2 = link_res_list[k];
+	if (res1 != res2) links->set_equiv(res1, res2);
+	}
+	}
 	}
 
 	designtask->rotamer_links( links );
-*/
+	*/
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	Energy score_orig = (*scorefxn)( pose );
 
@@ -457,7 +457,7 @@ my_main ( )
 
 	if ( algorithm_name == "repack" || algorithm_name == "redesign" ) {
 		repack_test();
-	} else if (algorithm_name == "minimize") {
+	} else if ( algorithm_name == "minimize" ) {
 		minimize_test();
 	}
 }
@@ -467,29 +467,29 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	using namespace basic::options;
-	utility::vector1< Size > blank_size_vector;
+		using namespace basic::options;
+		utility::vector1< Size > blank_size_vector;
 
-	NEW_OPT ( algorithm, "", "" );
-	NEW_OPT ( force_field, "score_file", "" );
-	NEW_OPT ( apply_dihedral_cst, "", true );
-	NEW_OPT ( no_symmetry, "", false );
-	NEW_OPT ( repack_res, "", blank_size_vector );
-	NEW_OPT ( n_repeat, "", 1 );
-	NEW_OPT ( repeat_size, "", 0 );
+		NEW_OPT ( algorithm, "", "" );
+		NEW_OPT ( force_field, "score_file", "" );
+		NEW_OPT ( apply_dihedral_cst, "", true );
+		NEW_OPT ( no_symmetry, "", false );
+		NEW_OPT ( repack_res, "", blank_size_vector );
+		NEW_OPT ( n_repeat, "", 1 );
+		NEW_OPT ( repeat_size, "", 0 );
 
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	core::init::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		core::init::init(argc, argv);
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-	my_main();
+		my_main();
 
-	 } catch ( utility::excn::EXCN_Base const & e ) {
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

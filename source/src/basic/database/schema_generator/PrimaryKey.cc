@@ -20,9 +20,9 @@
 #include <string>
 #include <set>
 
-namespace basic{
-namespace database{
-namespace schema_generator{
+namespace basic {
+namespace database {
+namespace schema_generator {
 
 PrimaryKey::PrimaryKey(){}
 
@@ -49,8 +49,8 @@ PrimaryKey::print(
 ) const {
 	std::string primary_key_string = "PRIMARY KEY (";
 
-	for(Columns::const_iterator it=columns_.begin(); it != columns_.end(); ++it){
-		if(it!=columns_.begin()){
+	for ( Columns::const_iterator it=columns_.begin(); it != columns_.end(); ++it ) {
+		if ( it!=columns_.begin() ) {
 			primary_key_string += ", ";
 		}
 		primary_key_string += it->name();

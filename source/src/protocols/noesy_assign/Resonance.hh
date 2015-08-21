@@ -46,16 +46,16 @@ public:
 	typedef utility::vector1< core::Size > ResonanceIDs;
 	typedef std::pair< core::Size, core::Size > ResonancePair;
 	typedef utility::vector1< ResonancePair > ResonancePairs;
-  typedef utility::vector1< ResonanceAP > ResonanceAPs;
+	typedef utility::vector1< ResonanceAP > ResonanceAPs;
 
-  Resonance();
-  Resonance( core::Size label, core::Real freq, core::Real error, core::id::NamedAtomID const& id, core::chemical::AA, core::Real intensity = 1.0 );
-  ~Resonance();
+	Resonance();
+	Resonance( core::Size label, core::Real freq, core::Real error, core::id::NamedAtomID const& id, core::chemical::AA, core::Real intensity = 1.0 );
+	~Resonance();
 
 	virtual ResonanceOP clone() = 0;
 
 	/// @brief output
-  virtual void write_to_stream( std::ostream& ) const;
+	virtual void write_to_stream( std::ostream& ) const;
 
 	virtual void write_to_stream( std::ostream&, core::chemical::AA aa ) const;
 
@@ -63,15 +63,15 @@ public:
 		return 1;
 	}
 	/// @brief ResonanceID
-  core::Size label() const { return label_; }
+	core::Size label() const { return label_; }
 	virtual core::Size float_label( core::Size /*ifloat*/ ) const { return label_; }
 	/// @brief Atom
-  core::id::NamedAtomID const& atom() const { return atom_; }
-  core::Size resid() const { return atom_.rsd(); }
-  std::string const& name() const { return atom_.atom(); }
+	core::id::NamedAtomID const& atom() const { return atom_; }
+	core::Size resid() const { return atom_.rsd(); }
+	std::string const& name() const { return atom_.atom(); }
 	bool is_proton() const { return is_proton_; }
 	/// @brief resonance frequency (chemical shift)
-  core::Real freq() const { return freq_; }
+	core::Real freq() const { return freq_; }
 	core::Real error() const { return error_; }
 	core::Real tolerance() const { return error_; }
 
@@ -82,7 +82,7 @@ public:
 
 	/// @brief match the proton and corresponding label atom at same time
 	virtual bool match2D(
-	  core::Real proton_freq,
+		core::Real proton_freq,
 		core::Real proton_error,
 		FoldResonance const& proton_folder,
 		core::Real label_freq,
@@ -121,11 +121,11 @@ public:
 
 private:
 	void _write_to_stream( std::ostream& ) const;
-  core::Size label_;
-  core::Real freq_;
-  core::Real error_;
+	core::Size label_;
+	core::Real freq_;
+	core::Real error_;
 	bool is_proton_;
-  core::id::NamedAtomID atom_;
+	core::id::NamedAtomID atom_;
 	core::chemical::AA aa_;
 	core::Real intensity_;
 	CALIBRATION_ATOM_TYPE calibration_atom_type_;

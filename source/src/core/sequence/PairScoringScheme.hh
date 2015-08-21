@@ -43,7 +43,7 @@ public:
 		Real gap_extend_in,
 		utility::vector1< utility::vector1< core::Real > > pairs
 	)
-		: pairs_( pairs )
+	: pairs_( pairs )
 	{
 		gap_open( gap_open_in );
 		gap_extend( gap_extend_in );
@@ -57,7 +57,7 @@ public:
 			gap_open(),
 			gap_extend(),
 			pairs()
-		) );
+			) );
 	}
 
 	utility::vector1< utility::vector1< core::Real > > pairs() const {

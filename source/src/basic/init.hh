@@ -17,12 +17,12 @@
 
 namespace basic {
 
-	/// @brief return true if core::init was already called and false otherwise
-	bool was_init_called();
+/// @brief return true if core::init was already called and false otherwise
+bool was_init_called();
 
 
-	/// @brief set global 'init_was_called' to true
-	void init();
+/// @brief set global 'init_was_called' to true
+void init();
 
 } // namespace basic
 

@@ -150,33 +150,33 @@ public:
 
 	/// @brief Take spherical harmonic transform of 'sigR', result in 'sigCoefR' and 'sigCoefI'
 	void sharm_transform( ObjexxFCL::FArray3D< double > const & sigR,
-	                      ObjexxFCL::FArray3D< double > & sigCoefR,
-	                      ObjexxFCL::FArray3D< double > & sigCoefI);
+		ObjexxFCL::FArray3D< double > & sigCoefR,
+		ObjexxFCL::FArray3D< double > & sigCoefI);
 
 	/// @brief Take inverse spherical harmonic transform of 'sigCoefR' and 'sigCoefI', result in 'sigR'
 	void sharm_invTransform( ObjexxFCL::FArray3D< double > & sigR,
-	                         ObjexxFCL::FArray3D< double > & sigCoefR,  // should be const
-	                         ObjexxFCL::FArray3D< double > & sigCoefI); // should be const
+		ObjexxFCL::FArray3D< double > & sigCoefR,  // should be const
+		ObjexxFCL::FArray3D< double > & sigCoefI); // should be const
 
 	/// @brief Standardize coefficients 'sigCoefR' and 'sigCoefI'
 	void sph_standardize( ObjexxFCL::FArray3D< double > & sigCoefR,
-	                      ObjexxFCL::FArray3D< double > & sigCoefI,
-	                      double & s,
-	                      double & s2);
+		ObjexxFCL::FArray3D< double > & sigCoefI,
+		double & s,
+		double & s2);
 
 	/// @brief Standardize coefficients 'sigCoefR' and 'sigCoefI'
 	void sph_standardize( ObjexxFCL::FArray3D< double > & sigCoefR,
-	                      ObjexxFCL::FArray3D< double > & sigCoefI) {
+		ObjexxFCL::FArray3D< double > & sigCoefI) {
 		double S,S2;
 		sph_standardize( sigCoefR, sigCoefI , S, S2 );
 	}
 
 	/// @brief Correlate two signals ('sigCoef' and 'tmpCoef') as a function of rotation of 'tmpCoef', result in 'so3_correlation'
 	void so3_correlate( ObjexxFCL::FArray3D< double > & so3_correlation,
-	                    ObjexxFCL::FArray3D< double > & sigCoefR,  // should be const
-	                    ObjexxFCL::FArray3D< double > & sigCoefI,  // should be const
-	                    ObjexxFCL::FArray3D< double > & tmpCoefR,  // should be const
-	                    ObjexxFCL::FArray3D< double > & tmpCoefI  ); // should be const
+		ObjexxFCL::FArray3D< double > & sigCoefR,  // should be const
+		ObjexxFCL::FArray3D< double > & sigCoefI,  // should be const
+		ObjexxFCL::FArray3D< double > & tmpCoefR,  // should be const
+		ObjexxFCL::FArray3D< double > & tmpCoefI  ); // should be const
 
 	/// @brief Convert an index from 'so3_correlation' into a rotation matrix
 	void idx_to_rot(int maxloc , numeric::xyzMatrix< double > & thisRot);

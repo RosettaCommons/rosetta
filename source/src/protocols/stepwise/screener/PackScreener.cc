@@ -26,34 +26,34 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	//Constructor
-	PackScreener::PackScreener( pose::Pose & pose,
-																						modeler::packer::StepWisePackerOP stepwise_packer ):
-		SampleApplier( pose ),
-		stepwise_packer_( stepwise_packer )
-	{
-	}
+//Constructor
+PackScreener::PackScreener( pose::Pose & pose,
+	modeler::packer::StepWisePackerOP stepwise_packer ):
+	SampleApplier( pose ),
+	stepwise_packer_( stepwise_packer )
+{
+}
 
-	//Destructor
-	PackScreener::~PackScreener()
-	{}
+//Destructor
+PackScreener::~PackScreener()
+{}
 
-	bool
-	PackScreener::check_screen() {
-		stepwise_packer_->apply( pose_ );
-		return true;
-	}
+bool
+PackScreener::check_screen() {
+	stepwise_packer_->apply( pose_ );
+	return true;
+}
 
-	/////////////////////////////////////////
-	void
-	PackScreener::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
-		using protocols::moves::MoverOP;
-		update_mover->add_mover( MoverOP( new modeler::packer::SideChainCopier( pose_,
-																																		 stepwise_packer_->previous_working_pack_res(),
-																																		 stepwise_packer_->pack_o2prime_hydrogens() ) )  );
-		restore_mover->add_mover( 0 ); // original choice.
-		//		restore_mover->add_mover( SideChainMover( *pose_original_ ) );
-	}
+/////////////////////////////////////////
+void
+PackScreener::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
+	using protocols::moves::MoverOP;
+	update_mover->add_mover( MoverOP( new modeler::packer::SideChainCopier( pose_,
+		stepwise_packer_->previous_working_pack_res(),
+		stepwise_packer_->pack_o2prime_hydrogens() ) )  );
+	restore_mover->add_mover( 0 ); // original choice.
+	//  restore_mover->add_mover( SideChainMover( *pose_original_ ) );
+}
 
 
 } //screener

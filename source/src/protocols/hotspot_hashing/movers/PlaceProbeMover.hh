@@ -41,65 +41,65 @@ namespace movers
 
 class PlaceProbeMover : virtual public protocols::moves::Mover
 {
-  public:
-		enum ExecutionMode
-		{
-			RunAll, OnePerStruct
-		};
+public:
+	enum ExecutionMode
+	{
+		RunAll, OnePerStruct
+	};
 
-		enum StructureOutputMode
-		{
-			None, Probe, Full
-		};
+	enum StructureOutputMode
+	{
+		None, Probe, Full
+	};
 
-    PlaceProbeMover();
+	PlaceProbeMover();
 
-    PlaceProbeMover(
-			std::string residue_name,
-			core::conformation::ResidueCOP target_residue,
-      core::Size search_partition = 1,
-      core::Size total_search_partition = 1);
+	PlaceProbeMover(
+		std::string residue_name,
+		core::conformation::ResidueCOP target_residue,
+		core::Size search_partition = 1,
+		core::Size total_search_partition = 1);
 
-    virtual void apply( Pose & );
+	virtual void apply( Pose & );
 
-    virtual bool reinitialize_for_new_input() const { return false; }
+	virtual bool reinitialize_for_new_input() const { return false; }
 
-  protected:
-		/// @brief Parses tag compoments for PlaceProbeMover
-    void parse_place_probe_tag(
-         utility::tag::TagCOP tag,
-         basic::datacache::DataMap &,
-         protocols::filters::Filters_map const &,
-         protocols::moves::Movers_map const &,
-         core::pose::Pose const &);
+protected:
+	/// @brief Parses tag compoments for PlaceProbeMover
+	void parse_place_probe_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &);
 
-	  StructureOutputMode parse_output_mode(std::string name);
+	StructureOutputMode parse_output_mode(std::string name);
 
-    void check_and_initialize(core::pose::Pose const & target_pose);
+	void check_and_initialize(core::pose::Pose const & target_pose);
 
-    void execute_one_search(core::pose::Pose & target_pose, core::Size search_index);
+	void execute_one_search(core::pose::Pose & target_pose, core::Size search_index);
 
-		void perform_local_refinement(core::pose::Pose & target_pose, core::Size target_residue);
+	void perform_local_refinement(core::pose::Pose & target_pose, core::Size target_residue);
 
-    virtual SearchPatternOP create_search_pattern(core::pose::Pose const & target_pose) = 0;
-    virtual SearchPatternOP create_partitioned_search_pattern(core::pose::Pose const & target_pose);
+	virtual SearchPatternOP create_search_pattern(core::pose::Pose const & target_pose) = 0;
+	virtual SearchPatternOP create_partitioned_search_pattern(core::pose::Pose const & target_pose);
 
-		virtual SearchPatternOP create_refinement_pattern(core::pose::Pose const & target_pose, core::Size target_residue);
-		virtual core::pack::task::PackerTaskOP create_refinement_packing_task(core::pose::Pose const & target_pose, core::Size target_residue);
+	virtual SearchPatternOP create_refinement_pattern(core::pose::Pose const & target_pose, core::Size target_residue);
+	virtual core::pack::task::PackerTaskOP create_refinement_packing_task(core::pose::Pose const & target_pose, core::Size target_residue);
 
-		std::string residue_name_;
-		std::vector<std::string> residue_variants_;
+	std::string residue_name_;
+	std::vector<std::string> residue_variants_;
 
-    core::conformation::ResidueCOP target_residue_;
-		core::scoring::ScoreFunctionCOP refinement_scorefxn_;
+	core::conformation::ResidueCOP target_residue_;
+	core::scoring::ScoreFunctionCOP refinement_scorefxn_;
 
-		ExecutionMode current_mode_;
+	ExecutionMode current_mode_;
 
-    core::Size search_partition_;
-    core::Size total_search_partition_;
+	core::Size search_partition_;
+	core::Size total_search_partition_;
 
-    bool initialized_pattern_;
-    utility::vector1<core::kinematics::Stub> search_points_;
+	bool initialized_pattern_;
+	utility::vector1<core::kinematics::Stub> search_points_;
 };
 
 }

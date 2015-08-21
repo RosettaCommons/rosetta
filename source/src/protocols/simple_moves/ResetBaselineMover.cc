@@ -45,7 +45,7 @@ ResetBaselineMoverCreator::mover_name()
 }
 
 ResetBaselineMover::ResetBaselineMover()
-	: moves::Mover("ResetBaseline"),
+: moves::Mover("ResetBaseline"),
 	filter_( /* NULL */ )
 {}
 
@@ -55,27 +55,26 @@ ResetBaselineMover::apply( Pose & pose )
 	using namespace protocols::filters;
 	using namespace protocols::simple_filters;
 
-  std::string const filter_type( filter()->get_type() );
-  runtime_assert( filter_type == "Operator" || filter_type == "CompoundStatement" );
-	if( filter_type == "Operator" ){
+	std::string const filter_type( filter()->get_type() );
+	runtime_assert( filter_type == "Operator" || filter_type == "CompoundStatement" );
+	if ( filter_type == "Operator" ) {
 		TR<<"resetting Operator filter's baseline"<<std::endl;
 		OperatorOP operator_filter( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::Operator > ( filter() )) ;
 		runtime_assert( operator_filter != 0 );
 		operator_filter->reset_baseline( pose, false/*reset baselines from checkpoint*/ );
-	}
-	else if( filter_type == "CompoundStatement" ){
+	} else if ( filter_type == "CompoundStatement" ) {
 		CompoundFilterOP comp_filt_op( utility::pointer::dynamic_pointer_cast< protocols::filters::CompoundFilter > ( filter() ) );
 		runtime_assert( comp_filt_op != 0 );
-    for( CompoundFilter::CompoundStatement::iterator cs_it = comp_filt_op->begin(); cs_it != comp_filt_op->end(); ++cs_it ){
-      FilterOP filt( cs_it->first );
-      if( filt->get_type() == "Operator" ){
-        TR<<"Resetting Operator filter's baseline"<<std::endl;
-        OperatorOP operator_filter( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::Operator > ( filt ) );
+		for ( CompoundFilter::CompoundStatement::iterator cs_it = comp_filt_op->begin(); cs_it != comp_filt_op->end(); ++cs_it ) {
+			FilterOP filt( cs_it->first );
+			if ( filt->get_type() == "Operator" ) {
+				TR<<"Resetting Operator filter's baseline"<<std::endl;
+				OperatorOP operator_filter( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::Operator > ( filt ) );
 				runtime_assert( operator_filter != 0 );
-        operator_filter->reset_baseline( pose, false/*read baselines from checkpoint*/ );
-      }// fi Operator
-    }// for cs_it
-  }//elseif CompoundStatement
+				operator_filter->reset_baseline( pose, false/*read baselines from checkpoint*/ );
+			}// fi Operator
+		}// for cs_it
+	}//elseif CompoundStatement
 }
 
 std::string

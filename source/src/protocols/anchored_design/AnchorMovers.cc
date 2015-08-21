@@ -102,7 +102,7 @@
 
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 
@@ -115,8 +115,8 @@ static thread_local basic::Tracer T_perturb( "protocols.AnchoredDesign.AnchoredP
 static thread_local basic::Tracer T_refine( "protocols.AnchoredDesign.AnchoredRefineMover" );
 static thread_local basic::Tracer T_shared( "protocols.AnchoredDesign.Anchor_Movers" );
 
-namespace protocols{
-namespace anchored_design{
+namespace protocols {
+namespace anchored_design {
 
 std::string const EMPTY_STRING("");
 int const ANCHOR_TARGET(1); //jump between anchor and target
@@ -126,10 +126,10 @@ int const ANCHOR_TARGET(1); //jump between anchor and target
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief a local helper function, not in the header
 void debug_dump_pose(
-										 core::pose::Pose const & pose,
-										 core::pose::PoseOP posecopy,
-										 std::string const & tag,
-										 protocols::moves::MoverOP mover)
+	core::pose::Pose const & pose,
+	core::pose::PoseOP posecopy,
+	std::string const & tag,
+	protocols::moves::MoverOP mover)
 {
 	using namespace protocols::jd2;
 	mover->apply(*posecopy);
@@ -142,18 +142,21 @@ void dump_cutpoint_info( core::pose::Pose const & pose)
 {
 	core::Size nres(pose.total_residue());
 	T_shared << "pose says 'is_cutpoint(#)': ";
-	for (core::Size i(1); i <= nres; ++i)
-		if (pose.fold_tree().is_cutpoint( i )) T_shared << i << " ";
+	for ( core::Size i(1); i <= nres; ++i ) {
+		if ( pose.fold_tree().is_cutpoint( i ) ) T_shared << i << " ";
+	}
 	T_shared << std::endl;
 
 	T_shared << "pose says 'has_variant_type CUTPOINT_LOWER': ";
-	for (core::Size i(1); i <= nres; ++i)
-		if (pose.residue(i).has_variant_type( core::chemical::CUTPOINT_LOWER)) T_shared << i << " ";
+	for ( core::Size i(1); i <= nres; ++i ) {
+		if ( pose.residue(i).has_variant_type( core::chemical::CUTPOINT_LOWER) ) T_shared << i << " ";
+	}
 	T_shared << std::endl;
 
 	T_shared << "pose says 'has_variant_type CUTPOINT_UPPER': ";
-	for (core::Size i(1); i <= nres; ++i)
-		if (pose.residue(i).has_variant_type( core::chemical::CUTPOINT_UPPER)) T_shared << i << " ";
+	for ( core::Size i(1); i <= nres; ++i ) {
+		if ( pose.residue(i).has_variant_type( core::chemical::CUTPOINT_UPPER) ) T_shared << i << " ";
+	}
 	T_shared << std::endl;
 }
 
@@ -219,7 +222,7 @@ AnchoredDesignMover::AnchoredDesignMover( AnchoredDesignMover const & rhs ) :
 AnchoredDesignMover & AnchoredDesignMover::operator=( AnchoredDesignMover const & rhs ){
 
 	//abort self-assignment
-	if (this == &rhs) return *this;
+	if ( this == &rhs ) return *this;
 
 	interface_ = rhs.interface_->clone();
 	//this is a shallow copy because it is only supposed to have one value anyway (only this!), what does it mean if you start mutating it?  I don't know
@@ -251,14 +254,15 @@ void AnchoredDesignMover::init_on_new_input(core::pose::Pose const & pose) {
 
 	//If the interface_ object doesn't exist yet, we must create one, giving it a pose to help it initialize
 	//it will exist if this object was created via the AnchorMoversData-supplying constructor
-	if(!interface_)
+	if ( !interface_ ) {
 		interface_ = protocols::anchored_design::AnchorMoversDataOP( new protocols::anchored_design::AnchorMoversData(pose) );
+	}
 
 	//If nobody told us not to autoinitialize, read the options system for our other data
-	if(autoinitialize_) read_options();
+	if ( autoinitialize_ ) read_options();
 
 	//If we are in RMSD_only_this_ mode, we will need to set up that cached comparison pose
-	if(RMSD_only_this_ != EMPTY_STRING) {
+	if ( RMSD_only_this_ != EMPTY_STRING ) {
 		core::pose::Pose dummy;
 		core::import_pose::pose_from_pdb(dummy, RMSD_only_this_);
 		RMSD_only_this_pose_ = core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose(dummy) ) );
@@ -272,16 +276,16 @@ void AnchoredDesignMover::apply( core::pose::Pose & pose )
 {
 	clock_t starttime = clock();
 
-	if( !init_for_input_yet_ ) init_on_new_input(pose);
+	if ( !init_for_input_yet_ ) init_on_new_input(pose);
 
 	core::pose::PoseCOP start_pose(0);
 
 	//pre-pre-processing
-	if( rmsd_ ){
+	if ( rmsd_ ) {
 		start_pose = core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose(pose) ) );
 	}
 
-	if( RMSD_only_this_ != EMPTY_STRING ){
+	if ( RMSD_only_this_ != EMPTY_STRING ) {
 		core::pose::Pose dummy;
 		core::import_pose::pose_from_pdb(dummy, RMSD_only_this_);
 		start_pose = RMSD_only_this_pose_;
@@ -293,24 +297,24 @@ void AnchoredDesignMover::apply( core::pose::Pose & pose )
 		set_fold_tree_and_cutpoints( pose );
 		forget_initial_loops( pose ); //checks loop object is_extended internally
 
-		if( randomize_input_sequence_ ) randomize_input_sequence(pose);
-		if( delete_interface_native_sidechains_ ) delete_interface_native_sidechains(pose);
+		if ( randomize_input_sequence_ ) randomize_input_sequence(pose);
+		if ( delete_interface_native_sidechains_ ) delete_interface_native_sidechains(pose);
 
-		if( interface_->get_anchor_noise_constraints_mode() ){
+		if ( interface_->get_anchor_noise_constraints_mode() ) {
 			interface_->anchor_noise_constraints_setup(pose);
 			perturb_anchor(pose);
 		}
 
-		if( show_extended_
-			|| randomize_input_sequence_
-			|| delete_interface_native_sidechains_
-			|| interface_->get_anchor_noise_constraints_mode()){
+		if ( show_extended_
+				|| randomize_input_sequence_
+				|| delete_interface_native_sidechains_
+				|| interface_->get_anchor_noise_constraints_mode() ) {
 			using namespace protocols::jd2;
 			JobDistributor::get_instance()->job_outputter()->other_pose(JobDistributor::get_instance()->current_job(), pose, "preprocessed");
 		}
 
 		//processing
-		if (!refine_only_){
+		if ( !refine_only_ ) {
 			protocols::anchored_design::AnchoredPerturbMover anchor_perturb( interface_ );
 			anchor_perturb.apply( pose );
 		}
@@ -332,7 +336,7 @@ void AnchoredDesignMover::apply( core::pose::Pose & pose )
 		IAM_->apply( pose );
 
 		//load unconstrainted score
-		if(pose.constraint_set()->has_constraints()){
+		if ( pose.constraint_set()->has_constraints() ) {
 			pose.constraint_set()->show_definition(T_design, pose);
 			core::pose::Pose nocstcopy(pose);
 			nocstcopy.remove_constraints();
@@ -354,24 +358,24 @@ void AnchoredDesignMover::apply( core::pose::Pose & pose )
 void
 AnchoredDesignMover::calculate_rmsd( core::pose::Pose const & pose, core::pose::PoseCOP start_pose ){
 
-	if( rmsd_ ){
+	if ( rmsd_ ) {
 		core::Real const rmsd(core::scoring::CA_rmsd(pose, *start_pose));
 		T_design << "CA_sup_RMSD for this trajectory: " << rmsd << std::endl;
 		protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("CA_sup_RMSD", rmsd);
 
 		std::list<core::Size> loops_for_rmsd;
-		for (core::Size i(1), num_loops(interface_->num_loops()); i <= num_loops; ++i){
+		for ( core::Size i(1), num_loops(interface_->num_loops()); i <= num_loops; ++i ) {
 			core::Size const loopstart(interface_->loop(i).start()), loopend(interface_->loop(i).stop());
-			for (core::Size j = loopstart; j <= loopend; ++j){
+			for ( core::Size j = loopstart; j <= loopend; ++j ) {
 				loops_for_rmsd.insert(loops_for_rmsd.end(), j);
 			}
 		}
 
-		// 		T_design << "loop residues for RMSD:";
-		// 		for( std::list<core::Size>::const_iterator it(loops_for_rmsd.begin()), end(loops_for_rmsd.end()); it != end; ++it){
-		// 			T_design << " " << *it;
-		// 		}
-		// 		T_design << std::endl;
+		//   T_design << "loop residues for RMSD:";
+		//   for( std::list<core::Size>::const_iterator it(loops_for_rmsd.begin()), end(loops_for_rmsd.end()); it != end; ++it){
+		//    T_design << " " << *it;
+		//   }
+		//   T_design << std::endl;
 
 		core::Real const loop_rmsd(core::scoring::CA_rmsd(pose, *start_pose, loops_for_rmsd));
 		T_design << "loop_CA_sup_RMSD for this trajectory: " << loop_rmsd << std::endl;
@@ -390,13 +394,13 @@ AnchoredDesignMover::calculate_rmsd( core::pose::Pose const & pose, core::pose::
 		//also need no-superimpose RMSDs for chain1/2 to get lever arm effect
 		ObjexxFCL::FArray1D_bool ch1(pose.total_residue(), false), ch2(pose.total_residue(), false);
 
-		for( core::Size i(pose.conformation().chain_begin(1)), end(pose.conformation().chain_end(1)); i<=end; ++i) ch1(i)=true;
+		for ( core::Size i(pose.conformation().chain_begin(1)), end(pose.conformation().chain_end(1)); i<=end; ++i ) ch1(i)=true;
 		//chain 1 RMSD
 		core::Real const ch1_rmsd(core::scoring::rmsd_no_super_subset(pose, *start_pose, ch1, core::scoring::is_protein_CA));
 		T_design << "chain 1 RMSD for this trajectory: " << ch1_rmsd << std::endl;
 		protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("ch1_CA_RMSD", ch1_rmsd);
 
-		for( core::Size i(pose.conformation().chain_begin(2)), end(pose.conformation().chain_end(2)); i<=end; ++i) ch2(i)=true;
+		for ( core::Size i(pose.conformation().chain_begin(2)), end(pose.conformation().chain_end(2)); i<=end; ++i ) ch2(i)=true;
 		//chain 2 RMSD
 		core::Real const ch2_rmsd(core::scoring::rmsd_no_super_subset(pose, *start_pose, ch2, core::scoring::is_protein_CA));
 		T_design << "chain 2 RMSD for this trajectory: " << ch2_rmsd << std::endl;
@@ -404,7 +408,7 @@ AnchoredDesignMover::calculate_rmsd( core::pose::Pose const & pose, core::pose::
 
 		//This next section is meant purely for benchmarking purposes.  It assumes the moving chain is chain 2, and that the interface-definition calculator created by the standard AnchorClass default TaskFactory exists.  It will use rmsd_with_super_subset on interface backbone atoms, because that's what docking does.
 		//chain 2 interface RMSD
-		if(true){
+		if ( true ) {
 
 			//get interface set from calculator
 			std::string const & interface_calc(interface_->interface_calc());
@@ -417,16 +421,16 @@ AnchoredDesignMover::calculate_rmsd( core::pose::Pose const & pose, core::pose::
 			//convert this set into the type needed by rmsd_with_super_subset
 			T_design << "interface for rmsd";
 			ObjexxFCL::FArray1D_bool is_interface( pose.total_residue(), false );
-			for (SizeSet::const_iterator it = sizeset.begin(); it != sizeset.end(); ++it){
+			for ( SizeSet::const_iterator it = sizeset.begin(); it != sizeset.end(); ++it ) {
 				is_interface(*it) = true;
 				T_design << " " << *it;
 			}
 			T_design << std::endl;
 
 			//ready to calculate
-		core::Real const I_sup_bb_rmsd(core::scoring::rmsd_with_super_subset(pose, *start_pose, is_interface, core::scoring::is_protein_backbone));
-		T_design << "interface backbone RMSD for this trajectory: " << I_sup_bb_rmsd << std::endl;
-		protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("I_sup_bb_RMSD", I_sup_bb_rmsd);
+			core::Real const I_sup_bb_rmsd(core::scoring::rmsd_with_super_subset(pose, *start_pose, is_interface, core::scoring::is_protein_backbone));
+			T_design << "interface backbone RMSD for this trajectory: " << I_sup_bb_rmsd << std::endl;
+			protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("I_sup_bb_RMSD", I_sup_bb_rmsd);
 
 		}
 
@@ -445,21 +449,21 @@ void AnchoredDesignMover::randomize_input_sequence(core::pose::Pose & pose ) con
 	//there isn't much we can do to use the old task due to accumulation of status; also (and more importantly) using a task to pack is ruined by uneven numbers of rotamers (arginine would be favored over glycine).
 
 	core::Size const nres(pose.total_residue());
-	for(core::Size i(1); i<=nres; ++i){ //for all positions
+	for ( core::Size i(1); i<=nres; ++i ) { //for all positions
 		//if this position is designable, do something
 		using core::pack::task::ResidueLevelTask;
 		ResidueLevelTask const & rlt(oldtask->residue_task(i));
-		if(rlt.being_designed()){
+		if ( rlt.being_designed() ) {
 			//get the list
 			ResidueLevelTask::ResidueTypeCOPList types(rlt.allowed_residue_types());
 
 			//print possibilities before histidine check
 			T_design << "before HIS/D check, position " << i;
 
-			for( ResidueLevelTask::ResidueTypeCOPListIter
-						 allowed_iter = types.begin(),
-						 allowed_end = types.end();
-					 allowed_iter != allowed_end;  ++allowed_iter ) {
+			for ( ResidueLevelTask::ResidueTypeCOPListIter
+					allowed_iter = types.begin(),
+					allowed_end = types.end();
+					allowed_iter != allowed_end;  ++allowed_iter ) {
 				T_design << " " << (*allowed_iter)->name();// << std::endl;
 			}
 			T_design << std::endl;
@@ -467,22 +471,22 @@ void AnchoredDesignMover::randomize_input_sequence(core::pose::Pose & pose ) con
 			//sweep for histidines
 			core::Size num_histidines(0); //count histidines we find; if more than 2 explode
 			core::chemical::ResidueTypeCOP histidine; //store the most recent histidine we find as we go
-			for( ResidueLevelTask::ResidueTypeCOPListIter
-							allowed_iter = types.begin(),
-							iter_next = types.begin(),
-							allowed_end = types.end();
-						allowed_iter != allowed_end;  /* no increment: deletion + iterator incrementing = segfault! */ ) {
+			for ( ResidueLevelTask::ResidueTypeCOPListIter
+					allowed_iter = types.begin(),
+					iter_next = types.begin(),
+					allowed_end = types.end();
+					allowed_iter != allowed_end;  /* no increment: deletion + iterator incrementing = segfault! */ ) {
 				iter_next = allowed_iter;
 				++iter_next;
 
-				if ((*allowed_iter)->aa() == core::chemical::aa_his) { //we only want to look at histidines
+				if ( (*allowed_iter)->aa() == core::chemical::aa_his ) { //we only want to look at histidines
 					++num_histidines;
 					histidine=*allowed_iter;
 					types.erase( allowed_iter );
 				}
 				allowed_iter = iter_next;
 			}//histidine removal scan
-			if( num_histidines > 0 && num_histidines < 3 ){
+			if ( num_histidines > 0 && num_histidines < 3 ) {
 				types.push_back(histidine); //if we removed 1 or 2
 			} else if ( num_histidines < 3 ) {
 				utility_exit_with_message("removed more than 2 histidines in AnchoredDesign::randomize_input_sequence, something is wrong");
@@ -491,10 +495,10 @@ void AnchoredDesignMover::randomize_input_sequence(core::pose::Pose & pose ) con
 			//print possibilities after histidine check
 			T_design << "after HIS/D check, position " << i;
 
-			for( ResidueLevelTask::ResidueTypeCOPListIter
-						 allowed_iter = types.begin(),
-						 allowed_end = types.end();
-					 allowed_iter != allowed_end;  ++allowed_iter ) {
+			for ( ResidueLevelTask::ResidueTypeCOPListIter
+					allowed_iter = types.begin(),
+					allowed_end = types.end();
+					allowed_iter != allowed_end;  ++allowed_iter ) {
 				T_design << " " << (*allowed_iter)->name();
 			}
 			T_design << std::endl;
@@ -503,7 +507,7 @@ void AnchoredDesignMover::randomize_input_sequence(core::pose::Pose & pose ) con
 			core::Size const num_types(types.size());
 			core::Size const chosen_type_index(numeric::random::rg().random_range(1, num_types));
 			ResidueLevelTask::ResidueTypeCOPListIter iter = types.begin();
-			for(core::Size add(1); add<chosen_type_index; ++add) ++iter;
+			for ( core::Size add(1); add<chosen_type_index; ++add ) ++iter;
 			core::chemical::ResidueTypeCOP chosen_type(*iter);
 
 			T_design << "chose at position " << i << chosen_type->name() << std::endl;
@@ -543,14 +547,14 @@ void AnchoredDesignMover::delete_interface_native_sidechains(core::pose::Pose & 
 
 	//operation to protect anchor
 	operation::PreventRepackingOP prop( new operation::PreventRepacking );
-	for( core::Size i(interface_->anchor_start()); i<= interface_->anchor_end(); ++i){
+	for ( core::Size i(interface_->anchor_start()); i<= interface_->anchor_end(); ++i ) {
 		prop->include_residue(i);
 	}
 
 	tf->push_back(prop);
 
 	//operations to allow ex flags to saturation
-	for(core::Size i(1), end(pose.total_residue()); i<=end; ++i){
+	for ( core::Size i(1), end(pose.total_residue()); i<=end; ++i ) {
 		tf->push_back(operation::RotamerExplosionOP( new core::pack::task::operation::RotamerExplosion(i, core::pack::task::EX_ONE_STDDEV, 4) ));
 		tf->push_back(operation::ExtraChiCutoffOP( new core::pack::task::operation::ExtraChiCutoff(i, 0) ));
 		//tf->push_back(operation::IncludeCurrentOP( new core::pack::task::operation::IncludeCurrent())); //this is exactly what we do not want - useful for testing that it worked right...
@@ -594,9 +598,9 @@ void AnchoredDesignMover::perturb_anchor( core::pose::Pose & pose ) const {
 	core::Real const new_z(translation.z() + ((numeric::random::rg().uniform()*2.0) - 1.0));
 
 	T_design << "perturb_anchor: old/new, x->y->z\n"
-					 << translation.x() << " " << new_x << "\n"
-					 << translation.y() << " " << new_y << "\n"
-					 << translation.z() << " " << new_z << std::endl;
+		<< translation.x() << " " << new_x << "\n"
+		<< translation.y() << " " << new_y << "\n"
+		<< translation.z() << " " << new_z << std::endl;
 
 	core::Vector const new_trans(new_x, new_y, new_z);
 
@@ -605,8 +609,8 @@ void AnchoredDesignMover::perturb_anchor( core::pose::Pose & pose ) const {
 	core::Vector const new_anchor_xyz(pose.xyz(anchor_ID));
 
 	T_design << "perturb_anchor: old and new CA positions:\n"
-					 << original_anchor_xyz << '\n'
-					 << new_anchor_xyz << std::endl;
+		<< original_anchor_xyz << '\n'
+		<< new_anchor_xyz << std::endl;
 
 	return;
 }
@@ -634,31 +638,31 @@ void AnchoredDesignMover::filter( core::pose::Pose & pose ){
 	std::ostringstream failure;
 	bool fail(false);
 
-	if(use_filter_score_) {
+	if ( use_filter_score_ ) {
 		core::Real const pscore((*interface_->get_fullatom_scorefunction())(pose));
-		if( pscore > filter_score_) {
+		if ( pscore > filter_score_ ) {
 			failure << "failed total score filter; score " << pscore;
 			fail = true;
 		}
 	}
 
-	if( use_filter_SASA_ && !fail ){
+	if ( use_filter_SASA_ && !fail ) {
 		basic::MetricValue< core::Real > mv_delta_sasa;
 		pose.metric("InterfaceSasaDefinition_1", "delta_sasa", mv_delta_sasa); //magic string: this calculator was created by the InterfaceAnalyzerMover
-		if(mv_delta_sasa.value() < filter_SASA_){
+		if ( mv_delta_sasa.value() < filter_SASA_ ) {
 			failure << "failed interface SASA filter; sasa " << mv_delta_sasa.value();
 			fail = true;
 		}
 	}
 
-	if( use_filter_omega_ && !fail){
+	if ( use_filter_omega_ && !fail ) {
 		core::Size const num_loops = interface_->num_loops();
-		for (core::Size i(1); i <= num_loops; ++i){
+		for ( core::Size i(1); i <= num_loops; ++i ) {
 			core::Size const loopstart(interface_->loop(i).start()), loopend(interface_->loop(i).stop());
-			for (core::Size j = loopstart; j <= loopend; ++j){
+			for ( core::Size j = loopstart; j <= loopend; ++j ) {
 				core::Real const omega(numeric::principal_angle_degrees(pose.omega(j)));
-				if( pose.residue(j).is_upper_terminus() ) continue; //omega will fail for c-term
-				if( (omega < 160) && (omega > -160) ) {
+				if ( pose.residue(j).is_upper_terminus() ) continue; //omega will fail for c-term
+				if ( (omega < 160) && (omega > -160) ) {
 					failure << "failed omega at " << j << " " << omega;
 					fail = true;
 					i = num_loops + 1; //break out of parent loop
@@ -668,7 +672,7 @@ void AnchoredDesignMover::filter( core::pose::Pose & pose ){
 		} //for each loop
 	}//if filter active
 
-	if( !fail ) { //succeed case
+	if ( !fail ) { //succeed case
 		set_last_move_status(protocols::moves::MS_SUCCESS); //this call is unnecessary but let's be safe
 		return;
 	}
@@ -687,8 +691,9 @@ void AnchoredDesignMover::set_fold_tree_and_cutpoints( core::pose::Pose & pose )
 
 	//we'll need to know where the chainbreak is (we are assuming there is only one)
 	core::Size const chain1end(pose.conformation().chain_end(1));
-	if( pose.conformation().num_chains() != 2 ) //2 is the value we expect
+	if ( pose.conformation().num_chains() != 2 ) { //2 is the value we expect
 		Warning() << "AnchoredDesign only tested with two chains; later chains may(?) be rigidly attached to chain 2 COOH, or not move at all, or who knows what";
+	}
 
 	core::Size const num_loops(interface_->num_loops());
 	core::Size num_jumps(num_loops+1);//one extra for the inter-rigid-body jump
@@ -697,26 +702,26 @@ void AnchoredDesignMover::set_fold_tree_and_cutpoints( core::pose::Pose & pose )
 	utility::vector1<int> jump_starts(num_jumps, 0), jump_stops(num_jumps, 0), cuts(num_jumps, 0);
 
 	//using core::Real;
-	core::Real anchorstart(interface_->anchor_start()),	anchorend(interface_->anchor_end());
+	core::Real anchorstart(interface_->anchor_start()), anchorend(interface_->anchor_end());
 	core::Size anchormid(core::Size(std::ceil(anchorstart + (anchorend - anchorstart)/2.0)));
 
 	Size anchor_jump_end( anchormid > chain1end ? chain1end : chain1end+1);
 	jump_starts[ANCHOR_TARGET] = anchormid < anchor_jump_end ? anchormid : anchor_jump_end; //max
 	jump_stops[ ANCHOR_TARGET] = anchormid > anchor_jump_end ? anchormid : anchor_jump_end; //min
 	cuts[ANCHOR_TARGET]        = chain1end;
- 	assert(anchormid != anchor_jump_end);
+	assert(anchormid != anchor_jump_end);
 
-// 	jumps(1, ANCHOR_TARGET) = anchormid < anchor_jump_end ? anchormid : anchor_jump_end; //max
-// 	jumps(2, ANCHOR_TARGET) = anchormid > anchor_jump_end ? anchormid : anchor_jump_end; //min
-// 	assert(anchormid != anchor_jump_end);
-// 	cuts(ANCHOR_TARGET) = chain1end;
+	//  jumps(1, ANCHOR_TARGET) = anchormid < anchor_jump_end ? anchormid : anchor_jump_end; //max
+	//  jumps(2, ANCHOR_TARGET) = anchormid > anchor_jump_end ? anchormid : anchor_jump_end; //min
+	//  assert(anchormid != anchor_jump_end);
+	//  cuts(ANCHOR_TARGET) = chain1end;
 
 	int jump_num = ANCHOR_TARGET; //this reserves earlier jump numbers for the anchor
 	//iterate over all loops
-	for( core::Size i(1); i <= num_loops; ++i ){
+	for ( core::Size i(1); i <= num_loops; ++i ) {
 		//if this is a terminal loop, don't mess with fold_tree, we won't need space in the vectors
 		if ( pose.residue(interface_->loop(i).start()).is_terminus() //or
-				 || pose.residue(interface_->loop(i).stop() ).is_terminus() ) {
+				|| pose.residue(interface_->loop(i).stop() ).is_terminus() ) {
 			jump_starts.pop_back();
 			jump_stops.pop_back();
 			cuts.pop_back();
@@ -739,7 +744,7 @@ void AnchoredDesignMover::set_fold_tree_and_cutpoints( core::pose::Pose & pose )
 	assert(cuts.size() == num_jumps);
 	ObjexxFCL::FArray2D<int> Fjumps(2, num_jumps);
 	ObjexxFCL::FArray1D<int> Fcuts(num_jumps);
-	for(core::Size i(1); i<=num_jumps; ++i){
+	for ( core::Size i(1); i<=num_jumps; ++i ) {
 		Fjumps(1, i) = jump_starts[i];
 		Fjumps(2, i) = jump_stops[i];
 		Fcuts(i) = cuts[i];
@@ -768,15 +773,15 @@ void AnchoredDesignMover::forget_initial_loops( core::pose::Pose & pose ){
 
 	//for each loop
 	core::Size const num_loops(interface_->num_loops());
-	for( core::Size loop(1); loop <= num_loops; ++loop ){
+	for ( core::Size loop(1); loop <= num_loops; ++loop ) {
 		//if loop has extended boolean set
-		if( interface_->loop(loop).is_extended() ){
+		if ( interface_->loop(loop).is_extended() ) {
 			//iterate through loop residues
 			core::Size const loop_start(interface_->loop(loop).start()), loop_end(interface_->loop(loop).stop());
-			for( core::Size res(loop_start); res<=loop_end; ++res ){
+			for ( core::Size res(loop_start); res<=loop_end; ++res ) {
 				//check movemap before alteration
 				using namespace core::id;
-				if(interface_->movemap_cen_all()->get_bb(res)){
+				if ( interface_->movemap_cen_all()->get_bb(res) ) {
 					pose.set_phi(res, -150.0);
 					pose.set_psi(res, 150.0);
 				}//if mm says ok
@@ -848,7 +853,7 @@ void AnchoredDesignMover::read_options(){
 	rmsd_ = option[ OptionKeys::AnchoredDesign::rmsd ].value();
 
 	//std::string RMSD_only_this_;
-	if( option[ testing::RMSD_only_this ].user() ){
+	if ( option[ testing::RMSD_only_this ].user() ) {
 		RMSD_only_this_ = option[ testing::RMSD_only_this ].value();
 	} else {
 		RMSD_only_this_ = EMPTY_STRING;
@@ -870,7 +875,7 @@ void AnchoredDesignMover::read_options(){
 	refine_only_ = option[ refine_only ].value();
 
 	//core::Real filter_score_;
-	if( option[ OptionKeys::AnchoredDesign::filters::score].user() ){
+	if ( option[ OptionKeys::AnchoredDesign::filters::score].user() ) {
 		filter_score_ = option[ OptionKeys::AnchoredDesign::filters::score].value();
 		use_filter_score_ = true;
 	} else {
@@ -878,7 +883,7 @@ void AnchoredDesignMover::read_options(){
 	}
 
 	//core::Real filter_SASA_;
-	if( option[ OptionKeys::AnchoredDesign::filters::sasa].user() ){
+	if ( option[ OptionKeys::AnchoredDesign::filters::sasa].user() ) {
 		filter_SASA_ = option[ OptionKeys::AnchoredDesign::filters::sasa].value();
 		use_filter_SASA_ = true;
 	} else {
@@ -926,7 +931,7 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 
 	protocols::simple_moves::SwitchResidueTypeSetMover typeset_swap(core::chemical::CENTROID);
 	typeset_swap.apply( pose );
-	if(debug_) posecopy = core::pose::PoseOP( new core::pose::Pose( pose ) );
+	if ( debug_ ) posecopy = core::pose::PoseOP( new core::pose::Pose( pose ) );
 
 	//centroid score
 	T_perturb << "centroid score of starting PDB: " << (*(interface_->get_centroid_scorefunction()))(pose) << std::endl;
@@ -934,11 +939,11 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 	T_perturb << std::flush; //show doesn't flush the buffer
 
 	/*
-		for each loop
-		 perturbmover of either type
-		 ccd close
-		minimize
-		MC evaluate
+	for each loop
+	perturbmover of either type
+	ccd close
+	minimize
+	MC evaluate
 	*/
 
 	//make the sequence mover.  other movers are inserted into it (their handles go out of scope!)
@@ -948,7 +953,7 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 
 	//loop to add perturbing movers for each loop (this setup does each loop equally and sequentially)
 	core::Size num_loops(interface_->num_loops());
-	for( core::Size i(1); i <= num_loops; ++i ){
+	for ( core::Size i(1); i <= num_loops; ++i ) {
 		///////////////////////////generate perturb mover///////////////////////////////
 		//somewhat complex logic here, as there are three options for internal loops:
 		// 1) SmallMover plus CCD closure
@@ -965,10 +970,10 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 		core::Size const loop_end(interface_->loop(i).stop());
 		bool const internal(!( pose.residue(loop_start).is_terminus() || pose.residue(loop_end).is_terminus() ));
 
-		if( perturb_CCD_off_ && perturb_KIC_off_ ) utility_exit_with_message( "cannot pass both AnchoredDesign::perturb_CCD_off AND AnchoredDesign::perturb_KIC_off; this turns off both types of loop remodeling" );
+		if ( perturb_CCD_off_ && perturb_KIC_off_ ) utility_exit_with_message( "cannot pass both AnchoredDesign::perturb_CCD_off AND AnchoredDesign::perturb_KIC_off; this turns off both types of loop remodeling" );
 
 		//option 3: kinematic; no perturbation or closure needed
-		if( internal && !perturb_KIC_off_){
+		if ( internal && !perturb_KIC_off_ ) {
 			//make kinematic mover
 			using protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP;
 			using protocols::loops::loop_closure::kinematic_closure::KinematicMoverCAP;
@@ -999,7 +1004,7 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 		}//if using kinematic
 
 		//if this is a terminal extension, or if we want CCD
-		if (!internal || !perturb_CCD_off_) {
+		if ( !internal || !perturb_CCD_off_ ) {
 			//now, check whether perturb is fragment based or not
 			if ( !interface_->get_frags() /*if NULL*/ || no_frags_ ) {
 				core::Size nmoves(5);
@@ -1011,10 +1016,9 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 				small_mover->angle_max( 'L', 180.0 );
 				perturb_mover = small_mover;
 				T_perturb << "creating SmallMover-based perturbation for loop " << loop_start << " " << loop_end << std::endl;
-			} //smallmover based perturb
-			else {
+			} else { //smallmover based perturb
 				/*T_perturb << "For loop start " << loop_start << " end " << loop_end
-					<< " fragments exist; preferring fragments over small moves" << std::endl;*/
+				<< " fragments exist; preferring fragments over small moves" << std::endl;*/
 				using protocols::simple_moves::ClassicFragmentMover;
 				protocols::simple_moves::ClassicFragmentMoverOP frag_mover( new ClassicFragmentMover(interface_->get_frags(), interface_->movemap_cen(i)) );
 				frag_mover->enable_end_bias_check(false);
@@ -1024,20 +1028,20 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 
 			oneloop_subsequence->add_mover(perturb_mover);
 
-			if( debug_ ) {
+			if ( debug_ ) {
 				outputfilename.str(""); //clears stream
 				outputfilename << "perturbed_" << counter;
 				debug_dump_pose(pose, posecopy, outputfilename.str(), perturb_mover);
 			}
 
 			//now we need to add on closure, if the loop is not terminal and we didn't use KinematicMover above
-			if( internal && !perturb_CCD_off_ ){
+			if ( internal && !perturb_CCD_off_ ) {
 				///////////////////////////generate CCD close mover///////////////////////////////
 				using protocols::loops::loop_closure::ccd::CCDLoopClosureMover;
 				oneloop_subsequence->add_mover(moves::MoverOP( new CCDLoopClosureMover(interface_->loop(i), interface_->movemap_cen_omegafixed(i)) ));
 				T_perturb << "creating CCD-closure after perturbation for loop " << loop_start << " " << loop_end << std::endl;
 
-				if( debug_ ){
+				if ( debug_ ) {
 					outputfilename.str(""); //clears stream
 					outputfilename << "perturbed_CCD_" << counter;
 					debug_dump_pose(pose, posecopy, outputfilename.str(), oneloop_subsequence);
@@ -1056,34 +1060,34 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 	//backbone_mover now randomly chooses one loop (equal probabilities) or all at once a small amount of the time
 	perturb_sequence->add_mover(backbone_mover);
 
-	if( debug_ ) debug_dump_pose(pose, posecopy, "perturbed_nomin", allloops_subsequence);
+	if ( debug_ ) debug_dump_pose(pose, posecopy, "perturbed_nomin", allloops_subsequence);
 
 	/////////////////////////minimizer mover/////////////////////////////////////////
 	using protocols::simple_moves::MinMoverOP;
 	using protocols::simple_moves::MinMover;
 	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(
-																			interface_->movemap_cen_all(),
-																			interface_->get_centroid_scorefunction_min(),
-																			min_type_,
-																			0.01,
-																			true /*use_nblist*/ ) );
+		interface_->movemap_cen_all(),
+		interface_->get_centroid_scorefunction_min(),
+		min_type_,
+		0.01,
+		true /*use_nblist*/ ) );
 
 	perturb_sequence->add_mover(min_mover);
 
-	if( debug_ )	{
+	if ( debug_ ) {
 		debug_dump_pose(pose, posecopy, "perturbed_min", min_mover);
 		dump_cutpoint_info( pose );
 		debug_dump_pose(pose, posecopy, "perturbed_all", perturb_sequence);
- 	}
+	}
 
 	/////////////////////////wrap the sequence in a trial/////////////////////////////////////////
 	//make the monte carlo object
 	using protocols::moves::MonteCarloOP;
 	using protocols::moves::MonteCarlo;
 	MonteCarloOP mc( new MonteCarlo(
-																	pose,
-																	*(interface_->get_centroid_scorefunction()),
-																	perturb_temp_ ) );//temperature, default 0.8
+		pose,
+		*(interface_->get_centroid_scorefunction()),
+		perturb_temp_ ) );//temperature, default 0.8
 	protocols::moves::TrialMoverOP trial_mover( new protocols::moves::TrialMover( perturb_sequence, mc ) );
 
 	/////////////////////////wrap in a for loop output preference/////////////////////////////////
@@ -1101,7 +1105,7 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 
 	//show centroid score (duplicates last line above)
 	T_perturb << "centroid score of final perturbed PDB: " << (*(interface_->get_centroid_scorefunction()))(pose)
-						<< std::endl;
+		<< std::endl;
 	(*(interface_->get_centroid_scorefunction())).show( T_perturb, pose );
 	T_perturb << std::flush; //show doesn't flush the buffer
 
@@ -1121,13 +1125,13 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 	pack_mover->task_factory( task_factory );
 	pack_mover->score_function( interface_->get_fullatom_scorefunction() );
 
-	//using protocols::simple_moves::MinMoverOP;	//using protocols::simple_moves::MinMover;
+	//using protocols::simple_moves::MinMoverOP; //using protocols::simple_moves::MinMover;
 	protocols::simple_moves::MinMoverOP min_mover_fa( new protocols::simple_moves::MinMover(
-																				 interface_->movemap_cen_all(), //even though this is fullatom; we do not yet want to minimize inside the anchor if we are using constraints
-																				 interface_->get_fullatom_scorefunction(),
-																				 min_type_,
-																				 0.01,
-																				 true /*use_nblist*/ ) );
+		interface_->movemap_cen_all(), //even though this is fullatom; we do not yet want to minimize inside the anchor if we are using constraints
+		interface_->get_fullatom_scorefunction(),
+		min_type_,
+		0.01,
+		true /*use_nblist*/ ) );
 
 	//definitely want sidechain minimization here
 	using protocols::simple_moves::TaskAwareMinMoverOP;
@@ -1138,7 +1142,7 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 
 	//score the protein
 	T_perturb << "fullatom score of perturbed, refullatomized, repacked/minimized PDB: "
-						<< (*(interface_->get_fullatom_scorefunction()))(pose) << std::endl;
+		<< (*(interface_->get_fullatom_scorefunction()))(pose) << std::endl;
 	(*(interface_->get_fullatom_scorefunction())).show( T_perturb, pose );
 	T_perturb << std::flush; //show doesn't flush the buffer
 
@@ -1249,7 +1253,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 
 	//variables used for debugging output
 	core::pose::PoseOP posecopy( NULL );
-	if(debug_) posecopy = core::pose::PoseOP( new core::pose::Pose(pose) );
+	if ( debug_ ) posecopy = core::pose::PoseOP( new core::pose::Pose(pose) );
 	int counter(1);
 	//std::stringstream outputfilename;
 
@@ -1261,14 +1265,14 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 
 	//refinement steps:
 	/*
-		first, do a repack/minimize of the interface (handles bad rotamers coming in from perturb mode)
-		for each loop
-		 small backbone movements (small and shear)
-		 CCD
-		rotamer trials
-		minimize
-		monte carlo check
-		every so often, do a repack/minimize instead of backbone perturbations
+	first, do a repack/minimize of the interface (handles bad rotamers coming in from perturb mode)
+	for each loop
+	small backbone movements (small and shear)
+	CCD
+	rotamer trials
+	minimize
+	monte carlo check
+	every so often, do a repack/minimize instead of backbone perturbations
 	*/
 
 	///////////////////////////////////////////MC object////////////////////////////////
@@ -1276,9 +1280,9 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 	using protocols::moves::MonteCarloOP;
 	using protocols::moves::MonteCarlo;
 	MonteCarloOP mc( new MonteCarlo(
-																	pose,
-																	*(interface_->get_fullatom_scorefunction()),
-																	refine_temp_ ) ); //temperature, default 0.8
+		pose,
+		*(interface_->get_fullatom_scorefunction()),
+		refine_temp_ ) ); //temperature, default 0.8
 
 	/////////////////////////////generate full repack mover//////////////////////////////
 	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
@@ -1289,11 +1293,11 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 	using protocols::simple_moves::MinMoverOP;
 	using protocols::simple_moves::MinMover;
 	protocols::simple_moves::MinMoverOP packing_min_mover( new protocols::simple_moves::MinMover(
-																							interface_->movemap_fa_all(),
-																							interface_->get_fullatom_scorefunction(),
-																							min_type_,
-																							0.01,
-																							true /*use_nblist*/ ) );
+		interface_->movemap_fa_all(),
+		interface_->get_fullatom_scorefunction(),
+		min_type_,
+		0.01,
+		true /*use_nblist*/ ) );
 
 	using protocols::simple_moves::TaskAwareMinMoverOP;
 	using protocols::simple_moves::TaskAwareMinMover;
@@ -1312,7 +1316,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 
 	//loop to add perturbing movers for each loop (this setup does each loop equally and sequentially)
 	core::Size num_loops(interface_->num_loops());
-	for( core::Size i(1); i <= num_loops; ++i ){
+	for ( core::Size i(1); i <= num_loops; ++i ) {
 
 		///////////////////////////generate backbone mover///////////////////////////////
 		//as before, we might want CCD, ALC, or both
@@ -1325,10 +1329,10 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 		core::Size const loop_start(interface_->loop(i).start());
 		core::Size const loop_end(interface_->loop(i).stop());
 		bool const internal(!( pose.residue(loop_start).is_terminus() || pose.residue(loop_end).is_terminus() ));
-		if( refine_CCD_off_ && refine_KIC_off_ ) utility_exit_with_message( "cannot pass both AnchoredDesign::refine_CCD_off AND AnchoredDesign::refine_KIC_off; this turns off both types of loop remodeling" );
+		if ( refine_CCD_off_ && refine_KIC_off_ ) utility_exit_with_message( "cannot pass both AnchoredDesign::refine_CCD_off AND AnchoredDesign::refine_KIC_off; this turns off both types of loop remodeling" );
 
 		//option 3: kinematic; no perturbation or closure needed
-		if( internal && !refine_KIC_off_){
+		if ( internal && !refine_KIC_off_ ) {
 			//make kinematic mover
 			using protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP;
 			using protocols::loops::loop_closure::kinematic_closure::KinematicMoverCAP;
@@ -1360,7 +1364,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 			T_perturb << "creating KinematicWrapper with loop " << loop_start << " " << loop_end << std::endl;
 		}//if using kinematic
 
-		if (!internal || !refine_CCD_off_) { //termini and ccd loops
+		if ( !internal || !refine_CCD_off_ ) { //termini and ccd loops
 
 			core::Size nmoves(1);
 			protocols::moves::MoverOP small_mover( new protocols::simple_moves::SmallMover(interface_->movemap_fa(i), 0.8, nmoves) );
@@ -1376,7 +1380,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 			oneloop_subsequence->add_mover(smallshear_mover);
 
 			//if not a terminal loop
-			if (internal && !refine_CCD_off_) {
+			if ( internal && !refine_CCD_off_ ) {
 				using protocols::loops::loop_closure::ccd::CCDLoopClosureMover;
 				using protocols::moves::MoverOP;
 				MoverOP CCD_mover( new CCDLoopClosureMover(interface_->loop(i), interface_->movemap_fa_omegafixed(i)) );
@@ -1384,29 +1388,29 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 				T_refine << "creating CCD-closure after perturbation for loop " << loop_start << " " << loop_end << std::endl;
 
 				/*if(debug_){
-					outputfilename.str(""); //clears stream
-					outputfilename << "refine_smallmoved" << counter << ".pdb";
-					small_mover->apply(*posecopy);
-					posecopy->dump_pdb(outputfilename.str());
+				outputfilename.str(""); //clears stream
+				outputfilename << "refine_smallmoved" << counter << ".pdb";
+				small_mover->apply(*posecopy);
+				posecopy->dump_pdb(outputfilename.str());
 
-					outputfilename.str(""); //clears stream
-					outputfilename << "refine_smallmoved_plus_CCD" << counter << ".pdb";
-					debug_dump_pose(pose, posecopy, outputfilename.str(), CCD_mover);
+				outputfilename.str(""); //clears stream
+				outputfilename << "refine_smallmoved_plus_CCD" << counter << ".pdb";
+				debug_dump_pose(pose, posecopy, outputfilename.str(), CCD_mover);
 
-					outputfilename.str(""); //clears stream
-					outputfilename << "refine_shearmoved" << counter << ".pdb";
-					shear_mover->apply(*posecopy);
-					posecopy->dump_pdb(outputfilename.str());
+				outputfilename.str(""); //clears stream
+				outputfilename << "refine_shearmoved" << counter << ".pdb";
+				shear_mover->apply(*posecopy);
+				posecopy->dump_pdb(outputfilename.str());
 
-					outputfilename.str(""); //clears stream
-					outputfilename << "refine_shearmoved_plus_CCD" << counter << ".pdb";
-					debug_dump_pose(pose, posecopy, outputfilename.str(), CCD_mover);
-					}*/
+				outputfilename.str(""); //clears stream
+				outputfilename << "refine_shearmoved_plus_CCD" << counter << ".pdb";
+				debug_dump_pose(pose, posecopy, outputfilename.str(), CCD_mover);
+				}*/
 			}//if needing CCD closure
 			oneloop_random->add_mover(oneloop_subsequence, 1);
 		}//if terminal or needing CCD closure
 		++counter;
-		if(debug_) *posecopy = pose;
+		if ( debug_ ) *posecopy = pose;
 
 		allloops_subsequence->add_mover(oneloop_random); //keep track of all loops as a sequence
 		backbone_mover->add_mover(oneloop_random, 1.0); //add to random mover with large weight
@@ -1426,24 +1430,24 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 	using protocols::simple_moves::RotamerTrialsMoverOP;
 	using protocols::simple_moves::EnergyCutRotamerTrialsMover;
 	protocols::simple_moves::RotamerTrialsMoverOP rt_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover(
-																																interface_->get_fullatom_scorefunction(),
-																																rt_task_factory,
-																																mc,
-																																0.01 /*energycut*/ ) );
+		interface_->get_fullatom_scorefunction(),
+		rt_task_factory,
+		mc,
+		0.01 /*energycut*/ ) );
 
-	if(debug_) debug_dump_pose(pose, posecopy, "refine_rt.pdb", rt_mover);
+	if ( debug_ ) debug_dump_pose(pose, posecopy, "refine_rt.pdb", rt_mover);
 	refine_sequence->add_mover(rt_mover);
 
 	/////////////////////////minimizer mover/////////////////////////////////////////
 	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(
-																			interface_->movemap_fa_all(),
-																			interface_->get_fullatom_scorefunction(),
-																			min_type_,
-																			0.01,
-																			true /*use_nblist*/ ) );
+		interface_->movemap_fa_all(),
+		interface_->get_fullatom_scorefunction(),
+		min_type_,
+		0.01,
+		true /*use_nblist*/ ) );
 	refine_sequence->add_mover( min_mover );
 
-	if(debug_){
+	if ( debug_ ) {
 		debug_dump_pose(pose, posecopy, "refine_min.pdb", ( packing_TAmin_mover ));
 		debug_dump_pose(pose, posecopy, "refine_all.pdb", refine_sequence);
 		dump_cutpoint_info(pose);
@@ -1452,7 +1456,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 	//////////////////cycle mover controls when backbone perturbations occur versus repacking///////////////
 	//this mover should do backbone refinement first <many> times it is called, then repack, then repeat
 	protocols::moves::CycleMoverOP refine_repack_cycle( new protocols::moves::CycleMover );
-	for(core::Size i = 1; i < refine_repack_cycles_; i++) refine_repack_cycle->add_mover(refine_sequence);
+	for ( core::Size i = 1; i < refine_repack_cycles_; i++ ) refine_repack_cycle->add_mover(refine_sequence);
 	refine_repack_cycle->add_mover(repack_sequence);
 	//could swap so that repack_trial is first and remove its explicit apply() above
 
@@ -1463,7 +1467,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 
 	core::Size const refine_latefactory = (refine_cycles_ -( refine_cycles_/3)); //magic number: final one third of cycles
 	T_refine << "   Current     Low    total cycles =" << refine_cycles_
-					 << ", second resfile at " << refine_latefactory << std::endl;
+		<< ", second resfile at " << refine_latefactory << std::endl;
 	for ( core::Size i = 1; i <= refine_cycles_; ++i ) {
 
 		if ( i == refine_latefactory ) {
@@ -1474,11 +1478,11 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 			rt_mover->task_factory(rt_late_factory);
 		}
 
-		if ( i == refine_cycles_ ){
+		if ( i == refine_cycles_ ) {
 			repack_sequence->apply(pose);
 			mc->boltzmann(pose);
 		} else {
-		refine_master->apply( pose );
+			refine_master->apply( pose );
 		}
 		T_refine << i << "  " << mc->last_accepted_score() << "  " << mc->lowest_score() << std::endl;
 	}//end the exciting for loop
@@ -1519,7 +1523,7 @@ core::Real AnchoredRefineMover::get_refine_temp() const { return refine_temp_;}
 core::Size AnchoredRefineMover::get_refine_cycles() const { return refine_cycles_;}
 /// @brief what minimizer type to use?
 std::string const & AnchoredRefineMover::get_min_type() const { return min_type_;}
-	/// @brief how many cycles between repack/design opportunities?
+/// @brief how many cycles between repack/design opportunities?
 core::Size AnchoredRefineMover::get_refine_repack_cycles() const { return refine_repack_cycles_;}
 
 /// @brief debugging mode activates a bunch of extra output
@@ -1557,7 +1561,7 @@ void AnchoredRefineMover::read_options(){
 	//bool refine_KIC_off_;
 	refine_KIC_off_ = option[ refine_KIC_off ].value();
 
-	///	bool nonpivot_torsion_sampling_;
+	/// bool nonpivot_torsion_sampling_;
 	nonpivot_torsion_sampling_ = option[ OptionKeys::loops::nonpivot_torsion_sampling ].value();
 
 	//bool vicinity_sampling_;

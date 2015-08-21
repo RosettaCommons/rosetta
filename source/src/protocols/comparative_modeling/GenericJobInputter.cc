@@ -44,7 +44,7 @@ namespace protocols {
 namespace comparative_modeling {
 
 GenericJobInputter::GenericJobInputter() {
-  tr.Debug << "Instantiate GenericJobInputter" << std::endl;
+	tr.Debug << "Instantiate GenericJobInputter" << std::endl;
 }
 
 /// @details This function will first see if the pose already exists in the Job.
@@ -53,54 +53,54 @@ GenericJobInputter::GenericJobInputter() {
 /// into it.
 /// why does this code live in comparative_modeling?
 void GenericJobInputter::pose_from_job( core::pose::Pose& pose, protocols::jd2::JobOP job) {
-  using protocols::simple_moves::ExtendedPoseMover;
-  using std::string;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using protocols::simple_moves::ExtendedPoseMover;
+	using std::string;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-  tr.Debug << "GenericJobInputter::pose_from_job" << std::endl;
-  if( !job->inner_job()->get_pose() ){
+	tr.Debug << "GenericJobInputter::pose_from_job" << std::endl;
+	if ( !job->inner_job()->get_pose() ) {
 		//fpd if pose is symmetric we need to change SymmetricConformation to Conformation
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
-	 		core::pose::symmetry::make_asymmetric_pose( pose );
+			core::pose::symmetry::make_asymmetric_pose( pose );
 		}
 
-    // Creates an extended, idealized pose from the first sequence in the first
-    // file in -in:file:fasta. Preserves current behavior for the TopologyBroker
-		if (option[OptionKeys::in::file::fasta].user()) {
-      string fasta = option[in::file::fasta]()[1];
-      string sequence = core::sequence::read_fasta_file_str(fasta)[1];
-      ExtendedPoseMover m(sequence);
-      m.apply(pose);
-    }
-  } else {
-    pose = *(job->inner_job()->get_pose());
-    tr.Debug << "filling pose from saved copy " << job->inner_job()->input_tag() << std::endl;
-  }
+		// Creates an extended, idealized pose from the first sequence in the first
+		// file in -in:file:fasta. Preserves current behavior for the TopologyBroker
+		if ( option[OptionKeys::in::file::fasta].user() ) {
+			string fasta = option[in::file::fasta]()[1];
+			string sequence = core::sequence::read_fasta_file_str(fasta)[1];
+			ExtendedPoseMover m(sequence);
+			m.apply(pose);
+		}
+	} else {
+		pose = *(job->inner_job()->get_pose());
+		tr.Debug << "filling pose from saved copy " << job->inner_job()->input_tag() << std::endl;
+	}
 }
 
 /// @details this function determines what jobs exist from -s/-l
 void GenericJobInputter::fill_jobs( protocols::jd2::JobsContainer & jobs ){
-  tr.Debug << "GenericJobInputter::fill_jobs" << std::endl;
+	tr.Debug << "GenericJobInputter::fill_jobs" << std::endl;
 
-  jobs.clear(); //should already be empty anyway
+	jobs.clear(); //should already be empty anyway
 
-  core::Size const nstruct( get_nstruct () );
+	core::Size const nstruct( get_nstruct () );
 
-  //note that we are not really using the second and third fields in this implementation
-  using basic::options::OptionKeys::jd2::generic_job_name; //This option defaults to 'S' for original behavior
-  protocols::jd2::InnerJobOP ijob( new protocols::jd2::InnerJob( basic::options::option[ generic_job_name ].value() , nstruct ) );
+	//note that we are not really using the second and third fields in this implementation
+	using basic::options::OptionKeys::jd2::generic_job_name; //This option defaults to 'S' for original behavior
+	protocols::jd2::InnerJobOP ijob( new protocols::jd2::InnerJob( basic::options::option[ generic_job_name ].value() , nstruct ) );
 
-  for( core::Size index = 1; index <= nstruct; ++index) {
-    jobs.push_back( protocols::jd2::JobOP( new protocols::jd2::Job( ijob, index ) ) );
-    tr.Trace << "create job index " << index << std::endl;
-  }
+	for ( core::Size index = 1; index <= nstruct; ++index ) {
+		jobs.push_back( protocols::jd2::JobOP( new protocols::jd2::Job( ijob, index ) ) );
+		tr.Trace << "create job index " << index << std::endl;
+	}
 }
 
 /// @brief Return the type of input source that the GenericJobInputter is currently using
 /// @return Always <em>POSE</em>.
 protocols::jd2::JobInputterInputSource::Enum GenericJobInputter::input_source() const {
-  return protocols::jd2::JobInputterInputSource::POSE;
+	return protocols::jd2::JobInputterInputSource::POSE;
 }
 
 //CREATOR SECTION

@@ -35,24 +35,24 @@
 namespace protocols {
 namespace denovo_design {
 
-	static char const PARENT_DELIMETER = '.';
+static char const PARENT_DELIMETER = '.';
 
-	typedef std::list< std::string > StringList;
-	typedef utility::vector1< std::string > StringVec;
+typedef std::list< std::string > StringList;
+typedef utility::vector1< std::string > StringVec;
 
-	struct CutAndJump {
-		public:
-			CutAndJump() :
-				cutpoint( 0 ),
-				jump( 0 ) {}
-			CutAndJump( core::Size const cutval, int const jumpno ) :
-				cutpoint( cutval ),
-				jump( jumpno ) {}
-		core::Size cutpoint;
-		int jump;
-		core::kinematics::FoldTreeOP ft;
-	};
-	typedef utility::vector1< CutAndJump > JumpInfo;
+struct CutAndJump {
+public:
+	CutAndJump() :
+		cutpoint( 0 ),
+		jump( 0 ) {}
+	CutAndJump( core::Size const cutval, int const jumpno ) :
+		cutpoint( cutval ),
+		jump( jumpno ) {}
+	core::Size cutpoint;
+	int jump;
+	core::kinematics::FoldTreeOP ft;
+};
+typedef utility::vector1< CutAndJump > JumpInfo;
 
 } // denovo_design
 } // protocols

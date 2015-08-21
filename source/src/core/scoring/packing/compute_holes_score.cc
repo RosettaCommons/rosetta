@@ -32,7 +32,7 @@
 
 
 #ifndef WIN32
-#ifndef  __native_client__ 
+#ifndef  __native_client__
 #include <pstream.h>
 
 //Auto Headers
@@ -56,12 +56,12 @@ HolesResult::~HolesResult() {}
 void compute_holes_surfs(PoseBalls & pb, std::string ) {
 
 #ifndef WIN32
-#ifndef  __native_client__ 
+#ifndef  __native_client__
 
 	using namespace std;
- 	using namespace basic::options;
+	using namespace basic::options;
 
-	for(Size tries = 1; tries <= 10; ++tries) {
+	for ( Size tries = 1; tries <= 10; ++tries ) {
 		TR << "compute_holes_surfs try: " << tries << std::endl;
 		pb.reset_surf();
 
@@ -70,13 +70,13 @@ void compute_holes_surfs(PoseBalls & pb, std::string ) {
 		// build DAlphaBall input commands
 		std::ostringstream oss;
 		oss << "NPOINTS" << endl << pb.nballs() << endl << "COORDS" << endl;
-		for( Size i = 1; i <= pb.nballs(); i++ ) {
+		for ( Size i = 1; i <= pb.nballs(); i++ ) {
 			Ball const & b(pb.ball(i));
 			oss << b.x() << " " << b.y() << " " << b.z() << " " << b.r() << " " << endl;
 		}
 		oss << "END" << endl;
 
-		if(option[OptionKeys::holes::debug]()) {
+		if ( option[OptionKeys::holes::debug]() ) {
 			utility::io::ozstream out("debug_holes_DalphaBall_command.daball");
 			out << oss.str();
 			out.close();
@@ -87,16 +87,16 @@ void compute_holes_surfs(PoseBalls & pb, std::string ) {
 		redi::pstream proc( cmd + " alpha20_surf" );
 		proc << oss.str() << redi::peof;
 		Size nlines = 0;
-        string buf, tmp;
-        while( getline(proc,tmp) ){
-        	buf += tmp+"\n";
+		string buf, tmp;
+		while ( getline(proc,tmp) ) {
+			buf += tmp+"\n";
 			++nlines;
 		}
-		proc.close();		
-		if(!proc.eof()){
+		proc.close();
+		if ( !proc.eof() ) {
 			utility_exit_with_message("too much DAlphaBall output!");
 		}
-		if( nlines != 20*pb.nballs() ){
+		if ( nlines != 20*pb.nballs() ) {
 			utility::io::ozstream out("debug_holes_DalphaBall_command.daball");
 			out << oss.str();
 			out.close();
@@ -108,31 +108,31 @@ void compute_holes_surfs(PoseBalls & pb, std::string ) {
 
 		std::istringstream iss(buf);
 		bool fail = false;
-		for( Size a = 1; a <= 20; a++ ) {
-			for( Size i = 1; i <= pb.nballs(); i++ ) {
+		for ( Size a = 1; a <= 20; a++ ) {
+			for ( Size i = 1; i <= pb.nballs(); i++ ) {
 				Size index,ialpha;
 				std::string val;
 				iss >> ialpha >> index >> val;
 				Real rval = atof(val.c_str());
-				if(boost::math::isnan(rval)) rval = 0.0;
+				if ( boost::math::isnan(rval) ) rval = 0.0;
 				//TR << "DAlphaBall output index " << ialpha << " " << a << "   " << index << " " << i << std::endl;
-				if( i != index || a != ialpha ) {
+				if ( i != index || a != ialpha ) {
 					TR << "DAlphaBall output index mismatch " << ialpha << " " << a << "   " << index << " " << i << std::endl;
 					fail = true;
 					break;
 				}
 				pb.set_surf(i,a,rval);
 			}
-			if(fail) break;
+			if ( fail ) break;
 		}
 
-		if(!fail) {
+		if ( !fail ) {
 			TR << "compute_holes_surfs completed successfully" << std::endl;
 			return;
 		} else {
 			TR << "failed to run DAlphaBall" << std::endl;
 		}
-		//		utility_exit_with_message("dab test");
+		//  utility_exit_with_message("dab test");
 	}
 	std::cerr << "Too many compute_holes_surfs failures" << std::endl;
 	std::exit(-1);
@@ -154,29 +154,29 @@ compute_rosettaholes_score(
 	std::string cmd
 )
 {
-	if( cmd == "" ) {
+	if ( cmd == "" ) {
 		cmd = basic::options::option[ basic::options::OptionKeys::holes::dalphaball ]();
 	}
 
 	HolesResult result;
-	if(!use_cached_surfs) compute_holes_surfs(pb,cmd);
+	if ( !use_cached_surfs ) compute_holes_surfs(pb,cmd);
 
 	core::pose::initialize_atomid_map(result.atom_scores,pose);
-	for( Size i = 1; i <= pb.nballs(); ++i ) {
+	for ( Size i = 1; i <= pb.nballs(); ++i ) {
 		Real resl_score = 0.0, dec_score = 0.0, dec15_score = 0.0;
 		Size at = pb.atom_type(i);
 		char ss = pb.secstruct(i);
-		for( Size a = 1; a <= 20; ++a ) {
+		for ( Size a = 1; a <= 20; ++a ) {
 			resl_score   += resl_params  .sa_weight(at,ss,a) * pb.surf(i,a);// now in weights / 12.56637;
-			 dec_score   += dec_params   .sa_weight(at,ss,a) * pb.surf(i,a);// now in weights / 12.56637;
-			 dec15_score += dec15_params .sa_weight(at,ss,a) * pb.surf(i,a);// now in weights / 12.56637;
+			dec_score   += dec_params   .sa_weight(at,ss,a) * pb.surf(i,a);// now in weights / 12.56637;
+			dec15_score += dec15_params .sa_weight(at,ss,a) * pb.surf(i,a);// now in weights / 12.56637;
 		}
 		resl_score   += resl_params.nb_weight(at,ss) * pb.smooth_nb(i);// now in weights / 150.0;
-		 dec_score   += dec_params .nb_weight(at,ss) * pb.smooth_nb(i);// now in weights / 150.0;
- 		 dec15_score += dec15_params .nb_weight(at,ss) * pb.smooth_nb(i);// now in weights / 150.0;
+		dec_score   += dec_params .nb_weight(at,ss) * pb.smooth_nb(i);// now in weights / 150.0;
+		dec15_score += dec15_params .nb_weight(at,ss) * pb.smooth_nb(i);// now in weights / 150.0;
 		resl_score   -= resl_params.intercept(at,ss) + resl_params.intercept();
-	 	 dec_score   -= dec_params .intercept(at,ss) + dec_params .intercept();
-	 	 dec15_score -= dec15_params .intercept(at,ss) + dec15_params .intercept();
+		dec_score   -= dec_params .intercept(at,ss) + dec_params .intercept();
+		dec15_score -= dec15_params .intercept(at,ss) + dec15_params .intercept();
 		result.resl_score  += resl_score;
 		result.decoy_score +=  dec_score;
 		result.dec15_score +=  dec15_score;
@@ -193,7 +193,7 @@ compute_rosettaholes_score(
 
 	TR << "compute_rosettaholes_score done: " << result.score << std::endl;
 
-   return result;
+	return result;
 }
 
 Real
@@ -210,11 +210,11 @@ compute_dec15_score(
 	Real dec15_score = 0.0;
 	compute_holes_surfs(pb,cmd);
 
-	for( Size i = 1; i <= pb.nballs(); ++i ) {
+	for ( Size i = 1; i <= pb.nballs(); ++i ) {
 		Size at = pb.atom_type(i);
 		char ss = pb.secstruct(i);
-		for( Size a = 1; a <= 20; ++a ) {
-			 dec15_score += dec15_params .sa_weight(at,ss,a) * pb.surf(i,a);// now in weights / 12.56637;
+		for ( Size a = 1; a <= 20; ++a ) {
+			dec15_score += dec15_params .sa_weight(at,ss,a) * pb.surf(i,a);// now in weights / 12.56637;
 		}
 		dec15_score += dec15_params .nb_weight(at,ss) * pb.smooth_nb(i);// now in weights / 150.0;
 		dec15_score -= dec15_params .intercept(at,ss) + dec15_params .intercept();
@@ -223,42 +223,42 @@ compute_dec15_score(
 
 	TR << "compute_dec15_score done: " << dec15_score << std::endl;
 
-   return dec15_score;
+	return dec15_score;
 }
 
 
 HolesResult
 compute_holes_score(
-   pose::Pose  const & pose,
-   PoseBalls         & pb,
-   HolesParams const & params,
-	 bool use_cached_surfs,
-	 std::string cmd
+	pose::Pose  const & pose,
+	PoseBalls         & pb,
+	HolesParams const & params,
+	bool use_cached_surfs,
+	std::string cmd
 ) {
 
-	if( cmd == "" ) {
+	if ( cmd == "" ) {
 		cmd = basic::options::option[ basic::options::OptionKeys::holes::dalphaball ]();
 	}
 
-   HolesResult result;
-   if( !use_cached_surfs ) compute_holes_surfs(pb,cmd);
+	HolesResult result;
+	if ( !use_cached_surfs ) compute_holes_surfs(pb,cmd);
 
 	core::pose::initialize_atomid_map(result.atom_scores,pose);
-	for( Size i = 1; i <= pb.nballs(); ++i ) {
+	for ( Size i = 1; i <= pb.nballs(); ++i ) {
 		Size at = pb.atom_type(i);
 		char ss = pb.secstruct(i);
-      Real tmp = 0.0;
-		for( Size a = 1; a <= 20; ++a ) {
-         tmp += params.sa_weight(at,ss,a) * pb.surf(i,a);// now in weights / 12.56637;
+		Real tmp = 0.0;
+		for ( Size a = 1; a <= 20; ++a ) {
+			tmp += params.sa_weight(at,ss,a) * pb.surf(i,a);// now in weights / 12.56637;
 		}
-      tmp += params.nb_weight(at,ss) * pb.smooth_nb(i);// now in weights / 150.0;
+		tmp += params.nb_weight(at,ss) * pb.smooth_nb(i);// now in weights / 150.0;
 		tmp -= params.intercept(at,ss) + params.intercept();
-      result.score += tmp;
+		result.score += tmp;
 		result.atom_scores.set( pb.index_to_id(i), tmp );
 	}
-   // result.score /= pb.nballs();
+	// result.score /= pb.nballs();
 	TR << "compute_holes_score done: " << result.score << std::endl;
-   return result;
+	return result;
 }
 
 inline core::Real sqr( core::Real x ) {
@@ -267,9 +267,9 @@ inline core::Real sqr( core::Real x ) {
 
 // smoothed neighbor is between 9 and 11 A
 inline core::Real sigmoidish_neighbor( core::Real sqdist ) {
-	if( sqdist >= 121.0 ) {
+	if ( sqdist >= 121.0 ) {
 		return 0.0;
-	} else if( sqdist <= 81.0 ) {
+	} else if ( sqdist <= 81.0 ) {
 		return 1.0;
 	} else {
 		Real dist = sqrt( sqdist );
@@ -279,9 +279,9 @@ inline core::Real sigmoidish_neighbor( core::Real sqdist ) {
 
 // smoothed neighbor is between 9 and 11 A
 inline core::Real sigmoidish_neighbor_deriv( core::Real sqdist ) {
-	if( sqdist >= 121.0 ) {
+	if ( sqdist >= 121.0 ) {
 		return 0.0;
-	} else if( sqdist <= 81.0 ) {
+	} else if ( sqdist <= 81.0 ) {
 		return 0.0;
 	} else {
 		Real dist = sqrt( sqdist );
@@ -295,39 +295,39 @@ core::Real compute_smooth_nb_deriv(
 	HolesParams const & params,
 	core::id::AtomID_Map< numeric::xyzVector<core::Real> > & deriv
 ) {
-   using namespace numeric;
-   Real tot_snb = 0.0;
-	for( core::Size i = 1; i <= pb.nballs(); i++ ) {
-		if( !pb.is_heavy(i) ) continue;
-      deriv.set(pb.index_to_id(i),deriv.get(pb.index_to_id(i)));
+	using namespace numeric;
+	Real tot_snb = 0.0;
+	for ( core::Size i = 1; i <= pb.nballs(); i++ ) {
+		if ( !pb.is_heavy(i) ) continue;
+		deriv.set(pb.index_to_id(i),deriv.get(pb.index_to_id(i)));
 		xyzVector<Real> & ixyz( pb.ball(i).xyz() );
-      Size at1 = pb.atom_type(i);
-      char ss1 = pb.secstruct(i);
-      tot_snb += params.nb_weight(at1,ss1);
-		for( core::Size j = 1; j < i; j++ ) {
-			if( !pb.is_heavy(j) ) continue;
+		Size at1 = pb.atom_type(i);
+		char ss1 = pb.secstruct(i);
+		tot_snb += params.nb_weight(at1,ss1);
+		for ( core::Size j = 1; j < i; j++ ) {
+			if ( !pb.is_heavy(j) ) continue;
 			xyzVector<Real> & jxyz( pb.ball(j).xyz() );
 			Real d2( ixyz.distance_squared(jxyz) );
-			if( d2 < 121.0 ) {
-            Real  sn = sigmoidish_neighbor(d2);
-            Real dsn = sigmoidish_neighbor_deriv(d2);
-            Size at2 = pb.atom_type(j);
-            char ss2 = pb.secstruct(j);
-            xyzVector<core::Real> dxyz = ixyz-jxyz;
-            dxyz.normalize();
-            Real w = 0.0;
-            if( params.have_params(at1,ss1) ) w += params.nb_weight(at1,ss1);
-            if( params.have_params(at2,ss2) ) w += params.nb_weight(at2,ss2);
-			   tot_snb += sn * w;
-            if( d2 > 81 ) {
-               // // TODO: sheffler why 4*?
-               deriv[pb.index_to_id(i)] += dxyz*dsn*w;
-               deriv[pb.index_to_id(j)] -= dxyz*dsn*w;
-            }
-         }
-      }
-   }
-   return tot_snb;
+			if ( d2 < 121.0 ) {
+				Real  sn = sigmoidish_neighbor(d2);
+				Real dsn = sigmoidish_neighbor_deriv(d2);
+				Size at2 = pb.atom_type(j);
+				char ss2 = pb.secstruct(j);
+				xyzVector<core::Real> dxyz = ixyz-jxyz;
+				dxyz.normalize();
+				Real w = 0.0;
+				if ( params.have_params(at1,ss1) ) w += params.nb_weight(at1,ss1);
+				if ( params.have_params(at2,ss2) ) w += params.nb_weight(at2,ss2);
+				tot_snb += sn * w;
+				if ( d2 > 81 ) {
+					// // TODO: sheffler why 4*?
+					deriv[pb.index_to_id(i)] += dxyz*dsn*w;
+					deriv[pb.index_to_id(j)] -= dxyz*dsn*w;
+				}
+			}
+		}
+	}
+	return tot_snb;
 }
 
 
@@ -340,117 +340,117 @@ compute_holes_deriv(
 ) {
 
 
-   HolesResult result;
+	HolesResult result;
 
 #ifndef WIN32
-#ifndef  __native_client__ 
-   using namespace std;
-   using namespace basic::options;
+#ifndef  __native_client__
+	using namespace std;
+	using namespace basic::options;
 
-	for(Size tries = 1; tries <= 10; ++tries) {
+	for ( Size tries = 1; tries <= 10; ++tries ) {
 		TR << "compute_holes_deriv try:" << tries << std::endl;
 		deriv.clear(numeric::xyzVector<Real>(0.0,0.0,0.0));
-	   /*Real orig_tot_snb = */compute_smooth_nb_deriv( pb, params, deriv );
+		/*Real orig_tot_snb = */compute_smooth_nb_deriv( pb, params, deriv );
 
-	   // TESTING SMOOTH NB DERIV
-	   // Real test_snb = 0.0;
-	   // for( Size i = 1; i <= pb.nballs(); i++ ) {
-	   //    Size at = pb.atom_type(i);
-	   //    char ss = pb.secstruct(i);
-	   //    // std::cerr << "test " << pb.smooth_nb(i) << " " << params.nb_weight(at,ss) << std::endl;
-	   //    test_snb = test_snb + pb.smooth_nb(i) * params.nb_weight(at,ss);
-	   // }
-	   // std::cerr << "snb: " << test_snb << " " << orig_tot_snb << std::endl;
-	   //
-	   // Real DELTA = 0.0001;
-	   // for( Size i = 1; i < pb.nballs(); i++ ) {
-	   //    pb.ball(i).x() += DELTA;
-	   //    core::id::AtomID_Map< numeric::xyzVector<core::Real> > dummy;
-	   //    Real tot_snb = compute_smooth_nb_deriv( pb, params, dummy );
-	   //    pb.ball(i).x() -= DELTA;
-	   //    std::cerr << "dsnb " << (tot_snb-orig_tot_snb)/DELTA << " " << deriv[pb.index_to_id(i)].x() << std::endl;
-	   // }
+		// TESTING SMOOTH NB DERIV
+		// Real test_snb = 0.0;
+		// for( Size i = 1; i <= pb.nballs(); i++ ) {
+		//    Size at = pb.atom_type(i);
+		//    char ss = pb.secstruct(i);
+		//    // std::cerr << "test " << pb.smooth_nb(i) << " " << params.nb_weight(at,ss) << std::endl;
+		//    test_snb = test_snb + pb.smooth_nb(i) * params.nb_weight(at,ss);
+		// }
+		// std::cerr << "snb: " << test_snb << " " << orig_tot_snb << std::endl;
+		//
+		// Real DELTA = 0.0001;
+		// for( Size i = 1; i < pb.nballs(); i++ ) {
+		//    pb.ball(i).x() += DELTA;
+		//    core::id::AtomID_Map< numeric::xyzVector<core::Real> > dummy;
+		//    Real tot_snb = compute_smooth_nb_deriv( pb, params, dummy );
+		//    pb.ball(i).x() -= DELTA;
+		//    std::cerr << "dsnb " << (tot_snb-orig_tot_snb)/DELTA << " " << deriv[pb.index_to_id(i)].x() << std::endl;
+		// }
 
-	   std::string cmd = basic::options::option[ OptionKeys::holes::dalphaball ]();
-	   redi::pstream proc( cmd + " alpha20_deriv_surf" );
-	   proc << "NPOINTS" << endl << pb.nballs() << endl << "COORDS" << endl;
-	   for( Size i = 1; i <= pb.nballs(); i++ ) {
-	      Ball const & b(pb.ball(i));
-	      proc << b.x() << " " << b.y() << " " << b.z() << " " << b.r() << " " << endl;
-	   }
-	   proc << "WEIGHTS" << endl;
-	   for( Size i = 1; i <= pb.nballs(); i++ ) {
-	      Size at = pb.atom_type(i);
-	      char ss = pb.secstruct(i);
-	      if( params.have_params(at,ss) ) {
-	         for( Size j = 1; j <=20; ++j ) {
-	            proc << params.sa_weight(at,ss,j) << " ";
-	         }
-	         proc << endl;
-	      } else {
-	         proc << "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" << endl;
-	      }
-	   }
-	   proc << "END" << endl << redi::peof;
+		std::string cmd = basic::options::option[ OptionKeys::holes::dalphaball ]();
+		redi::pstream proc( cmd + " alpha20_deriv_surf" );
+		proc << "NPOINTS" << endl << pb.nballs() << endl << "COORDS" << endl;
+		for ( Size i = 1; i <= pb.nballs(); i++ ) {
+			Ball const & b(pb.ball(i));
+			proc << b.x() << " " << b.y() << " " << b.z() << " " << b.r() << " " << endl;
+		}
+		proc << "WEIGHTS" << endl;
+		for ( Size i = 1; i <= pb.nballs(); i++ ) {
+			Size at = pb.atom_type(i);
+			char ss = pb.secstruct(i);
+			if ( params.have_params(at,ss) ) {
+				for ( Size j = 1; j <=20; ++j ) {
+					proc << params.sa_weight(at,ss,j) << " ";
+				}
+				proc << endl;
+			} else {
+				proc << "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" << endl;
+			}
+		}
+		proc << "END" << endl << redi::peof;
 
 		bool fail = false;
-	   result.score = 0.0;
-	   for( Size i = 1; i <= pb.nballs(); i++ ) {
-	      Size index;
-	      Real val,dx,dy,dz;
-	      proc >> index >> val >> dx >> dy >> dz;
-	      if( i != index ) {
-	         TR << "compute_holes_deriv DAlphaBall output index mismatch " << i << " " << index << std::endl;
+		result.score = 0.0;
+		for ( Size i = 1; i <= pb.nballs(); i++ ) {
+			Size index;
+			Real val,dx,dy,dz;
+			proc >> index >> val >> dx >> dy >> dz;
+			if ( i != index ) {
+				TR << "compute_holes_deriv DAlphaBall output index mismatch " << i << " " << index << std::endl;
 				fail = true;
 				break;
-	      }
-	      Size at = pb.atom_type(i);
-	      char ss = pb.secstruct(i);
-	      if( params.have_params(at,ss) ) {
-	         val += params.nb_weight(at,ss) * pb.smooth_nb(i);
-	         val -= params.intercept(at,ss) + params.intercept();
-	      } else if ( std::abs(val) > 9e-6 ) {
-	         TR << "no holes params but dalphaball score for atom is not 0!!!! " << val << std::endl;
-	      }
-	      result.score += val;
-	      result.atom_scores.set( pb.index_to_id(i), val );
-	      deriv[pb.index_to_id(i)] += numeric::xyzVector<core::Real>(dx,dy,dz);
-	   }
-		if(!fail) {
+			}
+			Size at = pb.atom_type(i);
+			char ss = pb.secstruct(i);
+			if ( params.have_params(at,ss) ) {
+				val += params.nb_weight(at,ss) * pb.smooth_nb(i);
+				val -= params.intercept(at,ss) + params.intercept();
+			} else if ( std::abs(val) > 9e-6 ) {
+				TR << "no holes params but dalphaball score for atom is not 0!!!! " << val << std::endl;
+			}
+			result.score += val;
+			result.atom_scores.set( pb.index_to_id(i), val );
+			deriv[pb.index_to_id(i)] += numeric::xyzVector<core::Real>(dx,dy,dz);
+		}
+		if ( !fail ) {
 			TR << "compute_holes_deriv done: " << result.score << std::endl;
 			return result;
 		}
-	   // result.score /= pb.nballs();
+		// result.score /= pb.nballs();
 
-	   // test that score from alpha20 and alpha20_deriv match
-	   // HolesResult result2 = compute_holes_score(pb,pose,params);
-	   // TR << "result1: " << result.score << " result2: " << result2.score << std::endl;
-	   // for( Size i = 1; i <= pose.total_residue(); ++i ) {
-	   //    TR << i << " " << result2.atom_scores[core::id::AtomID(1,i)] << " " << result.atom_scores[core::id::AtomID(1,i)] << std::endl;
-	   // }
+		// test that score from alpha20 and alpha20_deriv match
+		// HolesResult result2 = compute_holes_score(pb,pose,params);
+		// TR << "result1: " << result.score << " result2: " << result2.score << std::endl;
+		// for( Size i = 1; i <= pose.total_residue(); ++i ) {
+		//    TR << i << " " << result2.atom_scores[core::id::AtomID(1,i)] << " " << result.atom_scores[core::id::AtomID(1,i)] << std::endl;
+		// }
 
-	   //    pb.compute_smooth_nb();
-	   // Real base = compute_holes_score(pose,pb,params).score;
-	   //    Real delta = 0.0001;
-	   //    for( Size i = 1; i <= 10; ++i ) {
-	   //       pb.ball(i).x() += delta;
-	   //       pb.compute_smooth_nb();
-	   //    Real delta_x = (compute_holes_score(pose,pb,params).score - base) / delta;
-	   //       pb.ball(i).x() -= delta;
-	   //       pb.ball(i).y() += delta;
-	   //       pb.compute_smooth_nb();
-	   //    Real delta_y = (compute_holes_score(pose,pb,params).score - base) / delta;
-	   //       pb.ball(i).y() -= delta;
-	   //       pb.ball(i).z() += delta;
-	   //       pb.compute_smooth_nb();
-	   //    Real delta_z = (compute_holes_score(pose,pb,params).score - base) / delta;
-	   //       pb.ball(i).z() -= delta;
-	   //
-	   //       std::cerr << params.intercept()
-	   //          << " " << deriv[pb.index_to_id(i)].x() << " " << delta_x << " "
-	   //          << " " << deriv[pb.index_to_id(i)].y() << " " << delta_y << " "
-	   //          << " " << deriv[pb.index_to_id(i)].z() << " " << delta_z << endl;
-	   //    }
+		//    pb.compute_smooth_nb();
+		// Real base = compute_holes_score(pose,pb,params).score;
+		//    Real delta = 0.0001;
+		//    for( Size i = 1; i <= 10; ++i ) {
+		//       pb.ball(i).x() += delta;
+		//       pb.compute_smooth_nb();
+		//    Real delta_x = (compute_holes_score(pose,pb,params).score - base) / delta;
+		//       pb.ball(i).x() -= delta;
+		//       pb.ball(i).y() += delta;
+		//       pb.compute_smooth_nb();
+		//    Real delta_y = (compute_holes_score(pose,pb,params).score - base) / delta;
+		//       pb.ball(i).y() -= delta;
+		//       pb.ball(i).z() += delta;
+		//       pb.compute_smooth_nb();
+		//    Real delta_z = (compute_holes_score(pose,pb,params).score - base) / delta;
+		//       pb.ball(i).z() -= delta;
+		//
+		//       std::cerr << params.intercept()
+		//          << " " << deriv[pb.index_to_id(i)].x() << " " << delta_x << " "
+		//          << " " << deriv[pb.index_to_id(i)].y() << " " << delta_y << " "
+		//          << " " << deriv[pb.index_to_id(i)].z() << " " << delta_z << endl;
+		//    }
 	}
 	std::cerr << "too many dalphaball deriv fails!" << std::endl;
 	std::exit(-1);
@@ -458,21 +458,21 @@ compute_holes_deriv(
 #endif
 #endif
 
-   return result;
+	return result;
 
 }
 
 
 HolesResult
 compute_rosettaholes_score(
-   pose::Pose const & pose,
+	pose::Pose const & pose,
 	PoseBalls        & pb
 ) {
 	HolesParams hp_resl, hp_dec, hp_dec15;
 	hp_resl .read_data_file(basic::database::full_name("scoring/rosettaholes/resl.params"));
 	hp_dec  .read_data_file(basic::database::full_name("scoring/rosettaholes/decoy25.params"));
 	hp_dec15.read_data_file(basic::database::full_name("scoring/rosettaholes/decoy15.params"));
-   return compute_rosettaholes_score(pose,pb,hp_resl,hp_dec,hp_dec15);
+	return compute_rosettaholes_score(pose,pb,hp_resl,hp_dec,hp_dec15);
 }
 
 
@@ -482,8 +482,8 @@ compute_holes_deriv(
 	HolesParams const & params,
 	core::id::AtomID_Map< numeric::xyzVector<core::Real> > & deriv
 ) {
-   PoseBalls pb(pose);
-   return compute_holes_deriv( pose, pb, params, deriv );
+	PoseBalls pb(pose);
+	return compute_holes_deriv( pose, pb, params, deriv );
 }
 
 HolesResult
@@ -493,29 +493,29 @@ compute_rosettaholes_score(
 	HolesParams const & dec_params,
 	HolesParams const & dec15_params
 ) {
-   PoseBalls pb(pose);
-   return compute_rosettaholes_score( pose, pb, resl_params, dec_params, dec15_params );
+	PoseBalls pb(pose);
+	return compute_rosettaholes_score( pose, pb, resl_params, dec_params, dec15_params );
 }
 
 HolesResult
 compute_rosettaholes_score(
 	pose::Pose const & pose
 ) {
-   PoseBalls pb(pose);
-   return compute_rosettaholes_score( pose, pb );
+	PoseBalls pb(pose);
+	return compute_rosettaholes_score( pose, pb );
 }
 
 HolesResult
 compute_holes_score(
-   pose::Pose  const & pose,
-   HolesParams const & params
+	pose::Pose  const & pose,
+	HolesParams const & params
 ) {
-   PoseBalls pb(pose);
-   return compute_holes_score(pose,pb,params);
+	PoseBalls pb(pose);
+	return compute_holes_score(pose,pb,params);
 }
 
 HolesResult
-compute_holes_score( pose::Pose const & pose,	std::string const & cmd )
+compute_holes_score( pose::Pose const & pose, std::string const & cmd )
 {
 	PoseBalls pb(pose);
 	HolesParams hp_resl, hp_dec, hp_dec15;
@@ -523,7 +523,7 @@ compute_holes_score( pose::Pose const & pose,	std::string const & cmd )
 	hp_dec  .read_data_file(basic::database::full_name("scoring/rosettaholes/decoy25.params"));
 	hp_dec15.read_data_file(basic::database::full_name("scoring/rosettaholes/decoy15.params"));
 	bool use_cached_surfs( false );
- 	return compute_rosettaholes_score( pose, pb, hp_resl, hp_dec, hp_dec15, use_cached_surfs, cmd );
+	return compute_rosettaholes_score( pose, pb, hp_resl, hp_dec, hp_dec15, use_cached_surfs, cmd );
 }
 
 

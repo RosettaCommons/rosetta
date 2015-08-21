@@ -26,7 +26,7 @@
 #include <core/pose/Pose.hh>
 
 #ifdef WIN32
-  #include <basic/datacache/WriteableCacheableMap.hh>
+#include <basic/datacache/WriteableCacheableMap.hh>
 #endif
 
 
@@ -36,72 +36,72 @@
 
 namespace protocols {
 namespace abinitio {
-namespace abscript{
+namespace abscript {
 
 class ConstraintPreparer : public StagePreparer {
-  typedef StagePreparer Parent;
-  typedef environment::claims::EnvClaims EnvClaims;
+	typedef StagePreparer Parent;
+	typedef environment::claims::EnvClaims EnvClaims;
 
 public:
-  ConstraintPreparer();
+	ConstraintPreparer();
 
-  void prepare( core::pose::Pose& pose, core::Real progress );
+	void prepare( core::pose::Pose& pose, core::Real progress );
 
-  void parse_my_tag( utility::tag::TagCOP,
-                     basic::datacache::DataMap&,
-                     protocols::filters::Filters_map const&,
-                     protocols::moves::Movers_map const&,
-                     core::pose::Pose const& );
+	void parse_my_tag( utility::tag::TagCOP,
+		basic::datacache::DataMap&,
+		protocols::filters::Filters_map const&,
+		protocols::moves::Movers_map const&,
+		core::pose::Pose const& );
 
-  void cst_file( std::string const& );
+	void cst_file( std::string const& );
 
-  std::string const& cst_file() const { return filename_; }
+	std::string const& cst_file() const { return filename_; }
 
-  void combine_ratio( core::Size const& s ) { combine_ratio_ = s; }
-  core::Size const& combine_ratio() const { return combine_ratio_; }
+	void combine_ratio( core::Size const& s ) { combine_ratio_ = s; }
+	core::Size const& combine_ratio() const { return combine_ratio_; }
 
-  bool skip_redundant() const { return skip_redundant_; }
-  void skip_redundant( bool s ) { skip_redundant_ = s; }
+	bool skip_redundant() const { return skip_redundant_; }
+	void skip_redundant( bool s ) { skip_redundant_ = s; }
 
-  core::Size skip_redundant_width() const { return skip_redundant_width_; }
-  void skip_redundant_width( core::Size const& s ) { skip_redundant_width_ = s; }
+	core::Size skip_redundant_width() const { return skip_redundant_width_; }
+	void skip_redundant_width( core::Size const& s ) { skip_redundant_width_ = s; }
 
-  core::Real random_drop_rate() const { return rand_drop_rate_; }
-  void random_drop_rate( core::Real const& s ) { rand_drop_rate_ = s; }
+	core::Real random_drop_rate() const { return rand_drop_rate_; }
+	void random_drop_rate( core::Real const& s ) { rand_drop_rate_ = s; }
 
-  utility::vector1< bool > const& combine_exclude_res() const { return combine_exclude_res_; }
-  void combine_exclude_file( std::string const& filename );
+	utility::vector1< bool > const& combine_exclude_res() const { return combine_exclude_res_; }
+	void combine_exclude_file( std::string const& filename );
 
-  std::string get_name() const;
+	std::string get_name() const;
 
-  virtual
-  moves::MoverOP fresh_instance() const { return moves::MoverOP( new ConstraintPreparer() ); }
+	virtual
+	moves::MoverOP fresh_instance() const { return moves::MoverOP( new ConstraintPreparer() ); }
 
-  virtual
-  moves::MoverOP clone() const { return moves::MoverOP( new ConstraintPreparer( *this ) ); }
+	virtual
+	moves::MoverOP clone() const { return moves::MoverOP( new ConstraintPreparer( *this ) ); }
 
-  //prepares use the prepare method instead of apply
-  virtual
-  void apply( core::pose::Pose& ) { assert(false); };
+	//prepares use the prepare method instead of apply
+	virtual
+	void apply( core::pose::Pose& ) { assert(false); };
 
-  virtual
-  EnvClaims yield_claims( core::pose::Pose const&,
-                          basic::datacache::WriteableCacheableMapOP );
+	virtual
+	EnvClaims yield_claims( core::pose::Pose const&,
+		basic::datacache::WriteableCacheableMapOP );
 
 
 protected:
-  void load_constraints( core::pose::Pose const& );
+	void load_constraints( core::pose::Pose const& );
 
 private:
-  core::Size combine_ratio_;
-  bool skip_redundant_;
-  core::Size skip_redundant_width_;
-  core::Real rand_drop_rate_;
-  bool reprepare_;
-  utility::vector1< bool > combine_exclude_res_;
+	core::Size combine_ratio_;
+	bool skip_redundant_;
+	core::Size skip_redundant_width_;
+	core::Real rand_drop_rate_;
+	bool reprepare_;
+	utility::vector1< bool > combine_exclude_res_;
 
-  std::string filename_;
-  core::scoring::constraints::ConstraintSetOP constraints_;
+	std::string filename_;
+	core::scoring::constraints::ConstraintSetOP constraints_;
 
 }; // end ConstraintPreparer base class
 

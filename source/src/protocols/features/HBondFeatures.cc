@@ -77,8 +77,8 @@
 //Auto Headers
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::string;
 using std::endl;
@@ -198,21 +198,21 @@ HBondFeatures::write_hbond_chem_types_table_schema(
 	std::vector< string > c;
 	c.push_back("chem_type");
 	c.push_back("label");
- 	insert_or_ignore(t, c, list_of("hbacc_NONE")("aNONE"), db_session);
+	insert_or_ignore(t, c, list_of("hbacc_NONE")("aNONE"), db_session);
 	insert_or_ignore(t, c, list_of("hbacc_PBA")("aPBA: bb"), db_session);
 	insert_or_ignore(t, c, list_of("hbacc_CXA")("aCXA: n,q"), db_session);
 	insert_or_ignore(t, c, list_of("hbacc_CXL")("aCXL: d,e"), db_session);
 	insert_or_ignore(t, c, list_of("hbacc_IMD")("aIMD: h"), db_session);
 	insert_or_ignore(t, c, list_of("hbacc_IME")("aIME: h"), db_session);
 	insert_or_ignore(t, c, list_of("hbacc_AHX")("aAHX: t"), db_session);
- 	insert_or_ignore(t, c, list_of("hbacc_HXL")("aHXL: s,t"), db_session);
+	insert_or_ignore(t, c, list_of("hbacc_HXL")("aHXL: s,t"), db_session);
 	insert_or_ignore(t, c, list_of("hbacc_PCA_DNA")("aPCA_DNA: O{1,2}P"), db_session);
 	insert_or_ignore(t, c, list_of("hbacc_PES_DNA")("aPES_DNA: O{3,5}*"), db_session);
 	insert_or_ignore(t, c, list_of("hbacc_RRI_DNA")("aRRI_DNA: O4'"), db_session);
 	insert_or_ignore(t, c, list_of("hbacc_PCA_RNA")("aPCA_RNA: O{1,2}P"), db_session);
 	insert_or_ignore(t, c, list_of("hbacc_PES_RNA")("aPES_RNA: O{3,5}*"), db_session);
 	insert_or_ignore(t, c, list_of("hbacc_RRI_RNA")("aRRI_RNA: O4'"), db_session);
- 	insert_or_ignore(t, c, list_of("hbacc_H2O")("aH2O"), db_session);
+	insert_or_ignore(t, c, list_of("hbacc_H2O")("aH2O"), db_session);
 	insert_or_ignore(t, c, list_of("hbacc_GENERIC_SP2BB")("aGEN: sp2 bb"), db_session);
 	insert_or_ignore(t, c, list_of("hbacc_GENERIC_SP2SC")("aGEN: sp2 sc"), db_session);
 	insert_or_ignore(t, c, list_of("hbacc_GENERIC_SP3BB")("aGEN: sp3 bb"), db_session);
@@ -601,7 +601,7 @@ HBondFeatures::parse_my_tag(
 	Movers_map const & /*movers*/,
 	Pose const & /*pose*/
 ) {
-	if(tag->hasOption("scorefxn")){
+	if ( tag->hasOption("scorefxn") ) {
 		string const scorefxn_name(tag->getOption<string>("scorefxn"));
 		scfxn_ = data.get_ptr<ScoreFunction>("scorefxns", scorefxn_name);
 	} else {
@@ -610,16 +610,16 @@ HBondFeatures::parse_my_tag(
 
 	string const definition_type(
 		tag->getOption<string>("definition_type", "energy"));
-	if(definition_type == "energy"){
+	if ( definition_type == "energy" ) {
 		definition_type_ = hbdef_ENERGY;
-	} else if(definition_type == "AHdist"){
+	} else if ( definition_type == "AHdist" ) {
 		definition_type_ = hbdef_AHDIST;
 	} else {
 		stringstream error_msg;
 		error_msg
 			<< "The hbond definition type '" << definition_type << "' is not recognized." << endl
 			<< "Available hbond definition types are:" << endl
-			<< "	'energy' => A polar-polar contact is an hbond when energy is below the definition_threshold." << endl
+			<< "\t'energy' => A polar-polar contact is an hbond when energy is below the definition_threshold." << endl
 			<< "  'AHdist' => A polar-polar contact is an hbond when the Acceptor-Hydrogen distance is less than the definition_threshold." << endl;
 		throw utility::excn::EXCN_RosettaScriptsOption(error_msg.str());
 	}
@@ -636,7 +636,7 @@ HBondFeatures::report_features(
 	StructureID struct_id,
 	sessionOP db_session
 ){
-	if(!scfxn_){
+	if ( !scfxn_ ) {
 		scfxn_ = get_score_function();
 	}
 	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose(pose, scfxn_);
@@ -645,13 +645,13 @@ HBondFeatures::report_features(
 
 	// assert pose.update_residue_neighbors() has been called:
 	runtime_assert(
-		 !pose.conformation().structure_moved() &&
-		 pose.energies().residue_neighbors_updated());
+		!pose.conformation().structure_moved() &&
+		pose.energies().residue_neighbors_updated());
 
 
-	if(definition_type_ == hbdef_ENERGY){
+	if ( definition_type_ == hbdef_ENERGY ) {
 		hbond_set.setup_for_residue_pair_energies( pose, false, false );
-	} else if(definition_type_ == hbdef_AHDIST){
+	} else if ( definition_type_ == hbdef_AHDIST ) {
 		fill_hbond_set_by_AHdist_threshold(pose, definition_threshold_, hbond_set);
 	} else {
 		utility_exit_with_message("Unrecognized hbond definition type.");
@@ -663,7 +663,7 @@ HBondFeatures::report_features(
 	AtomID_Map< Real > atom_sasa_s, atom_sasa_m, atom_sasa_l;
 	vector1< Real > residue_sasa_s, residue_sasa_m, residue_sasa_l;
 
-	if(pose.is_fullatom()){
+	if ( pose.is_fullatom() ) {
 		calc_per_atom_sasa(pose, atom_sasa_s, residue_sasa_s, probe_radius_s);
 		calc_per_atom_sasa(pose, atom_sasa_m, residue_sasa_m, probe_radius_m);
 		calc_per_atom_sasa(pose, atom_sasa_l, residue_sasa_l, probe_radius_l);
@@ -675,9 +675,9 @@ HBondFeatures::report_features(
 	AtomID_Map<Real>site_hbond_energies;
 	initialize_atomid_map(site_hbond_energies, pose);
 
-	for (Size i = 1; i<= hbond_set.nhbonds(); i++) {
+	for ( Size i = 1; i<= hbond_set.nhbonds(); i++ ) {
 		HBond const & hbond(hbond_set.hbond(i));
-		if(!check_relevant_residues( relevant_residues, hbond.don_res(), hbond.acc_res() )) continue;
+		if ( !check_relevant_residues( relevant_residues, hbond.don_res(), hbond.acc_res() ) ) continue;
 
 		site_partners(hbond.don_res(),hbond.don_hatm()).push_back(hbond.get_self_ptr());
 		site_hbond_energies(hbond.don_res(),hbond.don_hatm()) += hbond.energy()/2;
@@ -690,14 +690,14 @@ HBondFeatures::report_features(
 	Size site_id(0);
 	AtomID_Map< Size > site_ids;
 	core::pose::initialize_atomid_map(site_ids, pose);
-	for( Size resNum =1; resNum <= pose.n_residue(); ++resNum ){
-		if(!check_relevant_residues( relevant_residues, resNum )) continue;
+	for ( Size resNum =1; resNum <= pose.n_residue(); ++resNum ) {
+		if ( !check_relevant_residues( relevant_residues, resNum ) ) continue;
 
 		Residue const & res(pose.residue(resNum));
 		// donor sites
 		for ( AtomIndices::const_iterator
-			atmNum  = res.Hpos_polar().begin(),
-			atmNume = res.Hpos_polar().end(); atmNum != atmNume; ++atmNum ) {
+				atmNum  = res.Hpos_polar().begin(),
+				atmNume = res.Hpos_polar().end(); atmNum != atmNume; ++atmNum ) {
 
 			site_id++;
 			insert_site_row(pose, struct_id, site_id, resNum, *atmNum, true /*is donor*/, db_session);
@@ -713,9 +713,9 @@ HBondFeatures::report_features(
 
 		}
 		// acceptor sites
-		for( AtomIndices::const_iterator
-			atmNum  = res.accpt_pos().begin(),
-			atmNume = res.accpt_pos().end(); atmNum != atmNume; ++atmNum ) {
+		for ( AtomIndices::const_iterator
+				atmNum  = res.accpt_pos().begin(),
+				atmNume = res.accpt_pos().end(); atmNum != atmNume; ++atmNum ) {
 			site_id++;
 			insert_site_row(pose, struct_id, site_id, resNum, *atmNum, false /*is not donor*/, db_session);
 			site_ids(resNum,*atmNum) = site_id;
@@ -729,15 +729,16 @@ HBondFeatures::report_features(
 		}
 	}
 
-	for (Size hbond_id = 1; hbond_id <= hbond_set.nhbonds(); hbond_id++) {
+	for ( Size hbond_id = 1; hbond_id <= hbond_set.nhbonds(); hbond_id++ ) {
 		HBond const & hbond = hbond_set.hbond( hbond_id );
-		if(!check_relevant_residues( relevant_residues, hbond.don_res(), hbond.acc_res() )) continue;
+		if ( !check_relevant_residues( relevant_residues, hbond.don_res(), hbond.acc_res() ) ) continue;
 
 		insert_hbond_row(hbond, struct_id, hbond_id, site_ids, site_partners, db_session);
 		insert_hbond_geom_coords(pose, hbond_set.hbond_options(), hbond, struct_id, hbond_id, db_session);
 		insert_hbond_lennard_jones_row(pose, hbond, struct_id, hbond_id, db_session);
-		if(pose.residue(hbond.don_res()).type().is_protein() && pose.residue(hbond.acc_res()).type().is_protein())
-				insert_hbond_dehydron_row(pose, hbond, struct_id, hbond_id, db_session);
+		if ( pose.residue(hbond.don_res()).type().is_protein() && pose.residue(hbond.acc_res()).type().is_protein() ) {
+			insert_hbond_dehydron_row(pose, hbond, struct_id, hbond_id, db_session);
+		}
 	}
 	return 0;
 }
@@ -760,7 +761,7 @@ HBondFeatures::insert_site_row(
 
 
 	string HBChemType;
-	if (is_donor){
+	if ( is_donor ) {
 		Size batmNum = pose.residue(resNum).atom_base( atmNum );
 		HBDonChemType hb_don_chem_type =
 			get_hb_don_chem_type( batmNum, pose.residue(resNum) );
@@ -793,12 +794,12 @@ HBondFeatures::insert_site_pdb_row(
 	Pose const & pose,
 	Size resNum,
 	Size,
-  Size heavy_atmNum,
+	Size heavy_atmNum,
 	StructureID struct_id,
 	Size site_id,
 	sessionOP db_session
 ){
-	if(!pose.pdb_info()) return; //eg if this is a silent file structure
+	if ( !pose.pdb_info() ) return; //eg if this is a silent file structure
 
 	string const pdb_chain(1,pose.pdb_info()->chain(resNum));
 	int const pdb_resNum( pose.pdb_info()->number(resNum) );
@@ -845,7 +846,7 @@ HBondFeatures::insert_site_environment_row(
 	stmt.bind(1, struct_id);
 	stmt.bind(2, site_id);
 
-	if(pose.is_fullatom()){
+	if ( pose.is_fullatom() ) {
 		stmt.bind(3, atom_sasa_s[AtomID(atmNum, resNum)]);
 		stmt.bind(4, atom_sasa_m[AtomID(atmNum, resNum)]);
 		stmt.bind(5, atom_sasa_l[AtomID(atmNum, resNum)]);
@@ -885,7 +886,7 @@ HBondFeatures::insert_site_atoms_row(
 
 	bool has_base2( rsd.abase2(atmNum) );
 	Real base2_x=0, base2_y=0, base2_z =0;
-	if( has_base2 ){
+	if ( has_base2 ) {
 		base2_x = rsd.atom(rsd.abase2(atmNum)).xyz().x();
 		base2_y = rsd.atom(rsd.abase2(atmNum)).xyz().y();
 		base2_z = rsd.atom(rsd.abase2(atmNum)).xyz().z();
@@ -899,7 +900,7 @@ HBondFeatures::insert_site_atoms_row(
 		<< atm_x << atm_y << atm_z
 		<< base_x << base_y << base_z
 		<< bbase_x << bbase_y << bbase_z;
-	if( has_base2 ){
+	if ( has_base2 ) {
 		stmt << base2_x << base2_y << base2_z;
 	} else {
 		stmt.bind_null();
@@ -921,18 +922,18 @@ HBondFeatures::insert_hbond_row(
 ){
 	ASSERT_ONLY( bool found_don_partner( false ); )
 
-	//Zero if unique
-	//i in 1 through n if ith lowest energy hbond made with this site
-	Size donRank=0, accRank=0;
+		//Zero if unique
+		//i in 1 through n if ith lowest energy hbond made with this site
+		Size donRank=0, accRank=0;
 	vector1< HBondCOP > don_partners(
 		site_partners(hbond.don_res(), hbond.don_hatm()));
-	if (don_partners.size() > 1){
+	if ( don_partners.size() > 1 ) {
 		donRank++;
 	}
-	BOOST_FOREACH(HBondCOP candidate_hbond, don_partners){
-		if(hbond == *candidate_hbond){
+	BOOST_FOREACH ( HBondCOP candidate_hbond, don_partners ) {
+		if ( hbond == *candidate_hbond ) {
 			ASSERT_ONLY( found_don_partner = true; )
-			break;
+				break;
 		} else {
 			++donRank;
 		}
@@ -940,17 +941,17 @@ HBondFeatures::insert_hbond_row(
 	assert(found_don_partner);
 
 	ASSERT_ONLY( bool found_acc_partner(false); )
-	vector1< HBondCOP > acc_partners(
+		vector1< HBondCOP > acc_partners(
 		site_partners(hbond.acc_res(), hbond.acc_atm()));
 
-	if (acc_partners.size() > 1){
+	if ( acc_partners.size() > 1 ) {
 		accRank++;
 	}
 
-	BOOST_FOREACH(HBondCOP candidate_hbond, acc_partners){
-		if(hbond == *candidate_hbond){
+	BOOST_FOREACH ( HBondCOP candidate_hbond, acc_partners ) {
+		if ( hbond == *candidate_hbond ) {
 			ASSERT_ONLY( found_acc_partner = true; )
-			break;
+				break;
 		} else {
 			++accRank;
 		}
@@ -1059,9 +1060,9 @@ HBondFeatures::insert_hbond_lennard_jones_row(
 	if ( !(scfxn_->energy_method_options().analytic_etable_evaluation()) ) {
 		core::scoring::etable::EtableCOP etable(
 			ScoringManager::get_instance()->etable(
-				scfxn_->energy_method_options() ) );
+			scfxn_->energy_method_options() ) );
 		TableLookupEtableEnergy const etable_energy( *etable,
-    		scfxn_->energy_method_options(), false /*do_classic_intrares*/ );
+			scfxn_->energy_method_options(), false /*do_classic_intrares*/ );
 
 		etable_energy.atom_pair_energy(
 			don_res.atom(don_datmNum), acc_res.atom(acc_atmNum),
@@ -1088,7 +1089,7 @@ HBondFeatures::insert_hbond_lennard_jones_row(
 			bb_dummy, dsq_dummy );
 	} else {
 		core::scoring::etable::EtableCOP etable( ScoringManager::get_instance()->etable(
-				scfxn_->energy_method_options() ) );
+			scfxn_->energy_method_options() ) );
 		AnalyticEtableEnergy const etable_energy(
 			*etable,
 			scfxn_->energy_method_options(), false /*do_classic_intrares*/ );
@@ -1167,7 +1168,7 @@ void
 HBondFeatures::insert_hbond_dehydron_row(
 	Pose const & pose,
 	HBond const & hbond,
-    StructureID struct_id,
+	StructureID struct_id,
 	Size hbond_id,
 	sessionOP db_session
 ){
@@ -1179,7 +1180,7 @@ HBondFeatures::insert_hbond_dehydron_row(
 	Residue const & don_res(pose.residue(hbond.don_res()));
 	Residue const & acc_res(pose.residue(hbond.acc_res()));
 
-	if(!don_res.is_protein() || !acc_res.is_protein()) return;
+	if ( !don_res.is_protein() || !acc_res.is_protein() ) return;
 
 	Vector const & don_res_ca_xyz(don_res.xyz("CA"));
 	Vector const & acc_res_ca_xyz(acc_res.xyz("CA"));
@@ -1188,37 +1189,37 @@ HBondFeatures::insert_hbond_dehydron_row(
 	TenANeighborGraph const & tenA(pose.energies().tenA_neighbor_graph());
 
 	// For each neighboring residue to the donor
-	for(EdgeListConstIterator
-		ni = tenA.get_node(hbond.don_res())->const_edge_list_begin(),
-		ni_end = tenA.get_node(hbond.don_res())->const_edge_list_end();
-		ni != ni_end; ++ni){
+	for ( EdgeListConstIterator
+			ni = tenA.get_node(hbond.don_res())->const_edge_list_begin(),
+			ni_end = tenA.get_node(hbond.don_res())->const_edge_list_end();
+			ni != ni_end; ++ni ) {
 		Residue const & nbr_res(pose.residue((*ni)->get_other_ind(hbond.don_res())));
 
 		// sum all CH_n groups with in the wrapping radius of the c-alpha
 		// atom of the donor residue.
-		for(Size atm_i = 1; atm_i <= nbr_res.nheavyatoms(); ++atm_i){
-			if(nbr_res.type().atom_type(atm_i).element() == "C" &&
-			 don_res_ca_xyz.distance(nbr_res.xyz(atm_i)) <= wrapping_radius){
+		for ( Size atm_i = 1; atm_i <= nbr_res.nheavyatoms(); ++atm_i ) {
+			if ( nbr_res.type().atom_type(atm_i).element() == "C" &&
+					don_res_ca_xyz.distance(nbr_res.xyz(atm_i)) <= wrapping_radius ) {
 				wrapping_count++;
 			}
 		}
 	}
 
 	// for each neighboring residue to the acceptor
-	for(EdgeListConstIterator
-		ni = tenA.get_node(hbond.don_res())->const_edge_list_begin(),
-		ni_end = tenA.get_node(hbond.don_res())->const_edge_list_end();
-		ni != ni_end; ++ni){
+	for ( EdgeListConstIterator
+			ni = tenA.get_node(hbond.don_res())->const_edge_list_begin(),
+			ni_end = tenA.get_node(hbond.don_res())->const_edge_list_end();
+			ni != ni_end; ++ni ) {
 		Residue const & nbr_res(pose.residue((*ni)->get_other_ind(hbond.don_res())));
 
 		// sum all CH_n groups with the wrapping radius of the c-alpha
 		// atom of the acceptor but not within wrapping radius of the
 		// c-alpha atom of the donor. This prevents double counting
 		// wrapping non-polar groups that are in both wrapping spheres.
-		for(Size atm_i = 1; atm_i <= nbr_res.nheavyatoms(); ++atm_i){
-			if(nbr_res.type().atom_type(atm_i).element() == "C" &&
-				don_res_ca_xyz.distance(nbr_res.xyz(atm_i)) > wrapping_radius &&
-				acc_res_ca_xyz.distance(nbr_res.xyz(atm_i)) <= wrapping_radius){
+		for ( Size atm_i = 1; atm_i <= nbr_res.nheavyatoms(); ++atm_i ) {
+			if ( nbr_res.type().atom_type(atm_i).element() == "C" &&
+					don_res_ca_xyz.distance(nbr_res.xyz(atm_i)) > wrapping_radius &&
+					acc_res_ca_xyz.distance(nbr_res.xyz(atm_i)) <= wrapping_radius ) {
 				wrapping_count++;
 			}
 		}

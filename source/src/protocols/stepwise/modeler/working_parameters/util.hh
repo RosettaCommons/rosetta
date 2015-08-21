@@ -30,23 +30,23 @@ namespace stepwise {
 namespace modeler {
 namespace working_parameters {
 
-	StepWiseWorkingParametersOP
-	setup_working_parameters_for_swa( utility::vector1< Size > const & moving_res_list,
-																		pose::Pose const & pose,
-																		pose::PoseCOP native_pose,
-																		utility::vector1< Size > const & bridge_res,
-																		utility::vector1< Size > const & working_minimize_res );
+StepWiseWorkingParametersOP
+setup_working_parameters_for_swa( utility::vector1< Size > const & moving_res_list,
+	pose::Pose const & pose,
+	pose::PoseCOP native_pose,
+	utility::vector1< Size > const & bridge_res,
+	utility::vector1< Size > const & working_minimize_res );
 
-	StepWiseWorkingParametersOP
-	setup_working_parameters_explicit( Size const rebuild_res,
-																		 pose::Pose const & pose,
-																		 pose::PoseCOP native_pose );
+StepWiseWorkingParametersOP
+setup_working_parameters_explicit( Size const rebuild_res,
+	pose::Pose const & pose,
+	pose::PoseCOP native_pose );
 
-	bool
-	figure_out_rebuild_bulge_mode( pose::Pose const & pose, Size const rebuild_res );
+bool
+figure_out_rebuild_bulge_mode( pose::Pose const & pose, Size const rebuild_res );
 
-	bool
-	figure_out_sample_both_sugar_base_rotamer( pose::Pose const & pose, bool const floating_base, Size const rebuild_suite );
+bool
+figure_out_sample_both_sugar_base_rotamer( pose::Pose const & pose, bool const floating_base, Size const rebuild_suite );
 
 } //working_parameters
 } //modeler

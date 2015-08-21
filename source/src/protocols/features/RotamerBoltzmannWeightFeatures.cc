@@ -41,8 +41,8 @@
 #include <utility/vector0.hh>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::string;
 using std::endl;
@@ -136,7 +136,7 @@ RotamerBoltzmannWeightFeatures::parse_my_tag(
 	Movers_map const & /*movers*/,
 	Pose const & /*pose*/
 ) {
-	if(tag->hasOption("scorefxn")){
+	if ( tag->hasOption("scorefxn") ) {
 		string scorefxn_name = tag->getOption<string>("scorefxn");
 		rotamer_boltzmann_weight_->scorefxn(
 			data.get_ptr<ScoreFunction>("scorefxns", scorefxn_name));
@@ -161,8 +161,8 @@ RotamerBoltzmannWeightFeatures::report_features(
 
 	std::string statement_string = "INSERT INTO rotamer_boltzmann_weight (struct_id, resNum, boltzmann_weight) VALUES (?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
-	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
-		if(!check_relevant_residues(relevant_residues, resNum)) continue;
+	for ( Size resNum=1; resNum <= pose.total_residue(); ++resNum ) {
+		if ( !check_relevant_residues(relevant_residues, resNum) ) continue;
 		Real const boltzmann_weight(
 			rotamer_boltzmann_weight_->compute_Boltzmann_weight(pose, resNum));
 

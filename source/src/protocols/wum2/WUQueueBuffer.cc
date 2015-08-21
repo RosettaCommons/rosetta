@@ -9,7 +9,7 @@
 
 /// @file   protocols/wum2/WUQueueBuffer.cc
 /// @brief  Foward decls for WUQueueBuffer, memory aware structure that links irecv and isend
-/// 				with their mpi::request status, so buffers are maintained until messages are sent/recvd
+///     with their mpi::request status, so buffers are maintained until messages are sent/recvd
 /// @author Ken Jung
 
 #ifdef USEBOOSTMPI

@@ -64,154 +64,154 @@ public:
 	void setup_for_derivatives(pose::Pose & pose) const;
 
 	void setup_for_packing(
-												 pose::Pose & pose,
-												 utility::vector1< bool > const & repacking_residues ) const;
+		pose::Pose & pose,
+		utility::vector1< bool > const & repacking_residues ) const;
 
 	void update_residue_for_packing( pose::Pose & pose,
-																	 Size const seqpos
-																	 ) const;
+		Size const seqpos
+	) const;
 
 	void get_rotamers_born_radii(pose::Pose const & pose, conformation::RotamerSetBase & rotamer_set) const;
 
 	void evaluate_polar_energy( Residue const & rsd1,
-															FACTSResidueInfo const & facts1,
-															Residue const & rsd2,
-															Real & E_elec,
-															Real & E_solv_self,
-															Real & E_solv_pair
-															) const;
+		FACTSResidueInfo const & facts1,
+		Residue const & rsd2,
+		Real & E_elec,
+		Real & E_solv_self,
+		Real & E_solv_pair
+	) const;
 
 	Real evaluate_nonpolar_energy( Residue const & rsd1,
-																 FACTSResidueInfo const & facts1,
-																 Residue const & rsd2
-																 ) const;
+		FACTSResidueInfo const & facts1,
+		Residue const & rsd2
+	) const;
 
 	void evaluate_context_change_for_packing(
-						 Residue const & rsd1_ref,
-						 Residue const & rsd1,
-						 FACTSResidueInfo const & facts1,
-						 Residue const & rsd2_ref,
-						 Residue const & rsd2,
-						 FACTSResidueInfo const & facts2,
-						 utility::vector1< Real > & dBRi1,
-						 utility::vector1< Real > & dBRi2,
-						 utility::vector1< Real > & dSAi1,
-						 utility::vector1< Real > & dSAi2
-						 ) const;
+		Residue const & rsd1_ref,
+		Residue const & rsd1,
+		FACTSResidueInfo const & facts1,
+		Residue const & rsd2_ref,
+		Residue const & rsd2,
+		FACTSResidueInfo const & facts2,
+		utility::vector1< Real > & dBRi1,
+		utility::vector1< Real > & dBRi2,
+		utility::vector1< Real > & dSAi1,
+		utility::vector1< Real > & dSAi2
+	) const;
 
 	void evaluate_polar_otf_energy(Residue const & rsd1,
-																 FACTSResidueInfo const & facts1,
-																 Residue const & rsd2,
-																 FACTSResidueInfo const & facts2,
-																 Real & E_elec,
-																 Real & E_solv_self,
-																 Real & E_solv_pair
-																 ) const;
+		FACTSResidueInfo const & facts1,
+		Residue const & rsd2,
+		FACTSResidueInfo const & facts2,
+		Real & E_elec,
+		Real & E_solv_self,
+		Real & E_solv_pair
+	) const;
 
 	void eval_atom_polar_derivative(
-					id::AtomID const & id,
-					Real const weight_elec,
-					Real const weight_solv,
-					pose::Pose const & pose,
-					kinematics::DomainMap const &, //domain_map,
-					bool const, //exclude_DNA_DNA,
-					Vector & F1,
-					Vector & F2
-					) const;
+		id::AtomID const & id,
+		Real const weight_elec,
+		Real const weight_solv,
+		pose::Pose const & pose,
+		kinematics::DomainMap const &, //domain_map,
+		bool const, //exclude_DNA_DNA,
+		Vector & F1,
+		Vector & F2
+	) const;
 
 	void eval_atom_nonpolar_derivative(
-					id::AtomID const & id,
-					Real const weight,
-					pose::Pose const & pose,
-					kinematics::DomainMap const &, //domain_map,
-					bool const, //exclude_DNA_DNA,
-					Vector & F1,
-					Vector & F2
-					) const;
+		id::AtomID const & id,
+		Real const weight,
+		pose::Pose const & pose,
+		kinematics::DomainMap const &, //domain_map,
+		bool const, //exclude_DNA_DNA,
+		Vector & F1,
+		Vector & F2
+	) const;
 
 	void get_single_rotamer_born_radii(
-																	Residue const & rsd1,
-																	pose::Pose const & pose,
-																	FACTSPoseInfo const & facts_info,
-																	FACTSResidueInfo & facts1
-																	) const;
+		Residue const & rsd1,
+		pose::Pose const & pose,
+		FACTSPoseInfo const & facts_info,
+		FACTSResidueInfo & facts1
+	) const;
 
 	Real polar_energy_pack_corrector(
-																	 Residue const & ref_rsd,
-																	 Residue const & rsd,
-																	 FACTSResidueInfo const & facts_info
-																	 ) const;
+		Residue const & ref_rsd,
+		Residue const & rsd,
+		FACTSResidueInfo const & facts_info
+	) const;
 
 private:
 	void res_res_burial(
-											Residue const & rsd1,
-											FACTSResidueInfo & facts1,
-											Residue const & rsd2,
-											FACTSResidueInfo const & facts2
-											) const;
+		Residue const & rsd1,
+		FACTSResidueInfo & facts1,
+		Residue const & rsd2,
+		FACTSResidueInfo const & facts2
+	) const;
 
 	void res_res_burial_for_scoring(
-												Residue const & rsd1,
-												FACTSResidueInfo & facts1,
-												Residue const & rsd2,
-												FACTSResidueInfo & facts2
-												) const;
+		Residue const & rsd1,
+		FACTSResidueInfo & facts1,
+		Residue const & rsd2,
+		FACTSResidueInfo & facts2
+	) const;
 
 	void get_self_terms( FACTSRsdTypeInfoCOP factstype1,
-											 FACTSResidueInfo & facts1,
-											 bool const packing
-											 ) const;
+		FACTSResidueInfo & facts1,
+		bool const packing
+	) const;
 
-	void atompair_scale( FACTSRsdTypeInfoCOP factstype1, 
-											 FACTSRsdTypeInfoCOP , //factstype2,
-											 scoring::etable::count_pair::CountPairFunctionCOP cpfxn14,
-											 conformation::Residue const &rsd1,
-											 conformation::Residue const &rsd2,
-											 Size const atm1,
-											 Size const atm2,
-											 Real &scale_solv,
-											 Real &scale_elec,
-											 bool &self_pair,
-											 bool const same_res,
-											 bool const adjacent ) const;
+	void atompair_scale( FACTSRsdTypeInfoCOP factstype1,
+		FACTSRsdTypeInfoCOP , //factstype2,
+		scoring::etable::count_pair::CountPairFunctionCOP cpfxn14,
+		conformation::Residue const &rsd1,
+		conformation::Residue const &rsd2,
+		Size const atm1,
+		Size const atm2,
+		Real &scale_solv,
+		Real &scale_elec,
+		bool &self_pair,
+		bool const same_res,
+		bool const adjacent ) const;
 
 	void calculate_GBpair_fast(
-													Residue const & rsd1,
-													Residue const & rsd2,
-													FACTSResidueInfo & facts1,
-													FACTSResidueInfo & facts2
-													) const;
+		Residue const & rsd1,
+		Residue const & rsd2,
+		FACTSResidueInfo & facts1,
+		FACTSResidueInfo & facts2
+	) const;
 
 	void calculate_GBpair_exact(
-													Residue const & rsd1,
-													Residue const & rsd2,
-													FACTSResidueInfo & facts1,
-													FACTSResidueInfo & facts2
-													) const;
+		Residue const & rsd1,
+		Residue const & rsd2,
+		FACTSResidueInfo & facts1,
+		FACTSResidueInfo & facts2
+	) const;
 
 	void calculate_GBpair_v1trunk(
-													Residue const & rsd1,
-													Residue const & rsd2,
-													FACTSResidueInfo & facts1,
-													FACTSResidueInfo & facts2
-													) const;
+		Residue const & rsd1,
+		Residue const & rsd2,
+		FACTSResidueInfo & facts1,
+		FACTSResidueInfo & facts2
+	) const;
 
 	void atom_atom_context_derivative( FACTSResidueInfo & facts1,
-																		 FACTSResidueInfo & facts2,
-																		 Size const & atm1,
-																		 Size const & atm2,
-																		 Vector const & dxyz,
-																		 bool const full_update
-																		 ) const;
+		FACTSResidueInfo & facts2,
+		Size const & atm1,
+		Size const & atm2,
+		Vector const & dxyz,
+		bool const full_update
+	) const;
 
 	void get_template_born_radii(
-														pose::Pose const & pose,
-														FACTSPoseInfo & facts_info
-														) const;
+		pose::Pose const & pose,
+		FACTSPoseInfo & facts_info
+	) const;
 
 	// Accessors
-	inline Real Tau() const{	return Tau_; }
-	inline Real inv_die() const{	return inv_die_; }
+	inline Real Tau() const{ return Tau_; }
+	inline Real inv_die() const{ return inv_die_; }
 	inline Real Kappa() const { return Kappa_; }
 	inline Real MultiplicitiveFactor() const { return MultiplicitiveFactor_; };
 	inline Real GBPair_cut() const { return GBpair_cut_; };

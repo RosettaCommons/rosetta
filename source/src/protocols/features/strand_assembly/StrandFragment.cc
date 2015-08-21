@@ -33,23 +33,23 @@ StrandFragment::StrandFragment()
 
 // 2 parameters
 StrandFragment::StrandFragment(core::Size start, core::Size end):
-start_(start),
-end_(end),
-pdb_source_("")
+	start_(start),
+	end_(end),
+	pdb_source_("")
 {}
 
-// 3 parameters	arguments
+// 3 parameters arguments
 StrandFragment::StrandFragment(core::Size beta_selected_segments_id, core::Size start, core::Size end):
-id_(beta_selected_segments_id),
-start_(start),
-end_(end),
-beta_id_i_(start), //beta_selected_segments_id_i
-beta_id_j_(end), //beta_selected_segments_id_j
-pdb_source_("")
+	id_(beta_selected_segments_id),
+	start_(start),
+	end_(end),
+	beta_id_i_(start), //beta_selected_segments_id_i
+	beta_id_j_(end), //beta_selected_segments_id_j
+	pdb_source_("")
 {}
 
 StrandFragment::~StrandFragment(){}
-	
+
 core::Size StrandFragment::get_id() const
 {
 	return id_;
@@ -69,15 +69,15 @@ core::Size StrandFragment::get_i() const
 {
 	return beta_id_i_;
 }
-	
+
 core::Size StrandFragment::get_j() const
 {
 	return beta_id_j_;
 }
-	
+
 core::Size StrandFragment::get_size() const
 {
-	if(end_ == start_){return 0;}
+	if ( end_ == start_ ) { return 0;}
 	return end_-start_+1;
 }
 

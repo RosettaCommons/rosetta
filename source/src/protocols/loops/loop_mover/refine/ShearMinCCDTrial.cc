@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/loops/loop_mover/refine/ShearMinCCDTrial.cc
-/// @brief Concrete class derived from LoopRefineInnerCycle to implement the CCD min trial flavor of inner cycle refinement.  
+/// @brief Concrete class derived from LoopRefineInnerCycle to implement the CCD min trial flavor of inner cycle refinement.
 /// @details
 ///
 /// @author Michael Pacella (mpacella88@gmail.com)
@@ -88,12 +88,12 @@ std::string ShearMinCCDTrial::get_name() const
 {
 	return type();
 }
-	
+
 moves::MoverOP ShearMinCCDTrial::clone() const
 {
 	return moves::MoverOP( new ShearMinCCDTrial( *this ) );
 }
-	
+
 moves::MoverOP ShearMinCCDTrial::fresh_instance() const
 {
 	return moves::MoverOP( new ShearMinCCDTrial() );
@@ -107,9 +107,9 @@ bool ShearMinCCDTrial::reinitialize_for_new_input() const
 
 //void ShearMinCCDTrial::register_options()
 //{
-	///  PUT THE LIST OF OPTIONS THAT ARE USED HERE  ///
-	
-	///  RECURSIVELY CALL REGISTER OPTIONS ON ALL MOVERS THAT THIS CLASS HAS AN OWNING_PTR TO  ///
+///  PUT THE LIST OF OPTIONS THAT ARE USED HERE  ///
+
+///  RECURSIVELY CALL REGISTER OPTIONS ON ALL MOVERS THAT THIS CLASS HAS AN OWNING_PTR TO  ///
 //}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////// END OF BOILER PLATE CODE //////////////////////////////////////
@@ -119,52 +119,51 @@ ShearMinCCDTrial::ShearMinCCDTrial(
 	moves::MonteCarloOP mc,
 	core::scoring::ScoreFunctionOP scorefxn,
 	core::pack::task::TaskFactoryOP tf
-	) : LoopRefineInnerCycle( loop_mover, mc, scorefxn, tf )
-	{
-		init();
-	}
+) : LoopRefineInnerCycle( loop_mover, mc, scorefxn, tf )
+{
+	init();
+}
 
 void ShearMinCCDTrial::apply( Pose & pose )
 {
 	setup_objects( pose );
-	
+
 	pack::task::PackerTaskOP task_before_bb_perturbation = task_factory()->create_task_and_apply_taskoperations( pose );
 	task_before_bb_perturbation->set_bump_check( true );
-	
+
 	LoopMover_Refine_CCDOP loop_mover_op( loop_mover() ); // lock AP
 	Loops::const_iterator it( loop_mover_op->loops()->one_random_loop() );
 	Loops one_loop;
 	one_loop.add_loop( it );
-	
+
 	// set up movemap properly
 	kinematics::MoveMapOP mm_one_loop( new kinematics::MoveMap() );
 	loop_mover_op->setup_movemap( pose, one_loop, task_before_bb_perturbation->repacking_residues(), mm_one_loop );
-	
+
 	protocols::simple_moves::ShearMover shear_moves( mm_one_loop, mc()->temperature(), nmoves_ );
 	shear_moves.apply( pose );
-	
-	if (! it->is_terminal( pose ) ) ccd_close_loops( pose, one_loop, *mm_one_loop);
-	
+
+	if ( ! it->is_terminal( pose ) ) ccd_close_loops( pose, one_loop, *mm_one_loop);
+
 	pack::task::PackerTaskOP task_after_bb_perturbation = task_factory()->create_task_and_apply_taskoperations( pose );
 	task_after_bb_perturbation->set_bump_check( true );
 	core::pack::rotamer_trials( pose, *scorefxn(), task_after_bb_perturbation );
 	(*scorefxn())(pose); // update 10A nbr graph, silly way to do this
-	
+
 	kinematics::MoveMapOP all_loops_movemap = movemap();
 	loop_mover_op->setup_movemap( pose, *loop_mover_op->loops(), task_after_bb_perturbation->repacking_residues(), all_loops_movemap );
-	if(loop_mover_op->flank_residue_min())
-	{
+	if ( loop_mover_op->flank_residue_min() ) {
 		add_loop_flank_residues_bb_to_movemap(*loop_mover_op->loops(), *all_loops_movemap);
 	} // added by JQX
-	
+
 
 	minimizer( pose )->run( pose, *all_loops_movemap, *scorefxn(), *min_options_ );
 	std::string move_type = "shear_ccd_min";
 	mc()->boltzmann( pose, move_type );
 	mc()->show_scores();
 }
-	
-	
+
+
 void ShearMinCCDTrial::init()
 {
 	type( "ShearMinCCDTrial" );
@@ -172,14 +171,14 @@ void ShearMinCCDTrial::init()
 	min_options_ = core::optimization::MinimizerOptionsOP( new core::optimization::MinimizerOptions("dfpmin", 0.001, true /*use_nblist*/, false /*deriv_check*/ ) );
 	init_options();
 }
-	
+
 void ShearMinCCDTrial::init_for_equal_operator_and_copy_constructor(ShearMinCCDTrial & lhs, ShearMinCCDTrial const & rhs)
 {
 	// copy all data members from rhs to lhs
 	lhs.nmoves_ = rhs.nmoves_;
 	lhs.min_options_ = rhs.min_options_;
 }
-	
+
 void ShearMinCCDTrial::init_options()
 {
 	//using namespace basic::options;
@@ -189,9 +188,8 @@ void ShearMinCCDTrial::init_options()
 core::optimization::AtomTreeMinimizerOP ShearMinCCDTrial::minimizer( core::pose::Pose const & pose ) const
 {
 	// minimizer
-	if (! minimizer_){
-		if ( core::pose::symmetry::is_symmetric( pose ) )
-		{
+	if ( ! minimizer_ ) {
+		if ( core::pose::symmetry::is_symmetric( pose ) ) {
 			// minimizer_ = dynamic_cast<core::optimization::AtomTreeMinimizer*>( new core::optimization::symmetry::SymAtomTreeMinimizer );
 			minimizer_ = core::optimization::AtomTreeMinimizerOP( new core::optimization::symmetry::SymAtomTreeMinimizer );
 		} else {
@@ -204,7 +202,7 @@ void ShearMinCCDTrial::show( std::ostream & out ) const
 {
 	out << *this;
 }
-	
+
 std::ostream & operator<<(std::ostream& out, ShearMinCCDTrial const & loop_refine_shear_CCD_min_trial_inner_cycle )
 {
 	out << loop_refine_shear_CCD_min_trial_inner_cycle.get_name() << "Concrete class derived from LoopRefineInnerCycle to implement the CCD min trial flavor of inner cycle refinement." << std::endl;
@@ -214,18 +212,18 @@ std::ostream & operator<<(std::ostream& out, ShearMinCCDTrial const & loop_refin
 void ShearMinCCDTrial::setup_objects( Pose const & pose )
 {
 	// TR << "Setting up data for " + get_name() + "." << std::endl;
-	
+
 	LoopRefineInnerCycle::setup_objects( pose );
 }
 
 ShearMinCCDTrialCreator::~ShearMinCCDTrialCreator() {}
 
 moves::MoverOP ShearMinCCDTrialCreator::create_mover() const {
-  return moves::MoverOP( new ShearMinCCDTrial() );
+	return moves::MoverOP( new ShearMinCCDTrial() );
 }
 
 std::string ShearMinCCDTrialCreator::keyname() const {
-  return "ShearMinCCDTrial";
+	return "ShearMinCCDTrial";
 }
 
 } // namespace refine

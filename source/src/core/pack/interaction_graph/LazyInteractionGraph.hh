@@ -109,7 +109,7 @@ protected:
 	rotamer_trie const &
 	get_current_rotamer()
 	{
-		return get_rotamer( current_state_ );
+	return get_rotamer( current_state_ );
 	}*/
 
 	/*
@@ -612,7 +612,7 @@ LazyEdge::store_interaction_energy_first_node(
 )
 {
 
-//debug_assert(first_node_alt_state != 0 && second_node_orig_state != 0);
+	//debug_assert(first_node_alt_state != 0 && second_node_orig_state != 0);
 	AminoAcidNeighborSparseMatrix< core::PackerEnergy >::set(
 		second_node_orig_state_sparse_info,
 		first_node_state_offset_minus_1,
@@ -652,7 +652,7 @@ LazyEdge::store_interaction_energy_second_node(
 	core::PackerEnergy interaction_energy
 )
 {
-//debug_assert(first_node_orig_state != 0 && second_node_alt_state != 0);
+	//debug_assert(first_node_orig_state != 0 && second_node_alt_state != 0);
 	AminoAcidNeighborSparseMatrix< core::PackerEnergy >::set(
 		first_node_orig_state_sparse_info,
 		second_node_alternate_state_sparse_info,
@@ -694,7 +694,7 @@ LazyEdge::get_alternate_state_energy_second_node(
 )
 {
 
-	if (first_node_orig_state == 0 || second_node_alt_state == 0) {
+	if ( first_node_orig_state == 0 || second_node_alt_state == 0 ) {
 		return core::PackerEnergy( 0.0 );
 	} else {
 		return AminoAcidNeighborSparseMatrix< core::PackerEnergy >::get(
@@ -755,8 +755,8 @@ LazyNode::project_deltaE_for_substitution
 	int nstates_offset =
 		num_states_for_aa_type_for_higher_indexed_neighbor_.index(1,1) - 1;
 
-	for (int ii = 1; ii <= get_num_edges_to_smaller_indexed_nodes();
-			++ii, aa_neighb_linear_index_offset += get_num_aa_types()) {
+	for ( int ii = 1; ii <= get_num_edges_to_smaller_indexed_nodes();
+			++ii, aa_neighb_linear_index_offset += get_num_aa_types() ) {
 
 		alternate_state_two_body_energies_[ ii ] =
 			get_incident_lazy_edge(ii)->
@@ -767,17 +767,17 @@ LazyNode::project_deltaE_for_substitution
 			alt_state_sparse_mat_info_,
 			alt_state_num_states_per_aa_type,
 			aa_offsets_for_edges_[
-				aa_neighb_linear_index_offset +
-				neighbors_curr_state_sparse_info_[ii].get_aa_type()
+			aa_neighb_linear_index_offset +
+			neighbors_curr_state_sparse_info_[ii].get_aa_type()
 			],
 			edge_matrix_ptrs_[ii]
 		);
 	}
 
-	for (int ii = get_num_edges_to_smaller_indexed_nodes() + 1;
+	for ( int ii = get_num_edges_to_smaller_indexed_nodes() + 1;
 			ii <= get_num_incident_edges();
 			++ii, aa_neighb_linear_index_offset += get_num_aa_types(),
-			nstates_offset += get_num_aa_types()) {
+			nstates_offset += get_num_aa_types() ) {
 		alternate_state_two_body_energies_[ ii ] =
 			get_incident_lazy_edge(ii)->
 			get_alternate_state_energy_first_node(
@@ -786,12 +786,12 @@ LazyNode::project_deltaE_for_substitution
 			neighbors_curr_state_sparse_info_[ii],
 			alt_state_for_aa_type_minus_1,
 			num_states_for_aa_type_for_higher_indexed_neighbor_[
-				nstates_offset +
-				neighbors_curr_state_sparse_info_[ii].get_aa_type()
+			nstates_offset +
+			neighbors_curr_state_sparse_info_[ii].get_aa_type()
 			],
 			aa_offsets_for_edges_[
-				aa_neighb_linear_index_offset +
-				neighbors_curr_state_sparse_info_[ii].get_aa_type()
+			aa_neighb_linear_index_offset +
+			neighbors_curr_state_sparse_info_[ii].get_aa_type()
 			],
 			edge_matrix_ptrs_[ii]
 		);
@@ -815,7 +815,7 @@ LazyNode::project_deltaE_for_substitution
 
 	alternate_state_total_energy_ = alternate_state_one_body_energy_;
 
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii, aa_neighb_linear_index_offset += get_num_aa_types()) {
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii, aa_neighb_linear_index_offset += get_num_aa_types() ) {
 		if ( alternate_state_two_body_energies_[ ii ] == LazyEdge::NOT_YET_COMPUTED_ENERGY ) {
 
 			alternate_state_two_body_energies_[ ii ] = compute_rotamer_pair_energy(
@@ -830,8 +830,8 @@ LazyNode::project_deltaE_for_substitution
 					alt_state_sparse_mat_info_,
 					alt_state_num_states_per_aa_type,
 					aa_offsets_for_edges_[
-						aa_neighb_linear_index_offset +
-						neighbors_curr_state_sparse_info_[ii].get_aa_type()
+					aa_neighb_linear_index_offset +
+					neighbors_curr_state_sparse_info_[ii].get_aa_type()
 					],
 					edge_matrix_ptrs_[ii],
 					alternate_state_two_body_energies_[ii]
@@ -841,12 +841,12 @@ LazyNode::project_deltaE_for_substitution
 					neighbors_curr_state_sparse_info_[ii],
 					alt_state_for_aa_type_minus_1,
 					num_states_for_aa_type_for_higher_indexed_neighbor_[
-						nstates_offset +
-						neighbors_curr_state_sparse_info_[ii].get_aa_type()
+					nstates_offset +
+					neighbors_curr_state_sparse_info_[ii].get_aa_type()
 					],
 					aa_offsets_for_edges_[
-						aa_neighb_linear_index_offset +
-						neighbors_curr_state_sparse_info_[ii].get_aa_type()
+					aa_neighb_linear_index_offset +
+					neighbors_curr_state_sparse_info_[ii].get_aa_type()
 					],
 					edge_matrix_ptrs_[ii],
 					alternate_state_two_body_energies_[ ii ]

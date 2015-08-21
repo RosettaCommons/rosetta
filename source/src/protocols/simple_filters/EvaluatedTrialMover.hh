@@ -10,7 +10,7 @@
 /// @file relax_initialization_protocols
 /// @brief
 /// @details
-///	  For diagnosis. Run with this TrialMover and get a log-file containing output from the provided PoseEvalutor
+///   For diagnosis. Run with this TrialMover and get a log-file containing output from the provided PoseEvalutor
 ///    and if it was accepted or not.
 ///
 ///
@@ -63,18 +63,18 @@ public:
 	);
 	~EvaluatedTrialMover();
 
-  /// apply does a single trial (which is a mover apply and a boltzmann)
-  virtual void apply( core::pose::Pose & pose );
+	/// apply does a single trial (which is a mover apply and a boltzmann)
+	virtual void apply( core::pose::Pose & pose );
 
 	virtual std::string get_name() const;
 
-  /// write all collected output to file (appends if file exist )
-  void dump_file( std::string fn );
+	/// write all collected output to file (appends if file exist )
+	void dump_file( std::string fn );
 private:
-  evaluation::MetaPoseEvaluatorOP evaluator_;
-  typedef utility::vector1< core::io::silent::SilentStructOP > SilentInfoList;
-  SilentInfoList evals_;
-  std::string tag_;  //the decoy_output tag
+	evaluation::MetaPoseEvaluatorOP evaluator_;
+	typedef utility::vector1< core::io::silent::SilentStructOP > SilentInfoList;
+	SilentInfoList evals_;
+	std::string tag_;  //the decoy_output tag
 };
 
 

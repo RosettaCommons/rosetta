@@ -78,24 +78,24 @@ static thread_local basic::Tracer tr( "protocols.comparative_modeling.threading"
 
 // Empty constructor
 ThreadingMover::ThreadingMover() : protocols::moves::Mover("ThreadingMover"),
-		query_index_(1),
-		template_index_(2),
-		build_query_loops_(true),
-		repack_query_(true),
-		randomize_loop_coords_(false),
-		min_loop_size_(3)
+	query_index_(1),
+	template_index_(2),
+	build_query_loops_(true),
+	repack_query_(true),
+	randomize_loop_coords_(false),
+	min_loop_size_(3)
 {}
 
 // Copy constructor
 ThreadingMover::ThreadingMover(ThreadingMover const & object_to_copy) : protocols::moves::Mover(object_to_copy),
-		query_index_(object_to_copy.query_index_),
-		template_index_(object_to_copy.template_index_),
-		template_pose_(object_to_copy.template_pose_),
-		align_(object_to_copy.align_),
-		build_query_loops_(object_to_copy.build_query_loops_),
-		repack_query_(object_to_copy.repack_query_),
-		randomize_loop_coords_(object_to_copy.randomize_loop_coords_),
-		min_loop_size_(object_to_copy.min_loop_size_)
+	query_index_(object_to_copy.query_index_),
+	template_index_(object_to_copy.template_index_),
+	template_pose_(object_to_copy.template_pose_),
+	align_(object_to_copy.align_),
+	build_query_loops_(object_to_copy.build_query_loops_),
+	repack_query_(object_to_copy.repack_query_),
+	randomize_loop_coords_(object_to_copy.randomize_loop_coords_),
+	min_loop_size_(object_to_copy.min_loop_size_)
 {}
 
 ThreadingMover::ThreadingMover(
@@ -185,13 +185,13 @@ core::Size ThreadingMover::min_loop_size() const {
 }
 
 utility::vector1< core::fragment::FragSetOP > ThreadingMover::frag_libs() const {
-    return frag_libs_;
+	return frag_libs_;
 }
 
 void ThreadingMover::frag_libs(
-   utility::vector1< core::fragment::FragSetOP > new_libs
+	utility::vector1< core::fragment::FragSetOP > new_libs
 ) {
-   frag_libs_ = new_libs;
+	frag_libs_ = new_libs;
 }
 
 core::id::SequenceMapping ThreadingMover::get_qt_mapping(
@@ -249,21 +249,22 @@ void ThreadingMover::apply(
 
 			//determine if we copy this atom: backbone and CB always, sidechain if identical aa
 			// core::id::AtomID cb_id(
-			// 	core::id::NamedAtomID( "CB", resi ),
-			// 	query_pose,
-			// 	false /*don't raise exception we check explicitly*/
+			//  core::id::NamedAtomID( "CB", resi ),
+			//  query_pose,
+			//  false /*don't raise exception we check explicitly*/
 			// );
 			if ( !query_pose.residue(resi).atom_is_backbone(atomj)
-				&& query_pose.residue(resi).name1() != template_pose_.residue(t_resi).name1()
-				&& query_pose.residue(resi).atom_index("CB") != atomj
-			) continue;
+					&& query_pose.residue(resi).name1() != template_pose_.residue(t_resi).name1()
+					&& query_pose.residue(resi).atom_index("CB") != atomj
+					) continue;
 
 			// fix OXT/O ambiguity in template
 			if ( !template_pose_.residue_type(t_resi).has( atom_name ) ) {
-				if ( template_pose_.residue_type(t_resi).has("OXT") && atom_name == " O  " )
+				if ( template_pose_.residue_type(t_resi).has("OXT") && atom_name == " O  " ) {
 					t_atom_name = " OXT";
-				else if ( template_pose_.residue_type(t_resi).has("O") && atom_name == " OXT" )
+				} else if ( template_pose_.residue_type(t_resi).has("O") && atom_name == " OXT" ) {
 					t_atom_name = " O  ";
+				}
 			}
 
 			core::id::NamedAtomID query_id   ( atom_name, resi   );
@@ -271,13 +272,13 @@ void ThreadingMover::apply(
 
 			// check to make sure that both poses have this atom_name
 			if ( !query_pose.residue_type(resi).has( atom_name ) ) {
-				tr.Warning 	<< "skipping atom,position " << atom_name << "," << resi
+				tr.Warning  << "skipping atom,position " << atom_name << "," << resi
 					<< " because query doesn't have atom " << atom_name << "."
 					<< std::endl;
 				continue;
 			}
 			if ( !template_pose_.residue_type(t_resi).has( t_atom_name ) ) {
-				tr.Warning 	<< "skipping atom,position " << atom_name << "," << resi
+				tr.Warning  << "skipping atom,position " << atom_name << "," << resi
 					<< " because template doesn't have atom " << t_atom_name << "."
 					<< std::endl;
 				continue;
@@ -297,7 +298,7 @@ void ThreadingMover::apply(
 
 	tr.Debug << "Built threading model for sequence "
 		<< query_pose.sequence() << std::endl;
-	tr.Debug	<< "Copied " << n_copied << " / "
+	tr.Debug << "Copied " << n_copied << " / "
 		<< query_pose.total_residue() << " from "
 		<< align_.sequence(template_index_)->id() << std::endl;
 
@@ -316,7 +317,7 @@ void ThreadingMover::apply(
 		using protocols::loops::Loops;
 		tr.Debug << "building query loops." << std::endl;
 		loops::LoopsOP query_loops = loops_from_alignment(
-			 query_pose.total_residue(), align_, min_loop_size()
+			query_pose.total_residue(), align_, min_loop_size()
 		);
 		query_loops->choose_cutpoints( query_pose );
 		tr.Debug << query_loops << std::endl;
@@ -346,7 +347,7 @@ void ThreadingMover::apply(
 				);
 			}
 		} else {
-			 tr.Warning << "No loops found!" << std::endl;
+			tr.Warning << "No loops found!" << std::endl;
 		}
 	} // build_query_loops
 

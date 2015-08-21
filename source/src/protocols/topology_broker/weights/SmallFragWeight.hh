@@ -58,13 +58,12 @@ class SmallFragWeight : public AbinitioMoverWeight {
 public:
 	SmallFragWeight( core::Real weight = 1.0 ) : weight_( weight ) {};
 	virtual core::Real weight( core::Size stageID, core::Real progress /* progress within stage */ ) const {
-		if(option[basic::options::OptionKeys::broker::small_frag_mover_stage1_weight].user() && stageID == 1)
-		{
+		if ( option[basic::options::OptionKeys::broker::small_frag_mover_stage1_weight].user() && stageID == 1 ) {
 			return option[basic::options::OptionKeys::broker::small_frag_mover_stage1_weight].value();
 		}
 
 		if ( stageID < abinitio::STAGE_4 ) return 0.0;
-		if ( stageID == abinitio::STAGE_4 && progress <=0.5) return weight_;
+		if ( stageID == abinitio::STAGE_4 && progress <=0.5 ) return weight_;
 		return 0.0;
 	};
 private:

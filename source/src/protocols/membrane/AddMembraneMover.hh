@@ -10,29 +10,29 @@
 /// @file       protocols/membrane/AddMembraneMover.hh
 ///
 /// @brief      Initialize the RosettaMP Framework by adding membrane representations to the pose
-/// @details	Given a pose, initialize and configure with the RosettaMP framework by taking the 
-///				following steps: 
-///					(1) Add a membrane residue to the pose (type MEM)
-///						(a) Append residue to the pose or accept a new one
-///						(b) Update PDB info to acknowledge the membrane residue
-///						(c) Set the MEM residue at the root of the foldtree
-///					(2) Initialize transmembrane spanning topology (Object: SpanningTopology)
-///					(3) Initialize the MembraneInfo object either with or without the LipidAccInfo object. 
-///					(4) Set the membrane starting position (either default or based on user input)
+/// @details Given a pose, initialize and configure with the RosettaMP framework by taking the
+///    following steps:
+///     (1) Add a membrane residue to the pose (type MEM)
+///      (a) Append residue to the pose or accept a new one
+///      (b) Update PDB info to acknowledge the membrane residue
+///      (c) Set the MEM residue at the root of the foldtree
+///     (2) Initialize transmembrane spanning topology (Object: SpanningTopology)
+///     (3) Initialize the MembraneInfo object either with or without the LipidAccInfo object.
+///     (4) Set the membrane starting position (either default or based on user input)
 ///
-///				This object does a massive amount of reading from CMD, RosettaScripts or Constructor. If you add
-///				a new piece of data - you must modify MembraneInfo, all of these channels for input AND the apply function!
-///				If and only if AddMembraneMover is applied to the pose, pose.conformation().is_membrane() MUST return true. 
+///    This object does a massive amount of reading from CMD, RosettaScripts or Constructor. If you add
+///    a new piece of data - you must modify MembraneInfo, all of these channels for input AND the apply function!
+///    If and only if AddMembraneMover is applied to the pose, pose.conformation().is_membrane() MUST return true.
 ///
-///				Last Updated: 7/23/15
-///	@author		Rebecca Faye Alford (rfalford12@gmail.com)
+///    Last Updated: 7/23/15
+/// @author  Rebecca Faye Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_AddMembraneMover_hh
 #define INCLUDED_protocols_membrane_AddMembraneMover_hh
 
 // Unit Headers
 #include <protocols/membrane/AddMembraneMover.fwd.hh>
-#include <protocols/moves/Mover.hh> 
+#include <protocols/moves/Mover.hh>
 
 // Project Headers
 #include <core/conformation/membrane/SpanningTopology.fwd.hh>
@@ -40,8 +40,8 @@
 #include <core/conformation/membrane/LipidAccInfo.hh>
 
 // Package Headers
-#include <core/pose/Pose.fwd.hh> 
-#include <core/types.hh> 
+#include <core/pose/Pose.fwd.hh>
+#include <core/types.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -55,53 +55,53 @@ namespace membrane {
 
 using namespace core;
 using namespace core::pose;
-using namespace core::conformation::membrane; 
+using namespace core::conformation::membrane;
 using namespace protocols::moves;
-	  
-/// @brief	Initialize the RosettaMP framework by adding membrane components to the pose 
+
+/// @brief Initialize the RosettaMP framework by adding membrane components to the pose
 class AddMembraneMover : public protocols::moves::Mover {
 
 public: // Constructors & General Setup
 
 	/// @brief Create a default RosettaMP membrane setup
-	/// @brief Create a membrane positioned at the origin (0, 0, 0) and aligned with 
-	/// the z axis. Use a defualt lipid type DOPC. 
+	/// @brief Create a membrane positioned at the origin (0, 0, 0) and aligned with
+	/// the z axis. Use a defualt lipid type DOPC.
 	AddMembraneMover();
-	
+
 	/// @brief Create a RosettaMP setup from an existing membrane residue
-	/// @brief Create a membrane using the position from the existing membrane residue. 
-	/// Use a defualt lipid type DOPC. 
+	/// @brief Create a membrane using the position from the existing membrane residue.
+	/// Use a defualt lipid type DOPC.
 	AddMembraneMover( core::Size membrane_rsd );
-	
+
 	/// @brief Create a RosettaMP setup from a user specified spanfile
-	/// @brief Create a membrane positioned at the origin (0, 0, 0) and aligned with 
+	/// @brief Create a membrane positioned at the origin (0, 0, 0) and aligned with
 	/// the z axis. Use a defualt lipid type DOPC. Load spanning topology from the user
 	/// specified spanfile
 	AddMembraneMover(
 		std::string spanfile,
 		core::Size membrane_rsd=0
 	);
-		
+
 	/// @brief Create a RosettaMP setup from a user specified SpanningTopology
-	/// @brief Create a membrane positioned at the origin (0, 0, 0) and aligned with 
+	/// @brief Create a membrane positioned at the origin (0, 0, 0) and aligned with
 	/// the z axis. Use a defualt lipid type DOPC. Load spanning topology from the user
 	/// specified spanning topology
-    AddMembraneMover(
-        SpanningTopologyOP topology,
-        core::Size anchor_rsd=1,
-        core::Size membrane_rsd=0
-        );
-    
+	AddMembraneMover(
+		SpanningTopologyOP topology,
+		core::Size anchor_rsd=1,
+		core::Size membrane_rsd=0
+	);
+
 	/// @brief Create a RosettaMP setup from an existing residue at a specific anchor point
-	/// @brief Create a membrane using the position from the existing membrane residue. Anchor 
-	/// this residue at the user-specified anchor residue. Use a defualt lipid type DOPC. 
+	/// @brief Create a membrane using the position from the existing membrane residue. Anchor
+	/// this residue at the user-specified anchor residue. Use a defualt lipid type DOPC.
 	AddMembraneMover(
 		core::Size anchor_rsd,
 		core::Size membrane_rsd
-		);
+	);
 
 	/// @brief Create a RosettaMP setup from a user specified spanfile and lipsfile
-	/// @brief Create a membrane positioned at the origin (0, 0, 0) and aligned with 
+	/// @brief Create a membrane positioned at the origin (0, 0, 0) and aligned with
 	/// the z axis. Use a defualt lipid type DOPC. Load spanning topology from the user
 	/// specified spanfile and lipsfile
 	AddMembraneMover(
@@ -109,114 +109,114 @@ public: // Constructors & General Setup
 		std::string lipsfile,
 		core::Size membrane_rsd=0
 	);
-    
+
 	/// @brief Create a RosettaMP setup from a user specified spanfile and lipsfile
-	/// @brief Create a membrane positioned at "init_center" and aligned with 
+	/// @brief Create a membrane positioned at "init_center" and aligned with
 	/// "init_normal". Use a defualt lipid type DOPC.
-    AddMembraneMover(
-         Vector init_center,
-         Vector init_normal,
-         std::string spanfile = "",
-         core::Size membrane_rsd = 0
-         );
-	
-    /// @brief Create a deep copy of the data in this mover
+	AddMembraneMover(
+		Vector init_center,
+		Vector init_normal,
+		std::string spanfile = "",
+		core::Size membrane_rsd = 0
+	);
+
+	/// @brief Create a deep copy of the data in this mover
 	AddMembraneMover( AddMembraneMover const & src );
-	
+
 	/// @brief Destructor
 	virtual ~AddMembraneMover();
 
 public: // Mover methods, getters & setters
-	
+
 	/// @brief Get the name of this Mover (AddMembraneMover)
 	virtual std::string get_name() const;
-		
+
 	/// @brief Initialize the RosettaMP elements with this pose
 	virtual void apply( Pose & pose );
 
 	/// @brief Return the current path to the spanfile held
-    /// by this mover
-    std::string get_spanfile() const;
+	/// by this mover
+	std::string get_spanfile() const;
 
-    /// @brief Set Spanfile path
-    /// @details Set the path to the spanfile
-    void spanfile( std::string spanfile );
+	/// @brief Set Spanfile path
+	/// @details Set the path to the spanfile
+	void spanfile( std::string spanfile );
 
-    /// @brief Set lipsfile path
-    /// @details Set the path to the lipsfile
-    void lipsfile( std::string lipsfile );
+	/// @brief Set lipsfile path
+	/// @details Set the path to the lipsfile
+	void lipsfile( std::string lipsfile );
 
-    /// @brief Set option for including lipophilicity data
-    /// @details Incidate whether lipophilicity information should be read
-    /// and used in MembraneInfo
-    void include_lips( bool include_lips );
-	
-public: // Rosetta Scripts Methods 
-	
+	/// @brief Set option for including lipophilicity data
+	/// @details Incidate whether lipophilicity information should be read
+	/// and used in MembraneInfo
+	void include_lips( bool include_lips );
+
+public: // Rosetta Scripts Methods
+
 	/// @brief Create a Clone of this mover
 	virtual protocols::moves::MoverOP clone() const;
-	
+
 	/// @brief Create a Fresh Instance of this Mover
 	virtual protocols::moves::MoverOP fresh_instance() const;
-	
+
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void parse_my_tag(
-	  utility::tag::TagCOP tag,
-	  basic::datacache::DataMap &,
-	  protocols::filters::Filters_map const &,
-	  protocols::moves::Movers_map const &,
-	  core::pose::Pose const &
-	  );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
+	);
 
 	/// @brief Helper Method - Add a membrane virtual residue
 	virtual Size add_membrane_virtual( Pose & pose );
-	
-private: // Setup Methods 
+
+private: // Setup Methods
 
 	/// @brief Initialize Membrane Residue given pose
 	virtual Size initialize_membrane_residue( Pose & pose, core::Size membrane_rsd );
 
 	/// @brief Helper Method - Check for Membrane residue already in the PDB
-    virtual utility::vector1< core::SSize > check_pdb_for_mem( Pose & pose );
-	
+	virtual utility::vector1< core::SSize > check_pdb_for_mem( Pose & pose );
+
 	/// @brief Register options from JD2
 	void register_options();
-	
+
 	/// @brief Initialize Mover options from the comandline
 	void init_from_cmd();
-	
+
 
 
 private:
 
 	// Pose residye typeset & include lips
 	bool include_lips_;
-	
+
 	// SpanningTopology
 	std::string spanfile_;
 	SpanningTopologyOP topology_;
 
 	// Lipid Accessibility Info - Lips Files
 	std::string lipsfile_;
-	
-    // the membrane residue is anchored to this
-    // residue position by jump
-    core::Size anchor_rsd_;
-    
+
+	// the membrane residue is anchored to this
+	// residue position by jump
+	core::Size anchor_rsd_;
+
 	// Membrane residue number
 	core::Size membrane_rsd_;
-    
-    // Initial Center/Normal Pair
-    core::Vector center_;
-    core::Vector normal_;
-    
-    // Set membrane thickness & steepness (FOR HIGHRES ONLY!!!)
-    core::Real thickness_;
-    core::Real steepness_;
 
-    // User defined 
-    bool user_defined_;
-    
+	// Initial Center/Normal Pair
+	core::Vector center_;
+	core::Vector normal_;
+
+	// Set membrane thickness & steepness (FOR HIGHRES ONLY!!!)
+	core::Real thickness_;
+	core::Real steepness_;
+
+	// User defined
+	bool user_defined_;
+
 };
 
 } // membrane

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/screener/ResidueContactScreener.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace stepwise {
 namespace screener {
-	
-	class ResidueContactScreener;
-	typedef utility::pointer::shared_ptr< ResidueContactScreener > ResidueContactScreenerOP;
-	typedef utility::pointer::shared_ptr< ResidueContactScreener const > ResidueContactScreenerCOP;
-	
+
+class ResidueContactScreener;
+typedef utility::pointer::shared_ptr< ResidueContactScreener > ResidueContactScreenerOP;
+typedef utility::pointer::shared_ptr< ResidueContactScreener const > ResidueContactScreenerCOP;
+
 } //screener
 } //stepwise
 } //protocols

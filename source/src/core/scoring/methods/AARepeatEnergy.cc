@@ -102,7 +102,7 @@ void AARepeatEnergy::indicate_required_context_graphs( utility::vector1< bool > 
 }
 
 /// @brief AARepeatEnergy is version 1.0 right now.
-///	
+///
 core::Size AARepeatEnergy::version() const
 {
 	return 1; // Initial versioning
@@ -114,18 +114,18 @@ void AARepeatEnergy::finalize_total_energy( core::pose::Pose & pose, ScoreFuncti
 {
 	//Number of residues:
 	core::Size const nres( pose.n_residue() );
-	
+
 	//Vector of residue owning pointers:
 	utility::vector1< core::conformation::ResidueCOP > resvector;
 	resvector.reserve(nres);
-	
+
 	//Populate the vector with const owning pointers to the residues:
-	for(core::Size ir=1; ir<=nres; ++ir) {
+	for ( core::Size ir=1; ir<=nres; ++ir ) {
 		resvector.push_back( pose.residue(ir).get_self_ptr() );
 	}
-	
+
 	totals[ aa_repeat_energy ] += calculate_aa_repeat_energy( resvector ); //Using the vector of residue owning pointers, calculate the repeat energy (unweighted) and set the aa_repeat_energy to this value.
-	
+
 	return;
 }
 
@@ -134,45 +134,45 @@ void AARepeatEnergy::finalize_total_energy( core::pose::Pose & pose, ScoreFuncti
 core::Real AARepeatEnergy::calculate_aa_repeat_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect ) const
 {
 	core::Size const nres( resvect.size() );
-	if(nres==0) return 0.0;
-	if(nres==1) return penalties(1);
-	
+	if ( nres==0 ) return 0.0;
+	if ( nres==1 ) return penalties(1);
+
 	//A counter (for number of residues in a row):
 	core::Size counter(0);
 	//An accumulator for the score:
 	core::Real accumulator(0.0);
-	
-	for(core::Size ir=2; ir<=nres; ++ir) { //Loop through all residues, starting with the second.
-		if( //If this residue lacks a lower connection, or it's not connected to the previous residue normally, add the penalty to the accumulator and reset the counter.
-			!resvect[ir]->has_lower_connect() || //Residue lacks a lower connection slot
-			resvect[ir]->connection_incomplete( resvect[ir]->type().lower_connect_id() ) || //Incomplete lower connection.
-			resvect[ir]->connected_residue_at_resconn( resvect[ir]->type().lower_connect_id() )!=ir-1 || //Not connected to the previous normally
-			resvect[ir-1]->connected_residue_at_resconn( resvect[ir-1]->type().upper_connect_id() )!=ir //Previous not connected to this normally
-		) {
+
+	for ( core::Size ir=2; ir<=nres; ++ir ) { //Loop through all residues, starting with the second.
+		if ( //If this residue lacks a lower connection, or it's not connected to the previous residue normally, add the penalty to the accumulator and reset the counter.
+				!resvect[ir]->has_lower_connect() || //Residue lacks a lower connection slot
+				resvect[ir]->connection_incomplete( resvect[ir]->type().lower_connect_id() ) || //Incomplete lower connection.
+				resvect[ir]->connected_residue_at_resconn( resvect[ir]->type().lower_connect_id() )!=ir-1 || //Not connected to the previous normally
+				resvect[ir-1]->connected_residue_at_resconn( resvect[ir-1]->type().upper_connect_id() )!=ir //Previous not connected to this normally
+				) {
 			accumulator += penalties(counter); //Score the last stretch.
 			counter=1; //Reset the counter.
 			continue;
 		}
 		//If this residue is the same as the previous, increment the counter:
-		if(resvect[ir]->type().name3() == resvect[ir-1]->type().name3()) ++counter;
+		if ( resvect[ir]->type().name3() == resvect[ir-1]->type().name3() ) ++counter;
 		else { //If it's not, score the last stretch and reset the counter:
 			accumulator += penalties(counter);
 			counter=1;
 		}
 	}
-	
+
 	//The last stretch will not have been counted at this point.  We need to count it.
 	accumulator += penalties(counter);
-	
+
 	return accumulator;
 }
 
 /// @brief Return a penalty for N residues in a row, from a lookup table.
 /// @details The last entry in the lookup table is the penalty to return for more residues
 /// than there are entries in the lookup table.  Returns 0 if nres is zero.
-inline core::Real	AARepeatEnergy::penalties( core::Size const nres ) const {
-	if(nres==0 || penalties_.empty()) return 0.0;
-	if(nres > penalties_.size()) {
+inline core::Real AARepeatEnergy::penalties( core::Size const nres ) const {
+	if ( nres==0 || penalties_.empty() ) return 0.0;
+	if ( nres > penalties_.size() ) {
 		return penalties_[penalties_.size()];
 	}
 	return penalties_[nres];
@@ -187,45 +187,45 @@ void AARepeatEnergy::load_penalty_table_from_file( std::string const &filename )
 	using namespace utility::io;
 
 	std::string filename_formatted = filename;
-	if(utility::file::file_extension(filename_formatted)!="rpt_pen") filename_formatted+= ".rpt_pen";
+	if ( utility::file::file_extension(filename_formatted)!="rpt_pen" ) filename_formatted+= ".rpt_pen";
 
 	izstream infile;
 	infile.open( filename_formatted );
-	if(!infile.good()) {
+	if ( !infile.good() ) {
 		filename_formatted = "scoring/score_functions/aa_repeat_energy/" + utility::file::file_basename(filename_formatted) + ".rpt_pen";
 		basic::database::open( infile, filename_formatted );
 		runtime_assert_string_msg( infile.good(), "Error in AARepeatEnergy::load_penalty_table_from_file():  Unable to open .rpt_pen file for read!" );
 	}
 
-	if(TR.Debug.visible()) TR.Debug << "Reading repeat penalty energies from " << filename_formatted << std::endl;
-	
+	if ( TR.Debug.visible() ) TR.Debug << "Reading repeat penalty energies from " << filename_formatted << std::endl;
+
 	bool non_comment_line_present(false); //Have we found an actual data line in the file?
 	std::string curline(""); //Buffer for current line.
 	utility::vector1< std::string > lines; //Storing all lines
-	
+
 	//Read the file:
-	while(getline(infile, curline)) {
-		if(curline.size() < 1) continue; //Ignore blank lines.
+	while ( getline(infile, curline) ) {
+		if ( curline.size() < 1 ) continue; //Ignore blank lines.
 		//Find and process comments:
 		std::string::size_type pound = curline.find('#', 0);
-		if( pound == std::string::npos ) {
+		if ( pound == std::string::npos ) {
 			lines.push_back( curline );
 		} else {
 			lines.push_back(curline.substr(0, pound));
 		}
 	}
 	infile.close();
-	
+
 	//Parse the lines from the file:
-	for(core::Size i=1, imax=lines.size(); i<=imax; ++i) {
-		if(non_comment_line_present) {
+	for ( core::Size i=1, imax=lines.size(); i<=imax; ++i ) {
+		if ( non_comment_line_present ) {
 			runtime_assert_string_msg( !parse_line( lines[i], penalties_ ), "Error in AARepeatEnergy::load_penalty_table_from_file():  More than one line containing data was found in the .rpt_pen file." );
 		} else { //If we have not yet found the data
-			if( parse_line( lines[i], penalties_) ) non_comment_line_present=true;
+			if ( parse_line( lines[i], penalties_) ) non_comment_line_present=true;
 		}
 	}
 
-	if(TR.Debug.visible()) {
+	if ( TR.Debug.visible() ) {
 		TR.Debug << "Done reading penalties from " << filename_formatted << std::endl;
 		TR.Debug.flush();
 	}
@@ -239,10 +239,10 @@ bool AARepeatEnergy::parse_line( std::string const &line, utility::vector1< core
 	core::Real curval;
 	utility::vector1 < core::Real > outvect;
 	bool good_parse(false);
-	
-	while(!l.eof()) {
+
+	while ( !l.eof() ) {
 		l >> curval;
-		if(!l.fail()) {
+		if ( !l.fail() ) {
 			good_parse=true;
 			outvect.push_back(curval);
 		} else {
@@ -250,8 +250,8 @@ bool AARepeatEnergy::parse_line( std::string const &line, utility::vector1< core
 			break;
 		}
 	}
-	
-	if(good_parse) penalties=outvect;
+
+	if ( good_parse ) penalties=outvect;
 	return good_parse;
 }
 

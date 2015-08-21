@@ -129,10 +129,10 @@ ProClosureEnergy::residue_pair_energy(
 	if ( rsd1.is_virtual_residue() ) return;
 	if ( rsd2.is_virtual_residue() ) return;
 
-	if (( ((rsd2.aa() == aa_pro) || (rsd2.aa() == aa_dpr)) && rsd1.is_bonded( rsd2 ) &&
+	if ( ( ((rsd2.aa() == aa_pro) || (rsd2.aa() == aa_dpr)) && rsd1.is_bonded( rsd2 ) &&
 			rsd1.seqpos() == rsd2.seqpos() - 1 ) ||
 			( ((rsd1.aa() == aa_pro) || (rsd1.aa() == aa_dpr)) && rsd1.is_bonded( rsd2 ) &&
-			rsd1.seqpos() - 1 == rsd2.seqpos() )) {
+			rsd1.seqpos() - 1 == rsd2.seqpos() ) ) {
 		Residue const & upper_res( rsd1.seqpos() > rsd2.seqpos() ? rsd1 : rsd2 );
 		Residue const & lower_res( rsd1.seqpos() > rsd2.seqpos() ? rsd2 : rsd1 );
 
@@ -158,7 +158,7 @@ ProClosureEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & upper_res( r1_upper ? rsd1 : rsd2 );
 	conformation::Residue const & lower_res( r1_upper ? rsd2 : rsd1 );
 
-debug_assert( (upper_res.aa() == chemical::aa_pro) || (upper_res.aa() == chemical::aa_dpr) );
+	debug_assert( (upper_res.aa() == chemical::aa_pro) || (upper_res.aa() == chemical::aa_dpr) );
 	const core::Real d_multiplier = ((upper_res.aa()==chemical::aa_dpr) ? -1.0 : 1.0); //A multiplier for the derivative to invert it if this is a D-amino acid.
 
 	utility::vector1< DerivVectorPair > & upper_res_atom_derivs( r1_upper ? r1_atom_derivs : r2_atom_derivs );
@@ -240,18 +240,18 @@ ProClosureEnergy::bump_energy_full(
 	static const std::string pru_name( "PRU" );
 
 	if ( pro_residue.aa() == chemical::aa_pro ) {
-		if ( pro_residue.is_bonded( other_residue ) &&
-				( ! pro_residue.is_upper_terminus() &&
-				pro_residue.seqpos() + 1 == other_residue.seqpos() )
-				||
-				( pro_residue.is_upper_terminus() &&
-				pro_residue.seqpos() == other_residue.seqpos() + 1 ) ) {
-			if ( pro_residue.name3() == prd_name && pro_residue.chi( 1 ) < 0 ) {
-				emap[ pro_close ] = 10;
-			} else if ( pro_residue.name3() == pru_name && pro_residue.chi( 1 ) > 0 ) {
-				emap[ pro_close ] = 10;
-			}
-		}
+	if ( pro_residue.is_bonded( other_residue ) &&
+	( ! pro_residue.is_upper_terminus() &&
+	pro_residue.seqpos() + 1 == other_residue.seqpos() )
+	||
+	( pro_residue.is_upper_terminus() &&
+	pro_residue.seqpos() == other_residue.seqpos() + 1 ) ) {
+	if ( pro_residue.name3() == prd_name && pro_residue.chi( 1 ) < 0 ) {
+	emap[ pro_close ] = 10;
+	} else if ( pro_residue.name3() == pru_name && pro_residue.chi( 1 ) > 0 ) {
+	emap[ pro_close ] = 10;
+	}
+	}
 	}
 	*/
 }
@@ -291,10 +291,10 @@ ProClosureEnergy::eval_intrares_energy(
 ) const
 {
 
-	if(skip_ring_closure()) return; //Do nothing here if we're skipping the ring closure energy calculation.
+	if ( skip_ring_closure() ) return; //Do nothing here if we're skipping the ring closure energy calculation.
 
 	if ( (rsd.aa() == chemical::aa_pro) || (rsd.aa() == chemical::aa_dpr) ) {
-		if ( rsd.is_virtual_residue() )return;
+		if ( rsd.is_virtual_residue() ) return;
 		Distance const dist2 = rsd.xyz( bbN_ ).distance_squared( rsd.xyz( scNV_ ) );
 		emap[ pro_close ] += dist2 / ( n_nv_dist_sd_ ); //Note that n_nv_dist_sd_ is actually the SQUARE of the standard deviation, now.
 	}
@@ -320,14 +320,14 @@ ProClosureEnergy::eval_intrares_derivatives(
 ) const
 {
 
-	if(skip_ring_closure()) return; //Do nothing here if we're skipping the ring closure energy calculation.
+	if ( skip_ring_closure() ) return; //Do nothing here if we're skipping the ring closure energy calculation.
 
-debug_assert ( (rsd.aa() == chemical::aa_pro) || (rsd.aa() == chemical::aa_dpr) );
+	debug_assert ( (rsd.aa() == chemical::aa_pro) || (rsd.aa() == chemical::aa_dpr) );
 
 	//const core::Real d_multiplier = ( (rsd.aa() == chemical::aa_dpr) ? -1.0 : 1.0 ); //Multiplier for derivatives
 
-debug_assert( rsd.has( scNV_ ) );
-debug_assert( rsd.has( bbN_ ) );
+	debug_assert( rsd.has( scNV_ ) );
+	debug_assert( rsd.has( bbN_ ) );
 	if ( rsd.is_virtual_residue() ) return;
 
 	Size NV_ind = rsd.atom_index( scNV_ );
@@ -375,16 +375,16 @@ ProClosureEnergy::measure_chi4(
 	using namespace numeric;
 	using namespace numeric::constants::d;
 
-debug_assert( (upper_res.aa() == chemical::aa_pro) || (upper_res.aa() == chemical::aa_dpr) );
-debug_assert( lower_res.is_bonded( upper_res ) );
-debug_assert( lower_res.seqpos() == upper_res.seqpos() - 1 );
+	debug_assert( (upper_res.aa() == chemical::aa_pro) || (upper_res.aa() == chemical::aa_dpr) );
+	debug_assert( lower_res.is_bonded( upper_res ) );
+	debug_assert( lower_res.seqpos() == upper_res.seqpos() - 1 );
 
 	Real chi4 = dihedral_radians(
 		upper_res.xyz( scCD_ ),
 		upper_res.xyz( bbN_ ),
 		lower_res.xyz( bbC_ ),
 		lower_res.xyz( bbO_ ));
-	if(upper_res.aa() == chemical::aa_dpr) chi4*= -1.0; //invert chi4 if this is a D-pro
+	if ( upper_res.aa() == chemical::aa_dpr ) chi4*= -1.0; //invert chi4 if this is a D-pro
 	if ( chi4 < -pi_over_2 ) chi4 += pi_2; // wrap
 	return chi4;
 }

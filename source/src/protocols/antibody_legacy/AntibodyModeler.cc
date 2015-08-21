@@ -133,8 +133,9 @@ void AntibodyModeler::init_from_options() {
 	model_h3_ = option[ OptionKeys::antibody::model_h3 ]();
 	snugfit_ = option[ OptionKeys::antibody::snugfit ]();
 	native_present_ = option[ OptionKeys::in::file::native ].user();
-	if( native_present_ )
+	if ( native_present_ ) {
 		native_filename_ = option[ OptionKeys::in::file::native ]();
+	}
 	graft_l1_ = option[ OptionKeys::antibody::graft_l1 ]();
 	graft_l2_ = option[ OptionKeys::antibody::graft_l2 ]();
 	graft_l3_ = option[ OptionKeys::antibody::graft_l3 ]();
@@ -144,16 +145,17 @@ void AntibodyModeler::init_from_options() {
 	benchmark_ = option[ OptionKeys::run::benchmark ]();
 	camelid_ = option[ OptionKeys::antibody::camelid ]();
 	camelid_constraints_ = option[ OptionKeys::antibody::
-	                               camelid_constraints ]();
+		camelid_constraints ]();
 	cst_weight_ = option[ OptionKeys::constraints::cst_weight ]();
-	if( camelid_ ) {
+	if ( camelid_ ) {
 		graft_l1_ = false;
 		graft_l2_ = false;
 		graft_l3_ = false;
 		snugfit_ = false;
 	}
-	if( camelid_constraints_ )
+	if ( camelid_constraints_ ) {
 		model_h3_ = false;
+	}
 
 }
 
@@ -169,21 +171,22 @@ void AntibodyModeler::init_on_new_input() {
 
 	// read native_pose
 	if ( native_present_ ) {
-		core::import_pose::pose_from_pdb(	native_pose_, native_filename_	);
+		core::import_pose::pose_from_pdb( native_pose_, native_filename_ );
 		pose::set_ss_from_phipsi( native_pose_ );
-	} else
+	} else {
 		native_pose_ = start_pose_;
+	}
 
 	antibody_in_.set_Fv( start_pose_, camelid_ );
 
-	if( model_h3_ ) {
+	if ( model_h3_ ) {
 		// Read standard Rosetta fragments file
 		read_and_store_fragments();
 
 		// Read in CDR H3 C-terminal fragment file
 		read_H3_cter_fragment( antibody_in_,
-		                       H3_base_library_,
-		                       camelid_);
+			H3_base_library_,
+			camelid_);
 	}
 
 	return;
@@ -199,7 +202,7 @@ void AntibodyModeler::apply( pose::Pose & pose_in ) {
 	using namespace core::scoring::constraints;
 	using namespace protocols::moves;
 
-	if( model_h3_ && ( cst_weight_ != 0.00 ) ) {
+	if ( model_h3_ && ( cst_weight_ != 0.00 ) ) {
 		protocols::simple_moves::ConstraintSetMoverOP cdr_constraint( new protocols::simple_moves::ConstraintSetMover() );
 		cdr_constraint->apply( pose_in );
 	}
@@ -207,12 +210,12 @@ void AntibodyModeler::apply( pose::Pose & pose_in ) {
 
 	start_pose_ = pose_in;
 
-	if( !init_for_input_yet_ ) init_on_new_input();
+	if ( !init_for_input_yet_ ) init_on_new_input();
 
 	pose::set_ss_from_phipsi( pose_in );
 
 	// display constraints and return
-	if( camelid_constraints_ ) {
+	if ( camelid_constraints_ ) {
 		display_constraint_residues();
 		return;
 	}
@@ -221,35 +224,35 @@ void AntibodyModeler::apply( pose::Pose & pose_in ) {
 	/*
 	Size tag = 0;
 	for( Size i = antibody_in_.cdrh_[3][2] - 4;
-			 i <= antibody_in_.cdrh_[3][2] + 1; i++ ) {
+	i <= antibody_in_.cdrh_[3][2] + 1; i++ ) {
 
-		Real phi = pose_in.phi( i );
-		Real psi = pose_in.psi( i );
-		Real omega = pose_in.omega( i );
-		Real size = (antibody_in_.cdrh_[3][2] - antibody_in_.cdrh_[3][1])+1;
+	Real phi = pose_in.phi( i );
+	Real psi = pose_in.psi( i );
+	Real omega = pose_in.omega( i );
+	Real size = (antibody_in_.cdrh_[3][2] - antibody_in_.cdrh_[3][1])+1;
 
-		if( i == (antibody_in_.cdrh_[3][2] + 1) ) {
-			std::cout << "OUTPUT: n+1, " << antibody_in_.Fv.pdb_info()->number(i)
-								<< antibody_in_.Fv.pdb_info()->icode(i) << ", "
-								<< antibody_in_.Fv.residue(i).name1()
-								<< ", " << omega << ", " << phi
-								<< ", " << psi << ", " << size << std::endl;
-		}
-		else if( i == antibody_in_.cdrh_[3][2] ) {
-			std::cout << "OUTPUT: n, " << antibody_in_.Fv.pdb_info()->number(i)
-								<< antibody_in_.Fv.pdb_info()->icode(i)
-								<< ", " << antibody_in_.Fv.residue(i).name1()
-								<< ", " << omega << ", " << phi
-								<< ", " << psi << ", " << size << std::endl;
-		}
-		else {
-			std::cout << "OUTPUT: n-" << antibody_in_.cdrh_[3][2] - i
-								<< ", " << antibody_in_.Fv.pdb_info()->number(i)
-								<< antibody_in_.Fv.pdb_info()->icode(i)
-								<< ", "<< antibody_in_.Fv.residue(i).name1()
-								<< ", "	<< omega << ", " << phi
-								<< ", " << psi << ", " << size << std::endl;
-		}
+	if( i == (antibody_in_.cdrh_[3][2] + 1) ) {
+	std::cout << "OUTPUT: n+1, " << antibody_in_.Fv.pdb_info()->number(i)
+	<< antibody_in_.Fv.pdb_info()->icode(i) << ", "
+	<< antibody_in_.Fv.residue(i).name1()
+	<< ", " << omega << ", " << phi
+	<< ", " << psi << ", " << size << std::endl;
+	}
+	else if( i == antibody_in_.cdrh_[3][2] ) {
+	std::cout << "OUTPUT: n, " << antibody_in_.Fv.pdb_info()->number(i)
+	<< antibody_in_.Fv.pdb_info()->icode(i)
+	<< ", " << antibody_in_.Fv.residue(i).name1()
+	<< ", " << omega << ", " << phi
+	<< ", " << psi << ", " << size << std::endl;
+	}
+	else {
+	std::cout << "OUTPUT: n-" << antibody_in_.cdrh_[3][2] - i
+	<< ", " << antibody_in_.Fv.pdb_info()->number(i)
+	<< antibody_in_.Fv.pdb_info()->icode(i)
+	<< ", "<< antibody_in_.Fv.residue(i).name1()
+	<< ", " << omega << ", " << phi
+	<< ", " << psi << ", " << size << std::endl;
+	}
 	}
 	return;
 	*/
@@ -291,14 +294,16 @@ void AntibodyModeler::apply( pose::Pose & pose_in ) {
 
 		// align Fv to native.Fv
 		pose::Pose native_pose;
-		if( get_native_pose() )
+		if ( get_native_pose() ) {
 			native_pose = *get_native_pose();
-		else
+		} else {
 			native_pose = antibody_in_.Fv;
+		}
 		Antibody native_ab( native_pose, camelid_ );
 		antibody_in_.align_to_native( native_ab );
-	} else if ( model_h3_ )
+	} else if ( model_h3_ ) {
 		relax_cdrs();
+	}
 
 	pose_in = antibody_in_.Fv;
 
@@ -310,7 +315,7 @@ void AntibodyModeler::apply( pose::Pose & pose_in ) {
 	Size frag_size = (antibody_in_.cdrh_[3][2]-antibody_in_.cdrh_[3][1]) + 3;
 	Size cutpoint =  antibody_in_.cdrh_[3][1] + int( frag_size / 2 );
 	loops::Loop cdr_h3( antibody_in_.cdrh_[3][1], antibody_in_.cdrh_[3][2],
-	                    cutpoint,	0, false );
+		cutpoint, 0, false );
 
 	// Fold Tree
 	simple_one_loop_fold_tree( pose_in, cdr_h3 );
@@ -339,7 +344,7 @@ void AntibodyModeler::apply( pose::Pose & pose_in ) {
 	score_map_[ "AA_H3" ] = global_loop_rmsd( pose_in, native_pose_, "h3" );
 	score_map_[ "AB_H2" ] = global_loop_rmsd( pose_in, native_pose_, "h2" );
 	score_map_[ "AB_H1" ] = global_loop_rmsd( pose_in, native_pose_, "h1" );
-	if( !camelid_ ) {
+	if ( !camelid_ ) {
 		score_map_[ "AC_L3" ] = global_loop_rmsd( pose_in, native_pose_, "l3");
 		score_map_[ "AD_L2" ] = global_loop_rmsd( pose_in, native_pose_, "l2");
 		score_map_[ "AE_L1" ] = global_loop_rmsd( pose_in, native_pose_, "l1");
@@ -363,8 +368,9 @@ AntibodyModeler::read_and_store_fragments() {
 	using namespace fragment;
 	using namespace core::scoring;
 
-	if ( !model_h3_ )
+	if ( !model_h3_ ) {
 		return;
+	}
 
 	// fragment initialization
 	utility::vector1< FragSetOP > frag_libs;
@@ -374,9 +380,9 @@ AntibodyModeler::read_and_store_fragments() {
 	Size frag_size = (antibody_in_.cdrh_[3][2]-antibody_in_.cdrh_[3][1]) + 3;
 	Size cutpoint =  antibody_in_.cdrh_[3][1] + int( frag_size / 2 );
 	setup_simple_fold_tree(  antibody_in_.cdrh_[3][1] - 1, cutpoint,
-	                         antibody_in_.cdrh_[3][2] + 1,
-	                         antibody_in_.Fv.total_residue(),
-	                         antibody_in_.Fv );
+		antibody_in_.cdrh_[3][2] + 1,
+		antibody_in_.Fv.total_residue(),
+		antibody_in_.Fv );
 
 	FragSetOP offset_3mer_frags;
 	// a fragset of same type should be able to handle everything
@@ -385,7 +391,7 @@ AntibodyModeler::read_and_store_fragments() {
 	Size offset = 0;
 	frag_libs[2]->region_simple( 1, frag_size, loop_3mer_frames );
 	for ( FrameList::const_iterator it = loop_3mer_frames.begin(),
-	        eit = loop_3mer_frames.end(); it!=eit; ++it ) {
+			eit = loop_3mer_frames.end(); it!=eit; ++it ) {
 		FrameOP short_frame = (*it)->clone_with_frags();
 		offset++;
 		short_frame->shift_to( ( antibody_in_.cdrh_[3][1] - 2 ) + offset  );
@@ -399,7 +405,7 @@ AntibodyModeler::read_and_store_fragments() {
 	offset = 0;
 	frag_libs[1]->region_simple( 1, frag_size, loop_9mer_frames );
 	for ( FrameList::const_iterator it = loop_9mer_frames.begin(),
-	        eit = loop_9mer_frames.end(); it!=eit; ++it ) {
+			eit = loop_9mer_frames.end(); it!=eit; ++it ) {
 		FrameOP short_frame = (*it)->clone_with_frags();
 		offset++;
 		short_frame->shift_to( ( antibody_in_.cdrh_[3][1] - 2 ) + offset  );
@@ -414,11 +420,11 @@ AntibodyModeler::read_and_store_fragments() {
 
 void
 AntibodyModeler::setup_simple_fold_tree(
-    Size jumppoint1,
-    Size cutpoint,
-    Size jumppoint2,
-    Size nres,
-    pose::Pose & pose_in ) {
+	Size jumppoint1,
+	Size cutpoint,
+	Size jumppoint2,
+	Size nres,
+	pose::Pose & pose_in ) {
 
 	using namespace kinematics;
 
@@ -493,15 +499,16 @@ AntibodyModeler::relax_cdrs() {
 	utility::vector1< bool> is_flexible( nres, false );
 	bool include_neighbors( false );
 	select_loop_residues( antibody_in_.Fv, antibody_in_.all_cdr_loops,
-	                      include_neighbors, is_flexible );
+		include_neighbors, is_flexible );
 	allcdr_map->set_bb( is_flexible );
 	include_neighbors = true;
 	antibody_in_.Fv.update_residue_neighbors(); // Need to have updated neighbors
 	select_loop_residues( antibody_in_.Fv, antibody_in_.all_cdr_loops,
-	                      include_neighbors, is_flexible );
+		include_neighbors, is_flexible );
 	allcdr_map->set_chi( is_flexible );
-	for( Size ii = 1; ii <= antibody_in_.all_cdr_loops.num_loop(); ii++ )
+	for ( Size ii = 1; ii <= antibody_in_.all_cdr_loops.num_loop(); ii++ ) {
 		allcdr_map->set_jump( ii, false );
+	}
 
 	// score functions
 	core::scoring::ScoreFunctionOP scorefxn;
@@ -510,14 +517,14 @@ AntibodyModeler::relax_cdrs() {
 	scorefxn->set_weight( core::scoring::overlap_chainbreak, 10. / 3. );
 
 	Real min_tolerance = 0.1;
-	if( benchmark_ ) min_tolerance = 1.0;
+	if ( benchmark_ ) min_tolerance = 1.0;
 	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
 	bool nb_list = true;
 	protocols::simple_moves::MinMoverOP all_cdr_min_mover( new protocols::simple_moves::MinMover( allcdr_map,
-	        scorefxn, min_type, min_tolerance, nb_list ) );
+		scorefxn, min_type, min_tolerance, nb_list ) );
 	all_cdr_min_mover->apply( antibody_in_.Fv );
 
-	if( !benchmark_ ) {
+	if ( !benchmark_ ) {
 		protocols::simple_moves::PackRotamersMoverOP repack( new protocols::simple_moves::PackRotamersMover( scorefxn ) );
 		setup_packer_task( antibody_in_.Fv );
 		( *scorefxn )( antibody_in_.Fv );
@@ -526,7 +533,7 @@ AntibodyModeler::relax_cdrs() {
 		repack->apply( antibody_in_.Fv );
 
 		protocols::simple_moves::RotamerTrialsMinMoverOP rtmin( new protocols::simple_moves::RotamerTrialsMinMover(
-		    scorefxn, tf_ ) );
+			scorefxn, tf_ ) );
 		rtmin->apply( antibody_in_.Fv );
 	}
 
@@ -557,8 +564,8 @@ AntibodyModeler::relax_cdrs() {
 ///////////////////////////////////////////////////////////////////////////
 void
 AntibodyModeler::all_cdr_VL_VH_fold_tree(
-    pose::Pose & pose_in,
-    const loops::Loops & loops_in ) {
+	pose::Pose & pose_in,
+	const loops::Loops & loops_in ) {
 
 	using namespace kinematics;
 
@@ -568,26 +575,28 @@ AntibodyModeler::all_cdr_VL_VH_fold_tree(
 	Size rb_cutpoint(0);
 
 	for ( Size i = 1; i <= nres; ++i ) {
-		if( pdb_info->chain( i ) == second_chain) {
+		if ( pdb_info->chain( i ) == second_chain ) {
 			rb_cutpoint = i-1;
 			break;
 		}
 	}
 
 	Size jump_pos1 ( core::pose::residue_center_of_mass( pose_in, 1,
-	                 rb_cutpoint ) );
+		rb_cutpoint ) );
 	Size jump_pos2 ( core::pose::residue_center_of_mass( pose_in,rb_cutpoint+1,
-	                 nres ) );
+		nres ) );
 
 	// make sure rb jumps do not reside in the loop region
-	for( loops::Loops::const_iterator it= loops_in.begin(),
-	        it_end = loops_in.end(); it != it_end; ++it ) {
+	for ( loops::Loops::const_iterator it= loops_in.begin(),
+			it_end = loops_in.end(); it != it_end; ++it ) {
 		if ( jump_pos1 >= ( it->start() - 1 ) &&
-		        jump_pos1 <= ( it->stop() + 1) )
+				jump_pos1 <= ( it->stop() + 1) ) {
 			jump_pos1 = it->stop() + 2;
+		}
 		if ( jump_pos2 >= ( it->start() - 1 ) &&
-		        jump_pos2 <= ( it->stop() + 1) )
+				jump_pos2 <= ( it->stop() + 1) ) {
 			jump_pos2 = it->start() - 2;
+		}
 	}
 
 	// make a simple rigid-body jump first
@@ -597,8 +606,8 @@ AntibodyModeler::all_cdr_VL_VH_fold_tree(
 	// delete some old edge accordingly
 	FoldTree f( pose_in.fold_tree() );
 
-	for( loops::Loops::const_iterator it=loops_in.begin(),
-	        it_end=loops_in.end(); it != it_end; ++it ) {
+	for ( loops::Loops::const_iterator it=loops_in.begin(),
+			it_end=loops_in.end(); it != it_end; ++it ) {
 		Size const loop_start ( it->start() );
 		Size const loop_stop ( it->stop() );
 		Size const loop_cutpoint ( it->cut() );
@@ -606,12 +615,12 @@ AntibodyModeler::all_cdr_VL_VH_fold_tree(
 		//bool edge_found = false;
 		const FoldTree & f_const = f;
 		Size const num_jump = f_const.num_jump();
-		for( FoldTree::const_iterator it2=f_const.begin(),
-		        it2_end=f_const.end(); it2 !=it2_end; ++it2 ) {
+		for ( FoldTree::const_iterator it2=f_const.begin(),
+				it2_end=f_const.end(); it2 !=it2_end; ++it2 ) {
 			edge_start = std::min( it2->start(), it2->stop() );
 			edge_stop = std::max( it2->start(), it2->stop() );
 			if ( ! it2->is_jump() && loop_start > edge_start
-			        && loop_stop < edge_stop ) {
+					&& loop_stop < edge_stop ) {
 				//edge_found = true;  // set but never used ~Labonte
 				break;
 			}
@@ -662,8 +671,8 @@ AntibodyModeler::all_cdr_VL_VH_fold_tree(
 ///////////////////////////////////////////////////////////////////////////
 void
 AntibodyModeler::repulsive_ramp(
-    pose::Pose & pose_in,
-    loops::Loops loops_in ) {
+	pose::Pose & pose_in,
+	loops::Loops loops_in ) {
 
 	Size nres = pose_in.total_residue();
 
@@ -682,14 +691,15 @@ AntibodyModeler::repulsive_ramp(
 	select_loop_residues( pose_in, loops_in, include_neighbors, is_flexible);
 	cdr_dock_map->set_chi( is_flexible );
 	cdr_dock_map->set_jump( 1, true );
-	for( Size ii = 2; ii <= loops_in.num_loop() + 1; ii++ )
+	for ( Size ii = 2; ii <= loops_in.num_loop() + 1; ii++ ) {
 		cdr_dock_map->set_jump( ii, false );
+	}
 
 
 	// score functions
 	core::scoring::ScoreFunctionOP scorefxn;
 	scorefxn = core::scoring::ScoreFunctionFactory::
-	           create_score_function( "docking", "docking_min" );
+		create_score_function( "docking", "docking_min" );
 	scorefxn->set_weight( core::scoring::chainbreak, 1.0 );
 	scorefxn->set_weight( core::scoring::overlap_chainbreak, 10./3. );
 
@@ -703,7 +713,7 @@ AntibodyModeler::repulsive_ramp(
 
 	using namespace core::chemical;
 	for ( loops::Loops::const_iterator it = loops_in.begin(),
-	        it_end = loops_in.end();	it != it_end; ++it ) {
+			it_end = loops_in.end(); it != it_end; ++it ) {
 		core::pose::add_variant_type_to_pose_residue( pose_in, CUTPOINT_LOWER, it->cut() );
 		core::pose::add_variant_type_to_pose_residue( pose_in, CUTPOINT_UPPER,it->cut()+1);
 	}
@@ -718,7 +728,7 @@ AntibodyModeler::repulsive_ramp(
 	//Real func_tol(1.0);
 	//mjo commenting out 'nb_list' because it is unused and causes a warning
 	//bool nb_list( true );
-	if( benchmark_ ) {
+	if ( benchmark_ ) {
 		rep_ramp_cycles = 1;
 		cycles = 1;
 		minimization_threshold = 150.0;
@@ -730,7 +740,7 @@ AntibodyModeler::repulsive_ramp(
 		Real rep_weight = 0.02 + rep_ramp_step * Real(i-1);
 		scorefxn->set_weight( core::scoring::fa_rep, rep_weight );
 		snugfit_MC_min ( pose_in, cdr_dock_map, cycles, minimization_threshold,
-		                 scorefxn, pack_scorefxn, is_flexible);
+			scorefxn, pack_scorefxn, is_flexible);
 	}
 
 	return;
@@ -738,24 +748,24 @@ AntibodyModeler::repulsive_ramp(
 
 void
 AntibodyModeler::snugfit_MC_min (
-    pose::Pose & pose_in,
-    kinematics::MoveMapOP cdr_dock_map,
-    Size cycles,
-    Real minimization_threshold,
-    core::scoring::ScoreFunctionOP scorefxn,
-    core::scoring::ScoreFunctionOP pack_scorefxn,
-    utility::vector1< bool> is_flexible ) {
+	pose::Pose & pose_in,
+	kinematics::MoveMapOP cdr_dock_map,
+	Size cycles,
+	Real minimization_threshold,
+	core::scoring::ScoreFunctionOP scorefxn,
+	core::scoring::ScoreFunctionOP pack_scorefxn,
+	utility::vector1< bool> is_flexible ) {
 
 	using namespace moves;
 	bool nb_list = true;
 	Size nres = pose_in.total_residue();
 
 	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( cdr_dock_map, scorefxn,
-	        "dfpmin_armijo_nonmonotone", minimization_threshold, nb_list ) );
+		"dfpmin_armijo_nonmonotone", minimization_threshold, nb_list ) );
 
 	//set up rigid body movers
 	rigid::RigidBodyPerturbMoverOP rb_perturb( new rigid::RigidBodyPerturbMover(pose_in,
-	        *cdr_dock_map, 2.0, 0.1 , rigid::partner_downstream, true ) );
+		*cdr_dock_map, 2.0, 0.1 , rigid::partner_downstream, true ) );
 
 	setup_packer_task( pose_in );
 	//set up sidechain movers for rigid body jump and loop & neighbors
@@ -765,24 +775,25 @@ AntibodyModeler::snugfit_MC_min (
 	using namespace core::pack::task::operation;
 	// selecting movable c-terminal residues
 	ObjexxFCL::FArray1D_bool loop_residues( nres, false );
-	for( Size i = 1; i <= nres; i++ )
+	for ( Size i = 1; i <= nres; i++ ) {
 		loop_residues( i ) = is_flexible[ i ]; // check mapping
+	}
 	using namespace protocols::toolbox::task_operations;
 	tf_->push_back( TaskOperationCOP( new RestrictToInterface( rb_jump, loop_residues ) ) );
 
 	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover(
-	    pack_scorefxn, tf_ ) );
+		pack_scorefxn, tf_ ) );
 	SequenceMoverOP rb_mover( new SequenceMover );
 	rb_mover->add_mover( rb_perturb );
 	rb_mover->add_mover( pack_rottrial );
 	JumpOutMoverOP rb_mover_min( new JumpOutMover( rb_mover, min_mover,
-	        scorefxn,	minimization_threshold ) );
+		scorefxn, minimization_threshold ) );
 
 	Real temperature = 0.8;
 	MonteCarloOP mc( new MonteCarlo( pose_in, *scorefxn, temperature ) );
 	TrialMoverOP rb_mover_min_trial( new TrialMover( rb_mover_min, mc) );
 	RepeatMoverOP first_mcm_cycles( new RepeatMover( rb_mover_min_trial,
-	        cycles ) );
+		cycles ) );
 	first_mcm_cycles->apply( pose_in );
 
 	return;
@@ -791,8 +802,8 @@ AntibodyModeler::snugfit_MC_min (
 
 void
 AntibodyModeler::snugfit_mcm_protocol(
-    pose::Pose & pose_in,
-    loops::Loops loops_in ) {
+	pose::Pose & pose_in,
+	loops::Loops loops_in ) {
 
 	using namespace moves;
 	bool nb_list = true;
@@ -810,7 +821,7 @@ AntibodyModeler::snugfit_mcm_protocol(
 	using namespace core::scoring;
 	core::scoring::ScoreFunctionOP scorefxn;
 	scorefxn = core::scoring::ScoreFunctionFactory::
-	           create_score_function( "docking", "docking_min" );
+		create_score_function( "docking", "docking_min" );
 	scorefxn->set_weight( core::scoring::chainbreak, 1.0 );
 	scorefxn->set_weight( core::scoring::overlap_chainbreak, 10./3. );
 
@@ -824,7 +835,7 @@ AntibodyModeler::snugfit_mcm_protocol(
 
 	using namespace core::chemical;
 	for ( loops::Loops::const_iterator it = loops_in.begin(),
-	        it_end = loops_in.end();	it != it_end; ++it ) {
+			it_end = loops_in.end(); it != it_end; ++it ) {
 		core::pose::add_variant_type_to_pose_residue( pose_in, CUTPOINT_LOWER, it->cut() );
 		core::pose::add_variant_type_to_pose_residue( pose_in, CUTPOINT_UPPER,it->cut()+1);
 	}
@@ -844,17 +855,18 @@ AntibodyModeler::snugfit_mcm_protocol(
 	select_loop_residues( pose_in, loops_in, include_neighbors, is_flexible);
 	cdr_dock_map->set_chi( is_flexible );
 	cdr_dock_map->set_jump( 1, true );
-	for( Size ii = 2; ii <= loops_in.num_loop() + 1; ii++ )
+	for ( Size ii = 2; ii <= loops_in.num_loop() + 1; ii++ ) {
 		cdr_dock_map->set_jump( ii, false );
+	}
 
 
 	//set up minimizer movers
 	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( cdr_dock_map, scorefxn, min_type,
-	        min_threshold, nb_list ) );
+		min_threshold, nb_list ) );
 
 	//set up rigid body movers
 	rigid::RigidBodyPerturbMoverOP rb_perturb( new rigid::RigidBodyPerturbMover( pose_in,
-	        *cdr_dock_map, rot_mag, trans_mag, rigid::partner_downstream, true ) );
+		*cdr_dock_map, rot_mag, trans_mag, rigid::partner_downstream, true ) );
 
 	setup_packer_task( pose_in );
 	//set up sidechain movers for rigid body jump and loop & neighbors
@@ -864,27 +876,28 @@ AntibodyModeler::snugfit_mcm_protocol(
 	using namespace core::pack::task::operation;
 	// selecting movable c-terminal residues
 	ObjexxFCL::FArray1D_bool loop_residues( nres, false );
-	for( Size i = 1; i <= nres; i++ )
+	for ( Size i = 1; i <= nres; i++ ) {
 		loop_residues( i ) = is_flexible[ i ]; // check mapping
+	}
 	using namespace protocols::toolbox::task_operations;
 	tf_->push_back( TaskOperationCOP( new RestrictToInterface( rb_jump, loop_residues ) ) );
 
 
 	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover(
-	    pack_scorefxn, tf_ ) );
+		pack_scorefxn, tf_ ) );
 
 	protocols::simple_moves::PackRotamersMoverOP pack_interface_repack( new protocols::simple_moves::PackRotamersMover(
-	    pack_scorefxn ) );
+		pack_scorefxn ) );
 	pack_interface_repack->task_factory(tf_);
 
 	Real temperature = 0.8;
 	MonteCarloOP mc( new MonteCarlo( pose_in, *scorefxn, temperature ) );
 
 	TrialMoverOP pack_interface_trial( new TrialMover(pack_interface_repack,
-	        mc ) );
+		mc ) );
 
 	protocols::docking::SidechainMinMoverOP scmin_mover( new
-	protocols::docking::SidechainMinMover( core::scoring::ScoreFunctionOP( pack_scorefxn ), core::pack::task::TaskFactoryCOP( tf_ ) ) );
+		protocols::docking::SidechainMinMover( core::scoring::ScoreFunctionOP( pack_scorefxn ), core::pack::task::TaskFactoryCOP( tf_ ) ) );
 	TrialMoverOP scmin_trial( new TrialMover( scmin_mover, mc ) );
 
 	SequenceMoverOP rb_mover( new SequenceMover );
@@ -892,7 +905,7 @@ AntibodyModeler::snugfit_mcm_protocol(
 	rb_mover->add_mover( pack_rottrial );
 
 	JumpOutMoverOP rb_mover_min( new JumpOutMover( rb_mover, min_mover,
-	        scorefxn, min_threshold) );
+		scorefxn, min_threshold) );
 	TrialMoverOP rb_mover_min_trial( new TrialMover( rb_mover_min, mc  ) );
 
 	SequenceMoverOP repack_step( new SequenceMover );
@@ -901,8 +914,9 @@ AntibodyModeler::snugfit_mcm_protocol(
 	repack_step->add_mover( scmin_trial );
 
 	CycleMoverOP rb_mover_min_trial_repack( new CycleMover );
-	for ( Size i=1; i < 8; ++i )
+	for ( Size i=1; i < 8; ++i ) {
 		rb_mover_min_trial_repack->add_mover( rb_mover_min_trial );
+	}
 	rb_mover_min_trial_repack->add_mover( repack_step );
 
 	//set up initial repack mover
@@ -917,10 +931,11 @@ AntibodyModeler::snugfit_mcm_protocol(
 	RepeatMoverOP mcm_four_cycles( new RepeatMover( rb_mover_min_trial, 4 ) );
 
 	Size cycles = 3;
-	if ( benchmark_ )
+	if ( benchmark_ ) {
 		cycles = 1;
+	}
 	RepeatMoverOP mcm_final_cycles( new RepeatMover(
-	    rb_mover_min_trial_repack, cycles ) );
+		rb_mover_min_trial_repack, cycles ) );
 
 	SequenceMoverOP snugfit_mcm( new SequenceMover );
 	snugfit_mcm->add_mover( initial_repack );
@@ -936,16 +951,17 @@ AntibodyModeler::snugfit_mcm_protocol(
 
 void
 AntibodyModeler::setup_packer_task(
-    pose::Pose & pose_in ) {
+	pose::Pose & pose_in ) {
 	using namespace pack::task;
 	using namespace pack::task::operation;
 
-	if( init_task_factory_ ) {
+	if ( init_task_factory_ ) {
 		tf_ = core::pack::task::TaskFactoryOP( new TaskFactory( *init_task_factory_ ) );
 		TR << "AbModeler Reinitializing Packer Task" << std::endl;
 		return;
-	} else
+	} else {
 		tf_ = core::pack::task::TaskFactoryOP( new TaskFactory );
+	}
 
 	TR << "AbModeler Setting Up Packer Task" << std::endl;
 
@@ -972,31 +988,31 @@ AntibodyModeler::setup_packer_task(
 
 Real
 AntibodyModeler::global_loop_rmsd (
-    const pose::Pose & pose_in,
-    const pose::Pose & native_pose,
-    std::string cdr_type
+	const pose::Pose & pose_in,
+	const pose::Pose & native_pose,
+	std::string cdr_type
 ) {
 
 	using namespace scoring;
 
 	Size loop_start( 1 );
 	Size loop_end( antibody_in_.Fv.total_residue() );
-	if( cdr_type == "l1" ) {
+	if ( cdr_type == "l1" ) {
 		loop_start = antibody_in_.cdrl_[1][1];
 		loop_end = antibody_in_.cdrl_[1][2];
-	} else if( cdr_type == "l2" ) {
+	} else if ( cdr_type == "l2" ) {
 		loop_start = antibody_in_.cdrl_[2][1];
 		loop_end = antibody_in_.cdrl_[2][2];
-	} else if( cdr_type == "l3" ) {
+	} else if ( cdr_type == "l3" ) {
 		loop_start = antibody_in_.cdrl_[3][1];
 		loop_end = antibody_in_.cdrl_[3][2];
-	} else if( cdr_type == "h1" ) {
+	} else if ( cdr_type == "h1" ) {
 		loop_start = antibody_in_.cdrh_[1][1];
 		loop_end = antibody_in_.cdrh_[1][2];
-	} else if( cdr_type == "h2" ) {
+	} else if ( cdr_type == "h2" ) {
 		loop_start = antibody_in_.cdrh_[2][1];
 		loop_end = antibody_in_.cdrh_[2][2];
-	} else if( cdr_type == "h3" ) {
+	} else if ( cdr_type == "h3" ) {
 		loop_start = antibody_in_.cdrh_[3][1];
 		loop_end = antibody_in_.cdrh_[3][2];
 	}
@@ -1004,12 +1020,13 @@ AntibodyModeler::global_loop_rmsd (
 	using ObjexxFCL::FArray1D_bool;
 	FArray1D_bool superpos_partner ( pose_in.total_residue(), false );
 
-	for ( Size i = loop_start; i <= loop_end; ++i )
+	for ( Size i = loop_start; i <= loop_end; ++i ) {
 		superpos_partner(i) = true;
+	}
 
 	using namespace core::scoring;
 	Real rmsG = rmsd_no_super_subset( native_pose, pose_in,
-	                                  superpos_partner, is_protein_CA );
+		superpos_partner, is_protein_CA );
 	return ( rmsG );
 } // global_loop_rmsd
 
@@ -1020,33 +1037,39 @@ AntibodyModeler::display_constraint_residues() {
 
 	Size H1_Cys(0), H3_Cys(0);
 
-	if( antibody_in_.Fv.residue( antibody_in_.Fv.pdb_info()->pdb2pose( 'H',
-	                             32 ) ).name3() == "CYS" )
+	if ( antibody_in_.Fv.residue( antibody_in_.Fv.pdb_info()->pdb2pose( 'H',
+			32 ) ).name3() == "CYS" ) {
 		H1_Cys = antibody_in_.Fv.pdb_info()->pdb2pose( 'H', 32 );
-	else if( antibody_in_.Fv.residue( antibody_in_.Fv.pdb_info()->pdb2pose(
-	                                      'H', 33 ) ).name3() == "CYS" )
+	} else if ( antibody_in_.Fv.residue( antibody_in_.Fv.pdb_info()->pdb2pose(
+			'H', 33 ) ).name3() == "CYS" ) {
 		H1_Cys = antibody_in_.Fv.pdb_info()->pdb2pose( 'H', 33 );
+	}
 
-	for( Size ii = antibody_in_.cdrh_[3][1]; ii <= antibody_in_.cdrh_[3][2];
-	        ii++ )
-		if( antibody_in_.Fv.residue(ii).name3() == "CYS" )
+	for ( Size ii = antibody_in_.cdrh_[3][1]; ii <= antibody_in_.cdrh_[3][2];
+			ii++ ) {
+		if ( antibody_in_.Fv.residue(ii).name3() == "CYS" ) {
 			H3_Cys = ii;
+		}
+	}
 
-	if( ( H1_Cys != 0 ) && ( H3_Cys != 0 ) )
+	if ( ( H1_Cys != 0 ) && ( H3_Cys != 0 ) ) {
 		TR << "CONSTRAINTS: "
-		   << "AtomPair CA " << H1_Cys << " CA " << H3_Cys
-		   << " BOUNDED 4.0 6.1 0.6 BOND; mean 5.6 sd 0.6" << std::endl;
+			<< "AtomPair CA " << H1_Cys << " CA " << H3_Cys
+			<< " BOUNDED 4.0 6.1 0.6 BOND; mean 5.6 sd 0.6" << std::endl;
+	}
 
 	// Specifying extended kink
 
 	Size hfr_46(0), h3_closest(0);
 	hfr_46 = antibody_in_.Fv.pdb_info()->pdb2pose( 'H', 46 );
-	if( antibody_in_.extended_ )
+	if ( antibody_in_.extended_ ) {
 		h3_closest = antibody_in_.cdrh_[3][2] - 5;
-	if( h3_closest != 0 )
+	}
+	if ( h3_closest != 0 ) {
 		TR << "CONSTRAINTS: "
-		   << "AtomPair CA " << hfr_46 << " CA " << h3_closest
-		   << " BOUNDED 6.5 9.1 0.7 DISTANCE; mean 8.0 sd 0.7" << std::endl;
+			<< "AtomPair CA " << hfr_46 << " CA " << h3_closest
+			<< " BOUNDED 6.5 9.1 0.7 DISTANCE; mean 8.0 sd 0.7" << std::endl;
+	}
 
 	return;
 } // display_constraint_residues

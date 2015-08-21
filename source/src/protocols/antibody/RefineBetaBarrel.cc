@@ -57,8 +57,8 @@ RefineBetaBarrel::RefineBetaBarrel(AntibodyInfoOP antibody_info) : Mover() {
 }
 
 RefineBetaBarrel::RefineBetaBarrel(AntibodyInfoOP antibody_info,
-                                   core::scoring::ScoreFunctionCOP dock_scorefxn,
-                                   core::scoring::ScoreFunctionCOP pack_scorefxn) : Mover() {
+	core::scoring::ScoreFunctionCOP dock_scorefxn,
+	core::scoring::ScoreFunctionCOP pack_scorefxn) : Mover() {
 	user_defined_ = true;
 	ab_info_ = antibody_info;
 	dock_scorefxn_ = dock_scorefxn->clone();
@@ -70,7 +70,7 @@ RefineBetaBarrel::RefineBetaBarrel(AntibodyInfoOP antibody_info,
 
 void RefineBetaBarrel::init( ) {
 
-	if(!user_defined_) {
+	if ( !user_defined_ ) {
 		dock_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
 		dock_scorefxn_->set_weight( core::scoring::chainbreak, 1.0 );
 		dock_scorefxn_->set_weight( core::scoring::overlap_chainbreak, 10./3. );
@@ -105,12 +105,12 @@ void RefineBetaBarrel::finalize_setup(pose::Pose & pose ) {
 	select_loop_residues( pose, *(ab_info_->get_AllCDRs_in_loopsop()), true/*include_neighbors*/, sc_is_flexible);
 
 	ObjexxFCL::FArray1D_bool loop_residues( pose.total_residue(), false );
-	for( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 		loop_residues(i) = sc_is_flexible[i];
 	} // check mapping
 
 	using namespace protocols::toolbox::task_operations;
-	if(!tf_) {
+	if ( !tf_ ) {
 		tf_= setup_packer_task(pose);
 		tf_->push_back( TaskOperationCOP( new RestrictToInterface( LH_dock_jump_, loop_residues ) ) );
 	}
@@ -137,13 +137,13 @@ void RefineBetaBarrel::finalize_setup(pose::Pose & pose ) {
 	loops::add_cutpoint_variants( pose ); // add back, based on the cutpoints defined by fold_tree
 
 	/*
-	    for (Size i=1; i<=pose.total_residue();i++) {
-	        if (pose.residue(i).type().variant_types().size()>0){
-	            TR<<"residue "<<i<<"    "<< pose.residue(i).type().variant_types()[1]<<std::endl;
-	        }
-	        else{ TR<<"residue "<<i<<std::endl; }
-	    }
-	    exit(-1);
+	for (Size i=1; i<=pose.total_residue();i++) {
+	if (pose.residue(i).type().variant_types().size()>0){
+	TR<<"residue "<<i<<"    "<< pose.residue(i).type().variant_types()[1]<<std::endl;
+	}
+	else{ TR<<"residue "<<i<<std::endl; }
+	}
+	exit(-1);
 	*/
 	TR<<"   finish finalize_setup function !!!"<<std::endl;
 
@@ -158,12 +158,12 @@ void RefineBetaBarrel::apply( pose::Pose & pose ) {
 	// the repulsive_ramp_ docking mover is very general now based on Jeff's request!
 	// it will be moved to DockingProtocol soon
 	// one must specify fold_tree and variants before using this mover
-	if(repulsive_ramp_) {
+	if ( repulsive_ramp_ ) {
 		lh_repulsive_ramp_ = LHRepulsiveRampOP( new LHRepulsiveRamp(LH_dock_jump_, dock_scorefxn_, pack_scorefxn_) );
 		lh_repulsive_ramp_ -> set_move_map(cdr_dock_map_);
 		lh_repulsive_ramp_ -> set_task_factory(tf_);
-		if(sc_min_) lh_repulsive_ramp_ -> set_sc_min(true);
-		if(rt_min_) lh_repulsive_ramp_ -> set_rt_min(true);
+		if ( sc_min_ ) lh_repulsive_ramp_ -> set_sc_min(true);
+		if ( rt_min_ ) lh_repulsive_ramp_ -> set_rt_min(true);
 		lh_repulsive_ramp_->apply(pose);
 		TR<<"   finish repulsive ramping !"<<std::endl;
 	}
@@ -172,8 +172,8 @@ void RefineBetaBarrel::apply( pose::Pose & pose ) {
 	dock_mcm_protocol_ = docking::DockMCMProtocolOP( new docking::DockMCMProtocol( LH_dock_jump_, dock_scorefxn_, pack_scorefxn_ ) );
 	dock_mcm_protocol_ -> set_task_factory(tf_);
 	dock_mcm_protocol_ -> set_move_map(cdr_dock_map_);
-	if(sc_min_) dock_mcm_protocol_ -> set_sc_min(true);
-	if(rt_min_) dock_mcm_protocol_ -> set_rt_min(true);
+	if ( sc_min_ ) dock_mcm_protocol_ -> set_sc_min(true);
+	if ( rt_min_ ) dock_mcm_protocol_ -> set_rt_min(true);
 	dock_mcm_protocol_ -> apply(pose);
 
 	TR<<"   finish L_H Docking !"<<std::endl;

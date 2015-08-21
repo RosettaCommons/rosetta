@@ -46,8 +46,8 @@ public:
 
 	// Undefined, commenting out to make PyRosetta compile
 	//RandomConformers(
-	//	core::pose::Pose & pose,
-	//	std::set< protocols::ligand_docking::ResidueTorsionRestraintsOP > const & restraints
+	// core::pose::Pose & pose,
+	// std::set< protocols::ligand_docking::ResidueTorsionRestraintsOP > const & restraints
 	//);
 
 private:

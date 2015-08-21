@@ -67,7 +67,7 @@ public:
 
 	/// @brief make clone
 	virtual TaskOperationOP clone() const;
-	
+
 
 public:
 
@@ -85,7 +85,7 @@ public:
 
 private: // data
 
-	core::pack::rotamer_set::UnboundRotamersOperationOP unboundrot_;		
+	core::pack::rotamer_set::UnboundRotamersOperationOP unboundrot_;
 
 };
 

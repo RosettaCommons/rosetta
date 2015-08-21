@@ -49,8 +49,8 @@
 // C++ Headers
 //#include <cmath>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 static thread_local basic::Tracer TR( "protocols.features.TrajectoryMapFeatures" );
 

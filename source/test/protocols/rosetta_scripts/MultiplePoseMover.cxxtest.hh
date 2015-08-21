@@ -54,10 +54,12 @@ public:
 	}
 
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) {
-		if(tag->hasOption("pos"))
+		if ( tag->hasOption("pos") ) {
 			pos_ = tag->getOption<int>("pos");
-		if(tag->hasOption("max_poses"))
+		}
+		if ( tag->hasOption("max_poses") ) {
 			max_poses_ = tag->getOption<int>("max_poses");
+		}
 	}
 
 	void apply( core::pose::Pose & pose ) {
@@ -66,10 +68,12 @@ public:
 	}
 
 	core::pose::PoseOP get_additional_output() {
-		if(npose_ >= max_poses_)
+		if ( npose_ >= max_poses_ ) {
 			return NULL;
-		if(base_pose_.total_residue() < 1)
+		}
+		if ( base_pose_.total_residue() < 1 ) {
 			base_pose_ = create_trpcage_ideal_pose();
+		}
 		core::pose::PoseOP p( new core::pose::Pose(base_pose_) );
 		generate_pose( *p );
 		return p;
@@ -141,7 +145,7 @@ using namespace protocols::rosetta_scripts;
 class MultiplePoseMoverTests : public CxxTest::TestSuite {
 
 private:
-//	basic::resource_manager::FallbackConfigurationRegistrator< DummyResourceFallbackConfiguration1Creator > reg_fallback_dummy1;
+	// basic::resource_manager::FallbackConfigurationRegistrator< DummyResourceFallbackConfiguration1Creator > reg_fallback_dummy1;
 
 public:
 
@@ -149,7 +153,7 @@ public:
 		protocols_init();
 
 		static bool first_run = true;
-		if(first_run) {
+		if ( first_run ) {
 			using protocols::filters::FilterCreatorOP;
 			protocols::moves::MoverFactory::get_instance()->factory_register( MoverCreatorOP( new DummyMultipleOutputMoverCreator ) );
 			protocols::filters::FilterFactory::get_instance()->factory_register( FilterCreatorOP( new DummyFilterCreator ) );
@@ -168,7 +172,7 @@ public:
 		DummyMultipleOutputMover mover;
 		const char *sequence = mover.get_sequence();
 
-		for(int i = 0; i < 20; ++i) {
+		for ( int i = 0; i < 20; ++i ) {
 			core::pose::PoseOP pose = mover.get_additional_output();
 			std::string pose_sequence( pose->sequence() );
 			std::cout << "Pose " << (i+1) << " sequence: " << pose_sequence << std::endl;
@@ -359,7 +363,7 @@ public:
 
 			// Expecting 5 poses (1 + 4 additional ones)
 			int i = 1;
-			while(mover->get_additional_output()) ++i;
+			while ( mover->get_additional_output() ) ++i;
 			TS_ASSERT( i == 5 );
 
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -398,7 +402,7 @@ public:
 
 			// Expecting 5 poses (1 + 4 additional ones)
 			int i = 1;
-			while(mover->get_additional_output()) ++i;
+			while ( mover->get_additional_output() ) ++i;
 			TS_ASSERT( i == 5 );
 
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -448,7 +452,7 @@ public:
 
 			// Expecting 5 poses (1 + 4 additional ones) due to TopNByProperty n=10 above
 			int i = 1;
-			while(mover->get_additional_output()) ++i;
+			while ( mover->get_additional_output() ) ++i;
 			TS_ASSERT( i == 5 );
 
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -504,7 +508,7 @@ public:
 
 			// Expecting 3 poses (1 + 2 additional ones) due to n=3 above
 			int i = 1;
-			while(mover->get_additional_output()) ++i;
+			while ( mover->get_additional_output() ) ++i;
 			TS_ASSERT( i == 3 );
 
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -565,7 +569,7 @@ public:
 
 			// Expecting 5 poses (1 + 2 additional ones) due to (n=7 && n=3) || n=5 above
 			int i = 1;
-			while(mover->get_additional_output()) ++i;
+			while ( mover->get_additional_output() ) ++i;
 			TS_ASSERT( i == 5 );
 
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -619,7 +623,7 @@ public:
 
 			// Expecting 5 poses (1 + 4 additional ones) due to TopNByProperty n=10 above
 			int i = 1;
-			while(mover->get_additional_output()) ++i;
+			while ( mover->get_additional_output() ) ++i;
 			TS_ASSERT( i == 5 );
 
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -672,7 +676,7 @@ public:
 			// Expecting 5 poses (1 + 4 additional ones) due to max_poses=10
 			// and DummyHalfFilter, which drops every other pose
 			int i = 1;
-			while(mover->get_additional_output()) ++i;
+			while ( mover->get_additional_output() ) ++i;
 			std::cout << "i = " << i << std::endl;
 			TS_ASSERT( i == 5 );
 
@@ -894,10 +898,10 @@ public:
 			std::cout << "Pose " << i << ": " << pose.sequence() << std::endl;
 			sequences.insert(pose.sequence());
 
-			while( ( p = mover->get_additional_output() ) ) {
+			while ( ( p = mover->get_additional_output() ) ) {
 				std::string sequence(p->sequence());
 				bool const exists( sequences.find( sequence ) != sequences.end() );
-				if(exists) {
+				if ( exists ) {
 					std::cout << "Error: sequence present twice! => " << sequence << std::endl;
 					continue;
 				}
@@ -988,10 +992,10 @@ public:
 			std::cout << "Pose " << i << ": " << pose.sequence() << std::endl;
 			sequences.insert(pose.sequence());
 
-			while( ( p = mover->get_additional_output() ) ) {
+			while ( ( p = mover->get_additional_output() ) ) {
 				std::string sequence(p->sequence());
 				bool const exists( sequences.find( sequence ) != sequences.end() );
-				if(exists) {
+				if ( exists ) {
 					std::cout << "Error: sequence present twice! => " << sequence << std::endl;
 					continue;
 				}
@@ -1046,7 +1050,7 @@ public:
 
 		// mover1  generates poses up to 10 poses
 		// mover2  accepts up to 3 poses from mover1 (max_input_poses=3)
-		//         feeds each pose to another instance of mover1 
+		//         feeds each pose to another instance of mover1
 		//         resulting in 10 output poses for each input pose
 		// mover3  accepts all poses from mover2 (30 total)
 		//         applies null mover to 30 poses
@@ -1072,10 +1076,10 @@ public:
 			std::cout << "Pose " << i << ": " << pose.sequence() << std::endl;
 			sequences.insert(pose.sequence());
 
-			while( ( p = mover->get_additional_output() ) ) {
+			while ( ( p = mover->get_additional_output() ) ) {
 				std::string sequence(p->sequence());
 				bool const exists( sequences.find( sequence ) != sequences.end() );
-				if(exists) {
+				if ( exists ) {
 					std::cout << "Error: sequence present twice! => " << sequence << std::endl;
 					continue;
 				}
@@ -1092,7 +1096,7 @@ public:
 		}
 
 	}
-	
+
 	void test_additionaloutputwrapper() {
 
 		/// Test the MultipleOutputWrapper
@@ -1139,13 +1143,13 @@ public:
 			std::cout << "Pose " << total_poses << ": " << pose.sequence() << std::endl;
 			sequences.insert(pose.sequence());
 
-			while( ( p = mover->get_additional_output() ) ) {
+			while ( ( p = mover->get_additional_output() ) ) {
 				++total_poses;
 				std::string sequence(p->sequence());
 				std::cout << "Pose " << total_poses << ": " << pose.sequence() << std::endl;
 
 				bool const exists( sequences.find( sequence ) != sequences.end() );
-				if(exists) {
+				if ( exists ) {
 					continue;
 				}
 				++unique_poses;

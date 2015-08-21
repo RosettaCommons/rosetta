@@ -65,107 +65,107 @@ main( int argc, char* argv [] )
 {
 	try {
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
-	utility::vector1< std::string > pdbfiles = option[ in::file::s ]();
-	core::Real distance_cutoff = 200;
-	if ( option[ constraints::cst_weight ].user() ) {
-		distance_cutoff = option[ constraints::cst_weight ]();
-	}
-
-	utility::vector1< std::string >::const_iterator iter;
-	for ( iter = pdbfiles.begin(); iter != pdbfiles.end(); ++iter ) {
-		std::string pdbfile = *iter;
-		if ( pdbfile == "" ) {
-			utility_exit_with_message( "Unable to open file: " + pdbfile + '\n' );
+		core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
+		utility::vector1< std::string > pdbfiles = option[ in::file::s ]();
+		core::Real distance_cutoff = 200;
+		if ( option[ constraints::cst_weight ].user() ) {
+			distance_cutoff = option[ constraints::cst_weight ]();
 		}
-		core::pose::Pose pose;
-		//std::cerr << "READING " << pdbfile << std::endl;
-		core::import_pose::pose_from_pdb( pose, pdbfile ); // default is standard fullatom residue_set
 
-		//std::string outfile  = pdbfile + ".distances";
-		//std::ofstream output( outfile.c_str() );
-		//if ( ! output.is_open() ) {
-		//	utility_exit_with_message( "Unable to open file: " + outfile + '\n' );
-		//}
-		std::ostream & output( std::cout );
+		utility::vector1< std::string >::const_iterator iter;
+		for ( iter = pdbfiles.begin(); iter != pdbfiles.end(); ++iter ) {
+			std::string pdbfile = *iter;
+			if ( pdbfile == "" ) {
+				utility_exit_with_message( "Unable to open file: " + pdbfile + '\n' );
+			}
+			core::pose::Pose pose;
+			//std::cerr << "READING " << pdbfile << std::endl;
+			core::import_pose::pose_from_pdb( pose, pdbfile ); // default is standard fullatom residue_set
 
-		// iterate over all atom pairs
-		output 	<< A( 10, "resi_idx" )
-						<< A( 10, "resj_idx" )
-						<< A(  6, "resi" )
-						<< A(  6, "resj" )
-						<< A(  8, "atomi"    )
-						<< A(  8, "atomj"    )
-						<< A( 10, "burial_i" )
-						<< A( 10, "burial_j" )
-						// << A( 10, "temp_i"   )
-						// << A( 10, "temp_j"   )
-						<< A( 10, "dist"     )
-						<< std::endl;
+			//std::string outfile  = pdbfile + ".distances";
+			//std::ofstream output( outfile.c_str() );
+			//if ( ! output.is_open() ) {
+			// utility_exit_with_message( "Unable to open file: " + outfile + '\n' );
+			//}
+			std::ostream & output( std::cout );
 
-		(*scorefxn)(pose);
-		// calculate burial
-		utility::vector1< int > burial = calculate_burial( pose );
-		for ( unsigned int i = 1; i <= pose.total_residue(); ++i ) {
-			for ( unsigned int j = 1; j <= pose.total_residue(); ++j ) {
-				core::conformation::Residue resi = pose.residue(i);
-				core::conformation::Residue resj = pose.residue(j);
+			// iterate over all atom pairs
+			output  << A( 10, "resi_idx" )
+				<< A( 10, "resj_idx" )
+				<< A(  6, "resi" )
+				<< A(  6, "resj" )
+				<< A(  8, "atomi"    )
+				<< A(  8, "atomj"    )
+				<< A( 10, "burial_i" )
+				<< A( 10, "burial_j" )
+				// << A( 10, "temp_i"   )
+				// << A( 10, "temp_j"   )
+				<< A( 10, "dist"     )
+				<< std::endl;
 
-				for ( unsigned int m = 1; m <= resi.natoms(); ++m ) {
-					for ( unsigned int n = 1; n <= resj.natoms(); ++n ) {
+			(*scorefxn)(pose);
+			// calculate burial
+			utility::vector1< int > burial = calculate_burial( pose );
+			for ( unsigned int i = 1; i <= pose.total_residue(); ++i ) {
+				for ( unsigned int j = 1; j <= pose.total_residue(); ++j ) {
+					core::conformation::Residue resi = pose.residue(i);
+					core::conformation::Residue resj = pose.residue(j);
 
-						if ( i == j ) continue;
+					for ( unsigned int m = 1; m <= resi.natoms(); ++m ) {
+						for ( unsigned int n = 1; n <= resj.natoms(); ++n ) {
 
-						// skip hydrogen atoms
-						if ( resi.atom_type(m).is_hydrogen() ||
-							resj.atom_type(n).is_hydrogen()
-						) {
-							continue;
-						}
+							if ( i == j ) continue;
 
-						//if ( ! pose.residue_type(i).atom_is_backbone(m) ||
-						//	 		! pose.residue_type(j).atom_is_backbone(n) ) {
-						//	//std::cerr << "atom_name == |" << resi.atom_name(m) << "|"
-						//	// 	<< std::endl;
-						//	continue; // temporary!
-						//}
+							// skip hydrogen atoms
+							if ( resi.atom_type(m).is_hydrogen() ||
+									resj.atom_type(n).is_hydrogen()
+									) {
+								continue;
+							}
 
-						// skip atoms that don't share a type
-						 if ( resi.atom_type(m).name() != resj.atom_type(n).name() ) {
-						 	continue;
-						 }
+							//if ( ! pose.residue_type(i).atom_is_backbone(m) ||
+							//    ! pose.residue_type(j).atom_is_backbone(n) ) {
+							// //std::cerr << "atom_name == |" << resi.atom_name(m) << "|"
+							// //  << std::endl;
+							// continue; // temporary!
+							//}
 
-						//if ( resi.atom_type(m).name() != "CA" ) {
-						//	continue;
-						//}
+							// skip atoms that don't share a type
+							if ( resi.atom_type(m).name() != resj.atom_type(n).name() ) {
+								continue;
+							}
 
-						core::Real const distance(
-							pose.residue(i).xyz(m).distance( resj.xyz(n) )
-						);
-						if ( distance > distance_cutoff ) continue;
+							//if ( resi.atom_type(m).name() != "CA" ) {
+							// continue;
+							//}
 
-						output 	<< I( 10, i )
-										<< I( 10, j )
-										<< A(  6, resi.name1() )
-										<< A(  6, resj.name1() )
-										<< A(  8, resi.atom_name(m) )
-										<< A(  8, resj.atom_name(n) )
-										<< I( 10, burial[i] )
-										<< I( 10, burial[j] )
-										<< F( 10, 4, distance ) // distance
-										<< std::endl;
-					} 	// for ( unsigned int n = 1; n <= resj.natoms(); ++n )
-				} // 	for ( unsigned int m = 1; m <= resi.natoms(); ++m )
-			} // 	for ( unsigned int j = i + 1; j <= pose.total_residue(); ++j )
-		}		// for ( unsigned int i = 1; i <= pose.total_residue(); ++i )
-		//output.close();
-	} // 	for ( iter = pdbfiles.begin(); iter != pdbfiles.end(); ++iter )
+							core::Real const distance(
+								pose.residue(i).xyz(m).distance( resj.xyz(n) )
+							);
+							if ( distance > distance_cutoff ) continue;
+
+							output  << I( 10, i )
+								<< I( 10, j )
+								<< A(  6, resi.name1() )
+								<< A(  6, resj.name1() )
+								<< A(  8, resi.atom_name(m) )
+								<< A(  8, resj.atom_name(n) )
+								<< I( 10, burial[i] )
+								<< I( 10, burial[j] )
+								<< F( 10, 4, distance ) // distance
+								<< std::endl;
+						}  // for ( unsigned int n = 1; n <= resj.natoms(); ++n )
+					} //  for ( unsigned int m = 1; m <= resi.natoms(); ++m )
+				} //  for ( unsigned int j = i + 1; j <= pose.total_residue(); ++j )
+			}  // for ( unsigned int i = 1; i <= pose.total_residue(); ++i )
+			//output.close();
+		} //  for ( iter = pdbfiles.begin(); iter != pdbfiles.end(); ++iter )
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

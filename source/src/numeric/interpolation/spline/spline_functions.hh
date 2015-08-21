@@ -29,19 +29,19 @@ using numeric::Real;
 
 utility::vector1<Real>
 spline_second_derivative(
- utility::vector1<Real> const & x,
- utility::vector1<Real> const & y,
- Real yp1,
- Real ypn
+	utility::vector1<Real> const & x,
+	utility::vector1<Real> const & y,
+	Real yp1,
+	Real ypn
 );
 
 
 void
 spline_interpolate(
- utility::vector1<Real> const & xa,
- utility::vector1<Real> const & ya,
- utility::vector1<Real> const & y2a,
- Real x, Real & y, Real & dy
+	utility::vector1<Real> const & xa,
+	utility::vector1<Real> const & ya,
+	utility::vector1<Real> const & y2a,
+	Real x, Real & y, Real & dy
 );
 
 

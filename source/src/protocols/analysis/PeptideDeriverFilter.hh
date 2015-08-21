@@ -149,7 +149,7 @@ public:
 	virtual void peptide_length(core::Size const pep_length);
 
 	// TODO : consider using a PeptideDeriverEntry struct to make this signature less verbose and more tolerant to changes in the protocol
-	//        e.g., 	virtual void peptide_entry(core::pose::Pose const & , PeptideDeriverEntry const & peptide_deriver_entry) --yuvals
+	//        e.g.,  virtual void peptide_entry(core::pose::Pose const & , PeptideDeriverEntry const & peptide_deriver_entry) --yuvals
 	virtual void peptide_entry(core::pose::Pose const & , PeptideDeriverEntryType const entry_type, core::Size const pep_start,
 		core::Real const linear_isc, std::string const & disulfide_info, bool const was_cyclic_pep_modeled,
 		core::pose::Pose const &, core::Real const cyclic_isc);
@@ -229,8 +229,8 @@ public:
 	/// @param is_dump_cyclic_poses      flag to output each modeled cyclic peptide (@see basic::options::OptionKeys::peptide_deriver::optimize_cyclic_threshold)
 	/// @param scorefxn                  score function to score the pose with before outputting
 	PeptideDeriverPoseOutputter( bool const is_dump_best_peptide_pose,
-			bool const is_dump_prepared_pose, bool const is_dump_cyclic_poses,
-			core::scoring::ScoreFunctionCOP scorefxn);
+		bool const is_dump_prepared_pose, bool const is_dump_cyclic_poses,
+		core::scoring::ScoreFunctionCOP scorefxn);
 
 	virtual void begin_structure(core::pose::Pose const &, std::string const &) {
 		// do nothing
@@ -381,17 +381,17 @@ public:
 
 	// RosettaScripts implementation
 	void parse_my_tag( utility::tag::TagCOP tag,
-			basic::datacache::DataMap & data,
-			protocols::filters::Filters_map const & filters,
-			protocols::moves::Movers_map const & movers,
-			core::pose::Pose const & pose );
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose );
 
 	// Filter-specific methods
 
 	/// @brief Prepare pose before derivation, by minimizing it and finding disulfides
 	void prepare_pose(
-			PeptideDeriverOutputter & output,
-			core::pose::Pose & pose) const;
+		PeptideDeriverOutputter & output,
+		core::pose::Pose & pose) const;
 
 	/// @brief Calculate the interface score, i.e. addition to energy
 	///        resulting from the complex coming together.
@@ -407,21 +407,21 @@ public:
 	/// @brief overload of PeptideDeriverFilter::derive_peptide() which accepts
 	///        a many-chain pose and chain indices, rather than single-chain poses.
 	void derive_peptide(
-			PeptideDeriverOutputter & output,
-			core::pose::Pose const & pose,
-			core::Size const first_chain_index,
-			core::Size const second_chain_index,
-			bool const both_ways ) const;
+		PeptideDeriverOutputter & output,
+		core::pose::Pose const & pose,
+		core::Size const first_chain_index,
+		core::Size const second_chain_index,
+		bool const both_ways ) const;
 
 	/// @brief The core of the filter: calculate and output a table of the
 	///        energetic contribution of each linear segment of the
 	///        pep_chain_pose chain (going through it with a sliding window),
 	///        together with other interesting data.
 	void derive_peptide(
-			PeptideDeriverOutputter & output,
-			core::pose::Pose const & receptor_pose,
-			core::pose::Pose const & partner_pose,
-			core::Real const total_isc ) const;
+		PeptideDeriverOutputter & output,
+		core::pose::Pose const & receptor_pose,
+		core::pose::Pose const & partner_pose,
+		core::Real const total_isc ) const;
 
 private:
 	/// @brief Minimization step, run on an input once before derivation.

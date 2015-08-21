@@ -292,8 +292,8 @@ public: // Indexers
 	const_reference
 	operator []( index_type const i ) const
 	{
-	debug_assert( vectorL_ZeroSelector< L != 0 >::ge( i, l_ ) ); // Avoid "always true" warnings when L==0
-	debug_assert( static_cast< size_type >( i - l_ ) < super::size() ); // Upper bound check
+		debug_assert( vectorL_ZeroSelector< L != 0 >::ge( i, l_ ) ); // Avoid "always true" warnings when L==0
+		debug_assert( static_cast< size_type >( i - l_ ) < super::size() ); // Upper bound check
 		return super::operator []( i - l_ );
 	}
 
@@ -303,8 +303,8 @@ public: // Indexers
 	reference
 	operator []( index_type const i )
 	{
-	debug_assert( vectorL_ZeroSelector< L != 0 >::ge( i, l_ ) ); // Avoid "always true" warnings when L==0
-	debug_assert( static_cast< size_type >( i - l_ ) < super::size() ); // Upper bound check
+		debug_assert( vectorL_ZeroSelector< L != 0 >::ge( i, l_ ) ); // Avoid "always true" warnings when L==0
+		debug_assert( static_cast< size_type >( i - l_ ) < super::size() ); // Upper bound check
 		return super::operator []( i - l_ );
 	}
 
@@ -314,7 +314,7 @@ public: // Indexers
 	const_reference
 	at( index_type const i ) const
 	{
-	debug_assert( vectorL_ZeroSelector< L != 0 >::ge( i, l_ ) ); // Avoid "always true" warnings when L==0
+		debug_assert( vectorL_ZeroSelector< L != 0 >::ge( i, l_ ) ); // Avoid "always true" warnings when L==0
 		return super::at( i - l_ );
 	}
 
@@ -324,7 +324,7 @@ public: // Indexers
 	reference
 	at( index_type const i )
 	{
-	debug_assert( vectorL_ZeroSelector< L != 0 >::ge( i, l_ ) ); // Avoid "always true" warnings when L==0
+		debug_assert( vectorL_ZeroSelector< L != 0 >::ge( i, l_ ) ); // Avoid "always true" warnings when L==0
 		return super::at( i - l_ );
 	}
 
@@ -343,8 +343,8 @@ public: // Indexers
 	index_type
 	u() const
 	{
-	debug_assert( ! super::empty() ); // Upper index only meaningful for non-empty vectors
-	//debug_assert( static_cast< index_type >( super::size() ) >= 0 ); // Catch size range error
+		debug_assert( ! super::empty() ); // Upper index only meaningful for non-empty vectors
+		//debug_assert( static_cast< index_type >( super::size() ) >= 0 ); // Catch size range error
 		return l_ + static_cast< index_type >( super::size() ) - 1;
 	}
 
@@ -354,18 +354,18 @@ public: // Indexers
 	vectorL< L, bool, A > invert() const
 	{
 		vectorL< L, bool, A > opposite(*this);
-		for ( Size i = 1; i <= opposite.size(); ++i) {
+		for ( Size i = 1; i <= opposite.size(); ++i ) {
 			opposite[i] = !opposite[i];
 		}
 		return opposite;
 	}
 
 	/// @brief useful function -- was commented out previously due, I think, to a conflict with has() in OptionKeys! Now renamed to has_value().
- 	inline
- 	bool
- 	has_value( bool const & t ) const {
- 		return ( std::find(begin(), end(), t ) != end() );
- 	}
+	inline
+	bool
+	has_value( bool const & t ) const {
+		return ( std::find(begin(), end(), t ) != end() );
+	}
 
 public: // Comparison
 

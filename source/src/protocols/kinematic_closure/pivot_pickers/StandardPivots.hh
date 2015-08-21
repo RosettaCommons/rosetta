@@ -18,15 +18,15 @@ namespace protocols {
 namespace kinematic_closure {
 namespace pivot_pickers {
 
-/// @brief Randomly pick pivots in a way that may or may not span the whole 
+/// @brief Randomly pick pivots in a way that may or may not span the whole
 /// loop.
 ///
-/// @details This is the default pivot picking algorithm used by 
-/// samplers::KicMover.  It works well for most applications, and should only 
-/// really need to be swapped out in in favor of custom pivot pickers that take 
-/// into account specific knowledge of the loop being sampled.  Earlier 
-/// versions of this algorithm were biased towards the fount half of the loop.  
-/// This bias has been mitigated, but not completely removed, in the current 
+/// @details This is the default pivot picking algorithm used by
+/// samplers::KicMover.  It works well for most applications, and should only
+/// really need to be swapped out in in favor of custom pivot pickers that take
+/// into account specific knowledge of the loop being sampled.  Earlier
+/// versions of this algorithm were biased towards the fount half of the loop.
+/// This bias has been mitigated, but not completely removed, in the current
 /// version.
 
 class StandardPivots : public PivotPicker {

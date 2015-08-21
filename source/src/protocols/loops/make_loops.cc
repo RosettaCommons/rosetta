@@ -80,7 +80,7 @@ void add_loop(
 			<< pdb.number( seg_end ) << " Chain " << pdb.chain( seg_end ) << std::endl;
 	} else {
 		TR(t_info) << "adding segment: " << seg_begin << "-(" << cut << ")-" << seg_end <<
-		 " Chain " << pose.chain( seg_end ) << std::endl;
+			" Chain " << pose.chain( seg_end ) << std::endl;
 	}
 
 	loops.add_loop( seg_begin, seg_end, cut, 0, false );
@@ -110,12 +110,12 @@ void loops_around_residues(
 	int last_chain( pose.chain( residue_indices.front() ) );
 	Size const nres( pose.total_residue() );
 	for ( vector1< Size >::const_iterator index( residue_indices.begin() );
-	      index != residue_indices.end(); ++index ) {
+			index != residue_indices.end(); ++index ) {
 		runtime_assert( *index > 0 );
 		runtime_assert( *index <= nres );
 		int const chain( pose.chain(*index) );
 		Size const chain_begin( chain > 0 ? conf.chain_begin( chain ) : 1 ),
-								chain_end( chain > 0 ? conf.chain_end( chain ) : nres );
+			chain_end( chain > 0 ? conf.chain_end( chain ) : nres );
 		// subtracting from unsigned ints is dangerous!
 		Size begin(*index);
 		for ( Size i(1); i <= extend; ++i ) {
@@ -127,7 +127,7 @@ void loops_around_residues(
 		// first residue always opens a segment
 		if ( index == residue_indices.begin() ) {
 			seg_begin = begin;
-		// residue closes open segment and opens a new one only if gapsize is exceeded, or new chain
+			// residue closes open segment and opens a new one only if gapsize is exceeded, or new chain
 		} else if ( begin > seg_end + gapsize || chain != last_chain ) {
 			// note: adds loop ending on previous residue, not current one
 			add_loop( seg_begin, seg_end, pose, loops );
@@ -136,7 +136,7 @@ void loops_around_residues(
 		seg_end = end;
 		last_chain = chain;
 		// last residue always closes last segment
-		if ( index + 1 == residue_indices.end() )	add_loop( seg_begin, seg_end, pose, loops );
+		if ( index + 1 == residue_indices.end() ) add_loop( seg_begin, seg_end, pose, loops );
 	}
 }
 

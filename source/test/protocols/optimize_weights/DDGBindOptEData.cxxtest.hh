@@ -173,7 +173,7 @@ public:
 
 		// num_total_dofs is the number of free energy term weights (num_energy_dofs) plus the reference energy dofs
 		core::Size dof_index = 1;
-		for( core::scoring::ScoreTypes::const_iterator itr = free_score_list.begin(), end_itr = free_score_list.end(); itr != end_itr; ++itr ) {
+		for ( core::scoring::ScoreTypes::const_iterator itr = free_score_list.begin(), end_itr = free_score_list.end(); itr != end_itr; ++itr ) {
 			dofs[ dof_index++ ] = include_terms[ *itr ];
 		}
 		for ( core::Size ii = 1; ii <= reference_energies.size(); ++ii ) {
@@ -181,7 +181,7 @@ public:
 		}
 
 		TR << "vars: ";
-		for ( core::Size ii = 1; ii <= dofs.size(); ++ii) { TR << ObjexxFCL::format::F( 6,3,dofs[ii] ) << ", "; }
+		for ( core::Size ii = 1; ii <= dofs.size(); ++ii ) { TR << ObjexxFCL::format::F( 6,3,dofs[ii] ) << ", "; }
 		TR << "]" << std::endl;
 
 		TR << "making component weights file" << std::endl;
@@ -193,10 +193,12 @@ public:
 		utility::vector1< core::Real > free_data( free_score_list.size(), 0.0 );
 		utility::vector1< core::Real > fixed_data( fixed_score_list.size(), 0.0 );
 		(*scorefxn)( wt_complex );
-		for ( core::Size kk = 1; kk <= free_score_list.size(); ++kk )
-			{ free_data[ kk ] = wt_complex.energies().total_energies()[ free_score_list[ kk ] ]; }
-		for ( core::Size kk = 1; kk <= fixed_score_list.size(); ++kk )
-			{ fixed_data[ kk ] = wt_complex.energies().total_energies()[ fixed_score_list[ kk ] ]; }
+		for ( core::Size kk = 1; kk <= free_score_list.size(); ++kk ) {
+			free_data[ kk ] = wt_complex.energies().total_energies()[ free_score_list[ kk ] ];
+		}
+		for ( core::Size kk = 1; kk <= fixed_score_list.size(); ++kk ) {
+			fixed_data[ kk ] = wt_complex.energies().total_energies()[ fixed_score_list[ kk ] ];
+		}
 
 		ssd = SingleStructureDataOP( new SingleStructureData( free_data, fixed_data ) );
 		ddg_bind_position_data->add_wt_complex( ssd );
@@ -205,10 +207,12 @@ public:
 		free_data.resize( free_score_list.size(), 0.0 );
 		fixed_data.resize( fixed_score_list.size(), 0.0 );
 		(*scorefxn)( mut_complex );
-		for ( core::Size kk = 1; kk <= free_score_list.size(); ++kk )
-			{ free_data[ kk ] = mut_complex.energies().total_energies()[ free_score_list[ kk ] ]; }
-		for ( core::Size kk = 1; kk <= fixed_score_list.size(); ++kk )
-			{ fixed_data[ kk ] = mut_complex.energies().total_energies()[ fixed_score_list[ kk ] ]; }
+		for ( core::Size kk = 1; kk <= free_score_list.size(); ++kk ) {
+			free_data[ kk ] = mut_complex.energies().total_energies()[ free_score_list[ kk ] ];
+		}
+		for ( core::Size kk = 1; kk <= fixed_score_list.size(); ++kk ) {
+			fixed_data[ kk ] = mut_complex.energies().total_energies()[ fixed_score_list[ kk ] ];
+		}
 
 		ssd = SingleStructureDataOP( new SingleStructureData( free_data, fixed_data ) );
 		ddg_bind_position_data->add_mutant_complex( ssd );
@@ -218,10 +222,12 @@ public:
 		free_data.resize( free_score_list.size(), 0.0 );
 		fixed_data.resize( fixed_score_list.size(), 0.0 );
 		(*scorefxn)( wt_unbounded );
-		for ( core::Size kk = 1; kk <= free_score_list.size(); ++kk )
-			{ free_data[ kk ] = wt_unbounded.energies().total_energies()[ free_score_list[ kk ] ]; }
-		for ( core::Size kk = 1; kk <= fixed_score_list.size(); ++kk )
-			{ fixed_data[ kk ] = wt_unbounded.energies().total_energies()[ fixed_score_list[ kk ] ]; }
+		for ( core::Size kk = 1; kk <= free_score_list.size(); ++kk ) {
+			free_data[ kk ] = wt_unbounded.energies().total_energies()[ free_score_list[ kk ] ];
+		}
+		for ( core::Size kk = 1; kk <= fixed_score_list.size(); ++kk ) {
+			fixed_data[ kk ] = wt_unbounded.energies().total_energies()[ fixed_score_list[ kk ] ];
+		}
 
 		ssd = SingleStructureDataOP( new SingleStructureData( free_data, fixed_data ) );
 		ddg_bind_position_data->add_wt_unbounds( ssd );
@@ -231,10 +237,12 @@ public:
 		free_data.resize( free_score_list.size(), 0.0 );
 		fixed_data.resize( fixed_score_list.size(), 0.0 );
 		(*scorefxn)( mut_unbounded );
-		for ( core::Size kk = 1; kk <= free_score_list.size(); ++kk )
-			{ free_data[ kk ] = mut_unbounded.energies().total_energies()[ free_score_list[ kk ] ]; }
-		for ( core::Size kk = 1; kk <= fixed_score_list.size(); ++kk )
-			{ fixed_data[ kk ] = mut_unbounded.energies().total_energies()[ fixed_score_list[ kk ] ]; }
+		for ( core::Size kk = 1; kk <= free_score_list.size(); ++kk ) {
+			free_data[ kk ] = mut_unbounded.energies().total_energies()[ free_score_list[ kk ] ];
+		}
+		for ( core::Size kk = 1; kk <= fixed_score_list.size(); ++kk ) {
+			fixed_data[ kk ] = mut_unbounded.energies().total_energies()[ fixed_score_list[ kk ] ];
+		}
 
 		ssd = SingleStructureDataOP( new SingleStructureData( free_data, fixed_data ) );
 		ddg_bind_position_data->add_mutant_unbounds( ssd );
@@ -296,7 +304,7 @@ public:
 		TS_ASSERT_DELTA( dE_dvars[ 17 ],  4.0566, 0.1 );
 
 		//score = ddg_bind_position_data->get_score( component_weights, vars, dE_dvars, free_score_list.size(),
-		//	chemical::num_canonical_aas, free_score_list.size() + chemical::num_canonical_aas, fixed_parameters, free_score_list, fixed_score_list );
+		// chemical::num_canonical_aas, free_score_list.size() + chemical::num_canonical_aas, fixed_parameters, free_score_list, fixed_score_list );
 		//TS_ASSERT_DELTA( score, 0.7064, 0.05 );
 
 

@@ -119,8 +119,8 @@ private:
 	mutable bool pose_is_proper;
 	mutable double structure_score;
 	mutable int nreses;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 };
 
 

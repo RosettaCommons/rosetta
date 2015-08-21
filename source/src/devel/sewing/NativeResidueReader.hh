@@ -35,7 +35,7 @@ class NativeResidueReader{
 
 public:
 
-  std::map<core::Size, utility::vector1<core::conformation::ResidueOP> > generateResiduesFromFile(utility::file::FileName file);
+	std::map<core::Size, utility::vector1<core::conformation::ResidueOP> > generateResiduesFromFile(utility::file::FileName file);
 
 private:
 

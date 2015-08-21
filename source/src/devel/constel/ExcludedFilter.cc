@@ -32,19 +32,21 @@ void ExcludedFilter::init(Pose& ps, std::string const& ex_fname) {
 
 
 /// @brief: given a constellation, returns true if it doesn't contain any
-/// 	residue to be excluded from any constellation; returns false otherwise.
+///  residue to be excluded from any constellation; returns false otherwise.
 ///
 /// @param[in] ps pose to which the constellation belongs (dummy)
 /// @param[in] cnl indexes in the pose of the residues forming the
-/// 	constellation
+///  constellation
 ///
 bool ExcludedFilter::hasnt_excluded(Pose const&,
 	utility::vector1<Size> const& cnl) {
 
 	Size const N = cnl.size();
-	for(Size i=1; i<=N; ++i)
-		if((*excluded)[cnl[i]])
+	for ( Size i=1; i<=N; ++i ) {
+		if ( (*excluded)[cnl[i]] ) {
 			return false;
+		}
+	}
 
 	return true;
 }

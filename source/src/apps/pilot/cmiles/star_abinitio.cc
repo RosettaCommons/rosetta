@@ -31,49 +31,54 @@
 const std::string ERROR_PREFIX = "Failed to specify required option ";
 
 void check_required() {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-  if (!option[in::file::fasta].user())
-    utility_exit_with_message(ERROR_PREFIX + "-in:file:fasta");
+	if ( !option[in::file::fasta].user() ) {
+		utility_exit_with_message(ERROR_PREFIX + "-in:file:fasta");
+	}
 
-  if (!option[in::file::frag3].user())
-    utility_exit_with_message(ERROR_PREFIX + "-in:file:frag3");
+	if ( !option[in::file::frag3].user() ) {
+		utility_exit_with_message(ERROR_PREFIX + "-in:file:frag3");
+	}
 
-  if (!option[in::file::frag9].user())
-    utility_exit_with_message(ERROR_PREFIX + "-in:file:frag9");
+	if ( !option[in::file::frag9].user() ) {
+		utility_exit_with_message(ERROR_PREFIX + "-in:file:frag9");
+	}
 
-  if (!option[in::file::alignment].user())
-    utility_exit_with_message(ERROR_PREFIX + "-in:file:alignment");
+	if ( !option[in::file::alignment].user() ) {
+		utility_exit_with_message(ERROR_PREFIX + "-in:file:alignment");
+	}
 
-  if (!option[in::file::template_pdb].user())
-    utility_exit_with_message(ERROR_PREFIX + "-in:file:template_pdb");
+	if ( !option[in::file::template_pdb].user() ) {
+		utility_exit_with_message(ERROR_PREFIX + "-in:file:template_pdb");
+	}
 }
 
 void* star_main(void*) {
-  using protocols::jd2::JobDistributor;
-  using protocols::star::StarAbinitio;
-  using protocols::moves::MoverOP;
+	using protocols::jd2::JobDistributor;
+	using protocols::star::StarAbinitio;
+	using protocols::moves::MoverOP;
 
-  check_required();
-  MoverOP mover( new StarAbinitio() );
+	check_required();
+	MoverOP mover( new StarAbinitio() );
 
-  try {
-    JobDistributor::get_instance()->go(mover);
-  } catch (utility::excn::EXCN_Base& e) {
-    std::cerr << "Exception: " << std::endl;
-    e.show(std::cerr);
-  }
-  return 0;
+	try {
+		JobDistributor::get_instance()->go(mover);
+	} catch (utility::excn::EXCN_Base& e) {
+		std::cerr << "Exception: " << std::endl;
+		e.show(std::cerr);
+	}
+	return 0;
 }
 
 int main(int argc, char* argv[]) {
-    try {
-  devel::init(argc, argv);
-  protocols::viewer::viewer_main(star_main);
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                             std::cout << "caught exception " << e.msg() << std::endl;
+	try {
+		devel::init(argc, argv);
+		protocols::viewer::viewer_main(star_main);
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                }
-       return 0;
+	}
+	return 0;
 }

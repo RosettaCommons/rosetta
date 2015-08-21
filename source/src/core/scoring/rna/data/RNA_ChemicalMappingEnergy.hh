@@ -56,8 +56,8 @@ public:
 
 	Real
 	calculate_energy( pose::Pose & pose,
-										bool const use_low_res = false,
-										bool const rna_base_pair_computed = false	) const;
+		bool const use_low_res = false,
+		bool const rna_base_pair_computed = false ) const;
 
 	virtual
 	void
@@ -74,7 +74,7 @@ public:
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const {}
 
-	virtual	Size version() const { return 0; }
+	virtual Size version() const { return 0; }
 
 private:
 

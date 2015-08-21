@@ -24,9 +24,9 @@
 #include <string>
 #include <set>
 
-namespace basic{
-namespace database{
-namespace schema_generator{
+namespace basic {
+namespace database {
+namespace schema_generator {
 
 class PrimaryKey
 {

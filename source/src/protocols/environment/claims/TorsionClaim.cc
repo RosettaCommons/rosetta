@@ -52,170 +52,170 @@ using core::environment::LocalPositions;
 using core::conformation::Conformation;
 
 TorsionClaim::TorsionClaim( ClientMoverOP owner,
-                            core::pack::task::residue_selector::ResidueSelectorCOP selector ) :
-  EnvClaim( owner ),
-  selector_( selector ),
-  c_str_( MUST_CONTROL ),
-  i_str_( DOES_NOT_CONTROL ),
-  claim_sidechain_( false ),
-  claim_backbone_( true )
+	core::pack::task::residue_selector::ResidueSelectorCOP selector ) :
+	EnvClaim( owner ),
+	selector_( selector ),
+	c_str_( MUST_CONTROL ),
+	i_str_( DOES_NOT_CONTROL ),
+	claim_sidechain_( false ),
+	claim_backbone_( true )
 {}
 
 
 TorsionClaim::TorsionClaim( ClientMoverOP owner,
-                            utility::tag::TagCOP tag,
-                            basic::datacache::DataMap& datamap ):
-  EnvClaim( owner ),
-  c_str_( Parent::parse_ctrl_str( tag->getOption< std::string >( "control_strength" ) ) ),
-  i_str_( Parent::parse_ctrl_str( tag->getOption< std::string >( "initialization_strength", "DOES_NOT_CONTROL" ) ) )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap& datamap ):
+	EnvClaim( owner ),
+	c_str_( Parent::parse_ctrl_str( tag->getOption< std::string >( "control_strength" ) ) ),
+	i_str_( Parent::parse_ctrl_str( tag->getOption< std::string >( "initialization_strength", "DOES_NOT_CONTROL" ) ) )
 {
-  claim_backbone_ = tag->getOption< bool >( "backbone", false );
-  claim_sidechain_ = tag->getOption< bool >( "sidechain", false );
-  if( !claim_sidechain_ && !claim_backbone_ ){
-    utility::tag::TagCOP tag_parent = tag->getParent().lock();
-    tr.Warning << type() << " owned by mover named "
-               << tag_parent->getOption< std::string >( "name" )
-               << " was not configured to claim neither sidechains nor backbone torsions."
-               << " Are you sure this is what you wanted?" << std::endl;
-  }
+	claim_backbone_ = tag->getOption< bool >( "backbone", false );
+	claim_sidechain_ = tag->getOption< bool >( "sidechain", false );
+	if ( !claim_sidechain_ && !claim_backbone_ ) {
+		utility::tag::TagCOP tag_parent = tag->getParent().lock();
+		tr.Warning << type() << " owned by mover named "
+			<< tag_parent->getOption< std::string >( "name" )
+			<< " was not configured to claim neither sidechains nor backbone torsions."
+			<< " Are you sure this is what you wanted?" << std::endl;
+	}
 
-  selector_ = datamap.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) );
+	selector_ = datamap.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) );
 }
 
 TorsionClaim::TorsionClaim( ClientMoverOP owner,
-                            LocalPosition const & local_pos):
-  EnvClaim( owner ),
-  selector_( core::pack::task::residue_selector::ResidueSelectorCOP( core::pack::task::residue_selector::ResidueSelectorOP( new EnvLabelSelector( local_pos ) ) ) ),
-  c_str_( MUST_CONTROL ),
-  i_str_( DOES_NOT_CONTROL ),
-  claim_sidechain_( false ),
-  claim_backbone_( true )
+	LocalPosition const & local_pos):
+	EnvClaim( owner ),
+	selector_( core::pack::task::residue_selector::ResidueSelectorCOP( core::pack::task::residue_selector::ResidueSelectorOP( new EnvLabelSelector( local_pos ) ) ) ),
+	c_str_( MUST_CONTROL ),
+	i_str_( DOES_NOT_CONTROL ),
+	claim_sidechain_( false ),
+	claim_backbone_( true )
 {}
 
 TorsionClaim::TorsionClaim( ClientMoverOP owner,
-                            std::string const & label,
-                            std::pair< core::Size, core::Size > const & range ):
-  EnvClaim( owner ),
-  c_str_( MUST_CONTROL ),
-  i_str_( DOES_NOT_CONTROL ),
-  claim_sidechain_( false ),
-  claim_backbone_( true )
+	std::string const & label,
+	std::pair< core::Size, core::Size > const & range ):
+	EnvClaim( owner ),
+	c_str_( MUST_CONTROL ),
+	i_str_( DOES_NOT_CONTROL ),
+	claim_sidechain_( false ),
+	claim_backbone_( true )
 {
-  LocalPositions local_positions = LocalPositions();
+	LocalPositions local_positions = LocalPositions();
 
-  for( Size i = range.first; i <= range.second; ++i){
-    local_positions.push_back( core::environment::LocalPositionOP( new LocalPosition( label, i ) ) );
-  }
+	for ( Size i = range.first; i <= range.second; ++i ) {
+		local_positions.push_back( core::environment::LocalPositionOP( new LocalPosition( label, i ) ) );
+	}
 
-  selector_ = core::pack::task::residue_selector::ResidueSelectorCOP( core::pack::task::residue_selector::ResidueSelectorOP( new EnvLabelSelector( local_positions ) ) );
+	selector_ = core::pack::task::residue_selector::ResidueSelectorCOP( core::pack::task::residue_selector::ResidueSelectorOP( new EnvLabelSelector( local_positions ) ) );
 }
 
 TorsionClaim::TorsionClaim( ClientMoverOP owner,
-                            LocalPositions const & positions ):
-  EnvClaim( owner ),
-  selector_( core::pack::task::residue_selector::ResidueSelectorCOP( core::pack::task::residue_selector::ResidueSelectorOP( new EnvLabelSelector( positions ) ) ) ),
-  c_str_( MUST_CONTROL ),
-  i_str_( DOES_NOT_CONTROL ),
-  claim_sidechain_( false ),
-  claim_backbone_( true )
+	LocalPositions const & positions ):
+	EnvClaim( owner ),
+	selector_( core::pack::task::residue_selector::ResidueSelectorCOP( core::pack::task::residue_selector::ResidueSelectorOP( new EnvLabelSelector( positions ) ) ) ),
+	c_str_( MUST_CONTROL ),
+	i_str_( DOES_NOT_CONTROL ),
+	claim_sidechain_( false ),
+	claim_backbone_( true )
 {}
 
 
 DOFElement TorsionClaim::wrap_dof_id( core::id::DOF_ID const & id ) const {
-  DOFElement e = Parent::wrap_dof_id( id );
+	DOFElement e = Parent::wrap_dof_id( id );
 
-  e.c_str = ctrl_strength();
-  e.i_str = init_strength();
+	e.c_str = ctrl_strength();
+	e.i_str = init_strength();
 
-  return e;
+	return e;
 }
 
 void TorsionClaim::insert_dof_element( core::conformation::Conformation const & conf,
-                                       DOFElements& elements,
-                                       core::Size seqpos,
-                                       core::id::TorsionType type,
-                                       core::Size torsion_number) const {
-  using namespace core::id;
+	DOFElements& elements,
+	core::Size seqpos,
+	core::id::TorsionType type,
+	core::Size torsion_number) const {
+	using namespace core::id;
 
-  TorsionID const t_id( seqpos, type, torsion_number );
-  assert( t_id.valid() );
+	TorsionID const t_id( seqpos, type, torsion_number );
+	assert( t_id.valid() );
 
-  DOF_ID d_id = conf.dof_id_from_torsion_id( t_id );
-  if( d_id.valid() ){
-    elements.push_back( wrap_dof_id( d_id ) );
-  } else {
-    tr.Debug << "Failed to claim " << t_id << " becaue it refers to an invalid torsion angle." << std::endl;
-  }
+	DOF_ID d_id = conf.dof_id_from_torsion_id( t_id );
+	if ( d_id.valid() ) {
+		elements.push_back( wrap_dof_id( d_id ) );
+	} else {
+		tr.Debug << "Failed to claim " << t_id << " becaue it refers to an invalid torsion angle." << std::endl;
+	}
 }
 
 void TorsionClaim::yield_elements( core::pose::Pose const & pose, DOFElements& elements ) const {
 
-  using namespace core::id;
+	using namespace core::id;
 
-  utility::vector1< bool > subset = selector_->apply( pose );
+	utility::vector1< bool > subset = selector_->apply( pose );
 
-  Conformation const & conf = pose.conformation();
+	Conformation const & conf = pose.conformation();
 
-  for( Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ){
-    if( !subset[seqpos] ){
-      // If this residue isn't selected by the selector, we're not supposed to do anything.
-      // Continue on to the next residue.
-      continue;
-    }
+	for ( Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ) {
+		if ( !subset[seqpos] ) {
+			// If this residue isn't selected by the selector, we're not supposed to do anything.
+			// Continue on to the next residue.
+			continue;
+		}
 
-    if( claim_backbone() ){
-      for( Size i = 1; i <= conf.residue( seqpos ).mainchain_torsions().size(); ++i ){
-        insert_dof_element( conf, elements, seqpos, BB, i );
-      }
-    }
-    if( claim_sidechain() ){
-      for( Size i = 1; i <= conf.residue( seqpos ).nchi(); ++i ){
-        insert_dof_element( conf, elements, seqpos, CHI, i );
-      }
-    }
-    if( conf.residue( seqpos ).n_nus() > 0 ){
-      for( Size i = 1; i <= conf.residue( seqpos ).n_nus(); ++i ){
-        insert_dof_element( conf, elements, seqpos, NU, i );
-      }
-      tr.Warning << "[WARNING] Nu angles for " << seqpos << " are being claimed. Is this what you want? You can investigate in " << __FILE__ << ":" << __LINE__ << std::endl;
-    }
-  }
+		if ( claim_backbone() ) {
+			for ( Size i = 1; i <= conf.residue( seqpos ).mainchain_torsions().size(); ++i ) {
+				insert_dof_element( conf, elements, seqpos, BB, i );
+			}
+		}
+		if ( claim_sidechain() ) {
+			for ( Size i = 1; i <= conf.residue( seqpos ).nchi(); ++i ) {
+				insert_dof_element( conf, elements, seqpos, CHI, i );
+			}
+		}
+		if ( conf.residue( seqpos ).n_nus() > 0 ) {
+			for ( Size i = 1; i <= conf.residue( seqpos ).n_nus(); ++i ) {
+				insert_dof_element( conf, elements, seqpos, NU, i );
+			}
+			tr.Warning << "[WARNING] Nu angles for " << seqpos << " are being claimed. Is this what you want? You can investigate in " << __FILE__ << ":" << __LINE__ << std::endl;
+		}
+	}
 }
 
 void TorsionClaim::strength( ControlStrength const& c_str, ControlStrength const& i_str ){
-  if( c_str > EXCLUSIVE || c_str < DOES_NOT_CONTROL ){
-    throw utility::excn::EXCN_RangeError( "Sampling ControlStrengths are limited to values between DOES_NOT_CONTROL and EXCLUSIVE" );
-  } else {
-    c_str_ = c_str;
-  }
+	if ( c_str > EXCLUSIVE || c_str < DOES_NOT_CONTROL ) {
+		throw utility::excn::EXCN_RangeError( "Sampling ControlStrengths are limited to values between DOES_NOT_CONTROL and EXCLUSIVE" );
+	} else {
+		c_str_ = c_str;
+	}
 
-  if( i_str > EXCLUSIVE || i_str < DOES_NOT_CONTROL ){
-    throw utility::excn::EXCN_RangeError( "Initialization ControlStrengths are limited to values between DOES_NOT_INITIALIZE and EXCLUSIVE" );
-  } else {
-    i_str_ = i_str;
-  }
+	if ( i_str > EXCLUSIVE || i_str < DOES_NOT_CONTROL ) {
+		throw utility::excn::EXCN_RangeError( "Initialization ControlStrengths are limited to values between DOES_NOT_INITIALIZE and EXCLUSIVE" );
+	} else {
+		i_str_ = i_str;
+	}
 }
 
 ControlStrength const& TorsionClaim::ctrl_strength() const {
-  return c_str_;
+	return c_str_;
 }
 
 
 ControlStrength const& TorsionClaim::init_strength() const {
-  return i_str_;
+	return i_str_;
 }
 
 EnvClaimOP TorsionClaim::clone() const {
-  return EnvClaimOP( new TorsionClaim( *this ) );
+	return EnvClaimOP( new TorsionClaim( *this ) );
 }
 
 std::string TorsionClaim::type() const{
-  return "Torsion";
+	return "Torsion";
 }
 
 void TorsionClaim::show( std::ostream& os ) const {
-  os << type() << " owned by a '" << owner()->get_name() << "' with control strength "
-     << ctrl_strength() << " and init strength " << init_strength() << " with selector " << selector()->get_name();
+	os << type() << " owned by a '" << owner()->get_name() << "' with control strength "
+		<< ctrl_strength() << " and init strength " << init_strength() << " with selector " << selector()->get_name();
 }
 
 } //claims

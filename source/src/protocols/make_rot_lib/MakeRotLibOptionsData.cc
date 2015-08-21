@@ -46,7 +46,7 @@ MakeRotLibOptionsData::MakeRotLibOptionsData( std::string filename ) :
 	std::string line;
 
 	// check to see if options file exists
-	if( !utility::file::file_exists( filename.c_str() ) ) {
+	if ( !utility::file::file_exists( filename.c_str() ) ) {
 		utility_exit_with_message( "Cannot find options file"+filename );
 	}
 
@@ -64,7 +64,7 @@ MakeRotLibOptionsData::MakeRotLibOptionsData( std::string filename ) :
 	options.close();
 
 	// first pass - get AA name, number of chi angles, number of centroids
-	for (Size i( 1 ); i<= lines.size(); ++i ) {
+	for ( Size i( 1 ); i<= lines.size(); ++i ) {
 		std::string const & line( lines[i] );
 		std::istringstream l( line );
 		std::string tag;
@@ -74,32 +74,20 @@ MakeRotLibOptionsData::MakeRotLibOptionsData( std::string filename ) :
 		// get number of chi
 		if ( tag == "NUM_CHI" ) {
 			l >> n_chi_;
-		}
-
-		// get number of BB
-		else if ( tag == "NUM_BB" ) {
+		} else if ( tag == "NUM_BB" ) {
+			// get number of BB
 			l >> n_bb_;
-		}
-
-		// get number of clusters
-		else if ( tag == "CENTROID" ) {
+		} else if ( tag == "CENTROID" ) {
+			// get number of clusters
 			++n_centroids_;
-		}
-
-		// get amino acid name
-		else if ( tag == "AA_NAME" ) {
+		} else if ( tag == "AA_NAME" ) {
+			// get amino acid name
 			l >> name_;
-		}
-		
-		else if ( tag == "SEMIROTAMERIC") {
+		} else if ( tag == "SEMIROTAMERIC" ) {
 			semirotameric_ = true;
-		}
-		
-		else if ( tag == "ROTAMERIC") {
+		} else if ( tag == "ROTAMERIC" ) {
 			semirotameric_ = false;
-		}
-		
-		else if ( tag == "TEMPERATURE") {
+		} else if ( tag == "TEMPERATURE" ) {
 			l >> KbT_;
 		}
 
@@ -125,39 +113,27 @@ MakeRotLibOptionsData::MakeRotLibOptionsData( std::string filename ) :
 			l >> bb_ranges_[bb_i].low >> bb_ranges_[bb_i].high >> bb_ranges_[bb_i].step;
 			bb_ids_[bb_i] = 2;
 			++bb_i;
-		}
-
-		// get psi range
-		else if ( tag == "PSI_RANGE" ) {
+		} else if ( tag == "PSI_RANGE" ) {
+			// get psi range
 			l >> bb_ranges_[bb_i].low >> bb_ranges_[bb_i].high >> bb_ranges_[bb_i].step;
 			bb_ids_[bb_i] = 3;
 			++bb_i;
-		}
-		
-		else if ( tag == "BB_RANGE" ) {
+		} else if ( tag == "BB_RANGE" ) {
 			l >> bb_ranges_[bb_i].low >> bb_ranges_[bb_i].high >> bb_ranges_[bb_i].step >> bb_ids_[bb_i];
 			++bb_i;
-		}
-
-		// get omg range
-		else if ( tag == "OMG_RANGE" ) {
+		} else if ( tag == "OMG_RANGE" ) {
+			// get omg range
 			l >> omg_range_.low >> omg_range_.high >> omg_range_.step;
-		}
-
-		// get eps range
-		else if ( tag == "EPS_RANGE") {
+		} else if ( tag == "EPS_RANGE" ) {
+			// get eps range
 			l >> eps_range_.low >> eps_range_.high >> eps_range_.step;
-		}
-
-		// get chi range
-		else if ( tag == "CHI_RANGE") {
+		} else if ( tag == "CHI_RANGE" ) {
+			// get chi range
 			core::Size chi_num( 0 );
 			l >> chi_num;
 			l >> chi_ranges_[ chi_num ].low >> chi_ranges_[ chi_num ].high >> chi_ranges_[ chi_num ].step;
-		}
-
-		// get centroids
-		else if ( tag == "CENTROID" ) {
+		} else if ( tag == "CENTROID" ) {
+			// get centroids
 			CentroidRotNumVec temp_crnv;
 			if ( semirotameric_ ) {
 				temp_crnv.resize( n_chi_-1 );
@@ -169,7 +145,7 @@ MakeRotLibOptionsData::MakeRotLibOptionsData( std::string filename ) :
 			centroid_data_.push_back( temp_crnv );
 		}
 	}
-	//TR << "Second pass done "<<std::endl; 
+	//TR << "Second pass done "<<std::endl;
 	// lastly get the polymer type
 	using namespace core::chemical;
 	ResidueTypeSetCOP RTS( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );

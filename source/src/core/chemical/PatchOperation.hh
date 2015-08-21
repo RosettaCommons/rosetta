@@ -234,16 +234,16 @@ class AddChi : public PatchOperation {
 public:
 	/// @brief Constructor for when the chi index is specified.
 	AddChi(Size const & chino_in,
-			std::string const & atom1_in,
-			std::string const & atom2_in,
-			std::string const & atom3_in,
-			std::string const & atom4_in);
+		std::string const & atom1_in,
+		std::string const & atom2_in,
+		std::string const & atom3_in,
+		std::string const & atom4_in);
 
 	/// @brief Constructor for when the chi index is not specified.
 	AddChi(std::string const & atom1_in,
-			std::string const & atom2_in,
-			std::string const & atom3_in,
-			std::string const & atom4_in);
+		std::string const & atom2_in,
+		std::string const & atom3_in,
+		std::string const & atom4_in);
 
 	/// @brief Add a chi angle.
 	bool apply(ResidueType & rsd) const;
@@ -468,9 +468,9 @@ class AddBondType : public PatchOperation {
 public:
 	// Constructor
 	AddBondType(
-			std::string const & atom1_in,
-			std::string const & atom2_in,
-			std::string const & bond_type_in );
+		std::string const & atom1_in,
+		std::string const & atom2_in,
+		std::string const & bond_type_in );
 
 	/// @brief  Apply this patch to the given ResidueType.
 	virtual bool apply( ResidueType & rsd ) const;

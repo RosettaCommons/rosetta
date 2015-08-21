@@ -60,7 +60,7 @@ public:
 	void score_function( core::scoring::ScoreFunctionOP const & scorefxn );
 
 	/// @brief Sets cutoff of repusion filter, use 0 to turn it off
-	void set_rep_cutoff( core::Real const setting ) {	rep_cutoff_ = setting; }
+	void set_rep_cutoff( core::Real const setting ) { rep_cutoff_ = setting; }
 
 	/// @brief Returns the MonteCarlo ScoreFunction
 	core::scoring::ScoreFunctionOP score_function() const;

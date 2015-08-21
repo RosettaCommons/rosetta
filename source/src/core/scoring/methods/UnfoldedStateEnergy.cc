@@ -43,7 +43,7 @@ UnfoldedStateEnergyCreator::create_energy_method( methods::EnergyMethodOptions c
 	if ( options.has_method_weights( unfolded ) ) {
 
 		utility::vector1< Real > const & v = options.method_weights( unfolded );
-	debug_assert( v.size() == scoring::n_score_types );
+		debug_assert( v.size() == scoring::n_score_types );
 
 		// convert the vector of Reals into an EnergyMap, because that's what the constructor for USE takes.
 		// assumes that the vector of Reals coming in contains the weights for each of the score types in the

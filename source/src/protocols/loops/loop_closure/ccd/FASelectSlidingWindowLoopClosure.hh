@@ -10,7 +10,7 @@
 /// @file src/protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.hh
 /// @brief header file for SlidingWindowLoopClosure protocol
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -65,7 +65,7 @@ typedef utility::pointer::shared_ptr< FASelectSlidingWindowLoopClosure const > F
 class FASelectSlidingWindowLoopClosure : public WidthFirstSlidingWindowLoopClosure {
 	typedef  WidthFirstSlidingWindowLoopClosure Parent;
 public:
-   /// @brief constructor: supply fragsets for fragment moves
+	/// @brief constructor: supply fragsets for fragment moves
 	FASelectSlidingWindowLoopClosure(
 		core::fragment::FragSetCOP fragset,
 		core::scoring::ScoreFunctionOP scorefxn,
@@ -89,7 +89,7 @@ public:
 	void set_fullatom_pose( core::pose::Pose& fa_pose );
 
 private:
-		core::pose::PoseOP fa_pose_;
+	core::pose::PoseOP fa_pose_;
 };
 
 } // namespace ccd

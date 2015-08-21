@@ -38,7 +38,7 @@
 #include <utility/excn/Exceptions.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 
@@ -86,9 +86,9 @@ Minimize::Minimize() :
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( option[ in::file::fullatom ]() ){
+	if ( option[ in::file::fullatom ]() ) {
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *score_function_ );
-	}else{
+	} else {
 		core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn( *score_function_ );
 	}
 
@@ -107,13 +107,13 @@ MoverOP Minimize::fresh_instance() const {
 void
 Minimize::apply( Pose & pose ) {
 	using namespace pose;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 
-	if ( option[ in::file::fullatom ]() ){
+	if ( option[ in::file::fullatom ]() ) {
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose( pose );
-	}else{
+	} else {
 		core::scoring::constraints::add_constraints_from_cmdline_to_pose( pose );
 	}
 
@@ -127,7 +127,7 @@ Minimize::apply( Pose & pose ) {
 
 	/*core::Real start_score =*/ (*score_function_)(pose);
 	core::Size repeats = 1;
-	for(core::Size i = 0; i < repeats; i++ ){
+	for ( core::Size i = 0; i < repeats; i++ ) {
 		core::optimization::AtomTreeMinimizer().run( pose, final_mm, *score_function_, options );
 		TR << "Score: " << i << "  " <<  (*score_function_)(pose) << std::endl;
 	}
@@ -149,13 +149,13 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-	using namespace protocols::moves;
-	using namespace scoring;
+		using namespace protocols::moves;
+		using namespace scoring;
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	MoverOP protocol( new Minimize() );
-	protocols::jd2::JobDistributor::get_instance()->go( protocol );
+		MoverOP protocol( new Minimize() );
+		protocols::jd2::JobDistributor::get_instance()->go( protocol );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

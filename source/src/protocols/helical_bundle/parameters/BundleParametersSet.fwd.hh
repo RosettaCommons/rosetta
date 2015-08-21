@@ -23,22 +23,22 @@
 // C++ headers
 
 namespace protocols {
-	namespace helical_bundle {
-		namespace parameters {
+namespace helical_bundle {
+namespace parameters {
 
-			class BundleParametersSet;
+class BundleParametersSet;
 
-			typedef  utility::pointer::weak_ptr< BundleParametersSet >  BundleParametersSetAP;
-			typedef  utility::pointer::weak_ptr< BundleParametersSet const >  BundleParametersSetCAP;
-			typedef  utility::pointer::shared_ptr< BundleParametersSet >  BundleParametersSetOP;
-			typedef  utility::pointer::shared_ptr< BundleParametersSet const >  BundleParametersSetCOP;
+typedef  utility::pointer::weak_ptr< BundleParametersSet >  BundleParametersSetAP;
+typedef  utility::pointer::weak_ptr< BundleParametersSet const >  BundleParametersSetCAP;
+typedef  utility::pointer::shared_ptr< BundleParametersSet >  BundleParametersSetOP;
+typedef  utility::pointer::shared_ptr< BundleParametersSet const >  BundleParametersSetCOP;
 
-			typedef  utility::vector1< BundleParametersSetOP >  BundleParametersSetOPs;
-			typedef  utility::vector1< BundleParametersSetCOP >  BundleParametersSetCOPs;
-			typedef  utility::vector1< BundleParametersSetCAP >  BundleParametersSetCAPs;
+typedef  utility::vector1< BundleParametersSetOP >  BundleParametersSetOPs;
+typedef  utility::vector1< BundleParametersSetCOP >  BundleParametersSetCOPs;
+typedef  utility::vector1< BundleParametersSetCAP >  BundleParametersSetCAPs;
 
-		} // namespace parameters
-	} // namespace helical_bundle
+} // namespace parameters
+} // namespace helical_bundle
 } // namespace protocols
 
 #endif // INCLUDED_protocols_helical_bundle_parameters_BundleParametersSet_fwd_hh

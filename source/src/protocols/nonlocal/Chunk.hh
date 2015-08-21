@@ -40,53 +40,53 @@ namespace nonlocal {
 /// the region may not be movable. Current behavior mimics but improves upon
 /// existing end-biased selection.
 class Chunk : public utility::pointer::ReferenceCount {
-  typedef boost::math::normal Normal;
-  typedef core::Size Size;
-  typedef core::kinematics::MoveMapOP MoveMapOP;
+	typedef boost::math::normal Normal;
+	typedef core::Size Size;
+	typedef core::kinematics::MoveMapOP MoveMapOP;
 
- public:
-  // -- Construction and Assignment -- //
+public:
+	// -- Construction and Assignment -- //
 
-  /// @brief Default constructor
-  /// <region> describes the contiguous stretch of residues.
-  /// <movable> describes the modifiable degrees of freedom in the system.
-  Chunk(const RegionOP& region, const MoveMapOP& movable);
+	/// @brief Default constructor
+	/// <region> describes the contiguous stretch of residues.
+	/// <movable> describes the modifiable degrees of freedom in the system.
+	Chunk(const RegionOP& region, const MoveMapOP& movable);
 
-  /// @brief Copy constructor
-  Chunk(const Chunk& other);
+	/// @brief Copy constructor
+	Chunk(const Chunk& other);
 
-  /// @brief Destructor
-  virtual ~Chunk() ; // auto-removing definition from header{}
+	/// @brief Destructor
+	virtual ~Chunk() ; // auto-removing definition from header{}
 
-  /// @brief Assignment operator
-  Chunk& operator=(const Chunk& other);
+	/// @brief Assignment operator
+	Chunk& operator=(const Chunk& other);
 
-  // -- Accessors -- //
+	// -- Accessors -- //
 
-  /// @brief Chooses an allowable insertion position on [start, stop] according
-  /// to the probability distribution
-  Size choose() const;
+	/// @brief Chooses an allowable insertion position on [start, stop] according
+	/// to the probability distribution
+	Size choose() const;
 
-  /// @brief Lower boundary of this chunk
-  Size start() const;
+	/// @brief Lower boundary of this chunk
+	Size start() const;
 
-  /// @brief Upper boundary of this chunk
-  Size stop() const;
+	/// @brief Upper boundary of this chunk
+	Size stop() const;
 
-  /// @brief Returns the length of this region
-  Size length() const;
+	/// @brief Returns the length of this region
+	Size length() const;
 
-  /// @brief Returns true if at least one position on [start(), stop()] is movable
-  bool is_movable() const;
+	/// @brief Returns true if at least one position on [start(), stop()] is movable
+	bool is_movable() const;
 
-  /// @brief Returns true if there is at least one valid insertion position in
-  /// the closed region [start(), stop()], false otherwise.
-  bool valid() const;
+	/// @brief Returns true if there is at least one valid insertion position in
+	/// the closed region [start(), stop()], false otherwise.
+	bool valid() const;
 
- private:
-  RegionOP region_;
-  MoveMapOP movable_;
-  boost::scoped_ptr<numeric::random::DistributionSampler<Normal> > sampler_;
+private:
+	RegionOP region_;
+	MoveMapOP movable_;
+	boost::scoped_ptr<numeric::random::DistributionSampler<Normal> > sampler_;
 };
 
 }  // namespace nonlocal

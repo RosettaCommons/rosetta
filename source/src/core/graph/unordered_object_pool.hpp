@@ -52,62 +52,63 @@ namespace boost {
 template <typename T, typename UserAllocator>
 class unordered_object_pool: protected pool<UserAllocator>
 {
-  public:
-    typedef T element_type;
-    typedef UserAllocator user_allocator;
-    typedef typename pool<UserAllocator>::size_type size_type;
-    typedef typename pool<UserAllocator>::difference_type difference_type;
+public:
+	typedef T element_type;
+	typedef UserAllocator user_allocator;
+	typedef typename pool<UserAllocator>::size_type size_type;
+	typedef typename pool<UserAllocator>::difference_type difference_type;
 
-  protected:
-    pool<UserAllocator> & store() { return *this; }
-    const pool<UserAllocator> & store() const { return *this; }
+protected:
+	pool<UserAllocator> & store() { return *this; }
+	const pool<UserAllocator> & store() const { return *this; }
 
-    // for the sake of code readability :)
-    static void * & nextof(void * const ptr)
-    { return *(static_cast<void **>(ptr)); }
+	// for the sake of code readability :)
+	static void * & nextof(void * const ptr)
+	{ return *(static_cast<void **>(ptr)); }
 
-  public:
-    // This constructor parameter is an extension!
-    explicit unordered_object_pool(const size_type next_size = 32)
-    :pool<UserAllocator>(sizeof(T), next_size) { }
+public:
+	// This constructor parameter is an extension!
+	explicit unordered_object_pool(const size_type next_size = 32)
+	:pool<UserAllocator>(sizeof(T), next_size) { }
 
-    ~unordered_object_pool();
+	~unordered_object_pool();
 
-    // Returns 0 if out-of-memory
-    element_type * malloc()
-    { return static_cast<element_type *>(store().malloc()); }
-    void free(element_type * const chunk)
-    { store().free(chunk); }
-    bool is_from(element_type * const chunk) const
-    { return store().is_from(chunk); }
+	// Returns 0 if out-of-memory
+	element_type * malloc()
+	{ return static_cast<element_type *>(store().malloc()); }
+	void free(element_type * const chunk)
+	{ store().free(chunk); }
+	bool is_from(element_type * const chunk) const
+	{ return store().is_from(chunk); }
 
-    element_type * construct()
-    {
-      element_type * const ret = malloc();
-      if (ret == 0)
-        return ret;
-      /*try*/ { new (ret) element_type(); }
-      /*catch (...) { free(ret); throw; }*/
-      return ret;
-    }
+	element_type * construct()
+	{
+		element_type * const ret = malloc();
+		if ( ret == 0 ) {
+			return ret;
+		}
+		/*try*/ { new (ret) element_type(); }
+		/*catch (...) { free(ret); throw; }*/
+		return ret;
+	}
 
-    // Include automatically-generated file for family of template construct()
-    //  functions
+	// Include automatically-generated file for family of template construct()
+	//  functions
 #ifndef BOOST_NO_TEMPLATE_CV_REF_OVERLOADS
-#   include <boost/pool/detail/pool_construct.ipp>
+	#   include <boost/pool/detail/pool_construct.ipp>
 #else
 #   include <boost/pool/detail/pool_construct_simple.ipp>
 #endif
 
-    void destroy(element_type * const chunk)
-    {
-      chunk->~T();
-      free(chunk);
-    }
+	void destroy(element_type * const chunk)
+	{
+		chunk->~T();
+		free(chunk);
+	}
 
-    // These functions are extensions!
-    size_type get_next_size() const { return store().get_next_size(); }
-    void set_next_size(const size_type x) { store().set_next_size(x); }
+	// These functions are extensions!
+	size_type get_next_size() const { return store().get_next_size(); }
+	void set_next_size(const size_type x) { store().set_next_size(x); }
 };
 
 template <typename T, typename UserAllocator>

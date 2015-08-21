@@ -122,7 +122,7 @@ otstreamOP &Tracer::ios_hook()
 	return hook;
 }
 
-bool &Tracer::ios_hook_raw_()	// uninitilized, we will set correct output during set_ios_hook(...)
+bool &Tracer::ios_hook_raw_() // uninitilized, we will set correct output during set_ios_hook(...)
 {
 	static bool raw = true;
 	return raw;
@@ -151,8 +151,8 @@ int Tracer::mpi_rank_( 0 );
 
 /// @details Static objects holding various ASCII CSI codes (see utility/CSI_Sequence.hh)
 utility::CSI_Sequence Tracer::Reset(utility::CSI_Reset), Tracer::Bold(utility::CSI_Bold), Tracer::Underline(utility::CSI_Underline),
-	  Tracer::Black(utility::CSI_Black),   Tracer::Red(utility::CSI_Red),   Tracer::Green(utility::CSI_Green),   Tracer::Yellow(utility::CSI_Yellow),   Tracer::Blue(utility::CSI_Blue),   Tracer::Magenta(utility::CSI_Magenta),   Tracer::Cyan(utility::CSI_Cyan),   Tracer::White(utility::CSI_White),
-	Tracer::bgBlack(utility::CSI_bgBlack), Tracer::bgRed(utility::CSI_bgRed), Tracer::bgGreen(utility::CSI_bgGreen), Tracer::bgYellow(utility::CSI_bgYellow), Tracer::bgBlue(utility::CSI_bgBlue), Tracer::bgMagenta(utility::CSI_bgMagenta), Tracer::bgCyan(utility::CSI_bgCyan), Tracer::bgWhite(utility::CSI_bgWhite);
+Tracer::Black(utility::CSI_Black),   Tracer::Red(utility::CSI_Red),   Tracer::Green(utility::CSI_Green),   Tracer::Yellow(utility::CSI_Yellow),   Tracer::Blue(utility::CSI_Blue),   Tracer::Magenta(utility::CSI_Magenta),   Tracer::Cyan(utility::CSI_Cyan),   Tracer::White(utility::CSI_White),
+Tracer::bgBlack(utility::CSI_bgBlack), Tracer::bgRed(utility::CSI_bgRed), Tracer::bgGreen(utility::CSI_bgGreen), Tracer::bgYellow(utility::CSI_bgYellow), Tracer::bgBlue(utility::CSI_bgBlue), Tracer::bgMagenta(utility::CSI_bgMagenta), Tracer::bgCyan(utility::CSI_bgCyan), Tracer::bgWhite(utility::CSI_bgWhite);
 
 Tracer::TracerProxy::TracerProxy(
 	Tracer & tracer,
@@ -204,7 +204,7 @@ void Tracer::flush_all_tracers()
 
 	std::vector< Tracer * > & all_tracers( TracerManager::get_instance()->all_tracers() );
 	for ( std::vector<Tracer *>::iterator it = all_tracers.begin();
-				it != all_tracers.end(); ++it ) {
+			it != all_tracers.end(); ++it ) {
 		(*it)->flush_all_channels();
 	}
 
@@ -270,11 +270,11 @@ Tracer::~Tracer()
 
 	std::vector< otstream* > v = utility::tools::make_vector< otstream* >(
 		this, &Fatal, &Error, &Warning,
- 		&Info, &Debug, &Trace);
+		&Info, &Debug, &Trace);
 
 	//bool need_flush = false;
-	for(size_t i=0; i<v.size(); i++) {
-		if( !v[i]->is_flushed() ) {
+	for ( size_t i=0; i<v.size(); i++ ) {
+		if ( !v[i]->is_flushed() ) {
 			//v[i]->flush();
 			(*v[i]) << std::endl;
 			(*v[i]) << "WARNING: Message(s) above was printed in the end instead of proper place because this Tracer object has some contents left in inner buffer when destructor was called. Explicit call Tracer::flush() or end your IO with std::endl to disable this warning.\n" << std::endl;
@@ -325,7 +325,7 @@ void Tracer::flush_all_channels()
 		this, &Fatal, &Error, &Warning,
 		&Info, &Debug, &Trace);
 
-	for(size_t i=0; i<v.size(); i++) {
+	for ( size_t i=0; i<v.size(); i++ ) {
 		v[i]->flush();
 	}
 }
@@ -350,9 +350,9 @@ void Tracer::priority(int priority)
 	priority_ = priority;
 	if ( visibility_calculated_ ) {
 		/*
-		#ifdef EXPERIMENTAL_TRACER_FEATURES
-			muted_ = priority >= mute_level_;
-		#endif // EXPERIMENTAL_TRACER_FEATURES
+#ifdef EXPERIMENTAL_TRACER_FEATURES
+		muted_ = priority >= mute_level_;
+#endif // EXPERIMENTAL_TRACER_FEATURES
 		*/
 		//visible_ = !muted_ && ( priority <= tracer_options_.level );
 		visible_ = !muted_ && ( priority <= mute_level_ );
@@ -391,15 +391,15 @@ void Tracer::calculate_visibility(
 		if ( in(tracer_options_.unmuted, channel, false) ) visible = true;
 		else visible = false;
 	} else {
-		if( in(tracer_options_.unmuted, "all", true) ) {
-			if( in(tracer_options_.muted, channel, false) ) visible = false;
+		if ( in(tracer_options_.unmuted, "all", true) ) {
+			if ( in(tracer_options_.muted, channel, false) ) visible = false;
 			else visible = true;
 		} else {  /// default bechavior: unmute unless muted_by_default is true
-			if( muted_by_default ) {
-				if( in(tracer_options_.unmuted, channel, false) ) visible = true;
+			if ( muted_by_default ) {
+				if ( in(tracer_options_.unmuted, channel, false) ) visible = true;
 				else visible = false;
 			} else {
-				if( in(tracer_options_.muted, channel, false) ) visible = false;
+				if ( in(tracer_options_.muted, channel, false) ) visible = false;
 				else visible = true;
 			}
 		}
@@ -433,7 +433,7 @@ void Tracer::calculate_visibility(
 	calculate_tracer_level(tracer_options_.levels, channel, false, mute_level_);
 	//std::cout << "levels:" << tracer_options_.levels <<" ch:" << channel << " mute_level:" << mute_level_ << " priority:" << priority << std::endl;
 
-	if( priority > mute_level_ ) visible = false;
+	if ( priority > mute_level_ ) visible = false;
 }
 
 
@@ -445,13 +445,13 @@ void Tracer::calculate_visibility(
 ///                          ie: ch='basic.pose' v[0]='basic' --> will yield true.
 bool Tracer::in(utility::vector1<std::string> const & v, std::string const ch, bool strict)
 {
-	for(size_t i=1; i<=v.size(); i++) {
-		if( v[i] == ch ) return true;
+	for ( size_t i=1; i<=v.size(); i++ ) {
+		if ( v[i] == ch ) return true;
 
-		if( !strict ) {
-			if( ch.size() > v[i].size() ) {
+		if ( !strict ) {
+			if ( ch.size() > v[i].size() ) {
 				std::string s(ch);  s.resize(v[i].size());
-				if( s == v[i] ) return true;
+				if ( s == v[i] ) return true;
 			}
 		}
 	}
@@ -460,7 +460,7 @@ bool Tracer::in(utility::vector1<std::string> const & v, std::string const ch, b
 
 /// @brief Output a message in a manner that is safe if the Tracers/output are poorly initialized.
 void Tracer::safe_output(std::string const & message ) {
-	if( ios_hook() ) {
+	if ( ios_hook() ) {
 		*ios_hook() << message << std::endl;
 	} else if ( final_stream() ) {
 		*final_stream() << message << std::endl;
@@ -475,43 +475,42 @@ bool Tracer::calculate_tracer_level(utility::vector1<std::string> const & v, std
 	unsigned int len = 0;
 	bool math = false;
 	//std::cout << "Entring:calculate_tracer_level: v=" << v << " ch:" << ch << std::endl;
-	for(size_t i=1; i<=v.size(); i++) {
+	for ( size_t i=1; i<=v.size(); i++ ) {
 		bool flag = false;
 		utility::vector1< std::string > spl = utility::string_split(v[i], ':');
-		if( spl.size() != 2 ) {
+		if ( spl.size() != 2 ) {
 			safe_output("WARNING: Cannot parse -out:levels setting '"+v[i]+"'. Does not follow the format of 'tracer:level'. Ignoring.");
 			continue;
 		}
 		//std::cout << "Split:" << spl << " size:" << spl[1].size() << std::endl;
 
-		if( spl[1] == "all" && len == 0 ) flag = true;  // we can asume that 'all' is shorter then any valid core/protocol path... but we don't!
+		if ( spl[1] == "all" && len == 0 ) flag = true;  // we can asume that 'all' is shorter then any valid core/protocol path... but we don't!
 
-		if( spl[1] == ch ) flag=true;
+		if ( spl[1] == ch ) flag=true;
 
-		if( !strict ) {
-			if( ch.size() > spl[1].size() ) {
+		if ( !strict ) {
+			if ( ch.size() > spl[1].size() ) {
 				std::string s(ch);  s.resize(spl[1].size());
-				if( s == spl[1] ) flag=true;
+				if ( s == spl[1] ) flag=true;
 			}
 		}
-		if(flag  && ( len <= spl[1].size() ) ) { // If specified twice, use the later one.
+		if ( flag  && ( len <= spl[1].size() ) ) { // If specified twice, use the later one.
 			math = true;
 			len = spl[1].size();
 			res = utility::string2int(spl[2]);
 			std::string const spl2_lower = ObjexxFCL::lowercased( spl[2] );
-			if( spl2_lower == "fatal" )   res = t_fatal;
-			if( spl2_lower == "error"   || spl2_lower == "errors" )   res = t_error;
-			if( spl2_lower == "warning" || spl2_lower == "warnings" ) res = t_warning;
-			if( spl2_lower == "info" )    res = t_info;
-			if( spl2_lower == "debug" )   res = t_debug;
-			if( spl2_lower == "trace" )   res = t_trace;
-			if( res == -1 ) {
+			if ( spl2_lower == "fatal" )   res = t_fatal;
+			if ( spl2_lower == "error"   || spl2_lower == "errors" )   res = t_error;
+			if ( spl2_lower == "warning" || spl2_lower == "warnings" ) res = t_warning;
+			if ( spl2_lower == "info" )    res = t_info;
+			if ( spl2_lower == "debug" )   res = t_debug;
+			if ( spl2_lower == "trace" )   res = t_trace;
+			if ( res == -1 ) {
 				safe_output( "WARNING: The setting '" + spl[2] + "' is not recognized as a valid tracer level." );
 				res = t_info; // Set such that you get standard amount of output instead of none.
 			}
 			//std::cout << "Match:" << spl << " ch:" << ch << " res:"<< res << std::endl;
-		}
-		else {
+		} else {
 			//std::cout << "Fail:" << spl << " ch:" << ch << " res:"<< res << std::endl;
 		}
 
@@ -526,10 +525,10 @@ bool Tracer::calculate_tracer_level(utility::vector1<std::string> const & v, std
 template <class out_stream>
 void Tracer::prepend_channel_name( out_stream & sout, std::string const &str )
 {
-	if ( tracer_options_.print_channel_name ){
+	if ( tracer_options_.print_channel_name ) {
 		std::string s = str;
 		begining_of_the_line_ = true;
-		for (size_t i=0; i<s.size(); i++) {
+		for ( size_t i=0; i<s.size(); i++ ) {
 			if ( begining_of_the_line_ ) {
 				sout << channel_ << ": ";
 #ifdef USEMPI
@@ -552,15 +551,15 @@ void Tracer::prepend_channel_name( out_stream & sout, std::string const &str )
 void Tracer::t_flush(std::string const &str)
 {
 	assert( ! initial_tracers_visibility_calculated_ || visibility_calculated_ );
-	if( ios_hook() && ios_hook().get()!=this &&
-		( in(monitoring_list_, channel_, false) || in(monitoring_list_, get_all_channels_string(), true ) ) ) {
-		if (ios_hook_raw_() || visible() ){
+	if ( ios_hook() && ios_hook().get()!=this &&
+			( in(monitoring_list_, channel_, false) || in(monitoring_list_, get_all_channels_string(), true ) ) ) {
+		if ( ios_hook_raw_() || visible() ) {
 			prepend_channel_name<otstream>( *ios_hook(), str );
 			ios_hook()->flush();
 		}
 	}
 
-	if ( !super_mute_() && visible() ){
+	if ( !super_mute_() && visible() ) {
 		prepend_channel_name<std::ostream>( *final_stream(), str );
 	}
 }
@@ -585,9 +584,9 @@ T(std::string const & channel, TracerPriority priority)
 /// muted.
 // void Tracer::set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list)
 // {
-// 	ios_hook_ = tr;
-// 	monitoring_list_ = utility::split(monitoring_channels_list);
-// 	ios_hook_raw_ = true;
+//  ios_hook_ = tr;
+//  monitoring_list_ = utility::split(monitoring_channels_list);
+//  ios_hook_raw_ = true;
 // }
 /// When raw==false same as above above but gives the option get only the
 /// visible and unmuted tracers.  It can be useful to get the raw

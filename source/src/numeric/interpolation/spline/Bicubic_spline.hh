@@ -70,8 +70,8 @@ class BicubicSpline
 {
 public:
 
-   //////////////////////////////////
-   // construction and destruction //
+	//////////////////////////////////
+	// construction and destruction //
 	//////////////////////////////////
 
 	/// construct generic BicubicSpline
@@ -85,9 +85,9 @@ public:
 		return new BicubicSpline( *this);
 	}
 
-   /////////////////
-   // data access //
-   /////////////////
+	/////////////////
+	// data access //
+	/////////////////
 
 
 	/// get the second order derivatives of the spline
@@ -95,8 +95,8 @@ public:
 	{
 		return values_;
 	}
-    
-    MathMatrix< Real> const &get_dsecox() const
+
+	MathMatrix< Real> const &get_dsecox() const
 	{
 		return dsecox_;
 	}

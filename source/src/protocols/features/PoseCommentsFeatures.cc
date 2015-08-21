@@ -55,8 +55,8 @@
 #include <map>
 #include <sstream>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::string;
 using std::map;
@@ -128,7 +128,7 @@ PoseCommentsFeatures::report_features(
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
-	BOOST_FOREACH(kv_pair const & kv, get_all_comments(pose)){
+	BOOST_FOREACH ( kv_pair const & kv, get_all_comments(pose) ) {
 
 		RowDataBaseOP comment_key_data( new RowData<string>("comment_key",kv.first) );
 		RowDataBaseOP value_data( new RowData<string>("value",kv.second) );
@@ -159,23 +159,23 @@ PoseCommentsFeatures::load_into_pose(
 	StructureID struct_id,
 	Pose & pose){
 
-	if(!table_exists(db_session, "pose_comments")) return;
+	if ( !table_exists(db_session, "pose_comments") ) return;
 
 
 	std::string statement_string =
 		"SELECT\n"
-		"	comment_key,\n"
-		"	value\n"
+		"\tcomment_key,\n"
+		"\tvalue\n"
 		"FROM\n"
-		"	pose_comments\n"
+		"\tpose_comments\n"
 		"WHERE\n"
-		"	pose_comments.struct_id = ?;";
+		"\tpose_comments.struct_id = ?;";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,struct_id);
 
 	result res(basic::database::safely_read_from_database(stmt));
 
-	while(res.next()){
+	while ( res.next() ) {
 		string key, value;
 		res >> key >> value;
 		add_comment(pose, key, value);

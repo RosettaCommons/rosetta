@@ -54,46 +54,46 @@ namespace movers
 static thread_local basic::Tracer TR( "protocols.hotspot_hashing.movers.PlaceSurfaceProbe" );
 
 PlaceSurfaceProbe::PlaceSurfaceProbe() :
-	  protocols::moves::Mover("PlaceSurfaceProbe"),
-	  protocols::hotspot_hashing::movers::PlaceProbeMover(),
-		surface_selection_(/* NULL */),
-		search_density_(0),
-		coarse_angle_sampling_(0),
-		coarse_sampling_(0),
-		refinement_distance_(0),
-		refinement_angle_sampling_(0),
-		refinement_sampling_(0),
-		refinement_pattern_(/* NULL */)
+	protocols::moves::Mover("PlaceSurfaceProbe"),
+	protocols::hotspot_hashing::movers::PlaceProbeMover(),
+	surface_selection_(/* NULL */),
+	search_density_(0),
+	coarse_angle_sampling_(0),
+	coarse_sampling_(0),
+	refinement_distance_(0),
+	refinement_angle_sampling_(0),
+	refinement_sampling_(0),
+	refinement_pattern_(/* NULL */)
 {
 
 }
 
 
 PlaceSurfaceProbe::PlaceSurfaceProbe(
-		std::string residue_name,
-		core::Real search_density,
-		core::Real coarse_angle_sampling,
-		core::Real coarse_sampling,
-		core::Real refinement_distance,
-		core::Real refinement_angle_sampling,
-		core::Real refinement_sampling,
-		core::conformation::ResidueCOP target_residue,
-		core::pack::task::TaskFactoryOP /*surface_selection*/,
-		core::Size search_partition,
-		core::Size total_search_partition) :
-		protocols::moves::Mover( "PlaceSurfaceProbe" ),
-		protocols::hotspot_hashing::movers::PlaceProbeMover(
-			residue_name,
-			target_residue,
-			search_partition,
-			total_search_partition),
-		search_density_(search_density),
-		coarse_angle_sampling_(coarse_angle_sampling),
-		coarse_sampling_(coarse_sampling),
-		refinement_distance_(refinement_distance),
-		refinement_angle_sampling_(refinement_angle_sampling),
-		refinement_sampling_(refinement_sampling),
-		refinement_pattern_(initialize_refinement_pattern())
+	std::string residue_name,
+	core::Real search_density,
+	core::Real coarse_angle_sampling,
+	core::Real coarse_sampling,
+	core::Real refinement_distance,
+	core::Real refinement_angle_sampling,
+	core::Real refinement_sampling,
+	core::conformation::ResidueCOP target_residue,
+	core::pack::task::TaskFactoryOP /*surface_selection*/,
+	core::Size search_partition,
+	core::Size total_search_partition) :
+	protocols::moves::Mover( "PlaceSurfaceProbe" ),
+	protocols::hotspot_hashing::movers::PlaceProbeMover(
+	residue_name,
+	target_residue,
+	search_partition,
+	total_search_partition),
+	search_density_(search_density),
+	coarse_angle_sampling_(coarse_angle_sampling),
+	coarse_sampling_(coarse_sampling),
+	refinement_distance_(refinement_distance),
+	refinement_angle_sampling_(refinement_angle_sampling),
+	refinement_sampling_(refinement_sampling),
+	refinement_pattern_(initialize_refinement_pattern())
 {
 }
 
@@ -107,9 +107,9 @@ SearchPatternOP PlaceSurfaceProbe::create_search_pattern(core::pose::Pose const 
 	using core::conformation::ResidueOP;
 
 	SearchPatternOP surface_pattern( new SurfaceSearchPattern(
-							target_pose,
-							surface_selection_,
-							search_density_) );
+		target_pose,
+		surface_selection_,
+		search_density_) );
 
 	core::Real expected_course_search_bound = std::sqrt(search_density_);
 
@@ -138,10 +138,10 @@ SearchPatternOP PlaceSurfaceProbe::create_search_pattern(core::pose::Pose const 
 	StubGenerator::placeResidueOnPose(residue_pose, virtual_bb_residue);
 
 	SearchPatternOP sampled_surface_pattern( new SICPatternAtTransform(
-				target_pose,
-				residue_pose,
-				surface_pattern,
-				residue_sampling_pattern) );
+		target_pose,
+		residue_pose,
+		surface_pattern,
+		residue_sampling_pattern) );
 
 	return sampled_surface_pattern;
 }
@@ -151,19 +151,19 @@ SearchPatternOP PlaceSurfaceProbe::create_partitioned_search_pattern(core::pose:
 	using core::conformation::ResidueOP;
 
 	SearchPatternOP surface_pattern( new SurfaceSearchPattern(
-							target_pose,
-							surface_selection_,
-							search_density_) );
+		target_pose,
+		surface_selection_,
+		search_density_) );
 
 	SearchPatternOP partitioned_surface_pattern( new PartitionedSearchPattern(surface_pattern, search_partition_, total_search_partition_) );
 
 	SearchPatternOP residue_sampling_pattern( new SphericalRotationSearchPattern(
-				coarse_angle_sampling_,
-				coarse_angle_sampling_,
-				coarse_angle_sampling_,
-				0, 360,
-				0, 180,
-				0, 360) );
+		coarse_angle_sampling_,
+		coarse_angle_sampling_,
+		coarse_angle_sampling_,
+		0, 360,
+		0, 180,
+		0, 360) );
 
 	core::pose::Pose residue_pose;
 
@@ -171,10 +171,10 @@ SearchPatternOP PlaceSurfaceProbe::create_partitioned_search_pattern(core::pose:
 	StubGenerator::placeResidueOnPose(residue_pose, virtual_bb_residue);
 
 	SearchPatternOP sampled_surface_pattern( new SICPatternAtTransform(
-				target_pose,
-				residue_pose,
-				partitioned_surface_pattern,
-				residue_sampling_pattern) );
+		target_pose,
+		residue_pose,
+		partitioned_surface_pattern,
+		residue_sampling_pattern) );
 
 	return sampled_surface_pattern;
 }
@@ -209,10 +209,10 @@ SearchPatternOP PlaceSurfaceProbe::initialize_refinement_pattern()
 
 void
 PlaceSurfaceProbe::parse_my_tag( utility::tag::TagCOP tag,
-                                basic::datacache::DataMap & data,
-                                protocols::filters::Filters_map const & filters_map,
-                                protocols::moves::Movers_map const & movers_map,
-                                core::pose::Pose const & target_pose)
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & filters_map,
+	protocols::moves::Movers_map const & movers_map,
+	core::pose::Pose const & target_pose)
 {
 	parse_place_probe_tag(
 		tag,
@@ -240,13 +240,13 @@ PlaceSurfaceProbe::parse_my_tag( utility::tag::TagCOP tag,
 protocols::moves::MoverOP
 PlaceSurfaceProbeCreator::create_mover() const
 {
-  return protocols::moves::MoverOP( new PlaceSurfaceProbe );
+	return protocols::moves::MoverOP( new PlaceSurfaceProbe );
 }
 
 std::string
 PlaceSurfaceProbeCreator::keyname() const
 {
-  return "PlaceSurfaceProbe";
+	return "PlaceSurfaceProbe";
 }
 
 std::string PlaceSurfaceProbeCreator::mover_name()

@@ -9,11 +9,11 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file protocols//ParatopeEpitopeSiteConstraintMoverCreator.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_antibody_constraints_ParatopeEpitopeSiteConstraintMoverCreator_hh
-#define	INCLUDED_protocols_antibody_constraints_ParatopeEpitopeSiteConstraintMoverCreator_hh
+#define INCLUDED_protocols_antibody_constraints_ParatopeEpitopeSiteConstraintMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 

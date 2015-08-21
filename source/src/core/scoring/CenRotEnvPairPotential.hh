@@ -103,7 +103,7 @@ public:
 	compute_centroid_environment(
 		pose::Pose & pose
 	) const;
-		void
+	void
 	compute_dcentroid_environment(
 		pose::Pose & pose
 	) const;
@@ -141,7 +141,7 @@ private:
 
 	utility::vector1< utility::vector1<
 		numeric::interpolation::spline::CubicSpline > > pairsplines_;
-	
+
 	utility::vector1<numeric::interpolation::spline::CubicSpline> envsplines_;
 	//numeric::interpolation::spline::CubicSpline cbeta6splines_;
 	//numeric::interpolation::spline::CubicSpline cbeta12splines_;
@@ -154,7 +154,7 @@ private:
 
 	//currently not implemented
 	//utility::vector1< utility::vector1<
-	//	numeric::interpolation::spline::BicubicSpline > > dihsplines_;
+	// numeric::interpolation::spline::BicubicSpline > > dihsplines_;
 };
 
 } // ns scoring

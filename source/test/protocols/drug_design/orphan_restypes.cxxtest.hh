@@ -108,12 +108,12 @@ public:
 
 	void test_load_restype_noset() {
 		core::chemical::ResidueTypeOP restype( read_topology_file(
-				resfile_, atom_types_, elements_, mm_atom_types_, orbital_types_, core::chemical::ResidueTypeSetCAP() ) ); // Null for ResidueTypeSet is deliberate
+			resfile_, atom_types_, elements_, mm_atom_types_, orbital_types_, core::chemical::ResidueTypeSetCAP() ) ); // Null for ResidueTypeSet is deliberate
 	}
 
 	void test_score_restype_noset() {
 		core::chemical::ResidueTypeOP restype( read_topology_file(
-				resfile_, atom_types_, elements_, mm_atom_types_, orbital_types_, core::chemical::ResidueTypeSetCAP() ) ); // Null for ResidueTypeSet is deliberate
+			resfile_, atom_types_, elements_, mm_atom_types_, orbital_types_, core::chemical::ResidueTypeSetCAP() ) ); // Null for ResidueTypeSet is deliberate
 
 		core::pose::Pose pose;
 		// Make a default residue
@@ -126,7 +126,7 @@ public:
 
 	void test_pack_restype_noset() {
 		core::chemical::ResidueTypeOP restype( read_topology_file(
-				resfile_, atom_types_, elements_, mm_atom_types_, orbital_types_, core::chemical::ResidueTypeSetCAP()) ); // Null for ResidueTypeSet is deliberate
+			resfile_, atom_types_, elements_, mm_atom_types_, orbital_types_, core::chemical::ResidueTypeSetCAP()) ); // Null for ResidueTypeSet is deliberate
 
 		core::pose::Pose pose;
 		// Make a default residue
@@ -139,7 +139,7 @@ public:
 
 	void test_min_restype_noset() {
 		core::chemical::ResidueTypeOP restype( read_topology_file(
-				resfile_, atom_types_, elements_, mm_atom_types_, orbital_types_, core::chemical::ResidueTypeSetCAP()) ); // Null for ResidueTypeSet is deliberate
+			resfile_, atom_types_, elements_, mm_atom_types_, orbital_types_, core::chemical::ResidueTypeSetCAP()) ); // Null for ResidueTypeSet is deliberate
 
 		core::pose::Pose pose;
 		// Make a default residue
@@ -152,7 +152,7 @@ public:
 
 	void test_cartmin_restype_noset() {
 		core::chemical::ResidueTypeOP restype( read_topology_file(
-				resfile_, atom_types_, elements_, mm_atom_types_, orbital_types_, core::chemical::ResidueTypeSetCAP() ) ); // Null for ResidueTypeSet is deliberate
+			resfile_, atom_types_, elements_, mm_atom_types_, orbital_types_, core::chemical::ResidueTypeSetCAP() ) ); // Null for ResidueTypeSet is deliberate
 
 		core::pose::Pose pose;
 		// Make a default residue
@@ -169,7 +169,7 @@ public:
 
 	void test_pack_restype_wrongset() {
 		core::chemical::ResidueTypeOP restype( read_topology_file(
-				resfile_, atom_types_, elements_, mm_atom_types_, orbital_types_, core::chemical::ResidueTypeSetCAP() ) ); // Null for ResidueTypeSet is deliberate
+			resfile_, atom_types_, elements_, mm_atom_types_, orbital_types_, core::chemical::ResidueTypeSetCAP() ) ); // Null for ResidueTypeSet is deliberate
 		restype->residue_type_set( chem_mang_->residue_type_set(offtypeset_) );
 
 		core::pose::Pose pose;
@@ -183,7 +183,7 @@ public:
 
 	void test_min_restype_wrongset() {
 		core::chemical::ResidueTypeOP restype( read_topology_file(
-				resfile_, atom_types_, elements_, mm_atom_types_, orbital_types_, core::chemical::ResidueTypeSetCAP() ) ); // Null for ResidueTypeSet is deliberate
+			resfile_, atom_types_, elements_, mm_atom_types_, orbital_types_, core::chemical::ResidueTypeSetCAP() ) ); // Null for ResidueTypeSet is deliberate
 		restype->residue_type_set( chem_mang_->residue_type_set(offtypeset_) );
 
 		core::pose::Pose pose;

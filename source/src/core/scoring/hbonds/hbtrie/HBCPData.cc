@@ -32,7 +32,7 @@ HBCPData::print( std::ostream & os ) const
 
 //void
 //HBCPData::set_count_pair_data_to_use(
-//	Size /*connection_id*/
+// Size /*connection_id*/
 //) const
 //{}
 

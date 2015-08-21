@@ -10,7 +10,7 @@
 /// @file COFilter.cc
 /// @brief runs reject or accept filters on pose
 /// @details
-///	  Contains currently: COFilter
+///   Contains currently: COFilter
 ///
 ///
 /// @author Robert Vernon
@@ -61,12 +61,12 @@ bool COFilter::apply( core::pose::Pose const & pose ) const{
 
 	//Real co_score = 0.0;
 
-  core::scoring::methods::ContactOrderEnergy co_energy;
-  //core::scoring::EnergyMap emap;
-  //core::scoring::ScoreFunction sfxn;
+	core::scoring::methods::ContactOrderEnergy co_energy;
+	//core::scoring::EnergyMap emap;
+	//core::scoring::ScoreFunction sfxn;
 
-  //co_energy.finalize_total_energy( pose, sfxn, emap );
-  Real co_score = co_energy.calculate_contact_order( pose );
+	//co_energy.finalize_total_energy( pose, sfxn, emap );
+	Real co_score = co_energy.calculate_contact_order( pose );
 
 	if ( co_score < co_cutoff ) {
 		return false;

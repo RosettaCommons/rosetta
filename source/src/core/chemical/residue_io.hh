@@ -41,7 +41,7 @@ read_topology_file(
 	chemical::ElementSetCAP elements,
 	chemical::MMAtomTypeSetCAP mm_atom_types,
 	chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types,
-//	chemical::CSDAtomTypeSetCAP csd_atom_types kwk commenting out csd_atom_types until I have a chance to fully implement them.
+	// chemical::CSDAtomTypeSetCAP csd_atom_types kwk commenting out csd_atom_types until I have a chance to fully implement them.
 	chemical::ResidueTypeSetCAP rsd_type_set
 );
 
@@ -52,7 +52,7 @@ read_topology_file(
 	chemical::ElementSetCAP elements,
 	chemical::MMAtomTypeSetCAP mm_atom_types,
 	chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types,
-//	chemical::CSDAtomTypeSetCAP csd_atom_types kwk commenting out csd_atom_types until I have a chance to fully implement them.
+	// chemical::CSDAtomTypeSetCAP csd_atom_types kwk commenting out csd_atom_types until I have a chance to fully implement them.
 	chemical::ResidueTypeSetCAP rsd_type_set
 );
 

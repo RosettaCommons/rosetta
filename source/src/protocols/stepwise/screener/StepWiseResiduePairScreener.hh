@@ -23,34 +23,34 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class StepWiseResiduePairScreener: public StepWiseScreener {
+class StepWiseResiduePairScreener: public StepWiseScreener {
 
-	public:
+public:
 
-		//constructor
-		StepWiseResiduePairScreener( Size const res1, Size const res2 );
+	//constructor
+	StepWiseResiduePairScreener( Size const res1, Size const res2 );
 
-		//destructor
-		~StepWiseResiduePairScreener();
+	//destructor
+	~StepWiseResiduePairScreener();
 
-	public:
+public:
 
-		virtual
-		std::string
-		name() const = 0;
+	virtual
+	std::string
+	name() const = 0;
 
-		virtual
-		StepWiseScreenerType
-		type() const = 0;
+	virtual
+	StepWiseScreenerType
+	type() const = 0;
 
-		void
-		fast_forward( sampler::StepWiseSamplerBaseOP sampler );
+	void
+	fast_forward( sampler::StepWiseSamplerBaseOP sampler );
 
-	protected:
+protected:
 
-		Size const res1_, res2_;
+	Size const res1_, res2_;
 
-	};
+};
 
 } //screener
 } //stepwise

@@ -56,8 +56,8 @@
 #include <protocols/rotamer_recovery/RRComparer.hh>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::string;
 using std::stringstream;
@@ -159,8 +159,8 @@ RotamerRecoveryFeatures::parse_my_tag(
 
 	RotamerRecoveryFactory * factory(RotamerRecoveryFactory::get_instance());
 
-	if(tag->hasOption("mover") || tag->hasOption("mover_name")){
-		if(tag->hasOption("reference_name")){
+	if ( tag->hasOption("mover") || tag->hasOption("mover_name") ) {
+		if ( tag->hasOption("reference_name") ) {
 			throw utility::excn::EXCN_RosettaScriptsOption(
 				"Both 'mover_name' and 'reference_name' were supplied. "
 				"Please specify at most one to indicate which protocols should "
@@ -171,24 +171,24 @@ RotamerRecoveryFeatures::parse_my_tag(
 			tag->getOption<string>("mover") :
 			tag->getOption<string>("mover_name"), movers);
 		protocol_ = protocols::rotamer_recovery::RRProtocolOP( new RRProtocolMover(mover) );
-	} else if(tag->hasOption("reference_name")){
-		if(tag->hasOption("mover")){
+	} else if ( tag->hasOption("reference_name") ) {
+		if ( tag->hasOption("mover") ) {
 			throw utility::excn::EXCN_RosettaScriptsOption(
 				"Both 'mover' and 'reference_name' were supplied. "
 				"Please specify at most one to indicate which protocols "
 				"should be used to run RotamerRecovery.");
 		}
 
-		if(tag->hasOption("mover_name")){
+		if ( tag->hasOption("mover_name") ) {
 			throw utility::excn::EXCN_RosettaScriptsOption(
 				"Both 'mover_name' and 'reference_name' were supplied. "
 				"Please specify at most one to indicate which protocols "
 				"should be used to run RotamerRecovery.");
 		}
 
-		if(tag->hasOption("protocol") &&
-			!tag->getOption<string>("protocol").compare(
-				"RRProtocolReferenceStructure")){
+		if ( tag->hasOption("protocol") &&
+				!tag->getOption<string>("protocol").compare(
+				"RRProtocolReferenceStructure") ) {
 			throw utility::excn::EXCN_RosettaScriptsOption(
 				"Specifying 'reference_name' is only compatible with the "
 				"'RRProtocolReferenceStructure' protocol.");
@@ -200,12 +200,12 @@ RotamerRecoveryFeatures::parse_my_tag(
 		protocol_ = protocols::rotamer_recovery::RRProtocolOP( new RRProtocolReferenceStructure(reference_pose) );
 	} else {
 		string const & protocol_name(tag->getOption<string>(
-				"protocol", "RRProtocolMinPack"));
-		if(!protocol_name.compare("RRProtocolMover")){
+			"protocol", "RRProtocolMinPack"));
+		if ( !protocol_name.compare("RRProtocolMover") ) {
 			throw utility::excn::EXCN_RosettaScriptsOption(
 				"Please specify 'mover_name' with the 'RRProtocolMover' "
 				"rotamer recovery protocol.");
-		} else if(!protocol_name.compare("RRProtocolReferenceStructure")){
+		} else if ( !protocol_name.compare("RRProtocolReferenceStructure") ) {
 			throw utility::excn::EXCN_RosettaScriptsOption(
 				"Please specify 'reference_name' with 'RRProtocolReferenceStructure' "
 				"rotamer recovery protocol.");
@@ -217,40 +217,40 @@ RotamerRecoveryFeatures::parse_my_tag(
 	//mjo if there are many options to be passed to the components,
 	//consider passing the tag to the components themselves to do their
 	//own tag parsing
-	if(protocol_->get_name() == "RRProtocolRTMin"){
-		if(tag->hasOption("nonideal")){
+	if ( protocol_->get_name() == "RRProtocolRTMin" ) {
+		if ( tag->hasOption("nonideal") ) {
 			static_cast<rotamer_recovery::RRProtocolRTMin &>(*protocol_).set_nonideal(tag->getOption<bool>("nonideal"));
 		}
-		if(tag->hasOption("cartesian")){
+		if ( tag->hasOption("cartesian") ) {
 			static_cast<rotamer_recovery::RRProtocolRTMin &>(*protocol_).set_cartesian(tag->getOption<bool>("cartesian"));
 		}
 	}
 
-	if(protocol_->get_name() == "RRProtocolRelax"){
-		if(tag->hasOption("nonideal")){
+	if ( protocol_->get_name() == "RRProtocolRelax" ) {
+		if ( tag->hasOption("nonideal") ) {
 			static_cast<rotamer_recovery::RRProtocolRelax &>(*protocol_).set_nonideal(tag->getOption<bool>("nonideal"));
 		}
-		if(tag->hasOption("cartesian")){
+		if ( tag->hasOption("cartesian") ) {
 			static_cast<rotamer_recovery::RRProtocolRelax &>(*protocol_).set_cartesian(tag->getOption<bool>("cartesian"));
 		}
 	}
 
 	string const & comparer_name(tag->getOption<string>(
-			"comparer", "RRComparerAutomorphicRMSD"));
+		"comparer", "RRComparerAutomorphicRMSD"));
 	comparer_ = factory->get_rotamer_recovery_comparer(comparer_name);
 
-	if(tag->hasOption("recovery_threshold")){
+	if ( tag->hasOption("recovery_threshold") ) {
 		comparer_->set_recovery_threshold(tag->getOption<Real>("recovery_threshold"));
 	}
 
 	task_factory_ = parse_task_operations(tag, data);
 
-	if(tag->hasOption("predicted_features_reporter")){
+	if ( tag->hasOption("predicted_features_reporter") ) {
 		string report_to_db_name(
 			tag->getOption<string>("predicted_features_reporter"));
 		MoverOP report_to_db(parse_mover(report_to_db_name, movers));
 
-		if(report_to_db->get_name() != "ReportToDB"){
+		if ( report_to_db->get_name() != "ReportToDB" ) {
 			stringstream errmsg;
 			errmsg
 				<< "For tag '" << tag->getName() << "',"
@@ -296,7 +296,7 @@ RotamerRecoveryFeatures::report_features(
 	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose(pose, scfxn_);
 	(*scfxn_)(pose);
 
-	if(task_factory_ == 0){
+	if ( task_factory_ == 0 ) {
 		task_factory_ = core::pack::task::TaskFactoryOP( new TaskFactory() );
 	}
 

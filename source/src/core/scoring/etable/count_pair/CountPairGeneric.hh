@@ -35,7 +35,7 @@ namespace count_pair {
 class CountPairGeneric : public CountPairFunction
 {
 public:
-	public:
+public:
 	typedef CountPairFunction parent;
 
 public:

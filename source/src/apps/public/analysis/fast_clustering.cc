@@ -82,11 +82,11 @@ void read_input_weights( FArray1D_double& weights, Size natoms ) {
 	loops::PoseNumberedLoopFileReader loop_file_reader;
 	loop_file_reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
 	std::ifstream is( option[ rigid::in ]().name().c_str() );
-	if (!is) utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ rigid::in ]().name() + "'" );
+	if ( !is ) utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ rigid::in ]().name() + "'" );
 	loops::SerializedLoopList loops = loop_file_reader.read_pose_numbered_loops_file(is, option[ rigid::in ](), false );
 	loops::Loops rigid = loops::Loops( loops );
-	for ( Size i=1;i<=natoms; ++i ) {
-		if (rigid.is_loop_residue( i ) ) weights( i )=1.0;
+	for ( Size i=1; i<=natoms; ++i ) {
+		if ( rigid.is_loop_residue( i ) ) weights( i )=1.0;
 		else weights( i )=0.0;
 	}
 }
@@ -98,7 +98,7 @@ void read_structures( SilentFileData &sfd, DecoySetEvaluation& ensemble ) {
 		utility_exit_with_message("fast_clustering works only with -in:file:silent as input option");
 	}
 	utility::vector1< utility::file::FileName > const silent_files( option[ in::file::silent ]() );
-	for ( utility::vector1< utility::file::FileName >::const_iterator current_fn_ = silent_files.begin();	current_fn_ != silent_files.end(); ++current_fn_ ) {
+	for ( utility::vector1< utility::file::FileName >::const_iterator current_fn_ = silent_files.begin(); current_fn_ != silent_files.end(); ++current_fn_ ) {
 		tr.Debug << "reading " << *current_fn_ << std::endl;
 		sfd.read_file( *current_fn_ );
 	}
@@ -134,15 +134,15 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	register_options();
-	devel::init( argc, argv );
+		register_options();
+		devel::init( argc, argv );
 
-	try{
-		run();
-	} catch ( utility::excn::EXCN_Base& excn ) {
-		excn.show( std::cerr );
-	}
-	 } catch ( utility::excn::EXCN_Base const & e ) {
+		try{
+			run();
+		} catch ( utility::excn::EXCN_Base& excn ) {
+			excn.show( std::cerr );
+		}
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

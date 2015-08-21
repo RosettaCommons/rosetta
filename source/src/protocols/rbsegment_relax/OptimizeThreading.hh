@@ -34,14 +34,16 @@ namespace rbsegment_relax {
 class OptimizeThreadingMover : public moves::Mover {
 public:
 	OptimizeThreadingMover() : Mover(),
-			nsteps_(1000), rebuild_cycles_(200), max_shift_(4), weight_(0.1), temperature_(2.0), recover_low_(true), step_penalty_(false), greedy_(false), native_(/* NULL */) {
+		nsteps_(1000), rebuild_cycles_(200), max_shift_(4), weight_(0.1), temperature_(2.0), recover_low_(true), step_penalty_(false), greedy_(false), native_(/* NULL */) {
 		scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
 		scorefxn_->set_weight( core::scoring::atom_pair_constraint , 1.0 );
 		scorefxn_sampling_ = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth");
-		if (scorefxn_sampling_->get_weight(core::scoring::atom_pair_constraint) == 0)
+		if ( scorefxn_sampling_->get_weight(core::scoring::atom_pair_constraint) == 0 ) {
 			scorefxn_sampling_->set_weight( core::scoring::atom_pair_constraint , 1.0 );
-		if (scorefxn_sampling_->get_weight(core::scoring::dihedral_constraint) == 0)
+		}
+		if ( scorefxn_sampling_->get_weight(core::scoring::dihedral_constraint) == 0 ) {
 			scorefxn_sampling_->set_weight( core::scoring::dihedral_constraint , 1.0 );
+		}
 
 		loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops );
 	}
@@ -52,11 +54,11 @@ public:
 	virtual void apply( core::pose::Pose & pose );
 
 	virtual void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap &data,
-			filters::Filters_map const &filters,
-			moves::Movers_map const &movers,
-			core::pose::Pose const & pose );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &data,
+		filters::Filters_map const &filters,
+		moves::Movers_map const &movers,
+		core::pose::Pose const & pose );
 
 private:
 	// helper function

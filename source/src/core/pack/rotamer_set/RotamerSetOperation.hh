@@ -57,7 +57,7 @@ namespace rotamer_set {
 
 class RotamerOperation : public utility::pointer::ReferenceCount
 {
-	public:
+public:
 	RotamerOperation();
 	virtual ~RotamerOperation();
 

@@ -36,9 +36,9 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace forge{
-namespace constraints{
+namespace protocols {
+namespace forge {
+namespace constraints {
 
 
 /// @brief a RemodelConstraintGenerator that creates AmbiguousConstraints for all positions
@@ -72,10 +72,10 @@ public:
 
 	virtual void
 	parse_my_tag( TagCOP tag,
-								basic::datacache::DataMap & data,
-								protocols::filters::Filters_map const & filters,
-								protocols::moves::Movers_map const & movers,
-								core::pose::Pose const & pose );
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose );
 
 	virtual std::string
 	get_name() const;
@@ -104,8 +104,8 @@ public:
 
 	/// @brief initialize with given lstart, lstop, and inverse rotamer residue list
 	void init( core::Size const lstart,
-						 core::Size const lstop,
-						 std::list< core::conformation::ResidueCOP > const & inverse_rotamers );
+		core::Size const lstop,
+		std::list< core::conformation::ResidueCOP > const & inverse_rotamers );
 
 private:
 	utility::vector1< forge::build::Interval > intervals_;

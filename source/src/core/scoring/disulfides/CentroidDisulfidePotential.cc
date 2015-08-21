@@ -51,79 +51,79 @@ namespace scoring {
 namespace disulfides {
 
 /**
- * Constructor
- */
+* Constructor
+*/
 CentroidDisulfidePotential::CentroidDisulfidePotential() {}
 
 /**
- * Deconstructor
- */
+* Deconstructor
+*/
 CentroidDisulfidePotential::~CentroidDisulfidePotential() {}
 
 /**
- * @brief Calculates scoring terms for the disulfide bond specified
- * @note Equivalent to the expanded form, but discards geometry info
- */
+* @brief Calculates scoring terms for the disulfide bond specified
+* @note Equivalent to the expanded form, but discards geometry info
+*/
 void
 CentroidDisulfidePotential::score_disulfide(
-		Residue const & res1,
-		Residue const & res2,
-		Energy & cbcb_distance_score,
-		Energy & centroid_distance_score,
-		Energy & cacbcb_angle_1_score,
-		Energy & cacbcb_angle_2_score,
-		Energy & cacbcbca_dihedral_score,
-		Energy & backbone_dihedral_score
-		) const
+	Residue const & res1,
+	Residue const & res2,
+	Energy & cbcb_distance_score,
+	Energy & centroid_distance_score,
+	Energy & cacbcb_angle_1_score,
+	Energy & cacbcb_angle_2_score,
+	Energy & cacbcbca_dihedral_score,
+	Energy & backbone_dihedral_score
+) const
 {
 	Real cbcb_distance_sq, centroid_distance_sq, cacbcb_angle_1, cacbcb_angle_2,
-	cacbcbca_dihedral, backbone_dihedral, score_factor;
+		cacbcbca_dihedral, backbone_dihedral, score_factor;
 	score_disulfide(res1,
-			res2,
-			cbcb_distance_sq,
-			centroid_distance_sq,
-			cacbcb_angle_1,
-			cacbcb_angle_2,
-			cacbcbca_dihedral,
-			backbone_dihedral,
-			cbcb_distance_score,
-			centroid_distance_score,
-			cacbcb_angle_1_score,
-			cacbcb_angle_2_score,
-			cacbcbca_dihedral_score,
-			backbone_dihedral_score,
-			score_factor
-			);
+		res2,
+		cbcb_distance_sq,
+		centroid_distance_sq,
+		cacbcb_angle_1,
+		cacbcb_angle_2,
+		cacbcbca_dihedral,
+		backbone_dihedral,
+		cbcb_distance_score,
+		centroid_distance_score,
+		cacbcb_angle_1_score,
+		cacbcb_angle_2_score,
+		cacbcbca_dihedral_score,
+		backbone_dihedral_score,
+		score_factor
+	);
 }
 
 /**
- * @brief Calculates scoring terms and geometry
- *
- * If a full atom pose is given, centroid_distance_score will be zero.
- *
- * If one of the residues is glycine it will be replaced with alanine for
- * the scores which require a CB atom.
- *
- * @note distances are given squared to avoid calling std::sqrt unnecessarily
- */
+* @brief Calculates scoring terms and geometry
+*
+* If a full atom pose is given, centroid_distance_score will be zero.
+*
+* If one of the residues is glycine it will be replaced with alanine for
+* the scores which require a CB atom.
+*
+* @note distances are given squared to avoid calling std::sqrt unnecessarily
+*/
 void
 CentroidDisulfidePotential::score_disulfide(
-		core::conformation::Residue const & res1,
-		core::conformation::Residue const & res2,
-		core::Real & cbcb_distance_sq,
-		core::Real & centroid_distance_sq,
-		core::Real & cacbcb_angle_1,
-		core::Real & cacbcb_angle_2,
-		core::Real & cacbcbca_dihedral,
-		core::Real & backbone_dihedral,
-		core::Energy & cbcb_distance_score,
-		core::Energy & centroid_distance_score,
-		core::Energy & cacbcb_angle_1_score,
-		core::Energy & cacbcb_angle_2_score,
-		core::Energy & cacbcbca_dihedral_score,
-		core::Energy & backbone_dihedral_score,
-		core::Real & cb_score_factor
-		) const
+	core::conformation::Residue const & res1,
+	core::conformation::Residue const & res2,
+	core::Real & cbcb_distance_sq,
+	core::Real & centroid_distance_sq,
+	core::Real & cacbcb_angle_1,
+	core::Real & cacbcb_angle_2,
+	core::Real & cacbcbca_dihedral,
+	core::Real & backbone_dihedral,
+	core::Energy & cbcb_distance_score,
+	core::Energy & centroid_distance_score,
+	core::Energy & cacbcb_angle_1_score,
+	core::Energy & cacbcb_angle_2_score,
+	core::Energy & cacbcbca_dihedral_score,
+	core::Energy & backbone_dihedral_score,
+	core::Real & cb_score_factor
+) const
 {
 	//The range of cb distances present in nature (squared)
 	static const Real min_native_cb_dist_sq = 10; //ang^2
@@ -133,19 +133,19 @@ CentroidDisulfidePotential::score_disulfide(
 
 	//Calculate the distances and angles of this disulfide
 	disulfide_params(res1, res2,
-			cbcb_distance_sq,
-			centroid_distance_sq,
-			cacbcb_angle_1,
-			cacbcb_angle_2,
-			cacbcbca_dihedral,
-			backbone_dihedral);
+		cbcb_distance_sq,
+		centroid_distance_sq,
+		cacbcb_angle_1,
+		cacbcb_angle_2,
+		cacbcbca_dihedral,
+		backbone_dihedral);
 
 
 	//Interpolate scores from the parameters
 	//Do the unscaled scores here, then the reweighted scores
 	cbcb_distance_score       = cb_distance_func_->func(cbcb_distance_sq);
 
-	if(centroid_distance_sq < 0) {
+	if ( centroid_distance_sq < 0 ) {
 		//Indicates error, probably full atom mode
 		centroid_distance_score = 0.0;
 	} else {
@@ -157,18 +157,16 @@ CentroidDisulfidePotential::score_disulfide(
 	//10-22A^2      1.0
 	//22-400A^2     linear function between (22,1) and (400,0)
 	//>400A^2       0.0
-	if( cbcb_distance_sq < min_native_cb_dist_sq || max_cb_dist_sq < cbcb_distance_sq ) {
+	if ( cbcb_distance_sq < min_native_cb_dist_sq || max_cb_dist_sq < cbcb_distance_sq ) {
 		//cb_score_factor = 0.; don't bother scoring
 		cacbcb_angle_1_score      = 0.;
 		cacbcb_angle_2_score      = 0.;
 		cacbcbca_dihedral_score   = 0.;
 		backbone_dihedral_score   = 0.;
 		return;
-	}
-	else if( cbcb_distance_sq < max_native_cb_dist_sq ) { //native range
+	} else if ( cbcb_distance_sq < max_native_cb_dist_sq ) { //native range
 		cb_score_factor = 1.;
-	}
-	else { //longer than native, so linearly decay to zero
+	} else { //longer than native, so linearly decay to zero
 		//slope = 1/( 22 - 400), x-intercept = 400
 		cb_score_factor = (cbcb_distance_sq - max_cb_dist_sq) /
 			(max_native_cb_dist_sq - max_cb_dist_sq);
@@ -187,31 +185,31 @@ CentroidDisulfidePotential::score_disulfide(
 
 
 /**
- * @brief calculates some degrees of freedom between two centroid cys residues
- *
- * If one of the residues is glycine it will be substituted with an idealize
- * alanine geometry for the calculations which require a Cb molecule.
- *
- * centroid_distance requires CEN atoms be defined. If full atom residues
- * are specified this function returns centroid_distance of -1.
- *
- * @param cbcb_distance     The distance between Cbetas squared
- * @param centroid_distance The distance between centroids squared
- * @param cacbcb_angle_1    The Ca1-Cb1-Cb2 planar angle, in degrees
- * @param cacbcb_angle_2    The Ca2-Cb2-Cb1 planar angle, in degrees
- * @param cacbcbca_dihedral The Ca1-Cb1-Cb2-Ca2 dihedral angle
- * @param backbone_dihedral The N-Ca1-Ca2-C2 dihedral angle
- */
+* @brief calculates some degrees of freedom between two centroid cys residues
+*
+* If one of the residues is glycine it will be substituted with an idealize
+* alanine geometry for the calculations which require a Cb molecule.
+*
+* centroid_distance requires CEN atoms be defined. If full atom residues
+* are specified this function returns centroid_distance of -1.
+*
+* @param cbcb_distance     The distance between Cbetas squared
+* @param centroid_distance The distance between centroids squared
+* @param cacbcb_angle_1    The Ca1-Cb1-Cb2 planar angle, in degrees
+* @param cacbcb_angle_2    The Ca2-Cb2-Cb1 planar angle, in degrees
+* @param cacbcbca_dihedral The Ca1-Cb1-Cb2-Ca2 dihedral angle
+* @param backbone_dihedral The N-Ca1-Ca2-C2 dihedral angle
+*/
 void
 CentroidDisulfidePotential::disulfide_params(
-		Residue const& res1,
-		Residue const& res2,
-		Real & cbcb_distance_sq,
-		Real & centroid_distance_sq,
-		Real & cacbcb_angle_1,
-		Real & cacbcb_angle_2,
-		Real & cacbcbca_dihedral,
-		Real & backbone_dihedral)
+	Residue const& res1,
+	Residue const& res2,
+	Real & cbcb_distance_sq,
+	Real & centroid_distance_sq,
+	Real & cacbcb_angle_1,
+	Real & cacbcb_angle_2,
+	Real & cacbcbca_dihedral,
+	Real & backbone_dihedral)
 {
 	using numeric::constants::d::radians_to_degrees;
 
@@ -219,7 +217,7 @@ CentroidDisulfidePotential::disulfide_params(
 	conformation::ResidueCOP res2_ptr = res2.get_self_ptr();
 	// Glycines pose a problem because they have no CB atom.
 	// Therefor mutate Gly to Ala first
-	if(res1.aa() == chemical::aa_gly) {
+	if ( res1.aa() == chemical::aa_gly ) {
 		//dummy conformation; would only be used if bb atoms missing, e.g. Pro
 		conformation::ConformationOP conformation_op( new conformation::Conformation() );
 		conformation::Conformation & conformation = *conformation_op;
@@ -228,7 +226,7 @@ CentroidDisulfidePotential::disulfide_params(
 		res1_ptr = conformation::ResidueCOP( conformation::ResidueOP( new conformation::Residue(
 			restype_set->name_map("ALA"), res1, conformation) ) );
 	}
-	if(res2.aa() == chemical::aa_gly) {
+	if ( res2.aa() == chemical::aa_gly ) {
 		//dummy conformation; would only be used if bb atoms missing, e.g. Pro
 		conformation::ConformationOP conformation_op( new conformation::Conformation() );
 		conformation::Conformation & conformation = *conformation_op;
@@ -238,8 +236,8 @@ CentroidDisulfidePotential::disulfide_params(
 			restype_set->name_map("ALA"), res2, conformation) ) );
 	}
 	//Make sure they both have CB now
-debug_assert(res1_ptr->type().has("CB"));
-debug_assert(res2_ptr->type().has("CB"));
+	debug_assert(res1_ptr->type().has("CB"));
+	debug_assert(res2_ptr->type().has("CB"));
 
 	Vector const& calpha_1 ( res1_ptr->xyz("CA") );
 	Vector const& cbeta_1  ( res1_ptr->xyz("CB") );
@@ -258,19 +256,18 @@ debug_assert(res2_ptr->type().has("CB"));
 	backbone_dihedral   = dihedral_degrees(n_1, calpha_1, calpha_2, c_2);
 
 	centroid_distance_sq = -1;
-	if( res1_ptr->type().has("CEN") &&
-		res2_ptr->type().has("CEN") )
-	{
+	if ( res1_ptr->type().has("CEN") &&
+			res2_ptr->type().has("CEN") ) {
 		Vector const& cen_1( res1_ptr->xyz("CEN"));
 		Vector const& cen_2( res2_ptr->xyz("CEN"));
 		centroid_distance_sq = cen_1.distance_squared(cen_2);
 
-	//Postcondition validation
-	debug_assert(0. <= centroid_distance_sq );
+		//Postcondition validation
+		debug_assert(0. <= centroid_distance_sq );
 	}
-debug_assert(0. <= cbcb_distance_sq);
-debug_assert(0. <= cacbcb_angle_1);debug_assert( cacbcb_angle_1 <= 180. );
-debug_assert(0. <= cacbcb_angle_2);debug_assert( cacbcb_angle_2 <= 180. );
+	debug_assert(0. <= cbcb_distance_sq);
+	debug_assert(0. <= cacbcb_angle_1);debug_assert( cacbcb_angle_1 <= 180. );
+	debug_assert(0. <= cacbcb_angle_2);debug_assert( cacbcb_angle_2 <= 180. );
 }
 
 Cb_Distance_FuncCOP CentroidDisulfidePotential::cb_distance_func_( Cb_Distance_FuncOP( new Cb_Distance_Func() ) );
@@ -280,15 +277,15 @@ NCaCaC_Dihedral_FuncCOP CentroidDisulfidePotential::ncacac_dihedral_func_( NCaCa
 CaCbCbCa_Dihedral_FuncCOP CentroidDisulfidePotential::cacbcbca_dihedral_func_( CaCbCbCa_Dihedral_FuncOP( new CaCbCbCa_Dihedral_Func() ) );
 
 /**
- * @brief Decide whether there is a disulfide bond between two residues.
- *
- * Does not require that the residues be cysteines, so if this is important
- * you should check for CYS first. (The relaxed requirements are useful for
- * design.)
- */
+* @brief Decide whether there is a disulfide bond between two residues.
+*
+* Does not require that the residues be cysteines, so if this is important
+* you should check for CYS first. (The relaxed requirements are useful for
+* design.)
+*/
 bool CentroidDisulfidePotential::is_disulfide(
-		Residue const & res1,
-		Residue const & res2) const
+	Residue const & res1,
+	Residue const & res2) const
 {
 	//Get Cb distance score
 	Energy cbcb_distance_score,
@@ -319,7 +316,7 @@ bool CentroidDisulfidePotential::is_disulfide(
 		cacbcbca_dihedral_score,
 		backbone_dihedral_score,
 		score_factor
-		);
+	);
 
 
 	return cbcb_distance_score <= disulfide_cb_dist_cutoff &&
@@ -354,7 +351,7 @@ Cb_Distance_Func::~Cb_Distance_Func() {}
 Real Cb_Distance_Func::func( Real const cb_dist_sq_) const {
 	using core::scoring::constraints::dgaussian;
 	Energy score = base_score_;
-	for(Size i = 0; i<3; ++i ) {
+	for ( Size i = 0; i<3; ++i ) {
 		score -= dgaussian(cb_dist_sq_, means_[i], sds_[i], weights_[i] );
 	}
 
@@ -372,8 +369,9 @@ const Real Cb_Distance_Func::base_score_ = 0.0;
 Cen_Distance_Func::Cen_Distance_Func() {}
 Cen_Distance_Func::~Cen_Distance_Func() {}
 Real Cen_Distance_Func::func( Real const cen_dist_sq) const {
-	if( centroid_dist_scores_ == 0)
+	if ( centroid_dist_scores_ == 0 ) {
 		centroid_dist_scores_ = histogram_from_db("scoring/score_functions/disulfides/centroid_distance_score");
+	}
 	Real e(0.0);
 	centroid_dist_scores_->interpolate(cen_dist_sq,e);
 	return e;
@@ -387,8 +385,9 @@ HistogramCOP<Real,Real>::Type Cen_Distance_Func::centroid_dist_scores_ = 0;
 CaCbCb_Angle_Func::CaCbCb_Angle_Func() {}
 CaCbCb_Angle_Func::~CaCbCb_Angle_Func() {}
 Real CaCbCb_Angle_Func::func( Real const cacbcb_angle) const {
-	if( CaCbCb_angle_scores_ == 0 )
+	if ( CaCbCb_angle_scores_ == 0 ) {
 		CaCbCb_angle_scores_ = histogram_from_db("scoring/score_functions/disulfides/centroid_CaCbCb_angle_score");
+	}
 	Real e(0.0);
 	CaCbCb_angle_scores_->interpolate(cacbcb_angle,e);
 	return e;
@@ -403,8 +402,9 @@ HistogramCOP<core::Real,core::Real>::Type CaCbCb_Angle_Func::CaCbCb_angle_scores
 NCaCaC_Dihedral_Func::NCaCaC_Dihedral_Func() {}
 NCaCaC_Dihedral_Func::~NCaCaC_Dihedral_Func() {}
 Real NCaCaC_Dihedral_Func::func( Real const backbone_dihedral) const {
-	if( backbone_dihedral_scores_ == 0 )
+	if ( backbone_dihedral_scores_ == 0 ) {
 		backbone_dihedral_scores_ = histogram_from_db("scoring/score_functions/disulfides/centroid_backbone_dihedral_score");
+	}
 	Real e(0.0);
 	backbone_dihedral_scores_->interpolate(backbone_dihedral, e);
 	return e;
@@ -419,8 +419,9 @@ HistogramCOP<core::Real,core::Real>::Type NCaCaC_Dihedral_Func::backbone_dihedra
 CaCbCbCa_Dihedral_Func::CaCbCbCa_Dihedral_Func() {}
 CaCbCbCa_Dihedral_Func::~CaCbCbCa_Dihedral_Func() {}
 Real CaCbCbCa_Dihedral_Func::func( Real const cacbcbca_dihedral) const {
-	if( CaCbCbCa_dihedral_scores_ == 0 )
+	if ( CaCbCbCa_dihedral_scores_ == 0 ) {
 		CaCbCbCa_dihedral_scores_ = histogram_from_db("scoring/score_functions/disulfides/centroid_CaCbCbCa_dihedral_score");
+	}
 	Real e(0.0);
 	CaCbCbCa_dihedral_scores_->interpolate(cacbcbca_dihedral,e);
 	return e;

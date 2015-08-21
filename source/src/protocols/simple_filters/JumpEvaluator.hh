@@ -49,9 +49,9 @@ namespace simple_filters {
 
 class JumpEvaluator : public evaluation::SingleValuePoseEvaluator< core::Real > {
 public:
-  JumpEvaluator( core::pose::Pose const& native_pose, Size jump_nr );
+	JumpEvaluator( core::pose::Pose const& native_pose, Size jump_nr );
 
-  virtual core::Real apply( core::pose::Pose& pose  ) const;
+	virtual core::Real apply( core::pose::Pose& pose  ) const;
 
 private:
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
@@ -67,8 +67,8 @@ private:
 //@brief yields a column with the number of jumps in the pose
 class JumpNrEvaluator : public evaluation::SingleValuePoseEvaluator< core::Size > {
 public:
-  JumpNrEvaluator() : evaluation::SingleValuePoseEvaluator< core::Size >( "nrjumps" ) {};
-  virtual core::Size apply( core::pose::Pose& pose  ) const;
+	JumpNrEvaluator() : evaluation::SingleValuePoseEvaluator< core::Size >( "nrjumps" ) {};
+	virtual core::Size apply( core::pose::Pose& pose  ) const;
 private:
 };
 

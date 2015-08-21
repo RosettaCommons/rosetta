@@ -51,8 +51,8 @@
 // External Headers
 #include <cppdb/frontend.h>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::string;
 using std::endl;
@@ -179,8 +179,8 @@ RotamerFeatures::report_features(
 	sessionOP db_session
 ) {
 
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	string library_name;
 	vector1< AA > rotameric_amino_acids;
@@ -195,62 +195,62 @@ RotamerFeatures::report_features(
 	vector1< bool > sym;
 	vector1< Real > astr;
 
-  if( option[ corrections::score::dun10 ] ){
-    library_name = "dun10";
+	if ( option[ corrections::score::dun10 ] ) {
+		library_name = "dun10";
 		RotamerLibrary::initialize_dun10_aa_parameters(
 			rotameric_amino_acids, rotameric_n_chi, rotameric_n_bb,
 			sraa, srnchi, srnbb, scind, sampind, sym, astr );
 
-  } else {
-    library_name = "dun02";
+	} else {
+		library_name = "dun02";
 		RotamerLibrary::initialize_dun02_aa_parameters(
 			rotameric_amino_acids, rotameric_n_chi, rotameric_n_bb);
-  }
+	}
 
 	string insert_sql(
 		"INSERT INTO residue_rotamers ("
-		"	struct_id,"
-		"	residue_number,"
-		"	rotamer_bin,"
-		"	nchi,"
-		"	semi_rotameric,"
-		"	chi1_mean,"
-		"	chi2_mean,"
-		"	chi3_mean,"
-		"	chi4_mean,"
-		"	chi1_standard_deviation,"
-		"	chi2_standard_deviation,"
-		"	chi3_standard_deviation,"
-		"	chi4_standard_deviation,"
-		"	chi1_deviation,"
-		"	chi2_deviation,"
-		"	chi3_deviation,"
-		"	chi4_deviation,"
-		"	rotamer_bin_probability) VALUES"
-		"	(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+		"\tstruct_id,"
+		"\tresidue_number,"
+		"\trotamer_bin,"
+		"\tnchi,"
+		"\tsemi_rotameric,"
+		"\tchi1_mean,"
+		"\tchi2_mean,"
+		"\tchi3_mean,"
+		"\tchi4_mean,"
+		"\tchi1_standard_deviation,"
+		"\tchi2_standard_deviation,"
+		"\tchi3_standard_deviation,"
+		"\tchi4_standard_deviation,"
+		"\tchi1_deviation,"
+		"\tchi2_deviation,"
+		"\tchi3_deviation,"
+		"\tchi4_deviation,"
+		"\trotamer_bin_probability) VALUES"
+		"\t(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
 	statement insert_stmt(safely_prepare_statement(insert_sql, db_session));
 
 	RotamerLibraryScratchSpace scratch;
 
-	for(
-		Size residue_number=1;
-		residue_number <= pose.total_residue();
-		++residue_number){
+	for (
+			Size residue_number=1;
+			residue_number <= pose.total_residue();
+			++residue_number ) {
 
 		// only report features for the specified subset of residues
-		if(!check_relevant_residues(relevant_residues, residue_number)) continue;
+		if ( !check_relevant_residues(relevant_residues, residue_number) ) continue;
 
 		Residue const & residue(pose.residue(residue_number));
-		if( residue.type().residue_type_set().name() != FA_STANDARD){
+		if ( residue.type().residue_type_set().name() != FA_STANDARD ) {
 			utility_exit_with_message("Attempting to report protein rotamer features for a pose that is not full-atom.");
 		}
 
-		if( ! residue.is_protein() || residue.type().aa() > num_canonical_aas ){
+		if ( ! residue.is_protein() || residue.type().aa() > num_canonical_aas ) {
 			TR.Warning << "Unable to report protein rotamer features for residue " << residue_number << " because it is not a canonical amino acid: '" << residue.type().name() << "'" << endl;
 			continue;
 		}
 
-		if(residue.type().rotamer_library_specification() && residue.type().rotamer_library_specification()->keyname() == "NCAA"){
+		if ( residue.type().rotamer_library_specification() && residue.type().rotamer_library_specification()->keyname() == "NCAA" ) {
 			TR.Warning << "Currently the RotamerFeatures only supports canonical amino acids, but this residue type is '" << residue.type().name() << "'" << endl;
 			continue;
 		}
@@ -264,8 +264,8 @@ RotamerFeatures::report_features(
 		bool semi_rotameric(true);
 		Size nchi = 0;
 		Size n_bb = 0;
-		for(Size ii=1; ii <= rotameric_amino_acids.size(); ++ii){
-			if (rotameric_amino_acids[ii] == residue.aa()){
+		for ( Size ii=1; ii <= rotameric_amino_acids.size(); ++ii ) {
+			if ( rotameric_amino_acids[ii] == residue.aa() ) {
 				semi_rotameric = false;
 				nchi = rotameric_n_chi[ ii ];
 				n_bb = rotameric_n_bb[ ii ];
@@ -273,9 +273,9 @@ RotamerFeatures::report_features(
 			}
 		}
 
-		if(semi_rotameric){
-			for(Size ii=1; ii <= sraa.size(); ++ii){
-				if(sraa[ii] == residue.aa()){
+		if ( semi_rotameric ) {
+			for ( Size ii=1; ii <= sraa.size(); ++ii ) {
+				if ( sraa[ii] == residue.aa() ) {
 					nchi = srnchi[ii];
 					n_bb = srnbb[ ii ];
 					break;
@@ -284,10 +284,10 @@ RotamerFeatures::report_features(
 		}
 
 
-		if(nchi == 0){
+		if ( nchi == 0 ) {
 			continue;
-		} else if( nchi == ONE){
-			if ( n_bb == ONE ){
+		} else if ( nchi == ONE ) {
+			if ( n_bb == ONE ) {
 				recognized_residue_type = RotamerInitializer<ONE, ONE>::initialize_rotamer( residue, scratch, rotamer_bin);
 			} else if ( n_bb == TWO ) {
 				recognized_residue_type = RotamerInitializer<ONE, TWO>::initialize_rotamer( residue, scratch, rotamer_bin);
@@ -298,8 +298,8 @@ RotamerFeatures::report_features(
 			} else {
 				continue;
 			}
-		} else if( nchi == TWO){
-			if ( n_bb == ONE ){
+		} else if ( nchi == TWO ) {
+			if ( n_bb == ONE ) {
 				recognized_residue_type = RotamerInitializer<TWO, ONE>::initialize_rotamer( residue, scratch, rotamer_bin);
 			} else if ( n_bb == TWO ) {
 				recognized_residue_type = RotamerInitializer<TWO, TWO>::initialize_rotamer( residue, scratch, rotamer_bin);
@@ -310,8 +310,8 @@ RotamerFeatures::report_features(
 			} else {
 				continue;
 			}
-		} else if( nchi == THREE){
-			if ( n_bb == ONE ){
+		} else if ( nchi == THREE ) {
+			if ( n_bb == ONE ) {
 				recognized_residue_type = RotamerInitializer<THREE, ONE>::initialize_rotamer( residue, scratch, rotamer_bin);
 			} else if ( n_bb == TWO ) {
 				recognized_residue_type = RotamerInitializer<THREE, TWO>::initialize_rotamer( residue, scratch, rotamer_bin);
@@ -322,8 +322,8 @@ RotamerFeatures::report_features(
 			} else {
 				continue;
 			}
-		} else if( nchi == FOUR){
-			if ( n_bb == ONE ){
+		} else if ( nchi == FOUR ) {
+			if ( n_bb == ONE ) {
 				recognized_residue_type = RotamerInitializer<FOUR, ONE>::initialize_rotamer( residue, scratch, rotamer_bin);
 			} else if ( n_bb == TWO ) {
 				recognized_residue_type = RotamerInitializer<FOUR, TWO>::initialize_rotamer( residue, scratch, rotamer_bin);
@@ -338,7 +338,7 @@ RotamerFeatures::report_features(
 			continue;
 		}
 
-		if(!recognized_residue_type){
+		if ( !recognized_residue_type ) {
 			TR.Warning << "Unable to report protein rotamer features for residue " << residue_number << " because there is no rotamer library defined for this residue type: '" << residue.type().name() << "'" << endl;
 			continue;
 		}
@@ -346,11 +346,11 @@ RotamerFeatures::report_features(
 
 		vector1< Real > chi_deviations(0, 4);
 
-		for(Size chi = 1; chi <= nchi; ++chi){
-			if(library_name.compare("dun02") == 0){
+		for ( Size chi = 1; chi <= nchi; ++chi ) {
+			if ( library_name.compare("dun02") == 0 ) {
 				chi_deviations.push_back(
 					subtract_chi_angles(
-						chis[chi], scratch.chimean()[chi], residue.aa(), chi));
+					chis[chi], scratch.chimean()[chi], residue.aa(), chi));
 			} else {
 				chi_deviations.push_back(
 					periodic_range(chis[chi] - scratch.chimean()[chi], 360));
@@ -363,8 +363,8 @@ RotamerFeatures::report_features(
 		insert_stmt.bind(4, nchi);
 		insert_stmt.bind(5, semi_rotameric);
 
-		for(Size chi = 1; chi <= 4; ++chi){
-			if( chi <= nchi){
+		for ( Size chi = 1; chi <= 4; ++chi ) {
+			if ( chi <= nchi ) {
 				insert_stmt.bind(5+chi, scratch.chimean()[chi]);
 				insert_stmt.bind(9+chi, scratch.chisd()[chi]);
 				insert_stmt.bind(13+chi, chi_deviations[chi]);

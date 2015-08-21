@@ -32,7 +32,7 @@ namespace dna {
 class DNABase {
 public: // constructor
 	DNABase() :  alpha_( 0.0 ), beta_( 0.0 ), gamma_( 0.0 ), delta_( 0.0 ), epsilon_( 0.0 ), zeta_( 0.0 ),
-								chi_( 0.0 ), pseudorotation_( 0.0 ), amplitude_( 0.0 ) {}
+		chi_( 0.0 ), pseudorotation_( 0.0 ), amplitude_( 0.0 ) {}
 	// These next two use the formats from core::scoring::dna, which are ultimately used to generate the data
 	DNABase( core::conformation::Residue const & rsd );
 
@@ -109,7 +109,7 @@ public: // constructor
 	// These next two use the formats from core::scoring::dna, which are ultimately used to generate the data
 	DNABasestep( utility::vector1<core::Real> const & init_values );
 	DNABasestep( core::conformation::Residue const & rsd1, core::conformation::Residue const & rsd2,
-								core::conformation::Residue const & rsd1_next, core::conformation::Residue const & rsd2_prev );
+		core::conformation::Residue const & rsd1_next, core::conformation::Residue const & rsd2_prev );
 
 public:
 	// const getter methods

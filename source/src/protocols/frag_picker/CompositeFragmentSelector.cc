@@ -22,10 +22,10 @@
 namespace protocols {
 namespace frag_picker {
 
-	/// @brief  Selects desired number of fragments from a given set of candidates
+/// @brief  Selects desired number of fragments from a given set of candidates
 void CompositeFragmentSelector::select_fragments(
-   ScoredCandidatesVector1 const& in,
-	 ScoredCandidatesVector1& out )
+	ScoredCandidatesVector1 const& in,
+	ScoredCandidatesVector1& out )
 {
 	if ( selectors_.size()==0 ) return;
 	if ( selectors_.size()==1 ) {
@@ -35,11 +35,12 @@ void CompositeFragmentSelector::select_fragments(
 	Size n = selectors_.size();
 	ScoredCandidatesVector1 tmp, tmp_tmp;
 	selectors_[1]->select_fragments(in,tmp);
-	for(Size i=2;i<=n-1;i++) {
+	for ( Size i=2; i<=n-1; i++ ) {
 		selectors_[i]->select_fragments(tmp,tmp_tmp);
 		tmp.clear();
-		for(Size j=1;j<=tmp_tmp.size();j++)
-	    tmp.push_back(tmp_tmp[j]);
+		for ( Size j=1; j<=tmp_tmp.size(); j++ ) {
+			tmp.push_back(tmp_tmp[j]);
+		}
 	}
 	selectors_[n]->select_fragments(tmp,out);
 }

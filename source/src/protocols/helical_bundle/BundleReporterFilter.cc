@@ -53,7 +53,7 @@
 #include <basic/options/option_macros.hh>
 #include <core/pose/util.hh>
 
-namespace protocols{
+namespace protocols {
 namespace helical_bundle {
 
 using namespace core;
@@ -105,61 +105,61 @@ BundleReporterFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 {
 	using namespace core::scoring;
 
-	// Parse scorefunction:	
+	// Parse scorefunction:
 	{
 		runtime_assert_string_msg( tag->hasOption("scorefxn"), "Error in protocols::helical_bundle::BundleReporterFilter::parse_my_tag():  The BundleReporter filter must have a scorefunction specified (\"scorefxn\" option)." );
 		set_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data )->clone() );
-		if(TR.visible()) TR << "Set scorefunction for the BundleReporter filter to " << tag->getOption<std::string>("scorefxn") << "." << std::endl;
+		if ( TR.visible() ) TR << "Set scorefunction for the BundleReporter filter to " << tag->getOption<std::string>("scorefxn") << "." << std::endl;
 	}
 
 	// Parse scoretype, if specified.  (Default to "total_score" if not.):
 	{
 		std::string const scoretype_string( tag->getOption<std::string>( "score_type", "total_score" ) );
 		set_score_type( core::scoring::score_type_from_name( scoretype_string ) );
-		if(TR.visible()) TR << "Set BundleReporter filter scoretype to " << scoretype_string << "." << std::endl;
+		if ( TR.visible() ) TR << "Set BundleReporter filter scoretype to " << scoretype_string << "." << std::endl;
 	}
-	
+
 	// Parse behaviour, if specified
 	{
 		std::string const behav_string( tag->getOption< std::string >( "behavior", "ALWAYS_TRUE" ) ); //Ugh -- user-facing side uses American spelling of "behaviour".
 		set_filter_behaviour( behav_string );
-		if(TR.visible()) TR << "Set BundleReporter filter behaviour to " << behav_string << "." << std::endl;
+		if ( TR.visible() ) TR << "Set BundleReporter filter behaviour to " << behav_string << "." << std::endl;
 	}
-	
+
 	// Parse energy threshold, if specified and used:
-	if( tag->hasOption( "threshold" ) ) {
-		if( filter_behaviour() != brf_filter_by_energy && TR.Warning.visible() ) {
-			if(TR.visible()) TR.flush();
+	if ( tag->hasOption( "threshold" ) ) {
+		if ( filter_behaviour() != brf_filter_by_energy && TR.Warning.visible() ) {
+			if ( TR.visible() ) TR.flush();
 			TR.Warning << "Warning!  A \"threshold\" option was specified in the setup for the BundleReporterFilter, but this will be ignored because the filter behaviour was not set to \"FILTER\"." << std::endl;
 			TR.Warning.flush();
 		}
 	}
-	if( filter_behaviour() == brf_filter_by_energy ) {
+	if ( filter_behaviour() == brf_filter_by_energy ) {
 		core::Real const thresh( tag->getOption<core::Real>( "threshold", 0.0 ) );
 		set_score_type_threshold( thresh );
-		if(TR.visible()) TR << "Energy threshold for filtering set to " << thresh << ".  (Energies above this will result in the filter returning FALSE)." << std::endl;
+		if ( TR.visible() ) TR << "Energy threshold for filtering set to " << thresh << ".  (Energies above this will result in the filter returning FALSE)." << std::endl;
 	}
-	
+
 	// Parse options for reporting sequences:
 	set_report_sequence( tag->getOption<bool>("report_sequence", false) );
-	if( tag->hasOption( "use_three_letter_code" ) && !report_sequence() && TR.Warning.visible() ) {
-		if(TR.visible()) TR.flush();
+	if ( tag->hasOption( "use_three_letter_code" ) && !report_sequence() && TR.Warning.visible() ) {
+		if ( TR.visible() ) TR.flush();
 		TR.Warning << "Warning!  The \"use_three_letter_code\" option was specified, but it will be ignored since \"report_sequence\" is set to false." << std::endl;
 		TR.Warning.flush();
 	}
 	set_use_threeletter( tag->getOption<bool>("use_three_letter_code", false) );
-	if(report_sequence() && TR.visible()) {
-		if(use_threeletter()) {
+	if ( report_sequence() && TR.visible() ) {
+		if ( use_threeletter() ) {
 			TR << "Sequences will be reported by the BundleReporterFilter as three-letter codes." << std::endl;
 		} else {
 			TR << "Sequences will be reported by the BundleReporterFilter as one-letter codes." << std::endl;
 		}
-	}	
+	}
 	// Flush all tracers:
-	if(TR.visible()) TR.flush();
-	if(TR.Warning.visible()) TR.Warning.flush();
-	if(TR.Debug.visible()) TR.Debug.flush();
-	
+	if ( TR.visible() ) TR.flush();
+	if ( TR.Warning.visible() ) TR.Warning.flush();
+	if ( TR.Debug.visible() ) TR.Debug.flush();
+
 	return;
 }
 
@@ -168,11 +168,11 @@ BundleReporterFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 /// @details Options are "ALWAYS_TRUE", "ALWAYS_FALSE", or "FILTER".
 void BundleReporterFilter::set_filter_behaviour( std::string const &behaviour_string )
 {
-	if( behaviour_string == "ALWAYS_TRUE" ) set_filter_behaviour( brf_always_true );
-	else if( behaviour_string == "ALWAYS_FALSE" ) set_filter_behaviour( brf_always_false );
-	else if( behaviour_string == "FILTER" ) set_filter_behaviour( brf_filter_by_energy );
+	if ( behaviour_string == "ALWAYS_TRUE" ) set_filter_behaviour( brf_always_true );
+	else if ( behaviour_string == "ALWAYS_FALSE" ) set_filter_behaviour( brf_always_false );
+	else if ( behaviour_string == "FILTER" ) set_filter_behaviour( brf_filter_by_energy );
 	else set_filter_behaviour( brf_undefined ); //Will throw an error.
-	
+
 	return;
 }
 
@@ -187,37 +187,36 @@ BundleReporterFilter::apply( core::pose::Pose const & pose ) const {
 
 	/// Compute the energy of the pose:
 	core::Real const score( compute( pose ) );
-	
+
 	/// Write out a full report:
-	if(TRReport.visible()) {
+	if ( TRReport.visible() ) {
 		core::Size jobno(0);
-		if( protocols::jd2::jd2_used() ) { //If this is a JD2 job
+		if ( protocols::jd2::jd2_used() ) { //If this is a JD2 job
 			jobno=protocols::jd2::JobDistributor::get_instance()->current_job()->nstruct_index(); //Get the current job number.
 		}
 		TRReport << generate_full_tracer_report( jobno, score, pose ) << std::endl;
 		TRReport.flush();
 	}
-	
-	if( filter_behaviour() == brf_filter_by_energy ) {
-		if(  score <= score_type_threshold() ) {
-			if(TR.visible()) TR << "Energy is less than threshold.  Passing." << std::endl;
+
+	if ( filter_behaviour() == brf_filter_by_energy ) {
+		if (  score <= score_type_threshold() ) {
+			if ( TR.visible() ) TR << "Energy is less than threshold.  Passing." << std::endl;
 			returnval=true;
-		}
-		else {
-			if(TR.visible()) TR << "Energy is greater than threshold.  Failing." << std::endl;
+		} else {
+			if ( TR.visible() ) TR << "Energy is greater than threshold.  Failing." << std::endl;
 			returnval=false;
 		}
-	} else if (filter_behaviour() == brf_always_false) {
+	} else if ( filter_behaviour() == brf_always_false ) {
 		returnval=false;
-	} else if (filter_behaviour() == brf_always_true) {
+	} else if ( filter_behaviour() == brf_always_true ) {
 		returnval=true;
 	}
-	
+
 	// Flush all tracers:
-	if(TR.visible()) TR.flush();
-	if(TR.Warning.visible()) TR.Warning.flush();
-	if(TR.Debug.visible()) TR.Debug.flush();
-	
+	if ( TR.visible() ) TR.flush();
+	if ( TR.Warning.visible() ) TR.Warning.flush();
+	if ( TR.Debug.visible() ) TR.Debug.flush();
+
 	return returnval;
 }
 
@@ -245,58 +244,58 @@ std::string BundleReporterFilter::generate_full_tracer_report(
 	using namespace protocols::helical_bundle::parameters;
 
 	std::stringstream ss;
-	
+
 	// Blank line first
 	ss << std::endl;
-	
+
 	// Asterisks and the job number at the top
-	if(jobno!=0) {
+	if ( jobno!=0 ) {
 		ss << "********** BUNDLEREPORTER FILTER REPORT FOR JOB " << jobno << " **********" << std::endl;
 	} else {
 		ss << "********** BUNDLEREPORTER FILTER REPORT **********" << std::endl;
 	}
-	
+
 	ss << "Score:\t" << score << std::endl;
 
 	/// Write out the sequence:
-	if(report_sequence()) {
+	if ( report_sequence() ) {
 		ss << "Sequence:\t";
-		if(use_threeletter()) {
-			for(core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir) {
+		if ( use_threeletter() ) {
+			for ( core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir ) {
 				ss << pose.residue(ir).name3();
-				if(ir<irmax) ss << " ";
+				if ( ir<irmax ) ss << " ";
 				else ss << std::endl;
 			}
 		} else {
 			ss << pose.sequence() << std::endl;
 		}
 	}
-	
+
 	core::Size const nsets(pose.conformation().n_parameters_sets()); //How many ParametersSet objects are there in the pose?
 	core::Size bundleset_counter(0);
-	
+
 	// Get the PDB remark info and put it in the output stringstream:
-	if( nsets==0 ) {
+	if ( nsets==0 ) {
 		ss << "This is not a parametric pose!" << std::endl;
 	} else {
-		for(core::Size iset=1; iset<=nsets; ++iset) { //Loop through all of the ParametersSet objects.
+		for ( core::Size iset=1; iset<=nsets; ++iset ) { //Loop through all of the ParametersSet objects.
 			BundleParametersSetCOP curset( utility::pointer::dynamic_pointer_cast< const BundleParametersSet >( pose.conformation().parameters_set(iset) ) );
-			if(!curset) continue; //Not a BundleParametersSet (i.e. some other sort of parametric dataset), so go on to the next.
+			if ( !curset ) continue; //Not a BundleParametersSet (i.e. some other sort of parametric dataset), so go on to the next.
 			++bundleset_counter;
 			curset->get_pdb_remark( ss );
-		}	
+		}
 	}
-	if(bundleset_counter==0) {
+	if ( bundleset_counter==0 ) {
 		ss << "This parametric pose has no BundleParameterSets in it!" << std::endl;
 	}
 
 	// Asterisks and the job number at the bottom
-	if(jobno!=0) {
+	if ( jobno!=0 ) {
 		ss << "******** END BUNDLEREPORTER FILTER REPORT FOR JOB " << jobno << " ********" << std::endl;
 	} else {
 		ss << "******** END BUNDLEREPORTER FILTER REPORT ********" << std::endl;
 	}
-	
+
 	return ss.str();
 }
 
@@ -316,7 +315,7 @@ BundleReporterFilter::compute( core::pose::Pose const & pose ) const {
 	core::Real const weight( (*scorefxn_)[ ScoreType( score_type_ ) ] );
 	core::Real const score( in_pose->energies().total_energies()[ ScoreType( score_type_ ) ]);
 
-	if( score_type_ == total_score ) return( score );
+	if ( score_type_ == total_score ) return( score );
 
 	core::Real const weighted_score( weight * score );
 	return( weighted_score );

@@ -53,8 +53,8 @@
 #include <utility/excn/Exceptions.hh>
 #include <map>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::map;
 using std::string;
@@ -120,7 +120,7 @@ AtomAtomPairFeatures::AtomAtomPairFeatures() :
 
 	AtomTypeSetCOP atom_type_set(ChemicalManager::get_instance()->atom_type_set("fa_standard"));
 
-	for(Size i=1; i <= relevant_atom_names_.size(); ++i){
+	for ( Size i=1; i <= relevant_atom_names_.size(); ++i ) {
 		atom_index_to_relevant_atom_index_[
 			atom_type_set->atom_type_index(relevant_atom_names_[i])] = i;
 	}
@@ -205,7 +205,7 @@ AtomAtomPairFeatures::parse_my_tag(
 	min_dist_ = tag->getOption<Real>("min_dist", 0.0);
 	max_dist_ = tag->getOption<Real>("max_dist", 10.0);
 	nbins_ = tag->getOption<Size>("nbins", 15);
-	if(nbins_ < 1){
+	if ( nbins_ < 1 ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("The parameter 'nbins' must be an integer greater than 0.");
 	}
 }
@@ -233,14 +233,14 @@ AtomAtomPairFeatures::report_atom_pairs(
 
 	// assert pose.update_residue_neighbors() has been called:
 	runtime_assert(
-		 !pose.conformation().structure_moved() &&
-		 pose.energies().residue_neighbors_updated());
+		!pose.conformation().structure_moved() &&
+		pose.energies().residue_neighbors_updated());
 
-	if(pose.total_residue() ==0){
+	if ( pose.total_residue() ==0 ) {
 		return;
 	}
 
-	if(pose.residue(1).type().atom_type_set().name() != "fa_standard"){
+	if ( pose.residue(1).type().atom_type_set().name() != "fa_standard" ) {
 		TR.Warning
 			<< "Currently AtomAtomPairFeatures only works "
 			<< "for the 'fa_standard' AtomTypeSet. This pose has AtomTypeSet '"
@@ -251,7 +251,7 @@ AtomAtomPairFeatures::report_atom_pairs(
 
 	vector1<Distance> bin_breaks;
 	Distance const bin_width((max_dist_-min_dist_)/nbins_);
-	for(Size i=0; i <= nbins_; ++i){
+	for ( Size i=0; i <= nbins_; ++i ) {
 		bin_breaks.push_back(i*bin_width + min_dist_);
 	}
 
@@ -262,38 +262,38 @@ AtomAtomPairFeatures::report_atom_pairs(
 	FArray3D< Size > counts;
 	counts.dimension(dim1, dim2, dim3, initial_value);
 
-	for(Size res_num1=1; res_num1 <= pose.total_residue(); ++res_num1){
+	for ( Size res_num1=1; res_num1 <= pose.total_residue(); ++res_num1 ) {
 		Residue res1(pose.residue(res_num1));
 
-		for(Size atom_num1=1; atom_num1 <= res1.natoms(); ++atom_num1){
+		for ( Size atom_num1=1; atom_num1 <= res1.natoms(); ++atom_num1 ) {
 			Vector const & atom1_xyz( res1.xyz(atom_num1) );
 
 			Size const atom_index1(res1.type().atom(atom_num1).atom_type_index());
 			map<Size, Size>::const_iterator const i_relevant_atom_index1(
 				atom_index_to_relevant_atom_index_.find(atom_index1));
-			if(i_relevant_atom_index1 == atom_index_to_relevant_atom_index_.end()){
+			if ( i_relevant_atom_index1 == atom_index_to_relevant_atom_index_.end() ) {
 				continue;
 			}
 
-			for(Size res_num2=1; res_num2 <= pose.total_residue(); ++res_num2){
-				if(!check_relevant_residues(
-						relevant_residues, res_num1, res_num2)) continue;
+			for ( Size res_num2=1; res_num2 <= pose.total_residue(); ++res_num2 ) {
+				if ( !check_relevant_residues(
+						relevant_residues, res_num1, res_num2) ) continue;
 				Residue res2( pose.residue(res_num2) );
 
-				for(Size atom_num2=1; atom_num2 <= res2.natoms(); ++atom_num2){
+				for ( Size atom_num2=1; atom_num2 <= res2.natoms(); ++atom_num2 ) {
 					string const elem_name2(res2.type().atom_type(atom_num2).element());
 					map< string, Size>::const_iterator i_elem2(
 						relevant_elements_.find(elem_name2));
-					if(i_elem2 == relevant_elements_.end()) continue;
+					if ( i_elem2 == relevant_elements_.end() ) continue;
 
 					Vector const & atom2_xyz( res2.xyz(atom_num2) );
 					Distance dist(atom1_xyz.distance(atom2_xyz));
-					if(dist <= min_dist_ || dist > max_dist_) continue;
+					if ( dist <= min_dist_ || dist > max_dist_ ) continue;
 
 
 					Size const dist_bin(
 						static_cast<Size>(ceil(
-								(dist-min_dist_)*nbins_/(max_dist_-min_dist_))));
+						(dist-min_dist_)*nbins_/(max_dist_-min_dist_))));
 					counts(i_relevant_atom_index1->second, i_elem2->second, dist_bin) += 1;
 				}
 			}
@@ -304,11 +304,11 @@ AtomAtomPairFeatures::report_atom_pairs(
 	statement stmt(safely_prepare_statement(stmt_string,db_session));
 
 
-	for(Size i_atom1=1; i_atom1 <= relevant_atom_names_.size(); ++i_atom1){
-		for(map<string, Size>::const_iterator
-					i_elem2=relevant_elements_.begin(),
-					ie_elem2=relevant_elements_.end(); i_elem2 != ie_elem2; ++i_elem2){
-			for(Size dist_bin=1; dist_bin <= nbins_; ++dist_bin){
+	for ( Size i_atom1=1; i_atom1 <= relevant_atom_names_.size(); ++i_atom1 ) {
+		for ( map<string, Size>::const_iterator
+				i_elem2=relevant_elements_.begin(),
+				ie_elem2=relevant_elements_.end(); i_elem2 != ie_elem2; ++i_elem2 ) {
+			for ( Size dist_bin=1; dist_bin <= nbins_; ++dist_bin ) {
 				Real const lower_break(min_dist_ + (dist_bin - 1)*bin_width);
 				Real const upper_break(min_dist_ + dist_bin * bin_width);
 				Size const count(counts(i_atom1,i_elem2->second, dist_bin));

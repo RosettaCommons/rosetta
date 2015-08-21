@@ -147,7 +147,7 @@ ActiveSiteGrid::initialize_from_gridlig_file( std::string const & fname )
 		if ( ! istr ) break;
 		++linenumber;
 
-		if (is_blank(line)) {
+		if ( is_blank(line) ) {
 			++bin[ 1 ];
 			bin[ 2 ] = 0;
 			bin[ 3 ] = 0;

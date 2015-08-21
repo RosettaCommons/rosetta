@@ -35,7 +35,7 @@ namespace mmt_msd {
 class MMTPackingJob : public utility::pointer::ReferenceCount
 {
 public:
-	typedef	std::list< std::pair< core::Size, std::string > > required_npds;
+	typedef std::list< std::pair< core::Size, std::string > > required_npds;
 	typedef std::pair< core::Size, core::Real > npd_property_and_value;
 	typedef std::list< npd_property_and_value > npd_properties;
 

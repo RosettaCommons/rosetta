@@ -67,32 +67,32 @@ go_main() {
 	JobInputterOP inputter( JobDistributorFactory::create_job_inputter() );
 	protocols::jd2::JobsContainer inputs_container;
 	inputter->fill_jobs( inputs_container );
-	
+
 	protocols::jd2::Jobs inputs;
-	for(core::Size i=1; i<=inputs_container.size(); ++i) {
+	for ( core::Size i=1; i<=inputs_container.size(); ++i ) {
 		inputs.push_back( inputs_container[i] );
 	}
 
 	core::import_pose::atom_tree_diffs::ScoresPairList scores_list;
 	std::map< std::string, JobOP> tag_job_map;
-	for( Jobs::const_iterator job_iter(inputs.begin()); job_iter != inputs.end(); ++job_iter ) {
+	for ( Jobs::const_iterator job_iter(inputs.begin()); job_iter != inputs.end(); ++job_iter ) {
 		std::string const & tag( (*job_iter)->input_tag() );
 		tag_job_map[ tag ] = *job_iter;
 		core::import_pose::atom_tree_diffs::Scores scoremap( (*job_iter)->output_string_real_pairs_begin(), (*job_iter)->output_string_real_pairs_end() );
 		// Need to add data from those tucked into the pose itself (for binary silent file support).
 		// We're actually only interested in "ligand_is_touching", "interface_delta",  and "total_score"
-		if( scoremap.find("ligand_is_touching") == scoremap.end() || scoremap.find("interface_delta") == scoremap.end() || scoremap.find("total_score") == scoremap.end() ) {
+		if ( scoremap.find("ligand_is_touching") == scoremap.end() || scoremap.find("interface_delta") == scoremap.end() || scoremap.find("total_score") == scoremap.end() ) {
 			core::pose::PoseCOP in_pose = (*job_iter)->get_pose();
 			runtime_assert( in_pose != 0 );
 			core::Real value;
-			if( scoremap.find("ligand_is_touching") == scoremap.end() && getPoseExtraScore( *in_pose, "ligand_is_touching", value ) ) {
+			if ( scoremap.find("ligand_is_touching") == scoremap.end() && getPoseExtraScore( *in_pose, "ligand_is_touching", value ) ) {
 				scoremap["ligand_is_touching"] = value;
 			}
-			if( scoremap.find("interface_delta") == scoremap.end() && getPoseExtraScore( *in_pose, "interface_delta", value ) ) {
+			if ( scoremap.find("interface_delta") == scoremap.end() && getPoseExtraScore( *in_pose, "interface_delta", value ) ) {
 				scoremap["interface_delta"] = value;
 			}
-			if( scoremap.find("total_score") == scoremap.end() ) {
-				if( getPoseExtraScore( *in_pose, "total_score", value ) ) {
+			if ( scoremap.find("total_score") == scoremap.end() ) {
+				if ( getPoseExtraScore( *in_pose, "total_score", value ) ) {
 					scoremap["total_score"] = value;
 				} else {
 					core::scoring::EnergyMap const & emap( in_pose->energies().total_energies() );
@@ -126,22 +126,22 @@ go_main() {
 
 	// Cycle through ranked poses, keeping them if they're at least min_rmsd
 	// away from all other poses being kept so far.
-	for(core::Size i = 1; i <= scores_list2.size(); ++i) {
-		if( selected_poses.size() >= max_poses ) break;
+	for ( core::Size i = 1; i <= scores_list2.size(); ++i ) {
+		if ( selected_poses.size() >= max_poses ) break;
 		std::string tag( scores_list2[i].first );
 		a_pose = core::pose::PoseOP( new core::pose::Pose() );
 		inputter->pose_from_job( *a_pose, tag_job_map[ tag ] );
 		core::Size const last_rsd = a_pose->total_residue();
 		core::Real rms = 1e99;
 		utility::vector1 < core::Real > rms_list;
-		for(core::Size j = 1; j <= selected_poses.size(); ++j) {
+		for ( core::Size j = 1; j <= selected_poses.size(); ++j ) {
 			// Can't break early if we want to compute the full rms table
 			//if(rms < min_rmsd) break;
 			core::Real this_rms = core::scoring::automorphic_rmsd(selected_poses[j]->residue(last_rsd), a_pose->residue(last_rsd), false /*don't superimpose*/);
 			rms_list.push_back(this_rms);
 			rms = std::min(rms, this_rms);
 		}
-		if(rms >= min_rmsd) {
+		if ( rms >= min_rmsd ) {
 			selected_poses.push_back( a_pose );
 			selected_scores.push_back( scores_list2[i].second );
 			selected_tags.push_back( tag );
@@ -159,7 +159,7 @@ go_main() {
 		default_outputter->set_precision(6, 3, 1);
 		JobOutputterOP outputter( JobDistributorFactory::create_job_outputter( default_outputter ) );
 
-		for(core::Size i = 1; i <= selected_poses.size(); ++i) {
+		for ( core::Size i = 1; i <= selected_poses.size(); ++i ) {
 			outputter->final_pose( tag_job_map[ selected_tags[i] ], *(selected_poses[i]) );
 		}
 	}
@@ -168,16 +168,16 @@ go_main() {
 	{
 		utility::io::ozstream out( "cluster_rms.tab" );
 		// Column names
-		for(core::Size i = 1; i <= selected_poses.size(); ++i) {
+		for ( core::Size i = 1; i <= selected_poses.size(); ++i ) {
 			out << ' ' << selected_tags[i];
 		}
 		out << '\n';
 		// Rows
-		for(core::Size i = 1; i <= selected_poses.size(); ++i) {
+		for ( core::Size i = 1; i <= selected_poses.size(); ++i ) {
 			out << selected_tags[i]; // row name
-			for(core::Size j = 1; j <= selected_poses.size(); ++j) {
-				if( i < j ) out << ' ' << rms_table[j][i];
-				else if( i > j ) out << ' ' << rms_table[i][j];
+			for ( core::Size j = 1; j <= selected_poses.size(); ++j ) {
+				if ( i < j ) out << ' ' << rms_table[j][i];
+				else if ( i > j ) out << ' ' << rms_table[i][j];
 				else out << " 0"; // i == j, self rms
 			}
 			out << '\n'; // end of row
@@ -191,46 +191,46 @@ go_main() {
 int
 main( int argc, char * argv [] ) {
 	try {
-	using basic::options::option;
-	using namespace basic::options::OptionKeys;
+		using basic::options::option;
+		using namespace basic::options::OptionKeys;
 
-	// Parses command line options and inits RNG.
-	// Doesn't seem to hurt to do it again if already done once (?)
-	devel::init(argc, argv);
+		// Parses command line options and inits RNG.
+		// Doesn't seem to hurt to do it again if already done once (?)
+		devel::init(argc, argv);
 
-	if( option[ in::file::silent ].user() && ! option[ in::file::atom_tree_diff ].user() && ! option[ in::file::silent_struct_type ].user() ) {
-		//Backwards compatability options munging
-		std::string first_silent( *(option[ in::file::silent ]().begin()) );
-		if( core::import_pose::atom_tree_diffs::file_is_atom_tree_diff( first_silent ) ) {
-			TR.Warning << "WARNING: File " << first_silent << " looks to be AtomTypeDiff - reinterpreting -in:file:silent as -in:file:atom_tree_diff." << std::endl;
-			TR.Warning << "         Explicitly set -in:file:silent_struct_type to override." << std::endl;
-			option[ in::file::atom_tree_diff ]( option[ in::file::silent ] );
-			option[ in::file::silent ].deactivate();
+		if ( option[ in::file::silent ].user() && ! option[ in::file::atom_tree_diff ].user() && ! option[ in::file::silent_struct_type ].user() ) {
+			//Backwards compatability options munging
+			std::string first_silent( *(option[ in::file::silent ]().begin()) );
+			if ( core::import_pose::atom_tree_diffs::file_is_atom_tree_diff( first_silent ) ) {
+				TR.Warning << "WARNING: File " << first_silent << " looks to be AtomTypeDiff - reinterpreting -in:file:silent as -in:file:atom_tree_diff." << std::endl;
+				TR.Warning << "         Explicitly set -in:file:silent_struct_type to override." << std::endl;
+				option[ in::file::atom_tree_diff ]( option[ in::file::silent ] );
+				option[ in::file::silent ].deactivate();
+			}
 		}
-	}
-	if( option[ out::file::silent ].user() && ! option[ out::file::atom_tree_diff ].user() && ! option[ out::file::silent_struct_type ].user() ) {
-		//Backwards compatability options munging
-		TR.Warning << "WARNING: For backward compatibility, by default select_best_unique_ligand_poses will output Atom Tree Diff format files to -out:file:silent" << std::endl;
-		TR.Warning << "         To output regular format silent file format, explicitly set -out:file:silent_struct_type" << std::endl;
-		option[ out::file::atom_tree_diff ].value( option[ out::file::silent ] );
-		option[ out::file::silent ].deactivate();
-	}
-	//Save users from themselves
-	if( option[ in::file::keep_input_scores ] == false ) {
-		TR.Warning << "WARNING: The program uses input scores, but -in:file:keep_input_scores is false. Resetting." << std::endl;
-		option[in::file::keep_input_scores]( true );
-	}
-	if( option[ out::nstruct ] != 1 ) {
-		TR.Warning << "WARNING: -out::nstruct other than one doesn't make sense. Resetting." << std::endl;
-		option[out::nstruct]( 1 );
-	}
-	//Since nstruct is 1 ...
-	if( ! option[ out::no_nstruct_label ] ) {
-		TR << "Turning off nstruct labeling on output. Explicitly set -out:no_nstruct_label false to override." << std::endl;
-		option[out::no_nstruct_label]( true );
-	}
+		if ( option[ out::file::silent ].user() && ! option[ out::file::atom_tree_diff ].user() && ! option[ out::file::silent_struct_type ].user() ) {
+			//Backwards compatability options munging
+			TR.Warning << "WARNING: For backward compatibility, by default select_best_unique_ligand_poses will output Atom Tree Diff format files to -out:file:silent" << std::endl;
+			TR.Warning << "         To output regular format silent file format, explicitly set -out:file:silent_struct_type" << std::endl;
+			option[ out::file::atom_tree_diff ].value( option[ out::file::silent ] );
+			option[ out::file::silent ].deactivate();
+		}
+		//Save users from themselves
+		if ( option[ in::file::keep_input_scores ] == false ) {
+			TR.Warning << "WARNING: The program uses input scores, but -in:file:keep_input_scores is false. Resetting." << std::endl;
+			option[in::file::keep_input_scores]( true );
+		}
+		if ( option[ out::nstruct ] != 1 ) {
+			TR.Warning << "WARNING: -out::nstruct other than one doesn't make sense. Resetting." << std::endl;
+			option[out::nstruct]( 1 );
+		}
+		//Since nstruct is 1 ...
+		if ( ! option[ out::no_nstruct_label ] ) {
+			TR << "Turning off nstruct labeling on output. Explicitly set -out:no_nstruct_label false to override." << std::endl;
+			option[out::no_nstruct_label]( true );
+		}
 
-	go_main();
+		go_main();
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

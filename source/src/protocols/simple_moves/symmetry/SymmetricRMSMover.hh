@@ -34,8 +34,8 @@ namespace symmetry {
 class SymmetricRMSMover : public protocols::moves::Mover
 {
 public:
-typedef core::conformation::symmetry::SymmetricConformation SymmetricConformation;
-typedef core::conformation::symmetry::SymmetryInfoCOP SymmetryInfoOP;
+	typedef core::conformation::symmetry::SymmetricConformation SymmetricConformation;
+	typedef core::conformation::symmetry::SymmetryInfoCOP SymmetryInfoOP;
 
 public:
 

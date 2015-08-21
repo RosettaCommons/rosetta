@@ -31,8 +31,8 @@
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class ScoreTypeFeatures : public protocols::features::FeaturesReporter {
 public:

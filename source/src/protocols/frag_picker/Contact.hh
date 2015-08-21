@@ -45,9 +45,9 @@ public:
 
 	~Contact(){};
 
-  core::Size & i() {
-    return i_;
-  }
+	core::Size & i() {
+		return i_;
+	}
 
 	core::Size & j() {
 		return j_;

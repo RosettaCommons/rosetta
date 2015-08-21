@@ -108,16 +108,16 @@ ResidualDipolarCouplingEnergy_Rohl::ResidualDipolarCouplingEnergy_Rohl() :
 EnergyMethodOP
 ResidualDipolarCouplingEnergy_Rohl::clone() const
 {
-  return EnergyMethodOP( new ResidualDipolarCouplingEnergy_Rohl() );
+	return EnergyMethodOP( new ResidualDipolarCouplingEnergy_Rohl() );
 }
 
 //////////////////////////////////////////////////////
 //@brief
 //////////////////////////////////////////////////////
 void ResidualDipolarCouplingEnergy_Rohl::finalize_total_energy(
-  pose::Pose & pose,
-  ScoreFunction const &,
-  EnergyMap & totals
+	pose::Pose & pose,
+	ScoreFunction const &,
+	EnergyMap & totals
 ) const
 {
 
@@ -134,14 +134,14 @@ ResidualDipolarCouplingEnergy_Rohl::rdc_from_pose(
 	pose::Pose & pose
 ) const
 {
-// 	//using core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA;
+	//  //using core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA;
 
-// 	if( pose.data().has( RESIDUAL_DIPOLAR_COUPLING_DATA ) )
-// 		return *( static_cast< ResidualDipolarCoupling const * >( pose.data().get_const_ptr( RESIDUAL_DIPOLAR_COUPLING_DATA )() ) );
+	//  if( pose.data().has( RESIDUAL_DIPOLAR_COUPLING_DATA ) )
+	//   return *( static_cast< ResidualDipolarCoupling const * >( pose.data().get_const_ptr( RESIDUAL_DIPOLAR_COUPLING_DATA )() ) );
 
-// 	ResidualDipolarCouplingOP rdc_info = new ResidualDipolarCoupling;
-// 	pose.data().set( RESIDUAL_DIPOLAR_COUPLING_DATA, rdc_info );
- 	ResidualDipolarCoupling_RohlOP rdc_info( retrieve_RDC_ROHL_from_pose( pose ) );
+	//  ResidualDipolarCouplingOP rdc_info = new ResidualDipolarCoupling;
+	//  pose.data().set( RESIDUAL_DIPOLAR_COUPLING_DATA, rdc_info );
+	ResidualDipolarCoupling_RohlOP rdc_info( retrieve_RDC_ROHL_from_pose( pose ) );
 	if ( !rdc_info ) {
 		rdc_info = ResidualDipolarCoupling_RohlOP( new ResidualDipolarCoupling_Rohl );
 		store_RDC_ROHL_in_pose( rdc_info, pose );
@@ -154,7 +154,7 @@ ResidualDipolarCouplingEnergy_Rohl::rdc_from_pose(
 // this has to be spread out over different routines to make this energy yield derivatives
 //////////////////////////////////////////////////////
 Real ResidualDipolarCouplingEnergy_Rohl::eval_dipolar(
-  pose::Pose & pose
+	pose::Pose & pose
 ) const
 {
 
@@ -174,12 +174,12 @@ Real ResidualDipolarCouplingEnergy_Rohl::eval_dipolar(
 
 
 	assemble_datamatrix( pose, All_RDC_lines, A, b, weights);
- 	/*	for ( core::Size i = 1; i <= nrow; ++i ) {
-		std::cout << "Matrices A & b  " << A(i,1) << " " << A(i,2) << " " << A(i,3) << " " << A(i,4) << " " << A(i,5) << " " << b(i) << std::endl;
+	/* for ( core::Size i = 1; i <= nrow; ++i ) {
+	std::cout << "Matrices A & b  " << A(i,1) << " " << A(i,2) << " " << A(i,3) << " " << A(i,4) << " " << A(i,5) << " " << b(i) << std::endl;
 	}
 	*/
 	calc_ordermatrix( nrow, ORDERSIZE, A, b, x, weights, reject );
-	if( reject ) std::cout << "SET SCORE VALUE, FIX THIS LATER " << std::endl;
+	if ( reject ) std::cout << "SET SCORE VALUE, FIX THIS LATER " << std::endl;
 	calc_orderparam( x, vec, Azz, eta );
 	Real score( calc_dipscore( A, x, b, All_RDC_lines, ORDERSIZE, Azz )*nrow );
 
@@ -204,27 +204,27 @@ void ResidualDipolarCouplingEnergy_Rohl::assemble_datamatrix(
 	utility::vector1< core::scoring::RDC_Rohl >::const_iterator it;
 	Size nrow( 0 );
 
-	for( it = All_RDC_lines.begin(); it != All_RDC_lines.end(); ++it) {
+	for ( it = All_RDC_lines.begin(); it != All_RDC_lines.end(); ++it ) {
 
 		++nrow;
-			umn = pose.residue(it->res()).atom("N").xyz() - pose.residue(it->res()).atom("H").xyz();
+		umn = pose.residue(it->res()).atom("N").xyz() - pose.residue(it->res()).atom("H").xyz();
 
-			Real umn_x = umn.x()/it->fixed_dist();
-			Real umn_y = umn.y()/it->fixed_dist();
-			Real umn_z = umn.z()/it->fixed_dist();
+		Real umn_x = umn.x()/it->fixed_dist();
+		Real umn_y = umn.y()/it->fixed_dist();
+		Real umn_z = umn.z()/it->fixed_dist();
 
-			//filling matrix A
-			A( nrow, 1 ) = umn_y*umn_y - umn_x*umn_x;
-			A( nrow, 2 ) = umn_z*umn_z - umn_x*umn_x;
-			A( nrow, 3 ) = 2.0*umn_x*umn_y;
-			A( nrow, 4 ) = 2.0*umn_x*umn_z;
-			A( nrow, 5 ) = 2.0*umn_z*umn_y;
+		//filling matrix A
+		A( nrow, 1 ) = umn_y*umn_y - umn_x*umn_x;
+		A( nrow, 2 ) = umn_z*umn_z - umn_x*umn_x;
+		A( nrow, 3 ) = 2.0*umn_x*umn_y;
+		A( nrow, 4 ) = 2.0*umn_x*umn_z;
+		A( nrow, 5 ) = 2.0*umn_z*umn_y;
 
-			//filling matrix b
-			b( nrow ) = it->Reduced_Jdipolar();
-			weights( nrow ) = it->weight();
-			//			std::cout << "nrow " << nrow << std::endl;
-			//		std::cout << "Matrix A " << A(nrow,1) << " " << A(nrow,2) << " " << A(nrow,3) << " " << A(nrow,4) << " " << A(nrow,5) << std::endl;
+		//filling matrix b
+		b( nrow ) = it->Reduced_Jdipolar();
+		weights( nrow ) = it->weight();
+		//   std::cout << "nrow " << nrow << std::endl;
+		//  std::cout << "Matrix A " << A(nrow,1) << " " << A(nrow,2) << " " << A(nrow,3) << " " << A(nrow,4) << " " << A(nrow,5) << std::endl;
 	}
 
 
@@ -234,13 +234,13 @@ void ResidualDipolarCouplingEnergy_Rohl::assemble_datamatrix(
 //
 ////////////////////////////////////////////////////////////////
 void ResidualDipolarCouplingEnergy_Rohl::calc_ordermatrix(
-		Size const & nrow,
-		Size const & ORDERSIZE,
-		ObjexxFCL::FArray2D< Real > & A,
-		ObjexxFCL::FArray1D< Real > & b,
-		ObjexxFCL::FArray1D< Real > & x,
-		ObjexxFCL::FArray1D< Real > & weights,
-		bool & reject
+	Size const & nrow,
+	Size const & ORDERSIZE,
+	ObjexxFCL::FArray2D< Real > & A,
+	ObjexxFCL::FArray1D< Real > & b,
+	ObjexxFCL::FArray1D< Real > & x,
+	ObjexxFCL::FArray1D< Real > & weights,
+	bool & reject
 ) const
 {
 
@@ -255,9 +255,9 @@ void ResidualDipolarCouplingEnergy_Rohl::calc_ordermatrix(
 	Size sing; // number of singular values in w
 	Real Sxx;
 
-	// why not	U=A; ? should even be faster!
+	// why not U=A; ? should even be faster!
 	Size ct_align = 0;
- 	for( core::Size i = 1; i <= nrow; ++i ) { // copy A
+	for ( core::Size i = 1; i <= nrow; ++i ) { // copy A
 		if ( weights( i ) > 0.000001 ) {
 			++ct_align;
 			U( ct_align, 1 ) = A(i,1) * weights( i ); // copy into U
@@ -267,7 +267,7 @@ void ResidualDipolarCouplingEnergy_Rohl::calc_ordermatrix(
 			U( ct_align, 5 ) = A(i,5) * weights( i );
 			bweighted( ct_align  ) = b( i ) * weights( i );
 		}
- 	}
+	}
 
 	svdcmp( U, ct_align, ORDERSIZE, w, v );
 
@@ -283,16 +283,17 @@ void ResidualDipolarCouplingEnergy_Rohl::calc_ordermatrix(
 			++sing;
 		}
 	}
-	if ( (int)sing > std::abs( int( ct_align ) - int( ORDERSIZE ) ) )
-	 std::cout << "SVD yielded a matrix singular above expectation " <<
-	 "in get_ordermatrix" << std::endl;
+	if ( (int)sing > std::abs( int( ct_align ) - int( ORDERSIZE ) ) ) {
+		std::cout << "SVD yielded a matrix singular above expectation " <<
+			"in get_ordermatrix" << std::endl;
+	}
 
 	// find solution for exact dipolar values
 
 	svbksb( U, w, v, ct_align, ORDERSIZE, bweighted, x );
 
-// x components: (Syy,Szz,Sxy,Sxz,Syz)
-// check for acceptable values
+	// x components: (Syy,Szz,Sxy,Sxz,Syz)
+	// check for acceptable values
 
 	reject = false;
 	Sxx = -x(1) - x(2);
@@ -305,8 +306,8 @@ void ResidualDipolarCouplingEnergy_Rohl::calc_ordermatrix(
 
 	if ( reject ) {
 		std::cout << "order matrix not physically meaningful" << std::endl;
-//		try with errors on dipolar values? map error?
-//		score = 0.0;
+		//  try with errors on dipolar values? map error?
+		//  score = 0.0;
 		return;
 	}
 
@@ -326,7 +327,7 @@ void ResidualDipolarCouplingEnergy_Rohl::svdcmp(
 ) const
 {
 
-//U    USES pythag
+	//U    USES pythag
 	Size i,its,j,jj,k,l,nm;
 	ObjexxFCL::FArray1D< core::Real > rv1( n );
 	Real anorm, c, f, g, h, s, scale, x, y, z;
@@ -469,7 +470,7 @@ void ResidualDipolarCouplingEnergy_Rohl::svdcmp(
 				}
 				if ( (std::abs(w(nm))+anorm) == anorm ) break;
 			}
-			if(!skipnow) {
+			if ( !skipnow ) {
 				c = 0.0;
 				s = 1.0;
 				for ( i = l; i <= k; ++i ) {
@@ -500,7 +501,7 @@ void ResidualDipolarCouplingEnergy_Rohl::svdcmp(
 				}
 				break;
 			}
-			if ( its == 30) utility_exit_with_message("no convergence in svdcmp \n" );
+			if ( its == 30 ) utility_exit_with_message("no convergence in svdcmp \n" );
 			x = w(l);
 			nm = k-1;
 			y = w(nm);
@@ -638,7 +639,7 @@ void ResidualDipolarCouplingEnergy_Rohl::calc_orderparam(
 	Real temp1, temp2;
 
 	// Assemble order matrix
-	numeric::xyzMatrix< Real > S = numeric::xyzMatrix< core::Real >::rows(	-x(1) - x(2), x(3), x(4),x(3), x(1), x(5), x(4), x(5), x(2) );
+	numeric::xyzMatrix< Real > S = numeric::xyzMatrix< core::Real >::rows( -x(1) - x(2), x(3), x(4),x(3), x(1), x(5), x(4), x(5), x(2) );
 
 
 	numeric::xyzVector< Real > val; // Eigenvalues
@@ -669,14 +670,14 @@ void ResidualDipolarCouplingEnergy_Rohl::calc_orderparam(
 	Azz = val(sort(1));
 	eta = (2.0/3.0) * std::abs(val(sort(2))-val(sort(3))/Azz);
 
-// sort eigen values      // largest to smallest : Azz,Ayy,Axx
+	// sort eigen values      // largest to smallest : Azz,Ayy,Axx
 	temp1 = val(sort(1));
 	temp2 = val(sort(2));
 	val(3) = val(sort(3));
 	val(2) = temp2;
 	val(1) = temp1;
 
-// sort eigen vectors
+	// sort eigen vectors
 	for ( Size i = 1; i <= 3; ++i ) {
 		temp1 = xyz_vec(i,sort(3));
 		temp2 = xyz_vec(i,sort(2));
@@ -703,21 +704,21 @@ Real ResidualDipolarCouplingEnergy_Rohl::calc_dipscore(
 ) const
 {
 
-debug_assert( Azz != 0 );
+	debug_assert( Azz != 0 );
 
 	Real score( 0.0 );
 
 	utility::vector1< core::scoring::RDC_Rohl >::const_iterator it;
 	Size nrow( 0 );
-	for( it = All_RDC_lines.begin(); it != All_RDC_lines.end(); ++it) {
+	for ( it = All_RDC_lines.begin(); it != All_RDC_lines.end(); ++it ) {
 		Real Jcalc( 0.0 );
 		++nrow;
-		for( Size j = 1; j <= ORDERSIZE; ++j ) {
+		for ( Size j = 1; j <= ORDERSIZE; ++j ) {
 			Jcalc += A( nrow, j )*x(j);
 		}
 		score += ( b( nrow ) -Jcalc )*( b( nrow ) - Jcalc ); //these are reduced Jd
 
-		//v		std::cout << b(nrow)/it->invDcnst() << " " << Jcalc/it->invDcnst() << " " << numeric::square( b(nrow)/it->invDcnst() - Jcalc/it->invDcnst() ) << " " << it->res() << std::endl;
+		//v  std::cout << b(nrow)/it->invDcnst() << " " << Jcalc/it->invDcnst() << " " << numeric::square( b(nrow)/it->invDcnst() - Jcalc/it->invDcnst() ) << " " << it->res() << std::endl;
 	}
 
 	//std::cout << "score, nrow, Azz " << score << " " << nrow << " " << Azz << std::endl;

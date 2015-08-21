@@ -7,20 +7,20 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		protocols/membrane/SetMembranePositionMover.fwd.hh
+/// @file  protocols/membrane/SetMembranePositionMover.fwd.hh
 ///
-/// @brief		Sets the membrane position normal and center
-///	@details	Sets the membrane position normal and center
-///				CAUTION: ONLY FOR FLEXIBLE MEMBRANE AND FIXED PROTEIN!!!
-///				Last Modified: 6/28/14
+/// @brief  Sets the membrane position normal and center
+/// @details Sets the membrane position normal and center
+///    CAUTION: ONLY FOR FLEXIBLE MEMBRANE AND FIXED PROTEIN!!!
+///    Last Modified: 6/28/14
 ///
-/// @author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_SetMembranePositionMover_fwd_hh
 #define INCLUDED_protocols_membrane_SetMembranePositionMover_fwd_hh
 
 // Utility Headers
-#include <utility/pointer/owning_ptr.hh> 
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace membrane {
@@ -39,7 +39,7 @@ typedef utility::pointer::shared_ptr< SetMembraneNormalMover const > SetMembrane
 class SetMembraneCenterMover;
 typedef utility::pointer::shared_ptr< SetMembraneCenterMover > SetMembraneCenterMoverOP;
 typedef utility::pointer::shared_ptr< SetMembraneCenterMover const > SetMembraneCenterMoverCOP;
-		
+
 } // membrane
 } // protocols
 

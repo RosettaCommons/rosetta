@@ -79,7 +79,7 @@ namespace metal_interface {
 
 /// @brief local helper function
 void dump_chis( core::conformation::Residue const & res ){
-	for(core::Size i(1); i<=res.nchi(); ++i){TR << " chi" << i << " " << res.chi()[i];}
+	for ( core::Size i(1); i<=res.nchi(); ++i ) {TR << " chi" << i << " " << res.chi()[i];}
 	TR << std::endl;
 }
 
@@ -90,8 +90,8 @@ void ZincHeterodimerMover::apply( core::pose::Pose & pose ){
 	core::Size const metal_res(mtm_start_metal ? metal_to_mobile_.stop() : metal_to_mobile_.start());
 	core::Size const ligand_res(mtm_start_metal ? metal_to_mobile_.start() : metal_to_mobile_.stop());
 	core::Size const fixed_res( core::Size(fixed_to_metal_.start()) == metal_res ? //if
-															fixed_to_metal_.stop() : //then
-															fixed_to_metal_.start()); //else
+		fixed_to_metal_.stop() : //then
+		fixed_to_metal_.start()); //else
 
 	/////////////////////////////make fold tree for fullatom pose////////////////////////////////////////////////
 	//this code assumes the pose is set up fixed partner1 - metal - mobile partner2, with only the three chains
@@ -118,13 +118,13 @@ void ZincHeterodimerMover::apply( core::pose::Pose & pose ){
 	centroid_tree.add_edge(Edge(1, metal_res-1, Edge::PEPTIDE)); //peptide edge for fixed, lower partner
 	centroid_tree.add_edge(Edge(metal_res+1, pose.total_residue(), Edge::PEPTIDE));//edge for upper
 	centroid_tree.add_edge(Edge(//interchain jump
-															metal_res+1, //from Cterm of chain 1
-															metal_res-1, //to Nterm of chain 3
-															1));           //jump number 1
+		metal_res+1, //from Cterm of chain 1
+		metal_res-1, //to Nterm of chain 3
+		1));           //jump number 1
 	centroid_tree.add_edge(Edge(//interchain jump
-															metal_res,
-															pose.total_residue(), //to Cterm of chain 3
-															2));           //jump number 2
+		metal_res,
+		pose.total_residue(), //to Cterm of chain 3
+		2));           //jump number 2
 	centroid_tree.delete_unordered_edge(1, pose.total_residue(), Edge::PEPTIDE);
 	centroid_tree.reorder(1);
 	TR << centroid_tree << std::endl;
@@ -150,8 +150,8 @@ void ZincHeterodimerMover::apply( core::pose::Pose & pose ){
 	TR << *task << std::endl;
 
 	protocols::simple_moves::sidechain_moves::SidechainMoverOP SCmover( new protocols::simple_moves::sidechain_moves::SidechainMover() );
- 	SCmover->set_task(task);
- 	SCmover->set_prob_uniform(0); //we want only Dunbrack rotamers, 0 percent chance of uniform sampling
+	SCmover->set_task(task);
+	SCmover->set_prob_uniform(0); //we want only Dunbrack rotamers, 0 percent chance of uniform sampling
 	SCmover->set_change_chi_without_replacing_residue(true); //moves everything downstream in foldtree rather than a pack_rotamers behavior
 
 	/////////////////////////package movers into RandomMover (do either with equal chance)/////////////////
@@ -174,11 +174,11 @@ void ZincHeterodimerMover::apply( core::pose::Pose & pose ){
 	using basic::options::OptionKeys::AnchoredDesign::perturb_temp;
 	using basic::options::option;
 	protocols::moves::DualMonteCarlo DMC(
-																			 pose, //pose for DMC
-																			 centroid, //pose for MC
-																			 *fullatom_scorefunction_, //scorefunction for DMC
-																			 *centroid_scorefunction_, //scorefunction for MC
-																			 option[perturb_temp].value()); //temperature for MC
+		pose, //pose for DMC
+		centroid, //pose for MC
+		*fullatom_scorefunction_, //scorefunction for DMC
+		*centroid_scorefunction_, //scorefunction for MC
+		option[perturb_temp].value()); //temperature for MC
 
 
 	///////////////////////////////conformational search///////////////////////////////
@@ -187,7 +187,7 @@ void ZincHeterodimerMover::apply( core::pose::Pose & pose ){
 	core::Size const perturb_cyc(option[ perturb_cycles ].value());
 	bool const output_pdbs(option[ perturb_show ].value());
 	TR << "Cycle\tDMC Current\tDMC Low\tMC Current\tMC Low" << std::endl;
-	for( core::Size i(1); i <= perturb_cyc ; ++i){
+	for ( core::Size i(1); i <= perturb_cyc ; ++i ) {
 
 		perturb_mover->apply(pose);
 		TR << "pre-DMC  "; //two spaces to line up with post-DMC
@@ -195,13 +195,13 @@ void ZincHeterodimerMover::apply( core::pose::Pose & pose ){
 
 		copy_to_centroid(pose, centroid, centroid_tree, metal_res);
 
-		if( output_pdbs ){
+		if ( output_pdbs ) {
 			output_fa->apply(pose); //debugging!
 			output_centroid->apply(centroid);
 		}
 
 		DMC.boltzmann(pose, centroid);
-		if (!DMC.MC().mc_accepted()) TR << "DMC rejected" << std::endl;
+		if ( !DMC.MC().mc_accepted() ) TR << "DMC rejected" << std::endl;
 		else TR << "DMC accepted" << std::endl;
 		TR << "post-DMC ";
 		dump_chis(pose.residue(ligand_res));
@@ -232,11 +232,11 @@ void ZincHeterodimerMover::apply( core::pose::Pose & pose ){
 	using protocols::simple_moves::MinMoverOP;
 	using protocols::simple_moves::MinMover;
 	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(
-																			map,
-																			fullatom_scorefunction_,
-																			option[ basic::options::OptionKeys::run::min_type ].value(),
-																			0.01,
-																			true /*use_nblist*/ ) );
+		map,
+		fullatom_scorefunction_,
+		option[ basic::options::OptionKeys::run::min_type ].value(),
+		0.01,
+		true /*use_nblist*/ ) );
 
 	using protocols::simple_moves::TaskAwareMinMoverOP;
 	using protocols::simple_moves::TaskAwareMinMover;
@@ -248,7 +248,7 @@ void ZincHeterodimerMover::apply( core::pose::Pose & pose ){
 	using basic::options::OptionKeys::AnchoredDesign::refine_cycles;
 	//this says: use one cycle unless there is a command-line option saying otherwise
 	core::Size const refine_applies( option[ refine_cycles ].user() ? option[ refine_cycles ].value() : 1 );
-	for( core::Size cycle(1); cycle <= refine_applies; ++cycle){
+	for ( core::Size cycle(1); cycle <= refine_applies; ++cycle ) {
 		pack_mover->apply(pose);
 		TAmin_mover->apply(pose);
 	}
@@ -283,7 +283,7 @@ void ZincHeterodimerMover::generate_scorefunctions(){
 	using namespace core::scoring;
 	fullatom_scorefunction_ = core::scoring::get_score_function();
 	TR << "Using default fullatom scorefunction (TALARIS_2013)\n"
-		 << *fullatom_scorefunction_ << std::flush;
+		<< *fullatom_scorefunction_ << std::flush;
 
 	centroid_scorefunction_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
 	centroid_scorefunction_->set_weight( env,         2.0 );
@@ -308,8 +308,9 @@ void ZincHeterodimerMover::generate_factory(){
 		task_factory->push_back(operation::TaskOperationOP( new operation::ReadResfile ));
 	}
 	operation::PreventRepackingOP prop( new operation::PreventRepacking() );
-	for(utility::vector1< core::Size >::const_iterator it(metal_site_.begin()), end(metal_site_.end());	it != end; ++it)
-		{prop->include_residue(*it);}
+	for ( utility::vector1< core::Size >::const_iterator it(metal_site_.begin()), end(metal_site_.end()); it != end; ++it ) {
+		prop->include_residue(*it);
+	}
 	task_factory->push_back(prop);
 	//this assumes that the two protein partners are chains 1 and 3 - this is dangerous!!!!
 	task_factory->push_back(operation::TaskOperationOP( new protocols::toolbox::task_operations::RestrictToInterfaceOperation(1, 3) ));
@@ -321,11 +322,11 @@ void ZincHeterodimerMover::generate_factory(){
 
 /// @details constructor
 ZincHeterodimerMover::ZincHeterodimerMover(
-																										 utility::vector1< core::Size > const & metal_site,
-																										 core::kinematics::Edge const & fixed_to_metal,
-																										 core::kinematics::Edge const & metal_to_mobile )
-	: Mover(), centroid_scorefunction_(/* NULL */), fullatom_scorefunction_(NULL), factory_(NULL),
-		fixed_to_metal_(fixed_to_metal), metal_to_mobile_(metal_to_mobile), metal_site_(metal_site)
+	utility::vector1< core::Size > const & metal_site,
+	core::kinematics::Edge const & fixed_to_metal,
+	core::kinematics::Edge const & metal_to_mobile )
+: Mover(), centroid_scorefunction_(/* NULL */), fullatom_scorefunction_(NULL), factory_(NULL),
+	fixed_to_metal_(fixed_to_metal), metal_to_mobile_(metal_to_mobile), metal_site_(metal_site)
 {
 	Mover::type( "ZincHeterodimerMover" );
 	generate_scorefunctions();

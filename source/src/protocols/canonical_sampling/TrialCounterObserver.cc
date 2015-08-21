@@ -75,11 +75,11 @@ TrialCounterObserver::clone() const {
 
 void
 TrialCounterObserver::parse_my_tag(
-       utility::tag::TagCOP tag,
-       basic::datacache::DataMap &,
-       protocols::filters::Filters_map const &,
-       protocols::moves::Movers_map const &,
-       core::pose::Pose const &
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
 ) { //no options ...
 	file_ = tag->getOption< std::string >("file","trial.stats");
 	io_stride_ = tag->getOption< core::Size >("stride", 10000 );
@@ -99,7 +99,7 @@ TrialCounterObserver::initialize_simulation(
 
 void
 TrialCounterObserver::observe_after_metropolis(
-		MetropolisHastingsMover const & mhm
+	MetropolisHastingsMover const & mhm
 ) {
 	std::string const& move_type( mhm.last_move().type() );
 	counters_.count_trial( move_type );

@@ -102,7 +102,7 @@ private:
 		Q1=0.39894228; Q2=0.1328592e-1; Q3=0.225319e-2;
 		Q4=-0.157565e-2; Q5=0.916281e-2; Q6=-0.2057706e-1;
 		Q7=0.2635537e-1; Q8=-0.1647633e-1; Q9=0.392377e-2;
-		if (fabs(X) < 3.75) {
+		if ( fabs(X) < 3.75 ) {
 			Y=(X/3.75)*(X/3.75);
 			return (P1+Y*(P2+Y*(P3+Y*(P4+Y*(P5+Y*(P6+Y*P7))))));
 		} else {
@@ -115,7 +115,7 @@ private:
 	}
 
 private:
-	utility::vector1< Real > lr_As_, sr_As_; 
+	utility::vector1< Real > lr_As_, sr_As_;
 	utility::vector1< numeric::xyzVector< Real > > lr_mus_, lr_sigmas_;
 	utility::vector1< numeric::xyzVector< Real > > sr_mus_, sr_sigmas_;
 	Real cutoff_sr_, cutoff_lr_;

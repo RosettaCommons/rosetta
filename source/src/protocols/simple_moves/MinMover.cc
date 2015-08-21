@@ -84,24 +84,24 @@ MinMoverCreator::mover_name()
 // default constructor
 // proper lightweight default constructor
 MinMover::MinMover() :
-    Parent("MinMover"),
-		movemap_(/* 0 */),
-		scorefxn_(/* 0 */),
-		min_options_(/* 0 */),
-		cartesian_(false),
-		dof_tasks_()
+	Parent("MinMover"),
+	movemap_(/* 0 */),
+	scorefxn_(/* 0 */),
+	min_options_(/* 0 */),
+	cartesian_(false),
+	dof_tasks_()
 {
 	omega_ = true;
 	min_options_ = MinimizerOptionsOP( new MinimizerOptions( "linmin", 0.01, true, false, false ) );
 }
 
 MinMover::MinMover( std::string const & name ) :
-    Parent( name ),
-		movemap_(/* 0 */),
-		scorefxn_(/* 0 */),
-		min_options_(/* 0 */),
-		cartesian_(false),
-		dof_tasks_()
+	Parent( name ),
+	movemap_(/* 0 */),
+	scorefxn_(/* 0 */),
+	min_options_(/* 0 */),
+	cartesian_(false),
+	dof_tasks_()
 {
 	omega_ = true;
 	min_options_ = MinimizerOptionsOP( new MinimizerOptions( "linmin", 0.01, true, false, false ) );
@@ -119,12 +119,12 @@ MinMover::MinMover(
 	bool deriv_check_in /* = false */,
 	bool deriv_check_verbose_in /* = false */
 ) : Parent("MinMover"),
-		movemap_( movemap_in ),
-		scorefxn_( scorefxn_in ),
-		min_options_(/* 0 */),
-		threshold_(1000000.0), // TODO: line can be deleted?
-		cartesian_(false),
-		dof_tasks_()
+	movemap_( movemap_in ),
+	scorefxn_( scorefxn_in ),
+	min_options_(/* 0 */),
+	threshold_(1000000.0), // TODO: line can be deleted?
+	cartesian_(false),
+	dof_tasks_()
 {
 	omega_ = true;
 	min_options_ = MinimizerOptionsOP( new MinimizerOptions(
@@ -156,7 +156,7 @@ MinMover::movemap( MoveMapCOP movemap_in )
 }
 
 void MinMover::set_movemap( MoveMapCOP movemap_in ){
-  movemap( movemap_in );
+	movemap( movemap_in );
 }
 
 MoveMapCOP
@@ -178,7 +178,7 @@ MinMover::score_function( ScoreFunctionCOP scorefxn_in )
 /*void
 MinMover::score_function( ScoreFunction const & scorefxn_in )
 {
-	scorefxn_ = scorefxn_in.clone();
+scorefxn_ = scorefxn_in.clone();
 }*/
 
 ScoreFunctionCOP
@@ -218,9 +218,9 @@ MinMover::apply_dof_tasks_to_movemap(
 	MoveMap & movemap
 ) const {
 
-	for(
-		DOF_TaskMap::const_iterator t=dof_tasks_.begin(), te=dof_tasks_.end();
-		t != te; ++t){
+	for (
+			DOF_TaskMap::const_iterator t=dof_tasks_.begin(), te=dof_tasks_.end();
+			t != te; ++t ) {
 		//generate task
 		PackerTaskOP task( t->second->create_task_and_apply_taskoperations( pose ) );
 
@@ -229,17 +229,17 @@ MinMover::apply_dof_tasks_to_movemap(
 
 		//Set DOFs by task operations:
 		for ( Size i(1); i <= nres; ++i ) {
-				if( t->first.first == core::id::PHI ){
-					core::kinematics::MoveMap::MoveMapTorsionID mmid;
-					mmid.first = i;
-					mmid.second = t->first.second;
-					movemap.set( mmid, task->pack_residue( i ) );
-				} else {
-					for( Size ia=1,iamax=pose.residue(i).natoms(); ia<=iamax; ++ia){
-						movemap.set( core::id::DOF_ID( core::id::AtomID(ia,i), t->first.first  ), task->pack_residue(i) );
-					}
-					//movemap.set( t->first.first, task->pack_residue( i ) );
+			if ( t->first.first == core::id::PHI ) {
+				core::kinematics::MoveMap::MoveMapTorsionID mmid;
+				mmid.first = i;
+				mmid.second = t->first.second;
+				movemap.set( mmid, task->pack_residue( i ) );
+			} else {
+				for ( Size ia=1,iamax=pose.residue(i).natoms(); ia<=iamax; ++ia ) {
+					movemap.set( core::id::DOF_ID( core::id::AtomID(ia,i), t->first.first  ), task->pack_residue(i) );
 				}
+				//movemap.set( t->first.first, task->pack_residue( i ) );
+			}
 		}
 	}
 }
@@ -260,15 +260,15 @@ MinMover::apply(pose::Pose & pose) {
 	if ( ! scorefxn_ ) scorefxn_ = get_score_function(); // get a default (INITIALIZED!) ScoreFunction
 
 	PROF_START( basic::MINMOVER_APPLY );
-	if (!cartesian( )) {
+	if ( !cartesian( ) ) {
 		AtomTreeMinimizer minimizer;
-		if( !omega_ ){
+		if ( !omega_ ) {
 			TR<<"shutting off omega dihedral angle minimization"<<std::endl;
-			for( core::Size i = 1; i <= pose.total_residue(); ++i ){
-				if( !pose.residue( i ).is_protein() ) continue;
+			for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+				if ( !pose.residue( i ).is_protein() ) continue;
 				active_movemap->set( core::id::TorsionID( core::id::omega_torsion, BB, i), false );
+			}
 		}
-    }
 		(*scorefxn_)(pose);
 		minimizer.run( pose, *active_movemap, *scorefxn_, *min_options_ );
 	} else {
@@ -278,9 +278,9 @@ MinMover::apply(pose::Pose & pose) {
 	}
 	PROF_STOP( basic::MINMOVER_APPLY );
 
-  // emit statistics
-  scorefxn_->show(TR.Debug, pose);
-  TR.Debug << std::endl;
+	// emit statistics
+	scorefxn_->show(TR.Debug, pose);
+	TR.Debug << std::endl;
 }
 
 std::string
@@ -295,11 +295,10 @@ MinMover::show(std::ostream & output) const
 	output << "Minimization type:\t" << min_type() << "\nScorefunction:\t\t";
 	if ( score_function() != 0 ) {
 		output  << score_function()->get_name() << std::endl;
-	}
-	else { output << "none" << std::endl; }
+	} else { output << "none" << std::endl; }
 	output << "Score tolerance:\t" << tolerance() << "\nNb list:\t\t" << (nb_list() ? "True" : "False") <<
-			"\nDeriv check:\t\t" << (deriv_check() ? "True" : "False") << std::endl << "Movemap:" << std::endl;
-	if (movemap() != 0) {
+		"\nDeriv check:\t\t" << (deriv_check() ? "True" : "False") << std::endl << "Movemap:" << std::endl;
+	if ( movemap() != 0 ) {
 		movemap()->show(output);
 	}
 }
@@ -311,19 +310,19 @@ void MinMover::parse_def_opts( utility::lua::LuaObject const & def,
 	utility::lua::LuaObject const & score_fxns,
 	utility::lua::LuaObject const & /*tasks*/,
 	protocols::moves::MoverCacheSP /*cache*/ ) {
-	if( def["scorefxn"] ) {
+	if ( def["scorefxn"] ) {
 		score_function( protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns ) );
 	} else {
 		score_function( score_fxns["score12"].to<ScoreFunctionSP>()->clone()  );
 	}
 
 	if ( ! movemap_ ) movemap_ = core::kinematics::MoveMapOP( new MoveMap );
-	if( def["jump"] ) {
-		for (utility::lua::LuaIterator i=def["jump"].begin(), end; i != end; ++i) {
-			if( (*i).to<int>() == -1 ) {
+	if ( def["jump"] ) {
+		for ( utility::lua::LuaIterator i=def["jump"].begin(), end; i != end; ++i ) {
+			if ( (*i).to<int>() == -1 ) {
 				movemap_->set_jump( true );
 				break;
-			} else if( (*i).to<core::Size>() == 0 ) {
+			} else if ( (*i).to<core::Size>() == 0 ) {
 				movemap_->set_jump( false );
 				break;
 			} else {
@@ -345,21 +344,24 @@ void MinMover::parse_def_opts( utility::lua::LuaObject const & def,
 }
 
 void MinMover::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & score_fxns,
-				utility::lua::LuaObject const & tasks,
-				protocols::moves::MoverCacheSP cache ) {
+	utility::lua::LuaObject const & score_fxns,
+	utility::lua::LuaObject const & tasks,
+	protocols::moves::MoverCacheSP cache ) {
 	if ( ! movemap_ ) movemap_ = core::kinematics::MoveMapOP( new MoveMap );
 
 	parse_def_opts( def, score_fxns, tasks, cache );
 
-	if( def["chi"] )
+	if ( def["chi"] ) {
 		movemap_->set_chi(def["chi"].to<bool>());
-	if( def["bb"] )
+	}
+	if ( def["bb"] ) {
 		movemap_->set_chi(def["bb"].to<bool>());
+	}
 
 
-	if( def["movemap"] )
+	if ( def["movemap"] ) {
 		protocols::elscripts::parse_movemapdef( def["movemap"], movemap_ );
+	}
 }
 
 void MinMover::parse_my_tag(
@@ -374,9 +376,9 @@ void MinMover::parse_my_tag(
 	parse_chi_and_bb( tag );
 	parse_dof_tasks( tag, data );
 
-/// parse_movemap will reset the movemap to minimize all if nothing is stated on it. The following section ensures that the protocol specifies a MoveMap before going that way
-//	utility::vector1< TagCOP > const branch_tags( tag->getTags() );
-//	utility::vector1< TagCOP >::const_iterator tag_it;
+	/// parse_movemap will reset the movemap to minimize all if nothing is stated on it. The following section ensures that the protocol specifies a MoveMap before going that way
+	// utility::vector1< TagCOP > const branch_tags( tag->getTags() );
+	// utility::vector1< TagCOP >::const_iterator tag_it;
 	protocols::rosetta_scripts::parse_movemap( tag, pose, movemap_, data, false );
 
 }
@@ -394,12 +396,12 @@ void MinMover::parse_opts(
 		if ( ! movemap_ ) movemap_ = core::kinematics::MoveMapOP( new MoveMap );
 		utility::vector1<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
 		// string 'ALL' makes all jumps movable
-		if (jumps.size() == 1 && (jumps[1] == "ALL" || jumps[1] == "All" || jumps[1] == "all" || jumps[1] == "*") ) {
+		if ( jumps.size() == 1 && (jumps[1] == "ALL" || jumps[1] == "All" || jumps[1] == "all" || jumps[1] == "*") ) {
 			movemap_->set_jump( true );
-		} else if( tag->getOption< core::Size > ( "jump" ) == 0 ) {
+		} else if ( tag->getOption< core::Size > ( "jump" ) == 0 ) {
 			movemap_->set_jump( false );
 		} else {
-			BOOST_FOREACH(std::string jump, jumps){
+			BOOST_FOREACH ( std::string jump, jumps ) {
 				Size const value = std::atoi( jump.c_str() ); // convert to C string, then convert to integer, then set a Size (phew!)
 				TR << "Setting min on jump " << value << std::endl;
 				movemap_->set_jump( value, true );
@@ -416,7 +418,7 @@ void MinMover::parse_opts(
 		min_type( "lbfgs_armijo_nonmonotone" );
 	}
 	if ( ( tag->getOption<bool>("bondangle",0) ||tag->getOption<bool>("bondlength",0) )
-	    && !tag->hasOption("type") ) {
+			&& !tag->hasOption("type") ) {
 		min_type( "lbfgs_armijo_nonmonotone" );
 	}
 }
@@ -425,7 +427,7 @@ void MinMover::parse_chi_and_bb( TagCOP const tag )
 {
 	if ( ! movemap_ ) movemap_ = core::kinematics::MoveMapOP( new MoveMap );
 	bool const chi( tag->getOption< bool >( "chi" ) ), bb( tag->getOption< bool >( "bb" ) );
-  omega_ = tag->getOption< bool >( "omega", true );
+	omega_ = tag->getOption< bool >( "omega", true );
 	movemap_->set_chi( chi );
 	movemap_->set_bb( bb );
 	TR<<"Options chi, bb: "<<chi<<", "<<bb<<" omega: "<<omega_<<std::endl;
@@ -449,20 +451,20 @@ MinMover::parse_dof_task_type(
 	basic::datacache::DataMap & data
 ) {
 
-	if(!tag->hasOption(tag_name)){
+	if ( !tag->hasOption(tag_name) ) {
 		return;
 	}
 
-  using namespace core::pack::task;
-  using namespace core::pack::task::operation;
+	using namespace core::pack::task;
+	using namespace core::pack::task::operation;
 	using std::string;
-  typedef utility::vector1< std::string > StringVec;
+	typedef utility::vector1< std::string > StringVec;
 
 	TaskFactoryOP task_factory( new TaskFactory() );
 	string const t_o_val( tag->getOption<string>(tag_name) );
 	StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
 
-	BOOST_FOREACH( string t_o_key, t_o_keys ){
+	BOOST_FOREACH ( string t_o_key, t_o_keys ) {
 		if ( data.has( "task_operations", t_o_key ) ) {
 			task_factory->push_back( data.get_ptr< TaskOperation >( "task_operations", t_o_key ) );
 			TR << "\t " << tag_name << ": " << t_o_key << std::endl;
@@ -470,7 +472,7 @@ MinMover::parse_dof_task_type(
 			utility_exit_with_message("TaskOperation " + t_o_key + " not found in basic::datacache::DataMap.");
 		}
 	}
-	dof_tasks_[	std::make_pair(dof_type, torsion_type)] =	task_factory;
+	dof_tasks_[ std::make_pair(dof_type, torsion_type)] = task_factory;
 }
 
 void
@@ -479,11 +481,11 @@ MinMover::parse_dof_tasks(
 	basic::datacache::DataMap & data
 ) {
 
-	if(
-		tag->hasOption("bb_task_operations") ||
-		tag->hasOption("chi_task_operations") ||
-		tag->hasOption("bondangle_task_operations") ||
-		tag->hasOption("bondlength_task_operations")){
+	if (
+			tag->hasOption("bb_task_operations") ||
+			tag->hasOption("chi_task_operations") ||
+			tag->hasOption("bondangle_task_operations") ||
+			tag->hasOption("bondlength_task_operations") ) {
 		TR
 			<< "Adding the following task operations to mover " << tag->getName() << " "
 			<< "called " << tag->getOption<std::string>( "name", "no_name" ) << ":" << std::endl;

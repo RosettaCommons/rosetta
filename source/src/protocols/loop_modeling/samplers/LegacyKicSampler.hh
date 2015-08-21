@@ -28,12 +28,12 @@ namespace samplers {
 
 /// @brief Apply the legacy KinematicMover.
 ///
-/// @details The old KinematicMover works just as well as the new KicMover, but 
-/// it is not written as well and is therefore much harder to understand and 
-/// maintain.  Largely for this reason, development will shift towards the new 
-/// implementation and the old one will grow more and more out of date.  This 
-/// sampler was written to compare the two algorithms and is only meant to be a 
-/// debugging tool.  However, it may be useful in the short term while features 
+/// @details The old KinematicMover works just as well as the new KicMover, but
+/// it is not written as well and is therefore much harder to understand and
+/// maintain.  Largely for this reason, development will shift towards the new
+/// implementation and the old one will grow more and more out of date.  This
+/// sampler was written to compare the two algorithms and is only meant to be a
+/// debugging tool.  However, it may be useful in the short term while features
 /// like next-gen KIC are still being ported to the new implementation.
 
 class LegacyKicSampler : public LoopMover {

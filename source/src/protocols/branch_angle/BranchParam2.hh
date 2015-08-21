@@ -48,13 +48,13 @@ public:
 		core::Real tolerance = 0
 	):
 		BranchParam1(
-			m1_m2_Ktheta,
-			m1_m2_theta0,
-			m1_b1_Ktheta,
-			m1_b1_theta0,
-			m2_b1_Ktheta,
-			m2_b1_theta0,
-			tolerance
+		m1_m2_Ktheta,
+		m1_m2_theta0,
+		m1_b1_Ktheta,
+		m1_b1_theta0,
+		m2_b1_Ktheta,
+		m2_b1_theta0,
+		tolerance
 		),
 		m1_b2_Ktheta_(m1_b2_Ktheta),
 		m1_b2_theta0_(m1_b2_theta0),
@@ -118,63 +118,63 @@ public:
 		core::Real const tolerance(a.tolerance_ < b.tolerance_ ? a.tolerance_ : b.tolerance_);
 
 		core::Real const m1_m2_Ktheta_diff(a.m1_m2_Ktheta_ - b.m1_m2_Ktheta_);
-		if (m1_m2_Ktheta_diff < -tolerance) return true;
-		if (m1_m2_Ktheta_diff > tolerance) return false;
+		if ( m1_m2_Ktheta_diff < -tolerance ) return true;
+		if ( m1_m2_Ktheta_diff > tolerance ) return false;
 		// within tolerance: proceed to checking the next number
 
 		core::Real const m1_m2_theta0_diff(a.m1_m2_theta0_ - b.m1_m2_theta0_);
-		if (m1_m2_theta0_diff < -tolerance) return true;
-		if (m1_m2_theta0_diff > tolerance) return false;
+		if ( m1_m2_theta0_diff < -tolerance ) return true;
+		if ( m1_m2_theta0_diff > tolerance ) return false;
 		// within tolerance: proceed to checking the next number
 
 		core::Real const m1_b1_Ktheta_diff(a.m1_b1_Ktheta_ - b.m1_b1_Ktheta_);
-		if (m1_b1_Ktheta_diff < -tolerance) return true;
-		if (m1_b1_Ktheta_diff > tolerance) return false;
+		if ( m1_b1_Ktheta_diff < -tolerance ) return true;
+		if ( m1_b1_Ktheta_diff > tolerance ) return false;
 		// within tolerance: proceed to checking the next number
 
 		core::Real const m1_b1_theta0_diff(a.m1_b1_theta0_ - b.m1_b1_theta0_);
-		if (m1_b1_theta0_diff < -tolerance) return true;
-		if (m1_b1_theta0_diff > tolerance) return false;
+		if ( m1_b1_theta0_diff < -tolerance ) return true;
+		if ( m1_b1_theta0_diff > tolerance ) return false;
 		// within tolerance: proceed to checking the next number
 
 		core::Real const m2_b1_Ktheta_diff(a.m2_b1_Ktheta_ - b.m2_b1_Ktheta_);
-		if (m2_b1_Ktheta_diff < -tolerance) return true;
-		if (m2_b1_Ktheta_diff > tolerance) return false;
+		if ( m2_b1_Ktheta_diff < -tolerance ) return true;
+		if ( m2_b1_Ktheta_diff > tolerance ) return false;
 		// within tolerance: proceed to checking the next number
 
 		core::Real const m2_b1_theta0_diff(a.m2_b1_theta0_ - b.m2_b1_theta0_);
-		if (m2_b1_theta0_diff < -tolerance) return true;
-		if (m2_b1_theta0_diff > tolerance) return false;
+		if ( m2_b1_theta0_diff < -tolerance ) return true;
+		if ( m2_b1_theta0_diff > tolerance ) return false;
 		// either greater than or withing tolarance
 
 
 		core::Real const m1_b2_Ktheta_diff(a.m1_b2_Ktheta_ - b.m1_b2_Ktheta_);
-		if (m1_b2_Ktheta_diff < -tolerance) return true;
-		if (m1_b2_Ktheta_diff > tolerance) return false;
+		if ( m1_b2_Ktheta_diff < -tolerance ) return true;
+		if ( m1_b2_Ktheta_diff > tolerance ) return false;
 		// within tolerance: proceed to checking the next number
 
 		core::Real const m1_b2_theta0_diff(a.m1_b2_theta0_ - b.m1_b2_theta0_);
-		if (m1_b2_theta0_diff < -tolerance) return true;
-		if (m1_b2_theta0_diff > tolerance) return false;
+		if ( m1_b2_theta0_diff < -tolerance ) return true;
+		if ( m1_b2_theta0_diff > tolerance ) return false;
 		// within tolerance: proceed to checking the next number
 
 		core::Real const m2_b2_Ktheta_diff(a.m2_b2_Ktheta_ - b.m2_b2_Ktheta_);
-		if (m2_b2_Ktheta_diff < -tolerance) return true;
-		if (m2_b2_Ktheta_diff > tolerance) return false;
+		if ( m2_b2_Ktheta_diff < -tolerance ) return true;
+		if ( m2_b2_Ktheta_diff > tolerance ) return false;
 		// within tolerance: proceed to checking the next number
 
 		core::Real const m2_b2_theta0_diff(a.m2_b2_theta0_ - b.m2_b2_theta0_);
-		if (m2_b2_theta0_diff < -tolerance) return true;
-		if (m2_b2_theta0_diff > tolerance) return false;
+		if ( m2_b2_theta0_diff < -tolerance ) return true;
+		if ( m2_b2_theta0_diff > tolerance ) return false;
 		// within tolerance: proceed to checking the next number
 
 		core::Real const b1_b2_Ktheta_diff(a.b1_b2_Ktheta_ - b.b1_b2_Ktheta_);
-		if (b1_b2_Ktheta_diff < -tolerance) return true;
-		if (b1_b2_Ktheta_diff > tolerance) return false;
+		if ( b1_b2_Ktheta_diff < -tolerance ) return true;
+		if ( b1_b2_Ktheta_diff > tolerance ) return false;
 		// within tolerance: proceed to checking the next number
 
 		core::Real const b1_b2_theta0_diff(a.b1_b2_theta0_ - b.b1_b2_theta0_);
-		if (b1_b2_theta0_diff < -tolerance) return true;
+		if ( b1_b2_theta0_diff < -tolerance ) return true;
 		// either greater than or within tolarance
 		return false;
 	}

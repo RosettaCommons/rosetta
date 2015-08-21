@@ -60,7 +60,7 @@ make_pose_from_sequence_(
 		ResidueType const & rsd_type( * residue_set.get_representative_type_aa( my_aa ) );
 		conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( rsd_type ) );
 	} // for seqpos
-		// pose.conformation().insert_chain_ending( pose.total_residue() - 1 );		 probably not necessary
+	// pose.conformation().insert_chain_ending( pose.total_residue() - 1 );   probably not necessary
 } // make_pose_match_sequence_
 
 FragData::FragData( SingleResidueFragDataOP SRFD, Size n) : valid_( false ), score_( 0.0 ) {
@@ -161,8 +161,8 @@ Size FragData::apply_ss( MoveMap const& mm, std::string& ss, Frame const& frame 
 
 Size FragData::is_applicable( kinematics::MoveMap const& mm, Size start, Size end ) const {
 	Size insert_size( 0 );
-	//	if ( !is_valid() ) return 0; //this might be necessary to have!!!
-	for (Size pos=start; pos<=end; pos++ ) {
+	// if ( !is_valid() ) return 0; //this might be necessary to have!!!
+	for ( Size pos=start; pos<=end; pos++ ) {
 		if ( !data_[ pos-start+1 ]->is_applicable( mm, pos ) ) continue;
 		++insert_size;
 	}
@@ -176,7 +176,7 @@ Size FragData::is_applicable( kinematics::MoveMap const& mm, Frame const& frame 
 		return is_applicable( mm, frame.start(), frame.end() );
 	}
 	Size insert_size( 0 );
-	for (Size j=1; j<=size(); j++ ) {
+	for ( Size j=1; j<=size(); j++ ) {
 		if ( !data_[ j ]->is_applicable( mm, j, frame ) ) continue;
 		++insert_size;
 	}
@@ -185,7 +185,7 @@ Size FragData::is_applicable( kinematics::MoveMap const& mm, Frame const& frame 
 
 bool FragData::steal( pose::Pose const& pose, Size start, Size end ) {
 	bool success( true );
-	for (Size pos=start; pos<=end; pos++) {
+	for ( Size pos=start; pos<=end; pos++ ) {
 		runtime_assert( start > 0 );
 		if ( pos > pose.total_residue() ) return false;
 		success = success && data_[ pos-start+1 ]->steal( pose, pos );
@@ -201,7 +201,7 @@ bool FragData::steal( pose::Pose const& pose, Frame const& frame ) {
 		return steal( pose, frame.start(), frame.end() );
 	}
 	bool success( true );
-	for (Size j=1; j<=size(); j++ ) {
+	for ( Size j=1; j<=size(); j++ ) {
 		runtime_assert( frame.seqpos( j ) > 0 );
 		if ( frame.seqpos( j ) > pose.total_residue() ) return false;
 		success = success && data_[ j ]->steal( pose, j, frame );
@@ -224,7 +224,7 @@ FragDataOP FragData::generate_sub_fragment( Size start, Size stop ) const {
 bool FragData::is_compatible( FragData const& frag_data ) const {
 	if ( frag_data.size() != size() ) return false;
 	for ( SRFD_List::const_iterator it1= data_.begin(), it2=frag_data.data_.begin(), eit1=data_.end(); it1!=eit1; ++it1,++it2 ) {
-		//		if ( typeid( *it1 ) != typeid( *it2 ) ) return false;
+		//  if ( typeid( *it1 ) != typeid( *it2 ) ) return false;
 		if ( ! (*it1)->is_compatible( **it2 ) ) return false;
 	}
 	return true;
@@ -235,10 +235,10 @@ void FragData::show( std::ostream &os, Frame const& frame ) const {
 	if ( is_valid() ) {
 		for ( SRFD_List::const_iterator it= data_.begin(), eit=data_.end(); it!=eit; ++it ) {
 			os << ObjexxFCL::format::RJ( 10, frame.seqpos( i++ ) ) << " " << ObjexxFCL::format::RJ( 5, pdbpos() ) << " " << pdbid() <<" ";
-			//			std::cerr << "FragData::show " << i-1 << std::endl;
+			//   std::cerr << "FragData::show " << i-1 << std::endl;
 			(*it)->show( os );
 			os << std::endl;
-			//			std::cerr << "FragData:show -- done" << std::endl;
+			//   std::cerr << "FragData:show -- done" << std::endl;
 		}
 	} else {
 		os << "EMPTY TEMPLATE" << std::endl;

@@ -119,7 +119,7 @@ protected:
 	rotamer_trie const &
 	get_current_rotamer()
 	{
-		return get_rotamer( current_state_ );
+	return get_rotamer( current_state_ );
 	}*/
 
 	/*
@@ -250,18 +250,18 @@ public:
 
 	/* inline
 	core::PackerEnergy get_alternate_state_energy_first_node(
-		int first_node_alt_state,
-		int second_node_orig_state,
-		SparseMatrixIndex const & first_node_alt_state_sparse_info,
-		SparseMatrixIndex const & second_node_orig_state_sparse_info
+	int first_node_alt_state,
+	int second_node_orig_state,
+	SparseMatrixIndex const & first_node_alt_state_sparse_info,
+	SparseMatrixIndex const & second_node_orig_state_sparse_info
 	); */
 
 	/* inline
 	core::PackerEnergy get_alternate_state_energy_second_node(
-		int first_node_orig_state,
-		int second_node_alt_state,
-		SparseMatrixIndex const & first_node_orig_state_sparse_info,
-		SparseMatrixIndex const & second_node_alternate_state_sparse_info
+	int first_node_orig_state,
+	int second_node_alt_state,
+	SparseMatrixIndex const & first_node_orig_state_sparse_info,
+	SparseMatrixIndex const & second_node_alternate_state_sparse_info
 	); */
 
 	inline
@@ -668,28 +668,28 @@ DoubleLazyNode::project_deltaE_for_substitution
 	prev_node_energy = curr_state_total_energy_;
 
 	//int aa_neighb_linear_index_offset = aa_offsets_for_edges_.
-	//	index(1, 1, alt_state_sparse_mat_info_.get_aa_type() ) - 1;
+	// index(1, 1, alt_state_sparse_mat_info_.get_aa_type() ) - 1;
 
 	//int alt_state_num_states_per_aa_type =
-	//	get_num_states_for_aa_type( alt_state_sparse_mat_info_.get_aa_type() );
+	// get_num_states_for_aa_type( alt_state_sparse_mat_info_.get_aa_type() );
 	//int alt_state_for_aa_type_minus_1 =
-	//	alt_state_sparse_mat_info_.get_state_ind_for_this_aa_type() - 1;
+	// alt_state_sparse_mat_info_.get_state_ind_for_this_aa_type() - 1;
 	//int nstates_offset =
-	//	num_states_for_aa_type_for_higher_indexed_neighbor_.index(1,1) - 1;
+	// num_states_for_aa_type_for_higher_indexed_neighbor_.index(1,1) - 1;
 
 	for ( int ii = 1; ii <= get_num_edges_to_smaller_indexed_nodes(); ++ii ) {
 
 		alternate_state_two_body_energies_[ ii ] = get_incident_dlazy_edge(ii)->
 			get_two_body_energy_smi(
-				neighbors_curr_state_[ ii ], alternate_state_,
-				neighbors_curr_state_sparse_info_[ ii ], alt_state_sparse_mat_info_ );
+			neighbors_curr_state_[ ii ], alternate_state_,
+			neighbors_curr_state_sparse_info_[ ii ], alt_state_sparse_mat_info_ );
 	}
 
-	for (int ii = get_num_edges_to_smaller_indexed_nodes() + 1;	ii <= get_num_incident_edges(); ++ii) {
+	for ( int ii = get_num_edges_to_smaller_indexed_nodes() + 1; ii <= get_num_incident_edges(); ++ii ) {
 		alternate_state_two_body_energies_[ ii ] = get_incident_dlazy_edge(ii)->
 			get_two_body_energy_smi(
-				alternate_state_, neighbors_curr_state_[ ii ],
-				alt_state_sparse_mat_info_, neighbors_curr_state_sparse_info_[ ii ] );
+			alternate_state_, neighbors_curr_state_[ ii ],
+			alt_state_sparse_mat_info_, neighbors_curr_state_sparse_info_[ ii ] );
 	}
 
 	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {

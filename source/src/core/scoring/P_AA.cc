@@ -94,7 +94,7 @@ core::chemical::AA
 P_AA::get_l_equivalent(
 	core::chemical::AA const d_aa
 ) const {
-		return core::chemical::get_L_equivalent(d_aa);
+	return core::chemical::get_L_equivalent(d_aa);
 }
 
 /// @brief Read the amino acid probability file into P_AA
@@ -117,9 +117,9 @@ P_AA::read_P_AA()
 		using namespace ObjexxFCL::format;
 		stream >> bite( 3, id ) >> skip( 1 ) >> bite( 9, probability ) >> skip;
 		if ( stream ) {
-		debug_assert( ( probability >= Probability( 0.0 ) ) && ( probability <= Probability( 1.0 ) ) );
+			debug_assert( ( probability >= Probability( 0.0 ) ) && ( probability <= Probability( 1.0 ) ) );
 			AA aa = aa_from_name( id );
-		debug_assert( ( aa >= 1 ) && ( aa <= num_canonical_aas ) );
+			debug_assert( ( aa >= 1 ) && ( aa <= num_canonical_aas ) );
 			probability_sum += probability;
 			P_AA_[ aa ] = probability;
 		} //! ADD INPUT ERROR HANDLING
@@ -127,7 +127,7 @@ P_AA::read_P_AA()
 	stream.close();
 
 	// Check probabilities sum to ~ 1
-debug_assert( numeric::eq_tol( probability_sum, Probability( 1.0 ), Probability( .0001 ), Probability( .0001 ) ) );
+	debug_assert( numeric::eq_tol( probability_sum, Probability( 1.0 ), Probability( .0001 ), Probability( .0001 ) ) );
 }
 
 
@@ -154,10 +154,10 @@ P_AA::read_P_AA_n()
 		using namespace ObjexxFCL::format;
 		stream >> bite( 3, id ) >> skip( 1 ) >> bite( 2, n ) >> skip( 1 ) >> bite( 9, probability ) >> skip;
 		if ( stream ) {
-		debug_assert( ( n >= 1 ) && ( n <= 14 ) ); // Support n in [1,14]
-		debug_assert( ( probability >= Probability( 0.0 ) ) && ( probability <= Probability( 1.0 ) ) );
+			debug_assert( ( n >= 1 ) && ( n <= 14 ) ); // Support n in [1,14]
+			debug_assert( ( probability >= Probability( 0.0 ) ) && ( probability <= Probability( 1.0 ) ) );
 			AA aa = aa_from_name( id );
-		debug_assert( ( aa >= 1 ) && ( aa <= num_canonical_aas ) );
+			debug_assert( ( aa >= 1 ) && ( aa <= num_canonical_aas ) );
 			//AminoAcidKey const & key( AminoAcidKeys::key( id ) );
 			P_AA_n_[ aa ][ n ] = probability;
 		} //! ADD INPUT ERROR HANDLING
@@ -171,7 +171,7 @@ P_AA::read_P_AA_n()
 		for ( Probability_AA_n::ConstIterator i = P_AA_n_.begin(), e = P_AA_n_.end(); i != e ; ++i ) {
 			probability_sum += (*i)[ n ];
 		}
-	debug_assert( numeric::eq_tol( probability_sum, Probability( 1.0 ), Probability( .0001 ), Probability( .0001 ) ) );
+		debug_assert( numeric::eq_tol( probability_sum, Probability( 1.0 ), Probability( .0001 ), Probability( .0001 ) ) );
 	}
 #endif
 }
@@ -202,22 +202,16 @@ P_AA::read_P_AA_pp()
 	utility::io::izstream stream;
 
 	//MaximCode
-	if (option[shapovalov_lib_fixes_enable] &&
-		option[shapovalov_lib::shap_p_aa_pp_enable])
-	{
+	if ( option[shapovalov_lib_fixes_enable] &&
+			option[shapovalov_lib::shap_p_aa_pp_enable] ) {
 		std::string _smoothingRequsted = basic::options::option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ];
 		std::string _smoothingAsKeyword = "undefined";
 
-		if (_smoothingRequsted.compare("1")==0)
-		{
+		if ( _smoothingRequsted.compare("1")==0 ) {
 			_smoothingAsKeyword = "low_smooth";
-		}
-		else if (_smoothingRequsted.compare("2")==0)
-		{
+		} else if ( _smoothingRequsted.compare("2")==0 ) {
 			_smoothingAsKeyword = "high_smooth";
-		}
-		else
-		{
+		} else {
 			_smoothingAsKeyword = "unknown";
 		}
 		TR << "shapovalov_lib::shap_p_aa_pp_smooth_level of " << _smoothingRequsted << "( aka " << _smoothingAsKeyword << " )" << " got activated." << std::endl;
@@ -225,20 +219,19 @@ P_AA::read_P_AA_pp()
 
 	// search in the local directory first
 	//MaximCode:
-	if (!basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
-			|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_enable]) {
+	if ( !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
+			|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_enable] ) {
 		stream.open( option[ p_aa_pp ] );
-	}
-	else {
+	} else {
 		stream.open( option[ shap_p_aa_pp ] );
 	}
 
 	// then database
-	if (!stream.good()) {
+	if ( !stream.good() ) {
 		stream.close();
 		//MaximCode:
-		if (!basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
-				|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_enable]) {
+		if ( !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
+				|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_enable] ) {
 			basic::database::open(stream, option[p_aa_pp]);
 		} else {
 			basic::database::open(stream, option[shap_p_aa_pp]);
@@ -255,65 +248,64 @@ P_AA::read_P_AA_pp()
 		using namespace ObjexxFCL::format;
 
 		//MaximCode:
-		if (stream.peek() == '#') {
+		if ( stream.peek() == '#' ) {
 			std::string line;
 			stream.getline(line);
 			continue;
 		}
 
 		//MaximCode:
-		if (!basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
-				|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_enable]) {
+		if ( !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
+				|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_enable] ) {
 			stream >> bite(4, phi) >> skip(1) >> bite(4, psi) >> skip(1)
-					>> bite(3, id) >> skip(17) >> bite(7, probability) >> skip;
+				>> bite(3, id) >> skip(17) >> bite(7, probability) >> skip;
 		} else {
 			stream >> phi >> psi >> skip(1) >> bite(3, id) >> skip(1)
-					>> probability >> minusLogProbability >> skip;
+				>> probability >> minusLogProbability >> skip;
 		}
 
 		if ( ( stream ) ) {
-		debug_assert( ( phi >= Angle( -180.0 ) ) && ( phi <= Angle( 180.0 ) ) );
-		debug_assert( ( psi >= Angle( -180.0 ) ) && ( psi <= Angle( 180.0 ) ) );
-		debug_assert( ( probability >= Probability( 0.0 ) ) && ( probability <= Probability( 1.0 ) ) );
+			debug_assert( ( phi >= Angle( -180.0 ) ) && ( phi <= Angle( 180.0 ) ) );
+			debug_assert( ( psi >= Angle( -180.0 ) ) && ( psi <= Angle( 180.0 ) ) );
+			debug_assert( ( probability >= Probability( 0.0 ) ) && ( probability <= Probability( 1.0 ) ) );
 
 			AA aa = aa_from_name( id );
-		debug_assert( ( aa >= 1 ) && ( aa <= num_canonical_aas ) );
+			debug_assert( ( aa >= 1 ) && ( aa <= num_canonical_aas ) );
 
 			//MaximCode:
 			if ( option[ p_aa_pp_nogridshift ] ||
 					(basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable] && basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_enable]) ) {
-						int const i_phi( numeric::mod( 36 + numeric::nint( phi / Angle( 10.0 ) ), 36 ) );
-						int const i_psi( numeric::mod( 36 + numeric::nint( psi / Angle( 10.0 ) ), 36 ) );
+				int const i_phi( numeric::mod( 36 + numeric::nint( phi / Angle( 10.0 ) ), 36 ) );
+				int const i_psi( numeric::mod( 36 + numeric::nint( psi / Angle( 10.0 ) ), 36 ) );
 
-						if ( probability == Probability( 0.0 ) ) probability = 1e-6;
-						P_AA_pp_[ aa ]( i_phi, i_psi ) = probability;
-					}
-					else {
-						int const i_phi( numeric::mod( 36 + numeric::nint( ( phi / Angle( 10.0 ) ) - Angle( 0.5 ) ), 36 ) );
-						int const i_psi( numeric::mod( 36 + numeric::nint( ( psi / Angle( 10.0 ) ) - Angle( 0.5 ) ), 36 ) );
+				if ( probability == Probability( 0.0 ) ) probability = 1e-6;
+				P_AA_pp_[ aa ]( i_phi, i_psi ) = probability;
+			} else {
+				int const i_phi( numeric::mod( 36 + numeric::nint( ( phi / Angle( 10.0 ) ) - Angle( 0.5 ) ), 36 ) );
+				int const i_psi( numeric::mod( 36 + numeric::nint( ( psi / Angle( 10.0 ) ) - Angle( 0.5 ) ), 36 ) );
 
-						if ( probability == Probability( 0.0 ) ) probability = .001; //! Hack from rosetta++ except leave .001 entries alone
-						P_AA_pp_[ aa ]( i_phi, i_psi ) = probability;
-					}
+				if ( probability == Probability( 0.0 ) ) probability = .001; //! Hack from rosetta++ except leave .001 entries alone
+				P_AA_pp_[ aa ]( i_phi, i_psi ) = probability;
+			}
 
 		} //! ADD INPUT ERROR HANDLING
 	}
 	stream.close();
 
-//! P_AA_pp file is NOT a proper distribution: Some (phi,psi) bins have total probabilities of zero
-//! This test must be left off until the file distribution is made proper or adapted to the file semantics
-//#ifndef NDEBUG
-//	// Check probabilities sum to ~ 1 for each (phi,psi)
-//	for ( int i_phi = 0; i_phi <= 35; ++i_phi ) {
-//		for ( int i_psi = 0; i_psi <= 35; ++i_psi ) {
-//			Probability probability_sum( 0.0 );
-//			for ( Probability_AA_pp::ConstIterator i = P_AA_pp.begin(), e = P_AA_pp.end(); i != e ; ++i ) {
-//				probability_sum += (*i)( i_phi, i_psi );
-//			}
-//		debug_assert( numeric::eq_tol( probability_sum, Probability( 1.0 ), Probability( .001 ), Probability( .001 ) ) );
-//		}
-//	}
-//#endif
+	//! P_AA_pp file is NOT a proper distribution: Some (phi,psi) bins have total probabilities of zero
+	//! This test must be left off until the file distribution is made proper or adapted to the file semantics
+	//#ifndef NDEBUG
+	// // Check probabilities sum to ~ 1 for each (phi,psi)
+	// for ( int i_phi = 0; i_phi <= 35; ++i_phi ) {
+	//  for ( int i_psi = 0; i_psi <= 35; ++i_psi ) {
+	//   Probability probability_sum( 0.0 );
+	//   for ( Probability_AA_pp::ConstIterator i = P_AA_pp.begin(), e = P_AA_pp.end(); i != e ; ++i ) {
+	//    probability_sum += (*i)( i_phi, i_psi );
+	//   }
+	//  debug_assert( numeric::eq_tol( probability_sum, Probability( 1.0 ), Probability( .001 ), Probability( .001 ) ) );
+	//  }
+	// }
+	//#endif
 
 
 	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
@@ -362,8 +354,8 @@ P_AA::P_AA_pp_energy( conformation::Residue const & res ) const
 
 	const core::Real d_multiplier = is_canonical_d_aminoacid(res.aa()) ? -1.0 : 1.0 ; //A multiplier that's -1 for D-amino acids and 1 for L-amino acids, used to invert phi and psi for D.
 
-	if ( ! res.is_terminus()  && ! res.is_virtual_residue()  )//ToDo Also exclude chainbreaks
-	{ // Probabilities for this amino acid are present in files and it is not a terminus
+	if ( ! res.is_terminus()  && ! res.is_virtual_residue()  ) { //ToDo Also exclude chainbreaks
+		// Probabilities for this amino acid are present in files and it is not a terminus
 		Angle const phi( d_multiplier*res.mainchain_torsion( 1 ) );
 		Angle const psi( d_multiplier*res.mainchain_torsion( 2 ) );
 		//printf("P_AA_pp: res=%lu phi=%.2f psi=%.2f\n", res.seqpos(), phi, psi); fflush(stdout); //DELETE ME
@@ -396,8 +388,7 @@ P_AA::P_AA_pp_energy( chemical::AA const aa, Angle const phi, Angle const psi ) 
 		// Probabilities for this amino acid are present in files
 		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::p_aa_pp_nogridshift ] ) { // the format of p_aa_pp changed from using i*10+5 to i*10 as grid
 			return -std::log( numeric::interpolation::periodic_range::full::bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa2 ] ) / P_AA_[ aa2 ] );
-		}
-		else {
+		} else {
 			//return -std::log( bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ] ) / P_AA_[ aa ] );
 			numeric::MathVector< Real > args(2);
 			args(0) = phi;
@@ -431,7 +422,7 @@ P_AA::get_Paa_pp_deriv(
 	Size const psi_id = 2;
 
 	if ( res.type().is_alpha_aa() && !res.is_terminus() && ( tor_id.type() == id::BB && (tor_id.torsion() == phi_id || tor_id.torsion() == psi_id )) & ! res.is_virtual_residue() ) {
-		 //ToDo Also exclude chainbreaks
+		//ToDo Also exclude chainbreaks
 		// Probabilities for this amino acid are present in files and it is not a terminus
 		Angle const phi( d_multiplier*res.mainchain_torsion( phi_id ));
 		Angle const psi( d_multiplier*res.mainchain_torsion( psi_id ));
@@ -461,12 +452,12 @@ P_AA::get_Paa_pp_deriv(
 			} else {
 				Real const interp_p = bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ], dp_dphi, dp_dpsi );
 				switch ( tor_id.torsion()  ) {
-					case phi_id :
-						return /*dlog_Paa_dphi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dphi; break;
-					case psi_id :
-						return /*dlog_Paa_dpsi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dpsi; break;
-					default :
-						return EnergyDerivative( 0.0 );
+				case phi_id :
+					return /*dlog_Paa_dphi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dphi; break;
+				case psi_id :
+					return /*dlog_Paa_dpsi = */ -( 1.0 / interp_p ) * d_multiplier * dp_dpsi; break;
+				default :
+					return EnergyDerivative( 0.0 );
 				}
 			}
 		}
@@ -485,8 +476,9 @@ P_AA::P_AA_energy( conformation::Residue const & res ) const {
 	using namespace core::chemical;
 
 	AA const aa( is_canonical_d_aminoacid(res.aa()) ? get_l_equivalent(res.aa()) : (res.backbone_aa()==aa_unk ? res.aa() : res.backbone_aa()) ); //This handles D-canonical amino acids, as well as noncanonicals templated on an L-canonical.
-	if ( aa > chemical::num_canonical_aas )
+	if ( aa > chemical::num_canonical_aas ) {
 		return 0.0;
+	}
 
 	return -std::log( P_AA_[ aa ] );
 }

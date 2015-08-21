@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/rosetta_scripts/PosePropertyReporterFactory.cc
-/// @brief	Factory for PosePropertyReporters
+/// @brief Factory for PosePropertyReporters
 /// @author Luki Goldschmidt <lugo@uw.edu>
 
 // Unit Headers
@@ -86,7 +86,7 @@ PosePropertyReporterFactory::factory_register( PosePropertyReporterCreatorOP cre
 
 /// @brief return new PosePropertyReporter by key lookup in reporter_creator_map_ (new PosePropertyReporter parses Tag if provided)
 PosePropertyReporterOP
-PosePropertyReporterFactory::newPosePropertyReporter(	std::string const & pose_selector_type )
+PosePropertyReporterFactory::newPosePropertyReporter( std::string const & pose_selector_type )
 {
 	PosePropertyReporterMap::const_iterator iter( reporter_creator_map_.find( pose_selector_type ) );
 	if ( iter != reporter_creator_map_.end() ) {
@@ -94,11 +94,11 @@ PosePropertyReporterFactory::newPosePropertyReporter(	std::string const & pose_s
 			throw utility::excn::EXCN_RosettaScriptsOption( "Error: PosePropertyReporterCreatorOP prototype for " + pose_selector_type + " is NULL!" );
 		}
 		return iter->second->create_reporter();
-	}
-	else {
+	} else {
 		TR<<"Available pose property reporters: ";
-		for( PosePropertyReporterMap::const_iterator it = reporter_creator_map_.begin(); it != reporter_creator_map_.end(); ++it )
+		for ( PosePropertyReporterMap::const_iterator it = reporter_creator_map_.begin(); it != reporter_creator_map_.end(); ++it ) {
 			TR<<it->first<<", ";
+		}
 		TR<<std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption( pose_selector_type + " is not known to the PosePropertyReporterFactory. Was it registered via a PosePropertyReporterRegistrator in one of the init.cc files?" );
 		return NULL;

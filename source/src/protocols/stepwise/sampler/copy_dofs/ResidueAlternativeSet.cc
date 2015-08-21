@@ -24,38 +24,38 @@ namespace stepwise {
 namespace sampler {
 namespace copy_dofs {
 
-	//Constructor
-	ResidueAlternativeSet::ResidueAlternativeSet(  utility::vector1< core::pose::PoseOP > const & pose_list,
-																								 std::map< Size, Size > const & res_map,
-																								 Size const representative_seqpos):
-		pose_list_( pose_list ),
-		res_map_( res_map ),
-		representative_seqpos_( representative_seqpos )
-	{}
+//Constructor
+ResidueAlternativeSet::ResidueAlternativeSet(  utility::vector1< core::pose::PoseOP > const & pose_list,
+	std::map< Size, Size > const & res_map,
+	Size const representative_seqpos):
+	pose_list_( pose_list ),
+	res_map_( res_map ),
+	representative_seqpos_( representative_seqpos )
+{}
 
-	//Constructor
-	ResidueAlternativeSet::ResidueAlternativeSet(  utility::vector1< core::pose::PoseOP > const & pose_list,
-																								 Size const representative_seqpos):
-		pose_list_( pose_list ),
-		representative_seqpos_( representative_seqpos )
-	{
-		res_map_[ representative_seqpos ] = representative_seqpos;
-	}
+//Constructor
+ResidueAlternativeSet::ResidueAlternativeSet(  utility::vector1< core::pose::PoseOP > const & pose_list,
+	Size const representative_seqpos):
+	pose_list_( pose_list ),
+	representative_seqpos_( representative_seqpos )
+{
+	res_map_[ representative_seqpos ] = representative_seqpos;
+}
 
-	//Destructor
-	ResidueAlternativeSet::~ResidueAlternativeSet(){}
+//Destructor
+ResidueAlternativeSet::~ResidueAlternativeSet(){}
 
-	utility::vector1< core::pose::PoseOP >
-	ResidueAlternativeSet::pose_list() const
-	{
-		return pose_list_;
-	}
+utility::vector1< core::pose::PoseOP >
+ResidueAlternativeSet::pose_list() const
+{
+	return pose_list_;
+}
 
-	core::pose::PoseOP
-	ResidueAlternativeSet::pose( Size const n ) const
-	{
-		return pose_list_[ n ];
-	}
+core::pose::PoseOP
+ResidueAlternativeSet::pose( Size const n ) const
+{
+	return pose_list_[ n ];
+}
 
 } //copy_dofs
 } //sampler

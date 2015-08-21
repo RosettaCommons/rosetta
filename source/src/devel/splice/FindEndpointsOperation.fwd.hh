@@ -18,7 +18,7 @@
 
 namespace devel {
 namespace splice {
-    
+
 class FindEndpointsOperation;
 
 typedef utility::pointer::shared_ptr< FindEndpointsOperation > FindEndpointsOperationOP;

@@ -59,10 +59,10 @@ void rb_grid_score_atr_rep(
 
 /// @brief a cleaner implementation of rb_grid_score_atr_rep
 std::pair<int, int> get_rb_atr_and_rep_scores(
-		core::grid::CartGrid<int> const & grid,
-		core::pose::Pose const & pose,
-		core::Size begin,
-		core::Size end
+	core::grid::CartGrid<int> const & grid,
+	core::pose::Pose const & pose,
+	core::Size begin,
+	core::Size end
 );
 
 /// @brief Try all rotamers for the specified residue and install the first one
@@ -75,10 +75,10 @@ void grid_rotamer_trials(
 );
 
 void rb_grid_rotamer_trials_atr_rep(
-		core::grid::CartGrid<int> const & grid,
-		core::pose::Pose & pose,
-		core::Size begin,
-		core::Size end
+	core::grid::CartGrid<int> const & grid,
+	core::pose::Pose & pose,
+	core::Size begin,
+	core::Size end
 );
 
 /// @brief Try all rotamers for the specified residue and install the first one
@@ -100,10 +100,10 @@ void rotamers_for_trials(
 
 /// @brief Set the value for all grid boxes whose centers fall inside the sphere.
 /* void set_sphere(
-	core::grid::CartGrid<int> const & grid,
-	core::Vector const & center,
-	core::Real radius,
-	int value
+core::grid::CartGrid<int> const & grid,
+core::Vector const & center,
+core::Real radius,
+int value
 ); */
 
 
@@ -145,13 +145,13 @@ void grid_to_kin(
 
 	int nx(0), ny(0), nz(0); // grid points in each dimension
 	grid.getNumberOfPoints(nx, ny, nz);
-	for(int i = 0, i_end = nx; i < i_end; i += stride) {
-		for(int j = 0, j_end = ny; j < j_end; j += stride) {
-			for(int k = 0, k_end = nz; k < k_end; k += stride) {
+	for ( int i = 0, i_end = nx; i < i_end; i += stride ) {
+		for ( int j = 0, j_end = ny; j < j_end; j += stride ) {
+			for ( int k = 0, k_end = nz; k < k_end; k += stride ) {
 				GridPt grid_pt(i, j, k);
 				Vector box_ctr = grid.coords( grid_pt );
 				T value = grid.getValue(grid_pt);
-				if( min_val <= value && value <= max_val ) {
+				if ( min_val <= value && value <= max_val ) {
 					out << '{' << i << ' ' << j << ' ' << k << "}U "
 						<< box_ctr.x() << ' ' << box_ctr.y() << ' ' << box_ctr.z() << '\n';
 				}

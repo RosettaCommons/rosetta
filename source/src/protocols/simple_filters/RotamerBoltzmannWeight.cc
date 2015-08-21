@@ -199,38 +199,40 @@ RotamerBoltzmannWeight::first_pass_ala_scan( core::pose::Pose const & pose ) con
 	hotspot_residues.clear();
 	protocols::simple_filters::AlaScan ala_scan;
 	ala_scan.repack( repack() );
-	if( repack() )
+	if ( repack() ) {
 		ala_scan.repeats( 3 );
-	else
+	} else {
 		ala_scan.repeats( 1 );
+	}
 	core::Size const jump( rb_jump() );
 	ala_scan.jump( jump );
 	ala_scan.scorefxn( scorefxn() );
-	if( repack() )
+	if ( repack() ) {
 		TR<<"All energy calculations will be computed subject to repacking in bound and unbound states (ddG).";
-	else
+	} else {
 		TR<<"All energy calculations will be computed subject to no repacking in the bound and unboud states (dG)";
+	}
 	core::Real orig_ddG(0.0);
-	if( !skip_ala_scan() ){
+	if ( !skip_ala_scan() ) {
 		protocols::simple_filters::DdgFilter ddg_filter( 100/*ddg_threshold*/, scorefxn(), jump, 1 /*repeats*/ );
 		ddg_filter.repack( repack() );
 		orig_ddG = ddg_filter.compute( pose );
 		TR<<"\nOriginal complex ddG "<<orig_ddG<<std::endl;
 	}
 	core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
-	for( core::Size resi=1; resi<=pose.total_residue(); ++resi ){
-		if( packer_task->being_packed( resi ) && pose.residue( resi ).is_protein()){
-			if( skip_ala_scan() ){
+	for ( core::Size resi=1; resi<=pose.total_residue(); ++resi ) {
+		if ( packer_task->being_packed( resi ) && pose.residue( resi ).is_protein() ) {
+			if ( skip_ala_scan() ) {
 				TR<<"Adding residue "<<resi<<" to hotspot list\n";
 				hotspot_residues.push_back( resi );
-			}
-			else{
+			} else {
 				core::Real const ala_scan_ddG( ala_scan.ddG_for_single_residue( pose, resi ) );
 				core::Real const ddG( ala_scan_ddG - orig_ddG );
 				TR<<"ddG for resi "<<pose.residue( resi ).name3()<<resi<<" is "<<ddG<<std::endl;
 				ddGs_[ resi ] = ddG;
-				if( ddG >= ddG_threshold() )
+				if ( ddG >= ddG_threshold() ) {
 					hotspot_residues.push_back( resi );
+				}
 			}
 		}
 	}
@@ -246,11 +248,11 @@ RotamerBoltzmannWeight::compute( core::pose::Pose const & const_pose ) const{
 
 	utility::vector1<Size> hotspot_res = core::pose::get_resnum_list_ordered(target_residues_,const_pose);
 	// for(Size i = 1; i <= hotspot_res.size(); ++i) {
-	// 	std::cerr << "RotamerBoltzmannWeight calc res: " << hotspot_res[i] << std::endl;
+	//  std::cerr << "RotamerBoltzmannWeight calc res: " << hotspot_res[i] << std::endl;
 	// }
 	core::pose::Pose unbound_pose( const_pose );
-	if( hotspot_res.size()==0 ) {
-		if( type_ == "monomer" ) {
+	if ( hotspot_res.size()==0 ) {
+		if ( type_ == "monomer" ) {
 			protocols::toolbox::SelectResiduesByLayer srb( true, true, false );
 			utility::vector1< core::chemical::AA > select_aa_types;
 			select_aa_types.push_back( core::chemical::aa_tyr );
@@ -261,18 +263,18 @@ RotamerBoltzmannWeight::compute( core::pose::Pose const & const_pose ) const{
 			srb.restrict_aatypes_for_selection( select_aa_types );
 			hotspot_res = srb.compute( const_pose );
 		} else {
-			if( unbound() ){
+			if ( unbound() ) {
 				using namespace protocols::moves;
 
 				if ( sym_dof_names() != "" ) { // JB 120817
 					utility::vector1<std::string> sym_dof_name_list = utility::string_split( sym_dof_names() , ',' ); // JB 120817
-					for (Size i = 1; i <= sym_dof_name_list.size(); i++) { // JB 120817
+					for ( Size i = 1; i <= sym_dof_name_list.size(); i++ ) { // JB 120817
 						int sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( unbound_pose, sym_dof_name_list[i] ); // JB 120817
 						rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( unbound_pose, sym_aware_jump_id ) ); // JB 120817
 						translate->step_size( 1000.0 ); // JB 120817
 						translate->apply( unbound_pose ); // JB 120817
 					} // JB 120817
-				} else {	// JB 120817
+				} else { // JB 120817
 					int sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num(unbound_pose, rb_jump() ); // JB 120420
 					rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( unbound_pose, sym_aware_jump_id ) ); // JB 120420
 					translate->step_size( 1000.0 );
@@ -283,7 +285,7 @@ RotamerBoltzmannWeight::compute( core::pose::Pose const & const_pose ) const{
 		}
 	}
 	//unbound_pose.dump_pdb("unbound_pose.pdb");
-	if( hotspot_res.size() == 0 ){
+	if ( hotspot_res.size() == 0 ) {
 		TR<<"No hot-spot residues detected in first pass alanine scan. Doing nothing"<<std::endl;
 		return( 0 );
 	} else {
@@ -292,7 +294,7 @@ RotamerBoltzmannWeight::compute( core::pose::Pose const & const_pose ) const{
 
 	protocols::toolbox::pose_metric_calculators::RotamerBoltzCalculator rotboltz_calc( this->scorefxn(), this->temperature(), this->repacking_radius() );
 
-	BOOST_FOREACH( core::Size const hs_res, hotspot_res ){
+	BOOST_FOREACH ( core::Size const hs_res, hotspot_res ) {
 		core::Real const boltz_weight( fast_calc_ ? rotboltz_calc.computeBoltzWeight( unbound_pose, hs_res ) : compute_Boltzmann_weight( unbound_pose, hs_res ) );
 		TR<<const_pose.residue( hs_res ).name3()<<hs_res<<" "<<boltz_weight<<'\n';
 		rotamer_probabilities_[ hs_res ] = boltz_weight;
@@ -300,9 +302,9 @@ RotamerBoltzmannWeight::compute( core::pose::Pose const & const_pose ) const{
 	}
 	TR.flush();
 	core::Real avg = 0.0;
-	for( std::map<core::Size,core::Real>::const_iterator i = rotamer_probabilities_.begin(); i != rotamer_probabilities_.end(); ++i) {
+	for ( std::map<core::Size,core::Real>::const_iterator i = rotamer_probabilities_.begin(); i != rotamer_probabilities_.end(); ++i ) {
 		avg += i->second;
-	}		
+	}
 	return - avg / (core::Real)rotamer_probabilities_.size();
 }
 
@@ -315,7 +317,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	using core::pack::task::operation::TaskOperationCOP;
 
 	TR<<"-----Computing Boltzmann weight for residue "<<resi<<std::endl;
-/// build a rotamer set for resi while pruning clashes against a poly-alanine background
+	/// build a rotamer set for resi while pruning clashes against a poly-alanine background
 	core::pose::Pose pose( const_pose );
 
 	Residue const & res = pose.residue( resi );
@@ -326,7 +328,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ));
 	tf->push_back( TaskOperationCOP( new core::pack::task::operation::IncludeCurrent ) );
 	PackerTaskOP ptask( tf->create_task_and_apply_taskoperations( pose ) );
-	if (core::pose::symmetry::is_symmetric(pose)) {
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::pack::make_symmetric_PackerTask_by_truncation(pose, ptask); // NK 110621
 	}
 	ResidueLevelTask & restask( ptask->nonconst_residue_task( resi ) );
@@ -336,32 +338,32 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	rotset->build_rotamers( pose, *scorefxn_, *ptask, packer_graph, false );
 	// TR << "num rotamers for resi " << resi << " is: " << rotset->num_rotamers() << std::endl;
 
-/// des_around will mark all residues around resi for design, the rest for packing.
+	/// des_around will mark all residues around resi for design, the rest for packing.
 	protocols::toolbox::task_operations::DesignAroundOperationOP des_around( new protocols::toolbox::task_operations::DesignAroundOperation );
 	des_around->design_shell( repacking_radius() );
 	des_around->include_residue( resi );
 	tf->push_back( des_around );
 	PackerTaskOP task = tf->create_task_and_apply_taskoperations( pose );
-	if (core::pose::symmetry::is_symmetric(pose)) {
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::pack::make_symmetric_PackerTask_by_truncation(pose, task); // NK 110621
 	}
 	protocols::simple_filters::ScoreTypeFilter const stf( scorefxn_, core::scoring::total_score, 0 );
 
 	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
-	if (core::pose::symmetry::is_symmetric(pose)) {
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::pose::symmetry::make_symmetric_movemap( pose, *mm ); // NK 110621
 	}
 	mm->set_bb( false );
-	if( unbound() ) // the complex was split, don't minimize rb dof
+	if ( unbound() ) { // the complex was split, don't minimize rb dof
 		mm->set_jump( false );
-	else // minimize rb if bound
+	} else { // minimize rb if bound
 		mm->set_jump( rb_jump(), true ); // Need to modify for multicomponent symmetries (JBB)
-	for( core::Size i=1; i<=pose.total_residue(); ++i ){
-		if( task->being_designed( i ) ){
+	}
+	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+		if ( task->being_designed( i ) ) {
 			task->nonconst_residue_task( i ).restrict_to_repacking(); // mark all des around to repacking only
 			mm->set_chi( i, true );
-		}
-		else{
+		} else {
 			task->nonconst_residue_task( i ).prevent_repacking(); /// mark all non-desaround positions for no repacking
 			mm->set_chi( i, false );
 		}
@@ -369,7 +371,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	task->nonconst_residue_task( resi ).prevent_repacking();
 	core::pack::pack_rotamers( pose, *scorefxn_, task );
 	protocols::moves::MoverOP min_mover;
-	if (core::pose::symmetry::is_symmetric(pose)) {
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		min_mover = protocols::moves::MoverOP( new protocols::simple_moves::symmetry::SymMinMover( mm, scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true, false, false ) ); // NK 110621
 	} else {
 		min_mover = protocols::moves::MoverOP( new protocols::simple_moves::MinMover( mm, scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true, false, false ) ); // NK 110621
@@ -379,7 +381,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	core::Real const init_score( stf.compute( const_min_pose ) );
 	TR<<"Total score for input pose: "<<init_score<<std::endl;
 	utility::vector1< core::Real > scores;
-	for( Rotamers::const_iterator rotamer = rotset->begin(); rotamer != rotset->end(); ++rotamer ){
+	for ( Rotamers::const_iterator rotamer = rotset->begin(); rotamer != rotset->end(); ++rotamer ) {
 		pose = const_min_pose;
 		pose.replace_residue( resi, **rotamer, false/*orient bb*/ );
 		core::pack::pack_rotamers( pose, *scorefxn(), task );
@@ -390,8 +392,9 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 		scores.push_back( score );
 	}
 	core::Real boltz_sum ( 0.0 );
-	BOOST_FOREACH( core::Real const score, scores )
+	BOOST_FOREACH ( core::Real const score, scores ) {
 		boltz_sum += exp(( init_score - score )/temperature());
+	}
 
 	return( 1/boltz_sum );
 }
@@ -412,11 +415,11 @@ core::Real
 RotamerBoltzmannWeight::report_sm( core::pose::Pose const & pose ) const
 {
 	compute( pose );
-	if (no_modified_ddG_) {
+	if ( no_modified_ddG_ ) {
 		core::Real avg = 0.0;
-		for( std::map<core::Size,core::Real>::const_iterator i = rotamer_probabilities_.begin(); i != rotamer_probabilities_.end(); ++i) {
+		for ( std::map<core::Size,core::Real>::const_iterator i = rotamer_probabilities_.begin(); i != rotamer_probabilities_.end(); ++i ) {
 			avg += i->second;
-		}		
+		}
 		return - avg / (core::Real)rotamer_probabilities_.size();
 	}
 	return( compute_modified_ddG( pose, TR ));
@@ -434,14 +437,14 @@ RotamerBoltzmannWeight::interface_interaction_energy( core::pose::Pose const & p
 
 	core::Size const res_chain( pose.residue( res ).chain() );
 	core::Real total_residue_energy( 0.0 );
-	for( EdgeListConstIterator egraph_it = nonconst_pose.energies().energy_graph().get_node( res )->const_edge_list_begin(); egraph_it != nonconst_pose.energies().energy_graph().get_node( res )->const_edge_list_end(); ++egraph_it){
-  	core::Size const int_resi = (*egraph_it)->get_other_ind( res );
+	for ( EdgeListConstIterator egraph_it = nonconst_pose.energies().energy_graph().get_node( res )->const_edge_list_begin(); egraph_it != nonconst_pose.energies().energy_graph().get_node( res )->const_edge_list_end(); ++egraph_it ) {
+		core::Size const int_resi = (*egraph_it)->get_other_ind( res );
 		core::Size const int_resi_chain( pose.residue( int_resi ).chain() );
-    if( int_resi_chain != res_chain ){ // only sum over interaction energies with the residue's non-host chain
-    	EnergyEdge const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
-    	core::Real const intE = Eedge->dot( curr_weights );
+		if ( int_resi_chain != res_chain ) { // only sum over interaction energies with the residue's non-host chain
+			EnergyEdge const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
+			core::Real const intE = Eedge->dot( curr_weights );
 			total_residue_energy += intE;
-    }//fi
+		}//fi
 	}//for each egraph_it
 	return( total_residue_energy );
 }
@@ -450,27 +453,28 @@ RotamerBoltzmannWeight::interface_interaction_energy( core::pose::Pose const & p
 void
 RotamerBoltzmannWeight::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
-	if( type_ == "monomer" || no_modified_ddG_ ) {
+	if ( type_ == "monomer" || no_modified_ddG_ ) {
 		out<<"RotamerBoltzmannWeightFilter returns "<<compute( pose )<<std::endl;
 		out<<"RotamerBoltzmannWeightFilter final report\n";
 		out<<"Residue"<<'\t'<<"ddG"<<'\t'<<"RotamerProbability"<<'\n';
-		for( std::map< core::Size, core::Real >::const_iterator rot( rotamer_probabilities_.begin() ); rot != rotamer_probabilities_.end(); ++rot ){
+		for ( std::map< core::Size, core::Real >::const_iterator rot( rotamer_probabilities_.begin() ); rot != rotamer_probabilities_.end(); ++rot ) {
 			core::Size const res( rot->first );
 			core::Real const prob( rot->second );
 			core::Real const ddG( 0.0 );
 			out<<pose.residue( res ).name3()<< pose.pdb_info()->number( res )<<'\t'<<ddG<<'\t'<<prob<<'\t';
 			out<<'\n';
 		}
-	} else
+	} else {
 		compute_modified_ddG( pose, out );
+	}
 }
 
 void
 RotamerBoltzmannWeight::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & )
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & )
 {
 	using namespace utility::tag;
 
@@ -488,7 +492,7 @@ RotamerBoltzmannWeight::parse_my_tag( utility::tag::TagCOP tag,
 	compute_entropy_reduction( tag->getOption< bool >( "compute_entropy_reduction", 0 ) );
 	repack( tag->getOption< bool >( "repack", 1 ) );
 	utility::vector0< TagCOP > const & branch( tag->getTags() );
-	BOOST_FOREACH( TagCOP const tag, branch ){
+	BOOST_FOREACH ( TagCOP const tag, branch ) {
 		using namespace core::chemical;
 
 		std::string const residue_type( tag->getName() );
@@ -508,8 +512,8 @@ RotamerBoltzmannWeight::parse_my_tag( utility::tag::TagCOP tag,
 	TR<<"with options repacking radius: "<<repacking_radius()<<" and jump "<<rb_jump()<<" unbound "<<unbound()<<" ddG threshold "<<ddG_threshold()<<" temperature "<<temperature()<<" energy reduction factr "<<energy_reduction_factor()<<" entropy_reduction "<<compute_entropy_reduction()<<" repack "<<repack()<<" skip_ala_scan "<<skip_ala_scan()<<std::endl;
 }
 void RotamerBoltzmannWeight::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & score_fxns,
-				utility::lua::LuaObject const & tasks ) {
+	utility::lua::LuaObject const & score_fxns,
+	utility::lua::LuaObject const & tasks ) {
 	TR << "RotamerBoltzmannWeightFilter"<<std::endl;
 	task_factory( protocols::elscripts::parse_taskdef( def["tasks"], tasks ));
 	repacking_radius(def["radius"] ? def["radius"].to<core::Real>() : 6.0);
@@ -518,7 +522,7 @@ void RotamerBoltzmannWeight::parse_def( utility::lua::LuaObject const & def,
 	unbound(def["unbound"] ? def["unbound"].to<bool>() : true);
 	ddG_threshold(def["ddG_threshold"] ? def["ddG_threshold"].to<core::Real>() : 1.5);
 	temperature(def["temperature"] ? def["temperature"].to<core::Real>() : 0.8);
-	if( def["scorefxn"] ) {
+	if ( def["scorefxn"] ) {
 		scorefxn_ = protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns );
 	} else {
 		scorefxn_ = score_fxns["score12"].to<core::scoring::ScoreFunctionSP>()->clone();
@@ -527,8 +531,8 @@ void RotamerBoltzmannWeight::parse_def( utility::lua::LuaObject const & def,
 	compute_entropy_reduction(def["compute_entropy_reduction"] ? def["compute_entropy_reduction"].to<bool>() : false);
 	repack(def["repack"] ? def["repack"].to<bool>() : true);
 
-	if( def["per_aa_threshold"] ) {
-		for (utility::lua::LuaIterator i=def["per_aa_threshold"].begin(), end; i != end; ++i) {
+	if ( def["per_aa_threshold"] ) {
+		for ( utility::lua::LuaIterator i=def["per_aa_threshold"].begin(), end; i != end; ++i ) {
 			core::chemical::AA const aa( core::chemical::aa_from_name( i.skey() ) );
 			threshold_probability( aa, (*i).to<core::Real>() );
 		}
@@ -548,10 +552,10 @@ void RotamerBoltzmannWeight::parse_def( utility::lua::LuaObject const & def,
 void RotamerBoltzmannWeight::write_to_pdb( core::Size const residue, std::string const residue_name, core::Real const boltzmann_weight ) const
 {
 
-  protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
-  std::string user_name = this->get_user_defined_name();
-  std::string output_string = "RotamerBoltzmannWeight " + user_name + ": " + residue_name + ObjexxFCL::string_of(residue) + " = " + ObjexxFCL::string_of(boltzmann_weight);
-  job->add_string(output_string);
+	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
+	std::string user_name = this->get_user_defined_name();
+	std::string output_string = "RotamerBoltzmannWeight " + user_name + ": " + residue_name + ObjexxFCL::string_of(residue) + " = " + ObjexxFCL::string_of(boltzmann_weight);
+	job->add_string(output_string);
 
 }
 
@@ -642,14 +646,14 @@ RotamerBoltzmannWeight::write2pdb( bool const write ) {
 core::Real
 RotamerBoltzmannWeight::compute_modified_ddG( core::pose::Pose const & pose, std::ostream & out ) const
 {
-	if (no_modified_ddG_) return (0.0);
+	if ( no_modified_ddG_ ) return (0.0);
 	protocols::simple_filters::DdgFilter ddg_filter( 100/*ddg_threshold*/, scorefxn(), rb_jump(), repack() ? 3 : 1 /*repeats*/ ); //120423
 	ddg_filter.repack( repack() );
 
 	core::Real const ddG_in( ddg_filter.compute( pose ) ); //problem
 	core::Real modified_ddG( ddG_in );
 	out<<"Residue"<<'\t'<<"ddG"<<'\t'<<"RotamerProbability"<<'\t'<<"EnergyReduction\n";
-	for( std::map< core::Size, core::Real >::const_iterator rot( rotamer_probabilities_.begin() ); rot != rotamer_probabilities_.end(); ++rot ){
+	for ( std::map< core::Size, core::Real >::const_iterator rot( rotamer_probabilities_.begin() ); rot != rotamer_probabilities_.end(); ++rot ) {
 		core::Size const res( rot->first );
 		core::Real const prob( rot->second );
 		core::Real const ddG( ddGs_[ res ] );
@@ -657,16 +661,16 @@ RotamerBoltzmannWeight::compute_modified_ddG( core::pose::Pose const & pose, std
 		core::Real const threshold_prob( threshold_probability( pose.residue( res ).aa() ) );
 
 		//out<<"prob: "<<prob<<"and threshold: " <<threshold_prob<<"\n";
-		if( prob <= threshold_prob ){
+		if ( prob <= threshold_prob ) {
 			//core::Real const int_energy( interface_interaction_energy( pose, res ) );
 			//core::Real const energy_reduction( energy_reduction_factor() * int_energy );
 			core::Real const energy_reduction( -1 * temperature() * log( prob ) * energy_reduction_factor() );
 			//out<<"after if statemnet energy reduction: "<<energy_reduction<<"this is prob: "<<prob<<"and this is threshold: " <<threshold_prob<<"\n";
 			out<<energy_reduction;
 			modified_ddG += energy_reduction;
-		}
-		else
+		} else {
 			out<<0;
+		}
 		out<<'\n';
 	}
 	out<<"ddG before, after modification: "<<ddG_in<<", "<<modified_ddG<<std::endl;

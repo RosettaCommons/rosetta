@@ -29,10 +29,10 @@ namespace protocols {
 namespace multistate_design {
 
 MultiStateFitnessFunction::MultiStateFitnessFunction()
-	: genetic_algorithm::FitnessFunction(),
-		aggregate_function_(/* NULL */),
-		scorefxn_(/* 0 */),
-		best_fitness_(0.)
+: genetic_algorithm::FitnessFunction(),
+	aggregate_function_(/* NULL */),
+	scorefxn_(/* 0 */),
+	best_fitness_(0.)
 {}
 
 MultiStateFitnessFunction::~MultiStateFitnessFunction(){}
@@ -51,8 +51,8 @@ MultiStateFitnessFunction::add_state( SingleStateOP state )
 	if ( state->is_positive_state() ) {
 		core::pose::PoseOP pose( new core::pose::Pose );
 		*pose = state->pose();
-// ja this is annoying during iterative protocols because there is no way(?) to close old viewers
-//		protocols::viewer::add_conformation_viewer( pose->conformation(), "Best fitness" );
+		// ja this is annoying during iterative protocols because there is no way(?) to close old viewers
+		//  protocols::viewer::add_conformation_viewer( pose->conformation(), "Best fitness" );
 		best_entity_positive_states_.push_back( pose );
 	}
 }
@@ -69,7 +69,7 @@ MultiStateFitnessFunction::evaluate( protocols::genetic_algorithm::Entity & enti
 	}
 
 	utility::vector1<core::Real> single_state_fitnesses(states_.size());
-	for (core::Size i = 1; i <= states_.size(); ++i) {
+	for ( core::Size i = 1; i <= states_.size(); ++i ) {
 		single_state_fitnesses[i] += evaluate(entity, i);
 	}
 
@@ -126,7 +126,7 @@ MultiStateFitnessFunction::const_states( bool positive_only /* = false */ ) cons
 {
 	SingleStateCOPs const_states;
 	for ( SingleStateOPs::const_iterator s( states_.begin() ), end( states_.end() );
-				s != end; ++s ) {
+			s != end; ++s ) {
 		if ( positive_only && !(*s)->is_positive_state() ) continue;
 		const_states.push_back( *s );
 	}
@@ -141,7 +141,7 @@ MultiStateFitnessFunction::num_states( bool pos_neg ) const
 {
 	core::Size n(0);
 	for ( SingleStateOPs::const_iterator s( states_.begin() ), end( states_.end() );
-				s != end; ++s ) {
+			s != end; ++s ) {
 		if ( (*s)->is_positive_state() != pos_neg ) continue;
 		++n;
 	}

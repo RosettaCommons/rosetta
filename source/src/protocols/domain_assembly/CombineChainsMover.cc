@@ -37,15 +37,15 @@ namespace domain_assembly {
 
 void CombineChainsMover::apply( core::pose::Pose & pose ) {
 
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	core::sequence::SequenceAlignment aln;
 	core::sequence::SequenceOP seq( new core::sequence::Sequence( pose.sequence(), "this comment here is really irrelevant..." ) );
 
 	core::pose::Pose extended_pose;
-        core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
-	                option[ in::file::residue_type_set ]() );
+	core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
+		option[ in::file::residue_type_set ]() );
 	core::pose::make_pose_from_sequence(extended_pose, pose.sequence(), *rsd_set);
 
 	aln.add_sequence(seq);

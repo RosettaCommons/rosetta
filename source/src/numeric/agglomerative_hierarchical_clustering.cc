@@ -31,13 +31,13 @@ AgglomerativeHierarchicalClusterer::cluster(
 	int cluster_id = 1;
 	ClusteringTreeNodeOP root;
 
-	for ( Size i = 1; i <= distance_matrix.size(); i++) {
+	for ( Size i = 1; i <= distance_matrix.size(); i++ ) {
 		active_indexes.push_back(i);
 		nodes.push_back( ClusteringTreeNode::newClusteringTreeNode(i) );
 		cluster_id++;
 	}
 
-	while(active_indexes.size() >n_clusters) {
+	while ( active_indexes.size() >n_clusters ) {
 		active_indexes.sort();
 		ClusterOptions co( 0, 0, 0, 0, 99999999999.0);
 
@@ -60,7 +60,7 @@ AgglomerativeHierarchicalClusterer::cluster(
 		active_indexes.remove(co.min_i_);
 		active_indexes.remove(co.min_j_);
 		active_indexes.push_back(nodes.size());
-//	std::cerr<<active_indexes.size() <<" "<<nodes.size()<<"\n";
+		// std::cerr<<active_indexes.size() <<" "<<nodes.size()<<"\n";
 	}
 
 	assert(active_indexes.size() == n_clusters);
@@ -80,7 +80,7 @@ void SingleLinkClusterer::comparator(
 ) {
 	for ( utility::vector1< Size >::const_iterator m1 = members1.begin(); m1 != members1.end(); ++m1 ) {
 		for ( utility::vector1< Size >::const_iterator m2 = members2.begin(); m2 != members2.end(); ++m2 ) {
-			if ( distance_matrix[ *m1 ][ *m2 ] < co.min_) {
+			if ( distance_matrix[ *m1 ][ *m2 ] < co.min_ ) {
 				co.min_ = distance_matrix[ *m1 ][ *m2 ];
 				co.min_i_ = co.node1_;
 				co.min_j_ = co.node2_;
@@ -120,7 +120,7 @@ void CompleteLinkClusterer::comparator(
 	Real max = -9999999999.0;
 	for ( utility::vector1< Size >::const_iterator m1 = members1.begin(); m1 != members1.end(); ++m1 ) {
 		for ( utility::vector1< Size >::const_iterator m2 = members2.begin(); m2 != members2.end(); ++m2 ) {
-			if ( distance_matrix[ *m1 ][ *m2 ] > max) {
+			if ( distance_matrix[ *m1 ][ *m2 ] > max ) {
 				max = distance_matrix[ *m1 ][ *m2 ];
 			}
 		}

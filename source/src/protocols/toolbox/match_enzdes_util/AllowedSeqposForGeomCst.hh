@@ -37,20 +37,20 @@ namespace match_enzdes_util {
 class AllowedSeqposForGeomCst : public utility::pointer::ReferenceCount {
 
 public:
-  typedef core::Size Size;
+	typedef core::Size Size;
 
-  AllowedSeqposForGeomCst( utility::vector1< utility::vector1< Size > > const & seqpos_for_geomcst );
+	AllowedSeqposForGeomCst( utility::vector1< utility::vector1< Size > > const & seqpos_for_geomcst );
 
 	AllowedSeqposForGeomCst();
 
-  virtual ~AllowedSeqposForGeomCst();
+	virtual ~AllowedSeqposForGeomCst();
 
 	core::Size
 	num_seqpos_lists() const {
 		return seqpos_for_geomcst_.size(); }
 
-  utility::vector1< Size > const &
-  seqpos_for_geomcst( Size geomcst ) const;
+	utility::vector1< Size > const &
+	seqpos_for_geomcst( Size geomcst ) const;
 
 	/// @brief this function used to live in the matcher task
 	/// pose can be passed in optionally to support the ALL tag
@@ -59,8 +59,8 @@ public:
 	initialize_from_command_line( core::pose::PoseCOP pose = NULL );
 
 private:
-  //dimension of this vector is num_geomcst
-  utility::vector1< utility::vector1< Size > > seqpos_for_geomcst_;
+	//dimension of this vector is num_geomcst
+	utility::vector1< utility::vector1< Size > > seqpos_for_geomcst_;
 };
 
 

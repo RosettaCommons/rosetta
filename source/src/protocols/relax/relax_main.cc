@@ -72,17 +72,17 @@ Relax_main( bool ) {
 	protocols::jd2::set_native_in_mover( *protocol );
 
 	// add constraints from cmd line
-	if ( option[ OptionKeys::constraints::cst_fa_file ].user() || option[ OptionKeys::constraints::cst_file ].user()) {
-			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
-			protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
-            if (option[ OptionKeys::constraints::cst_fa_file ].user()) {
-                loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
-            } else {
-                loadCsts->constraint_file( core::scoring::constraints::get_cst_file_option() );
-            }
-            seqmov->add_mover( loadCsts );
-			seqmov->add_mover( protocol );
-			protocol = seqmov;
+	if ( option[ OptionKeys::constraints::cst_fa_file ].user() || option[ OptionKeys::constraints::cst_file ].user() ) {
+		protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
+		protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
+		if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
+			loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
+		} else {
+			loadCsts->constraint_file( core::scoring::constraints::get_cst_file_option() );
+		}
+		seqmov->add_mover( loadCsts );
+		seqmov->add_mover( protocol );
+		protocol = seqmov;
 	}
 
 	// set pose for density scoring if a map was input
@@ -97,27 +97,27 @@ Relax_main( bool ) {
 	// setup symmetry mover ... this should happen _before_ SetupForDensityScoringMover
 	//   to avoid adding extra VRTs
 	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
-	    seqmov->add_mover( MoverOP( new protocols::simple_moves::symmetry::SetupForSymmetryMover ) );
-	    seqmov->add_mover( protocol );
-	    protocol = seqmov;
+		protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
+		seqmov->add_mover( MoverOP( new protocols::simple_moves::symmetry::SetupForSymmetryMover ) );
+		seqmov->add_mover( protocol );
+		protocol = seqmov;
 	}
 
 	// superimpose input model to the native structure or to a supplied PDB file
 	if ( option[ OptionKeys::relax::superimpose_to_file ].user() ||
-	     option[ OptionKeys::relax::superimpose_to_native ].user()
-	 ) {
-			core::pose::Pose ref_pose;
-			std::string ref_filename;
-			if(  option[ OptionKeys::relax::superimpose_to_file ].user() ) ref_filename = option[ basic::options::OptionKeys::relax::superimpose_to_file ]();
-			if(  option[ OptionKeys::relax::superimpose_to_native ].user() ) ref_filename =  option[ basic::options::OptionKeys::in::file::native ]();
-			core::import_pose::pose_from_pdb( ref_pose, ref_filename );
-			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
-			protocols::simple_moves::SuperimposeMoverOP sm( new protocols::simple_moves::SuperimposeMover );
-			sm->set_reference_pose( ref_pose );
-			seqmov->add_mover( sm );
-			seqmov->add_mover( protocol );
-			protocol = seqmov;
+			option[ OptionKeys::relax::superimpose_to_native ].user()
+			) {
+		core::pose::Pose ref_pose;
+		std::string ref_filename;
+		if (  option[ OptionKeys::relax::superimpose_to_file ].user() ) ref_filename = option[ basic::options::OptionKeys::relax::superimpose_to_file ]();
+		if (  option[ OptionKeys::relax::superimpose_to_native ].user() ) ref_filename =  option[ basic::options::OptionKeys::in::file::native ]();
+		core::import_pose::pose_from_pdb( ref_pose, ref_filename );
+		protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
+		protocols::simple_moves::SuperimposeMoverOP sm( new protocols::simple_moves::SuperimposeMover );
+		sm->set_reference_pose( ref_pose );
+		seqmov->add_mover( sm );
+		seqmov->add_mover( protocol );
+		protocol = seqmov;
 	}
 
 	protocols::jd2::JobDistributor::get_instance()->go( protocol );

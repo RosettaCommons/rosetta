@@ -58,23 +58,23 @@ static thread_local basic::Tracer TR("protocols.antibody.ConservativeDesignOpera
 class ConservativeDesignOperationTests: public CxxTest::TestSuite {
 
 public:
-	
+
 	core::pose::Pose pose;
 	AntibodyInfoOP ab_info;
 	ConservativeDesignOperationOP conservative_design;
 	ConservativeDesignOperationOP conservative_design_blosum62;
-	
+
 	utility::vector1<core::Size> positions; //Limit to L1
-	
+
 	bool first_run;
 	std::string UT_inpath;
-	
-	//Outpath for new UTracers. Sorry for the full path - 
+
+	//Outpath for new UTracers. Sorry for the full path -
 	// not sure a better way to do this other than copying each .u from the std output
 	std::string UT_outpath;
-	
+
 public:
-	
+
 	void setUp(){
 		core_init();
 		core::import_pose::pose_from_pdb(pose, "protocols/antibody/aho_with_antigen.pdb"); //AHO renumbered pose
@@ -82,42 +82,42 @@ public:
 		conservative_design = ConservativeDesignOperationOP( new ConservativeDesignOperation());
 		conservative_design->set_data_source("chothia_1976");
 		conservative_design_blosum62 = ConservativeDesignOperationOP( new ConservativeDesignOperation("BLOSUM62"));
-	
+
 		//Setup positions.
-		for (core::Size i = ab_info->get_CDR_start(l1, pose); i <= ab_info->get_CDR_end(l1, pose); ++i ){
+		for ( core::Size i = ab_info->get_CDR_start(l1, pose); i <= ab_info->get_CDR_end(l1, pose); ++i ) {
 			positions.push_back(i);
 		}
 		conservative_design->limit_to_positions(positions);
 		conservative_design_blosum62->limit_to_positions(positions);
-			
+
 		//Test output
 		first_run = false;
 		UT_inpath = "protocols/toolbox/task_operations/";
 		UT_outpath = "/Users/jadolfbr/Documents/modeling/rosetta/Rosetta/main/source/test/ut_files";
-		
-	
-	
-	}
-	
-	void test_task_op() {
-		
 
-		
+
+
+	}
+
+	void test_task_op() {
+
+
+
 		TaskFactoryOP tf( new TaskFactory());
-		
-		//Only allow L1 to design for simplicity. 
+
+		//Only allow L1 to design for simplicity.
 		// L1 will use conservative design
 		// H3 will design into anything.
-		
+
 		RestrictResidueToRepackingOP restrict_l2 = protocols::antibody::design::disable_design_cdr(ab_info, l2, pose);
 		RestrictResidueToRepackingOP restrict_l3 = protocols::antibody::design::disable_design_cdr(ab_info, l3, pose);
 		RestrictResidueToRepackingOP restrict_h1 = protocols::antibody::design::disable_design_cdr(ab_info, h1, pose);
 		RestrictResidueToRepackingOP restrict_h2 = protocols::antibody::design::disable_design_cdr(ab_info, h2, pose);
 		RestrictResidueToRepackingOP restrict_h3 = protocols::antibody::design::disable_design_cdr(ab_info, h3, pose);
-		
+
 		RestrictResidueToRepackingOP restrict_antigen = protocols::antibody::design::disable_design_antigen(ab_info, pose);
 		RestrictResidueToRepackingOP restrict_framework = protocols::antibody::design::disable_design_framework(ab_info, pose);
-		
+
 		tf->push_back(restrict_l2);
 		tf->push_back(restrict_l3);
 		tf->push_back(restrict_h1);
@@ -125,50 +125,49 @@ public:
 		tf->push_back(restrict_h3);
 		tf->push_back(restrict_antigen);
 		tf->push_back(restrict_framework);
-		
+
 		TaskFactoryOP all_but_cons = tf->clone();
-		
+
 		//Test Replacing, with natives.
 		tf->push_back(conservative_design);
 		output_or_test(tf, pose, first_run, "ConservativeDesignOperation_defaults");
 
-		
+
 		//Test Replacing without natives.
 		conservative_design->include_native_aa(false);
 		tf =all_but_cons->clone();
 		tf->push_back(conservative_design);
 		output_or_test(tf, pose, first_run, "ConservativeDesignOperation_no_native");
 
-	
+
 		//Test using a different data source as the conservative mutational data.
 		tf = all_but_cons->clone();
 		tf->push_back(conservative_design_blosum62);
 		output_or_test(tf, pose, first_run, "ConservativeDesignOperation_blosum62");
-		
+
 	}
 
 	///@brief Output a UT file (pass first run) or check that the task output matches the UT file.
 	void output_or_test(core::pack::task::TaskFactoryCOP tf,core::pose::Pose const & pose, bool first_run, std::string name) {
-	
-	
+
+
 		std::string inname = UT_inpath+"/"+name+".u";
 		std::string outname = UT_outpath+"/"+name+".u";
-		if (first_run){
+		if ( first_run ) {
 			TR <<"////"<<  std::endl << inname << std::endl << std::endl;
 			PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
 			task->show(std::cout);
-			
+
 			//Write to a file, which we can manually check, diff, and rename if needed.
 			std::ofstream OUT;
-			
+
 			TR << outname << std::endl;
 			OUT.open(outname.c_str());
 			task->show(OUT);
 			OUT << std::endl;
 			OUT.close();
-			
-		}
-		else{
+
+		} else {
 			test::UTracer UT(inname);
 			tf->create_task_and_apply_taskoperations(pose)->show(UT);
 		}

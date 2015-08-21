@@ -46,11 +46,11 @@ public:
 	void
 	set_native_pose( core::pose::PoseCOP native_pose);
 
-	protected:
+protected:
 
-		core::pose::PoseCOP native_pose_;
-		core::scoring::ScoreFunctionOP scorefxn_;
-	private:
+	core::pose::PoseCOP native_pose_;
+	core::scoring::ScoreFunctionOP scorefxn_;
+private:
 };
 
 
@@ -72,11 +72,11 @@ public:
 	// @brief Hook for post processing such as rescoring etc.
 	virtual void rescore_all_decoys();
 
-	protected:
+protected:
 
 	void trim();
 
-	private:
+private:
 
 	core::Real trim_proportion_;
 	core::pose::Pose ref_pose_ ;

@@ -105,8 +105,9 @@ PreProlineFilter::parse_my_tag(
 {
 	threshold_ = tag->getOption< core::Real >( "threshold", threshold_ );
 
-	if ( tag->hasOption( "use_statistical_potential" ) )
+	if ( tag->hasOption( "use_statistical_potential" ) ) {
 		use_statistical_potential_ = tag->getOption< bool >( "use_statistical_potential" );
+	}
 
 	selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, data );
 }
@@ -153,20 +154,23 @@ PreProlineFilter::compute( core::pose::Pose const & pose ) const
 
 core::Real
 PreProlineFilter::compute_spline(
-		core::pose::Pose const & pose,
-		utility::vector1< bool > const & selection ) const
+	core::pose::Pose const & pose,
+	utility::vector1< bool > const & selection ) const
 {
 	core::Size pro_count = 0;
 	core::Real potential_sum = 0.0;
 	for ( core::Size i = 1; i < pose.total_residue(); ++i ) {
-		if ( ! selection[ i + 1 ] )
+		if ( ! selection[ i + 1 ] ) {
 			continue;
+		}
 
-		if ( core::pose::is_upper_terminus( pose, i ) )
+		if ( core::pose::is_upper_terminus( pose, i ) ) {
 			continue;
+		}
 
-		if ( pose.residue( i + 1 ).name1() != 'P' )
+		if ( pose.residue( i + 1 ).name1() != 'P' ) {
 			continue;
+		}
 
 		++pro_count;
 		core::Real const splinescore = spline_.F( pose.phi( i ), pose.psi( i ) );
@@ -179,8 +183,8 @@ PreProlineFilter::compute_spline(
 
 core::Real
 PreProlineFilter::compute_simple(
-		core::pose::Pose const & pose,
-		utility::vector1< bool > const & selection ) const
+	core::pose::Pose const & pose,
+	utility::vector1< bool > const & selection ) const
 {
 	// as a simple first trial, only "B" and "E" torsion spaces should be allowed
 	core::Size bad_count = core::Size( 0.0 );
@@ -192,12 +196,14 @@ PreProlineFilter::compute_simple(
 			( a != abegos.end() ) && ( s != sequence.end() );
 			++a, ++s, ++resi ) {
 		// ignore if proline is not selected
-		if ( ! selection[ resi + 1 ] )
+		if ( ! selection[ resi + 1 ] ) {
 			continue;
+		}
 
 		// ignore if this is the end of the chain
-		if ( core::pose::is_upper_terminus( pose, resi ) )
+		if ( core::pose::is_upper_terminus( pose, resi ) ) {
 			continue;
+		}
 
 		if ( *s == 'P' ) {
 			++pro_count;
@@ -225,9 +231,9 @@ PreProlineFilter::apply( core::pose::Pose const & pose ) const
 
 numeric::MathMatrix< core::Real >
 parse_matrix(
-		std::istream & instream,
-		core::Size const npoints_x,
-		core::Size const npoints_y )
+	std::istream & instream,
+	core::Size const npoints_x,
+	core::Size const npoints_y )
 {
 	numeric::MathMatrix< core::Real > matrix( npoints_y, npoints_x, core::Real( 0.0 ) );
 	for ( core::Size i = 1; i <= npoints_y; ++i ) {
@@ -270,13 +276,13 @@ PreProlineFilter::setup_spline()
 	core::Real const start[2] = {
 		core::Real( -180.0 ),
 		core::Real( -180.0 )
-	};
+		};
 
 	// third line is delta values for each dimension
 	core::Real const delta[2] = {
 		core::Real( 360.0 ) / core::Real( npoints_phi ),
 		core::Real( 360.0 ) / core::Real( npoints_psi )
-	};
+		};
 
 	TR << "X start: " << start[0] << " delta: " << delta[0] << std::endl;
 	TR << "Y start: " << start[1] << " delta: " << delta[1] << std::endl;
@@ -284,12 +290,12 @@ PreProlineFilter::setup_spline()
 	numeric::interpolation::spline::BorderFlag boundary[2] = {
 		numeric::interpolation::spline::e_FirstDer,
 		numeric::interpolation::spline::e_FirstDer
-	};
+		};
 
 	std::pair< core::Real, core::Real > firstbe[2] = {
 		std::make_pair( 0.0, 0.0 ),
 		std::make_pair( 0.0, 0.0 )
-	};
+		};
 
 	bool lincont[2] = { true, true };
 

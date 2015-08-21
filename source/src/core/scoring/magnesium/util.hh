@@ -24,38 +24,38 @@ namespace core {
 namespace scoring {
 namespace magnesium {
 
-	Real
-	get_cos_theta( core::conformation::Residue const & rsd1,
-								 Size const i, Vector const & j_xyz,
-								 Size const i_base = 0 );
+Real
+get_cos_theta( core::conformation::Residue const & rsd1,
+	Size const i, Vector const & j_xyz,
+	Size const i_base = 0 );
 
-	Real
-	get_cos_theta( core::conformation::Residue const & rsd1,
-								 Size const i,  Vector const & j_xyz,
-								 Size & i_base,
-								 Vector & xyz_base );
+Real
+get_cos_theta( core::conformation::Residue const & rsd1,
+	Size const i,  Vector const & j_xyz,
+	Size & i_base,
+	Vector & xyz_base );
 
-	Real
-	get_gaussian_potential_score(
-															 core::chemical::rna::GaussianParameter const & mg_potential_gaussian_parameter,
-															 Vector const & pos1,
-															 Vector const & pos2 );
+Real
+get_gaussian_potential_score(
+	core::chemical::rna::GaussianParameter const & mg_potential_gaussian_parameter,
+	Vector const & pos1,
+	Vector const & pos2 );
 
-	Real
-	get_gaussian_score(
-										 core::chemical::rna::GaussianParameter const & mg_potential_gaussian_parameter,
-										 Real const & d );
+Real
+get_gaussian_score(
+	core::chemical::rna::GaussianParameter const & mg_potential_gaussian_parameter,
+	Real const & d );
 
-	Real
-	get_gaussian_deriv(
-										 core::chemical::rna::GaussianParameter const & mg_potential_gaussian_parameter,
-										 Real const & d );
+Real
+get_gaussian_deriv(
+	core::chemical::rna::GaussianParameter const & mg_potential_gaussian_parameter,
+	Real const & d );
 
-	Real
-	get_cos_angle_to_closest_orbital_axis( core::conformation::Residue const & rsd1, Vector const & j_xyz );
+Real
+get_cos_angle_to_closest_orbital_axis( core::conformation::Residue const & rsd1, Vector const & j_xyz );
 
-	Size
-	get_closest_orbital_axis( core::conformation::Residue const & mg_rsd, Vector const & j_xyz );
+Size
+get_closest_orbital_axis( core::conformation::Residue const & mg_rsd, Vector const & j_xyz );
 
 } //magnesium
 } //scoring

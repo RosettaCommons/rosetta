@@ -69,8 +69,8 @@ public: // Methods
 
 private:
 
-  NonPlaidFingerprint & nfp_;
-  PlaidFingerprint & pfp_;
+	NonPlaidFingerprint & nfp_;
+	PlaidFingerprint & pfp_;
 	core::Real missing_pt_;
 	core::Real steric_;
 	core::Real extra_pt_;

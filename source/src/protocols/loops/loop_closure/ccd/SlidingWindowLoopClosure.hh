@@ -10,7 +10,7 @@
 /// @file src/protocols/abinitio/SlidingWindowLoopClosure.hh
 /// @brief header file for SlidingWindowLoopClosure protocol
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -66,11 +66,11 @@ extern std::string const RMSD_FRAG_STORE;
 
 class SlidingWindowLoopClosure : public moves::Mover {
 public:
-   /// @brief constructor: supply fragsets for fragment moves
+	/// @brief constructor: supply fragsets for fragment moves
 	SlidingWindowLoopClosure(
-			core::fragment::FragSetCOP fragset,
-			core::scoring::ScoreFunctionOP scorefxn,
-			core::kinematics::MoveMapCOP movemap
+		core::fragment::FragSetCOP fragset,
+		core::scoring::ScoreFunctionOP scorefxn,
+		core::kinematics::MoveMapCOP movemap
 	);
 
 	//@brief just set defaults -- expects fragset, scorefxn and movemap to be set later
@@ -120,16 +120,16 @@ public:
 	void movemap( core::kinematics::MoveMapCOP movemap );
 
 	core::scoring::ScoreFunction const & scorefxn() const {
-	 return *scorefxn_;
+		return *scorefxn_;
 	}
 
 	void scorefxn( core::scoring::ScoreFunctionOP sfxn ) {
-	 scorefxn_ = sfxn;
+		scorefxn_ = sfxn;
 	}
 
 	//@brief set fragments for loop-sampling
 	void
-  fragments( core::fragment::FragSetCOP frags );
+	fragments( core::fragment::FragSetCOP frags );
 
 	void scored_frag_cycle_ratio( core::Real setting ) {
 		scored_frag_cycle_ratio_ = setting;
@@ -153,16 +153,16 @@ public:
 	}
 
 	void
-	set_evaluation( evaluation::MetaPoseEvaluatorOP ev ) { 	evaluator_ = ev; };
+	set_evaluation( evaluation::MetaPoseEvaluatorOP ev ) {  evaluator_ = ev; };
 
 	void
-  set_loop( Loop const& loop_in );
-  
+	set_loop( Loop const& loop_in );
+
 	Loop determine_loop( core::pose::Pose const& more_cut, core::pose::Pose & less_cut );
 
 protected:
-  typedef std::list< std::pair< core::Real, Loop > > WindowList;
-  void generate_window_list( Size loop_size, WindowList& window_list ) const;
+	typedef std::list< std::pair< core::Real, Loop > > WindowList;
+	void generate_window_list( Size loop_size, WindowList& window_list ) const;
 
 
 	void set_defaults();
@@ -175,7 +175,7 @@ protected:
 	///  return nr_of new good_loops ( vdw criterion )
 	Size
 	process_fragments(
-    core::fragment::FrameList& frame_in,
+		core::fragment::FrameList& frame_in,
 		core::pose::Pose const& more_cut,
 		core::pose::Pose const& loop_pose
 	);

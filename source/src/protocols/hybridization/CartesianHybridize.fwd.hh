@@ -23,14 +23,14 @@
 namespace protocols {
 //namespace comparative_modeling {
 namespace hybridization {
-			
+
 class CartesianHybridize;
 typedef utility::pointer::shared_ptr< CartesianHybridize > CartesianHybridizeOP;
 typedef utility::pointer::shared_ptr< CartesianHybridize const > CartesianHybridizeCOP;
 
 
-} // hybridize 
-//} // comparative_modeling 
+} // hybridize
+//} // comparative_modeling
 } // protocols
 
 #endif

@@ -136,7 +136,7 @@ public: // Indexers
 	Key const &
 	operator []( int const i ) const
 	{
-	debug_assert( ( i >= 0 ) && ( i < 3 ) );
+		debug_assert( ( i >= 0 ) && ( i < 3 ) );
 		return (
 			( i == 0 ? key1_ :
 			( i == 1 ? key2_ : key3_ ) ) );
@@ -148,7 +148,7 @@ public: // Indexers
 	Key &
 	operator []( int const i )
 	{
-	debug_assert( ( i >= 0 ) && ( i < 3 ) );
+		debug_assert( ( i >= 0 ) && ( i < 3 ) );
 		return (
 			( i == 0 ? key1_ :
 			( i == 1 ? key2_ : key3_ ) ) );
@@ -160,7 +160,7 @@ public: // Indexers
 	Key const &
 	operator ()( int const i ) const
 	{
-	debug_assert( ( i > 0 ) && ( i <= 3 ) );
+		debug_assert( ( i > 0 ) && ( i <= 3 ) );
 		return (
 			( i == 1 ? key1_ :
 			( i == 2 ? key2_ : key3_ ) ) );
@@ -172,7 +172,7 @@ public: // Indexers
 	Key &
 	operator ()( int const i )
 	{
-	debug_assert( ( i > 0 ) && ( i <= 3 ) );
+		debug_assert( ( i > 0 ) && ( i <= 3 ) );
 		return (
 			( i == 1 ? key1_ :
 			( i == 2 ? key2_ : key3_ ) ) );

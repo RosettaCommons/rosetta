@@ -80,7 +80,7 @@ public:// virtual constructor
 	virtual FilterOP clone() const { return FilterOP( new FragQualFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const {	return FilterOP( new FragQualFilter() ); }
+	virtual FilterOP fresh_instance() const { return FilterOP( new FragQualFilter() ); }
 
 
 public:// mutator
@@ -103,10 +103,10 @@ public:// accessor
 public:// parser
 
 	virtual void parse_my_tag( TagCOP tag,
-														 basic::datacache::DataMap & data,
-														 Filters_map const & filters,
-														 Movers_map const & movers,
-														 Pose const & pose );
+		basic::datacache::DataMap & data,
+		Filters_map const & filters,
+		Movers_map const & movers,
+		Pose const & pose );
 
 
 public:// virtual main operation

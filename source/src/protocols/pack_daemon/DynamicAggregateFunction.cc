@@ -116,9 +116,9 @@ VariableVectorExpression::active_variables_vector() const
 	for ( Size ii = 1; ii <= vars_.size(); ++ii ) {
 		active_vars_vector[ ii ] = vars_[ ii ]->active_variables();
 		//for ( std::list< std::string >::const_iterator
-		//		iter = active_vars_vector[ ii ].begin(), iter_end = active_vars_vector[ ii ].end();
-		//		iter != iter_end; ++iter ) {
-		//	TR << "DEBUG: active_variables_vector() " << ii << " includes " << *iter << std::endl;
+		//  iter = active_vars_vector[ ii ].begin(), iter_end = active_vars_vector[ ii ].end();
+		//  iter != iter_end; ++iter ) {
+		// TR << "DEBUG: active_variables_vector() " << ii << " includes " << *iter << std::endl;
 		//}
 	}
 	return active_vars_vector;
@@ -314,8 +314,8 @@ VMin::active_variables() const
 	VectorExpression::values vals = vec_ex()->vector_values();
 	Size index = utility::arg_min( vals );
 	//for ( std::list< std::string >::const_iterator iter = act_vars_vect[ index ].begin(),
-	//				iter_end = act_vars_vect[ index ].end(); iter != iter_end; ++iter ) {
-	//	TR << "DEBUG Vmin active variables for index " << index << " " << *iter << std::endl;
+	//    iter_end = act_vars_vect[ index ].end(); iter != iter_end; ++iter ) {
+	// TR << "DEBUG Vmin active variables for index " << index << " " << *iter << std::endl;
 	//}
 	//TR << "DEBUG Vmin end active variables" << std::endl;
 	return act_vars_vect[ index ];
@@ -601,7 +601,7 @@ core::Real
 DynamicAggregateFunction::evaluate( StateEnergies const & state_energies, StateEnergies const & npd_properties, Entity const & entity )
 {
 	/// Assign all variables, evaluate scalar_expressions and vector expressions, then evaluate the final fitness expression
-	if ( TR.visible( basic::t_debug )) {
+	if ( TR.visible( basic::t_debug ) ) {
 		TR.Debug << "DAF::eval";
 		for ( Size ii = 1; ii <= state_energies.size(); ++ii ) {
 			TR.Debug << " " << state_energies[ ii ];
@@ -612,7 +612,7 @@ DynamicAggregateFunction::evaluate( StateEnergies const & state_energies, StateE
 	//TR << "Fitness expression " << fitness_exp_() << std::endl;
 
 	core::Real score = (*fitness_exp_)();
-	if ( TR.visible( basic::t_debug )) {
+	if ( TR.visible( basic::t_debug ) ) {
 		TR.Debug << " s: " << score << std::endl;
 	}
 
@@ -1099,7 +1099,7 @@ DynamicAggregateFunction::process_STATE_VECTOR_line(
 	save_vector_variable( state_vector_variable_name, line_number );
 
 	state_vector_variable_names_.insert( state_vector_variable_name );
- 	strucvec_filenames.push_back( std::make_pair( state_vector_variable_name, state_vector_filename ) );
+	strucvec_filenames.push_back( std::make_pair( state_vector_variable_name, state_vector_filename ) );
 }
 
 void
@@ -1218,7 +1218,7 @@ DynamicAggregateFunction::process_POSE_ENERGY_VECTOR_line(
 		++count_pdbs;
 		assert( count_pdbs <= pose_energy_variables.size() );
 		TR << "  Importing pose from pdb file " << *iter << std::endl;
-   	//core::import_pose::pose_from_pdb( pose, pdb_name );
+		//core::import_pose::pose_from_pdb( pose, pdb_name );
 		std::string pdb_string;
 		try {
 			pdb_string = file_contents_->get_file_contents( *iter );
@@ -1228,7 +1228,7 @@ DynamicAggregateFunction::process_POSE_ENERGY_VECTOR_line(
 				+ "of the DynamicAggregateFunction fitness file" );
 		}
 		core::pose::Pose pose;
-   	core::import_pose::pose_from_pdbstring( pose, pdb_string, *iter );
+		core::import_pose::pose_from_pdbstring( pose, pdb_string, *iter );
 
 		if ( pose.total_residue() == 0 ) {
 			throw utility::excn::EXCN_Msg_Exception( "Input pose given in file '"
@@ -1952,7 +1952,7 @@ DynamicAggregateFunction::turn_expression_ASTs_into_expressions(
 	ASTPrinter printer;
 	//printer.pretty( false );
 
-	for( std::list< std::pair< Size, std::string > >::const_iterator
+	for ( std::list< std::pair< Size, std::string > >::const_iterator
 			iter = expression_evaluation_order_by_name_.begin(), iter_end = expression_evaluation_order_by_name_.end();
 			iter != iter_end; ++iter ) {
 		if ( iter->first == 1 ) {
@@ -2341,18 +2341,18 @@ DynamicAggregateFunctionDriver::assign_jobs_to_remote_daemon_sets(
 		StructureFileNames const & sfn = file_inputs_for_job( state_id );
 		utility::send_integer_to_node( proc_id, state_id );
 		utility::send_string_to_node( proc_id, sfn.pdb_name_ );
-		utility::send_string_to_node( proc_id,	get_file_contents( sfn.pdb_name_ ));
+		utility::send_string_to_node( proc_id, get_file_contents( sfn.pdb_name_ ));
 		utility::send_string_to_node( proc_id, sfn.correspondence_file_name_ );
-		utility::send_string_to_node( proc_id,	get_file_contents( sfn.correspondence_file_name_ ));
+		utility::send_string_to_node( proc_id, get_file_contents( sfn.correspondence_file_name_ ));
 		utility::send_string_to_node( proc_id, sfn.resfile_name_ );
-		utility::send_string_to_node( proc_id,	get_file_contents( sfn.resfile_name_ ));
+		utility::send_string_to_node( proc_id, get_file_contents( sfn.resfile_name_ ));
 		int n_npd_properties_to_send = num_npd_properties_for_state( state_id );
 		utility::send_integer_to_node( proc_id, n_npd_properties_to_send );
 		//int count_npd = 0;
 		for ( std::list< std::pair< Size, std::string > >::const_iterator
 				npditer = npd_variable_indices_for_state_begin( state_id ),
 				npditer_end = npd_variable_indices_for_state_end( state_id );
-				npditer != npditer_end; ++npditer) {
+				npditer != npditer_end; ++npditer ) {
 			//++count_npd;
 			utility::send_integer_to_node( proc_id, npditer->first );
 			utility::send_string_to_node( proc_id, npditer->second );
@@ -2772,10 +2772,10 @@ EntityFunc::process_AA_SET_line(
 		} else {
 			/// maybe later, if we want to include ncaa's then they're parsing will happen right here.
 			/// but for now, no go.
-				throw utility::excn::EXCN_Msg_Exception( "Expected to read a 1-letter"
-					"  amino acid code or a right curly brace, but found '" + utility::to_string( next_aa ) + "'.\n"
-					"Error encountered while reading AA_SET command\n" + line + "\n"
-					"Line # " + utility::to_string( line_number )  );
+			throw utility::excn::EXCN_Msg_Exception( "Expected to read a 1-letter"
+				"  amino acid code or a right curly brace, but found '" + utility::to_string( next_aa ) + "'.\n"
+				"Error encountered while reading AA_SET command\n" + line + "\n"
+				"Line # " + utility::to_string( line_number )  );
 		}
 		next_aa = ' ';
 		while ( next_aa == ' ' || next_aa == '\t' ) {

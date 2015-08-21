@@ -6,13 +6,13 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-  
+
 /// @file   apps/pilot/membrane/version_mpscorefxn.cc
 /// @brief  Application for determining the fingerprint for a score function and for comparing against
 ///         an existing fingerprint using the membrane framework supported terms
 ///
 /// @author Original:Andrew Leaver-Fay (aleaverfay@gmail.com)
-/// @author Phil Bradley 
+/// @author Phil Bradley
 /// @author Brian Weitzner
 /// @author Extended for membrane by: Rebecca Alford (rfalford12@gmail.com)
 
@@ -34,7 +34,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
-#include <protocols/membrane/AddMembraneMover.hh> 
+#include <protocols/membrane/AddMembraneMover.hh>
 
 /// basic headers
 #include <basic/options/option.hh>
@@ -231,13 +231,13 @@ typedef utility::pointer::shared_ptr< ScoreFunctionFingerprintMover > ScoreFunct
 /// @brief Declare Mover Container for scorefxn fingerprint
 class MPScoreFunctionFingerprintMover : public protocols::moves::Mover {
 
-public: 
+public:
 
 	MPScoreFunctionFingerprintMover();
 	virtual ~MPScoreFunctionFingerprintMover();
-	virtual std::string get_name() const; 
+	virtual std::string get_name() const;
 
-	virtual void apply( pose::Pose & pose ); 
+	virtual void apply( pose::Pose & pose );
 };
 
 MPScoreFunctionFingerprintMover::MPScoreFunctionFingerprintMover() {}
@@ -253,13 +253,13 @@ void MPScoreFunctionFingerprintMover::apply( pose::Pose & pose ) {
 	using namespace basic::options::OptionKeys;
 
 	// Apply Membrane Mover
-	AddMembraneMoverOP add_mem( new AddMembraneMover() ); 
-	add_mem->apply(pose); 
+	AddMembraneMoverOP add_mem( new AddMembraneMover() );
+	add_mem->apply(pose);
 
 	// Apply fingerprint mover
 	ScoreFunctionFingerprintMoverOP sffm( new ScoreFunctionFingerprintMover );
 	sffm->sfxn( core::scoring::get_score_function() );
-	sffm->apply( pose ); 
+	sffm->apply( pose );
 
 	std::ofstream output_file( option[ sfxnfprnt::output_fingerprint_file ]().c_str() );
 
@@ -273,7 +273,7 @@ void MPScoreFunctionFingerprintMover::apply( pose::Pose & pose ) {
 }
 
 // Tyepdef to owning pointer
-typedef utility::pointer::shared_ptr< MPScoreFunctionFingerprintMover > MPScoreFunctionFingerprintMoverOP; 
+typedef utility::pointer::shared_ptr< MPScoreFunctionFingerprintMover > MPScoreFunctionFingerprintMoverOP;
 
 
 int main( int argc, char ** argv )
@@ -285,17 +285,17 @@ int main( int argc, char ** argv )
 		using namespace basic::options::OptionKeys;
 
 		NEW_OPT( sfxnfprnt::output_fingerprint_file, "Fingerprint file destination", "" );
-		
+
 		devel::init( argc, argv );
 		if ( ! option[ sfxnfprnt::output_fingerprint_file ].user() ) {
 			utility_exit_with_message( "Must specify either an output fingerprint file" );
 		}
 
 		// Setup Membrane sfxn fingerprint mover and send to jd2
-		MPScoreFunctionFingerprintMoverOP mpsffm( new MPScoreFunctionFingerprintMover() ); 
+		MPScoreFunctionFingerprintMoverOP mpsffm( new MPScoreFunctionFingerprintMover() );
 		protocols::jd2::JobDistributor::get_instance()->go(mpsffm);
 
-		
+
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

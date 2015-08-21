@@ -73,9 +73,9 @@ RestrictToTerminiOperation::RestrictToTerminiOperation(
 {}
 
 RestrictToTerminiOperation::RestrictToTerminiOperation(RestrictToTerminiOperation const & src) : TaskOperation(src),
-		chain_(src.chain_),
-		repack_n_terminus_(src.repack_n_terminus_),
-		repack_c_terminus_(src.repack_c_terminus_)
+	chain_(src.chain_),
+	repack_n_terminus_(src.repack_n_terminus_),
+	repack_c_terminus_(src.repack_c_terminus_)
 {}
 
 
@@ -93,7 +93,7 @@ RestrictToTerminiOperation::apply(
 	PackerTask & task
 ) const {
 
-	if( chain_ > pose.conformation().num_chains()){
+	if ( chain_ > pose.conformation().num_chains() ) {
 		utility_exit_with_message(
 			"The pose does not contain the chain you have specified.");
 	}
@@ -101,19 +101,19 @@ RestrictToTerminiOperation::apply(
 	vector1<bool> repack_residues(pose.total_residue(), false);
 
 	// N-terminus
-	if(repack_n_terminus_){
+	if ( repack_n_terminus_ ) {
 		Size const n_terminus(pose.conformation().chain_begin(chain_));
 		repack_residues[n_terminus] = true;
 	}
 
 	// C-terminus
-	if(repack_c_terminus_){
+	if ( repack_c_terminus_ ) {
 		Size const c_terminus(pose.conformation().chain_end(chain_));
 		repack_residues[c_terminus] = true;
 	}
 
-	for(Size i = 1; i <= repack_residues.size(); ++i){
-		if(repack_residues[i]){
+	for ( Size i = 1; i <= repack_residues.size(); ++i ) {
+		if ( repack_residues[i] ) {
 			task.nonconst_residue_task(i).restrict_to_repacking();
 		} else {
 			task.nonconst_residue_task(i).prevent_repacking();

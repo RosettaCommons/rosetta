@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief
-/// @author 
+/// @author
 
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -47,32 +47,32 @@ namespace hotspot_hashing {
 static thread_local basic::Tracer TR( "protocols.hotspot_hashing.SICSearchPattern" );
 
 SICPatternAtTransform::SICPatternAtTransform(
-    core::pose::Pose const & source_pose,
-    core::pose::Pose const & placed_pose,
-    SearchPatternOP slide_pattern,
-    SearchPatternOP source_pattern,
-		core::Real starting_displacement) :
-  sic_fast_(),
+	core::pose::Pose const & source_pose,
+	core::pose::Pose const & placed_pose,
+	SearchPatternOP slide_pattern,
+	SearchPatternOP source_pattern,
+	core::Real starting_displacement) :
+	sic_fast_(),
 	starting_displacement_(starting_displacement),
 	slide_pattern_(slide_pattern),
 	source_pattern_(source_pattern)
 {
 	TR.Debug << "Initializing SICPatternAtTransform." << std::endl;
-  sic_fast_.init(placed_pose, source_pose);
+	sic_fast_.init(placed_pose, source_pose);
 }
 
 SICPatternAtTransform::SICPatternAtTransform(
-    core::pose::Pose const & source_pose,
-    core::pose::Pose const & placed_pose,
-    SearchPatternOP slide_pattern,
-		core::Real starting_displacement) :
-  sic_fast_(),
+	core::pose::Pose const & source_pose,
+	core::pose::Pose const & placed_pose,
+	SearchPatternOP slide_pattern,
+	core::Real starting_displacement) :
+	sic_fast_(),
 	starting_displacement_(starting_displacement),
 	slide_pattern_(slide_pattern),
 	source_pattern_(SearchPatternOP( new ConstPattern() ))
 {
 	TR.Debug << "Creating SICPatternAtTransform with no source pattern."<< std::endl;
-  sic_fast_.init(placed_pose, source_pose);
+	sic_fast_.init(placed_pose, source_pose);
 }
 
 utility::vector1<core::kinematics::Stub> SICPatternAtTransform::Searchpoints()
@@ -87,12 +87,10 @@ utility::vector1<core::kinematics::Stub> SICPatternAtTransform::Searchpoints()
 
 	result_transforms.reserve(slide_locations.size() * source_transforms.size());
 
-	for (core::Size i = 1; i <= slide_locations.size(); i++)
-	{
+	for ( core::Size i = 1; i <= slide_locations.size(); i++ ) {
 		TR.Trace << "slide " << i << " " << slide_locations[i].local2global(Vector(0)) << " " << slide_locations[i].local2global(Vector(1, 0, 0)) << "\n";
 
-		for (core::Size j = 1; j <= source_transforms.size(); j++)
-		{
+		for ( core::Size j = 1; j <= source_transforms.size(); j++ ) {
 			using core::kinematics::Stub;
 			using core::kinematics::RT;
 
@@ -109,9 +107,9 @@ utility::vector1<core::kinematics::Stub> SICPatternAtTransform::Searchpoints()
 			source_at_slide_location.v -= slide_vector * starting_displacement_;
 
 			core::Real sic_distance = sic_fast_.slide_into_contact_DEPRICATED(
-					source_at_slide_location,
-					core::kinematics::default_stub,
-					-slide_vector);
+				source_at_slide_location,
+				core::kinematics::default_stub,
+				-slide_vector);
 
 			source_at_slide_location.v += -slide_vector * sic_distance;
 

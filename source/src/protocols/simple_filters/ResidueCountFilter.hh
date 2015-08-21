@@ -74,7 +74,7 @@ public:
 
 	core::Real
 	round_to_Real(
-		core::Real x)	const;
+		core::Real x) const;
 
 	void
 	parse_my_tag(
@@ -123,27 +123,27 @@ public:
 		bool value
 	);
 
-  core::pack::task::TaskFactoryOP 
-  task_factory() const;
-  
-  void 
-  task_factory( 
-  	core::pack::task::TaskFactoryOP task_factory 
-  );
-  
-  bool packable() const;
-  
-  void 
-  packable( 
-  	bool const pack 
-  );
+	core::pack::task::TaskFactoryOP
+	task_factory() const;
+
+	void
+	task_factory(
+		core::pack::task::TaskFactoryOP task_factory
+	);
+
+	bool packable() const;
+
+	void
+	packable(
+		bool const pack
+	);
 
 	/// @brief Checks whether a residue type is present in the provided residue type set, and if so, adds it to res_types_
 	bool
 	add_residue_type_by_name(
-	  core::chemical::ResidueTypeSet const & res_type_set,
-    std::string const & res_type_input
-  );
+		core::chemical::ResidueTypeSet const & res_type_set,
+		std::string const & res_type_input
+	);
 
 
 private:
@@ -151,9 +151,9 @@ private:
 	bool enable_max_residue_count_;
 	core::Size min_residue_count_;
 	bool enable_min_residue_count_;
-	bool	count_as_percentage_;
+	bool count_as_percentage_;
 	utility::vector1< std::string > res_types_;
-  bool packable_;
+	bool packable_;
 	core::pack::task::TaskFactoryOP task_factory_;
 };
 

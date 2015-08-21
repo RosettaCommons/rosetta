@@ -66,7 +66,7 @@ private:
 
 	using protocols::simple_moves::PackRotamersMover::run;
 	void run();
-/// @brief add target and competitor states
+	/// @brief add target and competitor states
 	void add_states( Pose const & );
 
 private:
@@ -89,7 +89,7 @@ private:
 	bool use_unbound_for_sequence_profile_;// use a poly-ala unbound state to decide which residues to allow at each position
 	core::Real bump_threshold_; //for residues to be allowed in seq_profile
 	bool compare_energy_to_ground_state_; // set internally by the mover
-///states
+	///states
 	utility::vector1< core::pose::PoseOP > state_poses_;
 	utility::vector1< core::pose::PoseOP > saved_state_poses_; /// for dumping out pdbs of negative states at the end
 	utility::vector1< bool > state_positive_;

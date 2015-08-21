@@ -33,8 +33,8 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class RadiusOfGyrationFeatures : public protocols::features::FeaturesReporter {
 public:
@@ -70,7 +70,7 @@ public:
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
-        StructureID stuct_id,
+		StructureID stuct_id,
 		utility::sql_database::sessionOP db_interface
 	);
 

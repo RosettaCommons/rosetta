@@ -140,7 +140,7 @@ void SnugDockProtocol::setup_loop_refinement_movers() {
 	if ( ! antibody_info_ ) {
 		using utility::excn::EXCN_Msg_Exception;
 		throw EXCN_Msg_Exception( "A valid AntibodyInfo instance is required to setup " + get_name() + "'s centroid loop "
-		                          + "refinement movers." );
+			+ "refinement movers." );
 	}
 
 	/// FIXME: The chain break weight configuration and constraint weight should be handled by RefineOneCDRLoop.
@@ -150,19 +150,19 @@ void SnugDockProtocol::setup_loop_refinement_movers() {
 	low_res_loop_refinement_scorefxn->set_weight( scoring::atom_pair_constraint, 100 );
 
 	low_res_refine_cdr_h2_ = RefineOneCDRLoopOP( new RefineOneCDRLoop(
-	    antibody_info_,
-	    h2,
-	    loop_refinement_method_,
-	    low_res_loop_refinement_scorefxn
-	) );
+		antibody_info_,
+		h2,
+		loop_refinement_method_,
+		low_res_loop_refinement_scorefxn
+		) );
 	low_res_refine_cdr_h2_->set_h3_filter( false );
 
 	low_res_refine_cdr_h3_ = RefineOneCDRLoopOP( new RefineOneCDRLoop(
-	    antibody_info_,
-	    h3,
-	    loop_refinement_method_,
-	    low_res_loop_refinement_scorefxn
-	) );
+		antibody_info_,
+		h3,
+		loop_refinement_method_,
+		low_res_loop_refinement_scorefxn
+		) );
 	low_res_refine_cdr_h3_->set_h3_filter( h3_filter_ );
 	low_res_refine_cdr_h3_->set_num_filter_tries( h3_filter_tolerance_ );
 }
@@ -192,8 +192,8 @@ void SnugDockProtocol::init() {
 }
 
 void SnugDockProtocol::init_for_equal_operator_and_copy_constructor(
-    SnugDockProtocol & lhs,
-    SnugDockProtocol const & rhs
+	SnugDockProtocol & lhs,
+	SnugDockProtocol const & rhs
 ) {
 	// copy all data members from rhs to lhs
 	lhs.antibody_info_ = rhs.antibody_info_;
@@ -224,11 +224,11 @@ SnugDockProtocol::show( std::ostream & out ) const {
 std::ostream & operator<<(std::ostream& out, SnugDockProtocol const & snugdockprotocol ) {
 	if ( snugdockprotocol.antibody_info_ ) {
 		out << snugdockprotocol.get_name() << " has been configured to operate on an Antibody-Antigen complex with the "
-		    << "following information:" << std::endl;
+			<< "following information:" << std::endl;
 		out << * snugdockprotocol.antibody_info_ << std::endl;
 	} else {
 		out << snugdockprotocol.get_name() << " has not been used yet.  " << snugdockprotocol.get_name()
-		    <<"'s data initialization occurs the first time its apply method is called." << std::endl;
+			<<"'s data initialization occurs the first time its apply method is called." << std::endl;
 	}
 	return out;
 }

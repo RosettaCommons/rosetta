@@ -17,8 +17,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace devel{
-namespace denovo_protein_design{
+namespace devel {
+namespace denovo_protein_design {
 
 //Forwards and OP typedefs
 class SequenceFitnessMover;

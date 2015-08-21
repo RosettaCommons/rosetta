@@ -73,11 +73,11 @@ public:
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
 	virtual void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap &data,
-			filters::Filters_map const &filters,
-			moves::Movers_map const &movers,
-			core::pose::Pose const & pose );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &data,
+		filters::Filters_map const &filters,
+		moves::Movers_map const &movers,
+		core::pose::Pose const & pose );
 
 };
 

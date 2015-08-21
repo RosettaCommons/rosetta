@@ -10,7 +10,7 @@
 /// @file SAXSScoreFilter.cc
 /// @brief runs reject or accept filters on pose
 /// @details
-///	  Contains currently: SAXSScoreFilter
+///   Contains currently: SAXSScoreFilter
 ///
 ///
 /// @author Dominik Gront
@@ -61,49 +61,50 @@ namespace protocols {
 namespace simple_filters {
 
 SAXSScoreFilter::SAXSScoreFilter() {
-		using namespace basic::options;
-		using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-//    score_ = new protocols::scoring::methods::saxs::SAXSEnergyFA();
-    cutoff_ = basic::options::option[ basic::options::OptionKeys::filters::set_saxs_filter ]();
-    score_value_ = cutoff_ + 1;
+	//    score_ = new protocols::scoring::methods::saxs::SAXSEnergyFA();
+	cutoff_ = basic::options::option[ basic::options::OptionKeys::filters::set_saxs_filter ]();
+	score_value_ = cutoff_ + 1;
 }
 
 
 bool SAXSScoreFilter::apply( core::pose::Pose const & pose ) const {
 
-    using namespace basic::options;
-    using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-    core::pose::Pose fa_pose ( pose );
-    core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
-    if ( !pose.is_fullatom() )
+	core::pose::Pose fa_pose ( pose );
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
+	if ( !pose.is_fullatom() ) {
 		core::util::switch_to_residue_type_set( fa_pose, core::chemical::FA_STANDARD);
-    if ( option[ casp::repack ].user() ) {
-	core::pack::task::PackerTaskOP task(
-                            core::pack::task::TaskFactory::create_packer_task( fa_pose ));
-	task->initialize_from_command_line();
-        task->restrict_to_repacking();
-        core::pack::pack_rotamers(fa_pose, (*scorefxn), task);
-    }
-    if ( option[ casp::sc_min ] ) {
-//	std::string const min_type( option[ run::min_type ]() );
-	std::string min_type("dfpmin");
-        core::kinematics::MoveMap final_mm;
-        final_mm.set_chi( true );
-        final_mm.set_bb( false );
-        core::optimization::AtomTreeMinimizer().run( fa_pose, final_mm, *scorefxn,
-    		core::optimization::MinimizerOptions( min_type, 0.001, true ) );
-    }
-    score_value_ = score.total_energy( fa_pose );
+	}
+	if ( option[ casp::repack ].user() ) {
+		core::pack::task::PackerTaskOP task(
+			core::pack::task::TaskFactory::create_packer_task( fa_pose ));
+		task->initialize_from_command_line();
+		task->restrict_to_repacking();
+		core::pack::pack_rotamers(fa_pose, (*scorefxn), task);
+	}
+	if ( option[ casp::sc_min ] ) {
+		// std::string const min_type( option[ run::min_type ]() );
+		std::string min_type("dfpmin");
+		core::kinematics::MoveMap final_mm;
+		final_mm.set_chi( true );
+		final_mm.set_bb( false );
+		core::optimization::AtomTreeMinimizer().run( fa_pose, final_mm, *scorefxn,
+			core::optimization::MinimizerOptions( min_type, 0.001, true ) );
+	}
+	score_value_ = score.total_energy( fa_pose );
 
-    if ( score_value_ < cutoff_ ) {
-	tr.Info << " Passed with score " << score_value_ << std::endl;
-	return true;
-    }
+	if ( score_value_ < cutoff_ ) {
+		tr.Info << " Passed with score " << score_value_ << std::endl;
+		return true;
+	}
 
-    tr.Info << " Failed with score " << score_value_ << std::endl;
-    return false;
+	tr.Info << " Failed with score " << score_value_ << std::endl;
+	return false;
 }
 
 } // filters

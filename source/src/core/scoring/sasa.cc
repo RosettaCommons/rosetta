@@ -65,14 +65,14 @@ namespace scoring {
 // e.g. 1 in binary is 0000 0001, so 1 '1'-bit
 //      7 in binary is 0000 0111, so 3 '1'-bits
 short const bit_count[] = { // lookup table for number of 1 bits in a ubyte
-	0,1,1,2,1,2,2,3, 1,2,2,3,2,3,3,4,   1,2,2,3,2,3,3,4, 2,3,3,4,3,4,4,5,  // 0x 1x
-	1,2,2,3,2,3,3,4, 2,3,3,4,3,4,4,5,   2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6,  // 2x 3x
-	1,2,2,3,2,3,3,4, 2,3,3,4,3,4,4,5,   2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6,  // 4x 5x
-	2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6,   3,4,4,5,4,5,5,6, 4,5,5,6,5,6,6,7,  // 6x 7x
-	1,2,2,3,2,3,3,4, 2,3,3,4,3,4,4,5,   2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6,  // 8x 9x
-	2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6,   3,4,4,5,4,5,5,6, 4,5,5,6,5,6,6,7,  // Ax Bx
-	2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6,   3,4,4,5,4,5,5,6, 4,5,5,6,5,6,6,7,  // Cx Dx
-	3,4,4,5,4,5,5,6, 4,5,5,6,5,6,6,7,   4,5,5,6,5,6,6,7, 5,6,6,7,6,7,7,8,  // Ex Fx
+0,1,1,2,1,2,2,3, 1,2,2,3,2,3,3,4,   1,2,2,3,2,3,3,4, 2,3,3,4,3,4,4,5,  // 0x 1x
+1,2,2,3,2,3,3,4, 2,3,3,4,3,4,4,5,   2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6,  // 2x 3x
+1,2,2,3,2,3,3,4, 2,3,3,4,3,4,4,5,   2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6,  // 4x 5x
+2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6,   3,4,4,5,4,5,5,6, 4,5,5,6,5,6,6,7,  // 6x 7x
+1,2,2,3,2,3,3,4, 2,3,3,4,3,4,4,5,   2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6,  // 8x 9x
+2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6,   3,4,4,5,4,5,5,6, 4,5,5,6,5,6,6,7,  // Ax Bx
+2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6,   3,4,4,5,4,5,5,6, 4,5,5,6,5,6,6,7,  // Cx Dx
+3,4,4,5,4,5,5,6, 4,5,5,6,5,6,6,7,   4,5,5,6,5,6,6,7, 5,6,6,7,6,7,7,8,  // Ex Fx
 };
 
 
@@ -103,8 +103,9 @@ void input_sasa_dats() {
 
 	// this booleans checks whether we've done this already or not. if we have, then return immediately.
 	static bool init = false;
-	if ( init )
+	if ( init ) {
 		return;
+	}
 	init = true;
 
 	//j inputting the masks. they are 21 ubytes long, 162x100 (see header). expects file to be complete
@@ -284,8 +285,9 @@ void get_orientation( Vector const & a_xyz, Vector const & b_xyz, int & phi_inde
 #endif
 	phi_index = static_cast< int >( phi );
 	++phi_index; // for fortran goes from 1 to n
-	if ( phi_index > num_phi )
+	if ( phi_index > num_phi ) {
 		phi_index = 1; // reset back to index of 1?
+	}
 
 	//j figuring theta
 	//ronj atan2 is the arc tangent of y/x, expressed in radians.
@@ -356,22 +358,22 @@ calc_per_atom_sasa_sc( pose::Pose const & pose, utility::vector1< Real > & rsd_s
 	core::pose::initialize_atomid_map( atom_subset, pose, true);
 	Real total_sasa=calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, use_big_polar_H, atom_subset,true /*use_naccess_sasa_radii*/ );
 
-	for(Size i=1;i<=atom_sasa.n_residue();++i) {
+	for ( Size i=1; i<=atom_sasa.n_residue(); ++i ) {
 		rsd_sasa[i]=0;
 		conformation::Residue const & rsd( pose.residue(i) );
-		for(Size ii=1;ii<=atom_sasa.n_atom(i);++ii) {
-			if(!rsd.atom_is_backbone(ii)) { // || (rsd.name1()=='G' && rsd.atom_name(ii).compare(1,2,"CA")==0) ){
+		for ( Size ii=1; ii<=atom_sasa.n_atom(i); ++ii ) {
+			if ( !rsd.atom_is_backbone(ii) ) { // || (rsd.name1()=='G' && rsd.atom_name(ii).compare(1,2,"CA")==0) ){
 				id::AtomID const id(ii,i);
 				rsd_sasa[i]+=atom_sasa[ id ];
 			} else {
-				if(rsd.name1()=='G' && rsd.atom_name(ii).compare(1,2,"CA")==0) {
-						id::AtomID const id(ii,i);
-						rsd_sasa[i]+=atom_sasa[ id ]*1.67234+0.235839; //Somehow Gly area is too small with *1.67234+0.235839;
-					}
-			//			std::cout << "ATOM_SASA: " << rsd.name3() << " " << rsd.atom_name(j) << " " << id << " " << atom_sasa[ id ] << std::endl;
+				if ( rsd.name1()=='G' && rsd.atom_name(ii).compare(1,2,"CA")==0 ) {
+					id::AtomID const id(ii,i);
+					rsd_sasa[i]+=atom_sasa[ id ]*1.67234+0.235839; //Somehow Gly area is too small with *1.67234+0.235839;
+				}
+				//   std::cout << "ATOM_SASA: " << rsd.name3() << " " << rsd.atom_name(j) << " " << id << " " << atom_sasa[ id ] << std::endl;
 			}
 		}
-		if(normalize) {
+		if ( normalize ) {
 			rsd_sasa[i]/=normalizing_area(rsd.name1());
 			rsd_sasa[i]*=100;
 		}
@@ -404,51 +406,51 @@ calc_per_atom_sasa_sc( pose::Pose const & pose, utility::vector1< Real > & rsd_s
 static utility::vector1<Real> init_normalizing_area_sc() {
 	static utility::vector1<Real> area_sc(255,0);
 	area_sc[65]= 69.41;   // 69.41;     //A
-	area_sc[67]= 96.75;   // 96.75;		 //C
-	area_sc[68]=102.69;   // 48.00;		 //D
-	area_sc[69]=134.74;   // 59.10;		 //E
-	area_sc[70]=164.11;   //164.11;		 //F
-	area_sc[71]= 32.33;   // 32.33;		 //G
-	area_sc[72]=147.08;   // 96.01;		 //H
-	area_sc[73]=137.96;   //137.96;		 //I
-	area_sc[75]=163.30;   //115.38;		 //K
-	area_sc[76]=141.12;   //141.12;		 //L
-	area_sc[77]=156.64;   //156.64;		 //M
-	area_sc[78]=106.24;   // 44.98;		 //N
-	area_sc[80]=119.90;   //119.90;		 //P
-	area_sc[81]=140.99;   // 51.03;		 //Q
-	area_sc[82]=201.25;   // 76.60;		 //R
-	area_sc[83]= 78.11;   // 46.89;		 //S
-	area_sc[84]=101.70;   // 74.54;		 //T
-	area_sc[86]=114.28;   //114.28;		 //V
-	area_sc[87]=211.26;   //187.67;		 //W
-	area_sc[89]=177.38;   //135.35;		 //Y
-	//	std::cout << "INIT!!!!!!HELLO" << std::endl;
+	area_sc[67]= 96.75;   // 96.75;   //C
+	area_sc[68]=102.69;   // 48.00;   //D
+	area_sc[69]=134.74;   // 59.10;   //E
+	area_sc[70]=164.11;   //164.11;   //F
+	area_sc[71]= 32.33;   // 32.33;   //G
+	area_sc[72]=147.08;   // 96.01;   //H
+	area_sc[73]=137.96;   //137.96;   //I
+	area_sc[75]=163.30;   //115.38;   //K
+	area_sc[76]=141.12;   //141.12;   //L
+	area_sc[77]=156.64;   //156.64;   //M
+	area_sc[78]=106.24;   // 44.98;   //N
+	area_sc[80]=119.90;   //119.90;   //P
+	area_sc[81]=140.99;   // 51.03;   //Q
+	area_sc[82]=201.25;   // 76.60;   //R
+	area_sc[83]= 78.11;   // 46.89;   //S
+	area_sc[84]=101.70;   // 74.54;   //T
+	area_sc[86]=114.28;   //114.28;   //V
+	area_sc[87]=211.26;   //187.67;   //W
+	area_sc[89]=177.38;   //135.35;   //Y
+	// std::cout << "INIT!!!!!!HELLO" << std::endl;
 	return area_sc;
 }
 
 static utility::vector1<Real> init_normalizing_area_total() {
 	static utility::vector1<Real> area_total(255,0);
 	area_total[65]=107.95;     //A
-	area_total[67]=134.28;		 //C
-	area_total[68]=140.39;		 //D
-	area_total[69]=172.25;		 //E
-	area_total[70]=199.48;		 //F
-	area_total[71]= 80.10;		 //G
-	area_total[72]=182.88;		 //H
-	area_total[73]=175.12;		 //I
-	area_total[75]=200.81;		 //K
-	area_total[76]=178.63;		 //L
-	area_total[77]=194.15;		 //M
-	area_total[78]=143.94;		 //N
-	area_total[80]=136.13;		 //P
-	area_total[81]=178.50;		 //Q
-	area_total[82]=238.76;		 //R
-	area_total[83]=116.50;		 //S
-	area_total[84]=139.27;		 //T
-	area_total[86]=151.44;		 //V
-	area_total[87]=249.36;		 //W
-	area_total[89]=212.76;		 //Y
+	area_total[67]=134.28;   //C
+	area_total[68]=140.39;   //D
+	area_total[69]=172.25;   //E
+	area_total[70]=199.48;   //F
+	area_total[71]= 80.10;   //G
+	area_total[72]=182.88;   //H
+	area_total[73]=175.12;   //I
+	area_total[75]=200.81;   //K
+	area_total[76]=178.63;   //L
+	area_total[77]=194.15;   //M
+	area_total[78]=143.94;   //N
+	area_total[80]=136.13;   //P
+	area_total[81]=178.50;   //Q
+	area_total[82]=238.76;   //R
+	area_total[83]=116.50;   //S
+	area_total[84]=139.27;   //T
+	area_total[86]=151.44;   //V
+	area_total[87]=249.36;   //W
+	area_total[89]=212.76;   //Y
 	return area_total;
 }
 Real normalizing_area(char const res) {
@@ -483,8 +485,9 @@ calc_per_atom_sasa(
 	using core::conformation::Atom;
 	using core::id::AtomID;
 
-	if ( pose.total_residue() < 1 )
+	if ( pose.total_residue() < 1 ) {
 		return 0.0; // nothing to do
+	}
 
 	// read sasa datafiles
 	input_sasa_dats();
@@ -510,8 +513,8 @@ calc_per_atom_sasa(
 
 		if ( use_lj_radii ) {
 			radii[ii] = atom_type_set[ii].lj_radius();
-// 			std::cout << "Using LJ radius  "<< radii[ii] << " instead of " << atom_type_set[ii].extra_parameter( SASA_RADIUS_INDEX ) <<
-// 				" for " << atom_type_set[ii].name() << std::endl;
+			//    std::cout << "Using LJ radius  "<< radii[ii] << " instead of " << atom_type_set[ii].extra_parameter( SASA_RADIUS_INDEX ) <<
+			//     " for " << atom_type_set[ii].name() << std::endl;
 			continue; // note continue, no other checks applied
 		}
 
@@ -594,8 +597,9 @@ calc_per_atom_sasa(
 		for ( Size iia = 1; iia <= rsd.natoms(); ++iia ) {
 
 			AtomID const id( iia, ii );
-			if ( ! atom_subset[ id ] )
+			if ( ! atom_subset[ id ] ) {
 				continue; // jk skip this atom if not part of the subset
+			}
 
 			Real iia_rad = radii[ rsd.atom(iia).type() ];
 			if ( include_probe_radius_in_atom_radii ) iia_rad += probe_radius; // this is the default, not used for sasapack
@@ -624,7 +628,7 @@ calc_per_atom_sasa(
 			atom_sasa[ id ] = area_exposed;
 			// jk Water SASA doesn't count toward the residue's SASA
 			if ( ! rsd.atom_type(iia).is_h2o() &&
-				 ! rsd.atom_type(iia).is_virtual()) {
+					! rsd.atom_type(iia).is_virtual() ) {
 				rsd_sasa[ ii ] += area_exposed;
 				total_sasa += area_exposed;
 			}
@@ -677,16 +681,18 @@ calc_atom_masks(
 	//ronj what residue would have a negative nbr radius?
 	//ronj looks like GB_placeholder, SUCK, and VIRT residue types can have negative nbr radii
 	Real distance_ij_nbratoms = irsd.atom( irsd.nbr_atom() ).xyz().distance( jrsd.atom( jrsd.nbr_atom() ).xyz() );
-	if ( distance_ij_nbratoms > ( irsd.nbr_radius() + jrsd.nbr_radius() + cutoff_distance ) )
+	if ( distance_ij_nbratoms > ( irsd.nbr_radius() + jrsd.nbr_radius() + cutoff_distance ) ) {
 		return;
+	}
 
 	for ( Size iia=1; iia <= irsd.natoms(); ++iia ) {
 
 		//ronj check to see if this atom is in the subset of atoms we're considering. if not, continue to the next one.
 		//ronj have to translate the index 'iia' into an AtomID to check if we're in the subset.
 		AtomID const iia_atomid( iia, ii );
-		if ( ! atom_subset[ iia_atomid ] )
+		if ( ! atom_subset[ iia_atomid ] ) {
 			continue; // jk skip this atom if not part of the subset
+		}
 
 		//ronj convert the atom index into an Atom 'iia_atom' to make getting the xyz() and type() easier
 		Atom const & iia_atom( irsd.atom( iia ) );
@@ -697,8 +703,9 @@ calc_atom_masks(
 
 			//ronj for all atoms in residue 'j', check to make sure that atom is in the subset of atoms we're considering
 			AtomID const jji_atomid( jja, jj );
-			if ( ! atom_subset[ jji_atomid ] )
+			if ( ! atom_subset[ jji_atomid ] ) {
 				continue; // jk skip this atom if not part of the subset
+			}
 
 			Atom const & jja_atom( jrsd.atom( jja ) );
 			Vector const & jja_atom_xyz = jja_atom.xyz();
@@ -707,8 +714,9 @@ calc_atom_masks(
 			Real const distance_ijxyz( iia_atom_xyz.distance( jja_atom_xyz ) ); // could be faster w/o sqrt, using Jeff Gray's rsq_min stuff
 			if ( distance_ijxyz <= iia_atom_radius + jja_atom_radius ) {
 
-				if ( distance_ijxyz <= 0.0 )
+				if ( distance_ijxyz <= 0.0 ) {
 					continue;
+				}
 
 				// account for atom j overlapping atom i:
 				// jk Note: compute the water SASA, but DON'T allow the water to contribute to the burial of non-water atoms
@@ -716,33 +724,33 @@ calc_atom_masks(
 
 				if ( ! jrsd.atom_type( jja ).is_h2o() ) {
 					get_overlap( iia_atom_radius, jja_atom_radius, distance_ijxyz, degree_of_overlap );
-					#ifdef FILE_DEBUG
+#ifdef FILE_DEBUG
 						//TR << "calculated degree of overlap: " << degree_of_overlap << std::endl;
 						//TR << "calculating orientation of " << jrsd.name3() << jj << " atom " << jrsd.atom_name( jja ) << " on "
 						//	<< irsd.name3() << ii << " atom " << irsd.atom_name ( iia ) << std::endl;
-					#endif
+#endif
 
 					get_orientation( iia_atom_xyz, jja_atom_xyz, aphi, theta, distance_ijxyz );
 					point = angles( aphi, theta );
 					masknum = point * 100 + degree_of_overlap;
-					#ifdef FILE_DEBUG
+#ifdef FILE_DEBUG
 						//TR << "calculated masknum " << masknum << std::endl;
-					#endif
+#endif
 
 					//ronj overlap bit values for all atoms should have been init'd to zero before the main for loops
 					utility::vector1< ObjexxFCL::ubyte > & iia_bit_values = atom_masks[ AtomID( iia, ii ) ];
 
 					// iterate bb over all 21 bytes or 168 bits (of which we care about 162)
 					// bitwise_or the atoms current values with the values from the database/masks array
-					#ifdef FILE_DEBUG
+#ifdef FILE_DEBUG
 						//TR << "starting bit values for atom " << irsd.name3() << ii << "-" << irsd.atom_name( iia ) << ": ";
 						//print_dot_bit_string( iia_bit_values );
 						//TR << "mask bit values for atom " << irsd.name3() << ii << "-" << irsd.atom_name( iia ) << ": ";
-					#endif
+#endif
 					for ( int bb = 1, m = masks.index( bb, masknum ); bb <= num_bytes; ++bb, ++m ) {
 						iia_bit_values[ bb ] = ObjexxFCL::bit::bit_or( iia_bit_values[ bb ], masks[ m ] );
 
-						#ifdef FILE_DEBUG
+#ifdef FILE_DEBUG
 							//int bit;
 							//TR << (bb-1) * 8 << ":";
 							//for ( int index=7; index >= 0; index-- ) {
@@ -750,14 +758,14 @@ calc_atom_masks(
 							//	TR << bit;
 							//}
 							//TR << " ";
-						#endif
+#endif
 
 					}
-					#ifdef FILE_DEBUG
+#ifdef FILE_DEBUG
 						//TR << std::endl;
 						//TR << "overlap bit values for atom " << irsd.name3() << ii << "-" << irsd.atom_name( iia ) << ": ";
 						//print_dot_bit_string( iia_bit_values );
-					#endif
+#endif
 				}
 
 				// account for i overlapping j:
@@ -766,30 +774,30 @@ calc_atom_masks(
 				// ronj iterating over the j atoms
 				if ( !irsd.atom_type(iia).is_h2o() ) {
 					get_overlap( jja_atom_radius, iia_atom_radius, distance_ijxyz, degree_of_overlap );
-					#ifdef FILE_DEBUG
+#ifdef FILE_DEBUG
 						//TR << "calculated degree of overlap: " << degree_of_overlap << std::endl;
 						//TR << "calculating orientation of " << irsd.name3() << ii << " atom " << irsd.atom_name( iia ) << " on "
 						//	<< jrsd.name3() << jj << " atom " << jrsd.atom_name ( jja ) << std::endl;
-					#endif
+#endif
 
 					get_orientation( jja_atom_xyz, iia_atom_xyz, aphi, theta, distance_ijxyz );
 					point = angles( aphi, theta );
 					masknum = point * 100 + degree_of_overlap;
-					#ifdef FILE_DEBUG
+#ifdef FILE_DEBUG
 						//TR << "calculated masknum " << masknum << std::endl;
-					#endif
+#endif
 
 					utility::vector1< ObjexxFCL::ubyte > & jja_bit_values( atom_masks[ AtomID( jja, jj ) ] );
 
 					// iterate bb over all 21 bytes or 168 bits (of which we care about 162)
 					// bitwise_or the atoms current values with the values from the database/masks array
-					#ifdef FILE_DEBUG
+#ifdef FILE_DEBUG
 						//TR << "mask bit values for atom " << jrsd.name3() << jj << "-" << jrsd.atom_name( jja ) << ": ";
-					#endif
+#endif
 					for ( int bb = 1, m = masks.index(bb,masknum); bb <= num_bytes; ++bb, ++m ) {
 						jja_bit_values[ bb ] = ObjexxFCL::bit::bit_or( jja_bit_values[ bb ], masks[ m ] );
 
-						#ifdef FILE_DEBUG
+#ifdef FILE_DEBUG
 							//int bit;
 							//TR << (bb-1) * 8 << ":";
 							//for ( int index=7; index >= 0; index-- ) {
@@ -797,20 +805,20 @@ calc_atom_masks(
 							//	TR << bit;
 							//}
 							//TR << " ";
-						#endif
+#endif
 
 					}
-					#ifdef FILE_DEBUG
+#ifdef FILE_DEBUG
 						//TR << std::endl;
 						//TR << "final bit values for atom " << jrsd.name3() << jj << "-" << jrsd.atom_name( jja ) << ": ";
 						//print_dot_bit_string( jja_bit_values );
-					#endif
+#endif
 				}
 
 			} // distance_ijxyz <= iia_atom_radius + jja_atom_radius
-			#ifdef FILE_DEBUG
+#ifdef FILE_DEBUG
 				//TR << "------" << std::endl;
-			#endif
+#endif
 		} // jja
 	} // jr
 }
@@ -905,8 +913,9 @@ calc_per_res_hydrophobic_sasa( pose::Pose const & pose,
 
 			// exclude hydrogens from consideration of hydrophobic SASA.
 			// they should be excluded already because of the atom_subset mask, but just in case.
-			if ( rsd.atom_type( at ).is_hydrogen() )
+			if ( rsd.atom_type( at ).is_hydrogen() ) {
 				continue;
+			}
 
 			if ( rsd.atom_type( at ).element() == "C" || rsd.atom_type( at ).element() == "S" ) {
 				res_hsasa += atom_sasa[ atid ];

@@ -47,8 +47,8 @@ public:
 
 	Size c_alpha_index() const { return c_alpha_index_; }
 	Size c_beta_index()  const { return c_beta_index_;  }
-    /// @brief The atom which participates in the disulfide bond
-    /// SG for fullatom or CEN for centroid
+	/// @brief The atom which participates in the disulfide bond
+	/// SG for fullatom or CEN for centroid
 	Size disulf_atom_index() const { return disulf_atom_index_; }
 
 private:

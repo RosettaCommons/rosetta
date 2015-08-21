@@ -35,141 +35,141 @@
 
 namespace protocols {
 namespace analysis {
-	using utility::vector1;
-	using namespace core;
-	
-	enum InterfaceRegion {
-		total = 1,
-		side1,
-		side2
+using utility::vector1;
+using namespace core;
 
-	};
+enum InterfaceRegion {
+	total = 1,
+	side1,
+	side2
 
-	/// @brief All per residue interface data and residue averages.
-	///  Interface Residues only
-	/// @details Vector1 correspond to residues in the pose.  avg vector1 sets correspond to InterfaceRegion enums: total, side1, side
-	struct PerResidueInterfaceData {
-		vector1< bool > interface_residues;
+};
 
-		vector1< Real > separated_sasa;
-		vector1< Real > complexed_sasa;
-		vector1< Real > dSASA;
-		vector1< Real > dSASA_sc;
-		/// @brief 'Hydrophobic' dSASA
-		vector1< Real > dhSASA;
-		vector1< Real > dhSASA_sc;
-		
-		
-		/// @brief Relative Hydrophobic dSASA.  Calculated by: rel_dSASA = atom_dSASA*(1 - atom_charge).
-		///Subtracting this by the real dSASA gives you the relative polar dSASA.
-		vector1< Real > dhSASA_rel_by_charge;
-		
-		vector1< Real > SASA;
-		vector1< Real > dSASA_fraction; //fraction of SASA separated to SASA buried.  If all of it is buried, fraction is 1.0 (dSASA[i]/separated_sasa[i])
+/// @brief All per residue interface data and residue averages.
+///  Interface Residues only
+/// @details Vector1 correspond to residues in the pose.  avg vector1 sets correspond to InterfaceRegion enums: total, side1, side
+struct PerResidueInterfaceData {
+	vector1< bool > interface_residues;
+
+	vector1< Real > separated_sasa;
+	vector1< Real > complexed_sasa;
+	vector1< Real > dSASA;
+	vector1< Real > dSASA_sc;
+	/// @brief 'Hydrophobic' dSASA
+	vector1< Real > dhSASA;
+	vector1< Real > dhSASA_sc;
 
 
-		//Complex/Separated energies of Interface residues only.
-		vector1< Real > separated_energy;
-		vector1< Real > complexed_energy;
-		vector1< Real > dG;
+	/// @brief Relative Hydrophobic dSASA.  Calculated by: rel_dSASA = atom_dSASA*(1 - atom_charge).
+	///Subtracting this by the real dSASA gives you the relative polar dSASA.
+	vector1< Real > dhSASA_rel_by_charge;
+
+	vector1< Real > SASA;
+	vector1< Real > dSASA_fraction; //fraction of SASA separated to SASA buried.  If all of it is buried, fraction is 1.0 (dSASA[i]/separated_sasa[i])
 
 
-		/// @brief Average per residue change in energy in each InterfaceRegion
-		vector1<Real> regional_avg_per_residue_dG;
-		/// @brief Average per residue energy of the complexed interface in each InterfaceRegion
-		vector1<Real> regional_avg_per_residue_energy_int;
-		/// @brief Average per residue energy of the separated interface in each InterfaceRegion
-		vector1<Real> regional_avg_per_residue_energy_sep;
-
-		/// @brief Average per residue change in solvent accessible surface area in each InterfaceRegion
-		vector1<Real> regional_avg_per_residue_dSASA;
-		/// @brief Average per residue SASA of the complexed interface in each InterfaceRegion
-		vector1<Real> regional_avg_per_residue_SASA_sep;
-		vector1<Real> regional_avg_per_residue_SASA_int;
-
-	};
-
-	/// @brief All interface data. Unless otherwise specified, they refer specifically to the interface
-	/// @details All vectors correspond to InterfaceRegion enums
-	struct InterfaceData {
-
-		/// @brief Number of residues in each InterfaceRegion
-		vector1< Size > interface_nres;
-
-		/// @brief Boolean of interface residues [side1][2]
-		vector1< vector1< bool > > interface_residues;
-
-		/// @brief Change in Solvent Accessible Surface Area upon complexion in each InterfaceRegion
-		vector1< Real > dSASA;
-		vector1< Real > dSASA_sc;
-		
-		/// @brief 'Hydrophobic' dSASA
-		vector1< Real > dhSASA;
-		vector1< Real > dhSASA_sc;
-		
-		/// @brief Relative Hydrophobic dSASA.  Calculated by: sum(atom_dSASA*(1 - atom_charge)).
-		/// Note that this includes hydrogens, and subtracting this by the real dSASA gives you the relative polar dSASA.
-		vector1< Real > dhSASA_rel_by_charge;
-		
-		
-		Real complexed_SASA;
-		Real separated_SASA;
-
-		/// @brief Change in energy upon complexion in each InterfaceRegion
-		vector1<Real > dG;
-		Real gly_dG; //Energy of a all Gly interface
-
-		/// @brief Centroid_dG of interface
-		Real centroid_dG;
-
-		Real dG_dSASA_ratio;
-
-		/// @brief Number of unsaturated hbonds in complex
-		Size delta_unsat_hbonds;
-
-		/// @brief Total energy of interface Hbonds
-		Real total_hb_E;
-
-		Real hbond_E_fraction;
-
-		/// @brief Shape Complementarity value
-		Real sc_value;
-
-		/// @brief PackStat value of the interface
-		Real packstat;
-
-		/// @brief Total energy of the complex in each InterfaceRegion
-		vector1< Real > complex_total_energy;
-
-		/// @brief Total energy of the separated pose in each InterfaceRegion
-		vector1< Real > separated_total_energy;
-
-		Real crossterm_interface_energy;
-		Real crossterm_interface_energy_dSASA_ratio;
-
-		/// @brief pymol style selections
-		std::string pymol_sel_interface;
-		std::string pymol_sel_hbond_unsat;
-		std::string pymol_sel_packing;
-
-		vector1< Real > complexed_interface_score;
-		vector1< Real > separated_interface_score;
-
-		vector1< Size > aromatic_nres;
-		vector1< Real > aromatic_dSASA_fraction;
-
-		/// @brief Aromatic contribution to dG in each InterfaceRegion
-		vector1< Real > aromatic_dG_fraction;
-
-		vector1< Size > ss_helix_nres;
-		vector1< Size > ss_loop_nres;
-		vector1< Size > ss_sheet_nres;
-
-		/// @brief Fraction of interface nres to total surface residues in separated pose for total, side1 and side2.
-		vector1< Real > interface_to_surface_fraction;
+	//Complex/Separated energies of Interface residues only.
+	vector1< Real > separated_energy;
+	vector1< Real > complexed_energy;
+	vector1< Real > dG;
 
 
-	};
+	/// @brief Average per residue change in energy in each InterfaceRegion
+	vector1<Real> regional_avg_per_residue_dG;
+	/// @brief Average per residue energy of the complexed interface in each InterfaceRegion
+	vector1<Real> regional_avg_per_residue_energy_int;
+	/// @brief Average per residue energy of the separated interface in each InterfaceRegion
+	vector1<Real> regional_avg_per_residue_energy_sep;
+
+	/// @brief Average per residue change in solvent accessible surface area in each InterfaceRegion
+	vector1<Real> regional_avg_per_residue_dSASA;
+	/// @brief Average per residue SASA of the complexed interface in each InterfaceRegion
+	vector1<Real> regional_avg_per_residue_SASA_sep;
+	vector1<Real> regional_avg_per_residue_SASA_int;
+
+};
+
+/// @brief All interface data. Unless otherwise specified, they refer specifically to the interface
+/// @details All vectors correspond to InterfaceRegion enums
+struct InterfaceData {
+
+	/// @brief Number of residues in each InterfaceRegion
+	vector1< Size > interface_nres;
+
+	/// @brief Boolean of interface residues [side1][2]
+	vector1< vector1< bool > > interface_residues;
+
+	/// @brief Change in Solvent Accessible Surface Area upon complexion in each InterfaceRegion
+	vector1< Real > dSASA;
+	vector1< Real > dSASA_sc;
+
+	/// @brief 'Hydrophobic' dSASA
+	vector1< Real > dhSASA;
+	vector1< Real > dhSASA_sc;
+
+	/// @brief Relative Hydrophobic dSASA.  Calculated by: sum(atom_dSASA*(1 - atom_charge)).
+	/// Note that this includes hydrogens, and subtracting this by the real dSASA gives you the relative polar dSASA.
+	vector1< Real > dhSASA_rel_by_charge;
+
+
+	Real complexed_SASA;
+	Real separated_SASA;
+
+	/// @brief Change in energy upon complexion in each InterfaceRegion
+	vector1<Real > dG;
+	Real gly_dG; //Energy of a all Gly interface
+
+	/// @brief Centroid_dG of interface
+	Real centroid_dG;
+
+	Real dG_dSASA_ratio;
+
+	/// @brief Number of unsaturated hbonds in complex
+	Size delta_unsat_hbonds;
+
+	/// @brief Total energy of interface Hbonds
+	Real total_hb_E;
+
+	Real hbond_E_fraction;
+
+	/// @brief Shape Complementarity value
+	Real sc_value;
+
+	/// @brief PackStat value of the interface
+	Real packstat;
+
+	/// @brief Total energy of the complex in each InterfaceRegion
+	vector1< Real > complex_total_energy;
+
+	/// @brief Total energy of the separated pose in each InterfaceRegion
+	vector1< Real > separated_total_energy;
+
+	Real crossterm_interface_energy;
+	Real crossterm_interface_energy_dSASA_ratio;
+
+	/// @brief pymol style selections
+	std::string pymol_sel_interface;
+	std::string pymol_sel_hbond_unsat;
+	std::string pymol_sel_packing;
+
+	vector1< Real > complexed_interface_score;
+	vector1< Real > separated_interface_score;
+
+	vector1< Size > aromatic_nres;
+	vector1< Real > aromatic_dSASA_fraction;
+
+	/// @brief Aromatic contribution to dG in each InterfaceRegion
+	vector1< Real > aromatic_dG_fraction;
+
+	vector1< Size > ss_helix_nres;
+	vector1< Size > ss_loop_nres;
+	vector1< Size > ss_sheet_nres;
+
+	/// @brief Fraction of interface nres to total surface residues in separated pose for total, side1 and side2.
+	vector1< Real > interface_to_surface_fraction;
+
+
+};
 
 
 /// @brief Class for analyzing interfaces of a pose.  Many metrics are calculated and accessible after the apply method.
@@ -225,11 +225,11 @@ public:
 
 	//virtual bool
 	//reinitialize_for_new_input() const {return true;}
-	
+
 	/// @brief Explicitly initialize settings on apply - not at the constructor, since this can hold state, and some protocols use apply multiple times.
 	void
 	init_on_new_input(const pose::Pose & pose);
-	
+
 	/// @brief Called by MoverFactory when constructing new Movers. Takes care of the specific mover's parsing.
 	virtual
 	void parse_my_tag(
@@ -474,22 +474,22 @@ private:
 	void
 	compute_interface_sc( Size & interface_jump, pose::Pose const & complexed_pose);
 
-	virtual	void
+	virtual void
 	compute_separated_sasa(pose::Pose & complexed_pose, pose::Pose & separated_pose);
 
-	virtual	void
+	virtual void
 	compute_interface_energy(pose::Pose & complexed_pose, pose::Pose & separated_pose);
 
-	virtual	void
+	virtual void
 	compute_interface_packstat( pose::Pose & pose );
 
-	virtual	void
+	virtual void
 	compute_interface_delta_hbond_unsat(pose::Pose & complexed_pose, pose::Pose & separated_pose );
 
-	virtual	void
+	virtual void
 	score_separated_chains(pose::Pose & complexed_pose, pose::Pose & separated_pose);
 
-	
+
 	/// @brief Calculate the average energy per residue in the interface as well as other data.
 	void
 	calc_per_residue_and_regional_data( pose::Pose & complexed_pose, pose::Pose & separated_pose);
@@ -505,7 +505,7 @@ private:
 		const Real separated_sasa,
 		const Real complexed_sasa,
 		vector1< Real> & regional);
-	
+
 	vector1< Real >
 	calc_per_residue_dG(pose::Pose & complexed_pose, const vector1< Real > & separated_energy, const vector1< Real > & complexed_energy);
 
@@ -523,7 +523,7 @@ private:
 
 	void print_pymol_selection_of_interface_residues( pose::Pose const & pose, std::set< Size > const interface_set );
 	void print_pymol_selection_of_hbond_unsat( pose::Pose & pose, utility::vector1< id::AtomID > delta_unsat_hbond_atid_vector );
-	void print_pymol_selection_of_packing( pose::Pose const & pose,	utility::vector1< Real > & interface_pack_scores );
+	void print_pymol_selection_of_packing( pose::Pose const & pose, utility::vector1< Real > & interface_pack_scores );
 
 
 	/// @brief mutate all residue in the interface to Gly and recalc the energy - not used right now
@@ -620,8 +620,8 @@ private:
 
 	/// @brief group of residue ids of fixed chains and mobile chains (see typedef)
 	group_set chain_groups_;
-	
-	
+
+
 	//name strings for PoseMetricCalculators
 	/// @brief Sasa calculator name string
 	std::string Sasa_;

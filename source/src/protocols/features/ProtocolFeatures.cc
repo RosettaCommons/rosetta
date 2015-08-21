@@ -46,8 +46,8 @@
 
 static thread_local basic::Tracer TR( "protocols.features.ProtocolFeatures" );
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::string;
 using std::stringstream;
@@ -80,7 +80,7 @@ ProtocolFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	using namespace basic::database::schema_generator;
 
 	//if protocol id is set, don't autoincrement
-	if(protocol_id){
+	if ( protocol_id ) {
 
 		Column protocol_id("protocol_id", DbDataTypeOP( new DbInteger() ));
 		Schema protocols("protocols", PrimaryKey(protocol_id));
@@ -91,10 +91,8 @@ ProtocolFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 		protocols.add_column( Column("svn_version", DbDataTypeOP( new DbText() )) );
 		protocols.add_column( Column("script", DbDataTypeOP( new DbText() )) );
 		protocols.write(db_session);
-	}
-
-	//if protocol id is not set, don't autoincrement
-	else{
+	} else {
+		//if protocol id is not set, don't autoincrement
 
 		Column protocol_id("protocol_id", DbDataTypeOP( new DbInteger() ), false /*not null*/, true /*autoincrement*/);
 		Schema protocols("protocols", PrimaryKey(protocol_id));
@@ -137,7 +135,7 @@ ProtocolFeatures::report_features(
 
 	bool using_rosetta_scripts( basic::options::option[ protocol ].active() );
 	string script = "";
-	if ( using_rosetta_scripts){
+	if ( using_rosetta_scripts ) {
 		string const script_fname( basic::options::option[ protocol ] );
 		stringstream script_buf;
 		script_buf << utility::io::izstream( script_fname.c_str() ).rdbuf();
@@ -145,25 +143,25 @@ ProtocolFeatures::report_features(
 	}
 
 	cppdb::statement insert_statement;
-	if(protocol_id) {
+	if ( protocol_id ) {
 		//Check to make sure a protocol with the same id doesn't already exist (This should only happen if you are manually setting the protocol_id
 		//through the options system or the ReportToDB tag in RosettaScripts
 		std::string statement_string =
 			"SELECT\n"
-			"	count(*)\n"
+			"\tcount(*)\n"
 			"FROM\n"
-			"	protocols\n"
+			"\tprotocols\n"
 			"WHERE\n"
-			"	protocols.protocol_id = ?;";
+			"\tprotocols.protocol_id = ?;";
 		cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 		stmt.bind(1,protocol_id);
 
 		TR << "Checking for existing protocol entry with given id" << std::endl;
 		cppdb::result res(basic::database::safely_read_from_database(stmt));
-		if(res.next()) {
+		if ( res.next() ) {
 			core::Size selected = 0;
 			res >> selected;
-			if(selected != 0) {
+			if ( selected != 0 ) {
 				return protocol_id;
 			}
 		}
@@ -192,7 +190,7 @@ ProtocolFeatures::report_features(
 	//Protocol features doesn't use safely_write_to_database due to special handling of thrown cppdb exceptions
 	//basic::database::safely_write_to_database(insert_statement);
 	insert_statement.exec();
-	if(protocol_id) {
+	if ( protocol_id ) {
 		return protocol_id;
 	} else {
 		core::Size new_protocol_id = insert_statement.sequence_last("protocols_protocol_id_seq");

@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs/PseudocontactShiftEnergy.hh
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890
- ///
- /// @authorv Christophe Schmitz , Kala Bharath Pilla
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs/PseudocontactShiftEnergy.hh
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890
+///
+/// @authorv Christophe Schmitz , Kala Bharath Pilla
+///
+////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcsTs4_PseudocontactShiftEnergy_hh
 #define INCLUDED_protocols_scoring_methods_pcsTs4_PseudocontactShiftEnergy_hh
@@ -71,7 +71,7 @@ public:
 
 	PCS_Energy_Ts4(PCS_Energy_Ts4 const & other);
 
-	virtual	core::scoring::methods::EnergyMethodOP
+	virtual core::scoring::methods::EnergyMethodOP
 	clone() const;
 
 	void
@@ -105,8 +105,8 @@ public:
 
 	/*core::Real
 	calculate_single_score_and_tensor_from_PCS_data_per_lanthanides(
-		PCS_tensor_Ts4 & PCS_t,
-		PCS_data_per_lanthanides_Ts4 & pcs_d_p_l
+	PCS_tensor_Ts4 & PCS_t,
+	PCS_data_per_lanthanides_Ts4 & pcs_d_p_l
 	) const; */
 
 
@@ -120,8 +120,8 @@ public:
 		PCS_data_Ts4 const &pcs_d
 	) const;
 
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 };
 
 
@@ -180,22 +180,22 @@ public:
 
 	void
 	set_vector_name_and_weight(utility::vector1<std::string> const vec_filename,
-														 utility::vector1<core::Real> const vec_individual_weight);
+		utility::vector1<core::Real> const vec_individual_weight);
 
 	void
 	set_grid_param(core::Real const grid_edge,
-								 core::Real const grid_step,
-								 core::Real const grid_small_cutoff,
-								 core::Real const grid_large_cutoff,
-								 core::Real const grid_cone_angle_cutoff,
-								 std::string const grid_atom_name_1,
-								 std::string const grid_atom_name_2,
-								 core::SSize const grid_residue_num_1,
-								 core::SSize const grid_residue_num_2,
-								 core::Real const grid_k_vector,
-								 bool const minimize_best_tensor,
-								 core::Real const pcs_weight
-								 );
+		core::Real const grid_step,
+		core::Real const grid_small_cutoff,
+		core::Real const grid_large_cutoff,
+		core::Real const grid_cone_angle_cutoff,
+		std::string const grid_atom_name_1,
+		std::string const grid_atom_name_2,
+		core::SSize const grid_residue_num_1,
+		core::SSize const grid_residue_num_2,
+		core::Real const grid_k_vector,
+		bool const minimize_best_tensor,
+		core::Real const pcs_weight
+	);
 	void
 	print_grid_param() const;
 

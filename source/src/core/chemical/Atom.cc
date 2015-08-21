@@ -35,33 +35,33 @@ static thread_local basic::Tracer TR( "core.chemical.Atom" );
 
 /// @details All its properties are unset by default.
 Atom::Atom():
-		name_(""),
-		mm_name_(""),
-		atom_type_index_(0),
-		mm_atom_type_index_(0),
-		element_(/* 0 */),
-		gasteiger_atom_type_(/* 0 */),
-		formal_charge_(0),
-		charge_(0),
-		ideal_xyz_(),
-		heavyatom_has_polar_hydrogens_( false ),
-		is_acceptor_( false ),
-		is_polar_hydrogen_( false ),
-		is_hydrogen_( false ),
-		is_haro_( false ),
-		is_virtual_( false ),
-		has_orbitals_( false )
+	name_(""),
+	mm_name_(""),
+	atom_type_index_(0),
+	mm_atom_type_index_(0),
+	element_(/* 0 */),
+	gasteiger_atom_type_(/* 0 */),
+	formal_charge_(0),
+	charge_(0),
+	ideal_xyz_(),
+	heavyatom_has_polar_hydrogens_( false ),
+	is_acceptor_( false ),
+	is_polar_hydrogen_( false ),
+	is_hydrogen_( false ),
+	is_haro_( false ),
+	is_virtual_( false ),
+	has_orbitals_( false )
 {}
 
 /// @details Rosetta AtomTypes should be set through the ResidueType to ensure data consistency.
 // Do NOT change to pass by reference
 Atom::Atom(
-		std::string const name_in,
-		std::string const mm_name,
-		Size const mm_atom_type_index,
-		ElementCOP element,
-		Real const charge,
-		Vector const & ideal_xyz
+	std::string const name_in,
+	std::string const mm_name,
+	Size const mm_atom_type_index,
+	ElementCOP element,
+	Real const charge,
+	Vector const & ideal_xyz
 ):
 	name_( name_in ),
 	mm_name_(mm_name),
@@ -133,8 +133,8 @@ void Atom::gasteiger_atom_type( core::chemical::gasteiger::GasteigerAtomTypeData
 /// @note  (Real atoms have elements that exist on the periodic table.)
 bool
 Atom::is_fake() const {
-	if( is_virtual_ ) { return true; }
-	if( element_ ) {
+	if ( is_virtual_ ) { return true; }
+	if ( element_ ) {
 		return element_->is_fake();
 	} else {
 		TR.Warning << "Warning: Attempted to determine real/fake status of atom without an element: " << name() << std::endl;

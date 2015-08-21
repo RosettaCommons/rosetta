@@ -27,8 +27,8 @@ namespace analysis {
 
 class PeptideDeriverFilterCreator : public protocols::filters::FilterCreator {
 public:
-    virtual protocols::filters::FilterOP create_filter() const;
-    virtual std::string keyname() const;
+	virtual protocols::filters::FilterOP create_filter() const;
+	virtual std::string keyname() const;
 };
 
 } //namespace analysis

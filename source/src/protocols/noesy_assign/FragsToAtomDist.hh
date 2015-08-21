@@ -43,7 +43,7 @@ public:
 	class DistanceRecord {
 	public:
 		DistanceRecord()
-			: cum_dist6_( 0 ), cum_dist_( 0 ), min_dist_( 1000 ), count_( 0 ) {};
+		: cum_dist6_( 0 ), cum_dist_( 0 ), min_dist_( 1000 ), count_( 0 ) {};
 		DistanceRecord( core::Real dist6, core::Real dist, core::Real min_dist ,core::Size count ) :
 			cum_dist6_( std::pow( dist6, -6.0 ) ), cum_dist_( dist ), min_dist_( min_dist ), count_( count ) {};
 
@@ -56,7 +56,7 @@ public:
 		core::Real min_dist() const { return min_dist_; }
 		core::Real popular_bin() const ;
 		utility::vector1< core::Real > dist_track() const { return dist_track_ ; }
-		//		std::map< core::Real, core::Size > hist_dist() const { return hist_dist_ };
+		//  std::map< core::Real, core::Size > hist_dist() const { return hist_dist_ };
 
 	private:
 		core::Real cum_dist6_;
@@ -64,8 +64,8 @@ public:
 		core::Real min_dist_;
 		core::Size count_;
 		utility::vector1< core::Real > dist_track_;
-		//		std::map< core::Real, core::Size > hist_dist_;
-		//		std::map< core::Real, core::Size > hist_dist6_;
+		//  std::map< core::Real, core::Size > hist_dist_;
+		//  std::map< core::Real, core::Size > hist_dist6_;
 	};
 
 	typedef std::map< core::id::NamedAtomID, DistanceRecord > NamedInnerMap;
@@ -87,28 +87,28 @@ public:
 	void write_hist_to_file( std::string const& filename ) const;
 	// generate distance data from fragments
 	void generate_from_fragments(
-			 core::fragment::FragSetOP fragments,
-			 std::string const& sequence,
-			 //	 bool r6_averaging,
-			 core::Size cycles,
-			 core::Size dump_freq
+		core::fragment::FragSetOP fragments,
+		std::string const& sequence,
+		//  bool r6_averaging,
+		core::Size cycles,
+		core::Size dump_freq
 	);
 
 	// generate distance data from fragments
 	void generate_from_frag_file(
-			 std::string const& filename,
-			 std::string const& sequence,
-			 //			 bool r6_averaging,
-			 core::Size cycles,
-			 core::Size dump_freq
+		std::string const& filename,
+		std::string const& sequence,
+		//    bool r6_averaging,
+		core::Size cycles,
+		core::Size dump_freq
 	); //read fragments, call generate_from_fragments
 
 	// query distance between two atoms
 	FragsToAtomDist::DistanceRecord const& distance_record( core::id::NamedAtomID atom1, core::id::NamedAtomID atom2 ) const;
 	core::Real distance(
-		 core::id::NamedAtomID atom1,
-		 core::id::NamedAtomID atom2,
-		 bool r6_averaged = true
+		core::id::NamedAtomID atom1,
+		core::id::NamedAtomID atom2,
+		bool r6_averaged = true
 	) const {
 		return r6_averaged
 			? distance_record( atom1, atom2 ).average_dist6()
@@ -121,7 +121,7 @@ public:
 	std::string const& sequence() const { return sequence_; };
 
 	// has r6_everaging been used to prudecd
-	//	bool r6_averaged() const { return r6_averaged_; }
+	// bool r6_averaged() const { return r6_averaged_; }
 
 
 private:
@@ -131,22 +131,22 @@ private:
 	void set_sequence( std::string const& sequence ) {
 		sequence_=sequence;
 	}
-	//	void set_r6_averaged( bool r6_averaged ) {
-	//		r6_averaged_=r6_averaged;
-	//	}
+	// void set_r6_averaged( bool r6_averaged ) {
+	//  r6_averaged_=r6_averaged;
+	// }
 
 	//main helper function -- computes the distance map
 	void compute_average_distances( core::Size ,core::Size);
 
 	//fill vector with natoms() of each residue
-	//	void initialize_atom_number_of_each_residue( Size, utility::vector1< core::Size >&, core::pose::Pose const& );
-	//	void initialize_maps(Size, DistanceMap&, DistanceMap&, utility::vector1< core::Size >, core::pose::Pose const& );
-	//	void initialize_atomid_all(Size, AtomIDMap&, utility::vector1< core::Size > );
+	// void initialize_atom_number_of_each_residue( Size, utility::vector1< core::Size >&, core::pose::Pose const& );
+	// void initialize_maps(Size, DistanceMap&, DistanceMap&, utility::vector1< core::Size >, core::pose::Pose const& );
+	// void initialize_atomid_all(Size, AtomIDMap&, utility::vector1< core::Size > );
 
-	//	void average_distmap( DistanceMap&,DistanceMap );
+	// void average_distmap( DistanceMap&,DistanceMap );
 
 	std::string sequence_;
-	//	bool r6_averaged_;
+	// bool r6_averaged_;
 	core::fragment::FragSetOP frags_;
 	NamedDistanceMap named_distmap_;
 

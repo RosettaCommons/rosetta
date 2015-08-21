@@ -31,16 +31,16 @@ namespace protocols {
 namespace frag_picker {
 
 static thread_local basic::Tracer trBestTotalScoreSelector(
-		"protocols.frag_picker.BestTotalScoreSelector");
+	"protocols.frag_picker.BestTotalScoreSelector");
 
 void BestTotalScoreSelector::select_fragments(
-   ScoredCandidatesVector1 const& input_candidates,
-	 ScoredCandidatesVector1& output_selection )
+	ScoredCandidatesVector1 const& input_candidates,
+	ScoredCandidatesVector1& output_selection )
 {
 
 	Size n = frags_per_pos();
 	trBestTotalScoreSelector.Debug << "Selecting " << n << "fragments from "
-			<< input_candidates.size() << " candidates" << std::endl;
+		<< input_candidates.size() << " candidates" << std::endl;
 
 	output_selection = input_candidates;
 	if ( n > output_selection.size() ) {

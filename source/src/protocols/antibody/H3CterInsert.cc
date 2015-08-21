@@ -93,7 +93,7 @@ void H3CterInsert::set_default() {
 
 void H3CterInsert::apply(pose::Pose & pose) {
 
-//    finalize_setup(pose);
+	//    finalize_setup(pose);
 
 
 	TR <<  "Inserting CDR H3 C-ter Fragments" << std::endl;
@@ -109,7 +109,7 @@ void H3CterInsert::apply(pose::Pose & pose) {
 	TR<<pose.fold_tree()<<std::endl;
 
 	bool success = false;
-	while(success == false) {
+	while ( success == false ) {
 
 		fragment::FragData f;
 		Size random_H3_ter(0);
@@ -129,7 +129,7 @@ void H3CterInsert::apply(pose::Pose & pose) {
 		Size cter_insertion_pos( is_camelid_ ? 4 : 2 ); // not sure why 4 for camelid
 
 
-		if( (ab_info_->get_CDR_loop(h3).stop()-cter_insertion_pos) <= ab_info_->get_CDR_loop(h3).start() ) {
+		if ( (ab_info_->get_CDR_loop(h3).stop()-cter_insertion_pos) <= ab_info_->get_CDR_loop(h3).start() ) {
 			TR << "H3 LOOP IS TOO SHORT: CAN NOT USE C-TERM INFORMATION"<< std::endl;
 		} else {
 			f.apply( pose, ab_info_->get_CDR_loop(h3).stop() - cter_insertion_pos, ab_info_->get_CDR_loop(h3).stop() + 1 );
@@ -168,8 +168,8 @@ void H3CterInsert::read_H3_cter_fragment( ) {
 
 	bool is_kinked = false;
 	bool is_extended  = false;
-	if (ab_info_->get_H3_kink_type() == Kinked) is_kinked = true;
-	if (ab_info_->get_H3_kink_type() == Extended) is_extended = true;
+	if ( ab_info_->get_H3_kink_type() == Kinked ) is_kinked = true;
+	if ( ab_info_->get_H3_kink_type() == Extended ) is_extended = true;
 
 
 	// extract single letter aa codes for the chopped loop residues
@@ -193,7 +193,7 @@ void H3CterInsert::read_H3_cter_fragment( ) {
 
 
 	// file is read in from where other contraints are supposed to exist
-	if( ab_info_->is_camelid() ) {
+	if ( ab_info_->is_camelid() ) {
 		H3_ter_library_filename_ = basic::database::full_name( "sampling/antibodies/Fragments/camelid_H3_CTERM") ;
 	} else {
 		H3_ter_library_filename_ = basic::database::full_name( "sampling/antibodies/Fragments/H3_CTERM") ;
@@ -205,8 +205,8 @@ void H3CterInsert::read_H3_cter_fragment( ) {
 	// Check to see if file exists
 	if ( !H3_ter_library_stream ) {
 		TR << "[Error]: Could not open H3 base library file: "
-		   << H3_ter_library_filename_ << std::endl
-		   << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" << std::endl;
+			<< H3_ter_library_filename_ << std::endl
+			<< "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" << std::endl;
 		std::exit( EXIT_FAILURE );
 	}
 
@@ -224,7 +224,7 @@ void H3CterInsert::read_H3_cter_fragment( ) {
 	Size h3_base_frag_size( ab_info_->is_camelid() ? 6 : 4 );
 
 	bool end_not_reached(true);
-	while(end_not_reached) {
+	while ( end_not_reached ) {
 		bool seq_match( true );
 		bool base_match( false );
 
@@ -233,16 +233,16 @@ void H3CterInsert::read_H3_cter_fragment( ) {
 
 		for ( Size i = 1; i <= h3_base_frag_size; ++i ) {
 			H3_ter_library_stream >> pdb_name  >> res_no     >> res_name
-			                      >> omega     >> phi        >> psi
-			                      >> H3_length >> resolution >> base_type
-			                      >> std::skipws;
+				>> omega     >> phi        >> psi
+				>> H3_length >> resolution >> base_type
+				>> std::skipws;
 
-			if(H3_ter_library_stream.eof()) {
+			if ( H3_ter_library_stream.eof() ) {
 				end_not_reached = false;
 				break;
 			}
 
-			if( res_name != aa_1name[aa_1name.size() - 5 + i] ) {
+			if ( res_name != aa_1name[aa_1name.size() - 5 + i] ) {
 				seq_match = false;
 			}
 			//TR<<res_name<<"   .vs.    "<<aa_1name[aa_1name.size() - 5 + i]<<"    "<<seq_match<<std::endl;
@@ -259,35 +259,32 @@ void H3CterInsert::read_H3_cter_fragment( ) {
 
 
 		//regular antibody
-		if( ab_info_->is_camelid() == false) {
-			if( is_kinked && base_type == "KINK" ) {
+		if ( ab_info_->is_camelid() == false ) {
+			if ( is_kinked && base_type == "KINK" ) {
 				base_match = true;
-			} else if( is_extended && base_type == "EXTENDED" ) {
+			} else if ( is_extended && base_type == "EXTENDED" ) {
 				base_match = true;
-			} else if( !is_kinked && !is_extended && base_type == "NEUTRAL" ) {
+			} else if ( !is_kinked && !is_extended && base_type == "NEUTRAL" ) {
 				base_match = true;
 			}
-		}
-		//camelid antibody
-		else {
-			if( is_extended && base_type == "EXTENDED" ) {
+		} else {
+			//camelid antibody
+			if ( is_extended && base_type == "EXTENDED" ) {
 				base_match = true;
-			} else if( ( is_kinked && base_type == "KINK" ) || ( is_kinked && base_type == "EXTENDED" ) ) {
+			} else if ( ( is_kinked && base_type == "KINK" ) || ( is_kinked && base_type == "EXTENDED" ) ) {
 				base_match = true;
-			} else if( !is_kinked && !is_extended ) {
+			} else if ( !is_kinked && !is_extended ) {
 				base_match = true;
 			}
 		}
 
 
 		//camelid antibody
-		if( ab_info_->is_camelid() && end_not_reached && base_match ) {
+		if ( ab_info_->is_camelid() && end_not_reached && base_match ) {
 
 			H3_base_library_.push_back( f );
-		}
-
-		// regular antibody
-		else if( end_not_reached && (H3_length==pdb_H3_length) && base_match ) {
+		} else if ( end_not_reached && (H3_length==pdb_H3_length) && base_match ) {
+			// regular antibody
 			//TR<< "111111111111      H3_length = "<<H3_length<<"     pdb_h3_length="<<pdb_H3_length<<"    base_match="<<base_match<<std::endl;
 			//TR<<pdb_name<<"   "<<omega<<"    "<<phi<<"    "<<psi<<std::endl;
 
@@ -295,11 +292,11 @@ void H3CterInsert::read_H3_cter_fragment( ) {
 		}
 
 
-		if( end_not_reached && seq_match && base_match ) {
+		if ( end_not_reached && seq_match && base_match ) {
 
 			H3_base_library_seq_kink.push_back( f );
 		}
-		if( end_not_reached && base_match  ) {
+		if ( end_not_reached && base_match  ) {
 
 			H3_base_library_kink.push_back( f );
 		}
@@ -316,10 +313,10 @@ void H3CterInsert::read_H3_cter_fragment( ) {
 	// if no match found based on sequence and kink match criterion
 	// then choose based on size and kink match criterion
 	// if still no match, then choose based only on kink
-	if( H3_base_library_.size() == 0 ) {
+	if ( H3_base_library_.size() == 0 ) {
 		H3_base_library_ = H3_base_library_seq_kink;
 	}
-	if( H3_base_library_.size() == 0 ) {
+	if ( H3_base_library_.size() == 0 ) {
 		H3_base_library_ = H3_base_library_kink;
 	}
 

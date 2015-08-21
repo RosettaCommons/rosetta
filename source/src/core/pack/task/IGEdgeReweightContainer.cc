@@ -46,25 +46,23 @@ IGEdgeReweightContainer::res_res_weight(
 	core::Size res2id
 ) const {
 
-debug_assert( res1id <= nres_ );
-debug_assert( res2id <= nres_ );
+	debug_assert( res1id <= nres_ );
+	debug_assert( res2id <= nres_ );
 
 	Real reweight = 1.0;
 	bool firstpass = true;
 
-	for( utility::vector1< IGEdgeReweighterOP >::const_iterator re_it = edge_reweighters_.begin();
-			 re_it != edge_reweighters_.end();
-			 ++re_it
-	){
+	for ( utility::vector1< IGEdgeReweighterOP >::const_iterator re_it = edge_reweighters_.begin();
+			re_it != edge_reweighters_.end();
+			++re_it
+			) {
 
 		Real weight_this_upweighter = (*re_it)->get_edge_reweight( pose, task, res1id, res2id );
 
-		if( firstpass ){
+		if ( firstpass ) {
 			reweight = weight_this_upweighter;
-			if( reweight != 1.0 ) firstpass = false;
-		}
-
-		else if ( (reweight != weight_this_upweighter) && (weight_this_upweighter != 1.0)  ){
+			if ( reweight != 1.0 ) firstpass = false;
+		} else if ( (reweight != weight_this_upweighter) && (weight_this_upweighter != 1.0)  ) {
 
 			reweight = ( reweight > weight_this_upweighter) ? reweight : weight_this_upweighter ;
 

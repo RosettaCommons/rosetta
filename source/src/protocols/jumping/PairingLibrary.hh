@@ -79,7 +79,7 @@ public:
 
 	virtual void
 	create_jump_fragments(
-    int const orientation,
+		int const orientation,
 		int const pleating,
 		bool bWithTorsion,
 		core::fragment::FragDataOPs &
@@ -96,8 +96,8 @@ public:
 
 class PairingLibrary : public BasePairingLibrary {
 public:
-  typedef std::vector< PairingTemplate > PairingTemplateList;
-  typedef std::map< std::pair< int, int >, PairingTemplateList > PairingTemplateMap;
+	typedef std::vector< PairingTemplate > PairingTemplateList;
+	typedef std::map< std::pair< int, int >, PairingTemplateList > PairingTemplateMap;
 
 public:
 	PairingLibrary() : num_of_pairings_(0) {}
@@ -139,7 +139,7 @@ public:
 	/// bWithTorsion = true length of single FragData is 3   start jump end
 	void
 	create_jump_fragments(
-    int const orientation,
+		int const orientation,
 		int const pleating,
 		bool bWithTorsion,
 		core::fragment::FragDataOPs &
@@ -159,8 +159,8 @@ public:
 	);
 
 private:
-  PairingTemplateMap pairings_;
-  core::Size num_of_pairings_;
+	PairingTemplateMap pairings_;
+	core::Size num_of_pairings_;
 };
 
 class SpecificGeometryLibrary : public PairingLibrary {
@@ -172,8 +172,8 @@ private:
 /// @brief This class is thread-unsafe, though, if perhaps none of its non-const
 /// functions were accessible, then it wouldn't be.
 class StandardPairingLibrary :
-		public PairingLibrary,
-		public utility::SingletonBase< StandardPairingLibrary > {
+	public PairingLibrary,
+	public utility::SingletonBase< StandardPairingLibrary > {
 public:
 	friend class utility::SingletonBase< StandardPairingLibrary >;
 

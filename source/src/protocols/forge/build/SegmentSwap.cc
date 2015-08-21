@@ -213,13 +213,13 @@ void SegmentSwap::on_residue_prepend( LengthEvent const & event ) {
 void SegmentSwap::on_residue_delete( LengthEvent const & event ) {
 	if ( event.position < interval_.left ) { // left
 		//--interval_.left;
-		if( int(interval_.left) + event.length_change < int(event.position) ) interval_.left = event.position;
+		if ( int(interval_.left) + event.length_change < int(event.position) ) interval_.left = event.position;
 		else interval_.left += event.length_change;
 	}
 
 	if ( event.position < interval_.right ) { // right
 		//--interval_.right;
-		if( int(interval_.right) + event.length_change < int(event.position) ) interval_.right = event.position;
+		if ( int(interval_.right) + event.length_change < int(event.position) ) interval_.right = event.position;
 		else interval_.right += event.length_change;
 	}
 }
@@ -239,7 +239,7 @@ SegmentSwap::Positions SegmentSwap::original_kept_positions() const {
 SegmentSwap::Positions SegmentSwap::original_deleted_positions() const {
 	using protocols::forge::methods::closed_range;
 	return closed_range( original_interval().left, original_interval().right );
-	//	return Positions();
+	// return Positions();
 }
 
 
@@ -317,7 +317,7 @@ void SegmentSwap::modify_impl( Pose & pose ) {
 
 	// construct fold tree
 	FoldTree new_ft = replace( old_ft, original_interval().left, original_interval().right,
-	                           swap_in_movemap_, swap_in_.fold_tree() );
+		swap_in_movemap_, swap_in_.fold_tree() );
 
 	// set proper topology
 	pose.fold_tree( new_ft );

@@ -66,7 +66,7 @@
 #include <utility/io/ozstream.hh>
 
 #if (defined WIN32) //&& (!defined WIN_PYROSETTA)
-	#include <windows.h>
+#include <windows.h>
 #endif
 
 //Auto Headers
@@ -100,11 +100,11 @@ namespace jd2 {
 namespace archive {
 
 #ifdef WIN32
-	void sleep(int seconds){
-		//#if (defined WIN32) && (!defined WIN_PYROSETTA)
-			Sleep( seconds * 1000 );
-		//#endif
-	}
+void sleep(int seconds){
+	//#if (defined WIN32) && (!defined WIN_PYROSETTA)
+	Sleep( seconds * 1000 );
+	//#endif
+}
 #endif
 
 using namespace basic::options;
@@ -130,10 +130,10 @@ std::string Batch::alternative_decoys_out() const {
 }
 
 std::string Batch::silent_in() const {
-	//	if ( has_silent_in() )
+	// if ( has_silent_in() )
 	return batch() + "/decoys.in";
-	//	else
-	//		return "";
+	// else
+	//  return "";
 }
 
 std::string Batch::score_file() const {
@@ -155,13 +155,13 @@ std::string Batch::extra_broker_files() const {
 void Batch::show( std::ostream& out, bool single_line ) const {
 	std::string eol( single_line ? " " : "\n" );
 	out << "ID " << id() << eol
-			<< "INPUT " << ( has_silent_in() ? "yes" : "no" ) << eol
-			<< "NSTRUCT " << nstruct() << eol
-			<< "INTERMEDIATES " << ( intermediate_structs() ? "yes" : "no" ) << eol
-			<< "RETURNED " << decoys_returned() << eol
-			<< "FINISHED " << ( has_finished() ? "yes" : "no" ) << eol
-			<< "CANCELLED " << ( is_cancelled() ? "yes" : "no" ) << eol
-			<< "ALLOW_READING_CANCELLED_DECOYS " << ( allow_reading_cancelled_decoys() ? "yes" : "no" ) << eol;
+		<< "INPUT " << ( has_silent_in() ? "yes" : "no" ) << eol
+		<< "NSTRUCT " << nstruct() << eol
+		<< "INTERMEDIATES " << ( intermediate_structs() ? "yes" : "no" ) << eol
+		<< "RETURNED " << decoys_returned() << eol
+		<< "FINISHED " << ( has_finished() ? "yes" : "no" ) << eol
+		<< "CANCELLED " << ( is_cancelled() ? "yes" : "no" ) << eol
+		<< "ALLOW_READING_CANCELLED_DECOYS " << ( allow_reading_cancelled_decoys() ? "yes" : "no" ) << eol;
 }
 
 std::ostream& operator<< (std::ostream& out, Batch const& batch ) {
@@ -275,7 +275,7 @@ void BaseArchiveManager::set_archive( AbstractArchiveBaseOP anArchive ) {
 /// @details constructor.  Notice it calls the parent class!  It also builds some internal variables for determining
 ///which processor it is in MPI land.
 ArchiveManager::ArchiveManager( core::Size archive_rank, core::Size jd_master_rank, core::Size file_buf_rank ) :
-  archive_rank_( archive_rank ),
+	archive_rank_( archive_rank ),
 	jd_master_rank_( jd_master_rank ),
 	file_buf_rank_( file_buf_rank ),
 	save_archive_time_interval_( 60 )
@@ -314,7 +314,7 @@ ArchiveManager::go( ArchiveBaseOP archive )
 		send_stop_to_jobdistributor();
 		throw;
 	}
-	//	if ( batches_.size() == 0 ) theArchive_->generate_batch();
+// if ( batches_.size() == 0 ) theArchive_->generate_batch();
 	sleep( 5 ); //give JobDistributor time to start up...
 #ifdef USEMPI
 	MPI_Status status;
@@ -345,15 +345,15 @@ ArchiveManager::go( ArchiveBaseOP archive )
 		MPI_Iprobe( jd_master_rank_, MPI_ARCHIVE_TAG, MPI_COMM_WORLD, &flag, &status );
 		MPI_Iprobe( jd_master_rank_, MPI_ARCHIVE_TAG, MPI_COMM_WORLD, &flag, &status );
 #endif
-		// 	if ( !flag ) { //nothing ...
-		// 			//tell JobDistributor, that we are ready to receive message
-		// 			int buf[ 4 ];
-		// 			buf[ 0 ] = NOTIFICATION_QUERY;
-		// 			MPI_Send( &buf, 1, MPI_INT, jd_master_rank_, MPI_JOB_DIST_TAG, MPI_COMM_WORLD );
-		// 			sleep( 1 );
-		// 			//check if there is something this time...
-		// 			MPI_Iprobe( jd_master_rank_, MPI_ARCHIVE_TAG, MPI_COMM_WORLD, &flag, &status );
-		// 		}
+		//  if ( !flag ) { //nothing ...
+		//    //tell JobDistributor, that we are ready to receive message
+		//    int buf[ 4 ];
+		//    buf[ 0 ] = NOTIFICATION_QUERY;
+		//    MPI_Send( &buf, 1, MPI_INT, jd_master_rank_, MPI_JOB_DIST_TAG, MPI_COMM_WORLD );
+		//    sleep( 1 );
+		//    //check if there is something this time...
+		//    MPI_Iprobe( jd_master_rank_, MPI_ARCHIVE_TAG, MPI_COMM_WORLD, &flag, &status );
+		//   }
 
 		try {
 			//if there is a message -- go get it.
@@ -363,9 +363,9 @@ ArchiveManager::go( ArchiveBaseOP archive )
 				int merrno = MPI_Recv( &buf, 6, MPI_INT, jd_master_rank_, MPI_ARCHIVE_TAG, MPI_COMM_WORLD, &status );
 				if ( merrno != MPI_SUCCESS ) tr.Error << "ERROR: MPI_Recv error " << std::endl;
 #endif
-				//				basic::show_time( tr,  "manager main msg-loop: received message..." );
-			}	else { //nothing received
-				//				basic::show_time( tr,  "manager main msg-loop: no message: idle..." );
+				//    basic::show_time( tr,  "manager main msg-loop: received message..." );
+			} else { //nothing received
+				//    basic::show_time( tr,  "manager main msg-loop: no message: idle..." );
 				idle();
 				continue;
 			}
@@ -375,7 +375,7 @@ ArchiveManager::go( ArchiveBaseOP archive )
 			tr.Debug << "received message in ArchiveManager " << msg_tag << std::endl;
 
 			switch( msg_tag ) {
-			case JOB_COMPLETION: {
+			case JOB_COMPLETION : {
 				Size const batch_id( buf[ 1 ] );
 				bool const final( buf[ 2 ] == 1 );
 				Size const bad( buf[ 3 ] );
@@ -386,7 +386,7 @@ ArchiveManager::go( ArchiveBaseOP archive )
 				jobs_completed_[ batch_id ] = CompletionMessage( batch_id, final, bad, good, total );
 				break; //switch
 			}
-			case QUEUE_EMPTY:	{
+			case QUEUE_EMPTY : {
 				Size const batch_id( buf[ 1 ] );
 
 				//we ignore QUEUE_EMPTY if we know that a new batch has been submitted after issuing of this signal (i.e., the batch-number
@@ -395,8 +395,8 @@ ArchiveManager::go( ArchiveBaseOP archive )
 				Size max_working_batch_id( batches_.size() );
 				if ( batches_.size() ) {
 					while ( max_working_batch_id > 0
-						&& ( !batches_[ max_working_batch_id ].valid() || batches_[ max_working_batch_id ].has_finished() ) )
-						--max_working_batch_id;
+							&& ( !batches_[ max_working_batch_id ].valid() || batches_[ max_working_batch_id ].has_finished() ) )
+							--max_working_batch_id;
 					if ( batch_id <= max_working_batch_id ) {
 						tr.Info << "ArchiveManager ignored outdated QUEUE_EMPTY with batch_id " << batch_id << " -- already submitted " << batches_.size() << std::endl;
 						break; //switch
@@ -408,7 +408,7 @@ ArchiveManager::go( ArchiveBaseOP archive )
 					jobs_completed(); //get thru these before making job decisions
 				}
 				PROF_STOP( basic::ARCHIVE_CRITICAL_JOBSCOMPLETE );
-				//		the_archive().idle(); why was this in the job-completed loop ?
+				//  the_archive().idle(); why was this in the job-completed loop ?
 
 				PROF_START( basic::ARCHIVE_GEN_BATCH );
 				//this is a valid QUEUE_EMPTY request: do something about it
@@ -433,7 +433,7 @@ ArchiveManager::go( ArchiveBaseOP archive )
 				basic::prof_show();
 				break; //switch
 			}
-			default:
+			default :
 				utility_exit_with_message( "unknown msg in ArchiveManager " + ObjexxFCL::string_of( msg_tag ) );
 			} //switch
 		} catch ( utility::excn::EXCN_Base &excn ) {
@@ -464,7 +464,7 @@ ArchiveManager::idle() {
 		}
 	}
 
-	//	tr.Debug << "idle..." << std::endl;
+	// tr.Debug << "idle..." << std::endl;
 	if ( jobs_completed_.size() ) {
 		PROF_START( basic::ARCHIVE_JOBSCOMPLETE );
 		jobs_completed();
@@ -472,16 +472,16 @@ ArchiveManager::idle() {
 		return;
 	};
 
-	//	if ( !the_archive().finished() && the_archive().ready_for_batch() ) {
-		//		the_archive().generate_batch();
-	//	} else {
-		time_t before( time(NULL) );
-		the_archive().idle();
-		time_t after( time( NULL ) );
-		if ( after-before > 1 ) tr.Debug << "spend " << after-before << " seconds in archives idle method... " << std::endl;
-		//sleep some more if idle didn't use much time
-		if ( after-before < 5 ) sleep( (5 - ( after - before )) );
-		//	}
+	// if ( !the_archive().finished() && the_archive().ready_for_batch() ) {
+	//  the_archive().generate_batch();
+	// } else {
+	time_t before( time(NULL) );
+	the_archive().idle();
+	time_t after( time( NULL ) );
+	if ( after-before > 1 ) tr.Debug << "spend " << after-before << " seconds in archives idle method... " << std::endl;
+	//sleep some more if idle didn't use much time
+	if ( after-before < 5 ) sleep( (5 - ( after - before )) );
+	// }
 }
 
 void BaseArchiveManager::read_returning_decoys( Batch& batch, bool final ) {
@@ -499,11 +499,10 @@ void BaseArchiveManager::read_returning_decoys( Batch& batch, bool final ) {
 	utility::vector1< std::string >::iterator iter = tags_in_file.begin();
 	std::string unread_tag = "none";
 	for ( Size ct = 1;
-				iter != tags_in_file.end() && ct <= batch.decoys_returned();
-				++iter, ++ct )
-		{
-			unread_tag = *iter;
-		}; //just skipping...
+			iter != tags_in_file.end() && ct <= batch.decoys_returned();
+			++iter, ++ct ) {
+		unread_tag = *iter;
+	}; //just skipping...
 	utility::vector1< std::string > tags_to_read;
 
 	std::copy( iter, tags_in_file.end(), std::back_inserter( tags_to_read ) );
@@ -515,7 +514,7 @@ void BaseArchiveManager::read_returning_decoys( Batch& batch, bool final ) {
 			if ( final ) throw; //rethrow if it is the final version of the file...
 			tr.Error << "[ignored ERROR] " << excn.msg() << std::endl;
 			tr.Error << "this is not the final version of " << batch.silent_out() << "\n... maybe some data is still held in a cache of the filesystem..."
-							 << " let's see if it works better the next time we have to read" << std::endl;
+				<< " let's see if it works better the next time we have to read" << std::endl;
 			//or sleep( 5 ) and retry as above ?
 			return;
 		}
@@ -572,7 +571,7 @@ ArchiveManager::jobs_completed() {// core::Size batch_id, bool final, core::Size
 	if ( option[ run::constant_seed ] && !final ) return;
 
 	tr.Debug << "jobs_completed for " << batch.batch() << "..." << "already "
-					 << batch.decoys_returned() << " decoys known" << std::endl;
+		<< batch.decoys_returned() << " decoys known" << std::endl;
 	runtime_assert( batch.id() == batch_id );
 	WriteOut_MpiFileBuffer file_buf( file_buf_rank_ );
 	if ( bad ) {
@@ -585,8 +584,8 @@ ArchiveManager::jobs_completed() {// core::Size batch_id, bool final, core::Size
 		file_buf.block_file( ".//"+batch.silent_out() ); //destructor will release file automatically
 	} else {
 		tr.Debug << "final ... close file " << std::endl;
-		//	file_buf.close_file( ".//"+batch.silent_out() ); //that is not very nice, but file-buf isn't very smart with filenames...
-		//		file_buf.close_file( ".//"+batch.score_file() ); // not required since now we have garbage-collection
+		// file_buf.close_file( ".//"+batch.silent_out() ); //that is not very nice, but file-buf isn't very smart with filenames...
+		//  file_buf.close_file( ".//"+batch.score_file() ); // not required since now we have garbage-collection
 	}
 	if ( batch.is_cancelled() && !batch.allow_reading_cancelled_decoys() ) {
 		tr.Debug << "returned decoys of cancelled batch.. ignore..." << std::endl;
@@ -651,7 +650,7 @@ ArchiveManager::queue_batch( Batch const& batch ) {
 }
 
 void BaseArchiveManager::cancel_batches_previous_to( core::Size batch_id, bool allow_reading_of_decoys ) {
-	for ( BatchList::iterator it = batches_.begin(); it!=batches_.end(); ++it) {
+	for ( BatchList::iterator it = batches_.begin(); it!=batches_.end(); ++it ) {
 		if ( it->id() == batch_id ) break;
 		cancel_batch( *it, allow_reading_of_decoys );
 	}
@@ -705,8 +704,8 @@ void ArchiveManager::send_stop_to_jobdistributor() {
 		save_archive();
 		utility_exit_with_message("quick exit from job-distributor due to flag jd2::mpi_nowait_for_remaining_jobs --- this is not an error " );
 
-	//we do this by sending empty batch.
-	tr.Debug << "send STOP signal to JobDistributor " << std::endl;
+		//we do this by sending empty batch.
+		tr.Debug << "send STOP signal to JobDistributor " << std::endl;
 	}
 	Batch stop_batch( 0 );
 	queue_batch( stop_batch );
@@ -766,13 +765,13 @@ BaseArchiveManager::start_new_batch() {
 	new_batch.user_options().add_built_in_options();
 	add_all_rosetta_options( new_batch.user_options() );
 
-//copy the system broker setup --- OBSOLET since Sept 20th 2010. now broker:setup is FileVector option.
-// 	if ( !file_exists( new_batch.broker_file() ) && option[ OptionKeys::broker::setup ].user() ) {
-// 		utility::io::ozstream batch_broker( new_batch.broker_file() );
-// 		utility::io::izstream system_broker( option[ OptionKeys::broker::setup ]() );
-// 		std::string line;
-// 		while ( getline( system_broker, line ) ) batch_broker << line << std::endl;
-// 	}
+	//copy the system broker setup --- OBSOLET since Sept 20th 2010. now broker:setup is FileVector option.
+	//  if ( !file_exists( new_batch.broker_file() ) && option[ OptionKeys::broker::setup ].user() ) {
+	//   utility::io::ozstream batch_broker( new_batch.broker_file() );
+	//   utility::io::izstream system_broker( option[ OptionKeys::broker::setup ]() );
+	//   std::string line;
+	//   while ( getline( system_broker, line ) ) batch_broker << line << std::endl;
+	//  }
 	new_batch.nstruct() = basic::options::option[ basic::options::OptionKeys::out::nstruct ];
 	return batches_.back();
 }
@@ -786,7 +785,7 @@ BaseArchiveManager::finalize_batch( Batch& new_batch, bool reread ) {
 	using utility::file::file_exists;
 	using namespace basic::options::OptionKeys;
 	tr.Debug << "finalize_batch " << new_batch << std::endl;
-	if ( !reread) new_batch.set_decoys_returned( 0 );
+	if ( !reread ) new_batch.set_decoys_returned( 0 );
 
 	if ( !utility::file::file_exists( new_batch.broker_file() ) ) {
 		utility::io::ozstream broker( new_batch.broker_file() );
@@ -794,7 +793,7 @@ BaseArchiveManager::finalize_batch( Batch& new_batch, bool reread ) {
 		broker.close();
 	}
 
-	if( file_exists( new_batch.flag_file() ) ) {
+	if ( file_exists( new_batch.flag_file() ) ) {
 		tr.Debug << "checking aBatch.flag_file()... " << std::endl;
 		utility::options::OptionCollection batch_opts;
 		batch_opts.add_built_in_options();
@@ -810,24 +809,30 @@ BaseArchiveManager::finalize_batch( Batch& new_batch, bool reread ) {
 		}
 		if ( !reread )  {
 			//access all archive controlled options... so they are not in the "user_flags" anymore
-			if ( batch_opts[ in::file::silent ].user() )
+			if ( batch_opts[ in::file::silent ].user() ) {
 				tr.Warning << "option -in:file:silent will be overwritten by ArchiveMaster"
-									 << " -- control directly via class Batch" << std::endl;
-			if ( batch_opts[ out::nstruct ].user() )
+					<< " -- control directly via class Batch" << std::endl;
+			}
+			if ( batch_opts[ out::nstruct ].user() ) {
 				tr.Warning << "option -nstruct will be overwritten by ArchiveMaster "
-									 << "-- control directly via class Batch" << std::endl;
-			if ( batch_opts[ run::intermediate_structures ].user() )
+					<< "-- control directly via class Batch" << std::endl;
+			}
+			if ( batch_opts[ run::intermediate_structures ].user() ) {
 				tr.Warning << "option -run::intermediate_structures will be overwritten by ArchiveMaster "
-									 << "-- control directly via class Batch" << std::endl;
-			if ( batch_opts[ out::file::silent ].user() )
+					<< "-- control directly via class Batch" << std::endl;
+			}
+			if ( batch_opts[ out::file::silent ].user() ) {
 				tr.Warning << "option -out:file:silent will be overwritten by ArchiveMaster "
-									 << "-- control directly via class Batch" << std::endl;
-			if ( batch_opts[ broker::setup ].user() )
+					<< "-- control directly via class Batch" << std::endl;
+			}
+			if ( batch_opts[ broker::setup ].user() ) {
 				tr.Warning << "option -broker:setup will be overwritten by ArchiveMaster "
-									 << "-- control directly via class Batch" << std::endl;
-			if ( batch_opts[ out::file::scorefile ].user() )
+					<< "-- control directly via class Batch" << std::endl;
+			}
+			if ( batch_opts[ out::file::scorefile ].user() ) {
 				tr.Warning << "option -out:file:scorefile will be overwritten by ArchiveMaster "
-									 << "-- control directly via class Batch" << std::endl;
+					<< "-- control directly via class Batch" << std::endl;
+			}
 		}
 
 		core::Size nstruct( batch_opts[ out::nstruct ]() );

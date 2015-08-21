@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/screener/StubApplier.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace stepwise {
 namespace screener {
-	
-	class StubApplier;
-	typedef utility::pointer::shared_ptr< StubApplier > StubApplierOP;
-	typedef utility::pointer::shared_ptr< StubApplier const > StubApplierCOP;
-	
+
+class StubApplier;
+typedef utility::pointer::shared_ptr< StubApplier > StubApplierOP;
+typedef utility::pointer::shared_ptr< StubApplier const > StubApplierCOP;
+
 } //screener
 } //stepwise
 } //protocols

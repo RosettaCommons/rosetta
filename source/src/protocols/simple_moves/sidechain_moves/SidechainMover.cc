@@ -82,21 +82,21 @@ SidechainMoverCreator::mover_name() {
 }
 
 SidechainMover::SidechainMover():
-		rotamer_library_( * core::pack::dunbrack::RotamerLibrary::get_instance() ),
-		pose_(/* 0 */),
-		prob_uniform_(0.1),
-		prob_withinrot_(0.0),
-		prob_random_pert_to_current_(0.0),
-		preserve_detailed_balance_(false),
-		accept_according_to_dunbrack_(true),
-		sample_rotwells_unif_(false),
-		change_chi_without_replacing_residue_(false),
-		next_resnum_(0),
-		last_proposal_density_ratio_(1),
-		task_initialized_(false),
-		scratch_( core::pack::dunbrack::RotamerLibraryScratchSpaceOP( new core::pack::dunbrack::RotamerLibraryScratchSpace ) ),
-		temperature0_(0.56),
-		sampling_temperature_(0.56)
+	rotamer_library_( * core::pack::dunbrack::RotamerLibrary::get_instance() ),
+	pose_(/* 0 */),
+	prob_uniform_(0.1),
+	prob_withinrot_(0.0),
+	prob_random_pert_to_current_(0.0),
+	preserve_detailed_balance_(false),
+	accept_according_to_dunbrack_(true),
+	sample_rotwells_unif_(false),
+	change_chi_without_replacing_residue_(false),
+	next_resnum_(0),
+	last_proposal_density_ratio_(1),
+	task_initialized_(false),
+	scratch_( core::pack::dunbrack::RotamerLibraryScratchSpaceOP( new core::pack::dunbrack::RotamerLibraryScratchSpace ) ),
+	temperature0_(0.56),
+	sampling_temperature_(0.56)
 {}
 
 SidechainMover::SidechainMover(
@@ -146,10 +146,10 @@ SidechainMover::SidechainMover(
 	temperature0_(0.56),
 	sampling_temperature_(0.56)
 {
-	if (mover.task_factory_) task_factory_ = core::pack::task::TaskFactoryCOP( core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory(*mover.task_factory_) ) );
-	if (mover.task_) task_ = mover.task_->clone();
-	if (mover.pose_) pose_ = core::pose::PoseOP( new core::pose::Pose(*mover.pose_) );
-	if (mover.scratch_) scratch_ = core::pack::dunbrack::RotamerLibraryScratchSpaceOP( new core::pack::dunbrack::RotamerLibraryScratchSpace(*mover.scratch_) );
+	if ( mover.task_factory_ ) task_factory_ = core::pack::task::TaskFactoryCOP( core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory(*mover.task_factory_) ) );
+	if ( mover.task_ ) task_ = mover.task_->clone();
+	if ( mover.pose_ ) pose_ = core::pose::PoseOP( new core::pose::Pose(*mover.pose_) );
+	if ( mover.scratch_ ) scratch_ = core::pack::dunbrack::RotamerLibraryScratchSpaceOP( new core::pack::dunbrack::RotamerLibraryScratchSpace(*mover.scratch_) );
 }
 
 SidechainMover::~SidechainMover() {}
@@ -177,7 +177,7 @@ SidechainMover::parse_my_tag(
 		typedef utility::vector1< std::string > StringVec;
 		StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
 		for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
-					t_o_key != end; ++t_o_key ) {
+				t_o_key != end; ++t_o_key ) {
 			if ( data.has( "task_operations", *t_o_key ) ) {
 				new_task_factory->push_back( data.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", *t_o_key ) );
 			} else {
@@ -209,9 +209,9 @@ SidechainMover::init_task(
 )
 {
 	// check to see if a valid task already exists
-	if (!task_ || task_->total_residue() != pose.total_residue()) {
+	if ( !task_ || task_->total_residue() != pose.total_residue() ) {
 		// if not, create one using the task factory
-		if (task_factory_) {
+		if ( task_factory_ ) {
 			set_task(task_factory_->create_task_and_apply_taskoperations( pose ));
 		} else {
 			utility_exit_with_message("Cannot create task because no task factory is set");
@@ -219,7 +219,7 @@ SidechainMover::init_task(
 	}
 	/// apl -- is it reasonable to first check the task to see if infact we are designing?
 	/// copying a pose is expensive -- try to avoid it if possible.
-	if( !pose_ ){ //pose not initialized
+	if ( !pose_ ) { //pose not initialized
 		pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) ); //need this in case we're designing as well. ek 4/28/10
 	}
 
@@ -245,11 +245,11 @@ SidechainMover::perturb_chi(
 ){
 	new_chi.resize( old_chi.size() );
 	core::Real rand;
-	for(unsigned int chi_i = 1; chi_i <= old_chi.size(); chi_i++){
+	for ( unsigned int chi_i = 1; chi_i <= old_chi.size(); chi_i++ ) {
 		rand = Rand.uniform();
 		//int sign = Rand.random_range(0,1);
 		//if(sign == 0){
-		//	sign = -1;
+		// sign = -1;
 		//}
 		//new_chi[ chi_i ] = basic::periodic_range( ((rand * max_deviation * sign) + old_chi[ chi_i ]) , 360.0 );
 		new_chi[ chi_i ] = basic::periodic_range( ( (2.0*rand-1.0)*max_deviation + old_chi[ chi_i ]) , 360.0 );
@@ -271,7 +271,7 @@ SidechainMover::dunbrack_accept(
 	res.set_all_chi( new_chi_angles );
 
 	core::Real new_chi_angle_score = rotamer_library_.rotamer_energy( res, *scratch_);
-	if ( new_chi_angle_score > prev_chi_angle_score) {
+	if ( new_chi_angle_score > prev_chi_angle_score ) {
 		//Real const boltz_factor = (prev_chi_angle_score - new_chi_angle_score)/1.0;
 		Real const boltz_factor = (prev_chi_angle_score - new_chi_angle_score)/sampling_temperature_*temperature0_;
 		//Real const probability = std::exp(std::max(Real(-40.0),boltz_factor));
@@ -309,7 +309,7 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue )
 	do {
 		Size const restypenum(numeric::random::rg().random_range(1, residue_types.size()));
 		core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter iter(residue_types.begin());
-		for (Size i = 1; i < restypenum; ++i) ++iter;
+		for ( Size i = 1; i < restypenum; ++i ) ++iter;
 		residue_type = *iter;
 	}
 	while (residue_type->aa() == core::chemical::aa_pro); // temporary hack to exlcude sampling of proline sidechains
@@ -322,11 +322,11 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue )
 	///if (last_chi_angles_.size() < last_nchi_) last_chi_angles_.resize(last_nchi_);
 	last_chi_angles_.resize( last_nchi_ );
 
-	if ( TR.visible( basic::t_debug )) {
+	if ( TR.visible( basic::t_debug ) ) {
 		TR.Debug << input_residue->name() << " " << resnum << " -> " << residue_type->name() << std::endl;
 	}
 
-	if (residue_type->aa() != (input_residue->type()).aa()) last_mutation_ = true;
+	if ( residue_type->aa() != (input_residue->type()).aa() ) last_mutation_ = true;
 
 	core::pack::rotamers::SingleResidueRotamerLibraryCOP residue_rotamer_library(
 		core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get(*residue_type)
@@ -342,7 +342,7 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue )
 	/// method, so this is an ok check.
 
 	core::Real move_type_prob( numeric::random::rg().uniform() );
-	if ( move_type_prob > prob_uniform_  && residue_dunbrack_library) { //set up rotamer library stuff
+	if ( move_type_prob > prob_uniform_  && residue_dunbrack_library ) { //set up rotamer library stuff
 		//p_within_rot or p_jump_rots or p_random_pert_to_current
 		core::Real const phi( residue_dunbrack_library->get_phi_from_rsd( *input_residue ) );
 		core::Real const psi( residue_dunbrack_library->get_psi_from_rsd( *input_residue ) );
@@ -353,13 +353,13 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue )
 		core::Real const probability_threshold = 0.01;
 		assert( rotamer_sample_data.size() > 0 );
 		if ( sample_rotwells_unif_  ){ //uniformly samples rotamer wells
-			while((itr_i <= rotamer_sample_data.size())  &&
-						(rotamer_sample_data[ itr_i ].probability() > probability_threshold)){
-				most_probable_rotamers.push_back( rotamer_sample_data[ itr_i ] );
-				itr_i++;
-			}
-			assert( most_probable_rotamers.size() > 0 );
-			rotamer_sample_data = most_probable_rotamers; //replace all rots with ones that pass a certain threshold (1%)
+		while((itr_i <= rotamer_sample_data.size())  &&
+		(rotamer_sample_data[ itr_i ].probability() > probability_threshold)){
+		most_probable_rotamers.push_back( rotamer_sample_data[ itr_i ] );
+		itr_i++;
+		}
+		assert( most_probable_rotamers.size() > 0 );
+		rotamer_sample_data = most_probable_rotamers; //replace all rots with ones that pass a certain threshold (1%)
 		}*/
 
 		if ( move_type_prob > (prob_uniform_ + prob_withinrot_ + prob_random_pert_to_current_ ) || last_mutation_ ) {
@@ -372,7 +372,7 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue )
 		} else if ( move_type_prob > (prob_uniform_ + prob_withinrot_) ) {
 			//ek added in new option to perturb current chi and evaluate according to dunbrack
 			preturb_rot_and_dunbrack_eval( input_residue ); // ?
-		} else if (move_type_prob > prob_uniform_) {
+		} else if ( move_type_prob > prob_uniform_ ) {
 			utility::fixedsizearray1< Real, 5 > bbs;
 			bbs[ 1 ] = phi; bbs[ 2 ] = psi;
 			utility::vector1< core::pack::dunbrack::DunbrackRotamerSampleData > rotamer_sample_data(
@@ -381,7 +381,7 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue )
 			perturb_rot_within_well( rotamer_sample_data, previous_chi_angles );
 		}
 	} else {
-		if ( TR.visible( basic::t_debug )) {
+		if ( TR.visible( basic::t_debug ) ) {
 			TR.Debug << "making a uniform jump " << std::endl;
 		}
 		for ( Size ii = 1; ii <= last_nchi_; ++ii ) {
@@ -394,28 +394,28 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue )
 	core::Real proposal_density_reverse(1);
 	core::Real proposal_density_forward(1);
 
-	if (preserve_detailed_balance_) {
+	if ( preserve_detailed_balance_ ) {
 		proposal_density_reverse = proposal_density(*input_residue, resnum, *residue_type, last_chi_angles_);
 	}
 
 
-	if ( TR.visible( basic::t_debug )) {
+	if ( TR.visible( basic::t_debug ) ) {
 		TR.Debug << "residue angles were previously: ";
 
-		for (Size i = 1; i <= input_residue->nchi(); ++i) {
+		for ( Size i = 1; i <= input_residue->nchi(); ++i ) {
 			TR.Debug << " " << input_residue->chi( i );;
 		}
 		TR.Debug << std::endl;
 	}
 
 	/// set the chi
-	for (Size i = 1; i <= input_residue->nchi(); ++i) {
+	for ( Size i = 1; i <= input_residue->nchi(); ++i ) {
 		input_residue->set_chi( i, last_chi_angles_[ i ] );
 	}
 
-	if ( TR.visible( basic::t_debug )) {
+	if ( TR.visible( basic::t_debug ) ) {
 		TR.Debug << "Set residue chi angles to:";
-		for (Size i = 1; i <= input_residue->nchi(); ++i) {
+		for ( Size i = 1; i <= input_residue->nchi(); ++i ) {
 			TR.Debug << " " << last_chi_angles_[ i ];
 			TR.Debug << " " << input_residue->chi( i );
 		}
@@ -425,8 +425,8 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue )
 	// swap in a new residue if necessary
 	core::conformation::ResidueOP previous_residue = input_residue;
 	core::conformation::ResidueOP new_residue;
-	if (residue_type.get() != & previous_residue->type() ) { // apl, note: pointer comparison is faster
-		if ( TR.visible( basic::t_debug )) {
+	if ( residue_type.get() != & previous_residue->type() ) { // apl, note: pointer comparison is faster
+		if ( TR.visible( basic::t_debug ) ) {
 			TR.Debug << "previous residue " << previous_residue->type().name() << " doesn't match new res-name " << residue_type->name() << std::endl;
 		}
 		new_residue =
@@ -434,24 +434,23 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue )
 			*input_residue,
 			pose_->conformation(),
 			residue_task.preserve_c_beta());
-		if ( TR.visible( basic::t_debug )) {
+		if ( TR.visible( basic::t_debug ) ) {
 			TR.Debug << "type of new residue created " << new_residue->type().name() << std::endl;
 		}
-		for( Size ii = 1; ii <= residue_type->nchi(); ii++ ){
-			if ( TR.visible( basic::t_debug )) {
+		for ( Size ii = 1; ii <= residue_type->nchi(); ii++ ) {
+			if ( TR.visible( basic::t_debug ) ) {
 				TR.Debug << " setting chi of new residue " << last_chi_angles_[ ii ] << std::endl;
 			}
 			new_residue->set_chi( ii, numeric::principal_angle_degrees(last_chi_angles_[ ii ] ));
-			if ( TR.visible( basic::t_debug )) {
+			if ( TR.visible( basic::t_debug ) ) {
 				TR.Debug << " input residue chi is now: " << input_residue->chi( ii ) << std::endl;
 			}
 		}
-	}
-	else{
+	} else {
 		new_residue = input_residue;
 	}
-    //core::conformation::ResidueOP new_residue(input_residue);
-		//pose_.replace_residue(resnum, *new_residue, false); //moved to outside apply
+	//core::conformation::ResidueOP new_residue(input_residue);
+	//pose_.replace_residue(resnum, *new_residue, false); //moved to outside apply
 
 	/// last_chi_angles_ holds radians after this code executes;
 	for ( Size ii = 1; ii <= residue_type->nchi(); ++ii ) {
@@ -461,11 +460,11 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue )
 	}
 
 
-	if (preserve_detailed_balance_) {
+	if ( preserve_detailed_balance_ ) {
 		proposal_density_forward = proposal_density(*input_residue, resnum, previous_residue_type, previous_chi_angles);
 	}
 	last_proposal_density_ratio_ = proposal_density_reverse / proposal_density_forward;
-	if ( TR.visible( basic::t_debug )) {
+	if ( TR.visible( basic::t_debug ) ) {
 		TR.Debug << "last proposal density ratio set to: "  << last_proposal_density_ratio_ << std::endl;
 	}
 
@@ -482,34 +481,33 @@ SidechainMover::make_rotwell_jump(
 )
 {
 	Size rotnum = 0;
-	if ( TR.visible( basic::t_debug )) {
+	if ( TR.visible( basic::t_debug ) ) {
 		TR.Debug << "making a rot-well jump " << std::endl;
 	}
 	// choose a random rotamer according to its probability
 	core::Real random_prob = numeric::random::rg().uniform();
 
-  //yuan, 01/06/10
-  //modify the rotprob, if want to sample at different temperature
-  utility::vector1< core::Real > rot_prob_list(rotamer_sample_data.size());
-  core::Real sum_prob=0.0;
-  for (rotnum=rotamer_sample_data.size(); rotnum>0; rotnum--)
-  {
-    rot_prob_list[rotnum] = rotamer_sample_data[rotnum].probability();
-    //modified by temperature
-    rot_prob_list[rotnum]=std::pow(rot_prob_list[rotnum],temperature0_/sampling_temperature_);
-    sum_prob+=rot_prob_list[rotnum];
-  }
+	//yuan, 01/06/10
+	//modify the rotprob, if want to sample at different temperature
+	utility::vector1< core::Real > rot_prob_list(rotamer_sample_data.size());
+	core::Real sum_prob=0.0;
+	for ( rotnum=rotamer_sample_data.size(); rotnum>0; rotnum-- ) {
+		rot_prob_list[rotnum] = rotamer_sample_data[rotnum].probability();
+		//modified by temperature
+		rot_prob_list[rotnum]=std::pow(rot_prob_list[rotnum],temperature0_/sampling_temperature_);
+		sum_prob+=rot_prob_list[rotnum];
+	}
 
-  runtime_assert(sum_prob>0.0);
-  for (rotnum=rotamer_sample_data.size(); rotnum>0; rotnum--){rot_prob_list[rotnum]/=sum_prob;}
+	runtime_assert(sum_prob>0.0);
+	for ( rotnum=rotamer_sample_data.size(); rotnum>0; rotnum-- ) {rot_prob_list[rotnum]/=sum_prob;}
 
-  rotnum = 0;
+	rotnum = 0;
 	/// go through rotamers in decreasing order by probability and stop when the
 	while ( random_prob > 0 ) {
-		if( sample_rotwells_unif_ ){
+		if ( sample_rotwells_unif_ ) {
 			random_prob -= (1.0/rotamer_sample_data.size()); //pick any rotamer with uniform probability
 			rotnum++;
-		}else{
+		} else {
 			//random_prob -= rotamer_sample_data[++rotnum].probability();
 			random_prob -= rot_prob_list[++rotnum];
 		}
@@ -520,7 +518,7 @@ SidechainMover::make_rotwell_jump(
 	}
 	//rotamer_sample_data[rotnum].assign_random_chi(last_chi_angles_,numeric::random::rg());
 	rotamer_sample_data[rotnum].assign_random_chi(last_chi_angles_, numeric::random::rg(), std::sqrt(sampling_temperature_/temperature0_));
-	for(unsigned int ii = 1; ii <= last_chi_angles_.size(); ii++){
+	for ( unsigned int ii = 1; ii <= last_chi_angles_.size(); ii++ ) {
 		last_chi_angles_[ii] = basic::periodic_range( last_chi_angles_[ii], 360.0 );
 	}
 
@@ -529,24 +527,24 @@ SidechainMover::make_rotwell_jump(
 void
 SidechainMover::preturb_rot_and_dunbrack_eval( core::conformation::ResidueOP input_residue )
 {
-	if ( TR.visible( basic::t_debug )) {
+	if ( TR.visible( basic::t_debug ) ) {
 		TR.Debug << "making a perterb-rot (ek) " << std::endl;
 	}
 	core::Real const max_deviation = 10.0; //arbitrary_value!
 	utility::vector1< core::Real > new_chi_angles;
 	utility::vector1< core::Real > previous_chi_angles = input_residue->chi();
-	if( accept_according_to_dunbrack_ ){
+	if ( accept_according_to_dunbrack_ ) {
 		//compute probability of acceptance based on dunbrack rotamer distribution
 		/// apl -- unused -- core::Real rand = 0;
 		/// apl -- unused -- core::Real proposed_move_dunbrack_probability = -1;
 		/// apl -- unused -- core::Real before_pert_prob = 0;
 		do {
 			perturb_chi( numeric::random::rg(), max_deviation, previous_chi_angles, new_chi_angles );
- // new_chi_angles.resize( previous_chi_angles.size() );
- // for(unsigned int chi_i = 1; chi_i <= previous_chi_angles.size(); chi_i++)
-	//{
-  //  new_chi_angles[ chi_i ] = basic::periodic_range( ( (2.0*RG.uniform()-1.0)*max_deviation + previous_chi_angles[ chi_i ]) , 360.0 );
- // }
+			// new_chi_angles.resize( previous_chi_angles.size() );
+			// for(unsigned int chi_i = 1; chi_i <= previous_chi_angles.size(); chi_i++)
+			//{
+			//  new_chi_angles[ chi_i ] = basic::periodic_range( ( (2.0*RG.uniform()-1.0)*max_deviation + previous_chi_angles[ chi_i ]) , 360.0 );
+			// }
 
 		}
 		while( !dunbrack_accept( numeric::random::rg(), *input_residue, previous_chi_angles, new_chi_angles ) );
@@ -569,33 +567,33 @@ SidechainMover::perturb_rot_within_well(
 {
 	Size rotnum = 0;
 	//ek added in new option to perturb current chi and evaluate according to dunbrack 3/30/10
-	if ( TR.visible( basic::t_debug )) {
+	if ( TR.visible( basic::t_debug ) ) {
 		TR.Debug << "making a within-rot-well jump " << std::endl;
 	}
 	// find the rotamer that has the highest probability of proposing the previous chi angles
 	core::Real max_rot_prob = 0;
-	for (core::Size ii = 1; ii <= rotamer_sample_data.size(); ++ii) {
+	for ( core::Size ii = 1; ii <= rotamer_sample_data.size(); ++ii ) {
 		core::Real candidate_rot_prob( rotamer_sample_data[ii].chi_probability(previous_chi_angles) );
-		if (candidate_rot_prob > max_rot_prob) {
+		if ( candidate_rot_prob > max_rot_prob ) {
 			rotnum = ii;
 			max_rot_prob = candidate_rot_prob;
 		}
 	}
 	last_withinrot_ = true;
 	rotamer_sample_data[rotnum].assign_random_chi(last_chi_angles_,numeric::random::rg());
-	for(unsigned int ii = 1; ii <= last_chi_angles_.size(); ii++){
+	for ( unsigned int ii = 1; ii <= last_chi_angles_.size(); ii++ ) {
 		last_chi_angles_[ii] = basic::periodic_range(last_chi_angles_[ii],360.0);
 	}
 	//residue_rotamer_library->assign_random_rotamer_with_bias(
-	//	pose.residue( resnum ), *scratch_, numeric::random::rg(),
-	//	last_chi_angles_, true );
+	// pose.residue( resnum ), *scratch_, numeric::random::rg(),
+	// last_chi_angles_, true );
 
 }
 
 
-	bool SidechainMover::task_initialized(){
-		return task_initialized_;
-	}
+bool SidechainMover::task_initialized(){
+	return task_initialized_;
+}
 
 /// @details
 void
@@ -614,40 +612,40 @@ SidechainMover::apply(
 	runtime_assert(packed_residues_.size() > 0);
 
 	Size resnum;
-	if (next_resnum_) {
+	if ( next_resnum_ ) {
 		resnum = next_resnum_;
 		next_resnum_ = 0;
 	} else {
 		resnum = packed_residues_[ numeric::random::rg().random_range(1, packed_residues_.size()) ];
 	}
 	conformation::ResidueOP newresidue( new conformation::Residue( pose.residue( resnum ) ) );
-	if ( TR.visible( basic::t_debug )) {
+	if ( TR.visible( basic::t_debug ) ) {
 		TR.Debug << "old residue chi is : ";
-		for (Size i = 1; i <= newresidue->nchi(); ++i) TR.Debug << " " << newresidue->chi(i);
+		for ( Size i = 1; i <= newresidue->nchi(); ++i ) TR.Debug << " " << newresidue->chi(i);
 		TR.Debug << std::endl;
 	}
 
 	conformation::ResidueOP final = make_move( newresidue );
-	if ( TR.visible( basic::t_debug )) {
+	if ( TR.visible( basic::t_debug ) ) {
 		TR.Debug << "new residue chi is : ";
-		for (Size i = 1; i <= pose.residue(resnum).type().nchi(); ++i) TR.Debug << " " << newresidue->chi(i);
+		for ( Size i = 1; i <= pose.residue(resnum).type().nchi(); ++i ) TR.Debug << " " << newresidue->chi(i);
 		TR.Debug << std::endl;
 	}
 
 	//perform replace_residue by default, or if there was a mutation
-	if(!change_chi_without_replacing_residue() || last_mutation_){
+	if ( !change_chi_without_replacing_residue() || last_mutation_ ) {
 		pose.replace_residue(resnum, *final, true);
 	} else { //optionally, perform in-place chi rotations instead of a residue replace.  This causes proper kinematic dependency if the atomtree has atoms that are children of the moving residue.
 		core::Size const nchi(final->nchi());
-		for( core::Size i(1); i<=nchi; ++i ){
+		for ( core::Size i(1); i<=nchi; ++i ) {
 			pose.set_chi(i, resnum, final->chi(i));
 		}
 	}
 
-	if ( TR.visible( basic::t_debug )) {
+	if ( TR.visible( basic::t_debug ) ) {
 		TR.Debug << "pose replaced " << resnum << " " << pose.residue(resnum).type().name() << " has phi-psi " << pose.phi(resnum) << " " << pose.psi(resnum) << " and chi: ";
 
-		for (Size i = 1; i <= pose.residue(resnum).type().nchi(); ++i) TR.Debug << " " << (pose.residue(resnum).chi(i));
+		for ( Size i = 1; i <= pose.residue(resnum).type().nchi(); ++i ) TR.Debug << " " << (pose.residue(resnum).chi(i));
 		TR.Debug << std::endl;
 	}
 	PROF_STOP( basic::APPLY_SC_MOVE );
@@ -678,7 +676,7 @@ SidechainMover::proposal_density(
 		utility::pointer::dynamic_pointer_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const >(residue_rotamer_library)
 	);
 
-	if (residue_dunbrack_library) {
+	if ( residue_dunbrack_library ) {
 
 		core::Real const phi( residue_dunbrack_library->get_phi_from_rsd( proposed_residue ) );
 		core::Real const psi( residue_dunbrack_library->get_psi_from_rsd( proposed_residue ) );
@@ -691,10 +689,10 @@ SidechainMover::proposal_density(
 
 		utility::vector1< core::pack::dunbrack::DunbrackRotamerSampleData > most_probable_rotamers;
 		core::Real probability_threshold = 0.01;
-		if( sample_rotwells_unif_ ){
+		if ( sample_rotwells_unif_ ) {
 			core::Size itr_i = 1;
-			while( itr_i <= rotamer_sample_data.size() &&
-						 rotamer_sample_data[ itr_i ].probability() > probability_threshold){
+			while ( itr_i <= rotamer_sample_data.size() &&
+					rotamer_sample_data[ itr_i ].probability() > probability_threshold ) {
 				most_probable_rotamers.push_back( rotamer_sample_data[ itr_i ] );
 				itr_i++;
 			}
@@ -708,22 +706,22 @@ SidechainMover::proposal_density(
 
 		bool calc_withinrot( prob_withinrot_ && proposed_residue.type().aa() == initial_residue_type.aa() );
 
-		for (core::Size ii = 1; ii <= rotamer_sample_data.size(); ++ii) {
+		for ( core::Size ii = 1; ii <= rotamer_sample_data.size(); ++ii ) {
 
 			core::Real const proposed_rot_prob( rotamer_sample_data[ii].chi_probability(proposed_chi_angles) );
 
-			if( sample_rotwells_unif_ ){
+			if ( sample_rotwells_unif_ ) {
 				rot_density += ( 1.0 / rotamer_sample_data.size() ) * proposed_rot_prob;
-			}else{
+			} else {
 				//rot_density += rotamer_sample_data[ii].probability() * proposed_rot_prob;
 				rot_density += exp(log(rotamer_sample_data[ii].probability()) + log(proposed_rot_prob));
 			}
 
-			if (calc_withinrot) {
+			if ( calc_withinrot ) {
 
 				core::Real const initial_rot_prob( rotamer_sample_data[ii].chi_probability(initial_chi_angles) );
 
-				if (initial_rot_prob > max_initial_rot_prob) {
+				if ( initial_rot_prob > max_initial_rot_prob ) {
 					max_initial_rot_prob = initial_rot_prob;
 					max_proposed_rot_prob = proposed_rot_prob;
 				}
@@ -734,7 +732,7 @@ SidechainMover::proposal_density(
 
 		density += rot_density;
 
-		if (calc_withinrot) {
+		if ( calc_withinrot ) {
 
 			core::Real const withinrot_density( prob_withinrot_ * max_proposed_rot_prob );
 
@@ -742,15 +740,15 @@ SidechainMover::proposal_density(
 		}
 	}
 
-	if (prob_uniform_ || !residue_dunbrack_library) {
+	if ( prob_uniform_ || !residue_dunbrack_library ) {
 
 		core::Real uniform_density(1);
 
-		for (core::Size ii = 1; ii <= proposed_residue.nchi(); ++ii) {
+		for ( core::Size ii = 1; ii <= proposed_residue.nchi(); ++ii ) {
 			uniform_density *= 1.0/360.0;
 		}
 
-		if (residue_dunbrack_library) uniform_density *= prob_uniform_;
+		if ( residue_dunbrack_library ) uniform_density *= prob_uniform_;
 
 		density += uniform_density;
 	}
@@ -784,7 +782,7 @@ SidechainMover::idealize_sidechains(
 
 	init_task(pose);
 
-	for (Size i = 1; i <= packed_residues_.size(); ++i) {
+	for ( Size i = 1; i <= packed_residues_.size(); ++i ) {
 
 		Size const resnum(packed_residues_[i]);
 
@@ -793,23 +791,23 @@ SidechainMover::idealize_sidechains(
 		pack::task::ResidueLevelTask const & residue_task(task_->residue_task(resnum));
 
 		// disable proline idealization for now
-		if (residue_type.aa() == chemical::aa_pro) continue;
+		if ( residue_type.aa() == chemical::aa_pro ) continue;
 
 		// save original chi angles
-		if (residue_type.nchi() > chi.size()) chi.resize(residue_type.nchi());
-		for (Size chinum = 1; chinum <= residue_type.nchi(); ++chinum) {
+		if ( residue_type.nchi() > chi.size() ) chi.resize(residue_type.nchi());
+		for ( Size chinum = 1; chinum <= residue_type.nchi(); ++chinum ) {
 			chi[chinum] = pose.chi(chinum, resnum);
 		}
 
 		// create a new residue and replace the old one with it
 		conformation::ResidueOP new_residue(
 			conformation::ResidueFactory::create_residue(residue_type, pose.residue(resnum), pose.conformation(),
-			                                             residue_task.preserve_c_beta())
+			residue_task.preserve_c_beta())
 		);
 		pose.replace_residue(resnum, *new_residue, false);
 
 		// put original chi angles back
-		for (Size chinum = 1; chinum <= residue_type.nchi(); ++chinum) {
+		for ( Size chinum = 1; chinum <= residue_type.nchi(); ++chinum ) {
 			pose.set_chi(chinum, resnum, chi[chinum]);
 		}
 	}
@@ -853,16 +851,16 @@ SidechainMover::set_task(
 	// update the list of residues being packed
 	packed_residues_.clear();
 	residue_packed_.resize(task_->total_residue());
-	for (Size i = 1; i <= task_->total_residue(); ++i) {
+	for ( Size i = 1; i <= task_->total_residue(); ++i ) {
 
 		// loop over all possible residue types and check if any have chi angles
 		residue_packed_[i] = false;
 		core::pack::task::ResidueLevelTask const & residue_task(task->residue_task(i));
-		for (ResidueLevelTask::ResidueTypeCOPListConstIter iter(residue_task.allowed_residue_types_begin());
-		     iter != residue_task.allowed_residue_types_end(); ++iter) {
+		for ( ResidueLevelTask::ResidueTypeCOPListConstIter iter(residue_task.allowed_residue_types_begin());
+				iter != residue_task.allowed_residue_types_end(); ++iter ) {
 
 			// temporarily exclude proline residues from side chain sampling
-			if ((*iter)->nchi() > 0 && (*iter)->aa() != core::chemical::aa_pro) {
+			if ( (*iter)->nchi() > 0 && (*iter)->aa() != core::chemical::aa_pro ) {
 				packed_residues_.push_back(i);
 				residue_packed_[i] = true;
 				break;
@@ -901,7 +899,7 @@ SidechainMover::set_prob_withinrot(
 
 core::Real
 SidechainMover::prob_random_pert_current() const{
-  return prob_random_pert_to_current_;
+	return prob_random_pert_to_current_;
 }
 
 void
@@ -909,7 +907,7 @@ SidechainMover::set_prob_random_pert_current(
 	core::Real prob_pert
 )
 {
-  prob_random_pert_to_current_ = prob_pert;
+	prob_random_pert_to_current_ = prob_pert;
 }
 
 bool
@@ -959,7 +957,7 @@ SidechainMover::dof_id_ranges(
 
 	utility::vector1<core::id::DOF_ID_Range> range_vector;
 
-	for (core::Size i = 1; i <= packed_residues_.size(); ++i) {
+	for ( core::Size i = 1; i <= packed_residues_.size(); ++i ) {
 
 		core::Size const resnum(packed_residues_[i]);
 
@@ -968,22 +966,22 @@ SidechainMover::dof_id_ranges(
 		// we only monitor DOFs of residues that won't change primary type
 		// check to see if pose residue type has the same name as all allowed residue types
 		core::pack::task::ResidueLevelTask const & residueleveltask(task_->residue_task(resnum));
-		for (core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter iter(residueleveltask.allowed_residue_types_begin());
-				 iter != residueleveltask.allowed_residue_types_end(); ++iter) {
+		for ( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter iter(residueleveltask.allowed_residue_types_begin());
+				iter != residueleveltask.allowed_residue_types_end(); ++iter ) {
 
-			if ((*iter)->name3() != pose.residue_type(resnum).name3()) {
+			if ( (*iter)->name3() != pose.residue_type(resnum).name3() ) {
 				all_names_match = false;
 				break;
 			}
 		}
 
-		if (!all_names_match) break;
+		if ( !all_names_match ) break;
 
-		for (core::Size j = 1; j <= pose.residue_type(resnum).nchi(); ++j) {
+		for ( core::Size j = 1; j <= pose.residue_type(resnum).nchi(); ++j ) {
 
 			core::id::TorsionID chi_torsion(resnum, core::id::CHI, j);
 			core::id::DOF_ID chi_dof(pose.conformation().dof_id_from_torsion_id(chi_torsion));
-			if (chi_dof.valid()) range_vector.push_back(core::id::DOF_ID_Range(chi_dof, -pi, pi));
+			if ( chi_dof.valid() ) range_vector.push_back(core::id::DOF_ID_Range(chi_dof, -pi, pi));
 		}
 	}
 
@@ -1069,59 +1067,59 @@ SidechainMover::update_type()
 /// The following block of comments was originally in make_move
 /// but have been moved here
 
-	//Size chinum(1);
-	// use Dunbrack statistics to bias chi angle sampling
-	//if (numeric::random::rg().uniform() > prob_uniform_ && residue_dunbrack_library) {
-	//
-	//	// get indices of the phi and psi bins, plus extra information we don't need
-	//	Size phibin, psibin, phibin_next, psibin_next;
-	//	Real phi_err, psi_err;
-	//	residue_dunbrack_library->get_phi_interpolate_bin(pose.phi(resnum), pose.psi(resnum), phibin, psibin,
-	//		phibin_next, psibin_next, phi_err, psi_err);
+//Size chinum(1);
+// use Dunbrack statistics to bias chi angle sampling
+//if (numeric::random::rg().uniform() > prob_uniform_ && residue_dunbrack_library) {
+//
+// // get indices of the phi and psi bins, plus extra information we don't need
+// Size phibin, psibin, phibin_next, psibin_next;
+// Real phi_err, psi_err;
+// residue_dunbrack_library->get_phi_interpolate_bin(pose.phi(resnum), pose.psi(resnum), phibin, psibin,
+//  phibin_next, psibin_next, phi_err, psi_err);
 
-	//	// choose a random rotamer according to its probability
-	//	Real accprob = numeric::random::rg().uniform();
-	//	for (Size rotnum = 1; rotnum <= residue_dunbrack_library->nrots_per_bin(); rotnum++) {
-	//
-	//		core::pack::dunbrack::DunbrackRotamer< core::pack::dunbrack::FOUR > rotamer(
-	//			residue_dunbrack_library->retrieve_rotamer(phibin, psibin, rotnum)
-	//		);
+// // choose a random rotamer according to its probability
+// Real accprob = numeric::random::rg().uniform();
+// for (Size rotnum = 1; rotnum <= residue_dunbrack_library->nrots_per_bin(); rotnum++) {
+//
+//  core::pack::dunbrack::DunbrackRotamer< core::pack::dunbrack::FOUR > rotamer(
+//   residue_dunbrack_library->retrieve_rotamer(phibin, psibin, rotnum)
+//  );
 
-	//		// keep looking if we haven't decremented the accumulated probability below zero
-	//		accprob -= rotamer.rotamer_probability();
-	//		if (accprob > 0) continue;
+//  // keep looking if we haven't decremented the accumulated probability below zero
+//  accprob -= rotamer.rotamer_probability();
+//  if (accprob > 0) continue;
 
-	//		// for chi angles which have statistics, sample according to rotamer SD and mean
-	//		TR.Debug << "Using rotamer " << rotnum << ": ";
-	//		for ( ; chinum <= residue_dunbrack_library->nchi_aa(); ++chinum) {
-	//			TR.Debug << " " << rotamer.chi_mean(chinum) << "(" << rotamer.chi_sd(chinum) << ")";
-	//			last_chi_angles_[chinum] = radians(numeric::random::rg().gaussian()*rotamer.chi_sd(chinum) + rotamer.chi_mean(chinum));
-	//			pose.set_chi(chinum, resnum, degrees(last_chi_angles_[chinum]));
-	//		}
-	//		TR.Debug << std::endl;
+//  // for chi angles which have statistics, sample according to rotamer SD and mean
+//  TR.Debug << "Using rotamer " << rotnum << ": ";
+//  for ( ; chinum <= residue_dunbrack_library->nchi_aa(); ++chinum) {
+//   TR.Debug << " " << rotamer.chi_mean(chinum) << "(" << rotamer.chi_sd(chinum) << ")";
+//   last_chi_angles_[chinum] = radians(numeric::random::rg().gaussian()*rotamer.chi_sd(chinum) + rotamer.chi_mean(chinum));
+//   pose.set_chi(chinum, resnum, degrees(last_chi_angles_[chinum]));
+//  }
+//  TR.Debug << std::endl;
 
-	//		last_uniform_ = false;
-	//		break;
-	//	}
-	//}
+//  last_uniform_ = false;
+//  break;
+// }
+//}
 
-	// any/all remaning chi angles are chosen uniformly
-	//for ( ; chinum <= residue_type->nchi(); ++chinum) {
-	//	last_chi_angles_[chinum] = numeric::random::rg().uniform()*numeric::constants::d::pi_2 - numeric::constants::d::pi;
-	//	pose.set_chi(chinum, resnum, degrees(last_chi_angles_[chinum]));
-	//}
-
-
-	// 	TR << "new chi angles:";
-	// 	utility::vector1< Real > const & nchis(pose.residue(resnum).chi());
-	// 	for (core::Size i = 1; i <= nchis.size(); ++i)
-	// 		TR << " " << nchis[i];
-	// 	TR << std::endl;
+// any/all remaning chi angles are chosen uniformly
+//for ( ; chinum <= residue_type->nchi(); ++chinum) {
+// last_chi_angles_[chinum] = numeric::random::rg().uniform()*numeric::constants::d::pi_2 - numeric::constants::d::pi;
+// pose.set_chi(chinum, resnum, degrees(last_chi_angles_[chinum]));
+//}
 
 
-	//	TR.Debug << "Set residue chi angles to:";
-	//	for (Size i = 1; i <= residue_type->nchi(); ++i) TR.Debug << " " << degrees(last_chi_angles_[i]);
-	//	TR.Debug << std::endl;
+//  TR << "new chi angles:";
+//  utility::vector1< Real > const & nchis(pose.residue(resnum).chi());
+//  for (core::Size i = 1; i <= nchis.size(); ++i)
+//   TR << " " << nchis[i];
+//  TR << std::endl;
+
+
+// TR.Debug << "Set residue chi angles to:";
+// for (Size i = 1; i <= residue_type->nchi(); ++i) TR.Debug << " " << degrees(last_chi_angles_[i]);
+// TR.Debug << std::endl;
 
 
 } // sidechain_moves

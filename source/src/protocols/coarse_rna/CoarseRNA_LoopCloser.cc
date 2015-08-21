@@ -98,9 +98,9 @@ CoarseRNA_LoopCloser::apply( core::pose::Pose & pose, Size const & seqpos_moved 
 	pose.fold_tree().partition_by_residue( seqpos_moved, partition_definition_ );
 
 	figure_out_which_cutpoints_were_affected( pose );
-	//	if ( cutpos_list_.size() > 1 ) {
-		//		utility_exit_with_message( "Found more than one cutpoint affected by a frag insertion -- should not happen!" );
-	//	}
+	// if ( cutpos_list_.size() > 1 ) {
+	//  utility_exit_with_message( "Found more than one cutpoint affected by a frag insertion -- should not happen!" );
+	// }
 
 	return close_at_all_cutpoints( pose );
 }
@@ -151,10 +151,10 @@ CoarseRNA_LoopCloser::close_at_all_cutpoints( core::pose::Pose & pose ){
 		}
 
 		close_the_loop( pose );
-		//		std::cout << nsol_ << std::endl;
+		//  std::cout << nsol_ << std::endl;
 
 		if ( nsol_ == 0 ) success = false;
-		//		if ( nsol_ > 0 ) exit( 0 );
+		//  if ( nsol_ > 0 ) exit( 0 );
 	}
 
 	return success;
@@ -168,7 +168,7 @@ CoarseRNA_LoopCloser::figure_out_which_cutpoints_were_affected( core::pose::Pose
 
 	cutpos_list_.clear();
 
-	if ( verbose_ ){
+	if ( verbose_ ) {
 		for ( Size n = 1; n <= pose.total_residue(); n++ ) std::cout << partition_definition_( n );
 		std::cout << std::endl;
 	}
@@ -176,9 +176,9 @@ CoarseRNA_LoopCloser::figure_out_which_cutpoints_were_affected( core::pose::Pose
 	cutpos_ = 0;
 	for ( Size n = 1; n < pose.total_residue(); n++ ) {
 		if ( pose.fold_tree().is_cutpoint( n ) &&
-				 partition_definition_( n ) != partition_definition_( n+1 ) &&
-				 pose.residue_type( n   ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
-				 pose.residue_type( n+1 ).has_variant_type( chemical::CUTPOINT_UPPER )	){
+				partition_definition_( n ) != partition_definition_( n+1 ) &&
+				pose.residue_type( n   ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
+				pose.residue_type( n+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {
 			cutpos_list_.push_back( n );
 			if ( verbose_ ) std::cout << "AFFECTED CUTPOINT: " << n << std::endl;
 		}
@@ -189,14 +189,14 @@ CoarseRNA_LoopCloser::figure_out_which_cutpoints_were_affected( core::pose::Pose
 
 void
 CoarseRNA_LoopCloser::output_forward_backward_res(){
-		std::cout << "BACKWARD_RES ";
-		for ( Size n = 1; n <= backward_res_.size(); n++ ) std::cout << ' ' << backward_res_[n];
-		std::cout << std::endl;
+	std::cout << "BACKWARD_RES ";
+	for ( Size n = 1; n <= backward_res_.size(); n++ ) std::cout << ' ' << backward_res_[n];
+	std::cout << std::endl;
 
-		std::cout << "FORWARD_RES ";
-		for ( Size n = 1; n <= forward_res_.size(); n++ ) std::cout << ' ' << forward_res_[n];
-		std::cout << std::endl << std::endl;
-	}
+	std::cout << "FORWARD_RES ";
+	for ( Size n = 1; n <= forward_res_.size(); n++ ) std::cout << ' ' << forward_res_[n];
+	std::cout << std::endl << std::endl;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////
 bool
@@ -216,7 +216,7 @@ CoarseRNA_LoopCloser::figure_out_pivots( core::pose::Pose const & pose ){
 		remove_res( backward_res_, seqpos_moved_+1 );
 	}
 
-	if (verbose_) output_forward_backward_res();
+	if ( verbose_ ) output_forward_backward_res();
 
 	figure_out_pivot_res_and_scratch_res();
 
@@ -243,10 +243,10 @@ CoarseRNA_LoopCloser::remove_res( utility::vector1< core::Size > & res_vector, c
 // Keep track of controlling phosphates (potential "pivots")
 void
 CoarseRNA_LoopCloser::backtrack( core::kinematics::tree::Atom const * current_atom,
-																 utility::vector1< core::Size > & upstream_res,
-																 utility::vector1< bool > & is_upstream_res,
-																 pose::Pose const & pose ){
-	while ( current_atom->parent() ){
+	utility::vector1< core::Size > & upstream_res,
+	utility::vector1< bool > & is_upstream_res,
+	pose::Pose const & pose ){
+	while ( current_atom->parent() ) {
 
 		current_atom = ( current_atom->parent().get() );
 		AtomID const & atom_id( current_atom->id() );
@@ -264,7 +264,7 @@ CoarseRNA_LoopCloser::figure_out_forward_backward_res_by_backtracking( pose::Pos
 
 	is_backward_res_.clear();
 	is_forward_res_.clear();
-	for ( Size i = 1; i <= pose.total_residue(); i++ ){
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 		is_backward_res_.push_back( false );
 		is_forward_res_.push_back( false );
 	}
@@ -282,7 +282,7 @@ CoarseRNA_LoopCloser::figure_out_forward_backward_res_by_backtracking( pose::Pos
 	current_atom = & pose.atom_tree().atom_dont_do_update( atom_id );
 	backtrack( current_atom, forward_res_, is_forward_res_, pose );
 
-	if (verbose_) output_forward_backward_res();
+	if ( verbose_ ) output_forward_backward_res();
 
 	// Trick to filter out just controlling pivots -- any upstream residues
 	//  shared in the backtrack paths from either end of the chainbreak
@@ -292,15 +292,15 @@ CoarseRNA_LoopCloser::figure_out_forward_backward_res_by_backtracking( pose::Pos
 	filter_path( backward_res_, is_forward_res_, pose );
 	filter_path( forward_res_,  is_backward_res_, pose );
 
-	if (verbose_) output_forward_backward_res();
+	if ( verbose_ ) output_forward_backward_res();
 
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 void
 CoarseRNA_LoopCloser::filter_path( utility::vector1< core::Size > & upstream_res,
-																	 utility::vector1< bool > const & is_filter_res,
-																	 pose::Pose const & pose ){
+	utility::vector1< bool > const & is_filter_res,
+	pose::Pose const & pose ){
 
 	utility::vector1< core::Size > new_upstream_res;
 
@@ -309,11 +309,11 @@ CoarseRNA_LoopCloser::filter_path( utility::vector1< core::Size > & upstream_res
 		Size const i( upstream_res[ n ] );
 		// AtomID atom_id = named_atom_id_to_atom_id( NamedAtomID( " P  ", i ), pose ); // Unused variable causes warning.
 
-		//		if ( !is_filter_res[ i ] &&
-		//				 allow_insert_->get( atom_id ) )  new_upstream_res.push_back( i );
+		//  if ( !is_filter_res[ i ] &&
+		//     allow_insert_->get( atom_id ) )  new_upstream_res.push_back( i );
 
 		if ( !is_filter_res[ i ] &&
-				 allow_insert_->get( id::TorsionID( i, id::BB, 1 ), pose.conformation() ) )  new_upstream_res.push_back( i );
+				allow_insert_->get( id::TorsionID( i, id::BB, 1 ), pose.conformation() ) )  new_upstream_res.push_back( i );
 
 	}
 
@@ -332,14 +332,14 @@ CoarseRNA_LoopCloser::figure_out_pivot_res_and_scratch_res(){
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	Size total_pivots = forward_res_.size() + backward_res_.size() + 1;
 
-	if ( total_pivots < 3 ){
+	if ( total_pivots < 3 ) {
 		utility_exit_with_message( "Not enough pivots to close chainbreak!" );
 	}
 
 	// line up the pivots in order.
 	utility::vector1< Size > pivots_in_order;
 	// first the "backward" residues, those upstream of the cutpoint. Their order needs to be reversed.
-	for ( Size n = backward_res_.size();  n >= 1; n-- )	pivots_in_order.push_back( backward_res_[ n ] );
+	for ( Size n = backward_res_.size();  n >= 1; n-- ) pivots_in_order.push_back( backward_res_[ n ] );
 	// Cutpoint is one of the pivots.
 	pivots_in_order.push_back( cutpos_ + 1 );
 	// Then the "forward" residues (downstream).
@@ -355,7 +355,7 @@ CoarseRNA_LoopCloser::figure_out_pivot_res_and_scratch_res(){
 	total_pivots--;
 
 	// two more to go.
-	for ( Size n = 1; n <= 2; n++ ){
+	for ( Size n = 1; n <= 2; n++ ) {
 
 		Size const which_pivot = static_cast<int>( numeric::random::rg().uniform() * total_pivots ) + 1;
 		Size count( 0 );
@@ -374,10 +374,10 @@ CoarseRNA_LoopCloser::figure_out_pivot_res_and_scratch_res(){
 	////////////////////
 	// manual override!
 	////////////////////
-	//	for( Size i=1; i<=pivots_selected.size();i++) pivots_selected[i]= false;
-	//	pivots_selected[ 2 ] = true;
-	//	pivots_selected[ 3 ] = true;
-	//	pivots_selected[ 4 ] = true;
+	// for( Size i=1; i<=pivots_selected.size();i++) pivots_selected[i]= false;
+	// pivots_selected[ 2 ] = true;
+	// pivots_selected[ 3 ] = true;
+	// pivots_selected[ 4 ] = true;
 	////////////////////
 
 	////////////////////////////////////////////////////////////////////////////
@@ -388,7 +388,7 @@ CoarseRNA_LoopCloser::figure_out_pivot_res_and_scratch_res(){
 	//  [I think there may be a simpler way to write this ]
 	is_scratch_res_.clear();
 	is_pivot_res_.clear();
-	for ( Size i = 1; i <= is_backward_res_.size() /*pose.total_residue()*/ ; i++ ){
+	for ( Size i = 1; i <= is_backward_res_.size() /*pose.total_residue()*/ ; i++ ) {
 		is_scratch_res_.push_back( false );
 		is_pivot_res_.push_back( false );
 	}
@@ -400,7 +400,7 @@ CoarseRNA_LoopCloser::figure_out_pivot_res_and_scratch_res(){
 	}
 
 	for ( Size i = 1; i <= pivots_selected.size(); i++ ) {
-		if( pivots_selected[ i ] ) {
+		if ( pivots_selected[ i ] ) {
 			is_pivot_res_[   pivots_in_order[ i ]     ]   = true;
 			is_scratch_res_[ pivots_in_order[ i ]     ]   = true;
 		}
@@ -426,7 +426,7 @@ CoarseRNA_LoopCloser::figure_out_pivot_res_and_scratch_res(){
 	for ( Size i = 1; i <= is_scratch_res_.size(); i++ ) {
 		if ( is_scratch_res_[ i ] ) {
 			scratch_res_.push_back( i );
-			if( i == cutpos_ ) which_scratch_res_is_cut_ = scratch_res_.size();
+			if ( i == cutpos_ ) which_scratch_res_is_cut_ = scratch_res_.size();
 		}
 		if ( is_pivot_res_[ i ] ) {
 			pivot_res_.push_back( i );
@@ -438,19 +438,19 @@ CoarseRNA_LoopCloser::figure_out_pivot_res_and_scratch_res(){
 	assert( scratch_res_.size() >= 3 );
 	assert( pivot_res_.size() == 3 );
 
-	if (verbose_ ){
+	if ( verbose_ ) {
 		std::cout << "SCRATCH RES: ";
 		for ( Size n = 1; n <= scratch_res_.size(); n++ ) std::cout << ' ' << scratch_res_[ n ];
 		std::cout << std::endl;
 	}
 
-	if ( a_little_verbose_ || verbose_ ){
+	if ( a_little_verbose_ || verbose_ ) {
 		TR << "PIVOT RES: ";
 		for ( Size n = 1; n <= pivot_res_.size(); n++ ) TR << ' ' << pivot_res_[ n ];
 		TR << std::endl;
 	}
 
-	if (verbose_ ){
+	if ( verbose_ ) {
 		std::cout << "SCRATCH RES: ";
 		std::cout << "PIVOT_TO_SCRATCH_RES: ";
 		for ( Size n = 1; n <= pivot_to_scratch_res_.size(); n++ ) std::cout << ' ' << pivot_to_scratch_res_[ n ];
@@ -493,7 +493,7 @@ CoarseRNA_LoopCloser::close_the_loop( pose::Pose & pose ){
 	atom_ids_.push_back( NamedAtomID( " P  ", scratch_res_[ nscratch ] ) );
 	atom_ids_.push_back( NamedAtomID( " S  ", scratch_res_[ nscratch ] ) );
 	// scratch res.
-	for ( Size i = 1; i <= nscratch; i++ ){
+	for ( Size i = 1; i <= nscratch; i++ ) {
 		atom_ids_.push_back( NamedAtomID( " S  ", scratch_res_[ i ]-1 ) ); // wait won't this be a problem if scratch_res = 1?
 		atom_ids_.push_back( NamedAtomID( " P  ", scratch_res_[ i ]   ) );
 		atom_ids_.push_back( NamedAtomID( " S  ", scratch_res_[ i ]   ) );
@@ -503,7 +503,7 @@ CoarseRNA_LoopCloser::close_the_loop( pose::Pose & pose ){
 	atom_ids_.push_back( NamedAtomID( " P  ", scratch_res_[ 1 ]   ) );
 	atom_ids_.push_back( NamedAtomID( " S  ", scratch_res_[ 1 ]   ) );
 
-	for ( Size i = 1; i <= 3; i++ ){
+	for ( Size i = 1; i <= 3; i++ ) {
 		pivots[ i ] = 3 * ( pivot_to_scratch_res_[ i ] ) + 2;
 	}
 
@@ -530,40 +530,40 @@ CoarseRNA_LoopCloser::close_the_loop( pose::Pose & pose ){
 	//  previous residue's P-S-CEN coordinate system.
 	static const Real idl_S_nextP_( 3.838 );
 	Real const d_S_nextP = ( pose.xyz( NamedAtomID(" S  ", cutpos_) ) -
-															pose.xyz( NamedAtomID("OVL1", cutpos_) ) ).length();
-	if (verbose_)  std::cout << " D_S_NEXT_P " << d_S_nextP << " " << idl_S_nextP_ << std::endl;
+		pose.xyz( NamedAtomID("OVL1", cutpos_) ) ).length();
+	if ( verbose_ )  std::cout << " D_S_NEXT_P " << d_S_nextP << " " << idl_S_nextP_ << std::endl;
 	db_len[ 3 * which_scratch_res_is_cut_ + 4 ] = d_S_nextP;
 
 	static const Real idl_S_Snudge_nextP_(  65.908 );
 	// The "180.0 - " is because Snudge is sort of in the opposite direction to CEN (the math works out).
-	//	Real const theta_Snudge_S_nextP = 180.0 - degrees( angle_radians( pose.xyz( NamedAtomID(" CEN", cutpos_) ),
-	//																																 pose.xyz( NamedAtomID(" S  ", cutpos_) ),
-	//																																 pose.xyz( NamedAtomID("OVL1", cutpos_) ) ) );
+	// Real const theta_Snudge_S_nextP = 180.0 - degrees( angle_radians( pose.xyz( NamedAtomID(" CEN", cutpos_) ),
+	//                                 pose.xyz( NamedAtomID(" S  ", cutpos_) ),
+	//                                 pose.xyz( NamedAtomID("OVL1", cutpos_) ) ) );
 	Real const theta_S_Snudge_nextP = degrees( angle_radians(atoms_xyz[ 3*which_scratch_res_is_cut_+3],
-																													 atoms_xyz[ 3*which_scratch_res_is_cut_+4],
-																													 pose.xyz( NamedAtomID("OVL1", cutpos_) ) ) );
-	if (verbose_) 	std::cout << " THETA_S_Snudge_NEXTP " << theta_S_Snudge_nextP << " " << idl_S_Snudge_nextP_ << std::endl;
+		atoms_xyz[ 3*which_scratch_res_is_cut_+4],
+		pose.xyz( NamedAtomID("OVL1", cutpos_) ) ) );
+	if ( verbose_ )  std::cout << " THETA_S_Snudge_NEXTP " << theta_S_Snudge_nextP << " " << idl_S_Snudge_nextP_ << std::endl;
 	db_ang[ 3 * which_scratch_res_is_cut_ + 4 ] = theta_S_Snudge_nextP;
 
 
 	static const Real idl_S_nextP_nextS_( 84.947 );
 	Real const theta_S_nextP_nextS = degrees( angle_radians(atoms_xyz[ 3*which_scratch_res_is_cut_+4],
-																													pose.xyz( NamedAtomID("OVL1", cutpos_) ),
-																													pose.xyz( NamedAtomID("OVL2", cutpos_) ) ) );
-	if (verbose_) 	std::cout << " THETA_S_NEXTP_NEXTS " << theta_S_nextP_nextS << " " << idl_S_nextP_nextS_ << std::endl;
+		pose.xyz( NamedAtomID("OVL1", cutpos_) ),
+		pose.xyz( NamedAtomID("OVL2", cutpos_) ) ) );
+	if ( verbose_ )  std::cout << " THETA_S_NEXTP_NEXTS " << theta_S_nextP_nextS << " " << idl_S_nextP_nextS_ << std::endl;
 	db_ang[ 3 * which_scratch_res_is_cut_ + 5 ] = theta_S_nextP_nextS;
 
 
 	static const Real idl_P_S_CEN_nextP( 86.592 );
-	//	Real const phi_P_S_Snudge_nextP = degrees( dihedral_radians( atoms_xyz[ 3*which_scratch_res_is_cut_+2],
-	//																															 atoms_xyz[ 3*which_scratch_res_is_cut_+3],
-	//																															 atoms_xyz[ 3*which_scratch_res_is_cut_+4],
-	//																															 pose.xyz( NamedAtomID("OVL1", cutpos_) ) ) );
+	// Real const phi_P_S_Snudge_nextP = degrees( dihedral_radians( atoms_xyz[ 3*which_scratch_res_is_cut_+2],
+	//                                atoms_xyz[ 3*which_scratch_res_is_cut_+3],
+	//                                atoms_xyz[ 3*which_scratch_res_is_cut_+4],
+	//                                pose.xyz( NamedAtomID("OVL1", cutpos_) ) ) );
 	Real const phi_P_S_Snudge_nextP = degrees( dihedral_radians( atoms_xyz[ 3*which_scratch_res_is_cut_+2],
-																															 atoms_xyz[ 3*which_scratch_res_is_cut_+3],
-																															 atoms_xyz[ 3*which_scratch_res_is_cut_+4],
-																															 pose.xyz( NamedAtomID("OVL1", cutpos_) ) ) );
-	if (verbose_) std::cout << " PHI_P_S_Snudge_NEXTP " << phi_P_S_Snudge_nextP  << " " << idl_P_S_CEN_nextP << std::endl;
+		atoms_xyz[ 3*which_scratch_res_is_cut_+3],
+		atoms_xyz[ 3*which_scratch_res_is_cut_+4],
+		pose.xyz( NamedAtomID("OVL1", cutpos_) ) ) );
+	if ( verbose_ ) std::cout << " PHI_P_S_Snudge_NEXTP " << phi_P_S_Snudge_nextP  << " " << idl_P_S_CEN_nextP << std::endl;
 
 	dt_ang[ 3 * which_scratch_res_is_cut_ + 3 ] = phi_P_S_Snudge_nextP;
 
@@ -571,16 +571,16 @@ CoarseRNA_LoopCloser::close_the_loop( pose::Pose & pose ){
 	//Following are not critical but will allow cutpoint virtual atoms (OVL1, OVL2, and OVU1)
 	// to swing to the right place.
 	Real const phi_cutpivot1 = degrees( dihedral_radians(  atoms_xyz[ 3*which_scratch_res_is_cut_+3],
-																												 atoms_xyz[ 3*which_scratch_res_is_cut_+4],
-																												 pose.xyz( NamedAtomID("OVL1", cutpos_) ),
-																												 pose.xyz( NamedAtomID("OVL2", cutpos_) ) ) );
+		atoms_xyz[ 3*which_scratch_res_is_cut_+4],
+		pose.xyz( NamedAtomID("OVL1", cutpos_) ),
+		pose.xyz( NamedAtomID("OVL2", cutpos_) ) ) );
 	dt_ang[ 3 * which_scratch_res_is_cut_ + 4 ] = phi_cutpivot1;
-	if (verbose_) std::cout << " PHI_S_Snudge_nextP_nextS " << phi_cutpivot1  << std::endl;
+	if ( verbose_ ) std::cout << " PHI_S_Snudge_nextP_nextS " << phi_cutpivot1  << std::endl;
 
 	Real const phi_cutpivot2 = degrees( dihedral_radians( pose.xyz( NamedAtomID("OVU1", cutpos_+1) ),
-																												atoms_xyz[ 3*which_scratch_res_is_cut_+5],
-																												atoms_xyz[ 3*which_scratch_res_is_cut_+6],
-																												atoms_xyz[ 3*which_scratch_res_is_cut_+7] ) );
+		atoms_xyz[ 3*which_scratch_res_is_cut_+5],
+		atoms_xyz[ 3*which_scratch_res_is_cut_+6],
+		atoms_xyz[ 3*which_scratch_res_is_cut_+7] ) );
 	dt_ang[ 3 * which_scratch_res_is_cut_ + 5 ] = phi_cutpivot2;
 
 
@@ -594,7 +594,7 @@ CoarseRNA_LoopCloser::close_the_loop( pose::Pose & pose ){
 		}
 	}
 
-	if (verbose_){
+	if ( verbose_ ) {
 		std::cout <<  "after chainbreak geometry fix" << std::endl;
 		output_chainTORS( dt_ang, db_ang, db_len );
 	}
@@ -622,7 +622,7 @@ CoarseRNA_LoopCloser::close_the_loop( pose::Pose & pose ){
 ///////////////////////////////////////////////////////////////////////////////////////
 void
 CoarseRNA_LoopCloser::figure_out_dof_ids_and_offsets( pose::Pose const & pose,
-																											utility::vector1<Real> const & dt_ang ){
+	utility::vector1<Real> const & dt_ang ){
 	////////////////////////////////////////////////////////////////////////////////////
 	// Note that the torsion angles that we solved for do not directly correspond to
 	// torsion angles in the atom-tree. But they are right up to an *offset*, which
@@ -645,14 +645,14 @@ CoarseRNA_LoopCloser::figure_out_dof_ids_and_offsets( pose::Pose const & pose,
 	assert( pivot_res_.size() == 3 );
 
 	AtomID id1, id2, id3, id4;
-	for ( Size i = 1; i <= 3; i++ ){
+	for ( Size i = 1; i <= 3; i++ ) {
 
 		Size const pivot = pivot_res_[ i ]; // residue number of phosphate.
 
 		/////////////////////////////////////////////////////////////////////////////////////////
 		id1 = named_atom_id_to_atom_id( NamedAtomID( " P  ", pivot-1 ), pose );
 		id2 = named_atom_id_to_atom_id( NamedAtomID( " S  ", pivot-1 ), pose );
-		if ( pose.fold_tree().is_cutpoint( pivot - 1 ) ){
+		if ( pose.fold_tree().is_cutpoint( pivot - 1 ) ) {
 			assert( pose.residue_type( pivot-1 ).has_variant_type( chemical::CUTPOINT_LOWER ) ); //this better be the case!!!
 			id3 = named_atom_id_to_atom_id( NamedAtomID( "OVL1", pivot-1 ), pose );
 			id4 = named_atom_id_to_atom_id( NamedAtomID( "OVL2", pivot-1 ), pose );
@@ -662,12 +662,12 @@ CoarseRNA_LoopCloser::figure_out_dof_ids_and_offsets( pose::Pose const & pose,
 		}
 
 		dof_id1 = pose.atom_tree().torsion_angle_dof_id( id1, id2, id3, id4 );
-		//		std::cout << "PIVOT " << pivot << "  DOF_ID1 " << dof_id1 << "  ID1 " << id1<< "  ID2 " << id2 << "  ID3 " << id3 << "   ID4 " << id4 <<  std::endl;
+		//  std::cout << "PIVOT " << pivot << "  DOF_ID1 " << dof_id1 << "  ID1 " << id1<< "  ID2 " << id2 << "  ID3 " << id3 << "   ID4 " << id4 <<  std::endl;
 		dof_ids1_.push_back( dof_id1 );
 		figure_out_offset( pose, pivot, dof_id1, dt_ang[ 3*pivot_to_scratch_res_[ i ] + 1 ], offset_save1_ );
 
 		/////////////////////////////////////////////////////////////////////////////////////////
-		if ( pose.fold_tree().is_cutpoint( pivot - 1 ) ){
+		if ( pose.fold_tree().is_cutpoint( pivot - 1 ) ) {
 			assert( pose.residue_type( pivot ).has_variant_type( chemical::CUTPOINT_UPPER ) ); //this better be the case!!!
 			id1 = named_atom_id_to_atom_id( NamedAtomID( "OVU1", pivot ), pose );
 		} else {
@@ -675,14 +675,14 @@ CoarseRNA_LoopCloser::figure_out_dof_ids_and_offsets( pose::Pose const & pose,
 		}
 		id2 = named_atom_id_to_atom_id( NamedAtomID( " P  ", pivot   ), pose );
 		id3 = named_atom_id_to_atom_id( NamedAtomID( " S  ", pivot   ), pose );
-		if ( pose.fold_tree().is_cutpoint( pivot ) ){
+		if ( pose.fold_tree().is_cutpoint( pivot ) ) {
 			id4 = named_atom_id_to_atom_id( NamedAtomID( " CEN", pivot   ), pose );
 		} else {
 			id4 = named_atom_id_to_atom_id( NamedAtomID( " P  ", pivot+1 ), pose );
 		}
 
 		dof_id2 = pose.atom_tree().torsion_angle_dof_id( id1, id2, id3, id4 );
-		//		std::cout << "PIVOT " << pivot << "  DOF_ID2 " << dof_id2 << "  ID1 " << id1<< "  ID2 " << id2 << "  ID3 " << id3 << "   ID4 " << id4 <<  std::endl;
+		//  std::cout << "PIVOT " << pivot << "  DOF_ID2 " << dof_id2 << "  ID1 " << id1<< "  ID2 " << id2 << "  ID3 " << id3 << "   ID4 " << id4 <<  std::endl;
 		dof_ids2_.push_back( dof_id2 );
 		figure_out_offset( pose, pivot, dof_id2, dt_ang[ 3*pivot_to_scratch_res_[ i ] + 2 ], offset_save2_ );
 
@@ -693,29 +693,29 @@ CoarseRNA_LoopCloser::figure_out_dof_ids_and_offsets( pose::Pose const & pose,
 ////////////////////////////////////////////////////////////////////////////////////
 void
 CoarseRNA_LoopCloser::figure_out_offset(
-																				core::pose::Pose const & pose,
-																				core::Size const & pivot,
-																				core::id::DOF_ID const & dof_id,
-																				core::Real const & original_torsion_value,
-																				utility::vector1< core::Real > & offset_save ){
+	core::pose::Pose const & pose,
+	core::Size const & pivot,
+	core::id::DOF_ID const & dof_id,
+	core::Real const & original_torsion_value,
+	utility::vector1< core::Real > & offset_save ){
 
 	if ( dof_id == BOGUS_DOF_ID ) { //expected at cutpoint!
-		// 		if ( pivot == cutpos_+1 ) {
-		// 			offset_save.push_back( 0.0 ); //placeholder
-		// 			if ( verbose_ ){
-		// 				std::cout << dof_id;
-		// 				std::cout << "  offset --- " << std::endl;
-		// 			}
-		// 		} else {
+		//   if ( pivot == cutpos_+1 ) {
+		//    offset_save.push_back( 0.0 ); //placeholder
+		//    if ( verbose_ ){
+		//     std::cout << dof_id;
+		//     std::cout << "  offset --- " << std::endl;
+		//    }
+		//   } else {
 		std::cout <<  "Problem with DOF_ID "<< pivot << " " << dof_id << std::endl;
 		utility_exit_with_message( "Problem with DOF_ID" );
-			//		}
+		//  }
 	} else {
 		offset_save.push_back( pose.dof( dof_id ) - radians( original_torsion_value ) );
-		if ( verbose_ ){
-				std::cout << dof_id;
-				std::cout << "  offset " << pose.dof( dof_id ) << " " << radians( original_torsion_value )
-									<< " " << pose.dof( dof_id ) - radians( original_torsion_value ) << std::endl;
+		if ( verbose_ ) {
+			std::cout << dof_id;
+			std::cout << "  offset " << pose.dof( dof_id ) << " " << radians( original_torsion_value )
+				<< " " << pose.dof( dof_id ) - radians( original_torsion_value ) << std::endl;
 		}
 	}
 }
@@ -731,10 +731,10 @@ CoarseRNA_LoopCloser::apply_solutions( core::pose::Pose & pose ){
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	if ( nsol_ == 0 ) return;
 
-	if ( choose_least_perturb_solution_ ){
+	if ( choose_least_perturb_solution_ ) {
 
 
-		if ( verbose_ )		{
+		if ( verbose_ )  {
 			std::cout << "---------------------------------- " << std::endl;
 			std::cout << "   start pose " << std::endl;
 			std::cout << "---------------------------------- " << std::endl;
@@ -750,17 +750,17 @@ CoarseRNA_LoopCloser::apply_solutions( core::pose::Pose & pose ){
 		// could save time by just looking over a subset of residues. But I don't think this is rate limiting
 		utility::vector1< Vector > ref_vectors;
 		Size const ref_atom( 1 );
-		for ( Size i = 1; i <= pose.total_residue(); i++ ){
+		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 			ref_vectors.push_back( pose.xyz( id::AtomID(ref_atom,i) ) );
 		}
 
-		for (Size n = 1; n <= Size( nsol_ ); n++) {
+		for ( Size n = 1; n <= Size( nsol_ ); n++ ) {
 			fill_solution( pose, n );
 			Real deviation2( 0.0 );
-			for ( Size i = 1; i <= pose.total_residue(); i++ ){
+			for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 				deviation2 += ( pose.xyz( id::AtomID(ref_atom,i) ) - ref_vectors[i] ).length_squared();
 			}
-			if ( n==1 || deviation2 < best_deviation2){
+			if ( n==1 || deviation2 < best_deviation2 ) {
 				best_deviation2 = deviation2;
 				best_sol = n;
 			}
@@ -768,7 +768,7 @@ CoarseRNA_LoopCloser::apply_solutions( core::pose::Pose & pose ){
 
 		fill_solution( pose, best_sol );
 
-		if ( verbose_ ){ //consistency check.
+		if ( verbose_ ) { //consistency check.
 
 			std::cout << "---------------------------------- " << std::endl;
 			std::cout << "   solution " << best_sol << std::endl;
@@ -779,7 +779,7 @@ CoarseRNA_LoopCloser::apply_solutions( core::pose::Pose & pose ){
 
 		fill_solution( pose, best_sol );
 
-		if ( verbose_ )		{
+		if ( verbose_ )  {
 			std::cout << "pose " << best_sol << ": " << std::endl;
 			utility::vector1<Real> dt_ang, db_len, db_ang;
 			utility::vector1<utility::vector1<Real> > atoms;
@@ -788,13 +788,13 @@ CoarseRNA_LoopCloser::apply_solutions( core::pose::Pose & pose ){
 			pose.dump_pdb( "closed.pdb" );
 		}
 
-	} else if ( choose_best_solution_ ){
+	} else if ( choose_best_solution_ ) {
 
 		assert( scorefxn_ != 0 );
 
 		Real best_score( 0.0 );
 		Size best_sol( 0 );
-		for (Size n = 1; n <= Size( nsol_ ); n++) {
+		for ( Size n = 1; n <= Size( nsol_ ); n++ ) {
 			fill_solution( pose, n );
 			Real const score = (*scorefxn_)( pose );
 			if ( score < best_score || n == 1 ) {
@@ -802,7 +802,7 @@ CoarseRNA_LoopCloser::apply_solutions( core::pose::Pose & pose ){
 				best_sol = n;
 			}
 
-			if ( verbose_ && n == 2 ){ //consistency check.
+			if ( verbose_ && n == 2 ) { //consistency check.
 				std::cout << "solution " << n << ": " << std::endl;
 				output_chainTORS( t_ang_[n], b_ang_[n], b_len_[n] );
 
@@ -830,11 +830,11 @@ CoarseRNA_LoopCloser::apply_solutions( core::pose::Pose & pose ){
 //////////////////////////////////////////////////////////////////////////////////////////////
 void
 CoarseRNA_LoopCloser::get_all_solutions( core::pose::Pose & pose,
-																				 utility::vector1< core::pose::PoseOP > & pose_list ){
+	utility::vector1< core::pose::PoseOP > & pose_list ){
 
 	pose_list.clear();
 
-	for (Size n = 1; n <= Size( nsol_ ); n++) {
+	for ( Size n = 1; n <= Size( nsol_ ); n++ ) {
 
 		fill_solution( pose, n );
 
@@ -842,7 +842,7 @@ CoarseRNA_LoopCloser::get_all_solutions( core::pose::Pose & pose,
 		*pose_save = pose;
 		pose_list.push_back( pose_save );
 
-		if (verbose_ ) {
+		if ( verbose_ ) {
 			pose.dump_pdb( "KIC_"+ ObjexxFCL::string_of( n )+".pdb" );
 		}
 
@@ -853,10 +853,10 @@ CoarseRNA_LoopCloser::get_all_solutions( core::pose::Pose & pose,
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 CoarseRNA_LoopCloser::fill_solution( core::pose::Pose & pose,
-																		 Size const n ) const
+	Size const n ) const
 {
 
-	for ( Size i = 1; i <= dof_ids1_.size(); i++ ){
+	for ( Size i = 1; i <= dof_ids1_.size(); i++ ) {
 
 		if ( dof_ids1_[ i ] != BOGUS_DOF_ID )  {
 			pose.set_dof( dof_ids1_[i], principal_angle( radians( t_ang_[ n ][ 3 * pivot_to_scratch_res_[ i ] + 1 ] ) + offset_save1_[i] ) );
@@ -888,11 +888,11 @@ CoarseRNA_LoopCloser::choose_least_perturb_solution(){
 ///////////////////////////////////////////////////////////////////////////
 void
 CoarseRNA_LoopCloser::output_chainTORS( utility::vector1< core::Real > const & dt_ang,
-																				utility::vector1< core::Real > const & db_ang,
-																				utility::vector1< core::Real > const & db_len ) const {
+	utility::vector1< core::Real > const & db_ang,
+	utility::vector1< core::Real > const & db_len ) const {
 
 	std::cout << "------  chainTORS output ---- " << std::endl;
-	for (Size i = 1; i <= dt_ang.size(); i++) {
+	for ( Size i = 1; i <= dt_ang.size(); i++ ) {
 		std::cout << I( 3, i ) << " ";
 		std::cout << "TORSIONS: ";
 		std::cout << F(8,3,dt_ang[ i ]) << " ";
@@ -905,18 +905,18 @@ CoarseRNA_LoopCloser::output_chainTORS( utility::vector1< core::Real > const & d
 
 		std::cout << std::endl;
 
-		}
+	}
 }
 
 ///////////////////////////////////////////////////////////
 void
 CoarseRNA_LoopCloser::fill_chainTORS(
-							 core::pose::Pose const & pose,
-							 utility::vector1< id::NamedAtomID> const & atom_ids_,
-							 utility::vector1<utility::vector1<Real> > & atoms,
-							 utility::vector1<Real> & dt_ang,
-							 utility::vector1<Real> & db_ang,
-							 utility::vector1<Real> & db_len) const {
+	core::pose::Pose const & pose,
+	utility::vector1< id::NamedAtomID> const & atom_ids_,
+	utility::vector1<utility::vector1<Real> > & atoms,
+	utility::vector1<Real> & dt_ang,
+	utility::vector1<Real> & db_ang,
+	utility::vector1<Real> & db_len) const {
 
 	using namespace core::kinematics;
 	using namespace numeric::kinematic_closure;
@@ -925,8 +925,8 @@ CoarseRNA_LoopCloser::fill_chainTORS(
 	utility::vector1<Real> R0 (3);
 
 	utility::vector1< Vector > atoms_xyz;
-	for (Size i = 1; i <= atom_ids_.size(); i++ ) {
-		//		std::cout << "filling: " << atom_ids_[i].atomno() << " " << atom_ids_[i].rsd() << std::endl;
+	for ( Size i = 1; i <= atom_ids_.size(); i++ ) {
+		//  std::cout << "filling: " << atom_ids_[i].atomno() << " " << atom_ids_[i].rsd() << std::endl;
 		atoms_xyz.push_back( pose.xyz( atom_ids_[ i ] ) );
 	}
 
@@ -943,9 +943,9 @@ CoarseRNA_LoopCloser::fill_chainTORS(
 	// luckily there's a little hack we can do.
 	// where we nudge one atom the slightest bit.
 	static Real const nudge( 0.000001 );
-	for ( Size n = 1; n <= ( (atom_ids_.size()/3) - 3 ) ; n++ ){
+	for ( Size n = 1; n <= ( (atom_ids_.size()/3) - 3 ) ; n++ ) {
 		Size const i = 3 + (n * 3); // Look at S at the end of one triplet that may overlap with starting S of next triplet
-		if ( atom_ids_[ i ] == atom_ids_[ i+1 ] ){
+		if ( atom_ids_[ i ] == atom_ids_[ i+1 ] ) {
 			// This should be the S at the end of one triplet overlapping with
 			// the S beginning the next triplet.
 			Size const seqpos = atom_ids_[ i ].rsd();
@@ -956,7 +956,7 @@ CoarseRNA_LoopCloser::fill_chainTORS(
 
 	// formatting.
 	atoms.clear();
-	for ( Size i = 1; i <= atom_ids_.size(); i++ ){
+	for ( Size i = 1; i <= atom_ids_.size(); i++ ) {
 		utility::vector1< Real > atom_xyz_vals;
 		atom_xyz_vals.push_back( atoms_xyz[i].x() );
 		atom_xyz_vals.push_back( atoms_xyz[i].y() );

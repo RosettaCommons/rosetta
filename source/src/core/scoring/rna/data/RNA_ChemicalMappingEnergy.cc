@@ -54,7 +54,7 @@ namespace data {
 methods::EnergyMethodOP
 RNA_ChemicalMappingEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
-) const {	return methods::EnergyMethodOP( new RNA_ChemicalMappingEnergy ); }
+) const { return methods::EnergyMethodOP( new RNA_ChemicalMappingEnergy ); }
 
 ScoreTypes
 RNA_ChemicalMappingEnergyCreator::score_types_for_method() const {
@@ -96,13 +96,13 @@ RNA_ChemicalMappingEnergy::finalize_total_energy(
 /////////////////////////////////////////////////////////////////////////////
 Real
 RNA_ChemicalMappingEnergy::calculate_energy( pose::Pose & pose,
-																						 bool const use_low_res /* = false */,
-																						 bool const rna_base_pair_computed /* = false */ ) const {
+	bool const use_low_res /* = false */,
+	bool const rna_base_pair_computed /* = false */ ) const {
 
 	Real score( 0.0 );
 
 	pose::full_model_info::make_sure_full_model_info_is_setup( pose );
-  rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
+	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
 	rna::data::RNA_DataInfo const & rna_data_info( rna_scoring_info.rna_data_info() );
 	RNA_Reactivities const & rna_reactivities = rna_data_info.rna_reactivities();
 
@@ -116,12 +116,12 @@ RNA_ChemicalMappingEnergy::calculate_energy( pose::Pose & pose,
 
 	// get DMS data that needs to be scored.
 	// cycle through those data.
-	for ( Size n = 1; n <= rna_reactivities.size(); n++ ){
+	for ( Size n = 1; n <= rna_reactivities.size(); n++ ) {
 		RNA_Reactivity const & rna_reactivity = rna_reactivities[ n ];
-		if ( rna_reactivity.type() == DMS  ) 	{
+		if ( rna_reactivity.type() == DMS  )  {
 			if ( use_low_res ) {
 				score += DMS_low_resolution_potential_.evaluate( pose, rna_reactivity );
-			}	else {
+			} else {
 				score += DMS_potential_.evaluate( pose, rna_reactivity );
 			}
 		}

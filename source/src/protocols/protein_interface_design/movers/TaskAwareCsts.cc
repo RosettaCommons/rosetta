@@ -80,12 +80,12 @@ TaskAwareCsts::apply( core::pose::Pose & pose )
 	utility::vector1< core::Size > const designable( residue_packer_states( pose, task_factory(), true/*designable*/, false/*packable*/ ) );
 	runtime_assert( designable.size() );
 	AtomID const anchor_atom( AtomID( pose.residue( designable[ 1 ] ).atom_index( "CA" ),
-					( anchor_resnum_ == "" ? designable[ 1 ] /*anchor to first designable residue*/ : core::pose::parse_resnum( anchor_resnum_, pose ) ) ) );
+		( anchor_resnum_ == "" ? designable[ 1 ] /*anchor to first designable residue*/ : core::pose::parse_resnum( anchor_resnum_, pose ) ) ) );
 	core::scoring::func::HarmonicFuncOP coord_cst_func( new core::scoring::func::HarmonicFunc( 0.0, 1.0/*sd*/ ) ); // hardwired for now
 	TR<<"Adding constraints to pose at positions: ";
-	BOOST_FOREACH( core::Size const resid, designable ){
+	BOOST_FOREACH ( core::Size const resid, designable ) {
 		core::conformation::Residue const rsd_i( pose.residue( resid ) );
-		if( cst_type_ == "coordinate" ){
+		if ( cst_type_ == "coordinate" ) {
 			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_i.atom_index( "CA" ), resid ), anchor_atom, rsd_i.xyz( "CA" ), coord_cst_func ) ) );
 			TR<<resid<<',';
 		}
@@ -112,7 +112,7 @@ TaskAwareCsts::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, 
 
 protocols::moves::MoverOP
 TaskAwareCsts::clone() const {
-    return( protocols::moves::MoverOP( new TaskAwareCsts( *this ) ));
+	return( protocols::moves::MoverOP( new TaskAwareCsts( *this ) ));
 }
 
 core::pack::task::TaskFactoryOP

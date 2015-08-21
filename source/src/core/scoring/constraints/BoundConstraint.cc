@@ -46,7 +46,7 @@ BoundFunc::func( Real const x ) const
 	} else if ( x < lb_ ) {
 		delta = lb_ - x;
 	}
-//  tr.Trace << "evaluate x in [ lb_ ub_ ]: delta " << x << " " << lb_ << " " << ub_ << " " << delta << std::endl;
+	//  tr.Trace << "evaluate x in [ lb_ ub_ ]: delta " << x << " " << lb_ << " " << ub_ << " " << delta << std::endl;
 
 	delta/=sd_;
 
@@ -75,7 +75,7 @@ BoundFunc::dfunc( Real const x ) const {
 
 Size
 BoundFunc::show_violations( std::ostream& out, Real x, Size verbose_level, Real threshold) const {
-	if (verbose_level > 100) {
+	if ( verbose_level > 100 ) {
 		out << " " << type_ << " " ;
 	}
 	if ( verbose_level > 75  ) {
@@ -91,9 +91,9 @@ BoundFunc::show_violations( std::ostream& out, Real x, Size verbose_level, Real 
 		if ( x < lb_ ) out << (x - lb_) / sd_ << "\n";
 		else if ( x > ub_ ) out << (x - ub_) / sd_ << "\n";
 		else out << "0.0\n";
-	} else if (verbose_level > 70 ) {
+	} else if ( verbose_level > 70 ) {
 		if ( x < lb_  && ( this->func(x) > threshold ) ) out << "-";
-		else if ( x > ub_ && ( this->func(x) > threshold )) out << "+";
+		else if ( x > ub_ && ( this->func(x) > threshold ) ) out << "+";
 		else out << ".";
 	}
 
@@ -108,7 +108,7 @@ BoundFunc::show_definition( std::ostream &out ) const {
 	std::streamsize const input_precision(out.precision()); // bug #0000005; SML
 	out << "BOUNDED " << std::setprecision( 4 ) << RJ(7, lb_) << " " << RJ(7, ub_) << " " << RJ(3,sd_) << " ";
 	if ( rswitch_ != 0.5 ) out << RJ(5,rswitch_ ) << " ";
-  out << type_;
+	out << type_;
 	out << std::setprecision(input_precision) << "\n";
 }
 
@@ -126,7 +126,7 @@ BoundFunc::read_data( std::istream& in ) {
 		in >> type_;
 	} else {
 		//std::string line;
-		//		getline( in, line );
+		//  getline( in, line );
 		type_ = tag;//+line;
 	}
 }

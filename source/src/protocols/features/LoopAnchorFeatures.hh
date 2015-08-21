@@ -27,8 +27,8 @@
 // Utility Headers
 #include <numeric/HomogeneousTransform.fwd.hh>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class LoopAnchorFeatures : public FeaturesReporter {
 public:
@@ -85,11 +85,11 @@ public:
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
-    void
-    set_use_relevant_residues_as_loop_length( bool const use_relevant_residues_as_loop_length );
+	void
+	set_use_relevant_residues_as_loop_length( bool const use_relevant_residues_as_loop_length );
 
-    void
-    set_use_single_residue_to_define_anchor_transfrom( bool const use_single_residue_to_define_anchor_transfrom );
+	void
+	set_use_single_residue_to_define_anchor_transfrom( bool const use_single_residue_to_define_anchor_transfrom );
 
 private:
 	core::Size min_loop_length( utility::vector1< bool > const & relevant_residue ) const;
@@ -104,7 +104,7 @@ private:
 		core::pose::Pose const & pose,
 		core::Size const residue_begin,
 		core::Size const residue_end) const;
-	
+
 	void
 	compute_transform_and_write_to_db(
 		StructureID struct_id,
@@ -112,7 +112,7 @@ private:
 		core::Size end,
 		core::pose::Pose const & pose,
 		cppdb::statement & stmt) const;
-	
+
 private:
 
 	bool use_relevant_residues_as_loop_length_;

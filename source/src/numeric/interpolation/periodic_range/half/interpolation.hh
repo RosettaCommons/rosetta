@@ -142,10 +142,10 @@ bilinearly_interpolated(
 	platform::SSize const l1( numeric::modulo( u1 - 1 + n, n ) );
 	platform::SSize const l2( numeric::modulo( u2 - 1 + n, n ) );
 	return
-	 ( b1 * b2 * f( l1, l2 ) ) +
-	 ( a1 * b2 * f( u1, l2 ) ) +
-	 ( b1 * a2 * f( l1, u2 ) ) +
-	 ( a1 * a2 * f( u1, u2 ) );
+		( b1 * b2 * f( l1, l2 ) ) +
+		( a1 * b2 * f( u1, l2 ) ) +
+		( b1 * a2 * f( l1, u2 ) ) +
+		( a1 * a2 * f( u1, u2 ) );
 }
 
 
@@ -172,10 +172,10 @@ bilinearly_interpolated(
 	platform::SSize const l1( numeric::modulo( u1 - 1 + n, n ) );
 	platform::SSize const l2( numeric::modulo( u2 - 1 + n, n ) );
 	return
-	 ( b1 * b2 * f( l1, l2 ) ) +
-	 ( a1 * b2 * f( u1, l2 ) ) +
-	 ( b1 * a2 * f( l1, u2 ) ) +
-	 ( a1 * a2 * f( u1, u2 ) );
+		( b1 * b2 * f( l1, l2 ) ) +
+		( a1 * b2 * f( u1, l2 ) ) +
+		( b1 * a2 * f( l1, u2 ) ) +
+		( a1 * a2 * f( u1, u2 ) );
 }
 
 
@@ -211,10 +211,10 @@ bilinearly_interpolated(
 	df_dx1 = ( ( b2 * ( ful - fll ) ) + ( a2 * ( fuu - flu ) ) ) / w;
 	df_dx2 = ( ( b1 * ( flu - fll ) ) + ( a1 * ( fuu - ful ) ) ) / w;
 	return
-	 ( b1 * b2 * fll ) +
-	 ( a1 * b2 * ful ) +
-	 ( b1 * a2 * flu ) +
-	 ( a1 * a2 * fuu );
+		( b1 * b2 * fll ) +
+		( a1 * b2 * ful ) +
+		( b1 * a2 * flu ) +
+		( a1 * a2 * fuu );
 }
 
 
@@ -251,10 +251,10 @@ bilinearly_interpolated(
 	df_dx1 = ( ( b2 * ( ful - fll ) ) + ( a2 * ( fuu - flu ) ) ) / w;
 	df_dx2 = ( ( b1 * ( flu - fll ) ) + ( a1 * ( fuu - ful ) ) ) / w;
 	return
-	 ( b1 * b2 * fll ) +
-	 ( a1 * b2 * ful ) +
-	 ( b1 * a2 * flu ) +
-	 ( a1 * a2 * fuu );
+		( b1 * b2 * fll ) +
+		( a1 * b2 * ful ) +
+		( b1 * a2 * flu ) +
+		( a1 * a2 * fuu );
 }
 
 

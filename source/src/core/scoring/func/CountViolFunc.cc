@@ -50,10 +50,10 @@ CountViolFunc::read_data( std::istream & in )
 	std::string func_type;
 	in >> func_type;
 	func_to_weight_ = func_factory.new_func( func_type );
-  func_to_weight_->read_data( in );
+	func_to_weight_->read_data( in );
 }
 
-   /// @brief show some sort of stringified representation of the violations for this constraint.
+/// @brief show some sort of stringified representation of the violations for this constraint.
 core::Size CountViolFunc::show_violations(
 	std::ostream& out,
 	Real r,
@@ -62,9 +62,9 @@ core::Size CountViolFunc::show_violations(
 ) const
 {
 	Size ct ( func_to_weight_->show_violations( out, r, verbose_level, threshold ) );
-	//	if ( verbose_level == 100 ) {
+	// if ( verbose_level == 100 ) {
 	count_viols_ += ct;
-	//	}
+	// }
 	return ct;
 }
 

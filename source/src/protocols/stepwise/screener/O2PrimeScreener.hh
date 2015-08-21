@@ -24,35 +24,35 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class O2PrimeScreener: public SampleApplier {
+class O2PrimeScreener: public SampleApplier {
 
-	public:
+public:
 
-		//constructor
-		O2PrimeScreener( modeler::rna::o2prime::O2PrimePackerOP o2prime_packer );
+	//constructor
+	O2PrimeScreener( modeler::rna::o2prime::O2PrimePackerOP o2prime_packer );
 
-		//destructor
-		~O2PrimeScreener();
+	//destructor
+	~O2PrimeScreener();
 
-	public:
+public:
 
-		bool
-		check_screen();
+	bool
+	check_screen();
 
-		void
-		add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
+	void
+	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
 
-		std::string
-		name() const { return "O2PrimeScreener"; }
+	std::string
+	name() const { return "O2PrimeScreener"; }
 
-		StepWiseScreenerType
-		type() const { return O2PRIME_PACK; }
+	StepWiseScreenerType
+	type() const { return O2PRIME_PACK; }
 
-	private:
+private:
 
-		modeler::rna::o2prime::O2PrimePackerOP o2prime_packer_;
+	modeler::rna::o2prime::O2PrimePackerOP o2prime_packer_;
 
-	};
+};
 
 } //screener
 } //stepwise

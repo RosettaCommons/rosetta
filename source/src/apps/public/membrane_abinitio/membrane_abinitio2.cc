@@ -36,21 +36,21 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	devel::init( argc, argv );
-	protocols::abinitio::AbrelaxApplication::register_options();
-	protocols::abinitio::AbrelaxApplication abrelax;
+		devel::init( argc, argv );
+		protocols::abinitio::AbrelaxApplication::register_options();
+		protocols::abinitio::AbrelaxApplication abrelax;
 
-	bool const view( option[ OptionKeys::membrane::view ] );
+		bool const view( option[ OptionKeys::membrane::view ] );
 
-	if( view ){
-		std::cout << "Start viewer mode " << std::endl;
-		protocols::viewer::viewer_main( my_main );
-	}else{
-		abrelax.run();
-	}
+		if ( view ) {
+			std::cout << "Start viewer mode " << std::endl;
+			protocols::viewer::viewer_main( my_main );
+		} else {
+			abrelax.run();
+		}
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

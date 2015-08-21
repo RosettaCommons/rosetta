@@ -37,8 +37,8 @@ class IRmsdFilter : public protocols::filters::Filter
 public:
 	IRmsdFilter();
 	IRmsdFilter(protocols::docking::DockJumps const movable_jumps,
-							core::Real const threshold,
-							core::pose::PoseOP reference_pose
+		core::Real const threshold,
+		core::pose::PoseOP reference_pose
 	);
 
 	//@brief applies the filter to the input pose

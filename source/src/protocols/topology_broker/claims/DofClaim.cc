@@ -52,7 +52,7 @@ DofClaim::~DofClaim() {}
 using namespace core;
 
 void DofClaim::show( std::ostream& os ) const {
-    os << "owned by, " << owner().lock()->type() << ";";
+	os << "owned by, " << owner().lock()->type() << ";";
 }
 
 extern std::ostream& operator<<( std::ostream& os, DofClaim const& dof ) {

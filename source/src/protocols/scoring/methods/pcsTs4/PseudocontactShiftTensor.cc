@@ -7,24 +7,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @brief Hold chi- tensor information for the Pseudocontact Shift calculation
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890,
- ///  JBNMR 2008  41:179-189 schmitz et all will explains the tensor convention used
- ///
- /// @authorv Christophe Schmitz , Kala Bharath Pilla
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @brief Hold chi- tensor information for the Pseudocontact Shift calculation
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890,
+///  JBNMR 2008  41:179-189 schmitz et all will explains the tensor convention used
+///
+/// @authorv Christophe Schmitz , Kala Bharath Pilla
+///
+////////////////////////////////////////////////
 
 
 // Unit headers
@@ -45,10 +45,10 @@
 #include <iostream>
 
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcsTs4{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcsTs4 {
 
 PCS_tensor_Ts4::PCS_tensor_Ts4(){
 	utility_exit_with_message( "You shouldn't call the empty constructor for PCS_tensor_Ts4" );
@@ -94,11 +94,11 @@ PCS_tensor_Ts4::operator=(PCS_tensor_Ts4 const & other){
 /// @brief The constructeur use the chi matrix parameters (not the alpha beta gamma Ax and Rh component...)
 ///////////////////////////////////////////////
 PCS_tensor_Ts4::PCS_tensor_Ts4(core::Real const chi_xx,
-											 core::Real const chi_xy,
-											 core::Real const chi_xz,
-											 core::Real const chi_yy,
-											 core::Real const chi_yz,
-											 std::string const label)
+	core::Real const chi_xy,
+	core::Real const chi_xz,
+	core::Real const chi_yy,
+	core::Real const chi_yz,
+	std::string const label)
 {
 	chi_xx_ = chi_xx;
 	chi_yy_ = chi_yy;
@@ -112,10 +112,10 @@ PCS_tensor_Ts4::PCS_tensor_Ts4(core::Real const chi_xx,
 
 void
 PCS_tensor_Ts4::reset_tensor(core::Real const chi_xx,
-												 core::Real const chi_xy,
-												 core::Real const chi_xz,
-												 core::Real const chi_yy,
-												 core::Real const chi_yz){
+	core::Real const chi_xy,
+	core::Real const chi_xz,
+	core::Real const chi_yy,
+	core::Real const chi_yz){
 	chi_xx_ = chi_xx;
 	chi_yy_ = chi_yy;
 	chi_xy_ = chi_xy;
@@ -152,16 +152,16 @@ operator<<(std::ostream& out, const PCS_tensor_Ts4 &PCS_t){
 void
 PCS_tensor_Ts4::copy_from_ref(PCS_tensor_Ts4 & other){
 	a_ = other.a_;
-  b_ = other.b_;
-  g_ = other.g_;
-  ax_ = other.ax_;
-  rh_ = other.rh_;
+	b_ = other.b_;
+	g_ = other.g_;
+	ax_ = other.ax_;
+	rh_ = other.rh_;
 
-  chi_xx_ = other.chi_xx_;
-  chi_yy_ = other.chi_yy_;
-  chi_xy_ = other.chi_xy_;
-  chi_xz_ = other.chi_xz_;
-  chi_yz_ = other.chi_yz_;
+	chi_xx_ = other.chi_xx_;
+	chi_yy_ = other.chi_yy_;
+	chi_xy_ = other.chi_xy_;
+	chi_xz_ = other.chi_xz_;
+	chi_yz_ = other.chi_yz_;
 
 	label_ = other.label_;
 }

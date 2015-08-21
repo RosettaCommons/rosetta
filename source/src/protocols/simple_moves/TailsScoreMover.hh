@@ -33,8 +33,8 @@ class TailsScoreMover : public ScoreMover
 {
 public:
 	/// @brief
-	/// 	empty constructor fills values with the values
-	///		read in from the commandline
+	///  empty constructor fills values with the values
+	///  read in from the commandline
 	TailsScoreMover() :
 		ScoreMover()
 	{}
@@ -52,8 +52,8 @@ private:
 	double score_mode3(int& out_min_ltail_length, int& out_min_rtail_length,std::ofstream & in_tail_output, core::pose::Pose & pose);
 
 	double visit(double in_current_min, int in_current_min_ltail, int in_current_min_rtail,
-				 int in_ltail, int in_rtail, int in_array_of_visits [][200], int &out_min_ltail,
-				 int &out_min_rtail, int in_sequence_length, utility::vector1< core::Size > & tail, core::pose::Pose & pose,std::ofstream& area_file);
+		int in_ltail, int in_rtail, int in_array_of_visits [][200], int &out_min_ltail,
+		int &out_min_rtail, int in_sequence_length, utility::vector1< core::Size > & tail, core::pose::Pose & pose,std::ofstream& area_file);
 	void make_tail(utility::vector1< core::Size > & tail,int in_ltaillength, int in_rtaillength, int in_sequence_length);
 	core::Real m_hill_size;
 	int m_number_of_hill_points;

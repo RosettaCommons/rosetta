@@ -137,26 +137,26 @@ void RNA_SuiteName::init() {
 	dominant_suites = _dominant_suites;
 	satellite_suites = _satellite_suites;
 	half_width_sat = make_vector1(
-			make_vector1( 28, 60, 55, 50, 32, 35, 28),
-			make_vector1( 28, 18, 55, 50, 18, 35, 28),
-			make_vector1( 28, 20, 20, 50, 70, 35, 28),
-			make_vector1( 28, 60, 55, 50, 47, 35, 28),
-			make_vector1( 28, 60, 55, 50, 34, 35, 28),
-			make_vector1( 28, 40, 40, 50, 70, 35, 28),
-			make_vector1( 28, 26, 26, 50, 70, 35, 28),
-			make_vector1( 28, 60, 55, 50, 70, 35, 28),
-			make_vector1( 28, 60, 55, 50, 70, 35, 28) );
+		make_vector1( 28, 60, 55, 50, 32, 35, 28),
+		make_vector1( 28, 18, 55, 50, 18, 35, 28),
+		make_vector1( 28, 20, 20, 50, 70, 35, 28),
+		make_vector1( 28, 60, 55, 50, 47, 35, 28),
+		make_vector1( 28, 60, 55, 50, 34, 35, 28),
+		make_vector1( 28, 40, 40, 50, 70, 35, 28),
+		make_vector1( 28, 26, 26, 50, 70, 35, 28),
+		make_vector1( 28, 60, 55, 50, 70, 35, 28),
+		make_vector1( 28, 60, 55, 50, 70, 35, 28) );
 
 	half_width_dom = make_vector1(
-			make_vector1( 28, 60, 55, 50, 64, 35, 28 ),
-			make_vector1( 28, 70, 55, 50, 70, 35, 28 ),
-			make_vector1( 28, 60, 60, 50, 70, 35, 28 ),
-			make_vector1( 28, 60, 55, 50, 65, 35, 28 ),
-			make_vector1( 28, 60, 55, 50, 56, 35, 28 ),
-			make_vector1( 28, 50, 50, 50, 70, 35, 28 ),
-			make_vector1( 28, 36, 36, 50, 70, 35, 28 ),
-			make_vector1( 28, 60, 55, 50, 70, 35, 28 ),
-			make_vector1( 28, 60, 55, 50, 70, 35, 28 ) );
+		make_vector1( 28, 60, 55, 50, 64, 35, 28 ),
+		make_vector1( 28, 70, 55, 50, 70, 35, 28 ),
+		make_vector1( 28, 60, 60, 50, 70, 35, 28 ),
+		make_vector1( 28, 60, 55, 50, 65, 35, 28 ),
+		make_vector1( 28, 60, 55, 50, 56, 35, 28 ),
+		make_vector1( 28, 50, 50, 50, 70, 35, 28 ),
+		make_vector1( 28, 36, 36, 50, 70, 35, 28 ),
+		make_vector1( 28, 60, 55, 50, 70, 35, 28 ),
+		make_vector1( 28, 60, 55, 50, 70, 35, 28 ) );
 }
 
 /////////////////////////////////////////////////////////
@@ -167,9 +167,9 @@ void RNA_SuiteName::init() {
 //  specification of a few 'dominant' clusters and satellite clusters.
 void
 RNA_SuiteName::update_centers( utility::vector1< utility::vector1< Real > > const & centers,
-															 utility::vector1< std::string > const & tags ){
+	utility::vector1< std::string > const & tags ){
 	utility::vector1<RNA_SuiteInfo> new_suites;
-	for ( Size n = 1; n <= tags.size(); n++ ){
+	for ( Size n = 1; n <= tags.size(); n++ ) {
 		bool found_match = false;
 		for ( Size i = 1; i <= all_suites_.size(); ++i ) {
 			if ( all_suites_[i].name == tags[n] ) {
@@ -204,10 +204,10 @@ RNA_SuiteName::name2suite( std::string const name ) const{
 //Suite assignment codes
 Size
 RNA_SuiteName::get_classifier( utility::vector1< Real > const & torsions_in,
-															 bool & is_outlier ) const {
+	bool & is_outlier ) const {
 
 	utility::vector1< Real > torsions;
-	for (Size n = 1; n <= torsions_in.size(); n++ ) torsions.push_back( numeric::nonnegative_principal_angle_degrees( torsions_in[ n ] ) );
+	for ( Size n = 1; n <= torsions_in.size(); n++ ) torsions.push_back( numeric::nonnegative_principal_angle_degrees( torsions_in[ n ] ) );
 
 	Size classifier = 0;
 	//Delta1
@@ -247,7 +247,7 @@ RNA_SuiteName::get_classifier( utility::vector1< Real > const & torsions_in,
 		is_outlier = true;
 		if ( torsions[7] <= gamma_cutoff1 ) {
 			;
-		} else if ( torsions[7] > gamma_cutoff2 ){
+		} else if ( torsions[7] > gamma_cutoff2 ) {
 			classifier += 2;
 		} else {
 			classifier += 1;
@@ -268,7 +268,7 @@ Real RNA_SuiteName::distance_4d(
 	utility::vector1<Real> const & torsion1,
 	utility::vector1<Real> const & torsion2,
 	utility::vector1<Size> const & half_width
-) const	{
+) const {
 	//By suitename default, distance with power of 3 is used.
 	Real sum = 0;
 	for ( Size i = 2; i <= 5; ++i ) {
@@ -283,28 +283,28 @@ Real RNA_SuiteName::distance_4d(
 
 ////////////////////////////////////////////
 Real RNA_SuiteName::distance_7d(
- utility::vector1<Real> const & torsion1,
- utility::vector1<Real> const & torsion2,
- utility::vector1<Size> const & half_width
-) const	{
+	utility::vector1<Real> const & torsion1,
+	utility::vector1<Real> const & torsion2,
+	utility::vector1<Size> const & half_width
+) const {
 	utility::vector1<Real> deriv; // fill if non-empty
 	return distance_7d( torsion1, torsion2, half_width, deriv );
 }
 
 ////////////////////////////////////////////
 Real RNA_SuiteName::distance_7d(
- utility::vector1<Real> const & torsion1,
- utility::vector1<Real> const & torsion2,
- utility::vector1<Size> const & half_width,
- utility::vector1<Real> & deriv // fill if non-empty
-) const	{
+	utility::vector1<Real> const & torsion1,
+	utility::vector1<Real> const & torsion2,
+	utility::vector1<Size> const & half_width,
+	utility::vector1<Real> & deriv // fill if non-empty
+) const {
 	//By suitename default, distance with power of 3 is used.
 	Real sum = 0;
 	for ( Size i = 1; i <= 7; ++i ) {
 		Real diff = numeric::principal_angle_degrees( torsion1[i] - torsion2[i] );
 		diff = diff / static_cast<Real>( half_width[i] );
 		int sign = ( diff < 0 ) ? -1 : 1;
-		if (sign < 0) diff = -diff;
+		if ( sign < 0 ) diff = -diff;
 		sum += pow( diff, dist_pow_ );
 
 		// only fill deriv if supplied
@@ -312,7 +312,7 @@ Real RNA_SuiteName::distance_7d(
 			deriv[ i ] = sign * pow( diff, (dist_pow_ - 1) ) / static_cast<Real>(half_width[i]) ;
 		}
 	}
-	for ( Size i = 1; i <= deriv.size(); ++i ) deriv[ i ] *= 	pow( sum, (1.0 / dist_pow_ ) - 1 );
+	for ( Size i = 1; i <= deriv.size(); ++i ) deriv[ i ] *=  pow( sum, (1.0 / dist_pow_ ) - 1 );
 
 	return pow( sum, 1.0 / dist_pow_ );
 }
@@ -322,7 +322,7 @@ bool RNA_SuiteName::is_in_between(
 	utility::vector1<Real> const & target,
 	utility::vector1<Real> const & dominant,
 	utility::vector1<Real> const & satellite
-) const	{
+) const {
 	Real inner_product_dom( 0 ), inner_product_sat( 0 );
 	for ( Size i = 2; i <= 5; ++i ) {
 		inner_product_dom += ( target[i] - dominant[i]) * (satellite[i] - dominant[i] );
@@ -337,23 +337,23 @@ bool RNA_SuiteName::is_in_between(
 Real
 RNA_SuiteName::get_suiteness( Real const & dist_7d ) const {
 	runtime_assert( dist_7d <= 1.0 );
-	return ( cos( numeric::constants::r::pi	* dist_7d ) + 1.0 ) * 0.5;
+	return ( cos( numeric::constants::r::pi * dist_7d ) + 1.0 ) * 0.5;
 }
 
 ////////////////////////////////
 Real
 RNA_SuiteName::get_suiteness_derivative( Real const & dist_7d ) const {
 	runtime_assert( dist_7d <= 1.0 );
-	return ( -0.5 * numeric::constants::r::pi * sin( numeric::constants::r::pi	* dist_7d ) );
+	return ( -0.5 * numeric::constants::r::pi * sin( numeric::constants::r::pi * dist_7d ) );
 }
 
 ////////////////////////////////
 void
 RNA_SuiteName::fill_suiteness_derivative_7d (
-		 utility::vector1< Real  > & deriv,
-		 utility::vector1< Real > const & torsions,
-		 utility::vector1< Real > const & torsions_center,
-		 utility::vector1< Real > const & half_width ) const {
+	utility::vector1< Real  > & deriv,
+	utility::vector1< Real > const & torsions,
+	utility::vector1< Real > const & torsions_center,
+	utility::vector1< Real > const & half_width ) const {
 	if ( deriv.size() == 0 ) return;
 	runtime_assert( deriv.size() == torsions.size() );
 
@@ -371,19 +371,19 @@ RNA_SuiteName::assign( Pose const & pose, Size const res ) const {
 	if ( is_rna_chainbreak(pose, res - 1) ) return suite_undefined;
 	utility::vector1 <Real> torsions;
 	torsions.push_back( numeric::principal_angle_degrees(
-			pose.residue( res - 1 ).mainchain_torsion( DELTA ) ) );
+		pose.residue( res - 1 ).mainchain_torsion( DELTA ) ) );
 	torsions.push_back( numeric::principal_angle_degrees(
-			pose.residue( res - 1 ).mainchain_torsion( EPSILON ) ) );
+		pose.residue( res - 1 ).mainchain_torsion( EPSILON ) ) );
 	torsions.push_back( numeric::principal_angle_degrees(
-			pose.residue( res - 1 ).mainchain_torsion( ZETA ) ) );
+		pose.residue( res - 1 ).mainchain_torsion( ZETA ) ) );
 	torsions.push_back( numeric::principal_angle_degrees(
-			pose.residue( res ).mainchain_torsion( ALPHA ) ) );
+		pose.residue( res ).mainchain_torsion( ALPHA ) ) );
 	torsions.push_back( numeric::principal_angle_degrees(
-			pose.residue( res ).mainchain_torsion( BETA ) ) );
+		pose.residue( res ).mainchain_torsion( BETA ) ) );
 	torsions.push_back( numeric::principal_angle_degrees(
-			pose.residue( res ).mainchain_torsion( GAMMA ) ) );
+		pose.residue( res ).mainchain_torsion( GAMMA ) ) );
 	torsions.push_back( numeric::principal_angle_degrees(
-			pose.residue( res ).mainchain_torsion( DELTA ) ) );
+		pose.residue( res ).mainchain_torsion( DELTA ) ) );
 	return assign( torsions );
 }
 
@@ -398,9 +398,9 @@ RNA_SuiteName::assign( utility::vector1<Real> const & torsions_in ) const {
 
 RNA_SuiteAssignment
 RNA_SuiteName::assign( utility::vector1<Real> const & torsions_in,
-											 utility::vector1<Real> & deriv )	const {
+	utility::vector1<Real> & deriv ) const {
 	using namespace chemical::rna;
-debug_assert( torsions_in.size() == 7 );
+	debug_assert( torsions_in.size() == 7 );
 
 	utility::vector1<Real> torsions = torsions_in;
 	for ( Size i = 1; i <= torsions.size(); ++i ) {
@@ -432,7 +432,7 @@ debug_assert( torsions_in.size() == 7 );
 	for ( Size i = 1; i <= all_suites_.size(); ++i ) {
 		if ( all_suites_[i].classifier != classifier ) continue;
 		Real const dist = distance_4d( torsions, all_suites_[i].torsion,
-				regular_half_width );
+			regular_half_width );
 		if ( dist <= 1 && dominant_suites.has_value( all_suites_[i].name ) ) {
 			dom_index = i;
 			dom_dist = dist;
@@ -449,14 +449,14 @@ debug_assert( torsions_in.size() == 7 );
 	} else {
 		if ( dom_index != 0 ) {
 			Size const find_index = satellite_suites.index(
-					all_suites_[best_index].name );
+				all_suites_[best_index].name );
 			if ( satellite_suites.has_value(all_suites_[best_index].name ) &&
 					is_in_between( torsions, all_suites_[dom_index].torsion,
 					all_suites_[best_index].torsion ) ) {
 				Real const satellite_dist = distance_4d( torsions,
-						all_suites_[best_index].torsion, half_width_sat[find_index] );
+					all_suites_[best_index].torsion, half_width_sat[find_index] );
 				Real const dominant_dist = distance_4d( torsions,
-						all_suites_[dom_index].torsion, half_width_dom[find_index] );
+					all_suites_[dom_index].torsion, half_width_dom[find_index] );
 				if ( satellite_dist > dominant_dist ) {
 					best_index = dom_index;
 				}
@@ -467,7 +467,7 @@ debug_assert( torsions_in.size() == 7 );
 	}
 
 	Real const dist_7d = distance_7d( torsions, all_suites_[best_index].torsion, regular_half_width );
-	if ( dist_7d > 1 || is_outlier) {
+	if ( dist_7d > 1 || is_outlier ) {
 		RNA_SuiteAssignment const outlier( "!!", 0, dist_7d );
 		return outlier;
 	}

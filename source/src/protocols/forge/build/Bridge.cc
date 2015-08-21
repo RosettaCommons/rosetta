@@ -234,13 +234,13 @@ void Bridge::on_residue_delete( LengthEvent const & event ) {
 	// during modify().
 	if ( event.position < interval_.left ) { // left
 		//--interval_.left;
-		if( int(interval_.left) + event.length_change < int(event.position) ) interval_.left = event.position;
+		if ( int(interval_.left) + event.length_change < int(event.position) ) interval_.left = event.position;
 		else interval_.left += event.length_change;
 	}
 
 	if ( event.position < interval_.right ) { // right
 		//--interval_.right;
-		if( int(interval_.right) + event.length_change < int(event.position) ) interval_.right = event.position;
+		if ( int(interval_.right) + event.length_change < int(event.position) ) interval_.right = event.position;
 		else interval_.right += event.length_change;
 	}
 }

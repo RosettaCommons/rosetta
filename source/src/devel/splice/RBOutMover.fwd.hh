@@ -16,12 +16,12 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace devel{
-    namespace splice{
-        class RBOutMover;
-        typedef utility::pointer::shared_ptr< RBOutMover > RBOutMoverOP;
-        typedef utility::pointer::shared_ptr< RBOutMover const > RBOutMoverCOP;
-    } // simple_moves
+namespace devel {
+namespace splice {
+class RBOutMover;
+typedef utility::pointer::shared_ptr< RBOutMover > RBOutMoverOP;
+typedef utility::pointer::shared_ptr< RBOutMover const > RBOutMoverCOP;
+} // simple_moves
 } // protocols
 
 #endif // INCLUDED_protocols_simple_moves_RBOutMover_fwd_hh

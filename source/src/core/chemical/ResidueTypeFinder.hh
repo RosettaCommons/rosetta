@@ -30,230 +30,230 @@
 namespace core {
 namespace chemical {
 
-	class ResidueTypeFinder: public utility::pointer::ReferenceCount {
+class ResidueTypeFinder: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//constructor
-		ResidueTypeFinder( core::chemical::ResidueTypeSet const & residue_type_set );
+	//constructor
+	ResidueTypeFinder( core::chemical::ResidueTypeSet const & residue_type_set );
 
-		//destructor
-		~ResidueTypeFinder();
+	//destructor
+	~ResidueTypeFinder();
 
-	public:
+public:
 
-		ResidueTypeCOP
-		get_representative_type() const;
+	ResidueTypeCOP
+	get_representative_type() const;
 
-		ResidueTypeCOP
-		get_representative_type_SLOW() const;
+	ResidueTypeCOP
+	get_representative_type_SLOW() const;
 
-		ResidueTypeCOPs
-		get_all_possible_residue_types( bool const allow_extra_variants = false ) const;
+	ResidueTypeCOPs
+	get_all_possible_residue_types( bool const allow_extra_variants = false ) const;
 
-		ResidueTypeCOPs
-		get_possible_base_residue_types() const;
+	ResidueTypeCOPs
+	get_possible_base_residue_types() const;
 
-		ResidueTypeCOP
-		get_best_match_residue_type_for_atom_names( utility::vector1< std::string > const & atom_names );
+	ResidueTypeCOP
+	get_best_match_residue_type_for_atom_names( utility::vector1< std::string > const & atom_names );
 
-		ResidueTypeFinder &
-		aa( core::chemical::AA const & setting ) {
-			aa_ = setting;
-			return *this;
-		}
+	ResidueTypeFinder &
+	aa( core::chemical::AA const & setting ) {
+		aa_ = setting;
+		return *this;
+	}
 
-		ResidueTypeFinder &
-		name1( char const & setting ) {
-			name1_ = setting;
-			return *this;
-		}
+	ResidueTypeFinder &
+	name1( char const & setting ) {
+		name1_ = setting;
+		return *this;
+	}
 
-		ResidueTypeFinder &
-		name3( std::string const & setting ) {
-			name3_ = setting;
-			return *this;
-		}
+	ResidueTypeFinder &
+	name3( std::string const & setting ) {
+		name3_ = setting;
+		return *this;
+	}
 
-		ResidueTypeFinder &
-		residue_base_name( std::string const & setting ) {
-			residue_type_base_name_ = setting;
-			return *this;
-		}
+	ResidueTypeFinder &
+	residue_base_name( std::string const & setting ) {
+		residue_type_base_name_ = setting;
+		return *this;
+	}
 
-		ResidueTypeFinder &
- 		base_property( ResidueProperty const setting ) {
-			base_property_ = setting;
-			return *this;
-		}
+	ResidueTypeFinder &
+	base_property( ResidueProperty const setting ) {
+		base_property_ = setting;
+		return *this;
+	}
 
-		ResidueTypeFinder &
-		atom_names_soft( utility::vector1< std::string > const & setting ) {
-			atom_names_soft_ = setting;
-			return *this;
-		}
+	ResidueTypeFinder &
+	atom_names_soft( utility::vector1< std::string > const & setting ) {
+		atom_names_soft_ = setting;
+		return *this;
+	}
 
-		ResidueTypeFinder &
-		variants_in_sets( utility::vector1< utility::vector1< VariantType > > const & setting ) {
-			variants_in_sets_ = setting;
-			return *this;
-		}
+	ResidueTypeFinder &
+	variants_in_sets( utility::vector1< utility::vector1< VariantType > > const & setting ) {
+		variants_in_sets_ = setting;
+		return *this;
+	}
 
-		ResidueTypeFinder &
-		variants( utility::vector1< VariantType > const & setting );
+	ResidueTypeFinder &
+	variants( utility::vector1< VariantType > const & setting );
 
-		ResidueTypeFinder &
-		variants( utility::vector1< std::string > const & setting );
+	ResidueTypeFinder &
+	variants( utility::vector1< std::string > const & setting );
 
-		ResidueTypeFinder &
-		disallow_variants( utility::vector1< VariantType > const & setting ) {
-			disallow_variants_ = setting;
-			return *this;
-		}
+	ResidueTypeFinder &
+	disallow_variants( utility::vector1< VariantType > const & setting ) {
+		disallow_variants_ = setting;
+		return *this;
+	}
 
-		ResidueTypeFinder &
-		properties( utility::vector1< ResidueProperty > const & setting ) {
-			properties_ = setting;
-			return *this;
-		}
+	ResidueTypeFinder &
+	properties( utility::vector1< ResidueProperty > const & setting ) {
+		properties_ = setting;
+		return *this;
+	}
 
-		ResidueTypeFinder &
-		disallow_properties( utility::vector1< ResidueProperty > const & setting ) {
-			disallow_properties_ = setting;
-			return *this;
-		}
+	ResidueTypeFinder &
+	disallow_properties( utility::vector1< ResidueProperty > const & setting ) {
+		disallow_properties_ = setting;
+		return *this;
+	}
 
-		ResidueTypeFinder &
-		patch_names( utility::vector1< std::string > const & setting ) {
-			patch_names_ = setting;
-			return *this;
-		}
+	ResidueTypeFinder &
+	patch_names( utility::vector1< std::string > const & setting ) {
+		patch_names_ = setting;
+		return *this;
+	}
 
-		ResidueTypeFinder &
-		ignore_atom_named_H( bool const setting ) {
-			ignore_atom_named_H_ = setting;
-			return *this;
-		}
+	ResidueTypeFinder &
+	ignore_atom_named_H( bool const setting ) {
+		ignore_atom_named_H_ = setting;
+		return *this;
+	}
 
-		ResidueTypeFinder &
-		match_adducts( bool const setting ) {
-			match_adducts_ = setting;
-			return *this;
-		}
+	ResidueTypeFinder &
+	match_adducts( bool const setting ) {
+		match_adducts_ = setting;
+		return *this;
+	}
 
-		ResidueTypeFinder &
-		disallow_carboxyl_conjugation_at_glu_asp( bool const setting ) {
-			disallow_carboxyl_conjugation_at_glu_asp_ = setting;
-			return *this;
-		}
+	ResidueTypeFinder &
+	disallow_carboxyl_conjugation_at_glu_asp( bool const setting ) {
+		disallow_carboxyl_conjugation_at_glu_asp_ = setting;
+		return *this;
+	}
 
-	private:
+private:
 
-		ResidueTypeCOPs
-		apply_filters_after_patches( ResidueTypeCOPs rsd_types,
-																 bool const allow_extra_variants = false ) const;
+	ResidueTypeCOPs
+	apply_filters_after_patches( ResidueTypeCOPs rsd_types,
+		bool const allow_extra_variants = false ) const;
 
-		utility::vector1< ResidueTypeCOP >
-		apply_patches_recursively( utility::vector1< ResidueTypeCOP > const & rsd_types,
-															 Size const patch_number,
-															 bool const get_first_totally_ok_residue_type = false ) const;
-
-
-		ResidueTypeCOPs
-		filter_by_name1( ResidueTypeCOPs const & rsd_types  ) const;
-
-		ResidueTypeCOPs
-		filter_by_name3( ResidueTypeCOPs const & rsd_types,
-										 bool const keep_if_base_type_generates_name3) const;
-
-		ResidueTypeCOPs
-		filter_by_aa( ResidueTypeCOPs const & rsd_types  ) const;
-
-		ResidueTypeCOPs
-		filter_by_residue_type_base_name( ResidueTypeCOPs const & rsd_types ) const;
-
-		ResidueTypeCOPs
-		filter_by_base_property( ResidueTypeCOPs const & base_rsd_types ) const;
-
-		ResidueTypeCOPs
-		check_candidate_has_all_variant_sets( ResidueTypeCOPs const & rsd_types ) const;
-
-		ResidueTypeCOPs
-		check_variant_sets_have_all_candidate_variants( ResidueTypeCOPs const & rsd_types ) const;
-
-		ResidueTypeCOPs
-		filter_all_variants_matched( ResidueTypeCOPs const & rsd_types,
-																 bool const allow_extra_variants = false ) const;
-
-		ResidueTypeCOPs
-		filter_disallow_variants( ResidueTypeCOPs const & rsd_types )  const;
-
-		ResidueTypeCOPs
-		filter_all_patch_names( ResidueTypeCOPs const & rsd_types )  const;
-
-		ResidueTypeCOPs
-		filter_all_properties( ResidueTypeCOPs const & rsd_types )  const;
-
-		ResidueTypeCOPs
-		filter_disallow_properties( ResidueTypeCOPs const & rsd_types )  const;
-
-		ResidueTypeCOPs
-		filter_special_cases( ResidueTypeCOPs const & rsd_types )  const;
-
-		bool
-		has_disallowed_variant( PatchCOP patch ) const;
-
-		bool
-		adds_any_variant( PatchCOP patch ) const;
-
-		bool
-		fixes_name3( PatchCOP patch,
-								 ResidueTypeCOP rsd_type ) const;
-
-		bool
-		adds_any_property( PatchCOP patch,
-											 ResidueTypeCOP rsd_type ) const;
-
-		bool
-		deletes_any_property( PatchCOP patch,
-													ResidueTypeCOP rsd_type ) const;
-
-		bool
-		deletes_any_variant( PatchCOP patch,
-													ResidueTypeCOP rsd_type ) const;
-
-		bool
-		matches_any_patch_name( PatchCOP patch ) const;
-
-		bool
-		matches_any_atom_name( PatchCOP patch,
-													 ResidueTypeCOP rsd_type ) const;
-
-		ResidueTypeFinder &
-		variants( utility::vector1< VariantType > const & setting ) const;
+	utility::vector1< ResidueTypeCOP >
+	apply_patches_recursively( utility::vector1< ResidueTypeCOP > const & rsd_types,
+		Size const patch_number,
+		bool const get_first_totally_ok_residue_type = false ) const;
 
 
-	private:
+	ResidueTypeCOPs
+	filter_by_name1( ResidueTypeCOPs const & rsd_types  ) const;
 
-		core::chemical::ResidueTypeSet const & residue_type_set_;
+	ResidueTypeCOPs
+	filter_by_name3( ResidueTypeCOPs const & rsd_types,
+		bool const keep_if_base_type_generates_name3) const;
 
-		core::chemical::AA aa_;
-		char name1_;
-		std::string name3_;
-		std::string residue_type_base_name_;
-		utility::vector1< std::string > atom_names_soft_;
-		utility::vector1< utility::vector1< VariantType > > variants_in_sets_;
-		utility::vector1< std::string > custom_variants_;
-		utility::vector1< VariantType > disallow_variants_;
-		utility::vector1< ResidueProperty > properties_;
-		utility::vector1< ResidueProperty > disallow_properties_;
-		utility::vector1< std::string > patch_names_;
-		ResidueProperty base_property_;
-		bool ignore_atom_named_H_;
-		bool match_adducts_; // for DNA -- actually not in use, but keep in here if adducts are modernized.
-		bool disallow_carboxyl_conjugation_at_glu_asp_; // special case
+	ResidueTypeCOPs
+	filter_by_aa( ResidueTypeCOPs const & rsd_types  ) const;
 
-	};
+	ResidueTypeCOPs
+	filter_by_residue_type_base_name( ResidueTypeCOPs const & rsd_types ) const;
+
+	ResidueTypeCOPs
+	filter_by_base_property( ResidueTypeCOPs const & base_rsd_types ) const;
+
+	ResidueTypeCOPs
+	check_candidate_has_all_variant_sets( ResidueTypeCOPs const & rsd_types ) const;
+
+	ResidueTypeCOPs
+	check_variant_sets_have_all_candidate_variants( ResidueTypeCOPs const & rsd_types ) const;
+
+	ResidueTypeCOPs
+	filter_all_variants_matched( ResidueTypeCOPs const & rsd_types,
+		bool const allow_extra_variants = false ) const;
+
+	ResidueTypeCOPs
+	filter_disallow_variants( ResidueTypeCOPs const & rsd_types )  const;
+
+	ResidueTypeCOPs
+	filter_all_patch_names( ResidueTypeCOPs const & rsd_types )  const;
+
+	ResidueTypeCOPs
+	filter_all_properties( ResidueTypeCOPs const & rsd_types )  const;
+
+	ResidueTypeCOPs
+	filter_disallow_properties( ResidueTypeCOPs const & rsd_types )  const;
+
+	ResidueTypeCOPs
+	filter_special_cases( ResidueTypeCOPs const & rsd_types )  const;
+
+	bool
+	has_disallowed_variant( PatchCOP patch ) const;
+
+	bool
+	adds_any_variant( PatchCOP patch ) const;
+
+	bool
+	fixes_name3( PatchCOP patch,
+		ResidueTypeCOP rsd_type ) const;
+
+	bool
+	adds_any_property( PatchCOP patch,
+		ResidueTypeCOP rsd_type ) const;
+
+	bool
+	deletes_any_property( PatchCOP patch,
+		ResidueTypeCOP rsd_type ) const;
+
+	bool
+	deletes_any_variant( PatchCOP patch,
+		ResidueTypeCOP rsd_type ) const;
+
+	bool
+	matches_any_patch_name( PatchCOP patch ) const;
+
+	bool
+	matches_any_atom_name( PatchCOP patch,
+		ResidueTypeCOP rsd_type ) const;
+
+	ResidueTypeFinder &
+	variants( utility::vector1< VariantType > const & setting ) const;
+
+
+private:
+
+	core::chemical::ResidueTypeSet const & residue_type_set_;
+
+	core::chemical::AA aa_;
+	char name1_;
+	std::string name3_;
+	std::string residue_type_base_name_;
+	utility::vector1< std::string > atom_names_soft_;
+	utility::vector1< utility::vector1< VariantType > > variants_in_sets_;
+	utility::vector1< std::string > custom_variants_;
+	utility::vector1< VariantType > disallow_variants_;
+	utility::vector1< ResidueProperty > properties_;
+	utility::vector1< ResidueProperty > disallow_properties_;
+	utility::vector1< std::string > patch_names_;
+	ResidueProperty base_property_;
+	bool ignore_atom_named_H_;
+	bool match_adducts_; // for DNA -- actually not in use, but keep in here if adducts are modernized.
+	bool disallow_carboxyl_conjugation_at_glu_asp_; // special case
+
+};
 
 } //chemical
 } //core

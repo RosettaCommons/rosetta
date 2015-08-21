@@ -44,10 +44,10 @@ public:
 	/// @brief Return the name of this mover.
 	string get_name() const { return "LoopMoverGroup"; }
 
-	/// @brief Add the names of all the algorithms invoked by this loop mover to 
+	/// @brief Add the names of all the algorithms invoked by this loop mover to
 	/// the given list.  Indentation is used to represent hierarchy.
 	void get_children_names(
-			utility::vector1<std::string> & names, std::string indent="") const;
+		utility::vector1<std::string> & names, std::string indent="") const;
 
 	/// @brief Add a mover to this group.
 	LoopMoverOP add_mover(LoopMoverOP task);

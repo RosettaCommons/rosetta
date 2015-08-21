@@ -41,8 +41,8 @@ public:
 
 
 	AddOrDeleteMover( AddMoverOP rna_add_mover,
-												DeleteMoverOP rna_delete_mover,
-												FromScratchMoverOP rna_from_scratch_mover );
+		DeleteMoverOP rna_delete_mover,
+		FromScratchMoverOP rna_from_scratch_mover );
 
 	//destructor -- necessary? -- YES destructors are necessary.
 	~AddOrDeleteMover();
@@ -52,7 +52,7 @@ public:
 	apply( core::pose::Pose & pose, StepWiseMove const & swa_move );
 
 	bool
-  apply( core::pose::Pose & pose, std::string & move_type_string /* will be updated by mover */ );
+	apply( core::pose::Pose & pose, std::string & move_type_string /* will be updated by mover */ );
 
 	/// @brief Apply the minimizer to one pose
 	virtual void apply( core::pose::Pose & pose_to_visualize );

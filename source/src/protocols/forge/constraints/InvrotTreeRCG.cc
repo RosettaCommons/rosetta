@@ -36,9 +36,9 @@
 
 static thread_local basic::Tracer tr( "protocols.forge.constraints.InvrotTreeRCG" );
 
-namespace protocols{
-namespace forge{
-namespace constraints{
+namespace protocols {
+namespace forge {
+namespace constraints {
 
 protocols::moves::MoverOP
 InvrotTreeCstGeneratorCreator::create_mover() const
@@ -59,39 +59,39 @@ InvrotTreeCstGeneratorCreator::mover_name()
 }
 
 InvrotTreeRCG::InvrotTreeRCG()
-	: RemodelConstraintGenerator(),
-		add_ligand_to_pose_( false ),
-		invrot_tree_( /* NULL */ ),
-		enzcst_io_( /* NULL */ ),
-		geomcst_seqpos_( /* NULL */ ),
-		setup_align_pose_( /* NULL */ )
+: RemodelConstraintGenerator(),
+	add_ligand_to_pose_( false ),
+	invrot_tree_( /* NULL */ ),
+	enzcst_io_( /* NULL */ ),
+	geomcst_seqpos_( /* NULL */ ),
+	setup_align_pose_( /* NULL */ )
 {}
 
 InvrotTreeRCG::InvrotTreeRCG( InvrotTreeRCG const & rval )
-	: RemodelConstraintGenerator( rval ),
-		add_ligand_to_pose_( rval.add_ligand_to_pose_ ),
-		invrot_tree_( rval.invrot_tree_ ),
-		enzcst_io_( rval.enzcst_io_ ),
-		geomcst_seqpos_( rval.geomcst_seqpos_ ),
-		setup_align_pose_( rval.setup_align_pose_ )
+: RemodelConstraintGenerator( rval ),
+	add_ligand_to_pose_( rval.add_ligand_to_pose_ ),
+	invrot_tree_( rval.invrot_tree_ ),
+	enzcst_io_( rval.enzcst_io_ ),
+	geomcst_seqpos_( rval.geomcst_seqpos_ ),
+	setup_align_pose_( rval.setup_align_pose_ )
 {}
 
 InvrotTreeRCG::InvrotTreeRCG(
-														 toolbox::match_enzdes_util::InvrotTreeOP invrot_tree,
-														 toolbox::match_enzdes_util::AllowedSeqposForGeomCstOP geomcst_seqpos
-														 )
-	: invrot_tree_(invrot_tree),
-		geomcst_seqpos_(geomcst_seqpos)
+	toolbox::match_enzdes_util::InvrotTreeOP invrot_tree,
+	toolbox::match_enzdes_util::AllowedSeqposForGeomCstOP geomcst_seqpos
+)
+: invrot_tree_(invrot_tree),
+	geomcst_seqpos_(geomcst_seqpos)
 {}
 
 InvrotTreeRCG::~InvrotTreeRCG(){}
 
 void
 InvrotTreeRCG::parse_my_tag( TagCOP const tag,
-  													 basic::datacache::DataMap & data,
-														 protocols::filters::Filters_map const & filters,
-														 protocols::moves::Movers_map const & movers,
-														 core::pose::Pose const & pose )
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const & pose )
 {
 	RemodelConstraintGenerator::parse_my_tag( tag, data, filters, movers, pose );
 	//in case we'ref folding up around a ligand
@@ -141,7 +141,7 @@ InvrotTreeRCG::apply( core::pose::Pose & pose )
 
 void
 InvrotTreeRCG::generate_remodel_constraints(
-		core::pose::Pose const & pose )
+	core::pose::Pose const & pose )
 {
 	tr << "in invrottreercg" << std::endl;
 
@@ -154,7 +154,7 @@ InvrotTreeRCG::generate_remodel_constraints(
 	tr << "done generating inverse_rotamer_constraints" << std::endl;
 	core::scoring::constraints::ConstraintCOP cst_to_add( invrot_tree_->get_constraint_for_target_state( target_state ) );
 
-	if( !cst_to_add ) utility_exit_with_message("InvrotTree failed to generate anything but NULL pointer csts. Something is wrong somewhere. Check your starting structure for whether it already has every interaction in the cstfile." );
+	if ( !cst_to_add ) utility_exit_with_message("InvrotTree failed to generate anything but NULL pointer csts. Something is wrong somewhere. Check your starting structure for whether it already has every interaction in the cstfile." );
 	this->add_constraint( cst_to_add  );
 }
 
@@ -197,7 +197,7 @@ InvrotTreeRCG::init( core::pose::Pose const & pose )
 	// if a VLB is going on, this one can be called as a user-provided mover
 	run_align_pose_ = toolbox::match_enzdes_util::AlignPoseToInvrotTreeMoverOP( new toolbox::match_enzdes_util::AlignPoseToInvrotTreeMover( invrot_tree_, geomcst_seqpos_ ) );
 	run_align_pose_->set_geomcst_for_superposition_from_enz_io( enzcst_io_ );
-	
+
 	protocols::forge::components::VarLengthBuildOP vlbop = vlb().lock();
 	if ( vlbop ) {
 		vlbop->loop_mover_fold_tree_constant( true ); //we're taking care of the fold tree through the above align movers

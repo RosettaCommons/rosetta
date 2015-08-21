@@ -25,12 +25,12 @@ namespace refine {
 /// @brief creator for the RepackTrial class
 class RepackTrialCreator : public moves::MoverCreator {
 public:
-  RepackTrialCreator() {}
-  virtual ~RepackTrialCreator();
+	RepackTrialCreator() {}
+	virtual ~RepackTrialCreator();
 
-  virtual moves::MoverOP create_mover() const;
+	virtual moves::MoverOP create_mover() const;
 
-  virtual std::string keyname() const;
+	virtual std::string keyname() const;
 
 };
 

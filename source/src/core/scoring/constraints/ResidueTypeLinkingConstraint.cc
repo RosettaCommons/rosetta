@@ -34,7 +34,7 @@ namespace constraints {
 static thread_local basic::Tracer TR( "core.scoring.constraints.ResidueTypeLinkingConstraint" );
 
 ResidueTypeLinkingConstraint::ResidueTypeLinkingConstraint():
-			Constraint( core::scoring::res_type_linking_constraint )
+	Constraint( core::scoring::res_type_linking_constraint )
 
 {}
 
@@ -59,7 +59,7 @@ ResidueTypeLinkingConstraint::ResidueTypeLinkingConstraint(
 	Size seqpos1,
 	Size seqpos2,
 	std::string AA1name,
-  std::string AA2name,
+	std::string AA2name,
 	core::Real bonus
 ):
 	Constraint( core::scoring::res_type_linking_constraint ),
@@ -103,30 +103,30 @@ ResidueTypeLinkingConstraint::show( std::ostream & out ) const {
 ConstraintOP
 ResidueTypeLinkingConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const
 {
-	core::Size newseqpos = seqmap[ seqpos_ ];
-  if ( newseqpos != 0 ) {
+core::Size newseqpos = seqmap[ seqpos_ ];
+if ( newseqpos != 0 ) {
 
-		return ConstraintOP( new ResidueTypeLinkingConstraint(	newseqpos, AAname, rsd_type_name3_, favor_native_bonus_ ) );
-  } else {
-    return NULL;
-  }
+return ConstraintOP( new ResidueTypeLinkingConstraint( newseqpos, AAname, rsd_type_name3_, favor_native_bonus_ ) );
+} else {
+return NULL;
+}
 }
 */
 bool
 ResidueTypeLinkingConstraint::operator == ( Constraint const & other_cst ) const
 {
-	if( !dynamic_cast< ResidueTypeLinkingConstraint const * > ( &other_cst ) ) return false;
+	if ( !dynamic_cast< ResidueTypeLinkingConstraint const * > ( &other_cst ) ) return false;
 
 	ResidueTypeLinkingConstraint const & other( static_cast< ResidueTypeLinkingConstraint const & > (other_cst) );
 
-	if( seqpos1_ != other.seqpos1_ ) return false;
-	if( seqpos2_ != other.seqpos2_ ) return false;
-	if( AA1name != other.AA1name ) return false;
-	if( AA2name != other.AA2name ) return false;
-	if( rsd1_type_name3_ != other.rsd1_type_name3_ ) return false;
-	if( rsd2_type_name3_ != other.rsd2_type_name3_ ) return false;
-	if( bonus_ != other.bonus_ ) return false;
-	if( this->score_type() != other.score_type() ) return false;
+	if ( seqpos1_ != other.seqpos1_ ) return false;
+	if ( seqpos2_ != other.seqpos2_ ) return false;
+	if ( AA1name != other.AA1name ) return false;
+	if ( AA2name != other.AA2name ) return false;
+	if ( rsd1_type_name3_ != other.rsd1_type_name3_ ) return false;
+	if ( rsd2_type_name3_ != other.rsd2_type_name3_ ) return false;
+	if ( bonus_ != other.bonus_ ) return false;
+	if ( this->score_type() != other.score_type() ) return false;
 
 	return true;
 }
@@ -134,13 +134,13 @@ ResidueTypeLinkingConstraint::operator == ( Constraint const & other_cst ) const
 ConstraintOP
 ResidueTypeLinkingConstraint::remapped_clone( pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP smap ) const {
 
-	core::Size newseqpos = seqpos_;
-	if ( smap ) {
-		newseqpos = (*smap)[ seqpos_ ];
-		if( newseqpos == 0 ) return NULL;
-	}
+core::Size newseqpos = seqpos_;
+if ( smap ) {
+newseqpos = (*smap)[ seqpos_ ];
+if( newseqpos == 0 ) return NULL;
+}
 
-	return new ResidueTypeLinkingConstraint(newseqpos, AAname, rsd_type_name3_, favor_native_bonus_);
+return new ResidueTypeLinkingConstraint(newseqpos, AAname, rsd_type_name3_, favor_native_bonus_);
 }
 */
 
@@ -151,13 +151,13 @@ void
 ResidueTypeLinkingConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const
 {
 	Real const weight(weights[ this->score_type() ] );
-//	std::cout << "res_type_linking_cst weight " << weight << std::endl;
+	// std::cout << "res_type_linking_cst weight " << weight << std::endl;
 
-	if( weight == 0 ) return; // what's the point?
+	if ( weight == 0 ) return; // what's the point?
 
 	conformation::Residue const & rsd1( xyz_func.residue(seqpos1_) );
 	conformation::Residue const & rsd2( xyz_func.residue(seqpos2_) );
-	if( rsd1.aa() != rsd2.aa() ){
+	if ( rsd1.aa() != rsd2.aa() ) {
 		emap[ this->score_type() ] += bonus_;
 		//std::cout << "res_type_linking_cst " << seqpos1_ << " " << seqpos2_ << " aa1 " << rsd1.type().name3() << " aa2 " << rsd2.type().name3() << " " << emap[ this->score_type() ] << std::endl;
 	}// no match, don't adjust score

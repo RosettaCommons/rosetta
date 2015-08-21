@@ -28,8 +28,8 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class SecondaryStructureSegmentFeatures : public protocols::features::FeaturesReporter {
 
@@ -77,7 +77,7 @@ public:
 		utility::vector1< bool > const & relevant_residues,
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session
-		);
+	);
 };
 
 } // namespace

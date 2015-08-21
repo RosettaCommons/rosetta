@@ -33,35 +33,35 @@ namespace modeler {
 namespace rna {
 namespace o2prime {
 
-	//Constructor
-	O2PrimePacker::O2PrimePacker( pose::Pose const & pose,
-																core::scoring::ScoreFunctionCOP const & scorefxn,
-																utility::vector1< core::Size > moving_res,
-																bool const pack_virtual_o2prime_hydrogen /* = false */ ):
-		pose_with_original_HO2prime_torsion_( pose ),
-		moving_res_( moving_res ),
-		o2prime_pack_pose_( pose ),
-		pack_virtual_o2prime_hydrogen_( pack_virtual_o2prime_hydrogen ),
-		use_green_packer_( false )
-	{
-		if ( use_green_packer_ ){
-			initialize_o2prime_green_packer();
-		} else {
-			initialize_o2prime_packer_task();
-		}
-		o2prime_pack_scorefxn_ = initialize_o2prime_pack_scorefxn( scorefxn );
+//Constructor
+O2PrimePacker::O2PrimePacker( pose::Pose const & pose,
+	core::scoring::ScoreFunctionCOP const & scorefxn,
+	utility::vector1< core::Size > moving_res,
+	bool const pack_virtual_o2prime_hydrogen /* = false */ ):
+	pose_with_original_HO2prime_torsion_( pose ),
+	moving_res_( moving_res ),
+	o2prime_pack_pose_( pose ),
+	pack_virtual_o2prime_hydrogen_( pack_virtual_o2prime_hydrogen ),
+	use_green_packer_( false )
+{
+	if ( use_green_packer_ ) {
+		initialize_o2prime_green_packer();
+	} else {
+		initialize_o2prime_packer_task();
 	}
+	o2prime_pack_scorefxn_ = initialize_o2prime_pack_scorefxn( scorefxn );
+}
 
-	//Destructor
-	O2PrimePacker::~O2PrimePacker()
-	{}
+//Destructor
+O2PrimePacker::~O2PrimePacker()
+{}
 
-	////////////////////////////////////////////////////////////////////////
-	void
-	O2PrimePacker::initialize_o2prime_packer_task(){
-		utility::vector1< core::Size > const o2prime_pack_seq_num = get_surrounding_O2prime_hydrogen( o2prime_pack_pose_, moving_res_, false /*verbose*/ );
-		o2prime_pack_task_ = create_standard_o2prime_pack_task( o2prime_pack_pose_, o2prime_pack_seq_num, pack_virtual_o2prime_hydrogen_ );
-	}
+////////////////////////////////////////////////////////////////////////
+void
+O2PrimePacker::initialize_o2prime_packer_task(){
+	utility::vector1< core::Size > const o2prime_pack_seq_num = get_surrounding_O2prime_hydrogen( o2prime_pack_pose_, moving_res_, false /*verbose*/ );
+	o2prime_pack_task_ = create_standard_o2prime_pack_task( o2prime_pack_pose_, o2prime_pack_seq_num, pack_virtual_o2prime_hydrogen_ );
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 void
@@ -133,8 +133,8 @@ O2PrimePacker::sample_o2prime_hydrogen(){
 		//problem with bulge variant -- need to initialize_o2prime_packer_task each time.
 		initialize_o2prime_packer_task();
 		pack::rotamer_trials( o2prime_pack_pose_,
-													*o2prime_pack_scorefxn_,
-													o2prime_pack_task_ );
+			*o2prime_pack_scorefxn_,
+			o2prime_pack_task_ );
 	}
 }
 

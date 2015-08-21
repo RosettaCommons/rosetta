@@ -76,7 +76,7 @@
 
 
 #ifdef WIN32
-	#include <ctime>
+#include <ctime>
 #endif
 
 
@@ -100,30 +100,30 @@ namespace loophash {
 void
 Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 {
-  if( !library_ ) return;
+	if ( !library_ ) return;
 
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-  //std::string prefix = option[ out::prefix ]();
-  core::Size skim_size = option[ lh::skim_size ]();
+	//std::string prefix = option[ out::prefix ]();
+	core::Size skim_size = option[ lh::skim_size ]();
 
 	LocalInserter_SimpleMinOP simple_inserter( new LocalInserter_SimpleMin() );
-  LoopHashSampler  lsampler( library_, simple_inserter );
+	LoopHashSampler  lsampler( library_, simple_inserter );
 
 
 	ScoreFunctionOP fascorefxn = core::scoring::get_score_function();
 	protocols::relax::FastRelax relax( fascorefxn,  option[ OptionKeys::relax::sequence_file ]() );
-  core::pose::PoseOP native_pose;
-	if(  option[ in::file::native ].user() ){
+	core::pose::PoseOP native_pose;
+	if (  option[ in::file::native ].user() ) {
 		native_pose = core::pose::PoseOP( new Pose );
 		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() );
 		relax.set_native_pose( native_pose );
 	}
 
-  for(int round = 0; round < option[ OptionKeys::lh::rounds ]; round ++ ){
+	for ( int round = 0; round < option[ OptionKeys::lh::rounds ]; round ++ ) {
 		std::string checkpoint_id = "chk" + ObjexxFCL::string_of( round );
-		if (!checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true )){
+		if ( !checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true ) ) {
 			core::pose::Pose opose = pose;
 			std::vector< core::io::silent::SilentStructOP > lib_structs;
 
@@ -133,11 +133,11 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 			core::Size starttime2 = time(NULL);
 
 			core::Size lcount = 0;
-			while( lib_structs.size() < skim_size ){
+			while ( lib_structs.size() < skim_size ) {
 				core::Size resnum = numeric::random::random_range(1,pose.total_residue()-2);
 
-  			lsampler.set_start_res ( resnum );
-  			lsampler.set_stop_res ( resnum );
+				lsampler.set_start_res ( resnum );
+				lsampler.set_stop_res ( resnum );
 				lsampler.build_structures( pose, lib_structs );
 				lcount++;
 				TR.Info << "Lcount: " << lcount << std::endl;
@@ -146,36 +146,36 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 			TR.Info << "FOUND " << lib_structs.size() << " alternative states in time: " << endtime2 - starttime2 << std::endl;
 
 			// write out the centroid structures if desired
-			if((  option[ OptionKeys::lh::write_centroid_structs ]() ) ||
-				 (  option[ OptionKeys::lh::centroid_only ]() )){
+			if ( (  option[ OptionKeys::lh::write_centroid_structs ]() ) ||
+					(  option[ OptionKeys::lh::centroid_only ]() ) ) {
 				core::io::silent::SilentFileData sfd;
 				std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
 				silent_file_ += ".centroid.out" ;
-				for( core::Size h = 0; h < lib_structs.size(); h++){
-						core::pose::Pose rpose;
-						lib_structs[h]->fill_pose( rpose );
-						lib_structs[h]->add_energy( "round", round, 1.0 );
-						if( native_pose ){
-							core::Real rms = scoring::CA_rmsd( *native_pose, rpose );
-							core::Real gdtmm = scoring::CA_gdtmm( *native_pose, rpose );
-							lib_structs[h]->add_energy( "rms", rms, 1.0 );
-							lib_structs[h]->add_energy( "gdtmm", gdtmm, 1.0 );
-						}
-						lib_structs[h]->set_decoy_tag( "S_" + ObjexxFCL::string_of( round ) + "_" + ObjexxFCL::string_of(  h )  );
-						lib_structs[h]->sort_silent_scores();
-						sfd.write_silent_struct( *(lib_structs[h]) , silent_file_ );
+				for ( core::Size h = 0; h < lib_structs.size(); h++ ) {
+					core::pose::Pose rpose;
+					lib_structs[h]->fill_pose( rpose );
+					lib_structs[h]->add_energy( "round", round, 1.0 );
+					if ( native_pose ) {
+						core::Real rms = scoring::CA_rmsd( *native_pose, rpose );
+						core::Real gdtmm = scoring::CA_gdtmm( *native_pose, rpose );
+						lib_structs[h]->add_energy( "rms", rms, 1.0 );
+						lib_structs[h]->add_energy( "gdtmm", gdtmm, 1.0 );
+					}
+					lib_structs[h]->set_decoy_tag( "S_" + ObjexxFCL::string_of( round ) + "_" + ObjexxFCL::string_of(  h )  );
+					lib_structs[h]->sort_silent_scores();
+					sfd.write_silent_struct( *(lib_structs[h]) , silent_file_ );
 				}
 			}
 
 			// abort if centroid is all we're doing
-			if( option[ OptionKeys::lh::centroid_only ]() ) break;
+			if ( option[ OptionKeys::lh::centroid_only ]() ) break;
 
 			// Choose a set of structures to refine/relax
 			//std::random__shuffle( lib_structs.begin(), lib_structs.end());
 			numeric::random::random_permutation(lib_structs.begin(), lib_structs.end(), numeric::random::rg());
 
 			std::vector< core::io::silent::SilentStructOP > select_lib_structs;
-			for( core::Size k=0;k< std::min<core::Size>(skim_size, lib_structs.size() ) ;k++){
+			for ( core::Size k=0; k< std::min<core::Size>(skim_size, lib_structs.size() ) ; k++ ) {
 				select_lib_structs.push_back( lib_structs[k] );
 			}
 
@@ -189,13 +189,13 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 			TR.Info << "Batchrelax time: " << endtime - starttime << " for " << select_lib_structs.size() << " structures " << std::endl;
 
 
-			for( core::Size h = 0; h < select_lib_structs.size(); h++){
+			for ( core::Size h = 0; h < select_lib_structs.size(); h++ ) {
 				TR.Info << "DOING: " << h << " / " << select_lib_structs.size() << std::endl;
 				core::pose::Pose rpose;
 				select_lib_structs[h]->fill_pose( rpose );
 				core::Real score = (*fascorefxn)(rpose);
 				TR.Info << "score: " << h << "  " << score << std::endl;
-				if( score < bestscore ){
+				if ( score < bestscore ) {
 					bestscore = score;
 					bestindex = h;
 					pose = rpose;
@@ -204,16 +204,16 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 
 			core::io::silent::SilentFileData sfd;
 			std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
-			for( core::Size h = 0; h < select_lib_structs.size(); h++){
-				if( h == bestindex ) {
+			for ( core::Size h = 0; h < select_lib_structs.size(); h++ ) {
+				if ( h == bestindex ) {
 					core::pose::Pose rpose;
 					select_lib_structs[h]->fill_pose( rpose );
-					#ifdef BOINC_GRAPHICS
-							//mjo moving 'score' into ifdef to remove unused variable warning
-							core::Real score = select_lib_structs[h]->get_energy("score");
-							boinc::Boinc::update_graphics_low_energy( pose, score );
-							boinc::Boinc::update_graphics_last_accepted( pose, score );
-					#endif
+#ifdef BOINC_GRAPHICS
+					//mjo moving 'score' into ifdef to remove unused variable warning
+					core::Real score = select_lib_structs[h]->get_energy("score");
+					boinc::Boinc::update_graphics_low_energy( pose, score );
+					boinc::Boinc::update_graphics_last_accepted( pose, score );
+#endif
 					select_lib_structs[h]->add_energy( "round", round, 1.0 );
 					select_lib_structs[h]->set_decoy_tag( "S_" + ObjexxFCL::string_of( round ) + "_" + ObjexxFCL::string_of(  h )  );
 					select_lib_structs[h]->sort_silent_scores();
@@ -225,13 +225,13 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 		}
 
 		// if in boinc mode let boinc break out prematurely! This will make user's runtimes near perfect and users happy
-		#ifdef BOINC
+#ifdef BOINC
 			if (protocols::boinc::Boinc::worker_is_finished( round + 1 )){
 				std::cerr << "BOINC Finishing normally." << std::endl;
 				break; // we're done no matter what nstruct syays
 			}
-		#endif
-  }
+#endif
+	}
 
 	TR << "Finished serial loophash." << std::endl;
 
@@ -248,7 +248,7 @@ int loophash_main(){
 	LoopHashLibraryOP loop_hash_library( new LoopHashLibrary( loop_sizes ) );
 
 	// Run simple sampling run test or create the db ?
-	if ( option[lh::create_db]() ){;
+	if ( option[lh::create_db]() ) { ;
 		loop_hash_library->create_db();
 		loop_hash_library->save_db();
 		return 0;

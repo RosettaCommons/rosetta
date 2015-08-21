@@ -52,13 +52,12 @@ get_residue_path_distances( ResidueType const & res )
 	Graph g;
 
 	g.set_num_nodes( res.natoms() );
-	for ( uint ii = 1; ii <= res.natoms(); ++ii )
-	{
+	for ( uint ii = 1; ii <= res.natoms(); ++ii ) {
 		AtomIndices const ii_bonded = res.nbrs( ii  );
-		for ( Size jj = 1; jj <= ii_bonded.size(); ++jj)
-		{
-			if ( ii_bonded[ jj ] > ii )
+		for ( Size jj = 1; jj <= ii_bonded.size(); ++jj ) {
+			if ( ii_bonded[ jj ] > ii ) {
 				g.add_edge( ii, ii_bonded[ jj ] );
+			}
 		}
 	}
 	return g.all_pairs_shortest_paths();
@@ -77,7 +76,7 @@ LightWeightResidueGraph convert_residuetype_to_light_graph(ResidueType const & r
 	//map between the LightWeightResidueGraph vertex and the ResidueGraph vertex. Used when adding edges
 	std::map<core::chemical::VD, lwrg_VD> map_of_vertex;
 	//first, add all the vertex to light weight residue graph, and map the property maps to point at the ResidueGraph
-	for(core::chemical::VIterPair vp = boost::vertices(full_residue_graph); vp.first != vp.second; ++vp.first){
+	for ( core::chemical::VIterPair vp = boost::vertices(full_residue_graph); vp.first != vp.second; ++vp.first ) {
 		VD const & full_residue_graph_vd = *vp.first;
 		lwrg_VD lwrg_vd = boost::add_vertex(lwrg);
 		lwrg_vd_to_VD[lwrg_vd] = full_residue_graph_vd; //set property maps
@@ -85,7 +84,7 @@ LightWeightResidueGraph convert_residuetype_to_light_graph(ResidueType const & r
 	}
 
 	//now we add the edges between the vertex
-	for(EIterPair ep = boost::edges(full_residue_graph); ep.first != ep.second; ++ep.first){
+	for ( EIterPair ep = boost::edges(full_residue_graph); ep.first != ep.second; ++ep.first ) {
 		VD source = boost::source(*ep.first, full_residue_graph);
 		VD target = boost::target(*ep.first, full_residue_graph);
 		lwrg_VD source_lwrg_VD = map_of_vertex[source];
@@ -93,12 +92,12 @@ LightWeightResidueGraph convert_residuetype_to_light_graph(ResidueType const & r
 		lwrg_ED e_added;
 		bool added;
 		boost::tie(e_added, added) = boost::add_edge(source_lwrg_VD, target_lwrg_VD,lwrg );
-		if(added){ //only add bonds once!
+		if ( added ) { //only add bonds once!
 			lwrg_ed_to_ED[e_added] = *ep.first;
 		}
 	}
-debug_assert(boost::num_vertices(lwrg) == full_residue_graph.num_vertices()); //fail if the number of vertex are not the same
-debug_assert(boost::num_edges(lwrg) == full_residue_graph.num_edges()); //fail if the number of edges are not the same
+	debug_assert(boost::num_vertices(lwrg) == full_residue_graph.num_vertices()); //fail if the number of vertex are not the same
+	debug_assert(boost::num_edges(lwrg) == full_residue_graph.num_edges()); //fail if the number of edges are not the same
 
 
 	//boost::property_map<LightWeightResidueGraph, boost::vertex_name_t>::type lwrg_vd_to_VD = boost::get(boost::vertex_name, lwrg);
@@ -120,34 +119,34 @@ rename_atoms( ResidueType & res, bool preserve/*=true*/ ) {
 	std::map< std::string, core::Size > name_counts;
 	ResidueGraph const & graph( res.graph() );
 	VIter iter, iter_end;
-	for( boost::tie( iter, iter_end ) = boost::vertices( graph ); iter != iter_end; ++iter ) {
+	for ( boost::tie( iter, iter_end ) = boost::vertices( graph ); iter != iter_end; ++iter ) {
 		Atom const & atom( graph[*iter] );
-		if( preserve && atom.name().size() != 0 ) {
+		if ( preserve && atom.name().size() != 0 ) {
 			name_counts[ atom.name() ]++; // with map, builtins are zero-initialized according to the C++ spec.
 		}
 	}
 
-	for( boost::tie( iter, iter_end ) = boost::vertices( graph ); iter != iter_end; ++iter ) {
+	for ( boost::tie( iter, iter_end ) = boost::vertices( graph ); iter != iter_end; ++iter ) {
 		Atom const & atom( graph[*iter] );
-		if( !preserve || name_counts[ atom.name() ] != 1 ) {
+		if ( !preserve || name_counts[ atom.name() ] != 1 ) {
 			//Find the first unoccupied name Xnnn type string.
 			// Skipping values which were multiply represented in the input is deliberate
 			// There's no fair way to choose which one is the "real" one.
-		debug_assert( atom.element_type() );
+			debug_assert( atom.element_type() );
 			std::string name;
 			core::Size ii(0);
 			do {
 				++ii;
 				name = ObjexxFCL::uppercased( atom.element_type()->get_chemical_symbol() ) + utility::to_string( ii );
 				//Align name, preferring to keep start in the second position
-				if( name.size() == 2 ) {
+				if ( name.size() == 2 ) {
 					name = ' ' + name + ' ';
-				} else if (name.size() == 3 ) {
+				} else if ( name.size() == 3 ) {
 					name = ' ' + name;
 				} //Can't be 1, and if it's 4 or greater, leave as is.
 			} while ( name_counts.find( name ) != name_counts.end() );
 			// Assign new value and mark it used.
-			if( TR.Trace.visible() ) {
+			if ( TR.Trace.visible() ) {
 				TR.Trace << "Renaming atom from '"<< res.atom(*iter).name() << "' to '" << name << "'" << std::endl;
 			}
 			res.atom(*iter).name( name );
@@ -180,7 +179,7 @@ public:
 		//std::string start( restype_.atom_name( start_ ) );
 		//std::string source( restype_.atom_name( boost::source( edge, graph ) ) );
 		//std::string target( restype_.atom_name( boost::target( edge, graph ) ) );
-		if( source == start_ ) {
+		if ( source == start_ ) {
 			// Directly connected atoms are part of the rigid units, for distance purposes,
 			// but we shouldn't propagate across them unless the fit the other criteria
 			// (see TODO below, though)
@@ -189,13 +188,13 @@ public:
 		}
 		// Follow across non-rotatable bonds. (Ring and double bonds)
 		Bond const & bond( restype_.bond( edge ) );
-		if( bond.ringness() == BondInRing ) {
+		if ( bond.ringness() == BondInRing ) {
 			return false; // Follow rings
 		}
-		if( bond.order() == DoubleBondOrder || bond.order() == TripleBondOrder ) {
+		if ( bond.order() == DoubleBondOrder || bond.order() == TripleBondOrder ) {
 			return false; // Follow double and triple bonds
 		}
-		if( is_nub( source ) || is_nub( target ) ) {
+		if ( is_nub( source ) || is_nub( target ) ) {
 			//Need to test both for symmetry - if either is a nub the bond isn't rotatable and should be followed.
 			return false;
 		}
@@ -217,17 +216,17 @@ public:
 		// Additional non-rotatable bonds include single bonds which are connected to atoms
 		core::chemical::AdjacentIter iter, iter_end;
 		core::Size nheavy(0), nhydro(0);
-		for( boost::tie( iter, iter_end ) = restype_.bonded_neighbor_iterators(atom); iter != iter_end; ++iter ) {
-			if( restype_.atom(*iter).element_type()->element() == core::chemical::element::H ) {
+		for ( boost::tie( iter, iter_end ) = restype_.bonded_neighbor_iterators(atom); iter != iter_end; ++iter ) {
+			if ( restype_.atom(*iter).element_type()->element() == core::chemical::element::H ) {
 				++nhydro;
 			} else {
 				++nheavy;
 			}
 		}
-		if( nheavy >= 2 ) return false; // Multiply-heavy bonded atoms aren't non-rotatable stubs.
+		if ( nheavy >= 2 ) return false; // Multiply-heavy bonded atoms aren't non-rotatable stubs.
 		// Non-considered bonds are all hydrogens (bonds to hydrogens use this function)
-		if( nhydro != 1 ) return true; // Multiple hydrogens aren't considered rotameric.
-		if( restype_.atom(atom).element_type()->element() == core::chemical::element::C ) return true; // Carbon with only a single heavy bond is never rotameric
+		if ( nhydro != 1 ) return true; // Multiple hydrogens aren't considered rotameric.
+		if ( restype_.atom(atom).element_type()->element() == core::chemical::element::C ) return true; // Carbon with only a single heavy bond is never rotameric
 		// Proton rotamer
 		return false;
 	}
@@ -245,7 +244,7 @@ private:
 void calculate_rigid_matrix( ResidueType const & res, utility::vector1< utility::vector1< core::Real > > & distances ) {
 	// Set up bonded and rigid distances
 	VIter iter, iter_end;
-	for( boost::tie( iter, iter_end ) = res.atom_iterators(); iter != iter_end; ++iter ) {
+	for ( boost::tie( iter, iter_end ) = res.atom_iterators(); iter != iter_end; ++iter ) {
 		// The visitor takes the distance matrix as a reference and fills it out.
 		RigidDistanceVisitor vis( distances, res, *iter );
 		utility::graph::breadth_first_search_prune( res.graph(), *iter, vis );
@@ -253,29 +252,29 @@ void calculate_rigid_matrix( ResidueType const & res, utility::vector1< utility:
 	// The Floyd-Warshall algorithm. We do this in-line instead of with boost
 	// because some of the distance weights don't correspond to edge weights.
 	// (Besides, it's easy enough.)
-	for( core::Size kk(1); kk <= res.natoms(); ++kk ) {
-		for( core::Size jj(1); jj <= res.natoms(); ++jj ) {
-			for( core::Size ii(1); ii <= res.natoms(); ++ii ) {
+	for ( core::Size kk(1); kk <= res.natoms(); ++kk ) {
+		for ( core::Size jj(1); jj <= res.natoms(); ++jj ) {
+			for ( core::Size ii(1); ii <= res.natoms(); ++ii ) {
 				core::Real new_dist( distances[ii][kk] + distances[kk][jj] );
-				if( new_dist < distances[ii][jj] ) {
+				if ( new_dist < distances[ii][jj] ) {
 					distances[ii][jj] = new_dist;
 				}
 			}
 		}
 	}
 
-	if( TR.Trace.visible() ) {
+	if ( TR.Trace.visible() ) {
 		// Print out the full distance matrix for debugging purposes.
 		TR.Trace << std::setprecision(4);
 		TR.Trace << "Atom distance matrix for " << res.name() << std::endl;
 		TR.Trace << "    " << '\t';
-		for( core::Size xx(1); xx <= res.natoms(); ++xx ) {
+		for ( core::Size xx(1); xx <= res.natoms(); ++xx ) {
 			TR.Trace << res.atom_name(xx) << '\t';
 		}
 		TR.Trace << std::endl;
-		for(  core::Size yy(1); yy <= res.natoms(); ++yy ) {
+		for (  core::Size yy(1); yy <= res.natoms(); ++yy ) {
 			TR.Trace << res.atom_name(yy) << '\t';
-			for(  core::Size xx(1); xx <= res.natoms(); ++xx ) {
+			for (  core::Size xx(1); xx <= res.natoms(); ++xx ) {
 				TR.Trace << distances[yy][xx] << '\t';
 			}
 			TR.Trace << std::endl;
@@ -296,10 +295,10 @@ void calculate_rigid_matrix( ResidueType const & res, utility::vector1< utility:
 ///   * All atoms and bond are present
 ///   * All ideal_xyz coordinates have been set
 ///   * All elements have been set
-/// 	* All ring bonds have been annotated
+///  * All ring bonds have been annotated
 core::Real
 find_nbr_dist( ResidueType const & res, VD & nbr_atom ) {
-	if( res.natoms() == 0 ) {
+	if ( res.natoms() == 0 ) {
 		utility_exit_with_message("Cannot find neighbor atom distance for empty residue type.");
 	}
 	core::Real maxdist = 1e9; // Hopefully sufficiently large.
@@ -311,36 +310,36 @@ find_nbr_dist( ResidueType const & res, VD & nbr_atom ) {
 	// We could get smaller values by removing hydrogens from distance considerations.
 
 	utility::vector1< core::Real > maxdists;
-	for( core::Size ii(1); ii<= res.natoms(); ++ii ) {
+	for ( core::Size ii(1); ii<= res.natoms(); ++ii ) {
 		maxdists.push_back( *(std::max_element( distances[ii].begin(), distances[ii].end() )) );
 	}
 
-	if( nbr_atom != ResidueType::null_vertex ) {
+	if ( nbr_atom != ResidueType::null_vertex ) {
 		// We have an atom in mind - we just need the distance.
 		return maxdists[ res.atom_index( nbr_atom ) ];
 	}
 
 	//maxdist initialized above
-	for( core::Size jj(1); jj <= res.natoms(); ++jj) {
+	for ( core::Size jj(1); jj <= res.natoms(); ++jj ) {
 		VD atom_vd( res.atom_vertex( jj ) );
-		if( maxdists[jj] < maxdist &&
+		if ( maxdists[jj] < maxdist &&
 				res.atom(jj).element_type()->element() != core::chemical::element::H ) { // not hydrogen
 			//Use graph directly, as other neighbor annotations may not be fully baked
 			core::Size bonded_heavy(0);
 			AdjacentIter itr, itr_end;
-			for( boost::tie(itr, itr_end) = res.bonded_neighbor_iterators(atom_vd); itr != itr_end; ++itr) {
-				if( res.atom( *itr ).element_type()->element() != core::chemical::element::H ) {
+			for ( boost::tie(itr, itr_end) = res.bonded_neighbor_iterators(atom_vd); itr != itr_end; ++itr ) {
+				if ( res.atom( *itr ).element_type()->element() != core::chemical::element::H ) {
 					bonded_heavy += 1;
 				}
 			}
-			if( bonded_heavy >= 2 ) {
+			if ( bonded_heavy >= 2 ) {
 				maxdist = maxdists[jj];
 				nbr_atom = atom_vd;
 			}
 		}
 	}
 
-	if( nbr_atom == ResidueType::null_vertex ) { // No suitable neighbor -- just pick atom 1
+	if ( nbr_atom == ResidueType::null_vertex ) { // No suitable neighbor -- just pick atom 1
 		TR.Warning << "No suitable neighbor atom found for " << res.name() << " -- picking first atom (" << res.atom_name(1) << ") instead." << std::endl;
 		nbr_atom = res.atom_vertex( 1 );
 		maxdist = maxdists[1];
@@ -367,27 +366,27 @@ rosetta_recharge_fullatom( ResidueType & res ) {
 	core::Real desired_net(0), current_net(0);
 	core::Size natoms(0);
 	VIter iter, iter_end;
-	for( boost::tie( iter, iter_end ) = boost::vertices( graph ); iter != iter_end; ++iter ) {
+	for ( boost::tie( iter, iter_end ) = boost::vertices( graph ); iter != iter_end; ++iter ) {
 		Atom & atm( res.atom( *iter ) );
 		desired_net += atm.formal_charge();
 		core::Real charge(0);
-		if( atm.atom_type_index() != 0) {
+		if ( atm.atom_type_index() != 0 ) {
 			std::string const & type( ats[ atm.atom_type_index() ].name() );
 			charge = get_rpp_charge( type );
 		}
 		atm.charge( charge );
 		TR.Debug << "Residue " << res.name() << ": Charging atom " << atm.name() << " type " << ats[ atm.atom_type_index() ].name() << " at " << atm.charge() << std::endl;
 		current_net += charge;
-		if( charge != 0 ) {
+		if ( charge != 0 ) {
 			natoms += 1;
 		}
 	}
 
-	if( current_net < (desired_net - 0.001) || current_net > (desired_net + 0.001) ) {
+	if ( current_net < (desired_net - 0.001) || current_net > (desired_net + 0.001) ) {
 		core::Real correction( (desired_net-current_net)/natoms );
-		for( boost::tie( iter, iter_end ) = boost::vertices( graph ); iter != iter_end; ++iter ) {
+		for ( boost::tie( iter, iter_end ) = boost::vertices( graph ); iter != iter_end; ++iter ) {
 			Atom & atm( res.atom( *iter ) );
-			if( atm.charge() != 0 ) {
+			if ( atm.charge() != 0 ) {
 				atm.charge( atm.charge() + correction );
 				TR.Debug << "Residue " << res.name() << ": Adjusting charge on atom " << atm.name() << " type " << ats[ atm.atom_type_index() ].name() << " to " << atm.charge() << std::endl;
 			}
@@ -397,45 +396,45 @@ rosetta_recharge_fullatom( ResidueType & res ) {
 
 /// @brief Get charge for atom type based on Rosetta++ aaproperties_pack.cc values
 core::Real get_rpp_charge( std::string const & type ) {
-	if( type == "CNH2") { return 0.550; }
-	else if( type == "COO") { return  0.620; }
-	else if( type == "CH1") { return  -0.090; }
-	else if( type == "CH2") { return  -0.180; }
-	else if( type == "CH3") { return  -0.270; }
-	else if( type == "aroC") { return  -0.115; }
-	else if( type == "Ntrp") { return  -0.610; }
-	else if( type == "Nhis") { return  -0.530; }
-	else if( type == "NH2O") { return  -0.470; }
-	else if( type == "Nlys") { return  -0.620; }
-	else if( type == "Narg") { return  -0.750; }
-	else if( type == "Npro") { return  -0.370; }
-	else if( type == "OH")   { return  -0.660; }
-	else if( type == "Oaro") { return  -0.660; } // copied from OH
-	else if( type == "ONH2") { return  -0.550; }
-	else if( type == "OOC")  { return  -0.760; }
-	else if( type == "S")    { return  -0.160; }
-	else if( type == "Nbb")  { return  -0.470; }
-	else if( type == "CAbb") { return  0.070; }
-	else if( type == "CObb") { return  0.510; }
-	else if( type == "OCbb") { return  -0.510; }
-	else if( type == "Phos") { return  1.500; }
-	else if( type == "Hpol") { return  0.430; }
-	else if( type == "Hapo") { return  0.095; }
-	else if( type == "Haro") { return  0.115; }
-	else if( type == "HNbb") { return  0.310; }
-	else if( type == "H2O")  { return  0.000; }
-	else if( type == "F")    { return  -0.250; }
-	else if( type == "Cl")   { return  -0.130; }
-	else if( type == "Br")   { return  -0.100; }
-	else if( type == "I")    { return  -0.090; }
-	else if( type == "Zn2p") { return  2.000; }
-	else if( type == "Fe2p") { return  2.000; }
-	else if( type == "Fe3p") { return  3.000; }
-	else if( type == "Mg2p") { return  2.000; }
-	else if( type == "Ca2p") { return  2.000; }
-	else if( type == "Na1p") { return  1.000; }
-	else if( type == "K1p")  { return  1.000; }
-	else if( type == "VIRT") { return  0.000; }
+	if ( type == "CNH2" ) { return 0.550; }
+	else if ( type == "COO" ) { return  0.620; }
+	else if ( type == "CH1" ) { return  -0.090; }
+	else if ( type == "CH2" ) { return  -0.180; }
+	else if ( type == "CH3" ) { return  -0.270; }
+	else if ( type == "aroC" ) { return  -0.115; }
+	else if ( type == "Ntrp" ) { return  -0.610; }
+	else if ( type == "Nhis" ) { return  -0.530; }
+	else if ( type == "NH2O" ) { return  -0.470; }
+	else if ( type == "Nlys" ) { return  -0.620; }
+	else if ( type == "Narg" ) { return  -0.750; }
+	else if ( type == "Npro" ) { return  -0.370; }
+	else if ( type == "OH" )   { return  -0.660; }
+	else if ( type == "Oaro" ) { return  -0.660; } // copied from OH
+	else if ( type == "ONH2" ) { return  -0.550; }
+	else if ( type == "OOC" )  { return  -0.760; }
+	else if ( type == "S" )    { return  -0.160; }
+	else if ( type == "Nbb" )  { return  -0.470; }
+	else if ( type == "CAbb" ) { return  0.070; }
+	else if ( type == "CObb" ) { return  0.510; }
+	else if ( type == "OCbb" ) { return  -0.510; }
+	else if ( type == "Phos" ) { return  1.500; }
+	else if ( type == "Hpol" ) { return  0.430; }
+	else if ( type == "Hapo" ) { return  0.095; }
+	else if ( type == "Haro" ) { return  0.115; }
+	else if ( type == "HNbb" ) { return  0.310; }
+	else if ( type == "H2O" )  { return  0.000; }
+	else if ( type == "F" )    { return  -0.250; }
+	else if ( type == "Cl" )   { return  -0.130; }
+	else if ( type == "Br" )   { return  -0.100; }
+	else if ( type == "I" )    { return  -0.090; }
+	else if ( type == "Zn2p" ) { return  2.000; }
+	else if ( type == "Fe2p" ) { return  2.000; }
+	else if ( type == "Fe3p" ) { return  3.000; }
+	else if ( type == "Mg2p" ) { return  2.000; }
+	else if ( type == "Ca2p" ) { return  2.000; }
+	else if ( type == "Na1p" ) { return  1.000; }
+	else if ( type == "K1p" )  { return  1.000; }
+	else if ( type == "VIRT" ) { return  0.000; }
 	// If we don't recognize it, don't charge it.
 	TR.Warning << "No charge listed for atom type '" << type << "'." << std::endl;
 	return 0.00;

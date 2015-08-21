@@ -27,32 +27,32 @@ namespace task_operations {
 
 class HighestEnergyRegionOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
-  virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-  virtual std::string keyname() const;
+	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
+	virtual std::string keyname() const;
 };
 
 class DesignByResidueCentralityOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
-  virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-  virtual std::string keyname() const;
+	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
+	virtual std::string keyname() const;
 };
 
 class DesignRandomRegionOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
-  virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-  virtual std::string keyname() const;
+	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
+	virtual std::string keyname() const;
 };
 
 class DesignCatalyticResiduesOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
-  virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-  virtual std::string keyname() const;
+	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
+	virtual std::string keyname() const;
 };
 
 class DesignByCavityProximityOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
-  virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-  virtual std::string keyname() const;
+	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
+	virtual std::string keyname() const;
 };
 
 }

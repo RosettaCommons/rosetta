@@ -49,9 +49,9 @@ namespace rna {
 
 class Jump_point{
 
-		public:
+public:
 
-		Jump_point():
+	Jump_point():
 		five_prime_seq_num( 0 ),
 		five_prime_atom( "O3'" ),
 		three_prime_seq_num( 0 ),
@@ -62,7 +62,7 @@ class Jump_point{
 
 	~Jump_point(){};
 
-	public:
+public:
 
 	core::Size five_prime_seq_num;
 	std::string five_prime_atom;
@@ -99,16 +99,16 @@ public:
 		fake_working_moving_suite( 0 ),
 		possible_working_res_1( 0 ),
 		possible_working_res_2( 0 )
-		{
+	{
 	}
 
 	~InternalWorkingResidueParameter(){};
 
-	public:
+public:
 
-		core::Size fake_working_moving_suite;
-		core::Size possible_working_res_1;
-		core::Size possible_working_res_2;
+	core::Size fake_working_moving_suite;
+	core::Size possible_working_res_1;
+	core::Size possible_working_res_2;
 };
 
 
@@ -116,75 +116,75 @@ class StepWiseRNA_CountStruct{
 
 public:
 
-  StepWiseRNA_CountStruct():
-    output_pose_count( 0 ),
-    full_score_count( 0 ),
-    good_bin_rep_count( 0 ),
-    good_rep_rotamer_count( 0 ),
-    good_atr_rotamer_count( 0 ),
-    good_angle_count( 0 ),
-    good_distance_count( 0 ),
-    chain_break_screening_count( 0 ),
-    chain_closable_geometry_count( 0 ),
-    chain_closable_geometry_count2( 0 ),
-    chain_closable_geometry_count3( 0 ),
-    Near_Native_StepWiseSampler_Count( 0 ),
-    base_pairing_count( 0 ),
-    base_stack_count( 0 ),
-    strict_base_pairing_count( 0 ),
-    pass_base_centroid_screen( 0 ),
-    both_count( 0 ),
-    tot_rotamer_count( 0 ),
-    fine_rmsd_count( 0 ),
-    rmsd_count( 0 ),
-    non_clash_sugar( 0 ),
-    fast_full_atom_VDW_repulsion_screen( 0 ),
-    in_range_CCD_torsion( 0 ),
-    total_bin( 0 ),
-    bulge_at_chain_closure_count( 0 ),
-    before_chain_break_grid_index_screening( 0 ),
-    chain_break_grid_index_screening( 0 ),
-    residues_contact_screen( 0 ),
-    test_count_one( 0 ),
-    test_count_two( 0 )
-    {
-  }
+	StepWiseRNA_CountStruct():
+		output_pose_count( 0 ),
+		full_score_count( 0 ),
+		good_bin_rep_count( 0 ),
+		good_rep_rotamer_count( 0 ),
+		good_atr_rotamer_count( 0 ),
+		good_angle_count( 0 ),
+		good_distance_count( 0 ),
+		chain_break_screening_count( 0 ),
+		chain_closable_geometry_count( 0 ),
+		chain_closable_geometry_count2( 0 ),
+		chain_closable_geometry_count3( 0 ),
+		Near_Native_StepWiseSampler_Count( 0 ),
+		base_pairing_count( 0 ),
+		base_stack_count( 0 ),
+		strict_base_pairing_count( 0 ),
+		pass_base_centroid_screen( 0 ),
+		both_count( 0 ),
+		tot_rotamer_count( 0 ),
+		fine_rmsd_count( 0 ),
+		rmsd_count( 0 ),
+		non_clash_sugar( 0 ),
+		fast_full_atom_VDW_repulsion_screen( 0 ),
+		in_range_CCD_torsion( 0 ),
+		total_bin( 0 ),
+		bulge_at_chain_closure_count( 0 ),
+		before_chain_break_grid_index_screening( 0 ),
+		chain_break_grid_index_screening( 0 ),
+		residues_contact_screen( 0 ),
+		test_count_one( 0 ),
+		test_count_two( 0 )
+	{
+	}
 
 
-  ~StepWiseRNA_CountStruct(){};
+	~StepWiseRNA_CountStruct(){};
 
 public:
 
-  core::Size output_pose_count;
-  core::Size full_score_count;
-  core::Size good_bin_rep_count;
-  core::Size good_rep_rotamer_count;
-  core::Size good_atr_rotamer_count;
-  core::Size good_angle_count;
-  core::Size good_distance_count;
-  core::Size chain_break_screening_count;
-  core::Size chain_closable_geometry_count;
-  core::Size chain_closable_geometry_count2;
-  core::Size chain_closable_geometry_count3;
-  core::Size Near_Native_StepWiseSampler_Count;
-  core::Size base_pairing_count;
-  core::Size base_stack_count;
-  core::Size strict_base_pairing_count;
-  core::Size pass_base_centroid_screen;
-  core::Size both_count;
-  core::Size tot_rotamer_count;
-  core::Size fine_rmsd_count;
-  core::Size rmsd_count;
-  core::Size non_clash_sugar;
-  core::Size fast_full_atom_VDW_repulsion_screen;
-  core::Size in_range_CCD_torsion;
-  core::Size total_bin;
-  core::Size bulge_at_chain_closure_count;
-  core::Size before_chain_break_grid_index_screening;
-  core::Size chain_break_grid_index_screening;
-  core::Size residues_contact_screen;
-  core::Size test_count_one;
-  core::Size test_count_two;
+	core::Size output_pose_count;
+	core::Size full_score_count;
+	core::Size good_bin_rep_count;
+	core::Size good_rep_rotamer_count;
+	core::Size good_atr_rotamer_count;
+	core::Size good_angle_count;
+	core::Size good_distance_count;
+	core::Size chain_break_screening_count;
+	core::Size chain_closable_geometry_count;
+	core::Size chain_closable_geometry_count2;
+	core::Size chain_closable_geometry_count3;
+	core::Size Near_Native_StepWiseSampler_Count;
+	core::Size base_pairing_count;
+	core::Size base_stack_count;
+	core::Size strict_base_pairing_count;
+	core::Size pass_base_centroid_screen;
+	core::Size both_count;
+	core::Size tot_rotamer_count;
+	core::Size fine_rmsd_count;
+	core::Size rmsd_count;
+	core::Size non_clash_sugar;
+	core::Size fast_full_atom_VDW_repulsion_screen;
+	core::Size in_range_CCD_torsion;
+	core::Size total_bin;
+	core::Size bulge_at_chain_closure_count;
+	core::Size before_chain_break_grid_index_screening;
+	core::Size chain_break_grid_index_screening;
+	core::Size residues_contact_screen;
+	core::Size test_count_one;
+	core::Size test_count_two;
 };
 
 ////////////////////////////////////////////////////////////

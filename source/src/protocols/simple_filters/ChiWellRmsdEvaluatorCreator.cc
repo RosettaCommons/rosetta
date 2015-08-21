@@ -54,7 +54,7 @@
 
 
 #ifdef WIN32
-	#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.hh>
 #endif
 
 
@@ -79,7 +79,7 @@ void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator 
 			core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() );
 		}
 
-    typedef utility::vector1< std::string > RmsdVector;
+		typedef utility::vector1< std::string > RmsdVector;
 		RmsdVector const& rmsd( option[ OptionKeys::evaluation::chirmsd ]() );
 
 		//the ultimate in RMSD technology:
@@ -103,7 +103,7 @@ void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator 
 				Size pos( it->find('=') );
 				std::string key=it->substr(0,pos);
 				std::string value=it->substr(pos+1);
-				if ( key=="nchi") {
+				if ( key=="nchi" ) {
 					nchi_max=utility::string2int( value );
 				} else if ( key =="sasa" ) {
 					sasa_max=utility::string2float( value );
@@ -118,14 +118,14 @@ void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator 
 				column = *it;
 			} else {
 				utility_exit_with_message(
-							 "need to specify tripletts <target> [key/value pairs] <column> <selection/FULL> with option -evaluation:rmsd   last read: "+fname );
+					"need to specify tripletts <target> [key/value pairs] <column> <selection/FULL> with option -evaluation:rmsd   last read: "+fname );
 			}
 			++it;
 			if ( it != rmsd.end() ) {
 				selection_file = *it;
 			} else {
 				utility_exit_with_message(
-							 "need to specify tripletts <target> <column> <selection/FULL> with option -evaluation:rmsd   last read: "+column );
+					"need to specify tripletts <target> <column> <selection/FULL> with option -evaluation:rmsd   last read: "+column );
 			}
 			if ( fname == "NATIVE" ) target_pose = native_pose;
 			else if ( fname != "IRMS" ) {
@@ -154,7 +154,7 @@ void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator 
 					utility_exit_with_message(
 						"need to find END_INLINE after INLINE in option -evaluation:rmsd    last read: "+column );
 				} //error condition
-				while( next_tag != "END_INLINE" ) {
+				while ( next_tag != "END_INLINE" ) {
 					selection.push_back( utility::string2int( next_tag ) );
 					++it;
 					if ( it != rmsd.end() ) {
@@ -166,8 +166,8 @@ void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator 
 				}
 			} else if ( selection_file != "FULL" ) {
 				std::ifstream is( selection_file.c_str() );
-				
-				if (!is.good()) {
+
+				if ( !is.good() ) {
 					utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + selection_file + "'" );
 				}
 
@@ -179,20 +179,20 @@ void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator 
 			}
 			if ( invert ) {
 				utility::vector1< Size > inverted_selection;
-				for ( Size i = 1; i<=target_pose->total_residue(); ++i) {
+				for ( Size i = 1; i<=target_pose->total_residue(); ++i ) {
 					bool found( false );
 					for ( Size j = 1; j<=selection.size() && !found; ++j ) {
 						if ( selection[ j ]==i ) {
 							found = true;
 						}
 					}
-					if ( !found) inverted_selection.push_back( i );
+					if ( !found ) inverted_selection.push_back( i );
 				}
 				selection = inverted_selection;
 			}
 			if ( selection_file != "FULL" ) {
 				eval.add_evaluation( PoseEvaluatorOP( new simple_filters::ChiWellRmsdEvaluator( target_pose, nchi_max, sasa_max, selection, column) ) );
-			}	else {
+			} else {
 				eval.add_evaluation( PoseEvaluatorOP( new simple_filters::ChiWellRmsdEvaluator( target_pose, nchi_max, sasa_max, column ) ) );
 			}
 		} // iterate over tripletts in option -rmsd

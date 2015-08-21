@@ -14,8 +14,8 @@
 #ifndef INCLUDED_protocols_loops_LoopMoverFactory_fwd_hh
 #define INCLUDED_protocols_loops_LoopMoverFactory_fwd_hh
 
-namespace protocols{
-namespace loops{
+namespace protocols {
+namespace loops {
 
 class LoopMoverFactory;
 

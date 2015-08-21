@@ -260,14 +260,14 @@ public:
 		fcs->resfiles( resfiles );
 		fcs->apply( *poses[1] );
 		// Make sure all poses end up with the same consensus sequence
-		for( core::Size i = 2; i <= poses.size(); ++i ) {
+		for ( core::Size i = 2; i <= poses.size(); ++i ) {
 			TS_ASSERT_EQUALS( poses[ i ]->sequence(), poses[ 1 ]->sequence() );
 		}
 
 		// Make sure you see the same consensus sequence when the order is changed
 		fcs->set_poses( poses2 );
 		fcs->apply( *poses2[ 1 ] );
-		for( core::Size i = 2; i <= poses2.size(); ++i ) {
+		for ( core::Size i = 2; i <= poses2.size(); ++i ) {
 			TS_ASSERT_EQUALS( poses2[ i ]->sequence(), poses2[ 1 ]->sequence() );
 			TS_ASSERT_EQUALS( poses2[ i ]->sequence(), poses[ 1 ]->sequence() );
 		}

@@ -117,8 +117,8 @@ public:
 
 private:
 	core::scoring::mm::MMTorsionScore potential_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

@@ -55,9 +55,11 @@ namespace constel {
 ///
 core::Size get_pose_resnum(int const pdbnum, char const pdbchn, Pose& ps) {
 
-	for ( core::Size j = 1; j <= ps.total_residue(); ++j )
-		if ( ( ps.pdb_info()->chain(j) == pdbchn ) &&	(ps.pdb_info()->number(j) == pdbnum) )
+	for ( core::Size j = 1; j <= ps.total_residue(); ++j ) {
+		if ( ( ps.pdb_info()->chain(j) == pdbchn ) && (ps.pdb_info()->number(j) == pdbnum) ) {
 			return j;
+		}
+	}
 
 	// residue not found
 	TR << "ERROR!! Could not find residue" << pdbnum << " and chain " << pdbchn << std::endl;
@@ -107,7 +109,7 @@ void pair_constel_set_idx2(Size const i, Size const j, Pose const& pose_init) {
 			Pose secondary_mut_pose = primary_mut_pose;
 			SingResCnlCrea::zero_occ_for_deleted_atoms( secondary_mut_pose, j, aa_jmut);
 
-			if( MasterFilter::is_constel_valid( secondary_mut_pose, cnl ) ) {
+			if ( MasterFilter::is_constel_valid( secondary_mut_pose, cnl ) ) {
 
 				// print the atoms that would be removed by these mutations to a pdb file
 				ResMut mut1(aai, aa_imut, i_pdb_chain, i_pdb_number, i);
@@ -120,30 +122,30 @@ void pair_constel_set_idx2(Size const i, Size const j, Pose const& pose_init) {
 
 
 /// @brief Outputs to file a constellation obtained from mutating a pair of
-/// 	residues.
+///  residues.
 ///
 /// @param[in] mut1 representation of the mutation of the first residue.
 /// @param[in] mut2 representation of the mutation of the second residue.
 /// @param[in] cslnum a number to identify the constellation.
 /// @param[in] ps Rosetta pose that both residues belong to. In the pose,
-/// 	the occupancy of atoms in either residue is that AFTER the mutation.
+///  the occupancy of atoms in either residue is that AFTER the mutation.
 ///
 /// @remarks
-/// 	1. The file name of the constellation has the following format,
-/// 		SIIIIEC_siiiiec.pdb, where:
-/// 	- S is the first residue's start amino acid type
-/// 	- IIII is a four-digit field indicating the first residue's number in the
-/// 		input PDB file
-/// 	- E is the first residue's end amino acid type
-/// 	- C is the first residue's chain in the input PDB file
-/// 	- s is the second residue's start amino acid type
-/// 	- iiii is a four-digit field indicating the second residue's number in the
-/// 		input PDB file
-/// 	- e is the second residue's end amino acid type
-/// 	- c is the second residue's chain in the input PDB file
+///  1. The file name of the constellation has the following format,
+///   SIIIIEC_siiiiec.pdb, where:
+///  - S is the first residue's start amino acid type
+///  - IIII is a four-digit field indicating the first residue's number in the
+///   input PDB file
+///  - E is the first residue's end amino acid type
+///  - C is the first residue's chain in the input PDB file
+///  - s is the second residue's start amino acid type
+///  - iiii is a four-digit field indicating the second residue's number in the
+///   input PDB file
+///  - e is the second residue's end amino acid type
+///  - c is the second residue's chain in the input PDB file
 ///
-/// 	2. This function may set to zero the occupancy of additional atoms of the
-/// 		residues forming the constellation..
+///  2. This function may set to zero the occupancy of additional atoms of the
+///   residues forming the constellation..
 ///
 void out_pair_constel(ResMut const& mut1, ResMut const& mut2, int const cslnum, Pose& ps) {
 
@@ -160,12 +162,12 @@ void out_pair_constel(ResMut const& mut1, ResMut const& mut2, int const cslnum, 
 	outPDB_stream.open(outPDB_name.str(), std::ios::out);
 	outPDB_stream << "HEADER   CONST NUM " << cslnum <<
 		" TARGET MUTATION: " << mut1.cid << ':' << mut1.saa << mut1.pdbn <<
-			mut1.eaa <<
+		mut1.eaa <<
 		"  SECONDARY_MUTATION: " << mut2.cid << ':' << mut2.saa << mut2.pdbn <<
-			mut2.eaa << std::endl;
+		mut2.eaa << std::endl;
 
 	// check whether atoms must be stripped off the constellation
-	if(SingResCnlCrea::stripped()) {
+	if ( SingResCnlCrea::stripped() ) {
 		SingResCnlCrea::strip_atoms(ps, mut1.psn, mut1.eaa);
 		SingResCnlCrea::strip_atoms(ps, mut2.psn, mut2.eaa);
 	}
@@ -245,7 +247,7 @@ void triple_constel_set_idx3(Size const i, Size const j, Size const k,
 				Pose tertiary_mut_pose = secondary_mut_pose;
 				SingResCnlCrea::zero_occ_for_deleted_atoms( tertiary_mut_pose, k, aa_kmut);
 
-				if( MasterFilter::is_constel_valid( tertiary_mut_pose, cnl ) ) {
+				if ( MasterFilter::is_constel_valid( tertiary_mut_pose, cnl ) ) {
 
 					// print the atoms that would be removed by these mutations to
 					// a pdb file
@@ -261,33 +263,33 @@ void triple_constel_set_idx3(Size const i, Size const j, Size const k,
 
 
 /// @brief Outputs to file a constellation obtained from mutating a triple of
-/// 	residues.
+///  residues.
 ///
 /// @param[in] mut1 representation of the mutation of the first residue.
 /// @param[in] mut2 representation of the mutation of the second residue.
 /// @param[in] mut3 representation of the mutation of the third residue.
 /// @param[in] cslnum a number to identify the constellation.
 /// @param[in] ps Rosetta pose that all three residues belong to. In the pose,
-/// 	the occupancy of atoms in each residue is that AFTER the mutation.
+///  the occupancy of atoms in each residue is that AFTER the mutation.
 ///
 /// @remarks
-/// 	1. The file name of the constellation has the following format,
-/// 		SIIIIEC_siiiiec_tjjjjfd.pdb, where:
-/// 	- S is the first residue's start amino acid type
-/// 	- IIII is a four-digit field indicating the first residue's number in the
-/// 		input PDB file
-/// 	- E is the first residue's end amino acid type
-/// 	- C is the first residue's chain in the input PDB file
-/// 	- s is the second residue's start amino acid type
-/// 	- iiii is a four-digit field indicating the second residue's number in the
-/// 		input PDB file
-/// 	- e is the second residue's end amino acid type
-/// 	- c is the second residue's chain in the input PDB file
-/// 	- t is the third residue's start amino acid type
-/// 	- jjjj is a four-digit field indicating the third residue's number in the
-/// 		input PDB file
-/// 	- f is the third residue's end amino acid type
-/// 	- d is the third residue's chain in the input PDB file
+///  1. The file name of the constellation has the following format,
+///   SIIIIEC_siiiiec_tjjjjfd.pdb, where:
+///  - S is the first residue's start amino acid type
+///  - IIII is a four-digit field indicating the first residue's number in the
+///   input PDB file
+///  - E is the first residue's end amino acid type
+///  - C is the first residue's chain in the input PDB file
+///  - s is the second residue's start amino acid type
+///  - iiii is a four-digit field indicating the second residue's number in the
+///   input PDB file
+///  - e is the second residue's end amino acid type
+///  - c is the second residue's chain in the input PDB file
+///  - t is the third residue's start amino acid type
+///  - jjjj is a four-digit field indicating the third residue's number in the
+///   input PDB file
+///  - f is the third residue's end amino acid type
+///  - d is the third residue's chain in the input PDB file
 ///
 void out_triple_constel(ResMut const& mut1, ResMut const& mut2,
 	ResMut const& mut3, int const cslnum, Pose& ps) {
@@ -306,14 +308,14 @@ void out_triple_constel(ResMut const& mut1, ResMut const& mut2,
 	outPDB_stream.open(outPDB_name.str(), std::ios::out);
 	outPDB_stream << "HEADER CONST NUM " << cslnum <<
 		" TARGET MUTATION: " << mut1.cid << ':' << mut1.saa << mut1.pdbn <<
-			mut1.eaa <<
+		mut1.eaa <<
 		"  SECONDARY_MUTATION: " << mut2.cid << ':' << mut2.saa << mut2.pdbn <<
-			mut2.eaa <<
+		mut2.eaa <<
 		"  TERTIARY_MUTATION: " << mut3.cid << ':' << mut3.saa << mut3.pdbn <<
-			mut3.eaa << std::endl;
+		mut3.eaa << std::endl;
 
 	// check whether atoms must be stripped off the constellation
-	if(SingResCnlCrea::stripped()) {
+	if ( SingResCnlCrea::stripped() ) {
 		SingResCnlCrea::strip_atoms(ps, mut1.psn, mut1.eaa);
 		SingResCnlCrea::strip_atoms(ps, mut2.psn, mut2.eaa);
 		SingResCnlCrea::strip_atoms(ps, mut3.psn, mut3.eaa);
@@ -343,33 +345,33 @@ core::scoring::hbonds::HBondDatabaseCOP HBondCommon::hb_database;
 void HBondCommon::init() {
 
 	hb_database = core::scoring::hbonds::HBondDatabase::get_database
-                 (core::scoring::hbonds::HBondOptions().params_database_tag());
+		(core::scoring::hbonds::HBondOptions().params_database_tag());
 }
 
 
 /// @brief Given a residue's moiety in a constellation, returns true if it forms
-/// 	at least a hydrogen bond; returns false otherwise.
+///  at least a hydrogen bond; returns false otherwise.
 ///
 /// @param[in] ps pose to which the constellation belongs.
 /// @param[in] cnl indexes in the pose of the residues that contribute atoms to
-/// 	the constellation.
-///	@param[in] im index in cnl of the residue providing the moiety in question.
+///  the constellation.
+/// @param[in] im index in cnl of the residue providing the moiety in question.
 /// @param[in] is_donor boolean flag indicating whether the moiety has to be
-/// 	considered a donor (true) or an acceptor (false) of hydrogen bonds.
+///  considered a donor (true) or an acceptor (false) of hydrogen bonds.
 /// @param[in] hb_atoms names of the moiety's atoms whose hydrogen bonds are
-/// 	relevant.
+///  relevant.
 ///
 /// @remarks
-///		Assumption: the atom names in 'hb_atoms' are consistent with the value of
-/// 		'is_donor'.
-/// 	Note: this function neglects hydrogen bonds formed by the moiety and any
-/// 		atom in the side chain of a residue that contributes to the
-/// 		constellation. Such a neglection is overrestrictive with respect to
-/// 		those atoms in the side chain that are not part of the constellation.
+///  Assumption: the atom names in 'hb_atoms' are consistent with the value of
+///   'is_donor'.
+///  Note: this function neglects hydrogen bonds formed by the moiety and any
+///   atom in the side chain of a residue that contributes to the
+///   constellation. Such a neglection is overrestrictive with respect to
+///   those atoms in the side chain that are not part of the constellation.
 ///
 bool HBondCommon::is_rmoi_hbonded(Pose const& ps,
 	utility::vector1<Size> const& cnl, Size const im, bool const is_donor,
-  utility::vector1<std::string> const& hb_atoms) {
+	utility::vector1<std::string> const& hb_atoms) {
 
 	using core::scoring::hbonds::identify_hbonds_1way;
 	using core::conformation::Residue;
@@ -389,9 +391,9 @@ bool HBondCommon::is_rmoi_hbonded(Pose const& ps,
 
 	Residue const& rm( ps.residue( pim ) );
 	for ( core::graph::Graph::EdgeListConstIter
-	      nit = energy_graph.get_node(pim)->const_edge_list_begin(),
-	      nite = energy_graph.get_node(pim)->const_edge_list_end();
-	      nit != nite; ++nit ) {
+			nit = energy_graph.get_node(pim)->const_edge_list_begin(),
+			nite = energy_graph.get_node(pim)->const_edge_list_end();
+			nit != nite; ++nit ) {
 
 		Size const pin( (*nit)->get_other_ind(pim) );
 
@@ -400,42 +402,47 @@ bool HBondCommon::is_rmoi_hbonded(Pose const& ps,
 
 		Size const CSIZ = cnl.size();
 		bool nei_in_cnl = false;
-		for(Size i=1; i<=CSIZ; ++i)
-			if(cnl[i] == pin) {
+		for ( Size i=1; i<=CSIZ; ++i ) {
+			if ( cnl[i] == pin ) {
 				nei_in_cnl = true;
 				break;
 			}
-
-		if(is_donor) {
-
-			if(nei_in_cnl)
-				identify_hbonds_1way( *HBondCommon::hb_database, rm, rn, nnm, nnn, false,
-				                       true, false, true, true, hb_set);
-			else
-				identify_hbonds_1way( *HBondCommon::hb_database, rm, rn, nnm, nnn, false,
-                               true, false, true, false, hb_set);
 		}
-		else {
-			if(nei_in_cnl)
+
+		if ( is_donor ) {
+
+			if ( nei_in_cnl ) {
+				identify_hbonds_1way( *HBondCommon::hb_database, rm, rn, nnm, nnn, false,
+					true, false, true, true, hb_set);
+			} else {
+				identify_hbonds_1way( *HBondCommon::hb_database, rm, rn, nnm, nnn, false,
+					true, false, true, false, hb_set);
+			}
+		} else {
+			if ( nei_in_cnl ) {
 				identify_hbonds_1way( *HBondCommon::hb_database, rn, rm, nnn, nnm, false,
-		                           true, true, false, true, hb_set);
-			else
+					true, true, false, true, hb_set);
+			} else {
 				identify_hbonds_1way( *HBondCommon::hb_database, rn, rm, nnn, nnm, false,
-                               true, true, false, false, hb_set);
+					true, true, false, false, hb_set);
+			}
 		}
 	}
 
 	// check that at least one relevant hydrogen bond is present
 	Size N_HB_ATOMS = hb_atoms.size();
-	for(Size i=1; i<=N_HB_ATOMS; ++i)
-		if( !rm.has( hb_atoms[i] ) )
+	for ( Size i=1; i<=N_HB_ATOMS; ++i ) {
+		if ( !rm.has( hb_atoms[i] ) ) {
 			return false;
+		}
+	}
 
-	for(Size i=1; i<=N_HB_ATOMS; ++i) {
+	for ( Size i=1; i<=N_HB_ATOMS; ++i ) {
 		Size aidx = rm.atom_index( hb_atoms[i] );
 		core::id::AtomID aid(aidx, pim);
-		if(hb_set.atom_hbonds(aid).size())
+		if ( hb_set.atom_hbonds(aid).size() ) {
 			return true;
+		}
 	}
 
 	return false;
@@ -449,7 +456,7 @@ bool HBondCommon::is_rmoi_hbonded(Pose const& ps,
 /// @param[in] tgt Cartesian coordinates of a third, target atom.
 ///
 /// @return true if the distance of 'low' to 'tgt' is less than the distance of
-/// 	'hi' to 'tgt'; false otherwise.
+///  'hi' to 'tgt'; false otherwise.
 ///
 bool OrientCommon::is_closer_to_tgt(numeric::xyzVector<Real> const& low,
 	numeric::xyzVector<Real> const& hi, numeric::xyzVector<Real> const& tgt) {
@@ -462,44 +469,46 @@ bool OrientCommon::is_closer_to_tgt(numeric::xyzVector<Real> const& low,
 
 
 /// @brief Records the presence of given amino acid types in a given
-/// 	constellation.
+///  constellation.
 ///
 /// @param[in] ps a pose containing a target constellation.
 /// @param[in] cnl indexes in 'ps' of the residues contributing to the
-/// 	constellation.
+///  constellation.
 /// @param[in] aa_typs desired amino acid types for the residues contributing to
-/// 	 the constellation.
+///   the constellation.
 /// @param[out] aa_idxs vector that will map the desired amino acid types to the
-/// 	residue indexes in 'cnl'.
+///  residue indexes in 'cnl'.
 ///
 /// @return false if at least one amino acid type in 'aa_typs' is absent from
-/// 	the	constellation. Returns true otherwise; in this case, the ith value of
-/// 	 'aa_idxs' is the least index in 'cnl' of a residue having the ith amino
-/// 	 acid type in 'aa_typs' (i=1,...,aa_typs.size()).
+///  the constellation. Returns true otherwise; in this case, the ith value of
+///   'aa_idxs' is the least index in 'cnl' of a residue having the ith amino
+///   acid type in 'aa_typs' (i=1,...,aa_typs.size()).
 ///
 /// @remarks It is assumed that:
-/// 	1. 'cnl', 'aa_typs', and 'aa_idxs' have the same size.
+///  1. 'cnl', 'aa_typs', and 'aa_idxs' have the same size.
 ///   2.  different elements in 'aa_typs' have different values.
 ///
 bool PresenceCommon::are_aa_pres(core::pose::Pose const& ps,
-                                 utility::vector1<Size> const& cnl,
-                                 utility::vector1<core::chemical::AA> const& aa_typs,
-                                 utility::vector1<Size>& aa_idxs) {
+	utility::vector1<Size> const& cnl,
+	utility::vector1<core::chemical::AA> const& aa_typs,
+	utility::vector1<Size>& aa_idxs) {
 
 	const Size N = aa_typs.size();
-	for(Size i=1; i<=N; ++i) {
+	for ( Size i=1; i<=N; ++i ) {
 
 		core::chemical::AA tgt_aa = aa_typs[i];
 
 		Size j;
-		for(j=1; j<=N; ++j)
-			if(ps.aa(cnl[j]) == tgt_aa) {
+		for ( j=1; j<=N; ++j ) {
+			if ( ps.aa(cnl[j]) == tgt_aa ) {
 				aa_idxs[i] = j;
 				break;
 			}
+		}
 
-		if(j>N)
+		if ( j>N ) {
 			return false;
+		}
 	}
 
 	return true;
@@ -511,23 +520,25 @@ bool PresenceCommon::are_aa_pres(core::pose::Pose const& ps,
 /// @param[in] res: a residue.
 /// @param[in] anams vector of atom names to be found in the residue.
 /// @param[out] aidxs vector that will map the desired atom names to their
-/// 	indexes in the residue.
+///  indexes in the residue.
 ///
 /// @return false if at least one atom with a desired name is absent from
-/// 	the residue. Returns true otherwise; in this case, the ith element of
-/// 	'aidxs' will hold the index in 'res' of the atom having the ith name
-/// 	in 'anams' (i=1,...,anams.size()).
+///  the residue. Returns true otherwise; in this case, the ith element of
+///  'aidxs' will hold the index in 'res' of the atom having the ith name
+///  in 'anams' (i=1,...,anams.size()).
 ///
 bool PresenceCommon::are_atoms_pres(core::conformation::Residue const& res,
-                                    utility::vector1<std::string> const& anams,
-                                    utility::vector1<Size>& aidxs) {
+	utility::vector1<std::string> const& anams,
+	utility::vector1<Size>& aidxs) {
 
 	const Size N = anams.size();
-	for(Size i=1; i<=N; ++i)
-		if(res.has(anams[i]))
+	for ( Size i=1; i<=N; ++i ) {
+		if ( res.has(anams[i]) ) {
 			aidxs[i] = res.atom_index(anams[i]);
-		else
+		} else {
 			return false;
+		}
+	}
 
 	return true;
 }

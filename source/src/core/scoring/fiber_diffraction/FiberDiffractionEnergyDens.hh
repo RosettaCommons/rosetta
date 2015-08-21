@@ -68,17 +68,17 @@ public:
 
 	virtual void
 	eval_atom_derivative(
-		id::AtomID const & id,
-		pose::Pose const & pose,
-		kinematics::DomainMap const &, // domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
-		Vector & F1,
-		Vector & F2
+	id::AtomID const & id,
+	pose::Pose const & pose,
+	kinematics::DomainMap const &, // domain_map,
+	ScoreFunction const & sfxn,
+	EnergyMap const & weights,
+	Vector & F1,
+	Vector & F2
 	) const;*/
 
 	virtual void indicate_required_context_graphs(utility::vector1< bool > & /*context_graphs_required*/
-    ) const {}
+	) const {}
 
 
 	void
@@ -87,7 +87,7 @@ public:
 		ObjexxFCL::FArray1D< float > & rc,
 		ObjexxFCL::FArray1D< float > & phic,
 		ObjexxFCL::FArray1D< float > & zc,
-	        Real const c_
+		Real const c_
 	) const;
 
 private:

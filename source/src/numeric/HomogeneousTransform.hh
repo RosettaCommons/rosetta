@@ -206,7 +206,7 @@ public:
 
 		// Entry naming is reversed from that of xyzMatrix,
 		// see (xyzVector, xyzMatrix) constructor for specifc details.
-		
+
 		return xyzMatrix< T >::rows_constructor(
 			xyzVector< T >( xx_, yx_, zx_ ),
 			xyzVector< T >( xy_, yy_, zy_ ),
@@ -468,14 +468,14 @@ public:
 		T const FLOAT_PRECISION( 1e-5 );
 
 		// WARNING: Gimbal Lock!
-		if ( zz_ >= 1 - FLOAT_PRECISION ){
+		if ( zz_ >= 1 - FLOAT_PRECISION ) {
 			euler(1) = -std::atan2( sin_cos_range( yx_), sin_cos_range( xx_ ) );
 			euler(2) = 0.0;
 			euler(3) = 0.0;
 			return euler;
 		}
 
-		if ( zz_ <= -1 + FLOAT_PRECISION ){
+		if ( zz_ <= -1 + FLOAT_PRECISION ) {
 			euler(1) = -std::atan2( sin_cos_range( yx_), sin_cos_range( xx_ ) );
 			euler(2) = 0.0;
 			euler(3) = (T)numeric::constants::d::pi;

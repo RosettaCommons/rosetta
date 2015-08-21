@@ -88,7 +88,7 @@ public:
 		TS_TRACE( "Reading Crick parameters from the output pose." );
 		sprintf(outbuffer, "Number of Parameters objects in the output pose ParametersSet: %lu", testpose_->conformation().parameters_set(1)->n_parameters());
 		TS_TRACE( outbuffer );
-		for(core::Size i=1; i<=4; ++i) {
+		for ( core::Size i=1; i<=4; ++i ) {
 			BundleParametersOP h1params( utility::pointer::dynamic_pointer_cast<BundleParameters>( testpose_->conformation().parameters_set(1)->parameters(i) ) );
 			TS_ASSERT(h1params);
 			core::Real r0_1(h1params->r0());
@@ -98,7 +98,7 @@ public:
 			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str() );
 			TS_TRACE( outbuffer );
 
-			if(i==1 || i==3) {
+			if ( i==1 || i==3 ) {
 				TS_ASSERT_DELTA( r0_1, 5.0, 1e-5  );
 				TS_ASSERT_DELTA( omega0_1, 0.05, 1e-5  );
 				TS_ASSERT_DELTA( delta_omega0_1, 0.1 + (i==3 ? 3.141592654 : 0), 1e-5  );
@@ -166,7 +166,7 @@ public:
 
 		core::Size resind(1);
 
-		for(core::Size i=1; i<=4; ++i) {
+		for ( core::Size i=1; i<=4; ++i ) {
 			BundleParametersOP h1params( utility::pointer::dynamic_pointer_cast<BundleParameters>( testpose_->conformation().parameters_set(1)->parameters(i) ) );
 			TS_ASSERT(h1params);
 
@@ -174,7 +174,7 @@ public:
 
 			utility::vector1 < core::Size > residue_indices;
 
-			for(core::Size ir=1, irmax=h1params->n_residue(); ir<=irmax; ++ir) {
+			for ( core::Size ir=1, irmax=h1params->n_residue(); ir<=irmax; ++ir ) {
 				residue_indices.push_back( h1params->residue(ir)->seqpos() );
 				sprintf(outbuffer, "%s %lu", outbuffer, residue_indices[residue_indices.size()]);
 			}
@@ -182,10 +182,10 @@ public:
 			TS_TRACE(outbuffer);
 
 			core::Size expected_helix_size(10);
-			if(i==2 || i==4) expected_helix_size=12;
+			if ( i==2 || i==4 ) expected_helix_size=12;
 
 			TS_ASSERT(residue_indices.size()==expected_helix_size);
-			for(core::Size ii=1; ii<=expected_helix_size; ++ii) {
+			for ( core::Size ii=1; ii<=expected_helix_size; ++ii ) {
 				TS_ASSERT(residue_indices[ii]==resind);
 				resind++;
 			}
@@ -245,7 +245,7 @@ public:
 		TS_TRACE( "Reading Crick parameters from the cloned pose." );
 		sprintf(outbuffer, "Number of Parameters objects in the output pose ParametersSet: %lu", poseclone->conformation().parameters_set(1)->n_parameters());
 		TS_TRACE( outbuffer );
-		for(core::Size i=1; i<=4; ++i) {
+		for ( core::Size i=1; i<=4; ++i ) {
 			BundleParametersOP h1params( utility::pointer::dynamic_pointer_cast<BundleParameters>( poseclone->conformation().parameters_set(1)->parameters(i) ) );
 			TS_ASSERT(h1params);
 			core::Real r0_1(h1params->r0());
@@ -257,7 +257,7 @@ public:
 			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s z1_offset=%.4f z0_offset=%.4f", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str(), z1_off, z0_off );
 			TS_TRACE( outbuffer );
 
-			if(i==1 || i==3) {
+			if ( i==1 || i==3 ) {
 				TS_ASSERT_DELTA( r0_1, 5.0, 1e-5  );
 				TS_ASSERT_DELTA( omega0_1, 0.05, 1e-5  );
 				TS_ASSERT_DELTA( delta_omega0_1, 0.1 + (i==3 ? 3.141592654 : 0), 1e-5  );
@@ -282,7 +282,7 @@ public:
 		TS_TRACE( "Reading Crick parameters from the copied pose." );
 		sprintf(outbuffer, "Number of Parameters objects in the output pose ParametersSet: %lu", posecopy.conformation().parameters_set(1)->n_parameters());
 		TS_TRACE( outbuffer );
-		for(core::Size i=1; i<=4; ++i) {
+		for ( core::Size i=1; i<=4; ++i ) {
 			BundleParametersOP h1params( utility::pointer::dynamic_pointer_cast<BundleParameters>( posecopy.conformation().parameters_set(1)->parameters(i) ) );
 			TS_ASSERT(h1params);
 			core::Real r0_1(h1params->r0());
@@ -294,7 +294,7 @@ public:
 			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s z1_offset=%.4f z0_offset=%.4f", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str(), z1_off, z0_off );
 			TS_TRACE( outbuffer );
 
-			if(i==1 || i==3) {
+			if ( i==1 || i==3 ) {
 				TS_ASSERT_DELTA( r0_1, 5.0, 1e-5  );
 				TS_ASSERT_DELTA( omega0_1, 0.05, 1e-5  );
 				TS_ASSERT_DELTA( delta_omega0_1, 0.1 + (i==3 ? 3.141592654 : 0), 1e-5  );
@@ -320,7 +320,7 @@ public:
 		TS_TRACE( "Reading Crick parameters from the assignment-copied pose." );
 		sprintf(outbuffer, "Number of Parameters objects in the output pose ParametersSet: %lu", posecopy2.conformation().parameters_set(1)->n_parameters());
 		TS_TRACE( outbuffer );
-		for(core::Size i=1; i<=4; ++i) {
+		for ( core::Size i=1; i<=4; ++i ) {
 			BundleParametersOP h1params( utility::pointer::dynamic_pointer_cast<BundleParameters>( posecopy2.conformation().parameters_set(1)->parameters(i) ) );
 			TS_ASSERT(h1params);
 			core::Real r0_1(h1params->r0());
@@ -332,7 +332,7 @@ public:
 			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s z1_offset=%.4f z0_offset=%.4f", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str(), z1_off, z0_off );
 			TS_TRACE( outbuffer );
 
-			if(i==1 || i==3) {
+			if ( i==1 || i==3 ) {
 				TS_ASSERT_DELTA( r0_1, 5.0, 1e-5  );
 				TS_ASSERT_DELTA( omega0_1, 0.05, 1e-5  );
 				TS_ASSERT_DELTA( delta_omega0_1, 0.1 + (i==3 ? 3.141592654 : 0), 1e-5  );

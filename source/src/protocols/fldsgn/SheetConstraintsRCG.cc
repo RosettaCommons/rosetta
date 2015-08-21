@@ -46,8 +46,8 @@
 
 static thread_local basic::Tracer TR( "protocols.fldsgn.SheetConstraintsRCG" );
 
-namespace protocols{
-namespace fldsgn{
+namespace protocols {
+namespace fldsgn {
 
 std::string
 SheetCstGeneratorCreator::keyname() const
@@ -131,10 +131,10 @@ SheetConstraintsRCG::~SheetConstraintsRCG() {}
 
 void
 SheetConstraintsRCG::parse_my_tag( TagCOP const tag,
-												basic::datacache::DataMap & data,
-												protocols::filters::Filters_map const & filters,
-												protocols::moves::Movers_map const & movers,
-												core::pose::Pose const & pose )
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const & pose )
 {
 	RemodelConstraintGenerator::parse_my_tag( tag, data, filters, movers, pose );
 	// for all of these, the default is to not change what is already  present in the class
@@ -171,10 +171,10 @@ SheetConstraintsRCG::clone() const
 void
 SheetConstraintsRCG::set_blueprint( std::string const & blueprint_file )
 {
- 	if ( blueprint_file == "" ) {
+	if ( blueprint_file == "" ) {
 		utility_exit_with_message( "SheetCstGenerator requires a blueprint file" );
-  }
-  set_blueprint( BluePrintOP( new protocols::jd2::parser::BluePrint( blueprint_file ) ) );
+	}
+	set_blueprint( BluePrintOP( new protocols::jd2::parser::BluePrint( blueprint_file ) ) );
 	if ( ! blueprint_ ) {
 		utility_exit_with_message( "SheetCstGenerator tried to read a blueprint file, but failed to create the proper object." );
 	}
@@ -266,8 +266,8 @@ SheetConstraintsRCG::generate_remodel_constraints( Pose const & pose )
 	// set constraints to csts
 	core::Size nres( pose.total_residue() );
 	//flo sep '12 in case we have ligands in the pose, don't count them
-	for( core::Size i = nres; i != 0; i-- ){
-		if( pose.residue_type(i).is_ligand() ) {
+	for ( core::Size i = nres; i != 0; i-- ) {
+		if ( pose.residue_type(i).is_ligand() ) {
 			nres--;
 			TR << pose.residue( i ).name3() << i << " = ligand" << std::endl;
 		}
@@ -287,33 +287,32 @@ SheetConstraintsRCG::generate_remodel_constraints( Pose const & pose )
 	for ( utility::vector1< StrandPairingOP >::const_iterator it=spairs.begin(); it!=spairs.end(); ++it ) {
 
 		StrandPairing spair=**it;
-		for( core::Size iaa=spair.begin1(); iaa<=spair.end1(); iaa++ ) {
+		for ( core::Size iaa=spair.begin1(); iaa<=spair.end1(); iaa++ ) {
 			core::Size jaa( spair.residue_pair( iaa ) );
 			core::id::AtomID atom1( pose.residue_type( iaa ).atom_index( "CA" ), iaa );
 			core::id::AtomID atom2( pose.residue_type( jaa ).atom_index( "CA" ), jaa );
 			csts.push_back( core::scoring::constraints::ConstraintOP( new AtomPairConstraint( atom1, atom2, cstfunc ) ) );
 			//flo sep '12: constrain dihedral, might be more accurate
-			if( ( !constrain_dist_only_ ) ||
-					( basic::options::option[ basic::options::OptionKeys::flxbb::constraints_sheet_include_cacb_pseudotorsion ].value() ) ){
+			if ( ( !constrain_dist_only_ ) ||
+					( basic::options::option[ basic::options::OptionKeys::flxbb::constraints_sheet_include_cacb_pseudotorsion ].value() ) ) {
 				core::id::AtomID resi_n( pose.residue_type( iaa ).atom_index( "N" ), iaa );
 				core::id::AtomID resi_c( pose.residue_type( iaa ).atom_index( "C" ), iaa );
 				core::id::AtomID resi_o( pose.residue_type( iaa ).atom_index( "O" ), iaa );
-        core::id::AtomID resj_n( pose.residue_type( jaa ).atom_index( "N" ), jaa );
-        core::id::AtomID resj_c( pose.residue_type( jaa ).atom_index( "C" ), jaa );
-        core::id::AtomID resj_o( pose.residue_type( jaa ).atom_index( "O" ), jaa );
+				core::id::AtomID resj_n( pose.residue_type( jaa ).atom_index( "N" ), jaa );
+				core::id::AtomID resj_c( pose.residue_type( jaa ).atom_index( "C" ), jaa );
+				core::id::AtomID resj_o( pose.residue_type( jaa ).atom_index( "O" ), jaa );
 				csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::DihedralConstraint( resi_o, resi_n, resi_c, resj_c, bb_dihedral_func ) ) );
 				csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::DihedralConstraint( resj_o, resj_n, resj_c, resi_c, bb_dihedral_func ) ) );
-				if( spair.orient() == 'P' ){
+				if ( spair.orient() == 'P' ) {
 					csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AngleConstraint( resi_n, resi_c, resj_c, bb_angle_func ) ) );
 					csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AngleConstraint( resj_n, resj_c, resi_c, bb_angle_func ) ) );
+				} else if ( spair.orient() == 'A' ) {
+					csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AngleConstraint( resi_n, resi_c, resj_n, bb_angle_func ) ) );
+					csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AngleConstraint( resj_n, resj_c, resi_n, bb_angle_func ) ) );
 				}
-				else if( spair.orient() == 'A' ){
-          csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AngleConstraint( resi_n, resi_c, resj_n, bb_angle_func ) ) );
-          csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AngleConstraint( resj_n, resj_c, resi_n, bb_angle_func ) ) );
-				}
-				if( (pose.residue_type( iaa ).name3() == "GLY") || (pose.residue_type( jaa ).name3() == "GLY" ) ) continue; // don't bother restraining cacb dihedral with gly
+				if ( (pose.residue_type( iaa ).name3() == "GLY") || (pose.residue_type( jaa ).name3() == "GLY" ) ) continue; // don't bother restraining cacb dihedral with gly
 				core::id::AtomID resi_cb( pose.residue_type( iaa ).atom_index( "CB" ), iaa );
-      	core::id::AtomID resj_cb( pose.residue_type( jaa ).atom_index( "CB" ), jaa );
+				core::id::AtomID resj_cb( pose.residue_type( jaa ).atom_index( "CB" ), jaa );
 				csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::DihedralConstraint( resi_cb, atom1, atom2, resj_cb, cacb_dihedral_func ) ) );
 				TR << "Added dihedral constraint between residues " << iaa << " and " << jaa << std::endl;
 			}

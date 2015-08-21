@@ -71,17 +71,17 @@ namespace dna {
 
 bool ResTypeSequence_lt::operator() ( ResTypeSequence const & a, ResTypeSequence const & b ) const
 {
-		core::Size const asize( a.size() ), bsize( b.size() );
-		if ( asize < bsize ) return true;
-		if ( asize > bsize ) return false;
-		for ( ResTypeSequence::const_iterator ait( a.begin() ), bit( b.begin() ), aend( a.end() ),
-				bend( b.end() ); ait != aend && bit != bend; ++ait, ++bit ) {
-			if ( ait->first < bit->first ) return true;
-			if ( ait->first > bit->first ) return false;
-			if ( ait->second->name1() < bit->second->name1() ) return true;
-			if ( ait->second->name1() > bit->second->name1() ) return false;
-		}
-		return false;
+	core::Size const asize( a.size() ), bsize( b.size() );
+	if ( asize < bsize ) return true;
+	if ( asize > bsize ) return false;
+	for ( ResTypeSequence::const_iterator ait( a.begin() ), bit( b.begin() ), aend( a.end() ),
+			bend( b.end() ); ait != aend && bit != bend; ++ait, ++bit ) {
+		if ( ait->first < bit->first ) return true;
+		if ( ait->first > bit->first ) return false;
+		if ( ait->second->name1() < bit->second->name1() ) return true;
+		if ( ait->second->name1() > bit->second->name1() ) return false;
+	}
+	return false;
 }
 
 
@@ -90,18 +90,18 @@ int const PRECISION(3); // number of decimal places for floating point numbers
 using utility::vector1;
 using utility::string_split;
 using namespace core;
-	using namespace chemical;
-	using namespace conformation;
-	using namespace optimization;
-	using namespace basic::options;
-	using namespace pack;
-		using namespace task;
-			using namespace operation;
-	using namespace pose;
-	using namespace scoring;
+using namespace chemical;
+using namespace conformation;
+using namespace optimization;
+using namespace basic::options;
+using namespace pack;
+using namespace task;
+using namespace operation;
+using namespace pose;
+using namespace scoring;
 
 using namespace ObjexxFCL;
-	using namespace ObjexxFCL::format;
+using namespace ObjexxFCL::format;
 
 using basic::t_warning;
 using basic::t_info;
@@ -131,24 +131,24 @@ DnaInterfacePackerCreator::mover_name()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief lightweight default constructor
 DnaInterfacePacker::DnaInterfacePacker()
-	: protocols::simple_moves::PackRotamersMover( std::string("DnaInterfacePacker") ),
-		reference_pose_(/* 0 */),
-		dna_chains_(/* 0 */),
-		minimize_(false),
-		filename_root_( option[ OptionKeys::out::prefix ]() ),
-		binding_E_(false),
-		probe_specificity_(false),
-		reversion_scan_(false),
-		protein_scan_(false),
-		base_only_(false),
-		include_dna_potentials_in_specificity_calculations_(false),
-		num_repacks_(1),
-		specificity_repacks_(1),
-		minimize_options_(/* 0 */),
-		min_movemap_(/* 0 */),
-		pdboutput_(/* 0 */),
-		initialization_state_(false),
-		pdbname_("")
+: protocols::simple_moves::PackRotamersMover( std::string("DnaInterfacePacker") ),
+	reference_pose_(/* 0 */),
+	dna_chains_(/* 0 */),
+	minimize_(false),
+	filename_root_( option[ OptionKeys::out::prefix ]() ),
+	binding_E_(false),
+	probe_specificity_(false),
+	reversion_scan_(false),
+	protein_scan_(false),
+	base_only_(false),
+	include_dna_potentials_in_specificity_calculations_(false),
+	num_repacks_(1),
+	specificity_repacks_(1),
+	minimize_options_(/* 0 */),
+	min_movemap_(/* 0 */),
+	pdboutput_(/* 0 */),
+	initialization_state_(false),
+	pdbname_("")
 {}
 
 /// @brief functional constructor
@@ -156,24 +156,24 @@ DnaInterfacePacker::DnaInterfacePacker(
 	ScoreFunctionOP scorefxn_in,
 	bool minimize,
 	std::string filename_root
-   ) : protocols::simple_moves::PackRotamersMover( std::string("DnaInterfacePacker") ),
-		reference_pose_(/* 0 */),
-		dna_chains_(/* 0 */),
-		minimize_( minimize ),
-		filename_root_( filename_root ),
-		binding_E_(false),
-		probe_specificity_(false),
-		reversion_scan_(false),
-		protein_scan_(false),
-		base_only_(false),
-		include_dna_potentials_in_specificity_calculations_(false),
-		num_repacks_(1),
-		specificity_repacks_(1),
-		minimize_options_(/* 0 */),
-		min_movemap_(/* 0 */),
-		pdboutput_(/* 0 */),
-		initialization_state_(false),
-		pdbname_("")
+) : protocols::simple_moves::PackRotamersMover( std::string("DnaInterfacePacker") ),
+	reference_pose_(/* 0 */),
+	dna_chains_(/* 0 */),
+	minimize_( minimize ),
+	filename_root_( filename_root ),
+	binding_E_(false),
+	probe_specificity_(false),
+	reversion_scan_(false),
+	protein_scan_(false),
+	base_only_(false),
+	include_dna_potentials_in_specificity_calculations_(false),
+	num_repacks_(1),
+	specificity_repacks_(1),
+	minimize_options_(/* 0 */),
+	min_movemap_(/* 0 */),
+	pdboutput_(/* 0 */),
+	initialization_state_(false),
+	pdbname_("")
 {
 	score_function( scorefxn_in ); // calls PackRotamersMover setter
 	binding_E_ = option[ OptionKeys::dna::design::binding ]();
@@ -236,7 +236,7 @@ DnaInterfacePacker::standard_packing( Pose & pose )
 
 	// loop over DNA sequences
 	for ( ResTypeSequences::const_iterator dnaseq( dna_sequences_.begin() ),
-		end( dna_sequences_.end() ); dnaseq != end; ++dnaseq ) {
+			end( dna_sequences_.end() ); dnaseq != end; ++dnaseq ) {
 		TR << "Packing ";
 		print_sequence_pdb_nums( *dnaseq, pose, TR );
 
@@ -328,10 +328,12 @@ DnaInterfacePacker::post_packing( Pose & pose, ResTypeSequence const & dnaseq, S
 		std::pair< Real, Real > overall_specificities( 0., 0. );
 		ResTypeSequence currseq( current_working_sequence( pose ) );
 		// look up overall specificity scores, pass to reversion routine as baseline
-		if ( specificities.first.find( currseq ) != specificities.first.end() )
+		if ( specificities.first.find( currseq ) != specificities.first.end() ) {
 			overall_specificities.first = specificities.first[ currseq ];
-		if ( specificities.second.find( currseq ) != specificities.second.end() )
+		}
+		if ( specificities.second.find( currseq ) != specificities.second.end() ) {
 			overall_specificities.second = specificities.second[ currseq ];
+		}
 		reversion_scan( pose, bound_score, binding_score, overall_specificities );
 	}
 
@@ -412,9 +414,8 @@ DnaInterfacePacker::init_standard( Pose & pose )
 		TR << "DNA sequences to be considered:" << '\n';
 		print_sequences_pdb_nums( dna_sequences_, pose, TR );
 		TR << std::endl;
-	}
+	} else dna_sequences_.push_back( ResTypeSequence() );
 	// no DNA sequences specified by user. add a dummy sequence (placeholder allowing loop)
-	else dna_sequences_.push_back( ResTypeSequence() );
 	// if 'dna_sequences_' is still empty at this point, the SimAnnealer will perform DNA rotamer substitutions using any available DNA rotamers (including mutation). To constrain designed DNA sequences to Watson-Crick pairing, see WatsonCrickRotamerCouplings
 
 	if ( minimize_ ) {
@@ -524,12 +525,12 @@ DnaInterfacePacker::make_dna_sequence_combinations()
 	ResTypeSequence sequence; // empty starter sequence for the following recursive function
 	make_sequence_combinations( seq_indices.begin(), seq_indices, task(), sequence, dna_sequences_ );
 
-//	TR << std::flush << "Single-stranded sequences:" << '\n';
-//	print_sequences_pdb_nums( dna_sequences_, pose, TR );
-//	TR << std::endl;
+	// TR << std::flush << "Single-stranded sequences:" << '\n';
+	// print_sequences_pdb_nums( dna_sequences_, pose, TR );
+	// TR << std::endl;
 
 	for ( ResTypeSequences::iterator sequence( dna_sequences_.begin() ), end( dna_sequences_.end() );
-				sequence != end; ++sequence ) {
+			sequence != end; ++sequence ) {
 		add_complementary_sequence( *sequence );
 	}
 }
@@ -573,7 +574,7 @@ DnaInterfacePacker::unbound_score(
 	std::string pdbname // = ""
 )
 {
-//	TR << "Calculating unbound score..." << std::endl;
+	// TR << "Calculating unbound score..." << std::endl;
 	Pose unbound_pose( pose );
 	SeparateDnaFromNonDna unbind;
 	unbind.apply( unbound_pose );
@@ -620,11 +621,11 @@ std::pair< Real, Real > DnaInterfacePacker::measure_specificity( Pose & pose )
 		add_complementary_sequence( *sequence );
 	}
 
-//	for ( ResTypeSequences::iterator sequence( specificity_sequences.begin() ),
-//			end( specificity_sequences.end() ); sequence != end; ++sequence ) {
-//		print_sequence_pdb_nums( *sequence, pose, TR_spec );
-//	}
-//	TR_spec << std::endl;
+	// for ( ResTypeSequences::iterator sequence( specificity_sequences.begin() ),
+	//   end( specificity_sequences.end() ); sequence != end; ++sequence ) {
+	//  print_sequence_pdb_nums( *sequence, pose, TR_spec );
+	// }
+	// TR_spec << std::endl;
 
 	// first element is bound, second binding if binding_ flag is true
 	std::pair< SequenceScores, SequenceScores > sequence_scores(
@@ -674,7 +675,7 @@ DnaInterfacePacker::measure_bp_specificities( Pose & pose )
 		ResidueLevelTask const & rtask( task()->residue_task(index) );
 		// add competitors for this position
 		for ( ResidueLevelTask::ResidueTypeCOPListConstIter type( rtask.allowed_residue_types_begin() ),
-			end_type( rtask.allowed_residue_types_end() ); type != end_type; ++type ) {
+				end_type( rtask.allowed_residue_types_end() ); type != end_type; ++type ) {
 			if ( (*type)->aa() == bppos->second->aa() ) continue; // avoid duplicating input sequence
 			// ignore adduct variant types
 			if ( (*type)->has_variant_type( chemical::ADDUCT_VARIANT ) ) continue;
@@ -714,11 +715,11 @@ DnaInterfacePacker::measure_bp_specificities( Pose & pose )
 		}
 		// accumulate sequence scores for overall calculation
 		for ( SequenceScores::const_iterator ss_it( sequence_scores.first.begin() ),
-			ss_end( sequence_scores.first.end() ); ss_it != ss_end; ++ss_it ) {
+				ss_end( sequence_scores.first.end() ); ss_it != ss_end; ++ss_it ) {
 			bound_scores[ ss_it->first ] = ss_it->second;
 		}
 		for ( SequenceScores::const_iterator ss_it( sequence_scores.second.begin() ),
-			ss_end( sequence_scores.second.end() ); ss_it != ss_end; ++ss_it ) {
+				ss_end( sequence_scores.second.end() ); ss_it != ss_end; ++ss_it ) {
 			binding_scores[ ss_it->first ] = ss_it->second;
 		}
 	}
@@ -767,7 +768,7 @@ DnaInterfacePacker::measure_specificities( Pose & pose, ResTypeSequences const &
 	SequenceScores sequence_scores, sequence_binding_scores;
 
 	for ( ResTypeSequences::const_iterator dna_sequence( dna_sequences.begin() ),
-		end( dna_sequences.end() ); dna_sequence != end; ++dna_sequence ) {
+			end( dna_sequences.end() ); dna_sequence != end; ++dna_sequence ) {
 		Real best_trial_E(0), best_trial_binding_E(0);
 		// restrict packer to current protein sequence and this DNA sequence
 		utility::vector0< int > rot_to_pack;
@@ -832,7 +833,7 @@ DnaInterfacePacker::calculate_specificity(
 	// find low energy
 	Real low(0);
 	for ( SequenceScores::const_iterator iter( sequence_scores.begin() );
-				iter != sequence_scores.end(); ++iter ) {
+			iter != sequence_scores.end(); ++iter ) {
 		Real score( iter->second );
 		if ( iter == sequence_scores.begin() || ( score < low ) ) low = score;
 	}
@@ -840,7 +841,7 @@ DnaInterfacePacker::calculate_specificity(
 	Real const inv_temp( 1.0 / temp );
 	Real num(0), denom(0);
 	for ( SequenceScores::const_iterator iter( sequence_scores.begin() );
-				iter != sequence_scores.end(); ++iter ) {
+			iter != sequence_scores.end(); ++iter ) {
 		ResTypeSequence const & sequence( iter->first );
 		Real score( iter->second );
 		TR_spec << "\t";
@@ -870,13 +871,13 @@ DnaInterfacePacker::calculate_specificity(
 class Reversion {
 public:
 	Reversion( Size i = 0, ResidueTypeCOP t = 0 )
-		: index(i), type(t), dscore_bound(0.), dspec_bound(0.), dscore_binding(0.), dspec_binding(0.) {}
+	: index(i), type(t), dscore_bound(0.), dspec_bound(0.), dscore_binding(0.), dspec_binding(0.) {}
 	~Reversion(){}
 	// assign a number to the effect of this reversion
 	Real reversion_score() const { return -1 * dspec_binding; }
 	// for sorting when looking for the 'most acceptable' reversion in a set of reversions
 	bool operator < ( Reversion const & other ) const
-		{ return reversion_score() < other.reversion_score(); }
+	{ return reversion_score() < other.reversion_score(); }
 	Size index;
 	ResidueTypeCOP type;
 	Real dscore_bound, dspec_bound, dscore_binding, dspec_binding;
@@ -929,7 +930,7 @@ DnaInterfacePacker::reversion_scan(
 				rev != end; ++rev ) {
 			Size const index( rev->index );
 			ResidueTypeCOP starting_type( fixed_residue_types[ index ] ),
-							reference_type( reference_residue_types_[ index ] ); // 'reference' == 'native'
+				reference_type( reference_residue_types_[ index ] ); // 'reference' == 'native'
 			fixed_residue_types[ index ] = reference_type;
 
 			Real best_score(0.), best_binding_score(0.);
@@ -988,7 +989,7 @@ DnaInterfacePacker::reversion_scan(
 			// make 'best' reversion 'permanent'
 			Size const index( rev->index );
 			ResidueTypeCOP starting_type( fixed_residue_types[ index ] ),
-									reference_type( reference_residue_types_[ index ] ); // 'reference' == 'native'
+				reference_type( reference_residue_types_[ index ] ); // 'reference' == 'native'
 			fixed_residue_types[ index ] = reference_type;
 			TR << "(round " << round << ") Reversion from " << starting_type->name3()
 				<< " to " << reference_type->name3() << " at ";
@@ -1045,7 +1046,7 @@ DnaInterfacePacker::protein_scan( Pose & pose )
 	ResidueTypeCOPs allowed_type_caps;
 	ResidueTypeSet const & rts( pose.residue(1).residue_type_set() );
 	for ( std::string::const_iterator typechar( typestring.begin() );
-		typechar != typestring.end(); ++typechar ) {
+			typechar != typestring.end(); ++typechar ) {
 		ResidueTypeCOP aa_type( rts.get_representative_type_aa( aa_from_oneletter_code( *typechar ) ) );
 		if ( ! aa_type ) {
 			TR(t_warning) << "no ResidueType found in ResidueTypeSet for " << *typechar << std::endl;
@@ -1098,7 +1099,7 @@ DnaInterfacePacker::protein_scan( Pose & pose )
 	}
 
 #ifndef WIN32
-// this statement causes a build error on Windows.
+	// this statement causes a build error on Windows.
 	outfile << std::showpoint << std::fixed << std::setprecision(PRECISION);
 #endif
 
@@ -1115,37 +1116,37 @@ DnaInterfacePacker::protein_scan( Pose & pose )
 
 	// repack [and minimize] native interface in the relevant region, measure specificity
 	{ // scope
-	Pose best_pose( pose );
-	for ( Size trial(1); trial <= num_repacks_; ++trial ) {
-		// repack bound pose
-		utility::vector0<int> native_rot_to_pack;
-		restrict_to_single_sequence( rotamer_sets(), pose_residue_types, native_rot_to_pack );
-		// calls PackRotamersMover method
-		run( pose, native_rot_to_pack );
+		Pose best_pose( pose );
+		for ( Size trial(1); trial <= num_repacks_; ++trial ) {
+			// repack bound pose
+			utility::vector0<int> native_rot_to_pack;
+			restrict_to_single_sequence( rotamer_sets(), pose_residue_types, native_rot_to_pack );
+			// calls PackRotamersMover method
+			run( pose, native_rot_to_pack );
 
-		if ( min_movemap_ != 0 && minimize_options_ != 0 ) {
-			AtomTreeMinimizer().run( pose, *min_movemap_, *score_function(), *minimize_options_ );
+			if ( min_movemap_ != 0 && minimize_options_ != 0 ) {
+				AtomTreeMinimizer().run( pose, *min_movemap_, *score_function(), *minimize_options_ );
+			}
+			// native bound score
+			Real const native_score( ( *score_function() )( pose ) );
+
+			if ( trial == 1 || native_score < best_native_score ) {
+				best_native_score = native_score;
+				// native binding score (bound - unbound)
+				if ( binding_E_ ) best_native_dG = native_score - unbound_score( pose );
+				best_native_specificities  = measure_specificity( pose );
+				best_pose = pose;
+			}
 		}
-		// native bound score
-		Real const native_score( ( *score_function() )( pose ) );
+		// the interface is now repacked [and minimized] in the relevant region for subsequent calculations
+		pose = best_pose;
 
-		if ( trial == 1 || native_score < best_native_score ) {
-			best_native_score = native_score;
-			// native binding score (bound - unbound)
-			if ( binding_E_ ) best_native_dG = native_score - unbound_score( pose );
-			best_native_specificities  = measure_specificity( pose );
-			best_pose = pose;
-		}
-	}
-	// the interface is now repacked [and minimized] in the relevant region for subsequent calculations
-	pose = best_pose;
-
-	outfile << "Scanning protein positions that interface with DNA position(s) "
-		<< dna_seq_tag( pose, current_working_sequence( pose ) ) << '\n';
-	outfile << "Using native scores from best trial: " << "bound = " << best_native_score
-		<< ", binding = " << best_native_dG << ", specificity.bound = "
-		<< best_native_specificities.first << ", specificity.binding = "
-		<< best_native_specificities.second << '\n';
+		outfile << "Scanning protein positions that interface with DNA position(s) "
+			<< dna_seq_tag( pose, current_working_sequence( pose ) ) << '\n';
+		outfile << "Using native scores from best trial: " << "bound = " << best_native_score
+			<< ", binding = " << best_native_dG << ", specificity.bound = "
+			<< best_native_specificities.first << ", specificity.binding = "
+			<< best_native_specificities.second << '\n';
 
 	} // end scope
 
@@ -1168,7 +1169,7 @@ DnaInterfacePacker::protein_scan( Pose & pose )
 		ResidueTypeCOP native_type( pose_residue_types[ *index ] );
 
 		for ( ResidueTypeCOPs::const_iterator scan_type( allowed_type_caps.begin() );
-			scan_type != allowed_type_caps.end(); ++scan_type ) {
+				scan_type != allowed_type_caps.end(); ++scan_type ) {
 
 			// ensure that this type was allowed by the PackerTask/RotamerSets/I.G. before proceeding
 			ResidueLevelTask const & rtask( task()->residue_task(*index) );

@@ -123,7 +123,7 @@ public:
 	void set_indent(int num_spaces)
 	{
 		std::ostringstream s;
-		for(int i = 0; i < num_spaces; ++i) s << ' ';
+		for ( int i = 0; i < num_spaces; ++i ) s << ' ';
 		indent_str_ = s.str();
 	}
 
@@ -139,11 +139,10 @@ protected:
 	/// @brief Check that we're in the expected context (either map or list)
 	bool assert_in(bool in_map, std::string const & msg)
 	{
-		if( in_map_.empty() || in_map_.back() != in_map ) {
+		if ( in_map_.empty() || in_map_.back() != in_map ) {
 			basic::Warning() << "Bad YAML: " << msg << "\n";
 			return false;
-		}
-		else return true;
+		} else return true;
 	}
 
 	/// @brief Write the key part of a key-value pair.
@@ -252,7 +251,7 @@ protected:
 	{
 		bool needs_quotes(false); // dummy val; will be overwritten below
 		std::string t = escape_string(s, needs_quotes);
-		if( needs_quotes ) return "\""+t+"\"";
+		if ( needs_quotes ) return "\""+t+"\"";
 		else return t;
 	}
 
@@ -260,15 +259,14 @@ protected:
 	void do_indent(bool write_comma=true)
 	{
 		bool indent = indent_.back();
-		if( indent ) {
+		if ( indent ) {
 			out_ << "\n";
 			int depth = (indent_depth_.empty() ? 0 : indent_depth_.back());
-			for(int i = 0; i < depth; ++i) out_ << indent_str_;
-		}
-		else {
-			if( write_comma ) {
+			for ( int i = 0; i < depth; ++i ) out_ << indent_str_;
+		} else {
+			if ( write_comma ) {
 				bool first = first_.back();
-				if( first ) first_[ first_.size()-1 ] = false;
+				if ( first ) first_[ first_.size()-1 ] = false;
 				else out_ << ",";
 			}
 			out_ << " ";
@@ -280,23 +278,23 @@ protected:
 	void write_list_marker()
 	{
 		bool indent = indent_.back();
-		if( indent ) out_ << "- ";
+		if ( indent ) out_ << "- ";
 	}
 
 	/// @details YAML only uses brackets and braces if data is not being indented.
 	virtual
 	void start_raw(bool is_map, bool indent)
 	{
-		if( !indent ) {
-			if( is_map ) out_ << "{ ";
+		if ( !indent ) {
+			if ( is_map ) out_ << "{ ";
 			else out_ << "[ ";
 		}
 		in_map_.push_back(is_map);
 		first_.push_back(true);
 		// Once you start not indenting, no children can be indented
-		if( indent_.empty() ) indent_.push_back(indent);
+		if ( indent_.empty() ) indent_.push_back(indent);
 		else indent_.push_back( indent_.back() & indent );
-		if( indent_depth_.empty() ) indent_depth_.push_back(1);
+		if ( indent_depth_.empty() ) indent_depth_.push_back(1);
 		else indent_depth_.push_back(indent_depth_.back() + 1);
 	}
 
@@ -304,15 +302,15 @@ protected:
 	virtual
 	void end_raw()
 	{
-		if( in_map_.empty() ) return; // bad op
+		if ( in_map_.empty() ) return; // bad op
 		bool indent = indent_.back();
 		bool is_map = in_map_.back();
 		// This is popped first to get the closing brace/bracket to line up right.
 		// Other pops go after do_indent() or weird stuff could happen.
 		indent_depth_.pop_back();
-		if( !indent ) {
+		if ( !indent ) {
 			//do_indent(false /* no trailing comma */);
-			if( is_map ) out_ << " }";
+			if ( is_map ) out_ << " }";
 			else out_ << " ]";
 		}
 		in_map_.pop_back();
@@ -383,18 +381,17 @@ protected:
 	virtual
 	void do_indent(bool write_comma=true)
 	{
-		if( write_comma ) {
+		if ( write_comma ) {
 			bool first = first_.back();
-			if( first ) first_[ first_.size()-1 ] = false;
+			if ( first ) first_[ first_.size()-1 ] = false;
 			else out_ << ",";
 		}
 		bool indent = indent_.back();
-		if( indent ) {
+		if ( indent ) {
 			out_ << "\n";
 			int depth = (indent_depth_.empty() ? 0 : indent_depth_.back());
-			for(int i = 0; i < depth; ++i) out_ << indent_str_;
-		}
-		else out_ << " ";
+			for ( int i = 0; i < depth; ++i ) out_ << indent_str_;
+		} else out_ << " ";
 	}
 
 	/// @brief JSON has no special marker for list items
@@ -405,15 +402,15 @@ protected:
 	virtual
 	void start_raw(bool is_map, bool indent)
 	{
-		if( is_map ) out_ << "{";
+		if ( is_map ) out_ << "{";
 		else out_ << "[";
 		//if( !indent ) out_ << " "; // not needed
 		in_map_.push_back(is_map);
 		first_.push_back(true);
 		// Once you start not indenting, no children can be indented
-		if( indent_.empty() ) indent_.push_back(indent);
+		if ( indent_.empty() ) indent_.push_back(indent);
 		else indent_.push_back( indent_.back() & indent );
-		if( indent_depth_.empty() ) indent_depth_.push_back(1);
+		if ( indent_depth_.empty() ) indent_depth_.push_back(1);
 		else indent_depth_.push_back(indent_depth_.back() + 1);
 	}
 
@@ -421,13 +418,13 @@ protected:
 	virtual
 	void end_raw()
 	{
-		if( in_map_.empty() ) return; // bad op
+		if ( in_map_.empty() ) return; // bad op
 		bool is_map = in_map_.back();
 		// This is popped first to get the closing brace/bracket to line up right.
 		// Other pops go after do_indent() or weird stuff could happen.
 		indent_depth_.pop_back();
 		do_indent(false /* no trailing comma */);
-		if( is_map ) out_ << "}";
+		if ( is_map ) out_ << "}";
 		else out_ << "]";
 		in_map_.pop_back();
 		first_.pop_back();

@@ -30,9 +30,9 @@ public:
 		depth_ = 0;
 	}
 
-	triangle( const numeric::xyzVector<float> vertices[], const numeric::xyzVector<float> normals[] )	{
-		for (int i=0; i<3; ++i) {
-			for (int j=0; j<3; ++j) {
+	triangle( const numeric::xyzVector<float> vertices[], const numeric::xyzVector<float> normals[] ) {
+		for ( int i=0; i<3; ++i ) {
+			for ( int j=0; j<3; ++j ) {
 				vertices_[i][j] = (float)vertices[i][j];
 				normals_[i][j] = (float)normals[i][j];
 			}
@@ -42,9 +42,9 @@ public:
 
 	}
 
-	triangle( const numeric::xyzVector<double> vertices[], const numeric::xyzVector<double> normals[] )	{
-		for (int i=0; i<3; ++i) {
-			for (int j=0; j<3; ++j) {
+	triangle( const numeric::xyzVector<double> vertices[], const numeric::xyzVector<double> normals[] ) {
+		for ( int i=0; i<3; ++i ) {
+			for ( int j=0; j<3; ++j ) {
 				vertices_[i][j] = (float)vertices[i][j];
 				normals_[i][j] = (float)normals[i][j];
 			}

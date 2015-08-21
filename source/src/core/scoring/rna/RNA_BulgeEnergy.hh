@@ -68,9 +68,9 @@ public:
 	virtual
 	void
 	finalize_total_energy(
-	   pose::Pose &,
-		 ScoreFunction const &,
-		 EnergyMap & totals
+		pose::Pose &,
+		ScoreFunction const &,
+		EnergyMap & totals
 	) const;
 
 	/// @brief RNA_BulgeEnergy is context independent; indicates that no

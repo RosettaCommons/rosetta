@@ -120,8 +120,8 @@ private:
 
 	// const-ref to scoring database
 	CenRotEnvPairPotential const & potential_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

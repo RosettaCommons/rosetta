@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/antibody/design/AntibodyDesignModeler.fwd.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
@@ -37,5 +37,5 @@ typedef utility::pointer::shared_ptr< AntibodyDesignModeler const > AntibodyDesi
 
 
 
-#endif	//INCLUDED_protocols_antibody_design_ANTIBODYDESIGNMODELER_FWD_HH
+#endif //INCLUDED_protocols_antibody_design_ANTIBODYDESIGNMODELER_FWD_HH
 

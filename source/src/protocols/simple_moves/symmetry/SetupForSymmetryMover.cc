@@ -46,8 +46,8 @@
 
 
 namespace protocols {
-namespace simple_moves{
-namespace symmetry{
+namespace simple_moves {
+namespace symmetry {
 
 static thread_local basic::Tracer TR( "protocols.simple_moves.symmetry.SetupForSymmetryMover" );
 
@@ -134,8 +134,8 @@ SetupForSymmetryMover::apply( core::pose::Pose & pose )
 	// If we are alredy symmetric do nothing
 	if ( core::pose::symmetry::is_symmetric( pose ) ) return;
 
-	if(!symmdef_){
-		if(option[ OptionKeys::symmetry::symmetry_definition].user()){
+	if ( !symmdef_ ) {
+		if ( option[ OptionKeys::symmetry::symmetry_definition].user() ) {
 			symmdef_ = core::conformation::symmetry::SymmDataOP( new core::conformation::symmetry::SymmData() );
 			symmdef_->read_symmetry_data_from_file(
 				option[OptionKeys::symmetry::symmetry_definition]);
@@ -165,33 +165,33 @@ SetupForSymmetryMover::apply( core::pose::Pose & pose )
 }
 
 void SetupForSymmetryMover::parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & /*data*/,
-			filters::Filters_map const & /*filters*/,
-			moves::Movers_map const & /*movers*/,
-			core::pose::Pose const & /*pose*/ ) {
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & /*data*/,
+	filters::Filters_map const & /*filters*/,
+	moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/ ) {
 
 	using namespace basic::options;
 	using namespace basic::resource_manager;
 
-	if(tag->hasOption("definition") && tag->hasOption("resource_description")){
+	if ( tag->hasOption("definition") && tag->hasOption("resource_description") ) {
 		throw utility::excn::EXCN_BadInput(
 			"SetupForSymmetry takes either a 'definition' OR "
 			"a 'resource_description' tag but not both.");
 	}
 
-	if(tag->hasOption("definition")){
+	if ( tag->hasOption("definition") ) {
 		symmdef_ = core::conformation::symmetry::SymmDataOP( new core::conformation::symmetry::SymmData() );
 		symmdef_->read_symmetry_data_from_file(
 			tag->getOption<std::string>("definition"));
 		option[OptionKeys::symmetry::symmetry_definition].value( "dummy" );
 
-	} else if(tag->hasOption("resource_description")){
+	} else if ( tag->hasOption("resource_description") ) {
 		symmdef_ = get_resource< core::conformation::symmetry::SymmData >(
 			tag->getOption<std::string>("resource_description"));
 		option[OptionKeys::symmetry::symmetry_definition].value( "dummy" );
 
-	} else if(option[ OptionKeys::symmetry::symmetry_definition].user()){
+	} else if ( option[ OptionKeys::symmetry::symmetry_definition].user() ) {
 		symmdef_ = core::conformation::symmetry::SymmDataOP( new core::conformation::symmetry::SymmData() );
 		symmdef_->read_symmetry_data_from_file(
 			option[OptionKeys::symmetry::symmetry_definition]);
@@ -210,7 +210,7 @@ SetupForSymmetryMover::get_name() const {
 ////////////////////
 
 ExtractAsymmetricUnitMover::ExtractAsymmetricUnitMover()
-	: protocols::moves::Mover("ExtractAsymmetricUnitMover") { }
+: protocols::moves::Mover("ExtractAsymmetricUnitMover") { }
 
 ExtractAsymmetricUnitMover::~ExtractAsymmetricUnitMover(){}
 
@@ -240,7 +240,7 @@ ExtractAsymmetricUnitMover::get_name() const {
 /////////////////
 
 ExtractAsymmetricPoseMover::ExtractAsymmetricPoseMover()
-	: protocols::moves::Mover("ExtractAsymmetricPoseMover") { }
+: protocols::moves::Mover("ExtractAsymmetricPoseMover") { }
 
 ExtractAsymmetricPoseMover::~ExtractAsymmetricPoseMover(){}
 

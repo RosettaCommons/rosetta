@@ -32,15 +32,15 @@ namespace mpi_refinement {
 class Serial_Refine {
 public:
 	Serial_Refine();
-	 ~Serial_Refine();
+	~Serial_Refine();
 
 	void set_defaults();
 
 public:
 	core::Real
-	apply( core::pose::Pose &pose, 
-				 utility::vector1< core::Size > fixres
-				 );
+	apply( core::pose::Pose &pose,
+		utility::vector1< core::Size > fixres
+	);
 
 	void init();
 
@@ -48,23 +48,23 @@ private:
 
 	void
 	load_structures_from_cmdline_into_library(
-															core::pose::Pose const & pose,
-															protocols::wum::SilentStructStore &library );
+		core::pose::Pose const & pose,
+		protocols::wum::SilentStructStore &library );
 
-	protocols::wum::SilentStructStore 
+	protocols::wum::SilentStructStore
 	perturb( MethodParams const &params,
-					 const core::io::silent::SilentStructOP &start_struct );
+		const core::io::silent::SilentStructOP &start_struct );
 
 	void
-	dump_structures( protocols::wum::SilentStructStore const &new_structs, 
-									 bool score_only,
-									 std::string prefix ) const;
+	dump_structures( protocols::wum::SilentStructStore const &new_structs,
+		bool score_only,
+		std::string prefix ) const;
 
 	core::pose::Pose
 	get_average_structure( protocols::wum::SilentStructStore &decoys,
-												 utility::vector1< core::Size > const touse,
-												 std::string const columnname, 
-												 bool const minimize ) const;
+		utility::vector1< core::Size > const touse,
+		std::string const columnname,
+		bool const minimize ) const;
 
 private:
 

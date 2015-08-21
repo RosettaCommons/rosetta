@@ -23,8 +23,8 @@
 
 #include <utility/exit.hh>
 
-namespace protocols{
-namespace simple_moves{
+namespace protocols {
+namespace simple_moves {
 
 class O2M_MutateMover : public protocols::moves::Mover
 {
@@ -46,9 +46,9 @@ public:
 	}
 
 	void parse_def( utility::lua::LuaObject const & def,
-					utility::lua::LuaObject const & score_fxns,
-					utility::lua::LuaObject const & tasks,
-					protocols::moves::MoverCacheSP cache );
+		utility::lua::LuaObject const & score_fxns,
+		utility::lua::LuaObject const & tasks,
+		protocols::moves::MoverCacheSP cache );
 
 	protocols::moves::MoverSP create() { return protocols::moves::MoverSP( new O2M_MutateMover ); }
 	static std::string name() {

@@ -66,7 +66,7 @@ public:
 
 private:
 	core::io::silent::SilentFileData sfd_;
-	//	utility::vector1< FileName > silent_files_;
+	// utility::vector1< FileName > silent_files_;
 }; // SilentFileJobInputter
 
 } // namespace jd2

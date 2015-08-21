@@ -53,7 +53,7 @@ public:
 	/// @brief Default constructor.
 	///
 	AARepeatEnergy();
-	
+
 	/// @brief Copy constructor.
 	///
 	AARepeatEnergy( AARepeatEnergy const &src );
@@ -61,7 +61,7 @@ public:
 	/// @brief Default destructor.
 	///
 	virtual ~AARepeatEnergy();
-	
+
 	/// @brief Clone: create a copy of this object, and return an owning pointer
 	/// to the copy.
 	virtual EnergyMethodOP clone() const;
@@ -71,13 +71,13 @@ public:
 	virtual void indicate_required_context_graphs( utility::vector1< bool > &context_graphs_required ) const;
 
 	/// @brief AARepeatEnergy is version 1.0 right now.
-	///	
+	///
 	virtual core::Size version() const;
-	
+
 	/// @brief Actually calculate the total energy
 	/// @details Called by the scoring machinery.
 	virtual void finalize_total_energy( core::pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const;
-	
+
 	/// @brief Calculate the total energy given a vector of const owning pointers to residues.
 	/// @details Called by finalize_total_energy().
 	virtual core::Real calculate_aa_repeat_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect ) const;
@@ -87,23 +87,23 @@ private:
 	/******************
 	Private functions:
 	******************/
-	
+
 	/// @brief Return a penalty for N residues in a row, from a lookup table.
 	/// @details The last entry in the lookup table is the penalty to return for more residues
 	/// than there are entries in the lookup table.  Returns 0 if nres is zero.
-	inline core::Real	penalties(core::Size const nres) const;
-	
+	inline core::Real penalties(core::Size const nres) const;
+
 	/// @brief Read a penalty data file and load the penalties into the energy method.  Called once by the constructor.
 	/// @details Comment lines are ignored in the penalty data file.  The file should have one line that's a whitespace-separated
 	/// row of numbers.  The numbers represent the penalty for having a stretch of 1, 2, 3, 4, etc. of the same residue as a repeating
 	/// stretch.  The function looks in the working directory and in database/scoring/score_functions/aa_repeat_energy/ for the penalty
 	/// file.
 	void load_penalty_table_from_file( std::string const &filename );
-	
+
 	/// @brief Parse a series of floats from a string and store them in the penalties vector.  Return true if successful and false otherwise.
 	/// @details Only modifies the penalties vector if successful.
 	bool parse_line( std::string const &line, utility::vector1< core::Real > &penalties ) const;
-	
+
 	/******************
 	Private variables:
 	******************/

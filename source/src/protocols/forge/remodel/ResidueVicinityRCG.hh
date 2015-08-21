@@ -29,9 +29,9 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace forge{
-namespace remodel{
+namespace protocols {
+namespace forge {
+namespace remodel {
 
 class ResidueVicinityRCG;
 
@@ -44,7 +44,7 @@ typedef utility::pointer::shared_ptr< ResidueVicinityInfo const > ResidueVicinit
 
 /// @brief small helper class for the ResidueVicinityRCG
 class
-ResidueVicinityInfo : public utility::pointer::ReferenceCount
+	ResidueVicinityInfo : public utility::pointer::ReferenceCount
 {
 
 public:
@@ -180,17 +180,17 @@ public:
 
 	virtual ~ResidueVicinityRCG();
 
- 	virtual
+	virtual
 	void
 	generate_remodel_constraints(
 		core::pose::Pose const & pose );
 
 	virtual void
 	parse_my_tag( TagCOP tag,
-								basic::datacache::DataMap & data,
-								protocols::filters::Filters_map const & filters,
-								protocols::moves::Movers_map const & movers,
-								core::pose::Pose const & pose );
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose );
 
 	virtual std::string
 	get_name() const;

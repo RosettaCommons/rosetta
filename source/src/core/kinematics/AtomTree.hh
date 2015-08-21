@@ -217,14 +217,14 @@ public: // Methods
 	void
 	set_jump_now( AtomID const & id, Jump const & jump );
 
-  /// @brief find the atom giving rise to the jump connecting two stubs.
-  /// @param direction is set to 1 or -1 depending on the direction of the jump
-  AtomID
-  get_jump_atom_id(
-    StubID const& stub_id1,
-    StubID const& stub_id2,
-    int& direction
-  ) const;
+	/// @brief find the atom giving rise to the jump connecting two stubs.
+	/// @param direction is set to 1 or -1 depending on the direction of the jump
+	AtomID
+	get_jump_atom_id(
+		StubID const& stub_id1,
+		StubID const& stub_id2,
+		int& direction
+	) const;
 
 
 	/// @brief  Set the transform between two stubs, returns the atomid of the jump atom which moved (for book-keeping)

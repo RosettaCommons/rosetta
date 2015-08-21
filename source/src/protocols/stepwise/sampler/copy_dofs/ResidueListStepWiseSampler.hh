@@ -25,38 +25,38 @@ namespace stepwise {
 namespace sampler {
 namespace copy_dofs {
 
-	class ResidueListStepWiseSampler: public StepWiseSamplerSized {
+class ResidueListStepWiseSampler: public StepWiseSamplerSized {
 
-	public:
+public:
 
-		//constructor
-		ResidueListStepWiseSampler( utility::vector1< core::conformation::ResidueOP > copy_dofs );
+	//constructor
+	ResidueListStepWiseSampler( utility::vector1< core::conformation::ResidueOP > copy_dofs );
 
-		//destructor
-		~ResidueListStepWiseSampler();
+	//destructor
+	~ResidueListStepWiseSampler();
 
-	public:
+public:
 
-		core::conformation::ResidueOP get_residue_at_origin();
+	core::conformation::ResidueOP get_residue_at_origin();
 
-		/// @brief Get the total number of rotamers in sampler
-		virtual core::Size size() const{ return copy_dofs_.size(); }
+	/// @brief Get the total number of rotamers in sampler
+	virtual core::Size size() const{ return copy_dofs_.size(); }
 
-		/// @brief Apply the i-th rotamer to pose
-		// do nothing. job is to return a residue.
-		virtual void apply( core::pose::Pose&, core::Size const ){}
+	/// @brief Apply the i-th rotamer to pose
+	// do nothing. job is to return a residue.
+	virtual void apply( core::pose::Pose&, core::Size const ){}
 
-		/// @brief Name of the class
-		virtual std::string get_name() const { return "ResidueListStepWiseSampler"; }
+	/// @brief Name of the class
+	virtual std::string get_name() const { return "ResidueListStepWiseSampler"; }
 
-		/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-		virtual StepWiseSamplerType type() const { return RESIDUE_LIST; }
+	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
+	virtual StepWiseSamplerType type() const { return RESIDUE_LIST; }
 
-	private:
+private:
 
-		utility::vector1< core::conformation::ResidueOP > copy_dofs_;
+	utility::vector1< core::conformation::ResidueOP > copy_dofs_;
 
-	};
+};
 
 } //copy_dofs
 } //sampler

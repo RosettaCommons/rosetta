@@ -61,13 +61,14 @@ public:
 	inline
 	bool
 	has_entry(Size residue_id) const {
-		if (entries_.find(residue_id) != entries_.end())
+		if ( entries_.find(residue_id) != entries_.end() ) {
 			return true;
+		}
 		return false;
 	}
 
 	inline const boost::tuple<Size, char, Real, Real, Real, Real, Real, Real,
-			Size, std::string> get_entry(const Size res_id) {
+	Size, std::string> get_entry(const Size res_id) {
 		return entries_.find(res_id)->second;
 	}
 	inline Real phi(Size res_id) {
@@ -108,7 +109,7 @@ private:
 	Size first_residue_index_;
 	Size last_residue_index_;
 	std::map<Size, boost::tuple<Size, char, Real, Real, Real, Real, Real, Real,
-			Size, std::string> > entries_;
+		Size, std::string> > entries_;
 	void print_sequence(std::string const &, std::ostream &) const;
 };
 

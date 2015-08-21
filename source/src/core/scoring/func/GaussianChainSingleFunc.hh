@@ -30,7 +30,7 @@ class GaussianChainSingleFunc : public Func {
 public:
 
 	GaussianChainSingleFunc( Real const gaussian_variance_,
-													 Real const loop_fixed_cost );
+		Real const loop_fixed_cost );
 
 	FuncOP
 	clone() const;

@@ -63,9 +63,9 @@ ResInteractions::read_data( utility::io::izstream & data )
 
 	bool block_end(false);
 
-	while( !block_end ){
+	while ( !block_end ) {
 
-		if( data.eof() ){
+		if ( data.eof() ) {
 			tr << "Error: end of file reached before RES_CONTACT_END tag was found." << std::endl;
 			return false;
 		}
@@ -77,17 +77,15 @@ ResInteractions::read_data( utility::io::izstream & data )
 
 		tokens = utility::split( line );
 
-		if( tokens.size() < 1 ) continue;
+		if ( tokens.size() < 1 ) continue;
 
-		if( tokens[1] == "RES_CONTACT_END" ){
+		if ( tokens[1] == "RES_CONTACT_END" ) {
 			block_end = true;
-		}
-
-		else if( !process_input_line_tokens( tokens ) ) return false;
+		} else if ( !process_input_line_tokens( tokens ) ) return false;
 
 	} //file reading
 
-	if( targ_res_ == 0 ) return false;
+	if ( targ_res_ == 0 ) return false;
 
 	return true;
 }
@@ -101,11 +99,11 @@ ResInteractions::write_data() const {
 	//tr << "tolerance " << tolerance_ << std::endl;
 
 	tr << "targ_atom_names ";
-	for( core::Size i = 1; i <= targ_atom_names_.size(); ++i ) tr << targ_atom_names_[i] << " ";
+	for ( core::Size i = 1; i <= targ_atom_names_.size(); ++i ) tr << targ_atom_names_[i] << " ";
 	tr << std::endl;
 
 	tr << "loopres_atom_names ";
-	for( core::Size i = 1; i <= loopres_atom_names_.size(); ++i ) tr << loopres_atom_names_[i] << " ";
+	for ( core::Size i = 1; i <= loopres_atom_names_.size(); ++i ) tr << loopres_atom_names_[i] << " ";
 	tr << std::endl;
 
 }
@@ -144,112 +142,99 @@ ResInteractions::process_input_line_tokens(
 	core::Real const generic_force_K(100.0);
 	core::Real const generic_period(360.0);
 
-	if( ( tokens.size() < 2 ) || (tokens[2] == "" ) ){
+	if ( ( tokens.size() < 2 ) || (tokens[2] == "" ) ) {
 		tr << "Error when processing res_interactions block. Line containing " << tokens[1] << " seems to have no useable data." << std::endl;
 
 		return false;
 	}
 
-	if( tokens[1] == "target_res" ){
+	if ( tokens[1] == "target_res" ) {
 		targ_res_ = (core::Size) atoi( tokens[2].c_str() );
 		to_return = true;
-	}
-	else if( tokens[1] == "num_contacts" ){
+	} else if ( tokens[1] == "num_contacts" ) {
 		num_interactions_ = (core::Size) atoi( tokens[2].c_str() );
 		to_return = true;
-	}
-	//else if( tokens[1] == "distance" ){
-	//	dist_ = (core::Real) atof( tokens[2].c_str() );
-	//	to_return = true;
-	//}
-	//else if( tokens[1] == "tolerance" ) {
-	//	tolerance_ = (core::Real) atof( tokens[2].c_str() );
-	//	to_return = true;
-	//}
-	else if( tokens[1] == "targ_atom_names" ){
+	} else if ( tokens[1] == "targ_atom_names" ) {
+		//else if( tokens[1] == "distance" ){
+		// dist_ = (core::Real) atof( tokens[2].c_str() );
+		// to_return = true;
+		//}
+		//else if( tokens[1] == "tolerance" ) {
+		// tolerance_ = (core::Real) atof( tokens[2].c_str() );
+		// to_return = true;
+		//}
 		targ_atom_names_.clear();
-		for( core::Size i = 2; i <= tokens.size(); ++i ) targ_atom_names_.push_back( tokens[ i ] );
+		for ( core::Size i = 2; i <= tokens.size(); ++i ) targ_atom_names_.push_back( tokens[ i ] );
 		to_return = true;
-	}
-	else if( tokens[1] == "targ_base_atom_names" ){
+	} else if ( tokens[1] == "targ_base_atom_names" ) {
 		targ_base_atom_names_.clear();
-		for( core::Size i = 2; i <= tokens.size(); ++i ) targ_base_atom_names_.push_back( tokens[ i ] );
+		for ( core::Size i = 2; i <= tokens.size(); ++i ) targ_base_atom_names_.push_back( tokens[ i ] );
 		to_return = true;
-	}
-	else if( tokens[1] == "targ_base2_atom_names" ){
+	} else if ( tokens[1] == "targ_base2_atom_names" ) {
 		targ_base2_atom_names_.clear();
-		for( core::Size i = 2; i <= tokens.size(); ++i ) targ_base2_atom_names_.push_back( tokens[ i ] );
+		for ( core::Size i = 2; i <= tokens.size(); ++i ) targ_base2_atom_names_.push_back( tokens[ i ] );
 		to_return = true;
-	}
-	else if( tokens[1] == "loopres_atom_names" ){
+	} else if ( tokens[1] == "loopres_atom_names" ) {
 		loopres_atom_names_.clear();
-		for( core::Size i = 2; i <= tokens.size(); ++i ) loopres_atom_names_.push_back( tokens[ i ] );
+		for ( core::Size i = 2; i <= tokens.size(); ++i ) loopres_atom_names_.push_back( tokens[ i ] );
 		to_return = true;
-	}
-	else if( tokens[1] == "loopres_base_atom_names" ){
+	} else if ( tokens[1] == "loopres_base_atom_names" ) {
 		loopres_base_atom_names_.clear();
-		for( core::Size i = 2; i <= tokens.size(); ++i ) loopres_base_atom_names_.push_back( tokens[ i ] );
+		for ( core::Size i = 2; i <= tokens.size(); ++i ) loopres_base_atom_names_.push_back( tokens[ i ] );
 		to_return = true;
-	}
-	else if( tokens[1] == "loopres_base2_atom_names" ){
+	} else if ( tokens[1] == "loopres_base2_atom_names" ) {
 		loopres_base2_atom_names_.clear();
-		for( core::Size i = 2; i <= tokens.size(); ++i ) loopres_base2_atom_names_.push_back( tokens[ i ] );
+		for ( core::Size i = 2; i <= tokens.size(); ++i ) loopres_base2_atom_names_.push_back( tokens[ i ] );
 		to_return = true;
-	}
-	else if( tokens[1] == "distance" ){
-		if( tokens.size() < 3 ){ tr << "too little information given for distance_LT." << std::endl;
+	} else if ( tokens[1] == "distance" ) {
+		if ( tokens.size() < 3 ) { tr << "too little information given for distance_LT." << std::endl;
 			return false;
 		}
-		if( tokens.size() == 3 ) dis_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, 0.0 ) );
+		if ( tokens.size() == 3 ) dis_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, 0.0 ) );
 		else dis_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), 0.0 ) );
 		to_return = true;
-	}
-	else if( tokens[1] == "angle_loop" ){
-		if( tokens.size() < 3 ){ tr << "too little information given for angle_loop." << std::endl;
+	} else if ( tokens[1] == "angle_loop" ) {
+		if ( tokens.size() < 3 ) { tr << "too little information given for angle_loop." << std::endl;
 			return false;
 		}
-		if( tokens.size() == 3 ) loop_ang_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, generic_period ) );
+		if ( tokens.size() == 3 ) loop_ang_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, generic_period ) );
 		else loop_ang_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), generic_period ) );
 		to_return = true;
-	}
-	else if( tokens[1] == "angle_targ" ){
-		if( tokens.size() < 3 ){ tr << "too little information given for angle_targ." << std::endl;
+	} else if ( tokens[1] == "angle_targ" ) {
+		if ( tokens.size() < 3 ) { tr << "too little information given for angle_targ." << std::endl;
 			return false;
 		}
-		if( tokens.size() == 3 ) targ_ang_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, generic_period ) );
+		if ( tokens.size() == 3 ) targ_ang_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, generic_period ) );
 		else targ_ang_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), generic_period ) );
 		to_return = true;
-	}
-	else if( tokens[1] == "dih_loop" ){
-		if( tokens.size() < 3 ){ tr << "too little information given for dih_loop." << std::endl;
+	} else if ( tokens[1] == "dih_loop" ) {
+		if ( tokens.size() < 3 ) { tr << "too little information given for dih_loop." << std::endl;
 			return false;
 		}
-		if( tokens.size() == 3 ) loop_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, generic_period ) );
-		else if( tokens.size() == 4 ) loop_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), generic_period ) );
+		if ( tokens.size() == 3 ) loop_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, generic_period ) );
+		else if ( tokens.size() == 4 ) loop_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), generic_period ) );
 		else loop_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), atof( tokens[5].c_str() ) ) );
 		to_return = true;
-	}
-	else if( tokens[1] == "dih_targ" ){
-		if( tokens.size() < 3 ){ tr << "too little information given for dih_loop." << std::endl;
+	} else if ( tokens[1] == "dih_targ" ) {
+		if ( tokens.size() < 3 ) { tr << "too little information given for dih_loop." << std::endl;
 			return false;
 		}
-		if( tokens.size() == 3 ) targ_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, generic_period ) );
-		else if( tokens.size() == 4 ) targ_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), generic_period ) );
+		if ( tokens.size() == 3 ) targ_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, generic_period ) );
+		else if ( tokens.size() == 4 ) targ_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), generic_period ) );
 		else targ_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), atof( tokens[5].c_str() ) ) );
 		to_return = true;
-	}
-	else if( tokens[1] == "dih_LT" ){
-		if( tokens.size() < 3 ){ tr << "too little information given for dih_loop." << std::endl;
+	} else if ( tokens[1] == "dih_LT" ) {
+		if ( tokens.size() < 3 ) { tr << "too little information given for dih_loop." << std::endl;
 			return false;
 		}
-		if( tokens.size() == 3 ) lt_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, generic_period ) );
-		else if( tokens.size() == 4 ) lt_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), generic_period ) );
+		if ( tokens.size() == 3 ) lt_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, generic_period ) );
+		else if ( tokens.size() == 4 ) lt_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), generic_period ) );
 		else lt_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), atof( tokens[5].c_str() ) ) );
 		to_return = true;
 	}
 
 
-	if( !to_return ) tr << "Unspecified error when processing res_interactions block line containing " << tokens[1] << std::endl;
+	if ( !to_return ) tr << "Unspecified error when processing res_interactions block line containing " << tokens[1] << std::endl;
 
 	return to_return;
 }
@@ -269,10 +254,10 @@ CstResInteractions::read_data( utility::io::izstream & data )
 
 	bool cst_line_encountered(false), block_end(false);
 
-	while( !block_end ){
+	while ( !block_end ) {
 
 		//std::cerr << "reading CstResInp, token[1] is: '" << tokens[1] << "'" << std::endl;
-		if( data.eof() ){
+		if ( data.eof() ) {
 			tr << "Error: end of file reached before CST_TARGET_END tag was found." << std::endl;
 			this->write_data();
 			return false;
@@ -286,38 +271,34 @@ CstResInteractions::read_data( utility::io::izstream & data )
 
 		tokens = utility::split( line );
 
-		if( tokens.size() < 1 ) continue;
+		if ( tokens.size() < 1 ) continue;
 
-		if( tokens[1] == "CST_TARGET_END" ){
+		if ( tokens[1] == "CST_TARGET_END" ) {
 			block_end = true;
-		}
-
-		else if( tokens[1] == "cst_target" ){
+		} else if ( tokens[1] == "cst_target" ) {
 
 			cst_block_ = (core::Size ) atoi( tokens[2].c_str() );
 
-			if( tokens[3] == "A" ) resA_ = true;
-			else if( tokens[3] == "B" ) resA_ = false;
-			else{
+			if ( tokens[3] == "A" ) resA_ = true;
+			else if ( tokens[3] == "B" ) resA_ = false;
+			else {
 				tr << "When specifing a cst_target line, the 3rd element has to be either A or B, corresponding to which of the two residues in the cstfile is desired." << std::endl;
 				return false;
 			}
 
 			cst_line_encountered = true;
 
-		} //if cst_target
-
-		else if( !process_input_line_tokens( tokens ) ) return false;
+		} else if ( !process_input_line_tokens( tokens ) ) return false; //if cst_target
 
 	} //file reading
 	//std::cerr << "reading CstResInp after while, token[1] is: '" << tokens[1] << "'" << std::endl;
 
-	if( !cst_line_encountered ){
+	if ( !cst_line_encountered ) {
 		tr << "Did not find 'cst_target' line in CST block." << std::endl;
 		return false;
 	}
 
-	if( this->targ_res() != 0 ){
+	if ( this->targ_res() != 0 ) {
 
 		tr << "An explicit residue number has been specified in a CST_TARGET block" << std::endl;
 		return false;
@@ -333,7 +314,7 @@ CstResInteractions::write_data() const {
 
 	tr << "cst_target " << cst_block_ << " ";
 
-	if( resA_ ) tr << "A";
+	if ( resA_ ) tr << "A";
 	else tr << "B";
 
 	tr << std::endl;
@@ -371,9 +352,9 @@ EnzdesLoopInfo::read_loops_file_block(
 
 	utility::vector1< std::string > ss_blueprints;
 
-	while( !loop_end ){
+	while ( !loop_end ) {
 
-		if( data.eof() ){
+		if ( data.eof() ) {
 			tr << "Error: end of file reached before LOOP_END tag was found." << std::endl;
 			return false;
 		}
@@ -386,75 +367,63 @@ EnzdesLoopInfo::read_loops_file_block(
 
 		tokens = utility::split( line );
 
-		if( tokens.size() < 1 ) continue;
+		if ( tokens.size() < 1 ) continue;
 
 		//std::cerr << "eli line is '" << line << "'  , tokens[1] is '" << tokens[1] << "'" << std::endl;
 
-		if( tokens[1] == "LOOP_END" ) loop_end = true;
+		if ( tokens[1] == "LOOP_END" ) loop_end = true;
 
-		else if( tokens[1] == "start" ) {
+		else if ( tokens[1] == "start" ) {
 
 			loop_start_ = (core::Size) atoi( tokens[2].c_str() );
 			pose_numb_ = true;
 
-		} else if( tokens[1] == "stop" ) {
+		} else if ( tokens[1] == "stop" ) {
 
 			loop_end_ = (core::Size) atoi( tokens[2].c_str() );
 			pose_numb_ = true;
 
-    } else if( tokens[1] == "pdb_start" ) {
+		} else if ( tokens[1] == "pdb_start" ) {
 
 			loop_start_pdb_chain_ = tokens[2][0];
 			loop_start_pdb_ = (core::Size) atoi( tokens[3].c_str() );
 			pdb_numb_ = true;
 
-    } else if( tokens[1] == "pdb_stop" ) {
+		} else if ( tokens[1] == "pdb_stop" ) {
 
 			loop_end_pdb_chain_ = tokens[2][0];
 			loop_end_pdb_ = (core::Size) atoi( tokens[3].c_str() );
 			pdb_numb_ = true;
 
-		} else if( tokens[1] == "min_length" ){
+		} else if ( tokens[1] == "min_length" ) {
 			min_length_ = (core::Size) atoi( tokens[2].c_str() );
 			min_length_tag_found = true;
-		}
-
-		else if( tokens[1] == "max_length" ){
+		} else if ( tokens[1] == "max_length" ) {
 			max_length_ = (core::Size) atoi( tokens[2].c_str() );
 			max_length_tag_found = true;
-		}
-
-		else if( tokens[1] == "ss_string" ){
-			for( core::Size i = 2; i <= tokens.size(); ++i ) ss_strings_.push_back( tokens[ i ] );
-		}
-
-		else if( tokens[1] == "ss_blueprint" ){
-			for( core::Size i = 2; i <= tokens.size(); ++i ) ss_blueprints.push_back( tokens[i] );
-		}
-
-		else if( tokens[1] == "CST_TARGET_BEGIN" ){
+		} else if ( tokens[1] == "ss_string" ) {
+			for ( core::Size i = 2; i <= tokens.size(); ++i ) ss_strings_.push_back( tokens[ i ] );
+		} else if ( tokens[1] == "ss_blueprint" ) {
+			for ( core::Size i = 2; i <= tokens.size(); ++i ) ss_blueprints.push_back( tokens[i] );
+		} else if ( tokens[1] == "CST_TARGET_BEGIN" ) {
 
 			//std::cerr << "detected CST_TARG block on line " << linenum << ", tokens[1] is " << tokens[1] << std::endl;
 			cstres_interactions_.push_back( CstResInteractions() );
 
-			if( ! cstres_interactions_[ cstres_interactions_.size() ].read_data( data ) ) {
+			if ( ! cstres_interactions_[ cstres_interactions_.size() ].read_data( data ) ) {
 				tr << "Error occured when processing a CST_TARGET_BEGIN block." << std::endl;
 				return false;
 			}
 			//std::cerr << "successfully read CST_TARGET block " << std::endl;
-		}
-
-		else if( tokens[1] == "RES_CONTACT_BEGIN" ){
+		} else if ( tokens[1] == "RES_CONTACT_BEGIN" ) {
 
 			res_interactions_.push_back( ResInteractions() );
 
-			if( ! res_interactions_[ res_interactions_.size() ].read_data( data ) ){
+			if ( ! res_interactions_[ res_interactions_.size() ].read_data( data ) ) {
 				tr << "Error occured when processing a RES_CONTACT_BEGIN block." << std::endl;
 				return false;
 			}
-		}
-
-		else if( tokens[1] == "instruction" ){
+		} else if ( tokens[1] == "instruction" ) {
 			//unimplemented for now
 		}
 
@@ -463,14 +432,14 @@ EnzdesLoopInfo::read_loops_file_block(
 
 	tr << res_interactions_.size() << " residue contact blocks and " << cstres_interactions_.size() << " cst residue contact blocks were read in. " << std::endl;
 
-	for( core::Size i = 1; i <= ss_blueprints.size(); ++i ) generate_ss_strings_from_blueprint( ss_blueprints[i] );
+	for ( core::Size i = 1; i <= ss_blueprints.size(); ++i ) generate_ss_strings_from_blueprint( ss_blueprints[i] );
 
 	//in case the user forgot these tags, we take this to mean that the loop length isn't changing
-	if( !min_length_tag_found ){
+	if ( !min_length_tag_found ) {
 		min_length_ = loop_end_ - loop_start_ + 1;
 		tr << "No min_length tag found, min_length_ set to " << min_length_ << "." << std::endl;
 	}
-	if( !max_length_tag_found ){
+	if ( !max_length_tag_found ) {
 		max_length_ = loop_end_ - loop_start_ + 1;
 		tr << "No max_length tag found, max_length_ set to " << max_length_ << "." << std::endl;
 	}
@@ -484,51 +453,51 @@ EnzdesLoopInfo::check_data_consistency(
 	bool report
 ) const
 {
-	if( loop_start_ == 0 && loop_start_pdb_ == 0){
-		if( report ) tr << "file didn't seem to specify loop start" << std::endl;
+	if ( loop_start_ == 0 && loop_start_pdb_ == 0 ) {
+		if ( report ) tr << "file didn't seem to specify loop start" << std::endl;
 		return false;
 	}
 
-	if( loop_end_ == 0 && loop_start_pdb_ == 0){
-		if( report ) tr << "file didn't seem to specify loop stop" << std::endl;
+	if ( loop_end_ == 0 && loop_start_pdb_ == 0 ) {
+		if ( report ) tr << "file didn't seem to specify loop stop" << std::endl;
 		return false;
 	}
 
-	if( pose_numb_ && pdb_numb_){
-		if( report ) tr << "specify loop start and stop by PDB or pose numbering" << std::endl;
+	if ( pose_numb_ && pdb_numb_ ) {
+		if ( report ) tr << "specify loop start and stop by PDB or pose numbering" << std::endl;
 		return false;
 	}
 
-	if( min_length_ == 0 ){
-		if( report ) tr << "file specified illegal minimum loop length (min_length tag) of 0" << std::endl;
+	if ( min_length_ == 0 ) {
+		if ( report ) tr << "file specified illegal minimum loop length (min_length tag) of 0" << std::endl;
 		return false;
 	}
 
-	if( max_length_ == 0 ){
-		if( report ) tr << "file specified illegal maximum loop length (max_length tag) of 0" << std::endl;
+	if ( max_length_ == 0 ) {
+		if ( report ) tr << "file specified illegal maximum loop length (max_length tag) of 0" << std::endl;
 		return false;
 	}
 
-	if( loop_end_ <= loop_start_ && loop_end_pdb_ <= loop_start_pdb_ ){
-		if( report ) tr << "specified start of loop is after stop of loop. go work at mcdonalds." << std::endl;
+	if ( loop_end_ <= loop_start_ && loop_end_pdb_ <= loop_start_pdb_ ) {
+		if ( report ) tr << "specified start of loop is after stop of loop. go work at mcdonalds." << std::endl;
 		return false;
 	}
 
-	if( min_length_ > max_length_ ){
+	if ( min_length_ > max_length_ ) {
 		tr << "min_length of loop is larger than max_length of loop. go work at mcdonalds" << std::endl;
 		return false;
 	}
 
-	if( min_length_ < 4 ){
-		if( report ) tr << "min length of loop is too short, has to be at least 4." << std::endl;
+	if ( min_length_ < 4 ) {
+		if ( report ) tr << "min length of loop is too short, has to be at least 4." << std::endl;
 		return false;
 	}
 
-	for( core::Size i = 1; i <= ss_strings_.size(); ++i ){
+	for ( core::Size i = 1; i <= ss_strings_.size(); ++i ) {
 
-		if( ss_strings_[i].length() < min_length_ ) tr << "WARNING: secondary structure string " << i << ", " << ss_strings_[i] << ", specified in the enzdes loops file is shorter than min_length for the loop. This overrides the specified min_length." << std::endl;
+		if ( ss_strings_[i].length() < min_length_ ) tr << "WARNING: secondary structure string " << i << ", " << ss_strings_[i] << ", specified in the enzdes loops file is shorter than min_length for the loop. This overrides the specified min_length." << std::endl;
 
-		if( ss_strings_[i].length() > max_length_ ) tr << "WARNING: secondary structure string " << i <<  ", " << ss_strings_[i] << ", specified in the enzdes loops file is longer than max_length for the loop. This overrides the specified max_length." << std::endl;
+		if ( ss_strings_[i].length() > max_length_ ) tr << "WARNING: secondary structure string " << i <<  ", " << ss_strings_[i] << ", specified in the enzdes loops file is longer than max_length for the loop. This overrides the specified max_length." << std::endl;
 	}
 
 	return true;
@@ -548,24 +517,23 @@ EnzdesLoopInfo::generate_ss_strings_from_blueprint(
 	core::Size num_previous_ss_strings( ss_strings_.size() );
 	core::Size num_combos(1);
 
-	for(utility::vector1< std::string >::iterator ble_it = blueprint_elements.begin(); ble_it != blueprint_elements.end(); ++ble_it ){
+	for ( utility::vector1< std::string >::iterator ble_it = blueprint_elements.begin(); ble_it != blueprint_elements.end(); ++ble_it ) {
 
-		if( *ble_it == "" ) continue;
+		if ( *ble_it == "" ) continue;
 
 		std::string ble_length_info = ble_it->substr(2);
 		utility::vector1< std::string > min_max_strings( utility::string_split( ble_length_info, '-' ) );
 
-		if( ( (min_max_strings.size() != 1 ) && (min_max_strings.size() != 2 ) ) || ( (*ble_it)[1] != '(' ) ){
+		if ( ( (min_max_strings.size() != 1 ) && (min_max_strings.size() != 2 ) ) || ( (*ble_it)[1] != '(' ) ) {
 			utility_exit_with_message("SS_blueprint "+ *ble_it + " could not be understood when trying to generate ss_strings from it.");
 		}
 
 		blueprint_element_ss_chars.push_back( (*ble_it)[0] );
 
-		if( min_max_strings.size() == 1 ){
+		if ( min_max_strings.size() == 1 ) {
 			blueprint_element_num_lengths.push_back(1);
 			blueprint_element_min_lengths.push_back( (core::Size) atoi( min_max_strings[1].c_str() ) );
-		}
-		else{  //implies min_max_strings.size() == 2, see above check
+		} else {  //implies min_max_strings.size() == 2, see above check
 			core::Size ble_min_length( (core::Size) atoi( min_max_strings[1].c_str() ) );
 			core::Size ble_max_length( (core::Size) atoi(min_max_strings[2].c_str() ) );
 			//runtime_assert( ble_min_length <= ble_max_length );
@@ -582,19 +550,19 @@ EnzdesLoopInfo::generate_ss_strings_from_blueprint(
 	utility::LexicographicalIterator lex( blueprint_element_num_lengths );
 	std::set< std::string > observed_ss_strings; //safeguard to prevent the same string appearing more than once
 	core::Size redundant_strings(0);
-	while( !lex.at_end() ){
+	while ( !lex.at_end() ) {
 
 		core::Size length_this_string(0);
 
-		for( core::Size i = 1; i <= num_elements; ++i){
+		for ( core::Size i = 1; i <= num_elements; ++i ) {
 			length_this_string += lex[i]+blueprint_element_min_lengths[i] - 1;
 		}
-		if( length_this_string < min_length_ ){
+		if ( length_this_string < min_length_ ) {
 			too_short_strings++;
 			++lex;
 			continue;
 		}
-		if( length_this_string > max_length_ ){
+		if ( length_this_string > max_length_ ) {
 			too_long_strings++;
 			++lex;
 			continue;
@@ -602,26 +570,25 @@ EnzdesLoopInfo::generate_ss_strings_from_blueprint(
 
 		//ok, this particular string is within the desired range. now let's build it
 		std::string ss_string("");
-		for( core::Size i = 1; i <= num_elements; ++i){
+		for ( core::Size i = 1; i <= num_elements; ++i ) {
 
 			core::Size length_this_element( lex[i]+blueprint_element_min_lengths[i] - 1 );
-			for( core::Size j = 1; j <= length_this_element; ++j ){
+			for ( core::Size j = 1; j <= length_this_element; ++j ) {
 				ss_string.push_back( blueprint_element_ss_chars[i] );
 			}
 		}
 		//runtime_assert( ss_string.size() == length_this_string );
-		if( observed_ss_strings.find( ss_string ) == observed_ss_strings.end() ){
+		if ( observed_ss_strings.find( ss_string ) == observed_ss_strings.end() ) {
 			ss_strings_.push_back( ss_string );
 			observed_ss_strings.insert( ss_string );
-		}
-		else redundant_strings++;
+		} else redundant_strings++;
 
 		++lex;
 	}
 
 	tr << "SS blueprint string " << ss_blueprint << " led to the following " << ss_strings_.size() - num_previous_ss_strings << " secondary structure strings out of a total of " << num_combos << " possible combinations: " << std::endl;
 
-	for( core::Size i = num_previous_ss_strings + 1; i <= ss_strings_.size(); ++i ) tr << ss_strings_[i] << ", ";
+	for ( core::Size i = num_previous_ss_strings + 1; i <= ss_strings_.size(); ++i ) tr << ss_strings_[i] << ", ";
 
 	tr << std::endl << "A total of " << too_long_strings << " ss_strings were ignored because they were too long, a total of " << too_short_strings << " ss_strings were ignored because they were too short, and a total of " << redundant_strings << " ss_strings were ignored because they were redundant." << std::endl;
 
@@ -629,7 +596,7 @@ EnzdesLoopInfo::generate_ss_strings_from_blueprint(
 
 
 EnzdesLoopsFile::EnzdesLoopsFile()
-	: file_read_(false )
+: file_read_(false )
 {
 	enzloops_.clear();
 }
@@ -646,14 +613,14 @@ EnzdesLoopsFile::read_loops_file(
 
 	if ( !data ) {
 		std::cerr << "ERROR:: Unable to open enzdes loops file: "
-				<< filename << std::endl;
+			<< filename << std::endl;
 		std::exit( 1 );
 	}
 	tr.Info << "reading enzdes loops from  " << filename << " ..." << std::endl;
 
 	core::Size counted_loops(0);
 
-	while( !data.eof() ) {
+	while ( !data.eof() ) {
 
 		std::string key, line;
 		getline(data,line);
@@ -661,14 +628,14 @@ EnzdesLoopsFile::read_loops_file(
 		line_stream.str(line);
 		line_stream >> key;
 
-		if( key == "LOOP_BEGIN" ){
+		if ( key == "LOOP_BEGIN" ) {
 
 			counted_loops++;
 			tr << "reading loop block " << counted_loops << "... " << std::endl;
 
 			EnzdesLoopInfoOP el( new EnzdesLoopInfo() );
 
-			if( el->read_loops_file_block( data ) ){
+			if ( el->read_loops_file_block( data ) ) {
 
 				enzloops_.push_back( el );
 
@@ -676,9 +643,7 @@ EnzdesLoopsFile::read_loops_file(
 				tr << " max_length(" << el->max_length() << ") " << std::endl;
 				tr << el->ss_strings().size() << " secstruct strings, " << el->res_interactions().size() << " res interactions" << std::endl;
 				tr << " ... done reading block " << counted_loops << "." << std::endl;
-			}
-
-			else {
+			} else {
 				tr << "Error when reading file " << filename << ". Block " << counted_loops << " or the info therein was corrupted." << std::endl;
 				return false;
 			}

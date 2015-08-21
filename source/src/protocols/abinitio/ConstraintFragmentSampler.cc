@@ -10,7 +10,7 @@
 /// @file ConstraintFragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 /// @author Oliver Lange
 /// @author James Thompson
@@ -98,7 +98,7 @@ namespace abinitio {
 /// small(stage2/stage3/stage4)
 /// smooth_small ( stage3/stage4)
 ConstraintFragmentSampler::ConstraintFragmentSampler(topology_broker::TopologyBrokerOP broker)
-	: Parent(broker) {
+: Parent(broker) {
 	BaseClass::type( "ConstraintFragmentSampler" );
 	set_defaults();
 }
@@ -113,7 +113,7 @@ void ConstraintFragmentSampler::set_defaults() {
 	Parent::set_defaults();
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	if ( option[ OptionKeys::constraints::cst_weight ].user() ){
+	if ( option[ OptionKeys::constraints::cst_weight ].user() ) {
 		set_constraint_weight( option[ OptionKeys::constraints::cst_weight ] );
 
 	}
@@ -139,29 +139,29 @@ void ConstraintFragmentSampler::set_defaults() {
 
 	bRampChainbreaks_ = option[ jumps::ramp_chainbreaks ]; //default is true
 	bRampCoordConstraints_ = option[ fold_cst::ramp_coord_cst ]; //default is false
-  bOverlapChainbreaks_ = option[ jumps::overlap_chainbreak ];
+	bOverlapChainbreaks_ = option[ jumps::overlap_chainbreak ];
 	Real chainbreak_score_1 = option[ jumps::chainbreak_weight_stage1 ]();
-  Real chainbreak_score_2 = option[ jumps::chainbreak_weight_stage2 ]();
-  Real chainbreak_score_3 = option[ jumps::chainbreak_weight_stage3 ]();
-  Real chainbreak_score_4 = option[ jumps::chainbreak_weight_stage4 ]();
-  if ( !bRampChainbreaks_ ) {
-    set_score_weight( scoring::linear_chainbreak, chainbreak_score_1, STAGE_1 );
-    set_score_weight( scoring::linear_chainbreak, chainbreak_score_2, STAGE_2 );
-    set_score_weight( scoring::linear_chainbreak, chainbreak_score_3, STAGE_3a );
-    set_score_weight( scoring::linear_chainbreak, chainbreak_score_3, STAGE_3b );
-    set_score_weight( scoring::linear_chainbreak, chainbreak_score_4, STAGE_4 );
-  }
+	Real chainbreak_score_2 = option[ jumps::chainbreak_weight_stage2 ]();
+	Real chainbreak_score_3 = option[ jumps::chainbreak_weight_stage3 ]();
+	Real chainbreak_score_4 = option[ jumps::chainbreak_weight_stage4 ]();
+	if ( !bRampChainbreaks_ ) {
+		set_score_weight( scoring::linear_chainbreak, chainbreak_score_1, STAGE_1 );
+		set_score_weight( scoring::linear_chainbreak, chainbreak_score_2, STAGE_2 );
+		set_score_weight( scoring::linear_chainbreak, chainbreak_score_3, STAGE_3a );
+		set_score_weight( scoring::linear_chainbreak, chainbreak_score_3, STAGE_3b );
+		set_score_weight( scoring::linear_chainbreak, chainbreak_score_4, STAGE_4 );
+	}
 }
 
 void ConstraintFragmentSampler::replace_scorefxn(core::pose::Pose& pose,
-                                                 StageID stage,
-                                                 Real intra_stage_progress ) {
- 	Parent::replace_scorefxn( pose, stage, intra_stage_progress );
+	StageID stage,
+	Real intra_stage_progress ) {
+	Parent::replace_scorefxn( pose, stage, intra_stage_progress );
 
 	if ( bRampChainbreaks_ ) { //should this live in replace_scorefxn ???
-    Real setting( 0.0 );
+		Real setting( 0.0 );
 
-    if ( stage == STAGE_2 ) {
+		if ( stage == STAGE_2 ) {
 			setting = 0.25 / 3;
 		} else if ( stage == STAGE_3a ) {
 			setting = 2.5 * intra_stage_progress * 1.0/3;
@@ -176,17 +176,17 @@ void ConstraintFragmentSampler::replace_scorefxn(core::pose::Pose& pose,
 		}
 
 		if ( bOverlapChainbreaks_ && stage == STAGE_4 ) {
-      set_score_weight( scoring::overlap_chainbreak, intra_stage_progress * option[ jumps::increase_chainbreak ] , STAGE_4 );
+			set_score_weight( scoring::overlap_chainbreak, intra_stage_progress * option[ jumps::increase_chainbreak ] , STAGE_4 );
 			set_current_weight( scoring::overlap_chainbreak, intra_stage_progress * option[ jumps::increase_chainbreak ] );
-    }
-  }
+		}
+	}
 	Real sep_fact( seq_sep_stage1_ );
 	if ( stage == STAGE_1 ) {
 		sep_fact = std::min( 3.0/total_res( pose ), seq_sep_stage1_ );
 	} else if ( stage == STAGE_2 ) {
 		sep_fact = seq_sep_stage1_;
 	} else if ( stage == STAGE_3a || stage == STAGE_3b ) {
-		sep_fact = seq_sep_stage1_ + ( seq_sep_stage3_	- seq_sep_stage1_) * 1.0*intra_stage_progress;
+		sep_fact = seq_sep_stage1_ + ( seq_sep_stage3_ - seq_sep_stage1_) * 1.0*intra_stage_progress;
 	} else if ( stage == STAGE_4 ) {
 		sep_fact = seq_sep_stage3_ + ( seq_sep_stage4_ - seq_sep_stage3_ ) * 1.0*intra_stage_progress;
 	}
@@ -198,7 +198,7 @@ void ConstraintFragmentSampler::replace_scorefxn(core::pose::Pose& pose,
 //otherwise stage2 cycles remain as in the classic protocol
 Size ConstraintFragmentSampler::total_res( core::pose::Pose const& pose ) const {
 	return static_cast< Size >(
-			std::min( 1.0*pose.total_residue(), constraints_->largest_possible_sequence_sep( pose ) * max_seq_sep_fudge_ )
+		std::min( 1.0*pose.total_residue(), constraints_->largest_possible_sequence_sep( pose ) * max_seq_sep_fudge_ )
 	);
 }
 
@@ -210,29 +210,32 @@ void ConstraintFragmentSampler::set_max_seq_sep( pose::Pose& pose, core::Size se
 	bool const bHaveConstraints( pose.constraint_set()->has_residue_pair_constraints() );
 	bool const bHaveChainbreaks( topology_broker().has_chainbreaks_to_close() );
 
-	if (bHaveConstraints)
+	if ( bHaveConstraints ) {
 		runtime_assert( constraints_ != 0 );
+	}
 
 	if ( bHaveConstraints || bHaveChainbreaks ) {
-		if ( bHaveConstraints) {
+		if ( bHaveConstraints ) {
 			// pass along the updated sequence separation parameter to the constraints
 			constraints_->set_max_seq_sep( setting );
 		}
 		tr.Info << "max_seq_sep: " << setting << std::endl;
 
 		// we really have constraints... let's get to work
-		if (!bNoRecoverLowAtSwitch_) {
+		if ( !bNoRecoverLowAtSwitch_ ) {
 			// Recover the low energy pose, otherwise we will lose it at the next reset()
-			if (tr.Trace.visible())
+			if ( tr.Trace.visible() ) {
 				current_scorefxn().show(tr.Trace, pose);
+			}
 
 			tr.Trace << "================ RECOVER LOW (max_seq_sep) ==============" << std::endl;
 			mc().recover_low(pose);
 
-			if (bHaveConstraints)
+			if ( bHaveConstraints ) {
 				pose.constraint_set(constraints_);
+			}
 
-			if (bHaveChainbreaks) {
+			if ( bHaveChainbreaks ) {
 				// Take note of our existing energy method options
 				const EnergyMethodOptions& current_options =
 					current_scorefxn().energy_method_options();
@@ -243,57 +246,60 @@ void ConstraintFragmentSampler::set_max_seq_sep( pose::Pose& pose, core::Size se
 				updated_options.cst_max_seq_sep(setting);
 
 				// Replace the score function
-                core::scoring::ScoreFunctionOP new_scorefxn = current_scorefxn().clone();
+				core::scoring::ScoreFunctionOP new_scorefxn = current_scorefxn().clone();
 				new_scorefxn->set_energy_method_options(updated_options);
 				current_scorefxn(*new_scorefxn);
 			}
 
 			mc().reset(pose);
-			if (tr.Trace.visible())
+			if ( tr.Trace.visible() ) {
 				current_scorefxn().show(tr.Trace, pose);
+			}
 			tr.Trace << std::endl;
 		} else {
 			Pose low_pose;
 			mc().recover_low(low_pose);
 
-			if (bHaveConstraints)
+			if ( bHaveConstraints ) {
 				low_pose.constraint_set(constraints_);
+			}
 
-			if (bHaveChainbreaks) {
-        // Take note of our existing energy method options
-        const EnergyMethodOptions& current_options =
-          current_scorefxn().energy_method_options();
+			if ( bHaveChainbreaks ) {
+				// Take note of our existing energy method options
+				const EnergyMethodOptions& current_options =
+					current_scorefxn().energy_method_options();
 
-        // Update the maximum sequence separation setting, retaining the values
-        // of all other energy method options
-        EnergyMethodOptions updated_options(current_options);
-        updated_options.cst_max_seq_sep(setting);
+				// Update the maximum sequence separation setting, retaining the values
+				// of all other energy method options
+				EnergyMethodOptions updated_options(current_options);
+				updated_options.cst_max_seq_sep(setting);
 
-        // Replace the score function
-        ScoreFunctionOP new_scorefxn(current_scorefxn().clone());
-        new_scorefxn->set_energy_method_options(updated_options);
-        current_scorefxn(*new_scorefxn);
+				// Replace the score function
+				ScoreFunctionOP new_scorefxn(current_scorefxn().clone());
+				new_scorefxn->set_energy_method_options(updated_options);
+				current_scorefxn(*new_scorefxn);
 			}
 
 			mc().reset(low_pose);
 
-			if (bHaveConstraints)
+			if ( bHaveConstraints ) {
 				pose.constraint_set(constraints_);
+			}
 
-			if (bHaveChainbreaks) {
-        // Take note of our existing energy method options
-        const EnergyMethodOptions& current_options =
-          current_scorefxn().energy_method_options();
+			if ( bHaveChainbreaks ) {
+				// Take note of our existing energy method options
+				const EnergyMethodOptions& current_options =
+					current_scorefxn().energy_method_options();
 
-        // Update the maximum sequence separation setting, retaining the values
-        // of all other energy method options
-        EnergyMethodOptions updated_options(current_options);
-        updated_options.cst_max_seq_sep(setting);
+				// Update the maximum sequence separation setting, retaining the values
+				// of all other energy method options
+				EnergyMethodOptions updated_options(current_options);
+				updated_options.cst_max_seq_sep(setting);
 
-        // Replace the score function
-        ScoreFunctionOP new_scorefxn(current_scorefxn().clone());
-        new_scorefxn->set_energy_method_options(updated_options);
-        current_scorefxn(*new_scorefxn);
+				// Replace the score function
+				ScoreFunctionOP new_scorefxn(current_scorefxn().clone());
+				new_scorefxn->set_energy_method_options(updated_options);
+				current_scorefxn(*new_scorefxn);
 			}
 
 			mc().boltzmann(pose, "add_constraints");
@@ -336,7 +342,7 @@ ConstraintFragmentSampler::prepare_stage1( core::pose::Pose &pose ) {
 
 void
 ConstraintFragmentSampler::prepare_stage2( core::pose::Pose& pose ) {
-	//	set_max_seq_sep( pose, seq_sep_stage( total_res( pose ), seq_sep_stage1_ ) );
+	// set_max_seq_sep( pose, seq_sep_stage( total_res( pose ), seq_sep_stage1_ ) );
 	Parent::prepare_stage2( pose );
 	if ( tr.visible() ) pose.constraint_set()->show_violations( tr, pose, show_viol_level_ );
 }
@@ -357,27 +363,28 @@ void ConstraintFragmentSampler::apply(core::pose::Pose& pose) {
 	using core::scoring::constraints::ConstraintSetOP;
 	tr.Info << "ConstraintFragment Sampler: " << get_current_tag() << std::endl;
 
-  // take note of the current constraints, as we are responsible for restoring them
-  ConstraintSetOP orig_constraints(NULL);
+	// take note of the current constraints, as we are responsible for restoring them
+	ConstraintSetOP orig_constraints(NULL);
 	tr.Debug << "introduce MaxSeqSep Filter for constraints" << std::endl;
 	orig_constraints = pose.constraint_set()->clone();
 
-  // initialize a MaxSeqSepConstraintSet with the current set of constraints
+	// initialize a MaxSeqSepConstraintSet with the current set of constraints
 	constraints_ = constraints_additional::MaxSeqSepConstraintSetOP( new constraints_additional::MaxSeqSepConstraintSet(*orig_constraints, pose.fold_tree()) );
 	constraints_->set_max_seq_sep(pose.total_residue()); // so it is prepared for stage4.
 
-  // replace <pose>'s ConstraintSet with our newly initialized MaxSeqSepConstraintSet
+	// replace <pose>'s ConstraintSet with our newly initialized MaxSeqSepConstraintSet
 	pose.constraint_set(constraints_);
 
 	mc().clear_poses();
 	mc().reset(pose);
 
-  // *** Parent::apply() ***
+	// *** Parent::apply() ***
 	Parent::apply(pose);
 
-  // restore the original set of constraints
-	if (orig_constraints)
+	// restore the original set of constraints
+	if ( orig_constraints ) {
 		pose.constraint_set(orig_constraints);
+	}
 }
 
 string ConstraintFragmentSampler::get_name() const {
@@ -385,7 +392,7 @@ string ConstraintFragmentSampler::get_name() const {
 }
 
 inline Real ConstraintFragmentSampler::evaluate_constraint_energy(core::pose::Pose& pose,
-	                                                                ScoreFunction const & scfxn) const {
+	ScoreFunction const & scfxn) const {
 	scfxn( pose ); //accumulate energies
 	return
 		pose.energies().total_energies()[ core::scoring::atom_pair_constraint  ] +

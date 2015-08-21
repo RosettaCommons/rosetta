@@ -8,15 +8,15 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief      Does a quick relax of a membrane protein
-/// @details	Uses SmallMover and ShearMover with adjustable maximum dihedral
-///				angle changes, then repacking and a single round of minimization
+/// @details Uses SmallMover and ShearMover with adjustable maximum dihedral
+///    angle changes, then repacking and a single round of minimization
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_MPQuickRelaxMover_cc
 #define INCLUDED_protocols_membrane_MPQuickRelaxMover_cc
 
 // Unit Headers
-#include <protocols/membrane/MPQuickRelaxMover.hh> 
+#include <protocols/membrane/MPQuickRelaxMover.hh>
 #include <protocols/membrane/MPQuickRelaxMoverCreator.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -76,7 +76,7 @@ using namespace core;
 using namespace core::pose;
 using namespace protocols::membrane;
 using namespace core::kinematics;
-	
+
 /////////////////////
 /// Constructors  ///
 /////////////////////
@@ -100,7 +100,7 @@ MPQuickRelaxMover::MPQuickRelaxMover( Real angle_max, std::string nmoves ) :
 	set_defaults();
 	register_options();
 	init_from_cmd();
-	
+
 	angle_max_ = angle_max;
 	moves_ = nmoves;
 }
@@ -113,12 +113,12 @@ MPQuickRelaxMover::MPQuickRelaxMover( Real angle_max, std::string nmoves, MoveMa
 	set_defaults();
 	register_options();
 	init_from_cmd();
-	
+
 	angle_max_ = angle_max;
 	moves_ = nmoves;
 	movemap_ = movemap;
 }
-	
+
 /// @brief Copy Constructor
 /// @details Create a deep copy of this mover
 MPQuickRelaxMover::MPQuickRelaxMover( MPQuickRelaxMover const & src ) : protocols::moves::Mover( src ),
@@ -137,12 +137,12 @@ MPQuickRelaxMover::MPQuickRelaxMover( MPQuickRelaxMover const & src ) : protocol
 
 /// @brief Assignment Operator
 MPQuickRelaxMover & MPQuickRelaxMover::operator = ( MPQuickRelaxMover const & src ) {
-	
+
 	// Abort self-assignment.
-	if (this == &src) {
+	if ( this == &src ) {
 		return *this;
 	}
-		
+
 	// Otherwise, create a new object
 	return *( new MPQuickRelaxMover( *this ) );
 }
@@ -169,15 +169,15 @@ MPQuickRelaxMover::fresh_instance() const {
 /// @brief Pase Rosetta Scripts Options for this Mover
 void
 MPQuickRelaxMover::parse_my_tag(
-	 utility::tag::TagCOP /*tag*/,
-	 basic::datacache::DataMap &,
-	 protocols::filters::Filters_map const &,
-	 protocols::moves::Movers_map const &,
-	 core::pose::Pose const &
-	 ) {
+	utility::tag::TagCOP /*tag*/,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
+) {
 
 	// TODO: implement this
-	
+
 }
 
 /// @brief Create a new copy of this mover
@@ -213,16 +213,16 @@ MPQuickRelaxMover::get_name() const {
 /// @brief Run a quick relax on a membrane protein
 /// @details Requires AddMembraneMover to be run beforehand
 void MPQuickRelaxMover::apply( Pose & pose ) {
-	
+
 	using namespace protocols::membrane;
 	using namespace protocols::simple_moves;
 	using namespace protocols::moves;
 	using namespace core::pack::task;
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
-	
+
 	TR << "Running MPQuickRelax protocol..." << std::endl;
-	
+
 	// add membrane to pose
 	if ( addmem_ == true ) {
 		AddMembraneMoverOP addmem( new AddMembraneMover() );
@@ -238,17 +238,16 @@ void MPQuickRelaxMover::apply( Pose & pose ) {
 	Size nres( nres_protein( pose ) );
 	if ( moves_ == "nres" ) {
 		nmoves_ = nres;
-	}
-	else {
+	} else {
 		nmoves_ = utility::string2Size( moves_ );
 	}
-	
+
 	// find membrane position around the protein
 	if ( mem_from_topo_ ) {
 		MembranePositionFromTopologyMoverOP mempos( new MembranePositionFromTopologyMover() );
 		mempos->apply( pose );
 	}
-	
+
 	// optimize membrane position using smooth scorefunction
 	if ( opt_mem_ ) {
 		OptimizeMembranePositionMoverOP optmem( new OptimizeMembranePositionMover() );
@@ -256,11 +255,11 @@ void MPQuickRelaxMover::apply( Pose & pose ) {
 	}
 
 	// creating constraint set
-	if ( cst_file_.size() > 0 && cst_weight_ > 0) {
+	if ( cst_file_.size() > 0 && cst_weight_ > 0 ) {
 
 		ConstraintSetOP cst( ConstraintIO::get_instance()->read_constraints( cst_file_, ConstraintSetOP( new ConstraintSet() ), pose ) );
 		pose.constraint_set( cst );
-		
+
 		// set constraints in scorefunction
 		sfxn_->set_weight( atom_pair_constraint, cst_weight_ );
 		sfxn_->set_weight( angle_constraint, cst_weight_ );
@@ -275,32 +274,32 @@ void MPQuickRelaxMover::apply( Pose & pose ) {
 	SmallMoverOP small( new SmallMover( movemap_, kT, nmoves_ ) );
 	small->angle_max( angle_max_ );
 	small->apply( pose );
-	
+
 	ShearMoverOP shear( new ShearMover( movemap_, kT, nmoves_ ) );
 	shear->angle_max( angle_max_ );
 	shear->apply( pose );
 
 	// create MC object
 	MonteCarloOP mc( new MonteCarlo( pose, *sfxn_, 1.0 ) );
-	
+
 	// initialize AtomTreeMinimizer
 	core::optimization::MinimizerOptions min_opts( "lbfgs_armijo_atol", 0.01, true );
 	core::optimization::AtomTreeMinimizer atm;
 
-//				fa_rep min_tol cst_wts
-//	repeat 5
-//	ramp_repack_min 0.02  0.01     1.0
-//	ramp_repack_min 0.250 0.01     0.5
-//	ramp_repack_min 0.550 0.01     0.0
-//	ramp_repack_min 1     0.00001  0.0
+	//    fa_rep min_tol cst_wts
+	// repeat 5
+	// ramp_repack_min 0.02  0.01     1.0
+	// ramp_repack_min 0.250 0.01     0.5
+	// ramp_repack_min 0.550 0.01     0.0
+	// ramp_repack_min 1     0.00001  0.0
 
-//	sfxn_->set_weight( fa_rep, 0.5 );
+	// sfxn_->set_weight( fa_rep, 0.5 );
 
 	// run small and shearmover again
 	TR << "SmallMover and ShearMover - Waka waka ..." << std::endl;
 	small->apply( pose );
 	shear->apply( pose );
-	
+
 	// do this for a certain number of iterations
 	// since both the packer and especially minimization takes a while, just do one for now
 	Size breakpoint( 0 );
@@ -309,37 +308,36 @@ void MPQuickRelaxMover::apply( Pose & pose ) {
 	Real tot_score = ( *sfxn_ )( pose );
 	Real fa_rep = pose.energies().total_energies()[ scoring::fa_rep ];
 	Real fa_atr = pose.energies().total_energies()[ scoring::fa_atr ];
-	
+
 	// if fa_rep exceeds threshold (number of residues of the protein, as empirically determined)
 	// or score is greater than 0, keep continuing
 	while ( tot_score > 0 || fa_rep > nres_protein( pose ) + 100 ) {
-		
+
 		pose.energies().show_total_headers( TR );
 		TR << std::endl;
 		pose.energies().show_totals( TR );
 		TR << std::endl;
 		TR << "tot: " << tot_score << " fa_rep: " << fa_rep << " fa_atr: " << fa_atr << std::endl;
-		
+
 		++breakpoint;
-		
+
 		// ramp repulsive up and down
 		if ( breakpoint % 2 == 1 ) {
 			sfxn_->set_weight( core::scoring::fa_rep, 1.0);
-		}
-		else {
+		} else {
 			sfxn_->set_weight( core::scoring::fa_rep, 0.1);
 		}
 
 		// if breakpoint, fail_retry
-//		if ( breakpoint >= 10 && breakpoint <= 20 ) {
-//			TR << "Counter > 10, score: " << tot_score << ", fa_rep: " << fa_rep << ", FAIL_RETRY..." << std::endl;
-//			set_last_move_status(protocols::moves::FAIL_RETRY);
-//		}
-//		else if ( breakpoint > 20 ){
-//			TR << "Counter > 20, score: " << tot_score << ", fa_rep: " << fa_rep << ", FAIL_DO_NOT_RETRY..." << std::endl;
-//			set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
-//			return;
-//		}
+		//  if ( breakpoint >= 10 && breakpoint <= 20 ) {
+		//   TR << "Counter > 10, score: " << tot_score << ", fa_rep: " << fa_rep << ", FAIL_RETRY..." << std::endl;
+		//   set_last_move_status(protocols::moves::FAIL_RETRY);
+		//  }
+		//  else if ( breakpoint > 20 ){
+		//   TR << "Counter > 20, score: " << tot_score << ", fa_rep: " << fa_rep << ", FAIL_DO_NOT_RETRY..." << std::endl;
+		//   set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
+		//   return;
+		//  }
 
 		if ( breakpoint == 5 ) {
 			TR << "Counter == 6, score: " << tot_score << ", fa_rep: " << fa_rep << ", FAIL_DO_NOT_RETRY..." << std::endl;
@@ -352,18 +350,18 @@ void MPQuickRelaxMover::apply( Pose & pose ) {
 		PackerTaskOP repack = TaskFactory::create_packer_task( pose );
 		repack->restrict_to_repacking();
 		core::pack::pack_rotamers( pose, *sfxn_, repack );
-		
+
 		// minimize
 		TR << "Minimizing..." << std::endl;
 		atm.run( pose, *movemap_, *sfxn_, min_opts );
-		
+
 		// evaluate Boltzmann
 		mc->boltzmann( pose );
 		TR << "accepted? " << mc->mc_accepted() << " pose energy: " << pose.energies().total_energy() << std::endl;
 
 		// set pose to lowest scoring pose from MC simulation
 		pose = mc->lowest_score_pose();
-		
+
 		// score the pose
 		tot_score = ( *sfxn_ )( pose );
 		fa_rep = pose.energies().total_energies()[ scoring::fa_rep ];
@@ -373,7 +371,7 @@ void MPQuickRelaxMover::apply( Pose & pose ) {
 		TR << std::endl;
 		TR << "tot: " << tot_score << "fa_rep: " << fa_rep << " fa_atr: " << fa_atr << std::endl;
 		TR << "Iteration: " << breakpoint << " score: " << tot_score << " fa_rep: " << fa_rep << " fa_atr: " << fa_atr << std::endl;
-		
+
 	} // number of iterations for search
 
 	// reset the weight in the scorefunction to what it was before (for mpsmooth)
@@ -385,10 +383,10 @@ void MPQuickRelaxMover::apply( Pose & pose ) {
 	// superimpose poses with native
 	SuperimposeMoverOP super( new SuperimposeMover( *native_, 1, nres, 1, nres, true ) );
 	super->apply( pose );
-	
+
 	// get job for adding rmsd to scorefile
 	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-	
+
 	// calculate and store the rmsd in the score file
 	job->add_string_real_pair("rms", core::scoring::bb_rmsd( pose, *native_ ));
 
@@ -426,80 +424,79 @@ void MPQuickRelaxMover::optimize_membrane( bool yesno ) {
 
 /// @brief Register Options from Command Line
 void MPQuickRelaxMover::register_options() {
-	
+
 	using namespace basic::options;
 	option.add_relevant( OptionKeys::in::file::native );
 	option.add_relevant( OptionKeys::mp::quickrelax::angle_max );
 	option.add_relevant( OptionKeys::mp::quickrelax::nmoves );
 	option.add_relevant( OptionKeys::constraints::cst_file );
 	option.add_relevant( OptionKeys::constraints::cst_weight );
-	
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 /// @brief Set default values
 void MPQuickRelaxMover::set_defaults() {
-	
+
 	// maximum change in dihedral angles
 	angle_max_ = 1.0;
-	
+
 	// number of moves
 	moves_ = "nres";
-	
+
 	// Movemap
 	movemap_->set_bb( true );
 	movemap_->set_chi( true );
-	
+
 	// create scorefunction
 	sfxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2012.wts" );
-	
+
 	// default constraint weight of 1
 	cst_weight_ = 1.0;
-	
+
 	// run AddMembraneMover again?
 	addmem_ = true;
-	
+
 	// starting MembranePositionFromTopology?
 	mem_from_topo_ = false;
-	
+
 	// optimize membrane before relax?
 	opt_mem_ = false;
-	
+
 }// set_defaults
 
 ////////////////////////////////////////////////////////////////////////////////
 
 /// @brief Initialize from commandline
 void MPQuickRelaxMover::init_from_cmd() {
-	
+
 	using namespace basic::options;
 
 	// read native and attach membrane to it
-	if( option[ OptionKeys::in::file::native ].user() ) {
+	if ( option[ OptionKeys::in::file::native ].user() ) {
 		native_ = core::import_pose::pose_from_pdb( option[ OptionKeys::in::file::native ]() );
 		AddMembraneMoverOP addmem( new AddMembraneMover() );
 		addmem->apply( *native_ );
 	}
 
-	if( option[ OptionKeys::mp::quickrelax::angle_max ].user() ) {
+	if ( option[ OptionKeys::mp::quickrelax::angle_max ].user() ) {
 		angle_max_ = option[ OptionKeys::mp::quickrelax::angle_max ]();
 	}
 
-	if( option[ OptionKeys::mp::quickrelax::nmoves ].user() ) {
+	if ( option[ OptionKeys::mp::quickrelax::nmoves ].user() ) {
 		if ( option[ OptionKeys::mp::quickrelax::nmoves ]() == "nres" ) {
 			moves_ = utility::to_string( nres_protein( *native_ ) );
-		}
-		else {
+		} else {
 			moves_ = option[ OptionKeys::mp::quickrelax::nmoves ]();
 		}
 	}
 
-	if( option[ OptionKeys::constraints::cst_file ].user() ) {
+	if ( option[ OptionKeys::constraints::cst_file ].user() ) {
 		cst_file_ = option[ OptionKeys::constraints::cst_file ]()[1];
 	}
 
-	if( option[ OptionKeys::constraints::cst_weight ].user() ) {
+	if ( option[ OptionKeys::constraints::cst_weight ].user() ) {
 		cst_weight_ = option[ OptionKeys::constraints::cst_weight ]();
 	}
 

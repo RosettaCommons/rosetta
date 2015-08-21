@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/matdes/MatDesGreedyOptMutationMover.hh
-/// @brief	This is a modified version of Chris King's GreedyOptMutationMover with additional functionality that is currently not compatible with all of the ParetoOpt functionality. Please note that this has been checked into master in its current state in response to requests from others to use this modified version of Chris King's GreedyOptMutationMover. Although this is still a somewhat developmental piece of code, it has currently been left in src/protocols/matdes/ to avoid issues with intra-library level dependencies.  
+/// @brief This is a modified version of Chris King's GreedyOptMutationMover with additional functionality that is currently not compatible with all of the ParetoOpt functionality. Please note that this has been checked into master in its current state in response to requests from others to use this modified version of Chris King's GreedyOptMutationMover. Although this is still a somewhat developmental piece of code, it has currently been left in src/protocols/matdes/ to avoid issues with intra-library level dependencies.
 /// @author Jacob Bale (balej@uw.edu)
 
 #ifndef INCLUDED_protocols_matdes_MatDesGreedyOptMutationMover_hh
@@ -32,7 +32,7 @@
 #include <protocols/filters/Filter.hh>
 
 namespace protocols {
-namespace matdes{
+namespace matdes {
 
 class MatDesGreedyOptMutationMover : public protocols::moves::Mover
 {
@@ -52,14 +52,14 @@ public:
 		bool dump_pdb = false,
 		bool dump_table = false,
 		bool parallel = false,
-    bool stop_before_condition = false,
-    bool skip_best_check = false,
-    bool rtmin = false,
-    bool shuffle_order = false,
-    bool diversify = false,
-    bool incl_nonopt = false,
-    bool force_natro = false,
-    bool keep_trying = false,
+		bool stop_before_condition = false,
+		bool skip_best_check = false,
+		bool rtmin = false,
+		bool shuffle_order = false,
+		bool diversify = false,
+		bool incl_nonopt = false,
+		bool force_natro = false,
+		bool keep_trying = false,
 		protocols::filters::FilterOP stopping_condition = protocols::filters::FilterOP( NULL )
 	);
 
@@ -104,30 +104,30 @@ public:
 	void filter_deltas( utility::vector1< core::Real > const filter_deltas );
 	void stopping_condition( protocols::filters::FilterOP f ){ stopping_condition_ = f; }
 	protocols::filters::FilterOP stopping_condition() const{ return stopping_condition_; }
-  bool stop_before_condition() const;
-  void stop_before_condition( bool const stop_before_condition );
-  bool skip_best_check() const;
-  void skip_best_check( bool const skip_best_check );
-  utility::vector1< protocols::simple_filters::DeltaFilterOP > delta_filters() const;
-  void delta_filters( utility::vector1< protocols::simple_filters::DeltaFilterOP > const d );
+	bool stop_before_condition() const;
+	void stop_before_condition( bool const stop_before_condition );
+	bool skip_best_check() const;
+	void skip_best_check( bool const skip_best_check );
+	utility::vector1< protocols::simple_filters::DeltaFilterOP > delta_filters() const;
+	void delta_filters( utility::vector1< protocols::simple_filters::DeltaFilterOP > const d );
 	utility::vector1< protocols::simple_filters::TaskAwareScoreTypeFilterOP > set_task_for_filters() const;
 	void set_task_for_filters( utility::vector1< protocols::simple_filters::TaskAwareScoreTypeFilterOP > set_task_for_filters );
-  bool force_natro() const;
-  void force_natro( bool const f );
+	bool force_natro() const;
+	void force_natro( bool const f );
 	utility::vector1< std::string > force_natro_for_stored_task_names() const;
 	void force_natro_for_stored_task_names( utility::vector1<std::string> force_natro_for_stored_task_names );
-  bool rtmin() const;
-  void rtmin( bool const b );
-  bool shuffle_order() const;
-  void shuffle_order( bool const b );
-  bool diversify() const;
-  void diversify( bool const b );
-  bool incl_nonopt() const;
-  void incl_nonopt( bool const b );
- 	core::pose::PoseOP reference_pose() const;
-  void reference_pose( core::pose::PoseOP const reference_pose );
-  bool keep_trying() const;
-  void keep_trying( bool const k );
+	bool rtmin() const;
+	void rtmin( bool const b );
+	bool shuffle_order() const;
+	void shuffle_order( bool const b );
+	bool diversify() const;
+	void diversify( bool const b );
+	bool incl_nonopt() const;
+	void incl_nonopt( bool const b );
+	core::pose::PoseOP reference_pose() const;
+	void reference_pose( core::pose::PoseOP const reference_pose );
+	bool keep_trying() const;
+	void keep_trying( bool const k );
 
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
@@ -143,7 +143,7 @@ private:
 	bool parallel_;
 	protocols::filters::FilterOP stopping_condition_; // dflt NULL ; if defined, stops greedy optimization when the filter's apply evaluates to true;
 	utility::vector1< std::pair< core::Size, utility::vector1<
-			std::pair< core::chemical::AA, utility::vector1< core::Real > > > > > seqpos_aa_vals_vec_;
+		std::pair< core::chemical::AA, utility::vector1< core::Real > > > > > seqpos_aa_vals_vec_;
 	utility::vector1< core::Real > filter_deltas_;
 	core::pose::Pose ref_pose_;
 	utility::vector1< core::pose::Pose > pfront_poses_;

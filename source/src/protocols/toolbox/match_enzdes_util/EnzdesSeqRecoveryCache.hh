@@ -59,7 +59,7 @@ public:
 
 	core::Real
 	sequence_recovery(
-  	core::pose::Pose const & designed_pose
+		core::pose::Pose const & designed_pose
 	) const;
 
 	void remap_residues( core::id::SequenceMapping const & smap );

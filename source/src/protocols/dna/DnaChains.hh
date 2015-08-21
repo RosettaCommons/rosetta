@@ -31,14 +31,14 @@ namespace protocols {
 namespace dna {
 
 class DnaPosition {
-/// @brief Stores residue index/indices for a DNA position, which could be a basepair or a single-stranded position.  Accomplishes what std::pair<Size,Size> would, but is nicer to use
+	/// @brief Stores residue index/indices for a DNA position, which could be a basepair or a single-stranded position.  Accomplishes what std::pair<Size,Size> would, but is nicer to use
 public: // constructors
 	// default empty constructor
 	DnaPosition() : top_(0), bottom_(0), paired_(false) {}
 	// construct a single-stranded position
 	DnaPosition( core::Size i ) : top_(i), bottom_(0), paired_(false) {}
 	// construct a double-stranded position (a basepair)
-	DnaPosition( core::Size i, core::Size j )	: top_(i), bottom_(j), paired_(true) {}
+	DnaPosition( core::Size i, core::Size j ) : top_(i), bottom_(j), paired_(true) {}
 	~DnaPosition(){}
 
 public: // const methods
@@ -56,7 +56,7 @@ private:
 typedef std::map< core::Size, DnaPosition > DnaPositions;
 
 class DnaChains : public utility::pointer::ReferenceCount {
-// this class is a light wrapper for DnaPositions (a map which is typedefed above)
+	// this class is a light wrapper for DnaPositions (a map which is typedefed above)
 public: // constructors
 	DnaChains();
 	virtual ~DnaChains();
@@ -69,7 +69,7 @@ public: // constructors
 
 	DnaPosition & operator[] ( core::Size resindex ) { return positions_[ resindex ]; }
 	DnaPosition const & operator[] ( core::Size resindex ) const
-		{ return ( *( positions_.find( resindex ))).second; }
+	{ return ( *( positions_.find( resindex ))).second; }
 
 	DnaPositions & positions() { return positions_; }
 	DnaPositions const & positions() const { return positions_; }

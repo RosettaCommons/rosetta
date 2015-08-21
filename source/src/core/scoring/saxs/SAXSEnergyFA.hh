@@ -93,9 +93,9 @@ namespace saxs {
 class SAXSEnergyFA : public SAXSEnergy  {
 public:
 
-    /// c-tor
-    SAXSEnergyFA() : SAXSEnergy( fa_cfg_file_,
-	    chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD),saxs_fa_score,methods::EnergyMethodCreatorOP( new SAXSEnergyCreatorFA )) {}
+	/// c-tor
+	SAXSEnergyFA() : SAXSEnergy( fa_cfg_file_,
+		chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD),saxs_fa_score,methods::EnergyMethodCreatorOP( new SAXSEnergyCreatorFA )) {}
 
 };
 

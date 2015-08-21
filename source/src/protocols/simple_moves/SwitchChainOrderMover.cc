@@ -62,7 +62,7 @@ SwitchChainOrderMoverCreator::mover_name()
 }
 
 SwitchChainOrderMover::SwitchChainOrderMover()
-	: moves::Mover("SwitchChainOrder"),
+: moves::Mover("SwitchChainOrder"),
 	residue_numbers_( /* NULL */ )
 {
 	scorefxn( core::scoring::get_score_function() );
@@ -81,7 +81,7 @@ SwitchChainOrderMover::apply( Pose & pose )
 	new_residue_numbers.clear();
 	utility::vector1< core::Size > positions_in_new_pose;
 	positions_in_new_pose.clear();
-	BOOST_FOREACH( char const chaini, chain_order() ){
+	BOOST_FOREACH ( char const chaini, chain_order() ) {
 		core::Size const chain( chaini - '0' );
 		TR<<"Now at chain: "<<chain<<std::endl;
 		runtime_assert( chain > 0 && chain <= conf.num_chains() );
@@ -89,43 +89,47 @@ SwitchChainOrderMover::apply( Pose & pose )
 		core::Size const chain_end(   conf.chain_end(   chain ) );
 
 		core::Size const new_chain_begin( positions_in_new_pose.size() + 1 );
-		for( core::Size i = chain_begin; i<=chain_end; ++i )
+		for ( core::Size i = chain_begin; i<=chain_end; ++i ) {
 			positions_in_new_pose.push_back( i );
+		}
 		core::Size const new_chain_end( positions_in_new_pose.size() );
-		if( residue_numbers_ != NULL ){
-			BOOST_FOREACH( core::Size const residue_number, residue_numbers_->obj ){
-				if( residue_number >= chain_begin && residue_number <= chain_end )
+		if ( residue_numbers_ != NULL ) {
+			BOOST_FOREACH ( core::Size const residue_number, residue_numbers_->obj ) {
+				if ( residue_number >= chain_begin && residue_number <= chain_end ) {
 					new_residue_numbers.push_back( residue_number - ( chain_begin - new_chain_begin ) );
+				}
 			}
 		}
 		new_ft.add_edge( new_chain_begin, new_chain_end, -1 );
-		if( chain_count > 1 )
+		if ( chain_count > 1 ) {
 			new_ft.add_edge( 1, new_chain_begin, chain_count - 1 );
+		}
 		chain_count++;
 	}
 	new_ft.reorder( 1 );
 	core::pose::create_subpose( pose, positions_in_new_pose, new_ft, new_pose );
 	new_pose.update_residue_neighbors();
 	new_pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( new_pose, true ) ) ); //reinitialize the PDBInfo
-	
+
 	//When applying switch then comments are erased from the pose. adding condition that if -pdb comments true flag is turned on then copy comments to new pose. gideonla 1/5/13
-	if (basic::options::option[ basic::options::OptionKeys::out::file::pdb_comments ].value()){
+	if ( basic::options::option[ basic::options::OptionKeys::out::file::pdb_comments ].value() ) {
 		std::map< std::string, std::string > const comments = core::pose::get_all_comments( pose );
-		for( std::map< std::string, std::string >::const_iterator i = comments.begin(); i != comments.end(); ++i ){
-		core::pose::add_comment(new_pose,i->first,i->second);	
+		for ( std::map< std::string, std::string >::const_iterator i = comments.begin(); i != comments.end(); ++i ) {
+			core::pose::add_comment(new_pose,i->first,i->second);
 		}
 	}
-	pose.clear();	
+	pose.clear();
 	pose = new_pose;
 	pose.conformation().detect_disulfides();
 	( *scorefxn() ) ( pose );
 	pose.update_residue_neighbors();
 	TR<<"New pose's foldtree "<<pose.fold_tree()<<std::endl;
-	if( residue_numbers_ != NULL ){
+	if ( residue_numbers_ != NULL ) {
 		residue_numbers_->obj = new_residue_numbers;
 		TR<<"new residue numbers: ";
-		BOOST_FOREACH( core::Size const res, residue_numbers_->obj )
+		BOOST_FOREACH ( core::Size const res, residue_numbers_->obj ) {
 			TR<<res<<", ";
+		}
 		TR<<std::endl;
 	}
 }
@@ -158,8 +162,9 @@ SwitchChainOrderMover::parse_my_tag(
 	chain_order( tag->getOption< std::string >( "chain_order" ) );
 	std::string const residue_numbers_setter( tag->getOption< std::string >( "residue_numbers_setter", "" ) );
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
-	if( residue_numbers_setter != "" )
+	if ( residue_numbers_setter != "" ) {
 		residue_numbers_ = basic::datacache::get_set_from_datamap< basic::datacache::DataMapObj< utility::vector1< core::Size > > >( "residue_numbers", residue_numbers_setter, data );
+	}
 
 }
 

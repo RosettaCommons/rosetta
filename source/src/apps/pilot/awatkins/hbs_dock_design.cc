@@ -106,7 +106,7 @@ using utility::file::FileName;
 //   +-Monte Carlo Mover---------------------------------------+
 //   | +-Random Mover-( 1 / 2 / 1 / 1 )--------------------+ | |
 //   | | +-Docking Mover-----------------------------------+ | |
-//   | | | small rigid body movements between the peptide	 | | |
+//   | | | small rigid body movements between the peptide  | | |
 //   | | | and protein for conformational diversity        | | |
 //   | | +-------------------------------------------------+ | |
 //   | | +-Peptide Modeling--------------------------------+ | |
@@ -122,8 +122,8 @@ using utility::file::FileName;
 //
 // Design Minimization Phase
 //   | +-Pack Rotamers Mover---------------------------------+ |
-//   | | repack and design rotamers to explore sequence 	   | |
-//   | | space  	                                           | |
+//   | | repack and design rotamers to explore sequence     | |
+//   | | space                                              | |
 //   | +-----------------------------------------------------+ |
 //   | +-Minimization Mover----------------------------------+ |
 //   | | energy minimize the current conformation            | |
@@ -135,51 +135,51 @@ static basic::Tracer TR("HDDM");
 
 // application specific options
 namespace hddm {
-	// pert options
-	RealOptionKey const mc_temp( "hddm::mc_temp" );
-	RealOptionKey const pert_mc_temp( "hddm::pert_mc_temp" );
-	RealOptionKey const pert_dock_rot_mag( "hddm::pert_dock_rot_mag" );
-	RealOptionKey const pert_dock_trans_mag( "hddm::pert_dock_trans_mag" );
-	RealOptionKey const pert_pep_small_temp( "hddm::pert_pep_small_temp" );
-	RealOptionKey const pert_pep_small_H( "hddm::pert_pep_small_H" );
-	RealOptionKey const pert_pep_small_L( "hddm::pert_pep_small_L" );
-	RealOptionKey const pert_pep_small_E( "hddm::pert_pep_small_E" );
-	RealOptionKey const pert_pep_shear_temp( "hddm::pert_pep_shear_temp" );
-	RealOptionKey const pert_pep_shear_H( "hddm::pert_pep_shear_H" );
-	RealOptionKey const pert_pep_shear_L( "hddm::pert_pep_shear_L" );
-	RealOptionKey const pert_pep_shear_E( "hddm::pert_pep_shear_E" );
+// pert options
+RealOptionKey const mc_temp( "hddm::mc_temp" );
+RealOptionKey const pert_mc_temp( "hddm::pert_mc_temp" );
+RealOptionKey const pert_dock_rot_mag( "hddm::pert_dock_rot_mag" );
+RealOptionKey const pert_dock_trans_mag( "hddm::pert_dock_trans_mag" );
+RealOptionKey const pert_pep_small_temp( "hddm::pert_pep_small_temp" );
+RealOptionKey const pert_pep_small_H( "hddm::pert_pep_small_H" );
+RealOptionKey const pert_pep_small_L( "hddm::pert_pep_small_L" );
+RealOptionKey const pert_pep_small_E( "hddm::pert_pep_small_E" );
+RealOptionKey const pert_pep_shear_temp( "hddm::pert_pep_shear_temp" );
+RealOptionKey const pert_pep_shear_H( "hddm::pert_pep_shear_H" );
+RealOptionKey const pert_pep_shear_L( "hddm::pert_pep_shear_L" );
+RealOptionKey const pert_pep_shear_E( "hddm::pert_pep_shear_E" );
 
-	IntegerOptionKey const pert_pep_num_rep( "hddm::pert_pep_num_rep" );
-	IntegerOptionKey const pert_num( "hddm::pert_num" );
-	IntegerOptionKey const dock_design_loop_num( "hddm::dock_design_loop_num" );
+IntegerOptionKey const pert_pep_num_rep( "hddm::pert_pep_num_rep" );
+IntegerOptionKey const pert_num( "hddm::pert_num" );
+IntegerOptionKey const dock_design_loop_num( "hddm::dock_design_loop_num" );
 
-	BooleanOptionKey const final_design_min( "hddm::final_design_min" );
-	BooleanOptionKey const use_soft_rep( "hddm::use_soft_rep" );
-	BooleanOptionKey const mc_initial_pose( "hddm::mc_initial_pose" );
-	BooleanOptionKey const hbs_design_first( "hddm::hbs_design_first" );
+BooleanOptionKey const final_design_min( "hddm::final_design_min" );
+BooleanOptionKey const use_soft_rep( "hddm::use_soft_rep" );
+BooleanOptionKey const mc_initial_pose( "hddm::mc_initial_pose" );
+BooleanOptionKey const hbs_design_first( "hddm::hbs_design_first" );
 
-	BooleanOptionKey const pymol( "hddm::pymol" );
-	BooleanOptionKey const keep_history( "hddm::keep_history" );
+BooleanOptionKey const pymol( "hddm::pymol" );
+BooleanOptionKey const keep_history( "hddm::keep_history" );
 
-	// design options
-	RealOptionKey const desn_mc_temp( "hddm::desn_mc_temp" );
+// design options
+RealOptionKey const desn_mc_temp( "hddm::desn_mc_temp" );
 
 
 }
 
 class HbsDockDesignMinimizeMover : public Mover {
 
-	public:
+public:
 
-		//default ctor
-		HbsDockDesignMinimizeMover(): Mover("HbsDockDesignMinimizeMover"){}
+	//default ctor
+	HbsDockDesignMinimizeMover(): Mover("HbsDockDesignMinimizeMover"){}
 
-		//default dtor
-		virtual ~HbsDockDesignMinimizeMover(){}
+	//default dtor
+	virtual ~HbsDockDesignMinimizeMover(){}
 
-		//methods
-		virtual void apply( core::pose::Pose & pose );
-		virtual std::string get_name() const { return "HbsDockDesignMinimizeMover"; }
+	//methods
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const { return "HbsDockDesignMinimizeMover"; }
 
 };
 
@@ -191,53 +191,53 @@ int
 main( int argc, char* argv[] )
 {
 	try {
-	/*********************************************************************************************************************
-	Common Setup
-	**********************************************************************************************************************/
+		/*********************************************************************************************************************
+		Common Setup
+		**********************************************************************************************************************/
 
-	// add application specific options to options system
-	// There are far more options here than you will realistically need for a program of this complexity - but this gives you an idea of how to fine-grain option-control everything
-	option.add( hddm::mc_temp, "The temperature to use for the outer loop of the HDDM protocol. Defaults to 1.0." ).def( 1.0 );
-	option.add( hddm::pert_mc_temp, "The temperature to use for the pertubation phase of the HDDM protocol. Defaults to 0.8." ).def( 0.8 );
-	option.add( hddm::pert_dock_rot_mag, "The rotation magnitude for the ridged body pertubation in the pertubation phase of the HDDM protocol. Defaults to 1.0." ).def( 1 );
-	option.add( hddm::pert_dock_trans_mag, "The translation magnitude for the ridged body pertubation in the pertubation phase of the HDDM protocol. Defaults to 0.5." ).def( 0.5 );
-	option.add( hddm::pert_pep_small_temp, "" ).def( 0.8 );
-	option.add( hddm::pert_pep_shear_temp, "" ).def( 0.8 );
+		// add application specific options to options system
+		// There are far more options here than you will realistically need for a program of this complexity - but this gives you an idea of how to fine-grain option-control everything
+		option.add( hddm::mc_temp, "The temperature to use for the outer loop of the HDDM protocol. Defaults to 1.0." ).def( 1.0 );
+		option.add( hddm::pert_mc_temp, "The temperature to use for the pertubation phase of the HDDM protocol. Defaults to 0.8." ).def( 0.8 );
+		option.add( hddm::pert_dock_rot_mag, "The rotation magnitude for the ridged body pertubation in the pertubation phase of the HDDM protocol. Defaults to 1.0." ).def( 1 );
+		option.add( hddm::pert_dock_trans_mag, "The translation magnitude for the ridged body pertubation in the pertubation phase of the HDDM protocol. Defaults to 0.5." ).def( 0.5 );
+		option.add( hddm::pert_pep_small_temp, "" ).def( 0.8 );
+		option.add( hddm::pert_pep_shear_temp, "" ).def( 0.8 );
 
-	option.add( hddm::pert_pep_small_H, "" ).def( 2.0 );
-	option.add( hddm::pert_pep_small_L, "" ).def( 2.0 );
-	option.add( hddm::pert_pep_small_E, "" ).def( 2.0 );
-	option.add( hddm::pert_pep_shear_H, "" ).def( 2.0 );
-	option.add( hddm::pert_pep_shear_L, "" ).def( 2.0 );
-	option.add( hddm::pert_pep_shear_E, "" ).def( 2.0 );
+		option.add( hddm::pert_pep_small_H, "" ).def( 2.0 );
+		option.add( hddm::pert_pep_small_L, "" ).def( 2.0 );
+		option.add( hddm::pert_pep_small_E, "" ).def( 2.0 );
+		option.add( hddm::pert_pep_shear_H, "" ).def( 2.0 );
+		option.add( hddm::pert_pep_shear_L, "" ).def( 2.0 );
+		option.add( hddm::pert_pep_shear_E, "" ).def( 2.0 );
 
-	option.add( hddm::pert_pep_num_rep, "Number of small and shear iterations for the peptide" ).def( 100 );
-	option.add( hddm::pert_num, "Number of iterations of perturbation loop per design" ).def(10);
-	option.add( hddm::dock_design_loop_num, "Number of iterations of pertubation and design" ).def(10);
+		option.add( hddm::pert_pep_num_rep, "Number of small and shear iterations for the peptide" ).def( 100 );
+		option.add( hddm::pert_num, "Number of iterations of perturbation loop per design" ).def(10);
+		option.add( hddm::dock_design_loop_num, "Number of iterations of pertubation and design" ).def(10);
 
-	option.add( hddm::final_design_min, "Do a final repack/design and minimization. Default true" ).def(true);
-	option.add( hddm::use_soft_rep, "Use soft repulsion for pertubation and initial design. Default false" ).def(false);
-	option.add( hddm::mc_initial_pose, "Allow initial pose to be considered as lowest energy pose. Default false" ).def(false);
-	option.add( hddm::hbs_design_first, "Design before pertubation (want when initial struct is aligned to hotspot)  Default false" ).def(false);
+		option.add( hddm::final_design_min, "Do a final repack/design and minimization. Default true" ).def(true);
+		option.add( hddm::use_soft_rep, "Use soft repulsion for pertubation and initial design. Default false" ).def(false);
+		option.add( hddm::mc_initial_pose, "Allow initial pose to be considered as lowest energy pose. Default false" ).def(false);
+		option.add( hddm::hbs_design_first, "Design before pertubation (want when initial struct is aligned to hotspot)  Default false" ).def(false);
 
-	option.add( hddm::pymol, "Set up pymol mover. Default false" ).def(false);
-	option.add( hddm::keep_history, "Keep history in pymol. Requires hddm::pymol set to true. Default false" ).def(false);
+		option.add( hddm::pymol, "Set up pymol mover. Default false" ).def(false);
+		option.add( hddm::keep_history, "Keep history in pymol. Requires hddm::pymol set to true. Default false" ).def(false);
 
-	option.add( hddm::desn_mc_temp, "The temperature to use for the design/minimization phase of the HDDM protocol. Defaults to 0.8." ).def( 0.8 );
+		option.add( hddm::desn_mc_temp, "The temperature to use for the design/minimization phase of the HDDM protocol. Defaults to 0.8." ).def( 0.8 );
 
-	//utility::vector1< core::Size > empty_vector(0);
+		//utility::vector1< core::Size > empty_vector(0);
 
-	// init command line options
-	//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
-	devel::init(argc, argv);
+		// init command line options
+		//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
+		devel::init(argc, argv);
 
-	//create mover instance
-	HbsDockDesignMinimizeMoverOP HDDM_mover( new HbsDockDesignMinimizeMover );
+		//create mover instance
+		HbsDockDesignMinimizeMoverOP HDDM_mover( new HbsDockDesignMinimizeMover );
 
-	protocols::ncbb::setup_filter_stats();
+		protocols::ncbb::setup_filter_stats();
 
-	//call job distributor
-	protocols::jd2::JobDistributor::get_instance()->go( HDDM_mover );
+		//call job distributor
+		protocols::jd2::JobDistributor::get_instance()->go( HDDM_mover );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
@@ -308,14 +308,14 @@ HbsDockDesignMinimizeMover::apply(
 	pert_pep_mm_near->set_bb_true_range(pep_start+3, pep_start+5);
 	kinematics::MoveMapOP pert_pep_mm_mid( new kinematics::MoveMap() );
 	if (pep_end > pep_start+10) {
-		pert_pep_mm_mid->set_bb_true_range(pep_start+6, pep_start+10);
+	pert_pep_mm_mid->set_bb_true_range(pep_start+6, pep_start+10);
 	}
 	else {
-		pert_pep_mm_mid->set_bb_true_range(pep_start+6, pep_end);
+	pert_pep_mm_mid->set_bb_true_range(pep_start+6, pep_end);
 	}
 	kinematics::MoveMapOP pert_pep_mm_far( new kinematics::MoveMap() );
 	if (pep_end > pep_start+10) {
-		pert_pep_mm_far->set_bb_true_range(pep_start+11, pep_end);
+	pert_pep_mm_far->set_bb_true_range(pep_start+11, pep_end);
 	}
 	*/
 
@@ -330,10 +330,8 @@ HbsDockDesignMinimizeMover::apply(
 	//utility::vector1< core::Size > hbs_seq_positions;
 	core::Size hbs_seq_position = 0;
 	core::Size hbs_length = 0;
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i )
-	{
-		if( pose.residue(i).has_variant_type(chemical::HBS_PRE) == 1)
-		{
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( pose.residue(i).has_variant_type(chemical::HBS_PRE) == 1 ) {
 			//hbs_seq_positions.push_back( i );
 			//hbs_seq_positions.push_back( i+1 );
 			//hbs_seq_positions.push_back( i+2 );
@@ -352,9 +350,9 @@ HbsDockDesignMinimizeMover::apply(
 			//pert_pep_mm->set_bb( i+3, false );
 		}
 		//pert_pep_mm->set_bb( i, false );
-    if (hbs_seq_position>0 && hbs_seq_position <= i) {
-      hbs_length++;
-    }
+		if ( hbs_seq_position>0 && hbs_seq_position <= i ) {
+			hbs_length++;
+		}
 	}
 	assert(hbs_seq_position != 0);
 
@@ -393,7 +391,7 @@ HbsDockDesignMinimizeMover::apply(
 	operation::RestrictToRepackingOP pert_rtrp( new operation::RestrictToRepacking() );
 	pert_tf->push_back( pert_rtrp );
 
-    //operation::RestrictToInterfaceOP pert_rtio( new operation::RestrictToInterface(1, 2) ); //magic numbers: assume chains 1 and 2
+	//operation::RestrictToInterfaceOP pert_rtio( new operation::RestrictToInterface(1, 2) ); //magic numbers: assume chains 1 and 2
 	//pert_tf->push_back( pert_rtio );
 
 	// create a rotamer trials mover
@@ -456,7 +454,7 @@ HbsDockDesignMinimizeMover::apply(
 	desn_mm->set_jump( 1, true );
 
 	// create minimization mover
-	simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( desn_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
+	simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( desn_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 
 	//definitely want sidechain minimization here
 	using protocols::simple_moves::TaskAwareMinMoverOP;
@@ -476,13 +474,12 @@ HbsDockDesignMinimizeMover::apply(
 
 	protocols::jd2::JobOP curr_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
-//kdrew: only turn on pymol observer in debug mode
-//#ifndef NDEBUG
-if( option[ hddm::pymol ].value() )
-{
-	protocols::moves::PyMolObserverOP pymover = protocols::moves::AddPyMolObserver(pose, option[ hddm::keep_history ].value() );
-}
-//#endif
+	//kdrew: only turn on pymol observer in debug mode
+	//#ifndef NDEBUG
+	if ( option[ hddm::pymol ].value() ) {
+		protocols::moves::PyMolObserverOP pymover = protocols::moves::AddPyMolObserver(pose, option[ hddm::keep_history ].value() );
+	}
+	//#endif
 
 	//pose.dump_pdb("pre_main_loop.pdb");
 	for ( Size k = 1; k <= Size( option[ hddm::dock_design_loop_num ].value() ); ++k ) {
@@ -492,13 +489,12 @@ if( option[ hddm::pymol ].value() )
 
 		//kdrew: a quick design/repack prior to pertubation, often the initial structure given is aligned to hotspot Ca Cb vector
 		//kdrew: and do not want to perturb away until designed in hotspot residue
-		if( k == 1 && option[ hddm::hbs_design_first ].value() )
-		{
+		if ( k == 1 && option[ hddm::hbs_design_first ].value() ) {
 			desn_sequence->apply( pose );
 		}
 
 		// pert loop
-		for( Size j = 1; j <= Size( option[ hddm::pert_num ].value() ); ++j ) {
+		for ( Size j = 1; j <= Size( option[ hddm::pert_num ].value() ); ++j ) {
 			TR << "PERTURB: " << k << " / "  << j << std::endl;
 			pert_trial->apply( pose );
 			curr_job->add_string_real_pair( "ENERGY_PERT (pert score)", (*pert_score_fxn)(pose) );
@@ -512,8 +508,7 @@ if( option[ hddm::pymol ].value() )
 		curr_job->add_string_real_pair( "ENERGY_DESN (hard score)", (*score_fxn)(pose) );
 
 		//kdrew: reset mc after first cycle if not considering initial pose
-		if( !option[ hddm::mc_initial_pose ].value() && k == 1 )
-		{
+		if ( !option[ hddm::mc_initial_pose ].value() && k == 1 ) {
 			mc->reset(pose);
 			TR<< "after mc->reset" << std::endl;
 			mc->show_state();
@@ -536,7 +531,7 @@ if( option[ hddm::pymol ].value() )
 
 	TR << "Checking pose energy..." << std::endl;
 
-		// create  MetricValues
+	// create  MetricValues
 	basic::MetricValue< core::Real > mv_sasa_complex;
 	basic::MetricValue< core::Real > mv_sasa_seperated;
 	basic::MetricValue< utility::vector1< core::Size > > mv_unsat_res_complex;
@@ -587,7 +582,7 @@ if( option[ hddm::pymol ].value() )
 		final_min_mm->set_jump( 1, true );
 
 		// create minimization mover
-		simple_moves::MinMoverOP final_min( new simple_moves::MinMover( final_min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
+		simple_moves::MinMoverOP final_min( new simple_moves::MinMover( final_min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 		// final min (okay to use ta min here)
 		final_min->apply( pose );
 	}
@@ -630,7 +625,7 @@ if( option[ hddm::pymol ].value() )
 	separate_min_mm->set_jump( 1, true );
 
 	// create minimization mover
-	simple_moves::MinMoverOP separate_min( new simple_moves::MinMover( separate_min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
+	simple_moves::MinMoverOP separate_min( new simple_moves::MinMover( separate_min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 	// final min (okay to use ta min here)
 	separate_min->apply( repack_stats_pose );
 

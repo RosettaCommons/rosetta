@@ -124,17 +124,17 @@ instead wil be read the by function that will call this function.  It is
 listed here simply for context.
 <ResourceLocators>
 
-	 declare one or more resource locators
-   <LocatorType tag=name_for_this_instance >
-	    * where LocatorType is one of the several locator_types that have been
-      implemented; the string must match the locator_type given by some
-      ResourceLocatorCreator. E.g. "DatabaseResourceLocator". And,
-      * where the "tag" (the name) for the declared instance must be unique
-      among the set of all resource locators declared.
-      <...\>
-         provide any subtags that are required to instantiate a
-         ResourceLocator of the indicated type
-   <\LocatorType>
+declare one or more resource locators
+<LocatorType tag=name_for_this_instance >
+* where LocatorType is one of the several locator_types that have been
+implemented; the string must match the locator_type given by some
+ResourceLocatorCreator. E.g. "DatabaseResourceLocator". And,
+* where the "tag" (the name) for the declared instance must be unique
+among the set of all resource locators declared.
+<...\>
+provide any subtags that are required to instantiate a
+ResourceLocator of the indicated type
+<\LocatorType>
 
 <\ResourceLocators>
 / \endverbatim
@@ -202,29 +202,29 @@ instead wil be read the by function that will call this function.  It is
 listed here simply for context.
 <ResourceOptions>
 
-	 declare one or more resource options objects
-   <OptionsType tag=name_for_this_instance >
-	    * where OptionsType is one of the several option_types that have been
-      implemented; the string must match the option_type given by some
-      ResourceOptionsCreator. E.g. "ImportPoseOptions". And,
-      * where the "tag" (the name) for the declared instance must be unique
-      among the set of all resource options declared.
-      <...\>
-         provide any subtags that are required to instantiate a
-         ResourceOptions object of the indicated type
-   <\OptionsType>
+declare one or more resource options objects
+<OptionsType tag=name_for_this_instance >
+* where OptionsType is one of the several option_types that have been
+implemented; the string must match the option_type given by some
+ResourceOptionsCreator. E.g. "ImportPoseOptions". And,
+* where the "tag" (the name) for the declared instance must be unique
+among the set of all resource options declared.
+<...\>
+provide any subtags that are required to instantiate a
+ResourceOptions object of the indicated type
+<\OptionsType>
 
-   or provide an SQL query to retrieve the ResourceOptions defined in
-   a database
-   <OptionsTable sql_command=command database_resource=dbresource/>
-      * where command is a string representing an SQL query, and
-      * where dbresource is the name for a previously-declared database-connection resource
-		  Each row of the resource options table should have the following format
-		      resource_options_tag, resource_options_type, resource_option_key, resource_option_value
-		   * The table should 'ORDER BY resource_options_tag', to have data for a
-         specific resource-options object adjacent in the table
-		   * resource_option_{key, value}: Each resource options takes set of key value pairs (string -> string)
-         for example, for PoseFromPDBOptions, has the key 'exit_if_missing_heavy_atoms' and takes '1' for true or '0' for false.;
+or provide an SQL query to retrieve the ResourceOptions defined in
+a database
+<OptionsTable sql_command=command database_resource=dbresource/>
+* where command is a string representing an SQL query, and
+* where dbresource is the name for a previously-declared database-connection resource
+Each row of the resource options table should have the following format
+resource_options_tag, resource_options_type, resource_option_key, resource_option_value
+* The table should 'ORDER BY resource_options_tag', to have data for a
+specific resource-options object adjacent in the table
+* resource_option_{key, value}: Each resource options takes set of key value pairs (string -> string)
+for example, for PoseFromPDBOptions, has the key 'exit_if_missing_heavy_atoms' and takes '1' for true or '0' for false.;
 
 <\ResourceOptions>
 \endverbatim
@@ -240,7 +240,7 @@ void JD2ResourceManager::read_resource_options_tags( TagCOP tags )
 			tag_iter != tag_iter_end; ++tag_iter ) {
 		std::string const & tagname = (*tag_iter)->getName();
 
-		if(tagname == "OptionsTable") {
+		if ( tagname == "OptionsTable" ) {
 			read_resource_options_table_tag(*tag_iter);
 			continue;
 		} else {
@@ -254,12 +254,12 @@ void
 JD2ResourceManager::read_resource_options_table_tag(
 	TagCOP tag
 ) {
-		using namespace basic::database;
+	using namespace basic::database;
 
 	utility::sql_database::sessionOP db_session = parse_database_connection(tag);
 
 	string sql_command;
-	if(tag->hasOption("sql_command")){
+	if ( tag->hasOption("sql_command") ) {
 		sql_command = tag->getOption<string>("sql_command");
 		check_statement_sanity(sql_command);
 	} else {
@@ -281,12 +281,12 @@ JD2ResourceManager::read_resource_options_table_tag(
 		"    resource_options_tag, resource_options_type, resource_option_key, resource_option_value\n"
 		"\n"
 		" * The table should 'ORDER BY resource_options_tag', to have data for a\n"
-    "   specific resource-options ojbect adjacent in the table\n"
+		"   specific resource-options ojbect adjacent in the table\n"
 		"\n"
 		" * resource_option_{key, value}: Each resource options takes set of key value pairs (string -> string)\n"
-    "   for example, for PoseFromPDBOptions, has the key 'exit_if_missing_heavy_atoms' and takes '1' for true or '0' for false.\n";
+		"   for example, for PoseFromPDBOptions, has the key 'exit_if_missing_heavy_atoms' and takes '1' for true or '0' for false.\n";
 
-	if(res.cols() != 4){
+	if ( res.cols() != 4 ) {
 		stringstream err_msg;
 		err_msg
 			<< "The OptionsTable tag requires a 'sql_command' tag" << endl
@@ -299,18 +299,18 @@ JD2ResourceManager::read_resource_options_table_tag(
 
 	Size row_number(0);
 	std::map< string, TagOP > tags;
-	while(res.next()){
+	while ( res.next() ) {
 		row_number++;
 
 		string tag, type, key, value;
 		res >> tag >> type >> key >> value;
 
 		std::map< string, TagOP >::iterator t(tags.find(tag));
-		if(t == tags.end()){
+		if ( t == tags.end() ) {
 			TagOP newtag( new Tag() );
 			newtag->setOption("tag", tag);
 			newtag->setName(type);
-			if(!key.empty()){
+			if ( !key.empty() ) {
 				newtag->setOption(key, value);
 			}
 			tags[tag] = newtag;
@@ -319,13 +319,13 @@ JD2ResourceManager::read_resource_options_table_tag(
 		}
 	}
 
-	if(row_number == 0){
+	if ( row_number == 0 ) {
 		TR.Warning << "JobsTable returned no rows." << endl;
 	}
 
-	for(
-		std::map<string, TagOP>::const_iterator t=tags.begin(), te=tags.end();
-		t != te; ++t){
+	for (
+			std::map<string, TagOP>::const_iterator t=tags.begin(), te=tags.end();
+			t != te; ++t ) {
 		read_resource_option_item(t->second);
 	}
 }
@@ -390,7 +390,7 @@ JD2ResourceManager::check_resource_loader_type(
 		err << "ResourceLoader type '" << loader_type << "' requested in JD2ResourceManager::read_resources_tags has not been registered with the ResourceLoaderFactory.  Available types include:.\n";
 		std::list< std::string > loader_types = ResourceLoaderFactory::get_instance()->available_resource_loaders();
 		for ( std::list< std::string >::const_iterator
-						iter = loader_types.begin(), iter_end = loader_types.end(); iter != iter_end; ++iter ) {
+				iter = loader_types.begin(), iter_end = loader_types.end(); iter != iter_end; ++iter ) {
 			err << "  '" << *iter << std::endl;
 		}
 		throw MsgException( err.str() );
@@ -453,7 +453,7 @@ JD2ResourceManager::read_resource_locator_items(
 				<< " which has not previously been declared.";
 			throw MsgException( err.str() );
 		}
-		if( tag->hasOption( "file" ) && locator_tag != "FileSystemResourceLocator" ){
+		if ( tag->hasOption( "file" ) && locator_tag != "FileSystemResourceLocator" ) {
 			std::ostringstream err;
 			err
 				<< "Resource subtag "
@@ -464,7 +464,7 @@ JD2ResourceManager::read_resource_locator_items(
 				<< " FileSystemResourceLocator." << std::endl;
 			throw MsgException(err.str());
 		}
-		if( locator_tag == "NULL" ){
+		if ( locator_tag == "NULL" ) {
 			locator_id = "";
 			return locator_tag;
 		}
@@ -472,8 +472,8 @@ JD2ResourceManager::read_resource_locator_items(
 		locator_tag = "";
 	}
 
-	if(tag->hasOption( "file" )){
-		if(tag->hasOption("locatorID")) {
+	if ( tag->hasOption( "file" ) ) {
+		if ( tag->hasOption("locatorID") ) {
 			std::ostringstream err;
 			err
 				<< "Resource subtag"
@@ -485,7 +485,7 @@ JD2ResourceManager::read_resource_locator_items(
 			throw MsgException(err.str());
 		}
 		locator_id = tag->getOption< LocatorID >("file");
-	} else if( tag->hasOption("locatorID")){
+	} else if ( tag->hasOption("locatorID") ) {
 		locator_id = tag->getOption< LocatorID >( "locatorID" );
 	} else {
 		std::ostringstream err;
@@ -536,41 +536,41 @@ instead wil be read the by function that will call this function.  It is
 listed here simply for context.
 <Resources>
 
-	 declare one or more resource objects
-   <ResourceLoaderType tag=name_for_this_instance locator=locatorname locatorID=locid options=optname \>
-	    * where ResourceLoaderType is one of the several loader_types that have been
-      implemented; the string must match the loader_type given by some
-      ResourceLoaderCreator. E.g. "LoopsFile" which is given by the
-      LoopsFileLoaderCreator. And,
-      * where the (required) "name_for_this_instance" (the tag) for the declared instance
-      must be unique among the set of all resources declared,
-      * where the (optional) "locatorname" must refer to a previously-declared resource locator,
-      if a locator is not given, the FileSystemResourceLocator is used
-      * where the (required) "locid" provides the locatorID that the resource locator uses
-      to create the input stream needed to read in the resource (e.g. the file name), and
-      * where the (optional) "optname" string refers to a previously-declared ResourceOptions object
-      that will be used by the indicated ResourceLoader (if not given, then the ResourceLoader
-      will use the default ResourceOptions object).
-   <\ResourceLoaderType>
-   or
-   <ResourceLoaderType tag=name_for_this_instance file=filename locator=locatorname options=optname >
-	    * where ResourceLoaderType is the same as above,
-      * where the (required) "name_for_this_instance" is the same as above,
-      * where the (optional) "locatorname" must refer to a previously defined FileSystemResourceLocator
-      * where the (required) "filename" is the path to the file used to create the resource
-      * where the (optional) "optsname" is the same as above
-   <\ResourceLoaderType>
-   or provide an SQL query to retrieve the Resources defined in a database
-   <ResourceTable sql_command=command database_resource=dbresource/>
-      * where command is a string representing an SQL query, and
-      * where dbresource is the name for a previously-declared database-connection resource
-			The ResourceTable tag requires a 'sql_command' tag that
-			is an SQL SELECT statement that returns the following columns:
-			   resource_tag
-			   locator_tag
-			   locator_id
-			   loader_type
-			   resource_options_tag
+declare one or more resource objects
+<ResourceLoaderType tag=name_for_this_instance locator=locatorname locatorID=locid options=optname \>
+* where ResourceLoaderType is one of the several loader_types that have been
+implemented; the string must match the loader_type given by some
+ResourceLoaderCreator. E.g. "LoopsFile" which is given by the
+LoopsFileLoaderCreator. And,
+* where the (required) "name_for_this_instance" (the tag) for the declared instance
+must be unique among the set of all resources declared,
+* where the (optional) "locatorname" must refer to a previously-declared resource locator,
+if a locator is not given, the FileSystemResourceLocator is used
+* where the (required) "locid" provides the locatorID that the resource locator uses
+to create the input stream needed to read in the resource (e.g. the file name), and
+* where the (optional) "optname" string refers to a previously-declared ResourceOptions object
+that will be used by the indicated ResourceLoader (if not given, then the ResourceLoader
+will use the default ResourceOptions object).
+<\ResourceLoaderType>
+or
+<ResourceLoaderType tag=name_for_this_instance file=filename locator=locatorname options=optname >
+* where ResourceLoaderType is the same as above,
+* where the (required) "name_for_this_instance" is the same as above,
+* where the (optional) "locatorname" must refer to a previously defined FileSystemResourceLocator
+* where the (required) "filename" is the path to the file used to create the resource
+* where the (optional) "optsname" is the same as above
+<\ResourceLoaderType>
+or provide an SQL query to retrieve the Resources defined in a database
+<ResourceTable sql_command=command database_resource=dbresource/>
+* where command is a string representing an SQL query, and
+* where dbresource is the name for a previously-declared database-connection resource
+The ResourceTable tag requires a 'sql_command' tag that
+is an SQL SELECT statement that returns the following columns:
+resource_tag
+locator_tag
+locator_id
+loader_type
+resource_options_tag
 
 <\Resources>
 \endverbatim
@@ -584,7 +584,7 @@ void JD2ResourceManager::read_resources_tags( TagCOP tags )
 			tag_iter != tag_iter_end; ++tag_iter ) {
 
 		LoaderType loader_type((*tag_iter)->getName());
-		if( loader_type == "ResourceTable" ){
+		if ( loader_type == "ResourceTable" ) {
 			read_resource_table_tag(*tag_iter);
 			continue;
 		}
@@ -594,7 +594,7 @@ void JD2ResourceManager::read_resources_tags( TagCOP tags )
 		LocatorID locator_id;
 		LocatorTag locator_tag(
 			read_resource_locator_items(
-				*tag_iter, loader_type, locator_id));
+			*tag_iter, loader_type, locator_id));
 
 		ResourceTag resource_tag(
 			read_resource_tag_item(*tag_iter, loader_type, locator_id));
@@ -625,7 +625,7 @@ JD2ResourceManager::read_resource_table_tag(
 	utility::sql_database::sessionOP db_session = parse_database_connection(tag);
 
 	std::string sql_command;
-	if(tag->hasOption("sql_command")){
+	if ( tag->hasOption("sql_command") ) {
 		sql_command = tag->getOption<string>("sql_command");
 		check_statement_sanity(sql_command);
 	} else {
@@ -644,7 +644,7 @@ JD2ResourceManager::read_resource_table_tag(
 	cppdb::statement select_stmt(safely_prepare_statement(sql_command, db_session));
 	cppdb::result res(safely_read_from_database(select_stmt));
 
-	if(res.cols() != 5){
+	if ( res.cols() != 5 ) {
 		stringstream err_msg;
 		err_msg
 			<< "The ResourceTable tag requires a 'sql_command' tag that "
@@ -660,7 +660,7 @@ JD2ResourceManager::read_resource_table_tag(
 	}
 
 	Size row_number(0);
-	while(res.next()){
+	while ( res.next() ) {
 		row_number++;
 
 		ResourceTag resource_tag;
@@ -674,7 +674,7 @@ JD2ResourceManager::read_resource_table_tag(
 		res >> loader_type;
 		res >> resource_options_tag;
 
-		if(!LazyResourceManager::has_resource_locator(locator_tag)){
+		if ( !LazyResourceManager::has_resource_locator(locator_tag) ) {
 			std::stringstream err;
 			err
 				<< "Row " << row_number << " in the  ResourceTable "
@@ -688,7 +688,7 @@ JD2ResourceManager::read_resource_table_tag(
 
 		check_resource_loader_type(loader_type);
 
-		if(!resource_options_tag.empty() && !LazyResourceManager::has_resource_options(resource_options_tag)){
+		if ( !resource_options_tag.empty() && !LazyResourceManager::has_resource_options(resource_options_tag) ) {
 			std::stringstream err;
 			err
 				<< "Row " << row_number << "in the  ResourceTable "
@@ -711,7 +711,7 @@ JD2ResourceManager::read_resource_table_tag(
 			resource_tag, resource_configuration );
 	}
 
-	if(row_number == 0){
+	if ( row_number == 0 ) {
 		TR.Warning << "ResourceTable returned no rows." << endl;
 	}
 
@@ -741,8 +741,8 @@ JD2ResourceManager::has_resource_with_description(
 	using basic::resource_manager::ResourceTag;
 
 	if ( has_resource_tag_by_job_tag(
-		resource_description,
-		JobDistributor::get_instance()->current_job()->input_tag()) ) {
+			resource_description,
+			JobDistributor::get_instance()->current_job()->input_tag()) ) {
 		return true;
 	}
 
@@ -752,7 +752,7 @@ JD2ResourceManager::has_resource_with_description(
 		return true;
 	}
 
-	if ( FallbackConfigurationFactory::get_instance()->has_fallback_for_resource( resource_description )) {
+	if ( FallbackConfigurationFactory::get_instance()->has_fallback_for_resource( resource_description ) ) {
 		FallbackConfigurationOP fallback = FallbackConfigurationFactory::get_instance()->create_fallback_configuration( resource_description );
 		return fallback->fallback_specified( resource_description );
 	}
@@ -778,28 +778,28 @@ JD2ResourceManager::get_resource(
 		using basic::resource_manager::FallbackConfigurationFactory;
 		using basic::resource_manager::FallbackConfigurationOP;
 
-        if ( FallbackConfigurationFactory::get_instance()->has_fallback_for_resource( resource_description )) {
-            FallbackConfigurationOP fallback = FallbackConfigurationFactory::get_instance()->create_fallback_configuration( resource_description );
-            if ( fallback->fallback_specified( resource_description ) ) {
-                ResourceOP fallbackresource = create_resource_from_fallback( fallback, resource_description );
-                // now make sure that the resource is saved for later; create a pheax uuid for this
-                std::string fallbackname = "fallback_" + resource_description;
-                for ( core::Size ii = 1; ii <= 10000; ++ii ) {
-                    if ( ! has_resource_configuration( fallbackname )) break;
-                    fallbackname = "fallback_" + resource_description + "_" + utility::to_string( numeric::random::random_range(1,4000000) );
-                }
-                if ( has_resource_configuration( fallbackname ) ) {
-                    throw utility::excn::EXCN_Msg_Exception( "Could not name the fallback resource after 10000 attempts.  Try not to name your resources"
-                        " beginning with the prefix 'fallback_'." );
-                }
-                basic::resource_manager::ResourceConfiguration fake_configuration;
-                fake_configuration.resource_tag = fallbackname;
-                add_resource_configuration( fallbackname, fake_configuration );
-                fallback_resource_descriptions_created_[ resource_description ] = fallbackname;
-                add_resource( fallbackname, fallbackresource );
-                return fallbackresource;
-            }
-        }
+		if ( FallbackConfigurationFactory::get_instance()->has_fallback_for_resource( resource_description ) ) {
+			FallbackConfigurationOP fallback = FallbackConfigurationFactory::get_instance()->create_fallback_configuration( resource_description );
+			if ( fallback->fallback_specified( resource_description ) ) {
+				ResourceOP fallbackresource = create_resource_from_fallback( fallback, resource_description );
+				// now make sure that the resource is saved for later; create a pheax uuid for this
+				std::string fallbackname = "fallback_" + resource_description;
+				for ( core::Size ii = 1; ii <= 10000; ++ii ) {
+					if ( ! has_resource_configuration( fallbackname ) ) break;
+					fallbackname = "fallback_" + resource_description + "_" + utility::to_string( numeric::random::random_range(1,4000000) );
+				}
+				if ( has_resource_configuration( fallbackname ) ) {
+					throw utility::excn::EXCN_Msg_Exception( "Could not name the fallback resource after 10000 attempts.  Try not to name your resources"
+						" beginning with the prefix 'fallback_'." );
+				}
+				basic::resource_manager::ResourceConfiguration fake_configuration;
+				fake_configuration.resource_tag = fallbackname;
+				add_resource_configuration( fallbackname, fake_configuration );
+				fallback_resource_descriptions_created_[ resource_description ] = fallbackname;
+				add_resource( fallbackname, fallbackresource );
+				return fallbackresource;
+			}
+		}
 
 		std::ostringstream errmsg;
 		errmsg << "JD2ResourceManager does not have a resource "
@@ -830,7 +830,7 @@ JD2ResourceManager::get_option(
 	Job const &  currjob( * JobDistributor::get_instance()->current_job() );
 	if ( has_job_options( currjob.input_tag() ) ) {
 		JobOptionsOP job_option( get_job_options( currjob.input_tag() ));
-		if(job_option->has_option(key)){
+		if ( job_option->has_option(key) ) {
 			return job_option->get_option(key);
 		}
 	}
@@ -844,7 +844,7 @@ JD2ResourceManager::get_option(
 	Job const &  currjob( * JobDistributor::get_instance()->current_job() );
 	if ( has_job_options( currjob.input_tag() ) ) {
 		JobOptionsOP job_option( get_job_options( currjob.input_tag() ));
-		if(job_option->has_option(key)){
+		if ( job_option->has_option(key) ) {
 			return job_option->get_option(key);
 		}
 	}
@@ -858,7 +858,7 @@ JD2ResourceManager::get_option(
 	Job const &  currjob( * JobDistributor::get_instance()->current_job() );
 	if ( has_job_options( currjob.input_tag() ) ) {
 		JobOptionsOP job_option( get_job_options( currjob.input_tag() ));
-		if(job_option->has_option(key)){
+		if ( job_option->has_option(key) ) {
 			return job_option->get_option(key);
 		}
 	}
@@ -872,7 +872,7 @@ JD2ResourceManager::get_option(
 	Job const &  currjob( * JobDistributor::get_instance()->current_job() );
 	if ( has_job_options( currjob.input_tag() ) ) {
 		JobOptionsOP job_option( get_job_options( currjob.input_tag() ));
-		if(job_option->has_option(key)){
+		if ( job_option->has_option(key) ) {
 			return job_option->get_option(key);
 		}
 	}
@@ -886,7 +886,7 @@ JD2ResourceManager::get_option(
 	Job const &  currjob( * JobDistributor::get_instance()->current_job() );
 	if ( has_job_options( currjob.input_tag() ) ) {
 		JobOptionsOP job_option( get_job_options( currjob.input_tag() ));
-		if(job_option->has_option(key)){
+		if ( job_option->has_option(key) ) {
 			return job_option->get_option(key);
 		}
 	}
@@ -900,7 +900,7 @@ JD2ResourceManager::get_option(
 	Job const &  currjob( * JobDistributor::get_instance()->current_job() );
 	if ( has_job_options( currjob.input_tag() ) ) {
 		JobOptionsOP job_option( get_job_options( currjob.input_tag() ));
-		if(job_option->has_option(key)){
+		if ( job_option->has_option(key) ) {
 			return job_option->get_option(key);
 		}
 	}
@@ -914,7 +914,7 @@ JD2ResourceManager::get_option(
 	Job const &  currjob( * JobDistributor::get_instance()->current_job() );
 	if ( has_job_options( currjob.input_tag() ) ) {
 		JobOptionsOP job_option( get_job_options( currjob.input_tag() ));
-		if(job_option->has_option(key)){
+		if ( job_option->has_option(key) ) {
 			return job_option->get_option(key);
 		}
 	}
@@ -928,7 +928,7 @@ JD2ResourceManager::get_option(
 	Job const &  currjob( * JobDistributor::get_instance()->current_job() );
 	if ( has_job_options( currjob.input_tag() ) ) {
 		JobOptionsOP job_option( get_job_options( currjob.input_tag() ));
-		if(job_option->has_option(key)){
+		if ( job_option->has_option(key) ) {
 			return job_option->get_option(key);
 		}
 	}
@@ -942,7 +942,7 @@ JD2ResourceManager::get_option(
 	Job const &  currjob( * JobDistributor::get_instance()->current_job() );
 	if ( has_job_options( currjob.input_tag() ) ) {
 		JobOptionsOP job_option( get_job_options( currjob.input_tag() ));
-		if(job_option->has_option(key)){
+		if ( job_option->has_option(key) ) {
 			return job_option->get_option(key);
 		}
 	}
@@ -956,7 +956,7 @@ JD2ResourceManager::get_option(
 	Job const &  currjob( * JobDistributor::get_instance()->current_job() );
 	if ( has_job_options( currjob.input_tag() ) ) {
 		JobOptionsOP job_option( get_job_options( currjob.input_tag() ));
-		if(job_option->has_option(key)){
+		if ( job_option->has_option(key) ) {
 			return job_option->get_option(key);
 		}
 	}
@@ -970,7 +970,7 @@ JD2ResourceManager::get_option(
 	Job const &  currjob( * JobDistributor::get_instance()->current_job() );
 	if ( has_job_options( currjob.input_tag() ) ) {
 		JobOptionsOP job_option( get_job_options( currjob.input_tag() ));
-		if(job_option->has_option(key)){
+		if ( job_option->has_option(key) ) {
 			return job_option->get_option(key);
 		}
 	}
@@ -984,7 +984,7 @@ JD2ResourceManager::get_option(
 	Job const &  currjob( * JobDistributor::get_instance()->current_job() );
 	if ( has_job_options( currjob.input_tag() ) ) {
 		JobOptionsOP job_option( get_job_options( currjob.input_tag() ));
-		if(job_option->has_option(key)){
+		if ( job_option->has_option(key) ) {
 			return job_option->get_option(key);
 		}
 	}
@@ -996,10 +996,10 @@ JD2ResourceManager::has_option(
 	utility::options::BooleanOptionKey key
 ) const {
 
-	if ( ! has_job_options( JobDistributor::get_instance()->current_job()->input_tag() )) return false;
+	if ( ! has_job_options( JobDistributor::get_instance()->current_job()->input_tag() ) ) return false;
 	JobOptionsOP job_option(
 		get_job_options(
-			JobDistributor::get_instance()->current_job()->input_tag()));
+		JobDistributor::get_instance()->current_job()->input_tag()));
 	return job_option->has_option(key);
 }
 
@@ -1129,7 +1129,7 @@ JD2ResourceManager::create_resource_from_fallback(
 
 	ResourceLoaderOP loader(
 		ResourceLoaderFactory::get_instance()->create_resource_loader(
-			fallback->get_resource_loader( resource_description )));
+		fallback->get_resource_loader( resource_description )));
 
 	ResourceOptionsOP resource_options = fallback->get_resource_options( resource_description );
 	if ( resource_options == 0 ) {

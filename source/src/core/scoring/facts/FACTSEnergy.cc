@@ -73,9 +73,9 @@ FACTSEnergy::FACTSEnergy( FACTSEnergy const & src ):
 	max_dis_ ( src.max_dis_ ) {}
 
 FACTSEnergy::FACTSEnergy( EnergyMethodOptions const & options ):
-		parent( methods::EnergyMethodCreatorOP( new FACTSEnergyCreator ) ),
-		potential_( ScoringManager::get_instance()->get_FACTSPotential() ),
-		exclude_DNA_DNA_( options.exclude_DNA_DNA() ) {
+	parent( methods::EnergyMethodCreatorOP( new FACTSEnergyCreator ) ),
+	potential_( ScoringManager::get_instance()->get_FACTSPotential() ),
+	exclude_DNA_DNA_( options.exclude_DNA_DNA() ) {
 	//fpd  this should be in energymethodoptions
 	max_dis_ = basic::options::option[ basic::options::OptionKeys::score::facts_GBpair_cut ]();
 }
@@ -87,7 +87,7 @@ FACTSEnergy::setup_for_packing(
 	utility::vector1< bool > const & residues_repacking,
 	utility::vector1< bool > const &
 ) const {
-//std::cerr << "FACTSEnergy::setup_for_packing" << std::endl;
+	//std::cerr << "FACTSEnergy::setup_for_packing" << std::endl;
 	pose.update_residue_neighbors();
 	potential_.setup_for_packing( pose, residues_repacking );
 }
@@ -96,7 +96,7 @@ void FACTSEnergy::prepare_rotamers_for_packing(
 	pose::Pose const & pose,
 	conformation::RotamerSetBase & rotamer_set
 ) const {
-//std::cerr << "FACTSEnergy::prepare_rotamers_for_packing" << std::endl;
+	//std::cerr << "FACTSEnergy::prepare_rotamers_for_packing" << std::endl;
 	potential_.get_rotamers_born_radii( pose, rotamer_set );
 }
 
@@ -104,18 +104,18 @@ void FACTSEnergy::update_residue_for_packing(
 	pose::Pose & pose,
 	Size resid
 ) const {
-//std::cerr << "FACTSEnergy::update_residue_for_packing" << std::endl;
+	//std::cerr << "FACTSEnergy::update_residue_for_packing" << std::endl;
 	potential_.update_residue_for_packing( pose, resid );
 }
 
 
 void FACTSEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {
-//std::cerr << "FACTSEnergy::setup_for_scoring" << std::endl;
+	//std::cerr << "FACTSEnergy::setup_for_scoring" << std::endl;
 	potential_.setup_for_scoring( pose, false );
 }
 
 void FACTSEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const {
-//std::cerr << "FACTSEnergy::setup_for_derivatives" << std::endl;
+	//std::cerr << "FACTSEnergy::setup_for_derivatives" << std::endl;
 	potential_.setup_for_derivatives( pose );
 }
 
@@ -164,7 +164,7 @@ void FACTSEnergy::eval_intrares_energy(
 
 
 void FACTSEnergy::evaluate_rotamer_intrares_energies(
-  conformation::RotamerSetBase const & set,
+	conformation::RotamerSetBase const & set,
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn,
 	utility::vector1< core::PackerEnergy > & energies
@@ -182,17 +182,17 @@ void FACTSEnergy::evaluate_rotamer_intrares_energies(
 
 		Real E_elec, E_solv_pair, E_solv_self;
 		potential_.evaluate_polar_otf_energy( *set.rotamer( ii ), facts_info.residue_info( ii ),
-																					*set.rotamer( ii ), facts_info.residue_info( ii ),
-																					E_elec, E_solv_self, E_solv_pair
-																					);
+			*set.rotamer( ii ), facts_info.residue_info( ii ),
+			E_elec, E_solv_self, E_solv_pair
+		);
 
 		Real const E_sasa
 			( potential_.evaluate_nonpolar_energy( *set.rotamer( ii ), facts_info.residue_info( ii ),
-																						 *set.rotamer( ii ) ));
+			*set.rotamer( ii ) ));
 
 		energies[ ii ] += static_cast< core::PackerEnergy > ( sfxn[ facts_elec ] * E_elec
-																													+ sfxn[ facts_solv ] * (E_solv_pair + E_solv_self)
-																													+ sfxn[ facts_sasa ] * E_sasa );
+			+ sfxn[ facts_solv ] * (E_solv_pair + E_solv_self)
+			+ sfxn[ facts_sasa ] * E_sasa );
 
 	}
 }
@@ -222,17 +222,17 @@ void FACTSEnergy::evaluate_rotamer_intrares_energy_maps(
 
 		Real E_elec, E_solv_pair, E_solv_self;
 		potential_.evaluate_polar_otf_energy( *set.rotamer( ii ), facts_info.residue_info( ii ),
-																					*set.rotamer( ii ), facts_info.residue_info( ii ),
-																					E_elec, E_solv_self, E_solv_pair
-																					);
+			*set.rotamer( ii ), facts_info.residue_info( ii ),
+			E_elec, E_solv_self, E_solv_pair
+		);
 
 		Real const E_sasa
 			( potential_.evaluate_nonpolar_energy( *set.rotamer( ii ), facts_info.residue_info( ii ),
-																						 *set.rotamer( ii ) ));
+			*set.rotamer( ii ) ));
 
-			(emaps[ ii ])[ facts_elec ] += E_elec ;
-			(emaps[ ii ])[ facts_solv ] += E_solv_pair + E_solv_self ;
-			(emaps[ ii ])[ facts_sasa ] += E_sasa ;
+		(emaps[ ii ])[ facts_elec ] += E_elec ;
+		(emaps[ ii ])[ facts_solv ] += E_solv_pair + E_solv_self ;
+		(emaps[ ii ])[ facts_sasa ] += E_sasa ;
 	}
 }
 
@@ -282,7 +282,7 @@ void FACTSEnergy::evaluate_rotamer_pair_energies(
 			Vector const & jj_coord( jj_example_rotamer.nbr_atom_xyz() );
 			Real const jj_radius( jj_example_rotamer.nbr_radius() );
 
-			if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 )) {
+			if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) {
 				for ( Size kk = 1, kke = set1.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
 					Size const kk_rot_id = ii_offset + kk - 1;
 					for ( Size ll = 1, lle = set2.get_n_rotamers_for_residue_type( jj ); ll <= lle; ++ll ) {
@@ -295,11 +295,11 @@ void FACTSEnergy::evaluate_rotamer_pair_energies(
 						);
 						Real const E_sasa
 							( potential_.evaluate_nonpolar_energy( *set1.rotamer( kk_rot_id ), facts_info1.residue_info( kk_rot_id ),
-								*set2.rotamer( ll_rot_id ) ) );
+							*set2.rotamer( ll_rot_id ) ) );
 
 						energy_table( ll_rot_id, kk_rot_id ) += static_cast< core::PackerEnergy >( weights[ facts_elec ] * E_elec
-								+ weights[ facts_solv ] * (E_solv_self + E_solv_pair)
-								+ weights[ facts_sasa ] * E_sasa );
+							+ weights[ facts_solv ] * (E_solv_self + E_solv_pair)
+							+ weights[ facts_sasa ] * E_sasa );
 					}
 				}
 			}
@@ -343,20 +343,20 @@ void FACTSEnergy::evaluate_rotamer_background_energies(
 		Vector const & jj_coord( rsd.nbr_atom_xyz() );
 		Real const jj_radius( rsd.nbr_radius() );
 
-		if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 )) {
+		if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) {
 			for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
 				Size const kk_rot_id = ii_offset + kk - 1;
 
 				Real E_elec, E_solv_self, E_solv_pair;
 				potential_.evaluate_polar_otf_energy( *set.rotamer( kk_rot_id ), facts_set_info.residue_info( kk_rot_id ),
-																							rsd, facts_rsd_info,
-																							E_elec, E_solv_self, E_solv_pair );
+					rsd, facts_rsd_info,
+					E_elec, E_solv_self, E_solv_pair );
 				Real const E_sasa
 					( potential_.evaluate_nonpolar_energy( *set.rotamer( kk_rot_id ), facts_set_info.residue_info( kk_rot_id ),
-																								 rsd) );
+					rsd) );
 				energy_vector[ kk_rot_id ] += static_cast< core::PackerEnergy > ( weights[ facts_elec ] * E_elec
-																																					+	weights[ facts_solv ] * (E_solv_self+E_solv_pair)
-																																					+ weights[ facts_sasa ] * E_sasa );
+					+ weights[ facts_solv ] * (E_solv_self+E_solv_pair)
+					+ weights[ facts_sasa ] * E_sasa );
 				//std::cout << "Background: " << ii << " " << kk << " " << kk_rot_id << " " << polarE << " " << nonpolarE << std::endl;
 			} // kk - rotamers for residue types
 		} // nbrs
@@ -395,17 +395,17 @@ void FACTSEnergy::evaluate_rotamer_background_energy_maps(
 		Vector const & jj_coord( rsd.nbr_atom_xyz() );
 		Real const jj_radius( rsd.nbr_radius() );
 
-		if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 )) {
+		if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) {
 			for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
 				Size const kk_rot_id = ii_offset + kk - 1;
 
 				Real E_elec, E_solv_self, E_solv_pair;
 				potential_.evaluate_polar_otf_energy( *set.rotamer( kk_rot_id ), facts_set_info.residue_info( kk_rot_id ),
-																							rsd, facts_rsd_info,
-																							E_elec, E_solv_self, E_solv_pair );
+					rsd, facts_rsd_info,
+					E_elec, E_solv_self, E_solv_pair );
 				Real const E_sasa
 					( potential_.evaluate_nonpolar_energy( *set.rotamer( kk_rot_id ), facts_set_info.residue_info( kk_rot_id ),
-																								 rsd ) );
+					rsd ) );
 				(emaps[ kk_rot_id ])[ facts_elec ] += E_elec;
 				(emaps[ kk_rot_id ])[ facts_solv ] += E_solv_self + E_solv_pair;
 				(emaps[ kk_rot_id ])[ facts_sasa ] += E_sasa;
@@ -425,7 +425,7 @@ void FACTSEnergy::eval_atom_derivative(
 	Vector & F2
 ) const {
 	potential_.eval_atom_polar_derivative( atom_id, weights[ facts_elec ], weights[ facts_solv ],
-																				 pose, domain_map, exclude_DNA_DNA_, F1, F2 );
+		pose, domain_map, exclude_DNA_DNA_, F1, F2 );
 	potential_.eval_atom_nonpolar_derivative( atom_id, weights[ facts_sasa ], pose, domain_map, exclude_DNA_DNA_, F1, F2 );
 }
 

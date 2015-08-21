@@ -22,7 +22,7 @@
 #include <basic/Tracer.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/pose/Pose.hh>
-namespace protocols{
+namespace protocols {
 namespace simple_filters {
 
 static thread_local basic::Tracer TR( "protocols.simple_filters.NonSequentialNeighborsFilter" );
@@ -35,12 +35,12 @@ NonSequentialNeighborsFilterCreator::keyname() const { return "NonSequentialNeig
 
 //default ctor
 NonSequentialNeighborsFilter::NonSequentialNeighborsFilter() :
-protocols::filters::Filter( "NonSequentialNeighbors" ),
-distance_threshold_( 8.0 ),
-neighbor_cutoff_( 10 ),
-bound_( false ),
-resnum_( 0 ),
-jump_( 1 )
+	protocols::filters::Filter( "NonSequentialNeighbors" ),
+	distance_threshold_( 8.0 ),
+	neighbor_cutoff_( 10 ),
+	bound_( false ),
+	resnum_( 0 ),
+	jump_( 1 )
 {
 }
 
@@ -78,12 +78,14 @@ core::Size
 NonSequentialNeighborsFilter::residue_neighbors( core::pose::Pose const & pose, core::Size const resi ) const{
 	core::Size count_neighbors = 0;
 	core::Size const target_chain( pose.chain( resi ) );
-	for( core::Size resj = pose.conformation().chain_begin( target_chain ); resj <= pose.conformation().chain_end( target_chain ); ++resj ){
-		if( resj >= resi - neighbor_cutoff() && resj <= resi + neighbor_cutoff() )
+	for ( core::Size resj = pose.conformation().chain_begin( target_chain ); resj <= pose.conformation().chain_end( target_chain ); ++resj ) {
+		if ( resj >= resi - neighbor_cutoff() && resj <= resi + neighbor_cutoff() ) {
 			continue;
+		}
 		core::Real const distance( pose.residue( resi ).xyz( pose.residue( resi ).nbr_atom() ).distance( pose.residue( resj ).xyz( pose.residue( resj ).nbr_atom() ) ) );
-		if( distance <= distance_threshold() )
+		if ( distance <= distance_threshold() ) {
 			count_neighbors++;
+		}
 	}
 	return( count_neighbors );
 }
@@ -94,14 +96,14 @@ NonSequentialNeighborsFilter::compute(
 ) const {
 	core::pose::Pose copy_pose( pose );
 
-	if( !bound() ){
+	if ( !bound() ) {
 		protocols::rigid::RigidBodyTransMover rbtm( copy_pose, jump() );
 		rbtm.step_size( 10000.0 );
 		rbtm.apply( copy_pose );
 		TR.Debug<<"Unbound complex"<<std::endl;
 	}
-	if( resnum() == 0 ){// working on entire protein
-		for( core::Size resi = 1; resi <= pose.total_residue(); ++resi ){
+	if ( resnum() == 0 ) { // working on entire protein
+		for ( core::Size resi = 1; resi <= pose.total_residue(); ++resi ) {
 			core::Size const count_neighbors( residue_neighbors( copy_pose, resi ) );
 			TR.Debug<<"neighbors of residue "<<resi<<": "<<count_neighbors<<std::endl;
 		}// for resi

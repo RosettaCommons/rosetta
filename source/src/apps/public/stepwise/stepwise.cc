@@ -73,18 +73,18 @@ static thread_local basic::Tracer TR( "apps.pilot.rhiju.stepwise_monte_carlo" );
 void
 stepwise_monte_carlo()
 {
-  using namespace core::pose;
-  using namespace core::scoring;
-  using namespace core::chemical;
-  using namespace core::pose::full_model_info;
-  using namespace protocols::stepwise;
-  using namespace protocols::stepwise::modeler;
-  using namespace protocols::stepwise::monte_carlo::submotif;
+	using namespace core::pose;
+	using namespace core::scoring;
+	using namespace core::chemical;
+	using namespace core::pose::full_model_info;
+	using namespace protocols::stepwise;
+	using namespace protocols::stepwise::modeler;
+	using namespace protocols::stepwise::monte_carlo::submotif;
 	using namespace protocols::stepwise::setup;
-  using namespace protocols::stepwise::monte_carlo;
-  using namespace protocols::stepwise::monte_carlo::mover;
-  using namespace protocols::stepwise::monte_carlo::options;
-  using namespace utility::file;
+	using namespace protocols::stepwise::monte_carlo;
+	using namespace protocols::stepwise::monte_carlo::mover;
+	using namespace protocols::stepwise::monte_carlo::options;
+	using namespace utility::file;
 
 	bool const just_RNA = just_modeling_RNA( option[ in::file::fasta ]() );
 	// following toggles to FA_RNA for speed; if ResidueTypeSet instantiation can be accelerated, OK to always use FA_STANDARD.
@@ -104,7 +104,7 @@ stepwise_monte_carlo()
 	core::io::rna::get_rna_data_info( pose, option[ basic::options::OptionKeys::rna::data_file ](), scorefxn );
 
 	// Get rid of this commented code when it is incorporated into a unit test.
-	//	test_merge_and_slice_with_two_helix_test_case( input_poses, scorefxn ); exit( 0 );
+	// test_merge_and_slice_with_two_helix_test_case( input_poses, scorefxn ); exit( 0 );
 
 	// setup test move specified via -stepwise:move option
 	StepWiseMove const test_move( option[ OptionKeys::stepwise::move ](), const_full_model_info( pose ).full_model_parameters() );
@@ -151,7 +151,7 @@ my_main( void* )
 	stepwise_monte_carlo();
 	protocols::viewer::clear_conformation_viewers();
 	std::cout << "Total time to run " << static_cast<Real>( clock() - my_main_time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
-  exit( 0 );
+	exit( 0 );
 }
 
 
@@ -224,16 +224,16 @@ main( int argc, char * argv [] )
 		// on command line. Following are basicaly hacks to set these global variables based on expectations of
 		// which patches will be needed. -- rhiju, 2014
 
-		if ( option[ OptionKeys::stepwise::virtualize_free_moieties_in_native ]() /* true by default*/ ){
+		if ( option[ OptionKeys::stepwise::virtualize_free_moieties_in_native ]() /* true by default*/ ) {
 			option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" ); // for chemical mapping & bulges in native.
 			option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RNA_RESIDUE" ); // for bulge
 		}
 		if ( option[ OptionKeys::stepwise::virtualize_free_moieties_in_native ]() /* true by default*/ ||
-				 option[ OptionKeys::stepwise::monte_carlo::allow_skip_bulge ]() ){
+				option[ OptionKeys::stepwise::monte_carlo::allow_skip_bulge ]() ) {
 			option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RIBOSE" ); // for skip-nucleotide moves.
 		}
 		if ( option[ OptionKeys::stepwise::virtualize_free_moieties_in_native ]() /* true by default*/ ||
-				 option[ OptionKeys::stepwise::rna::sampler_perform_phosphate_pack ]() ){
+				option[ OptionKeys::stepwise::rna::sampler_perform_phosphate_pack ]() ) {
 			option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" ); // 5prime_phosphate and 3prime_phosphate
 		}
 		if ( option[ OptionKeys::stepwise::protein::allow_virtual_side_chains ]() ) {

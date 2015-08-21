@@ -40,12 +40,12 @@ namespace protocols {
 namespace antibody {
 namespace design {
 
-	using namespace boost;
-	using namespace protocols::antibody;
-	using namespace protocols::antibody::clusters;
-	using utility::io::izstream;
-	using std::string;
-	using utility::vector1;
+using namespace boost;
+using namespace protocols::antibody;
+using namespace protocols::antibody::clusters;
+using utility::io::izstream;
+using std::string;
+using utility::vector1;
 
 CDRGraftDesignOptions::CDRGraftDesignOptions():
 	utility::pointer::ReferenceCount()
@@ -161,7 +161,7 @@ CDRGraftDesignOptionsParser::~CDRGraftDesignOptionsParser() {}
 utility::vector1<CDRGraftDesignOptionsOP>
 CDRGraftDesignOptionsParser::parse_default_and_user_options(std::string filename) {
 	utility::vector1<CDRGraftDesignOptionsOP> antibody_options;
-	for (core::Size i = 1; i <= 6; ++i ){
+	for ( core::Size i = 1; i <= 6; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
 		antibody_options.push_back( parse_default_and_user_options( cdr, filename ) );
 	}
@@ -184,7 +184,7 @@ CDRGraftDesignOptionsParser::parse_default_and_user_options(CDRNameEnum cdr, std
 utility::vector1<CDRGraftDesignOptionsOP>
 CDRGraftDesignOptionsParser::parse_options(std::string filename) {
 	utility::vector1<CDRGraftDesignOptionsOP> antibody_options;
-	for (core::Size i = 1; i <= 6; ++i ){
+	for ( core::Size i = 1; i <= 6; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
 		antibody_options.push_back( parse_options( cdr, filename ) );
 	}
@@ -197,10 +197,9 @@ CDRGraftDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 	using namespace utility;
 	using namespace std;
 
-	if (default_and_user_){
+	if ( default_and_user_ ) {
 		cdr_options_->set_cdr(cdr);
-	}
-	else{
+	} else {
 		cdr_options_ = CDRGraftDesignOptionsOP( new CDRGraftDesignOptions(cdr) );
 	}
 
@@ -210,18 +209,18 @@ CDRGraftDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 	//This is straight from C++ tutorials.
 	string line;
 	izstream instruction_file(instructions_path_);
-	if(instruction_file.bad()){
+	if ( instruction_file.bad() ) {
 		utility_exit_with_message("Unable to open grafting instruction file.");
 	}
 	//TR <<"Reading "<<path << " for "<< ab_manager_->cdr_name_enum_to_string(cdr) << std::endl;
-	while (getline(instruction_file, line)){
+	while ( getline(instruction_file, line) ) {
 
 		//Skip any comments + empty lines
 		utility::trim(line, "\n"); //Remove trailing line break
 		boost::algorithm::trim(line); //Remove any whitespace on either side of the string
 
 		//Continue to next line on empty string, comment
-		if (startswith(line, "#") || startswith(line, "\n") || line.empty()  ||  (line.find_first_not_of(' ') == std::string::npos) ){
+		if ( startswith(line, "#") || startswith(line, "\n") || line.empty()  ||  (line.find_first_not_of(' ') == std::string::npos) ) {
 			continue;
 		}
 
@@ -236,15 +235,13 @@ CDRGraftDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 		std::string mode = lineSP[2];
 		boost::to_upper(mode);
 
-		if (cdr_type == "ALL"){
+		if ( cdr_type == "ALL" ) {
 			parse_cdr_option(mode, lineSP);
-		}
-		else if (ab_manager_->cdr_name_is_present(cdr_type)){
-			if (ab_manager_->cdr_name_string_to_enum(cdr_type) == cdr){
+		} else if ( ab_manager_->cdr_name_is_present(cdr_type) ) {
+			if ( ab_manager_->cdr_name_string_to_enum(cdr_type) == cdr ) {
 				parse_cdr_option(mode, lineSP);
 			}
-		}
-		else {
+		} else {
 			//If expansion to chains, frameworks, etc.  Do it here.
 			//We may have separate parsers for framework or L2.5 or whatever.
 			//If its not a CDR, just skip it for now so we can have
@@ -261,14 +258,13 @@ void
 CDRGraftDesignOptionsParser::check_path() {
 	using namespace std;
 	izstream check( instructions_path_, ifstream::in);
-	if (check.good()){return;}
-	else{
+	if ( check.good() ) { return;}
+	else {
 		ifstream check2((basic::database::full_name(instructions_path_, false)).c_str(), ifstream::in);
-		if (check2.good()){
+		if ( check2.good() ) {
 			instructions_path_ = basic::database::full_name(instructions_path_);
 			return;
-		}
-		else{
+		} else {
 			utility_exit_with_message("Instructions file path not good.  Please check path.");
 		}
 	}
@@ -280,20 +276,18 @@ CDRGraftDesignOptionsParser::parse_cdr_option(std::string const mode, vector1<st
 	///Since we are now including SeqDesign and GraftDesign as part of the overall protocol,
 	/// it does not make sense to include MIN as part of GraftDesign, since it is overall part of the protocol.
 	/// that said, I cannot make up my mind as to what the hell the the tag should be called.
-	if (mode == "GRAFT" || mode == "GRAFT_DESIGN" || mode == "GRAFTDESIGN" ||
-	     mode == "GRAFTING" || mode == "MINPROTOCOL" || mode == "MIN_PROTOCOL" || mode == "MIN_STEP" || mode == "MINSTEP"){
+	if ( mode == "GRAFT" || mode == "GRAFT_DESIGN" || mode == "GRAFTDESIGN" ||
+			mode == "GRAFTING" || mode == "MINPROTOCOL" || mode == "MIN_PROTOCOL" || mode == "MIN_STEP" || mode == "MINSTEP" ) {
 		check_line_len(lineSP, 3);
 		std::string adjective = lineSP[3];
 		boost::to_upper(adjective);
 		parse_cdr_graft_option(adjective, lineSP);
-	}
-	else if (lineSP.size() == 2){
+	} else if ( lineSP.size() == 2 ) {
 		parse_cdr_general_option(lineSP);
-	}
-	else if (lineSP.size() == 3){
+	} else if ( lineSP.size() == 3 ) {
 		std::string setting = lineSP[ 2 ];
 		boost::to_upper( setting );
-		if (setting == "WEIGHT" || setting == "WEIGHTS"){
+		if ( setting == "WEIGHT" || setting == "WEIGHTS" ) {
 			check_line_len(lineSP, 3);
 			cdr_options_->weight(utility::string2Real(lineSP[3]));
 		}
@@ -303,7 +297,7 @@ CDRGraftDesignOptionsParser::parse_cdr_option(std::string const mode, vector1<st
 
 void
 CDRGraftDesignOptionsParser::check_line_len(const vector1<string> & lineSP, const core::Size len_check) const {
-	if (lineSP.size() < len_check){
+	if ( lineSP.size() < len_check ) {
 		utility_exit_with_message("Could not parse design instructions. Line not long enough: "+utility::to_string(len_check)+" "+utility::to_string(lineSP));
 	}
 }
@@ -313,29 +307,25 @@ CDRGraftDesignOptionsParser::parse_cdr_graft_option(std::string const setting, v
 
 	//Here we match.  This is rather ugly, as I don't have much C++ expereince in this.  Python however...
 
-	if (lineSP.size() == 3){
+	if ( lineSP.size() == 3 ) {
 		std::string option = lineSP[3];
 		boost::to_upper(option);
 		set_cdr_graft_general_option(option);
 		return;
-	}
-	else if (setting == "MINTYPE" || setting == "MIN"){
+	} else if ( setting == "MINTYPE" || setting == "MIN" ) {
 		check_line_len(lineSP, 4);
 		std::string type = lineSP[4];
 		boost::to_upper(type);
 		set_cdr_graft_mintype_options(type);
 		return;
-	}
-	else if (setting == "MIN_OTHER_CDRS" || setting == "MIN_NEIGHBOR_CDRS" || setting == "MIN_NEIGHBORS" || setting == "Min_Other" || setting == "MinOther") {
+	} else if ( setting == "MIN_OTHER_CDRS" || setting == "MIN_NEIGHBOR_CDRS" || setting == "MIN_NEIGHBORS" || setting == "Min_Other" || setting == "MinOther" ) {
 		set_cdr_graft_neighbor_mintype_options(lineSP);
 		return;
-	}
-	else if (setting == "WEIGHT" || setting == "WEIGHTS"){
+	} else if ( setting == "WEIGHT" || setting == "WEIGHTS" ) {
 		check_line_len(lineSP, 4);
 		cdr_options_->weight(utility::string2Real(lineSP[4]));
 		return;
-	}
-	else {
+	} else {
 		utility_exit_with_message("Cannot parse ab design instructions. " + setting);
 	}
 }
@@ -343,13 +333,11 @@ CDRGraftDesignOptionsParser::parse_cdr_graft_option(std::string const setting, v
 void
 CDRGraftDesignOptionsParser::set_cdr_graft_general_option(std::string const option) {
 
-	if (option == "FIX"){
+	if ( option == "FIX" ) {
 		cdr_options_->design(false);
-	}
-	else if (option == "ALLOW") {
+	} else if ( option == "ALLOW" ) {
 		cdr_options_->design(true);
-	}
-	else{utility_exit_with_message("Unrecognized option: "+option);}
+	} else { utility_exit_with_message("Unrecognized option: "+option); }
 }
 
 void
@@ -364,38 +352,30 @@ void
 CDRGraftDesignOptionsParser::set_cdr_graft_mintype_options(std::string const mintype) {
 
 	///If we ever have a design enum manager, add these to it to make this simpler.
-	if (mintype == "REPACK" || mintype == "PACK"){
+	if ( mintype == "REPACK" || mintype == "PACK" ) {
 		cdr_options_->mintype(protocols::antibody::design::repack);
-	}
-	else if (mintype == "MIN" || mintype == "MINIMIZE" || mintype == "MINIMIZER"){
+	} else if ( mintype == "MIN" || mintype == "MINIMIZE" || mintype == "MINIMIZER" ) {
 		cdr_options_->mintype(minimize);
-	}
-	else if (mintype == "MIN_CART" || mintype == "MINIMIZE_CART" || mintype == "MINIMIZE_CARTESIAN" || mintype == "CARTMIN"){
+	} else if ( mintype == "MIN_CART" || mintype == "MINIMIZE_CART" || mintype == "MINIMIZE_CARTESIAN" || mintype == "CARTMIN" ) {
 		cdr_options_->mintype(minimize_cartesian);
-	}
-	else if (mintype == "RELAX"){
+	} else if ( mintype == "RELAX" ) {
 		cdr_options_->mintype(relax);
-	}
-	else if (mintype == "DUALSPACE" || mintype == "DUALSPACE_RELAX" || mintype == "DS_RELAX") {
+	} else if ( mintype == "DUALSPACE" || mintype == "DUALSPACE_RELAX" || mintype == "DS_RELAX" ) {
 		cdr_options_->mintype(dualspace);
-	}
-	else if (mintype == "BACKRUB") {
+	} else if ( mintype == "BACKRUB" ) {
 		cdr_options_->mintype(backrub_protocol);
-	}
-	else if (mintype == "INCLUDE_RB" || mintype == "RB" || mintype == "W_RB"){
+	} else if ( mintype == "INCLUDE_RB" || mintype == "RB" || mintype == "W_RB" ) {
 		cdr_options_->min_rb(true);
-	}
-	else if (mintype == "NONE"){
+	} else if ( mintype == "NONE" ) {
 		cdr_options_->mintype(no_min);
-	}
-	else {utility_exit_with_message("Unrecognized mintype option: "+mintype);}
+	} else { utility_exit_with_message("Unrecognized mintype option: "+mintype); }
 
 	//else if (mintype == "CENTROIDRELAX" || mintype == "CENTROID_RELAX" || mintype == "CENRELAX" || mintype == "CEN_RELAX"){
-	//	cdr_options_->mintype(centroid_relax);
+	// cdr_options_->mintype(centroid_relax);
 	//}
 	//else if (mintype == "CENTROIDRELAX_W_RB" || mintype == "CENTROID_RELAX_W_RB" || mintype=="CENRELAX_W_RB" || mintype == "CEN_RELAX_W_RB"){
-	//	graft_instructions_[cdr].mintype = centroid_relax;
-	//	graft_instructions_[cdr].min_rb = true;
+	// graft_instructions_[cdr].mintype = centroid_relax;
+	// graft_instructions_[cdr].min_rb = true;
 	//}
 
 }
@@ -406,10 +386,10 @@ CDRGraftDesignOptionsParser::set_cdr_graft_neighbor_mintype_options(utility::vec
 	///Clear neighbor min settings so overwrites do not get weird.
 	cdr_options_->neighbor_min_clear();
 
-	for (core::Size i = 4; i <= lineSP.size(); ++i){
+	for ( core::Size i = 4; i <= lineSP.size(); ++i ) {
 		std::string cdr_type = lineSP[i];
 		boost::to_upper(cdr_type);
-		if (! ab_manager_->cdr_name_is_present(cdr_type)){
+		if ( ! ab_manager_->cdr_name_is_present(cdr_type) ) {
 			utility_exit_with_message("Unrecognized CDR type - "+cdr_type);
 		}
 

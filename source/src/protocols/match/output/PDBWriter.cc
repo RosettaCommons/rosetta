@@ -195,7 +195,7 @@ PDBWriter::record_match( match_dspos1 const & m )
 
 //void
 //PDBWriter::create_output_pose_from_dspos1_match(
-//	match_dspos1 const & m )
+// match_dspos1 const & m )
 //{
 //}
 
@@ -263,7 +263,7 @@ PDBWriter::assemble_remark_lines(
 		ri.num = 666; /// really now?
 		std::string upname3( upstream_matchres[ i ]->name3() );
 		std::map< core::Size, core::Size >::const_iterator red_it = redundant_upstream_res.find( i );
-		if( red_it != redundant_upstream_res.end() ){
+		if ( red_it != redundant_upstream_res.end() ) {
 			upname3 = upstream_matchres[ red_it->second ]->name3();
 		}
 		std::string upres_chain( utility::to_string( orig_upstream_pose_->pdb_info()->chain( upstream_matchres[ i ]->seqpos() ) ) );
@@ -272,7 +272,7 @@ PDBWriter::assemble_remark_lines(
 		std::string targ_chain("X");
 		int targ_seqpos(0);
 		std::map< core::Size, core::Size >::const_iterator upstream_only_it(upstream_only_geom_cst_.find( i ) );
-		if( upstream_only_it != upstream_only_geom_cst_.end() ){
+		if ( upstream_only_it != upstream_only_geom_cst_.end() ) {
 			targ_resname = upstream_matchres[ upstream_only_it->second ]->name3();
 			targ_chain =  utility::to_string( orig_upstream_pose_->pdb_info()->chain( upstream_matchres[ upstream_only_it->second ]->seqpos() ) );
 			targ_seqpos = orig_upstream_pose_->pdb_info()->number( upstream_matchres[ upstream_only_it->second ]->seqpos() );
@@ -300,20 +300,18 @@ PDBWriter::create_output_upstream_pose(
 
 	core::pose::PoseOP outpose;
 
-	if( write_matchres_only_ ){
+	if ( write_matchres_only_ ) {
 		outpose = core::pose::PoseOP( new core::pose::Pose() );
 
 		core::pose::PDBInfoOP pdbinf( new core::pose::PDBInfo( *outpose ) );
 		outpose->pdb_info( pdbinf );
-	}
-
-	else outpose = core::pose::PoseOP( new core::pose::Pose( *orig_upstream_pose_ ) );
+	} else outpose = core::pose::PoseOP( new core::pose::Pose( *orig_upstream_pose_ ) );
 
 	for ( core::Size i = 1, count_non_redundant = 1; i <= upstream_matchres.size(); ++i ) {
-		if( redundant_upstream_res.find( i ) != redundant_upstream_res.end() ) continue;
+		if ( redundant_upstream_res.find( i ) != redundant_upstream_res.end() ) continue;
 		//matchres_seqpos.push_back( upstream_matchres[i]->seqpos() );
-		if( write_matchres_only_ ){
-			if( i == 1 ) {
+		if ( write_matchres_only_ ) {
+			if ( i == 1 ) {
 				outpose->append_residue_by_jump( *(upstream_matchres[i]), 1 );
 			} else {
 				outpose->append_residue_by_bond( *(upstream_matchres[i]) );
@@ -340,7 +338,7 @@ PDBWriter::signature_string(
 ) const
 {
 	std::string signature("");
-	for ( core::Size i =1; i <= upstream_matchres.size(); ++i ){
+	for ( core::Size i =1; i <= upstream_matchres.size(); ++i ) {
 		signature = signature + upstream_matchres[i]->name1() +
 			utility::to_string( orig_upstream_pose_->pdb_info()->number( upstream_matchres[i]->seqpos() ) );
 	}
@@ -393,8 +391,8 @@ PDBWriter::assemble_outtag(
 
 	std::string signature( signature_string( upstream_matchres ));
 	//for ( core::Size i =1; i <= upstream_matchres.size(); ++i ){
-	//	signature = signature + upstream_matchres[i]->name1() +
-	//		utility::to_string( upstream_matchres[i]->seqpos() );
+	// signature = signature + upstream_matchres[i]->name1() +
+	//  utility::to_string( upstream_matchres[i]->seqpos() );
 	//}
 
 	std::map< std::string, SizePair >::iterator map_it = signature_map_.find( signature );
@@ -439,8 +437,8 @@ CloudPDBWriter::end_output_writing()
 {
 	TR << "CloudPDBWriter beginning to output matches for " << match_groups_ushits_.size() << " match groups." << std::endl;
 	core::Size total_ushit_count(0), total_dshit_count(0);
-	for( core::Size ii = 1; ii <= match_groups_ushits_.size(); ++ii){
-		for( core::Size jj =1; jj <= num_geom_cst(); ++jj){
+	for ( core::Size ii = 1; ii <= match_groups_ushits_.size(); ++ii ) {
+		for ( core::Size jj =1; jj <= num_geom_cst(); ++jj ) {
 			total_ushit_count += match_groups_ushits_[ii][jj].size();
 			total_dshit_count += match_groups_dshits_[ii][jj].size();
 		}
@@ -460,7 +458,7 @@ CloudPDBWriter::record_match(  match const & m , MatchEvaluatorOP evaluator, Mat
 	//TR << "CPW recording match for assigned group " << mgroup << " ... " << std::endl;
 
 	// check if this is a new unqiue match
-	if( mgroup > match_groups_ushits_.size() ){
+	if ( mgroup > match_groups_ushits_.size() ) {
 		runtime_assert( mgroup == match_groups_ushits_.size() + 1 );
 		match_groups_ushits_.push_back( UpstreamHitSets( num_geom_cst() ) );
 		match_groups_dshits_.push_back( DownstreamHitSets( num_geom_cst() ) );
@@ -469,30 +467,29 @@ CloudPDBWriter::record_match(  match const & m , MatchEvaluatorOP evaluator, Mat
 
 		utility::vector1< core::conformation::ResidueCOP > upstream_matchres;
 		for ( Size ii = 1; ii <= m.size(); ++ii ) {
-			core::conformation::ResidueCOP conf =	coordinate_cacher()->upstream_conformation_for_hit( ii, m[ ii ] );
+			core::conformation::ResidueCOP conf = coordinate_cacher()->upstream_conformation_for_hit( ii, m[ ii ] );
 			upstream_matchres.push_back( conf );
 
 			//note the special case here: we don't push back the first because
 			//that will be written out separately
-			if( (ii != 1) && (dsbuilders()[ii]) ){
+			if ( (ii != 1) && (dsbuilders()[ii]) ) {
 				match_groups_dshits_[mgroup][ii].insert( downstream_hit( m[ii] ) );
 			}
 		}
 		std::string unique_match_name = prefix() + "_" + utility::to_string( mgroup ) + "_" + signature_string( upstream_matchres ) + "_" + scaf_name() + "_" + cstfile_name();
 		unique_match_names_.push_back( unique_match_name );
 		match_score_writer->add_match( unique_match_name , evaluator->score(m) );
-	}
-	else{
+	} else {
 		//TR << "CPW group " << mgroup << " has been previously encountered.. ";
-		for( core::Size ii = 1; ii <= num_geom_cst(); ++ii ){
+		for ( core::Size ii = 1; ii <= num_geom_cst(); ++ii ) {
 			upstream_hit uhit( m[ii] );
-			if( match_groups_ushits_[mgroup][ii].find( uhit ) == match_groups_ushits_[mgroup][ii].end() ){
+			if ( match_groups_ushits_[mgroup][ii].find( uhit ) == match_groups_ushits_[mgroup][ii].end() ) {
 				match_groups_ushits_[mgroup][ii].insert( uhit );
 				//TR << " got new uphit for geomcst " << ii << ";   ";
 			}
-			if( dsbuilders()[ii] ){
+			if ( dsbuilders()[ii] ) {
 				downstream_hit dhit( m[ii] );
-				if( match_groups_dshits_[mgroup][ii].find( dhit ) == match_groups_dshits_[mgroup][ii].end() ){
+				if ( match_groups_dshits_[mgroup][ii].find( dhit ) == match_groups_dshits_[mgroup][ii].end() ) {
 					match_groups_dshits_[mgroup][ii].insert( dhit );
 					//TR << " got new downhit for geomcst " << ii << ";   ";
 				}
@@ -513,10 +510,10 @@ void
 CloudPDBWriter::write_match_groups()
 {
 	runtime_assert( match_groups_ushits_.size() == unique_match_names_.size() );
-	for( core::Size ii = 1; ii <= match_groups_ushits_.size(); ++ii){
+	for ( core::Size ii = 1; ii <= match_groups_ushits_.size(); ++ii ) {
 
 		TR << "beginning writing cloud for group " << ii << std::endl;
-		for( core::Size jj =1; jj <= num_geom_cst(); ++jj){
+		for ( core::Size jj =1; jj <= num_geom_cst(); ++jj ) {
 			TR << match_groups_ushits_[ii][jj].size() << " upstream hits and "  << match_groups_dshits_[ii][jj].size() << " downstream hits " << " for geom cst " << jj << std::endl;
 		}
 		TR.flush();
@@ -536,16 +533,16 @@ CloudPDBWriter::write_match_groups()
 			upstream_matchres.push_back( conf );
 			ex_geom_ids_for_upstream_res.push_back( rep_match.upstream_hits[jj].external_geom_id() );
 
-			if( redundant_upstream_res.find( jj ) != redundant_upstream_res.end() ){
+			if ( redundant_upstream_res.find( jj ) != redundant_upstream_res.end() ) {
 				us_hitset_its_[jj] = us_hitset_end_its_[jj];
 			}
 		}
 		core::pose::PoseCOP up_outpose = create_output_upstream_pose(
-		upstream_matchres, redundant_upstream_res, ex_geom_ids_for_upstream_res );
+			upstream_matchres, redundant_upstream_res, ex_geom_ids_for_upstream_res );
 		core::pose::PoseCOP downstream_pose = dsbuilders()[ rep_match.originating_geom_cst_for_dspos ]->downstream_pose_from_hit(  full_hit( rep_match ) );
 
 		std::ofstream file_out( (unique_match_names_[ii] + "_1.pdb").c_str() );
-		if( !file_out.is_open() ) utility_exit_with_message("Could not open file with name " + unique_match_names_[ii] + "_1.pdb for outputting matches.");
+		if ( !file_out.is_open() ) utility_exit_with_message("Could not open file with name " + unique_match_names_[ii] + "_1.pdb for outputting matches.");
 
 		file_out << "MODEL    1\n";
 		up_outpose->dump_pdb( file_out );
@@ -556,15 +553,15 @@ CloudPDBWriter::write_match_groups()
 		core::Size allmodelcount(0), num_files_this_group(1), modelcount(2), atomcounter(0);
 		bool all_hitset_iterators_at_end( false );
 		//UpstreamHitSets const & us_hitset_ref( match_groups_ushits_[ ii ] );
-		while( ! all_hitset_iterators_at_end ){
+		while ( ! all_hitset_iterators_at_end ) {
 			all_hitset_iterators_at_end = true;
 			bool modeltag_written( false );
 
-			for( core::Size jj = 1; jj <= num_geom_cst(); ++jj ){
-				if( us_hitset_its_[jj] == us_hitset_end_its_[jj] ) continue;
+			for ( core::Size jj = 1; jj <= num_geom_cst(); ++jj ) {
+				if ( us_hitset_its_[jj] == us_hitset_end_its_[jj] ) continue;
 				all_hitset_iterators_at_end = false;
 
-				if( !modeltag_written ){
+				if ( !modeltag_written ) {
 					file_out << "MODEL    "+utility::to_string( modelcount++ )+"\n";
 					modeltag_written = true;
 				}
@@ -575,10 +572,10 @@ CloudPDBWriter::write_match_groups()
 			} //jj loop over all geom csts
 
 			//write out one ds pose
-			for( core::Size jj = 1; jj <= num_geom_cst(); ++jj ){
-				if( ds_hitset_its_[jj] == ds_hitset_end_its_[jj]) continue;
+			for ( core::Size jj = 1; jj <= num_geom_cst(); ++jj ) {
+				if ( ds_hitset_its_[jj] == ds_hitset_end_its_[jj] ) continue;
 				all_hitset_iterators_at_end = false;
-				if( !modeltag_written ){
+				if ( !modeltag_written ) {
 					file_out << "MODEL    "+utility::to_string( modelcount++ )+"\n";
 					modeltag_written = true;
 				}
@@ -587,12 +584,12 @@ CloudPDBWriter::write_match_groups()
 				ds_hitset_its_[jj]++;
 				break;
 			}
-			if( modeltag_written )	file_out << "ENDMDL \n";
+			if ( modeltag_written ) file_out << "ENDMDL \n";
 
 			//note: we don't want to go overboard w/ the number of different models,
 			//bc the packer can only handle so much. so if there are more than 100,
 			//let's open a new file
-			if( modelcount == 101 && (! all_hitset_iterators_at_end ) ){
+			if ( modelcount == 101 && (! all_hitset_iterators_at_end ) ) {
 				file_out.close();
 				atomcounter = 0;
 				allmodelcount += (modelcount - 2);
@@ -672,7 +669,7 @@ CloudPDBWriter::setup_hitset_iterators_for_group(
 	UpstreamHitSets const & us_hitset_ref( match_groups_ushits_[ group ] );
 	DownstreamHitSets const & ds_hitset_ref( match_groups_dshits_[ group ] );
 	runtime_assert( us_hitset_ref.size() == ds_hitset_ref.size() );
-	for( core::Size ii = 1; ii <= us_hitset_ref.size(); ++ii ){
+	for ( core::Size ii = 1; ii <= us_hitset_ref.size(); ++ii ) {
 		//runtime_assert( us_hitset_ref[ii].size() > 0 );
 		us_hitset_its_.push_back( us_hitset_ref[ ii ].begin() );
 		us_hitset_end_its_.push_back( us_hitset_ref[ii].end() );
@@ -683,7 +680,7 @@ CloudPDBWriter::setup_hitset_iterators_for_group(
 
 
 PoseMatchOutputWriter::PoseMatchOutputWriter( MatchGrouperOP grouper )
-	: parent( grouper )
+: parent( grouper )
 {}
 
 PoseMatchOutputWriter::~PoseMatchOutputWriter(){}
@@ -715,7 +712,7 @@ PoseMatchOutputWriter::insert_match_into_pose(
 			coordinate_cacher()->upstream_conformation_for_hit( jj, fake_hit( rep_match.upstream_hits[ jj ] ) );
 		upstream_matchres.push_back( conf );
 		ex_geom_ids_for_upstream_res.push_back( full_hit( rep_match).external_geom_id() );
-		if( redundant_upstream_res.find( jj ) == redundant_upstream_res.end() ){
+		if ( redundant_upstream_res.find( jj ) == redundant_upstream_res.end() ) {
 			pose.replace_residue( conf->seqpos(), *conf, false );
 		}
 	}
@@ -726,7 +723,7 @@ PoseMatchOutputWriter::insert_match_into_pose(
 	//then the downstream pose
 	core::pose::PoseCOP downstream_pose = dsbuilders()[ rep_match.originating_geom_cst_for_dspos ]->downstream_pose_from_hit(  full_hit( rep_match ) );
 
-	if( downstream_pose->total_residue() == 1 ){
+	if ( downstream_pose->total_residue() == 1 ) {
 		pose.append_residue_by_jump( downstream_pose->residue(1), 1, "", "", true );
 		pose.pdb_info()->chain( pose.total_residue(), 'X' );
 		pose.pdb_info()->number( pose.total_residue(), 1 );
@@ -734,18 +731,17 @@ PoseMatchOutputWriter::insert_match_into_pose(
 		//pose.append_residue_by_jump( downstream_pose->residue(1), pose.total_residue(), "CA", downstream_pose->residue(1).atom_name(1), true );
 
 		utility::vector1< core::conformation::ResidueCOP > additional_lig_confs;
-		for( core::Size i = 1; i <= num_geom_cst(); ++i ){
-			for( std::set< downstream_hit >::const_iterator ds_hits_it( match_groups_dshits()[match_group][i].begin()), ds_hits_end( match_groups_dshits()[match_group][i].end() ); ds_hits_it != ds_hits_end; ++ds_hits_it){
+		for ( core::Size i = 1; i <= num_geom_cst(); ++i ) {
+			for ( std::set< downstream_hit >::const_iterator ds_hits_it( match_groups_dshits()[match_group][i].begin()), ds_hits_end( match_groups_dshits()[match_group][i].end() ); ds_hits_it != ds_hits_end; ++ds_hits_it ) {
 				additional_lig_confs.push_back( dsbuilders()[i]->downstream_pose_from_hit( fake_hit(*(ds_hits_it)) )->residue(1).get_self_ptr() );
-				if( additional_lig_confs.size() > 99 ) break;
+				if ( additional_lig_confs.size() > 99 ) break;
 			}
-			if( additional_lig_confs.size() > 99 ) break;
+			if ( additional_lig_confs.size() > 99 ) break;
 		}
-		if( additional_lig_confs.size() > 1 ){
+		if ( additional_lig_confs.size() > 1 ) {
 			protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_rigid_body_confs_for_lig( pose.total_residue(), additional_lig_confs );
 		}
-	}
-	else utility_exit_with_message("PoseMatchOutputWriter not set up to put a downstream pose containing more than one ligand into the upstream pose");
+	} else utility_exit_with_message("PoseMatchOutputWriter not set up to put a downstream pose containing more than one ligand into the upstream pose");
 }
 
 void
@@ -754,13 +750,12 @@ PoseMatchOutputWriter::insert_match_into_pose(
 )
 {
 	core::Size num_match_groups( match_groups_ushits().size() );
-	if( num_match_groups > 1 ){
+	if ( num_match_groups > 1 ) {
 		core::Size mgroup( numeric::random::random_range( 1, num_match_groups ) );
 		TR << "WARNING: Matcher produced " << num_match_groups << " unique match groups, randomly picked " << mgroup << " to be inserted into the pose." << std::endl;
 		insert_match_into_pose( pose, mgroup );
-	}
-	else if( num_match_groups == 1 ) insert_match_into_pose( pose, 1 );
-	else{
+	} else if ( num_match_groups == 1 ) insert_match_into_pose( pose, 1 );
+	else {
 		TR << "Apparently no matches were found, so it's impossible to insert a match into the pose." << std::endl;
 	}
 }

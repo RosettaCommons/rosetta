@@ -53,7 +53,7 @@ vector1 < platform::Real > Svm_rosetta::predict_probability(vector1 <Svm_node_ro
 	// TL 5/2013: Changed to use new and delete[] to avoid problems
 	//struct svm_node *x = (struct svm_node *) malloc((features.size()+1)*sizeof(struct svm_node));
 	struct svm_node *x = new svm_node[features.size()+1];
-	for (platform::Size ii=1; ii<=features.size(); ++ii){
+	for ( platform::Size ii=1; ii<=features.size(); ++ii ) {
 		x[ii-1].index = (int)features[ii]->index();
 		x[ii-1].value = (double)features[ii]->value();
 	}
@@ -63,7 +63,7 @@ vector1 < platform::Real > Svm_rosetta::predict_probability(vector1 <Svm_node_ro
 	double *prob_estimates = new double[nr_class];
 	/*double predict_label =*/ svm_predict_probability(svm_model_,x,prob_estimates);
 	vector1 <platform::Real> probs_to_return;
-	for(int ii=0;ii<nr_class;++ii){
+	for ( int ii=0; ii<nr_class; ++ii ) {
 		probs_to_return.push_back(prob_estimates[ii]);
 	}
 	delete[] prob_estimates;
@@ -71,12 +71,12 @@ vector1 < platform::Real > Svm_rosetta::predict_probability(vector1 <Svm_node_ro
 	return(probs_to_return);
 }
 
-platform::Real Svm_rosetta::predict( const vector1 <Svm_node_rosettaOP> & features) 
+platform::Real Svm_rosetta::predict( const vector1 <Svm_node_rosettaOP> & features)
 {
 	// TL 5/2013: Changed to use new and delete[] to avoid problems
 	//struct svm_node *x = (struct svm_node *) malloc((features.size()+1)*sizeof(struct svm_node));
 	struct svm_node *x = new svm_node[features.size()+1];
-	for (platform::Size ii=1; ii<=features.size(); ++ii){
+	for ( platform::Size ii=1; ii<=features.size(); ++ii ) {
 		x[ii-1].index = (int)features[ii]->index();
 		x[ii-1].value = (double)features[ii]->value();
 	}

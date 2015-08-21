@@ -38,7 +38,7 @@ using namespace core::chemical;
 
 class MMAtomTypeSetTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	// Shared data elements go here.
 	MMAtomTypeSetOP mmatomtypeset;

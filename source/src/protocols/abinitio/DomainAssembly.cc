@@ -108,7 +108,7 @@ DomainAssembly::apply( core::pose::Pose & pose )
 {
 	protocols::simple_moves::ReturnSidechainMover recover_sidechains( pose );
 
-	if( !fragments_set_ ) {
+	if ( !fragments_set_ ) {
 		TR<<"*******WARNING WARNING********: fragments not set, skipping domain assembly"<<std::endl;
 		runtime_assert( fragments_set_ );
 		return;
@@ -116,23 +116,23 @@ DomainAssembly::apply( core::pose::Pose & pose )
 
 	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap() );
 	mm->set_bb( false );
-	for( core::Size i=linker_start_; i<=linker_end_; ++i ) mm->set_bb( i, true );
-/* //The following code only makes sense if we do 'blind' prediction stuff. In all cases where we have a starting structure,
-//it's probably a good idea to start near that.
+	for ( core::Size i=linker_start_; i<=linker_end_; ++i ) mm->set_bb( i, true );
+	/* //The following code only makes sense if we do 'blind' prediction stuff. In all cases where we have a starting structure,
+	//it's probably a good idea to start near that.
 	for(i = 1; i <= flexible_regions_.size(); i++ ){
-		ir = std::max(0, std::min( (int)pose_full_centroid.total_residue() ,  (int) flexible_regions_[i] ) );
+	ir = std::max(0, std::min( (int)pose_full_centroid.total_residue() ,  (int) flexible_regions_[i] ) );
 
-		std::cout << "Linker: " << ir << std::endl;
+	std::cout << "Linker: " << ir << std::endl;
 
-		Real const init_phi  ( -150.0 );
-		Real const init_psi  (  150.0 );
-		Real const init_omega(  180.0 );
-		pose_full_centroid.set_phi( ir ,  init_phi  );
-		pose_full_centroid.set_psi( ir ,  init_psi  );
-		pose_full_centroid.set_omega( ir, init_omega);
-		movemap->set_bb(ir, true);
+	Real const init_phi  ( -150.0 );
+	Real const init_psi  (  150.0 );
+	Real const init_omega(  180.0 );
+	pose_full_centroid.set_phi( ir ,  init_phi  );
+	pose_full_centroid.set_psi( ir ,  init_psi  );
+	pose_full_centroid.set_omega( ir, init_omega);
+	movemap->set_bb(ir, true);
 	}
-*/
+	*/
 	core::scoring::ScoreFunctionCOP scorefxn( get_score_function() );
 	protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
 	protocols::simple_moves::SwitchResidueTypeSetMover to_fullatom( core::chemical::FA_STANDARD );
@@ -147,52 +147,53 @@ DomainAssembly::apply( core::pose::Pose & pose )
 	//recover sidechains from starting structures
 	to_fullatom.apply( pose );
 	recover_sidechains.apply( pose );
-//	pose.update_residue_neighbors(); // o/w fails assertion `graph_state_ == GOOD`
-//	(*scorefxn)( pose );
-//	scorefxn->accumulate_residue_total_energies( pose );
+	// pose.update_residue_neighbors(); // o/w fails assertion `graph_state_ == GOOD`
+	// (*scorefxn)( pose );
+	// scorefxn->accumulate_residue_total_energies( pose );
 
-//Repack regions around the linker
+	//Repack regions around the linker
 	core::pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line().or_include_current( true );
 	task->restrict_to_repacking();
 
-	for ( core::Size i = linker_end_+1; i <= pose.total_residue(); ++i) {
+	for ( core::Size i = linker_end_+1; i <= pose.total_residue(); ++i ) {
 		if ( !pose.residue(i).is_protein() ) continue;
-		if( pose.residue(i).type().is_disulfide_bonded() ) {
+		if ( pose.residue(i).type().is_disulfide_bonded() ) {
 			task->nonconst_residue_task( i ).prevent_repacking();
 			continue;
 		}
 
 		core::conformation::Residue const resi( pose.residue( i ) );
 		core::Size j;
-		for( j = 1; j<=linker_end_; ++j ) {
+		for ( j = 1; j<=linker_end_; ++j ) {
 			core::conformation::Residue const resj( pose.residue( j ) );
 
 			core::Real const distance( resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );
-			if( distance <= 8.0 ) break;
+			if ( distance <= 8.0 ) break;
 		}
-		if( j>linker_end_ ) task->nonconst_residue_task( i ).prevent_repacking();
+		if ( j>linker_end_ ) task->nonconst_residue_task( i ).prevent_repacking();
 	}
-	for ( core::Size i = 1; i <= linker_start_ - 1; ++i) {
+	for ( core::Size i = 1; i <= linker_start_ - 1; ++i ) {
 		if ( !pose.residue(i).is_protein() ) continue;
-		if( pose.residue(i).type().is_disulfide_bonded() ) {
+		if ( pose.residue(i).type().is_disulfide_bonded() ) {
 			task->nonconst_residue_task( i ).prevent_repacking();
 			continue;
 		}
 
 		core::conformation::Residue const resi( pose.residue( i ) );
 		core::Size j;
-		for( j = linker_start_; j<=pose.total_residue(); ++j ) {
+		for ( j = linker_start_; j<=pose.total_residue(); ++j ) {
 			core::conformation::Residue const resj( pose.residue( j ) );
 
 			core::Real const distance( resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );
-			if( distance <= 8.0 ) break;
+			if ( distance <= 8.0 ) break;
 		}
-		if( j>pose.total_residue() ) task->nonconst_residue_task( i ).prevent_repacking();
+		if ( j>pose.total_residue() ) task->nonconst_residue_task( i ).prevent_repacking();
 	}
 	//in case there is a resfile, information in this resfile overrides the computed task
-	if( basic::options::option[basic::options::OptionKeys::packing::resfile].user() )
+	if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
 		core::pack::task::parse_resfile(pose, *task);
+	}
 
 	pack::pack_rotamers( pose, *scorefxn, task);
 	(*scorefxn)( pose );

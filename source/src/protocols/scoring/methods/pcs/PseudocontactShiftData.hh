@@ -6,25 +6,25 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
- //////////////////////////////////////////////
- ///
- /// @file PseudocontactShiftData.hh
- ///
- /// @brief  Hold the PCS data on which the SVD will be applyed
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file PseudocontactShiftData.hh
+///
+/// @brief  Hold the PCS data on which the SVD will be applyed
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs_PseudocontactShiftData_hh
@@ -52,16 +52,16 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-	#include <protocols/scoring/methods/pcs/PseudocontactShiftInput.hh>
-	#include <protocols/scoring/methods/pcs/PseudocontactShiftTensor.hh>
-	#include <protocols/scoring/methods/pcs/PseudocontactShiftData.hh>
+#include <protocols/scoring/methods/pcs/PseudocontactShiftInput.hh>
+#include <protocols/scoring/methods/pcs/PseudocontactShiftTensor.hh>
+#include <protocols/scoring/methods/pcs/PseudocontactShiftData.hh>
 #endif
 
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs {
 
 class PCS_data_per_lanthanides{
 private:
@@ -70,7 +70,7 @@ private:
 
 	utility::vector1<core::Size> A_index_; //index on the giant matrix A to build all the smalls matrix A_
 
- 	ObjexxFCL::FArray2D< core::Real > fstyle_A_; //We are going to SVD Ax = b
+	ObjexxFCL::FArray2D< core::Real > fstyle_A_; //We are going to SVD Ax = b
 	ObjexxFCL::FArray1D< core::Real > fstyle_b_; //I should make this one const
 
 	basic::svd::SVD_Solver svd_s_;
@@ -199,8 +199,8 @@ public:
 
 	void
 	update_matrix_A_all(core::Real const X,
-											core::Real const Y,
-											core::Real const Z);
+		core::Real const Y,
+		core::Real const Z);
 
 	//void print_matrix_A_all() const;
 

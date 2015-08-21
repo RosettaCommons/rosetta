@@ -85,7 +85,7 @@ RRComparerElecDensDiff::measure_rotamer_recovery(
 	bool & recovered
 ) {
 
-	if( res1.aa() != res2.aa()  || res1.nheavyatoms() != res2.nheavyatoms()) {
+	if ( res1.aa() != res2.aa()  || res1.nheavyatoms() != res2.nheavyatoms() ) {
 		TR << "Cannot measure rotamer recovery of residue " << res1.seqpos() << " because" << endl;
 		TR << "\nresidue 1 has type '" << res1.type().name() << "'" << endl;
 		TR << "\nresidue 2 has type '" << res2.type().name() << "'" << endl;
@@ -94,7 +94,7 @@ RRComparerElecDensDiff::measure_rotamer_recovery(
 	}
 
 	// TODO: Can this restriction be relaxed? What about using 'is_polymer()'?
-	if( res1.aa() > num_canonical_aas ){
+	if ( res1.aa() > num_canonical_aas ) {
 		TR << "WARNING: trying to compare rotamer bins for non-canonical amino acid '" << res1.name() << "'" << endl;
 		score = -1; recovered = false; return false;
 	}
@@ -110,8 +110,9 @@ RRComparerElecDensDiff::measure_rotamer_recovery(
 	// setup density scoring
 	core::scoring::electron_density::getDensityMap().set_nres( nres );
 	core::scoring::electron_density::getDensityMap().setScoreWindowContext( true );
-	if ( basic::options::option[ basic::options::OptionKeys::edensity::sliding_window ].user() )
+	if ( basic::options::option[ basic::options::OptionKeys::edensity::sliding_window ].user() ) {
 		core::scoring::electron_density::getDensityMap().setWindow( basic::options::option[ basic::options::OptionKeys::edensity::sliding_window ] );
+	}
 
 	// score to set energy graph
 	core::scoring::ScoreFunctionOP scorefxn ( new core::scoring::ScoreFunction );
@@ -122,15 +123,16 @@ RRComparerElecDensDiff::measure_rotamer_recovery(
 	// electron density correlation
 	Real pose1_corr = core::scoring::electron_density::getDensityMap().matchRes( res1.seqpos(), res1, pose1, NULL , false);
 	Real pose2_corr = core::scoring::electron_density::getDensityMap().matchRes( res2.seqpos(), res2, pose2, NULL , false);
-	Real corr_diff = pose1_corr - pose2_corr;				//if Rosetta fixes an error in native density fitting, count as recovered
-																									//pose1 must be native
+	Real corr_diff = pose1_corr - pose2_corr;    //if Rosetta fixes an error in native density fitting, count as recovered
+	//pose1 must be native
 
 	TR << "type: " << res1.name3() << " seqpos: " << res1.seqpos() << " corr diff: " << corr_diff << std::endl;
 
-	if ( corr_diff > recovery_threshold_ )
+	if ( corr_diff > recovery_threshold_ ) {
 		recovered = false;
-	else
+	} else {
 		recovered = true;
+	}
 
 	return true;
 }

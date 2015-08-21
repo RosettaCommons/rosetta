@@ -23,43 +23,43 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class FastForwardToNextResidueAlternative: public StepWiseScreener {
+class FastForwardToNextResidueAlternative: public StepWiseScreener {
 
-	public:
+public:
 
-		//constructor
-		FastForwardToNextResidueAlternative( Size const moving_res );
+	//constructor
+	FastForwardToNextResidueAlternative( Size const moving_res );
 
-		//destructor
-		~FastForwardToNextResidueAlternative();
+	//destructor
+	~FastForwardToNextResidueAlternative();
 
-	public:
+public:
 
-		//		bool
-		//		check_screen();
+	//  bool
+	//  check_screen();
 
-		virtual
-		std::string
-		name() const { return "FastForwardToNextResidueAlternative"; }
+	virtual
+	std::string
+	name() const { return "FastForwardToNextResidueAlternative"; }
 
-		virtual
-		StepWiseScreenerType
-		type() const { return FAST_FORWARD_TO_NEXT_RESIDUE_ALTERNATIVE; }
+	virtual
+	StepWiseScreenerType
+	type() const { return FAST_FORWARD_TO_NEXT_RESIDUE_ALTERNATIVE; }
 
-		virtual
-		void
-		get_update( sampler::StepWiseSamplerBaseOP sampler );
+	virtual
+	void
+	get_update( sampler::StepWiseSamplerBaseOP sampler );
 
-		// kind of tricky -- put fast_forward above in get_update.
-		//		virtual
-		//		void
-		//		fast_forward( sampler::StepWiseSamplerBaseOP sampler );
+	// kind of tricky -- put fast_forward above in get_update.
+	//  virtual
+	//  void
+	//  fast_forward( sampler::StepWiseSamplerBaseOP sampler );
 
-	private:
+private:
 
-		Size const moving_res_;
+	Size const moving_res_;
 
-	};
+};
 
 } //screener
 } //stepwise

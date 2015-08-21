@@ -33,9 +33,9 @@ static thread_local basic::Tracer TR("protocols.antibody.task_operations.Disable
 namespace protocols {
 namespace antibody {
 namespace task_operations {
-	using namespace core::pack::task::operation;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+using namespace core::pack::task::operation;
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
 
 DisableAntibodyRegionOperation::DisableAntibodyRegionOperation():
 	TaskOperation(),
@@ -76,12 +76,12 @@ DisableAntibodyRegionOperation::clone() const {
 }
 
 DisableAntibodyRegionOperation::DisableAntibodyRegionOperation(DisableAntibodyRegionOperation const & src):
-		TaskOperation(src),
-		ab_info_(src.ab_info_),
-		region_(src.region_),
-		disable_packing_and_design_(src.disable_packing_and_design_),
-		numbering_scheme_(src.numbering_scheme_),
-		cdr_definition_(src.cdr_definition_)
+	TaskOperation(src),
+	ab_info_(src.ab_info_),
+	region_(src.region_),
+	disable_packing_and_design_(src.disable_packing_and_design_),
+	numbering_scheme_(src.numbering_scheme_),
+	cdr_definition_(src.cdr_definition_)
 {
 
 }
@@ -90,12 +90,12 @@ void
 DisableAntibodyRegionOperation::parse_tag(utility::tag::TagCOP tag, basic::datacache::DataMap&){
 	AntibodyEnumManager manager = AntibodyEnumManager();
 
-	if (tag->hasOption("region")){
+	if ( tag->hasOption("region") ) {
 		region_ = manager.antibody_region_string_to_enum(tag->getOption< std::string >( "region" ));
 	}
 	disable_packing_and_design_ = tag->getOption< bool >( "disable_packing_and_design", disable_packing_and_design_);
-	
-	if (tag->hasOption("cdr_definition") && tag->hasOption("numbering_scheme")){
+
+	if ( tag->hasOption("cdr_definition") && tag->hasOption("numbering_scheme") ) {
 
 
 		AntibodyEnumManager manager = AntibodyEnumManager();
@@ -103,12 +103,11 @@ DisableAntibodyRegionOperation::parse_tag(utility::tag::TagCOP tag, basic::datac
 		cdr_definition_ = manager.cdr_definition_string_to_enum(tag->getOption<std::string>("cdr_definition"));
 		numbering_scheme_ = manager.numbering_scheme_string_to_enum(tag->getOption<std::string>("numbering_scheme"));
 
-	}
-	else if(tag->hasOption("cdr_definition") || tag->hasOption("numbering_scheme")){
+	} else if ( tag->hasOption("cdr_definition") || tag->hasOption("numbering_scheme") ) {
 		TR <<"Please pass both cdr_definition and numbering_scheme.  These can also be set via cmd line options of the same name." << std::endl;
 
 	}
-	
+
 }
 
 void
@@ -125,7 +124,7 @@ void
 DisableAntibodyRegionOperation::set_defaults() {
 	region_ = cdr_region;
 	disable_packing_and_design_ = true;
-	
+
 	AntibodyEnumManager manager = AntibodyEnumManager();
 	std::string numbering_scheme = option [OptionKeys::antibody::numbering_scheme]();
 	std::string cdr_definition = option [OptionKeys::antibody::cdr_definition]();
@@ -139,27 +138,25 @@ DisableAntibodyRegionOperation::apply(const core::pose::Pose& pose, core::pack::
 
 	//This is due to const apply and no pose in parse_my_tag.
 	AntibodyInfoOP local_ab_info;
-	if (! ab_info_){
+	if ( ! ab_info_ ) {
 		local_ab_info = AntibodyInfoOP(new AntibodyInfo(pose, numbering_scheme_, cdr_definition_));
-	}
-	else {
+	} else {
 		local_ab_info = ab_info_->clone();
 	}
 
 	core::pack::task::operation::PreventRepacking turn_off_packing;
 	core::pack::task::operation::RestrictResidueToRepacking turn_off_design;
 
-	for (core::Size i = 1; i <= pose.total_residue(); ++i){
-		if (local_ab_info->get_region_of_residue(pose, i) == region_){
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( local_ab_info->get_region_of_residue(pose, i) == region_ ) {
 			turn_off_packing.include_residue(i);
 			turn_off_design.include_residue(i);
 		}
 	}
 
-	if (disable_packing_and_design_){
+	if ( disable_packing_and_design_ ) {
 		turn_off_packing.apply( pose, task );
-	}
-	else {
+	} else {
 		turn_off_design.apply( pose, task );
 	}
 

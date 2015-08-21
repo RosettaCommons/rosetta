@@ -139,50 +139,50 @@ public: //  Fields for COMPND Records
 
 	/*
 
-		http://www.wwpdb.org/documentation/format23/sect2.html#COMPND
+	http://www.wwpdb.org/documentation/format23/sect2.html#COMPND
 
-		The COMPND record describes the macromolecular contents of an
-		entry. Each macromolecule found in the entry is described by a set of
-		token: value pairs, and is referred to as a COMPND record
-		component. Since the concept of a molecule is difficult to specify
-		exactly, PDB staff may exercise editorial judgment in consultation
-		with depositors in assigning these names.
+	The COMPND record describes the macromolecular contents of an
+	entry. Each macromolecule found in the entry is described by a set of
+	token: value pairs, and is referred to as a COMPND record
+	component. Since the concept of a molecule is difficult to specify
+	exactly, PDB staff may exercise editorial judgment in consultation
+	with depositors in assigning these names.
 
-		* In the general case the PDB tends to reflect the
-		biological/functional view of the molecule. For example, the
-		hetero-tetramer hemoglobin molecule is treated as a discrete
-		component in COMPND.
+	* In the general case the PDB tends to reflect the
+	biological/functional view of the molecule. For example, the
+	hetero-tetramer hemoglobin molecule is treated as a discrete
+	component in COMPND.
 
-		* In the case of synthetic molecules, e. g., hybrids, the depositor
-		will provide the description.
+	* In the case of synthetic molecules, e. g., hybrids, the depositor
+	will provide the description.
 
-		* No specific rules apply to the ordering of the tokens, except that
-		the occurrence of MOL_ID or FRAGMENT indicates that the subsequent
-		tokens are related to that specific molecule or fragment of the
-		molecule.
+	* No specific rules apply to the ordering of the tokens, except that
+	the occurrence of MOL_ID or FRAGMENT indicates that the subsequent
+	tokens are related to that specific molecule or fragment of the
+	molecule.
 
-		* Asterisks in nucleic acid names (in MOLECULE) are for ease of reading.
+	* Asterisks in nucleic acid names (in MOLECULE) are for ease of reading.
 
-		* When insertion codes are given as part of the residue name, they
-		must be given within square brackets, i.e., H57[A]N. This might
-		occur when listing residues in FRAGMENT or OTHER_DETAILS.
+	* When insertion codes are given as part of the residue name, they
+	must be given within square brackets, i.e., H57[A]N. This might
+	occur when listing residues in FRAGMENT or OTHER_DETAILS.
 
-		* For multi-chain molecules, e.g., the hemoglobin tetramer, a
-		comma-separated list of CHAIN identifiers is used.
+	* For multi-chain molecules, e.g., the hemoglobin tetramer, a
+	comma-separated list of CHAIN identifiers is used.
 
-		* When non-blank chain identifiers occur in the entry, they must be specified.
+	* When non-blank chain identifiers occur in the entry, they must be specified.
 
-		## Verification/Validation/Value Authority Control ##
+	## Verification/Validation/Value Authority Control ##
 
-		* CHAIN must match the chain identifiers(s) of the molecule(s). EC
-		numbers are also checked
+	* CHAIN must match the chain identifiers(s) of the molecule(s). EC
+	numbers are also checked
 
-		## Relationships to Other Record Types ##
+	## Relationships to Other Record Types ##
 
-		* In the case of mutations, the SEQADV records will present
-		differences from the reference molecule. REMARK records may
-		further describe the contents of the entry. Also see verification
-		above.
+	* In the case of mutations, the SEQADV records will present
+	differences from the reference molecule. REMARK records may
+	further describe the contents of the entry. Also see verification
+	above.
 	*/
 
 	enum CompoundToken {

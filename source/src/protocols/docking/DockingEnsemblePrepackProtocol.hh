@@ -32,7 +32,7 @@
 
 
 namespace protocols {
-namespace docking{
+namespace docking {
 
 using namespace protocols::moves;
 
@@ -42,14 +42,14 @@ public:
 	DockingEnsemblePrepackProtocol();
 
 	~DockingEnsemblePrepackProtocol();
-	
+
 	/// @brief Assigns default values to members
 	void setup_defaults();
-	
+
 	/// @brief Instantiates and configures movers used by DockingEnsemblePrepackProtocol
 	void setup_pack_operation_movers();
-	
-	
+
+
 	void apply( core::pose::Pose & );
 
 	virtual std::string get_name() const;
@@ -73,7 +73,7 @@ private:
 	DockingEnsembleOP ensemble1_;
 	DockingEnsembleOP ensemble2_;
 	std::string ensemble1_filename_, ensemble2_filename_;
-	
+
 	/// @brief Performs setup that requires a pose
 	void finalize_setup( core::pose::Pose & );
 	void register_options();

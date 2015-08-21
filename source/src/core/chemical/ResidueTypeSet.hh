@@ -42,7 +42,7 @@
 #include <core/chemical/Adduct.fwd.hh>
 
 #ifdef WIN32
-	#include <core/chemical/Adduct.hh>
+#include <core/chemical/Adduct.hh>
 #endif
 
 namespace core {
@@ -50,9 +50,9 @@ namespace chemical {
 
 ///  A collection of ResidueType defined
 /**
-	 One thing that is not nailed down is whether a single ResidueSet can have ResidueType's with
-	 different AtomTypeSets. I've left open this possibility currently although there isnt any code
-	 for this yet (PB-07/07)
+One thing that is not nailed down is whether a single ResidueSet can have ResidueType's with
+different AtomTypeSets. I've left open this possibility currently although there isnt any code
+for this yet (PB-07/07)
 **/
 
 
@@ -60,7 +60,7 @@ class ResidueTypeSet : public utility::pointer::ReferenceCount, public utility::
 {
 public:
 	typedef std::list< AA >::const_iterator AAsIter;
-	typedef	std::map< std::string, ResidueTypeCOP >::const_iterator const_residue_iterator;
+	typedef std::map< std::string, ResidueTypeCOP >::const_iterator const_residue_iterator;
 
 public:
 
@@ -261,13 +261,13 @@ public:
 
 	/// @brief Query a variant ResidueType by its base ResidueType and VariantType
 	ResidueType const & get_residue_type_with_variant_added(
-			ResidueType const & init_rsd,
-			VariantType const new_type ) const;
+		ResidueType const & init_rsd,
+		VariantType const new_type ) const;
 
 	/// @brief return the residuetype we get from variant rsd type after removing the desired variant type
 	ResidueType const & get_residue_type_with_variant_removed(
-			ResidueType const & init_rsd,
-			VariantType const old_type ) const;
+		ResidueType const & init_rsd,
+		VariantType const old_type ) const;
 
 	/// @brief query ResidueTypes by their AA enum type
 	///
@@ -356,8 +356,8 @@ private:
 
 	void
 	figure_out_last_patch_from_name( std::string const &rsd_name,
-																	 std::string & rsd_name_base,
-																	 std::string & patch_name ) const;
+		std::string & rsd_name_base,
+		std::string & patch_name ) const;
 
 	/// @brief helper function used during replacing residue types after, e.g., orbitals.
 	void
@@ -406,7 +406,7 @@ private:
 
 	/// @brief map to ResidueType pointers that were replaced during application
 	//  Do not delete yet -- may revive later to 'properly' handle replace_residue_types -- rhiju.
-	//	std::map< std::string, ResidueTypeCOP > replaced_name_map_;
+	// std::map< std::string, ResidueTypeCOP > replaced_name_map_;
 
 	/// @brief list of AA types defined
 	std::list< AA > aas_defined_;

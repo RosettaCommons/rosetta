@@ -49,7 +49,7 @@ LoadUnboundRotMoverCreator::mover_name()
 }
 
 LoadUnboundRotMover::LoadUnboundRotMover()
-	: protocols::moves::Mover("LoadUnboundRotMover")
+: protocols::moves::Mover("LoadUnboundRotMover")
 {}
 
 LoadUnboundRotMover::~LoadUnboundRotMover(){}
@@ -71,11 +71,11 @@ protocols::moves::MoverOP LoadUnboundRotMover::clone() const { return protocols:
 /// @brief parse XML (specifically in the context of the parser/scripting scheme); it's a no-op
 void
 LoadUnboundRotMover::parse_my_tag(
-		utility::tag::TagCOP const,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		Pose const &
+	utility::tag::TagCOP const,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	Pose const &
 )
 {}
 

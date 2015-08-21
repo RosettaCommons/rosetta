@@ -10,8 +10,8 @@
 /// @file PeriodicBoxMover.hh
 /// @brief Mover for running liquid simulation (and related others)
 /// @author Frank DiMaio & Hahnbeom Park (hahnbeom@gmail.com)
-/// @details implementation of MC liquid simulation in Rosetta. 
-/// Reference: William Jorgensen et al. "Development and testing of the OPLS all-atom 
+/// @details implementation of MC liquid simulation in Rosetta.
+/// Reference: William Jorgensen et al. "Development and testing of the OPLS all-atom
 /// force field on conformational energetics and properties", JACS 118 (1996), 11225-11235.
 /// The purpose of the implementation is to run "liquid simulation" to get optimized parameters
 /// for LJ, hbond, electrostatic terms in Rosetta. Please refer to the reference to see how this works.
@@ -45,7 +45,7 @@ namespace protocols {
 namespace simple_moves {
 
 /// @brief structure that stores data during simulation
-/// @note intraE and interE are incorrect for now; 
+/// @note intraE and interE are incorrect for now;
 struct ThermodynamicData {
 public:
 	core::Real volume;
@@ -59,30 +59,30 @@ public:
 /*
 class PeriodicBoxMoverWaterReporter : public utility::pointer::ReferenceCount {
 public:
-  PeriodicBoxMoverWaterReporter(std::string suffix) {
-		volout_eq_.open((std::string("volume_")+suffix+std::string(".txt")).c_str());
-    volout_eq_ << "#step sidelength volume density\n";
-		RDF_eq_.open((std::string("RDF_")+suffix+std::string(".txt")).c_str());
-		hbond_eq_.open((std::string("hbond_")+suffix+std::string(".txt")).c_str());
-		hbond_eq_ << "#step unique_hbond total_hbond hbond_per_residue\n";
-    print_RDF_header_ = true;
-  }
-  void
-  report( PeriodicBoxMover & mover,
-				  int step,
-				  core::pose::Pose & pose, 
-				  core::Real mweight,
-				  core::Size lattice_jump );
+PeriodicBoxMoverWaterReporter(std::string suffix) {
+volout_eq_.open((std::string("volume_")+suffix+std::string(".txt")).c_str());
+volout_eq_ << "#step sidelength volume density\n";
+RDF_eq_.open((std::string("RDF_")+suffix+std::string(".txt")).c_str());
+hbond_eq_.open((std::string("hbond_")+suffix+std::string(".txt")).c_str());
+hbond_eq_ << "#step unique_hbond total_hbond hbond_per_residue\n";
+print_RDF_header_ = true;
+}
+void
+report( PeriodicBoxMover & mover,
+int step,
+core::pose::Pose & pose,
+core::Real mweight,
+core::Size lattice_jump );
 private:
-  std::ofstream volout_eq_, RDF_eq_, hbond_eq_;
-  bool print_RDF_header_;
+std::ofstream volout_eq_, RDF_eq_, hbond_eq_;
+bool print_RDF_header_;
 };
 */
 
 //typedef utility::pointer::shared_ptr< PeriodicBoxMoverWaterReporter > PeriodicBoxMoverWaterReporterOP;
 
 class PeriodicBoxMover : public protocols::moves::Mover {
-  //friend class PeriodicBoxMoverWaterReporter;
+	//friend class PeriodicBoxMoverWaterReporter;
 public:
 	PeriodicBoxMover();
 	//PeriodicBoxMover( std::string const & );
@@ -94,8 +94,8 @@ public:
 	void perturb_molecule_move( Pose & pose, core::Size, bool& );
 
 	//  void show_residue_hbonds( Pose const & pose, core::Size );
-  //utility::vector1<core::Real> RDF( Pose & pose, core::Real, core::Real, core::Size );
-  //core::Real dist( Pose & pose, core::Size, std::string, core::Size, std::string); 
+	//utility::vector1<core::Real> RDF( Pose & pose, core::Real, core::Real, core::Size );
+	//core::Real dist( Pose & pose, core::Size, std::string, core::Size, std::string);
 
 	virtual std::string get_name() const;
 	virtual protocols::moves::MoverOP clone() const;
@@ -114,8 +114,8 @@ private:
 	// helper
 	core::conformation::ResidueOP make_vrt( core::Vector O, core::Vector X, core::Vector Y ) {
 		core::conformation::ResidueOP vrtrsd
-				( core::conformation::ResidueFactory::create_residue(
-					core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map( "VRT" ) ) );
+			( core::conformation::ResidueFactory::create_residue(
+			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map( "VRT" ) ) );
 		vrtrsd->set_xyz("ORIG",O);
 		vrtrsd->set_xyz("X",O+X);
 		vrtrsd->set_xyz("Y",O+Y);
@@ -124,12 +124,12 @@ private:
 
 	void
 	report_thermodynamics( Pose & pose,
-												 core::Size lattice_jump );
+		core::Size lattice_jump );
 	void
 	recenter_pose( Pose & pose,
-								 core::Real const lattice,
-								 core::Real const new_lattice
-								 ) const;
+		core::Real const lattice,
+		core::Real const new_lattice
+	) const;
 
 	void
 	dump_ASU( Pose & pose, core::Size &lattice_jump, std::string filename );
@@ -139,8 +139,8 @@ private:
 
 	void
 	check_virial_pressure( Pose & pose,
-												 core::Real L
-												 ) const;
+		core::Real L
+	) const;
 
 
 	/// @brief correction to energy that accounts for missing vdw interaction from cut-off to infinity
@@ -164,7 +164,7 @@ private:
 	// outputs
 	core::Size dump_every_, report_every_;
 	core::Size report_thermodynamics_;
-  core::Size report_water_;
+	core::Size report_water_;
 	std::string rg_atom1_, rg_atom2_;
 	std::string report_silent_, report_scorefile_;
 	ThermodynamicData thermodynamic_data_;
@@ -176,7 +176,7 @@ private:
 	// constant pressure setups
 	core::Real P0_; // unit in atmosphere
 
-  //PeriodicBoxMoverWaterReporterOP water_reporter_;
+	//PeriodicBoxMoverWaterReporterOP water_reporter_;
 
 	// for two molecule simulations
 	core::Size central_resno_;

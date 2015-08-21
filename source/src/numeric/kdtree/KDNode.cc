@@ -118,7 +118,7 @@ std::ostream & operator<< (
 	using utility::vector1;
 	for ( vector1< Real >::const_iterator val = points.begin(),
 			val_end = points.end(); val != val_end; ++val
-	) {
+			) {
 		out << ' ' << *val;
 	}
 	return out;

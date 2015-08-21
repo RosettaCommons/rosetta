@@ -34,5 +34,5 @@ public:
 		TEST_MOVER( protocols::simple_moves::SmallMover, "protocols/moves/test_in.pdb", "protocols/moves/smallmoves_out.pdb");
 
 		TEST_MOVER( protocols::simple_moves::ShearMover, "protocols/moves/test_in.pdb", "protocols/moves/shearmoves_out.pdb");
-	 }
+	}
 };

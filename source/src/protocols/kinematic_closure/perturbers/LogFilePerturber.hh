@@ -36,19 +36,19 @@ public:
 
 	/// @copydoc Perturber::get_subset
 	void perturb_subset(
-			Pose const & pose,
-			IndexList const & residues,
-			ClosureProblemOP problem);
+		Pose const & pose,
+		IndexList const & residues,
+		ClosureProblemOP problem);
 
-	/// @brief Output the given torsion angles in a format that can later be read 
+	/// @brief Output the given torsion angles in a format that can later be read
 	/// by LogFilePerturber.
 	static void log_torsions(std::ostream &  out, ParameterList torsions);
 
-	/// @brief Output the given bond angles in a format that can later be read by 
+	/// @brief Output the given bond angles in a format that can later be read by
 	/// LogFilePerturber.
 	static void log_angles(std::ostream & out, ParameterList angles);
 
-	/// @brief Output the given bond lengths in a format that can later be read 
+	/// @brief Output the given bond lengths in a format that can later be read
 	/// by LogFilePerturber.
 	static void log_lengths(std::ostream & out, ParameterList lengths);
 

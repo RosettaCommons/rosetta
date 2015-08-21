@@ -42,7 +42,7 @@ public:
 
 
 	RNA_TorsionEnergy( RNA_EnergyMethodOptions const & options,
-										 RNA_TorsionPotentialOP rna_torsion_potential = 0 );
+		RNA_TorsionPotentialOP rna_torsion_potential = 0 );
 
 	/// clone
 	virtual
@@ -76,8 +76,8 @@ public:
 
 	/// called during gradient-based minimization inside dfunc
 	/**
-		 F1 and F2 are not zeroed -- contributions from this atom are
-		 just summed in
+	F1 and F2 are not zeroed -- contributions from this atom are
+	just summed in
 	**/
 	virtual
 	void

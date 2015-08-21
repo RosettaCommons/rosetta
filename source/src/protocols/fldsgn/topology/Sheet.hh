@@ -58,7 +58,7 @@ public:// construct/destruct
 	Sheet();
 
 	/// @brief value constructor
-	Sheet( VecSize const & order_strands,	VecInt const & orient_strands, bool is_barrel );
+	Sheet( VecSize const & order_strands, VecInt const & orient_strands, bool is_barrel );
 
 	/// @brief copy constructor
 	Sheet( Sheet const & s );
@@ -87,12 +87,12 @@ public: //accessors
 
 
 	/// @brief the number strands inclued in
-	Size num_strands() const {	return num_strands_;	}
+	Size num_strands() const { return num_strands_; }
 
 	/// @brief is this barrel ?
 	bool is_barrel() const { return is_barrel_; }
 
-	VecSize order_strands() const {	return order_strands_; }
+	VecSize order_strands() const { return order_strands_; }
 
 	Size order_strand( Size const s ) const { return order_strands_[ s ]; }
 
@@ -100,7 +100,7 @@ public: //accessors
 
 	int orient_strand( Size const s ) const { return orient_strands_[ s ]; }
 
-	Size strand_order( Size const s ) {	return strand_order_[ s ];	}
+	Size strand_order( Size const s ) { return strand_order_[ s ]; }
 
 	VecInt ca_cb_orients() const { return ca_cb_orients_; }
 
@@ -219,10 +219,10 @@ public: // accessors
 	inline Sheets sheets() const { return sheets_; }
 
 	/// @brief return number of sheets
-	inline Size	num_sheets() const { return sheets_.size();	}
+	inline Size num_sheets() const { return sheets_.size(); }
 
 	/// @brief return number of sheets
-	inline Size	size() const { return sheets_.size();	}
+	inline Size size() const { return sheets_.size(); }
 
 	/// @brief return the id of sheet that a given strand belongs to.
 	Size which_sheet( Size const s ) const;

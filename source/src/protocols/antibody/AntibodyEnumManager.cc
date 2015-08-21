@@ -52,22 +52,22 @@ AntibodyEnumManager::setup() {
 	cdr_name_to_string_[l1] = "L1";
 	cdr_name_to_string_[l2] = "L2";
 	cdr_name_to_string_[l3] = "L3";
-	
+
 	cdr_name_to_string_[proto_l4] = "Proto_L4";
 	cdr_name_to_string_[proto_h4] = "Proto_H4";
-	
+
 	cdr_name_to_enum_["H1"] = h1;
 	cdr_name_to_enum_["H2"] = h2;
 	cdr_name_to_enum_["H3"] = h3;
 	cdr_name_to_enum_["L1"] = l1;
 	cdr_name_to_enum_["L2"] = l2;
 	cdr_name_to_enum_["L3"] = l3;
-	
+
 	cdr_name_to_enum_["L4"] = proto_l4;
 	cdr_name_to_enum_["H4"] = proto_h4;
 	cdr_name_to_enum_["PROTO_L4"] = proto_l4;
 	cdr_name_to_enum_["PROTO_H4"] = proto_h4;
-	
+
 	///Just in case these are used in files.
 	cdr_name_to_enum_["h1"] = h1;
 	cdr_name_to_enum_["h2"] = h2;
@@ -75,14 +75,14 @@ AntibodyEnumManager::setup() {
 	cdr_name_to_enum_["l1"] = l1;
 	cdr_name_to_enum_["l2"] = l2;
 	cdr_name_to_enum_["l3"] = l3;
-	
+
 	cdr_name_to_enum_["l4"] = l4;
 	cdr_name_to_enum_["h4"] = h4;
 	cdr_name_to_enum_["proto_l4"] = proto_l4;
 	cdr_name_to_enum_["proto_h4"] = proto_h4;
 	cdr_name_to_enum_["Proto_L4"] = proto_l4;
 	cdr_name_to_enum_["Proto_H4"] = proto_h4;
-	
+
 	////////////////// Numbering Schemes ///////////////////////////////////////
 	numbering_scheme_to_string_[Chothia_Scheme] = "Chothia_Scheme";
 	numbering_scheme_to_string_[Kabat_Scheme] ="Kabat_Scheme";

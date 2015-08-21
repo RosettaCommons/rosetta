@@ -36,25 +36,25 @@ namespace nonlocal {
 /// that fragment insertion methods differ primarily in the manner in which they
 /// choose from among a set of possibilities.
 class Policy : public utility::pointer::ReferenceCount {
-  typedef core::fragment::FragSetCOP FragSetCOP;
+	typedef core::fragment::FragSetCOP FragSetCOP;
 
- public:
-  /// @brief Provides derived classes with the opportunity to precompute various
-  /// properties of the fragment set from which they will have to make choices.
-  explicit Policy(FragSetCOP fragments) : fragments_(fragments) {}
+public:
+	/// @brief Provides derived classes with the opportunity to precompute various
+	/// properties of the fragment set from which they will have to make choices.
+	explicit Policy(FragSetCOP fragments) : fragments_(fragments) {}
 
-  /// @brief Selects a single fragment from a set of possibilities given the
-  /// current status of the pose.
-  virtual core::Size choose(const core::fragment::Frame& frame,
-                            const core::pose::Pose& pose) = 0;
+	/// @brief Selects a single fragment from a set of possibilities given the
+	/// current status of the pose.
+	virtual core::Size choose(const core::fragment::Frame& frame,
+		const core::pose::Pose& pose) = 0;
 
-  // -- Accessors -- //
-  FragSetCOP fragments() const {
-    return fragments_;
-  }
+	// -- Accessors -- //
+	FragSetCOP fragments() const {
+		return fragments_;
+	}
 
- private:
-  FragSetCOP fragments_;
+private:
+	FragSetCOP fragments_;
 };
 
 }  // namespace nonlocal

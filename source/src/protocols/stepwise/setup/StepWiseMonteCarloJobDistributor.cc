@@ -43,77 +43,77 @@ namespace protocols {
 namespace stepwise {
 namespace setup {
 
-	//Constructor
- 	StepWiseMonteCarloJobDistributor::StepWiseMonteCarloJobDistributor( stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo,
-																																			std::string const silent_file,
-																																			core::Size const nstruct ):
-		StepWiseJobDistributor( stepwise_monte_carlo, silent_file, nstruct ),
-		count_( 1 ),
-		out_tag_( "" ),
-		init_tag_is_done_( false )
-	{
+//Constructor
+StepWiseMonteCarloJobDistributor::StepWiseMonteCarloJobDistributor( stepwise::monte_carlo::StepWiseMonteCarloOP stepwise_monte_carlo,
+	std::string const silent_file,
+	core::Size const nstruct ):
+	StepWiseJobDistributor( stepwise_monte_carlo, silent_file, nstruct ),
+	count_( 1 ),
+	out_tag_( "" ),
+	init_tag_is_done_( false )
+{
+}
+
+//Destructor
+StepWiseMonteCarloJobDistributor::~StepWiseMonteCarloJobDistributor()
+{}
+
+void
+StepWiseMonteCarloJobDistributor::initialize( core::pose::Pose const & pose ) {
+	start_pose_ = pose.clone();
+	count_ = 1;
+}
+
+void
+StepWiseMonteCarloJobDistributor::move_forward_to_next_model() {
+	while ( count_ <= nstruct_ && !get_out_tag() ) {
+		count_++;
+		if ( !get_out_tag() ) TR << "Already done: " << out_tag_ << std::endl;
+	}
+}
+
+bool
+StepWiseMonteCarloJobDistributor::has_another_job() {
+	move_forward_to_next_model();
+	return ( count_ <= nstruct_ );
+}
+
+void
+StepWiseMonteCarloJobDistributor::apply( core::pose::Pose & pose ) {
+
+	runtime_assert( has_another_job() );
+	TR << std::endl << TR.Green << "Embarking on structure " << count_ << " of " << nstruct_ << TR.Reset << std::endl;
+
+	runtime_assert( start_pose_ != 0 ); // initialized.
+	pose = *start_pose_;
+	stepwise_monte_carlo_->set_model_tag( out_tag_ );
+
+	stepwise_monte_carlo_->apply( pose );
+
+	if ( ! stepwise_monte_carlo_->options()->output_minimized_pose_list() ) {
+		monte_carlo::output_to_silent_file( out_tag_, silent_file_,
+			pose, get_native_pose(), superimpose_over_all_,
+			true /*rms_fill*/ );
+	}
+	tag_is_done_[ out_tag_ ] = true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// used to be in a util.cc
+bool
+StepWiseMonteCarloJobDistributor::get_out_tag(){
+	using namespace core::io::silent;
+	if ( !init_tag_is_done_ ) {
+		tag_is_done_ = initialize_tag_is_done( silent_file_ );
+		init_tag_is_done_ = true;
 	}
 
-	//Destructor
-	StepWiseMonteCarloJobDistributor::~StepWiseMonteCarloJobDistributor()
-	{}
-
-	void
-	StepWiseMonteCarloJobDistributor::initialize( core::pose::Pose const & pose ) {
-		start_pose_ = pose.clone();
-		count_ = 1;
+	out_tag_ = "S_" + ObjexxFCL::lead_zero_string_of( count_, 6 );
+	if ( tag_is_done_[ out_tag_ ] ) {
+		return false;
 	}
-
-	void
-	StepWiseMonteCarloJobDistributor::move_forward_to_next_model() {
-		while ( count_ <= nstruct_ && !get_out_tag() ){
-			count_++;
-			if ( !get_out_tag() ) TR << "Already done: " << out_tag_ << std::endl;
-		}
-	}
-
-	bool
-	StepWiseMonteCarloJobDistributor::has_another_job() {
-		move_forward_to_next_model();
-		return ( count_ <= nstruct_ );
-	}
-
-	void
-	StepWiseMonteCarloJobDistributor::apply( core::pose::Pose & pose ) {
-
-		runtime_assert( has_another_job() );
-		TR << std::endl << TR.Green << "Embarking on structure " << count_ << " of " << nstruct_ << TR.Reset << std::endl;
-
-		runtime_assert( start_pose_ != 0 ); // initialized.
-		pose = *start_pose_;
-		stepwise_monte_carlo_->set_model_tag( out_tag_ );
-
- 		stepwise_monte_carlo_->apply( pose );
-
-		if (! stepwise_monte_carlo_->options()->output_minimized_pose_list()){
-			monte_carlo::output_to_silent_file( out_tag_, silent_file_,
-														 pose, get_native_pose(), superimpose_over_all_,
-														 true /*rms_fill*/ );
-		}
-		tag_is_done_[ out_tag_ ] = true;
-	}
-
-	///////////////////////////////////////////////////////////////////////////////
-	// used to be in a util.cc
-	bool
-	StepWiseMonteCarloJobDistributor::get_out_tag(){
-		using namespace core::io::silent;
-		if ( !init_tag_is_done_ ){
-			tag_is_done_ = initialize_tag_is_done( silent_file_ );
-			init_tag_is_done_ = true;
-		}
-
-		out_tag_ = "S_" + ObjexxFCL::lead_zero_string_of( count_, 6 );
-		if ( tag_is_done_[ out_tag_ ] ) {
-			return false;
-		}
-		return true; //ok, not done, so do it.
-	}
+	return true; //ok, not done, so do it.
+}
 
 
 } //setup

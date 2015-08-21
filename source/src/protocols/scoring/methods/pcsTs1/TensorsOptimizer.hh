@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/TensorsOptimizer.hh
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890
- ///
- /// @authorv Christophe Schmitz , Kala Bharath Pilla
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/TensorsOptimizer.hh
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890
+///
+/// @authorv Christophe Schmitz , Kala Bharath Pilla
+///
+////////////////////////////////////////////////
 
 
 #ifndef INCLUDED_protocols_scoring_methods_pcsTs1_TensorsOptimizer_hh
@@ -45,10 +45,10 @@
 // C++ headers
 
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcsTs1{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcsTs1 {
 
 
 class TensorsOptimizer_Ts1 : public core::optimization::Multifunc {
@@ -58,29 +58,29 @@ public:
 
 private:
 	/// @brief Must pass a PCS_data_Ts1 object!
-  TensorsOptimizer_Ts1();
+	TensorsOptimizer_Ts1();
 
 public:
-  TensorsOptimizer_Ts1(PCS_data_Ts1 const & pcs_d);
+	TensorsOptimizer_Ts1(PCS_data_Ts1 const & pcs_d);
 
-  virtual
-  ~TensorsOptimizer_Ts1();
+	virtual
+	~TensorsOptimizer_Ts1();
 
-  // @brief OptE func
-  virtual
-  core::Real
-  operator ()( core::optimization::Multivec const & vars ) const;
+	// @brief OptE func
+	virtual
+	core::Real
+	operator ()( core::optimization::Multivec const & vars ) const;
 
-  /// @brief OptE dfunc
-  virtual
-  void
-  dfunc(core::optimization::Multivec const & vars,
+	/// @brief OptE dfunc
+	virtual
+	void
+	dfunc(core::optimization::Multivec const & vars,
 		core::optimization::Multivec & dE_dvars
 	) const;
 
 
-	//	void
-	//	dfunc_test(optimization::Multivec const & vars) const;
+	// void
+	// dfunc_test(optimization::Multivec const & vars) const;
 
 private:
 

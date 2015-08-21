@@ -43,7 +43,7 @@ CircularSigmoidalFunc::dfunc( Real const x ) const {
 	Real const x0 = numeric::nearest_angle_radians(x,xC_)-xC_;
 
 	Real const z = m_*std::pow(M_E,m_*x0+m_*o1_)/(2*std::pow(M_E,m_*x0+m_*o1_)+std::pow(M_E,2*m_*x0)+std::pow(M_E,2*m_*o1_))
-	           	 - m_*std::pow(M_E,m_*x0+m_*o2_)/(2*std::pow(M_E,m_*x0+m_*o2_)+std::pow(M_E,2*m_*x0)+std::pow(M_E,2*m_*o2_));
+		- m_*std::pow(M_E,m_*x0+m_*o2_)/(2*std::pow(M_E,m_*x0+m_*o2_)+std::pow(M_E,2*m_*x0)+std::pow(M_E,2*m_*o2_));
 
 	return z;
 }

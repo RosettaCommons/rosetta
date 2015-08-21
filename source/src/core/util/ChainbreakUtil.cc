@@ -28,18 +28,18 @@ namespace util {
 core::scoring::ScoreFunctionOP ChainbreakUtil::score_ = 0;
 
 bool ChainbreakUtil::has_chainbreak(const core::pose::Pose& pose) {
-  using core::pose::Pose;
+	using core::pose::Pose;
 
-  if (!score_) {
-    score_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
+	if ( !score_ ) {
+		score_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
 		score_->set_weight( core::scoring::linear_chainbreak, 1.0 );
-  }
+	}
 
-  Pose copy(pose);
-  core::pose::correctly_add_cutpoint_variants(copy);
+	Pose copy(pose);
+	core::pose::correctly_add_cutpoint_variants(copy);
 
-  score_->score(copy);
-  return (*score_)[core::scoring::linear_chainbreak] > 0;
+	score_->score(copy);
+	return (*score_)[core::scoring::linear_chainbreak] > 0;
 }
 
 }  // namesapce util

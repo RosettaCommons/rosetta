@@ -128,15 +128,16 @@ ResidueLevelTask_::ResidueLevelTask_(
 			for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
 				ResidueTypeCOPs const & aas( residue_set.get_all_types_with_variants_aa( AA( ii ), match_residue_type.variant_types() ) );
 				for ( ResidueTypeCOPs::const_iterator
-								aas_iter = aas.begin(),
-								aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
+						aas_iter = aas.begin(),
+						aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
 					allowed_residue_types_.push_back( *aas_iter );
 				}
 			}
 		}
 		// allow noncanonical AAs and D-amino acids to be repacked
-		if (original_residue.aa() == aa_unk || core::chemical::is_canonical_D_aa( original_residue.aa() ) )
+		if ( original_residue.aa() == aa_unk || core::chemical::is_canonical_D_aa( original_residue.aa() ) ) {
 			allowed_residue_types_.push_back( original_residue.type().get_self_ptr() );
+		}
 
 	} else if ( original_residue.is_DNA() ) {
 
@@ -151,7 +152,7 @@ ResidueLevelTask_::ResidueLevelTask_(
 
 		ResidueTypeSet const & residue_set( original_residue.residue_type_set() );
 		ResidueType const & match_residue_type(
-				residue_set.get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_O2PRIME_HYDROGEN ) );
+			residue_set.get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_O2PRIME_HYDROGEN ) );
 		allowed_residue_types_.push_back( match_residue_type.get_self_ptr() );
 
 	} else {
@@ -196,15 +197,15 @@ ResidueLevelTask_::setup_allowed_protein_residue_types_LEGACY( chemical::Residue
 	for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
 		ResidueTypeCOPs const & aas( residue_set.aa_map_DO_NOT_USE( chemical::AA( ii )));
 		for ( ResidueTypeCOPs::const_iterator
-						aas_iter = aas.begin(),
-						aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
+				aas_iter = aas.begin(),
+				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
 			if ( variants_match( match_residue_type, **aas_iter ) ) {
 				allowed_residue_types_.push_back( *aas_iter );
 			}
 		}
 	}
 	if ( allowed_residue_types_.size() > 10000 /* totally arbitrary limit to flag to future devs to look into this */ &&
-			 !basic::options::option[ basic::options::OptionKeys::chemical::override_rsd_type_limit ]() ) {
+			!basic::options::option[ basic::options::OptionKeys::chemical::override_rsd_type_limit ]() ) {
 		std::string const error_message = "Number of residue types is greater than 10000. Rerun with -override_rsd_type_limit. Or this might be a good time to fix how custom variants or pH_mode are handled (see notes in ResidueLevelTask_.cc). ";
 		utility_exit_with_message( error_message );
 	}
@@ -232,13 +233,13 @@ ResidueLevelTask_::setup_allowed_DNA_residue_types_LEGACY( conformation::Residue
 	ResidueTypeSet const & residue_set( original_residue.residue_type_set() );
 	ResidueTypeCOPs dna_types( ResidueTypeSelector().set_property("DNA").select( residue_set ) );
 	for ( ResidueTypeCOPs::const_iterator type( dna_types.begin() ), end( dna_types.end() );
-				type != end; ++type ) {
+			type != end; ++type ) {
 		if ( nonadduct_variants_match( original_residue.type(), **type ) ) {
 			allowed_residue_types_.push_back( *type );
 		}
 	}
 	if ( allowed_residue_types_.size() > 5000 /* totally arbitrary limit to flag to future devs to look into this */ &&
-			 !basic::options::option[ basic::options::OptionKeys::chemical::override_rsd_type_limit ]() ) {
+			!basic::options::option[ basic::options::OptionKeys::chemical::override_rsd_type_limit ]() ) {
 		std::string const error_message = "Number of residue types is greater than 5000. Rerun with -override_rsd_type_limit. Or this might be agood time to fix how adducts get set up in ResidueTypeSet  (see notes in ResidueLevelTask_.cc and ResidueTypeSet.cc). ";
 		utility_exit_with_message( error_message );
 	}
@@ -264,7 +265,7 @@ ResidueLevelTask_::extrachi_sample_level(
 				return ex1aro_exposed_sample_level_;
 			}
 		} else {
-			if (buried ) {
+			if ( buried ) {
 				return ex2aro_sample_level_;
 			} else {
 				return ex2aro_exposed_sample_level_;
@@ -311,41 +312,53 @@ ResidueLevelTask_::initialize_extra_rotamer_flags_from_command_line()
 	if ( option[ ex3::ex3 ].user() ) { or_ex3( option[ ex3::ex3 ].value() ); }
 	if ( option[ ex4::ex4 ].user() ) { or_ex4( option[ ex4::ex4 ].value() ); }
 
-	if ( option[ ex1aro::ex1aro ].user() )
-	{ or_ex1aro( option[ ex1aro::ex1aro ].value() ); }
+	if ( option[ ex1aro::ex1aro ].user() ) {
+		or_ex1aro( option[ ex1aro::ex1aro ].value() );
+	}
 
-	if ( option[ ex2aro::ex2aro ].user() )
-	{ or_ex2aro( option[ ex2aro::ex2aro ].value() ); }
+	if ( option[ ex2aro::ex2aro ].user() ) {
+		or_ex2aro( option[ ex2aro::ex2aro ].value() );
+	}
 
-	if ( option[ ex1aro_exposed::ex1aro_exposed ].user() )
-	{ or_ex1aro_exposed( option[ ex1aro_exposed::ex1aro_exposed ].value() ); }
+	if ( option[ ex1aro_exposed::ex1aro_exposed ].user() ) {
+		or_ex1aro_exposed( option[ ex1aro_exposed::ex1aro_exposed ].value() );
+	}
 
-	if ( option[ ex2aro_exposed::ex2aro_exposed ].user() )
-	{ or_ex2aro_exposed( option[ ex2aro_exposed::ex2aro_exposed ].value() ); }
+	if ( option[ ex2aro_exposed::ex2aro_exposed ].user() ) {
+		or_ex2aro_exposed( option[ ex2aro_exposed::ex2aro_exposed ].value() );
+	}
 
-	if ( option[ ex1::level ].user() )
-	{ or_ex1_sample_level( static_cast<ExtraRotSample>( option[ ex1::level ].value() )); }
+	if ( option[ ex1::level ].user() ) {
+		or_ex1_sample_level( static_cast<ExtraRotSample>( option[ ex1::level ].value() ));
+	}
 
-	if ( option[ ex2::level ].user() )
-	{ or_ex2_sample_level( static_cast<ExtraRotSample>( option[ ex2::level ].value() )); }
+	if ( option[ ex2::level ].user() ) {
+		or_ex2_sample_level( static_cast<ExtraRotSample>( option[ ex2::level ].value() ));
+	}
 
-	if ( option[ ex3::level ].user() )
-	{ or_ex3_sample_level( static_cast<ExtraRotSample>( option[ ex3::level ].value() )); }
+	if ( option[ ex3::level ].user() ) {
+		or_ex3_sample_level( static_cast<ExtraRotSample>( option[ ex3::level ].value() ));
+	}
 
-	if ( option[ ex4::level ].user() )
-	{ or_ex4_sample_level( static_cast<ExtraRotSample>( option[ ex4::level ].value() )); }
+	if ( option[ ex4::level ].user() ) {
+		or_ex4_sample_level( static_cast<ExtraRotSample>( option[ ex4::level ].value() ));
+	}
 
-	if ( option[ ex1aro::level ].user() )
-	{ or_ex1aro_sample_level( static_cast<ExtraRotSample>( option[ ex1aro::level ].value() )); }
+	if ( option[ ex1aro::level ].user() ) {
+		or_ex1aro_sample_level( static_cast<ExtraRotSample>( option[ ex1aro::level ].value() ));
+	}
 
-	if ( option[ ex2aro::level ].user() )
-	{ or_ex2aro_sample_level( static_cast<ExtraRotSample>( option[ ex2aro::level ].value() )); }
+	if ( option[ ex2aro::level ].user() ) {
+		or_ex2aro_sample_level( static_cast<ExtraRotSample>( option[ ex2aro::level ].value() ));
+	}
 
-	if ( option[ ex1aro_exposed::level ].user() )
-	{ or_ex1aro_exposed_sample_level( static_cast<ExtraRotSample>( option[ ex1aro_exposed::level ].value() )); }
+	if ( option[ ex1aro_exposed::level ].user() ) {
+		or_ex1aro_exposed_sample_level( static_cast<ExtraRotSample>( option[ ex1aro_exposed::level ].value() ));
+	}
 
-	if ( option[ ex2aro_exposed::level ].user() )
-	{ or_ex2aro_exposed_sample_level( static_cast<ExtraRotSample>( option[ ex2aro_exposed::level ].value() )); }
+	if ( option[ ex2aro_exposed::level ].user() ) {
+		or_ex2aro_exposed_sample_level( static_cast<ExtraRotSample>( option[ ex2aro_exposed::level ].value() ));
+	}
 
 	if ( option[ ex1::operate ].user() ) { or_operate_on_ex1( option[ ex1::operate ]() ); }
 	if ( option[ ex2::operate ].user() ) { or_operate_on_ex2( option[ ex2::operate ]() ); }
@@ -357,13 +370,11 @@ ResidueLevelTask_::initialize_extra_rotamer_flags_from_command_line()
 		if ( option[ exdna::exdna ].value() && option[ exdna::level ].value() ) {
 			or_exdna_sample_level( static_cast<ExtraRotSample>( option[ exdna::level ].value() ) );
 		}
-	}
-	else if ( option[ exdna::exdna ].user() && !option[ exdna::level ].user() ) {
+	} else if ( option[ exdna::exdna ].user() && !option[ exdna::level ].user() ) {
 		if ( option[ exdna::exdna ].value() ) {
 			or_exdna_sample_level( EX_ONE_STDDEV );
 		}
-	}
-	else if ( !option[ exdna::exdna ].user() && option[ exdna::level ].user() ) {
+	} else if ( !option[ exdna::exdna ].user() && option[ exdna::level ].user() ) {
 		if ( option[ exdna::level ].value() ) {
 			or_exdna_sample_level( static_cast<ExtraRotSample>( option[ exdna::level ].value() ) );
 		}
@@ -401,7 +412,7 @@ bool ResidueLevelTask_::has_behavior() const
 
 void ResidueLevelTask_::target_type( chemical::ResidueTypeCOP type ) {
 	bool allowed( std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(), type ) !=
-		            allowed_residue_types_.end() );
+		allowed_residue_types_.end() );
 	if ( !allowed ) {
 		T.Error << "Target type " << type->name() << " is not an allowed type!" << std::endl;
 		utility_exit();
@@ -557,13 +568,13 @@ void ResidueLevelTask_::or_ex2aro_exposed_sample_level(
 }
 
 void ResidueLevelTask_::or_operate_on_ex1( bool operate )
-	{ operate_on_ex1_ |= operate; }
+{ operate_on_ex1_ |= operate; }
 void ResidueLevelTask_::or_operate_on_ex2( bool operate )
-	{ operate_on_ex2_ |= operate; }
+{ operate_on_ex2_ |= operate; }
 void ResidueLevelTask_::or_operate_on_ex3( bool operate )
-	{ operate_on_ex3_ |= operate; }
+{ operate_on_ex3_ |= operate; }
 void ResidueLevelTask_::or_operate_on_ex4( bool operate )
-	{ operate_on_ex4_ |= operate; }
+{ operate_on_ex4_ |= operate; }
 
 
 void ResidueLevelTask_::sample_proton_chi( bool setting )
@@ -717,14 +728,14 @@ void ResidueLevelTask_::or_fix_his_tautomer( bool setting )
 	bool HIS_D(original_residue_type_->has(" HD1")); //HIS_D
 
 	for ( ResidueTypeCOPListIter
-					allowed_iter = allowed_residue_types_.begin(),
-					iter_next = allowed_residue_types_.begin(),
-					allowed_end = allowed_residue_types_.end();
-				allowed_iter != allowed_end;  /* no increment: deletion + iterator incrementing = segfault! */ ) {
+			allowed_iter = allowed_residue_types_.begin(),
+			iter_next = allowed_residue_types_.begin(),
+			allowed_end = allowed_residue_types_.end();
+			allowed_iter != allowed_end;  /* no increment: deletion + iterator incrementing = segfault! */ ) {
 		iter_next = allowed_iter;
 		++iter_next;
 
-		if ((*allowed_iter)->aa() == chemical::aa_his) { //we only want to look at histidines
+		if ( (*allowed_iter)->aa() == chemical::aa_his ) { //we only want to look at histidines
 			//which hydrogen atoms are present in the residue we're checking?
 			bool comp_HIS((*allowed_iter)->has(" HE2")); //HIS
 			bool comp_HIS_D((*allowed_iter)->has(" HD1")); //HIS_D
@@ -790,21 +801,21 @@ ResidueLevelTask_::restrict_absent_canonical_aas( utility::vector1< bool > const
 {
 	Size num_allowed = std::count( allowed_aas.begin(), allowed_aas.end(), true);
 	std::ostringstream aas;
-	if (num_allowed == 0){
+	if ( num_allowed == 0 ) {
 		mode_tokens_.push_back("EMPTY");
-	} else if ( num_allowed == chemical::num_canonical_aas ){
+	} else if ( num_allowed == chemical::num_canonical_aas ) {
 		// this doesn't constrain anything...
-	} else if (num_allowed < chemical::num_canonical_aas/2){
+	} else if ( num_allowed < chemical::num_canonical_aas/2 ) {
 		mode_tokens_.push_back("PIKAA");
-		for( Size i = 1; i <= chemical::num_canonical_aas; ++i ){
-			if( allowed_aas[ i ] ){
+		for ( Size i = 1; i <= chemical::num_canonical_aas; ++i ) {
+			if ( allowed_aas[ i ] ) {
 				aas << chemical::oneletter_code_from_aa( static_cast<chemical::AA>(i) );
 			}
 		}
 	} else {
 		mode_tokens_.push_back("NOTAA");
-		for( Size i = 1; i <= chemical::num_canonical_aas; ++i ){
-			if( !allowed_aas[ i ] ){
+		for ( Size i = 1; i <= chemical::num_canonical_aas; ++i ) {
+			if ( !allowed_aas[ i ] ) {
 				aas << chemical::oneletter_code_from_aa( static_cast<chemical::AA>(i) );
 			}
 		}
@@ -827,9 +838,9 @@ ResidueLevelTask_::do_restrict_absent_canonical_aas( utility::vector1< bool > co
 	runtime_assert( allowed_aas.size() == chemical::num_canonical_aas );
 
 	for ( ResidueTypeCOPListIter
-					allowed_iter( allowed_residue_types_.begin() ),
-					allowed_end( allowed_residue_types_.end() );
-				allowed_iter != allowed_end; ) {
+			allowed_iter( allowed_residue_types_.begin() ),
+			allowed_end( allowed_residue_types_.end() );
+			allowed_iter != allowed_end; ) {
 
 		if ( ( (*allowed_iter)->aa() <= chemical::num_canonical_aas ) && ( ! allowed_aas[ (*allowed_iter)->aa() ] ) ) {
 			allowed_iter = allowed_residue_types_.erase( allowed_iter );
@@ -849,9 +860,9 @@ ResidueLevelTask_::restrict_nonnative_canonical_aas( utility::vector1< bool > co
 	runtime_assert( allowed_aas.size() == chemical::num_canonical_aas );
 
 	for ( ResidueTypeCOPListIter
-					allowed_iter = allowed_residue_types_.begin(),
-					allowed_end = allowed_residue_types_.end();
-				allowed_iter != allowed_end; ) {
+			allowed_iter = allowed_residue_types_.begin(),
+			allowed_end = allowed_residue_types_.end();
+			allowed_iter != allowed_end; ) {
 
 		//checks if not in the allowed list and not the original type
 		if ( ( (*allowed_iter)->aa() <= chemical::num_canonical_aas ) && ( ! allowed_aas[ (*allowed_iter)->aa() ]) && ( ! is_original_type( *allowed_iter ) ) ) {
@@ -875,9 +886,9 @@ ResidueLevelTask_::restrict_absent_nas(
 {
 	typedef utility::vector1< chemical::AA > AAs;
 	for ( ResidueTypeCOPListIter
-		    type_itr = allowed_residue_types_.begin(), next_itr = allowed_residue_types_.begin(),
-		    end_itr = allowed_residue_types_.end(); type_itr != end_itr;
-		    /* no increment: deletion + iterator incrementing = segfault! */ ) {
+			type_itr = allowed_residue_types_.begin(), next_itr = allowed_residue_types_.begin(),
+			end_itr = allowed_residue_types_.end(); type_itr != end_itr;
+			/* no increment: deletion + iterator incrementing = segfault! */ ) {
 		next_itr = type_itr;
 		++next_itr;
 		bool keep(false);
@@ -892,7 +903,7 @@ ResidueLevelTask_::restrict_absent_nas(
 
 
 	std::ostringstream nas;
-	for( utility::vector1 < chemical::AA >::const_iterator na = keep_nas.begin(); na != keep_nas.end(); ++na ){
+	for ( utility::vector1 < chemical::AA >::const_iterator na = keep_nas.begin(); na != keep_nas.end(); ++na ) {
 		// illegal for DNA: single-letter codes redundant
 		//nas << chemical::oneletter_code_from_aa( *na );
 		nas << chemical::name_from_aa( *na );
@@ -912,7 +923,7 @@ ResidueLevelTask_::restrict_to_repacking()
 	for ( ResidueTypeCOPListIter
 			allowed_iter = allowed_residue_types_.begin(),
 			allowed_end = allowed_residue_types_.end();
-				allowed_iter != allowed_end; ) {
+			allowed_iter != allowed_end; ) {
 
 		if ( ! is_original_type( *allowed_iter ) ) {
 			allowed_iter = allowed_residue_types_.erase( allowed_iter );
@@ -942,7 +953,7 @@ bool ResidueLevelTask_::is_original_type( chemical::ResidueTypeCOP type ) const
 }
 
 chemical::ResidueTypeSet const & ResidueLevelTask_::get_original_residue_set() const {
-  return original_residue_type_->residue_type_set();
+	return original_residue_type_->residue_type_set();
 }
 
 chemical::AA const & ResidueLevelTask_::get_original_residue() const {
@@ -961,11 +972,10 @@ void ResidueLevelTask_::allow_noncanonical_aa(
 	// get ResidueTypeCOPs vector
 	chemical::ResidueTypeCOPs const & aas( residue_set.interchangeability_group_map_DO_NOT_USE( interchangeability_group ) );
 
-	for ( chemical::ResidueTypeCOPs::const_iterator	aas_iter = aas.begin(), aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
+	for ( chemical::ResidueTypeCOPs::const_iterator aas_iter = aas.begin(), aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
 		if ( variants_match( *original_residue_type_, **aas_iter ) &&
-				 (*aas_iter)->aa() >= chemical::num_canonical_aas && // cannot be used to add canonical amino acids
-				std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(), *aas_iter ) ==	allowed_residue_types_.end() /* haven't already added it */)
-		{
+				(*aas_iter)->aa() >= chemical::num_canonical_aas && // cannot be used to add canonical amino acids
+				std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(), *aas_iter ) == allowed_residue_types_.end() /* haven't already added it */ ) {
 			allowed_residue_types_.push_back( *aas_iter );
 		}
 	}
@@ -999,9 +1009,9 @@ void ResidueLevelTask_::allow_noncanonical_aa( chemical::AA aa )
 void ResidueLevelTask_::disallow_noncanonical_aas()
 {
 	for ( ResidueTypeCOPList::iterator
-					aas_iter( allowed_residue_types_.begin() ),
-					aas_end( allowed_residue_types_.end() );
-				aas_iter != aas_end; ) {
+			aas_iter( allowed_residue_types_.begin() ),
+			aas_end( allowed_residue_types_.end() );
+			aas_iter != aas_end; ) {
 
 		if ( (*aas_iter)->aa() > chemical::num_canonical_aas ) {
 			aas_iter = allowed_residue_types_.erase( aas_iter );
@@ -1029,9 +1039,9 @@ ResidueLevelTask_::allow_aa(
 	chemical::ResidueTypeCOPs const aas( residue_set.get_all_types_with_variants_aa( aa, original_residue_type_->variant_types() ) );
 
 	for ( chemical::ResidueTypeCOPs::const_iterator
-					aas_iter = aas.begin(), aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
+			aas_iter = aas.begin(), aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
 		if ( std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(), *aas_iter ) ==
-					 allowed_residue_types_.end() /* haven't already added it */ ) {
+				allowed_residue_types_.end() /* haven't already added it */ ) {
 			allowed_residue_types_.push_back( *aas_iter );
 		}
 	}
@@ -1062,7 +1072,7 @@ chemical::ResidueTypeCOP
 ResidueLevelTask_::target_type() const {
 
 	bool allowed( std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(),
-		            target_residue_type_ ) != allowed_residue_types_.end() );
+		target_residue_type_ ) != allowed_residue_types_.end() );
 	if ( !allowed ) return 0;
 	return target_residue_type_;
 }
@@ -1071,7 +1081,7 @@ void
 ResidueLevelTask_::print_allowed_types( std::ostream & os ) const
 {
 	for ( ResidueTypeCOPListConstIter type( allowed_residue_types_begin() );
-		    type != allowed_residue_types_end(); ++type ) {
+			type != allowed_residue_types_end(); ++type ) {
 		os << '\t' << (**type).name() << '\n';
 	}
 }
@@ -1208,32 +1218,32 @@ ResidueLevelTask_::update_union( ResidueLevelTask const & t )
 	//T << "ResidueLevelTask_::update_union" << std::endl;
 	ResidueLevelTask_ const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
 
-	for(utility::vector1<std::string>::const_iterator i = o.behaviors_.begin(); i != o.behaviors_.end(); ++i){
-		if( std::find(behaviors_.begin(),behaviors_.end(),*i) == behaviors_.end() ) {
+	for ( utility::vector1<std::string>::const_iterator i = o.behaviors_.begin(); i != o.behaviors_.end(); ++i ) {
+		if ( std::find(behaviors_.begin(),behaviors_.end(),*i) == behaviors_.end() ) {
 			//std::cout << "behaviors_ add " << *i;
 			behaviors_.push_back(*i);
 		}
 	}
-	for(rotamer_set::RotamerOperations::const_iterator i = o.rotamer_operations_.begin(); i != o.rotamer_operations_.end(); ++i){
-		if( std::find(rotamer_operations_.begin(),rotamer_operations_.end(),*i) == rotamer_operations_.end() ) {
+	for ( rotamer_set::RotamerOperations::const_iterator i = o.rotamer_operations_.begin(); i != o.rotamer_operations_.end(); ++i ) {
+		if ( std::find(rotamer_operations_.begin(),rotamer_operations_.end(),*i) == rotamer_operations_.end() ) {
 			//std::cout << "rotamer_operations_ add " << *i;
 			rotamer_operations_.push_back(*i);
 		}
 	}
-	for(rotamer_set::RotSetOperationList::const_iterator i = o.rotsetops_.begin(); i != o.rotsetops_.end(); ++i){
-		if( std::find(rotsetops_.begin(),rotsetops_.end(),*i) == rotsetops_.end() ) {
+	for ( rotamer_set::RotSetOperationList::const_iterator i = o.rotsetops_.begin(); i != o.rotsetops_.end(); ++i ) {
+		if ( std::find(rotsetops_.begin(),rotsetops_.end(),*i) == rotsetops_.end() ) {
 			//std::cout << "rotsetops_ add " << *i;
 			rotsetops_.push_back(*i);
 		}
 	}
-	for(std::vector<std::string>::const_iterator i = o.mode_tokens_.begin(); i != o.mode_tokens_.end(); ++i){
-		if( std::find(mode_tokens_.begin(),mode_tokens_.end(),*i) == mode_tokens_.end() ) {
+	for ( std::vector<std::string>::const_iterator i = o.mode_tokens_.begin(); i != o.mode_tokens_.end(); ++i ) {
+		if ( std::find(mode_tokens_.begin(),mode_tokens_.end(),*i) == mode_tokens_.end() ) {
 			//std::cout << "mode_tokens_ add " << *i;
 			mode_tokens_.push_back(*i);
 		}
 	}
-	for(ResidueTypeCOPList::const_iterator i = o.allowed_residue_types_.begin(); i != o.allowed_residue_types_.end(); ++i){
-		if( std::find(allowed_residue_types_.begin(),allowed_residue_types_.end(),*i) == allowed_residue_types_.end() ) {
+	for ( ResidueTypeCOPList::const_iterator i = o.allowed_residue_types_.begin(); i != o.allowed_residue_types_.end(); ++i ) {
+		if ( std::find(allowed_residue_types_.begin(),allowed_residue_types_.end(),*i) == allowed_residue_types_.end() ) {
 			//std::cout << "allowed_residue_types_ add " << (*i)->name();
 			allowed_residue_types_.push_back(*i);
 			//std::cout << " set disabled false ";
@@ -1287,18 +1297,18 @@ ResidueLevelTask_::update_intersection( ResidueLevelTask const & t )
 	ResidueLevelTask_ const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
 
 	utility::vector1<std::string> new_behaviors;
-	for(utility::vector1<std::string>::const_iterator i = o.behaviors_.begin(); i != o.behaviors_.end(); ++i){
-		if( std::find(  behaviors_.begin(),  behaviors_.end(),*i) !=   behaviors_.end() &&
-			std::find(o.behaviors_.begin(),o.behaviors_.end(),*i) != o.behaviors_.end() ){
+	for ( utility::vector1<std::string>::const_iterator i = o.behaviors_.begin(); i != o.behaviors_.end(); ++i ) {
+		if ( std::find(  behaviors_.begin(),  behaviors_.end(),*i) !=   behaviors_.end() &&
+				std::find(o.behaviors_.begin(),o.behaviors_.end(),*i) != o.behaviors_.end() ) {
 			new_behaviors.push_back(*i);
 		}
 	}
 	behaviors_ = new_behaviors;
 
 	rotamer_set::RotamerOperations new_rotamer_operations;
-	for(rotamer_set::RotamerOperations::const_iterator i = o.rotamer_operations_.begin(); i != o.rotamer_operations_.end(); ++i){
-		if( std::find(  rotamer_operations_.begin(),  rotamer_operations_.end(),*i) !=   rotamer_operations_.end() &&
-			std::find(o.rotamer_operations_.begin(),o.rotamer_operations_.end(),*i) != o.rotamer_operations_.end() ){
+	for ( rotamer_set::RotamerOperations::const_iterator i = o.rotamer_operations_.begin(); i != o.rotamer_operations_.end(); ++i ) {
+		if ( std::find(  rotamer_operations_.begin(),  rotamer_operations_.end(),*i) !=   rotamer_operations_.end() &&
+				std::find(o.rotamer_operations_.begin(),o.rotamer_operations_.end(),*i) != o.rotamer_operations_.end() ) {
 			new_rotamer_operations.push_back(*i);
 		}
 	}
@@ -1306,27 +1316,27 @@ ResidueLevelTask_::update_intersection( ResidueLevelTask const & t )
 
 
 	rotamer_set::RotSetOperationList new_rotsetops;
-	for(rotamer_set::RotSetOperationList::const_iterator i = o.rotsetops_.begin(); i != o.rotsetops_.end(); ++i){
-		if( std::find(  rotsetops_.begin(),  rotsetops_.end(),*i) !=   rotsetops_.end() &&
-			std::find(o.rotsetops_.begin(),o.rotsetops_.end(),*i) != o.rotsetops_.end() ){
+	for ( rotamer_set::RotSetOperationList::const_iterator i = o.rotsetops_.begin(); i != o.rotsetops_.end(); ++i ) {
+		if ( std::find(  rotsetops_.begin(),  rotsetops_.end(),*i) !=   rotsetops_.end() &&
+				std::find(o.rotsetops_.begin(),o.rotsetops_.end(),*i) != o.rotsetops_.end() ) {
 			new_rotsetops.push_back(*i);
 		}
 	}
 	rotsetops_ = new_rotsetops;
 
 	std::vector<std::string> new_mode_tokens;
-	for(std::vector<std::string>::const_iterator i = o.mode_tokens_.begin(); i != o.mode_tokens_.end(); ++i){
-		if( std::find(  mode_tokens_.begin(),  mode_tokens_.end(),*i) !=   mode_tokens_.end() &&
-			std::find(o.mode_tokens_.begin(),o.mode_tokens_.end(),*i) != o.mode_tokens_.end() ){
+	for ( std::vector<std::string>::const_iterator i = o.mode_tokens_.begin(); i != o.mode_tokens_.end(); ++i ) {
+		if ( std::find(  mode_tokens_.begin(),  mode_tokens_.end(),*i) !=   mode_tokens_.end() &&
+				std::find(o.mode_tokens_.begin(),o.mode_tokens_.end(),*i) != o.mode_tokens_.end() ) {
 			new_mode_tokens.push_back(*i);
 		}
 	}
 	mode_tokens_ = new_mode_tokens;
 
 	ResidueTypeCOPList new_allowed_residue_types;
-	for(ResidueTypeCOPList::const_iterator i = o.allowed_residue_types_.begin(); i != o.allowed_residue_types_.end(); ++i){
-		if( std::find(  allowed_residue_types_.begin(),  allowed_residue_types_.end(),*i) !=   allowed_residue_types_.end() &&
-			std::find(o.allowed_residue_types_.begin(),o.allowed_residue_types_.end(),*i) != o.allowed_residue_types_.end() ){
+	for ( ResidueTypeCOPList::const_iterator i = o.allowed_residue_types_.begin(); i != o.allowed_residue_types_.end(); ++i ) {
+		if ( std::find(  allowed_residue_types_.begin(),  allowed_residue_types_.end(),*i) !=   allowed_residue_types_.end() &&
+				std::find(o.allowed_residue_types_.begin(),o.allowed_residue_types_.end(),*i) != o.allowed_residue_types_.end() ) {
 			new_allowed_residue_types.push_back(*i);
 		}
 	}

@@ -73,7 +73,7 @@ void lregister_SerializableState( lua_State * lstate ){
 #endif
 
 using namespace core;
-	using namespace pose;
+using namespace pose;
 
 using basic::T;
 using basic::Error;
@@ -116,7 +116,7 @@ Mover::Mover( Mover const & other ) :
 /// @brief assignment operator
 Mover& Mover::operator=( Mover const & rhs ) {
 	//abort self-assignment
-	if (this == &rhs) return *this;
+	if ( this == &rhs ) return *this;
 	type_ = rhs.type_;
 	current_tag_ = rhs.current_tag_;
 	input_pose_ = rhs.input_pose_;
@@ -147,7 +147,7 @@ MoverSP Mover::create() {
 }
 // elscripts functions
 void Mover::apply( core::io::serialization::PipeMap & pmap ) {
-	for( core::io::serialization::Pipe::iterator itr = pmap["input"]->begin(), end = pmap["input"]->end(); itr != end; ++itr ) {
+	for ( core::io::serialization::Pipe::iterator itr = pmap["input"]->begin(), end = pmap["input"]->end(); itr != end; ++itr ) {
 		apply( **itr );
 	}
 }
@@ -158,9 +158,9 @@ void Mover::parse_state( SerializableState const & /*state*/ ) {
 }
 // state is not an argument because it doesn't exist at this point
 void Mover::parse_def( utility::lua::LuaObject const & /*def*/,
-				utility::lua::LuaObject const & /*score_fxns*/,
-				utility::lua::LuaObject const & /*tasks*/,
-				MoverCacheSP /*cache*/ ) {
+	utility::lua::LuaObject const & /*score_fxns*/,
+	utility::lua::LuaObject const & /*tasks*/,
+	MoverCacheSP /*cache*/ ) {
 	utility_exit_with_message("This Mover has not implemented parse_def()");
 }
 
@@ -250,7 +250,7 @@ void SerializableState_set( SerializableStateSP state, std::string key, core::Re
 	(*state)[key] = utility::to_string(val);
 }
 std::string SerializableState_get( SerializableStateSP state, std::string key ) {
-	if( state->find( key ) != state->end() ) {
+	if ( state->find( key ) != state->end() ) {
 		return (*state)[key];
 	} else {
 		return "";
@@ -269,8 +269,8 @@ std::string SerializableState_get( SerializableStateSP state, std::string key ) 
 //std::ostream &
 //operator<<(std::ostream & output, moves::Mover const & mover)
 //{
-//	mover.show(output);
-//	return output;
+// mover.show(output);
+// return output;
 //}
 
 } // protocols

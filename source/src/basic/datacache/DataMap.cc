@@ -36,7 +36,7 @@ DataMap::~DataMap() {}
 
 bool
 DataMap::add( std::string const type, std::string const name, utility::pointer::ReferenceCountOP const op ){
-	if( has( type, name ) ){
+	if ( has( type, name ) ) {
 		TR<<"A datum of type "<<type<<" and name "<<name<<" has been added before. I'm not adding again. This is probably a BIG error but I'm letting it pass!"<<std::endl;
 		return false;
 	}
@@ -50,19 +50,19 @@ DataMap::has( std::string const type, std::string const name/*=""*/ ) const {
 	std::map< std::string, std::map< std::string, utility::pointer::ReferenceCountOP > >::const_iterator it;
 
 	it = data_map_.find( type );
-	if( it == data_map_.end() ) return false;
+	if ( it == data_map_.end() ) return false;
 	std::map< std::string, utility::pointer::ReferenceCountOP >::const_iterator it2;
 	it2 = it->second.find( name );
-	if( it2 == it->second.end() ) return false;
+	if ( it2 == it->second.end() ) return false;
 
 	return true;
 }
 
 std::map< std::string, utility::pointer::ReferenceCountOP > &
 DataMap::operator []( std::string const & type ) {
-	if( !has( type ) ) {
-// "dummy_entry" serves as a placeholder while the datamap does not contain actual maps of this type.
-// it is removed if the map is accessed.
+	if ( !has( type ) ) {
+		// "dummy_entry" serves as a placeholder while the datamap does not contain actual maps of this type.
+		// it is removed if the map is accessed.
 		add( type, "dummy_entry", 0 );
 	}
 

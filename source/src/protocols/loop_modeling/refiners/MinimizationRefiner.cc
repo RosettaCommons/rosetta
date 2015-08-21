@@ -52,18 +52,18 @@ std::string MinimizationRefinerCreator::keyname() const {
 }
 
 MinimizationRefiner::MinimizationRefiner(
-		bool cartesian, MinimizerOptionsOP options) {
+	bool cartesian, MinimizerOptionsOP options) {
 
 	use_cartesian(cartesian);
 	set_min_options(options);
 }
 
 void MinimizationRefiner::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose) {
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const & pose) {
 
 	LoopMover::parse_my_tag(tag, data, filters, movers, pose);
 	utilities::set_scorefxn_from_tag(*this, tag, data);
@@ -82,12 +82,12 @@ bool MinimizationRefiner::do_apply(Pose & pose) {
 	MinMoverOP minimizer( is_symmetric(pose) ? new SymMinMover : new MinMover );
 	ScoreFunctionCOP score_function = get_score_function();
 	MoveMapOP move_map( new MoveMap ); loops_set_move_map(
-			pose, loops,
-			/*fix sidechains:*/ false,
-			*move_map,
-			/*neighbor radius:*/ 10.0,
-			/*allow omega moves:*/ true,
-			/*allow takeoff torsion moves:*/ false);
+		pose, loops,
+		/*fix sidechains:*/ false,
+		*move_map,
+		/*neighbor radius:*/ 10.0,
+		/*allow omega moves:*/ true,
+		/*allow takeoff torsion moves:*/ false);
 
 	minimizer->score_function(score_function);
 	minimizer->movemap(move_map);
@@ -107,18 +107,18 @@ void MinimizationRefiner::set_score_function(ScoreFunctionOP score_function) {
 }
 
 void MinimizationRefiner::set_min_options(MinimizerOptionsOP options) {
-	// If no minimizer options are given, use default values that seem to work 
-	// well.  These values were chosen based a simple benchmark run, but in that 
-	// benchmark no parameters really performed that much better or worse than 
-	// any others.  So loop modeling doesn't seem to be that sensitive to the 
+	// If no minimizer options are given, use default values that seem to work
+	// well.  These values were chosen based a simple benchmark run, but in that
+	// benchmark no parameters really performed that much better or worse than
+	// any others.  So loop modeling doesn't seem to be that sensitive to the
 	// exact choice of minimizer options.
 
 	if ( ! options ) {
 		min_options_ = MinimizerOptionsOP( new MinimizerOptions(
-				"dfpmin",   // min_type
-				1e-3,       // min_tolerance
-				true,       // use_nblist
-				false) );   // deriv_check
+			"dfpmin",   // min_type
+			1e-3,       // min_tolerance
+			true,       // use_nblist
+			false) );   // deriv_check
 	} else {
 		min_options_ = options;
 	}

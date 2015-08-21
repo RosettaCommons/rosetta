@@ -116,7 +116,7 @@ public:
 		utility::vector1<std::string> interfaces;
 		TS_ASSERT_THROWS_NOTHING(reporter_->make_interface_combos(multimer_, interfaces));
 		TR << "Interfaces: "<< interfaces.size() << std::endl;
-		for (core::Size i = 1; i<=interfaces.size(); ++i){
+		for ( core::Size i = 1; i<=interfaces.size(); ++i ) {
 			TR<<"Interface: " << interfaces[i]<<std::endl;
 		}
 		TS_ASSERT_EQUALS(interfaces.size(), 6);

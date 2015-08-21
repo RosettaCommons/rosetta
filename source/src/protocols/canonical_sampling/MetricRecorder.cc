@@ -142,25 +142,25 @@ MetricRecorder::parse_my_tag(
 
 	utility::vector0< utility::tag::TagCOP > const subtags( tag->getTags() );
 
-	for( utility::vector0< utility::tag::TagCOP >::const_iterator subtag_it = subtags.begin(); subtag_it != subtags.end(); ++subtag_it ) {
+	for ( utility::vector0< utility::tag::TagCOP >::const_iterator subtag_it = subtags.begin(); subtag_it != subtags.end(); ++subtag_it ) {
 
 		TagCOP const subtag = *subtag_it;
 
 		protocols::moves::MoverOP mover;
 
-		if (subtag->getName() == "Torsion") {
+		if ( subtag->getName() == "Torsion" ) {
 
 			std::string rsd = subtag->getOption< std::string >( "rsd" );
 			std::string type = subtag->getOption< std::string >( "type" );
 			core::Size torsion = subtag->getOption< core::Size >( "torsion" );
 			std::string name = subtag->getOption< std::string >( "name", "" );
-			if (subtag->hasOption("name")) name = subtag->getOptions().find("name")->second;
+			if ( subtag->hasOption("name") ) name = subtag->getOptions().find("name")->second;
 
 			add_torsion(pose, rsd, type, torsion, name);
 
-		} else if (subtag->getName() == "AllChi") {
-			for ( Size i = 1; i <= pose.total_residue(); ++i) {
-				for (Size j = 1; j <= pose.residue_type(i).nchi(); ++j) {
+		} else if ( subtag->getName() == "AllChi" ) {
+			for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+				for ( Size j = 1; j <= pose.residue_type(i).nchi(); ++j ) {
 					std::ostringstream name_stream;
 					name_stream << pose.residue_type(i).name3() << "_" << i << "_Chi" << j ;
 					std::ostringstream res_id_str;
@@ -169,8 +169,8 @@ MetricRecorder::parse_my_tag(
 				}
 			}
 
-		} else if (subtag->getName() == "AllBB") {
-			for ( Size i = 1; i <= pose.total_residue(); ++i) {
+		} else if ( subtag->getName() == "AllBB" ) {
+			for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 				std::ostringstream res_id_str;
 				res_id_str << i;
 				add_torsion(pose, res_id_str.str(), "BB", 1, pose.residue_type(i).name3() + "_" + res_id_str.str() + "_phi");
@@ -262,7 +262,7 @@ MetricRecorder::add_torsion(
 {
 	runtime_assert(torsion_id.valid());
 
-	if (name == "") {
+	if ( name == "" ) {
 
 		std::ostringstream name_stream;
 		name_stream << torsion_id;
@@ -285,11 +285,11 @@ MetricRecorder::add_torsion(
 
 	std::transform(type.begin(), type.end(), type.begin(), toupper);
 	core::id::TorsionType parsed_type;
-	if (type == "BB") {
+	if ( type == "BB" ) {
 		parsed_type = core::id::BB;
-	} else if (type == "CHI") {
+	} else if ( type == "CHI" ) {
 		parsed_type = core::id::CHI;
-	} else if (type == "JUMP") {
+	} else if ( type == "JUMP" ) {
 		parsed_type = core::id::JUMP;
 	} else {
 		utility_exit_with_message("Unknown torsion type");
@@ -317,9 +317,9 @@ MetricRecorder::update_after_boltzmann(
 	protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover //= 0
 )
 {
-	if (recorder_stream_.filename() == "") {
+	if ( recorder_stream_.filename() == "" ) {
 		std::ostringstream file_name_stream;
-		if (prepend_output_name_ && !metropolis_hastings_mover) {
+		if ( prepend_output_name_ && !metropolis_hastings_mover ) {
 			file_name_stream << protocols::jd2::JobDistributor::get_instance()->current_output_name() << '_';
 		}
 		file_name_stream << file_name_;
@@ -333,22 +333,22 @@ MetricRecorder::update_after_boltzmann(
 	core::Size replica = protocols::jd2::current_replica();
 
 	TemperingBaseCOP tempering = 0;
-	if (metropolis_hastings_mover) {
+	if ( metropolis_hastings_mover ) {
 		tempering = utility::pointer::dynamic_pointer_cast< TemperingBase const >( metropolis_hastings_mover->tempering() );
 	}
 
-	if (step_count_ == 0) {
+	if ( step_count_ == 0 ) {
 
 		// output header if not cumulating, replica exchange inactive, or this is the first replica
-		if ((!cumulate_jobs_ || nstruct_index == 1) && (!cumulate_replicas_ || replica <= 1)) {
+		if ( (!cumulate_jobs_ || nstruct_index == 1) && (!cumulate_replicas_ || replica <= 1) ) {
 
 			recorder_stream_ << "Trial";
-			if (cumulate_jobs_ && output_name.length()) recorder_stream_ << '\t' << "Job";
-			if (cumulate_replicas_ && replica) recorder_stream_ << '\t' << "Replica";
-			if (tempering) recorder_stream_ << '\t' << "Temperature";
+			if ( cumulate_jobs_ && output_name.length() ) recorder_stream_ << '\t' << "Job";
+			if ( cumulate_replicas_ && replica ) recorder_stream_ << '\t' << "Replica";
+			if ( tempering ) recorder_stream_ << '\t' << "Temperature";
 			recorder_stream_ << '\t' << "Score";
 
-			for (core::Size i = 1; i <= torsion_ids_.size(); ++i) {
+			for ( core::Size i = 1; i <= torsion_ids_.size(); ++i ) {
 				recorder_stream_ << '\t' << torsion_ids_[i].second;
 			}
 
@@ -358,22 +358,22 @@ MetricRecorder::update_after_boltzmann(
 		last_flush_ = time(NULL);
 	}
 
-	if (step_count_ % stride_ == 0) {
+	if ( step_count_ % stride_ == 0 ) {
 
 		recorder_stream_ << step_count_;
-		if (cumulate_jobs_ && output_name.length()) recorder_stream_ << '\t' << output_name;
-		if (cumulate_replicas_ && replica) recorder_stream_ << '\t' << replica;
-		if (tempering) recorder_stream_ << '\t' << metropolis_hastings_mover->monte_carlo()->temperature();
+		if ( cumulate_jobs_ && output_name.length() ) recorder_stream_ << '\t' << output_name;
+		if ( cumulate_replicas_ && replica ) recorder_stream_ << '\t' << replica;
+		if ( tempering ) recorder_stream_ << '\t' << metropolis_hastings_mover->monte_carlo()->temperature();
 		recorder_stream_ << '\t' << pose.energies().total_energy();
 
-		for (core::Size i = 1; i <= torsion_ids_.size(); ++i) {
+		for ( core::Size i = 1; i <= torsion_ids_.size(); ++i ) {
 			recorder_stream_ << '\t' << pose.torsion(torsion_ids_[i].first);
 		}
 
 		recorder_stream_ << std::endl;
 
 		time_t now = time(NULL);
-		if (now-last_flush_ > 10) {
+		if ( now-last_flush_ > 10 ) {
 			recorder_stream_.flush();
 			last_flush_ = now;
 		}

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   src/devel/denovo_design/DumpStatsSS.fwd.hh
-/// @brief  
+/// @brief
 /// @author TJ Brunette
 
 

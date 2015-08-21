@@ -38,7 +38,7 @@
 
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 using namespace ObjexxFCL::format;
@@ -50,48 +50,48 @@ static thread_local basic::Tracer TR( "MPI_WUM" );
 
 int mpi_rank(){
 	int mpi_rank_=0;
-	#ifdef USEMPI
+#ifdef USEMPI
 		MPI_Comm_rank( MPI_COMM_WORLD, ( int* )( &mpi_rank_ ) );
-	#else
-		utility_exit_with_message( "ERROR: The MPI_WorkUnitManager will not work unless you have compiled using extras=mpi" );
-	#endif
+#else
+	utility_exit_with_message( "ERROR: The MPI_WorkUnitManager will not work unless you have compiled using extras=mpi" );
+#endif
 	return mpi_rank_;
 }
 
 int mpi_npes(){
 	int mpi_npes_=0;
-	#ifdef USEMPI
+#ifdef USEMPI
 		MPI_Comm_size( MPI_COMM_WORLD, ( int* )( &mpi_npes_ ) );
-	#else
-		utility_exit_with_message( "ERROR: The MPI_WorkUnitManager will not work unless you have compiled using extras=mpi" );
-	#endif
+#else
+	utility_exit_with_message( "ERROR: The MPI_WorkUnitManager will not work unless you have compiled using extras=mpi" );
+#endif
 	return mpi_npes_;
 }
 
 
 core::Real get_time(){
-	#ifdef USEMPI
+#ifdef USEMPI
 	 return MPI_Wtime();
-	#else
-	 return (core::Real) time(NULL);
-	#endif
+#else
+	return (core::Real) time(NULL);
+#endif
 }
 
 
 MPI_WorkUnitManager::MPI_WorkUnitManager( char machine_letter  ):
-WorkUnitManager(),
-last_stats_(0),
-traffic_total_received_(0),
-traffic_total_sent_(0),
-send_wu_time_(0),
-send_wu_time_n_(0),
-recv_wu_time_(0),
-recv_wu_time_n_(0),
-machine_letter_( machine_letter )
+	WorkUnitManager(),
+	last_stats_(0),
+	traffic_total_received_(0),
+	traffic_total_sent_(0),
+	send_wu_time_(0),
+	send_wu_time_n_(0),
+	recv_wu_time_(0),
+	recv_wu_time_n_(0),
+	machine_letter_( machine_letter )
 {
 	TR << "Starting MPI_WorkUnitManager.." << std::endl;
- 	using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	start_time_wall_clock_ = time(NULL);
 	timing_last_start_time_ = 0;
@@ -357,7 +357,7 @@ core::Real MPI_WorkUnitManager::start_timer( MPI_TIMING timing_mode ) const
 	core::Real elapsed = 0;
 	runtime_assert( timing_mode < TIMING_end );
 	// analyse old timer
-	if( timing_last_start_time_ != 0 ){
+	if ( timing_last_start_time_ != 0 ) {
 		elapsed = current_time - timing_last_start_time_;
 		timing_total_[timing_last_type_] += elapsed;
 	}
@@ -370,14 +370,14 @@ core::Real MPI_WorkUnitManager::start_timer( MPI_TIMING timing_mode ) const
 }
 
 void MPI_WorkUnitManager::print_stats_auto(){
-	if( time(NULL) - last_stats_ > 60 ){
+	if ( time(NULL) - last_stats_ > 60 ) {
 		MPI_WorkUnitManager::print_stats();
 		last_stats_ = time(NULL);
 	}
 }
 
 void MPI_WorkUnitManager::reset_timing_stats(){
-	for( core::Size i=0;i<TIMING_end;i++) timing_total_[i] = 0;
+	for ( core::Size i=0; i<TIMING_end; i++ ) timing_total_[i] = 0;
 }
 
 
@@ -389,28 +389,28 @@ void MPI_WorkUnitManager::print_stats( )
 {
 	core::Real total_secs = 0;
 	total_secs =
-								timing_total_[TIMING_CPU] +
-	              timing_total_[TIMING_TRANSFER_SEND] +
-	              timing_total_[TIMING_TRANSFER_RECV] +
-								timing_total_[TIMING_IO_READ] +
-								timing_total_[TIMING_IO_WRITE] +
-								timing_total_[TIMING_WAIT] +
-								timing_total_[TIMING_IDLE];
+		timing_total_[TIMING_CPU] +
+		timing_total_[TIMING_TRANSFER_SEND] +
+		timing_total_[TIMING_TRANSFER_RECV] +
+		timing_total_[TIMING_IO_READ] +
+		timing_total_[TIMING_IO_WRITE] +
+		timing_total_[TIMING_WAIT] +
+		timing_total_[TIMING_IDLE];
 	TR << "STATW" << get_machine_letter()  << " " <<
-        I( (int)7, (int)wall_time() )  << "s " <<
-        I( (int)7, total_secs )  << "s " <<
-				F( 4, 1, 100.0f*( timing_total_[TIMING_CPU]           / total_secs)) << "% " <<
-				F( 4, 1, 100.0f*( timing_total_[TIMING_TRANSFER_SEND] / total_secs)) << "% " <<
-				F( 4, 1, 100.0f*( timing_total_[TIMING_TRANSFER_RECV] / total_secs)) << "% " <<
-				F( 4, 1, 100.0f*( timing_total_[TIMING_IO_READ]       / total_secs)) << "% " <<
-				F( 4, 1, 100.0f*( timing_total_[TIMING_IO_WRITE]      / total_secs)) << "% " <<
-				F( 4, 1, 100.0f*( timing_total_[TIMING_WAIT]          / total_secs)) << "% " <<
-				F( 4, 1, 100.0f*( timing_total_[TIMING_IDLE]          / total_secs)) << "% " <<
-				F( 6, 2, (float(traffic_total_sent_)/1024.0/1024.0) ) << "Mb  " <<
-				F( 6, 2, (float(traffic_total_received_)/1024.0/1024.0) ) << "Mb  " <<
-				F( 6, 2, (float(send_wu_time_/1000.0/(send_wu_time_n_+1)) ) ) << "ms " <<
-				F( 6, 2, (float(recv_wu_time_/1000.0/(recv_wu_time_n_+1)) ) ) << "ms " <<
-				"";
+		I( (int)7, (int)wall_time() )  << "s " <<
+		I( (int)7, total_secs )  << "s " <<
+		F( 4, 1, 100.0f*( timing_total_[TIMING_CPU]           / total_secs)) << "% " <<
+		F( 4, 1, 100.0f*( timing_total_[TIMING_TRANSFER_SEND] / total_secs)) << "% " <<
+		F( 4, 1, 100.0f*( timing_total_[TIMING_TRANSFER_RECV] / total_secs)) << "% " <<
+		F( 4, 1, 100.0f*( timing_total_[TIMING_IO_READ]       / total_secs)) << "% " <<
+		F( 4, 1, 100.0f*( timing_total_[TIMING_IO_WRITE]      / total_secs)) << "% " <<
+		F( 4, 1, 100.0f*( timing_total_[TIMING_WAIT]          / total_secs)) << "% " <<
+		F( 4, 1, 100.0f*( timing_total_[TIMING_IDLE]          / total_secs)) << "% " <<
+		F( 6, 2, (float(traffic_total_sent_)/1024.0/1024.0) ) << "Mb  " <<
+		F( 6, 2, (float(traffic_total_received_)/1024.0/1024.0) ) << "Mb  " <<
+		F( 6, 2, (float(send_wu_time_/1000.0/(send_wu_time_n_+1)) ) ) << "ms " <<
+		F( 6, 2, (float(recv_wu_time_/1000.0/(recv_wu_time_n_+1)) ) ) << "ms " <<
+		"";
 
 	reset_timing_stats();
 

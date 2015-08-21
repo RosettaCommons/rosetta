@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/PcsLineData.cc
- ///
- /// @brief  Class that hold a line data of the input file
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/PcsLineData.cc
+///
+/// @brief  Class that hold a line data of the input file
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 
 // Unit headers
@@ -47,10 +47,10 @@
 //#include <iostream>
 #include <iomanip>
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs2{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs2 {
 
 static thread_local basic::Tracer TR_PcsInputLine( "protocols.scoring.methods.pcs.PcsInputLine" );
 
@@ -78,7 +78,7 @@ PcsInputLine &
 PcsInputLine::operator=( PcsInputLine const & other )
 {
 	if ( this != &other ) {
-	//All data member are const, nothing to copy
+		//All data member are const, nothing to copy
 	}
 	return *this;
 }
@@ -101,14 +101,14 @@ PcsInputLine::get_PCS_experimental() const{
 
 core::Real
 PcsInputLine::get_PCS_tolerance() const{
-	 	return PCS_tolerance_;
+	return PCS_tolerance_;
 }
 
 PcsInputLine::PcsInputLine(core::Size residue_num,
-													 std::string atom_name,
-													 core::Real PCS_experimental,
-													 core::Real PCS_tolerance
-													 ) :
+	std::string atom_name,
+	core::Real PCS_experimental,
+	core::Real PCS_tolerance
+) :
 	residue_num_( residue_num ),
 	atom_name_(atom_name),
 	PCS_experimental_(PCS_experimental),
@@ -118,11 +118,11 @@ PcsInputLine::PcsInputLine(core::Size residue_num,
 
 std::ostream &
 operator<<(std::ostream& out, const PcsInputLine &me){
-		out << "Residue: " << std::setw(4) << me.get_residue_num();
-		out << "   Atom: " << std::setw(4) << me.get_atom_name();
-		out << "   PCS: " << std::setw(7) << me.get_PCS_experimental();
-		out << "   Tolerance: " << std::setw(7) << me.get_PCS_tolerance()<< std::endl;
-		return out;
+	out << "Residue: " << std::setw(4) << me.get_residue_num();
+	out << "   Atom: " << std::setw(4) << me.get_atom_name();
+	out << "   PCS: " << std::setw(7) << me.get_PCS_experimental();
+	out << "   Tolerance: " << std::setw(7) << me.get_PCS_tolerance()<< std::endl;
+	return out;
 }
 
 }//namespace pcs2

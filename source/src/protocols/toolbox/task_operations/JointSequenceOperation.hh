@@ -35,9 +35,9 @@
 
 using namespace core::pack::task;
 
-namespace protocols{
-namespace toolbox{
-namespace task_operations{
+namespace protocols {
+namespace toolbox {
+namespace task_operations {
 
 class JointSequenceOperation : public core::pack::task::operation::TaskOperation {
 public:
@@ -57,7 +57,7 @@ public:
 	JointSequenceOperation();
 
 	/// @brief destructor
-	 ~JointSequenceOperation();
+	~JointSequenceOperation();
 
 	/// @brief make clone
 	virtual TaskOperationOP clone() const;
@@ -93,14 +93,14 @@ public:
 	/// @brief Return which chain to operate on with 0 meaning all
 	void set_chain(core::Size chain);
 
-  /// @brief Add the sequence from the given fasta filename to the set of allowed aas
-  void add_native_fasta( std::string fasta_file );
+	/// @brief Add the sequence from the given fasta filename to the set of allowed aas
+	void add_native_fasta( std::string fasta_file );
 
 private:
 
 	bool use_current_pose_;
 	bool use_natro_; // set only with use_natro(), bookkeeping of ubr_
-  bool use_fasta_;                                                                                                                 
+	bool use_fasta_;
 	core::pack::rotamer_set::UnboundRotamersOperationOP ubr_;
 	std::vector<core::sequence::SequenceOP> sequences_;
 	/// @brief Which chain to operate on

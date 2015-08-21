@@ -45,69 +45,70 @@ using namespace protocols::moves;
 
 static thread_local basic::Tracer TR( "protocols.seeded_abinitio.CAcstGenerator" );
 
-	std::string
-	CAcstGeneratorCreator::keyname() const
-	{
-		return CAcstGeneratorCreator::mover_name();
-	}
+std::string
+CAcstGeneratorCreator::keyname() const
+{
+	return CAcstGeneratorCreator::mover_name();
+}
 
-	protocols::moves::MoverOP
-	CAcstGeneratorCreator::create_mover() const {
-		return protocols::moves::MoverOP( new CAcstGenerator );
-	}
+protocols::moves::MoverOP
+CAcstGeneratorCreator::create_mover() const {
+	return protocols::moves::MoverOP( new CAcstGenerator );
+}
 
-	std::string
-	CAcstGeneratorCreator::mover_name()
-	{
-		return "CAcstGenerator";
-	}
+std::string
+CAcstGeneratorCreator::mover_name()
+{
+	return "CAcstGenerator";
+}
 
-	CAcstGenerator::~CAcstGenerator() {}
+CAcstGenerator::~CAcstGenerator() {}
 
-	CAcstGenerator::CAcstGenerator() :
+CAcstGenerator::CAcstGenerator() :
 	protocols::moves::Mover( CAcstGeneratorCreator::mover_name() )
-	{
-		stddev_ = 3.0;
-		seed_exceptions_.clear();
-		distance_cutoff_ = 6;
-	}
+{
+	stddev_ = 3.0;
+	seed_exceptions_.clear();
+	distance_cutoff_ = 6;
+}
 
 protocols::moves::MoverOP
 CAcstGenerator::clone() const {
-  return( protocols::moves::MoverOP( new CAcstGenerator( *this ) ) );
+	return( protocols::moves::MoverOP( new CAcstGenerator( *this ) ) );
 }
 
 protocols::moves::MoverOP
 CAcstGenerator::fresh_instance() const {
-  return protocols::moves::MoverOP( new CAcstGenerator );
+	return protocols::moves::MoverOP( new CAcstGenerator );
 }
 
 bool
-is_part(	utility::vector1<core::Size> & cut_points,
-				core::Size & residue){
-		bool res_cut = false;
-		for( Size i = 1; i <= cut_points.size(); ++i ){
-			if ( cut_points[i] == residue)
-				res_cut = true;
+is_part( utility::vector1<core::Size> & cut_points,
+	core::Size & residue){
+	bool res_cut = false;
+	for ( Size i = 1; i <= cut_points.size(); ++i ) {
+		if ( cut_points[i] == residue ) {
+			res_cut = true;
 		}
+	}
 	return res_cut;
 }
 
 ///this method will get de-convoluted soon....
 void add_dist_constraints(
-						 				pose::Pose & pose,
-									 	pose::PoseOP & pose_of_int,
-										core::Size start_relevant_chain,
-										core::scoring::constraints::ConstraintSetOP & cst,
-										protocols::loops::Loops & seeds,// referring to template if one is given! or just individual chain numbering
-										protocols::loops::Loops & clear_area,
-									 	utility::vector1< core::Size > cut_points,
-										utility::vector1< core::Size > seed_exceptions,
-										bool add_cst_seed,
-					 					core::Real stddev,
-										core::Size seq_separation,
-										core::Real distance_cutoff
-										){
+	pose::Pose & pose,
+	pose::PoseOP & pose_of_int,
+	core::Size start_relevant_chain,
+	core::scoring::constraints::ConstraintSetOP & cst,
+	protocols::loops::Loops & seeds,// referring to template if one is given! or just individual chain numbering
+	protocols::loops::Loops & clear_area,
+	utility::vector1< core::Size > cut_points,
+	utility::vector1< core::Size > seed_exceptions,
+	bool add_cst_seed,
+	core::Real stddev,
+	core::Size seq_separation,
+	core::Real distance_cutoff
+){
 
 	using namespace scoring::constraints;
 	using namespace id;
@@ -116,101 +117,103 @@ void add_dist_constraints(
 
 	TR<<"stddev for harmonic constraints: " << stddev <<std::endl;
 
-	if( cut_points.empty() )
+	if ( cut_points.empty() ) {
 		TR<<"there are no cut point registered" <<std::endl;
+	}
 
 	TR.Debug << "start_relevant_chain: " << start_relevant_chain << std::endl;
 	TR.Debug << "seeds: " << seeds << std::endl;
 	TR.Debug << "clear_area " << clear_area << std::endl;
 
-	for( Size i=1;i<=cut_points.size(); i++) {
+	for ( Size i=1; i<=cut_points.size(); i++ ) {
 		TR <<"cutpoints: " << cut_points[i] << std::endl;
 	}
 
 	//adjust cutpoints first to relevant numbering
-	for( Size i = 1 ; i <= cut_points.size(); ++i ){
+	for ( Size i = 1 ; i <= cut_points.size(); ++i ) {
 		TR.Debug <<"rosetta numbering: cutpoint: "<< cut_points[i] <<std::endl;
 		cut_points[i] = cut_points[i] - (start_relevant_chain -1);
 		TR.Debug <<"adjusted cutpoint: "<< cut_points[i] <<std::endl;
 	}
 
-  for( Size i=1;i<=cut_points.size(); i++) {
-    TR <<"cutpoints: " << cut_points[i] << std::endl;
-  }
+	for ( Size i=1; i<=cut_points.size(); i++ ) {
+		TR <<"cutpoints: " << cut_points[i] << std::endl;
+	}
 
 
 	for ( Size pos = 1; pos <= pose_of_int->total_residue(); pos++ ) {
-			for (Size pos_2 = 1; pos_2 <=pose_of_int->total_residue(); pos_2++   ){
+		for ( Size pos_2 = 1; pos_2 <=pose_of_int->total_residue(); pos_2++   ) {
 
-        bool res_is_loop = false;
-        bool res2_is_loop = false;
+			bool res_is_loop = false;
+			bool res2_is_loop = false;
 
-				if( !is_part( seed_exceptions, pos) ){
-					//if residues are part of the loop, set to true
-					res_is_loop = seeds.is_loop_residue( pos );
+			if ( !is_part( seed_exceptions, pos) ) {
+				//if residues are part of the loop, set to true
+				res_is_loop = seeds.is_loop_residue( pos );
+			}
+
+			if ( !is_part( seed_exceptions, pos_2 ) ) {
+				res2_is_loop = seeds.is_loop_residue( pos_2 );
+			}
+
+			bool cut_point_pos = false;
+			bool cut_point_pos_2 = false;
+			bool res_cst_free = false;
+
+			//add the cst of the segment that will be replaced by the seed(s)
+			if ( add_cst_seed ) {
+				res_is_loop = false;
+				res2_is_loop = false;
+			}
+
+			//user specified area that is allowed to float
+			if ( clear_area.size() > 0 ) {
+				if ( clear_area.is_loop_residue(pos) || clear_area.is_loop_residue(pos_2) ) {
+					res_cst_free = true;
 				}
+			}
 
-				if( !is_part( seed_exceptions, pos_2 ) ){
-					res2_is_loop = seeds.is_loop_residue( pos_2 );
-				}
+			//mark cut points
+			if ( cut_points.size() > 1 ) {
+				cut_point_pos = is_part(cut_points, pos );
+				cut_point_pos_2 = is_part(cut_points, pos_2 );
+			}
 
-				bool cut_point_pos = false;
-				bool cut_point_pos_2 = false;
-				bool res_cst_free = false;
+			//avoiding doubling of constraints
+			Size seq_sep = 0;
 
-				//add the cst of the segment that will be replaced by the seed(s)
-				if ( add_cst_seed ){
-					res_is_loop = false;
-					res2_is_loop = false;
-				}
+			if ( pos > pos_2 ) {
+				seq_sep = pos - pos_2;
+			} else {
+				seq_sep = 0; //to avoid repetition
+			}
+			//seq_sep = pos_2 - pos;
 
-				//user specified area that is allowed to float
-				if ( clear_area.size() > 0 ){
-					if ( clear_area.is_loop_residue(pos) || clear_area.is_loop_residue(pos_2) ){
-						res_cst_free = true;
-					}
-				}
+			if ( seq_sep >= seq_separation  ) {
+				if ( !res_is_loop && !res2_is_loop ) {
+					if ( !cut_point_pos && !cut_point_pos_2 ) {
 
-				//mark cut points
-				if ( cut_points.size() > 1 ) {
-					cut_point_pos = is_part(cut_points, pos );
-					cut_point_pos_2 = is_part(cut_points, pos_2 );
-				}
+						if ( !res_cst_free ) {
+							core::conformation::Residue res_pos = pose_of_int->residue(pos);
+							core::conformation::Residue res_pos_2 = pose_of_int->residue(pos_2);
 
-				//avoiding doubling of constraints
-				Size seq_sep = 0;
+							Real const distance_ca( res_pos.xyz( res_pos.atom_index("CA") ).distance( res_pos_2.xyz( res_pos_2.atom_index("CA") )));
+							TR.Debug  <<"distance contraints for: " << pos_2 <<" "<< pos << " "<<distance_ca <<std::endl;
+							TR.Debug <<"updated: "<<pos_2 + start_relevant_chain -1 <<" " << pos + start_relevant_chain - 1<< " " <<distance_ca << std::endl;
 
-				if (pos > pos_2)
-					seq_sep = pos - pos_2;
-				else
-					seq_sep = 0; //to avoid repetition
-					//seq_sep = pos_2 - pos;
+							if ( distance_ca > distance_cutoff ) {
+								//adjust numbering to the current input pose!
+								core::conformation::Residue res_in_pose = pose.residue( pos + start_relevant_chain - 1 );
+								core::conformation::Residue res_in_pose2= pose.residue( pos_2 + start_relevant_chain - 1);
 
-				if ( seq_sep >= seq_separation  ){
-					if ( !res_is_loop && !res2_is_loop ) {
-						if( !cut_point_pos && !cut_point_pos_2 ){
-
-							if (!res_cst_free){
-		 						core::conformation::Residue res_pos = pose_of_int->residue(pos);
-								core::conformation::Residue res_pos_2 = pose_of_int->residue(pos_2);
-
-								Real const distance_ca( res_pos.xyz( res_pos.atom_index("CA") ).distance( res_pos_2.xyz( res_pos_2.atom_index("CA") )));
-								TR.Debug  <<"distance contraints for: " << pos_2 <<" "<< pos << " "<<distance_ca <<std::endl;
-								TR.Debug <<"updated: "<<pos_2 + start_relevant_chain -1 <<" " << pos + start_relevant_chain - 1<< " " <<distance_ca << std::endl;
-
-								if( distance_ca > distance_cutoff ){
-									//adjust numbering to the current input pose!
-									core::conformation::Residue res_in_pose = pose.residue( pos + start_relevant_chain - 1 );
-									core::conformation::Residue res_in_pose2= pose.residue( pos_2 + start_relevant_chain - 1);
-
-									cst->add_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint ( AtomID(res_in_pose.atom_index("CA"), pos + start_relevant_chain - 1), AtomID(res_in_pose2.atom_index("CA"),pos_2 + start_relevant_chain - 1), core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( distance_ca, stddev ) ) ) ) ) );
-								}
-								}
+								cst->add_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint ( AtomID(res_in_pose.atom_index("CA"), pos + start_relevant_chain - 1), AtomID(res_in_pose2.atom_index("CA"),pos_2 + start_relevant_chain - 1), core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( distance_ca, stddev ) ) ) ) ) );
+							}
 						}
 					}
-				}//end seq_sep
-			}
+				}
+			}//end seq_sep
 		}
+	}
 }
 
 void
@@ -220,9 +223,9 @@ CAcstGenerator::apply( pose::Pose & pose ){
 
 	utility::vector1< Size > cutpoints = pose.fold_tree().cutpoints();
 
-	for( Size i=1;i<=cutpoints.size(); i++) {
-    TR.Debug <<"cutpoints: " << cutpoints[i] << std::endl;
-  }
+	for ( Size i=1; i<=cutpoints.size(); i++ ) {
+		TR.Debug <<"cutpoints: " << cutpoints[i] << std::endl;
+	}
 
 	TR.Debug << "foldtree: " << pose.fold_tree();
 
@@ -231,52 +234,52 @@ CAcstGenerator::apply( pose::Pose & pose ){
 	ca_cst_ = core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet() );
 
 	//this all has to be checked during run time since parse time input will be inaccurate if the pose has been grown before
-	if( from_chain_ == 0 ){
+	if ( from_chain_ == 0 ) {
 		TR<<"user did not specify for which chain constraints should be derrived, defaulting to all chains"<<std::endl;
-		if( template_presence_ ){
+		if ( template_presence_ ) {
 			donor_poseOP = template_pdb_;
 			TR<<"derriving CA distance constraints from the template pdb, since a template was given"<<std::endl;
-		}
-		else
+		} else {
 			donor_poseOP = pose.get_self_ptr();
+		}
 	}
 
 	//statements to prevent bogus from happening
-	if( to_chain_ == 0 && template_presence_ ){
-		if (pose.total_residue() != template_pdb_->total_residue() )
+	if ( to_chain_ == 0 && template_presence_ ) {
+		if ( pose.total_residue() != template_pdb_->total_residue() ) {
 			utility_exit_with_message("chain(s) to derrive constraints form and chain(s) to apply it to, do NOT have the same residue number. NOT supported." );
+		}
 	}
 
-	if( from_chain_ != 0 ){
-		if( template_presence_ ){
+	if ( from_chain_ != 0 ) {
+		if ( template_presence_ ) {
 			donor_poseOP = template_pdb_->split_by_chain( from_chain_ );
 			TR<<"derriving CA distance constraints from the template pdb"<<std::endl;
-		}
-		else{
+		} else {
 			donor_poseOP = pose.split_by_chain( from_chain_ );
 		}
 	}
 
-	if( to_chain_ != 0 ){
+	if ( to_chain_ != 0 ) {
 		start_recipient_chain = pose.conformation().chain_begin( to_chain_ );
 		TR<<"adding constraints starting from index residue: " <<start_recipient_chain <<std::endl;
 	}
 
-	if( from_chain_ != 0 && to_chain_ != 0 ){
+	if ( from_chain_ != 0 && to_chain_ != 0 ) {
 		TR<<"donor chain length: " << donor_poseOP->total_residue() <<", recipient chain length: " << pose.conformation().chain_end( to_chain_ ) - pose.conformation().chain_begin( to_chain_) +1 <<std::endl;
-		if( donor_poseOP->total_residue() != (pose.conformation().chain_end( to_chain_ ) - pose.conformation().chain_begin( to_chain_) + 1) )
+		if ( donor_poseOP->total_residue() != (pose.conformation().chain_end( to_chain_ ) - pose.conformation().chain_begin( to_chain_) + 1) ) {
 			utility_exit_with_message("donor pose and recipient chain do not have the same residue numbers, check your template or input pdb");
+		}
 	}
 
 
 	add_dist_constraints( pose, donor_poseOP , start_recipient_chain , ca_cst_, all_seeds_ , clear_seeds_ , cutpoints,
-			seed_exceptions_, add_cst_seed_ , stddev_, seq_separation_, distance_cutoff_);
+		seed_exceptions_, add_cst_seed_ , stddev_, seq_separation_, distance_cutoff_);
 
-	if( replace_ ){
+	if ( replace_ ) {
 		TR<<"replacing all constraints with newly generated constraint set" <<std::endl;
 		pose.constraint_set( ca_cst_ );
-	}
-	else {
+	} else {
 		utility_exit_with_message("ADDing new constraints to pose, is currently not supported, try just replacing"); //<<std::endl;
 	}
 	TR.flush();
@@ -284,16 +287,16 @@ CAcstGenerator::apply( pose::Pose & pose ){
 
 std::string
 CAcstGenerator::get_name() const {
-		return CAcstGeneratorCreator::mover_name();
-		}
+	return CAcstGeneratorCreator::mover_name();
+}
 
 
 void
 CAcstGenerator::parse_my_tag( TagCOP const tag,
-							  basic::datacache::DataMap & /*data*/,
-							  protocols::filters::Filters_map const & /*filters*/,
-							  Movers_map const &,
-							  Pose const & ){
+	basic::datacache::DataMap & /*data*/,
+	protocols::filters::Filters_map const & /*filters*/,
+	Movers_map const &,
+	Pose const & ){
 
 	TR<<"CAcstGenerator has been invoked"<<std::endl;
 
@@ -308,7 +311,7 @@ CAcstGenerator::parse_my_tag( TagCOP const tag,
 
 	TR<<"setting constraint standard deviation to "<< stddev_<< std::endl;
 
-	if( tag->hasOption( "template_pdb" ) ){
+	if ( tag->hasOption( "template_pdb" ) ) {
 		std::string const template_pdb_fname( tag->getOption< std::string >( "template_pdb" ));
 		template_pdb_ = core::pose::PoseOP( new core::pose::Pose ) ;
 		core::import_pose::pose_from_pdb( *template_pdb_, template_pdb_fname );
@@ -324,25 +327,26 @@ CAcstGenerator::parse_my_tag( TagCOP const tag,
 
 	distance_cutoff_ = tag->getOption< core::Real >("distance", 6.0 );
 
-  if( tag->hasOption( "add_seed_residues" ) ){
+	if ( tag->hasOption( "add_seed_residues" ) ) {
 		std::string residues_string = tag->getOption< std::string > ("add_seed_residues" );
-    utility::vector1< std::string > const residue_keys( utility::string_split( residues_string, ',' ) );
-    BOOST_FOREACH( std::string const key, residue_keys ){
+		utility::vector1< std::string > const residue_keys( utility::string_split( residues_string, ',' ) );
+		BOOST_FOREACH ( std::string const key, residue_keys ) {
 			Size const res( utility::string2int( key ) );
-      TR  << "add constraints to residues  within seed, residue: "<< key <<std::endl;
-      seed_exceptions_.push_back( res );
-   }
+			TR  << "add constraints to residues  within seed, residue: "<< key <<std::endl;
+			seed_exceptions_.push_back( res );
+		}
 	}
 
 	//parsing branch tags
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
 
-	BOOST_FOREACH( TagCOP const btag, branch_tags ){
+	BOOST_FOREACH ( TagCOP const btag, branch_tags ) {
 		//parse the pdb of interest, which is either the template or the input pdb depending on the users specificiation
-		if( template_presence_ )
+		if ( template_presence_ ) {
 			curr_pose_ = template_pdb_;
+		}
 
-		if( btag->getName() == "Seeds" ) { //need an assertion for the presence of these or at least for the option file
+		if ( btag->getName() == "Seeds" ) { //need an assertion for the presence of these or at least for the option file
 			//needs some assertions to avoid bogus input
 			std::string const beginS( btag->getOption<std::string>( "begin" ) );
 			std::string const endS( btag->getOption<std::string>( "end" ) );
@@ -356,7 +360,7 @@ CAcstGenerator::parse_my_tag( TagCOP const tag,
 
 		}//end seed tags
 
-		if( btag->getName() == "Clear_cst_segment" ) { //need an assertion for the presence of these or at least for the option file
+		if ( btag->getName() == "Clear_cst_segment" ) { //need an assertion for the presence of these or at least for the option file
 
 			std::string const begin_str( btag->getOption<std::string>( "begin" ) );
 			std::string const end_str( btag->getOption<std::string>( "end" ) );
@@ -370,17 +374,17 @@ CAcstGenerator::parse_my_tag( TagCOP const tag,
 	///could be eventually a vector of chains if desired
 	///but currently just the simple version...
 
-	if( tag->hasOption( "from_chain" ) ){
+	if ( tag->hasOption( "from_chain" ) ) {
 		from_chain_ = tag->getOption< core::Size >( "from_chain", 1 );
 		TR<<"chain to derrive constraints from: "<< from_chain_ <<std::endl;
 	}
 
-	if( tag->hasOption( "to_chain" ) ){
+	if ( tag->hasOption( "to_chain" ) ) {
 		to_chain_ = tag->getOption< core::Size >( "to_chain", 1 );
 		TR<<"chain to apply constraints to: "<< to_chain_ <<std::endl;
 	}
 
-	}//end parse my tag
+}//end parse my tag
 
-	}//CAcstGenerator
+}//CAcstGenerator
 }//protocol

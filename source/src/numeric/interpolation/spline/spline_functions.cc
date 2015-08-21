@@ -32,10 +32,10 @@ namespace spline {
 //derivative on that boundary.
 utility::vector1<Real>
 spline_second_derivative(
- utility::vector1<Real> const & x,
- utility::vector1<Real> const & y,
- Real yp1,
- Real ypn
+	utility::vector1<Real> const & x,
+	utility::vector1<Real> const & y,
+	Real yp1,
+	Real ypn
 )
 {
 
@@ -45,11 +45,11 @@ spline_second_derivative(
 	// cerr << "spline second derivative 1 yp1 " << yp1 << " ypn " << ypn<< endl;
 	// cerr << "                      x:" ;
 	// for(int ii=1; ii<=(int)x.size();ii++)
-	// 	cerr << ' ' << x[ii] ;
+	//  cerr << ' ' << x[ii] ;
 	// cerr << endl;
 	// cerr << "                      y:" ;
 	// for(int ii=1; ii<=(int)y.size();ii++)
-	// 	cerr << ' ' << y[ii] ;
+	//  cerr << ' ' << y[ii] ;
 	// cerr << endl;
 	// std::cerr << "starting spline_second_derivative" << std::endl;
 
@@ -59,7 +59,7 @@ spline_second_derivative(
 
 	// cout << "spline second derivative 2 "<< n <<  endl;
 	//The lower boundary condition is set either to be  nat-ural  y2[1]=u[1]=0.0;
-	if (yp1 > 0.99e30) {
+	if ( yp1 > 0.99e30 ) {
 		//or else to have a specified first derivative.
 		y2[1] = u[1]=0.0;
 	} else {
@@ -70,7 +70,7 @@ spline_second_derivative(
 	//This is the decomposition loop of the tridiagonal al-gorithm.
 	//y2 and u are used for tem-porary storage of the decomposed factors.
 
-	for (int i=2; i<=n-1; i++) {
+	for ( int i=2; i<=n-1; i++ ) {
 		Real sig=(x[i]-x[i-1])/(x[i+1]-x[i-1]);
 		Real p=sig*y2[i-1]+2.0;
 		y2[i]=(sig-1.0)/p;
@@ -80,7 +80,7 @@ spline_second_derivative(
 	}
 	// cout << "spline second derivative 4 "<< endl;
 	//The upper boundary condition is set either to be  natural  qn=un=0.0;
-	if (ypn > 0.99e30) {
+	if ( ypn > 0.99e30 ) {
 		qn = un = 0.0;
 	} else { //or else to have a specified first derivative.
 		qn=0.5;
@@ -90,7 +90,7 @@ spline_second_derivative(
 	//This is the backsubstitution loop of the tridiagonal algorithm
 	y2[n]=(un-qn*u[n-1])/(qn*y2[n-1]+1.0);
 	// cout << "spline second derivative 6 "<< endl;
-	for( int k=n-1; k>=1; k--) {
+	for ( int k=n-1; k>=1; k-- ) {
 		// cout << k << ' ' << y2[k] << ' ' << u[k] << endl;
 		y2[k]=y2[k]*y2[k+1]+u[k];
 	}
@@ -105,10 +105,10 @@ spline_second_derivative(
 //is the output from spline above, and given a value of x, this
 //routine returns a cubic-spline interpolated value y.
 void spline_interpolate(
- utility::vector1<Real> const & xa,
- utility::vector1<Real> const & ya,
- utility::vector1<Real> const & y2a,
- Real x, Real & y, Real & dy
+	utility::vector1<Real> const & xa,
+	utility::vector1<Real> const & ya,
+	utility::vector1<Real> const & y2a,
+	Real x, Real & y, Real & dy
 )
 {
 	int klo,khi;
@@ -122,17 +122,18 @@ void spline_interpolate(
 	int n = xa.size();
 	klo=1;
 	khi=n;
-	while (khi-klo > 1) {
+	while ( khi-klo > 1 ) {
 		int k=(khi+klo) >> 1;
-		if (xa[k] > x)
+		if ( xa[k] > x ) {
 			khi=k;
-		else
+		} else {
 			klo=k;
+		}
 	}
 	//klo and khi now bracket the input value of x.
 	h=xa[khi]-xa[klo];
 	// if (h == 0.0)
-		// cout << "spline interpolate: Bad xa input to routine splint" << endl;
+	// cout << "spline interpolate: Bad xa input to routine splint" << endl;
 	//The xa s must be dis-tinct.
 	a=(xa[khi]-x)/h;
 	b=(x-xa[klo])/h;

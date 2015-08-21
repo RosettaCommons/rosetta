@@ -33,47 +33,47 @@ namespace core {
 namespace import_pose {
 namespace pose_stream {
 
-	bool ExtendedPoseInputStream::has_another_pose() {
-		return ( current_n_ <= ntimes_ );
-	}
+bool ExtendedPoseInputStream::has_another_pose() {
+	return ( current_n_ <= ntimes_ );
+}
 
-	void ExtendedPoseInputStream::reset() {
-		current_n_ = 1;
-	}
+void ExtendedPoseInputStream::reset() {
+	current_n_ = 1;
+}
 
-	void ExtendedPoseInputStream::fill_pose(
-		core::pose::Pose & pose,
-		core::chemical::ResidueTypeSet const & residue_set
-	) {
-		// check to make sure that we have more poses!
-		if ( !has_another_pose() ) {
-			utility_exit_with_message(
-				"ExtendedPoseInputStream: called fill_pose, but I have no more Poses!"
-			);
-		}
-
-		core::pose::make_pose_from_sequence(
-			 pose,
-			 seq_,
-			 residue_set
-		);
-
-		for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
-			pose.set_phi  ( pos, -150 );
-			pose.set_psi  ( pos,  150 );
-			pose.set_omega( pos,  180 );
-		}
-
-		++current_n_;
-	} // fill_pose
-
-	void ExtendedPoseInputStream::fill_pose(
-		core::pose::Pose &
-	) {
+void ExtendedPoseInputStream::fill_pose(
+	core::pose::Pose & pose,
+	core::chemical::ResidueTypeSet const & residue_set
+) {
+	// check to make sure that we have more poses!
+	if ( !has_another_pose() ) {
 		utility_exit_with_message(
-				"ExtendedPoseInputStream: called fill_pose, but without ResidueType Set"
+			"ExtendedPoseInputStream: called fill_pose, but I have no more Poses!"
 		);
 	}
+
+	core::pose::make_pose_from_sequence(
+		pose,
+		seq_,
+		residue_set
+	);
+
+	for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
+		pose.set_phi  ( pos, -150 );
+		pose.set_psi  ( pos,  150 );
+		pose.set_omega( pos,  180 );
+	}
+
+	++current_n_;
+} // fill_pose
+
+void ExtendedPoseInputStream::fill_pose(
+	core::pose::Pose &
+) {
+	utility_exit_with_message(
+		"ExtendedPoseInputStream: called fill_pose, but without ResidueType Set"
+	);
+}
 
 } // pose_stream
 } // import_pose

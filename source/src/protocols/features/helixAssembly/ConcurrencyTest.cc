@@ -52,40 +52,40 @@ namespace protocols {
 namespace features {
 namespace helixAssembly {
 
-	void
-	ConcurrencyTest::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
+void
+ConcurrencyTest::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 
-		using namespace basic::database::schema_generator;
+	using namespace basic::database::schema_generator;
 
-		PrimaryKey id(Column("id", DbDataTypeOP( new DbBigInt() ), false));
-		Column random_number(Column("description", DbDataTypeOP( new DbInteger() )));
+	PrimaryKey id(Column("id", DbDataTypeOP( new DbBigInt() ), false));
+	Column random_number(Column("description", DbDataTypeOP( new DbInteger() )));
 
-		Schema concurrency_test("concurrency_test", id);
-		concurrency_test.add_column(random_number);
+	Schema concurrency_test("concurrency_test", id);
+	concurrency_test.add_column(random_number);
 
-		concurrency_test.write(db_session);
+	concurrency_test.write(db_session);
 
+}
+
+/// @brief collect all the feature data for the pose
+core::Size
+ConcurrencyTest::report_features(
+	core::pose::Pose const &,
+	utility::vector1<bool> const &,
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session
+){
+
+
+	std::string test_insert =  "INSERT INTO concurrency_test (id, random_num) VALUES (?);";
+	for ( int i=1; i<=100000; i++ ) {
+		cppdb::statement test_stmt(basic::database::safely_prepare_statement(test_insert,db_session));
+		test_stmt.bind(1,struct_id);
+		test_stmt.bind(2,numeric::random::random_range(0,INT_MAX));
+		basic::database::safely_write_to_database(test_stmt);
 	}
-
-	/// @brief collect all the feature data for the pose
-	core::Size
-	ConcurrencyTest::report_features(
-		core::pose::Pose const &,
-		utility::vector1<bool> const &,
-		StructureID struct_id,
-		utility::sql_database::sessionOP db_session
-	){
-
-
-		std::string test_insert =  "INSERT INTO concurrency_test (id, random_num) VALUES (?);";
-		for(int i=1; i<=100000; i++){
-			cppdb::statement test_stmt(basic::database::safely_prepare_statement(test_insert,db_session));
-			test_stmt.bind(1,struct_id);
-			test_stmt.bind(2,numeric::random::random_range(0,INT_MAX));
-			basic::database::safely_write_to_database(test_stmt);
-		}
-		return 0;
-	}
+	return 0;
+}
 
 }
 }

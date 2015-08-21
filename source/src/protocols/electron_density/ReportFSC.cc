@@ -77,13 +77,13 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 	}
-	for (core::Size i = 1; i <= pose.total_residue(); ++i) {
-		if (asymm_only_ && symm_info && !symm_info->bb_is_independent( i ) ) continue;
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( asymm_only_ && symm_info && !symm_info->bb_is_independent( i ) ) continue;
 		core::conformation::Residue const & rsd_i ( pose.residue(i) );
 		if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
 
 		core::Size natoms = rsd_i.nheavyatoms();
-		for (core::Size j = 1; j <= natoms; ++j) {
+		for ( core::Size j = 1; j <= natoms; ++j ) {
 			core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 
 			poseCoord coord_j;
@@ -108,13 +108,13 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 	numeric::fourier::fft3(core::scoring::electron_density::getDensityMap().data(), FrhoO);
 
 	core::scoring::electron_density::getDensityMap().getFSC( FrhoC, FrhoO, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmap1FSC, bin_squared_ );
-	for (Size i=1; i<=modelmap1FSC.size(); ++i) fsc1+=modelmap1FSC[i];
+	for ( Size i=1; i<=modelmap1FSC.size(); ++i ) fsc1+=modelmap1FSC[i];
 	fsc1 /= modelmap1FSC.size();
 
-	if (testmap_ && testmap_->isMapLoaded()) {
+	if ( testmap_ && testmap_->isMapLoaded() ) {
 		numeric::fourier::fft3(testmap_->data(), FrhoO);
 		testmap_->getFSC( FrhoC, FrhoO, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmap2FSC, bin_squared_ );
-		for (Size i=1; i<=modelmap2FSC.size(); ++i) fsc2+=modelmap2FSC[i];
+		for ( Size i=1; i<=modelmap2FSC.size(); ++i ) fsc2+=modelmap2FSC[i];
 		fsc2 /= modelmap2FSC.size();
 	}
 
@@ -123,27 +123,29 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 	std::ostringstream oss;
 	core::Real maskwidth =  core::scoring::electron_density::getDensityMap().getAtomMask();
 
-	if (mask_)
+	if ( mask_ ) {
 		oss << "FSC[mask=" << maskwidth << "](" << res_low_ << ":" << res_high_ << ") = " << fsc1;
-	else
+	} else {
 		oss << "FSC(" << res_low_ << ":" << res_high_ << ") = " << fsc1;
+	}
 
-	if (testmap_ && testmap_->isMapLoaded())
+	if ( testmap_ && testmap_->isMapLoaded() ) {
 		oss << " / " << fsc2;
+	}
 
 	TR << oss.str() << std::endl;
-	remark.num = 1;	remark.value = oss.str();
+	remark.num = 1; remark.value = oss.str();
 	pose.pdb_info()->remarks().push_back( remark );
 }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 ReportFSC::parse_my_tag(
-		TagCOP const tag,
-		basic::datacache::DataMap &,
-		Filters_map const &,
-		moves::Movers_map const &,
-		Pose const &)
+	TagCOP const tag,
+	basic::datacache::DataMap &,
+	Filters_map const &,
+	moves::Movers_map const &,
+	Pose const &)
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

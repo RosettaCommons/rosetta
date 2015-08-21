@@ -72,7 +72,7 @@ RBSegmentRelaxImpl::RBSegmentRelaxImpl(){
 	//////////////////
 	// rbmover scorefn
 	scorefxn_rb_ = core::scoring::ScoreFunctionFactory::create_score_function(
-			basic::options::option[ basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn ]()
+		basic::options::option[ basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn ]()
 	);
 	core::pose::Pose native_pose;
 
@@ -102,17 +102,19 @@ void RBSegmentRelaxImpl::apply( core::pose::Pose & pose ){
 	protocols::loops::Loops loops;
 	std::string rbfilename( basic::options::option[ basic::options::OptionKeys::RBSegmentRelax::rb_file ]().name() );
 
-	for (int i=1; i<=pose.fold_tree().num_cutpoint() ; ++i)
+	for ( int i=1; i<=pose.fold_tree().num_cutpoint() ; ++i ) {
 		cutpts.push_back( pose.fold_tree().cutpoint(i) );
+	}
 	int last_peptide_res = pose.total_residue();
 	while ( !pose.residue( last_peptide_res ).is_protein() )
-		last_peptide_res--;
+			last_peptide_res--;
 	read_RBSegment_file( rbsegs, loops, rbfilename, true, last_peptide_res , cutpts  );
 
 	// read fragments
 	utility::vector1< core::fragment::FragSetOP > frag_libs;
-	if ( basic::options::option[ basic::options::OptionKeys::loops::frag_files ].user() )
+	if ( basic::options::option[ basic::options::OptionKeys::loops::frag_files ].user() ) {
 		protocols::loops::read_loop_fragments( frag_libs );
+	}
 
 #ifdef BOINC_GRAPHICS
 	// attach boinc graphics pose observer
@@ -134,13 +136,13 @@ RBSegmentRelaxImpl::get_name() const{
 
 int
 RBSegmentRelax_main() {
-//	using namespace rbsegment_relax;
-//	using namespace jobdist;
-//	using namespace basic::options;
-//	using namespace basic::options::OptionKeys;
-//	using namespace core::scoring;
-//	using namespace core::chemical;
-//	using namespace core::id;
+	// using namespace rbsegment_relax;
+	// using namespace jobdist;
+	// using namespace basic::options;
+	// using namespace basic::options::OptionKeys;
+	// using namespace core::scoring;
+	// using namespace core::chemical;
+	// using namespace core::id;
 
 
 	//core::pose::Pose start_pose, pose;
@@ -148,15 +150,15 @@ RBSegmentRelax_main() {
 
 	//std::string pdbfilename;
 	//if ( option[ OptionKeys::RBSegmentRelax::input_pdb ].user() )
-	//	pdbfilename = option[ OptionKeys::RBSegmentRelax::input_pdb ]().name();
+	// pdbfilename = option[ OptionKeys::RBSegmentRelax::input_pdb ]().name();
 	//else
-	//	pdbfilename = option[ OptionKeys::in::file::s ]()[1];
+	// pdbfilename = option[ OptionKeys::in::file::s ]()[1];
 
 	// if full-atom load starting structure as full-atom to recover sidechains later
 	//if ( option[ in::file::fullatom ]() ) {
-	//	core::import_pose::pose_from_pdb( start_pose, pdbfilename );
+	// core::import_pose::pose_from_pdb( start_pose, pdbfilename );
 	//} else {
-	//	core::import_pose::centroid_pose_from_pdb( start_pose, pdbfilename );
+	// core::import_pose::centroid_pose_from_pdb( start_pose, pdbfilename );
 	//}
 
 	// roughly guess at secondary structure
@@ -176,13 +178,13 @@ RBSegmentRelax_main() {
 	// output nonidealized silent file or PDBs?
 	//bool silent_output;
 	//if ( boinc_mode || option[ OptionKeys::out::file::silent ].user() ) {
-	//	TRb.Debug << "Outputting silent file\n";
-	//	jobdist = new protocols::jobdist::PlainSilentFileJobDistributor( input_jobs );
-	//	silent_output = true;
+	// TRb.Debug << "Outputting silent file\n";
+	// jobdist = new protocols::jobdist::PlainSilentFileJobDistributor( input_jobs );
+	// silent_output = true;
 	//} else {
-	//	TRb.Debug << "Outputting PDBs\n";
-	//	jobdist = new protocols::jobdist::PlainPdbJobDistributor( input_jobs );
-	//	silent_output = false;
+	// TRb.Debug << "Outputting PDBs\n";
+	// jobdist = new protocols::jobdist::PlainPdbJobDistributor( input_jobs );
+	// silent_output = false;
 	//}
 
 	//protocols::jobdist::BasicJobOP prev_job, curr_job;
@@ -193,45 +195,45 @@ RBSegmentRelax_main() {
 	/////
 	/////
 	//while ( jobdist->next_job(curr_job, curr_nstruct) ) { // loop over jobs
-	//	std::string curr_job_tag = curr_job->output_tag( curr_nstruct );
+	// std::string curr_job_tag = curr_job->output_tag( curr_nstruct );
 
-	//	pose = start_pose;
-//		if ( option[ in::file::fullatom ]() )
-//			core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
+	// pose = start_pose;
+	//  if ( option[ in::file::fullatom ]() )
+	//   core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
 
-//#ifdef BOINC_GRAPHICS
-//	 attach boinc graphics pose observer
-//		protocols::boinc::Boinc::attach_graphics_current_pose_observer( pose );
-//#endif
+	//#ifdef BOINC_GRAPHICS
+	//  attach boinc graphics pose observer
+	//  protocols::boinc::Boinc::attach_graphics_current_pose_observer( pose );
+	//#endif
 
-		// the rigid body movement mover
-//		RBSegmentRelax shaker( scorefxn_rb, rbsegs, loops );
-//		shaker.initialize( frag_libs );
-//		shaker.set_randomize( 2 );  //???
-//		shaker.apply( pose );
+	// the rigid body movement mover
+	//  RBSegmentRelax shaker( scorefxn_rb, rbsegs, loops );
+	//  shaker.initialize( frag_libs );
+	//  shaker.set_randomize( 2 );  //???
+	//  shaker.apply( pose );
 
-		////
-		////  output
-//		if ( silent_output ) {
-//			PlainSilentFileJobDistributor *jd =
-//					 dynamic_cast< PlainSilentFileJobDistributor * > (jobdist());
+	////
+	////  output
+	//  if ( silent_output ) {
+	//   PlainSilentFileJobDistributor *jd =
+	//      dynamic_cast< PlainSilentFileJobDistributor * > (jobdist());
 
-//			std::string silent_struct_type( "binary" );  // default to binary
-//			if ( option[ out::file::silent_struct_type ].user() ) {
-//				silent_struct_type = option[ OptionKeys::out::file::silent_struct_type ];
-//			}
+	//   std::string silent_struct_type( "binary" );  // default to binary
+	//   if ( option[ out::file::silent_struct_type ].user() ) {
+	//    silent_struct_type = option[ OptionKeys::out::file::silent_struct_type ];
+	//   }
 
-//			core::io::silent::SilentStructOP ss
-//				= core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( silent_struct_type );
+	//   core::io::silent::SilentStructOP ss
+	//    = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( silent_struct_type );
 
-//			ss->fill_struct( pose, curr_job_tag );
+	//   ss->fill_struct( pose, curr_job_tag );
 
-//			jd->dump_silent( curr_nstruct, *ss );
-//		} else {
-//			jobdist->dump_pose_and_map( curr_job_tag, pose );    // output PDB
-//		}
-//	}
-//	jobdist->shutdown();
+	//   jd->dump_silent( curr_nstruct, *ss );
+	//  } else {
+	//   jobdist->dump_pose_and_map( curr_job_tag, pose );    // output PDB
+	//  }
+	// }
+	// jobdist->shutdown();
 
 	RBSegmentRelaxImplOP rb_segment_relax_impl( new RBSegmentRelaxImpl() );
 	protocols::jd2::JobDistributor::get_instance()->go( rb_segment_relax_impl );

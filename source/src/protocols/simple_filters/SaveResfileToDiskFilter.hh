@@ -65,13 +65,13 @@ public:// constructor/destructor
 
 	// @brief constructor with arguments
 	SaveResfileToDiskFilter( core::pack::task::TaskFactoryOP task_factory,
-			utility::vector1<core::Size> selected_resis,
-			bool designable_only,
-			std::string resfile_name,
-			std::string resfile_suffix,
-			std::string resfile_prefix,
-			std::string resfile_general_property,
-			std::string selected_resis_property
+		utility::vector1<core::Size> selected_resis,
+		bool designable_only,
+		std::string resfile_name,
+		std::string resfile_suffix,
+		std::string resfile_prefix,
+		std::string resfile_general_property,
+		std::string selected_resis_property
 	);
 
 	// @brief copy constructor
@@ -129,20 +129,20 @@ public:// parser
 public:// virtual main operation
 
 	// @brief returns true if the given pose passes the filter, false otherwise.
-  virtual bool apply( core::pose::Pose const & pose ) const;
+	virtual bool apply( core::pose::Pose const & pose ) const;
 
 	// @brief public functions
 	utility::vector1< core::Size > select_residues( Pose const & pose ) const;
 	void write_resfile( Pose const & pose, utility::vector1< core::Size > const & selected_residues ) const;
 
 	/// @brief
-//  virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-//  virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
+	//  virtual core::Real report_sm( core::pose::Pose const & pose ) const;
+	//  virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
 
 
 private:
 
-  core::pack::task::TaskFactoryOP task_factory_;
+	core::pack::task::TaskFactoryOP task_factory_;
 	utility::vector1< core::Size > selected_resis_;
 	bool designable_only_;
 	bool renumber_pdb_;

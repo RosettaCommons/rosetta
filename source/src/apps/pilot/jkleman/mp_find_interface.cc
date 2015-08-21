@@ -35,17 +35,17 @@ main( int argc, char * argv [] )
 		using namespace protocols::jd2;
 		using namespace protocols::docking::membrane;
 
-		
+
 		// initialize options, RNG, and factory-registrators
 		devel::init(argc, argv);
-		
+
 		MPFindInterfaceMoverOP mfi( new MPFindInterfaceMover() );
 		JobDistributor::get_instance()->go(mfi);
 	}
-	catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
-		return -1;
-	}
+catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+	return -1;
+}
 
 	return 0;
 }

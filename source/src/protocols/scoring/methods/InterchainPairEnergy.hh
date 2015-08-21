@@ -10,7 +10,7 @@
 /// @file   core/scoring/methods/InterchainPairEnergy.hh
 /// @brief  Statistically derived rotamer pair potentials
 /// @details For docking (or between chains) only those residues at the interface
-///						and between the two interfaces need to be evaluated
+///      and between the two interfaces need to be evaluated
 /// @author Monica Berrondo
 
 
@@ -108,8 +108,8 @@ private:
 	protocols::scoring::InterchainPotential const & interchain_potential_;
 	core::scoring::EnvPairPotential const & env_potential_;
 
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 };
 
 

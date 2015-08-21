@@ -66,7 +66,7 @@ public:
 		core::scoring::func::ConformationXYZ confxyz( pose.conformation() );
 
 		core::scoring::func::HarmonicFuncOP func(
-				new core::scoring::func::HarmonicFunc( numeric::conversions::radians( 109 ), 10 ) );
+			new core::scoring::func::HarmonicFunc( numeric::conversions::radians( 109 ), 10 ) );
 
 		// angle is 146.3 = 2.5534167 radians
 		// 109 degrees = 1.90240888 radians

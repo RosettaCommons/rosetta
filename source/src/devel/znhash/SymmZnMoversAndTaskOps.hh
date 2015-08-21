@@ -300,7 +300,7 @@ public:
 
 	virtual TaskOperationOP clone() const;
 
-	virtual	void apply(
+	virtual void apply(
 		core::pose::Pose const & pose,
 		core::pack::task::PackerTask & task
 	) const;

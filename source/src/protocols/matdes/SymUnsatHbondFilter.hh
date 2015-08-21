@@ -29,16 +29,16 @@ namespace matdes {
 class SymUnsatHbondFilter : public protocols::filters::Filter {
 public:
 
-  typedef protocols::filters::Filter Super;
-  typedef protocols::filters::Filter Filter;
-  typedef protocols::filters::FilterOP FilterOP;
-  typedef core::Real Real;
-  typedef core::pose::Pose Pose;
+	typedef protocols::filters::Filter Super;
+	typedef protocols::filters::Filter Filter;
+	typedef protocols::filters::FilterOP FilterOP;
+	typedef core::Real Real;
+	typedef core::pose::Pose Pose;
 
-  typedef utility::tag::TagCOP TagCOP;
-  typedef protocols::filters::Filters_map Filters_map;
-  typedef basic::datacache::DataMap DataMap;
-  typedef protocols::moves::Movers_map Movers_map;
+	typedef utility::tag::TagCOP TagCOP;
+	typedef protocols::filters::Filters_map Filters_map;
+	typedef basic::datacache::DataMap DataMap;
+	typedef protocols::moves::Movers_map Movers_map;
 
 public:
 	// @brief default constructor
@@ -55,14 +55,14 @@ public:
 public:// virtual constructor
 
 	// @brief make clone
-  virtual protocols::filters::FilterOP clone() const;
+	virtual protocols::filters::FilterOP clone() const;
 
-  // @brief make fresh instance
-  virtual protocols::filters::FilterOP fresh_instance() const;
+	// @brief make fresh instance
+	virtual protocols::filters::FilterOP fresh_instance() const;
 
 public:// accessor
-  // @brief get name of this filter
-  virtual std::string name() const { return "SymUnsatHbond"; }
+	// @brief get name of this filter
+	virtual std::string name() const { return "SymUnsatHbond"; }
 
 public:// setters
 	void upper_threshold( core::Size const upper_cutoff );
@@ -71,7 +71,7 @@ public:// setters
 	void verbose( bool const verb );
 	void write2pdb( bool const write );
 	void mode( std::string const mode );
-  void reference_pose( core::pose::PoseOP const reference_pose );
+	void reference_pose( core::pose::PoseOP const reference_pose );
 	void compare_to_ref( bool const compare_to_ref );
 
 public:// getters
@@ -81,19 +81,19 @@ public:// getters
 	bool verbose() const;
 	bool write2pdb() const;
 	std::string mode() const;
- 	core::pose::PoseOP reference_pose() const;
+	core::pose::PoseOP reference_pose() const;
 	bool compare_to_ref() const;
 
 public:// parser
 
-  virtual void parse_my_tag( TagCOP tag,
-    basic::datacache::DataMap &,
-    protocols::filters::Filters_map const &,
-    Movers_map const &,
-    Pose const & );
+	virtual void parse_my_tag( TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		Movers_map const &,
+		Pose const & );
 	void parse_def( utility::lua::LuaObject const & def,
-					utility::lua::LuaObject const & score_fxns,
-					utility::lua::LuaObject const & tasks );
+		utility::lua::LuaObject const & score_fxns,
+		utility::lua::LuaObject const & tasks );
 
 public:// virtual main operation
 

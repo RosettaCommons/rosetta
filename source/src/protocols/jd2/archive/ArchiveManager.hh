@@ -61,27 +61,27 @@ public:
 
 	//c'stor
 	Batch( utility::options::OptionCollection const& options, bool intermediate_structs, bool has_silent_in, core::Size nstruct )
-		: nstruct_( nstruct ),
-			intermediate_structs_( intermediate_structs ),
-			has_silent_in_( has_silent_in ),
-			has_finished_( false ),
-			is_cancelled_( false ),
-			allow_reading_cancelled_decoys_( true ),
-			invalid_( false ),
-			options_( options ),
-			decoys_returned_to_archive_( 0 )
+	: nstruct_( nstruct ),
+		intermediate_structs_( intermediate_structs ),
+		has_silent_in_( has_silent_in ),
+		has_finished_( false ),
+		is_cancelled_( false ),
+		allow_reading_cancelled_decoys_( true ),
+		invalid_( false ),
+		options_( options ),
+		decoys_returned_to_archive_( 0 )
 	{};
 
 	///c'stor
 	Batch( core::Size id ) : batch_id_( id ),
-													 nstruct_( 0 ),
-													 intermediate_structs_( false ),
-													 has_silent_in_( false ),
-													 has_finished_( false ),
-													 is_cancelled_( false ),
-													 allow_reading_cancelled_decoys_( true ),
-													 invalid_( false ),
-													 decoys_returned_to_archive_( 0 )
+		nstruct_( 0 ),
+		intermediate_structs_( false ),
+		has_silent_in_( false ),
+		has_finished_( false ),
+		is_cancelled_( false ),
+		allow_reading_cancelled_decoys_( true ),
+		invalid_( false ),
+		decoys_returned_to_archive_( 0 )
 
 	{};
 
@@ -199,8 +199,8 @@ private:
 /// @detail he owns an Archive (AbstractArchiveBase) that will be handed the decoys and is asked to generate_batch() if the QUEUE_EMPTY .
 class BaseArchiveManager {
 public:
-  /// @brief ctor is protected; singleton pattern
-  BaseArchiveManager() : theArchive_( /* NULL */ ) {};
+	/// @brief ctor is protected; singleton pattern
+	BaseArchiveManager() : theArchive_( /* NULL */ ) {};
 	virtual ~BaseArchiveManager() {};  //virtual destructor because we have virtual functions
 
 public:
@@ -243,15 +243,15 @@ private:
 class ArchiveManager : public BaseArchiveManager {
 	typedef BaseArchiveManager Parent;
 public:
-  /// @brief ctor is protected; singleton pattern
-  ArchiveManager( core::Size archive_rank, core::Size jd_master_rank, core::Size file_buf_rank );
+	/// @brief ctor is protected; singleton pattern
+	ArchiveManager( core::Size archive_rank, core::Size jd_master_rank, core::Size file_buf_rank );
 	virtual ~ArchiveManager() {}; //virtual destructor because we have virtual functions
 
 
 public:
 	static void register_options();
 
-  void go( ArchiveBaseOP );
+	void go( ArchiveBaseOP );
 
 	//this will read options to check
 	//it will read the broker_file and check
@@ -267,8 +267,8 @@ protected:
 	/// @brief triggered in slave if new batch_ID comes in.
 	virtual void batch_underflow() {};
 
-// 	/// @brief return true if message was understood
-// 	virtual bool process_message( int msg_tag, int slave_rank, int slave_job_id );
+	//  /// @brief return true if message was understood
+	//  virtual bool process_message( int msg_tag, int slave_rank, int slave_job_id );
 
 	void idle();
 
@@ -280,7 +280,7 @@ protected:
 	void send_stop_to_jobdistributor();
 
 
-  friend class JobDistributorFactory; //ctor access
+	friend class JobDistributorFactory; //ctor access
 
 	virtual void unlock_file( Batch const& batch, bool final );
 private:
@@ -291,7 +291,7 @@ private:
 	core::Size const file_buf_rank_;
 
 	typedef MPIArchiveJobDistributor::CompletionMessage CompletionMessage;
-	typedef	std::map< core::Size, CompletionMessage > CompletionMessages;
+	typedef std::map< core::Size, CompletionMessage > CompletionMessages;
 	CompletionMessages jobs_completed_;
 	/// @brief specify seconds between automatic saves to filesystem
 	core::Size save_archive_time_interval_;

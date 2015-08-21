@@ -52,7 +52,7 @@ using namespace basic::options::OptionKeys;
 
 /// @brief ctor
 UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor() :
-  MPIWorkPoolJobDistributor()
+	MPIWorkPoolJobDistributor()
 {}
 
 /// @brief dtor (don't put anything in here)
@@ -248,10 +248,10 @@ void
 UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::add_unfolded_energy_data( std::string tlc, core::scoring::EMapVector const & scores )
 {
 	if ( rank_ == 0 ) {
-    master_add_unfolded_energy_data( tlc, scores );
-  } else {
-    slave_add_unfolded_energy_data( tlc, scores );
-  }
+		master_add_unfolded_energy_data( tlc, scores );
+	} else {
+		slave_add_unfolded_energy_data( tlc, scores );
+	}
 }
 
 void
@@ -307,10 +307,10 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::set_energy_terms(core::s
 	using namespace protocols::jd2;
 
 	if ( rank_ == 0 ) {
-    master_set_energy_terms( weights );
-  } else {
+		master_set_energy_terms( weights );
+	} else {
 		slave_set_energy_terms( weights );
-  }
+	}
 }
 
 void

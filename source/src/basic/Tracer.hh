@@ -85,8 +85,8 @@ public:
 
 	/// @brief Return true if inner string buffer is empty.
 	bool is_flushed() const {
-			basic_tstringbuf<char> * buf = dynamic_cast< basic_tstringbuf<char> * >( this->rdbuf() );
-			return buf->str().size() == 0;
+		basic_tstringbuf<char> * buf = dynamic_cast< basic_tstringbuf<char> * >( this->rdbuf() );
+		return buf->str().size() == 0;
 	}
 
 protected:
@@ -207,7 +207,7 @@ public:
 	static void calculate_tracer_visibilities();
 
 public: /// Inner Classes
-	 /// @brief Small inner class acting as a proxy to an object that hold it.
+	/// @brief Small inner class acting as a proxy to an object that hold it.
 	class TracerProxy : public otstream // std::ostringstream //
 	{
 	public:
@@ -246,7 +246,7 @@ public: /// Inner Classes
 
 	/// @details Static objects holding various ASCII CSI codes (see utility/CSI_Sequence.hh)
 	static utility::CSI_Sequence Reset, Bold, Underline,
-		  Black,   Red,   Green,   Yellow,   Blue,   Magenta,   Cyan,   White,
+		Black,   Red,   Green,   Yellow,   Blue,   Magenta,   Cyan,   White,
 		bgBlack, bgRed, bgGreen, bgYellow, bgBlue, bgMagenta, bgCyan, bgWhite;
 
 protected:

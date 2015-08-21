@@ -30,7 +30,7 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-	#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.hh>
 #endif
 
 
@@ -45,14 +45,14 @@ const int LENGTH_TLC( 3 );
 class UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor : public protocols::jd2::MPIWorkPoolJobDistributor
 {
 public:
-	typedef	std::map<std::string, utility::vector1< core::scoring::EMapVector > >::iterator uem_iter;
+	typedef std::map<std::string, utility::vector1< core::scoring::EMapVector > >::iterator uem_iter;
 
-  /// @brief ctor is protected; singleton pattern
-  UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor();
+	/// @brief ctor is protected; singleton pattern
+	UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor();
 
 	///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 	///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
-  virtual ~UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor();
+	virtual ~UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor();
 
 	/// @brief dummy for master/slave version
 	void
@@ -65,9 +65,9 @@ public:
 protected:
 
 	/// @brief
-  virtual
-  void
-  master_go( protocols::moves::MoverOP mover );
+	virtual
+	void
+	master_go( protocols::moves::MoverOP mover );
 
 private:
 

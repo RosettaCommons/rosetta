@@ -77,12 +77,12 @@ static thread_local basic::Tracer TR( "protocols.dna.PDBOutput", t_info );
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 PDBOutput::PDBOutput()
-	: jd2::PDBJobOutputter(),
-		pose_copy_(/* 0 */),
-		reference_pose_(/* 0 */),
-		chi_diff_threshold_(0.0001),
-		mainchain_torsion_diff_threshold_(0.0001),
-		enabled_(true)
+: jd2::PDBJobOutputter(),
+	pose_copy_(/* 0 */),
+	reference_pose_(/* 0 */),
+	chi_diff_threshold_(0.0001),
+	mainchain_torsion_diff_threshold_(0.0001),
+	enabled_(true)
 {}
 
 PDBOutput::~PDBOutput(){}
@@ -97,8 +97,9 @@ PDBOutput::final_pose( JobOP job, Pose const & pose, std::string const & /*tag*/
 	call_output_observers( pose, job );
 	pose_copy_ = PoseOP( new Pose( pose ) );
 	ozstream pdbout( extended_name(job) );
-	if ( !pdbout.good() )
+	if ( !pdbout.good() ) {
 		utility_exit_with_message( "Unable to open file: " + extended_name(job) + "\n" );
+	}
 	pdbout << "REMARK BEGIN ROSETTA INFO\n";
 	extract_data_from_Job( job, pdbout );
 	output_pdb( pdbout );
@@ -119,8 +120,9 @@ PDBOutput::operator() (
 	pose_copy_ = PoseOP( new Pose( pose ) );
 	make_subdirs( name );
 	ozstream pdbout( name );
-	if ( !pdbout.good() )
+	if ( !pdbout.good() ) {
 		utility_exit_with_message( "Unable to open file: " + name + "\n" );
+	}
 	pdbout << "REMARK BEGIN ROSETTA INFO\n";
 	output_info( pdbout );
 	output_pdb( pdbout );
@@ -182,7 +184,7 @@ PDBOutput::note_designed_residues( PackerTaskCOP ptask )
 {
 	for ( Size index(1), end( ptask->total_residue() ); index < end; ++index ) {
 		if ( ptask->design_residue(index) ||
-			   ptask->residue_task(index).has_behavior("TARGET") ) {
+				ptask->residue_task(index).has_behavior("TARGET") ) {
 			designed_residue(index);
 		}
 	}
@@ -193,11 +195,11 @@ void
 PDBOutput::output_info( ozstream & pdbout )
 {
 	for ( StringsMap::const_iterator itr( info_map_.begin() ), end( info_map_.end() );
-	      itr != end; ++itr ) {
+			itr != end; ++itr ) {
 		// the 'key' or title for this particular set of information
 		pdbout << itr->first << '\n';
 		for ( Strings::const_iterator line( itr->second.begin() ), end2( itr->second.end() );
-		      line != end2; ++line ) {
+				line != end2; ++line ) {
 			pdbout << *line << '\n';
 		}
 		pdbout << "REMARK\n";
@@ -246,18 +248,18 @@ PDBOutput::residues_are_different(
 	// check sidechain torsions
 	vector1< Real > const & res1chi( res1.chi() ), res2chi( res2.chi() );
 	for ( vector1< Real >::const_iterator it1( res1chi.begin() ), it2( res2chi.begin() ),
-	      end1( res1chi.end() ), end2( res2chi.end() ); it1 != end1 && it2 != end2; ++it1, ++it2 ) {
+			end1( res1chi.end() ), end2( res2chi.end() ); it1 != end1 && it2 != end2; ++it1, ++it2 ) {
 		if ( std::abs( *it1 - *it2 ) > chi_diff_threshold_ ) {
-//			TR(t_info) << "Chis differ: " << F(6,3,*it1) << " " << F(6,3,*it2) << std::endl;
+			//   TR(t_info) << "Chis differ: " << F(6,3,*it1) << " " << F(6,3,*it2) << std::endl;
 			return true;
 		}
 	}
 	// check mainchain torsions
 	vector1< Real > const & res1mc( res1.mainchain_torsions() ), res2mc( res2.mainchain_torsions() );
 	for ( vector1< Real >::const_iterator it1( res1mc.begin() ), it2( res2mc.begin() ),
-	      end1( res1mc.end() ), end2( res2mc.end() ); it1 != end1 && it2 != end2; ++it1, ++it2 ) {
+			end1( res1mc.end() ), end2( res2mc.end() ); it1 != end1 && it2 != end2; ++it1, ++it2 ) {
 		if ( std::abs( *it1 - *it2 ) > mainchain_torsion_diff_threshold_ ) {
-//			TR(t_info) << "mainchain dihedrals differ: " << F(6,3,*it1) << " " << F(6,3,*it2) << std::endl;
+			//   TR(t_info) << "mainchain dihedrals differ: " << F(6,3,*it1) << " " << F(6,3,*it2) << std::endl;
 			return true;
 		}
 	}
@@ -276,9 +278,9 @@ PDBOutput::get_residue_indices_to_output()
 		}
 	} else {
 		for ( Size i(1), endpose( pose_copy_->total_residue() ),
-			endref( reference_pose_->total_residue() ); i <= endpose; ++i ) {
+				endref( reference_pose_->total_residue() ); i <= endpose; ++i ) {
 			if ( i <= endref &&
-				!residues_are_different( pose_copy_->residue(i), reference_pose_->residue(i) ) ) continue;
+					!residues_are_different( pose_copy_->residue(i), reference_pose_->residue(i) ) ) continue;
 			res_indices_to_output_.push_back(i);
 		}
 	}
@@ -293,7 +295,7 @@ string_join(
 {
 	std::string os;
 	for ( std::list< std::string >::const_iterator it( list.begin() ), end( list.end() );
-		    it != end; ++it ) os += sep + *it;
+			it != end; ++it ) os += sep + *it;
 	return os;
 }
 
@@ -309,10 +311,10 @@ PDBOutput::output_design_tags( ozstream & pdbout ) const
 
 	for ( Size index(1), nres( pose_copy_->total_residue() ); index <= nres; ++index ) {
 		std::ostringstream os;
-		if ( pose_copy_->pdb_info() )
+		if ( pose_copy_->pdb_info() ) {
 			os << pose_copy_->pdb_info()->number( index ) << " "
 				<< pose_copy_->pdb_info()->chain( index );
-		else os << index << " " << pose_copy_->chain( index );
+		} else os << index << " " << pose_copy_->chain( index );
 
 		if ( reference_pose_ ) {
 			// compare to reference pose if it exists
@@ -320,9 +322,9 @@ PDBOutput::output_design_tags( ozstream & pdbout ) const
 			if ( pose_copy_->residue_type(index).aa() != reference_pose_->residue_type(index).aa() ) {
 				if ( pose_copy_->residue_type(index).is_DNA() ) mutated_DNA.push_back( os.str() );
 				else mutated.push_back( os.str() );
-			// no mutation, but structure changed
+				// no mutation, but structure changed
 			} else if ( residues_are_different( pose_copy_->residue(index),
-				reference_pose_->residue(index) ) ) {
+					reference_pose_->residue(index) ) ) {
 				if ( pose_copy_->residue_type(index).is_DNA() ) moved_DNA.push_back( os.str() );
 				else moved.push_back( os.str() );
 			}
@@ -364,12 +366,12 @@ PDBOutput::output_score_info( ozstream & pdbout )
 		// end header
 		// residues
 		for ( vector1< Size >::const_iterator pos( res_indices_to_output_.begin() ),
-			    end( res_indices_to_output_.end() ); pos != end; ++pos ) {
+				end( res_indices_to_output_.end() ); pos != end; ++pos ) {
 			pdbout << "REMARK ";
 			if ( pose_copy_->pdb_info() ) {
 				pdbout << I( 4, pose_copy_->pdb_info()->number(*pos) )
-				<< A( 4, pose_copy_->residue(*pos).type().name3() )
-				<< A( 2, pose_copy_->pdb_info()->chain(*pos) );
+					<< A( 4, pose_copy_->residue(*pos).type().name3() )
+					<< A( 2, pose_copy_->pdb_info()->chain(*pos) );
 			} else {
 				pdbout << I( 4, *pos ) << A( 4, pose_copy_->residue(*pos).type().name3() )
 					<< A( 2, pose_copy_->chain(*pos) );
@@ -390,8 +392,8 @@ PDBOutput::output_score_info( ozstream & pdbout )
 	EnergyMap const & total_energies( pose_copy_->energies().total_energies() );
 	for ( int i(1); i <= n_score_types; ++i ) {
 		Real const E( total_energies[ ScoreType(i) ] ),
-		           W( weights[ ScoreType(i) ] );
-//		if ( E == 0 || W == 0 ) continue;
+			W( weights[ ScoreType(i) ] );
+		//  if ( E == 0 || W == 0 ) continue;
 		if ( W == 0 ) continue;
 		Real const weighted_E( E * W );
 		std::string const name( ScoreTypeManager::name_from_score_type( ScoreType(i) ) );
@@ -413,7 +415,7 @@ PDBOutput::output_hbond_info( ozstream & pdbout )
 	using namespace scoring::hbonds;
 	HBondSet hbond_set;
 	// omission can result in failed 'graph_state_ == GOOD' assertion, but pose is const...
-//	pose.update_residue_neighbors();
+	// pose.update_residue_neighbors();
 	// this yields UNWEIGHTED energies
 	fill_hbond_set( *pose_copy_, false, hbond_set );
 
@@ -430,7 +432,7 @@ PDBOutput::output_hbond_info( ozstream & pdbout )
 	// expand list of residues to consider into nres bool vector for simple lookup
 	vector1< bool > relevant_residue( pose_copy_->total_residue(), false );
 	for ( vector1< Size >::const_iterator index( res_indices_to_output_.begin() ),
-		    end( res_indices_to_output_.end() ); index != end; ++index ) {
+			end( res_indices_to_output_.end() ); index != end; ++index ) {
 		relevant_residue[ *index ] = true;
 	}
 
@@ -439,7 +441,7 @@ PDBOutput::output_hbond_info( ozstream & pdbout )
 		HBond const & hb( hbond_set.hbond(i) );
 		Size const don_res_i( hb.don_res() ), acc_res_i( hb.acc_res() );
 		Residue const & don_rsd( pose_copy_->residue( don_res_i ) ),
-										acc_rsd( pose_copy_->residue( acc_res_i ) );
+			acc_rsd( pose_copy_->residue( acc_res_i ) );
 		// skip NA-NA
 		if ( don_rsd.is_DNA() && acc_rsd.is_DNA() ) continue;
 		// skip (protein) backbone-backbone hbonds
@@ -447,14 +449,16 @@ PDBOutput::output_hbond_info( ozstream & pdbout )
 		// skip hbonds that don't involve a relevant residue
 		if ( !relevant_residue[ don_res_i ] && !relevant_residue[ acc_res_i ] ) continue;
 		// skip protein residues that are not close to DNA
-		if ( !don_rsd.is_DNA() && !interface.protein_neighbors().find( don_res_i )->second.close() )
+		if ( !don_rsd.is_DNA() && !interface.protein_neighbors().find( don_res_i )->second.close() ) {
 			continue;
-		if ( !acc_rsd.is_DNA() && !interface.protein_neighbors().find( acc_res_i )->second.close() )
+		}
+		if ( !acc_rsd.is_DNA() && !interface.protein_neighbors().find( acc_res_i )->second.close() ) {
 			continue;
+		}
 
 		Size const donH_i( hb.don_hatm() ), acc_i( hb.acc_atm() );
 		std::string const don_hatm_name( don_rsd.atom_name( donH_i ) ),
-		                  acc_atm_name( acc_rsd.atom_name( acc_i ) );
+			acc_atm_name( acc_rsd.atom_name( acc_i ) );
 
 		Real weight(0.0);
 		if ( acc_rsd.atom_is_backbone( acc_i ) || don_rsd.atom_is_backbone( donH_i ) ) {
@@ -468,7 +472,7 @@ PDBOutput::output_hbond_info( ozstream & pdbout )
 			category = ( category == "sc_bb" ? "dna_bb" : "dna_base" );
 			// dna water adduct
 			if ( acc_rsd.atom_type( acc_i ).name() == "HOH" ||
-				   don_rsd.atom_type( donH_i ).name() == "HOH"  ) {
+					don_rsd.atom_type( donH_i ).name() == "HOH"  ) {
 				category = "dna_wat";
 				weight = score_function_->weights()[ h2o_hbond ];
 			}
@@ -508,17 +512,17 @@ PDBOutput::output_hbond_info( ozstream & pdbout )
 		if ( pose_copy_->pdb_info() ) pdbout << pose_copy_->pdb_info()->chain( don_res_i );
 		else pdbout << pose_copy_->chain( don_res_i );
 		pdbout << " " << don_hatm_name << " "
-		// these coordinates are used by PyMOL plugins to create (and display) hydrogen bond cgo objects
+			// these coordinates are used by PyMOL plugins to create (and display) hydrogen bond cgo objects
 			<< F(8,3,Hxyz[0]) << " " << F(8,3,Hxyz[1]) << " " << F(8,3,Hxyz[2]) << " ";
 		pdbout << acc_rsd.name3() << " " << I(4,acc_res_i) << " " << I(4,acc_pdb) << " ";
 		if ( pose_copy_->pdb_info() ) pdbout << pose_copy_->pdb_info()->chain( acc_res_i );
 		else pdbout << pose_copy_->chain( acc_res_i );
 		pdbout << " " << acc_atm_name << " "
-		// these coordinates are used by PyMOL plugins to create (and display) hydrogen bond cgo objects
+			// these coordinates are used by PyMOL plugins to create (and display) hydrogen bond cgo objects
 			<< F(8,3,Axyz[0]) << " " << F(8,3,Axyz[1]) << " " << F(8,3,Axyz[2]) << " ";
 		pdbout << F(6,2, weighted_E ) << " " << AHdis << " " << xD << " " << xH << '\n';
 	}
-//	pdbout << "REMARK base-specific hbond energy: " << F(6,2,hb_spec) << '\n';
+	// pdbout << "REMARK base-specific hbond energy: " << F(6,2,hb_spec) << '\n';
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -536,9 +540,9 @@ PDBOutput::output_buried_unsatisfied_hbonds( ozstream & pdbout )
 	basic::MetricValue< AtomID_Map< bool > > map;
 	bu_calc.get( "atom_bur_unsat", map, *pose_copy_ );
 	for ( vector1< Size >::const_iterator pos( res_indices_to_output_.begin() ),
-		    end( res_indices_to_output_.end() ); pos != end; ++pos ) {
-		for( Size atomi(1); atomi <= map.value().n_atom(*pos); ++atomi ) {
-			if( map.value()(*pos,atomi) ) {
+			end( res_indices_to_output_.end() ); pos != end; ++pos ) {
+		for ( Size atomi(1); atomi <= map.value().n_atom(*pos); ++atomi ) {
+			if ( map.value()(*pos,atomi) ) {
 				ResidueType const & rt( pose_copy_->residue_type(*pos) );
 				std::string name3( rt.name3() );
 				if ( rt.is_DNA() ) name3 = dna_full_name3( name3 );
@@ -546,7 +550,7 @@ PDBOutput::output_buried_unsatisfied_hbonds( ozstream & pdbout )
 				pdbout << "REMARK Unsat ";
 				if ( pose_copy_->pdb_info() ) {
 					pdbout << pose_copy_->pdb_info()->chain(*pos) << '.'
-					<< pose_copy_->pdb_info()->number(*pos);
+						<< pose_copy_->pdb_info()->number(*pos);
 				} else {
 					pdbout << pose_copy_->chain(*pos) << '.' << *pos;
 				}
@@ -558,18 +562,18 @@ PDBOutput::output_buried_unsatisfied_hbonds( ozstream & pdbout )
 	// instantiation of BuriedUnsatisfiedPolarsCalculator looks up (or creates) instantiations of NumberHBondsCalculator and SasaCalculatorLegacy -- output of info from these too while we're at it
 	// somehow pose has become aware of these calculators and will not recompute them(?)
 
-//  basic::MetricValue< id::AtomID_Map< Size > > atom_hbonds;
-//  pose_copy_->metric( bu_calc.name_of_hbond_calc(), "atom_Hbonds", atom_hbonds );
-  basic::MetricValue< Size > nhbonds;
-  pose_copy_->metric( bu_calc.name_of_hbond_calc(), "all_Hbonds", nhbonds );
+	//  basic::MetricValue< id::AtomID_Map< Size > > atom_hbonds;
+	//  pose_copy_->metric( bu_calc.name_of_hbond_calc(), "atom_Hbonds", atom_hbonds );
+	basic::MetricValue< Size > nhbonds;
+	pose_copy_->metric( bu_calc.name_of_hbond_calc(), "all_Hbonds", nhbonds );
 
 	TR(t_info) << "pdb nhbonds " << nhbonds.value() << std::endl;
 	pdbout << "REMARK nhbonds " << nhbonds.value() << '\n';
 
-//  basic::MetricValue< id::AtomID_Map< Real > > atom_sasa;
-//  pose_copy_->metric( bu_calc.name_of_sasa_calc(), "atom_sasa", atom_sasa );
-  basic::MetricValue< Real > total_sasa;
-  pose_copy_->metric( bu_calc.name_of_sasa_calc(), "total_sasa", total_sasa );
+	//  basic::MetricValue< id::AtomID_Map< Real > > atom_sasa;
+	//  pose_copy_->metric( bu_calc.name_of_sasa_calc(), "atom_sasa", atom_sasa );
+	basic::MetricValue< Real > total_sasa;
+	pose_copy_->metric( bu_calc.name_of_sasa_calc(), "total_sasa", total_sasa );
 
 	TR(t_info) << "pdb total_sasa " << total_sasa.value() << std::endl;
 	pdbout << "REMARK total_sasa " << total_sasa.value() << '\n';

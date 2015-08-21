@@ -32,24 +32,24 @@ namespace loop_closure {
 namespace ccd {
 
 class ShortLoopClosure : public LoopClosure {
-  typedef LoopClosure Parent;
+	typedef LoopClosure Parent;
 public:
 
-  //c'stor
-  ShortLoopClosure(
-    core::fragment::FragSetCOP fragset,
-    Loop loop_def,
-    core::kinematics::MoveMapCOP movemap
-  );
+	//c'stor
+	ShortLoopClosure(
+		core::fragment::FragSetCOP fragset,
+		Loop loop_def,
+		core::kinematics::MoveMapCOP movemap
+	);
 
-  //@brief run protocol on pose
-  virtual bool apply( core::pose::Pose const& pose );
+	//@brief run protocol on pose
+	virtual bool apply( core::pose::Pose const& pose );
 
-  /// @brief save the loop-fragment in closure_frames_
-  // overwritten to realign frames to target sequence
-  virtual void catch_fragment( core::pose::Pose const& short_pose );
+	/// @brief save the loop-fragment in closure_frames_
+	// overwritten to realign frames to target sequence
+	virtual void catch_fragment( core::pose::Pose const& short_pose );
 private:
-  Loop orig_loop_;
+	Loop orig_loop_;
 };
 
 } // namespace ccd

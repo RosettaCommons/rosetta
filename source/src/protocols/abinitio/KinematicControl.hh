@@ -99,8 +99,8 @@ public:
 	void set_sampling_fold_tree( core::kinematics::FoldTree const& f) {
 		sampling_fold_tree_ = f;
 	}
-  //  void set_sample_cuts();//???
-  //void set_sample_jumps(); //???
+	//  void set_sample_cuts();//???
+	//void set_sample_jumps(); //???
 
 	void set_final_fold_tree( core::kinematics::FoldTree const& f) {
 		final_fold_tree_ = f;
@@ -124,24 +124,24 @@ public:
 
 	virtual void add_score_weights( core::scoring::ScoreFunction&, core::Real /*progress*/ ) const {};
 
-// 	loops::Loops const& rigid_zones() const {
-// 		return rigid_;
-// 	}
+	//  loops::Loops const& rigid_zones() const {
+	//   return rigid_;
+	//  }
 
-// 	void rigid_zones( loops::Loops const& rigid ) {
-// 		rigid_ = rigid;
-// 	}
+	//  void rigid_zones( loops::Loops const& rigid ) {
+	//   rigid_ = rigid;
+	//  }
 
 private:
-  core::kinematics::MoveMapCOP strict_movemap_;
-  core::kinematics::MoveMapCOP movemap_;
+	core::kinematics::MoveMapCOP strict_movemap_;
+	core::kinematics::MoveMapCOP movemap_;
 
-  core::kinematics::FoldTree sampling_fold_tree_;
-  core::kinematics::FoldTree final_fold_tree_;
+	core::kinematics::FoldTree sampling_fold_tree_;
+	core::kinematics::FoldTree final_fold_tree_;
 
-  simple_moves::FragmentMoverOP jump_mover_;
+	simple_moves::FragmentMoverOP jump_mover_;
 
-// 	loops::Loops rigid_;
+	//  loops::Loops rigid_;
 };
 
 class CoordinateConstraintKC : public KinematicControl {

@@ -262,34 +262,34 @@ OPT_KEY( Real, coordinate_constraint_weight )
 // ///////////////////////////////////////////////////////////////////////////////
 // void
 // rna_basepair_jump_atoms( chemical::AA const res,
-// 												 Size & atom1, Size & atom2, Size & atom3){
-// 	//	using namespace param_aa;
-// 	//	assert( is_RNA( res ));
-// 	using namespace chemical;
+//              Size & atom1, Size & atom2, Size & atom3){
+//  // using namespace param_aa;
+//  // assert( is_RNA( res ));
+//  using namespace chemical;
 
-// 	if ( res == na_rad ){
-// 		atom1 = 18; // C6
-// 		atom2 = 13; // N1
-// 		atom3 = 14; // C2
-// 	}
+//  if ( res == na_rad ){
+//   atom1 = 18; // C6
+//   atom2 = 13; // N1
+//   atom3 = 14; // C2
+//  }
 
-// 	if ( res == na_rcy ){
-// 		atom1 = 17; // C4
-// 		atom2 = 16; // N3
-// 		atom3 = 14; // C2
-// 	}
+//  if ( res == na_rcy ){
+//   atom1 = 17; // C4
+//   atom2 = 16; // N3
+//   atom3 = 14; // C2
+//  }
 
-// 	if ( res == na_rgu ){
-// 		atom1 = 19; // C6
-// 		atom2 = 13; // N1
-// 		atom3 = 14; // C2
-// 	}
+//  if ( res == na_rgu ){
+//   atom1 = 19; // C6
+//   atom2 = 13; // N1
+//   atom3 = 14; // C2
+//  }
 
-// 	if ( res == na_ura ){
-// 		atom1 = 17; // C4
-// 		atom2 = 16; // N3
-// 		atom3 = 14; // C2
-// 	}
+//  if ( res == na_ura ){
+//   atom1 = 17; // C4
+//   atom2 = 16; // N3
+//   atom3 = 14; // C2
+//  }
 // }
 
 // //////////////////////////////////////////
@@ -298,41 +298,41 @@ OPT_KEY( Real, coordinate_constraint_weight )
 // void
 // set_na_jump_atoms( pose::Pose & pose )
 // {
-// 	using conformation::Residue;
-// 	using namespace id;
+//  using conformation::Residue;
+//  using namespace id;
 
-// 	kinematics::FoldTree f( pose.fold_tree() );
+//  kinematics::FoldTree f( pose.fold_tree() );
 
-// 	// anchor intra-dna jumps at fourth chi1 atom (out in the base)
-// 	//
-// 	for ( Size i=1; i<= f.num_jump(); ++i ) {
-// 		Residue const & rsd1( pose.residue( f.  upstream_jump_residue( i ) ) );
-// 		Residue const & rsd2( pose.residue( f.downstream_jump_residue( i ) ) );
-// 		if ( rsd1.is_NA() && rsd2.is_NA() ) {
-// 			f.set_jump_atoms( i, rsd1.atom_name( rsd1.chi_atoms(1)[4] ), rsd2.atom_name( rsd2.chi_atoms(1)[4] ) );
-// 		} else if ( rsd1.is_NA() && rsd2.is_protein() ) {
-// 			f.set_jump_atoms( i, rsd1.atom_name( rsd1.chi_atoms(1)[4] ),  "CA" );
-// 		} else if ( rsd2.is_NA() && rsd1.is_protein() ) {
-// 			f.set_jump_atoms( i, "CA", rsd2.atom_name( rsd2.chi_atoms(1)[4] ) );
-// 		}
-// 	}
+//  // anchor intra-dna jumps at fourth chi1 atom (out in the base)
+//  //
+//  for ( Size i=1; i<= f.num_jump(); ++i ) {
+//   Residue const & rsd1( pose.residue( f.  upstream_jump_residue( i ) ) );
+//   Residue const & rsd2( pose.residue( f.downstream_jump_residue( i ) ) );
+//   if ( rsd1.is_NA() && rsd2.is_NA() ) {
+//    f.set_jump_atoms( i, rsd1.atom_name( rsd1.chi_atoms(1)[4] ), rsd2.atom_name( rsd2.chi_atoms(1)[4] ) );
+//   } else if ( rsd1.is_NA() && rsd2.is_protein() ) {
+//    f.set_jump_atoms( i, rsd1.atom_name( rsd1.chi_atoms(1)[4] ),  "CA" );
+//   } else if ( rsd2.is_NA() && rsd1.is_protein() ) {
+//    f.set_jump_atoms( i, "CA", rsd2.atom_name( rsd2.chi_atoms(1)[4] ) );
+//   }
+//  }
 
-// 	pose.fold_tree( f );
+//  pose.fold_tree( f );
 
-// 	// tinker with atomorder in atomtree so that we'll get the jump stubs we want
-// 	// useful for graphics -- keeps root base fixed in space
-// 	//
-// 	// I'm not actually sure that this is so important anymore
-// 	// I mean, it seems likely that this will in fact be the stub... but can't remember the details...
-// 	//
-// 	for ( Size i=1; i<= pose.total_residue(); ++i ) {
-// 		Residue const & rsd( pose.residue(i) );
-// 		if ( rsd.is_NA() ) {
-// 			pose.conformation().set_jump_atom_stub_id( StubID ( AtomID( rsd.chi_atoms(1)[4], i ),
-// 																													AtomID( rsd.chi_atoms(1)[3], i ),
-// 																													AtomID( rsd.chi_atoms(1)[2], i ) ) );
-// 		}
-// 	}
+//  // tinker with atomorder in atomtree so that we'll get the jump stubs we want
+//  // useful for graphics -- keeps root base fixed in space
+//  //
+//  // I'm not actually sure that this is so important anymore
+//  // I mean, it seems likely that this will in fact be the stub... but can't remember the details...
+//  //
+//  for ( Size i=1; i<= pose.total_residue(); ++i ) {
+//   Residue const & rsd( pose.residue(i) );
+//   if ( rsd.is_NA() ) {
+//    pose.conformation().set_jump_atom_stub_id( StubID ( AtomID( rsd.chi_atoms(1)[4], i ),
+//                              AtomID( rsd.chi_atoms(1)[3], i ),
+//                              AtomID( rsd.chi_atoms(1)[2], i ) ) );
+//   }
+//  }
 
 
 // }
@@ -356,12 +356,12 @@ figure_out_icoord_test( ){
 
 	std::cout << "ABOUT TO MAKE EXTENDED POSE" << std::endl;
 
-// 	ResidueTypeCOPs const & rsd_type_list(	rsd_set->aa_map( aa_from_oneletter_code( 'a' )  ) );
-// 	std::cout << "SIZE " << rsd_type_list.size() << std::endl;
-// 	for ( Size j=1; j<= rsd_type_list.size(); ++j ) {
-// 		ResidueType const & rsd_type( *(rsd_type_list[j]) );
-// 		std::cout << "ISPOLYMER" << j << " " << rsd_type.is_polymer() << std::endl;
-// 	}
+	//  ResidueTypeCOPs const & rsd_type_list( rsd_set->aa_map( aa_from_oneletter_code( 'a' )  ) );
+	//  std::cout << "SIZE " << rsd_type_list.size() << std::endl;
+	//  for ( Size j=1; j<= rsd_type_list.size(); ++j ) {
+	//   ResidueType const & rsd_type( *(rsd_type_list[j]) );
+	//   std::cout << "ISPOLYMER" << j << " " << rsd_type.is_polymer() << std::endl;
+	//  }
 
 	make_pose_from_sequence(
 		extended_pose,
@@ -389,7 +389,7 @@ figure_out_icoord_test( ){
 	start_pose = pose;
 
 	//Hmm, do I understand how to address the atom tree degrees of freedom?
-	for (Size j=1; j <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
+	for ( Size j=1; j <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j ) {
 
 		pose = start_pose;
 
@@ -397,24 +397,24 @@ figure_out_icoord_test( ){
 
 		id::AtomID id1,id2,id3,id4;
 		bool fail = pose.conformation().get_torsion_angle_atom_ids( my_ID, id1, id2, id3, id4 );
-		if (!fail){
-		std::cout << " BB: " << j << "  " <<
-			id1.rsd()  << ' ' << pose.residue( id1.rsd() ).atom_name( id1.atomno() ) << "   " <<
-			id2.rsd()  << ' ' << pose.residue( id2.rsd() ).atom_name( id2.atomno() ) << "   " <<
-			id3.rsd()  << ' ' << pose.residue( id3.rsd() ).atom_name( id3.atomno() ) << "   " <<
-			id4.rsd()  << ' ' << pose.residue( id4.rsd() ).atom_name( id4.atomno() ) << " : " <<
-			pose.torsion( my_ID ) <<
-			std::endl;
+		if ( !fail ) {
+			std::cout << " BB: " << j << "  " <<
+				id1.rsd()  << ' ' << pose.residue( id1.rsd() ).atom_name( id1.atomno() ) << "   " <<
+				id2.rsd()  << ' ' << pose.residue( id2.rsd() ).atom_name( id2.atomno() ) << "   " <<
+				id3.rsd()  << ' ' << pose.residue( id3.rsd() ).atom_name( id3.atomno() ) << "   " <<
+				id4.rsd()  << ' ' << pose.residue( id4.rsd() ).atom_name( id4.atomno() ) << " : " <<
+				pose.torsion( my_ID ) <<
+				std::endl;
 
-		pose.set_torsion( my_ID, 180.0 );
+			pose.set_torsion( my_ID, 180.0 );
 
-		dump_pdb( pose, "testBB"+string_of(j)+".pdb" );
-		std::cout << "DUMPED PDB" << j << std::endl;
+			dump_pdb( pose, "testBB"+string_of(j)+".pdb" );
+			std::cout << "DUMPED PDB" << j << std::endl;
 		}
 	}
 
 
-	for (Size j=1; j <= core::chemical::rna::NUM_RNA_CHI_TORSIONS; ++j) {
+	for ( Size j=1; j <= core::chemical::rna::NUM_RNA_CHI_TORSIONS; ++j ) {
 
 		pose = start_pose;
 
@@ -453,14 +453,14 @@ rna_fullatom_score_test()
 
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
-	if (option[fa_standard]) rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	if ( option[fa_standard] ) rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 
 	SilentFileData silent_file_data;
 	std::string const silent_file = option[ out::file::silent  ]();
 
-	for (Size i = 1; i <= pdb_files.size(); i++) {
+	for ( Size i = 1; i <= pdb_files.size(); i++ ) {
 		std::string const pdb_file = pdb_files[i];
 
 		pose::Pose pose;
@@ -488,28 +488,27 @@ rna_fullatom_score_test()
 		silent_file_data.write_silent_struct( s, silent_file, true /*write score only*/ );
 
 		//Testing HB env dep...
-		if (false )
-		{
-// 			std::cout << "*****************************" << std::endl;
-// 			std::cout << "TURNING OFF HB ENV DEP" << std::endl;
-// 			std::cout << "*****************************" << std::endl;
-// 			scorefxn->energy_method_options().hbond_options()->use_hb_env_dep( false );
-// 			(*scorefxn)( pose );
-// 			scorefxn->show( std::cout, pose );
+		if ( false ) {
+			//    std::cout << "*****************************" << std::endl;
+			//    std::cout << "TURNING OFF HB ENV DEP" << std::endl;
+			//    std::cout << "*****************************" << std::endl;
+			//    scorefxn->energy_method_options().hbond_options()->use_hb_env_dep( false );
+			//    (*scorefxn)( pose );
+			//    scorefxn->show( std::cout, pose );
 
-// 			std::cout << "*****************************" << std::endl;
-// 			std::cout << "TURNING ON HB ENV DEP" << std::endl;
-// 			std::cout << "*****************************" << std::endl;
-// 			scorefxn->energy_method_options().hbond_options()->use_hb_env_dep( true );
-// 			(*scorefxn)( pose );
-// 			scorefxn->show( std::cout, pose );
+			//    std::cout << "*****************************" << std::endl;
+			//    std::cout << "TURNING ON HB ENV DEP" << std::endl;
+			//    std::cout << "*****************************" << std::endl;
+			//    scorefxn->energy_method_options().hbond_options()->use_hb_env_dep( true );
+			//    (*scorefxn)( pose );
+			//    scorefxn->show( std::cout, pose );
 
-// 			std::cout << "*****************************" << std::endl;
-// 			std::cout << "TURNING OFF HB ENV DEP" << std::endl;
-// 			std::cout << "*****************************" << std::endl;
-// 			scorefxn->energy_method_options().hbond_options()->use_hb_env_dep( false );
-// 			(*scorefxn)( pose );
-// 			scorefxn->show( std::cout, pose );
+			//    std::cout << "*****************************" << std::endl;
+			//    std::cout << "TURNING OFF HB ENV DEP" << std::endl;
+			//    std::cout << "*****************************" << std::endl;
+			//    scorefxn->energy_method_options().hbond_options()->use_hb_env_dep( false );
+			//    (*scorefxn)( pose );
+			//    scorefxn->show( std::cout, pose );
 
 			using namespace core::scoring::methods;
 			std::cout << "*****************************" << std::endl;
@@ -555,25 +554,25 @@ rna_fullatom_score_test()
 
 		}
 
-		//		pose.dump_pdb( "score.pdb" );
+		//  pose.dump_pdb( "score.pdb" );
 
-// 		for (Size i = 1; i <= pose.total_residue(); i++ ){
-// 			id::TorsionID torsion_id( i, id::CHI, 4 );
-// 			id::DOF_ID const dof_id(  pose.conformation().dof_id_from_torsion_id( torsion_id ) );
-// 			std::cout << i << " 2'-OH-TORSION: " <<  pose.torsion( torsion_id ) << " " << numeric::conversions::degrees( pose.conformation().dof( dof_id ) ) << std::endl;
-// 		}
+		//   for (Size i = 1; i <= pose.total_residue(); i++ ){
+		//    id::TorsionID torsion_id( i, id::CHI, 4 );
+		//    id::DOF_ID const dof_id(  pose.conformation().dof_id_from_torsion_id( torsion_id ) );
+		//    std::cout << i << " 2'-OH-TORSION: " <<  pose.torsion( torsion_id ) << " " << numeric::conversions::degrees( pose.conformation().dof( dof_id ) ) << std::endl;
+		//   }
 
 		//////////////////////////////////
 		//////////////////////////////////
 		//test
-	// 			for (Real x = -180.0; x <= 180.0; x++ ){
-// 					pose::Pose my_pose;
-// 					my_pose = pose;
-// 					pose.set_torsion( id::TorsionID( 2, id::CHI, 4), x );
-// 					Real my_score = (*scorefxn)( my_pose );
-// 					RNA_SilentStruct s( my_pose, string_of( x ) );
-// 					silent_file_data.write_silent_struct( s, silent_file, true /*write score only*/ );
-// 				}
+		//    for (Real x = -180.0; x <= 180.0; x++ ){
+		//      pose::Pose my_pose;
+		//      my_pose = pose;
+		//      pose.set_torsion( id::TorsionID( 2, id::CHI, 4), x );
+		//      Real my_score = (*scorefxn)( my_pose );
+		//      RNA_SilentStruct s( my_pose, string_of( x ) );
+		//      silent_file_data.write_silent_struct( s, silent_file, true /*write score only*/ );
+		//     }
 		//////////////////////////////////
 		//////////////////////////////////
 
@@ -616,7 +615,7 @@ pack_o2prime( core::pose::Pose & pose, core::scoring::ScoreFunction const & scor
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line();
 
-	for (Size i = 1; i <= pose.total_residue(); i++) {
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 		if ( !pose.residue(i).is_RNA() ) continue;
 		task->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
 		task->nonconst_residue_task(i).or_ex4( true );
@@ -658,7 +657,7 @@ setup_rna_chainbreak_constraints(
 		Residue const & rsd1( pose.residue( i   ) );
 		Residue const & rsd2( pose.residue( i+1 ) );
 		if ( rsd1.is_NA() && !rsd1.is_upper_terminus() && rsd2.is_NA() && !rsd2.is_lower_terminus() ) {
-			//			tt << "adding dna chainbreak constraint between residues " << i << " and " << i+1 << std::endl;
+			//   tt << "adding dna chainbreak constraint between residues " << i << " and " << i+1 << std::endl;
 
 			AtomID const C3_id( rsd1.atom_index( "C3'" ), i   );
 			AtomID const O3_id( rsd1.atom_index( "O3'" ), i   );
@@ -684,53 +683,53 @@ setup_rna_chainbreak_constraints(
 // Probably belongs in util.hh
 void
 get_basepair_atoms( pose::Pose & pose,
-										Size const & i, Size const & j,
-										std::string & atom1, std::string & atom2 ) {
+	Size const & i, Size const & j,
+	std::string & atom1, std::string & atom2 ) {
 
 	using namespace core::chemical;
 	char aa1 = pose.residue(i).name1();
 	char aa2 = pose.residue(j).name1();
 
-	if ( aa1=='a' && aa2=='u') {
+	if ( aa1=='a' && aa2=='u' ) {
 		atom1 = " N1 ";
 		atom2 = " N3 ";
 		return;
 	}
-	if ( aa1=='u' && aa2=='a') {
+	if ( aa1=='u' && aa2=='a' ) {
 		atom1 = " N3 ";
 		atom2 = " N1 ";
 		return;
 	}
-	if ( aa1=='g' && aa2=='c') {
+	if ( aa1=='g' && aa2=='c' ) {
 		atom1 = " N1 ";
 		atom2 = " N3 ";
 		return;
 	}
-	if ( aa1=='c' && aa2=='g') {
+	if ( aa1=='c' && aa2=='g' ) {
 		atom1 = " N3 ";
 		atom2 = " N1 ";
 		return;
 	}
-	if ( aa1=='g' && aa2=='u') {
+	if ( aa1=='g' && aa2=='u' ) {
 		atom1 = " O6 ";
 		atom2 = " N3 ";
 		return;
 	}
-	if ( aa1=='u' && aa2=='g') {
+	if ( aa1=='u' && aa2=='g' ) {
 		atom1 = " N3 ";
 		atom2 = " O6 ";
 		return;
 	}
 
 	//SPECIAL HACK -- force a stack.
-	if ( aa1=='a' && aa2=='g') {
+	if ( aa1=='a' && aa2=='g' ) {
 		std::cout << "BIG PROBLEM!" << std::endl;
 		std::cout << "CRAZY STACK HACK!" << std::endl;
 		atom1 = " C2'";
 		atom2 = " O4'";
 	}
 
-	//	assert( 1+1 == 3);
+	// assert( 1+1 == 3);
 	return;
 
 }
@@ -758,13 +757,13 @@ setup_rna_base_pair_constraints( pose::Pose & pose ){
 	utility::vector1 < std::pair< Size,Size> > basepair_list;
 
 	Size pos1, pos2;
-	while( 	getline(data_stream, line) ) {
+	while (  getline(data_stream, line) ) {
 		std::istringstream line_stream( line );
 		line_stream >> pos1;
 
-		while( !line_stream.fail() ){
+		while ( !line_stream.fail() ) {
 			line_stream >> pos2;
-			if (!line_stream.fail())  {
+			if ( !line_stream.fail() )  {
 				basepair_list.push_back( std::make_pair( pos1, pos2 ) );
 			}
 		}
@@ -775,7 +774,7 @@ setup_rna_base_pair_constraints( pose::Pose & pose ){
 	FuncOP const distance_func( new HarmonicFunc( WC_distance, distance_stddev ) );
 
 	std::string atom1, atom2;
-	for (Size n = 1; n <= basepair_list.size(); n++ ) {
+	for ( Size n = 1; n <= basepair_list.size(); n++ ) {
 		Size const i = basepair_list[n].first;
 		Size const j = basepair_list[n].second;
 		get_basepair_atoms( pose, i, j,  atom1, atom2 );
@@ -809,7 +808,7 @@ rna_fullatom_minimize_test()
 
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
-	if (option[fa_standard]) rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	if ( option[fa_standard] ) rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
 	std::string const silent_file = option[ out::file::silent  ]();
 	// Silent file setup?
@@ -830,7 +829,7 @@ rna_fullatom_minimize_test()
 
 	pose::Pose pose,start_pose;
 
-	for (Size i = 1; i <= pdb_files.size(); i++) {
+	for ( Size i = 1; i <= pdb_files.size(); i++ ) {
 		std::string const pdb_file = pdb_files[i];
 
 		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
@@ -844,21 +843,21 @@ rna_fullatom_minimize_test()
 		//core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 
 		pose::Pose pose_init = pose;
-		//		setup_rna_chainbreak_constraints( pose );
-		//		setup_rna_base_pair_constraints( pose );
+		//  setup_rna_chainbreak_constraints( pose );
+		//  setup_rna_base_pair_constraints( pose );
 
-		//		if ( option[ params_file ].user() ){
-		//			protocols::farna::RNA_StructureParameters rna_structure_parameters;
-		//			std::string jump_library_file( basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat" ) );
-		//			std::string rna_params_file( 	option[ params_file ] );
-		//			rna_structure_parameters.initialize( pose, rna_params_file, jump_library_file, false );
-		//		}
+		//  if ( option[ params_file ].user() ){
+		//   protocols::farna::RNA_StructureParameters rna_structure_parameters;
+		//   std::string jump_library_file( basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat" ) );
+		//   std::string rna_params_file(  option[ params_file ] );
+		//   rna_structure_parameters.initialize( pose, rna_params_file, jump_library_file, false );
+		//  }
 
 		// checking boundary cases for weird sugar puckers
-		//		for ( Size n = 1; n < pose.total_residue() / 2 ; n++ ) {
-		//			pose.set_torsion( id::TorsionID( n, id::BB, 4 ), 109.0 );
-		//		}
-		//		pose.dump_pdb( "tweaked.pdb" );
+		//  for ( Size n = 1; n < pose.total_residue() / 2 ; n++ ) {
+		//   pose.set_torsion( id::TorsionID( n, id::BB, 4 ), 109.0 );
+		//  }
+		//  pose.dump_pdb( "tweaked.pdb" );
 
 		if ( option[ data_file].user() ) {
 			core::io::rna::RNA_DataReader rna_data_reader( option[ data_file ] );
@@ -870,7 +869,7 @@ rna_fullatom_minimize_test()
 		rna_minimizer.deriv_check( option[ deriv_check ] );
 		rna_minimizer.use_coordinate_constraints( !option[ skip_coord_constraints]() );
 		//    rna_minimizer.skip_o2prime_pack( option[ skip_o2prime_pack] );
-		//		rna_minimizer.use_lores_plus_hires_scorefxn( option[ sum_lores_plus_hires ] );
+		//  rna_minimizer.use_lores_plus_hires_scorefxn( option[ sum_lores_plus_hires ] );
 		rna_minimizer.vary_bond_geometry( option[ vary_geometry ] );
 
 		rna_minimizer.apply( pose );
@@ -879,7 +878,7 @@ rna_fullatom_minimize_test()
 		std::string const tag = "S_" +string_of( i );
 		BinarySilentStruct s( pose, tag );
 
-		if ( native_exists ){
+		if ( native_exists ) {
 			Real const rmsd_init = all_atom_rmsd( native_pose, pose_init );
 			Real const rmsd      = all_atom_rmsd( native_pose, pose );
 			std::cout << "All atom rmsd: " << rmsd_init  << " to " << rmsd << std::endl;
@@ -914,7 +913,7 @@ rna_fullatom_multiscore_test()
 
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
-	if (option[fa_standard]) rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	if ( option[fa_standard] ) rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 
@@ -949,12 +948,12 @@ rna_fullatom_multiscore_test()
 	AtomTreeMultifunc f( pose, min_map, *scorefxn, false, false );
 	Multivec dofs( min_map.nangles() );
 
-	for ( Size count = 1; count <= numscores; count++ ){
+	for ( Size count = 1; count <= numscores; count++ ) {
 
 		if ( count % 1000 == 0 ) std::cout << "Done with score number: " << count << std::endl;
 
-		for ( Size i = 1; i <= pose.total_residue(); i++ ){
-			for ( Size j = 1; j <= pose.residue_type( i ).natoms(); j++ ){
+		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+			for ( Size j = 1; j <= pose.residue_type( i ).natoms(); j++ ) {
 				pose.set_xyz( AtomID(j,i), pose_start.xyz( AtomID(j,i) ) + numeric::xyzVector<Real>( 0.0, 0.0, 0.001) * count  );
 			}
 		}
@@ -989,11 +988,11 @@ convert_to_native_test()
 
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
-	if (option[fa_standard]) rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	if ( option[fa_standard] ) rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 
-	for (Size i = 1; i <= pdb_files.size(); i++) {
+	for ( Size i = 1; i <= pdb_files.size(); i++ ) {
 		std::string const pdb_file = pdb_files[i];
 
 		pose::Pose pose, start_pose;
@@ -1087,7 +1086,7 @@ rna_fullatom_minimize_silent_test()
 		//finish up -- calculate lo res terms, and save values in silent struct.
 		pose::Pose pose_for_lores_scoring  = pose;
 		(*lores_scorefxn)( pose_for_lores_scoring );
-		for ( Size i = 1; i <= n_score_types; i++ ){
+		for ( Size i = 1; i <= n_score_types; i++ ) {
 			ScoreType const t = ScoreType( i );
 			if ( lores_scorefxn->get_weight( t ) != 0.0 ) {
 				s.add_energy( name_from_score_type( t ), pose_for_lores_scoring.energies().total_energies()[ t ] );
@@ -1098,7 +1097,7 @@ rna_fullatom_minimize_silent_test()
 		silent_file_data_out.write_silent_struct( s, outfile, false /*write score only*/ );
 
 
-		//		dump_pdb( pose, out_tag+".pdb" );
+		//  dump_pdb( pose, out_tag+".pdb" );
 
 	}
 
@@ -1125,7 +1124,7 @@ rna_o2prime_test()
 
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 
-	for (Size i = 1; i <= pdb_files.size(); i++) {
+	for ( Size i = 1; i <= pdb_files.size(); i++ ) {
 		std::string const pdb_file = pdb_files[i];
 
 		pose::Pose pose, start_pose;
@@ -1182,7 +1181,7 @@ rna_lores_score_test()
 
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 
-	for (Size i = 1; i <= pdb_files.size(); i++) {
+	for ( Size i = 1; i <= pdb_files.size(); i++ ) {
 		std::string const pdb_file = pdb_files[i];
 
 		pose::Pose pose;
@@ -1224,7 +1223,7 @@ rna_lores_score_silent_test()
 	//Native pose setup
 	pose::Pose native_pose;
 	bool const use_native = option[in::file::native].active();
-	if (use_native) 	{
+	if ( use_native )  {
 		import_pose::pose_from_pdb( native_pose, *rsd_set, option( in::file::native ) );
 		/////////////////////////////////////////
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( native_pose );
@@ -1256,7 +1255,7 @@ rna_lores_score_silent_test()
 		scorefxn->show( std::cout, pose );
 
 		RNA_SilentStruct s( pose, out_tag );
-		if (use_native ){
+		if ( use_native ) {
 			Real const rmsd = all_atom_rmsd( native_pose, pose );
 			std::cout << "All atom rmsd: " << rmsd  << std::endl;
 			s.add_energy( "rms", rmsd );
@@ -1272,19 +1271,19 @@ rna_lores_score_silent_test()
 ///////////////////////////////////////////////////////////////////////////////
 void
 output_struct_type(
- utility::io::ozstream & pymol_out,
- pose::Pose const & pose,
- ObjexxFCL::FArray1D_int & struct_type,
- int const & match_type)
+	utility::io::ozstream & pymol_out,
+	pose::Pose const & pose,
+	ObjexxFCL::FArray1D_int & struct_type,
+	int const & match_type)
 {
 
 	bool start_list( false );
 
 	Size const nres( pose.total_residue() );
 
-	for (Size i = 1; i <= nres; i++ )  {
+	for ( Size i = 1; i <= nres; i++ )  {
 		if ( struct_type(i) == match_type ) {
-			if (start_list) pymol_out << '+';
+			if ( start_list ) pymol_out << '+';
 			pymol_out << pose.pdb_info()->number(i);
 			start_list = true;
 		}
@@ -1327,7 +1326,7 @@ pymol_struct_type_test()
 	pymol_out << "bg_color white" << std::endl;
 
 
-	//	bool start_list;
+	// bool start_list;
 	pymol_out << "select SS, resi ";
 	output_struct_type( pymol_out, pose, struct_type, 0);
 	pymol_out << "color red, SS " << std::endl;
@@ -1364,14 +1363,14 @@ rna_design_gap_test()
 
 	ScoreFunctionOP scorefxn = get_score_function();
 
-	//	scorefxn->energy_method_options().exclude_DNA_DNA( exclude_DNA_DNA );
+	// scorefxn->energy_method_options().exclude_DNA_DNA( exclude_DNA_DNA );
 	EnergyMethodOptions options( scorefxn->energy_method_options() );
 	options.exclude_DNA_DNA( false );
 	scorefxn->set_energy_method_options( options );
 
 	std::string const in_path = option[ in::path::path ]()[1];
 
-	for (Size i = 1; i <= pdb_files.size(); i++) {
+	for ( Size i = 1; i <= pdb_files.size(); i++ ) {
 		std::string const pdb_file = pdb_files[i];
 
 		pose::Pose pose;
@@ -1448,7 +1447,7 @@ print_internal_coord_test()
 	std::string pdb_file  = option[ in::file::s ][1];
 	import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
 	/////////////////////////////////////////
-	if ( option[ rsd_type_set]() == "rna" ){
+	if ( option[ rsd_type_set]() == "rna" ) {
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 		core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 	}
@@ -1460,17 +1459,17 @@ print_internal_coord_test()
 	f.new_jump( start, end, cutpos );
 
 
-	//	 f.set_jump_atoms( 1,
-	//										 core::chemical::rna::chi1_torsion_atom( pose.residue( start ) ),
-	//										 core::chemical::rna::chi1_torsion_atom( pose.residue( end ) ) );
+	//  f.set_jump_atoms( 1,
+	//           core::chemical::rna::chi1_torsion_atom( pose.residue( start ) ),
+	//           core::chemical::rna::chi1_torsion_atom( pose.residue( end ) ) );
 
-	//	 f.set_jump_atoms( 1,
-	//										 core::chemical::rna::chi1_torsion_atom( pose.residue( end ) ),
-	//										 " O2'" );
+	//  f.set_jump_atoms( 1,
+	//           core::chemical::rna::chi1_torsion_atom( pose.residue( end ) ),
+	//           " O2'" );
 
 	f.set_jump_atoms( 1, " Y  ", " Y  " );
 	pose.fold_tree( f );
-	//	 set_na_jump_atoms( pose );
+	//  set_na_jump_atoms( pose );
 
 
 	pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpos   );
@@ -1482,33 +1481,33 @@ print_internal_coord_test()
 
 
 	//Special trick to figure out where to put VO4' virtual atom for sugar ring closure.
-	// 	for (Size i= 1; i <= pose.total_residue(); i++ ) {
-	// 		conformation::Residue const & rsd( pose.residue( i ) ) ;
-	 // 		for (Size j = 1; j <= rsd.natoms(); j++ ) {
-	 // 			if ( rsd.atom_name( j ) == "VO4'" ) {
-	 // 				pose.set_xyz( id::AtomID(j,i ), rsd.xyz( "O4'") );
-	 // 			}
-	 // 		}
-	 // 	}
+	//  for (Size i= 1; i <= pose.total_residue(); i++ ) {
+	//   conformation::Residue const & rsd( pose.residue( i ) ) ;
+	//   for (Size j = 1; j <= rsd.natoms(); j++ ) {
+	//    if ( rsd.atom_name( j ) == "VO4'" ) {
+	//     pose.set_xyz( id::AtomID(j,i ), rsd.xyz( "O4'") );
+	//    }
+	//   }
+	//  }
 
 	protocols::farna::print_internal_coords( pose );
 
 
 	if ( option[ rsd_type_set ]() == "coarse_rna" ) {
-		 {
-			 conformation::Residue const & rsd = pose.residue(cutpos);
-			 if (rsd.has( "OVL1" ) ){
-				 std::cout << "OVL1 torsion: " << numeric::conversions::degrees(  numeric::dihedral_radians( rsd.xyz( "OVL1" ), rsd.xyz( "S" ), rsd.xyz( "P" ), rsd.xyz( "CEN" ) ) ) << std::endl;
-				 std::cout << "OVL2 torsion: " << numeric::conversions::degrees(  numeric::dihedral_radians( rsd.xyz( "OVL2" ), rsd.xyz( "OVL1" ), rsd.xyz( "S" ), rsd.xyz( "P" ) ) ) << std::endl;
-			 }
-		 }
+		{
+			conformation::Residue const & rsd = pose.residue(cutpos);
+			if ( rsd.has( "OVL1" ) ) {
+				std::cout << "OVL1 torsion: " << numeric::conversions::degrees(  numeric::dihedral_radians( rsd.xyz( "OVL1" ), rsd.xyz( "S" ), rsd.xyz( "P" ), rsd.xyz( "CEN" ) ) ) << std::endl;
+				std::cout << "OVL2 torsion: " << numeric::conversions::degrees(  numeric::dihedral_radians( rsd.xyz( "OVL2" ), rsd.xyz( "OVL1" ), rsd.xyz( "S" ), rsd.xyz( "P" ) ) ) << std::endl;
+			}
+		}
 
-		 {
-			 conformation::Residue const & rsd = pose.residue(cutpos+1);
-			 if (rsd.has( "OVU1" ) ){
-				 std::cout << "OVU1 torsion: " << numeric::conversions::degrees(  numeric::dihedral_radians( rsd.xyz( "OVU1" ), rsd.xyz( "P" ), rsd.xyz( "S" ), rsd.xyz( "CEN" ) ) ) << std::endl;
-			 }
-		 }
+		{
+			conformation::Residue const & rsd = pose.residue(cutpos+1);
+			if ( rsd.has( "OVU1" ) ) {
+				std::cout << "OVU1 torsion: " << numeric::conversions::degrees(  numeric::dihedral_radians( rsd.xyz( "OVU1" ), rsd.xyz( "P" ), rsd.xyz( "S" ), rsd.xyz( "CEN" ) ) ) << std::endl;
+			}
+		}
 	}
 
 
@@ -1531,14 +1530,14 @@ set_ideal_geometry( pose::Pose & pose, pose::Pose const & extended_pose, chemica
 		/////////////////////////////////////////
 
 		pose = ideal_pose;
-		for ( Size i = 1; i <= pose.total_residue(); i++ ){
-			for (Size j=1; j <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
+		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+			for ( Size j=1; j <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j ) {
 				id::TorsionID my_ID( i, id::BB, j );
 				pose.set_torsion( my_ID, extended_pose.torsion( my_ID ) );
 			}
 
 			//Is it really necessary to hard code 6 backbone torsion angles and 4 chi angles?
-			for (Size j=1; j <= core::chemical::rna::NUM_RNA_CHI_TORSIONS; ++j) {
+			for ( Size j=1; j <= core::chemical::rna::NUM_RNA_CHI_TORSIONS; ++j ) {
 				id::TorsionID my_ID( i, id::CHI, j );
 				pose.set_torsion( my_ID, extended_pose.torsion( my_ID ) );
 			}
@@ -1553,13 +1552,13 @@ set_ideal_geometry( pose::Pose & pose, pose::Pose const & extended_pose, chemica
 void
 copy_rna_torsions( Size const new_pos, Size const src_pos, pose::Pose & new_pose, pose::Pose & src_pose)
 {
-	for (Size j=1; j <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
+	for ( Size j=1; j <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j ) {
 		id::TorsionID    my_ID( new_pos, id::BB, j );
 		id::TorsionID input_ID( src_pos, id::BB, j );
 		new_pose.set_torsion( my_ID, src_pose.torsion( input_ID ) );
 	}
 
-	for (Size j=1; j <= core::chemical::rna::NUM_RNA_CHI_TORSIONS; ++j) {
+	for ( Size j=1; j <= core::chemical::rna::NUM_RNA_CHI_TORSIONS; ++j ) {
 		id::TorsionID    my_ID(  new_pos, id::CHI, j );
 		id::TorsionID input_ID(  src_pos, id::CHI, j );
 		new_pose.set_torsion( my_ID, src_pose.torsion( input_ID ) );
@@ -1604,15 +1603,15 @@ rna_assemble_test() {
 
 	std::string line;
 
-	while( 	getline(data_stream, line) ) {
+	while (  getline(data_stream, line) ) {
 		std::istringstream line_stream( line );
 
 		line_stream >> pdb_file;
 		pdb_files.push_back( pdb_file );
 
-		while( !line_stream.fail() ){
+		while ( !line_stream.fail() ) {
 			line_stream >> start >> end;
-			if (!line_stream.fail()) segments[ pdb_file ].push_back( std::make_pair(start, end) );
+			if ( !line_stream.fail() ) segments[ pdb_file ].push_back( std::make_pair(start, end) );
 		}
 
 	}
@@ -1625,7 +1624,7 @@ rna_assemble_test() {
 	////////////////////////////////////////////////////////
 	// Read in individual PDBs and copy in torsions
 	////////////////////////////////////////////////////////
-	for (Size n = 1; n <= pdb_files.size(); n++ ){
+	for ( Size n = 1; n <= pdb_files.size(); n++ ) {
 		pose::Pose input_pose;
 		import_pose::pose_from_pdb( input_pose, *rsd_set, pdb_files[n] );
 		/////////////////////////////////////////
@@ -1640,14 +1639,14 @@ rna_assemble_test() {
 		std::map <Size, Size > sequence_map;
 		Size count( 0 );
 		utility::vector1< std::pair< Size, Size > >  const & my_segments( segments[ pdb_files[n] ] );
-		for (Size m = 1; m <= my_segments.size(); m++ ) {
+		for ( Size m = 1; m <= my_segments.size(); m++ ) {
 			start = (my_segments[m]).first;
 			end   = (my_segments[m]).second;
-			for (Size i = start; i <= end; i++ ){
+			for ( Size i = start; i <= end; i++ ) {
 				count++;
 				sequence_map[ count ] = i;
 
-				if (i > start && i < end ) allow_insert( i ) = false;
+				if ( i > start && i < end ) allow_insert( i ) = false;
 
 			}
 		}
@@ -1667,7 +1666,7 @@ rna_assemble_test() {
 		std::cout <<  f << std::endl;
 		std::cout <<  f_input << std::endl;
 
-		for (Size m = 1; m <= f_input.num_jump(); m++ ) {
+		for ( Size m = 1; m <= f_input.num_jump(); m++ ) {
 			Size const jump1 = sequence_map[ f_input.upstream_jump_residue(m) ];
 			Size const jump2 = sequence_map[ f_input.downstream_jump_residue(m) ];
 			Size const cutpt = sequence_map[ f_input.cutpoint(m) ];
@@ -1677,15 +1676,15 @@ rna_assemble_test() {
 			conformation::Residue const & rsd1( pose.residue(jump1) );
 			conformation::Residue const & rsd2( pose.residue(jump2) );
 			f.set_jump_atoms( initial_num_jump + m,
-												core::chemical::rna::chi1_torsion_atom( rsd1 ),
-												core::chemical::rna::chi1_torsion_atom( rsd2 ) );
+				core::chemical::rna::chi1_torsion_atom( rsd1 ),
+				core::chemical::rna::chi1_torsion_atom( rsd2 ) );
 		}
 		pose.fold_tree( f );
 
 		////////////////////////////////////////////////////////
 		// Copy over jumps
 		////////////////////////////////////////////////////////
-		for (Size m = 1; m <= f_input.num_jump(); m++ ){
+		for ( Size m = 1; m <= f_input.num_jump(); m++ ) {
 			//This correspondence may not actually hold.
 			pose.set_jump( initial_num_jump + m , input_pose.jump( m ) );
 		}
@@ -1696,7 +1695,7 @@ rna_assemble_test() {
 		////////////////////////////////////////////////////////
 		// Copy over torsions
 		////////////////////////////////////////////////////////
-		for ( count = 1; count <= input_pose.total_residue(); count++ ){
+		for ( count = 1; count <= input_pose.total_residue(); count++ ) {
 			Size const i = sequence_map[ count ];
 			std::cout <<  "   transfer to " << pose.residue(i).name1() << i <<
 				"   from   " << input_pose.residue(count).name1() << count << std::endl;
@@ -1723,11 +1722,11 @@ rna_assemble_test() {
 	Size const monte_carlo_cycles = option[ cycles ];
 	std::string const silent_file = option[ out::file::silent  ]();
 	protocols::farna::RNA_DeNovoProtocol rna_de_novo_protocol( nstruct,
-																													 silent_file,
-																													 false /*heat_structure*/, true /*minimize structure*/ );
+		silent_file,
+		false /*heat_structure*/, true /*minimize structure*/ );
 	rna_de_novo_protocol.set_monte_carlo_cycles( monte_carlo_cycles );
-	//	rna_de_novo_protocol.set_native_pose( native_pose_OP );
-	//	for (Size i = 1; i <= pose.total_residue(); i++ ) std::cout << "ALLOW_INSERT: " << i << "  " << allow_insert(i) << std::endl;
+	// rna_de_novo_protocol.set_native_pose( native_pose_OP );
+	// for (Size i = 1; i <= pose.total_residue(); i++ ) std::cout << "ALLOW_INSERT: " << i << "  " << allow_insert(i) << std::endl;
 
 
 	///////////////////
@@ -1762,7 +1761,7 @@ rna_idealize_test() {
 
 	bool const close_chainbreaks = option[ idl_close_chainbreaks ];
 
-	for (Size n = 1; n <= pdb_files.size(); n++ ){
+	for ( Size n = 1; n <= pdb_files.size(); n++ ) {
 
 		std::string const pdb_file = pdb_files[n];
 
@@ -1772,7 +1771,7 @@ rna_idealize_test() {
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 		/////////////////////////////////////////
 
-		if (!close_chainbreaks) core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
+		if ( !close_chainbreaks ) core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 
 		pose::Pose const start_pose( pose );
 
@@ -1796,15 +1795,15 @@ rna_idealize_test() {
 		idealizer.apply( pose );
 
 		//test this.
-		//		pose::Pose refold_pose;
-		//		std::string refold_sequence = pose.sequence();
-		//		refold_sequence.erase( refold_sequence.size()-1 );
-		//		std::cout << "ABOUT TO MAKE POSE FROM SEQUENCE " << refold_sequence << std::endl;
-		//		core::chemical::make_pose_from_sequence( refold_pose, refold_sequence,	*rsd_set );
-		//		std::cout << "HEY! " << pose.total_residue() << " " << refold_pose.total_residue() << std::endl;
-		//		refold_pose.dump_pdb( "extended.pdb" );
-		//		for (Size i = 1; i <= refold_pose.total_residue(); i++ ) copy_rna_torsions( i, i, refold_pose, pose );
-		//		refold_pose.dump_pdb( "refold.pdb" );
+		//  pose::Pose refold_pose;
+		//  std::string refold_sequence = pose.sequence();
+		//  refold_sequence.erase( refold_sequence.size()-1 );
+		//  std::cout << "ABOUT TO MAKE POSE FROM SEQUENCE " << refold_sequence << std::endl;
+		//  core::chemical::make_pose_from_sequence( refold_pose, refold_sequence, *rsd_set );
+		//  std::cout << "HEY! " << pose.total_residue() << " " << refold_pose.total_residue() << std::endl;
+		//  refold_pose.dump_pdb( "extended.pdb" );
+		//  for (Size i = 1; i <= refold_pose.total_residue(); i++ ) copy_rna_torsions( i, i, refold_pose, pose );
+		//  refold_pose.dump_pdb( "refold.pdb" );
 
 		pose.dump_pdb( "idealize_"+pdb_file );
 
@@ -1816,14 +1815,14 @@ rna_idealize_test() {
 void
 print_torsions_check( pose::Pose & pose )
 {
-	for (Size i = 1 ; i < pose.total_residue(); i ++ ) {
+	for ( Size i = 1 ; i < pose.total_residue(); i ++ ) {
 		std::cout << "POSITION " << I(3,i);
-		for (Size j=1; j <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
+		for ( Size j=1; j <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j ) {
 			id::TorsionID    my_ID( i, id::BB, j );
 			std::cout << " BB" << j << " " << F(8,3,pose.torsion(my_ID) ) << ";";
 		}
 
-		for (Size j=1; j <= core::chemical::rna::NUM_RNA_CHI_TORSIONS; ++j) {
+		for ( Size j=1; j <= core::chemical::rna::NUM_RNA_CHI_TORSIONS; ++j ) {
 			id::TorsionID    my_ID(  i, id::CHI, j );
 			std::cout << " CHI" << j << " " << F(8,3,pose.torsion(my_ID) ) << ";";
 		}
@@ -1848,9 +1847,9 @@ rna_torsion_check_test(){
 
 	core::sequence::Sequence fasta_sequence = *(core::sequence::read_fasta_file( option[ in::file::fasta ]()[1] )[1]);
 	make_pose_from_sequence(
-		 pose,
-		 fasta_sequence.sequence(),
-		 *rsd_set );
+		pose,
+		fasta_sequence.sequence(),
+		*rsd_set );
 
 	std::cout << " --------- ORIGINAL ---------" << std::endl;
 	print_torsions_check( pose );
@@ -1871,7 +1870,7 @@ rna_torsion_check_test(){
 	print_torsions_check( pose2 );
 	pose.dump_pdb( "S2.pdb" );
 
-	for (Size i =1; i<=nres; i++ ) copy_rna_torsions(i,i,pose2,pose);
+	for ( Size i =1; i<=nres; i++ ) copy_rna_torsions(i,i,pose2,pose);
 	(*lores_scorefxn)( pose2 );
 
 	std::cout << " --------- COPY TORSIONS-----" << std::endl;
@@ -1927,8 +1926,8 @@ rna_close_chainbreaks_test(){
 	lores_scorefxn->show( std::cout, pose );
 
 	// Copy bb torsions over.
-	for (Size i = 1; i <= pose.total_residue(); i++ ) {
-		for (Size j = 1; j <= chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; j++ ) {
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		for ( Size j = 1; j <= chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; j++ ) {
 			id::TorsionID torsion_id( i, id::BB, j );
 			pose.set_torsion( torsion_id, start_pose.torsion( torsion_id ) ) ;
 		}
@@ -1983,20 +1982,20 @@ rna_jumping_test(){
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( native_pose );
 		/////////////////////////////////////////
 		dump_pdb( native_pose, "native.pdb");
-	  native_exists = true;
+		native_exists = true;
 	}
 
 
 	//Prepare starting structure from scratch --> read from fasta.
 	core::sequence::Sequence fasta_sequence = *(core::sequence::read_fasta_file( option[ in::file::fasta ]()[1] )[1]);
-	make_pose_from_sequence(extended_pose,fasta_sequence.sequence(),	*rsd_set );
+	make_pose_from_sequence(extended_pose,fasta_sequence.sequence(), *rsd_set );
 
 	dump_pdb( extended_pose, "extended.pdb");
 
 	std::cout << "Check it! EXTEND " << extended_pose.sequence() << std::endl;
 
 	Real rmsd( 0.0 );
-	if (native_exists) {
+	if ( native_exists ) {
 		std::cout << "Check it! NATIVE " << native_pose.sequence() << std::endl;
 		rmsd = all_atom_rmsd( native_pose, extended_pose );
 	}
@@ -2025,9 +2024,9 @@ rna_jumping_test(){
 	rna_de_novo_protocol.set_dump_pdb( true );
 
 	// Do this next.
-	//	rna_de_novo_protocol.set_constraints_file( option[ constraints_file ] );
+	// rna_de_novo_protocol.set_constraints_file( option[ constraints_file ] );
 
-	if (native_exists) rna_de_novo_protocol.set_native_pose( native_pose_OP );
+	if ( native_exists ) rna_de_novo_protocol.set_native_pose( native_pose_OP );
 
 	rna_de_novo_protocol.apply( pose );
 
@@ -2042,7 +2041,7 @@ rna_jumping_test(){
 ///////////////////////////////////////////////////////////////////////////////
 Size
 is_regular_helix( pose::Pose const & pose,
-									Size const & seqpos ){
+	Size const & seqpos ){
 
 	using namespace core::chemical::rna;
 	using namespace core::scoring::rna;
@@ -2054,23 +2053,23 @@ is_regular_helix( pose::Pose const & pose,
 	EnergyBasePairList const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
 
 	bool forms_canonical_base_pair( false );
-	//	bool forms_non_canonical_base_pair( false );
+	// bool forms_non_canonical_base_pair( false );
 
 	Size k( 0 ), m( 0 );
 	Size partner( 0 ), canonical_partner( 0 );
 	for ( EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
-				it != scored_base_pair_list.end(); ++it ){
+			it != scored_base_pair_list.end(); ++it ) {
 
 		BasePair const base_pair = it->second;
 
 		Size const i = base_pair.res1;
 		Size const j = base_pair.res2;
 
-		if ( i == seqpos ){
+		if ( i == seqpos ) {
 			k = base_pair.edge1;
 			m = base_pair.edge2;
 			partner = j;
-		} else if ( j == seqpos ){
+		} else if ( j == seqpos ) {
 			k = base_pair.edge2;
 			m = base_pair.edge1;
 			partner = i;
@@ -2082,11 +2081,10 @@ is_regular_helix( pose::Pose const & pose,
 		Residue const & rsd_j( pose.residue( j ) );
 
 		if ( ( k == WATSON_CRICK && m == WATSON_CRICK
-					 && base_pair.orientation == 1 )  &&
-				 possibly_canonical( rsd_i.aa(), rsd_j.aa() ) ) //&&
-				 //				 pose.torsion( id::TorsionID( i, id::CHI, 1 ) ) > 0  && //Need to check syn/anti
-				 //				 pose.torsion( id::TorsionID( j, id::CHI, 1 ) ) > 0     //Need to check syn/anti
-				 {
+				&& base_pair.orientation == 1 )  &&
+				possibly_canonical( rsd_i.aa(), rsd_j.aa() ) ) { //&&
+			//     pose.torsion( id::TorsionID( i, id::CHI, 1 ) ) > 0  && //Need to check syn/anti
+			//     pose.torsion( id::TorsionID( j, id::CHI, 1 ) ) > 0     //Need to check syn/anti
 
 			std::string atom1, atom2;
 			get_watson_crick_base_pair_atoms( rsd_i, rsd_j, atom1, atom2 );
@@ -2095,14 +2093,14 @@ is_regular_helix( pose::Pose const & pose,
 				canonical_partner = partner;
 				break;
 			}  //else {
-			//			forms_non_canonical_base_pair = true;
-			//			break;
-			//		}
+			//   forms_non_canonical_base_pair = true;
+			//   break;
+			//  }
 		}
 
 	}
 
-	if (forms_canonical_base_pair ) { //&& !forms_non_canonical_base_pair) {
+	if ( forms_canonical_base_pair ) { //&& !forms_non_canonical_base_pair) {
 		return canonical_partner;
 	}
 
@@ -2111,13 +2109,13 @@ is_regular_helix( pose::Pose const & pose,
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace benchmark_ns {
-	ObjexxFCL::FArray1D < Size > vanilla_helix;
-	ObjexxFCL::FArray1D < Size > domain_map;
-	Size num_domain( 0 );
-	utility::vector1< utility::vector1< Size > > domain_residue_list;
-	Size nres;
-	FArray2D <bool> hbonded;
-	utility::vector1< std::string > colors;
+ObjexxFCL::FArray1D < Size > vanilla_helix;
+ObjexxFCL::FArray1D < Size > domain_map;
+Size num_domain( 0 );
+utility::vector1< utility::vector1< Size > > domain_residue_list;
+Size nres;
+FArray2D <bool> hbonded;
+utility::vector1< std::string > colors;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2132,45 +2130,45 @@ figure_out_domain_neighbors( Size const & i, core::pose::Pose const & pose  ){
 		return;
 	}
 
-	//	std::cout << "Assigning domain: " <<  i << " " << num_domain << std::endl;
+	// std::cout << "Assigning domain: " <<  i << " " << num_domain << std::endl;
 	domain_map( i ) = num_domain;
-	//	std::cout << "Figure out i-1 " << std::endl;
-	if (i > 1 )	figure_out_domain_neighbors( i - 1, pose );
-	//	std::cout << "Figure out i+1 " << std::endl;
-	if (i < nres )	figure_out_domain_neighbors( i + 1, pose );
+	// std::cout << "Figure out i-1 " << std::endl;
+	if ( i > 1 ) figure_out_domain_neighbors( i - 1, pose );
+	// std::cout << "Figure out i+1 " << std::endl;
+	if ( i < nres ) figure_out_domain_neighbors( i + 1, pose );
 
-	//	RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
-	//	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
-	//	EnergyBasePairList const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
+	// RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
+	// RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
+	// EnergyBasePairList const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
 
 	// Reach across to anything base paired.
-	//	for ( EnergyBasePairList::const_iterator it = local_scored_base_pair_list.begin();
-	//				it != local_scored_base_pair_list.end(); ++it ){
-	//		BasePair const base_pair = it->second;
-	//		Size const pos1 = base_pair.res1;
-	//		Size const pos2 = base_pair.res2;
-	//		if ( pos1 == i ) figure_out_domain_neighbors( pos2 );
-	//		if ( pos2 == i ) figure_out_domain_neighbors( pos1 );
-	//	}
+	// for ( EnergyBasePairList::const_iterator it = local_scored_base_pair_list.begin();
+	//    it != local_scored_base_pair_list.end(); ++it ){
+	//  BasePair const base_pair = it->second;
+	//  Size const pos1 = base_pair.res1;
+	//  Size const pos2 = base_pair.res2;
+	//  if ( pos1 == i ) figure_out_domain_neighbors( pos2 );
+	//  if ( pos2 == i ) figure_out_domain_neighbors( pos1 );
+	// }
 
 	// Reach across to anything hydrogen bonded.
 	// core::scoring::hbonds::HBondSet const & hbond_set
-	//		( static_cast< core::scoring::hbonds::HBondSet const & >
-	//			( pose.energies().data().get( util::HBOND_SET )));
-	//	for ( int n = 1; n <= hbond_set.nhbonds(); ++n ) {
-	//		core::scoring::hbonds::HBond const & hbond( hbond_set.hbond(n) );
-	//		if (i == Size( hbond.don_res() ) ) figure_out_domain_neighbors( hbond.acc_res(), pose );
-	//		if (i == Size( hbond.acc_res() ) ) figure_out_domain_neighbors( hbond.don_res(), pose );
-	//	}
+	//  ( static_cast< core::scoring::hbonds::HBondSet const & >
+	//   ( pose.energies().data().get( util::HBOND_SET )));
+	// for ( int n = 1; n <= hbond_set.nhbonds(); ++n ) {
+	//  core::scoring::hbonds::HBond const & hbond( hbond_set.hbond(n) );
+	//  if (i == Size( hbond.don_res() ) ) figure_out_domain_neighbors( hbond.acc_res(), pose );
+	//  if (i == Size( hbond.acc_res() ) ) figure_out_domain_neighbors( hbond.don_res(), pose );
+	// }
 
 	// the neighbor/energy links
 	using namespace core::scoring;
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
 	for ( graph::Graph::EdgeListConstIter
-					iru  = energy_graph.get_node(i)->const_edge_list_begin(),
-					irue = energy_graph.get_node(i)->const_edge_list_end();
-				iru != irue; ++iru ) {
+			iru  = energy_graph.get_node(i)->const_edge_list_begin(),
+			irue = energy_graph.get_node(i)->const_edge_list_end();
+			iru != irue; ++iru ) {
 
 		EnergyEdge const * edge( static_cast< EnergyEdge const *> ( *iru ) );
 
@@ -2190,7 +2188,7 @@ figure_out_domain_map( pose::Pose const & pose ) {
 	domain_map.dimension( nres );
 	domain_map = 0;
 	num_domain = 0;
-	for (Size i = 1; i <= nres; i++ ){
+	for ( Size i = 1; i <= nres; i++ ) {
 		if ( vanilla_helix( i ) )  continue;
 		if ( domain_map(i) > 0 ) continue;
 		num_domain++;
@@ -2205,10 +2203,10 @@ void
 absorb_surrounded_canonicals(){
 	//Absorb a few a canonicals in, if they're surrounded.
 	using namespace benchmark_ns;
-	for (Size i = 2; i < nres; i++ ){
+	for ( Size i = 2; i < nres; i++ ) {
 		if ( domain_map(i) == 0 &&  //canonical helix
-				 domain_map(i-1) > 0 && // surrounded by noncanonicals?
-				 domain_map(i-1) == domain_map(i+1)  ) {
+				domain_map(i-1) > 0 && // surrounded by noncanonicals?
+				domain_map(i-1) == domain_map(i+1)  ) {
 			domain_map( i ) = domain_map(i-1);
 			domain_map( vanilla_helix( i ) ) = domain_map( i ); //This could lead to disaster.
 		}
@@ -2220,10 +2218,10 @@ void setup_domain_list(){
 	using namespace benchmark_ns;
 	// Check it out.
 	domain_residue_list.clear();
-	for (Size n = 1; n <= num_domain; n++ ){
+	for ( Size n = 1; n <= num_domain; n++ ) {
 		utility::vector1< Size > temp_list;
-		for (Size i = 1; i <= nres; i++ )  {
-			if (domain_map(i)==n) {
+		for ( Size i = 1; i <= nres; i++ )  {
+			if ( domain_map(i)==n ) {
 				temp_list.push_back( i );
 			}
 		}
@@ -2241,14 +2239,14 @@ fill_hbond_neighbors( pose::Pose const & pose  ){
 	hbonded = false;
 
 	//Look through list of hydrogen bonded neighbors -- add to stem list.
-	for (Size i = 1; i <= nres; i++ ){
+	for ( Size i = 1; i <= nres; i++ ) {
 		using namespace core::scoring;
 		EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
 		for ( graph::Graph::EdgeListConstIter
-						iru  = energy_graph.get_node(i)->const_edge_list_begin(),
-						irue = energy_graph.get_node(i)->const_edge_list_end();
-					iru != irue; ++iru ) {
+				iru  = energy_graph.get_node(i)->const_edge_list_begin(),
+				irue = energy_graph.get_node(i)->const_edge_list_end();
+				iru != irue; ++iru ) {
 
 			EnergyEdge const * edge( static_cast< EnergyEdge const *> ( *iru ) );
 
@@ -2265,18 +2263,18 @@ fill_hbond_neighbors( pose::Pose const & pose  ){
 ///////////////////////////////////////////////////////////////////////////////
 void
 output_benchmark_stuff( pose::Pose const & pose,
-												std::string const & tag,
-												utility::vector1<Size> const & domain_res_list,
-												std::list<Size> const & stem_res_list,
-												Size const & n,
-												utility::io::ozstream & pymol_out )
+	std::string const & tag,
+	utility::vector1<Size> const & domain_res_list,
+	std::list<Size> const & stem_res_list,
+	Size const & n,
+	utility::io::ozstream & pymol_out )
 {
 
 	using namespace benchmark_ns;
 
 	// which residues to output?
 	std::list <Size > all_res_list = stem_res_list;
-	for (Size m = 1; m <= domain_res_list.size(); m++ ) all_res_list.push_back( domain_res_list[m] );
+	for ( Size m = 1; m <= domain_res_list.size(); m++ ) all_res_list.push_back( domain_res_list[m] );
 
 	all_res_list.sort();
 	all_res_list.unique();
@@ -2286,7 +2284,7 @@ output_benchmark_stuff( pose::Pose const & pose,
 	Size count( 0 );
 	std::map< Size, Size > res_map;
 	for ( std::list<Size>::iterator it = all_res_list.begin(),
-					it_end = all_res_list.end(); it != it_end; ++ it ){
+			it_end = all_res_list.end(); it != it_end; ++ it ) {
 		res_map[ *it ] = ++count;
 		mini_pose.append_residue_by_bond( pose.residue( *it ) );
 	}
@@ -2303,7 +2301,7 @@ output_benchmark_stuff( pose::Pose const & pose,
 	core::pose::rna::figure_out_reasonable_rna_fold_tree( mini_pose );
 	if ( mini_pose.num_jump() > 0 ) {
 		params_out << "CUTPOINT_OPEN " ;
-		for (Size j = 1; j < mini_pose.total_residue(); j++ ) {
+		for ( Size j = 1; j < mini_pose.total_residue(); j++ ) {
 			if ( mini_pose.fold_tree().is_cutpoint( j ) ) {
 				params_out << " " << I(3,j);
 			}
@@ -2315,7 +2313,7 @@ output_benchmark_stuff( pose::Pose const & pose,
 	// Some pymol crap.
 	pymol_out << "select  chunk"<< lead_zero_string_of(n,3) << ", resi ";
 	for ( std::list<Size>::iterator it = all_res_list.begin(),
-					it_end = all_res_list.end(); it != it_end; ++ it ){
+			it_end = all_res_list.end(); it != it_end; ++ it ) {
 		pymol_out << *it << "+";
 	}
 	pymol_out << "0" << std::endl;
@@ -2325,7 +2323,7 @@ output_benchmark_stuff( pose::Pose const & pose,
 
 	pymol_out << "select  stems"<< lead_zero_string_of(n,3) << ", resi ";
 	for ( std::list<Size>::const_iterator it = stem_res_list.begin(),
-					it_end = stem_res_list.end(); it != it_end; ++ it ){
+			it_end = stem_res_list.end(); it != it_end; ++ it ) {
 		pymol_out << *it << "+";
 	}
 	pymol_out << "0" << std::endl;
@@ -2337,7 +2335,7 @@ output_benchmark_stuff( pose::Pose const & pose,
 	// Note that this doesn't (yet) group stem residues together --
 	//  may be necessary for pseudoknots!
 	for ( std::list<Size>::const_iterator it = stem_res_list.begin(),
-					it_end = stem_res_list.end(); it != it_end; ++ it ){
+			it_end = stem_res_list.end(); it != it_end; ++ it ) {
 		Size const i( *it );
 		if ( !stem_residue_written_out( i ) ) {
 			params_out << "STEM PAIR " << res_map[i] << " " << res_map[vanilla_helix(i)] << " W W A " << std::endl;
@@ -2374,38 +2372,38 @@ figure_out_stems( pose::Pose & pose, std::string const & infile, utility::io::oz
 {
 	using namespace benchmark_ns;
 
-	for (Size n = 1; n <= num_domain; n++ ){
+	for ( Size n = 1; n <= num_domain; n++ ) {
 
 		std::list < Size > stem_residues;
 		std::cout << "DOMAIN " << I(3,n) << "==> ";
 
-		if ( domain_residue_list[n].size() < 3) continue;
+		if ( domain_residue_list[n].size() < 3 ) continue;
 
-		for (Size m = 1; m <= domain_residue_list[n].size(); m++ ){
+		for ( Size m = 1; m <= domain_residue_list[n].size(); m++ ) {
 
 			Size const i = domain_residue_list[n][m];
 			std::cout << " " << i;
 
-			for (Size j = 1; j <= nres; j++ ){
+			for ( Size j = 1; j <= nres; j++ ) {
 				if ( hbonded(i,j) && vanilla_helix(j) ) {
-					if( !domain_map( j) || !domain_map( vanilla_helix(j) ) ) {
+					if ( !domain_map( j) || !domain_map( vanilla_helix(j) ) ) {
 						stem_residues.push_back( j );
 						stem_residues.push_back( vanilla_helix(j) );
 					}
 				}
 			}
 
-				if ( i > 1  && vanilla_helix(i-1) ) {
-					Size const j = i-1;
-					if( !domain_map( j) || !domain_map( vanilla_helix(j) ) ) {
-						stem_residues.push_back( j );
-						stem_residues.push_back( vanilla_helix(j) );
-					}
+			if ( i > 1  && vanilla_helix(i-1) ) {
+				Size const j = i-1;
+				if ( !domain_map( j) || !domain_map( vanilla_helix(j) ) ) {
+					stem_residues.push_back( j );
+					stem_residues.push_back( vanilla_helix(j) );
+				}
 			}
 
 			if ( i < nres  && vanilla_helix(i+1) ) {
 				Size const j = i+1;
-				if( !domain_map( j) || !domain_map( vanilla_helix(j) ) ) {
+				if ( !domain_map( j) || !domain_map( vanilla_helix(j) ) ) {
 					stem_residues.push_back( j );
 					stem_residues.push_back( vanilla_helix(j) );
 				}
@@ -2420,7 +2418,7 @@ figure_out_stems( pose::Pose & pose, std::string const & infile, utility::io::oz
 
 		std::cout << "  ASSOCIATED STEM RESIDUES ==> ";
 		for ( std::list<Size>::iterator it = stem_residues.begin(),
-						it_end = stem_residues.end(); it != it_end; ++ it ){
+				it_end = stem_residues.end(); it != it_end; ++ it ) {
 			std::cout << " " << ( *it );
 		}
 		std::cout << std::endl;
@@ -2468,7 +2466,7 @@ create_rna_benchmark_test(){
 
 	utility::vector1< std::string > const infiles( option[ in::file::s ]() );
 
-	for (Size i = 1; i <= infiles.size(); i++ ){
+	for ( Size i = 1; i <= infiles.size(); i++ ) {
 
 		std::string infile  = infiles[i];
 
@@ -2494,7 +2492,7 @@ create_rna_benchmark_test(){
 		vanilla_helix.dimension( nres );
 		vanilla_helix = 0;
 		std::cout << "Vanilla helix setup... " << std::endl;
-		for (Size i = 1; i <= nres; i++ ) vanilla_helix( i ) = is_regular_helix( pose, i );
+		for ( Size i = 1; i <= nres; i++ ) vanilla_helix( i ) = is_regular_helix( pose, i );
 
 		std::cout << "Domain map setup... " << std::endl;
 		// March through each residue.
@@ -2564,15 +2562,15 @@ rna_chain_closure_test()
 	kinematics::FoldTree f( pose.total_residue() );
 	f.new_jump( cutpoint, cutpoint+1, cutpoint );
 	f.set_jump_atoms( 1,
-										core::chemical::rna::chi1_torsion_atom( pose.residue( cutpoint) ),
-										core::chemical::rna::chi1_torsion_atom( pose.residue( cutpoint+1) )   );
+		core::chemical::rna::chi1_torsion_atom( pose.residue( cutpoint) ),
+		core::chemical::rna::chi1_torsion_atom( pose.residue( cutpoint+1) )   );
 	pose.fold_tree( f );
 
 	add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpoint );
 	add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cutpoint+1 );
 
-	for (Size i = cutpoint; i <= cutpoint+1; i++ ){
-		for (Size j=1; j <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
+	for ( Size i = cutpoint; i <= cutpoint+1; i++ ) {
+		for ( Size j=1; j <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j ) {
 			id::TorsionID my_ID( i, id::BB, j );
 			pose.set_torsion( my_ID, start_pose.torsion( my_ID ) );
 		}
@@ -2581,15 +2579,14 @@ rna_chain_closure_test()
 
 	//Perturb torsions
 	utility::vector1< id::TorsionID > tor_ids;
-	for (Size j = 5; j <=6; ++ j){
+	for ( Size j = 5; j <=6; ++ j ) {
 		tor_ids.push_back( id::TorsionID( cutpoint, id::BB, j ) );
 	}
-	for (Size j = 1; j <=4; ++ j){
+	for ( Size j = 1; j <=4; ++ j ) {
 		tor_ids.push_back( id::TorsionID( cutpoint+1, id::BB, j ) );
 	}
 
-	for (Size n = 1; n <= tor_ids.size(); n++ )
-	{
+	for ( Size n = 1; n <= tor_ids.size(); n++ ) {
 		//Size const n(1);
 		Real const current_val = pose.torsion( tor_ids[n] );
 		pose.set_torsion( tor_ids[n], current_val + 20.0);
@@ -2639,7 +2636,7 @@ setup_crazy_fold_tree( pose::Pose & pose, core::chemical::ResidueTypeSetCOP & rs
 	Size const num_jumps( nres_real );
 	ObjexxFCL::FArray2D <int> jump_points( 2, num_jumps );
 	ObjexxFCL::FArray1D <int> cuts( num_jumps );
-	for (Size n = 1; n <= num_jumps; n++ ){
+	for ( Size n = 1; n <= num_jumps; n++ ) {
 		jump_points( 1, n ) = n;
 		jump_points( 2, n ) = nres_real+1;
 		cuts( n ) = n;
@@ -2647,18 +2644,18 @@ setup_crazy_fold_tree( pose::Pose & pose, core::chemical::ResidueTypeSetCOP & rs
 
 	FoldTree f( nres_real+1 );
 	f.tree_from_jumps_and_cuts( nres_real + 1, num_jumps,
-															jump_points, cuts, 1, false /*verbose*/ );
+		jump_points, cuts, 1, false /*verbose*/ );
 	f.reorder( nres_real + 1 );
-	for (Size n = 1; n <= num_jumps; n++ ){
+	for ( Size n = 1; n <= num_jumps; n++ ) {
 		f.set_jump_atoms( n,
-											"ORIG",
-											core::chemical::rna::chi1_torsion_atom( pose.residue( n ) )   );
+			"ORIG",
+			core::chemical::rna::chi1_torsion_atom( pose.residue( n ) )   );
 
 	}
 
 	pose.fold_tree( f );
 
-	for (Size n = 1; n < nres_real; n++ ){
+	for ( Size n = 1; n < nres_real; n++ ) {
 		if ( !original_pose.fold_tree().is_cutpoint( n ) ) {
 			add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, n );
 			add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, n+1 );
@@ -2705,16 +2702,16 @@ rna_backbone_rebuild_test()
 	pose.clear();
 
 	ResidueOP rsd( ResidueFactory::create_residue( rsd_set->name_map( "VRT" ) ) );
-	make_pose_from_sequence( pose, rna_sequence,	*rsd_set );
+	make_pose_from_sequence( pose, rna_sequence, *rsd_set );
 	pose.append_residue_by_jump( *rsd, 1 );
 	pose.fold_tree( start_pose.fold_tree() );
 	Size const nres_real( rna_sequence.size()  );
 	Size const num_jumps( nres_real );
-	for (Size n = 1; n <= num_jumps; n++ ){
+	for ( Size n = 1; n <= num_jumps; n++ ) {
 		pose.set_jump( n, start_pose.jump( n ) );
 	}
 
-	for (Size n = 1; n < nres_real; n++ ){
+	for ( Size n = 1; n < nres_real; n++ ) {
 		add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, n );
 		add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, n+1 );
 	}
@@ -2728,13 +2725,13 @@ rna_backbone_rebuild_test()
 
 	utility::vector1< utility::vector1< Real > >  torsion_sets;
 
-	while (  getline( vall_in, line) ){
+	while (  getline( vall_in, line) ) {
 		std::istringstream line_stream( line );
 		char dummychar( ' ' );
 		Real val( 0.0 );
 		line_stream >> dummychar;
 		utility::vector1 < Real > torsion_set;
-		for (Size i = 1; i <= core::chemical::rna::NUM_RNA_TORSIONS; i++ ) {
+		for ( Size i = 1; i <= core::chemical::rna::NUM_RNA_TORSIONS; i++ ) {
 			line_stream  >> val;
 			torsion_set.push_back( val );
 		}
@@ -2744,13 +2741,13 @@ rna_backbone_rebuild_test()
 	/////////////////////////////////////////////////////////////////////////////
 	// Figure out a mapping between torsion sets and jumps
 	pose::Pose mini_pose;
-	make_pose_from_sequence( mini_pose, "uu",	*rsd_set );
+	make_pose_from_sequence( mini_pose, "uu", *rsd_set );
 	FoldTree mini_f( 2 );
 	mini_f.new_jump( 1, 2, 1);
 	mini_f.set_jump_atoms( 1, " C2 ", " C2 " );
-	//	mini_pose.fold_tree( mini_f );
-	//	add_variant_type_to_pose_residue( mini_pose, chemical::CUTPOINT_LOWER, 1 );
-	//	add_variant_type_to_pose_residue( mini_pose, chemical::CUTPOINT_UPPER, 2 );
+	// mini_pose.fold_tree( mini_f );
+	// add_variant_type_to_pose_residue( mini_pose, chemical::CUTPOINT_LOWER, 1 );
+	// add_variant_type_to_pose_residue( mini_pose, chemical::CUTPOINT_UPPER, 2 );
 
 	utility::vector1< Jump > base_base_jumps, forwardconnect_base_jumps;
 	std::cout << "NUM TORSION SETS " << torsion_sets.size() << std::endl;
@@ -2758,20 +2755,20 @@ rna_backbone_rebuild_test()
 	ScoreFunctionOP scorefxn( new ScoreFunction );
 	scorefxn->set_weight( hbond_sc, 1.0 );
 
-	for (Size n = 1; n < torsion_sets.size(); n++ ){
+	for ( Size n = 1; n < torsion_sets.size(); n++ ) {
 		mini_pose.fold_tree( FoldTree( 2 ) ); //simple.
-		for (Size j = 1; j <= NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
+		for ( Size j = 1; j <= NUM_RNA_MAINCHAIN_TORSIONS; ++j ) {
 			mini_pose.set_torsion( id::TorsionID( 1, id::BB, j), torsion_sets[n][j] );
 			mini_pose.set_torsion( id::TorsionID( 2, id::BB, j), torsion_sets[n+1][j] );
 		}
-		for (Size j = 1; j <= NUM_RNA_CHI_TORSIONS; ++ j){
+		for ( Size j = 1; j <= NUM_RNA_CHI_TORSIONS; ++ j ) {
 			mini_pose.set_torsion( id::TorsionID( 1, id::CHI, j), torsion_sets[n][j+ NUM_RNA_MAINCHAIN_TORSIONS] );
 			mini_pose.set_torsion( id::TorsionID( 2, id::CHI, j), torsion_sets[n+1][j+NUM_RNA_MAINCHAIN_TORSIONS] );
 		}
 
 		//Need to force a refold?
 		(*scorefxn)( mini_pose );
-		//		mini_pose.dump_pdb( "S_"+string_of( n )+".pdb" );
+		//  mini_pose.dump_pdb( "S_"+string_of( n )+".pdb" );
 
 		mini_pose.fold_tree( mini_f );
 
@@ -2802,23 +2799,23 @@ rna_backbone_rebuild_test()
 
 		Real best_jump_distance( 999.9 );
 		Size best_n( 1 );
-		for (Size n = 1; n <= base_base_jumps.size(); n++ ){
+		for ( Size n = 1; n <= base_base_jumps.size(); n++ ) {
 			Real const jump_distance = get_jump_distance( current_jump, base_base_jumps[ n ] );
-			//		std::cout <<  "JUMP DIST ==> " << n << " " << jump_distance << " " << base_base_jumps[n] << std::endl;
-			if (jump_distance < best_jump_distance ){
+			//  std::cout <<  "JUMP DIST ==> " << n << " " << jump_distance << " " << base_base_jumps[n] << std::endl;
+			if ( jump_distance < best_jump_distance ) {
 				best_jump_distance = jump_distance;
 				best_n = n;
-				//				std::cout << "Found better jump: " << best_n  << " " << best_jump_distance << std::endl;
+				//    std::cout << "Found better jump: " << best_n  << " " << best_jump_distance << std::endl;
 			}
 		}
 
-		for (Size j = 4; j <= NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
+		for ( Size j = 4; j <= NUM_RNA_MAINCHAIN_TORSIONS; ++j ) {
 			pose.set_torsion( id::TorsionID( i, id::BB, j), torsion_sets[best_n][j] );
 		}
-		for (Size j = 1; j <= 4; ++j) {
+		for ( Size j = 1; j <= 4; ++j ) {
 			pose.set_torsion( id::TorsionID( i+1, id::BB, j), torsion_sets[best_n+1][j] );
 		}
-		for (Size j = 1; j <= NUM_RNA_CHI_TORSIONS; ++ j){
+		for ( Size j = 1; j <= NUM_RNA_CHI_TORSIONS; ++ j ) {
 			pose.set_torsion( id::TorsionID( i, id::CHI, j), torsion_sets[best_n][j+NUM_RNA_MAINCHAIN_TORSIONS] );
 			pose.set_torsion( id::TorsionID( i+1, id::CHI, j), torsion_sets[best_n+1][j+NUM_RNA_MAINCHAIN_TORSIONS] );
 		}
@@ -2829,7 +2826,7 @@ rna_backbone_rebuild_test()
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Now close the rest of the residues...
-	for (Size i = 2; i < nres_real; i++ ){
+	for ( Size i = 2; i < nres_real; i++ ) {
 
 		id::AtomID base_atom1_id(       pose.residue(i).atom_index( " O3'" ), i );
 		tree::AtomCOP base_atom1 ( pose.atom_tree().atom( base_atom1_id ).get_self_ptr() );
@@ -2839,23 +2836,23 @@ rna_backbone_rebuild_test()
 
 		Real best_jump_distance( 999.9 );
 		Size best_n( 1 );
-		for (Size n = 1; n <= base_base_jumps.size(); n++ ){
+		for ( Size n = 1; n <= base_base_jumps.size(); n++ ) {
 			Real const jump_distance = get_jump_distance( current_jump, forwardconnect_base_jumps[ n ] );
-			//		std::cout <<  "JUMP DIST ==> " << n << " " << jump_distance << " " << base_base_jumps[n] << std::endl;
-			if (jump_distance < best_jump_distance ){
+			//  std::cout <<  "JUMP DIST ==> " << n << " " << jump_distance << " " << base_base_jumps[n] << std::endl;
+			if ( jump_distance < best_jump_distance ) {
 				best_jump_distance = jump_distance;
 				best_n = n;
 			}
 		}
 		std::cout << "Found best jump: " << best_n  << " " << best_jump_distance << std::endl;
 
-		for (Size j = 5; j <= NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
+		for ( Size j = 5; j <= NUM_RNA_MAINCHAIN_TORSIONS; ++j ) {
 			pose.set_torsion( id::TorsionID( i, id::BB, j), torsion_sets[best_n][j] );
 		}
-		for (Size j = 1; j <= 4; ++j) {
+		for ( Size j = 1; j <= 4; ++j ) {
 			pose.set_torsion( id::TorsionID( i+1, id::BB, j), torsion_sets[best_n+1][j] );
 		}
-		for (Size j = 1; j <= NUM_RNA_CHI_TORSIONS; ++ j){
+		for ( Size j = 1; j <= NUM_RNA_CHI_TORSIONS; ++ j ) {
 			pose.set_torsion( id::TorsionID( i+1, id::CHI, j), torsion_sets[best_n+1][j+NUM_RNA_MAINCHAIN_TORSIONS] );
 		}
 	}
@@ -2863,7 +2860,7 @@ rna_backbone_rebuild_test()
 
 	// CCD close?
 	protocols::farna::RNA_LoopCloser rna_loop_closer;
-	for (Size i = 1; i < nres_real; i++ ) {
+	for ( Size i = 1; i < nres_real; i++ ) {
 
 		//Real mean_dist_err = rna_ccd_close( pose, i );
 
@@ -2898,9 +2895,9 @@ rna_filter_base_pairs_test()
 	silent_file_data_in.read_file( infile );
 
 	//Input pose, tack on virtual atom.
-	//	pose::Pose pose;
-	//	import_pose::pose_from_pdb( pose, *rsd_set, infile );
-	//	protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
+	// pose::Pose pose;
+	// import_pose::pose_from_pdb( pose, *rsd_set, infile );
+	// protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 
 	std::string const in_path = option[ in::path::path ]()[1];
 	std::string const rna_params_file =  in_path + option[ params_file ]();
@@ -2916,7 +2913,7 @@ rna_filter_base_pairs_test()
 		pose::Pose pose;
 		iter->fill_pose( pose, *rsd_set );
 
-		if (!init) {
+		if ( !init ) {
 			rna_structure_parameters.initialize( pose, rna_params_file, rna_jump_library_file, false /*ignore_secstruct*/ );
 			init = true;
 		}
@@ -2965,7 +2962,7 @@ crazy_minimize_test()
 
 	Size const nstruct = option[ out::nstruct ];
 
-	for (Size i = 1; i <= pdb_files.size(); i++) {
+	for ( Size i = 1; i <= pdb_files.size(); i++ ) {
 		std::string const pdb_file = pdb_files[i];
 
 		pose::Pose pose, start_pose;
@@ -2983,7 +2980,7 @@ crazy_minimize_test()
 
 			pose = start_pose;
 
-			if ( i == 1 && n == 1) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
+			if ( i == 1 && n == 1 ) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
 			//User defined fold tree...
 			if ( option[ params_file ].user() ) {
@@ -3019,13 +3016,13 @@ crazy_minimize_test()
 ///////////////////////////////////////////////////////////////////////////////
 void
 output_sasa( std::ostream & out,
-						 pose::Pose & pose,
-						 Size const rsdno,
-						 id::AtomID_Map< Real > & atom_sasa,
-						 utility::vector1< std::string> const & atom_names,
-						 bool const & output )
+	pose::Pose & pose,
+	Size const rsdno,
+	id::AtomID_Map< Real > & atom_sasa,
+	utility::vector1< std::string> const & atom_names,
+	bool const & output )
 {
-	if (!output){
+	if ( !output ) {
 		out << F(8,3, 0.0 );
 		return;
 	}
@@ -3033,7 +3030,7 @@ output_sasa( std::ostream & out,
 	bool atom_found( true );
 	Real atom_sasa_tot( 0.0 );
 
-	for (Size m = 1; m <= atom_names.size(); m++ ) {
+	for ( Size m = 1; m <= atom_names.size(); m++ ) {
 		Size const atom_i( pose.residue( rsdno ).atom_index( atom_names[m] ) );
 		if ( atom_i > 0 ) {
 			id::AtomID atom_id( atom_i, rsdno );
@@ -3097,12 +3094,12 @@ sasa_test()
 
 	Real const probe_radius( 1.4 );
 
-	for (Size n = 1; n <= pdb_files.size(); n++) {
+	for ( Size n = 1; n <= pdb_files.size(); n++ ) {
 		std::string const pdb_file = pdb_files[n];
 
 		pose::Pose pose;
 		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
-		//		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
+		//  protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 
 		id::AtomID_Map< Real > atom_sasa;
 		utility::vector1< Real > rsd_sasa;
@@ -3156,7 +3153,7 @@ env_sugar_test()
 
 
 	utility::vector1< std::string > atom_names_sugar;
-	if ( option[ rsd_type_set ]() == "coarse_rna" ){
+	if ( option[ rsd_type_set ]() == "coarse_rna" ) {
 		atom_names_sugar.push_back( " S  ");
 	} else {
 		atom_names_sugar.push_back( " C1'");
@@ -3171,12 +3168,12 @@ env_sugar_test()
 	Size const numbins( static_cast<int>(max_probe_radius/probe_radius_bin_size) );
 	Size const num_sugar_atoms( atom_names_sugar.size() );
 
-	for (Size n = 1; n <= pdb_files.size(); n++) {
+	for ( Size n = 1; n <= pdb_files.size(); n++ ) {
 		std::string const pdb_file = pdb_files[n];
 
 		pose::Pose pose;
 		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
-		//		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
+		//  protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 
 		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 
@@ -3211,7 +3208,7 @@ env_sugar_test()
 							//for ( Size b = 1; b <= bin; b++ ) {
 							nbrs( bin, j )++;
 							found_neighbor( bin ) = true;
-							//							}
+							//       }
 						}
 					}
 
@@ -3264,7 +3261,7 @@ print_hbonds_test()
 
 	ScoreFunctionOP scorefxn = get_score_function();
 
-	for (Size n = 1; n <= pdb_files.size(); n++) {
+	for ( Size n = 1; n <= pdb_files.size(); n++ ) {
 		std::string const pdb_file = pdb_files[n];
 
 		pose::Pose pose;
@@ -3278,7 +3275,7 @@ print_hbonds_test()
 		hbonds::fill_hbond_set( pose, false /*calc deriv*/, *hbond_set );
 
 		core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
-		for (Size i = 1; i <= hbond_set->nhbonds(); i++ ) {
+		for ( Size i = 1; i <= hbond_set->nhbonds(); i++ ) {
 			hbonds::HBond const & hbond( hbond_set->hbond( i ) );
 
 			Size const don_res_num = hbond.don_res();
@@ -3296,7 +3293,7 @@ print_hbonds_test()
 				pose.residue( acc_res_num).name1() << pdb_info->number( acc_res_num ) << " " <<
 				pose.residue( acc_res_num ).atom_name( acc_atm ) <<
 				" ==> " << hbond.energy()
-								<< std::endl;
+				<< std::endl;
 
 		}
 
@@ -3307,8 +3304,8 @@ print_hbonds_test()
 ///////////////////////////////////////////////////////////////////////////////
 void
 create_dihedral_constraint( core::scoring::constraints::ConstraintSetOP & cst_set,
-														core::pose::Pose & pose,
-														core::id::TorsionID torsion_id )
+	core::pose::Pose & pose,
+	core::id::TorsionID torsion_id )
 {
 	using namespace core::id;
 	using namespace core::scoring;
@@ -3321,11 +3318,11 @@ create_dihedral_constraint( core::scoring::constraints::ConstraintSetOP & cst_se
 	Real torsion_value( pose.torsion( torsion_id ) );
 
 	HarmonicFuncOP harm_func( new HarmonicFunc( numeric::conversions::radians( torsion_value ),
-																							 numeric::conversions::radians( 20.0 ) ) );
+		numeric::conversions::radians( 20.0 ) ) );
 
 	ConstraintOP dihedral1( new DihedralConstraint( id1, id2, id3, id4,
-																				 harm_func,
-																				 rna_torsion ) );
+		harm_func,
+		rna_torsion ) );
 	cst_set->add_constraint( dihedral1 );
 }
 
@@ -3333,8 +3330,8 @@ create_dihedral_constraint( core::scoring::constraints::ConstraintSetOP & cst_se
 ///////////////////////////////////////////////////////////////////////////////
 void
 get_backbone_rotamers( utility::vector1< utility::vector1 <Real > > & backbone_rotamers,
-											 PuckerState const & pucker1,
-											 PuckerState const & pucker2 ) {
+	PuckerState const & pucker1,
+	PuckerState const & pucker2 ) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -3356,71 +3353,71 @@ get_backbone_rotamers( utility::vector1< utility::vector1 <Real > > & backbone_r
 
 	chemical::rna::GaussianParameter gp( 0.0, 0.0, 0.0);
 
-	for (int d1 = 1; d1 <= 2; d1++ ) {
+	for ( int d1 = 1; d1 <= 2; d1++ ) {
 
 		if ( pucker1 > 0 &&  pucker1 != d1 ) continue;
 
-		if (d1 == 1) {
+		if ( d1 == 1 ) {
 			delta1 = rna_fitted_torsion_info.gaussian_parameter_set_delta_north()[1].center;
 			nu2_1 = rna_fitted_torsion_info.gaussian_parameter_set_nu2_north()[1].center;
 			nu1_1 = rna_fitted_torsion_info.gaussian_parameter_set_nu1_north()[1].center;
-		}	else {
+		} else {
 			delta1 = rna_fitted_torsion_info.gaussian_parameter_set_delta_south()[1].center;
 			nu2_1 = rna_fitted_torsion_info.gaussian_parameter_set_nu2_south()[1].center;
 			nu1_1 = rna_fitted_torsion_info.gaussian_parameter_set_nu1_south()[1].center;
 		}
 
-		for (Size e1 = 1; e1 <= 2; e1++ ) {
+		for ( Size e1 = 1; e1 <= 2; e1++ ) {
 
 			for ( Size e1_std = 1; e1_std <= torsion_samples.size(); e1_std++ ) {
 
-				if (d1 == 1) gp = rna_fitted_torsion_info.gaussian_parameter_set_epsilon_north()[e1];
+				if ( d1 == 1 ) gp = rna_fitted_torsion_info.gaussian_parameter_set_epsilon_north()[e1];
 				else         gp = rna_fitted_torsion_info.gaussian_parameter_set_epsilon_south()[e1];
 
-				epsilon1 = gp.center +	torsion_samples[ e1_std ] * gp.width;
+				epsilon1 = gp.center + torsion_samples[ e1_std ] * gp.width;
 
 				//zeta depends on alpha of next residue...
-				for (Size a2 = 1; a2 <= 3; a2++ ) {
+				for ( Size a2 = 1; a2 <= 3; a2++ ) {
 
 					for ( Size a2_std = 1; a2_std <= torsion_samples.size(); a2_std++ ) {
 
 						gp = rna_fitted_torsion_info.gaussian_parameter_set_alpha()[a2];
-						alpha2 = gp.center +	torsion_samples[ a2_std ] * gp.width;
+						alpha2 = gp.center + torsion_samples[ a2_std ] * gp.width;
 
-						for (Size z1 = 1; z1 <= 2; z1++ ) {
+						for ( Size z1 = 1; z1 <= 2; z1++ ) {
 
 							for ( Size z1_std = 1; z1_std <= torsion_samples.size(); z1_std++ ) {
 
-								if (a2 == 1)    gp = rna_fitted_torsion_info.gaussian_parameter_set_zeta_alpha_sc_minus()[z1];
-								else if (a2==2) gp = rna_fitted_torsion_info.gaussian_parameter_set_zeta_alpha_sc_plus()[z1];
+								if ( a2 == 1 )    gp = rna_fitted_torsion_info.gaussian_parameter_set_zeta_alpha_sc_minus()[z1];
+								else if ( a2==2 ) gp = rna_fitted_torsion_info.gaussian_parameter_set_zeta_alpha_sc_plus()[z1];
 								else            gp = rna_fitted_torsion_info.gaussian_parameter_set_zeta_alpha_ap()[z1];
 
-								zeta1 = gp.center +	torsion_samples[ z1_std ] * gp.width;
+								zeta1 = gp.center + torsion_samples[ z1_std ] * gp.width;
 
 
-								for (Size b2 = 1; b2 <= 1; b2++ ) {
+								for ( Size b2 = 1; b2 <= 1; b2++ ) {
 
 									for ( Size b2_std = 1; b2_std <= torsion_samples.size(); b2_std++ ) {
 
 										gp = rna_fitted_torsion_info.gaussian_parameter_set_beta()[b2];
-										beta2 = gp.center +	torsion_samples[ b2_std ] * gp.width;
+										beta2 = gp.center + torsion_samples[ b2_std ] * gp.width;
 
-										for (Size g2 = 1; g2 <= 3; g2++ ) {
+										for ( Size g2 = 1; g2 <= 3; g2++ ) {
 
 											for ( Size g2_std = 1; g2_std <= torsion_samples.size(); g2_std++ ) {
 
 												gp = rna_fitted_torsion_info.gaussian_parameter_set_gamma()[g2];
-												gamma2 = gp.center +	torsion_samples[ g2_std ] * gp.width;
+												gamma2 = gp.center + torsion_samples[ g2_std ] * gp.width;
 
-												for (int d2 = 1; d2 <= 2; d2++ ) {
+												for ( int d2 = 1; d2 <= 2; d2++ ) {
 
 													if ( pucker2 > 0 &&  pucker2 != d2 ) continue;
 
-													if (d2 == 1) {
+													if ( d2 == 1 ) {
 														delta2 = rna_fitted_torsion_info.gaussian_parameter_set_delta_north()[1].center;
 														nu2_2 = rna_fitted_torsion_info.gaussian_parameter_set_nu2_north()[1].center;
 														nu1_2 = rna_fitted_torsion_info.gaussian_parameter_set_nu1_north()[1].center;
-													}	else {
+													} else {
 														delta2 = rna_fitted_torsion_info.gaussian_parameter_set_delta_south()[1].center;
 														nu2_2 = rna_fitted_torsion_info.gaussian_parameter_set_nu2_south()[1].center;
 														nu1_2 = rna_fitted_torsion_info.gaussian_parameter_set_nu1_south()[1].center;
@@ -3459,7 +3456,7 @@ get_backbone_rotamers( utility::vector1< utility::vector1 <Real > > & backbone_r
 ///////////////////////////////////////////////////////////////////////////////
 void
 apply_backbone_rotamer( pose::Pose & pose, Size const i, utility::vector1< Real > backbone_rotamer,
-												bool const pucker1 = true, bool const pucker2 = true)
+	bool const pucker1 = true, bool const pucker2 = true)
 {
 	using namespace core::id;
 
@@ -3506,13 +3503,13 @@ dinucleotide_test()
 	std::string sequence = "cc";
 
 	core::pose::make_pose_from_sequence(
-																					pose,
-																					sequence,
-																					*rsd_set );
+		pose,
+		sequence,
+		*rsd_set );
 	dump_pdb( pose, "start.pdb" );
 
 	chemical::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
-	for (Size i = 1; i <=2; i++ ) { // starting values for torsions.
+	for ( Size i = 1; i <=2; i++ ) { // starting values for torsions.
 
 		pose.set_torsion( TorsionID( i, id::BB, 1 ), rna_fitted_torsion_info.gaussian_parameter_set_alpha()[1].center );
 		pose.set_torsion( TorsionID( i, id::BB, 2 ), rna_fitted_torsion_info.gaussian_parameter_set_beta()[1].center );
@@ -3545,7 +3542,7 @@ dinucleotide_test()
 	utility::vector1< utility::vector1 <Real > > backbone_rotamers;
 	get_backbone_rotamers( backbone_rotamers, ANY_PUCKER, ANY_PUCKER );
 
-	for ( Size n = 1;  n <= backbone_rotamers.size(); n++ )		{
+	for ( Size n = 1;  n <= backbone_rotamers.size(); n++ )  {
 		apply_backbone_rotamer( pose, 1, backbone_rotamers[n] );
 
 		current_pose = pose;
@@ -3578,7 +3575,7 @@ dinucleotide_test()
 		mm.set_jump( true );
 
 		minimizer.run( current_pose, mm, *(scorefxn), options );
-		//			(*scorefxn)(current_pose);
+		//   (*scorefxn)(current_pose);
 
 		std::string const tag( "S_"+lead_zero_string_of(count++, 3) );
 		RNA_SilentStruct s( current_pose, tag );
@@ -3593,9 +3590,9 @@ dinucleotide_test()
 ////////////////////////////////////////////////////
 void
 vary_bond_length( pose::Pose & pose,
-									core::id::TorsionID & tor_id,
-									core::kinematics::MoveMap & mm,
-									core::scoring::constraints::ConstraintSetOP & cst_set )
+	core::id::TorsionID & tor_id,
+	core::kinematics::MoveMap & mm,
+	core::scoring::constraints::ConstraintSetOP & cst_set )
 {
 	using namespace core::id;
 	using namespace core::scoring;
@@ -3604,9 +3601,9 @@ vary_bond_length( pose::Pose & pose,
 
 	AtomID id1,id2,id3,id4, my_ID;
 	bool const failure = pose.conformation().get_torsion_angle_atom_ids( tor_id, id1, id2, id3, id4 );
-	if (failure) return;
+	if ( failure ) return;
 
- 	core::kinematics::tree::AtomCOP atom2 ( pose.atom_tree().atom( id2 ).get_self_ptr() );
+	core::kinematics::tree::AtomCOP atom2 ( pose.atom_tree().atom( id2 ).get_self_ptr() );
 	core::kinematics::tree::AtomCOP atom3 ( pose.atom_tree().atom( id3 ).get_self_ptr() );
 
 	DOF_ID dof_id;
@@ -3619,7 +3616,7 @@ vary_bond_length( pose::Pose & pose,
 	}
 
 	dof_id = DOF_ID( my_ID, D );
-	//	std::cout << "Attempt to vary bond length for resno " << my_ID.rsd() << " atom: " << pose.residue( my_ID.rsd() ).atom_name( my_ID.atomno() ) << std::endl;
+	// std::cout << "Attempt to vary bond length for resno " << my_ID.rsd() << " atom: " << pose.residue( my_ID.rsd() ).atom_name( my_ID.atomno() ) << std::endl;
 
 	mm.set( dof_id, true );
 
@@ -3640,15 +3637,15 @@ void vary_geometry_RNA( pose::Pose & pose, kinematics::MoveMap & mm )
 	using namespace core::chemical::rna;
 	using namespace core::scoring::constraints;
 
-	ConstraintSetOP cst_set( 	pose.constraint_set()->clone() ) ;
+	ConstraintSetOP cst_set(  pose.constraint_set()->clone() ) ;
 
 	//Change this to also include D DOF's for sidechains.
-	for (Size i = 1; i <= pose.total_residue(); i++ ) {
-		for (Size n = 1; n <= NUM_RNA_MAINCHAIN_TORSIONS; n++ ) {
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		for ( Size n = 1; n <= NUM_RNA_MAINCHAIN_TORSIONS; n++ ) {
 			TorsionID tor_id( i, id::BB, n );
 			vary_bond_length( pose, tor_id, mm, cst_set );
 		}
-		for (Size n = 1; n <= NUM_RNA_CHI_TORSIONS; n++ ) {
+		for ( Size n = 1; n <= NUM_RNA_CHI_TORSIONS; n++ ) {
 			TorsionID tor_id( i, id::CHI, n );
 			vary_bond_length( pose, tor_id, mm, cst_set );
 		}
@@ -3689,7 +3686,7 @@ build_next_nucleotide_test()
 	import_pose::pose_from_pdb( pose_start, *rsd_set, infile );
 
 	//This is a bit complicated...
- 	if ( option[in::file::native].user() ) {
+	if ( option[in::file::native].user() ) {
 		import_pose::pose_from_pdb( pose_reference, *rsd_set, option[in::file::native] );
 		if ( prepend_res ) {
 			ResidueType rsd_type =  pose_reference.residue( 1 ).type();
@@ -3697,7 +3694,7 @@ build_next_nucleotide_test()
 			pose_start.prepend_polymer_residue_before_seqpos( *new_rsd, 1, true );
 		} else {
 			remove_upper_terminus_type_from_pose_residue(pose_start,
-																									 pose_start.total_residue() );
+				pose_start.total_residue() );
 
 			Size nres( pose_reference.total_residue() );
 			chemical::AA res_aa =  pose_reference.residue( nres ).aa();
@@ -3705,7 +3702,7 @@ build_next_nucleotide_test()
 			pose_start.append_residue_by_bond( *new_rsd, true );
 
 			add_upper_terminus_type_to_pose_residue(pose_start,
-																							pose_start.total_residue() );
+				pose_start.total_residue() );
 
 		}
 	} else {
@@ -3724,7 +3721,7 @@ build_next_nucleotide_test()
 	ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type ) ;
 
 	utility::vector1< std::pair< std::string, std::string> > atom_pairs;
-	if (prepend_res) {
+	if ( prepend_res ) {
 		atom_pairs.push_back( std::make_pair( " O3'", " O3'" ) );
 		atom_pairs.push_back( std::make_pair( " C3'", " C3'" ) );
 		atom_pairs.push_back( std::make_pair( " C4'", " C4'" ) );
@@ -3772,7 +3769,7 @@ build_next_nucleotide_test()
 	std::string const silent_file = option[ out::file::silent  ]();
 
 	utility::vector1< utility::vector1 <Real > > backbone_rotamers;
-	if (prepend_res) {
+	if ( prepend_res ) {
 		get_backbone_rotamers( backbone_rotamers, ANY_PUCKER, NORTH );
 	} else {
 		get_backbone_rotamers( backbone_rotamers, NORTH, ANY_PUCKER );
@@ -3796,9 +3793,9 @@ build_next_nucleotide_test()
 	//mm.set_bb(  which_res, true );
 	//mm.set_chi( which_res, true );
 	//if (prepend_res) {
-	//	mm.set_bb(  which_res+1, true );
+	// mm.set_bb(  which_res+1, true );
 	//} else {
-	//	mm.set_bb(  which_res-1, true );
+	// mm.set_bb(  which_res-1, true );
 	//}
 
 	//Just testing...
@@ -3809,7 +3806,7 @@ build_next_nucleotide_test()
 	// Initial pose...
 	Size count( 0 );
 	current_pose = pose_reference;
-	if (!quick) minimizer.run( current_pose, mm, *(scorefxn), options );
+	if ( !quick ) minimizer.run( current_pose, mm, *(scorefxn), options );
 	(*scorefxn)(current_pose);
 	rmsd = all_atom_rmsd( pose_reference, current_pose );
 	std::string const tag( "S_"+lead_zero_string_of(count, 3) );
@@ -3818,30 +3815,30 @@ build_next_nucleotide_test()
 	silent_file_data.write_silent_struct(s, silent_file, false /*write score only*/);
 
 	//////////////////////////////////////////////////////////
-	for ( Size n = 1;  n <= backbone_rotamers.size(); n++ )		{
+	for ( Size n = 1;  n <= backbone_rotamers.size(); n++ )  {
 
 		count++;
 
-		if (prepend_res) {
+		if ( prepend_res ) {
 			apply_backbone_rotamer( pose, suite_res, backbone_rotamers[n],
-															true /* pucker1 */, false /* pucker2 */);
+				true /* pucker1 */, false /* pucker2 */);
 		} else {
 			apply_backbone_rotamer( pose, suite_res, backbone_rotamers[n],
-															false /* pucker1 */, true /* pucker2 */);
+				false /* pucker1 */, true /* pucker2 */);
 		}
 
 		current_pose = pose;
 
-		if ( option[ vary_geometry] )		 vary_geometry_RNA( pose, mm );
+		if ( option[ vary_geometry] )   vary_geometry_RNA( pose, mm );
 
-		//		mm.set_jump( true );
+		//  mm.set_jump( true );
 
 		rmsd = all_atom_rmsd( pose_reference, current_pose );
 		std::cout << count << " All atom rmsd: " << rmsd  << std::endl;
 
 		if ( rmsd > RMSD_CUTOFF ) continue;
 
-		if (!quick) minimizer.run( current_pose, mm, *(scorefxn), options );
+		if ( !quick ) minimizer.run( current_pose, mm, *(scorefxn), options );
 
 		(*scorefxn)(current_pose);
 
@@ -3852,7 +3849,7 @@ build_next_nucleotide_test()
 		s.add_energy( "rms", rmsd );
 
 		silent_file_data.write_silent_struct(s, silent_file, false /*write score only*/);
-		if (!quick) dump_pdb( current_pose, tag+".pdb" );
+		if ( !quick ) dump_pdb( current_pose, tag+".pdb" );
 
 		//dump_pdb( pose, "nomin_"+tag+".pdb" );
 	}
@@ -3865,10 +3862,10 @@ typedef utility::vector1< GaussianParameter > GaussianParameterSet;
 
 void
 copy_rotamerized_torsions( pose::Pose & pose,
-													 pose::Pose & source_pose,
-													 Size const i,
-													 Size const rna_torsion_number,
-													 GaussianParameterSet const & gaussian_parameter_set )
+	pose::Pose & source_pose,
+	Size const i,
+	Size const rna_torsion_number,
+	GaussianParameterSet const & gaussian_parameter_set )
 {
 
 	using namespace core::scoring;
@@ -3887,7 +3884,7 @@ copy_rotamerized_torsions( pose::Pose & pose,
 
 	id::AtomID id1,id2,id3,id4;
 	bool fail = source_pose.conformation().get_torsion_angle_atom_ids( torsion_id, id1, id2, id3, id4 );
-	if (fail) return;
+	if ( fail ) return;
 
 	Real torsion_value( source_pose.torsion( torsion_id ) );
 
@@ -3903,7 +3900,7 @@ copy_rotamerized_torsions( pose::Pose & pose,
 		torsion_samples.push_back( 1 );
 	}
 
-	for (Size n = 1; n <= gaussian_parameter_set.size(); n++ ){
+	for ( Size n = 1; n <= gaussian_parameter_set.size(); n++ ) {
 
 		Real const width = gaussian_parameter_set[n].width;
 		Real const weight = 1.0/( width * width );
@@ -3914,15 +3911,15 @@ copy_rotamerized_torsions( pose::Pose & pose,
 			Real deviation = numeric::principal_angle_degrees( torsion_value - center );
 			Real const sigma2 = deviation * deviation * weight;
 
-				if (sigma2 < best_sigma2 ){
-					best_center = center;
-					best_sigma2 = sigma2;
-				}
+			if ( sigma2 < best_sigma2 ) {
+				best_center = center;
+				best_sigma2 = sigma2;
+			}
 		}
 	}
 
 	std::cout << "Residue " << i << "  torsion_num " << rna_torsion_number << "  " << F(8,3,torsion_value) << " " <<
-			F(8,3,best_center) << "  ==> " << F(8,3,torsion_value-best_center) << std::endl;
+		F(8,3,best_center) << "  ==> " << F(8,3,torsion_value-best_center) << std::endl;
 	pose.set_torsion( torsion_id, best_center );
 }
 
@@ -3938,7 +3935,7 @@ rotamerize_structure( pose::Pose & pose, pose::Pose & source_pose )
 	Real const DELTA_CUTOFF( rna_fitted_torsion_info.delta_cutoff() );
 	Size const nres( pose.total_residue() );
 
-	for (Size i = 1; i <=nres; i++ ){
+	for ( Size i = 1; i <=nres; i++ ) {
 
 		conformation::Residue const & rsd( source_pose.residue( i ) );
 		copy_rotamerized_torsions( pose, source_pose, i, ALPHA, rna_fitted_torsion_info.gaussian_parameter_set_alpha());
@@ -3947,13 +3944,13 @@ rotamerize_structure( pose::Pose & pose, pose::Pose & source_pose )
 
 		Real const & delta( rsd.mainchain_torsion( DELTA ) );
 
-		if (delta <= DELTA_CUTOFF) { // North, or 3'-endo sugar pucker, favored by RNA.
+		if ( delta <= DELTA_CUTOFF ) { // North, or 3'-endo sugar pucker, favored by RNA.
 			copy_rotamerized_torsions( pose, source_pose, i, DELTA, rna_fitted_torsion_info.gaussian_parameter_set_delta_north());
 		} else { // South, or 2'-endo sugar pucker.
 			copy_rotamerized_torsions( pose, source_pose, i, DELTA, rna_fitted_torsion_info.gaussian_parameter_set_delta_south());
 		}
 
-		if (delta <= DELTA_CUTOFF) { // North, or 3'-endo sugar pucker, favored by RNA.
+		if ( delta <= DELTA_CUTOFF ) { // North, or 3'-endo sugar pucker, favored by RNA.
 			copy_rotamerized_torsions( pose, source_pose, i, EPSILON, rna_fitted_torsion_info.gaussian_parameter_set_epsilon_north());
 		} else { // South, or 2'-endo sugar pucker.
 			copy_rotamerized_torsions( pose, source_pose, i, EPSILON, rna_fitted_torsion_info.gaussian_parameter_set_epsilon_south());
@@ -3971,19 +3968,19 @@ rotamerize_structure( pose::Pose & pose, pose::Pose & source_pose )
 		}
 
 
-		if (delta <= DELTA_CUTOFF) { // North, or 3'-endo sugar pucker, favored by RNA.
+		if ( delta <= DELTA_CUTOFF ) { // North, or 3'-endo sugar pucker, favored by RNA.
 			copy_rotamerized_torsions( pose, source_pose, i, core::chemical::rna::CHI, rna_fitted_torsion_info.gaussian_parameter_set_chi_north());
 		} else { // South, or 2'-endo sugar pucker.
 			copy_rotamerized_torsions( pose, source_pose, i, core::chemical::rna::CHI, rna_fitted_torsion_info.gaussian_parameter_set_chi_south());
 		}
 
-		if (delta <= DELTA_CUTOFF) { // North, or 3'-endo sugar pucker, favored by RNA.
+		if ( delta <= DELTA_CUTOFF ) { // North, or 3'-endo sugar pucker, favored by RNA.
 			copy_rotamerized_torsions( pose, source_pose, i, NU2, rna_fitted_torsion_info.gaussian_parameter_set_nu2_north());
 		} else { // South, or 2'-endo sugar pucker.
 			copy_rotamerized_torsions( pose, source_pose, i, NU2, rna_fitted_torsion_info.gaussian_parameter_set_nu2_south());
 		}
 
-		if (delta <= DELTA_CUTOFF) { // North, or 3'-endo sugar pucker, favored by RNA.
+		if ( delta <= DELTA_CUTOFF ) { // North, or 3'-endo sugar pucker, favored by RNA.
 			copy_rotamerized_torsions( pose, source_pose, i, NU1, rna_fitted_torsion_info.gaussian_parameter_set_nu1_north());
 		} else { // South, or 2'-endo sugar pucker.
 			copy_rotamerized_torsions( pose, source_pose, i, NU1, rna_fitted_torsion_info.gaussian_parameter_set_nu1_south());
@@ -4022,9 +4019,9 @@ rotamerize_rna_test()
 	std::string sequence = source_pose.sequence();
 
 	core::pose::make_pose_from_sequence(
-																			pose,
-																			sequence,
-																			*rsd_set );
+		pose,
+		sequence,
+		*rsd_set );
 	dump_pdb( pose, "start.pdb" );
 
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
@@ -4033,13 +4030,13 @@ rotamerize_rna_test()
 	rotamerize_structure( pose, source_pose );
 
 	pose.dump_pdb( "rotamerized.pdb");
-	std::cout << "All-atom RMSD " << 		all_atom_rmsd( source_pose, pose ) << std::endl;
+	std::cout << "All-atom RMSD " <<   all_atom_rmsd( source_pose, pose ) << std::endl;
 
 
 	//////////////////////////////////////////////////
 	// Stay near this rotamer
 	ConstraintSetOP cst_set( new ConstraintSet() );
-	for (Size i = 1; i < pose.total_residue(); i++ ) {
+	for ( Size i = 1; i < pose.total_residue(); i++ ) {
 		create_dihedral_constraint( cst_set, pose, TorsionID( 1, id::BB, 4 ) );
 		create_dihedral_constraint( cst_set, pose, TorsionID( 1, id::CHI, 1 ) );
 		create_dihedral_constraint( cst_set, pose, TorsionID( 1, id::CHI, 2 ) );
@@ -4054,8 +4051,8 @@ rotamerize_rna_test()
 
 	//////////////////////////////////////////////////
 	// base pairing constraints.
- 	Real const WC_distance( 1.9 );
- 	Real const distance_stddev( 0.25 ); //Hmm. Maybe try linear instead?
+	Real const WC_distance( 1.9 );
+	Real const distance_stddev( 0.25 ); //Hmm. Maybe try linear instead?
 	FuncOP const distance_func( new HarmonicFunc( WC_distance, distance_stddev ) );
 
 	utility::vector1< std::string > atom_ids1, atom_ids2;
@@ -4063,7 +4060,7 @@ rotamerize_rna_test()
 	Size j( pose.total_residue() );
 	get_watson_crick_base_pair_atoms( pose.residue(i), pose.residue(j), atom_ids1, atom_ids2 );
 
-	for (Size p = 1; p <= atom_ids1.size(); p++ ){
+	for ( Size p = 1; p <= atom_ids1.size(); p++ ) {
 
 		Size const atom1 = pose.residue(i).type().atom_index( atom_ids1[p] ) ;
 		Size const atom2 = pose.residue(j).type().atom_index( atom_ids2[p] ) ;
@@ -4074,9 +4071,9 @@ rotamerize_rna_test()
 			atom_ids2[p] << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
 
 		cst_set->add_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint(
-																										id::AtomID(atom1,i),
-																										id::AtomID(atom2,j),
-																										distance_func ) ) ) );
+			id::AtomID(atom1,i),
+			id::AtomID(atom2,j),
+			distance_func ) ) ) );
 
 	}
 
@@ -4096,11 +4093,11 @@ rotamerize_rna_test()
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line();
 
-	for (Size i = 1; i <= pose.total_residue(); i++) {
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 		if ( !pose.residue(i).is_RNA() ) continue;
 		task->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
 	}
-	//		pack::pack_rotamers( pose, *packer_scorefxn, task);
+	//  pack::pack_rotamers( pose, *packer_scorefxn, task);
 	pack::rotamer_trials( pose, *scorefxn, task);
 
 
@@ -4117,7 +4114,7 @@ rotamerize_rna_test()
 	mm.set_chi( true );
 	mm.set_jump( true );
 
- 	if ( option[ vary_geometry] ) {
+	if ( option[ vary_geometry] ) {
 		vary_geometry_RNA( pose, mm );
 	}
 	scorefxn->set_weight( dof_constraint, 1.0 );
@@ -4125,7 +4122,7 @@ rotamerize_rna_test()
 	minimizer.run( pose, mm, *(scorefxn), options );
 
 	scorefxn->show( std::cout, pose );
-	std::cout << "All-atom RMSD " << 		all_atom_rmsd( source_pose, pose ) << std::endl;
+	std::cout << "All-atom RMSD " <<   all_atom_rmsd( source_pose, pose ) << std::endl;
 
 	pose.dump_pdb( "minimized.pdb" );
 
@@ -4155,7 +4152,7 @@ calc_rmsd_test()
 	protocols::farna::ensure_phosphate_nomenclature_matches_mini( native_pose );
 
 	Real rmsd( 0.0 );
-	for (Size n = 1; n <= pdb_files.size(); n++) {
+	for ( Size n = 1; n <= pdb_files.size(); n++ ) {
 		std::string const pdb_file = pdb_files[n];
 
 		pose::Pose pose;
@@ -4171,12 +4168,12 @@ calc_rmsd_test()
 /////////////////////////////////////////////////////////////////
 void
 output_sugar_geometry_parameters(
-  pose::Pose & pose,
+	pose::Pose & pose,
 	utility::vector1< utility::vector1< std::string> > & bond_length_atoms,
 	utility::vector1< utility::vector1< std::string> > & bond_angle_atoms,
-	//	utility::vector1< utility::vector1< std::string> > & bond_torsions
+	// utility::vector1< utility::vector1< std::string> > & bond_torsions
 	utility::io::ozstream & out
-																 )
+)
 {
 
 	using namespace core::conformation;
@@ -4184,7 +4181,7 @@ output_sugar_geometry_parameters(
 	Size const nres ( pose.total_residue() );
 
 	for ( Size i = 1; i <= nres; i++ ) {
- 		Residue const & rsd( pose.residue( i ) );
+		Residue const & rsd( pose.residue( i ) );
 
 
 		out << rsd.mainchain_torsion( 4 );
@@ -4192,8 +4189,8 @@ output_sugar_geometry_parameters(
 		for ( Size n = 1; n <= bond_length_atoms.size(); n++ ) {
 			std::string a1 = bond_length_atoms[n][1];
 			std::string a2 = bond_length_atoms[n][2];
-			if (a1 == "BASE") a1 = first_base_atom( rsd );
-			if (a2 == "BASE") a2 = first_base_atom( rsd );
+			if ( a1 == "BASE" ) a1 = first_base_atom( rsd );
+			if ( a2 == "BASE" ) a2 = first_base_atom( rsd );
 			//std::cout << "LENGTH " << a1 << " " << a2 << " " << ( rsd.xyz( a1 ) - rsd.xyz( a2 ) ).length() << std::endl;
 			out << ' ' << ( rsd.xyz( a1 ) - rsd.xyz( a2 ) ).length();
 		}
@@ -4202,9 +4199,9 @@ output_sugar_geometry_parameters(
 			std::string a1 = bond_angle_atoms[n][1];
 			std::string a2 = bond_angle_atoms[n][2];
 			std::string a3 = bond_angle_atoms[n][3];
-			if (a1 == "BASE") a1 = first_base_atom( rsd );
-			if (a2 == "BASE") a2 = first_base_atom( rsd );
-			if (a3 == "BASE") a3 = first_base_atom( rsd );
+			if ( a1 == "BASE" ) a1 = first_base_atom( rsd );
+			if ( a2 == "BASE" ) a2 = first_base_atom( rsd );
+			if ( a3 == "BASE" ) a3 = first_base_atom( rsd );
 			//std::cout << "LENGTH " << a1 << " " << a2 << " " << ( rsd.xyz( a1 ) - rsd.xyz( a2 ) ).length() << std::endl;
 			out << ' ' << numeric::conversions::degrees( angle_radians( rsd.xyz( a1 ), rsd.xyz( a2 ), rsd.xyz( a3 ) ) );
 		}
@@ -4226,8 +4223,8 @@ output_sugar_geometry_parameters(
 /////////////////////////////////////////////////////////////////////
 void
 put_it_in_list(
-							 utility::vector1< utility::vector1< std::string> > & my_list,
-							 std::string const  a1, std::string const  a2 ){
+	utility::vector1< utility::vector1< std::string> > & my_list,
+	std::string const  a1, std::string const  a2 ){
 	utility::vector1< std::string > vec;
 	vec.push_back( a1 );
 	vec.push_back( a2 );
@@ -4235,8 +4232,8 @@ put_it_in_list(
 }
 void
 put_it_in_list(
-							 utility::vector1< utility::vector1< std::string> > & my_list,
-							 std::string const  a1, std::string const  a2, std::string const a3 ){
+	utility::vector1< utility::vector1< std::string> > & my_list,
+	std::string const  a1, std::string const  a2, std::string const a3 ){
 	utility::vector1< std::string > vec;
 	vec.push_back( a1 );
 	vec.push_back( a2 );
@@ -4245,9 +4242,9 @@ put_it_in_list(
 }
 void
 put_it_in_list(
-							 utility::vector1< utility::vector1< std::string> > & my_list,
-							 std::string const  a1, std::string const  a2,
-							 std::string const  a3, std::string const  a4 ){
+	utility::vector1< utility::vector1< std::string> > & my_list,
+	std::string const  a1, std::string const  a2,
+	std::string const  a3, std::string const  a4 ){
 	utility::vector1< std::string > vec;
 	vec.push_back( a1 );
 	vec.push_back( a2 );
@@ -4270,9 +4267,9 @@ fill_sugar_atom_list( utility::vector1< std::string> & sugar_atom_list )
 /////////////////////////////////////////////////////////////////////
 void
 fill_bond_atoms(
-								utility::vector1< utility::vector1< std::string> > & bond_length_atoms ,
-								utility::vector1< utility::vector1< std::string> > & bond_angle_atoms
-								)
+	utility::vector1< utility::vector1< std::string> > & bond_length_atoms ,
+	utility::vector1< utility::vector1< std::string> > & bond_angle_atoms
+)
 {
 	put_it_in_list( bond_length_atoms, " C3'", " C4'" );
 	put_it_in_list( bond_length_atoms, " C2'", " C3'" );
@@ -4298,13 +4295,13 @@ output_sugar_internal_dof( pose::Pose & pose, utility::vector1< std::string > co
 	using namespace core::id;
 	using namespace numeric::conversions;
 
-	for (Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 		core::conformation::Residue const & rsd( pose.residue( i ) );
 
 		std::cout << " DELTA " << rsd.mainchain_torsion( 4 ) << std::endl;
 		out << rsd.mainchain_torsion( 4 );
 
-		for (Size n = 1; n <= sugar_atom_list.size(); n++ ) {
+		for ( Size n = 1; n <= sugar_atom_list.size(); n++ ) {
 
 			std::string atom_name(  sugar_atom_list[ n ] );
 			if ( atom_name == "BASE" ) atom_name = core::chemical::rna::first_base_atom( pose.residue(i) );
@@ -4314,12 +4311,12 @@ output_sugar_internal_dof( pose::Pose & pose, utility::vector1< std::string > co
 			core::kinematics::tree::AtomCOP current_atom ( pose.atom_tree().atom( AtomID(j,i) ).get_self_ptr() );
 
 			std::cout << A( 5, rsd.atom_name( j )) << " " <<
-			F(11,6, degrees(	pose.atom_tree().dof( DOF_ID( current_atom->id(), id::PHI ) ) ) )  << " " <<
-			F(11,6, degrees(  pose.atom_tree().dof( DOF_ID( current_atom->id(), id::THETA ) ) ) ) << " " <<
-			F(11,6, pose.atom_tree().dof( DOF_ID( current_atom->id(), id::D ) ) )    << "  " << std::endl;
+				F(11,6, degrees( pose.atom_tree().dof( DOF_ID( current_atom->id(), id::PHI ) ) ) )  << " " <<
+				F(11,6, degrees(  pose.atom_tree().dof( DOF_ID( current_atom->id(), id::THETA ) ) ) ) << " " <<
+				F(11,6, pose.atom_tree().dof( DOF_ID( current_atom->id(), id::D ) ) )    << "  " << std::endl;
 
 			out << " " <<
-				F(11,6, degrees(	pose.atom_tree().dof( DOF_ID( current_atom->id(), id::PHI ) ) ) )  << " " <<
+				F(11,6, degrees( pose.atom_tree().dof( DOF_ID( current_atom->id(), id::PHI ) ) ) )  << " " <<
 				F(11,6, degrees(  pose.atom_tree().dof( DOF_ID( current_atom->id(), id::THETA ) ) ) ) << " " <<
 				F(11,6, pose.atom_tree().dof( DOF_ID( current_atom->id(), id::D ) ) );
 
@@ -4338,12 +4335,12 @@ replace_torsion_angles( pose::Pose & extended_pose, pose::Pose & fixed_pose, pos
 	using namespace core::conformation;
 	using namespace core::id;
 
-	for (Size i = 1; i <= pose.total_residue(); i++ ) {
-		for (Size j=1; j <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		for ( Size j=1; j <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j ) {
 			id::TorsionID my_ID( i, id::BB, j );
 			extended_pose.set_torsion( my_ID, pose.torsion( my_ID ) );
 		}
-		for (Size j=1; j <= core::chemical::rna::NUM_RNA_CHI_TORSIONS; ++j) {
+		for ( Size j=1; j <= core::chemical::rna::NUM_RNA_CHI_TORSIONS; ++j ) {
 			id::TorsionID my_ID( i, id::CHI, j );
 			extended_pose.set_torsion( my_ID, pose.torsion( my_ID ) );
 		}
@@ -4351,7 +4348,7 @@ replace_torsion_angles( pose::Pose & extended_pose, pose::Pose & fixed_pose, pos
 
 	fixed_pose = extended_pose;
 
-	for (Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 		Residue rsd = pose.residue( i );
 		kinematics::Stub const input_stub( rsd.xyz( " C3'" ), rsd.xyz( " C3'" ), rsd.xyz( " C4'" ), rsd.xyz( " C5'" ) );
 
@@ -4368,7 +4365,7 @@ replace_torsion_angles( pose::Pose & extended_pose, pose::Pose & fixed_pose, pos
 		utility::vector1< utility::vector1< Real > > new_dof_sets;
 
 		//What DOFS do I need to get the ring atoms where I want them?
-		for (Size n = 1; n <= my_atoms.size(); n++  ) {
+		for ( Size n = 1; n <= my_atoms.size(); n++  ) {
 			Size const j = rsd.atom_index( my_atoms[ n ] );
 			Vector v1 = input_stub.global2local( rsd.xyz( my_atoms[ n ] ) );
 			Vector v2 = input_stub_fixed.local2global( v1 );
@@ -4388,11 +4385,11 @@ replace_torsion_angles( pose::Pose & extended_pose, pose::Pose & fixed_pose, pos
 		// Now put the ring atoms in the desired spots, but by changing internal DOFS --
 		// rest of the atoms (e.g., in base and 2'-OH) will scoot around as well, preserving
 		// ideal bond lengths and angles.
-		for (Size n = 1; n <= my_atoms.size(); n++  ) {
+		for ( Size n = 1; n <= my_atoms.size(); n++  ) {
 			Size const j = rsd.atom_index( my_atoms[ n ] );
 			fixed_pose.set_xyz( id::AtomID( j,i ), start_vectors[n] );
 		}
-		for (Size n = 1; n <= my_atoms.size(); n++  ) {
+		for ( Size n = 1; n <= my_atoms.size(); n++  ) {
 			Size const j = rsd.atom_index( my_atoms[ n ] );
 			fixed_pose.set_dof(  DOF_ID( AtomID( j,i) , id::D ), new_dof_sets[n][1] );
 			fixed_pose.set_dof(  DOF_ID( AtomID( j,i) , id::PHI ), new_dof_sets[n][2] );
@@ -4411,7 +4408,7 @@ fix_sugar_bond_angles_EMPIRICAL( pose::Pose & pose )
 
 	Real theta( 0.0 ), phi( 0.0 );
 
-	for (Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 
 		core::conformation::Residue const & rsd( pose.residue( i ) );
 		Real const delta = rsd.mainchain_torsion( 4 );
@@ -4420,7 +4417,7 @@ fix_sugar_bond_angles_EMPIRICAL( pose::Pose & pose )
 			std::string const atom_name = " C2'";
 			Size const j = rsd.atom_index( atom_name );
 			core::kinematics::tree::AtomCOP current_atom ( pose.atom_tree().atom( AtomID(j,i) ).get_self_ptr() );
-			if (delta < 100.0 ) {
+			if ( delta < 100.0 ) {
 				theta  = -0.138 * delta + 89.4;
 			} else {
 				theta  =  0.0423 * delta + 71.4;
@@ -4433,7 +4430,7 @@ fix_sugar_bond_angles_EMPIRICAL( pose::Pose & pose )
 			std::string const atom_name = " O4'";
 			Size const j = rsd.atom_index( atom_name );
 			core::kinematics::tree::AtomCOP current_atom ( pose.atom_tree().atom( AtomID(j,i) ).get_self_ptr() );
-			if (delta < 100.0 ) {
+			if ( delta < 100.0 ) {
 				theta  =  0.132 * delta + 59.5;
 				phi = 0.0118 * delta - 118.0;
 			} else {
@@ -4455,7 +4452,7 @@ fix_sugar_bond_angles_CLOSE_BOND( pose::Pose & pose )
 {
 	using namespace core::id;
 
-	for (Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 
 		core::conformation::Residue const & rsd( pose.residue( i ) );
 
@@ -4466,47 +4463,47 @@ fix_sugar_bond_angles_CLOSE_BOND( pose::Pose & pose )
 
 		{
 			kinematics::Stub const input_stub( rsd.xyz( " C4'"), rsd.xyz( " C4'"),
-																				 rsd.xyz( " C3'"), rsd.xyz( " O4'") );
+				rsd.xyz( " C3'"), rsd.xyz( " O4'") );
 
 			Vector v1 = input_stub.global2local( rsd.xyz( " O4'" ) );
-			//			std::cout << "VEC " << v1.x() << " " << v1.y() << " " << v1.z() << std::endl;
+			//   std::cout << "VEC " << v1.x() << " " << v1.y() << " " << v1.z() << std::endl;
 
 			std::string atom_name = " O4'";
 			Size const j = rsd.atom_index( atom_name );
 			pose.set_xyz( id::AtomID(j,i), input_stub.spherical( 0.0, theta, a ) );
 
 			//v1 = input_stub.global2local( rsd.xyz( " O4'" ) );
-			//			std::cout << "VEC_NEW " << v1.x() << " " << v1.y() << " " << v1.z() << std::endl;
+			//   std::cout << "VEC_NEW " << v1.x() << " " << v1.y() << " " << v1.z() << std::endl;
 
 		}
 
-		//		std::cout << "LENGTH_O4'_VO4': " << ( pose.residue(i).xyz( "VO4'" ) - pose.residue(i).xyz(" C3'") ).length() << " " << ( pose.residue(i).xyz( " O4'" ) - pose.residue(i).xyz(" C3'") ).length() << " " << std::endl;
+		//  std::cout << "LENGTH_O4'_VO4': " << ( pose.residue(i).xyz( "VO4'" ) - pose.residue(i).xyz(" C3'") ).length() << " " << ( pose.residue(i).xyz( " O4'" ) - pose.residue(i).xyz(" C3'") ).length() << " " << std::endl;
 
 
 		std::string atom_name = " C2'";
 		Size j = rsd.atom_index( atom_name );
 		{
 			kinematics::Stub const input_stub( rsd.xyz( " C3'"), rsd.xyz( " C3'"),
-																				 rsd.xyz( " C4'"), rsd.xyz( " C2'") );
+				rsd.xyz( " C4'"), rsd.xyz( " C2'") );
 
 
 			Vector const v1 = input_stub.global2local( pose.residue(i).xyz( " O4'" ) );
 			Vector const v2 = input_stub.global2local( pose.residue(i).xyz( "VO4'" ) );
 			//Real const theta_difference = std::atan2( v2.y(), v2.x() )  - std::atan2( v1.y(), v1.x() ) ;
 
-			//			std::cout << "BLAH  " << input_stub.global2local( pose.residue(i).xyz( " O4'" ) ).x() << " " <<
-			//				input_stub.global2local( pose.residue(i).xyz( "VO4'" ) ).x() << std::endl;
+			//   std::cout << "BLAH  " << input_stub.global2local( pose.residue(i).xyz( " O4'" ) ).x() << " " <<
+			//    input_stub.global2local( pose.residue(i).xyz( "VO4'" ) ).x() << std::endl;
 
 			Real const d = sqrt( v2.x() * v2.x() + v2.y()*v2.y() );
 			Real const alpha = std::atan2( v2.y(), v2.x() );
 			Real const theta_difference = std::acos( v1.x()/d ) - alpha;
 
-			//			std::cout << "THETA DIFFERENCE " << alpha << " " << theta_difference << std::endl;
+			//   std::cout << "THETA DIFFERENCE " << alpha << " " << theta_difference << std::endl;
 			id::DOF_ID dof_id( DOF_ID( id::AtomID( j, i), THETA ) );
 			pose.set_dof(  dof_id, pose.dof( dof_id ) + theta_difference );
 
-			//			std::cout << "BLAH2 " << input_stub.global2local( pose.residue(i).xyz( " O4'" ) ).x() << " " <<
-			//				input_stub.global2local( pose.residue(i).xyz( "VO4'" ) ).x() << std::endl;
+			//   std::cout << "BLAH2 " << input_stub.global2local( pose.residue(i).xyz( " O4'" ) ).x() << " " <<
+			//    input_stub.global2local( pose.residue(i).xyz( "VO4'" ) ).x() << std::endl;
 
 		}
 
@@ -4534,7 +4531,7 @@ fix_sugar_bond_angles_CLOSE_BOND( pose::Pose & pose )
 		//std::cout << "PHI_DIFFERENCE_NEW " << phi_difference << std::endl;
 		//}
 
-		//		std::cout << "LENGTH: " << ( pose.residue(i).xyz( "VO4'" ) - pose.residue(i).xyz( " O4'" ) ).length() << std::endl;
+		//  std::cout << "LENGTH: " << ( pose.residue(i).xyz( "VO4'" ) - pose.residue(i).xyz( " O4'" ) ).length() << std::endl;
 
 
 	}
@@ -4576,7 +4573,7 @@ sugar_geometry_RNA_test()
 
 	pose::Pose extended_pose, pose, fixed_pose;
 
-	for (Size n = 1; n <= pdb_files.size(); n++) {
+	for ( Size n = 1; n <= pdb_files.size(); n++ ) {
 		std::string const pdb_file = pdb_files[n];
 
 		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
@@ -4622,21 +4619,21 @@ sugar_frag_RNA_test()
 	kinematics::FoldTree f( pose.total_residue() );
 	f.new_jump(1,2,1);
 	f.set_jump_atoms( 1,
-										core::chemical::rna::chi1_torsion_atom( pose.residue( 1) ),
-										core::chemical::rna::chi1_torsion_atom( pose.residue( 2) )   );
+		core::chemical::rna::chi1_torsion_atom( pose.residue( 1) ),
+		core::chemical::rna::chi1_torsion_atom( pose.residue( 2) )   );
 	pose.fold_tree( f );
 	std::cout << f << std::endl;
 
 	{
 		pose::Pose pose_temp = pose;
-		for( Size  n = 1; n <= pose.total_residue(); n++ )  {
+		for ( Size  n = 1; n <= pose.total_residue(); n++ )  {
 			pose::rna::apply_ideal_c2endo_sugar_coords( pose_temp, n /*, true  */ );
 		}
 		pose_temp.dump_pdb( "final_WORKS.pdb" );
 	}
 	{
 		pose::Pose pose_temp = pose;
-		for( Size  n = 1; n <= pose.total_residue(); n++ )  {
+		for ( Size  n = 1; n <= pose.total_residue(); n++ )  {
 			pose::rna::apply_ideal_c2endo_sugar_coords( pose_temp, n /*, false */ );
 		}
 		pose_temp.dump_pdb( "final_NOWORKS.pdb" );
@@ -4668,7 +4665,7 @@ color_by_geom_sol_RNA_test()
 
 	Pose pose;
 
-	for (Size n = 1; n <= pdb_files.size(); n++) {
+	for ( Size n = 1; n <= pdb_files.size(); n++ ) {
 		std::string const pdb_file = pdb_files[n];
 		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
@@ -4678,7 +4675,7 @@ color_by_geom_sol_RNA_test()
 		(*scorefxn)( pose );
 
 		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
-			for (Size j = 1; j <= pose.residue( i ) .natoms(); j++ ) {
+			for ( Size j = 1; j <= pose.residue( i ) .natoms(); j++ ) {
 				pdb_info->temperature( i, j, geometric_sol_energy_method.eval_atom_energy( AtomID( j, i ), pose ) );
 			}
 		}
@@ -4714,12 +4711,12 @@ color_by_lj_base_RNA_test()
 	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS );
 
 	EtableOP etable_ptr( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
-									EtableOptions() ) );
-	//	core::chemical::rna::RNA_LJ_BaseEnergy rna_lj_base_energy( *etable_ptr );
+		EtableOptions() ) );
+	// core::chemical::rna::RNA_LJ_BaseEnergy rna_lj_base_energy( *etable_ptr );
 
 	Pose pose;
 
-	for (Size n = 1; n <= pdb_files.size(); n++) {
+	for ( Size n = 1; n <= pdb_files.size(); n++ ) {
 		std::string const pdb_file = pdb_files[n];
 		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
@@ -4729,7 +4726,7 @@ color_by_lj_base_RNA_test()
 		(*scorefxn)( pose );
 
 		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
-			for (Size j = 1; j <= pose.residue( i ) .natoms(); j++ ) {
+			for ( Size j = 1; j <= pose.residue( i ) .natoms(); j++ ) {
 				Real const score = 0.0; //rna_lj_base_energy.eval_atom_energy( AtomID( j, i ), pose );
 				std::cout << i <<  " " << j << " " <<  score << std::endl;
 				pdb_info->temperature( i, j, score );
@@ -4779,7 +4776,7 @@ rna_stats_test()
 
 	Pose pose;
 
-	for (Size n = 1; n <= pdb_files.size(); n++) {
+	for ( Size n = 1; n <= pdb_files.size(); n++ ) {
 		std::string const pdb_file = pdb_files[n];
 		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
@@ -4819,7 +4816,7 @@ files_for_openMM_test(){
 	protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose_start );
 
 	Pose pose;
-	make_pose_from_sequence( pose, pose_start.sequence(),	*rsd_set );
+	make_pose_from_sequence( pose, pose_start.sequence(), *rsd_set );
 	//apply_ideal_coordinates_for_alternative_pucker( pose_start, pose );
 
 
@@ -4832,7 +4829,7 @@ files_for_openMM_test(){
 	utility::io::ozstream out1( "xyz.txt" );
 	Size count( 0 );
 	for ( Size i = 1; i <= pose_start.total_residue(); i++ ) {
-		for ( Size j = 1; j <= pose_start.residue_type(i).natoms(); j++ ){
+		for ( Size j = 1; j <= pose_start.residue_type(i).natoms(); j++ ) {
 			numeric::xyzVector< Real > const & v = pose_start.residue(i).xyz(j);
 			out1 << 0.1*v(1) << ' ' << 0.1*v(2) << ' ' << 0.1*v(3) << std::endl;
 
@@ -4845,13 +4842,13 @@ files_for_openMM_test(){
 	// bonds
 	utility::io::ozstream out2( "bonds.txt" );
 	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
-		for ( Size j = 1; j <= pose.residue_type(i).natoms(); j++ ){
+		for ( Size j = 1; j <= pose.residue_type(i).natoms(); j++ ) {
 
 			AtomID atom_id1( j,i);
 			utility::vector1< AtomID > atom_ids2 = pose.conformation().bonded_neighbor_all_res( atom_id1 );
 			for ( Size n = 1; n <= atom_ids2.size(); n++ ) {
 				AtomID const & atom_id2 = atom_ids2[ n ] ;
-				if ( global_index_map[ atom_id1 ] > global_index_map[ atom_id2 ] ){
+				if ( global_index_map[ atom_id1 ] > global_index_map[ atom_id2 ] ) {
 					Real const atom_atom_distance = ( pose.xyz( atom_id1 ) - pose.xyz( atom_id2 ) ).length();
 					out2 << global_index_map[ atom_id1 ] << ' ' <<  global_index_map[ atom_id2 ] << ' ' << 0.1 * atom_atom_distance << std::endl;
 				}
@@ -4864,7 +4861,7 @@ files_for_openMM_test(){
 	// angles
 	utility::io::ozstream out3( "angles.txt" );
 	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
-		for ( Size j = 1; j <= pose.residue_type(i).natoms(); j++ ){
+		for ( Size j = 1; j <= pose.residue_type(i).natoms(); j++ ) {
 
 			AtomID atom_id1( j,i);
 			utility::vector1< AtomID > atom_ids2 = pose.conformation().bonded_neighbor_all_res( atom_id1 );
@@ -4916,7 +4913,7 @@ files_for_openMM_test(){
 	utility::io::ozstream out6( "donor_acceptor_exclude.txt" );
 	for ( Size i = 1; i <= resnum_for_donor.size(); i++ ) {
 		for ( Size j = 1; j <= resnum_for_acceptor.size(); j++ ) {
-			if ( resnum_for_donor[i] == resnum_for_acceptor[j] ){
+			if ( resnum_for_donor[i] == resnum_for_acceptor[j] ) {
 				out6 << i-1 << ' ' << j-1 << std::endl;
 			}
 		}
@@ -4929,7 +4926,7 @@ files_for_openMM_test(){
 /////////////////////////////////////////////////
 void
 print_secstruct_test(){
- 	using namespace core::chemical;
+	using namespace core::chemical;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose;
@@ -4945,7 +4942,7 @@ print_secstruct_test(){
 	protocols::farna::get_base_pairing_list( pose, base_pairing_list );
 
 	std::cout << "WATSON-CRICK BASE PAIRS: " << std::endl;
-	for ( Size n = 1; n <= base_pairing_list.size(); n++ ){
+	for ( Size n = 1; n <= base_pairing_list.size(); n++ ) {
 		std::cout << base_pairing_list[n].first << ' ' << base_pairing_list[n].second << std::endl;
 	}
 
@@ -4954,7 +4951,7 @@ print_secstruct_test(){
 /////////////////////////////////////////////////
 void
 print_all_torsions_test(){
- 	using namespace core::chemical;
+	using namespace core::chemical;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose;
@@ -4968,16 +4965,16 @@ print_all_torsions_test(){
 	import_pose::pose_from_pdb( pose, *rsd_set, infile );
 
 	std::cout << "  N    ALPHA     BETA    GAMMA    DELTA  EPSILON     ZETA         CHI" << std::endl;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ){
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 		std::cout << I( 3, n )
-							<< ' ' << F( 8, 3, pose.torsion( TorsionID( n, id::BB, ALPHA ) ) )
-							<< ' ' << F( 8, 3, pose.torsion( TorsionID( n, id::BB, BETA ) ) )
-							<< ' ' << F( 8, 3, pose.torsion( TorsionID( n, id::BB, GAMMA ) ) )
-							<< ' ' << F( 8, 3, pose.torsion( TorsionID( n, id::BB, DELTA ) ) )
-							<< ' ' << F( 8, 3, pose.torsion( TorsionID( n, id::BB, EPSILON ) ) )
-							<< ' ' << F( 8, 3, pose.torsion( TorsionID( n, id::BB, ZETA ) ) )
-							<< "   " << F( 8, 3, pose.torsion( TorsionID( n, id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ) ) )
-							<< std::endl;
+			<< ' ' << F( 8, 3, pose.torsion( TorsionID( n, id::BB, ALPHA ) ) )
+			<< ' ' << F( 8, 3, pose.torsion( TorsionID( n, id::BB, BETA ) ) )
+			<< ' ' << F( 8, 3, pose.torsion( TorsionID( n, id::BB, GAMMA ) ) )
+			<< ' ' << F( 8, 3, pose.torsion( TorsionID( n, id::BB, DELTA ) ) )
+			<< ' ' << F( 8, 3, pose.torsion( TorsionID( n, id::BB, EPSILON ) ) )
+			<< ' ' << F( 8, 3, pose.torsion( TorsionID( n, id::BB, ZETA ) ) )
+			<< "   " << F( 8, 3, pose.torsion( TorsionID( n, id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ) ) )
+			<< std::endl;
 	}
 
 }
@@ -5049,88 +5046,88 @@ my_main( void* )
 
 	if ( option[ create_vall_torsions ] ) {
 		create_rna_vall_torsions_test();
-	}	else if ( option[ create_jump_database ] ) {
+	} else if ( option[ create_jump_database ] ) {
 		create_bp_jump_database_test();
-	} else if ( option[ icoord_test ] ){
+	} else if ( option[ icoord_test ] ) {
 		figure_out_icoord_test();
-	} else if ( option[ extract ] ){
+	} else if ( option[ extract ] ) {
 		extract_pdbs_test();
-	} else if ( option[ print_internal_coord ] ){
+	} else if ( option[ print_internal_coord ] ) {
 		print_internal_coord_test();
-	} else if ( option[ fullatom_score_test ] ){
-	  rna_fullatom_score_test();
-	} else if ( option[ o2prime_test ] ){
-	  rna_o2prime_test();
-	} else if ( option[ fullatom_minimize ] ){
-	  rna_fullatom_minimize_test();
-	} else if ( option[ fullatom_multiscore ] ){
-	  rna_fullatom_multiscore_test();
-	} else if ( option[ fullatom_minimize_silent ] ){
-	  rna_fullatom_minimize_silent_test();
-	} else if ( option[ lores_score ] ){
-	  rna_lores_score_test();
-	} else if ( option[ lores_score_silent ] ){
-	  rna_lores_score_silent_test();
-	} else if ( option[ rna_design ] ){
-	  rna_design_test();
-	} else if ( option[ rna_design_gap ] ){
-	  rna_design_gap_test();
-	} else if ( option[ rna_idealize ] ){
-	  rna_idealize_test();
-	} else if ( option[ rna_assemble ] ){
-	  rna_assemble_test();
-	} else if ( option[ rna_torsion_check ] ){
-	  rna_torsion_check_test();
-	} else if ( option[ rna_stats ] ){
-	  rna_stats_test();
-	} else if ( option[ close_chainbreaks_test ] ){
-	  rna_close_chainbreaks_test();
-	} else if ( option[ rna_jumping ] ){
-	  rna_jumping_test();
-	} else if ( option[ create_benchmark ] ){
-	  create_rna_benchmark_test();
-	} else if ( option[ chain_closure_test ] ){
-	  rna_chain_closure_test();
-	} else if ( option[ filter_base_pairs ] ){
-	  rna_filter_base_pairs_test();
-	} else if ( option[ backbone_rebuild_test ] ){
-	  rna_backbone_rebuild_test();
-	} else if ( option[ convert_to_native ] ){
-	  convert_to_native_test();
-	} else if ( option[ pymol_struct_type ] ){
-	  pymol_struct_type_test();
-	} else if ( option[ crazy_minimize ] ){
-	  crazy_minimize_test();
-	} else if ( option[ env_test ] ){
-	  env_sugar_test();
-	} else if ( option[ sasatest ] ){
-	  sasa_test();
-	} else if ( option[ print_hbonds ] ){
-	  print_hbonds_test();
-	} else if ( option[ calc_rmsd ] ){
-	  calc_rmsd_test();
-	} else if ( option[ dinucleotide ] ){
-	  dinucleotide_test();
-	} else if ( option[ rotamerize_test ] ){
-	  rotamerize_rna_test();
-	} else if ( option[ build_next_nucleotide ] ){
-	  build_next_nucleotide_test();
-	} else if ( option[ sugar_geometry_test ] ){
-	  sugar_geometry_RNA_test();
-	} else if ( option[ sugar_frag_test ] ){
-	  sugar_frag_RNA_test();
-	} else if ( option[ color_by_geom_sol ] ){
-	  color_by_geom_sol_RNA_test();
-	} else if ( option[ color_by_rna_lj_base ] ){
-	  color_by_lj_base_RNA_test();
-	} else if ( option[ files_for_openMM ] ){
-	  files_for_openMM_test();
-	} else if ( option[ print_secstruct ] ){
-	  print_secstruct_test();
-	} else if ( option[ print_torsions ] ){
-	  print_all_torsions_test();
+	} else if ( option[ fullatom_score_test ] ) {
+		rna_fullatom_score_test();
+	} else if ( option[ o2prime_test ] ) {
+		rna_o2prime_test();
+	} else if ( option[ fullatom_minimize ] ) {
+		rna_fullatom_minimize_test();
+	} else if ( option[ fullatom_multiscore ] ) {
+		rna_fullatom_multiscore_test();
+	} else if ( option[ fullatom_minimize_silent ] ) {
+		rna_fullatom_minimize_silent_test();
+	} else if ( option[ lores_score ] ) {
+		rna_lores_score_test();
+	} else if ( option[ lores_score_silent ] ) {
+		rna_lores_score_silent_test();
+	} else if ( option[ rna_design ] ) {
+		rna_design_test();
+	} else if ( option[ rna_design_gap ] ) {
+		rna_design_gap_test();
+	} else if ( option[ rna_idealize ] ) {
+		rna_idealize_test();
+	} else if ( option[ rna_assemble ] ) {
+		rna_assemble_test();
+	} else if ( option[ rna_torsion_check ] ) {
+		rna_torsion_check_test();
+	} else if ( option[ rna_stats ] ) {
+		rna_stats_test();
+	} else if ( option[ close_chainbreaks_test ] ) {
+		rna_close_chainbreaks_test();
+	} else if ( option[ rna_jumping ] ) {
+		rna_jumping_test();
+	} else if ( option[ create_benchmark ] ) {
+		create_rna_benchmark_test();
+	} else if ( option[ chain_closure_test ] ) {
+		rna_chain_closure_test();
+	} else if ( option[ filter_base_pairs ] ) {
+		rna_filter_base_pairs_test();
+	} else if ( option[ backbone_rebuild_test ] ) {
+		rna_backbone_rebuild_test();
+	} else if ( option[ convert_to_native ] ) {
+		convert_to_native_test();
+	} else if ( option[ pymol_struct_type ] ) {
+		pymol_struct_type_test();
+	} else if ( option[ crazy_minimize ] ) {
+		crazy_minimize_test();
+	} else if ( option[ env_test ] ) {
+		env_sugar_test();
+	} else if ( option[ sasatest ] ) {
+		sasa_test();
+	} else if ( option[ print_hbonds ] ) {
+		print_hbonds_test();
+	} else if ( option[ calc_rmsd ] ) {
+		calc_rmsd_test();
+	} else if ( option[ dinucleotide ] ) {
+		dinucleotide_test();
+	} else if ( option[ rotamerize_test ] ) {
+		rotamerize_rna_test();
+	} else if ( option[ build_next_nucleotide ] ) {
+		build_next_nucleotide_test();
+	} else if ( option[ sugar_geometry_test ] ) {
+		sugar_geometry_RNA_test();
+	} else if ( option[ sugar_frag_test ] ) {
+		sugar_frag_RNA_test();
+	} else if ( option[ color_by_geom_sol ] ) {
+		color_by_geom_sol_RNA_test();
+	} else if ( option[ color_by_rna_lj_base ] ) {
+		color_by_lj_base_RNA_test();
+	} else if ( option[ files_for_openMM ] ) {
+		files_for_openMM_test();
+	} else if ( option[ print_secstruct ] ) {
+		print_secstruct_test();
+	} else if ( option[ print_torsions ] ) {
+		print_all_torsions_test();
 	} else {
-		//		virtual_test();
+		//  virtual_test();
 		rna_denovo_test();
 	}
 
@@ -5147,101 +5144,101 @@ main( int argc, char * argv [] )
 
 	try {
 
-	using namespace basic::options;
+		using namespace basic::options;
 
-	//Uh, options?
-	NEW_OPT( create_vall_torsions, "Generate a torsions file from a big RNA file", false );
-	NEW_OPT( create_jump_database, "Generate a database of jumps extracted from base pairings from a big RNA file", false );
-	NEW_OPT( icoord_test, "Rhiju testing generation of ideal RNA coordinates", false );
-	NEW_OPT( print_internal_coord, "Rhiju: generate ideal RNA coordinates", false );
-	NEW_OPT( extract, "Extract RNA pdbs", false );
-	NEW_OPT( fullatom_score_test, "Test RNA full atom score", false );
-	NEW_OPT( fullatom_minimize, "Test RNA full minimize", false );
-	NEW_OPT( fullatom_multiscore, "Test RNA fullatom scoring speed", false );
-	NEW_OPT( fullatom_minimize_silent, "Test RNA full minimize on silent file", false );
-	NEW_OPT( o2prime_test, "Test RNA 2'-OH rotamer trials", false );
-	NEW_OPT( deriv_check, "Check derivatives!", false );
-	NEW_OPT( skip_o2prime_pack, "Turn off RNA 2'-OH packing during minimize", false );
-	NEW_OPT( lores_score, "Test RNA low resolution score", false );
-	NEW_OPT( lores_score_silent, "Test RNA low resolution score on silent file", false );
-	NEW_OPT( env_test, "environment", false );
-	NEW_OPT( rna_idealize, "RNA idealize", false );
-	NEW_OPT( idl_close_chainbreaks, "RNA idealize, close chain breaks", false );
-	NEW_OPT( rna_assemble, "RNA assemble", false );
-	NEW_OPT( rna_design, "Test RNA design", false );
-	NEW_OPT( rna_design_gap, "Test RNA design gap", false );
-	NEW_OPT( rna_stats, "Check rms, no. shared base pairs, etc. for decoys", false );
-	NEW_OPT( rna_torsion_check, "Test RNA torsions, reverse fold tree", false );
-	NEW_OPT( sum_lores_plus_hires, "Sum in low res score after hi res minimize", false );
-	NEW_OPT( fa_standard, "standard residue types",false );
-	NEW_OPT( close_chainbreaks_test, "Close chainbreaks after fragment insertion in a pdb --test",false );
-	NEW_OPT( rna_jumping, "Jumping test",false );
-	NEW_OPT( create_benchmark, "Create RNA benchmark",false );
-	NEW_OPT( minimize_rna, "Minimize RNA after fragment assembly",false );
-	NEW_OPT( relax_rna, "Relax RNA after fragment assembly",false );
-	NEW_OPT( simple_relax, "Relax by minimizing after any fragment insertion",false );
-	NEW_OPT( color_by_geom_sol, "Color by geometric solvation",false );
-	NEW_OPT( color_by_rna_lj_base, "Color by Lennard-Jones energy (just between bases)",false );
-	NEW_OPT( ignore_secstruct, "Ignore sec struct in input file",false );
-	NEW_OPT( chain_closure_test, "RNA CCD test",false );
-	NEW_OPT( filter_base_pairs, "Filter silent file for models that satisfy structure parameters",false );
-	NEW_OPT( filter_lores_base_pairs, "Filter for models that satisfy structure parameters",false );
-	NEW_OPT( backbone_rebuild_test, "RNA backbone rebuild test",false );
-	NEW_OPT( crazy_minimize, "RNA crazy minimize test",false );
-	NEW_OPT( crazy_fold_tree, "RNA star fold tree",false );
-	NEW_OPT( sasatest, "SASA calculator",false );
-	NEW_OPT( fa_stack_weight, "RNA full atom stacking potential weight", 1.0 );
-	NEW_OPT( cycles, "Default number of Monte Carlo cycles", 10000 );
-	NEW_OPT( vall_torsions, "Torsions file?", "sampling/rna/1jj2.torsions" );
-	NEW_OPT( temperature, "temperature", 0.3 );
-	NEW_OPT( jump_change_frequency, "jump change frequency", 0.1 );
-	NEW_OPT( close_loops, "close loops during frag insertion and jump mover", false );
-	NEW_OPT( output_lores_silent_file, "output lores stuff", false );
-	NEW_OPT( heat, "Heat (random frag insertions)", false );
-	NEW_OPT( dump, "Dump pdb", false );
-	NEW_OPT( pymol_struct_type, "struct type", false );
-	NEW_OPT( convert_to_native, "Convert input pdb to rosetta-ordered native",false);
-	NEW_OPT( disable_o2prime_rotamers, "In designing, don't sample 2'-OH",false);
-	NEW_OPT( disable_include_current, "In designing, don't include current",false);
-	NEW_OPT( sample_chi, "In designing RNA, chi torsion sample",false);
-	NEW_OPT( print_hbonds, "Read in PDB output H-BONDS",false);
-	NEW_OPT( calc_rmsd, "rmsd",false);
-	NEW_OPT( dinucleotide, "dinucleotide",false);
-	NEW_OPT( vary_geometry, "vary geometry",false);
-	NEW_OPT( more_rotamers, "more rotamers",false);
-	NEW_OPT( quick_test, "more rotamers",false);
-	NEW_OPT( sugar_geometry_test, "sugar geometry",false);
-	NEW_OPT( sugar_frag_test, "sugar frag",false);
-	NEW_OPT( rmsd_cutoff, "rmsd_cutoff", 999.99 );
-	NEW_OPT( rotamerize_test, "rotamerize test",false);
-	NEW_OPT( build_next_nucleotide, "rotamerize test",false);
-	NEW_OPT( prepend_residue, "rotamerize test",false);
-	NEW_OPT( skip_coord_constraints, "skip coord constraints",false);
-	NEW_OPT( atom_pair_constraint_weight, "atompair constraint weight", 0.0 );
-	NEW_OPT( coordinate_constraint_weight, "coordinate constraint weight", 0.0 );
-	NEW_OPT( assemble_file, "Input file for RNA assembly", "assemble.txt" );
-	NEW_OPT( basepair_file, "Input file for RNA base pair definition", "default.basepairs" );
-	NEW_OPT( jump_library_file, "Input file for jumps", "sampling/rna/1jj2_RNA_jump_library.dat" );
-	NEW_OPT( params_file, "Input file for pairings", "default.prm" );
-	NEW_OPT( data_file, "Input file for pairings", "default.prm" );
-	NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );
-	NEW_OPT( rsd_type_set, "Input file for RNA assembly", "rna" );
-	NEW_OPT( files_for_openMM, "get files ready for openMM", false );
-	NEW_OPT( print_secstruct, "print secondary structure", false );
-	NEW_OPT( print_torsions, "print RNA torsions", false );
-
-
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+		//Uh, options?
+		NEW_OPT( create_vall_torsions, "Generate a torsions file from a big RNA file", false );
+		NEW_OPT( create_jump_database, "Generate a database of jumps extracted from base pairings from a big RNA file", false );
+		NEW_OPT( icoord_test, "Rhiju testing generation of ideal RNA coordinates", false );
+		NEW_OPT( print_internal_coord, "Rhiju: generate ideal RNA coordinates", false );
+		NEW_OPT( extract, "Extract RNA pdbs", false );
+		NEW_OPT( fullatom_score_test, "Test RNA full atom score", false );
+		NEW_OPT( fullatom_minimize, "Test RNA full minimize", false );
+		NEW_OPT( fullatom_multiscore, "Test RNA fullatom scoring speed", false );
+		NEW_OPT( fullatom_minimize_silent, "Test RNA full minimize on silent file", false );
+		NEW_OPT( o2prime_test, "Test RNA 2'-OH rotamer trials", false );
+		NEW_OPT( deriv_check, "Check derivatives!", false );
+		NEW_OPT( skip_o2prime_pack, "Turn off RNA 2'-OH packing during minimize", false );
+		NEW_OPT( lores_score, "Test RNA low resolution score", false );
+		NEW_OPT( lores_score_silent, "Test RNA low resolution score on silent file", false );
+		NEW_OPT( env_test, "environment", false );
+		NEW_OPT( rna_idealize, "RNA idealize", false );
+		NEW_OPT( idl_close_chainbreaks, "RNA idealize, close chain breaks", false );
+		NEW_OPT( rna_assemble, "RNA assemble", false );
+		NEW_OPT( rna_design, "Test RNA design", false );
+		NEW_OPT( rna_design_gap, "Test RNA design gap", false );
+		NEW_OPT( rna_stats, "Check rms, no. shared base pairs, etc. for decoys", false );
+		NEW_OPT( rna_torsion_check, "Test RNA torsions, reverse fold tree", false );
+		NEW_OPT( sum_lores_plus_hires, "Sum in low res score after hi res minimize", false );
+		NEW_OPT( fa_standard, "standard residue types",false );
+		NEW_OPT( close_chainbreaks_test, "Close chainbreaks after fragment insertion in a pdb --test",false );
+		NEW_OPT( rna_jumping, "Jumping test",false );
+		NEW_OPT( create_benchmark, "Create RNA benchmark",false );
+		NEW_OPT( minimize_rna, "Minimize RNA after fragment assembly",false );
+		NEW_OPT( relax_rna, "Relax RNA after fragment assembly",false );
+		NEW_OPT( simple_relax, "Relax by minimizing after any fragment insertion",false );
+		NEW_OPT( color_by_geom_sol, "Color by geometric solvation",false );
+		NEW_OPT( color_by_rna_lj_base, "Color by Lennard-Jones energy (just between bases)",false );
+		NEW_OPT( ignore_secstruct, "Ignore sec struct in input file",false );
+		NEW_OPT( chain_closure_test, "RNA CCD test",false );
+		NEW_OPT( filter_base_pairs, "Filter silent file for models that satisfy structure parameters",false );
+		NEW_OPT( filter_lores_base_pairs, "Filter for models that satisfy structure parameters",false );
+		NEW_OPT( backbone_rebuild_test, "RNA backbone rebuild test",false );
+		NEW_OPT( crazy_minimize, "RNA crazy minimize test",false );
+		NEW_OPT( crazy_fold_tree, "RNA star fold tree",false );
+		NEW_OPT( sasatest, "SASA calculator",false );
+		NEW_OPT( fa_stack_weight, "RNA full atom stacking potential weight", 1.0 );
+		NEW_OPT( cycles, "Default number of Monte Carlo cycles", 10000 );
+		NEW_OPT( vall_torsions, "Torsions file?", "sampling/rna/1jj2.torsions" );
+		NEW_OPT( temperature, "temperature", 0.3 );
+		NEW_OPT( jump_change_frequency, "jump change frequency", 0.1 );
+		NEW_OPT( close_loops, "close loops during frag insertion and jump mover", false );
+		NEW_OPT( output_lores_silent_file, "output lores stuff", false );
+		NEW_OPT( heat, "Heat (random frag insertions)", false );
+		NEW_OPT( dump, "Dump pdb", false );
+		NEW_OPT( pymol_struct_type, "struct type", false );
+		NEW_OPT( convert_to_native, "Convert input pdb to rosetta-ordered native",false);
+		NEW_OPT( disable_o2prime_rotamers, "In designing, don't sample 2'-OH",false);
+		NEW_OPT( disable_include_current, "In designing, don't include current",false);
+		NEW_OPT( sample_chi, "In designing RNA, chi torsion sample",false);
+		NEW_OPT( print_hbonds, "Read in PDB output H-BONDS",false);
+		NEW_OPT( calc_rmsd, "rmsd",false);
+		NEW_OPT( dinucleotide, "dinucleotide",false);
+		NEW_OPT( vary_geometry, "vary geometry",false);
+		NEW_OPT( more_rotamers, "more rotamers",false);
+		NEW_OPT( quick_test, "more rotamers",false);
+		NEW_OPT( sugar_geometry_test, "sugar geometry",false);
+		NEW_OPT( sugar_frag_test, "sugar frag",false);
+		NEW_OPT( rmsd_cutoff, "rmsd_cutoff", 999.99 );
+		NEW_OPT( rotamerize_test, "rotamerize test",false);
+		NEW_OPT( build_next_nucleotide, "rotamerize test",false);
+		NEW_OPT( prepend_residue, "rotamerize test",false);
+		NEW_OPT( skip_coord_constraints, "skip coord constraints",false);
+		NEW_OPT( atom_pair_constraint_weight, "atompair constraint weight", 0.0 );
+		NEW_OPT( coordinate_constraint_weight, "coordinate constraint weight", 0.0 );
+		NEW_OPT( assemble_file, "Input file for RNA assembly", "assemble.txt" );
+		NEW_OPT( basepair_file, "Input file for RNA base pair definition", "default.basepairs" );
+		NEW_OPT( jump_library_file, "Input file for jumps", "sampling/rna/1jj2_RNA_jump_library.dat" );
+		NEW_OPT( params_file, "Input file for pairings", "default.prm" );
+		NEW_OPT( data_file, "Input file for pairings", "default.prm" );
+		NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );
+		NEW_OPT( rsd_type_set, "Input file for RNA assembly", "rna" );
+		NEW_OPT( files_for_openMM, "get files ready for openMM", false );
+		NEW_OPT( print_secstruct, "print secondary structure", false );
+		NEW_OPT( print_torsions, "print RNA torsions", false );
 
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
-	protocols::viewer::viewer_main( my_main );
+
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
+
+		protocols::viewer::viewer_main( my_main );
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

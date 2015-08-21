@@ -73,7 +73,7 @@
 #endif
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 #ifdef BOINC_GRAPHICS
@@ -107,20 +107,20 @@ FoldabilityFilterCreator::filter_name()
 }
 
 /*
-		NOTES
-		test case is a long helix, 12 residues fixed helical
-		plus 9 residues variable for fragment insertion
-		plus 12 residues fixed helical
+NOTES
+test case is a long helix, 12 residues fixed helical
+plus 9 residues variable for fragment insertion
+plus 12 residues fixed helical
 
-		Architecture: Javier writes code to make a fragment insertion move
-		I write code that evaluates the move
-		Possible metrics for study :
-			independent variable fragment length and abego
-			angle of H-axis bend
-			dihedral about H-axis
-			could go with 6-D translation/rotation IF we are changing insert lengths.
-			if we are not, project the a parametric helix forward or back to find the closest point
-			to a predefined end point in euclidean space.
+Architecture: Javier writes code to make a fragment insertion move
+I write code that evaluates the move
+Possible metrics for study :
+independent variable fragment length and abego
+angle of H-axis bend
+dihedral about H-axis
+could go with 6-D translation/rotation IF we are changing insert lengths.
+if we are not, project the a parametric helix forward or back to find the closest point
+to a predefined end point in euclidean space.
 */
 
 ///  ---------------------------------------------------------------------------------
@@ -137,7 +137,7 @@ FoldabilityFilter::FoldabilityFilter() :
 	scorefxn_(),
 	selector_(),
 	picker_( PickerOP( new Picker() ) ),
-	vlb_(	protocols::forge::components::VarLengthBuildOP( new protocols::forge::components::VarLengthBuild() ) )
+	vlb_( protocols::forge::components::VarLengthBuildOP( new protocols::forge::components::VarLengthBuild() ) )
 {
 	segments_.clear();
 }
@@ -188,7 +188,7 @@ FoldabilityFilter::parse_my_tag(
 	} else {
 		segments_.clear();
 		add_segment( tag->getOption< core::Size >( "start_res", 1 ),
-				tag->getOption< core::Size >( "end_res", 1 ) );
+			tag->getOption< core::Size >( "end_res", 1 ) );
 	}
 	motif_ = tag->getOption< std::string >( "motif", motif_ );
 	ignore_pose_abego_ = tag->getOption< bool >( "ignore_pose_abego", ignore_pose_abego_ );
@@ -248,9 +248,9 @@ FoldabilityFilter::compute( core::pose::Pose const & pose ) const
 
 core::Real
 FoldabilityFilter::compute_segment(
-		core::pose::Pose const & pose,
-		IntervalVec const & segments,
-		core::Size const segment ) const
+	core::pose::Pose const & pose,
+	IntervalVec const & segments,
+	core::Size const segment ) const
 {
 	// work on pose copy
 	core::pose::PoseOP posecopy = generate_pose( pose );
@@ -336,12 +336,12 @@ FoldabilityFilter::generate_pose( core::pose::Pose const & pose ) const
 /// @brief gets aa string, ss string, and abego vector for the area to rebuild
 void
 FoldabilityFilter::get_aa_ss_abego(
-		std::string & aa,
-		std::string & ss,
-		utility::vector1< std::string > & abego,
-		core::Size const start,
-		core::Size & end,
-		core::pose::Pose const & pose ) const
+	std::string & aa,
+	std::string & ss,
+	utility::vector1< std::string > & abego,
+	core::Size const start,
+	core::Size & end,
+	core::pose::Pose const & pose ) const
 {
 	utility::vector1< std::string > abego_insert;
 	// if a motif is not specified, determine it from the structure
@@ -410,9 +410,9 @@ FoldabilityFilter::get_aa_ss_abego(
 /// @brief prepares the pose/segment from start to end for insertion
 void
 FoldabilityFilter::prepare_pose(
-		core::pose::Pose & pose,
-		core::Size const start,
-		core::Size const end ) const
+	core::pose::Pose & pose,
+	core::Size const start,
+	core::Size const end ) const
 {
 	// cut the residue after end to avoid clashes
 	if ( end+1 <= pose.total_residue() ) {
@@ -445,11 +445,11 @@ FoldabilityFilter::prepare_pose(
 /// @brief performs fragment picking/other preparations for building
 protocols::moves::MoverOP
 FoldabilityFilter::create_fragment_insertion_mover(
-		std::string const & complete_aa,
-		std::string const & complete_ss,
-		utility::vector1< std::string > const & complete_abego,
-		core::Size const start,
-		core::Size const end ) const
+	std::string const & complete_aa,
+	std::string const & complete_ss,
+	utility::vector1< std::string > const & complete_abego,
+	core::Size const start,
+	core::Size const end ) const
 {
 	debug_assert( picker_ );
 
@@ -488,10 +488,10 @@ FoldabilityFilter::create_fragment_insertion_mover(
 /// @brief performs fragment insertion and returns number of successful builds. Assumes setup_vlb() has already been called
 core::Size
 FoldabilityFilter::fragment_insertion(
-		core::pose::Pose const & pose,
-		protocols::moves::Mover & fragment_mover,
-		core::Size const end,
-		core::conformation::Residue const & end_res ) const
+	core::pose::Pose const & pose,
+	protocols::moves::Mover & fragment_mover,
+	core::Size const end,
+	core::conformation::Residue const & end_res ) const
 {
 	core::Size good_count = 0;
 	for ( core::Size i=1; i<=tries_; ++i ) {

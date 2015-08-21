@@ -75,26 +75,26 @@ public:
 
 	/// @brief Perturb all of the non-pivot residues.
 	void perturb(
-			Pose const & pose,
-			ClosureProblemOP problem);
+		Pose const & pose,
+		ClosureProblemOP problem);
 
 	/// @brief Perturb all of the non-pivot residues such that detailed balance
 	/// is obeyed.
 	void perturb_with_balance(
-			Pose const & pose,
-			ClosureProblemOP problem);
+		Pose const & pose,
+		ClosureProblemOP problem);
 
 	/// @brief Perturb the given residues.
 	virtual void perturb_subset(
-			Pose const & pose,
-			IndexList const & residues,
-			ClosureProblemOP problem) = 0;
+		Pose const & pose,
+		IndexList const & residues,
+		ClosureProblemOP problem) = 0;
 
 	/// @brief Perturb the given residues such that detailed balance is obeyed.
 	virtual void perturb_subset_with_balance(
-			Pose const & pose,
-			IndexList const & residues,
-			ClosureProblemOP problem);
+		Pose const & pose,
+		IndexList const & residues,
+		ClosureProblemOP problem);
 
 };
 

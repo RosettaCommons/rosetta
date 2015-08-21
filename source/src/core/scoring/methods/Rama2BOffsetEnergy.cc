@@ -127,8 +127,9 @@ Rama2BOffsetEnergy::setup_for_scoring(
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
 		PeptideBondedEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::PeptideBondedEnergyContainer > ( lrc ) );
 		Size nres = pose.total_residue();
-		if( core::pose::symmetry::is_symmetric(pose) )
+		if ( core::pose::symmetry::is_symmetric(pose) ) {
 			nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
+		}
 		if ( dec->size() != nres ) {
 			create_new_lre_container = true;
 		}
@@ -136,8 +137,9 @@ Rama2BOffsetEnergy::setup_for_scoring(
 
 	if ( create_new_lre_container ) {
 		Size nres = pose.total_residue();
-		if( core::pose::symmetry::is_symmetric(pose) )
+		if ( core::pose::symmetry::is_symmetric(pose) ) {
 			nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
+		}
 		utility::vector1< ScoreType > s_types;
 		s_types.push_back( rama2b_offset );
 		s_types.push_back( omega2b_offset );
@@ -256,76 +258,76 @@ Rama2BOffsetEnergy::eval_residue_pair_derivatives(
 	Vector f1, f2;
 	Real phi;
 	{
-			numeric::deriv::dihedral_p1_cosine_deriv(
-				res_lo.atom(1).xyz(), res_lo.atom(2).xyz(), res_lo.atom(3).xyz(), res_hi.atom(1).xyz(), phi, f1, f2 );
-			res_lo_derivs[ 1 ].f1() += drb2o_dpsi1 * f1;
-			res_lo_derivs[ 1 ].f2() += drb2o_dpsi1 * f2;
+		numeric::deriv::dihedral_p1_cosine_deriv(
+			res_lo.atom(1).xyz(), res_lo.atom(2).xyz(), res_lo.atom(3).xyz(), res_hi.atom(1).xyz(), phi, f1, f2 );
+		res_lo_derivs[ 1 ].f1() += drb2o_dpsi1 * f1;
+		res_lo_derivs[ 1 ].f2() += drb2o_dpsi1 * f2;
 
-			f1 = f2 = Vector(0.0);
-			numeric::deriv::dihedral_p2_cosine_deriv(
-				res_lo.atom(1).xyz(), res_lo.atom(2).xyz(), res_lo.atom(3).xyz(), res_hi.atom(1).xyz(), phi, f1, f2 );
-			res_lo_derivs[ 2 ].f1() += drb2o_dpsi1 * f1;
-			res_lo_derivs[ 2 ].f2() += drb2o_dpsi1 * f2;
+		f1 = f2 = Vector(0.0);
+		numeric::deriv::dihedral_p2_cosine_deriv(
+			res_lo.atom(1).xyz(), res_lo.atom(2).xyz(), res_lo.atom(3).xyz(), res_hi.atom(1).xyz(), phi, f1, f2 );
+		res_lo_derivs[ 2 ].f1() += drb2o_dpsi1 * f1;
+		res_lo_derivs[ 2 ].f2() += drb2o_dpsi1 * f2;
 
-			f1 = f2 = Vector(0.0);
-			numeric::deriv::dihedral_p2_cosine_deriv(
-				res_hi.atom(1).xyz(), res_lo.atom(3).xyz(), res_lo.atom(2).xyz(), res_lo.atom(1).xyz(), phi, f1, f2 );
-			res_lo_derivs[ 3 ].f1() += drb2o_dpsi1 * f1;
-			res_lo_derivs[ 3 ].f2() += drb2o_dpsi1 * f2;
+		f1 = f2 = Vector(0.0);
+		numeric::deriv::dihedral_p2_cosine_deriv(
+			res_hi.atom(1).xyz(), res_lo.atom(3).xyz(), res_lo.atom(2).xyz(), res_lo.atom(1).xyz(), phi, f1, f2 );
+		res_lo_derivs[ 3 ].f1() += drb2o_dpsi1 * f1;
+		res_lo_derivs[ 3 ].f2() += drb2o_dpsi1 * f2;
 
-			f1 = f2 = Vector(0.0);
-			numeric::deriv::dihedral_p1_cosine_deriv(
-				res_hi.atom(1).xyz(), res_lo.atom(3).xyz(), res_lo.atom(2).xyz(), res_lo.atom(1).xyz(), phi, f1, f2 );
-			res_hi_derivs[ 1 ].f1() += drb2o_dpsi1 * f1;
-			res_hi_derivs[ 1 ].f2() += drb2o_dpsi1 * f2;
+		f1 = f2 = Vector(0.0);
+		numeric::deriv::dihedral_p1_cosine_deriv(
+			res_hi.atom(1).xyz(), res_lo.atom(3).xyz(), res_lo.atom(2).xyz(), res_lo.atom(1).xyz(), phi, f1, f2 );
+		res_hi_derivs[ 1 ].f1() += drb2o_dpsi1 * f1;
+		res_hi_derivs[ 1 ].f2() += drb2o_dpsi1 * f2;
 	}
 	{
-			numeric::deriv::dihedral_p1_cosine_deriv(
-				res_lo.atom(2).xyz(), res_lo.atom(3).xyz(), res_hi.atom(1).xyz(), res_hi.atom(2).xyz(), phi, f1, f2 );
-			res_lo_derivs[ 2 ].f1() += drb2o_domega2 * f1;
-			res_lo_derivs[ 2 ].f2() += drb2o_domega2 * f2;
+		numeric::deriv::dihedral_p1_cosine_deriv(
+			res_lo.atom(2).xyz(), res_lo.atom(3).xyz(), res_hi.atom(1).xyz(), res_hi.atom(2).xyz(), phi, f1, f2 );
+		res_lo_derivs[ 2 ].f1() += drb2o_domega2 * f1;
+		res_lo_derivs[ 2 ].f2() += drb2o_domega2 * f2;
 
-			f1 = f2 = Vector(0.0);
-			numeric::deriv::dihedral_p2_cosine_deriv(
-				res_lo.atom(2).xyz(), res_lo.atom(3).xyz(), res_hi.atom(1).xyz(), res_hi.atom(2).xyz(), phi, f1, f2 );
-			res_lo_derivs[ 3 ].f1() += drb2o_domega2 * f1;
-			res_lo_derivs[ 3 ].f2() += drb2o_domega2 * f2;
+		f1 = f2 = Vector(0.0);
+		numeric::deriv::dihedral_p2_cosine_deriv(
+			res_lo.atom(2).xyz(), res_lo.atom(3).xyz(), res_hi.atom(1).xyz(), res_hi.atom(2).xyz(), phi, f1, f2 );
+		res_lo_derivs[ 3 ].f1() += drb2o_domega2 * f1;
+		res_lo_derivs[ 3 ].f2() += drb2o_domega2 * f2;
 
-			f1 = f2 = Vector(0.0);
-			numeric::deriv::dihedral_p2_cosine_deriv(
-				res_hi.atom(2).xyz(), res_hi.atom(1).xyz(), res_lo.atom(3).xyz(), res_lo.atom(2).xyz(), phi, f1, f2 );
-			res_hi_derivs[ 1 ].f1() += drb2o_domega2 * f1;
-			res_hi_derivs[ 1 ].f2() += drb2o_domega2 * f2;
+		f1 = f2 = Vector(0.0);
+		numeric::deriv::dihedral_p2_cosine_deriv(
+			res_hi.atom(2).xyz(), res_hi.atom(1).xyz(), res_lo.atom(3).xyz(), res_lo.atom(2).xyz(), phi, f1, f2 );
+		res_hi_derivs[ 1 ].f1() += drb2o_domega2 * f1;
+		res_hi_derivs[ 1 ].f2() += drb2o_domega2 * f2;
 
-			f1 = f2 = Vector(0.0);
-			numeric::deriv::dihedral_p1_cosine_deriv(
-				res_hi.atom(2).xyz(), res_hi.atom(1).xyz(), res_lo.atom(3).xyz(), res_lo.atom(2).xyz(), phi, f1, f2 );
-			res_hi_derivs[ 2 ].f1() += drb2o_domega2 * f1;
-			res_hi_derivs[ 2 ].f2() += drb2o_domega2 * f2;
+		f1 = f2 = Vector(0.0);
+		numeric::deriv::dihedral_p1_cosine_deriv(
+			res_hi.atom(2).xyz(), res_hi.atom(1).xyz(), res_lo.atom(3).xyz(), res_lo.atom(2).xyz(), phi, f1, f2 );
+		res_hi_derivs[ 2 ].f1() += drb2o_domega2 * f1;
+		res_hi_derivs[ 2 ].f2() += drb2o_domega2 * f2;
 	}
 	{
-			numeric::deriv::dihedral_p1_cosine_deriv(
-				res_lo.atom(3).xyz(), res_hi.atom(1).xyz(), res_hi.atom(2).xyz(), res_hi.atom(3).xyz(), phi, f1, f2 );
-			res_lo_derivs[ 3 ].f1() += drb2o_dphi2 * f1;
-			res_lo_derivs[ 3 ].f2() += drb2o_dphi2 * f2;
+		numeric::deriv::dihedral_p1_cosine_deriv(
+			res_lo.atom(3).xyz(), res_hi.atom(1).xyz(), res_hi.atom(2).xyz(), res_hi.atom(3).xyz(), phi, f1, f2 );
+		res_lo_derivs[ 3 ].f1() += drb2o_dphi2 * f1;
+		res_lo_derivs[ 3 ].f2() += drb2o_dphi2 * f2;
 
-			f1 = f2 = Vector(0.0);
-			numeric::deriv::dihedral_p2_cosine_deriv(
-				res_lo.atom(3).xyz(), res_hi.atom(1).xyz(), res_hi.atom(2).xyz(), res_hi.atom(3).xyz(), phi, f1, f2 );
-			res_hi_derivs[ 1 ].f1() += drb2o_dphi2 * f1;
-			res_hi_derivs[ 1 ].f2() += drb2o_dphi2 * f2;
+		f1 = f2 = Vector(0.0);
+		numeric::deriv::dihedral_p2_cosine_deriv(
+			res_lo.atom(3).xyz(), res_hi.atom(1).xyz(), res_hi.atom(2).xyz(), res_hi.atom(3).xyz(), phi, f1, f2 );
+		res_hi_derivs[ 1 ].f1() += drb2o_dphi2 * f1;
+		res_hi_derivs[ 1 ].f2() += drb2o_dphi2 * f2;
 
-			f1 = f2 = Vector(0.0);
-			numeric::deriv::dihedral_p2_cosine_deriv(
-				res_hi.atom(3).xyz(), res_hi.atom(2).xyz(), res_hi.atom(1).xyz(), res_lo.atom(3).xyz(), phi, f1, f2 );
-			res_hi_derivs[ 2 ].f1() += drb2o_dphi2 * f1;
-			res_hi_derivs[ 2 ].f2() += drb2o_dphi2 * f2;
+		f1 = f2 = Vector(0.0);
+		numeric::deriv::dihedral_p2_cosine_deriv(
+			res_hi.atom(3).xyz(), res_hi.atom(2).xyz(), res_hi.atom(1).xyz(), res_lo.atom(3).xyz(), phi, f1, f2 );
+		res_hi_derivs[ 2 ].f1() += drb2o_dphi2 * f1;
+		res_hi_derivs[ 2 ].f2() += drb2o_dphi2 * f2;
 
-			f1 = f2 = Vector(0.0);
-			numeric::deriv::dihedral_p1_cosine_deriv(
-				res_hi.atom(3).xyz(), res_hi.atom(2).xyz(), res_hi.atom(1).xyz(), res_lo.atom(3).xyz(), phi, f1, f2 );
-			res_hi_derivs[ 3 ].f1() += drb2o_dphi2 * f1;
-			res_hi_derivs[ 3 ].f2() += drb2o_dphi2 * f2;
+		f1 = f2 = Vector(0.0);
+		numeric::deriv::dihedral_p1_cosine_deriv(
+			res_hi.atom(3).xyz(), res_hi.atom(2).xyz(), res_hi.atom(1).xyz(), res_lo.atom(3).xyz(), phi, f1, f2 );
+		res_hi_derivs[ 3 ].f1() += drb2o_dphi2 * f1;
+		res_hi_derivs[ 3 ].f2() += drb2o_dphi2 * f2;
 	}
 }
 

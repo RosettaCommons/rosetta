@@ -44,33 +44,36 @@ bool RNA_TorsionScreener::screen(
 	core::Size const suite
 ) {
 	Real const epsilon = angle_conv(
-			pose.residue( suite ).mainchain_torsion( EPSILON ) );
+		pose.residue( suite ).mainchain_torsion( EPSILON ) );
 	if ( epsilon > suitename_->epsilonmax ) return false;
 	if ( epsilon < suitename_->epsilonmin ) return false;
 
 	Real const zeta = angle_conv(
-			pose.residue( suite ).mainchain_torsion( ZETA ) );
+		pose.residue( suite ).mainchain_torsion( ZETA ) );
 	if ( zeta > suitename_->zetamax ) return false;
 	if ( zeta < suitename_->zetamin ) return false;
 
 	Real const alpha = angle_conv(
-			pose.residue( suite + 1 ).mainchain_torsion( ZETA ) );
+		pose.residue( suite + 1 ).mainchain_torsion( ZETA ) );
 	if ( alpha > suitename_->alphamax ) return false;
 	if ( alpha < suitename_->alphamin ) return false;
 
 	Real const beta = angle_conv(
-			pose.residue( suite + 1 ).mainchain_torsion( BETA ) );
+		pose.residue( suite + 1 ).mainchain_torsion( BETA ) );
 	if ( beta > suitename_->betamax ) return false;
 	if ( beta < suitename_->betamin ) return false;
 
 	Real const gamma = angle_conv(
-			pose.residue( suite + 1 ).mainchain_torsion( GAMMA ) );
-	if ( gamma >= suitename_->gammapmin && gamma <= suitename_->gammapmax )
-			return true;
-	if ( gamma >= suitename_->gammatmin && gamma <= suitename_->gammatmax )
-			return true;
-	if ( gamma >= suitename_->gammammin && gamma <= suitename_->gammammax )
-			return true;
+		pose.residue( suite + 1 ).mainchain_torsion( GAMMA ) );
+	if ( gamma >= suitename_->gammapmin && gamma <= suitename_->gammapmax ) {
+		return true;
+	}
+	if ( gamma >= suitename_->gammatmin && gamma <= suitename_->gammatmax ) {
+		return true;
+	}
+	if ( gamma >= suitename_->gammammin && gamma <= suitename_->gammammax ) {
+		return true;
+	}
 
 	return false;
 }

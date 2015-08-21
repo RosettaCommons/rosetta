@@ -48,7 +48,7 @@
 #include <utility/vector0.hh>
 
 #ifdef WIN32
-	#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.hh>
 #endif
 
 

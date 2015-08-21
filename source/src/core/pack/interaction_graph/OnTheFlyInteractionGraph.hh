@@ -114,7 +114,7 @@ public:
 	SparseMatrixIndex const &
 	get_sparse_mat_info_for_state( int state ) const
 	{
-	debug_assert( state > 0 && state <= get_num_states() );
+		debug_assert( state > 0 && state <= get_num_states() );
 		return sparse_mat_info_for_state_[ state ];
 	}
 
@@ -340,17 +340,17 @@ public:
 	ScoreFunction const &
 	score_function() const
 	{
-	debug_assert( score_function_ );
+		debug_assert( score_function_ );
 		return *score_function_;
 	}
 
 	/*
 	// for using ResidueWeightMap
 	inline void set_residue_weight_map(PackerTaskResidueWeightMap const & residue_weight_map_in) {
-		residue_weight_map_ = residue_weight_map_in;
+	residue_weight_map_ = residue_weight_map_in;
 	}
 	inline float get_residue_weights(int seqpos1, int aa1, int seqpos2, int aa2 ) const {
-		{ return residue_weight_map_.get_weight(seqpos1, aa1, seqpos2, aa2); };
+	{ return residue_weight_map_.get_weight(seqpos1, aa1, seqpos2, aa2); };
 	}
 	inline bool check_empty_weight_map() { return residue_weight_map_.check_empty_map(); };
 	*/
@@ -464,7 +464,7 @@ inline
 OnTheFlyEdge *
 OnTheFlyNode::get_incident_otf_edge( int edge )
 {
-debug_assert( dynamic_cast< OnTheFlyEdge * >  (get_incident_edge( edge )) );
+	debug_assert( dynamic_cast< OnTheFlyEdge * >  (get_incident_edge( edge )) );
 	return static_cast< OnTheFlyEdge * >  (get_incident_edge( edge ));
 }
 
@@ -472,7 +472,7 @@ inline
 OnTheFlyEdge const *
 OnTheFlyNode::get_incident_otf_edge( int edge ) const
 {
-debug_assert( dynamic_cast< OnTheFlyEdge const * >  (get_incident_edge( edge )) );
+	debug_assert( dynamic_cast< OnTheFlyEdge const * >  (get_incident_edge( edge )) );
 	return static_cast< OnTheFlyEdge const * >  (get_incident_edge( edge ));
 }
 
@@ -480,7 +480,7 @@ inline
 OnTheFlyNode *
 OnTheFlyNode::get_adjacent_otf_node( int index )
 {
-debug_assert( dynamic_cast< OnTheFlyNode * > ( get_adjacent_node( index ) ));
+	debug_assert( dynamic_cast< OnTheFlyNode * > ( get_adjacent_node( index ) ));
 	return static_cast< OnTheFlyNode * > ( get_adjacent_node( index ) );
 }
 
@@ -488,7 +488,7 @@ inline
 OnTheFlyNode const *
 OnTheFlyNode::get_adjacent_otf_node( int index ) const
 {
-debug_assert( dynamic_cast< OnTheFlyNode const * > ( get_adjacent_node( index ) ));
+	debug_assert( dynamic_cast< OnTheFlyNode const * > ( get_adjacent_node( index ) ));
 	return static_cast< OnTheFlyNode const * > ( get_adjacent_node( index ) );
 }
 
@@ -497,7 +497,7 @@ inline
 OnTheFlyInteractionGraph *
 OnTheFlyNode::get_on_the_fly_owner()
 {
-debug_assert( dynamic_cast< OnTheFlyInteractionGraph * > ( get_owner() ) );
+	debug_assert( dynamic_cast< OnTheFlyInteractionGraph * > ( get_owner() ) );
 	return static_cast< OnTheFlyInteractionGraph * > ( get_owner() );
 }
 
@@ -505,7 +505,7 @@ inline
 OnTheFlyInteractionGraph const *
 OnTheFlyNode::get_on_the_fly_owner() const
 {
-debug_assert( dynamic_cast< OnTheFlyInteractionGraph const * > ( get_owner() ) );
+	debug_assert( dynamic_cast< OnTheFlyInteractionGraph const * > ( get_owner() ) );
 	return static_cast< OnTheFlyInteractionGraph const * > ( get_owner() );
 }
 

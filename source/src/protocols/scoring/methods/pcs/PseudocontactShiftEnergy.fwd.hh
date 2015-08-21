@@ -8,13 +8,13 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/PseudocontactShiftEnergy.fwd.hh
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/PseudocontactShiftEnergy.fwd.hh
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs_PseudocontactShiftEnergy_fwd_hh

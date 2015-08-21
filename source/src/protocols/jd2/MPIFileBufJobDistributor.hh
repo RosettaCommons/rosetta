@@ -60,8 +60,8 @@ class MPIFileBufJobDistributor : public JobDistributor
 {
 	typedef JobDistributor Parent;
 protected:
-  /// @brief ctor is protected; singleton pattern
-  MPIFileBufJobDistributor();
+	/// @brief ctor is protected; singleton pattern
+	MPIFileBufJobDistributor();
 
 	/// @brief protected ctor for child-classes
 	MPIFileBufJobDistributor( core::Size master_rank, core::Size file_buf_rank, core::Size min_client_rank, bool start_empty=false );
@@ -71,7 +71,7 @@ protected:
 public:
 	///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 	///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
-  virtual ~MPIFileBufJobDistributor();
+	virtual ~MPIFileBufJobDistributor();
 
 	core::Size increment_client_rank(){
 		return ++min_client_rank_;
@@ -84,9 +84,9 @@ public:
 
 
 	/// @brief dummy for master/slave version
-  virtual
-  void
-  go( protocols::moves::MoverOP mover );
+	virtual
+	void
+	go( protocols::moves::MoverOP mover );
 
 
 	/// @brief dummy for master/slave version
@@ -119,39 +119,39 @@ protected:
 
 	//return true if message was understood
 	virtual bool process_message(
-     core::Size msg_tag,
-		 core::Size slave_rank,
-		 core::Size slave_job_id,
-		 core::Size slave_batch_id,
-		 core::Real runtime
+		core::Size msg_tag,
+		core::Size slave_rank,
+		core::Size slave_job_id,
+		core::Size slave_batch_id,
+		core::Real runtime
 	);
 
 	//overloaded so that slave-nodes never automatically switch to next_batch when spinning down.
 	virtual bool next_batch();
 
-  /// @brief Handles the receiving of job requests and the sending of job ids to and from slaves
-  void master_go( protocols::moves::MoverOP mover );
+	/// @brief Handles the receiving of job requests and the sending of job ids to and from slaves
+	void master_go( protocols::moves::MoverOP mover );
 
-  /// @brief Always returns zero, simply increments next_job_to_assign_ to the next job that should be run based
-  ///on what has been completeted and the overwrite flags
-  core::Size master_get_new_job_id();
+	/// @brief Always returns zero, simply increments next_job_to_assign_ to the next job that should be run based
+	///on what has been completeted and the overwrite flags
+	core::Size master_get_new_job_id();
 
-  /// @brief requests, receives, and returns a new job id from the master node or returns the current job id if the
-  ///repeat_job_ flag is set to true
-  core::Size slave_get_new_job_id();
+	/// @brief requests, receives, and returns a new job id from the master node or returns the current job id if the
+	///repeat_job_ flag is set to true
+	core::Size slave_get_new_job_id();
 
-  /// @brief This should never be called as this is handled internally by the slave nodes, it utility_exits
-  void master_mark_current_job_id_for_repetition();
+	/// @brief This should never be called as this is handled internally by the slave nodes, it utility_exits
+	void master_mark_current_job_id_for_repetition();
 
-  /// @brief Sets the repeat_job_ flag to true
-  void slave_mark_current_job_id_for_repetition();
+	/// @brief Sets the repeat_job_ flag to true
+	void slave_mark_current_job_id_for_repetition();
 
-  /// @brief Simply increments next_job_to_assign_ to the next job that should be run based on what has been
-  ///completed and if the input job tag of the job marked as having bad input
-  void master_remove_bad_inputs_from_job_list();
+	/// @brief Simply increments next_job_to_assign_ to the next job that should be run based on what has been
+	///completed and if the input job tag of the job marked as having bad input
+	void master_remove_bad_inputs_from_job_list();
 
-  /// @brief Sends a message to the head node that contains the id of a job that had bad input
-  void slave_remove_bad_inputs_from_job_list();
+	/// @brief Sends a message to the head node that contains the id of a job that had bad input
+	void slave_remove_bad_inputs_from_job_list();
 
 	/// @brief This should never be called as this is handled internally by the slave nodes, it utility_exits
 	void master_job_succeeded(core::pose::Pose & pose, std::string const & tag);
@@ -197,7 +197,7 @@ protected:
 
 	/// @brief how many workers --- important to keep track during spin-down process
 	void set_n_worker( core::Size setting ) {
-	  n_worker_=setting;
+		n_worker_=setting;
 	}
 
 	/// @brief marks job as completed in joblist
@@ -212,16 +212,16 @@ protected:
 
 private:
 
-  /// @brief total number of processing elements
+	/// @brief total number of processing elements
 	core::Size n_rank_;
 
 	core::Size n_worker_;
 
-  /// @brief rank of the "local" instance
+	/// @brief rank of the "local" instance
 	core::Size rank_;
 
-  /// @brief where slave jobs store current job id
-  core::Size slave_current_job_id_; //this overlays current_job_id_ of base class.... BAD
+	/// @brief where slave jobs store current job id
+	core::Size slave_current_job_id_; //this overlays current_job_id_ of base class.... BAD
 
 	/// @brief batch_id allow to run multiple batches of jobs -
 	core::Size slave_current_batch_id_; //i.e. next_job_to_assign_ is from this batch (for master)
@@ -229,11 +229,11 @@ private:
 	/// @brief runtime of last job
 	core::Real slave_current_runtime_; //i.e. next_job_to_assign_ is from this batch (for master)
 
-  /// @brief where master stores next job to assign (in a good state after get_new_job_id up until it's used)
-  //core::Size next_job_to_assign_;
+	/// @brief where master stores next job to assign (in a good state after get_new_job_id up until it's used)
+	//core::Size next_job_to_assign_;
 
-  /// @brief where master temporarily stores id of jobs with bad input
-  core::Size bad_job_id_;
+	/// @brief where master temporarily stores id of jobs with bad input
+	core::Size bad_job_id_;
 
 	/// @brief where slave stores whether it should repeat its current job id
 	bool repeat_job_;

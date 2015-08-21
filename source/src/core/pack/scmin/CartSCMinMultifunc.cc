@@ -220,16 +220,16 @@ CartSCMinMultifunc::dfunc( Multivec const & chi, Multivec & dE_dx ) const
 		for ( Size jj = 1; jj <= iires.nchi(); ++jj ) {
 			id::TorsionID torid(iiresid, id::CHI, jj);
 			chemical::AtomIndices const &chi_atoms = iires.chi_atoms( jj );
-			
-			Real dofderiv = eval_dof_deriv_for_minnode( 
+
+			Real dofderiv = eval_dof_deriv_for_minnode(
 				*g_.get_minimization_node( iiresid ),
 				scminmap_.residue( iiresid ),
 				pose_, junk, torid, sfxn_, sfxn_.weights() );
-	
-			optimization::VectorQuad coords( 
+
+			optimization::VectorQuad coords(
 				iires.xyz(chi_atoms[1]),
-				iires.xyz(chi_atoms[2]), 
-				iires.xyz(chi_atoms[3]), 
+				iires.xyz(chi_atoms[2]),
+				iires.xyz(chi_atoms[3]),
 				iires.xyz(chi_atoms[4]) );
 			optimization::VectorQuad grads;
 			optimization::tors_deriv_to_cartesian( dofderiv, coords, grads );
@@ -238,22 +238,22 @@ CartSCMinMultifunc::dfunc( Multivec const & chi, Multivec & dE_dx ) const
 			Size kkatmidx2 = scminmap_.get_atom_index(id::AtomID(chi_atoms[2], iiresid));
 			Size kkatmidx3 = scminmap_.get_atom_index(id::AtomID(chi_atoms[3], iiresid));
 			Size kkatmidx4 = scminmap_.get_atom_index(id::AtomID(chi_atoms[4], iiresid));
-			if (kkatmidx1>0) {
+			if ( kkatmidx1>0 ) {
 				dE_dx[3*kkatmidx1-2] += grads.get<0>().x();
 				dE_dx[3*kkatmidx1-1] += grads.get<0>().y();
 				dE_dx[3*kkatmidx1  ] += grads.get<0>().z();
 			}
-			if (kkatmidx2>0) {
+			if ( kkatmidx2>0 ) {
 				dE_dx[3*kkatmidx2-2] += grads.get<1>().x();
 				dE_dx[3*kkatmidx2-1] += grads.get<1>().y();
 				dE_dx[3*kkatmidx2  ] += grads.get<1>().z();
 			}
-			if (kkatmidx3>0) {
+			if ( kkatmidx3>0 ) {
 				dE_dx[3*kkatmidx3-2] += grads.get<2>().x();
 				dE_dx[3*kkatmidx3-1] += grads.get<2>().y();
 				dE_dx[3*kkatmidx3  ] += grads.get<2>().z();
 			}
-			if (kkatmidx4>0) {
+			if ( kkatmidx4>0 ) {
 				dE_dx[3*kkatmidx4-2] += grads.get<3>().x();
 				dE_dx[3*kkatmidx4-1] += grads.get<3>().y();
 				dE_dx[3*kkatmidx4  ] += grads.get<3>().z();

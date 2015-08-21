@@ -44,10 +44,10 @@ OPT_1GRP_KEY( Boolean, trajectory, cumulate_replicas )
 bool protocols::canonical_sampling::TrajectoryRecorder::options_registered_( false );
 
 void protocols::canonical_sampling::TrajectoryRecorder::register_options() {
-  using namespace basic::options;
-  using namespace OptionKeys;
-  if ( options_registered_ ) return;
-  options_registered_ = true;
+	using namespace basic::options;
+	using namespace OptionKeys;
+	if ( options_registered_ ) return;
+	options_registered_ = true;
 	NEW_OPT( trajectory::stride, "how often should a snapshot be written to the trajectory", 1 );
 	NEW_OPT( trajectory::cache_limit, "the maximum number of poses to cache before performing IO", 500 );
 	NEW_OPT( trajectory::cumulate_jobs, "write structures from different jobs into the same trajectory file", false );
@@ -66,8 +66,8 @@ TrajectoryRecorder::TrajectoryRecorder() :
 	cumulate_jobs_( false ),
 	cumulate_replicas_( false )
 {
-  using namespace basic::options;
-  using namespace OptionKeys;
+	using namespace basic::options;
+	using namespace OptionKeys;
 	if ( options_registered_ ) {
 		stride_ = option[ OptionKeys::trajectory::stride ]();
 		cache_limit_ = option[ OptionKeys::trajectory::cache_limit ]();
@@ -136,17 +136,17 @@ void
 TrajectoryRecorder::update_after_boltzmann(
 	core::pose::Pose const & pose,
 	protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover //= 0
-	) {
+) {
 	++step_count_;
 
-	if (step_count_ % stride_ == 0) {
+	if ( step_count_ % stride_ == 0 ) {
 		++model_count_;
 		write_model(pose, metropolis_hastings_mover);
 	}
 }
 
 void
-TrajectoryRecorder::update_after_boltzmann(	protocols::moves::MonteCarlo const & mc ) {
+TrajectoryRecorder::update_after_boltzmann( protocols::moves::MonteCarlo const & mc ) {
 	update_after_boltzmann(mc.last_accepted_pose());
 }
 
@@ -157,7 +157,7 @@ TrajectoryRecorder::apply( core::pose::Pose & pose ) {
 
 void
 TrajectoryRecorder::initialize_simulation(
-  core::pose::Pose &,
+	core::pose::Pose &,
 	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 	core::Size cycle //default=0; non-zero if trajectory is restarted
 ) {
@@ -165,7 +165,7 @@ TrajectoryRecorder::initialize_simulation(
 		*(metropolis_hastings_mover.monte_carlo()),
 		&metropolis_hastings_mover
 	);
-	if (cycle != 0) {
+	if ( cycle != 0 ) {
 		step_count_ = cycle;
 		model_count_ = step_count_ / stride();
 	}

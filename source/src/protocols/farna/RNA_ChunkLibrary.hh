@@ -55,148 +55,148 @@
 namespace protocols {
 namespace farna {
 
-	class ChunkSet : public utility::pointer::ReferenceCount  {
-	public:
+class ChunkSet : public utility::pointer::ReferenceCount  {
+public:
 
-		//constructor!
-		ChunkSet( utility::vector1< core::pose::MiniPoseOP > const & mini_pose_list,
-							core::pose::ResMap const & res_map );
+	//constructor!
+	ChunkSet( utility::vector1< core::pose::MiniPoseOP > const & mini_pose_list,
+		core::pose::ResMap const & res_map );
 
-		ChunkSet( utility::vector1< core::pose::PoseOP > const & pose_list,
-							core::pose::ResMap const & res_map );
+	ChunkSet( utility::vector1< core::pose::PoseOP > const & pose_list,
+		core::pose::ResMap const & res_map );
 
-		// Need a clone();
+	// Need a clone();
 
-		//destructor -- necessary?
-		~ChunkSet();
+	//destructor -- necessary?
+	~ChunkSet();
 
-		void
-		insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_pose_index, protocols::toolbox::AllowInsertOP const & allow_insert ) const;
+	void
+	insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_pose_index, protocols::toolbox::AllowInsertOP const & allow_insert ) const;
 
-		Size
-		num_chunks() const{ return mini_pose_list_.size(); };
+	Size
+	num_chunks() const{ return mini_pose_list_.size(); };
 
-		std::map< core::id::AtomID, core::id::AtomID >
-		get_atom_id_map(  core::pose::Pose & pose, protocols::toolbox::AllowInsertOP const & allow_insert ) const;
+	std::map< core::id::AtomID, core::id::AtomID >
+	get_atom_id_map(  core::pose::Pose & pose, protocols::toolbox::AllowInsertOP const & allow_insert ) const;
 
-		core::pose::MiniPoseOP const mini_pose( Size const idx ) const;
+	core::pose::MiniPoseOP const mini_pose( Size const idx ) const;
 
-		bool
-		check_fold_tree_OK(	core::pose::Pose const & pose );
+	bool
+	check_fold_tree_OK( core::pose::Pose const & pose );
 
-	private:
+private:
 
-		void filter_atom_id_map_with_mask( std::map< core::id::AtomID, core::id::AtomID > & atom_id_map ) const;
+	void filter_atom_id_map_with_mask( std::map< core::id::AtomID, core::id::AtomID > & atom_id_map ) const;
 
-		utility::vector1< core::pose::MiniPoseOP > mini_pose_list_;
-		core::pose::ResMap res_map_;
-		std::map< core::id::AtomID, bool > atom_id_mask_;
+	utility::vector1< core::pose::MiniPoseOP > mini_pose_list_;
+	core::pose::ResMap res_map_;
+	std::map< core::id::AtomID, bool > atom_id_mask_;
 
-	};
+};
 
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////////
-	class RNA_ChunkLibrary : public utility::pointer::ReferenceCount  {
-	public:
+/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+class RNA_ChunkLibrary : public utility::pointer::ReferenceCount  {
+public:
 
-		RNA_ChunkLibrary();
+	RNA_ChunkLibrary();
 
-		// default constructor.
-		RNA_ChunkLibrary(
-								utility::vector1 < std::string > const & pdb_files,
-								utility::vector1 < std::string > const & silent_files,
-								core::pose::Pose const & pose,
-								utility::vector1< core::Size > const & input_res );
+	// default constructor.
+	RNA_ChunkLibrary(
+		utility::vector1 < std::string > const & pdb_files,
+		utility::vector1 < std::string > const & silent_files,
+		core::pose::Pose const & pose,
+		utility::vector1< core::Size > const & input_res );
 
-		// should not be in use in the future...
-		RNA_ChunkLibrary(
-								utility::vector1 < std::string > const & silent_files,
-								core::pose::Pose const & pose,
-								utility::vector1< core::Size > const & input_res );
+	// should not be in use in the future...
+	RNA_ChunkLibrary(
+		utility::vector1 < std::string > const & silent_files,
+		core::pose::Pose const & pose,
+		utility::vector1< core::Size > const & input_res );
 
-		//destructor
-		~RNA_ChunkLibrary();
+	//destructor
+	~RNA_ChunkLibrary();
 
-		// default constructor.
-		void
-		initialize_rna_chunk_library(
-								utility::vector1 < std::string > const & pdb_files,
-								utility::vector1 < std::string > const & silent_files,
-								core::pose::Pose const & pose,
-								utility::vector1< core::Size > const & input_res );
+	// default constructor.
+	void
+	initialize_rna_chunk_library(
+		utility::vector1 < std::string > const & pdb_files,
+		utility::vector1 < std::string > const & silent_files,
+		core::pose::Pose const & pose,
+		utility::vector1< core::Size > const & input_res );
 
- 		Size num_chunk_sets() const { return chunk_sets_.size(); };
+	Size num_chunk_sets() const { return chunk_sets_.size(); };
 
- 		Size num_chunks( Size const n ) const { return chunk_sets_[ n ]->num_chunks(); };
+	Size num_chunks( Size const n ) const { return chunk_sets_[ n ]->num_chunks(); };
 
-		ChunkSetOP chunk_set( Size const n ) const { return chunk_sets_[ n ];  };
+	ChunkSetOP chunk_set( Size const n ) const { return chunk_sets_[ n ];  };
 
-		void add_chunk_set( std::string const & silent_file,
-												core::pose::ResMap const & res_map,
-												core::pose::Pose const & big_pose );
+	void add_chunk_set( std::string const & silent_file,
+		core::pose::ResMap const & res_map,
+		core::pose::Pose const & big_pose );
 
-		void insert_chunk_into_pose( core::pose::Pose & pose,
-																 Size const & chunk_list_index,
-																 Size const & chunk_pose_index ) const;
+	void insert_chunk_into_pose( core::pose::Pose & pose,
+		Size const & chunk_list_index,
+		Size const & chunk_pose_index ) const;
 
-		utility::vector1< Size >
-		get_indices_of_moving_chunks() const;
+	utility::vector1< Size >
+	get_indices_of_moving_chunks() const;
 
-		Size num_moving_chunks() const ;
+	Size num_moving_chunks() const ;
 
-		bool
-		random_chunk_insertion( core::pose::Pose & pose ) const;
+	bool
+	random_chunk_insertion( core::pose::Pose & pose ) const;
 
-		void
-		initialize_random_chunks( core::pose::Pose & pose, bool const dump_pdb = false ) const;
+	void
+	initialize_random_chunks( core::pose::Pose & pose, bool const dump_pdb = false ) const;
 
 	toolbox::AllowInsertOP allow_insert(){ return allow_insert_; };
 
-		void set_allow_insert(toolbox::AllowInsertOP allow_insert );
+	void set_allow_insert(toolbox::AllowInsertOP allow_insert );
 
-		core::Real const & chunk_coverage() const{ return chunk_coverage_; };
+	core::Real const & chunk_coverage() const{ return chunk_coverage_; };
 
-		void
-		superimpose_to_first_chunk( core::pose::Pose & pose ) const;
+	void
+	superimpose_to_first_chunk( core::pose::Pose & pose ) const;
 
-		bool
-		check_fold_tree_OK(	core::pose::Pose const & pose );
+	bool
+	check_fold_tree_OK( core::pose::Pose const & pose );
 
-		void
-		setup_base_pair_step_chunks( core::pose::Pose const & pose, utility::vector1< BasePairStep > base_pair_steps );
+	void
+	setup_base_pair_step_chunks( core::pose::Pose const & pose, utility::vector1< BasePairStep > base_pair_steps );
 
-	private:
+private:
 
-		void
-		update_allow_insert( core::pose::ResMap const & res_map,
-													 core::pose::Pose const & pose,
-													 core::pose::Pose const & scratch_pose,
-													 Size const domain_num );
+	void
+	update_allow_insert( core::pose::ResMap const & res_map,
+		core::pose::Pose const & pose,
+		core::pose::Pose const & scratch_pose,
+		Size const domain_num );
 
-		bool
-		check_fold_tree_OK( core::pose::ResMap const & res_map,
-												core::pose::Pose const & pose,
-												core::pose::Pose const & scratch_pose );
-		void
-		figure_out_chunk_coverage();
+	bool
+	check_fold_tree_OK( core::pose::ResMap const & res_map,
+		core::pose::Pose const & pose,
+		core::pose::Pose const & scratch_pose );
+	void
+	figure_out_chunk_coverage();
 
-		bool
-		check_res_map( core::pose::ResMap const & res_map, core::pose::Pose const & scratch_pose, std::string const & sequence ) const;
+	bool
+	check_res_map( core::pose::ResMap const & res_map, core::pose::Pose const & scratch_pose, std::string const & sequence ) const;
 
-		void
-		align_to_chunk( core::pose::Pose & pose, ChunkSet const & chunk_set, core::Size const chunk_index ) const;
+	void
+	align_to_chunk( core::pose::Pose & pose, ChunkSet const & chunk_set, core::Size const chunk_index ) const;
 
-	private:
+private:
 
-		utility::vector1< ChunkSetOP > chunk_sets_;
-		toolbox::AllowInsertOP allow_insert_;
-		ObjexxFCL::FArray1D <bool> covered_by_chunk_;
-		core::Real chunk_coverage_;
-		bool coarse_rna_;
-		BasePairStepLibraryOP base_pair_step_library_;
+	utility::vector1< ChunkSetOP > chunk_sets_;
+	toolbox::AllowInsertOP allow_insert_;
+	ObjexxFCL::FArray1D <bool> covered_by_chunk_;
+	core::Real chunk_coverage_;
+	bool coarse_rna_;
+	BasePairStepLibraryOP base_pair_step_library_;
 
-	};
+};
 
 
 } //farna

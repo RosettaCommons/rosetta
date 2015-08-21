@@ -81,13 +81,13 @@ MembraneEnvSmoothEnergy::MembraneEnvSmoothEnergy() :
 	mem_env_log10_.dimension( max_aa, max_mem_layers, env_log_table_cen10_bins );
 	utility::io::izstream stream;
 	basic::database::open( stream, "scoring/score_functions/MembranePotential/CEN10_Menv_smooth_log.txt" );
-	for ( Size i=1; i<= max_aa; ++i ){
+	for ( Size i=1; i<= max_aa; ++i ) {
 		getline( stream, line );
 		std::istringstream l(line);
 		l >> tag >> aa;
 		if ( l.fail() || tag != "MENV_SMOOTH_LOG_CEN10:"  ) utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/CEN10_Menv_smooth_log.txt (Menv_smooth)");
-		for( Size j=1;j<=max_mem_layers;++j) {
-			for( Size k=1;k<=env_log_table_cen10_bins;++k) {
+		for ( Size j=1; j<=max_mem_layers; ++j ) {
+			for ( Size k=1; k<=env_log_table_cen10_bins; ++k ) {
 				l >> mem_env_log10_(aa,j,k);
 			}
 		}
@@ -122,9 +122,9 @@ MembraneEnvSmoothEnergy::setup_for_derivatives(
 	pose.update_residue_neighbors();
 	Size const nres( pose.total_residue() );
 
- 	residue_N_.clear();
- 	residue_E_.clear();
- 	residue_dEdN_.clear();
+	residue_N_.clear();
+	residue_E_.clear();
+	residue_dEdN_.clear();
 
 
 	// iterate over all the residues in the protein and count their neighbours
@@ -134,7 +134,7 @@ MembraneEnvSmoothEnergy::setup_for_derivatives(
 		// get the appropriate residue from the pose.
 		conformation::Residue const & rsd( pose.residue(i) );
 		// currently this is only for protein residues
-		if(! rsd.is_protein() ) continue; //return;
+		if ( ! rsd.is_protein() ) continue; //return;
 
 		Size const atomindex_i = rsd.atom_index( representative_atom_name( rsd.aa() ));
 
@@ -215,7 +215,7 @@ MembraneEnvSmoothEnergy::residue_energy(
 		conformation::Residue const & rsd_j( pose.residue(j) );
 
 		// if virtual residue, don't score
-		if (rsd_j.aa() == core::chemical::aa_vrt) continue;
+		if ( rsd_j.aa() == core::chemical::aa_vrt ) continue;
 
 		Size atomindex_j( rsd_j.nbr_atom() );
 
@@ -250,14 +250,14 @@ MembraneEnvSmoothEnergy::eval_atom_derivative(
 {
 	conformation::Residue const & rsd = pose.residue( atom_id.rsd() );
 
-	if (! rsd.is_protein() ) return;
+	if ( ! rsd.is_protein() ) return;
 
 	Size const i = rsd.seqpos();
 	Size const i_nbr_atom = rsd.type().nbr_atom();
 	Size const i_rep_atom = rsd.atom_index( representative_atom_name( rsd.aa() ));
 
 	// forces act only on the nbr atom (CB or CA) or the representative atom
-	if( i_nbr_atom != (Size) atom_id.atomno() && i_rep_atom != (Size) atom_id.atomno() ) return;
+	if ( i_nbr_atom != (Size) atom_id.atomno() && i_rep_atom != (Size) atom_id.atomno() ) return;
 
 	core::conformation::Atom const & atom_i = rsd.atom( atom_id.atomno() );
 
@@ -277,7 +277,7 @@ MembraneEnvSmoothEnergy::eval_atom_derivative(
 		conformation::Residue const & rsd_j( pose.residue(j) );
 
 		// if virtual residue, don't score
-		if (rsd_j.aa() == core::chemical::aa_vrt ) continue;
+		if ( rsd_j.aa() == core::chemical::aa_vrt ) continue;
 
 		if ( input_atom_is_nbr && input_atom_is_rep && rsd_j.is_protein() ) {
 			Size const resj_rep_atom = rsd_j.atom_index( representative_atom_name( rsd_j.aa() ));
@@ -326,7 +326,7 @@ MembraneEnvSmoothEnergy::eval_atom_derivative(
 std::string const &
 MembraneEnvSmoothEnergy::representative_atom_name( chemical::AA const aa ) const
 {
-debug_assert( aa >= 1 && aa <= chemical::num_canonical_aas );
+	debug_assert( aa >= 1 && aa <= chemical::num_canonical_aas );
 
 	static std::string const cbeta_string(  "CB"  );
 	static std::string const sgamma_string( "SG"  );
@@ -340,28 +340,28 @@ debug_assert( aa >= 1 && aa <= chemical::num_canonical_aas );
 	static std::string const sdelta_string( "SD"  );
 
 	switch ( aa ) {
-		case ( chemical::aa_ala ) : return cbeta_string;  break;
-		case ( chemical::aa_cys ) : return sgamma_string; break;
-		case ( chemical::aa_asp ) : return cgamma_string; break;
-		case ( chemical::aa_glu ) : return cdelta_string; break;
-		case ( chemical::aa_phe ) : return czeta_string;  break;
-		case ( chemical::aa_gly ) : return calpha_string; break;
-		case ( chemical::aa_his ) : return ceps_1_string; break;
-		case ( chemical::aa_ile ) : return cdel_1_string; break;
-		case ( chemical::aa_lys ) : return cdelta_string; break;
-		case ( chemical::aa_leu ) : return cgamma_string; break;
-		case ( chemical::aa_met ) : return sdelta_string; break;
-		case ( chemical::aa_asn ) : return cgamma_string; break;
-		case ( chemical::aa_pro ) : return cgamma_string; break;
-		case ( chemical::aa_gln ) : return cdelta_string; break;
-		case ( chemical::aa_arg ) : return czeta_string;  break;
-		case ( chemical::aa_ser ) : return cbeta_string;  break;
-		case ( chemical::aa_thr ) : return cbeta_string;  break;
-		case ( chemical::aa_val ) : return cbeta_string;  break;
-		case ( chemical::aa_trp ) : return ceps_2_string; break;
-		case ( chemical::aa_tyr ) : return czeta_string;  break;
-		default :
-			utility_exit_with_message( "ERROR: Failed to find amino acid " + chemical::name_from_aa( aa ) + " in EnvSmooth::representative_atom_name" );
+	case ( chemical::aa_ala ) : return cbeta_string;  break;
+	case ( chemical::aa_cys ) : return sgamma_string; break;
+	case ( chemical::aa_asp ) : return cgamma_string; break;
+	case ( chemical::aa_glu ) : return cdelta_string; break;
+	case ( chemical::aa_phe ) : return czeta_string;  break;
+	case ( chemical::aa_gly ) : return calpha_string; break;
+	case ( chemical::aa_his ) : return ceps_1_string; break;
+	case ( chemical::aa_ile ) : return cdel_1_string; break;
+	case ( chemical::aa_lys ) : return cdelta_string; break;
+	case ( chemical::aa_leu ) : return cgamma_string; break;
+	case ( chemical::aa_met ) : return sdelta_string; break;
+	case ( chemical::aa_asn ) : return cgamma_string; break;
+	case ( chemical::aa_pro ) : return cgamma_string; break;
+	case ( chemical::aa_gln ) : return cdelta_string; break;
+	case ( chemical::aa_arg ) : return czeta_string;  break;
+	case ( chemical::aa_ser ) : return cbeta_string;  break;
+	case ( chemical::aa_thr ) : return cbeta_string;  break;
+	case ( chemical::aa_val ) : return cbeta_string;  break;
+	case ( chemical::aa_trp ) : return ceps_2_string; break;
+	case ( chemical::aa_tyr ) : return czeta_string;  break;
+	default :
+		utility_exit_with_message( "ERROR: Failed to find amino acid " + chemical::name_from_aa( aa ) + " in EnvSmooth::representative_atom_name" );
 		break;
 	}
 
@@ -396,20 +396,20 @@ MembraneEnvSmoothEnergy::calc_energy(
 	Size low_bin = static_cast< Size > ( floor(neighbor_count));
 	Size high_bin = static_cast< Size > ( ceil(neighbor_count));
 	Real inter = neighbor_count - low_bin;
-	if (neighbor_count <= 1) {
+	if ( neighbor_count <= 1 ) {
 		low_bin = high_bin = 1; inter = 0;
 	}
 
 	Real const MembraneDepth (MembraneEmbed_from_pose( pose ).depth( rsd.seqpos() ) );
 
-  Real thickness = 2.0;
-  int  slope = 14;
+	Real thickness = 2.0;
+	int  slope = 14;
 	int  layer1,layer2,layer;
 	Real f,z,zn,layer_edge;
 
 	Real const env10_weight=1.0;
 
-	if (high_bin < 41 ){
+	if ( high_bin < 41 ) {
 		if ( ( MembraneDepth < 11.0 ) || ( MembraneDepth > 49.0 ) ) {
 			//pure water layer
 			layer = 3;
@@ -421,7 +421,7 @@ MembraneEnvSmoothEnergy::calc_energy(
 				env10_weight * mem_env_log10_( aa, layer, low_bin );
 
 		} else if ( ( MembraneDepth >= 11.0 && MembraneDepth <= 13.0 ) || ( MembraneDepth >= 47.0 && MembraneDepth <= 49.0 ) ) {
-    //interpolate between water and interface phases
+			//interpolate between water and interface phases
 			layer1 = 2; //interface layer
 			layer2 = 3; //water layer
 
@@ -435,14 +435,14 @@ MembraneEnvSmoothEnergy::calc_energy(
 			f = zn/(1 + zn);
 
 			score = f * ( env10_weight * mem_env_log10_( aa, layer2, low_bin ) * (1.0-inter) +
-										env10_weight * mem_env_log10_( aa, layer2, high_bin ) * (inter) ) +
+				env10_weight * mem_env_log10_( aa, layer2, high_bin ) * (inter) ) +
 				( 1 - f ) * ( env10_weight * mem_env_log10_( aa, layer1, low_bin ) * (1.0-inter) +
-											env10_weight * mem_env_log10_( aa, layer1, high_bin ) * (inter) );
+				env10_weight * mem_env_log10_( aa, layer1, high_bin ) * (inter) );
 
 			dscore_dneighbor_count = f * ( env10_weight * mem_env_log10_( aa, layer2, high_bin ) -
-																		 env10_weight * mem_env_log10_( aa, layer2, low_bin ) ) +
+				env10_weight * mem_env_log10_( aa, layer2, low_bin ) ) +
 				( 1 - f ) * ( env10_weight * mem_env_log10_( aa, layer1, high_bin ) -
-											env10_weight * mem_env_log10_( aa, layer1, low_bin ) );
+				env10_weight * mem_env_log10_( aa, layer1, low_bin ) );
 
 			if ( MembraneDepth <= 12.0 || MembraneDepth >= 48.0 ) {
 				layer = 2;
@@ -451,7 +451,7 @@ MembraneEnvSmoothEnergy::calc_energy(
 			}
 
 		} else if ( ( MembraneDepth > 13.0 && MembraneDepth < 17.0 ) || ( MembraneDepth > 43.0 && MembraneDepth < 47.0 ) ) {
-    //pure interface phase
+			//pure interface phase
 			layer = 2;
 
 			score = env10_weight * mem_env_log10_( aa, layer, low_bin ) * (1.0-inter) +
@@ -475,27 +475,27 @@ MembraneEnvSmoothEnergy::calc_energy(
 			f = zn/(1 + zn);
 
 			score = f * ( env10_weight * mem_env_log10_( aa, layer2, low_bin ) * (1.0-inter) +
-										env10_weight * mem_env_log10_( aa, layer2, high_bin ) * (inter) ) +
+				env10_weight * mem_env_log10_( aa, layer2, high_bin ) * (inter) ) +
 				( 1 - f ) * ( env10_weight * mem_env_log10_( aa, layer1, low_bin ) * (1.0-inter) +
-											env10_weight * mem_env_log10_( aa, layer1, high_bin ) * (inter) );
+				env10_weight * mem_env_log10_( aa, layer1, high_bin ) * (inter) );
 
 			dscore_dneighbor_count = f * ( env10_weight * mem_env_log10_( aa, layer2, high_bin ) -
-																		 env10_weight * mem_env_log10_( aa, layer2, low_bin ) ) +
+				env10_weight * mem_env_log10_( aa, layer2, low_bin ) ) +
 				( 1 - f ) * ( env10_weight * mem_env_log10_( aa, layer1, high_bin ) -
-											env10_weight * mem_env_log10_( aa, layer1, low_bin ) );
+				env10_weight * mem_env_log10_( aa, layer1, low_bin ) );
 
-    } else {
-    //pure hydrophobic phase
-		layer = 1;
+		} else {
+			//pure hydrophobic phase
+			layer = 1;
 
-		score = env10_weight * mem_env_log10_( aa, layer, low_bin ) * (1.0-inter) +
-			env10_weight * mem_env_log10_( aa, layer, high_bin ) * (inter);
+			score = env10_weight * mem_env_log10_( aa, layer, low_bin ) * (1.0-inter) +
+				env10_weight * mem_env_log10_( aa, layer, high_bin ) * (inter);
 
-		dscore_dneighbor_count = env10_weight * mem_env_log10_( aa, layer, high_bin ) -
+			dscore_dneighbor_count = env10_weight * mem_env_log10_( aa, layer, high_bin ) -
 				env10_weight * mem_env_log10_( aa, layer, low_bin );
 		}
 
-	}else{ //high_bin >= 40 neighbors - does it ever happen?
+	} else { //high_bin >= 40 neighbors - does it ever happen?
 
 		dscore_dneighbor_count = 0;
 
@@ -506,7 +506,7 @@ MembraneEnvSmoothEnergy::calc_energy(
 			score = env10_weight * mem_env_log10_( aa, layer, 40 );
 
 		} else if ( ( MembraneDepth >= 11.0 && MembraneDepth <= 13.0 ) || ( MembraneDepth >= 47.0 && MembraneDepth <= 49.0 ) ) {
-    //interpolate between water and interface phases
+			//interpolate between water and interface phases
 			layer1 = 2; //interface layer
 			layer2 = 3; //water layer
 
@@ -529,7 +529,7 @@ MembraneEnvSmoothEnergy::calc_energy(
 			}
 
 		} else if ( ( MembraneDepth > 13.0 && MembraneDepth < 17.0 ) || ( MembraneDepth > 43.0 && MembraneDepth < 47.0 ) ) {
-    //pure interface phase
+			//pure interface phase
 			layer = 2;
 
 			score = env10_weight * mem_env_log10_( aa, layer, 40 );
@@ -551,11 +551,11 @@ MembraneEnvSmoothEnergy::calc_energy(
 			score = f * ( env10_weight * mem_env_log10_( aa, layer2, 40 ) ) +
 				( 1 - f ) * ( env10_weight * mem_env_log10_( aa, layer1, 40 ) );
 
-    } else {
-    //pure hydrophobic phase
-		layer = 1;
+		} else {
+			//pure hydrophobic phase
+			layer = 1;
 
-		score = env10_weight * mem_env_log10_( aa, layer, 40 );
+			score = env10_weight * mem_env_log10_( aa, layer, 40 );
 
 		}
 	}
@@ -568,9 +568,9 @@ MembraneEnvSmoothEnergy::calc_energy(
 Real
 MembraneEnvSmoothEnergy::sigmoidish_neighbor( DistanceSquared const sqdist ) const
 {
-	if( sqdist > end_sig2 ) {
+	if ( sqdist > end_sig2 ) {
 		return 0.0;
-	} else if( sqdist < start_sig2 ) {
+	} else if ( sqdist < start_sig2 ) {
 		return 1.0;
 	} else {
 		Real dist = sqrt( sqdist );

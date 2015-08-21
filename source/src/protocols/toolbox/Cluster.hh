@@ -28,38 +28,38 @@ namespace toolbox {
 
 class ClusterBase {
 public:
-  ClusterBase( core::Size dim ) :
-    distance_( dim, dim, 0.0 ),
-    dim_( dim )
+	ClusterBase( core::Size dim ) :
+		distance_( dim, dim, 0.0 ),
+		dim_( dim )
 	{};
 
-  core::Real dist( core::Size i, core::Size j ) const {
-    return distance_( i, j );
-  }
+	core::Real dist( core::Size i, core::Size j ) const {
+		return distance_( i, j );
+	}
 
-  core::Real & dist( core::Size i, core::Size j ) {
-    return distance_( i, j);
-  }
+	core::Real & dist( core::Size i, core::Size j ) {
+		return distance_( i, j);
+	}
 
 	ObjexxFCL::FArray2D< core::Real > & distance_matrix() { return distance_; }
 	ObjexxFCL::FArray2D< core::Real > const& distance_matrix() const { return distance_; }
 
 	core::Size dim() const { return dim_; }
 
-  void print_cluster_assignment( std::ostream& out ) const;
+	void print_cluster_assignment( std::ostream& out ) const;
 
-  typedef std::deque< core::Size > Cluster;
-  typedef utility::vector1 < Cluster > ClusterList;
-  typedef Cluster::const_iterator IntraClusterIterator;
-  typedef ClusterList::const_iterator ClusterIterator;
+	typedef std::deque< core::Size > Cluster;
+	typedef utility::vector1 < Cluster > ClusterList;
+	typedef Cluster::const_iterator IntraClusterIterator;
+	typedef ClusterList::const_iterator ClusterIterator;
 
-  core::Size size() const {
-    return clusterlist_.size();
-  }
+	core::Size size() const {
+		return clusterlist_.size();
+	}
 
-  Cluster const& cluster( core::Size i ) const {
-    return clusterlist_[ i ];
-  }
+	Cluster const& cluster( core::Size i ) const {
+		return clusterlist_[ i ];
+	}
 
 	ClusterList const& clusterlist() const {
 		return clusterlist_;
@@ -69,36 +69,36 @@ public:
 	void limit_groupsize( core::Size limit );
 	void print_summary( utility::vector1< std::string > tags, utility::vector1< core::Real > all_energies );
 
-  void show( std::ostream& out ) const;
-  void read( std::istream& in );
+	void show( std::ostream& out ) const;
+	void read( std::istream& in );
 
 protected:
-  ClusterList clusterlist_;
-  ObjexxFCL::FArray2D< core::Real > distance_;
-  core::Size dim_;
+	ClusterList clusterlist_;
+	ObjexxFCL::FArray2D< core::Real > distance_;
+	core::Size dim_;
 
 };
 
 class ClusterPhilStyle : public ClusterBase {
 public:
-  ClusterPhilStyle( core::Size dim, core::Real rad = 1.0 ) :
-    ClusterBase( dim ),
-    cluster_radius_ ( rad ),
+	ClusterPhilStyle( core::Size dim, core::Real rad = 1.0 ) :
+		ClusterBase( dim ),
+		cluster_radius_ ( rad ),
 		n_max_cluster_( 10 )
-  {};
+	{};
 
-  void compute();
+	void compute();
 	void do_clustering() { compute(); };
 
-  void set_radius( core::Real setting ) {
-    cluster_radius_ = setting;
-  }
+	void set_radius( core::Real setting ) {
+		cluster_radius_ = setting;
+	}
 
 	void set_n_max_cluster( core::Size setting ) {
 		n_max_cluster_ = setting;
 	}
 private:
-  core::Real cluster_radius_;
+	core::Real cluster_radius_;
 	core::Size n_max_cluster_;
 };
 
@@ -133,16 +133,16 @@ public:
 template< typename SilentStructIterator, typename StructureContainer >
 void cluster_silent_structs(
 	core::Size n_decoys,
-  SilentStructIterator input_decoys_begin,
-  SilentStructIterator input_decoys_end,
+	SilentStructIterator input_decoys_begin,
+	SilentStructIterator input_decoys_end,
 	StructureContainer& new_structs, //provides a "push_back" method
 	ClusterOptions opts
 );
 
 template< typename SilentStructIterator, typename StructureContainer >
 void cluster_silent_structs( DecoySetEvaluation const& CA_set,
-  SilentStructIterator input_decoys_begin,
-  SilentStructIterator input_decoys_end,
+	SilentStructIterator input_decoys_begin,
+	SilentStructIterator input_decoys_end,
 	StructureContainer& new_structs,
 	ClusterOptions opts
 );

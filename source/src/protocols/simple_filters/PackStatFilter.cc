@@ -78,22 +78,22 @@ PackStatFilter::compute( Pose const & pose ) const
 {
 	// calc packstat
 	core::Real packscore;
-	
+
 	// repeats to average
 	core::Real packscore_average( 0.0 );
 
-    for( core::Size i = 1; i<=repeats_; i++ ){
-			if( chain_ < 1 )
-				packscore = core::scoring::packstat::compute_packing_score( pose );
-			else{
-				core::pose::PoseOP single_chain( pose.split_by_chain( chain_ ) );
-				packscore = core::scoring::packstat::compute_packing_score( *single_chain );		
-			}
+	for ( core::Size i = 1; i<=repeats_; i++ ) {
+		if ( chain_ < 1 ) {
+			packscore = core::scoring::packstat::compute_packing_score( pose );
+		} else {
+			core::pose::PoseOP single_chain( pose.split_by_chain( chain_ ) );
+			packscore = core::scoring::packstat::compute_packing_score( *single_chain );
+		}
 		packscore_average += packscore;
 		tr << "repeat " << i << ": packscore: " << packscore << std::endl;
-    }
+	}
 
-    return packscore_average / (core::Real)repeats_;
+	return packscore_average / (core::Real)repeats_;
 }
 
 /// @brief
@@ -108,10 +108,10 @@ PackStatFilter::report_sm( Pose const & pose ) const
 bool PackStatFilter::apply( Pose const & pose ) const
 {
 	Real score = compute( pose );
-	if( score > filtered_score_ ){
+	if ( score > filtered_score_ ) {
 		tr << "Successfully filtered: " << score << std::endl;
 		return true;
-	}else{
+	} else {
 		tr << "Filter failed current/threshold=" << score << "/" << filtered_score_ << std::endl;
 		return false;
 	}
@@ -126,7 +126,7 @@ PackStatFilter::parse_my_tag(
 	Movers_map const &,
 	Pose const & )
 {
- 	filtered_score_ = tag->getOption<Real>( "threshold", 0.58 ); // ideally, ~0.65 is required for good packing
+	filtered_score_ = tag->getOption<Real>( "threshold", 0.58 ); // ideally, ~0.65 is required for good packing
 	tr << "Structures with packstat score " << filtered_score_ << " will be filtred." << std::endl;
 	chain_ = tag->getOption<core::Size>( "chain", 0 );
 	repeats_ = tag->getOption<core::Size>( "repeats", 1 );

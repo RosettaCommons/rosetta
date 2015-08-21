@@ -46,8 +46,8 @@
 #include <string>
 #include <sstream>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::string;
 using std::stringstream;
@@ -179,10 +179,10 @@ ChargeChargeFeatures::report_features(
 	// just the ones involved in hydrogen bonds
 	std::string hbond_string =
 		"SELECT\n"
-		"	q1.site_id AS q1_id,\n"
-		"	q2.site_id AS q2_id,\n"
-		"	CASE q1.is_donor WHEN 1 THEN 1 ELSE -1 END AS q1_charge,\n"
-		"	CASE q2.is_donor WHEN 1 THEN 1 ELSE -1 END AS q2_charge,\n"
+		"\tq1.site_id AS q1_id,\n"
+		"\tq2.site_id AS q2_id,\n"
+		"\tCASE q1.is_donor WHEN 1 THEN 1 ELSE -1 END AS q1_charge,\n"
+		"\tCASE q2.is_donor WHEN 1 THEN 1 ELSE -1 END AS q2_charge,\n"
 		" q1_xyz.atm_x AS q1_x, q1_xyz.atm_y AS q1_y, q1_xyz.atm_z AS q1_z,\n"
 		" q2_xyz.atm_x AS q2_x, q2_xyz.atm_y AS q2_y, q2_xyz.atm_z AS q2_z,\n"
 		" q1_xyz.base_x AS B1_x, q1_xyz.base_y AS B1_y, q1_xyz.base_z AS B1_z,\n"
@@ -190,23 +190,23 @@ ChargeChargeFeatures::report_features(
 		" q1_xyz.bbase_x AS C1_x, q1_xyz.bbase_y AS C1_y, q1_xyz.bbase_z AS C1_z,\n"
 		" q2_xyz.bbase_x AS C2_x, q2_xyz.bbase_y AS C2_y, q2_xyz.bbase_z AS C2_z\n"
 		"FROM\n"
-		"	hbond_sites AS q1,\n"
-		"	hbond_sites AS q2,\n"
-		"	hbond_site_atoms AS q1_xyz,\n"
-		"	hbond_site_atoms AS q2_xyz\n"
+		"\thbond_sites AS q1,\n"
+		"\thbond_sites AS q2,\n"
+		"\thbond_site_atoms AS q1_xyz,\n"
+		"\thbond_site_atoms AS q2_xyz\n"
 		"WHERE\n"
-		"	q1.struct_id = ? AND q2.struct_id = ? AND\n"
+		"\tq1.struct_id = ? AND q2.struct_id = ? AND\n"
 		" q1.resNum < q2.resNum AND\n"
-		"	(q1.HBChemType = 'hbacc_CXL' OR\n"
-		"	q1.HBChemType = 'hbacc_IMD' OR q1.HBChemType = 'hbacc_IME' OR q1.HBChemType = 'hbdon_IMD' OR q1.HBChemType = 'hbdon_IME' OR\n"
-		"	q1.HBChemType = 'hbdon_AMO' OR\n"
-		"	q1.HBChemType = 'hbdon_GDE' OR q1.HBChemType = 'hbdon_GDH' ) AND\n"
-		"	(q2.HBChemType = 'hbacc_CXL' OR\n"
-		"	q2.HBChemType = 'hbacc_IMD' OR q2.HBChemType = 'hbacc_IME' OR q2.HBChemType = 'hbdon_IMD' OR q2.HBChemType = 'hbdon_IME' OR\n"
-		"	q2.HBChemType = 'hbdon_AMO' OR\n"
-		"	q2.HBChemType = 'hbdon_GDE' OR q2.HBChemType = 'hbdon_GDH' ) AND\n"
-		"	q1_xyz.struct_id = q1.struct_id AND\n"
-		"	q2_xyz.struct_id = q2.struct_id AND\n"
+		"\t(q1.HBChemType = 'hbacc_CXL' OR\n"
+		"\tq1.HBChemType = 'hbacc_IMD' OR q1.HBChemType = 'hbacc_IME' OR q1.HBChemType = 'hbdon_IMD' OR q1.HBChemType = 'hbdon_IME' OR\n"
+		"\tq1.HBChemType = 'hbdon_AMO' OR\n"
+		"\tq1.HBChemType = 'hbdon_GDE' OR q1.HBChemType = 'hbdon_GDH' ) AND\n"
+		"\t(q2.HBChemType = 'hbacc_CXL' OR\n"
+		"\tq2.HBChemType = 'hbacc_IMD' OR q2.HBChemType = 'hbacc_IME' OR q2.HBChemType = 'hbdon_IMD' OR q2.HBChemType = 'hbdon_IME' OR\n"
+		"\tq2.HBChemType = 'hbdon_AMO' OR\n"
+		"\tq2.HBChemType = 'hbdon_GDE' OR q2.HBChemType = 'hbdon_GDH' ) AND\n"
+		"\tq1_xyz.struct_id = q1.struct_id AND\n"
+		"\tq2_xyz.struct_id = q2.struct_id AND\n"
 		" q1_xyz.site_id = q1.site_id AND\n"
 		" q2_xyz.site_id = q2.site_id;\n";
 
@@ -229,7 +229,7 @@ ChargeChargeFeatures::report_features(
 	statement charge_charge_statement(basic::database::safely_prepare_statement(charge_charge_string,db_session));
 
 
-	while(res.next()){
+	while ( res.next() ) {
 		res >> q1_site_id >> q2_site_id;
 		res >> q1_charge >> q2_charge;
 		res >> q1_x >> q1_y >> q1_z;
@@ -253,7 +253,7 @@ ChargeChargeFeatures::report_features(
 		Angle const B2q2_torsion(dihedral_radians(C2, B2, q2, q1));
 
 
-		if(q1q2_distance > distance_cutoff_){
+		if ( q1q2_distance > distance_cutoff_ ) {
 			continue;
 		}
 

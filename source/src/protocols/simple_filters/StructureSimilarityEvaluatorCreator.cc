@@ -50,7 +50,7 @@
 #include <utility/vector0.hh>
 
 #ifdef WIN32
-	#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.hh>
 #endif
 
 
@@ -85,7 +85,7 @@ void StructureSimilarityEvaluatorCreator::add_evaluators( evaluation::MetaPoseEv
 		);
 		core::chemical::ResidueTypeSetCOP rsd_set( core::chemical::rsd_set_from_cmd_line() );
 		utility::vector1< core::pose::Pose > poses;
-		while( silent_input.has_another_pose() ) {
+		while ( silent_input.has_another_pose() ) {
 			core::pose::Pose pose;
 			silent_input.fill_pose( pose, *rsd_set );
 			poses.push_back( pose );

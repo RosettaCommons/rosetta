@@ -23,7 +23,7 @@
 
 namespace protocols {
 namespace features {
-	
+
 SmotifFeaturesCreator::SmotifFeaturesCreator() {}
 SmotifFeaturesCreator::~SmotifFeaturesCreator() {}
 FeaturesReporterOP SmotifFeaturesCreator::create_features_reporter() const {
@@ -33,6 +33,6 @@ FeaturesReporterOP SmotifFeaturesCreator::create_features_reporter() const {
 std::string SmotifFeaturesCreator::type_name() const {
 	return "SmotifFeatures";
 }
-		
-	} //namespace features
+
+} //namespace features
 } //namespace protocols

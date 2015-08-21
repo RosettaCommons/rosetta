@@ -45,7 +45,7 @@
 
 static thread_local basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.InterGroupNeighborsCalculator" );
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 
@@ -54,12 +54,12 @@ namespace pose_metric_calculators {
 //typedef utility::vector1< group_pair > group_set;
 
 InterGroupNeighborsCalculator::InterGroupNeighborsCalculator( group_set const & groups, core::Real dist_cutoff )
-	: parent(), groups_(groups), dist_cutoff_(dist_cutoff), num_neighbors_(0)
-		//not doing anything to std::set<core::Size> - should initialize empty
+: parent(), groups_(groups), dist_cutoff_(dist_cutoff), num_neighbors_(0)
+	//not doing anything to std::set<core::Size> - should initialize empty
 {}
 
 InterGroupNeighborsCalculator::InterGroupNeighborsCalculator( InterGroupNeighborsCalculator const & calculator )
-	: parent(), groups_(calculator.groups()), dist_cutoff_(calculator.dist_cutoff())
+: parent(), groups_(calculator.groups()), dist_cutoff_(calculator.dist_cutoff())
 {}
 
 InterGroupNeighborsCalculator::~InterGroupNeighborsCalculator() {}
@@ -69,8 +69,8 @@ core::pose::metrics::PoseMetricCalculatorOP InterGroupNeighborsCalculator::clone
 
 void
 InterGroupNeighborsCalculator::lookup(
-  std::string const & key,
-  basic::MetricValueBase * valptr
+	std::string const & key,
+	basic::MetricValueBase * valptr
 ) const
 {
 	if ( key == "groups" ) {
@@ -100,37 +100,40 @@ std::string
 InterGroupNeighborsCalculator::print( std::string const & key ) const
 {
 	if ( key == "dist_cutoff" ) {
-    return utility::to_string( dist_cutoff_ );
+		return utility::to_string( dist_cutoff_ );
 
-  } else if ( key == "num_neighbors" ) {
-    return utility::to_string( num_neighbors_ );
+	} else if ( key == "num_neighbors" ) {
+		return utility::to_string( num_neighbors_ );
 
-  } else if ( key == "groups" || key == "neighbors" ) {
+	} else if ( key == "groups" || key == "neighbors" ) {
 		//set up big return string for both sets
 		using namespace basic::options; //this lets you get + or (space) as spacer
 		std::string const spacer( option[ OptionKeys::packing::print_pymol_selection].value() ? "+" : " ");
 		std::string nbrs_string("");
 
 		if ( key == "groups" ) {
-			for( core::Size i(1), vecsize(groups_.size()); i <= vecsize; ++i){
+			for ( core::Size i(1), vecsize(groups_.size()); i <= vecsize; ++i ) {
 				nbrs_string += "{ (";
-				for( one_group::const_iterator it(groups_[i].first.begin()), end(groups_[i].first.end()); it != end; ++it)
+				for ( one_group::const_iterator it(groups_[i].first.begin()), end(groups_[i].first.end()); it != end; ++it ) {
 					nbrs_string += spacer + utility::to_string(*it);
+				}
 				nbrs_string += ") ; (";
-				for( one_group::const_iterator it(groups_[i].second.begin()), end(groups_[i].second.end()); it != end; ++it)
+				for ( one_group::const_iterator it(groups_[i].second.begin()), end(groups_[i].second.end()); it != end; ++it ) {
 					nbrs_string += spacer + utility::to_string(*it);
+				}
 				nbrs_string += ") }";
 			}
 			return nbrs_string;
 		} else if ( key == "neighbors" ) {
-			for( std::set< core::Size >::const_iterator it(neighbors_.begin()), end(neighbors_.end()); it != end; ++it)
+			for ( std::set< core::Size >::const_iterator it(neighbors_.begin()), end(neighbors_.end()); it != end; ++it ) {
 				nbrs_string += utility::to_string(*it) + spacer;
+			}
 			return nbrs_string;
 		}//neighbors or groups
-  }//else
-  basic::Error() << "InterGroupNeighborsCalculator cannot compute metric " << key << std::endl;
-  utility_exit();
-  return "";
+	}//else
+	basic::Error() << "InterGroupNeighborsCalculator cannot compute metric " << key << std::endl;
+	utility_exit();
+	return "";
 } //print
 
 void
@@ -151,9 +154,9 @@ InterGroupNeighborsCalculator::recompute( core::pose::Pose const & pose )
 
 	//PointGraph is the one-way graph, but this is inefficient for group v group calculations - we do not want to iterate over the entire graph each time.  Instead we want to visit just the nodes in one group and see if its edges are in the second group, so we need a two-way graph to prevent reiterating the lower half every time.
 	core::graph::Graph neighborgraph(nres);
-	for ( core::Size r(1); r <= nres; ++r){
+	for ( core::Size r(1); r <= nres; ++r ) {
 		for ( core::conformation::PointGraph::UpperEdgeListConstIter edge_iter = pg->get_vertex(r).upper_edge_list_begin(),
-						edge_end_iter = pg->get_vertex(r).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
+				edge_end_iter = pg->get_vertex(r).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
 			neighborgraph.add_edge(r, edge_iter->upper_vertex());
 		}
 	}
@@ -162,23 +165,23 @@ InterGroupNeighborsCalculator::recompute( core::pose::Pose const & pose )
 
 	//iterating through the graph is somewhat less expensive.  We will need to iterate once per group pair (domain pair)
 	//for each group/domain pair
-	for( core::Size i(1), vecsize(groups_.size()); i <= vecsize; ++i){
+	for ( core::Size i(1), vecsize(groups_.size()); i <= vecsize; ++i ) {
 		//for the first member of the group/domain, iterate through its residues
-		for( one_group::const_iterator it(groups_[i].first.begin()), end(groups_[i].first.end()); it != end; ++it){
+		for ( one_group::const_iterator it(groups_[i].first.begin()), end(groups_[i].first.end()); it != end; ++it ) {
 			//for all edges of that node
 			for ( core::graph::Graph::EdgeListConstIter edge_iter = neighborgraph.get_node(*it)->const_edge_list_begin(),
-							edge_end_iter = neighborgraph.get_node(*it)->const_edge_list_end();
-						edge_iter != edge_end_iter; ++edge_iter ) {
+					edge_end_iter = neighborgraph.get_node(*it)->const_edge_list_end();
+					edge_iter != edge_end_iter; ++edge_iter ) {
 				core::Size const other = (*edge_iter)->get_other_ind(*it);
 				//at this point, *it and other are neighbors.  *it is in the "first" group, we need to see if other is in the second.
-				if(groups_[i].second.find(other) != groups_[i].second.end()){
+				if ( groups_[i].second.find(other) != groups_[i].second.end() ) {
 					// *it was in group 1 and other was in group 2 - store them!
 					neighbors_.insert(*it);
 					neighbors_.insert(other);
 				} //if these are cross-group neighbors
 			}//for all edges of a node
 			//we also need to check if a residue is in both groups at once - it is its own neighbor, so this makes it part of the set
-			if(groups_[i].second.find(*it) != groups_[i].second.end()) neighbors_.insert(*it);
+			if ( groups_[i].second.find(*it) != groups_[i].second.end() ) neighbors_.insert(*it);
 		}// for all residues in a group
 	}//for all group pairs
 

@@ -20,11 +20,11 @@
 namespace protocols {
 namespace grafting {
 
-/// @brief  
+/// @brief
 class CCDEndsGraftMover;
 
-	typedef utility::pointer::shared_ptr<CCDEndsGraftMover> CCDEndsGraftMoverOP;
-	typedef utility::pointer::shared_ptr<CCDEndsGraftMover const> CCDEndsGraftMoverCOP;
+typedef utility::pointer::shared_ptr<CCDEndsGraftMover> CCDEndsGraftMoverOP;
+typedef utility::pointer::shared_ptr<CCDEndsGraftMover const> CCDEndsGraftMoverCOP;
 
 }}  // namespace grafting_protocls
 

@@ -325,7 +325,7 @@ void PointMutScanDriver::fill_mutations_list() {
 			//single mutant scan
 			Mutant m;
 			m.add_mutation( md1 ); // the variable mutations is a vector of vectors!
-			if (reject_mutant(m, pose)) { //offers a chance for child classes to inject mutant selection logic
+			if ( reject_mutant(m, pose) ) { //offers a chance for child classes to inject mutant selection logic
 				++no_single_mutants_excluded_otherwise;
 			} else {
 				all_mutants_.push_back( m );
@@ -367,7 +367,7 @@ void PointMutScanDriver::fill_mutations_list() {
 						Mutant m;
 						m.add_mutation( md1 ); // the variable mutations is a vector of vectors!
 						m.add_mutation( md2 ); // the variable mutations is a vector of vectors!
-						if (reject_mutant(m, pose)) { //offers a chance for child classes to inject mutant selection logic
+						if ( reject_mutant(m, pose) ) { //offers a chance for child classes to inject mutant selection logic
 							++no_double_mutants_excluded_otherwise;
 							continue;
 						}
@@ -380,9 +380,9 @@ void PointMutScanDriver::fill_mutations_list() {
 	}//for all residues resid1
 
 	if ( MPI_rank_ == 0 ) {
-			Size const single_possible = 19 * n_residue;
-			TR << "fill_mutations_list(): number single mutants possible: " << single_possible << std::endl;
-			TR << "fill_mutations_list(): number single mutants excluded otherwise: " << no_single_mutants_excluded_otherwise << std::endl;
+		Size const single_possible = 19 * n_residue;
+		TR << "fill_mutations_list(): number single mutants possible: " << single_possible << std::endl;
+		TR << "fill_mutations_list(): number single mutants excluded otherwise: " << no_single_mutants_excluded_otherwise << std::endl;
 		if ( double_mutant_scan_ ) {
 			TR << "fill_mutations_list(): number double mutants possible: " << no_double_mutants_possible << std::endl;
 			TR << "fill_mutations_list(): number double mutants excluded for distance: " << no_double_mutants_excluded_for_distance << std::endl;
@@ -495,8 +495,8 @@ void PointMutScanDriver::calculate_neighbor_table( pose::Pose & pose, utility::v
 	core::graph::Graph neighbor_graph( pose.n_residue() );
 	for ( Size r=1; r <= pose.total_residue(); ++r ) {
 		for ( core::conformation::PointGraph::UpperEdgeListConstIter edge_iter = pg->get_vertex(r).upper_edge_list_begin(),
-			edge_end_iter = pg->get_vertex(r).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
-				neighbor_graph.add_edge(r, edge_iter->upper_vertex());
+				edge_end_iter = pg->get_vertex(r).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
+			neighbor_graph.add_edge(r, edge_iter->upper_vertex());
 		}
 	}
 
@@ -504,7 +504,7 @@ void PointMutScanDriver::calculate_neighbor_table( pose::Pose & pose, utility::v
 
 		conformation::Residue const & ii_rsd( pose.residue( ii ) );
 		for ( core::graph::EdgeListConstIterator eli = neighbor_graph.get_node( ii )->const_edge_list_begin(),
-			eli_end = neighbor_graph.get_node( ii )->const_edge_list_end(); eli != eli_end; ++eli ) {
+				eli_end = neighbor_graph.get_node( ii )->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 			Size nb_resnum = (*eli)->get_other_ind( ii );
 			if ( nb_resnum < ii ) { continue; } // only want higher indexed residues
@@ -551,7 +551,7 @@ void PointMutScanDriver::divide_up_mutations() {
 		//utility::vector1< Mutant > all_mutants_;
 
 		Size const num_mutants_per_cpu = all_mutants_.size() / MPI_nprocs_;
- 		Size const nextra = all_mutants_.size() - ( num_mutants_per_cpu * MPI_nprocs_ );
+		Size const nextra = all_mutants_.size() - ( num_mutants_per_cpu * MPI_nprocs_ );
 
 		Size my_njobs = ( nextra >= 1 ? 1 : 0 ) + num_mutants_per_cpu;
 		for ( Size ii = 1; ii <= my_njobs; ++ii ) {
@@ -723,7 +723,7 @@ void PointMutScanDriver::make_specific_mutant( utility::vector1< pose::Pose > & 
 	Mutant & m, std::string mutation_string, std::string mutation_string_PDB_numbering ) {
 
 	//TR << "make_specific_mutant() called. mutant_poses.size(): " << mutant_poses.size() << ", native_poses.size(): " << native_poses.size()
-	//	<< ", num mutations: " << m.n_mutations() << ", mutation_string: " << mutation_string << std::endl;
+	// << ", num mutations: " << m.n_mutations() << ", mutation_string: " << mutation_string << std::endl;
 
 	// if the mutants vector has more than element, we have to take out the first element of the vector
 	if ( m.n_mutations() > 1 ) {
@@ -825,12 +825,12 @@ void PointMutScanDriver::make_specific_mutant( utility::vector1< pose::Pose > & 
 
 		/*TR << "native poses total energies: ";
 		for ( Size ii=1; ii <= native_poses_total_energies.size(); ++ii ) {
-			TR << native_poses_total_energies[ ii ] << ", ";
+		TR << native_poses_total_energies[ ii ] << ", ";
 		}
 		TR << std::endl;
 		TR << "mutant poses total energies: ";
 		for ( Size ii=1; ii <= mutant_poses_total_energies.size(); ++ii ) {
-			TR << mutant_poses_total_energies[ ii ] << ", ";
+		TR << mutant_poses_total_energies[ ii ] << ", ";
 		}
 		TR << std::endl;*/
 		TR.flush_all_channels();
@@ -864,7 +864,7 @@ void PointMutScanDriver::make_mutant_structure( pose::Pose & mutant_pose, pose::
 
 	//TR << "make_mutant_structure(): neighbor_set: ";
 	//for ( std::set< Size >::iterator it = neighbor_set.begin() ; it != neighbor_set.end(); it++ ) {
-	//	TR << *it << ", ";
+	// TR << *it << ", ";
 	//}
 	//TR << std::endl;
 

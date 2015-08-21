@@ -18,7 +18,7 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
+namespace protocols {
 namespace forge {
 namespace remodel {
 

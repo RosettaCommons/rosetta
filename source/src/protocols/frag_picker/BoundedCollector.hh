@@ -64,15 +64,16 @@ public:
 
 		FragmentCandidateOP worst_f( new FragmentCandidate(1,1,0,1) );
 		scores::FragmentScoreMapOP worst_s( new scores::FragmentScoreMap(n_score_terms) );
-		for(Size i=1;i<=n_score_terms;i++)
-		    worst_s->set_score_component(99999.9999,i);
+		for ( Size i=1; i<=n_score_terms; i++ ) {
+			worst_s->set_score_component(99999.9999,i);
+		}
 
-		for (Size i = 1; i <= query_size; i++) {
+		for ( Size i = 1; i <= query_size; i++ ) {
 			LazySortedVector1< std::pair< FragmentCandidateOP,
-					scores::FragmentScoreMapOP >, StrictWeakOrdering > queue(
-					fragment_comparator, max_frags_per_pos,max_frags_per_pos*buffer_factor);
+				scores::FragmentScoreMapOP >, StrictWeakOrdering > queue(
+				fragment_comparator, max_frags_per_pos,max_frags_per_pos*buffer_factor);
 			queue.set_worst( std::pair<FragmentCandidateOP,
-			                scores::FragmentScoreMapOP>(worst_f,worst_s) );
+				scores::FragmentScoreMapOP>(worst_f,worst_s) );
 			storage_.push_back(queue);
 		}
 	}
@@ -81,7 +82,7 @@ public:
 	inline bool add( ScoredCandidate new_canditate) {
 
 		return storage_[new_canditate.first->get_first_index_in_query()].push(
-				new_canditate);
+			new_canditate);
 	}
 
 	/// @brief  Check how many candidates have been already collected for a given position
@@ -95,8 +96,9 @@ public:
 	inline Size count_candidates() const {
 
 		Size response = 0;
-		for(Size i=1;i<=storage_.size();++i)
+		for ( Size i=1; i<=storage_.size(); ++i ) {
 			response += storage_[i].size();
+		}
 		return response;
 	}
 
@@ -111,45 +113,47 @@ public:
 	/// Candidates may or may not get inserted depending on the candidate
 	void insert(Size pos, CandidatesCollectorOP collector) {
 		BoundedCollectorOP c = utility::pointer::dynamic_pointer_cast< protocols::frag_picker::BoundedCollector<class protocols::frag_picker::CompareTotalScore> > ( collector );
-		if (c == 0) {
+		if ( c == 0 ) {
 			utility_exit_with_message("Cant' cast candidates' collector to BoundedCollector.");
 		}
 		ScoredCandidatesVector1 & content = c->get_candidates(pos);
-		for(Size l=1;l<=content.size();l++) storage_.at(pos).push( content[l] );
+		for ( Size l=1; l<=content.size(); l++ ) storage_.at(pos).push( content[l] );
 	}
 
 	/// @brief returns all stored fragment candidates that begins at a given position in a query
-	inline 	ScoredCandidatesVector1 & get_candidates( Size position_in_query ) {
+	inline  ScoredCandidatesVector1 & get_candidates( Size position_in_query ) {
 		return storage_.at(position_in_query).expose_data();
 	}
 
 	inline void clear() {
 
-	    for (Size i_pos = 1; i_pos <= storage_.size(); ++i_pos)
-		storage_[i_pos].clear();
+		for ( Size i_pos = 1; i_pos <= storage_.size(); ++i_pos ) {
+			storage_[i_pos].clear();
+		}
 	}
 
 	/// @brief prints how many candidates have been collected for each position and how good they are
 	void print_report(std::ostream& out, scores::FragmentScoreManagerOP scoring) const {
 		using namespace ObjexxFCL::format;
 		out
-				<< "\n pos  count   best     worst  | pos  count   best    worst   | pos  count    best    worst  |\n";
+			<< "\n pos  count   best     worst  | pos  count   best    worst   | pos  count    best    worst  |\n";
 		Size cnt = 0;
-		for (Size i_pos = 1; i_pos <= storage_.size(); ++i_pos) {
+		for ( Size i_pos = 1; i_pos <= storage_.size(); ++i_pos ) {
 
-			if (storage_[i_pos].size() <= 1) {
+			if ( storage_[i_pos].size() <= 1 ) {
 				out << I(4, i_pos) << "      0                   |";
 			} else {
 				out << I(4, i_pos) << " " << I(6, storage_[i_pos].size())
-						<< " ";
+					<< " ";
 				out << F(8, 2, scoring->total_score(
-						storage_[i_pos].peek_front().second)) << " ";
+					storage_[i_pos].peek_front().second)) << " ";
 				out << F(8, 2, scoring->total_score(
-						storage_[i_pos].peek_back().second)) << " |";
+					storage_[i_pos].peek_back().second)) << " |";
 			}
 			++cnt;
-			if (cnt % 3 == 0)
+			if ( cnt % 3 == 0 ) {
 				out << '\n';
+			}
 		}
 		out << std::endl;
 	}
@@ -163,7 +167,7 @@ class BoundedCollector_CompareTotalScore : public BoundedCollector<CompareTotalS
 {
 public:
 	BoundedCollector_CompareTotalScore(Size query_size, Size max_frags_per_pos, CompareTotalScore fragment_comparator,Size n_score_terms,Size buffer_factor = 5)
-	 : BoundedCollector<CompareTotalScore>(query_size, max_frags_per_pos, fragment_comparator, n_score_terms, buffer_factor) {};
+	: BoundedCollector<CompareTotalScore>(query_size, max_frags_per_pos, fragment_comparator, n_score_terms, buffer_factor) {};
 };
 
 } // frag_picker

@@ -21,19 +21,19 @@ namespace protocols {
 namespace cyclic_peptide {
 
 enum StubMode {
-    append,
-    prepend,
-    insert
+	append,
+	prepend,
+	insert
 };
 
 class PeptideStubMover : public moves::Mover {
-    
+
 public:
 	PeptideStubMover();
 	virtual ~PeptideStubMover();
 	PeptideStubMover( PeptideStubMover const &src );
 
-    void init();
+	void init();
 
 	virtual void apply( Pose & );
 	virtual std::string get_name() const;
@@ -48,11 +48,11 @@ public:
 	/// @brief Reset mover data
 	void reset_mover_data()
 	{
-    stub_rsd_names_.clear();
-    stub_rsd_jumping_.clear();
-    stub_rsd_connecting_atom_.clear();
-    stub_anchor_rsd_.clear();
-    stub_anchor_rsd_connecting_atom_.clear();
+		stub_rsd_names_.clear();
+		stub_rsd_jumping_.clear();
+		stub_rsd_connecting_atom_.clear();
+		stub_anchor_rsd_.clear();
+		stub_anchor_rsd_connecting_atom_.clear();
 		return;
 	}
 
@@ -84,24 +84,24 @@ public:
 		core::Size const anchor_rsd,
 		std::string const &anchor_atom
 	);
-    
+
 private:
-    bool reset_;
+	bool reset_;
 
 
-		/// @brief As residues are added, should the PDB numbering be updated?  Default true.
-		bool update_pdb_numbering_;
-    
-    utility::vector1<StubMode> stub_mode_;
-    utility::vector1<std::string> stub_rsd_names_;
-    utility::vector1<bool> stub_rsd_jumping_;
-    utility::vector1<std::string> stub_rsd_connecting_atom_;
-    utility::vector1<core::Size> stub_rsd_repeat_;
-    utility::vector1<core::Size> stub_insert_pos_;
-    utility::vector1<core::Size> stub_anchor_rsd_;
-    utility::vector1<std::string> stub_anchor_rsd_connecting_atom_;
+	/// @brief As residues are added, should the PDB numbering be updated?  Default true.
+	bool update_pdb_numbering_;
 
-//Private functions:
+	utility::vector1<StubMode> stub_mode_;
+	utility::vector1<std::string> stub_rsd_names_;
+	utility::vector1<bool> stub_rsd_jumping_;
+	utility::vector1<std::string> stub_rsd_connecting_atom_;
+	utility::vector1<core::Size> stub_rsd_repeat_;
+	utility::vector1<core::Size> stub_insert_pos_;
+	utility::vector1<core::Size> stub_anchor_rsd_;
+	utility::vector1<std::string> stub_anchor_rsd_connecting_atom_;
+
+	//Private functions:
 
 
 	/// @brief Rebuilds all atoms that are dependent on bonds between residue_index and any other residues (including atoms on the other residues).

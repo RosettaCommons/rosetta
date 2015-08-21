@@ -42,7 +42,7 @@ namespace topology_broker {
 /// the input pose is used to initialize the rigid region ( via copying of internal coordinates )
 ///  e.g., a hole in the structure shouldn't pose a problem, since we basically copy the atom-tree.
 class RigidChunkClaimer : public TopologyClaimer {
-typedef TopologyClaimer Parent;
+	typedef TopologyClaimer Parent;
 
 public:
 	class CM_SuggestFixResidue : public ClaimerMessage {
@@ -82,7 +82,7 @@ public:
 	/// @brief issue jump-claims for jumps yet missing to keep rigid regions fixed
 	virtual void finalize_claims( claims::DofClaims& );
 
-	//	virtual void initialize_residues( core::pose::Pose&, DofClaims const& init_claims, DofClaims& failed_to_init );
+	// virtual void initialize_residues( core::pose::Pose&, DofClaims const& init_claims, DofClaims& failed_to_init );
 	/// @brief initialize BB residues and rigid-internal jumps from starting structure --- copying atom-tree dofs
 	virtual void initialize_dofs( core::pose::Pose&, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init );
 
@@ -100,7 +100,7 @@ public:
 
 	// will be required when we have the option to use coord. csts to fix the rigid chunk.
 	//virtual void add_constraints( core::pose::Pose& /*pose*/ );
-	//????	virtual void add_score_weights( core::scoring::ScoreFunction& );
+	//???? virtual void add_score_weights( core::scoring::ScoreFunction& );
 	virtual void receive_message( ClaimerMessage& cm );
 
 	/// @brief Returns true if we are using loop definitions from ThreadingJob
@@ -168,7 +168,7 @@ private:
 	/// @brief helper class -- computes if we have all jupms needed to rigidify the chosen chunk and generate more jumps if needed.
 	class JumpCalculator : public utility::pointer::ReferenceCount { //helper class do we like this jump, do we need more ?
 	public:
-		JumpCalculator( loops::Loops const& rigid_,	bool bAllowAdjacentJumps );
+		JumpCalculator( loops::Loops const& rigid_, bool bAllowAdjacentJumps );
 
 		/// @brief only called for relevant jumps:
 		///*true* if this jump helps us keeping things rigid,

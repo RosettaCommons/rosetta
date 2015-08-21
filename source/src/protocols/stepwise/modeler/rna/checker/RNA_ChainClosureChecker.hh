@@ -30,67 +30,67 @@ namespace modeler {
 namespace rna {
 namespace checker {
 
-	class RNA_ChainClosureChecker: public protocols::moves::Mover {
+class RNA_ChainClosureChecker: public protocols::moves::Mover {
 
-	public:
+public:
 
-		//constructor
-		RNA_ChainClosureChecker( pose::Pose const & pose, Size const five_prime_res );
+	//constructor
+	RNA_ChainClosureChecker( pose::Pose const & pose, Size const five_prime_res );
 
 
-		//destructor
-		~RNA_ChainClosureChecker();
+	//destructor
+	~RNA_ChainClosureChecker();
 
-	public:
+public:
 
-		void
-		apply( core::pose::Pose & pose ){ copy_CCD_torsions( pose ); }
+	void
+	apply( core::pose::Pose & pose ){ copy_CCD_torsions( pose ); }
 
-		std::string get_name() const{ return "RNA_ChainClosureChecker"; }
+	std::string get_name() const{ return "RNA_ChainClosureChecker"; }
 
-		void
-		set_reinitialize_CCD_torsions( bool const & setting ){ reinitialize_CCD_torsions_ = setting; };
+	void
+	set_reinitialize_CCD_torsions( bool const & setting ){ reinitialize_CCD_torsions_ = setting; };
 
-		//void
-		//add_harmonic_chain_break_constraint( Size const five_prime_res );
+	//void
+	//add_harmonic_chain_break_constraint( Size const five_prime_res );
 
-		void
-		copy_CCD_torsions( pose::Pose & pose ) const;
+	void
+	copy_CCD_torsions( pose::Pose & pose ) const;
 
-		void
-		copy_CCD_torsions_general( pose::Pose & pose, Size const five_prime_res, Size const three_prime_res ) const;
+	void
+	copy_CCD_torsions_general( pose::Pose & pose, Size const five_prime_res, Size const three_prime_res ) const;
 
-		bool
-		check_loop_closed( pose::Pose const & pose );
+	bool
+	check_loop_closed( pose::Pose const & pose );
 
-		bool
-		chain_break_screening_general( pose::Pose & chain_break_screening_pose, core::scoring::ScoreFunctionOP const & chainbreak_scorefxn, Size const five_ );
+	bool
+	chain_break_screening_general( pose::Pose & chain_break_screening_pose, core::scoring::ScoreFunctionOP const & chainbreak_scorefxn, Size const five_ );
 
-		//bool
-		//chain_break_screening( pose::Pose & chain_break_screening_pose, core::scoring::ScoreFunctionOP const & chainbreak_scorefxn );
+	//bool
+	//chain_break_screening( pose::Pose & chain_break_screening_pose, core::scoring::ScoreFunctionOP const & chainbreak_scorefxn );
 
-		bool
-		check_screen();
+	bool
+	check_screen();
 
-		bool
-		check_screen( pose::Pose & pose );
+	bool
+	check_screen( pose::Pose & pose );
 
-		pose::Pose & pose(){ return chain_break_screening_pose_; }
+	pose::Pose & pose(){ return chain_break_screening_pose_; }
 
-		Size const & five_prime_res() const{ return five_prime_res_;}
+	Size const & five_prime_res() const{ return five_prime_res_;}
 
-	private:
+private:
 
-		pose::Pose chain_break_screening_pose_;
-		Size const five_prime_res_;
-		bool reinitialize_CCD_torsions_;
-		bool verbose_;
+	pose::Pose chain_break_screening_pose_;
+	Size const five_prime_res_;
+	bool reinitialize_CCD_torsions_;
+	bool verbose_;
 
-		core::scoring::ScoreFunctionOP chain_break_scorefxn_;
+	core::scoring::ScoreFunctionOP chain_break_scorefxn_;
 
-		StepWiseRNA_CountStruct count_data_;
+	StepWiseRNA_CountStruct count_data_;
 
-	};
+};
 
 } //checker
 } //rna

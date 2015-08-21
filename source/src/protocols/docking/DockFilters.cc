@@ -66,9 +66,9 @@ DockingLowResFilter::DockingLowResFilter() : Filter()
 }
 
 DockingLowResFilter::DockingLowResFilter( const DockingLowResFilter & init ) :
-	    //utility::pointer::ReferenceCount(),
-		Filter( init ), use_constraints_( init.use_constraints_ ), constraint_cutoff_( init.constraint_cutoff_ ),
-		filters_( init.filters_ )
+	//utility::pointer::ReferenceCount(),
+	Filter( init ), use_constraints_( init.use_constraints_ ), constraint_cutoff_( init.constraint_cutoff_ ),
+	filters_( init.filters_ )
 {
 }
 

@@ -62,7 +62,7 @@ public:
 	Size
 	conn_dist( Size ASSERT_ONLY( which_connection) ) const
 	{
-	debug_assert( which_connection == 0 );
+		debug_assert( which_connection == 0 );
 		return connection_distance_;
 	}
 

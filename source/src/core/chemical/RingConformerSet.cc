@@ -51,16 +51,16 @@ using namespace core;
 /// @param    <lowest_conformer>: IUPAC name for the lowest-energy ring conformer, if known
 /// @param    <low_conformers>: IUPAC name for other low-energy ring conformers
 RingConformerSet::RingConformerSet(
-		core::Size const ring_size,
-		std::string const & lowest_conformer,
-		utility::vector1< std::string > const & low_conformers ) : utility::pointer::ReferenceCount()
+	core::Size const ring_size,
+	std::string const & lowest_conformer,
+	utility::vector1< std::string > const & low_conformers ) : utility::pointer::ReferenceCount()
 {
 	init( ring_size, lowest_conformer, low_conformers );
 }
 
 // Copy constructor
 RingConformerSet::RingConformerSet( RingConformerSet const & object_to_copy ) :
-		utility::pointer::ReferenceCount( object_to_copy )
+	utility::pointer::ReferenceCount( object_to_copy )
 {
 	copy_data( *this, object_to_copy );
 }
@@ -176,7 +176,7 @@ RingConformerSet::get_ideal_conformer_by_CP_parameters( utility::vector1< core::
 	}
 	if ( ring_size_ > 6 ) {
 		utility_exit_with_message(
-				"Rosetta does not currently handle C-P parameters for rings larger than size 6; exiting." );
+			"Rosetta does not currently handle C-P parameters for rings larger than size 6; exiting." );
 	}
 
 	Size const n_parameters( parameters.size() );
@@ -184,11 +184,11 @@ RingConformerSet::get_ideal_conformer_by_CP_parameters( utility::vector1< core::
 	// Check for reasonable values.
 	if ( n_parameters != ring_size_ - 3 ) {
 		utility_exit_with_message( "An N-membered ring is described by exactly N-3 Cremer-Pople parameters, "
-				"yet a different number was provided; exiting." );
+			"yet a different number was provided; exiting." );
 	}
 	if ( parameters[ q ] == 0.0 ) {
 		utility_exit_with_message( "Planar ring conformations are not handled by Rosetta; "
-				"please specify a non-zero q value; exiting." );
+			"please specify a non-zero q value; exiting." );
 	}
 
 	Size const n_conformers( size() );
@@ -196,59 +196,59 @@ RingConformerSet::get_ideal_conformer_by_CP_parameters( utility::vector1< core::
 
 	// Interpret parameters as appropriate for this ring size.
 	switch ( ring_size_ ) {
-		case 4:
-			utility_exit_with_message( "4-membered rings not yet handled in Rosetta; exiting." );
-			if ( parameters[ q ] > 0 ) {
-				// TODO
-			} else /* q < 0 */ {
-				// TODO
-			}
-			break;
-		case 5:
-			// Adjust input to the nearest 18th degree.
-			adjusted_phi = uint( ( nonnegative_principal_angle_degrees( parameters[ PHI ] ) + 18/2 ) / 18 ) * 18;
+	case 4 :
+		utility_exit_with_message( "4-membered rings not yet handled in Rosetta; exiting." );
+		if ( parameters[ q ] > 0 ) {
+			// TODO
+		} else /* q < 0 */ {
+			// TODO
+		}
+		break;
+	case 5 :
+		// Adjust input to the nearest 18th degree.
+		adjusted_phi = uint( ( nonnegative_principal_angle_degrees( parameters[ PHI ] ) + 18/2 ) / 18 ) * 18;
 
-			if ( TR.Debug.visible() ) {
-				TR.Debug << "Searching for phi = " << adjusted_phi << "..." << endl;
-			}
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "Searching for phi = " << adjusted_phi << "..." << endl;
+		}
 
-			for ( uint i( 1 ); i <= n_conformers; ++i ) {
-				RingConformer const & conformer( nondegenerate_conformers_[ i ] );
-				if ( uint( conformer.CP_parameters[ PHI ] ) == adjusted_phi ) {
+		for ( uint i( 1 ); i <= n_conformers; ++i ) {
+			RingConformer const & conformer( nondegenerate_conformers_[ i ] );
+			if ( uint( conformer.CP_parameters[ PHI ] ) == adjusted_phi ) {
+				return conformer;
+			}
+		}
+		break;
+	case 6 :
+		// Adjust input to the nearest 30th and 45th degrees, respectively.
+		// TODO: Use numeric::nearest_angle_degrees.
+		adjusted_phi = uint( ( nonnegative_principal_angle_degrees( parameters[ PHI ] ) + 30/2 ) / 30 ) * 30;
+		adjusted_theta = uint( ( nonnegative_principal_angle_degrees( parameters[ THETA ] ) + 45/2 ) / 45 ) * 45;
+
+		// Theta must be between 0 and 180.
+		if ( adjusted_theta > 180 ) {
+			adjusted_theta = 360 - adjusted_theta;
+		}
+
+		// If at the poles, phi is meaningless, so set to arbitrary value 180, as listed in database.
+		if ( adjusted_theta == 180 || adjusted_theta == 0 ) {
+			adjusted_phi = 180;
+		}
+
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "Searching for phi = " << adjusted_phi;
+			TR.Debug << " and theta = " << adjusted_theta << "..." << endl;
+		}
+
+		for ( uint i( 1 ); i <= n_conformers; ++i ) {
+			RingConformer const & conformer( nondegenerate_conformers_[ i ] );
+			if ( uint( conformer.CP_parameters[ PHI ] ) == adjusted_phi ) {
+				if ( uint( conformer.CP_parameters[ THETA ] ) == adjusted_theta ) {
 					return conformer;
 				}
 			}
-			break;
-		case 6:
-			// Adjust input to the nearest 30th and 45th degrees, respectively.
-			// TODO: Use numeric::nearest_angle_degrees.
-			adjusted_phi = uint( ( nonnegative_principal_angle_degrees( parameters[ PHI ] ) + 30/2 ) / 30 ) * 30;
-			adjusted_theta = uint( ( nonnegative_principal_angle_degrees( parameters[ THETA ] ) + 45/2 ) / 45 ) * 45;
-
-			// Theta must be between 0 and 180.
-			if ( adjusted_theta > 180 ) {
-				adjusted_theta = 360 - adjusted_theta;
-			}
-
-			// If at the poles, phi is meaningless, so set to arbitrary value 180, as listed in database.
-			if ( adjusted_theta == 180 || adjusted_theta == 0 ) {
-				adjusted_phi = 180;
-			}
-
-			if ( TR.Debug.visible() ) {
-				TR.Debug << "Searching for phi = " << adjusted_phi;
-				TR.Debug << " and theta = " << adjusted_theta << "..." << endl;
-			}
-
-			for ( uint i( 1 ); i <= n_conformers; ++i ) {
-				RingConformer const & conformer( nondegenerate_conformers_[ i ] );
-				if ( uint( conformer.CP_parameters[ PHI ] ) == adjusted_phi ) {
-					if ( uint( conformer.CP_parameters[ THETA ] ) == adjusted_theta ) {
-						return conformer;
-					}
-				}
-			}
-			break;
+		}
+		break;
 	}
 
 	utility_exit_with_message( "No conformer with given parameters found in this set; exiting." );
@@ -275,7 +275,7 @@ RingConformerSet::get_ideal_conformer_from_nus( utility::vector1< core::Angle > 
 	}
 	if ( ring_size_ > 6 ) {
 		utility_exit_with_message(
-				"Rosetta does not currently handle rings larger than size 6; exiting." );
+			"Rosetta does not currently handle rings larger than size 6; exiting." );
 	}
 
 	Size const n_angles( angles.size() );
@@ -352,9 +352,9 @@ RingConformerSet::get_random_local_min_conformer() const
 // Initialize data members for the given ring size.
 void
 RingConformerSet::init(
-		core::uint const ring_size,
-		std::string const & lowest_conformer_in,
-		utility::vector1< std::string > const & low_conformers )
+	core::uint const ring_size,
+	std::string const & lowest_conformer_in,
+	utility::vector1< std::string > const & low_conformers )
 {
 	using namespace utility;
 
@@ -387,8 +387,8 @@ RingConformerSet::init(
 // Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
 void
 RingConformerSet::copy_data(
-		RingConformerSet & object_to_copy_to,
-		RingConformerSet const & object_to_copy_from )
+	RingConformerSet & object_to_copy_to,
+	RingConformerSet const & object_to_copy_from )
 {
 	object_to_copy_to.ring_size_ = object_to_copy_from.ring_size_;
 	object_to_copy_to.nondegenerate_conformers_ = object_to_copy_from.nondegenerate_conformers_;
@@ -419,11 +419,11 @@ operator<<( std::ostream & output, RingConformer const & object_to_output )
 	output << "nu angles (degrees): ";
 	Size const n_angles( object_to_output.nu_angles.size() );
 	for ( uint i( 1 ); i <= n_angles; ++i ) {
-				if ( i > 1 ) {
-					output << ", ";
-				}
-				output << object_to_output.nu_angles[ i ];
-			}
+		if ( i > 1 ) {
+			output << ", ";
+		}
+		output << object_to_output.nu_angles[ i ];
+	}
 	return output;
 }
 

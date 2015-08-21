@@ -37,7 +37,7 @@ class FragmentScoringMethod: public utility::pointer::ReferenceCount {
 public:
 
 	FragmentScoringMethod(Size priority, Real lowest_acceptable_value,
-			bool use_lowest, std::string name) {
+		bool use_lowest, std::string name) {
 		priority_ = priority;
 		name_ = name;
 		lowest_acceptable_value_ = lowest_acceptable_value;
@@ -102,7 +102,7 @@ public:
 	}
 
 	virtual FragmentScoringMethodOP make(Size, Real, bool, FragmentPickerOP,
-			std::string) =0;
+		std::string) =0;
 
 	inline std::string& get_score_name() {
 		return name_;

@@ -41,7 +41,7 @@ public:
 
 	// constructor with arguments
 	GraftedStemOptimizer(CDRNameEnum const & cdr_name,
-	                     AntibodyInfoOP antibody_info);
+		AntibodyInfoOP antibody_info);
 
 
 	~GraftedStemOptimizer();
@@ -79,13 +79,13 @@ public:
 
 	kinematics::MoveMapOP
 	get_stem_movemap(pose::Pose const & pose,
-	                 std::string const & type,
-	                 bool const & include_nb_sc = false) const;
+		std::string const & type,
+		bool const & include_nb_sc = false) const;
 
 	pack::task::TaskFactoryOP
 	get_stem_taskfactory(pose::Pose & pose,
-	                     std::string const & type,
-	                     bool const & include_nb_sc = false) const;
+		std::string const & type,
+		bool const & include_nb_sc = false) const;
 
 
 	/// @brief stem that was replaced by the extra reesidues at the end of the

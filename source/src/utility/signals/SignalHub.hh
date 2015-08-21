@@ -69,7 +69,7 @@ public: // typedefs
 protected: // typedefs
 
 
-//	typedef boost::function< ReturnType ( Signal ) > Function; // preferred boost::function syntax
+	// typedef boost::function< ReturnType ( Signal ) > Function; // preferred boost::function syntax
 	typedef boost::function1< ReturnType, Signal > Function; // portable boost::function syntax
 	typedef std::vector< LinkUnitOP > LinkUnits;
 	typedef std::vector< Link > Links;

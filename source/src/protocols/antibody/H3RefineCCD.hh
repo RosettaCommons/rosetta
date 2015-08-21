@@ -55,7 +55,7 @@ public:
 
 	/// @brief constructor with arguments
 	H3RefineCCD(AntibodyInfoOP antibody_info, CDRNameEnum loop_name,
-	            core::scoring::ScoreFunctionCOP highres_scorefxn );
+		core::scoring::ScoreFunctionCOP highres_scorefxn );
 
 	/// @brief constructor with arguments
 	H3RefineCCD( AntibodyInfoOP antibody_info);

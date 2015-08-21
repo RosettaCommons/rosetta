@@ -57,7 +57,7 @@ public:
 	/// @brief Default constructor.
 	///
 	AACompositionEnergy();
-	
+
 	/// @brief Copy constructor.
 	///
 	AACompositionEnergy( AACompositionEnergy const &src );
@@ -65,7 +65,7 @@ public:
 	/// @brief Default destructor.
 	///
 	virtual ~AACompositionEnergy();
-	
+
 	/// @brief Clone: create a copy of this object, and return an owning pointer
 	/// to the copy.
 	virtual EnergyMethodOP clone() const;
@@ -75,17 +75,17 @@ public:
 	virtual void indicate_required_context_graphs( utility::vector1< bool > &context_graphs_required ) const;
 
 	/// @brief AACompositionEnergy is version 1.0 right now.
-	///	
+	///
 	virtual core::Size version() const;
-	
+
 	/// @brief Actually calculate the total energy
 	/// @details Called by the scoring machinery.
 	virtual void finalize_total_energy( core::pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const;
-	
+
 	/// @brief Calculate the total energy given a vector of const owning pointers to residues.
 	/// @details Called by finalize_total_energy().
 	virtual core::Real calculate_aa_composition_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect ) const;
-	
+
 	/// @brief Get a summary of all loaded data.
 	///
 	void report() const;
@@ -97,17 +97,17 @@ private:
 	******************/
 
 	/// @brief Calculate the total energy based on residue types, given a vector of const owning pointers to residues.
-	/// @details Called by calculate_aa_composition_energy().  
+	/// @details Called by calculate_aa_composition_energy().
 	virtual core::Real calculate_energy_by_restype( utility::vector1< core::conformation::ResidueCOP > const &resvect ) const;
 
 	/// @brief Calculate the total energy based on residue properties, given a vector of const owning pointers to residues.
-	/// @details Called by calculate_aa_composition_energy().  
+	/// @details Called by calculate_aa_composition_energy().
 	virtual core::Real calculate_energy_by_properties( utility::vector1< core::conformation::ResidueCOP > const &resvect ) const;
-	
+
 	/// @brief Get a const-access pointer to the setup helper object.
 	///
 	inline AACompositionEnergySetupCOP setup_helper_cop() const { return utility::pointer::dynamic_pointer_cast<AACompositionEnergySetup const>(setup_helper_); }
-		
+
 	/******************
 	Private variables:
 	******************/

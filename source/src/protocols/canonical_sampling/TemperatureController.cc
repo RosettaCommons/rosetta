@@ -74,9 +74,9 @@ interpolation_type_enum_to_string( InterpolationType interp_enum ) {
 InterpolationType
 interpolation_type_string_to_enum( std::string const & interp_string ) {
 
-	if (interp_string == "linear") {
+	if ( interp_string == "linear" ) {
 		return linear;
-	} else if (interp_string != "exponential") {
+	} else if ( interp_string != "exponential" ) {
 		utility_exit_with_message("invalid temp_interpolation value, expecting linear or exponential");
 	}
 	return exponential;
@@ -86,7 +86,7 @@ TemperatureController::TemperatureController() :
 	protocols::canonical_sampling::ThermodynamicObserver()
 {}
 
-TemperatureController::TemperatureController(	TemperatureController const & other ) :
+TemperatureController::TemperatureController( TemperatureController const & other ) :
 	protocols::canonical_sampling::ThermodynamicObserver(other)
 {}
 

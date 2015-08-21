@@ -50,34 +50,34 @@ public:
 
 	RNA_ScoringInfo();
 
-  RNA_ScoringInfo( RNA_ScoringInfo const & src );
+	RNA_ScoringInfo( RNA_ScoringInfo const & src );
 
-  basic::datacache::CacheableDataOP
-  clone() const
-  {
-    return basic::datacache::CacheableDataOP( new RNA_ScoringInfo( *this ) );
-  }
+	basic::datacache::CacheableDataOP
+	clone() const
+	{
+		return basic::datacache::CacheableDataOP( new RNA_ScoringInfo( *this ) );
+	}
 
-  Size
-  size() const {
-    return rna_centroid_info_.size();
-  }
+	Size
+	size() const {
+		return rna_centroid_info_.size();
+	}
 
-  bool
-  calculated() const
-  {
-    return ( rna_centroid_info_.calculated() &&
-						 rna_raw_base_base_info_.calculated() &&
-						 rna_filtered_base_base_info_.calculated() );
-  }
+	bool
+	calculated() const
+	{
+		return ( rna_centroid_info_.calculated() &&
+			rna_raw_base_base_info_.calculated() &&
+			rna_filtered_base_base_info_.calculated() );
+	}
 
- 	utility::vector1< utility::vector1< Size > > const &
+	utility::vector1< utility::vector1< Size > > const &
 	atom_numbers_for_vdw_calculation() const { return atom_numbers_for_vdw_calculation_; }
 
 	utility::vector1< utility::vector1< Size > > &
 	nonconst_atom_numbers_for_vdw_calculation() { return atom_numbers_for_vdw_calculation_; }
 
- 	utility::vector1< utility::vector1< Size > > const &
+	utility::vector1< utility::vector1< Size > > const &
 	atom_numbers_for_mg_calculation() const { return atom_numbers_for_mg_calculation_; }
 
 	utility::vector1< utility::vector1< Size > > &
@@ -136,8 +136,8 @@ private:
 	utility::vector1< utility::vector1< Size > > atom_numbers_for_vdw_calculation_;
 
 	// for rna low-res magnesium calculations
-	utility::vector1< utility::vector1< Size > >	atom_numbers_for_mg_calculation_;
-	utility::vector1< bool >	is_magnesium_;
+	utility::vector1< utility::vector1< Size > > atom_numbers_for_mg_calculation_;
+	utility::vector1< bool > is_magnesium_;
 
 	std::string vdw_calculation_annotated_sequence_;
 	std::string mg_calculation_annotated_sequence_;

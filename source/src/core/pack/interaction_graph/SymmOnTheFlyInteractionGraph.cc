@@ -116,7 +116,7 @@ SymmOnTheFlyNode::set_rotamers(
 		//sparse_mat_info_for_state_[ ii ].set_aa_type( curr_restype_group );
 		//sparse_mat_info_for_state_[ ii ].set_state_ind_for_this_aa_type( count_for_restype_group );
 		++count_for_restype_group;
-		while ( count_for_restype_group > rotamers->get_n_rotamers_for_residue_group( curr_restype_group )) {
+		while ( count_for_restype_group > rotamers->get_n_rotamers_for_residue_group( curr_restype_group ) ) {
 			// increment curr_restype_group and skip over restypes with 0 rotamers
 			++curr_restype_group;
 			count_for_restype_group = 1;
@@ -277,19 +277,19 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 						tbody_emap );
 
 					/*get_on_the_fly_owner()->score_function().eval_ci_2b_sc_sc(
-						get_rotamer( state_this ),
-						neighbor.get_rotamer( state_other ),
-						get_on_the_fly_owner()->pose(),
-						tbody_emap );
+					get_rotamer( state_this ),
+					neighbor.get_rotamer( state_other ),
+					get_on_the_fly_owner()->pose(),
+					tbody_emap );
 
 					get_on_the_fly_owner()->score_function().eval_cd_2b_sc_sc(
-						get_rotamer( state_this ),
-						neighbor.get_rotamer( state_other ),
-						get_on_the_fly_owner()->pose(),
-						tbody_emap
+					get_rotamer( state_this ),
+					neighbor.get_rotamer( state_other ),
+					get_on_the_fly_owner()->pose(),
+					tbody_emap
 					);*/
 
-				break;
+					break;
 				case ( sc_whole ) :
 					get_on_the_fly_owner()->score_function().eval_ci_2b_sc_sc(
 						this_rotamer,
@@ -317,7 +317,7 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 						tbody_emap
 					);
 
-				break;
+					break;
 				case ( whole_sc ) :
 					get_on_the_fly_owner()->score_function().eval_ci_2b_sc_sc(
 						this_rotamer,
@@ -346,7 +346,7 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 					);
 
 
-				break;
+					break;
 				case ( whole_whole ) :
 
 					get_on_the_fly_owner()->score_function().eval_ci_2b(
@@ -362,7 +362,7 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 						tbody_emap
 					);
 
-				break;
+					break;
 				}
 
 				if ( false ) {
@@ -370,7 +370,7 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 					std::cout << "this cbeta: " << this_rotamer.xyz( "CB" ).x() << " " << this_rotamer.xyz( "CB" ).y() << " " << this_rotamer.xyz( "CB" ).z();
 					std::cout << "; other cbeta: " << other_rotamer.xyz( "CB" ).x() << " " << other_rotamer.xyz( "CB" ).y() << " " << other_rotamer.xyz( "CB" ).z() << std::endl;;
 				}
-				esum += iijj_score_multiply *	static_cast< core::PackerEnergy >
+				esum += iijj_score_multiply * static_cast< core::PackerEnergy >
 					( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) );
 			}
 
@@ -405,7 +405,7 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 		esum += get_incident_otf_edge( edge_making_energy_request )->
 			get_proline_correction_for_node( get_node_index(), state_this );
 		//std::cout << "adding proline correction 1: " << get_incident_otf_edge( edge_making_energy_request )->
-		//	get_proline_correction_for_node( get_node_index(), state_this ) << std::endl;
+		// get_proline_correction_for_node( get_node_index(), state_this ) << std::endl;
 	}
 	if ( get_rotamer( state_this, 1 ).aa() == chemical::aa_pro ) {
 		esum += get_incident_otf_edge( edge_making_energy_request )->
@@ -413,7 +413,7 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 			state_other
 		);
 		//std::cout << "adding proline correction 2: " <<  get_incident_otf_edge( edge_making_energy_request )->
-    //  get_proline_correction_for_node( get_index_of_adjacent_node( edge_making_energy_request ), state_other ) << std::endl;
+		//  get_proline_correction_for_node( get_index_of_adjacent_node( edge_making_energy_request ), state_other ) << std::endl;
 	}
 
 	return get_incident_edge( edge_making_energy_request )->edge_weight() * esum;
@@ -433,13 +433,13 @@ SymmOnTheFlyNode::get_rotamer( int state, int subunit ) const
 
 	int state_aa = rotamer_set_->get_residue_type_index_for_rotamer( state );
 	//if ( rotamers_currently_reprsented_[ subunit ][ state_aa ] == state ) {
-	//	return *rotamer_representatives_[ subunit ][ state_aa ];
+	// return *rotamer_representatives_[ subunit ][ state_aa ];
 	//}
 	//rotamers_currently_represented_[ subunit ][ state_aa ] = state;
 
 	conformation::Residue & rotamer = *rotamer_representatives_[ subunit ][ state_aa ];
 	conformation::Residue const & asymm_rotamer = *rotamers_[ state ];
-debug_assert( &rotamer.type() == & asymm_rotamer.type() );
+	debug_assert( &rotamer.type() == & asymm_rotamer.type() );
 
 	// copy torsions
 	rotamer.mainchain_torsions() = asymm_rotamer.mainchain_torsions();
@@ -488,17 +488,17 @@ SymmOnTheFlyEdge::SymmOnTheFlyEdge(
 :
 	FixedBBEdge( owner, first_node_ind, second_node_ind ),
 	restypegroup_adjacency_(
-		get_otf_owner()->get_num_restype_groups(),
-		get_otf_owner()->get_num_restype_groups(),
-		get_otf_owner()->symm_info()->subunits(),
-		2,
-		(unsigned char) 0  // initial value -- set everything to "false"
+	get_otf_owner()->get_num_restype_groups(),
+	get_otf_owner()->get_num_restype_groups(),
+	get_otf_owner()->symm_info()->subunits(),
+	2,
+	(unsigned char) 0  // initial value -- set everything to "false"
 	),
 	long_range_interactions_exist_( false ),
 	short_range_interactions_exist_( false )
 {
 	bool distinguish_sc_bb[ 2 ];
-	for ( int ii = 0; ii < 2; ++ii) {
+	for ( int ii = 0; ii < 2; ++ii ) {
 		proline_corrections_[ ii ].resize( get_num_states_for_node( ii ) );
 		std::fill( proline_corrections_[ ii ].begin(), proline_corrections_[ ii ].end(), 0.0f );
 		distinguish_sc_bb[ ii ] = get_otf_node( ii )->distinguish_backbone_and_sidechain();
@@ -564,7 +564,7 @@ SymmOnTheFlyEdge::set_residues_adjacent_for_subunit_pair(
 	int const asu_index = 1; // ASSUMPTION, the asymmetric unit is unit 1!
 	int const nres_asu = get_otf_owner()->symm_info()->num_independent_residues();
 	Size const score_multiply =
-			Size(get_otf_owner()->symm_info()->score_multiply( 1, (other_node_subunit-1)*nres_asu + 1 ));
+		Size(get_otf_owner()->symm_info()->score_multiply( 1, (other_node_subunit-1)*nres_asu + 1 ));
 	if ( score_multiply == 0 ) return;
 
 	// OK: now iterate across the rotamer representatives for this pair and figure out their cbeta distances
@@ -657,14 +657,14 @@ void
 SymmOnTheFlyInteractionGraph::set_score_function( ScoreFunction const & sfxn )
 {
 	score_function_ = sfxn.clone();
-	if ( pose_ ) (*score_function_)(*pose_); // rescore the pose with the input score function
+	if ( pose_ ) ( *score_function_)(*pose_); // rescore the pose with the input score function
 }
 
 void
 SymmOnTheFlyInteractionGraph::set_pose( pose::Pose const & pose )
 {
 	pose_ = pose::PoseOP( new pose::Pose( pose ) );
-	if ( score_function_ ) (*score_function_)(*pose_);
+	if ( score_function_ ) ( *score_function_)(*pose_);
 
 	using conformation::symmetry::SymmetricConformation;
 	using id::AtomID;
@@ -676,7 +676,7 @@ SymmOnTheFlyInteractionGraph::set_pose( pose::Pose const & pose )
 	// symmetric clone frames
 	Size const nsubunits = symm_info_->subunits();
 	Size const asu_size = symm_info_->num_independent_residues();
-debug_assert( nsubunits > 0 );
+	debug_assert( nsubunits > 0 );
 	symmetric_transforms_.resize( nsubunits );
 	symmetric_transforms_[1].set_identity();
 
@@ -782,15 +782,15 @@ SymmOnTheFlyInteractionGraph::get_num_rpe_calculations_count() const
 
 //void
 //SymmOnTheFlyInteractionGraph::set_sparse_aa_info_for_edge(
-//	int node1,
-//	int node2,
-//	FArray2_bool const & sparse_conn_info
+// int node1,
+// int node2,
+// FArray2_bool const & sparse_conn_info
 //)
 //{
-//	SymmOnTheFlyEdge* edge = (SymmOnTheFlyEdge*) find_edge( node1, node2 );
-//	if (edge != 0) {
-//		edge->set_sparse_aa_info( sparse_conn_info );
-//	}
+// SymmOnTheFlyEdge* edge = (SymmOnTheFlyEdge*) find_edge( node1, node2 );
+// if (edge != 0) {
+//  edge->set_sparse_aa_info( sparse_conn_info );
+// }
 //}
 
 void
@@ -806,8 +806,7 @@ SymmOnTheFlyInteractionGraph::add_ProCorrection_values_for_edge(
 )
 {
 	SymmOnTheFlyEdge* edge = (SymmOnTheFlyEdge*) find_edge( node1, node2 );
-	if (edge != 0)
-	{
+	if ( edge != 0 ) {
 		edge->add_ProCorrection_values(
 			node_not_neccessarily_proline, state,
 			bb_nonprobb_E, bb_probb_E, sc_nonprobb_E, sc_probb_E );
@@ -821,7 +820,7 @@ SymmOnTheFlyInteractionGraph::note_short_range_interactions_exist_for_edge(
 )
 {
 	SymmOnTheFlyEdge* edge = (SymmOnTheFlyEdge*) find_edge( node1, node2 );
-	if (edge != 0) {
+	if ( edge != 0 ) {
 		edge->note_short_range_interactions_exist();
 	}
 }
@@ -833,7 +832,7 @@ SymmOnTheFlyInteractionGraph::note_long_range_interactions_exist_for_edge(
 )
 {
 	SymmOnTheFlyEdge* edge = (SymmOnTheFlyEdge*) find_edge( node1, node2 );
-	if (edge != 0) {
+	if ( edge != 0 ) {
 		edge->note_long_range_interactions_exist( );
 	}
 }

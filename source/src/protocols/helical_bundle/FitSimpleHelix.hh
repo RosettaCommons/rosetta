@@ -58,11 +58,11 @@ public:
 	virtual std::string get_name() const;
 
 	/*virtual void parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const &
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const &
 	);*/
 
 	void set_initial_guesses (core::Real const &r1_initial, core::Real const &omega1_initial, core::Real const &dz1_initial) {
@@ -124,7 +124,7 @@ public:
 		residues_per_repeat_ = count_in;
 		return;
 	}
-	
+
 	/// @brief Get the number of residues per repeating unit in the helix.
 	///
 	inline core::Size residues_per_repeat() const { return residues_per_repeat_; }
@@ -137,9 +137,9 @@ public:
 		core::Real &omega1_out,
 		core::Real &z1_out,
 		utility::vector1 < core::Real > &delta_omega1_out,
-		utility::vector1 < core::Real > &delta_z1_out		
+		utility::vector1 < core::Real > &delta_z1_out
 	) const;
-	
+
 	/// @brief Load in guesses for the radii (optional during fitter setup).
 	///
 	void set_r1_guesses( utility::vector1<core::Real> const &r1_guesses_in ) {
@@ -153,7 +153,7 @@ public:
 		delta_omega1_guesses_=delta_omega1_guesses_in;
 		return;
 	}
-	
+
 	/// @brief Load in guesses for the delta_z1 values (optional during fitter setup).
 	///
 	void set_delta_z1_guesses( utility::vector1<core::Real> const &delta_z1_guesses_in ) {
@@ -162,9 +162,9 @@ public:
 	}
 
 private:
-////////////////////////////////////////////////////////////////////////////////
-//          PRIVATE DATA                                                      //
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	//          PRIVATE DATA                                                      //
+	////////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Initial guess for r1.
 	///
@@ -229,19 +229,19 @@ private:
 	/// @brief Output delta_z1 values (z offset, one for each atom fitted by the fitter).
 	///
 	utility::vector1 < core::Real > delta_z1_vals_output_;
-	
+
 	/// @brief Vector of guesses for radii.
 	utility::vector1 < core::Real > r1_guesses_;
 
 	/// @brief Vector of guesses for offset around z-axis.
 	utility::vector1 < core::Real > delta_omega1_guesses_;
-	
+
 	/// @brief Vector of guesses for offset along z-axis.
 	utility::vector1 < core::Real > delta_z1_guesses_;
 
-////////////////////////////////////////////////////////////////////////////////
-//          PRIVATE FUNCTIONS                                                 //
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	//          PRIVATE FUNCTIONS                                                 //
+	////////////////////////////////////////////////////////////////////////////////
 
 };
 

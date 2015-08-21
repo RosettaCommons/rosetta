@@ -139,8 +139,8 @@ PairEnergy::residue_pair_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ){
-			return;
+	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ) {
+		return;
 	}
 
 	if ( rsd1.seqpos() == rsd2.seqpos() ) return;
@@ -176,16 +176,16 @@ PairEnergy::residue_pair_energy(
 		}
 
 		//if ( rsd1.actcoord_atoms().size() == 1 && rsd1.actcoord().distance( rsd1.xyz( rsd1.actcoord_atoms()[ 1 ] )) > 0.0001 ) {
-		//	std::cout << "Actcoord discrepancy!" << std::endl;
+		// std::cout << "Actcoord discrepancy!" << std::endl;
 		//}
 
 		//if ( rsd2.actcoord_atoms().size() == 1 && rsd2.actcoord().distance( rsd2.xyz( rsd2.actcoord_atoms()[ 1 ] )) > 0.0001 ) {
-		//	std::cout << "Actcoord discrepancy2!" << std::endl;
+		// std::cout << "Actcoord discrepancy2!" << std::endl;
 		//}
 
 
 		//if ( pairE != 0.0 )
-		//	std::cout << "  pairE " << rsd1.seqpos() << " " << rsd2.seqpos() << " " << pairE << " " << std::sqrt( nbr_dist2 ) << std::endl;
+		// std::cout << "  pairE " << rsd1.seqpos() << " " << rsd2.seqpos() << " " << pairE << " " << std::sqrt( nbr_dist2 ) << std::endl;
 		//std::cout << "  pairE: " << rsd1.seqpos() << " " << rsd2.seqpos() << " " << pairE << std::endl;
 	}
 }
@@ -222,13 +222,13 @@ PairEnergy::evaluate_rotamer_pair_energies(
 			Size const jj_offset = set2.get_residue_type_begin( jj );
 			Residue const & jj_example_rotamer( set2.rotamer_ref( jj_offset ));
 
-			if ( ! jj_example_rotamer.is_protein() || ! ( jj_example_rotamer.is_polar() || (any_aro &&  jj_example_rotamer.is_aromatic()) )) continue;
+			if ( ! jj_example_rotamer.is_protein() || ! ( jj_example_rotamer.is_polar() || (any_aro &&  jj_example_rotamer.is_aromatic()) ) ) continue;
 
 
 			Vector const & jj_coord( jj_example_rotamer.atom( jj_example_rotamer.type().nbr_atom() ).xyz());
 			Real const jj_radius( jj_example_rotamer.type().nbr_radius() );
 
-			if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+atomic_interaction_cutoff(), 2 )) {
+			if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+atomic_interaction_cutoff(), 2 ) ) {
 				for ( Size kk = 1, kke = set1.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
 					Size const kk_rot_id = ii_offset + kk - 1;
 					for ( Size ll = 1, lle = set2.get_n_rotamers_for_residue_type( jj ); ll <= lle; ++ll ) {
@@ -264,7 +264,7 @@ PairEnergy::evaluate_rotamer_background_energies(
 	utility::vector1< core::PackerEnergy > & energy_vector
 ) const
 {
-	if ( ! residue.is_protein() || ! ( residue.is_polar() || residue.is_aromatic() )) return;
+	if ( ! residue.is_protein() || ! ( residue.is_polar() || residue.is_aromatic() ) ) return;
 	EnergyMap emap;
 	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
 		//emap.zero();
@@ -293,11 +293,11 @@ PairEnergy::evaluate_rotamer_background_energy_maps(
 	EnergyMap emap;
 	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
 		//emap.zero();
-    emap[ fa_pair ] = 0;
+		emap[ fa_pair ] = 0;
 		emap[ fa_pair_aro_aro ] = 0;
 		emap[ fa_pair_aro_pol ] = 0;
 		emap[ fa_pair_pol_pol ] = 0;
-		if ( ! set.rotamer(ii)->is_protein() || ! ( set.rotamer(ii)->is_polar() || set.rotamer(ii)->is_aromatic() )) continue;
+		if ( ! set.rotamer(ii)->is_protein() || ! ( set.rotamer(ii)->is_polar() || set.rotamer(ii)->is_aromatic() ) ) continue;
 		PairEnergy::residue_pair_energy( *set.rotamer( ii ), residue, pose, sfxn, emap );
 		emaps[ ii ] += emap;
 	}
@@ -323,85 +323,85 @@ PairEnergy::defines_score_for_residue_pair(
 
 /*void
 PairEnergy::eval_atom_derivative_for_residue_pair(
-	Size const atom_index,
-	conformation::Residue const & rsd1,
-	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const &,// minsingle_data1,
-	ResSingleMinimizationData const &,// minsingle_data2,
-	ResPairMinimizationData const &,// minpair_data,
-	pose::Pose const & pose, // provides context
-	kinematics::DomainMap const &,// domain_map,
-	ScoreFunction const & ,//sfxn,
-	EnergyMap const & weights,
-	Vector & F1,
-	Vector & F2
+Size const atom_index,
+conformation::Residue const & rsd1,
+conformation::Residue const & rsd2,
+ResSingleMinimizationData const &,// minsingle_data1,
+ResSingleMinimizationData const &,// minsingle_data2,
+ResPairMinimizationData const &,// minpair_data,
+pose::Pose const & pose, // provides context
+kinematics::DomainMap const &,// domain_map,
+ScoreFunction const & ,//sfxn,
+EnergyMap const & weights,
+Vector & F1,
+Vector & F2
 ) const
 {
-	if ( atom_index == rsd1.actcoord_atoms()[1] ) {
-		TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
-		int const nbr_count1( tenA_neighbor_graph.get_node( rsd1.seqpos() )->
-			num_neighbors_counting_self_static() );
-		int const nbr_count2( tenA_neighbor_graph.get_node( rsd2.seqpos() )->
-			num_neighbors_counting_self_static() );
+if ( atom_index == rsd1.actcoord_atoms()[1] ) {
+TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
+int const nbr_count1( tenA_neighbor_graph.get_node( rsd1.seqpos() )->
+num_neighbors_counting_self_static() );
+int const nbr_count2( tenA_neighbor_graph.get_node( rsd2.seqpos() )->
+num_neighbors_counting_self_static() );
 
-		Real weight(0.0); Size naros(0);
-		if ( rsd1.is_aromatic() ) {
-			++naros;
-		}
-		if( rsd2.is_aromatic() ) {
-			++naros;
-		}
-		switch (naros ) {
-		case 0:
-			weight = std::max( weights[ fa_pair ], weights[ fa_pair_pol_pol ] );
-			break;
-		case 1:
-			weight = weights[ fa_pair_aro_pol ];
-			break;
-		case 2:
-			weight = weights[ fa_pair_aro_aro ];
-			break;
-		default:
-			utility_exit_with_message( "ERROR in fa_pair derivaties, too many aromatics!!!");
-			break;
-		}
+Real weight(0.0); Size naros(0);
+if ( rsd1.is_aromatic() ) {
+++naros;
+}
+if( rsd2.is_aromatic() ) {
+++naros;
+}
+switch (naros ) {
+case 0:
+weight = std::max( weights[ fa_pair ], weights[ fa_pair_pol_pol ] );
+break;
+case 1:
+weight = weights[ fa_pair_aro_pol ];
+break;
+case 2:
+weight = weights[ fa_pair_aro_aro ];
+break;
+default:
+utility_exit_with_message( "ERROR in fa_pair derivaties, too many aromatics!!!");
+break;
+}
 
-		if ( weight == 0.0 ) return;
+if ( weight == 0.0 ) return;
 
-		Real dpairE_dr( 0.0 );
-		potential_.pair_term_energy_and_deriv
-			( rsd1, nbr_count1, rsd2, nbr_count2, dpairE_dr );
-		//std::cout << "  pairE deriv " << rsd1.seqpos() << " " << rsd2.seqpos() << " " << dpairE_dr << " " <<  rsd1.actcoord().distance( rsd2.actcoord() ) <<  std::endl;
-		//std::cout << "        r1: " << rsd1.actcoord().x() << " " << rsd1.actcoord().y() << " " << rsd1.actcoord().z() << std::endl;
-		//for ( Size ii = 1; ii <= rsd1.actcoord_atoms().size(); ++ii ) {
-		//	std::cout << "        r1 real: " <<
-		//		rsd1.xyz( rsd1.actcoord_atoms()[ ii ] ).x() << " " << rsd1.xyz( rsd1.actcoord_atoms()[ ii ] ).y() << " " << rsd1.xyz( rsd1.actcoord_atoms()[ ii ] ).z() << std::endl;
-		//}
+Real dpairE_dr( 0.0 );
+potential_.pair_term_energy_and_deriv
+( rsd1, nbr_count1, rsd2, nbr_count2, dpairE_dr );
+//std::cout << "  pairE deriv " << rsd1.seqpos() << " " << rsd2.seqpos() << " " << dpairE_dr << " " <<  rsd1.actcoord().distance( rsd2.actcoord() ) <<  std::endl;
+//std::cout << "        r1: " << rsd1.actcoord().x() << " " << rsd1.actcoord().y() << " " << rsd1.actcoord().z() << std::endl;
+//for ( Size ii = 1; ii <= rsd1.actcoord_atoms().size(); ++ii ) {
+// std::cout << "        r1 real: " <<
+//  rsd1.xyz( rsd1.actcoord_atoms()[ ii ] ).x() << " " << rsd1.xyz( rsd1.actcoord_atoms()[ ii ] ).y() << " " << rsd1.xyz( rsd1.actcoord_atoms()[ ii ] ).z() << std::endl;
+//}
 
-		//std::cout << "        r2: " << rsd2.actcoord().x() << " " << rsd2.actcoord().y() << " " << rsd2.actcoord().z() << std::endl;
-		//for ( Size ii = 1; ii <= rsd2.actcoord_atoms().size(); ++ii ) {
-		//	std::cout << "        r2 real: " <<
-		//		rsd2.xyz( rsd2.actcoord_atoms()[ ii ] ).x() << " " << rsd2.xyz( rsd2.actcoord_atoms()[ ii ] ).y() << " " << rsd2.xyz( rsd2.actcoord_atoms()[ ii ] ).z() << std::endl;
-		//}
-		//if ( rsd1.actcoord_atoms().size() == 1 && rsd1.actcoord().distance( rsd1.xyz( rsd1.actcoord_atoms()[ 1 ] )) > 0.0001 ) {
-		//	std::cout << "Actcoord discrepancy!" << std::endl;
-		//}
+//std::cout << "        r2: " << rsd2.actcoord().x() << " " << rsd2.actcoord().y() << " " << rsd2.actcoord().z() << std::endl;
+//for ( Size ii = 1; ii <= rsd2.actcoord_atoms().size(); ++ii ) {
+// std::cout << "        r2 real: " <<
+//  rsd2.xyz( rsd2.actcoord_atoms()[ ii ] ).x() << " " << rsd2.xyz( rsd2.actcoord_atoms()[ ii ] ).y() << " " << rsd2.xyz( rsd2.actcoord_atoms()[ ii ] ).z() << std::endl;
+//}
+//if ( rsd1.actcoord_atoms().size() == 1 && rsd1.actcoord().distance( rsd1.xyz( rsd1.actcoord_atoms()[ 1 ] )) > 0.0001 ) {
+// std::cout << "Actcoord discrepancy!" << std::endl;
+//}
 
-		//if ( rsd2.actcoord_atoms().size() == 1 && rsd2.actcoord().distance( rsd2.xyz( rsd2.actcoord_atoms()[ 1 ] )) > 0.0001 ) {
-		//	std::cout << "Actcoord discrepancy2!" << std::endl;
-		//}
+//if ( rsd2.actcoord_atoms().size() == 1 && rsd2.actcoord().distance( rsd2.xyz( rsd2.actcoord_atoms()[ 1 ] )) > 0.0001 ) {
+// std::cout << "Actcoord discrepancy2!" << std::endl;
+//}
 
-		Vector const f1( cross( rsd1.actcoord(), rsd2.actcoord() ) );
-		Vector const f2( rsd1.actcoord() - rsd2.actcoord() );
-		Real const dis( f2.length() );
+Vector const f1( cross( rsd1.actcoord(), rsd2.actcoord() ) );
+Vector const f2( rsd1.actcoord() - rsd2.actcoord() );
+Real const dis( f2.length() );
 
-		if ( dis == Real(0.0 ) ) {
-			utility_exit_with_message("dis==0 in pairtermderiv!");
-		}
-		dpairE_dr /= dis;
-		F1 += weight * dpairE_dr * f1;
-		F2 += weight * dpairE_dr * f2;
-	}
+if ( dis == Real(0.0 ) ) {
+utility_exit_with_message("dis==0 in pairtermderiv!");
+}
+dpairE_dr /= dis;
+F1 += weight * dpairE_dr * f1;
+F2 += weight * dpairE_dr * f2;
+}
 }*/
 
 void
@@ -418,11 +418,11 @@ PairEnergy::eval_residue_pair_derivatives(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ){
-			return;
+	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ) {
+		return;
 	}
 
-debug_assert( (rsd1.is_polar() || rsd1.is_aromatic()) && (rsd2.is_polar() || rsd2.is_aromatic() ) );
+	debug_assert( (rsd1.is_polar() || rsd1.is_aromatic()) && (rsd2.is_polar() || rsd2.is_aromatic() ) );
 
 	TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
 	int const nbr_count1( tenA_neighbor_graph.get_node( rsd1.seqpos() )->
@@ -434,20 +434,20 @@ debug_assert( (rsd1.is_polar() || rsd1.is_aromatic()) && (rsd2.is_polar() || rsd
 	if ( rsd1.is_aromatic() ) {
 		++naros;
 	}
-	if( rsd2.is_aromatic() ) {
+	if ( rsd2.is_aromatic() ) {
 		++naros;
 	}
 	switch (naros ) {
-	case 0:
+	case 0 :
 		weight = std::max( weights[ fa_pair ], weights[ fa_pair_pol_pol ] );
 		break;
-	case 1:
+	case 1 :
 		weight = weights[ fa_pair_aro_pol ];
 		break;
-	case 2:
+	case 2 :
 		weight = weights[ fa_pair_aro_aro ];
 		break;
-	default:
+	default :
 		utility_exit_with_message( "ERROR in fa_pair derivaties, too many aromatics!!!");
 		break;
 	}
@@ -497,80 +497,80 @@ debug_assert( (rsd1.is_polar() || rsd1.is_aromatic()) && (rsd2.is_polar() || rsd
 /// probably move this logic to PairEPotential ??
 /*void
 PairEnergy::eval_atom_derivative(
-	id::AtomID const & atom_id,
-	pose::Pose const & pose,
-	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const &,
-	EnergyMap const & weights,
-	Vector & F1,
-	Vector & F2
+id::AtomID const & atom_id,
+pose::Pose const & pose,
+kinematics::DomainMap const &, // domain_map,
+ScoreFunction const &,
+EnergyMap const & weights,
+Vector & F1,
+Vector & F2
 ) const
 {
-	int const seqpos( atom_id.rsd() );
-	conformation::Residue const & rsd( pose.residue( seqpos ) );
-	if ( potential_.pair_term_energy_exists( rsd ) ) {
-	debug_assert( !rsd.actcoord_atoms().empty() );
-		TenANeighborGraph const & tenA_neighbor_graph
-			( pose.energies().tenA_neighbor_graph() );
-		EnergyGraph const & energy_graph( pose.energies().energy_graph() );
+int const seqpos( atom_id.rsd() );
+conformation::Residue const & rsd( pose.residue( seqpos ) );
+if ( potential_.pair_term_energy_exists( rsd ) ) {
+debug_assert( !rsd.actcoord_atoms().empty() );
+TenANeighborGraph const & tenA_neighbor_graph
+( pose.energies().tenA_neighbor_graph() );
+EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
 
-		// NOTE this will not give the right derivatives if bond angles and lenghts are alowed to flex.
-		// This code clearly operates under the assumption that all the act coords are controlled by the
-		// same DOF.  The simple solution is to divide the derivative over all the atoms that define
-		// the act coords.
-		if ( atom_id.atomno() == rsd.actcoord_atoms()[1] ) {
-			int const nbr_count( tenA_neighbor_graph.get_node( seqpos )->
-				num_neighbors_counting_self_static() );
-			// neighbor lookup by index (seqpos) rather than from within residue
-			for ( graph::Graph::EdgeListConstIter
-					ir  = energy_graph.get_node( seqpos )->const_edge_list_begin(),
-					ire = energy_graph.get_node( seqpos )->const_edge_list_end();
-					ir != ire; ++ir ) {
-				int const seqpos2( (*ir)->get_other_ind( seqpos ) );
-				conformation::Residue const & rsd2( pose.residue( seqpos2 ) );
-				int const nbr_count2( tenA_neighbor_graph.get_node( seqpos2 )->
-					num_neighbors_counting_self_static() );
-				if ( potential_.pair_term_energy_exists( rsd2 ) ) {
-					Real weight(0.0); Size naros(0);
-					if ( rsd.is_aromatic() ) {
-						++naros;
-					}
-					if( rsd2.is_aromatic() ) {
-						++naros;
-					}
-					switch (naros ) {
-					case 0:
-						weight = std::max( weights[ fa_pair ], weights[ fa_pair_pol_pol ] );
-						break;
-					case 1:
-						weight = weights[ fa_pair_aro_pol ];
-						break;
-					case 2:
-						weight = weights[ fa_pair_aro_aro ];
-						break;
-					default:
-						utility_exit_with_message( "ERROR in fa_pair derivaties, too many aromatics!!!");
-						break;
-					}
+// NOTE this will not give the right derivatives if bond angles and lenghts are alowed to flex.
+// This code clearly operates under the assumption that all the act coords are controlled by the
+// same DOF.  The simple solution is to divide the derivative over all the atoms that define
+// the act coords.
+if ( atom_id.atomno() == rsd.actcoord_atoms()[1] ) {
+int const nbr_count( tenA_neighbor_graph.get_node( seqpos )->
+num_neighbors_counting_self_static() );
+// neighbor lookup by index (seqpos) rather than from within residue
+for ( graph::Graph::EdgeListConstIter
+ir  = energy_graph.get_node( seqpos )->const_edge_list_begin(),
+ire = energy_graph.get_node( seqpos )->const_edge_list_end();
+ir != ire; ++ir ) {
+int const seqpos2( (*ir)->get_other_ind( seqpos ) );
+conformation::Residue const & rsd2( pose.residue( seqpos2 ) );
+int const nbr_count2( tenA_neighbor_graph.get_node( seqpos2 )->
+num_neighbors_counting_self_static() );
+if ( potential_.pair_term_energy_exists( rsd2 ) ) {
+Real weight(0.0); Size naros(0);
+if ( rsd.is_aromatic() ) {
+++naros;
+}
+if( rsd2.is_aromatic() ) {
+++naros;
+}
+switch (naros ) {
+case 0:
+weight = std::max( weights[ fa_pair ], weights[ fa_pair_pol_pol ] );
+break;
+case 1:
+weight = weights[ fa_pair_aro_pol ];
+break;
+case 2:
+weight = weights[ fa_pair_aro_aro ];
+break;
+default:
+utility_exit_with_message( "ERROR in fa_pair derivaties, too many aromatics!!!");
+break;
+}
 
-					Real dpairE_dr( 0.0 );
-					potential_.pair_term_energy_and_deriv
-						( rsd, nbr_count, rsd2, nbr_count2, dpairE_dr );
-					Vector const f1( cross( rsd.actcoord(), rsd2.actcoord() ) );
-					Vector const f2( rsd.actcoord() - rsd2.actcoord() );
-					Real const dis( f2.length() );
+Real dpairE_dr( 0.0 );
+potential_.pair_term_energy_and_deriv
+( rsd, nbr_count, rsd2, nbr_count2, dpairE_dr );
+Vector const f1( cross( rsd.actcoord(), rsd2.actcoord() ) );
+Vector const f2( rsd.actcoord() - rsd2.actcoord() );
+Real const dis( f2.length() );
 
-					if ( dis == Real(0.0 ) ) {
-						utility_exit_with_message("dis==0 in pairtermderiv!");
-					}
-					dpairE_dr /= dis;
-					F1 += weight * dpairE_dr * f1;
-					F2 += weight * dpairE_dr * f2;
-				}
-			}
-		}
-	}
+if ( dis == Real(0.0 ) ) {
+utility_exit_with_message("dis==0 in pairtermderiv!");
+}
+dpairE_dr /= dis;
+F1 += weight * dpairE_dr * f1;
+F2 += weight * dpairE_dr * f2;
+}
+}
+}
+}
 }*/
 
 /// @brief PairEnergy distance cutoff set to the same cutoff used by EtableEnergy, for now

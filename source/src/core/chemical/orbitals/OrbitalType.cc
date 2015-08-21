@@ -49,17 +49,17 @@
 #include <utility/vector1.hh>
 
 
-namespace core{
-namespace chemical{
-namespace orbitals{
+namespace core {
+namespace chemical {
+namespace orbitals {
 
 //mjo commenting out 'atom_type_name' because it is not used and cause a warnings
 /// @brief Constructor that is generally initialized in OrbitalTypeSet.hh. If you add a property,
 /// you must initialize that property as false!!!!!!!!
 OrbitalType::OrbitalType(std::string & orbital_name, std::string & /*atom_type_name*/):
-			is_orbital_acceptor_(false),
-			is_orbital_donor_(false),
-			distance_(0.0)
+	is_orbital_acceptor_(false),
+	is_orbital_donor_(false),
+	distance_(0.0)
 
 {
 
@@ -71,7 +71,7 @@ OrbitalType::OrbitalType(std::string & orbital_name, std::string & /*atom_type_n
 	hybridization_= name_split[3];
 
 	name_split=utility::string_split(orbital_name, '_');
-	for(core::Size i=1; i <= name_split.size(); ++i){
+	for ( core::Size i=1; i <= name_split.size(); ++i ) {
 		atom_type_name_.push_back(name_split[i]);
 	}
 
@@ -109,13 +109,13 @@ OrbitalType::set_property(
 	bool const setting
 )
 {
-	if(property == "DONOR"){
+	if ( property == "DONOR" ) {
 		is_orbital_donor_=setting;
-	}else if(property == "ACCEPTOR"){
+	} else if ( property == "ACCEPTOR" ) {
 		is_orbital_acceptor_=setting;
 	} else {
-	utility_exit_with_message( "unrecognized atomtype property "+property );
-}
+		utility_exit_with_message( "unrecognized atomtype property "+property );
+	}
 
 
 }

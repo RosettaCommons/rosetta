@@ -33,40 +33,40 @@ namespace core {
 namespace io {
 namespace raw_data {
 
-	/////////////////////////////////////////////////////////////////////////////
-	// holds all the data for a single entry in a silent file
-	class ScoreStructText : public RawStruct {
+/////////////////////////////////////////////////////////////////////////////
+// holds all the data for a single entry in a silent file
+class ScoreStructText : public RawStruct {
 
-	public:
-		// constructor
-		ScoreStructText();
+public:
+	// constructor
+	ScoreStructText();
 
-		ScoreStructText(
-			core::pose::Pose, // pose,
-			std::string tag = "empty_tag"
-		);
+	ScoreStructText(
+		core::pose::Pose, // pose,
+		std::string tag = "empty_tag"
+	);
 
-		// destructor
-		~ScoreStructText() {}
+	// destructor
+	~ScoreStructText() {}
 
-		//ScoreStructText & operator= (ScoreStructText const & src);
+	//ScoreStructText & operator= (ScoreStructText const & src);
 
 
-		/// @brief Fill a Pose with the conformation information in this RawStruct and the FA_STANDARD
-		/// ResidueTypeSet. This is a virtual method which must be implemented by classes derived from RawStruct.
-		void fill_pose(
-			core::pose::Pose & //pose
-		);
+	/// @brief Fill a Pose with the conformation information in this RawStruct and the FA_STANDARD
+	/// ResidueTypeSet. This is a virtual method which must be implemented by classes derived from RawStruct.
+	void fill_pose(
+		core::pose::Pose & //pose
+	);
 
-		/// @brief Fill a Pose with the conformation information in this RawStruct and the ResidueTypeSet
-		/// provided by the caller. This is a virtual method which must be implemented by classes derived from RawStruct.
-		virtual void fill_pose(
-			core::pose::Pose &, //pose,
-			core::chemical::ResidueTypeSet const& residue_set
-		);
+	/// @brief Fill a Pose with the conformation information in this RawStruct and the ResidueTypeSet
+	/// provided by the caller. This is a virtual method which must be implemented by classes derived from RawStruct.
+	virtual void fill_pose(
+		core::pose::Pose &, //pose,
+		core::chemical::ResidueTypeSet const& residue_set
+	);
 
-		virtual Real get_debug_rmsd();
-		virtual void print_conformation( std::ostream& out ) const;
+	virtual Real get_debug_rmsd();
+	virtual void print_conformation( std::ostream& out ) const;
 
 }; // class ScoreStructText
 

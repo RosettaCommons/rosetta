@@ -37,28 +37,28 @@ namespace wum {
 
 
 class MPI_WorkUnitManager_Slave: public MPI_WorkUnitManager {
-  public:
-    MPI_WorkUnitManager_Slave( core::Size my_master );
+public:
+	MPI_WorkUnitManager_Slave( core::Size my_master );
 
-    virtual ~MPI_WorkUnitManager_Slave(){}
+	virtual ~MPI_WorkUnitManager_Slave(){}
 
-		virtual void go();
+	virtual void go();
 
-	protected:
-		void init(){};
+protected:
+	void init(){};
 
-		virtual void process_inbound_wus();
+	virtual void process_inbound_wus();
 
-		virtual void process_outbound_wus();
+	virtual void process_outbound_wus();
 
-		/// @brief Slave: call a master to ask for more work
-		virtual void request_new_jobs();
+	/// @brief Slave: call a master to ask for more work
+	virtual void request_new_jobs();
 
-		core::Size get_my_master(){ return my_master_; };
+	core::Size get_my_master(){ return my_master_; };
 
-	private:
-		const core::Size my_master_;
-  	bool terminate_;
+private:
+	const core::Size my_master_;
+	bool terminate_;
 };
 
 

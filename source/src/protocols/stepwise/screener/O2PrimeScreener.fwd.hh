@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/screener/O2PrimeScreener.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace stepwise {
 namespace screener {
-	
-	class O2PrimeScreener;
-	typedef utility::pointer::shared_ptr< O2PrimeScreener > O2PrimeScreenerOP;
-	typedef utility::pointer::shared_ptr< O2PrimeScreener const > O2PrimeScreenerCOP;
-	
+
+class O2PrimeScreener;
+typedef utility::pointer::shared_ptr< O2PrimeScreener > O2PrimeScreenerOP;
+typedef utility::pointer::shared_ptr< O2PrimeScreener const > O2PrimeScreenerCOP;
+
 } //screener
 } //stepwise
 } //protocols

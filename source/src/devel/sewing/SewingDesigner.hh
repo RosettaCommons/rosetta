@@ -150,7 +150,7 @@ private:
 
 	core::Size asym_size_;
 
-//	core::Size num_helices_in_repeat_;
+	// core::Size num_helices_in_repeat_;
 };
 
 } // sewing

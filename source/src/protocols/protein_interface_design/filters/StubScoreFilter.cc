@@ -38,7 +38,7 @@
 
 
 namespace protocols {
-namespace protein_interface_design{
+namespace protein_interface_design {
 namespace filters {
 
 static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.StubScoreFilter" );
@@ -54,7 +54,7 @@ bool
 StubScoreFilter::apply(core::pose::Pose const & pose ) const
 {
 	core::Real const stub_score( compute( pose ) );
-	if( stub_score >= -0.0001 ){
+	if ( stub_score >= -0.0001 ) {
 		TR<<"bb_cst evalutes to 0. Failing"<<std::endl;
 		return false;
 	}
@@ -63,7 +63,7 @@ StubScoreFilter::apply(core::pose::Pose const & pose ) const
 
 core::Real
 StubScoreFilter::compute( core::pose::Pose const & in_pose ) const{
-	if( !stub_sets_.size() ){
+	if ( !stub_sets_.size() ) {
 		TR.Error<<"Stubsets not set in StubScoreFilter. Have I been parsed correctly?"<<std::endl;
 		runtime_assert( stub_sets_.size() );
 	}
@@ -101,10 +101,10 @@ StubScoreFilter::stub_sets( utility::vector1<  std::pair< protocols::hotspot_has
 
 void
 StubScoreFilter::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &data,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & pose )
+	basic::datacache::DataMap &data,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & pose )
 {
 	TR.Info << "StubScoreFilter"<<std::endl;
 	host_chain_ = tag->getOption< core::Size >( "chain_to_design", 2 );

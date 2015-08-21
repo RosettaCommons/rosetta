@@ -32,8 +32,8 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace enzdes{
+namespace protocols {
+namespace enzdes {
 
 class EnzdesFlexBBProtocol;
 typedef utility::pointer::shared_ptr< EnzdesFlexBBProtocol > EnzdesFlexBBProtocolOP;
@@ -66,8 +66,8 @@ public:
 
 	void
 	get_tenA_neighbor_residues(
-  	core::pose::Pose const & pose,
-  	utility::vector1<bool> & residue_positions
+		core::pose::Pose const & pose,
+		utility::vector1<bool> & residue_positions
 	) const;
 
 	core::pack::task::PackerTaskOP
@@ -251,7 +251,7 @@ public:
 
 	static bool
 	compare_SizeRealPairs( SizeRealPair const & first, SizeRealPair const & second ){
-		if( first.second < second.second ) return true;
+		if ( first.second < second.second ) return true;
 		else return false;
 	}
 

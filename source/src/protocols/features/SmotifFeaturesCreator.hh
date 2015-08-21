@@ -23,18 +23,18 @@
 
 namespace protocols {
 namespace features {
-	
+
 /// @brief creator for the SmotifFeaturesCreator class
 class SmotifFeaturesCreator : public FeaturesReporterCreator
 {
 public:
 	SmotifFeaturesCreator();
 	virtual ~SmotifFeaturesCreator();
-	
+
 	virtual FeaturesReporterOP create_features_reporter() const;
 	virtual std::string type_name() const;
 };
-	
+
 } //namespace features
 } //namespace protocols
 

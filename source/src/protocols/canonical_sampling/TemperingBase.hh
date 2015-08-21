@@ -35,19 +35,19 @@ namespace canonical_sampling {
 
 /// @brief Base class for tempering Monte Carlo optimizations.
 ///
-/// @details Many important Monte Carlo optimization techniques, like simulated 
-/// annealing and parallel tempering, depend on a changing temperature 
-/// schedule.  TemperatureController provides the essential interface for 
-/// providing this functionality.  This class provides a lot of useful 
-/// protected member functions, especially with regard to input (i.e.  
+/// @details Many important Monte Carlo optimization techniques, like simulated
+/// annealing and parallel tempering, depend on a changing temperature
+/// schedule.  TemperatureController provides the essential interface for
+/// providing this functionality.  This class provides a lot of useful
+/// protected member functions, especially with regard to input (i.e.
 /// command-line or file) and output (i.e. tracer or silent file).
 ///
-/// That said, my first impression is that this class really limits what you 
-/// can do in terms of output.  The emphasis seems to be on silent files, so it 
-/// would be hard to instead use (for example) database output.  In general, 
-/// putting IO code in a base class seems like a bad idea.  Better to do that 
-/// kind of stuff with object composition, so different IO formats can easily 
-/// be swapped in and out.  Perhaps this would be a good target for a small 
+/// That said, my first impression is that this class really limits what you
+/// can do in terms of output.  The emphasis seems to be on silent files, so it
+/// would be hard to instead use (for example) database output.  In general,
+/// putting IO code in a base class seems like a bad idea.  Better to do that
+/// kind of stuff with object composition, so different IO formats can easily
+/// be swapped in and out.  Perhaps this would be a good target for a small
 /// refactoring project.
 
 class TemperingBase : public protocols::canonical_sampling::TemperatureController {
@@ -137,11 +137,11 @@ protected:
 	virtual
 	void write_to_file( std::string const& file_in, std::string const& output_name, utility::vector1< core::Real > const& wcounts );
 
-	/// @brief Assert that the current temperature of the MonteCarlo object 
+	/// @brief Assert that the current temperature of the MonteCarlo object
 	/// agrees with the current temperature level of this object.
 	bool check_temp_consistency();
 
-	/// @brief Return true if a temperature move should be made on this 
+	/// @brief Return true if a temperature move should be made on this
 	/// iteration.
 	virtual
 	bool time_for_temp_move() {
@@ -154,13 +154,13 @@ protected:
 
 protected:
 
-	/// @brief Return the current temperature level.  Identical to 
+	/// @brief Return the current temperature level.  Identical to
 	/// temperature_level() as far as I can tell.
 	core::Size current_temp() const {
 		return current_temp_;
 	}
 
-	/// @brief Forget all temperature levels and return to an uninitialized 
+	/// @brief Forget all temperature levels and return to an uninitialized
 	/// state.
 	void clear();
 
@@ -168,7 +168,7 @@ protected:
 	void set_temperatures( utility::vector1< core::Real > const& );
 
 	/// @brief Set the temperature to the given level.
-	/// @details Note that the argument is a temperature level, not a raw 
+	/// @details Note that the argument is a temperature level, not a raw
 	/// temperature.
 	virtual
 	void set_current_temp( core::Size new_temp );
@@ -176,19 +176,19 @@ protected:
 	/// @brief Return true if a statistics summary should be written.
 	/// @see stats_silent_output()
 	/// @see stats_file()
- 	bool stats_line_output() const {
+	bool stats_line_output() const {
 		return stats_line_output_;
 	}
 
-	/// @brief Return true if a statistics summary should be inserted into a 
+	/// @brief Return true if a statistics summary should be inserted into a
 	/// silent file.
 	/// @see stats_line_output()
 	/// @see stats_file()
- 	bool stats_silent_output() const {
+	bool stats_silent_output() const {
 		return stats_silent_output_;
 	}
-	
-	/// @brief Return the name of the silent file into which statistics should be 
+
+	/// @brief Return the name of the silent file into which statistics should be
 	/// recorded.
 	/// @see stats_line_output()
 	/// @see stats_silent_output()
@@ -196,7 +196,7 @@ protected:
 		return stats_file_;
 	}
 
-	/// @brief Explicitly set the temperature levels by interpolating the given 
+	/// @brief Explicitly set the temperature levels by interpolating the given
 	/// parameters.
 	void generate_temp_range( core::Real temp_low, core::Real temp_high, core::Size n_levels, InterpolationType interpolation = linear );
 
@@ -208,7 +208,7 @@ private:
 	static bool options_registered_;
 
 public:
-	/// @brief Register the options used by this mover with the global options 
+	/// @brief Register the options used by this mover with the global options
 	/// system.
 	static void register_options();
 
@@ -218,15 +218,15 @@ protected:
 	/// @brief Temperature levels.
 	utility::vector1< core::Real > temperatures_;
 
-	/// @brief Frequency for attempting temperature moves (e.g. once every 
+	/// @brief Frequency for attempting temperature moves (e.g. once every
 	/// `io_stride_` steps).
 	core::Size temperature_stride_;
 
-	/// @brief Frequency with which statistics should be written (e.g. once every 
+	/// @brief Frequency with which statistics should be written (e.g. once every
 	/// `io_stride_` steps).
 	core::Size io_stride_;
 
-	/// @brief If false, look for current temperature in monte_carlo_ before each 
+	/// @brief If false, look for current temperature in monte_carlo_ before each
 	/// move.  Set to true by default.
 	bool trust_current_temp_;
 
@@ -242,15 +242,15 @@ protected:
 	/// @brief Job object to report on temperatures.
 	protocols::jd2::JobOP job_;
 
-	/// @brief If false, init_from_options() will be called before the simulation 
+	/// @brief If false, init_from_options() will be called before the simulation
 	/// starts.
 	bool instance_initialized_;
 
 	/// @brief Current temperature level.  Not the current temperature!
 	core::Size current_temp_;
 
-	/// @brief Number of times time_for_temp_move() has been called.  This method 
-	/// is meant to be called every time temperature_move() is called. 
+	/// @brief Number of times time_for_temp_move() has been called.  This method
+	/// is meant to be called every time temperature_move() is called.
 	core::Size temp_trial_count_;
 
 	MultiTemperatureTrialCounter trial_counter_;

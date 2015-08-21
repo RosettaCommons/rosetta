@@ -73,8 +73,8 @@ namespace scoring {
 namespace func {
 
 GaussianChainFunc::GaussianChainFunc( Real const gaussian_variance,
-																			Real const loop_fixed_cost,
-																			utility::vector1< Real > const & other_distances ):
+	Real const loop_fixed_cost,
+	utility::vector1< Real > const & other_distances ):
 	gaussian_variance_( gaussian_variance ),
 	loop_fixed_cost_( loop_fixed_cost ),
 	other_distances_( other_distances )
@@ -84,7 +84,7 @@ GaussianChainFunc::GaussianChainFunc( Real const gaussian_variance,
 }
 
 GaussianChainFunc::GaussianChainFunc( Real const gaussian_variance,
-																			Real const loop_fixed_cost ):
+	Real const loop_fixed_cost ):
 	gaussian_variance_( gaussian_variance ),
 	loop_fixed_cost_( loop_fixed_cost )
 {
@@ -112,19 +112,19 @@ GaussianChainFunc::initialize_func(){
 
 	func_.reset();
 
-	if ( !force_combined_gaussian_approximation_ ){
+	if ( !force_combined_gaussian_approximation_ ) {
 		if ( other_distances_.size() == 0 ) {
 			func_ = FuncOP( new GaussianChainSingleFunc( gaussian_variance_, loop_fixed_cost_ ) );
-		} else if ( other_distances_.size() == 1 ){
+		} else if ( other_distances_.size() == 1 ) {
 			func_ = FuncOP( new GaussianChainDoubleFunc( gaussian_variance_, loop_fixed_cost_, other_distances_[1] ) );
-		} else if ( other_distances_.size() == 2 ){
+		} else if ( other_distances_.size() == 2 ) {
 			func_ = FuncOP( new GaussianChainTripleFunc( gaussian_variance_, loop_fixed_cost_, other_distances_[1], other_distances_[2] ) );
-		} else if ( other_distances_.size() == 3 ){
+		} else if ( other_distances_.size() == 3 ) {
 			func_ = FuncOP( new GaussianChainQuadrupleFunc( gaussian_variance_, loop_fixed_cost_, other_distances_[1], other_distances_[2], other_distances_[3] ) );
 		}
 	}
 
-	if ( func_ == 0 ){
+	if ( func_ == 0 ) {
 		// for more than four joints, treat as one effective long gaussian chain.
 		// not a bad approximation actually.
 		Real gaussian_variance_total  = gaussian_variance_;
@@ -132,7 +132,7 @@ GaussianChainFunc::initialize_func(){
 			// Note that the radius of gyration is sqrt( 3 ) * gaussian_variance.
 			gaussian_variance_total += (other_distances_[ n ] * other_distances_[ n ] / 3.0);
 		}
-		func_ = FuncOP( new GaussianChainSingleFunc( gaussian_variance_total, 	loop_fixed_cost_ ) );
+		func_ = FuncOP( new GaussianChainSingleFunc( gaussian_variance_total,  loop_fixed_cost_ ) );
 	}
 
 	runtime_assert( func_.get() != NULL );
@@ -157,7 +157,7 @@ void
 GaussianChainFunc::read_data( std::istream & in ) {
 	in >> loop_fixed_cost_ >> gaussian_variance_;
 	Real dist;
-	if ( in.good() ){
+	if ( in.good() ) {
 		in >> dist;
 		other_distances_.push_back( dist );
 	}

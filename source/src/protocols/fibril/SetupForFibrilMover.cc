@@ -37,7 +37,7 @@ namespace fibril {
 static thread_local basic::Tracer TR( "protocols.moves.symmetry.SetupForFibrilMover" );
 
 SetupForFibrilMover::SetupForFibrilMover()
-	: Mover("SetupForFibrilMover") {}
+: Mover("SetupForFibrilMover") {}
 
 SetupForFibrilMover::~SetupForFibrilMover(){}
 
@@ -60,7 +60,7 @@ SetupForFibrilMover::align(
 	core::pose::Pose & pose,
 	core::pose::Pose & monomer_pose,
 	protocols::loops::Loops core,
-  protocols::loops::Loops ref_core
+	protocols::loops::Loops ref_core
 )
 {
 	// If we are alredy symmetric do nothing

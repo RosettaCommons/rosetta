@@ -29,7 +29,7 @@ namespace sequence {
 
 class AlignerFactory {
 public:
- 	/// @brief returns an AlignerOP
+	/// @brief returns an AlignerOP
 	static AlignerOP get_aligner( std::string const & type );
 };
 

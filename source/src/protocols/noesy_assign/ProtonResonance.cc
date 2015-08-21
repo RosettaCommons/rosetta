@@ -49,13 +49,13 @@ namespace noesy_assign {
 ProtonResonance::ProtonResonance() {}
 
 ProtonResonance::ProtonResonance(
-   core::Size label,
-	 core::Real freq,
-	 core::Real error,
-	 core::id::NamedAtomID const& id,
-	 core::chemical::AA aa,
-	 core::Real intensity )
-	: Resonance( label, freq, error, id, aa, intensity )
+	core::Size label,
+	core::Real freq,
+	core::Real error,
+	core::id::NamedAtomID const& id,
+	core::chemical::AA aa,
+	core::Real intensity )
+: Resonance( label, freq, error, id, aa, intensity )
 {}
 
 ProtonResonance::~ProtonResonance() {}
@@ -63,13 +63,13 @@ ProtonResonance::~ProtonResonance() {}
 
 /// @brief match the proton and corresponding label atom at same time
 bool ProtonResonance::match2D(
-		core::Real proton_freq,
-		core::Real proton_error,
-    FoldResonance const& proton_folder,
-    core::Real label_freq,
-    core::Real label_error,
-    FoldResonance const& label_folder,
-		ResonancePairs& matches
+	core::Real proton_freq,
+	core::Real proton_error,
+	FoldResonance const& proton_folder,
+	core::Real label_freq,
+	core::Real label_error,
+	FoldResonance const& label_folder,
+	ResonancePairs& matches
 ) const {
 	// pseudo4D peaks with two heavy-atoms and one proton are matched via the heavy-atom
 	if ( proton_error >= 99 ) return false;

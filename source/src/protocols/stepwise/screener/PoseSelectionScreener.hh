@@ -26,36 +26,36 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class PoseSelectionScreener: public StepWiseScreener {
+class PoseSelectionScreener: public StepWiseScreener {
 
-	public:
+public:
 
-		//constructor
-		PoseSelectionScreener( core::pose::Pose & pose,
-													 core::scoring::ScoreFunctionCOP scorefxn,
-													 modeler::align::StepWiseClustererOP stepwise_clusterer );
+	//constructor
+	PoseSelectionScreener( core::pose::Pose & pose,
+		core::scoring::ScoreFunctionCOP scorefxn,
+		modeler::align::StepWiseClustererOP stepwise_clusterer );
 
-		//destructor
-		~PoseSelectionScreener();
+	//destructor
+	~PoseSelectionScreener();
 
-	public:
+public:
 
-		std::string
-		name() const { return "PoseSelectionScreener"; }
+	std::string
+	name() const { return "PoseSelectionScreener"; }
 
-		StepWiseScreenerType
-		type() const { return POSE_SELECTION; }
+	StepWiseScreenerType
+	type() const { return POSE_SELECTION; }
 
-		bool
-		check_screen();
+	bool
+	check_screen();
 
-	private:
+private:
 
-		core::pose::Pose & pose_;
-		core::scoring::ScoreFunctionCOP scorefxn_;
-		modeler::align::StepWiseClustererOP stepwise_clusterer_;
+	core::pose::Pose & pose_;
+	core::scoring::ScoreFunctionCOP scorefxn_;
+	modeler::align::StepWiseClustererOP stepwise_clusterer_;
 
-	};
+};
 
 } //screener
 } //stepwise

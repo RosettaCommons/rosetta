@@ -86,10 +86,10 @@ public:
 		CountPairDataGeneric const & at1dat,
 		CountPairDataGeneric const & at2dat,
 		Real & weight,
-	  Size & path_dist)
+		Size & path_dist)
 	{
-	debug_assert( connection_gaps_.size() == at1dat.conn_dat( res1_cpdat_ ).size() );
-	debug_assert( connection_gaps_.size() == at2dat.conn_dat( res2_cpdat_ ).size() );
+		debug_assert( connection_gaps_.size() == at1dat.conn_dat( res1_cpdat_ ).size() );
+		debug_assert( connection_gaps_.size() == at2dat.conn_dat( res2_cpdat_ ).size() );
 		Size minimum_distance = INFINITE_SEPARATION;
 		for ( Size ii = 1; ii <= connection_gaps_.size(); ++ii ) {
 			Size iidist = at1dat.conn_dat( res1_cpdat_ )[ ii ] + at2dat.conn_dat( res2_cpdat_ )[ ii ] + connection_gaps_[ ii ];
@@ -706,7 +706,7 @@ public:
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector);
 
-/// Hack Elec Energy
+	/// Hack Elec Energy
 
 
 	virtual

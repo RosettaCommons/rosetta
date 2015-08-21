@@ -63,8 +63,8 @@ namespace jd2 {
 
 /// @details constructor.  Notice it calls the parent class!
 BOINCJobDistributor::BOINCJobDistributor() :
-  ShuffleFileSystemJobDistributor(),
-  total_completed_nstruct_( 0 )
+	ShuffleFileSystemJobDistributor(),
+	total_completed_nstruct_( 0 )
 {
 #ifdef BOINC
 	checkpoint_read();
@@ -121,7 +121,7 @@ BOINCJobDistributor::checkpoint_write()
 	time_t time_now = time(NULL);
 	// Refuse to checkpoint more than once a minute, no matter what BOINC wants.
 	// Random number checkpoint files can be large (100k or more uncompressed).
-	if( time_now - last_chkpt_time > 60 ) {
+	if ( time_now - last_chkpt_time > 60 ) {
 #ifdef BOINC
 		// BOINC automatically handles begin/end_critical_section() calls.
 		utility::io::ozstream ozs("rng.state.gz");
@@ -181,7 +181,7 @@ void BOINCJobDistributor::job_failed( core::pose::Pose& pose, bool /*will_retry*
 	using namespace basic::options;
 
 	current_job()->set_status_prefix("FAILURE");
-	job_succeeded( pose, 0, "" );	//i.e., job_outputter_->final_pose( current_job(), pose );
+	job_succeeded( pose, 0, "" ); //i.e., job_outputter_->final_pose( current_job(), pose );
 }
 
 void

@@ -30,8 +30,8 @@ using utility::vector1;
 // bool print = false;
 
 std::ostream & operator<< ( std::ostream & out, PackingScoreResData const & dat ) {
-	for( Size i =1; i <= dat.nrad(); ++i ) {
-		for( Size j =1; j <= dat.npr(); ++j ) {
+	for ( Size i =1; i <= dat.nrad(); ++i ) {
+		for ( Size j =1; j <= dat.npr(); ++j ) {
 			out << dat.msa(i,j) << " ";
 		}
 		out << "     ";
@@ -41,17 +41,17 @@ std::ostream & operator<< ( std::ostream & out, PackingScoreResData const & dat 
 
 
 Real PackingScore::score( PackingScoreResDataCOP dat ) const {
-debug_assert( dat->npr() == npr() && dat->nrad() == nrad() );
+	debug_assert( dat->npr() == npr() && dat->nrad() == nrad() );
 	Real score = 0;
-	for( Size i =1; i <= nrad(); ++i ) {
-		for( Size j =1; j <= npr(); ++j ) {
+	for ( Size i =1; i <= nrad(); ++i ) {
+		for ( Size j =1; j <= npr(); ++j ) {
 			// std::cerr << "DAT " << i << " " << j << " " << dat->msa(i,j) << std::endl;
 			score += ( dat->msa(i,j) - center(i,j) ) * weight(i,j);
 		}
 	}
 	score -= rho();
 	// if(print) std::cerr << " DV " << score;
-	if( compprob() ) {
+	if ( compprob() ) {
 		score = 1.0 - (1.0 / (1.0 + exp( probA_ * score + probB_ ) ));
 	} else {
 		score = probA_ * score + probB_;
@@ -63,18 +63,18 @@ debug_assert( dat->npr() == npr() && dat->nrad() == nrad() );
 
 Real PackingScore::score( utility::vector1<PackingScoreResDataCOP> dats ) const {
 	Real sc = 0.0/*, psc = 0.0*/;
-	for( Size di = 1; di <= dats.size(); ++di ) {
-		for( Size i =1; i <= nrad(); ++i ) {
-			for( Size j =1; j <= npr(); ++j ) {
+	for ( Size di = 1; di <= dats.size(); ++di ) {
+		for ( Size i =1; i <= nrad(); ++i ) {
+			for ( Size j =1; j <= npr(); ++j ) {
 				// std::cerr << i << " " << j << " DAT " << dats[di]->msa(i,j) << std::endl;
 				sc += ( dats[di]->msa(i,j) - center(i,j) ) * weight(i,j);
 			}
 		}
 		// if( di == 1 ) {
-		// 	std::cerr << "di " << di;
-		// 	print = true;
+		//  std::cerr << "di " << di;
+		//  print = true;
 		// } else {
-		// 	print = false;
+		//  print = false;
 		// }
 		//
 		// psc += score( dats[di] );
@@ -84,7 +84,7 @@ Real PackingScore::score( utility::vector1<PackingScoreResDataCOP> dats ) const 
 	sc = sc / dats.size();
 	sc = sc - rho();
 	// std::cout << "SCORE " << sc << std::endl;
-	if( compprob() ) {
+	if ( compprob() ) {
 		sc = 1.0 - (1.0 / (1.0 + exp( probA_ * sc + probB_ ) ) );
 	} else {
 		sc = probA_ * sc + probB_;

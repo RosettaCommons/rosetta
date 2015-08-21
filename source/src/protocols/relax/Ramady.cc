@@ -48,55 +48,55 @@ namespace relax {
 
 
 void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::pose::Pose &constraint_target_pose,  protocols::loops::Loops &exclude_regions ){
-		using namespace core;
-		using namespace conformation;
-		using namespace pose;
-		using namespace scoring;
-		using namespace constraints;
-		using namespace id;
-		using namespace kinematics;
-		using namespace moves;
+	using namespace core;
+	using namespace conformation;
+	using namespace pose;
+	using namespace scoring;
+	using namespace constraints;
+	using namespace id;
+	using namespace kinematics;
+	using namespace moves;
 
-		core::Size nnonvrt_cst_target = constraint_target_pose.total_residue();
-		core::Size nnonvrt_pose = pose.total_residue();
+	core::Size nnonvrt_cst_target = constraint_target_pose.total_residue();
+	core::Size nnonvrt_pose = pose.total_residue();
 
-		while ( pose.residue( nnonvrt_pose ).aa() == core::chemical::aa_vrt ) { nnonvrt_pose--; }
-		while ( constraint_target_pose.residue( nnonvrt_cst_target ).aa() == core::chemical::aa_vrt ) { nnonvrt_cst_target--; }
+	while ( pose.residue( nnonvrt_pose ).aa() == core::chemical::aa_vrt ) { nnonvrt_pose--; }
+	while ( constraint_target_pose.residue( nnonvrt_cst_target ).aa() == core::chemical::aa_vrt ) { nnonvrt_cst_target--; }
 
-		protocols::loops::Loops coordconstraint_segments;
-		coordconstraint_segments = exclude_regions.invert( nnonvrt_cst_target );
+	protocols::loops::Loops coordconstraint_segments;
+	coordconstraint_segments = exclude_regions.invert( nnonvrt_cst_target );
 
-		//TR << coordconstraint_segments << std::endl;
+	//TR << coordconstraint_segments << std::endl;
 
-		if ( nnonvrt_pose != nnonvrt_cst_target ) {
-			std::cerr << "ERROR coord constraint pose length mismatch with input pose: " << nnonvrt_cst_target << " vs. " << nnonvrt_pose << std::endl;
-			utility_exit();
-		}
+	if ( nnonvrt_pose != nnonvrt_cst_target ) {
+		std::cerr << "ERROR coord constraint pose length mismatch with input pose: " << nnonvrt_cst_target << " vs. " << nnonvrt_pose << std::endl;
+		utility_exit();
+	}
 
-		if ( pose.residue( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
-			pose.append_residue_by_jump
-				( *ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map( "VRT" ) ),
-					pose.total_residue()/2 );
-		}
+	if ( pose.residue( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
+		pose.append_residue_by_jump
+			( *ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map( "VRT" ) ),
+			pose.total_residue()/2 );
+	}
 
 
-		Size nres = pose.total_residue();
-		Real const coord_sdev( 0.5 );
-		for ( Size i = 1; i<= (Size)nres; ++i ) {
-			if ( i==(Size)pose.fold_tree().root() ) continue;
-			if( coordconstraint_segments.is_loop_residue( i ) ) {
-				Residue const & nat_i_rsd( pose.residue(i) );
-				for ( Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
-					func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) );
-					pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint(
-								AtomID(ii,i), AtomID(1,nres), nat_i_rsd.xyz( ii ),
-								fx ) ) ) );
-				}
+	Size nres = pose.total_residue();
+	Real const coord_sdev( 0.5 );
+	for ( Size i = 1; i<= (Size)nres; ++i ) {
+		if ( i==(Size)pose.fold_tree().root() ) continue;
+		if ( coordconstraint_segments.is_loop_residue( i ) ) {
+			Residue const & nat_i_rsd( pose.residue(i) );
+			for ( Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
+				func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) );
+				pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint(
+					AtomID(ii,i), AtomID(1,nres), nat_i_rsd.xyz( ii ),
+					fx ) ) ) );
 			}
 		}
-
-
 	}
+
+
+}
 
 
 bool rama_list_pred( const std::pair < core::Size, core::Real > &left, const std::pair < core::Size, core::Real > &right )
@@ -153,20 +153,21 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 
 	for ( Size j=1; j<= pose.total_residue(); ++j ) {
 		EnergyMap & emap( energies.onebody_energies( j ) );
-		if (  emap[ rama ] > limit_rama_min )
+		if (  emap[ rama ] > limit_rama_min ) {
 			rama_list.push_back( std::make_pair( j, emap[ rama ] ) );
+		}
 	}
 
-	if( rama_list.size() == 0 ) return;
+	if ( rama_list.size() == 0 ) return;
 	// sort the rama_list
 
 	std::sort(rama_list.begin(), rama_list.end(), rama_list_pred);
 
-	for ( Size g=0; g< rama_list.size(); g++ ){
+	for ( Size g=0; g< rama_list.size(); g++ ) {
 		TR << "RAMALIST: " << rama_list[g].first << "  " << rama_list[g].second << std::endl;
 	}
 
-	for ( Size g=0; g< how_many; g++ ){
+	for ( Size g=0; g< how_many; g++ ) {
 
 		if ( g >= rama_list.size() ) break;
 
@@ -178,7 +179,7 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 
 		TR << "RAMALIST: " << rama_list[g].first << "  " << rama_list[g].second << " RAMA: " << rama_e << " RES: " << i << std::endl;
 		// save the angles
-		for( core::Size ir = 1; ir < pose.total_residue(); ir ++ ){
+		for ( core::Size ir = 1; ir < pose.total_residue(); ir ++ ) {
 			temp_pose.set_phi(   ir, pose.phi(   ir ) );
 			temp_pose.set_psi(   ir, pose.psi(   ir ) );
 			temp_pose.set_omega( ir, pose.omega( ir ) );
@@ -200,13 +201,13 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 			core::Real bestdist = 1000000;
 			core::Size bestindex = 0;
 			TR << "S:" << curphi << " " << curpsi << "  " << std::endl;
-			for(core::Size a = 0; a < ok_angles; a++ ){
-				core::Real diffphi =  ok_phi[a]  - curphi; while( diffphi > 180 ) diffphi-=360.0;  while( diffphi < -180 ) diffphi += 360.0;
-				core::Real diffpsi =  ok_psi[a]  - curpsi; while( diffpsi > 180 ) diffpsi-=360.0;  while( diffpsi < -180 ) diffpsi += 360.0;
+			for ( core::Size a = 0; a < ok_angles; a++ ) {
+				core::Real diffphi =  ok_phi[a]  - curphi; while ( diffphi > 180 ) diffphi-=360.0;  while ( diffphi < -180 ) diffphi += 360.0;
+				core::Real diffpsi =  ok_psi[a]  - curpsi; while ( diffpsi > 180 ) diffpsi-=360.0;  while ( diffpsi < -180 ) diffpsi += 360.0;
 				core::Real dist = sqrt( diffphi*diffphi + diffpsi * diffpsi );
 				TR << "T:" << ok_phi[a] << "  " << ok_psi[a] << "  " << dist << std::endl;
-				if( (dist < bestdist) || (a == 0) ){
-					if( std::find(used_angles.begin(), used_angles.end(), a)!=used_angles.end() ) continue;
+				if ( (dist < bestdist) || (a == 0) ) {
+					if ( std::find(used_angles.begin(), used_angles.end(), a)!=used_angles.end() ) continue;
 					newphi = ok_phi[a];
 					newpsi = ok_psi[a];
 					bestdist = dist;
@@ -222,11 +223,11 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 
 			kinematics::MoveMap local_mm;
 			local_mm.set_bb(true);
-			for ( int ii=-4; ii< 3; ii ++ ){
+			for ( int ii=-4; ii< 3; ii ++ ) {
 				int res = i + ii;
 
-				if( res < 1 ) continue;
-				if( res > (int)pose.total_residue() ) continue;
+				if ( res < 1 ) continue;
+				if ( res > (int)pose.total_residue() ) continue;
 				local_mm.set_bb( res, true );
 				local_mm.set( TorsionID( omega_torsion, BB, res), false );
 				// disallow proline PHI
@@ -247,12 +248,12 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 
 			// break out if structure is good
 			if ( ( post_fix_rama_e < limit_rama ) &&
-					 ( change_rms < limit_RMS ) ){
+					( change_rms < limit_RMS ) ) {
 				break;
 			}
 
 			// otherwise restore and continue
-			for( core::Size ir = 1; ir < pose.total_residue(); ir ++ ){
+			for ( core::Size ir = 1; ir < pose.total_residue(); ir ++ ) {
 				pose.set_phi(   ir, temp_pose.phi(   ir ) );
 				pose.set_psi(   ir, temp_pose.psi(   ir ) );
 				pose.set_omega( ir, temp_pose.omega( ir ) );
@@ -273,13 +274,13 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 		if ( !pose.residue_type(i).is_protein() ) continue;
 		EnergyMap & emap( energies.onebody_energies( i ) );
 		TR << "CHECK: " << i << "  "
-			 << pose.phi(i) << "  "
-			 << pose.psi(i) << "  "
-			 << emap[ rama ] << std::endl;
+			<< pose.phi(i) << "  "
+			<< pose.psi(i) << "  "
+			<< emap[ rama ] << std::endl;
 	}
 
 	// save the angles
-	for( core::Size ir = 1; ir < original_pose.total_residue(); ir ++ ){
+	for ( core::Size ir = 1; ir < original_pose.total_residue(); ir ++ ) {
 		if ( !pose.residue_type(ir).is_protein() ) continue;
 		original_pose.set_phi(   ir, pose.phi(   ir ) );
 		original_pose.set_psi(   ir, pose.psi(   ir ) );

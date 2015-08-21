@@ -40,7 +40,7 @@ namespace legacy {
 namespace modeler {
 namespace rna {
 
-//	typedef std::map< std::string, pose::PoseOP > PoseList;
+// typedef std::map< std::string, pose::PoseOP > PoseList;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -141,18 +141,18 @@ private:
 
 	void
 	do_checks_and_apply_protonated_H1_adenosine_variant( pose::Pose & pose,
-																											 pose::Pose const & start_pose_with_variant,
-																											 Size const & n /*res num*/,
-																											 Size const & i /*input pose num*/,
-																											 utility::vector1< Size > const & input_res,
-																											 std::map< Size, Size > & full_to_sub );
+		pose::Pose const & start_pose_with_variant,
+		Size const & n /*res num*/,
+		Size const & i /*input pose num*/,
+		utility::vector1< Size > const & input_res,
+		std::map< Size, Size > & full_to_sub );
 
 	void
 	correctly_copy_HO2prime_positions( pose::Pose & full_pose, utility::vector1< pose::Pose > const & start_pose_list );
 
 	Real
 	get_nearest_dist_to_O2prime( Size const O2prime_seq_num, pose::Pose const & input_pose,
-															 utility::vector1< Size > const & input_res_list, utility::vector1< Size > const & common_res_list );
+		utility::vector1< Size > const & input_res_list, utility::vector1< Size > const & common_res_list );
 
 	void
 	add_protonated_H1_adenosine_variants( pose::Pose & pose ) const;
@@ -168,7 +168,7 @@ private:
 
 private:
 
-//		utility::vector1< utility::vector1< Size > > input_res_vectors_;
+	//  utility::vector1< utility::vector1< Size > > input_res_vectors_;
 
 	chemical::ResidueTypeSetCAP rsd_set_;
 	utility::vector1< std::string > input_tags_;

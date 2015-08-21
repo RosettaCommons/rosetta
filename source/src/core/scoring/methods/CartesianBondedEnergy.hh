@@ -262,12 +262,12 @@ public:
 	// old-style interface to database
 	void
 	lookup_torsion_legacy( core::chemical::ResidueType const & restype,
-	        int atm1, int atm2, int atm3, int atm4, Real &Kphi, Real &phi0, Real &phi_step );
+		int atm1, int atm2, int atm3, int atm4, Real &Kphi, Real &phi0, Real &phi_step );
 
 	// old-style interface to database
 	void
 	lookup_angle_legacy( core::pose::Pose const & pose, core::conformation::Residue const & res,
-		   int atm1, int atm2, int atm3, Real &Ktheta, Real &d0);
+		int atm1, int atm2, int atm3, Real &Ktheta, Real &d0);
 
 	// old-style interface to database
 	void
@@ -331,7 +331,7 @@ private:
 	Real k_length_, k_angle_, k_torsion_, k_torsion_proton_, k_torsion_improper_;
 
 	// backbone-independent parameters (keyed on atom names)
-	boost::unordered_map< atm_name_quad, 	CartBondedParametersOP > torsions_indep_;
+	boost::unordered_map< atm_name_quad,  CartBondedParametersOP > torsions_indep_;
 	boost::unordered_map< atm_name_triple, CartBondedParametersOP > bondangles_indep_;
 	boost::unordered_map< atm_name_pair, CartBondedParametersOP > bondlengths_indep_;
 
@@ -370,7 +370,7 @@ public:
 	EnergyMethodOP
 	clone() const;
 
-	virtual	void
+	virtual void
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
 
 	virtual void
@@ -393,7 +393,7 @@ public:
 	) const;
 
 
-	virtual	void
+	virtual void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
@@ -483,7 +483,7 @@ private:
 	//    rather than defined in intrares energy
 	void
 	eval_singleres_energy(
-	  conformation::Residue const & rsd,
+		conformation::Residue const & rsd,
 		ResidueCartBondedParameters const & rsdparams,
 		Real phi,
 		Real psi,
@@ -706,8 +706,8 @@ private:
 	) const;
 
 	/// @brief evaluate inter-residue improper torsion derivatives
- 	void
- 	eval_improper_torsion_derivatives(
+	void
+	eval_improper_torsion_derivatives(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		ResidueCartBondedParameters const & res1params,
@@ -715,7 +715,7 @@ private:
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
- 	) const;
+	) const;
 
 	////////////////////////////////////////////////////////////////////
 	/// Common to evaluating the score for torsions, angles, and lengths

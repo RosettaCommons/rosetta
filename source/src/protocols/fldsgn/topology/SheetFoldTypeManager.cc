@@ -111,7 +111,7 @@ SheetFoldTypeManager::setup_foldtype_names()
 	foldtype2name_.resize( n_fold_types );
 
 	for ( std::map< String, SheetFoldType >::const_iterator iter = name2foldtype_.begin(),
-					iter_end = name2foldtype_.end(); iter != iter_end; ++iter ) {
+			iter_end = name2foldtype_.end(); iter != iter_end; ++iter ) {
 		foldtype2name_[ iter->second ] = iter->first;
 	}
 
@@ -121,7 +121,7 @@ SheetFoldTypeManager::setup_foldtype_names()
 SheetFoldType
 SheetFoldTypeManager::foldtype_from_name( String const & name )
 {
-	if( ! initialized_ ) initialize();
+	if ( ! initialized_ ) initialize();
 	std::map< String, SheetFoldType >::const_iterator iter( name2foldtype_.find( name ) );
 	if ( iter == name2foldtype_.end() ) {
 		utility_exit_with_message("unrecognized foldtype type "+name);
@@ -133,7 +133,7 @@ SheetFoldTypeManager::foldtype_from_name( String const & name )
 std::string
 SheetFoldTypeManager::name_from_foldtype( SheetFoldType foldtype )
 {
-	if( ! initialized_ ) initialize();
+	if ( ! initialized_ ) initialize();
 	return foldtype2name_[ foldtype ];
 }
 
@@ -141,7 +141,7 @@ SheetFoldTypeManager::name_from_foldtype( SheetFoldType foldtype )
 bool
 SheetFoldTypeManager::is_foldtype( String const & name )
 {
-	if( ! initialized_ ) initialize();
+	if ( ! initialized_ ) initialize();
 	std::map< String, SheetFoldType >::const_iterator iter( name2foldtype_.find( name ) );
 	return iter != name2foldtype_.end();
 }
@@ -209,7 +209,7 @@ SheetFoldTypeManager::setup_foldtype_strand_pairings()
 	foldtype2spairs_.resize( n_fold_types );
 
 	for ( std::map< String, SheetFoldType >::const_iterator iter = spairs2foldtype_.begin(),
-					iter_end = spairs2foldtype_.end(); iter != iter_end; ++iter ) {
+			iter_end = spairs2foldtype_.end(); iter != iter_end; ++iter ) {
 		foldtype2spairs_[ iter->second ] = iter->first;
 
 	}
@@ -220,7 +220,7 @@ SheetFoldTypeManager::setup_foldtype_strand_pairings()
 SheetFoldType
 SheetFoldTypeManager::foldtype_from_spairs( String const & spairs )
 {
-	if( ! initialized_ ) initialize();
+	if ( ! initialized_ ) initialize();
 	std::map< String, SheetFoldType >::const_iterator iter( spairs2foldtype_.find( spairs ) );
 	if ( iter == spairs2foldtype_.end() ) {
 		return UNKNOWN;
@@ -234,7 +234,7 @@ SheetFoldTypeManager::foldtype_from_spairs( String const & spairs )
 std::string
 SheetFoldTypeManager::spairs_from_foldtype( SheetFoldType foldtype )
 {
-	if( ! initialized_ ) initialize();
+	if ( ! initialized_ ) initialize();
 	return foldtype2spairs_[ foldtype ];
 }
 
@@ -242,7 +242,7 @@ SheetFoldTypeManager::spairs_from_foldtype( SheetFoldType foldtype )
 bool
 SheetFoldTypeManager::is_sparis_foldtype( String const & spairs )
 {
-	if( ! initialized_ ) initialize();
+	if ( ! initialized_ ) initialize();
 	std::map< String, SheetFoldType >::const_iterator iter( spairs2foldtype_.find( spairs ) );
 	return iter != spairs2foldtype_.end();
 }

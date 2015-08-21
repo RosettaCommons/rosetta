@@ -10,7 +10,7 @@
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -47,34 +47,34 @@ namespace protocols {
 namespace evaluation {
 
 class PCA : public utility::pointer::ReferenceCount {
-  typedef ObjexxFCL::FArray2D< core::Real > CoordVector;
-  typedef utility::vector1< core::id::AtomID > IndexVector;
-// this code is stolen from GROMACS. Hence some unfamiliar definitions
-  typedef core::Real matrix[3][3];
-  typedef core::Real rvec[3];
+	typedef ObjexxFCL::FArray2D< core::Real > CoordVector;
+	typedef utility::vector1< core::id::AtomID > IndexVector;
+	// this code is stolen from GROMACS. Hence some unfamiliar definitions
+	typedef core::Real matrix[3][3];
+	typedef core::Real rvec[3];
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~PCA();
-  typedef utility::vector1< core::Real > ProjectionVector;
+	typedef utility::vector1< core::Real > ProjectionVector;
 
-  void read_eigvec_file( std::string fn, core::pose::Pose const& pose, int nvec = -1 );
-  void eval( core::pose::Pose const& pose, ProjectionVector& proj );
-  void show( std::ostream& );
+	void read_eigvec_file( std::string fn, core::pose::Pose const& pose, int nvec = -1 );
+	void eval( core::pose::Pose const& pose, ProjectionVector& proj );
+	void show( std::ostream& );
 private:
-  void read_structure ( std::istream& data, core::pose::Pose const& pose, IndexVector& ind, CoordVector& x, std::string endtag );
-  void fill_coordinates( core::pose::Pose const& pose, IndexVector const& ind, CoordVector & x );
-  void reset_x( Size n, CoordVector& x, rvec trans );
-  void jacobi(double a[6][6],double d[],double v[6][6],int *nrot);
-  void calc_fit_R(int natoms,rvec *xp,rvec const* x,matrix R);
-  void rotate_vec(int natoms,rvec *x,matrix R);
-  void add_vec( int natoms, rvec *x, rvec transvec );
-  void oprod(const rvec a,const rvec b,rvec c);
-  CoordVector xref_;
-  CoordVector xav_;
-  IndexVector ifit_;
-  IndexVector ipca_;
-  ObjexxFCL::FArray3D< core::Real > eigvec_;
-  Size nfit_, npca_, nvec_;
+	void read_structure ( std::istream& data, core::pose::Pose const& pose, IndexVector& ind, CoordVector& x, std::string endtag );
+	void fill_coordinates( core::pose::Pose const& pose, IndexVector const& ind, CoordVector & x );
+	void reset_x( Size n, CoordVector& x, rvec trans );
+	void jacobi(double a[6][6],double d[],double v[6][6],int *nrot);
+	void calc_fit_R(int natoms,rvec *xp,rvec const* x,matrix R);
+	void rotate_vec(int natoms,rvec *x,matrix R);
+	void add_vec( int natoms, rvec *x, rvec transvec );
+	void oprod(const rvec a,const rvec b,rvec c);
+	CoordVector xref_;
+	CoordVector xav_;
+	IndexVector ifit_;
+	IndexVector ipca_;
+	ObjexxFCL::FArray3D< core::Real > eigvec_;
+	Size nfit_, npca_, nvec_;
 };
 
 }

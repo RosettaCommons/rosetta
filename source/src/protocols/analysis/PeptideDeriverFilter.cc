@@ -98,13 +98,13 @@ void PeptideDeriverOutputterContainer::clear() {
 }
 
 void PeptideDeriverOutputterContainer::begin_structure(core::pose::Pose const & pose, std::string const &name) {
-	BOOST_FOREACH( PeptideDeriverOutputterOP const outputter, list_ ) {
+	BOOST_FOREACH ( PeptideDeriverOutputterOP const outputter, list_ ) {
 		outputter->begin_structure(pose, name);
 	}
 }
 
 void PeptideDeriverOutputterContainer::chain_pair_pose_prepared(core::pose::Pose const & pose) {
-	BOOST_FOREACH( PeptideDeriverOutputterOP const outputter, list_ ) {
+	BOOST_FOREACH ( PeptideDeriverOutputterOP const outputter, list_ ) {
 		outputter->chain_pair_pose_prepared(pose);
 	}
 }
@@ -112,32 +112,32 @@ void PeptideDeriverOutputterContainer::chain_pair_pose_prepared(core::pose::Pose
 void PeptideDeriverOutputterContainer::begin_receptor_partner_pair(char const receptor_chain_letter,
 	char const partner_chain_letter, core::Real const total_isc,
 	std::string const & options_string) {
-	BOOST_FOREACH( PeptideDeriverOutputterOP const outputter, list_ ) {
+	BOOST_FOREACH ( PeptideDeriverOutputterOP const outputter, list_ ) {
 		outputter->begin_receptor_partner_pair(receptor_chain_letter, partner_chain_letter, total_isc, options_string);
 	}
 }
 
 void PeptideDeriverOutputterContainer::peptide_length(core::Size const pep_length) {
-	BOOST_FOREACH( PeptideDeriverOutputterOP const outputter, list_ ) {
+	BOOST_FOREACH ( PeptideDeriverOutputterOP const outputter, list_ ) {
 		outputter->peptide_length(pep_length);
 	}
 }
 
 void PeptideDeriverOutputterContainer::peptide_entry(core::pose::Pose const & pose, PeptideDeriverEntryType const entry_type, core::Size const pep_start,
 	core::Real const linear_isc, std::string const & disulfide_info, bool const was_cyclic_pep_modeled, core::pose::Pose const & cyclic_pose, core::Real const cyclic_isc) {
-	BOOST_FOREACH( PeptideDeriverOutputterOP const outputter, list_ ) {
+	BOOST_FOREACH ( PeptideDeriverOutputterOP const outputter, list_ ) {
 		outputter->peptide_entry(pose, entry_type, pep_start, linear_isc, disulfide_info, was_cyclic_pep_modeled, cyclic_pose, cyclic_isc);
 	}
 }
 
 void PeptideDeriverOutputterContainer::end_receptor_partner_pair() {
-	BOOST_FOREACH( PeptideDeriverOutputterOP const outputter, list_ ) {
+	BOOST_FOREACH ( PeptideDeriverOutputterOP const outputter, list_ ) {
 		outputter->end_receptor_partner_pair();
 	}
 }
 
 void PeptideDeriverOutputterContainer::end_structure() {
-	BOOST_FOREACH( PeptideDeriverOutputterOP const outputter, list_ ) {
+	BOOST_FOREACH ( PeptideDeriverOutputterOP const outputter, list_ ) {
 		outputter->end_structure();
 	}
 }
@@ -254,9 +254,9 @@ void PeptideDeriverMarkdownStreamOutputter::peptide_length(core::Size const pep_
 	current_pep_length_ = pep_length;
 
 	all_peptides_ << ( boost::format("### Receptor= %1% Partner= %2% Peptide_length= %3%")
-			% current_receptor_chain_letter_
-			% current_partner_chain_letter_
-			% current_pep_length_ ) << std::endl
+		% current_receptor_chain_letter_
+		% current_partner_chain_letter_
+		% current_pep_length_ ) << std::endl
 		<< prefix_ << "- Total interface score: " << current_total_isc_ << std::endl
 		<< prefix_ << std::endl
 		<< prefix_ << "| Position | Interface score | Disulfide info               | Cyclized interface score |" << std::endl
@@ -271,46 +271,46 @@ void PeptideDeriverMarkdownStreamOutputter::peptide_entry(core::pose::Pose const
 	core::Size const PEPTIDE_CHAIN = 2;
 
 	switch (entry_type) {
-		case ET_BEST_LINEAR:
-			best_linear_peptides_ << prefix_ << ( boost::format( "| %1$-8c | %2$-7c | %3$-14d | %4$-8d | %5$-15.3f | %6$-28s | %7$-24s | %8$-20s |" )
-					% current_receptor_chain_letter_
-					% current_partner_chain_letter_
-					% current_pep_length_
-					% pep_start
-					% linear_isc
-					% disulfide_info
-					% cyclic_isc_string
-					% pose.chain_sequence(PEPTIDE_CHAIN) ) << std::endl;
+	case ET_BEST_LINEAR :
+		best_linear_peptides_ << prefix_ << ( boost::format( "| %1$-8c | %2$-7c | %3$-14d | %4$-8d | %5$-15.3f | %6$-28s | %7$-24s | %8$-20s |" )
+			% current_receptor_chain_letter_
+			% current_partner_chain_letter_
+			% current_pep_length_
+			% pep_start
+			% linear_isc
+			% disulfide_info
+			% cyclic_isc_string
+			% pose.chain_sequence(PEPTIDE_CHAIN) ) << std::endl;
 
-			// the best linear peptide signals the end of a run for a certain chain pair in certain roles
-			// add a separator at the end of the table for the 'general' peptides
-			all_peptides_ << prefix_ << "---" << std::endl
-				<< prefix_ << std::endl;
-			break;
+		// the best linear peptide signals the end of a run for a certain chain pair in certain roles
+		// add a separator at the end of the table for the 'general' peptides
+		all_peptides_ << prefix_ << "---" << std::endl
+			<< prefix_ << std::endl;
+		break;
 
-		case ET_BEST_CYCLIC:
-			best_cyclic_peptides_ << prefix_ << ( boost::format( "| %1$-8c | %2$-7c | %3$-14d | %4$-8d | %5$-15.3f | %6$-28s | %7$-24s | %8$-20s |" )
-					% current_receptor_chain_letter_
-					% current_partner_chain_letter_
-					% current_pep_length_
-					% pep_start
-					% linear_isc
-					% disulfide_info
-					% cyclic_isc_string
-					% pose.chain_sequence(PEPTIDE_CHAIN) ) << std::endl;
+	case ET_BEST_CYCLIC :
+		best_cyclic_peptides_ << prefix_ << ( boost::format( "| %1$-8c | %2$-7c | %3$-14d | %4$-8d | %5$-15.3f | %6$-28s | %7$-24s | %8$-20s |" )
+			% current_receptor_chain_letter_
+			% current_partner_chain_letter_
+			% current_pep_length_
+			% pep_start
+			% linear_isc
+			% disulfide_info
+			% cyclic_isc_string
+			% pose.chain_sequence(PEPTIDE_CHAIN) ) << std::endl;
 
-			break;
+		break;
 
-		case ET_GENERAL:
-			all_peptides_ << prefix_ << ( boost::format( "| %1$-8d | %2$-15.3f | %3$-28s | %4$-24s |" )
-					% pep_start
-					% linear_isc
-					% disulfide_info
-					% cyclic_isc_string ) << std::endl;
-			break;
+	case ET_GENERAL :
+		all_peptides_ << prefix_ << ( boost::format( "| %1$-8d | %2$-15.3f | %3$-28s | %4$-24s |" )
+			% pep_start
+			% linear_isc
+			% disulfide_info
+			% cyclic_isc_string ) << std::endl;
+		break;
 
-		default: // should never happen; means code wasn't written well
-			utility_exit_with_message("Invalid enum value provided for entry_type");
+	default : // should never happen; means code wasn't written well
+		utility_exit_with_message("Invalid enum value provided for entry_type");
 	}
 }
 
@@ -329,21 +329,20 @@ void PeptideDeriverPoseOutputter::output_pose( core::pose::Pose & pose, std::str
 	if ( protocols::jd2::jd2_used() ) {
 		protocols::jd2::JobOP current_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 		protocols::jd2::JobDistributor::get_instance()->job_outputter()->other_pose( current_job, pose, pose_name );
-	}
-	else {
+	} else {
 		std::string const file_name(pose_name + ".pdb");
-	    utility::io::ozstream out_stream( file_name );
+		utility::io::ozstream out_stream( file_name );
 		core::io::pdb::FileData::dump_pdb( pose, out_stream );
 	}
 }
 
 PeptideDeriverPoseOutputter::PeptideDeriverPoseOutputter( bool const is_dump_best_peptide_pose,
-		bool const is_dump_prepared_pose, bool const is_dump_cyclic_poses,
-		core::scoring::ScoreFunctionCOP scorefxn) :
-		is_dump_best_peptide_pose_(is_dump_best_peptide_pose),
-		is_dump_prepared_pose_(is_dump_prepared_pose),
-		is_dump_cyclic_poses_(is_dump_cyclic_poses),
-		scorefxn_(scorefxn) { }
+	bool const is_dump_prepared_pose, bool const is_dump_cyclic_poses,
+	core::scoring::ScoreFunctionCOP scorefxn) :
+	is_dump_best_peptide_pose_(is_dump_best_peptide_pose),
+	is_dump_prepared_pose_(is_dump_prepared_pose),
+	is_dump_cyclic_poses_(is_dump_cyclic_poses),
+	scorefxn_(scorefxn) { }
 
 void PeptideDeriverPoseOutputter::chain_pair_pose_prepared(core::pose::Pose const & pose) {
 	// note: we use the term 'prepared' and 'minimized' interchangeably
@@ -384,32 +383,31 @@ void PeptideDeriverPoseOutputter::peptide_length(core::Size const pep_length) {
 void PeptideDeriverPoseOutputter::peptide_entry(core::pose::Pose const & pose, PeptideDeriverEntryType const entry_type, core::Size const,
 	core::Real const, std::string const & disulfide_info, bool const was_cyclic_pep_modeled, core::pose::Pose const & cyclic_pose, core::Real const) {
 
-	if (is_dump_best_peptide_pose_ && (entry_type == ET_BEST_LINEAR || (entry_type == ET_BEST_CYCLIC && was_cyclic_pep_modeled))) {
+	if ( is_dump_best_peptide_pose_ && (entry_type == ET_BEST_LINEAR || (entry_type == ET_BEST_CYCLIC && was_cyclic_pep_modeled)) ) {
 		std::string const lin_pose_name = ( boost::format("receptor%1%_partner%2%_%3%aa_best_%4%_linear_peptide")
-					% current_receptor_chain_letter_
-					% current_partner_chain_letter_
-					% current_peptide_length_
-					% (entry_type == ET_BEST_LINEAR? "linear" : "cyclic") ).str();
+			% current_receptor_chain_letter_
+			% current_partner_chain_letter_
+			% current_peptide_length_
+			% (entry_type == ET_BEST_LINEAR? "linear" : "cyclic") ).str();
 		core::pose::Pose temp_pose(pose);
 		output_pose(temp_pose, lin_pose_name);
 
 		if ( was_cyclic_pep_modeled ) {
 			std::string const cyc_pose_name = ( boost::format("receptor%1%_partner%2%_%3%aa_best_%4%_cyclic_peptide")
-						% current_receptor_chain_letter_
-						% current_partner_chain_letter_
-						% current_peptide_length_
-						% (entry_type == ET_BEST_LINEAR? "linear" : "cyclic") ).str();
+				% current_receptor_chain_letter_
+				% current_partner_chain_letter_
+				% current_peptide_length_
+				% (entry_type == ET_BEST_LINEAR? "linear" : "cyclic") ).str();
 			core::pose::Pose temp_cyclic_pose(cyclic_pose);
 			output_pose(temp_cyclic_pose, cyc_pose_name);
 		}
 
-	}
-	else if (is_dump_cyclic_poses_ && entry_type == ET_GENERAL && was_cyclic_pep_modeled) {
+	} else if ( is_dump_cyclic_poses_ && entry_type == ET_GENERAL && was_cyclic_pep_modeled ) {
 		std::string const pose_name = ( boost::format("receptor%1%_partner%2%_%3%aa_%4%_cyclic_peptide")
-					% current_receptor_chain_letter_
-					% current_partner_chain_letter_
-					% current_peptide_length_
-					% disulfide_info ).str();
+			% current_receptor_chain_letter_
+			% current_partner_chain_letter_
+			% current_peptide_length_
+			% disulfide_info ).str();
 		core::pose::Pose temp_pose(cyclic_pose);
 		output_pose(temp_pose, pose_name);
 	}
@@ -427,7 +425,7 @@ void PeptideDeriverPoseOutputter::peptide_entry(core::pose::Pose const & pose, P
 
 // NOTE : based on LoopMover version
 PeptideDeriverFilter & PeptideDeriverFilter::operator=( PeptideDeriverFilter const & rhs ) {
-	if (this == &rhs) return *this;
+	if ( this == &rhs ) return *this;
 
 	// NOTE : if Filter will have an operator=, call it:
 	// Filter::operator=(rhs);
@@ -454,13 +452,13 @@ void PeptideDeriverFilter::parse_options() {
 
 	utility::vector1<char> restrict_receptors_to_chains;
 
-	BOOST_FOREACH(std::string const chain_string, basic::options::option[basic::options::OptionKeys::peptide_deriver::restrict_receptors_to_chains]()){
+	BOOST_FOREACH ( std::string const chain_string, basic::options::option[basic::options::OptionKeys::peptide_deriver::restrict_receptors_to_chains]() ) {
 		assert(chain_string.size() == 1);
 		restrict_receptors_to_chains.push_back(chain_string[0]);
 	}
 
 	utility::vector1<char> restrict_partners_to_chains;
-	BOOST_FOREACH(std::string const chain_string, basic::options::option[basic::options::OptionKeys::peptide_deriver::restrict_partners_to_chains]()){
+	BOOST_FOREACH ( std::string const chain_string, basic::options::option[basic::options::OptionKeys::peptide_deriver::restrict_partners_to_chains]() ) {
 		assert(chain_string.size() == 1);
 		restrict_partners_to_chains.push_back(chain_string[0]);
 	}
@@ -470,7 +468,7 @@ void PeptideDeriverFilter::parse_options() {
 }
 
 PeptideDeriverFilter::PeptideDeriverFilter() :
-		Filter("PeptideDeriverFilter") {
+	Filter("PeptideDeriverFilter") {
 	// this is currently redundant, since we always read the options (parse_options())
 	// and this is the default specified in options_rosetta.py, but I left it here
 	// so that if options are moved out of the ctor, it would be clear that it's probably
@@ -505,7 +503,7 @@ PeptideDeriverFilter::assign(PeptideDeriverFilter & lhs, PeptideDeriverFilter co
 }
 
 PeptideDeriverFilter::PeptideDeriverFilter(PeptideDeriverFilter const & rhs) :
-		Filter(rhs) {
+	Filter(rhs) {
 	PeptideDeriverFilter::assign(*this, rhs);
 }
 
@@ -516,21 +514,21 @@ PeptideDeriverFilter::minimize(core::pose::Pose & pose) const {
 	// set native constraints prior to minimization
 
 	core::scoring::constraints::ConstraintSetOP cst_set(
-			new core::scoring::constraints::ConstraintSet());
+		new core::scoring::constraints::ConstraintSet());
 	core::scoring::func::HarmonicFuncOP spring(
-			new core::scoring::func::HarmonicFunc(
-				0, // mean
-				1  // std. dev
-			));
+		new core::scoring::func::HarmonicFunc(
+		0, // mean
+		1  // std. dev
+		));
 	core::conformation::Conformation const & conformation(pose.conformation());
-	for (core::Size i = 1; i <= pose.total_residue(); ++i) {
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		if ( ! pose.residue(i).is_protein() ) {
 			continue;
 		}
 		core::id::AtomID CAi( pose.residue(i).atom_index("CA"), i );
 		cst_set->add_constraint( core::scoring::constraints::ConstraintCOP(
-				new core::scoring::constraints::CoordinateConstraint( CAi, CAi,
-					conformation.xyz( CAi ), spring ) ) );
+			new core::scoring::constraints::CoordinateConstraint( CAi, CAi,
+			conformation.xyz( CAi ), spring ) ) );
 	}
 	pose.constraint_set( cst_set );
 
@@ -542,7 +540,7 @@ PeptideDeriverFilter::minimize(core::pose::Pose & pose) const {
 	// TODO : consider using whatever is mentioned in -run:min_type and -run:min_tolerance
 	//        and maybe change the defaults to this for Peptiderive app
 	protocols::simple_moves::MinMover minimizer( movemap, scorefxn_minimizer_,
-			"dfpmin_armijo_atol", 0.01, true /*nb_list*/ );
+		"dfpmin_armijo_atol", 0.01, true /*nb_list*/ );
 
 	// minimize pose
 	minimizer.apply( pose );
@@ -552,8 +550,8 @@ PeptideDeriverFilter::minimize(core::pose::Pose & pose) const {
 // this filter doesn't do any filtering, only reporting
 bool
 PeptideDeriverFilter::apply(
-		core::pose::Pose const & // pose - unused
-	) const {
+	core::pose::Pose const & // pose - unused
+) const {
 
 	// we do nothing here
 	// the interesting stuff happens in PeptideDeriverFilter::report()
@@ -563,7 +561,7 @@ PeptideDeriverFilter::apply(
 
 PeptideDeriverReportFormat
 PeptideDeriverFilter::parse_report_format_string(
-		std::string const value) {
+	std::string const value) {
 	if ( value == "markdown" ) {
 		return PRF_MARKDOWN;
 	}
@@ -579,12 +577,12 @@ PeptideDeriverFilter::parse_report_format_string(
 /// @param pose the pose to prepare.
 void
 PeptideDeriverFilter::prepare_pose(
-		PeptideDeriverOutputter & ,
-		core::pose::Pose & pose) const {
+	PeptideDeriverOutputter & ,
+	core::pose::Pose & pose) const {
 	// check number of chains
-	if (pose.conformation().num_chains() < 2) {
+	if ( pose.conformation().num_chains() < 2 ) {
 		throw utility::excn::EXCN_Msg_Exception(
-				"Input PDB contains less than 2 chains.");
+			"Input PDB contains less than 2 chains.");
 	}
 
 	if ( is_do_minimize_ ) {
@@ -627,17 +625,17 @@ PeptideDeriverFilter::report(std::ostream & out, core::pose::Pose const & orig_p
 	PeptideDeriverOutputterContainer output;
 
 	utility::io::orstream & output_stream = ( is_dump_report_file_?
-                (utility::io::orstream &)file_out :
-                (utility::io::orstream &)log_out );
+		(utility::io::orstream &)file_out :
+		(utility::io::orstream &)log_out );
 
- 	// this is simpler than creating a full-fledged factory. Sorry, design pattern people. --yuvals
+	// this is simpler than creating a full-fledged factory. Sorry, design pattern people. --yuvals
 	switch ( report_format_ ) {
-		case PRF_MARKDOWN:
-			output.push_back( PeptideDeriverOutputterOP( new PeptideDeriverMarkdownStreamOutputter( output_stream , /*prefix=*/"" ) ) );
-			break;
-		case PRF_BASIC:
-			output.push_back( PeptideDeriverOutputterOP( new PeptideDeriverBasicStreamOutputter( output_stream , /*prefix=*/"" ) ) );
-			break;
+	case PRF_MARKDOWN :
+		output.push_back( PeptideDeriverOutputterOP( new PeptideDeriverMarkdownStreamOutputter( output_stream , /*prefix=*/"" ) ) );
+		break;
+	case PRF_BASIC :
+		output.push_back( PeptideDeriverOutputterOP( new PeptideDeriverBasicStreamOutputter( output_stream , /*prefix=*/"" ) ) );
+		break;
 	}
 
 
@@ -648,7 +646,7 @@ PeptideDeriverFilter::report(std::ostream & out, core::pose::Pose const & orig_p
 			<< "cyclic=" << is_dump_cyclic_poses_ << ")"
 			<< std::endl;
 		output.push_back( PeptideDeriverOutputterOP( new PeptideDeriverPoseOutputter( is_dump_peptide_pose_,
-				is_dump_prepared_pose_, is_dump_cyclic_poses_, scorefxn_deriver_ ) ) );
+			is_dump_prepared_pose_, is_dump_cyclic_poses_, scorefxn_deriver_ ) ) );
 	}
 
 	// prepare the PDB
@@ -670,11 +668,11 @@ PeptideDeriverFilter::report(std::ostream & out, core::pose::Pose const & orig_p
 	utility::vector1<core::Size> already_done_both_ways;
 
 	// go through all requested chains
-	BOOST_FOREACH( core::Size const receptor_chain, receptor_chain_indices ){
+	BOOST_FOREACH ( core::Size const receptor_chain, receptor_chain_indices ) {
 
 		bool is_receptor_also_partner = partner_chain_indices.contains(receptor_chain);
 
-		BOOST_FOREACH( core::Size const partner_chain, partner_chain_indices ){
+		BOOST_FOREACH ( core::Size const partner_chain, partner_chain_indices ) {
 			if ( receptor_chain == partner_chain ) {
 				continue;
 			}
@@ -687,8 +685,7 @@ PeptideDeriverFilter::report(std::ostream & out, core::pose::Pose const & orig_p
 				if ( !already_done_both_ways.contains(partner_chain) ) {
 					derive_peptide( output, orig_pose, receptor_chain, partner_chain, /* both_ways = */ true);
 				}
-			}
-			else {
+			} else {
 				derive_peptide( output, orig_pose, receptor_chain, partner_chain, /* both_ways = */ false );
 			}
 		}
@@ -716,9 +713,8 @@ PeptideDeriverFilter::get_chain_indices(core::pose::Pose const & pose, utility::
 		for ( core::Size i = 1; i <= chain_count; ++i ) {
 			chain_indices.push_back(i);
 		}
-	}
-	else {
-		BOOST_FOREACH( char const chain_char, restrict_to_chains ){
+	} else {
+		BOOST_FOREACH ( char const chain_char, restrict_to_chains ) {
 			chain_indices.push_back( core::pose::get_chain_id_from_chain( chain_char, pose ) );
 		}
 	}
@@ -729,12 +725,12 @@ PeptideDeriverFilter::get_chain_indices(core::pose::Pose const & pose, utility::
 /// Pushes the residue indices belonging to the specified chain index into a given vector.
 void
 PeptideDeriverFilter::push_chain_residue_indices(core::pose::Pose const & many_chain_pose,
-		core::Size const chain_index, utility::vector1<core::Size> & residue_indices ) {
+	core::Size const chain_index, utility::vector1<core::Size> & residue_indices ) {
 
 	core::Size chain_begin = many_chain_pose.conformation().chain_begin( chain_index );
 	core::Size chain_end = many_chain_pose.conformation().chain_end( chain_index );
 
-	for (core::Size i = chain_begin; i <= chain_end; ++i) {
+	for ( core::Size i = chain_begin; i <= chain_end; ++i ) {
 		residue_indices.push_back( i );
 	}
 
@@ -752,11 +748,11 @@ PeptideDeriverFilter::push_chain_residue_indices(core::pose::Pose const & many_c
 
 void
 PeptideDeriverFilter::derive_peptide(
-		PeptideDeriverOutputter & output,
-		core::pose::Pose const & pose,
-		core::Size const first_chain_index,
-		core::Size const second_chain_index,
-		bool const both_ways ) const {
+	PeptideDeriverOutputter & output,
+	core::pose::Pose const & pose,
+	core::Size const first_chain_index,
+	core::Size const second_chain_index,
+	bool const both_ways ) const {
 
 	// create a subpose with only the two chains
 	utility::vector1<core::Size> residue_indices;
@@ -805,10 +801,10 @@ PeptideDeriverFilter::derive_peptide(
 ///       peptide will be derived, the partner.
 void
 PeptideDeriverFilter::derive_peptide(
-		PeptideDeriverOutputter & output,
-		core::pose::Pose const & receptor_pose,
-		core::pose::Pose const & partner_pose,
-		core::Real const total_isc ) const {
+	PeptideDeriverOutputter & output,
+	core::pose::Pose const & receptor_pose,
+	core::pose::Pose const & partner_pose,
+	core::Real const total_isc ) const {
 
 	core::Size receptor_start = receptor_pose.conformation().chain_begin(1);
 	//core::Size receptor_end = receptor_pose.conformation().chain_end(1);
@@ -823,8 +819,8 @@ PeptideDeriverFilter::derive_peptide(
 
 	// show options which have an effect on the way we're running
 	options_string << "pep_lengths= "        << utility::join(pep_lengths_, ",") << " "
-				<< "is_skip_zero_isc= "      << is_skip_zero_isc_                << " "
-				<< "is_do_minimize= "        << is_do_minimize_                  ;
+		<< "is_skip_zero_isc= "      << is_skip_zero_isc_                << " "
+		<< "is_do_minimize= "        << is_do_minimize_                  ;
 
 	tracer << "Begin receptor-partner pair " << receptor_chain_letter << partner_chain_letter << std::endl;
 	output.begin_receptor_partner_pair(receptor_chain_letter, partner_chain_letter, total_isc, options_string.str());
@@ -842,9 +838,9 @@ PeptideDeriverFilter::derive_peptide(
 	// TODO : perhaps we want the jump in the movemap that DisulfideInsertionMover uses to be user-defined (command-line option), to prevent the peptide from escaping the binding pocket
 	protocols::simple_moves::DisulfideInsertionMoverOP disulfide_inserter( new protocols::simple_moves::DisulfideInsertionMover(peptide_chain) );
 
-	BOOST_FOREACH( core::Size const pep_length, pep_lengths_ ){
+	BOOST_FOREACH ( core::Size const pep_length, pep_lengths_ ) {
 
-		if (pep_length > (partner_end - partner_start + 1)) {
+		if ( pep_length > (partner_end - partner_start + 1) ) {
 			tracer << "Skip peptide length " << pep_length << " as it is larger than the chain" << std::endl;
 			continue;
 		}
@@ -882,22 +878,22 @@ PeptideDeriverFilter::derive_peptide(
 		// keep track of the next chain break
 		utility::vector1<core::Size>::const_iterator next_cutpoint_it = partner_cutpoints.begin();
 		/*
-			pseudo-code for better handling of non-protein residues :
-			bool[partner_length] valid_start_points;
-			foreach ( residue in partner_pose ) {
-				if ( (! residue.is_protein()) || residue.is_cutpoint() ) {
-					valid_start_points.set_range(residue.index-pep_length, pep_length, false); // make sure indexes work out
-				}
-			}
+		pseudo-code for better handling of non-protein residues :
+		bool[partner_length] valid_start_points;
+		foreach ( residue in partner_pose ) {
+		if ( (! residue.is_protein()) || residue.is_cutpoint() ) {
+		valid_start_points.set_range(residue.index-pep_length, pep_length, false); // make sure indexes work out
+		}
+		}
 		*/
 
-		for (core::Size pep_start = partner_start; pep_start <= partner_end - pep_length + 1; ++pep_start) {
+		for ( core::Size pep_start = partner_start; pep_start <= partner_end - pep_length + 1; ++pep_start ) {
 			core::Size pep_end = pep_start + pep_length - 1;
 
 			// TODO : skip windows with non-protein residues
 			/*
-				pseudo-code for better handling of non-protein residues :
-				if ( ! valid_start_point[pep_start] ) continue;
+			pseudo-code for better handling of non-protein residues :
+			if ( ! valid_start_point[pep_start] ) continue;
 			*/
 
 			// skip sequences which have cutpoints
@@ -924,7 +920,7 @@ PeptideDeriverFilter::derive_peptide(
 			const core::Real linear_isc = calculate_interface_score(*receptor_peptide_pose, linear_jump_id);
 
 			// skip zero linear_isc if requested
-			if ((is_skip_zero_isc_) && (fabs(linear_isc) < PRACTICALLY_ZERO_ISC)) {
+			if ( (is_skip_zero_isc_) && (fabs(linear_isc) < PRACTICALLY_ZERO_ISC) ) {
 				tracer << "Skip " << pep_start << "-" << pep_end << ", zero (linear) isc" << std::endl;
 				// we skipped a couple of residues, so make sure that the next_cutpoint_it is updated
 				while ( (next_cutpoint_it != partner_cutpoints.end()) && (*next_cutpoint_it < pep_end) ) {
@@ -945,17 +941,17 @@ PeptideDeriverFilter::derive_peptide(
 			core::Real cyclic_isc = UNLIKELY_ISC_VALUE;
 			core::pose::PoseOP receptor_cyclic_peptide_pose = receptor_peptide_pose; // NOTE : this is a dummy value so that we don't dereference NULL; see below
 			core::pose::PoseOP receptor_pre_cyclization_peptide_pose = receptor_peptide_pose; // NOTE : this is a dummy value so that we don't dereference NULL; see below
-			if ((linear_isc<CHECK_CYCLIZABLE_THRESHOLD_ISC) && (n_putative_cyd>=partner_start) && (c_putative_cyd<=partner_end)) {
+			if ( (linear_isc<CHECK_CYCLIZABLE_THRESHOLD_ISC) && (n_putative_cyd>=partner_start) && (c_putative_cyd<=partner_end) ) {
 				protocols::simple_moves::DisulfideCyclizationViability cyclization_viable(disulfide_inserter->determine_cyclization_viability(partner_pose, n_putative_cyd, c_putative_cyd));
 				current_peptide_cyclizable = ( (cyclization_viable == protocols::simple_moves::DCV_CYCLIZABLE) || (cyclization_viable == protocols::simple_moves::DCV_ALREADY_CYCLIZED) );
 
-				if (current_peptide_cyclizable) {
+				if ( current_peptide_cyclizable ) {
 					any_peptide_cyclizable = true;
 
 					disulfide_info << partner_chain_letter << "_" << n_putative_cyd << "-" << c_putative_cyd;
 
 					// For peptides that can be closed and contribute more then third of the binding energy, mutate to cysteins and re-evaluate energy
-					if ((linear_isc / total_isc) >= optimize_cyclic_threshold_) {
+					if ( (linear_isc / total_isc) >= optimize_cyclic_threshold_ ) {
 						// NOTE : see note on linear_jump_id
 						core::Size cyclic_jump_id;
 						receptor_pre_cyclization_peptide_pose = build_receptor_peptide_pose(receptor_pose, partner_pose, n_putative_cyd, c_putative_cyd, cyclic_jump_id);
@@ -969,7 +965,7 @@ PeptideDeriverFilter::derive_peptide(
 						any_peptide_cyclic_model_created = true;
 						current_peptide_cyclic_model_created = true;
 						cyclic_isc = calculate_interface_score(*receptor_cyclic_peptide_pose, cyclic_jump_id);
-				   }
+					}
 				}
 			}
 
@@ -977,7 +973,7 @@ PeptideDeriverFilter::derive_peptide(
 			output.peptide_entry(*receptor_peptide_pose, ET_GENERAL, pep_start, normalize_isc(linear_isc), disulfide_info.str(), /*was_cyclic_pep_modeled=*/cyclic_isc<0, *receptor_cyclic_peptide_pose, normalize_isc(cyclic_isc));
 
 			// save details for the linear peptide that scored best
-			if (linear_isc < lin_isc_of_best_lin) {
+			if ( linear_isc < lin_isc_of_best_lin ) {
 				pep_start_of_best_lin = pep_start;
 				lin_isc_of_best_lin = linear_isc;
 				cyc_isc_of_best_lin = (current_peptide_cyclic_model_created? cyclic_isc : UNLIKELY_ISC_VALUE);
@@ -1021,11 +1017,11 @@ PeptideDeriverFilter::derive_peptide(
 			// If position 20 is compared using the cyclic peptide interface score, this means a cyclic model was produced for it, which means it would be produced for position 30 as well (has a better linear peptide interface score), and position 30 has a better cyclic interface score.
 			// So, if a peptide B has both a better linear peptide interface score and a better cyclic peptide interface score than peptide A, peptide A will never be the best cyclizable peptide.
 
-			if (current_peptide_cyclizable &&
-				(
+			if ( current_peptide_cyclizable &&
+					(
 					(current_peptide_cyclic_model_created && (cyclic_isc < cyc_isc_of_best_cyc)) ||
 					((!any_peptide_cyclic_model_created) && (linear_isc < lin_isc_of_best_cyc))
-				) ) {
+					) ) {
 				pep_start_of_best_cyc = pep_start;
 				lin_isc_of_best_cyc = linear_isc;
 				cyc_isc_of_best_cyc = (current_peptide_cyclic_model_created? cyclic_isc : UNLIKELY_ISC_VALUE);
@@ -1068,7 +1064,7 @@ PeptideDeriverFilter::calculate_interface_score(core::pose::Pose const & pose, c
 
 	//create a Rigid body mover - the mover works on a rigid body jump
 	protocols::rigid::RigidBodyTransMoverOP translate_away(
-			new protocols::rigid::RigidBodyTransMover(unbound_pose, jump_id));
+		new protocols::rigid::RigidBodyTransMover(unbound_pose, jump_id));
 
 	//set the size of the move
 	translate_away->step_size(VERY_LARGE_TRANSLATION);
@@ -1088,10 +1084,10 @@ PeptideDeriverFilter::calculate_interface_score(core::pose::Pose const & pose, c
 /// @param pose a two-monomer pose.
 void
 PeptideDeriverFilter::calculate_per_residue_interface_score(
-		core::pose::Pose & chain_pair_pose,
-		std::set<core::Size> interface_residues,
-		std::ostream & report_out,
-		core::Size const jump_id) const {
+	core::pose::Pose & chain_pair_pose,
+	std::set<core::Size> interface_residues,
+	std::ostream & report_out,
+	core::Size const jump_id) const {
 
 	//seperate the given structure in space using a translate_away mover and score each of the states
 	core::Real const VERY_LARGE_TRANSLATION = 2e6;
@@ -1107,8 +1103,8 @@ PeptideDeriverFilter::calculate_per_residue_interface_score(
 	(*scorefxn_deriver_)(unbound_pair);
 
 	//go over each interface residue and calculate its energetical contribution to binding
-	for(std::set< core::Size >::const_iterator it(interface_residues.begin()), end(interface_residues.end()); it != end; ++it) {
-		 // delta between total energy in the bound and unbound states is in fact the interface score
+	for ( std::set< core::Size >::const_iterator it(interface_residues.begin()), end(interface_residues.end()); it != end; ++it ) {
+		// delta between total energy in the bound and unbound states is in fact the interface score
 		core::Real res_isc = chain_pair_pose.energies().residue_total_energy(*it) - unbound_pair.energies().residue_total_energy(*it);
 		report_out << "residue " << *it << " in chain " << chain_pair_pose.residue(*it).chain() << " has interface score " << res_isc << std::endl;
 	}
@@ -1142,10 +1138,10 @@ PeptideDeriverFilter::normalize_isc(core::Real const isc) {
 /// @param peptide_start starting position in the partner pose to cut from
 /// @param peptide_end   last position in the partner pose to be cut out
 core::pose::PoseOP PeptideDeriverFilter::build_receptor_peptide_pose(core::pose::Pose const & receptor_pose,
-		core::pose::Pose const & partner_pose,
-		core::Size peptide_start,
-		core::Size peptide_end,
-		core::Size & jump_id) const {
+	core::pose::Pose const & partner_pose,
+	core::Size peptide_start,
+	core::Size peptide_end,
+	core::Size & jump_id) const {
 	// once created these will be the positions of the peptide start and end in the receptor_peptide_pose
 	core::Size two_chain_peptide_start = receptor_pose.total_residue() + 1;
 	core::Size two_chain_peptide_end = two_chain_peptide_start + peptide_end - peptide_start;
@@ -1162,12 +1158,12 @@ core::pose::PoseOP PeptideDeriverFilter::build_receptor_peptide_pose(core::pose:
 
 	receptor_peptide_pose->append_residue_by_jump(partner_pose.residue(pep_cen_mass), receptor_anchor_pos, "", "", true);
 
-	for (core::Size i = pep_cen_mass ; i > peptide_start; --i) {
+	for ( core::Size i = pep_cen_mass ; i > peptide_start; --i ) {
 		// tracer << "Prepending at " << two_chain_peptide_start << " " << partner_pose.residue(i-1) << std::endl;
 		receptor_peptide_pose->conformation().safely_prepend_polymer_residue_before_seqpos(partner_pose.residue(i-1), two_chain_peptide_start, false);
 	}
 
-	for (core::Size i = pep_cen_mass ; i < peptide_end; ++i) {
+	for ( core::Size i = pep_cen_mass ; i < peptide_end; ++i ) {
 		// tracer << "Appending at " << receptor_peptide_pose->total_residue() << " " << partner_pose.residue(i+1) << std::endl;
 		receptor_peptide_pose->conformation().safely_append_polymer_residue_after_seqpos(partner_pose.residue(i+1), receptor_peptide_pose->total_residue(), false);
 	}
@@ -1190,8 +1186,8 @@ core::pose::PoseOP PeptideDeriverFilter::build_receptor_peptide_pose(core::pose:
 	core::pose::add_variant_type_to_pose_residue(*receptor_peptide_pose, core::chemical::LOWER_TERMINUS_VARIANT, two_chain_peptide_start);
 	core::pose::add_variant_type_to_pose_residue(*receptor_peptide_pose, core::chemical::UPPER_TERMINUS_VARIANT, two_chain_peptide_end);
 	// if a cysteine in the peptide was disulfide bonded to a residue that no longer exists in the protein-peptide pose, it is converted back to a regular cysteine
-	for (core::Size i = two_chain_peptide_start; i <= two_chain_peptide_end ; ++i) {
-		if (receptor_peptide_pose->conformation().residue(i).has_variant_type( core::chemical::DISULFIDE )) {
+	for ( core::Size i = two_chain_peptide_start; i <= two_chain_peptide_end ; ++i ) {
+		if ( receptor_peptide_pose->conformation().residue(i).has_variant_type( core::chemical::DISULFIDE ) ) {
 			core::conformation::change_cys_state(i, "CYS", receptor_peptide_pose->conformation());
 		}
 	}
@@ -1202,11 +1198,11 @@ core::pose::PoseOP PeptideDeriverFilter::build_receptor_peptide_pose(core::pose:
 
 void
 PeptideDeriverFilter::parse_my_tag( utility::tag::TagCOP tag,
-			basic::datacache::DataMap & data,
-			protocols::filters::Filters_map const & , // filters - unused
-			protocols::moves::Movers_map const & , // movers - unused
-			core::pose::Pose const & // pose - unused
-		) {
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & , // filters - unused
+	protocols::moves::Movers_map const & , // movers - unused
+	core::pose::Pose const & // pose - unused
+) {
 
 	// NOTE : we rely on the fact that all the options already have values
 	//        from when parse_options() was called. This way command-line

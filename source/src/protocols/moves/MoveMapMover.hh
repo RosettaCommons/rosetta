@@ -35,19 +35,19 @@ namespace moves {
 
 
 class MoveMapMover : public Mover {
-  typedef Mover Parent;
+	typedef Mover Parent;
 public:
-  MoveMapMover(): Parent() {}
-  MoveMapMover( std::string const& name ) : Parent( name ) {}
-  MoveMapMover( MoveMapMover const & other ) : Parent( other ) {}
+	MoveMapMover(): Parent() {}
+	MoveMapMover( std::string const& name ) : Parent( name ) {}
+	MoveMapMover( MoveMapMover const & other ) : Parent( other ) {}
 
-  virtual ~MoveMapMover() {};
+	virtual ~MoveMapMover() {};
 
-  virtual void set_movemap( core::kinematics::MoveMapCOP ) = 0;
+	virtual void set_movemap( core::kinematics::MoveMapCOP ) = 0;
 
-  virtual core::kinematics::MoveMapCOP movemap() const = 0;
+	virtual core::kinematics::MoveMapCOP movemap() const = 0;
 
-  virtual void initialize( core::pose::Pose& ) {}
+	virtual void initialize( core::pose::Pose& ) {}
 
 
 }; // end MoveMapMover base class

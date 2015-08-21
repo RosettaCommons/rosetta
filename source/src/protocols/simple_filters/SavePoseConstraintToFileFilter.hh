@@ -50,8 +50,8 @@ public:
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );
 private:
-    std::string filename_;
-	  bool overwrite_;
+	std::string filename_;
+	bool overwrite_;
 };
 
 } // filters

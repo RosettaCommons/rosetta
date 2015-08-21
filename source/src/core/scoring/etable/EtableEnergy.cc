@@ -67,7 +67,7 @@ EtableEnergyCreator::score_types_for_method() const {
 	sts.push_back( fa_intra_atr_xover4 );
 	sts.push_back( fa_intra_rep_xover4 );
 	sts.push_back( fa_intra_sol_xover4 );
-	// 	note that 'classic' fa_intra_atr, fa_intra_rep, and fa_intra_sol terms are now in EtableClassicIntraEnergy. -- rhiju
+	//  note that 'classic' fa_intra_atr, fa_intra_rep, and fa_intra_sol terms are now in EtableClassicIntraEnergy. -- rhiju
 	return sts;
 }
 
@@ -105,19 +105,19 @@ TableLookupEtableEnergy::TableLookupEtableEnergy(
 )
 :
 	BaseEtableEnergy< TableLookupEtableEnergy > ( do_classic_intrares ?
-								methods::EnergyMethodCreatorOP( new EtableClassicIntraEnergyCreator ) :
-							  methods::EnergyMethodCreatorOP( new EtableEnergyCreator ),
-							  etable_in, options, do_classic_intrares ),
+	methods::EnergyMethodCreatorOP( new EtableClassicIntraEnergyCreator ) :
+	methods::EnergyMethodCreatorOP( new EtableEnergyCreator ),
+	etable_in, options, do_classic_intrares ),
 	intrares_evaluator_( etable_in ),
 	interres_evaluator_( etable_in )
 {
 	if ( do_classic_intrares ) {
 		interres_evaluator_.set_scoretypes( fa_atr_dummy, fa_rep_dummy, fa_sol_dummy );
-		//		interres_evaluator_.set_scoretypes( fa_atr, fa_rep, fa_sol ); // will get zeros.
+		//  interres_evaluator_.set_scoretypes( fa_atr, fa_rep, fa_sol ); // will get zeros.
 		intrares_evaluator_.set_scoretypes( fa_intra_atr, fa_intra_rep, fa_intra_sol );
 	} else {
 		interres_evaluator_.set_scoretypes( fa_atr, fa_rep, fa_sol );
-		if ( put_intra_into_total() ){
+		if ( put_intra_into_total() ) {
 			intrares_evaluator_.set_scoretypes( fa_atr, fa_rep, fa_sol );
 		} else {
 			intrares_evaluator_.set_scoretypes( fa_intra_atr_xover4, fa_intra_rep_xover4, fa_intra_sol_xover4 );
@@ -142,13 +142,13 @@ TableLookupEtableEnergy::clone() const {
 void
 TableLookupEtableEnergy::setup_for_scoring_( pose::Pose const &pose, scoring::ScoreFunction const& ) const
 {
-	if (pose.total_residue()) {
+	if ( pose.total_residue() ) {
 		if ( pose.residue(1).type().atom_type_set_ptr() != etable().atom_set().lock() ) {
 			std::stringstream err_msg;
 			err_msg
 				<< "Illegal attempt to score with non-identical atom set between pose and etable" << std::endl
-				<< "	pose   atom_type_set: '" << pose.residue(1).type().atom_type_set_ptr()->name() << "'" << std::endl
-				<< "	etable atom_type_set: '" << etable().atom_set().lock()->name() << "'" << std::endl;
+				<< "\tpose   atom_type_set: '" << pose.residue(1).type().atom_type_set_ptr()->name() << "'" << std::endl
+				<< "\tetable atom_type_set: '" << etable().atom_set().lock()->name() << "'" << std::endl;
 			utility_exit_with_message( err_msg.str());
 		}
 	}
@@ -160,19 +160,19 @@ TableLookupEtableEnergy::defines_intrares_energy(
 	EnergyMap const & weights
 ) const
 {
-	if ( do_classic_intrares() ){
+	if ( do_classic_intrares() ) {
 		return ( weights[ fa_intra_atr ] != 0 ||
-						 weights[ fa_intra_rep ] != 0 ||
-						 weights[ fa_intra_sol ] != 0 );
+			weights[ fa_intra_rep ] != 0 ||
+			weights[ fa_intra_sol ] != 0 );
 	}
 	if ( put_intra_into_total() ) {
 		return ( weights[ fa_atr ] != 0 ||
-						 weights[ fa_rep ] != 0 ||
-						 weights[ fa_sol ] != 0 );
+			weights[ fa_rep ] != 0 ||
+			weights[ fa_sol ] != 0 );
 	}
 	return ( weights[ fa_intra_atr_xover4 ] != 0 ||
-					 weights[ fa_intra_rep_xover4 ] != 0 ||
-					 weights[ fa_intra_sol_xover4 ] != 0 );
+		weights[ fa_intra_rep_xover4 ] != 0 ||
+		weights[ fa_intra_sol_xover4 ] != 0 );
 }
 
 /// @brief
@@ -185,8 +185,8 @@ TableLookupEtableEnergy::eval_intrares_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( res.has_variant_type( core::chemical::REPLONLY ) ){
-			return;
+	if ( res.has_variant_type( core::chemical::REPLONLY ) ) {
+		return;
 	}
 
 	EnergyMap tbemap;
@@ -224,9 +224,9 @@ AnalyticEtableEnergy::AnalyticEtableEnergy(
 	bool const do_classic_intrares
 ) :
 	BaseEtableEnergy< AnalyticEtableEnergy > ( do_classic_intrares ?
-								methods::EnergyMethodCreatorOP( new EtableClassicIntraEnergyCreator ) :
-							  methods::EnergyMethodCreatorOP( new EtableEnergyCreator ),
-							  etable_in, options, do_classic_intrares ),
+	methods::EnergyMethodCreatorOP( new EtableClassicIntraEnergyCreator ) :
+	methods::EnergyMethodCreatorOP( new EtableEnergyCreator ),
+	etable_in, options, do_classic_intrares ),
 	intrares_evaluator_( etable_in ),
 	interres_evaluator_( etable_in )
 {
@@ -235,7 +235,7 @@ AnalyticEtableEnergy::AnalyticEtableEnergy(
 		intrares_evaluator_.set_scoretypes( fa_intra_atr, fa_intra_rep, fa_intra_sol );
 	} else {
 		interres_evaluator_.set_scoretypes( fa_atr, fa_rep, fa_sol );
-		if ( put_intra_into_total() ){
+		if ( put_intra_into_total() ) {
 			intrares_evaluator_.set_scoretypes( fa_atr, fa_rep, fa_sol );
 		} else {
 			intrares_evaluator_.set_scoretypes( fa_intra_atr_xover4, fa_intra_rep_xover4, fa_intra_sol_xover4 );
@@ -260,7 +260,7 @@ AnalyticEtableEnergy::clone() const {
 void
 AnalyticEtableEnergy::setup_for_scoring_( pose::Pose const &pose, scoring::ScoreFunction const& ) const
 {
-	if (pose.total_residue()) {
+	if ( pose.total_residue() ) {
 		if ( pose.residue(1).type().atom_type_set_ptr() != etable().atom_set().lock() ) {
 			utility_exit_with_message( "Illegal attempt to score with non-identical atom set between pose and etable " );
 		}
@@ -276,19 +276,19 @@ AnalyticEtableEnergy::defines_intrares_energy(
 	EnergyMap const & weights
 ) const
 {
-	if ( do_classic_intrares() ){
+	if ( do_classic_intrares() ) {
 		return ( weights[ fa_intra_atr ] != 0 ||
-						 weights[ fa_intra_rep ] != 0 ||
-						 weights[ fa_intra_sol ] != 0 );
+			weights[ fa_intra_rep ] != 0 ||
+			weights[ fa_intra_sol ] != 0 );
 	}
 	if ( put_intra_into_total() ) {
 		return ( weights[ fa_atr ] != 0 ||
-						 weights[ fa_rep ] != 0 ||
-						 weights[ fa_sol ] != 0 );
+			weights[ fa_rep ] != 0 ||
+			weights[ fa_sol ] != 0 );
 	}
 	return ( weights[ fa_intra_atr_xover4 ] != 0 ||
-					 weights[ fa_intra_rep_xover4 ] != 0 ||
-					 weights[ fa_intra_sol_xover4 ] != 0 );
+		weights[ fa_intra_rep_xover4 ] != 0 ||
+		weights[ fa_intra_sol_xover4 ] != 0 );
 }
 
 /// @brief
@@ -301,7 +301,7 @@ AnalyticEtableEnergy::eval_intrares_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( res.has_variant_type( core::chemical::REPLONLY ) ){
+	if ( res.has_variant_type( core::chemical::REPLONLY ) ) {
 		return;
 	}
 
@@ -414,8 +414,8 @@ TableLookupEvaluator::residue_atom_pair_energy_sidechain_whole(
 //            if ( eval_deriv ){
 //                // Following (commented out) is used in dE_dR_over_R below,
 //                //  but its a mistake, I think -- rhiju.
-//                //			Real e1 = dsolv1_[ l1 ];
-//                //			deriv = ( e1 + frac * ( dsolv1_[ l2 ] - e1 ) );
+//                //   Real e1 = dsolv1_[ l1 ];
+//                //   deriv = ( e1 + frac * ( dsolv1_[ l2 ] - e1 ) );
 //                dsolv1 = ( solv1_[ l2 ] - solv1_[ l1 ] ) * etable_bins_per_A2_ * std::sqrt( d2 ) * 2;
 //            }
 //
@@ -576,8 +576,8 @@ AnalyticEtableEvaluator::trie_vs_path(
 
 void
 AnalyticEtableEvaluator::atom_pair_lk_energy_and_deriv_v(
-  conformation::Atom const & atom1,
-  conformation::Atom const & atom2,
+	conformation::Atom const & atom1,
+	conformation::Atom const & atom2,
 	Real & solE1,
 	Real & dsolE1,
 	bool const eval_deriv
@@ -596,22 +596,22 @@ AnalyticEtableEvaluator::atom_pair_lk_energy_and_deriv_v(
 
 void
 AnalyticEtableEvaluator::atom_pair_lk_energy_and_deriv_v_efficient(
-    conformation::Atom const & atom1,
-    conformation::Atom const & atom2,
-    Real & solE1,
-    Real & solE2,
-    Real & dsolE1,
-    bool const eval_deriv
+	conformation::Atom const & atom1,
+	conformation::Atom const & atom2,
+	Real & solE1,
+	Real & solE2,
+	Real & dsolE1,
+	bool const eval_deriv
 ) const
 {
-    // could save time by not computing solE2.
-    etable_.analytic_lk_energy( atom1, atom2, solE1, solE2 );
+	// could save time by not computing solE2.
+	etable_.analytic_lk_energy( atom1, atom2, solE1, solE2 );
 
-    if ( eval_deriv ) {
-        // could save time by not computing dsolE2.
-        Real dsolE2, inv_d;
-        etable_.analytic_lk_derivatives( atom1, atom2, dsolE1, dsolE2, inv_d );
-    }
+	if ( eval_deriv ) {
+		// could save time by not computing dsolE2.
+		Real dsolE2, inv_d;
+		etable_.analytic_lk_derivatives( atom1, atom2, dsolE1, dsolE2, inv_d );
+	}
 }
 
 

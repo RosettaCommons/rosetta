@@ -26,7 +26,7 @@
 
 namespace protocols {
 namespace simple_filters {
-	
+
 class ResidueSetChainEnergyFilterCreator : public protocols::filters::FilterCreator
 {
 public:

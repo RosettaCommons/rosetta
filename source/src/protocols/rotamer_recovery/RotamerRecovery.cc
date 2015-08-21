@@ -136,7 +136,7 @@ RotamerRecovery::init_rotamer_recovery_with_options(
 	using basic::options::option;
 	using basic::options::OptionKeys::in::ignore_unrecognized_res;
 
-	if( option[ ignore_unrecognized_res ].user() ){
+	if ( option[ ignore_unrecognized_res ].user() ) {
 		rotamer_recovery.set_ignore_unrecognized_res(
 			option[ ignore_unrecognized_res ].value() );
 	}

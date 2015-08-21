@@ -33,7 +33,7 @@
 
 
 namespace protocols {
-namespace protein_interface_design{
+namespace protein_interface_design {
 namespace filters {
 
 static thread_local basic::Tracer tr( "protocols.protein_interface_design.filters.StubScoreLoopsFilter" );
@@ -49,10 +49,10 @@ StubScoreLoopsFilter::~StubScoreLoopsFilter() {}
 
 void
 StubScoreLoopsFilter::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & pose )
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & pose )
 {
 	tr.Info << "StubScoreLoopsFilter"<<std::endl;
 	cb_force_ = tag->getOption< core::Real >( "cb_force", 0.5 );
@@ -61,7 +61,7 @@ StubScoreLoopsFilter::parse_my_tag( utility::tag::TagCOP tag,
 	stub_set_->read_data( tag->getOption< std::string >("stubfile") );
 	loop_start_ = tag->getOption<Size>("start", 0 );
 	loop_stop_ = tag->getOption<Size>("stop", 0 );
-	if (loop_start_ <= 0) {
+	if ( loop_start_ <= 0 ) {
 		utility_exit_with_message( "please provide loop-start with 'start' option" );
 	}
 	if ( loop_stop_ <= loop_start_ ) {

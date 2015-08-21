@@ -45,11 +45,11 @@ struct BaseBin{
 
 
 struct
-compare_base_bin{
+	compare_base_bin{
 
 	//The expression comp(a,b), where comp is an object of this comparison class and a and b are key values, shall return true if a is to be placed at an earlier position than b in a strict weak ordering operation
 
-  bool
+	bool
 	operator() ( BaseBin const & first, BaseBin const & second ) const {
 
 		if ( first.centroid_x != second.centroid_x ) return ( first.centroid_x < second.centroid_x ); //x
@@ -64,15 +64,15 @@ compare_base_bin{
 
 };
 
-	typedef	std::map< BaseBin, int, compare_base_bin > BaseBinMap;
+typedef std::map< BaseBin, int, compare_base_bin > BaseBinMap;
 
 struct
-compare_int_pair{
+	compare_int_pair{
 
 	//The expression comp(a,b), where comp is an object of this comparison class and a and b are key values, shall return true if a is to be placed at an earlier position than b in a strict weak ordering operation
 
 
-  bool
+	bool
 	operator() ( std::pair < int, int > const & pair_one, std::pair < int, int > const & pair_two ) const {
 
 		if ( pair_one.first != pair_two.first ) return ( pair_one.first < pair_two.first );

@@ -33,12 +33,12 @@
 #include <basic/options/keys/sasa.OptionKeys.gen.hh>
 
 
-namespace core{
+namespace core {
 namespace pose {
 namespace metrics {
 namespace simple_calculators {
-	using utility::vector1;
-	
+using utility::vector1;
+
 class SasaCalculator2 : public core::pose::metrics::StructureDependentCalculator {
 
 public:
@@ -54,27 +54,27 @@ protected:
 	virtual void recompute( core::pose::Pose const & this_pose );
 
 private:
-	
+
 	core::scoring::sasa::SasaCalcOP sasa_calc_;
-	
+
 	//These need to be specified and returned from sasacalc or else clang gives error: taking the address of a temporary object of type...
-	
+
 	core::Real total_sasa_;
 	core::Real total_hsasa_;
 	core::Real total_rel_hsasa_;
-	
+
 	core::id::AtomID_Map<core::Real > atom_sasa_;
 	vector1< core::Real > residue_sasa_;
 	vector1< core::Real > residue_hsasa_;
 	vector1< core::Real > residue_rel_hsasa_;
-	
+
 	//Sc/BB calculated during sasacalc, so why not have it accessible here
 	core::Real total_sasa_sc_;
 	core::Real total_hsasa_sc_; //pretty much small, but here for completeness
-	
+
 	vector1< core::Real > residue_sasa_sc_;
 	vector1< core::Real > residue_hsasa_sc_;
-	
+
 };
 
 

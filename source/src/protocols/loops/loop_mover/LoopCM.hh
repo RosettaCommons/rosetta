@@ -25,7 +25,7 @@
 #include <basic/datacache/WriteableCacheableMap.fwd.hh>
 
 #ifdef WIN32
-	#include <basic/datacache/WriteableCacheableMap.hh>
+#include <basic/datacache/WriteableCacheableMap.hh>
 #endif
 
 // C++ Headers
@@ -36,43 +36,43 @@ namespace loops {
 namespace loop_mover {
 
 class LoopCM: public protocols::environment::ClientMover {
-  typedef protocols::environment::ClientMover Parent;
+	typedef protocols::environment::ClientMover Parent;
 
-  typedef environment::claims::EnvClaims EnvClaims;
+	typedef environment::claims::EnvClaims EnvClaims;
 public:
-  LoopCM();
+	LoopCM();
 
-  virtual ~LoopCM() {}
+	virtual ~LoopCM() {}
 
-  virtual
-  void apply( core::pose::Pose& pose );
+	virtual
+	void apply( core::pose::Pose& pose );
 
-  virtual
-  void parse_my_tag( TagCOP,
-                     basic::datacache::DataMap&,
-                     Filters_map const&,
-                     moves::Movers_map const&,
-                     Pose const& );
+	virtual
+	void parse_my_tag( TagCOP,
+		basic::datacache::DataMap&,
+		Filters_map const&,
+		moves::Movers_map const&,
+		Pose const& );
 
-  virtual
-  EnvClaims yield_claims( core::pose::Pose const&,
-                          basic::datacache::WriteableCacheableMapOP );
+	virtual
+	EnvClaims yield_claims( core::pose::Pose const&,
+		basic::datacache::WriteableCacheableMapOP );
 
-  virtual void passport_updated();
+	virtual void passport_updated();
 
-  virtual void initialize( core::pose::Pose& ) {}
+	virtual void initialize( core::pose::Pose& ) {}
 
-  virtual
-  std::string get_name() const;
+	virtual
+	std::string get_name() const;
 
 private:
-  void build_mover( LoopsOP loops );
+	void build_mover( LoopsOP loops );
 
-  std::string algorithm_;
-  std::string style_;
+	std::string algorithm_;
+	std::string style_;
 
-  LoopMoverOP mover_;
-  core::pack::task::residue_selector::ResidueSelectorCOP selector_;
+	LoopMoverOP mover_;
+	core::pack::task::residue_selector::ResidueSelectorCOP selector_;
 
 }; // class LoopCM
 

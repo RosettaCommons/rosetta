@@ -23,35 +23,35 @@
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {
-    
+
 class SolvationGrid : public SingleGrid
 {
 public:
-    
-    SolvationGrid();
-    virtual ~SolvationGrid();
-    virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & );
-    virtual void refresh(core::pose::Pose const & pose, core::Vector const & center);
-    virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, utility::vector1<core::Size> );
-    
-    void parse_my_tag(utility::tag::TagCOP tag);
-    
-    /// @brief serialize the Interpolator to a json_spirit object
-    virtual utility::json_spirit::Value serialize();
-    /// @brief deserialize a json_spirit object to a Interpolator
-    virtual void deserialize(utility::json_spirit::mObject data);
-    
-    void set_probe_atom_type(core::ShortSize const & atom_type);
+
+	SolvationGrid();
+	virtual ~SolvationGrid();
+	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & );
+	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center);
+	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, utility::vector1<core::Size> );
+
+	void parse_my_tag(utility::tag::TagCOP tag);
+
+	/// @brief serialize the Interpolator to a json_spirit object
+	virtual utility::json_spirit::Value serialize();
+	/// @brief deserialize a json_spirit object to a Interpolator
+	virtual void deserialize(utility::json_spirit::mObject data);
+
+	void set_probe_atom_type(core::ShortSize const & atom_type);
 
 private:
-    core::ShortSize probe_atom_type_;
-    
-    
-    
+	core::ShortSize probe_atom_type_;
+
+
+
 };
-    
+
 }
 }
 }
 
-#endif 
+#endif

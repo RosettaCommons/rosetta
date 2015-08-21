@@ -35,30 +35,30 @@ namespace simple_moves {
 class CyclizationMover : public protocols::moves::Mover {
 public:
 
-  // ctor
-  CyclizationMover( core::Size chain_to_cyclize, bool add_constraints, bool minimize, core::Size minimization_rebuild_rounds );
+	// ctor
+	CyclizationMover( core::Size chain_to_cyclize, bool add_constraints, bool minimize, core::Size minimization_rebuild_rounds );
 
 	// ctor
-  CyclizationMover( core::Size chain_to_cyclize, bool add_constraints, bool minimize, core::Size minimization_rebuild_rounds,
+	CyclizationMover( core::Size chain_to_cyclize, bool add_constraints, bool minimize, core::Size minimization_rebuild_rounds,
 		core::scoring::ScoreFunctionOP score_fxn, core::kinematics::MoveMapOP move_map );
 
-  // dtor
-  virtual ~CyclizationMover(){}
+	// dtor
+	virtual ~CyclizationMover(){}
 
-  // mover interface
-  virtual void apply( core::pose::Pose & pose );
-  virtual std::string get_name() const { return "CyclizationMover"; }
+	// mover interface
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const { return "CyclizationMover"; }
 
 private:
-  // mover specific
-  void setup_connections( core::pose::Pose & pose );
-  void setup_constraints( core::pose::Pose & pose );
+	// mover specific
+	void setup_connections( core::pose::Pose & pose );
+	void setup_constraints( core::pose::Pose & pose );
 	void setup_scorefunction();
 	void setup_minimizer( core::pose::Pose & pose );
 	void minimize_rebuild( core::pose::Pose & pose );
 
 private:
-  // the chain number to cyclize
+	// the chain number to cyclize
 	core::Size chain_to_cyclize_;
 
 	// N-terminus and C-terminus residue positions

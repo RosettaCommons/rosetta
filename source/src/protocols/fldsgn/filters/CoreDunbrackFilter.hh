@@ -83,7 +83,7 @@ public:// virtual constructor
 	virtual FilterOP clone() const { return FilterOP( new CoreDunbrackFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const {	return FilterOP( new CoreDunbrackFilter() ); }
+	virtual FilterOP fresh_instance() const { return FilterOP( new CoreDunbrackFilter() ); }
 
 
 public:// mutator
@@ -106,10 +106,10 @@ public:// accessor
 public:// parser
 
 	virtual void parse_my_tag( TagCOP tag,
-														 basic::datacache::DataMap &,
-														 Filters_map const &,
-														 Movers_map const &,
-														 Pose const & pose );
+		basic::datacache::DataMap &,
+		Filters_map const &,
+		Movers_map const &,
+		Pose const & pose );
 
 
 public:// virtual main operation

@@ -94,8 +94,8 @@ static thread_local basic::Tracer TR( "protocols.cryst.cryst_movers" );
 
 using namespace protocols;
 using namespace core;
-  using namespace kinematics;
-  using namespace scoring;
+using namespace kinematics;
+using namespace scoring;
 
 
 //////////////////
@@ -256,9 +256,9 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 	move_map.set_jump( true );
 
 	// additional setup for symmetric poses
-	if (core::pose::symmetry::is_symmetric(pose)) {
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetricConformation const & symm_conf (
-				dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 		// symmetrize scorefunct & movemap
@@ -290,8 +290,8 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 	// used for:
 	//  a) verbose output
 	//  b) normalization for non-etable derivs
-	for (int ii=1; ii<=(int)core::scoring::n_score_types; ++ii) {
-		if (reference_scorefxn->get_weight( (core::scoring::ScoreType)ii ) == 0.0) continue;
+	for ( int ii=1; ii<=(int)core::scoring::n_score_types; ++ii ) {
+		if ( reference_scorefxn->get_weight( (core::scoring::ScoreType)ii ) == 0.0 ) continue;
 
 		term_i.push_back( (core::scoring::ScoreType)ii );
 		dEros_i_dvars.push_back( Multivec() );
@@ -318,17 +318,17 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 	core::Size natoms = dEros_dvars.size()/3;  // integer division, numerator is always divisible by 3
 	core::Real gradsum=0.0;
 
-	for (core::Size ii_atm=0; ii_atm<natoms; ++ii_atm) {
+	for ( core::Size ii_atm=0; ii_atm<natoms; ++ii_atm ) {
 		id::AtomID id = min_map.get_atom( ii_atm+1 );
 		numeric::xyzVector< core::Real > grad_i(dEros_dvars[3*ii_atm+1], dEros_dvars[3*ii_atm+2], dEros_dvars[3*ii_atm+3]);
 
-		if (grad_i.length()<1e-6) continue;
+		if ( grad_i.length()<1e-6 ) continue;
 
 		// etable terms
 		core::Real norm = normalization(pose,  min_map.get_atom( ii_atm+1 ), reference_scorefxn );
 
 		// other terms
-		for (int ii=1; ii<=(int)term_i.size(); ++ii) {
+		for ( int ii=1; ii<=(int)term_i.size(); ++ii ) {
 			if ( term_i[ii] == fa_rep || term_i[ii] == fa_atr || term_i[ii] == fa_sol ) continue;
 			if ( term_i[ii] == fa_elec || term_i[ii] == fa_grpelec ) continue;
 			if ( term_i[ii] == fa_intra_rep || term_i[ii] == fa_intra_atr || term_i[ii] == fa_intra_sol ) continue;
@@ -339,7 +339,7 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 			norm += grad_ij.length();
 		}
 
-		if (norm<1e-6) {
+		if ( norm<1e-6 ) {
 			TR << "ERROR! at atom " << id << " got grad = " << grad_i.length() << " with norm " << norm << std::endl;
 		}
 
@@ -350,15 +350,15 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 	TR << "[grad] average gradient " << gradsum << std::endl;
 
 	// (optionally) report per-atom/per-scoreterm gradients
-	if (verbose_) {
+	if ( verbose_ ) {
 		// header
 		TR << "[grad] restype resid chnid atomname grad_unnorm norm grad_norm ";
-		for (int ii=1; ii<=(int)term_i.size(); ++ii) {
+		for ( int ii=1; ii<=(int)term_i.size(); ++ii ) {
 			TR << term_i[ii] << " ";
 		}
 		TR << std::endl;
 
-		for (core::Size ii_atm=0; ii_atm<natoms; ++ii_atm) {
+		for ( core::Size ii_atm=0; ii_atm<natoms; ++ii_atm ) {
 			id::AtomID id = min_map.get_atom( ii_atm+1 );
 			core::conformation::Residue const & rsd_i = pose.residue( id.rsd() );
 
@@ -366,7 +366,7 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 			core::Size pdb_res = pose.pdb_info()->number( id.rsd() );
 			char pdb_chain = pose.pdb_info()->chain( id.rsd() );
 
-			if (id.atomno() <= rsd_i.natoms()) {
+			if ( id.atomno() <= rsd_i.natoms() ) {
 				numeric::xyzVector< core::Real > grad_i(dEros_dvars[3*ii_atm+1], dEros_dvars[3*ii_atm+2], dEros_dvars[3*ii_atm+3]);
 				TR << "[grad] " << rsd_i.name3() << " " << pdb_res << " " << pdb_chain<< " " << rsd_i.atom_name( id.atomno() );
 
@@ -374,7 +374,7 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 				core::Real norm = normalization(pose,  min_map.get_atom( ii_atm+1 ), reference_scorefxn );
 
 				// other terms
-				for (int jj=1; jj<=(int)term_i.size(); ++jj) {
+				for ( int jj=1; jj<=(int)term_i.size(); ++jj ) {
 					if ( term_i[jj] == fa_rep || term_i[jj] == fa_atr || term_i[jj] == fa_sol ) continue;
 					if ( term_i[jj] == fa_elec || term_i[jj] == fa_grpelec ) continue;
 					if ( term_i[jj] == fa_intra_rep || term_i[jj] == fa_intra_atr || term_i[jj] == fa_intra_sol ) continue;
@@ -386,7 +386,7 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 				}
 
 				TR << " " << grad_i.length() << " " << norm << " " << grad_i.length()/norm;
-				for (int jj=1; jj<=(int)term_i.size(); ++jj) {
+				for ( int jj=1; jj<=(int)term_i.size(); ++jj ) {
 					numeric::xyzVector< core::Real > grad_ij(dEros_i_dvars[jj][3*ii_atm+1], dEros_i_dvars[jj][3*ii_atm+2], dEros_i_dvars[jj][3*ii_atm+3]);
 					TR << " " << grad_ij.length();
 				}
@@ -395,7 +395,7 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 		}
 	}
 
-	if (outfile_.length() > 0) {
+	if ( outfile_.length() > 0 ) {
 		std::ofstream OUT(outfile_.c_str());
 		OUT << gradsum << std::endl;
 	}
@@ -411,9 +411,9 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 	using namespace core::scoring::methods;
 
 	core::Real symmscale=1.0;
-	if (core::pose::symmetry::is_symmetric(pose)) {
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetricConformation const & symm_conf (
-				dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 		symmscale = symm_info->score_multiply_factor();
 	}
@@ -458,7 +458,7 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 	coulomb.initialize();
 
 	// get inter-res etable energies
-	if (fa_atr_wt>0 || fa_rep_wt>0 || fa_sol_wt>0 || fa_elec_wt>0 || lk_ball_wtd_wt>0) {
+	if ( fa_atr_wt>0 || fa_rep_wt>0 || fa_sol_wt>0 || fa_elec_wt>0 || lk_ball_wtd_wt>0 ) {
 		for ( graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(ires)->const_edge_list_begin(),
 				irue = energy_graph.get_node(ires)->const_edge_list_end();
@@ -467,7 +467,7 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 			Size jres=edge->get_other_ind(ires);
 			core::conformation::Residue const &rsd2( pose.residue(jres) );
 
-			if (ires == jres) continue;
+			if ( ires == jres ) continue;
 
 			LKB_ResidueInfo const &lkbinfo2 = lkbposeinfo[jres];
 
@@ -495,18 +495,18 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 					d_lkball = f2.length() /weight;
 
 					norm += symmscale * weight *(
-							fa_atr_wt*std::abs(d_faatr) +
-							fa_rep_wt*std::abs(d_farep) +
-							fa_sol_wt*std::abs(d_fasol) +
-							dis*fa_elec_wt*std::abs(d_faelec) +
-							lk_ball_wtd_wt*std::abs(d_lkball));
+						fa_atr_wt*std::abs(d_faatr) +
+						fa_rep_wt*std::abs(d_farep) +
+						fa_sol_wt*std::abs(d_fasol) +
+						dis*fa_elec_wt*std::abs(d_faelec) +
+						lk_ball_wtd_wt*std::abs(d_lkball));
 				}
 			}
 		}
 	}
 
 	// add fa_intra_* contribution
-	if (fa_intra_atr_wt>0 || fa_intra_rep_wt>0 || fa_intra_sol_wt>0) {
+	if ( fa_intra_atr_wt>0 || fa_intra_rep_wt>0 || fa_intra_sol_wt>0 ) {
 		CountPairFunctionOP cpfxn =
 			CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_3 );
 		for ( Size jatm=1; jatm<= rsd1.natoms(); ++jatm ) {
@@ -525,7 +525,7 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 	}
 
 	// add fa_intra_*_xover4 contribution
-	if (fa_intra_atr_x4_wt>0 || fa_intra_rep_x4_wt>0 || fa_intra_sol_x4_wt>0) {
+	if ( fa_intra_atr_x4_wt>0 || fa_intra_rep_x4_wt>0 || fa_intra_sol_x4_wt>0 ) {
 		CountPairFunctionOP cpfxn =
 			CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_4 );
 		for ( Size jatm=1; jatm<= rsd1.natoms(); ++jatm ) {
@@ -536,9 +536,9 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 				etable.analytic_etable_derivatives(rsd1.atom(iatm), rsd1.atom(jatm),  d_faatr, d_farep, d_fasol, invD );
 				//Real const dis = (rsd1.xyz(iatm)-rsd1.xyz(jatm)).length();
 				norm += symmscale * weight*(
-						fa_intra_atr_x4_wt*std::abs(d_faatr) +
-						fa_intra_rep_x4_wt*std::abs(d_farep) +
-						fa_intra_sol_x4_wt*std::abs(d_fasol) );
+					fa_intra_atr_x4_wt*std::abs(d_faatr) +
+					fa_intra_rep_x4_wt*std::abs(d_farep) +
+					fa_intra_sol_x4_wt*std::abs(d_fasol) );
 			}
 		}
 	}
@@ -547,11 +547,11 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 }
 
 void ReportGradientsMover::parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap &data,
-			filters::Filters_map const & /*filters*/,
-			moves::Movers_map const & /*movers*/,
-			core::pose::Pose const & /*pose*/ ) {
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &data,
+	filters::Filters_map const & /*filters*/,
+	moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/ ) {
 	score_function_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 	verbose_ = tag->getOption<bool>("verbose", false);
 	outfile_ = tag->getOption<std::string>("outfile", "");
@@ -560,18 +560,18 @@ void ReportGradientsMover::parse_my_tag(
 ////
 
 void SetCrystWeightMover::apply( core::pose::Pose & pose ) {
-	if (autoset_wt_) {
+	if ( autoset_wt_ ) {
 		// if autoset_wt_ guess at cryst wt
 		//    use score_function_ref_ to do the scaling
 		core::Real auto_weight = 0;
-		if (cartesian_) {
-			if (mm_) {
+		if ( cartesian_ ) {
+			if ( mm_ ) {
 				auto_weight = core::util::getMLweight_cart( *score_function_ref_, pose, *mm_  );
 			} else {
 				auto_weight = core::util::getMLweight_cart( *score_function_ref_, pose );
 			}
 		} else {
-			if (mm_) {
+			if ( mm_ ) {
 				auto_weight = core::util::getMLweight( *score_function_ref_, pose, *mm_  );
 			} else {
 				auto_weight = core::util::getMLweight( *score_function_ref_, pose );
@@ -590,18 +590,19 @@ void SetCrystWeightMover::apply( core::pose::Pose & pose ) {
 }
 
 void SetCrystWeightMover::parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap &data,
-			filters::Filters_map const & /*filters*/,
-			moves::Movers_map const & /*movers*/,
-			core::pose::Pose const & pose ) {
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &data,
+	filters::Filters_map const & /*filters*/,
+	moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & pose ) {
 
 	score_function_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 
 	if ( tag->hasOption("scorefxn_ref") ) {
 		std::string const scorefxn_key( tag->getOption<std::string>("scorefxn_ref") );
-		if ( ! data.has( "scorefxns", scorefxn_key ) )
+		if ( ! data.has( "scorefxns", scorefxn_key ) ) {
 			utility_exit_with_message("ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap.");
+		}
 		score_function_ref_ = data.get_ptr< ScoreFunction >( "scorefxns", scorefxn_key );
 	} else {
 		score_function_ref_ = score_function_->clone();
@@ -616,10 +617,10 @@ void SetCrystWeightMover::parse_my_tag(
 		if ( ! mm_ ) mm_ = core::kinematics::MoveMapOP( new MoveMap );
 		utility::vector1<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
 		// string 'ALL' makes all jumps movable
-		if (jumps.size() == 1 && (jumps[1] == "ALL" || jumps[1] == "All" || jumps[1] == "all") ) {
-				mm_->set_jump( true );
+		if ( jumps.size() == 1 && (jumps[1] == "ALL" || jumps[1] == "All" || jumps[1] == "all") ) {
+			mm_->set_jump( true );
 		} else {
-			for( std::vector<std::string>::const_iterator it = jumps.begin(); it != jumps.end(); ++it ) {
+			for ( std::vector<std::string>::const_iterator it = jumps.begin(); it != jumps.end(); ++it ) {
 				Size const value = std::atoi( it->c_str() ); // convert to C string, then convert to integer, then set a Size (phew!)
 				mm_->set_jump( value, true );
 			}
@@ -668,11 +669,11 @@ void RecomputeDensityMapMover::apply( core::pose::Pose & pose )
 }
 
 void RecomputeDensityMapMover::parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & /*data*/,
-			filters::Filters_map const & /*filters*/,
-			moves::Movers_map const & /*movers*/,
-			core::pose::Pose const & /*pose*/ )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & /*data*/,
+	filters::Filters_map const & /*filters*/,
+	moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/ )
 {
 	keep_sidechains_ = tag->getOption<bool>("sidechains", true);
 }
@@ -689,11 +690,11 @@ void LoadDensityMapMover::apply( core::pose::Pose & /*pose*/ ) {
 }
 
 void LoadDensityMapMover::parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & /*data*/,
-			filters::Filters_map const & /*filters*/,
-			moves::Movers_map const & /*movers*/,
-			core::pose::Pose const & /*pose*/ )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & /*data*/,
+	filters::Filters_map const & /*filters*/,
+	moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/ )
 {
 	mapfile_ = tag->getOption<std::string>("mapfile");
 	sc_scale_ = tag->getOption<core::Real>("sc_scale", 1.0);
@@ -703,7 +704,7 @@ void LoadDensityMapMover::parse_my_tag(
 ////
 
 void FitBfactorsMover::apply( core::pose::Pose & pose ) {
-	if (adp_strategy_ == "randomize") {
+	if ( adp_strategy_ == "randomize" ) {
 		randomize_bs( pose );
 	} else {
 		core::scoring::cryst::getPhenixInterface().set_adp_strategy( adp_strategy_ );
@@ -715,23 +716,24 @@ void FitBfactorsMover::apply( core::pose::Pose & pose ) {
 }
 
 void FitBfactorsMover::parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & /*data*/,
-			filters::Filters_map const & /*filters*/,
-			moves::Movers_map const & /*movers*/,
-			core::pose::Pose const & /*pose*/ )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & /*data*/,
+	filters::Filters_map const & /*filters*/,
+	moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/ )
 {
 	std::string adp_strat = tag->getOption<std::string>("adp_strategy", "individual");
 	runtime_assert( adp_strat=="individual" || adp_strat=="group" || adp_strat=="randomize" );
 
-	if ( adp_strat=="group") {
+	if ( adp_strat=="group" ) {
 		Size group_adp_strat = tag->getOption<Size>("group_adp_mode", 1);
 		runtime_assert( group_adp_strat==1 || group_adp_strat==2 );
-		if (group_adp_strat==1)
+		if ( group_adp_strat==1 ) {
 			adp_strategy_ = "group1";
-		else
+		} else {
 			adp_strategy_ = "group2";
-	} else if ( adp_strat=="randomize") {
+		}
+	} else if ( adp_strat=="randomize" ) {
 		adp_strategy_ = "randomize";
 		b_min_ = tag->getOption<core::Real>("b_min", 5.0);
 		b_max_ = tag->getOption<core::Real>("b_max", 5.0);
@@ -741,10 +743,10 @@ void FitBfactorsMover::parse_my_tag(
 }
 
 void FitBfactorsMover::randomize_bs( core::pose::Pose & pose ) {
-	for (core::Size resid=1; resid<=pose.total_residue(); ++resid) {
-		if (pose.residue(resid).aa() == core::chemical::aa_vrt) continue;
+	for ( core::Size resid=1; resid<=pose.total_residue(); ++resid ) {
+		if ( pose.residue(resid).aa() == core::chemical::aa_vrt ) continue;
 		core::conformation::Residue const &rsd_i = pose.residue(resid);
-		for (core::Size atmid=1; atmid<=rsd_i.natoms(); ++atmid) {
+		for ( core::Size atmid=1; atmid<=rsd_i.natoms(); ++atmid ) {
 			core::Real B = numeric::random::uniform()*(b_max_-b_min_) + b_min_;
 			pose.pdb_info()->temperature( resid, atmid, B);
 		}
@@ -758,28 +760,28 @@ void UpdateSolventMover::apply( core::pose::Pose & pose ) {
 	core::scoring::cryst::getPhenixInterface().getScore( pose );
 
 	//fcalc
-	if( update_fcalc_ ) {
+	if ( update_fcalc_ ) {
 		core::scoring::cryst::getPhenixInterface().updateFcalc();
 	}
 
 	//mask
-	if (optimize_mask_ && optimize_params_) {
+	if ( optimize_mask_ && optimize_params_ ) {
 		core::scoring::cryst::getPhenixInterface().optimizeSolvParamsAndMask();
-	} else if (optimize_mask_) {
+	} else if ( optimize_mask_ ) {
 		core::scoring::cryst::getPhenixInterface().optimizeSolventMask();
-	} else if( optimize_params_ ) {
+	} else if ( optimize_params_ ) {
 		core::scoring::cryst::getPhenixInterface().optimizeSolvParams();
-	} else if( update_mask_ ) {
+	} else if ( update_mask_ ) {
 		core::scoring::cryst::getPhenixInterface().updateSolventMask();
 	}
 }
 
 void UpdateSolventMover::parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & /*data*/,
-			filters::Filters_map const & /*filters*/,
-			moves::Movers_map const & /*movers*/,
-			core::pose::Pose const & /*pose*/ )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & /*data*/,
+	filters::Filters_map const & /*filters*/,
+	moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/ )
 {
 	update_mask_ = tag->getOption<bool>("update_mask", 1);
 	update_fcalc_ = tag->getOption<bool>("update_fcalc", 1);
@@ -795,8 +797,9 @@ void TagPoseWithRefinementStatsMover::apply( core::pose::Pose & pose ) {
 
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	//fpd if the pose is symmetric use a symmetric scorefunction
-	if (core::pose::symmetry::is_symmetric(pose))
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn );
+	}
 	core::Real score = (*scorefxn)(pose);
 	core::pose::RemarkInfo remark;
 
@@ -809,13 +812,13 @@ void TagPoseWithRefinementStatsMover::apply( core::pose::Pose & pose ) {
 	oss << " sc=" << score;
 
 	core::pose::Pose pose_asu;
-	if (basic::options::option[ basic::options::OptionKeys::in::file::native ].user() || dump_pose_) {
+	if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() || dump_pose_ ) {
 		core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu);
 	}
 
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 		// rms to native
-		if (!get_native_pose()) protocols::jd2::set_native_in_mover(*this);
+		if ( !get_native_pose() ) protocols::jd2::set_native_in_mover(*this);
 		core::pose::PoseCOP native = get_native_pose();
 
 		core::sequence::SequenceOP model_seq( new core::sequence::Sequence( pose_asu.sequence(),  "model",  1 ) );
@@ -829,17 +832,17 @@ void TagPoseWithRefinementStatsMover::apply( core::pose::Pose & pose ) {
 		oss << " rms=" << rms;
 	}
 
-	if (report_grads_) {
+	if ( report_grads_ ) {
 		ReportGradientsMover RGG(scorefxn);
 		core::Real gradsum = RGG.compute(pose);
 		oss << " grad=" << gradsum;
 	}
 
 	TR << oss.str() << std::endl;
-	remark.num = 1;	remark.value = oss.str();
+	remark.num = 1; remark.value = oss.str();
 	pose.pdb_info()->remarks().push_back( remark );
 
-	if (dump_pose_) {
+	if ( dump_pose_ ) {
 		std::string out_name = protocols::jd2::JobDistributor::get_instance()->current_output_name() + "_" + tag_ + ".pdb";
 		pose_asu.dump_pdb( out_name );
 	}
@@ -847,11 +850,11 @@ void TagPoseWithRefinementStatsMover::apply( core::pose::Pose & pose ) {
 
 
 void TagPoseWithRefinementStatsMover::parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & /*data*/,
-			filters::Filters_map const & /*filters*/,
-			moves::Movers_map const & /*movers*/,
-			core::pose::Pose const & /*pose*/ )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & /*data*/,
+	filters::Filters_map const & /*filters*/,
+	moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/ )
 {
 	tag_ = tag->getOption<std::string>("tag", "");
 	dump_pose_ = tag->getOption<bool>("dump", 0);
@@ -862,49 +865,49 @@ void TagPoseWithRefinementStatsMover::parse_my_tag(
 void SetRefinementOptionsMover::apply( core::pose::Pose & /*pose*/ ) {
 	TR << "Setting options:" << std::endl;
 
-	if (res_high_ != 0 || res_low_ != 0) {
+	if ( res_high_ != 0 || res_low_ != 0 ) {
 		TR << "  res_high:" << res_high_ << std::endl;
 		TR << "  res_low:" << res_low_ << std::endl;
 		core::scoring::cryst::getPhenixInterface().setResLimits(res_high_, res_low_);
 	}
-	if (twin_law_.length() != 0) {
+	if ( twin_law_.length() != 0 ) {
 		TR << "  twin_law:" << twin_law_ << std::endl;
 		core::scoring::cryst::getPhenixInterface().setTwinLaw(twin_law_);
 	}
-	if (algo_.length() != 0) {
+	if ( algo_.length() != 0 ) {
 		TR << "  algorithm:" << algo_ << std::endl;
 		core::scoring::cryst::getPhenixInterface().setAlgorithm(algo_);
 	}
-	if (target_.length() != 0) {
+	if ( target_.length() != 0 ) {
 		TR << "  target:" << std::endl;
 		core::scoring::cryst::getPhenixInterface().set_target_function(target_);
 	}
 
-	if (setmap_type_) {
+	if ( setmap_type_ ) {
 		TR << "  map_type:" << map_type_ << std::endl;
 		core::scoring::cryst::getPhenixInterface().set_map_type ( map_type_ );
 	}
 
-	if (cif_files_.size() > 0) {
+	if ( cif_files_.size() > 0 ) {
 		TR << "Passing cif files to phenix refine:" << std::endl;
-		for (core::Size i=1; i<=cif_files_.size(); ++i) {
+		for ( core::Size i=1; i<=cif_files_.size(); ++i ) {
 			TR << "  " << cif_files_[i] << std::endl;
 		}
 		core::scoring::cryst::getPhenixInterface().set_cif_files ( cif_files_ );
 	}
 
-	if (sharpen_b_ != 0.0) {
+	if ( sharpen_b_ != 0.0 ) {
 		core::scoring::cryst::getPhenixInterface().set_sharpen_b ( sharpen_b_ );
 	}
 }
 
 
 void SetRefinementOptionsMover::parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & /*data*/,
-			filters::Filters_map const & /*filters*/,
-			moves::Movers_map const & /*movers*/,
-			core::pose::Pose const & /*pose*/ )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & /*data*/,
+	filters::Filters_map const & /*filters*/,
+	moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/ )
 {
 	res_high_ = tag->getOption<core::Real>("res_high", 0.0);
 	res_low_ = tag->getOption<core::Real>("res_low", 0.0);
@@ -916,8 +919,9 @@ void SetRefinementOptionsMover::parse_my_tag(
 	sharpen_b_ = tag->getOption<core::Real>("sharpen_b", 0.0);
 
 	std::string allcifs = tag->getOption<std::string>("cifs", "");
-	if (allcifs != "")
+	if ( allcifs != "" ) {
 		cif_files_ = utility::string_split( allcifs, ',' );
+	}
 }
 
 }

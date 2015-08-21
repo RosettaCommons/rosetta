@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/screener/StepWiseResiduePairScreener.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace stepwise {
 namespace screener {
-	
-	class StepWiseResiduePairScreener;
-	typedef utility::pointer::shared_ptr< StepWiseResiduePairScreener > StepWiseResiduePairScreenerOP;
-	typedef utility::pointer::shared_ptr< StepWiseResiduePairScreener const > StepWiseResiduePairScreenerCOP;
-	
+
+class StepWiseResiduePairScreener;
+typedef utility::pointer::shared_ptr< StepWiseResiduePairScreener > StepWiseResiduePairScreenerOP;
+typedef utility::pointer::shared_ptr< StepWiseResiduePairScreener const > StepWiseResiduePairScreenerCOP;
+
 } //screener
 } //stepwise
 } //protocols

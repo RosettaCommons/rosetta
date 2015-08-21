@@ -86,68 +86,73 @@ using core::scoring::electron_density::poseCoord;
 std::string
 name2elt( std::string line ) {
 	std::string atmid = line.substr(12,4);
-	while (!atmid.empty() && atmid[0] == ' ') atmid = atmid.substr(1,atmid.size()-1);
-	while (!atmid.empty() && atmid[atmid.size()-1] == ' ') atmid = atmid.substr(0,atmid.size()-1);
+	while ( !atmid.empty() && atmid[0] == ' ' ) atmid = atmid.substr(1,atmid.size()-1);
+	while ( !atmid.empty() && atmid[atmid.size()-1] == ' ' ) atmid = atmid.substr(0,atmid.size()-1);
 	std::string resname = line.substr(17,3);
-	while (!resname.empty() && resname[0] == ' ') resname = resname.substr(1,resname.size()-1);
-	while (!resname.empty() && resname[resname.size()-1] == ' ') resname = resname.substr(0,resname.size()-1);
+	while ( !resname.empty() && resname[0] == ' ' ) resname = resname.substr(1,resname.size()-1);
+	while ( !resname.empty() && resname[resname.size()-1] == ' ' ) resname = resname.substr(0,resname.size()-1);
 
 	std::string type;
 
-	if (line.substr(0,4) == "ATOM") {
+	if ( line.substr(0,4) == "ATOM" ) {
 		type = atmid.substr(0,2);
-		if (isdigit(type[0])) {
+		if ( isdigit(type[0]) ) {
 			// sometimes non-standard files have, e.g 11HH
-			if (!isdigit(type[1])) type = atmid.substr(1,1);
+			if ( !isdigit(type[1]) ) type = atmid.substr(1,1);
 			else type = atmid.substr(2,1);
 		} else if ( (line[12] == ' ' && type!="Zn" && type!="Fe" && type!="ZN" && type!="FE")
-								|| isdigit(type[1]) )
+				|| isdigit(type[1]) ) {
 			type = atmid.substr(0,1);     // one-character element
+		}
 
-		if (resname.substr(0,2) == "AS" || resname[0] == 'N') {
-			if (atmid == "AD1") type = "O";
-			if (atmid == "AD2") type = "N";
+		if ( resname.substr(0,2) == "AS" || resname[0] == 'N' ) {
+			if ( atmid == "AD1" ) type = "O";
+			if ( atmid == "AD2" ) type = "N";
 		}
-		if (resname.substr(0,3) == "HIS" || resname[0] == 'H') {
-			if (atmid == "AD1" || atmid == "AE2") type = "N";
-			if (atmid == "AE1" || atmid == "AD2") type = "C";
+		if ( resname.substr(0,3) == "HIS" || resname[0] == 'H' ) {
+			if ( atmid == "AD1" || atmid == "AE2" ) type = "N";
+			if ( atmid == "AE1" || atmid == "AD2" ) type = "C";
 		}
-		if (resname.substr(0,2) == "GL" || resname[0] == 'Q') {
-			if (atmid == "AE1") type = "O";
-			if (atmid == "AE2") type = "N";
+		if ( resname.substr(0,2) == "GL" || resname[0] == 'Q' ) {
+			if ( atmid == "AE1" ) type = "O";
+			if ( atmid == "AE2" ) type = "N";
 		}
-		if (atmid.substr(0,2) == "HH") // ARG
-				type = "H";
-		if (atmid.substr(0,2) == "HD" || atmid.substr(0,2) == "HE" || atmid.substr(0,2) == "HG")
-				type = "H";
+		if ( atmid.substr(0,2) == "HH" ) { // ARG
+			type = "H";
+		}
+		if ( atmid.substr(0,2) == "HD" || atmid.substr(0,2) == "HE" || atmid.substr(0,2) == "HG" ) {
+			type = "H";
+		}
 	} else {
-		if (isalpha(atmid[0])) {
-			if (atmid.size() > 2 && (atmid[2] == '\0' || atmid[2] == ' '))
+		if ( isalpha(atmid[0]) ) {
+			if ( atmid.size() > 2 && (atmid[2] == '\0' || atmid[2] == ' ') ) {
 				type = atmid.substr(0,2);
-			else if (atmid[0] == 'A') // alpha prefix
+			} else if ( atmid[0] == 'A' ) { // alpha prefix
 				type = atmid.substr(1, atmid.size() - 1);
-			else
+			} else {
 				type = atmid.substr(0,1);
-		} else if (atmid[0] == ' ')
+			}
+		} else if ( atmid[0] == ' ' ) {
 			type = atmid.substr(1,1); // one char element
-		else
+		} else {
 			type = atmid.substr(1,2);
+		}
 
-		if (atmid == resname) {
+		if ( atmid == resname ) {
 			type = atmid;
-			if (type.size() == 2) type[1] = toupper(type[1]);
-		} else if (resname == "ADR" || resname == "COA" || resname == "FAD" ||
+			if ( type.size() == 2 ) type[1] = toupper(type[1]);
+		} else if ( resname == "ADR" || resname == "COA" || resname == "FAD" ||
 				resname == "GPG" || resname == "NAD" || resname == "NAL" ||
-				resname == "NDP" || resname == "ABA")  {
-			if (type.size() > 1) type = type.substr(0,1);
-		} else if (isdigit(type[0])) {
+				resname == "NDP" || resname == "ABA" )  {
+			if ( type.size() > 1 ) type = type.substr(0,1);
+		} else if ( isdigit(type[0]) ) {
 			type = type.substr(1,1);
-		} else if (type.size() > 1 && isdigit(type[1])) {
+		} else if ( type.size() > 1 && isdigit(type[1]) ) {
 			type = type.substr(0,1);
-		} else if (type.size() > 1 && isalpha(type[1])) {
-			if (type[0] == 'O' && type[1] == 'H')
+		} else if ( type.size() > 1 && isalpha(type[1]) ) {
+			if ( type[0] == 'O' && type[1] == 'H' ) {
 				type = type.substr(0,1); // no "Oh" element (e.g. 1MBN)
-			else if(islower(type[1])) {
+			} else if ( islower(type[1]) ) {
 				type[1] = toupper(type[1]);
 			}
 		}
@@ -162,8 +167,8 @@ readPDBcoords(std::string filename, poseCoords &atmlist) {
 	std::ifstream inpdb(filename.c_str());
 	std::string buf;
 
-	while (std::getline(inpdb, buf ) ) {
-		if( buf.substr(0,4)!="ATOM" && buf.substr(0,6)!="HETATM") continue;
+	while ( std::getline(inpdb, buf ) ) {
+		if ( buf.substr(0,4)!="ATOM" && buf.substr(0,6)!="HETATM" ) continue;
 		poseCoord atom_i;
 
 		atom_i.x_[0] = atof(buf.substr(30,8).c_str());
@@ -172,7 +177,7 @@ readPDBcoords(std::string filename, poseCoords &atmlist) {
 		atom_i.B_ = atof(buf.substr(60,6).c_str());
 
 		atom_i.elt_ = name2elt( buf ); // horrible hacky logic mapping name->elt (could use PDB fields 76-77 if on by default)
-		if (atom_i.elt_ == "H") continue;
+		if ( atom_i.elt_ == "H" ) continue;
 
 		atmlist.push_back( atom_i );
 	}
@@ -210,8 +215,8 @@ densityTools()
 	ObjexxFCL::FArray3D< std::complex<double> > FrhoC, FrhoMask, FrhoCmask, FrhoOmask, FrhoO2mask;
 	ObjexxFCL::FArray3D< std::complex<double> > FrhoO, FrhoO2;
 
-	if (hires == 0.0) hires = core::scoring::electron_density::getDensityMap().maxNominalRes();
-	if (truncate_hires == 0.0) truncate_hires = core::scoring::electron_density::getDensityMap().maxNominalRes();
+	if ( hires == 0.0 ) hires = core::scoring::electron_density::getDensityMap().maxNominalRes();
+	if ( truncate_hires == 0.0 ) truncate_hires = core::scoring::electron_density::getDensityMap().maxNominalRes();
 
 	runtime_assert( lowres > hires );
 	runtime_assert( truncate_lowres > truncate_hires );
@@ -233,7 +238,7 @@ densityTools()
 	poseCoords pose;
 	core::pose::Pose fullpose;  // needed for per-residue stats (if requested)
 	std::string pdbfile;
-	if (userpose && !option[ denstools::truncate_map ]) {
+	if ( userpose && !option[ denstools::truncate_map ] ) {
 		pdbfile = basic::options::start_file();
 		readPDBcoords( pdbfile, pose );
 
@@ -245,8 +250,9 @@ densityTools()
 		// apply mask
 		std::cout << "       : mask map" << std::endl;
 		rhoOmask = rhoMask;
-		for (int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i)
+		for ( int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i ) {
 			rhoOmask[i] *= core::scoring::electron_density::getDensityMap().data()[i];
+		}
 		numeric::fourier::fft3(rhoOmask, FrhoOmask);
 
 		// intensities
@@ -259,13 +265,14 @@ densityTools()
 	core::scoring::electron_density::getDensityMap().getResolutionBins(nresobins, lowres, hires, resobins, resobin_counts, bin_squared);
 
 	// rescale
-	if (option[ denstools::truncate_map ]) {
+	if ( option[ denstools::truncate_map ] ) {
 		utility::vector1< core::Real > trunc = mapI;
-		for (int i=1; i<=(int)mapI.size(); ++i) {
-			if (resobins[i] <= truncate_lowres || resobins[i] >= truncate_hires)
+		for ( int i=1; i<=(int)mapI.size(); ++i ) {
+			if ( resobins[i] <= truncate_lowres || resobins[i] >= truncate_hires ) {
 				trunc[i] = 0;
-			else
+			} else {
 				trunc[i] = 1;
+			}
 		}
 
 		core::scoring::electron_density::getDensityMap().scaleIntensities( trunc, lowres, hires, bin_squared );
@@ -278,7 +285,7 @@ densityTools()
 	std::cout << "Stage 3: map vs map" << std::endl;
 	core::scoring::electron_density::ElectronDensity mapAlt;
 	bool usermap = option[ edensity::alt_mapfile ].user();
-	if (usermap) {
+	if ( usermap ) {
 		std::string mapfile = option[ edensity::alt_mapfile ];
 		core::Real mapreso = option[ edensity::mapreso ]();
 		core::Real mapsampling = option[ edensity::grid_spacing ]();
@@ -286,11 +293,12 @@ densityTools()
 		mapAlt.readMRCandResize( mapfile , mapreso , mapsampling );
 		numeric::fourier::fft3(mapAlt.data(), FrhoO2);
 
-		if (userpose) {
-		std::cout << "       : mask alt_map" << std::endl;
+		if ( userpose ) {
+			std::cout << "       : mask alt_map" << std::endl;
 			rhoO2mask = rhoMask;
-			for (int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i)
+			for ( int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i ) {
 				rhoO2mask[i] *= mapAlt.data()[i];
+			}
 			numeric::fourier::fft3(rhoO2mask, FrhoO2mask);
 		}
 
@@ -299,7 +307,7 @@ densityTools()
 		core::scoring::electron_density::getDensityMap().getFSC(FrhoO, FrhoO2, nresobins, lowres, hires, mapmapFSC, bin_squared);
 
 		// masked
-		if (userpose) {
+		if ( userpose ) {
 			core::scoring::electron_density::getDensityMap().getFSC(FrhoOmask, FrhoO2mask, nresobins, lowres, hires, mapmapFSC, bin_squared);
 		}
 	}
@@ -308,8 +316,8 @@ densityTools()
 	Real modelMapFSCsum=0, maskedModelMapFSCsum=0, RSCC=0;
 
 	std::cout << "Stage 4: model vs map" << std::endl;
-	if (userpose) {
-		if (perres) {
+	if ( userpose ) {
+		if ( perres ) {
 			std::cout << "       : per-res" << std::endl;
 			core::chemical::ResidueTypeSetCAP rsd_set;
 			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
@@ -329,8 +337,9 @@ densityTools()
 			scorefxn->set_weight( core::scoring::elec_dens_window, 1.0 );
 			(*scorefxn)(fullpose);
 
-			for (core::uint r = 1; r <= nres; ++r)
+			for ( core::uint r = 1; r <= nres; ++r ) {
 				perResCC[r] = core::scoring::electron_density::getDensityMap().matchRes( r , fullpose.residue(r), fullpose, NULL , false);
+			}
 		}
 
 		std::cout << "       : FSCs" << std::endl;
@@ -341,7 +350,7 @@ densityTools()
 		RSCC = core::scoring::electron_density::getDensityMap().getRSCC( rhoC, rhoMask );
 
 		// sum FSC over reso bins
-		for (Size i=1; i<=resobins.size(); ++i) {
+		for ( Size i=1; i<=resobins.size(); ++i ) {
 			modelMapFSCsum += modelmapFSC[i];
 			maskedModelMapFSCsum += maskedModelMapFSC[i];
 		}
@@ -351,30 +360,30 @@ densityTools()
 
 	// verbose
 	if ( option[ denstools::verbose ]() ) {
-			std::cerr << "res count";
-			if (mapI.size()) std::cerr << " I_map";
-			if (maskedmapI.size()) std::cerr << " I_map_masked";
-			if (modelI.size()) std::cerr << " I_model" ;
-			if (maskI.size()) std::cerr << " I_mask" ;
-			if (mapmapFSC.size())  std::cerr << " FSC_mapmap";
-			if (modelmapFSC.size())  std::cerr << " FSC_modelmap";
-			if (maskedModelMapFSC.size())  std::cerr << " FSC_maskedmodelmap";
-			std::cerr << std::endl;
-		for (Size i=1; i<=resobins.size(); ++i) {
+		std::cerr << "res count";
+		if ( mapI.size() ) std::cerr << " I_map";
+		if ( maskedmapI.size() ) std::cerr << " I_map_masked";
+		if ( modelI.size() ) std::cerr << " I_model" ;
+		if ( maskI.size() ) std::cerr << " I_mask" ;
+		if ( mapmapFSC.size() )  std::cerr << " FSC_mapmap";
+		if ( modelmapFSC.size() )  std::cerr << " FSC_modelmap";
+		if ( maskedModelMapFSC.size() )  std::cerr << " FSC_maskedmodelmap";
+		std::cerr << std::endl;
+		for ( Size i=1; i<=resobins.size(); ++i ) {
 			std::cerr << resobins[i] << " " << resobin_counts[i];
-			if (mapI.size()) std::cerr << " " << mapI[i];
-			if (maskedmapI.size()) std::cerr << " " << maskedmapI[i];
-			if (modelI.size()) std::cerr << " " << modelI[i];
-			if (maskI.size()) std::cerr << " " << maskI[i];
-			if (mapmapFSC.size())  std::cerr << " " << mapmapFSC[i];
-			if (modelmapFSC.size())  std::cerr << " " << modelmapFSC[i];
-			if (maskedModelMapFSC.size())  std::cerr << " " << maskedModelMapFSC[i];
+			if ( mapI.size() ) std::cerr << " " << mapI[i];
+			if ( maskedmapI.size() ) std::cerr << " " << maskedmapI[i];
+			if ( modelI.size() ) std::cerr << " " << modelI[i];
+			if ( maskI.size() ) std::cerr << " " << maskI[i];
+			if ( mapmapFSC.size() )  std::cerr << " " << mapmapFSC[i];
+			if ( modelmapFSC.size() )  std::cerr << " " << modelmapFSC[i];
+			if ( maskedModelMapFSC.size() )  std::cerr << " " << maskedModelMapFSC[i];
 			std::cerr << std::endl;
 		}
 	}
 
 	// dump
-	if (userpose && option[ denstools::dump_map_and_mask ]()) {
+	if ( userpose && option[ denstools::dump_map_and_mask ]() ) {
 		core::scoring::electron_density::getDensityMap().set_data(rhoOmask);
 		core::scoring::electron_density::getDensityMap().writeMRC( "map_masked.mrc" );
 
@@ -385,14 +394,14 @@ densityTools()
 		core::scoring::electron_density::getDensityMap().writeMRC( "model_mask.mrc" );
 	}
 
-	if (userpose && option[ denstools::perres ]()) {
-		for (core::uint r = 1; r <= perResCC.size(); ++r) {
+	if ( userpose && option[ denstools::perres ]() ) {
+		for ( core::uint r = 1; r <= perResCC.size(); ++r ) {
 			std::cerr << "PERRESCC residue " << r << " " << perResCC[r] << std::endl;
 		}
 	}
 
 	// compact
-	if (userpose) {
+	if ( userpose ) {
 		std::cerr << pdbfile << "RSCC/FSC/FSCmask: " << RSCC << " " << modelMapFSCsum << " " << maskedModelMapFSCsum;
 		std::cerr << std::endl;
 	}
@@ -405,26 +414,26 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-	// options, random initialization
-	NEW_OPT(denstools::lowres, "low res limit", 1000.0);
-	NEW_OPT(denstools::hires, "high res limit", 0.0);
-	NEW_OPT(edensity::alt_mapfile, "alt mapfile", "");
-	NEW_OPT(denstools::nresbins, "# resolution bins for statistics", 200);
-	NEW_OPT(denstools::truncate_map, "dump map with map I scaled to to model I?", false);
-	NEW_OPT(denstools::truncate_lowres, "low res truncation", 1000.0);
-	NEW_OPT(denstools::truncate_hires, "high res truncation", 0.0);
-	NEW_OPT(denstools::dump_map_and_mask, "dump mrc of rho_calc and eps_calc", false);
-	NEW_OPT(denstools::mask, "mask all calcs", false);
-	NEW_OPT(denstools::mask_modelmap, "mask model-map calcs only", false);
-	NEW_OPT(denstools::mask_radius, "radius for masking", 0.0);
-	NEW_OPT(denstools::perres, "output per-residue stats", false);
-	NEW_OPT(denstools::verbose, "dump extra output", false);
-	NEW_OPT(denstools::super_verbose, "dump a lot of extra output", false);
-	NEW_OPT(denstools::bin_squared, "bin uniformly in 1/res^2 (default bins 1/res)", false);
-	NEW_OPT(denstools::rscc_wdw, "sliding window to calculate rscc", 3);
+		// options, random initialization
+		NEW_OPT(denstools::lowres, "low res limit", 1000.0);
+		NEW_OPT(denstools::hires, "high res limit", 0.0);
+		NEW_OPT(edensity::alt_mapfile, "alt mapfile", "");
+		NEW_OPT(denstools::nresbins, "# resolution bins for statistics", 200);
+		NEW_OPT(denstools::truncate_map, "dump map with map I scaled to to model I?", false);
+		NEW_OPT(denstools::truncate_lowres, "low res truncation", 1000.0);
+		NEW_OPT(denstools::truncate_hires, "high res truncation", 0.0);
+		NEW_OPT(denstools::dump_map_and_mask, "dump mrc of rho_calc and eps_calc", false);
+		NEW_OPT(denstools::mask, "mask all calcs", false);
+		NEW_OPT(denstools::mask_modelmap, "mask model-map calcs only", false);
+		NEW_OPT(denstools::mask_radius, "radius for masking", 0.0);
+		NEW_OPT(denstools::perres, "output per-residue stats", false);
+		NEW_OPT(denstools::verbose, "dump extra output", false);
+		NEW_OPT(denstools::super_verbose, "dump a lot of extra output", false);
+		NEW_OPT(denstools::bin_squared, "bin uniformly in 1/res^2 (default bins 1/res)", false);
+		NEW_OPT(denstools::rscc_wdw, "sliding window to calculate rscc", 3);
 
-	devel::init( argc, argv );
-	densityTools();
+		devel::init( argc, argv );
+		densityTools();
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

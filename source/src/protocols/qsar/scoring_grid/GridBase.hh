@@ -61,10 +61,10 @@ public:
 	virtual utility::json_spirit::Value serialize() = 0;
 	/// @brief deserialize a json spirit Value into a GridBase object
 	virtual void deserialize(utility::json_spirit::mObject data) = 0;
-    /// @brief determine if all residue atoms are in a grid
-    virtual bool is_in_grid(core::conformation::UltraLightResidue const & residue) =0;
-    /// @brief determine if all residue atoms are in a grid
-    virtual bool is_in_grid(core::conformation::Residue const & residue) =0;
+	/// @brief determine if all residue atoms are in a grid
+	virtual bool is_in_grid(core::conformation::UltraLightResidue const & residue) =0;
+	/// @brief determine if all residue atoms are in a grid
+	virtual bool is_in_grid(core::conformation::Residue const & residue) =0;
 };
 
 }

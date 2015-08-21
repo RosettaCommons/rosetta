@@ -104,23 +104,23 @@ namespace sugar {
 
 //Constructor
 VirtualSugarSampler::VirtualSugarSampler( working_parameters::StepWiseWorkingParametersCOP & working_parameters,
-		SugarModeling & sugar_modeling ) :
-		working_parameters_( working_parameters ),
-		sugar_modeling_( sugar_modeling ), // holds both job parameters and pose list.
-		tag_( "" ),
-		use_phenix_geo_( false ),
-		keep_base_fixed_( false ),
-		choose_random_( false ),
-		do_minimize_( true ),
-		do_screens_( true ),
-		integration_test_mode_( false ),
-		virtual_sugar_is_from_prior_step_( true ),
-		legacy_mode_( false ), //for comparison to original code -- may deprecate in 2014.
-		do_chain_closure_( true || legacy_mode_ ),
-		first_minimize_with_fixed_base_( false ),
-		max_tries_for_random_sugar_setup_( 1 ),
-		sugar_setup_success_( false ),
-		moving_phosphate_virtualized_( false )
+	SugarModeling & sugar_modeling ) :
+	working_parameters_( working_parameters ),
+	sugar_modeling_( sugar_modeling ), // holds both job parameters and pose list.
+	tag_( "" ),
+	use_phenix_geo_( false ),
+	keep_base_fixed_( false ),
+	choose_random_( false ),
+	do_minimize_( true ),
+	do_screens_( true ),
+	integration_test_mode_( false ),
+	virtual_sugar_is_from_prior_step_( true ),
+	legacy_mode_( false ), //for comparison to original code -- may deprecate in 2014.
+	do_chain_closure_( true || legacy_mode_ ),
+	first_minimize_with_fixed_base_( false ),
+	max_tries_for_random_sugar_setup_( 1 ),
+	sugar_setup_success_( false ),
+	moving_phosphate_virtualized_( false )
 {}
 
 //Destructor
@@ -140,7 +140,7 @@ VirtualSugarSampler::apply( pose::Pose & viewer_pose ){
 	utility::vector1< PoseOP > pose_list;
 
 	Size const max_tries = choose_random_ ? max_tries_for_random_sugar_setup_ : 1;
-	for ( Size ntries = 1; ntries <= max_tries; ntries++ ){
+	for ( Size ntries = 1; ntries <= max_tries; ntries++ ) {
 		TR.Debug << TR.Green << "Will sample residue " << sugar_modeling_.moving_res << " ( reference res: " << sugar_modeling_.reference_res <<  " ) " << TR.Reset << std::endl;
 		apply( pose_list, viewer_pose );
 		if ( pose_list.size() > 0 || !sugar_setup_success_ ) break;
@@ -153,7 +153,7 @@ VirtualSugarSampler::apply( pose::Pose & viewer_pose ){
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 VirtualSugarSampler::apply( utility::vector1< PoseOP > & pose_list,
-																				pose::Pose & viewer_pose ){
+	pose::Pose & viewer_pose ){
 	using namespace ObjexxFCL;
 	using namespace core::io::silent;
 
@@ -166,7 +166,7 @@ VirtualSugarSampler::apply( utility::vector1< PoseOP > & pose_list,
 	original_constraint_set_ = viewer_pose.constraint_set()->clone();
 
 	//Virtualize any residues that move 'with' the moving residue -- their locations have not been sampled yet.
-	if ( do_screens_ ){
+	if ( do_screens_ ) {
 		if ( virtual_sugar_is_from_prior_step_ ) virtualize_distal_partition( viewer_pose );
 		else runtime_assert( working_parameters_->gap_size() );
 	}
@@ -178,7 +178,7 @@ VirtualSugarSampler::apply( utility::vector1< PoseOP > & pose_list,
 	if ( ( sugar_modeling_.bulge_res > 0 ) && do_chain_closure_ ) do_chain_closure_modeler( pose_list, viewer_pose );
 
 	reinstate_original_constraints( pose_list );
-	if ( do_screens_ && virtual_sugar_is_from_prior_step_ )	reinstantiate_distal_partition( pose_list );
+	if ( do_screens_ && virtual_sugar_is_from_prior_step_ ) reinstantiate_distal_partition( pose_list );
 
 	viewer_pose = viewer_pose_save;
 
@@ -211,8 +211,8 @@ VirtualSugarSampler::setup_sugar_conformations( utility::vector1< PoseOP > & pos
 	clock_t const time_start( clock() );
 	//July 28th, 2011 Could set extra_chi here, BUT necessary?
 	RNA_NucleosideStepWiseSampler sampler( sugar_modeling_.moving_res,
-			sugar_modeling_.moving_res_pucker_state,
-			sugar_modeling_.moving_res_base_state );
+		sugar_modeling_.moving_res_pucker_state,
+		sugar_modeling_.moving_res_base_state );
 	sampler.set_idealize_coord(   use_phenix_geo_ );
 	sampler.set_skip_same_pucker( use_phenix_geo_ );
 	sampler.set_random( choose_random_ );
@@ -227,43 +227,43 @@ VirtualSugarSampler::setup_sugar_conformations( utility::vector1< PoseOP > & pos
 		runtime_assert( sugar_modeling_.reference_res > 0 );
 
 		// Deprecate soon:
-		//	 Size const moving_suite = sugar_modeling_.is_prepend ? sugar_modeling_.moving_res : ( sugar_modeling_.moving_res - 1);
+		//  Size const moving_suite = sugar_modeling_.is_prepend ? sugar_modeling_.moving_res : ( sugar_modeling_.moving_res - 1);
 		//TR << TR.Red << "MOVING " << sugar_modeling_.moving_res << "  BULGE " << sugar_modeling_.bulge_res << "  REFERENCE " << sugar_modeling_.reference_res << " IS_PREPEND " << sugar_modeling_.is_prepend << " MOVING_SUITE " << moving_suite << " sugar_modeling:FIVE_PRIME_CHAINBREAK " << sugar_modeling_.five_prime_chain_break << " FIVE_PRIME_GAP_RES " << five_prime_gap_res << " DO_MINIMIZE " << do_minimize_ << TR.Reset << std::endl;
 		using namespace core::pose::full_model_info;
 		utility::vector1< Size > const chains = figure_out_chain_numbers_from_full_model_info( pose );
-		if ( chains[ five_prime_gap_res ] == chains[ three_prime_gap_res ] ){
+		if ( chains[ five_prime_gap_res ] == chains[ three_prime_gap_res ] ) {
 			utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
 			Size const gap_size = res_list[ three_prime_gap_res ] -  res_list[ five_prime_gap_res ];
 			checker::RNA_ChainClosableGeometryChecker chain_closable_geometry_checker( five_prime_gap_res, three_prime_gap_res, gap_size );
 		}
 
 		utility::vector1< Size > const & moving_partition_res = working_parameters_->working_moving_partition_res();
-		if ( moving_partition_res.has_value( sugar_modeling_.moving_res ) == moving_partition_res.has_value( sugar_modeling_.reference_res ) ){
+		if ( moving_partition_res.has_value( sugar_modeling_.moving_res ) == moving_partition_res.has_value( sugar_modeling_.reference_res ) ) {
 			atr_rep_checker = checker::RNA_AtrRepCheckerOP( new checker::RNA_AtrRepChecker( pose, sugar_modeling_.moving_res, sugar_modeling_.reference_res, 0 /*gap_size = 0 forces loose rep_cutoff (10.0 )*/, scorefxn_->energy_method_options().clone() ) );
 		}
 	}
 
 	pose::Pose pose_init = pose;//Hard copy
 	pose::remove_variant_type_from_pose_residue( pose_init,
-			core::chemical::VIRTUAL_RIBOSE, sugar_modeling_.moving_res );
+		core::chemical::VIRTUAL_RIBOSE, sugar_modeling_.moving_res );
 
 	Size count( 0 );
 	sugar_setup_success_ = false;
 	pose_list.clear();
 	for ( sampler.reset(); sampler.not_end(); ++sampler ) {
 		count++;
-		if ( choose_random_ && count > max_tries_for_random_sugar_setup_ ){
+		if ( choose_random_ && count > max_tries_for_random_sugar_setup_ ) {
 			pose_list.push_back( pose.clone() ); // this routine must return something with an instantiated sugar, even if its a fail.
 			break;
 		}
 
 		pose = pose_init;
 		// following *must* be mistake... should occur below inside actual chain_closure..
-		if ( legacy_mode_) {
+		if ( legacy_mode_ ) {
 			add_harmonic_chain_break_constraint( pose, sugar_modeling_.five_prime_chain_break );
 			if  ( do_chain_closure_ ) setup_chain_break_variants( pose, sugar_modeling_.five_prime_chain_break );
 		} else if ( do_screens_ ) {
-			add_fade_chain_break_constraint_across_gap( pose, five_prime_gap_res, three_prime_gap_res,	1 /*gap_size -- one intervening bulge residue -- perhaps should not be hard-wired! */ );
+			add_fade_chain_break_constraint_across_gap( pose, five_prime_gap_res, three_prime_gap_res, 1 /*gap_size -- one intervening bulge residue -- perhaps should not be hard-wired! */ );
 		}
 
 		sampler.apply( pose );
@@ -316,7 +316,7 @@ VirtualSugarSampler::minimize_sugar( pose::Pose & pose_with_sugar ){
 	mm.set_chi( false );
 	mm.set_jump( false );
 
-	if ( first_minimize_with_fixed_base_ || keep_base_fixed_ ){
+	if ( first_minimize_with_fixed_base_ || keep_base_fixed_ ) {
 		mm.set( TorsionID( sugar_modeling_.moving_res, id::CHI, 1 ), true ); // nucleosidic chi
 		mm.set( TorsionID( sugar_modeling_.moving_res, id::CHI, 2 ), true ); // sugar torsion
 		mm.set( TorsionID( sugar_modeling_.moving_res, id::CHI, 3 ), true ); // sugar torsion
@@ -326,10 +326,10 @@ VirtualSugarSampler::minimize_sugar( pose::Pose & pose_with_sugar ){
 	if ( keep_base_fixed_ ) return;
 
 	bool found_desired_jump_ID = false;
-	for ( Size jump_ID = 1; jump_ID <= pose_with_sugar.fold_tree().num_jump(); jump_ID++ ){
+	for ( Size jump_ID = 1; jump_ID <= pose_with_sugar.fold_tree().num_jump(); jump_ID++ ) {
 		Size const jump_pos1( pose_with_sugar.fold_tree().upstream_jump_residue( jump_ID ) );
 		Size const jump_pos2( pose_with_sugar.fold_tree().downstream_jump_residue( jump_ID ) );
-		if ( ( jump_pos1 == sugar_modeling_.moving_res ) || ( jump_pos2 == sugar_modeling_.moving_res ) ){
+		if ( ( jump_pos1 == sugar_modeling_.moving_res ) || ( jump_pos2 == sugar_modeling_.moving_res ) ) {
 			found_desired_jump_ID = true;
 			mm.set_jump( jump_ID, true );
 		}
@@ -367,13 +367,13 @@ VirtualSugarSampler::get_sugar_setup_scorefxns( scoring::ScoreFunctionOP & sugar
 
 	using namespace core::scoring;
 
-	sugar_scorefxn =	scorefxn_->clone();
+	sugar_scorefxn = scorefxn_->clone();
 	sugar_scorefxn->set_weight( linear_chainbreak, 0.0 );
 	sugar_scorefxn->set_weight( angle_constraint, 0.0 );
 	sugar_scorefxn->set_weight( atom_pair_constraint, 0.0 );
 	sugar_scorefxn->set_weight( coordinate_constraint, 0.1 );
 
-	sugar_scorefxn_without_ch_bond =	sugar_scorefxn->clone();
+	sugar_scorefxn_without_ch_bond = sugar_scorefxn->clone();
 	sugar_scorefxn_without_ch_bond->set_weight( ch_bond, 0.0 );
 	//This makes sure that there are no chain_break score involved.
 
@@ -406,7 +406,7 @@ VirtualSugarSampler::get_sugar_setup_scorefxns( scoring::ScoreFunctionOP & sugar
 //
 void
 VirtualSugarSampler::do_chain_closure_modeler( utility::vector1< PoseOP > & pose_list,
-																														pose::Pose & viewer_pose ){
+	pose::Pose & viewer_pose ){
 
 	using namespace core::chemical;
 	using namespace core::conformation;
@@ -424,8 +424,8 @@ VirtualSugarSampler::do_chain_closure_modeler( utility::vector1< PoseOP > & pose
 /////////////////////////////////////////////////////////////////////////////////////////
 void
 VirtualSugarSampler::bulge_chain_closure( utility::vector1< PoseOP > & pose_list,
-																											pose::Pose & viewer_pose ){
-	if ( legacy_mode_ ){ // deprecate legacy code soon
+	pose::Pose & viewer_pose ){
+	if ( legacy_mode_ ) { // deprecate legacy code soon
 		bulge_chain_closure_legacy( pose_list, viewer_pose );
 		bulge_chain_minimize_legacy( pose_list, viewer_pose );
 	} else {
@@ -439,7 +439,7 @@ VirtualSugarSampler::bulge_chain_closure( utility::vector1< PoseOP > & pose_list
 // faster than the legacy code [which was CCD-based].
 void
 VirtualSugarSampler::bulge_chain_closure_complete( utility::vector1< PoseOP > & pose_list,
-																															 pose::Pose & viewer_pose ){
+	pose::Pose & viewer_pose ){
 	utility::vector1< PoseOP > output_pose_list;
 	Size const rebuild_res = sugar_modeling_.bulge_res;
 	StepWiseModelerOP stepwise_modeler( new StepWiseModeler( rebuild_res, scorefxn_ ) );
@@ -450,7 +450,7 @@ VirtualSugarSampler::bulge_chain_closure_complete( utility::vector1< PoseOP > & 
 	options->set_integration_test_mode( true /*fast modeler*/ );
 	options->set_disallow_realign( true );
 	stepwise_modeler->set_options( options );
-	for ( Size n = 1; n <= pose_list.size(); n++ ){
+	for ( Size n = 1; n <= pose_list.size(); n++ ) {
 		pose::Pose & pose( *pose_list[n] );
 		viewer_pose = pose;
 		stepwise_modeler->set_moving_res_and_reset( rebuild_res );
@@ -467,7 +467,7 @@ VirtualSugarSampler::bulge_chain_closure_complete( utility::vector1< PoseOP > & 
 // satisfactory for stepwise assembly & stepwise monte carlo runs.
 void
 VirtualSugarSampler::bulge_chain_closure_legacy( utility::vector1< PoseOP > & pose_list,
-																														 pose::Pose & viewer_pose ){
+	pose::Pose & viewer_pose ){
 
 	using namespace sampler::rna;
 	using namespace protocols::stepwise::modeler::rna::checker;
@@ -481,8 +481,8 @@ VirtualSugarSampler::bulge_chain_closure_legacy( utility::vector1< PoseOP > & po
 	clock_t const time_start_modeler( clock() );
 
 	// in legacy mode chainbreak constraint addition occurs above in 'setup'. but it really should be here.
-	if ( !legacy_mode_ ){
-		for ( Size n = 1; n <= pose_list.size(); n++ ){
+	if ( !legacy_mode_ ) {
+		for ( Size n = 1; n <= pose_list.size(); n++ ) {
 			Pose & pose = *(pose_list[n]);
 			add_harmonic_chain_break_constraint( pose, sugar_modeling_.five_prime_chain_break );
 		}
@@ -524,7 +524,7 @@ VirtualSugarSampler::bulge_chain_closure_legacy( utility::vector1< PoseOP > & po
 	Size num_closed_chain_pose = 0;
 
 	utility::vector1< RNA_AtrRepCheckerOP > atr_rep_checkers_;
-	for ( Size n = 1; n <= pose_list.size(); n++ )	atr_rep_checkers_.push_back( rna::checker::RNA_AtrRepCheckerOP( new RNA_AtrRepChecker( *(pose_list[n]), bulge_suite, bulge_rsd, 0 /*gap_size*/ ) ) );
+	for ( Size n = 1; n <= pose_list.size(); n++ ) atr_rep_checkers_.push_back( rna::checker::RNA_AtrRepCheckerOP( new RNA_AtrRepChecker( *(pose_list[n]), bulge_suite, bulge_rsd, 0 /*gap_size*/ ) ) );
 
 	RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker_( new RNA_ChainClosableGeometryChecker( sugar_modeling_.five_prime_chain_break, 0 /*gap_size*/ ) );
 	RNA_ChainClosureCheckerOP chain_closure_checker_( new RNA_ChainClosureChecker( screening_pose, sugar_modeling_.five_prime_chain_break ) );
@@ -540,7 +540,7 @@ VirtualSugarSampler::bulge_chain_closure_legacy( utility::vector1< PoseOP > & po
 	for ( sampler.reset(); sampler.not_end(); ++sampler ) {
 		if ( integration_test_mode_ && num_closed_chain_pose > 1 ) break;
 
-		if ( num_closed_chain_pose == pose_list.size() )	break;
+		if ( num_closed_chain_pose == pose_list.size() ) break;
 
 		count_data.tot_rotamer_count++;
 		sampler.apply( screening_pose );
@@ -548,23 +548,23 @@ VirtualSugarSampler::bulge_chain_closure_legacy( utility::vector1< PoseOP > & po
 		if ( VDW_bin_checker_ && !VDW_bin_checker_->VDW_rep_screen( screening_pose, sugar_modeling_.bulge_res ) ) continue;
 		count_data.good_bin_rep_count++;
 
-		for ( Size n = 1; n <= pose_list.size(); n++ ){
+		for ( Size n = 1; n <= pose_list.size(); n++ ) {
 
 			if ( is_chain_close[ n ] ) continue;
 			Pose & current_pose = *(pose_list[n]);
 
 			// don't copy torsions into current pose just quite yet -- check if chain is closable.
 			if  ( !chain_closable_geometry_checker_->check_screen( screening_pose   /* moving_pose */,
-																										 current_pose     /* reference_pose */,
-																										 !sugar_modeling_.is_prepend,
-																										 true /*strict*/ ) ) continue;
+					current_pose     /* reference_pose */,
+					!sugar_modeling_.is_prepend,
+					true /*strict*/ ) ) continue;
 			count_data.chain_closable_geometry_count++;
 
 			sampler.apply( current_pose );
 
 			if ( !fast_full_atom_VDW_repulsion_screen( current_pose,
-																								 sugar_modeling_.bulge_res, sugar_modeling_.moving_res,
-																								 sugar_modeling_.is_prepend ) ) continue;
+					sugar_modeling_.bulge_res, sugar_modeling_.moving_res,
+					sugar_modeling_.is_prepend ) ) continue;
 			count_data.fast_full_atom_VDW_repulsion_screen++;
 
 			if ( !atr_rep_checkers_[n]->check_screen( current_pose ) ) continue;
@@ -593,7 +593,7 @@ VirtualSugarSampler::bulge_chain_closure_legacy( utility::vector1< PoseOP > & po
 /////////////////////////////////////////////////////////////////////////////////////////
 void
 VirtualSugarSampler::bulge_chain_minimize_legacy( utility::vector1< PoseOP > & pose_list,
-																															pose::Pose & viewer_pose ){
+	pose::Pose & viewer_pose ){
 
 	using namespace core::optimization;
 	using namespace core::id;
@@ -642,7 +642,7 @@ VirtualSugarSampler::bulge_chain_minimize_legacy( utility::vector1< PoseOP > & p
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< PoseOP > output_pose_list;
-	for ( Size n = 1; n <= pose_list.size(); n++ ){
+	for ( Size n = 1; n <= pose_list.size(); n++ ) {
 		viewer_pose = *(pose_list[n]);
 		TR.Debug << "POST_PROCESSING pose # " << n << " out of " << pose_list.size() << " " << std::endl;;
 		minimizer.run( viewer_pose, mm, *( bulge_chain_closure_scorefxn ), options );
@@ -656,12 +656,12 @@ VirtualSugarSampler::bulge_chain_minimize_legacy( utility::vector1< PoseOP > & p
 void
 VirtualSugarSampler::initialize_pose_variants_for_chain_closure( utility::vector1< pose::PoseOP > & pose_list ){
 	// instantiate bulge.
-	for ( Size n = 1; n <= pose_list.size(); n++ ){
+	for ( Size n = 1; n <= pose_list.size(); n++ ) {
 		Pose & pose = *(pose_list[n]);
 		// in legacy mode this occurs above in 'setup'. but it really should be here.
-		if ( !legacy_mode_)	setup_chain_break_variants( pose, sugar_modeling_.five_prime_chain_break );
+		if ( !legacy_mode_ ) setup_chain_break_variants( pose, sugar_modeling_.five_prime_chain_break );
 		pose::add_variant_type_to_pose_residue(  pose,
-				core::chemical::VIRTUAL_PHOSPHATE, sugar_modeling_.five_prime_chain_break + 1 );
+			core::chemical::VIRTUAL_PHOSPHATE, sugar_modeling_.five_prime_chain_break + 1 );
 		core::pose::rna::remove_virtual_rna_residue_variant_type( pose, sugar_modeling_.bulge_res );
 
 		// this used to happen inside StepWiseModeler (and not get reverted) -- special for bulge cases, so moved out here.
@@ -675,11 +675,11 @@ VirtualSugarSampler::restore_pose_variants_after_chain_closure( utility::vector1
 	using namespace core::scoring;
 	// reverse instantiation of bulge.
 	ScoreFunctionOP modeler_scorefxn = get_modeler_scorefxn( scorefxn_ );
-	for ( Size n = 1; n <= pose_list.size(); n++ ){
+	for ( Size n = 1; n <= pose_list.size(); n++ ) {
 		Pose & pose = *(pose_list[n]);
 		remove_chain_break_variants( pose, sugar_modeling_.five_prime_chain_break );
 		pose::remove_variant_type_from_pose_residue( pose,
-				core::chemical::VIRTUAL_PHOSPHATE,  sugar_modeling_.five_prime_chain_break + 1 );
+			core::chemical::VIRTUAL_PHOSPHATE,  sugar_modeling_.five_prime_chain_break + 1 );
 		core::pose::rna::apply_virtual_rna_residue_variant_type( pose, sugar_modeling_.bulge_res );
 		( *modeler_scorefxn )( pose ); //for output purposes...
 	}
@@ -688,12 +688,12 @@ VirtualSugarSampler::restore_pose_variants_after_chain_closure( utility::vector1
 /////////////////////////////////////////////////////////////////////////////////////////
 void
 VirtualSugarSampler::reinstantiate_backbone_at_moving_res( core::pose::Pose & pose, core::Size const rebuild_res,
-																																			 Size const five_prime_chain_break_res ) {
+	Size const five_prime_chain_break_res ) {
 	pose::remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, rebuild_res ); //May 31, 2010
 	pose::remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_O2PRIME_HYDROGEN, rebuild_res );
 	if ( rebuild_res == five_prime_chain_break_res + 1 ) {
 		pose::remove_variant_type_from_pose_residue( pose,
-				core::chemical::VIRTUAL_PHOSPHATE, rebuild_res ); //this virtual_phosphate was added to pose at the beginning of this function.
+			core::chemical::VIRTUAL_PHOSPHATE, rebuild_res ); //this virtual_phosphate was added to pose at the beginning of this function.
 	}
 }
 
@@ -734,7 +734,7 @@ VirtualSugarSampler::virtualize_distal_partition( pose::Pose & viewer_pose ){
 	bool const reference_res_partition = partition( sugar_modeling_.reference_res );
 	runtime_assert( moving_res_partition != reference_res_partition );
 
-	for ( Size seq_num = 1; seq_num <= nres; seq_num++ ){
+	for ( Size seq_num = 1; seq_num <= nres; seq_num++ ) {
 		if ( seq_num == sugar_modeling_.moving_res ) continue;
 		if ( partition( seq_num ) == moving_res_partition ) distal_partition_res_.push_back( seq_num );
 	}
@@ -745,16 +745,16 @@ VirtualSugarSampler::virtualize_distal_partition( pose::Pose & viewer_pose ){
 		pose::add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, sugar_modeling_.moving_res );
 		// If phosphate instantiated, I thought there should always be a connection to a distal 5' residue..
 		// but that's not the case at a cutpoint_closed. -- rhiju.
-		//		runtime_assert( distal_partition_res_.has_value( sugar_modeling_.moving_res - 1 ) )
+		//  runtime_assert( distal_partition_res_.has_value( sugar_modeling_.moving_res - 1 ) )
 		moving_phosphate_virtualized_ = true;
 	}
 
 	pose_with_original_terminal_phosphates_ = pose.clone();
 	phosphate::remove_terminal_phosphates( pose, distal_partition_res_ );
 
-	for ( Size ii = 1; ii <= distal_partition_res_.size(); ii++ ){
+	for ( Size ii = 1; ii <= distal_partition_res_.size(); ii++ ) {
 		Size const seq_num = distal_partition_res_[ii];
-		if ( pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ){
+		if ( pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
 			already_virtualized_res_list_.push_back( seq_num );
 		} else {
 			pose::add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_RNA_RESIDUE, seq_num );
@@ -768,9 +768,9 @@ VirtualSugarSampler::virtualize_distal_partition( pose::Pose & viewer_pose ){
 /////////////////////////////////////////////////////////////////////////
 void
 VirtualSugarSampler::reinstantiate_distal_partition( utility::vector1< PoseOP > & final_pose_list ){
-	for ( Size n = 1; n <= final_pose_list.size(); n++ ){
+	for ( Size n = 1; n <= final_pose_list.size(); n++ ) {
 		pose::Pose & current_pose = ( *final_pose_list[n] );
-		if ( virtual_sugar_is_from_prior_step_ )	reinstantiate_distal_partition( current_pose );
+		if ( virtual_sugar_is_from_prior_step_ ) reinstantiate_distal_partition( current_pose );
 	}
 }
 
@@ -778,10 +778,12 @@ VirtualSugarSampler::reinstantiate_distal_partition( utility::vector1< PoseOP > 
 void
 VirtualSugarSampler::reinstantiate_distal_partition( pose::Pose & current_pose ){
 
-	if ( moving_phosphate_virtualized_ ) pose::remove_variant_type_from_pose_residue( current_pose,
+	if ( moving_phosphate_virtualized_ ) {
+		pose::remove_variant_type_from_pose_residue( current_pose,
 			core::chemical::VIRTUAL_PHOSPHATE, sugar_modeling_.moving_res );
+	}
 
-	for ( Size ii = 1; ii <= distal_partition_res_.size(); ii++ ){
+	for ( Size ii = 1; ii <= distal_partition_res_.size(); ii++ ) {
 		Size const seq_num = distal_partition_res_[ii];
 		if ( already_virtualized_res_list_.has_value( seq_num ) ) continue;
 		pose::remove_variant_type_from_pose_residue( current_pose, core::chemical::VIRTUAL_RNA_RESIDUE, seq_num );
@@ -810,14 +812,14 @@ VirtualSugarSampler::fast_full_atom_VDW_repulsion_screen( core::pose::Pose const
 	conformation::Residue const & rsd_2 = pose.residue( res_2 );
 
 
-	for ( Size n_1 = 1; n_1 <= rsd_1.natoms(); n_1++ ){
+	for ( Size n_1 = 1; n_1 <= rsd_1.natoms(); n_1++ ) {
 
 		//atom 1-4 are " P  ", " OP2", " OP1" and " O5'"
 		Size const act_res_1 = ( is_prepend && n_1 <= 4 ) ? res_1 + 1: res_1;
 
 		if ( pose.residue( act_res_1 ).is_virtual( n_1 )  ) continue;
 
-		for ( Size n_2 = 1; n_2 <= rsd_2.natoms(); n_2++ ){
+		for ( Size n_2 = 1; n_2 <= rsd_2.natoms(); n_2++ ) {
 
 			Size const act_res_2 = ( is_prepend && n_2 <= 4 ) ? res_2 + 1: res_2;
 
@@ -830,7 +832,7 @@ VirtualSugarSampler::fast_full_atom_VDW_repulsion_screen( core::pose::Pose const
 
 			Real const clash_radius = VDW_radius_1 + VDW_radius_2 - clash_dist_cutoff;
 
-			if ( ( pose.residue( act_res_1 ).xyz( n_1 ) - pose.residue( act_res_2 ).xyz( n_2 ) ).length_squared() < clash_radius*clash_radius ){
+			if ( ( pose.residue( act_res_1 ).xyz( n_1 ) - pose.residue( act_res_2 ).xyz( n_2 ) ).length_squared() < clash_radius*clash_radius ) {
 				return false; //OK consider fail screening if find even one clash...
 			}
 

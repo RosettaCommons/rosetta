@@ -33,14 +33,14 @@ class WorkUnit_CombinePose : public protocols::mpi_refinement::WorkUnit_Sampler
 
 public:
 	WorkUnit_CombinePose( core::Size nstruct = 10,
-												bool const cartesian = false );
+		bool const cartesian = false );
 
 	virtual protocols::wum::WorkUnitBaseOP clone() const {
 		return protocols::wum::WorkUnitBaseOP( new WorkUnit_CombinePose( *this ) );
 	}
 
 	// Pure virtual functions
-	virtual	void run();
+	virtual void run();
 
 	virtual void init_from_cmd( const core::Size );
 
@@ -69,18 +69,18 @@ class WorkUnit_NormalMode : public protocols::mpi_refinement::WorkUnit_Sampler
 {
 
 public:
-	WorkUnit_NormalMode( core::Size const nmodes = 0, 
-											 core::Size const nmtype = 0,
-											 core::Size const relaxtype = 1,
-											 core::Real const maxscale = 0.0
-											 );
+	WorkUnit_NormalMode( core::Size const nmodes = 0,
+		core::Size const nmtype = 0,
+		core::Size const relaxtype = 1,
+		core::Real const maxscale = 0.0
+	);
 
 	virtual protocols::wum::WorkUnitBaseOP clone() const {
 		return protocols::wum::WorkUnitBaseOP( new WorkUnit_NormalMode( *this ) );
 	}
 
 	// Pure virtual functions
-	virtual	void run();
+	virtual void run();
 
 	virtual void init_from_cmd( const core::Size );
 
@@ -100,20 +100,20 @@ protected:
 private:
 
 	inline
-	protocols::normalmode::NormalModeRelaxMoverOP 
+	protocols::normalmode::NormalModeRelaxMoverOP
 	get_NMmover( core::pose::Pose pose,
-							 core::scoring::ScoreFunctionCOP sfxn_loc,
-							 core::kinematics::MoveMapOP mm,
-							 core::Real distcut,
-							 std::string relaxmode,
-							 bool const cart )
+		core::scoring::ScoreFunctionCOP sfxn_loc,
+		core::kinematics::MoveMapOP mm,
+		core::Real distcut,
+		std::string relaxmode,
+		bool const cart )
 	{
-		if( cart ){
+		if ( cart ) {
 			return protocols::normalmode::NormalModeRelaxMoverOP(
-  		 new protocols::normalmode::CartesianNormalModeMover( pose, sfxn_loc, mm, "CA", distcut, relaxmode ) );
+				new protocols::normalmode::CartesianNormalModeMover( pose, sfxn_loc, mm, "CA", distcut, relaxmode ) );
 		} else {
 			return protocols::normalmode::NormalModeRelaxMoverOP(
-			 new protocols::normalmode::TorsionNormalModeMover( pose, sfxn_loc,  mm, "CA", distcut, relaxmode ) );
+				new protocols::normalmode::TorsionNormalModeMover( pose, sfxn_loc,  mm, "CA", distcut, relaxmode ) );
 		}
 	}
 
@@ -126,17 +126,17 @@ class WorkUnit_RamaPerturber : public protocols::mpi_refinement::WorkUnit_Sample
 
 public:
 	// initialize only via this
-	WorkUnit_RamaPerturber( core::Size const nsteps = 0, 
-													core::Size const res1 = 0,
-													core::Size const res2 = 0,
-													core::Real const kT = 0.0
-													);
+	WorkUnit_RamaPerturber( core::Size const nsteps = 0,
+		core::Size const res1 = 0,
+		core::Size const res2 = 0,
+		core::Real const kT = 0.0
+	);
 	virtual protocols::wum::WorkUnitBaseOP clone() const {
 		return protocols::wum::WorkUnitBaseOP( new WorkUnit_RamaPerturber( *this ) );
 	}
 
 	// Pure virtual functions
-	virtual	void run();
+	virtual void run();
 
 	virtual void init_from_cmd( const core::Size );
 

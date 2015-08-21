@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/toolbox/task_operations/RestrictIdentitiesOperation.cc
-/// @brief	Restricts specified residue types to only repack, no design.
+/// @brief Restricts specified residue types to only repack, no design.
 /// @author Neil King (neilking@uw.edu)
 
 // Unit Headers
@@ -52,7 +52,7 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-// @brief default constructor	
+// @brief default constructor
 RestrictIdentitiesOperation::RestrictIdentitiesOperation() {}
 
 // @brief constructor with arguments
@@ -85,8 +85,9 @@ void RestrictIdentitiesOperation::identities( utility::vector1 < std::string > i
 {
 	runtime_assert( identities_vec.size() != 0 );
 	identities_.clear();
-	BOOST_FOREACH( std::string const item, identities_vec )
+	BOOST_FOREACH ( std::string const item, identities_vec ) {
 		identities_.push_back( item );
+	}
 }
 void RestrictIdentitiesOperation::prevent_repacking( bool const prevent_repacking) { prevent_repacking_ = prevent_repacking; }
 
@@ -96,19 +97,19 @@ RestrictIdentitiesOperation::apply( core::pose::Pose const & pose, core::pack::t
 {
 	runtime_assert( identities_.size() != 0 );
 
-	for (Size j=1; j<=identities_.size(); j++) {
-		for (Size i=1; i<=pose.n_residue(); i++) {
+	for ( Size j=1; j<=identities_.size(); j++ ) {
+		for ( Size i=1; i<=pose.n_residue(); i++ ) {
 			std::string aa_name = pose.residue(i).name3();
-			if (aa_name == identities_[j]) {
+			if ( aa_name == identities_[j] ) {
 				if ( prevent_repacking_ == 1 ) {
-	      	task.nonconst_residue_task(i).prevent_repacking();
+					task.nonconst_residue_task(i).prevent_repacking();
 					TR.Debug << "preventing " << aa_name << i << " from repacking" << std::endl;
 				} else {
-	      	task.nonconst_residue_task(i).restrict_to_repacking();
+					task.nonconst_residue_task(i).restrict_to_repacking();
 					TR.Debug << "restricting " << aa_name << i << " to repacking" << std::endl;
 				}
 			}
-   	}
+		}
 	}
 
 }
@@ -119,17 +120,17 @@ RestrictIdentitiesOperation::parse_tag( TagCOP tag , DataMap & )
 {
 	unparsed_identities_ = tag->getOption< std::string >( "identities" ) ;
 	prevent_repacking( tag->getOption< bool >( "prevent_repacking", false ));
-	if( unparsed_identities_ != "" ){
-		
-    utility::vector1< std::string > const ids( utility::string_split( unparsed_identities_ , ',' ) );
+	if ( unparsed_identities_ != "" ) {
+
+		utility::vector1< std::string > const ids( utility::string_split( unparsed_identities_ , ',' ) );
 		identities_.clear();
 
 		std::string action = (prevent_repacking_) ? "Preventing from repacking " : "Restricting to repacking " ;
 		TR << action << "residues of type(s): ";
-    BOOST_FOREACH( std::string const id, ids ){
+		BOOST_FOREACH ( std::string const id, ids ) {
 			TR << id << " ";
-      	identities_.push_back( id );
-    }
+			identities_.push_back( id );
+		}
 		TR.Debug << std::endl;
 	}
 }
@@ -141,13 +142,13 @@ RestrictIdentitiesOperation::parse_def( utility::lua::LuaObject const & def)
 	std::string action = (prevent_repacking_) ? "Preventing from repacking " : "Restricting to repacking " ;
 	TR << action << "residues of type(s): ";
 	identities_.clear();
-	for (utility::lua::LuaIterator i=def["identities"].begin(), end; i != end; ++i) {
+	for ( utility::lua::LuaIterator i=def["identities"].begin(), end; i != end; ++i ) {
 		identities_.push_back( (*i).to< std::string >() ) ;
 		TR << identities_.back() << " ";
 	}
 	TR.Debug << std::endl;
 }
-	
+
 } //namespace protocols
 } //namespace toolbox
 } //namespace task_operations

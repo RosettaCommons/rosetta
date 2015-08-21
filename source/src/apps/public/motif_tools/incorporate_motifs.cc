@@ -79,7 +79,7 @@ identify_targeted_positions( utility::vector1< core::Size > & pos_vec, core::pos
 	// Probe for file
 	std::ifstream pos_file( source_file.c_str() );
 
-	if( !pos_file ) {
+	if ( !pos_file ) {
 		TR << "Requested file " << source_file << " not found." << std::endl;
 		return;
 	}
@@ -88,7 +88,7 @@ identify_targeted_positions( utility::vector1< core::Size > & pos_vec, core::pos
 	char chain;
 
 	pos_file >> pos;
-	while( !pos_file.eof() ) {
+	while ( !pos_file.eof() ) {
 		pos_file >> chain;
 		TR << "Reading position " << pos << " chain " << chain << " from " << source_file << std::endl;
 		pos_vec.push_back( pose.pdb_info()->pdb2pose( chain, pos ) );
@@ -109,13 +109,13 @@ void
 read_in_flexible_regions( protocols::loops::LoopsOP & flex_regions, core::pose::Pose & pose )
 {
 
-	if( option[ motif_flexible_loop_file].active() ){
+	if ( option[ motif_flexible_loop_file].active() ) {
 		std::string flex_file_name( option[ motif_flexible_loop_file ] );
 
 		// Probe for file
 		std::ifstream regions_file( flex_file_name.c_str() );
 
-		if( !regions_file ) {
+		if ( !regions_file ) {
 			TR << "motif_flexible_loop_file " << flex_file_name << " not found." << std::endl;
 			return;
 		}
@@ -129,7 +129,7 @@ read_in_flexible_regions( protocols::loops::LoopsOP & flex_regions, core::pose::
 		regions_file >> flex_chain;
 		TR << "Adding flexible region from  " << start_pos << " to " << end_pos << " in chain " << flex_chain << std::endl;
 		TR << "In Rosetta numbering, from  " << pose.pdb_info()->pdb2pose( flex_chain, start_pos ) <<
-					" to " << pose.pdb_info()->pdb2pose( flex_chain, end_pos ) << std::endl;
+			" to " << pose.pdb_info()->pdb2pose( flex_chain, end_pos ) << std::endl;
 		flex_regions->add_loop( pose.pdb_info()->pdb2pose( flex_chain, start_pos ), pose.pdb_info()->pdb2pose( flex_chain, end_pos ) );
 		regions_file.close();
 	} else {
@@ -156,8 +156,8 @@ find_close_motifs()
 	std::string template_structure_file( option[ in::file::s ]()[1] );
 	pose_from_pdb( pose,  template_structure_file.c_str() );
 
-  std::string weights( "talaris2013" );
-  ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( weights ) );
+	std::string weights( "talaris2013" );
+	ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( weights ) );
 
 	MotifLibrary motif_lib;
 
@@ -166,14 +166,14 @@ find_close_motifs()
 
 	// Read in the positions to target with motifs
 	utility::vector1< core::Size > target_positions;
-	if( option[ build_residue_file ].active() ){
+	if ( option[ build_residue_file ].active() ) {
 		std::string build_file_name( option[ build_residue_file ] );
 		identify_targeted_positions( target_positions, pose, build_file_name );
 	}
 
 	// Read in the positions to trim before
 	utility::vector1< core::Size > trim_positions;
-	if( option[ residue_trim_file ].active() ){
+	if ( option[ residue_trim_file ].active() ) {
 		std::string trim_file_name( option[ residue_trim_file ] );
 		identify_targeted_positions( trim_positions, pose, trim_file_name );
 	}

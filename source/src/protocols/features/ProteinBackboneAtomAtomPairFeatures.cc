@@ -37,8 +37,8 @@
 // External Headers
 #include <cppdb/frontend.h>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::string;
 using core::chemical::num_canonical_aas;
@@ -188,9 +188,9 @@ ProteinBackboneAtomAtomPairFeatures::report_features(
 	std::string statement_string = "INSERT INTO protein_backbone_atom_atom_pairs (struct_id, resNum1, resNum2, N_N_dist, N_Ca_dist, N_C_dist, N_O_dist, N_Ha_dist, Ca_N_dist, Ca_Ca_dist, Ca_C_dist, Ca_O_dist, Ca_Ha_dist, C_N_dist, C_Ca_dist, C_C_dist, C_O_dist, C_Ha_dist, O_N_dist, O_Ca_dist, O_C_dist, O_O_dist, O_Ha_dist, Ha_N_dist, Ha_Ca_dist, Ha_C_dist, Ha_O_dist, Ha_Ha_dist) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
-	for(Size resNum1=1; resNum1 <= pose.total_residue(); ++resNum1){
+	for ( Size resNum1=1; resNum1 <= pose.total_residue(); ++resNum1 ) {
 		Residue const & res1 = pose.residue(resNum1);
-		if(!res1.is_protein()) continue;
+		if ( !res1.is_protein() ) continue;
 
 		Vector const & N1(res1.xyz("N"));
 		Vector const & Ca1(res1.xyz("CA"));
@@ -202,14 +202,14 @@ ProteinBackboneAtomAtomPairFeatures::report_features(
 			res1.aa() != core::chemical::aa_gly ? res1.xyz("HA") : res1.xyz("2HA"));
 
 		for ( Graph::EdgeListConstIter
-			ir  = tenA.get_node( resNum1 )->const_edge_list_begin(),
-			ire = tenA.get_node( resNum1 )->const_edge_list_end();
-			ir != ire; ++ir ) {
+				ir  = tenA.get_node( resNum1 )->const_edge_list_begin(),
+				ire = tenA.get_node( resNum1 )->const_edge_list_end();
+				ir != ire; ++ir ) {
 			Size resNum2( (*ir)->get_other_ind(resNum1) );
 
-			if(!check_relevant_residues( relevant_residues, resNum1, resNum2 ) || (resNum1 >= resNum2)) continue;
+			if ( !check_relevant_residues( relevant_residues, resNum1, resNum2 ) || (resNum1 >= resNum2) ) continue;
 			Residue const & res2 = pose.residue(resNum2);
-			if(!res2.is_protein()) continue;
+			if ( !res2.is_protein() ) continue;
 
 			Vector const & N2(res2.xyz("N"));
 			Vector const & Ca2(res2.xyz("CA"));

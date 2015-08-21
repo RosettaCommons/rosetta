@@ -39,7 +39,7 @@ SequenceMapping::SequenceMapping( utility::vector1< Size > const & mapping ):
 SequenceMapping::SequenceMapping(
 	conformation::signals::LengthEvent const & event
 )
-	: size2_( 0 )
+: size2_( 0 )
 {
 
 	//int direction(0);
@@ -53,21 +53,16 @@ SequenceMapping::SequenceMapping(
 		//i guess in this case it's better to return an empty sequence mapping and let
 		//the observers deal with it
 		return;
-	}
-
-	else if ( event.tag == conformation::signals::LengthEvent::RESIDUE_APPEND ) {
+	} else if ( event.tag == conformation::signals::LengthEvent::RESIDUE_APPEND ) {
 		//direction = 1;
 		upstream_res = event.position;
-	}
-	else if( event.tag == conformation::signals::LengthEvent::RESIDUE_PREPEND ) {
+	} else if ( event.tag == conformation::signals::LengthEvent::RESIDUE_PREPEND ) {
 		//direction = 1;
 		upstream_res = event.position - 1;
-	}
-	else if( event.tag == conformation::signals::LengthEvent::RESIDUE_DELETE ) {
+	} else if ( event.tag == conformation::signals::LengthEvent::RESIDUE_DELETE ) {
 		//direction = -1;
 		upstream_res = event.position - 1;
-	}
-	else {
+	} else {
 		utility_exit_with_message(
 			"unknown signal triggered by conformation length change. please update this file"
 		);
@@ -79,22 +74,23 @@ SequenceMapping::SequenceMapping(
 
 	//if ( direction == 1 ) mapping_.push_back( upstream_res + 1 + event.length_change );
 	if ( longer ) {
-		if (upstream_res < old_num_res)
+		if ( upstream_res < old_num_res ) {
 			mapping_.push_back( upstream_res + 1 + event.length_change );
+		}
 	} else {
-		for( int i = event.length_change; i < 0; ++i ) mapping_.push_back( 0 );
+		for ( int i = event.length_change; i < 0; ++i ) mapping_.push_back( 0 );
 	}
 	//for ( Size i = upstream_res + 2; i <= old_num_res; ++i ) mapping_.push_back( i + direction );
 	Size downstream_res( mapping_.size() + 1 );
 	runtime_assert( downstream_res <= old_num_res + 1);
-	for( Size i = downstream_res; i <= old_num_res; ++i ) mapping_.push_back( i + event.length_change );
+	for ( Size i = downstream_res; i <= old_num_res; ++i ) mapping_.push_back( i + event.length_change );
 }
 
 SequenceMapping::~SequenceMapping() {}
 
 
 SequenceMapping::SequenceMapping( SequenceMapping const & src )
-	: ReferenceCount(src)
+: ReferenceCount(src)
 {
 	*this = src;
 }
@@ -136,8 +132,8 @@ SequenceMapping::reverse()
 void
 SequenceMapping::downstream_combine( core::id::SequenceMapping const & smap_to_add )
 {
-	for( core::Size i = 1; i <= mapping_.size(); ++i){
-		if( mapping_[i] != 0 ){
+	for ( core::Size i = 1; i <= mapping_.size(); ++i ) {
+		if ( mapping_[i] != 0 ) {
 			mapping_[i] = smap_to_add[ mapping_[i] ];
 		}
 	}
@@ -148,9 +144,9 @@ void
 SequenceMapping::upstream_combine( core::id::SequenceMapping const & smap_to_add )
 {
 	utility::vector1< Size > new_mapping( smap_to_add.mapping() );
-	for( core::Size i = 1; i <= new_mapping.size(); ++i){
-		if( new_mapping[i] != 0 && new_mapping[i] <= mapping_.size() ){
-				new_mapping[i] = mapping_[ new_mapping[i] ];
+	for ( core::Size i = 1; i <= new_mapping.size(); ++i ) {
+		if ( new_mapping[i] != 0 && new_mapping[i] <= mapping_.size() ) {
+			new_mapping[i] = mapping_[ new_mapping[i] ];
 		} else {
 			new_mapping[i] = 0;
 		}
@@ -238,11 +234,11 @@ SequenceMapping::show() const
 
 void
 SequenceMapping::show( std::ostream & output ) const {
-   for ( Size i=1; i<= size1(); ++i ) {
-      output << ("id.SequenceMapping ") << i << " --> ";
-      if ( mapping_[i] ) output << mapping_[i] << std::endl;
-      else output << "----" << std::endl;
-   }
+	for ( Size i=1; i<= size1(); ++i ) {
+		output << ("id.SequenceMapping ") << i << " --> ";
+		if ( mapping_[i] ) output << mapping_[i] << std::endl;
+		else output << "----" << std::endl;
+	}
 }
 
 
@@ -355,12 +351,12 @@ combine_sequence_mappings(
 	using namespace core::id;
 
 	//gigo :)
-	if( smaps.size() == 0 ) return core::id::SequenceMappingOP( new SequenceMapping() ) ;
+	if ( smaps.size() == 0 ) return core::id::SequenceMappingOP( new SequenceMapping() ) ;
 
 	SequenceMappingOP composite_smap( new SequenceMapping() );
 	*composite_smap = smaps[1];
 
-	for( core::Size i = 2; i <= smaps.size(); ++i ){
+	for ( core::Size i = 2; i <= smaps.size(); ++i ) {
 		composite_smap->downstream_combine( smaps[i] );
 	}
 

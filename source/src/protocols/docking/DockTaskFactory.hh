@@ -10,8 +10,8 @@
 /// @file DockTaskFactory
 /// @brief sets up the task factory for docking movers
 /// @details
-///		This contains the functions that set up the taskfactory for docking
-///		movers depending on the command line options
+///  This contains the functions that set up the taskfactory for docking
+///  movers depending on the command line options
 /// @author Krishna Kilambi
 
 
@@ -35,7 +35,7 @@
 //Auto Headers
 // option key includes
 #ifdef WIN32
-	#include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/operation/TaskOperation.hh>
 #endif
 
 
@@ -57,7 +57,7 @@ public:
 	virtual ~DockTaskFactory();
 
 	/// @brief Creates an appropriate TaskFactory based on command line options and attach it to a DockingHighResOP
-	///		Two arguments: DockingHighResOP and a pose.
+	///  Two arguments: DockingHighResOP and a pose.
 	void create_and_attach_task_factory(
 		DockingHighRes * docker,
 		core::pose::Pose const & pose
@@ -74,12 +74,12 @@ public:
 	void set_norepack1( bool norepack1 ) { norepack1_=norepack1; }
 	void set_norepack2( bool norepack2 ) { norepack2_=norepack2; }
 	void set_design_chains( utility::vector1< char > design_chains ) { design_chains_ = design_chains; }
-    void set_additional_task_operarations( utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations );
-    void add_additional_task_operaration( core::pack::task::operation::TaskOperationOP task_operation );
-    utility::vector1< core::pack::task::operation::TaskOperationOP > get_additional_task_operarations();
+	void set_additional_task_operarations( utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations );
+	void add_additional_task_operaration( core::pack::task::operation::TaskOperationOP task_operation );
+	utility::vector1< core::pack::task::operation::TaskOperationOP > get_additional_task_operarations();
 
-    void set_interface_definition_task_operation( protocols::toolbox::task_operations::InterfaceTaskOperationOP interface_definition );
-   	bool get_norepack1() const { return norepack1_; }
+	void set_interface_definition_task_operation( protocols::toolbox::task_operations::InterfaceTaskOperationOP interface_definition );
+	bool get_norepack1() const { return norepack1_; }
 	bool get_norepack2() const { return norepack2_; }
 	void set_prepack_only( bool prepack_only ) { prepack_only_ = prepack_only;} //JQX: add this function, one can decide to do restrict2interface
 
@@ -89,12 +89,12 @@ private:
 	bool norepack1_;
 	bool norepack2_;
 	utility::vector1< char > design_chains_;
-    utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations_;
+	utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations_;
 	bool prepack_only_;  //JQX
 
-    toolbox::task_operations::InterfaceTaskOperationOP restrict_to_interface_;
+	toolbox::task_operations::InterfaceTaskOperationOP restrict_to_interface_;
 
-//	core::pack::task::TaskFactoryOP init_tf_;
+	// core::pack::task::TaskFactoryOP init_tf_;
 };
 
 } // docking

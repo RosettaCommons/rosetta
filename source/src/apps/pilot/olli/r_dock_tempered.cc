@@ -32,18 +32,18 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-  using namespace basic::options;
-  using namespace protocols::docking;
-  using namespace protocols::jd2;
+		using namespace basic::options;
+		using namespace protocols::docking;
+		using namespace protocols::jd2;
 
-	protocols::jd2::register_options();
-	TemperedDocking::register_options();
+		protocols::jd2::register_options();
+		TemperedDocking::register_options();
 
-  // initialize core
-  devel::init(argc, argv);
-  //	core::init::init_random_generators(3,numeric::random::_RND_TestRun_, "mt19937"); //JQX from Sergery
+		// initialize core
+		devel::init(argc, argv);
+		// core::init::init_random_generators(3,numeric::random::_RND_TestRun_, "mt19937"); //JQX from Sergery
 
-	JobDistributor::get_instance()->go( protocols::moves::MoverOP( new TemperedDocking() ) );
+		JobDistributor::get_instance()->go( protocols::moves::MoverOP( new TemperedDocking() ) );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

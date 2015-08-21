@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/antibody_design/InterfaceFeatures.fwd.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_features_INTERFACEFEATURES_FWD_HH
@@ -18,15 +18,15 @@
 
 namespace protocols {
 namespace features {
-		
+
 class InterfaceFeatures;
 
-	typedef utility::pointer::shared_ptr< protocols::features::InterfaceFeatures > InterfaceFeaturesOP;
-	typedef utility::pointer::shared_ptr< InterfaceFeatures const > InterfaceFeaturesCOP;
+typedef utility::pointer::shared_ptr< protocols::features::InterfaceFeatures > InterfaceFeaturesOP;
+typedef utility::pointer::shared_ptr< InterfaceFeatures const > InterfaceFeaturesCOP;
 
 }
 }
 
 
-#endif	//#ifndef INCLUDED_protocols/antibody_design_INTERFACEFEATURES_FWD_HH
+#endif //#ifndef INCLUDED_protocols/antibody_design_INTERFACEFEATURES_FWD_HH
 

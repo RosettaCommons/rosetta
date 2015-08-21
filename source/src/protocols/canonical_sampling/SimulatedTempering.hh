@@ -33,7 +33,7 @@
 namespace protocols {
 namespace canonical_sampling {
 
-/// @details The only way to set the temperature range used for simulated 
+/// @details The only way to set the temperature range used for simulated
 /// annealing is to use the command line.  The relevant options are:
 ///
 /// @code
@@ -117,7 +117,7 @@ protected:
 	virtual
 	void write_to_file( std::string const& file_in, std::string const& output_name, utility::vector1< core::Real > const& wcounts );
 
-/// ------------------ register cmdline options ---------------------------
+	/// ------------------ register cmdline options ---------------------------
 
 private:
 	static bool options_registered_;
@@ -125,7 +125,7 @@ private:
 public:
 	static void register_options();
 
-/// ---------------- member variables --------------------------
+	/// ---------------- member variables --------------------------
 
 private:
 

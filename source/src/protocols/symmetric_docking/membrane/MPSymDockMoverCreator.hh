@@ -31,13 +31,13 @@ namespace membrane {
 
 /// @brief Mover Creator
 class MPSymDockMoverCreator : public protocols::moves::MoverCreator {
-    
+
 public:
-    
-    virtual protocols::moves::MoverOP create_mover() const;
-    virtual std::string keyname() const;
-    static std::string mover_name();
-    
+
+	virtual protocols::moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
+	static std::string mover_name();
+
 };
 
 } // membrane

@@ -21,7 +21,7 @@
 
 namespace protocols {
 namespace simple_moves {
-		
+
 
 class ChangeAndResetFoldTreeMover;
 
@@ -32,6 +32,6 @@ typedef utility::pointer::shared_ptr< ChangeAndResetFoldTreeMover const > Change
 }
 
 
-#endif	//INCLUDED_ TestClass2.fwd.hh
+#endif //INCLUDED_ TestClass2.fwd.hh
 
 

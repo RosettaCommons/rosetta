@@ -40,8 +40,8 @@
 #endif
 
 #ifdef WIN32
-	#include <string>
-	#include <core/fragment/FragData.hh>
+#include <string>
+#include <core/fragment/FragData.hh>
 #endif
 
 // C++ STL Headers
@@ -56,15 +56,15 @@ namespace core {
 namespace fragment {
 
 /* How to make a top_N_frag thingy, i.e., get a Frame that does only use a certain subset of the
-	 available FragData
-	 clearly that will be a copy of a Frame with less elements.
-		tex: not necessarily. we could just set weights of certain fragments to zero and do weight-based
-		sampling.
+available FragData
+clearly that will be a copy of a Frame with less elements.
+tex: not necessarily. we could just set weights of certain fragments to zero and do weight-based
+sampling.
 
-	 Frame contains only FragDataCOPs so it can refer to the same elements but less of them ...
+Frame contains only FragDataCOPs so it can refer to the same elements but less of them ...
 
-	 ERROR Handling: have to think about that. So far I often return a bool
-	 Raising Exceptions would be better. But I think we are still free of exceptions...
+ERROR Handling: have to think about that. So far I often return a bool
+Raising Exceptions would be better. But I think we are still free of exceptions...
 */
 //WARNING: when fragments inside of a frame are deleted the FragID of that frame will be fucked up
 
@@ -100,7 +100,7 @@ namespace fragment {
 
 
 class Frame : public utility::pointer::ReferenceCount {
-	typedef	std::map<std::string, BaseCacheUnitOP > CacheMap;
+	typedef std::map<std::string, BaseCacheUnitOP > CacheMap;
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~Frame();
@@ -211,8 +211,8 @@ public:
 	core::Size start() const;
 
 	/// @brief set start position
-	//	inline
-	//	void start( core::Size setting );
+	// inline
+	// void start( core::Size setting );
 
 	/// @brief shift to new start position ( change end accordingly )
 	virtual void shift_to( core::Size setting );
@@ -223,15 +223,15 @@ public:
 	/// @brief last sequence position affected by this frame
 	core::Size end() const;
 
-	///	/// @brief set stop position
-	//	core::Size stop( core::Size setting );
+	/// /// @brief set stop position
+	// core::Size stop( core::Size setting );
 
 	/// @brief last sequence position affected by this frame
 	core::Size stop() const;
 
 	virtual bool moves_residue( core::Size pos ) const;
 
-/// @brief number of residues affected by this frame
+	/// @brief number of residues affected by this frame
 	core::Size nr_res_affected( kinematics::MoveMap const& mm ) const;
 
 	/// @brief number of residues in this frame ( for continuous frames it is the same as end()-start() + 1 )

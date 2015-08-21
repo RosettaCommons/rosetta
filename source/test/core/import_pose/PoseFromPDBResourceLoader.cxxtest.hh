@@ -79,7 +79,7 @@ public:
 
 		TS_ASSERT(
 			core::pose::compare_binary_protein_silent_struct(
-				*idealized_input_pose, reference_pose));
+			*idealized_input_pose, reference_pose));
 
 	}
 

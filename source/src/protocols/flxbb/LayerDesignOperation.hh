@@ -131,37 +131,37 @@ public:
 
 	/// @brief add a new layer which will be created based on a task operation
 	void add_layer(
-			std::string const & layer_name,
-			core::pack::task::operation::TaskOperationOP task,
-			LayerOperationType const operation,
-			LayerSpecificationType const specification );
+		std::string const & layer_name,
+		core::pack::task::operation::TaskOperationOP task,
+		LayerOperationType const operation,
+		LayerSpecificationType const specification );
 
 	/// @brief gets the residues allowed for a given secondary structure in a given layer
 	std::string const & layer_residues(
-			std::string const & layer_name,
-			std::string const & ss_name ) const;
+		std::string const & layer_name,
+		std::string const & ss_name ) const;
 
 	/// @brief gets the residues allowed for a given secondary structure in a given layer
 	utility::vector1< std::string > const & layer_nc_residues(
-			std::string const & layer_name,
-			std::string const & ss_name ) const;
+		std::string const & layer_name,
+		std::string const & ss_name ) const;
 
 	/// @brief sets residues allowed for a particular secondary structure in the given layer
 	void set_layer_residues(
-			std::string const & layer_name,
-			std::string const & ss_name,
-			std::string const & residues );
+		std::string const & layer_name,
+		std::string const & ss_name,
+		std::string const & residues );
 
 	/// @brief copies residues allowed from src to dest
 	void copy_layer_residues(
-			std::string const & src_layer,
-			std::string const & dest_layer );
+		std::string const & src_layer,
+		std::string const & dest_layer );
 
 	/// @brief sets nc residues allowed for a particular secondary structure in the given layer
 	void set_nc_layer_residues(
-			std::string const & layer_name,
-			std::string const & ss_name,
-			std::string const & residues );
+		std::string const & layer_name,
+		std::string const & ss_name,
+		std::string const & residues );
 	void set_nc_layer_residues(
 		std::string const & layer_name,
 		std::string const & ss_name,
@@ -210,9 +210,9 @@ public:
 	void parse_layer_tag( TagCOP layer_tag, DataMap & datamap );
 
 	void parse_layer_secstruct_tag(
-			TagCOP secstruct_tag,
-			DataMap & datamap,
-			std::string const & layer_name );
+		TagCOP secstruct_tag,
+		DataMap & datamap,
+		std::string const & layer_name );
 
 	/// @brief Sets whether residues set with PIKAA and NATRO in previously-applied resfiles are ignored.
 	/// @brief Default behaviour is now FALSE to preserve commutativity.
@@ -230,37 +230,37 @@ public:
 private:
 	///@brief gets a list of allowed amino acids, and includes the current amino acid in addition to those allowed by layer
 	utility::vector1< bool >
-		get_restrictions(
-				std::string const & layer,
-				std::string const & default_layer,
-				std::string const & ss_type,
-				char const current_aa ) const;
+	get_restrictions(
+		std::string const & layer,
+		std::string const & default_layer,
+		std::string const & ss_type,
+		char const current_aa ) const;
 
 	utility::vector1< bool >
-		get_restrictions(
-				std::string const & layer,
-				std::string const & /*default_layer*/,
-				std::string const & ss_type) const;
+	get_restrictions(
+		std::string const & layer,
+		std::string const & /*default_layer*/,
+		std::string const & ss_type) const;
 
 	void set_default_layer_residues();
 
 	/// @brief Take a string consisting of comma-separated three-letter codes and parse it, storing separate three-letter codes in a given
 	/// utility::vector1 of strings.
 	void parse_ncaa_list(
-			std::string const & str,
-			utility::vector1< std::string > & storage_vect );
+		std::string const & str,
+		utility::vector1< std::string > & storage_vect );
 
 	/// @brief Remove a list of residue types from another list.
 	///
 	void exclude_ncaas(
-			utility::vector1< std::string > const & aas_to_exclude,
-			utility::vector1< std::string > & storage_vect );
+		utility::vector1< std::string > const & aas_to_exclude,
+		utility::vector1< std::string > & storage_vect );
 
 	void set_layer_residues(
-			std::string const & layer_name,
-			std::string const & ss_name,
-			std::string const & residues,
-			LayerResidues & layer_residues );
+		std::string const & layer_name,
+		std::string const & ss_name,
+		std::string const & residues,
+		LayerResidues & layer_residues );
 
 	void init_nc_layerdefinitions( std::string const & layer_name );
 
@@ -271,11 +271,11 @@ private:
 
 	/// @brief write a pymol command with the different layers as selections
 	void write_pymol_script(
-			Pose const & pos,
-			toolbox::SelectResiduesByLayerOP srbl,
-			std::map< std::string, utility::vector1< bool > > const & layer_specification,
-			bool las_ligand,
-			std::string const & filename ) const;
+		Pose const & pos,
+		toolbox::SelectResiduesByLayerOP srbl,
+		std::map< std::string, utility::vector1< bool > > const & layer_specification,
+		bool las_ligand,
+		std::string const & filename ) const;
 
 	/// @brief add helix capping ?
 	bool add_helix_capping_;

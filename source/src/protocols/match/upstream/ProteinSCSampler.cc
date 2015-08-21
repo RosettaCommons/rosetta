@@ -73,21 +73,21 @@ DunbrackSCSampler::samples(
 		}
 
 		{
-		if ( ! dynamic_cast< ProteinBackboneBuildPoint const * > ( & bb_conf ) ) {
-			utility_exit_with_message( "ERROR: DunbrackSCSampler expects a ProteinBackboneBuildPoint but"
-				"was handed an incompatible type.  ScaffoldBuildPoint #" +
-				utility::to_string( bb_conf.index() ) + " is of an incompatible type" );
-		}
+			if ( ! dynamic_cast< ProteinBackboneBuildPoint const * > ( & bb_conf ) ) {
+				utility_exit_with_message( "ERROR: DunbrackSCSampler expects a ProteinBackboneBuildPoint but"
+					"was handed an incompatible type.  ScaffoldBuildPoint #" +
+					utility::to_string( bb_conf.index() ) + " is of an incompatible type" );
+			}
 		}
 
 		ProteinBackboneBuildPoint const & bb(
 			static_cast< ProteinBackboneBuildPoint const & >
 			( bb_conf ));
-      
-	  	// amw
-	   	utility::fixedsizearray1< core::Real, 5 > bbs;
+
+		// amw
+		utility::fixedsizearray1< core::Real, 5 > bbs;
 		bbs[ 1] = bb.phi(); bbs[2] = bb.psi();
-        DunbrackRotamerSampleDataVector rotamers = dun_rotlib->get_all_rotamer_samples( bbs );//bb.phi(), bb.psi() );
+		DunbrackRotamerSampleDataVector rotamers = dun_rotlib->get_all_rotamer_samples( bbs );//bb.phi(), bb.psi() );
 		if ( desymmeterize_ && rotamers.size() != 0 ) {
 			using namespace core::chemical;
 			AA aa = restype.aa();
@@ -105,7 +105,7 @@ DunbrackSCSampler::samples(
 				core::Size const last_chi = rotamers[1].nchi();
 				for ( core::Size ii = 1; ii <= rotamers.size(); ++ii ) {
 					DunbrackRotamerSampleData iisample = desymm_rots[ 2*ii - 1 ];
-					if ( iisample.chi_is_nonrotameric( last_chi )) {
+					if ( iisample.chi_is_nonrotameric( last_chi ) ) {
 						/// the ProteinUpstreamBuilder assumes that nrchi_lower_boundary < chi_mean < nrchi_upper_boundary,
 						/// so just add 180 to everything.
 						iisample.set_nrchi_lower_boundary( iisample.nrchi_lower_boundary() + 180 );

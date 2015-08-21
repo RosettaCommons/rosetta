@@ -62,10 +62,10 @@ std::string TotalScoreFeaturesCreator::type_name() const {
 }
 
 TotalScoreFeatures::TotalScoreFeatures()
-	: scorefxn_(core::scoring::get_score_function()) {}
+: scorefxn_(core::scoring::get_score_function()) {}
 
 TotalScoreFeatures::TotalScoreFeatures(ScoreFunctionOP scorefxn)
-	: scorefxn_(scorefxn) {}
+: scorefxn_(scorefxn) {}
 
 TotalScoreFeatures::~TotalScoreFeatures() {}
 
@@ -82,13 +82,13 @@ void TotalScoreFeatures::scorefxn(ScoreFunctionOP scorefxn) {
 }
 
 void TotalScoreFeatures::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & /*filters*/,
-		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & /*pose*/) {
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & /*filters*/,
+	protocols::moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/) {
 
-	if (tag->hasOption("scorefxn")){
+	if ( tag->hasOption("scorefxn") ) {
 		string scorefxn_name = tag->getOption<string>("scorefxn");
 		scorefxn_ = data.get_ptr<ScoreFunction>("scorefxns", scorefxn_name);
 	} else {
@@ -121,7 +121,7 @@ Size TotalScoreFeatures::report_features(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session) {
 
-	// Calculate the total score of the pose.  The entire pose is included in the 
+	// Calculate the total score of the pose.  The entire pose is included in the
 	// score calculation; the relevant residues_parameter is ignored.
 
 	Pose non_const_pose = pose;
@@ -137,8 +137,8 @@ Size TotalScoreFeatures::report_features(
 	insert_statement.add_column("struct_id");
 	insert_statement.add_column("score");
 	insert_statement.add_row(make_vector<RowDataBaseOP>(
-				RowDataBaseOP( new RowData<StructureID>("struct_id", struct_id) ),
-				RowDataBaseOP( new RowData<Real>("score", total_score) )));
+		RowDataBaseOP( new RowData<StructureID>("struct_id", struct_id) ),
+		RowDataBaseOP( new RowData<Real>("score", total_score) )));
 
 	insert_statement.write_to_database(db_session);
 

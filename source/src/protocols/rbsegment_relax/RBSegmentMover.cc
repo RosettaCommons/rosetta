@@ -49,9 +49,9 @@ void RBSegmentMover::set_movement( core::Real , core::Real , core::Real , core::
 /// @brief Helper function to get a coordinate transformation from 3 points:
 ///   the origin, a point specifying the +z axis, and a point specifying the x-z plane
 numeric::xyzMatrix< Real > RBSegmentMover::coordTransformFromThreePoints(
-                                     numeric::xyzVector< Real > ori,
-                                     numeric::xyzVector< Real > zAxis,
-                                     numeric::xyzVector< Real > xzPlane ) {
+	numeric::xyzVector< Real > ori,
+	numeric::xyzVector< Real > zAxis,
+	numeric::xyzVector< Real > xzPlane ) {
 	numeric::xyzVector< Real > xDir, yDir, zDir;
 	numeric::xyzMatrix< Real > trans;
 
@@ -75,7 +75,7 @@ numeric::xyzVector< Real > RBSegmentMover::getCoM( core::pose::Pose const & pose
 	numeric::xyzVector< Real > CoM( 0, 0, 0 );
 	int N = 0;
 
-	for (Size i=1; i<=segment_.nContinuousSegments(); ++i) {
+	for ( Size i=1; i<=segment_.nContinuousSegments(); ++i ) {
 		// apply to transformation to every atom in this segment
 		Size i_start = std::max(segment_[i].start(), (Size)1);
 		Size i_end   = std::min(segment_[i].end(),  pose.total_residue());
@@ -93,7 +93,7 @@ numeric::xyzVector< Real > RBSegmentMover::getCoM( core::pose::Pose const & pose
 
 /// @brief Apply an arbitrary rotation specified by a rotation matrix
 void  RBSegmentMover::applyRotation( core::pose::Pose & pose, numeric::xyzMatrix< Real > rotation ) {
-	//	get transformation
+	// get transformation
 	numeric::xyzVector< Real > origin;
 	numeric::xyzMatrix< Real > local2global, global2local;
 
@@ -104,7 +104,7 @@ void  RBSegmentMover::applyRotation( core::pose::Pose & pose, numeric::xyzMatrix
 	utility::vector1< numeric::xyzVector< core::Real> > atm_xyzs;
 
 	numeric::xyzVector< Real > localX, localRX, globalRX;
-	for (Size i=1; i<=segment_.nContinuousSegments(); ++i) {
+	for ( Size i=1; i<=segment_.nContinuousSegments(); ++i ) {
 		// apply to transformation to every atom in this segment
 		Size i_start = std::max(segment_[i].start(), (Size)1);
 		Size i_end   = std::min(segment_[i].end() , pose.total_residue());
@@ -127,7 +127,7 @@ void  RBSegmentMover::applyRotation( core::pose::Pose & pose, numeric::xyzMatrix
 
 /// @brief Apply an arbitrary translation
 void  RBSegmentMover::applyTranslation( core::pose::Pose & pose, numeric::xyzVector< Real > translation ) {
-	//	get transformation
+	// get transformation
 	numeric::xyzVector< Real > origin;
 	numeric::xyzMatrix< Real > local2global;
 
@@ -137,7 +137,7 @@ void  RBSegmentMover::applyTranslation( core::pose::Pose & pose, numeric::xyzVec
 	utility::vector1< numeric::xyzVector< core::Real> > atm_xyzs;
 
 	numeric::xyzVector< Real > localX, localRX, globalRX;
-	for (Size i=1; i<=segment_.nContinuousSegments(); ++i) {
+	for ( Size i=1; i<=segment_.nContinuousSegments(); ++i ) {
 		// apply to transformation to every atom in this segment
 		Size i_start = std::max(segment_[i].start(), (Size)1);
 		Size i_end   = std::min(segment_[i].end(), pose.total_residue());
@@ -158,7 +158,7 @@ void  RBSegmentMover::applyTranslation( core::pose::Pose & pose, numeric::xyzVec
 
 /// @brief Apply a rotation followed by a translation (does not recompute coordinate transformation between the two!)
 void  RBSegmentMover::applyTransformation( core::pose::Pose & pose, numeric::xyzMatrix< Real > rotation , numeric::xyzVector< Real > translation ) {
-	//	get transformation
+	// get transformation
 	numeric::xyzVector< Real > origin;
 	numeric::xyzMatrix< Real > local2global, global2local;
 
@@ -169,7 +169,7 @@ void  RBSegmentMover::applyTransformation( core::pose::Pose & pose, numeric::xyz
 	utility::vector1< numeric::xyzVector< core::Real> > atm_xyzs;
 
 	numeric::xyzVector< Real > localX, localRX, globalRX;
-	for (Size i=1; i<=segment_.nContinuousSegments(); ++i) {
+	for ( Size i=1; i<=segment_.nContinuousSegments(); ++i ) {
 		// apply to transformation to every atom in this segment
 		Size i_start = std::max(segment_[i].start(), (Size)1);
 		Size i_end   = std::min(segment_[i].end(), pose.total_residue());
@@ -228,10 +228,10 @@ GaussianRBSegmentMover::get_name() const {
 /// Defined such that +z points to the C-terminal end of the helix axis,
 /// +x from the helix axis to the N-terminal residue
 void GaussianRBSegmentMover::getCoordinateTransformation(
-								core::pose::Pose const & pose,
-								Vector &rotationCenter,
-								numeric::xyzMatrix< Real > &coordinateTransform
-																) {
+	core::pose::Pose const & pose,
+	Vector &rotationCenter,
+	numeric::xyzMatrix< Real > &coordinateTransform
+) {
 	// rotate about center-of-mass
 	rotationCenter = getCoM( pose );
 
@@ -259,13 +259,13 @@ void SequenceShiftMover::apply( core::pose::Pose & pose, int shift ) {
 	Size mag = std::abs(shift);
 
 	core::Size nres = hybridization::get_num_residues_nonvirt( pose );
-	while (!pose.residue(nres).is_protein()) nres--;
+	while ( !pose.residue(nres).is_protein() ) nres--;
 
-	if (offsets_.size() != nres) {
+	if ( offsets_.size() != nres ) {
 		offsets_.clear();
 		offsets_.resize(nres,0);
 	}
-	if (penalty_res_.size() != nres) {
+	if ( penalty_res_.size() != nres ) {
 		penalty_res_.clear();
 		penalty_res_.resize(nres,false);
 	}
@@ -275,7 +275,7 @@ void SequenceShiftMover::apply( core::pose::Pose & pose, int shift ) {
 	utility::vector1< id::AtomID > atm_ids;
 	utility::vector1< numeric::xyzVector< core::Real> > atm_xyzs;
 
-	for (Size ii=1; ii<=segment_.nContinuousSegments(); ++ii) {
+	for ( Size ii=1; ii<=segment_.nContinuousSegments(); ++ii ) {
 		// apply to transformation to every atom in this segment
 		core::uint i_start = std::max(segment_[ii].start(), (Size)1);
 		core::uint i_end   = std::min(segment_[ii].end(), nres);
@@ -317,7 +317,7 @@ void SequenceShiftMover::apply( core::pose::Pose & pose, int shift ) {
 				atm_ids.push_back( id );
 				atm_xyzs.push_back( newX );
 			}
-			if (verbose_) { TR << "align " << r_i << "->" << r_j << std::endl; }
+			if ( verbose_ ) { TR << "align " << r_i << "->" << r_j << std::endl; }
 		}
 
 		// final 'mag+1' residues
@@ -328,17 +328,19 @@ void SequenceShiftMover::apply( core::pose::Pose & pose, int shift ) {
 			int r_j = r_i + dir * mag + offsets_[r_i];
 
 			bool crosses_cut = (ref_pose_.total_residue() == 0);
-			if (!crosses_cut) {
-				if (r_j > r_i) {
-					for (int k = r_i; k < r_j && !crosses_cut; ++k)
+			if ( !crosses_cut ) {
+				if ( r_j > r_i ) {
+					for ( int k = r_i; k < r_j && !crosses_cut; ++k ) {
 						crosses_cut |= ref_pose_.fold_tree().is_cutpoint(k);
+					}
 				} else {
-					for (int k = r_i; k > r_j && !crosses_cut; --k)
+					for ( int k = r_i; k > r_j && !crosses_cut; --k ) {
 						crosses_cut |= ref_pose_.fold_tree().is_cutpoint(k-1);
+					}
 				}
 			}
 
-			if ( r_j <= static_cast<int>(nres) && r_j >= 1 && !crosses_cut) {
+			if ( r_j <= static_cast<int>(nres) && r_j >= 1 && !crosses_cut ) {
 				CA1 = pose.residue(r_i).atom("CA").xyz();
 				C1 = pose.residue(r_i).atom("C").xyz() - CA1;  // offset from CA
 				N1 = pose.residue(r_i).atom("N").xyz() - CA1;  // offset from CA
@@ -349,7 +351,7 @@ void SequenceShiftMover::apply( core::pose::Pose & pose, int shift ) {
 				// get rotation from (i+dir) to i
 				R1 = numeric::alignVectorSets( C1,N1, C2,N2 );
 
-				if (verbose_) { TR << "align " << r_i << "->" << r_j << "using template" << std::endl; }
+				if ( verbose_ ) { TR << "align " << r_i << "->" << r_j << "using template" << std::endl; }
 
 				// apply transformation to every atom in this res
 				for ( Size a_i = 1; a_i<=pose.residue(r_i).natoms(); ++a_i ) {
@@ -361,7 +363,7 @@ void SequenceShiftMover::apply( core::pose::Pose & pose, int shift ) {
 					atm_xyzs.push_back( newX );
 				}
 			} else {
-if (verbose_) { TR << "align " << r_i << "->" << r_j << "using prev xform" << std::endl; }
+				if ( verbose_ ) { TR << "align " << r_i << "->" << r_j << "using prev xform" << std::endl; }
 				for ( Size a_i = 1; a_i<=pose.residue(r_i).natoms(); ++a_i ) {
 					id::AtomID id( a_i, r_i );
 					numeric::xyzVector< Real > newX = R * (pose.xyz(id) - CA1) + CA2;
@@ -379,8 +381,8 @@ if (verbose_) { TR << "align " << r_i << "->" << r_j << "using prev xform" << st
 
 void SequenceShiftMover::trigger_accept() {
 	// apply shift to array and score
-	for (core::uint j = 1; j <= segment_.nContinuousSegments(); ++j) {
-		for (core::uint k = segment_[j].start(); k <= segment_[j].end(); ++k) {
+	for ( core::uint j = 1; j <= segment_.nContinuousSegments(); ++j ) {
+		for ( core::uint k = segment_[j].start(); k <= segment_[j].end(); ++k ) {
 			offsets_[k] += last_move_;
 		}
 	}
@@ -391,24 +393,24 @@ SequenceShiftMover::score(bool step_fn/*=false*/) {
 	int score_aln=0;
 
 	utility::vector1< int > offsets_working = offsets_;
-	for (core::uint j = 1; j <= segment_.nContinuousSegments(); ++j) {
-		for (core::uint k = segment_[j].start(); k <= segment_[j].end(); ++k) {
+	for ( core::uint j = 1; j <= segment_.nContinuousSegments(); ++j ) {
+		for ( core::uint k = segment_[j].start(); k <= segment_[j].end(); ++k ) {
 			offsets_working[k] += last_move_;
 		}
 	}
 
 	// # block shifts
-	if (step_fn) {
-		if (offsets_working[1] != 0)  score_aln++;
-		if (offsets_working[offsets_.size()] != 0)  score_aln++;
-		for (core::uint j = 2; j <= offsets_.size(); ++j) {
-			if (offsets_working[j] != offsets_working[j - 1]) {
+	if ( step_fn ) {
+		if ( offsets_working[1] != 0 )  score_aln++;
+		if ( offsets_working[offsets_.size()] != 0 )  score_aln++;
+		for ( core::uint j = 2; j <= offsets_.size(); ++j ) {
+			if ( offsets_working[j] != offsets_working[j - 1] ) {
 				core::Real sc_scale = 1.0;
 				int newj0 = j + offsets_working[j];
 				int newj1 = j - 1 + offsets_working[j - 1];
-				if (newj0 > 0 && newj1 > 0 &&
+				if ( newj0 > 0 && newj1 > 0 &&
 						newj0 <= static_cast<int>(offsets_.size()) && newj1 <= static_cast<int>(offsets_.size()) &&
-						penalty_res_[newj0] && penalty_res_[newj1]) {
+						penalty_res_[newj0] && penalty_res_[newj1] ) {
 					sc_scale = 100.0;
 				}
 				score_aln = (int)(score_aln + sc_scale);
@@ -417,14 +419,14 @@ SequenceShiftMover::score(bool step_fn/*=false*/) {
 	} else {
 		score_aln += std::abs(offsets_working[1]);
 		score_aln += std::abs(offsets_working[offsets_.size()]);
-		for (core::uint j = 2; j <= offsets_.size(); ++j) {
-			if (offsets_working[j] != offsets_working[j - 1]) {
+		for ( core::uint j = 2; j <= offsets_.size(); ++j ) {
+			if ( offsets_working[j] != offsets_working[j - 1] ) {
 				core::Real sc_scale = 1.0;
 				int newj0 = j + offsets_working[j];
 				int newj1 = j - 1 + offsets_working[j - 1];
-				if (newj0 > 0 && newj1 > 0 &&
+				if ( newj0 > 0 && newj1 > 0 &&
 						newj0 <= static_cast<int>(offsets_.size()) && newj1 <= static_cast<int>(offsets_.size()) &&
-						penalty_res_[newj0] && penalty_res_[newj1]) {
+						penalty_res_[newj0] && penalty_res_[newj1] ) {
 					sc_scale = 100.0;
 				}
 				score_aln = int(score_aln + sc_scale * abs(offsets_working[j] - offsets_working[j-1]));
@@ -434,10 +436,10 @@ SequenceShiftMover::score(bool step_fn/*=false*/) {
 
 	// penalize unaligned residues
 	utility::vector1<bool> residues_to_rebuild (offsets_working.size(), false);
-	for (int i = 1; i <= static_cast<int>(offsets_working.size()); ++i) {
-		if (residues_to_rebuild[i]) continue;
+	for ( int i = 1; i <= static_cast<int>(offsets_working.size()); ++i ) {
+		if ( residues_to_rebuild[i] ) continue;
 		// case 1: alignment passes N- or C- term
-		if (offsets_working[i] + i < 1 || offsets_working[i] + i > static_cast<int>(offsets_working.size())) {
+		if ( offsets_working[i] + i < 1 || offsets_working[i] + i > static_cast<int>(offsets_working.size()) ) {
 			residues_to_rebuild[i]=true;
 			continue;
 		}
@@ -445,22 +447,22 @@ SequenceShiftMover::score(bool step_fn/*=false*/) {
 		// case 2: alignment crosses cutpoint
 		int dir = (offsets_[i]>0) ? 1:-1;
 		int step = (offsets_[i]>0) ? 0:-1;
-		for (int j = i; (j != i + offsets_working[i]) && !residues_to_rebuild[i]; j += dir) {
-			if (ref_pose_.fold_tree().is_cutpoint(j+step)) {
+		for ( int j = i; (j != i + offsets_working[i]) && !residues_to_rebuild[i]; j += dir ) {
+			if ( ref_pose_.fold_tree().is_cutpoint(j+step) ) {
 				residues_to_rebuild[i]=true;
 			}
 		}
-		if (residues_to_rebuild[i]) continue;
+		if ( residues_to_rebuild[i] ) continue;
 
 		// case 3: another residue is mapped here
-		for (int j = i + 1; j <= static_cast<int>(offsets_working.size()); ++j) {
-			if (offsets_working[i] + i == offsets_working[j] + j) {
+		for ( int j = i + 1; j <= static_cast<int>(offsets_working.size()); ++j ) {
+			if ( offsets_working[i] + i == offsets_working[j] + j ) {
 				residues_to_rebuild[i] = residues_to_rebuild[j]=true;
 			}
 		}
 	}
-	for (core::uint i = 1; i <= offsets_working.size(); ++i) {
-		if (residues_to_rebuild[i]) ++score_aln;
+	for ( core::uint i = 1; i <= offsets_working.size(); ++i ) {
+		if ( residues_to_rebuild[i] ) ++score_aln;
 	}
 
 	return score_aln;
@@ -470,16 +472,17 @@ SequenceShiftMover::score(bool step_fn/*=false*/) {
 loops::LoopsOP
 SequenceShiftMover::get_residues_to_rebuild() {
 	loops::LoopsOP retval( new loops::Loops );
-	if (ref_pose_.total_residue() == 0)
+	if ( ref_pose_.total_residue() == 0 ) {
 		return retval;
+	}
 
 	utility::vector1<bool> residues_to_rebuild (offsets_.size(), false);
 
-	for (int i = 1; i <= static_cast<int>(offsets_.size()); ++i) {
-		if (residues_to_rebuild[i]) continue;
+	for ( int i = 1; i <= static_cast<int>(offsets_.size()); ++i ) {
+		if ( residues_to_rebuild[i] ) continue;
 
 		// case 1: alignment passes N- or C- term
-		if (offsets_[i] + i < 1 || offsets_[i] + i > static_cast<int>(offsets_.size())) {
+		if ( offsets_[i] + i < 1 || offsets_[i] + i > static_cast<int>(offsets_.size()) ) {
 			residues_to_rebuild[i]=true;
 			continue;
 		}
@@ -487,17 +490,17 @@ SequenceShiftMover::get_residues_to_rebuild() {
 		// case 2: alignment crosses cutpoint
 		int dir = (offsets_[i]>0) ? 1:-1;
 		int step = (offsets_[i]>0) ? 0:-1;
-		for (int j = i; (j != i + offsets_[i]) && !residues_to_rebuild[i]; j += dir) {
-			if (ref_pose_.fold_tree().is_cutpoint(j+step)) {
+		for ( int j = i; (j != i + offsets_[i]) && !residues_to_rebuild[i]; j += dir ) {
+			if ( ref_pose_.fold_tree().is_cutpoint(j+step) ) {
 				residues_to_rebuild[i]=true;
 				std::cerr << "at " << i << " cross cut " << j << std::endl;
 			}
 		}
-		if (residues_to_rebuild[i]) continue;
+		if ( residues_to_rebuild[i] ) continue;
 
 		// case 3: another residue is mapped here
-		for (int j = i + 1; j <= static_cast<int>(offsets_.size()); ++j) {
-			if (offsets_[i] + i == offsets_[j] + j) {
+		for ( int j = i + 1; j <= static_cast<int>(offsets_.size()); ++j ) {
+			if ( offsets_[i] + i == offsets_[j] + j ) {
 				//std::cerr << "res " << i << " and " << j << " collide" << std::endl;
 				residues_to_rebuild[i] = residues_to_rebuild[j] = true;
 			}
@@ -509,83 +512,86 @@ SequenceShiftMover::get_residues_to_rebuild() {
 
 	//A: extend loops by 1 residue if they do not cross a cut
 	utility::vector1<bool> ext_residues_to_rebuild = residues_to_rebuild;
-	for (core::uint i = 1; i <= residues_to_rebuild.size(); ++i) {
-		if (i > 1 && residues_to_rebuild[i] && !ref_pose_.fold_tree().is_cutpoint(i - 1))
+	for ( core::uint i = 1; i <= residues_to_rebuild.size(); ++i ) {
+		if ( i > 1 && residues_to_rebuild[i] && !ref_pose_.fold_tree().is_cutpoint(i - 1) ) {
 			ext_residues_to_rebuild[i - 1] = true;
-		if (i < residues_to_rebuild.size() && residues_to_rebuild[i] && !ref_pose_.fold_tree().is_cutpoint(i))
+		}
+		if ( i < residues_to_rebuild.size() && residues_to_rebuild[i] && !ref_pose_.fold_tree().is_cutpoint(i) ) {
 			ext_residues_to_rebuild[i + 1] = true;
+		}
 	}
 	//B: remove "singletons"
 	//C: ensure loops are at least 3 residues long
-	for (core::uint i = 1; i <= residues_to_rebuild.size(); ++i) {
-		if (i < residues_to_rebuild.size() && ref_pose_.fold_tree().is_cutpoint(i - 1) &&
-				ext_residues_to_rebuild[i + 1]) {
+	for ( core::uint i = 1; i <= residues_to_rebuild.size(); ++i ) {
+		if ( i < residues_to_rebuild.size() && ref_pose_.fold_tree().is_cutpoint(i - 1) &&
+				ext_residues_to_rebuild[i + 1] ) {
 			ext_residues_to_rebuild[i] = true;
-			if (i + 1 < residues_to_rebuild.size()) ext_residues_to_rebuild[i + 2] = true;
+			if ( i + 1 < residues_to_rebuild.size() ) ext_residues_to_rebuild[i + 2] = true;
 		}
-		if (i>1 && ref_pose_.fold_tree().is_cutpoint(i) && ext_residues_to_rebuild[i-1]) {
+		if ( i>1 && ref_pose_.fold_tree().is_cutpoint(i) && ext_residues_to_rebuild[i-1] ) {
 			ext_residues_to_rebuild[i] = true;
-			if (i>2) ext_residues_to_rebuild[i-2] = true;
+			if ( i>2 ) ext_residues_to_rebuild[i-2] = true;
 		}
 	}
 
 	std::cerr <<
-			"....|....1....|....2....|....3....|....4....|....5....|....6....|....7....|....8....|....9....|....0" <<
-			std::endl;
-	for (core::uint i = 1; i <= penalty_res_.size(); ++i) {
-		if (penalty_res_[i]) {
+		"....|....1....|....2....|....3....|....4....|....5....|....6....|....7....|....8....|....9....|....0" <<
+		std::endl;
+	for ( core::uint i = 1; i <= penalty_res_.size(); ++i ) {
+		if ( penalty_res_[i] ) {
 			std::cerr << "1";
 		} else {
 			std::cerr << "0";
 		}
-		if (i%100==0) std::cerr << std::endl;
+		if ( i%100==0 ) std::cerr << std::endl;
 	}
 	std::cerr << std::endl;
 	std::cerr << "---" << std::endl;
-	for (core::uint i = 1; i <= offsets_.size(); ++i) {
-		if (ext_residues_to_rebuild[i]) {
-			if (ref_pose_.fold_tree().is_cutpoint(i)) std::cerr << "C";
+	for ( core::uint i = 1; i <= offsets_.size(); ++i ) {
+		if ( ext_residues_to_rebuild[i] ) {
+			if ( ref_pose_.fold_tree().is_cutpoint(i) ) std::cerr << "C";
 			else std::cerr << "1";
 		} else {
-			if (ref_pose_.fold_tree().is_cutpoint(i)) std::cerr << "c";
+			if ( ref_pose_.fold_tree().is_cutpoint(i) ) std::cerr << "c";
 			else std::cerr << "0";
 		}
 
-		if (i%100==0) std::cerr << std::endl;
+		if ( i%100==0 ) std::cerr << std::endl;
 	}
 	std::cerr << std::endl;
 	std::cerr << "---" << std::endl;
-	for (core::uint i = 1; i <= offsets_.size(); ++i) {
+	for ( core::uint i = 1; i <= offsets_.size(); ++i ) {
 		int off_mag = std::abs(offsets_[i]);
-		if (off_mag!=offsets_[i]) std::cerr << "\x1b[31m";
+		if ( off_mag!=offsets_[i] ) std::cerr << "\x1b[31m";
 		else std::cerr << "\x1b[32m";
-		if (off_mag <=9)
+		if ( off_mag <=9 ) {
 			std::cerr << off_mag;
-		else
+		} else {
 			std::cerr << (char)(off_mag-10+'A');
-		if (i%100==0) std::cerr << std::endl;
+		}
+		if ( i%100==0 ) std::cerr << std::endl;
 	}
 	std::cerr << "\x1b[39m";
 	std::cerr << std::endl;
 
-	for (core::uint i = 1; i <= ext_residues_to_rebuild.size(); ++i) {
-		if (!inloop && ext_residues_to_rebuild[i]) {
+	for ( core::uint i = 1; i <= ext_residues_to_rebuild.size(); ++i ) {
+		if ( !inloop && ext_residues_to_rebuild[i] ) {
 			inloop=true;
 			loopstart=i;
-		} else if (inloop && !ext_residues_to_rebuild[i]) {
+		} else if ( inloop && !ext_residues_to_rebuild[i] ) {
 			inloop=false;
 			loopstop = i-1;
 			retval->add_loop( loopstart,loopstop, (int)std::floor(0.5*(loopstart+loopstop+1)) );
-		} else if (inloop && i>1 && ref_pose_.fold_tree().is_cutpoint(i-1)) {
+		} else if ( inloop && i>1 && ref_pose_.fold_tree().is_cutpoint(i-1) ) {
 			loopstop = i-1;
 			retval->add_loop( loopstart,loopstop, (int)std::floor(0.5*(loopstart+loopstop+1)) );
 			loopstart = i;
 		}
 	}
-	if (inloop) {
-		if (!ref_pose_.fold_tree().is_cutpoint(loopstart-1)) loopstart--;
+	if ( inloop ) {
+		if ( !ref_pose_.fold_tree().is_cutpoint(loopstart-1) ) loopstart--;
 		retval->add_loop( loopstart,residues_to_rebuild.size(),
-		                  (int)std::floor(0.5*(loopstart+residues_to_rebuild.size()+1)) );
+			(int)std::floor(0.5*(loopstart+residues_to_rebuild.size()+1)) );
 	}
 	return retval;
 }
@@ -611,24 +617,24 @@ void HelicalGaussianMover::apply( core::pose::Pose & pose )
 	Real displacement_gamma( sigOffAxisR_*numeric::random::rg().gaussian() );
 
 	TR.Debug << "HelicalGaussianMover::apply() ["
-	         << displacement_X << "," << displacement_Y << "," << displacement_Z << ","
-	         << displacement_alpha << "," << displacement_beta << "," << displacement_gamma << "]" << std::endl;
+		<< displacement_X << "," << displacement_Y << "," << displacement_Z << ","
+		<< displacement_alpha << "," << displacement_beta << "," << displacement_gamma << "]" << std::endl;
 	TR.Debug << "                              ["
-	         << sigAxisT_ << "," << sigOffAxisT_ << "," << sigAxisR_ << "," << sigOffAxisR_ << "]" << std::endl;
+		<< sigAxisT_ << "," << sigOffAxisT_ << "," << sigAxisR_ << "," << sigOffAxisR_ << "]" << std::endl;
 
-//	TR << "HelixAxisGaussianTransMover::apply()" << std::endl;
+	// TR << "HelixAxisGaussianTransMover::apply()" << std::endl;
 	if ( sigAxisT_ > 1e-6 || sigOffAxisT_ > 1e-6 ) {
-//		TR << "  Translation w.r.t. Helical Axis [" << displacement_X << " , "
-//																								<< displacement_Y << " , "
-//																								<< displacement_Z << "]" << std::endl;
+		//  TR << "  Translation w.r.t. Helical Axis [" << displacement_X << " , "
+		//                        << displacement_Y << " , "
+		//                        << displacement_Z << "]" << std::endl;
 		numeric::xyzVector< Real > trans( displacement_X, displacement_Y, displacement_Z );
 		applyTranslation( pose, trans );
 	}
 
 	if ( sigAxisR_ > 1e-6 || sigOffAxisR_ > 1e-6 ) {
-//		TR << "  Rotation w.r.t. Helical Axis [" << displacement_alpha << " , "
-//																						 << displacement_beta  << " , "
-//																						 << displacement_gamma << "]" << std::endl;
+		//  TR << "  Rotation w.r.t. Helical Axis [" << displacement_alpha << " , "
+		//                       << displacement_beta  << " , "
+		//                       << displacement_gamma << "]" << std::endl;
 		applyRotation( pose, displacement_alpha, displacement_beta, displacement_gamma );
 	}
 }
@@ -639,13 +645,13 @@ HelicalGaussianMover::get_name() const {
 }
 
 void HelicalGaussianMover::getCoordinateTransformation(
-								core::pose::Pose const & pose,
-								Vector &rotationCenter,
-								numeric::xyzMatrix< Real > &coordinateTransform
-																)
+	core::pose::Pose const & pose,
+	Vector &rotationCenter,
+	numeric::xyzMatrix< Real > &coordinateTransform
+)
 {
 	// if the segment is not simple (i.e. contains >1 continuous segment) output error msg
-	if (!segment_.isSimple()) {
+	if ( !segment_.isSimple() ) {
 		TR << "[ ERROR ] HelicalGaussianMover::getCoordinateTransformationy() called on compound segment!" << std::endl;
 		exit(1);
 	}
@@ -659,7 +665,7 @@ void HelicalGaussianMover::getCoordinateTransformation(
 	int endRes = segment_[1].end();
 	int nres =  endRes - startRes + 1;
 
-	if (nres < 4) {
+	if ( nres < 4 ) {
 		TR << "[WARNING]  Helical axis of helices less than four residues is not correctly computed" << std::endl;
 		rotationCenter = getCoM( pose );
 
@@ -668,7 +674,7 @@ void HelicalGaussianMover::getCoordinateTransformation(
 		coordinateTransform.yy(1);
 		coordinateTransform.zz(1);
 	} else {
-		if (nres >= 7) {
+		if ( nres >= 7 ) {
 			int midRes = startRes + (nres-1)/2;
 			helixAxisNterm += ( 0.6/3.6 ) * pose.residue( midRes ).xyz( "CA" );
 			helixAxisNterm += ( 1.0/3.6 ) * pose.residue( midRes - 1 ).xyz( "CA" );
@@ -691,9 +697,9 @@ void HelicalGaussianMover::getCoordinateTransformation(
 
 		rotationCenter = 0.5 * helixAxisNterm + 0.5 * helixAxisCterm;
 		coordinateTransform = coordTransformFromThreePoints(
-																 rotationCenter,
-																 helixAxisCterm,
-																 pose.residue(startRes).xyz("CA") );
+			rotationCenter,
+			helixAxisCterm,
+			pose.residue(startRes).xyz("CA") );
 	}
 }
 
@@ -711,8 +717,8 @@ void StrandTwistingMover::apply( core::pose::Pose & pose )
 	Real displacement_gamma( sigOffAxisR_*numeric::random::rg().gaussian() );
 
 	TR.Debug << "StrandTwistingMover::apply() ["
-	         << displacement_X << "," << displacement_Y << "," << displacement_Z << ","
-	         << displacement_alpha << "," << displacement_beta << "," << displacement_gamma << "]" << std::endl;
+		<< displacement_X << "," << displacement_Y << "," << displacement_Z << ","
+		<< displacement_alpha << "," << displacement_beta << "," << displacement_gamma << "]" << std::endl;
 
 	if ( sigAxisT_ > 1e-6 || sigOffAxisT_ > 1e-6 ) {
 		numeric::xyzVector< Real > trans( displacement_X, displacement_Y, displacement_Z );
@@ -736,7 +742,7 @@ void StrandTwistingMover::getCoordinateTransformation(
 )
 {
 	// if the segment is not simple (i.e. contains >1 continuous segment) output error msg
-	if (!segment_.isSimple()) {
+	if ( !segment_.isSimple() ) {
 		TR << "[ ERROR ] HelicalGaussianMover::getCoordinateTransformationy() called on compound segment!" << std::endl;
 		exit(1);
 	}
@@ -747,7 +753,7 @@ void StrandTwistingMover::getCoordinateTransformation(
 	int endRes = segment_[1].end();
 	int nres =  endRes - startRes + 1;
 
-	if (nres < 3) {
+	if ( nres < 3 ) {
 		TR << "[WARNING]  Strand axis of less than three residues is not correctly computed" << std::endl;
 		rotationCenter = getCoM( pose );
 
@@ -763,9 +769,9 @@ void StrandTwistingMover::getCoordinateTransformation(
 
 		rotationCenter = 0.5 * sAxisNterm + 0.5 * sAxisCterm;
 		coordinateTransform = coordTransformFromThreePoints(
-																 rotationCenter,
-																 sAxisCterm,
-																 pose.residue(startRes).xyz("CA") );
+			rotationCenter,
+			sAxisCterm,
+			pose.residue(startRes).xyz("CA") );
 	}
 }
 

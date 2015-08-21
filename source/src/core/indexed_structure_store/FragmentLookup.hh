@@ -73,8 +73,7 @@ public:
 		// Lookup modifies coordinates in-place during lookup, copy input vector for query.
 		std::vector< numeric::xyzVector<numeric::Real> > query_coordinates(store_->fragment_specification.coordinates_per_fragment());
 
-		for (Size i = 0; i < store_->fragment_specification.coordinates_per_fragment(); i++, input++)
-		{
+		for ( Size i = 0; i < store_->fragment_specification.coordinates_per_fragment(); i++, input++ ) {
 			query_coordinates[i] = *input;
 		}
 
@@ -88,8 +87,7 @@ public:
 		// Lookup modifies coordinates in-place during lookup, copy input vector for query.
 		std::vector< numeric::xyzVector<numeric::Real> > query_coordinates(store_->fragment_specification.coordinates_per_fragment());
 
-		for (Size i = 0; i < store_->fragment_specification.coordinates_per_fragment(); i++, input++)
-		{
+		for ( Size i = 0; i < store_->fragment_specification.coordinates_per_fragment(); i++, input++ ) {
 			query_coordinates[i] = *input;
 		}
 
@@ -102,27 +100,22 @@ public:
 		std::vector< ResidueSpan > valid_residue_spans = get_fragment_residue_spans(pose);
 
 		// Traverse each residue span, extract fragment atom coordinates and score.
-		BOOST_FOREACH( ResidueSpan residue_span, valid_residue_spans)
-		{
+		BOOST_FOREACH ( ResidueSpan residue_span, valid_residue_spans ) {
 			// Short-circuit if the span is shorter than the minimum fragment length.
-			if (residue_span.second - residue_span.first < store_->fragment_specification.fragment_length )
-			{
+			if ( residue_span.second - residue_span.first < store_->fragment_specification.fragment_length ) {
 				continue;
 			}
 
 			std::vector< numeric::xyzVector<numeric::Real> > query_coordinates;
-			for (Size i = residue_span.first; i < residue_span.second; i++)
-			{
-				BOOST_FOREACH(std::string atom_name, store_->fragment_specification.fragment_atoms)
-				{
+			for ( Size i = residue_span.first; i < residue_span.second; i++ ) {
+				BOOST_FOREACH ( std::string atom_name, store_->fragment_specification.fragment_atoms ) {
 					query_coordinates.push_back(pose.residue(i).xyz(atom_name));
 				}
 			}
 
-			for (Size i = 0; residue_span.first + i + (store_->fragment_specification.fragment_length - 1) < residue_span.second; i++)
-			{
+			for ( Size i = 0; residue_span.first + i + (store_->fragment_specification.fragment_length - 1) < residue_span.second; i++ ) {
 				*result_out = lookup_fragment(
-						&query_coordinates[i * store_->fragment_specification.fragment_atoms.size()]);
+					&query_coordinates[i * store_->fragment_specification.fragment_atoms.size()]);
 				result_out++;
 
 				*fragment_start_out = residue_span.first + i;
@@ -137,27 +130,22 @@ public:
 		std::vector< ResidueSpan > valid_residue_spans = get_fragment_residue_spans(pose);
 
 		// Traverse each residue span, extract fragment atom coordinates and score.
-		BOOST_FOREACH( ResidueSpan residue_span, valid_residue_spans)
-		{
+		BOOST_FOREACH ( ResidueSpan residue_span, valid_residue_spans ) {
 			// Short-circuit if the span is shorter than the minimum fragment length.
-			if (residue_span.second - residue_span.first < store_->fragment_specification.fragment_length )
-			{
+			if ( residue_span.second - residue_span.first < store_->fragment_specification.fragment_length ) {
 				continue;
 			}
 
 			std::vector< numeric::xyzVector<numeric::Real> > query_coordinates;
-			for (Size i = residue_span.first; i < residue_span.second; i++)
-			{
-				BOOST_FOREACH(std::string atom_name, store_->fragment_specification.fragment_atoms)
-				{
+			for ( Size i = residue_span.first; i < residue_span.second; i++ ) {
+				BOOST_FOREACH ( std::string atom_name, store_->fragment_specification.fragment_atoms ) {
 					query_coordinates.push_back(pose.residue(i).xyz(atom_name));
 				}
 			}
 
-			for (Size i = 0; residue_span.first + i + (store_->fragment_specification.fragment_length - 1) < residue_span.second; i++)
-			{
+			for ( Size i = 0; residue_span.first + i + (store_->fragment_specification.fragment_length - 1) < residue_span.second; i++ ) {
 				*result_out = lookup_closest_fragment(
-						&query_coordinates[i * store_->fragment_specification.fragment_atoms.size()]);
+					&query_coordinates[i * store_->fragment_specification.fragment_atoms.size()]);
 				result_out++;
 
 				*fragment_start_out = residue_span.first + i;
@@ -186,7 +174,7 @@ protected:
 	FragmentLookupResult lookup_closest_fragment(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates);
 
 private:
-  FragmentStoreOP store_;
+	FragmentStoreOP store_;
 	numeric::coordinate_fitting::CoordinateArray_RMSD_FlatLookup<numeric::Real> lookup_;
 };
 

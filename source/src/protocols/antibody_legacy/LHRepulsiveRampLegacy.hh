@@ -51,12 +51,12 @@ public:
 	LHRepulsiveRampLegacy(AntibodyInfoOP antibody_in, bool camelid );
 
 	LHRepulsiveRampLegacy(loops::Loops loops_in,
-	                      core::scoring::ScoreFunctionCOP dock_scorefxn,
-	                      core::scoring::ScoreFunctionCOP pack_scorefxn );
+		core::scoring::ScoreFunctionCOP dock_scorefxn,
+		core::scoring::ScoreFunctionCOP pack_scorefxn );
 
 	LHRepulsiveRampLegacy(AntibodyInfoOP antibody_in,
-	                      core::scoring::ScoreFunctionCOP dock_scorefxn,
-	                      core::scoring::ScoreFunctionCOP pack_scorefxn );
+		core::scoring::ScoreFunctionCOP dock_scorefxn,
+		core::scoring::ScoreFunctionCOP pack_scorefxn );
 
 	virtual protocols::moves::MoverOP clone() const;
 

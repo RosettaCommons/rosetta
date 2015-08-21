@@ -45,18 +45,15 @@ spline::SplineGenerator spline_from_file(std::string const &  filename,platform:
 	std::string line;
 	utility::vector1< std::pair<std::string,spline::LinearFunction> > boundary_functions;
 
-	while(getline(potential_file,line))
-	{
-		if(line.size() == 0)
-		{
+	while ( getline(potential_file,line) )
+			{
+		if ( line.size() == 0 ) {
 			continue;
 		}
 		boost::trim(line);
 		utility::vector1<std::string>  split_fields(utility::string_split(line,'\t'));
-		if(split_fields[1] == "x_axis")
-		{
-			for(platform::Size count = 2; count <= split_fields.size(); ++count)
-			{
+		if ( split_fields[1] == "x_axis" ) {
+			for ( platform::Size count = 2; count <= split_fields.size(); ++count ) {
 				bins_vect.push_back(utility::from_string(split_fields[count],platform::Real(0.0)));
 			}
 
@@ -64,10 +61,8 @@ spline::SplineGenerator spline_from_file(std::string const &  filename,platform:
 			utility::vector1<platform::Real>::const_reverse_iterator upper_bound_x_iterator(bins_vect.rbegin());
 			lower_bound_x = ((*lower_bound_x_iterator) - (0.5*bin_size));
 			upper_bound_x = ((*upper_bound_x_iterator) + (0.5*bin_size));
-		}else if(split_fields[1] == "y_axis")
-		{
-			for(platform::Size count = 2; count <= split_fields.size(); ++count)
-			{
+		} else if ( split_fields[1] == "y_axis" ) {
+			for ( platform::Size count = 2; count <= split_fields.size(); ++count ) {
 				potential_vect.push_back(utility::from_string(split_fields[count],platform::Real(0.0)));
 			}
 
@@ -76,8 +71,7 @@ spline::SplineGenerator spline_from_file(std::string const &  filename,platform:
 			lower_bound_y = *lower_bound_y_iterator;
 			upper_bound_y = *upper_bound_y_iterator;
 		}
-		if(split_fields[1] == "lb_function" || split_fields[1] == "ub_function")
-		{
+		if ( split_fields[1] == "lb_function" || split_fields[1] == "ub_function" ) {
 			platform::Real cutoff= utility::from_string(split_fields[2],platform::Real(0.0));
 			platform::Real slope = utility::from_string(split_fields[3],platform::Real(0.0));
 			platform::Real intercept = utility::from_string(split_fields[4],platform::Real(0.0));
@@ -86,25 +80,22 @@ spline::SplineGenerator spline_from_file(std::string const &  filename,platform:
 
 	}
 	potential_file.close();
-	if(bins_vect.size() != potential_vect.size())
-	{
+	if ( bins_vect.size() != potential_vect.size() ) {
 		utility_exit_with_message("the x and y axis lines in the spline file"+filename+"do not have the same number of entries");
 	}
 
 	numeric::interpolation::spline::SplineGenerator spline(lower_bound_x,lower_bound_y,0 /*lbdy*/,upper_bound_x,upper_bound_y,0/*ubdy*/);
 	//std::cout << "entering for loop in util.cc..." << std::endl;
-	for(platform::Size index = 1; index <= bins_vect.size(); ++index)
-	{
+	for ( platform::Size index = 1; index <= bins_vect.size(); ++index ) {
 		spline.add_known_value(bins_vect[index],potential_vect[index]);
 
 		//std::cout << "bins_vect.size() is:  " << bins_vect.size() << std::endl;
 		//std::cout << "current index is:  " << index << " current bins_vect value is:  " << bins_vect[index]
-		  // << " current potential_vect_value is:  " << potential_vect[index] << std::endl;	}
+		// << " current potential_vect_value is:  " << potential_vect[index] << std::endl; }
 	}
 
 
-	for(platform::Size index = 1; index <= boundary_functions.size(); ++index )
-	{
+	for ( platform::Size index = 1; index <= boundary_functions.size(); ++index ) {
 		std::string tag = boundary_functions[index].first;
 		spline::LinearFunction function = boundary_functions[index].second;
 		spline.add_boundary_function(tag,function.cutoff,function.slope,function.intercept);

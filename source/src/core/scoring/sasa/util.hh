@@ -28,29 +28,29 @@
 namespace core {
 namespace scoring {
 namespace sasa {
-	
+
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///  Convenience Functions
-///	
+///
 ///
 
 /// @brief Relative per residue sidechain SASA
 /// @details Added by JKLeman (julia.koehler1982@gmail.com)
-///			GXG tripeptide values for sidechain SASA are taken from
-///			http://www.proteinsandproteomics.org/content/free/tables_1/table08.pdf
+///   GXG tripeptide values for sidechain SASA are taken from
+///   http://www.proteinsandproteomics.org/content/free/tables_1/table08.pdf
 utility::vector1< Real > per_res_sc_sasa( const pose::Pose & pose );
 
 /// @brief Relative per residue sidechain SASA
 /// @details Added by JKLeman (julia.koehler1982@gmail.com)
-///			GXG tripeptide values for sidechain SASA are taken from
-///			http://www.proteinsandproteomics.org/content/free/tables_1/table08.pdf
+///   GXG tripeptide values for sidechain SASA are taken from
+///   http://www.proteinsandproteomics.org/content/free/tables_1/table08.pdf
 utility::vector1< Real > rel_per_res_sc_sasa( const pose::Pose & pose );
 
 /// @brief Is residue exposed?
 /// @details Added by JKLeman (julia.koehler1982@gmail.com)
-///			Uses the function rel_per_res_sc_sasa above
-///			THIS IS EXPENSIVE, BE AWARE!!! IF YOU NEED TO RUN IT OVER THE ENTIRE
-///			PROTEIN, USE THE rel_per_res_sc_sasa FUNCTION INSTEAD!
+///   Uses the function rel_per_res_sc_sasa above
+///   THIS IS EXPENSIVE, BE AWARE!!! IF YOU NEED TO RUN IT OVER THE ENTIRE
+///   PROTEIN, USE THE rel_per_res_sc_sasa FUNCTION INSTEAD!
 bool is_res_exposed( const pose::Pose & pose, core::Size resnum );
 
 /// @brief Calculate the sidechain and backbone sasa from atom sasa
@@ -64,12 +64,12 @@ get_sc_bb_sasa_per_res(const pose::Pose & pose, const id::AtomID_Map<Real> & ato
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///  Enum Management.  Can go in separate file if it gets large.
-///	
 ///
 ///
-	
+///
 
-	
+
+
 /// @brief Gets sasa enum from string passed by options system.
 SasaMethodEnum
 get_sasa_method_from_string(std::string method);
@@ -91,7 +91,7 @@ get_sasa_radii_set_from_string(std::string radii_set);
 //Real
 //calc_per_atom_sasa_sc_proq( const pose::Pose  & pose, utility::vector1< Real > & rsd_sasa, bool normalize);
 
-//Real 
+//Real
 //normalizing_area(char const res);
 
 
@@ -108,14 +108,14 @@ get_sasa_radii_set_from_string(std::string radii_set);
 /// @brief
 /// Returns const access to the angles FArray, which contains the information in the SASA database file sampling/SASA-angles.dat.
 /// Adding this in so that the values in the SASA database files can be used in SASA-based scores. (ronj)
-ObjexxFCL::FArray2D_int const & 
+ObjexxFCL::FArray2D_int const &
 get_legrand_sasa_angles();
 
 /// @brief
 /// Returns const access to the masks FArray, which contains the information in the SASA database file sampling/SASA-masks.dat.
 /// Adding this in so that the values in the SASA database files can be used in SASA-based scores. (ronj)
 ///
-ObjexxFCL::FArray2D_ubyte const & 
+ObjexxFCL::FArray2D_ubyte const &
 get_legrand_sasa_masks();
 
 
@@ -209,5 +209,5 @@ get_legrand_2way_orientation( Vector const & a_xyz, Vector const & b_xyz,
 }
 }
 
-#endif	//#ifndef INCLUDED_protocols/antibody_design_UTIL_HH
+#endif //#ifndef INCLUDED_protocols/antibody_design_UTIL_HH
 

@@ -48,7 +48,7 @@
 #include <map>
 #include <string>
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 // option key includes
 
@@ -77,7 +77,7 @@ LoopMover::LoopMover() :
 	Mover(),
 	guarded_loops_( GuardedLoopsFromFileOP( new GuardedLoopsFromFile ) )
 {
-   init();
+	init();
 }
 
 /// @details GuardedLoops constructed with a pointer to a loops object:
@@ -88,7 +88,7 @@ LoopMover::LoopMover( protocols::loops::LoopsOP loops_in )
 	Mover(),
 	guarded_loops_( GuardedLoopsFromFileOP( new GuardedLoopsFromFile( loops_in ) ))
 {
-    init();
+	init();
 }
 
 /// @details GuardedLoops constructed with an unresolve-loop-indices object:
@@ -166,38 +166,38 @@ protocols::loops::LoopsCOP LoopMover::loops() const
 
 protocols::loops::LoopsOP LoopMover::loops()
 {
-   return guarded_loops_->loops();
+	return guarded_loops_->loops();
 }
 
 
 const utility::vector1< core::fragment::FragSetOP > & LoopMover::frag_libs() const
 {
-    return frag_libs_;
+	return frag_libs_;
 }
 
 void LoopMover::set_use_loops_from_observer_cache( bool const loops_from_observer_cache )
 {
-    loops_from_observer_cache_ = loops_from_observer_cache;
+	loops_from_observer_cache_ = loops_from_observer_cache;
 }
 
 bool LoopMover::use_loops_from_observer_cache() const
 {
-    return loops_from_observer_cache_;
+	return loops_from_observer_cache_;
 }
 
 checkpoint::CheckPointerOP & LoopMover::get_checkpoints()
 {
-    return checkpoints_;
+	return checkpoints_;
 }
 
 void LoopMover::false_movemap( MoveMapOP const & mm )
 {
-    false_movemap_ = mm;
+	false_movemap_ = mm;
 }
 
 LoopMover::MoveMapOP const & LoopMover::false_movemap() const
 {
-    return false_movemap_;
+	return false_movemap_;
 }
 
 // end of accessors
@@ -205,7 +205,7 @@ LoopMover::MoveMapOP const & LoopMover::false_movemap() const
 // Additional MoveMap method
 Size LoopMover::enforce_false_movemap( MoveMapOP & mm ) const
 {
-    return mm->import_false( *false_movemap() );
+	return mm->import_false( *false_movemap() );
 }
 
 
@@ -229,7 +229,7 @@ void LoopMover::set_extended_torsions(
 	Size start_extended = std::max((Size)1,loop.start());
 	Size end_extended   = std::min(pose.total_residue(),loop.stop());
 	for ( Size i = start_extended; i <= end_extended; ++i ) {
-		if ( i != start_extended )	pose.set_phi( i, init_phi );
+		if ( i != start_extended ) pose.set_phi( i, init_phi );
 		if ( i != end_extended ) pose.set_psi( i, init_psi );
 		if ( ( i != start_extended ) && ( i != end_extended ) ) pose.set_omega( i, init_omega );
 	}
@@ -257,18 +257,17 @@ void LoopMover::clear_fragments() {
 void
 LoopMover::set_loops_from_pose_observer_cache( core::pose::Pose const & pose ){
 
-	if( pose.observer_cache().has( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER) ){
+	if ( pose.observer_cache().has( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER) ) {
 		LoopsOP loops( new Loops() );
 		utility::vector1< std::pair< core::Size, core::Size > > const & segments = utility::pointer::static_pointer_cast< core::pose::datacache::SpecialSegmentsObserver const >(pose.observer_cache().get_const_ptr( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER ) )->segments();
-		for( core::Size i = 1; i <= segments.size(); ++i ){
+		for ( core::Size i = 1; i <= segments.size(); ++i ) {
 			core::Size loop_end = segments[i].second - 1; //segment convention
-			if( loop_end <= segments[i].first ) continue; //safeguard against faulty or segments of length 1
+			if ( loop_end <= segments[i].first ) continue; //safeguard against faulty or segments of length 1
 			tr() << "Setting loop from observer cache between seqpos " << segments[i].first << " and " << loop_end << "." << std::endl;
 			loops->add_loop( segments[i].first, loop_end, numeric::random::random_range( int(segments[i].first), int(loop_end)  ) );
 		}
 		guarded_loops_->loops( *loops ); // <--- deep copy into the GuardedLoops existing Loops object
-	}
-	else{
+	} else {
 		utility_exit_with_message("trying to set loops from observer cache even though no cache was detected in the pose");
 	}
 }
@@ -278,7 +277,7 @@ LoopMover::set_loops_from_pose_observer_cache( core::pose::Pose const & pose ){
 void
 loops_set_chainbreak_weight( core::scoring::ScoreFunctionOP scorefxn, Size const round ){
 	bool const use_linear_chainbreak( basic::options::option[basic::options::OptionKeys::loops::kic_use_linear_chainbreak]() );
-	if ( use_linear_chainbreak ){
+	if ( use_linear_chainbreak ) {
 		scorefxn->set_weight( core::scoring::linear_chainbreak, float( round ) * 150.0 / 3.0 );
 		scorefxn->set_weight( core::scoring::chainbreak, 0.0 );
 	} else { // default behavior.
@@ -296,7 +295,7 @@ LoopMover::LoopMover( LoopMover const & rhs ) :
 /// @brief assignment operator
 LoopMover & LoopMover::operator=( LoopMover const & rhs ){
 	//abort self-assignment
-	if (this == &rhs) return *this;
+	if ( this == &rhs ) return *this;
 
 	Mover::operator=(rhs);
 	initForEqualOperatorAndCopyConstructor(*this, rhs);
@@ -333,7 +332,7 @@ LoopMover::torsion_features_string( core::pose::Pose const & pose ) const
 	// alternatively one could return a vector of torsion feature strings or some other more complex construct
 	// note: won't work properly for multiple loops at the moment -- TODO
 	for ( Loops::const_iterator it=loops()->begin(), it_end=loops()->end(); it != it_end; ++it ) {
-		if (torsion_bins.size() != 0 ) {
+		if ( torsion_bins.size() != 0 ) {
 			torsion_bins.push_back( core::conformation::ppo_torbin_U ); // next loop
 		}
 		for ( core::Size i = it->start(), l_end = it->stop(); i <= l_end; i++ ) {

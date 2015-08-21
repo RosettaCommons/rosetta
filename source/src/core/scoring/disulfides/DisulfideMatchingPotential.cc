@@ -54,8 +54,8 @@ namespace scoring {
 namespace disulfides {
 
 /**
- * Constructor
- */
+* Constructor
+*/
 DisulfideMatchingPotential::DisulfideMatchingPotential()
 {
 
@@ -63,23 +63,23 @@ DisulfideMatchingPotential::DisulfideMatchingPotential()
 }
 
 /**
- * Deconstructor
- */
+* Deconstructor
+*/
 DisulfideMatchingPotential::~DisulfideMatchingPotential() {}
 
 /**
- * @brief Calculates scoring terms
- *
- */
+* @brief Calculates scoring terms
+*
+*/
 void
 DisulfideMatchingPotential::score_disulfide(
-		Residue const & res1,
-		Residue const & res2,
-		Energy & match_t,
-		Energy & match_r,
-		Energy & match_rt,
-		bool const mirror /*For scoring mirror-image disulfides (DCYS-DCYS)*/
-		) const
+	Residue const & res1,
+	Residue const & res2,
+	Energy & match_t,
+	Energy & match_r,
+	Energy & match_rt,
+	bool const mirror /*For scoring mirror-image disulfides (DCYS-DCYS)*/
+) const
 {
 
 	const core::Real probe_radius( basic::options::option[ basic::options::OptionKeys::score::disulf_matching_probe ] );
@@ -97,32 +97,32 @@ DisulfideMatchingPotential::score_disulfide(
 
 	mt_dist = std::sqrt( scoring_RT.get_translation().distance_squared( db_disulfides[1].get_translation() ));
 	r_dist = std::sqrt( scoring_RT.get_rotation().col(1).distance_squared( db_disulfides[1].get_rotation().col(1) ) +
-											scoring_RT.get_rotation().col(2).distance_squared( db_disulfides[1].get_rotation().col(2) ) +
-											scoring_RT.get_rotation().col(3).distance_squared( db_disulfides[1].get_rotation().col(3) ) );
+		scoring_RT.get_rotation().col(2).distance_squared( db_disulfides[1].get_rotation().col(2) ) +
+		scoring_RT.get_rotation().col(3).distance_squared( db_disulfides[1].get_rotation().col(3) ) );
 	rt_dist = core::kinematics::distance( scoring_RT, db_disulfides[1] );
 
-	if (( r_dist <= mr_dist ) && ( mt_dist <= probe_radius )) mr_dist = r_dist;
+	if ( ( r_dist <= mr_dist ) && ( mt_dist <= probe_radius ) ) mr_dist = r_dist;
 
-	if (( rt_dist <= mrt_dist ) && ( mt_dist <= probe_radius )) mrt_dist = rt_dist;
+	if ( ( rt_dist <= mrt_dist ) && ( mt_dist <= probe_radius ) ) mrt_dist = rt_dist;
 
 	//std::cout << "CHECKING " << db_disulfides.size() << " " << mt_dist << " " << mr_dist << " " << mrt_dist << " " << std::endl;
 
 	for ( Size d = 2; d <= db_disulfides.size(); ++d ) {
 		/*
-			As far as I can tell, the following four lines were broken before, calculating the same thing for every iteration of this for loop.
-			VKM, 17 Aug 2015.
+		As far as I can tell, the following four lines were broken before, calculating the same thing for every iteration of this for loop.
+		VKM, 17 Aug 2015.
 		*/
 		float t_dist = std::sqrt( scoring_RT.get_translation().distance_squared( db_disulfides[d].get_translation() ));
 		r_dist = std::sqrt( scoring_RT.get_rotation().col(1).distance_squared( db_disulfides[d].get_rotation().col(1) ) +
-			                  scoring_RT.get_rotation().col(2).distance_squared( db_disulfides[d].get_rotation().col(2) ) +
-											  scoring_RT.get_rotation().col(3).distance_squared( db_disulfides[d].get_rotation().col(3) ) );
+			scoring_RT.get_rotation().col(2).distance_squared( db_disulfides[d].get_rotation().col(2) ) +
+			scoring_RT.get_rotation().col(3).distance_squared( db_disulfides[d].get_rotation().col(3) ) );
 		rt_dist = core::kinematics::distance( scoring_RT, db_disulfides[d] );
 
 		//std::cout << "HEYO " << d << " " << mt_dist << " " << mr_dist << " " << mrt_dist << " " << t_dist << " " << r_dist << " " << rt_dist << std::endl;
 
 		if ( t_dist <= mt_dist ) mt_dist = t_dist;
-		if (( r_dist <= mr_dist ) && ( t_dist <= probe_radius )) mr_dist = r_dist;
-		if (( rt_dist <= mrt_dist ) && ( t_dist <= probe_radius )) mrt_dist = rt_dist;
+		if ( ( r_dist <= mr_dist ) && ( t_dist <= probe_radius ) ) mr_dist = r_dist;
+		if ( ( rt_dist <= mrt_dist ) && ( t_dist <= probe_radius ) ) mrt_dist = rt_dist;
 	}
 
 	match_t = mt_dist;
@@ -145,11 +145,11 @@ Energy DisulfideMatchingPotential::compute_matching_energy( pose::Pose const & p
 			Energy temp_RT(0.0), junk_rot(0.0), junk_trans(0.0);
 
 			score_disulfide(
-			pose.residue(disulfides[i].first),
-			pose.residue(disulfides[i].second),
-			junk_rot,
-			junk_trans,
-			temp_RT
+				pose.residue(disulfides[i].first),
+				pose.residue(disulfides[i].second),
+				junk_rot,
+				junk_trans,
+				temp_RT
 			);
 
 			match_RT += temp_RT;
@@ -161,26 +161,26 @@ Energy DisulfideMatchingPotential::compute_matching_energy( pose::Pose const & p
 
 
 /**
- * @brief calculates some degrees of freedom between two centroid cys residues
- *
- * If one of the residues is glycine it will be substituted with an idealize
- * alanine geometry for the calculations which require a Cb molecule.
- *
- * centroid_distance requires CEN atoms be defined. If full atom residues
- * are specified this function returns centroid_distance of -1.
- *
- * @param cbcb_distance     The distance between Cbetas squared
- * @param centroid_distance The distance between centroids squared
- * @param cacbcb_angle_1    The Ca1-Cb1-Cb2 planar angle, in degrees
- * @param cacbcb_angle_2    The Ca2-Cb2-Cb1 planar angle, in degrees
- * @param cacbcbca_dihedral The Ca1-Cb1-Cb2-Ca2 dihedral angle
- * @param backbone_dihedral The N-Ca1-Ca2-C2 dihedral angle
- */
+* @brief calculates some degrees of freedom between two centroid cys residues
+*
+* If one of the residues is glycine it will be substituted with an idealize
+* alanine geometry for the calculations which require a Cb molecule.
+*
+* centroid_distance requires CEN atoms be defined. If full atom residues
+* are specified this function returns centroid_distance of -1.
+*
+* @param cbcb_distance     The distance between Cbetas squared
+* @param centroid_distance The distance between centroids squared
+* @param cacbcb_angle_1    The Ca1-Cb1-Cb2 planar angle, in degrees
+* @param cacbcb_angle_2    The Ca2-Cb2-Cb1 planar angle, in degrees
+* @param cacbcbca_dihedral The Ca1-Cb1-Cb2-Ca2 dihedral angle
+* @param backbone_dihedral The N-Ca1-Ca2-C2 dihedral angle
+*/
 core::kinematics::RT
 DisulfideMatchingPotential::disulfide_RT(
-		Residue const& res1,
-		Residue const& res2,
-		bool const mirror
+	Residue const& res1,
+	Residue const& res2,
+	bool const mirror
 ) const {
 
 	core::Real const mirrormult( mirror ? -1.0 : 1.0 );
@@ -339,14 +339,14 @@ RT_helper::RT_from_epos( ObjexxFCL::FArray2A_float Epos1, ObjexxFCL::FArray2A_fl
 	rotation = m1.transposed() * m2;
 	/************************Phil's legacy code *********************/
 	// rotation(j,*) is the j-th unit vector of 2nd coord sys written in 1st coord-sys
-	// 	for ( int i=1; i<=3; ++i ) {
-	// 			for ( int j=1; j<=3; ++j ) {
-	// 				// DANGER: not sure about the order... ////////////////////////
-	// 				// should sync with make_jump
-	//  				rotation(j,i) = Ddotprod( m1(1,i), m2(1,j) ); // 2nd guess
-	//  				//rotation(j,i) = Ddotprod( m1(1,j), m2(1,i) ); // 1st guess
-	// 			}
-	// 		}
+	//  for ( int i=1; i<=3; ++i ) {
+	//    for ( int j=1; j<=3; ++j ) {
+	//     // DANGER: not sure about the order... ////////////////////////
+	//     // should sync with make_jump
+	//      rotation(j,i) = Ddotprod( m1(1,i), m2(1,j) ); // 2nd guess
+	//      //rotation(j,i) = Ddotprod( m1(1,j), m2(1,i) ); // 1st guess
+	//    }
+	//   }
 	/************************Phil's legacy code ********************/
 	core::kinematics::RT rt;
 	rt.set_translation( translation );

@@ -26,7 +26,7 @@ public:
 	virtual
 	methods::EnergyMethodOP
 	create_energy_method (
-	  methods::EnergyMethodOptions const &
+		methods::EnergyMethodOptions const &
 	) const;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod

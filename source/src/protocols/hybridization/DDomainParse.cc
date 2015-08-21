@@ -59,71 +59,75 @@ DDomainParse::pulldomain( int isize0, int ist, int ilast, utility::vector1< core
 	//int ikp = 1;
 	//int i0 = 0, idip0 = 1, kk1 = 0, kk2 = 0;
 
-	for (int i=isize0; i<=ilast-isize0; ++i) {
+	for ( int i=isize0; i<=ilast-isize0; ++i ) {
 		core::Real tmp = resect[i];
 
 		maxe1[i] = i;
 		core::Real tmp1 = tmp;
-		for (int j=ist; j<=i; ++j) {
+		for ( int j=ist; j<=i; ++j ) {
 			core::Real tmp2 = resect[j];
-			if (tmp2 > tmp1) {
+			if ( tmp2 > tmp1 ) {
 				tmp1 = tmp2;
 				maxe1[i] = j;
 			}
 		}
 		maxe2[i] = i;
 		tmp1 = tmp;
-		for (int j=i; j<=ilast-1; ++j) {
+		for ( int j=i; j<=ilast-1; ++j ) {
 			core::Real tmp2 = resect[j];
-			if (tmp2 > tmp1) {
+			if ( tmp2 > tmp1 ) {
 				tmp1 = tmp2;
 				maxe2[i] = j;
 			}
 		}
 
 		core::Size k1 = 0;
-		for (int k=maxe1[i]; k<=i; ++k) {
+		for ( int k=maxe1[i]; k<=i; ++k ) {
 			core::Real de1 = resect[k] - tmp;
-			if (de1 > hcut_)
+			if ( de1 > hcut_ ) {
 				k1++;
-			else
+			} else {
 				break;
+			}
 		}
-		for (int k=maxe1[i]; k>=ist; --k) {
+		for ( int k=maxe1[i]; k>=ist; --k ) {
 			core::Real de1 = resect[k] - tmp;
-			if (de1 > hcut_)
+			if ( de1 > hcut_ ) {
 				k1++;
-			else
+			} else {
 				break;
+			}
 		}
 
 		core::Size k2 = 0;
-		for (int k=maxe2[i]; k<=ilast; ++k) {
+		for ( int k=maxe2[i]; k<=ilast; ++k ) {
 			core::Real de1 = resect[k] - tmp;
-			if (de1 > hcut_)
+			if ( de1 > hcut_ ) {
 				k2++;
-			else
+			} else {
 				break;
+			}
 
 		}
-		for (int k=maxe2[i]; k>=i; --k) {
+		for ( int k=maxe2[i]; k>=i; --k ) {
 			core::Real de1 = resect[k] - tmp;
-			if (de1 > hcut_)
+			if ( de1 > hcut_ ) {
 				k2++;
-			else
+			} else {
 				break;
+			}
 		}
 
 
 		core::Real de1 = resect[maxe1[i]] - tmp;
 		core::Real de2 = resect[maxe2[i]] - tmp;
 
-		if (tmp < tmp20 && de1 > hcut_ && de2 > hcut_) {
+		if ( tmp < tmp20 && de1 > hcut_ && de2 > hcut_ ) {
 			//ikp = i;  // set but never used ~Labonte
 			tmp20 = tmp;
 		}
-		if ((k1 > length_ && k2 > length_)) {
-			if (tmp < tmp10) {
+		if ( (k1 > length_ && k2 > length_) ) {
+			if ( tmp < tmp10 ) {
 				tmp10 = tmp;
 				idip = i;
 				//kk1 = k1;  // set but never used ~Labonte
@@ -133,13 +137,13 @@ DDomainParse::pulldomain( int isize0, int ist, int ilast, utility::vector1< core
 	}
 
 
-	if (resect[idip] > pcut_) {
+	if ( resect[idip] > pcut_ ) {
 		idip = ist;
 	}
 
 	int i1 = idip;
 	int i2 = ilast - idip;
-	if (i1 > isize0 && i2 > isize0) {
+	if ( i1 > isize0 && i2 > isize0 ) {
 		// do nothing
 	} else {
 		idip = ist;
@@ -152,11 +156,11 @@ DDomainParse::findpos(
 	int, int ndom, int id,
 	utility::vector1<int> &ipdom, int &ist, int &ilast)
 {
-	if (ndom > 1) {
-		if (id == 1) {
+	if ( ndom > 1 ) {
+		if ( id == 1 ) {
 			ist = 1;
 			ilast = ipdom[id];
-		} else if (id == ndom) {
+		} else if ( id == ndom ) {
 			ist = ipdom[id - 1] + 1;
 			ilast = nseq_;
 		} else {
@@ -171,7 +175,7 @@ DDomainParse::findpos2(
 	int ist, int ilast, int imid, int i,
 	int &ista, int &ilasta)
 {
-	if (i == 1) {
+	if ( i == 1 ) {
 		ista = ist;
 		ilasta = imid;
 	} else {
@@ -190,11 +194,11 @@ DDomainParse::small_big(
 	utility::vector1<int> ifg_min(mdom, 0);
 	utility::vector1<int> itmp(mdom, 0);
 
-	for (int id=1; id<=ipdd; ++id) {
+	for ( int id=1; id<=ipdd; ++id ) {
 		int imin = 100000;
-		for (int i=1; i<=ipdd; ++i) {
-			if (ifg_min[i] == 0) {
-				if (ipdom[i] < imin) {
+		for ( int i=1; i<=ipdd; ++i ) {
+			if ( ifg_min[i] == 0 ) {
+				if ( ipdom[i] < imin ) {
 					imin = ipdom[i];
 					ip = i;
 				}
@@ -203,7 +207,7 @@ DDomainParse::small_big(
 		ifg_min[ip] = 1;
 		itmp[id] = imin;
 	}
-	for (int i=1; i<=ipdd; ++i) {
+	for ( int i=1; i<=ipdd; ++i ) {
 		ipdom[i] = itmp[i];
 	}
 }
@@ -217,8 +221,8 @@ DDomainParse::distance(
 {
 	dij.resize(mseq_, utility::vector1< core::Real >(mseq_,0));
 
-	for (int i=ist; i<=ilast-1; ++i) {
-		for (int j=i+1; j<=ilast; ++j) {
+	for ( int i=ist; i<=ilast-1; ++i ) {
+		for ( int j=i+1; j<=ilast; ++j ) {
 			dij[i][j] = dij[j][i] = xs[i].distance( xs[j] );
 		}
 	}
@@ -234,13 +238,14 @@ DDomainParse::ddomain_pot(
 
 	core::Real ave = 0.0, rcut = 6.5, /*ect = 0,*/ dr = 0;
 	//int ipt1 = 0, ipt2 = 0;
-	for (int k=ist; k<=ilast - 1; ++k) {
+	for ( int k=ist; k<=ilast - 1; ++k ) {
 		core::Real ect = 0.0;
-		for (int i=ist; i<=k; ++i) {
-			for (int j=k+1; j<=ilast; ++j) {
+		for ( int i=ist; i<=k; ++i ) {
+			for ( int j=k+1; j<=ilast; ++j ) {
 				dr = dij[i][j];
-				if (dr < rcut)
+				if ( dr < rcut ) {
 					ect -= 1.0;
+				}
 			}
 		}
 		int ipt1 = k - ist + 1;
@@ -251,7 +256,7 @@ DDomainParse::ddomain_pot(
 		ave += ect;
 	}
 	core::Real tmp = ave / ((ilast - ist + 1) - 1);
-	for (int k=ist; k<=ilast - 1; ++k) {
+	for ( int k=ist; k<=ilast - 1; ++k ) {
 		resect[k] /= tmp;
 	}
 }
@@ -264,10 +269,10 @@ DDomainParse::split( core::pose::Pose const &templ ) {
 
 	//std::string fname;
 	mseq_ = templ.total_residue();
-	while (mseq_>0 && !templ.residue(mseq_).is_protein()) mseq_--;
+	while ( mseq_>0 && !templ.residue(mseq_).is_protein() ) mseq_--;
 	nseq_ = mseq_;
 
-	if (mseq_ == 0) { return retval; }
+	if ( mseq_ == 0 ) { return retval; }
 
 	utility::vector1<int> ipdom(mseq_,0);
 	utility::vector1< numeric::xyzVector<core::Real> > xs(mseq_, numeric::xyzVector<core::Real>(0,0,0));
@@ -276,41 +281,41 @@ DDomainParse::split( core::pose::Pose const &templ ) {
 
 	// grab "centroid" from pose
 	// use same definition as DDomain
-	for (core::Size i=1; i<=mseq_; ++i) {
+	for ( core::Size i=1; i<=mseq_; ++i ) {
 		core::conformation::Residue const &rsd_i = templ.residue(i);
 		core::Size nsc=0;
-		if (rsd_i.aa() == core::chemical::aa_gly) {
+		if ( rsd_i.aa() == core::chemical::aa_gly ) {
 			xs[i] = rsd_i.atom(2).xyz();
 			nsc++;
 		}
- 		for (int j=rsd_i.first_sidechain_atom(); j<=(int)rsd_i.nheavyatoms(); ++j) {
-			if (rsd_i.aa() == core::chemical::aa_pro && j==(int)rsd_i.nheavyatoms()) continue;
+		for ( int j=rsd_i.first_sidechain_atom(); j<=(int)rsd_i.nheavyatoms(); ++j ) {
+			if ( rsd_i.aa() == core::chemical::aa_pro && j==(int)rsd_i.nheavyatoms() ) continue;
 			xs[i] += rsd_i.atom(j).xyz();
 			nsc++;
 		}
 		xs[i] /= nsc;
 	}
 
-  const int mdom = 20;  // maximum domains
+	const int mdom = 20;  // maximum domains
 
 	core::Real pw = 0.43f;
 	int isize0 = 40;
 	int ist=1, ilast=nseq_, ndom=1, idom=1, ipdd=0, ifg_dom=0;
-  int imid=0, istx=0, ilastx=0, imidx=0;
+	int imid=0, istx=0, ilastx=0, imidx=0;
 
 	bool done=false;
 
-	while (!done) {
+	while ( !done ) {
 		done = true;
-		for (int id=1; id <= ndom; ++id) {
+		for ( int id=1; id <= ndom; ++id ) {
 			findpos(mdom, ndom, id, ipdom, ist, ilast);
 			distance(ist, ilast, xs, dij);
 			ddomain_pot(pw, ist, ilast, dij, resect);
 			pulldomain(isize0, ist, ilast, resect, imid);
 
-			if (imid > ist && imid < ilast) {
+			if ( imid > ist && imid < ilast ) {
 				idom++;
-				if (idom > mdom) {
+				if ( idom > mdom ) {
 					std::cerr << "DDomainParse::split(): idom > mdom [1]";
 					ifg_dom = 0;
 					break;
@@ -319,15 +324,15 @@ DDomainParse::split( core::pose::Pose const &templ ) {
 				ipdom[ipdd] = imid;
 				ifg_dom = 1;
 
-				for (int i=1; i<=2; ++i) {
+				for ( int i=1; i<=2; ++i ) {
 					findpos2(ist, ilast, imid, i, istx, ilastx);
-					if (ilastx - istx >= isize0) {
+					if ( ilastx - istx >= isize0 ) {
 						distance(istx, ilastx, xs, dij);
 						ddomain_pot(pw, istx, ilastx, dij, resect);
 						pulldomain(isize0, istx, ilastx, resect, imidx);
-						if (imidx > istx && imidx < ilastx) {
+						if ( imidx > istx && imidx < ilastx ) {
 							idom++;
-							if (idom > mdom) {
+							if ( idom > mdom ) {
 								std::cerr << "DDomainParse::split(): idom > mdom [2]";
 								ifg_dom = 0;
 								break;
@@ -341,7 +346,7 @@ DDomainParse::split( core::pose::Pose const &templ ) {
 			}
 		}
 
-		if (ifg_dom == 1) {
+		if ( ifg_dom == 1 ) {
 			ndom = idom;
 			ifg_dom = 0;
 			small_big(mdom, ipdd, ipdom);
@@ -349,24 +354,21 @@ DDomainParse::split( core::pose::Pose const &templ ) {
 		}
 	}
 
-	for (int i=1; i<=ndom; ++i) {
-		if (ndom == 1) {
+	for ( int i=1; i<=ndom; ++i ) {
+		if ( ndom == 1 ) {
 			loops::Loops newloops;
 			newloops.add_loop( 1, nseq_ );
 			retval.push_back( newloops );
-		}
-		else {
-			if (i == 1) {
+		} else {
+			if ( i == 1 ) {
 				loops::Loops newloops;
 				newloops.add_loop( 1, ipdom[i] );
 				retval.push_back( newloops );
-			}
-			else if (i == ndom) {
+			} else if ( i == ndom ) {
 				loops::Loops newloops;
 				newloops.add_loop( ipdom[i-1]+1, nseq_ );
 				retval.push_back( newloops );
-			}
-			else {
+			} else {
 				loops::Loops newloops;
 				newloops.add_loop( ipdom[i-1]+1, ipdom[i] );
 				retval.push_back( newloops );

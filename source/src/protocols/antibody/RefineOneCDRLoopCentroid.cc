@@ -50,14 +50,14 @@ namespace protocols {
 namespace antibody {
 
 RefineOneCDRLoopCentroid::RefineOneCDRLoopCentroid( AntibodyInfoCOP antibody_info,
-        CDRNameEnum const & loop_name ) : Mover() {
+	CDRNameEnum const & loop_name ) : Mover() {
 	the_cdr_loop_ =  antibody_info->get_CDR_loop(loop_name);
 	set_default();
 }
 
 RefineOneCDRLoopCentroid::RefineOneCDRLoopCentroid( AntibodyInfoCOP antibody_info,
-        CDRNameEnum const & loop_name,
-        core::scoring::ScoreFunctionCOP scorefxn) : Mover() {
+	CDRNameEnum const & loop_name,
+	core::scoring::ScoreFunctionCOP scorefxn) : Mover() {
 	lowres_scorefxn_ = scorefxn->clone();
 	the_cdr_loop_ =  antibody_info->get_CDR_loop(loop_name);
 	set_default();
@@ -70,7 +70,7 @@ RefineOneCDRLoopCentroid::RefineOneCDRLoopCentroid( loops::Loop const & a_cdr_lo
 }
 
 RefineOneCDRLoopCentroid::RefineOneCDRLoopCentroid( loops::Loop const & a_cdr_loop,
-        core::scoring::ScoreFunctionCOP scorefxn  ) : Mover() {
+	core::scoring::ScoreFunctionCOP scorefxn  ) : Mover() {
 	lowres_scorefxn_ = scorefxn->clone();
 	the_cdr_loop_ = a_cdr_loop;
 	set_default();
@@ -103,7 +103,7 @@ void RefineOneCDRLoopCentroid::set_score_function(core::scoring::ScoreFunctionCO
 
 void RefineOneCDRLoopCentroid::finalize_setup( core::pose::Pose const & /*pose*/ ) {
 	TR<<"   start finalize_setup function ..."<<std::endl;
-	if (!lowres_scorefxn_) {
+	if ( !lowres_scorefxn_ ) {
 		lowres_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
 		lowres_scorefxn_->set_weight( scoring::chainbreak, 10./3. );
 	}
@@ -142,9 +142,9 @@ void RefineOneCDRLoopCentroid::apply( pose::Pose & pose ) {
 ///
 ///////////////////////////////////////////////////////////////////////////
 void RefineOneCDRLoopCentroid::loop_centroid_relax(
-		pose::Pose & pose_in,
-		Size const loop_begin,
-		Size const loop_end )
+	pose::Pose & pose_in,
+	Size const loop_begin,
+	Size const loop_end )
 {
 	using namespace protocols;
 	using namespace protocols::simple_moves;
@@ -164,7 +164,7 @@ void RefineOneCDRLoopCentroid::loop_centroid_relax(
 	loop_map->set_chi( false );
 	loop_map->set_bb( false );
 	utility::vector1< bool> allow_bb_move( pose_in.total_residue(), false );
-	for( Size ii = loop_begin; ii <= loop_end; ii++ ) {
+	for ( Size ii = loop_begin; ii <= loop_end; ii++ ) {
 		allow_bb_move[ ii ] = true;
 	}
 	loop_map->set_bb( allow_bb_move );
@@ -174,20 +174,22 @@ void RefineOneCDRLoopCentroid::loop_centroid_relax(
 	Size loop_size = ( loop_end - loop_begin ) + 1;
 	Size cutpoint = loop_begin + Size(loop_size/2);
 
-	loops::Loop one_loop( loop_begin, loop_end,	cutpoint,	0, false );
+	loops::Loop one_loop( loop_begin, loop_end, cutpoint, 0, false );
 	simple_one_loop_fold_tree( pose_in, one_loop );
 
 	// set cutpoint variants for correct chainbreak scoring
-	if( !pose_in.residue( cutpoint ).is_upper_terminus() ) {
-		if( !pose_in.residue( cutpoint ).has_variant_type(chemical::CUTPOINT_LOWER))
+	if ( !pose_in.residue( cutpoint ).is_upper_terminus() ) {
+		if ( !pose_in.residue( cutpoint ).has_variant_type(chemical::CUTPOINT_LOWER) ) {
 			core::pose::add_variant_type_to_pose_residue( pose_in, chemical::CUTPOINT_LOWER, cutpoint );
-		if( !pose_in.residue( cutpoint + 1 ).has_variant_type(chemical::CUTPOINT_UPPER ) )
+		}
+		if ( !pose_in.residue( cutpoint + 1 ).has_variant_type(chemical::CUTPOINT_UPPER ) ) {
 			core::pose::add_variant_type_to_pose_residue( pose_in, chemical::CUTPOINT_UPPER, cutpoint + 1 );
+		}
 	}
 
 
 	Real min_tolerance = 0.001;
-	if( benchmark_ ) min_tolerance = 1.0;
+	if ( benchmark_ ) min_tolerance = 1.0;
 	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
 	bool nb_list = true;
 	MinMoverOP loop_min_mover( new MinMover( loop_map, lowres_scorefxn_, min_type, min_tolerance, nb_list ) );
@@ -196,13 +198,13 @@ void RefineOneCDRLoopCentroid::loop_centroid_relax(
 	Size n_small_moves ( numeric::max(Size(5), Size(loop_size/2)) );
 	Size inner_cycles( loop_size );
 	Size outer_cycles( 1 );
-	if( refine_input_loop_ ) {
+	if ( refine_input_loop_ ) {
 		outer_cycles = 5;
 	}
-	if(  snug_fit_ ) {
+	if (  snug_fit_ ) {
 		outer_cycles = 2;
 	}
-	if( benchmark_ ) {
+	if ( benchmark_ ) {
 		n_small_moves = 1;
 		inner_cycles = 1;
 		outer_cycles = 1;
@@ -241,7 +243,7 @@ void RefineOneCDRLoopCentroid::loop_centroid_relax(
 	mc->reset( pose_in ); // monte carlo reset
 
 	// outer cycle
-	for(Size i = 1; i <= outer_cycles; i++) {
+	for ( Size i = 1; i <= outer_cycles; i++ ) {
 		mc->recover_low( pose_in );
 
 		// inner cycle
@@ -259,7 +261,7 @@ void RefineOneCDRLoopCentroid::loop_centroid_relax(
 
 
 	// minimize
-	if( !benchmark_ ) {
+	if ( !benchmark_ ) {
 		loop_min_mover->apply( pose_in );
 	}
 

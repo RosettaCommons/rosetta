@@ -107,10 +107,10 @@ KinematicMover::KinematicMover() :
 	//BANGLE_MIN = BANGLE_MEAN - (2.0 * BANGLE_SD);
 	//BANGLE_MIN = 102.7284756;
 	//BANGLE_MIN = 98.86848; // (to coincide with mm_bend potential)
-  //BANGLE_MAX_(118.9353622),
+	//BANGLE_MAX_(118.9353622),
 	//BANGLE_MAX = 115.07536; // (to coincide with mm_bend potential)
 	OMEGA_MEAN_(179.8),
-  //OMEGA_SCALE_FACTOR_(2.375), // scale factor parameterized to reproduce pdb loop omega angles
+	//OMEGA_SCALE_FACTOR_(2.375), // scale factor parameterized to reproduce pdb loop omega angles
 	//OMEGA_SD=9.15;
 	//OMEGA_MIN = OMEGA_MEAN - (0.5 * OMEGA_SD);
 	//MAX_SAMPLE_ITS_(2000), // DJM: deprecated in favor of loops::max_kic_perturber_samples
@@ -127,31 +127,31 @@ KinematicMover::KinematicMover() :
 	bump_overlap_factor_( basic::options::option[ basic::options::OptionKeys::loops::kic_bump_overlap_factor ]() ), // 0.6; // 0.8; // 0.8^2, allows some atomic overlap
 	taboo_map_max_capacity_(0.95) // how full can the taboo map get before we re-set it? --> the higher, the more likely are almost-endless loops -- but if the value is too low it's not actual taboo sampling
 
-	{
-		// Cannot initialize perturber_ here -- get_self_ptr() can't be used in c'tor
-		Mover::type( "KinematicMover" );
-		set_defaults(); // doesn't do anything in this implementation
-	}
+{
+	// Cannot initialize perturber_ here -- get_self_ptr() can't be used in c'tor
+	Mover::type( "KinematicMover" );
+	set_defaults(); // doesn't do anything in this implementation
+}
 
 // default destructor
 KinematicMover::~KinematicMover() {}
 
 
 KinematicPerturberOP KinematicMover::perturber() {
-	
-	if(!perturber_) {
+
+	if ( !perturber_ ) {
 		perturber_ = KinematicPerturberOP( new kinematic_closure::TorsionSamplingKinematicPerturber(
-			kinematic_closure::KinematicMoverCAP( utility::pointer::dynamic_pointer_cast< KinematicMover const >( get_self_ptr() ) ) 
-		) );
+			kinematic_closure::KinematicMoverCAP( utility::pointer::dynamic_pointer_cast< KinematicMover const >( get_self_ptr() ) )
+			) );
 	}
 	return perturber_;
 }
 
 void KinematicMover::set_pivots( Size start_res, Size middle_res, Size end_res )
 {
-	start_res_	= start_res;
-	middle_res_	= middle_res;
-	end_res_	= end_res;
+	start_res_ = start_res;
+	middle_res_ = middle_res;
+	end_res_ = end_res;
 
 	seg_len_ = end_res_ - start_res_ + 1;
 	//if these are bad data, we're in trouble!
@@ -305,7 +305,7 @@ bool KinematicMover::last_move_succeeded()
 bool KinematicMover::is_beta_aminoacid (
 	const core::conformation::Residue &res
 ) const {
-	if(res.has("CM")) return true; //For now, the test of whether this is a beta amino acid is the presence of a "CM" atom.  I might add a better test later.
+	if ( res.has("CM") ) return true; //For now, the test of whether this is a beta amino acid is the presence of a "CM" atom.  I might add a better test later.
 	return false;
 }
 
@@ -314,7 +314,7 @@ core::Size KinematicMover::count_bb_atoms_in_residue (
 	const core::pose::Pose &pose,
 	const core::Size position
 ) const {
-	if(is_beta_aminoacid( pose.residue(position) ) ) return 4; //If this is a beta-amino acid, return 4 atoms (N, CA, CM, C).
+	if ( is_beta_aminoacid( pose.residue(position) ) ) return 4; //If this is a beta-amino acid, return 4 atoms (N, CA, CM, C).
 	return 3; //By default, assume that this is an alpha-amino acid.  Return 3 atoms (N, CA, C).
 }
 
@@ -328,14 +328,14 @@ core::Size KinematicMover::count_bb_atoms (
 	core::Size counter = 0; //A counter for atoms.
 
 	//The residue preceding the loop:
-	if(pose.residue(start_res).is_lower_terminus()) counter += count_bb_atoms_in_residue(pose, start_res); //A copy of start_res is prepended in KinematicMover::apply if the starting residue is a terminus.
+	if ( pose.residue(start_res).is_lower_terminus() ) counter += count_bb_atoms_in_residue(pose, start_res); //A copy of start_res is prepended in KinematicMover::apply if the starting residue is a terminus.
 	else counter += count_bb_atoms_in_residue(pose, start_res-1); //Otherwise, count the number of atoms in the residue prior to the starting residue
 
 	//The residue following the loop:
-	if(pose.residue(end_res).is_upper_terminus()) counter += count_bb_atoms_in_residue(pose, end_res); //A copy of end_res is appended in KinematicMover::apply if the end residue is a terminus.
+	if ( pose.residue(end_res).is_upper_terminus() ) counter += count_bb_atoms_in_residue(pose, end_res); //A copy of end_res is appended in KinematicMover::apply if the end residue is a terminus.
 	else counter += count_bb_atoms_in_residue(pose, end_res+1); //Otherwise, count the number of atoms in the residue after the end residue
 
-	for(core::Size ir=start_res; ir<=end_res; ++ir) counter += count_bb_atoms_in_residue(pose, ir); //Count the atoms in the loop itself
+	for ( core::Size ir=start_res; ir<=end_res; ++ir ) counter += count_bb_atoms_in_residue(pose, ir); //Count the atoms in the loop itself
 
 	return counter; //Return the number of atoms in the segement, including the residues before and after the segment.
 }
@@ -346,20 +346,20 @@ std::string KinematicMover::get_bb_atoms_for_residue (
 ) const {
 	std::string returnvalue = "";
 
-	if (is_beta_aminoacid(res)) { //If this is a beta amino acid.
+	if ( is_beta_aminoacid(res) ) { //If this is a beta amino acid.
 		switch (bb_atom_index) {
-			case 1: returnvalue = "N"; break;
-			case 2: returnvalue = "CA"; break;
-			case 3: returnvalue = "CM"; break;
-			case 4: returnvalue = "C"; break;
-			default: break;
+		case 1 : returnvalue = "N"; break;
+		case 2 : returnvalue = "CA"; break;
+		case 3 : returnvalue = "CM"; break;
+		case 4 : returnvalue = "C"; break;
+		default : break;
 		}
 	} else { //Default case -- alpha amino acids
 		switch (bb_atom_index) {
-			case 1: returnvalue = "N"; break;
-			case 2: returnvalue = "CA"; break;
-			case 3: returnvalue = "C"; break;
-			default: break;
+		case 1 : returnvalue = "N"; break;
+		case 2 : returnvalue = "CA"; break;
+		case 3 : returnvalue = "C"; break;
+		default : break;
 		}
 	}
 
@@ -400,7 +400,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 
 	// KC requires 3 backbone atoms 1 residue N-terminal to start pivot and 1 residue C-terminal to end pivot
 	// so check for terminal pivots and compute coordinates from prepended / appended residues if necessary
-	if (pose.residue(start_res_).is_lower_terminus()) {
+	if ( pose.residue(start_res_).is_lower_terminus() ) {
 		// make a copy of the lower terminal residue
 		conformation::ResidueOP nterm_copy( conformation::ResidueFactory::create_residue(
 			pose.conformation().residue(start_res_).type(),
@@ -409,7 +409,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 			false ) );
 		// now create another residue of the same type to prepend
 		conformation::ResidueOP pre_nterm( conformation::ResidueFactory::create_residue(
-																						pose.residue(start_res_).type() ) );
+			pose.residue(start_res_).type() ) );
 		// create a new conformation containing the n-term copy
 		conformation::ConformationOP extn_op( new conformation::Conformation() );
 		conformation::Conformation & extn = *extn_op;
@@ -421,7 +421,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 
 		// Store the xyz coords for KC from the first 3 atoms of the pre-nterm residue into the first 3 atoms indices
 		// Note: if this is a beta-amino acid, it will store the first 4 atoms.
-		for (Size j=1, numatoms=count_bb_atoms_in_residue(pose, start_res_), ind=1; j<=numatoms; j++) {
+		for ( Size j=1, numatoms=count_bb_atoms_in_residue(pose, start_res_), ind=1; j<=numatoms; j++ ) {
 			atoms[ind].resize(3);
 			atoms[ind][1] = static_cast<Real> (extn.residue(1).xyz( get_bb_atoms_for_residue( extn.residue(1), j ) ).x());
 			atoms[ind][2] = static_cast<Real> (extn.residue(1).xyz( get_bb_atoms_for_residue( extn.residue(1), j ) ).y());
@@ -431,7 +431,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 	}
 
 	// check for upper terminus
-	if (pose.residue(end_res_).is_upper_terminus()) {
+	if ( pose.residue(end_res_).is_upper_terminus() ) {
 		// make a copy of the upper terminal residue
 		conformation::ResidueOP cterm_copy( conformation::ResidueFactory::create_residue(
 			pose.conformation().residue(end_res_).type(),
@@ -441,7 +441,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 
 		// now create another residue of the same type to append
 		conformation::ResidueOP post_cterm( conformation::ResidueFactory::create_residue(
-																						 pose.residue(end_res_).type() ) );
+			pose.residue(end_res_).type() ) );
 		// create a new conformation containing the c-term copy
 		conformation::ConformationOP extn_op( new conformation::Conformation() );
 		conformation::Conformation & extn = *extn_op;
@@ -452,7 +452,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 		extn.set_torsion( id::TorsionID( 2, id::BB, 3 ),  OMEGA_MEAN_);
 		// store the xyz coords for KC from the first 3 atoms of the post-cterm residue into the last 3 atom indices
 		// Note: if this is a beta-amino acid, it will store 4 atoms (N, CA, CM, C) in the last 4 atom indices.
-		for (Size j=1, numatoms=count_bb_atoms_in_residue(pose, end_res_), ind=atoms.size()-count_bb_atoms_in_residue(pose, end_res_)+1; j<=numatoms; j++) {
+		for ( Size j=1, numatoms=count_bb_atoms_in_residue(pose, end_res_), ind=atoms.size()-count_bb_atoms_in_residue(pose, end_res_)+1; j<=numatoms; j++ ) {
 			atoms[ind].resize(3);
 			atoms[ind][1] = static_cast<Real> (extn.residue(2).xyz( get_bb_atoms_for_residue( extn.residue(2), j ) ).x());
 			atoms[ind][2] = static_cast<Real> (extn.residue(2).xyz( get_bb_atoms_for_residue( extn.residue(2), j ) ).y());
@@ -463,11 +463,11 @@ void KinematicMover::apply( core::pose::Pose & pose )
 
 	// Get the current coords of the loop closure segment (if a pivot is terminal we took the coords above so skip)
 	Size ind = (pose.residue(start_res_).is_lower_terminus() ? count_bb_atoms_in_residue(pose, start_res_) + 1 : 1); //If the start res is a terminus, then an identical amino acid has been prepended, so the start atom is 1 plus the number of backbone atoms in the prepended residue.
-	for (Size i = (pose.residue(start_res_).is_lower_terminus() ? start_res_ : start_res_ - 1);
-		 i <= (pose.residue(end_res_).is_upper_terminus() ? end_res_ : end_res_ + 1);
-		 i++) {
+	for ( Size i = (pose.residue(start_res_).is_lower_terminus() ? start_res_ : start_res_ - 1);
+			i <= (pose.residue(end_res_).is_upper_terminus() ? end_res_ : end_res_ + 1);
+			i++ ) {
 		conformation::Residue res=pose.residue(i);
-		for (Size j=1; j<=count_bb_atoms_in_residue(pose, i); j++) { // Updated by VKM -- keep N,CA,C by default, though the get_bb_atoms_for_residue function will return whatever atoms should be kept (e.g. N, CA, CM, C for beta-amino acids).  That is, we're no longer making the protein-only assumption.
+		for ( Size j=1; j<=count_bb_atoms_in_residue(pose, i); j++ ) { // Updated by VKM -- keep N,CA,C by default, though the get_bb_atoms_for_residue function will return whatever atoms should be kept (e.g. N, CA, CM, C for beta-amino acids).  That is, we're no longer making the protein-only assumption.
 			atoms[ind].resize(3);
 			atoms[ind][1] = static_cast<Real> (res.xyz( get_bb_atoms_for_residue( res, j ) ).x());
 			atoms[ind][2] = static_cast<Real> (res.xyz( get_bb_atoms_for_residue( res, j ) ).y());
@@ -486,7 +486,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 	core::Size end_plus_one_bb_atom_count = pose.residue(end_res_).is_upper_terminus() ? count_bb_atoms_in_residue(pose, end_res_) : count_bb_atoms_in_residue(pose, end_res_ + 1); //Number of backbone atoms for the last residue in the segment (end_res_ + 1 or the appended end_res_ if end_res_ is a terminus)
 	core::Size pvatom1 = start_minus_one_bb_atom_count + 2; // Second backbone atom of start_res_ (CA if alpha or beta-amino acid).
 	core::Size pvatom2 = start_minus_one_bb_atom_count + 2;
-	for(core::Size ir = start_res_; ir<middle_res_; ++ir) pvatom2 += count_bb_atoms_in_residue(pose, ir); //This will set pvatom2 to be the second backbone atom of middle_res_ (CA if alpha or beta-amino acid).
+	for ( core::Size ir = start_res_; ir<middle_res_; ++ir ) pvatom2 += count_bb_atoms_in_residue(pose, ir); //This will set pvatom2 to be the second backbone atom of middle_res_ (CA if alpha or beta-amino acid).
 	core::Size pvatom3 = atoms.size() - end_plus_one_bb_atom_count - count_bb_atoms_in_residue(pose, end_res_) + 2; // Second backbone atom of end_res_ (CA if alpha or beta-amino acid).
 	pivots[1]=pvatom1;
 	pivots[2]=pvatom2;
@@ -506,11 +506,11 @@ void KinematicMover::apply( core::pose::Pose & pose )
 	chainTORS(atoms.size(), atoms, dt_ang, db_ang, db_len, R0, Q0);
 
 	// save the previous torsions, lengths and angles to restore if no solution is found
-	if (! idealize_loop_first_) {
+	if ( ! idealize_loop_first_ ) {
 		save_t_ang.resize(dt_ang.size());
 		save_b_ang.resize(db_ang.size());
 		save_b_len.resize(db_len.size());
-		for (Size i=1; i<=dt_ang.size(); i++) {
+		for ( Size i=1; i<=dt_ang.size(); i++ ) {
 			save_t_ang[i] = dt_ang[i];
 			save_b_ang[i] = db_ang[i];
 			save_b_len[i] = db_len[i];
@@ -519,72 +519,72 @@ void KinematicMover::apply( core::pose::Pose & pose )
 
 	// idealize the loop if requested
 	// NOTE: for now, this only works for alpha-amino acids.  If there are beta-amino acids in the mix, this will return an error.
-	if (idealize_loop_first_) {
+	if ( idealize_loop_first_ ) {
 
 		// save a backbup of the non-ideal residues in case closure fails -- AS_DEBUG: now trying to simply store the entire pose and write it back
 		save_residues.resize(seg_len);
-		for (Size seqpos=start_res_, i=1; seqpos<=end_res_; seqpos++, i++) {
+		for ( Size seqpos=start_res_, i=1; seqpos<=end_res_; seqpos++, i++ ) {
 			conformation::ResidueOP saveres=pose.conformation().residue( seqpos ).clone();
 			save_residues[i]=saveres;
 		}
 
 		// set all bond lengths, angles, and omegas for closure to ideal values
 		// check sizes to prevent memory crashes:
-		for (Size i=1, res=start_res_-1; i<=atoms.size(); res+=1) {
+		for ( Size i=1, res=start_res_-1; i<=atoms.size(); res+=1 ) {
 			//Check for whether this is a beta-amino acid:
 			bool is_beta_residue = false;
-			if(res == start_res_ - 1 && pose.residue(start_res_).is_lower_terminus()) is_beta_residue = is_beta_aminoacid(pose.residue(start_res_));
-			else if(res == end_res_ + 1 && pose.residue(end_res_).is_upper_terminus()) is_beta_residue = is_beta_aminoacid(pose.residue(end_res_));
+			if ( res == start_res_ - 1 && pose.residue(start_res_).is_lower_terminus() ) is_beta_residue = is_beta_aminoacid(pose.residue(start_res_));
+			else if ( res == end_res_ + 1 && pose.residue(end_res_).is_upper_terminus() ) is_beta_residue = is_beta_aminoacid(pose.residue(end_res_));
 			else is_beta_residue = is_beta_aminoacid(pose.residue(res));
 
-			if(is_beta_residue) { //Idealizing a beta-amino acid
-				if( db_ang.size() >= (i) )   db_ang[i]=idl_beta_C_N_CA_;
-				if( db_ang.size() >= (i+1) ) db_ang[i+1]=idl_beta_N_CA_CM_;
-				if( db_ang.size() >= (i+2) ) db_ang[i+2]=idl_beta_CA_CM_C_;
-				if( db_ang.size() >= (i+3) ) db_ang[i+3]=idl_beta_CM_C_N_;
-				if( db_len.size() >= (i) )   db_len[i]=idl_beta_N_CA_;
-				if( db_len.size() >= (i+1) ) db_len[i+1]=idl_beta_CA_CM_;
-				if( db_len.size() >= (i+2) ) db_len[i+2]=idl_beta_CM_C_;
-				if( db_len.size() >= (i+3) ) db_len[i+3]=idl_beta_C_N_;
-				if( dt_ang.size() >= (i+3) ) dt_ang[i+3]=( core::chemical::is_canonical_D_aa(pose.residue(res).aa()) ? -1.0 : 1.0 ) * OMEGA_MEAN_;
+			if ( is_beta_residue ) { //Idealizing a beta-amino acid
+				if ( db_ang.size() >= (i) )   db_ang[i]=idl_beta_C_N_CA_;
+				if ( db_ang.size() >= (i+1) ) db_ang[i+1]=idl_beta_N_CA_CM_;
+				if ( db_ang.size() >= (i+2) ) db_ang[i+2]=idl_beta_CA_CM_C_;
+				if ( db_ang.size() >= (i+3) ) db_ang[i+3]=idl_beta_CM_C_N_;
+				if ( db_len.size() >= (i) )   db_len[i]=idl_beta_N_CA_;
+				if ( db_len.size() >= (i+1) ) db_len[i+1]=idl_beta_CA_CM_;
+				if ( db_len.size() >= (i+2) ) db_len[i+2]=idl_beta_CM_C_;
+				if ( db_len.size() >= (i+3) ) db_len[i+3]=idl_beta_C_N_;
+				if ( dt_ang.size() >= (i+3) ) dt_ang[i+3]=( core::chemical::is_canonical_D_aa(pose.residue(res).aa()) ? -1.0 : 1.0 ) * OMEGA_MEAN_;
 			} else { //Default case: alpha-amino acid residue
-				if( db_ang.size() >= (i) )   db_ang[i]=idl_C_N_CA_;
-				if( db_ang.size() >= (i+1) ) db_ang[i+1]=idl_N_CA_C_;
-				if( db_ang.size() >= (i+2) ) db_ang[i+2]=idl_CA_C_N_;
-				if( db_len.size() >= (i) )   db_len[i]=idl_N_CA_;
-				if( db_len.size() >= (i+1) ) db_len[i+1]=idl_CA_C_;
-				if( db_len.size() >= (i+2) ) db_len[i+2]=idl_C_N_;
-				if( dt_ang.size() >= (i+2) ) dt_ang[i+2]=OMEGA_MEAN_;
+				if ( db_ang.size() >= (i) )   db_ang[i]=idl_C_N_CA_;
+				if ( db_ang.size() >= (i+1) ) db_ang[i+1]=idl_N_CA_C_;
+				if ( db_ang.size() >= (i+2) ) db_ang[i+2]=idl_CA_C_N_;
+				if ( db_len.size() >= (i) )   db_len[i]=idl_N_CA_;
+				if ( db_len.size() >= (i+1) ) db_len[i+1]=idl_CA_C_;
+				if ( db_len.size() >= (i+2) ) db_len[i+2]=idl_C_N_;
+				if ( dt_ang.size() >= (i+2) ) dt_ang[i+2]=OMEGA_MEAN_;
 			}
 
 			//Incrementing the atom counter:
-			if(res == start_res_ - 1) i += start_minus_one_bb_atom_count; //The padding residue at the start
-			else if (res == end_res_ + 1) i += end_plus_one_bb_atom_count; //The padding residue at the end
+			if ( res == start_res_ - 1 ) i += start_minus_one_bb_atom_count; //The padding residue at the start
+			else if ( res == end_res_ + 1 ) i += end_plus_one_bb_atom_count; //The padding residue at the end
 			else i += count_bb_atoms_in_residue(pose, res); //The loop residues
 		}
 
 		// setting pose omegas here, don't set them later!
 		for ( Size i= start_res_; i<= end_res_; ++i ) {
 			conformation::idealize_position( i, pose.conformation() ); // this is coupled to above values!
-			if( is_beta_aminoacid(pose.residue(i))) pose.conformation().set_torsion( id::TorsionID( i, id::BB, 4 ), OMEGA_MEAN_ ); //set_omega doesn't work properly for beta-amino acids (it sets the third torsion rather than the fourth).
-			else if (core::chemical::is_canonical_D_aa(pose.residue(i).aa())) pose.set_omega(i, -1.0*OMEGA_MEAN_);
+			if ( is_beta_aminoacid(pose.residue(i)) ) pose.conformation().set_torsion( id::TorsionID( i, id::BB, 4 ), OMEGA_MEAN_ ); //set_omega doesn't work properly for beta-amino acids (it sets the third torsion rather than the fourth).
+			else if ( core::chemical::is_canonical_D_aa(pose.residue(i).aa()) ) pose.set_omega(i, -1.0*OMEGA_MEAN_);
 			else pose.set_omega(i, OMEGA_MEAN_); //Default case for alpha-amino acids -- set the torsion angle with set_omega.
 		}
 
 	} //if (idealize_loop_first)
 
 	// If preserving detailed balance, compute the Rosenbluth factor for the before state
-	//	W_before = rosenbluth_factor( atoms, save_t_ang, save_b_ang, save_b_len, pivots, order, t_ang, b_ang, b_len, nsol );
+	// W_before = rosenbluth_factor( atoms, save_t_ang, save_b_ang, save_b_len, pivots, order, t_ang, b_ang, b_len, nsol );
 	// DJM: currently bridgeObjects will be applying save* transformations to atoms, which isn't necessary. Maybe in option in bridge not to?
 	// VKM, 26 Aug 2013: the rosenbluth_factor bit above was commented out when I got here.  I'm not going to bother to check whether this is compatible with nonstandard backbones, but if
 	// someone uncomments it in the future, be sure to check compatibility with nonstandard backbones.
 
 	using namespace std;
 	KinematicPerturberOP perturber = this->perturber();
-	for (Size nits=1; nits <= perturber->max_sample_iterations(); ++nits ) { // try these pivots until a solution passes all filters or nits > perturber_->max_sample_iterations()
+	for ( Size nits=1; nits <= perturber->max_sample_iterations(); ++nits ) { // try these pivots until a solution passes all filters or nits > perturber_->max_sample_iterations()
 
 		//make sure the perturber can still generate solutions
-		if( perturber->perturber_exhausted() ) break;
+		if ( perturber->perturber_exhausted() ) break;
 
 		perturber->perturb_chain( pose, dt_ang, db_ang, db_len );
 
@@ -596,15 +596,15 @@ void KinematicMover::apply( core::pose::Pose & pose )
 		//if( preserve_detailed_balance_ ) {
 		//detail_sol = check_detailed_balance( W_before, t_ang, b_ang, b_len, nsol ); // DJM: should be able to used chainXYZ to recreate the segments
 		//if detail_sol != 0 { // accepted a move by detailed balance
-				// DJM: next want to pre-screen for detailed balance acceptance, or only consider solns for detailed balance check if pass sterics and Rama
-				//last_move_succeeded_ = true;
-				//return;
+		// DJM: next want to pre-screen for detailed balance acceptance, or only consider solns for detailed balance check if pass sterics and Rama
+		//last_move_succeeded_ = true;
+		//return;
 		//}
 		//else continue;
 		//}
 
 		utility::vector1<Size> pos(nsol);
-		for (int i=1; i<=nsol; i++) {
+		for ( int i=1; i<=nsol; i++ ) {
 			pos[i]=i;
 		}
 
@@ -612,15 +612,15 @@ void KinematicMover::apply( core::pose::Pose & pose )
 		numeric::random::random_permutation(pos.begin(), pos.end(), numeric::random::rg()); //Put the solutions in random order, since the first one encountered that passes the filters is accepted.
 
 		// Look for solutions passing NaN, Rama, bump checks and eventual filters
-		for (Size i=nsol; i>=1; i--) {
+		for ( Size i=nsol; i>=1; i-- ) {
 			//TR << "KINMOVER checking sol " << nsol - i + 1 << " of " << nsol << " .. "; // DJM: debug
 			// make sure no torsions are NaN, Inf, or otherwise unreasonable
 			if ( ! ( ( -360.0 <= t_ang[pos[i]][pivots[1]-1] ) && (t_ang[pos[i]][pivots[1]-1] <= 360.0) ) ||
-				! ( ( -360.0 <= t_ang[pos[i]][pivots[1]]   ) && (t_ang[pos[i]][pivots[1]]   <= 360.0) ) ||
-				! ( ( -360.0 <= t_ang[pos[i]][pivots[2]-1] ) && (t_ang[pos[i]][pivots[2]-1] <= 360.0) ) ||
-				! ( ( -360.0 <= t_ang[pos[i]][pivots[2]]   ) && (t_ang[pos[i]][pivots[2]]   <= 360.0) ) ||
-				! ( ( -360.0 <= t_ang[pos[i]][pivots[3]-1] ) && (t_ang[pos[i]][pivots[3]-1] <= 360.0) ) ||
-				! ( ( -360.0 <= t_ang[pos[i]][pivots[3]]   ) && (t_ang[pos[i]][pivots[3]]   <= 360.0) ) ) {
+					! ( ( -360.0 <= t_ang[pos[i]][pivots[1]]   ) && (t_ang[pos[i]][pivots[1]]   <= 360.0) ) ||
+					! ( ( -360.0 <= t_ang[pos[i]][pivots[2]-1] ) && (t_ang[pos[i]][pivots[2]-1] <= 360.0) ) ||
+					! ( ( -360.0 <= t_ang[pos[i]][pivots[2]]   ) && (t_ang[pos[i]][pivots[2]]   <= 360.0) ) ||
+					! ( ( -360.0 <= t_ang[pos[i]][pivots[3]-1] ) && (t_ang[pos[i]][pivots[3]-1] <= 360.0) ) ||
+					! ( ( -360.0 <= t_ang[pos[i]][pivots[3]]   ) && (t_ang[pos[i]][pivots[3]]   <= 360.0) ) ) {
 				TR << "solution " << i << " of " << nsol << " failed NaN / Inf check. Skipping..." << std::endl;
 				TR << "failed NaN t_ang matrix: " << std::endl;
 				printMatrix(t_ang);
@@ -628,7 +628,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 			}
 
 			//if (!perform_rama_check(pose, t_ang[i], pivots, start_res, seg_len)) { // checks all loop residues
-			if (!perform_rama_check(pose, t_ang[pos[i]], pivots, start_res_, middle_res_, end_res_)) { // checks only pivot residues
+			if ( !perform_rama_check(pose, t_ang[pos[i]], pivots, start_res_, middle_res_, end_res_) ) { // checks only pivot residues
 				//TR << "Rama continue" << std::endl; // DJM: debug
 				continue;
 			}
@@ -641,21 +641,21 @@ void KinematicMover::apply( core::pose::Pose & pose )
 			insert_sampled_torsion_string_into_taboo_map( torsion_features_string( pose ) ); //VKM, 27 Aug 2013: This won't work properly with beta-amino acids, but won't crash, either...
 
 			//now check if the pose passes all the filters
-			if( do_hardsphere_bump_check_ && !perform_bump_check(pose, start_res_, end_res_) ){
+			if ( do_hardsphere_bump_check_ && !perform_bump_check(pose, start_res_, end_res_) ) {
 				continue;
 			}
 
-			if( do_sfxn_eval_every_iteration_ ) (*sfxn_)( pose );
+			if ( do_sfxn_eval_every_iteration_ ) ( *sfxn_)( pose );
 
-			if( filters_.size() != 0 ){
+			if ( filters_.size() != 0 ) {
 				bool all_filters_passed( true );
-				BOOST_FOREACH(protocols::filters::FilterCOP filter, filters_){
-					if( ! filter->apply( pose ) ) {
+				BOOST_FOREACH ( protocols::filters::FilterCOP filter, filters_ ) {
+					if ( ! filter->apply( pose ) ) {
 						all_filters_passed = false;
 						break;
 					}
 				}
-				if ( !all_filters_passed ){
+				if ( !all_filters_passed ) {
 					continue;
 				}
 			}
@@ -665,19 +665,19 @@ void KinematicMover::apply( core::pose::Pose & pose )
 
 			/*
 			if (sfxn_ && sfxn_->get_weight( chainbreak ) > 0) { // sfxn_ must be defined
-				(*sfxn_)(pose);
-				core::Real current_chainbreak = pose.energies().total_energies()[ core::scoring::chainbreak ] * sfxn_->get_weight( chainbreak );
+			(*sfxn_)(pose);
+			core::Real current_chainbreak = pose.energies().total_energies()[ core::scoring::chainbreak ] * sfxn_->get_weight( chainbreak );
 
-				TR << "AS_DEBUG -- chainbreak score " << current_chainbreak << std::endl;
-				if ( current_chainbreak > basic::options::option[ basic::options::OptionKeys::loops::kic_chainbreak_threshold ]() ) {
-					TR << "AS_DEBUG -- this structure probably has a chain break, skipping it " << start_res_ << "-" << end_res_ << std::endl;
-					sfxn_->show(pose); // AS_DEBUG
+			TR << "AS_DEBUG -- chainbreak score " << current_chainbreak << std::endl;
+			if ( current_chainbreak > basic::options::option[ basic::options::OptionKeys::loops::kic_chainbreak_threshold ]() ) {
+			TR << "AS_DEBUG -- this structure probably has a chain break, skipping it " << start_res_ << "-" << end_res_ << std::endl;
+			sfxn_->show(pose); // AS_DEBUG
 
-					pose.dump_pdb("high_chainbreak_score_" + utility::to_string(nits) + "_" + utility::to_string(start_res_) + "_" + utility::to_string(end_res_) + ".pdb");
-					continue;
-				}
+			pose.dump_pdb("high_chainbreak_score_" + utility::to_string(nits) + "_" + utility::to_string(start_res_) + "_" + utility::to_string(end_res_) + ".pdb");
+			continue;
 			}
-			 */
+			}
+			*/
 
 			last_move_succeeded_ = true;
 			//std::cerr << "kinmover success after " << nits << "...   ";
@@ -705,44 +705,44 @@ KinematicMover::get_name() const {
 
 // checks if pivot solutions are within vicinity degrees of current pivot torsion values
 // DJM: currently not used because it significantly reduces the number of accepted moves
-	/* AS Oct 03, 2012 -- commenting this out for vicinity refactoring
+/* AS Oct 03, 2012 -- commenting this out for vicinity refactoring
 bool KinematicMover::pivots_within_vicinity(
-	core::pose::Pose const & pose,
-	utility::vector1<Real> const & t_ang,
-	utility::vector1<Size> const & pivots,
-	Size const start_res,
-	Size const middle_res,
-	Size const end_res
-	)
+core::pose::Pose const & pose,
+utility::vector1<Real> const & t_ang,
+utility::vector1<Size> const & pivots,
+Size const start_res,
+Size const middle_res,
+Size const end_res
+)
 {
-	Real old_phi, new_phi, old_psi, new_psi; // torsions before and after the move is applied
+Real old_phi, new_phi, old_psi, new_psi; // torsions before and after the move is applied
 
-	// check start_res
-	new_phi = t_ang[pivots[1]-1];
-	new_psi = t_ang[pivots[1]];
-	old_phi = pose.phi(start_res);
-	old_psi = pose.psi(start_res);
-	if ( ( std::abs( new_phi - old_phi ) > degree_vicinity_ ) || ( std::abs( new_psi - old_psi ) > degree_vicinity_ ) )
-		return false;
+// check start_res
+new_phi = t_ang[pivots[1]-1];
+new_psi = t_ang[pivots[1]];
+old_phi = pose.phi(start_res);
+old_psi = pose.psi(start_res);
+if ( ( std::abs( new_phi - old_phi ) > degree_vicinity_ ) || ( std::abs( new_psi - old_psi ) > degree_vicinity_ ) )
+return false;
 
-	// check middle_res
-	new_phi = t_ang[pivots[2]-1];
-	new_psi = t_ang[pivots[2]];
-	old_phi = pose.phi(middle_res);
-	old_psi = pose.psi(middle_res);
-	if ( ( std::abs( new_phi - old_phi ) > degree_vicinity_ ) || ( std::abs( new_psi - old_psi ) > degree_vicinity_ ) )
-		return false;
+// check middle_res
+new_phi = t_ang[pivots[2]-1];
+new_psi = t_ang[pivots[2]];
+old_phi = pose.phi(middle_res);
+old_psi = pose.psi(middle_res);
+if ( ( std::abs( new_phi - old_phi ) > degree_vicinity_ ) || ( std::abs( new_psi - old_psi ) > degree_vicinity_ ) )
+return false;
 
-	// check end_res
-	new_phi = t_ang[pivots[3]-1];
-	new_psi = t_ang[pivots[3]];
-	old_phi = pose.phi(end_res);
-	old_psi = pose.psi(end_res);
-	if ( ( std::abs( new_phi - old_phi ) > degree_vicinity_ ) || ( std::abs( new_psi - old_psi ) > degree_vicinity_ ) )
-		return false;
+// check end_res
+new_phi = t_ang[pivots[3]-1];
+new_psi = t_ang[pivots[3]];
+old_phi = pose.phi(end_res);
+old_psi = pose.psi(end_res);
+if ( ( std::abs( new_phi - old_phi ) > degree_vicinity_ ) || ( std::abs( new_psi - old_psi ) > degree_vicinity_ ) )
+return false;
 
-	// all passed
-	return true;
+// all passed
+return true;
 }
 */
 
@@ -759,19 +759,19 @@ bool KinematicMover::perform_rama_check(
 	Real old_phi, new_phi, old_psi, new_psi; // torsions before and after the move is applied
 	Real old_rama_score, new_rama_score; // rama scores before and after the move is applied
 
-	for (Size offset=0; offset<seg_len; offset++) { // offset is natoms into kic segment
+	for ( Size offset=0; offset<seg_len; offset++ ) { // offset is natoms into kic segment
 		conformation::Residue const & current_rsd( pose.residue(start_res+offset) );
 		new_phi = t_ang[pivots[1]+(3*offset)-1];
 		new_psi = t_ang[pivots[1]+(3*offset)];
 		new_rama_score = rama.eval_rama_score_residue( current_rsd.aa(), new_phi, new_psi );
-		if (new_rama_score == 20.0) {
+		if ( new_rama_score == 20.0 ) {
 			//std::cout << "Rama fail" << std::endl;
 			return false;
 		}
 		old_psi = pose.psi(start_res+offset);
 		old_phi = pose.phi(start_res+offset);
 		old_rama_score = rama.eval_rama_score_residue( current_rsd.aa(), old_phi, old_psi );
-		if (!check_rama(old_rama_score, new_rama_score)) {
+		if ( !check_rama(old_rama_score, new_rama_score) ) {
 			// DJM: debug
 			// TR << "Residue " << start_res + offset << " failed Rama. old_rama_score: " << old_rama_score
 			//    << " new_rama_score " << new_rama_score << std::endl;
@@ -798,12 +798,12 @@ bool KinematicMover::perform_rama_check(
 	Real old_rama_score, new_rama_score; // rama scores before and after the move is applied
 
 	// check start_res
-	if(!is_beta_aminoacid(pose.residue(start_res))) {
+	if ( !is_beta_aminoacid(pose.residue(start_res)) ) {
 		conformation::Residue const & start_rsd( pose.residue(start_res) );
 		new_phi = t_ang[pivots[1]-1];
 		new_psi = t_ang[pivots[1]];
 		new_rama_score = rama.eval_rama_score_residue( start_rsd.aa(), new_phi, new_psi );
-		if (new_rama_score == 20.0) {
+		if ( new_rama_score == 20.0 ) {
 			//TR << "score for pivot 1 was 20. returning false" << std::endl;
 			///std::cout << "Rama fail" << std::endl;
 			return false;
@@ -813,7 +813,7 @@ bool KinematicMover::perform_rama_check(
 		old_rama_score = rama.eval_rama_score_residue( start_rsd.aa(), old_phi, old_psi );
 		// DJM: debug
 		//TR << "new_phi, new_psi, rama score: " << new_phi << " " << new_psi << " " << new_rama_score << std::endl;
-		if (!check_rama(old_rama_score, new_rama_score)) {
+		if ( !check_rama(old_rama_score, new_rama_score) ) {
 			// DJM: debug
 			// TR << "Residue " << start_res + offset << " failed Rama. old_rama_score: " << old_rama_score
 			//    << " new_rama_score " << new_rama_score << std::endl;
@@ -823,12 +823,12 @@ bool KinematicMover::perform_rama_check(
 	} //if (!is_beta_aminoacid)
 
 	// check middle_res
-	if(!is_beta_aminoacid(pose.residue(middle_res))) {
+	if ( !is_beta_aminoacid(pose.residue(middle_res)) ) {
 		conformation::Residue const & middle_rsd( pose.residue(middle_res) );
 		new_phi = t_ang[pivots[2]-1];
 		new_psi = t_ang[pivots[2]];
 		new_rama_score = rama.eval_rama_score_residue( middle_rsd.aa(), new_phi, new_psi );
-		if (new_rama_score == 20.0) {
+		if ( new_rama_score == 20.0 ) {
 			//TR << "score for pivot 2 was 20. returning false" << std::endl;
 			//std::cout << "Rama fail" << std::endl;
 			return false;
@@ -836,7 +836,7 @@ bool KinematicMover::perform_rama_check(
 		old_phi = pose.phi(middle_res);
 		old_psi = pose.psi(middle_res);
 		old_rama_score = rama.eval_rama_score_residue( middle_rsd.aa(), old_phi, old_psi );
-		if (!check_rama(old_rama_score, new_rama_score)) {
+		if ( !check_rama(old_rama_score, new_rama_score) ) {
 			// DJM: debug
 			// TR << "Residue " << start_res + offset << " failed Rama. old_rama_score: " << old_rama_score
 			//    << " new_rama_score " << new_rama_score << std::endl;
@@ -846,12 +846,12 @@ bool KinematicMover::perform_rama_check(
 	} //if(!is_beta_aminoacid)
 
 	// check end_res
-	if(!is_beta_aminoacid(pose.residue(end_res))) {
+	if ( !is_beta_aminoacid(pose.residue(end_res)) ) {
 		conformation::Residue const & end_rsd( pose.residue(end_res) );
 		new_phi = t_ang[pivots[3]-1];
 		new_psi = t_ang[pivots[3]];
 		new_rama_score = rama.eval_rama_score_residue( end_rsd.aa(), new_phi, new_psi );
-		if (new_rama_score == 20.0) {
+		if ( new_rama_score == 20.0 ) {
 			//TR << "score for pivot 3 was 20. returning false" << std::endl;
 			//std::cout << "Rama fail" << std::endl;
 			return false;
@@ -859,7 +859,7 @@ bool KinematicMover::perform_rama_check(
 		old_phi = pose.phi(end_res);
 		old_psi = pose.psi(end_res);
 		old_rama_score = rama.eval_rama_score_residue( end_rsd.aa(), old_phi, old_psi );
-		if (!check_rama(old_rama_score, new_rama_score)) {
+		if ( !check_rama(old_rama_score, new_rama_score) ) {
 			// DJM: debug
 			// TR << "Residue " << start_res + offset << " failed Rama. old_rama_score: " << old_rama_score
 			//    << " new_rama_score " << new_rama_score << std::endl;
@@ -869,16 +869,16 @@ bool KinematicMover::perform_rama_check(
 	} //if(!is_beta_aminoacid)
 
 	// DJM: debug - print out all the rama score
-/*
+	/*
 	TR << "All residues passed Rama. Scores follow:" << std::endl;
 	for (Size i=start_res; i<=end_res; i++) {
-		Real cur_phi = pose.phi(i);
-		Real cur_psi = pose.psi(i);
-		conformation::Residue const & cur_rsd( pose.residue(i) );
-		Real cur_rama_score = rama.eval_rama_score_residue( cur_rsd.aa(), cur_phi, cur_psi);
-		TR << "Res " << i << ": " << cur_rama_score << std::endl;
+	Real cur_phi = pose.phi(i);
+	Real cur_psi = pose.psi(i);
+	conformation::Residue const & cur_rsd( pose.residue(i) );
+	Real cur_rama_score = rama.eval_rama_score_residue( cur_rsd.aa(), cur_phi, cur_psi);
+	TR << "Res " << i << ": " << cur_rama_score << std::endl;
 	}
-*/
+	*/
 	return true; // passed rama check
 }
 
@@ -889,26 +889,26 @@ std::string KinematicMover::get_bumpcheck_atoms_for_residue (
 ) const {
 	std::string returnval = "";
 
-	if(is_beta_aminoacid(rsd)) { //Beta-amino acids:
+	if ( is_beta_aminoacid(rsd) ) { //Beta-amino acids:
 		switch(bumpcheck_atom_index) {
-			case 1: returnval = "N"; break;
-				//case 2: returnval = "H"; break; //Include the backbone hydrogen -- why not? --> Because, as was pointed out, this prevents solutions involving backbone H-bonds.
-			case 2: returnval = "CA"; break;
-			case 3: returnval = "CM"; break;
-			case 4: returnval = "C"; break;
-			case 5: returnval = "O"; break;
-			case 6: returnval = "CB"; break;
-			default: break;
+		case 1 : returnval = "N"; break;
+			//case 2: returnval = "H"; break; //Include the backbone hydrogen -- why not? --> Because, as was pointed out, this prevents solutions involving backbone H-bonds.
+		case 2 : returnval = "CA"; break;
+		case 3 : returnval = "CM"; break;
+		case 4 : returnval = "C"; break;
+		case 5 : returnval = "O"; break;
+		case 6 : returnval = "CB"; break;
+		default : break;
 		}
 	} else { //Default case -- alpha-amino acids
 		switch(bumpcheck_atom_index) {
-			case 1: returnval = "N"; break;
-            //case 2: returnval = "H"; break; //AS Sept 4: Do not include the backbone hydrogen -- hbonding Hs will be closer to their donor/acceptor than the bumpfix allows. This may lead to unsolvable closures, esp. because the NH of the first residue is never modified but is still bumpchecked.
-			case 2: returnval = "CA"; break;
-			case 3: returnval = "C"; break;
-			case 4: returnval = "O"; break;
-			case 5: returnval = "CB"; break;
-			default: break;
+		case 1 : returnval = "N"; break;
+			//case 2: returnval = "H"; break; //AS Sept 4: Do not include the backbone hydrogen -- hbonding Hs will be closer to their donor/acceptor than the bumpfix allows. This may lead to unsolvable closures, esp. because the NH of the first residue is never modified but is still bumpchecked.
+		case 2 : returnval = "CA"; break;
+		case 3 : returnval = "C"; break;
+		case 4 : returnval = "O"; break;
+		case 5 : returnval = "CB"; break;
+		default : break;
 		}
 	}
 
@@ -918,7 +918,7 @@ std::string KinematicMover::get_bumpcheck_atoms_for_residue (
 //Function to return the number of atoms to use for the bump check.
 core::Size KinematicMover::get_bumpcheck_atom_count_for_residue ( const core::conformation::Residue &rsd ) const
 {
-	if(is_beta_aminoacid( rsd )) return 6; //Beta-amino acids use N, CA, CM, C, O, CB -- six atoms
+	if ( is_beta_aminoacid( rsd ) ) return 6; //Beta-amino acids use N, CA, CM, C, O, CB -- six atoms
 	return 5; //Default case -- alpha-amino acids use N, CA, C, O, CB -- five atoms
 }
 
@@ -926,13 +926,13 @@ core::Size KinematicMover::get_bumpcheck_atom_count_for_residue ( const core::co
 // perform_bump_check
 // 1. loop over all residues in the loop
 // 2. for each loop residue, grab the neighbor atom's xyz
-//	3. for every other residue res2 in the protein:
-//		4. grab the neighbor atom of res2
-//		5. grab the neighbor radii of res1.nbratom and res2.nbratom (make sure these are sensible)
-//		6. see if res1 and res2 are close enough to be considered neighbors. if so:
-//			7. for each main_chain atom in res1,
-//				8. for each main_chain atom in res2
-//					9. if any of these atoms is within dist_cutoff, clash is true
+// 3. for every other residue res2 in the protein:
+//  4. grab the neighbor atom of res2
+//  5. grab the neighbor radii of res1.nbratom and res2.nbratom (make sure these are sensible)
+//  6. see if res1 and res2 are close enough to be considered neighbors. if so:
+//   7. for each main_chain atom in res1,
+//    8. for each main_chain atom in res2
+//     9. if any of these atoms is within dist_cutoff, clash is true
 
 // returns true if bump check is passed, false if it fails
 bool
@@ -945,15 +945,15 @@ KinematicMover::perform_bump_check(
 	// iterate over loop residues
 	//bool passed_but_no_neighbor=true; // DJM: neighbor filter
 	//int no_neighbor_res=0; // DJM: neighbor filter
-	for (Size i=start_res; i<= end_res; i++) {
+	for ( Size i=start_res; i<= end_res; i++ ) {
 		conformation::Residue const & rsd1 = pose.conformation().residue(i);
 		// get the xyz vector of the atom of this residue used for neighbor detection
 		Vector const & nbr_i( rsd1.xyz( rsd1.nbr_atom() ) );
 		// iterate over all other residues in the protein
 		//bool had_neighbor = false; // DJM: neighbor filter
-		for (Size j=1; j <= pose.total_residue(); j++ ) {
-			if ((j == i) || (j == i+1) || (j == i-1)) continue; // don't do same or adjacent residues
-			if ((j >= start_res) && (j <= i)) continue; // don't do loop residues multiple times
+		for ( Size j=1; j <= pose.total_residue(); j++ ) {
+			if ( (j == i) || (j == i+1) || (j == i-1) ) continue; // don't do same or adjacent residues
+			if ( (j >= start_res) && (j <= i) ) continue; // don't do loop residues multiple times
 			conformation::Residue const & rsd2 = pose.conformation().residue(j);
 			// get the xyz vector for the atom of this residue used for neighbor detection
 			Vector const & nbr_j( rsd2.xyz( rsd2.nbr_atom() ) );
@@ -965,23 +965,23 @@ KinematicMover::perform_bump_check(
 			//else had_neighbor = true; // DJM: neighbor filter
 			// now check for clashes between the atoms of the two residues
 			//Size max_res1_heavyatoms = std::min( Size (5), rsd1.nheavyatoms() ); // keep N,CA,C,O (and CB if not Gly)
-			for (Size m=1, mmax=get_bumpcheck_atom_count_for_residue(rsd1); m<=mmax; m++) {
+			for ( Size m=1, mmax=get_bumpcheck_atom_count_for_residue(rsd1); m<=mmax; m++ ) {
 
-				if(!rsd1.has( get_bumpcheck_atoms_for_residue(rsd1, m) )) continue; //Skip to next atom if the current residue doesn't have the current bumpcheck atom (e.g. no CB, or no H in the case of proline)
+				if ( !rsd1.has( get_bumpcheck_atoms_for_residue(rsd1, m) ) ) continue; //Skip to next atom if the current residue doesn't have the current bumpcheck atom (e.g. no CB, or no H in the case of proline)
 				Vector const & atom_i( rsd1.xyz( get_bumpcheck_atoms_for_residue(rsd1, m) ) ); //Get the xyz coordinates of the atom for the bumpcheck from residue 1.
 
 				Size max_res2_heavyatoms;
 				if ( rsd2.is_protein() ) max_res2_heavyatoms = get_bumpcheck_atom_count_for_residue(rsd2);
 				else max_res2_heavyatoms = rsd2.nheavyatoms(); // rsd2 is a ligand, check all atoms
 
-				for (Size n=1; n<= max_res2_heavyatoms; n++) {
-					if(rsd2.is_protein() && !rsd2.has( get_bumpcheck_atoms_for_residue(rsd2,n) ) ) continue; //Skip to next atom if the current residue doesn't have the current bumpcheck atom, as above.
+				for ( Size n=1; n<= max_res2_heavyatoms; n++ ) {
+					if ( rsd2.is_protein() && !rsd2.has( get_bumpcheck_atoms_for_residue(rsd2,n) ) ) continue; //Skip to next atom if the current residue doesn't have the current bumpcheck atom, as above.
 
 					Vector const & atom_j( (rsd2.is_protein() ? rsd2.xyz( get_bumpcheck_atoms_for_residue(rsd2, n) ) : rsd2.xyz( n )) ); //Get the xyz coordinates of the atom for the bumpcheck from residue 2.
 					// dist cutoff will be squared sum of LJ radii
 					Real lj_sum = (rsd1.atom_type( rsd1.atom_index( get_bumpcheck_atoms_for_residue(rsd1,m) ) ).lj_radius() +
-							( rsd2.is_protein() ? rsd2.atom_type( rsd2.atom_index( get_bumpcheck_atoms_for_residue(rsd2,n) ) ).lj_radius() : rsd2.atom_type(n).lj_radius() )
-							);
+						( rsd2.is_protein() ? rsd2.atom_type( rsd2.atom_index( get_bumpcheck_atoms_for_residue(rsd2,n) ) ).lj_radius() : rsd2.atom_type(n).lj_radius() )
+					);
 					//dist_cutoff2 = lj_sum;
 					Real dist_cutoff2 = (lj_sum * lj_sum) * bump_overlap_factor_;
 					Real dist2 = ( atom_i - atom_j ).length_squared();
@@ -999,7 +999,7 @@ KinematicMover::perform_bump_check(
 						return false;
 					}
 					//else {
-					//	TR << "bump check passed res " << i << ", atom " << m << " against res " << j << ", atom " << n << std::endl;
+					// TR << "bump check passed res " << i << ", atom " << m << " against res " << j << ", atom " << n << std::endl;
 					//}
 				}
 			}
@@ -1007,12 +1007,12 @@ KinematicMover::perform_bump_check(
 		// DJM: neighbor filter
 		/*
 		if (had_neighbor == false) {
-			passed_but_no_neighbor = true;
-			no_neighbor_res = i;
-			TR << "Pose passed rama and bump check but resid " << no_neighbor_res << " has no neighbors." << std::endl;
-			return false;
+		passed_but_no_neighbor = true;
+		no_neighbor_res = i;
+		TR << "Pose passed rama and bump check but resid " << no_neighbor_res << " has no neighbors." << std::endl;
+		return false;
 		}
-		 */
+		*/
 	}
 
 	//TR << "\tNO CLASHES!" << std::endl;
@@ -1046,14 +1046,14 @@ KinematicMover::update_sequence( utility::vector1< core::chemical::AA > const & 
 	// note: it would be much better to implement this as a vector/map of strings, that then redirect to the corresponding taboo map -- otherwise we lose all information the moment we change loops, which will happen a lot when remodeling multiple loops -- TODO
 	// in other words, this implementation is only intended for remodeling single loops
 
-	if (sequence != sequence_) { // is there an actual change?
+	if ( sequence != sequence_ ) { // is there an actual change?
 
-		if (sequence_.size() > 0) {
+		if ( sequence_.size() > 0 ) {
 			// store last used taboo_map_ along with the corresponding sequence
 			/*
 			TR << "storing taboo map for "; // debug/testing info
 			for (Size i = 1; i <= sequence_.size(); i++)
-				TR << sequence_[i] << " " ;
+			TR << sequence_[i] << " " ;
 			TR << " (" << loop_begin_ << "-" << loop_end_ << ")" << std::endl; // actually I'm not sure when loop_begin_ and loop_end_ are updated...
 			*/
 			taboo_master_map_[sequence_] = taboo_map_;
@@ -1061,11 +1061,11 @@ KinematicMover::update_sequence( utility::vector1< core::chemical::AA > const & 
 
 		sequence_ = sequence;
 		taboo_map_.clear();
-		if (taboo_master_map_.find(sequence) != taboo_master_map_.end()) {
+		if ( taboo_master_map_.find(sequence) != taboo_master_map_.end() ) {
 			/*
 			TR << "reloading taboo map for "; // debug/testing info
 			for (Size i = 1; i <= sequence.size(); i++)
-				TR << sequence[i];
+			TR << sequence[i];
 			TR << " (" << loop_begin_ << "-" << loop_end_ << ")" << std::endl;
 			*/
 			taboo_map_ = taboo_master_map_[sequence]; // reload from previous use, if possible
@@ -1085,7 +1085,7 @@ KinematicMover::get_loop_sequence() const
 void
 KinematicMover::insert_sampled_torsion_string_into_taboo_map( core::conformation::torsion_bin_string const & ts )
 {
-	if (sequence_.size() > 0 && taboo_map_.size() > pow(4.0, (double) sequence_.size()) * taboo_map_max_capacity_) {
+	if ( sequence_.size() > 0 && taboo_map_.size() > pow(4.0, (double) sequence_.size()) * taboo_map_max_capacity_ ) {
 		TR << "Taboo map filled to " << taboo_map_max_capacity_*100 << "% capacity, clearing the map to avoid almost-endless loops. " << taboo_map_.size() << std::endl;
 		taboo_map_.clear();
 	}
@@ -1104,16 +1104,16 @@ KinematicMover::is_in_taboo_map( core::conformation::torsion_bin_string const & 
 core::Real
 KinematicMover::frequency_in_taboo_map( core::Size pos, core::conformation::ppo_torsion_bin torsion_bin ) const {
 
-	if (taboo_map_.size() == 0) {
+	if ( taboo_map_.size() == 0 ) {
 		return 0;
 	}
 
 	core::Size counter = 0;
-	if (pos >= sequence_.size()) {
+	if ( pos >= sequence_.size() ) {
 		TR << "error -- position " << pos << " exceeds the current taboo map string" << std::endl;
 		return counter;
 	} // assumption: all strings in the taboo map have the same size, and pos is within these bounds
-	for (std::map< core::conformation::torsion_bin_string, bool >::const_iterator
+	for ( std::map< core::conformation::torsion_bin_string, bool >::const_iterator
 			mi = taboo_map_.begin(), end = taboo_map_.end(); mi != end;  ++mi ) {
 		counter += ( (mi->first)[pos] == torsion_bin ); // this might be slow...
 	}

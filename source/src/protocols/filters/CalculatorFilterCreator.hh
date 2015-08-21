@@ -9,7 +9,7 @@
 
 /// @file   protocols/filters/CalculatorFilterCreator.hh
 /// @brief  FilterCreator for the CalculatorFilter
-/// @author Rocco Moretti (rmoretti@u.washington.edu) 
+/// @author Rocco Moretti (rmoretti@u.washington.edu)
 
 #ifndef INCLUDED_protocols_filters_CalculatorFilterCreator_hh
 #define INCLUDED_protocols_filters_CalculatorFilterCreator_hh

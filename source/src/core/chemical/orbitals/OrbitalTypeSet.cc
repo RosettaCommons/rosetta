@@ -38,9 +38,9 @@
 #include <utility/vector1.hh>
 
 
-namespace core{
-namespace chemical{
-namespace orbitals{
+namespace core {
+namespace chemical {
+namespace orbitals {
 
 /// @details Auto-generated virtual destructor
 OrbitalTypeSet::~OrbitalTypeSet() {}
@@ -54,13 +54,13 @@ OrbitalTypeSet::OrbitalTypeSet(std::string const & directory)
 
 	//currently commented out. This is if someone down the line wants to add extras, like
 	//in the atomtype extras.
-/*	std::ifstream data( ( directory+"/extras.txt" ).c_str() );
+	/* std::ifstream data( ( directory+"/extras.txt" ).c_str() );
 	if ( data.good() ) { // add extra data
-		std::string line;
-		while( getline( data, line ) ) {
-			if ( line.size() && line[0] == '#' ) continue;
-			add_parameters_from_file( directory+"/"+line );
-		}
+	std::string line;
+	while( getline( data, line ) ) {
+	if ( line.size() && line[0] == '#' ) continue;
+	add_parameters_from_file( directory+"/"+line );
+	}
 	}
 	data.close();*/
 
@@ -72,7 +72,7 @@ OrbitalTypeSet::OrbitalTypeSet(std::string const & directory)
 //
 void OrbitalTypeSet::read_file(std::string const & filename)
 {
-	utility::io::izstream data( filename.c_str() ); 
+	utility::io::izstream data( filename.c_str() );
 
 	if ( !data.good() ) utility_exit_with_message( "Unable to open atomset file: "+filename );
 
@@ -84,7 +84,7 @@ void OrbitalTypeSet::read_file(std::string const & filename)
 		std::istringstream l( line );
 		l >> tag >> tag2;
 		if ( tag != "orbital_type" || tag2 != "atom_type" ) {
-			utility_exit_with_message("AtomTypeSet::read_file: bad first line: "+	line );
+			utility_exit_with_message("AtomTypeSet::read_file: bad first line: "+ line );
 		}
 		l >> tag;
 		while ( !l.fail() ) {
@@ -108,7 +108,7 @@ void OrbitalTypeSet::read_file(std::string const & filename)
 				utility_exit_with_message("bad line: "+line);
 			}
 
-			//			std::string const name( line.substr(0,4) );
+			//   std::string const name( line.substr(0,4) );
 			std::string atom_type_name( tag );
 			OrbitalType* orbital_type_ptr( new OrbitalType( name_wo_whitespace, atom_type_name ) );
 
@@ -131,7 +131,7 @@ void OrbitalTypeSet::read_file(std::string const & filename)
 
 			// add this to the list
 			orbitals_.push_back( orbital_type_ptr );
-			//		atom_type_index_[ name ] = atoms_.size();
+			//  atom_type_index_[ name ] = atoms_.size();
 			if ( orbital_type_index_.count( name_wo_whitespace ) ) {
 				utility_exit_with_message("AtomTypeSet:: duplicate atom name "+name_wo_whitespace);
 			}

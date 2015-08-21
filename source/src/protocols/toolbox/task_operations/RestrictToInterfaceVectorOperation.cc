@@ -60,7 +60,7 @@ RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation() :
 
 // /// @details this ctor assumes a pregenerated calculator - if you want a particular non-default cutoff distance
 // RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation( std::string const & calculator )
-// 	: parent(), calculator_name_(calculator)
+//  : parent(), calculator_name_(calculator)
 // {}
 
 /// @brief this ctor will generate the calculator for you (may use defaults)
@@ -123,7 +123,7 @@ RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation(
 	nearby_atom_cutoff_( nearby_atom_cutoff ),
 	vector_angle_cutoff_( vector_angle_cutoff ),
 	vector_dist_cutoff_( vector_dist_cutoff )
-{	set_movable_jumps( movable_jumps );}
+{ set_movable_jumps( movable_jumps );}
 
 
 //class member functions
@@ -148,68 +148,63 @@ RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::
 {
 
 	//if the jump constructor then itterate through jumps, make union
-	if(jump_active_){
+	if ( jump_active_ ) {
 		utility::vector1_bool repack_full(pose.total_residue(), false);
-		for( utility::vector1_int::const_iterator jj = movable_jumps().begin() ; jj != movable_jumps().end() ; ++jj ){
+		for ( utility::vector1_int::const_iterator jj = movable_jumps().begin() ; jj != movable_jumps().end() ; ++jj ) {
 			//std::cout << "Calculating interface for jump: " <<*jj << std::endl;
 			//run detection based on jump
-			if( *jj == 0 || core::Size(*jj) > pose.num_jump() ) {
+			if ( *jj == 0 || core::Size(*jj) > pose.num_jump() ) {
 				TR.Error << "In RestrictToInterfaceVectorOperation: Jump " << *jj << " not found in pose with " << pose.num_jump() << " jumps." << std::endl;
 				utility_exit_with_message("Specified jump does not exist.");
 			}
 			utility::vector1_bool repack =
 				core::pack::task::operation::util::calc_interface_vector(
-					pose,
-					*jj,
+				pose,
+				*jj,
+				CB_dist_cutoff_,
+				nearby_atom_cutoff_,
+				vector_angle_cutoff_,
+				vector_dist_cutoff_ );
+			//add repack true setting to repack_full
+			for ( core::Size ii = 1; ii <= repack.size(); ++ii ) {
+				if ( repack[ii] ) {
+					repack_full[ii] = true;
+				}
+			}//end add repack to full_repack
+		}//itterate over jumps
+		task.restrict_to_residues(repack_full);
+	} else { //end if jump active // if using only the two chain case
+		//vector for filling packertask
+		utility::vector1_bool repack_full(pose.total_residue(),false);
+
+		for ( utility::vector1<core::Size>::const_iterator lower_chain_it = lower_chains_.begin();
+				lower_chain_it != lower_chains_.end(); ++lower_chain_it ) {
+			core::Size current_lower_chain = *lower_chain_it;
+
+			for ( utility::vector1<core::Size>::const_iterator upper_chain_it = upper_chains_.begin();
+					upper_chain_it != upper_chains_.end(); ++upper_chain_it ) {
+				core::Size current_upper_chain = *upper_chain_it;
+				TR.Debug << "calculating_interface between: " << current_lower_chain << " " << current_upper_chain <<std::endl;
+				if ( current_lower_chain == 0 || current_lower_chain > pose.conformation().num_chains() ||
+						current_upper_chain == 0 || current_upper_chain > pose.conformation().num_chains() ) {
+					TR.Error << "In RestrictToInterfaceVectorOperation: Cannot find interface between chains " << current_lower_chain <<
+						" and " << current_upper_chain << ". Pose only has " << pose.conformation().num_chains() << " chains." << std::endl;
+					utility_exit_with_message("Specified chain does not exist.");
+				}
+				utility::vector1_bool repack =
+					core::pack::task::operation::util::calc_interface_vector( pose,
+					current_lower_chain, current_upper_chain,
 					CB_dist_cutoff_,
 					nearby_atom_cutoff_,
 					vector_angle_cutoff_,
 					vector_dist_cutoff_ );
-			//add repack true setting to repack_full
-			for(core::Size ii = 1; ii <= repack.size(); ++ii){
-				if(repack[ii])
-					repack_full[ii] = true;
-			}//end add repack to full_repack
-		}//itterate over jumps
-		task.restrict_to_residues(repack_full);
-	}//end if jump active
-
- 	else{ // if using only the two chain case
-		//vector for filling packertask
- 		utility::vector1_bool repack_full(pose.total_residue(),false);
-
- 		for(utility::vector1<core::Size>::const_iterator lower_chain_it = lower_chains_.begin();
-				lower_chain_it != lower_chains_.end(); ++lower_chain_it)
-			{
-				core::Size current_lower_chain = *lower_chain_it;
-
-				for(utility::vector1<core::Size>::const_iterator upper_chain_it = upper_chains_.begin();
-						upper_chain_it != upper_chains_.end(); ++upper_chain_it)
-					{
-						core::Size current_upper_chain = *upper_chain_it;
-						TR.Debug << "calculating_interface between: " << current_lower_chain << " " << current_upper_chain <<std::endl;
-						if( current_lower_chain == 0 || current_lower_chain > pose.conformation().num_chains() ||
-								current_upper_chain == 0 || current_upper_chain > pose.conformation().num_chains() ) {
-							TR.Error << "In RestrictToInterfaceVectorOperation: Cannot find interface between chains " << current_lower_chain <<
-									" and " << current_upper_chain << ". Pose only has " << pose.conformation().num_chains() << " chains." << std::endl;
-							utility_exit_with_message("Specified chain does not exist.");
-						}
-						utility::vector1_bool repack =
-							core::pack::task::operation::util::calc_interface_vector( pose,
-								current_lower_chain, current_upper_chain,
-								CB_dist_cutoff_,
-								nearby_atom_cutoff_,
-								vector_angle_cutoff_,
-								vector_dist_cutoff_ );
-						for(core::Size ii = 1; ii <=repack.size(); ++ii)
-							{
-								if(repack[ii])
-									{
-										repack_full[ii] = true;
-									}
-							}
+				for ( core::Size ii = 1; ii <=repack.size(); ++ii ) {
+					if ( repack[ii] ) {
+						repack_full[ii] = true;
 					}
+				}
 			}
+		}
 
 		task.restrict_to_residues(repack_full);
 	}
@@ -273,10 +268,10 @@ RestrictToInterfaceVectorOperation::vector_dist_cutoff(core::Real vector_dist_cu
 void
 RestrictToInterfaceVectorOperation::setup_interface_chains_from_jumps( core::pose::Pose const & pose ){
 
-    // This class wouldn't know what to do with more than jump, so we'll assert that there's only one.
-    assert(movable_jumps().size() == 1);
-    lower_chain( pose.chain( pose.fold_tree().jump_edge( *it ).start() ) );
-    upper_chain( pose.chain( pose.fold_tree().jump_edge( *it ).stop() ) );
+// This class wouldn't know what to do with more than jump, so we'll assert that there's only one.
+assert(movable_jumps().size() == 1);
+lower_chain( pose.chain( pose.fold_tree().jump_edge( *it ).start() ) );
+upper_chain( pose.chain( pose.fold_tree().jump_edge( *it ).stop() ) );
 }
 */
 
@@ -284,10 +279,11 @@ RestrictToInterfaceVectorOperation::setup_interface_chains_from_jumps( core::pos
 void
 RestrictToInterfaceVectorOperation::parse_tag( TagCOP tag , DataMap & )
 {
-	if( ( tag->hasOption("chain1_num" ) || tag->hasOption("chain2_num" ) ) && tag->hasOption("jump" ) )
+	if ( ( tag->hasOption("chain1_num" ) || tag->hasOption("chain2_num" ) ) && tag->hasOption("jump" ) ) {
 		utility_exit_with_message( "You can't define chains and jumps" );
+	}
 	//use chain numbers if given, otherwise use jump
-	if( tag->hasOption("chain1_num" ) && tag->hasOption("chain2_num" ) ){
+	if ( tag->hasOption("chain1_num" ) && tag->hasOption("chain2_num" ) ) {
 
 		utility::vector1<core::Size> lower_chains = utility::string_split(tag->getOption<std::string>("chain1_num"),',',core::Size());
 		utility::vector1<core::Size> upper_chains = utility::string_split(tag->getOption<std::string>("chain2_num"),',',core::Size());
@@ -295,29 +291,27 @@ RestrictToInterfaceVectorOperation::parse_tag( TagCOP tag , DataMap & )
 		lower_chain( lower_chains );
 		upper_chain( upper_chains );
 		jump_active_ = false;
-	}
-	//go through the jumps, should probably be a utility function for this
-	else if( tag->hasOption("jump") )
-		{
-			//jump_num( tag->getOption< int >( "jump", 1) );
-			//get a string of comma separated jumps
-			utility::vector1_int jump_vector(0); //init to zero to cause insant problem if nothing passed
-			utility::vector1<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
-			for( utility::vector1<std::string>::const_iterator it = jumps.begin(); it != jumps.end(); ++it ) {
-				// convert to C string, then convert to integer then push back in vector
-				int this_jump(std::atoi( it->c_str() ) );
-				jump_vector.push_back( this_jump );
-				//add_movable_jump (this_jump ); //from parent class
-				TR << 	"Adding jump: " << this_jump << ", ";
-			}
-			TR << std::endl;
-			assert( jump_vector.size() > 0 );
-			//now set jumps for parent class and locally
-			set_movable_jumps( jump_vector );
-			jump_active_ = true;
-		}//end jumps
-	else
+	} else if ( tag->hasOption("jump") ) {
+		//go through the jumps, should probably be a utility function for this
+		//jump_num( tag->getOption< int >( "jump", 1) );
+		//get a string of comma separated jumps
+		utility::vector1_int jump_vector(0); //init to zero to cause insant problem if nothing passed
+		utility::vector1<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
+		for ( utility::vector1<std::string>::const_iterator it = jumps.begin(); it != jumps.end(); ++it ) {
+			// convert to C string, then convert to integer then push back in vector
+			int this_jump(std::atoi( it->c_str() ) );
+			jump_vector.push_back( this_jump );
+			//add_movable_jump (this_jump ); //from parent class
+			TR <<  "Adding jump: " << this_jump << ", ";
+		}
+		TR << std::endl;
+		assert( jump_vector.size() > 0 );
+		//now set jumps for parent class and locally
+		set_movable_jumps( jump_vector );
+		jump_active_ = true;
+	} else { //end jumps
 		utility_exit_with_message( "Need to define either jump OR (chain1_num AND chain2_num)" );
+	}
 	//get other possible tags, set default values to something reasonable.
 	CB_dist_cutoff( tag->getOption< core::Real >( "CB_dist_cutoff", 10.0) );
 	nearby_atom_cutoff( tag->getOption< core::Real >( "nearby_atom_cutoff", 5.5) );

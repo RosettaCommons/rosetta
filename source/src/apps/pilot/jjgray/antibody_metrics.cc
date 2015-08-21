@@ -52,32 +52,32 @@ int
 main( int argc, char* argv[] ){
 
 	try{
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	//-s read in PDB
-	core::pose::Pose pose;
-	std::string pdbname(basic::options::option[ basic::options::OptionKeys::in::file::s ].value()[1]);
-	core::import_pose::pose_from_pdb( pose, pdbname );
+		//-s read in PDB
+		core::pose::Pose pose;
+		std::string pdbname(basic::options::option[ basic::options::OptionKeys::in::file::s ].value()[1]);
+		core::import_pose::pose_from_pdb( pose, pdbname );
 
-	// Build atom subsets for computing SASA
-	AntibodyInfo ab_info = AntibodyInfo(pose);
-	TR << ab_info;
+		// Build atom subsets for computing SASA
+		AntibodyInfo ab_info = AntibodyInfo(pose);
+		TR << ab_info;
 
-	core::Real bbHbond = kink_bb_Hbond(pose, ab_info);
-	TR << "bbHbond: " << bbHbond << std::endl;
+		core::Real bbHbond = kink_bb_Hbond(pose, ab_info);
+		TR << "bbHbond: " << bbHbond << std::endl;
 
-	core::Real RD_Hbond = kink_RD_Hbond(pose, ab_info);
-	TR << "RD_Hbond: " << RD_Hbond << std::endl;
+		core::Real RD_Hbond = kink_RD_Hbond(pose, ab_info);
+		TR << "RD_Hbond: " << RD_Hbond << std::endl;
 
-	core::Real WHbond = kink_Trp_Hbond(pose, ab_info);
-	TR << "WHbond: " << WHbond << std::endl;
+		core::Real WHbond = kink_Trp_Hbond(pose, ab_info);
+		TR << "WHbond: " << WHbond << std::endl;
 
-	std::pair<core::Real,core::Real> q = kink_dihedral(pose, ab_info);
-	TR << "q: " << q.first << " " << q.second << std::endl;
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-				return -1;
-    }
+		std::pair<core::Real,core::Real> q = kink_dihedral(pose, ab_info);
+		TR << "q: " << q.first << " " << q.second << std::endl;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 	return 0;
 }
 
@@ -85,25 +85,25 @@ main( int argc, char* argv[] ){
 //int
 //main( int argc, char * argv [] )
 //{
-//	try {
+// try {
 //
-//	using namespace basic::options;
-//	using namespace protocols::antibody;
-//	using namespace protocols::jd2;
+// using namespace basic::options;
+// using namespace protocols::antibody;
+// using namespace protocols::jd2;
 //
-//	AntibodyModelerProtocol::register_options();
-//	protocols::jd2::register_options();
-//	// initialize core
-//	devel::init(argc, argv);
+// AntibodyModelerProtocol::register_options();
+// protocols::jd2::register_options();
+// // initialize core
+// devel::init(argc, argv);
 //
 //
-//	AntibodyModelerProtocolOP ab_m_h3 = new AntibodyModelerProtocol();
-//	TR<<*ab_m_h3<<std::endl;
-//	JobDistributor::get_instance()->go(ab_m_h3);
+// AntibodyModelerProtocolOP ab_m_h3 = new AntibodyModelerProtocol();
+// TR<<*ab_m_h3<<std::endl;
+// JobDistributor::get_instance()->go(ab_m_h3);
 //
-//	 } catch ( utility::excn::EXCN_Base const & e ) {
-//		 std::cout << "caught exception " << e.msg() << std::endl;
-//	}
+//  } catch ( utility::excn::EXCN_Base const & e ) {
+//   std::cout << "caught exception " << e.msg() << std::endl;
+// }
 //}
 //
 //

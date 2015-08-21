@@ -18,9 +18,9 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace toolbox{
-namespace pose_metric_calculators{
+namespace protocols {
+namespace toolbox {
+namespace pose_metric_calculators {
 
 //Forwards and OP typedefs
 class NeighborsByDistanceCalculator;

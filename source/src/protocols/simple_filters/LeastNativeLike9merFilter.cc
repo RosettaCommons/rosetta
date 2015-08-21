@@ -48,14 +48,14 @@ namespace simple_filters {
 
 // @brief default constructor
 LeastNativeLike9merFilter::LeastNativeLike9merFilter():
-    Filter( "worst9mer" ),
-    filtered_value_( 99 )
+	Filter( "worst9mer" ),
+	filtered_value_( 99 )
 {}
 
 // @brief copy constructor
 LeastNativeLike9merFilter::LeastNativeLike9merFilter( LeastNativeLike9merFilter const & rval ):
-    Super( rval ),
-    filtered_value_( rval.filtered_value_ )
+	Super( rval ),
+	filtered_value_( rval.filtered_value_ )
 {}
 
 // @brief destructor
@@ -64,33 +64,33 @@ LeastNativeLike9merFilter::~LeastNativeLike9merFilter() {}
 // @brief set filtered value
 void LeastNativeLike9merFilter::filtered_value( Real const & value )
 {
-    filtered_value_ = value;
+	filtered_value_ = value;
 }
 
 /// @brief
 LeastNativeLike9merFilter::Real
 LeastNativeLike9merFilter::report_sm( const Pose & pose ) const
 {
-    return  compute( pose );
+	return  compute( pose );
 }
 
 /// @brief
 void
 LeastNativeLike9merFilter::report( std::ostream & out, Pose const & pose ) const
 {
-    out << "worst_9mer: " <<  compute( pose ) << std::endl;
+	out << "worst_9mer: " <<  compute( pose ) << std::endl;
 }
 
 /// @brief
 LeastNativeLike9merFilter::Real
 LeastNativeLike9merFilter::compute( const Pose & pose ) const
 {
-    using namespace core::scoring::methods;
-    using namespace core::scoring;
+	using namespace core::scoring::methods;
+	using namespace core::scoring;
 
-    VallLookbackPotential const & potential_( ScoringManager::get_instance()->get_vallLookbackPotential());
-    Real worst_9mer = potential_.lookback(pose);
-    return(worst_9mer);
+	VallLookbackPotential const & potential_( ScoringManager::get_instance()->get_vallLookbackPotential());
+	Real worst_9mer = potential_.lookback(pose);
+	return(worst_9mer);
 }
 
 
@@ -98,29 +98,29 @@ LeastNativeLike9merFilter::compute( const Pose & pose ) const
 // In this case, the test is whether the give pose is the topology we want.
 bool LeastNativeLike9merFilter::apply(const Pose & pose ) const
 {
-    Real value = compute( pose );
-		std::cout << "value" << value << "filtered_value_" << filtered_value_ << std::endl;
-    if( value < filtered_value_ ){
-        tr << "Successfully filtered: " << value << std::endl;
-        return true;
-    }else{
-        tr << "Filter failed current/threshold=" << value << "/" << filtered_value_ << std::endl;
-        return false;
-    }
+	Real value = compute( pose );
+	std::cout << "value" << value << "filtered_value_" << filtered_value_ << std::endl;
+	if ( value < filtered_value_ ) {
+		tr << "Successfully filtered: " << value << std::endl;
+		return true;
+	} else {
+		tr << "Filter failed current/threshold=" << value << "/" << filtered_value_ << std::endl;
+		return false;
+	}
 } // apply_filter
 
 /// @brief parse xml
 void
 LeastNativeLike9merFilter::parse_my_tag(
-    TagCOP const tag,
-    basic::datacache::DataMap &,
-    filters::Filters_map const &,
-    Movers_map const &,
-    Pose const & )
+	TagCOP const tag,
+	basic::datacache::DataMap &,
+	filters::Filters_map const &,
+	Movers_map const &,
+	Pose const & )
 {
-    // set threshold
-    filtered_value_ = tag->getOption<Real>( "threshold", 99.0 );
-    tr << "Structures which has the best fragment RMSD at the worst position greater than " << filtered_value_ << " will be filtered." << std::endl;
+	// set threshold
+	filtered_value_ = tag->getOption<Real>( "threshold", 99.0 );
+	tr << "Structures which has the best fragment RMSD at the worst position greater than " << filtered_value_ << " will be filtered." << std::endl;
 }
 
 filters::FilterOP

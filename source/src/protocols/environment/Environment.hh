@@ -50,91 +50,91 @@ namespace environment {
 
 class Environment : public core::environment::EnvCore, public utility::pointer::enable_shared_from_this< Environment >
 {
-  typedef core::environment::EnvCore Parent;
-  typedef core::environment::SequenceAnnotationCOP SequenceAnnotationCOP;
-  typedef core::environment::SequenceAnnotationOP SequenceAnnotationOP;
-  typedef core::environment::SequenceAnnotation SequenceAnnotation;
+	typedef core::environment::EnvCore Parent;
+	typedef core::environment::SequenceAnnotationCOP SequenceAnnotationCOP;
+	typedef core::environment::SequenceAnnotationOP SequenceAnnotationOP;
+	typedef core::environment::SequenceAnnotation SequenceAnnotation;
 
-  typedef core::conformation::Conformation Conformation;
-  typedef core::conformation::ConformationAP ConformationAP;
-  typedef core::conformation::ConformationOP ConformationOP;
-  typedef core::conformation::ConformationCOP ConformationCOP;
+	typedef core::conformation::Conformation Conformation;
+	typedef core::conformation::ConformationAP ConformationAP;
+	typedef core::conformation::ConformationOP ConformationOP;
+	typedef core::conformation::ConformationCOP ConformationCOP;
 
 public:
-  Environment( std::string name );
-  virtual ~Environment();
-  
-  //@brief register the given mover and, recursively, and submovers yielded by yield_submovers.
-  void register_mover( moves::MoverOP );
+	Environment( std::string name );
+	virtual ~Environment();
 
-  //@brief register multiple movers (repetitively calls register_mover)
-  //@note must be implemented in header for linker
-  template< class Iterator >
-  void register_movers( Iterator start, Iterator end ){
-    for( Iterator it = start; it != end; ++it ){
-      register_mover( *it );
-    }
-  }
+	//@brief register the given mover and, recursively, and submovers yielded by yield_submovers.
+	void register_mover( moves::MoverOP );
 
-  bool is_registered( ClientMoverOP ) const;
+	//@brief register multiple movers (repetitively calls register_mover)
+	//@note must be implemented in header for linker
+	template< class Iterator >
+	void register_movers( Iterator start, Iterator end ){
+		for ( Iterator it = start; it != end; ++it ) {
+			register_mover( *it );
+		}
+	}
 
-  core::pose::Pose start( core::pose::Pose const& );
+	bool is_registered( ClientMoverOP ) const;
 
-  core::pose::Pose end( core::pose::Pose const& );
+	core::pose::Pose start( core::pose::Pose const& );
 
-  EnvironmentCAP superenv() const;
+	core::pose::Pose end( core::pose::Pose const& );
 
-  EnvClaimBrokerCOP broker() const { return broker_; }
+	EnvironmentCAP superenv() const;
 
-  SequenceAnnotationCOP annotations() const { return ann_; }
+	EnvClaimBrokerCOP broker() const { return broker_; }
 
-  bool auto_cut() const { return bAutoCut_; }
-  bool inherit_cuts() const { return bInheritCuts_; }
-  bool allow_pure_movers() const { return bAllowPureMovers_; }
+	SequenceAnnotationCOP annotations() const { return ann_; }
 
-  void auto_cut( bool );
-  void inherit_cuts( bool );
-  void allow_pure_movers( bool );
+	bool auto_cut() const { return bAutoCut_; }
+	bool inherit_cuts() const { return bInheritCuts_; }
+	bool allow_pure_movers() const { return bAllowPureMovers_; }
 
-  void pconf_destruction( Conformation * ptr ) const {
-    pconfs_.erase( ptr );
-  }
+	void auto_cut( bool );
+	void inherit_cuts( bool );
+	void allow_pure_movers( bool );
 
-  void pconf_creation( Conformation * ptr ) const {
-    pconfs_.insert( ptr );
-  }
+	void pconf_destruction( Conformation * ptr ) const {
+		pconfs_.erase( ptr );
+	}
 
-  /// self pointers
-  inline EnvironmentCOP get_self_ptr() const { return shared_from_this(); }
-  inline EnvironmentOP get_self_ptr() { return shared_from_this(); }
-  inline EnvironmentCAP get_self_weak_ptr() const { return EnvironmentCAP( shared_from_this() ); }
-  inline EnvironmentAP get_self_weak_ptr() { return EnvironmentAP( shared_from_this() ); }
+	void pconf_creation( Conformation * ptr ) const {
+		pconfs_.insert( ptr );
+	}
+
+	/// self pointers
+	inline EnvironmentCOP get_self_ptr() const { return shared_from_this(); }
+	inline EnvironmentOP get_self_ptr() { return shared_from_this(); }
+	inline EnvironmentCAP get_self_weak_ptr() const { return EnvironmentCAP( shared_from_this() ); }
+	inline EnvironmentAP get_self_weak_ptr() { return EnvironmentAP( shared_from_this() ); }
 
 private:
-  
-  core::conformation::ConformationOP end( ProtectedConformationCOP );
 
-  core::pose::Pose broker( core::pose::Pose const& );
+	core::conformation::ConformationOP end( ProtectedConformationCOP );
 
-  void remove_nonpermenant_features( core::pose::Pose& );
+	core::pose::Pose broker( core::pose::Pose const& );
 
-  void assign_passport( ClientMoverOP, core::environment::DofPassportCOP );
+	void remove_nonpermenant_features( core::pose::Pose& );
 
-  void cancel_passports();
+	void assign_passport( ClientMoverOP, core::environment::DofPassportCOP );
 
-  void remove_chainbreak_variants( core::pose::Pose&, core::Size up_res, core::Size down_res ) const;
+	void cancel_passports();
 
-  EnvClaimBrokerOP broker_;
-  core::pose::Pose input_pose_;
-  std::set<ClientMoverOP> registered_movers_;
+	void remove_chainbreak_variants( core::pose::Pose&, core::Size up_res, core::Size down_res ) const;
 
-  SequenceAnnotationOP ann_;
+	EnvClaimBrokerOP broker_;
+	core::pose::Pose input_pose_;
+	std::set<ClientMoverOP> registered_movers_;
 
-  bool bAutoCut_;
-  bool bInheritCuts_;
-  bool bAllowPureMovers_;
+	SequenceAnnotationOP ann_;
 
-  mutable std::set< Conformation * > pconfs_;
+	bool bAutoCut_;
+	bool bInheritCuts_;
+	bool bAllowPureMovers_;
+
+	mutable std::set< Conformation * > pconfs_;
 
 
 }; // end Environment base class

@@ -149,7 +149,7 @@ HSSTriplet::calc_geometry( SS_Info2_COP const ssinfo )
 
 	Real sign_ss/*, sign_hs1, sign_hs2*/;
 
-	if( dot_ss < 0 ) {
+	if ( dot_ss < 0 ) {
 		sign_ss = -1.0;
 		ss_orient_ = "A";
 	} else {
@@ -157,7 +157,7 @@ HSSTriplet::calc_geometry( SS_Info2_COP const ssinfo )
 		ss_orient_ = "P";
 	}
 
-	if( dot_hs1 < 0 ) {
+	if ( dot_hs1 < 0 ) {
 		//sign_hs1 = -1.0;  // set but never used ~Labonte
 		hs1_orient_ = "A";
 	} else {
@@ -165,7 +165,7 @@ HSSTriplet::calc_geometry( SS_Info2_COP const ssinfo )
 		hs1_orient_ = "P";
 	}
 
-	if( dot_hs2 < 0 ) {
+	if ( dot_hs2 < 0 ) {
 		//sign_hs2 = -1.0;  // set but never used ~Labonte
 		hs2_orient_ = "A";
 	} else {
@@ -182,7 +182,7 @@ HSSTriplet::calc_geometry( SS_Info2_COP const ssinfo )
 	Vector const s12_vec = ( s2_mid - s1_mid ).normalized();
 	Vector const hs1_vec = ( hmid - s1_mid ).normalized();
 	Real d = hs1_vec.cross( s12_vec ).dot( s1.orient() );
-	if( d < 0 ) left_handed_ = true;
+	if ( d < 0 ) left_handed_ = true;
 
 	// define beta sheet plane
 	Vector const s1_chalf_mid = ( s1.mid_pos() + s1.Cend_pos() )/2.0;
@@ -212,7 +212,7 @@ HSSTriplet::calc_geometry( SS_Info2_COP const ssinfo )
 	Vector const hx_on_sheet = ( h1 - h2 ).normalized();
 	Real ori = cross( hx_on_sheet, v2 ).dot( sheet_plane );
 	hs_angle_ = numeric::conversions::degrees( angle_of( v2, hx_on_sheet ) );
-	if( ori < 0 ) hs_angle_ = -1*hs_angle_;
+	if ( ori < 0 ) hs_angle_ = -1*hs_angle_;
 
 	// std::cout << ss_orient_ << " " << hs1_orient_ << " " << hs2_orient_ << " "
 	// << hsheet_dist_ << " " << hs1_dist_ << " " << hs2_dist_ << " " << ss_dist_ << " "
@@ -220,22 +220,22 @@ HSSTriplet::calc_geometry( SS_Info2_COP const ssinfo )
 
 	geometry_is_initialized_ = true;
 
-//	using namespace ObjexxFCL::format;
-//	Size number( 0 );
-//	for( int ii=1; ii<=25; ii++ ) {
-//		for( int jj=1; jj<=25; jj++ ) {
-//			++number;
-//			Vector pos = v1*( ii - 12 ) + v2*( jj - 12 ) + s1_chalf_mid;
-//			std::cout << "ATOM  " << I(5,number) << ' ' << " CA " << ' ' << "ALA" << ' '
-//				<< "B" << I(4,number) << "    "
-//				<< F(8,3,pos.x()) << F(8,3,pos.y()) << F(8,3,pos.z())
-//				<< F(6,2,1.0) << F(6,2,10.0) << std::endl;
-//		}
-//	}
-//	std::cout << "ATOM  " << I(5,1) << ' ' << " CA " << ' ' << "ALA" << ' '
-//	<< "C" << I(4,1) << "    "
-//	<< F(8,3,hmid.x()) << F(8,3,hmid.y()) << F(8,3,hmid.z())
-//	<< F(6,2,1.0) << F(6,2,10.0) << std::endl;
+	// using namespace ObjexxFCL::format;
+	// Size number( 0 );
+	// for( int ii=1; ii<=25; ii++ ) {
+	//  for( int jj=1; jj<=25; jj++ ) {
+	//   ++number;
+	//   Vector pos = v1*( ii - 12 ) + v2*( jj - 12 ) + s1_chalf_mid;
+	//   std::cout << "ATOM  " << I(5,number) << ' ' << " CA " << ' ' << "ALA" << ' '
+	//    << "B" << I(4,number) << "    "
+	//    << F(8,3,pos.x()) << F(8,3,pos.y()) << F(8,3,pos.z())
+	//    << F(6,2,1.0) << F(6,2,10.0) << std::endl;
+	//  }
+	// }
+	// std::cout << "ATOM  " << I(5,1) << ' ' << " CA " << ' ' << "ALA" << ' '
+	// << "C" << I(4,1) << "    "
+	// << F(8,3,hmid.x()) << F(8,3,hmid.y()) << F(8,3,hmid.z())
+	// << F(6,2,1.0) << F(6,2,10.0) << std::endl;
 
 }
 
@@ -252,12 +252,12 @@ HSSTripletSet::HSSTripletSet( String const & s )
 {
 	clear();
 
-	if( s == "" ) {
+	if ( s == "" ) {
 		return;
 	}
 
 	utility::vector1< String > hsss( utility::string_split( s, ';' ) );
-	for( utility::vector1< String >::const_iterator iter = hsss.begin(); iter != hsss.end() ; ++iter) {
+	for ( utility::vector1< String >::const_iterator iter = hsss.begin(); iter != hsss.end() ; ++iter ) {
 		push_back( HSSTripletOP( new HSSTriplet( *iter ) ) );
 	}
 }
@@ -266,7 +266,7 @@ HSSTripletSet::HSSTripletSet( String const & s )
 /// @brief value constructor
 HSSTripletSet::HSSTripletSet( HSSTriplets const & s )
 {
-	for( HSSTriplets::const_iterator it=s.begin(),	ite=s.end(); it!= ite; ++it ) {
+	for ( HSSTriplets::const_iterator it=s.begin(), ite=s.end(); it!= ite; ++it ) {
 		HSSTripletOP const hss( *it );
 		push_back( hss );
 	}
@@ -289,8 +289,8 @@ HSSTripletSet::~HSSTripletSet(){}
 std::ostream & operator<<(std::ostream & out, const HSSTripletSet & s )
 {
 	out << "#### HSSTriplet Info " << std::endl;
-	for( HSSTriplets::const_iterator iter = s.hss_triplets().begin(),
-				 iter_end = s.hss_triplets().end(); iter != iter_end; ++iter ) {
+	for ( HSSTriplets::const_iterator iter = s.hss_triplets().begin(),
+			iter_end = s.hss_triplets().end(); iter != iter_end; ++iter ) {
 		HSSTriplet const & hss( **iter );
 		out << hss << std::endl;
 	}
@@ -302,7 +302,7 @@ std::ostream & operator<<(std::ostream & out, const HSSTripletSet & s )
 void
 HSSTripletSet::add_hsstriplets( HSSTriplets const & s )
 {
-	for( HSSTriplets::const_iterator it=s.begin(),	ite=s.end(); it!= ite; ++it ) {
+	for ( HSSTriplets::const_iterator it=s.begin(), ite=s.end(); it!= ite; ++it ) {
 		HSSTripletOP const hss( *it );
 		push_back( hss );
 	}
@@ -313,7 +313,7 @@ void
 HSSTripletSet::push_back( HSSTripletOP const hsop )
 {
 	for ( std::map< Size, HSSTripletOP >::const_iterator it=helix2hss_.begin(),
-					ite=helix2hss_.end(); it!=ite ; ++it ) {
+			ite=helix2hss_.end(); it!=ite ; ++it ) {
 		if ( it->first == hsop->helix() ) {
 			TR <<  "Helix "  <<  it->first << " is already defined in HSSTriplet. " << std::endl;
 			assert( false );

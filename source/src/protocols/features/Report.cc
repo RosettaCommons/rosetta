@@ -19,13 +19,13 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using utility::pointer::ReferenceCount;
 
 Report::Report() :
-  reporters_()
+	reporters_()
 {}
 
 Report::Report(Report const &) :

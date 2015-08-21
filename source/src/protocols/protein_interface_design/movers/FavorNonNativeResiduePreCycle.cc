@@ -34,17 +34,17 @@ static thread_local basic::Tracer favor_nonnative_residue_tracer( "protocols.pro
 
 std::string FavorNonNativeResiduePreCycleCreator::keyname() const
 {
-        return FavorNonNativeResiduePreCycleCreator::mover_name();
+	return FavorNonNativeResiduePreCycleCreator::mover_name();
 }
 
 protocols::moves::MoverOP
 FavorNonNativeResiduePreCycleCreator::create_mover() const {
-        return protocols::moves::MoverOP( new FavorNonNativeResiduePreCycle );
+	return protocols::moves::MoverOP( new FavorNonNativeResiduePreCycle );
 }
 
 std::string
 FavorNonNativeResiduePreCycleCreator::mover_name() {
-        return "FavorNonNativeResidue";
+	return "FavorNonNativeResidue";
 }
 
 
@@ -61,20 +61,20 @@ FavorNonNativeResiduePreCycle::parse_my_tag( TagCOP const tag, basic::datacache:
 	using namespace utility::pointer;
 
 	bonus_ = tag->getOption<core::Real>( "bonus", -1.5 );
-	for( std::map< std::string, ReferenceCountOP >::const_iterator it = (data)[ "scorefxns" ].begin(); it!=(data)[ "scorefxns" ].end(); ++it ){
+	for ( std::map< std::string, ReferenceCountOP >::const_iterator it = (data)[ "scorefxns" ].begin(); it!=(data)[ "scorefxns" ].end(); ++it ) {
 		ScoreFunctionOP scorefxn( data.get_ptr< ScoreFunction >( "scorefxns", it->first ) );
-		if( scorefxn->get_weight( res_type_constraint ) == 0.0 ){
+		if ( scorefxn->get_weight( res_type_constraint ) == 0.0 ) {
 			scorefxn->set_weight( res_type_constraint, bonus_ );
 			favor_nonnative_residue_tracer<<"Setting res_type_constraint weight in scorefxn "<<it->first<<" to "<<bonus_<<'\n';
 		}
 	}
-/*
-for( std::map< std::string, ReferenceCountOP >::const_iterator it=(data)[ "scorefxns_hshash" ].begin(); it!=(data)[ "scorefxns" ].end(); ++it ){ // scorefxns where the user defined hs_hash but not fnr
-		ScoreFunctionOP scorefxn( *data.get< ScoreFunction * >( "scorefxns", it->first ) );
-		scorefxn->set_weight( res_type_constraint, bonus_ );
-		favor_nonnative_residue_tracer<<"Setting res_type_constraint weight in scorefxn "<<it->first<<" to "<<bonus_<<'\n';
+	/*
+	for( std::map< std::string, ReferenceCountOP >::const_iterator it=(data)[ "scorefxns_hshash" ].begin(); it!=(data)[ "scorefxns" ].end(); ++it ){ // scorefxns where the user defined hs_hash but not fnr
+	ScoreFunctionOP scorefxn( *data.get< ScoreFunction * >( "scorefxns", it->first ) );
+	scorefxn->set_weight( res_type_constraint, bonus_ );
+	favor_nonnative_residue_tracer<<"Setting res_type_constraint weight in scorefxn "<<it->first<<" to "<<bonus_<<'\n';
 	}
-*/
+	*/
 	favor_nonnative_residue_tracer<<"applying favor native residue to pose with weight: "<<bonus_<<std::endl;
 }
 

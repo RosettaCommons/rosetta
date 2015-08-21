@@ -246,32 +246,32 @@ MatcherTask::modify_pose_build_resids_from_endes_input()
 	runtime_assert( upstream_pose_ != 0 );
 	bool switch_to_per_cst_resids_necessary( share_build_points_for_geomcsts_ );
 
-	for( core::Size i =1; i<= enz_input_data_->num_mcfi_lists(); ++i ){
+	for ( core::Size i =1; i<= enz_input_data_->num_mcfi_lists(); ++i ) {
 
 		std::map< std::string, utility::vector1< std::string > > const & alg_map = (*(enz_input_data_->mcfi_list( i )->mcfi( 1 ))).algorithm_inputs();
 		std::map< std::string, utility::vector1< std::string > >::const_iterator map_it( alg_map.find( "match_positions" ) );
-		if( map_it == alg_map.end() ) continue;
+		if ( map_it == alg_map.end() ) continue;
 
 		// silly: this could mean that different positions are used for each cst, so we might have to switch
-		if( switch_to_per_cst_resids_necessary ){
+		if ( switch_to_per_cst_resids_necessary ) {
 			share_build_points_for_geomcsts_ = false;
 			switch_to_per_cst_resids_necessary = false;
 			per_cst_pose_build_resids_.resize( enz_input_data_->num_mcfi_lists() );
-			for( core::Size j =1; j <= per_cst_pose_build_resids_.size(); ++j) per_cst_pose_build_resids_[j] = generic_pose_build_resids_;
+			for ( core::Size j =1; j <= per_cst_pose_build_resids_.size(); ++j ) per_cst_pose_build_resids_[j] = generic_pose_build_resids_;
 			generic_pose_build_resids_.clear();
 		}
 
-		for( core::Size mpm_string =1; mpm_string <= map_it->second.size(); ++mpm_string ){
+		for ( core::Size mpm_string =1; mpm_string <= map_it->second.size(); ++mpm_string ) {
 			utility::vector1< std::string > tokens;
 			tokens.push_back(""); //weird util vect1 copy behavior makes this necessary
 			tokens = utility::split( map_it->second[mpm_string] );
 			MatchPositionModifierCOP mpm( create_match_position_modifier( tokens[1], i, tokens ) );
-			if( !mpm ) utility_exit_with_message("Could not create a MatchPositionModifier based on name "+tokens[1]+".");
+			if ( !mpm ) utility_exit_with_message("Could not create a MatchPositionModifier based on name "+tokens[1]+".");
 			per_cst_pose_build_resids_[i] = mpm->modified_match_positions( per_cst_pose_build_resids_[ i ], *upstream_pose_, get_self_ptr() );
 		}
 
 		TR << "Match position modifiers changed match positions for geomcst " << i << " to the following: " << std::endl;
-		for( core::Size newpos = 1; newpos <= per_cst_pose_build_resids_[i].size(); ++newpos ) TR << per_cst_pose_build_resids_[i][newpos] << "+";
+		for ( core::Size newpos = 1; newpos <= per_cst_pose_build_resids_[i].size(); ++newpos ) TR << per_cst_pose_build_resids_[i][newpos] << "+";
 		TR << std::endl;
 
 	} //loop over all mcfi lists
@@ -393,7 +393,7 @@ MatcherTask::initialize_from_command_line()
 
 	initialize_enzdes_input_data_from_command_line();
 
-	if( !ignore_cmdline_for_build_points_ ) initialize_scaffold_active_site_residue_list_from_command_line();
+	if ( !ignore_cmdline_for_build_points_ ) initialize_scaffold_active_site_residue_list_from_command_line();
 
 	modify_pose_build_resids_from_endes_input();
 
@@ -951,9 +951,8 @@ MatcherTask::initialize_occupied_space_bounding_box_from_command_line()
 		upper_corner.z() += zwidth * zsize;
 		occ_space_bounding_box_.set_lower( lower_corner );
 		occ_space_bounding_box_.set_upper( upper_corner );
-	}
-	else{
-		if( !upstream_pose_ ) utility_exit_with_message( "Grid boundary defintion file must be specified with the -match::grid_boundary <filename> flag, or the upstram_pose_ must be set in the MatcherTask." );
+	} else {
+		if ( !upstream_pose_ ) utility_exit_with_message( "Grid boundary defintion file must be specified with the -match::grid_boundary <filename> flag, or the upstram_pose_ must be set in the MatcherTask." );
 
 		TR << "WARNING WARNING WARNING: no grid file specified for option -grid_boundary. The bounding grid will be generated from the dimensions of the pose. This is experimental at the moment." << std::endl;
 
@@ -962,21 +961,21 @@ MatcherTask::initialize_occupied_space_bounding_box_from_command_line()
 		Real lowz(upstream_pose_->residue(1).xyz(1).z());
 		Real highx(lowx), highy(lowy), highz(lowz);
 
-		for( Size i =1; i <= upstream_pose_->total_residue(); ++i ){
+		for ( Size i =1; i <= upstream_pose_->total_residue(); ++i ) {
 			core::conformation::Residue const & cur_res( upstream_pose_->residue( i ) );
 
-			if( !cur_res.is_protein() ) continue;
+			if ( !cur_res.is_protein() ) continue;
 			utility::vector1< Size > const & bb_atoms( cur_res.type().all_bb_atoms() );
 
-			for( Size j =1; j <= bb_atoms.size(); ++j){
+			for ( Size j =1; j <= bb_atoms.size(); ++j ) {
 				Real curx( cur_res.xyz( bb_atoms[j] ).x() ), cury( cur_res.xyz( bb_atoms[j] ).y() ), curz( cur_res.xyz( bb_atoms[j] ).z() );
 
-				if(  curx  < lowx ) lowx = curx;
-				else if( curx > highx ) highx = curx;
-				if(  cury < lowy ) lowy = cury;
-				else if( cury > highy ) highy = cury;
-				if(  curz < lowz ) lowz = curz;
-				else if( curz > highz ) highz = curz;
+				if (  curx  < lowx ) lowx = curx;
+				else if ( curx > highx ) highx = curx;
+				if (  cury < lowy ) lowy = cury;
+				else if ( cury > highy ) highy = cury;
+				if (  curz < lowz ) lowz = curz;
+				else if ( curz > highz ) highz = curz;
 			}
 		}
 		//lowx -= padding, lowy -= padding, lowz -= padding;
@@ -1010,33 +1009,32 @@ MatcherTask::initialize_scaffold_active_site_residue_list_from_command_line()
 
 	//now go through and initialize the MatcherTask data from the file reader
 	//first check whether there's actually any positions to go from
-	if( scaf_seqpos.num_seqpos_lists() == 0 ) utility_exit_with_message("Apparently match positions couldn't get read from file...");
+	if ( scaf_seqpos.num_seqpos_lists() == 0 ) utility_exit_with_message("Apparently match positions couldn't get read from file...");
 
-	else if( scaf_seqpos.num_seqpos_lists() == 1 ){
+	else if ( scaf_seqpos.num_seqpos_lists() == 1 ) {
 		share_build_points_for_geomcsts_ = true;
 		generic_pose_build_resids_.clear();
-		for( core::Size i = 1; i <= scaf_seqpos.seqpos_for_geomcst( 1 ).size(); ++i ){
-			if( scaf_seqpos.seqpos_for_geomcst( 1 )[i] <= upstream_pose_->total_residue() ){
-				if( upstream_pose_->residue_type(  scaf_seqpos.seqpos_for_geomcst( 1 )[i] ).is_protein() ) generic_pose_build_resids_.push_back( scaf_seqpos.seqpos_for_geomcst( 1 )[i] );
-			}
-			else std::cerr << "Warning: seqpos number " << scaf_seqpos.seqpos_for_geomcst( 1 )[i] << " is larger than size of pose, ignoring. Check if you're using the right match posfile.";
+		for ( core::Size i = 1; i <= scaf_seqpos.seqpos_for_geomcst( 1 ).size(); ++i ) {
+			if ( scaf_seqpos.seqpos_for_geomcst( 1 )[i] <= upstream_pose_->total_residue() ) {
+				if ( upstream_pose_->residue_type(  scaf_seqpos.seqpos_for_geomcst( 1 )[i] ).is_protein() ) generic_pose_build_resids_.push_back( scaf_seqpos.seqpos_for_geomcst( 1 )[i] );
+			} else std::cerr << "Warning: seqpos number " << scaf_seqpos.seqpos_for_geomcst( 1 )[i] << " is larger than size of pose, ignoring. Check if you're using the right match posfile.";
 
 		}
-	}
-	else{
-		if( scaf_seqpos.num_seqpos_lists() != enz_input_data_->mcfi_lists_size() ) utility_exit_with_message("#geometric constraints disagreement between file given for option match::scaffold_active_site_residues_for_geomcsts having " + utility::to_string(scaf_seqpos.num_seqpos_lists() ) + "constraitns and Enz .cst file: " + option[ geometric_constraint_file ]()() +
-			" having (" + utility::to_string(enz_input_data_->mcfi_lists_size()) + ") constraints." );
+	} else {
+		if ( scaf_seqpos.num_seqpos_lists() != enz_input_data_->mcfi_lists_size() ) {
+			utility_exit_with_message("#geometric constraints disagreement between file given for option match::scaffold_active_site_residues_for_geomcsts having " + utility::to_string(scaf_seqpos.num_seqpos_lists() ) + "constraitns and Enz .cst file: " + option[ geometric_constraint_file ]()() +
+				" having (" + utility::to_string(enz_input_data_->mcfi_lists_size()) + ") constraints." );
+		}
 
 		share_build_points_for_geomcsts_ = false;
 		per_cst_pose_build_resids_.clear();
 		per_cst_pose_build_resids_.resize( scaf_seqpos.num_seqpos_lists() );
 
-		for( core::Size i =1; i <= scaf_seqpos.num_seqpos_lists(); ++i ){
-			for( core::Size j = 1; j <= scaf_seqpos.seqpos_for_geomcst( i ).size(); ++j ){
-				if( scaf_seqpos.seqpos_for_geomcst( i )[j] <= upstream_pose_->total_residue() ){
-					if( upstream_pose_->residue_type(  scaf_seqpos.seqpos_for_geomcst( i )[j] ).is_protein() ) per_cst_pose_build_resids_[i].push_back( scaf_seqpos.seqpos_for_geomcst( i )[j] );
-				}
-				else std::cerr <<  "Warning: seqpos number " << scaf_seqpos.seqpos_for_geomcst( i )[j] << " is larger than size of pose, ignoring. Check if you're using the right match posfile.";
+		for ( core::Size i =1; i <= scaf_seqpos.num_seqpos_lists(); ++i ) {
+			for ( core::Size j = 1; j <= scaf_seqpos.seqpos_for_geomcst( i ).size(); ++j ) {
+				if ( scaf_seqpos.seqpos_for_geomcst( i )[j] <= upstream_pose_->total_residue() ) {
+					if ( upstream_pose_->residue_type(  scaf_seqpos.seqpos_for_geomcst( i )[j] ).is_protein() ) per_cst_pose_build_resids_[i].push_back( scaf_seqpos.seqpos_for_geomcst( i )[j] );
+				} else std::cerr <<  "Warning: seqpos number " << scaf_seqpos.seqpos_for_geomcst( i )[j] << " is larger than size of pose, ignoring. Check if you're using the right match posfile.";
 			}
 		}
 	}
@@ -1047,7 +1045,7 @@ MatcherTask::initialize_scaffold_active_site_residue_list_from_command_line()
 void
 MatcherTask::set_active_site_residue_list_to_preexisting_partial_match()
 {
-	if( !upstream_pose_ ) return;
+	if ( !upstream_pose_ ) return;
 
 	core::pose::PDBInfoCOP pose_pdbinfo = upstream_pose_->pdb_info();
 
@@ -1060,20 +1058,20 @@ MatcherTask::set_active_site_residue_list_to_preexisting_partial_match()
 	Size n_geometric_constraints( enz_input_data_->mcfi_lists_size() );
 
 	// Loop over all the remarks in pdb file
-	for( std::vector< core::pose::RemarkInfo >::const_iterator remark_it = pose_remarks.begin(), end = pose_remarks.end(); remark_it != end; ++remark_it ){
+	for ( std::vector< core::pose::RemarkInfo >::const_iterator remark_it = pose_remarks.begin(), end = pose_remarks.end(); remark_it != end; ++remark_it ) {
 
 		std::string resA_type(""), resB_type("");
 		int resA_num(0), resB_num(0);
 		Size cst_block(0);
 		std::string resA_chain ,resB_chain;
 		core::Size ex_geom_id;
-		if( protocols::toolbox::match_enzdes_util::split_up_remark_line(remark_it->value, resA_chain,
+		if ( protocols::toolbox::match_enzdes_util::split_up_remark_line(remark_it->value, resA_chain,
 				resA_type, resA_num, resB_chain, resB_type,
-				resB_num, cst_block, ex_geom_id)  ){
+				resB_num, cst_block, ex_geom_id)  ) {
 
-			if( !change_build_point_lists ) {
+			if ( !change_build_point_lists ) {
 				change_build_point_lists = true;
-				if( switch_to_different_build_points_required ) use_different_build_points_for_each_geometric_constraint( n_geometric_constraints );
+				if ( switch_to_different_build_points_required ) use_different_build_points_for_each_geometric_constraint( n_geometric_constraints );
 			}
 
 			Size upstream_seqpos(  pose_pdbinfo->pdb2pose(resB_chain.c_str()[0],resB_num) );
@@ -1085,14 +1083,14 @@ MatcherTask::set_active_site_residue_list_to_preexisting_partial_match()
 			cst_ids_already_present.insert( cst_block );
 		}
 	}
-	if( change_build_point_lists){
+	if ( change_build_point_lists ) {
 		//it is likely that the downstream object is part of the upstream_pose_
 		//in this case, bc the starting structure already contained a partial match.
 		remove_downstream_object_from_upstream_pose();
 
-		if( switch_to_different_build_points_required ){
-			for( Size i = 1; i <= n_geometric_constraints; ++i){
-				if( cst_ids_already_present.find( i ) == cst_ids_already_present.end() ){
+		if ( switch_to_different_build_points_required ) {
+			for ( Size i = 1; i <= n_geometric_constraints; ++i ) {
+				if ( cst_ids_already_present.find( i ) == cst_ids_already_present.end() ) {
 					set_original_scaffold_build_points_for_geometric_constraint( i, generic_pose_build_resids_copy );
 				}
 			}
@@ -1104,20 +1102,20 @@ void
 MatcherTask::remove_downstream_object_from_upstream_pose()
 {
 	//right now this function only works for ligand downstream objects
-	if( (downstream_pose_->total_residue() != 1 ) ) utility_exit_with_message("Can't remove a downstream pose containing more than one residue from the upstream pose.");
+	if ( (downstream_pose_->total_residue() != 1 ) ) utility_exit_with_message("Can't remove a downstream pose containing more than one residue from the upstream pose.");
 
 	utility::vector1< Size > seqpos_to_remove;
-	for( core::Size i = 1; i<= upstream_pose_->conformation().num_chains(); ++i ){
+	for ( core::Size i = 1; i<= upstream_pose_->conformation().num_chains(); ++i ) {
 		core::Size chain_begin( upstream_pose_->conformation().chain_begin( i ) );
-		if( (upstream_pose_->conformation().chain_end( i ) - chain_begin == 0 ) &&
-			downstream_pose_->residue_type(1).name3() == upstream_pose_->residue_type( chain_begin ).name3() ){
+		if ( (upstream_pose_->conformation().chain_end( i ) - chain_begin == 0 ) &&
+				downstream_pose_->residue_type(1).name3() == upstream_pose_->residue_type( chain_begin ).name3() ) {
 			seqpos_to_remove.push_back( chain_begin );
 		}
 	}
-	if( seqpos_to_remove.size() == 0 ) return;
+	if ( seqpos_to_remove.size() == 0 ) return;
 
 	core::pose::PoseOP mod_up_pose( new core::pose::Pose( *upstream_pose_ ) );
-	for( core::Size i = seqpos_to_remove.size(); i >= 1; --i){
+	for ( core::Size i = seqpos_to_remove.size(); i >= 1; --i ) {
 		TR << "Removing seqpos " << seqpos_to_remove[i] << " from upstream_pose_ because it is part of the downstream object." << std::endl;
 		mod_up_pose->conformation().delete_residue_slow( seqpos_to_remove[i] );
 	}
@@ -1157,10 +1155,10 @@ MatcherTask::determine_all_match_relevant_downstream_atoms()
 	relevant_downstream_atoms_.clear();
 	std::set< core::id::AtomID > seen_atoms;
 
-	for( core::Size i = 1; i <= enz_input_data_->num_mcfi_lists(); ++i ){
+	for ( core::Size i = 1; i <= enz_input_data_->num_mcfi_lists(); ++i ) {
 
 		std::map< std::string, utility::vector1< std::string > > const &
-					alg_info(  enz_input_data_->mcfi_list( i )->mcfi( 1 )->algorithm_inputs() );
+			alg_info(  enz_input_data_->mcfi_list( i )->mcfi( 1 )->algorithm_inputs() );
 		if ( alg_info.find( "match" ) != alg_info.end() ) {
 			//make sure this is not upstream matching
 			bool upstream_matching( false);
@@ -1170,9 +1168,9 @@ MatcherTask::determine_all_match_relevant_downstream_atoms()
 				std::istringstream llstream( llstr );
 				std::string first, second;
 				llstream >> first;
-				if( first == "SECONDARY_MATCH:" ) {
+				if ( first == "SECONDARY_MATCH:" ) {
 					llstream >> second;
-					if ( second == "UPSTREAM_CST" ){
+					if ( second == "UPSTREAM_CST" ) {
 						core::Size target_id(0);
 						llstream >> target_id;
 						upstream_matching = true;
@@ -1181,23 +1179,23 @@ MatcherTask::determine_all_match_relevant_downstream_atoms()
 					}
 				}
 			}
-			if( upstream_matching ) continue;
+			if ( upstream_matching ) continue;
 		}
 		//upstream matching check over
 
-		for( core::Size j = 1; j <= enz_input_data_->mcfi_list( i )->num_mcfis(); ++j){
+		for ( core::Size j = 1; j <= enz_input_data_->mcfi_list( i )->num_mcfis(); ++j ) {
 			protocols::toolbox::match_enzdes_util::MatchConstraintFileInfoCOP cur_mcfi( enz_input_data_->mcfi_list( i )->mcfi( j ) );
 			core::Size ds_matchres( cur_mcfi->downstream_res() );
-			if( cur_mcfi->allowed_restypes( ds_matchres ).size() == 0 ) {
-					utility_exit_with_message("No allowed residue types seen for downstream residue for constraint " + utility::to_string( i ) + " block " + utility::to_string( j ) );
+			if ( cur_mcfi->allowed_restypes( ds_matchres ).size() == 0 ) {
+				utility_exit_with_message("No allowed residue types seen for downstream residue for constraint " + utility::to_string( i ) + " block " + utility::to_string( j ) );
 			}
 			core::chemical::ResidueTypeCOP ds_restype( cur_mcfi->allowed_restypes( ds_matchres )[1] );
 
-			for( core::Size k = 1; k <= 3; ++k){
+			for ( core::Size k = 1; k <= 3; ++k ) {
 
-				for( core::Size l = 1; l <= cur_mcfi->template_atom_inds( ds_matchres, k, *ds_restype ).size(); ++l ){
+				for ( core::Size l = 1; l <= cur_mcfi->template_atom_inds( ds_matchres, k, *ds_restype ).size(); ++l ) {
 					core::id::AtomID this_at( cur_mcfi->template_atom_inds( ds_matchres, k, *ds_restype )[l], 1 );
-					if( seen_atoms.find( this_at ) == seen_atoms.end() ){
+					if ( seen_atoms.find( this_at ) == seen_atoms.end() ) {
 						seen_atoms.insert( this_at );
 						relevant_downstream_atoms_.push_back( this_at );
 						//std::cerr << " atom " << cur_mcfi->template_atom_inds( ds_matchres, k, *ds_restype )[l] << " is relevant for matcher" << std::endl;
@@ -1463,27 +1461,26 @@ MatcherTask::initialize_output_options_from_command_line()
 	// Check if score output option is enabled
 	if ( option[ OptionKeys::out::file::scorefile ].user() ) {
 		std::string scorefile_path = option[ OptionKeys::out::file::scorefile ];
-		if (scorefile_path == "") {
+		if ( scorefile_path == "" ) {
 			output_scores_ = true;
-		}
-		else {
+		} else {
 			score_output_file_name( option[ OptionKeys::out::file::scorefile ] );
 		}
 	}
 
 	utility::vector1< int > tempvec = option[ OptionKeys::match::geom_csts_downstream_output ];
-	if( tempvec.size() == 0 ) utility_exit_with_message("Bad user input: empty vector specified for option -match::geom_csts_downstream_output.");
+	if ( tempvec.size() == 0 ) utility_exit_with_message("Bad user input: empty vector specified for option -match::geom_csts_downstream_output.");
 	geom_csts_downstream_output_.clear();
 
 	core::Size num_geom_csts( enz_input_data_->num_mcfi_lists() );
 
-	for( core::Size i = 1; i <= tempvec.size(); ++i ){
+	for ( core::Size i = 1; i <= tempvec.size(); ++i ) {
 
-		if( tempvec[ i ]  < 1 ){
+		if ( tempvec[ i ]  < 1 ) {
 			utility_exit_with_message("Retarded user input. Output for geom cst with id smaller than 1 requested.");
 		}
 
-		if( (Size) tempvec[ i ] > num_geom_csts ){
+		if ( (Size) tempvec[ i ] > num_geom_csts ) {
 			utility_exit_with_message("Bad user input. Output for geom cst with id higher than the number of total geomcsts requested.");
 		}
 
@@ -1491,7 +1488,7 @@ MatcherTask::initialize_output_options_from_command_line()
 	}
 
 	if ( option[ OptionKeys::match::define_match_by_single_downstream_positioning ] ) {
-		if( geom_csts_downstream_output_.size() != 1 ) utility_exit_with_message("Bad user input: values specified for options -match::define_match_by_single_downstream_positioning and -match::geom_csts_downstream_output are incompatible.");
+		if ( geom_csts_downstream_output_.size() != 1 ) utility_exit_with_message("Bad user input: values specified for options -match::define_match_by_single_downstream_positioning and -match::geom_csts_downstream_output are incompatible.");
 		if ( ! option[ OptionKeys::match::consolidate_matches ] ) {
 			define_match_by_single_downstream_positioning_ = true;
 		} else {

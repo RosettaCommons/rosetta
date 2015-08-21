@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/modeler/packer/SideChainCopier.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -22,11 +22,11 @@ namespace protocols {
 namespace stepwise {
 namespace modeler {
 namespace packer {
-	
-	class SideChainCopier;
-	typedef utility::pointer::shared_ptr< SideChainCopier > SideChainCopierOP;
-	typedef utility::pointer::shared_ptr< SideChainCopier const > SideChainCopierCOP;
-	
+
+class SideChainCopier;
+typedef utility::pointer::shared_ptr< SideChainCopier > SideChainCopierOP;
+typedef utility::pointer::shared_ptr< SideChainCopier const > SideChainCopierCOP;
+
 } //packer
 } //modeler
 } //stepwise

@@ -82,28 +82,28 @@ operator<< ( ostream & out, const Polynomial_1d & poly ){
 void
 Polynomial_1d::show( ostream & out ) const{
 	out << name() << " "
-	<< "geometric dimension:" << HBondTypeManager::name_from_geo_dim_type(geometric_dimension()) << " "
-	<< "domain:(" << xmin() << "," << xmax() << ") "
-	<< "out_of_range_vals:(" << min_val() << "," << max_val() << ") "
-	<< "roots:[" << root1() << "," << root2() << "] "
-	<< "degree:" << degree() << " "
-	<< "y=";
-	for(Size i=1; i <= degree(); ++i){
-		if (i >1){
-			if (coefficients()[i] > 0 ){
+		<< "geometric dimension:" << HBondTypeManager::name_from_geo_dim_type(geometric_dimension()) << " "
+		<< "domain:(" << xmin() << "," << xmax() << ") "
+		<< "out_of_range_vals:(" << min_val() << "," << max_val() << ") "
+		<< "roots:[" << root1() << "," << root2() << "] "
+		<< "degree:" << degree() << " "
+		<< "y=";
+	for ( Size i=1; i <= degree(); ++i ) {
+		if ( i >1 ) {
+			if ( coefficients()[i] > 0 ) {
 				out << "+";
-			} else if (coefficients()[i] < 0 ){
+			} else if ( coefficients()[i] < 0 ) {
 				out << "-";
-			} else{
+			} else {
 				continue;
 			}
 		}
 		out << std::abs(coefficients()[i]);
-		if (degree()-i >1){
+		if ( degree()-i >1 ) {
 			out << "x^" << degree()-i;
-		} else if (degree()-i == 1){
+		} else if ( degree()-i == 1 ) {
 			out << "x";
-		} else {}
+		} else { }
 	}
 }
 
@@ -117,18 +117,18 @@ Polynomial_1d::show_values( ) const{
 	out << name();
 
 	switch(geometric_dimension_){
-	case(hbgd_NONE):
+	case(hbgd_NONE) :
 		out << " NONE ";
 		break;
-	case(hbgd_AHdist):
+	case(hbgd_AHdist) :
 		out << " AHdist ";
-		for ( Size i=120; i<= 300; i+=2 ){
+		for ( Size i=120; i<= 300; i+=2 ) {
 			Real const AHdist( 0.01 * i );
 			operator()(AHdist, energy, deriv);
 			out << F(9, 3, energy) << " ";
 		}
 		break;
-	case(hbgd_cosBAH):
+	case(hbgd_cosBAH) :
 		out << " cosBAH ";
 		for ( Size i=60; i<= 180; i+=2 ) {
 			Real const xH( cos( radians( 180.0 - i ) ) );
@@ -136,7 +136,7 @@ Polynomial_1d::show_values( ) const{
 			out << F(9, 3, energy) << " ";
 		}
 		break;
-	case(hbgd_cosAHD):
+	case(hbgd_cosAHD) :
 		//out << " cosAHD ";
 		for ( Size i=60; i<= 180; i+=2 ) {
 			Real const xD( cos( radians( 180.0 - i ) ) );
@@ -144,15 +144,15 @@ Polynomial_1d::show_values( ) const{
 			out << F(9, 3, energy) << " ";
 		}
 		break;
-	case(hbgd_AHD):
+	case(hbgd_AHD) :
 		//out << " AHD ";
 		// I am not sure how this should be implemented; I added this case block to remove compiler warning:
 		// "enum value hbgd_AHD not handled in switch statement"
 		// ~Labonte
 		break;
-	case(hbgd_chi):
+	case(hbgd_chi) :
 		// just a guess, needs checking !
-		for ( Size i=0; i<=360; i+=6) {
+		for ( Size i=0; i<=360; i+=6 ) {
 			Real const chi( cos( radians( 180.0 - i ) ) );
 			operator()(chi, energy, deriv);
 			out << F(9, 3, energy) << " ";

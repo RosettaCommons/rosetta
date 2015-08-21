@@ -353,7 +353,7 @@ protected: // access
 	inline
 	DataOPs &
 	data() {
-		 return data_;
+		return data_;
 	}
 
 

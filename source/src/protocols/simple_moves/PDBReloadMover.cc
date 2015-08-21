@@ -80,7 +80,7 @@ PDBReloadMover::fresh_instance() const
 
 void
 PDBReloadMover::apply( Pose & pose ) {
-	std::ostringstream ss;	
+	std::ostringstream ss;
 	pose.dump_pdb(ss);
 	core::import_pose::pose_from_pdbstring(pose, ss.str());
 }
@@ -92,10 +92,10 @@ PDBReloadMover::get_name() const {
 
 void
 PDBReloadMover::parse_my_tag( utility::tag::TagCOP const /*tag*/,
-		basic::datacache::DataMap & /*data_map*/,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & )
+	basic::datacache::DataMap & /*data_map*/,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & )
 {
 }
 

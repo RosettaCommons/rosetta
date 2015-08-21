@@ -9,18 +9,18 @@
 
 /// @file       protocols/membrane/TiltMover.cc
 /// @brief      Tilts a protein in the membrane (Rosetta Scripts Hook)
-/// @details	Tilts a span, protein or part of a pose in the membrane,
-///				depending on the jump number. The tilt axis is the axis
-///				perpendicular to the axis connecting the embedding centers of the
-///				two partners;
-///				BEWARE: CANNOT USE MEMBRANE JUMP AS JUMP NUMBER!!!
+/// @details Tilts a span, protein or part of a pose in the membrane,
+///    depending on the jump number. The tilt axis is the axis
+///    perpendicular to the axis connecting the embedding centers of the
+///    two partners;
+///    BEWARE: CANNOT USE MEMBRANE JUMP AS JUMP NUMBER!!!
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_TiltMover_cc
 #define INCLUDED_protocols_membrane_TiltMover_cc
 
 // Unit Headers
-#include <protocols/membrane/TiltMover.hh> 
+#include <protocols/membrane/TiltMover.hh>
 #include <protocols/membrane/TiltMoverCreator.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -63,14 +63,14 @@ using namespace core;
 using namespace core::pose;
 using namespace core::conformation::membrane;
 using namespace protocols::moves;
-	
+
 /////////////////////
 /// Constructors  ///
 /////////////////////
 
 /// @brief Default Constructor
 /// @details Defaults: jump = 1, angle = random, axis =
-///	axis perpendicular to axis connecting protein embedding centers
+/// axis perpendicular to axis connecting protein embedding centers
 TiltMover::TiltMover() : protocols::moves::Mover()
 {
 	set_defaults();
@@ -83,7 +83,7 @@ TiltMover::TiltMover( Size jump_num )
 {
 	set_defaults();
 	register_options();
-	
+
 	jump_num_ = jump_num;
 }
 
@@ -93,12 +93,12 @@ TiltMover::TiltMover( Size jump_num, Real angle )
 {
 	set_defaults();
 	register_options();
-	
+
 	jump_num_ = jump_num;
 	angle_ = angle;
 	random_angle_ = false;
 }
-	
+
 /// @brief Copy Constructor
 /// @details Create a deep copy of this mover
 TiltMover::TiltMover( TiltMover const & src ) : protocols::moves::Mover( src ),
@@ -109,12 +109,12 @@ TiltMover::TiltMover( TiltMover const & src ) : protocols::moves::Mover( src ),
 
 /// @brief Assignment Operator
 TiltMover & TiltMover::operator = ( TiltMover const & src ) {
-	
+
 	// Abort self-assignment.
-	if (this == &src) {
+	if ( this == &src ) {
 		return *this;
 	}
-		
+
 	// Otherwise, create a new object
 	return *( new TiltMover( *this ) );
 }
@@ -141,15 +141,15 @@ TiltMover::fresh_instance() const {
 /// @brief Pase Rosetta Scripts Options for this Mover
 void
 TiltMover::parse_my_tag(
-	 utility::tag::TagCOP /*tag*/,
-	 basic::datacache::DataMap &,
-	 protocols::filters::Filters_map const &,
-	 protocols::moves::Movers_map const &,
-	 core::pose::Pose const &
-	 ) {
+	utility::tag::TagCOP /*tag*/,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
+) {
 
 	// TODO: implement this
-	
+
 }
 
 /// @brief Create a new copy of this mover
@@ -183,20 +183,20 @@ TiltMover::get_name() const {
 
 /// @brief Flip the downstream partner in the membrane
 void TiltMover::apply( Pose & pose ) {
-	
+
 	using namespace numeric;
 	using namespace core::conformation::membrane;
 	using namespace protocols::rigid;
 	using namespace protocols::membrane::geometry;
 	using namespace protocols::membrane;
-	
+
 	TR << "Tilting along a jump in the membrane..." << std::endl;
 
 	// starting foldtree
 	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
 	pose.fold_tree().show( TR );
 	core::kinematics::FoldTree orig_ft = pose.fold_tree();
-	
+
 	// if random angle, set it to random
 	if ( random_angle_ == true ) {
 		angle_ = numeric::random::random_range( -45, 45 );
@@ -204,19 +204,19 @@ void TiltMover::apply( Pose & pose ) {
 	}
 
 	TR << "angle is " << angle_ << std::endl;
-	
+
 	// compute downstream empedding
 	SpanningTopologyOP topo = pose.conformation().membrane_info()->spanning_topology();
 	SpanningTopologyOP topo_up_( new SpanningTopology() );
 	SpanningTopologyOP topo_down_( new SpanningTopology() );
-	
+
 	// split_topology_by_jump_noshift
 	split_topology_by_jump_noshift( pose, jump_num_, topo, topo_up_, topo_down_ );
-	
+
 	// compute embedding for partners (compute structure-based embedding with split topologies)
 	EmbeddingDefOP emb_up( compute_structure_based_embedding( pose, *topo_up_ ) );
 	EmbeddingDefOP emb_down( compute_structure_based_embedding( pose, *topo_down_ ) );
-	
+
 	// compute tilt axis
 	core::Vector emb_cnt_vector = emb_down->center() - emb_up->center();
 	core::Vector mem_normal = pose.conformation().membrane_info()->membrane_normal();
@@ -224,9 +224,9 @@ void TiltMover::apply( Pose & pose ) {
 
 	// tilt the downstream partner
 	RigidBodyDeterministicSpinMoverOP tilt( new RigidBodyDeterministicSpinMover(
-			jump_num_, tangent_axis, emb_down->center(), angle_ ) );
+		jump_num_, tangent_axis, emb_down->center(), angle_ ) );
 	tilt->apply( pose );
-	
+
 	// reset foldtree and show final one
 	pose.fold_tree( orig_ft );
 	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
@@ -245,19 +245,19 @@ void TiltMover::set_random_membrane_tilt_angle() {
 
 /// @brief Register Options from Command Line
 void TiltMover::register_options() {
-	
+
 	using namespace basic::options;
 	option.add_relevant( OptionKeys::mp::setup::spanfiles );
-	
+
 }
 
 /// @brief Set default values
 void TiltMover::set_defaults() {
-	
+
 	jump_num_ = 1;
 	angle_ = 10;
 	random_angle_ = true;
-	
+
 }// set_defaults
 
 

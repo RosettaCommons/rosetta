@@ -91,7 +91,7 @@ public:
 		rotsets->compute_energies( *trpcage, *sfxn, packer_neighbor_graph, faster_ig );
 
 		/*for ( Size ii = 1; ii <= rotsets->nmoltenres(); ++ii ) {
-			std::cout << "Rotset " << ii << " with " << rotsets->rotamer_set_for_moltenresidue(ii)->num_rotamers() << " rotamers" << std::endl;
+		std::cout << "Rotset " << ii << " with " << rotsets->rotamer_set_for_moltenresidue(ii)->num_rotamers() << " rotamers" << std::endl;
 		}*/
 
 		//std::cout.precision( 8 );
@@ -105,7 +105,7 @@ public:
 		faster_ig->get_current_network_state( netstate );
 		/*std::cout << "BMEC state:";
 		for ( Size ii = 1; ii <= 3; ++ii ) {
-			std::cout << " " << netstate( ii );
+		std::cout << " " << netstate( ii );
 		}
 		std::cout << std::endl;
 		std::cout << faster_ig->get_energy_current_state_assignment() << std::endl;*/
@@ -115,7 +115,7 @@ public:
 		TS_ASSERT( netstate( 3 ) ==  4 );
 
 		//for ( core::Size ii = 1; ii <= 3; ++ii ) {
-		//	trpcage->replace_residue( ii + 10, *rotsets->rotamer_set_for_moltenresidue( ii )->rotamer( netstate(ii) ), false );
+		// trpcage->replace_residue( ii + 10, *rotsets->rotamer_set_for_moltenresidue( ii )->rotamer( netstate(ii) ), false );
 		//}
 		//std::cout << "score for bmec" << (*sfxn)( *trpcage );
 
@@ -127,7 +127,7 @@ public:
 
 		/*std::cout << "BMEC relaxed relaxed state:";
 		for ( Size ii = 1; ii <= 3; ++ii ) {
-			std::cout << " " << netstate( ii );
+		std::cout << " " << netstate( ii );
 		}
 		std::cout << std::endl;
 		std::cout << faster_ig->get_energy_current_state_assignment() << std::endl;*/
@@ -144,7 +144,7 @@ public:
 
 		/*std::cout << "sPBR (2,6) relaxed state:";
 		for ( Size ii = 1; ii <= 3; ++ii ) {
-			std::cout << " " << netstate( ii );
+		std::cout << " " << netstate( ii );
 		}
 		std::cout << std::endl;
 		std::cout << faster_ig->get_energy_current_state_assignment() << std::endl;*/
@@ -164,7 +164,7 @@ public:
 
 		/*std::cout << "sPBR (3,5) relaxed state:";
 		for ( Size ii = 1; ii <= 3; ++ii ) {
-			std::cout << " " << netstate( ii );
+		std::cout << " " << netstate( ii );
 		}
 		std::cout << std::endl;
 		std::cout << faster_ig->get_energy_current_state_assignment() << std::endl;*/
@@ -175,7 +175,7 @@ public:
 
 		/*std::cout << "sPBR (2,35) relaxed state:";
 		for ( Size ii = 1; ii <= 3; ++ii ) {
-			std::cout << " " << netstate( ii );
+		std::cout << " " << netstate( ii );
 		}
 		std::cout << std::endl;
 		std::cout << faster_ig->get_energy_current_state_assignment() << std::endl;*/
@@ -196,7 +196,7 @@ public:
 
 		/*std::cout << "sPBR (3,20) relaxed state:";
 		for ( Size ii = 1; ii <= 3; ++ii ) {
-			std::cout << " " << netstate( ii );
+		std::cout << " " << netstate( ii );
 		}
 		std::cout << std::endl;
 		std::cout << faster_ig->get_energy_current_state_assignment() << std::endl;*/

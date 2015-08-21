@@ -70,22 +70,22 @@ public:
 	virtual
 	bool
 	evaluate_residues(
-	core::conformation::Residue const & match_res,
-	core::conformation::Residue const & target_res
+		core::conformation::Residue const & match_res,
+		core::conformation::Residue const & target_res
 	) const;
 
 	virtual
 	bool
 	eval_cd_2b_residues(
-	core::conformation::Residue const & match_res,
-	core::conformation::Residue const & target_res
+		core::conformation::Residue const & match_res,
+		core::conformation::Residue const & target_res
 	) const;
 
 	virtual
 	bool
 	eval_longRange_2b_residue(
-  core::conformation::Residue const & match_res,
-  core::conformation::Residue const & target_res
+		core::conformation::Residue const & match_res,
+		core::conformation::Residue const & target_res
 	) const;
 
 	virtual
@@ -99,8 +99,8 @@ public:
 	virtual
 	bool
 	check2bsc(
-	core::scoring::ScoreType sType,
-	core::Real wts
+		core::scoring::ScoreType sType,
+		core::Real wts
 	);
 
 
@@ -109,12 +109,12 @@ private:
 	utility::vector1< core::scoring::ScoreType > secmatch_scotypes_cutoff_;
 	utility::vector1< core::Real > secmatch_value_cutoff_;
 
-  core::Real total_score_cutoff_;
+	core::Real total_score_cutoff_;
 	bool cutoff_flag_;
 	bool cutoff_scoreType_flag_;
 
-  core::pose::PoseOP ref_pose_;
-  core::scoring::ScoreFunctionOP sfxn_;
+	core::pose::PoseOP ref_pose_;
+	core::scoring::ScoreFunctionOP sfxn_;
 
 	bool shortRange_;
 	bool longRange_;

@@ -31,7 +31,7 @@ namespace rotamer_set {
 
 FlexbbRotamerSet::FlexbbRotamerSet() :
 	parent(),
-	existing_residue_( /* 0 */ ), 
+	existing_residue_( /* 0 */ ),
 	owner_( /* 0 */ )
 {}
 
@@ -114,15 +114,15 @@ FlexbbRotamerSet::bump_check(
 
 		utility::vector1< Residue const * > check_residues;
 
-		if( bbconfs_this_neighbor == 1 ) check_residues.push_back( & pose.residue( neighbor_id ) );
+		if ( bbconfs_this_neighbor == 1 ) check_residues.push_back( & pose.residue( neighbor_id ) );
 
-		else{
-			for( core::Size bbconf = 1; bbconf <= bbconfs_this_neighbor ; ++bbconf) {
+		else {
+			for ( core::Size bbconf = 1; bbconf <= bbconfs_this_neighbor ; ++bbconf ) {
 				check_residues.push_back( & owner->backbone_for_resid_bbconf( neighbor_id, bbconf ) );
 			}
 		}
 
-		for( core::Size check_res = 1; check_res <= check_residues.size();  ++check_res) {
+		for ( core::Size check_res = 1; check_res <= check_residues.size();  ++check_res ) {
 
 			EnergyMap emap;
 
@@ -133,7 +133,7 @@ FlexbbRotamerSet::bump_check(
 			}
 			core::Real cur_bumpE = sf.weights().dot( emap );
 
-			if( check_res == 1 || cur_bumpE < smallest_neighbor_bumpE ) smallest_neighbor_bumpE = cur_bumpE;
+			if ( check_res == 1 || cur_bumpE < smallest_neighbor_bumpE ) smallest_neighbor_bumpE = cur_bumpE;
 
 		} //iterator over flexible states of this neighbor
 

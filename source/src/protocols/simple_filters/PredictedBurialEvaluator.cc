@@ -31,7 +31,7 @@ PredictedBurialEvaluator::PredictedBurialEvaluator(
 	std::string const & fn
 )  : evaluation::SingleValuePoseEvaluator< core::Real >( "burial" )
 {
-	 init_from_file(fn);
+	init_from_file(fn);
 }
 
 PredictedBurialEvaluator::~PredictedBurialEvaluator() {}
@@ -77,7 +77,7 @@ void PredictedBurialEvaluator::init_from_file(
 			std::istringstream line_input(line);
 			std::string token;
 			line_input >> token;
-			while( !line_input.fail() ) line_input >> token;
+			while ( !line_input.fail() ) line_input >> token;
 
 			float pred = ObjexxFCL::float_of( token.substr(2,4) );
 			if ( token.substr(1,1) == "1" ) pred *= -1;

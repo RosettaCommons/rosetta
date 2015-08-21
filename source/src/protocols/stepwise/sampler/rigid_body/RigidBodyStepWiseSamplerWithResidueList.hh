@@ -29,58 +29,58 @@ namespace stepwise {
 namespace sampler {
 namespace rigid_body {
 
-	class RigidBodyStepWiseSamplerWithResidueList: public StepWiseSamplerComb {
+class RigidBodyStepWiseSamplerWithResidueList: public StepWiseSamplerComb {
 
-	public:
+public:
 
-		//constructor
-RigidBodyStepWiseSamplerWithResidueList( copy_dofs::ResidueListStepWiseSamplerOP copy_dofs_rotamer,
-																		 RigidBodyStepWiseSamplerOP rigid_body_rotamer );
+	//constructor
+	RigidBodyStepWiseSamplerWithResidueList( copy_dofs::ResidueListStepWiseSamplerOP copy_dofs_rotamer,
+		RigidBodyStepWiseSamplerOP rigid_body_rotamer );
 
-		//destructor
-		~RigidBodyStepWiseSamplerWithResidueList();
+	//destructor
+	~RigidBodyStepWiseSamplerWithResidueList();
 
-	public:
+public:
 
-		/// @brief Apply the current rotamer to pose
-		virtual void apply( core::pose::Pose & pose );
+	/// @brief Apply the current rotamer to pose
+	virtual void apply( core::pose::Pose & pose );
 
-		void
-		fast_forward();
+	void
+	fast_forward();
 
-		void
-		fast_forward_to_next_rigid_body();
+	void
+	fast_forward_to_next_rigid_body();
 
-		void
-		fast_forward_to_next_translation();
+	void
+	fast_forward_to_next_translation();
 
-		void
-		fast_forward_to_next_euler_gamma();
+	void
+	fast_forward_to_next_euler_gamma();
 
-		ValueList const & get_rigid_body_values();
+	ValueList const & get_rigid_body_values();
 
-		// from rigid body rotamer
-		core::kinematics::Stub get_stub();
+	// from rigid body rotamer
+	core::kinematics::Stub get_stub();
 
-		// from residue list rotamer
-		core::conformation::ResidueOP get_residue_at_origin();
+	// from residue list rotamer
+	core::conformation::ResidueOP get_residue_at_origin();
 
-copy_dofs::ResidueListStepWiseSamplerOP copy_dofs_rotamer();
-		RigidBodyStepWiseSamplerOP rigid_body_rotamer();
+	copy_dofs::ResidueListStepWiseSamplerOP copy_dofs_rotamer();
+	RigidBodyStepWiseSamplerOP rigid_body_rotamer();
 
 
-		/// @brief Name of the class
-		virtual std::string get_name() const { return "RigidBodyStepWiseSamplerWithResidueList"; }
+	/// @brief Name of the class
+	virtual std::string get_name() const { return "RigidBodyStepWiseSamplerWithResidueList"; }
 
-		/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-		virtual StepWiseSamplerType type() const { return RIGID_BODY_WITH_RESIDUE_LIST; }
+	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
+	virtual StepWiseSamplerType type() const { return RIGID_BODY_WITH_RESIDUE_LIST; }
 
-	private:
+private:
 
-copy_dofs::ResidueListStepWiseSamplerOP copy_dofs_rotamer_;
-		RigidBodyStepWiseSamplerOP rigid_body_rotamer_;
+	copy_dofs::ResidueListStepWiseSamplerOP copy_dofs_rotamer_;
+	RigidBodyStepWiseSamplerOP rigid_body_rotamer_;
 
-	};
+};
 
 } //rigid_body
 } //sampler

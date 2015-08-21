@@ -46,11 +46,11 @@ public:
 	void set_poses( utility::vector1< core::pose::PoseOP > const & poses );
 
 	/// @brief Sets current pose in case you want to act on only one of the present poses
-//	void set_current_pose( core::Size current );
+	// void set_current_pose( core::Size current );
 
 protected:
 	utility::vector1< core::pose::PoseOP > poses_;
-//	core::Size current_pose_;
+	// core::Size current_pose_;
 };
 
 }  // namespace moves

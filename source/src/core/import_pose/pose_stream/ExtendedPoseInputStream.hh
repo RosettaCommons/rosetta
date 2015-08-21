@@ -35,7 +35,7 @@ class ExtendedPoseInputStream : public PoseInputStream {
 
 public:
 	ExtendedPoseInputStream( std::string sequence, Size ntimes )
-		: seq_( sequence ), ntimes_( ntimes ), current_n_( 1 ) {}
+	: seq_( sequence ), ntimes_( ntimes ), current_n_( 1 ) {}
 	~ExtendedPoseInputStream() {}
 
 	virtual bool has_another_pose();
@@ -46,7 +46,7 @@ public:
 		core::pose::Pose & pose,
 		core::chemical::ResidueTypeSet const & residue_set
 	);
-	virtual void fill_pose(	core::pose::Pose&	);
+	virtual void fill_pose( core::pose::Pose& );
 
 private:
 	std::string seq_;

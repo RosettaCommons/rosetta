@@ -107,7 +107,7 @@ void DecoyStruct::fill_pose(
 		pose.set_psi   ( seqpos, psi_   [seqpos] );
 		pose.set_omega ( seqpos, omega_ [seqpos] );
 		if ( fullatom_ ) {
-			for ( Size j = 1; j <= pose.residue(seqpos).nchi(); ++j ){
+			for ( Size j = 1; j <= pose.residue(seqpos).nchi(); ++j ) {
 				pose.set_chi( j, seqpos, chi_[seqpos][j] );
 			}
 		}
@@ -122,13 +122,13 @@ void DecoyStruct::print_conformation( std::ostream& output ) const {
 
 	for ( Size i = 1; i <= nres_; ++i ) {
 		output << I( 4, i ) << ' '
-				<< secstruct_[i] << ' '
-				<< F( 9, 3, phi_[i] )
-				<< F( 9, 3, psi_[i] )
-				<< F( 9, 3, omega_[i] )
-				<< F( 9, 3, coords_[i].x() )
-				<< F( 9, 3, coords_[i].y() )
-				<< F( 9, 3, coords_[i].z() );
+			<< secstruct_[i] << ' '
+			<< F( 9, 3, phi_[i] )
+			<< F( 9, 3, psi_[i] )
+			<< F( 9, 3, omega_[i] )
+			<< F( 9, 3, coords_[i].x() )
+			<< F( 9, 3, coords_[i].y() )
+			<< F( 9, 3, coords_[i].z() );
 		if ( fullatom_ ) {
 			for ( unsigned int chino = 1; chino <= 4; ++chino ) {
 				Real chi_to_print = 0.0f;

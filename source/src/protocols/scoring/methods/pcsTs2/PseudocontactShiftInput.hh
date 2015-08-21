@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/PseudocontactShiftInput.hh
- ///
- /// @brief Read input .npc input file
- ///
- /// @details The following classes are responsable to read / parse the PCS input file (.npc format)
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890
- ///
- /// @authorv Christophe Schmitz , Kala Bharath Pilla
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/PseudocontactShiftInput.hh
+///
+/// @brief Read input .npc input file
+///
+/// @details The following classes are responsable to read / parse the PCS input file (.npc format)
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890
+///
+/// @authorv Christophe Schmitz , Kala Bharath Pilla
+///
+////////////////////////////////////////////////
 
 
 #ifndef INCLUDED_protocols_scoring_methods_pcsTs2_PseudocontactShiftInput_hh
@@ -50,10 +50,10 @@
 #include <utility/vector1_bool.hh>
 
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcsTs2{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcsTs2 {
 
 ///////////////////////////////////////////////////////////////////////////
 /// @brief PCS_line_data_Ts2 class: hold a line of the input file information (.npc format)
@@ -73,17 +73,17 @@ public:
 	operator=( PCS_line_data_Ts2 const & other );
 
 	PCS_line_data_Ts2(
-								core::Size const residue_num,
-								std::string const atom_name,
-								core::Real const PCS_experimental,
-								core::Real const PCS_tolerance
-								);
+		core::Size const residue_num,
+		std::string const atom_name,
+		core::Real const PCS_experimental,
+		core::Real const PCS_tolerance
+	);
 
- 	core::Size
+	core::Size
 	residue_num() const;
 
 	std::string
-  atom_name() const;
+	atom_name() const;
 
 	core::Real
 	PCS_experimental() const;

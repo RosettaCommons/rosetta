@@ -42,7 +42,7 @@ bool load_RotData( std::istream & in, protocols::make_rot_lib::RotVec & rotvec )
 			continue;
 		}
 		protocols::make_rot_lib::RotData rd(0,0);
-		if( rd.load( in ) ) { return true; }
+		if ( rd.load( in ) ) { return true; }
 		rotvec.push_back( rd );
 		TR.Debug << "Loaded " << rotvec.size() << " RotData objects." << std::endl;
 	}
@@ -93,12 +93,12 @@ public:
 		TS_ASSERT_EQUALS(ncluster, 9);
 		TS_ASSERT_EQUALS(aa_name, "NVL:MethylatedCtermProteinFull:AcetylatedNtermProteinFull");
 
-		for(core::Size ii(1); ii <= rotamers.size(); ++ii ) {
+		for ( core::Size ii(1); ii <= rotamers.size(); ++ii ) {
 			UT_rot << "# Rotamer " << ii << std::endl;
 			rotamers[ii].show(UT_rot);
 		}
 
-		for(core::Size jj(1); jj <= centroids.size(); ++jj ) {
+		for ( core::Size jj(1); jj <= centroids.size(); ++jj ) {
 			UT_cen << "# Centroid " << jj << std::endl;
 			centroids[jj].show(UT_cen);
 		}
@@ -134,7 +134,7 @@ public:
 
 		min_rotamers( rotamers, scrfxn, "NVL:MethylatedCtermProteinFull:AcetylatedNtermProteinFull" );
 
-		for(core::Size ii(1); ii <= rotamers.size(); ++ii ) {
+		for ( core::Size ii(1); ii <= rotamers.size(); ++ii ) {
 			UT << "# Min Rotamer " << ii << std::endl;
 			rotamers[ii].show(UT);
 		}
@@ -155,7 +155,7 @@ public:
 		for ( core::Size ii( 1 ); ii <= rotamers.size(); ++ii ) {
 			UT << "# All dist Rotamer " << ii << std::endl;
 			rotamers[ ii ].show( UT );
-        }
+		}
 	}
 
 	void test_calc_rotamer_clusters() {
@@ -169,10 +169,10 @@ public:
 
 		calc_rotamer_clusters( rotamers );
 
-		for(core::Size ii(1); ii <= rotamers.size(); ++ii ) {
+		for ( core::Size ii(1); ii <= rotamers.size(); ++ii ) {
 			UT << "# Calc Rotamer Clusters Rotamer " << ii << std::endl;
 			rotamers[ii].show(UT);
-    }
+		}
 	}
 
 
@@ -188,10 +188,10 @@ public:
 
 		calc_centroids( rotamers, centroids );
 
-		for(core::Size ii(1); ii <= centroids.size(); ++ii ) {
+		for ( core::Size ii(1); ii <= centroids.size(); ++ii ) {
 			UT << "# Calc centroids centroid " << ii << std::endl;
 			centroids[ii].show(UT);
-    }
+		}
 	}
 
 };//end class

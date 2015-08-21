@@ -59,7 +59,7 @@ std::map< std::string, utility::vector1< core::Size > > read_extra_residues(
 			utility_exit_with_message(msg);
 		}
 		std::string line;
-		while( getline(input,line) ) {
+		while ( getline(input,line) ) {
 			if ( line.substr(0,1) == "#" ) continue;
 			std::istringstream ss(line);
 			std::string aln_id;
@@ -94,7 +94,7 @@ ThreadingJobInputter::ThreadingJobInputter() :
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
- 	tr.Debug << "Instantiate ThreadingJobInputter" << std::endl;
+	tr.Debug << "Instantiate ThreadingJobInputter" << std::endl;
 
 	/// read alignments from command-line
 	utility::vector1< std::string > const & aln_fns( option[ in::file::alignment ]() );
@@ -288,7 +288,7 @@ void ThreadingJobInputter::fill_jobs( protocols::jd2::JobsContainer & jobs ) {
 				// create inner job
 				ThreadingJobOP ijob( new ThreadingJob(
 					*it, align_it->clone(), "S_" + alignment_id, nstruct
-				) );
+					) );
 				// find extra residues
 				ExtraResidues::const_iterator extra_res(extra_residues_.find(alignment_id));
 				if ( extra_res != extra_residues_.end() ) {
@@ -296,7 +296,7 @@ void ThreadingJobInputter::fill_jobs( protocols::jd2::JobsContainer & jobs ) {
 				}
 
 				// make nstruct outer jobs
-				for ( Size index = 1; index <= nstruct; ++index) {
+				for ( Size index = 1; index <= nstruct; ++index ) {
 					jobs.push_back( protocols::jd2::JobOP( new protocols::jd2::Job( ijob, index ) ) );
 					jobs.back()->add_string_string_pair( "aln_id", alignment_id );
 				} // loop over nstruct
@@ -315,12 +315,12 @@ protocols::jd2::JobInputterInputSource::Enum ThreadingJobInputter::input_source(
 }
 
 size_t ThreadingJobInputter::num_templates() const {
-    size_t num_templates = 0;
-    for (PoseMap::const_iterator i = template_poses_.begin();
-         i != template_poses_.end(); ++i) {
-      ++num_templates;
-    }
-    return num_templates;
+	size_t num_templates = 0;
+	for ( PoseMap::const_iterator i = template_poses_.begin();
+			i != template_poses_.end(); ++i ) {
+		++num_templates;
+	}
+	return num_templates;
 }
 
 //CREATOR SECTION

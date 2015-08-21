@@ -49,7 +49,7 @@ enum __ATTEN_ENUM__ {
 
 class ShapeComplementarityCalculatorException : public utility::excn::EXCN_Msg_Exception {
 
-	public:
+public:
 	std::string error;
 
 	ShapeComplementarityCalculatorException(const char *err, ...) :

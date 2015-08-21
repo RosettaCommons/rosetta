@@ -30,15 +30,15 @@ std::ostream & operator << (
 
 	os << mdhist.num_dimensions() << " " << mdhist.label() << std::endl;
 
-	for (numeric::Size i = 1; i <= mdhist.num_dimensions(); ++i) {
+	for ( numeric::Size i = 1; i <= mdhist.num_dimensions(); ++i ) {
 
 		os << mdhist.num_bins()[i] << " " << mdhist.start()[i] << " " << mdhist.end()[i] << " "
-		   << mdhist.dim_labels()[i] << std::endl;
+			<< mdhist.dim_labels()[i] << std::endl;
 	}
 
-	for (numeric::Size i = 0; i < mdhist.counts().size(); ++i) {
+	for ( numeric::Size i = 0; i < mdhist.counts().size(); ++i ) {
 
-		if (i) os << " ";
+		if ( i ) os << " ";
 		os << mdhist.counts()[i];
 	}
 	os << std::endl;

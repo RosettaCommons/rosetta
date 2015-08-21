@@ -73,11 +73,11 @@ public:
 		//test another way that it came out right: for all residues, for all chi, check equality
 		core::Size nres = pose.total_residue();
 		TS_ASSERT_EQUALS(nres, posecopy.total_residue());
-		for(core::Size res(1); res <= nres; ++res){
+		for ( core::Size res(1); res <= nres; ++res ) {
 			utility::vector1<core::Real> const & copychi(posecopy.residue(res).chi());
 			utility::vector1<core::Real> const & newchi(pose.residue(res).chi());
 			TS_ASSERT_EQUALS(copychi.size(), newchi.size());
-			for(core::Size chi(1); chi <= copychi.size(); ++chi){
+			for ( core::Size chi(1); chi <= copychi.size(); ++chi ) {
 				TS_ASSERT_DELTA(copychi.at(chi), newchi.at(chi), 0.0001);
 			}
 		}

@@ -84,9 +84,9 @@ RestrictIdentitiesAtAlignedPositionsOperation::apply( core::pose::Pose const & p
 	DesignAroundOperation dao;
 	dao.design_shell( 0.01 );
 	dao.repack_shell( 6.0 );
-	BOOST_FOREACH( core::Size const resid, res_ids_ ){
+	BOOST_FOREACH ( core::Size const resid, res_ids_ ) {
 		core::Size const nearest_to_res = find_nearest_res( pose, *source_pose_, resid, chain() );
-		if( nearest_to_res == 0 ){
+		if ( nearest_to_res == 0 ) {
 			TR<<"WARNING: could not find a residue near to "<<resid<<std::endl;
 			continue;
 		}//fi
@@ -99,12 +99,13 @@ RestrictIdentitiesAtAlignedPositionsOperation::apply( core::pose::Pose const & p
 		racaas1->aas_to_keep( residues_to_keep );
 		racaas2->aas_to_keep( keep_aas_ );
 		OperateOnCertainResidues oocr;
-		if( prevent_repacking() && source_pose_->residue( resid ).name1() == pose.residue( nearest_to_res ).name1() ) /// if the source and designed pose have the same residue identity we can additionally prevent repacking at this position
+		if ( prevent_repacking() && source_pose_->residue( resid ).name1() == pose.residue( nearest_to_res ).name1() ) { /// if the source and designed pose have the same residue identity we can additionally prevent repacking at this position
 			oocr.op( pr );
-		else if( restrict_identities() )
+		} else if ( restrict_identities() ) {
 			oocr.op( racaas2 );
-		else
+		} else {
 			oocr.op( racaas1 );
+		}
 		utility::vector1< core::Size > temp_vec;
 		temp_vec.clear();
 		temp_vec.push_back( nearest_to_res );
@@ -112,8 +113,9 @@ RestrictIdentitiesAtAlignedPositionsOperation::apply( core::pose::Pose const & p
 		oocr.apply( pose, task );
 		dao.include_residue( nearest_to_res );
 	}//foreach resid
-	if( design_only_target_residues() )
+	if ( design_only_target_residues() ) {
 		dao.apply( pose, task );
+	}
 }
 
 void
@@ -126,12 +128,12 @@ RestrictIdentitiesAtAlignedPositionsOperation::parse_tag( TagCOP tag , DataMap &
 {
 	using namespace protocols::rosetta_scripts;
 	utility::vector1< std::string > pdb_names, start_res, stop_res;
-  source_pose( tag->getOption< std::string >( "source_pdb" ) );
+	source_pose( tag->getOption< std::string >( "source_pdb" ) );
 	std::string const res_list( tag->getOption< std::string >( "resnums" ) );
 	utility::vector1< std::string > const split_reslist( utility::string_split( res_list,',' ) );
 	chain( tag->getOption< core::Size >( "chain", 1 ) );
 	TR<<"source_pdb: "<<tag->getOption< std::string >( "source_pdb" )<<" restricting residues: ";
-	BOOST_FOREACH( std::string const res_str, split_reslist ){
+	BOOST_FOREACH ( std::string const res_str, split_reslist ) {
 		res_ids_.push_back( core::pose::parse_resnum( res_str, *source_pose_ ) );
 		TR<<res_str<<",";
 	}

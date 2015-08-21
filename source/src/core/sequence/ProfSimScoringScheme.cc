@@ -69,10 +69,10 @@ void ProfSimScoringScheme::initialize_parameters() {
 	for ( map< char, Real >::const_iterator it = log_p_aa_.begin(),
 			end = log_p_aa_.end();
 			it != end; ++it
-	) {
-			core::chemical::AA aa
-				= core::chemical::aa_from_oneletter_code(it->first );
-			prior_probs_[ aa ] = std::exp( it->second );
+			) {
+		core::chemical::AA aa
+			= core::chemical::aa_from_oneletter_code(it->first );
+		prior_probs_[ aa ] = std::exp( it->second );
 	}
 }
 
@@ -118,9 +118,9 @@ Real ProfSimScoringScheme::score(
 
 	Real score = 0.5 * ( 1 - divergence_score ) * ( 1 + similarity_score );
 	//std::cout << "divergence = " << divergence_score
-	//	<< ", similarity = " << similarity_score
-	//	<< ", score = " << score
-	//	<< std::endl;
+	// << ", similarity = " << similarity_score
+	// << ", score = " << score
+	// << std::endl;
 	return score;
 } // score
 

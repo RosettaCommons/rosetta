@@ -52,13 +52,13 @@ RotamerAssigningAnnealer::RotamerAssigningAnnealer(
 	FArray1D< core::PackerEnergy > & rot_freq
 ) :
 	SimAnnealerBase(
-		num_rots_to_pack_in,
-		bestrotamer_at_seqpos,
-		bestenergy,
-		start_with_current,
-		current_rot_index,
-		calc_rot_freq,
-		rot_freq
+	num_rots_to_pack_in,
+	bestrotamer_at_seqpos,
+	bestenergy,
+	start_with_current,
+	current_rot_index,
+	calc_rot_freq,
+	rot_freq
 	),
 	rotamer_sets_( rotamer_sets ),
 	rot_to_pack_( num_rots_to_pack_in ),
@@ -66,7 +66,7 @@ RotamerAssigningAnnealer::RotamerAssigningAnnealer(
 	n_assigned_at_start_( 0 ),
 	assign_state_to_all_nodes_immediately_( false )
 {
-	for (unsigned int ii(1); ii <= rot_to_pack_.size(); ++ii) {
+	for ( unsigned int ii(1); ii <= rot_to_pack_.size(); ++ii ) {
 		rot_to_pack_[ ii-1 ] = ii;
 	}
 	setup_rots_for_node( rotamer_sets );
@@ -85,13 +85,13 @@ RotamerAssigningAnnealer::RotamerAssigningAnnealer(
 	FArray1D< core::PackerEnergy > & rot_freq
 ) :
 	SimAnnealerBase(
-		num_rots_to_pack_in,
-		bestrotamer_at_seqpos,
-		bestenergy,
-		start_with_current,
-		current_rot_index,
-		calc_rot_freq,
-		rot_freq
+	num_rots_to_pack_in,
+	bestrotamer_at_seqpos,
+	bestenergy,
+	start_with_current,
+	current_rot_index,
+	calc_rot_freq,
+	rot_freq
 	),
 	rotamer_sets_( rotamer_sets ),
 	current_to_pick_( 1 ),
@@ -172,27 +172,27 @@ int RotamerAssigningAnnealer::pick_a_rotamer( int cycle )
 
 	//bk if quench cycle, pass through all rotamers before
 	//bk repeating a rotamer
-	if ( quench() ){
+	if ( quench() ) {
 		int num =  mod( cycle - 1, (int) num_rots_to_pack());
-		if (num == 0){
+		if ( num == 0 ) {
 			numeric::random::random_permutation( rot_to_pack_, numeric::random::rg() );
 		}
 		ranrotamer = rot_to_pack_.at(num);
 		//bk if start of run and start_with_current is true then first nres
 		//bk iterations will be used to place the current rotamers
-	}else if (start_with_current && (unsigned int) current_to_pick_ <= current_rot_index().size() ){
+	} else if ( start_with_current && (unsigned int) current_to_pick_ <= current_rot_index().size() ) {
 
-		if ( current_to_pick_ == 1  ){
+		if ( current_to_pick_ == 1  ) {
 			std::cout << "RotamerAssigningAnnealer: recovering current rotamers for start." << std::endl;
 		}
-		if (current_rot_index()(current_to_pick_) != -1 ){
+		if ( current_rot_index()(current_to_pick_) != -1 ) {
 			ranrotamer = current_rot_index()(current_to_pick_);
-		}else{
+		} else {
 			std::cout << "RotamerAssigningAnnealer: unable to recover current rotamer for moltenres: " << current_to_pick_ << std::endl;
 			ranrotamer = -1;
 		}
 		++current_to_pick_;
-	}else{
+	} else {
 		ranrotamer = rot_to_pack_.at(static_cast<int>( num_rots_to_pack() * numeric::random::rg().uniform() ));
 	}
 	//std::cerr << "ranrotamer: " << ranrotamer << " total: " << current_rot_index_.size() << std::endl;

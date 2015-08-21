@@ -153,7 +153,7 @@ GrowRight::MoveMap GrowRight::movemap() const {
 
 	MoveMap mm;
 
-	for( Positions::const_iterator i = newp.begin(), ie = newp.end(); i != ie; ++i ) {
+	for ( Positions::const_iterator i = newp.begin(), ie = newp.end(); i != ie; ++i ) {
 		mm.set_bb( *i, true );
 		mm.set_chi( *i, true );
 	}
@@ -184,7 +184,7 @@ void GrowRight::on_residue_prepend( LengthEvent const & event ) {
 void GrowRight::on_residue_delete( LengthEvent const & event ) {
 	if ( event.position <= pos_ ) {
 		//--pos_;
-		if( int(pos_) + event.length_change < int(event.position) ) pos_ = event.position;
+		if ( int(pos_) + event.length_change < int(event.position) ) pos_ = event.position;
 		pos_ += event.length_change;
 	}
 }

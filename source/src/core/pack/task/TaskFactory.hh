@@ -80,7 +80,7 @@ public:
 	void
 	clear();
 
-/// @brief return the size of the operations_ list
+	/// @brief return the size of the operations_ list
 	core::Size size() const;
 
 public:

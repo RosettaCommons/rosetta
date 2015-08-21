@@ -45,13 +45,13 @@ public:
 public:
 	/// ICoordAtomID type
 	/**
-		- INTERNAL: atoms which inherently belong to this ResidueType
-		- POLYMER_LOWER: atom at the polymer lower connection, such as backbone C in
-		the previous residue (N-term side)
-		- POLYMER_UPPER: atom at the polymer upper connection, such as backbone N in
-		the next residue (C-term side)
-		- CONNECT: atoms from a non-adjacent residue which connect to this residue
-		by non-polymer connection, such as disulfide
+	- INTERNAL: atoms which inherently belong to this ResidueType
+	- POLYMER_LOWER: atom at the polymer lower connection, such as backbone C in
+	the previous residue (N-term side)
+	- POLYMER_UPPER: atom at the polymer upper connection, such as backbone N in
+	the next residue (C-term side)
+	- CONNECT: atoms from a non-adjacent residue which connect to this residue
+	by non-polymer connection, such as disulfide
 	*/
 	enum Type {
 		INTERNAL = 1,
@@ -77,10 +77,10 @@ public:
 		ResidueType const & rsd_type
 	);
 
-/*	ICoorAtomID(ICoorAtomID id) :
-		type_(id.type_),
-		atomno_(id.atomno_),
-		vd_(id.vd_)
+	/* ICoorAtomID(ICoorAtomID id) :
+	type_(id.type_),
+	atomno_(id.atomno_),
+	vd_(id.vd_)
 	{
 
 	}*/
@@ -190,13 +190,13 @@ private:
 
 /// @brief A basic class containing info of internal coordinates needed for building an atom within a ResidueType
 /**
-	In atom tree, each atom is defined by its internal coordinates, which include a bond distance,
-	a bond angle and a torsion angle. Of course, all these internal coordinates are only meaningful
-	in the context of three reference (stub) atoms. AtomICoor information is stored in the residue param
-	files and some terms are defined as following:\n
-	- bond distance d_ is that between the atom to be built (child) and stub_atom1 (parent)
-	- bond angle theta_ is that defined by child-parent-stub2(angle)
-	- torsion angle phi_ is that defined by child-parent-stub2-stub3(torsion)
+In atom tree, each atom is defined by its internal coordinates, which include a bond distance,
+a bond angle and a torsion angle. Of course, all these internal coordinates are only meaningful
+in the context of three reference (stub) atoms. AtomICoor information is stored in the residue param
+files and some terms are defined as following:\n
+- bond distance d_ is that between the atom to be built (child) and stub_atom1 (parent)
+- bond angle theta_ is that defined by child-parent-stub2(angle)
+- torsion angle phi_ is that defined by child-parent-stub2-stub3(torsion)
 */
 class AtomICoor {
 public:
@@ -296,8 +296,8 @@ public:
 	depends_on_residue_connection( Size const connid ) const
 	{
 		return ( stub_atom1_.is_connect( connid ) ||
-						 stub_atom2_.is_connect( connid ) ||
-						 stub_atom3_.is_connect( connid ) );
+			stub_atom2_.is_connect( connid ) ||
+			stub_atom3_.is_connect( connid ) );
 	}
 
 	/// @brief Returns true if any of the stub atoms is a connection ID.
@@ -306,8 +306,8 @@ public:
 	depends_on_residue_connection( ) const
 	{
 		return ( stub_atom1_.is_connect( ) ||
-						 stub_atom2_.is_connect( ) ||
-						 stub_atom3_.is_connect( ) );
+			stub_atom2_.is_connect( ) ||
+			stub_atom3_.is_connect( ) );
 	}
 
 
@@ -316,9 +316,9 @@ public:
 	stub_atom( int const atm )
 	{
 		switch( atm ) {
-		case 1: return stub_atom1_;
-		case 2: return stub_atom2_;
-		case 3: return stub_atom3_;
+		case 1 : return stub_atom1_;
+		case 2 : return stub_atom2_;
+		case 3 : return stub_atom3_;
 		}
 		utility_exit_with_message( "ICoorAtomID::stub_atom should be 1--3" );
 		return stub_atom1_;
@@ -329,9 +329,9 @@ public:
 	stub_atom( int const atm ) const
 	{
 		switch( atm ) {
-		case 1: return stub_atom1_;
-		case 2: return stub_atom2_;
-		case 3: return stub_atom3_;
+		case 1 : return stub_atom1_;
+		case 2 : return stub_atom2_;
+		case 3 : return stub_atom3_;
 		}
 		utility_exit_with_message( "ICoorAtomID::stub_atom should be 1--3" );
 		return stub_atom1_;

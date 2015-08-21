@@ -57,10 +57,10 @@ using core::conformation::symmetry::SymmetricConformation;
 using core::conformation::symmetry::SymmetryInfoCOP;
 
 using namespace core;
-	using namespace pack;
-		using namespace task;
-			using namespace operation;
-	using namespace scoring;
+using namespace pack;
+using namespace task;
+using namespace operation;
+using namespace scoring;
 
 // creator
 std::string
@@ -82,25 +82,25 @@ SymPackRotamersMoverCreator::mover_name() {
 /// PackRotamersMover
 
 SymPackRotamersMover::SymPackRotamersMover()
-	: protocols::simple_moves::PackRotamersMover(),
-		sym_rotamer_sets_( core::pack::rotamer_set::symmetry::SymmetricRotamerSetsOP( new rotamer_set::symmetry::SymmetricRotamerSets() ) ),
-		symmetric_ig_(/* 0 */)
+: protocols::simple_moves::PackRotamersMover(),
+	sym_rotamer_sets_( core::pack::rotamer_set::symmetry::SymmetricRotamerSetsOP( new rotamer_set::symmetry::SymmetricRotamerSets() ) ),
+	symmetric_ig_(/* 0 */)
 {}
 
-	// constructors with arguments
+// constructors with arguments
 SymPackRotamersMover::SymPackRotamersMover(
 	ScoreFunctionCOP scorefxn,
 	task::PackerTaskCOP task,
 	Size nloop
 ) : protocols::simple_moves::PackRotamersMover( scorefxn, task, nloop ),
-		sym_rotamer_sets_( core::pack::rotamer_set::symmetry::SymmetricRotamerSetsOP( new rotamer_set::symmetry::SymmetricRotamerSets() ) ),
-		symmetric_ig_(/* 0 */)
+	sym_rotamer_sets_( core::pack::rotamer_set::symmetry::SymmetricRotamerSetsOP( new rotamer_set::symmetry::SymmetricRotamerSets() ) ),
+	symmetric_ig_(/* 0 */)
 {}
 
 SymPackRotamersMover::~SymPackRotamersMover(){}
 
 SymPackRotamersMover::SymPackRotamersMover( PackRotamersMover const & other )
-	: protocols::simple_moves::PackRotamersMover( other )
+: protocols::simple_moves::PackRotamersMover( other )
 {
 	sym_rotamer_sets_ = core::pack::rotamer_set::symmetry::SymmetricRotamerSetsOP( new rotamer_set::symmetry::SymmetricRotamerSets() );
 
@@ -109,16 +109,16 @@ SymPackRotamersMover::SymPackRotamersMover( PackRotamersMover const & other )
 /*void
 SymPackRotamersMover::apply( pose::Pose & pose )
 {
-	// jec update_residue_neighbors() required to update EnergyGraph (ensures graph_state == GOOD) when calling Interface.cc
-	pose.update_residue_neighbors();
-	// guarantee of valid ScoreFunction and PackerTask postponed until now
+// jec update_residue_neighbors() required to update EnergyGraph (ensures graph_state == GOOD) when calling Interface.cc
+pose.update_residue_neighbors();
+// guarantee of valid ScoreFunction and PackerTask postponed until now
 
-//	else assert( task_is_valid( pose ) );
+// else assert( task_is_valid( pose ) );
 
-	// get rotamers, energies
-	this->setup( pose );
+// get rotamers, energies
+this->setup( pose );
 
-	this->run( pose );
+this->run( pose );
 
 }*/
 
@@ -130,27 +130,27 @@ SymPackRotamersMover::get_name() const {
 void SymPackRotamersMover::setup( pose::Pose & pose )
 {
 
-  // jec update_residue_neighbors() required to update EnergyGraph (ensures graph_state == GOOD) when calling Interface.cc
-  pose.update_residue_neighbors();
-  // guarantee of valid ScoreFunction and PackerTask postponed until now
-  if ( score_function() == 0 ) {
-    Warning() << "undefined ScoreFunction -- creating a default one" << std::endl;
-    ScoreFunctionCOP scfx ( get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
+	// jec update_residue_neighbors() required to update EnergyGraph (ensures graph_state == GOOD) when calling Interface.cc
+	pose.update_residue_neighbors();
+	// guarantee of valid ScoreFunction and PackerTask postponed until now
+	if ( score_function() == 0 ) {
+		Warning() << "undefined ScoreFunction -- creating a default one" << std::endl;
+		ScoreFunctionCOP scfx ( get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
 		score_function( scfx );
-  }
+	}
 
-   // if present, task_factory_ always overrides/regenerates task_
-		if ( task() != 0 ) {
-			symmetric_task_ = (task())->clone();
-		}
-	  if ( task_factory() != 0 ) {
-			symmetric_task_ = task_factory()->create_task_and_apply_taskoperations( pose );
-		} else if ( task() == 0 ) {
-    Warning() << "undefined PackerTask -- creating a default one" << std::endl;
-    symmetric_task_ = core::pack::task::TaskFactory::create_packer_task( pose );
-  }
-  // in case PackerTask was not generated locally, verify compatibility with pose
-  //else runtime_assert( task_is_valid( pose ) );
+	// if present, task_factory_ always overrides/regenerates task_
+	if ( task() != 0 ) {
+		symmetric_task_ = (task())->clone();
+	}
+	if ( task_factory() != 0 ) {
+		symmetric_task_ = task_factory()->create_task_and_apply_taskoperations( pose );
+	} else if ( task() == 0 ) {
+		Warning() << "undefined PackerTask -- creating a default one" << std::endl;
+		symmetric_task_ = core::pack::task::TaskFactory::create_packer_task( pose );
+	}
+	// in case PackerTask was not generated locally, verify compatibility with pose
+	//else runtime_assert( task_is_valid( pose ) );
 	symmetric_task_ = make_symmetric_task( pose, symmetric_task_ );
 
 	symmetric_pack_rotamers_setup( pose, *( score_function() ), symmetric_task_, sym_rotamer_sets_, symmetric_ig_ );
@@ -170,23 +170,23 @@ SymPackRotamersMover::make_symmetric_task(
 )
 {
 	assert( pose::symmetry::is_symmetric( pose ) );
-    if( task->symmetrize_by_union() || task->symmetrize_by_intersection() ){
-				return make_new_symmetric_PackerTask_by_requested_method(pose,task);
-    } // new machinery
+	if ( task->symmetrize_by_union() || task->symmetrize_by_intersection() ) {
+		return make_new_symmetric_PackerTask_by_requested_method(pose,task);
+	} // new machinery
 
 	SymmetricConformation & SymmConf (
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	utility::vector1<bool> allow_repacked( pose.total_residue(), false );
-	for (Size res=1; res <= pose.total_residue(); ++res ) {
+	for ( Size res=1; res <= pose.total_residue(); ++res ) {
 		if ( pose.residue(res).aa() != core::chemical::aa_vrt && symm_info->fa_is_independent(res) ) {
 			allow_repacked.at(res) = true;
 		}
 	}
-    task::PackerTaskOP new_task ( task->clone() );
+	task::PackerTaskOP new_task ( task->clone() );
 	new_task->restrict_to_residues( allow_repacked );
-    return new_task;
+	return new_task;
 }
 
 protocols::moves::MoverOP SymPackRotamersMover::clone() const { return protocols::moves::MoverOP( new  SymPackRotamersMover( *this ) ); }
@@ -199,15 +199,15 @@ SymPackRotamersMover::parse_my_tag(
 	basic::datacache::DataMap & data,
 	Filters_map const &fm,
 	protocols::moves::Movers_map const &mm,
-	Pose const &pose ) 
+	Pose const &pose )
 {
 	PackRotamersMover::parse_my_tag( tag,data,fm,mm,pose );
 }
 
 void SymPackRotamersMover::parse_def( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const & score_fxns,
-		utility::lua::LuaObject const & tasks,
-		protocols::moves::MoverCacheSP cache ){
+	utility::lua::LuaObject const & score_fxns,
+	utility::lua::LuaObject const & tasks,
+	protocols::moves::MoverCacheSP cache ){
 	PackRotamersMover::parse_def( def, score_fxns, tasks, cache);
 }
 

@@ -23,14 +23,14 @@
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 using namespace core;
-	using namespace scoring;
-		using namespace constraints;
+using namespace scoring;
+using namespace constraints;
 
 using namespace protocols;
-	using namespace dna;
-	using namespace moves;
-	using namespace jd2;
-	using namespace viewer;
+using namespace dna;
+using namespace moves;
+using namespace jd2;
+using namespace viewer;
 
 static thread_local basic::Tracer TR( "apps.public.rosettaDNA" );
 
@@ -63,8 +63,8 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-	devel::init( argc, argv );
-	viewer_main( my_main );
+		devel::init( argc, argv );
+		viewer_main( my_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

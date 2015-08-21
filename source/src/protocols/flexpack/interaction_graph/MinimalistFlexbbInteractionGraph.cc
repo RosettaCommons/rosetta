@@ -78,7 +78,7 @@ MinimalistFlexbbNode::print() const
 //bool
 //MinimalistFlexbbNode::state_unassigned() const
 //{
-//	return current_state() == 0;
+// return current_state() == 0;
 //}
 
 
@@ -91,9 +91,9 @@ MinimalistFlexbbNode::project_deltaE_for_substitution(
 	assert( get_bb_for_state( current_state() ) == 0 || get_bb_for_state( alternate_state ) == get_bb_for_state( current_state() ));
 	set_considering_alternate_state();
 	set_alternate_state( alternate_state );
-   set_alternate_state_one_body_energy( one_body_energies()[ alternate_state ]);
+	set_alternate_state_one_body_energy( one_body_energies()[ alternate_state ]);
 
-   set_alternate_state_total_energy( alternate_state_one_body_energy() );
+	set_alternate_state_total_energy( alternate_state_one_body_energy() );
 	prev_energy_for_node = curr_state_total_energy();
 
 	/// for debugging -- make sure that curr_state_total_energy
@@ -103,30 +103,30 @@ MinimalistFlexbbNode::project_deltaE_for_substitution(
 
 	//std::cout << "\npdE: " << get_node_index() << " alt state: " << alternate_state << " amino acid " << rotamer( alternate_state ).aa() ;
 	//std::cout << " coord: " << rotamer( alternate_state ).xyz( rotamer( alternate_state ).nheavyatoms() ).x() <<
-	//					" " << rotamer( alternate_state ).xyz( rotamer( alternate_state ).nheavyatoms() ).y() <<
-	//					" " << rotamer( alternate_state ).xyz( rotamer( alternate_state ).nheavyatoms() ).z() << std::endl;
+	//     " " << rotamer( alternate_state ).xyz( rotamer( alternate_state ).nheavyatoms() ).y() <<
+	//     " " << rotamer( alternate_state ).xyz( rotamer( alternate_state ).nheavyatoms() ).z() << std::endl;
 	//std::cout << "alt state one body energy: " << one_body_energies()[ alternate_state ] << " vs curr: " << one_body_energies()[ current_state() ] << std::endl;
 
-  	for ( int ii = 1; ii <= get_num_edges_to_smaller_indexed_nodes(); ++ii ) {
+	for ( int ii = 1; ii <= get_num_edges_to_smaller_indexed_nodes(); ++ii ) {
 		get_incident_flexbb_edge( ii )->set_alt_state(
 			get_node_index(), alternate_state, alternate_state_info() );
 		set_alternate_state_two_body_energies(
 			ii, get_incident_otfflexbb_edge( ii )->compute_samebbconf_alternate_state_energy_second_node());
-  		inc_alternate_state_total_energy( alternate_state_two_body_energies( ii ));
+		inc_alternate_state_total_energy( alternate_state_two_body_energies( ii ));
 
 		//std::cout << "\n" << get_index_of_adjacent_node( ii ) << " " << alternate_state_two_body_energies( ii );
 		/*
 		two_body_energy_sum += alternate_state_two_body_energies( ii );
 		if ( get_node_index() == 17 && alternate_state == 63 ) {
-				std::cout << "Two-Body Energy Predicted: " << get_node_index() << " " << get_index_of_adjacent_node( ii ) << " " << alternate_state_two_body_energies( ii ) << std::endl;
+		std::cout << "Two-Body Energy Predicted: " << get_node_index() << " " << get_index_of_adjacent_node( ii ) << " " << alternate_state_two_body_energies( ii ) << std::endl;
 		}
 		curr_state_actual_total += curr_state_two_body_energies()[ ii ];
 		if ( std::abs( curr_state_two_body_energies()[ ii ] - get_incident_otfflexbb_edge( ii )->cur_energy()) > 1e-6 ) {
-			std::cout << "CURRENT STATE ENERGY DISCREPANCY: " << get_node_index() << " " << get_index_of_adjacent_node( ii ) <<
-				" local: " << curr_state_two_body_energies()[ ii ] <<
-				" on edge: " << get_incident_otfflexbb_edge( ii )->cur_energy() <<
-				" diff: " << curr_state_two_body_energies()[ ii ] - get_incident_otfflexbb_edge( ii )->cur_energy() <<
-				std::endl;
+		std::cout << "CURRENT STATE ENERGY DISCREPANCY: " << get_node_index() << " " << get_index_of_adjacent_node( ii ) <<
+		" local: " << curr_state_two_body_energies()[ ii ] <<
+		" on edge: " << get_incident_otfflexbb_edge( ii )->cur_energy() <<
+		" diff: " << curr_state_two_body_energies()[ ii ] - get_incident_otfflexbb_edge( ii )->cur_energy() <<
+		std::endl;
 		}
 		*/
 	}
@@ -136,20 +136,20 @@ MinimalistFlexbbNode::project_deltaE_for_substitution(
 			get_node_index(), alternate_state, alternate_state_info() );
 		set_alternate_state_two_body_energies(
 			ii, get_incident_otfflexbb_edge( ii )->compute_samebbconf_alternate_state_energy_first_node() );
-  		inc_alternate_state_total_energy( alternate_state_two_body_energies( ii ));
+		inc_alternate_state_total_energy( alternate_state_two_body_energies( ii ));
 		/*
 		if ( get_node_index() == 17 && alternate_state == 63 ) {
-				std::cout << "Two-Body Energy Predicted: " << get_node_index() << " " << get_index_of_adjacent_node( ii ) << " " << alternate_state_two_body_energies( ii ) << std::endl;
+		std::cout << "Two-Body Energy Predicted: " << get_node_index() << " " << get_index_of_adjacent_node( ii ) << " " << alternate_state_two_body_energies( ii ) << std::endl;
 		}
 		//std::cout << "\n" << get_index_of_adjacent_node( ii ) << " " << alternate_state_two_body_energies( ii );
 		two_body_energy_sum += alternate_state_two_body_energies( ii );
 		curr_state_actual_total += curr_state_two_body_energies()[ ii ];
 		if ( std::abs( curr_state_two_body_energies()[ ii ] - get_incident_otfflexbb_edge( ii )->cur_energy()) > 1e-6 ) {
-			std::cout << "CURRENT STATE ENERGY DISCREPANCY: " << get_node_index() << " " << get_index_of_adjacent_node( ii ) <<
-				" local: " << curr_state_two_body_energies()[ ii ] <<
-				" on edge: " << get_incident_otfflexbb_edge( ii )->cur_energy() <<
-				" diff: " << curr_state_two_body_energies()[ ii ] - get_incident_otfflexbb_edge( ii )->cur_energy() <<
-				std::endl;
+		std::cout << "CURRENT STATE ENERGY DISCREPANCY: " << get_node_index() << " " << get_index_of_adjacent_node( ii ) <<
+		" local: " << curr_state_two_body_energies()[ ii ] <<
+		" on edge: " << get_incident_otfflexbb_edge( ii )->cur_energy() <<
+		" diff: " << curr_state_two_body_energies()[ ii ] - get_incident_otfflexbb_edge( ii )->cur_energy() <<
+		std::endl;
 		}
 		*/
 	}
@@ -162,15 +162,15 @@ MinimalistFlexbbNode::project_deltaE_for_substitution(
 #endif
 
 	/*if ( std::abs( curr_state_actual_total - curr_state_total_energy()) > 1e-6 ) {
-		std::cout << "Inaccurate current energy: " << get_node_index() << " " << alternate_state << " "
-			<< curr_state_actual_total << " " << curr_state_total_energy() << std::endl;
+	std::cout << "Inaccurate current energy: " << get_node_index() << " " << alternate_state << " "
+	<< curr_state_actual_total << " " << curr_state_total_energy() << std::endl;
 	}
 	if ( get_node_index() == 17 && alternate_state == 63 ) {
-		std::cout << "Alternate_state_total_energy: " << alternate_state_total_energy() << " " << two_body_energy_sum
-			<< " " << alternate_state_one_body_energy() + two_body_energy_sum
-			<< " " << alternate_state_total_energy() - curr_state_total_energy()
-			<< " " << alternate_state_total_energy() - curr_state_actual_total
-			<< std::endl;
+	std::cout << "Alternate_state_total_energy: " << alternate_state_total_energy() << " " << two_body_energy_sum
+	<< " " << alternate_state_one_body_energy() + two_body_energy_sum
+	<< " " << alternate_state_total_energy() - curr_state_total_energy()
+	<< " " << alternate_state_total_energy() - curr_state_actual_total
+	<< std::endl;
 	}*/
 
 	return alternate_state_total_energy() - curr_state_total_energy();
@@ -180,49 +180,49 @@ MinimalistFlexbbNode::project_deltaE_for_substitution(
 /*
 MinimalistFlexbbNode::PackerEnergy
 MinimalistFlexbbNode::project_deltaE_with_backbone_move(
-	int alternate_state,
-	PackerEnergy & prev_energy_for_flexseg,
-	bool & valid_motion
+int alternate_state,
+PackerEnergy & prev_energy_for_flexseg,
+bool & valid_motion
 )
 {
-	//std::cout << "project_deltaE_with_backbone_move: " << get_node_index() << " " << alternate_state << " " << curr_bb() << std::endl;
-	prev_energy_for_flexseg = 0;
-	register_contacted_node_for_bb_jump();
+//std::cout << "project_deltaE_with_backbone_move: " << get_node_index() << " " << alternate_state << " " << curr_bb() << std::endl;
+prev_energy_for_flexseg = 0;
+register_contacted_node_for_bb_jump();
 
-	if ( get_bb_for_state( alternate_state ) == get_bb_for_state( current_state() ) ) {
-		//std::cout << "project_deltaE_with_backbone_move: same backbone " << get_node_index() << " " << alternate_state << " " << curr_bb() << std::endl;
-		return project_deltaE_for_substitution( alternate_state, prev_energy_for_flexseg );
-	}
+if ( get_bb_for_state( alternate_state ) == get_bb_for_state( current_state() ) ) {
+//std::cout << "project_deltaE_with_backbone_move: same backbone " << get_node_index() << " " << alternate_state << " " << curr_bb() << std::endl;
+return project_deltaE_for_substitution( alternate_state, prev_energy_for_flexseg );
+}
 
-	set_alternate_state( alternate_state );
+set_alternate_state( alternate_state );
 
-	int const alt_bb = alternate_state_info().get_bb();
+int const alt_bb = alternate_state_info().get_bb();
 
-	/// FlexbbNode base class call -- visit all nodes in this flexseg and their adjacent edges
-	/// in a DFS traversal.  If any node in the flexseg has state 0, quit.
-	if ( ! prepare_for_bb_jump( alt_bb ) ) {
-		//std::cout << "INVALID MOTION" << std::endl;
-		valid_motion = false; return 0.0;
-	}
+/// FlexbbNode base class call -- visit all nodes in this flexseg and their adjacent edges
+/// in a DFS traversal.  If any node in the flexseg has state 0, quit.
+if ( ! prepare_for_bb_jump( alt_bb ) ) {
+//std::cout << "INVALID MOTION" << std::endl;
+valid_motion = false; return 0.0;
+}
 
-	PackerEnergy alt_energy_for_flexseg = get_altE_for_bb_move( prev_energy_for_flexseg );
-	//std::cout << "Finished flexseg energy calc: " << alt_energy_for_flexseg << " " << prev_energy_for_flexseg << std::endl;
-	return alt_energy_for_flexseg - prev_energy_for_flexseg;
+PackerEnergy alt_energy_for_flexseg = get_altE_for_bb_move( prev_energy_for_flexseg );
+//std::cout << "Finished flexseg energy calc: " << alt_energy_for_flexseg << " " << prev_energy_for_flexseg << std::endl;
+return alt_energy_for_flexseg - prev_energy_for_flexseg;
 
 }
 
 
 MinimalistFlexbbNode::PackerEnergy
 MinimalistFlexbbNode::project_deltaE_for_backbone_move(
-	int alt_bb,
-	PackerEnergy & prev_energy_for_flexseg,
-	bool & valid_motion
+int alt_bb,
+PackerEnergy & prev_energy_for_flexseg,
+bool & valid_motion
 )
 {
-	//std::cout << "Considering bb move: " << get_node_index() << " " << alt_bb << " " << curr_bb() << std::endl;
-	if ( current_state() == 0 || alt_bb == curr_bb() ) { valid_motion = false; return 0.0; }
-	set_alternate_state( closest_state_on_alt_bb()( alt_bb, current_state() ) );
-	return project_deltaE_with_backbone_move( alternate_state(), prev_energy_for_flexseg, valid_motion );
+//std::cout << "Considering bb move: " << get_node_index() << " " << alt_bb << " " << curr_bb() << std::endl;
+if ( current_state() == 0 || alt_bb == curr_bb() ) { valid_motion = false; return 0.0; }
+set_alternate_state( closest_state_on_alt_bb()( alt_bb, current_state() ) );
+return project_deltaE_with_backbone_move( alternate_state(), prev_energy_for_flexseg, valid_motion );
 }
 */
 
@@ -251,15 +251,15 @@ bool
 MinimalistFlexbbNode::prepare_for_altbb_move_to_closest_state( int alt_bb )
 {
 	if ( current_state() == 0 ) return false;
-  if ( current_state() > get_num_states() ) { std::cerr << "Current state out-of-range: " << get_num_states() << " " << current_state() << std::endl; return false; }
-  if ( alt_bb == 0 || alt_bb > get_num_distinct_backbones() ) { std::cerr << "ALTERNATE BACKBONE OUT-OF-RANGE: " << get_num_distinct_backbones() << " " << alt_bb << std::endl; return false; }
+	if ( current_state() > get_num_states() ) { std::cerr << "Current state out-of-range: " << get_num_states() << " " << current_state() << std::endl; return false; }
+	if ( alt_bb == 0 || alt_bb > get_num_distinct_backbones() ) { std::cerr << "ALTERNATE BACKBONE OUT-OF-RANGE: " << get_num_distinct_backbones() << " " << alt_bb << std::endl; return false; }
 	if ( closest_state_on_alt_bb()( alt_bb, current_state() ) == 0 ) return false;
 
- if ( closest_state_on_alt_bb()( alt_bb, current_state() ) > get_num_states() ) {
-    std::cerr << "CANNOT2 MOVE TO ALT_STATE " << closest_state_on_alt_bb()( alt_bb, current_state() ) << " WHEN THERE ARE ONLY " << get_num_states() << " STATES; " << alt_bb << " " << current_state() << " " << curr_bb() << std::endl;
-    utility_exit();
-    return false;
-  }
+	if ( closest_state_on_alt_bb()( alt_bb, current_state() ) > get_num_states() ) {
+		std::cerr << "CANNOT2 MOVE TO ALT_STATE " << closest_state_on_alt_bb()( alt_bb, current_state() ) << " WHEN THERE ARE ONLY " << get_num_states() << " STATES; " << alt_bb << " " << current_state() << " " << curr_bb() << std::endl;
+		utility_exit();
+		return false;
+	}
 	return prepare_for_altbb_move_to_state( closest_state_on_alt_bb()( alt_bb, current_state() ) );
 }
 
@@ -342,7 +342,7 @@ MinimalistFlexbbNode::acknowledge_neighbors_substitution(
 	/// DEBUG:
 	//PackerEnergy true_curr_state_total_energy = curr_state_one_body_energy();
 	//for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
-	//	true_curr_state_total_energy += curr_state_two_body_energies()[ ii ];
+	// true_curr_state_total_energy += curr_state_two_body_energies()[ ii ];
 	//}
 	//assert( std::abs( (true_curr_state_total_energy - curr_state_total_energy())/std::max( PackerEnergy(1.0), std::abs(curr_state_total_energy())) ) < 1e-5 );
 }
@@ -431,64 +431,64 @@ MinimalistFlexbbNode::count_dynamic_memory() const
 MinimalistFlexbbNode::PackerEnergy
 MinimalistFlexbbNode::get_altE_for_bb_move( PackerEnergy & curr_frag_etotal )
 {
-	if ( energies_already_projected() ) return 0.0;
+if ( energies_already_projected() ) return 0.0;
 
-	//std::cout << "get_altE_for_bb_move " << get_node_index() << std::endl;
+//std::cout << "get_altE_for_bb_move " << get_node_index() << std::endl;
 
-	PackerEnergy alt_frag_etotal( 0.0 );
+PackerEnergy alt_frag_etotal( 0.0 );
 
-   set_alternate_state_one_body_energy( one_body_energies()[ alternate_state() ]);
-	//if ( get_node_index() == 17 && alternate_state() == 63 ) {
-	//	std::cout << "SETTING ALT STATE 11 (63) ON NODE 17: " << alternate_state_one_body_energy() << std::endl;
-	//}
+set_alternate_state_one_body_energy( one_body_energies()[ alternate_state() ]);
+//if ( get_node_index() == 17 && alternate_state() == 63 ) {
+// std::cout << "SETTING ALT STATE 11 (63) ON NODE 17: " << alternate_state_one_body_energy() << std::endl;
+//}
 
-   set_alternate_state_total_energy( alternate_state_one_body_energy() );
+set_alternate_state_total_energy( alternate_state_one_body_energy() );
 
-	alt_frag_etotal += alternate_state_one_body_energy();
-	curr_frag_etotal += curr_state_one_body_energy();
+alt_frag_etotal += alternate_state_one_body_energy();
+curr_frag_etotal += curr_state_one_body_energy();
 
-	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
-		if ( edge_connects_flexsegmate()[ ii ] ) {
-			alt_frag_etotal +=
-				get_adjacent_minimalistflexbb_node( ii )->get_altE_for_bb_move( curr_frag_etotal );
-			//std::cerr << get_node_index() << " alt_frag_etotal( " << ii << ", " << alt_frag_etotal  << ") " << std::endl;
-			//std::cerr << get_node_index() << " curr_frag_etotal( " << ii << ", " << curr_frag_etotal << ") " << std::endl;
+for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
+if ( edge_connects_flexsegmate()[ ii ] ) {
+alt_frag_etotal +=
+get_adjacent_minimalistflexbb_node( ii )->get_altE_for_bb_move( curr_frag_etotal );
+//std::cerr << get_node_index() << " alt_frag_etotal( " << ii << ", " << alt_frag_etotal  << ") " << std::endl;
+//std::cerr << get_node_index() << " curr_frag_etotal( " << ii << ", " << curr_frag_etotal << ") " << std::endl;
 
-			set_alternate_state_two_body_energies( ii,
-				get_incident_minimalistflexbb_edge( ii )->get_alt_stateE());
-			inc_alternate_state_total_energy( alternate_state_two_body_energies()[ ii ]);
+set_alternate_state_two_body_energies( ii,
+get_incident_minimalistflexbb_edge( ii )->get_alt_stateE());
+inc_alternate_state_total_energy( alternate_state_two_body_energies()[ ii ]);
 
-			if ( count_energy_to_node_in_my_fragtotalE( ii ) ) {
+if ( count_energy_to_node_in_my_fragtotalE( ii ) ) {
 
-				alt_frag_etotal  += alternate_state_two_body_energies()[ ii ];
-				curr_frag_etotal += curr_state_two_body_energies()[ ii ];
+alt_frag_etotal  += alternate_state_two_body_energies()[ ii ];
+curr_frag_etotal += curr_state_two_body_energies()[ ii ];
 
-			}
-		} else {
+}
+} else {
 
-			//if ( ii < get_num_edges_to_smaller_indexed_nodes() ) {
-			//	set_alternate_state_two_body_energies(
-			//		ii, get_incident_otfflexbb_edge( ii )->compute_samebbconf_alternate_state_energy_second_node());
-			//} else {
-			//	set_alternate_state_two_body_energies(
-			//		ii, get_incident_otfflexbb_edge( ii )->compute_samebbconf_alternate_state_energy_first_node() );
-			//}
+//if ( ii < get_num_edges_to_smaller_indexed_nodes() ) {
+// set_alternate_state_two_body_energies(
+//  ii, get_incident_otfflexbb_edge( ii )->compute_samebbconf_alternate_state_energy_second_node());
+//} else {
+// set_alternate_state_two_body_energies(
+//  ii, get_incident_otfflexbb_edge( ii )->compute_samebbconf_alternate_state_energy_first_node() );
+//}
 
-			set_alternate_state_two_body_energies( ii, get_incident_minimalistflexbb_edge( ii )->get_alt_stateE() );
+set_alternate_state_two_body_energies( ii, get_incident_minimalistflexbb_edge( ii )->get_alt_stateE() );
 
-			alt_frag_etotal += alternate_state_two_body_energies()[ ii ];
-			inc_alternate_state_total_energy( alternate_state_two_body_energies()[ ii ] );
-			curr_frag_etotal += curr_state_two_body_energies()[ii];
+alt_frag_etotal += alternate_state_two_body_energies()[ ii ];
+inc_alternate_state_total_energy( alternate_state_two_body_energies()[ ii ] );
+curr_frag_etotal += curr_state_two_body_energies()[ii];
 
-		}
-	}
+}
+}
 
 #ifdef DEBUG_OTF_FLEXBB_ENERGIES
-	get_otfflexbbig_owner()->debug_note_considered_substitution( rotamer( alternate_state() ), alternate_state() - state_offsets_for_bb()[ alternate_state_info().get_bb() ] );
-	//get_otfflexbbig_owner()->debug_note_considered_substitution( rotamer( alternate_state() ), alternate_state() );
+get_otfflexbbig_owner()->debug_note_considered_substitution( rotamer( alternate_state() ), alternate_state() - state_offsets_for_bb()[ alternate_state_info().get_bb() ] );
+//get_otfflexbbig_owner()->debug_note_considered_substitution( rotamer( alternate_state() ), alternate_state() );
 #endif
 
-	return alt_frag_etotal;
+return alt_frag_etotal;
 }
 */
 
@@ -631,10 +631,10 @@ MinimalistFlexbbInteractionGraph::set_network_state( ObjexxFCL::FArray1_int & no
 	PackerEnergy last_total_energy = total_energy_current_state_assignment();
 #endif
 
-	for (int ii = 1; ii <= get_num_nodes(); ++ii) {
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		get_minimalistflexbb_node( ii )->partially_assign_state( node_states( ii ) );
 	}
-	for (int ii = 1; ii <= get_num_nodes(); ++ii) {
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		get_minimalistflexbb_node( ii )->complete_partial_state_assignment();
 	}
 	update_internal_energy_totals();
@@ -701,8 +701,8 @@ int
 MinimalistFlexbbInteractionGraph::get_edge_memory_usage() const
 {
 	int sum = 0;
-	for (std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
-			iter != get_edge_list_end(); ++iter) {
+	for ( std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
+			iter != get_edge_list_end(); ++iter ) {
 		sum += cast_minimalist_flexbb_edge(*iter)->count_dynamic_memory(); // close enough...
 	}
 	return sum;
@@ -713,7 +713,7 @@ void
 MinimalistFlexbbInteractionGraph::print_current_state_assignment() const
 {
 	std::cerr << "Curr States: ";
-	for (int ii = 1; ii <= get_num_nodes(); ++ii) {
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		std::cerr << "(" << ii << ", ";
 		std::cerr << get_minimalistflexbb_node(ii)->get_current_state() << ") ";
 	}
@@ -730,19 +730,19 @@ MinimalistFlexbbInteractionGraph::PackerEnergy
 MinimalistFlexbbInteractionGraph::get_energy_sum_for_vertex_group( int group_id )
 {
 	PackerEnergy esum = 0;
-	for (int ii = 1; ii <= get_num_nodes(); ++ii) {
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		if ( get_vertex_member_of_energy_sum_group( ii, group_id ) ) {
 			esum += get_minimalistflexbb_node( ii )->curr_state_one_body_energy();
 		}
 	}
 
 	for ( std::list< EdgeBase* >::iterator edge_iter = get_edge_list_begin();
-			edge_iter != get_edge_list_end(); ++edge_iter) {
+			edge_iter != get_edge_list_end(); ++edge_iter ) {
 		int first_node_ind = (*edge_iter)->get_first_node_ind();
 		int second_node_ind = (*edge_iter)->get_second_node_ind();
 
 		if ( get_vertex_member_of_energy_sum_group( first_node_ind, group_id )
-			&& get_vertex_member_of_energy_sum_group( second_node_ind, group_id )) {
+				&& get_vertex_member_of_energy_sum_group( second_node_ind, group_id ) ) {
 			esum += cast_minimalist_flexbb_edge(*edge_iter)->cur_energy();
 		}
 	}
@@ -830,7 +830,7 @@ MinimalistFlexbbInteractionGraph::consider_bbmove_w_state_substitution(
 
 	/// Decide: does this flexible-backbone substitution actually need to move the backbone?
 	if (  flexseg_for_moltenres( node_ind ) == 0 ||
-			get_flexbb_node( node_ind )->state_has_same_backbone_as_current( new_state )) {
+			get_flexbb_node( node_ind )->state_has_same_backbone_as_current( new_state ) ) {
 		valid_motion = true;
 		num_nodes_changing_state = 1;
 		consider_substitution( node_ind, new_state, delta_energy, prev_flexseg_energy );

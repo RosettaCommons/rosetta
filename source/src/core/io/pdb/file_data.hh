@@ -70,19 +70,19 @@ class AtomInformation
 public:
 	/// @brief default constructor to initialize all values
 	AtomInformation() :
-	isHet( false ),
-	serial( 0 ),
-	name( "" ),
-	altLoc( ' ' ),
-	resName( "" ),
-	chainID( ' ' ),
-	resSeq( 0 ),
-	iCode( ' ' ),
-	x( 0.0 ), y( 0.0 ), z( 0.0 ),
-	occupancy( 0.0 ),
-	temperature( 0.0 ),
-	element( "" ),
-	terCount( 0 )
+		isHet( false ),
+		serial( 0 ),
+		name( "" ),
+		altLoc( ' ' ),
+		resName( "" ),
+		chainID( ' ' ),
+		resSeq( 0 ),
+		iCode( ' ' ),
+		x( 0.0 ), y( 0.0 ), z( 0.0 ),
+		occupancy( 0.0 ),
+		temperature( 0.0 ),
+		element( "" ),
+		terCount( 0 )
 	{}
 
 	/// For now, all member names have the same names as fields in PDB standard.
@@ -103,12 +103,12 @@ public:
 	/// @brief Debug printing, serializing to Tracer like object.
 	friend std::ostream& operator <<(std::ostream &os, AtomInformation const & ai) {
 		os << "<AtomInformation>{" << "isHet=" << ai.isHet << " serial=" << ai.serial << " name=" << ai.name << " resName=" << ai.resName
-		<< " chainID=" << ai.chainID << " resSeq=" << ai.resSeq
-		<< " x=" << ai.x << " y=" << ai.y << " z=" << ai.z
-		<< " temperature=" << ai.temperature
-		<< " occupancy=" << ai.occupancy
-		<< " element=" << ai.element
-		<< "}";
+			<< " chainID=" << ai.chainID << " resSeq=" << ai.resSeq
+			<< " x=" << ai.x << " y=" << ai.y << " z=" << ai.z
+			<< " temperature=" << ai.temperature
+			<< " occupancy=" << ai.occupancy
+			<< " element=" << ai.element
+			<< "}";
 		return os;
 	}
 };  // class AtomInformation
@@ -247,14 +247,14 @@ public:  // An instance of FileData should not preserve any 'state', so its data
 public:
 	void initialize_header_information();
 
-	HeaderInformationOP	header_information() const;
+	HeaderInformationOP header_information() const;
 
 	void store_header_record(Record & R);
 
 	/// @brief The header records can span multiple lines while the
 	/// pdb_dynamic_parser is done line-wise. Finalizing the header
 	/// information ensures that all the information is fully processed.
- 	void finalize_header_information();
+	void finalize_header_information();
 
 	/// @brief Make sure to call finalize_header_information before
 	/// calling this.
@@ -275,14 +275,14 @@ public:
 
 	/// @brief Return the PDB resName, chainID, resSeq, and iCode for the given Rosetta sequence position.
 	ResidueInformation get_residue_information(core::pose::Pose const & pose, core::uint const seqpos,
-			bool use_PDB=true, bool renumber_chains=false) const;
+		bool use_PDB=true, bool renumber_chains=false) const;
 
 	/// @brief Append pdb information to FileData for a single residue.
 	void append_residue(
-			core::conformation::Residue const & rsd,
-			core::Size & atom_index,
-			core::pose::Pose const & pose,
-			bool preserve_crystinfo = false
+		core::conformation::Residue const & rsd,
+		core::Size & atom_index,
+		core::pose::Pose const & pose,
+		bool preserve_crystinfo = false
 	);
 
 	/// @brief Fill FileData object using information from given Pose object.
@@ -466,14 +466,14 @@ void pose_from_pose(
 );
 
 void
-fixup_rinfo_based_on_residue_type_set( 	utility::vector1< ResidueInformation > & rinfos,
-																			 	chemical::ResidueTypeSet const & residue_set );
+fixup_rinfo_based_on_residue_type_set(  utility::vector1< ResidueInformation > & rinfos,
+	chemical::ResidueTypeSet const & residue_set );
 
 
 void fill_name_map( core::io::pdb::NameBimap & name_map,
-			ResidueInformation const & rinfo,
-			chemical::ResidueType const & rsd_type,
-			FileDataOptions const & options);
+	ResidueInformation const & rinfo,
+	chemical::ResidueType const & rsd_type,
+	FileDataOptions const & options);
 
 chemical::ResidueTypeCOP
 get_rsd_type(

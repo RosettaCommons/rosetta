@@ -7,26 +7,26 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	    protocols/membrane/MembranePositionFromTopologyMoverCreator.hh
+/// @file     protocols/membrane/MembranePositionFromTopologyMoverCreator.hh
 ///
 /// @brief      Compute the Initial Position of the membrane
-/// @details	Compute the initial position of the membrane from
-///				sequence or structure (can be specified by the user at construction
-///				or as a seutp cmd flag)
-/// @file		protocols/membrane/MembranePositionRTMover.hh
+/// @details Compute the initial position of the membrane from
+///    sequence or structure (can be specified by the user at construction
+///    or as a seutp cmd flag)
+/// @file  protocols/membrane/MembranePositionRTMover.hh
 ///
-/// @brief		Sets the membrane position normal and center
-///	@details	Sets the membrane position normal and center
-///				CAUTION: ONLY FOR FLEXIBLE MEMBRANE AND FIXED PROTEIN!!!
-///				Last Modified: 6/28/14
+/// @brief  Sets the membrane position normal and center
+/// @details Sets the membrane position normal and center
+///    CAUTION: ONLY FOR FLEXIBLE MEMBRANE AND FIXED PROTEIN!!!
+///    Last Modified: 6/28/14
 ///
-/// @author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 ///
-///				NOTE: Requires a membrane pose!
-///				NOTE: sequence not yet implemented
-///				Last Modified: 6/21/14
+///    NOTE: Requires a membrane pose!
+///    NOTE: sequence not yet implemented
+///    Last Modified: 6/21/14
 ///
-/// @author		Rebecca Alford (rflaford12@gmail.com)
+/// @author  Rebecca Alford (rflaford12@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_MembranePositionFromTopologyMoverCreator_hh
 #define INCLUDED_protocols_membrane_MembranePositionFromTopologyMoverCreator_hh
@@ -39,13 +39,13 @@ namespace membrane {
 
 /// @brief Mover Creator
 class MembranePositionFromTopologyMoverCreator : public protocols::moves::MoverCreator {
-	
+
 public:
-	
+
 	virtual protocols::moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
 	static std::string mover_name();
-	
+
 };
 
 } // membrane

@@ -83,7 +83,7 @@ public:// virtual constructor
 	virtual FilterOP clone() const { return FilterOP( new ParallelBetaPairingPreferenceFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const {	return FilterOP( new ParallelBetaPairingPreferenceFilter() ); }
+	virtual FilterOP fresh_instance() const { return FilterOP( new ParallelBetaPairingPreferenceFilter() ); }
 
 
 public:// set filter value
@@ -123,10 +123,10 @@ public:// parser
 
 
 	virtual void parse_my_tag( TagCOP tag,
-														 basic::datacache::DataMap &,
-														 Filters_map const &,
-														 Movers_map const &,
-														 Pose const & );
+		basic::datacache::DataMap &,
+		Filters_map const &,
+		Movers_map const &,
+		Pose const & );
 
 
 private:

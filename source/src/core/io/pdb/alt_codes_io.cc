@@ -66,7 +66,7 @@ read_alternative_3_letter_codes_from_database_file( std::string const & filename
 	}
 
 	if ( TR.Debug.visible() ) {
-			TR.Debug << "Read " << code_map.size() << " 3-letter code mappings from " << filename << '.' << endl;
+		TR.Debug << "Read " << code_map.size() << " 3-letter code mappings from " << filename << '.' << endl;
 	}
 
 	return code_map;

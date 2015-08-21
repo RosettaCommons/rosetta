@@ -27,7 +27,7 @@ using namespace core::chemical::rna;
 
 namespace core {
 namespace pose {
-namespace rna{
+namespace rna {
 
 bool
 mutate_position( core::pose::Pose & pose, core::Size const i, char const & new_seq );
@@ -46,77 +46,77 @@ is_rna_chainbreak( Pose const & pose, Size const i );
 
 void
 fix_sugar_coords_WORKS_BUT_SLOW(
-		utility::vector1< std::string> atoms_for_which_we_need_new_dofs,
-		utility::vector1< utility::vector1< id::DOF_Type > > which_dofs,
-		utility::vector1< Vector > const & non_main_chain_sugar_coords,
-		Pose & pose,
-		Size const i);
+	utility::vector1< std::string> atoms_for_which_we_need_new_dofs,
+	utility::vector1< utility::vector1< id::DOF_Type > > which_dofs,
+	utility::vector1< Vector > const & non_main_chain_sugar_coords,
+	Pose & pose,
+	Size const i);
 
 void
 prepare_scratch_residue(
-		conformation::ResidueOP & scratch_rsd,
-		conformation::Residue const & start_rsd,
-		utility::vector1< Vector > const & non_main_chain_sugar_coords,
-		Pose const & pose);
+	conformation::ResidueOP & scratch_rsd,
+	conformation::Residue const & start_rsd,
+	utility::vector1< Vector > const & non_main_chain_sugar_coords,
+	Pose const & pose);
 
 void
 fix_sugar_coords(
-		utility::vector1< std::string> atoms_for_which_we_need_new_dofs,
-		utility::vector1< Vector > const & non_main_chain_sugar_coords,
-		Pose & pose,
-		Pose const & reference_pose,
-		Size const i);
+	utility::vector1< std::string> atoms_for_which_we_need_new_dofs,
+	utility::vector1< Vector > const & non_main_chain_sugar_coords,
+	Pose & pose,
+	Pose const & reference_pose,
+	Size const i);
 
 void
 initialize_atoms_for_which_we_need_new_dofs(
-		utility::vector1< std::string > & atoms_for_which_we_need_new_dofs,
-		Pose const & pose,
-		Size const i );
+	utility::vector1< std::string > & atoms_for_which_we_need_new_dofs,
+	Pose const & pose,
+	Size const i );
 
 void
 apply_non_main_chain_sugar_coords(
-    utility::vector1< Vector > const & non_main_chain_sugar_coords,
-		Pose & pose,
-		Pose const & reference_pose,
-		Size const i);
+	utility::vector1< Vector > const & non_main_chain_sugar_coords,
+	Pose & pose,
+	Pose const & reference_pose,
+	Size const i);
 
 void
 apply_ideal_c2endo_sugar_coords(
-		Pose & pose,
-		Size const i);
+	Pose & pose,
+	Size const i);
 
 core::chemical::rna::PuckerState
 assign_pucker(
-		Pose const & pose,
-		Size const rsd_id );
+	Pose const & pose,
+	Size const rsd_id );
 
 void
 apply_pucker(
-		Pose & pose,
-		Size const i,
-		PuckerState const pucker_state = ANY_PUCKER,
-		bool const skip_same_state = false,
-		bool const idealize_coord = true );
+	Pose & pose,
+	Size const i,
+	PuckerState const pucker_state = ANY_PUCKER,
+	bool const skip_same_state = false,
+	bool const idealize_coord = true );
 
 // DEPRECATED
 void
 apply_ideal_c2endo_sugar_coords(
-																pose::Pose & pose,
-																Size const i );
+	pose::Pose & pose,
+	Size const i );
 
 void
 correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose, Size const five_prime_chainbreak );
 
-bool is_cutpoint_closed_torsion( pose::Pose const & pose,	id::TorsionID const & torsion_id );
+bool is_cutpoint_closed_torsion( pose::Pose const & pose, id::TorsionID const & torsion_id );
 
-bool is_cutpoint_closed_atom(	core::conformation::Residue const & rsd, id::AtomID const & id );
+bool is_cutpoint_closed_atom( core::conformation::Residue const & rsd, id::AtomID const & id );
 
 void output_boolean( std::string const & tag, bool boolean );
 
-void print_torsion_info( pose::Pose const & pose,	id::TorsionID const & torsion_id );
+void print_torsion_info( pose::Pose const & pose, id::TorsionID const & torsion_id );
 
 bool is_torsion_valid( pose::Pose const & pose, id::TorsionID const & torsion_id,
-		bool verbose = false, bool skip_chainbreak_torsions = false );
+	bool verbose = false, bool skip_chainbreak_torsions = false );
 
 
 // might be deprecatable soon -- legacy of VirtualSugarSampler, which could get away with bulge variant.

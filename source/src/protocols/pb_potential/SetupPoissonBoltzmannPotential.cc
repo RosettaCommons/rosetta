@@ -43,8 +43,8 @@
 #include <fstream> // for ifstream
 #include <cstdio> // for remove()
 
-namespace protocols{
-namespace pb_potential{
+namespace protocols {
+namespace pb_potential {
 
 typedef SetupPoissonBoltzmannPotential SetupPB;
 typedef SetupPoissonBoltzmannPotentialCreator SetupPBCreator;
@@ -59,17 +59,17 @@ SetupPBCreator::~SetupPoissonBoltzmannPotentialCreator()
 protocols::moves::MoverOP
 SetupPBCreator::create_mover() const
 {
-  return protocols::moves::MoverOP( new SetupPoissonBoltzmannPotential );
+	return protocols::moves::MoverOP( new SetupPoissonBoltzmannPotential );
 }
 std::string
 SetupPBCreator::keyname() const
 {
-  return SetupPBCreator::mover_name();
+	return SetupPBCreator::mover_name();
 }
 std::string
 SetupPBCreator::mover_name()
 {
-  return "SetupPoissonBoltzmannPotential";
+	return "SetupPoissonBoltzmannPotential";
 }
 
 const std::string SetupPB::DEFAULT_APBS_PATH = "apbs";
@@ -87,47 +87,47 @@ SetupPB::apply(core::pose::Pose & pose ) {
 	using namespace methods;
 
 	// Register the empty cache holder if not done so yet.
-	if( !pose.data().has( pose::datacache::CacheableDataType::PB_LIFETIME_CACHE ) ){
+	if ( !pose.data().has( pose::datacache::CacheableDataType::PB_LIFETIME_CACHE ) ) {
 		PoissonBoltzmannEnergy::PBLifetimeCacheOP new_cache( new PoissonBoltzmannEnergy::PBLifetimeCache() );
 		pose.data().set( pose::datacache::CacheableDataType::PB_LIFETIME_CACHE, new_cache );
 	}
 
 	// Cache the "which chain" info
 	PoissonBoltzmannEnergy::PBLifetimeCacheOP cached_data =
-		static_cast< PoissonBoltzmannEnergy::PBLifetimeCacheOP >(pose.data().get_ptr<	PoissonBoltzmannEnergy::PBLifetimeCache>(pose::datacache::CacheableDataType::PB_LIFETIME_CACHE ));
+		static_cast< PoissonBoltzmannEnergy::PBLifetimeCacheOP >(pose.data().get_ptr< PoissonBoltzmannEnergy::PBLifetimeCache>(pose::datacache::CacheableDataType::PB_LIFETIME_CACHE ));
 	pose.data().set( pose::datacache::CacheableDataType::PB_LIFETIME_CACHE, cached_data );
 
 
 	// Let's clean up the previous run's mess.
 	remove("*.dx");
-  remove("*.in");
+	remove("*.in");
 	remove("*.pqr");
 
 	// Prescore to cache bound/unbound poses.  This is necessary for filters.
 	// Bound, unbound
- 	ddg_->apply(pose);
+	ddg_->apply(pose);
 
 }
 
 std::string
 SetupPB::get_name() const {
-  return "SetupPoissonBoltzmannPotential";
+	return "SetupPoissonBoltzmannPotential";
 }
 protocols::moves::MoverOP
 SetupPB::clone() const {
-  return protocols::moves::MoverOP( new SetupPoissonBoltzmannPotential( *this ) );
+	return protocols::moves::MoverOP( new SetupPoissonBoltzmannPotential( *this ) );
 }
 
 void
 SetupPB::parse_my_tag( utility::tag::TagCOP tag,
-			    basic::datacache::DataMap & data_map,
-			    protocols::filters::Filters_map const & filters_map,
-			    protocols::moves::Movers_map const & movers_map,
-			    core::pose::Pose const & pose ) {
+	basic::datacache::DataMap & data_map,
+	protocols::filters::Filters_map const & filters_map,
+	protocols::moves::Movers_map const & movers_map,
+	core::pose::Pose const & pose ) {
 	// This param is required when the app is NOT linked against the apbs libraries.
 	// Validate only when it is a requirement, but register in any way.
 	std::string apbs_path;  // path to the apbs executable.
-	if( tag->hasOption( "apbs_path" ) ) {
+	if ( tag->hasOption( "apbs_path" ) ) {
 		apbs_path = tag->getOption<std::string>("apbs_path");
 	}
 #ifdef LINK_APBS_LIBS
@@ -142,52 +142,51 @@ SetupPB::parse_my_tag( utility::tag::TagCOP tag,
 	basic::options::option[basic::options::OptionKeys::pb_potential::apbs_path](apbs_path);
 
 	utility::vector1<Size> charged_chains;
-  if( tag->hasOption( "charged_chains" )) {
-    // comma delimited list of residue numbers in string (e.g. "1,2" for chain 1 and chain 2).
-    utility::vector1<std::string> temp = utility::string_split( tag->getOption< std::string >( "charged_chains" ), ',');
-    for( core::Size i=1; i<=temp.size(); ++i ) {
-      charged_chains.push_back(atoi(temp[i].c_str()));
-    }
-	}
-	else{
+	if ( tag->hasOption( "charged_chains" ) ) {
+		// comma delimited list of residue numbers in string (e.g. "1,2" for chain 1 and chain 2).
+		utility::vector1<std::string> temp = utility::string_split( tag->getOption< std::string >( "charged_chains" ), ',');
+		for ( core::Size i=1; i<=temp.size(); ++i ) {
+			charged_chains.push_back(atoi(temp[i].c_str()));
+		}
+	} else {
 		TR << "No user defined charged chains.  Default to : 1" << std::endl;
 		charged_chains.push_back(1);
 	}
 	basic::options::option[basic::options::OptionKeys::pb_potential::charged_chains](charged_chains);
 
 	utility::vector1<Size> revamp_near_chain;
-	if( tag->hasOption("revamp_near_chain") ) {
-		 utility::vector1<std::string> temp = utility::string_split( tag->getOption< std::string >( "revamp_near_chain" ), ',');
-    for( core::Size i=1; i<=temp.size(); ++i ) {
-      revamp_near_chain.push_back(atoi(temp[i].c_str()));
-    }
+	if ( tag->hasOption("revamp_near_chain") ) {
+		utility::vector1<std::string> temp = utility::string_split( tag->getOption< std::string >( "revamp_near_chain" ), ',');
+		for ( core::Size i=1; i<=temp.size(); ++i ) {
+			revamp_near_chain.push_back(atoi(temp[i].c_str()));
+		}
 		basic::options::option[basic::options::OptionKeys::pb_potential::revamp_near_chain]( revamp_near_chain);
 	}
 
 	core::Real potential_cap;
-	if( tag->hasOption("potential_cap") ) {
+	if ( tag->hasOption("potential_cap") ) {
 		potential_cap = tag->getOption<core::Real>( "potential_cap" );
 		basic::options::option[basic::options::OptionKeys::pb_potential::potential_cap]( potential_cap );
 	}
 
 	//bool sidechain_only;
-	if( tag->hasOption("sidechain_only") ) {
+	if ( tag->hasOption("sidechain_only") ) {
 		bool sidechain_only = tag->getOption<bool>( "sidechain_only" );
 		basic::options::option[basic::options::OptionKeys::pb_potential::sidechain_only]( sidechain_only );
 	}
 
 	core::Real epsilon;
-	if( tag->hasOption("epsilon") ) {
+	if ( tag->hasOption("epsilon") ) {
 		epsilon = tag->getOption<core::Real>( "epsilon" );
 		basic::options::option[basic::options::OptionKeys::pb_potential::epsilon]( epsilon );
 	}
 	//bool calcenergy;
-	if( tag->hasOption("calcenergy") ) {
+	if ( tag->hasOption("calcenergy") ) {
 		bool calcenergy = tag->getOption<bool>( "calcenergy" );
 		basic::options::option[basic::options::OptionKeys::pb_potential::calcenergy]( calcenergy );
 	}
 	//int apbs_debug;
-	if( tag->hasOption("apbs_debug") ) {
+	if ( tag->hasOption("apbs_debug") ) {
 		int apbs_debug = tag->getOption<int>( "apbs_debug" );
 		basic::options::option[basic::options::OptionKeys::pb_potential::apbs_debug]( apbs_debug );
 	}
@@ -203,13 +202,13 @@ SetupPB::parse_my_tag( utility::tag::TagCOP tag,
 	( utility::pointer::const_pointer_cast< utility::tag::Tag > (tag) )->setOption<bool>("repack",1);
 
 	std::string scorefxn_name = tag->getOption<std::string>("scorefxn");
-	if( scorefxn_name != "" ) {
+	if ( scorefxn_name != "" ) {
 		core::scoring::ScoreFunction * scorefxn = data_map.get<core::scoring::ScoreFunction*>("scorefxns", scorefxn_name);
 		TR << "Scorefxn weigths: " << scorefxn->serialize_weights() << std::endl;
-		if( scorefxn->get_weight(core::scoring::PB_elec) == 0. ){
+		if ( scorefxn->get_weight(core::scoring::PB_elec) == 0. ) {
 			TR.Error << "PB_elec term is required.  Not found in the scorefxn.  Terminating the program..." << std::endl;
 			TR.Error.flush();
-runtime_assert(false);
+			runtime_assert(false);
 		}
 	}
 	ddg_->parse_my_tag( tag, data_map, filters_map, movers_map, pose );
@@ -218,7 +217,7 @@ runtime_assert(false);
 protocols::moves::MoverOP
 SetupPB::fresh_instance() const {
 
-  return protocols::moves::MoverOP( new SetupPoissonBoltzmannPotential() );
+	return protocols::moves::MoverOP( new SetupPoissonBoltzmannPotential() );
 }
 }
 }

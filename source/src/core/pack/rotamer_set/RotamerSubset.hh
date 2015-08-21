@@ -40,9 +40,9 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-	#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
-	#include <core/pack/rotamer_set/RotamerSet.hh>
-	#include <core/graph/Graph.hh>
+#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
+#include <core/pack/rotamer_set/RotamerSet.hh>
+#include <core/graph/Graph.hh>
 #endif
 
 namespace core {
@@ -269,7 +269,7 @@ public: // noop functions:
 		utility::vector1< scoring::EnergyMap > & energies ) const;
 
 
-// DATA
+	// DATA
 private:
 
 	Rotamers rotamers_;

@@ -40,60 +40,60 @@ namespace saxs {
 class PDDFEnergy : public core::scoring::methods::WholeStructureEnergy  {
 public:
 
-    PDDFEnergy();
+	PDDFEnergy();
 
-    PDDFEnergy(utility::vector1<core::Real> const &,utility::vector1<core::Real> const &);
+	PDDFEnergy(utility::vector1<core::Real> const &,utility::vector1<core::Real> const &);
 
-    virtual ~PDDFEnergy() {}
+	virtual ~PDDFEnergy() {}
 
-    virtual core::scoring::methods::EnergyMethodOP clone() const { return core::scoring::methods::EnergyMethodOP( new PDDFEnergy() ); }
+	virtual core::scoring::methods::EnergyMethodOP clone() const { return core::scoring::methods::EnergyMethodOP( new PDDFEnergy() ); }
 
-    virtual void finalize_total_energy(core::pose::Pose & pose,core::scoring::ScoreFunction const &,core::scoring::EnergyMap & totals) const;
+	virtual void finalize_total_energy(core::pose::Pose & pose,core::scoring::ScoreFunction const &,core::scoring::EnergyMap & totals) const;
 
-    virtual void indicate_required_context_graphs(utility::vector1< bool > & /*context_graphs_required*/
-    ) const {}
+	virtual void indicate_required_context_graphs(utility::vector1< bool > & /*context_graphs_required*/
+	) const {}
 
 	core::scoring::methods::EnergyMethodOP create_energy_method(core::scoring::methods::EnergyMethodOptions const &) const {
-	return core::scoring::methods::EnergyMethodOP( new PDDFEnergy() );
-    }
+		return core::scoring::methods::EnergyMethodOP( new PDDFEnergy() );
+	}
 
-    utility::vector1<core::Real>&  get_pddf() {
-	return pose_pddf_;
-    }
+	utility::vector1<core::Real>&  get_pddf() {
+		return pose_pddf_;
+	}
 
-    utility::vector1<core::Real>&  get_dist_bins() {
-	return d_;
-    }
+	utility::vector1<core::Real>&  get_dist_bins() {
+		return d_;
+	}
 
-    utility::vector1<core::Real> & compute_pddf(const core::pose::Pose &) const;
-    utility::vector1<core::Real> & compute_pddf_without_ff(const core::pose::Pose &) const;
-    core::Real compute_chi(utility::vector1<core::Real> const &, utility::vector1<core::Real> const &) const;
-    core::Real compute_L1(utility::vector1<core::Real> const &, utility::vector1<core::Real> const &) const;
-    void create_pddf(core::pose::Pose &,core::Real,core::Real,core::Real);
+	utility::vector1<core::Real> & compute_pddf(const core::pose::Pose &) const;
+	utility::vector1<core::Real> & compute_pddf_without_ff(const core::pose::Pose &) const;
+	core::Real compute_chi(utility::vector1<core::Real> const &, utility::vector1<core::Real> const &) const;
+	core::Real compute_L1(utility::vector1<core::Real> const &, utility::vector1<core::Real> const &) const;
+	void create_pddf(core::pose::Pose &,core::Real,core::Real,core::Real);
 
-    core::Real evaluate_pddf_energy(const core::pose::Pose & pose) const;
+	core::Real evaluate_pddf_energy(const core::pose::Pose & pose) const;
 
 private:
-    mutable utility::vector1< utility::vector1<core::Real> > factors_;
-    mutable utility::vector1<core::Size> r_ids_;
-    mutable utility::vector1<core::Size> a_ids_;
-    mutable utility::vector1< utility::vector1<core::Real> > dmatrix_;
-    mutable utility::vector1<bool> is_glob_;
+	mutable utility::vector1< utility::vector1<core::Real> > factors_;
+	mutable utility::vector1<core::Size> r_ids_;
+	mutable utility::vector1<core::Size> a_ids_;
+	mutable utility::vector1< utility::vector1<core::Real> > dmatrix_;
+	mutable utility::vector1<bool> is_glob_;
 
-    core::Real norm_;
-    bool if_fit_area_;
-    utility::vector1<core::Real> d_;
-    mutable utility::vector1<core::Real> pose_pddf_;
-    utility::vector1<core::Real> reference_pddf_;
-    core::scoring::saxs::FormFactorManager* ff_manager_;
-    core::Real bin_size_;
-    core::Size min_bin_;
-    core::Size max_bin_;
-    bool if_hydrogens_;
+	core::Real norm_;
+	bool if_fit_area_;
+	utility::vector1<core::Real> d_;
+	mutable utility::vector1<core::Real> pose_pddf_;
+	utility::vector1<core::Real> reference_pddf_;
+	core::scoring::saxs::FormFactorManager* ff_manager_;
+	core::Real bin_size_;
+	core::Size min_bin_;
+	core::Size max_bin_;
+	bool if_hydrogens_;
 
-    void read_pddf(std::string);
-virtual
-core::Size version() const;
+	void read_pddf(std::string);
+	virtual
+	core::Size version() const;
 };
 
 

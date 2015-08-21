@@ -44,7 +44,7 @@ using namespace ObjexxFCL;
 static thread_local basic::Tracer TR( "protocols.simple_moves.symmetry.SymmetricRMSMover" );
 
 SymmetricRMSMover::SymmetricRMSMover()
-	: protocols::moves::Mover("SymmetricRMSMover") {}
+: protocols::moves::Mover("SymmetricRMSMover") {}
 
 SymmetricRMSMover::~SymmetricRMSMover(){}
 
@@ -55,7 +55,7 @@ SymmetricRMSMover::apply( core::pose::Pose & pose )
 	//using core::pose::datacache::CacheableDataType::SCORE_MAP;
 
 	std::map < std::string, core::Real > score_map;
-	if( !(pose.data().has( core::pose::datacache::CacheableDataType::SCORE_MAP ) ) ) {
+	if ( !(pose.data().has( core::pose::datacache::CacheableDataType::SCORE_MAP ) ) ) {
 		score_map[ "NO_OUTPUT_TAG_CACHED_SORRY" ] = 0.0;
 	} else {
 		score_map = ( static_cast< DiagnosticData const &>( pose.data().get( core::pose::datacache::CacheableDataType::SCORE_MAP ))).data() ;
@@ -67,8 +67,7 @@ SymmetricRMSMover::apply( core::pose::Pose & pose )
 	core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	FArray1D_bool superpos ( pose.total_residue(), false );
-	for (Size res=1; res <= symm_info->num_total_residues_without_pseudo(); ++res )
-	{
+	for ( Size res=1; res <= symm_info->num_total_residues_without_pseudo(); ++res ) {
 		superpos(res) = true;
 	}
 	if ( get_native_pose() ) {

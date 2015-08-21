@@ -584,7 +584,7 @@ public:
 		Evaluator const & evaluator,
 		EnergyMap & emap
 	)
-		: parent( rsd1, rsd2, evaluator, emap )
+	: parent( rsd1, rsd2, evaluator, emap )
 	{}
 
 	virtual ~WholeWholeEnergyInvoker() {}
@@ -608,7 +608,7 @@ public:
 		Evaluator const & evaluator,
 		EnergyMap & emap
 	)
-		: parent( rsd1, rsd2, evaluator, emap )
+	: parent( rsd1, rsd2, evaluator, emap )
 	{}
 
 	virtual ~SC_BB_EnergyInvoker() {}
@@ -632,7 +632,7 @@ public:
 		Evaluator const & evaluator,
 		EnergyMap & emap
 	)
-		: parent( rsd1, rsd2, evaluator, emap )
+	: parent( rsd1, rsd2, evaluator, emap )
 	{}
 
 	virtual ~SC_Whole_EnergyInvoker() {}
@@ -656,7 +656,7 @@ public:
 		Evaluator const & evaluator,
 		EnergyMap & emap
 	)
-		: parent( rsd1, rsd2, evaluator, emap )
+	: parent( rsd1, rsd2, evaluator, emap )
 	{}
 
 	virtual ~BB_BB_EnergyInvoker() {}
@@ -680,7 +680,7 @@ public:
 		Evaluator const & evaluator,
 		EnergyMap & emap
 	)
-		: parent( rsd1, rsd2, evaluator, emap )
+	: parent( rsd1, rsd2, evaluator, emap )
 	{}
 
 	virtual ~SC_SC_EnergyInvoker() {}
@@ -697,7 +697,7 @@ using namespace etrie;
 using namespace trie;
 using namespace basic::options;
 
-  /// construction with an etable
+/// construction with an etable
 template < class Derived >
 BaseEtableEnergy< Derived >::BaseEtableEnergy(
 	methods::EnergyMethodCreatorOP creator,
@@ -705,16 +705,16 @@ BaseEtableEnergy< Derived >::BaseEtableEnergy(
 	methods::EnergyMethodOptions const & options,
 	bool do_classic_intrares
 ):
-	parent( creator ),
-	etable_( etable_in ),
-	safe_max_dis2( etable_in.get_safe_max_dis2() ),
-	hydrogen_interaction_cutoff2_( option[ OptionKeys::score::fa_Hatr ] ?
-		std::pow( std::sqrt( etable_in.hydrogen_interaction_cutoff2()) + std::sqrt( safe_max_dis2 ), 2)
-		: etable_in.hydrogen_interaction_cutoff2() ),
-	exclude_DNA_DNA_( options.exclude_DNA_DNA() ),
-	do_classic_intrares_( do_classic_intrares ),
-	put_intra_into_total_( options.put_intra_into_total() ),
-	exclude_intra_res_protein_( options.exclude_intra_res_protein() )
+parent( creator ),
+etable_( etable_in ),
+safe_max_dis2( etable_in.get_safe_max_dis2() ),
+hydrogen_interaction_cutoff2_( option[ OptionKeys::score::fa_Hatr ] ?
+std::pow( std::sqrt( etable_in.hydrogen_interaction_cutoff2()) + std::sqrt( safe_max_dis2 ), 2)
+: etable_in.hydrogen_interaction_cutoff2() ),
+exclude_DNA_DNA_( options.exclude_DNA_DNA() ),
+do_classic_intrares_( do_classic_intrares ),
+put_intra_into_total_( options.put_intra_into_total() ),
+exclude_intra_res_protein_( options.exclude_intra_res_protein() )
 {}
 
 /// @details an explicit copy constructor is required so that the etable_evaluator_ instance,
@@ -722,14 +722,14 @@ BaseEtableEnergy< Derived >::BaseEtableEnergy(
 /// the derived) class.
 template < class Derived >
 BaseEtableEnergy< Derived >::BaseEtableEnergy( BaseEtableEnergy< Derived > const & src ) :
-	parent( src ),
-	etable_( src.etable_ ),
-	safe_max_dis2( src.safe_max_dis2 ),
-	hydrogen_interaction_cutoff2_( src.hydrogen_interaction_cutoff2_ ),
-	exclude_DNA_DNA_( src.exclude_DNA_DNA_ ),
-	do_classic_intrares_( src.do_classic_intrares_ ),
-	put_intra_into_total_( src.put_intra_into_total_ ),
-	exclude_intra_res_protein_( src.exclude_intra_res_protein_ )
+parent( src ),
+etable_( src.etable_ ),
+safe_max_dis2( src.safe_max_dis2 ),
+hydrogen_interaction_cutoff2_( src.hydrogen_interaction_cutoff2_ ),
+exclude_DNA_DNA_( src.exclude_DNA_DNA_ ),
+do_classic_intrares_( src.do_classic_intrares_ ),
+put_intra_into_total_( src.put_intra_into_total_ ),
+exclude_intra_res_protein_( src.exclude_intra_res_protein_ )
 {
 }
 
@@ -780,7 +780,7 @@ BaseEtableEnergy< Derived >::finalize_total_energy(
 				AtomNeighbors const & intranbrs( nblist.intrares_upper_atom_neighbors(i,ii) );
 				conformation::Atom const & iatom( ires.atom(ii) );
 				for ( AtomNeighbors::const_iterator nbr=intranbrs.begin(),
-								nbr_end=intranbrs.end(); nbr!= nbr_end; ++nbr ) {
+						nbr_end=intranbrs.end(); nbr!= nbr_end; ++nbr ) {
 					Size const jj( nbr->atomno() );
 					Real const cp_weight( nbr->weight_func() * nbr->weight() );  //fpd
 
@@ -791,7 +791,7 @@ BaseEtableEnergy< Derived >::finalize_total_energy(
 				///prepare_for_residue_pair( 1,2, pose ); // set inter-res
 				AtomNeighbors const & nbrs( nblist.upper_atom_neighbors(i,ii) );
 				for ( AtomNeighbors::const_iterator nbr=nbrs.begin(),
-								nbr_end=nbrs.end(); nbr!= nbr_end; ++nbr ) {
+						nbr_end=nbrs.end(); nbr!= nbr_end; ++nbr ) {
 #ifdef APL_TEMP_DEBUG
 					++n_d2;
 #endif
@@ -883,7 +883,7 @@ BaseEtableEnergy< Derived >::setup_for_scoring(
 	ScoreFunction const &scfxn
 ) const
 {
-debug_assert( dynamic_cast< Derived const* > (this) );
+	debug_assert( dynamic_cast< Derived const* > (this) );
 	Derived const * ptr = static_cast< Derived const * > (this);
 	ptr->setup_for_scoring_(pose,scfxn);
 	if ( pose.energies().use_nblist() ) {
@@ -902,7 +902,7 @@ BaseEtableEnergy< Derived >::setup_for_derivatives(
 ) const
 {
 	//std::cout << "BaseEtable Setup for derivatives" << std::endl;
-debug_assert( dynamic_cast< Derived const* > (this) );
+	debug_assert( dynamic_cast< Derived const* > (this) );
 	Derived const * ptr = static_cast< Derived const* > (this);
 	ptr->setup_for_scoring_(pose,scfxn);
 	if ( pose.energies().use_nblist() ) {
@@ -929,10 +929,10 @@ BaseEtableEnergy< Derived >::setup_for_packing(
 	tries->total_residue( pose.total_residue() );
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		// Do not compute energy for virtual residues.
-		if (pose.residue(ii).aa() == core::chemical::aa_vrt) continue;
+		if ( pose.residue(ii).aa() == core::chemical::aa_vrt ) continue;
 		//iwd  Temporary hack: also skip ligand residues
 		//if ( !pose.residue(ii).is_polymer() )
-		//	continue;
+		// continue;
 
 		EtableRotamerTrieOP one_rotamer_trie = create_rotamer_trie( pose.residue(ii), pose );
 		tries->trie( ii, one_rotamer_trie );
@@ -1003,7 +1003,7 @@ BaseEtableEnergy< Derived >::get_count_pair_function(
 	using namespace count_pair;
 
 	if ( !calculate_interres( res1, res2 ) ) {
-	 	return count_pair::CountPairFunctionCOP( count_pair::CountPairFunctionOP( new CountPairNone ) );
+		return count_pair::CountPairFunctionCOP( count_pair::CountPairFunctionOP( new CountPairNone ) );
 	}
 
 	count_pair::CPCrossoverBehavior crossover = determine_crossover_behavior( res1, res2, pose, sfxn );
@@ -1078,14 +1078,14 @@ BaseEtableEnergy< Derived >::get_count_pair_function_trie(
 	if ( connection == CP_ONE_BOND ) {
 		CPCrossoverBehavior crossover = determine_crossover_behavior( res1, res2, pose, sfxn );
 		switch ( crossover ) {
-			case CP_CROSSOVER_3 :
-				tcpfxn = TrieCountPairBaseOP( new TrieCountPair1BC3( conn1, conn2 ) );
+		case CP_CROSSOVER_3 :
+			tcpfxn = TrieCountPairBaseOP( new TrieCountPair1BC3( conn1, conn2 ) );
 			break;
-			case CP_CROSSOVER_4 :
-				tcpfxn = TrieCountPairBaseOP( new TrieCountPair1BC4( conn1, conn2 ) );
+		case CP_CROSSOVER_4 :
+			tcpfxn = TrieCountPairBaseOP( new TrieCountPair1BC4( conn1, conn2 ) );
 			break;
-			default:
-				utility_exit();
+		default :
+			utility_exit();
 			break;
 		}
 	} else if ( connection == CP_MULTIPLE_BONDS_OR_PSEUDOBONDS ) {
@@ -1113,25 +1113,25 @@ BaseEtableEnergy< Derived >::get_count_pair_function_trie(
 template < class Derived >
 count_pair::CPResidueConnectionType
 BaseEtableEnergy< Derived >::determine_residue_connection(
-	conformation::Residue const & res1,
-	conformation::Residue const & res2,
-	pose::Pose const &
+conformation::Residue const & res1,
+conformation::Residue const & res2,
+pose::Pose const &
 ) const
 {
-	using namespace count_pair;
-	/// this code is incompatible with designing both disulfides and non-disulfies
-	/// at the same residue...
-	if ( res1.is_pseudobonded( res2.seqpos ) {
-		return CP_MULTIPLE_BONDS_OR_PSEUDOBONDS;
-	} else if ( res1.is_bonded(res2) ) {
-		if ( res1.connections_to_residue( res2 ).size() == 1 ) {
-			return CP_ONE_BOND;
-		} else {
-			return CP_MULTIPLE_BONDS_OR_PSEUDOBONDS;
-		}
-	} else {
-		return CP_NO_BONDS;
-	}
+using namespace count_pair;
+/// this code is incompatible with designing both disulfides and non-disulfies
+/// at the same residue...
+if ( res1.is_pseudobonded( res2.seqpos ) {
+return CP_MULTIPLE_BONDS_OR_PSEUDOBONDS;
+} else if ( res1.is_bonded(res2) ) {
+if ( res1.connections_to_residue( res2 ).size() == 1 ) {
+return CP_ONE_BOND;
+} else {
+return CP_MULTIPLE_BONDS_OR_PSEUDOBONDS;
+}
+} else {
+return CP_NO_BONDS;
+}
 }
 */
 
@@ -1149,21 +1149,21 @@ BaseEtableEnergy< Derived >::determine_crossover_behavior(
 	// maybe should ask "are these two residues polymers and do they share a polymeric bond"
 	if ( res1.polymeric_sequence_distance(res2) == 1 ) {
 		if ( ( !sfxn.has_zero_weight( mm_twist ) && sfxn.has_zero_weight( rama )) ||
-				 ( ( !res1.is_protein() || !res2.is_protein()) &&
-					 ( !res1.is_RNA() || !res2.is_RNA())
-					 ) ) {
+				( ( !res1.is_protein() || !res2.is_protein()) &&
+				( !res1.is_RNA() || !res2.is_RNA())
+				) ) {
 			return CP_CROSSOVER_3;
 		} else {
 			return CP_CROSSOVER_4; // peptide bond w/ or w/o rama, but definately w/o mm_twist
 		}
 	} else if ( res1.seqpos() == res2.seqpos() ) {
 		// logic for controlling intra-residue count pair behavior goes here; for now, default to crossover 3
-		if ( do_classic_intrares_ ){
+		if ( do_classic_intrares_ ) {
 			return CP_CROSSOVER_3; // used by EtableIntraClassicEnergy
 		} else {
 			return CP_CROSSOVER_4;
 		}
-	}else {
+	} else {
 		return CP_CROSSOVER_3; // e.g. disulfides where seqsep != 1
 	}
 }
@@ -1179,7 +1179,7 @@ BaseEtableEnergy< Derived >::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
-debug_assert( rsd1.seqpos() != rsd2.seqpos() );
+	debug_assert( rsd1.seqpos() != rsd2.seqpos() );
 	//std::cerr << __FILE__<< ' ' << __LINE__ << std::endl;
 
 	if ( ! pose.energies().use_nblist() ) {
@@ -1215,7 +1215,7 @@ BaseEtableEnergy< Derived >::residue_pair_energy_ext(
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
 	///prepare_for_residue_pair( 1,2, pose ); // set inter-res
-debug_assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( min_pair_data_type() ) ));
+	debug_assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( min_pair_data_type() ) ));
 	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( min_pair_data_type() ) ) );
 	Real dsq;
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
@@ -1290,8 +1290,8 @@ BaseEtableEnergy< Derived >::setup_for_scoring_for_residue(
 ) const
 {}
 /*debug_assert( dynamic_cast< ResidueNblistData * > (min_data.get_data( min_single_data_type() )() ));
-	ResidueNblistData & nbdata( static_cast< ResidueNblistData & > ( min_data.get_data_ref( min_single_data_type() ) ));
-	nbdata.update( rsd );
+ResidueNblistData & nbdata( static_cast< ResidueNblistData & > ( min_data.get_data_ref( min_single_data_type() ) ));
+nbdata.update( rsd );
 }*/
 
 
@@ -1340,19 +1340,19 @@ BaseEtableEnergy< Derived >::setup_for_scoring_for_residue_pair(
 	ResPairMinimizationData &// data_cache
 ) const
 {
-/*debug_assert( dynamic_cast< ResidueNblistData const * > (minsingle_data1.get_data( min_single_data_type() )() ));
-debug_assert( dynamic_cast< ResidueNblistData const * > (minsingle_data2.get_data( min_single_data_type() )() ));
-debug_assert( dynamic_cast< ResiduePairNeighborList * > (data_cache.get_data( min_pair_data_type() )() ));
+	/*debug_assert( dynamic_cast< ResidueNblistData const * > (minsingle_data1.get_data( min_single_data_type() )() ));
+	debug_assert( dynamic_cast< ResidueNblistData const * > (minsingle_data2.get_data( min_single_data_type() )() ));
+	debug_assert( dynamic_cast< ResiduePairNeighborList * > (data_cache.get_data( min_pair_data_type() )() ));
 
 	ResidueNblistData const & r1nbdat( static_cast< ResidueNblistData const & > ( minsingle_data1.get_data_ref( min_single_data_type() ) ));
 	ResidueNblistData const & r2nbdat( static_cast< ResidueNblistData const & > ( minsingle_data2.get_data_ref( min_single_data_type() ) ));
 	ResiduePairNeighborList & nblist( static_cast< ResiduePairNeighborList & > (  data_cache.get_data_ref( min_pair_data_type() ) ) );
 
 	nblist.update(
-		etable_.max_heavy_heavy_cutoff(),
-		etable_.max_heavy_hydrogen_cutoff(),
-		etable_.max_hydrogen_hydrogen_cutoff(),
-		rsd1, rsd2, r1nbdat, r2nbdat );*/
+	etable_.max_heavy_heavy_cutoff(),
+	etable_.max_heavy_hydrogen_cutoff(),
+	etable_.max_hydrogen_hydrogen_cutoff(),
+	rsd1, rsd2, r1nbdat, r2nbdat );*/
 
 }
 
@@ -1384,45 +1384,45 @@ BaseEtableEnergy< Derived >::setup_for_derivatives_for_residue_pair(
 template < class Derived >
 void
 BaseEtableEnergy< Derived >::eval_atom_derivative_for_residue_pair(
-	Size const atom_index,
-	conformation::Residue const & rsd1,
-	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData const & min_data,
-	pose::Pose const & pose, // provides context
-	kinematics::DomainMap const &,
-	ScoreFunction const &,
-	EnergyMap const & weights,
-	Vector & F1,
-	Vector & F2
+Size const atom_index,
+conformation::Residue const & rsd1,
+conformation::Residue const & rsd2,
+ResSingleMinimizationData const &,
+ResSingleMinimizationData const &,
+ResPairMinimizationData const & min_data,
+pose::Pose const & pose, // provides context
+kinematics::DomainMap const &,
+ScoreFunction const &,
+EnergyMap const & weights,
+Vector & F1,
+Vector & F2
 ) const
 {
 debug_assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( min_pair_data_type() )() ));
-	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( min_pair_data_type() )) );
-	utility::vector1< AtomNeighbor > const & atneighbs( rsd1.seqpos() < rsd2.seqpos() ?
-		nblist.r1_at_neighbors()[ atom_index ] :
-		nblist.r2_at_neighbors()[ atom_index ] );
-	if ( atneighbs.empty() ) return; // early exit
+ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( min_pair_data_type() )) );
+utility::vector1< AtomNeighbor > const & atneighbs( rsd1.seqpos() < rsd2.seqpos() ?
+nblist.r1_at_neighbors()[ atom_index ] :
+nblist.r2_at_neighbors()[ atom_index ] );
+if ( atneighbs.empty() ) return; // early exit
 
-	conformation::Atom const & atom1( rsd1.atom( atom_index ));
-	prepare_for_residue_pair( 1, 2, pose ); // set inter-res
-	Vector f1,f2;
-	//ResiduePairNeighborList::AtomNeighbors const & atneighbs( rsd1.seqpos() < rsd2.seqpos() ?
-	//	nblist.r1_narrow_neighbors( atom_index ) :
-	//	nblist.r2_narrow_neighbors( atom_index ) );
-	//for ( Size ii = atneighbs.head(), iiend = atneighbs.end(); ii != iiend; ii = atneighbs[ ii ].next() ) {
-	for ( Size ii = 1, iiend = atneighbs.size(); ii <= iiend; ++ii ) {
-		//Real const cp_weight( atneighbs[ ii ].data().weight() );  // do not use nbr->weight_func() here
-		Real const cp_weight( atneighbs[ ii ].weight() );  // do not use nbr->weight_func() here
-		conformation::Atom const & atom2( rsd2.atom( atneighbs[ ii ].atomno() ) );
-		Real const dE_dR_over_r( eval_dE_dR_over_r( atom1, atom2, weights, f1, f2 ) );
-		//std::cout << "  atom deriv: " << rsd1.seqpos() << " " << atom_index << " with " << rsd2.seqpos() << " " << nbr->atomno() << ". w= " << nbr->weight() << " dE_dR_over_r: " << dE_dR_over_r <<  std::endl;
-		if ( dE_dR_over_r != 0.0 ) {
-			F1 += dE_dR_over_r * cp_weight * f1;
-			F2 += dE_dR_over_r * cp_weight * f2;
-		}
-	}
+conformation::Atom const & atom1( rsd1.atom( atom_index ));
+prepare_for_residue_pair( 1, 2, pose ); // set inter-res
+Vector f1,f2;
+//ResiduePairNeighborList::AtomNeighbors const & atneighbs( rsd1.seqpos() < rsd2.seqpos() ?
+// nblist.r1_narrow_neighbors( atom_index ) :
+// nblist.r2_narrow_neighbors( atom_index ) );
+//for ( Size ii = atneighbs.head(), iiend = atneighbs.end(); ii != iiend; ii = atneighbs[ ii ].next() ) {
+for ( Size ii = 1, iiend = atneighbs.size(); ii <= iiend; ++ii ) {
+//Real const cp_weight( atneighbs[ ii ].data().weight() );  // do not use nbr->weight_func() here
+Real const cp_weight( atneighbs[ ii ].weight() );  // do not use nbr->weight_func() here
+conformation::Atom const & atom2( rsd2.atom( atneighbs[ ii ].atomno() ) );
+Real const dE_dR_over_r( eval_dE_dR_over_r( atom1, atom2, weights, f1, f2 ) );
+//std::cout << "  atom deriv: " << rsd1.seqpos() << " " << atom_index << " with " << rsd2.seqpos() << " " << nbr->atomno() << ". w= " << nbr->weight() << " dE_dR_over_r: " << dE_dR_over_r <<  std::endl;
+if ( dE_dR_over_r != 0.0 ) {
+F1 += dE_dR_over_r * cp_weight * f1;
+F2 += dE_dR_over_r * cp_weight * f2;
+}
+}
 }*/
 
 template < class Derived >
@@ -1442,37 +1442,37 @@ BaseEtableEnergy< Derived >::eval_residue_pair_derivatives(
 
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
-/*debug_assert( r1_at_derivs.size() >= rsd1.natoms() );
-debug_assert( r2_at_derivs.size() >= rsd2.natoms() );
+	/*debug_assert( r1_at_derivs.size() >= rsd1.natoms() );
+	debug_assert( r2_at_derivs.size() >= rsd2.natoms() );
 
-debug_assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( min_pair_data_type() )() ));
+	debug_assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( min_pair_data_type() )() ));
 	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( min_pair_data_type() )) );
 
 	prepare_for_residue_pair( 1, 2, pose ); // set inter-res
 	Vector f1,f2;
 	utility::vector1< utility::vector1< AtomNeighbor > > const & r1_nbs = nblist.r1_at_neighbors();
 	for ( Size ii = nblist.r1_nonempty().head(),  iiend = 0; ii != iiend; ii = nblist.r1_nonempty()[ ii ].next() ) {
-		utility::vector1< AtomNeighbor > const & ii_nbs( r1_nbs[ ii ] );
-		conformation::Atom const & iiatom( rsd1.atom( ii ) );
-		for ( Size jj = 1, jj_end = ii_nbs.size(); jj <= jj_end; ++jj ) {
-			conformation::Atom const & jjatom( rsd2.atom( ii_nbs[ jj ].atomno() ) );
-			Real const dE_dR_over_r( eval_dE_dR_over_r( iiatom, jjatom, weights, f1, f2 ) );
-			//std::cout << "  atom deriv: " << rsd1.seqpos() << " " << atom_index << " with " << rsd2.seqpos() << " " << nbr->atomno() << ". w= " << nbr->weight() << " dE_dR_over_r: " << dE_dR_over_r <<  std::endl;
-			if ( dE_dR_over_r != 0.0 ) {
-				f1 *= dE_dR_over_r * ii_nbs[ jj ].weight();
-				f2 *= dE_dR_over_r * ii_nbs[ jj ].weight();
-				r1_at_derivs[ ii ].f1() += f1;
-				r1_at_derivs[ ii ].f2() += f2;
-				r2_at_derivs[ ii_nbs[ jj ].atomno() ].f1() += -1*f1;
-				r2_at_derivs[ ii_nbs[ jj ].atomno() ].f2() += -1*f2;
-			}
-		}
+	utility::vector1< AtomNeighbor > const & ii_nbs( r1_nbs[ ii ] );
+	conformation::Atom const & iiatom( rsd1.atom( ii ) );
+	for ( Size jj = 1, jj_end = ii_nbs.size(); jj <= jj_end; ++jj ) {
+	conformation::Atom const & jjatom( rsd2.atom( ii_nbs[ jj ].atomno() ) );
+	Real const dE_dR_over_r( eval_dE_dR_over_r( iiatom, jjatom, weights, f1, f2 ) );
+	//std::cout << "  atom deriv: " << rsd1.seqpos() << " " << atom_index << " with " << rsd2.seqpos() << " " << nbr->atomno() << ". w= " << nbr->weight() << " dE_dR_over_r: " << dE_dR_over_r <<  std::endl;
+	if ( dE_dR_over_r != 0.0 ) {
+	f1 *= dE_dR_over_r * ii_nbs[ jj ].weight();
+	f2 *= dE_dR_over_r * ii_nbs[ jj ].weight();
+	r1_at_derivs[ ii ].f1() += f1;
+	r1_at_derivs[ ii ].f2() += f2;
+	r2_at_derivs[ ii_nbs[ jj ].atomno() ].f1() += -1*f1;
+	r2_at_derivs[ ii_nbs[ jj ].atomno() ].f2() += -1*f2;
+	}
+	}
 	}*/
 
-debug_assert( r1_at_derivs.size() >= rsd1.natoms() );
-debug_assert( r2_at_derivs.size() >= rsd2.natoms() );
+	debug_assert( r1_at_derivs.size() >= rsd1.natoms() );
+	debug_assert( r2_at_derivs.size() >= rsd2.natoms() );
 
-debug_assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( min_pair_data_type() ) ));
+	debug_assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( min_pair_data_type() ) ));
 	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( min_pair_data_type() )) );
 
 	//prepare_for_residue_pair( 1, 2, pose ); // set inter-res
@@ -1509,7 +1509,7 @@ BaseEtableEnergy< Derived >::backbone_backbone_energy(
 	EnergyMap & emap
 ) const
 {
-debug_assert( ! pose.energies().use_nblist() );
+	debug_assert( ! pose.energies().use_nblist() );
 	//prepare_for_residue_pair(rsd1.seqpos(),rsd2.seqpos(),pose);
 	//count_pair::CountPairFunctionCOP cpfxn = get_count_pair_function( rsd1, rsd2, pose, sfxn );
 	//cpfxn->residue_atom_pair_energy_backbone_backbone( rsd1, rsd2, static_cast< Derived const&> (*this), emap );
@@ -1531,7 +1531,7 @@ BaseEtableEnergy< Derived >::backbone_sidechain_energy(
 	EnergyMap & emap
 ) const
 {
-debug_assert( ! pose.energies().use_nblist() );
+	debug_assert( ! pose.energies().use_nblist() );
 	//prepare_for_residue_pair(rsd2.seqpos(),rsd1.seqpos(),pose);
 	//count_pair::CountPairFunctionCOP cpfxn = get_count_pair_function( rsd2, rsd1, pose, sfxn );
 	//cpfxn->residue_atom_pair_energy_sidechain_backbone( rsd2, rsd1, static_cast<Derived const&> (*this), emap );
@@ -1552,7 +1552,7 @@ BaseEtableEnergy< Derived >::sidechain_sidechain_energy(
 	EnergyMap & emap
 ) const
 {
-debug_assert( ! pose.energies().use_nblist() );
+	debug_assert( ! pose.energies().use_nblist() );
 	//prepare_for_residue_pair(rsd1.seqpos(),rsd2.seqpos(),pose);
 	//count_pair::CountPairFunctionCOP cpfxn = get_count_pair_function( rsd1, rsd2, pose, sfxn );
 	//cpfxn->residue_atom_pair_energy_sidechain_sidechain( rsd1, rsd2, static_cast<Derived const&> (*this), emap );
@@ -1574,7 +1574,7 @@ BaseEtableEnergy< Derived >::evaluate_rotamer_pair_energies(
 	ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 ) const
 {
-debug_assert( set1.resid() != set2.resid() );
+	debug_assert( set1.resid() != set2.resid() );
 
 	using namespace methods;
 	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table1( energy_table );
@@ -1611,16 +1611,16 @@ debug_assert( set1.resid() != set2.resid() );
 	temp_table3 = 0;
 	EnergyMap emap;
 	for ( Size ii = 1, ii_end = set1.num_rotamers(); ii <= ii_end; ++ii ) {
-		for ( Size jj = 1, jj_end = set2.num_rotamers(); jj <= jj_end; ++jj ) {
-			emap.zero();
-			residue_pair_energy( *set1.rotamer( ii ), *set2.rotamer( jj ), pose, sfxn, emap );
-			temp_table3( jj, ii ) += weights.dot( emap );
-			if ( std::abs( temp_table1( jj, ii ) - temp_table3( jj, ii )) > 0.001 ) {
-				std::cout << "Residues " << set1.resid() << " & " << set2.resid() << " rotamers: " << ii << " & " << jj;
-				std::cout << " tvt/reg discrepancy: tvt= " <<  temp_table1( jj, ii ) << " reg= " << temp_table3( jj, ii );
-				std::cout << " delta: " << temp_table1( jj, ii ) - temp_table3( jj, ii ) << std::endl;
-			}
-		}
+	for ( Size jj = 1, jj_end = set2.num_rotamers(); jj <= jj_end; ++jj ) {
+	emap.zero();
+	residue_pair_energy( *set1.rotamer( ii ), *set2.rotamer( jj ), pose, sfxn, emap );
+	temp_table3( jj, ii ) += weights.dot( emap );
+	if ( std::abs( temp_table1( jj, ii ) - temp_table3( jj, ii )) > 0.001 ) {
+	std::cout << "Residues " << set1.resid() << " & " << set2.resid() << " rotamers: " << ii << " & " << jj;
+	std::cout << " tvt/reg discrepancy: tvt= " <<  temp_table1( jj, ii ) << " reg= " << temp_table3( jj, ii );
+	std::cout << " delta: " << temp_table1( jj, ii ) - temp_table3( jj, ii ) << std::endl;
+	}
+	}
 	}
 	//std::cout << "Finished RPE calcs for residues " << set1.resid() << " & " << set2.resid() << std::endl;
 	*/
@@ -1652,7 +1652,7 @@ BaseEtableEnergy< Derived >::evaluate_rotamer_background_energies(
 		( pose.energies().data().get( EnergiesCacheableDataType::ETABLE_TRIE_COLLECTION )) ).trie( residue.seqpos() );
 
 	//fpd
-	if (trie2 == NULL) return;
+	if ( trie2 == NULL ) return;
 
 	//prepare_for_residue_pair( set.resid(), residue.seqpos(), pose );
 
@@ -1678,14 +1678,14 @@ BaseEtableEnergy< Derived >::evaluate_rotamer_background_energies(
 	utility::vector1< Energy > temp_vector3( energy_vector.size(), 0.0f );
 	EnergyMap emap;
 	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
-		emap.zero();
-		residue_pair_energy( *set.rotamer( ii ), residue, pose, sfxn, emap );
-		temp_vector3[ ii ] += weights.dot( emap );
-		if ( std::abs( temp_vector1[ ii ] - temp_vector3[ ii ]) > 0.001 ) {
-			std::cout << "Residues " << set.resid() << " & " << residue.seqpos() << " rotamers: " << ii << " & bg";
-			std::cout << " tvt/reg discrepancy: tvt= " <<  temp_vector1[ ii ] << " reg= " << temp_vector3[ ii ];
-			std::cout << " delta: " << temp_vector1[ ii ] - temp_vector3[ ii ] << std::endl;
-		}
+	emap.zero();
+	residue_pair_energy( *set.rotamer( ii ), residue, pose, sfxn, emap );
+	temp_vector3[ ii ] += weights.dot( emap );
+	if ( std::abs( temp_vector1[ ii ] - temp_vector3[ ii ]) > 0.001 ) {
+	std::cout << "Residues " << set.resid() << " & " << residue.seqpos() << " rotamers: " << ii << " & bg";
+	std::cout << " tvt/reg discrepancy: tvt= " <<  temp_vector1[ ii ] << " reg= " << temp_vector3[ ii ];
+	std::cout << " delta: " << temp_vector1[ ii ] - temp_vector3[ ii ] << std::endl;
+	}
 	}
 	std::cout << "Finished Rotamer BG calcs for residues " << set.resid() << " & " << residue.seqpos() << std::endl;
 	*/
@@ -1711,7 +1711,7 @@ BaseEtableEnergy< Derived >::eval_intrares_energy_ext(
 {
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
-debug_assert( utility::pointer::dynamic_pointer_cast< ResidueNblistData const > (min_data.get_data( min_single_data_type() ) ));
+	debug_assert( utility::pointer::dynamic_pointer_cast< ResidueNblistData const > (min_data.get_data( min_single_data_type() ) ));
 	ResidueNblistData const & nblist( static_cast< ResidueNblistData const & > ( min_data.get_data_ref( min_single_data_type() ) ) );
 
 	//prepare_for_residue_pair( 1,1, pose ); // set intra-res
@@ -1723,8 +1723,8 @@ debug_assert( utility::pointer::dynamic_pointer_cast< ResidueNblistData const > 
 		conformation::Atom const & atom2( rsd.atom( neighbs[ ii ].atomno2() ) );
 		static_cast< Derived const & > (*this).intrares_evaluator().atom_pair_energy( atom1, atom2, neighbs[ ii ].weight(), emap, dsq );
 		//std::cout << "evaluated " << neighbs[ ii ].atomno1() << " " << neighbs[ ii ].atomno2() << " " <<
-		//	emap[ fa_atr ] << " " << emap[ fa_rep ] << " " << emap[ fa_sol ] << " " <<
-		//	emap[ fa_intra_atr ] << " " << emap[ fa_intra_rep ] << " " << emap[ fa_intra_sol ] << std::endl;
+		// emap[ fa_atr ] << " " << emap[ fa_rep ] << " " << emap[ fa_sol ] << " " <<
+		// emap[ fa_intra_atr ] << " " << emap[ fa_intra_rep ] << " " << emap[ fa_intra_sol ] << std::endl;
 	}
 }
 
@@ -1777,7 +1777,7 @@ BaseEtableEnergy< Derived >::eval_intrares_derivatives(
 {
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
-debug_assert( utility::pointer::dynamic_pointer_cast< ResidueNblistData const > (min_data.get_data( min_single_data_type() ) ));
+	debug_assert( utility::pointer::dynamic_pointer_cast< ResidueNblistData const > (min_data.get_data( min_single_data_type() ) ));
 	ResidueNblistData const & nblist( static_cast< ResidueNblistData const & > ( min_data.get_data_ref( min_single_data_type() )) );
 
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
@@ -1891,8 +1891,8 @@ BaseEtableEnergy< Derived >::bump_energy_full(
 {
 	EnergyMap tbemap;
 	//prepare_for_residue_pair(rsd1.seqpos(),rsd2.seqpos(),pose);
-//	count_pair::CountPairFunctionCOP cpfxn = get_count_pair_function( rsd1, rsd2, pose, sfxn );
-//	cpfxn->residue_atom_pair_energy_sidechain_whole( rsd1, rsd2, static_cast<Derived const&> (*this), tbemap );
+	// count_pair::CountPairFunctionCOP cpfxn = get_count_pair_function( rsd1, rsd2, pose, sfxn );
+	// cpfxn->residue_atom_pair_energy_sidechain_whole( rsd1, rsd2, static_cast<Derived const&> (*this), tbemap );
 	if ( !calculate_interres( rsd1, rsd2 ) ) return;
 	count_pair::CPCrossoverBehavior crossover = determine_crossover_behavior( rsd1, rsd2, pose, sfxn );
 	typename Derived::Evaluator const & evaluator( static_cast< Derived const & > (*this).interres_evaluator() );

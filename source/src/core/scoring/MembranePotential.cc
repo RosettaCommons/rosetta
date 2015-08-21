@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/scoring/MembranePotential.cc
+/// @file  core/scoring/MembranePotential.cc
 ///
-/// @brief		Membrane Potential - Base Scoring Methods for LowRes Energy Function
-/// @details	Compute Low Res membrane energy terms: Menv, MPair, MCBeta and Membrane
-///				penalties. Also contains pass-through methods for accessing and updating
-///				mp framework supported data in a membrane conformation.
-///				Last Modified: 3/11/14
+/// @brief  Membrane Potential - Base Scoring Methods for LowRes Energy Function
+/// @details Compute Low Res membrane energy terms: Menv, MPair, MCBeta and Membrane
+///    penalties. Also contains pass-through methods for accessing and updating
+///    mp framework supported data in a membrane conformation.
+///    Last Modified: 3/11/14
 ///
-///	@author		Rebecca Faye Alford (rfalford12@gmail.com)
-/// @author		Bjorn Wallner (Original)
+/// @author  Rebecca Faye Alford (rfalford12@gmail.com)
+/// @author  Bjorn Wallner (Original)
 
 #ifndef INCLUDE_core_scoring_MembranePotential_cc
 #define INCLUDE_core_scoring_MembranePotential_cc
@@ -78,7 +78,7 @@ namespace scoring {
 
 /// @brief Copy Constructor for a Membrane Embedding Object
 MembraneEmbed::MembraneEmbed( MembraneEmbed const & src ) :
-CacheableData()
+	CacheableData()
 {
 	depth_=src.depth_;
 	center_=src.center_;
@@ -166,14 +166,15 @@ MembranePotential::MembranePotential():
 		mem_env_log6_.dimension( max_aa, max_mem_layers,env_log_table_cen6_bins );
 		utility::io::izstream stream;
 		basic::database::open( stream, "scoring/score_functions/MembranePotential/CEN6_mem_env_log.txt" );
-		for ( Size i=1; i<= max_aa; ++i ){
+		for ( Size i=1; i<= max_aa; ++i ) {
 			getline( stream, line );
 			std::istringstream l(line);
 			l >> tag >> aa;
 			if ( l.fail() || tag != "MEM_ENV_LOG_CEN6:"  ) {
-				utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/CEN6_mem_env_log.txt (cen6)"); }
-			for( Size j=1;j<=max_mem_layers;++j) {
-				for( Size k=1;k<=env_log_table_cen6_bins;++k) {
+				utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/CEN6_mem_env_log.txt (cen6)");
+			}
+			for ( Size j=1; j<=max_mem_layers; ++j ) {
+				for ( Size k=1; k<=env_log_table_cen6_bins; ++k ) {
 					l >> mem_env_log6_(aa,j,k);
 				}
 			}
@@ -184,14 +185,15 @@ MembranePotential::MembranePotential():
 
 		utility::io::izstream stream;
 		basic::database::open( stream, "scoring/score_functions/MembranePotential/CEN10_mem_env_log.txt" );
-		for ( Size i=1; i<= max_aa; ++i ){
+		for ( Size i=1; i<= max_aa; ++i ) {
 			getline( stream, line );
 			std::istringstream l(line);
 			l >> tag >> aa;
 			if ( l.fail() || tag != "MEM_ENV_LOG_CEN10:"  ) {
-				utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/CEN10_mem_env_log.txt (cen10)"); }
-			for( Size j=1;j<=max_mem_layers;++j) {
-				for( Size k=1;k<=env_log_table_cen10_bins;++k) {
+				utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/CEN10_mem_env_log.txt (cen10)");
+			}
+			for ( Size j=1; j<=max_mem_layers; ++j ) {
+				for ( Size k=1; k<=env_log_table_cen10_bins; ++k ) {
 					l >> mem_env_log10_(aa,j,k);
 				}
 			}
@@ -215,8 +217,8 @@ MembranePotential::MembranePotential():
 			getline( stream, line );
 			{
 				std::istringstream l(line);
-				l >>	tag;
-				for ( Size i=1; i<= cbeta_den_table_size; ++i ){
+				l >> tag;
+				for ( Size i=1; i<= cbeta_den_table_size; ++i ) {
 					l >>mem_cbeta_den6_(i);
 				}
 				if ( l.fail() || tag != "MEMCBETA_DEN6:"  ) utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/memcbeta_den.txt (DEN6)");
@@ -225,7 +227,7 @@ MembranePotential::MembranePotential():
 			{
 				std::istringstream l(line);
 				l >> tag;
-				for ( Size i=1; i<= cbeta_den_table_size; ++i ){
+				for ( Size i=1; i<= cbeta_den_table_size; ++i ) {
 					l >> mem_cbeta_2TM_den6_(i);
 				}
 				if ( l.fail() || tag != "MEMCBETA_2TM_DEN6:"  ) utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/memcbeta_den.txt (2TM_DEN6)");
@@ -234,7 +236,7 @@ MembranePotential::MembranePotential():
 			{
 				std::istringstream l(line);
 				l >> tag;
-				for ( Size i=1; i<= cbeta_den_table_size; ++i ){
+				for ( Size i=1; i<= cbeta_den_table_size; ++i ) {
 					l >> mem_cbeta_4TM_den6_(i);
 				}
 				if ( l.fail() || tag != "MEMCBETA_4TM_DEN6:"  ) utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/memcbeta_den.txt (4TM_DEN6)");
@@ -246,7 +248,7 @@ MembranePotential::MembranePotential():
 				getline( stream, line );
 				std::istringstream l(line);
 				l >> tag;
-				for ( Size i=1; i<= cbeta_den_table_size; ++i ){
+				for ( Size i=1; i<= cbeta_den_table_size; ++i ) {
 					l >> mem_cbeta_den12_(i);
 				}
 				if ( l.fail() || tag != "MEMCBETA_DEN12:"  ) utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/memcbeta_den.txt (DEN12)");
@@ -255,7 +257,7 @@ MembranePotential::MembranePotential():
 			{
 				std::istringstream l(line);
 				l >> tag;
-				for ( Size i=1; i<= cbeta_den_table_size; ++i ){
+				for ( Size i=1; i<= cbeta_den_table_size; ++i ) {
 					l >> mem_cbeta_2TM_den12_(i);
 				}
 				if ( l.fail() || tag != "MEMCBETA_2TM_DEN12:"  ) utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/memcbeta_den.txt (2TM_DEN12)");
@@ -264,7 +266,7 @@ MembranePotential::MembranePotential():
 			{
 				std::istringstream l(line);
 				l >> tag;
-				for ( Size i=1; i<= cbeta_den_table_size; ++i ){
+				for ( Size i=1; i<= cbeta_den_table_size; ++i ) {
 					l >> mem_cbeta_4TM_den12_(i);
 				}
 				if ( l.fail() || tag != "MEMCBETA_4TM_DEN12:"  ) utility_exit_with_message("bad format for scoring/score_functions/MembranePotential/memcbeta_den.txt (4TM_DEN12)");
@@ -278,7 +280,7 @@ MembranePotential::MembranePotential():
 
 		utility::io::izstream stream;
 		basic::database::open( stream, "scoring/score_functions/MembranePotential/mem_pair_log.txt" );
-		for ( Size i=1; i<= min_mem_layers;++i) {
+		for ( Size i=1; i<= min_mem_layers; ++i ) {
 			for ( Size j=1; j<= pair_log_table_size; ++j ) {
 				for ( Size k=1; k<= max_aa; ++k ) {
 					getline( stream, line );
@@ -286,8 +288,7 @@ MembranePotential::MembranePotential():
 					Size ii,jj;
 					l >> tag >> ii >> jj >> aa;
 					assert( Size(aa) == k );
-					for ( Size n=1;n<=max_aa;++n)
-					{
+					for ( Size n=1; n<=max_aa; ++n ) {
 						l >> mem_pair_log_(i,j,aa,n);
 					}
 					if ( l.fail() || ii != i || jj != j || tag != "MEM_PAIR_LOG:"  ) utility_exit_with_message("scoring/score_functions/MembranePotential/mem_pair_log.txt");
@@ -313,28 +314,27 @@ MembranePotential::finalize( pose::Pose & pose ) const
 /// @brief Evaluate Membrane Environment Term (by residue)
 void
 MembranePotential::evaluate_env(
-								pose::Pose const & pose,
-								conformation::Residue const & rsd,
-								Real & membrane_env_score
-								) const
+	pose::Pose const & pose,
+	conformation::Residue const & rsd,
+	Real & membrane_env_score
+) const
 {
-	if(MembraneEmbed_from_pose( pose ).spanning()) {
+	if ( MembraneEmbed_from_pose( pose ).spanning() ) {
 		Real termini_pen(0);
 		Real const MembraneDepth (MembraneEmbed_from_pose( pose ).depth(rsd.seqpos() ) );
 		evaluate_env(pose,rsd,MembraneDepth,membrane_env_score);
 		Vector const normal(MembraneEmbed_from_pose( pose ).normal());
 		Vector const center(MembraneEmbed_from_pose( pose ).center());
-		if(Menv_penalties_ && ( rsd.seqpos()==1 || rsd.seqpos()==pose.total_residue() ) ) {
+		if ( Menv_penalties_ && ( rsd.seqpos()==1 || rsd.seqpos()==pose.total_residue() ) ) {
 			Vector const & xyz( pose.residue(rsd.seqpos()).atom( 2 ).xyz() );
 			Real depth=dot(xyz-center,normal)+30;
-			if(depth>18 &&
-			   depth<42) {
+			if ( depth>18 &&
+					depth<42 ) {
 				termini_pen++;
 			}
 			membrane_env_score+=50*termini_pen;
 		}
-	}
-	else {
+	} else {
 		membrane_env_score=100;
 	}
 }
@@ -361,8 +361,8 @@ MembranePotential::evaluate_env(
 	Real fcen10 ( cenlist_from_pose( pose ).fcen10( rsd.seqpos() ) );
 
 	// in rare cases, the density is over 15 within 6
-	if (fcen6 > 15) fcen6 = 15 ;
-	if (fcen10 > 40) fcen10 = 40;
+	if ( fcen6 > 15 ) fcen6 = 15 ;
+	if ( fcen10 > 40 ) fcen10 = 40;
 
 	if ( rsd.is_protein() ) {
 
@@ -374,8 +374,7 @@ MembranePotential::evaluate_env(
 			Real score10 (env10_weight* mem_env_log10_( rsd.aa(), layer, static_cast< int >( fcen10 ) ) );
 			membrane_env_score = score6 + score10;
 
-		}
-		else if ( ( MembraneDepth >= 11.0 && MembraneDepth <= 13.0 ) || ( MembraneDepth >= 47.0 && MembraneDepth <= 49.0 ) ) {
+		} else if ( ( MembraneDepth >= 11.0 && MembraneDepth <= 13.0 ) || ( MembraneDepth >= 47.0 && MembraneDepth <= 49.0 ) ) {
 			//interpolate between water and interface phases
 			int layer1 = 2; //interface layer
 			int layer2 = 3; //water layer
@@ -402,16 +401,14 @@ MembranePotential::evaluate_env(
 			// in higher scope either.
 			//int layer = ( MembraneDepth <= 12.0 || MembraneDepth >= 48.0 ) ? 2 : 3;
 
-		}
-		else if ( ( MembraneDepth > 13.0 && MembraneDepth < 17.0 ) || ( MembraneDepth > 43.0 && MembraneDepth < 47.0 ) ) {
+		} else if ( ( MembraneDepth > 13.0 && MembraneDepth < 17.0 ) || ( MembraneDepth > 43.0 && MembraneDepth < 47.0 ) ) {
 			//pure interface phase
 			int layer = 2; //interface layer
 			//B_layer = 1;  // set but never used ~Labonte
 			Real score6 ( env6_weight*mem_env_log6_( rsd.aa(), layer, static_cast< int >( fcen6 ) ) );
 			Real score10 ( env10_weight*mem_env_log10_( rsd.aa(), layer, static_cast< int >( fcen10 ) ) );
 			membrane_env_score = score6 + score10;
-		}
-		else if ( ( MembraneDepth >= 17.0 && MembraneDepth <= 19.0 ) || ( MembraneDepth >= 41.0 && MembraneDepth <= 43.0 ) ) {
+		} else if ( ( MembraneDepth >= 17.0 && MembraneDepth <= 19.0 ) || ( MembraneDepth >= 41.0 && MembraneDepth <= 43.0 ) ) {
 			//interpolate between interface and hydrophobic phases
 			int layer1 = 1; //hydrophobic layer
 			int layer2 = 2; //interface layer
@@ -435,8 +432,7 @@ MembranePotential::evaluate_env(
 
 			//int layer = ( MembraneDepth <= 18.0 || MembraneDepth >= 42.0 ) ? 2 : 1;
 
-		}
-		else {
+		} else {
 			//pure hydrophobic phase
 			int layer = 1;
 
@@ -455,10 +451,10 @@ MembranePotential::evaluate_env(
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void
 MembranePotential::evaluate_cbeta(
-								  pose::Pose const & pose,
-								  conformation::Residue const & rsd,
-								  Real & membrane_cb_score
-								  ) const
+	pose::Pose const & pose,
+	conformation::Residue const & rsd,
+	Real & membrane_cb_score
+) const
 {
 	membrane_cb_score=0;
 	Real const fcen6 ( cenlist_from_pose( pose ).fcen6( rsd.seqpos() ) );
@@ -476,22 +472,22 @@ MembranePotential::evaluate_cbeta(
 	Real const interp4 = fcen12-interp3;
 	if ( TMHs <= 2 ) {
 		membrane_cb_score6 =
-		( 1.0-interp2 ) * mem_cbeta_2TM_den6_( interp1 )+
-		interp2         * mem_cbeta_2TM_den6_( interp1+1 );
+			( 1.0-interp2 ) * mem_cbeta_2TM_den6_( interp1 )+
+			interp2         * mem_cbeta_2TM_den6_( interp1+1 );
 
 	} else if ( TMHs <= 4 ) {
 		membrane_cb_score6 =
-		(1.0-interp2) * mem_cbeta_4TM_den6_( interp1 )+
-		interp2       * mem_cbeta_4TM_den6_( interp1+1 );
+			(1.0-interp2) * mem_cbeta_4TM_den6_( interp1 )+
+			interp2       * mem_cbeta_4TM_den6_( interp1+1 );
 
 	} else {
 		membrane_cb_score6 =
-		(1.0-interp2) * mem_cbeta_den6_( interp1 )+
-		interp2       * mem_cbeta_den6_( interp1+1 );
+			(1.0-interp2) * mem_cbeta_den6_( interp1 )+
+			interp2       * mem_cbeta_den6_( interp1+1 );
 	}
 	membrane_cb_score12 =
-	(1.0-interp4) * mem_cbeta_den12_( interp3 )+
-	interp4       * mem_cbeta_den12_( interp3+1 );
+		(1.0-interp4) * mem_cbeta_den12_( interp3 )+
+		interp4       * mem_cbeta_den12_( interp3+1 );
 
 	membrane_cb_score = (membrane_cb_score6+membrane_cb_score12);
 }
@@ -501,12 +497,12 @@ MembranePotential::evaluate_cbeta(
 /// @brief Evaluate Membrane Rsd Pair Term
 void
 MembranePotential::evaluate_pair(
-								 pose::Pose const & pose,
-								 conformation::Residue const & rsd1,
-								 conformation::Residue const & rsd2,
-								 Real const cendist,
-								 Real & membrane_pair_score
-								 ) const
+	pose::Pose const & pose,
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	Real const cendist,
+	Real & membrane_pair_score
+) const
 {
 
 	membrane_pair_score = 0.0;
@@ -517,9 +513,9 @@ MembranePotential::evaluate_pair(
 	chemical::AA const aa2( rsd2.aa() );
 
 	//CAR  no pair score if a disulfide
-	if (	aa1 == chemical::aa_cys && aa2 == chemical::aa_cys &&
-		rsd1.is_bonded( rsd2 ) && rsd1.polymeric_sequence_distance( rsd2 ) > 1 &&
-		rsd1.has_variant_type( chemical::DISULFIDE ) && rsd2.has_variant_type( chemical::DISULFIDE ) ) return;
+	if ( aa1 == chemical::aa_cys && aa2 == chemical::aa_cys &&
+			rsd1.is_bonded( rsd2 ) && rsd1.polymeric_sequence_distance( rsd2 ) > 1 &&
+			rsd1.has_variant_type( chemical::DISULFIDE ) && rsd2.has_variant_type( chemical::DISULFIDE ) ) return;
 
 	// no pair score for residues closer than 9 in sequence
 	if ( rsd1.polymeric_sequence_distance( rsd2 ) /* j - i */ <= 8 ) return;
@@ -541,11 +537,10 @@ MembranePotential::evaluate_pair(
 
 	int hydro_layer=1;  //1 not_hydrophobic_core 2 hydrophobic core
 	Real AverageDepth=(MembraneDepth1+MembraneDepth2)/2;
-	if(MembraneDepth1 > 18 &&
-	   MembraneDepth1 < 42 &&
-	   MembraneDepth2 >18 &&
-	   MembraneDepth2 <42) //bw currently both residues have to be in the hydrophobic core
-	{
+	if ( MembraneDepth1 > 18 &&
+			MembraneDepth1 < 42 &&
+			MembraneDepth2 >18 &&
+			MembraneDepth2 <42 ) { //bw currently both residues have to be in the hydrophobic core
 		hydro_layer=2;
 	}
 
@@ -574,28 +569,27 @@ MembranePotential::evaluate_pair(
 	// handle last bin specially since icon+1 would be past array end
 	Real f(0);
 	if ( icon != 5 ) {
-		if(!no_interpolate_Mpair_) { //bw new mini specfic, true by default.
+		if ( !no_interpolate_Mpair_ ) { //bw new mini specfic, true by default.
 
-			if( std::abs(AverageDepth - 18)<4)
-			{
+			if ( std::abs(AverageDepth - 18)<4 ) {
 				f=1/(1+std::exp(1.5*(18-AverageDepth)));
 				membrane_pair_score = ( ( 1.0f - interp2 ) * ((1-f)*mem_pair_log_( 1, icon  , aa1, aa2 ) + f*mem_pair_log_( 2, icon  , aa1, aa2 )) +
-									   (      	interp2 ) *  ((1-f)*mem_pair_log_( 1, icon+1, aa1, aa2 ) + f*mem_pair_log_( 2, icon+1, aa1, aa2 )));
-			} else if(std::abs(AverageDepth - 42)<4) {
+					(       interp2 ) *  ((1-f)*mem_pair_log_( 1, icon+1, aa1, aa2 ) + f*mem_pair_log_( 2, icon+1, aa1, aa2 )));
+			} else if ( std::abs(AverageDepth - 42)<4 ) {
 
 				f=1/(1+std::exp(1.5*(AverageDepth-42)));
 
 				membrane_pair_score = ( ( 1.0f - interp2 ) * ((1-f)*mem_pair_log_( 1, icon  , aa1, aa2 ) + f*mem_pair_log_( 2, icon  , aa1, aa2 )) +
-									   (      	interp2 ) *  ((1-f)*mem_pair_log_( 1, icon+1, aa1, aa2 ) + f*mem_pair_log_( 2, icon+1, aa1, aa2 )));
+					(       interp2 ) *  ((1-f)*mem_pair_log_( 1, icon+1, aa1, aa2 ) + f*mem_pair_log_( 2, icon+1, aa1, aa2 )));
 
 			}  else {
 
 				membrane_pair_score = ( ( 1.0f - interp2 ) * mem_pair_log_( hydro_layer, icon  , aa1, aa2 ) +
-									   (      	interp2 ) *  mem_pair_log_( hydro_layer, icon+1, aa1, aa2 ));
+					(       interp2 ) *  mem_pair_log_( hydro_layer, icon+1, aa1, aa2 ));
 			}
 		} else {
 			membrane_pair_score = ( ( 1.0f - interp2 ) * mem_pair_log_( hydro_layer, icon  , aa1, aa2 ) +
-								   (      	interp2 ) *  mem_pair_log_( hydro_layer, icon+1, aa1, aa2 ));
+				(       interp2 ) *  mem_pair_log_( hydro_layer, icon+1, aa1, aa2 ));
 		}
 	} else {
 		membrane_pair_score =   ( 1.0f - interp2 ) * mem_pair_log_( hydro_layer,icon  , aa1, aa2 );
@@ -622,7 +616,7 @@ MembranePotential::compute_membrane_embedding(pose::Pose & pose) const
 	//read in spanfile
 	MembraneTopology & topology( nonconst_MembraneTopology_from_pose(pose) );
 	if ( !topology.initialized() ) {
-		if(option[in::file::spanfile].user()) {
+		if ( option[in::file::spanfile].user() ) {
 			std::string spanfile(option[OptionKeys::in::file::spanfile]());
 			TR << "Reading spanfile " << spanfile << std::endl;
 			topology.initialize(spanfile);
@@ -631,8 +625,7 @@ MembranePotential::compute_membrane_embedding(pose::Pose & pose) const
 		}
 	}
 
-	if(!membrane_embed.calculated())
-	{
+	if ( !membrane_embed.calculated() ) {
 		membrane_embed.initialize( pose );
 		Vector init_normal,init_center;
 		init_membrane_center_normal(pose,init_normal,init_center);
@@ -682,9 +675,10 @@ MembranePotential::compute_membrane_embedding(pose::Pose & pose) const
 				trial_center=orig_trial_center;
 				search_memb_center (trial_center,trial_normal,delta_center);
 
-				if(!check_spanning(pose,trial_normal,trial_center)){
-					if(debug)
+				if ( !check_spanning(pose,trial_normal,trial_center) ) {
+					if ( debug ) {
 						TR << "delta_center= " << delta_center << " not spanning" << std::endl ;
+					}
 					trial_center=accepted_center;
 					trial_normal=accepted_normal;
 					continue;
@@ -692,10 +686,8 @@ MembranePotential::compute_membrane_embedding(pose::Pose & pose) const
 
 				score_normal_center(pose,trial_normal,trial_center,score);
 
-				if(score<accepted_score)
-				{
-					if(score<best_score)
-					{
+				if ( score<accepted_score ) {
+					if ( score<best_score ) {
 						best_score=score;
 						best_center=trial_center;
 						best_normal=trial_normal;
@@ -718,14 +710,15 @@ MembranePotential::compute_membrane_embedding(pose::Pose & pose) const
 		}
 
 		if ( memb_normal_search_ ) {
-			for( Size alpha=alpha_start; alpha<= max_alpha; alpha+=delta_alpha ) {
-				for( Size theta=0; theta<360; theta+=60 ) {
+			for ( Size alpha=alpha_start; alpha<= max_alpha; alpha+=delta_alpha ) {
+				for ( Size theta=0; theta<360; theta+=60 ) {
 					if ( Membed_init_ ) break; //pba no mb embed optimization; just intial guess
 					trial_normal=orig_trial_normal;
 					search_memb_normal(trial_normal,alpha,theta);
-					if(!check_spanning(pose,trial_normal,trial_center)){
-						if(debug)
+					if ( !check_spanning(pose,trial_normal,trial_center) ) {
+						if ( debug ) {
 							TR << "alpha = " << alpha << " not spanning" << std::endl ;
+						}
 						trial_center=accepted_center;
 						trial_normal=accepted_normal;
 						continue;
@@ -733,10 +726,8 @@ MembranePotential::compute_membrane_embedding(pose::Pose & pose) const
 
 					score_normal_center(pose,trial_normal,trial_center,score);
 
-					if(score<accepted_score)
-					{
-						if(score<best_score)
-						{
+					if ( score<accepted_score ) {
+						if ( score<best_score ) {
 							best_score=score;
 							best_center=trial_center;
 							best_normal=trial_normal;
@@ -760,30 +751,25 @@ MembranePotential::compute_membrane_embedding(pose::Pose & pose) const
 		}
 
 		if ( !memb_center_search_ && !memb_normal_search_ ) {
-			for( Size cycles=1;cycles<=membrane_normal_cycles_;++cycles)
-			{
+			for ( Size cycles=1; cycles<=membrane_normal_cycles_; ++cycles ) {
 				if ( Membed_init_ ) break; //pba no mb embed optimization; just intial guess
 				temperature = 2.0/cycles;
-				if(numeric::random::rg().uniform()<0.5) // change center
-				{
+				if ( numeric::random::rg().uniform()<0.5 ) { // change center
 					rigid_perturb_vector(trial_center,center_mag);
-				}
-				else // change normal
-				{
+				} else { // change normal
 					rot_perturb_vector(trial_normal,normal_mag);
 				}
-				if(!check_spanning(pose,trial_normal,trial_center)){
-					if(debug)
+				if ( !check_spanning(pose,trial_normal,trial_center) ) {
+					if ( debug ) {
 						TR << "Cycle " << cycles << " not spanning" << std::endl ;
+					}
 					trial_center=accepted_center;
 					trial_normal=accepted_normal;
 					continue;
 				}
 				score_normal_center(pose,trial_normal,trial_center,score);
-				if(score<accepted_score)
-				{
-					if(score<best_score)
-					{
+				if ( score<accepted_score ) {
+					if ( score<best_score ) {
 						best_score=score;
 						best_center=trial_center;
 						best_normal=trial_normal;
@@ -793,22 +779,17 @@ MembranePotential::compute_membrane_embedding(pose::Pose & pose) const
 					accepted_center=trial_center;
 					accepted_normal=trial_normal;
 					++accepted;
-				}
-				else
-				{
+				} else {
 					++counter;
 					Real const boltz_factor=(accepted_score-score)/temperature;
 					Real const probability = std::exp( std::min ((core::Real)40.0, std::max((core::Real)-40.0,boltz_factor)) );
-					if(numeric::random::rg().uniform()<probability)
-					{
+					if ( numeric::random::rg().uniform()<probability ) {
 						accepted_score=score;
 						accepted_center=trial_center;
 						accepted_normal=trial_normal;
 						++thermally_accepted;
 						++accepted;
-					}
-					else
-					{
+					} else {
 						trial_center=accepted_center;
 						trial_normal=accepted_normal;
 					}
@@ -837,10 +818,10 @@ MembranePotential::compute_membrane_embedding(pose::Pose & pose) const
 // duplicated in Embedding Factory and Embedding Residues
 /// @brief Initialize Membrane Center and Normal parameters (from starting params)
 void MembranePotential::init_membrane_center_normal(
-													pose::Pose const & pose,
-													Vector & normal,
-													Vector & center
-													) const
+	pose::Pose const & pose,
+	Vector & normal,
+	Vector & center
+) const
 {
 	/// Load from
 
@@ -866,19 +847,15 @@ void MembranePotential::init_membrane_center_normal(
 	//Define vectors for inside and outside cap residue
 	Vector inside(0);
 	Vector outside(0);
-	for(Size i=1;i<=topology.tmhelix();++i)
-	{
-		if(!topology.allow_tmh_scoring(i)) continue;
+	for ( Size i=1; i<=topology.tmhelix(); ++i ) {
+		if ( !topology.allow_tmh_scoring(i) ) continue;
 		Vector const & start( pose.residue( topology.span_begin(i) ).atom( 2 ).xyz());
 		Vector const & end( pose.residue( topology.span_end(i) ).atom( 2 ).xyz());
 		// all odd helices goes from outside in (from c++)
-		if( topology.helix_id(i) % 2 == 0)
-		{
+		if ( topology.helix_id(i) % 2 == 0 ) {
 			inside+=start;
 			outside+=end;
-		}
-		else
-		{
+		} else {
 			outside+=start;
 			inside+=end;
 		}
@@ -893,11 +870,11 @@ void MembranePotential::init_membrane_center_normal(
 // Helper function, will go into Embedding Factory
 /// @brief Score Pose using MP Normal and Center
 void MembranePotential::score_normal_center(
-											pose::Pose const & pose,
-											Vector const & normal,
-											Vector const & center,
-											Real & score
-											) const
+	pose::Pose const & pose,
+	Vector const & normal,
+	Vector const & center,
+	Real & score
+) const
 {
 
 	// Compute Starting Conditions
@@ -924,18 +901,18 @@ void MembranePotential::score_normal_center(
 
 			SymmetricConformation const & symm_conf ( dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
 			SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
-			if (!symm_info->bb_is_independent(pose.residue(i).seqpos())) {
+			if ( !symm_info->bb_is_independent(pose.residue(i).seqpos()) ) {
 				rsdSeq = symm_info->bb_follows(pose.residue(i).seqpos());
 			}
-			if (symm_info->is_virtual(i)) {
+			if ( symm_info->is_virtual(i) ) {
 				rsdSeq = 0;
 			}
 		}
 
 		// If any of these conditions apply, skip to the end of the loop
-		if (rsdSeq == 0 ) continue;
+		if ( rsdSeq == 0 ) continue;
 		if ( pose.residue(rsdSeq).aa() == core::chemical::aa_vrt ) continue;
-		if(!topology.allow_scoring(rsdSeq)) continue;
+		if ( !topology.allow_scoring(rsdSeq) ) continue;
 
 		// Grab CA coords, compute depth, score based on env and append score
 		Vector const & xyz( pose.residue( i ).atom( 2 ).xyz());
@@ -946,7 +923,7 @@ void MembranePotential::score_normal_center(
 	}
 
 	// if the user specified to apply mp penalties, append the score
-	if(Menv_penalties_) {
+	if ( Menv_penalties_ ) {
 		tm_projection_penalty( pose, normal, center, tm_projection );
 		non_helix_in_membrane_penalty( pose, normal, center, non_helix_pen );
 		termini_penalty( pose, normal, center, termini_pen );
@@ -957,10 +934,10 @@ void MembranePotential::score_normal_center(
 // Helper function, will go into Embedding Factory
 /// @brief Search for the Membrane Normal Parameter
 void MembranePotential::search_memb_normal(
-										   Vector & n,
-										   Real const & alpha,
-										   Real const & theta
-										   ) const
+	Vector & n,
+	Real const & alpha,
+	Real const & theta
+) const
 {
 	Real r_alpha = numeric::conversions::radians(alpha);
 	Real r_theta = numeric::conversions::radians(theta);
@@ -972,10 +949,10 @@ void MembranePotential::search_memb_normal(
 /// @brief Search for the Membrane Center
 void
 MembranePotential::search_memb_center(
-									  Vector & c,
-									  Vector & n,
-									  Real const & delta
-									  ) const
+	Vector & c,
+	Vector & n,
+	Real const & delta
+) const
 {
 	c = c + delta*n;
 }
@@ -984,9 +961,9 @@ MembranePotential::search_memb_center(
 /// @brief Rotatate Vector (Helper method - randomnly perturb for normal search)
 void
 MembranePotential::rot_perturb_vector(
-									  Vector & v,
-									  Real const & std_dev
-									  ) const
+	Vector & v,
+	Real const & std_dev
+) const
 {
 	Vector u( numeric::random::gaussian(), numeric::random::gaussian(), numeric::random::gaussian() ); //bw rotation_matrix will normalize.
 	Real alpha( numeric::random::gaussian() * std_dev );
@@ -995,7 +972,7 @@ MembranePotential::rot_perturb_vector(
 
 void
 MembranePotential::rigid_perturb_vector(Vector & v,
-										Real const & std_dev) const
+	Real const & std_dev) const
 {
 	Vector u(numeric::random::gaussian(),numeric::random::gaussian(),numeric::random::gaussian()); // there is a weird thing here???
 	u.normalize();
@@ -1009,30 +986,24 @@ MembranePotential::check_spanning(pose::Pose const & pose, Vector const & normal
 {
 	MembraneTopology const & topology( MembraneTopology_from_pose(pose) );
 
-	for(Size i=1;i<=topology.tmhelix()-1;++i)
-	{
-		if(!topology.allow_tmh_scoring(i)) continue;
+	for ( Size i=1; i<=topology.tmhelix()-1; ++i ) {
+		if ( !topology.allow_tmh_scoring(i) ) continue;
 		Vector const & start_i( pose.residue( topology.span_begin(i) ).atom( 2 ).xyz());
 		bool start_i_side=(dot(start_i-center,normal) > 0);
 		bool span_check=false;
-		for(Size j=i+1;j<=topology.tmhelix();++j)
-		{
-			if(!topology.allow_tmh_scoring(j) || span_check) continue;
+		for ( Size j=i+1; j<=topology.tmhelix(); ++j ) {
+			if ( !topology.allow_tmh_scoring(j) || span_check ) continue;
 			span_check=true;
 			Vector const & start_j( pose.residue( topology.span_begin(j) ).atom( 2 ).xyz());
 			bool start_j_side=(dot(start_j-center,normal) > 0);
 			bool coord_para=(start_i_side==start_j_side);
-			if(topology.helix_id(i)-topology.helix_id(j) % 2 == 0) // both should be on the same side (parallel)
-			{
-				if(!(coord_para))
-				{
+			if ( topology.helix_id(i)-topology.helix_id(j) % 2 == 0 ) { // both should be on the same side (parallel)
+				if ( !(coord_para) ) {
 					return false;
 				}
-			}
-			else
-			{ // should be on opposite sides.
-				if(coord_para)
-				{
+			} else {
+				// should be on opposite sides.
+				if ( coord_para ) {
 					return false;
 				}
 			}
@@ -1047,8 +1018,9 @@ void
 MembranePotential::tm_projection_penalty(pose::Pose const & pose,Real & tm_proj) const
 {
 	tm_proj=0.0;
-	if(!Menv_penalties_)
+	if ( !Menv_penalties_ ) {
 		return;
+	}
 	Vector const normal(MembraneEmbed_from_pose( pose ).normal());
 	Vector const center(MembraneEmbed_from_pose( pose ).center());
 	tm_projection_penalty(pose,normal,center,tm_proj);
@@ -1058,8 +1030,9 @@ void
 MembranePotential::tm_projection_penalty(pose::Pose const & pose, Vector const & normal,Vector const & center,Real & tm_proj) const
 {
 	tm_proj=0.0;
-	if(!Menv_penalties_)
+	if ( !Menv_penalties_ ) {
 		return;
+	}
 	MembraneTopology const & topology( MembraneTopology_from_pose(pose) );
 
 	//Define vectors for inside and outside cap residue
@@ -1067,17 +1040,18 @@ MembranePotential::tm_projection_penalty(pose::Pose const & pose, Vector const &
 	Vector outside(0);
 	tm_proj=0;
 
-	for(Size i=1;i<=topology.tmhelix();++i)
-	{
-		if(!topology.allow_tmh_scoring(i)) continue;
+	for ( Size i=1; i<=topology.tmhelix(); ++i ) {
+		if ( !topology.allow_tmh_scoring(i) ) continue;
 		Vector const & start( pose.residue( topology.span_begin(i) ).atom( 2 ).xyz());
 		Vector const & end( pose.residue( topology.span_end(i) ).atom( 2 ).xyz());
 		Real tm_length=std::abs(dot(start-center,normal)-dot(end-center,normal));
 		Real ratio=tm_length/(topology.span_end(i)-topology.span_begin(i)+1);
-		if(tm_length<15)
+		if ( tm_length<15 ) {
 			tm_proj++;
-		if(ratio<1 || ratio > 1.5)
+		}
+		if ( ratio<1 || ratio > 1.5 ) {
 			tm_proj++;
+		}
 	}
 	tm_proj*=50; //total_embed weight is 0.5 in membrane_score_quick.cc
 }
@@ -1086,8 +1060,9 @@ void
 MembranePotential::non_helix_in_membrane_penalty(pose::Pose const & pose, Real & non_helix_pen) const
 {
 	non_helix_pen=0.0;
-	if(!Menv_penalties_)
+	if ( !Menv_penalties_ ) {
 		return;
+	}
 	Vector const normal(MembraneEmbed_from_pose( pose ).normal());
 	Vector const center(MembraneEmbed_from_pose( pose ).center());
 	non_helix_in_membrane_penalty(pose,normal,center,non_helix_pen);
@@ -1097,33 +1072,33 @@ void
 MembranePotential::non_helix_in_membrane_penalty(pose::Pose const & pose, Vector const & normal,Vector const & center,Real & non_helix_pen) const
 {
 	non_helix_pen=0.0;
-	if(!Menv_penalties_)
+	if ( !Menv_penalties_ ) {
 		return;
+	}
 	MembraneTopology const & topology( MembraneTopology_from_pose(pose) );
-	for(Size i=1;i<=pose.total_residue();++i)
-	{
+	for ( Size i=1; i<=pose.total_residue(); ++i ) {
 		Size rsdSeq(i);
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
 			using namespace core::conformation::symmetry;
 			SymmetricConformation const & symm_conf (
-													 dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
+				dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
 			SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
-			if (!symm_info->bb_is_independent(pose.residue(i).seqpos())) {
+			if ( !symm_info->bb_is_independent(pose.residue(i).seqpos()) ) {
 				rsdSeq = symm_info->bb_follows(pose.residue(i).seqpos());
 			}
-			if (symm_info->is_virtual(i)) {
+			if ( symm_info->is_virtual(i) ) {
 				rsdSeq = 0;
 			}
 		}
-		if (rsdSeq ==0 ) continue; // skip virtual residue
+		if ( rsdSeq ==0 ) continue; // skip virtual residue
 
 		if ( pose.residue(rsdSeq).aa() == core::chemical::aa_vrt ) continue;
-		if(!topology.allow_scoring(rsdSeq)) continue;
-		if(topology.tmregion(rsdSeq) && pose.conformation().secstruct(i)!='H') {
+		if ( !topology.allow_scoring(rsdSeq) ) continue;
+		if ( topology.tmregion(rsdSeq) && pose.conformation().secstruct(i)!='H' ) {
 			Vector const & xyz( pose.residue( i ).atom( 2 ).xyz());
 			Real depth=dot(xyz-center,normal)+30;
-			if(depth>18 &&
-			   depth<42) {
+			if ( depth>18 &&
+					depth<42 ) {
 				non_helix_pen++;
 			}
 		}
@@ -1135,8 +1110,9 @@ void
 MembranePotential::termini_penalty(pose::Pose const & pose, Real & termini_pen) const
 {
 	termini_pen=0.0;
-	if(!Menv_penalties_)
+	if ( !Menv_penalties_ ) {
 		return;
+	}
 	Vector const normal(MembraneEmbed_from_pose( pose ).normal());
 	Vector const center(MembraneEmbed_from_pose( pose ).center());
 	termini_penalty(pose,normal,center,termini_pen);
@@ -1146,35 +1122,35 @@ void
 MembranePotential::termini_penalty(pose::Pose const & pose, Vector const & normal,Vector const & center,Real & termini_pen) const
 {
 	termini_pen=0.0;
-	if(!Menv_penalties_)
+	if ( !Menv_penalties_ ) {
 		return;
+	}
 	MembraneTopology const & topology( MembraneTopology_from_pose(pose) );
 
-	for(Size i=1;i<=pose.total_residue();++i) {
-		if (!pose.residue(i).is_terminus()) continue;
+	for ( Size i=1; i<=pose.total_residue(); ++i ) {
+		if ( !pose.residue(i).is_terminus() ) continue;
 
 		Size rsdSeq(i);
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
 			using namespace core::conformation::symmetry;
 			SymmetricConformation const & symm_conf (
-													 dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
+				dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
 			SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
-			if (!symm_info->bb_is_independent(pose.residue(i).seqpos())) {
+			if ( !symm_info->bb_is_independent(pose.residue(i).seqpos()) ) {
 				rsdSeq = symm_info->bb_follows(pose.residue(i).seqpos());
 			}
-			if (symm_info->is_virtual(i)) {
+			if ( symm_info->is_virtual(i) ) {
 				rsdSeq = 0;
 			}
 		}
-		if (rsdSeq ==0 ) continue;
+		if ( rsdSeq ==0 ) continue;
 
 		if ( pose.residue(rsdSeq).aa() == core::chemical::aa_vrt ) continue;
-		if(topology.allow_scoring(rsdSeq))
-		{
+		if ( topology.allow_scoring(rsdSeq) ) {
 			Vector const & xyz( pose.residue( i ).atom( 2 ).xyz());
 			Real depth=dot(xyz-center,normal);
-			if(depth>-12 &&
-			   depth<12) {
+			if ( depth>-12 &&
+					depth<12 ) {
 				termini_pen++;
 			}
 		}

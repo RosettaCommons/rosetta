@@ -76,12 +76,12 @@ Picker::~Picker() {}
 /// @param[in] n_frags The number of fragments to pick per position.
 core::fragment::FrameList
 Picker::get_framelist(
-		std::string const & complete_aa,
-		std::string const & complete_ss,
-		utility::vector1< std::string > const & complete_abego,
-		core::Size const start_res,
-		core::Size const end_res,
-		core::Size const frag_length )
+	std::string const & complete_aa,
+	std::string const & complete_ss,
+	utility::vector1< std::string > const & complete_abego,
+	core::Size const start_res,
+	core::Size const end_res,
+	core::Size const frag_length )
 {
 	assert( start_res >= 1 );
 	assert( end_res >= 1 );
@@ -99,12 +99,12 @@ Picker::get_framelist(
 	if ( it == fragcache_.end() ) {
 		// not found
 		core::fragment::FrameList framelist = pick_fragments(
-				complete_ss,                                               // secondary structure of entire pose
-				complete_aa,                                               // amino acid sequence
-				complete_abego,                                            // abegos for entire pose
-				protocols::forge::build::Interval( start_res, end_res ),   // start/end of region for picking
-				frag_length,                                               // fragment length
-				n_frags_ );                                                // # fragments per position
+			complete_ss,                                               // secondary structure of entire pose
+			complete_aa,                                               // amino acid sequence
+			complete_abego,                                            // abegos for entire pose
+			protocols::forge::build::Interval( start_res, end_res ),   // start/end of region for picking
+			frag_length,                                               // fragment length
+			n_frags_ );                                                // # fragments per position
 		fragcache_[key] = framelist;
 		TR << "Saved " << key << " in cache" << std::endl;
 		assert( framelist.size() );
@@ -137,11 +137,11 @@ Picker::get_framelist(
 
 core::fragment::ConstantLengthFragSetOP
 Picker::pick_and_cache_fragments(
-		std::string const & complete_ss,
-		utility::vector1< std::string > const & complete_abego,
-		core::Size const start_res,
-		core::Size const end_res,
-		core::Size const frag_length )
+	std::string const & complete_ss,
+	utility::vector1< std::string > const & complete_abego,
+	core::Size const start_res,
+	core::Size const end_res,
+	core::Size const frag_length )
 {
 	core::fragment::ConstantLengthFragSetOP fragset =
 		core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( frag_length ) );
@@ -152,12 +152,12 @@ Picker::pick_and_cache_fragments(
 
 core::fragment::ConstantLengthFragSetOP
 Picker::pick_and_cache_fragments(
-		std::string const & complete_aa,
-		std::string const & complete_ss,
-		utility::vector1< std::string > const & complete_abego,
-		core::Size const start_res,
-		core::Size const end_res,
-		core::Size const frag_length )
+	std::string const & complete_aa,
+	std::string const & complete_ss,
+	utility::vector1< std::string > const & complete_abego,
+	core::Size const start_res,
+	core::Size const end_res,
+	core::Size const frag_length )
 {
 	core::fragment::ConstantLengthFragSetOP fragset =
 		core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( frag_length ) );
@@ -170,9 +170,9 @@ Picker::pick_and_cache_fragments(
 /// this does cache and should be the primary function called by objects needing fragments
 core::fragment::ConstantLengthFragSetOP
 Picker::fragments_for_permutation(
-		StructureData const & perm,
-		utility::vector1< std::string > const & comp_ids,
-		core::Size const frag_length )
+	StructureData const & perm,
+	utility::vector1< std::string > const & comp_ids,
+	core::Size const frag_length )
 {
 	core::fragment::ConstantLengthFragSetOP fragset =
 		core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( frag_length ) );
@@ -193,9 +193,9 @@ Picker::fragments_for_permutation(
 /// replaces X in the desired abego with whatever is in the pose
 core::fragment::ConstantLengthFragSetOP
 Picker::fragments_for_permutation_take_X_from_pose(
-		StructureData const & perm,
-		utility::vector1< std::string > const & comp_ids,
-		core::Size const frag_length )
+	StructureData const & perm,
+	utility::vector1< std::string > const & comp_ids,
+	core::Size const frag_length )
 {
 	core::fragment::ConstantLengthFragSetOP fragset =
 		core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( frag_length ) );
@@ -221,12 +221,12 @@ Picker::fragments_for_permutation_take_X_from_pose(
 /// @brief generates a key based on secondary structure to be used in fragcache
 std::string
 Picker::ss_key(
-		std::string const & aa,
-		std::string const & ss,
-		utility::vector1< std::string > const & abego,
-		core::Size const start,
-		core::Size const end,
-		core::Size const fragsize ) const
+	std::string const & aa,
+	std::string const & ss,
+	utility::vector1< std::string > const & abego,
+	core::Size const start,
+	core::Size const end,
+	core::Size const fragsize ) const
 {
 	assert( start <= end );
 	assert( start >= 1 );

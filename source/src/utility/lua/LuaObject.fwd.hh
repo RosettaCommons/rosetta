@@ -8,11 +8,11 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file utility/lua/LuaObject.fwd.hh
-/// @brief A wrapper around a luabind::object 
+/// @brief A wrapper around a luabind::object
 /// has bool conversion, [] support, nested table support, and a .to<T>() conversion function
 /// since a luabind::object is actually a pointer to the stack of a luastate object,
 /// if the luastate object is destroyed, before this wrapper class is destroyed, i don't know what will happen
-// 
+//
 // this is really just a convenience class
 /// @author Ken Jung
 
@@ -21,7 +21,7 @@
 
 namespace utility {
 namespace lua {
-		class LuaObject;
+class LuaObject;
 }
 }
 

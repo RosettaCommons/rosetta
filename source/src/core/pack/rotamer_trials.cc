@@ -69,8 +69,8 @@ static thread_local basic::Tracer TR( "core.pack.rotamer_trials" );
 
 utility::vector1< uint >
 symmetric_repackable_residues(
-    task::PackerTask const & the_task,
-    pose::Pose & pose
+	task::PackerTask const & the_task,
+	pose::Pose & pose
 );
 
 void
@@ -143,17 +143,17 @@ rotamer_trials(
 		Size bestrot = utility::arg_min( one_body_energies );
 
 		//don't replace if the best rotamer is the one that's already assigned
-		//		TR.Trace << "rottrial at position " << resid << " nrot= " << rotset->num_rotamers() << std::endl;
+		//  TR.Trace << "rottrial at position " << resid << " nrot= " << rotset->num_rotamers() << std::endl;
 		if ( bestrot != rotset->id_for_current_rotamer() ) {
 			replaced_residue = true;
 			conformation::ResidueOP newresidue( rotset->rotamer( bestrot )->clone() );//create_residue() );
 			pose.replace_residue ( resid, *newresidue, false );
 			scfxn.update_residue_for_packing( pose, resid );
- 			//TR << "rottrial accept: " << resid << " bestrot: " << bestrot << ' ' <<	one_body_energies[ bestrot ];
-			if( rotset->id_for_current_rotamer() != 0 ) { //more output in this case
+			//TR << "rottrial accept: " << resid << " bestrot: " << bestrot << ' ' << one_body_energies[ bestrot ];
+			if ( rotset->id_for_current_rotamer() != 0 ) { //more output in this case
 				//sml this output is protected because id_for_current_rotamer is incompatible with forced mutations (eg PIKAA)
 				//TR << ' ' << one_body_energies[ rotset->id_for_current_rotamer() ] << ' ' <<
-				//	one_body_energies[ bestrot ] - one_body_energies[ rotset->id_for_current_rotamer() ];
+				// one_body_energies[ bestrot ] - one_body_energies[ rotset->id_for_current_rotamer() ];
 			}
 			//TR << std::endl;
 		}
@@ -175,10 +175,8 @@ repackable_residues( task::PackerTask const & the_task )
 {
 	utility::vector1< int > to_be_packed( the_task.num_to_be_packed() );
 	uint count = 0;
-	for (uint ii = 1; ii <= the_task.total_residue(); ++ii )
-	{
-		if ( the_task.pack_residue( ii ) )
-		{
+	for ( uint ii = 1; ii <= the_task.total_residue(); ++ii ) {
+		if ( the_task.pack_residue( ii ) ) {
 			++count;
 			to_be_packed[ count ] = ii;
 		}
@@ -196,7 +194,7 @@ symmetric_rotamer_trials(
 	using namespace numeric::random;
 	using namespace conformation::symmetry;
 
-//clock_t starttime = clock();
+	//clock_t starttime = clock();
 	PROF_START( basic::ROTAMER_TRIALS );
 
 	task::PackerTaskCOP input_task = make_new_symmetric_PackerTask_by_requested_method( pose, non_symmetric_task );
@@ -253,7 +251,7 @@ symmetric_rotamer_trials(
 		Size bestrot = utility::arg_min( one_body_energies );
 
 		//don't replace if the best rotamer is the one that's already assigned
-		//		TR.Trace << "rottrial at position " << resid << " nrot= " << rotset->num_rotamers() << std::endl;
+		//  TR.Trace << "rottrial at position " << resid << " nrot= " << rotset->num_rotamers() << std::endl;
 		if ( bestrot != rotset->id_for_current_rotamer() ) {
 			replaced_residue = true;
 			conformation::ResidueOP newresidue(  rotset->rotamer( bestrot )->clone() );//create_residue() );
@@ -265,19 +263,19 @@ symmetric_rotamer_trials(
 
 			//fpd replace_residue is symmetric now ... still need to update scorefxn though
 			for ( std::vector< Size>::const_iterator
-			    clone     = symm_info->bb_clones( resid ).begin(),
-			    clone_end = symm_info->bb_clones( resid ).end();
-			    clone != clone_end; ++clone ) {
-			//	  	conformation::ResidueOP sym_rsd = newresidue->clone();
-			// 		  sym_rsd->orient_onto_residue(pose.residue( *clone) );
-			//  		pose.replace_residue ( *clone, *sym_rsd, false );
-                scfxn.update_residue_for_packing( pose, *clone );
+					clone     = symm_info->bb_clones( resid ).begin(),
+					clone_end = symm_info->bb_clones( resid ).end();
+					clone != clone_end; ++clone ) {
+				//    conformation::ResidueOP sym_rsd = newresidue->clone();
+				//     sym_rsd->orient_onto_residue(pose.residue( *clone) );
+				//    pose.replace_residue ( *clone, *sym_rsd, false );
+				scfxn.update_residue_for_packing( pose, *clone );
 			}
-			//			TR.Trace << "rottrial accept: " << resid << " bestrot: " << bestrot << ' ' <<	one_body_energies[ bestrot ];
+			//   TR.Trace << "rottrial accept: " << resid << " bestrot: " << bestrot << ' ' << one_body_energies[ bestrot ];
 			if ( rotset->id_for_current_rotamer() != 0 ) { //more output in this case
 				//sml this output is protected because id_for_current_rotamer is incompatible with forced mutations (eg PIKAA)
 				// TR.Trace << ' ' << one_body_energies[ rotset->id_for_current_rotamer() ] << ' ' <<
-				//					one_body_energies[ bestrot ] - one_body_energies[ rotset->id_for_current_rotamer() ];
+				//     one_body_energies[ bestrot ] - one_body_energies[ rotset->id_for_current_rotamer() ];
 
 			}
 			//TR.Trace << std::endl;
@@ -303,26 +301,23 @@ symmetric_repackable_residues(
 	using namespace conformation::symmetry;
 
 	// find SymmInfo
-  SymmetricConformation const & SymmConf (
+	SymmetricConformation const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation() ) );
-  SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
+	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	// First find out how many residues to pack. Silly, lets come up with a better way of sizing this array...
 	uint num_molten = 0;
-	for (uint res = 1; res <= the_task.total_residue(); ++res ) {
+	for ( uint res = 1; res <= the_task.total_residue(); ++res ) {
 		if ( the_task.pack_residue( res ) && symm_info->fa_is_independent( res )
-				&& res <= symm_info->num_total_residues() )
-		{
+				&& res <= symm_info->num_total_residues() ) {
 			++num_molten;
 		}
 	}
 	utility::vector1< int > to_be_packed( num_molten );
 	uint count = 0;
-	for (uint ii = 1; ii <= the_task.total_residue(); ++ii )
-	{
+	for ( uint ii = 1; ii <= the_task.total_residue(); ++ii ) {
 		if ( the_task.pack_residue( ii ) && symm_info->fa_is_independent( ii )
-					&& ii <= symm_info->num_total_residues() )
-		{
+				&& ii <= symm_info->num_total_residues() ) {
 			++count;
 			to_be_packed[ count ] = ii;
 		}

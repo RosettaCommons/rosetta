@@ -35,8 +35,8 @@ public:
 		utility::vector1< std::string > params_files;
 		ResidueTypeSetCOP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
-		if(!residue_set.has_name("QC1"))   params_files.push_back("core/chemical/1pqc.params");
-		if(!residue_set.has_name("UK002")) params_files.push_back("core/chemical/uk002.params");
+		if ( !residue_set.has_name("QC1") )   params_files.push_back("core/chemical/1pqc.params");
+		if ( !residue_set.has_name("UK002") ) params_files.push_back("core/chemical/uk002.params");
 		residue_set.read_files(params_files);
 	}
 
@@ -53,7 +53,7 @@ public:
 	{
 		core::chemical::AutomorphismIterator itr(*rsdtype, false /*exclude H*/);
 		core::Size cnt = 0;
-		while( !itr.next().empty() ) cnt++;
+		while ( !itr.next().empty() ) cnt++;
 		return cnt;
 	}
 };

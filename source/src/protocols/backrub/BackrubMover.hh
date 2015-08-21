@@ -100,8 +100,8 @@ public:
 		core::id::AtomID end_atomid
 	)
 	{
-		for (Size i = 1; i <= segments_.size(); ++i) {
-			if (segments_[i].start_atomid() == start_atomid && segments_[i].end_atomid() == end_atomid) return i;
+		for ( Size i = 1; i <= segments_.size(); ++i ) {
+			if ( segments_[i].start_atomid() == start_atomid && segments_[i].end_atomid() == end_atomid ) return i;
 		}
 
 		return 0;
@@ -189,11 +189,11 @@ public:
 		utility::vector1<core::Size> const & pivot_residues
 	);
 
-	///@brief Sets Pivot Residues from the Movemap.  Each contiguous set of residues 
+	///@brief Sets Pivot Residues from the Movemap.  Each contiguous set of residues
 	/// with BB enabled will be used as a segment.
 	void
 	set_movemap( core::kinematics::MoveMapCOP movemap );
-	
+
 	/// @brief get atom names to pivot if no segments manually defined
 	utility::vector1<std::string> const &
 	pivot_atoms() const;
@@ -253,7 +253,7 @@ public:
 	set_max_angle_disp_slope(
 		core::Real max_angle_disp_slope
 	);
-	
+
 	/// @brief get whether rotation angle is customized
 	virtual
 	bool
@@ -265,7 +265,7 @@ public:
 	set_custom_angle(
 		bool custom_angle
 	);
-	
+
 	/// @brief get whether detailed balance is preserved (i.e. no branch angle optimization during moves)
 	virtual
 	bool
@@ -355,11 +355,11 @@ public:
 	set_next_angle(
 		core::Real next_angle
 	);
-	
+
 	/// @brief get the rotation angle for the next move
 	core::Real
 	next_angle() const;
-	
+
 	/// @brief get the last rotation angle
 	core::Real
 	last_angle() const;

@@ -108,20 +108,21 @@ numeric::xyzVector< core::Real > recenter_with_missing( core::pose::Pose &pose) 
 	numeric::xyzVector< core::Real > cog(0,0,0), x_i;
 
 	core::Size count=0;
-	for( core::Size ir = 1; ir <= pose.total_residue(); ir++){
-		if (!pose.residue(ir).is_protein() ) continue;
+	for ( core::Size ir = 1; ir <= pose.total_residue(); ir++ ) {
+		if ( !pose.residue(ir).is_protein() ) continue;
 		x_i = pose.xyz( core::id::AtomID( 2, ir ) );
-		if (x_i.length() < 800 ) { // was this randomized??
+		if ( x_i.length() < 800 ) { // was this randomized??
 			cog += x_i;
 			count++;
 		}
 	}
 
-	if (count > 0)
+	if ( count > 0 ) {
 		cog /= (core::Real) count;
+	}
 
-	for( core::Size ir = 1; ir <= pose.total_residue(); ir++){
-		for( core::Size at = 1; at <= pose.residue( ir ).natoms(); at++){
+	for ( core::Size ir = 1; ir <= pose.total_residue(); ir++ ) {
+		for ( core::Size at = 1; at <= pose.residue( ir ).natoms(); at++ ) {
 			pose.set_xyz(  core::id::AtomID( at, ir ),  pose.xyz( core::id::AtomID( at, ir )) - cog  );
 		}
 	}
@@ -150,7 +151,7 @@ typedef utility::pointer::shared_ptr< CaToAllAtom > CaToAllAtomOP;
 CaToAllAtom::CaToAllAtom(){
 	// RB scoring function; get from command line
 	scorefxn_cst_ = core::scoring::ScoreFunctionFactory::create_score_function(
-			basic::options::option[ basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn ]() );
+		basic::options::option[ basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn ]() );
 
 	// grab edens scores from CL as well
 	if ( basic::options::option[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
@@ -180,11 +181,13 @@ void CaToAllAtom::apply( core::pose::Pose & pose ){
 
 	utility::vector1< core::fragment::FragSetOP > frag_libs;
 	bool hasLoopFile = basic::options::option[ basic::options::OptionKeys::loops::frag_files ].user();
-	if ( hasLoopFile )
+	if ( hasLoopFile ) {
 		protocols::loops::read_loop_fragments( frag_libs );
+	}
 
-	for (int i=1; i<=pose.fold_tree().num_cutpoint() ; ++i)
+	for ( int i=1; i<=pose.fold_tree().num_cutpoint() ; ++i ) {
 		cutpts.push_back( pose.fold_tree().cutpoint(i) );
+	}
 	int last_peptide_res = pose.total_residue();
 	while ( !pose.residue( last_peptide_res ).is_protein() ) last_peptide_res--;
 
@@ -213,91 +216,91 @@ ca_to_allatom_main( void * )
 	using namespace basic::options::OptionKeys;
 	using namespace utility::file;
 
-//	// load rbsegs
-//	utility::vector1< protocols::rbsegment_relax::RBSegment > rbsegs,rbsegs_remap;
-//	utility::vector1< int > cutpts;
-//	protocols::loops::Loops loops;
-//	std::string filename( option[ OptionKeys::RBSegmentRelax::rb_file ]().name() );
-//
-//	evaluation::MetaPoseEvaluatorOP evaluator = new evaluation::MetaPoseEvaluator;
-//	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluator);
-//	evaluator->add_evaluation( new simple_filters::SelectRmsdEvaluator( native_pose_, "_native" ) );
+	// // load rbsegs
+	// utility::vector1< protocols::rbsegment_relax::RBSegment > rbsegs,rbsegs_remap;
+	// utility::vector1< int > cutpts;
+	// protocols::loops::Loops loops;
+	// std::string filename( option[ OptionKeys::RBSegmentRelax::rb_file ]().name() );
+	//
+	// evaluation::MetaPoseEvaluatorOP evaluator = new evaluation::MetaPoseEvaluator;
+	// evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluator);
+	// evaluator->add_evaluation( new simple_filters::SelectRmsdEvaluator( native_pose_, "_native" ) );
 
-//	utility::vector1< protocols::jobdist::BasicJobOP > input_jobs = protocols::jobdist::load_s_and_l();
+	// utility::vector1< protocols::jobdist::BasicJobOP > input_jobs = protocols::jobdist::load_s_and_l();
 
-//	protocols::jobdist::BaseJobDistributorOP jobdist;
-//	bool const silent_output = option[ out::file::silent ].user();
-//	if ( silent_output ) {
-//		TZ << "Silent Output Mode " << std::endl;
-//		jobdist = new protocols::jobdist::PlainSilentFileJobDistributor(input_jobs);
-//	} else {
-//		TZ << "PDB Output Mode " << std::endl;
-//		jobdist = new protocols::jobdist::PlainPdbJobDistributor(input_jobs, "none");
-//	}
+	// protocols::jobdist::BaseJobDistributorOP jobdist;
+	// bool const silent_output = option[ out::file::silent ].user();
+	// if ( silent_output ) {
+	//  TZ << "Silent Output Mode " << std::endl;
+	//  jobdist = new protocols::jobdist::PlainSilentFileJobDistributor(input_jobs);
+	// } else {
+	//  TZ << "PDB Output Mode " << std::endl;
+	//  jobdist = new protocols::jobdist::PlainPdbJobDistributor(input_jobs, "none");
+	// }
 
-//	if( option[ out::nooutput ]() ){
-//		jobdist->disable_output();
-//		jobdist->enable_ignorefinished();
-//	}
+	// if( option[ out::nooutput ]() ){
+	//  jobdist->disable_output();
+	//  jobdist->enable_ignorefinished();
+	// }
 
 	// read fragments
-//	utility::vector1< core::fragment::FragSetOP > frag_libs;
-//	bool hasLoopFile = basic::options::option[ basic::options::OptionKeys::loops::frag_files ].user();
-//	if ( hasLoopFile )
-//		protocols::loops::read_loop_fragments( frag_libs );
+	// utility::vector1< core::fragment::FragSetOP > frag_libs;
+	// bool hasLoopFile = basic::options::option[ basic::options::OptionKeys::loops::frag_files ].user();
+	// if ( hasLoopFile )
+	//  protocols::loops::read_loop_fragments( frag_libs );
 
-//	protocols::jobdist::BasicJobOP curr_job, prev_job;
-//	int curr_nstruct;
-//	jobdist->startup();
-//	while( jobdist->next_job(curr_job, curr_nstruct) ) {
-//		std::string curr_job_tag = curr_job->output_tag( curr_nstruct );
-//
-//		// read as-needed
-//		if ( !prev_job || curr_job->input_tag() != prev_job->input_tag() ) {
-//			core::import_pose::pose_from_pdb( start_pose, curr_job->input_tag() );
+	// protocols::jobdist::BasicJobOP curr_job, prev_job;
+	// int curr_nstruct;
+	// jobdist->startup();
+	// while( jobdist->next_job(curr_job, curr_nstruct) ) {
+	//  std::string curr_job_tag = curr_job->output_tag( curr_nstruct );
+	//
+	//  // read as-needed
+	//  if ( !prev_job || curr_job->input_tag() != prev_job->input_tag() ) {
+	//   core::import_pose::pose_from_pdb( start_pose, curr_job->input_tag() );
 
-//			for (int i=1; i<=start_pose.fold_tree().num_cutpoint() ; ++i)
-//				cutpts.push_back( start_pose.fold_tree().cutpoint(i) );
-//			int last_peptide_res = start_pose.total_residue();
-//			while ( !start_pose.residue( last_peptide_res ).is_protein() ) last_peptide_res--;
-//
-//			std::string rbfilename( option[ OptionKeys::RBSegmentRelax::rb_file ]().name() );
-//			protocols::rbsegment_relax::read_RBSegment_file( rbsegs, loops, rbfilename, true, last_peptide_res , cutpts  );
-//		}
-//		pose = start_pose;
+	//   for (int i=1; i<=start_pose.fold_tree().num_cutpoint() ; ++i)
+	//    cutpts.push_back( start_pose.fold_tree().cutpoint(i) );
+	//   int last_peptide_res = start_pose.total_residue();
+	//   while ( !start_pose.residue( last_peptide_res ).is_protein() ) last_peptide_res--;
+	//
+	//   std::string rbfilename( option[ OptionKeys::RBSegmentRelax::rb_file ]().name() );
+	//   protocols::rbsegment_relax::read_RBSegment_file( rbsegs, loops, rbfilename, true, last_peptide_res , cutpts  );
+	//  }
+	//  pose = start_pose;
 
-		// the rigid body movement mover
-//		protocols::rbsegment_relax::RBSegmentRelax shaker( scorefxn_cst, rbsegs, loops );
-//		shaker.initialize( frag_libs , option[ ca_to_allatom::frag_randomness ]() );
-//		shaker.set_bootstrap( true );
-//		shaker.set_skip_lr( option[ ca_to_allatom::no_lr ] );
-//		shaker.set_fix_ligands( option[ ca_to_allatom::fix_ligands ] );
-//		shaker.apply( pose );
+	// the rigid body movement mover
+	//  protocols::rbsegment_relax::RBSegmentRelax shaker( scorefxn_cst, rbsegs, loops );
+	//  shaker.initialize( frag_libs , option[ ca_to_allatom::frag_randomness ]() );
+	//  shaker.set_bootstrap( true );
+	//  shaker.set_skip_lr( option[ ca_to_allatom::no_lr ] );
+	//  shaker.set_fix_ligands( option[ ca_to_allatom::fix_ligands ] );
+	//  shaker.apply( pose );
 
-		////
-		////  output
-//		if ( silent_output ) {
-//			protocols::jobdist::PlainSilentFileJobDistributor *jd =
-//					 dynamic_cast< protocols::jobdist::PlainSilentFileJobDistributor * > (jobdist());
-//
-//			std::string silent_struct_type( "binary" );  // default to binary
-//			if ( option[ out::file::silent_struct_type ].user() ) {
-//				silent_struct_type = option[ OptionKeys::out::file::silent_struct_type ];
-//			}
-//
-//			core::io::silent::SilentStructOP ss
-//				= core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( silent_struct_type );
-//
-//			ss->fill_struct( pose, curr_job_tag );
-//
-//			jd->dump_silent( curr_nstruct, *ss );
-//		} else {
-//			jobdist->dump_pose_and_map( curr_job_tag, pose );    // output PDB
-//		}
-//
-//		prev_job = curr_job;
-//	} // loop over jobs
-//	jobdist->shutdown();
+	////
+	////  output
+	//  if ( silent_output ) {
+	//   protocols::jobdist::PlainSilentFileJobDistributor *jd =
+	//      dynamic_cast< protocols::jobdist::PlainSilentFileJobDistributor * > (jobdist());
+	//
+	//   std::string silent_struct_type( "binary" );  // default to binary
+	//   if ( option[ out::file::silent_struct_type ].user() ) {
+	//    silent_struct_type = option[ OptionKeys::out::file::silent_struct_type ];
+	//   }
+	//
+	//   core::io::silent::SilentStructOP ss
+	//    = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( silent_struct_type );
+	//
+	//   ss->fill_struct( pose, curr_job_tag );
+	//
+	//   jd->dump_silent( curr_nstruct, *ss );
+	//  } else {
+	//   jobdist->dump_pose_and_map( curr_job_tag, pose );    // output PDB
+	//  }
+	//
+	//  prev_job = curr_job;
+	// } // loop over jobs
+	// jobdist->shutdown();
 
 	CaToAllAtomOP ca_to_all_atom( new CaToAllAtom() );
 	protocols::jd2::JobDistributor::get_instance()->go( ca_to_all_atom );
@@ -309,17 +312,17 @@ ca_to_allatom_main( void * )
 int
 main( int argc, char * argv [] )
 {
-try {
-	// options, random initialization
-	NEW_OPT( ca_to_allatom::frag_randomness, "fragment randomness", 0.0 );
-	NEW_OPT( ca_to_allatom::no_lr,           "skip lr?", false );
-	NEW_OPT( ca_to_allatom::fix_ligands,     "fix ligands?", false );
+	try {
+		// options, random initialization
+		NEW_OPT( ca_to_allatom::frag_randomness, "fragment randomness", 0.0 );
+		NEW_OPT( ca_to_allatom::no_lr,           "skip lr?", false );
+		NEW_OPT( ca_to_allatom::fix_ligands,     "fix ligands?", false );
 
-	devel::init( argc, argv );
-	protocols::viewer::viewer_main( ca_to_allatom_main );
-} catch ( utility::excn::EXCN_Base const & e ) {
-	std::cout << "caught exception " << e.msg() << std::endl;
-	return -1;
-}
+		devel::init( argc, argv );
+		protocols::viewer::viewer_main( ca_to_allatom_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 	return 0;
 }

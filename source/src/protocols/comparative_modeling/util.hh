@@ -37,9 +37,9 @@ core::id::SequenceMapping get_qt_mapping_general(
 	core::Size const query_index,
 	core::Size const template_index
 );
-	
+
 protocols::loops::LoopsOP loops_from_alignment(
-  core::Size nres,
+	core::Size nres,
 	core::sequence::SequenceAlignment const & aln,
 	core::Size const min_loop_size
 );
@@ -49,10 +49,10 @@ protocols::loops::LoopsOP loops_from_alignment(
 /// <min_size>. Aligned regions share this property as well, and can be obtained
 /// by calling the invert() method on the output parameter <unaligned_regions>.
 void bounded_loops_from_alignment(
-    const core::Size num_residues,
-    const core::Size min_size,
-    const core::sequence::SequenceAlignment& alignment,
-    protocols::loops::LoopsOP & unaligned_regions);
+	const core::Size num_residues,
+	const core::Size min_size,
+	const core::sequence::SequenceAlignment& alignment,
+	protocols::loops::LoopsOP & unaligned_regions);
 
 protocols::loops::LoopsOP loops_from_transitive_alignments(
 	core::Size nres1,
@@ -63,7 +63,7 @@ protocols::loops::LoopsOP loops_from_transitive_alignments(
 );
 
 protocols::loops::LoopsOP pick_loops_unaligned(
-  core::Size nres,
+	core::Size nres,
 	utility::vector1< core::Size > const & unaligned_residues,
 	core::Size min_loop_size
 );

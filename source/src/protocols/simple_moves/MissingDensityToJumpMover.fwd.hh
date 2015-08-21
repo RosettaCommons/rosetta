@@ -23,8 +23,8 @@ namespace protocols {
 namespace simple_moves {
 
 class MissingDensityToJumpMover;
-  typedef utility::pointer::shared_ptr< MissingDensityToJumpMover > MissingDensityToJumpMoverOP;
-  typedef utility::pointer::shared_ptr< MissingDensityToJumpMover const > MissingDensityToJumpMoverCOP;
+typedef utility::pointer::shared_ptr< MissingDensityToJumpMover > MissingDensityToJumpMoverOP;
+typedef utility::pointer::shared_ptr< MissingDensityToJumpMover const > MissingDensityToJumpMoverCOP;
 
 } // moves
 } // protocols

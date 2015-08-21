@@ -41,34 +41,34 @@ class NatbiasHelicesSheetPotential : public utility::pointer::ReferenceCount {
 public: // typedef
 
 
-  typedef core::Size Size;
-  typedef core::Real Real;
-  typedef core::Vector Vector;
-  typedef protocols::fldsgn::topology::SS_Info2_COP SS_Info2_COP;
-  typedef protocols::fldsgn::topology::HSSTripletOP HSSTripletOP;
-  typedef protocols::fldsgn::topology::HSSTripletSetOP HSSTripletSetOP;
-  typedef protocols::fldsgn::topology::HelixPairingSet HelixPairingSet;
-  typedef protocols::fldsgn::topology::HelixPairingSetOP HelixPairingSetOP;
-  typedef protocols::fldsgn::topology::HSSConstIterator HSSConstIterator;
+	typedef core::Size Size;
+	typedef core::Real Real;
+	typedef core::Vector Vector;
+	typedef protocols::fldsgn::topology::SS_Info2_COP SS_Info2_COP;
+	typedef protocols::fldsgn::topology::HSSTripletOP HSSTripletOP;
+	typedef protocols::fldsgn::topology::HSSTripletSetOP HSSTripletSetOP;
+	typedef protocols::fldsgn::topology::HelixPairingSet HelixPairingSet;
+	typedef protocols::fldsgn::topology::HelixPairingSetOP HelixPairingSetOP;
+	typedef protocols::fldsgn::topology::HSSConstIterator HSSConstIterator;
 
 
 public: // construct/destruct
 
 
-  /// @brief default constructor
-  NatbiasHelicesSheetPotential();
+	/// @brief default constructor
+	NatbiasHelicesSheetPotential();
 
-  /// @brief value constructor
-  NatbiasHelicesSheetPotential( HSSTripletSetOP const hss3set );
+	/// @brief value constructor
+	NatbiasHelicesSheetPotential( HSSTripletSetOP const hss3set );
 
-  /// @brief value constructor
-  NatbiasHelicesSheetPotential( HSSTripletSetOP const hss3set, HelixPairingSetOP const hpairset );
+	/// @brief value constructor
+	NatbiasHelicesSheetPotential( HSSTripletSetOP const hss3set, HelixPairingSetOP const hpairset );
 
-  /// @brief copy constructor
-  NatbiasHelicesSheetPotential( NatbiasHelicesSheetPotential const & src );
+	/// @brief copy constructor
+	NatbiasHelicesSheetPotential( NatbiasHelicesSheetPotential const & src );
 
-  /// @brief default destructor
-  virtual ~NatbiasHelicesSheetPotential();
+	/// @brief default destructor
+	virtual ~NatbiasHelicesSheetPotential();
 
 
 public:
@@ -81,12 +81,12 @@ public:
 public: // mutator
 
 
-  /// @brief set HSSTripletSet
-  void
+	/// @brief set HSSTripletSet
+	void
 	hss_triplet_set( HSSTripletSetOP const hss3set );
 
-  /// @brief set HelixPairingSet
-  void
+	/// @brief set HelixPairingSet
+	void
 	hpairset( HelixPairingSetOP const hpairset );
 
 	/// @brief set dist parameters for helix-strands interaction
@@ -122,7 +122,7 @@ public: // mutator
 	/// @brief set angle parameters for helices projected onto sheet
 	void
 	set_angle_params_helices_on_sheet(
-   	Real const hh_align_angle_wts,
+		Real const hh_align_angle_wts,
 		Real const hh_align_angle,
 		Real const hh_align_angle_sigma2 );
 
@@ -137,54 +137,54 @@ public: // accessor
 public: // scoring
 
 
-  /// @brief calc score
-  void score( SS_Info2_COP const ss_info, Real & hh_score, Real & hs_score ) const;
+	/// @brief calc score
+	void score( SS_Info2_COP const ss_info, Real & hh_score, Real & hs_score ) const;
 
 
 private: // secondary structure data
 
 
-  /// @brief HSSTripletSet
-  HSSTripletSetOP hss3set_;
+	/// @brief HSSTripletSet
+	HSSTripletSetOP hss3set_;
 
-  /// @brief HelixPairingSet
-  HelixPairingSetOP  hpairset_;
+	/// @brief HelixPairingSet
+	HelixPairingSetOP  hpairset_;
 
-  /// @brief score between helix and sheet
-  mutable utility::vector1< Real > hs_scores_;
+	/// @brief score between helix and sheet
+	mutable utility::vector1< Real > hs_scores_;
 
-  /// @brief weights for distant score between helix and sheet
-  Real hs_dist_wts_;
+	/// @brief weights for distant score between helix and sheet
+	Real hs_dist_wts_;
 
-  /// @brief maximum distance for the most favorable interaction between helix and sheet
-  Real hs_dist_;
+	/// @brief maximum distance for the most favorable interaction between helix and sheet
+	Real hs_dist_;
 
-  /// @brief sigma for distance score between helix and sheet
-  Real hs_dist_sigma2_;
+	/// @brief sigma for distance score between helix and sheet
+	Real hs_dist_sigma2_;
 
-  /// @brief repulsive distance between helix and sheet
-  Real hsheet_dist_repulsive_;
+	/// @brief repulsive distance between helix and sheet
+	Real hsheet_dist_repulsive_;
 
-  /// @brief weights for angle score between helix and sheet
-  Real hs_angle_wts_;
+	/// @brief weights for angle score between helix and sheet
+	Real hs_angle_wts_;
 
-  /// @brief maximum angle for the most favorable interaction between helix and sheet
-  Real hs_angle_;
+	/// @brief maximum angle for the most favorable interaction between helix and sheet
+	Real hs_angle_;
 
-  /// @brief sigma for angle score between helix and sheet
-  Real hs_angle_sigma2_;
+	/// @brief sigma for angle score between helix and sheet
+	Real hs_angle_sigma2_;
 
-  /// @brief score of helix pair on sheet
-  mutable utility::vector1< Real > hh_scores_;
+	/// @brief score of helix pair on sheet
+	mutable utility::vector1< Real > hh_scores_;
 
-  /// @brief weight for angle score of helix pair
-  Real hh_align_angle_wts_;
+	/// @brief weight for angle score of helix pair
+	Real hh_align_angle_wts_;
 
-  /// @brief maximum angle for the most favorable interaction of helix-pair on sheet
-  Real hh_align_angle_;
+	/// @brief maximum angle for the most favorable interaction of helix-pair on sheet
+	Real hh_align_angle_;
 
-  /// @brief sigma for angle score of helix pair
-  Real hh_align_angle_sigma2_;
+	/// @brief sigma for angle score of helix pair
+	Real hh_align_angle_sigma2_;
 
 };
 

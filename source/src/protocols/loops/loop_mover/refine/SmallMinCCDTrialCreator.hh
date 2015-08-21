@@ -25,12 +25,12 @@ namespace refine {
 /// @brief creator for the SmallMinCCDTrial class
 class SmallMinCCDTrialCreator : public moves::MoverCreator {
 public:
-  SmallMinCCDTrialCreator() {}
-  virtual ~SmallMinCCDTrialCreator();
+	SmallMinCCDTrialCreator() {}
+	virtual ~SmallMinCCDTrialCreator();
 
-  virtual moves::MoverOP create_mover() const;
+	virtual moves::MoverOP create_mover() const;
 
-  virtual std::string keyname() const;
+	virtual std::string keyname() const;
 
 };
 

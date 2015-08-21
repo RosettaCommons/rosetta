@@ -37,64 +37,64 @@ namespace protocols {
 namespace environment {
 
 class CoMTrackerCM : public environment::ClientMover {
-  typedef environment::claims::EnvClaims EnvClaims;
-  typedef int JumpNumber;
+	typedef environment::claims::EnvClaims EnvClaims;
+	typedef int JumpNumber;
 
 public:
-  CoMTrackerCM();
+	CoMTrackerCM();
 
-  CoMTrackerCM( std::string const& name,
-                core::pack::task::residue_selector::ResidueSelectorCOP mobile_selector,
-                std::string const& stationary_label );
+	CoMTrackerCM( std::string const& name,
+		core::pack::task::residue_selector::ResidueSelectorCOP mobile_selector,
+		std::string const& stationary_label );
 
-  CoMTrackerCM( std::string const& name,
-                core::pack::task::residue_selector::ResidueSelectorCOP mobile_selector );
+	CoMTrackerCM( std::string const& name,
+		core::pack::task::residue_selector::ResidueSelectorCOP mobile_selector );
 
-  virtual
-  ~CoMTrackerCM() {};
+	virtual
+	~CoMTrackerCM() {};
 
-  virtual
-  EnvClaims yield_claims( core::pose::Pose const&,
-                          basic::datacache::WriteableCacheableMapOP );
+	virtual
+	EnvClaims yield_claims( core::pose::Pose const&,
+		basic::datacache::WriteableCacheableMapOP );
 
-  virtual std::string get_name() const;
+	virtual std::string get_name() const;
 
-  virtual void initialize( core::pose::Pose& pose );
+	virtual void initialize( core::pose::Pose& pose );
 
-  virtual void apply( core::pose::Pose& );
+	virtual void apply( core::pose::Pose& );
 
-  virtual void
-  parse_my_tag( utility::tag::TagCOP tag,
-                basic::datacache::DataMap & data,
-                protocols::filters::Filters_map const & filters,
-                protocols::moves::Movers_map const & movers,
-                core::pose::Pose const & pose );
+	virtual void
+	parse_my_tag( utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose );
 
-  std::string const& name() const { return name_; }
+	std::string const& name() const { return name_; }
 
-  void name( std::string const& name ) { name_ = name; }
+	void name( std::string const& name ) { name_ = name; }
 
-  virtual
-  moves::MoverOP fresh_instance() const;
+	virtual
+	moves::MoverOP fresh_instance() const;
 
-  virtual
-  moves::MoverOP clone() const;
+	virtual
+	moves::MoverOP clone() const;
 
 protected:
-  virtual void passport_updated();
+	virtual void passport_updated();
 
 private:
-  void update_tracking_residue( core::kinematics::RT::Vector new_position,
-                                core::Size tracking_residue_id,
-                                core::pose::Pose & pose ) const;
+	void update_tracking_residue( core::kinematics::RT::Vector new_position,
+		core::Size tracking_residue_id,
+		core::pose::Pose & pose ) const;
 
-  void update_com( core::pose::Pose& ) const;
+	void update_com( core::pose::Pose& ) const;
 
-  std::string name_;
-  std::string stationary_label_;
-  std::string com_name_, com_jump_name_;
-  core::pack::task::residue_selector::ResidueSubset mobile_residues_;
-  core::pack::task::residue_selector::ResidueSelectorCOP mobile_selector_;
+	std::string name_;
+	std::string stationary_label_;
+	std::string com_name_, com_jump_name_;
+	core::pack::task::residue_selector::ResidueSubset mobile_residues_;
+	core::pack::task::residue_selector::ResidueSelectorCOP mobile_selector_;
 
 }; // end CoMTrackerCM base class
 

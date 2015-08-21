@@ -29,17 +29,17 @@ namespace noesy_assign {
 class PeakCalibrator;
 
 enum CALIBRATION_ATOM_TYPE {
-    BACKBONE = 1,
-		BETA_NON_METHYL,
-    METHYL,
-		SIDECHAIN,
-    MAX_TYPE //keep last
+	BACKBONE = 1,
+	BETA_NON_METHYL,
+	METHYL,
+	SIDECHAIN,
+	MAX_TYPE //keep last
 };
 
 //previously
 /* BACKBONE
-	 SIDECHAIN
-	 METHYL
+SIDECHAIN
+METHYL
 */
 
 typedef std::bitset< MAX_TYPE > CalibrationTypeCumulator;

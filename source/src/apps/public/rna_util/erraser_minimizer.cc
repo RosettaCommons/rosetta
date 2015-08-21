@@ -136,15 +136,15 @@ OPT_KEY ( IntegerVector, cutpoint_open )
 ////////////////////////////////////////////////////////////////////////
 bool
 check_num_in_vector ( int input_num, utility::vector1< int > const & input_vector  ) {
-	for (Size i = 1; i <= input_vector.size(); ++i) {
-		if (input_num == input_vector[i]) return true;
+	for ( Size i = 1; i <= input_vector.size(); ++i ) {
+		if ( input_num == input_vector[i] ) return true;
 	}
 	return false;
 }
 ////////////////////////////////////////////////////////////////////////
 void
 translate_residue ( conformation::Residue & rsd,
-                    Vector const & nbr_atom_xyz ) {
+	Vector const & nbr_atom_xyz ) {
 	Vector const translate ( nbr_atom_xyz - rsd.nbr_atom_xyz() );
 
 	for ( Size i = 1; i <= rsd.natoms(); ++i ) {
@@ -154,8 +154,8 @@ translate_residue ( conformation::Residue & rsd,
 //////////////////////////////////////////////////////////////////////////////////////////////
 bool
 check_in_bonded_list ( core::id::AtomID const & atom_id1,
-                       core::id::AtomID const & atom_id2,
-                       utility::vector1< std::pair< core::id::AtomID, core::id::AtomID > > & bonded_atom_list ) {
+	core::id::AtomID const & atom_id2,
+	utility::vector1< std::pair< core::id::AtomID, core::id::AtomID > > & bonded_atom_list ) {
 	for ( Size n = 1; n <= bonded_atom_list.size(); n++ ) {
 		if ( atom_id1 == bonded_atom_list[ n ].first && atom_id2 == bonded_atom_list[ n ].second ) return true;
 
@@ -169,9 +169,9 @@ check_in_bonded_list ( core::id::AtomID const & atom_id1,
 //////////////////////////////////////////////////////////////////////////////////////////////
 bool
 check_in_bond_angle_list ( core::id::AtomID const & atom_id1,
-                           core::id::AtomID const & atom_id2,
-                           core::id::AtomID const & atom_id3,
-                           utility::vector1< std::pair< core::id::AtomID, std::pair< core::id::AtomID, core::id::AtomID > > > & bond_angle_list ) {
+	core::id::AtomID const & atom_id2,
+	core::id::AtomID const & atom_id3,
+	utility::vector1< std::pair< core::id::AtomID, std::pair< core::id::AtomID, core::id::AtomID > > > & bond_angle_list ) {
 	for ( Size n = 1; n <= bond_angle_list.size(); n++ ) {
 		if ( atom_id1 == bond_angle_list[ n ].first ) {
 			if ( atom_id2 == bond_angle_list[ n ].second.first && atom_id3 == bond_angle_list[ n ].second.second ) return true;
@@ -205,18 +205,18 @@ apply_ideal_coordinates ( pose::Pose const & pose, pose::Pose & pose_reference )
 			pucker_conformation[n] = NORTH;
 		}
 	}
-	if (is_use_phenix_geo) {
+	if ( is_use_phenix_geo ) {
 		ideal_coord.apply(pose_reference, pucker_conformation, false /*donot keep torsions*/);
 	}
 }
 ////////////////////////////////////////////////////////////////
 void
 add_bond_constraint ( core::id::AtomID const & atom_id1,
-                      core::id::AtomID const & atom_id2,
-                      utility::vector1< std::pair< core::id::AtomID, core::id::AtomID > > & bonded_atom_list,
-                      core::pose::Pose const & pose,
-                      core::pose::Pose const & pose_reference,
-                      core::scoring::constraints::ConstraintSetOP & cst_set ) {
+	core::id::AtomID const & atom_id2,
+	utility::vector1< std::pair< core::id::AtomID, core::id::AtomID > > & bonded_atom_list,
+	core::pose::Pose const & pose,
+	core::pose::Pose const & pose_reference,
+	core::scoring::constraints::ConstraintSetOP & cst_set ) {
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
 	std::string const & atom_name1 = pose.residue ( atom_id1.rsd() ).atom_name ( atom_id1.atomno() );
@@ -230,31 +230,31 @@ add_bond_constraint ( core::id::AtomID const & atom_id1,
 		bonded_atom_list.push_back ( std::make_pair ( atom_id1, atom_id2 ) );
 		Real const bond_length_sd_ ( 0.05 );
 		Real const bond_length = ( pose_reference.residue ( atom_id1.rsd() ).xyz ( atom_name1 ) -
-		                           pose_reference.residue ( atom_id2.rsd() ).xyz ( atom_name2 ) ).length();
+			pose_reference.residue ( atom_id2.rsd() ).xyz ( atom_name2 ) ).length();
 		core::scoring::func::FuncOP dist_harm_func_( new core::scoring::func::HarmonicFunc ( bond_length, bond_length_sd_ ) );
 		cst_set->add_constraint ( ConstraintCOP( ConstraintOP( new AtomPairConstraint ( atom_id1 ,
-		                          atom_id2,
-		                          dist_harm_func_,
-		                          rna_bond_geometry ) ) ) );
+			atom_id2,
+			dist_harm_func_,
+			rna_bond_geometry ) ) ) );
 
 		if ( false ) {
 			std::cout << "PUTTING CONSTRAINT ON DISTANCE: " <<
-			          atom_id2.rsd() << " " << atom_name1 << "; "  <<
-			          atom_id1.rsd() << " " << atom_name2 << " "  <<
-			          bond_length <<
-			          std::endl;
+				atom_id2.rsd() << " " << atom_name1 << "; "  <<
+				atom_id1.rsd() << " " << atom_name2 << " "  <<
+				bond_length <<
+				std::endl;
 		}
 	}
 }
 ///////////////////////////////////////////////////////
 void
 add_bond_angle_constraint ( core::id::AtomID const & atom_id1,
-                            core::id::AtomID const & atom_id2,
-                            core::id::AtomID const & atom_id3,
-                            utility::vector1< std::pair < core::id::AtomID, std::pair< core::id::AtomID, core::id::AtomID > > > & bond_angle_list,
-                            core::pose::Pose const & pose,
-                            core::pose::Pose const & pose_reference,
-                            core::scoring::constraints::ConstraintSetOP & cst_set ) {
+	core::id::AtomID const & atom_id2,
+	core::id::AtomID const & atom_id3,
+	utility::vector1< std::pair < core::id::AtomID, std::pair< core::id::AtomID, core::id::AtomID > > > & bond_angle_list,
+	core::pose::Pose const & pose,
+	core::pose::Pose const & pose_reference,
+	core::scoring::constraints::ConstraintSetOP & cst_set ) {
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
 	using namespace numeric::conversions;
@@ -279,23 +279,23 @@ add_bond_angle_constraint ( core::id::AtomID const & atom_id1,
 		bond_angle_list.push_back ( std::make_pair ( atom_id1, std::make_pair ( atom_id2, atom_id3 ) ) );
 		Real const bond_angle_sd_ ( radians ( 3.0 ) );
 		Real const bond_angle = angle_radians (
-		                          pose_reference.residue ( atom_id2.rsd() ).xyz ( atom_name2 )  ,
-		                          pose_reference.residue ( atom_id1.rsd() ).xyz ( atom_name1 )  ,
-		                          pose_reference.residue ( atom_id3.rsd() ).xyz ( atom_name3 )
-		                        );
+			pose_reference.residue ( atom_id2.rsd() ).xyz ( atom_name2 )  ,
+			pose_reference.residue ( atom_id1.rsd() ).xyz ( atom_name1 )  ,
+			pose_reference.residue ( atom_id3.rsd() ).xyz ( atom_name3 )
+		);
 
 		if ( bond_angle < 0.001 ) std::cout << "WHAT THE HELL????????? " << std::endl;
 
 		core::scoring::func::FuncOP angle_harm_func_( new core::scoring::func::HarmonicFunc ( bond_angle, bond_angle_sd_ ) );
 		cst_set->add_constraint ( ConstraintCOP( ConstraintOP( new AngleConstraint (
-		                            atom_id2 , atom_id1, atom_id3, angle_harm_func_,	rna_bond_geometry ) ) ) );
+			atom_id2 , atom_id1, atom_id3, angle_harm_func_, rna_bond_geometry ) ) ) );
 
 		if ( false ) {
 			std::cout << "PUTTING CONSTRAINT ON ANGLE: " <<
-			          atom_id2.rsd() << " " << pose_reference.residue ( atom_id2.rsd() ).atom_name ( atom_id2.atomno() ) << "; "  <<
-			          atom_id1.rsd() << " " << pose_reference.residue ( atom_id1.rsd() ).atom_name ( atom_id1.atomno() ) << "; "  <<
-			          atom_id3.rsd() << " " << pose_reference.residue ( atom_id3.rsd() ).atom_name ( atom_id3.atomno() ) << " ==> "  << degrees ( bond_angle ) << " " << degrees ( bond_angle_sd_ ) <<
-			          std::endl;
+				atom_id2.rsd() << " " << pose_reference.residue ( atom_id2.rsd() ).atom_name ( atom_id2.atomno() ) << "; "  <<
+				atom_id1.rsd() << " " << pose_reference.residue ( atom_id1.rsd() ).atom_name ( atom_id1.atomno() ) << "; "  <<
+				atom_id3.rsd() << " " << pose_reference.residue ( atom_id3.rsd() ).atom_name ( atom_id3.atomno() ) << " ==> "  << degrees ( bond_angle ) << " " << degrees ( bond_angle_sd_ ) <<
+				std::endl;
 		}
 	}
 }
@@ -303,9 +303,9 @@ add_bond_angle_constraint ( core::id::AtomID const & atom_id1,
 ////////////////////////////////////////////////
 bool
 check_if_really_connected (
-  core::pose::Pose const & pose,
-  core::id::AtomID const & atom_id1,
-  core::id::AtomID const & atom_id2 ) {
+	core::pose::Pose const & pose,
+	core::id::AtomID const & atom_id1,
+	core::id::AtomID const & atom_id2 ) {
 	if ( atom_id1.rsd() == atom_id2.rsd() ) return true;
 
 	core::kinematics::tree::AtomCOP atom1 ( pose.atom_tree().atom ( atom_id1 ).get_self_ptr() );
@@ -322,10 +322,10 @@ check_if_really_connected (
 bool
 i_want_this_atom_to_move ( conformation::Residue const & residue2, Size const & k ) {
 	if ( k > residue2.first_sidechain_atom() &&
-	     k != chemical::rna::first_base_atom_index ( residue2 ) ) return false;
+			k != chemical::rna::first_base_atom_index ( residue2 ) ) return false;
 
 	if ( residue2.is_virtual( k )  ) {
-		//		std::cout << "Is this virtual? " << residue2.atom_name( k ) << std::endl;
+		//  std::cout << "Is this virtual? " << residue2.atom_name( k ) << std::endl;
 		return false;
 	}
 
@@ -335,7 +335,7 @@ i_want_this_atom_to_move ( conformation::Residue const & residue2, Size const & 
 bool
 i_want_this_atom_to_move ( pose::Pose const & pose, core::id::AtomID const & atom_id ) {
 	return i_want_this_atom_to_move ( pose.residue ( atom_id.rsd() ) ,
-	                                  atom_id.atomno() );
+		atom_id.atomno() );
 }
 
 bool
@@ -352,12 +352,12 @@ is_atom_exist_in_reference ( pose::Pose const & pose, pose::Pose const & pose_re
 //////////////////////////////////////////////////////////////////////////////
 void
 create_pose_reference (
-  pose::Pose const & pose,
-  pose::Pose & pose_reference ) {
+	pose::Pose const & pose,
+	pose::Pose & pose_reference ) {
 	using namespace core::chemical;
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set ( FA_RNA );
-	make_pose_from_sequence ( pose_reference, pose.sequence(),	*rsd_set );
+	make_pose_from_sequence ( pose_reference, pose.sequence(), *rsd_set );
 	apply_ideal_coordinates ( pose, pose_reference );
 }
 
@@ -365,10 +365,10 @@ create_pose_reference (
 // Following has not (yet) been carefully debugged.
 void
 vary_bond_geometry (
-  core::kinematics::MoveMap & mm,
-  pose::Pose & pose,
-  pose::Pose const & pose_reference,
-  ObjexxFCL::FArray1D< bool > & allow_insert_ ) {
+	core::kinematics::MoveMap & mm,
+	pose::Pose & pose,
+	pose::Pose const & pose_reference,
+	ObjexxFCL::FArray1D< bool > & allow_insert_ ) {
 	using namespace core::id;
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
@@ -466,8 +466,8 @@ vary_bond_geometry (
 
 				if ( i_want_this_atom_to_move ( residue2, k ) )  {
 					add_bond_constraint ( atom_id1, atom_id2,
-					                      bond_list,
-					                      pose, pose_reference, cst_set );
+						bond_list,
+						pose, pose_reference, cst_set );
 				}
 			}
 
@@ -489,9 +489,9 @@ vary_bond_geometry (
 					Size const & q ( atom_id3.atomno() ) ;
 
 					if ( i_want_this_atom_to_move ( residue2, k ) &&
-					     i_want_this_atom_to_move ( residue3, q ) )  {
+							i_want_this_atom_to_move ( residue3, q ) )  {
 						add_bond_angle_constraint ( atom_id1, atom_id2, atom_id3, bond_angle_list,
-						                            pose, pose_reference, cst_set );
+							pose, pose_reference, cst_set );
 					}
 				}
 
@@ -506,9 +506,9 @@ vary_bond_geometry (
 					Size const & q ( atom_id3.atomno() ) ;
 
 					if ( i_want_this_atom_to_move ( residue2, k ) &&
-					     i_want_this_atom_to_move ( residue3, q ) )  {
+							i_want_this_atom_to_move ( residue3, q ) )  {
 						add_bond_angle_constraint ( atom_id1, atom_id2, atom_id3, bond_angle_list,
-						                            pose, pose_reference, cst_set );
+							pose, pose_reference, cst_set );
 					}
 				}
 			}
@@ -604,8 +604,8 @@ setup_fold_tree_sample_res ( pose::Pose & pose, utility::vector1< core::Size > c
 ///////////////////////////////////////////
 void
 pyrimidine_flip_trial( pose::Pose & pose,
-											 utility::vector1< Size > const & fixed_res_list,
-											 scoring::ScoreFunctionOP scorefxn )
+	utility::vector1< Size > const & fixed_res_list,
+	scoring::ScoreFunctionOP scorefxn )
 {
 	using namespace core::id;
 	using namespace core::scoring;
@@ -620,15 +620,15 @@ pyrimidine_flip_trial( pose::Pose & pose,
 	orig_score = (*scorefxn) (pose);
 	new_score = (*scorefxn) (screen_pose);
 	std::cout << "Start pyrimidine_flip_trial. Filp residue :";
-	for (Size i = 1; i <= total_res; ++i) {
+	for ( Size i = 1; i <= total_res; ++i ) {
 		if ( check_num_in_vector( i, fixed_res_list ) ) continue;
 		Residue const & res = pose.residue(i);
-		if ( res.is_RNA() && (res.aa() == na_rcy || res.aa() == na_ura)) {
+		if ( res.is_RNA() && (res.aa() == na_rcy || res.aa() == na_ura) ) {
 			Real const orig_chi = pose.torsion( TorsionID( i, id::CHI, 1 ) );
 			Real const new_chi = orig_chi + 180.0;
 			screen_pose.set_torsion( TorsionID( i, id::CHI, 1 ), new_chi );
 			new_score = (*scorefxn) (screen_pose);
-			if (new_score < orig_score) { //Flip the chi!
+			if ( new_score < orig_score ) { //Flip the chi!
 				pose.set_torsion( TorsionID( i, id::CHI, 1 ), new_chi );
 				orig_score = new_score;
 				std::cout << ' ' << i;
@@ -654,7 +654,7 @@ pdb_minimizer() {
 	using namespace protocols::stepwise::modeler::rna;
 
 	ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->
-	          									residue_type_set ( FA_RNA );
+		residue_type_set ( FA_RNA );
 	bool const vary_bond_geometry_ =  option[ vary_geometry ];
 	bool const constrain_phosphate =  option[ constrain_P ];
 	bool const ready_set_only_ =  option[ ready_set_only ];
@@ -680,14 +680,14 @@ pdb_minimizer() {
 	} else {
 		output_pdb_name = pdb_name;
 		size_t found = output_pdb_name.find(".pdb");
-		if (found != std::string::npos) {
-			if (ready_set_only_) {
+		if ( found != std::string::npos ) {
+			if ( ready_set_only_ ) {
 				output_pdb_name.replace(found, found + 4, "_ready_set.pdb");
 			} else {
 				output_pdb_name.replace(found, found + 4, "_minimize.pdb");
 			}
 		} else {
-			if (ready_set_only_) {
+			if ( ready_set_only_ ) {
 				output_pdb_name.append("_ready_set.pdb");
 			} else {
 				output_pdb_name.append("_minimize.pdb");
@@ -695,7 +695,7 @@ pdb_minimizer() {
 		}
 	}
 
-	if (ready_set_only_) {
+	if ( ready_set_only_ ) {
 		pose.dump_pdb(output_pdb_name);
 		return;
 	}
@@ -707,11 +707,11 @@ pdb_minimizer() {
 		std::cout << "User passed in score:weight option: " << score_weight_file << std::endl;
 	}
 	core::scoring::ScoreFunctionOP scorefxn =
-			ScoreFunctionFactory::create_score_function ( score_weight_file );
+		ScoreFunctionFactory::create_score_function ( score_weight_file );
 
 	core::scoring::ScoreFunctionOP edens_scorefxn( new ScoreFunction );
 	edens_scorefxn -> set_weight(
-			elec_dens_atomwise, scorefxn -> get_weight(elec_dens_atomwise) );
+		elec_dens_atomwise, scorefxn -> get_weight(elec_dens_atomwise) );
 
 	//Setup fold tree using user input or using Rhiju's function
 	if ( cutpoint_list.size() == 0 ) {
@@ -729,7 +729,7 @@ pdb_minimizer() {
 	//Output the sequence
 	std::string working_sequence = pose.sequence();
 	std::cout << "Pose sequence = " << working_sequence << std::endl;
-	//	protocols::stepwise::modeler::rna::output_fold_tree_info ( pose.fold_tree(), "rna_pdb_minimizing" ); // in legacy now.
+	// protocols::stepwise::modeler::rna::output_fold_tree_info ( pose.fold_tree(), "rna_pdb_minimizing" ); // in legacy now.
 
 	//Try flipping the pyrimidines
 	if ( attempt_pyrimidine_flip_ ) {
@@ -767,10 +767,10 @@ pdb_minimizer() {
 		cut_upper.push_back(m);
 
 		if ( pose.residue ( k ).aa() != core::chemical::aa_vrt &&
-		     pose.residue ( m ).aa() != core::chemical::aa_vrt ) {
+				pose.residue ( m ).aa() != core::chemical::aa_vrt ) {
 			if ( fixed_res_list.size() != 0 &&
-					 ! ( check_num_in_vector(k, fixed_res_list) ) &&
-					 ! ( check_num_in_vector(m, fixed_res_list) ) ) {
+					! ( check_num_in_vector(k, fixed_res_list) ) &&
+					! ( check_num_in_vector(m, fixed_res_list) ) ) {
 				mm.set_jump ( i, true );
 			}
 		}
@@ -798,7 +798,7 @@ pdb_minimizer() {
 			atm_indexBase = rsd.atom_index ( "N9" );
 		} else if ( rsd.aa() == core::chemical::na_ura || rsd.aa() == core::chemical::na_rcy ) {
 			atm_indexBase = rsd.atom_index ( "N1" );
-		}	else {
+		} else {
 			utility_exit_with_message("Fixed residue is not a RNA residue!!!!");
 		}
 
@@ -815,14 +815,14 @@ pdb_minimizer() {
 
 		allow_insert(fixed_res_num) = false;
 
-		if (fixed_res_num - 1 > 0 &&
-		    ! ( check_num_in_vector( fixed_res_num - 1, fixed_res_list ) ) &&
-		    ! ( check_num_in_vector( fixed_res_num, cut_lower ) ) ) {
+		if ( fixed_res_num - 1 > 0 &&
+				! ( check_num_in_vector( fixed_res_num - 1, fixed_res_list ) ) &&
+				! ( check_num_in_vector( fixed_res_num, cut_lower ) ) ) {
 			allow_insert(fixed_res_num) = true;
 		}
-		if (fixed_res_num + 1 <= nres &&
-		    ! ( check_num_in_vector( fixed_res_num + 1, fixed_res_list ) ) &&
-		    ! ( check_num_in_vector( fixed_res_num, cut_upper ) ) ) {
+		if ( fixed_res_num + 1 <= nres &&
+				! ( check_num_in_vector( fixed_res_num + 1, fixed_res_list ) ) &&
+				! ( check_num_in_vector( fixed_res_num, cut_upper ) ) ) {
 			allow_insert(fixed_res_num) = true;
 		}
 
@@ -830,19 +830,19 @@ pdb_minimizer() {
 	std::cout << std::endl;
 
 	//constrain phosphate mode
-	if (constrain_phosphate) {
+	if ( constrain_phosphate ) {
 		for ( Size i = 1; i <= nres; ++i ) {
 			if ( pose.residue ( i ).aa() == core::chemical::aa_vrt ) continue;
 
 			bool is_fixed_res = false;
 			for ( Size j = 1; j <= fixed_res_list.size(); ++j ) {
-				if (i == fixed_res_list[j]) {
+				if ( i == fixed_res_list[j] ) {
 					is_fixed_res = true;
 					break;
 				}
 			}
 
-			if (is_fixed_res) continue;
+			if ( is_fixed_res ) continue;
 
 			Real const coord_sdev ( 0.3 );
 			Size const my_anchor ( virtual_res_pos ); //anchor on virtual residue
@@ -883,7 +883,7 @@ pdb_minimizer() {
 	scorefxn -> show ( std::cout, pose );
 	Real const score = ( (*scorefxn) (pose) );
 	Real const edens_score = ( (*edens_scorefxn) (pose) );
-	if (score > score_before + 5 || edens_score > edens_score_before * 0.9) {
+	if ( score > score_before + 5 || edens_score > edens_score_before * 0.9 ) {
 		std::cout << "current_score = " << score << ", start_score = " << score_before << std::endl;
 		std::cout << "current_edens_score = " << edens_score << ", start_edens_score = " << edens_score_before << std::endl;
 		std::cout << "The minimization went wild!!! Try alternative minimization using dfpmin with use_nb_list=false .." << std::endl;
@@ -896,7 +896,7 @@ pdb_minimizer() {
 		scorefxn -> show ( std::cout, pose );
 		Real const score = ( (*scorefxn) (pose) );
 		Real const edens_score = ( (*edens_scorefxn) (pose) );
-		if (score > score_before + 5 || edens_score > edens_score_before * 0.9) {
+		if ( score > score_before + 5 || edens_score > edens_score_before * 0.9 ) {
 			std::cout << "current_score = " << score << ", start_score = " << score_before << std::endl;
 			std::cout << "current_edens_score = " << edens_score << ", start_edens_score = " << edens_score_before << std::endl;
 			pose = start_pose;
@@ -918,29 +918,29 @@ my_main ( void* ) {
 ///////////////////////////////////////////////////////////////////////////////
 int
 main ( int argc, char * argv [] ) {
-try {
-	utility::vector1< Size > blank_size_vector;
-	utility::vector1< std::string > blank_string_vector;
-	NEW_OPT ( out_pdb, "name of output pdb file", "" );
-	NEW_OPT ( vary_geometry, "vary geometry", false );
-	NEW_OPT ( constrain_P, "constrain phosphate", false );
-	NEW_OPT ( fixed_res, "optional: residues to be held fixed in minimizer", blank_size_vector );
-	NEW_OPT ( cutpoint_open, "optional: chainbreak in full sequence", blank_size_vector );
-	NEW_OPT ( ready_set_only, "load in and output directly for reformatting the pdb", false );
-	NEW_OPT ( skip_minimize, "output the pdb without minimization", false );
-	NEW_OPT ( attempt_pyrimidine_flip, "try to flip pyrimidine by 180 degree and pick the better energy conformer", false );
+	try {
+		utility::vector1< Size > blank_size_vector;
+		utility::vector1< std::string > blank_string_vector;
+		NEW_OPT ( out_pdb, "name of output pdb file", "" );
+		NEW_OPT ( vary_geometry, "vary geometry", false );
+		NEW_OPT ( constrain_P, "constrain phosphate", false );
+		NEW_OPT ( fixed_res, "optional: residues to be held fixed in minimizer", blank_size_vector );
+		NEW_OPT ( cutpoint_open, "optional: chainbreak in full sequence", blank_size_vector );
+		NEW_OPT ( ready_set_only, "load in and output directly for reformatting the pdb", false );
+		NEW_OPT ( skip_minimize, "output the pdb without minimization", false );
+		NEW_OPT ( attempt_pyrimidine_flip, "try to flip pyrimidine by 180 degree and pick the better energy conformer", false );
 
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	core::init::init ( argc, argv );
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		core::init::init ( argc, argv );
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
-	protocols::viewer::viewer_main ( my_main );
-} catch ( utility::excn::EXCN_Base const & e ) {
-	std::cout << "caught exception " << e.msg() << std::endl;
-	return -1;
-}
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
+		protocols::viewer::viewer_main ( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 }

@@ -50,39 +50,39 @@ public:
 
 	/// construct generic PolycubicSpline
 	PolycubicSpline(){n_xs_ = 3;}
-    PolycubicSpline(Size n_xs) : n_xs_( n_xs ) {
-        border_.resize( n_xs );
-        start_.resize( n_xs );
-        delta_.resize( n_xs );
-        //n_derivs_.resize( static_cast< Size > ( std::pow( 2, n_xs ) ) );
-        firstbe_.resize( n_xs );
-        LinCont_.resize( n_xs );
-    }
+	PolycubicSpline(Size n_xs) : n_xs_( n_xs ) {
+		border_.resize( n_xs );
+		start_.resize( n_xs );
+		delta_.resize( n_xs );
+		//n_derivs_.resize( static_cast< Size > ( std::pow( 2, n_xs ) ) );
+		firstbe_.resize( n_xs );
+		LinCont_.resize( n_xs );
+	}
 
 	/// copy constructor
 	PolycubicSpline* Clone() const
 	{
-	  return new PolycubicSpline( *this);
+		return new PolycubicSpline( *this);
 	}
 
 	/////////////////
 	// data access //
 	/////////////////
 
-    /// get the second order derivatives of the spline
-    /// for 3 dimensions, you would pass 1-8 and get
-    /// values, z, y, yz, x, xz, xy, xyz
-    MathNTensor< Real> const & get_deriv( Size n ) const
+	/// get the second order derivatives of the spline
+	/// for 3 dimensions, you would pass 1-8 and get
+	/// values, z, y, yz, x, xz, xy, xyz
+	MathNTensor< Real> const & get_deriv( Size n ) const
 	{
-        return n_derivs_[ n ];
+		return n_derivs_[ n ];
 	}
-    
-    
-    utility::vector1< Real > get_all_derivs( utility::vector1< Size > indices )
+
+
+	utility::vector1< Real > get_all_derivs( utility::vector1< Size > indices )
 	{
-        utility::vector1< Real > ret;
-        for ( Size i = 1; i <= n_derivs_.size(); ++i ) ret.push_back( n_derivs_[ i ]( indices ) );
-        return ret;
+		utility::vector1< Real > ret;
+		for ( Size i = 1; i <= n_derivs_.size(); ++i ) ret.push_back( n_derivs_[ i ]( indices ) );
+		return ret;
 	}
 
 	////////////////
@@ -104,7 +104,7 @@ public:
 	/// train PolycubicSpline
 	void train
 	(
-        const utility::vector1< BorderFlag > BORDER,//[3],
+		const utility::vector1< BorderFlag > BORDER,//[3],
 		const utility::vector1< double > START,//[3],
 		const utility::vector1< double > DELTA,//[3],
 		const MathNTensor< Real > &RESULTS,
@@ -114,14 +114,14 @@ public:
 
 
 private:
-    Size n_xs_; ///< number of dimensions
-    utility::vector1< BorderFlag > border_;   ///< controls the behavior at x/y_0 and x/y_dim-1
+	Size n_xs_; ///< number of dimensions
+	utility::vector1< BorderFlag > border_;   ///< controls the behavior at x/y_0 and x/y_dim-1
 
 	utility::vector1< Real > start_;
 	utility::vector1< Real > delta_;    ///< gives the arguments as a sequence of equidistant points
 
-    utility::vector1< MathNTensor< Real> > n_derivs_; // has 000 = values_,
-                                                     // 001 = z deriv, etc.
+	utility::vector1< MathNTensor< Real> > n_derivs_; // has 000 = values_,
+	// 001 = z deriv, etc.
 	/*MathTensor< Real> values_;     ///< f(x,y,z)
 	MathTensor< Real> dsecox_;     ///< second order derivatives for x -- d**2/dx**2 f(x,y,z)
 	MathTensor< Real> dsecoy_;     ///< second order derivatives for y

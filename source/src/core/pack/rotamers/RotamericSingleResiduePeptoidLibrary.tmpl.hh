@@ -267,8 +267,8 @@ Real const RotamericSingleResiduePeptoidLibrary< T, N >::TRANS_UPPER_CIS_LOWER_S
 
 template < Size T, Size N >
 RotamericSingleResiduePeptoidLibrary< T, N >::RotamericSingleResiduePeptoidLibrary() :
-	parent( T )
-	//max_rotprob_( N_PHIPSI_BINS, N_PHIPSI_BINS, 0.0 )
+parent( T )
+//max_rotprob_( N_PHIPSI_BINS, N_PHIPSI_BINS, 0.0 )
 {}
 
 template < Size T, Size N >
@@ -309,14 +309,14 @@ RotamericSingleResiduePeptoidLibrary< T, N >::rotamer_energy_deriv(
 
 
 	/// sum derivatives.
-    Real5 & dE_dbb(  scratch.dE_dbb() );
+	Real5 & dE_dbb(  scratch.dE_dbb() );
 	Real4 & dE_dchi( scratch.dE_dchi() );
 
 	// p0 - the base probability -- not modified by the chi-dev penalty
 	Real const rotprob( scratch.rotprob() );
 
 	Size const nbb( numeric::min( rsd.mainchain_torsions().size(), DUNBRACK_MAX_BBTOR) );
-    //Size const nbb( parent::bb_indices().size() );
+	//Size const nbb( parent::bb_indices().size() );
 
 	Real const invp( ( rotprob == Real( 0.0 ) ) ? 0.0 : -1.0 / rotprob );
 
@@ -347,14 +347,14 @@ RotamericSingleResiduePeptoidLibrary< T, N >::eval_rotameric_energy_deriv(
 	return 0.0;
 
 	/*
-debug_assert( rsd.aa() == aa() );
+	debug_assert( rsd.aa() == aa() );
 
 	// Grab data from rsd
 	Size const nbb ( rsd.mainchain_torsions().size() );
 	Size const nchi( rsd.nchi() );
 	ChiVector const & chi( rsd.chi() );
 
-debug_assert( nbb == 3 && chi.size() == nchi );
+	debug_assert( nbb == 3 && chi.size() == nchi );
 
 	Real4 & chimean( scratch.chimean() );
 	Real4 & chisd(   scratch.chisd()   );
@@ -395,33 +395,33 @@ debug_assert( nbb == 3 && chi.size() == nchi );
 
 	Size packed_rotno( rotwell_2_packed_rotno( rotwell ));
 	if ( packed_rotno == 0 ) {
-		// panic!  Extremely unlikely rotamer found.  Find another rotamer that has at least some probability,
-		// and move this rotamer toward it -- do so in a predictable manner so that the score function is continuous
-		// as it tries to move from this rotamer to another.
-		packed_rotno = find_another_representative_for_unlikely_rotamer( rsd, rotwell );
+	// panic!  Extremely unlikely rotamer found.  Find another rotamer that has at least some probability,
+	// and move this rotamer toward it -- do so in a predictable manner so that the score function is continuous
+	// as it tries to move from this rotamer to another.
+	packed_rotno = find_another_representative_for_unlikely_rotamer( rsd, rotwell );
 	}
 
 	PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
 	interpolate_rotamers( rsd, scratch, packed_rotno, interpolated_rotamer );
 
 	if ( dun02() ) {
-		for ( Size ii = 1; ii <= T; ++ii ) { chidev[ ii ] = subtract_chi_angles( chi[ ii ], chimean[ ii ], aa(), ii ); }
+	for ( Size ii = 1; ii <= T; ++ii ) { chidev[ ii ] = subtract_chi_angles( chi[ ii ], chimean[ ii ], aa(), ii ); }
 	} else {
-		for ( Size ii = 1; ii <= T; ++ii ) { chidev[ ii ] = basic::periodic_range( chi[ ii ] - chimean[ ii ], 360 ); }
+	for ( Size ii = 1; ii <= T; ++ii ) { chidev[ ii ] = basic::periodic_range( chi[ ii ] - chimean[ ii ], 360 ); }
 	}
 
 	for ( Size ii = 1; ii <= T; ++ii ) {
-		/// chidev penalty: define a gaussian with a height of 1 and a standard deviation of chisd[ ii ];
-		/// exp( -1 * (chi_i - chi_mean_i )**2 / ( 2 * chisd_ii**2 ) )
-		/// Pretend this gaussian defines a probability for having an angle at a certain deviation from the mean.
-		/// Convert that probability into an energy:
-		/// -ln p = -ln exp( -1* (chi_i - chi_mean_i)**2/(2 chisd_i**2) ) = (chi_i - chi_mean_i)**2/(2 chisd_i**2)
-		chidevpen[ ii ] = chidev[ ii ]*chidev[ ii ] / ( 2 * chisd[ ii ] * chisd[ ii ] );
+	/// chidev penalty: define a gaussian with a height of 1 and a standard deviation of chisd[ ii ];
+	/// exp( -1 * (chi_i - chi_mean_i )**2 / ( 2 * chisd_ii**2 ) )
+	/// Pretend this gaussian defines a probability for having an angle at a certain deviation from the mean.
+	/// Convert that probability into an energy:
+	/// -ln p = -ln exp( -1* (chi_i - chi_mean_i)**2/(2 chisd_i**2) ) = (chi_i - chi_mean_i)**2/(2 chisd_i**2)
+	chidevpen[ ii ] = chidev[ ii ]*chidev[ ii ] / ( 2 * chisd[ ii ] * chisd[ ii ] );
 
 	}
 	Real chidevpensum( 0.0 );
 	for ( Size ii = 1; ii <= T; ++ii ) {
-		chidevpensum += chidevpen[ ii ];
+	chidevpensum += chidevpen[ ii ];
 	}
 
 	scratch.fa_dun_tot() = -std::log( scratch.rotprob() ) + chidevpensum;
@@ -438,24 +438,24 @@ debug_assert( nbb == 3 && chi.size() == nchi );
 	dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PSI_INDEX ] = 0.0;
 	for ( Size ii = 1; ii <= T; ++ii ) {
 
-		/// Backbone derivatives for chi-dev penalty.
-		/// Xmean_i and sd_i both depend on phi and psi.
-		/// Let: f = (X_i-Xmean_i)**2
-		/// Let: g = 2 sd_i**2
-		/// Then, chidevpen = f/g
-		/// and, dchidevpen = (f'g - fg')/(gg)
-		Real const f      = chidev[ ii ]*chidev[ ii ];
-		Real const fprime = -2*chidev[ ii ];
-		Real const g      = 2*chisd[ ii ]*chisd[ ii ];
-		Real const gprime = 4*chisd[ ii ];
-		Real const invgg  = 1 / (g*g);
+	/// Backbone derivatives for chi-dev penalty.
+	/// Xmean_i and sd_i both depend on phi and psi.
+	/// Let: f = (X_i-Xmean_i)**2
+	/// Let: g = 2 sd_i**2
+	/// Then, chidevpen = f/g
+	/// and, dchidevpen = (f'g - fg')/(gg)
+	Real const f      = chidev[ ii ]*chidev[ ii ];
+	Real const fprime = -2*chidev[ ii ];
+	Real const g      = 2*chisd[ ii ]*chisd[ ii ];
+	Real const gprime = 4*chisd[ ii ];
+	Real const invgg  = 1 / (g*g);
 
-		dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PHI_INDEX  ] +=
-			( g*fprime*dchimean_dphi[ ii ] - f*gprime*dchisd_dphi[ ii ] ) * invgg;
-		dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PSI_INDEX  ] +=
-			( g*fprime*dchimean_dpsi[ ii ] - f*gprime*dchisd_dpsi[ ii ] ) * invgg;
+	dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PHI_INDEX  ] +=
+	( g*fprime*dchimean_dphi[ ii ] - f*gprime*dchisd_dphi[ ii ] ) * invgg;
+	dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PSI_INDEX  ] +=
+	( g*fprime*dchimean_dpsi[ ii ] - f*gprime*dchisd_dpsi[ ii ] ) * invgg;
 
-		dchidevpen_dchi[ ii ] = chidev[ ii ] / ( chisd[ ii ] * chisd[ ii ] );
+	dchidevpen_dchi[ ii ] = chidev[ ii ] / ( chisd[ ii ] * chisd[ ii ] );
 	}
 
 	return score;
@@ -602,7 +602,7 @@ RotamericSingleResiduePeptoidLibrary< T, N >::find_another_representative_for_un
 		get_omg_from_rsd( rsd ), get_phi_from_rsd( rsd ), get_psi_from_rsd( rsd ),
 		omgbin, phibin, psibin, omgbin_next, phibin_next, psibin_next, omg_alpha, phi_alpha, psi_alpha );
 
-	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > const & rotamers_array( rotamers( 	get_omg_from_rsd( rsd ) ) );
+	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > const & rotamers_array( rotamers(  get_omg_from_rsd( rsd ) ) );
 	//ObjexxFCL::FArray4D< Size > const & packed_rotno_2_sorted_rotno_array( packed_rotno_2_sorted_rotno( get_omg_from_rsd( rsd ) ) );
 
 	Size packed_rotno = rotamers_array( omgbin, phibin, psibin, 1 ).packed_rotno();
@@ -649,54 +649,54 @@ RotamericSingleResiduePeptoidLibrary< T, N >::best_rotamer_energy(
 	/*
 	Real maxprob( 0 );
 	if ( curr_rotamer_only ) {
-		Size4 & rotwell( scratch.rotwell() );
-		RotamericSingleResiduePeptoidLibrary< T, N >::get_rotamer_from_chi_static( rsd.chi(), rotwell );
-		Size const packed_rotno = rotwell_2_packed_rotno( rotwell );
+	Size4 & rotwell( scratch.rotwell() );
+	RotamericSingleResiduePeptoidLibrary< T, N >::get_rotamer_from_chi_static( rsd.chi(), rotwell );
+	Size const packed_rotno = rotwell_2_packed_rotno( rotwell );
 
-		PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
-		interpolate_rotamers( rsd, pose, scratch, packed_rotno, interpolated_rotamer );
+	PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
+	interpolate_rotamers( rsd, pose, scratch, packed_rotno, interpolated_rotamer );
 
-		maxprob = interpolated_rotamer.rotamer_probability();
+	maxprob = interpolated_rotamer.rotamer_probability();
 	} else {
-		Real const omg( get_omg_from_rsd( rsd, pose ) );
-		Real const phi( get_phi_from_rsd( rsd, pose ) );
-		Real const psi( get_psi_from_rsd( rsd, pose ) );
+	Real const omg( get_omg_from_rsd( rsd, pose ) );
+	Real const phi( get_phi_from_rsd( rsd, pose ) );
+	Real const psi( get_psi_from_rsd( rsd, pose ) );
 
-		Size omgbin, phibin, psibin, omgbin_next, phibin_next, psibin_next;
-		Real omg_alpha, phi_alpha, psi_alpha;
-		get_omgphipsi_bins( omg, phi, psi, omgbin, phibin, psibin, omgbin_next, phibin_next, psibin_next, omg_alpha, phi_alpha, psi_alpha );
+	Size omgbin, phibin, psibin, omgbin_next, phibin_next, psibin_next;
+	Real omg_alpha, phi_alpha, psi_alpha;
+	get_omgphipsi_bins( omg, phi, psi, omgbin, phibin, psibin, omgbin_next, phibin_next, psibin_next, omg_alpha, phi_alpha, psi_alpha );
 
-		Size n_packed_rotnos(8);
-		utility::vector1< Size > packed_rotnos( n_packed_rotnos, 0 );
+	Size n_packed_rotnos(8);
+	utility::vector1< Size > packed_rotnos( n_packed_rotnos, 0 );
 
-		/// check all eight bins...
-		packed_rotnos[ 1 ] = rotamers_( omgbin, phibin, psibin, 1 ).packed_rotno();
-		packed_rotnos[ 2 ] = rotamers_( omgbin, phibin_next, psibin, 1 ).packed_rotno();
-		packed_rotnos[ 3 ] = rotamers_( omgbin, phibin, psibin_next, 1 ).packed_rotno();
-		packed_rotnos[ 4 ] = rotamers_( omgbin, phibin_next, psibin_next, 1 ).packed_rotno();
-		packed_rotnos[ 5 ] = rotamers_( omgbin_next, phibin, psibin, 1 ).packed_rotno();
-		packed_rotnos[ 6 ] = rotamers_( omgbin_next, phibin_next, psibin, 1 ).packed_rotno();
-		packed_rotnos[ 7 ] = rotamers_( omgbin_next, phibin, psibin_next, 1 ).packed_rotno();
-		packed_rotnos[ 8 ] = rotamers_( omgbin_next, phibin_next, psibin_next, 1 ).packed_rotno();
+	/// check all eight bins...
+	packed_rotnos[ 1 ] = rotamers_( omgbin, phibin, psibin, 1 ).packed_rotno();
+	packed_rotnos[ 2 ] = rotamers_( omgbin, phibin_next, psibin, 1 ).packed_rotno();
+	packed_rotnos[ 3 ] = rotamers_( omgbin, phibin, psibin_next, 1 ).packed_rotno();
+	packed_rotnos[ 4 ] = rotamers_( omgbin, phibin_next, psibin_next, 1 ).packed_rotno();
+	packed_rotnos[ 5 ] = rotamers_( omgbin_next, phibin, psibin, 1 ).packed_rotno();
+	packed_rotnos[ 6 ] = rotamers_( omgbin_next, phibin_next, psibin, 1 ).packed_rotno();
+	packed_rotnos[ 7 ] = rotamers_( omgbin_next, phibin, psibin_next, 1 ).packed_rotno();
+	packed_rotnos[ 8 ] = rotamers_( omgbin_next, phibin_next, psibin_next, 1 ).packed_rotno();
 
-		PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
-		for ( Size ii = 1; ii <= n_packed_rotnos; ++ii ) {
-			interpolate_rotamers( rsd, pose, scratch, packed_rotnos[ ii ], interpolated_rotamer );
-			maxprob = ( maxprob < interpolated_rotamer.rotamer_probability() ?
-				interpolated_rotamer.rotamer_probability() : maxprob );
-		}
+	PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
+	for ( Size ii = 1; ii <= n_packed_rotnos; ++ii ) {
+	interpolate_rotamers( rsd, pose, scratch, packed_rotnos[ ii ], interpolated_rotamer );
+	maxprob = ( maxprob < interpolated_rotamer.rotamer_probability() ?
+	interpolated_rotamer.rotamer_probability() : maxprob );
+	}
 
 	}
 
 	//std::cout << "packed_rotno " << curr_rotamer_only << " " << packed_rotno <<
-	//	" " << packed_rotno_2_sorted_rotno_( omgbin, phibin, psibin, 1 ).packed_rotno() <<
-	//	" " << packed_rotno_2_sorted_rotno_( omgbin, phibin_next, psibin, 1 ).packed_rotno() <<
-	//	" " << packed_rotno_2_sorted_rotno_( omgbin, phibin, psibin_next, 1 ).packed_rotno() <<
-	//	" " << packed_rotno_2_sorted_rotno_( omgbin, phibin_next, psibin_next, 1 ).packed_rotno() <<
-	//	" " << packed_rotno_2_sorted_rotno_( omgbin_next, phibin, psibin, 1 ).packed_rotno() <<
-	//	" " << packed_rotno_2_sorted_rotno_( omgbin_next, phibin_next, psibin, 1 ).packed_rotno() <<
-	//	" " << packed_rotno_2_sorted_rotno_( omgbin_next, phibin, psibin_next, 1 ).packed_rotno() <<
-	//	" " << packed_rotno_2_sorted_rotno_( omgbin_next, phibin_next, psibin_next, 1 ).packed_rotno() << std::endl;
+	// " " << packed_rotno_2_sorted_rotno_( omgbin, phibin, psibin, 1 ).packed_rotno() <<
+	// " " << packed_rotno_2_sorted_rotno_( omgbin, phibin_next, psibin, 1 ).packed_rotno() <<
+	// " " << packed_rotno_2_sorted_rotno_( omgbin, phibin, psibin_next, 1 ).packed_rotno() <<
+	// " " << packed_rotno_2_sorted_rotno_( omgbin, phibin_next, psibin_next, 1 ).packed_rotno() <<
+	// " " << packed_rotno_2_sorted_rotno_( omgbin_next, phibin, psibin, 1 ).packed_rotno() <<
+	// " " << packed_rotno_2_sorted_rotno_( omgbin_next, phibin_next, psibin, 1 ).packed_rotno() <<
+	// " " << packed_rotno_2_sorted_rotno_( omgbin_next, phibin, psibin_next, 1 ).packed_rotno() <<
+	// " " << packed_rotno_2_sorted_rotno_( omgbin_next, phibin_next, psibin_next, 1 ).packed_rotno() << std::endl;
 
 
 	return -1 * std::log( maxprob );
@@ -744,13 +744,13 @@ RotamericSingleResiduePeptoidLibrary< T, N >::get_omgphipsi_bins(
 		bin_angle( -30.0, OMG_BINRANGE, 70.0, N_OMG_BINS, numeric::principal_angle_degrees(CIS_OMG_UPPER_RANGE), omgbin, omgbin_next, omg_alpha );
 	} else if ( omg >= CIS_UPPER_TRANS_LOWER_SPLIT && omg < TRANS_OMG_LOWER_RANGE ) { // [   90,  150 ) use trans_range_lower
 		bin_angle( 150.0, OMG_BINRANGE, 70.0, N_OMG_BINS, numeric::principal_angle_degrees(TRANS_OMG_LOWER_RANGE), omgbin, omgbin_next, omg_alpha );
-	} else if ( omg >= TRANS_OMG_LOWER_RANGE && omg < 180.00 ) { //	[  150, 180 ) use omg
+	} else if ( omg >= TRANS_OMG_LOWER_RANGE && omg < 180.00 ) { // [  150, 180 ) use omg
 		bin_angle( 150.0, OMG_BINRANGE, 70.0, N_OMG_BINS, numeric::nonnegative_principal_angle_degrees(omg), omgbin, omgbin_next, omg_alpha );
-	} else if (omg >= -180.00 && omg < TRANS_OMG_UPPER_RANGE ) { // [  180, -150 use nnpad
+	} else if ( omg >= -180.00 && omg < TRANS_OMG_UPPER_RANGE ) { // [  180, -150 use nnpad
 		bin_angle( 150.0, OMG_BINRANGE, 70.0, N_OMG_BINS, numeric::nonnegative_principal_angle_degrees(omg), omgbin, omgbin_next, omg_alpha );
 	} else if ( omg >= TRANS_OMG_UPPER_RANGE && omg < TRANS_UPPER_CIS_LOWER_SPLIT ) { // [ -150,  -90 ) use trans_range_upper
 		bin_angle( 150.0, OMG_BINRANGE, 70.0, N_OMG_BINS, numeric::nonnegative_principal_angle_degrees(TRANS_OMG_UPPER_RANGE), omgbin, omgbin_next, omg_alpha );
-	} else if ( omg >= TRANS_UPPER_CIS_LOWER_SPLIT && omg < CIS_OMG_LOWER_RANGE) { // [  -90,  -30 ) use cis_range_lower
+	} else if ( omg >= TRANS_UPPER_CIS_LOWER_SPLIT && omg < CIS_OMG_LOWER_RANGE ) { // [  -90,  -30 ) use cis_range_lower
 		bin_angle( -30.0, OMG_BINRANGE, 70.0, N_OMG_BINS, numeric::principal_angle_degrees(CIS_OMG_LOWER_RANGE), omgbin, omgbin_next, omg_alpha );
 	} else if ( omg >= CIS_OMG_LOWER_RANGE && omg < CIS_OMG_UPPER_RANGE ) { // [  -30,    30 ) use omg
 		bin_angle( -30.0, OMG_BINRANGE, 70.0, N_OMG_BINS, numeric::principal_angle_degrees(omg), omgbin, omgbin_next, omg_alpha );
@@ -854,7 +854,7 @@ RotamericSingleResiduePeptoidLibrary< T, N >::interpolate_rotamers(
 		rot110( rotamers( omgbin_next, phibin_next, psibin     , sorted_rotno_110 ) ),
 		rot111( rotamers( omgbin_next, phibin_next, psibin_next, sorted_rotno_111 ) );
 
-		/// DOUG DOUG DOUG check scratch INDEX stuff may need to change some things
+	/// DOUG DOUG DOUG check scratch INDEX stuff may need to change some things
 	basic::interpolate_trilinear_by_value(
 		static_cast< Real >  ( rot000.rotamer_probability()),
 		static_cast< Real >  ( rot100.rotamer_probability()),
@@ -923,47 +923,47 @@ RotamericSingleResiduePeptoidLibrary< T, N >::interpolate_rotamers(
 }
 
 /*
-	get_omg/phi/psi_from_rsd() return the omega (of the preceeding residue), phi and psi dihedral angles given a residue and a pose
-	there are special cases, some of which are handled properly by the conformation::Residue class and other are not (ie. cyclic
-  structures)
+get_omg/phi/psi_from_rsd() return the omega (of the preceeding residue), phi and psi dihedral angles given a residue and a pose
+there are special cases, some of which are handled properly by the conformation::Residue class and other are not (ie. cyclic
+structures)
 
-	default nterm
-	     pomg: undefined, return NEUTRAL OMG
-			 phi:  undefined, return NEUTRAL PHI
-			 psi:  defined, return psi from current residue
-			 omg:  defined, return omg from current residue
+default nterm
+pomg: undefined, return NEUTRAL OMG
+phi:  undefined, return NEUTRAL PHI
+psi:  defined, return psi from current residue
+omg:  defined, return omg from current residue
 
-	acetylated nterm
-	     pomg: undefined, return NEUTRAL OMG (this should change as all atoms there but don't know how to handle phi needing to be bb torsion1 when ths preceeds it)
-			 phi:  defined, return phi from current residue
-			 psi:  defined, return psi from current residue
-			 omg:  defined, return omg from current residue
+acetylated nterm
+pomg: undefined, return NEUTRAL OMG (this should change as all atoms there but don't know how to handle phi needing to be bb torsion1 when ths preceeds it)
+phi:  defined, return phi from current residue
+psi:  defined, return psi from current residue
+omg:  defined, return omg from current residue
 
-	connected end term with connected cterm in same chain (cyclic chain)
-	     pomg: defined, return omg from cyclic partner (non-atomtree lookup in Residue)
-			 phi:  defined, return phi from current residue (non-atomtree lookup in Residue)
-			 psi:  defined, return psi from current residue
-			 omg:  defined, return omg from current residue
+connected end term with connected cterm in same chain (cyclic chain)
+pomg: defined, return omg from cyclic partner (non-atomtree lookup in Residue)
+phi:  defined, return phi from current residue (non-atomtree lookup in Residue)
+psi:  defined, return psi from current residue
+omg:  defined, return omg from current residue
 
-	connected cterm with connect nterm in same chain (cyclic chain)
-	     pomg: defined, return omg from preceeding residue
-			 phi:  defined, return phi from current residue
-			 psi:  defined, return psi from current residue (non-atomtree lookup in Residue)
-			 omg:  defined, return omg from current residue (non-atomtree lookup in Residue)
+connected cterm with connect nterm in same chain (cyclic chain)
+pomg: defined, return omg from preceeding residue
+phi:  defined, return phi from current residue
+psi:  defined, return psi from current residue (non-atomtree lookup in Residue)
+omg:  defined, return omg from current residue (non-atomtree lookup in Residue)
 
-	methylated cterms
-	     pomg: defined, return omg from preceeding residue
-			 phi:  defined, return phi from current residue
-			 psi:  defined, return psi from current residue
-			 omg:  defined, return omg from current residue (no problems like with pomg in actylated nterm since we are appending)
+methylated cterms
+pomg: defined, return omg from preceeding residue
+phi:  defined, return phi from current residue
+psi:  defined, return psi from current residue
+omg:  defined, return omg from current residue (no problems like with pomg in actylated nterm since we are appending)
 
-	default cterm
-	     pomg: defined, return omg from preceeding residue
-			 phi:  defined, return phi from current residue
-			 psi:  undefined, return NEUTRAL PSI
-			 omg:  undefined, return NEUTRAL OMG
+default cterm
+pomg: defined, return omg from preceeding residue
+phi:  defined, return phi from current residue
+psi:  undefined, return NEUTRAL PSI
+omg:  undefined, return NEUTRAL OMG
 
- */
+*/
 
 /// @details Returns the preceeding omg.
 template < Size T, Size N >
@@ -973,7 +973,7 @@ RotamericSingleResiduePeptoidLibrary< T, N >::get_omg_from_rsd(
 	pose::Pose const & pose
 ) const
 {
-debug_assert( rsd.is_peptoid() || rsd.is_protein() );
+	debug_assert( rsd.is_peptoid() || rsd.is_protein() );
 
 	if ( pose.conformation().num_chains() == 2 || rsd.chain() == pose.conformation().num_chains()-1 ) {
 		// chain_end won't be the last residue, because the last residue of a conformation isn't the chain ending for some reason...
@@ -982,7 +982,7 @@ debug_assert( rsd.is_peptoid() || rsd.is_protein() );
 			return pose.residue( pose.total_residue() ).mainchain_torsion( RSD_OMG_INDEX );
 		} else if ( rsd.is_lower_terminus() ) {
 			return parent::NEUTRAL_OMG;
-		}	else {
+		} else {
 			debug_assert( pose.residue( rsd.seqpos() - 1 ).is_protein() || pose.residue( rsd.seqpos() - 1 ).is_peptoid() );
 			return pose.residue( rsd.seqpos() - 1 ).mainchain_torsion( RSD_OMG_INDEX );
 		}
@@ -993,7 +993,7 @@ debug_assert( rsd.is_peptoid() || rsd.is_protein() );
 
 		} else if ( rsd.is_lower_terminus() ) {
 			return parent::NEUTRAL_OMG;
-		}	else {
+		} else {
 			debug_assert( pose.residue( rsd.seqpos() - 1 ).is_protein() || pose.residue( rsd.seqpos() - 1 ).is_peptoid() );
 			return pose.residue( rsd.seqpos() - 1 ).mainchain_torsion( RSD_OMG_INDEX );
 		}
@@ -1008,10 +1008,10 @@ RotamericSingleResiduePeptoidLibrary< T, N >::get_phi_from_rsd(
 	pose::Pose const & pose
 ) const
 {
-debug_assert( rsd.is_peptoid() || rsd.is_protein() );
+	debug_assert( rsd.is_peptoid() || rsd.is_protein() );
 
 	if ( rsd.has_variant_type( chemical::NTERM_CONNECT ) && pose.residue( pose.conformation().chain_end( rsd.chain() ) ).has_variant_type( chemical::CTERM_CONNECT ) ) {
-	debug_assert( pose.residue( pose.conformation().chain_end( rsd.chain() ) ).is_protein() || pose.residue( pose.conformation().chain_end( rsd.chain() ) ).is_peptoid() );
+		debug_assert( pose.residue( pose.conformation().chain_end( rsd.chain() ) ).is_protein() || pose.residue( pose.conformation().chain_end( rsd.chain() ) ).is_peptoid() );
 		return rsd.mainchain_torsion( RSD_PHI_INDEX );
 
 	} else if ( rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) ) {
@@ -1020,7 +1020,7 @@ debug_assert( rsd.is_peptoid() || rsd.is_protein() );
 	} else if ( rsd.is_lower_terminus() ) {
 		return parent::NEUTRAL_PHI;
 
-	}	else {
+	} else {
 		return rsd.mainchain_torsion( RSD_PHI_INDEX );
 	}
 
@@ -1034,10 +1034,10 @@ RotamericSingleResiduePeptoidLibrary< T, N >::get_psi_from_rsd(
 	pose::Pose const & pose
 ) const
 {
-debug_assert( rsd.is_peptoid() || rsd.is_protein() );
+	debug_assert( rsd.is_peptoid() || rsd.is_protein() );
 
 	if ( rsd.has_variant_type( chemical::CTERM_CONNECT ) && pose.residue( pose.conformation().chain_begin( rsd.chain() ) ).has_variant_type( chemical::NTERM_CONNECT ) ) {
-	debug_assert( pose.residue( pose.conformation().chain_begin( rsd.chain() ) ).is_protein() || pose.residue( pose.conformation().chain_begin( rsd.chain() ) ).is_peptoid() );
+		debug_assert( pose.residue( pose.conformation().chain_begin( rsd.chain() ) ).is_protein() || pose.residue( pose.conformation().chain_begin( rsd.chain() ) ).is_peptoid() );
 		return rsd.mainchain_torsion( RSD_PSI_INDEX );
 
 	} else if ( rsd.has_variant_type( chemical::METHYLATED_CTERMINUS_VARIANT ) ) {
@@ -1046,7 +1046,7 @@ debug_assert( rsd.is_peptoid() || rsd.is_protein() );
 	} else if ( rsd.is_upper_terminus() ) {
 		return parent::NEUTRAL_PSI;
 
-	}	else {
+	} else {
 		return rsd.mainchain_torsion( RSD_PSI_INDEX );
 	}
 
@@ -1121,7 +1121,7 @@ RotamericSingleResiduePeptoidLibrary< T, N >::fill_rotamer_vector(
 	// /// DOUG DOUG DOUG
 	// std::cout << "---" << std::endl;
 	// for ( Size i(1); i <= rotamers.size(); ++i ) {
-	// 	std::cout << "ROTAMER " << i << ":\t" << rotamers[i]->chi(1) << "\t" << rotamers[i]->chi(2) << "\t" << rotamers[i]->chi(3) << std::endl;
+	//  std::cout << "ROTAMER " << i << ":\t" << rotamers[i]->chi(1) << "\t" << rotamers[i]->chi(2) << "\t" << rotamers[i]->chi(3) << std::endl;
 	// }
 
 }
@@ -1314,10 +1314,10 @@ RotamericSingleResiduePeptoidLibrary< T, N >::build_rotamers(
 	/*
 	std::cout << "EXTRA_CHI_STEPS::build_rotamers\t" << extra_chi_steps.size() << std::endl;
 	for ( Size i(1); i <= extra_chi_steps.size(); ++i ) {
-			for ( Size j(1); j <= extra_chi_steps[i].size(); ++j ) {
-				std::cout << i << "/" << j << ":\t" << extra_chi_steps[i][j] << "\t" << std::flush;
-			}
-			std::cout << std::endl;
+	for ( Size j(1); j <= extra_chi_steps[i].size(); ++j ) {
+	std::cout << i << "/" << j << ":\t" << extra_chi_steps[i][j] << "\t" << std::flush;
+	}
+	std::cout << std::endl;
 	}
 	std::cout << std::endl;
 	*/
@@ -1350,7 +1350,7 @@ RotamericSingleResiduePeptoidLibrary< T, N >::verify_omgphipsi_bins(
 ) const
 {
 	if ( (omgbin < 1 || omgbin > N_OMG_BINS ) || ( phibin < 1 || phibin > N_PHI_BINS ) || ( psibin < 1 || psibin > N_PHI_BINS ) ||
-		( omgbin_next < 1 || omgbin_next > N_OMG_BINS) || ( phibin_next < 1 || phibin_next > N_PHI_BINS ) || ( psibin_next < 1 || psibin_next > N_PSI_BINS )) {
+			( omgbin_next < 1 || omgbin_next > N_OMG_BINS) || ( phibin_next < 1 || phibin_next > N_PHI_BINS ) || ( psibin_next < 1 || psibin_next > N_PSI_BINS ) ) {
 		std::cerr << "ERROR: omg/phi/psi bin out of range: " << aa() << " " << omg << " " << phi << " " << psi << " " << omgbin << " " << omgbin_next << " " << phibin << " " << phibin_next << " " << psibin << " " << psibin_next <<  std::endl;
 		utility_exit();
 	}
@@ -1376,7 +1376,7 @@ RotamericSingleResiduePeptoidLibrary< T, N >::create_rotamers_from_chisets(
 
 	// construct real rotamers
 	for ( vector1< ChiSetOP >::const_iterator chi_set( chi_set_vector.begin() );
-	      chi_set != chi_set_vector.end(); ++chi_set ) {
+			chi_set != chi_set_vector.end(); ++chi_set ) {
 		conformation::ResidueOP rotamer = conformation::ResidueFactory::create_residue(
 			*concrete_residue, existing_residue, pose.conformation(), rtask.preserve_c_beta() );
 		for ( Size jj = 1; jj <= (*chi_set)->chi.size(); ++jj ) {
@@ -1385,8 +1385,8 @@ RotamericSingleResiduePeptoidLibrary< T, N >::create_rotamers_from_chisets(
 		// apply an operation (or a filter) to this rotamer at build time
 		bool reject(false);
 		for ( pack::rotamer_set::RotamerOperations::const_iterator
-			    op( rtask.rotamer_operations().begin() );
-		      op != rtask.rotamer_operations().end(); ++op ) {
+				op( rtask.rotamer_operations().begin() );
+				op != rtask.rotamer_operations().end(); ++op ) {
 			reject |= ! (**op)( rotamer, pose, scorefxn, rtask, packer_neighbor_graph, *chi_set );
 		}
 		if ( !reject ) rotamers.push_back( rotamer );
@@ -1461,11 +1461,11 @@ RotamericSingleResiduePeptoidLibrary< T, N >::enumerate_chi_sets(
 	for ( utility::LexicographicalIterator lex( lex_sizes ); ! lex.at_end(); ++lex ) {
 		Real chi_set_prob = base_probability;
 
-    runtime_assert( nchi <=  lex.size() );
-    runtime_assert( nchi <=  chisample_prob.size() );
+		runtime_assert( nchi <=  lex.size() );
+		runtime_assert( nchi <=  chisample_prob.size() );
 
 		for ( Size ii = 1; ii <= nchi; ++ii ) {
-			if( chisample_prob[ ii ].size() >= lex[ ii ] ){
+			if ( chisample_prob[ ii ].size() >= lex[ ii ] ) {
 				chi_set_prob *= chisample_prob[ ii ][ lex[ ii ] ];
 			}
 		}
@@ -1500,7 +1500,7 @@ RotamericSingleResiduePeptoidLibrary< T, N >::chisamples_for_rotamer_and_chi(
 	utility::vector1< Real > & chisample_prob
 ) const
 {
-//debug_assert( dynamic_cast< RotamericData const & > ( rotamer_data ) );
+	//debug_assert( dynamic_cast< RotamericData const & > ( rotamer_data ) );
 	//RotamericData const & rotameric_data( static_cast< RotamericData const & > ( rotamer_data ) );
 
 	// setting this value to zero disables the small-standdev filter -- is that what we want?
@@ -1617,18 +1617,18 @@ RotamericSingleResiduePeptoidLibrary< T, N >::write_to_file( utility::io::ozstre
 	DunbrackReal * packed_rotnos = new DunbrackReal[ ntotalrot ];
 	Size count_chi( 0 ), count_rots( 0 );
 	for ( Size ii = 1; ii <= parent::n_packed_rots(); ++ii ) {
-		for ( Size jj = 1; jj <= N_PHI_BINS; ++jj ) {
-			for ( Size kk = 1; kk <= N_PSI_BINS; ++kk ) {
-				for ( Size ll = 1; ll <= T; ++ll ) {
-					rotamer_means[ count_chi ] = rotamers_( kk, jj, ii ).chi_mean( ll );
-					rotamer_stdvs[ count_chi ] = rotamers_( kk, jj, ii ).chi_sd( ll );
-					++count_chi;
-				}
-				rotamer_probs[ count_rots ] = rotamers_( kk, jj, ii ).rotamer_probability();
-				packed_rotnos[ count_rots ] = rotamers_( kk, jj, ii ).packed_rotno();
-				++count_rots;
-			}
-		}
+	for ( Size jj = 1; jj <= N_PHI_BINS; ++jj ) {
+	for ( Size kk = 1; kk <= N_PSI_BINS; ++kk ) {
+	for ( Size ll = 1; ll <= T; ++ll ) {
+	rotamer_means[ count_chi ] = rotamers_( kk, jj, ii ).chi_mean( ll );
+	rotamer_stdvs[ count_chi ] = rotamers_( kk, jj, ii ).chi_sd( ll );
+	++count_chi;
+	}
+	rotamer_probs[ count_rots ] = rotamers_( kk, jj, ii ).rotamer_probability();
+	packed_rotnos[ count_rots ] = rotamers_( kk, jj, ii ).packed_rotno();
+	++count_rots;
+	}
+	}
 	}
 	out.write( (char*) rotamer_means, ntotalchi * sizeof( DunbrackReal ));
 	out.write( (char*) rotamer_stdvs, ntotalchi * sizeof( DunbrackReal ));
@@ -1646,12 +1646,12 @@ RotamericSingleResiduePeptoidLibrary< T, N >::write_to_file( utility::io::ozstre
 	boost::int32_t * packed_rotno_2_sorted_rotno = new boost::int32_t[ ntotalpackedrots ];
 	Size count( 0 );
 	for ( Size ii = 1; ii <= parent::n_packed_rots(); ++ii ) {
-		for ( Size jj = 1; jj <= N_PHI_BINS; ++jj ) {
-			for ( Size kk = 1; kk <= N_PSI_BINS; ++kk ) {
-				packed_rotno_2_sorted_rotno[ count ] = packed_rotno_2_sorted_rotno_( kk, jj, ii );
-				++count;
-			}
-		}
+	for ( Size jj = 1; jj <= N_PHI_BINS; ++jj ) {
+	for ( Size kk = 1; kk <= N_PSI_BINS; ++kk ) {
+	packed_rotno_2_sorted_rotno[ count ] = packed_rotno_2_sorted_rotno_( kk, jj, ii );
+	++count;
+	}
+	}
 	}
 	out.write( (char*) packed_rotno_2_sorted_rotno, ntotalpackedrots * sizeof( boost::int32_t ) );
 	delete [] packed_rotno_2_sorted_rotno;
@@ -1686,18 +1686,18 @@ RotamericSingleResiduePeptoidLibrary< T, N >::write_to_binary( utility::io::ozst
 	DunbrackReal * packed_rotnos = new DunbrackReal[ ntotalrot ];
 	Size count_chi( 0 ), count_rots( 0 );
 	for ( Size ii = 1; ii <= parent::n_packed_rots(); ++ii ) {
-		for ( Size jj = 1; jj <= N_PHI_BINS; ++jj ) {
-			for ( Size kk = 1; kk <= N_PSI_BINS; ++kk ) {
-				for ( Size ll = 1; ll <= T; ++ll ) {
-					rotamer_means[ count_chi ] = rotamers_( kk, jj, ii ).chi_mean( ll );
-					rotamer_stdvs[ count_chi ] = rotamers_( kk, jj, ii ).chi_sd( ll );
-					++count_chi;
-				}
-				rotamer_probs[ count_rots ] = rotamers_( kk, jj, ii ).rotamer_probability();
-				packed_rotnos[ count_rots ] = rotamers_( kk, jj, ii ).packed_rotno();
-				++count_rots;
-			}
-		}
+	for ( Size jj = 1; jj <= N_PHI_BINS; ++jj ) {
+	for ( Size kk = 1; kk <= N_PSI_BINS; ++kk ) {
+	for ( Size ll = 1; ll <= T; ++ll ) {
+	rotamer_means[ count_chi ] = rotamers_( kk, jj, ii ).chi_mean( ll );
+	rotamer_stdvs[ count_chi ] = rotamers_( kk, jj, ii ).chi_sd( ll );
+	++count_chi;
+	}
+	rotamer_probs[ count_rots ] = rotamers_( kk, jj, ii ).rotamer_probability();
+	packed_rotnos[ count_rots ] = rotamers_( kk, jj, ii ).packed_rotno();
+	++count_rots;
+	}
+	}
 	}
 	out.write( (char*) rotamer_means, ntotalchi * sizeof( DunbrackReal ));
 	out.write( (char*) rotamer_stdvs, ntotalchi * sizeof( DunbrackReal ));
@@ -1715,12 +1715,12 @@ RotamericSingleResiduePeptoidLibrary< T, N >::write_to_binary( utility::io::ozst
 	boost::int32_t * packed_rotno_2_sorted_rotno = new boost::int32_t[ ntotalpackedrots ];
 	Size count( 0 );
 	for ( Size ii = 1; ii <= parent::n_packed_rots(); ++ii ) {
-		for ( Size jj = 1; jj <= N_PHI_BINS; ++jj ) {
-			for ( Size kk = 1; kk <= N_PSI_BINS; ++kk ) {
-				packed_rotno_2_sorted_rotno[ count ] = packed_rotno_2_sorted_rotno_( kk, jj, ii );
-				++count;
-			}
-		}
+	for ( Size jj = 1; jj <= N_PHI_BINS; ++jj ) {
+	for ( Size kk = 1; kk <= N_PSI_BINS; ++kk ) {
+	packed_rotno_2_sorted_rotno[ count ] = packed_rotno_2_sorted_rotno_( kk, jj, ii );
+	++count;
+	}
+	}
 	}
 	out.write( (char*) packed_rotno_2_sorted_rotno, ntotalpackedrots * sizeof( boost::int32_t ) );
 	delete [] packed_rotno_2_sorted_rotno;
@@ -1759,18 +1759,18 @@ RotamericSingleResiduePeptoidLibrary< T, N >::read_from_binary( utility::io::izs
 
 	Size count_chi( 0 ), count_rots( 0 );
 	for ( Size ii = 1; ii <= parent::n_packed_rots(); ++ii ) {
-		for ( Size jj = 1; jj <= N_PHI_BINS; ++jj ) {
-			for ( Size kk = 1; kk <= N_PSI_BINS; ++kk ) {
-				for ( Size ll = 1; ll <= T; ++ll ) {
-					rotamers_( kk, jj, ii ).chi_mean( ll ) = rotamer_means[ count_chi ];
-					rotamers_( kk, jj, ii ).chi_sd(  ll ) = rotamer_stdvs[ count_chi ];
-					++count_chi;
-				}
-				rotamers_( kk, jj, ii ).rotamer_probability() = rotamer_probs[ count_rots ];
-				rotamers_( kk, jj, ii ).packed_rotno() = ( Size ) packed_rotnos[ count_rots ];
-				++count_rots;
-			}
-		}
+	for ( Size jj = 1; jj <= N_PHI_BINS; ++jj ) {
+	for ( Size kk = 1; kk <= N_PSI_BINS; ++kk ) {
+	for ( Size ll = 1; ll <= T; ++ll ) {
+	rotamers_( kk, jj, ii ).chi_mean( ll ) = rotamer_means[ count_chi ];
+	rotamers_( kk, jj, ii ).chi_sd(  ll ) = rotamer_stdvs[ count_chi ];
+	++count_chi;
+	}
+	rotamers_( kk, jj, ii ).rotamer_probability() = rotamer_probs[ count_rots ];
+	rotamers_( kk, jj, ii ).packed_rotno() = ( Size ) packed_rotnos[ count_rots ];
+	++count_rots;
+	}
+	}
 	}
 	delete [] rotamer_means;
 	delete [] rotamer_stdvs;
@@ -1786,12 +1786,12 @@ RotamericSingleResiduePeptoidLibrary< T, N >::read_from_binary( utility::io::izs
 	Size count( 0 );
 	packed_rotno_2_sorted_rotno_.dimension( N_PHI_BINS, N_PSI_BINS, parent::n_packed_rots() );
 	for ( Size ii = 1; ii <= parent::n_packed_rots(); ++ii ) {
-		for ( Size jj = 1; jj <= N_PHI_BINS; ++jj ) {
-			for ( Size kk = 1; kk <= N_PSI_BINS; ++kk ) {
-				packed_rotno_2_sorted_rotno_( kk, jj, ii ) = packed_rotno_2_sorted_rotno[ count ];
-				++count;
-			}
-		}
+	for ( Size jj = 1; jj <= N_PHI_BINS; ++jj ) {
+	for ( Size kk = 1; kk <= N_PSI_BINS; ++kk ) {
+	packed_rotno_2_sorted_rotno_( kk, jj, ii ) = packed_rotno_2_sorted_rotno[ count ];
+	++count;
+	}
+	}
 	}
 	delete [] packed_rotno_2_sorted_rotno;
 	}
@@ -1836,7 +1836,7 @@ RotamericSingleResiduePeptoidLibrary< T, N >::read_from_file(
 	}
 
 	// parse the lines
-	for( Size i( 1 ); i <= lines.size(); ++i ) {
+	for ( Size i( 1 ); i <= lines.size(); ++i ) {
 		/// 1. Read the line.  Format is:
 		/// a.   three-letter-code,
 		/// b.   omg
@@ -1903,7 +1903,7 @@ RotamericSingleResiduePeptoidLibrary< T, N >::read_from_file(
 			++count_in_this_omgphipsi_bin;
 			lastomgbin = omgbin; lastphibin = phibin; lastpsibin = psibin;
 		} else {
-			if ( !very_first_rotamer && (omgbin != lastomgbin || phibin != lastphibin || psibin != lastpsibin )) {
+			if ( !very_first_rotamer && (omgbin != lastomgbin || phibin != lastphibin || psibin != lastpsibin ) ) {
 				// We have now read all rotamers from this phi/psi bin.
 				// 1. Declare all existing rotwells encountered
 				// 2. Allocate space for rotamer data
@@ -1916,12 +1916,12 @@ RotamericSingleResiduePeptoidLibrary< T, N >::read_from_file(
 
 				// decide if cis or trans rotamer or packed_rotno_2_sorted_rotno arrays
 				//if ( is_trans_omg( omg ) ) {
-					trans_rotamers_.dimension( N_OMG_BINS, N_PHI_BINS, N_PSI_BINS, n_packed_rots() );
-					trans_packed_rotno_2_sorted_rotno_.dimension( N_OMG_BINS, N_PHI_BINS, N_PSI_BINS, n_packed_rots() );
-					//} else if ( is_cis_omg( omg ) ) {
-					cis_rotamers_.dimension( N_OMG_BINS, N_PHI_BINS, N_PSI_BINS, n_packed_rots() );
-					cis_packed_rotno_2_sorted_rotno_.dimension( N_OMG_BINS, N_PHI_BINS, N_PSI_BINS, n_packed_rots() );
-					//}
+				trans_rotamers_.dimension( N_OMG_BINS, N_PHI_BINS, N_PSI_BINS, n_packed_rots() );
+				trans_packed_rotno_2_sorted_rotno_.dimension( N_OMG_BINS, N_PHI_BINS, N_PSI_BINS, n_packed_rots() );
+				//} else if ( is_cis_omg( omg ) ) {
+				cis_rotamers_.dimension( N_OMG_BINS, N_PHI_BINS, N_PSI_BINS, n_packed_rots() );
+				cis_packed_rotno_2_sorted_rotno_.dimension( N_OMG_BINS, N_PHI_BINS, N_PSI_BINS, n_packed_rots() );
+				//}
 
 				// 3.
 				utility::vector1< Size > first_bin_rotwell( DUNBRACK_MAX_SCTOR, 0 );
@@ -1950,7 +1950,7 @@ RotamericSingleResiduePeptoidLibrary< T, N >::read_from_file(
 				}
 
 				// 4.
-			debug_assert( count_in_this_omgphipsi_bin == 1 );
+				debug_assert( count_in_this_omgphipsi_bin == 1 );
 				Size const packed_rotno = rotwell_2_packed_rotno( rotwell );
 				PackedDunbrackRotamer< T, N > rotamer( chimean, chisd, probability, packed_rotno );
 				if ( is_trans_omg( omg ) ) {
@@ -2040,11 +2040,11 @@ RotamericSingleResiduePeptoidLibrary< T, N >::get_rotamer_from_chi_static(
 {
 	if ( dun02() ) { rotamer_from_chi_02( chi, aa(), T, rot ); return; }
 
-debug_assert( chi.size() >= T );
+	debug_assert( chi.size() >= T );
 
 	/// compiler will unroll this loop
 	for ( Size ii = 1; ii <= T; ++ii ) {
-		 rot[ ii ]  = bin_rotameric_chi( basic::periodic_range( chi[ ii ], 360 ), ii );
+		rot[ ii ]  = bin_rotameric_chi( basic::periodic_range( chi[ ii ], 360 ), ii );
 	}
 }
 

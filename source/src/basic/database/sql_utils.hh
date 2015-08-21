@@ -62,7 +62,7 @@ get_db_session(
 	utility::sql_database::TransactionMode::e transaction_mode,
 	platform::Size chunk_size,
 	std::string const & pq_schema="");
-	
+
 utility::sql_database::sessionOP
 get_db_session(
 	utility::sql_database::DatabaseMode::e db_mode,
@@ -88,8 +88,8 @@ platform::SSize db_partition_from_options(
 
 /// @brief Returns partition identifer from mpi rank if in partitioned database mode, or valid manual partition, otherwise -1.
 platform::SSize resolve_db_partition(
-		bool partition_by_mpi_process,
-		platform::SSize manual_partition = -1);
+	bool partition_by_mpi_process,
+	platform::SSize manual_partition = -1);
 
 cppdb::statement
 safely_prepare_statement(

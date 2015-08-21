@@ -28,44 +28,45 @@ namespace numeric {
 /// @brief Returns the sum of all elements on the range [first, last)
 template <class InputIterator>
 double sum(InputIterator first, InputIterator last) {
-  double sum = 0;
-  for (; first != last; ++first)
-    sum += *first;
-  return sum;
+	double sum = 0;
+	for ( ; first != last; ++first ) {
+		sum += *first;
+	}
+	return sum;
 }
 
 /// @brief Normalizes elements on the range [first, last)
 template <class InputIterator>
 void normalize(InputIterator first, InputIterator last) {
-  const double div = sum(first, last);
-  for (; first != last; ++first) {
-    *first /= div;
-  }
+	const double div = sum(first, last);
+	for ( ; first != last; ++first ) {
+		*first /= div;
+	}
 }
 
 /// @brief Converts pdf to cdf
 template <class RandomAccessIterator>
 void cumulative(RandomAccessIterator first, RandomAccessIterator last) {
-  normalize(first, last);
-  for (RandomAccessIterator i = first + 1; i != last; ++i) {
-    *i += *(i - 1);
-  }
+	normalize(first, last);
+	for ( RandomAccessIterator i = first + 1; i != last; ++i ) {
+		*i += *(i - 1);
+	}
 }
 
 /// @brief Multiplies two probability vectors with one another.
 /// Probability vectors are assumed to have equal lengths.
 template <class ForwardIterator>
 void product(ForwardIterator probs1_first, ForwardIterator probs1_last,
-             ForwardIterator probs2_first, ForwardIterator probs2_last) {
-  normalize(probs1_first, probs1_last);
-  normalize(probs2_first, probs2_last);
+	ForwardIterator probs2_first, ForwardIterator probs2_last) {
+	normalize(probs1_first, probs1_last);
+	normalize(probs2_first, probs2_last);
 
-  ForwardIterator i = probs1_first;
-  ForwardIterator j = probs2_first;
-  for (; i != probs1_last; ++i, ++j) {
-    *i *= *j;
-  }
-  normalize(probs1_first, probs1_last);
+	ForwardIterator i = probs1_first;
+	ForwardIterator j = probs2_first;
+	for ( ; i != probs1_last; ++i, ++j ) {
+		*i *= *j;
+	}
+	normalize(probs1_first, probs1_last);
 }
 
 /// @brief Loads normalized, per-residue probabilities from filename,

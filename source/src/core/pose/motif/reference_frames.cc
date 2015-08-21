@@ -28,21 +28,21 @@ namespace core {
 namespace pose {
 namespace motif {
 
-	using numeric::xyzVector;
-	using numeric::xyzTransform;
-	using namespace core::chemical;
-	using core::Size;
-	using core::Real;
-	using std::string;
-	typedef xyzTransform<Real> Xform;
-	typedef xyzVector<Real> Vec;
-	typedef Pose const & PoseCR;
-	typedef Size const & SizeCR;
-	using utility::tools::make_vector1;
-	using core::id::AtomID;
-	using std::cout;
-	using std::endl;
-	typedef utility::vector1<core::id::AtomID> AIDs;
+using numeric::xyzVector;
+using numeric::xyzTransform;
+using namespace core::chemical;
+using core::Size;
+using core::Real;
+using std::string;
+typedef xyzTransform<Real> Xform;
+typedef xyzVector<Real> Vec;
+typedef Pose const & PoseCR;
+typedef Size const & SizeCR;
+using utility::tools::make_vector1;
+using core::id::AtomID;
+using std::cout;
+using std::endl;
+typedef utility::vector1<core::id::AtomID> AIDs;
 
 
 static
@@ -52,8 +52,8 @@ AIDs get_AIDs(
 	utility::vector1<std::string> const & anames
 ){
 	AIDs aids;
-	BOOST_FOREACH(std::string const& aname,anames){
-		if(pose.residue(ir).has(aname)){
+	BOOST_FOREACH ( std::string const& aname,anames ) {
+		if ( pose.residue(ir).has(aname) ) {
 			aids.push_back( AtomID(pose.residue(ir).atom_index(aname),ir) );
 		} else {
 			std::cout << "WARNING! get_sidechain_reference_frame_downstream_atoms: res "<<ir<<" "<< pose.residue(ir).name() << " has no atom named '" << aname<<"'!" << std::endl;
@@ -65,7 +65,7 @@ AIDs get_AIDs(
 }
 
 Vec a(Pose const & p, numeric::Size const & i, string const & s){
-	if(! p.residue(i).has(s) ) utility_exit_with_message("no "+s+" atom in residue "+p.residue(i).name()+"!");
+	if ( ! p.residue(i).has(s) ) utility_exit_with_message("no "+s+" atom in residue "+p.residue(i).name()+"!");
 	return p.residue(i).xyz(s);
 }
 
@@ -83,7 +83,7 @@ Xform get_backbone_reference_frame(
 Xform get_backbone_reference_frame(Pose const & p, numeric::Size const & i){
 	runtime_assert( i >= 1 );
 	runtime_assert( i <= p.n_residue() );
-	if( !p.residue(i).is_protein() ) return Xform::BAD_XFORM();
+	if ( !p.residue(i).is_protein() ) return Xform::BAD_XFORM();
 	return get_backbone_reference_frame( a(p,i,"N"), a(p,i,"CA"), a(p,i,"C") );
 }
 
@@ -96,10 +96,10 @@ Xform get_nterminal_peptide_bond_reference_frame(
 	return Xform().from_four_points( H, H , N, CA );
 }
 Xform get_nterminal_peptide_bond_reference_frame(Pose const & p, numeric::Size const & i){
-	if( !p.residue(i).is_protein() ) return Xform::BAD_XFORM();
-	if( p.residue(i).is_lower_terminus() ) return Xform::BAD_XFORM();
+	if ( !p.residue(i).is_protein() ) return Xform::BAD_XFORM();
+	if ( p.residue(i).is_lower_terminus() ) return Xform::BAD_XFORM();
 	// if( 1==i ) return Xform::BAD_XFORM();
-	if( p.residue(i).aa()==aa_pro ) return Xform::BAD_XFORM();
+	if ( p.residue(i).aa()==aa_pro ) return Xform::BAD_XFORM();
 	return get_nterminal_peptide_bond_reference_frame( a(p,i, "H" ), a(p,i,"N"), a(p,i,"CA") );
 }
 
@@ -111,8 +111,8 @@ Xform get_cterminal_peptide_bond_reference_frame(
 	return Xform().from_four_points( O, O, C, CA );
 }
 Xform get_cterminal_peptide_bond_reference_frame(Pose const & p, numeric::Size const & i){
-	if( !p.residue(i).is_protein() ) return Xform::BAD_XFORM();
-	if( p.residue(i).is_upper_terminus() ) return Xform::BAD_XFORM();
+	if ( !p.residue(i).is_protein() ) return Xform::BAD_XFORM();
+	if ( p.residue(i).is_upper_terminus() ) return Xform::BAD_XFORM();
 	// if( i==p.n_residue() ) return Xform::BAD_XFORM();
 	return get_cterminal_peptide_bond_reference_frame( a(p,i,"O"), a(p,i,"C"), a(p,i,"CA") );
 }
@@ -120,19 +120,19 @@ Xform get_cterminal_peptide_bond_reference_frame(Pose const & p, numeric::Size c
 
 AIDs
 get_nterminal_peptide_bond_reference_frame_atomids(Pose const & p, numeric::Size const & i, bool extra){
-	if( !p.residue(i).is_protein()       ) return AIDs();
-	if( p.residue(i).is_lower_terminus() ) return AIDs();
-	if( p.residue(i).aa()==aa_pro ) return AIDs();
+	if ( !p.residue(i).is_protein()       ) return AIDs();
+	if ( p.residue(i).is_lower_terminus() ) return AIDs();
+	if ( p.residue(i).aa()==aa_pro ) return AIDs();
 	AIDs aids = get_AIDs(p,i,make_vector1<string>("H","N","CA"));
-	if( extra && i > 1 ) aids.push_back( AtomID(p.residue(i-1).atom_index("C"),i-1) );
+	if ( extra && i > 1 ) aids.push_back( AtomID(p.residue(i-1).atom_index("C"),i-1) );
 	return aids;
 }
 AIDs
 get_cterminal_peptide_bond_reference_frame_atomids(Pose const & p, numeric::Size const & i, bool extra){
-	if( !p.residue(i).is_protein()       ) return AIDs();
-	if( p.residue(i).is_upper_terminus() ) return AIDs();
+	if ( !p.residue(i).is_protein()       ) return AIDs();
+	if ( p.residue(i).is_upper_terminus() ) return AIDs();
 	AIDs aids = get_AIDs(p,i,make_vector1<string>("CA","C","O"));
-	if( extra && i < p.n_residue() ) aids.push_back( AtomID(p.residue(i+1).atom_index("N"),i+1) );
+	if ( extra && i < p.n_residue() ) aids.push_back( AtomID(p.residue(i+1).atom_index("N"),i+1) );
 	return aids;
 }
 
@@ -141,32 +141,32 @@ Xform get_sidechain_reference_frame(Pose const & p, numeric::Size const & i){
 	runtime_assert( i >= 1 );
 	runtime_assert( i <= p.n_residue() );
 	switch(p.residue(i).aa()){
-		case aa_ala: return get_frame_ala(p,i);
-		case aa_cys: return get_frame_cys(p,i);
-		case aa_asp: return get_frame_asp(p,i);
-		case aa_glu: return get_frame_glu(p,i);
-		case aa_phe: return get_frame_phe(p,i);
-		case aa_gly: return get_frame_gly(p,i);
-		case aa_his: return get_frame_his(p,i);
-		case aa_ile: return get_frame_ile(p,i);
-		case aa_lys: return get_frame_lys(p,i);
-		case aa_leu: return get_frame_leu(p,i);
-		case aa_met: return get_frame_met(p,i);
-		case aa_asn: return get_frame_asn(p,i);
-		case aa_pro: return get_frame_pro(p,i);
-		case aa_gln: return get_frame_gln(p,i);
-		case aa_arg: return get_frame_arg(p,i);
-		case aa_ser: return get_frame_ser(p,i);
-		case aa_thr: return get_frame_thr(p,i);
-		case aa_val: return get_frame_val(p,i);
-		case aa_trp: return get_frame_trp(p,i);
-		case aa_tyr: return get_frame_tyr(p,i);
-		default:
-			return Xform::BAD_XFORM();
-			//utility_exit_with_message("don't know what to do with unknown AA");
+	case aa_ala : return get_frame_ala(p,i);
+	case aa_cys : return get_frame_cys(p,i);
+	case aa_asp : return get_frame_asp(p,i);
+	case aa_glu : return get_frame_glu(p,i);
+	case aa_phe : return get_frame_phe(p,i);
+	case aa_gly : return get_frame_gly(p,i);
+	case aa_his : return get_frame_his(p,i);
+	case aa_ile : return get_frame_ile(p,i);
+	case aa_lys : return get_frame_lys(p,i);
+	case aa_leu : return get_frame_leu(p,i);
+	case aa_met : return get_frame_met(p,i);
+	case aa_asn : return get_frame_asn(p,i);
+	case aa_pro : return get_frame_pro(p,i);
+	case aa_gln : return get_frame_gln(p,i);
+	case aa_arg : return get_frame_arg(p,i);
+	case aa_ser : return get_frame_ser(p,i);
+	case aa_thr : return get_frame_thr(p,i);
+	case aa_val : return get_frame_val(p,i);
+	case aa_trp : return get_frame_trp(p,i);
+	case aa_tyr : return get_frame_tyr(p,i);
+	default :
+		return Xform::BAD_XFORM();
+		//utility_exit_with_message("don't know what to do with unknown AA");
 	}
 	return Xform::BAD_XFORM();
- }
+}
 
 Xform get_frame_ala(PoseCR p, SizeCR i){ runtime_assert( p.residue(i).aa() == aa_ala); return Xform().from_four_points(a(p,i,"CB" ),a(p,i,"CB" ),a(p,i,"CA" ),a(p,i,"N"  )); }
 Xform get_frame_cys(PoseCR p, SizeCR i){ runtime_assert( p.residue(i).aa() == aa_cys); return Xform().from_four_points(a(p,i,"SG" ),a(p,i,"SG" ),a(p,i,"CB" ),a(p,i,"CA" )); }
@@ -241,7 +241,7 @@ get_backbone_reference_frame_atomids(
 	aids.push_back(AtomID(1,ir));
 	aids.push_back(AtomID(2,ir));
 	aids.push_back(AtomID(3,ir));
-	if(pose.residue(ir).aa()!=aa_gly) aids.push_back(AtomID(5,ir));
+	if ( pose.residue(ir).aa()!=aa_gly ) aids.push_back(AtomID(5,ir));
 	else                              aids.push_back(id::BOGUS_ATOM_ID);
 	return aids;
 }
@@ -257,21 +257,21 @@ get_backbone_reference_frame_atomids_with_downstream(
 	aids.push_back(AtomID(1,ir));
 	aids.push_back(AtomID(2,ir));
 	aids.push_back(AtomID(3,ir));
-	for(Size ia = 5; ia <= pose.residue_type(ir).natoms(); ++ia){
+	for ( Size ia = 5; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 		// if( pose.residue_type(ir).atom_is_polar_hydrogen(ia) ){
-		// 	for(Size j = 1; j <= pose.residue_type(ir).natoms(); ++j){
-		// 		cout << pose.residue(ir).name() << " " << pose.residue(ir).atom_name(j) << ir << " " << j << " " << pose.residue_type(ir).atom_is_polar_hydrogen(j) << endl;
-		// 	}
-		// 	cout << endl;
+		//  for(Size j = 1; j <= pose.residue_type(ir).natoms(); ++j){
+		//   cout << pose.residue(ir).name() << " " << pose.residue(ir).atom_name(j) << ir << " " << j << " " << pose.residue_type(ir).atom_is_polar_hydrogen(j) << endl;
+		//  }
+		//  cout << endl;
 		// }
-			// std::cout << "MASK CHECK: "
-			// << pose.residue_type(ir).atom_name(ia) << " "
-			// << pose.residue_type(ir).atom_is_backbone(ia) << " "
-			// << pose.residue_type(ir).atom_is_hydrogen(ia) << " "
-			// << pose.residue_type(ir).atom_is_polar_hydrogen(ia) << " "
-			// << std::endl;
-		if(pose.residue_type(ir).atom_is_backbone(ia) ) continue;
-		if(pose.residue_type(ir).atom_is_hydrogen(ia) && !pose.residue_type(ir).atom_is_polar_hydrogen(ia) ) continue;
+		// std::cout << "MASK CHECK: "
+		// << pose.residue_type(ir).atom_name(ia) << " "
+		// << pose.residue_type(ir).atom_is_backbone(ia) << " "
+		// << pose.residue_type(ir).atom_is_hydrogen(ia) << " "
+		// << pose.residue_type(ir).atom_is_polar_hydrogen(ia) << " "
+		// << std::endl;
+		if ( pose.residue_type(ir).atom_is_backbone(ia) ) continue;
+		if ( pose.residue_type(ir).atom_is_hydrogen(ia) && !pose.residue_type(ir).atom_is_polar_hydrogen(ia) ) continue;
 		aids.push_back(AtomID(ia,ir));
 	}
 	return aids;
@@ -285,27 +285,27 @@ get_sidechain_reference_frame_atomids(
 	runtime_assert( ir >= 1 );
 	runtime_assert( ir <= pose.n_residue() );
 	switch(pose.residue(ir).aa()){
-		case aa_ala: return get_atoms_ala(pose,ir);
-		case aa_cys: return get_atoms_cys(pose,ir);
-		case aa_asp: return get_atoms_asp(pose,ir);
-		case aa_glu: return get_atoms_glu(pose,ir);
-		case aa_phe: return get_atoms_phe(pose,ir);
-		case aa_gly: return get_atoms_gly(pose,ir);
-		case aa_his: return get_atoms_his(pose,ir);
-		case aa_ile: return get_atoms_ile(pose,ir);
-		case aa_lys: return get_atoms_lys(pose,ir);
-		case aa_leu: return get_atoms_leu(pose,ir);
-		case aa_met: return get_atoms_met(pose,ir);
-		case aa_asn: return get_atoms_asn(pose,ir);
-		case aa_pro: return get_atoms_pro(pose,ir);
-		case aa_gln: return get_atoms_gln(pose,ir);
-		case aa_arg: return get_atoms_arg(pose,ir);
-		case aa_ser: return get_atoms_ser(pose,ir);
-		case aa_thr: return get_atoms_thr(pose,ir);
-		case aa_val: return get_atoms_val(pose,ir);
-		case aa_trp: return get_atoms_trp(pose,ir);
-		case aa_tyr: return get_atoms_tyr(pose,ir);
-		default: utility_exit_with_message("don't know what to do with unknown AA");
+	case aa_ala : return get_atoms_ala(pose,ir);
+	case aa_cys : return get_atoms_cys(pose,ir);
+	case aa_asp : return get_atoms_asp(pose,ir);
+	case aa_glu : return get_atoms_glu(pose,ir);
+	case aa_phe : return get_atoms_phe(pose,ir);
+	case aa_gly : return get_atoms_gly(pose,ir);
+	case aa_his : return get_atoms_his(pose,ir);
+	case aa_ile : return get_atoms_ile(pose,ir);
+	case aa_lys : return get_atoms_lys(pose,ir);
+	case aa_leu : return get_atoms_leu(pose,ir);
+	case aa_met : return get_atoms_met(pose,ir);
+	case aa_asn : return get_atoms_asn(pose,ir);
+	case aa_pro : return get_atoms_pro(pose,ir);
+	case aa_gln : return get_atoms_gln(pose,ir);
+	case aa_arg : return get_atoms_arg(pose,ir);
+	case aa_ser : return get_atoms_ser(pose,ir);
+	case aa_thr : return get_atoms_thr(pose,ir);
+	case aa_val : return get_atoms_val(pose,ir);
+	case aa_trp : return get_atoms_trp(pose,ir);
+	case aa_tyr : return get_atoms_tyr(pose,ir);
+	default : utility_exit_with_message("don't know what to do with unknown AA");
 	}
 	utility_exit_with_message("don't know what to do with unknown AA");
 }
@@ -318,27 +318,27 @@ get_sidechain_reference_frame_atomids_with_downstream(
 	runtime_assert( ir >= 1 );
 	runtime_assert( ir <= pose.n_residue() );
 	switch(pose.residue(ir).aa()){
-		case aa_ala: return get_atoms_ala_downstream(pose,ir);
-		case aa_cys: return get_atoms_cys_downstream(pose,ir);
-		case aa_asp: return get_atoms_asp_downstream(pose,ir);
-		case aa_glu: return get_atoms_glu_downstream(pose,ir);
-		case aa_phe: return get_atoms_phe_downstream(pose,ir);
-		case aa_gly: return get_atoms_gly_downstream(pose,ir);
-		case aa_his: return get_atoms_his_downstream(pose,ir);
-		case aa_ile: return get_atoms_ile_downstream(pose,ir);
-		case aa_lys: return get_atoms_lys_downstream(pose,ir);
-		case aa_leu: return get_atoms_leu_downstream(pose,ir);
-		case aa_met: return get_atoms_met_downstream(pose,ir);
-		case aa_asn: return get_atoms_asn_downstream(pose,ir);
-		case aa_pro: return get_atoms_pro_downstream(pose,ir);
-		case aa_gln: return get_atoms_gln_downstream(pose,ir);
-		case aa_arg: return get_atoms_arg_downstream(pose,ir);
-		case aa_ser: return get_atoms_ser_downstream(pose,ir);
-		case aa_thr: return get_atoms_thr_downstream(pose,ir);
-		case aa_val: return get_atoms_val_downstream(pose,ir);
-		case aa_trp: return get_atoms_trp_downstream(pose,ir);
-		case aa_tyr: return get_atoms_tyr_downstream(pose,ir);
-		default: utility_exit_with_message("don't know what to do with unknown AA");
+	case aa_ala : return get_atoms_ala_downstream(pose,ir);
+	case aa_cys : return get_atoms_cys_downstream(pose,ir);
+	case aa_asp : return get_atoms_asp_downstream(pose,ir);
+	case aa_glu : return get_atoms_glu_downstream(pose,ir);
+	case aa_phe : return get_atoms_phe_downstream(pose,ir);
+	case aa_gly : return get_atoms_gly_downstream(pose,ir);
+	case aa_his : return get_atoms_his_downstream(pose,ir);
+	case aa_ile : return get_atoms_ile_downstream(pose,ir);
+	case aa_lys : return get_atoms_lys_downstream(pose,ir);
+	case aa_leu : return get_atoms_leu_downstream(pose,ir);
+	case aa_met : return get_atoms_met_downstream(pose,ir);
+	case aa_asn : return get_atoms_asn_downstream(pose,ir);
+	case aa_pro : return get_atoms_pro_downstream(pose,ir);
+	case aa_gln : return get_atoms_gln_downstream(pose,ir);
+	case aa_arg : return get_atoms_arg_downstream(pose,ir);
+	case aa_ser : return get_atoms_ser_downstream(pose,ir);
+	case aa_thr : return get_atoms_thr_downstream(pose,ir);
+	case aa_val : return get_atoms_val_downstream(pose,ir);
+	case aa_trp : return get_atoms_trp_downstream(pose,ir);
+	case aa_tyr : return get_atoms_tyr_downstream(pose,ir);
+	default : utility_exit_with_message("don't know what to do with unknown AA");
 	}
 	utility_exit_with_message("don't know what to do with unknown AA");
 }

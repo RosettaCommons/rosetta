@@ -9,8 +9,8 @@
 
 /// @file       protocols/membrane/MPDockingSetupMover.fwd.hh
 /// @brief      Reads in 2 poses and 2 spanfiles, concatenates them, and
-///				prints them out
-///				CURRENTLY ONLY WORKS FOR 2 POSES!!!
+///    prints them out
+///    CURRENTLY ONLY WORKS FOR 2 POSES!!!
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 /// @note       Last Modified (10/16/14)
 
@@ -30,7 +30,7 @@
 
 // Package Headers
 #include <core/pose/Pose.hh>
-#include <core/types.hh> 
+#include <core/types.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -49,11 +49,11 @@ namespace membrane {
 using namespace core;
 using namespace core::pose;
 using namespace protocols::moves;
-	
+
 /// @brief Setup for MPDocking
 /// @details Reads in 2 poses and 2 spanfiles, concatenates the poses and
-///			 spanfiles and prints them out
-///			 CURRENTLY ONLY WORKS FOR 2 POSES!!!
+///    spanfiles and prints them out
+///    CURRENTLY ONLY WORKS FOR 2 POSES!!!
 class MPDockingSetupMover : public protocols::moves::Mover {
 
 public:
@@ -64,43 +64,43 @@ public:
 
 	/// @brief Default Constructor
 	MPDockingSetupMover();
-		
+
 	/// @brief Copy Constructor
 	MPDockingSetupMover( MPDockingSetupMover const & src );
-	
+
 	/// @brief Destructor
 	virtual ~MPDockingSetupMover();
-	
+
 public: // methods
 
 	/// @brief Create a Clone of this mover
 	virtual MoverOP clone() const;
-	
+
 	/// @brief Create a Fresh Instance of this Mover
 	virtual MoverOP fresh_instance() const;
-    
-    /// @brief Parse Rosetta Scripts Options for this Mover
-    void parse_my_tag(
-      utility::tag::TagCOP tag,
-      basic::datacache::DataMap &,
-      protocols::filters::Filters_map const &,
-      protocols::moves::Movers_map const &,
-      core::pose::Pose const &
-      );
-	
+
+	/// @brief Parse Rosetta Scripts Options for this Mover
+	void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
+	);
+
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
-	
+
 	/// @brief Get the name of this Mover (MPDockingSetupMover)
 	virtual std::string get_name() const;
-		
+
 	/// @brief Reads in 2 poses and 2 spanfiles, concatenates the poses and
-	///			spanfiles and prints them out
+	///   spanfiles and prints them out
 	virtual void apply( Pose & pose );
-	
+
 private: // methods
-	
+
 	// read poses
 	void read_poses();
 
@@ -109,7 +109,7 @@ private: // methods
 
 	// initialize from commandline
 	void init_from_cmd();
-	
+
 	// transform pose into membrane
 	void transform_pose_into_membrane( Pose & pose, Vector center, Vector normal, std::string spanfile, Size partner );
 
@@ -118,11 +118,11 @@ private: // data
 	// vector of poses and spanfiles that are used as input to create final pose and spanfile
 	utility::vector1< PoseOP > poses_;
 	utility::vector1< std::string > spanfiles_;
-	
+
 	// should the position of partner 1 or 2 be optimized in the membrane?
 	bool optimize1_;
 	bool optimize2_;
-	
+
 };
 
 } // membrane

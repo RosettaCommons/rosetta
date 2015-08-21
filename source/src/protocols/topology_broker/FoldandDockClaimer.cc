@@ -61,7 +61,7 @@ FoldandDockClaimer::FoldandDockClaimer( pose::Pose const& input_pose ) :
 	input_pose_(input_pose)
 {}
 
-	//clone
+//clone
 TopologyClaimerOP
 FoldandDockClaimer::clone() const {
 	return TopologyClaimerOP( new FoldandDockClaimer( *this ) );
@@ -80,11 +80,11 @@ FoldandDockClaimer::_static_type_name() {
 
 void
 FoldandDockClaimer::add_mover(
-    moves::RandomMover& random_mover,
-		core::pose::Pose const& /*pose*/,
-		abinitio::StageID stageID,  /*abinitio sampler stage */
-		core::scoring::ScoreFunction const& scorefxn,
-		core::Real /*progress  progress within stage */
+	moves::RandomMover& random_mover,
+	core::pose::Pose const& /*pose*/,
+	abinitio::StageID stageID,  /*abinitio sampler stage */
+	core::scoring::ScoreFunction const& scorefxn,
+	core::Real /*progress  progress within stage */
 )
 {
 	using namespace basic::options;
@@ -97,10 +97,10 @@ FoldandDockClaimer::add_mover(
 	);
 	moves::MoverOP slide_mover( new symmetric_docking::SymFoldandDockSlideTrialMover );
 	core::Real move_anchor_weight(option[ OptionKeys::fold_and_dock::move_anchor_frequency ]()),
-	           rb_weight(option[ OptionKeys::fold_and_dock::rigid_body_frequency ]()),
-	           slide_weight(option[ OptionKeys::fold_and_dock::slide_contact_frequency ]());
+		rb_weight(option[ OptionKeys::fold_and_dock::rigid_body_frequency ]()),
+		slide_weight(option[ OptionKeys::fold_and_dock::slide_contact_frequency ]());
 
-	if (move_anchor_weight > 0) random_mover.add_mover( move_anchor_mover, move_anchor_weight );
+	if ( move_anchor_weight > 0 ) random_mover.add_mover( move_anchor_mover, move_anchor_weight );
 	random_mover.add_mover( rb_trial_mover, rb_weight );
 	random_mover.add_mover( slide_mover, slide_weight );
 }
@@ -137,7 +137,7 @@ void FoldandDockClaimer::initialize_dofs(
 	core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
 
 	for ( claims::DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
-          it != eit; ++it ) {
+			it != eit; ++it ) {
 		if ( (*it)->owner().lock().get() == this ) {
 			(*it)->toggle( *movemap, true );
 		}
@@ -149,7 +149,7 @@ void FoldandDockClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	utility::vector1< int > cuts( input_pose_.conformation().fold_tree().cutpoints() );
 	for ( Size i = 1; i <= cuts.size(); ++i ) {
 		new_claims.push_back( claims::DofClaimOP( new claims::CutClaim( get_self_weak_ptr(), std::make_pair( Parent::label(), cuts[i]),
-																								claims::DofClaim::INIT /* for now... eventually CAN_INIT ? */ ) ) );
+			claims::DofClaim::INIT /* for now... eventually CAN_INIT ? */ ) ) );
 	}
 }
 

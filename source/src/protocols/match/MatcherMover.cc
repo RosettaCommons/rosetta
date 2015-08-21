@@ -43,7 +43,7 @@
 
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 
@@ -110,23 +110,25 @@ MatcherMover::apply( core::pose::Pose & pose )
 
 	core::pose::Pose ligpose;
 	core::pose::Pose save_pose = pose;
-	if( !ligres_ ) ligres_ = core::conformation::ResidueFactory::create_residue(
-		core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map(
+	if ( !ligres_ ) {
+		ligres_ = core::conformation::ResidueFactory::create_residue(
+			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map(
 			basic::options::option[ basic::options::OptionKeys::match::lig_name ] ) );
+	}
 
-	if( !ligres_->type().is_ligand() ) std::cerr << "WARNING: downstream residue " << ligres_->type().name3() << " set in the matcher mover does not seem to be a ligand residue, matcher will likely not behave properly." << std::endl;
+	if ( !ligres_->type().is_ligand() ) std::cerr << "WARNING: downstream residue " << ligres_->type().name3() << " set in the matcher mover does not seem to be a ligand residue, matcher will likely not behave properly." << std::endl;
 
 	ligpose.append_residue_by_jump( *ligres_, 1 );
 
 	//we might have to remove the downstream pose from the input
-	if( incorporate_matches_into_pose_ ){
-		for( core::Size i = pose.total_residue(); i >  0; --i ){
-			if( pose.residue_type( i ).name3() == ligres_->type().name3() )	pose.conformation().delete_residue_slow( i );
+	if ( incorporate_matches_into_pose_ ) {
+		for ( core::Size i = pose.total_residue(); i >  0; --i ) {
+			if ( pose.residue_type( i ).name3() == ligres_->type().name3() ) pose.conformation().delete_residue_slow( i );
 		}
 	}
 
 	//if ( option[ OptionKeys::match::ligand_rotamer_index ].user() ) {
-	//	set_ligpose_rotamer( ligpose );
+	// set_ligpose_rotamer( ligpose );
 	//}
 	Size cent, nbr1, nbr2;
 	ligres_->select_orient_atoms( cent, nbr1, nbr2 );
@@ -142,14 +144,14 @@ MatcherMover::apply( core::pose::Pose & pose )
 	oats[ 1 ] = core::id::AtomID( nbr2, 1 ); oats[ 2 ] = core::id::AtomID( nbr1, 1 ); oats[ 3 ] = core::id::AtomID( cent, 1 );
 
 	mtask->set_downstream_pose( ligpose,  oats );
-	if( match_positions_.size() != 0 ){
+	if ( match_positions_.size() != 0 ) {
 		mtask->set_ignore_cmdline_for_build_points( true );
 		mtask->set_original_scaffold_build_points( match_positions_ );
 	}
 
 	mtask->initialize_from_command_line();
 
-	if( incorporate_matches_into_pose_ ) mtask->output_writer_name("PoseMatchOutputWriter");
+	if ( incorporate_matches_into_pose_ ) mtask->output_writer_name("PoseMatchOutputWriter");
 
 	time_t matcher_start_time = time(NULL);
 	protocols::match::MatcherOP matcher( new protocols::match::Matcher );
@@ -158,7 +160,7 @@ MatcherMover::apply( core::pose::Pose & pose )
 
 	protocols::match::output::MatchProcessorOP processor = protocols::match::output::ProcessorFactory::create_processor( matcher, mtask );
 
-	if( matcher->find_hits() ){
+	if ( matcher->find_hits() ) {
 		matcher->process_matches( *processor );
 	}
 
@@ -166,14 +168,14 @@ MatcherMover::apply( core::pose::Pose & pose )
 	std::string success_str( processor->match_processing_successful() ? "successful." : "not sucessful." );
 	tr << "Matcher ran for " << (long)(matcher_end_time - matcher_start_time) << " seconds and was " << success_str << std::endl;
 
-	if( processor->match_processing_successful() ) this->set_last_move_status( protocols::moves::MS_SUCCESS );
-	else{
+	if ( processor->match_processing_successful() ) this->set_last_move_status( protocols::moves::MS_SUCCESS );
+	else {
 		this->set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
 		pose = save_pose;
 		return;
 	}
 
-	if( incorporate_matches_into_pose_ ){
+	if ( incorporate_matches_into_pose_ ) {
 		protocols::match::output::PoseMatchOutputWriterOP outputter( utility::pointer::static_pointer_cast< protocols::match::output::PoseMatchOutputWriter > ( processor->output_writer() ) );
 		outputter->insert_match_into_pose( pose );
 		// should make another mover to set these constraints  flo and nobu

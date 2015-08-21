@@ -72,8 +72,8 @@ Real ChemicalShiftScoringScheme::score(
 
 			//for ( Size jj = 1; jj < i; ++jj ) std::cout << " ";
 			//std::cout << "comparing " << q_shift << " and " << v_shift <<
-			//	" (sig_diff = " << sig_diff << ")" << std::endl <<
-			//	" (v_sigma = " << v_sigma << ")" << std::endl;
+			// " (sig_diff = " << sig_diff << ")" << std::endl <<
+			// " (v_sigma = " << v_sigma << ")" << std::endl;
 			//for ( Size jj = 1; jj < i; ++jj ) std::cout << " ";
 			//std::cout << "sigmoid_diff = " << sigmoid_diff  << std::endl;
 
@@ -88,7 +88,7 @@ Real ChemicalShiftScoringScheme::score(
 
 	//score *= 3;
 	//std::cout << "score(" << pos1 << "," << pos2 << ") = " << score
-	//	<< std::endl << std::endl;
+	// << std::endl << std::endl;
 
 	return score;
 } // score

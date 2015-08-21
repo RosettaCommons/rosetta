@@ -77,10 +77,10 @@ SymMinMoverCreator::mover_name() {
 // default constructor
 // proper lightweight default constructor
 SymMinMover::SymMinMover()
-	: protocols::simple_moves::MinMover() {}
+: protocols::simple_moves::MinMover() {}
 
 SymMinMover::SymMinMover( std::string const & name )
-	: protocols::simple_moves::MinMover(name) {}
+: protocols::simple_moves::MinMover(name) {}
 
 SymMinMover::~SymMinMover(){}
 
@@ -95,9 +95,9 @@ SymMinMover::SymMinMover(
 	bool deriv_check_verbose_in /* = false */
 ) :
 	protocols::simple_moves::MinMover(
-		movemap_in, scorefxn_in, min_type_in,
-		tolerance_in, use_nb_list_in,
-		deriv_check_in, deriv_check_verbose_in ) {}
+	movemap_in, scorefxn_in, min_type_in,
+	tolerance_in, use_nb_list_in,
+	deriv_check_in, deriv_check_verbose_in ) {}
 
 
 void
@@ -113,22 +113,22 @@ SymMinMover::apply( pose::Pose & pose )
 	core::pose::symmetry::make_symmetric_movemap( pose, *symmetric_movemap ); // we do this here since this is the first time we meet the symmetric pose
 
 	//{ // scope APL debug:
-	//	std::cout << "SymMinMover free DOFs" << std::endl;
-	//	core::conformation::symmetry::SymmetricConformation const & symm_conf (
-	//		dynamic_cast< core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation()) );
-	//	core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
-	//	for (int jump_nbr = 1; jump_nbr <= (int)pose.num_jump(); ++jump_nbr) {
-	//		if ( symmetric_movemap->get_jump( jump_nbr ) ) {
-	//			std::cout << "SymMinMover jump " << jump_nbr << " is free" << std::endl;
-	//		}
-	//	}
+	// std::cout << "SymMinMover free DOFs" << std::endl;
+	// core::conformation::symmetry::SymmetricConformation const & symm_conf (
+	//  dynamic_cast< core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation()) );
+	// core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
+	// for (int jump_nbr = 1; jump_nbr <= (int)pose.num_jump(); ++jump_nbr) {
+	//  if ( symmetric_movemap->get_jump( jump_nbr ) ) {
+	//   std::cout << "SymMinMover jump " << jump_nbr << " is free" << std::endl;
+	//  }
+	// }
 	//}
 
 
 	if ( ! score_function() ) score_function( get_score_function() ); // get a default (INITIALIZED!) ScoreFunction
 
 	PROF_START( basic::MINMOVER_APPLY );
-	if (!cartesian( )) {
+	if ( !cartesian( ) ) {
 		//TR << "Before minimization" << std::endl;
 		//score_function()->show( TR, pose );
 		//TR << std::endl;
@@ -163,7 +163,7 @@ void SymMinMover::parse_my_tag(
 {
 	MinMover::parse_my_tag( tag, data, filters, movers, pose );
 
-	// symm-specific options 
+	// symm-specific options
 }
 
 

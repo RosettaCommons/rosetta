@@ -78,7 +78,7 @@ RNA_LJ_BaseEnergy::RNA_LJ_BaseEnergy( etable::Etable const & etable_in ) :
 	get_bins_per_A2_( etable_in.get_bins_per_A2() ),
 	verbose_( false )
 {
-	if ( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] ){
+	if ( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] ) {
 		utility_exit_with_message(  "RNA_LJ_BaseEnergy not compatible with analytic_etable_evaluation yet -- rerun with flag -analytic_etable_evaluation false." );
 	}
 
@@ -165,8 +165,8 @@ RNA_LJ_BaseEnergy::residue_pair_energy(
 				Real temp_atr_score( 0.0 ), temp_rep_score( 0.0 );
 
 				eval_lj( rsd1.atom( i ), rsd2.atom( j ), d2,
-								 temp_atr_score, temp_rep_score,
-								 dummy_deriv, dummy_deriv );
+					temp_atr_score, temp_rep_score,
+					dummy_deriv, dummy_deriv );
 
 				fa_atr_score += cp_weight * temp_atr_score;
 				fa_rep_score += cp_weight * temp_rep_score;
@@ -186,8 +186,8 @@ RNA_LJ_BaseEnergy::residue_pair_energy(
 /////////////////////////////////////////////////////////////////////////////
 void
 RNA_LJ_BaseEnergy::setup_for_derivatives(
-																				 pose::Pose & pose,
-																				 ScoreFunction const &
+	pose::Pose & pose,
+	ScoreFunction const &
 ) const
 {
 	pose.update_residue_neighbors();
@@ -207,7 +207,7 @@ RNA_LJ_BaseEnergy::eval_lj(
 ) const
 {
 
-	//	Real temp_score( 0.0 );
+	// Real temp_score( 0.0 );
 	deriv_atr = 0.0;
 	deriv_rep = 0.0;
 
@@ -217,8 +217,8 @@ RNA_LJ_BaseEnergy::eval_lj(
 	if ( ( d2 < safe_max_dis2_ ) && ( d2 != Real( 0.0 ) ) ) {
 
 		Real const d2_bin = d2 * get_bins_per_A2_;
-		int	disbin = static_cast< int > ( d2_bin ) + 1;
-		Real	frac = d2_bin - ( disbin - 1 );
+		int disbin = static_cast< int > ( d2_bin ) + 1;
+		Real frac = d2_bin - ( disbin - 1 );
 
 		// l1 and l2 are FArray LINEAR INDICES for fast lookup:
 		// [ l1 ] == (disbin ,attype2,attype1)
@@ -279,7 +279,7 @@ RNA_LJ_BaseEnergy::eval_atom_derivative(
 	// the neighbor/energy links
 	EnergyGraph const & energy_graph( energies.energy_graph() );
 
-	//	Real deriv( 0.0 );
+	// Real deriv( 0.0 );
 
 	for ( graph::Graph::EdgeListConstIter
 			iter  = energy_graph.get_node( i )->const_edge_list_begin(),
@@ -314,17 +314,17 @@ RNA_LJ_BaseEnergy::eval_atom_derivative(
 				eval_lj( rsd1.atom( m ), rsd2.atom( n ), d2, dummy, dummy, fa_atr_deriv, fa_rep_deriv );
 
 				Vector const f2_fwd =   -1.0 * cp_weight * d_ij_norm * ( fa_atr_deriv * weights[ rna_fa_atr_base ] +
-																										fa_rep_deriv * weights[ rna_fa_rep_base ] );
+					fa_rep_deriv * weights[ rna_fa_rep_base ] );
 				Vector const f1_fwd =   1.0 * cross( f2_fwd, heavy_atom_j );
 
 				F1 += f1_fwd;
 				F2 += f2_fwd;
 
-      }
+			}
 
 
-    }
-  }
+		}
+	}
 
 }
 
@@ -382,11 +382,11 @@ RNA_LJ_BaseEnergy::eval_atom_energy(
 				// In principle could pass in an emap and weight the components
 				// by the Emap.
 				score += cp_weight * ( fa_atr + fa_rep );
-      }
+			}
 
 
-    }
-  }
+		}
+	}
 
 	return score;
 }
@@ -406,7 +406,7 @@ RNA_LJ_BaseEnergy::finalize_total_energy(
 	EnergyMap &
 ) const
 {
-	if ( verbose_ )	std::cout << "DONE SCORING" << std::endl;
+	if ( verbose_ ) std::cout << "DONE SCORING" << std::endl;
 }
 core::Size
 RNA_LJ_BaseEnergy::version() const

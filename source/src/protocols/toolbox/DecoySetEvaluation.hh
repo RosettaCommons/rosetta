@@ -32,7 +32,7 @@ namespace protocols {
 namespace toolbox {
 
 
-	/// @brief const_iterator class for SilentFileData container.
+/// @brief const_iterator class for SilentFileData container.
 template< typename const_iterator, typename SomeOP >
 class OP_const_iterator {
 	typedef SomeOP value_type;
@@ -42,7 +42,7 @@ class OP_const_iterator {
 	typedef std::bidirectional_iterator_tag iterator_category;
 
 public:
-		/// @brief empty constructor
+	/// @brief empty constructor
 	OP_const_iterator() {}
 
 	/// @brief Constructor, given an iterator into the Structure_Map.
@@ -93,15 +93,15 @@ private:
 
 class DecoySetEvaluation : public utility::pointer::ReferenceCount {
 public:
-  DecoySetEvaluation();
+	DecoySetEvaluation();
 	virtual ~DecoySetEvaluation();
 
-  static void register_options();
+	static void register_options();
 
 
-  void reserve( core::Size n_decoys_ );
+	void reserve( core::Size n_decoys_ );
 
-  void push_back( core::pose::Pose& pose );
+	void push_back( core::pose::Pose& pose );
 	//void push_back_CA_xyz( ObjexxFCL::FArray2D< core::Real > const&, core::Size nres );
 	void push_back_CA_xyz( ObjexxFCL::FArray2_double const&, core::Size nres );
 
@@ -112,20 +112,20 @@ public:
 
 	template< typename SilentStructIterator >
 	void push_back_CA_xyz_from_silent_file(
-         core::Size n_decoys,
-				 SilentStructIterator begin,
-				 SilentStructIterator end,
-				 bool store_energies
+		core::Size n_decoys,
+		SilentStructIterator begin,
+		SilentStructIterator end,
+		bool store_energies
 	);
 
-  void rmsf( utility::vector1< core::Real >& results );
+	void rmsf( utility::vector1< core::Real >& results );
 
 	core::Size n_decoys_max() const {
 		return n_decoys_max_;
 	}
-  core::Size n_decoys() const {
-    return n_decoys_;
-  }
+	core::Size n_decoys() const {
+		return n_decoys_;
+	}
 	core::Size n_atoms() const {
 		return n_atoms_;
 	}
@@ -146,9 +146,9 @@ public:
 	void rmsf( ObjexxFCL::FArray1_double& result );
 
 	core::Real rmsd(
-									ObjexxFCL::FArray1_double const& weights,
-									ObjexxFCL::FArray2_double& xx_ref,
-									ObjexxFCL::FArray2_double& xx
+		ObjexxFCL::FArray1_double const& weights,
+		ObjexxFCL::FArray2_double& xx_ref,
+		ObjexxFCL::FArray2_double& xx
 	) const;
 	//returns the index of the structure used as reference  (icenter)
 	core::Size wRMSD( core::Real sigma2, core::Real tolerance, ObjexxFCL::FArray1_double& weights );
@@ -157,9 +157,9 @@ public:
 
 	void superimpose( core::Size icenter = 1 ); //take icenter decoy as reference
 
- 	core::pose::Pose const& ref_pose() {
- 		return ref_pose_;
- 	}
+	core::pose::Pose const& ref_pose() {
+		return ref_pose_;
+	}
 
 	void clear() {
 		n_decoys_max_ = 0;
@@ -174,11 +174,11 @@ public:
 	void create_dist_constraints_median( core::scoring::constraints::ConstraintSet& cst_set ) const;
 	void create_dist_constraints( core::scoring::constraints::ConstraintSet& cst_set ) const;
 	void create_xyz_constraints_median(
-		 core::scoring::constraints::ConstraintSet& cst_set,
-		 core::pose::Pose const& ref_pose,
-		 core::Size root
+		core::scoring::constraints::ConstraintSet& cst_set,
+		core::pose::Pose const& ref_pose,
+		core::Size root
 	) const;
-	//	void dump_coords() const;
+	// void dump_coords() const;
 
 	core::Size find_closest_to_average( ObjexxFCL::FArray2_double& average_structure ) const;
 	void compute_average_structure( ObjexxFCL::FArray2_double& average_structure ) const;
@@ -198,12 +198,12 @@ private:
 private:
 	core::pose::Pose ref_pose_;
 	ObjexxFCL::FArray1D_double COM;
-  core::Size n_decoys_;
-  core::Size n_atoms_;
-  ObjexxFCL::FArray3D_double coords_;
-  ObjexxFCL::FArray2D_double ref_structure_;
-  core::Size n_decoys_max_;
-  ObjexxFCL::FArray1D_double weights_;
+	core::Size n_decoys_;
+	core::Size n_atoms_;
+	ObjexxFCL::FArray3D_double coords_;
+	ObjexxFCL::FArray2D_double ref_structure_;
+	core::Size n_decoys_max_;
+	ObjexxFCL::FArray1D_double weights_;
 
 	utility::vector1< core::Real > all_energies_;
 	bool store_energies_;

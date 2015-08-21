@@ -10,8 +10,8 @@
 /// @file       protocols/simple_moves/UniformPositionMover.hh
 ///
 /// @brief      Apply a uniform (deterministic move) to a given position
-/// @details	Generic movers for applying a uniform rotation or translation move
-///				along a jump to a given partner in the pose.
+/// @details Generic movers for applying a uniform rotation or translation move
+///    along a jump to a given partner in the pose.
 ///
 /// @author     Rebecca Alford (rfalford12@gmail.com)
 /// @note       Last Modified (7/10/14)
@@ -39,114 +39,114 @@ using namespace core;
 
 /// @brief Uniform Rotation Mover
 class UniformRotationMover : public protocols::moves::Mover {
-	
+
 public:
-	
+
 	////////////////////
 	/// Constructors ///
 	////////////////////
-	
+
 	/// @brief Custom Constructor
 	/// @details Specify a new normal to rotate membranes to
-	///	to move this position to
+	/// to move this position to
 	UniformRotationMover(
-								 Real alpha,
-								 Vector axis,
-								 core::SSize rb_jump
-								 );
-	
+		Real alpha,
+		Vector axis,
+		core::SSize rb_jump
+	);
+
 	/// @brief Copy Constructor
 	/// @details Make a deep copy of this mover object
 	UniformRotationMover( UniformRotationMover const & src );
-	
+
 	/// @brief Assignment Operator
 	/// @details Make a deep copy of this mover object, overriding the assignment operator
 	UniformRotationMover &
 	operator=( UniformRotationMover const & src );
-	
+
 	/// @brief Destructor
 	~UniformRotationMover();
-	
+
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
-	
+
 	/// @brief Get the name of this mover
 	virtual std::string get_name() const;
-	
+
 	/// @brief Apply Rotation
 	/// @brief Rotate the membrane to the new normal position
 	virtual void apply( Pose & pose );
-	
+
 private: // methods
-	
+
 	/// @brief Construct a Default Membrane Position Mover
 	UniformRotationMover();
-	
+
 private:
-	
+
 	// Store new normal axis
 	Real alpha_;
 	Vector axis_;
-	
+
 	// Store jump num
 	core::SSize rb_jump_;
-	
+
 };
 
 /// @brief Uniform Translation Mover
 class UniformTranslationMover : public protocols::moves::Mover {
-	
+
 public:
-	
+
 	////////////////////
 	/// Constructors ///
 	////////////////////
-	
+
 	/// @brief Custom Constructor
 	/// @details Specify a new center position to translate this stub to
 	UniformTranslationMover(
-									Vector new_position_,
-									SSize rb_jump
-									);
-	
+		Vector new_position_,
+		SSize rb_jump
+	);
+
 	/// @brief Copy Constructor
 	/// @details Make a deep copy of this mover object
 	UniformTranslationMover( UniformTranslationMover const & src );
-	
+
 	/// @brief Assignment Operator
 	/// @details Make a deep copy of this mover object, overriding the assignment operator
 	UniformTranslationMover &
 	operator=( UniformTranslationMover const & src );
-	
+
 	/// @brief Destructor
 	~UniformTranslationMover();
-	
+
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
-	
+
 	/// @brief Get the name of this mover
 	virtual std::string get_name() const;
-	
+
 	/// @brief Apply Translation to membrane position
 	/// @brief Translate membrane position to new center
 	virtual void apply( Pose & pose );
-	
+
 private:
-	
+
 	/// @brief Construct a Default Membrane Position Mover
 	UniformTranslationMover();
-	
+
 private:
-	
+
 	// Store new center
 	Vector new_position_;
-	
+
 	// Store jump num
 	core::SSize rb_jump_;
-	
-	
+
+
 };
 
 } // simple_moves

@@ -174,12 +174,15 @@ bool
 SecondaryStructureSelector::check_ss( std::string const & ss ) const
 {
 	for ( std::string::const_iterator c = ss.begin(), endc = ss.end(); c != endc; ++c ) {
-		if ( *c == 'L' )
+		if ( *c == 'L' ) {
 			continue;
-		if ( *c == 'E' )
+		}
+		if ( *c == 'E' ) {
 			continue;
-		if ( *c == 'H' )
+		}
+		if ( *c == 'H' ) {
 			continue;
+		}
 		return false;
 	}
 	return true;
@@ -187,9 +190,9 @@ SecondaryStructureSelector::check_ss( std::string const & ss ) const
 
 void
 SecondaryStructureSelector::add_overlap(
-		ResidueSubset & matching_ss,
-		pose::Pose const & pose,
-		std::string const & ss ) const
+	ResidueSubset & matching_ss,
+	pose::Pose const & pose,
+	std::string const & ss ) const
 {
 	IntervalVec intervals = subset_to_intervals( matching_ss );
 	for ( IntervalVec::iterator i = intervals.begin(), endi = intervals.end(); i != endi; ++i ) {
@@ -208,11 +211,12 @@ SecondaryStructureSelector::add_overlap(
 		TR.Debug << "Interval: " << i->first << " " << i->second << " " << ss[ i->first - 1 ] << std::endl;
 
 		// get rid of one-residue terminal "loops"
-		if ( include_terminal_loops_ )
+		if ( include_terminal_loops_ ) {
 			continue;
+		}
 
 		if ( ( i->first == i->second ) && ( ss[ i->first - 1 ] == 'L' )
-			&& ( pose::pose_residue_is_terminal( pose, i->first ) ) ) {
+				&& ( pose::pose_residue_is_terminal( pose, i->first ) ) ) {
 			matching_ss[ i->first ] = false;
 		}
 		if ( ( i->first + 1 == i->second ) && ( ss[ i->first - 1 ] == 'L' )

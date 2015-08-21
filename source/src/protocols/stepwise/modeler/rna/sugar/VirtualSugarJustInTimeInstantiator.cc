@@ -127,7 +127,7 @@ VirtualSugarJustInTimeInstantiator::do_the_modeler( core::pose::Pose & pose ){
 	}
 
 	// definitely need to instantiate & sample sugars if they are about to get involved in chain closure...
-	utility::vector1< Size > cutpoints_closed =	figure_out_moving_cutpoints_closed( pose, working_parameters_->working_moving_partition_res() );
+	utility::vector1< Size > cutpoints_closed = figure_out_moving_cutpoints_closed( pose, working_parameters_->working_moving_partition_res() );
 	for ( Size n = 1; n <= cutpoints_closed.size(); n++ ) {
 		check_res.push_back( cutpoints_closed[ n ]     );
 		check_res.push_back( cutpoints_closed[ n ] + 1 );
@@ -140,7 +140,7 @@ VirtualSugarJustInTimeInstantiator::do_the_modeler( core::pose::Pose & pose ){
 	}
 
 	bool success( true );
-	for ( Size n = 1; n <= check_res.size(); n++ ){
+	for ( Size n = 1; n <= check_res.size(); n++ ) {
 		Size const i = check_res[ n ];
 		success = get_sugar_modeling_set( pose, i );
 		if ( !success ) break;
@@ -170,7 +170,7 @@ VirtualSugarJustInTimeInstantiator::get_sugar_modeling_set( pose::Pose & viewer_
 	bool did_setup = setup_sugar_modeling( viewer_pose, i, *sugar_modeling);
 	if ( !did_setup ) return true;
 
-	PoseOP	pose_save = viewer_pose.clone();
+	PoseOP pose_save = viewer_pose.clone();
 	do_sugar_sampling( viewer_pose, *sugar_modeling, ObjexxFCL::string_of( i ) );
 
 	if ( sugar_modeling->pose_list.size() == 0 ) return false;
@@ -189,7 +189,7 @@ VirtualSugarJustInTimeInstantiator::do_sugar_sampling( pose::Pose & viewer_pose,
 	virtual_sugar_sampler.set_scorefxn( scorefxn_ );
 	virtual_sugar_sampler.set_integration_test_mode( options_->integration_test_mode() );
 	virtual_sugar_sampler.set_do_minimize( options_->virtual_sugar_do_minimize() );
-	if ( options_->integration_test_mode() ) 	virtual_sugar_sampler.set_do_minimize( false ); // override.
+	if ( options_->integration_test_mode() )  virtual_sugar_sampler.set_do_minimize( false ); // override.
 	virtual_sugar_sampler.set_use_phenix_geo( options_->use_phenix_geo() );
 	virtual_sugar_sampler.set_legacy_mode( options_->virtual_sugar_legacy_mode() );
 	virtual_sugar_sampler.set_keep_base_fixed( options_->virtual_sugar_keep_base_fixed() );
@@ -199,7 +199,7 @@ VirtualSugarJustInTimeInstantiator::do_sugar_sampling( pose::Pose & viewer_pose,
 
 	virtual_sugar_sampler.apply( viewer_pose );
 
-	if ( sugar_modeling.pose_list.size() == 0 ){
+	if ( sugar_modeling.pose_list.size() == 0 ) {
 		TR.Debug << name + " sugar modeling unsuccessful!" << std::endl;
 		return false;
 	}
@@ -235,9 +235,9 @@ VirtualSugarJustInTimeInstantiator::setup_sugar_modeling( pose::Pose const & pos
 	// also no point in doing chain closure if split across partitions...
 	utility::vector1< Size > const & moving_partition_res = working_parameters_->working_moving_partition_res();
 	if ( bulge_res_ == sugar_modeling.reference_res ||
-			 bulge_res_ == 0 ||
-			 !pose.residue_type( bulge_res_ ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ||
-			 moving_partition_res.has_value( sugar_modeling.moving_res ) != moving_partition_res.has_value( sugar_modeling.reference_res ) ){
+			bulge_res_ == 0 ||
+			!pose.residue_type( bulge_res_ ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ||
+			moving_partition_res.has_value( sugar_modeling.moving_res ) != moving_partition_res.has_value( sugar_modeling.reference_res ) ) {
 		TR.Debug <<  "CHECKING BULGE AT " << bulge_res_ << " is it bulge? " <<  pose.residue_type( bulge_res_ ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) << "  moving_res: " << sugar_modeling.moving_res << "  reference_res " << sugar_modeling.reference_res << std::endl;
 		sugar_modeling.bulge_res   = 0;
 		sugar_modeling.bulge_suite = 0;
@@ -249,15 +249,15 @@ VirtualSugarJustInTimeInstantiator::setup_sugar_modeling( pose::Pose const & pos
 ////////////////////////////////////////////////////////////////////////////////////
 void
 VirtualSugarJustInTimeInstantiator::instantiate_sugars_recursively(  pose::Pose const & pose,
-																																								 utility::vector1< pose::PoseOP > & pose_data_list,
-																																								 utility::vector1< SugarModelingOP > const & sugar_modeling_sets,
-																																								 utility::vector1< Size > const & sugar_modeling_set_indices ) const {
+	utility::vector1< pose::PoseOP > & pose_data_list,
+	utility::vector1< SugarModelingOP > const & sugar_modeling_sets,
+	utility::vector1< Size > const & sugar_modeling_set_indices ) const {
 
 	Size const which_set = sugar_modeling_set_indices.size() + 1;
 	Size const num_sets = sugar_modeling_sets.size();
-	if ( which_set <= num_sets ){
-		for ( Size n = 1; n <= sugar_modeling_sets[ which_set ]->pose_list.size(); n++ ){
-			utility::vector1< Size >	indices_new = sugar_modeling_set_indices;
+	if ( which_set <= num_sets ) {
+		for ( Size n = 1; n <= sugar_modeling_sets[ which_set ]->pose_list.size(); n++ ) {
+			utility::vector1< Size > indices_new = sugar_modeling_set_indices;
 			indices_new.push_back( n );
 			instantiate_sugars_recursively( pose, pose_data_list, sugar_modeling_sets, indices_new );
 		}
@@ -273,8 +273,8 @@ VirtualSugarJustInTimeInstantiator::instantiate_sugars_recursively(  pose::Pose 
 ////////////////////////////////////////////////////////////////////////////////////
 void
 VirtualSugarJustInTimeInstantiator::prepare_from_prior_sampled_sugar_jobs( pose::Pose const & pose,
-																																											 utility::vector1< PoseOP > & pose_data_list,
-																																											 bool const pose_explosion_legacy /* = false */) const {
+	utility::vector1< PoseOP > & pose_data_list,
+	bool const pose_explosion_legacy /* = false */) const {
 	if ( pose_explosion_legacy ) {
 		runtime_assert( modeler_sugar() );
 		utility::vector1< Size > sugar_modeling_set_indices;
@@ -290,12 +290,12 @@ VirtualSugarJustInTimeInstantiator::prepare_from_prior_sampled_sugar_jobs( pose:
 //////////////////////////////////////////////////
 void
 VirtualSugarJustInTimeInstantiator::instantiate_sugars_at_cutpoint_closed( pose::Pose & pose ) const {
-	for ( Size n = 1; n <= sugar_modeling_sets_.size(); n++ ){
+	for ( Size n = 1; n <= sugar_modeling_sets_.size(); n++ ) {
 		Size const & sugar_res = sugar_modeling_sets_[n]->moving_res;
 		if ( pose.residue( sugar_res ).has_variant_type( chemical::CUTPOINT_UPPER ) ||
-				 pose.residue( sugar_res ).has_variant_type( chemical::CUTPOINT_LOWER ) ||
-				 ( sugar_res < pose.total_residue() && !pose.fold_tree().is_cutpoint( sugar_res ) ) ||
-				 ( sugar_res > 1 && !pose.fold_tree().is_cutpoint( sugar_res - 1 ) ) ){
+				pose.residue( sugar_res ).has_variant_type( chemical::CUTPOINT_LOWER ) ||
+				( sugar_res < pose.total_residue() && !pose.fold_tree().is_cutpoint( sugar_res ) ) ||
+				( sugar_res > 1 && !pose.fold_tree().is_cutpoint( sugar_res - 1 ) ) ) {
 			instantiate_sugar( pose, *sugar_modeling_sets_[ n ], 1 );
 		}
 	}
@@ -306,19 +306,19 @@ VirtualSugarJustInTimeInstantiator::instantiate_sugars_at_cutpoint_closed( pose:
 // NO! Floating bases are bulged. No reason for a virtual sugar sampler to move them. That can be another Sampler's job. --rd2013.
 void
 VirtualSugarJustInTimeInstantiator::minimize_sugar_sets_legacy( pose::Pose const & pose,
-																																						utility::vector1< pose::PoseOP > & pose_data_list ) const {
+	utility::vector1< pose::PoseOP > & pose_data_list ) const {
 	Pose pose_copy = pose;
 	utility::vector1< SugarModeling > sugar_modeling_sets;
 	for ( Size n = 1; n <= sugar_modeling_sets_.size(); n++ ) sugar_modeling_sets.push_back( *sugar_modeling_sets_[n] );
 	minimize_all_sampled_floating_bases( pose_copy, sugar_modeling_sets, pose_data_list,
-																			 scorefxn_, working_parameters_, true /*virtual_sugar_is_from_prior_step*/ );
+		scorefxn_, working_parameters_, true /*virtual_sugar_is_from_prior_step*/ );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
 // for backwards compatibility
 void
 VirtualSugarJustInTimeInstantiator::prepare_from_prior_sampled_sugar_jobs_for_chain_break( pose::Pose const & pose,
-																																																			 utility::vector1< pose::PoseOP > & pose_data_list ) const {
+	utility::vector1< pose::PoseOP > & pose_data_list ) const {
 	runtime_assert( modeler_sugar_at_chain_break() );
 	utility::vector1< SugarModelingOP > sugar_modeling_sets_for_chainbreak = get_sugar_modeling_sets_for_chainbreak();
 	utility::vector1< Size > sugar_modeling_set_indices;
@@ -331,7 +331,7 @@ VirtualSugarJustInTimeInstantiator::prepare_from_prior_sampled_sugar_jobs_for_ch
 utility::vector1< SugarModelingOP >
 VirtualSugarJustInTimeInstantiator::get_sugar_modeling_sets_for_chainbreak() const {
 	utility::vector1< SugarModelingOP > sets;
-	for ( Size n = 1; n <= sugar_modeling_sets_.size(); n++ ){
+	for ( Size n = 1; n <= sugar_modeling_sets_.size(); n++ ) {
 		Size const & sugar_res = sugar_modeling_sets_[n]->moving_res;
 		if ( sugar_res == working_parameters_->working_moving_res()    ) continue;
 		if ( sugar_res == working_parameters_->working_reference_res() ) continue;
@@ -343,12 +343,12 @@ VirtualSugarJustInTimeInstantiator::get_sugar_modeling_sets_for_chainbreak() con
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 VirtualSugarJustInTimeInstantiator::instantiate_sugar( pose::Pose & pose,
-																																	 SugarModeling const & sugar_modeling,
-																																	 Size const sugar_ID ) const {
+	SugarModeling const & sugar_modeling,
+	Size const sugar_ID ) const {
 	if ( sugar_modeling.pose_list.size() > 0 ) {
 		tag_into_pose( pose,   tag_from_pose(pose) + tag_from_pose( *sugar_modeling.pose_list[ sugar_ID ] ) );
 		copy_bulge_res_and_sugar_torsion( sugar_modeling, pose, ( *sugar_modeling.pose_list[ sugar_ID ] ), true /*instantiate_sugar*/ );
-	} else{
+	} else {
 		tag_into_pose( pose, tag_from_pose( pose ) + "_null" );
 	}
 }
@@ -358,7 +358,7 @@ SugarModeling const &
 VirtualSugarJustInTimeInstantiator::anchor_sugar_modeling(){
 	Size const anchor_set_idx = sampled_sugar_index( working_parameters_->working_reference_res() );
 	// kind of a hack, for backwards compatibility.
-	if ( anchor_set_idx == 0 ){
+	if ( anchor_set_idx == 0 ) {
 		SugarModelingOP blank_sugar_modeling( new SugarModeling() );
 		return *blank_sugar_modeling;
 	}

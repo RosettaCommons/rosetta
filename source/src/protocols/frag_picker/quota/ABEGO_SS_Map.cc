@@ -34,95 +34,97 @@ char ABEGO_SS_Map::all_ss_[4] = {'X','H','E','L'};
 
 ABEGO_SS_Map::ABEGO_SS_Map(utility::vector1< std::pair<Size,Size> > ss_abego_types) {
 
-	for(Size i=1;i<=3;i++) {
-	    utility::vector1<bool> row;
-	    for(Size j=1;j<=5;j++)
-		row.push_back(false);
-	    ss_abego_types_.push_back(row);
+	for ( Size i=1; i<=3; i++ ) {
+		utility::vector1<bool> row;
+		for ( Size j=1; j<=5; j++ ) {
+			row.push_back(false);
+		}
+		ss_abego_types_.push_back(row);
 	}
-	for(Size i=1;i<=ss_abego_types.size();i++)
-	    set_status(ss_abego_types[i],true);
+	for ( Size i=1; i<=ss_abego_types.size(); i++ ) {
+		set_status(ss_abego_types[i],true);
+	}
 }
 
 std::string ABEGO_SS_Map::show_valid() {
 
-    std::ostringstream ss;
-    for(Size i=1;i<=3;i++) {
-	for(Size j=1;j<=5;j++) {
-	    if(! ss_abego_types_[i][j] ) continue;
-	    ss<< "("<<all_ss_[i]<<","<<all_abego_[j]<<") ";
+	std::ostringstream ss;
+	for ( Size i=1; i<=3; i++ ) {
+		for ( Size j=1; j<=5; j++ ) {
+			if ( ! ss_abego_types_[i][j] ) continue;
+			ss<< "("<<all_ss_[i]<<","<<all_abego_[j]<<") ";
+		}
 	}
-    }
 
-    return ss.str();
+	return ss.str();
 }
 
 Size torsion2big_bin_id(core::Real const phi,  core::Real const psi,  core::Real const omega) {
 
-   if ( std::abs( omega ) < 90 ) {
-      return 5; // cis-omega
-   } else if ( phi >= 0.0 ) {
-      if ( -100 < psi && psi <= 100 ) {
-         return 4; // alpha-L
-      } else {
-         return 3; // E
-      }
-   } else {
-      if ( -125 < psi && psi <= 50 ) {
-         return 1; // helical
-      } else {
-         return 2; // extended
-      }
-   }
-   return 0;
+	if ( std::abs( omega ) < 90 ) {
+		return 5; // cis-omega
+	} else if ( phi >= 0.0 ) {
+		if ( -100 < psi && psi <= 100 ) {
+			return 4; // alpha-L
+		} else {
+			return 3; // E
+		}
+	} else {
+		if ( -125 < psi && psi <= 50 ) {
+			return 1; // helical
+		} else {
+			return 2; // extended
+		}
+	}
+	return 0;
 }
 
 Size abego_index(char abego_class) {
 
-    switch(abego_class) {
+	switch(abego_class) {
 	case 'A' :
 	case 'a' :
-	    return 1;
+		return 1;
 	case 'B' :
 	case 'b' :
-	    return 2;
+		return 2;
 	case 'E' :
 	case 'e' :
-	    return 3;
+		return 3;
 	case 'G' :
 	case 'g' :
-	    return 4;
+		return 4;
 	case 'O' :
 	case 'o' :
-	    return 5;
+		return 5;
 	default :
-	    std::stringstream ss (std::stringstream::out);
-	    ss << "[ERROR] Unrecognized abego class id: "<<abego_class<<"\n";
-	    utility_exit_with_message(ss.str());
-	    return 0;
-    }
+		std::stringstream ss (std::stringstream::out);
+		ss << "[ERROR] Unrecognized abego class id: "<<abego_class<<"\n";
+		utility_exit_with_message(ss.str());
+		return 0;
+	}
 }
 
 Size ss_index(char ss_class) {
 
-    switch(ss_class) {
+	switch(ss_class) {
 	case 'H' :
 	case 'h' :
-	    return 1;
+		return 1;
 	case 'E' :
 	case 'e' :
-	    return 2;
+		return 2;
 	case 'C' :
 	case 'c' :
 	case 'L' :
 	case 'l' :
-	    return 3;
+		return 3;
 	default :
-	    std::stringstream ss (std::stringstream::out);
-	    ss << "[ERROR] Unrecognized ss class id: "<<ss_class<<"\n";
-	    utility_exit_with_message(ss.str());
-	    return 0;
-    }
+		std::stringstream ss (std::stringstream::out);
+		ss << "[ERROR] Unrecognized ss class id: "<<ss_class<<"\n";
+		utility_exit_with_message(ss.str());
+		return 0;
+	}
 }
 
 } // quota

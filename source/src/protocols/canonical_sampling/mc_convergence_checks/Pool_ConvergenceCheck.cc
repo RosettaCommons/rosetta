@@ -66,14 +66,14 @@ using namespace core;
 using namespace basic;
 
 void Pool_RMSD::get( core::Size index , FArray2D<double>& result){
-	 tr.Debug << "getting " << index << " coords of " << pool_.n_decoys() << std::endl;
-	 FArray2P_double temp = pool_.coords( index );
-	 result.dimension(temp.u1(),temp.u2(),0.0);
-	 for(int i = 1; i <= result.u1(); i++){
-		 for(int j = 1; j <= result.u2(); j++){
-			 result( i, j ) = temp( i, j );
-		 }
-	 }
+	tr.Debug << "getting " << index << " coords of " << pool_.n_decoys() << std::endl;
+	FArray2P_double temp = pool_.coords( index );
+	result.dimension(temp.u1(),temp.u2(),0.0);
+	for ( int i = 1; i <= result.u1(); i++ ) {
+		for ( int j = 1; j <= result.u2(); j++ ) {
+			result( i, j ) = temp( i, j );
+		}
+	}
 }
 
 std::string& Pool_RMSD::get_tag( core::Size index ){
@@ -118,9 +118,9 @@ void Pool_RMSD::fill_pool( std::string const& silent_file ) {
 	}
 	pool_.push_back_CA_xyz_from_silent_file( sfd, false /*don't save energies*/ );
 	tags_.reserve( sfd.size() );
- 	for ( io::silent::SilentFileData::iterator it=sfd.begin(), eit=sfd.end(); it!=eit; ++it ) {
- 		tags_.push_back( it->decoy_tag() );
- 	}
+	for ( io::silent::SilentFileData::iterator it=sfd.begin(), eit=sfd.end(); it!=eit; ++it ) {
+		tags_.push_back( it->decoy_tag() );
+	}
 	weights_.dimension( pool_.n_atoms(), 1.0 );
 	if ( pool_.n_decoys() ) pool_.center_all( weights_ ); //this centers all structures
 	reserve_size_ = 100;
@@ -143,7 +143,7 @@ void Pool_RMSD::add( core::pose::Pose const& pose, std::string new_tag ) {
 
 void Pool_RMSD::add( ObjexxFCL::FArray2D_double const& xyz, core::Size nres, std::string new_tag ) {
 
-	if( weights_.size() == 0 ){
+	if ( weights_.size() == 0 ) {
 		weights_.dimension( nres, 1.0 );
 		reserve_size_ = 100;
 	}
@@ -153,8 +153,8 @@ void Pool_RMSD::add( ObjexxFCL::FArray2D_double const& xyz, core::Size nres, std
 	if ( pool_.n_decoys_max() >= pool_.n_decoys() ) {
 		//pool_.reserve( pool_.n_decoys() + 100 );
 		pool_.reserve( pool_.n_decoys() + reserve_size_ ); //ek
-		//		pool_.reserve( pool_.n_decoys() + reserve_size_ ); //ek
-		//		tr.Debug << "pool can now hold a max of " << pool_.n_decoys() + reserve_size_;
+		//  pool_.reserve( pool_.n_decoys() + reserve_size_ ); //ek
+		//  tr.Debug << "pool can now hold a max of " << pool_.n_decoys() + reserve_size_;
 	}
 	tags_.push_back( new_tag );
 	pool_.push_back_CA_xyz( xyz, nres );
@@ -172,7 +172,7 @@ void Pool_RMSD::set_reserve_size( int max_size ){ //ek
 
 core::Size Pool_RMSD::evaluate_and_add(pose::Pose const& pose, std::string& cluster_center, core::Real& rms_to_cluster, core::Real transition_threshold) {
 	tr.Debug << "using Pool_RMSD::evaluate_and_add " << std::endl;
-  ObjexxFCL::FArray2D_double coords;
+	ObjexxFCL::FArray2D_double coords;
 	coords.redimension( 3, pose.total_residue() );
 	toolbox::fill_CA_coords( pose, pool_.n_atoms(), coords );
 	return evaluate_and_add( coords, cluster_center, rms_to_cluster, transition_threshold );
@@ -180,15 +180,15 @@ core::Size Pool_RMSD::evaluate_and_add(pose::Pose const& pose, std::string& clus
 
 core::Size Pool_RMSD::evaluate_and_add( ObjexxFCL::FArray2D_double& coords, std::string& best_decoy, core::Real& best_rmsd, core::Real transition_threshold  ){
 	core::Size best_index = evaluate( coords, best_decoy, best_rmsd );
-	if( best_rmsd > transition_threshold ){
+	if ( best_rmsd > transition_threshold ) {
 		tr.Debug  << "adding structure to pool " << std::endl;
 		using namespace ObjexxFCL;
 		//form tags of type: c.<cluster_number>.<decoy_in_group_nr>
-    std::string jobname = protocols::jd2::current_output_name();
+		std::string jobname = protocols::jd2::current_output_name();
 		std::string new_cluster_tag = "new."+lead_zero_string_of( size(), 8 )+".0"+"_"+jobname;
 		add( coords, coords.u2(), new_cluster_tag);
 	}
-  return best_index;
+	return best_index;
 }
 
 core::Size Pool_RMSD::evaluate( core::io::silent::SilentStruct const& pss, std::string& best_decoy, core::Real& best_rmsd ) const {
@@ -236,7 +236,7 @@ core::Size Pool_RMSD::evaluate( FArray2D_double& coords, std::string& best_decoy
 
 	FArray1D_double transvec( 3 );
 	toolbox::reset_x( pool_.n_atoms(), coords, weights, transvec );//center coordinates
-  //n_atoms is simply # CA atoms in each "pose"
+	//n_atoms is simply # CA atoms in each "pose"
 	Real invn( 1.0 / pool_.n_atoms() );
 	best_rmsd = 1000000;
 	Size best_index( 0 );
@@ -245,7 +245,7 @@ core::Size Pool_RMSD::evaluate( FArray2D_double& coords, std::string& best_decoy
 		ObjexxFCL::FArray2P_double xx2( pool_.coords( i ) );
 		toolbox::fit_centered_coords( pool_.n_atoms(), weights, xx2, coords, R );
 		Real rmsd( 0 );
-		for ( Size n = 1; n <= pool_.n_atoms(); n++) {
+		for ( Size n = 1; n <= pool_.n_atoms(); n++ ) {
 			for ( Size d = 1; d<=3; ++d ) {
 				rmsd += ( coords( d, n ) -  xx2( d, n ) ) * ( coords( d, n ) - xx2( d, n ) ) * invn;
 			}
@@ -287,9 +287,9 @@ void Pool_Evaluator::apply( core::pose::Pose& fit_pose, std::string, core::io::s
 
 	pss.add_string_value( name( 1 ), best_decoy );
 	pss.add_energy( name( 2 ), best_rmsd );
-// //store in Job-Object:
-// 	protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair( "pool_converged_tag", best_decoy );
-// 	protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair( "pool_converged_rmsd", best_rmsd );
+	// //store in Job-Object:
+	//  protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair( "pool_converged_tag", best_decoy );
+	//  protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair( "pool_converged_rmsd", best_rmsd );
 
 }
 
@@ -302,9 +302,9 @@ void Pool_Evaluator::apply( core::io::silent::SilentStruct &pss) const {
 
 	pss.add_string_value( name( 1 ), best_decoy );
 	pss.add_energy( name( 2 ), best_rmsd );
-// //store in Job-Object:
-// 	protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair( "pool_converged_tag", best_decoy );
-// 	protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair( "pool_converged_rmsd", best_rmsd );
+	// //store in Job-Object:
+	//  protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair( "pool_converged_tag", best_decoy );
+	//  protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair( "pool_converged_rmsd", best_rmsd );
 
 }
 

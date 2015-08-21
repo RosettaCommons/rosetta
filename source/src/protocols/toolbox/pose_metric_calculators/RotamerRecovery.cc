@@ -62,9 +62,9 @@
 // option key includes
 
 
-namespace protocols{
-namespace toolbox{
-namespace pose_metric_calculators{
+namespace protocols {
+namespace toolbox {
+namespace pose_metric_calculators {
 
 
 char RotamerRecovery::torsion2big_bin(
@@ -72,22 +72,22 @@ char RotamerRecovery::torsion2big_bin(
 	float const psi,
 	float const omega
 ) {
-   if ( std::abs( omega ) < 90 ) {
-      return 'O'; // cis-omega
-   } else if ( phi >= 0.0 ) {
-      if ( -100 < psi && psi <= 100 ) {
-         return 'G'; // alpha-L
-      } else {
-         return 'E'; // E
-      }
-   } else {
-      if ( -125 < psi && psi <= 50 ) {
-         return 'A'; // helical
-      } else {
-         return 'B'; // extended
-      }
-   }
-   return 'X';
+	if ( std::abs( omega ) < 90 ) {
+		return 'O'; // cis-omega
+	} else if ( phi >= 0.0 ) {
+		if ( -100 < psi && psi <= 100 ) {
+			return 'G'; // alpha-L
+		} else {
+			return 'E'; // E
+		}
+	} else {
+		if ( -125 < psi && psi <= 50 ) {
+			return 'A'; // helical
+		} else {
+			return 'B'; // extended
+		}
+	}
+	return 'X';
 }
 
 utility::vector1< char > RotamerRecovery::get_ss( core::pose::Pose & pose ) {
@@ -121,9 +121,9 @@ utility::vector1< char > RotamerRecovery::bb_bins_from_pose(
 	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		bb_bins.push_back(
 			torsion2big_bin(
-				pose.residue(ii).mainchain_torsion(1),
-				pose.residue(ii).mainchain_torsion(2),
-				pose.residue(ii).mainchain_torsion(3)
+			pose.residue(ii).mainchain_torsion(1),
+			pose.residue(ii).mainchain_torsion(2),
+			pose.residue(ii).mainchain_torsion(3)
 			)
 		);
 	}
@@ -177,18 +177,18 @@ void RotamerRecovery::get_rotamer_recovery(core::pose::Pose & native, utility::v
 
 	utility::vector1< core::Size > bb_bins_correct( native.total_residue(), 0 );
 	utility::vector1< utility::vector1< core::Size > > rots_correct(
-			native.total_residue(), utility::vector1< core::Size >( native.total_residue(), 0 )
+		native.total_residue(), utility::vector1< core::Size >( native.total_residue(), 0 )
 	);
 
 
 	utility::vector1< utility::vector1< core::Size > > chis_correct(
-			native.total_residue(), utility::vector1< core::Size >( native.total_residue(), 0 )
+		native.total_residue(), utility::vector1< core::Size >( native.total_residue(), 0 )
 	);
 
 
 	core::Size total(0);
 	utility::vector1< core::pose::Pose >::iterator other_poses_itr( compared_poses.begin() ), other_poses_last( compared_poses.end() );
-	while(  (other_poses_itr != other_poses_last ) ) {
+	while (  (other_poses_itr != other_poses_last ) ) {
 		core::pose::Pose pose( *other_poses_itr );
 
 		utility::vector1< char > pose_bb_bins( bb_bins_from_pose(pose) );
@@ -214,188 +214,42 @@ void RotamerRecovery::get_rotamer_recovery(core::pose::Pose & native, utility::v
 
 
 	// print out stats on bb_bins_correct and rots_correct
-		std::ostream & output( std::cout );
-		core::Size const width(12);
-		core::Size const prec(4);
-
-		output << "# total = " << ObjexxFCL::string_of(total) << std::endl;
-		output
-			<< ObjexxFCL::format::A( width, "resi_idx" )
-			<< ObjexxFCL::format::A( width, "nat_bb_bin" )
-			<< ObjexxFCL::format::A( width, "pct_bb" )
-			<< ObjexxFCL::format::A( width, "nat_rot1" )
-			<< ObjexxFCL::format::A( width, "pct_rot1" )
-			<< ObjexxFCL::format::A( width, "nat_rot2" )
-			<< ObjexxFCL::format::A( width, "pct_rot2" )
-			<< ObjexxFCL::format::A( width, "nat_rot3" )
-			<< ObjexxFCL::format::A( width, "pct_rot3" )
-			<< ObjexxFCL::format::A( width, "nat_rot4" )
-			<< ObjexxFCL::format::A( width, "pct_rot4" )
-			<< std::endl;
-
-		for ( core::Size ii = 1; ii <= native.total_residue(); ++ii ) {
-			core::Real pct_bb(0.0);
-			if ( bb_bins_correct[ii] > 0 ) {
-				pct_bb = (
-					static_cast< core::Real > ( bb_bins_correct[ii] ) /
-					static_cast< core::Real > ( total )
-				);
-			}
-			utility::vector1< core::Real > pct_natrots;
-			utility::vector1< core::Size > out_nat_rots;
-			for ( core::Size jj = 1; jj <= 4; ++jj ) {
-				if ( jj <= nat_rots[ii].size() ) {
-					core::Real pct_natrots_correct(0.0);
-					if ( rots_correct[ii][jj] > 0 ) {
-						pct_natrots_correct = (
-							static_cast< core::Real > ( rots_correct[ii][jj] ) /
-							static_cast< core::Real > ( total )
-						);
-					}
-					pct_natrots.push_back( pct_natrots_correct );
-					out_nat_rots.push_back( nat_rots[ii][jj] );
-				} else {
-					//std::cout << "no rot " << jj << std::endl;
-					pct_natrots.push_back( 0.0 );
-					out_nat_rots.push_back( 999 );
-				}
-			}
-
-			//std::cout << "nat_rots[" << ii << "][1] = "
-			//	<< nat_rots[ii][1] << std::endl;
-			//std::cout << "nat_rots[" << ii << "].size() = "
-			//	<< nat_rots[ii].size() << std::endl;
-
-			output
-				<< ObjexxFCL::format::A( width, ObjexxFCL::string_of(ii) )
-				<< ObjexxFCL::format::A( width, nat_bb_bins[ii] )
-				<< ObjexxFCL::format::F( width, prec, pct_bb )
-				<< ObjexxFCL::format::A( width, ObjexxFCL::string_of(out_nat_rots[1]) )
-				<< ObjexxFCL::format::F( width, prec, pct_natrots[1] )
-				<< ObjexxFCL::format::A( width, ObjexxFCL::string_of(out_nat_rots[2]) )
-				<< ObjexxFCL::format::F( width, prec, pct_natrots[2] )
-				<< ObjexxFCL::format::A( width, ObjexxFCL::string_of(out_nat_rots[3]) )
-				<< ObjexxFCL::format::F( width, prec, pct_natrots[3] )
-				<< ObjexxFCL::format::A( width, ObjexxFCL::string_of(out_nat_rots[4]) )
-				<< ObjexxFCL::format::F( width, prec, pct_natrots[4] )
-				<< std::endl;
-		}
-
-
-}
-
-
-/*
-int
-main( int argc, char* argv [] ) {
-	// options, random initialization
-	devel::init( argc, argv );
-
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::scoring::constraints;
-	using namespace ObjexxFCL::format;
-	using namespace core::import_pose::pose_stream;
-	using namespace core::chemical;
-	using namespace core::pack::dunbrack;
-
-	using core::Size;
-	using core::Real;
-	using std::string;
-	using utility::vector1;
-	using ObjexxFCL::string_of;
-	using core::pose::Pose;
-
-	core::import_pose::pose_stream::MetaPoseInputStream input
-		= core::import_pose::pose_stream::streams_from_cmd_line();
-	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
-
-	Pose native;
-	core::io::pdb::pose_from_pdb(
-		native, option[ in::file::native ]()
-	);
-
-	vector1< char > nat_bb_bins( bb_bins_from_pose(native) );
-	vector1< RotVector > nat_rots( rots_from_pose(native) );
-
-	vector1< Size > bb_bins_correct( native.total_residue(), 0 );
-	vector1< vector1< Size > > rots_correct(
-		native.total_residue(), vector1< Size >( native.total_residue(), 0 )
-	);
-
-
-	vector1< vector1< Size > > chis_correct(
-		native.total_residue(), vector1< Size >( native.total_residue(), 0 )
-	);
-
-
-	Size total(0);
-	while( input.has_another_pose() ) {
-		Pose pose;
-		input.fill_pose( pose, *rsd_set );
-
-		vector1< char > pose_bb_bins( bb_bins_from_pose(pose) );
-		vector1< RotVector > pose_rots( rots_from_pose(pose) );
-		vector1< vector1< Real > > pose_chis( chis_from_pose(pose) );
-
-		runtime_assert( pose_bb_bins.size() == nat_bb_bins.size() );
-		runtime_assert( pose_rots.size() == pose_rots.size() );
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-			if ( pose_bb_bins[ii] == nat_bb_bins[ii] ) {
-				bb_bins_correct[ii]++;
-			}
-			for ( Size jj = 1; jj <= pose_rots[ii].size(); ++jj ) {
-				//std::cout << "rot(" << ii << "," << jj << ")" << std::endl;
-				if ( pose_rots[ii][jj] == nat_rots[ii][jj] ) {
-					rots_correct[ii][jj]++;
-				}
-			}
-		}
-		++total;
-	}
-
-
-	//////
-	/////
-	/////
-
-	// print out stats on bb_bins_correct and rots_correct
 	std::ostream & output( std::cout );
-	Size const width(12);
-	Size const prec(4);
+	core::Size const width(12);
+	core::Size const prec(4);
 
-	output << "# total = " << string_of(total) << std::endl;
+	output << "# total = " << ObjexxFCL::string_of(total) << std::endl;
 	output
-		<< A( width, "resi_idx" )
-		<< A( width, "nat_bb_bin" )
-		<< A( width, "pct_bb" )
-		<< A( width, "nat_rot1" )
-		<< A( width, "pct_rot1" )
-		<< A( width, "nat_rot2" )
-		<< A( width, "pct_rot2" )
-		<< A( width, "nat_rot3" )
-		<< A( width, "pct_rot3" )
-		<< A( width, "nat_rot4" )
-		<< A( width, "pct_rot4" )
+		<< ObjexxFCL::format::A( width, "resi_idx" )
+		<< ObjexxFCL::format::A( width, "nat_bb_bin" )
+		<< ObjexxFCL::format::A( width, "pct_bb" )
+		<< ObjexxFCL::format::A( width, "nat_rot1" )
+		<< ObjexxFCL::format::A( width, "pct_rot1" )
+		<< ObjexxFCL::format::A( width, "nat_rot2" )
+		<< ObjexxFCL::format::A( width, "pct_rot2" )
+		<< ObjexxFCL::format::A( width, "nat_rot3" )
+		<< ObjexxFCL::format::A( width, "pct_rot3" )
+		<< ObjexxFCL::format::A( width, "nat_rot4" )
+		<< ObjexxFCL::format::A( width, "pct_rot4" )
 		<< std::endl;
 
-	for ( Size ii = 1; ii <= native.total_residue(); ++ii ) {
-		Real pct_bb(0.0);
+	for ( core::Size ii = 1; ii <= native.total_residue(); ++ii ) {
+		core::Real pct_bb(0.0);
 		if ( bb_bins_correct[ii] > 0 ) {
 			pct_bb = (
-				static_cast< Real > ( bb_bins_correct[ii] ) /
-				static_cast< Real > ( total )
+				static_cast< core::Real > ( bb_bins_correct[ii] ) /
+				static_cast< core::Real > ( total )
 			);
 		}
-		vector1< Real > pct_natrots;
-		vector1< Size > out_nat_rots;
-		for ( Size jj = 1; jj <= 4; ++jj ) {
+		utility::vector1< core::Real > pct_natrots;
+		utility::vector1< core::Size > out_nat_rots;
+		for ( core::Size jj = 1; jj <= 4; ++jj ) {
 			if ( jj <= nat_rots[ii].size() ) {
-				Real pct_natrots_correct(0.0);
+				core::Real pct_natrots_correct(0.0);
 				if ( rots_correct[ii][jj] > 0 ) {
 					pct_natrots_correct = (
-						static_cast< Real > ( rots_correct[ii][jj] ) /
-						static_cast< Real > ( total )
+						static_cast< core::Real > ( rots_correct[ii][jj] ) /
+						static_cast< core::Real > ( total )
 					);
 				}
 				pct_natrots.push_back( pct_natrots_correct );
@@ -408,25 +262,171 @@ main( int argc, char* argv [] ) {
 		}
 
 		//std::cout << "nat_rots[" << ii << "][1] = "
-		//	<< nat_rots[ii][1] << std::endl;
+		// << nat_rots[ii][1] << std::endl;
 		//std::cout << "nat_rots[" << ii << "].size() = "
-		//	<< nat_rots[ii].size() << std::endl;
+		// << nat_rots[ii].size() << std::endl;
 
 		output
-			<< A( width, string_of(ii) )
-			<< A( width, nat_bb_bins[ii] )
-			<< F( width, prec, pct_bb )
-			<< A( width, string_of(out_nat_rots[1]) )
-			<< F( width, prec, pct_natrots[1] )
-			<< A( width, string_of(out_nat_rots[2]) )
-			<< F( width, prec, pct_natrots[2] )
-			<< A( width, string_of(out_nat_rots[3]) )
-			<< F( width, prec, pct_natrots[3] )
-			<< A( width, string_of(out_nat_rots[4]) )
-			<< F( width, prec, pct_natrots[4] )
+			<< ObjexxFCL::format::A( width, ObjexxFCL::string_of(ii) )
+			<< ObjexxFCL::format::A( width, nat_bb_bins[ii] )
+			<< ObjexxFCL::format::F( width, prec, pct_bb )
+			<< ObjexxFCL::format::A( width, ObjexxFCL::string_of(out_nat_rots[1]) )
+			<< ObjexxFCL::format::F( width, prec, pct_natrots[1] )
+			<< ObjexxFCL::format::A( width, ObjexxFCL::string_of(out_nat_rots[2]) )
+			<< ObjexxFCL::format::F( width, prec, pct_natrots[2] )
+			<< ObjexxFCL::format::A( width, ObjexxFCL::string_of(out_nat_rots[3]) )
+			<< ObjexxFCL::format::F( width, prec, pct_natrots[3] )
+			<< ObjexxFCL::format::A( width, ObjexxFCL::string_of(out_nat_rots[4]) )
+			<< ObjexxFCL::format::F( width, prec, pct_natrots[4] )
 			<< std::endl;
 	}
-	return 0;
+
+
+}
+
+
+/*
+int
+main( int argc, char* argv [] ) {
+// options, random initialization
+devel::init( argc, argv );
+
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
+using namespace core::scoring::constraints;
+using namespace ObjexxFCL::format;
+using namespace core::import_pose::pose_stream;
+using namespace core::chemical;
+using namespace core::pack::dunbrack;
+
+using core::Size;
+using core::Real;
+using std::string;
+using utility::vector1;
+using ObjexxFCL::string_of;
+using core::pose::Pose;
+
+core::import_pose::pose_stream::MetaPoseInputStream input
+= core::import_pose::pose_stream::streams_from_cmd_line();
+ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+
+Pose native;
+core::io::pdb::pose_from_pdb(
+native, option[ in::file::native ]()
+);
+
+vector1< char > nat_bb_bins( bb_bins_from_pose(native) );
+vector1< RotVector > nat_rots( rots_from_pose(native) );
+
+vector1< Size > bb_bins_correct( native.total_residue(), 0 );
+vector1< vector1< Size > > rots_correct(
+native.total_residue(), vector1< Size >( native.total_residue(), 0 )
+);
+
+
+vector1< vector1< Size > > chis_correct(
+native.total_residue(), vector1< Size >( native.total_residue(), 0 )
+);
+
+
+Size total(0);
+while( input.has_another_pose() ) {
+Pose pose;
+input.fill_pose( pose, *rsd_set );
+
+vector1< char > pose_bb_bins( bb_bins_from_pose(pose) );
+vector1< RotVector > pose_rots( rots_from_pose(pose) );
+vector1< vector1< Real > > pose_chis( chis_from_pose(pose) );
+
+runtime_assert( pose_bb_bins.size() == nat_bb_bins.size() );
+runtime_assert( pose_rots.size() == pose_rots.size() );
+for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+if ( pose_bb_bins[ii] == nat_bb_bins[ii] ) {
+bb_bins_correct[ii]++;
+}
+for ( Size jj = 1; jj <= pose_rots[ii].size(); ++jj ) {
+//std::cout << "rot(" << ii << "," << jj << ")" << std::endl;
+if ( pose_rots[ii][jj] == nat_rots[ii][jj] ) {
+rots_correct[ii][jj]++;
+}
+}
+}
+++total;
+}
+
+
+//////
+/////
+/////
+
+// print out stats on bb_bins_correct and rots_correct
+std::ostream & output( std::cout );
+Size const width(12);
+Size const prec(4);
+
+output << "# total = " << string_of(total) << std::endl;
+output
+<< A( width, "resi_idx" )
+<< A( width, "nat_bb_bin" )
+<< A( width, "pct_bb" )
+<< A( width, "nat_rot1" )
+<< A( width, "pct_rot1" )
+<< A( width, "nat_rot2" )
+<< A( width, "pct_rot2" )
+<< A( width, "nat_rot3" )
+<< A( width, "pct_rot3" )
+<< A( width, "nat_rot4" )
+<< A( width, "pct_rot4" )
+<< std::endl;
+
+for ( Size ii = 1; ii <= native.total_residue(); ++ii ) {
+Real pct_bb(0.0);
+if ( bb_bins_correct[ii] > 0 ) {
+pct_bb = (
+static_cast< Real > ( bb_bins_correct[ii] ) /
+static_cast< Real > ( total )
+);
+}
+vector1< Real > pct_natrots;
+vector1< Size > out_nat_rots;
+for ( Size jj = 1; jj <= 4; ++jj ) {
+if ( jj <= nat_rots[ii].size() ) {
+Real pct_natrots_correct(0.0);
+if ( rots_correct[ii][jj] > 0 ) {
+pct_natrots_correct = (
+static_cast< Real > ( rots_correct[ii][jj] ) /
+static_cast< Real > ( total )
+);
+}
+pct_natrots.push_back( pct_natrots_correct );
+out_nat_rots.push_back( nat_rots[ii][jj] );
+} else {
+//std::cout << "no rot " << jj << std::endl;
+pct_natrots.push_back( 0.0 );
+out_nat_rots.push_back( 999 );
+}
+}
+
+//std::cout << "nat_rots[" << ii << "][1] = "
+// << nat_rots[ii][1] << std::endl;
+//std::cout << "nat_rots[" << ii << "].size() = "
+// << nat_rots[ii].size() << std::endl;
+
+output
+<< A( width, string_of(ii) )
+<< A( width, nat_bb_bins[ii] )
+<< F( width, prec, pct_bb )
+<< A( width, string_of(out_nat_rots[1]) )
+<< F( width, prec, pct_natrots[1] )
+<< A( width, string_of(out_nat_rots[2]) )
+<< F( width, prec, pct_natrots[2] )
+<< A( width, string_of(out_nat_rots[3]) )
+<< F( width, prec, pct_natrots[3] )
+<< A( width, string_of(out_nat_rots[4]) )
+<< F( width, prec, pct_natrots[4] )
+<< std::endl;
+}
+return 0;
 } // int main( int argc, char * argv [] )
 */
 

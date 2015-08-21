@@ -29,34 +29,34 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	//Constructor
-	StubApplier::StubApplier( kinematics::Stub & stub ):
-		stub_( stub )
-	{}
+//Constructor
+StubApplier::StubApplier( kinematics::Stub & stub ):
+	stub_( stub )
+{}
 
-	//Destructor
-	StubApplier::~StubApplier()
-	{}
+//Destructor
+StubApplier::~StubApplier()
+{}
 
-	///////////////////////////////////////////////////////////////////
-	void
-	StubApplier::get_update( sampler::StepWiseSamplerBaseOP sampler ){
+///////////////////////////////////////////////////////////////////
+void
+StubApplier::get_update( sampler::StepWiseSamplerBaseOP sampler ){
 
-		if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_LIST ){
-			RigidBodyStepWiseSamplerWithResidueList & rigid_body_rotamer_with_copy_dofs = *( static_cast< RigidBodyStepWiseSamplerWithResidueList * >( sampler.get() ) );
-			stub_ = rigid_body_rotamer_with_copy_dofs.get_stub();
-			return;
-		} else if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ){
-			RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
-			stub_ = rigid_body_rotamer_with_residue_alternatives.get_stub();
-			return;
-		}
-
-   runtime_assert( sampler->type() == RIGID_BODY );
-	 RigidBodyStepWiseSampler & rigid_body_rotamer = *( static_cast< RigidBodyStepWiseSampler * >( sampler.get() ) );
-	 stub_ = rigid_body_rotamer.get_stub();
-
+	if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_LIST ) {
+		RigidBodyStepWiseSamplerWithResidueList & rigid_body_rotamer_with_copy_dofs = *( static_cast< RigidBodyStepWiseSamplerWithResidueList * >( sampler.get() ) );
+		stub_ = rigid_body_rotamer_with_copy_dofs.get_stub();
+		return;
+	} else if ( sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ) {
+		RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
+		stub_ = rigid_body_rotamer_with_residue_alternatives.get_stub();
+		return;
 	}
+
+	runtime_assert( sampler->type() == RIGID_BODY );
+	RigidBodyStepWiseSampler & rigid_body_rotamer = *( static_cast< RigidBodyStepWiseSampler * >( sampler.get() ) );
+	stub_ = rigid_body_rotamer.get_stub();
+
+}
 
 } //screener
 } //stepwise

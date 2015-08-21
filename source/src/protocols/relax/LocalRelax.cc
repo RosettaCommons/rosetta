@@ -127,17 +127,17 @@ static basic::Tracer TR("LocalRelax");
 
 std::string
 LocalRelaxCreator::keyname() const {
-  return LocalRelaxCreator::mover_name();
+	return LocalRelaxCreator::mover_name();
 }
 
 protocols::moves::MoverOP
 LocalRelaxCreator::create_mover() const {
-  return protocols::moves::MoverOP( new LocalRelax() );
+	return protocols::moves::MoverOP( new LocalRelax() );
 }
 
 std::string
 LocalRelaxCreator::mover_name() {
-  return "LocalRelax";
+	return "LocalRelax";
 }
 
 
@@ -165,7 +165,7 @@ LocalRelax::LocalRelax() {
 		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *min_sfxn_ );
 	}
 
-	if ( option[ OptionKeys::constraints::cst_fa_weight].user()) {
+	if ( option[ OptionKeys::constraints::cst_fa_weight].user() ) {
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *pack_sfxn_ );
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *min_sfxn_ );
 	} else {
@@ -194,7 +194,7 @@ LocalRelax::optimization_loop(
 	local_pack_sf->set_weight( fa_rep, fa_rep_scale*pack_sfxn_->get_weight( fa_rep ) );
 	local_min_sf->set_weight( fa_rep, fa_rep_scale*min_sfxn_->get_weight( fa_rep ) );
 
-	if (ramp_cart_) {
+	if ( ramp_cart_ ) {
 		core::Real cart_scale = std::max( fa_rep_scale, 0.1 );
 		local_pack_sf->set_weight( cart_bonded, cart_scale*pack_sfxn_->get_weight( cart_bonded ) );
 		local_min_sf->set_weight( cart_bonded, cart_scale*min_sfxn_->get_weight( cart_bonded ) );
@@ -214,7 +214,7 @@ LocalRelax::optimization_loop(
 
 	// AMW: cppcheck flags this but unnecessarily so
 	static int dump_idx=1;
-	if (verbose_) {
+	if ( verbose_ ) {
 		std::string name = "opt_"+utility::to_string( dump_idx++ )+".pdb";
 		TR << "Write " << name << std::endl;
 		pose.dump_pdb( name );
@@ -231,7 +231,7 @@ LocalRelax::get_neighbor_graph(
 
 	// grab symminfo (if defined) from the pose
 	core::conformation::symmetry::SymmetryInfoCOP symminfo=NULL;
-	if (core::pose::symmetry::is_symmetric(pose)) {
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation &>(pose.conformation()).Symmetry_Info();
 	}
 
@@ -243,16 +243,18 @@ LocalRelax::get_neighbor_graph(
 	// make pose polyA
 	Pose pose_working = pose;
 	utility::vector1< Size > protein_residues;
-	for ( Size i=1, i_end = nres; i<= i_end; ++i )
-		if ( pose.residue( i ).is_protein() )
+	for ( Size i=1, i_end = nres; i<= i_end; ++i ) {
+		if ( pose.residue( i ).is_protein() ) {
 			protein_residues.push_back( i );
+		}
+	}
 	protocols::toolbox::pose_manipulation::construct_poly_XXX_pose( "ALA", pose_working, protein_residues, false, false, false );
 
 	neighbor.clear();
 	neighbor.resize( nres );
 
 	for ( Size i=1, i_end = nres; i<= i_end; ++i ) {
-		if (symminfo && !symminfo->bb_is_independent( i )) continue;
+		if ( symminfo && !symminfo->bb_is_independent( i ) ) continue;
 		neighbor[i].resize(nres, false);
 		neighbor[i][i] = true;
 
@@ -269,9 +271,9 @@ LocalRelax::get_neighbor_graph(
 
 			core::Real angle_tgt = K*exp(b*dist);
 
-			if (angle_tgt < 180 && angle1 > angle_tgt && angle2 > angle_tgt) {
+			if ( angle_tgt < 180 && angle1 > angle_tgt && angle2 > angle_tgt ) {
 				core::Size j_asu=j;
-				if (symminfo && !symminfo->bb_is_independent( j )) {
+				if ( symminfo && !symminfo->bb_is_independent( j ) ) {
 					j_asu = symminfo->bb_follows( j );
 				}
 				neighbor[i][j_asu] = true;
@@ -293,16 +295,16 @@ LocalRelax::parse_my_tag(
 	using namespace core::scoring;
 
 	// scorefxns
-	if( tag->hasOption( "scorefxn" ) ) {
+	if ( tag->hasOption( "scorefxn" ) ) {
 		std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn" ) );
 		pack_sfxn_ = (data.get_ptr< ScoreFunction >( "scorefxns", scorefxn_name ));
 		min_sfxn_ = (data.get_ptr< ScoreFunction >( "scorefxns", scorefxn_name ));
 	}
-	if( tag->hasOption( "pack_scorefxn" ) ) {
+	if ( tag->hasOption( "pack_scorefxn" ) ) {
 		std::string const scorefxn_name( tag->getOption<std::string>( "pack_scorefxn" ) );
 		pack_sfxn_ = (data.get_ptr< ScoreFunction >( "scorefxns", scorefxn_name ));
 	}
-	if( tag->hasOption( "min_scorefxn" ) ) {
+	if ( tag->hasOption( "min_scorefxn" ) ) {
 		std::string const scorefxn_name( tag->getOption<std::string>( "min_scorefxn" ) );
 		min_sfxn_ = (data.get_ptr< ScoreFunction >( "scorefxns", scorefxn_name ));
 	}
@@ -326,7 +328,7 @@ LocalRelax::parse_my_tag(
 		std::string ramp_schedule_str = tag->getOption< std::string >( "ramp_schedule" );
 		utility::vector1< std::string > ramp_schedule_strs = utility::string_split ( ramp_schedule_str, ',' );
 		ramp_schedule_.clear();
-		for (core::Size i=1; i<= ramp_schedule_strs.size(); ++i) {
+		for ( core::Size i=1; i<= ramp_schedule_strs.size(); ++i ) {
 			ramp_schedule_.push_back( atoi(ramp_schedule_strs[i].c_str()) );
 		}
 		runtime_assert( ramp_schedule_.size() >= 1);
@@ -366,41 +368,41 @@ LocalRelax::apply( core::pose::Pose & pose) {
 			//   - sort by connectedness
 			utility::vector1< core::Size > neighborcounts(nres, 0);
 			for ( Size i=1, i_end = nres; i<= i_end; ++i ) {
-				if (!symminfo || symminfo->bb_is_independent(i)) {
-					for (Size j=1; j<=nres; ++j) if (neighbor[i][j]) neighborcounts[j]++;
+				if ( !symminfo || symminfo->bb_is_independent(i) ) {
+					for ( Size j=1; j<=nres; ++j ) if ( neighbor[i][j] ) neighborcounts[j]++;
 				}
 			}
 
 			utility::vector1<bool> shell0, shell1, visited(nres_asu, false);
 
 			// mark non-packable as visited
-			for (Size i=1; i<=nres; ++i) {
+			for ( Size i=1; i<=nres; ++i ) {
 				if ( !ptask_resfile->pack_residue( i ) ) visited[i] = true;
 			}
 
 			// main loop
-			while (true) {
+			while ( true ) {
 
 				// find most connected residue
 				Size maxneighb=0;
 				Size currres=0;
 				for ( Size i=1; i<=nres; ++i ) {
-					if (!visited[i] && neighborcounts[i] > maxneighb) {
-							maxneighb = neighborcounts[i];
-							currres = i;
+					if ( !visited[i] && neighborcounts[i] > maxneighb ) {
+						maxneighb = neighborcounts[i];
+						currres = i;
 					}
 				}
 
-				if (maxneighb==0) {
+				if ( maxneighb==0 ) {
 					// all done
 					break;
-				} else if (maxneighb < 2) {
+				} else if ( maxneighb < 2 ) {
 					TR << "PACK SURFACE" << std::endl;
 
 					utility::vector1<bool> neigh_merge(nres, false);
 					for ( Size i=1; i<=nres; ++i ) {
-						if (visited[i]) continue;
-						if (symminfo && !symminfo->bb_is_independent(i)) continue;
+						if ( visited[i] ) continue;
+						if ( symminfo && !symminfo->bb_is_independent(i) ) continue;
 						for ( Size j=1; j<=nres; ++j ) {
 							neigh_merge[j] = neigh_merge[j] || neighbor[i][j];
 						}
@@ -410,20 +412,20 @@ LocalRelax::apply( core::pose::Pose & pose) {
 					shell0 = neigh_merge;
 					shell1 = shell0;
 					for ( Size j=1; j<=nres; ++j ) {
-						if (shell0[j]) {
+						if ( shell0[j] ) {
 							for ( Size k=1; k<=nres; ++k ) {
-								if (!shell0[k] && neigh_merge[k]) shell1[k] = true;
+								if ( !shell0[k] && neigh_merge[k] ) shell1[k] = true;
 							}
 						}
 					}
 				} else {
 					shell1 = neighbor[currres];
-					for (Size i=1; i<=NEXP_; ++i) {
+					for ( Size i=1; i<=NEXP_; ++i ) {
 						shell0 = shell1;
 						for ( Size j=1; j<=nres; ++j ) {
-							if (shell0[j]) {
+							if ( shell0[j] ) {
 								for ( Size k=1; k<=nres; ++k ) {
-									if (!shell0[k] && neighbor[j][k]) shell1[k] = true;
+									if ( !shell0[k] && neighbor[j][k] ) shell1[k] = true;
 								}
 							}
 						}
@@ -436,11 +438,11 @@ LocalRelax::apply( core::pose::Pose & pose) {
 				ptask_working->or_include_current(true);
 
 				for ( Size j=1, j_end = nres; j<= j_end; ++j ) {
-					if (shell0[j]) {
+					if ( shell0[j] ) {
 						visited[j] = true;
 						dynamic_cast<core::pack::task::ResidueLevelTask_&>
-								(ptask_working->nonconst_residue_task(j)).update_commutative( ptask_resfile->nonconst_residue_task(j) );
-					} else if (shell1[j]) {
+							(ptask_working->nonconst_residue_task(j)).update_commutative( ptask_resfile->nonconst_residue_task(j) );
+					} else if ( shell1[j] ) {
 						ptask_working->nonconst_residue_task(j).restrict_to_repacking();
 						ptask_working->nonconst_residue_task(j).or_include_current(true);
 					}
@@ -462,8 +464,8 @@ LocalRelax::apply( core::pose::Pose & pose) {
 						// allow a window of bb movement around each central residue
 						mm->set_bb(j, true);
 						mm->set_chi(j, true);
-						if (j<nres) { mm->set_bb(j+1, true); mm->set_chi(j+1, true); }
-						if (j>1)    { mm->set_bb(j-1, true); mm->set_chi(j-1, true); }
+						if ( j<nres ) { mm->set_bb(j+1, true); mm->set_chi(j+1, true); }
+						if ( j>1 )    { mm->set_bb(j-1, true); mm->set_chi(j-1, true); }
 					}
 				}
 
@@ -473,16 +475,16 @@ LocalRelax::apply( core::pose::Pose & pose) {
 
 				Size nvis=0,nsh0=0,nsh1=0;
 				for ( Size j=1, j_end = nres; j<= j_end; ++j ) {
-					if (visited[j]) nvis++;
-					if (shell0[j]) nsh0++;
-					if (shell1[j]) nsh1++;
+					if ( visited[j] ) nvis++;
+					if ( shell0[j] ) nsh0++;
+					if ( shell1[j] ) nsh1++;
 				}
 
 				// optimize
 				optimization_loop( pose, ptask_working, mm,  ramp_schedule_[innercyc], 1e-4 );
 				TR << "[" << cyc << "." << innercyc << "] res " << currres << " [" << nsh0 << "/" << nsh1 << "] ("
-				   << nvis << "/" << nres_asu << ")  E=" << (*min_sfxn_)(pose)
-				   << "  ramp=" << ramp_schedule_[innercyc] << std::endl;
+					<< nvis << "/" << nres_asu << ")  E=" << (*min_sfxn_)(pose)
+					<< "  ramp=" << ramp_schedule_[innercyc] << std::endl;
 			}
 		}
 	}

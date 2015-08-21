@@ -197,27 +197,27 @@ public:
 		optimization::MinimizerOptions min_options( "dfpmin", 0.1, true, false, false );
 
 		for ( Size ii = 1; ii <= task->num_to_be_packed(); ++ii ) {
-			Size iires = active_residues[ ii ];
-			for ( graph::Node::EdgeListConstIter
-					eiter = packer_neighbor_graph->get_node( iires )->const_edge_list_begin(),
-					eiter_end = packer_neighbor_graph->get_node( iires )->const_edge_list_end();
-					eiter != eiter_end; ++eiter ) {
-				Size jjres = (*eiter)->get_other_ind( iires );
-				if ( ! bgres[ jjres ] && ! task->being_packed( jjres )) {
-					inactive_neighbors.push_back( jjres );
-					residue_is_inactive_neighbor[ jjres ] = true;
-					bgres[ jjres ] = new Residue( pose.residue( jjres ) );
-					scminmap.set_natoms_for_residue( jjres, bgres[ jjres ]->natoms() );
-					/// Do setup_for_minimizing for background nodes once and leave them alone for
-					/// the rest of the trajectory
-					scorefxn->setup_for_minimizing_for_node(
-						* mingraph.get_minimization_node( jjres ), pose.residue( jjres ),
-						scminmap, pose, false, emap_dummy );
-				}
-				if ( ! task->being_packed( jjres ) || iires < jjres ) {
-					mingraph.add_edge( iires, jjres ); // add edges, but don't bother calling setup_for_minimization yet
-				}
-			}
+		Size iires = active_residues[ ii ];
+		for ( graph::Node::EdgeListConstIter
+		eiter = packer_neighbor_graph->get_node( iires )->const_edge_list_begin(),
+		eiter_end = packer_neighbor_graph->get_node( iires )->const_edge_list_end();
+		eiter != eiter_end; ++eiter ) {
+		Size jjres = (*eiter)->get_other_ind( iires );
+		if ( ! bgres[ jjres ] && ! task->being_packed( jjres )) {
+		inactive_neighbors.push_back( jjres );
+		residue_is_inactive_neighbor[ jjres ] = true;
+		bgres[ jjres ] = new Residue( pose.residue( jjres ) );
+		scminmap.set_natoms_for_residue( jjres, bgres[ jjres ]->natoms() );
+		/// Do setup_for_minimizing for background nodes once and leave them alone for
+		/// the rest of the trajectory
+		scorefxn->setup_for_minimizing_for_node(
+		* mingraph.get_minimization_node( jjres ), pose.residue( jjres ),
+		scminmap, pose, false, emap_dummy );
+		}
+		if ( ! task->being_packed( jjres ) || iires < jjres ) {
+		mingraph.add_edge( iires, jjres ); // add edges, but don't bother calling setup_for_minimization yet
+		}
+		}
 		}
 
 		task->set_bump_check( false );
@@ -230,245 +230,245 @@ public:
 		optimization::Multivec chi( 4 ); // guess -- resized smaller
 
 		for ( Size ii = 1; ii <= active_residues.size(); ++ii ) {
-			/// Now, build rotamers, prep the nodes and edges of the minimization graph
-			/// and build the AtomTreeCollection for this residue;
-			Size iiresid = active_residues[ ii ];
-			conformation::Residue const & trial_res = pose.residue( iiresid );
-			scminmap.activate_residue_chi( iiresid );
+		/// Now, build rotamers, prep the nodes and edges of the minimization graph
+		/// and build the AtomTreeCollection for this residue;
+		Size iiresid = active_residues[ ii ];
+		conformation::Residue const & trial_res = pose.residue( iiresid );
+		scminmap.activate_residue_chi( iiresid );
 
-			//pretend this is a repacking and only this residue is being repacked
-			//while all other residues are being held fixed.
-			task->temporarily_set_pack_residue( iiresid, true );
+		//pretend this is a repacking and only this residue is being repacked
+		//while all other residues are being held fixed.
+		task->temporarily_set_pack_residue( iiresid, true );
 
-			RotamerSetFactory rsf;
-			rotamer_set::RotamerSetOP iirotset = rsf.create_rotamer_set( trial_res );
-			iirotset->set_resid( iiresid );
-			iirotset->build_rotamers( pose, *scorefxn, *task, packer_neighbor_graph );
-			Size const ii_curr_rot = iirotset->id_for_current_rotamer();
-			TS_ASSERT( ii_curr_rot != 0 );
+		RotamerSetFactory rsf;
+		rotamer_set::RotamerSetOP iirotset = rsf.create_rotamer_set( trial_res );
+		iirotset->set_resid( iiresid );
+		iirotset->build_rotamers( pose, *scorefxn, *task, packer_neighbor_graph );
+		Size const ii_curr_rot = iirotset->id_for_current_rotamer();
+		TS_ASSERT( ii_curr_rot != 0 );
 
-			AtomTreeCollectionOP ii_atc = new AtomTreeCollection( iirotset, false );
-			ii_atc->residue_atomtree_collection( iiresid ).set_active_restype_index( 1 ); // start at the beginning.
-			ii_atc->residue_atomtree_collection( iiresid ).set_rescoords( * iirotset->rotamer( 1 ) );
-			ii_atc->residue_atomtree_collection( iiresid ).update_atom_tree();
-			scminmap.setup( ii_atc );
+		AtomTreeCollectionOP ii_atc = new AtomTreeCollection( iirotset, false );
+		ii_atc->residue_atomtree_collection( iiresid ).set_active_restype_index( 1 ); // start at the beginning.
+		ii_atc->residue_atomtree_collection( iiresid ).set_rescoords( * iirotset->rotamer( 1 ) );
+		ii_atc->residue_atomtree_collection( iiresid ).update_atom_tree();
+		scminmap.setup( ii_atc );
 
-			{/// SCOPE -- make sure the minimization graph is ready to optimize this residue
-			Residue const & iirsd( ii_atc->residue_atomtree_collection( iiresid ).active_residue() );
-			if ( ! bgres[ iiresid ] ) {
-				// we have not ever done setup for scoring for this residue
-				scorefxn->setup_for_minimizing_for_node(
-					* mingraph.get_minimization_node( iiresid ), iirsd,
-					scminmap, pose, false, emap_dummy );
-			} else {
-				scorefxn->reinitialize_minnode_for_residue(
-					* mingraph.get_minimization_node( iiresid ), iirsd,
-					scminmap, pose );
-			}
-			for ( graph::Node::EdgeListIter
-					eiter = mingraph.get_node( iiresid )->edge_list_begin(),
-					eiter_end = mingraph.get_node( iiresid )->edge_list_end();
-					eiter != eiter_end; ++eiter ) {
+		{/// SCOPE -- make sure the minimization graph is ready to optimize this residue
+		Residue const & iirsd( ii_atc->residue_atomtree_collection( iiresid ).active_residue() );
+		if ( ! bgres[ iiresid ] ) {
+		// we have not ever done setup for scoring for this residue
+		scorefxn->setup_for_minimizing_for_node(
+		* mingraph.get_minimization_node( iiresid ), iirsd,
+		scminmap, pose, false, emap_dummy );
+		} else {
+		scorefxn->reinitialize_minnode_for_residue(
+		* mingraph.get_minimization_node( iiresid ), iirsd,
+		scminmap, pose );
+		}
+		for ( graph::Node::EdgeListIter
+		eiter = mingraph.get_node( iiresid )->edge_list_begin(),
+		eiter_end = mingraph.get_node( iiresid )->edge_list_end();
+		eiter != eiter_end; ++eiter ) {
 
-				Size jjresid = (*eiter)->get_other_ind( iiresid );
-				if ( ! bgres[ jjresid ] ) {
-					/// we have an active residue which we have not yet visited in the rtmin traversal
-					bgres[ jjresid ] = new Residue( pose.residue( jjresid ) );
-					scorefxn->setup_for_minimizing_for_node(
-						* mingraph.get_minimization_node( jjresid ),
-						* bgres[ jjresid ],
-						scminmap, pose, false, emap_dummy );
-					scminmap.set_natoms_for_residue( jjresid, bgres[ jjresid ]->natoms() );
-				}
-				Residue const & jjrsd( * bgres[ jjresid ] );
-				MinimizationEdge & min_edge( static_cast< MinimizationEdge & > ( **eiter ));
-				//std::cout << "Minedge " << iiresid << " " << jjresid << std::endl;
-				if ( jjresid < iiresid ) {
-					if ( residue_is_inactive_neighbor[ jjresid ] || ! active_residue_has_been_visited[ jjresid ] ) {
-						scorefxn->setup_for_minimizing_sr2b_enmeths_for_minedge(
-							jjrsd, iirsd, min_edge, scminmap, pose, true, false, ( EnergyEdge * ) 0, emap_dummy );
-					} else {
-						min_edge.reinitialize_active_energy_methods( iirsd, jjrsd, pose, true);
-					}
-					/// TEMP!
-					min_edge.setup_for_minimizing( jjrsd, iirsd, pose, *scorefxn, scminmap );
+		Size jjresid = (*eiter)->get_other_ind( iiresid );
+		if ( ! bgres[ jjresid ] ) {
+		/// we have an active residue which we have not yet visited in the rtmin traversal
+		bgres[ jjresid ] = new Residue( pose.residue( jjresid ) );
+		scorefxn->setup_for_minimizing_for_node(
+		* mingraph.get_minimization_node( jjresid ),
+		* bgres[ jjresid ],
+		scminmap, pose, false, emap_dummy );
+		scminmap.set_natoms_for_residue( jjresid, bgres[ jjresid ]->natoms() );
+		}
+		Residue const & jjrsd( * bgres[ jjresid ] );
+		MinimizationEdge & min_edge( static_cast< MinimizationEdge & > ( **eiter ));
+		//std::cout << "Minedge " << iiresid << " " << jjresid << std::endl;
+		if ( jjresid < iiresid ) {
+		if ( residue_is_inactive_neighbor[ jjresid ] || ! active_residue_has_been_visited[ jjresid ] ) {
+		scorefxn->setup_for_minimizing_sr2b_enmeths_for_minedge(
+		jjrsd, iirsd, min_edge, scminmap, pose, true, false, ( EnergyEdge * ) 0, emap_dummy );
+		} else {
+		min_edge.reinitialize_active_energy_methods( iirsd, jjrsd, pose, true);
+		}
+		/// TEMP!
+		min_edge.setup_for_minimizing( jjrsd, iirsd, pose, *scorefxn, scminmap );
 
-				} else {
-					if ( residue_is_inactive_neighbor[ jjresid ]  || ! active_residue_has_been_visited[ jjresid ] ) {
-						scorefxn->setup_for_minimizing_sr2b_enmeths_for_minedge(
-							iirsd, jjrsd, min_edge, scminmap, pose, true, false, ( EnergyEdge * ) 0, emap_dummy );
-					} else {
-						min_edge.reinitialize_active_energy_methods( jjrsd, iirsd, pose, true);
-					}
-					/// TEMP!
-					min_edge.setup_for_minimizing( iirsd, jjrsd, pose, *scorefxn, scminmap );
-				}
-			}
-			//// LONG RANGE SETUP
-			for ( ScoreFunction::LR_2B_MethodIterator
-					iter = scorefxn->long_range_energies_begin(),
-					iter_end = scorefxn->long_range_energies_end();
-					iter != iter_end; ++iter ) {
+		} else {
+		if ( residue_is_inactive_neighbor[ jjresid ]  || ! active_residue_has_been_visited[ jjresid ] ) {
+		scorefxn->setup_for_minimizing_sr2b_enmeths_for_minedge(
+		iirsd, jjrsd, min_edge, scminmap, pose, true, false, ( EnergyEdge * ) 0, emap_dummy );
+		} else {
+		min_edge.reinitialize_active_energy_methods( jjrsd, iirsd, pose, true);
+		}
+		/// TEMP!
+		min_edge.setup_for_minimizing( iirsd, jjrsd, pose, *scorefxn, scminmap );
+		}
+		}
+		//// LONG RANGE SETUP
+		for ( ScoreFunction::LR_2B_MethodIterator
+		iter = scorefxn->long_range_energies_begin(),
+		iter_end = scorefxn->long_range_energies_end();
+		iter != iter_end; ++iter ) {
 
-				if ( (*iter)->minimize_in_whole_structure_context( pose ) ) continue;
+		if ( (*iter)->minimize_in_whole_structure_context( pose ) ) continue;
 
-				LREnergyContainerCOP lrec = pose.energies().long_range_container( (*iter)->long_range_type() );
-				if ( !lrec || lrec->empty() ) continue;
+		LREnergyContainerCOP lrec = pose.energies().long_range_container( (*iter)->long_range_type() );
+		if ( !lrec || lrec->empty() ) continue;
 
-				EnergyMap dummy_emap;
+		EnergyMap dummy_emap;
 
-				// Potentially O(N) operation...
-				for ( ResidueNeighborConstIteratorOP
-						rni = lrec->const_neighbor_iterator_begin( iiresid ), // traverse both upper and lower neighbors
-						rniend = lrec->const_neighbor_iterator_end( iiresid );
-						(*rni) != (*rniend); ++(*rni) ) {
-					Size const r1 = rni->lower_neighbor_id();
-					Size const r2 = rni->upper_neighbor_id();
-					Size const jjresid = ( r1 == iiresid ? r2 : r1 );
-					bool const res_moving_wrt_eachother( true );
+		// Potentially O(N) operation...
+		for ( ResidueNeighborConstIteratorOP
+		rni = lrec->const_neighbor_iterator_begin( iiresid ), // traverse both upper and lower neighbors
+		rniend = lrec->const_neighbor_iterator_end( iiresid );
+		(*rni) != (*rniend); ++(*rni) ) {
+		Size const r1 = rni->lower_neighbor_id();
+		Size const r2 = rni->upper_neighbor_id();
+		Size const jjresid = ( r1 == iiresid ? r2 : r1 );
+		bool const res_moving_wrt_eachother( true );
 
-					/// We've already set up the long-range energy methods for this edge if
-					/// jjresid is an active residue that has already had its conformation optimized
-					if ( active_residue_has_been_visited[ jjresid ] ) continue;
-					conformation::Residue const & lower_res( r1 == iiresid ? iirsd : *bgres[ jjresid ] );
-					conformation::Residue const & upper_res( r1 == iiresid ? *bgres[ jjresid ] : iirsd );
-					scorefxn->setup_for_lr2benmeth_minimization_for_respair(
-						lower_res, upper_res, *iter, mingraph, scminmap, pose,
-						res_moving_wrt_eachother, false, rni, dummy_emap );
-				}
-			}
+		/// We've already set up the long-range energy methods for this edge if
+		/// jjresid is an active residue that has already had its conformation optimized
+		if ( active_residue_has_been_visited[ jjresid ] ) continue;
+		conformation::Residue const & lower_res( r1 == iiresid ? iirsd : *bgres[ jjresid ] );
+		conformation::Residue const & upper_res( r1 == iiresid ? *bgres[ jjresid ] : iirsd );
+		scorefxn->setup_for_lr2benmeth_minimization_for_respair(
+		lower_res, upper_res, *iter, mingraph, scminmap, pose,
+		res_moving_wrt_eachother, false, rni, dummy_emap );
+		}
+		}
 
-			} /// END MinimizationGraph initialization SCOPE
+		} /// END MinimizationGraph initialization SCOPE
 
-			/// OK: now start iterating across rotamers, setting up for minimization when the residue type changes,
-			/// initializing the scminmultifunc
-			Size next_restype_index( 2 );
+		/// OK: now start iterating across rotamers, setting up for minimization when the residue type changes,
+		/// initializing the scminmultifunc
+		Size next_restype_index( 2 );
 
-			Real best_score( 0.0 ); bool first_pass( true );
+		Real best_score( 0.0 ); bool first_pass( true );
 #ifdef APL_FULL_DEBUG
-			Real best_real_score( 0.0 );
+		Real best_real_score( 0.0 );
 #endif
-			ResidueAtomTreeCollectionMomento momento;
-			scminmap.set_natoms_for_residue( iiresid, ii_atc->residue_atomtree_collection( iiresid ).active_residue().natoms()  );
-			for ( Size jj = 1, jj_end = iirotset->num_rotamers(); jj <= jj_end; ++jj ) {
-				if (next_restype_index <= iirotset->get_n_residue_types() &&
-						iirotset->get_residue_type_begin( next_restype_index ) == jj ) {
-					ii_atc->residue_atomtree_collection( iiresid ).set_active_restype_index( next_restype_index );
-					++next_restype_index;
+		ResidueAtomTreeCollectionMomento momento;
+		scminmap.set_natoms_for_residue( iiresid, ii_atc->residue_atomtree_collection( iiresid ).active_residue().natoms()  );
+		for ( Size jj = 1, jj_end = iirotset->num_rotamers(); jj <= jj_end; ++jj ) {
+		if (next_restype_index <= iirotset->get_n_residue_types() &&
+		iirotset->get_residue_type_begin( next_restype_index ) == jj ) {
+		ii_atc->residue_atomtree_collection( iiresid ).set_active_restype_index( next_restype_index );
+		++next_restype_index;
 
-					ii_atc->residue_atomtree_collection( iiresid ).set_rescoords( * iirotset->rotamer( jj ));
-					ii_atc->residue_atomtree_collection( iiresid ).update_atom_tree();
-					scminmap.set_natoms_for_residue( iiresid, iirotset->rotamer( jj )->natoms() );
+		ii_atc->residue_atomtree_collection( iiresid ).set_rescoords( * iirotset->rotamer( jj ));
+		ii_atc->residue_atomtree_collection( iiresid ).update_atom_tree();
+		scminmap.set_natoms_for_residue( iiresid, iirotset->rotamer( jj )->natoms() );
 
-					scminmap.setup( ii_atc ); // traverse the atom tree and identify dofs
-				}
+		scminmap.setup( ii_atc ); // traverse the atom tree and identify dofs
+		}
 
-				ii_atc->residue_atomtree_collection( iiresid ).set_rescoords( * iirotset->rotamer( jj ));
-				ii_atc->residue_atomtree_collection( iiresid ).update_atom_tree();
-				chi = iirotset->rotamer( jj )->chi();
+		ii_atc->residue_atomtree_collection( iiresid ).set_rescoords( * iirotset->rotamer( jj ));
+		ii_atc->residue_atomtree_collection( iiresid ).update_atom_tree();
+		chi = iirotset->rotamer( jj )->chi();
 
-				reinitialize_mingraph_neighborhood_for_residue( pose, scorefxn, bgres, scminmap, scminmap.residue( iiresid ), mingraph );
-
-#ifdef APL_FULL_DEBUG
-				pose.replace_residue( iiresid, ii_atc->residue_atomtree_collection( iiresid ).active_residue(), false );
-				Real const real_start_score( (*scorefxn)( pose ) );
-#endif
-				//pose.dump_pdb( "rtmin_before_" + utility::to_string( iiresid ) + "_" + utility::to_string( jj ) + ".pdb" );
-				/// OK: Minimization graph is initialized.  Now setup the SCMinMultifunc
-				SCMinMultifunc scmin_multifunc( pose, bgres, *scorefxn, mingraph, scminmap );
-				//Real const start_score( scmin_multifunc( chi ) );
-
-				//std::cout << "Starting comparison: " << iiresid << " " << start_score  << " " << iirotset->rotamer( jj )->name() << std::endl;
-#ifdef APL_FULL_DEBUG
-				deriv_check_for_residue( iiresid, jj, scmin_multifunc, chi );
-				compare_mingraph_and_energy_graph( iiresid, pose, *scorefxn, mingraph );
-#endif
-
-				Minimizer minimizer( scmin_multifunc, min_options );
-				//Real const start_func = scmin_multifunc( chi );
-				//Real const end_func =
-				minimizer.run( chi );
-				/// Note: our neighborlist may have gone out-of-date.  Update now to make sure the best rotamer is placed in the pose
-				reinitialize_mingraph_neighborhood_for_residue( pose, scorefxn, bgres, scminmap, scminmap.residue( iiresid ), mingraph );
-				Real const end_score = scmin_multifunc( chi );
-				//std::cout << "start func: " << start_func << " end func: " << end_func << " end score: " << end_score << std::endl;
-
-				//for ( Size kk = 1; kk <= chi.size(); ++kk ) {
-				//	std::cout << "chi " << kk << " " << chi[ kk ] << " vs "
-				//		<< ii_atc->residue_atomtree_collection( iiresid ).active_residue().chi()[ kk ]
-				//		<< " ";
-				//}
-				//std::cout << std::endl;
+		reinitialize_mingraph_neighborhood_for_residue( pose, scorefxn, bgres, scminmap, scminmap.residue( iiresid ), mingraph );
 
 #ifdef APL_FULL_DEBUG
-				pose.replace_residue( iiresid, ii_atc->residue_atomtree_collection( iiresid ).active_residue(), false );
-				Real const real_end_score( (*scorefxn)( pose ) );
-				//std::cout << "Ending comparison: " << iiresid  << " " << end_score << " " << real_end_score << " " << iirotset->rotamer( jj )->name() << std::endl;
-				deriv_check_for_residue( iiresid, jj, scmin_multifunc, chi );
-				compare_mingraph_and_energy_graph( iiresid, pose, *scorefxn, mingraph );
-				//if ( iiresid == 14 && jj == 7 ) {
-				//	atom_tree_multifunc_dump( pose, *scorefxn, chi, ii );
-				//}
+		pose.replace_residue( iiresid, ii_atc->residue_atomtree_collection( iiresid ).active_residue(), false );
+		Real const real_start_score( (*scorefxn)( pose ) );
 #endif
+		//pose.dump_pdb( "rtmin_before_" + utility::to_string( iiresid ) + "_" + utility::to_string( jj ) + ".pdb" );
+		/// OK: Minimization graph is initialized.  Now setup the SCMinMultifunc
+		SCMinMultifunc scmin_multifunc( pose, bgres, *scorefxn, mingraph, scminmap );
+		//Real const start_score( scmin_multifunc( chi ) );
 
-				if ( first_pass || end_score <= best_score ) {
-					best_score = end_score;
+		//std::cout << "Starting comparison: " << iiresid << " " << start_score  << " " << iirotset->rotamer( jj )->name() << std::endl;
 #ifdef APL_FULL_DEBUG
-					best_real_score = real_end_score;
+		deriv_check_for_residue( iiresid, jj, scmin_multifunc, chi );
+		compare_mingraph_and_energy_graph( iiresid, pose, *scorefxn, mingraph );
 #endif
-					first_pass = false;
-					ii_atc->residue_atomtree_collection( iiresid ).save_momento( momento );
-				}
 
-				// ok -- lets get here
-				//std::cout << "iiresid " << iiresid << " rot: " << jj << " start score: "
-				//	<< start_score << " end score: " << end_score << " real start: " << real_start_score
-				//	<< " real end:" << real_end_score << " ddScore " << ( end_score - start_score ) - ( real_end_score - real_start_score )
-				//	<< std::endl;
+		Minimizer minimizer( scmin_multifunc, min_options );
+		//Real const start_func = scmin_multifunc( chi );
+		//Real const end_func =
+		minimizer.run( chi );
+		/// Note: our neighborlist may have gone out-of-date.  Update now to make sure the best rotamer is placed in the pose
+		reinitialize_mingraph_neighborhood_for_residue( pose, scorefxn, bgres, scminmap, scminmap.residue( iiresid ), mingraph );
+		Real const end_score = scmin_multifunc( chi );
+		//std::cout << "start func: " << start_func << " end func: " << end_func << " end score: " << end_score << std::endl;
 
-				//pose.dump_pdb( "rtmin_after_" + utility::to_string( iiresid ) + "_" + utility::to_string( jj ) + ".pdb" );
+		//for ( Size kk = 1; kk <= chi.size(); ++kk ) {
+		// std::cout << "chi " << kk << " " << chi[ kk ] << " vs "
+		//  << ii_atc->residue_atomtree_collection( iiresid ).active_residue().chi()[ kk ]
+		//  << " ";
+		//}
+		//std::cout << std::endl;
 
-			}
-			ii_atc->residue_atomtree_collection( iiresid ).update_from_momento( momento );
-			bgres[ iiresid ] = new Residue( ii_atc->residue_atomtree_collection( iiresid ).active_residue() );
-
-			/// NOW, we must call setup_for_scoring_for_residue for this residue we've just replaced, and
-			/// for the edges adjacent to this residue and to other non-background residues so that the guarantee
-			/// that setup_for_scoring_for_residue has been called on a residue before the next time its score is
-			/// evaluated as a two-body energy
-
-			//scorefxn->reinitialize_minnode_for_residue( * mingraph.get_minimization_node( iiresid ),
-			//	*bgres[ iiresid ], scminmap, pose );
-			reinitialize_mingraph_neighborhood_for_residue( pose, scorefxn, bgres, scminmap, *bgres[ iiresid ], mingraph );
-
-			//for ( graph::Graph::EdgeListIter
-			//		edgeit = mingraph.get_node( iiresid )->edge_list_begin(),
-			//		edgeit_end = mingraph.get_node( iiresid )->edge_list_end();
-			//		edgeit != edgeit_end; ++edgeit ) {
-			//	Size const jjresid = (*edgeit)->get_other_ind( iiresid );
-			//	if ( residue_is_inactive_neighbor[ jjresid ] ) continue;
-			//	MinimizationEdge & min_edge = static_cast< MinimizationEdge & > ( (**edgeit) );
-			//	if ( iiresid < jjresid ) {
-			//		min_edge.reinitialize_active_energy_methods( *bgres[ iiresid ], *bgres[ jjresid ], pose, true);
-			//		min_edge.setup_for_minimizing( *bgres[ iiresid ], *bgres[ jjresid ], pose, *scorefxn, scminmap );
-			//	} else {
-			//		min_edge.reinitialize_active_energy_methods( *bgres[ jjresid ], *bgres[ iiresid ], pose, true);
-			//		min_edge.setup_for_minimizing( *bgres[ jjresid ], *bgres[ iiresid ], pose, *scorefxn, scminmap );
-			//	}
-			//}
-
-			active_residue_has_been_visited[ iiresid ] = true;
-			scminmap.clear_active_chi();
 #ifdef APL_FULL_DEBUG
-			pose.replace_residue( iiresid, *bgres[ iiresid ], false );
-			for ( Size jj = 1; jj <= bgres[ iiresid ]->natoms(); ++jj ) {
-				TS_ASSERT( bgres[ iiresid ]->xyz( jj ).distance( pose.residue( iiresid ).xyz( jj ) ) < 1e-5 );
-			}
-			Real const ii_final_score( (*scorefxn)( pose ) );
-			TS_ASSERT_DELTA( best_real_score, ii_final_score, 1e-13 );
+		pose.replace_residue( iiresid, ii_atc->residue_atomtree_collection( iiresid ).active_residue(), false );
+		Real const real_end_score( (*scorefxn)( pose ) );
+		//std::cout << "Ending comparison: " << iiresid  << " " << end_score << " " << real_end_score << " " << iirotset->rotamer( jj )->name() << std::endl;
+		deriv_check_for_residue( iiresid, jj, scmin_multifunc, chi );
+		compare_mingraph_and_energy_graph( iiresid, pose, *scorefxn, mingraph );
+		//if ( iiresid == 14 && jj == 7 ) {
+		// atom_tree_multifunc_dump( pose, *scorefxn, chi, ii );
+		//}
 #endif
-			//pose.dump_pdb( "rtmin_selected_" + utility::to_string( iiresid ) + ".pdb" );
-			//std::cout << "Round " << ii << " final score: " << (*scorefxn)(pose) << std::endl;
+
+		if ( first_pass || end_score <= best_score ) {
+		best_score = end_score;
+#ifdef APL_FULL_DEBUG
+		best_real_score = real_end_score;
+#endif
+		first_pass = false;
+		ii_atc->residue_atomtree_collection( iiresid ).save_momento( momento );
+		}
+
+		// ok -- lets get here
+		//std::cout << "iiresid " << iiresid << " rot: " << jj << " start score: "
+		// << start_score << " end score: " << end_score << " real start: " << real_start_score
+		// << " real end:" << real_end_score << " ddScore " << ( end_score - start_score ) - ( real_end_score - real_start_score )
+		// << std::endl;
+
+		//pose.dump_pdb( "rtmin_after_" + utility::to_string( iiresid ) + "_" + utility::to_string( jj ) + ".pdb" );
+
+		}
+		ii_atc->residue_atomtree_collection( iiresid ).update_from_momento( momento );
+		bgres[ iiresid ] = new Residue( ii_atc->residue_atomtree_collection( iiresid ).active_residue() );
+
+		/// NOW, we must call setup_for_scoring_for_residue for this residue we've just replaced, and
+		/// for the edges adjacent to this residue and to other non-background residues so that the guarantee
+		/// that setup_for_scoring_for_residue has been called on a residue before the next time its score is
+		/// evaluated as a two-body energy
+
+		//scorefxn->reinitialize_minnode_for_residue( * mingraph.get_minimization_node( iiresid ),
+		// *bgres[ iiresid ], scminmap, pose );
+		reinitialize_mingraph_neighborhood_for_residue( pose, scorefxn, bgres, scminmap, *bgres[ iiresid ], mingraph );
+
+		//for ( graph::Graph::EdgeListIter
+		//  edgeit = mingraph.get_node( iiresid )->edge_list_begin(),
+		//  edgeit_end = mingraph.get_node( iiresid )->edge_list_end();
+		//  edgeit != edgeit_end; ++edgeit ) {
+		// Size const jjresid = (*edgeit)->get_other_ind( iiresid );
+		// if ( residue_is_inactive_neighbor[ jjresid ] ) continue;
+		// MinimizationEdge & min_edge = static_cast< MinimizationEdge & > ( (**edgeit) );
+		// if ( iiresid < jjresid ) {
+		//  min_edge.reinitialize_active_energy_methods( *bgres[ iiresid ], *bgres[ jjresid ], pose, true);
+		//  min_edge.setup_for_minimizing( *bgres[ iiresid ], *bgres[ jjresid ], pose, *scorefxn, scminmap );
+		// } else {
+		//  min_edge.reinitialize_active_energy_methods( *bgres[ jjresid ], *bgres[ iiresid ], pose, true);
+		//  min_edge.setup_for_minimizing( *bgres[ jjresid ], *bgres[ iiresid ], pose, *scorefxn, scminmap );
+		// }
+		//}
+
+		active_residue_has_been_visited[ iiresid ] = true;
+		scminmap.clear_active_chi();
+#ifdef APL_FULL_DEBUG
+		pose.replace_residue( iiresid, *bgres[ iiresid ], false );
+		for ( Size jj = 1; jj <= bgres[ iiresid ]->natoms(); ++jj ) {
+		TS_ASSERT( bgres[ iiresid ]->xyz( jj ).distance( pose.residue( iiresid ).xyz( jj ) ) < 1e-5 );
+		}
+		Real const ii_final_score( (*scorefxn)( pose ) );
+		TS_ASSERT_DELTA( best_real_score, ii_final_score, 1e-13 );
+#endif
+		//pose.dump_pdb( "rtmin_selected_" + utility::to_string( iiresid ) + ".pdb" );
+		//std::cout << "Round " << ii << " final score: " << (*scorefxn)(pose) << std::endl;
 		}*/
 
 	}
@@ -568,7 +568,7 @@ public:
 		SimpleDerivCheckResult deriv_check = simple_numeric_deriv_check( scmin_multifunc, chi, dEdchi, write_output, write_output );
 		for ( Size ii = 1; ii <= deriv_check.nangles(); ++ii ) {
 			for ( Size jj = 1; jj <= 1; ++jj ) {
-			//for ( Size jj = 1; jj <= deriv_check.nsteps(); ++jj ) {
+				//for ( Size jj = 1; jj <= deriv_check.nsteps(); ++jj ) {
 				if ( deriv_check.step_data(ii,jj).ratio() != 0.0 ) {
 					TS_ASSERT_DELTA( deriv_check.step_data(ii,jj).ratio(), 1.0, 0.5 );
 				}
@@ -670,7 +670,7 @@ public:
 			for ( core::Size jj = 1; jj <= niterations; ++jj ) {
 				pose::Pose copy_pose( orig_pose );
 				//pack::task::PackerTaskOP task
-				//	( pack::task::TaskFactory::create_packer_task( copy_pose ));
+				// ( pack::task::TaskFactory::create_packer_task( copy_pose ));
 				//task->initialize_from_command_line().restrict_to_repacking();
 
 				//pack::RTMin rtmin;
@@ -718,30 +718,30 @@ public:
 
 	}
 
-/*
-					Residue const & iires( ii_atc->residue_atomtree_collection( iiresid ).active_residue() );
-					/// Setup the minimization graph for this new restype
-					scorefxn->reinitialize_minnode_for_residue(
-						* mingraph.get_minimization_node( iiresid ),
-						iires, scminmap, pose );
-					/// Now, iterate across all the edges and set them up
-					for ( graph::Node::EdgeListIter
-							eiter = mingraph.get_node( iiresid )->edge_list_begin(),
-							eiter_end = mingraph.get_node( iiresid )->edge_list_end();
-							eiter != eiter_end; ++eiter ) {
-						Size kkresid = (*eiter)->get_other_ind( iiresid );
-						MinimizationEdge & min_edge( static_cast< MinimizationEdge & > ( **eiter ));
-						if ( iiresid <= kkresid ) {
-							min_edge.reinitialize_active_energy_methods( iires, *bgres[ kkresid ], pose, true);
-							min_edge.setup_for_minimizing( iires, *bgres[ kkresid ], pose, *scorefxn, scminmap );
-						} else {
-							min_edge.reinitialize_active_energy_methods( *bgres[ kkresid ], iires, pose, true);
-							min_edge.setup_for_minimizing( *bgres[ kkresid ], iires, pose, *scorefxn, scminmap );
-						}
-					}
-				}
+	/*
+	Residue const & iires( ii_atc->residue_atomtree_collection( iiresid ).active_residue() );
+	/// Setup the minimization graph for this new restype
+	scorefxn->reinitialize_minnode_for_residue(
+	* mingraph.get_minimization_node( iiresid ),
+	iires, scminmap, pose );
+	/// Now, iterate across all the edges and set them up
+	for ( graph::Node::EdgeListIter
+	eiter = mingraph.get_node( iiresid )->edge_list_begin(),
+	eiter_end = mingraph.get_node( iiresid )->edge_list_end();
+	eiter != eiter_end; ++eiter ) {
+	Size kkresid = (*eiter)->get_other_ind( iiresid );
+	MinimizationEdge & min_edge( static_cast< MinimizationEdge & > ( **eiter ));
+	if ( iiresid <= kkresid ) {
+	min_edge.reinitialize_active_energy_methods( iires, *bgres[ kkresid ], pose, true);
+	min_edge.setup_for_minimizing( iires, *bgres[ kkresid ], pose, *scorefxn, scminmap );
+	} else {
+	min_edge.reinitialize_active_energy_methods( *bgres[ kkresid ], iires, pose, true);
+	min_edge.setup_for_minimizing( *bgres[ kkresid ], iires, pose, *scorefxn, scminmap );
+	}
+	}
+	}
 
-*/
+	*/
 
 	void debug_nblist_for_respair(
 		conformation::Residue const & rsd1,

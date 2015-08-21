@@ -38,7 +38,7 @@
 
 
 namespace protocols {
-namespace flxbb{
+namespace flxbb {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 class DesignTask : public utility::pointer::ReferenceCount {
@@ -80,7 +80,7 @@ public:
 	virtual void setup( Pose const &, PackerTaskOP const ) = 0;
 
 
-public:	// accessors
+public: // accessors
 
 
 	/// @brief the number of cycles of fixbb design and mover

@@ -546,7 +546,7 @@ private: // Creation
 		Value const & xx_a, Value const & xy_a, Value const & xz_a,
 		Value const & yx_a, Value const & yy_a, Value const & yz_a,
 		Value const & zx_a, Value const & zy_a, Value const & zz_a
-	 ) :
+	) :
 		xx_( xx_a ), xy_( xy_a ), xz_( xz_a ),
 		yx_( yx_a ), yy_( yy_a ), yz_( yz_a ),
 		zx_( zx_a ), zy_( zy_a ), zz_( zz_a )
@@ -964,8 +964,8 @@ public: // Methods: complex mathematical
 	clear()
 	{
 		xx_ = xy_ = xz_ =
-		yx_ = yy_ = yz_ =
-		zx_ = zy_ = zz_ = Value( 0 );
+			yx_ = yy_ = yz_ =
+			zx_ = zy_ = zz_ = Value( 0 );
 		return *this;
 	}
 
@@ -976,8 +976,8 @@ public: // Methods: complex mathematical
 	zero()
 	{
 		xx_ = xy_ = xz_ =
-		yx_ = yy_ = yz_ =
-		zx_ = zy_ = zz_ = Value( 0 );
+			yx_ = yy_ = yz_ =
+			zx_ = zy_ = zz_ = Value( 0 );
 		return *this;
 	}
 
@@ -1345,11 +1345,11 @@ public: // Properties: columns
 	{
 		assert( ( i > 0 ) && ( i <= 3 ) );
 		switch ( i ) {
-		case 1:
+		case 1 :
 			return Vector( xx_, yx_, zx_ );
-		case 2:
+		case 2 :
 			return Vector( xy_, yy_, zy_ );
-		default: // Assume i == 3
+		default : // Assume i == 3
 			return Vector( xz_, yz_, zz_ );
 		}
 	}
@@ -1362,13 +1362,13 @@ public: // Properties: columns
 	{
 		assert( ( i > 0 ) && ( i <= 3 ) );
 		switch ( i ) {
-		case 1:
+		case 1 :
 			xx_ = v.x_; yx_ = v.y_; zx_ = v.z_;
 			break;
-		case 2:
+		case 2 :
 			xy_ = v.x_; yy_ = v.y_; zy_ = v.z_;
 			break;
-		default: // Assume i == 3
+		default : // Assume i == 3
 			xz_ = v.x_; yz_ = v.y_; zz_ = v.z_;
 		}
 		return *this;
@@ -1442,11 +1442,11 @@ public: // Properties: rows
 	{
 		assert( ( i > 0 ) && ( i <= 3 ) );
 		switch ( i ) {
-		case 1:
+		case 1 :
 			return Vector( xx_, xy_, xz_ );
-		case 2:
+		case 2 :
 			return Vector( yx_, yy_, yz_ );
-		default: // Assume i == 3
+		default : // Assume i == 3
 			return Vector( zx_, zy_, zz_ );
 		}
 	}
@@ -1459,11 +1459,11 @@ public: // Properties: rows
 	{
 		assert( ( i > 0 ) && ( i <= 3 ) );
 		switch ( i ) {
-		case 1:
+		case 1 :
 			xx_ = v.x_; xy_ = v.y_; xz_ = v.z_;
-		case 2:
+		case 2 :
 			yx_ = v.x_; yy_ = v.y_; yz_ = v.z_;
-		default: // Assume i == 3
+		default : // Assume i == 3
 			zx_ = v.x_; zy_ = v.y_; zz_ = v.z_;
 		}
 		return *this;
@@ -1643,11 +1643,11 @@ public: // Properties: scalars
 		assert( ( i > 0 ) && ( i <= 3 ) );
 		assert( ( j > 0 ) && ( j <= 3 ) );
 		switch ( i ) {
-		case 1:
+		case 1 :
 			return ( j == 1 ? xx_ : ( j == 2 ? xy_ : xz_ ) );
-		case 2:
+		case 2 :
 			return ( j == 1 ? yx_ : ( j == 2 ? yy_ : yz_ ) );
-		default: // Assume i == 3
+		default : // Assume i == 3
 			return ( j == 1 ? zx_ : ( j == 2 ? zy_ : zz_ ) );
 		}
 	}
@@ -1661,11 +1661,11 @@ public: // Properties: scalars
 		assert( ( i > 0 ) && ( i <= 3 ) );
 		assert( ( j > 0 ) && ( j <= 3 ) );
 		switch ( i ) {
-		case 1:
+		case 1 :
 			return ( j == 1 ? xx_ : ( j == 2 ? xy_ : xz_ ) );
-		case 2:
+		case 2 :
 			return ( j == 1 ? yx_ : ( j == 2 ? yy_ : yz_ ) );
-		default: // Assume i == 3
+		default : // Assume i == 3
 			return ( j == 1 ? zx_ : ( j == 2 ? zy_ : zz_ ) );
 		}
 	}
@@ -1765,9 +1765,9 @@ public: // Properties: predicates
 	{
 		static Value const ZERO( 0 );
 		return
-		 ( xx_ == ZERO ) && ( xy_ == ZERO ) && ( xz_ == ZERO ) &&
-		 ( yx_ == ZERO ) && ( yy_ == ZERO ) && ( yz_ == ZERO ) &&
-		 ( zx_ == ZERO ) && ( zy_ == ZERO ) && ( zz_ == ZERO );
+			( xx_ == ZERO ) && ( xy_ == ZERO ) && ( xz_ == ZERO ) &&
+			( yx_ == ZERO ) && ( yy_ == ZERO ) && ( yz_ == ZERO ) &&
+			( zx_ == ZERO ) && ( zy_ == ZERO ) && ( zz_ == ZERO );
 	}
 
 
@@ -1779,9 +1779,9 @@ public: // Properties: predicates
 		static Value const ZERO( 0 );
 		static Value const ONE( 1 );
 		return
-		 ( xx_ == ONE  ) && ( xy_ == ZERO ) && ( xz_ == ZERO ) &&
-		 ( yx_ == ZERO ) && ( yy_ == ONE  ) && ( yz_ == ZERO ) &&
-		 ( zx_ == ZERO ) && ( zy_ == ZERO ) && ( zz_ == ONE  );
+			( xx_ == ONE  ) && ( xy_ == ZERO ) && ( xz_ == ZERO ) &&
+			( yx_ == ZERO ) && ( yy_ == ONE  ) && ( yz_ == ZERO ) &&
+			( zx_ == ZERO ) && ( zy_ == ZERO ) && ( zz_ == ONE  );
 	}
 
 
@@ -1830,7 +1830,7 @@ public: // Properties: calculated
 			(a.yy_*a.zz_-a.yz_*a.zy_)/D, -(a.xy_*a.zz_-a.xz_*a.zy_)/D,  (a.xy_*a.yz_-a.xz_*a.yy_)/D,
 			-(a.yx_*a.zz_-a.zx_*a.yz_)/D,  (a.xx_*a.zz_-a.xz_*a.zx_)/D, -(a.xx_*a.yz_-a.xz_*a.yx_)/D,
 			(a.yx_*a.zy_-a.zx_*a.yy_)/D, -(a.xx_*a.zy_-a.xy_*a.zx_)/D,  (a.xx_*a.yy_-a.xy_*a.yx_)/D
-							  );
+		);
 	}
 
 public: // Comparison
@@ -1843,9 +1843,9 @@ public: // Comparison
 	operator ==( xyzMatrix const & a, xyzMatrix const & b )
 	{
 		return
-		 ( a.xx_ == b.xx_ ) && ( a.xy_ == b.xy_ ) && ( a.xz_ == b.xz_ ) &&
-		 ( a.yx_ == b.yx_ ) && ( a.yy_ == b.yy_ ) && ( a.yz_ == b.yz_ ) &&
-		 ( a.zx_ == b.zx_ ) && ( a.zy_ == b.zy_ ) && ( a.zz_ == b.zz_ );
+			( a.xx_ == b.xx_ ) && ( a.xy_ == b.xy_ ) && ( a.xz_ == b.xz_ ) &&
+			( a.yx_ == b.yx_ ) && ( a.yy_ == b.yy_ ) && ( a.yz_ == b.yz_ ) &&
+			( a.zx_ == b.zx_ ) && ( a.zy_ == b.zy_ ) && ( a.zz_ == b.zz_ );
 	}
 
 
@@ -1866,9 +1866,9 @@ public: // Comparison
 	operator <( xyzMatrix const & a, xyzMatrix const & b )
 	{
 		return
-		 ( a.xx_ < b.xx_ ) && ( a.xy_ < b.xy_ ) && ( a.xz_ < b.xz_ ) &&
-		 ( a.yx_ < b.yx_ ) && ( a.yy_ < b.yy_ ) && ( a.yz_ < b.yz_ ) &&
-		 ( a.zx_ < b.zx_ ) && ( a.zy_ < b.zy_ ) && ( a.zz_ < b.zz_ );
+			( a.xx_ < b.xx_ ) && ( a.xy_ < b.xy_ ) && ( a.xz_ < b.xz_ ) &&
+			( a.yx_ < b.yx_ ) && ( a.yy_ < b.yy_ ) && ( a.yz_ < b.yz_ ) &&
+			( a.zx_ < b.zx_ ) && ( a.zy_ < b.zy_ ) && ( a.zz_ < b.zz_ );
 	}
 
 
@@ -1879,9 +1879,9 @@ public: // Comparison
 	operator <=( xyzMatrix const & a, xyzMatrix const & b )
 	{
 		return
-		 ( a.xx_ <= b.xx_ ) && ( a.xy_ <= b.xy_ ) && ( a.xz_ <= b.xz_ ) &&
-		 ( a.yx_ <= b.yx_ ) && ( a.yy_ <= b.yy_ ) && ( a.yz_ <= b.yz_ ) &&
-		 ( a.zx_ <= b.zx_ ) && ( a.zy_ <= b.zy_ ) && ( a.zz_ <= b.zz_ );
+			( a.xx_ <= b.xx_ ) && ( a.xy_ <= b.xy_ ) && ( a.xz_ <= b.xz_ ) &&
+			( a.yx_ <= b.yx_ ) && ( a.yy_ <= b.yy_ ) && ( a.yz_ <= b.yz_ ) &&
+			( a.zx_ <= b.zx_ ) && ( a.zy_ <= b.zy_ ) && ( a.zz_ <= b.zz_ );
 	}
 
 
@@ -1892,9 +1892,9 @@ public: // Comparison
 	operator >=( xyzMatrix const & a, xyzMatrix const & b )
 	{
 		return
-		 ( a.xx_ >= b.xx_ ) && ( a.xy_ >= b.xy_ ) && ( a.xz_ >= b.xz_ ) &&
-		 ( a.yx_ >= b.yx_ ) && ( a.yy_ >= b.yy_ ) && ( a.yz_ >= b.yz_ ) &&
-		 ( a.zx_ >= b.zx_ ) && ( a.zy_ >= b.zy_ ) && ( a.zz_ >= b.zz_ );
+			( a.xx_ >= b.xx_ ) && ( a.xy_ >= b.xy_ ) && ( a.xz_ >= b.xz_ ) &&
+			( a.yx_ >= b.yx_ ) && ( a.yy_ >= b.yy_ ) && ( a.yz_ >= b.yz_ ) &&
+			( a.zx_ >= b.zx_ ) && ( a.zy_ >= b.zy_ ) && ( a.zz_ >= b.zz_ );
 	}
 
 
@@ -1905,9 +1905,9 @@ public: // Comparison
 	operator >( xyzMatrix const & a, xyzMatrix const & b )
 	{
 		return
-		 ( a.xx_ > b.xx_ ) && ( a.xy_ > b.xy_ ) && ( a.xz_ > b.xz_ ) &&
-		 ( a.yx_ > b.yx_ ) && ( a.yy_ > b.yy_ ) && ( a.yz_ > b.yz_ ) &&
-		 ( a.zx_ > b.zx_ ) && ( a.zy_ > b.zy_ ) && ( a.zz_ > b.zz_ );
+			( a.xx_ > b.xx_ ) && ( a.xy_ > b.xy_ ) && ( a.xz_ > b.xz_ ) &&
+			( a.yx_ > b.yx_ ) && ( a.yy_ > b.yy_ ) && ( a.yz_ > b.yz_ ) &&
+			( a.zx_ > b.zx_ ) && ( a.zy_ > b.zy_ ) && ( a.zz_ > b.zz_ );
 	}
 
 
@@ -1918,9 +1918,9 @@ public: // Comparison
 	operator ==( xyzMatrix const & m, Value const & t )
 	{
 		return
-		 ( m.xx_ == t ) && ( m.xy_ == t ) && ( m.xz_ == t ) &&
-		 ( m.yx_ == t ) && ( m.yy_ == t ) && ( m.yz_ == t ) &&
-		 ( m.zx_ == t ) && ( m.zy_ == t ) && ( m.zz_ == t );
+			( m.xx_ == t ) && ( m.xy_ == t ) && ( m.xz_ == t ) &&
+			( m.yx_ == t ) && ( m.yy_ == t ) && ( m.yz_ == t ) &&
+			( m.zx_ == t ) && ( m.zy_ == t ) && ( m.zz_ == t );
 	}
 
 
@@ -1941,9 +1941,9 @@ public: // Comparison
 	operator <( xyzMatrix const & m, Value const & t )
 	{
 		return
-		 ( m.xx_ < t ) && ( m.xy_ < t ) && ( m.xz_ < t ) &&
-		 ( m.yx_ < t ) && ( m.yy_ < t ) && ( m.yz_ < t ) &&
-		 ( m.zx_ < t ) && ( m.zy_ < t ) && ( m.zz_ < t );
+			( m.xx_ < t ) && ( m.xy_ < t ) && ( m.xz_ < t ) &&
+			( m.yx_ < t ) && ( m.yy_ < t ) && ( m.yz_ < t ) &&
+			( m.zx_ < t ) && ( m.zy_ < t ) && ( m.zz_ < t );
 	}
 
 
@@ -1954,9 +1954,9 @@ public: // Comparison
 	operator <=( xyzMatrix const & m, Value const & t )
 	{
 		return
-		 ( m.xx_ <= t ) && ( m.xy_ <= t ) && ( m.xz_ <= t ) &&
-		 ( m.yx_ <= t ) && ( m.yy_ <= t ) && ( m.yz_ <= t ) &&
-		 ( m.zx_ <= t ) && ( m.zy_ <= t ) && ( m.zz_ <= t );
+			( m.xx_ <= t ) && ( m.xy_ <= t ) && ( m.xz_ <= t ) &&
+			( m.yx_ <= t ) && ( m.yy_ <= t ) && ( m.yz_ <= t ) &&
+			( m.zx_ <= t ) && ( m.zy_ <= t ) && ( m.zz_ <= t );
 	}
 
 
@@ -1967,9 +1967,9 @@ public: // Comparison
 	operator >=( xyzMatrix const & m, Value const & t )
 	{
 		return
-		 ( m.xx_ >= t ) && ( m.xy_ >= t ) && ( m.xz_ >= t ) &&
-		 ( m.yx_ >= t ) && ( m.yy_ >= t ) && ( m.yz_ >= t ) &&
-		 ( m.zx_ >= t ) && ( m.zy_ >= t ) && ( m.zz_ >= t );
+			( m.xx_ >= t ) && ( m.xy_ >= t ) && ( m.xz_ >= t ) &&
+			( m.yx_ >= t ) && ( m.yy_ >= t ) && ( m.yz_ >= t ) &&
+			( m.zx_ >= t ) && ( m.zy_ >= t ) && ( m.zz_ >= t );
 	}
 
 
@@ -1980,9 +1980,9 @@ public: // Comparison
 	operator >( xyzMatrix const & m, Value const & t )
 	{
 		return
-		 ( m.xx_ > t ) && ( m.xy_ > t ) && ( m.xz_ > t ) &&
-		 ( m.yx_ > t ) && ( m.yy_ > t ) && ( m.yz_ > t ) &&
-		 ( m.zx_ > t ) && ( m.zy_ > t ) && ( m.zz_ > t );
+			( m.xx_ > t ) && ( m.xy_ > t ) && ( m.xz_ > t ) &&
+			( m.yx_ > t ) && ( m.yy_ > t ) && ( m.yz_ > t ) &&
+			( m.zx_ > t ) && ( m.zy_ > t ) && ( m.zz_ > t );
 	}
 
 
@@ -1993,9 +1993,9 @@ public: // Comparison
 	operator ==( Value const & t, xyzMatrix const & m )
 	{
 		return
-		 ( t == m.xx_ ) && ( t == m.xy_ ) && ( t == m.xz_ ) &&
-		 ( t == m.yx_ ) && ( t == m.yy_ ) && ( t == m.yz_ ) &&
-		 ( t == m.zx_ ) && ( t == m.zy_ ) && ( t == m.zz_ );
+			( t == m.xx_ ) && ( t == m.xy_ ) && ( t == m.xz_ ) &&
+			( t == m.yx_ ) && ( t == m.yy_ ) && ( t == m.yz_ ) &&
+			( t == m.zx_ ) && ( t == m.zy_ ) && ( t == m.zz_ );
 	}
 
 
@@ -2016,9 +2016,9 @@ public: // Comparison
 	operator <( Value const & t, xyzMatrix const & m )
 	{
 		return
-		 ( t < m.xx_ ) && ( t < m.xy_ ) && ( t < m.xz_ ) &&
-		 ( t < m.yx_ ) && ( t < m.yy_ ) && ( t < m.yz_ ) &&
-		 ( t < m.zx_ ) && ( t < m.zy_ ) && ( t < m.zz_ );
+			( t < m.xx_ ) && ( t < m.xy_ ) && ( t < m.xz_ ) &&
+			( t < m.yx_ ) && ( t < m.yy_ ) && ( t < m.yz_ ) &&
+			( t < m.zx_ ) && ( t < m.zy_ ) && ( t < m.zz_ );
 	}
 
 
@@ -2029,9 +2029,9 @@ public: // Comparison
 	operator <=( Value const & t, xyzMatrix const & m )
 	{
 		return
-		 ( t <= m.xx_ ) && ( t <= m.xy_ ) && ( t <= m.xz_ ) &&
-		 ( t <= m.yx_ ) && ( t <= m.yy_ ) && ( t <= m.yz_ ) &&
-		 ( t <= m.zx_ ) && ( t <= m.zy_ ) && ( t <= m.zz_ );
+			( t <= m.xx_ ) && ( t <= m.xy_ ) && ( t <= m.xz_ ) &&
+			( t <= m.yx_ ) && ( t <= m.yy_ ) && ( t <= m.yz_ ) &&
+			( t <= m.zx_ ) && ( t <= m.zy_ ) && ( t <= m.zz_ );
 	}
 
 
@@ -2042,9 +2042,9 @@ public: // Comparison
 	operator >=( Value const & t, xyzMatrix const & m )
 	{
 		return
-		 ( t >= m.xx_ ) && ( t >= m.xy_ ) && ( t >= m.xz_ ) &&
-		 ( t >= m.yx_ ) && ( t >= m.yy_ ) && ( t >= m.yz_ ) &&
-		 ( t >= m.zx_ ) && ( t >= m.zy_ ) && ( t >= m.zz_ );
+			( t >= m.xx_ ) && ( t >= m.xy_ ) && ( t >= m.xz_ ) &&
+			( t >= m.yx_ ) && ( t >= m.yy_ ) && ( t >= m.yz_ ) &&
+			( t >= m.zx_ ) && ( t >= m.zy_ ) && ( t >= m.zz_ );
 	}
 
 
@@ -2055,9 +2055,9 @@ public: // Comparison
 	operator >( Value const & t, xyzMatrix const & m )
 	{
 		return
-		 ( t > m.xx_ ) && ( t > m.xy_ ) && ( t > m.xz_ ) &&
-		 ( t > m.yx_ ) && ( t > m.yy_ ) && ( t > m.yz_ ) &&
-		 ( t > m.zx_ ) && ( t > m.zy_ ) && ( t > m.zz_ );
+			( t > m.xx_ ) && ( t > m.xy_ ) && ( t > m.xz_ ) &&
+			( t > m.yx_ ) && ( t > m.yy_ ) && ( t > m.yz_ ) &&
+			( t > m.zx_ ) && ( t > m.zy_ ) && ( t > m.zz_ );
 	}
 
 	/// @brief Show

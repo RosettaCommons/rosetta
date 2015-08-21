@@ -29,7 +29,7 @@
 
 // C++ Headers
 
-namespace protocols { 
+namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
@@ -51,19 +51,19 @@ public:
 private:
 	std::string mode_;
 	std::string state_;
- 	core::Real probe_radius_; 
+	core::Real probe_radius_;
 	core::Real core_asa_;
 	core::Real surface_asa_;
 	std::string jump_nums_;
 	std::string sym_dof_names_;
-	bool core_;	
-	bool boundary_;	
-	bool surface_;	
-	bool verbose_;	
+	bool core_;
+	bool boundary_;
+	bool surface_;
+	bool verbose_;
 };
 
 } //namespace task_operations
 } //namespace toolbox
 } //namespace protocols
 
-#endif 
+#endif

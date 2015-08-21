@@ -70,7 +70,7 @@ residue_selector_single_from_line( std::string const & line )
 			name3s.push_back( name3 );
 			l >> name3;
 		}
-		if( !name3s.empty() )  return ResidueTypeSelectorSingleOP( new Selector_NAME3( name3s, desired_result ) );
+		if ( !name3s.empty() )  return ResidueTypeSelectorSingleOP( new Selector_NAME3( name3s, desired_result ) );
 
 	} else if ( tag == "PROPERTY" ) {
 		std::string property;
@@ -92,10 +92,10 @@ residue_selector_single_from_line( std::string const & line )
 		}
 		if ( !variant_types.empty() ) return ResidueTypeSelectorSingleOP( new Selector_VARIANT_TYPE( variant_types, desired_result ) );
 
-	} else if (tag == "UPPER_POSITION") {  // This is the position label at which the upper connection is attached.
+	} else if ( tag == "UPPER_POSITION" ) {  // This is the position label at which the upper connection is attached.
 		uint position;
 		l >> position;
-		if (position) {
+		if ( position ) {
 			return ResidueTypeSelectorSingleOP( new Selector_UPPER_POSITION(position, desired_result) );
 		}
 
@@ -114,7 +114,7 @@ ResidueTypeSelector::select( ResidueTypeSet const & rsd_set )
 {
 	ResidueTypeCOPs rsd_list;
 	for ( ResidueTypeCOPs::const_iterator it= rsd_set.residue_types_DO_NOT_USE().begin(), ite= rsd_set.residue_types_DO_NOT_USE().end();
-				it != ite; ++it ) {
+			it != ite; ++it ) {
 		if ( operator[]( **it ) ) rsd_list.push_back( *it );
 	}
 	return rsd_list;
@@ -127,7 +127,7 @@ Selector_CMDFLAG::Selector_CMDFLAG(std::string  const & flag_in, bool const resu
 	b_flag_is_present_ = false;
 	if ( !option[ OptionKeys::chemical::patch_selectors ].user() ) return;
 	for ( StringVectorOption::const_iterator it = option[ OptionKeys::chemical::patch_selectors ]().begin(),
-				eit = option[ OptionKeys::chemical::patch_selectors ]().end(); it != eit ; ++ it ) {
+			eit = option[ OptionKeys::chemical::patch_selectors ]().end(); it != eit ; ++ it ) {
 		if ( *it == flag_in ) {
 			b_flag_is_present_ = true;
 			break;

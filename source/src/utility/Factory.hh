@@ -21,7 +21,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/function.hpp>
 #include <boost/functional/factory.hpp>
-#include <utility/exit.hh> 
+#include <utility/exit.hh>
 #include <string>
 #include <map>
 
@@ -30,24 +30,24 @@ namespace utility {
 template < class T >
 class Factory {
 
-		typedef typename boost::scoped_ptr < Factory<T> > FactorySCP;
-		typedef typename boost::shared_ptr < T > TSP;
-		typedef typename boost::function< TSP () > Creator;
-		typedef typename std::map<std::string, Creator> CreatorMap;
-		typedef typename CreatorMap::const_iterator cmap_itr;
+	typedef typename boost::scoped_ptr < Factory<T> > FactorySCP;
+	typedef typename boost::shared_ptr < T > TSP;
+	typedef typename boost::function< TSP () > Creator;
+	typedef typename std::map<std::string, Creator> CreatorMap;
+	typedef typename CreatorMap::const_iterator cmap_itr;
 
-		private:
-    Factory(){};
-  public:
-    ~Factory(){}
-    static Factory * get_instance();
-				TSP from_string( std::string const & name );
-				bool has_string( std::string const & name );
-    void register_string( std::string const & name, Creator m );
+private:
+	Factory(){};
+public:
+	~Factory(){}
+	static Factory * get_instance();
+	TSP from_string( std::string const & name );
+	bool has_string( std::string const & name );
+	void register_string( std::string const & name, Creator m );
 
-  private:
-    static FactorySCP factory_;
-				CreatorMap cmap_;
+private:
+	static FactorySCP factory_;
+	CreatorMap cmap_;
 };
 
 template < typename T >
@@ -55,55 +55,58 @@ typename Factory<T>::FactorySCP Factory<T>::factory_( 0 ); // initialize the sin
 
 template < class T >
 bool Factory<T>::has_string( std::string const & name ) {
-		typename Factory<T>::cmap_itr itr =  cmap_.find( name );
-		if( itr != cmap_.end() ) {
-				return true;
-		} else {
-				return false;
-		}
+	typename Factory<T>::cmap_itr itr =  cmap_.find( name );
+	if ( itr != cmap_.end() ) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 template < class T >
 typename Factory<T>::TSP Factory<T>::from_string( std::string const & name ) {
-		typename Factory<T>::cmap_itr itr =  cmap_.find( name );
-		if( itr != cmap_.end() ) {
-				if ( ! itr->second ) 
-					utility_exit_with_message( "Error: String \"" + name + "\" is registered, but points to an invalid create() function.  Check where you registered with this factory that you are passing the right function when you call register_string().");
-				TSP m = itr->second();
-				return m->create();
-		} else {
-					utility_exit_with_message( "Error: String \"" + name + "\" is not registered.  Are you sure you registered that string with this Factory?  Try checking protocols/init/init.<something>Factory.ihh for " + name + ", boost::factory seems to point to invalid functor" );
-				return TSP();
+	typename Factory<T>::cmap_itr itr =  cmap_.find( name );
+	if ( itr != cmap_.end() ) {
+		if ( ! itr->second ) {
+			utility_exit_with_message( "Error: String \"" + name + "\" is registered, but points to an invalid create() function.  Check where you registered with this factory that you are passing the right function when you call register_string().");
 		}
+		TSP m = itr->second();
+		return m->create();
+	} else {
+		utility_exit_with_message( "Error: String \"" + name + "\" is not registered.  Are you sure you registered that string with this Factory?  Try checking protocols/init/init.<something>Factory.ihh for " + name + ", boost::factory seems to point to invalid functor" );
+		return TSP();
+	}
 }
 
 template < class T >
 Factory<T> * Factory<T>::get_instance() {
-  if ( ! factory_ ) {
-				typename Factory<T>::FactorySCP tmp(new Factory<T>());
-				factory_.swap( tmp );
-		}
-		return factory_.get();
+	if ( ! factory_ ) {
+		typename Factory<T>::FactorySCP tmp(new Factory<T>());
+		factory_.swap( tmp );
+	}
+	return factory_.get();
 }
 
 // need to change all these to actually throw exceptions
 template < class T >
 void Factory<T>::register_string( std::string const & name, Creator m ) {
-		if ( name == "UNDEFINED NAME" )
-				utility_exit_with_message("Can't map derived object with undefined type name. In english, you're trying to register a class that doesn't have a name() function");
-		if ( cmap_.find( name ) != cmap_.end() )
-				utility_exit_with_message("Factory already has a Creator with name \"" + name + "\".  Conflicting object names" );
-		cmap_[name] = m;
+	if ( name == "UNDEFINED NAME" ) {
+		utility_exit_with_message("Can't map derived object with undefined type name. In english, you're trying to register a class that doesn't have a name() function");
+	}
+	if ( cmap_.find( name ) != cmap_.end() ) {
+		utility_exit_with_message("Factory already has a Creator with name \"" + name + "\".  Conflicting object names" );
+	}
+	cmap_[name] = m;
 }
 
 
 template <class T, class U>
 class FactoryRegister {
 public:
-    FactoryRegister(){
-      Factory<T> * factory = Factory<T>::get_instance();
-      factory->register_string( U::name(), boost::factory< boost::shared_ptr< U > >() );
-    }
+	FactoryRegister(){
+		Factory<T> * factory = Factory<T>::get_instance();
+		factory->register_string( U::name(), boost::factory< boost::shared_ptr< U > >() );
+	}
 };
 
 } //utility

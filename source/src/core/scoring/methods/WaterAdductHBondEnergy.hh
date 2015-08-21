@@ -93,17 +93,17 @@ public:
 	) const {}
 
 
- 	virtual
- 	void
- 	eval_atom_derivative(
- 		id::AtomID const & atom_id,
- 		pose::Pose const & pose,
+	virtual
+	void
+	eval_atom_derivative(
+		id::AtomID const & atom_id,
+		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
- 		ScoreFunction const &,
- 		EnergyMap const & weights,
- 		Vector & F1,
- 		Vector & F2
- 	) const;
+		ScoreFunction const &,
+		EnergyMap const & weights,
+		Vector & F1,
+		Vector & F2
+	) const;
 
 	void
 	get_atom_h2o_hbond_derivative(
@@ -132,8 +132,8 @@ public:
 private:
 
 	core::scoring::WaterAdductHBondPotential const & potential_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

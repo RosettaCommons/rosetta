@@ -47,9 +47,9 @@ public:
 	using Pool_RMSD::evaluate_and_add;
 
 	core::Size evaluate_and_add(
-			core::pose::Pose const& pose,
-			std::string& best_decoy,
-			core::Real& best_rmsd);
+		core::pose::Pose const& pose,
+		std::string& best_decoy,
+		core::Real& best_rmsd);
 
 
 	void set_discovered_out( std::string const& newout );
@@ -71,12 +71,12 @@ public:
 	core::Real resolved_level_best_rmsd( Address& addr, utility::vector1< core::Real > & rmsd );
 
 	bool is_new_structure( Address & address,
-			 utility::vector1< core::Real > & radii,
-			 utility::vector1< core::Real > & rmsds );
+		utility::vector1< core::Real > & radii,
+		utility::vector1< core::Real > & rmsds );
 
 	bool is_new_structure( Address & address,
-			 utility::vector1< core::Real > & radii,
-			 core::Real & rmsds );
+		utility::vector1< core::Real > & radii,
+		core::Real & rmsds );
 
 	core::Size find_address( Address & query_addr, utility::vector1< Address > & address_database );
 

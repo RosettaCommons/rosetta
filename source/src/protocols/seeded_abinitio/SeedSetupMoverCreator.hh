@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// 
+///
 /// @author Eva-Maria Strauch (evas01@u.washington.edu), May 2011
 
 
@@ -18,18 +18,18 @@
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
-	namespace seeded_abinitio{
-		
-		class SeedSetupMoverCreator : public moves::MoverCreator
-		{
-		public:
-			virtual moves::MoverOP create_mover() const;
-			virtual std::string keyname() const;
-			static  std::string mover_name();
-			
-		};
-		
-	}
+namespace seeded_abinitio {
+
+class SeedSetupMoverCreator : public moves::MoverCreator
+{
+public:
+	virtual moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
+	static  std::string mover_name();
+
+};
+
+}
 }
 
 #endif

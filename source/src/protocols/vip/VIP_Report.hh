@@ -22,17 +22,17 @@ namespace vip {
 class VIP_Report
 {
 
-	public:
-                VIP_Report();
-                virtual ~VIP_Report();
+public:
+	VIP_Report();
+	virtual ~VIP_Report();
 
-//		void define_report_file();
-//		void close_report_file();
-		void get_GOE_repack_report( core::pose::Pose & goe_native, utility::vector1<core::Real> & goe_repack_e, utility::vector1<core::conformation::ResidueOP> & goe_repack_res, utility::vector1<core::Size> & goe_repack_pos, core::Size it, bool use_stored, core::Real stored_e );
-		void get_GOE_relaxed_report( core::pose::Pose & goe_native, utility::vector1<core::Real> & goe_repack_e, utility::vector1<core::conformation::ResidueOP> & goe_repack_res, utility::vector1<core::Size> & goe_repack_pos, core::Size it, bool use_stored, core::Real stored_e );
-		void get_GOE_packstat_report(   core::pose::Pose & goe_native, utility::vector1<core::pose::Pose> & goe_relax );
+	//  void define_report_file();
+	//  void close_report_file();
+	void get_GOE_repack_report( core::pose::Pose & goe_native, utility::vector1<core::Real> & goe_repack_e, utility::vector1<core::conformation::ResidueOP> & goe_repack_res, utility::vector1<core::Size> & goe_repack_pos, core::Size it, bool use_stored, core::Real stored_e );
+	void get_GOE_relaxed_report( core::pose::Pose & goe_native, utility::vector1<core::Real> & goe_repack_e, utility::vector1<core::conformation::ResidueOP> & goe_repack_res, utility::vector1<core::Size> & goe_repack_pos, core::Size it, bool use_stored, core::Real stored_e );
+	void get_GOE_packstat_report(   core::pose::Pose & goe_native, utility::vector1<core::pose::Pose> & goe_relax );
 
-//		friend class VIP_Mover;
+	//  friend class VIP_Mover;
 };
 
 }}

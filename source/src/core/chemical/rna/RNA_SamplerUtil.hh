@@ -19,26 +19,26 @@
 
 namespace core {
 namespace chemical {
-namespace rna{
+namespace rna {
 
 void add_values_from_center(
 	utility::vector1<core::Real> & torsions,
 	Real const center,
 	Real const max_range,
-	Real const bin_size	);
+	Real const bin_size );
 
 utility::vector1< Real >
 get_full_torsions( Real const bin_size = 20.0 );
 
 utility::vector1< Real >
 get_epsilon_torsions( Real const delta,
-											bool const extra_epsilon,
-											Real const bin_size /* = 20.0*/ );
+	bool const extra_epsilon,
+	Real const bin_size /* = 20.0*/ );
 
 utility::vector1< Real >
 get_epsilon_torsions( bool const north_pucker,
-											bool const extra_epsilon = true,
-											Real const bin_size = 20.0 );
+	bool const extra_epsilon = true,
+	Real const bin_size = 20.0 );
 
 
 } //ns rna

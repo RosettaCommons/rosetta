@@ -39,18 +39,18 @@ namespace protein_interface_design {
 namespace filters {
 
 LRmsdFilter::LRmsdFilter() :
-  protocols::filters::Filter( "LRmsd" ),
-  threshold_( 5.0 ),
-  reference_pose_( /* NULL */ )
+	protocols::filters::Filter( "LRmsd" ),
+	threshold_( 5.0 ),
+	reference_pose_( /* NULL */ )
 {}
 
 LRmsdFilter::LRmsdFilter(protocols::docking::DockJumps const movable_jumps,
-			 core::Real const threshold,
-			 core::pose::PoseOP reference_pose)
-  : protocols::filters::Filter( "LRmsd" ),
-    threshold_(threshold),
-    reference_pose_(reference_pose),
-    movable_jumps_(movable_jumps)
+	core::Real const threshold,
+	core::pose::PoseOP reference_pose)
+: protocols::filters::Filter( "LRmsd" ),
+	threshold_(threshold),
+	reference_pose_(reference_pose),
+	movable_jumps_(movable_jumps)
 {}
 
 LRmsdFilter::~LRmsdFilter() {}
@@ -64,7 +64,7 @@ static thread_local basic::Tracer TR( "protocols.protein_interface_design.filter
 core::Real
 LRmsdFilter::compute( core::pose::Pose const & pose ) const
 {
-  return protocols::docking::calc_Lrmsd(pose, *reference_pose_, movable_jumps_);
+	return protocols::docking::calc_Lrmsd(pose, *reference_pose_, movable_jumps_);
 }
 
 bool
@@ -72,12 +72,10 @@ LRmsdFilter::apply( core::pose::Pose const & pose ) const {
 
 	core::Real const rmsd( compute( pose ));
 	TR << "L_rmsd: " << rmsd ;
-	if( rmsd <= threshold_ )
-	{
+	if ( rmsd <= threshold_ ) {
 		TR<<" passing."<<std::endl;
 		return( true );
-	}
-	else TR<<" failing." << std::endl;
+	} else TR<<" failing." << std::endl;
 	return( false );
 }
 
@@ -99,13 +97,13 @@ LRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &
 	/// @details
 	///if the save pose mover has been instantiated, this filter can calculate the rms
 	///against the ref pose
-	if( tag->hasOption("reference_name") ){
+	if ( tag->hasOption("reference_name") ) {
 		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data_map );
-	}
-	else{
+	} else {
 		reference_pose_ = core::pose::PoseOP( new core::pose::Pose( reference_pose ) );
-		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() )
+		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 			core::import_pose::pose_from_pdb( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] );
+		}
 	}
 
 	threshold_ = tag->getOption<core::Real>( "threshold", 5 );

@@ -102,10 +102,10 @@ fix_with_coord_cst( Loops const& rigid, core::pose::Pose& pose, bool bCstAllAtom
 		weights.resize( pose.total_residue() );
 	}
 
-  for ( Loops::const_iterator it = rigid.begin(), eit = rigid.end();
-	it!=eit; ++it ) {
-    for ( Size pos = it->start(); pos <= it->stop(); ++pos ) {
-      Size const seq_dist( std::min( (int) pos - it->start(), (int) it->stop() - pos ) + 1);
+	for ( Loops::const_iterator it = rigid.begin(), eit = rigid.end();
+			it!=eit; ++it ) {
+		for ( Size pos = it->start(); pos <= it->stop(); ++pos ) {
+			Size const seq_dist( std::min( (int) pos - it->start(), (int) it->stop() - pos ) + 1);
 			Real coord_sdev;
 			if ( bReadWeights ) {
 				coord_sdev = weights[ pos ];
@@ -122,7 +122,7 @@ fix_with_coord_cst( Loops const& rigid, core::pose::Pose& pose, bool bCstAllAtom
 						id::AtomID( 1, pos ) /*this is completely ignored! */,
 						rsd.xyz( ii ),
 						fx
-					) ) ) );
+						) ) ) );
 				}
 			} else {
 				id::AtomID atomID( pose.residue_type(pos).atom_index("CA"), pos );
@@ -131,7 +131,7 @@ fix_with_coord_cst( Loops const& rigid, core::pose::Pose& pose, bool bCstAllAtom
 					id::AtomID( 1, pos ) /*this is completely ignored! */,
 					rsd.xyz( atomID.atomno() ),
 					fx
-				) ) ) );
+					) ) ) );
 			}
 		}
 	}
@@ -139,10 +139,10 @@ fix_with_coord_cst( Loops const& rigid, core::pose::Pose& pose, bool bCstAllAtom
 
 /// @brief get frags that are fully within the Loop --- shorten(=true/false) frags that are close to the end of loops.
 void select_loop_frags(
-				 loops::Loops const& loops,
-				 core::fragment::FragSet& source,
-				 core::fragment::FragSet& loop_frags,
-				 Size shorten
+	loops::Loops const& loops,
+	core::fragment::FragSet& source,
+	core::fragment::FragSet& loop_frags,
+	Size shorten
 ) {
 	using namespace core::fragment;
 	//assuming backbone degrees of freedom are wanted by the loops.
@@ -175,7 +175,7 @@ void select_loop_frags(
 		FrameList copy_frames;
 		source.frames( pos, copy_frames );
 		for ( FrameList::iterator it = copy_frames.begin(), eit = copy_frames.end();
-					it!=eit; ++it ) {
+				it!=eit; ++it ) {
 			TR.Trace << "add frame at pos " << pos << " " << (*it)->length() << " insert_size " << size << std::endl;
 			if ( (*it)->length() == size ) loop_frags.add( *it );
 			else if ( shorten && size > shorten ) loop_frags.add( (*it)->generate_sub_frame( size ) );
@@ -184,37 +184,39 @@ void select_loop_frags(
 } //select_loop_frags
 
 void safe_set_extended_torsions_and_idealize_loops(const protocols::loops::Loops& loops,
-                                                   core::pose::Pose* pose) {
-  if (loops.empty())
-    return;
+	core::pose::Pose* pose) {
+	if ( loops.empty() ) {
+		return;
+	}
 
-  set_extended_torsions_and_idealize_loops(*pose, loops);
+	set_extended_torsions_and_idealize_loops(*pose, loops);
 }
 
 void set_extended_torsions_and_idealize_loops(core::pose::Pose& pose, loops::Loops loops) {
-  using core::Size;
-  using core::conformation::Conformation;
-  using protocols::loops::Loop;
-  using protocols::loops::Loops;
+	using core::Size;
+	using core::conformation::Conformation;
+	using protocols::loops::Loop;
+	using protocols::loops::Loops;
 
 	// if no loops, we want to have extended structure everywhere.
 	// it is a by-value parameter -- as intenden the change is kept local
-	if (loops.empty())
+	if ( loops.empty() ) {
 		loops.add_loop(1, pose.total_residue(), 0);
+	}
 
 	TR.Debug << "extend structure for " << loops << std::endl;
 
-  Conformation& conf = pose.conformation();
-  for (Loops::const_iterator i = loops.begin(); i != loops.end(); ++i) {
-    const Loop& loop = *i;
+	Conformation& conf = pose.conformation();
+	for ( Loops::const_iterator i = loops.begin(); i != loops.end(); ++i ) {
+		const Loop& loop = *i;
 
-    for (Size j = loop.start(); j <= loop.stop(); ++j) {
+		for ( Size j = loop.start(); j <= loop.stop(); ++j ) {
 			core::conformation::idealize_position(j, conf);
-      pose.set_phi(j, EXT_PHI);
-      pose.set_psi(j, EXT_PSI);
-      pose.set_omega(j, EXT_OMG);
-    }
-  }
+			pose.set_phi(j, EXT_PHI);
+			pose.set_psi(j, EXT_PSI);
+			pose.set_omega(j, EXT_OMG);
+		}
+	}
 }
 
 void addScoresForLoopParts(
@@ -229,16 +231,16 @@ void addScoresForLoopParts(
 
 	Size nres = pose.total_residue();
 	utility::vector1< core::Size > all_loop_list;
-	for( Size i = 1; i < nres; i ++ ){
-		if( loops.is_loop_residue(i) ) all_loop_list.push_back( i );
+	for ( Size i = 1; i < nres; i ++ ) {
+		if ( loops.is_loop_residue(i) ) all_loop_list.push_back( i );
 	}
 	scorefxn(pose);
-	setPoseExtraScore( pose, "ScoreCore", 	scorefxn.get_sub_score_exclude_res( pose, all_loop_list ) );
+	setPoseExtraScore( pose, "ScoreCore",  scorefxn.get_sub_score_exclude_res( pose, all_loop_list ) );
 
 	Real score =  scorefxn(pose);
 
-	for( Size l = 1; l <= nloops; l++ ){
-		if( l > loops.size() ){
+	for ( Size l = 1; l <= nloops; l++ ) {
+		if ( l > loops.size() ) {
 			setPoseExtraScore( pose, "ScoreLoopI" + ObjexxFCL::right_string_of(l,3,'0'), 0 );
 			setPoseExtraScore( pose, "ScoreLoopC" + ObjexxFCL::right_string_of(l,3,'0'), 0 );
 			setPoseExtraScore( pose, "ScoreLoopL" + ObjexxFCL::right_string_of(l,3,'0'), 0 );
@@ -246,10 +248,10 @@ void addScoresForLoopParts(
 		}
 		utility::vector1< core::Size > loop_list;
 		utility::vector1< core::Size > non_loop_list;
-		for( Size i = 1; i < nres; i ++ ){
-			if( ( i < loops[l].start() ) || ( i > loops[l].stop() ) ){
+		for ( Size i = 1; i < nres; i ++ ) {
+			if ( ( i < loops[l].start() ) || ( i > loops[l].stop() ) ) {
 				loop_list.push_back( i );
-			}else{
+			} else {
 				non_loop_list.push_back( i );
 			}
 		}
@@ -269,7 +271,7 @@ void addScoresForLoopParts(
 	for ( core::Size ir=1; ir <= native_pose.total_residue(); ++ir ) {
 		runtime_assert( ir <=  pose.total_residue() );
 		runtime_assert( ir <=  native_pose_super.total_residue() );
-		if( ( !loops.is_loop_residue( ir ) ) && pose.residue(ir).is_protein() ) {
+		if ( ( !loops.is_loop_residue( ir ) ) && pose.residue(ir).is_protein() ) {
 			id::AtomID const id1( native_pose_super.residue(ir).atom_index("CA"), ir );
 			id::AtomID const id2( pose.residue(ir).atom_index("CA"), ir );
 			atom_map.set(id1, id2);
@@ -278,17 +280,17 @@ void addScoresForLoopParts(
 	core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
 
 	int corelength;
-	setPoseExtraScore(	pose, "corerms", native_loop_core_CA_rmsd( native_pose, pose, loops, corelength )	);
+	setPoseExtraScore( pose, "corerms", native_loop_core_CA_rmsd( native_pose, pose, loops, corelength ) );
 
-	for( Size l = 1; l <= nloops; l++ ){
-		if( l > loops.size() ){
+	for ( Size l = 1; l <= nloops; l++ ) {
+		if ( l > loops.size() ) {
 			setPoseExtraScore( pose, "RMSLoop" + ObjexxFCL::right_string_of(l,3,'0'), 0 );
 			continue;
 		}
 		Loops temploops;
 		temploops.add_loop( loops[l] );
 		setPoseExtraScore( pose, "RMSLoop" + ObjexxFCL::right_string_of(l,3,'0'),
-												loops::loop_rmsd( native_pose_super, pose, temploops, true ) );
+			loops::loop_rmsd( native_pose_super, pose, temploops, true ) );
 	}
 }
 
@@ -338,92 +340,93 @@ core::scoring::ScoreFunctionOP get_fa_scorefxn() {
 
 
 void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::pose::Pose &constraint_target_pose,  protocols::loops::Loops &exclude_regions ){
-  using namespace conformation;
-  using namespace core;
-  using namespace core::scoring;
-  using namespace core::scoring::constraints;
-  using namespace id;
-  using namespace scoring::constraints;
+	using namespace conformation;
+	using namespace core;
+	using namespace core::scoring;
+	using namespace core::scoring::constraints;
+	using namespace id;
+	using namespace scoring::constraints;
 
-  core::Size nnonvrt_cst_target = constraint_target_pose.total_residue();
-  core::Size nnonvrt_pose = pose.total_residue();
+	core::Size nnonvrt_cst_target = constraint_target_pose.total_residue();
+	core::Size nnonvrt_pose = pose.total_residue();
 
-  while ( pose.residue( nnonvrt_pose ).aa() == core::chemical::aa_vrt ) { nnonvrt_pose--; }
-  while ( constraint_target_pose.residue( nnonvrt_cst_target ).aa() == core::chemical::aa_vrt ) { nnonvrt_cst_target--; }
+	while ( pose.residue( nnonvrt_pose ).aa() == core::chemical::aa_vrt ) { nnonvrt_pose--; }
+	while ( constraint_target_pose.residue( nnonvrt_cst_target ).aa() == core::chemical::aa_vrt ) { nnonvrt_cst_target--; }
 
-  protocols::loops::Loops coordconstraint_segments;
-  coordconstraint_segments = exclude_regions.invert( nnonvrt_cst_target );
+	protocols::loops::Loops coordconstraint_segments;
+	coordconstraint_segments = exclude_regions.invert( nnonvrt_cst_target );
 
-  //TR.Info << coordconstraint_segments << std::endl;
+	//TR.Info << coordconstraint_segments << std::endl;
 
-  if ( nnonvrt_pose != nnonvrt_cst_target ) {
-    TR.Error << "ERROR coord constraint pose length mismatch with input pose: " << nnonvrt_cst_target << " vs. " << nnonvrt_pose << std::endl;
-    utility_exit();
-  }
+	if ( nnonvrt_pose != nnonvrt_cst_target ) {
+		TR.Error << "ERROR coord constraint pose length mismatch with input pose: " << nnonvrt_cst_target << " vs. " << nnonvrt_pose << std::endl;
+		utility_exit();
+	}
 
-  if ( pose.residue( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
-    pose.append_residue_by_jump
-      ( *ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map( "VRT" ) ),
-        pose.total_residue()/2 );
-  }
+	if ( pose.residue( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
+		pose.append_residue_by_jump
+			( *ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map( "VRT" ) ),
+			pose.total_residue()/2 );
+	}
 
 
-  Size nres = pose.total_residue();
-  Real const coord_sdev( 0.5 );
-  core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) );
-  
-  for ( Size i = 1; i<= (Size)nres; ++i ) {
-    if ( i==(Size)pose.fold_tree().root() ) continue;
-    if( coordconstraint_segments.is_loop_residue( i ) ) {
-      Residue const & nat_i_rsd( pose.residue(i) );
-      for ( Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
-        pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint(
-          AtomID(ii,i), AtomID(1,nres), nat_i_rsd.xyz( ii ),
-          fx ) ) ) );
-      }
-    }
-  }
+	Size nres = pose.total_residue();
+	Real const coord_sdev( 0.5 );
+	core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) );
+
+	for ( Size i = 1; i<= (Size)nres; ++i ) {
+		if ( i==(Size)pose.fold_tree().root() ) continue;
+		if ( coordconstraint_segments.is_loop_residue( i ) ) {
+			Residue const & nat_i_rsd( pose.residue(i) );
+			for ( Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
+				pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint(
+					AtomID(ii,i), AtomID(1,nres), nat_i_rsd.xyz( ii ),
+					fx ) ) ) );
+			}
+		}
+	}
 
 }
 
 LoopsOP
 loops_from_string( std::string const & loop_str, core::pose::Pose const & pose ){
-  utility::vector1< std::string > const loops_vec( utility::string_split( loop_str, ',' ) );
+	utility::vector1< std::string > const loops_vec( utility::string_split( loop_str, ',' ) );
 
-// each loop should have the format loop_start:loop_end:cut
-// if cut is not set then it's taken to be 0. Residue numbering can follow the
-// pdb numbering
-  LoopsOP loops_from_tag( new Loops() );
- 	BOOST_FOREACH( std::string const residue_pair, loops_vec ){
-    utility::vector1< std::string > const residues( utility::string_split( residue_pair, ':' ) );
-		if(residues.size() != 2 && residues.size() != 3){
+	// each loop should have the format loop_start:loop_end:cut
+	// if cut is not set then it's taken to be 0. Residue numbering can follow the
+	// pdb numbering
+	LoopsOP loops_from_tag( new Loops() );
+	BOOST_FOREACH ( std::string const residue_pair, loops_vec ) {
+		utility::vector1< std::string > const residues( utility::string_split( residue_pair, ':' ) );
+		if ( residues.size() != 2 && residues.size() != 3 ) {
 			utility_exit_with_message(
 				"To specify a loops string it must have the format "
 				"\"loop_start:loop_end:cut[,loop_start:loop_end:cut...]\". "
 				"If the cut is not set, then it is taken to be zero. "
 				"The residue numbering can use the pdb numbering.");
 		}
-    core::Size const loop_start( core::pose::parse_resnum( residues[ 1 ], pose ) );
-    core::Size const loop_stop( core::pose::parse_resnum( residues[ 2 ], pose ) );
-    core::Size loop_cut( 0 );
-	  if( residues.size() == 3 )
-      loop_cut = core::pose::parse_resnum( residues[ 3 ], pose );
-    runtime_assert( loop_start <= loop_stop );
-	  runtime_assert( loop_start >= 1 );
-    runtime_assert( loop_stop <= pose.total_residue() );
-    loops_from_tag->add_loop( loop_start, loop_stop, loop_cut );
+		core::Size const loop_start( core::pose::parse_resnum( residues[ 1 ], pose ) );
+		core::Size const loop_stop( core::pose::parse_resnum( residues[ 2 ], pose ) );
+		core::Size loop_cut( 0 );
+		if ( residues.size() == 3 ) {
+			loop_cut = core::pose::parse_resnum( residues[ 3 ], pose );
+		}
+		runtime_assert( loop_start <= loop_stop );
+		runtime_assert( loop_start >= 1 );
+		runtime_assert( loop_stop <= pose.total_residue() );
+		loops_from_tag->add_loop( loop_start, loop_stop, loop_cut );
 	}
 	return( loops_from_tag );
 }
 
 void define_scorable_core_from_secondary_structure(
-   core::fragment::SecondaryStructure const& ss_def,
-	 protocols::loops::Loops& scored_core )
+	core::fragment::SecondaryStructure const& ss_def,
+	protocols::loops::Loops& scored_core )
 {
 	using namespace core;
 	using namespace basic::options;
-	//	Size const max_loop_size( 3 );
-	//	Size const max_short_helix( 5 );
+	// Size const max_loop_size( 3 );
+	// Size const max_short_helix( 5 );
 	Size const max_loop_size( option[ OptionKeys::evaluation::score_sscore_maxloop ]() );
 	Size const max_short_helix( option[ OptionKeys::evaluation::score_sscore_short_helix ]() );
 
@@ -472,12 +475,12 @@ void define_scorable_core_from_secondary_structure(
 		}
 	}
 
-	scored_core =	removed_short_helices.invert( ss_def.total_residue() );
+	scored_core = removed_short_helices.invert( ss_def.total_residue() );
 }
 
 /// @brief Extract secondary structure chunks from the secondary structure
 protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose const & pose,
-														   char const extracted_ss_type) {
+	char const extracted_ss_type) {
 	using namespace core;
 	using protocols::loops::Loops;
 	Loops secondary_structure_chunks;
@@ -486,20 +489,18 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
 	Size chunk_start_seqpos(0);
 	Size chunk_end_seqpos(0);
 
-	for (core::Size ires = 1; ires <= pose.total_residue(); ++ires) {
-		if (!ss_chunk_started) {
-			if (pose.secstruct(ires) == extracted_ss_type) {
+	for ( core::Size ires = 1; ires <= pose.total_residue(); ++ires ) {
+		if ( !ss_chunk_started ) {
+			if ( pose.secstruct(ires) == extracted_ss_type ) {
 				ss_chunk_started = true;
 				chunk_start_seqpos = ires;
 			}
-		}
-		else {
-			if (pose.secstruct(ires) != extracted_ss_type) {
+		} else {
+			if ( pose.secstruct(ires) != extracted_ss_type ) {
 				ss_chunk_started = false;
 				chunk_end_seqpos = ires - 1;
 				secondary_structure_chunks.add_loop( chunk_start_seqpos, chunk_end_seqpos);
-			}
-			else if ( ! pose.residue_type(ires).is_protein() ) {
+			} else if ( ! pose.residue_type(ires).is_protein() ) {
 				ss_chunk_started = false;
 				chunk_end_seqpos = ires - 1;
 				secondary_structure_chunks.add_loop( chunk_start_seqpos, chunk_end_seqpos);
@@ -508,7 +509,7 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
 	}
 
 	// if the input sequence ends with the last ss chunk
-	if (ss_chunk_started) {
+	if ( ss_chunk_started ) {
 		chunk_end_seqpos = pose.total_residue();
 		secondary_structure_chunks.add_loop( chunk_start_seqpos, chunk_end_seqpos);
 	}
@@ -534,14 +535,14 @@ protocols::loops::Loops find_non_protein_chunks(core::pose::Pose const & pose) {
 	Loop new_loop;
 	bool chunk_started = false;
 
-	for (core::Size ires = 1; ires < pose.total_residue(); ++ires) {
-		if (pose.residue_type(ires).is_protein()) continue;
-		if (!chunk_started) {
+	for ( core::Size ires = 1; ires < pose.total_residue(); ++ires ) {
+		if ( pose.residue_type(ires).is_protein() ) continue;
+		if ( !chunk_started ) {
 			new_loop.set_start(ires);
 			chunk_started = true;
 		}
 
-		if (!pose.residue_type(ires).is_polymer() || pose.residue_type(ires).is_upper_terminus()) {
+		if ( !pose.residue_type(ires).is_polymer() || pose.residue_type(ires).is_upper_terminus() ) {
 			chunk_started = false;
 			new_loop.set_stop(ires);
 			chunks.add_loop(new_loop);
@@ -551,20 +552,20 @@ protocols::loops::Loops find_non_protein_chunks(core::pose::Pose const & pose) {
 }
 
 protocols::loops::Loops split_by_resSeq(core::pose::Pose const & pose,
-										protocols::loops::Loops const & input_chunks) {
+	protocols::loops::Loops const & input_chunks) {
 	using protocols::loops::Loop;
 	using protocols::loops::Loops;
-    Loops chunks;
+	Loops chunks;
 
 	Loops::LoopList::const_iterator eit, it;
 	for (  it = input_chunks.begin(), eit = input_chunks.end();
-		 it != eit; ++it ) {
+			it != eit; ++it ) {
 
 		Loop new_loop(*it);
 
-		for (core::Size ires = it->start(); ires < it->stop(); ++ires) {
+		for ( core::Size ires = it->start(); ires < it->stop(); ++ires ) {
 			if ( pose.pdb_info()->number(ires+1) - pose.pdb_info()->number(ires) != 1 ||
-				pose.pdb_info()->chain(ires+1) != pose.pdb_info()->chain(ires) ) {
+					pose.pdb_info()->chain(ires+1) != pose.pdb_info()->chain(ires) ) {
 				new_loop.set_stop(ires);
 				chunks.add_loop(new_loop);
 
@@ -579,31 +580,30 @@ protocols::loops::Loops split_by_resSeq(core::pose::Pose const & pose,
 }
 
 protocols::loops::Loops split_by_ca_ca_dist(core::pose::Pose const & pose,
-											protocols::loops::Loops const & input_chunks,
-											core::Real const CA_CA_distance_cutoff) {
+	protocols::loops::Loops const & input_chunks,
+	core::Real const CA_CA_distance_cutoff) {
 	using protocols::loops::Loop;
 	using protocols::loops::Loops;
 	Loops continuous_chunks;
 
 	Loops::LoopList::const_iterator eit, it;
 	for (  it = input_chunks.begin(), eit = input_chunks.end();
-		 it != eit; ++it ) {
+			it != eit; ++it ) {
 
 		Loop new_loop(*it);
 
-		for (core::Size ires = it->start(); ires < it->stop(); ++ires) {
-			if( ! pose.residue(ires).is_protein() ) continue;
+		for ( core::Size ires = it->start(); ires < it->stop(); ++ires ) {
+			if ( ! pose.residue(ires).is_protein() ) continue;
 
-			if( pose.residue(ires+1).is_protein() ) {
-			if ( pose.residue(ires).xyz("CA").distance(pose.residue(ires+1).xyz("CA")) > CA_CA_distance_cutoff ) {
-				new_loop.set_stop(ires);
-				continuous_chunks.add_loop(new_loop);
+			if ( pose.residue(ires+1).is_protein() ) {
+				if ( pose.residue(ires).xyz("CA").distance(pose.residue(ires+1).xyz("CA")) > CA_CA_distance_cutoff ) {
+					new_loop.set_stop(ires);
+					continuous_chunks.add_loop(new_loop);
 
-				new_loop.set_start(ires+1);
-				new_loop.set_stop(it->stop());
-			}
-			}
-			else {
+					new_loop.set_start(ires+1);
+					new_loop.set_stop(it->stop());
+				}
+			} else {
 				new_loop.set_stop(ires);
 				continuous_chunks.add_loop(new_loop);
 
@@ -624,15 +624,14 @@ protocols::loops::Loops remove_small_gaps(protocols::loops::Loops const & input_
 
 	// join ss_chunks seperated by a small gap
 	core::Size i_chunk = 1;
-	while (i_chunk <= input_chunks.num_loop()) {
+	while ( i_chunk <= input_chunks.num_loop() ) {
 		Loop new_loop(input_chunks[i_chunk]);
-		while(i_chunk < input_chunks.num_loop()) {
+		while ( i_chunk < input_chunks.num_loop() ) {
 			const core::Size gap_length = input_chunks[i_chunk+1].start() - input_chunks[i_chunk].stop() - 1;
-			if (gap_length <= gap_size) {
+			if ( gap_length <= gap_size ) {
 				new_loop.set_stop(input_chunks[i_chunk+1].stop());
 				++i_chunk;
-			}
-			else {
+			} else {
 				break;
 			}
 		}
@@ -649,8 +648,8 @@ protocols::loops::Loops remove_short_chunks(protocols::loops::Loops const & inpu
 	//remove short ss_chunks
 	Loops::LoopList::const_iterator eit, it;
 	for (  it = input_chunks.begin(), eit = input_chunks.end();
-		 it != eit; ++it ) {
-		if (it->size() >= minimum_length_of_chunk) {
+			it != eit; ++it ) {
+		if ( it->size() >= minimum_length_of_chunk ) {
 			secondary_structure_chunks.add_loop(*it);
 		}
 	}
@@ -659,15 +658,15 @@ protocols::loops::Loops remove_short_chunks(protocols::loops::Loops const & inpu
 
 // gap_size- if two chunks are seperated by a gap of this size (or less), consider them one big chunk
 protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose const & pose,
-														   std::string extracted_ss_types,
-														   core::Size gap_size,
-														   core::Size minimum_length_of_chunk_helix,
-														   core::Size minimum_length_of_chunk_strand,
-														   core::Real CA_CA_distance_cutoff) {
+	std::string extracted_ss_types,
+	core::Size gap_size,
+	core::Size minimum_length_of_chunk_helix,
+	core::Size minimum_length_of_chunk_strand,
+	core::Real CA_CA_distance_cutoff) {
 	using protocols::loops::Loops;
 	Loops secondary_structure_chunks;
 
-	for (core::Size i_ss = 0; i_ss < extracted_ss_types.size(); ++i_ss) {
+	for ( core::Size i_ss = 0; i_ss < extracted_ss_types.size(); ++i_ss ) {
 		char ss = extracted_ss_types[i_ss];
 		Loops secondary_structure_chunks_this_ss;
 
@@ -676,16 +675,16 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
 		secondary_structure_chunks_this_ss = remove_small_gaps(secondary_structure_chunks_this_ss, gap_size);
 		secondary_structure_chunks_this_ss = split_by_resSeq(pose, secondary_structure_chunks_this_ss);
 		secondary_structure_chunks_this_ss = split_by_ca_ca_dist(pose, secondary_structure_chunks_this_ss, CA_CA_distance_cutoff);
-		if (ss == 'H') {
+		if ( ss == 'H' ) {
 			secondary_structure_chunks_this_ss = remove_short_chunks(secondary_structure_chunks_this_ss, minimum_length_of_chunk_helix);
 		}
-		if (ss == 'E') {
+		if ( ss == 'E' ) {
 			secondary_structure_chunks_this_ss = remove_short_chunks(secondary_structure_chunks_this_ss, minimum_length_of_chunk_strand);
 		}
 
 		Loops::LoopList::const_iterator eit, it;
 		for (  it = secondary_structure_chunks_this_ss.begin(), eit = secondary_structure_chunks_this_ss.end();
-			 it != eit; ++it ) {
+				it != eit; ++it ) {
 			secondary_structure_chunks.add_loop(*it);
 		}
 	}
@@ -695,16 +694,16 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
 	Loops non_prot_chunks = find_non_protein_chunks(pose);
 	Loops::LoopList::const_iterator eit, it;
 	for (  it = non_prot_chunks.begin(), eit = non_prot_chunks.end();
-		 it != eit; ++it ) {
-		secondary_structure_chunks.add_loop(*it);
+	it != eit; ++it ) {
+	secondary_structure_chunks.add_loop(*it);
 	}
 	*/
 	return secondary_structure_chunks;
 }
 
 protocols::loops::Loops extract_continuous_chunks(core::pose::Pose const & pose,
-														   core::Size const minimum_size,
-														   core::Real const CA_CA_distance_cutoff) {
+	core::Size const minimum_size,
+	core::Real const CA_CA_distance_cutoff) {
 
 	using protocols::loops::Loops;
 	Loops chunks;
@@ -723,25 +722,25 @@ has_severe_pep_bond_geom_issues(
 	core::Real max_c_n_dis, /*2.0*/
 	core::Real allowed_ca_c_n_deviation, /* 25.0 */
 	core::Real allowed_c_n_ca_deviation /* 25.0*/ ) {
-	
+
 	//JAB - these values are based on the CDL.  No peptide bond without severe chainbreaks or missing residues should have values
 	// out of this range.  This can also indicate verypoorly solved crystal structures.
 	// Berkholz DS, Shapovalov MV, Dunbrack RL Jr, Karplus PA (2009)
-	// Conformation dependence of backbone geometry in proteins. Structure 17: 1316–1325. 
+	// Conformation dependence of backbone geometry in proteins. Structure 17: 1316–1325.
 	//
-	
+
 	TR << "checking peptide bond geometry: " << std::endl;
-	for (core::Size i =  loop.start(); i <= loop.stop() - 1; ++i){
+	for ( core::Size i =  loop.start(); i <= loop.stop() - 1; ++i ) {
 		std::pair<bool, core::Size> checked = has_severe_pep_bond_geom_issues(
 			pose, i, check_bonds, check_angles, max_c_n_dis, allowed_ca_c_n_deviation, allowed_c_n_ca_deviation);
-			
-		if (checked.first) return checked;
+
+		if ( checked.first ) return checked;
 		else {
 			continue;
 		}
-		
+
 	}
-	
+
 	return std::make_pair(false, 0);
 
 }
@@ -758,63 +757,62 @@ has_severe_pep_bond_geom_issues(
 {
 
 	//Skip measuring virtual residue geometry or non-protein residues.
-	if (pose.residue(resnum).is_virtual_residue() || pose.residue(resnum+1).is_virtual_residue()){
+	if ( pose.residue(resnum).is_virtual_residue() || pose.residue(resnum+1).is_virtual_residue() ) {
 		TR << "Cannot measure geometry of virtual residue" << std::endl;
 		return std::make_pair(false, 0);
 	}
-	if (! pose.residue(resnum).is_protein() || ! pose.residue(resnum+1).is_protein()){
+	if ( ! pose.residue(resnum).is_protein() || ! pose.residue(resnum+1).is_protein() ) {
 		TR << "Cannot measure geometry of non-protein residue" << std::endl;
 		return std::make_pair(false, 0);
 	}
-	
+
 	//25 degree dif default from  min/max in  CDL. 1.0 A crystal structures. This should cover NMR and MD structures as well
 	core::Real min_ca_c_n_ang = 114.5 - allowed_ca_c_n_deviation;
 	core::Real max_ca_c_n_ang = 119.5 + allowed_ca_c_n_deviation;
-	
+
 	core::Real min_c_n_ca_ang =  120.0 - allowed_c_n_ca_deviation;
 	core::Real max_c_n_ca_ang = 126.0 + allowed_c_n_ca_deviation;
-	
+
 	//core::id::AtomID n_0 = core::id::AtomID(pose.residue(i).atom_index("N"), i);
 	numeric::xyzVector<Real> const ca_0 = pose.residue(resnum).atom("CA").xyz();
 	numeric::xyzVector<Real> const c_0 = pose.residue(resnum).atom("C").xyz();
-		
-			
+
+
 	numeric::xyzVector<Real> const n_1 = pose.residue(resnum +1).atom("N").xyz();
 	numeric::xyzVector<Real> const ca_1 = pose.residue(resnum +1).atom("CA").xyz();
 	//core::id::AtomID c_1 = core::id::AtomID(pose.residue(i +1).atom_index("C"), i +1);
-		
-	
+
+
 	if ( check_bonds ) {
 		core::Real c_n_dis =c_0.distance(n_1);
-		if (c_n_dis > max_c_n_dis){
+		if ( c_n_dis > max_c_n_dis ) {
 			TR<< "PepBondGeom: "<< pose.pdb_info()->pose2pdb(resnum)<<" C-N --  " << c_n_dis << " max: " << max_c_n_dis << std::endl;
 			return std::make_pair(true, resnum);
 		}
 	}
-		
-	if ( check_angles ){
-		
+
+	if ( check_angles ) {
+
 		core::Real ca_c_n_ang = numeric::angle_degrees(ca_0, c_0, n_1);
-		core::Real c_n_ca_ang = numeric::angle_degrees(c_0, n_1, ca_1); 
+		core::Real c_n_ca_ang = numeric::angle_degrees(c_0, n_1, ca_1);
 		//core::Real ca_c_n_ang = numeric::conversions::degrees(pose.conformation().bond_angle(ca_0, c_0, n_1));
 		//core::Real c_n_ca_ang = numeric::conversions::degrees(pose.conformation().bond_angle(c_0, n_1, ca_1));
-			
-		if (ca_c_n_ang < min_ca_c_n_ang || ca_c_n_ang > max_ca_c_n_ang ) {
-			TR<< "PepBondGeom: " << resnum <<" - " << pose.pdb_info()->pose2pdb(resnum) 
-					<< " Ca-C-N --  " << min_ca_c_n_ang <<" (min): "<< ca_c_n_ang <<" : "<< max_ca_c_n_ang << " (max)"<< std::endl;
+
+		if ( ca_c_n_ang < min_ca_c_n_ang || ca_c_n_ang > max_ca_c_n_ang ) {
+			TR<< "PepBondGeom: " << resnum <<" - " << pose.pdb_info()->pose2pdb(resnum)
+				<< " Ca-C-N --  " << min_ca_c_n_ang <<" (min): "<< ca_c_n_ang <<" : "<< max_ca_c_n_ang << " (max)"<< std::endl;
+			return std::make_pair(true, resnum);
+
+		} else if ( c_n_ca_ang < min_c_n_ca_ang || c_n_ca_ang > max_c_n_ca_ang ) {
+			TR << "PepBondGeom: " << resnum << " - " << pose.pdb_info()->pose2pdb(resnum)
+				<< " C-N-Ca --  "<< min_c_n_ca_ang <<" (min) : " << c_n_ca_ang << " : "<< max_c_n_ca_ang << " (max)" << std::endl;
 			return std::make_pair(true, resnum);
 
 		}
-		else if (c_n_ca_ang < min_c_n_ca_ang || c_n_ca_ang > max_c_n_ca_ang) {
-			TR << "PepBondGeom: " << resnum << " - " << pose.pdb_info()->pose2pdb(resnum) 
-					<< " C-N-Ca --  "<< min_c_n_ca_ang <<" (min) : " << c_n_ca_ang << " : "<< max_c_n_ca_ang << " (max)" << std::endl;
-			return std::make_pair(true, resnum);
-				
-		}
 
-				
+
 	}
-	
+
 	return std::make_pair(false, 0);
 }
 

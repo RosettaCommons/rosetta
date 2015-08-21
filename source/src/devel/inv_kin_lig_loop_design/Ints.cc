@@ -25,166 +25,164 @@
 
 namespace devel {
 
-  namespace inv_kin_lig_loop_design {
+namespace inv_kin_lig_loop_design {
 
-    Ints::Ints() {
-      b_is_init = false;
-    } // Int::Ints
+Ints::Ints() {
+	b_is_init = false;
+} // Int::Ints
 
-    Ints::Ints(const string& s) {
-      b_is_init = false;
-      fromString(s);
-    } // Int::Ints
+Ints::Ints(const string& s) {
+	b_is_init = false;
+	fromString(s);
+} // Int::Ints
 
-    void Ints::clear() {
-      vInts.clear();
-      b_is_init = false;
-    } // Ints::clear
+void Ints::clear() {
+	vInts.clear();
+	b_is_init = false;
+} // Ints::clear
 
-    void Ints::add(const int i) {
-      vInts.push_back(i);
-      b_is_init = false;
-    } // Ints::add
+void Ints::add(const int i) {
+	vInts.push_back(i);
+	b_is_init = false;
+} // Ints::add
 
-    void Ints::add(const pair<int,int>& range) {
-      if( range.first <= range.second ) {
-				vRanges.push_back(range);
-      }
-      else {
-				vRanges.push_back( make_pair(range.second,range.first) );
-      }
-      b_is_init = false;
-    } // Ints::add
+void Ints::add(const pair<int,int>& range) {
+	if ( range.first <= range.second ) {
+		vRanges.push_back(range);
+	} else {
+		vRanges.push_back( make_pair(range.second,range.first) );
+	}
+	b_is_init = false;
+} // Ints::add
 
-    int Ints::getRandomInt() const {
+int Ints::getRandomInt() const {
 
-      vInit.clear();
+	vInit.clear();
 
-      if( !b_is_init ) {
-				vInit.insert( vInit.end(), vInts.begin(), vInts.end() );
-				typedef pair<int,int> pii_t;
-				FORVC( i,pii_t,vRanges ) {
-					for( int k = i->first; k <= i->second; ++k ) {
-						vInit.push_back(k);
-					} // k
-				} // i
-				b_is_init = true;
-      }
+	if ( !b_is_init ) {
+		vInit.insert( vInit.end(), vInts.begin(), vInts.end() );
+		typedef pair<int,int> pii_t;
+		FORVC ( i,pii_t,vRanges ) {
+			for ( int k = i->first; k <= i->second; ++k ) {
+				vInit.push_back(k);
+			} // k
+		} // i
+		b_is_init = true;
+	}
 
-      if( vInit.size() == 0 ) {
-				return 0;
-      }
-      else {
-				return vInit[ numeric::random::random_range(0,vInit.size()-1) ];
-      }
+	if ( vInit.size() == 0 ) {
+		return 0;
+	} else {
+		return vInit[ numeric::random::random_range(0,vInit.size()-1) ];
+	}
 
-    } // Int::getRandomInt
+} // Int::getRandomInt
 
-    void Ints::fromString(const string& s) {
-      clear();
+void Ints::fromString(const string& s) {
+	clear();
 
-      enum State { STATE_0 , STATE_1 };
+	enum State { STATE_0 , STATE_1 };
 
-      State state = STATE_0;
+	State state = STATE_0;
 
-      pair<string,string> p;
+	pair<string,string> p;
 
-      for( size_t k = 0; k < s.size(); ++k ) {
+	for ( size_t k = 0; k < s.size(); ++k ) {
 
-				switch( state ) {
-				case STATE_0:
+		switch( state ) {
+		case STATE_0 :
 
-					switch( s[k] ) {
-					case ',':
-						add( atoi( p.first.c_str() ) );
-						p.first.clear();
-						break;
-					case '-':
-						state = STATE_1;
-						break;
-					default:
-						p.first += s[k];
-						break;
-					} // switch
-					break;
-
-				case STATE_1:
-
-					switch( s[k] ) {
-					case ',':
-						add( make_pair( atoi(p.first.c_str()), atoi(p.second.c_str()) ) );
-						p.first.clear();
-						p.second.clear();
-						state = STATE_0;
-						break;
-					default:
-						p.second += s[k];
-						break;
-					} // switch
-
-					break;
-				default:
-					assert( false );
-				} // state
-
-      } // k
-
-      switch( state ) {
-      case STATE_0:
-				add( atoi(p.first.c_str()));
+			switch( s[k] ) {
+			case ',' :
+				add( atoi( p.first.c_str() ) );
 				p.first.clear();
 				break;
-      case STATE_1:
+			case '-' :
+				state = STATE_1;
+				break;
+			default :
+				p.first += s[k];
+				break;
+			} // switch
+			break;
+
+		case STATE_1 :
+
+			switch( s[k] ) {
+			case ',' :
 				add( make_pair( atoi(p.first.c_str()), atoi(p.second.c_str()) ) );
 				p.first.clear();
 				p.second.clear();
+				state = STATE_0;
 				break;
-      default:
-				assert( false );
-      } // state
+			default :
+				p.second += s[k];
+				break;
+			} // switch
 
-    } // Ints::fromString
+			break;
+		default :
+			assert( false );
+		} // state
 
-    //#define FORVC(Iter,Type,Vector) for( vector<Type>::const_iterator Iter = (Vector).begin(); Iter != (Vector).end(); ++Iter )
+	} // k
 
-    const string Ints::toString() const {
+	switch( state ) {
+	case STATE_0 :
+		add( atoi(p.first.c_str()));
+		p.first.clear();
+		break;
+	case STATE_1 :
+		add( make_pair( atoi(p.first.c_str()), atoi(p.second.c_str()) ) );
+		p.first.clear();
+		p.second.clear();
+		break;
+	default :
+		assert( false );
+	} // state
 
-      ostringstream out;
-      FORVC(k,int,vInts) {
-				if( k != vInts.begin() ) {
-					out << ",";
-				}
-				out << *k;
-      } // k
+} // Ints::fromString
 
-      if( vInts.size() != 0 && vRanges.size() != 0 ) {
-				out << ",";
-      }
+//#define FORVC(Iter,Type,Vector) for( vector<Type>::const_iterator Iter = (Vector).begin(); Iter != (Vector).end(); ++Iter )
 
-      typedef pair<int,int> pii_t;
-      FORVC(k,pii_t,vRanges) {
-				if( k != vRanges.begin() ) {
-					out << ",";
-				}
-				out << k->first << "-" << k->second;
-      } // k
+const string Ints::toString() const {
 
-      return out.str();
+	ostringstream out;
+	FORVC ( k,int,vInts ) {
+		if ( k != vInts.begin() ) {
+			out << ",";
+		}
+		out << *k;
+	} // k
 
-    } // Ints::toString
+	if ( vInts.size() != 0 && vRanges.size() != 0 ) {
+		out << ",";
+	}
 
-    ostream& operator<<(ostream& out, const Ints& ints) {
-      out << ints.toString();
-      return out;
-    } // operator<<
+	typedef pair<int,int> pii_t;
+	FORVC ( k,pii_t,vRanges ) {
+		if ( k != vRanges.begin() ) {
+			out << ",";
+		}
+		out << k->first << "-" << k->second;
+	} // k
 
-    istream& operator>>(istream& in, Ints& ints) {
-      string s;
-      in >> s;
-      ints.fromString(s);
-      return in;
-    } // operator<<
+	return out.str();
 
-  } // namespace LoopDesign
+} // Ints::toString
+
+ostream& operator<<(ostream& out, const Ints& ints) {
+	out << ints.toString();
+	return out;
+} // operator<<
+
+istream& operator>>(istream& in, Ints& ints) {
+	string s;
+	in >> s;
+	ints.fromString(s);
+	return in;
+} // operator<<
+
+} // namespace LoopDesign
 
 } // namespace devel

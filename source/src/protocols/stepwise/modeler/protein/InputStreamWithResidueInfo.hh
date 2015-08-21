@@ -34,94 +34,94 @@ namespace stepwise {
 namespace modeler {
 namespace protein {
 
-	void
-	initialize_input_streams(  	utility::vector1< protocols::stepwise::modeler::protein::InputStreamWithResidueInfoOP > & input_streams );
+void
+initialize_input_streams(   utility::vector1< protocols::stepwise::modeler::protein::InputStreamWithResidueInfoOP > & input_streams );
+
+void
+initialize_input_streams_with_residue_info( utility::vector1< InputStreamWithResidueInfoOP > & input_streams_with_residue_info,
+	utility::vector1< std::string > const & pdb_tags,
+	utility::vector1< std::string > const & silent_files_in,
+	utility::vector1< Size > const & input_res,
+	utility::vector1< Size > const & input_res2
+);
+
+import_pose::pose_stream::PoseInputStreamOP
+setup_pose_input_stream(
+	utility::options::StringVectorOption const & option_s1,
+	utility::options::StringVectorOption const & option_silent1,
+	utility::options::StringVectorOption const & option_tags1 );
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
+class InputStreamWithResidueInfo:public utility::pointer::ReferenceCount {
+public:
+
+	InputStreamWithResidueInfo( import_pose::pose_stream::PoseInputStreamOP pose_input_stream,
+		utility::vector1< Size > const & input_res,
+		utility::vector1< Size > const & slice_res );
+
+	InputStreamWithResidueInfo( import_pose::pose_stream::PoseInputStreamOP pose_input_stream,
+		utility::vector1< Size > const & input_res);
+
+	~InputStreamWithResidueInfo();
+
+	import_pose::pose_stream::PoseInputStreamOP & pose_input_stream();
+	utility::vector1< Size > const & input_res();
+	utility::vector1< Size > const & slice_res();
+	std::map< Size, Size > & full_to_sub();
+
+	void set_slice_res(  utility::vector1< Size > const & slice_res );
+	void set_full_to_sub( std::map< Size, Size > const & full_to_sub );
+	void set_rsd_set( chemical::ResidueTypeSetCAP & rsd_set );
+
+	void reset();
+
+	bool has_another_pose() const;
 
 	void
-	initialize_input_streams_with_residue_info( utility::vector1< InputStreamWithResidueInfoOP > & input_streams_with_residue_info,
-																							utility::vector1< std::string > const & pdb_tags,
-																							utility::vector1< std::string > const & silent_files_in,
-																							utility::vector1< Size > const & input_res,
-																							utility::vector1< Size > const & input_res2
-																							);
+	advance_to_next_pose_segment();
 
-	import_pose::pose_stream::PoseInputStreamOP
-	setup_pose_input_stream(
-													utility::options::StringVectorOption const & option_s1,
-													utility::options::StringVectorOption const & option_silent1,
-													utility::options::StringVectorOption const & option_tags1	);
+	void copy_next_pose_segment( pose::Pose & pose );
 
+	void copy_next_pose_segment( pose::Pose & pose,
+		pose::Pose & import_pose,
+		bool const check_sequence_matches,
+		bool const align_pose_to_import_pose = false );
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////////////////////////////
-	class InputStreamWithResidueInfo:public utility::pointer::ReferenceCount {
-	public:
+	void
+	apply_current_pose_segment( pose::Pose & pose );
 
-		InputStreamWithResidueInfo( import_pose::pose_stream::PoseInputStreamOP pose_input_stream,
-																utility::vector1< Size > const & input_res,
-																utility::vector1< Size > const & slice_res );
+	void
+	apply_current_pose_segment( pose::Pose & pose,
+		pose::Pose & import_pose,
+		bool const check_sequence_matches,
+		bool const align_pose_to_import_pose = false );
 
-		InputStreamWithResidueInfo( import_pose::pose_stream::PoseInputStreamOP pose_input_stream,
-																utility::vector1< Size > const & input_res);
+	void set_backbone_only( bool const setting );
 
-		~InputStreamWithResidueInfo();
+	Size compute_size();
 
-		import_pose::pose_stream::PoseInputStreamOP & pose_input_stream();
-		utility::vector1< Size > const & input_res();
-		utility::vector1< Size > const & slice_res();
-		std::map< Size, Size > & full_to_sub();
+private:
 
-		void set_slice_res( 	utility::vector1< Size > const & slice_res );
-		void set_full_to_sub( std::map< Size, Size > const & full_to_sub );
-		void set_rsd_set( chemical::ResidueTypeSetCAP & rsd_set );
+	void
+	initialize_defaults();
 
-		void reset();
+	void cleanup_pose( pose::Pose & import_pose ) const;
 
-		bool has_another_pose() const;
+	void check_sequence( pose::Pose const & pose, pose::Pose const & import_pose );
 
-		void
-		advance_to_next_pose_segment();
+private:
 
-		void copy_next_pose_segment( pose::Pose & pose );
+	import_pose::pose_stream::PoseInputStreamOP pose_input_stream_;
+	utility::vector1< Size > input_res_;
+	utility::vector1< Size > slice_res_;
+	std::map< Size, Size > full_to_sub_;
+	chemical::ResidueTypeSetCAP rsd_set_;
+	bool backbone_only_;
 
-		void copy_next_pose_segment( pose::Pose & pose,
-																 pose::Pose & import_pose,
-																 bool const check_sequence_matches,
-																 bool const align_pose_to_import_pose = false );
-
-		void
-		apply_current_pose_segment( pose::Pose & pose );
-
-		void
-		apply_current_pose_segment( pose::Pose & pose,
-																pose::Pose & import_pose,
-																bool const check_sequence_matches,
-																bool const align_pose_to_import_pose = false );
-
-		void set_backbone_only( bool const setting );
-
-		Size compute_size();
-
-	private:
-
-		void
-		initialize_defaults();
-
-		void cleanup_pose( pose::Pose & import_pose ) const;
-
-		void check_sequence( pose::Pose const & pose, pose::Pose const & import_pose );
-
-	private:
-
-		import_pose::pose_stream::PoseInputStreamOP pose_input_stream_;
-		utility::vector1< Size > input_res_;
-		utility::vector1< Size > slice_res_;
-		std::map< Size, Size > full_to_sub_;
-		chemical::ResidueTypeSetCAP rsd_set_;
-		bool backbone_only_;
-
-		pose::PoseOP import_pose_;
-	};
+	pose::PoseOP import_pose_;
+};
 
 
 } //protein

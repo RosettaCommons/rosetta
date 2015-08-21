@@ -18,7 +18,7 @@
 /// First, create the calculator. To do this, see below:
 /// core::pose::metrics::PoseMetricCalculatorOP sb_calculator = new protocols::toolbox::pose_metric_calculators::SaltBridgeCalculator();
 /// Then you must register this so that the pose understands it. See below:
-///	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sb_metric", sb_calculator );
+/// core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sb_metric", sb_calculator );
 /// To actually get the metric, you have to print it. For example:
 /// core::pose::Pose pose;
 /// pose.print_metric("sb_metric", "salt_bridge")
@@ -42,7 +42,7 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 
@@ -55,16 +55,16 @@ public:
 	SaltBridgeCalculator(core::Real dist_cutoff);
 
 	core::pose::metrics::PoseMetricCalculatorOP clone() const {
-	    return core::pose::metrics::PoseMetricCalculatorOP( new SaltBridgeCalculator( distance_cutoff_) ); };
+		return core::pose::metrics::PoseMetricCalculatorOP( new SaltBridgeCalculator( distance_cutoff_) ); };
 
 private:
 	core::Real distance_cutoff_; //distance cutoff between the Hydrogen and Acceptor atoms. Default is 3.2
 	core::Size salt_bridge_total_;
 
 protected:
-	  virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-	  virtual std::string print( std::string const & key ) const;
-	  virtual void recompute( core::pose::Pose const & this_pose );
+	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
+	virtual std::string print( std::string const & key ) const;
+	virtual void recompute( core::pose::Pose const & this_pose );
 
 };
 

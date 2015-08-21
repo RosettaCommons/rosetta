@@ -28,34 +28,34 @@ namespace core {
 namespace scoring {
 namespace dssp {
 
-   typedef utility::vector1< PointPosition > PointList;
+typedef utility::vector1< PointPosition > PointList;
 
 void
 get_CA_vectors(
-	       PointList const & ca1, // pass by reference, so no tricks:: 3x3
-	       PointList const & ca2, // pass by reference, so no tricks:: 3x3
-	       Vector & a,
-	       Vector & b,
-	       Vector & c
+	PointList const & ca1, // pass by reference, so no tricks:: 3x3
+	PointList const & ca2, // pass by reference, so no tricks:: 3x3
+	Vector & a,
+	Vector & b,
+	Vector & c
 );
 
 void
 get_pairing_geometry(
-		     pose::Pose const& pose,
-		     Size const res1,
-		     Size const res2,
-		     Real& orientation,
-		     Real& pleating1,
-		     Real& pleating2
+	pose::Pose const& pose,
+	Size const res1,
+	Size const res2,
+	Real& orientation,
+	Real& pleating1,
+	Real& pleating2
 );
 
 void
 get_pleating(
-	       pose::Pose const& pose,
-	       Size const pos1,
-	       Size const pos2,
-	       Size &orientation,
-	       Size &pleating
+	pose::Pose const& pose,
+	Size const pos1,
+	Size const pos2,
+	Size &orientation,
+	Size &pleating
 );
 
 

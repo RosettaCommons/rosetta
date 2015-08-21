@@ -31,22 +31,22 @@ class PDB_DReaderOptions : public FileDataOptions
 {
 public:
 	PDB_DReaderOptions();
-	
+
 	virtual ~PDB_DReaderOptions();
-	
+
 	virtual
 	void parse_my_tag( utility::tag::TagCOP tag );
-	
+
 	virtual
 	std::string type() const;
-	
+
 	// accessors
 	bool new_chain_order() const;
 	bool obey_ENDMDL() const;
 	bool read_pdb_header() const;
 	bool read_link_records() const;
 	bool glycam_pdb_format() const;
-	
+
 	// mutators
 	void set_new_chain_order( bool setting );
 	void set_obey_ENDMDL( bool setting );

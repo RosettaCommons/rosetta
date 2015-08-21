@@ -28,50 +28,50 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class PartitionContactScreener: public StepWiseScreener {
+class PartitionContactScreener: public StepWiseScreener {
 
-	public:
+public:
 
-		//constructor
-		PartitionContactScreener( core::pose::Pose const & pose,
-															modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters,
-															bool const use_loose_rep_cutoff,
-															core::scoring::methods::EnergyMethodOptions const & options /* how to setup etable */ );
+	//constructor
+	PartitionContactScreener( core::pose::Pose const & pose,
+		modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters,
+		bool const use_loose_rep_cutoff,
+		core::scoring::methods::EnergyMethodOptions const & options /* how to setup etable */ );
 
-		//destructor
-		~PartitionContactScreener();
+	//destructor
+	~PartitionContactScreener();
 
-	public:
+public:
 
-		std::string
-		name() const { return "PartitionContactScreener"; }
+	std::string
+	name() const { return "PartitionContactScreener"; }
 
-		StepWiseScreenerType
-		type() const { return PARTITION_CONTACT; }
+	StepWiseScreenerType
+	type() const { return PARTITION_CONTACT; }
 
-		bool
-		check_screen();
+	bool
+	check_screen();
 
-	private:
+private:
 
-		void
-		initialize_actual_rep_cutoff();
+	void
+	initialize_actual_rep_cutoff();
 
-		void
-		initialize_evaluator( core::scoring::methods::EnergyMethodOptions const & options );
+	void
+	initialize_evaluator( core::scoring::methods::EnergyMethodOptions const & options );
 
-		void
-		check_screen( Size const moving_res, bool & atr_ok, bool & rep_ok ) const;
+	void
+	check_screen( Size const moving_res, bool & atr_ok, bool & rep_ok ) const;
 
-	private:
+private:
 
-		core::pose::Pose const & pose_;
-		utility::vector1< core::Size > const & moving_res_list_;
-		core::Real const fa_atr_weight_, fa_rep_weight_, rep_cutoff_, atr_cutoff_;
-		bool const use_loose_rep_cutoff_, close_chain_;
-		core::Real actual_rep_cutoff_;
-		core::scoring::etable::AnalyticEtableEvaluatorOP eval_;
-	};
+	core::pose::Pose const & pose_;
+	utility::vector1< core::Size > const & moving_res_list_;
+	core::Real const fa_atr_weight_, fa_rep_weight_, rep_cutoff_, atr_cutoff_;
+	bool const use_loose_rep_cutoff_, close_chain_;
+	core::Real actual_rep_cutoff_;
+	core::scoring::etable::AnalyticEtableEvaluatorOP eval_;
+};
 
 } //screener
 } //stepwise

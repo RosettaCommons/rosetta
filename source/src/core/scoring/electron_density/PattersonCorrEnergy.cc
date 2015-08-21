@@ -51,8 +51,8 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-	#define _USE_MATH_DEFINES
-	#include <math.h>
+#define _USE_MATH_DEFINES
+#include <math.h>
 #endif
 
 using basic::T;
@@ -115,7 +115,7 @@ bool PattersonCorrEnergy::defines_residue_pair_energy(
 
 void
 PattersonCorrEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & /* sf */) const {
-	if (!pose.is_fullatom()) return;
+	if ( !pose.is_fullatom() ) return;
 
 	core::scoring::electron_density::getDensityMap().matchPoseToPatterson( pose, true );
 }
@@ -135,7 +135,7 @@ PattersonCorrEnergy::setup_for_scoring(
 	isRepacking = false;
 
 	// Do we have a map?
-	if (!map_loaded) {
+	if ( !map_loaded ) {
 		utility_exit_with_message("Density scoring function called but no map loaded.");
 	}
 
@@ -167,7 +167,7 @@ PattersonCorrEnergy::setup_for_scoring(
 	}
 
 	pose_is_proper = true;
-	if (root_res.aa() != core::chemical::aa_vrt || root_edge.label() < 0) {
+	if ( root_res.aa() != core::chemical::aa_vrt || root_edge.label() < 0 ) {
 		pose_is_proper = false;  // we may be able to recover from this some time but for now just exit
 		//utility_exit_with_message("Fold tree is not set properly for density scoring!");
 		TR.Warning << "Fold tree is not set properly for patterson function scoring." << std::endl;
@@ -184,9 +184,11 @@ PattersonCorrEnergy::setup_for_scoring(
 
 	// # of NON-VRT residues
 	nreses = 0;
-	for (int i=1; i<=(int)pose.total_residue(); ++i)
-		if (pose.residue(i).aa() != core::chemical::aa_vrt)
+	for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
+		if ( pose.residue(i).aa() != core::chemical::aa_vrt ) {
 			nreses++;
+		}
+	}
 
 	TR.Debug << "PattersonCorrEnergy::setup_for_scoring() returns PCC = " << pcc_structure << std::endl;
 }
@@ -210,21 +212,21 @@ PattersonCorrEnergy::residue_pair_energy(
 	ScoreFunction const &,
 	EnergyMap & emap
 ) const {
-	if (!pose_is_proper) return;
+	if ( !pose_is_proper ) return;
 
 	using namespace numeric::statistics;
 
-	if (rsd1.aa() != core::chemical::aa_vrt && rsd2.aa() != core::chemical::aa_vrt) return;
-	if (rsd1.aa() == core::chemical::aa_vrt && rsd2.aa() == core::chemical::aa_vrt) return;
+	if ( rsd1.aa() != core::chemical::aa_vrt && rsd2.aa() != core::chemical::aa_vrt ) return;
+	if ( rsd1.aa() == core::chemical::aa_vrt && rsd2.aa() == core::chemical::aa_vrt ) return;
 
 	conformation::Residue const & rsd = (rsd1.aa() == core::chemical::aa_vrt) ? rsd2 : rsd1;
 
- 	if ( isRepacking && scoreRepacks) {
- 		// update patterson map quickly only moving sidechain of 'rsd'
- 		core::Real cc = core::scoring::electron_density::getDensityMap().rematchResToPatterson( rsd );
- 		emap[ patterson_cc ] += -cc;
- 		TR.Debug << "Rescore residue " << rsd.seqpos() << " :  patterson CC = " << cc << std::endl;
- 	} else {
+	if ( isRepacking && scoreRepacks ) {
+		// update patterson map quickly only moving sidechain of 'rsd'
+		core::Real cc = core::scoring::electron_density::getDensityMap().rematchResToPatterson( rsd );
+		emap[ patterson_cc ] += -cc;
+		TR.Debug << "Rescore residue " << rsd.seqpos() << " :  patterson CC = " << cc << std::endl;
+	} else {
 		// just return score from setup_for_scoring
 		emap[ patterson_cc ] += -pcc_structure;
 	}
@@ -237,7 +239,7 @@ PattersonCorrEnergy::update_residue_for_packing(
 	pose::Pose &pose,
 	Size resid
 ) const {
-	if (!pose_is_proper) return;
+	if ( !pose_is_proper ) return;
 
 	core::scoring::electron_density::getDensityMap().updateCachedDensity( pose.residue(resid) );
 	//std::cout << "UPDATE residue " << resid << " " << std::endl;
@@ -255,8 +257,8 @@ PattersonCorrEnergy::eval_atom_derivative(
 	Vector & F2
 ) const
 {
-	if (!pose_is_proper) return;
-	if (!pose.is_fullatom()) return;
+	if ( !pose_is_proper ) return;
+	if ( !pose.is_fullatom() ) return;
 
 	using namespace numeric::statistics;
 

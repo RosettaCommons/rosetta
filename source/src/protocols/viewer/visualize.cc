@@ -56,7 +56,7 @@ void print_node(
 {
 	// atom_num is often 0 in fold tree, means no specific atom.
 	// might as well use the first one:
-	if (atom_num == 0) atom_num = 1;
+	if ( atom_num == 0 ) atom_num = 1;
 	core::conformation::Residue const & res = conf.residue(residue_num);
 	core::chemical::ResidueType const & res_type = conf.residue_type(residue_num);
 	core::conformation::Atom const & atom = res.atom(atom_num);
@@ -82,9 +82,9 @@ void print_node(
 	core::conformation::Residue const & res = conf.residue(residue_num);
 
 	int atom_num;
-	if (atom_name == "") {
+	if ( atom_name == "" ) {
 		atom_num = 1;
-	}	else {
+	} else {
 		atom_num = res.atom_index( atom_name );
 	}
 	print_node( out, residue_num, atom_num, conf, extras );
@@ -115,11 +115,11 @@ void dump_residue_kinemage(
 	std::string colors[num_colors] = {"pinktint", "peachtint", "yellowtint", "greentint", "bluetint", "lilactint"};
 	std::string color = colors[ rsd.seqpos() % num_colors ];
 	out << "@vectorlist {} color= " << color << " width= 1 master= {intra-res}\n";
-	for(core::Size atom_i = 1; atom_i <= rsd.natoms(); ++atom_i) {
+	for ( core::Size atom_i = 1; atom_i <= rsd.natoms(); ++atom_i ) {
 		core::conformation::Residue::AtomIndices const & nbrs = rsd.nbrs(atom_i);
-		for(core::conformation::Residue::AtomIndices::const_iterator j = nbrs.begin(), end_j = nbrs.end(); j != end_j; ++j) {
+		for ( core::conformation::Residue::AtomIndices::const_iterator j = nbrs.begin(), end_j = nbrs.end(); j != end_j; ++j ) {
 			core::Size atom_j = *j;
-			if(atom_j <= atom_i) continue; // so we draw each bond just once, not twice
+			if ( atom_j <= atom_i ) continue; // so we draw each bond just once, not twice
 			print_node(out, rsd.seqpos(), atom_i, conf, "P");
 			print_node(out, rsd.seqpos(), atom_j, conf);
 		}
@@ -128,13 +128,13 @@ void dump_residue_kinemage(
 	// there *has* to be a better way of getting next/prev residue...
 	out << "@vectorlist {} color= gray width= 1 master= {inter-res}\n";
 	core::chemical::ResidueType const & res_type = rsd.type();
-	if (rsd.seqpos() > 1 && rsd.is_bonded( conf.residue(rsd.seqpos()-1) )) {
+	if ( rsd.seqpos() > 1 && rsd.is_bonded( conf.residue(rsd.seqpos()-1) ) ) {
 		print_interres_bond(out, rsd, conf.residue(rsd.seqpos()-1), conf);
 	}
-	if ((core::Size)rsd.seqpos() < conf.size() && rsd.is_bonded( conf.residue(rsd.seqpos()+1) )) {
+	if ( (core::Size)rsd.seqpos() < conf.size() && rsd.is_bonded( conf.residue(rsd.seqpos()+1) ) ) {
 		print_interres_bond(out, rsd, conf.residue(rsd.seqpos()+1), conf);
 	}
-	for(core::Size i = 1; i <= res_type.n_residue_connections(); ++i) {
+	for ( core::Size i = 1; i <= res_type.n_residue_connections(); ++i ) {
 		print_interres_bond(out, rsd, conf.residue( rsd.residue_connection_partner(i) ), conf);
 	}
 }
@@ -148,7 +148,7 @@ void dump_structure_kinemage(
 )
 {
 	out << "@subgroup {by residue} dominant\n";
-	for(core::Size i = 1; i <= conf.size(); ++i) {
+	for ( core::Size i = 1; i <= conf.size(); ++i ) {
 		dump_residue_kinemage(out, conf.residue(i), conf);
 	}
 }
@@ -162,16 +162,16 @@ void dump_foldtree_kinemage(
 {
 	out << "@arrowlist {true} color= gold width=3 radius= 0.6 off\n";
 	core::kinematics::FoldTree::const_iterator i = fold_tree.begin(), i_end = fold_tree.end();
-	for( ; i != i_end; ++i) {
+	for ( ; i != i_end; ++i ) {
 		//std::cout << i->start() << "," << i->start_atom() << " --> " << i->stop() << "," << i->stop_atom() << std::endl;
-			print_node(out, i->start(), i->start_atom(), conf, "P");
+		print_node(out, i->start(), i->start_atom(), conf, "P");
 		if ( i->is_jump() ) print_node(out, i->stop(), i->stop_atom(), conf, "width6");
 		else                print_node(out, i->stop(), i->stop_atom(), conf);
 	}
 
 	out << "@arrowlist {res-by-res} color= lime radius= 0.6\n";
 	i = fold_tree.begin(), i_end = fold_tree.end();
-	for( ; i != i_end; ++i) {
+	for ( ; i != i_end; ++i ) {
 		if ( i->is_jump() ) {
 			print_node(out, i->start(), i->start_atom(), conf, "P");
 			print_node(out, i->stop(), i->stop_atom(), conf, "width4");
@@ -179,7 +179,7 @@ void dump_foldtree_kinemage(
 			print_node(out, i->start(), 0, conf, "P");
 			// start res num may be greater or less than stop res num:
 			int dir = (i->start() < i->stop() ? 1 : -1);
-			for(int j = i->start()+dir, j_end = i->stop()+dir; j != j_end; j+=dir ) {
+			for ( int j = i->start()+dir, j_end = i->stop()+dir; j != j_end; j+=dir ) {
 				print_node(out, j, 0, conf);
 			}
 		}
@@ -196,7 +196,7 @@ void visit_atomtree_node(
 	// Easier to just do point-line all the time than to try and see if
 	// previous line was drawn to our parent (it rarely will be).
 
-	if (katom.parent().get() != NULL) {
+	if ( katom.parent().get() != NULL ) {
 		core::id::AtomID const & p_atom_id = katom.parent()->atom_id();
 		int p_residue_num = p_atom_id.rsd();
 		int p_atom_num = p_atom_id.atomno();
@@ -206,12 +206,12 @@ void visit_atomtree_node(
 	core::id::AtomID const & atom_id = katom.atom_id();
 	int residue_num = atom_id.rsd();
 	int atom_num = atom_id.atomno();
-	if (katom.is_jump()) print_node(out, residue_num, atom_num, conf, "width4");
+	if ( katom.is_jump() ) print_node(out, residue_num, atom_num, conf, "width4");
 	else                 print_node(out, residue_num, atom_num, conf);
 
 	// Recursively visit child atoms
 	core::kinematics::tree::Atom::Atoms_ConstIterator i = katom.atoms_begin(), i_end = katom.atoms_end();
-	for( ; i != i_end; ++i) visit_atomtree_node(out, **i, conf);
+	for ( ; i != i_end; ++i ) visit_atomtree_node(out, **i, conf);
 }
 
 
@@ -237,7 +237,7 @@ dump_pose_kinemage(
 )
 {
 	std::ofstream out (filename.c_str());
-	if (!out.good()) {
+	if ( !out.good() ) {
 		basic::Error() << "Can't open kinemage file " << filename << std::endl;
 		return;
 	}

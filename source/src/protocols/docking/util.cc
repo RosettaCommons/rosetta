@@ -51,14 +51,14 @@ std::string comma_separated_partner_chains( std::string const & chains )
 {
 	using std::endl;
 	using std::string;
-	
+
 	// abort if chains is an empty string
 	if ( ! chains.size() ) { return chains; }
 	if ( TR.Debug.visible() ) { TR.Debug << "Chain group: " << chains << endl; }
 
 	string r;
 	r.reserve( ( chains.size() * 2 ) );
-	for( string::const_iterator o = chains.begin(); o != chains.end(); ++o ) {
+	for ( string::const_iterator o = chains.begin(); o != chains.end(); ++o ) {
 		r.push_back( * o );
 		r.push_back( ',' );
 	}
@@ -92,46 +92,44 @@ void setup_edges_for_partner(
 	// create an `Edge` for each contiguous stretch of residues in the partner
 	bool prev_residue_is_in_partner( false );
 	Size edge_start( 0 );
-	
+
 	for ( Size i = partner.l(); i <= partner.u(); ++i ) {
 		bool const residue_is_in_partner( partner[ i ] );
-		
+
 		if ( ! residue_is_in_partner && prev_residue_is_in_partner ) {
 			// 'false' after seeing a 'true' - create an `Edge`
 			Edge const edge( edge_start, i - 1, Edge::PEPTIDE );
 			edge_list.push_back( edge );
 			ft.add_edge( edge );
-			
+
 			edge_start = 0;
-		}
-		else if ( residue_is_in_partner && prev_residue_is_in_partner && pose.chain( i - 1 ) != pose.chain( i ) ) {
+		} else if ( residue_is_in_partner && prev_residue_is_in_partner && pose.chain( i - 1 ) != pose.chain( i ) ) {
 			// new chain - create an `Edge` that ends where the chain ends
 			Edge const edge( edge_start, i - 1, Edge::PEPTIDE );
 			edge_list.push_back( edge );
 			ft.add_edge( edge );
-			
+
 			edge_start = i;
-		}
-		else if ( residue_is_in_partner && ! edge_start ) {
+		} else if ( residue_is_in_partner && ! edge_start ) {
 			// first occurence of 'true' - set `edge_start` to this position
 			edge_start = i;
 		}
-		
+
 		prev_residue_is_in_partner = residue_is_in_partner;
 	}
-	
+
 	// account for edges that end with the last residue
 	if ( prev_residue_is_in_partner && edge_start ) {
 		Edge const edge( edge_start, partner.size(), Edge::PEPTIDE );
 		edge_list.push_back( edge );
 		ft.add_edge( edge );
 	}
-	
+
 	// connect the edges associated with the partner with a jump
 	for ( Size i = edge_list.l() + 1; i <= edge_list.u(); ++i ) {
 		ft.add_edge( edge_list[ i - 1 ].stop(), edge_list[ i ].start(), ft.num_jump() + 1 );
 	}
-	
+
 	// adjust the FoldTree to have no edges that span the CoM residue.
 	ft.split_existing_edge_at_residue( center_of_mass_residue );
 }
@@ -149,16 +147,16 @@ core::Size setup_dock_jump(
 {
 	using core::kinematics::Edge;
 	using core::Size;
-	
+
 	Size const last_jump_number( ft.num_jump() + 1 );
 	Size const dock_jump_number( make_dock_jump_label_1 ?  1 : last_jump_number );
-	
+
 	if ( make_dock_jump_label_1 && ft.num_jump() ) {
 		// change the label of Jump 1 to be the last Jump so the rigid body docking jump can be "1"
 		Edge const & jump_to_update( ft.jump_edge( dock_jump_number ) );
 		ft.update_edge_label( jump_to_update.start(), jump_to_update.stop(), jump_to_update.label(), last_jump_number );
 	}
-	
+
 	// make the dock jump with the correct label
 	ft.add_edge( partner1_CoM, partner2_CoM, dock_jump_number );
 	return dock_jump_number;
@@ -185,25 +183,24 @@ setup_foldtree(
 	using core::Size;
 	using core::kinematics::FoldTree;
 	using core::pack::task::residue_selector::ChainSelector;
-	
+
 	FoldTree f;
 	vector1< bool > partner1( pose.total_residue(), false );
 	if ( partner_chainID == "_" ) {
 		assert( pose.chain( pose.total_residue() ) > 1 );
-		
+
 		Size const last_res_of_first_chain( pose.conformation().chain_end( 1 ) );
 		for ( Size i = partner1.l(); i <= last_res_of_first_chain; ++i ) { partner1[ i ] = true; }
-	}
-	else {
+	} else {
 		vector1< string > const partners = string_split( partner_chainID, '_' );
-		
+
 		if ( partners.size() != 2 ) {
 			stringstream error_msg;
 			error_msg << "Automatic FoldTree setup only works for two-body docking. The value of the partners flag \"";
 			error_msg << partner_chainID << "\" implies there are " << partners.size() << " independently movable chains.";
 			utility_exit_with_message( error_msg.str() );
 		}
-		
+
 		for ( vector1< string >::const_iterator it = partners.begin(); it != partners.end(); ++it ) {
 			if ( *it == "" ) {
 				stringstream error_msg;
@@ -212,11 +209,11 @@ setup_foldtree(
 				utility_exit_with_message( error_msg.str() );
 			}
 		}
-		
+
 		ChainSelector const partner1_selector( comma_separated_partner_chains( partners[ 1 ] ) );
 		partner1 = partner1_selector.apply( pose );
 	}
-	
+
 	setup_foldtree( pose, partner1, movable_jumps, f );
 	pose.fold_tree( f );
 }
@@ -241,7 +238,7 @@ setup_foldtree(
 	using utility::vector1;
 	using core::Size;
 	using core::pose::residue_center_of_mass;
-	
+
 	assert( pose.total_residue() );
 	assert( partner1.size() == pose.total_residue() );
 
@@ -259,7 +256,7 @@ setup_foldtree(
 
 	ft.clear();
 	movable_jumps.clear();
-	
+
 
 	setup_edges_for_partner( pose, partner1, jump_pos1, ft );
 	setup_edges_for_partner( pose, partner2, jump_pos2, ft );

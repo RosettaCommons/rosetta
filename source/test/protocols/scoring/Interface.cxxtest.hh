@@ -49,7 +49,7 @@ using namespace protocols::scoring;
 /// @name InterfaceTest
 /// @brief: test the interface calculation between two proteins
 /// @details use the docking protein from demo/rosetta/docking
-///		Values for the interface have been checked against pymol
+///  Values for the interface have been checked against pymol
 
 class InterfaceTest : public CxxTest::TestSuite
 {

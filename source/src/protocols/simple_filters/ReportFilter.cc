@@ -27,7 +27,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/exit.hh>
-namespace protocols{
+namespace protocols {
 namespace simple_filters {
 
 using namespace core;
@@ -43,12 +43,12 @@ ReportFilterCreator::keyname() const { return "Report"; }
 
 //default ctor
 ReportFilter::ReportFilter() :
-protocols::filters::Filter( "Report" ),
-report_string_( /* NULL */ ),
-filter_( /* NULL */ ),
-report_filter_name_( "" ),
-filter_val_( -9999.9 ),
-    checkpointing_file_("")
+	protocols::filters::Filter( "Report" ),
+	report_string_( /* NULL */ ),
+	filter_( /* NULL */ ),
+	report_filter_name_( "" ),
+	filter_val_( -9999.9 ),
+	checkpointing_file_("")
 {}
 
 ReportFilter::~ReportFilter() {}
@@ -57,47 +57,52 @@ void
 ReportFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & )
 {
 	report_filter_name_ = tag->getOption< std::string >( "name" );
-	if( tag->hasOption( "report_string" ) )
+	if ( tag->hasOption( "report_string" ) ) {
 		report_string_ = data.get_ptr< basic::datacache::DataMapObj< std::string > >( "report_string", tag->getOption< std::string >( "report_string" )  );
-	if( tag->hasOption( "filter" ) )
+	}
+	if ( tag->hasOption( "filter" ) ) {
 		filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), filters ) );
-    checkpointing_file( tag->getOption< std::string >( "checkpointing_file", "" ) );
-    TR<<"checkpointing_file: "<<checkpointing_file()<<std::endl;
+	}
+	checkpointing_file( tag->getOption< std::string >( "checkpointing_file", "" ) );
+	TR<<"checkpointing_file: "<<checkpointing_file()<<std::endl;
 }
 
 void
 ReportFilter::checkpoint_read() const{
-    if( checkpointing_file() == "" )
-        return;
-    utility::io::izstream data_in( checkpointing_file_ );
-    if ( !data_in ){
-        TR<<"checkpointing file not yet written. Skipping reading checkpoint"<<std::endl;
-    }
-    TR<<"Loading filter_val from checkpointing file: "<<checkpointing_file()<<std::endl;
-    std::string line;
-    getline( data_in, line );
-    std::istringstream stream( line );
-    stream >> filter_val_;
-    TR<<"Filter_val read from checkpoint: "<<filter_val()<<std::endl;
+	if ( checkpointing_file() == "" ) {
+		return;
+	}
+	utility::io::izstream data_in( checkpointing_file_ );
+	if ( !data_in ) {
+		TR<<"checkpointing file not yet written. Skipping reading checkpoint"<<std::endl;
+	}
+	TR<<"Loading filter_val from checkpointing file: "<<checkpointing_file()<<std::endl;
+	std::string line;
+	getline( data_in, line );
+	std::istringstream stream( line );
+	stream >> filter_val_;
+	TR<<"Filter_val read from checkpoint: "<<filter_val()<<std::endl;
 }
-    
-    void ReportFilter::checkpoint_write() const{
-        if( checkpointing_file() == "" )
-            return;
-        TR<<"writing filter_val "<<filter_val()<<" to checkpointing file: "<<checkpointing_file()<<std::endl;
-        utility::io::ozstream data_out( checkpointing_file_ );
-        if( !data_out )
-            utility_exit_with_message( "Could not open "+checkpointing_file()+" for writing checkpoint information" );
-        data_out<<filter_val();
-        TR<<"Wrote filter_val to checkpointing file"<<std::endl;
-        
-    }
-    
+
+void ReportFilter::checkpoint_write() const{
+	if ( checkpointing_file() == "" ) {
+		return;
+	}
+	TR<<"writing filter_val "<<filter_val()<<" to checkpointing file: "<<checkpointing_file()<<std::endl;
+	utility::io::ozstream data_out( checkpointing_file_ );
+	if ( !data_out ) {
+		utility_exit_with_message( "Could not open "+checkpointing_file()+" for writing checkpoint information" );
+	}
+	data_out<<filter_val();
+	TR<<"Wrote filter_val to checkpointing file"<<std::endl;
+
+}
+
 bool
 ReportFilter::apply( core::pose::Pose const & pose ) const {
-    filter_val_ = compute( pose );
-    checkpoint_read();
-    checkpoint_write();
+	filter_val_ = compute( pose );
+	checkpoint_read();
+	checkpoint_write();
 	return true;/// does not filter; only reports
 }
 
@@ -107,16 +112,18 @@ ReportFilter::report( std::ostream & out, core::pose::Pose const & /*pose*/ ) co
 	out<<"filter: "<<report_filter_name_;
 	protocols::jd2::JobOP job2 = jd2::JobDistributor::get_instance()->current_job();
 	std::string job_name (JobDistributor::get_instance()->job_outputter()->output_name( job2 ) );
-	if( report_string_ != NULL && report_string_->obj.length() > 0 )
+	if ( report_string_ != NULL && report_string_->obj.length() > 0 ) {
 		out<<"job name: "<<job_name<<" report_string: "<<report_string_->obj<<std::endl;
-	if( filter_ != NULL )
+	}
+	if ( filter_ != NULL ) {
 		out<<"job name: "<<job_name<<" reporting filter value: ";
-    out<<"Internal filter's value is: "<<filter_val()<<std::endl;
+	}
+	out<<"Internal filter's value is: "<<filter_val()<<std::endl;
 }
 
 core::Real
 ReportFilter::report_sm( core::pose::Pose const & /*pose*/ ) const {
-    checkpoint_read();
+	checkpoint_read();
 	return( filter_val() );
 }
 

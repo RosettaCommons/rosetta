@@ -29,27 +29,29 @@
 namespace {
 
 class ResidueTest : public CxxTest::TestSuite {
- public:
-  core::pose::Pose pose_;
+public:
+	core::pose::Pose pose_;
 
-  void setUp() {
-    core_init();
-    core::import_pose::pose_from_pdb(pose_, "core/conformation/4gatA.pdb");
-  }
+	void setUp() {
+		core_init();
+		core::import_pose::pose_from_pdb(pose_, "core/conformation/4gatA.pdb");
+	}
 
-  void test_isDNA() {
-    unsigned dna_start = 68;
-    unsigned dna_end = 93;
+	void test_isDNA() {
+		unsigned dna_start = 68;
+		unsigned dna_end = 93;
 
-    for (unsigned i = 1; i < dna_start; ++i)
-      TS_ASSERT(!pose_.residue(i).is_DNA());
+		for ( unsigned i = 1; i < dna_start; ++i ) {
+			TS_ASSERT(!pose_.residue(i).is_DNA());
+		}
 
-    for (unsigned i = dna_start; i <= dna_end; ++i)
-      TS_ASSERT(pose_.residue(i).is_DNA());
-  }
+		for ( unsigned i = dna_start; i <= dna_end; ++i ) {
+			TS_ASSERT(pose_.residue(i).is_DNA());
+		}
+	}
 
-  void test_isLigand() {
-    TS_ASSERT(pose_.residue(67).is_ligand());
-  }
+	void test_isLigand() {
+		TS_ASSERT(pose_.residue(67).is_ligand());
+	}
 };
 }  // anonymous namespace

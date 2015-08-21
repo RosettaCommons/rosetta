@@ -155,7 +155,7 @@ apply_ss_jumps( pose::Pose &pose, JumpSetup jump_def, std::string tag ) {
 	jump.generate_jump_frags( *(jumping::StandardPairingLibrary::get_instance()), mm, true /* bWithTorsion */, jump_geometries );
 	tr.Debug << *jump_geometries.front() << std::endl;
 	tr.Info << "found " << jump_geometries.size() << " frames with "
-					<<  jump_geometries[ 1 ]->nr_frags() << " frags in first frame " << std::endl;
+		<<  jump_geometries[ 1 ]->nr_frags() << " frags in first frame " << std::endl;
 	int ct = 1;
 	std::string out_fn( "distance_"+tag+".dat" );
 	std::string in_fn ("protocols/jumping/gold_distance_"+tag+".dat" );
@@ -166,13 +166,13 @@ apply_ss_jumps( pose::Pose &pose, JumpSetup jump_def, std::string tag ) {
 	}
 	bool success = true;
 	for ( FragID_Iterator it=jump_geometries.begin(), eit=jump_geometries.end();
-				it!=eit; ++it, ++ct ) {
+			it!=eit; ++it, ++ct ) {
 		it->apply( mm, pose );
 		std::ostringstream fn;
 		tr.Trace << "apply frag_nr " << ct << std::endl;
 		if ( ct<20 ) {
 			fn << "sspair_" << tag << "_" << ct << ".pdb";
-			if ( tr.Trace.visible() )	pose.dump_pdb( fn.str() );
+			if ( tr.Trace.visible() ) pose.dump_pdb( fn.str() );
 		}
 		Real d1,d2;
 		get_distance( pose, jump_def, d1, d2 );
@@ -220,7 +220,7 @@ void JumpingTest::test_save_and_restore_silentio_with_jumps()
 	using namespace io::silent;
 	using namespace core::chemical;
 	//ResidueTypeSetCAP rsd_set
-	//	= ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+	// = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 	//should live in core/io/silent but I'd like to use the JumpSetup stuff
 	pose::Pose native_pose;
 	//pose::Pose native_pose( create_test_in_pdb_pose() ); // jumping/test_in.pdb is different from all the other test_in.pdbs
@@ -239,9 +239,9 @@ void JumpingTest::test_save_and_restore_silentio_with_jumps()
 	pss.fill_struct( native_pose, "native_structure" );
 	sfd_out.write_silent_struct( pss, "test.out" );
 
-	//	if ( !utility::file::file_exists( "test_backward.out" ) )  {
-	//		sfd_out.write_silent_struct( pss, "test_backward.out" );
-	// 	}
+	// if ( !utility::file::file_exists( "test_backward.out" ) )  {
+	//  sfd_out.write_silent_struct( pss, "test_backward.out" );
+	//  }
 
 	// test internal compatibility
 	{
@@ -263,11 +263,11 @@ void JumpingTest::test_save_and_restore_silentio_with_jumps()
 		//sfd.read_file( "test_backward.out" );
 		/*
 		for ( SilentFileData::const_iterator it=sfd.begin_const(), eit=sfd.end_const(); it!=eit; ++it ) {
-			pose::Pose pose;
-			std::string tag = it->decoy_tag();
-			it->fill_pose( pose );
-			tr.Info << "RMSD between structures is " << scoring::CA_rmsd( pose, native_pose ) << std::endl;
-			pose.dump_pdb( "backward_silent_reread.pdb");
+		pose::Pose pose;
+		std::string tag = it->decoy_tag();
+		it->fill_pose( pose );
+		tr.Info << "RMSD between structures is " << scoring::CA_rmsd( pose, native_pose ) << std::endl;
+		pose.dump_pdb( "backward_silent_reread.pdb");
 		}
 		*/
 	}
@@ -282,17 +282,17 @@ void JumpingTest::test_strand_fraction() {
 	SecondaryStructure ss( fragset3mer_ );
 	for ( Size i = 1; i<= ss.total_residue(); i++ ) {
 		tr.Debug << "pos " << i
-						<< " E " << RJ( 3, ss.strand_fraction( i ) )
-						<< " L " << RJ( 3, ss.loop_fraction( i ) )
-						<< " H " << RJ( 3, ss.helix_fraction( i ) )
-						<< std::endl;
+			<< " E " << RJ( 3, ss.strand_fraction( i ) )
+			<< " L " << RJ( 3, ss.loop_fraction( i ) )
+			<< " H " << RJ( 3, ss.helix_fraction( i ) )
+			<< std::endl;
 	}
 	if ( tr.Debug.visible() ) ss.show( tr );
-	//	std::ofstream os( "gb3_secondary_structure.dat" );
-	//	ss.show( os );
+	// std::ofstream os( "gb3_secondary_structure.dat" );
+	// ss.show( os );
 	SecondaryStructure ss_gold;
 	ss_gold.read_from_file( "protocols/jumping/gb3_secondary_structure.dat");
-	//	if ( tr.Debug.visible() )
+	// if ( tr.Debug.visible() )
 	ss_gold.show( tr.Debug );
 	TS_ASSERT_EQUALS( ss_gold.total_residue(), ss.total_residue() );
 	for ( Size i = 1; i<= ss.total_residue(); i++ ) {
@@ -331,7 +331,7 @@ void JumpingTest::test_SheetBuilder() {
 		for ( int i = 1; i <= 10; i++ ) {
 			JumpSample jumps = sheet_jumps.create_jump_sample();
 			tr.Info << "SheetBuilder created jumps: 3 strand "
-							<< jumps << std::endl;
+				<< jumps << std::endl;
 		}
 	}
 
@@ -344,7 +344,7 @@ void JumpingTest::test_SheetBuilder() {
 		for ( int i = 1; i <= 10; i++ ) {
 			JumpSample jumps = sheet_jumps.create_jump_sample();
 			tr.Info << "SheetBuilder created jumps: 4 strand "
-							<< jumps << std::endl;
+				<< jumps << std::endl;
 		}
 	}
 
@@ -358,7 +358,7 @@ void JumpingTest::test_SheetBuilder() {
 		for ( int i = 1; i <= 10; i++ ) {
 			JumpSample jumps = sheet_jumps.create_jump_sample();
 			tr.Info << "SheetBuilder created jumps: 2x2 strand "
-							<< jumps << std::endl;
+				<< jumps << std::endl;
 		}
 	}
 }
@@ -429,7 +429,7 @@ void JumpingTest::test_jump_geometry() {
 
 	//big whack on structure
 	for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
-		///				if ( pos == 21 || pos == 20 || pos == 22 ) continue;
+		///    if ( pos == 21 || pos == 20 || pos == 22 ) continue;
 		pose.set_phi( 128, -45 );
 		pose.set_psi( pos, -45 );
 		pose.set_omega( pos, 180 );

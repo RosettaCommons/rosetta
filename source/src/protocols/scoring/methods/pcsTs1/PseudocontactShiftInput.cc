@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/PseudocontactShiftInput.cc
- ///
- /// @brief Read input .npc input file
- ///
- /// @details The following classes are responsable to read / parse the PCS input file (.npc format)
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890
- ///
- /// @authorv Christophe Schmitz , Kala Bharath Pilla
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/PseudocontactShiftInput.cc
+///
+/// @brief Read input .npc input file
+///
+/// @details The following classes are responsable to read / parse the PCS input file (.npc format)
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890
+///
+/// @authorv Christophe Schmitz , Kala Bharath Pilla
+///
+////////////////////////////////////////////////
 
 
 // Unit headers
@@ -49,10 +49,10 @@
 #include <iostream>
 #include <iomanip>
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcsTs1{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcsTs1 {
 
 static thread_local basic::Tracer TR_PCS_d_i_Ts1( "protocols.scoring.methods.pcsTs1.PCS_data_input_Ts1" );
 
@@ -68,7 +68,7 @@ PCS_line_data_Ts1 &
 PCS_line_data_Ts1::operator=( PCS_line_data_Ts1 const & other )
 {
 	if ( this != &other ) {
-	//All data member are const, nothing to copy
+		//All data member are const, nothing to copy
 	}
 	return *this;
 }
@@ -131,14 +131,14 @@ PCS_line_data_Ts1::PCS_experimental() const{
 
 core::Real
 PCS_line_data_Ts1::PCS_tolerance() const{
-	 	return PCS_tolerance_;
+	return PCS_tolerance_;
 }
 
 PCS_line_data_Ts1::PCS_line_data_Ts1(core::Size residue_num,
-														 std::string atom_name,
-														 core::Real PCS_experimental,
-														 core::Real PCS_tolerance
-														 ) :
+	std::string atom_name,
+	core::Real PCS_experimental,
+	core::Real PCS_tolerance
+) :
 	residue_num_( residue_num ),
 	atom_name_(atom_name),
 	PCS_experimental_(PCS_experimental),
@@ -168,16 +168,16 @@ PCS_file_data_Ts1::PCS_file_data_Ts1(std::string const & filename, core::Real co
 }
 
 PCS_data_input_Ts1::PCS_data_input_Ts1(utility::vector1<std::string> const & filenames, utility::vector1<core::Real> const & weight){
-	//	utility::vector1<std::string>::const_iterator it;
+	// utility::vector1<std::string>::const_iterator it;
 	core::Real weight_sum;
 	core::Size i;
 
 	weight_sum = 0;
-	for (i = 1; i <= filenames.size(); i++){
+	for ( i = 1; i <= filenames.size(); i++ ) {
 		weight_sum += weight[i];
 	}
 
-	for (i = 1; i <= filenames.size(); i++){
+	for ( i = 1; i <= filenames.size(); i++ ) {
 		//core::Real my_weight(weight[i]/weight_sum);
 		//TODO correct the weighting scheme. For the moment it is one automatically
 		core::Real my_weight(weight[i]);
@@ -196,17 +196,17 @@ PCS_file_data_Ts1::read_PCS_file(){
 	std::string line;
 	core::Size line_number(0);
 
- 	TR_PCS_d_i_Ts1 << "Opening file '" << get_filename().c_str() << "'" << std::endl;
+	TR_PCS_d_i_Ts1 << "Opening file '" << get_filename().c_str() << "'" << std::endl;
 	myfile.open (get_filename().c_str(), std::ios::in);
-	if (!myfile.is_open ()){
+	if ( !myfile.is_open () ) {
 		std::cerr << "Unable to open the file '" << get_filename().c_str()  <<"'" << std::endl;
 		utility_exit();
 	}
 
-	while( getline( myfile, line ) ) {
+	while ( getline( myfile, line ) ) {
 		line_number++;
 		std::istringstream line_stream( line ,std::istringstream::in);
-		if( (line_stream >> residue_num >> atom_name >> PCS_experimental >> PCS_tolerance).fail()){
+		if ( (line_stream >> residue_num >> atom_name >> PCS_experimental >> PCS_tolerance).fail() ) {
 			TR_PCS_d_i_Ts1 << "Ignoring line " <<line_number << ": `" << line << "` from file " << get_filename() <<std::endl;
 			continue;
 		}
@@ -224,11 +224,11 @@ PCS_file_data_Ts1::get_PCS_data_line_all_reference(){
 
 std::ostream &
 operator<<(std::ostream& out, const PCS_line_data_Ts1 &PCS_l_d){
-		out << "Residue: " << std::setw(4) << PCS_l_d.residue_num();
-		out << "   Atom: " << std::setw(4) << PCS_l_d.atom_name();
-		out << "   PCS: " << std::setw(7) << PCS_l_d.PCS_experimental();
-		out << "   Tolerance: " << std::setw(7) << PCS_l_d.PCS_tolerance()<< std::endl;
-		return out;
+	out << "Residue: " << std::setw(4) << PCS_l_d.residue_num();
+	out << "   Atom: " << std::setw(4) << PCS_l_d.atom_name();
+	out << "   PCS: " << std::setw(7) << PCS_l_d.PCS_experimental();
+	out << "   Tolerance: " << std::setw(7) << PCS_l_d.PCS_tolerance()<< std::endl;
+	return out;
 }
 
 std::ostream &
@@ -237,7 +237,7 @@ operator<<(std::ostream& out, const PCS_file_data_Ts1 &PCS_f_d){
 	utility::vector1<PCS_line_data_Ts1> PCS_d_l_a;
 	PCS_d_l_a = PCS_f_d.PCS_data_line_all_;
 
-	for ( it = PCS_d_l_a.begin(); it != PCS_d_l_a.end(); ++it){
+	for ( it = PCS_d_l_a.begin(); it != PCS_d_l_a.end(); ++it ) {
 		out << *it;
 	}
 	out<< PCS_d_l_a.size() << " PCS in total for this file" << std::endl;
@@ -245,18 +245,18 @@ operator<<(std::ostream& out, const PCS_file_data_Ts1 &PCS_f_d){
 }
 
 std::ostream &
- operator<<(std::ostream & out,  const PCS_data_input_Ts1 &PCS_d_i ){
+operator<<(std::ostream & out,  const PCS_data_input_Ts1 &PCS_d_i ){
 
-		std::map< std::string, PCS_file_data_Ts1 >::iterator it;
-		std::map< std::string, PCS_file_data_Ts1 > mymap;
-		mymap = PCS_d_i.PCS_filename_and_data_;
+	std::map< std::string, PCS_file_data_Ts1 >::iterator it;
+	std::map< std::string, PCS_file_data_Ts1 > mymap;
+	mymap = PCS_d_i.PCS_filename_and_data_;
 
-		for ( it = mymap.begin(); it != mymap.end(); ++it ) {
-			out << "For the file '" << it->first <<"' the PCS are:" << std::endl;
-			out << it->second;// << std::endl;
-			out << "The relative weight is " << (it->second).get_weight() << std::endl;
-		}
-		return out;
+	for ( it = mymap.begin(); it != mymap.end(); ++it ) {
+		out << "For the file '" << it->first <<"' the PCS are:" << std::endl;
+		out << it->second;// << std::endl;
+		out << "The relative weight is " << (it->second).get_weight() << std::endl;
+	}
+	return out;
 }
 
 
@@ -266,8 +266,8 @@ PCS_data_input_manager_Ts1::PCS_data_input_manager_Ts1(){
 
 PCS_data_input_manager_Ts1 *
 PCS_data_input_manager_Ts1::get_instance(){
-	if ( instance_ == 0 ){
-		 instance_ = new PCS_data_input_manager_Ts1();
+	if ( instance_ == 0 ) {
+		instance_ = new PCS_data_input_manager_Ts1();
 	}
 	return instance_;
 }
@@ -277,14 +277,14 @@ PCS_data_input_manager_Ts1::get_input_data(utility::vector1<std::string> const &
 	std::string id;
 	core::Size i;
 
-	for(i = 1; i <= filenames.size(); ++i){
+	for ( i = 1; i <= filenames.size(); ++i ) {
 		id += filenames[i];
 	}
 
 	std::map< std::string, PCS_data_input_Ts1 >::iterator it;
 
 	for ( it = file_2_data_map_.begin(); it != file_2_data_map_.end(); ++it ) {
-		if(it->first == id){
+		if ( it->first == id ) {
 			return(it->second);
 		}
 	}

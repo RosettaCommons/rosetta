@@ -48,9 +48,9 @@ static basic::Tracer TR("antibody.constraints.util");
 namespace protocols {
 namespace antibody {
 namespace constraints {
-	using namespace protocols::antibody;
-	using namespace protocols::antibody::clusters;
-	using utility::vector1;
+using namespace protocols::antibody;
+using namespace protocols::antibody::clusters;
+using utility::vector1;
 
 // AMW: do not pass constraint_type by reference, it'll kill a unit test
 bool
@@ -63,22 +63,22 @@ cdr_has_res_constraints(AntibodyInfoCOP ab_info, core::pose::Pose & pose, CDRNam
 	std::map< core::Size, bool> cst_found;
 
 	//Initialize our map of whether the CDR residue has constraints.
-	for (core::Size i = start_res; i <= end_res; ++i){
+	for ( core::Size i = start_res; i <= end_res; ++i ) {
 		cst_found[i] = false;
 	}
 	utility::vector1< ConstraintCOP > csts = pose.constraint_set()->get_all_constraints();
-	for (core::Size i = 1; i <= csts.size(); ++i){
-		if (csts[i]->type() != constraint_type){ continue; }
+	for ( core::Size i = 1; i <= csts.size(); ++i ) {
+		if ( csts[i]->type() != constraint_type ) { continue; }
 
 		utility::vector1< core::Size > residues = csts[i]->residues();
-		for (core::Size x = 1; x <= residues.size(); ++x){
+		for ( core::Size x = 1; x <= residues.size(); ++x ) {
 			cst_found[residues[x]] = true;
 		}
 	}
 
 	//Check that all residues have constraints of the particular type:
-	for (core::Size i = start_res ; i <= end_res; ++i){
-		if (! cst_found[i]){ return false; }
+	for ( core::Size i = start_res ; i <= end_res; ++i ) {
+		if ( ! cst_found[i] ) { return false; }
 	}
 
 	return true;
@@ -93,7 +93,7 @@ add_harmonic_dihedral_cst_general(
 	using namespace core::scoring::constraints;
 	using namespace core::scoring::func;
 
-	if ( !ab_info->has_CDR( cdr ) ){
+	if ( !ab_info->has_CDR( cdr ) ) {
 		return;
 	}
 
@@ -102,7 +102,7 @@ add_harmonic_dihedral_cst_general(
 	core::Real phi_sd_rad = numeric::conversions::radians(phi_sd_deg);
 	core::Real psi_sd_rad = numeric::conversions::radians(psi_sd_deg);
 
-	for (core::Size i = ab_info->get_CDR_start(cdr, pose); i <= ab_info->get_CDR_end(cdr, pose); ++i){
+	for ( core::Size i = ab_info->get_CDR_start(cdr, pose); i <= ab_info->get_CDR_end(cdr, pose); ++i ) {
 
 		//Current residue designated as 1
 		AtomID C_0 =   AtomID(pose.residue(i-1).atom_index("C"), i-1);

@@ -56,78 +56,78 @@ using namespace protocols::environment;
 // creator
 std::string
 StructPerturberCMCreator::keyname() const {
-  return StructPerturberCMCreator::mover_name();
+	return StructPerturberCMCreator::mover_name();
 }
 
 protocols::moves::MoverOP
 StructPerturberCMCreator::create_mover() const {
-  return protocols::moves::MoverOP( new StructPerturberCM );
+	return protocols::moves::MoverOP( new StructPerturberCM );
 }
 
 std::string
 StructPerturberCMCreator::mover_name() {
-  return "StructPerturberCM";
+	return "StructPerturberCM";
 }
 
 StructPerturberCM::StructPerturberCM():
-  Parent()
+	Parent()
 {}
 
 StructPerturberCM::StructPerturberCM( std::string const& label,
-                                      core::Real magnitude ):
-  magnitude_( magnitude ),
-  label_( label )
+	core::Real magnitude ):
+	magnitude_( magnitude ),
+	label_( label )
 {}
 
 claims::EnvClaims StructPerturberCM::yield_claims( core::pose::Pose const& in_pose,
-                                                   basic::datacache::WriteableCacheableMapOP ){
-  claims::EnvClaims claims;
+	basic::datacache::WriteableCacheableMapOP ){
+	claims::EnvClaims claims;
 
-  claims::TorsionClaimOP claim( new claims::TorsionClaim(
-	utility::pointer::static_pointer_cast< ClientMover > ( get_self_ptr() ),
-	label(), std::make_pair( 1, in_pose.total_residue() ) ) );
-  claim->strength( claims::CAN_CONTROL, claims::DOES_NOT_CONTROL );
+	claims::TorsionClaimOP claim( new claims::TorsionClaim(
+		utility::pointer::static_pointer_cast< ClientMover > ( get_self_ptr() ),
+		label(), std::make_pair( 1, in_pose.total_residue() ) ) );
+	claim->strength( claims::CAN_CONTROL, claims::DOES_NOT_CONTROL );
 
-  claims.push_back( claim );
+	claims.push_back( claim );
 
-  return claims;
+	return claims;
 }
 
 void StructPerturberCM::parse_my_tag( utility::tag::TagCOP tag,
-                                      basic::datacache::DataMap&,
-                                      protocols::filters::Filters_map const&,
-                                      protocols::moves::Movers_map const&,
-                                      core::pose::Pose const& ){
-  magnitude( tag->getOption< core::Real >( "magnitude", 2.0 ) );
-  label( tag->getOption< std::string >( "label", "BASE" ) );
+	basic::datacache::DataMap&,
+	protocols::filters::Filters_map const&,
+	protocols::moves::Movers_map const&,
+	core::pose::Pose const& ){
+	magnitude( tag->getOption< core::Real >( "magnitude", 2.0 ) );
+	label( tag->getOption< std::string >( "label", "BASE" ) );
 }
 
 void StructPerturberCM::apply( core::pose::Pose& pose ){
-  if( passport() ){
-    DofUnlock unlock( pose.conformation(), passport() );
-    core::kinematics::MoveMapOP mm = passport()->render_movemap();
+	if ( passport() ) {
+		DofUnlock unlock( pose.conformation(), passport() );
+		core::kinematics::MoveMapOP mm = passport()->render_movemap();
 
-    for( Size i = 1; i <= pose.total_residue(); ++i ){
-      for( DofPassport::const_iterator it = passport()->begin();
-           it != passport()->end(); ++it ){
-        pose.set_dof( *it, pose.dof( *it) + ( numeric::random::rg().gaussian() * magnitude_ ) );
-      }
-    }
-  } else {
-    for( Size i = 1; i <= pose.total_residue(); ++i ){
-        pose.set_phi( i, pose.phi( i ) + numeric::random::rg().gaussian() * magnitude_ );
-        pose.set_psi( i, pose.psi( i ) + numeric::random::rg().gaussian() * magnitude_ );
-    }
-  }
+		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+			for ( DofPassport::const_iterator it = passport()->begin();
+					it != passport()->end(); ++it ) {
+				pose.set_dof( *it, pose.dof( *it) + ( numeric::random::rg().gaussian() * magnitude_ ) );
+			}
+		}
+	} else {
+		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+			pose.set_phi( i, pose.phi( i ) + numeric::random::rg().gaussian() * magnitude_ );
+			pose.set_psi( i, pose.psi( i ) + numeric::random::rg().gaussian() * magnitude_ );
+		}
+	}
 }
 
 std::string StructPerturberCM::get_name() const {
-  return "StructPerturberCM";
+	return "StructPerturberCM";
 }
 
 protocols::moves::MoverOP
 StructPerturberCM::clone() const {
-  return protocols::moves::MoverOP( new StructPerturberCM( *this ) );
+	return protocols::moves::MoverOP( new StructPerturberCM( *this ) );
 }
 
 } // abscript

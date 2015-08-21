@@ -22,36 +22,35 @@
 
 namespace devel {
 
-  namespace inv_kin_lig_loop_design {
+namespace inv_kin_lig_loop_design {
 
-    template< class K, class V >
-    V const& find_or_throw( std::map<K,V> const& m, K const& k ) {
-      typename std::map<K,V>::const_iterator i = m.find(k);
-      if( i == m.end() ) {
-				std::cout << "find_or_throw - couldn't find " << k << std::endl;
-				assert( false );
-      }
-			return i->second;
-    }
+template< class K, class V >
+V const& find_or_throw( std::map<K,V> const& m, K const& k ) {
+	typename std::map<K,V>::const_iterator i = m.find(k);
+	if ( i == m.end() ) {
+		std::cout << "find_or_throw - couldn't find " << k << std::endl;
+		assert( false );
+	}
+	return i->second;
+}
 
-    template< class K, class V >
-    V const& find_or_default( std::map<K,V> const& m, K const& k, V const& v_default ) {
-      typename std::map<K,V>::const_iterator i = m.find(k);
-      if( i != m.end() ) {
-				return i->second;
-      }
-      else {
-				return v_default;
-      }
-    }
+template< class K, class V >
+V const& find_or_default( std::map<K,V> const& m, K const& k, V const& v_default ) {
+	typename std::map<K,V>::const_iterator i = m.find(k);
+	if ( i != m.end() ) {
+		return i->second;
+	} else {
+		return v_default;
+	}
+}
 
-    template<class T>
-    std::vector<T> operator+=(std::vector<T>& v, const std::vector<T>& other) {
-      v.insert(v.end(),other.begin(),other.end());
-      return v;
-    } // operator+=
+template<class T>
+std::vector<T> operator+=(std::vector<T>& v, const std::vector<T>& other) {
+	v.insert(v.end(),other.begin(),other.end());
+	return v;
+} // operator+=
 
-  } //
+} //
 
 }
 

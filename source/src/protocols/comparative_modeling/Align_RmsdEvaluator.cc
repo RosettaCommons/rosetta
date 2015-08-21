@@ -81,7 +81,7 @@ Align_RmsdEvaluator::apply(
 	Real rmsd( numeric::model_quality::rms_wrapper( n_atoms, p1a, p2a ) );
 	ss.add_energy( "rms_" + tag(), rmsd );
 
-  Real const coverage(
+	Real const coverage(
 		(Real) (n_atoms) / (Real) (native_pose()->total_residue())
 	);
 
@@ -95,14 +95,14 @@ Align_RmsdEvaluator::apply(
 		// required for high-accuracy statistics
 		core::id::SequenceMapping mapping = get_alignment(pose)->sequence_mapping(1, 2);
 		std::map<Size, Size> residues;
-		for (Size idx_mod = 1; idx_mod <= mapping.size1(); ++idx_mod) {
+		for ( Size idx_mod = 1; idx_mod <= mapping.size1(); ++idx_mod ) {
 			Size idx_ref = mapping[idx_mod];
-			if (idx_ref > 0) {
+			if ( idx_ref > 0 ) {
 				residues[idx_ref] = idx_mod;
 			}
 		}
 
-		if( gdt_by_TM() ){
+		if ( gdt_by_TM() ) {
 			tr.Debug << "computing gdttm for " << tag() << std::endl;
 			Real gdttm, gdtha;
 			xyz_gdttm( p1a, p2a, gdttm, gdtha );

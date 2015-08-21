@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/methods/vall_lookback/VallLookbackEnergy.hh
-/// @brief  lookback to native scores.  
+/// @brief  lookback to native scores.
 /// @author TJ Brunette (brunette@gmail.com)
 
 /// This energy function requires A. the VALL lookback database gets added to the potential
@@ -38,7 +38,7 @@ namespace scoring {
 namespace methods {
 
 class VallLookbackEnergy : public WholeStructureEnergy {
-	public:
+public:
 	typedef WholeStructureEnergy  parent;
 
 	VallLookbackEnergy();

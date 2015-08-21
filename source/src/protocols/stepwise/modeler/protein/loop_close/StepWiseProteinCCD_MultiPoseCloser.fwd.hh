@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/modeler/protein/loop_close/StepWiseProteinCCD_MultiPoseCloser.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -23,11 +23,11 @@ namespace stepwise {
 namespace modeler {
 namespace protein {
 namespace loop_close {
-	
-	class StepWiseProteinCCD_MultiPoseCloser;
-	typedef utility::pointer::shared_ptr< StepWiseProteinCCD_MultiPoseCloser > StepWiseProteinCCD_MultiPoseCloserOP;
-	typedef utility::pointer::shared_ptr< StepWiseProteinCCD_MultiPoseCloser const > StepWiseProteinCCD_MultiPoseCloserCOP;
-	
+
+class StepWiseProteinCCD_MultiPoseCloser;
+typedef utility::pointer::shared_ptr< StepWiseProteinCCD_MultiPoseCloser > StepWiseProteinCCD_MultiPoseCloserOP;
+typedef utility::pointer::shared_ptr< StepWiseProteinCCD_MultiPoseCloser const > StepWiseProteinCCD_MultiPoseCloserCOP;
+
 } //loop_close
 } //protein
 } //modeler

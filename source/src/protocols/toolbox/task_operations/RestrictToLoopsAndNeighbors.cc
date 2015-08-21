@@ -88,13 +88,13 @@ void RestrictToLoopsAndNeighbors::parse_tag(TagCOP tag, DataMap & data)
 	parent::parse_tag(tag, data);
 
 	set_include_neighbors(
-			tag->getOption<bool>("include_neighbors", include_neighbors()));
+		tag->getOption<bool>("include_neighbors", include_neighbors()));
 
 	set_design_neighbors(
-			tag->getOption<bool>("design_neighbors", design_neighbors()));
-	
+		tag->getOption<bool>("design_neighbors", design_neighbors()));
+
 	set_cutoff_distance(
-			tag->getOption<Real>("cutoff_dist", cutoff_distance()));
+		tag->getOption<Real>("cutoff_dist", cutoff_distance()));
 
 
 }
@@ -130,12 +130,12 @@ void RestrictToLoopsAndNeighbors::set_include_neighbors( bool include_neighbors 
 	include_neighbors_ = include_neighbors;
 }
 
-bool RestrictToLoopsAndNeighbors::design_neighbors() const 
+bool RestrictToLoopsAndNeighbors::design_neighbors() const
 {
 	return design_neighbors_;
 }
 
-void RestrictToLoopsAndNeighbors::set_design_neighbors(bool design_neighbors) 
+void RestrictToLoopsAndNeighbors::set_design_neighbors(bool design_neighbors)
 {
 	design_neighbors_ = design_neighbors;
 }
@@ -147,8 +147,7 @@ core::Real RestrictToLoopsAndNeighbors::cutoff_distance() const
 
 void RestrictToLoopsAndNeighbors::set_cutoff_distance( core::Real cutoff_distance )
 {
-	if ( cutoff_distance >= 0.0 && cutoff_distance <= 10.0 )
-	{
+	if ( cutoff_distance >= 0.0 && cutoff_distance <= 10.0 ) {
 		cutoff_distance_ = cutoff_distance;
 	}
 }

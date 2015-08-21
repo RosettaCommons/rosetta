@@ -90,13 +90,13 @@ PerturbRotamerSidechainMover::PerturbRotamerSidechainMover() {
 
 PerturbRotamerSidechainMover::PerturbRotamerSidechainMover(
 	pack::dunbrack::RotamerLibrary const & rotamer_library
-) :	Parent( rotamer_library ) {
+) : Parent( rotamer_library ) {
 	protocols::moves::Mover::type( "PerturbRotamerSidechain" );
 	set_defaults();
 }
 
 PerturbRotamerSidechainMover::PerturbRotamerSidechainMover(
-  PerturbRotamerSidechainMover const & mover
+	PerturbRotamerSidechainMover const & mover
 ) : Parent ( mover ) {
 	set_defaults();
 }
@@ -113,7 +113,7 @@ PerturbRotamerSidechainMover::set_defaults() {
 
 void
 PerturbRotamerSidechainMover::parse_my_tag(
-  utility::tag::TagCOP const /*tag*/,
+	utility::tag::TagCOP const /*tag*/,
 	basic::datacache::DataMap & /*data*/,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
@@ -142,7 +142,7 @@ PerturbRotamerSidechainMover::make_chi_move(
 	Size max_rot_num = 0;
 	//Real rot_prob_normalize (0);
 
-	for (Size ii = 1; ii <= rotamers.size() ; ++ii) {
+	for ( Size ii = 1; ii <= rotamers.size() ; ++ii ) {
 		//TR << "rotamer.size is " << rotamers.size() << "  rotamer number is " << ii << std::endl;
 		Real rot_prob( rotamers[ii].chi_probability( old_chi, temperature_ )*rotamers[ ii ].probability());
 		//Real rot_prob( rotamers[ii].chi_probability( old_chi, temperature_ ));
@@ -161,7 +161,7 @@ PerturbRotamerSidechainMover::make_chi_move(
 
 ///all angles in degree
 Real PerturbRotamerSidechainMover::compute_proposal_density(
-  Residue const & new_residue,
+	Residue const & new_residue,
 	Size const,
 	chemical::ResidueType const &,
 	ChiVector const& old_chi /* in degree */
@@ -209,7 +209,7 @@ PerturbRotamerSidechainMover::build_rotamer_list(
 	utility::fixedsizearray1< Real, 5 > bbs;
 	//for ( Size i = 1; i <= residue.type().mainchain_torsions().size() - 1; ++i )
 	bbs[ 1 ] = phi;
-	bbs[2] = psi; 
+	bbs[2] = psi;
 	//residue_dunbrack_library->get_bb_from_rsd( i, residue );
 	//RotamerList rotamers_raw( residue_dunbrack_library->get_all_rotamer_samples( phi, psi ) );
 	RotamerList rotamers_raw( residue_dunbrack_library->get_all_rotamer_samples( bbs ) );
@@ -217,13 +217,13 @@ PerturbRotamerSidechainMover::build_rotamer_list(
 	//make short list of most probable rotamers
 	if ( !filter_low_probabilities ) {
 		rotamers=rotamers_raw;
-	}	else {
+	} else {
 		utility::vector1< DunbrackRotamerSampleData > most_probable_rotamers;
 		most_probable_rotamers.reserve( rotamers.size() );
 		Real probability_threshold = 0.01;
 		Size i = 1;
 		while ( i <= rotamers.size() &&
-			rotamers[ i ].probability() > probability_threshold ) {
+				rotamers[ i ].probability() > probability_threshold ) {
 			rotamers.push_back( rotamers[ i ] );
 			i++;
 		}
@@ -233,7 +233,7 @@ PerturbRotamerSidechainMover::build_rotamer_list(
 void
 PerturbRotamerSidechainMover::compute_rotdensities(
 	RotamerList const& rotamers,
-  ChiVector const& old_chi,
+	ChiVector const& old_chi,
 	ChiVector const& new_chi,
 	Real& within_rot_density
 ) const {
@@ -243,12 +243,12 @@ PerturbRotamerSidechainMover::compute_rotdensities(
 	Real norm_prob(0);
 	//Real const inv_nrot( 1.0 / rotamers.size() );
 
-	for (Size jj=1; jj <= rotamers.size(); ++jj) {
+	for ( Size jj=1; jj <= rotamers.size(); ++jj ) {
 		norm_prob+=rotamers[jj].probability();
 	}
 	//if ( std::abs( norm_prob - 1.0 ) > 0.00001 ) {
 	//TR.Warning << "ALARM: probs are not normalized correctly: " << norm_prob << std::endl;
-		//}
+	//}
 
 	for ( Size ii = 1; ii <= rotamers.size(); ++ii ) {
 		//for each rotamer evaluate the density at our new chi angles
@@ -256,7 +256,7 @@ PerturbRotamerSidechainMover::compute_rotdensities(
 		Real const new_rot_prob( rotamers[ii].chi_probability( new_chi, temperature() )*well_prob );
 
 		Real const old_rot_prob( rotamers[ii].chi_probability( old_chi, temperature() )*well_prob );
-		if (old_rot_prob > max_old_rot_prob) {
+		if ( old_rot_prob > max_old_rot_prob ) {
 			max_old_rot_prob = old_rot_prob;
 			max_new_rot_prob = new_rot_prob;
 		}

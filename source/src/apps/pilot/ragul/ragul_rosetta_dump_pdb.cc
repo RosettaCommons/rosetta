@@ -71,19 +71,19 @@ static thread_local basic::Tracer TR( "apps.pilot.dump_pdb.main" );
 int main( int argc, char * argv [] )
 {
 	try{
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	// create native pose from pdb
-	pose::Pose pose_init;
-	std::string const input_pdb_name( basic::options::start_file() );
-	core::import_pose::pose_from_pdb( pose_init, input_pdb_name );
-	std::string out_pdb_name = "rosetta_" + input_pdb_name;
-	pose_init.dump_pdb(out_pdb_name);
+		// create native pose from pdb
+		pose::Pose pose_init;
+		std::string const input_pdb_name( basic::options::start_file() );
+		core::import_pose::pose_from_pdb( pose_init, input_pdb_name );
+		std::string out_pdb_name = "rosetta_" + input_pdb_name;
+		pose_init.dump_pdb(out_pdb_name);
 
-    } catch ( utility::excn::EXCN_Base const & e ) {
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
-    }
+	}
 	return 0;
 
 }

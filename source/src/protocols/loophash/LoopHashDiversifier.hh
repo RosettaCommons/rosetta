@@ -65,7 +65,7 @@ public:
 	);
 
 	void apply( core::pose::Pose & pose );
-//	core::pose::PoseOP get_additional_output();
+	// core::pose::PoseOP get_additional_output();
 
 	virtual std::string get_name() const;
 	void parse_my_tag( utility::tag::TagCOP tag,

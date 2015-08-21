@@ -82,7 +82,7 @@ public:
 		return "LoopHashLibrary";
 	}
 
-	virtual	protocols::moves::MoverOP	fresh_instance() const {
+	virtual protocols::moves::MoverOP fresh_instance() const {
 		return protocols::moves::MoverOP( new LoopHashLibrary );
 	}
 
@@ -132,7 +132,7 @@ public:
 
 	void create_db();
 	void set_create_db( bool setting = true ){ create_db_ = setting; }
-	void set_db_path( std::string setting ){ db_path_ =	setting; }
+	void set_db_path( std::string setting ){ db_path_ = setting; }
 
 	void graft_loop(
 		const core::pose::Pose& src_pose,

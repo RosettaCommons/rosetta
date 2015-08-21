@@ -23,20 +23,20 @@
 // C++ headers
 
 namespace protocols {
-	namespace helical_bundle {
+namespace helical_bundle {
 
-		class PerturbBundleOptions;
+class PerturbBundleOptions;
 
-		typedef  utility::pointer::weak_ptr< PerturbBundleOptions >  PerturbBundleOptionsAP;
-		typedef  utility::pointer::weak_ptr< PerturbBundleOptions const >  PerturbBundleOptionsCAP;
-		typedef  utility::pointer::shared_ptr< PerturbBundleOptions >  PerturbBundleOptionsOP;
-		typedef  utility::pointer::shared_ptr< PerturbBundleOptions const >  PerturbBundleOptionsCOP;
+typedef  utility::pointer::weak_ptr< PerturbBundleOptions >  PerturbBundleOptionsAP;
+typedef  utility::pointer::weak_ptr< PerturbBundleOptions const >  PerturbBundleOptionsCAP;
+typedef  utility::pointer::shared_ptr< PerturbBundleOptions >  PerturbBundleOptionsOP;
+typedef  utility::pointer::shared_ptr< PerturbBundleOptions const >  PerturbBundleOptionsCOP;
 
-		typedef  utility::vector1< PerturbBundleOptionsOP >  PerturbBundleOptionsOPs;
-		typedef  utility::vector1< PerturbBundleOptionsCOP >  PerturbBundleOptionsCOPs;
-		typedef  utility::vector1< PerturbBundleOptionsCAP >  PerturbBundleOptionsCAPs;
+typedef  utility::vector1< PerturbBundleOptionsOP >  PerturbBundleOptionsOPs;
+typedef  utility::vector1< PerturbBundleOptionsCOP >  PerturbBundleOptionsCOPs;
+typedef  utility::vector1< PerturbBundleOptionsCAP >  PerturbBundleOptionsCAPs;
 
-	} // namespace helical_bundle
+} // namespace helical_bundle
 } // namespace protocols
 
 #endif // INCLUDED_protocols_helical_bundle_PerturbBundleOptions_fwd_hh

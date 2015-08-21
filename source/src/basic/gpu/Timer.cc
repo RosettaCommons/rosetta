@@ -69,17 +69,19 @@ double Timer::GetTime() {
 void Timer::Report(const char *tag) {
 
 	double time = GetTime();
-	if(t_) {
-		if(tag)
+	if ( t_ ) {
+		if ( tag ) {
 			(*t_) << "Time [" << tag << "]: ";
-		else
+		} else {
 			(*t_) << "Time: ";
+		}
 		(*t_) << time << " ms" << std::endl;
 	} else {
-		if(tag_)
+		if ( tag_ ) {
 			std::cout << "Time [" << tag << "]: ";
-		else
+		} else {
 			std::cout << "Time: ";
+		}
 		std::cout << time << " ms" << std::endl;
 	}
 }

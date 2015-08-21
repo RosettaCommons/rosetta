@@ -34,82 +34,82 @@ namespace stepwise {
 namespace modeler {
 namespace packer {
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  class StepWisePacker: public protocols::moves::Mover {
-  public:
+/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+class StepWisePacker: public protocols::moves::Mover {
+public:
 
-    //constructor!
-		StepWisePacker( utility::vector1< Size > const & working_moving_residues );
+	//constructor!
+	StepWisePacker( utility::vector1< Size > const & working_moving_residues );
 
-    //destructor -- necessary?
-    ~StepWisePacker();
+	//destructor -- necessary?
+	~StepWisePacker();
 
-    /// @brief Apply the minimizer to one pose
-    virtual void apply( pose::Pose & pose );
+	/// @brief Apply the minimizer to one pose
+	virtual void apply( pose::Pose & pose );
 
-		virtual std::string get_name() const;
+	virtual std::string get_name() const;
 
-		void
-		do_packing( pose::Pose & pose );
+	void
+	do_packing( pose::Pose & pose );
 
-		void
-		reset( pose::Pose const & pose );
+	void
+	reset( pose::Pose const & pose );
 
-		void
-		set_scorefxn( scoring::ScoreFunctionCOP scorefxn );
+	void
+	set_scorefxn( scoring::ScoreFunctionCOP scorefxn );
 
-    void
-		set_use_packer_instead_of_rotamer_trials( bool const & setting ){ use_packer_instead_of_rotamer_trials_ = setting; }
+	void
+	set_use_packer_instead_of_rotamer_trials( bool const & setting ){ use_packer_instead_of_rotamer_trials_ = setting; }
 
-		void
-		do_prepack( pose::Pose & pose );
+	void
+	do_prepack( pose::Pose & pose );
 
-		void set_allow_virtual_side_chains( bool const & setting ){ allow_virtual_side_chains_ = setting; }
-		bool allow_virtual_side_chains() const{ return allow_virtual_side_chains_; }
+	void set_allow_virtual_side_chains( bool const & setting ){ allow_virtual_side_chains_ = setting; }
+	bool allow_virtual_side_chains() const{ return allow_virtual_side_chains_; }
 
-		void set_allow_virtual_o2prime_hydrogens( bool const & setting ){ allow_virtual_o2prime_hydrogens_ = setting; }
-		bool allow_virtual_o2prime_hydrogens() const{ return allow_virtual_o2prime_hydrogens_; }
+	void set_allow_virtual_o2prime_hydrogens( bool const & setting ){ allow_virtual_o2prime_hydrogens_ = setting; }
+	bool allow_virtual_o2prime_hydrogens() const{ return allow_virtual_o2prime_hydrogens_; }
 
-		void set_pack_all_side_chains( bool const & setting ){ pack_all_side_chains_ = setting; }
-		bool pack_all_side_chains() const{ return pack_all_side_chains_; }
+	void set_pack_all_side_chains( bool const & setting ){ pack_all_side_chains_ = setting; }
+	bool pack_all_side_chains() const{ return pack_all_side_chains_; }
 
-		void set_pack_o2prime_hydrogens( bool const & setting ){ pack_o2prime_hydrogens_ = setting; }
-		bool pack_o2prime_hydrogens() const { return pack_o2prime_hydrogens_; }
+	void set_pack_o2prime_hydrogens( bool const & setting ){ pack_o2prime_hydrogens_ = setting; }
+	bool pack_o2prime_hydrogens() const { return pack_o2prime_hydrogens_; }
 
-		bool working_pack_res_was_inputted() const { return working_pack_res_was_inputted_; }
+	bool working_pack_res_was_inputted() const { return working_pack_res_was_inputted_; }
 
-		void set_working_pack_res( utility::vector1< Size > const & setting ) { working_pack_res_ = setting; }
-		utility::vector1< Size > previous_working_pack_res() const { return previous_working_pack_res_; }
+	void set_working_pack_res( utility::vector1< Size > const & setting ) { working_pack_res_ = setting; }
+	utility::vector1< Size > previous_working_pack_res() const { return previous_working_pack_res_; }
 
-  private:
+private:
 
-		void
-		figure_out_neighbors( pose::Pose & pose );
+	void
+	figure_out_neighbors( pose::Pose & pose );
 
-		void
-		reinstate_side_chain_angles( pose::Pose & pose, pose::Pose const & src_pose );
+	void
+	reinstate_side_chain_angles( pose::Pose & pose, pose::Pose const & src_pose );
 
-		void
-		setup_pack_task( pose::Pose const & pose );
+	void
+	setup_pack_task( pose::Pose const & pose );
 
-	private:
+private:
 
-		utility::vector1< Size > const working_moving_res_list_;
-		scoring::ScoreFunctionCOP scorefxn_;
-		bool use_packer_instead_of_rotamer_trials_;
-		bool allow_virtual_side_chains_;
-		bool allow_virtual_o2prime_hydrogens_;
-		bool pack_o2prime_hydrogens_;
-		pack::task::PackerTaskOP pack_task_;
-		pose::PoseOP pose_init_;
+	utility::vector1< Size > const working_moving_res_list_;
+	scoring::ScoreFunctionCOP scorefxn_;
+	bool use_packer_instead_of_rotamer_trials_;
+	bool allow_virtual_side_chains_;
+	bool allow_virtual_o2prime_hydrogens_;
+	bool pack_o2prime_hydrogens_;
+	pack::task::PackerTaskOP pack_task_;
+	pose::PoseOP pose_init_;
 
-		utility::vector1< core::Size > working_pack_res_; // set this from outside, or packer will figure it out from working_moving_res
-		utility::vector1< core::Size > previous_working_pack_res_; // cached of residues packed last time, used for reinstating side chains.
-		bool working_pack_res_was_inputted_;
-		bool pack_all_side_chains_;
+	utility::vector1< core::Size > working_pack_res_; // set this from outside, or packer will figure it out from working_moving_res
+	utility::vector1< core::Size > previous_working_pack_res_; // cached of residues packed last time, used for reinstating side chains.
+	bool working_pack_res_was_inputted_;
+	bool pack_all_side_chains_;
 
-  };
+};
 
 } //packer
 } //modeler

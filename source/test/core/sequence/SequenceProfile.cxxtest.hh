@@ -155,7 +155,7 @@ public:
 		TS_ASSERT( prof1->length() == 64 );
 		TS_ASSERT( prof2->length() == 65 );
 
-//		core::Real const TOLERATED_ERROR( 0.00001 );
+		//  core::Real const TOLERATED_ERROR( 0.00001 );
 
 		ScoringSchemeOP simple_ss( new SimpleScoringScheme( 6, 1, -8, -1 ) );
 		ScoringSchemeOP prof_sim( new ProfSimScoringScheme( -1, -0.1 ) );

@@ -82,12 +82,12 @@ void RamaCheckBase::show( std::ostream & output ) const
 
 	output << name() << ":" << endl;
 	output <<
-	"\nTemperature:                                   " << temperature_ <<
-	"\nMaximum Ramachandran Score Increase Tolerated: " << max_rama_score_increase_ << endl;
+		"\nTemperature:                                   " << temperature_ <<
+		"\nMaximum Ramachandran Score Increase Tolerated: " << max_rama_score_increase_ << endl;
 }
 
 /// @details Enable the RamaCheck classes to parse tags with options for "max_rama_score_increase" and "temperature".
-void RamaCheckBase::parse_my_tag(	utility::tag::TagCOP tag )
+void RamaCheckBase::parse_my_tag( utility::tag::TagCOP tag )
 {
 	using core::Real;
 
@@ -162,12 +162,12 @@ RamaCheckBase::accept_new_conformation(
 	// Evaluate the rama score difference.
 	Real const current_rama_score( compute_rama_score(pose, seqpos, pose.phi( seqpos ), pose.psi( seqpos ) ) );
 	Real const proposed_rama_score( compute_rama_score(pose, seqpos,
-			pose.phi( seqpos ) + delta_phi_psi[ phi_torsion ],
-			pose.psi( seqpos ) + delta_phi_psi[ psi_torsion ] ) );
+		pose.phi( seqpos ) + delta_phi_psi[ phi_torsion ],
+		pose.psi( seqpos ) + delta_phi_psi[ psi_torsion ] ) );
 
 	if ( TR.Debug.visible() ) {
 		TR.Debug  << "Current rama score at position " << seqpos << ": " << current_rama_score <<
-		"; Proposed score: " << proposed_rama_score << std::endl;
+			"; Proposed score: " << proposed_rama_score << std::endl;
 	}
 
 	return accept_new_conformation( current_rama_score, proposed_rama_score, starting_rama_scores_[ seqpos ]);
@@ -200,7 +200,7 @@ RamaCheckBase::total_net_change_in_rama_score_over_range(
 		initialize_starting_rama_scores( pose );
 	}
 
-	for ( core::uint i = first_res; i <= last_res; ++i ){
+	for ( core::uint i = first_res; i <= last_res; ++i ) {
 		Real const final_rama_score( compute_rama_score( pose, i, pose.phi( i ), pose.psi( i ) ) );
 		total_change_in_rama_score += ( final_rama_score - starting_rama_scores_[ i ] );
 	}

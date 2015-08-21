@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/simple_moves/CopyDofMover.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -20,12 +20,12 @@
 
 namespace protocols {
 namespace simple_moves {
-	
-	class CopyDofMover;
-	typedef utility::pointer::shared_ptr< CopyDofMover > CopyDofMoverOP;
-	typedef utility::pointer::shared_ptr< CopyDofMover const > CopyDofMoverCOP;
-	
-} //simple_moves 
-} //protocols 
+
+class CopyDofMover;
+typedef utility::pointer::shared_ptr< CopyDofMover > CopyDofMoverOP;
+typedef utility::pointer::shared_ptr< CopyDofMover const > CopyDofMoverCOP;
+
+} //simple_moves
+} //protocols
 
 #endif

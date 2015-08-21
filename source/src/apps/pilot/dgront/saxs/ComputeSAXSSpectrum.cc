@@ -34,75 +34,75 @@ static thread_local basic::Tracer trRescoreSAXS( "ComputeSAXSSpectrum" );
 
 
 void register_options() {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-  OPT(in::file::native);
-  OPT(in::file::s);
-  OPT(in::file::residue_type_set);
-  OPT(out::nooutput);
-  OPT(score::saxs::q_min);
-  OPT(score::saxs::q_max);
-  OPT(score::saxs::q_step);
-  OPT(score::saxs::custom_ff);
+	OPT(in::file::native);
+	OPT(in::file::s);
+	OPT(in::file::residue_type_set);
+	OPT(out::nooutput);
+	OPT(score::saxs::q_min);
+	OPT(score::saxs::q_max);
+	OPT(score::saxs::q_step);
+	OPT(score::saxs::custom_ff);
 }
 
 
 class ComputeSAXSSpectrum : public protocols::moves::Mover {
 public:
 
-    ComputeSAXSSpectrum() {
+	ComputeSAXSSpectrum() {
 
-    using namespace basic::options;
-    using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	if(basic::options::option[ in::file::residue_type_set ]() == "fa_standard") {
-	    saxs_ = new core::scoring::saxs::SAXSEnergyFA();
-	} else {
-	    saxs_ = new core::scoring::saxs::SAXSEnergyCEN();
+		if ( basic::options::option[ in::file::residue_type_set ]() == "fa_standard" ) {
+			saxs_ = new core::scoring::saxs::SAXSEnergyFA();
+		} else {
+			saxs_ = new core::scoring::saxs::SAXSEnergyCEN();
+		}
+		mdl_cnt_ = 1;
 	}
-	mdl_cnt_ = 1;
-    }
 
-    virtual ~ComputeSAXSSpectrum() {}
+	virtual ~ComputeSAXSSpectrum() {}
 
 	virtual void apply( core::pose::Pose & pose ) {
 
-	    saxs_->total_energy(pose);
-	    utility::vector1<Real> q = saxs_->get_q();
-	    utility::vector1<Real> I = saxs_->get_pose_intensities();
+		saxs_->total_energy(pose);
+		utility::vector1<Real> q = saxs_->get_q();
+		utility::vector1<Real> I = saxs_->get_pose_intensities();
 
-	    std::cout << mdl_cnt_<<" "<<0.0<<" "<<std::setw(15)<<std::setprecision(8)<<
-		    saxs_->compute_zero_intensity()<<std::endl;
-	    for(Size i=1;i<=q.size();i++) {
-		std::cout << mdl_cnt_<<" "<<q[i]<<" "<<std::setw(15)<<std::setprecision(8)<<I[i]<<std::endl;
-	    }
-	    mdl_cnt_++;
+		std::cout << mdl_cnt_<<" "<<0.0<<" "<<std::setw(15)<<std::setprecision(8)<<
+			saxs_->compute_zero_intensity()<<std::endl;
+		for ( Size i=1; i<=q.size(); i++ ) {
+			std::cout << mdl_cnt_<<" "<<q[i]<<" "<<std::setw(15)<<std::setprecision(8)<<I[i]<<std::endl;
+		}
+		mdl_cnt_++;
 	}
 
 	virtual std::string get_name() const { return "ComputeSAXSSpectrum"; }
 
 private:
-    Size mdl_cnt_;
-    core::scoring::saxs::SAXSEnergy* saxs_;
+	Size mdl_cnt_;
+	core::scoring::saxs::SAXSEnergy* saxs_;
 };
 
 int main( int argc, char * argv [] ) {
-    try {
-    using namespace protocols;
-    using namespace protocols::jobdist;
-    using namespace protocols::moves;
+	try {
+		using namespace protocols;
+		using namespace protocols::jobdist;
+		using namespace protocols::moves;
 
-    register_options();
-    devel::init(argc, argv);
+		register_options();
+		devel::init(argc, argv);
 
-    ComputeSAXSSpectrum debay;
+		ComputeSAXSSpectrum debay;
 
-    not_universal_main( debay );
+		not_universal_main( debay );
 
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                             std::cout << "caught exception " << e.msg() << std::endl;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                }
-       return 0;
+	}
+	return 0;
 }

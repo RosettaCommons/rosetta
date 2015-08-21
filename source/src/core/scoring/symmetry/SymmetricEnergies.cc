@@ -52,38 +52,38 @@ namespace scoring {
 namespace symmetry {
 
 SymmetricEnergies::SymmetricEnergies() :
-  Energies()
+	Energies()
 {}
 
 /// copy ctor -- deep copy
 SymmetricEnergies::SymmetricEnergies( Energies const & other ) :
-  Energies( other )
+	Energies( other )
 {}
 
 /// copy ctor -- deep copy
 SymmetricEnergies::SymmetricEnergies( Energies & other ) :
-  Energies( other )
+	Energies( other )
 {}
 
 /// assignment operator -- deep copy
 Energies const &
 SymmetricEnergies::operator = ( Energies const & rhs )
 {
-  Energies::operator=( rhs );
-  return *this;
+	Energies::operator=( rhs );
+	return *this;
 }
 
 bool
 SymmetricEnergies::same_type_as_me( Energies const & other, bool recurse  /* = true */ ) const
 {
-   if ( ! dynamic_cast< SymmetricEnergies const * > ( &other ) ) {
-      return false;
-   }
-   if ( recurse ) {
-      return other.same_type_as_me( *this, false );
-   } else {
-      return true;
-   }
+	if ( ! dynamic_cast< SymmetricEnergies const * > ( &other ) ) {
+		return false;
+	}
+	if ( recurse ) {
+		return other.same_type_as_me( *this, false );
+	} else {
+		return true;
+	}
 }
 
 
@@ -91,7 +91,7 @@ SymmetricEnergies::same_type_as_me( Energies const & other, bool recurse  /* = t
 EnergiesOP
 SymmetricEnergies::clone() const
 {
-  return EnergiesOP( new SymmetricEnergies( *this ) );
+	return EnergiesOP( new SymmetricEnergies( *this ) );
 }
 
 SymmetricEnergies::~SymmetricEnergies() {}
@@ -128,12 +128,12 @@ SymmetricEnergies::update_neighbor_links(
 	using namespace scoring;
 
 	//std::cout << "update_neighbor_links: interaction dist: " << scorefxn_info_->max_atomic_interaction_distance() <<
-	//	std::endl;
+	// std::endl;
 
-  // find SymmInfo
-  SymmetricConformation const & SymmConf (
-    dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
-  SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
+	// find SymmInfo
+	SymmetricConformation const & SymmConf (
+		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
+	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	conformation::PointGraphOP pg( point_graph() );
 	if ( pg == 0 ) {
@@ -173,18 +173,18 @@ SymmetricEnergies::update_neighbor_links(
 				// How about we simply make sure the radii sum is positive instead of paying for a sqrt
 				// if ( std::sqrt( square_distance ) < ( ii_intxn_radius + jj_res.nbr_radius() ) ) {
 				if ( ii_intxn_radius + jjradius > 0 ) {
-					if ( square_distance < (ii_intxn_radius + jjradius )*(ii_intxn_radius + jjradius )) {
-//						bool symm_add;
-//						if (SymmConf.Symmetry_Info().subunits() > 2 ) {
-//							bool symm_add = symm_info.scoring_residue(jj);
-//						} else {
-//							symm_add = ( symm_info.bb_is_independent(jj) )
-//													|| ( !symm_info.bb_is_independent(jj) &&
-//																symm_info.bb_follows(jj) <= ii );
-//						}
-//						if ( symm_add ) {
-							energy_graph_no_state_check().add_energy_edge( ii, jj, square_distance );
-//						}
+					if ( square_distance < (ii_intxn_radius + jjradius )*(ii_intxn_radius + jjradius ) ) {
+						//      bool symm_add;
+						//      if (SymmConf.Symmetry_Info().subunits() > 2 ) {
+						//       bool symm_add = symm_info.scoring_residue(jj);
+						//      } else {
+						//       symm_add = ( symm_info.bb_is_independent(jj) )
+						//             || ( !symm_info.bb_is_independent(jj) &&
+						//                symm_info.bb_follows(jj) <= ii );
+						//      }
+						//      if ( symm_add ) {
+						energy_graph_no_state_check().add_energy_edge( ii, jj, square_distance );
+						//      }
 					}
 					for ( uint kk = 1; kk <= context_graphs_present.size(); ++kk ) {
 						context_graphs_present[ kk ]->conditionally_add_edge( ii, jj, square_distance );
@@ -220,7 +220,7 @@ void
 SymmetricEnergies::fill_point_graph( pose::Pose const & pose, conformation::PointGraphOP pg ) const {
 
 	SymmetricConformation const & SymmConf (
-    dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
+		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	core::conformation::residue_point_graph_from_conformation( pose.conformation(), *pg );
@@ -245,7 +245,7 @@ SymmetricEnergies::require_context_graph_( scoring::ContextGraphType type, bool 
 	//utility::vector1< ContextGraphOP >  cgraphs( context_graphs() );
 	utility::vector1< ContextGraphOP >& cgraphs( context_graphs() );
 	utility::vector1< bool >& required_cgraphs( required_context_graphs() );
-debug_assert( cgraphs[type] == 0 );
+	debug_assert( cgraphs[type] == 0 );
 	required_cgraphs[type] = true;
 	cgraphs[type] = ContextGraphFactory::create_context_graph( type );
 	if ( cgraphs[type] == 0 ) {
@@ -277,9 +277,9 @@ debug_assert( cgraphs[type] == 0 );
 			}
 		}
 	}
-  SymmetricConformation const & SymmConf (
-    dynamic_cast<SymmetricConformation const &> ( pose.conformation() ) );
-  SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
+	SymmetricConformation const & SymmConf (
+		dynamic_cast<SymmetricConformation const &> ( pose.conformation() ) );
+	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	/// Manually set the neighbour count for the context_graph to be symmetrical
 	for ( uint res = 1; res <= pose.total_residue(); ++res ) {

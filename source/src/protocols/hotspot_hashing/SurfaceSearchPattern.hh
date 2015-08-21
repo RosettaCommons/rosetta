@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief
-/// @author 
+/// @author
 
 
 #ifndef INCLUDED_protocols_hotspot_hashing_SurfaceSearchPattern_hh
@@ -36,19 +36,19 @@ namespace hotspot_hashing {
 
 class SurfaceSearchPattern : public SearchPattern
 {
-	public:
-		SurfaceSearchPattern(
-        core::pose::Pose const & source_pose,
-				core::pack::task::TaskFactoryOP surface_selection,
-				core::Real surface_density);
+public:
+	SurfaceSearchPattern(
+		core::pose::Pose const & source_pose,
+		core::pack::task::TaskFactoryOP surface_selection,
+		core::Real surface_density);
 
-		virtual utility::vector1<core::kinematics::Stub> Searchpoints();
-		utility::vector1<VectorPair> surface_vectors() { return surface_vectors_; }
+	virtual utility::vector1<core::kinematics::Stub> Searchpoints();
+	utility::vector1<VectorPair> surface_vectors() { return surface_vectors_; }
 
-	private:
-    utility::vector1<VectorPair> surface_vectors_;
+private:
+	utility::vector1<VectorPair> surface_vectors_;
 
-		core::Real surface_density_;
+	core::Real surface_density_;
 };
 }
 }

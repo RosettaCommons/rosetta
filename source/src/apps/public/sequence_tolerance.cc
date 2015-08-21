@@ -72,12 +72,12 @@ static thread_local basic::Tracer TR( "app.sequence_tolerance" );
 #include <utility/excn/Exceptions.hh>
 
 using namespace core;
-	using namespace pose::metrics;
+using namespace pose::metrics;
 using namespace conformation;
 using namespace chemical;
 using namespace pack;
-	using namespace task;
-		using namespace operation;
+using namespace task;
+using namespace operation;
 using namespace scoring;
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
@@ -101,11 +101,11 @@ int
 main( int argc, char * argv[] )
 {
 	try {
-	NEW_OPT(seq_tol::fitness_master_weights, "fitness function master weights", utility::vector1<core::Real>());
-	NEW_OPT(seq_tol::unsat_polars, "calculate the number of buried unsatisfied polar atoms", false);
-	NEW_OPT(seq_tol::surface, "calculate the the surface score", false);
-	devel::init( argc, argv );
-	protocols::viewer::viewer_main( sequence_tolerance_main );
+		NEW_OPT(seq_tol::fitness_master_weights, "fitness function master weights", utility::vector1<core::Real>());
+		NEW_OPT(seq_tol::unsat_polars, "calculate the number of buried unsatisfied polar atoms", false);
+		NEW_OPT(seq_tol::surface, "calculate the the surface score", false);
+		devel::init( argc, argv );
+		protocols::viewer::viewer_main( sequence_tolerance_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
@@ -183,7 +183,7 @@ sequence_tolerance_main( void * )
 			std::set< core::chemical::AA > aaset;
 			std::list< ResidueTypeCOP > const & allowed( rtask.allowed_residue_types() );
 			for ( std::list< ResidueTypeCOP >::const_iterator t( allowed.begin() ), end( allowed.end() );
-						t != end; ++t ) {
+					t != end; ++t ) {
 				core::chemical::AA aa( (*t)->aa() );
 				// avoid duplicate AA's (such as for multiple histidine ResidueTypes)
 				if ( aaset.find( aa ) != aaset.end() ) continue;
@@ -258,7 +258,7 @@ sequence_tolerance_main( void * )
 	func->add_state( target_state );
 
 	TR(t_info) << "There are " << func->num_positive_states() << " positive states and "
-	           << func->num_negative_states() << " negative states" << std::endl;
+		<< func->num_negative_states() << " negative states" << std::endl;
 
 	// do single-state designs to find best theoretical single-state energy
 	func->single_state_design();
@@ -267,14 +267,14 @@ sequence_tolerance_main( void * )
 	ga.set_func( func );
 
 	// start the genetic algorithm from scratch if not resuming from a checkpoint
-	if (ga.population(ga.current_generation()).size() == 0) {
+	if ( ga.population(ga.current_generation()).size() == 0 ) {
 		// add single-state design sequence(s) to genetic algorithm starting population and parents
 		SingleStateCOPs states( func->positive_states() );
 		TR(t_info) << "Adding single-state design entities:" << std::endl;
 		for ( SingleStateCOPs::const_iterator s( states.begin() ), end( states.end() ); s != end; ++s ) {
 			EntityElements traits;
 			for ( utility::vector1<Size>::const_iterator i( design_positions.begin() ),
-						end( design_positions.end() ); i != end; ++i ) {
+					end( design_positions.end() ); i != end; ++i ) {
 				PosType pt( *i, (*s)->pose().residue_type(*i).aa() );
 				traits.push_back( protocols::genetic_algorithm::EntityElementOP( new PosType( pt ) ) );
 				TR(t_info) << pt.to_string() << " ";
@@ -294,7 +294,7 @@ sequence_tolerance_main( void * )
 
 	// loop over generations
 	while ( !ga.complete() ) {
-		if (ga.current_generation_complete()) ga.evolve_next_generation();
+		if ( ga.current_generation_complete() ) ga.evolve_next_generation();
 		TR(t_info) << "Generation " << ga.current_generation() << ":" << std::endl;
 		ga.evaluate_fitnesses();
 		ga.print_generation_statistics(TR(t_info), ga.current_generation());
@@ -312,18 +312,18 @@ sequence_tolerance_main( void * )
 	typedef GeneticAlgorithm::TraitEntityHashMap TraitEntityHashMap;
 	TraitEntityHashMap const & cache( ga.entity_cache() );
 	utility::vector1< Entity::OP > sortable;
-// 	std::copy( cache.begin(), cache.end(), sortable.begin() ); // FAIL(?)
+	//  std::copy( cache.begin(), cache.end(), sortable.begin() ); // FAIL(?)
 	for ( TraitEntityHashMap::const_iterator it( cache.begin() ), end( cache.end() ); it != end; ++it ) {
 		sortable.push_back( it->second );
 	}
 	std::sort( sortable.begin(), sortable.end(), lt_OP_deref< Entity > );
 
 	TR(t_info) << "Evaluated " << sortable.size() << " sequences out of " << rand->library_size()
-	           << " possible.\nBest sequences:\n";
+		<< " possible.\nBest sequences:\n";
 	// list and output top solutions
 	int counter(1);
 	for ( utility::vector1<Entity::OP>::const_iterator it( sortable.begin() ), end( sortable.end() );
-				it != end && counter <= option[ ms::numresults ](); ++it, ++counter ) {
+			it != end && counter <= option[ ms::numresults ](); ++it, ++counter ) {
 		protocols::genetic_algorithm::Entity & entity(**it);
 		// apply sequence to existing positive state(s)
 		func->evaluate_positive_states( entity );
@@ -343,9 +343,9 @@ sequence_tolerance_main( void * )
 		std::ostringstream ms_info;
 		ms_info << "MultiState Fitness: " << F(5,4,entity.fitness());
 		extra_lines.push_back( ms_info.str() );
-    ms_info.str(""); // funky way to 'empty' ostringstream
-    ms_info << "MultiState Fitness Offset: " << F(5,4,entity.fitness() - (*(sortable.begin()))->fitness());
-    extra_lines.push_back( ms_info.str() );
+		ms_info.str(""); // funky way to 'empty' ostringstream
+		ms_info << "MultiState Fitness Offset: " << F(5,4,entity.fitness() - (*(sortable.begin()))->fitness());
+		extra_lines.push_back( ms_info.str() );
 		ms_info.str(""); // funky way to 'empty' ostringstream
 		ms_info << "MultiState Fitness Offset: " << F(5,4,entity.fitness() - (*(sortable.begin()))->fitness());
 		extra_lines.push_back( ms_info.str() );

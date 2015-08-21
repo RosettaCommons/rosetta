@@ -38,9 +38,9 @@ public:
 		return( protocols::moves::MoverOP( new CutOutDomain( *this ) ) );
 	}
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new CutOutDomain ); }
-	
-	void start_res(core::Size s) {start_res_ = s;} 
-	void start_end(core::Size e) {end_res_ = e;} 
+
+	void start_res(core::Size s) {start_res_ = s;}
+	void start_end(core::Size e) {end_res_ = e;}
 	void suffix(std::string suf) {suffix_ = suf;}
 	void source_pdb_name(std::string name) {source_pdb_name_ = name;}
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
@@ -60,4 +60,4 @@ private:
 } // devel
 
 
-#endif 
+#endif

@@ -98,7 +98,7 @@ public: // construct/destruct
 	BluePrintBDR( BluePrintBDR const & rval );
 
 	/// @brief default destructor
-	virtual	~BluePrintBDR();
+	virtual ~BluePrintBDR();
 
 
 private: // disallow assignment
@@ -134,25 +134,25 @@ public: // accessors
 	///  (default "RemodelLoopMover")
 	/// @remarks set to either a string the create_loop_mover() LoopMoverFactory
 	///  recognizes or the "RemodelLoopMover"
-	inline String const & loop_mover_str() const {	return loop_mover_str_; }
+	inline String const & loop_mover_str() const { return loop_mover_str_; }
 
 	/// @brief use full-mer fragments when building the loop? (default false)
-	inline bool use_fullmer() const {	return use_fullmer_; }
+	inline bool use_fullmer() const { return use_fullmer_; }
 
 	/// @brief the number of fragments to pick at each position
 	inline Size num_fragpick() const { return num_fragpick_; }
 
 	/// @brief use sequence biased fragments when building the loop? (default false)
-	inline bool use_sequence_bias() const {	return use_sequence_bias_; }
+	inline bool use_sequence_bias() const { return use_sequence_bias_; }
 
 	/// @brief use abego biased fragments when building the loop? (default false)
 	inline bool use_abego_bias() const { return use_abego_bias_; }
 
 	/// @brief the maximum allowed linear chainbreak (default 0.07)
-	inline Real max_linear_chainbreak() const {	return max_linear_chainbreak_; }
+	inline Real max_linear_chainbreak() const { return max_linear_chainbreak_; }
 
 	/// @brief define secondary structrue by blueprint
-	inline bool is_initialized() const { return initialized_;	}
+	inline bool is_initialized() const { return initialized_; }
 
 
 public: // mutators
@@ -165,13 +165,13 @@ public: // mutators
 	///  SegmentRebuild and SegmentInsert.  Make sure the length of this
 	///  string matches up properly, and remember to use any special characters,
 	///  e.g. the insertion character for SegmentInsert
-	void add_instruction(	BuildInstructionOP bi );
+	void add_instruction( BuildInstructionOP bi );
 
 	/// @brief create directed dependency between two instructions
-	void create_directed_dependency( BuildInstructionOP u, BuildInstructionOP v	);
+	void create_directed_dependency( BuildInstructionOP u, BuildInstructionOP v );
 
 	/// @brief use full-mer fragments when building the loop?
-	inline void use_fullmer( bool const flag ) {	use_fullmer_ = flag; }
+	inline void use_fullmer( bool const flag ) { use_fullmer_ = flag; }
 
 	/// @brief use sequence biased fragments when building the loop? (default false)
 	inline void use_sequence_bias( bool const flag ) { use_sequence_bias_ = flag; }
@@ -185,13 +185,13 @@ public: // mutators
 	/// @brief the loop mover string to use during centroid build
 	/// @remarks set to either a string the create_loop_mover() LoopMoverFactory
 	///  recognizes or the "RemodelLoopMover"
-	inline void loop_mover_str( String const & loop_mover_str ) { loop_mover_str_ = loop_mover_str;	}
+	inline void loop_mover_str( String const & loop_mover_str ) { loop_mover_str_ = loop_mover_str; }
 
 	/// @brief the number of fragments to pick at each position
-	inline void num_fragpick( Size const num ){ num_fragpick_ = num;	}
+	inline void num_fragpick( Size const num ){ num_fragpick_ = num; }
 
 	/// @brief define secondary structrue by blueprint
-	inline void ss_from_blueprint( bool const flag ){ ss_from_blueprint_ = flag;	}
+	inline void ss_from_blueprint( bool const flag ){ ss_from_blueprint_ = flag; }
 
 	/// @brief set the centroid level score function
 	void scorefunction( ScoreFunction const & sfx );
@@ -233,10 +233,10 @@ public: //parser
 
 	/// @brief parse xml file
 	void parse_my_tag( TagCOP tag,
-										 basic::datacache::DataMap & data,
-										 Filters_map const &,
-										 Movers_map const &,
-										 Pose const & );
+		basic::datacache::DataMap & data,
+		Filters_map const &,
+		Movers_map const &,
+		Pose const & );
 
 
 private: // protocol methods

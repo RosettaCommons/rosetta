@@ -174,7 +174,7 @@ ScoreMover::apply( Pose & pose ) {
 		core::pose::Pose native_pose;
 		if ( get_native_pose() ) {
 			native_pose = *get_native_pose();
-		} else	{
+		} else {
 			native_pose = pose;
 		}
 		protocols::loops::Loops my_loops( option[ OptionKeys::loops::loopscores]() );
@@ -216,10 +216,10 @@ void ScoreMover::parse_my_tag(
 }
 
 void ScoreMover::parse_def( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const & score_fxns,
-		utility::lua::LuaObject const & /*tasks*/,
-		protocols::moves::MoverCacheSP /*cache*/ ){
-	if( def["scorefxn"] ) {
+	utility::lua::LuaObject const & score_fxns,
+	utility::lua::LuaObject const & /*tasks*/,
+	protocols::moves::MoverCacheSP /*cache*/ ){
+	if ( def["scorefxn"] ) {
 		score_function_ = protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns );
 	}
 

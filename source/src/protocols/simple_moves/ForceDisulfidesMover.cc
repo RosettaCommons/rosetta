@@ -91,11 +91,11 @@ ForceDisulfidesMover::apply( Pose & pose ) {
 	using namespace core::pack::task;
 	using namespace protocols::toolbox::task_operations;
 	using core::pack::task::operation::TaskOperationCOP;
-	
+
 	DesignAroundOperationOP dao( new DesignAroundOperation );
 	dao->design_shell( 0.0 );
 	dao->repack_shell( 6.0 );
-	for( utility::vector1< std::pair< core::Size, core::Size > > ::const_iterator pair = disulfides_.begin(); pair != disulfides_.end(); ++pair ){
+	for ( utility::vector1< std::pair< core::Size, core::Size > > ::const_iterator pair = disulfides_.begin(); pair != disulfides_.end(); ++pair ) {
 		dao->include_residue( pair->first );
 		dao->include_residue( pair->second );
 	}
@@ -111,12 +111,12 @@ ForceDisulfidesMover::apply( Pose & pose ) {
 
 void
 ForceDisulfidesMover::scorefxn( core::scoring::ScoreFunctionOP sf ){
-  scorefxn_ = sf;
+	scorefxn_ = sf;
 }
 
 core::scoring::ScoreFunctionOP
 ForceDisulfidesMover::scorefxn() const{
-  return scorefxn_;
+	return scorefxn_;
 }
 
 std::string
@@ -127,10 +127,10 @@ ForceDisulfidesMover::get_name() const {
 void
 ForceDisulfidesMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
 {
-  scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
+	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	utility::vector1< std::string > const residue_pairs( utility::string_split( tag->getOption< std::string >( "disulfides" ), ',' ) );
 	TR<<"Setting fix disulfides on residues: ";
-	BOOST_FOREACH( std::string const residue_pair, residue_pairs ){
+	BOOST_FOREACH ( std::string const residue_pair, residue_pairs ) {
 		utility::vector1< std::string > const residues( utility::string_split( residue_pair, ':' ));
 		runtime_assert( residues.size() == 2);
 		core::Size const res1( core::pose::parse_resnum( residues[ 1 ], pose ) );

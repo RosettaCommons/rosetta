@@ -26,10 +26,10 @@ namespace moves {
 // probably because the MS part is encoded in the type! a related question: why
 // MS_SUCCESS and not just SUCCESS?
 enum MoverStatus {
-  MS_SUCCESS = 0,
-  FAIL_RETRY,
-  FAIL_DO_NOT_RETRY,
-  FAIL_BAD_INPUT
+	MS_SUCCESS = 0,
+	FAIL_RETRY,
+	FAIL_DO_NOT_RETRY,
+	FAIL_BAD_INPUT
 };
 
 MoverStatus mstype_from_name( std::string const & name );

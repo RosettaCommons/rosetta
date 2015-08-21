@@ -81,9 +81,9 @@ public:
 	string decompose_restypes_list(Size resid){
 		string oneletters;
 		for ( ResidueLevelTask::ResidueTypeCOPListConstIter
-						restype_iter = the_task->residue_task( resid ).allowed_residue_types_begin(),
-						restype_iter_end = the_task->residue_task( resid ).allowed_residue_types_end();
-					restype_iter != restype_iter_end; ++restype_iter ) {
+				restype_iter = the_task->residue_task( resid ).allowed_residue_types_begin(),
+				restype_iter_end = the_task->residue_task( resid ).allowed_residue_types_end();
+				restype_iter != restype_iter_end; ++restype_iter ) {
 
 			oneletters += ((**restype_iter).name1());
 		}//for
@@ -100,21 +100,21 @@ public:
 		ResidueType const & ala = *ala_op;
 
 		EXstream << the_task->residue_task( resid ).extrachi_sample_level(true, 1, phe) //position 0 in string
-						 << the_task->residue_task( resid ).extrachi_sample_level(false, 1, phe)//1
-						 << the_task->residue_task( resid ).extrachi_sample_level(true, 2, phe) //2
-						 << the_task->residue_task( resid ).extrachi_sample_level(false, 2, phe)//3
-						 << the_task->residue_task( resid ).extrachi_sample_level(true, 3, phe) //4
-						 << the_task->residue_task( resid ).extrachi_sample_level(false, 3, phe)//5
-						 << the_task->residue_task( resid ).extrachi_sample_level(true, 4, phe) //6
-						 << the_task->residue_task( resid ).extrachi_sample_level(false, 4, phe)//7
-						 << the_task->residue_task( resid ).extrachi_sample_level(true, 1, ala) //8
-						 << the_task->residue_task( resid ).extrachi_sample_level(false, 1, ala)//9
-						 << the_task->residue_task( resid ).extrachi_sample_level(true, 2, ala) //10
-						 << the_task->residue_task( resid ).extrachi_sample_level(false, 2, ala)//11
-						 << the_task->residue_task( resid ).extrachi_sample_level(true, 3, ala) //12
-						 << the_task->residue_task( resid ).extrachi_sample_level(false, 3, ala)//13
-						 << the_task->residue_task( resid ).extrachi_sample_level(true, 4, ala) //14
-						 << the_task->residue_task( resid ).extrachi_sample_level(false, 4, ala);//15
+			<< the_task->residue_task( resid ).extrachi_sample_level(false, 1, phe)//1
+			<< the_task->residue_task( resid ).extrachi_sample_level(true, 2, phe) //2
+			<< the_task->residue_task( resid ).extrachi_sample_level(false, 2, phe)//3
+			<< the_task->residue_task( resid ).extrachi_sample_level(true, 3, phe) //4
+			<< the_task->residue_task( resid ).extrachi_sample_level(false, 3, phe)//5
+			<< the_task->residue_task( resid ).extrachi_sample_level(true, 4, phe) //6
+			<< the_task->residue_task( resid ).extrachi_sample_level(false, 4, phe)//7
+			<< the_task->residue_task( resid ).extrachi_sample_level(true, 1, ala) //8
+			<< the_task->residue_task( resid ).extrachi_sample_level(false, 1, ala)//9
+			<< the_task->residue_task( resid ).extrachi_sample_level(true, 2, ala) //10
+			<< the_task->residue_task( resid ).extrachi_sample_level(false, 2, ala)//11
+			<< the_task->residue_task( resid ).extrachi_sample_level(true, 3, ala) //12
+			<< the_task->residue_task( resid ).extrachi_sample_level(false, 3, ala)//13
+			<< the_task->residue_task( resid ).extrachi_sample_level(true, 4, ala) //14
+			<< the_task->residue_task( resid ).extrachi_sample_level(false, 4, ala);//15
 
 		return EXstream.str();
 	}//decompose_EX_info
@@ -143,7 +143,7 @@ public:
 		TS_ASSERT( !the_task->design_residue(12));//), false);
 
 		//check proper number being packed
- 		TS_ASSERT_EQUALS( the_task->num_to_be_packed(), 14u);
+		TS_ASSERT_EQUALS( the_task->num_to_be_packed(), 14u);
 
 		//check packs positively for ALLAAwc, ALLAAxc, PIKAA, NOTAA, POLAR, APOLAR, NATAA
 		TS_ASSERT( the_task->pack_residue(1));//), true);
@@ -170,9 +170,9 @@ public:
 		/////////////////////////////////////////////////////////////////////////
 
 
-		// 		for ( int q = 1; q < 30 /*assuming pose size is 30 */; q++ ) {
-// 			std::cout << q << "  " << decompose_restypes_list(q) << std::endl;
-// 		}
+		//   for ( int q = 1; q < 30 /*assuming pose size is 30 */; q++ ) {
+		//    std::cout << q << "  " << decompose_restypes_list(q) << std::endl;
+		//   }
 
 
 		TS_ASSERT_EQUALS(decompose_restypes_list(1), "ACDEFGHHIKLMNPQRSTVWY");  //ALLAAwc
@@ -254,87 +254,87 @@ public:
 
 	}//end test_resfile_EX_commands
 
-//	void  test_generate_output_resfiles(){
-//		std::cout << "generate_output_resfiles" << std::endl;
-//		//std::string directory( "/Users/momeara/mini_pure2/test/core/pack/task/test_resfiles/"); //"core/pack/task/test_resfiles");
-//		std::string directory( "core/pack/task/test_resfiles/");
-//		utility::vector1<std::string> filenames;
-//		if ( utility::file::list_dir( directory, filenames ) ){
-//			std::cout << "error reading directory " << directory << "." << std::endl;
-//			TS_ASSERT(false);
-//		}
-//		for( utility::vector1<std::string>::iterator input_filename = filenames.begin(); input_filename != filenames.end(); ++input_filename ){
-//			if ( utility::file::file_extension( *input_filename ) != "resfile") continue;
-//			std::string output_filename( utility::file::file_basename( *input_filename ) + ".output" );
-//			std::cout << "generating output '" << directory << output_filename << "' from input file '" << directory << *input_filename << "'." << std::endl;
-//			the_task = TaskFactory::create_packer_task( pose );
-//			the_task->read_resfile( directory + *input_filename );
-//
-//			std::string actual_output = the_task->task_string( pose );
-//			utility::file::file_delete( directory + output_filename);
-//			utility::file::create_blank_file( directory + output_filename );
-//			std::ofstream output_file;
-//			output_file.open( (directory+output_filename).c_str() );
-//			output_file.close();
-//		}
-//	}
-//
-//	void generate_output_resfile( std::string const & directory,
-//																std::string const & input_filename ){
-//
-//		if ( utility::file::file_extension( input_filename ) != "resfile"){
-//			std::cout << "The output should have the extension 'resfile'" << std::endl;
-//			TS_ASSERT(false);
-//		}
-//
-//		std::string output_filename( utility::file::file_basename( input_filename ) + ".output" );
-//		std::cout << "generating output '" << directory << output_filename << "' from input file '" << directory << input_filename << "'." << std::endl;
-//		the_task = TaskFactory::create_packer_task( pose );
-//		the_task->read_resfile( directory + input_filename );
-//
-//		std::string actual_output = the_task->task_string( pose );
-//		utility::file::file_delete( directory + output_filename);
-//		utility::file::create_blank_file( directory + output_filename );
-//		std::ofstream output_file;
-//		output_file.open( (directory+output_filename).c_str() );
-//		output_file  << actual_output;
-//		output_file.close();
-//	}
-//
-//	void compare_input_output( std::string const & directory,
-//												std::string const & input_filename ){
-//
-//		std::string output_filename( utility::file::file_basename( input_filename ) + ".output" );
-//		the_task = TaskFactory::create_packer_task( pose );
-//		the_task->read_resfile( directory + input_filename );
-//		std::string actual_output = the_task->task_string( pose );
-//		std::string expected_output;
-//		utility::io::izstream file( directory + output_filename );
-//		if (!file) {
-//			std::cout << "Cannot open file " << output_filename << " run generate_output_resfile in ResfileReader.cxxtest.hh to generate";
-//			TS_ASSERT(false);
-//		}
-//		utility::slurp( file, expected_output );
-//		TS_ASSERT_EQUALS( actual_output, expected_output );
-//	}
-//
-//	void test_output_task_string(){
-//		std::string directory( "core/pack/task/test_resfiles/"); //"core/pack/task/test_resfiles");
-//		std::cout << "test_output_task_string, putting output in directory " << directory << std::endl;
-//
-//		//for resfile in directory, read in resfile, compare it with expected output
-//		utility::vector1<std::string> filenames;
-//		if ( utility::file::list_dir( directory, filenames ) ) {
-//			std::cout << "error reading directory " << directory << "." << std::endl;
-//			TS_ASSERT(false);
-//		}
-//
-//		for( utility::vector1<std::string>::iterator input_it=filenames.begin(); input_it !=filenames.end(); ++input_it ){
-//			if ( utility::file::file_extension( *input_it ) != "resfile") continue;
-//			generate_output_resfile( directory, *input_it );
-//			compare_input_output( directory, *input_it );
-//		}
-//	}
+	// void  test_generate_output_resfiles(){
+	//  std::cout << "generate_output_resfiles" << std::endl;
+	//  //std::string directory( "/Users/momeara/mini_pure2/test/core/pack/task/test_resfiles/"); //"core/pack/task/test_resfiles");
+	//  std::string directory( "core/pack/task/test_resfiles/");
+	//  utility::vector1<std::string> filenames;
+	//  if ( utility::file::list_dir( directory, filenames ) ){
+	//   std::cout << "error reading directory " << directory << "." << std::endl;
+	//   TS_ASSERT(false);
+	//  }
+	//  for( utility::vector1<std::string>::iterator input_filename = filenames.begin(); input_filename != filenames.end(); ++input_filename ){
+	//   if ( utility::file::file_extension( *input_filename ) != "resfile") continue;
+	//   std::string output_filename( utility::file::file_basename( *input_filename ) + ".output" );
+	//   std::cout << "generating output '" << directory << output_filename << "' from input file '" << directory << *input_filename << "'." << std::endl;
+	//   the_task = TaskFactory::create_packer_task( pose );
+	//   the_task->read_resfile( directory + *input_filename );
+	//
+	//   std::string actual_output = the_task->task_string( pose );
+	//   utility::file::file_delete( directory + output_filename);
+	//   utility::file::create_blank_file( directory + output_filename );
+	//   std::ofstream output_file;
+	//   output_file.open( (directory+output_filename).c_str() );
+	//   output_file.close();
+	//  }
+	// }
+	//
+	// void generate_output_resfile( std::string const & directory,
+	//                std::string const & input_filename ){
+	//
+	//  if ( utility::file::file_extension( input_filename ) != "resfile"){
+	//   std::cout << "The output should have the extension 'resfile'" << std::endl;
+	//   TS_ASSERT(false);
+	//  }
+	//
+	//  std::string output_filename( utility::file::file_basename( input_filename ) + ".output" );
+	//  std::cout << "generating output '" << directory << output_filename << "' from input file '" << directory << input_filename << "'." << std::endl;
+	//  the_task = TaskFactory::create_packer_task( pose );
+	//  the_task->read_resfile( directory + input_filename );
+	//
+	//  std::string actual_output = the_task->task_string( pose );
+	//  utility::file::file_delete( directory + output_filename);
+	//  utility::file::create_blank_file( directory + output_filename );
+	//  std::ofstream output_file;
+	//  output_file.open( (directory+output_filename).c_str() );
+	//  output_file  << actual_output;
+	//  output_file.close();
+	// }
+	//
+	// void compare_input_output( std::string const & directory,
+	//            std::string const & input_filename ){
+	//
+	//  std::string output_filename( utility::file::file_basename( input_filename ) + ".output" );
+	//  the_task = TaskFactory::create_packer_task( pose );
+	//  the_task->read_resfile( directory + input_filename );
+	//  std::string actual_output = the_task->task_string( pose );
+	//  std::string expected_output;
+	//  utility::io::izstream file( directory + output_filename );
+	//  if (!file) {
+	//   std::cout << "Cannot open file " << output_filename << " run generate_output_resfile in ResfileReader.cxxtest.hh to generate";
+	//   TS_ASSERT(false);
+	//  }
+	//  utility::slurp( file, expected_output );
+	//  TS_ASSERT_EQUALS( actual_output, expected_output );
+	// }
+	//
+	// void test_output_task_string(){
+	//  std::string directory( "core/pack/task/test_resfiles/"); //"core/pack/task/test_resfiles");
+	//  std::cout << "test_output_task_string, putting output in directory " << directory << std::endl;
+	//
+	//  //for resfile in directory, read in resfile, compare it with expected output
+	//  utility::vector1<std::string> filenames;
+	//  if ( utility::file::list_dir( directory, filenames ) ) {
+	//   std::cout << "error reading directory " << directory << "." << std::endl;
+	//   TS_ASSERT(false);
+	//  }
+	//
+	//  for( utility::vector1<std::string>::iterator input_it=filenames.begin(); input_it !=filenames.end(); ++input_it ){
+	//   if ( utility::file::file_extension( *input_it ) != "resfile") continue;
+	//   generate_output_resfile( directory, *input_it );
+	//   compare_input_output( directory, *input_it );
+	//  }
+	// }
 
 
 	void test_resid_parsing(){
@@ -370,7 +370,7 @@ public:
 			PackerTaskOP ptask = TaskFactory::create_packer_task(pose);
 			stringstream resfile; resfile << "NATRO\nSTART\n* _ ALLAA";
 			parse_resfile_string(pose, *ptask, resfile.str() );
-			for(Size i = 1; i <= pose.total_residue(); ++i){
+			for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 				TS_ASSERT(ptask->pack_residue(i));
 			}
 		}
@@ -381,7 +381,7 @@ public:
 			TS_ASSERT(ptask->pack_residue(1));
 			TS_ASSERT(ptask->pack_residue(2));
 			TS_ASSERT(ptask->pack_residue(3));
-			for(Size i = 4; i <= pose.total_residue(); ++i){
+			for ( Size i = 4; i <= pose.total_residue(); ++i ) {
 				TS_ASSERT(!ptask->pack_residue(i));
 			}
 		}
@@ -392,7 +392,7 @@ public:
 			TS_ASSERT(ptask->pack_residue(1));
 			TS_ASSERT(ptask->pack_residue(2));
 			TS_ASSERT(ptask->pack_residue(3));
-			for(Size i = 4; i <= pose.total_residue(); ++i){
+			for ( Size i = 4; i <= pose.total_residue(); ++i ) {
 				TS_ASSERT(!ptask->pack_residue(i));
 			}
 		}

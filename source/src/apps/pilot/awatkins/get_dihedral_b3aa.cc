@@ -95,9 +95,9 @@ get_symm_corrected_angle( core::Size chi_num, std::string tlc, core::Real chi ) 
 		return temp_chi - 180;
 	} else if ( res_type_name3 == "602" && chi_num == 2 && temp_chi >= 135 && temp_chi <= 315 ) {
 		return temp_chi - 180;
-	}	else if ( res_type_name3 == "101" && chi_num == 2 && temp_chi >= 135 && temp_chi <= 315 ) {
+	} else if ( res_type_name3 == "101" && chi_num == 2 && temp_chi >= 135 && temp_chi <= 315 ) {
 		return temp_chi - 180;
-	}	else if ( res_type_name3 == "401" && chi_num == 3 && temp_chi >= 135 && temp_chi <= 315 ) {
+	} else if ( res_type_name3 == "401" && chi_num == 3 && temp_chi >= 135 && temp_chi <= 315 ) {
 		return temp_chi - 180;
 	} else {
 		return chi;
@@ -125,7 +125,7 @@ calc_dist( core::conformation::Residue res1, core::conformation::Residue res2 ) 
 	Size nchi( res1.type().nchi() );
 	Real sd( 0 );
 
-	for( Size i( 1 ); i <= nchi; ++i ) {
+	for ( Size i( 1 ); i <= nchi; ++i ) {
 		sd += pow( angle_diff( get_symm_corrected_angle( i, res1.type().name3(), res1.chi( i ) ), get_symm_corrected_angle( i, res2.type().name3(), res2.chi( i ) ) ), 2 );
 	}
 
@@ -155,7 +155,7 @@ get_phi_from_rsd( core::conformation::Residue const & rsd ) {
 	if ( rsd.is_lower_terminus() ) {
 		return -90.0;
 
-	}	else {
+	} else {
 		return rsd.mainchain_torsion( 1 );
 	}
 
@@ -169,7 +169,7 @@ get_psi_from_rsd( core::conformation::Residue const & rsd ) {
 	if ( rsd.is_upper_terminus() ) {
 		return 180.0;
 
-	}	else {
+	} else {
 		return rsd.mainchain_torsion( 3 );
 	}
 
@@ -187,7 +187,7 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-		// get some info about amino acid type
+	// get some info about amino acid type
 	std::string aa_name3( rsd_type.name3() );
 	Size n_rotlib_chi( rsd_type.nchi() - rsd_type.n_proton_chi() );
 
@@ -198,8 +198,8 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 		dir_name = basic::database::full_name( "/rotamer/ncaa_rotlibs/" );
 
 		core::chemical::rotamers::NCAARotamerLibrarySpecificationCOP rotamer_spec(
-				utility::pointer::dynamic_pointer_cast< core::chemical::rotamers::NCAARotamerLibrarySpecification const >( rsd_type.rotamer_library_specification() ) );
-		if( rotamer_spec == 0 ) {
+			utility::pointer::dynamic_pointer_cast< core::chemical::rotamers::NCAARotamerLibrarySpecification const >( rsd_type.rotamer_library_specification() ) );
+		if ( rotamer_spec == 0 ) {
 			utility_exit_with_message("NCAA rotamer set not found for residue type " + rsd_type.name() );
 		}
 		std::string file_name = rotamer_spec->ncaa_rotlib_path();
@@ -215,7 +215,7 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 		chemical::AA aan( rsd_type.aa() );
 
 		switch ( n_rotlib_chi ) {
-		case 1: {
+		case 1 : {
 			RotamericSingleResidueDunbrackLibrary< ONE, THREE > * r1 =
 				new RotamericSingleResidueDunbrackLibrary< ONE, THREE >(aan, true);
 			r1->set_n_chi_bins( rotamer_spec->ncaa_rotlib_n_bin_per_rot() );
@@ -223,7 +223,7 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 			dunbrack_rotlib = SingleResidueDunbrackLibraryOP( r1);
 			break;
 		}
-		case 2: {
+		case 2 : {
 			RotamericSingleResidueDunbrackLibrary< TWO, THREE > * r2 =
 				new RotamericSingleResidueDunbrackLibrary< TWO, THREE >(aan, true);
 			r2->set_n_chi_bins( rotamer_spec->ncaa_rotlib_n_bin_per_rot() );
@@ -231,7 +231,7 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 			dunbrack_rotlib = SingleResidueDunbrackLibraryOP( r2);
 			break;
 		}
-		case 3: {
+		case 3 : {
 			RotamericSingleResidueDunbrackLibrary< THREE, THREE > * r3 =
 				new RotamericSingleResidueDunbrackLibrary< THREE, THREE >(aan, true);
 			r3->set_n_chi_bins( rotamer_spec->ncaa_rotlib_n_bin_per_rot() );
@@ -239,7 +239,7 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 			dunbrack_rotlib = SingleResidueDunbrackLibraryOP( r3);
 			break;
 		}
-		case 4: {
+		case 4 : {
 			RotamericSingleResidueDunbrackLibrary< FOUR, THREE > * r4 =
 				new RotamericSingleResidueDunbrackLibrary< FOUR, THREE >(aan, true);
 			r4->set_n_chi_bins( rotamer_spec->ncaa_rotlib_n_bin_per_rot() );
@@ -247,8 +247,8 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 			dunbrack_rotlib = SingleResidueDunbrackLibraryOP( r4);
 			break;
 		}
-		default:
-				utility_exit_with_message( "ERROR: too many chi angles desired for dunbrack library: " + boost::lexical_cast<std::string>(n_rotlib_chi) );
+		default :
+			utility_exit_with_message( "ERROR: too many chi angles desired for dunbrack library: " + boost::lexical_cast<std::string>(n_rotlib_chi) );
 			break;
 		}
 
@@ -262,24 +262,24 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 // super simple class to grab and print stuff
 class B3AADihedralGrabber : public protocols::moves::Mover {
 public:
-// ctor
+	// ctor
 	B3AADihedralGrabber() {}
 
-//dtor
-virtual ~B3AADihedralGrabber(){}
+	//dtor
+	virtual ~B3AADihedralGrabber(){}
 
-// mover interface
-virtual void apply( core::pose::Pose & pose );
-virtual std::string get_name() const { return "B3AADihedralGrabber"; }
+	// mover interface
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const { return "B3AADihedralGrabber"; }
 
 
 };
 
 /*
 rot_data_61_cis = [
-    { 'aa':  "601", 'omg': -0.206, 'phi': -72.082, 'psi': 162.446, 'x1': 66.409, 'x2': -158.748 },
-    { 'aa':  "601", 'omg': -12.364, 'phi': 79.333, 'psi': 176.360, 'x1': 37.311, 'x2': 83.005 }]
- */
+{ 'aa':  "601", 'omg': -0.206, 'phi': -72.082, 'psi': 162.446, 'x1': 66.409, 'x2': -158.748 },
+{ 'aa':  "601", 'omg': -12.364, 'phi': 79.333, 'psi': 176.360, 'x1': 37.311, 'x2': 83.005 }]
+*/
 void
 B3AADihedralGrabber::apply( core::pose::Pose & pose ) {
 	using namespace core;
@@ -309,101 +309,101 @@ B3AADihedralGrabber::apply( core::pose::Pose & pose ) {
 	(*scrfxn)( pose ); // if you don'r score the pose before getting the png you get an assertion failure
 	graph::GraphOP packer_neighbor_graph( new graph::Graph( pose.energies().energy_graph() ) );
 
-	for( Size i(1); i <= pose.total_residue(); ++i ) {
+	for ( Size i(1); i <= pose.total_residue(); ++i ) {
 		if ( pose.residue( i ).type().is_beta_aa() ) {
-		// print out experimental rotamer data
-		//TR << "resnum: " << i << " " << pose.residue( i ).type().name()  << " " << pose.residue( i ).has_variant_type( chemical::ACETYLATED_NTERMINUS ) << std::endl;
-		// print name
-		TR_EX << std::fixed << std::setprecision(3)
-		<<   "{ 'pdb_name': \"" << pose.pdb_info()->name()
-		<< "\", 'aa': \"" << pose.residue( i ).type().name3()
-		<< "\", 'chain': " << pose.residue( i ).chain()
-		<<   ", 'num_chi': " << pose.residue( i ).type().nchi() -  pose.residue( i ).type().n_proton_chi()
-		<<   ", 'res': " << std::setw( 3 ) << i << ", " ;
-
-
-		id::TorsionID bb1( i, id::BB, 1 );
-		id::TorsionID bb2( i, id::BB, 2 );
-		id::TorsionID bb3( i, id::BB, 3 );
-		// print preceding omg, phi psi
-		Real phi, tht, psi;
-
-		/*phi = numeric::principal_angle_degrees( pose.phi( i ) );
-		tht = numeric::principal_angle_degrees( pose.phi( i ) );
-		psi = numeric::principal_angle_degrees( pose.psi( i ) );*/
-		phi = numeric::principal_angle_degrees( pose.torsion( bb1 ) );
-		tht = numeric::principal_angle_degrees( pose.torsion( bb2 ) );
-		psi = numeric::principal_angle_degrees( pose.torsion( bb3 ) );
-
-		TR_EX << "'phi': " << std::setw( 9 ) << numeric::principal_angle_degrees( phi )
-		<< ", 'tht': " << std::setw( 9 ) << numeric::principal_angle_degrees( tht )
-		<< ", 'psi': " << std::setw( 9 ) << numeric::principal_angle_degrees( psi ) << ", ";
-
-		// print sidechain info
-		for( Size j(1); j <= pose.residue( i ).type().nchi(); ++j ) {
-			std::stringstream chi_string;
-			chi_string << "'x" << j << "': ";
-			if( j == pose.residue( i ).type().nchi() ) { // if it is the last don't print the ", "
-				TR_EX << chi_string.str() << std::setw( 9 ) << numeric::principal_angle_degrees( get_symm_corrected_angle( j, pose.residue( i ).type().name3(), pose.residue( i ).chi( j ) ) );
-			} else {
-				TR_EX << chi_string.str() << std::setw( 9 ) << numeric::principal_angle_degrees( get_symm_corrected_angle( j, pose.residue( i ).type().name3(), pose.residue( i ).chi( j ) ) ) << ", ";
-			}
-		}
-		TR_EX << " }," << std::endl;
-
-
-		// print out interpolated rotamers if rotamer lib exists
-
-		// need this for each res
-		chemical::ResidueTypeOP concrete_residue( new chemical::ResidueType( pose.residue( i ).type() ) );
-		conformation::Residue existing_residue( pose.residue( i ) );
-		core::pack::rotamers::RotamerVector rotamers;
-		utility::vector1< utility::vector1< Real > > extra_chi_steps( concrete_residue->nchi() );
-
-		core::chemical::rotamers::NCAARotamerLibrarySpecificationCOP rotamer_spec(
-				utility::pointer::dynamic_pointer_cast< core::chemical::rotamers::NCAARotamerLibrarySpecification const >( concrete_residue->rotamer_library_specification() ) );
-		if( rotamer_spec && ! rotamer_spec->ncaa_rotlib_path().empty() ) {
-
-			// get srrl
-			core::pack::dunbrack::SingleResidueDunbrackLibraryCOP dunbrack_rl;
-			dunbrack_rl = get_rsrpl( pose.residue( i ).type() );
-
-			// fill rotamer vector
-			dunbrack_rl->fill_rotamer_vector( pose, *scrfxn, *pt, packer_neighbor_graph, concrete_residue, existing_residue, extra_chi_steps, buried, rotamers );
-
-			Real tht_rl( get_tht_from_rsd( pose.residue( i ), pose ) );
-			Real phi_rl( get_phi_from_rsd( pose.residue( i )) );
-			Real psi_rl( get_psi_from_rsd( pose.residue( i )) );
-			utility::fixedsizearray1< Real, 5 > bbs;
-			bbs[1] = phi_rl; bbs[2] = tht_rl; bbs[3] = psi_rl;
-			utility::vector1< core::pack::dunbrack::DunbrackRotamerSampleData > drsd( dunbrack_rl->get_all_rotamer_samples( bbs ) );
-
-			Size min = rotamers.size() < drsd.size() ? rotamers.size() : drsd.size();
-			for ( Size j(1); j <= min; ++j ) {//drsd.size(); ++j ) {
-				std::stringstream stupid;
-				stupid << "\"" << pose.pdb_info()->name() << "\"";
-				TR_IR << std::fixed << std::setprecision(3)
-				<< "{ 'pdb_name': "	<< std::setw(21) << stupid.str()
-				<<  ", 'aa': \"" << pose.residue( i ).type().name3()
+			// print out experimental rotamer data
+			//TR << "resnum: " << i << " " << pose.residue( i ).type().name()  << " " << pose.residue( i ).has_variant_type( chemical::ACETYLATED_NTERMINUS ) << std::endl;
+			// print name
+			TR_EX << std::fixed << std::setprecision(3)
+				<<   "{ 'pdb_name': \"" << pose.pdb_info()->name()
+				<< "\", 'aa': \"" << pose.residue( i ).type().name3()
 				<< "\", 'chain': " << pose.residue( i ).chain()
 				<<   ", 'num_chi': " << pose.residue( i ).type().nchi() -  pose.residue( i ).type().n_proton_chi()
-				<< ", 'res': " << std::setw( 3 ) << i	<< ", 'rot': " << std::setw(3) << j << ", ";
+				<<   ", 'res': " << std::setw( 3 ) << i << ", " ;
 
-				TR_IR << "'phi': " << std::setw( 9 ) << numeric::principal_angle_degrees( phi ) << ", "	<< "'tht': " << std::setw( 9 ) << numeric::principal_angle_degrees( tht ) << ", "	<< "'psi': " << std::setw( 9 ) << numeric::principal_angle_degrees( psi ) << ", "
-				<< "'x1': "  << std::setw( 9 ) << numeric::principal_angle_degrees( get_symm_corrected_angle( 1, pose.residue( i ).type().name3(), drsd[j].chi_mean()[1] ) ) << ", "
-				<< "'x2': "  << std::setw( 9 ) << numeric::principal_angle_degrees( get_symm_corrected_angle( 2, pose.residue( i ).type().name3(), drsd[j].chi_mean()[2] ) ) << ", "
-				<< "'x3': "  << std::setw( 9 ) << numeric::principal_angle_degrees( get_symm_corrected_angle( 3, pose.residue( i ).type().name3(), drsd[j].chi_mean()[3] ) ) << ", "
-				<< "'x4': "  << std::setw( 9 ) << numeric::principal_angle_degrees( get_symm_corrected_angle( 4, pose.residue( i ).type().name3(), drsd[j].chi_mean()[4] ) ) << ", "
-				<< "'sd1': " << std::setw( 9 ) <<  drsd[j].chi_sd()[1] << ", "
-				<< "'sd2': " << std::setw( 9 ) <<  drsd[j].chi_sd()[2] << ", "
-				<< "'sd3': " << std::setw( 9 ) <<  drsd[j].chi_sd()[3] << ", "
-				<< "'sd4': " << std::setw( 9 ) <<  drsd[j].chi_sd()[4] << ", "
-				<< "'prob': " << std::setw( 9 ) << drsd[j].probability() << ", "
-				<< "'rms_dist': " << std::setw( 9 ) << calc_dist( *rotamers[j],	pose.residue( i ) )
-				<< " }," << std::endl;
 
+			id::TorsionID bb1( i, id::BB, 1 );
+			id::TorsionID bb2( i, id::BB, 2 );
+			id::TorsionID bb3( i, id::BB, 3 );
+			// print preceding omg, phi psi
+			Real phi, tht, psi;
+
+			/*phi = numeric::principal_angle_degrees( pose.phi( i ) );
+			tht = numeric::principal_angle_degrees( pose.phi( i ) );
+			psi = numeric::principal_angle_degrees( pose.psi( i ) );*/
+			phi = numeric::principal_angle_degrees( pose.torsion( bb1 ) );
+			tht = numeric::principal_angle_degrees( pose.torsion( bb2 ) );
+			psi = numeric::principal_angle_degrees( pose.torsion( bb3 ) );
+
+			TR_EX << "'phi': " << std::setw( 9 ) << numeric::principal_angle_degrees( phi )
+				<< ", 'tht': " << std::setw( 9 ) << numeric::principal_angle_degrees( tht )
+				<< ", 'psi': " << std::setw( 9 ) << numeric::principal_angle_degrees( psi ) << ", ";
+
+			// print sidechain info
+			for ( Size j(1); j <= pose.residue( i ).type().nchi(); ++j ) {
+				std::stringstream chi_string;
+				chi_string << "'x" << j << "': ";
+				if ( j == pose.residue( i ).type().nchi() ) { // if it is the last don't print the ", "
+					TR_EX << chi_string.str() << std::setw( 9 ) << numeric::principal_angle_degrees( get_symm_corrected_angle( j, pose.residue( i ).type().name3(), pose.residue( i ).chi( j ) ) );
+				} else {
+					TR_EX << chi_string.str() << std::setw( 9 ) << numeric::principal_angle_degrees( get_symm_corrected_angle( j, pose.residue( i ).type().name3(), pose.residue( i ).chi( j ) ) ) << ", ";
+				}
 			}
-		}
+			TR_EX << " }," << std::endl;
+
+
+			// print out interpolated rotamers if rotamer lib exists
+
+			// need this for each res
+			chemical::ResidueTypeOP concrete_residue( new chemical::ResidueType( pose.residue( i ).type() ) );
+			conformation::Residue existing_residue( pose.residue( i ) );
+			core::pack::rotamers::RotamerVector rotamers;
+			utility::vector1< utility::vector1< Real > > extra_chi_steps( concrete_residue->nchi() );
+
+			core::chemical::rotamers::NCAARotamerLibrarySpecificationCOP rotamer_spec(
+				utility::pointer::dynamic_pointer_cast< core::chemical::rotamers::NCAARotamerLibrarySpecification const >( concrete_residue->rotamer_library_specification() ) );
+			if ( rotamer_spec && ! rotamer_spec->ncaa_rotlib_path().empty() ) {
+
+				// get srrl
+				core::pack::dunbrack::SingleResidueDunbrackLibraryCOP dunbrack_rl;
+				dunbrack_rl = get_rsrpl( pose.residue( i ).type() );
+
+				// fill rotamer vector
+				dunbrack_rl->fill_rotamer_vector( pose, *scrfxn, *pt, packer_neighbor_graph, concrete_residue, existing_residue, extra_chi_steps, buried, rotamers );
+
+				Real tht_rl( get_tht_from_rsd( pose.residue( i ), pose ) );
+				Real phi_rl( get_phi_from_rsd( pose.residue( i )) );
+				Real psi_rl( get_psi_from_rsd( pose.residue( i )) );
+				utility::fixedsizearray1< Real, 5 > bbs;
+				bbs[1] = phi_rl; bbs[2] = tht_rl; bbs[3] = psi_rl;
+				utility::vector1< core::pack::dunbrack::DunbrackRotamerSampleData > drsd( dunbrack_rl->get_all_rotamer_samples( bbs ) );
+
+				Size min = rotamers.size() < drsd.size() ? rotamers.size() : drsd.size();
+				for ( Size j(1); j <= min; ++j ) {//drsd.size(); ++j ) {
+					std::stringstream stupid;
+					stupid << "\"" << pose.pdb_info()->name() << "\"";
+					TR_IR << std::fixed << std::setprecision(3)
+						<< "{ 'pdb_name': " << std::setw(21) << stupid.str()
+						<<  ", 'aa': \"" << pose.residue( i ).type().name3()
+						<< "\", 'chain': " << pose.residue( i ).chain()
+						<<   ", 'num_chi': " << pose.residue( i ).type().nchi() -  pose.residue( i ).type().n_proton_chi()
+						<< ", 'res': " << std::setw( 3 ) << i << ", 'rot': " << std::setw(3) << j << ", ";
+
+					TR_IR << "'phi': " << std::setw( 9 ) << numeric::principal_angle_degrees( phi ) << ", " << "'tht': " << std::setw( 9 ) << numeric::principal_angle_degrees( tht ) << ", " << "'psi': " << std::setw( 9 ) << numeric::principal_angle_degrees( psi ) << ", "
+						<< "'x1': "  << std::setw( 9 ) << numeric::principal_angle_degrees( get_symm_corrected_angle( 1, pose.residue( i ).type().name3(), drsd[j].chi_mean()[1] ) ) << ", "
+						<< "'x2': "  << std::setw( 9 ) << numeric::principal_angle_degrees( get_symm_corrected_angle( 2, pose.residue( i ).type().name3(), drsd[j].chi_mean()[2] ) ) << ", "
+						<< "'x3': "  << std::setw( 9 ) << numeric::principal_angle_degrees( get_symm_corrected_angle( 3, pose.residue( i ).type().name3(), drsd[j].chi_mean()[3] ) ) << ", "
+						<< "'x4': "  << std::setw( 9 ) << numeric::principal_angle_degrees( get_symm_corrected_angle( 4, pose.residue( i ).type().name3(), drsd[j].chi_mean()[4] ) ) << ", "
+						<< "'sd1': " << std::setw( 9 ) <<  drsd[j].chi_sd()[1] << ", "
+						<< "'sd2': " << std::setw( 9 ) <<  drsd[j].chi_sd()[2] << ", "
+						<< "'sd3': " << std::setw( 9 ) <<  drsd[j].chi_sd()[3] << ", "
+						<< "'sd4': " << std::setw( 9 ) <<  drsd[j].chi_sd()[4] << ", "
+						<< "'prob': " << std::setw( 9 ) << drsd[j].probability() << ", "
+						<< "'rms_dist': " << std::setw( 9 ) << calc_dist( *rotamers[j], pose.residue( i ) )
+						<< " }," << std::endl;
+
+				}
+			}
 		}
 	}
 }
@@ -414,43 +414,43 @@ typedef utility::pointer::shared_ptr< B3AADihedralGrabber > B3AADihedralGrabberO
 int
 main( int argc, char * argv [] )
 {
-try {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys::cyclization;
-	using namespace protocols::simple_moves;
-	using namespace protocols::moves;
+	try {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys::cyclization;
+		using namespace protocols::simple_moves;
+		using namespace protocols::moves;
 
 
-	// init
-	devel::init( argc, argv );
+		// init
+		devel::init( argc, argv );
 
-	// setup sequence mover
-	SequenceMoverOP sm( new SequenceMover() );
+		// setup sequence mover
+		SequenceMoverOP sm( new SequenceMover() );
 
-	B3AADihedralGrabberOP pdg( new B3AADihedralGrabber( ) );
-	sm->add_mover( pdg );
+		B3AADihedralGrabberOP pdg( new B3AADihedralGrabber( ) );
+		sm->add_mover( pdg );
 
 
-	// derp derp
-	//for ( core::Real i( -180.00 ); i <= 360.00; i += 5.00 ) {
-	//	core::Real nnpa( numeric::nonnegative_principal_angle_degrees( i ) );
-	//	core::Real symc( nnpa );
-	//	if ( nnpa >= 135 && nnpa <= 315 ) { symc = symc - 180.00; }
-	//	core::Real sypa( numeric::principal_angle_degrees( symc ) );
-	//	std::cout << "DEBUG: " << i << "\t" << nnpa << "\t" << symc << "\t" << sypa << std::endl;
-	//}
+		// derp derp
+		//for ( core::Real i( -180.00 ); i <= 360.00; i += 5.00 ) {
+		// core::Real nnpa( numeric::nonnegative_principal_angle_degrees( i ) );
+		// core::Real symc( nnpa );
+		// if ( nnpa >= 135 && nnpa <= 315 ) { symc = symc - 180.00; }
+		// core::Real sypa( numeric::principal_angle_degrees( symc ) );
+		// std::cout << "DEBUG: " << i << "\t" << nnpa << "\t" << symc << "\t" << sypa << std::endl;
+		//}
 
-  // go go go
-	protocols::jd2::JobDistributor::get_instance()->go( sm );
+		// go go go
+		protocols::jd2::JobDistributor::get_instance()->go( sm );
 
-  TR << "\n+-----------------------------------------------------------------+\n"
-     <<   "|                              DONE                               |\n"
-     <<   "+-----------------------------------------------------------------+" << std::endl;
+		TR << "\n+-----------------------------------------------------------------+\n"
+			<<   "|                              DONE                               |\n"
+			<<   "+-----------------------------------------------------------------+" << std::endl;
 
-} catch ( utility::excn::EXCN_Base const & e ) {
-	std::cerr << "caught exception " << e.msg() << std::endl;
-	return -1;
-}
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 
 	return 0;
 }

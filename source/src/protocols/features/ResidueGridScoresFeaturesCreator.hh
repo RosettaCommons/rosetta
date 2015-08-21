@@ -17,17 +17,17 @@
 #include <protocols/features/FeaturesReporterCreator.hh>
 
 namespace protocols {
-namespace features{
+namespace features {
 
 /// @brief creator for the ResidueGridScoresFeatures class
 class ResidueGridScoresFeaturesCreator : public protocols::features::FeaturesReporterCreator
 {
 public:
 	ResidueGridScoresFeaturesCreator();
-    virtual ~ResidueGridScoresFeaturesCreator();
+	virtual ~ResidueGridScoresFeaturesCreator();
 
-    virtual protocols::features::FeaturesReporterOP create_features_reporter() const;
-    virtual std::string type_name() const;
+	virtual protocols::features::FeaturesReporterOP create_features_reporter() const;
+	virtual std::string type_name() const;
 };
 
 

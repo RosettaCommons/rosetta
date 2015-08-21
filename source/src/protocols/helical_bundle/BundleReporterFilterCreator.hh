@@ -25,7 +25,7 @@
 
 namespace protocols {
 namespace helical_bundle {
-	
+
 class BundleReporterFilterCreator : public protocols::filters::FilterCreator
 {
 public:

@@ -221,19 +221,19 @@ public:
 
 		/*std::cout << "Initial pose one-body energy: " << sfxn->weights().dot( trpcage->energies().onebody_energies( 12 )) << std::endl;
 		for ( Node::EdgeListConstIter iter = trpcage->energies().energy_graph().get_node( 12 )->edge_list_begin(),
-				iter_end = trpcage->energies().energy_graph().get_node( 12 )->edge_list_end(); iter != iter_end; ++iter ) {
-			std::cout << "Energy Edge to " << (*iter)->get_other_ind( 12 ) << " ";
-			EnergyEdge const * eedge = static_cast< EnergyEdge const * > (*iter);
-			EnergyMap emap = eedge->fill_energy_map();
-			//emap.show_weighted( std::cout, sfxn->weights() );
+		iter_end = trpcage->energies().energy_graph().get_node( 12 )->edge_list_end(); iter != iter_end; ++iter ) {
+		std::cout << "Energy Edge to " << (*iter)->get_other_ind( 12 ) << " ";
+		EnergyEdge const * eedge = static_cast< EnergyEdge const * > (*iter);
+		EnergyMap emap = eedge->fill_energy_map();
+		//emap.show_weighted( std::cout, sfxn->weights() );
 
-			std::cout << sfxn->weights().dot( emap ) << std::endl;
+		std::cout << sfxn->weights().dot( emap ) << std::endl;
 		}
 		std::cout << "Initial one-body energy: " << static_cast< SimpleNode const * > (simple_ig->get_node( 12 ))->current_one_body_energy() << std::endl;
 		for ( Node::EdgeListConstIter iter = simple_ig->get_node( 12 )->edge_list_begin(),
-				iter_end = simple_ig->get_node( 12 )->edge_list_end(); iter != iter_end; ++iter ) {
-			SimpleEdge const * simple_edge = static_cast< SimpleEdge const * > ( *iter );
-			std::cout << "Curr energy: " << simple_edge->get_other_ind( 12 ) << " " << simple_edge->get_current_energy() << std::endl;
+		iter_end = simple_ig->get_node( 12 )->edge_list_end(); iter != iter_end; ++iter ) {
+		SimpleEdge const * simple_edge = static_cast< SimpleEdge const * > ( *iter );
+		std::cout << "Curr energy: " << simple_edge->get_other_ind( 12 ) << " " << simple_edge->get_current_energy() << std::endl;
 		}*/
 
 
@@ -248,19 +248,19 @@ public:
 
 		/*std::cout << "Afterwards pose one-body energy: " << sfxn->weights().dot( trpcage->energies().onebody_energies( 12 )) << std::endl;
 		for ( Node::EdgeListConstIter iter = trpcage->energies().energy_graph().get_node( 12 )->edge_list_begin(),
-				iter_end = trpcage->energies().energy_graph().get_node( 12 )->edge_list_end(); iter != iter_end; ++iter ) {
-			std::cout << "Energy Edge to " << (*iter)->get_other_ind( 12 ) << " ";
-			EnergyEdge const * eedge = static_cast< EnergyEdge const * > (*iter);
-			EnergyMap emap = eedge->fill_energy_map();
-			//emap.show_weighted( std::cout, sfxn->weights() );
+		iter_end = trpcage->energies().energy_graph().get_node( 12 )->edge_list_end(); iter != iter_end; ++iter ) {
+		std::cout << "Energy Edge to " << (*iter)->get_other_ind( 12 ) << " ";
+		EnergyEdge const * eedge = static_cast< EnergyEdge const * > (*iter);
+		EnergyMap emap = eedge->fill_energy_map();
+		//emap.show_weighted( std::cout, sfxn->weights() );
 
-			std::cout << sfxn->weights().dot( emap ) << std::endl;
+		std::cout << sfxn->weights().dot( emap ) << std::endl;
 		}
 		std::cout << "Alternate one-body energy: " << static_cast< SimpleNode const * > (simple_ig->get_node( 12 ))->proposed_one_body_energy() << std::endl;
 		for ( Node::EdgeListConstIter iter = simple_ig->get_node( 12 )->edge_list_begin(),
-				iter_end = simple_ig->get_node( 12 )->edge_list_end(); iter != iter_end; ++iter ) {
-			SimpleEdge const * simple_edge = static_cast< SimpleEdge const * > ( *iter );
-			std::cout << "Alt energy: " << simple_edge->get_other_ind( 12 ) << " " << simple_edge->get_proposed_energy() << std::endl;
+		iter_end = simple_ig->get_node( 12 )->edge_list_end(); iter != iter_end; ++iter ) {
+		SimpleEdge const * simple_edge = static_cast< SimpleEdge const * > ( *iter );
+		std::cout << "Alt energy: " << simple_edge->get_other_ind( 12 ) << " " << simple_edge->get_proposed_energy() << std::endl;
 		}*/
 	}
 
@@ -278,7 +278,7 @@ public:
 		simple_ig->set_scorefunction( *sfxn );
 		simple_ig->initialize( oneten );
 
-		for (core::Size ii(1); ii <= oneten.n_residue(); ++ii) {
+		for ( core::Size ii(1); ii <= oneten.n_residue(); ++ii ) {
 			ResidueCOP res( ResidueOP( new Residue(oneten.residue(ii)) ) );
 			TS_ASSERT_DELTA( simple_ig->consider_substitution(ii, res), 0, 0.0001);
 			simple_ig->reject_change( ii );

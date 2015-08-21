@@ -46,7 +46,7 @@
 #endif
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 #ifdef BOINC_GRAPHICS
@@ -188,7 +188,7 @@ SSShapeComplementarityFilter::compute( core::pose::Pose const & pose ) const
 				secstruct += dssp_ss[i-1];
 			}
 		}
-		
+
 		// AMW: cppcheck noticed that secstruct wasn't being used. I think it should be used here!
 		// Note that this would be compatible with the SS_Info2 constructor's interpretation of the dssp string
 		// i.e. that it should skip non protein residues, and only be THAT long.
@@ -234,50 +234,50 @@ SSShapeComplementarityFilter::compute( core::pose::Pose const & pose ) const
 	}
 	/*std::string helix_string;
 	if ( blueprint_ ) {
-		helix_string = blueprint_->helix_pairings();
+	helix_string = blueprint_->helix_pairings();
 	} else {
-		helix_string = detect_helix_pairings( pose, ss_info );
-		TR << "Helix_string=" << helix_string << std::endl;
+	helix_string = detect_helix_pairings( pose, ss_info );
+	TR << "Helix_string=" << helix_string << std::endl;
 	}
 	protocols::fldsgn::topology::HelixPairings helix_pairs( protocols::fldsgn::topology::HelixPairingSet( helix_string ).helix_pairings() );
 	for ( core::Size i=1; i<=helix_pairs.size(); ++i ) {
-		setup_sc_hh( pose, *ss_info, helix_pairs[i] );
+	setup_sc_hh( pose, *ss_info, helix_pairs[i] );
 
-		core::scoring::sc::RESULTS const & r( get_sc_and_area() );
-		if ( r.valid == 1 ) {
-			sum += r.sc * r.area;
-			total_area += r.area;
-			++count;
-			TR << "SUM=" << sum << "; area=" << r.area << "; sc=" << r.sc << std::endl;
-		}
-		// reset SCC for reuse
-		scc_->Reset();
+	core::scoring::sc::RESULTS const & r( get_sc_and_area() );
+	if ( r.valid == 1 ) {
+	sum += r.sc * r.area;
+	total_area += r.area;
+	++count;
+	TR << "SUM=" << sum << "; area=" << r.area << "; sc=" << r.sc << std::endl;
+	}
+	// reset SCC for reuse
+	scc_->Reset();
 	}
 
 	std::string hss_string;
 	if ( blueprint_ ) {
-		hss_string = blueprint_->hss_triplets();
+	hss_string = blueprint_->hss_triplets();
 	} else {
-		hss_string = detect_hss_triplets( pose, ss_info );
-		TR << "HSS string = " << hss_string << std::endl;
+	hss_string = detect_hss_triplets( pose, ss_info );
+	TR << "HSS string = " << hss_string << std::endl;
 	}
 	protocols::fldsgn::topology::HSSTriplets hss_triplets( protocols::fldsgn::topology::HSSTripletSet( hss_string ).hss_triplets() );
 	for ( core::Size i=1; i<=hss_triplets.size(); ++i ) {
-		setup_sc_hss( pose, *ss_info, hss_triplets[i] );
+	setup_sc_hss( pose, *ss_info, hss_triplets[i] );
 
-		core::scoring::sc::RESULTS const & r( get_sc_and_area() );
+	core::scoring::sc::RESULTS const & r( get_sc_and_area() );
 
-		// this check makes sure there wasn't an error in the filter calculation.
-		// if there was an error, the result is simply ignored.
-		if ( r.valid == 1 ) {
-			sum += r.sc * r.area;
-			total_area += r.area;
-			++count;
-			TR << "SUM=" << sum << "; area=" << r.area << "; sc=" << r.sc << std::endl;
-		}
-		// reset SCC for reuse
-		scc_->Reset();
-		}*/
+	// this check makes sure there wasn't an error in the filter calculation.
+	// if there was an error, the result is simply ignored.
+	if ( r.valid == 1 ) {
+	sum += r.sc * r.area;
+	total_area += r.area;
+	++count;
+	TR << "SUM=" << sum << "; area=" << r.area << "; sc=" << r.sc << std::endl;
+	}
+	// reset SCC for reuse
+	scc_->Reset();
+	}*/
 
 	if ( count == 0 || total_area <= 0.0 ) {
 		return 0;
@@ -294,12 +294,12 @@ SSShapeComplementarityFilter::apply( core::pose::Pose const & pose ) const
 {
 	core::Real const returnval( report_sm( pose ) );
 
-	if(returnval < rejection_thresh()) {
-		if(TR.visible()) TR << "SSShapecomplementarity result is less than rejection threshold (" << returnval << " < " << rejection_thresh() << ").  Filter failed." << std::endl;
+	if ( returnval < rejection_thresh() ) {
+		if ( TR.visible() ) TR << "SSShapecomplementarity result is less than rejection threshold (" << returnval << " < " << rejection_thresh() << ").  Filter failed." << std::endl;
 		return false;
 	}
-	
-	if(TR.visible()) TR << "SSShapecomplementarityFilter passed." << std::endl;
+
+	if ( TR.visible() ) TR << "SSShapecomplementarityFilter passed." << std::endl;
 	return true;
 }
 
@@ -307,7 +307,7 @@ SSShapeComplementarityFilter::apply( core::pose::Pose const & pose ) const
 /// @brief sets up the underlying filter to work based on a helix
 void
 SSShapeComplementarityFilter::setup_sc( core::pose::Pose const & pose,
-																				protocols::fldsgn::topology::SS_BaseCOP const ss ) const
+	protocols::fldsgn::topology::SS_BaseCOP const ss ) const
 {
 	utility::vector1< core::Size > set1, set2;
 	runtime_assert( ss->begin() <= ss->end() );
@@ -315,8 +315,9 @@ SSShapeComplementarityFilter::setup_sc( core::pose::Pose const & pose,
 	// set1 is the helix
 	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
 		// exclude ligands and other weird things
-		if ( ! pose.residue( i ).is_protein() )
+		if ( ! pose.residue( i ).is_protein() ) {
 			continue;
+		}
 
 		if ( i >= ss->begin() && i <= ss->end() ) {
 			set1.push_back( i );
@@ -343,8 +344,8 @@ SSShapeComplementarityFilter::setup_sc( core::pose::Pose const & pose,
 /// @brief sets up the underlying shapecomplementarity filter to work based on secondary structure elements
 void
 SSShapeComplementarityFilter::setup_sc_hss( core::pose::Pose const & pose,
-																						protocols::fldsgn::topology::SS_Info2 const & ss_info,
-																						protocols::fldsgn::topology::HSSTripletCOP hss_triplet ) const
+	protocols::fldsgn::topology::SS_Info2 const & ss_info,
+	protocols::fldsgn::topology::HSSTripletCOP hss_triplet ) const
 {
 	utility::vector1< core::Size > set1, set2;
 	// set 1 is the helix
@@ -378,8 +379,8 @@ SSShapeComplementarityFilter::setup_sc_hss( core::pose::Pose const & pose,
 /// @brief sets up the underlying shapecomplementarity filter to work based on secondary structure elements
 void
 SSShapeComplementarityFilter::setup_sc_hh( core::pose::Pose const & pose,
-																					 protocols::fldsgn::topology::SS_Info2 const & ss_info,
-																					 protocols::fldsgn::topology::HelixPairingCOP helix_pair ) const
+	protocols::fldsgn::topology::SS_Info2 const & ss_info,
+	protocols::fldsgn::topology::HelixPairingCOP helix_pair ) const
 {
 	utility::vector1< core::Size > set1, set2;
 	// set 1 is helix1, set2 is helix2
@@ -420,11 +421,12 @@ SSShapeComplementarityFilter::get_sc_and_area() const
 	if ( verbose_ ) {
 		TR << "==================================================" << std::endl;
 		TR << std::endl;
-		for(int i = 0; i <= 2; i++) {
-			if(i < 2)
+		for ( int i = 0; i <= 2; i++ ) {
+			if ( i < 2 ) {
 				TR << "Molecule " << (i+1) << ":" << std::endl;
-			else
+			} else {
 				TR << "Total/Average for both molecules:" << std::endl;
+			}
 
 			TR << "          Total Atoms: " << r.surface[i].nAtoms << std::endl;
 			TR << "         Buried Atoms: " << r.surface[i].nBuriedAtoms << std::endl;
@@ -436,11 +438,12 @@ SSShapeComplementarityFilter::get_sc_and_area() const
 		}
 		TR << std::endl;
 
-		for(int i = 0; i <= 2; i++) {
-			if(i < 2)
+		for ( int i = 0; i <= 2; i++ ) {
+			if ( i < 2 ) {
 				TR << "Molecule " << (i+1) << "->" << ((i+1)%2+1) << ": " << std::endl;
-			else
+			} else {
 				TR << "Average for both molecules:" << std::endl;
+			}
 			TR << "      Mean Separation: " << r.surface[i].d_mean << std::endl;
 			TR << "    Median Separation: " << r.surface[i].d_median << std::endl;
 			TR << "    Mean Shape Compl.: " << r.surface[i].s_mean << std::endl;

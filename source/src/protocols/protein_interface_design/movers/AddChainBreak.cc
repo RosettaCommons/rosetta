@@ -79,12 +79,12 @@ void
 AddChainBreak::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	/// resnum & pdb_num are now equivalent
-	if( tag->hasOption( "resnum" ) )
+	if ( tag->hasOption( "resnum" ) ) {
 		resnum_ = tag->getOption< std::string > ("resnum" );
-	else if( tag->hasOption( "pdb_num" ) ){
+	} else if ( tag->hasOption( "pdb_num" ) ) {
 		resnum_ = tag->getOption< std::string > ("pdb_num" );
 	}
-	if( tag->hasOption( "find_automatically" ) ){
+	if ( tag->hasOption( "find_automatically" ) ) {
 		find_automatically( tag->getOption< bool >( "find_automatically" ) );
 		automatic_distance_cutoff( tag->getOption< core::Real >( "distance_cutoff", 2.5 ));
 	}
@@ -100,42 +100,41 @@ AddChainBreak::apply( core::pose::Pose & pose )
 	using namespace pose;
 	core::kinematics::FoldTree f( pose.fold_tree() );
 
-	if( resnum() != "" ){
+	if ( resnum() != "" ) {
 		core::Size const resn( core::pose::parse_resnum( resnum(), pose ) );
 
-		if( change_foldtree() ){
+		if ( change_foldtree() ) {
 			f.new_jump( resn, resn+1, resn );
 		}
-		if(pose.residue(resn  ).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(pose,resn);
-		if(pose.residue(resn+1).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(pose,resn+1);
-		if( remove() ){
+		if ( pose.residue(resn  ).is_upper_terminus() ) core::pose::remove_upper_terminus_type_from_pose_residue(pose,resn);
+		if ( pose.residue(resn+1).is_lower_terminus() ) core::pose::remove_lower_terminus_type_from_pose_residue(pose,resn+1);
+		if ( remove() ) {
 			remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, resn );
 			remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, resn +1);
-		}
-		else{
+		} else {
 			add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, resn );
 			add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, resn +1);
 		}
 	}
 	utility::vector1< core::Size > cuts;
 	cuts.clear();
-	if( find_automatically() ){
-		for( core::Size i = 1; i < pose.total_residue(); ++i ){
+	if ( find_automatically() ) {
+		for ( core::Size i = 1; i < pose.total_residue(); ++i ) {
 			core::Real const distance( pose.residue( i ).xyz( "C" ).distance( pose.residue( i + 1 ).xyz( "N" ) ) );
-			if( distance >= automatic_distance_cutoff() ){
+			if ( distance >= automatic_distance_cutoff() ) {
 				cuts.push_back( i );
 				TR<<"Detecting cut at "<<i<<" with distance "<<distance<<std::endl;
 			}
 		}
 	}
-	BOOST_FOREACH( core::Size const res, cuts ){
+	BOOST_FOREACH ( core::Size const res, cuts ) {
 		add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, res );
 		add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, res +1);
-		if( change_foldtree() ){
+		if ( change_foldtree() ) {
 			f.new_jump( res, res+1, res );
 		}
 	}
-	if( change_foldtree() ){
+	if ( change_foldtree() ) {
 		pose.fold_tree( f );
 		TR<<"New fold tree: "<<pose.fold_tree()<<std::endl;
 	}

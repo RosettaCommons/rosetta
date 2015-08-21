@@ -46,7 +46,7 @@ SingleLigandRotamerLibraryCreator::create( core::chemical::ResidueType const & r
 
 	std::string const & rotamers_file(pdb_libspec->pdb_rotamers_file());
 
-	if( rotamers_file.size() == 0 ) {
+	if ( rotamers_file.size() == 0 ) {
 		utility_exit_with_message("Can't load PDB rotamers from an empty filename.");
 	}
 	if ( !restype.is_ligand() ) { // Historical tracer output

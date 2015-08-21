@@ -42,13 +42,13 @@ inline void kf_cexp(kiss_fft_cpx & x, kiss_fft_scalar phase) {
 void kiss_fft(kiss_fft_cfg cfg,const kiss_fft_cpx *fin,kiss_fft_cpx *fout);
 
 //fpd
-void kiss_fft_split(kiss_fftsplit_cfg cfg, 
-     const kiss_fft_scalar *rin,
-     const kiss_fft_scalar *iin,
-     kiss_fft_scalar *rout,
-     kiss_fft_scalar *iout,
-     int fin_stride,
-     int fout_stride);
+void kiss_fft_split(kiss_fftsplit_cfg cfg,
+	const kiss_fft_scalar *rin,
+	const kiss_fft_scalar *iin,
+	kiss_fft_scalar *rout,
+	kiss_fft_scalar *iout,
+	int fin_stride,
+	int fout_stride);
 
 
 // A more generic version of the above function. It reads its input from every Nth sample.
@@ -78,16 +78,16 @@ void kiss_fftnd(kiss_fftnd_cfg  cfg,const kiss_fft_cpx *fin,kiss_fft_cpx *fout);
 // input timedata has nfft scalar points
 // output freqdata has nfft/2+1 complex points
 void kiss_fftr(
-           kiss_fftr_cfg cfg,
-           const kiss_fft_scalar *timedata,
-           kiss_fft_cpx *freqdata);
+	kiss_fftr_cfg cfg,
+	const kiss_fft_scalar *timedata,
+	kiss_fft_cpx *freqdata);
 
 // input freqdata has  nfft/2+1 complex points
 // output timedata has nfft scalar points
 void kiss_fftri(
-           kiss_fftr_cfg cfg,
-           const kiss_fft_cpx *freqdata,
-           kiss_fft_scalar *timedata);
+	kiss_fftr_cfg cfg,
+	const kiss_fft_cpx *freqdata,
+	kiss_fft_scalar *timedata);
 
 
 ///////////////////
@@ -95,14 +95,14 @@ void kiss_fftri(
 ///////////////////
 //fpd
 void kiss_dct(
-           kiss_dct_cfg st,
-           const kiss_fft_scalar *timedata,
-           kiss_fft_scalar *freqdata);
+	kiss_dct_cfg st,
+	const kiss_fft_scalar *timedata,
+	kiss_fft_scalar *freqdata);
 
 void kiss_idct(
-           kiss_dct_cfg st,
-           const kiss_fft_scalar *freqdata,
-           kiss_fft_scalar *timedata);
+	kiss_dct_cfg st,
+	const kiss_fft_scalar *freqdata,
+	kiss_fft_scalar *timedata);
 
 ///////////////////
 // Multidim Real FFTs
@@ -112,15 +112,15 @@ void kiss_idct(
 // input timedata has dims[0] X dims[1] X ... X  dims[ndims-1] scalar points
 // output freqdata has dims[0] X dims[1] X ... X  dims[ndims-1]/2+1 complex points
 void kiss_fftndr(
-        kiss_fftndr_cfg cfg,
-        const kiss_fft_scalar *timedata,
-        kiss_fft_cpx *freqdata);
+	kiss_fftndr_cfg cfg,
+	const kiss_fft_scalar *timedata,
+	kiss_fft_cpx *freqdata);
 
 // input and output dimensions are the exact opposite of kiss_fftndr
 void kiss_fftndri(
-        kiss_fftndr_cfg cfg,
-        const kiss_fft_cpx *freqdata,
-        kiss_fft_scalar *timedata);
+	kiss_fftndr_cfg cfg,
+	const kiss_fft_cpx *freqdata,
+	kiss_fft_scalar *timedata);
 
 }
 }

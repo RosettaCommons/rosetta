@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 	 core/membrane/SpanningTopology.cxxtest.hh
+/// @file   core/membrane/SpanningTopology.cxxtest.hh
 ///
-/// @brief 	 Unit test for SpanningTopology class
+/// @brief   Unit test for SpanningTopology class
 /// @details Test object for transmembrane spans
 ///
 /// @author  JKLeman (julia.koehler1982@gmail.com)
@@ -47,24 +47,24 @@ using namespace core::conformation::membrane;
 using namespace protocols::membrane;
 
 class SpanningTopologyTest : public CxxTest::TestSuite {
-	
-public: // test functions
-    
-    /// Test Setup Functions ////////
-    
-    /// @brief Setup Test
-    void setUp(){
-	
-        // Initialize
-        core_init();
-	}
-    
-    /// @brief Standard Tear Down
-    void tearDown() {}
-	    
-    ///// Test Methods /////////////
 
-////////////////////////////////////////////////////////////////////////////////
+public: // test functions
+
+	/// Test Setup Functions ////////
+
+	/// @brief Setup Test
+	void setUp(){
+
+		// Initialize
+		core_init();
+	}
+
+	/// @brief Standard Tear Down
+	void tearDown() {}
+
+	///// Test Methods /////////////
+
+	////////////////////////////////////////////////////////////////////////////////
 
 	// create object from PDB
 	void test_from_pdb1(){
@@ -82,11 +82,11 @@ public: // test functions
 		TS_TRACE("Finished testing constructor from structure.");
 	}
 
-////////////////////////////////////////////////////////////////////////////////
-	
+	////////////////////////////////////////////////////////////////////////////////
+
 	// create object from PDB
 	void test_from_pdb2(){
-		
+
 		TS_TRACE("Test constructor from structure for 2LEG");
 
 		SpanningTopologyOP topo_from_pdb( topology_from_pdb( "core/conformation/membrane/2LEG_B_tr.pdb") );
@@ -104,15 +104,15 @@ public: // test functions
 		TS_TRACE("Finished testing constructor from structure.");
 	}
 
-////////////////////////////////////////////////////////////////////////////////
-	
+	////////////////////////////////////////////////////////////////////////////////
+
 	// create object from PDB
 	void test_from_pdb3(){
-		
+
 		TS_TRACE("Test constructor from structure for 3MP7");
 
 		SpanningTopologyOP topo_from_pdb( topology_from_pdb( "core/conformation/membrane/3MP7__tr.pdb") );
-		
+
 		// check topology
 		TS_ASSERT_EQUALS( topo_from_pdb->nspans(), 11 );
 		TS_ASSERT_EQUALS( topo_from_pdb->span(1)->start(), 5 );
@@ -140,11 +140,11 @@ public: // test functions
 		TS_TRACE("Finished testing constructor from structure.");
 	}
 
-////////////////////////////////////////////////////////////////////////////////
-	
+	////////////////////////////////////////////////////////////////////////////////
+
 	// create object from PDB
 	void test_from_pdb4(){
-		
+
 		TS_TRACE("Test constructor from structure for 3UKM");
 
 		SpanningTopologyOP topo_from_pdb( topology_from_pdb( "core/conformation/membrane/3UKM__tr.pdb") );
@@ -178,7 +178,7 @@ public: // test functions
 		TS_TRACE("Finished testing constructor from structure.");
 	}
 
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
 
 	// create object from spanfile
 	void test_from_spanfile(){
@@ -186,7 +186,7 @@ public: // test functions
 
 		// create object
 		SpanningTopologyOP topo_from_spanfile( new SpanningTopology( "core/conformation/membrane/1AFO_AB.span", 80 ) );
-		
+
 		// check topology
 		TS_ASSERT_EQUALS( topo_from_spanfile->nspans(), 2 );
 		TS_ASSERT_EQUALS( topo_from_spanfile->span(1)->start(), 15 );
@@ -196,15 +196,15 @@ public: // test functions
 		TS_TRACE("Finished testing constructor from spanfile.");
 	}
 
-////////////////////////////////////////////////////////////////////////////////
-	
+	////////////////////////////////////////////////////////////////////////////////
+
 	// is residue in membrane?
 	void test_res_in_membrane(){
 		TS_TRACE("Test whether residue is in the membrane");
 
 		// create object
 		SpanningTopologyOP topo_from_spanfile( new SpanningTopology( "core/conformation/membrane/1AFO_AB.span", 80 ) );
-		
+
 		// check specific residues for membrane location
 		TS_ASSERT_EQUALS( topo_from_spanfile->in_span( 8), 0 );
 		TS_ASSERT_EQUALS( topo_from_spanfile->in_span(14), 0 );
@@ -221,12 +221,12 @@ public: // test functions
 		TS_TRACE("Finished whether residue is in the membrane.");
 	}
 
-////////////////////////////////////////////////////////////////////////////////
-	
+	////////////////////////////////////////////////////////////////////////////////
+
 	// does span cross the membrane?
 	void test_spanning_membrane(){
 		TS_TRACE("Test whether Span crosses the membrane");
-		
+
 		using namespace core::pose;
 		using namespace core::import_pose;
 
@@ -235,15 +235,15 @@ public: // test functions
 		// Load in pose from pdb
 		Pose pose;
 		pose_from_pdb( pose, "core/conformation/membrane/1AFO_AB.pdb" );
-		
+
 		// get info from pose
 		std::pair< utility::vector1< Real >, utility::vector1< Size > > pose_info( get_chain_and_z( pose ));
 		utility::vector1< Real > zcoord = pose_info.first;
-		
+
 		// check specific spans for first helix
 		SpanOP span1( new Span(  1, 10 ) );
 		TS_ASSERT_EQUALS( topo_from_pdb->spanning( zcoord, *span1 ), 0 );
-		
+
 		SpanOP span2( new Span( 10, 20 ) );
 		TS_ASSERT_EQUALS( topo_from_pdb->spanning( zcoord, *span2 ), 0 );
 
@@ -252,35 +252,35 @@ public: // test functions
 
 		SpanOP span4( new Span( 27, 40 ) );
 		TS_ASSERT_EQUALS( topo_from_pdb->spanning( zcoord, *span4 ), 0 );
-		
+
 		// check specific spans for second helix
 		SpanOP span5( new Span( 40, 41 ) );
 		TS_ASSERT_EQUALS( topo_from_pdb->spanning( zcoord, *span5 ), 1 );
-		
+
 		SpanOP span6( new Span( 41, 56 ) );
 		TS_ASSERT_EQUALS( topo_from_pdb->spanning( zcoord, *span6 ), 0 );
-		
+
 		SpanOP span7( new Span( 57, 68 ) );
 		TS_ASSERT_EQUALS( topo_from_pdb->spanning( zcoord, *span7 ), 1 );
-		
+
 		SpanOP span8( new Span( 66, 80 ) );
 		TS_ASSERT_EQUALS( topo_from_pdb->spanning( zcoord, *span8 ), 0 );
-		
+
 		TS_TRACE("Finished testing whether span crosses the membrane.");
 	}
 
-////////////////////////////////////////////////////////////////////////////////
-	
+	////////////////////////////////////////////////////////////////////////////////
+
 	// is the spanning topology valid?
 	void test_is_valid(){
 		TS_TRACE("Testing whether spans are valid");
 		using namespace core::conformation::membrane;
-		
+
 		// test if span too short
 		SpanningTopology topo1( SpanningTopology( "core/conformation/membrane/1AFO_AB_invalid_too-short.span", 80 ) );
 		TS_ASSERT_EQUALS( topo1.is_valid(), true );
 		TS_TRACE("...topo1 done.");
-		
+
 		// test if span too long
 		SpanningTopology topo2( SpanningTopology( "core/conformation/membrane/1AFO_AB_invalid_too-long.span", 80 ) );
 		TS_ASSERT_EQUALS( topo2.is_valid(), true );
@@ -304,14 +304,14 @@ public: // test functions
 		}
 		TS_TRACE("...topo4 done.");
 	}
-		
+
 	////////////////////////////////////////////////////////////////////////////////
 
 	// concatenate topology
 	void test_concatenate_topology(){
 		TS_TRACE("Testing concatenate topology");
 		using namespace core::conformation::membrane;
-		
+
 		// create topology objects
 		SpanningTopology topo1( SpanningTopology( "core/conformation/membrane/pmp22_withSS_PPM_opt.span" ) );
 		SpanningTopology topo2( SpanningTopology( "core/conformation/membrane/caln_tm_finalB.span" ) );
@@ -330,13 +330,13 @@ public: // test functions
 		TS_ASSERT_EQUALS( topo1.span(4)->end(),   154 );
 		TS_ASSERT_EQUALS( topo1.span(5)->start(), 167 );
 		TS_ASSERT_EQUALS( topo1.span(5)->end(),   186 );
-		
+
 	}
 
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
 
 	SpanningTopologyOP topology_from_pdb( std::string pdbfile ) {
-		
+
 		using namespace core::pose;
 		using namespace core::import_pose;
 
@@ -353,7 +353,7 @@ public: // test functions
 
 		// create object
 		SpanningTopologyOP topo( new SpanningTopology( zcoord, chainID, secstruct, thickness ) );
-		
+
 		return topo;
 	}
 

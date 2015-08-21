@@ -45,14 +45,14 @@ namespace rna {
 RNA_RawBaseBaseInfo::RNA_RawBaseBaseInfo( RNA_RawBaseBaseInfo const & src ) :
 	CacheableData()
 {
-  base_pair_array_ = src.base_pair_array_;
-  base_axis_array_ = src.base_axis_array_;
-  base_stagger_array_ = src.base_stagger_array_;
-  base_stack_array_ = src.base_stack_array_;
-  base_stack_axis_array_ = src.base_stack_axis_array_;
-  base_geometry_orientation_array_ = src.base_geometry_orientation_array_;
-  base_geometry_height_array_ = src.base_geometry_height_array_;
-  calculated_ = src.calculated_;
+	base_pair_array_ = src.base_pair_array_;
+	base_axis_array_ = src.base_axis_array_;
+	base_stagger_array_ = src.base_stagger_array_;
+	base_stack_array_ = src.base_stack_array_;
+	base_stack_axis_array_ = src.base_stack_axis_array_;
+	base_geometry_orientation_array_ = src.base_geometry_orientation_array_;
+	base_geometry_height_array_ = src.base_geometry_height_array_;
+	calculated_ = src.calculated_;
 }
 
 void
@@ -61,41 +61,41 @@ RNA_RawBaseBaseInfo::resize( Size const & total_residue )
 
 	if ( base_pair_array_.size1() == total_residue ) return;
 
-  base_pair_array_.dimension( total_residue, total_residue, 3 );
-  base_stagger_array_.dimension( total_residue, total_residue, 3 );
-  base_axis_array_.dimension( total_residue, total_residue, 3 );
-  base_stack_array_.dimension( total_residue, total_residue );
-  base_stack_axis_array_.dimension( total_residue, total_residue );
-  base_geometry_orientation_array_.dimension( total_residue, total_residue );
-  base_geometry_height_array_.dimension( total_residue, total_residue );
+	base_pair_array_.dimension( total_residue, total_residue, 3 );
+	base_stagger_array_.dimension( total_residue, total_residue, 3 );
+	base_axis_array_.dimension( total_residue, total_residue, 3 );
+	base_stack_array_.dimension( total_residue, total_residue );
+	base_stack_axis_array_.dimension( total_residue, total_residue );
+	base_geometry_orientation_array_.dimension( total_residue, total_residue );
+	base_geometry_height_array_.dimension( total_residue, total_residue );
 }
 
-	////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
 void
 RNA_RawBaseBaseInfo::zero()
 {
-  base_pair_array_ = 0.0;
-  base_stagger_array_ = 0.0;
-  base_axis_array_ = 0.0;
-  base_stack_array_ = 0.0;
-  base_stack_axis_array_ = 0.0;
-  base_geometry_orientation_array_ = 0.0;
-  base_geometry_height_array_ = 0.0;
+	base_pair_array_ = 0.0;
+	base_stagger_array_ = 0.0;
+	base_axis_array_ = 0.0;
+	base_stack_array_ = 0.0;
+	base_stack_axis_array_ = 0.0;
+	base_geometry_orientation_array_ = 0.0;
+	base_geometry_height_array_ = 0.0;
 }
 
-	////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
 void
 RNA_RawBaseBaseInfo::copy_values( RNA_RawBaseBaseInfo const & src, Size const & i, Size const & j )
 {
-	for ( Size k = 1; k <= NUM_EDGES; k++ ){
+	for ( Size k = 1; k <= NUM_EDGES; k++ ) {
 		base_pair_array_( i, j, k ) = src.base_pair_array_( i, j, k );
 		base_stagger_array_( i, j, k ) = src.base_stagger_array_( i, j, k );
 		base_axis_array_( i, j, k ) = src.base_axis_array_( i, j, k );
 	}
 	base_stack_array_( i, j ) = src.base_stack_array_( i, j );
-  base_stack_axis_array_( i, j ) = src.base_stack_axis_array_( i, j );
-  base_geometry_orientation_array_( i, j ) = src.base_geometry_orientation_array_( i, j );
-  base_geometry_height_array_( i, j ) = src.base_geometry_height_array_( i, j );
+	base_stack_axis_array_( i, j ) = src.base_stack_axis_array_( i, j );
+	base_geometry_orientation_array_( i, j ) = src.base_geometry_orientation_array_( i, j );
+	base_geometry_height_array_( i, j ) = src.base_geometry_height_array_( i, j );
 }
 
 } //rna

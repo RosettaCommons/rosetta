@@ -41,7 +41,7 @@ namespace toolbox {
 namespace pose_metric_calculators {
 
 HPatchCalculator::HPatchCalculator( bool remove_nonprotein_res )
-	: total_hpatch_score_(0.0), remove_nonprotein_res_(remove_nonprotein_res )
+: total_hpatch_score_(0.0), remove_nonprotein_res_(remove_nonprotein_res )
 {}
 
 HPatchCalculator::~HPatchCalculator(){}
@@ -90,7 +90,7 @@ void
 HPatchCalculator::recompute( pose::Pose const & this_pose ) {
 
 	// use the SurfacePotential class to recompute the hpatch score
-	if( !remove_nonprotein_res_ ){
+	if ( !remove_nonprotein_res_ ) {
 		pack::interaction_graph::SurfacePotential::get_instance()->compute_pose_hpatch_score( this_pose, total_hpatch_score_, patch_scores_, atoms_in_patches_ );
 
 	} else {

@@ -114,17 +114,17 @@ LoopCloseEnergy::eval_atom_derivative(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
- 	) const
+) const
 {
 
 	using namespace conformation;
 	using namespace core::scoring::loop_graph;
 
-	for ( Size n = 1; n <= loop_graph_->num_loops(); n++ ){
+	for ( Size n = 1; n <= loop_graph_->num_loops(); n++ ) {
 
 		LoopScoreInfoOP const & loop_score_info = loop_graph_->loop_score_info( n );
 
-		if ( loop_score_info->takeoff_atom() == atom_id ){
+		if ( loop_score_info->takeoff_atom() == atom_id ) {
 
 			id::AtomID const & loop_landing_atom = loop_score_info->landing_atom();
 
@@ -138,7 +138,7 @@ LoopCloseEnergy::eval_atom_derivative(
 			F2 += weights[ loop_close ] * f2;
 		}
 
-		if ( loop_score_info->landing_atom() == atom_id ){
+		if ( loop_score_info->landing_atom() == atom_id ) {
 
 			id::AtomID const & loop_takeoff_atom = loop_score_info->takeoff_atom();
 

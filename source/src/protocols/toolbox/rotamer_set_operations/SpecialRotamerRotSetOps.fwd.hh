@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/toolbox/RotamerSetOperations/SpecialRotamerRotSetOps.fwd.hh
-/// @brief 	combine two rotamer sets
+/// @brief  combine two rotamer sets
 /// @author Summer Thyme, sthyme@u.washington.edu
 
 #ifndef INCLUDED_protocols_toolbox_rotamer_set_operations_SpecialRotamerRotSetOps_fwd_hh

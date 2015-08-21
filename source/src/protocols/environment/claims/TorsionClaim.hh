@@ -53,79 +53,79 @@ namespace environment {
 namespace claims {
 
 class TorsionClaim : public EnvClaim {
-  typedef core::environment::FoldTreeSketch FoldTreeSketch;
-  typedef EnvClaim Parent;
+	typedef core::environment::FoldTreeSketch FoldTreeSketch;
+	typedef EnvClaim Parent;
 
-  typedef core::pack::task::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
+	typedef core::pack::task::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
 
 public:
-  typedef core::environment::LocalPosition LocalPosition;
-  typedef core::environment::LocalPositions LocalPositions;
+	typedef core::environment::LocalPosition LocalPosition;
+	typedef core::environment::LocalPositions LocalPositions;
 
-  TorsionClaim( ClientMoverOP owner,
-                utility::tag::TagCOP tag,
-                basic::datacache::DataMap& );
+	TorsionClaim( ClientMoverOP owner,
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap& );
 
-  TorsionClaim( ClientMoverOP owner,
-                core::pack::task::residue_selector::ResidueSelectorCOP );
+	TorsionClaim( ClientMoverOP owner,
+		core::pack::task::residue_selector::ResidueSelectorCOP );
 
-  // Initializer for a single backbone angle
-  TorsionClaim( ClientMoverOP owner,
-                LocalPosition const& local_pos );
+	// Initializer for a single backbone angle
+	TorsionClaim( ClientMoverOP owner,
+		LocalPosition const& local_pos );
 
-  // Initializer for a contiguous range of backbone angles.
-  TorsionClaim( ClientMoverOP owner,
-                std::string const& label,
-                std::pair< core::Size, core::Size > const& range );
+	// Initializer for a contiguous range of backbone angles.
+	TorsionClaim( ClientMoverOP owner,
+		std::string const& label,
+		std::pair< core::Size, core::Size > const& range );
 
-  TorsionClaim( ClientMoverOP owner,
-                LocalPositions const& positions );
+	TorsionClaim( ClientMoverOP owner,
+		LocalPositions const& positions );
 
-  virtual void yield_elements( core::pose::Pose const&, DOFElements& elements ) const;
+	virtual void yield_elements( core::pose::Pose const&, DOFElements& elements ) const;
 
-  ControlStrength const& ctrl_strength() const;
+	ControlStrength const& ctrl_strength() const;
 
-  void claim_sidechain( bool in ) { claim_sidechain_ = in; }
+	void claim_sidechain( bool in ) { claim_sidechain_ = in; }
 
-  bool claim_sidechain() const { return claim_sidechain_; }
+	bool claim_sidechain() const { return claim_sidechain_; }
 
-  void claim_backbone( bool in ) { claim_backbone_ = in; }
+	void claim_backbone( bool in ) { claim_backbone_ = in; }
 
-  bool claim_backbone() const { return claim_backbone_; }
+	bool claim_backbone() const { return claim_backbone_; }
 
-  /// @brief set the initialization and control strength of the TorsionClaim.
-  void strength( ControlStrength const& control_strength,
-                 ControlStrength const& initialization_strength );
+	/// @brief set the initialization and control strength of the TorsionClaim.
+	void strength( ControlStrength const& control_strength,
+		ControlStrength const& initialization_strength );
 
-  ControlStrength const& init_strength() const;
+	ControlStrength const& init_strength() const;
 
-  virtual EnvClaimOP clone() const;
+	virtual EnvClaimOP clone() const;
 
-  virtual std::string type() const;
+	virtual std::string type() const;
 
-  virtual ResidueSelectorCOP selector() const { return selector_; }
+	virtual ResidueSelectorCOP selector() const { return selector_; }
 
-  virtual void show( std::ostream& os ) const;
+	virtual void show( std::ostream& os ) const;
 
 protected:
-  virtual
-  DOFElement wrap_dof_id( core::id::DOF_ID const& id ) const;
+	virtual
+	DOFElement wrap_dof_id( core::id::DOF_ID const& id ) const;
 
-  void insert_dof_element( core::conformation::Conformation const& conf,
-                           DOFElements& elements,
-                           core::Size seqpos,
-                           core::id::TorsionType type,
-                           core::Size torsion_number) const;
+	void insert_dof_element( core::conformation::Conformation const& conf,
+		DOFElements& elements,
+		core::Size seqpos,
+		core::id::TorsionType type,
+		core::Size torsion_number) const;
 
 
 private:
-  ResidueSelectorCOP selector_;
+	ResidueSelectorCOP selector_;
 
-  ControlStrength c_str_;
-  ControlStrength i_str_;
+	ControlStrength c_str_;
+	ControlStrength i_str_;
 
-  bool claim_sidechain_;
-  bool claim_backbone_;
+	bool claim_sidechain_;
+	bool claim_backbone_;
 
 }; //class TorsionClaim
 

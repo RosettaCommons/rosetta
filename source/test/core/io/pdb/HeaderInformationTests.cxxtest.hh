@@ -56,7 +56,7 @@ public:
 		using namespace basic::options::OptionKeys;
 		core_init();
 
-		if(option.has(run::preserve_header)){
+		if ( option.has(run::preserve_header) ) {
 			cache_option__preserve_header_ = option[ run::preserve_header ]();
 			option[ run::preserve_header ](true);
 		}
@@ -67,7 +67,7 @@ public:
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 
-		if(option.has(run::preserve_header)){
+		if ( option.has(run::preserve_header) ) {
 			option[ run::preserve_header ].value(cache_option__preserve_header_);
 		}
 	}
@@ -124,7 +124,7 @@ public:
 		vector1<string> h_out(string_split(header_str_out, '\n'));
 
 		TS_ASSERT_EQUALS(h_in.size(),h_out.size());
-		for(Size i = 1, ie= h_in.size(); i != ie; ++i){
+		for ( Size i = 1, ie= h_in.size(); i != ie; ++i ) {
 			TS_ASSERT_EQUALS(h_in[i], rstripped_whitespace(h_out[i]));
 		}
 	}

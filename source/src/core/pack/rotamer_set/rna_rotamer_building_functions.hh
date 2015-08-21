@@ -34,7 +34,7 @@ namespace core {
 namespace pack {
 namespace rotamer_set {
 
-using namespace core::conformation; 
+using namespace core::conformation;
 
 void
 build_rna_rotamers(

@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //
-// Based on the Boost::Spirit calculator examples. 
+// Based on the Boost::Spirit calculator examples.
 // (See also rosetta/rosetta_source/external/boost_*/LICENSE_1_0.txt or http://www.boost.org/LICENSE_1_0.txt)
 
 /// @file   core/fragment/picking/Calculator.cc
 /// @brief a string-input calculator
-/// @author Rocco Moretti (rmoretti@u.washington.edu) 
+/// @author Rocco Moretti (rmoretti@u.washington.edu)
 
 #include <numeric/Calculator.hh>
 #include <numeric/NumericTraits.hh>
@@ -34,8 +34,8 @@ namespace phoenix = boost::phoenix;
 class CalculatorParser;
 
 // This strange, indirect invocation is to make boost::phoenix::bind happy.
-// If you can figure out how to directly call the member function, have at it. 
-void do_add_symbol(CalculatorParser & cp, std::string name, double value); 
+// If you can figure out how to directly call the member function, have at it.
+void do_add_symbol(CalculatorParser & cp, std::string name, double value);
 
 // These adapter functions are needed to get the type determination for the underlying overloaded functions correct
 double do_abs( double a) { return std::abs(a); }
@@ -64,11 +64,11 @@ public:
 	typedef std::map<std::string,numeric::Real> Varmap;
 
 	// Setup the grammar of the calculator
-  CalculatorParser(Varmap variables) :
+	CalculatorParser(Varmap variables) :
 		CalculatorParser::base_type(parser_)
 	{
 
-		for( Varmap::iterator iter(variables.begin()); iter != variables.end(); ++iter) {
+		for ( Varmap::iterator iter(variables.begin()); iter != variables.end(); ++iter ) {
 			add_symbol(iter->first,iter->second);
 		}
 
@@ -80,55 +80,55 @@ public:
 		assignment = omit[ ( varname >> '=' >> expression ) [ phoenix::bind(do_add_symbol, boost::ref(*this), qi::_1, qi::_2) ] ];
 
 		expression =
-		    term                            [_val = _1]
-		    >> *(   ('+' >> term            [_val += _1])
-		        |   ('-' >> term            [_val -= _1])
-		        )
-		    ;
-		
+			term                            [_val = _1]
+			>> *(   ('+' >> term            [_val += _1])
+			|   ('-' >> term            [_val -= _1])
+		)
+			;
+
 		term =
-		    exponent                        [_val = _1]
-		    >> *(   ('*' >> exponent        [_val *= _1])
-		        |   ('/' >> exponent        [_val /= _1])
-		        )
-		    ;
+			exponent                        [_val = _1]
+			>> *(   ('*' >> exponent        [_val *= _1])
+			|   ('/' >> exponent        [_val /= _1])
+		)
+			;
 
 		exponent =
-		    factor                        [_val = _1] 
-		    >> -('^' >> exponent   [ _val = phoenix::bind(do_pow, qi::_val, qi::_1) ] )
-		    ;
-	
+			factor                        [_val = _1]
+			>> -('^' >> exponent   [ _val = phoenix::bind(do_pow, qi::_val, qi::_1) ] )
+			;
+
 		factor =
-		    double_                         [_val = _1]
-		    | function                      [_val = _1]
-		    | ( local_vars_ >> ! lit('(') ) [_val = _1]
-		    |   '(' >> expression           [_val = _1] >> ')'
-		    |   ('-' >> factor              [_val = -_1])
-		    |   ('+' >> factor              [_val = _1])
-		    ;
+			double_                         [_val = _1]
+			| function                      [_val = _1]
+			| ( local_vars_ >> ! lit('(') ) [_val = _1]
+			|   '(' >> expression           [_val = _1] >> ')'
+			|   ('-' >> factor              [_val = -_1])
+			|   ('+' >> factor              [_val = _1])
+			;
 
 		function =
-		      ( no_case["abs"] >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_abs, qi::_1) ]
-		    | ( no_case["exp"] >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_exp, qi::_1) ]
-		    | ( no_case["ln"]  >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_ln, qi::_1) ]
-		    | ( no_case["log"]  >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_log10, qi::_1) ]
-		    | ( no_case["log"]  >> '(' >> expression >> ',' >> expression >> ')' ) [ _val = phoenix::bind(do_log, qi::_1, qi::_2) ]
-		    | ( no_case["log10"]  >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_log10, qi::_1) ]
-		    | ( no_case["log2"]  >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_log2, qi::_1) ]
-		    | ( no_case["r2d"]  >> '(' >> expression >> ')' ) [ _val = _1 * numeric::NumericTraits< double >::rad2deg() ]
-		    | ( no_case["d2r"]  >> '(' >> expression >> ')' ) [ _val = _1 * numeric::NumericTraits< double >::deg2rad() ]
-		    | ( no_case["sqrt"]  >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_sqrt, qi::_1) ]
-		    | ( no_case["cos"]  >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_cos, qi::_1) ]
-		    | ( no_case["sin"]  >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_sin, qi::_1) ]
-		    | ( no_case["tan"]  >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_tan, qi::_1) ]
-		  // indeterminite argument functions
-		    | ( no_case["mean"]  >> '(' >> (expression % ',') >> ')' ) [ _val = phoenix::bind(do_mean, qi::_1) ]
-		    | ( no_case["median"]  >> '(' >> (expression % ',') >> ')' ) [ _val = phoenix::bind(do_median, qi::_1) ]
-		    | ( no_case["min"]  >> '(' >> (expression % ',') >> ')' ) [ _val = phoenix::bind(do_min, qi::_1) ]
-		    | ( no_case["max"]  >> '(' >> (expression % ',') >> ')' ) [ _val = phoenix::bind(do_max, qi::_1) ]
-		    ;
-	
-		parser_ = *(assignment >> ';') >> expression; //assigment is omitted, so expression is the value for all. 
+			( no_case["abs"] >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_abs, qi::_1) ]
+			| ( no_case["exp"] >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_exp, qi::_1) ]
+			| ( no_case["ln"]  >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_ln, qi::_1) ]
+			| ( no_case["log"]  >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_log10, qi::_1) ]
+			| ( no_case["log"]  >> '(' >> expression >> ',' >> expression >> ')' ) [ _val = phoenix::bind(do_log, qi::_1, qi::_2) ]
+			| ( no_case["log10"]  >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_log10, qi::_1) ]
+			| ( no_case["log2"]  >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_log2, qi::_1) ]
+			| ( no_case["r2d"]  >> '(' >> expression >> ')' ) [ _val = _1 * numeric::NumericTraits< double >::rad2deg() ]
+			| ( no_case["d2r"]  >> '(' >> expression >> ')' ) [ _val = _1 * numeric::NumericTraits< double >::deg2rad() ]
+			| ( no_case["sqrt"]  >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_sqrt, qi::_1) ]
+			| ( no_case["cos"]  >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_cos, qi::_1) ]
+			| ( no_case["sin"]  >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_sin, qi::_1) ]
+			| ( no_case["tan"]  >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_tan, qi::_1) ]
+			// indeterminite argument functions
+			| ( no_case["mean"]  >> '(' >> (expression % ',') >> ')' ) [ _val = phoenix::bind(do_mean, qi::_1) ]
+			| ( no_case["median"]  >> '(' >> (expression % ',') >> ')' ) [ _val = phoenix::bind(do_median, qi::_1) ]
+			| ( no_case["min"]  >> '(' >> (expression % ',') >> ')' ) [ _val = phoenix::bind(do_min, qi::_1) ]
+			| ( no_case["max"]  >> '(' >> (expression % ',') >> ')' ) [ _val = phoenix::bind(do_max, qi::_1) ]
+			;
+
+		parser_ = *(assignment >> ';') >> expression; //assigment is omitted, so expression is the value for all.
 	}
 
 	void add_symbol(std::string name, double value) {
@@ -145,7 +145,7 @@ private:
 	qi::symbols<char, double> local_vars_;
 };
 
-void do_add_symbol(CalculatorParser & cp, std::string name, double value) { 
+void do_add_symbol(CalculatorParser & cp, std::string name, double value) {
 	cp.add_symbol(name,value);
 }
 
@@ -154,7 +154,7 @@ void do_add_symbol(CalculatorParser & cp, std::string name, double value) {
 Calculator::~Calculator() {}
 
 Calculator::Calculator(std::string const & equation):
-    equation_(equation)
+	equation_(equation)
 {}
 
 // Return true on failure and false on success
@@ -165,9 +165,9 @@ Calculator::compute( std::map<std::string, Real> & values, Real & output) const 
 	CalculatorParser calc_parser( values );
 
 	bool success = qi::phrase_parse(iter, equation.end(), calc_parser.parser(), ascii::space, output);
-	if (success && iter == equation.end() ) {
+	if ( success && iter == equation.end() ) {
 		return false;
-	}	
+	}
 	//std::cout << "Output -- " << output << " and parsing " << (success?"Succeeded":"Failed") << std::endl;
 	//std::cout << "'" << std::string(equation.begin(), iter) << "' and '" << std::string(iter, equation.end()) << "'" << std::endl;
 	return true;

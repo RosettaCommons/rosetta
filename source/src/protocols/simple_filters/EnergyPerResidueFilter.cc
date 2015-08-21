@@ -64,12 +64,12 @@ EnergyPerResidueFilter::EnergyPerResidueFilter(
 	bool const select_resnums,
 	bool const select_around_resnums,
 	core::Real const around_shell,
-  std::string const string_resnums,
-  std::string const string_around_resnums,
+	std::string const string_resnums,
+	std::string const string_around_resnums,
 	core::Size const rb_jump,
 	core::Real const interface_distance_cutoff,
 	bool const bb_bb
-	) :
+) :
 	filters::Filter( "EnergyPerResidue" ),
 	resnum_( resnum ),
 	score_type_( score_type ),
@@ -84,14 +84,14 @@ EnergyPerResidueFilter::EnergyPerResidueFilter(
 	rb_jump_ ( rb_jump ),
 	interface_distance_cutoff_ ( interface_distance_cutoff ),
 	bb_bb_ ( bb_bb )
-	{
-		using namespace core::scoring;
+{
+	using namespace core::scoring;
 
-		if( scorefxn ) scorefxn_ = scorefxn->clone();
-		if( score_type_ != total_score ) {
-			core::Real const old_weight( scorefxn_->get_weight( score_type_ ) );
-			scorefxn_->reset();
-			scorefxn_->set_weight( score_type_, old_weight );
+	if ( scorefxn ) scorefxn_ = scorefxn->clone();
+	if ( score_type_ != total_score ) {
+		core::Real const old_weight( scorefxn_->get_weight( score_type_ ) );
+		scorefxn_->reset();
+		scorefxn_->set_weight( score_type_, old_weight );
 	}
 }
 
@@ -112,7 +112,7 @@ EnergyPerResidueFilter::EnergyPerResidueFilter( EnergyPerResidueFilter const &in
 	bb_bb_ ( init.bb_bb_ )
 {
 	using namespace core::scoring;
-	if( init.scorefxn_ ) scorefxn_ = init.scorefxn_->clone();
+	if ( init.scorefxn_ ) scorefxn_ = init.scorefxn_->clone();
 }
 
 core::scoring::ScoreFunctionOP
@@ -182,20 +182,20 @@ EnergyPerResidueFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache
 	bb_bb_ = tag->getOption< bool >("bb_bb", false );
 	resnum_=0;
 
-	if (!whole_protein_) {
+	if ( !whole_protein_ ) {
 		select_resnums_=false;
 		string_resnums_ = "";
 		select_around_resnums_=false;
 		string_around_resnums_ ="";
-		if (whole_interface_) {
-			if (pose.conformation().num_chains() < 2 ) {
+		if ( whole_interface_ ) {
+			if ( pose.conformation().num_chains() < 2 ) {
 				throw utility::excn::EXCN_RosettaScriptsOption( "ERROR: it doesn't make sense for interface since you have only one chain");
-		    } else {
+			} else {
 				energy_per_residue_filter_tracer<<"energies for all interface residues with a distance cutoff of "
-				<< interface_distance_cutoff_ << " A will be calculated "
-				<< "jump_number is set to "<< rb_jump_
-				<< " and scorefxn " << rosetta_scripts::get_score_function_name(tag) <<" will be used" <<std::endl;
-			  }
+					<< interface_distance_cutoff_ << " A will be calculated "
+					<< "jump_number is set to "<< rb_jump_
+					<< " and scorefxn " << rosetta_scripts::get_score_function_name(tag) <<" will be used" <<std::endl;
+			}
 		} else if ( tag->hasOption( "resnums" ) ) {
 			select_resnums_=true;
 			string_resnums_ = tag->getOption< std::string >( "resnums" );
@@ -203,16 +203,16 @@ EnergyPerResidueFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache
 		} else if ( tag->hasOption( "around_resnums" ) ) {
 			select_around_resnums_=true;
 			string_around_resnums_ = tag->getOption< std::string >( "around_resnums" );
-		  around_shell_ = tag->getOption<core::Real>( "around_shell", 8.0 );
+			around_shell_ = tag->getOption<core::Real>( "around_shell", 8.0 );
 			energy_per_residue_filter_tracer<<"energies for residues around specified residues " << string_around_resnums_  <<" using a cutoff distance (around_shell) of " << around_shell_ << std::endl;
 		} else {
-     resnum_ = core::pose::get_resnum( tag, pose );
-     energy_per_residue_filter_tracer<<"EnergyPerResidueFilter for residue "<<resnum_<<" of score_type "<<score_type_<<" with cutoff "<<threshold_<<std::endl;
+			resnum_ = core::pose::get_resnum( tag, pose );
+			energy_per_residue_filter_tracer<<"EnergyPerResidueFilter for residue "<<resnum_<<" of score_type "<<score_type_<<" with cutoff "<<threshold_<<std::endl;
 		}
 	} else {
-		 whole_protein_=1;
-     energy_per_residue_filter_tracer<<"EnergyPerResidueFilter default for whole_protein"<<std::endl;
-  }
+		whole_protein_=1;
+		energy_per_residue_filter_tracer<<"EnergyPerResidueFilter default for whole_protein"<<std::endl;
+	}
 }
 
 void
@@ -220,9 +220,9 @@ EnergyPerResidueFilter::apply_helper( std::string name, core::pose::Pose const &
 {
 	using namespace core::scoring;
 	using ObjexxFCL::FArray1D_bool;
-	
+
 	use_all_residues.resize(pose.total_residue(),false);
-	
+
 	if ( whole_interface_ ) {
 		energy_per_residue_filter_tracer << name << " reassign interface residues" << std::endl;
 		core::pose::Pose in_pose = pose;
@@ -233,28 +233,30 @@ EnergyPerResidueFilter::apply_helper( std::string name, core::pose::Pose const &
 		interface_obj.distance( interface_distance_cutoff_ );
 		interface_obj.calculate( in_pose );
 		(*scorefxn_)( in_pose );
-		
-		for ( core::Size resid = 1; resid <= pose.total_residue(); ++resid) {
-			if( interface_obj.is_interface( resid ) ) {
+
+		for ( core::Size resid = 1; resid <= pose.total_residue(); ++resid ) {
+			if ( interface_obj.is_interface( resid ) ) {
 				use_all_residues[resid]=true;
 			}
 		}
 	} else if ( select_resnums_ ) {
 		std::set< core::Size > const res_vec( core::pose::get_resnum_list( string_resnums_, pose ) );
-		foreach( core::Size const res, res_vec)
-		use_all_residues[ res ]=true;
+		foreach ( core::Size const res, res_vec ) {
+			use_all_residues[ res ]=true;
+		}
 	} else if ( select_around_resnums_ ) {
-		if (string_around_resnums_.size()!=0) {
+		if ( string_around_resnums_.size()!=0 ) {
 			std::set< core::Size > const res_vec( core::pose::get_resnum_list( string_around_resnums_, pose ) );
-			foreach( core::Size const res, res_vec) {
+			foreach ( core::Size const res, res_vec ) {
 				use_all_residues[ res ]=true;
-				
-				for ( core::Size i = 1; i <= pose.total_residue(); ++i) {
+
+				for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 					if ( i == res ) continue; //dont need to check if is nbr of self
 					if ( use_all_residues[ i ] ) continue; //dont need to check one that is marked already
 					core::Real const distance( pose.residue( i ).xyz( pose.residue( i ).nbr_atom() ).distance( pose.residue( res ).xyz( pose.residue( res ).nbr_atom() )) );
-					if( distance <= around_shell_ )
+					if ( distance <= around_shell_ ) {
 						use_all_residues[ i ]=true;
+					}
 				}
 			}
 		} else {
@@ -266,21 +268,22 @@ EnergyPerResidueFilter::apply_helper( std::string name, core::pose::Pose const &
 		energy_per_residue_filter_tracer << name << " reassign everything to be true" << std::endl;
 		std::fill (use_all_residues.begin(),use_all_residues.end(),true);
 	}
-	
+
 	//tracer output
 	energy_per_residue_filter_tracer<<"Apply Filter Scoretype "<<name_from_score_type( score_type_ )<<" total of " << use_all_residues.size()<<": ";
-	for ( core::Size i = 1; i <= use_all_residues.size()-1; ++i) {
-		if (use_all_residues[i]) {
+	for ( core::Size i = 1; i <= use_all_residues.size()-1; ++i ) {
+		if ( use_all_residues[i] ) {
 			energy_per_residue_filter_tracer << i << "+";
 		}
 	}
-	
-	if (use_all_residues[use_all_residues.size()])
+
+	if ( use_all_residues[use_all_residues.size()] ) {
 		energy_per_residue_filter_tracer << use_all_residues.size()<<std::endl;
-	else
+	} else {
 		energy_per_residue_filter_tracer << std::endl;
+	}
 }
-	
+
 bool
 EnergyPerResidueFilter::apply( core::pose::Pose const & pose ) const
 {
@@ -289,23 +292,24 @@ EnergyPerResidueFilter::apply( core::pose::Pose const & pose ) const
 	utility::vector1<bool> use_all_residues;
 
 	apply_helper( "apply", pose, use_all_residues );
-	
+
 	bool pass;
 	core::Real energy=0;
 
-	for ( core::Size resid = 1; resid <= pose.total_residue(); ++resid) {
+	for ( core::Size resid = 1; resid <= pose.total_residue(); ++resid ) {
 		if ( !pose.residue(resid).is_protein() ) continue;
-		if (use_all_residues[resid]) {
+		if ( use_all_residues[resid] ) {
 			energy= compute( pose, resid ) ;
 			core::Size resnum(resid);
-			if(pose.pdb_info()) resnum=pose.pdb_info()->number(resid);
+			if ( pose.pdb_info() ) resnum=pose.pdb_info()->number(resid);
 			energy_per_residue_filter_tracer<<"Scoretype "<<name_from_score_type( score_type_ )<<" for residue: " << resnum <<" " <<pose.residue( resid ).name3() <<" is "<<energy<<std::endl;
 
 			if ( energy > threshold_ ) {
 				pass=false;
 				break;
-			} else
+			} else {
 				pass=true;
+			}
 		}
 	}
 	return pass;
@@ -318,16 +322,16 @@ EnergyPerResidueFilter::report( std::ostream & out, core::pose::Pose const & pos
 	using namespace core::scoring;
 	using ObjexxFCL::FArray1D_bool;
 	utility::vector1<bool> use_all_residues;
-	
+
 	apply_helper( "report", pose, use_all_residues );
-	
+
 	core::Real energy = 0;
 	for ( core::Size resid = 1; resid <= pose.total_residue(); ++resid ) {
 		if ( !pose.residue( resid ).is_protein() ) continue;
 		if ( use_all_residues[ resid ] ) {
 			energy = compute( pose, resid ) ;
 			core::Size resnum(resid);
-                        if(pose.pdb_info()) resnum=pose.pdb_info()->number(resid);
+			if ( pose.pdb_info() ) resnum=pose.pdb_info()->number(resid);
 			out << "Scoretype " << name_from_score_type( score_type_ ) << " for residue: " << resnum << " " << pose.residue( resid ).name3() << " is " << energy << std::endl;
 		}
 	}
@@ -339,9 +343,9 @@ EnergyPerResidueFilter::report_sm( core::pose::Pose const & pose ) const
 	using namespace core::scoring;
 	using ObjexxFCL::FArray1D_bool;
 	utility::vector1<bool> use_all_residues;
-	
+
 	apply_helper( "report_sm", pose, use_all_residues );
-	
+
 	core::Real energy = 999999;
 	core::Real ind_energy = 0;
 	core::Size num_res = 0;
@@ -363,17 +367,15 @@ EnergyPerResidueFilter::compute( core::pose::Pose const & pose , core::Size cons
 	using namespace core::scoring;
 
 	core::pose::Pose in_pose = pose;
-	if( ( (*scorefxn_)[ interchain_env ] > 0.0 )
-		&& ( (*scorefxn_)[ interchain_vdw ] > 0.0 )
-		&& ( (*scorefxn_)[fa_rep] == 0.0 )
-		&& ( (*scorefxn_)[fa_atr] == 0.0 ) )
-		{
-			if( in_pose.is_fullatom() ) {
+	if ( ( (*scorefxn_)[ interchain_env ] > 0.0 )
+			&& ( (*scorefxn_)[ interchain_vdw ] > 0.0 )
+			&& ( (*scorefxn_)[fa_rep] == 0.0 )
+			&& ( (*scorefxn_)[fa_atr] == 0.0 ) ) {
+		if ( in_pose.is_fullatom() ) {
 			core::util::switch_to_residue_type_set( in_pose, core::chemical::CENTROID );
 		}
-	}
-	else {
-		if( in_pose.is_centroid() ) {
+	} else {
+		if ( in_pose.is_centroid() ) {
 			core::util::switch_to_residue_type_set( in_pose, core::chemical::FA_STANDARD );
 		}
 	}
@@ -381,15 +383,15 @@ EnergyPerResidueFilter::compute( core::pose::Pose const & pose , core::Size cons
 	in_pose.update_residue_neighbors();
 	(*scorefxn_)( in_pose );
 	core::Real weighted_score;
-	if( score_type_ == total_score ) weighted_score = in_pose.energies().residue_total_energies( resid )[ ScoreType( score_type_ )];
+	if ( score_type_ == total_score ) weighted_score = in_pose.energies().residue_total_energies( resid )[ ScoreType( score_type_ )];
 	else {
 
-		if( bb_bb_ ){
+		if ( bb_bb_ ) {
 			energy_per_residue_filter_tracer << "decomposing bb hydrogen bond terms" << std::endl;
-    	core::scoring::methods::EnergyMethodOptionsOP energy_options( new core::scoring::methods::EnergyMethodOptions(scorefxn_->energy_method_options()) );
-    	energy_options->hbond_options().decompose_bb_hb_into_pair_energies(true);
-    	scorefxn_->set_energy_method_options(*energy_options);
-	    (*scorefxn_)( in_pose );
+			core::scoring::methods::EnergyMethodOptionsOP energy_options( new core::scoring::methods::EnergyMethodOptions(scorefxn_->energy_method_options()) );
+			energy_options->hbond_options().decompose_bb_hb_into_pair_energies(true);
+			scorefxn_->set_energy_method_options(*energy_options);
+			(*scorefxn_)( in_pose );
 		}
 
 		core::Real const weight( (*scorefxn_)[ ScoreType( score_type_ ) ] );
@@ -402,42 +404,40 @@ EnergyPerResidueFilter::compute( core::pose::Pose const & pose , core::Size cons
 core::Real
 EnergyPerResidueFilter::compute( core::pose::Pose const & pose ) const
 {
-  using namespace core::scoring;
+	using namespace core::scoring;
 
-  core::pose::Pose in_pose = pose;
-  if( ( (*scorefxn_)[ interchain_env ] > 0.0 )
-    && ( (*scorefxn_)[ interchain_vdw ] > 0.0 )
-    && ( (*scorefxn_)[fa_rep] == 0.0 )
-    && ( (*scorefxn_)[fa_atr] == 0.0 ) )
-    {
-      if( in_pose.is_fullatom() ) {
-      core::util::switch_to_residue_type_set( in_pose, core::chemical::CENTROID );
-    }
-  }
-  else {
-    if( in_pose.is_centroid() ) {
-      core::util::switch_to_residue_type_set( in_pose, core::chemical::FA_STANDARD );
-    }
-  }
+	core::pose::Pose in_pose = pose;
+	if ( ( (*scorefxn_)[ interchain_env ] > 0.0 )
+			&& ( (*scorefxn_)[ interchain_vdw ] > 0.0 )
+			&& ( (*scorefxn_)[fa_rep] == 0.0 )
+			&& ( (*scorefxn_)[fa_atr] == 0.0 ) ) {
+		if ( in_pose.is_fullatom() ) {
+			core::util::switch_to_residue_type_set( in_pose, core::chemical::CENTROID );
+		}
+	} else {
+		if ( in_pose.is_centroid() ) {
+			core::util::switch_to_residue_type_set( in_pose, core::chemical::FA_STANDARD );
+		}
+	}
 
-  in_pose.update_residue_neighbors();
-  (*scorefxn_)( in_pose );
-  core::Real weighted_score;
-  if( score_type_ == total_score ) weighted_score = in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( score_type_ )];
-  else {
+	in_pose.update_residue_neighbors();
+	(*scorefxn_)( in_pose );
+	core::Real weighted_score;
+	if ( score_type_ == total_score ) weighted_score = in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( score_type_ )];
+	else {
 
-    if( bb_bb_ ){
-      energy_per_residue_filter_tracer << "decomposing bb hydrogen bond terms" << std::endl;
-      core::scoring::methods::EnergyMethodOptionsOP energy_options( new core::scoring::methods::EnergyMethodOptions(scorefxn_->energy_method_options()) );
-      energy_options->hbond_options().decompose_bb_hb_into_pair_energies(true);
-      scorefxn_->set_energy_method_options(*energy_options);
-    }
+		if ( bb_bb_ ) {
+			energy_per_residue_filter_tracer << "decomposing bb hydrogen bond terms" << std::endl;
+			core::scoring::methods::EnergyMethodOptionsOP energy_options( new core::scoring::methods::EnergyMethodOptions(scorefxn_->energy_method_options()) );
+			energy_options->hbond_options().decompose_bb_hb_into_pair_energies(true);
+			scorefxn_->set_energy_method_options(*energy_options);
+		}
 
-    core::Real const weight( (*scorefxn_)[ ScoreType( score_type_ ) ] );
-    core::Real const score( in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( score_type_ ) ]);
-    weighted_score = weight * score ;
-  }
-  return( weighted_score );
+		core::Real const weight( (*scorefxn_)[ ScoreType( score_type_ ) ] );
+		core::Real const score( in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( score_type_ ) ]);
+		weighted_score = weight * score ;
+	}
+	return( weighted_score );
 }
 
 }

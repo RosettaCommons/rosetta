@@ -55,7 +55,7 @@ class ConstrainToIdealMover : public protocols::moves::Mover {
 public:
 
 	ConstrainToIdealMover();
-	//	ConstrainToIdealMover(ConstrainToIdealMover const & rhs);
+	// ConstrainToIdealMover(ConstrainToIdealMover const & rhs);
 	ConstrainToIdealMover & operator = ( ConstrainToIdealMover const & rhs );
 	virtual ~ConstrainToIdealMover();
 
@@ -135,13 +135,13 @@ private:
 
 	void
 	add_bond_dihedral_constraint(
-															 core::id::AtomID const & atom_id1,
-															 core::id::AtomID const & atom_id2,
-															 core::id::AtomID const & atom_id3,
-															 core::id::AtomID const & atom_id4,
-															 core::pose::Pose const & pose,
-															 core::pose::Pose const & pose_reference,
-															 core::scoring::constraints::ConstraintSetOP & cst_set ) const;
+		core::id::AtomID const & atom_id1,
+		core::id::AtomID const & atom_id2,
+		core::id::AtomID const & atom_id3,
+		core::id::AtomID const & atom_id4,
+		core::pose::Pose const & pose,
+		core::pose::Pose const & pose_reference,
+		core::scoring::constraints::ConstraintSetOP & cst_set ) const;
 
 	void
 	add_bond_length_constraint(
@@ -174,12 +174,12 @@ private:
 
 void
 setup_vary_rna_bond_geometry( core::kinematics::MoveMap & mm, core::pose::Pose & pose,
-															protocols::toolbox::AllowInsertCOP allow_insert,
-															core::scoring::ScoreType score_type = core::scoring::rna_bond_geometry );
+	protocols::toolbox::AllowInsertCOP allow_insert,
+	core::scoring::ScoreType score_type = core::scoring::rna_bond_geometry );
 
 void
 setup_vary_polar_hydrogen_geometry( core::kinematics::MoveMap & mm,
-																		core::pose::Pose & pose, toolbox::AllowInsertCOP allow_insert );
+	core::pose::Pose & pose, toolbox::AllowInsertCOP allow_insert );
 
 } //namespace moves
 } //namespace protocols

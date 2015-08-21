@@ -47,14 +47,14 @@ public:
 	virtual void apply( core::pose::Pose & pose_to_visualize );
 	virtual std::string get_name() const;
 
-  void
-  apply( core::pose::Pose & pose, std::string & move_type, Real const & sample_range );
+	void
+	apply( core::pose::Pose & pose, std::string & move_type, Real const & sample_range );
 
 	void
 	random_torsion_move( pose::Pose & pose,
-																				 utility::vector1< Size > const & moving_res_list,
-																				 std::string & move_type,
-																				 Real const & sample_range );
+		utility::vector1< Size > const & moving_res_list,
+		std::string & move_type,
+		Real const & sample_range );
 
 	void
 	sample_near_suite_torsion(utility::vector1< Real > & torsion_list, Real const stddev);
@@ -64,21 +64,21 @@ public:
 
 	void
 	apply_random_nucleoside_torsion( pose::Pose & pose,
-																	 Size const moving_res );
+		Size const moving_res );
 
 	void
 	apply_random_suite_torsion( pose::Pose & pose,
-															Size const moving_suite );
+		Size const moving_suite );
 
 	void
 	apply_nucleoside_torsion_Aform(
-																 pose::Pose & pose,
-																 Size const moving_res );
+		pose::Pose & pose,
+		Size const moving_res );
 
 	void
 	apply_suite_torsion_Aform(
-														pose::Pose & pose,
-														Size const moving_suite );
+		pose::Pose & pose,
+		Size const moving_suite );
 
 	void
 	sample_near_suite_torsion( pose::Pose & pose, Size const moving_suite, Real const sample_range);
@@ -94,14 +94,14 @@ private:
 
 	void
 	apply_nucleoside_torsion( utility::vector1< Real > const & torsion_set,
-																							pose::Pose & pose,
-																							Size const moving_res);
+		pose::Pose & pose,
+		Size const moving_res);
 
 
 	void
 	apply_suite_torsion( utility::vector1< Real > const & torsion_set,
-																				 pose::Pose & pose,
-																				 Size const moving_suite );
+		pose::Pose & pose,
+		Size const moving_suite );
 
 	utility::vector1< Real>
 	get_suite_torsion( pose::Pose const & pose, Size const moving_suite );

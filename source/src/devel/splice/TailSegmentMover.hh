@@ -50,13 +50,13 @@ public:
 	TailSegmentMover & operator=( TailSegmentMover const & rhs );
 
 	virtual ~TailSegmentMover();
-    
-    /// @brief set the movemap instead of initializing it from cmd-line
+
+	/// @brief set the movemap instead of initializing it from cmd-line
 	virtual void set_movemap(core::kinematics::MoveMapOP const movemap);
-    
+
 	virtual void set_fa_scorefxn(core::scoring::ScoreFunctionOP const fa_scorefxn);
-    
-    
+
+
 	virtual void apply( core::pose::Pose & pose );
 
 	virtual std::string get_name() const { return "TailSegmentMover"; }

@@ -76,8 +76,7 @@ SOGFunc_Impl::read_data( std::istream & in ) {
 	using namespace basic::options::OptionKeys;
 	if ( option[ OptionKeys::constraints::sog_upper_bound ].user() ) {
 		upper_bound(option[ OptionKeys::constraints::sog_upper_bound ]());
-	}
-	else {
+	} else {
 		upper_bound(10);
 	}
 }
@@ -109,7 +108,7 @@ void SOGFunc_Impl::smooth_to_zero( bool const setting ) {
 }
 
 void SOGFunc_Impl::upper_bound( Real const r ) {
-debug_assert( r > 0 );
+	debug_assert( r > 0 );
 	upper_bound_ = r;
 	score_upper_ = -1 * std::log( prob_sum_of_gaussians(r) );
 }
@@ -139,12 +138,12 @@ SOGFunc_Impl::get_alt_score_( Real const x ) const {
 Real SOGFunc_Impl::prob_sum_of_gaussians( Real const x ) const {
 	Real score( 0.0 );
 	for ( utility::vector1< Real >::const_iterator
-				w = weights_.begin(), w_end = weights_.end(),
-				m = means_.begin(), m_end = means_.end(),
-				s = sdevs_.begin(), s_end = sdevs_.end(); // iterators
-				w != w_end && m != m_end && s != s_end; // condition
-				++w, ++m, ++s  // iteration
-	) {
+			w = weights_.begin(), w_end = weights_.end(),
+			m = means_.begin(), m_end = means_.end(),
+			s = sdevs_.begin(), s_end = sdevs_.end(); // iterators
+			w != w_end && m != m_end && s != s_end; // condition
+			++w, ++m, ++s  // iteration
+			) {
 		Real temp_sc = dgaussian( x, *m, *s, *w );
 		score += temp_sc;
 	}
@@ -153,7 +152,7 @@ Real SOGFunc_Impl::prob_sum_of_gaussians( Real const x ) const {
 }
 
 Real
-SOGFunc_Impl::func( Real const x ) const	{
+SOGFunc_Impl::func( Real const x ) const {
 	if ( x > upper_bound() ) {
 		return 0.0;
 	}
@@ -187,8 +186,8 @@ void SOGFunc_Impl::check_bounds( Real const x, Real const val ) const {
 }
 
 void SOGFunc_Impl::show_definition( std::ostream & out ) const {
-debug_assert( weights_.size() == means_.size() );
-debug_assert( weights_.size() == sdevs_.size() );
+	debug_assert( weights_.size() == means_.size() );
+	debug_assert( weights_.size() == sdevs_.size() );
 
 	out << "SOGFUNC " << weights_.size();
 	for ( Size i = 1; i <= weights_.size(); ++i ) {
@@ -210,7 +209,7 @@ void SOGFunc_Impl::set_defaults() {
 	using namespace basic::options::OptionKeys;
 
 	if ( option[ basic::options::OptionKeys::constraints::sog_cst_param ].user() ) {
-			sog_cst_param( option[ basic::options::OptionKeys::constraints::sog_cst_param ]() );
+		sog_cst_param( option[ basic::options::OptionKeys::constraints::sog_cst_param ]() );
 	}
 }
 

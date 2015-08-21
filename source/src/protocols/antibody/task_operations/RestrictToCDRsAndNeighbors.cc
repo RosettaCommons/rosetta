@@ -36,10 +36,10 @@ static thread_local basic::Tracer TR("protocols.antibody.task_operationsRestrict
 namespace protocols {
 namespace antibody {
 namespace task_operations {
-	using namespace core::pack::task::operation;
-	using namespace protocols::loops;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+using namespace core::pack::task::operation;
+using namespace protocols::loops;
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
 
 RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors():
 	TaskOperation(),
@@ -73,11 +73,11 @@ RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors(AntibodyInfoCOP ab_info, 
 }
 
 RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors(
-			AntibodyInfoCOP ab_info,
-			utility::vector1<bool> cdrs,
-			bool allow_cdr_design,
-			bool allow_neighbor_framework_design,
-			bool allow_neighbor_antigen_design):
+	AntibodyInfoCOP ab_info,
+	utility::vector1<bool> cdrs,
+	bool allow_cdr_design,
+	bool allow_neighbor_framework_design,
+	bool allow_neighbor_antigen_design):
 	TaskOperation(),
 	ab_info_(ab_info)
 {
@@ -125,13 +125,13 @@ RestrictToCDRsAndNeighbors::set_defaults() {
 	std::string cdr_definition = option [OptionKeys::antibody::cdr_definition]();
 	numbering_scheme_ = manager.numbering_scheme_string_to_enum(numbering_scheme);
 	cdr_definition_ = manager.cdr_definition_string_to_enum(cdr_definition);
-	
-	
+
+
 }
 
 void
 RestrictToCDRsAndNeighbors::parse_tag(utility::tag::TagCOP tag, basic::datacache::DataMap&){
-	if (tag->hasOption("cdrs")){
+	if ( tag->hasOption("cdrs") ) {
 		cdrs_ = get_cdr_bool_from_tag(tag, "cdrs");
 	}
 
@@ -140,8 +140,8 @@ RestrictToCDRsAndNeighbors::parse_tag(utility::tag::TagCOP tag, basic::datacache
 	design_antigen_ = tag->getOption< bool >("design_antigen", design_antigen_);
 	design_framework_ = tag->getOption< bool >("design_framework", design_framework_);
 	stem_size_ = tag->getOption< core::Size >("stem_size", stem_size_);
-	
-	if (tag->hasOption("cdr_definition") && tag->hasOption("numbering_scheme")){
+
+	if ( tag->hasOption("cdr_definition") && tag->hasOption("numbering_scheme") ) {
 
 
 		AntibodyEnumManager manager = AntibodyEnumManager();
@@ -149,12 +149,11 @@ RestrictToCDRsAndNeighbors::parse_tag(utility::tag::TagCOP tag, basic::datacache
 		cdr_definition_ = manager.cdr_definition_string_to_enum(tag->getOption<std::string>("cdr_definition"));
 		numbering_scheme_ = manager.numbering_scheme_string_to_enum(tag->getOption<std::string>("numbering_scheme"));
 
-	}
-	else if(tag->hasOption("cdr_definition") || tag->hasOption("numbering_scheme")){
+	} else if ( tag->hasOption("cdr_definition") || tag->hasOption("numbering_scheme") ) {
 		TR <<"Please pass both cdr_definition and numbering_scheme.  These can also be set via cmd line options of the same name." << std::endl;
 
 	}
-	
+
 }
 
 void
@@ -199,10 +198,9 @@ RestrictToCDRsAndNeighbors::apply(const core::pose::Pose& pose, core::pack::task
 
 	//This is due to const apply and no pose in parse_my_tag.
 	AntibodyInfoOP local_ab_info;
-	if (! ab_info_){
+	if ( ! ab_info_ ) {
 		local_ab_info = AntibodyInfoOP(new AntibodyInfo(pose, numbering_scheme_, cdr_definition_));
-	}
-	else {
+	} else {
 		local_ab_info = ab_info_->clone();
 	}
 
@@ -214,20 +212,17 @@ RestrictToCDRsAndNeighbors::apply(const core::pose::Pose& pose, core::pack::task
 	utility::vector1<bool> loops_and_neighbors( pose.total_residue(), false );
 	select_loop_residues( pose, *cdr_loops_and_stems, true , loops_and_neighbors, neighbor_dis_ );
 
-	for (core::Size i = 1; i <= pose.total_residue(); ++i){
-		if (! loops_and_neighbors[ i ]){
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( ! loops_and_neighbors[ i ] ) {
 			turn_off_packing.include_residue( i );
-		}
-		else {
+		} else {
 			AntibodyRegionEnum region = local_ab_info->get_region_of_residue( pose, i );
 
-			if (region == cdr_region && !design_cdrs_){
+			if ( region == cdr_region && !design_cdrs_ ) {
 				turn_off_design.include_residue( i );
-			}
-			else if  (region == framework_region && ! design_framework_){
+			} else if  ( region == framework_region && ! design_framework_ ) {
 				turn_off_design.include_residue( i );
-			}
-			else if (region == antigen_region && ! design_antigen_){
+			} else if ( region == antigen_region && ! design_antigen_ ) {
 				turn_off_design.include_residue( i );
 			}
 		}

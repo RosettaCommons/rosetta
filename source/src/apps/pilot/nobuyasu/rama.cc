@@ -60,32 +60,32 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	using core::chemical::oneletter_code_from_aa;
+		using core::chemical::oneletter_code_from_aa;
 
-	ThisApplication::register_options();
-  devel::init(argc, argv);
+		ThisApplication::register_options();
+		devel::init(argc, argv);
 
-	// blueprint output file
-	std::ofstream out;
-	std::ostringstream filename;
-	filename <<  basic::options::option[ output ]();
-	out.open( filename.str().c_str() ,std::ios::out );
+		// blueprint output file
+		std::ofstream out;
+		std::ostringstream filename;
+		filename <<  basic::options::option[ output ]();
+		out.open( filename.str().c_str() ,std::ios::out );
 
-	// calc secondary structure info
-	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, option[ in::file::s ].value().at( 1 ) );
-	protocols::moves::DsspMover dsm;
-	dsm.apply( pose );
+		// calc secondary structure info
+		core::pose::Pose pose;
+		core::import_pose::pose_from_pdb( pose, option[ in::file::s ].value().at( 1 ) );
+		protocols::moves::DsspMover dsm;
+		dsm.apply( pose );
 
-	utility::vector1< std::string > abego_ = core::sequence::get_abego( pose, option[ abego ]() );
+		utility::vector1< std::string > abego_ = core::sequence::get_abego( pose, option[ abego ]() );
 
-	using namespace ObjexxFCL::format;
-	out << "# resn aa ss abego phi psi omega" << std::endl;
-	for ( core::Size ii=1; ii<=pose.total_residue(); ii++ ) {
-		out << I( 5, pose.pdb_info()->number( ii ) ) << " " << oneletter_code_from_aa( pose.aa( ii ) ) << " " << pose.secstruct( ii ) << " " << abego_[ ii ] << " "
+		using namespace ObjexxFCL::format;
+		out << "# resn aa ss abego phi psi omega" << std::endl;
+		for ( core::Size ii=1; ii<=pose.total_residue(); ii++ ) {
+			out << I( 5, pose.pdb_info()->number( ii ) ) << " " << oneletter_code_from_aa( pose.aa( ii ) ) << " " << pose.secstruct( ii ) << " " << abego_[ ii ] << " "
 				<< F( 8, 2, pose.phi( ii ) ) << F( 8, 2, pose.psi( ii ) ) << F( 8, 2, pose.omega( ii ) )
 				<< std::endl;
-	}
+		}
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

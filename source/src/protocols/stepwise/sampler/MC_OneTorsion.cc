@@ -29,8 +29,8 @@ namespace stepwise {
 namespace sampler {
 ///////////////////////////////////////////////////////////////////////////
 MC_OneTorsion::MC_OneTorsion(
-		core::id::TorsionID const & tor_id,
-		core::Real const start_torsion
+	core::id::TorsionID const & tor_id,
+	core::Real const start_torsion
 ):
 	MC_StepWiseSampler(),
 	stored_angle_( start_torsion ),

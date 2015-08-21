@@ -27,10 +27,10 @@ class GaussianFunc : public Func {
 public:
 
 	/*!
-	 * Constuctor for GaussianFunc. Arguments to the constructor are:
-	 * - mean: parameter representing the mean of this function.
-	 * - sd: parameter representing the standard deviation of this function.
-	 */
+	* Constuctor for GaussianFunc. Arguments to the constructor are:
+	* - mean: parameter representing the mean of this function.
+	* - sd: parameter representing the standard deviation of this function.
+	*/
 
 	GaussianFunc (
 		Real const mean,
@@ -63,13 +63,13 @@ public:
 	/// @brief
 	/// The parameters are:
 	/*!
-	 * Initializes this GaussianFunc from the given istream. An example
-	 * of the type of string from which the istream should be constructed is:
-	 * "GAUSSIANFUNC 19.396 7.643". The interpretation is to
-	 * create initialize this GaussianFunc object with the following parameters:
-	 * - mean 19.396
-	 * - sd 7.643
-	 */
+	* Initializes this GaussianFunc from the given istream. An example
+	* of the type of string from which the istream should be constructed is:
+	* "GAUSSIANFUNC 19.396 7.643". The interpretation is to
+	* create initialize this GaussianFunc object with the following parameters:
+	* - mean 19.396
+	* - sd 7.643
+	*/
 	void read_data( std::istream& in );
 
 private:

@@ -56,7 +56,7 @@ SingleResiduePeptoidLibraryCreator::create( core::chemical::ResidueType const & 
 	// Some basic error checking against restype
 	Size pose_n_rotlib_chi( restype.nchi() - restype.n_proton_chi() );
 	Size n_rotlib_chi( peptoid_libspec->peptoid_rotlib_n_rotameric_bins() );
-	if( n_rotlib_chi != pose_n_rotlib_chi ) {
+	if ( n_rotlib_chi != pose_n_rotlib_chi ) {
 		TR.Error << "Number of chi mismatch. Expected " << n_rotlib_chi << " rotatable heavy atom chis, found " << pose_n_rotlib_chi << std::endl;
 		utility_exit_with_message("Number of chi mismatch in Peptoid rotlib loading.");
 	}
@@ -70,7 +70,7 @@ SingleResiduePeptoidLibraryCreator::create( core::chemical::ResidueType const & 
 	// create izstream from path
 	std::string dir_name = basic::database::full_name( "/rotamer/peptoid_rotlibs/" );
 	std::string file_name = peptoid_libspec->peptoid_rotlib_path();
-	if( ! file_name.size() ) {
+	if ( ! file_name.size() ) {
 		utility_exit_with_message("Unspecified Peptoid rotlib path with residue type " + restype.name() );
 	}
 	std::string full_path = dir_name + file_name;
@@ -95,7 +95,7 @@ SingleResiduePeptoidLibraryCreator::create( core::chemical::ResidueType const & 
 	SingleResidueRotamerLibraryOP peptoid_rotlib;
 
 	switch ( n_rotlib_chi ) {
-	case 1: {
+	case 1 : {
 		RotamericSingleResiduePeptoidLibrary< ONE, THREE > * r1 =
 			new RotamericSingleResiduePeptoidLibrary< ONE, THREE >();
 		r1->set_n_chi_bins( peptoid_libspec->peptoid_rotlib_n_bin_per_rot() );
@@ -103,7 +103,7 @@ SingleResiduePeptoidLibraryCreator::create( core::chemical::ResidueType const & 
 		peptoid_rotlib = SingleResidueRotamerLibraryOP(r1);
 		break;
 	}
-	case 2: {
+	case 2 : {
 		RotamericSingleResiduePeptoidLibrary< TWO, THREE > * r2 =
 			new RotamericSingleResiduePeptoidLibrary< TWO, THREE >();
 		r2->set_n_chi_bins( peptoid_libspec->peptoid_rotlib_n_bin_per_rot() );
@@ -111,7 +111,7 @@ SingleResiduePeptoidLibraryCreator::create( core::chemical::ResidueType const & 
 		peptoid_rotlib = SingleResidueRotamerLibraryOP(r2);
 		break;
 	}
-	case 3: {
+	case 3 : {
 		RotamericSingleResiduePeptoidLibrary< THREE, THREE > * r3 =
 			new RotamericSingleResiduePeptoidLibrary< THREE, THREE >();
 		r3->set_n_chi_bins( peptoid_libspec->peptoid_rotlib_n_bin_per_rot() );
@@ -119,7 +119,7 @@ SingleResiduePeptoidLibraryCreator::create( core::chemical::ResidueType const & 
 		peptoid_rotlib = SingleResidueRotamerLibraryOP(r3);
 		break;
 	}
-	case 4: {
+	case 4 : {
 		RotamericSingleResiduePeptoidLibrary< FOUR, THREE > * r4 =
 			new RotamericSingleResiduePeptoidLibrary< FOUR, THREE >();
 		r4->set_n_chi_bins( peptoid_libspec->peptoid_rotlib_n_bin_per_rot() );
@@ -127,7 +127,7 @@ SingleResiduePeptoidLibraryCreator::create( core::chemical::ResidueType const & 
 		peptoid_rotlib = SingleResidueRotamerLibraryOP(r4);
 		break;
 	}
-	default:
+	default :
 		TR.Error << "ERROR: too many chi angles desired for peptoid library: " << n_rotlib_chi << std::endl;
 		utility_exit_with_message( "ERROR: too many chi angles desired for peptoid library." );
 		break;

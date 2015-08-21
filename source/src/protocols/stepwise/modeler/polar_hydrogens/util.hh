@@ -24,13 +24,13 @@ namespace stepwise {
 namespace modeler {
 namespace polar_hydrogens {
 
-	// move to core::chemical::ResidueType?
-	core::Size
-	check_if_proton_chi_atom( core::pose::Pose const & pose, core::Size const rsd, core::Size const atomno );
+// move to core::chemical::ResidueType?
+core::Size
+check_if_proton_chi_atom( core::pose::Pose const & pose, core::Size const rsd, core::Size const atomno );
 
-	void
-	pack_polar_hydrogens( core::pose::Pose & pose,
-												bool allow_virtual_o2prime_hydrogens_ = false );
+void
+pack_polar_hydrogens( core::pose::Pose & pose,
+	bool allow_virtual_o2prime_hydrogens_ = false );
 
 } //polar_hydrogens
 } //modeler

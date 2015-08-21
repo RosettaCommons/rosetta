@@ -33,15 +33,15 @@ struct OrderPoint {
 SplineGenerator::SplineGenerator(
 	Real lbx, Real lby, Real lbdy,
 	Real ubx, Real uby, Real ubdy
-) : lbx_ (lbx),	lby_ (lby),	lbdy_(lbdy),
-		ubx_ (ubx), uby_ (uby),	ubdy_(ubdy)
+) : lbx_ (lbx), lby_ (lby), lbdy_(lbdy),
+	ubx_ (ubx), uby_ (uby), ubdy_(ubdy)
 {
 
 }
 
 SplineGenerator::SplineGenerator():
-		lbx_(0.0),lby_(0.0),lbdy_(0.0),
-		ubx_(0.0),uby_(0.0),ubdy_(0.0)
+	lbx_(0.0),lby_(0.0),lbdy_(0.0),
+	ubx_(0.0),uby_(0.0),ubdy_(0.0)
 {
 
 }
@@ -74,17 +74,17 @@ void SplineGenerator::add_boundary_function(std::string const & tag, Real const 
 InterpolatorOP
 SplineGenerator::get_interpolator()
 {
-	if( interpolator_ == (InterpolatorOP)NULL ) {
+	if ( interpolator_ == (InterpolatorOP)NULL ) {
 		std::sort( points_.begin(), points_.end(), OrderPoint() );
 		bool compound = false;
-		for( size_t i = 1; i <= points_.size(); ++i ) {
+		for ( size_t i = 1; i <= points_.size(); ++i ) {
 			compound = compound || points_[i].has_dy;
 		}
 		utility::vector1<Real> x,y;
 		x.push_back( lbx_ );
 		y.push_back( lby_ );
-		if( !compound ) {
-			for( size_t i = 1; i <= points_.size(); ++i ) {
+		if ( !compound ) {
+			for ( size_t i = 1; i <= points_.size(); ++i ) {
 				x.push_back(points_[i].x);
 				y.push_back(points_[i].y);
 			}
@@ -98,9 +98,9 @@ SplineGenerator::get_interpolator()
 			Real lbx  = lbx_;
 			//Real lby  = lby_;
 			Real lbdy = lbdy_;
-			for( size_t i = 1; i <= points_.size(); i++ ) {
+			for ( size_t i = 1; i <= points_.size(); i++ ) {
 				Point & p( points_[i] );
-				if( p.has_dy ) {
+				if ( p.has_dy ) {
 					x.push_back(p.x);
 					y.push_back(p.y);
 					// std::cerr << "add range " << lbx << " " << p.x << std::endl;
@@ -118,13 +118,11 @@ SplineGenerator::get_interpolator()
 		}
 		std::map<std::string, LinearFunction>::iterator lower_bound(boundary_functions_.find("lb_function"));
 		std::map<std::string, LinearFunction>::iterator upper_bound(boundary_functions_.find("ub_function"));
-		if(lower_bound != boundary_functions_.end())
-		{
+		if ( lower_bound != boundary_functions_.end() ) {
 			interpolator_->set_lb_function(lower_bound->second.cutoff,lower_bound->second.slope,lower_bound->second.intercept);
 		}
 
-		if(upper_bound != boundary_functions_.end())
-		{
+		if ( upper_bound != boundary_functions_.end() ) {
 			interpolator_->set_ub_function(upper_bound->second.cutoff,upper_bound->second.slope,upper_bound->second.intercept);
 		}
 	}

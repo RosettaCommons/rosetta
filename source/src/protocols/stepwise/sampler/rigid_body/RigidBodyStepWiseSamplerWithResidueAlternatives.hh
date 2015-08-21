@@ -28,75 +28,75 @@ namespace stepwise {
 namespace sampler {
 namespace rigid_body {
 
-	class RigidBodyStepWiseSamplerWithResidueAlternatives: public StepWiseSamplerComb {
+class RigidBodyStepWiseSamplerWithResidueAlternatives: public StepWiseSamplerComb {
 
-	public:
+public:
 
-		//constructor
-		RigidBodyStepWiseSamplerWithResidueAlternatives( ResidueAlternativeStepWiseSamplerCombOP residue_alternative_rotamer,
-																						 RigidBodyStepWiseSamplerOP rigid_body_rotamer );
+	//constructor
+	RigidBodyStepWiseSamplerWithResidueAlternatives( ResidueAlternativeStepWiseSamplerCombOP residue_alternative_rotamer,
+		RigidBodyStepWiseSamplerOP rigid_body_rotamer );
 
-		//destructor
-		~RigidBodyStepWiseSamplerWithResidueAlternatives();
+	//destructor
+	~RigidBodyStepWiseSamplerWithResidueAlternatives();
 
-	public:
+public:
 
-		void
-		fast_forward();
+	void
+	fast_forward();
 
-		void
-		fast_forward_to_next_rigid_body();
+	void
+	fast_forward_to_next_rigid_body();
 
-		void
-		fast_forward_to_next_translation();
+	void
+	fast_forward_to_next_translation();
 
-		void
-		fast_forward_to_next_euler_gamma();
+	void
+	fast_forward_to_next_euler_gamma();
 
-		ValueList const & get_rigid_body_values();
+	ValueList const & get_rigid_body_values();
 
-		// from rigid body rotamer
-		core::kinematics::Stub get_stub();
+	// from rigid body rotamer
+	core::kinematics::Stub get_stub();
 
-		// from residue list rotamer
-		core::conformation::Residue const & get_residue_at_origin();
+	// from residue list rotamer
+	core::conformation::Residue const & get_residue_at_origin();
 
-		// from residue list rotamer
-		core::conformation::Residue const & get_residue_at_origin( Size const seqpos );
+	// from residue list rotamer
+	core::conformation::Residue const & get_residue_at_origin( Size const seqpos );
 
-		ResidueAlternativeStepWiseSamplerCombOP residue_alternatives_rotamer();
-		RigidBodyStepWiseSamplerOP rigid_body_rotamer();
+	ResidueAlternativeStepWiseSamplerCombOP residue_alternatives_rotamer();
+	RigidBodyStepWiseSamplerOP rigid_body_rotamer();
 
-		/// @brief Name of the class
-		virtual std::string get_name() const { return "RigidBodyStepWiseSamplerWithResidueAlternatives"; }
+	/// @brief Name of the class
+	virtual std::string get_name() const { return "RigidBodyStepWiseSamplerWithResidueAlternatives"; }
 
-		/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-		virtual StepWiseSamplerType type() const { return RIGID_BODY_WITH_RESIDUE_ALTERNATIVES; }
+	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
+	virtual StepWiseSamplerType type() const { return RIGID_BODY_WITH_RESIDUE_ALTERNATIVES; }
 
-		void
-		apply_rigid_body_only( pose::Pose & pose );
+	void
+	apply_rigid_body_only( pose::Pose & pose );
 
-		void
-		fast_forward_to_next_residue_pair( Size const i, Size const j);
+	void
+	fast_forward_to_next_residue_pair( Size const i, Size const j);
 
-		void
-		fast_forward_to_next_residue( Size const i );
+	void
+	fast_forward_to_next_residue( Size const i );
 
-Vector
-get_xyz( Size const seqpos, std::string const atom_name  );
+	Vector
+	get_xyz( Size const seqpos, std::string const atom_name  );
 
-conformation::ResidueCOP
-		get_residue( Size const seqpos );
+	conformation::ResidueCOP
+	get_residue( Size const seqpos );
 
-	private:
+private:
 
-		ResidueAlternativeStepWiseSamplerCombOP residue_alternatives_rotamer_;
-		RigidBodyStepWiseSamplerOP rigid_body_rotamer_;
+	ResidueAlternativeStepWiseSamplerCombOP residue_alternatives_rotamer_;
+	RigidBodyStepWiseSamplerOP rigid_body_rotamer_;
 
-std::map< Size, conformation::ResidueOP > transformed_residues;
+	std::map< Size, conformation::ResidueOP > transformed_residues;
 
 
-	};
+};
 
 } //rigid_body
 } //sampler

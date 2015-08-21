@@ -84,24 +84,24 @@ RamachandranEnergy::residue_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ){
-			return;
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) {
+		return;
 	}
 
 	if ( rsd.is_protein() &&
-				(			(rsd.aa() <= chemical::num_canonical_aas) ||
-							(core::chemical::is_canonical_D_aa(rsd.aa()) /*canonical D-amino acids*/) ||
-							(rsd.backbone_aa() <= chemical::num_canonical_aas /*noncanonical with canonical template*/)
-				)
-		) {
-			Real rama_score, drama_dphi, drama_dpsi;
-			if(potential_.is_normally_connected(rsd)) {
-				potential_.eval_rama_score_residue( rsd, rama_score, drama_dphi, drama_dpsi );
-			} else {
-				potential_.eval_rama_score_residue_nonstandard_connection( pose, rsd, rama_score, drama_dphi, drama_dpsi );
-			}
-			emap[ rama ] += rama_score;
+			(   (rsd.aa() <= chemical::num_canonical_aas) ||
+			(core::chemical::is_canonical_D_aa(rsd.aa()) /*canonical D-amino acids*/) ||
+			(rsd.backbone_aa() <= chemical::num_canonical_aas /*noncanonical with canonical template*/)
+			)
+			) {
+		Real rama_score, drama_dphi, drama_dpsi;
+		if ( potential_.is_normally_connected(rsd) ) {
+			potential_.eval_rama_score_residue( rsd, rama_score, drama_dphi, drama_dpsi );
+		} else {
+			potential_.eval_rama_score_residue_nonstandard_connection( pose, rsd, rama_score, drama_dphi, drama_dpsi );
 		}
+		emap[ rama ] += rama_score;
+	}
 }
 
 bool
@@ -122,20 +122,20 @@ RamachandranEnergy::eval_residue_dof_derivative(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ){
-			return 0.0;
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) {
+		return 0.0;
 	}
 
 	Real deriv(0.0);
 	if ( tor_id.valid() && tor_id.type() == id::BB ) {
 		//conformation::Residue const & rsd( pose.residue( tor_id.rsd() ) );
-		if (	rsd.is_protein() &&
-					(	(rsd.aa() <= chemical::num_canonical_aas) ||
-						(rsd.aa()>=core::chemical::aa_dal && rsd.aa()<=core::chemical::aa_dty /*D-amino acids*/) ||
-						(rsd.backbone_aa() <= chemical::num_canonical_aas)
-					) && tor_id.torsion() <= 2 ) {
+		if ( rsd.is_protein() &&
+				( (rsd.aa() <= chemical::num_canonical_aas) ||
+				(rsd.aa()>=core::chemical::aa_dal && rsd.aa()<=core::chemical::aa_dty /*D-amino acids*/) ||
+				(rsd.backbone_aa() <= chemical::num_canonical_aas)
+				) && tor_id.torsion() <= 2 ) {
 			Real rama_score, drama_dphi, drama_dpsi;
-			if(potential_.is_normally_connected(rsd)) { //If this residue is connected to the N-1 and N+1 residues
+			if ( potential_.is_normally_connected(rsd) ) { //If this residue is connected to the N-1 and N+1 residues
 				potential_.eval_rama_score_residue( rsd, rama_score, drama_dphi, drama_dpsi );
 				deriv = ( tor_id.torsion() == 1 ? drama_dphi : drama_dpsi );
 			} else { //If this residue is connected to things out of sequence
@@ -161,7 +161,7 @@ RamachandranEnergy::eval_dof_derivative(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( pose.residue(tor_id.rsd()).has_variant_type( core::chemical::REPLONLY ) ){
+	if ( pose.residue(tor_id.rsd()).has_variant_type( core::chemical::REPLONLY ) ) {
 		return 0.0;
 	}
 
@@ -169,12 +169,12 @@ RamachandranEnergy::eval_dof_derivative(
 	if ( tor_id.valid() && tor_id.type() == id::BB ) {
 		conformation::Residue const & rsd( pose.residue( tor_id.rsd() ) );
 		if ( rsd.is_protein() &&
-					(		(rsd.aa() <= chemical::num_canonical_aas) ||
-							(rsd.aa()>=core::chemical::aa_dal && rsd.aa()<=core::chemical::aa_dty /*D-amino acids*/) ||
-							(rsd.backbone_aa() <= chemical::num_canonical_aas)
-					) && tor_id.torsion() <= 2 ) {
+				(  (rsd.aa() <= chemical::num_canonical_aas) ||
+				(rsd.aa()>=core::chemical::aa_dal && rsd.aa()<=core::chemical::aa_dty /*D-amino acids*/) ||
+				(rsd.backbone_aa() <= chemical::num_canonical_aas)
+				) && tor_id.torsion() <= 2 ) {
 			Real rama_score, drama_dphi, drama_dpsi;
-			if(potential_.is_normally_connected(rsd)) { //If this residue is connected to the N-1 and N+1 residues
+			if ( potential_.is_normally_connected(rsd) ) { //If this residue is connected to the N-1 and N+1 residues
 				potential_.eval_rama_score_residue( rsd, rama_score, drama_dphi, drama_dpsi );
 				deriv = ( tor_id.torsion() == 1 ? drama_dphi : drama_dpsi );
 			} else { //If this residue is connected to things out of sequence

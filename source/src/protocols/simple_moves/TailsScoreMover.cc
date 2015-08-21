@@ -74,20 +74,17 @@ double TailsScoreMover::visit(
 	using namespace basic::options;
 	using namespace core::pose;
 
-	if(in_ltail > in_sequence_length/2 || in_ltail >= 200 || in_rtail > in_sequence_length/2 || in_rtail>= 200)
-	{
+	if ( in_ltail > in_sequence_length/2 || in_ltail >= 200 || in_rtail > in_sequence_length/2 || in_rtail>= 200 ) {
 		m_done_all = true;
 		TR<< "done" << std::endl;
 	}
 
-	if(in_ltail < 0 || in_ltail > in_sequence_length/2 || in_ltail >= 200 || in_rtail < 0 || in_rtail > in_sequence_length/2 || in_rtail>= 200)// check that we are not outside of boundaries
-	{
+	if ( in_ltail < 0 || in_ltail > in_sequence_length/2 || in_ltail >= 200 || in_rtail < 0 || in_rtail > in_sequence_length/2 || in_rtail>= 200 ) { // check that we are not outside of boundaries
 		out_min_ltail = in_current_min_ltail;
 		out_min_rtail = in_current_min_rtail;
 		return in_current_min;
 	}
-	if(in_array_of_visits[in_ltail][in_rtail] == VISITED || in_array_of_visits[in_ltail][in_rtail] == VISITED_HILL || in_array_of_visits[in_ltail][in_rtail] ==HILL) //if this spot was already visited or it is a hill
-	{
+	if ( in_array_of_visits[in_ltail][in_rtail] == VISITED || in_array_of_visits[in_ltail][in_rtail] == VISITED_HILL || in_array_of_visits[in_ltail][in_rtail] ==HILL ) { //if this spot was already visited or it is a hill
 		out_min_ltail = in_current_min_ltail;
 		out_min_rtail = in_current_min_rtail;
 		return in_current_min;
@@ -97,36 +94,32 @@ double TailsScoreMover::visit(
 	Real updated_tail_score = tail_score - ED*(in_ltail+in_rtail);
 
 	//If you are not at the edge check if you are on the hill
-	if(in_ltail!=0 && in_array_of_visits[in_ltail][in_rtail] != PREVIOUS_HILL && in_array_of_visits[in_ltail][in_rtail] != HILL && in_array_of_visits[in_ltail][in_rtail] != VISITED_HILL)
-	{
+	if ( in_ltail!=0 && in_array_of_visits[in_ltail][in_rtail] != PREVIOUS_HILL && in_array_of_visits[in_ltail][in_rtail] != HILL && in_array_of_visits[in_ltail][in_rtail] != VISITED_HILL ) {
 		make_tail(tail,in_ltail+1,in_rtail, in_sequence_length);
 		Real up_updated_tail_score = score_function()->get_sub_score_exclude_res(pose, tail) - ED*(in_ltail+1+in_rtail);
 		make_tail(tail,in_ltail-1,in_rtail, in_sequence_length);
 		Real down_updated_tail_score = score_function()->get_sub_score_exclude_res(pose, tail) - ED*(in_ltail-1+in_rtail);
-		if(up_updated_tail_score < updated_tail_score && down_updated_tail_score < updated_tail_score )
-		{
-		//	TR<< "Hill" << "    " << in_ltail<< "   " << in_rtail << "   " << updated_tail_score << "    "<< up_updated_tail_score << "     " << down_updated_tail_score << "    "<< in_array_of_visits[in_ltail][in_rtail] << std::endl;
+		if ( up_updated_tail_score < updated_tail_score && down_updated_tail_score < updated_tail_score ) {
+			// TR<< "Hill" << "    " << in_ltail<< "   " << in_rtail << "   " << updated_tail_score << "    "<< up_updated_tail_score << "     " << down_updated_tail_score << "    "<< in_array_of_visits[in_ltail][in_rtail] << std::endl;
 			m_hill_size = m_hill_size + updated_tail_score;
 			m_number_of_hill_points+=1;
-		//	TR<< "Updating hill size     " <<m_hill_size<<"    "<<m_number_of_hill_points <<  std::endl;
+			// TR<< "Updating hill size     " <<m_hill_size<<"    "<<m_number_of_hill_points <<  std::endl;
 			in_array_of_visits[in_ltail][in_rtail] = HILL;
 			out_min_ltail = in_current_min_ltail;
 			out_min_rtail = in_current_min_rtail;
 			return in_current_min;
 		}
 	}
-	if(in_rtail!=0 && in_array_of_visits[in_ltail][in_rtail] != PREVIOUS_HILL && in_array_of_visits[in_ltail][in_rtail] != HILL && in_array_of_visits[in_ltail][in_rtail] != VISITED_HILL)
-	{
+	if ( in_rtail!=0 && in_array_of_visits[in_ltail][in_rtail] != PREVIOUS_HILL && in_array_of_visits[in_ltail][in_rtail] != HILL && in_array_of_visits[in_ltail][in_rtail] != VISITED_HILL ) {
 		make_tail(tail,in_ltail,in_rtail+1, in_sequence_length);
 		Real right_updated_tail_score = score_function()->get_sub_score_exclude_res(pose, tail) - ED*(in_ltail+in_rtail+1);
 		make_tail(tail,in_ltail,in_rtail-1, in_sequence_length);
 		Real left_updated_tail_score = score_function()->get_sub_score_exclude_res(pose, tail) - ED*(in_ltail+in_rtail-1);
-		 if(left_updated_tail_score < updated_tail_score && right_updated_tail_score < updated_tail_score)
-		{
-		//	TR<< "Hill" << "    " << in_ltail<< "   " << in_rtail << "   " << updated_tail_score << "    "<< left_updated_tail_score << "     " << right_updated_tail_score << "    "<< in_array_of_visits[in_ltail][in_rtail] << std::endl;
+		if ( left_updated_tail_score < updated_tail_score && right_updated_tail_score < updated_tail_score ) {
+			// TR<< "Hill" << "    " << in_ltail<< "   " << in_rtail << "   " << updated_tail_score << "    "<< left_updated_tail_score << "     " << right_updated_tail_score << "    "<< in_array_of_visits[in_ltail][in_rtail] << std::endl;
 			m_hill_size = m_hill_size + updated_tail_score;
 			m_number_of_hill_points+=1;
-		//	TR<< "Updating hill size     " <<m_hill_size<<"    "<<m_number_of_hill_points <<  std::endl;
+			// TR<< "Updating hill size     " <<m_hill_size<<"    "<<m_number_of_hill_points <<  std::endl;
 			in_array_of_visits[in_ltail][in_rtail] = HILL;
 			out_min_ltail = in_current_min_ltail;
 			out_min_rtail = in_current_min_rtail;
@@ -135,12 +128,10 @@ double TailsScoreMover::visit(
 	}
 
 	//Mark this as visited
-	if(in_array_of_visits[in_ltail][in_rtail] != PREVIOUS_HILL && in_array_of_visits[in_ltail][in_rtail] != HILL && in_array_of_visits[in_ltail][in_rtail] != VISITED_HILL)
-	{
+	if ( in_array_of_visits[in_ltail][in_rtail] != PREVIOUS_HILL && in_array_of_visits[in_ltail][in_rtail] != HILL && in_array_of_visits[in_ltail][in_rtail] != VISITED_HILL ) {
 		in_array_of_visits[in_ltail][in_rtail] = VISITED;
 	}
-	if(in_array_of_visits[in_ltail][in_rtail] == PREVIOUS_HILL)
-	{
+	if ( in_array_of_visits[in_ltail][in_rtail] == PREVIOUS_HILL ) {
 		in_array_of_visits[in_ltail][in_rtail] = VISITED_HILL;
 	}
 
@@ -152,37 +143,32 @@ double TailsScoreMover::visit(
 	int t_ltail;
 	int t_rtail;
 	updated_tail_score = visit(in_current_min,in_current_min_ltail, in_current_min_rtail, in_ltail-1,in_rtail, in_array_of_visits,t_ltail, t_rtail,in_sequence_length,tail,  pose,area_file);
-	if(updated_tail_score < min_updated_tail_score)
-	{
+	if ( updated_tail_score < min_updated_tail_score ) {
 		out_min_ltail = t_ltail;
 		out_min_rtail = t_rtail;
 		min_updated_tail_score = updated_tail_score;
 	}
 	updated_tail_score = visit(in_current_min, in_current_min_ltail, in_current_min_rtail, in_ltail,in_rtail+1, in_array_of_visits,t_ltail, t_rtail,in_sequence_length,tail,  pose,area_file);
-	if(updated_tail_score < min_updated_tail_score)
-	{
+	if ( updated_tail_score < min_updated_tail_score ) {
 		out_min_ltail = t_ltail;
 		out_min_rtail = t_rtail;
 		min_updated_tail_score = updated_tail_score;
 	}
 	updated_tail_score = visit(in_current_min,in_current_min_ltail, in_current_min_rtail, in_ltail+1,in_rtail, in_array_of_visits,t_ltail, t_rtail,in_sequence_length,tail,  pose,area_file);
-	if(updated_tail_score < min_updated_tail_score)
-	{
+	if ( updated_tail_score < min_updated_tail_score ) {
 		out_min_ltail = t_ltail;
 		out_min_rtail = t_rtail;
 		min_updated_tail_score = updated_tail_score;
 	}
 	updated_tail_score = visit(in_current_min,in_current_min_ltail, in_current_min_rtail, in_ltail,in_rtail-1, in_array_of_visits,t_ltail, t_rtail,in_sequence_length,tail,  pose,area_file);
-	if(updated_tail_score < min_updated_tail_score)
-	{
+	if ( updated_tail_score < min_updated_tail_score ) {
 		out_min_ltail = t_ltail;
 		out_min_rtail = t_rtail;
 		min_updated_tail_score = updated_tail_score;
 	}
-	if( min_updated_tail_score < in_current_min)
+	if ( min_updated_tail_score < in_current_min ) {
 		return min_updated_tail_score;
-	else
-	{
+	} else {
 		return in_current_min;
 		//out_min_ltail = in_current_min_ltail;
 		//out_min_rtail = in_current_min_rtail;
@@ -192,13 +178,11 @@ void TailsScoreMover::make_tail(utility::vector1< core::Size > & tail,int in_lta
 {
 	tail.clear();
 	//populating tail with left tail residues
-	for(int rcount = 1; rcount<=in_ltaillength;rcount++)
-	{
+	for ( int rcount = 1; rcount<=in_ltaillength; rcount++ ) {
 		tail.push_back(rcount);
 	}
 	//Putting in right tail
-	for(int rcount = 1; rcount <  in_rtaillength+1; rcount++)
-	{
+	for ( int rcount = 1; rcount <  in_rtaillength+1; rcount++ ) {
 		tail.push_back(in_sequence_length - in_rtaillength+rcount);
 	}
 }
@@ -216,31 +200,26 @@ double TailsScoreMover::score_mode1(int& out_min_ltail_length, int& out_min_rtai
 	Real min_rtail_length = 0;
 	int number_of_ltail_steps = sequence_length/2;
 	int number_of_rtail_steps = sequence_length/2;
-	for( int ltaillength = 0; ltaillength < number_of_ltail_steps; ltaillength ++ )
-	{
+	for ( int ltaillength = 0; ltaillength < number_of_ltail_steps; ltaillength ++ ) {
 		tail.clear();
-		for(int rcount = 1; rcount<=ltaillength;rcount++) //populating tail with left tail residues
-		{
+		for ( int rcount = 1; rcount<=ltaillength; rcount++ ) { //populating tail with left tail residues
 			tail.push_back(rcount);
 		}
-		for(int rtaillength = 0; rtaillength < number_of_rtail_steps; rtaillength ++)
-		{
+		for ( int rtaillength = 0; rtaillength < number_of_rtail_steps; rtaillength ++ ) {
 			//removing previous residues
-			for(int rcount = 1; rcount < rtaillength; rcount++)
-			{
-				if(!tail.empty())
+			for ( int rcount = 1; rcount < rtaillength; rcount++ ) {
+				if ( !tail.empty() ) {
 					tail.pop_back();
+				}
 			}
 			//adding residues from the right tail
-			for(int rcount = 1; rcount <  rtaillength+1; rcount++)
-			{
+			for ( int rcount = 1; rcount <  rtaillength+1; rcount++ ) {
 				tail.push_back(sequence_length - rtaillength+rcount);
 			}
 			Real tail_score = score_function()->get_sub_score_exclude_res(pose, tail);
 			updated_tail_score = tail_score - ED*(ltaillength+rtaillength);
 			in_tail_output <<  updated_tail_score << "    " << ltaillength <<  "     " << rtaillength <<"   "<<tail_score << std::endl;
-			if(updated_tail_score < min_updated_tail_score)
-			{
+			if ( updated_tail_score < min_updated_tail_score ) {
 				min_updated_tail_score = updated_tail_score;
 				min_ltail_length = ltaillength;
 				min_rtail_length = rtaillength;
@@ -274,13 +253,12 @@ double TailsScoreMover::score_mode2(int& out_min_ltail_length, int& out_min_rtai
 	Real min_rtail_length = 0;
 	int taillength = 0;
 
-	while(updated_tail_score < min_updated_tail_score + KT && taillength < number_of_tail_steps)
-	{
+	while ( updated_tail_score < min_updated_tail_score + KT && taillength < number_of_tail_steps )
+			{
 		tail.push_back(taillength);
 		Real tail_score = score_function()->get_sub_score_exclude_res(pose, tail);
 		updated_tail_score = tail_score - ED*taillength;
-		if(updated_tail_score < min_updated_tail_score)
-		{
+		if ( updated_tail_score < min_updated_tail_score ) {
 			min_updated_tail_score = updated_tail_score;
 			min_tail_length = taillength;
 		}
@@ -291,8 +269,7 @@ double TailsScoreMover::score_mode2(int& out_min_ltail_length, int& out_min_rtai
 	//Clean the tail vector first
 	tail.clear();
 	//Put in left tail that was found
-	for(int rcount = 1; rcount<=min_ltail_length;rcount++) //populating tail with left tail residues
-	{
+	for ( int rcount = 1; rcount<=min_ltail_length; rcount++ ) { //populating tail with left tail residues
 		tail.push_back(rcount);
 	}
 	min_updated_tail_score = score_function()->get_sub_score_exclude_res(pose, tail);
@@ -301,23 +278,21 @@ double TailsScoreMover::score_mode2(int& out_min_ltail_length, int& out_min_rtai
 	min_tail_length = 0;
 	//search for right tail now
 	taillength = 0;
-	while(updated_tail_score < min_updated_tail_score + KT && taillength < number_of_tail_steps)
-	{
+	while ( updated_tail_score < min_updated_tail_score + KT && taillength < number_of_tail_steps )
+			{
 		//removing previous residues
-		for(int rcount = 1; rcount < taillength; rcount++)
-		{
-			if(!tail.empty())
+		for ( int rcount = 1; rcount < taillength; rcount++ ) {
+			if ( !tail.empty() ) {
 				tail.pop_back();
+			}
 		}
 		//adding residues from the right tail
-		for(int rcount = 1; rcount <  taillength+1; rcount++)
-		{
+		for ( int rcount = 1; rcount <  taillength+1; rcount++ ) {
 			tail.push_back(sequence_length - taillength+rcount);
 		}
 		Real tail_score = score_function()->get_sub_score_exclude_res(pose, tail);
 		updated_tail_score = tail_score - ED*(min_ltail_length + taillength);
-		if(updated_tail_score < min_updated_tail_score)
-		{
+		if ( updated_tail_score < min_updated_tail_score ) {
 			min_updated_tail_score = updated_tail_score;
 			min_tail_length = taillength;
 		}
@@ -346,43 +321,36 @@ double TailsScoreMover::score_mode3(int& out_min_ltail_length, int& out_min_rtai
 
 	double hill_size = 0;
 	m_done_all = false;
-	while(hill_size < KT && !m_done_all)
-	{
+	while ( hill_size < KT && !m_done_all )
+			{
 		min_ltail_length = 0;
 		min_rtail_length = 0;
-		core::Real	m_hill_size = 0;
+		core::Real m_hill_size = 0;
 		core::Real  m_number_of_hill_points = 0;
 		make_tail(tail, 0,0,sequence_length);
 		double min_current_tail_score = score_function()->get_sub_score_exclude_res(pose, tail);
 		//Real barrier = min_current_tail_score + 2;
 
 		min_updated_tail_score = visit(min_current_tail_score, 0, 0,
-										0, 0, array_of_visits, min_ltail_length,
-										min_rtail_length, sequence_length, tail, pose,in_tail_output);
+			0, 0, array_of_visits, min_ltail_length,
+			min_rtail_length, sequence_length, tail, pose,in_tail_output);
 
 		assert( m_number_of_hill_points != 0 );
 		hill_size = (m_hill_size - min_updated_tail_score*m_number_of_hill_points)/m_number_of_hill_points;
-		//	TR<< "Hill size is    " << hill_size <<"    "<<m_hill_size<<"     "<< min_updated_tail_score <<"     "<<m_number_of_hill_points<< std::endl;
+		// TR<< "Hill size is    " << hill_size <<"    "<<m_hill_size<<"     "<< min_updated_tail_score <<"     "<<m_number_of_hill_points<< std::endl;
 
-		//	tail_output_file << "       Min updated score       " <<  min_updated_tail_score << "    " << min_ltail_length <<  "     " << min_rtail_length << std::endl;
+		// tail_output_file << "       Min updated score       " <<  min_updated_tail_score << "    " << min_ltail_length <<  "     " << min_rtail_length << std::endl;
 		//Clean visits array
-		//	TR<< "Updating array of visits..." <<  std::endl;
-		for (int i = 0; i < 200; i++)
-		{
-			for (int j=0; j < 200; j++)
-			{
-				if(array_of_visits [i][j]==HILL)
-				{
-					//	TR<< "Hill at" << "    " << i<< "   " << j << std::endl;
+		// TR<< "Updating array of visits..." <<  std::endl;
+		for ( int i = 0; i < 200; i++ ) {
+			for ( int j=0; j < 200; j++ ) {
+				if ( array_of_visits [i][j]==HILL ) {
+					// TR<< "Hill at" << "    " << i<< "   " << j << std::endl;
 					array_of_visits [i][j] = PREVIOUS_HILL;
-				}
-				else if(array_of_visits [i][j]==PREVIOUS_HILL || array_of_visits [i][j]==VISITED_HILL)
-				{
+				} else if ( array_of_visits [i][j]==PREVIOUS_HILL || array_of_visits [i][j]==VISITED_HILL ) {
 					//TR<< "Hill at" << "    " << i<< "   " << j << std::endl;
 					array_of_visits [i][j] = PREVIOUS_HILL;
-				}
-				else
-				{
+				} else {
 					array_of_visits [i][j] = 0;
 				}
 			}
@@ -412,8 +380,7 @@ TailsScoreMover::apply( pose::Pose & pose )
 
 
 	int tail_mode_name = basic::options::option[ basic::options::OptionKeys::krassk::tail_mode_name ](); // What algorithm to use for tail prediction
-	if(tail_mode_name < 1 || tail_mode_name > 3)
-	{
+	if ( tail_mode_name < 1 || tail_mode_name > 3 ) {
 		Error() << "No such tail algorithm supported. " << std::endl;
 	}
 
@@ -421,8 +388,7 @@ TailsScoreMover::apply( pose::Pose & pose )
 	const char * tt = tail_output_file_name.c_str();
 
 	std::ofstream  tail_output_file(tt, std::ios::app );
-	if(!tail_output_file.good())
-	{
+	if ( !tail_output_file.good() ) {
 		Error() << "Unable to open tail output file for writing. " << std::endl;
 	}
 
@@ -431,27 +397,27 @@ TailsScoreMover::apply( pose::Pose & pose )
 	int out_min_rtail_length = 0;
 
 	switch(tail_mode_name)
-	{
-		case 1:
-		{
-			free_energy = score_mode1(out_min_ltail_length, out_min_rtail_length,tail_output_file,pose);
-			break;
-		}
-		case 2:
-		{
-			free_energy = score_mode2(out_min_ltail_length, out_min_rtail_length,tail_output_file,pose);
-			break;
-		}
-		case 3:
-		{
-			free_energy = score_mode3( out_min_ltail_length, out_min_rtail_length,tail_output_file,pose);
-			break;
-		}
-		default:
-		{
-			free_energy = score_mode1(out_min_ltail_length,out_min_rtail_length,tail_output_file,pose);
-		}
-	}
+			{
+			case 1 :
+				{
+				free_energy = score_mode1(out_min_ltail_length, out_min_rtail_length,tail_output_file,pose);
+				break;
+			}
+			case 2 :
+				{
+				free_energy = score_mode2(out_min_ltail_length, out_min_rtail_length,tail_output_file,pose);
+				break;
+			}
+			case 3 :
+				{
+				free_energy = score_mode3( out_min_ltail_length, out_min_rtail_length,tail_output_file,pose);
+				break;
+			}
+			default :
+				{
+				free_energy = score_mode1(out_min_ltail_length,out_min_rtail_length,tail_output_file,pose);
+			}
+			}
 
 	setPoseExtraScore( pose, "free_energy", free_energy);
 	setPoseExtraScore( pose, "left_tail",   out_min_ltail_length);

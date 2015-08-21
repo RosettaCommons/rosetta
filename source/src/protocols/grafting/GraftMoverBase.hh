@@ -27,89 +27,89 @@
 
 namespace protocols {
 namespace grafting {
-	using core::Size;
-	using core::pose::Pose;
-	using core::pose::PoseOP;
-	using protocols::loops::Loop;
-	using core::kinematics::MoveMapOP;
-	using core::kinematics::MoveMap;
-	
+using core::Size;
+using core::pose::Pose;
+using core::pose::PoseOP;
+using protocols::loops::Loop;
+using core::kinematics::MoveMapOP;
+using core::kinematics::MoveMap;
+
 /// @brief Fairly abstract base class for GraftMover classes
 class GraftMoverBase: public moves::Mover {
 
 public:
-	
+
 	/// @brief Default constructor for RosettaScripts
 	GraftMoverBase(std::string mover_name);
-	
+
 	/// @brief Start and end are the residue numbers you want your insert to go between.  start->Insert<-end
 	GraftMoverBase(Size const start, Size const end, std::string mover_name);
 
 	GraftMoverBase(Size const start, Size const end, std::string mover_name,
 		core::pose::Pose const & piece, Size Nter_overhang_length=0, Size Cter_overhang_length=0);
-        
+
 	GraftMoverBase(GraftMoverBase const & src);
-	
+
 	virtual ~GraftMoverBase();
 
 	//@brief copy ctor
 	//GraftMoverBase( GraftMoverBase const & rhs);
 
 	/// @brief Sets the piece that will be inserted, and any overhang residues.
-	/// @details Overhang residues are residues not being inserted into the scaffold. 
+	/// @details Overhang residues are residues not being inserted into the scaffold.
 	/// These residues are deleted before insertion and are used by classes usually for superposition or
-	/// Initial orientation of the insert relative to the scaffold.  
-	virtual void 
+	/// Initial orientation of the insert relative to the scaffold.
+	virtual void
 	set_piece(Pose const & piece, Size Nter_overhang_length, Size Cter_overhang_length);
 
 	virtual void
 	set_insert_region(Size const start, Size const end);
-	
-	/// @brief Copy PDBInfo from the pose piece into pose during graft.  If false(default), PDBInfo will be obsoleted. 
+
+	/// @brief Copy PDBInfo from the pose piece into pose during graft.  If false(default), PDBInfo will be obsoleted.
 	void
 	copy_pdbinfo(bool copy_pdbinfo);
-	
+
 	bool
 	copy_pdbinfo() const {
 		return copy_pdbinfo_;
 	}
-	
-	
+
+
 public:
 	/// @brief  Return the name of the Mover.
-	virtual std::string 
+	virtual std::string
 	get_name() const;
 
 	Size start();
 	Size original_end();
 	Size end();
 	Size insertion_length();
-	
+
 protected:
-    
+
 	/// @brief Steven Lewis' insertion method from insert_pose_into_pose. Wrapper to his function, using variables defined in this baseclass.
 	/// @details Need to set piece to use. Deletes any overhang in piece.  Deletes any region from start to end in pose. Updates end_.
 	/// Recommended use is within apply method.
 	///
-	Pose 
+	Pose
 	insert_piece(Pose const & pose);
-	
+
 protected:
 	///Setters and accessors of private data
 	void original_end(Size original_end);
 	void insertion_length(Size insertion_length);
 	void start(core::Size start);
 	void end(core::Size end);
-	
+
 	Size Nter_overhang_length();
 	void Nter_overhang_length(core::Size overhang);
 	Size Cter_overhang_length();
 	void Cter_overhang_length(core::Size overhang);
 	PoseOP piece();
 	void piece(PoseOP piece);
-	
+
 private:
-   	//Reference of the pose piece.  Should be changed to local copy, but I'm not sure how to do that.
+	//Reference of the pose piece.  Should be changed to local copy, but I'm not sure how to do that.
 	PoseOP piece_;
 
 	/// @brief Residue insertion will start from
@@ -120,13 +120,13 @@ private:
 	Size original_end_;
 
 	Size insertion_length_;
-	
+
 	/// @brief Number of overhang residues on N terminus.  Updates on delete_overhang_residues
 	Size Nter_overhang_length_;
 	/// @brief Number of overhang residues on C terminus.  Updates on delete_overhang_residues
 	Size Cter_overhang_length_;
 	bool copy_pdbinfo_;
-	
+
 };  // class GraftMoverBase
 
 }  // namespace grafting

@@ -48,8 +48,8 @@
 #include <utility/excn/Exceptions.hh>
 #include <sstream>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::endl;
 using std::string;
@@ -151,7 +151,7 @@ ResidueTotalScoresFeatures::parse_my_tag(
 	Movers_map const & /*movers*/,
 	Pose const & /*pose*/
 ) {
-	if(tag->hasOption("scorefxn")){
+	if ( tag->hasOption("scorefxn") ) {
 		string const scorefxn_name(tag->getOption<string>("scorefxn"));
 		scfxn_ = data.get_ptr<ScoreFunction>("scorefxns", scorefxn_name);
 	} else {
@@ -185,7 +185,7 @@ ResidueTotalScoresFeatures::insert_residue_total_scores_rows(
 	StructureID const struct_id,
 	sessionOP db_session
 ) const {
-	if(!scfxn_->energy_method_options().hbond_options().decompose_bb_hb_into_pair_energies()){
+	if ( !scfxn_->energy_method_options().hbond_options().decompose_bb_hb_into_pair_energies() ) {
 		TR.Warning << "The backbone-backbone hydrogen bonds being stored in the per-residue scores. Please enable the decompose_bb_hb_into_pair_energies option if you want this behavior." << endl;
 	}
 
@@ -203,8 +203,8 @@ ResidueTotalScoresFeatures::insert_residue_total_scores_rows(
 	statement stmt(
 		basic::database::safely_prepare_statement(stmt_string, db_session));
 
-	for(Size resNum=1; resNum <= temp_pose.total_residue(); ++resNum){
-		if(!check_relevant_residues( relevant_residues, resNum )) continue;
+	for ( Size resNum=1; resNum <= temp_pose.total_residue(); ++resNum ) {
+		if ( !check_relevant_residues( relevant_residues, resNum ) ) continue;
 
 		Real const score_value(temp_pose.energies().residue_total_energy(resNum));
 

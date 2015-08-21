@@ -17,8 +17,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace simple_moves{
+namespace protocols {
+namespace simple_moves {
 namespace symmetry {
 
 //Forwards and OP typedefs

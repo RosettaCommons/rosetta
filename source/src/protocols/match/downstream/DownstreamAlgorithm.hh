@@ -187,21 +187,21 @@ public:
 	);
 
 	DownstreamBuilderOP
-  get_dsbuilder() const;
+	get_dsbuilder() const;
 
 	bool
 	are_colliding(
-  	core::conformation::Residue const & us_res /*upstream*/,
-  	core::conformation::Residue const & ds_res /*downstream*/,
+		core::conformation::Residue const & us_res /*upstream*/,
+		core::conformation::Residue const & ds_res /*downstream*/,
 		utility::vector1< core::id::AtomID > const & ds_atoms,
-	  utility::vector1< core::Size > const & catalytic_atoms
+		utility::vector1< core::Size > const & catalytic_atoms
 	) const;
 
-//  virtual
-//  void
-//  initialize_upstream_residue(
-//    core::conformation::Residue const& us_res /*upstream residue*/
-//  );
+	//  virtual
+	//  void
+	//  initialize_upstream_residue(
+	//    core::conformation::Residue const& us_res /*upstream residue*/
+	//  );
 
 protected:
 
@@ -233,7 +233,7 @@ private:
 	Size geom_cst_id_; // which geometric constraint is this a downstream-algorithm for?
 	BumpGridCOP bbgrid_;
 	ActiveSiteGridCOP active_site_grid_;
-  DownstreamBuilderOP dsbuilder_;
+	DownstreamBuilderOP dsbuilder_;
 
 };
 

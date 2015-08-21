@@ -10,9 +10,9 @@
 /// @file docking_initialization_protocols
 /// @brief initialization protocols for docking
 /// @details
-///		This contains the functions that create initial positions for docking
-///		You can either randomize partner 1 or partner 2, spin partner 2, or
-///		perform a simple perturbation.
+///  This contains the functions that create initial positions for docking
+///  You can either randomize partner 1 or partner 2, spin partner 2, or
+///  perform a simple perturbation.
 /// @author Monica Berrondo
 
 
@@ -52,14 +52,14 @@ public:
 	DockingInitialPerturbation();
 
 	/// @brief Constructor with two arguments. The first is the jump number to dock over, the second is a boolean (true
-	///		will use slide into contact, false will not).
+	///  will use slide into contact, false will not).
 	DockingInitialPerturbation(
 		core::Size const rb_jump,
 		bool const slide=true
 	);
 
 	/// @brief Constructor with two arguments. The first is the DockJumps, the second is a boolean (true
-	///		will use slide into contact, false will not).
+	///  will use slide into contact, false will not).
 	DockingInitialPerturbation(
 		DockJumps const movable_jumps,
 		bool const slide=true
@@ -113,11 +113,11 @@ public:
 
 	/// zhe for rosetta_scripts
 	void parse_my_tag(
-										utility::tag::TagCOP tag,
-										basic::datacache::DataMap &,
-										protocols::filters::Filters_map const &,
-										protocols::moves::Movers_map const &,
-										core::pose::Pose const &
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
 	);
 	virtual protocols::moves::MoverOP clone() const; //zhe for scripts
 
@@ -180,7 +180,7 @@ private:
 	// which jump to use for docking
 	core::Size rb_jump_;
 	core::Vector slide_axis_; //used if a specific slide axis is specified in the constructor
-	
+
 };  // class DockingSlideIntoContact
 
 std::ostream &operator<< ( std::ostream &os, DockingSlideIntoContact const &mover );
@@ -188,8 +188,8 @@ std::ostream &operator<< ( std::ostream &os, DockingSlideIntoContact const &move
 
 /// @brief Slides docking partners together by monitoring fa_rep.
 /// @details
-///		If partners are already touching, no change is made.
-///		Separation will be 1A or less after calling this function.
+///  If partners are already touching, no change is made.
+///  Separation will be 1A or less after calling this function.
 class FaDockingSlideIntoContact : public moves::Mover
 {
 public:

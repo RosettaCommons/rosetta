@@ -37,7 +37,7 @@ DP_Matrix::~DP_Matrix() {}
 
 void
 DP_Matrix::clear() {
-		scoring_matrix_.erase( scoring_matrix_.begin(), scoring_matrix_.end() );
+	scoring_matrix_.erase( scoring_matrix_.begin(), scoring_matrix_.end() );
 }
 
 CellOP
@@ -88,8 +88,9 @@ std::ostream & operator<<( std::ostream & out, const DP_Matrix & m ) {
 		if ( ylabs.size() > 1 && i == 1 ) {
 			out << A( width, ' ' );
 
-			for ( Size k = 1; k <= m.cols(); ++k )
+			for ( Size k = 1; k <= m.cols(); ++k ) {
 				out << A( width, ylabs[k] );
+			}
 			out << std::endl;
 		}
 

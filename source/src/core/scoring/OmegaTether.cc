@@ -50,8 +50,9 @@ namespace scoring {
 OmegaTether::OmegaTether() {
 	using namespace basic::options;
 	use_phipsi_dep_ = option[ OptionKeys::corrections::score::bbdep_omega ]();
-	if (use_phipsi_dep_)
+	if ( use_phipsi_dep_ ) {
 		read_omega_tables( );
+	}
 }
 
 
@@ -70,10 +71,8 @@ OmegaTether::eval_omega_score_all(
 
 	Energies & pose_energies( pose.energies() );
 
-	for ( int ii = 1; ii <= total_residue; ++ii )
-	{
-		if ( pose.residue(ii).is_protein()  && ! pose.residue(ii).is_terminus() && ! pose.residue(ii).is_virtual_residue()  )
-		{
+	for ( int ii = 1; ii <= total_residue; ++ii ) {
+		if ( pose.residue(ii).is_protein()  && ! pose.residue(ii).is_terminus() && ! pose.residue(ii).is_virtual_residue()  ) {
 			Real omega_score,dscore_domega, dscore_dphi, dscore_dpsi ;
 			eval_omega_score_residue(pose.residue(ii),omega_score,dscore_domega, dscore_dphi, dscore_dpsi );
 			pose_energies.onebody_energies( ii )[omega] = omega_score;
@@ -87,7 +86,7 @@ OmegaTether::eval_omega_score_all(
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 core::Size OmegaTether::phi_index( core::conformation::Residue const &rsd ) const
 {
-	if(rsd.type().is_beta_aa()) return 2; //Special case.
+	if ( rsd.type().is_beta_aa() ) return 2; //Special case.
 	return 1; //Default for alpha-amino acids.
 }
 
@@ -96,7 +95,7 @@ core::Size OmegaTether::phi_index( core::conformation::Residue const &rsd ) cons
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 core::Size OmegaTether::psi_index( core::conformation::Residue const &rsd ) const
 {
-	if(rsd.type().is_beta_aa()) return 3; //Special case.
+	if ( rsd.type().is_beta_aa() ) return 3; //Special case.
 	return 2; //Default for alpha-amino acids.
 }
 
@@ -105,7 +104,7 @@ core::Size OmegaTether::psi_index( core::conformation::Residue const &rsd ) cons
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 core::Size OmegaTether::omega_index( core::conformation::Residue const &rsd ) const
 {
-	if(rsd.type().is_beta_aa()) return 4;
+	if ( rsd.type().is_beta_aa() ) return 4;
 	return 3; //Default for alpha-amino acids.
 }
 
@@ -138,7 +137,7 @@ OmegaTether::eval_omega_score_residue(
 {
 	using namespace numeric;
 
-debug_assert( rsd.is_protein() );
+	debug_assert( rsd.is_protein() );
 
 	// vkm -- changing this yet again, so that now we have the is_beta_aa() check in one and only one place.
 	// amw changing this to is_beta_aa as well
@@ -178,16 +177,16 @@ OmegaTether::eval_omega_score_residue(
 	using basic::subtract_degree_angles;
 
 	core::Real omega_p = omega;
-	while( omega_p <  -90.0 ) omega_p += 360.0;
-	while( omega_p >  270.0 ) omega_p -= 360.0;
-	
+	while ( omega_p <  -90.0 ) omega_p += 360.0;
+	while ( omega_p >  270.0 ) omega_p -= 360.0;
+
 	if ( !use_phipsi_dep_ || omega_p < 90.0 ) {  // use standard form for cis omegas
 		// standard form
 		core::Real dangle;
 		core::Real weight = 0.01;  // This is 1 in rosetta but divided by the number of residues oddly. we'll just assume N=100 here such
-															 // that omega can be calculated on a per residue basis
-		
-		if( omega_p >= 90.0 ){
+		// that omega can be calculated on a per residue basis
+
+		if ( omega_p >= 90.0 ) {
 			// trans
 			dangle = subtract_degree_angles(omega_p, 180);
 		} else {
@@ -201,12 +200,15 @@ OmegaTether::eval_omega_score_residue(
 	} else {
 		// figure out which table to use
 		core::Size table=1;
-		if (aa == core::chemical::aa_gly)
+		if ( aa == core::chemical::aa_gly ) {
 			table = 2;
-		if (aa == core::chemical::aa_pro)
+		}
+		if ( aa == core::chemical::aa_pro ) {
 			table = 3;
-		if (aa == core::chemical::aa_ile || aa == core::chemical::aa_val)
+		}
+		if ( aa == core::chemical::aa_ile || aa == core::chemical::aa_val ) {
 			table = 4;
+		}
 
 		//fpd note: preproline is not yet implemented as this would have to be a 2b energy term
 
@@ -252,14 +254,14 @@ OmegaTether::read_omega_tables( ) {
 	omega_mus_all_splines_.resize(5);
 	omega_sigmas_all_splines_.resize(5);
 
-	for (int i=1;  i<=5; ++i) {
+	for ( int i=1;  i<=5; ++i ) {
 		utility::io::izstream stream;
-		if (i==1)      basic::database::open( stream, "scoring/score_functions/omega/omega_ppdep.all.txt");
-		else if (i==2) basic::database::open( stream, "scoring/score_functions/omega/omega_ppdep.gly.txt");
-		else if (i==3) basic::database::open( stream, "scoring/score_functions/omega/omega_ppdep.pro.txt");
-		else if (i==4) basic::database::open( stream, "scoring/score_functions/omega/omega_ppdep.valile.txt");
+		if ( i==1 )      basic::database::open( stream, "scoring/score_functions/omega/omega_ppdep.all.txt");
+		else if ( i==2 ) basic::database::open( stream, "scoring/score_functions/omega/omega_ppdep.gly.txt");
+		else if ( i==3 ) basic::database::open( stream, "scoring/score_functions/omega/omega_ppdep.pro.txt");
+		else if ( i==4 ) basic::database::open( stream, "scoring/score_functions/omega/omega_ppdep.valile.txt");
 		//else if (i==5) basic::database::open( stream, "scoring/score_functions/omega/omega_ppdep.prepro.txt");
-		else if (i==5) continue;  // prepro not yet used
+		else if ( i==5 ) continue;  // prepro not yet used
 
 		read_table_from_stream( stream, omega_mus_all_[i], omega_sigmas_all_[i] );
 		setup_interpolation( omega_mus_all_[i], omega_mus_all_splines_[i] );
@@ -296,7 +298,7 @@ OmegaTether::setup_interpolation(
 void
 OmegaTether::read_table_from_stream(
 	utility::io::izstream &stream,
-	ObjexxFCL::FArray2D< Real > &mus, 
+	ObjexxFCL::FArray2D< Real > &mus,
 	ObjexxFCL::FArray2D< Real > &sigmas
 ) {
 	core::Size i, j;

@@ -111,31 +111,31 @@ find_neighbors_3dgrid_restricted(
 template <class Vertex, class Edge>
 core::Size
 get_nearest_neighbor(
-		utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
-		core::Size node_id,
-		core::Real neighbor_cutoff,
-		Strategy strategy = AUTOMATIC
+	utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+	core::Size node_id,
+	core::Real neighbor_cutoff,
+	Strategy strategy = AUTOMATIC
 );
 
 /*
 // Commented out to make clang compile - duplication of default arguments and forward declaration of template functions confuses the compiler (and me!)
 // Brian Weitzner and Sergey Lyskov 3/5/2011
- 
+
 template <class Vertex, class Edge>
 void
 find_neighbors(
-    utility::pointer::owning_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
-    core::Real neighbor_cutoff,
-    Strategy strategy = AUTOMATIC
+utility::pointer::owning_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+core::Real neighbor_cutoff,
+Strategy strategy = AUTOMATIC
 );
- 
+
 template <class Vertex, class Edge>
 void
 find_neighbors_restricted(
-    utility::pointer::owning_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
-    core::Real neighbor_cutoff,
-    utility::vector1< bool > const & residue_selection,
-    Strategy strategy = AUTOMATIC
+utility::pointer::owning_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+core::Real neighbor_cutoff,
+utility::vector1< bool > const & residue_selection,
+Strategy strategy = AUTOMATIC
 );
 */
 

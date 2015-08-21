@@ -58,56 +58,56 @@ public:
 		core_init();
 	}
 
-	
+
 	void tearDown() {}
 
 	// @brief test default options and default locator
 	void test_FiberDiffractionEnergy() {
 
-	try{
-		do_test_FiberDiffractionEnergy();
-		do_test_FiberDiffractionEnergyDens();
-	} catch( utility::excn::EXCN_Base& excn ) {
-		TR << "ERROR: Exception caught by FiberDiffractionEnergy:"
-		<< excn << std::endl;
+		try{
+			do_test_FiberDiffractionEnergy();
+			do_test_FiberDiffractionEnergyDens();
+		} catch( utility::excn::EXCN_Base& excn ) {
+			TR << "ERROR: Exception caught by FiberDiffractionEnergy:"
+				<< excn << std::endl;
 		}
 	}
 	void do_test_FiberDiffractionEnergy() {
-	
-  	core_init_with_additional_options( "-fiber_diffraction::layer_lines core/scoring/fiber_diffraction/data/1ifp.mini.dat -fiber_diffraction:a 27 -fiber_diffraction:b 5 -fiber_diffraction:resolution_cutoff_low 0.0833333 -fiber_diffraction:resolution_cutoff_high 0.333333 -symmetry:symmetry_definition core/scoring/fiber_diffraction/data/helix_denovo.sdef" );
 
-	
-		std::string pdb_file_name = "core/scoring/fiber_diffraction/data/1IFP.mini.pdb";
-		Pose pose;
-  	core::import_pose::pose_from_pdb(pose, pdb_file_name);		
-		core::pose::symmetry::make_symmetric_pose( pose );
+		core_init_with_additional_options( "-fiber_diffraction::layer_lines core/scoring/fiber_diffraction/data/1ifp.mini.dat -fiber_diffraction:a 27 -fiber_diffraction:b 5 -fiber_diffraction:resolution_cutoff_low 0.0833333 -fiber_diffraction:resolution_cutoff_high 0.333333 -symmetry:symmetry_definition core/scoring/fiber_diffraction/data/helix_denovo.sdef" );
 
-  	core::Real const TOL(1e-5);
-
-		SymmetricScoreFunction sfxn;
-		sfxn.set_weight(fiberdiffraction, 1 );
-		Energy score = sfxn( pose );
-
- 		TS_ASSERT( std::fabs( score - 0.564044 ) < TOL );
-
-	}	
-
-	void do_test_FiberDiffractionEnergyDens() {
-
-  	core_init_with_additional_options( "-fiber_diffraction::layer_lines core/scoring/fiber_diffraction/data/1ifp.mini.dat -in:file:centroid_input -fiber_diffraction:a 27 -fiber_diffraction:b 5 -fiber_diffraction:resolution_cutoff_low 0.0833333 -fiber_diffraction:resolution_cutoff_high 0.333333 -symmetry:symmetry_definition core/scoring/fiber_diffraction/data/helix_denovo.sdef " );
 
 		std::string pdb_file_name = "core/scoring/fiber_diffraction/data/1IFP.mini.pdb";
 		Pose pose;
 		core::import_pose::pose_from_pdb(pose, pdb_file_name);
 		core::pose::symmetry::make_symmetric_pose( pose );
-	
+
 		core::Real const TOL(1e-5);
-	
+
+		SymmetricScoreFunction sfxn;
+		sfxn.set_weight(fiberdiffraction, 1 );
+		Energy score = sfxn( pose );
+
+		TS_ASSERT( std::fabs( score - 0.564044 ) < TOL );
+
+	}
+
+	void do_test_FiberDiffractionEnergyDens() {
+
+		core_init_with_additional_options( "-fiber_diffraction::layer_lines core/scoring/fiber_diffraction/data/1ifp.mini.dat -in:file:centroid_input -fiber_diffraction:a 27 -fiber_diffraction:b 5 -fiber_diffraction:resolution_cutoff_low 0.0833333 -fiber_diffraction:resolution_cutoff_high 0.333333 -symmetry:symmetry_definition core/scoring/fiber_diffraction/data/helix_denovo.sdef " );
+
+		std::string pdb_file_name = "core/scoring/fiber_diffraction/data/1IFP.mini.pdb";
+		Pose pose;
+		core::import_pose::pose_from_pdb(pose, pdb_file_name);
+		core::pose::symmetry::make_symmetric_pose( pose );
+
+		core::Real const TOL(1e-5);
+
 		SymmetricScoreFunction sfxn;
 		sfxn.set_weight(fiberdiffractiondens, 1 );
-	
+
 		Energy score = sfxn( pose );
-	
+
 		TS_ASSERT( std::fabs( score -  0.99333 ) < TOL );
 	}
 };

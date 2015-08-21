@@ -41,31 +41,31 @@ public:
 	typedef ContextIndependentTwoBodyEnergy  parent;
 public:
 
-  /// ctor
-  MMLJEnergyIntra();
+	/// ctor
+	MMLJEnergyIntra();
 
-  /// clone
-  virtual
-  EnergyMethodOP
-  clone() const;
+	/// clone
+	virtual
+	EnergyMethodOP
+	clone() const;
 
 	void
 	setup_for_minimizing(
-	  pose::Pose & pose,
+		pose::Pose & pose,
 		ScoreFunction const & sfxn,
 		kinematics::MinimizerMapBase const & min_map
 	) const;
 
 
-  virtual
-  void
-  residue_pair_energy(
-    conformation::Residue const & rsd1,
-    conformation::Residue const & rsd2,
-    pose::Pose const & pose,
-    ScoreFunction const &,
-    EnergyMap & emap
-  ) const;
+	virtual
+	void
+	residue_pair_energy(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		ScoreFunction const &,
+		EnergyMap & emap
+	) const;
 
 	virtual
 	void
@@ -79,27 +79,27 @@ public:
 		Vector & F2
 	) const;
 
-  virtual
-  bool
-  defines_intrares_energy( EnergyMap const & ) const;
+	virtual
+	bool
+	defines_intrares_energy( EnergyMap const & ) const;
 
-  virtual
-  void
-  eval_intrares_energy(
-    conformation::Residue const & rsd,
-    pose::Pose const & pose,
-    ScoreFunction const & sfxn,
-    EnergyMap & emap
-  ) const;
+	virtual
+	void
+	eval_intrares_energy(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn,
+		EnergyMap & emap
+	) const;
 
-  /// @brief MMLJEnergy does not have an atomic interation threshold
-  virtual
-  Distance
-  atomic_interaction_cutoff() const;
+	/// @brief MMLJEnergy does not have an atomic interation threshold
+	virtual
+	Distance
+	atomic_interaction_cutoff() const;
 
-  /// @brief MMLJEnergy is context independent; indicates that no context graphs are required
-  virtual
-  void
+	/// @brief MMLJEnergy is context independent; indicates that no context graphs are required
+	virtual
+	void
 	indicate_required_context_graphs( utility::vector1< bool > & ) const;
 
 	/// @brief required for neighbor list and to be more lke the ETable
@@ -130,8 +130,8 @@ public:
 
 private:
 	core::scoring::mm::MMLJEnergyTable const & potential_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

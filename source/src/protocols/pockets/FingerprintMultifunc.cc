@@ -21,7 +21,7 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
+namespace protocols {
 namespace pockets {
 
 FingerprintMultifunc::FingerprintMultifunc(
@@ -34,10 +34,10 @@ FingerprintMultifunc::FingerprintMultifunc(
 ) :
 	nfp_( nfp_in ),
 	pfp_( pfp_in ),
-  missing_pt_(missing_point_weight),
+	missing_pt_(missing_point_weight),
 	steric_(steric_weight),
-  extra_pt_(extra_point_weight),
-  nconformers_(nconformers)
+	extra_pt_(extra_point_weight),
+	nconformers_(nconformers)
 {}
 
 core::Real
@@ -57,8 +57,8 @@ void
 FingerprintMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const
 {
 
-	//	std::cout<< "Can't compute derivates of FingerprintMultifunc" << std::endl;
-	//	exit(1);
+	// std::cout<< "Can't compute derivates of FingerprintMultifunc" << std::endl;
+	// exit(1);
 
 	numeric::xyzVector<core::Real> origin_offset;
 	origin_offset.x() = vars[1];

@@ -36,9 +36,9 @@
 
 static thread_local basic::Tracer tr( "protocols.forge.constraints.InverseRotamersRCG" );
 
-namespace protocols{
-namespace forge{
-namespace constraints{
+namespace protocols {
+namespace forge {
+namespace constraints {
 
 protocols::moves::MoverOP
 InverseRotamersCstGeneratorCreator::create_mover() const
@@ -59,24 +59,24 @@ InverseRotamersCstGeneratorCreator::mover_name()
 }
 
 InverseRotamersRCG::InverseRotamersRCG()
-	: RemodelConstraintGenerator(),
-		constraint_func_( /* NULL */ ),
-		func_sd_( 0.4 )
+: RemodelConstraintGenerator(),
+	constraint_func_( /* NULL */ ),
+	func_sd_( 0.4 )
 {}
 
 InverseRotamersRCG::InverseRotamersRCG( InverseRotamersRCG const & rval )
-	: RemodelConstraintGenerator( rval ),
-		constraint_func_( rval.constraint_func_ ),
-		func_sd_( rval.func_sd_ )
+: RemodelConstraintGenerator( rval ),
+	constraint_func_( rval.constraint_func_ ),
+	func_sd_( rval.func_sd_ )
 {}
 
 InverseRotamersRCG::InverseRotamersRCG(
 	core::Size const lstart,
 	core::Size const lstop,
 	std::list< core::conformation::ResidueCOP > const & inverse_rotamers )
-	: RemodelConstraintGenerator(),
-		constraint_func_(/* NULL */),
-		func_sd_(0.4)
+: RemodelConstraintGenerator(),
+	constraint_func_(/* NULL */),
+	func_sd_(0.4)
 {
 	init( lstart, lstop, inverse_rotamers );
 }
@@ -85,10 +85,10 @@ InverseRotamersRCG::~InverseRotamersRCG(){}
 
 void
 InverseRotamersRCG::parse_my_tag( TagCOP const tag,
-																	basic::datacache::DataMap & data,
-																	protocols::filters::Filters_map const & filters,
-																	protocols::moves::Movers_map const & movers,
-																	core::pose::Pose const & pose )
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const & pose )
 {
 	RemodelConstraintGenerator::parse_my_tag( tag, data, filters, movers, pose );
 	//nothing here right now
@@ -120,23 +120,23 @@ InverseRotamersRCG::generate_remodel_constraints(
 	//tr << "Generating remodel constraints" << std::endl;
 	//using namespace core::scoring::constraints;
 	//safeguard against bad user input
-	if( inverse_rotamers_.size() == 0 ){
+	if ( inverse_rotamers_.size() == 0 ) {
 		std::cerr << "WARNING: InverseRotamersRCG is asked to produce constraints but was not given any inverse rotamers. Something's probably wrong somewhere." << std::endl;
 		return;
 	}
 
 	//if no constraint func has been set, we'll create a default one
-	if( !constraint_func_ ){
+	if ( !constraint_func_ ) {
 		constraint_func_ = core::scoring::func::FuncOP( new core::scoring::constraints::BoundFunc( 0, 0.05, func_sd_, "invrot") );
 	}
 	utility::vector1< core::Size > seqpos;
-	for( core::Size i(1); i <= intervals_.size(); ++i ){
+	for ( core::Size i(1); i <= intervals_.size(); ++i ) {
 		//eventually remap intervals according to vlb seqmap
-		if( this->seqmap() ){
+		if ( this->seqmap() ) {
 			intervals_[i].left = (*(this->seqmap() ))[ intervals_[i].left ];
 			intervals_[i].right = (*(this->seqmap() ))[ intervals_[i].right ];
 		}
-		for( core::Size remres( intervals_[i].left ); remres <= intervals_[i].right; ++remres ){
+		for ( core::Size remres( intervals_[i].left ); remres <= intervals_[i].right; ++remres ) {
 			seqpos.push_back( remres );
 		}
 	}
@@ -163,14 +163,14 @@ InverseRotamersRCG::clear_inverse_rotamers()
 
 void
 InverseRotamersRCG::init( core::Size const lstart,
-													core::Size const lstop,
-													std::list< core::conformation::ResidueCOP > const & inverse_rotamers )
+	core::Size const lstop,
+	std::list< core::conformation::ResidueCOP > const & inverse_rotamers )
 {
 	intervals_.clear();
 	inverse_rotamers_.clear();
 	intervals_.push_back( forge::build::Interval( lstart, lstop ) );
-	for( std::list< core::conformation::ResidueCOP >::const_iterator rot_it( inverse_rotamers.begin() ), rot_end( inverse_rotamers.end() );
-			 rot_it != rot_end; ++rot_it ){
+	for ( std::list< core::conformation::ResidueCOP >::const_iterator rot_it( inverse_rotamers.begin() ), rot_end( inverse_rotamers.end() );
+			rot_it != rot_end; ++rot_it ) {
 		inverse_rotamers_.push_back( *rot_it );
 	}
 }

@@ -50,7 +50,7 @@ public:
 	struct AngleData {
 		AngleData() : psi( 0.0 ), phi( 0.0 ), h_angle( 0.0 ), set( false ) {}
 		AngleData( core::Real const phi_val, core::Real const psi_val, core::Real const h_angle_val )
-			: psi( psi_val ), phi( phi_val ), h_angle( h_angle_val ), set( true ) {}
+		: psi( psi_val ), phi( phi_val ), h_angle( h_angle_val ), set( true ) {}
 		core::Real psi;
 		core::Real phi;
 		core::Real h_angle;
@@ -59,10 +59,10 @@ public:
 
 	struct StrandData {
 		StrandData( std::string const name_val,
-				core::Size const len,
-				int const reg_shift,
-				std::string const orient )
-			: name( name_val),
+			core::Size const len,
+			int const reg_shift,
+			std::string const orient )
+		: name( name_val),
 			length( len ),
 			register_shift( reg_shift ),
 			orientation( orient )
@@ -76,25 +76,25 @@ public:
 	/// @brief default constructor
 	BuildSheet();
 
-  /// @brief virtual constructor to allow derivation
+	/// @brief virtual constructor to allow derivation
 	virtual ~BuildSheet();
 
-  /// @brief Parses the BuildSheetTags
+	/// @brief Parses the BuildSheetTags
 	void parse_my_tag(
-	  utility::tag::TagCOP tag,
-	  basic::datacache::DataMap & data,
-	  protocols::filters::Filters_map const &,
-	  protocols::moves::Movers_map const &,
-	  core::pose::Pose const &
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
 	);
 
-  /// @brief Return the name of this mover.
-  virtual std::string get_name() const;
+	/// @brief Return the name of this mover.
+	virtual std::string get_name() const;
 
-  /// @brief return a fresh instance of this class in an owning pointer
+	/// @brief return a fresh instance of this class in an owning pointer
 	virtual protocols::moves::MoverOP clone() const;
 
-  /// @brief Apply the BuildSheet. Overloaded apply function from mover base class.
+	/// @brief Apply the BuildSheet. Overloaded apply function from mover base class.
 	virtual void apply( core::pose::Pose & pose );
 
 	/// @brief physically builds a strand based on the provided ca coordinates
@@ -104,8 +104,8 @@ public:
 	/// @brief builds a small idealized strand fragment to be used for parameterized stuff
 	core::pose::Pose
 	build_ideal_strand( core::chemical::ResidueTypeSetCAP restype_set,
-											std::string const & res_name,
-											core::Size const len ) const;
+		std::string const & res_name,
+		core::Size const len ) const;
 
 	/// @brief minimizes residue resid with cartesian minimization, including strong Ca constraints
 	/// assumes that the Ca positions are correct
@@ -114,8 +114,8 @@ public:
 	/// the "resis" vector contains ca_coords_ residue indices for the same three residues, in the same order
 	void
 	minimize_residues( core::pose::Pose & pose, utility::vector1< core::Size > const & residues,
-								utility::vector1< core::Size > const & strands,
-								utility::vector1< core::Size > const & resis ) const;
+		utility::vector1< core::Size > const & strands,
+		utility::vector1< core::Size > const & resis ) const;
 
 	/// @brief initializes and rests the dihedral map
 	void init_dihedral_map();
@@ -181,8 +181,8 @@ core::Real calc_spherical_phi( core::Vector const & vec );
 /// @brief creates a rotation matrix that places p1, p2, and p_center in the XY plane with p_center at the origin and p2 on the x axis
 numeric::xyzMatrix< core::Real >
 align_matrix( core::Vector const & p1,
-							core::Vector const & p2,
-							core::Vector const & p_center );
+	core::Vector const & p2,
+	core::Vector const & p_center );
 
 } // denovo_design
 } // devel

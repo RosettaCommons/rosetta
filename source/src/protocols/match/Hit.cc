@@ -20,14 +20,14 @@ namespace match {
 bool
 upstream_hit::operator < ( upstream_hit const & rhs ) const
 {
-	if( first_[1] < rhs.first_[1] ) return true;
-	else if( first_[1] > rhs.first_[1] ) return false;
+	if ( first_[1] < rhs.first_[1] ) return true;
+	else if ( first_[1] > rhs.first_[1] ) return false;
 
-	if( first_[2] < rhs.first_[2] ) return true;
-	else if( first_[2] > rhs.first_[2] ) return false;
+	if ( first_[2] < rhs.first_[2] ) return true;
+	else if ( first_[2] > rhs.first_[2] ) return false;
 
-	if( first_[3] < rhs.first_[3] ) return true;
-	else 	if( first_[3] > rhs.first_[3] ) return false;
+	if ( first_[3] < rhs.first_[3] ) return true;
+	else  if ( first_[3] > rhs.first_[3] ) return false;
 
 	return false;
 }
@@ -35,9 +35,9 @@ upstream_hit::operator < ( upstream_hit const & rhs ) const
 bool
 upstream_hit::operator == ( upstream_hit const & rhs ) const
 {
-	if( ( first_[1] == rhs.first_[1] )
-		&&( first_[2] == rhs.first_[2] )
-		&&( first_[3] == rhs.first_[3] ) ) return true;
+	if ( ( first_[1] == rhs.first_[1] )
+			&&( first_[2] == rhs.first_[2] )
+			&&( first_[3] == rhs.first_[3] ) ) return true;
 
 	return false;
 }
@@ -45,11 +45,11 @@ upstream_hit::operator == ( upstream_hit const & rhs ) const
 bool
 downstream_hit::operator < ( downstream_hit const & rhs ) const
 {
-	if( downstream_conf_id_ < rhs.downstream_conf_id_ ) return true;
-	else if( downstream_conf_id_ > rhs.downstream_conf_id_) return false;
+	if ( downstream_conf_id_ < rhs.downstream_conf_id_ ) return true;
+	else if ( downstream_conf_id_ > rhs.downstream_conf_id_ ) return false;
 
-	for( core::Size i =1; i <= 6; ++i ){
-		if( second_[i] < rhs.second_[i] ) return true;
+	for ( core::Size i =1; i <= 6; ++i ) {
+		if ( second_[i] < rhs.second_[i] ) return true;
 		else if (  second_[i] > rhs.second_[i] ) return false;
 	}
 	return false;
@@ -58,13 +58,13 @@ downstream_hit::operator < ( downstream_hit const & rhs ) const
 bool
 downstream_hit::operator == ( downstream_hit const & rhs ) const
 {
-	if( ( downstream_conf_id_ == rhs.downstream_conf_id_ )
-		&&( second_[1] == rhs.second_[1] )
-		&&( second_[2] == rhs.second_[2] )
-		&&( second_[3] == rhs.second_[3] )
-		&&( second_[4] == rhs.second_[4] )
-		&&( second_[5] == rhs.second_[5] )
-		&&( second_[6] == rhs.second_[6] ) ) return true;
+	if ( ( downstream_conf_id_ == rhs.downstream_conf_id_ )
+			&&( second_[1] == rhs.second_[1] )
+			&&( second_[2] == rhs.second_[2] )
+			&&( second_[3] == rhs.second_[3] )
+			&&( second_[4] == rhs.second_[4] )
+			&&( second_[5] == rhs.second_[5] )
+			&&( second_[6] == rhs.second_[6] ) ) return true;
 
 	return false;
 }

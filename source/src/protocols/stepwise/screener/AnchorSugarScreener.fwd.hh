@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/screener/AnchorSugarScreener.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace stepwise {
 namespace screener {
-	
-	class AnchorSugarScreener;
-	typedef utility::pointer::shared_ptr< AnchorSugarScreener > AnchorSugarScreenerOP;
-	typedef utility::pointer::shared_ptr< AnchorSugarScreener const > AnchorSugarScreenerCOP;
-	
+
+class AnchorSugarScreener;
+typedef utility::pointer::shared_ptr< AnchorSugarScreener > AnchorSugarScreenerOP;
+typedef utility::pointer::shared_ptr< AnchorSugarScreener const > AnchorSugarScreenerCOP;
+
 } //screener
 } //stepwise
 } //protocols

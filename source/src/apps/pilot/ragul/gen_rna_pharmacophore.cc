@@ -72,57 +72,57 @@ int main( int argc, char * argv [] ){
 
 	try{
 
-	NEW_OPT( input_rna, "rna file name", "rna.pdb" );
-	NEW_OPT( input_protein, "rna protein name", "protein.pdb" );
-	NEW_OPT( pre_phr, "pre clustering file name", "" );
+		NEW_OPT( input_rna, "rna file name", "rna.pdb" );
+		NEW_OPT( input_protein, "rna protein name", "protein.pdb" );
+		NEW_OPT( pre_phr, "pre clustering file name", "" );
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	protocols::pockets::GenPharmacophore rphr;
-    std::string const pre_phr_pose = option[ pre_phr ];
-	std::string const input_rna_pose = option[ input_rna ];
-	std::string const input_protein_pose = option[ input_protein ];
+		protocols::pockets::GenPharmacophore rphr;
+		std::string const pre_phr_pose = option[ pre_phr ];
+		std::string const input_rna_pose = option[ input_rna ];
+		std::string const input_protein_pose = option[ input_protein ];
 
-	//cteate 'tag' for output files
-	int pfounddir = input_protein_pose.find_last_of("/\\");
-	int pfounddot = input_protein_pose.find_last_of(".");
-	//get the basename of the protein pdb file
-	std::string tag = input_protein_pose.substr((pfounddir+1),(pfounddot-(pfounddir+1)));
+		//cteate 'tag' for output files
+		int pfounddir = input_protein_pose.find_last_of("/\\");
+		int pfounddot = input_protein_pose.find_last_of(".");
+		//get the basename of the protein pdb file
+		std::string tag = input_protein_pose.substr((pfounddir+1),(pfounddot-(pfounddir+1)));
 
-    if (pre_phr_pose.size() > 0) {
-        std::cout << "Clustering " << pre_phr_pose << std::endl;
+		if ( pre_phr_pose.size() > 0 ) {
+			std::cout << "Clustering " << pre_phr_pose << std::endl;
 
-        std::ifstream ifs(pre_phr_pose.c_str());
-        std::string content( (std::istreambuf_iterator<char>(ifs) ),\
-                             (std::istreambuf_iterator<char>()    ));
+			std::ifstream ifs(pre_phr_pose.c_str());
+			std::string content( (std::istreambuf_iterator<char>(ifs) ),\
+				(std::istreambuf_iterator<char>()    ));
 
-        rphr.cluster_KeyFeatures(content, tag);
-        return 0;
-    }
+			rphr.cluster_KeyFeatures(content, tag);
+			return 0;
+		}
 
-	pose::Pose rna_pose, protein_pose;
-	core::import_pose::pose_from_pdb( rna_pose, input_rna_pose );
-	core::import_pose::pose_from_pdb( protein_pose, input_protein_pose );
+		pose::Pose rna_pose, protein_pose;
+		core::import_pose::pose_from_pdb( rna_pose, input_rna_pose );
+		core::import_pose::pose_from_pdb( protein_pose, input_protein_pose );
 
-	std::string keyFeatures_hbond = rphr.extract_Hbond_atoms_from_protein_rna_complex(protein_pose, rna_pose);
-  //rphr.print_string_to_PDBfile(keyFeatures_hbond, "hbond.pdb");
-	std::string keyFeatures_rings = rphr.extract_rna_rings_from_protein_rna_complex(protein_pose, rna_pose);
-  //rphr.print_string_to_PDBfile(keyFeatures_rings, "rings.pdb");
+		std::string keyFeatures_hbond = rphr.extract_Hbond_atoms_from_protein_rna_complex(protein_pose, rna_pose);
+		//rphr.print_string_to_PDBfile(keyFeatures_hbond, "hbond.pdb");
+		std::string keyFeatures_rings = rphr.extract_rna_rings_from_protein_rna_complex(protein_pose, rna_pose);
+		//rphr.print_string_to_PDBfile(keyFeatures_rings, "rings.pdb");
 
-	//concatenate hbond and rings
-	//ring atoms should be placed first (clustering code requires like that!)
-	std::string keyFeatures_string1 = keyFeatures_rings + keyFeatures_hbond;
+		//concatenate hbond and rings
+		//ring atoms should be placed first (clustering code requires like that!)
+		std::string keyFeatures_string1 = keyFeatures_rings + keyFeatures_hbond;
 
-	std::string precluster_PDBfile = tag + "_preclusterPHR.pdb";
-	rphr.print_string_to_PDBfile(keyFeatures_string1, precluster_PDBfile);
+		std::string precluster_PDBfile = tag + "_preclusterPHR.pdb";
+		rphr.print_string_to_PDBfile(keyFeatures_string1, precluster_PDBfile);
 
-	std::string	keyFeatures_string2 = rphr.make_compatible_with_ROCS_custom_ForceField(keyFeatures_string1);
-	rphr.cluster_KeyFeatures(keyFeatures_string2, tag);
+		std::string keyFeatures_string2 = rphr.make_compatible_with_ROCS_custom_ForceField(keyFeatures_string1);
+		rphr.cluster_KeyFeatures(keyFeatures_string2, tag);
 
-    }
+	}
 catch ( utility::excn::EXCN_Base const & e ) {
-  std::cerr << "caught exception " << e.msg() << std::endl;
-  return -1;
+	std::cerr << "caught exception " << e.msg() << std::endl;
+	return -1;
 }
 
 	return 0;

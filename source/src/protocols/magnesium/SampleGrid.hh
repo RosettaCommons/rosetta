@@ -25,71 +25,71 @@
 namespace protocols {
 namespace magnesium {
 
-	class SampleGrid: public utility::pointer::ReferenceCount {
+class SampleGrid: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//constructor
-		SampleGrid( core::pose::Pose const & pose );
+	//constructor
+	SampleGrid( core::pose::Pose const & pose );
 
-		//destructor
-		~SampleGrid();
+	//destructor
+	~SampleGrid();
 
-	public:
+public:
 
-		utility::vector1< core::Vector > get_mg_positions( core::pose::Pose const & pose );
+	utility::vector1< core::Vector > get_mg_positions( core::pose::Pose const & pose );
 
-		void set_input_scan_res( utility::vector1< core::Size > const & setting ){ input_scan_res_ = setting; }
-		utility::vector1< core::Size > input_scan_res() const { return input_scan_res_; }
+	void set_input_scan_res( utility::vector1< core::Size > const & setting ){ input_scan_res_ = setting; }
+	utility::vector1< core::Size > input_scan_res() const { return input_scan_res_; }
 
-		void set_tether_to_closest_res( bool const & setting ){ tether_to_closest_res_ = setting; }
-		bool tether_to_closest_res() const { return tether_to_closest_res_; }
+	void set_tether_to_closest_res( bool const & setting ){ tether_to_closest_res_ = setting; }
+	bool tether_to_closest_res() const { return tether_to_closest_res_; }
 
-		void set_xyz_step( core::Real const & setting ){ xyz_step_ = setting; }
-		core::Real xyz_step() const { return xyz_step_; }
+	void set_xyz_step( core::Real const & setting ){ xyz_step_ = setting; }
+	core::Real xyz_step() const { return xyz_step_; }
 
-		core::Real xmin() const { return xmin_; }
-		core::Real xmax() const { return xmax_; }
-		core::Real ymin() const { return ymin_; }
-		core::Real ymax() const { return ymax_; }
-		core::Real zmin() const { return zmin_; }
-		core::Real zmax() const { return zmax_; }
+	core::Real xmin() const { return xmin_; }
+	core::Real xmax() const { return xmax_; }
+	core::Real ymin() const { return ymin_; }
+	core::Real ymax() const { return ymax_; }
+	core::Real zmin() const { return zmin_; }
+	core::Real zmax() const { return zmax_; }
 
-	private:
+private:
 
-		void
-		figure_out_box_bounds( core::pose::Pose const & pose );
+	void
+	figure_out_box_bounds( core::pose::Pose const & pose );
 
-		void
-		create_grid();
+	void
+	create_grid();
 
-		utility::vector1< Size >
-		figure_out_scan_res( utility::vector1< Size > const & input_scan_res,
-												 core::pose::Pose const & pose );
+	utility::vector1< Size >
+	figure_out_scan_res( utility::vector1< Size > const & input_scan_res,
+		core::pose::Pose const & pose );
 
-		void
-		define_bins( core::Real const x,
-								 core::Real const subgrid_radius,
-								 core::Real const xmin,
-								 Size const xgridsize,
-								 core::Real const xyz_increment,
-								 Size & xbinmin,
-								 Size & xbinmax ) const;
+	void
+	define_bins( core::Real const x,
+		core::Real const subgrid_radius,
+		core::Real const xmin,
+		Size const xgridsize,
+		core::Real const xyz_increment,
+		Size & xbinmin,
+		Size & xbinmax ) const;
 
-		core::Real
-		get_position( Size const xbin, core::Real const xmin, core::Real const xyz_increment ) const;
+	core::Real
+	get_position( Size const xbin, core::Real const xmin, core::Real const xyz_increment ) const;
 
-	private:
+private:
 
-		bool tether_to_closest_res_;
-		core::Real xyz_step_;
-		core::Real xmax_, xmin_, ymax_, ymin_, zmax_, zmin_;
-		utility::vector1< core::Size > input_scan_res_;
-		utility::vector1< core::Size > scan_res_;
+	bool tether_to_closest_res_;
+	core::Real xyz_step_;
+	core::Real xmax_, xmin_, ymax_, ymin_, zmax_, zmin_;
+	utility::vector1< core::Size > input_scan_res_;
+	utility::vector1< core::Size > scan_res_;
 
-		ObjexxFCL::FArray3D< core::Real > min_distance_grid_; // contains closest distance to a pose acceptor atom.
+	ObjexxFCL::FArray3D< core::Real > min_distance_grid_; // contains closest distance to a pose acceptor atom.
 
-	};
+};
 
 } //magnesium
 } //protocols

@@ -80,7 +80,7 @@ void ResidueTorsionRestraints::setup_constraints(core::pose::Pose & pose)
 
 	Residue const & rsd = pose.residue(resid_);
 	ResidueType const & rsd_type = pose.residue_type(resid_);
-	for(core::Size j = 1, j_end = rsd_type.nchi(); j <= j_end; ++j) {
+	for ( core::Size j = 1, j_end = rsd_type.nchi(); j <= j_end; ++j ) {
 		core::Real const curr_chi_degrees = rsd.chi(j);
 		core::Real const curr_chi_radians = numeric::conversions::radians( curr_chi_degrees );
 		core::scoring::func::FuncOP restr_func( new core::scoring::func::CircularHarmonicFunc( curr_chi_radians, stddev_radians ) );
@@ -91,11 +91,11 @@ void ResidueTorsionRestraints::setup_constraints(core::pose::Pose & pose)
 			AtomID(chi_idx[3], resid_),
 			AtomID(chi_idx[4], resid_),
 			restr_func
-		) ) );
+			) ) );
 		TR << "Constraint: " << curr_chi_degrees << " deg, " << constraint->atom(1) << " "
 			<< constraint->atom(2) << " " << constraint->atom(3) << " " << constraint->atom(4) << std::endl;
 		// Is this still necessary (no) or advisable (maybe)?  Constraint will be removed before packing...
-		if( rsd.atom_type(chi_idx[1]).is_hydrogen() || rsd.atom_type(chi_idx[4]).is_hydrogen() ) {
+		if ( rsd.atom_type(chi_idx[1]).is_hydrogen() || rsd.atom_type(chi_idx[4]).is_hydrogen() ) {
 			TR << "Constraint involves hydrogen atom; skipping it for PROTON_CHI." << std::endl;
 		} else {
 			new_constraints->add_constraint( constraint );
@@ -117,10 +117,10 @@ ResidueTorsionRestraints::without_my_constraints(
 	ConstraintSetOP new_constraints( new ConstraintSet() );
 
 	// Cycle through all existing constraints, and keep all except the ones we added:
-	if( old_constraints.get() != NULL ) {
+	if ( old_constraints.get() != NULL ) {
 		utility::vector1< ConstraintCOP > old_constr = old_constraints->get_all_constraints();
-		for( Size i = 1; i <= old_constr.size(); ++i ) {
-			if( my_constraints_.find( old_constr[i]->to_string() ) == my_constraints_.end() ) {
+		for ( Size i = 1; i <= old_constr.size(); ++i ) {
+			if ( my_constraints_.find( old_constr[i]->to_string() ) == my_constraints_.end() ) {
 				new_constraints->add_constraint( old_constr[i] );
 				TR << "Keeping old constraint " << old_constr[i]->to_string() << std::endl;
 			} else {
@@ -141,17 +141,17 @@ void ResidueTorsionRestraints::enable( core::pose::Pose & pose )
 	// Has our target residue changed conformation significantly?
 	utility::vector1< core::Real > new_chi = pose.residue(resid_).chi(); // need a copy, not a reference
 	bool resid_has_changed = (old_chi_.size() != new_chi.size());
-	if( !resid_has_changed ) {
-		for( core::Size i = 1; i <= old_chi_.size(); ++i ) {
-			if( std::abs( old_chi_[i] - new_chi[i] ) > 1e-1 ) resid_has_changed = true;
+	if ( !resid_has_changed ) {
+		for ( core::Size i = 1; i <= old_chi_.size(); ++i ) {
+			if ( std::abs( old_chi_[i] - new_chi[i] ) > 1e-1 ) resid_has_changed = true;
 		}
 	}
 
 	TR.Trace << "Residue " << resid_ << " has changed conformation? " << resid_has_changed << std::endl;
-	if( !resid_has_changed ) {
+	if ( !resid_has_changed ) {
 		// No:  restore constraints exactly as they were
 		ConstraintSetOP new_constraints = pose.constraint_set()->clone(); // deep copy, constraints and their funcs are cloned too
-		BOOST_FOREACH(core::scoring::constraints::ConstraintCOP constraint, old_constraints_){
+		BOOST_FOREACH ( core::scoring::constraints::ConstraintCOP constraint, old_constraints_ ) {
 			new_constraints->add_constraint( constraint );
 		}
 		pose.constraint_set( new_constraints );

@@ -32,7 +32,7 @@
 namespace protocols {
 namespace farna {
 
-	enum _RNA_MatchType_ { MATCH_ALL /* 0 */, MATCH_YR /* 1 */, MATCH_EXACT /* 2 */};
+enum _RNA_MatchType_ { MATCH_ALL /* 0 */, MATCH_YR /* 1 */, MATCH_EXACT /* 2 */};
 } //farna
 } //protocols
 

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/sampler/protein/ProteinMainChainStepWiseSampler.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -22,11 +22,11 @@ namespace protocols {
 namespace stepwise {
 namespace sampler {
 namespace protein {
-	
-	class ProteinMainChainStepWiseSampler;
-	typedef utility::pointer::shared_ptr< ProteinMainChainStepWiseSampler > ProteinMainChainStepWiseSamplerOP;
-	typedef utility::pointer::shared_ptr< ProteinMainChainStepWiseSampler const > ProteinMainChainStepWiseSamplerCOP;
-	
+
+class ProteinMainChainStepWiseSampler;
+typedef utility::pointer::shared_ptr< ProteinMainChainStepWiseSampler > ProteinMainChainStepWiseSamplerOP;
+typedef utility::pointer::shared_ptr< ProteinMainChainStepWiseSampler const > ProteinMainChainStepWiseSamplerCOP;
+
 } //protein
 } //sampler
 } //stepwise

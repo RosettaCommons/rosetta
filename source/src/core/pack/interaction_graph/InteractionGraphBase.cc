@@ -141,7 +141,7 @@ std::list< EdgeBase* >::iterator NodeBase::add_edge(EdgeBase* edge_ptr)
 	++num_incident_edges_;
 	edge_vector_up_to_date_ = false;
 	int other_node_index = edge_ptr->get_other_ind( node_index_);
-	if (other_node_index <  node_index_) {
+	if ( other_node_index <  node_index_ ) {
 		++num_edges_to_smaller_indexed_nodes_;
 		return incident_edge_list_.insert( incident_edge_list_.begin(), edge_ptr);
 	} else {
@@ -177,7 +177,7 @@ std::list< EdgeBase* >::iterator NodeBase::add_edge(EdgeBase* edge_ptr)
 void NodeBase::drop_edge(std::list< EdgeBase* >::iterator edge)
 {
 	int other_node_index = (*edge)->get_other_ind( node_index_ );
-	if (node_index_ < other_node_index) {
+	if ( node_index_ < other_node_index ) {
 		--num_edges_to_larger_indexed_nodes_;
 	} else {
 		--num_edges_to_smaller_indexed_nodes_;
@@ -209,7 +209,7 @@ void NodeBase::drop_edge(std::list< EdgeBase* >::iterator edge)
 ////////////////////////////////////////////////////////////////////////////////
 void NodeBase::drop_all_edges()
 {
-	for (std::list< EdgeBase* >::iterator iter = incident_edge_list_.begin();
+	for ( std::list< EdgeBase* >::iterator iter = incident_edge_list_.begin();
 			iter != incident_edge_list_.end(); ) {
 		std::list< EdgeBase* >::iterator nextiter = iter;
 		++nextiter;
@@ -243,8 +243,8 @@ void NodeBase::drop_all_edges()
 ////////////////////////////////////////////////////////////////////////////////
 EdgeBase* NodeBase::find_edge(int other_node) const
 {
-	for (std::list< EdgeBase* >::const_iterator iter = incident_edge_list_.begin();
-			iter != incident_edge_list_.end(); ++iter) {
+	for ( std::list< EdgeBase* >::const_iterator iter = incident_edge_list_.begin();
+			iter != incident_edge_list_.end(); ++iter ) {
 		if ( (*iter)->same_edge( node_index_, other_node) ) return (*iter);
 	}
 	return NULL;
@@ -279,8 +279,8 @@ void NodeBase::depth_first_connected_component_counting()
 	//std::cerr << "Arrived at node: " << node_index_ << std::endl;
 	owner_->note_vertex_reached( node_index_ );
 
-	for (std::list< EdgeBase* >::const_iterator iter = incident_edge_list_.begin();
-			iter != incident_edge_list_.end(); ++iter) {
+	for ( std::list< EdgeBase* >::const_iterator iter = incident_edge_list_.begin();
+			iter != incident_edge_list_.end(); ++iter ) {
 		((*iter)->get_other_node( node_index_ ))->
 			depth_first_connected_component_counting();
 	}
@@ -331,11 +331,11 @@ void NodeBase::update_edge_vector()
 
 	std::copy( incident_edge_list_.begin(), incident_edge_list_.end(), position1 );
 
-	for (int ii = 1; ii <= num_incident_edges_; ++ii) {
+	for ( int ii = 1; ii <= num_incident_edges_; ++ii ) {
 		incident_edge_vector_[ii]->set_pos_in_node_edgevector( node_index_, ii );
 		adjacent_node_ind_[ ii ] = incident_edge_vector_[ii]->get_other_ind( node_index_);
 
-	debug_assert( ( ii <= num_edges_to_smaller_indexed_nodes_ && adjacent_node_ind_[ii] < node_index_ )
+		debug_assert( ( ii <= num_edges_to_smaller_indexed_nodes_ && adjacent_node_ind_[ii] < node_index_ )
 			||
 			( adjacent_node_ind_[ii] > node_index_ &&
 			ii > num_edges_to_smaller_indexed_nodes_ ) );
@@ -411,7 +411,7 @@ EdgeBase::~EdgeBase()
 	//std::cerr << "~EdgeBase(): " << this << " node 1 " << node_indices_[0]
 	//<< " node 2 " << node_indices_[1] << " owner " <<
 	//*pos_in_owners_edge_list_ << " ";
-//debug_assert( this == *pos_in_owners_edge_list_);
+	//debug_assert( this == *pos_in_owners_edge_list_);
 	nodes_[0]->drop_edge(pos_in_nodes_edge_list_[0]);
 	nodes_[1]->drop_edge(pos_in_nodes_edge_list_[1]);
 	owner_->drop_edge(pos_in_owners_edge_list_);
@@ -448,7 +448,7 @@ EdgeBase::EdgeBase
 	int first_node_ind,
 	int second_node_ind
 )
-	: owner_(owner),
+: owner_(owner),
 	edge_weight_( 1.0 )
 {  //pre condition: first_node_ind < second_node_ind.
 	node_indices_[0]    = first_node_ind;
@@ -579,7 +579,7 @@ int EdgeBase::get_second_node_ind() const
 ////////////////////////////////////////////////////////////////////////////////
 void EdgeBase::set_pos_in_owners_list( std::list< EdgeBase* >::iterator iter )
 {
-debug_assert( this == *iter);
+	debug_assert( this == *iter);
 	pos_in_owners_edge_list_ = iter;
 	return;
 }
@@ -608,7 +608,7 @@ debug_assert( this == *iter);
 ////////////////////////////////////////////////////////////////////////////////
 void EdgeBase::set_pos_in_node_edgevector(int node_ind, int vect_position)
 {
-debug_assert( node_ind == node_indices_[0] || node_ind == node_indices_[1]);
+	debug_assert( node_ind == node_indices_[0] || node_ind == node_indices_[1]);
 	int node_pos = (node_ind == node_indices_[0] ? 0 : 1 );
 	pos_in_nodes_edge_vector_[node_pos] = vect_position;
 	return;
@@ -640,11 +640,10 @@ debug_assert( node_ind == node_indices_[0] || node_ind == node_indices_[1]);
 bool EdgeBase::same_edge(int node1, int node2) const
 {
 	//swap
-	if (node1 > node2)
-	{
-			int temp = node2;
-			node2 = node1;
-			node1 = temp;
+	if ( node1 > node2 ) {
+		int temp = node2;
+		node2 = node1;
+		node1 = temp;
 	}
 	return (node1 == node_indices_[0] && node2 == node_indices_[1]);
 }
@@ -689,16 +688,16 @@ EdgeBase::edge_weight( Real new_weight )
 InteractionGraphBase::~InteractionGraphBase()
 {
 
-	for (std::list< EdgeBase* >::iterator iter = ig_edge_list_.begin();
-			iter != ig_edge_list_.end(); )
-	{
-			std::list< EdgeBase* >::iterator next_iter = iter;
-			++next_iter;
-			delete (*iter);
-			iter = next_iter;
+	for ( std::list< EdgeBase* >::iterator iter = ig_edge_list_.begin();
+			iter != ig_edge_list_.end(); ) {
+		std::list< EdgeBase* >::iterator next_iter = iter;
+		++next_iter;
+		delete (*iter);
+		iter = next_iter;
 	}
-	for (int ii = 1; ii <= num_ig_nodes_; ii++)
-			delete ig_nodes_[ii];
+	for ( int ii = 1; ii <= num_ig_nodes_; ii++ ) {
+		delete ig_nodes_[ii];
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -762,13 +761,12 @@ void InteractionGraphBase::set_num_states_for_node
 	int num_states
 )
 {
-debug_assert (ig_nodes_[node_index] == NULL);
+	debug_assert (ig_nodes_[node_index] == NULL);
 	ig_nodes_[node_index] = create_new_node( node_index, num_states);
 	num_total_states_ += num_states;
-	if ( node_index != num_ig_nodes_ )
-	{
-			node_state_offsets_[ node_index + 1 ] =
-					node_state_offsets_[ node_index ] + num_states;
+	if ( node_index != num_ig_nodes_ ) {
+		node_state_offsets_[ node_index + 1 ] =
+			node_state_offsets_[ node_index ] + num_states;
 	}
 	return;
 }
@@ -795,7 +793,7 @@ debug_assert (ig_nodes_[node_index] == NULL);
 ////////////////////////////////////////////////////////////////////////////////
 int  InteractionGraphBase::get_num_states_for_node(int node_index) const
 {
-debug_assert( ig_nodes_[node_index] );
+	debug_assert( ig_nodes_[node_index] );
 	return ig_nodes_[node_index]->get_num_states();
 }
 
@@ -830,7 +828,7 @@ void InteractionGraphBase::add_edge(int index1, int index2)
 	index2 = index1 < index2 ? index2 : index1;
 	index1 = temp;
 
-debug_assert( index1 != index2 );
+	debug_assert( index1 != index2 );
 
 	EdgeBase* new_edge = create_new_edge(index1, index2);
 	ig_edge_list_.push_front( new_edge );
@@ -899,7 +897,7 @@ void InteractionGraphBase::drop_all_edges_for_node( int node )
 /// edge vector representation.
 void InteractionGraphBase::prepare_for_simulated_annealing()
 {
-	for (std::list< EdgeBase* >::iterator iter = get_edge_list_begin();
+	for ( std::list< EdgeBase* >::iterator iter = get_edge_list_begin();
 			iter != get_edge_list_end();
 			/* note: no increment statement here */ ) {
 		std::list< EdgeBase* >::iterator next_iter = iter;
@@ -910,7 +908,7 @@ void InteractionGraphBase::prepare_for_simulated_annealing()
 		iter = next_iter;
 	}
 
-	for (int ii = 1; ii <= get_num_nodes(); ++ii) {
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		get_node(ii)->prepare_for_simulated_annealing();
 	}
 	return;
@@ -938,8 +936,9 @@ void InteractionGraphBase::prepare_for_simulated_annealing()
 ////////////////////////////////////////////////////////////////////////////////
 void InteractionGraphBase::print_vertices() const
 {
-	for (int ii = 1; ii <= num_ig_nodes_; ii++)
-			ig_nodes_[ii]->print();
+	for ( int ii = 1; ii <= num_ig_nodes_; ii++ ) {
+		ig_nodes_[ii]->print();
+	}
 	return;
 }
 
@@ -966,11 +965,11 @@ void InteractionGraphBase::print_vertices() const
 void InteractionGraphBase::output_connectivity(std::ostream & os) const
 {
 	int counter = 1;
-	for (std::list< EdgeBase* >::const_iterator iter = ig_edge_list_.begin();
-			iter != ig_edge_list_.end(); ++iter)
-	{  os << "edge " << counter << " between " << (*iter)->get_first_node_ind()
-					<< " " << (*iter)->get_second_node_ind() << std::endl;
-			counter++;
+	for ( std::list< EdgeBase* >::const_iterator iter = ig_edge_list_.begin();
+			iter != ig_edge_list_.end(); ++iter ) {
+		os << "edge " << counter << " between " << (*iter)->get_first_node_ind()
+			<< " " << (*iter)->get_second_node_ind() << std::endl;
+		counter++;
 	}
 	return;
 }
@@ -1001,11 +1000,10 @@ void InteractionGraphBase::output_dimacs(std::ostream & os) const
 	int num_edges = ig_edge_list_.size();
 	os << "DIMACS: " << "p edges " << num_ig_nodes_ << " " ;
 	os << num_edges << std::endl;
-	for (std::list< EdgeBase* >::const_iterator iter = ig_edge_list_.begin();
-			iter != ig_edge_list_.end(); ++iter)
-	{
-			os << "DIMACS: " << "e " << (*iter)->get_first_node_ind();
-			os << " " << (*iter)->get_second_node_ind() << std::endl;
+	for ( std::list< EdgeBase* >::const_iterator iter = ig_edge_list_.begin();
+			iter != ig_edge_list_.end(); ++iter ) {
+		os << "DIMACS: " << "e " << (*iter)->get_first_node_ind();
+		os << " " << (*iter)->get_second_node_ind() << std::endl;
 	}
 
 	return;
@@ -1040,8 +1038,7 @@ void InteractionGraphBase::output_dimacs(std::ostream & os) const
 bool
 InteractionGraphBase::any_vertex_state_unassigned() const
 {
-	for (int ii = 1; ii <= get_num_nodes(); ++ii)
-	{
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		if ( get_node( ii )->state_unassigned() ) return true;
 	}
 	return false;
@@ -1078,19 +1075,15 @@ void InteractionGraphBase::add_to_one_body_energies
 	FArray1< core::PackerEnergy > & one_body_energies
 )
 {
-	for (int ii = 1; ii <= num_ig_nodes_; ++ii )
-	{
-			int ii_num_states;
-			if ( ii == num_ig_nodes_ )
-			{
-					ii_num_states = num_total_states_ - node_state_offsets_[ii];
-			}
-			else
-			{
-					ii_num_states = node_state_offsets_[ ii + 1 ] - node_state_offsets_[ ii ];
-			}
-			FArray1A< core::PackerEnergy > ii_one_body_energies( one_body_energies( node_state_offsets_[ii] + 1), ii_num_states );
-			ig_nodes_[ ii ]->add_to_one_body_energies( ii_one_body_energies );
+	for ( int ii = 1; ii <= num_ig_nodes_; ++ii ) {
+		int ii_num_states;
+		if ( ii == num_ig_nodes_ ) {
+			ii_num_states = num_total_states_ - node_state_offsets_[ii];
+		} else {
+			ii_num_states = node_state_offsets_[ ii + 1 ] - node_state_offsets_[ ii ];
+		}
+		FArray1A< core::PackerEnergy > ii_one_body_energies( one_body_energies( node_state_offsets_[ii] + 1), ii_num_states );
+		ig_nodes_[ ii ]->add_to_one_body_energies( ii_one_body_energies );
 	}
 }
 
@@ -1143,7 +1136,7 @@ void InteractionGraphBase::zero_one_body_energies_for_node( int node )
 
 /// @param node_ind - [in] - the node in question
 /// @param one_body_energies - [in] - the energies to be added to the one-body energies
-/// 	on that node.  One entry per state.
+///  on that node.  One entry per state.
 void InteractionGraphBase::add_to_nodes_one_body_energy
 (
 	int node_ind,
@@ -1151,7 +1144,7 @@ void InteractionGraphBase::add_to_nodes_one_body_energy
 )
 {
 	int num_states_for_node = get_node( node_ind )->get_num_states();
-	for (int ii = 1; ii <= num_states_for_node; ++ii ) {
+	for ( int ii = 1; ii <= num_states_for_node; ++ii ) {
 		get_node( node_ind )->add_to_one_body_energy( ii, one_body_energies[ ii ] );
 	}
 	return;
@@ -1159,7 +1152,7 @@ void InteractionGraphBase::add_to_nodes_one_body_energy
 
 /// @param node_ind - [in] - the node in question
 /// @param one_body_energies - [in] - the energies to be added to the one-body energies
-/// 	on that node.  One entry per state.
+///  on that node.  One entry per state.
 void InteractionGraphBase::add_to_nodes_one_body_energy
 (
 	int node_ind,
@@ -1167,7 +1160,7 @@ void InteractionGraphBase::add_to_nodes_one_body_energy
 )
 {
 	int num_states_for_node = get_node( node_ind )->get_num_states();
-	for (int ii = 1; ii <= num_states_for_node; ++ii ) {
+	for ( int ii = 1; ii <= num_states_for_node; ++ii ) {
 		get_node( node_ind )->add_to_one_body_energy( ii, one_body_energies( ii ) );
 	}
 	return;
@@ -1234,12 +1227,12 @@ InteractionGraphBase::getTotalMemoryUsage() const
 	//std::cout << "calling InteractionGraphBase::getTotalMemoryUsage() const" << std::endl;
 
 	unsigned int total_memory = 0;
-	for (int ii = 1; ii <= num_ig_nodes_; ++ii) {
+	for ( int ii = 1; ii <= num_ig_nodes_; ++ii ) {
 		total_memory += ig_nodes_[ ii ]->count_dynamic_memory();
 		total_memory += ig_nodes_[ ii ]->count_static_memory();
 	}
-	for (std::list< EdgeBase* >::const_iterator iter = ig_edge_list_.begin();
-			iter != ig_edge_list_.end(); ++iter) {
+	for ( std::list< EdgeBase* >::const_iterator iter = ig_edge_list_.begin();
+			iter != ig_edge_list_.end(); ++iter ) {
 		total_memory += (*iter)->count_dynamic_memory();
 		total_memory += (*iter)->count_static_memory();
 	}
@@ -1261,7 +1254,7 @@ void InteractionGraphBase::reset_edge_list_iterator_for_node( int node_index ) c
 /// @brief increment the (single) edge list iterator to the next element
 void InteractionGraphBase::increment_edge_list_iterator() const
 {
-debug_assert( focused_edge_iterator_ != focused_edge_iterator_end_ );
+	debug_assert( focused_edge_iterator_ != focused_edge_iterator_end_ );
 	++focused_edge_iterator_;
 }
 
@@ -1334,10 +1327,10 @@ InteractionGraphBase::count_dynamic_memory() const
 void
 InteractionGraphBase::set_number_of_energy_sum_vertex_groups( int num_groups )
 {
-debug_assert( num_energy_sum_groups_ == -1 && num_groups > 0 );
+	debug_assert( num_energy_sum_groups_ == -1 && num_groups > 0 );
 	num_energy_sum_groups_ = num_groups;
 	energy_sum_group_membership_.dimension(
-			num_ig_nodes_, num_energy_sum_groups_ );
+		num_ig_nodes_, num_energy_sum_groups_ );
 	energy_sum_group_membership_ = false;
 }
 
@@ -1370,20 +1363,18 @@ InteractionGraphBase::count_connected_components_and_initialize_vertex_groups()
 {
 	component_membership_.dimension( num_ig_nodes_) = 0;
 	num_energy_sum_groups_ = 0;
-	for (int ii = 1; ii <= num_ig_nodes_; ++ii)
-	{
-			if ( vertex_already_reached( ii ) ) continue;
-			++num_energy_sum_groups_;
-			//std::cerr << "Starting depth first search at node: " << ii << " of group # " << num_energy_sum_groups_ << std::endl;
+	for ( int ii = 1; ii <= num_ig_nodes_; ++ii ) {
+		if ( vertex_already_reached( ii ) ) continue;
+		++num_energy_sum_groups_;
+		//std::cerr << "Starting depth first search at node: " << ii << " of group # " << num_energy_sum_groups_ << std::endl;
 
-			ig_nodes_[ ii ]->depth_first_connected_component_counting();
+		ig_nodes_[ ii ]->depth_first_connected_component_counting();
 	}
 
 	energy_sum_group_membership_.dimension( num_ig_nodes_, num_energy_sum_groups_ );
 	energy_sum_group_membership_ = false;
-	for ( int ii = 1; ii <= num_ig_nodes_; ++ii )
-	{
-			energy_sum_group_membership_( ii, component_membership_(ii)) = true;
+	for ( int ii = 1; ii <= num_ig_nodes_; ++ii ) {
+		energy_sum_group_membership_( ii, component_membership_(ii)) = true;
 	}
 	component_membership_.dimension( 0 );
 	return num_energy_sum_groups_;
@@ -1416,7 +1407,7 @@ InteractionGraphBase::count_connected_components_and_initialize_vertex_groups()
 void
 InteractionGraphBase::note_vertex_reached( int node_index )
 {
-debug_assert( component_membership_( node_index ) == 0 );
+	debug_assert( component_membership_( node_index ) == 0 );
 	component_membership_( node_index ) = num_energy_sum_groups_;
 	//std::cerr << "Marked node " << node_index << " in group " << num_energy_sum_groups_ << std::endl;
 }
@@ -1493,43 +1484,41 @@ InteractionGraphBase::set_vertex_member_of_group( int vertex, int group )
 void
 InteractionGraphBase::print_vertex_groups()
 {
-	for (int ii = 1; ii <= get_num_nodes(); ++ii )
-	{
-			std::cerr << "Node " << ii << ": ";
-			for (int jj = 1; jj <= num_energy_sum_groups_; ++jj)
-			{
-					std::cerr << energy_sum_group_membership_( ii, jj ) << " ";
-			}
-			std::cerr << std::endl;
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
+		std::cerr << "Node " << ii << ": ";
+		for ( int jj = 1; jj <= num_energy_sum_groups_; ++jj ) {
+			std::cerr << energy_sum_group_membership_( ii, jj ) << " ";
+		}
+		std::cerr << std::endl;
 	}
 }
 /*
 unsigned int
 InteractionGraphBase::getTotalMemoryUsage() const
 {
-	unsigned int total_memory = 0;
-	for (int ii = 1; ii <= get_num_nodes(); ++ii)
-	{
-			total_memory += ig_nodes_[ ii ]->getMemoryUsageInBytes();
-	}
-	for (std::list< EdgeBase* >::const_iterator iter = ig_edge_list_.begin();
-			iter != ig_edge_list_.end(); ++iter )
-	{
-			total_memory += (*iter)->getMemoryUsageInBytes();
-	}
+unsigned int total_memory = 0;
+for (int ii = 1; ii <= get_num_nodes(); ++ii)
+{
+total_memory += ig_nodes_[ ii ]->getMemoryUsageInBytes();
+}
+for (std::list< EdgeBase* >::const_iterator iter = ig_edge_list_.begin();
+iter != ig_edge_list_.end(); ++iter )
+{
+total_memory += (*iter)->getMemoryUsageInBytes();
+}
 
-	total_memory += getMemoryUsageInBytes();
-	return total_memory;
+total_memory += getMemoryUsageInBytes();
+return total_memory;
 }
 
 unsigned int
 InteractionGraphBase::getMemoryUsageInBytes() const
 {
-	unsigned int total_memory = 0;
-	total_memory += ig_nodes_.size() * sizeof ( NodeBase * );
-	total_memory += 4 * ig_nodes_.size() * sizeof ( EdgeBase * );
-	total_memory += node_state_offsets_.size() * sizeof ( int );
-	return total_memory;
+unsigned int total_memory = 0;
+total_memory += ig_nodes_.size() * sizeof ( NodeBase * );
+total_memory += 4 * ig_nodes_.size() * sizeof ( EdgeBase * );
+total_memory += node_state_offsets_.size() * sizeof ( int );
+return total_memory;
 }
 */
 
@@ -1593,7 +1582,7 @@ void InteractionGraphBase::drop_edge(std::list< EdgeBase* >::iterator iter)
 ////////////////////////////////////////////////////////////////////////////////
 EdgeBase const * InteractionGraphBase::find_edge(int node1, int node2) const
 {
-	if (focused_edge_ == NULL || !( focused_edge_->same_edge(node1, node2)) ) {
+	if ( focused_edge_ == NULL || !( focused_edge_->same_edge(node1, node2)) ) {
 		focused_edge_ = ig_nodes_[node1]->find_edge(node2);
 	}
 	return focused_edge_;

@@ -98,15 +98,15 @@ public:
 
 private:
 	TorsionList fast_sample_torsions_from_info(
-				utility::vector1<core::chemical::rna::GaussianParameter>
-				const & params );
+		utility::vector1<core::chemical::rna::GaussianParameter>
+		const & params );
 
 	core::Size const rsd_id_;
 	ChiState base_state_lower_, base_state_upper_;
 
 	bool sample_nucleoside_lower_, sample_nucleoside_upper_,
-			extra_epsilon_, extra_beta_, extra_chi_,
-			skip_same_pucker_, idealize_coord_, fast_;
+		extra_epsilon_, extra_beta_, extra_chi_,
+		skip_same_pucker_, idealize_coord_, fast_;
 
 	core::Real bin_size_;
 

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/enzdes/RemoveLigandFilterCreator.hh
-/// @brief  
+/// @brief
 /// @author Javier Castellanos(javiercv@uw.edu)
 
 #ifndef INCLUDED_protocols_enzdes_RemoveLigandFilterCreator_hh

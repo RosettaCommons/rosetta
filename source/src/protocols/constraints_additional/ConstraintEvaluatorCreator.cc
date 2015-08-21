@@ -43,7 +43,7 @@
 #include <utility/vector0.hh>
 
 #ifdef WIN32
-	#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.hh>
 #endif
 
 
@@ -71,20 +71,20 @@ void ConstraintEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 	using protocols::evaluation::PoseEvaluatorOP;
 
 
-  if ( option[ OptionKeys::evaluation::constraints ].user() ) {
-    /*
-      this creates Evaluators to evaluate different constraint sets against your decoys
-      pls: provide also as many column-names to match your constraint sets
-      ---
-    */
-    utility::vector1< std::string > const& cst_target( option[ OptionKeys::evaluation::constraints ]() );
-    utility::vector1< std::string > const& cst_col_name( option[ OptionKeys::evaluation::constraints_column ]() );
-    for ( Size ct = 1; ct <= cst_target.size(); ct ++ ) {
-      std::string tag( ObjexxFCL::string_of( ct ) );
-      if ( cst_col_name.size() >= ct ) tag = cst_col_name[ ct ];
-      eval.add_evaluation( PoseEvaluatorOP( new ConstraintEvaluator( tag, cst_target[ ct ] ) ) );
-    }
-  }
+	if ( option[ OptionKeys::evaluation::constraints ].user() ) {
+		/*
+		this creates Evaluators to evaluate different constraint sets against your decoys
+		pls: provide also as many column-names to match your constraint sets
+		---
+		*/
+		utility::vector1< std::string > const& cst_target( option[ OptionKeys::evaluation::constraints ]() );
+		utility::vector1< std::string > const& cst_col_name( option[ OptionKeys::evaluation::constraints_column ]() );
+		for ( Size ct = 1; ct <= cst_target.size(); ct ++ ) {
+			std::string tag( ObjexxFCL::string_of( ct ) );
+			if ( cst_col_name.size() >= ct ) tag = cst_col_name[ ct ];
+			eval.add_evaluation( PoseEvaluatorOP( new ConstraintEvaluator( tag, cst_target[ ct ] ) ) );
+		}
+	}
 
 }
 

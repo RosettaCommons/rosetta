@@ -48,16 +48,16 @@ static thread_local basic::Tracer tether_ligand_tracer( "protocols.ligand_dockin
 TetherLigand::TetherLigand(){}
 
 TetherLigand::TetherLigand(const char & chain, const core::Real & angstroms):
-		protocols::moves::Mover(),
-		chain_(chain),
-		angstroms_(angstroms)
+	protocols::moves::Mover(),
+	chain_(chain),
+	angstroms_(angstroms)
 {}
 
 TetherLigand::TetherLigand(TetherLigand const & that):
-		protocols::moves::Mover( that ),
-		chain_(that.chain_),
-		angstroms_(that.angstroms_), //size of one stdev for ligand restraint
-		ligand_tether_(that.ligand_tether_)
+	protocols::moves::Mover( that ),
+	chain_(that.chain_),
+	angstroms_(that.angstroms_), //size of one stdev for ligand restraint
+	ligand_tether_(that.ligand_tether_)
 
 {}
 
@@ -87,9 +87,9 @@ TetherLigand::get_ligand_tether() const {
 
 core::scoring::constraints::ConstraintCOP
 restrain_ligand_nbr_atom(
-		core::Size const lig_id,
-		core::Real const stddev_Angstroms,
-		core::pose::Pose & pose
+	core::Size const lig_id,
+	core::Real const stddev_Angstroms,
+	core::pose::Pose & pose
 ){
 	tether_ligand_tracer.Debug<< "stddev: " << stddev_Angstroms << std::endl;
 	core::scoring::func::FuncOP const restraint_function( new core::scoring::func::HarmonicFunc(0, stddev_Angstroms) );
@@ -98,11 +98,11 @@ restrain_ligand_nbr_atom(
 
 	core::conformation::Residue const & residue = pose.residue(lig_id);
 	core::scoring::constraints::ConstraintCOP constraint( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint(
-			core::id::AtomID( residue.nbr_atom(), lig_id),
-			fixed_pt,
-			residue.nbr_atom_xyz(),
-			restraint_function
-	) ) );
+		core::id::AtomID( residue.nbr_atom(), lig_id),
+		fixed_pt,
+		residue.nbr_atom_xyz(),
+		restraint_function
+		) ) );
 	constraint = pose.add_constraint(constraint);
 
 	return constraint;

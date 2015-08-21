@@ -44,8 +44,8 @@
 
 //Auto Headers
 #include <utility/excn/EXCN_Base.hh>
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 static thread_local basic::Tracer TR( "protocols.features.DatabaseFilters" );
 
@@ -63,7 +63,7 @@ core::Real get_current_model_score(core::pose::Pose const & pose, core::Size sco
 }
 
 DatabaseFilterOP get_DB_filter_ptr(){
-	if( ! basic::options::option[basic::options::OptionKeys::out::database_filter].user()){
+	if ( ! basic::options::option[basic::options::OptionKeys::out::database_filter].user() ) {
 		return NULL;// just leave the database_filter pointer null
 	}
 	utility::vector1<std::string> filter_option=
@@ -73,28 +73,27 @@ DatabaseFilterOP get_DB_filter_ptr(){
 	++begin;
 	utility::vector1<std::string> arguments(begin, filter_option.end());
 
-	if(type == "TopPercentOfEachInput") return DatabaseFilterOP( new TopPercentOfEachInput(arguments) );
-	if(type == "TopPercentOfAllInputs") return DatabaseFilterOP( new TopPercentOfAllInputs(arguments) );
-	if(type == "TopCountOfEachInput") return DatabaseFilterOP( new TopCountOfEachInput(arguments) );
-	if(type == "TopCountOfAllInputs") return DatabaseFilterOP( new TopCountOfAllInputs(arguments) );
+	if ( type == "TopPercentOfEachInput" ) return DatabaseFilterOP( new TopPercentOfEachInput(arguments) );
+	if ( type == "TopPercentOfAllInputs" ) return DatabaseFilterOP( new TopPercentOfAllInputs(arguments) );
+	if ( type == "TopCountOfEachInput" ) return DatabaseFilterOP( new TopCountOfEachInput(arguments) );
+	if ( type == "TopCountOfAllInputs" ) return DatabaseFilterOP( new TopCountOfAllInputs(arguments) );
 
 	utility_exit_with_message(type+" is not a valid Database Filter name");
 	return NULL; // To keep the compiler happy
 }
 
 WriteDeletePair get_write_delete_pair(
-		core::pose::Pose const & pose,
-		utility::sql_database::sessionOP db_session,
-		core::Size const & protocol_id,
-		core::Size const & count,
-		std::string const & score_term,
-		std::string current_input=""
+	core::pose::Pose const & pose,
+	utility::sql_database::sessionOP db_session,
+	core::Size const & protocol_id,
+	core::Size const & count,
+	std::string const & score_term,
+	std::string current_input=""
 ){
 	core::Size n_models = get_current_structure_count(db_session,protocol_id,current_input);
 
 	//store all the structures until you have at least percentile_count worth of models
-	if(n_models < count)
-	{
+	if ( n_models < count ) {
 		return WriteDeletePair(true, utility::vector1<StructureID>());
 	}
 	// else we need to delete some structure(s) from the database
@@ -103,20 +102,19 @@ WriteDeletePair get_write_delete_pair(
 	core::Real current_model_score = 0.0;
 	core::Size score_type_id = 0;
 	try
-	{
+{
 		score_type_id = get_score_type_id_from_score_term(db_session,protocol_id,score_term);
 	}catch(utility::excn::EXCN_Base &)
-	{
+{
 		TR << "no score type term, looking in the job data map" <<std::endl;
 	}
-	//Some applications (most ligand docking) store score terms in the job data.
-	//If this is the case score_type_id will return 0
-	//otherwise, we know that the score term in question is a normal scoring function term
+//Some applications (most ligand docking) store score terms in the job data.
+//If this is the case score_type_id will return 0
+//otherwise, we know that the score term in question is a normal scoring function term
 
 	StructureID struct_id_to_remove;
 
-	if(score_type_id != 0)
-	{
+	if ( score_type_id != 0 ) {
 		current_model_score = get_current_model_score(pose, score_type_id);
 
 		//Get the structure ID and associated score from the database
@@ -124,17 +122,14 @@ WriteDeletePair get_write_delete_pair(
 		cutoff_score = get_score_for_struct_id_and_score_term_from_score_data(db_session,struct_id,score_type_id);
 		struct_id_to_remove = get_struct_id_with_highest_score_from_score_data(db_session,score_type_id,protocol_id, current_input);
 
-	}
-	else{
+	} else {
 		//get the current score out of the job data map
 		protocols::jd2::JobCOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
 		//The job data is stored as a list instead of a map so we have to actually iterate over the whole thing
 		//In order to pull out one particular item
 		protocols::jd2::Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin());
-		for(;it != job->output_string_real_pairs_end();++it)
-		{
-			if(it->first == score_term)
-			{
+		for ( ; it != job->output_string_real_pairs_end(); ++it ) {
+			if ( it->first == score_term ) {
 				current_model_score = it->second;
 				break;
 			}
@@ -147,28 +142,26 @@ WriteDeletePair get_write_delete_pair(
 		struct_id_to_remove = get_struct_id_with_highest_score_from_job_data(db_session,score_term,protocol_id,current_input);
 	}
 	//See if our current model is better
-	if(current_model_score < cutoff_score )
-	{
+	if ( current_model_score < cutoff_score ) {
 		TR <<"Current score is " <<current_model_score << ". Best score is " << cutoff_score <<
-		". Deleting struct_id " <<struct_id_to_remove <<std::endl;
+			". Deleting struct_id " <<struct_id_to_remove <<std::endl;
 		utility::vector1<StructureID> struct_ids_to_delete(1,struct_id_to_remove);
 		return WriteDeletePair(true, struct_ids_to_delete);
-	}else
-	{
+	} else {
 		TR <<"Current score is " <<current_model_score << ". Best score is " << cutoff_score <<
-		". Discarding current pose" <<std::endl;
+			". Discarding current pose" <<std::endl;
 		return WriteDeletePair(false, utility::vector1<StructureID>());
 	}
 
 }
 
 TopPercentOfEachInput::TopPercentOfEachInput(
-		utility::vector1<std::string> arguments
+	utility::vector1<std::string> arguments
 ):
-		DatabaseFilter(),
-		top_count_of_each_input_()
+	DatabaseFilter(),
+	top_count_of_each_input_()
 {
-	if(arguments.size() != 2){
+	if ( arguments.size() != 2 ) {
 		utility_exit_with_message("TopPercentOfEachInput option takes 2 arguments");
 	}
 	top_count_of_each_input_.score_term_ = arguments[1];
@@ -181,17 +174,17 @@ TopPercentOfEachInput::TopPercentOfEachInput(
 
 WriteDeletePair
 TopPercentOfEachInput::operator()(
-		core::pose::Pose const & pose,
-		utility::sql_database::sessionOP db_session,
-		core::Size const & protocol_id
+	core::pose::Pose const & pose,
+	utility::sql_database::sessionOP db_session,
+	core::Size const & protocol_id
 ){
 	return top_count_of_each_input_(pose, db_session, protocol_id);
 }
 
 TopPercentOfAllInputs::TopPercentOfAllInputs(utility::vector1<std::string> arguments):
-			DatabaseFilter()
+	DatabaseFilter()
 {
-	if(arguments.size() != 2){
+	if ( arguments.size() != 2 ) {
 		utility_exit_with_message("TopPercentOfAllInputs option takes 2 arguments");
 	}
 	top_count_of_all_inputs_.score_term_ = arguments[1];
@@ -204,22 +197,22 @@ TopPercentOfAllInputs::TopPercentOfAllInputs(utility::vector1<std::string> argum
 
 WriteDeletePair
 TopPercentOfAllInputs::operator()(
-		core::pose::Pose const & pose,
-		utility::sql_database::sessionOP db_session,
-		core::Size const & protocol_id
+	core::pose::Pose const & pose,
+	utility::sql_database::sessionOP db_session,
+	core::Size const & protocol_id
 ){
 	return top_count_of_all_inputs_(pose, db_session, protocol_id);
 }
 
 TopCountOfEachInput::TopCountOfEachInput():
-				DatabaseFilter()
+	DatabaseFilter()
 {}
 
 TopCountOfEachInput::TopCountOfEachInput(utility::vector1<std::string> arguments):
-				DatabaseFilter(),
-				count_(0)
+	DatabaseFilter(),
+	count_(0)
 {
-	if(arguments.size() != 2){
+	if ( arguments.size() != 2 ) {
 		utility_exit_with_message("TopCountOfEachInput option takes 2 arguments");
 	}
 	score_term_ = arguments[1];
@@ -228,23 +221,23 @@ TopCountOfEachInput::TopCountOfEachInput(utility::vector1<std::string> arguments
 
 WriteDeletePair
 TopCountOfEachInput::operator()(
-		core::pose::Pose const & pose,
-		utility::sql_database::sessionOP db_session,
-		core::Size const & protocol_id
+	core::pose::Pose const & pose,
+	utility::sql_database::sessionOP db_session,
+	core::Size const & protocol_id
 ){
 	std::string current_input(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
 	return get_write_delete_pair(pose, db_session, protocol_id, count_, score_term_, current_input);
 }
 
 TopCountOfAllInputs::TopCountOfAllInputs():
-		DatabaseFilter()
+	DatabaseFilter()
 {}
 
 TopCountOfAllInputs::TopCountOfAllInputs(utility::vector1<std::string> arguments):
-				DatabaseFilter(),
-				count_(0)
+	DatabaseFilter(),
+	count_(0)
 {
-	if(arguments.size() != 2){
+	if ( arguments.size() != 2 ) {
 		utility_exit_with_message("TopCountOfAllInputs option takes 2 arguments");
 	}
 	score_term_ = arguments[1];
@@ -253,9 +246,9 @@ TopCountOfAllInputs::TopCountOfAllInputs(utility::vector1<std::string> arguments
 
 WriteDeletePair
 TopCountOfAllInputs::operator()(
-		core::pose::Pose const & pose,
-		utility::sql_database::sessionOP db_session,
-		core::Size const & protocol_id
+	core::pose::Pose const & pose,
+	utility::sql_database::sessionOP db_session,
+	core::Size const & protocol_id
 ){
 	return get_write_delete_pair(pose, db_session, protocol_id, count_, score_term_);
 }

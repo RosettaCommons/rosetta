@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file core/chemical/ResidueTypeFinder.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -20,12 +20,12 @@
 
 namespace core {
 namespace chemical {
-	
-	class ResidueTypeFinder;
-	typedef utility::pointer::shared_ptr< ResidueTypeFinder > ResidueTypeFinderOP;
-	typedef utility::pointer::shared_ptr< ResidueTypeFinder const > ResidueTypeFinderCOP;
-	
-} //chemical 
-} //core 
+
+class ResidueTypeFinder;
+typedef utility::pointer::shared_ptr< ResidueTypeFinder > ResidueTypeFinderOP;
+typedef utility::pointer::shared_ptr< ResidueTypeFinder const > ResidueTypeFinderCOP;
+
+} //chemical
+} //core
 
 #endif

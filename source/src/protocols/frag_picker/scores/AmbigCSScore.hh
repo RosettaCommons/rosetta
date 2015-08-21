@@ -35,7 +35,7 @@ namespace scores {
 
 typedef utility::vector1<utility::vector1<Real> > Matrix;
 
-	//typedef utility::vector1<utility::vector1<std::pair<Real,Real> > > Score_Matrix;
+//typedef utility::vector1<utility::vector1<std::pair<Real,Real> > > Score_Matrix;
 
 /// @brief  scores a fragment by the root mean square deviation of Phi and Psi angles.
 class AmbigCSScore: public CachingScoringMethod {

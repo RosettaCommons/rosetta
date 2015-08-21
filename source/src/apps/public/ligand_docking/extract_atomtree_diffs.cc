@@ -112,57 +112,57 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	devel::init(argc, argv);
-	protocols::jd2::register_options();
+		devel::init(argc, argv);
+		protocols::jd2::register_options();
 
-	// Munge the input options to be compatible with the previous versions of extract_atomtree_diffs
-	if ( basic::options::option[ basic::options::OptionKeys::in::file::l ].user() || basic::options::option[ basic::options::OptionKeys::in::file::list ].user() ) {
-		TR.Error << "Sorry, cannot use -in:file:l or -in::file::list with extract_atomtree_diffs" << std::endl;
-		utility_exit_with_message("Invalid option -in:file:l or -in::file::list passed to extract_atomtree_diffs.");
-	}
-
-	if ( basic::options::option[ basic::options::OptionKeys::in::file::s ].user() ) {
-		if ( basic::options::option[ basic::options::OptionKeys::in::file::atom_tree_diff ].user() ) {
-			TR.Error << "Sorry, cannot use both -in:file:s and -in::file::atom_tree_diff with extract_atomtree_diffs" << std::endl;
-			utility_exit_with_message("Invalid option combination -in:file:s and -in::file::atom_tree_diff passed to extract_atomtree_diffs.");
-		} else {
-			TR << "Converting -in:file:s to -in::file::atom_tree_diff." << std::endl;
-			basic::options::option[ basic::options::OptionKeys::in::file::atom_tree_diff ].value(basic::options::option[ basic::options::OptionKeys::in::file::s ]);
-			basic::options::option[ basic::options::OptionKeys::in::file::s ].deactivate();
+		// Munge the input options to be compatible with the previous versions of extract_atomtree_diffs
+		if ( basic::options::option[ basic::options::OptionKeys::in::file::l ].user() || basic::options::option[ basic::options::OptionKeys::in::file::list ].user() ) {
+			TR.Error << "Sorry, cannot use -in:file:l or -in::file::list with extract_atomtree_diffs" << std::endl;
+			utility_exit_with_message("Invalid option -in:file:l or -in::file::list passed to extract_atomtree_diffs.");
 		}
-	}
 
-	// Match output tagging status of previous version of extract_atomtree_diffs, unless overwritten
-	if ( ! basic::options::option[ basic::options::OptionKeys::out::no_nstruct_label ].user() ) {
-		basic::options::option[ basic::options::OptionKeys::out::no_nstruct_label ].value(true);
-		TR << "Setting no_nstruct_label" << std::endl;
-	}
-
-	if( ! basic::options::option[ basic::options::OptionKeys::run::preserve_header].user() ) {
-		basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
-	}
-
-	ExtractATDOP extract_mover( new ExtractATD );
-
-	// Setup constraints on reference poses
-	// Reading the enzdes constraints creates new residue types we may need, in the case of covalent constraints.
-	protocols::jd2::JobInputterOP inputter(protocols::jd2::JobDistributor::get_instance()->job_inputter());
-	protocols::jd2::AtomTreeDiffJobInputterOP atd_inputter( utility::pointer::dynamic_pointer_cast< protocols::jd2::AtomTreeDiffJobInputter > ( inputter ) );
-	if (atd_inputter && basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ) {
-		protocols::toolbox::match_enzdes_util::EnzConstraintIOOP constraints;
-		//we need the residue type set, assuming FA standard is used
-		core::chemical::ResidueTypeSetCAP restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-		constraints = protocols::toolbox::match_enzdes_util::EnzConstraintIOOP( new protocols::toolbox::match_enzdes_util::EnzConstraintIO( restype_set ) );
-		constraints->read_enzyme_cstfile(basic::options::option[basic::options::OptionKeys::enzdes::cstfile]);
-
-		utility::vector1< core::pose::PoseOP > const & ref_poses = atd_inputter->all_ref_poses();
-		for( core::Size i = 1; i <= ref_poses.size(); ++i ) {
-			constraints->add_constraints_to_pose( *ref_poses[i], extract_mover->scorefxn(), false );
+		if ( basic::options::option[ basic::options::OptionKeys::in::file::s ].user() ) {
+			if ( basic::options::option[ basic::options::OptionKeys::in::file::atom_tree_diff ].user() ) {
+				TR.Error << "Sorry, cannot use both -in:file:s and -in::file::atom_tree_diff with extract_atomtree_diffs" << std::endl;
+				utility_exit_with_message("Invalid option combination -in:file:s and -in::file::atom_tree_diff passed to extract_atomtree_diffs.");
+			} else {
+				TR << "Converting -in:file:s to -in::file::atom_tree_diff." << std::endl;
+				basic::options::option[ basic::options::OptionKeys::in::file::atom_tree_diff ].value(basic::options::option[ basic::options::OptionKeys::in::file::s ]);
+				basic::options::option[ basic::options::OptionKeys::in::file::s ].deactivate();
+			}
 		}
-	}
+
+		// Match output tagging status of previous version of extract_atomtree_diffs, unless overwritten
+		if ( ! basic::options::option[ basic::options::OptionKeys::out::no_nstruct_label ].user() ) {
+			basic::options::option[ basic::options::OptionKeys::out::no_nstruct_label ].value(true);
+			TR << "Setting no_nstruct_label" << std::endl;
+		}
+
+		if ( ! basic::options::option[ basic::options::OptionKeys::run::preserve_header].user() ) {
+			basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
+		}
+
+		ExtractATDOP extract_mover( new ExtractATD );
+
+		// Setup constraints on reference poses
+		// Reading the enzdes constraints creates new residue types we may need, in the case of covalent constraints.
+		protocols::jd2::JobInputterOP inputter(protocols::jd2::JobDistributor::get_instance()->job_inputter());
+		protocols::jd2::AtomTreeDiffJobInputterOP atd_inputter( utility::pointer::dynamic_pointer_cast< protocols::jd2::AtomTreeDiffJobInputter > ( inputter ) );
+		if ( atd_inputter && basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ) {
+			protocols::toolbox::match_enzdes_util::EnzConstraintIOOP constraints;
+			//we need the residue type set, assuming FA standard is used
+			core::chemical::ResidueTypeSetCAP restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+			constraints = protocols::toolbox::match_enzdes_util::EnzConstraintIOOP( new protocols::toolbox::match_enzdes_util::EnzConstraintIO( restype_set ) );
+			constraints->read_enzyme_cstfile(basic::options::option[basic::options::OptionKeys::enzdes::cstfile]);
+
+			utility::vector1< core::pose::PoseOP > const & ref_poses = atd_inputter->all_ref_poses();
+			for ( core::Size i = 1; i <= ref_poses.size(); ++i ) {
+				constraints->add_constraints_to_pose( *ref_poses[i], extract_mover->scorefxn(), false );
+			}
+		}
 
 
-	protocols::jd2::JobDistributor::get_instance()->go(extract_mover);
+		protocols::jd2::JobDistributor::get_instance()->go(extract_mover);
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/methods/RG_LocalEnergy.hh
 /// @brief  only calculates RG the length of the repeat. Uses code from RG_Energy_fast
-/// @author TJ Brunette 
+/// @author TJ Brunette
 
 
 #ifndef INCLUDED_core_scoring_methods_RG_LocalEnergy_hh
@@ -39,10 +39,10 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-		
+
 class RG_Local_MinData:  public RG_MinData {
 public:
-  RG_Local_MinData():RG_MinData(){}
+	RG_Local_MinData():RG_MinData(){}
 };
 
 typedef utility::pointer::shared_ptr< RG_Local_MinData > RG_Local_MinDataOP;
@@ -103,8 +103,8 @@ public:
 private:
 	RG_Local_MinData const & mindata_from_pose( pose::Pose const & ) const;
 	RG_Local_MinData & nonconst_mindata_from_pose( pose::Pose & ) const;
-  core::Size lastRes_;
-  core::Size firstRes_;
+	core::Size lastRes_;
+	core::Size firstRes_;
 };
 
 

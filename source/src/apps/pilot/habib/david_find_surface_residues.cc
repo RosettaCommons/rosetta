@@ -77,20 +77,20 @@ std::set <std::string> interface;
 //stores resid of the ligand residue
 void register_metrics() {
 
-  core::pose::metrics::PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy );
-  core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
+	core::pose::metrics::PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy );
+	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 
 }
 
 void
 setup_secstruct_dssp( pose::Pose & pose )
 {
-  core::scoring::dssp::Dssp dssp( pose );
-  ObjexxFCL::FArray1D_char dssp_secstruct( pose.total_residue() );
-  dssp.dssp_reduced( dssp_secstruct );
-  for (Size i = 1; i <= pose.total_residue(); i++ ) {
-    pose.set_secstruct(i,  dssp_secstruct(i) );
-  }
+	core::scoring::dssp::Dssp dssp( pose );
+	ObjexxFCL::FArray1D_char dssp_secstruct( pose.total_residue() );
+	dssp.dssp_reduced( dssp_secstruct );
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		pose.set_secstruct(i,  dssp_secstruct(i) );
+	}
 
 }
 
@@ -101,135 +101,135 @@ main( int argc, char * argv [] )
 {
 	try {
 
-std::vector<std::string> surface;
-std::set <std::string> interface;
-  NEW_OPT( max_residues, "Maximum number of residues to return", 1000);
-  NEW_OPT( min_sasa, "Minimum SASA to classify a residue as surface", 10);
-  NEW_OPT ( contact_list, "File name for optional list of contact residues to check","");
+		std::vector<std::string> surface;
+		std::set <std::string> interface;
+		NEW_OPT( max_residues, "Maximum number of residues to return", 1000);
+		NEW_OPT( min_sasa, "Minimum SASA to classify a residue as surface", 10);
+		NEW_OPT ( contact_list, "File name for optional list of contact residues to check","");
 
-  using namespace core;
-  using namespace core::scoring;
+		using namespace core;
+		using namespace core::scoring;
 
-  devel::init(argc, argv);
-  register_metrics();
-  pose::Pose pose;
-  std::string const input_pdb_name ( basic::options::start_file() );
-  core::import_pose::pose_from_pdb( pose, input_pdb_name );
+		devel::init(argc, argv);
+		register_metrics();
+		pose::Pose pose;
+		std::string const input_pdb_name ( basic::options::start_file() );
+		core::import_pose::pose_from_pdb( pose, input_pdb_name );
 
-  std::string const cfilename = option[ contact_list ];
-  if ( cfilename != "" ){
-    std::ifstream ifs(cfilename.c_str(), std::ifstream::in);
-    if (!ifs.is_open()){
-      std::cout<< "Error opening contact list file "<<cfilename<<std::endl;
-      return -100;
-    }
-    //ifb.open (cfilename,std::ios::in);
-    //std::ostream ios(&ifb);
-    std::string intres;
-    while (ifs.good()){
-      ifs >> intres;
-      interface.insert(intres);
-    }
-  }
+		std::string const cfilename = option[ contact_list ];
+		if ( cfilename != "" ) {
+			std::ifstream ifs(cfilename.c_str(), std::ifstream::in);
+			if ( !ifs.is_open() ) {
+				std::cout<< "Error opening contact list file "<<cfilename<<std::endl;
+				return -100;
+			}
+			//ifb.open (cfilename,std::ios::in);
+			//std::ostream ios(&ifb);
+			std::string intres;
+			while ( ifs.good() ) {
+				ifs >> intres;
+				interface.insert(intres);
+			}
+		}
 
-  core::Size sasa_threshold = option [ min_sasa ];
-  core::Size max_resi = option [ max_residues ];
-  basic::MetricValue< utility::vector1< Real > > resisasa;
-  pose.metric( "sasa", "residue_sasa", resisasa );
-  setup_secstruct_dssp(pose);
+		core::Size sasa_threshold = option [ min_sasa ];
+		core::Size max_resi = option [ max_residues ];
+		basic::MetricValue< utility::vector1< Real > > resisasa;
+		pose.metric( "sasa", "residue_sasa", resisasa );
+		setup_secstruct_dssp(pose);
 
-  for( Size i = 1; i <= pose.total_residue(); ++i){
-    int close = 0;
-    for( Size j = 1; j <= pose.total_residue(); ++j){
-      if (i == j) continue;
-      //make sure it's not within 12A of the interface
-      std::ostringstream residuestream;
-      residuestream << pose.pdb_info()->chain(j) << pose.pdb_info()->number(j);
-      std::string res_id = residuestream.str();
-      if (interface.find(res_id) != interface.end()){
-        if ( pose.residue(i).xyz( pose.residue(i).nbr_atom() ).distance( pose.residue(j).xyz( pose.residue(j).nbr_atom() ) ) <= 12 ){
-          close = 1;
-          break;
-        }
-      }
-      //make sure it's not within 12A of a *meric interface
-      if ( pose.pdb_info()->chain(i) == pose.pdb_info()->chain(j) ) continue;
-      if ( pose.residue(i).xyz( pose.residue(i).nbr_atom() ).distance( pose.residue(j).xyz( pose.residue(j).nbr_atom() ) ) <= 12 ){
-        close = 1;
-      }
+		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+			int close = 0;
+			for ( Size j = 1; j <= pose.total_residue(); ++j ) {
+				if ( i == j ) continue;
+				//make sure it's not within 12A of the interface
+				std::ostringstream residuestream;
+				residuestream << pose.pdb_info()->chain(j) << pose.pdb_info()->number(j);
+				std::string res_id = residuestream.str();
+				if ( interface.find(res_id) != interface.end() ) {
+					if ( pose.residue(i).xyz( pose.residue(i).nbr_atom() ).distance( pose.residue(j).xyz( pose.residue(j).nbr_atom() ) ) <= 12 ) {
+						close = 1;
+						break;
+					}
+				}
+				//make sure it's not within 12A of a *meric interface
+				if ( pose.pdb_info()->chain(i) == pose.pdb_info()->chain(j) ) continue;
+				if ( pose.residue(i).xyz( pose.residue(i).nbr_atom() ).distance( pose.residue(j).xyz( pose.residue(j).nbr_atom() ) ) <= 12 ) {
+					close = 1;
+				}
 
-    }
-    if (!close){
-      if (resisasa.value()[i]>= sasa_threshold && pose.secstruct(i) != 'L'){
-        std::ostringstream residuestream;
-        residuestream << pose.pdb_info()->chain(i) << pose.pdb_info()->number(i);
-        std::string res_id = residuestream.str();
-        if (interface.find(res_id) == interface.end()){
-          //std::cout<<res_id<<std::endl;
-          surface.push_back(res_id);
-        }
-      }
-    }
-  }
+			}
+			if ( !close ) {
+				if ( resisasa.value()[i]>= sasa_threshold && pose.secstruct(i) != 'L' ) {
+					std::ostringstream residuestream;
+					residuestream << pose.pdb_info()->chain(i) << pose.pdb_info()->number(i);
+					std::string res_id = residuestream.str();
+					if ( interface.find(res_id) == interface.end() ) {
+						//std::cout<<res_id<<std::endl;
+						surface.push_back(res_id);
+					}
+				}
+			}
+		}
 
-  std::filebuf fb;
-  std::stringstream filename;
-  filename<<option[ OptionKeys::out::output_tag ]()<<".randomsurface";
-  fb.open (filename.str().c_str(),std::ios::out);
-  std::ostream os(&fb);
+		std::filebuf fb;
+		std::stringstream filename;
+		filename<<option[ OptionKeys::out::output_tag ]()<<".randomsurface";
+		fb.open (filename.str().c_str(),std::ios::out);
+		std::ostream os(&fb);
 
 
-  if ( max_resi < surface.size()){
-    std::set<std::string> indeces;
-    for (core::Size i = 0; i < max_resi; i++){
-      int r=(int) (numeric::random::uniform() * surface.size());
-      std::string rname(surface[r]);
-      if (indeces.find(surface[r]) == indeces.end()){
-        indeces.insert(surface[r]);
+		if ( max_resi < surface.size() ) {
+			std::set<std::string> indeces;
+			for ( core::Size i = 0; i < max_resi; i++ ) {
+				int r=(int) (numeric::random::uniform() * surface.size());
+				std::string rname(surface[r]);
+				if ( indeces.find(surface[r]) == indeces.end() ) {
+					indeces.insert(surface[r]);
 
-        //remove nearest neighbors
-        core::Size pos = 0;
-        for( Size j = 1; j <= pose.total_residue(); ++j){
-          std::ostringstream residuestream;
-          residuestream << pose.pdb_info()->chain(j) << pose.pdb_info()->number(j);
-          std::string res_id = residuestream.str();
-          if (!res_id.compare(surface[r])){
-            pos = j;
-            break;
-          }
-        }
-        for (std::vector<std::string>::iterator it2=surface.begin(); it2 != surface.end(); it2++){
-          core::Size(pos2) = 0;
-          for( Size j = 1; j <= pose.total_residue(); ++j){
-            std::ostringstream residuestream;
-            residuestream << pose.pdb_info()->chain(j) << pose.pdb_info()->number(j);
-            std::string res_id = residuestream.str();
-            if (!res_id.compare(*it2)){
-              pos2 = j;
-              break;
-            }
-          }
-          if (pos == pos2) continue;
-          if ( pose.residue(pos).xyz( pose.residue(pos).nbr_atom() ).distance( pose.residue(pos2).xyz( pose.residue(pos2).nbr_atom() ) ) <= 12 ){
-            if (it2 != surface.begin()) --it2;
-            surface.erase(it2);
-            if (max_resi == surface.size()) max_resi--;
-          }
+					//remove nearest neighbors
+					core::Size pos = 0;
+					for ( Size j = 1; j <= pose.total_residue(); ++j ) {
+						std::ostringstream residuestream;
+						residuestream << pose.pdb_info()->chain(j) << pose.pdb_info()->number(j);
+						std::string res_id = residuestream.str();
+						if ( !res_id.compare(surface[r]) ) {
+							pos = j;
+							break;
+						}
+					}
+					for ( std::vector<std::string>::iterator it2=surface.begin(); it2 != surface.end(); it2++ ) {
+						core::Size(pos2) = 0;
+						for ( Size j = 1; j <= pose.total_residue(); ++j ) {
+							std::ostringstream residuestream;
+							residuestream << pose.pdb_info()->chain(j) << pose.pdb_info()->number(j);
+							std::string res_id = residuestream.str();
+							if ( !res_id.compare(*it2) ) {
+								pos2 = j;
+								break;
+							}
+						}
+						if ( pos == pos2 ) continue;
+						if ( pose.residue(pos).xyz( pose.residue(pos).nbr_atom() ).distance( pose.residue(pos2).xyz( pose.residue(pos2).nbr_atom() ) ) <= 12 ) {
+							if ( it2 != surface.begin() ) --it2;
+							surface.erase(it2);
+							if ( max_resi == surface.size() ) max_resi--;
+						}
 
-        }
-      }else{
-        i--;
-      }
-    }
-    //sort (indeces.begin(), indeces.end());
-    for (std::set<std::string>::iterator it=indeces.begin(); it != indeces.end(); it++){
-      os<<*it<<std::endl;
-    }
-  }else{
-    for (std::vector<std::string>::iterator it=surface.begin(); it != surface.end(); it++){
-      os<<*it<<std::endl;
-    }
-  }
+					}
+				} else {
+					i--;
+				}
+			}
+			//sort (indeces.begin(), indeces.end());
+			for ( std::set<std::string>::iterator it=indeces.begin(); it != indeces.end(); it++ ) {
+				os<<*it<<std::endl;
+			}
+		} else {
+			for ( std::vector<std::string>::iterator it=surface.begin(); it != surface.end(); it++ ) {
+				os<<*it<<std::endl;
+			}
+		}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

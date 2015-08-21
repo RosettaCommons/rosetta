@@ -74,15 +74,15 @@ DOFHistogramRecorder::insert_dofs_by_residue(
 	utility::vector1<std::set<core::id::DOF_ID_Range> > residue_dof_ranges;
 	residue_dof_ranges.resize(pose.total_residue());
 
-	for (core::Size i = 1; i <= dof_ranges.size(); ++i) {
+	for ( core::Size i = 1; i <= dof_ranges.size(); ++i ) {
 
 		core::id::AtomID parent_id( pose.atom_tree().atom(dof_ranges[i].dof_id().atom_id()).parent()->id() );
 		residue_dof_ranges[parent_id.rsd()].insert(dof_ranges[i]);
 	}
 
-	for (core::Size i = 1; i <= residue_dof_ranges.size(); ++i) {
+	for ( core::Size i = 1; i <= residue_dof_ranges.size(); ++i ) {
 
-		if (residue_dof_ranges[i].size()) {
+		if ( residue_dof_ranges[i].size() ) {
 
 			dofs_.resize(dofs_.size()+1);
 			histograms_.resize(histograms_.size()+1);
@@ -102,7 +102,7 @@ DOFHistogramRecorder::insert_dofs_by_residue(
 			histogram.num_dimensions(r_dof_ranges.size());
 			dof_values.resize(r_dof_ranges.size());
 
-			for (core::Size j = 1; j <= r_dof_ranges.size(); ++j) {
+			for ( core::Size j = 1; j <= r_dof_ranges.size(); ++j ) {
 
 				dofs[j] = r_dof_ranges[j].dof_id();
 
@@ -119,8 +119,8 @@ DOFHistogramRecorder::update_after_boltzmann(
 	core::pose::Pose const & pose
 )
 {
-	for (core::Size i = 1; i <= dofs_.size(); ++i) {
-		for (core::Size j = 1; j <= dofs_[i].size(); ++j) {
+	for ( core::Size i = 1; i <= dofs_.size(); ++i ) {
+		for ( core::Size j = 1; j <= dofs_[i].size(); ++j ) {
 			dof_values_[i][j] = pose.dof(dofs_[i][j]);
 		}
 		histograms_[i].record(dof_values_[i]);
@@ -132,14 +132,14 @@ DOFHistogramRecorder::write_mse_summary(
 	std::ostream & os
 ) const
 {
-	for (core::Size i = 1; i <= dofs_.size(); ++i) {
+	for ( core::Size i = 1; i <= dofs_.size(); ++i ) {
 
 		numeric::MultiDimensionalHistogram const & histogram(histograms_[i]);
 
 		utility::vector1<utility::vector1<core::Real> > expected_frequencies_all(dofs_[i].size());
 		utility::vector1<utility::vector1<core::Real> > expected_frequencies_subset(1);
 
-		for (core::Size j = 1; j <= dofs_[i].size(); ++j) {
+		for ( core::Size j = 1; j <= dofs_[i].size(); ++j ) {
 			expected_frequencies_all[j] = uniform_dof_distribution(
 				dofs_[i][j].type(), histogram.num_bins()[j], histogram.start()[j], histogram.end()[j]
 			);
@@ -158,26 +158,26 @@ std::ostream & operator << (
 	std::ostream & os,
 	DOFHistogramRecorder const & dof_recorder)
 {
-	for (core::Size i = 1; i <= dof_recorder.histograms().size(); ++i) {
+	for ( core::Size i = 1; i <= dof_recorder.histograms().size(); ++i ) {
 
 		os << dof_recorder.histograms()[i];
 
 		// print out collapsed histograms for debugging purposes
-// 		utility::vector1<core::Size> dim_to_keep(1);
-// 		for (core::Size j = 1; j <= dof_recorder.histograms()[i].num_dimensions(); ++j) {
-//
-// 			dim_to_keep[1] = j;
-// 			numeric::MultiDimensionalHistogram mdhist(dof_recorder.histograms()[i].collapse(dim_to_keep));
-// 			os << mdhist;
-//
-// 			core::id::DOF_Type dof_type(dof_recorder.dofs()[i][j].type());
-// 			utility::vector1<core::Real> expected(
-// 				uniform_dof_distribution(dof_type, mdhist.num_bins()[1], mdhist.start()[1], mdhist.end()[1])
-// 			);
-//
-// 			for (core::Size i = 1; i < expected.size(); ++i) os << expected[i] << " ";
-// 			os << std::endl;
-// 		}
+		//   utility::vector1<core::Size> dim_to_keep(1);
+		//   for (core::Size j = 1; j <= dof_recorder.histograms()[i].num_dimensions(); ++j) {
+		//
+		//    dim_to_keep[1] = j;
+		//    numeric::MultiDimensionalHistogram mdhist(dof_recorder.histograms()[i].collapse(dim_to_keep));
+		//    os << mdhist;
+		//
+		//    core::id::DOF_Type dof_type(dof_recorder.dofs()[i][j].type());
+		//    utility::vector1<core::Real> expected(
+		//     uniform_dof_distribution(dof_type, mdhist.num_bins()[1], mdhist.start()[1], mdhist.end()[1])
+		//    );
+		//
+		//    for (core::Size i = 1; i < expected.size(); ++i) os << expected[i] << " ";
+		//    os << std::endl;
+		//   }
 	}
 
 	return os;
@@ -193,17 +193,17 @@ uniform_dof_distribution(
 {
 	utility::vector1<core::Real> frequencies;
 
-	if (dof_type == core::id::PHI) {
+	if ( dof_type == core::id::PHI ) {
 
 		frequencies.resize(num_bins, 1.0/num_bins);
 
-	} else if (dof_type == core::id::THETA) {
+	} else if ( dof_type == core::id::THETA ) {
 
 		frequencies.resize(num_bins);
 		core::Real frequencies_total(0);
 
 		core::Real const delta((max-min)/num_bins);
-		for (core::Size i = 1; i <= num_bins; ++i) {
+		for ( core::Size i = 1; i <= num_bins; ++i ) {
 
 			core::Real const interval_start(min+(i-1)*delta);
 			core::Real const interval_end(min+i*delta);
@@ -213,7 +213,7 @@ uniform_dof_distribution(
 			frequencies_total += frequencies[i];
 		}
 
-		for (core::Size i = 1; i <= num_bins; ++i) {
+		for ( core::Size i = 1; i <= num_bins; ++i ) {
 			frequencies[i] /= frequencies_total;
 		}
 

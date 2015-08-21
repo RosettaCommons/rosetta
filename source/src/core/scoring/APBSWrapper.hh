@@ -35,17 +35,17 @@ namespace scoring {
 //--------------------------------------------------------------------------------------
 class APBSWrapper : public utility::pointer::ReferenceCount {
 
-  PQROP pqr;
-  APBSConfigOP config;
-  APBSResultOP result;
+	PQROP pqr;
+	APBSConfigOP config;
+	APBSResultOP result;
 public:
-  APBSWrapper(pose::Pose const & pose,
-	      std::map<std::string, bool> const & charged_residues,
-              int dbg, bool calcenergy);
-  virtual ~APBSWrapper();
+	APBSWrapper(pose::Pose const & pose,
+		std::map<std::string, bool> const & charged_residues,
+		int dbg, bool calcenergy);
+	virtual ~APBSWrapper();
 	APBSResultCOP exec();
 private:
-  // Count the number of non-virtual atoms
+	// Count the number of non-virtual atoms
 	int count_atoms( pose::Pose const & pose ) const;
 };
 ///-------------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ public:
 	inline int get_natoms() { return natoms_; }
 	static std::string const chains;
 	int natoms_;
-  std::vector<double> x, y, z, charge, radius;
+	std::vector<double> x, y, z, charge, radius;
 };
 ///-------------------------------------------------------------------------------------
 /// APBSResult
@@ -66,9 +66,9 @@ public:
 class  APBSResult  : public utility::pointer::ReferenceCount {
 public:
 	APBSResult(int nsims, int natoms, int grid_dimes[3],
-						 int calcforce, int calcenergy,
-						 int write_pot, int write_charge, int write_smol,
-						 int write_kappa, int write_diel, int write_atompot ) ;
+		int calcforce, int calcenergy,
+		int write_pot, int write_charge, int write_smol,
+		int write_kappa, int write_diel, int write_atompot ) ;
 	virtual ~APBSResult();
 
 	std::vector<double> esEnergy;
@@ -102,8 +102,8 @@ public:
 	///---------------------------------------------------------
 	/// I_PARAM
 	///---------------------------------------------------------
-	class I_PARAM : public utility::pointer::ReferenceCount 
-	{    
+	class I_PARAM : public utility::pointer::ReferenceCount
+	{
 		mutable int array[25];
 	public:
 		int sim_type; // 0=mg-manual, 1=mg-auto, 2=mg-parallel
@@ -131,11 +131,11 @@ public:
 		int use_charge;
 		int use_kappa;
 		int use_diel;
-  
+
 		I_PARAM();
 		~I_PARAM();
 		int * raw_array();
-	}; 
+	};
 
 	///---------------------------------------------------------
 	/// R_PARAM
@@ -152,13 +152,13 @@ public:
 
 	APBSConfig(pose::Pose const & pose, int natoms, int dbg, bool calcenergy);
 	virtual ~APBSConfig();
-	
+
 	// APBS debug level
 	int dbg;
-	
+
 	// Number of simulations
 	int nsims;
-	
+
 	// Number of atoms
 	int natoms;
 
@@ -177,9 +177,9 @@ public:
 	double fglen[3];
 	double ccenter[3];
 	double fcenter[3];
-	
+
 	double ionq[4], ionc[4], ionr[4];
-	double ofrac; // parallel only 
+	double ofrac; // parallel only
 	I_PARAM i_param;
 	R_PARAM r_param;
 

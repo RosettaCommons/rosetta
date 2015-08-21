@@ -159,7 +159,7 @@ void setup_grid_manager(GridWeights const & /*weights*/)
 	grid_manager->insert_grid("vdw",vdw);
 	grid_manager->insert_grid("hba",hba);
 	grid_manager->insert_grid("hbd",hbd);
-	roc_tracer << "setup grids"	<<std::endl;
+	roc_tracer << "setup grids" <<std::endl;
 
 }
 
@@ -236,8 +236,8 @@ void setup_activity_table(
 {
 	std::string schema =
 		"CREATE TABLE IF NOT EXISTS structure_activity (\n"
-		"	input_tag TEXT,\n"
-		"	activity BOOLEAN);";
+		"\tinput_tag TEXT,\n"
+		"\tactivity BOOLEAN);";
 
 	cppdb::statement schema_statement( basic::database::safely_prepare_statement(schema,db_session));
 	basic::database::safely_write_to_database(schema_statement);
@@ -247,12 +247,11 @@ void setup_activity_table(
 
 	utility::io::izstream active_file;
 	active_file.open(active_list_filename, std::ios_base::in);
-	while(!active_file.eof())
-	{
+	while ( !active_file.eof() )
+			{
 		std::string line;
 		getline(active_file,line);
-		if(line.size() > 0)
-		{
+		if ( line.size() > 0 ) {
 			insert_statement.bind(1,line);
 			insert_statement.bind(2,true);
 			basic::database::safely_write_to_database(insert_statement);
@@ -262,12 +261,11 @@ void setup_activity_table(
 
 	utility::io::izstream inactive_file;
 	inactive_file.open(inactive_list_filename, std::ios_base::in);
-	while(!inactive_file.eof())
-	{
+	while ( !inactive_file.eof() )
+			{
 		std::string line;
 		getline(inactive_file,line);
-		if(line.size() >0)
-		{
+		if ( line.size() >0 ) {
 			insert_statement.bind(1,line);
 			insert_statement.bind(2,false);
 			basic::database::safely_write_to_database(insert_statement);
@@ -283,19 +281,19 @@ numeric::RocCurve setup_roc_curve(utility::sql_database::sessionOP & db_session,
 	numeric::RocCurve roc_curve;
 	std::string select_string =
 		"SELECT structures.tag, job_string_real_data.data_value, structure_activity.activity\n"
-		"	FROM structures\n"
-		"		INNER JOIN structure_activity ON structures.input_tag = structure_activity.input_tag\n"
-		"		INNER JOIN job_string_real_data ON structures.struct_id = job_string_real_data.struct_id\n"
-		"	WHERE\n"
-		"		job_string_real_data.data_key= ?";
+		"\tFROM structures\n"
+		"\t\tINNER JOIN structure_activity ON structures.input_tag = structure_activity.input_tag\n"
+		"\t\tINNER JOIN job_string_real_data ON structures.struct_id = job_string_real_data.struct_id\n"
+		"\tWHERE\n"
+		"\t\tjob_string_real_data.data_key= ?";
 
 	cppdb::statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
 
 	select_statement.bind(1,"total_score_X");
 
 	cppdb::result result(basic::database::safely_read_from_database(select_statement));
-	while(result.next())
-	{
+	while ( result.next() )
+			{
 		std::string tag;
 		core::Real value = 0.0;
 		int activity = 0; //
@@ -316,10 +314,10 @@ void dump_curve_to_db(
 {
 	std::string schema =
 		"CREATE TABLE IF NOT EXISTS roc_curve (\n"
-		"	point_id INTEGER PRIMARY KEY AUTO_INCREMENT,\n"
-		"	curve_id INTEGER,\n"
-		"	TPR REAL,\n"
-		"	FPR REAL);";
+		"\tpoint_id INTEGER PRIMARY KEY AUTO_INCREMENT,\n"
+		"\tcurve_id INTEGER,\n"
+		"\tTPR REAL,\n"
+		"\tFPR REAL);";
 
 	cppdb::statement schema_statement( basic::database::safely_prepare_statement(schema,db_session));
 	basic::database::safely_write_to_database(schema_statement);
@@ -327,8 +325,7 @@ void dump_curve_to_db(
 	std::string insert_string = "INSERT INTO roc_curve VALUES(NULL,?,?,?);";
 	cppdb::statement insert_statement(basic::database::safely_prepare_statement(insert_string,db_session));
 	insert_statement.bind(1,curve_id);
-	for(utility::vector1<std::pair<platform::Real, platform::Real> >::const_iterator curve_it = curve.begin(); curve_it != curve.end();++curve_it)
-	{
+	for ( utility::vector1<std::pair<platform::Real, platform::Real> >::const_iterator curve_it = curve.begin(); curve_it != curve.end(); ++curve_it ) {
 		insert_statement.bind(2,curve_it->first);
 		insert_statement.bind(3,curve_it->second);
 		basic::database::safely_write_to_database(insert_statement);
@@ -355,8 +352,8 @@ void clean_up_database(utility::sql_database::sessionOP & db_session)
 
 	protocols::features::ProteinSilentReport reporter;
 
-	while(res.next())
-	{
+	while ( res.next() )
+			{
 		protocols::features::StructureID struct_id;
 		res >> struct_id;
 
@@ -370,12 +367,12 @@ void write_weights_to_db(utility::sql_database::sessionOP & db_session, GridWeig
 {
 	std::string schema =
 		"CREATE TABLE IF NOT EXISTS grid_weights (\n"
-		"	cycle INTEGER PRIMARY KEY,\n"
-		"	hba REAL,\n"
-		"	hbd REAL,\n"
-		"	vdw REAL,\n"
-		"	atr REAL,\n"
-		"	rep REAL);";
+		"\tcycle INTEGER PRIMARY KEY,\n"
+		"\thba REAL,\n"
+		"\thbd REAL,\n"
+		"\tvdw REAL,\n"
+		"\tatr REAL,\n"
+		"\trep REAL);";
 	cppdb::statement schema_statement( basic::database::safely_prepare_statement(schema,db_session));
 	basic::database::safely_write_to_database(schema_statement);
 
@@ -393,87 +390,84 @@ void write_weights_to_db(utility::sql_database::sessionOP & db_session, GridWeig
 
 int main(int argc, char* argv[])
 {
-    try {
+	try {
 
-	NEW_OPT(roc_opt::active_list,"a list of active protein_ligand complexes","");
-	NEW_OPT(roc_opt::inactive_list,"a list of inactive protein_ligand complexes","");
-	//NEW_OPT(roc_opt::outer_cycles,"the number of dock/optimize cycles to perfrom","");
+		NEW_OPT(roc_opt::active_list,"a list of active protein_ligand complexes","");
+		NEW_OPT(roc_opt::inactive_list,"a list of inactive protein_ligand complexes","");
+		//NEW_OPT(roc_opt::outer_cycles,"the number of dock/optimize cycles to perfrom","");
 
-	devel::init(argc,argv);
+		devel::init(argc,argv);
 
-	GridWeights current_weights(1.0,1.0,1.0,1.0,1.0);
+		GridWeights current_weights(1.0,1.0,1.0,1.0,1.0);
 
-	core::Size mpi_rank = 0;
+		core::Size mpi_rank = 0;
 
-	core::optimization::Multivec min_weights(5,-3.0);
-	core::optimization::Multivec max_weights(5,3.0);
+		core::optimization::Multivec min_weights(5,-3.0);
+		core::optimization::Multivec max_weights(5,3.0);
 
 #ifdef USEMPI
 	MPI_Comm_rank( MPI_COMM_WORLD, ( int* )( &mpi_rank ) );
 #endif
 
-	std::string active_list_filename = basic::options::option[basic::options::OptionKeys::roc_opt::active_list]();
-	std::string inactive_list_filename = basic::options::option[basic::options::OptionKeys::roc_opt::inactive_list]();
+		std::string active_list_filename = basic::options::option[basic::options::OptionKeys::roc_opt::active_list]();
+		std::string inactive_list_filename = basic::options::option[basic::options::OptionKeys::roc_opt::inactive_list]();
 
-	utility::sql_database::sessionOP db_session(basic::database::get_db_session());
+		utility::sql_database::sessionOP db_session(basic::database::get_db_session());
 
-	if(mpi_rank == 0)
-	{
-		roc_tracer <<"setting up activity table"<<std::endl;
-		setup_activity_table(db_session,active_list_filename,inactive_list_filename);
-		roc_tracer << "done setting up activity table" <<std::endl;
-	}
-
-
-//resync processes after table setup
-
-#ifdef USEMPI
-		MPI_Barrier( MPI_COMM_WORLD );
-#endif
-
-	for(core::Size cycle = 1; cycle <= 10; ++cycle)
-	{
-
-		setup_grid_manager(current_weights);
-		protocols::moves::MoverOP mover(setup_lowres_protocol());
-		protocols::jd2::JobDistributor::get_instance()->mpi_finalize(false);
-		roc_tracer << "starting docking for cycle " << cycle << std::endl;
-		protocols::jd2::JobDistributor::get_instance()->go(mover);
-
-#ifdef USEMPI
-		MPI_Barrier( MPI_COMM_WORLD );
-#endif
-
-
-		if(mpi_rank == 0)
-		{
-			roc_tracer << "starting roc optimization for cycle " << cycle << std::endl;
-			protocols::qsar::qsarOptFunc qsar_func(db_session,current_weights.get_multivec(),current_weights.get_indices());
-			numeric::RocCurve curve(setup_roc_curve(db_session,0.0));
-			curve.generate_roc_curve();
-			dump_curve_to_db(db_session,cycle,curve.roc_curve());
-			roc_tracer << curve.calculate_auc() <<std::endl;
-
-			//query the database and process score information
-			qsar_func.setup_data_map();
-			current_weights = optimize_weights(min_weights,max_weights,qsar_func,current_weights.get_multivec());
-			roc_tracer <<"New weights: " << current_weights.hba() << " "
-				<<current_weights.hbd() << " "
-				<<current_weights.atr() << " "
-				<<current_weights.rep() << " "
-				<<current_weights.vdw() << std::endl;
-			write_weights_to_db(db_session,current_weights,cycle);
-			clean_up_database(db_session);
+		if ( mpi_rank == 0 ) {
+			roc_tracer <<"setting up activity table"<<std::endl;
+			setup_activity_table(db_session,active_list_filename,inactive_list_filename);
+			roc_tracer << "done setting up activity table" <<std::endl;
 		}
 
-		protocols::jd2::JobDistributor::get_instance()->restart();
+
+		//resync processes after table setup
 
 #ifdef USEMPI
 		MPI_Barrier( MPI_COMM_WORLD );
 #endif
-	}
 
-//one last sync and finalize to shut everything down
+		for ( core::Size cycle = 1; cycle <= 10; ++cycle ) {
+
+			setup_grid_manager(current_weights);
+			protocols::moves::MoverOP mover(setup_lowres_protocol());
+			protocols::jd2::JobDistributor::get_instance()->mpi_finalize(false);
+			roc_tracer << "starting docking for cycle " << cycle << std::endl;
+			protocols::jd2::JobDistributor::get_instance()->go(mover);
+
+#ifdef USEMPI
+		MPI_Barrier( MPI_COMM_WORLD );
+#endif
+
+
+			if ( mpi_rank == 0 ) {
+				roc_tracer << "starting roc optimization for cycle " << cycle << std::endl;
+				protocols::qsar::qsarOptFunc qsar_func(db_session,current_weights.get_multivec(),current_weights.get_indices());
+				numeric::RocCurve curve(setup_roc_curve(db_session,0.0));
+				curve.generate_roc_curve();
+				dump_curve_to_db(db_session,cycle,curve.roc_curve());
+				roc_tracer << curve.calculate_auc() <<std::endl;
+
+				//query the database and process score information
+				qsar_func.setup_data_map();
+				current_weights = optimize_weights(min_weights,max_weights,qsar_func,current_weights.get_multivec());
+				roc_tracer <<"New weights: " << current_weights.hba() << " "
+					<<current_weights.hbd() << " "
+					<<current_weights.atr() << " "
+					<<current_weights.rep() << " "
+					<<current_weights.vdw() << std::endl;
+				write_weights_to_db(db_session,current_weights,cycle);
+				clean_up_database(db_session);
+			}
+
+			protocols::jd2::JobDistributor::get_instance()->restart();
+
+#ifdef USEMPI
+		MPI_Barrier( MPI_COMM_WORLD );
+#endif
+		}
+
+		//one last sync and finalize to shut everything down
 #ifdef USEMPI
 		MPI_Barrier( MPI_COMM_WORLD );
 		MPI_Finalize();

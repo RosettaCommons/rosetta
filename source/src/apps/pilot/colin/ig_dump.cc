@@ -68,126 +68,126 @@ static thread_local basic::Tracer TR( "apps.ig_dump" );
 int
 main( int argc, char * argv [] )
 {
-    try {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	try {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	// initialize Rosetta
-	devel::init(argc, argv);
+		// initialize Rosetta
+		devel::init(argc, argv);
 
-	// create a TaskFactory with the resfile
-	using namespace core::pack::task;
-	using namespace core::pack::task::operation;
-	TaskFactoryOP main_task_factory( new TaskFactory );
-	main_task_factory->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
-	if ( option[ packing::resfile ].user() ) {
-		main_task_factory->push_back( TaskOperationCOP( new operation::ReadResfile ) );
-	}
-
-	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
-
-	utility::vector1< protocols::jobdist::BasicJobOP > input_jobs = protocols::jobdist::load_s_and_l();
-	core::pose::PoseOP input_pose;
-
-	for (core::Size i = 1; i <= input_jobs.size(); ++i) {
-
-		TR << "Processing " << input_jobs[i]->input_tag() << "..." << std::endl;
-
-		// load the PDB file
-		input_pose = core::pose::PoseOP( new core::pose::Pose() );
-		if ( option[ in::file::centroid_input ].user() ) {
-			core::import_pose::centroid_pose_from_pdb( *input_pose, input_jobs[i]->input_tag() );
-		} else {
-			core::import_pose::pose_from_pdb( *input_pose, input_jobs[i]->input_tag() );
+		// create a TaskFactory with the resfile
+		using namespace core::pack::task;
+		using namespace core::pack::task::operation;
+		TaskFactoryOP main_task_factory( new TaskFactory );
+		main_task_factory->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
+		if ( option[ packing::resfile ].user() ) {
+			main_task_factory->push_back( TaskOperationCOP( new operation::ReadResfile ) );
 		}
 
-		std::string output_tag(input_jobs[i]->output_tag(1));
+		core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 
-		// make a directory for the results if necessary
-		if ( utility::file::file_exists(output_tag) ) {
-			TR << "Using existing " << output_tag << " directory for interaction graph data" << std::endl;
-		} else {
-			TR << "Creating " << output_tag << " directory for interaction graph data" << std::endl;
-			if (  !utility::file::create_directory(output_tag) ) {
-				utility_exit_with_message("Could not create results directory");
+		utility::vector1< protocols::jobdist::BasicJobOP > input_jobs = protocols::jobdist::load_s_and_l();
+		core::pose::PoseOP input_pose;
+
+		for ( core::Size i = 1; i <= input_jobs.size(); ++i ) {
+
+			TR << "Processing " << input_jobs[i]->input_tag() << "..." << std::endl;
+
+			// load the PDB file
+			input_pose = core::pose::PoseOP( new core::pose::Pose() );
+			if ( option[ in::file::centroid_input ].user() ) {
+				core::import_pose::centroid_pose_from_pdb( *input_pose, input_jobs[i]->input_tag() );
+			} else {
+				core::import_pose::pose_from_pdb( *input_pose, input_jobs[i]->input_tag() );
 			}
-		}
 
-		// allocate variables necessary for creating an interaction graph
-		PackerTaskCOP task = main_task_factory->create_task_and_apply_taskoperations( *input_pose );
-		core::pack::rotamer_set::RotamerSetsOP rotsets( new core::pack::rotamer_set::RotamerSets );
-		core::pack::interaction_graph::InteractionGraphBaseOP ig;
+			std::string output_tag(input_jobs[i]->output_tag(1));
 
-		// create rotamers and calculate interaction graph energies
-		core::pack::pack_rotamers_setup(*input_pose, *score_fxn, task, rotsets, ig);
-
-		int const num_nodes(ig->get_num_nodes());
-
-		TR << "One Body Energies:" << std::endl << std::endl;
-
-		for (int i = 1; i <= num_nodes; ++i) {
-
-			TR << "Writing Node " << rotsets->moltenres_2_resid(i) << std::endl;
-
-			std::ostringstream fname;
-			fname << output_tag << platform::file::PATH_SEPARATOR << rotsets->moltenres_2_resid(i) << ".gz";
-
-			utility::io::ozstream outfile(fname.str());
-
-			int const num_states(ig->get_num_states_for_node(i));
-			for (int j = 1; j <= num_states; ++j) {
-				core::conformation::Residue const & rotres(*rotsets->rotamer_set_for_moltenresidue(i)->rotamer(j));
-				outfile << ig->get_one_body_energy_for_node_state(i, j) << "\t" << rotres.name3() ;
-				for (core::Size k = 1; k <= rotres.nchi(); ++k) {
-					outfile << "\t" << rotres.chi(k);
+			// make a directory for the results if necessary
+			if ( utility::file::file_exists(output_tag) ) {
+				TR << "Using existing " << output_tag << " directory for interaction graph data" << std::endl;
+			} else {
+				TR << "Creating " << output_tag << " directory for interaction graph data" << std::endl;
+				if (  !utility::file::create_directory(output_tag) ) {
+					utility_exit_with_message("Could not create results directory");
 				}
-				outfile << "\n"; // don't flush with std::endl!
 			}
 
-			outfile.close();
-		}
-		TR << std::endl;
-		TR << "Two Body Energies:" << std::endl << std::endl;
+			// allocate variables necessary for creating an interaction graph
+			PackerTaskCOP task = main_task_factory->create_task_and_apply_taskoperations( *input_pose );
+			core::pack::rotamer_set::RotamerSetsOP rotsets( new core::pack::rotamer_set::RotamerSets );
+			core::pack::interaction_graph::InteractionGraphBaseOP ig;
 
-		core::pack::interaction_graph::PrecomputedPairEnergiesInteractionGraphOP pig =
-		utility::pointer::dynamic_pointer_cast< core::pack::interaction_graph::PrecomputedPairEnergiesInteractionGraph > ( ig );
-		if ( !pig ) {
-			utility_exit_with_message("Interaction graph is not pre-computed");
-		}
+			// create rotamers and calculate interaction graph energies
+			core::pack::pack_rotamers_setup(*input_pose, *score_fxn, task, rotsets, ig);
 
-		for (int node1 = 1; node1 <= num_nodes; ++node1) {
-			for (int node2 = node1+1; node2 <= num_nodes; ++node2) {
+			int const num_nodes(ig->get_num_nodes());
 
-				int const num_states1(ig->get_num_states_for_node(node1));
-				int const num_states2(ig->get_num_states_for_node(node2));
+			TR << "One Body Energies:" << std::endl << std::endl;
 
-				if (!ig->get_edge_exists(node1, node2)) continue;
+			for ( int i = 1; i <= num_nodes; ++i ) {
 
-				TR << "Writing Node " << rotsets->moltenres_2_resid(node1) << " - Node " << rotsets->moltenres_2_resid(node2)
-				   << std::endl;
+				TR << "Writing Node " << rotsets->moltenres_2_resid(i) << std::endl;
 
 				std::ostringstream fname;
-				fname << output_tag << platform::file::PATH_SEPARATOR << rotsets->moltenres_2_resid(node1) << "-"
-				      << rotsets->moltenres_2_resid(node2) << ".gz";
+				fname << output_tag << platform::file::PATH_SEPARATOR << rotsets->moltenres_2_resid(i) << ".gz";
 
 				utility::io::ozstream outfile(fname.str());
 
-				for (int state1 = 1; state1 <= num_states1; ++state1) {
-					for (int state2 = 1; state2 <= num_states2; ++state2) {
-
-						if (state2 > 1) outfile << "\t";
-						outfile << pig->get_two_body_energy_for_edge(node1, node2, state1, state2);
+				int const num_states(ig->get_num_states_for_node(i));
+				for ( int j = 1; j <= num_states; ++j ) {
+					core::conformation::Residue const & rotres(*rotsets->rotamer_set_for_moltenresidue(i)->rotamer(j));
+					outfile << ig->get_one_body_energy_for_node_state(i, j) << "\t" << rotres.name3() ;
+					for ( core::Size k = 1; k <= rotres.nchi(); ++k ) {
+						outfile << "\t" << rotres.chi(k);
 					}
 					outfile << "\n"; // don't flush with std::endl!
 				}
 
 				outfile.close();
 			}
+			TR << std::endl;
+			TR << "Two Body Energies:" << std::endl << std::endl;
+
+			core::pack::interaction_graph::PrecomputedPairEnergiesInteractionGraphOP pig =
+				utility::pointer::dynamic_pointer_cast< core::pack::interaction_graph::PrecomputedPairEnergiesInteractionGraph > ( ig );
+			if ( !pig ) {
+				utility_exit_with_message("Interaction graph is not pre-computed");
+			}
+
+			for ( int node1 = 1; node1 <= num_nodes; ++node1 ) {
+				for ( int node2 = node1+1; node2 <= num_nodes; ++node2 ) {
+
+					int const num_states1(ig->get_num_states_for_node(node1));
+					int const num_states2(ig->get_num_states_for_node(node2));
+
+					if ( !ig->get_edge_exists(node1, node2) ) continue;
+
+					TR << "Writing Node " << rotsets->moltenres_2_resid(node1) << " - Node " << rotsets->moltenres_2_resid(node2)
+						<< std::endl;
+
+					std::ostringstream fname;
+					fname << output_tag << platform::file::PATH_SEPARATOR << rotsets->moltenres_2_resid(node1) << "-"
+						<< rotsets->moltenres_2_resid(node2) << ".gz";
+
+					utility::io::ozstream outfile(fname.str());
+
+					for ( int state1 = 1; state1 <= num_states1; ++state1 ) {
+						for ( int state2 = 1; state2 <= num_states2; ++state2 ) {
+
+							if ( state2 > 1 ) outfile << "\t";
+							outfile << pig->get_two_body_energy_for_edge(node1, node2, state1, state2);
+						}
+						outfile << "\n"; // don't flush with std::endl!
+					}
+
+					outfile.close();
+				}
+			}
 		}
-	}
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                             std::cout << "caught exception " << e.msg() << std::endl;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                }
-       return 0;
+	}
+	return 0;
 }

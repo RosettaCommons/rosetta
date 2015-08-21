@@ -123,7 +123,7 @@ protected: // Methods
 	{
 		if ( ( value_str.empty() ) || ( ! ObjexxFCL::is_double( value_str ) ) ) {
 			std::cerr << "ERROR: Illegal value for real option -" << id()
-			 << " specified: " << value_str << std::endl;
+				<< " specified: " << value_str << std::endl;
 			std::exit( EXIT_FAILURE );
 		}
 		return ObjexxFCL::double_of( value_str );

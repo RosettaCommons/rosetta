@@ -48,7 +48,7 @@ public:
 
 	virtual TaskOperationOP clone() const;
 	void surface_exposed_nb_cutoff( core::Size const nb_count );
-	virtual	void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
+	virtual void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
 	virtual void parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & dm );
 
 private:

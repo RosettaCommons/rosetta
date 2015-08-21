@@ -66,26 +66,26 @@ FitSimpleHelixCreator::mover_name()
 
 /// @brief Creator for FitSimpleHelix mover.
 FitSimpleHelix::FitSimpleHelix():
-		//utility::pointer::ReferenceCount(),
-		Mover("FitSimpleHelix"),
-		r1_initial_(1.0),
-		omega1_initial_(1.0),
-		dz1_initial_(1.0),
-		start_index_(0),
-		end_index_(0),
-		min_type_("dfpmin"),
-		min_tolerance_(0.00000001),
-		reference_atom_("CA"),
-		reference_residue_(1),
-		residues_per_repeat_(1),
-		r1_vals_output_(),
-		omega1_val_output_(0.0),
-		z1_val_output_(0.0),
-		delta_omega1_vals_output_(),
-		delta_z1_vals_output_(),
-		r1_guesses_(),
-		delta_omega1_guesses_(),
-		delta_z1_guesses_()
+	//utility::pointer::ReferenceCount(),
+	Mover("FitSimpleHelix"),
+	r1_initial_(1.0),
+	omega1_initial_(1.0),
+	dz1_initial_(1.0),
+	start_index_(0),
+	end_index_(0),
+	min_type_("dfpmin"),
+	min_tolerance_(0.00000001),
+	reference_atom_("CA"),
+	reference_residue_(1),
+	residues_per_repeat_(1),
+	r1_vals_output_(),
+	omega1_val_output_(0.0),
+	z1_val_output_(0.0),
+	delta_omega1_vals_output_(),
+	delta_z1_vals_output_(),
+	r1_guesses_(),
+	delta_omega1_guesses_(),
+	delta_z1_guesses_()
 {}
 
 
@@ -125,17 +125,17 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 	offsetvect.x() = 5;
 	offsetvect.y() = 6;
 	offsetvect.z() = 7;
-	for(core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir) {
-		for(core::Size ia=1, iamax=pose.residue(ir).natoms(); ia<=iamax; ++ia) {
+	for ( core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir ) {
+		for ( core::Size ia=1, iamax=pose.residue(ir).natoms(); ia<=iamax; ++ia ) {
 			pose.set_xyz( core::id::AtomID(ia,ir), pose.xyz( core::id::AtomID(ia,ir) ) + offsetvect );
 		}
 	}
-	
+
 	//Count mainchain atoms in the residues making up the repeating unit:
 	core::Size natoms(0);
 	core::Size natoms_before_refres(0);
-	for(core::Size i=0, imax=residues_per_repeat(); i<imax; ++i) {
-		if(i+1 < reference_residue()) natoms_before_refres += pose.residue(start_index_+i).n_mainchain_atoms();
+	for ( core::Size i=0, imax=residues_per_repeat(); i<imax; ++i ) {
+		if ( i+1 < reference_residue() ) natoms_before_refres += pose.residue(start_index_+i).n_mainchain_atoms();
 		natoms += pose.residue(start_index_+i).n_mainchain_atoms();
 	}
 
@@ -154,7 +154,7 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 		runtime_assert_string_msg( reference_res_index >= start_index_ && reference_res_index <= end_index_, "In FitSimpleHelix::apply(): The reference residue does not fall within the range of residues to be fitted." );
 		runtime_assert_string_msg( reference_atom_index <= pose.residue( reference_res_index ).n_mainchain_atoms(), "In FitSimpleHelix::apply(): The reference atom is not a mainchain atom in the reference residue." );
 
-		if(TR.visible()) TR << "Fitting reference atom " << reference_atom_ << " in reference residue (residue " << reference_res_index << ")." << std::endl;
+		if ( TR.visible() ) TR << "Fitting reference atom " << reference_atom_ << " in reference residue (residue " << reference_res_index << ")." << std::endl;
 
 		FitSimpleHelixMultiFunc multfunc(pose, reference_atom_, reference_res_index, residues_per_repeat(), start_index_, end_index_, 0); //Make the multifunc that will be used to fit the reference atom.
 
@@ -178,7 +178,7 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 		delta_omega1_vals_output_[absolute_reference_atom_index] = vars[4];
 		delta_z1_vals_output_[absolute_reference_atom_index] = vars[5];
 
-		if(TR.visible()) {
+		if ( TR.visible() ) {
 			TR << "Reference atom r1 = " << vars[1] << std::endl; //Delete me
 			TR << "Reference atom omega1 = " << vars[2] << std::endl; //Delete me
 			TR << "Reference atom dz1 = " << vars[3] << std::endl; //Delete me
@@ -186,7 +186,7 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 			TR << "Reference atom delta_z1 = " << vars[5] << std::endl; //Delete me
 		}
 
-		if(TR.visible()) TR << "Aligning pose to ideal helix." << std::endl;
+		if ( TR.visible() ) TR << "Aligning pose to ideal helix." << std::endl;
 
 		core::pose::Pose pose_copy = pose; //Make a copy of the pose.
 
@@ -196,7 +196,7 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 		core::Real t = -1.0*static_cast<core::Real>(end_index_ - start_index_ + 1)/2.0;
 		t += static_cast<core::Real>( reference_res_index-start_index_ );
 
-		for(core::Size ir = reference_res_index; ir <= end_index_; ir += residues_per_repeat()) {
+		for ( core::Size ir = reference_res_index; ir <= end_index_; ir += residues_per_repeat() ) {
 			pose_copy.set_xyz( core::id::NamedAtomID(reference_atom_,ir), numeric::crick_equations::xyz( vars[1], vars[2] , t, vars[3], 0.0, 0.0 ) + offsetvect );
 			amap[core::id::AtomID(pose.residue(ir).atom_index(reference_atom_),ir)] = core::id::AtomID(pose_copy.residue(ir).atom_index(reference_atom_),ir);
 			t += static_cast<core::Real>( residues_per_repeat() );
@@ -213,20 +213,20 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 	//Scope 2 (within this for loop): repeat for all mainchain atoms
 	core::Size cur_res(start_index_);
 	core::Size cur_atom(0);
-	for(core::Size ia=1; ia<=natoms; ++ia) {
+	for ( core::Size ia=1; ia<=natoms; ++ia ) {
 
 		++cur_atom; //Increment the current atom.
-		if( cur_atom > pose.residue(cur_res).n_mainchain_atoms() ) { //If we've gone through all of the atoms defining mainchain torsions in the current residue.
+		if ( cur_atom > pose.residue(cur_res).n_mainchain_atoms() ) { //If we've gone through all of the atoms defining mainchain torsions in the current residue.
 			++cur_res; //Increment the current residue
 			cur_atom=1; //Start with the first atom of the next residue.
 		}
-		if( cur_res==reference_res_index && cur_atom==reference_atom_index ) {
+		if ( cur_res==reference_res_index && cur_atom==reference_atom_index ) {
 			runtime_assert_string_msg( ia == absolute_reference_atom_index, "Programming error in protocols::helical_bundle::FitSimpleHelix::apply() function.  This shouldn't ever happen.  Please consult a developer." ); //This should be true.
 			continue; //Skip the reference atom -- we've already done it.
 		}
 
 		std::string const cur_atom_name = pose.residue(cur_res).atom_name( cur_atom );
-		if(TR.visible()) TR << "Fitting " << cur_atom_name << " atom." << std::endl;
+		if ( TR.visible() ) TR << "Fitting " << cur_atom_name << " atom." << std::endl;
 
 		FitSimpleHelixMultiFunc multfunc(pose, cur_atom_name, cur_res, residues_per_repeat(), start_index_, end_index_, 1); //Make the multifunc that will be used to fit the current atom.
 
@@ -248,7 +248,7 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 		delta_omega1_vals_output_[ia] = vars[4];
 		delta_z1_vals_output_[ia] = vars[5];
 
-		if(TR.visible()) {
+		if ( TR.visible() ) {
 			TR << "Atom " << cur_atom_name << " r1 = " << vars[1] << std::endl; //Delete me
 			TR << "omega1 = " << vars[2] << std::endl; //Delete me
 			TR << "dz1 = " << vars[3] << std::endl; //Delete me
@@ -256,15 +256,15 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 			TR << "Atom " << cur_atom_name << " delta_z1 = " << vars[5] << std::endl; //Delete me
 		}
 	}
-	
+
 	//Subtract the arbitrary offset from the pose to shift it back:
-	for(core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir) {
-		for(core::Size ia=1, iamax=pose.residue(ir).natoms(); ia<=iamax; ++ia) {
+	for ( core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir ) {
+		for ( core::Size ia=1, iamax=pose.residue(ir).natoms(); ia<=iamax; ++ia ) {
 			pose.set_xyz( core::id::AtomID(ia,ir), pose.xyz( core::id::AtomID(ia,ir) ) - offsetvect );
 		}
 	}
 
-	if(TR.visible()) TR << "Fit complete." << std::endl;
+	if ( TR.visible() ) TR << "Fit complete." << std::endl;
 
 	return;
 }
@@ -285,7 +285,7 @@ void FitSimpleHelix::get_crick_parameters (
 	core::Real &omega1_out,
 	core::Real &z1_out,
 	utility::vector1 < core::Real > &delta_omega1_out,
-	utility::vector1 < core::Real > &delta_z1_out		
+	utility::vector1 < core::Real > &delta_z1_out
 ) const {
 	r1_out = r1_vals_output_;
 	omega1_out = omega1_val_output_;
@@ -302,15 +302,15 @@ void FitSimpleHelix::get_crick_parameters (
 ///
 /*void
 FitSimpleHelix::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data_map,
-		protocols::filters::Filters_map const &filters,
-		protocols::moves::Movers_map const &movers,
-		core::pose::Pose const & pose
+utility::tag::TagCOP tag,
+basic::datacache::DataMap & data_map,
+protocols::filters::Filters_map const &filters,
+protocols::moves::Movers_map const &movers,
+core::pose::Pose const & pose
 ) {
 
 
-	return;
+return;
 }*/
 
 

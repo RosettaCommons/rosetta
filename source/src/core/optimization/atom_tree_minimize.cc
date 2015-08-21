@@ -219,7 +219,7 @@ torsional_derivative_from_cartesian_derivatives(
 	//  using Abe Go trick
 	//
 	if ( type == PHI || type == THETA || type == RB4 || type == RB5 ||
-			 type == RB6 ) {
+			type == RB6 ) {
 		// rotation about an axis
 		// note: assumes we are dealing with RADIANS
 		// scale factor below handles the fact that RB4-6 are degrees
@@ -237,7 +237,7 @@ torsional_derivative_from_cartesian_derivatives(
 		}
 
 		deriv -= scale_factor * ( dot( axis, dof_node.F1() ) +
-															dot( cross( axis, end_pos ), dof_node.F2() ) );
+			dot( cross( axis, end_pos ), dof_node.F2() ) );
 	} else {
 		// translation along an axis
 		deriv += dot( axis, dof_node.F2() );
@@ -264,7 +264,7 @@ atom_tree_get_atompairE_deriv(
 {
 	using namespace scoring;
 
-debug_assert( pose.energies().minimization_graph() );
+	debug_assert( pose.energies().minimization_graph() );
 	MinimizationGraphCOP mingraph = pose.energies().minimization_graph();
 
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
@@ -296,7 +296,7 @@ debug_assert( pose.energies().minimization_graph() );
 
 		// loop through atoms first moved by this torsion
 		for ( DOF_Node::AtomIDs::const_iterator it1=dof_node.atoms().begin(),
-				it1e = dof_node.atoms().end();	it1 != it1e; ++it1 ) {
+				it1e = dof_node.atoms().end(); it1 != it1e; ++it1 ) {
 			id::AtomID const & atom_id( *it1 );
 			dof_node.F1() += min_map.atom_derivatives( atom_id.rsd() )[ atom_id.atomno() ].f1();
 			dof_node.F2() += min_map.atom_derivatives( atom_id.rsd() )[ atom_id.atomno() ].f2();
@@ -541,11 +541,11 @@ numerical_derivative_check(
 	NumDerivCheckDataOP min_debug;
 	if ( deriv_check_result ) min_debug = NumDerivCheckDataOP( new NumDerivCheckData( nangles, n_increment ) );
 
-// 	min_debug->nangles = nangles;
-// 	if ( nangles > int( min_debug->abs_deriv_dev.size1() ) ) {
-// 		min_debug->abs_deriv_dev.dimension( nangles );
-// 		min_debug->rel_deriv_dev.dimension( nangles );
-// 	}
+	//  min_debug->nangles = nangles;
+	//  if ( nangles > int( min_debug->abs_deriv_dev.size1() ) ) {
+	//   min_debug->abs_deriv_dev.dimension( nangles );
+	//   min_debug->rel_deriv_dev.dimension( nangles );
+	//  }
 
 	Multivec vars( start_vars );
 
@@ -575,7 +575,7 @@ numerical_derivative_check(
 			vars[ii] = start_vars[ii];
 
 			Real const ratio( std::abs( dE_dvars[ii] ) < 0.001 ? 0.0 :
-												 deriv / dE_dvars[ii] );
+				deriv / dE_dvars[ii] );
 
 			if ( std::abs(dE_dvars[ii]) > 0.001 || std::abs(deriv) > 0.001 ) {
 				id::DOF_ID parent_id( id::BOGUS_DOF_ID );
@@ -710,17 +710,17 @@ numerical_derivative_check(
 
 } // namespace optimization
 } // namespace core
-// 	{ // dont want to modify the pose if we can avoid it
-// 		Size const nangles( min_map.nangles() );
-// 		Multivec tmp_vars( nangles );
-// 		min_map.copy_dofs_from_pose( pose, tmp_vars );
-// 		Real dev(0.0);
-// 		for ( Size i=1; i<= nangles; ++i ) {
-// 			dev += std::abs( tmp_vars[i] - vars[i] );
-// 		}
-// 		std::cout << "[ DEBUG ] vars dev in atom_tree_dfunc: " << dev << std::endl;
-// 		if ( dev > 1e-2 ) {
-// 			min_map.copy_dofs_to_pose( pose, vars );
-// 			scorefxn( pose );
-// 		}
-// 	}
+//  { // dont want to modify the pose if we can avoid it
+//   Size const nangles( min_map.nangles() );
+//   Multivec tmp_vars( nangles );
+//   min_map.copy_dofs_from_pose( pose, tmp_vars );
+//   Real dev(0.0);
+//   for ( Size i=1; i<= nangles; ++i ) {
+//    dev += std::abs( tmp_vars[i] - vars[i] );
+//   }
+//   std::cout << "[ DEBUG ] vars dev in atom_tree_dfunc: " << dev << std::endl;
+//   if ( dev > 1e-2 ) {
+//    min_map.copy_dofs_to_pose( pose, vars );
+//    scorefxn( pose );
+//   }
+//  }

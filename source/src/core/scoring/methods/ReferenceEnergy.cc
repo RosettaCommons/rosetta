@@ -80,8 +80,8 @@ ReferenceEnergy::residue_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ){
-			return;
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) {
+		return;
 	}
 
 	using namespace chemical;
@@ -91,9 +91,9 @@ ReferenceEnergy::residue_energy(
 		AA const aa2 ( is_d_aminoacid(aa) ? get_l_equivalent(aa) : aa);
 		if ( Size(aa2) > aa_weights_.size() ) return;
 		emap[ ref ] += aa_weights_[ aa2 ];
-// 		if ( rsd.is_DNA() ) {
-// 			std::cout << "using dna refE " << aa_weights_[aa] << std::endl;
-// 		}
+		//   if ( rsd.is_DNA() ) {
+		//    std::cout << "using dna refE " << aa_weights_[aa] << std::endl;
+		//   }
 		return;
 	}
 
@@ -107,68 +107,68 @@ ReferenceEnergy::residue_energy(
 	if ( rsd.type().aa() > num_canonical_aas ) return;
 
 	/* Stolen from rosetta++; negated so that Wref is a positive number
-		Waa( aa_ala ) = -0.16;  //ALA,1
-		Waa( aa_cys ) = -1.70;  //CYS,2
-		Waa( aa_asp ) =  0.67;  //ASP,3
-		Waa( aa_glu ) =  0.81;  //GLU,4
-		Waa( aa_phe ) = -0.63;  //PHE,5
-		Waa( aa_gly ) =  0.17;  //GLY,6
-		Waa( aa_his ) = -0.56;  //HIS,7
-		Waa( aa_ile ) = -0.24;  //ILE,8
-		Waa( aa_lys ) =  0.65;  //LYS,9
-		Waa( aa_leu ) =  0.10;  //LEU,10
-		Waa( aa_met ) =  0.34;  //MET,11
-		Waa( aa_asn ) =  0.89;  //ASN,12
-		Waa( aa_pro ) = -0.02;  //PRO,13
-		Waa( aa_gln ) =  0.97;  //GLN,14
-		Waa( aa_arg ) =  0.98;  //ARG,15
-		Waa( aa_ser ) =  0.37;  //SER,16
-		Waa( aa_thr ) =  0.27;  //THR,17
-		Waa( aa_val ) = -0.29;  //VAL,18
-		Waa( aa_trp ) = -0.91;  //TRP,19
-		Waa( aa_tyr ) = -0.51;  //TYR,20
+	Waa( aa_ala ) = -0.16;  //ALA,1
+	Waa( aa_cys ) = -1.70;  //CYS,2
+	Waa( aa_asp ) =  0.67;  //ASP,3
+	Waa( aa_glu ) =  0.81;  //GLU,4
+	Waa( aa_phe ) = -0.63;  //PHE,5
+	Waa( aa_gly ) =  0.17;  //GLY,6
+	Waa( aa_his ) = -0.56;  //HIS,7
+	Waa( aa_ile ) = -0.24;  //ILE,8
+	Waa( aa_lys ) =  0.65;  //LYS,9
+	Waa( aa_leu ) =  0.10;  //LEU,10
+	Waa( aa_met ) =  0.34;  //MET,11
+	Waa( aa_asn ) =  0.89;  //ASN,12
+	Waa( aa_pro ) = -0.02;  //PRO,13
+	Waa( aa_gln ) =  0.97;  //GLN,14
+	Waa( aa_arg ) =  0.98;  //ARG,15
+	Waa( aa_ser ) =  0.37;  //SER,16
+	Waa( aa_thr ) =  0.27;  //THR,17
+	Waa( aa_val ) = -0.29;  //VAL,18
+	Waa( aa_trp ) = -0.91;  //TRP,19
+	Waa( aa_tyr ) = -0.51;  //TYR,20
 	*/
 
 	switch ( rsd.type().aa() ) {
-		case aa_ala: emap[ ref ] +=  0.16; break;
-		case aa_cys: emap[ ref ] +=  1.70; break;
+	case aa_ala : emap[ ref ] +=  0.16; break;
+	case aa_cys : emap[ ref ] +=  1.70; break;
 		//    case aa_asp: emap[ ref ] +=  -0.67; break;
-		case aa_asp:
-			emap[ ref ] += (rsd.type().has_variant_type( chemical::PROTONATED )) ? -0.262 : -0.67;
-			break;
+	case aa_asp :
+		emap[ ref ] += (rsd.type().has_variant_type( chemical::PROTONATED )) ? -0.262 : -0.67;
+		break;
 		//    case aa_glu: emap[ ref ] +=  -0.81; break;
-		case aa_glu:
-	    	emap[ ref ] += (rsd.type().has_variant_type( chemical::PROTONATED )) ? -0.81 : -0.81;
-	    	break;
-	    case aa_phe: emap[ ref ] +=  0.63; break;
-	    case aa_gly: emap[ ref ] +=  -0.17; break;
-	    //    case aa_his: emap[ ref ] +=  0.56; break;
-	    case aa_his:
-	    	emap[ ref ] += (rsd.type().has_variant_type( chemical::PROTONATED )) ? 0.288 : 0.56;
-	    	break;
-	    case aa_ile: emap[ ref ] +=  0.24; break;
-	    //    case aa_lys: emap[ ref ] +=  -0.65; break;
-	    case aa_lys:
-	    	emap[ ref ] += (rsd.type().has_variant_type( chemical::DEPROTONATED )) ? -0.65 : -0.65;
-	    	break;
-	    case aa_leu: emap[ ref ] +=  -0.10; break;
-	    case aa_met: emap[ ref ] +=  -0.34; break;
-	    case aa_asn: emap[ ref ] +=  -0.89; break;
-	    case aa_pro: emap[ ref ] +=  0.02; break;
-	    case aa_gln: emap[ ref ] +=  -0.97; break;
-	    case aa_arg: emap[ ref ] +=  -0.98; break;
-	    case aa_ser: emap[ ref ] +=  -0.37; break;
-	    case aa_thr: emap[ ref ] +=  -0.27; break;
-	    case aa_val: emap[ ref ] +=  0.29; break;
-	    case aa_trp: emap[ ref ] +=  0.91; break;
-	    //    case aa_tyr: emap[ ref ] +=  0.51; break;
-	    case aa_tyr:
-	    	emap[ ref ] += (rsd.type().has_variant_type( chemical::DEPROTONATED )) ? 0.238 : 0.51;
-	    	break;
-	    default:
-	    	utility_exit();
-	    	break;
-	  }
+	case aa_glu :
+		emap[ ref ] += (rsd.type().has_variant_type( chemical::PROTONATED )) ? -0.81 : -0.81;
+		break;
+	case aa_phe : emap[ ref ] +=  0.63; break;
+	case aa_gly : emap[ ref ] +=  -0.17; break;
+		//    case aa_his: emap[ ref ] +=  0.56; break;
+	case aa_his :
+		emap[ ref ] += (rsd.type().has_variant_type( chemical::PROTONATED )) ? 0.288 : 0.56;
+		break;
+	case aa_ile : emap[ ref ] +=  0.24; break;
+		//    case aa_lys: emap[ ref ] +=  -0.65; break;
+	case aa_lys :
+		emap[ ref ] += (rsd.type().has_variant_type( chemical::DEPROTONATED )) ? -0.65 : -0.65;
+		break;
+	case aa_leu : emap[ ref ] +=  -0.10; break;
+	case aa_met : emap[ ref ] +=  -0.34; break;
+	case aa_asn : emap[ ref ] +=  -0.89; break;
+	case aa_pro : emap[ ref ] +=  0.02; break;
+	case aa_gln : emap[ ref ] +=  -0.97; break;
+	case aa_arg : emap[ ref ] +=  -0.98; break;
+	case aa_ser : emap[ ref ] +=  -0.37; break;
+	case aa_thr : emap[ ref ] +=  -0.27; break;
+	case aa_val : emap[ ref ] +=  0.29; break;
+	case aa_trp : emap[ ref ] +=  0.91; break;
+		//    case aa_tyr: emap[ ref ] +=  0.51; break;
+	case aa_tyr :
+		emap[ ref ] += (rsd.type().has_variant_type( chemical::DEPROTONATED )) ? 0.238 : 0.51;
+		break;
+	default :
+		utility_exit();
+		break;
+	}
 
 }
 
@@ -181,7 +181,7 @@ ReferenceEnergy::is_d_aminoacid(
 	core::chemical::AA const res_aa
 ) const {
 	using namespace core::chemical;
-	if(res_aa >= aa_dal && res_aa <= aa_dty) return true;
+	if ( res_aa >= aa_dal && res_aa <= aa_dty ) return true;
 	return false;
 }
 
@@ -194,25 +194,25 @@ ReferenceEnergy::get_l_equivalent(
 	core::chemical::AA const d_aa
 ) const {
 	using namespace core::chemical;
-	if(d_aa==aa_dal) return aa_ala;
-	else if(d_aa==aa_dcs) return aa_cys;
-	else if(d_aa==aa_das) return aa_asp;
-	else if(d_aa==aa_dgu) return aa_glu;
-	else if(d_aa==aa_dph) return aa_phe;
-	else if(d_aa==aa_dhi) return aa_his;
-	else if(d_aa==aa_dil) return aa_ile;
-	else if(d_aa==aa_dly) return aa_lys;
-	else if(d_aa==aa_dle) return aa_leu;
-	else if(d_aa==aa_dme) return aa_met;
-	else if(d_aa==aa_dan) return aa_asn;
-	else if(d_aa==aa_dpr) return aa_pro;
-	else if(d_aa==aa_dgn) return aa_gln;
-	else if(d_aa==aa_dar) return aa_arg;
-	else if(d_aa==aa_dse) return aa_ser;
-	else if(d_aa==aa_dth) return aa_thr;
-	else if(d_aa==aa_dva) return aa_val;
-	else if(d_aa==aa_dtr) return aa_trp;
-	else if(d_aa==aa_dty) return aa_tyr;
+	if ( d_aa==aa_dal ) return aa_ala;
+	else if ( d_aa==aa_dcs ) return aa_cys;
+	else if ( d_aa==aa_das ) return aa_asp;
+	else if ( d_aa==aa_dgu ) return aa_glu;
+	else if ( d_aa==aa_dph ) return aa_phe;
+	else if ( d_aa==aa_dhi ) return aa_his;
+	else if ( d_aa==aa_dil ) return aa_ile;
+	else if ( d_aa==aa_dly ) return aa_lys;
+	else if ( d_aa==aa_dle ) return aa_leu;
+	else if ( d_aa==aa_dme ) return aa_met;
+	else if ( d_aa==aa_dan ) return aa_asn;
+	else if ( d_aa==aa_dpr ) return aa_pro;
+	else if ( d_aa==aa_dgn ) return aa_gln;
+	else if ( d_aa==aa_dar ) return aa_arg;
+	else if ( d_aa==aa_dse ) return aa_ser;
+	else if ( d_aa==aa_dth ) return aa_thr;
+	else if ( d_aa==aa_dva ) return aa_val;
+	else if ( d_aa==aa_dtr ) return aa_trp;
+	else if ( d_aa==aa_dty ) return aa_tyr;
 
 	return aa_unk;
 }

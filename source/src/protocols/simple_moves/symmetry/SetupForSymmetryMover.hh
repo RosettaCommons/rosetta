@@ -26,7 +26,7 @@
 // Utility Headers
 
 namespace protocols {
-namespace simple_moves{
+namespace simple_moves {
 namespace symmetry {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ public:
 	// default constructor
 	SetupForSymmetryMover();
 
-	SetupForSymmetryMover( core::conformation::symmetry::SymmDataOP symmdata ); 
+	SetupForSymmetryMover( core::conformation::symmetry::SymmDataOP symmdata );
 
 	SetupForSymmetryMover( std::string const & );
 
@@ -48,11 +48,11 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap &data,
-			filters::Filters_map const &filters,
-			moves::Movers_map const &movers,
-			core::pose::Pose const & pose );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &data,
+		filters::Filters_map const &filters,
+		moves::Movers_map const &movers,
+		core::pose::Pose const & pose );
 
 	virtual std::string get_name() const;
 
@@ -79,11 +79,11 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap &data,
-			filters::Filters_map const &filters,
-			moves::Movers_map const &movers,
-			core::pose::Pose const & pose );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &data,
+		filters::Filters_map const &filters,
+		moves::Movers_map const &movers,
+		core::pose::Pose const & pose );
 
 	virtual std::string get_name() const;
 };
@@ -101,11 +101,11 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap &data,
-			filters::Filters_map const &filters,
-			moves::Movers_map const &movers,
-			core::pose::Pose const & pose );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &data,
+		filters::Filters_map const &filters,
+		moves::Movers_map const &movers,
+		core::pose::Pose const & pose );
 
 	virtual std::string get_name() const;
 };

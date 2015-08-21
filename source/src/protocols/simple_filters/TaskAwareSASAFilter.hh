@@ -117,23 +117,23 @@ public:// parser
 public:// virtual main operation
 
 	// @brief returns true if the given pose passes the filter, false otherwise.
-  virtual bool apply( core::pose::Pose const & pose ) const;
+	virtual bool apply( core::pose::Pose const & pose ) const;
 
 	/// @brief
-  virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-  virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
+	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
+	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
 
 	/// @brief calc oligomeric AverageDegree
-  core::Real compute( core::pose::Pose const & pose, bool const verbose ) const;
+	core::Real compute( core::pose::Pose const & pose, bool const verbose ) const;
 
 
 private:
 
-  core::pack::task::TaskFactoryOP task_factory_;
-  core::Real threshold_;
-  bool designable_only_;
+	core::pack::task::TaskFactoryOP task_factory_;
+	core::Real threshold_;
+	bool designable_only_;
 	bool sc_only_;
-  core::Real probe_radius_;
+	core::Real probe_radius_;
 	core::Size jump_id_;
 
 };

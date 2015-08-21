@@ -35,15 +35,15 @@ namespace electron_density {
 
 // x mod y, returns z in [0,y-1]
 inline int pos_mod(int x,int y) {
-	int r=x%y; if (r<0) r+=y;
+	int r=x%y; if ( r<0 ) r+=y;
 	return r;
 }
 inline float pos_mod(float x,float y) {
-	float r=std::fmod(x,y); if (r<0) r+=y;
+	float r=std::fmod(x,y); if ( r<0 ) r+=y;
 	return r;
 }
 inline double pos_mod(double x,double y) {
-	double r=std::fmod(x,y); if (r<0) r+=y;
+	double r=std::fmod(x,y); if ( r<0 ) r+=y;
 	return r;
 }
 inline float  square(float  x) { return (x*x); }
@@ -57,10 +57,10 @@ OneGaussianScattering get_A( std::string elt ) {
 	// fit to parameters from Doyle and Turner, Acta Cryst A, 1968
 	//   --> single gaussians fit in reciprocal space fom 20A-2A resolution
 	//   --> TODO .. move to database, make parameters selectable
-	if (elt_db.empty() ) { //size() == 0) {
-		if (basic::options::option[ basic::options::OptionKeys::edensity::cryoem_scatterers ]()) {
+	if ( elt_db.empty() ) { //size() == 0) {
+		if ( basic::options::option[ basic::options::OptionKeys::edensity::cryoem_scatterers ]() ) {
 			// [1] electron scattering
-		  elt_db["C"]  = OneGaussianScattering(  6.00000, 7.10668);
+			elt_db["C"]  = OneGaussianScattering(  6.00000, 7.10668);
 			elt_db["N"]  = OneGaussianScattering(  5.28737, 6.03448);
 			elt_db["O"]  = OneGaussianScattering(  4.74213, 5.17616);
 			elt_db["Na"] = OneGaussianScattering( 11.42607, 6.58734);
@@ -70,11 +70,11 @@ OneGaussianScattering get_A( std::string elt ) {
 			elt_db["K"]  = OneGaussianScattering( 21.48425, 7.09360);
 			elt_db["Ca"] = OneGaussianScattering( 23.70586, 7.47775);
 			elt_db["Fe"] = OneGaussianScattering( 17.13431, 5.96932);
-			elt_db["Ni"] = OneGaussianScattering( 15.70905, 5.56662);	
+			elt_db["Ni"] = OneGaussianScattering( 15.70905, 5.56662);
 			elt_db["X"]  = OneGaussianScattering(
-					static_cast<int>(
-							6.0*basic::options::option[ basic::options::OptionKeys::edensity::centroid_density_mass ]()),
-					4.88284);  // centroid
+				static_cast<int>(
+				6.0*basic::options::option[ basic::options::OptionKeys::edensity::centroid_density_mass ]()),
+				4.88284);  // centroid
 		} else {
 			// [2] xray scattering
 			elt_db["C"]  = OneGaussianScattering(  6.0, 4.88398);
@@ -89,14 +89,14 @@ OneGaussianScattering get_A( std::string elt ) {
 			elt_db["Fe"] = OneGaussianScattering( 26.0, 3.10464);
 			elt_db["Ni"] = OneGaussianScattering( 28.0, 2.95223);
 			elt_db["X"]  = OneGaussianScattering(
-					static_cast<int>(
-							6.0*basic::options::option[ basic::options::OptionKeys::edensity::centroid_density_mass ]()),
-					4.88284);  // centroid
+				static_cast<int>(
+				6.0*basic::options::option[ basic::options::OptionKeys::edensity::centroid_density_mass ]()),
+				4.88284);  // centroid
 		}
 	}
 
 
-	if (elt_db.find( elt ) == elt_db.end()) {
+	if ( elt_db.find( elt ) == elt_db.end() ) {
 		// default to C
 		TR.Warning << "[ WARNING ] Unknown atom " << elt << std::endl;
 		return elt_db["C"];
@@ -109,7 +109,7 @@ OneGaussianScattering get_A( std::string elt ) {
 KromerMann get_km( std::string elt ) {
 	static std::map< std::string, KromerMann > elt_db;
 
-	if (elt_db.empty() ) {//size() == 0) {
+	if ( elt_db.empty() ) { //size() == 0) {
 		elt_db["C"]  = KromerMann(  0.215600,  2.310000, 1.020000, 1.588600, 0.865000, 20.843899, 10.207500,  0.568700,  51.651199);
 		elt_db["N"]  = KromerMann(-11.528999, 12.212600, 3.132200, 2.012500, 1.166300,  0.005700,  9.893300, 28.997499,   0.582600);
 		elt_db["O"]  = KromerMann(  0.250800,  3.048500, 2.286800, 1.546300, 0.867000, 13.277100,  5.701100,  0.323900,  32.908897);
@@ -124,7 +124,7 @@ KromerMann get_km( std::string elt ) {
 		elt_db["X"] = KromerMann();  // centroid
 	}
 
-	if (elt_db.find( elt ) == elt_db.end()) {
+	if ( elt_db.find( elt ) == elt_db.end() ) {
 		// default to C
 		TR.Warning << "[ WARNING ] Unknown atom " << elt << std::endl;
 		return elt_db["C"];
@@ -139,51 +139,51 @@ KromerMann get_km( std::string elt ) {
 
 
 bool factorsLTE5(int X) {
-	while (X != 1 && X%2 == 0) X /= 2;
-	while (X != 1 && X%3 == 0) X /= 3;
-	while (X != 1 && X%5 == 0) X /= 5;
+	while ( X != 1 && X%2 == 0 ) X /= 2;
+	while ( X != 1 && X%3 == 0 ) X /= 3;
+	while ( X != 1 && X%5 == 0 ) X /= 5;
 
 	return (X == 1);
 }
 
 
 bool factorsLTE19(int X) {
-	while (X != 1 && X%2 == 0) X /= 2;
-	while (X != 1 && X%3 == 0) X /= 3;
-	while (X != 1 && X%5 == 0) X /= 5;
-	while (X != 1 && X%7 == 0) X /= 7;
-	while (X != 1 && X%11 == 0)	X /= 11;
-	while (X != 1 && X%13 == 0)	X /= 13;
-	while (X != 1 && X%17 == 0)	X /= 17;
-	while (X != 1 && X%19 == 0)	X /= 19;
+	while ( X != 1 && X%2 == 0 ) X /= 2;
+	while ( X != 1 && X%3 == 0 ) X /= 3;
+	while ( X != 1 && X%5 == 0 ) X /= 5;
+	while ( X != 1 && X%7 == 0 ) X /= 7;
+	while ( X != 1 && X%11 == 0 ) X /= 11;
+	while ( X != 1 && X%13 == 0 ) X /= 13;
+	while ( X != 1 && X%17 == 0 ) X /= 17;
+	while ( X != 1 && X%19 == 0 ) X /= 19;
 
 	return (X == 1);
 }
 
 
 int findSampling5(double MINSMP, int NMUL) {
-	if (MINSMP <= 0) return NMUL;
+	if ( MINSMP <= 0 ) return NMUL;
 
 	// multiple of nmul nearest minsmp
 	int N = (int) floor( MINSMP/NMUL + 0.5 ) * NMUL;
 
 	// increment until no factors >= 5
-	while (!factorsLTE5(N))
-		N += NMUL;
+	while ( !factorsLTE5(N) )
+			N += NMUL;
 
 	return N;
 }
 
 
 int findSampling(double MINSMP, int NMUL) {
-	if (MINSMP <= 0) return NMUL;
+	if ( MINSMP <= 0 ) return NMUL;
 
 	// multiple of nmul nearest minsmp
 	int N = (int) floor( MINSMP/NMUL + 0.5 ) * NMUL;
 
 	// increment until no factors >= 19
-	while (!factorsLTE19(N))
-		N += NMUL;
+	while ( !factorsLTE19(N) )
+			N += NMUL;
 
 	return N;
 }

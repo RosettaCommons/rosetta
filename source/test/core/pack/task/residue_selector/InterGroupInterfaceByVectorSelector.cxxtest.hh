@@ -220,7 +220,7 @@ public:
 			igibv_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should not succeed
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-	//		std::cerr << "Exception!" << e.msg() << std::endl;
+			//  std::cerr << "Exception!" << e.msg() << std::endl;
 			std::string expected_error = "Failed to find ResidueSelector named 'bogus' from the Datamap from InterGroupInterfaceByVectorSelector::parse_my_tag\nERROR: Could not find ResidueSelector and name bogus in Datamap\n";
 			TS_ASSERT_EQUALS( e.msg(), expected_error );
 			return;
@@ -236,18 +236,18 @@ public:
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
-	
+
 		ResidueSelectorOP igibv_rs( new InterGroupInterfaceByVectorSelector );
 		try {
 			igibv_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should not succeed
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-		//	std::cerr << "Exception!" << e.msg() << std::endl;
+			// std::cerr << "Exception!" << e.msg() << std::endl;
 			std::string expected_error = "InterGroupInterfaceByVectorSelector takes either two or zero subtags to specify residue groups!\n";
 			TS_ASSERT_EQUALS( e.msg(), expected_error );
 			return;
 		}
-}
+	}
 
 
 };

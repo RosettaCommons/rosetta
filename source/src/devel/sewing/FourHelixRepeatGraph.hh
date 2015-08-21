@@ -26,23 +26,23 @@ namespace sewing {
 
 class FourHelixRepeatGraph : public FourHelixGraph {
 public:
-	
+
 	FourHelixRepeatGraph(
 		utility::sql_database::sessionOP db_session
 	);
-	
+
 	core::Size
 	get_path_size(
 		core::Size num_desired_helices
 	);
-	
+
 	void
 	find_paths(
 		EdgeList visited_edges,
 		utility::vector1<NodeOP> visited_nodes,
 		core::Size path_size
 	);
-	
+
 	void
 	tree_finder(
 		EdgeList visited_edges,
@@ -53,7 +53,7 @@ public:
 		EdgeSet possible_inter_edges,
 		EdgeSet possible_intra_edges
 	);
-	
+
 private:
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
 	// core::Size num_cycles_to_print_;

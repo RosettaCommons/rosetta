@@ -37,9 +37,9 @@ namespace frag_picker {
 namespace quota {
 
 typedef LazySortedVector1<std::pair<FragmentCandidateOP,
-                scores::FragmentScoreMapOP>, CompareByScoreCombination> BoundedQuotaContainer;
+	scores::FragmentScoreMapOP>, CompareByScoreCombination> BoundedQuotaContainer;
 typedef utility::pointer::shared_ptr<BoundedQuotaContainer>
-		BoundedQuotaContainerOP;
+	BoundedQuotaContainerOP;
 
 /// @brief represents a single pool used by quota selector
 class SecondaryStructurePool : public QuotaPool {
@@ -47,13 +47,13 @@ public:
 	/// @brief Creates a pool of a given size and name
 	/// @param size - total number of fragments from all the pools at a given position
 	/// @param name - name assigned to this pool. This in general may be any string that
-	///	later allows one control pool's behavior from a flag file
+	/// later allows one control pool's behavior from a flag file
 	/// @param ss_type - what is the type of secondary structur this pool is accepting
 	/// @param score_components_id - which scores will be used to sort this pool
 	/// @param weights - weights for the scores that in general may be different than these used for fragment picking
 	/// @param fraction - fraction of this pool in the entire population
 	SecondaryStructurePool(Size,std::string,char,
-	    utility::vector1<Size>&,utility::vector1<Real>&,Real,Size,Size);
+		utility::vector1<Size>&,utility::vector1<Real>&,Real,Size,Size);
 
 	char get_ss_type() const { return ss_type_; }
 
@@ -76,7 +76,7 @@ public:
 	}
 
 
-// Stuff inherited from CandidatesCollector base
+	// Stuff inherited from CandidatesCollector base
 	/// @brief  Insert a fragment candidate to the container
 	virtual bool add(ScoredCandidate);
 
@@ -100,20 +100,21 @@ public:
 	/// Candidates may or may not get inserted depending on the candidate
 	void insert(Size, CandidatesCollectorOP collector) {
 		SecondaryStructurePoolOP c = utility::pointer::dynamic_pointer_cast< protocols::frag_picker::quota::SecondaryStructurePool > ( collector );
-		if (c == 0)
+		if ( c == 0 ) {
 			utility_exit_with_message("Cant' cast candidates' collector to SecondaryStructurePool.");
+		}
 		ScoredCandidatesVector1 & content = c->get_candidates(0);
-		for(Size l=1;l<=content.size();l++) storage_->push( content[l] );
+		for ( Size l=1; l<=content.size(); l++ ) storage_->push( content[l] );
 	}
 
 	/// @brief  Returns all the candidate in this pool
 	ScoredCandidatesVector1 & get_candidates( Size //position_in_query
-			) {
-	    return storage_->expose_data();
+	) {
+		return storage_->expose_data();
 	}
 
 	void resize(Size new_size) {
-	    storage_->resize(new_size,new_size*buffer_factor_);
+		storage_->resize(new_size,new_size*buffer_factor_);
 	}
 
 	/// @brief Describes what has been collected
@@ -122,15 +123,17 @@ public:
 	virtual void set_fraction(Real new_fraction) {
 		QuotaPool::set_fraction(new_fraction);
 		this_size_ = (Size)(total_size_*new_fraction);
-		if ( this_size_ < 20 )
+		if ( this_size_ < 20 ) {
 			this_size_ = 20;
+		}
 		storage_->resize( this_size_,this_size_*buffer_factor_ );
 	}
 
 	virtual Real quota_score(ScoredCandidate candidate) const {
 		Real t2(0);
-		for(Size i=1;i<=components_.size();i++)
-		t2 += candidate.second->at( components_[i] ) * weights_[i];
+		for ( Size i=1; i<=components_.size(); i++ ) {
+			t2 += candidate.second->at( components_[i] ) * weights_[i];
+		}
 		return t2;
 	}
 

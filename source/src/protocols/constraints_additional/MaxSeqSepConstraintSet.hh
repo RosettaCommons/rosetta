@@ -135,29 +135,29 @@ public:
 
 	void
 	virtual eval_non_residue_pair_energy(
-					 	 core::pose::Pose const & pose,
-						 core::scoring::ScoreFunction const & sfxn,
-						 core::scoring::EnergyMap & emap
+		core::pose::Pose const & pose,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const;
 
 
 protected:
 
-  /*
-  void
-  eval_atom_derivative_for_residue_pairs(
-    core::id::AtomID const & atom_id,
-    core::pose::Pose const & pose,
-    core::scoring::ScoreFunction const &,
-    core::scoring::EnergyMap const & weights,
-    core::Vector & F1,
-    core::Vector & F2
-  ) const;*/
+	/*
+	void
+	eval_atom_derivative_for_residue_pairs(
+	core::id::AtomID const & atom_id,
+	core::pose::Pose const & pose,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
+	core::Vector & F1,
+	core::Vector & F2
+	) const;*/
 
 
 private:
-  Size max_seq_sep_;
-  core::kinematics::ShortestPathInFoldTreeOP shortest_path_;
+	Size max_seq_sep_;
+	core::kinematics::ShortestPathInFoldTreeOP shortest_path_;
 };
 
 } // constraints_additional

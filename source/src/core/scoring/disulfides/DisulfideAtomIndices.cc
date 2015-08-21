@@ -30,12 +30,12 @@ DisulfideAtomIndices::DisulfideAtomIndices( conformation::Residue const & res ) 
 	derivative_atom_types_( res.natoms(), NO_DERIVATIVES_FOR_ATOM )
 {
 	core::chemical::ResidueType rt = res.type();
-	
+
 	std::string disulf_atom_name = rt.get_disulfide_atom_name();
 	disulf_atom_index_ = rt.has( disulf_atom_name ) ? res.atom_index( disulf_atom_name ) : 0;
-	
+
 	if ( disulf_atom_name == "CEN" ) {
-	debug_assert(rt.has("CEN") );//disulfides form to SG or CEN only
+		debug_assert(rt.has("CEN") );//disulfides form to SG or CEN only
 		disulf_atom_index_ = res.atom_index( "CEN" );
 		derivative_atom_types_[ disulf_atom_index_ ] = CYS_CEN;
 	} else {

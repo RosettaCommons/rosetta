@@ -41,7 +41,7 @@ public:
 
 	/// @brief  Constructor sets the desired number of fragments.
 	BestTotalScoreSelector(Size frags_per_pos,
-			scores::FragmentScoreManagerOP scoring_scheme) :
+		scores::FragmentScoreManagerOP scoring_scheme) :
 		FragmentSelectingRule(frags_per_pos), comparator_(scoring_scheme) {
 
 	}

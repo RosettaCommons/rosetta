@@ -24,29 +24,29 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	//Constructor
-	Scorer::Scorer():
-		pose_( *( new core::pose::Pose ) )
-	{}
+//Constructor
+Scorer::Scorer():
+	pose_( *( new core::pose::Pose ) )
+{}
 
-	//Constructor
-	Scorer::Scorer( core::pose::Pose & pose,
-									core::scoring::ScoreFunctionCOP scorefxn ):
-		pose_( pose ),
-		scorefxn_( scorefxn )
-	{
-	}
+//Constructor
+Scorer::Scorer( core::pose::Pose & pose,
+	core::scoring::ScoreFunctionCOP scorefxn ):
+	pose_( pose ),
+	scorefxn_( scorefxn )
+{
+}
 
-	//Destructor
-	Scorer::~Scorer()
-	{}
+//Destructor
+Scorer::~Scorer()
+{}
 
-	////////////////////////////////////////////////////////
-	bool
-	Scorer::check_screen(){
-		( *scorefxn_ )( pose_ );
-		return true;
-	}
+////////////////////////////////////////////////////////
+bool
+Scorer::check_screen(){
+	( *scorefxn_ )( pose_ );
+	return true;
+}
 
 } //screener
 } //stepwise

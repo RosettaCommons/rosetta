@@ -22,15 +22,15 @@ namespace protocols {
 namespace stepwise {
 namespace sampler {
 
-	//Constructor
-	NoOpStepWiseSampler::NoOpStepWiseSampler()
-	{
-		init();
-	}
+//Constructor
+NoOpStepWiseSampler::NoOpStepWiseSampler()
+{
+	init();
+}
 
-	//Destructor
-	NoOpStepWiseSampler::~NoOpStepWiseSampler()
-	{}
+//Destructor
+NoOpStepWiseSampler::~NoOpStepWiseSampler()
+{}
 
 } //sampler
 } //stepwise

@@ -44,7 +44,7 @@ public:
 	ClusterPoseSelector();
 	virtual ~ClusterPoseSelector() {}
 
-	static std::string name() {	return "ClusterPoseSelector"; }
+	static std::string name() { return "ClusterPoseSelector"; }
 	virtual std::string get_name() const { return name(); }
 	rosetta_scripts::PoseSelectorFlags get_flags() const { return rosetta_scripts::PSF_NEED_FULL_POSE_SET; }
 

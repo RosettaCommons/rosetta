@@ -23,24 +23,24 @@ namespace func {
 Real
 PeriodicFunc::func( Real const x ) const
 {
-  return ( k_ * (cos( n_periodic_ * ( x - x0_ ) ) ) ) + C_;
+	return ( k_ * (cos( n_periodic_ * ( x - x0_ ) ) ) ) + C_;
 }
 
 Real
 PeriodicFunc::dfunc( Real const x ) const
 {
-  return -1. * k_ * n_periodic_ * sin( n_periodic_ * (x - x0_ ) );
+	return -1. * k_ * n_periodic_ * sin( n_periodic_ * (x - x0_ ) );
 }
 
 void
 PeriodicFunc::read_data( std::istream& in )
 {
-  in >> x0_ >> n_periodic_ >> k_ >> C_;
+	in >> x0_ >> n_periodic_ >> k_ >> C_;
 }
 
 void
 PeriodicFunc::show_definition(std::ostream &out ) const {
-  out << "PERIODIC " << x0_ << " " << n_periodic_ << " " << k_ << " " << C_
+	out << "PERIODIC " << x0_ << " " << n_periodic_ << " " << k_ << " " << C_
 		<< std::endl;
 }
 
@@ -49,10 +49,10 @@ Size
 PeriodicFunc::show_violations(
 	std::ostream& out, Real x, Size verbose_level, Real threshold
 ) const {
-  if (verbose_level > 100 ) {
-    out << "PERIODIC " <<  func(x) << std::endl;
-  }
-  return Func::show_violations( out, x, verbose_level, threshold);
+	if ( verbose_level > 100 ) {
+		out << "PERIODIC " <<  func(x) << std::endl;
+	}
+	return Func::show_violations( out, x, verbose_level, threshold);
 
 }
 

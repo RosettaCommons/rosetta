@@ -40,7 +40,7 @@ enum dof_type {
 
 class SymDof {
 
-	public:
+public:
 
 	/// @brief constructor
 	SymDof();
@@ -49,7 +49,7 @@ class SymDof {
 	SymDof( SymDof const & src );
 
 	SymDof &
-  operator=( SymDof const & src );
+	operator=( SymDof const & src );
 
 	~SymDof();
 
@@ -76,7 +76,7 @@ class SymDof {
 
 	// @details the upper boundary of range1
 	core::Real
-  range1_upper( int df ) const;
+	range1_upper( int df ) const;
 
 	// @details the lower boundary of range2
 	core::Real
@@ -84,7 +84,7 @@ class SymDof {
 
 	// @details the upper boundary of range1
 	core::Real
-  range2_upper( int df ) const;
+	range2_upper( int df ) const;
 
 	// details Have a range1 been specified?
 	bool
@@ -100,19 +100,19 @@ class SymDof {
 
 	// @details has a upper boundary of range1 been specified?
 	bool
-  has_range1_upper( int df ) const;
+	has_range1_upper( int df ) const;
 
 	// @details has a lower boundary of range2 been specified?
 	bool
-  has_range2_lower( int df ) const;
+	has_range2_lower( int df ) const;
 
 	// @details has a upper boundary of range2 been specified?
 	bool
-  has_range2_upper( int df ) const;
+	has_range2_upper( int df ) const;
 
 	// @details is range2 a bounds?
 	bool
-  range2_is_bound( int df ) const;
+	range2_is_bound( int df ) const;
 
 	// @detail return the direction( upstream or downstream )
 	// of the jump for a dof
@@ -127,7 +127,7 @@ class SymDof {
 	bool
 	operator!=(SymDof const & a, SymDof const & b);
 
-	private:
+private:
 
 	utility::vector1< bool > range2_is_bound_; // is a particular dof allowed to move?
 	utility::vector1< bool > allowed_dof_jumps_; // is a particular dof allowed to move?
@@ -135,11 +135,11 @@ class SymDof {
 	utility::vector1< Real > upper_range_dof_jumps1_; // store the upper boundary of range1
 	utility::vector1< Real > lower_range_dof_jumps2_; // store the lower boundary of range2
 	utility::vector1< Real > upper_range_dof_jumps2_; // store the upper boundary of range2
-	utility::vector1< bool > has_range1_lower_;	// Is there a lower bound on range1?
+	utility::vector1< bool > has_range1_lower_; // Is there a lower bound on range1?
 	utility::vector1< bool > has_range1_upper_; // Is there a upper bound on range1?
 	utility::vector1< bool > has_range2_lower_; // Is there a lower bound on range2?
 	utility::vector1< bool > has_range2_upper_; // Is there a upper bound on range2?
-	utility::vector1< int > jump_dir_;	// store jump dir for each dof
+	utility::vector1< int > jump_dir_; // store jump dir for each dof
 
 };
 

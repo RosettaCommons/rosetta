@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/simple_filters/ILeastNativeLike9merFilter.fwd.hh
-/// @brief  Filter for the best fragment at worst position. 
+/// @brief  Filter for the best fragment at worst position.
 /// @author TJ Brunette (tjbrunette@gmail.com)
 
 

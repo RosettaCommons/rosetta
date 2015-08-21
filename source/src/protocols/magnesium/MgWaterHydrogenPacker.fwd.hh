@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/magnesium/MgWaterHydrogenPacker.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -20,12 +20,12 @@
 
 namespace protocols {
 namespace magnesium {
-	
-	class MgWaterHydrogenPacker;
-	typedef utility::pointer::shared_ptr< MgWaterHydrogenPacker > MgWaterHydrogenPackerOP;
-	typedef utility::pointer::shared_ptr< MgWaterHydrogenPacker const > MgWaterHydrogenPackerCOP;
-	
-} //magnesium 
-} //protocols 
+
+class MgWaterHydrogenPacker;
+typedef utility::pointer::shared_ptr< MgWaterHydrogenPacker > MgWaterHydrogenPackerOP;
+typedef utility::pointer::shared_ptr< MgWaterHydrogenPacker const > MgWaterHydrogenPackerCOP;
+
+} //magnesium
+} //protocols
 
 #endif

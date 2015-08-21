@@ -7,26 +7,26 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/PcsInputFile.cc
- ///
- /// @brief Read all input from a .npc input file, and hold the data in the class
- /// One file per lanthanide data
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/PcsInputFile.cc
+///
+/// @brief Read all input from a .npc input file, and hold the data in the class
+/// One file per lanthanide data
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 
 // Unit headers
@@ -51,10 +51,10 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs2{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs2 {
 
 static thread_local basic::Tracer TR_PcsInputFile( "protocols.scoring.methods.pcs.PcsInputFile" );
 
@@ -91,7 +91,7 @@ PcsInputFile::get_weight() const{
 	return(weight_);
 }
 
-	PcsInputFile::PcsInputFile(std::string const & filename, core::Real const my_weight):
+PcsInputFile::PcsInputFile(std::string const & filename, core::Real const my_weight):
 	filename_(std::string(filename)), weight_(my_weight)
 {
 	read_PCS_file();
@@ -107,17 +107,17 @@ PcsInputFile::read_PCS_file(){
 	std::string line;
 	core::Size line_number(0);
 
- 	TR_PcsInputFile << "Opening file '" << get_filename().c_str() << "'" << std::endl;
+	TR_PcsInputFile << "Opening file '" << get_filename().c_str() << "'" << std::endl;
 	myfile.open (get_filename().c_str(), std::ios::in);
-	if (!myfile.is_open ()){
+	if ( !myfile.is_open () ) {
 		std::cerr << "Unable to open the file '" << get_filename().c_str()  <<"'" << std::endl;
 		utility_exit();
 	}
 
-	while( getline( myfile, line ) ) {
+	while ( getline( myfile, line ) ) {
 		line_number++;
 		std::istringstream line_stream( line ,std::istringstream::in);
-		if( (line_stream >> residue_num >> atom_name >> PCS_experimental >> PCS_tolerance).fail()){
+		if ( (line_stream >> residue_num >> atom_name >> PCS_experimental >> PCS_tolerance).fail() ) {
 			TR_PcsInputFile << "Ignoring line " <<line_number << ": `" << line << "` from file " << get_filename() <<std::endl;
 			continue;
 		}
@@ -143,20 +143,20 @@ operator<<(std::ostream& out, const PcsInputFile &me){
 	i = 1;
 	n = pcs_i_l_a.size();
 	out<< "Found the following " << n << " PCS value in the file " << me.get_filename() << std::endl;
-	for ( it = pcs_i_l_a.begin(); it != pcs_i_l_a.end(); ++it){
+	for ( it = pcs_i_l_a.begin(); it != pcs_i_l_a.end(); ++it ) {
 
-		if( (i == 1) || (i == 2)){
+		if ( (i == 1) || (i == 2) ) {
 			out << *it;
 			i++;
 			continue;
 		}
-		if( i == (n-1) ){
+		if ( i == (n-1) ) {
 			out << std::endl;
 			out << *it;
 			i++;
 			continue;
 		}
-		if( i == (n) ){
+		if ( i == (n) ) {
 			out << *it;
 			i++;
 			continue;

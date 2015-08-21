@@ -36,7 +36,7 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-	#include <protocols/fldsgn/topology/HSSTriplet.hh>
+#include <protocols/fldsgn/topology/HSSTriplet.hh>
 #endif
 
 
@@ -136,7 +136,7 @@ HelixPairingFilter::apply( Pose const & pose ) const
 	runtime_assert( ! helix_pairings.empty() );
 
 	// set secondary structure
-	if( secstruct_ == "" ) {
+	if ( secstruct_ == "" ) {
 		Dssp dssp( pose );
 		secstruct_ = dssp.get_dssp_secstruct();
 	}
@@ -151,21 +151,21 @@ HelixPairingFilter::apply( Pose const & pose ) const
 
 	// check conformation of helical pairings
 	bool filter( true );
-	for( HelixPairings::const_iterator it=helix_pairings.begin(), ite=helix_pairings.end(); it != ite; ++it ) {
+	for ( HelixPairings::const_iterator it=helix_pairings.begin(), ite=helix_pairings.end(); it != ite; ++it ) {
 		HelixPairing const & hpair( **it );
 
-		if( helices.size() < hpair.h1() ) {
+		if ( helices.size() < hpair.h1() ) {
 			TR << "Helix " << hpair.h1() << " does not exist ! " << std::endl;
 			return false;
 		}
 
-		if( helices.size() < hpair.h2() ) {
+		if ( helices.size() < hpair.h2() ) {
 			TR << "Helix " << hpair.h2() << " does not exist ! " << std::endl;
 			return false;
 		}
 
 		// bend check
-		if( bend_angle_ >= 0.0 ) {
+		if ( bend_angle_ >= 0.0 ) {
 			if ( helices[ hpair.h1() ]->bend() > bend_angle_ ) {
 				TR << "Helix " << hpair.h1() << "is bend, angle=" << helices[ hpair.h1() ]->bend() << std::endl;
 				filter=false;
@@ -177,24 +177,24 @@ HelixPairingFilter::apply( Pose const & pose ) const
 		}
 
 
-		if( hpair.dist() > dist_cutoff_ && dist_cutoff_ >= 0 ) filter = false;
-		if( hpair.cross_angle() > cross_angle_ && cross_angle_ >= 0 ) filter = false;
+		if ( hpair.dist() > dist_cutoff_ && dist_cutoff_ >= 0 ) filter = false;
+		if ( hpair.cross_angle() > cross_angle_ && cross_angle_ >= 0 ) filter = false;
 
-		if( hpair.align_angle() < 0 ) continue;
-		if( hpair.align_angle() > align_angle_ && align_angle_ >= 0 ) filter = false;
+		if ( hpair.align_angle() < 0 ) continue;
+		if ( hpair.align_angle() > align_angle_ && align_angle_ >= 0 ) filter = false;
 
-		if( filter == false ) break;
+		if ( filter == false ) break;
 	}
 
 	TR << " Filter condition: " << std::endl;
 	TR << " bend ( intra helix ) <= " << bend_angle_ << std::endl;
 	TR << " dist <= " << dist_cutoff_  << std::endl;
 	TR << " cross <= " << cross_angle_  << std::endl;
-	TR << " align <= " << align_angle_	<< std::endl;
+	TR << " align <= " << align_angle_ << std::endl;
 
 	TR << hpairset;
 
-	if( filter ) {
+	if ( filter ) {
 		TR << " Filter success ! " << std::endl;
 	} else {
 		TR << " Filter failed ! " << std::endl;
@@ -222,7 +222,7 @@ HelixPairingFilter::compute( Pose const & pose ) const
 	runtime_assert( ! helix_pairings.empty() );
 
 	// set secondary structure
-	if( secstruct_ == "" ) {
+	if ( secstruct_ == "" ) {
 		Dssp dssp( pose );
 		secstruct_ = dssp.get_dssp_secstruct();
 	}
@@ -264,17 +264,17 @@ HelixPairingFilter::parse_my_tag(
 
 	// set filtered helix_pairings
 	String const hpairs = tag->getOption<String>( "helix_pairings", "" );
-	if( hpairs != ""  ) helix_pairings( hpairs );
+	if ( hpairs != ""  ) helix_pairings( hpairs );
 
 	// Blueprint is for giving secondary structure information, otherwise dssp will run for ss definition
 	// HHPAIR line is read for the topology of helix pairings
 	String const blueprint = tag->getOption<String>( "blueprint", "" );
-	if( blueprint != "" ) {
+	if ( blueprint != "" ) {
 		BluePrint blue( blueprint );
 		secstruct_ = blue.secstruct();
 
-		if( ! blue.helix_pairings().empty() ) {
-			if( hpairs == "" ) {
+		if ( ! blue.helix_pairings().empty() ) {
+			if ( hpairs == "" ) {
 				helix_pairings( blue.helix_pairings() );
 			} else {
 				TR << " HHPAIR in blueprint will be igonared " << std::endl;
@@ -282,7 +282,7 @@ HelixPairingFilter::parse_my_tag(
 		}
 	}
 
-	if( hpairset_->helix_pairings().empty() ){
+	if ( hpairset_->helix_pairings().empty() ) {
 		TR.Error << "Error!, Option of helix_pairings is empty." << std::endl;
 		runtime_assert( false );
 	}
@@ -295,11 +295,11 @@ HelixPairingFilter::parse_my_tag(
 	output_id_ = tag->getOption<Size>( "output_id", 1 );
 	output_type_ = tag->getOption<String>( "output_type", "dist" );
 
-	if( output_type_ != "dist" && output_type_ != "cross" && output_type_ != "align" ) {
+	if ( output_type_ != "dist" && output_type_ != "cross" && output_type_ != "align" ) {
 		TR << "Invalid type for output_type, choose among dist or cross or align. " << std::endl;
 	} else {
 		TR << "HelixPairing " << *hpairset_->helix_pairing( output_id_ ) << ", "
-			 << output_type_ << " is used for output value. " << std::endl;
+			<< output_type_ << " is used for output value. " << std::endl;
 	}
 
 }

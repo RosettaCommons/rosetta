@@ -30,7 +30,7 @@ static thread_local basic::Tracer tr( "protocols.environment.movers.StagePrepare
 
 namespace protocols {
 namespace abinitio {
-namespace abscript{
+namespace abscript {
 
 using namespace core::environment;
 

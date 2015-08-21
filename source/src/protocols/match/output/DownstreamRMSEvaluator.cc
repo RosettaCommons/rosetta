@@ -101,7 +101,7 @@ DownstreamRMSEvaluator::score( match const & m ) const
 
 			Real iijj_rms = 0.0;
 			Size num_atoms_to_compare=atoms_to_compare_.size();
-            for ( Size kk = 1; kk <= num_atoms_to_compare; ++kk ) {
+			for ( Size kk = 1; kk <= num_atoms_to_compare; ++kk ) {
 				iijj_rms += ds_coords[ ii ][ kk ].distance_squared( ds_coords[ jj ][ kk ] );
 			}
 			rms_sum += std::sqrt( iijj_rms/num_atoms_to_compare );

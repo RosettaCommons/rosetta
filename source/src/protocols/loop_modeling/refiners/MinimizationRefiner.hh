@@ -32,20 +32,20 @@ class MinimizationRefiner : public LoopMover {
 
 public:
 
-	/// @brief Constructor with options to configure the MinMover that will be 
+	/// @brief Constructor with options to configure the MinMover that will be
 	/// used under the hood.
 	MinimizationRefiner(
-			bool cartesian=false,
-			core::optimization::MinimizerOptionsOP options=
-				core::optimization::MinimizerOptionsOP());
+		bool cartesian=false,
+		core::optimization::MinimizerOptionsOP options=
+		core::optimization::MinimizerOptionsOP());
 
 	/// @copydoc LoopMover::parse_my_tag
 	void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & data,
-			protocols::filters::Filters_map const & filters,
-			protocols::moves::Movers_map const & movers,
-			Pose const & pose);
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		Pose const & pose);
 
 	/// @copydoc LoopMover::get_name
 	string get_name() const { return "MinimizationRefiner"; }
@@ -53,7 +53,7 @@ public:
 	/// @brief Specify whether or not Cartesian minimization should be used.
 	void use_cartesian(bool setting);
 
-	/// @brief Return true if cartesian minimization will be used.  The 
+	/// @brief Return true if cartesian minimization will be used.  The
 	/// alternative is atom tree minimization.
 	bool use_cartesian() const;
 
@@ -65,16 +65,16 @@ public:
 
 	/// @brief Set the minimizer options.
 	void set_min_options(core::optimization::MinimizerOptionsOP options);
-	
+
 	/// @brief Non-const access to the minimizer options.  May be NULL.
 	core::optimization::MinimizerOptionsOP get_min_options();
-	
+
 	/// @brief Const access to the minimizer options.  May be NULL.
 	core::optimization::MinimizerOptionsCOP get_min_options() const;
-	
+
 protected:
 
-	/// @brief Perform Cartesian minimization within 10A of the loops being 
+	/// @brief Perform Cartesian minimization within 10A of the loops being
 	/// sampled.
 	bool do_apply(Pose & pose);
 

@@ -128,7 +128,7 @@ RotamerTrialsMover::apply( core::pose::Pose & pose )
 	//task() contains the call to the TaskFactory
 	//TR << *(task(pose)) << std::flush;
 	PackerTaskCOP ptask = task( pose );
-	if( show_packer_task_ ) {
+	if ( show_packer_task_ ) {
 		TR << *ptask;
 	}
 	core::pack::rotamer_trials( pose, *scorefxn_, ptask );
@@ -145,8 +145,7 @@ RotamerTrialsMover::show(std::ostream & output) const
 	Mover::show(output);
 	if ( scorefxn() != 0 ) {
 		output << "Score function: " << scorefxn()->get_name() << std::endl;
-	}
-	else { output << "Score function: none" << std::endl; }
+	} else { output << "Score function: none" << std::endl; }
 }
 
 /// @brief read access for derived classes
@@ -161,7 +160,7 @@ RotamerTrialsMover::PackerTaskCOP
 RotamerTrialsMover::task( core::pose::Pose const & pose ) const
 {
 	//if we have a factory, generate and return a new task
-	if(factory_) return factory_->create_task_and_apply_taskoperations( pose );
+	if ( factory_ ) return factory_->create_task_and_apply_taskoperations( pose );
 	//else runtime_assert( task_is_valid( pose ) );
 
 	//else return the unsafe one

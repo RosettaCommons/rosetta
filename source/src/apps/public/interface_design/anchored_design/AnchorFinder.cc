@@ -77,8 +77,9 @@ basic::options::StringOptionKey const bestoutfile("bestoutfile");
 class AnchorFinderMover : public protocols::moves::Mover {
 public:
 	AnchorFinderMover() : out(basic::options::option[ bestoutfile ].value(), std::ios_base::app /*append*/) {
-		if ( !out.good() )
+		if ( !out.good() ) {
 			utility_exit_with_message( "Unable to open file: " + basic::options::option[ bestoutfile ].value() + "\n" );
+		}
 	}
 
 	virtual ~AnchorFinderMover(){
@@ -100,7 +101,7 @@ public:
 		if ( nres == 0 ) {
 			TR << pdbname.base() << " empty, skipping (not a protein?)" << std::endl;
 			quit = true;
-		} else if ( num_chains < 2 ){
+		} else if ( num_chains < 2 ) {
 			TR << pdbname.base() << " less than two chains, AnchorFinderMover skipping! " << std::endl;
 			quit = true;
 		} else if ( nres <= 20 ) {
@@ -122,14 +123,14 @@ public:
 		core::conformation::find_neighbors< core::conformation::PointGraphVertexData, core::conformation::PointGraphEdgeData >( pg, distcut );
 
 		utility::vector1< utility::vector1< core::Size > > table;
-		for( core::Size i( 1 ); i <= nres; ++i) table.push_back( utility::vector1< core::Size >(num_chains, 0) );
+		for ( core::Size i( 1 ); i <= nres; ++i ) table.push_back( utility::vector1< core::Size >(num_chains, 0) );
 		//table is now nres x num_chains filled with zeroes
 
 		//for each residue
 		for ( core::Size res1( 1 ); res1 <= nres; ++res1 ) {
 			//for each neighbor of that residue
 			for ( core::conformation::PointGraph::UpperEdgeListConstIter edge_iter = pg->get_vertex( res1 ).upper_edge_list_begin(),
-							edge_end_iter = pg->get_vertex( res1 ).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
+					edge_end_iter = pg->get_vertex( res1 ).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
 
 				Size const res2 = edge_iter->upper_vertex(); //a partner
 				++table[ res1 ][ pose.chain( res2 ) ];
@@ -143,9 +144,9 @@ public:
 		datafile << "residue\tchain\tPDBdata\tDSSP";
 		for ( core::Size j( 1 ); j <= num_chains; ++j ) datafile << '\t' << j;
 		datafile << std::endl;
-		for ( core::Size i( 1 ); i <= nres; ++i){
+		for ( core::Size i( 1 ); i <= nres; ++i ) {
 			datafile << i << '\t' << pose.chain(i) << '\t' << pose.pdb_info()->pose2pdb(i)
-							 << '\t' << pose.secstruct(i);
+				<< '\t' << pose.secstruct(i);
 			for ( core::Size j( 1 ); j <= num_chains; ++j ) datafile << '\t' << table[i][j];
 			datafile << std::endl;
 		}
@@ -160,7 +161,7 @@ public:
 
 		//now we look for stretches with large numbers of other neighbors AND loop-ish neighbors
 		for ( core::Size window( 1 ), windowstart( 1 ), windowend( basic::options::option[ window_size ].value() );
-				 windowend <= nres; ++window, ++windowstart, ++windowend ) {
+				windowend <= nres; ++window, ++windowstart, ++windowend ) {
 
 			//skip cross-chain windows
 			bool skip( false );
@@ -171,10 +172,10 @@ public:
 			core::Size loopness(0);
 			utility::vector1< core::Size > interface_nbrs(num_chains, 0);
 
-			for( core::Size i(windowstart); i<=windowend; ++i){
-				if( pose.secstruct(i) == 'L' ) ++loopness;
-				for( core::Size j(1); j<=num_chains; ++j){
-					if( j == chain ) continue; //lots of own neighbors = who cares?
+			for ( core::Size i(windowstart); i<=windowend; ++i ) {
+				if ( pose.secstruct(i) == 'L' ) ++loopness;
+				for ( core::Size j(1); j<=num_chains; ++j ) {
+					if ( j == chain ) continue; //lots of own neighbors = who cares?
 					interface_nbrs[j] += table[i][j];
 				}
 			}
@@ -185,11 +186,11 @@ public:
 			outcopy << "PDB " << pdbname.base() << " window " << window << " loopness " << loopness << " nbrs";
 			for ( core::Size j( 1 ); j <= num_chains; ++j ) outcopy << " " << interface_nbrs[ j ];
 			outcopy << " start " << pose.pdb_info()->pose2pdb( windowstart )
-							<< " pymol select " << pdbname.base() << " and chain " << pose.pdb_info()->chain( windowstart )
-							<< " and resi " << pdb_windowstart << "-" << pdb_windowend;
+				<< " pymol select " << pdbname.base() << " and chain " << pose.pdb_info()->chain( windowstart )
+				<< " and resi " << pdb_windowstart << "-" << pdb_windowend;
 
 			bool good_interfacenbrs( false );
-			for( core::Size j( 1 ); j <= num_chains; ++j ) if( interface_nbrs[ j ] > nbrs_cutoff ) good_interfacenbrs = true;
+			for ( core::Size j( 1 ); j <= num_chains; ++j ) if ( interface_nbrs[ j ] > nbrs_cutoff ) good_interfacenbrs = true;
 
 			TR << outcopy.str() << std::endl;
 			if ( ( loopness >= loopness_cutoff ) && good_interfacenbrs ) {
@@ -232,20 +233,20 @@ typedef utility::pointer::shared_ptr< AnchorFinderMover > AnchorFinderMoverOP;
 int main( int argc, char* argv[] )
 {
 	try {
-	using basic::options::option;
-	option.add( window_size, "window size for loops" ).def( 5 );
-	option.add( loopness, "fraction of residues in window that need to be loop" ).def( 0.6 );
-	option.add( nbrs_per_residue, "# cross-interface interactions per residue in loop window" ).def( 4.0 );
-	option.add( bestoutfile, "file to print best loops in (ALL windows printed to tracer" ).def( "goodfile.out" );
-	devel::init( argc, argv );
+		using basic::options::option;
+		option.add( window_size, "window size for loops" ).def( 5 );
+		option.add( loopness, "fraction of residues in window that need to be loop" ).def( 0.6 );
+		option.add( nbrs_per_residue, "# cross-interface interactions per residue in loop window" ).def( 4.0 );
+		option.add( bestoutfile, "file to print best loops in (ALL windows printed to tracer" ).def( "goodfile.out" );
+		devel::init( argc, argv );
 
-	protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new AnchorFinderMover ) );
+		protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new AnchorFinderMover ) );
 
-	TR << "************************d**o**n**e**************************************" << std::endl;
+		TR << "************************d**o**n**e**************************************" << std::endl;
 	}
-	catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception" << e.msg() << std::endl;
-		return -1;
-	}
+catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception" << e.msg() << std::endl;
+	return -1;
+}
 	return 0;
 }

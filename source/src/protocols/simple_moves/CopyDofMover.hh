@@ -29,39 +29,39 @@ using namespace core;
 namespace protocols {
 namespace simple_moves {
 
-	class CopyDofMover: public protocols::moves::Mover {
+class CopyDofMover: public protocols::moves::Mover {
 
-	public:
+public:
 
-		//constructor
-		CopyDofMover( pose::Pose const & template_pose, std::map< Size, Size > res_map );
+	//constructor
+	CopyDofMover( pose::Pose const & template_pose, std::map< Size, Size > res_map );
 
-		//destructor
-		~CopyDofMover();
+	//destructor
+	~CopyDofMover();
 
-	public:
+public:
 
-		virtual void apply( core::pose::Pose & pose );
-		virtual std::string get_name() const { return "CopyDofMover"; }
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const { return "CopyDofMover"; }
 
-	private:
+private:
 
-		bool
-		check_for_precomputed_copy_dofs_info( pose::Pose const & pose );
+	bool
+	check_for_precomputed_copy_dofs_info( pose::Pose const & pose );
 
-	private:
+private:
 
-		pose::Pose const & template_pose_;
-		pose::MiniPose const template_mini_pose_;
-		std::map< Size, Size > res_map_;
-		bool backbone_only_;
-		bool side_chain_only_;
-		bool ignore_virtual_;
+	pose::Pose const & template_pose_;
+	pose::MiniPose const template_mini_pose_;
+	std::map< Size, Size > res_map_;
+	bool backbone_only_;
+	bool side_chain_only_;
+	bool ignore_virtual_;
 
-		bool use_hash_;
-		std::string pose_string_; // for precomputation. probably should hash to int.
-		std::map< std::string, pose::copydofs::CopyDofsInfo > copy_dofs_info_;
-	};
+	bool use_hash_;
+	std::string pose_string_; // for precomputation. probably should hash to int.
+	std::map< std::string, pose::copydofs::CopyDofsInfo > copy_dofs_info_;
+};
 
 } //simple_moves
 } //protocols

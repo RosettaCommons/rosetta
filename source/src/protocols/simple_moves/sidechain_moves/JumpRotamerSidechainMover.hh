@@ -84,9 +84,9 @@ public:
 		ChiVector const & old_chi
 	) const;
 
-	virtual	void
+	virtual void
 	make_chi_move(
-	  core::conformation::Residue const& residue,
+		core::conformation::Residue const& residue,
 		ChiVector const& old_chi,
 		ChiVector&  new_chi
 	);
@@ -97,17 +97,17 @@ protected:
 	void set_defaults();
 
 	void compute_tempered_rotamer_probabilities(
-     RotamerList const&,
-		 core::Real temperature,
-		 utility::vector1< core::Real >& prob,
-		 core::Real& normalize
+		RotamerList const&,
+		core::Real temperature,
+		utility::vector1< core::Real >& prob,
+		core::Real& normalize
 	) const;
 
 	//helper function
 	void compute_rotdensities(
-		 RotamerList const&,
-		 ChiVector const& new_chi,
-		 core::Real& rot_density
+		RotamerList const&,
+		ChiVector const& new_chi,
+		core::Real& rot_density
 	) const;
 
 private:

@@ -65,76 +65,76 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using core::chemical::oneletter_code_from_aa;
-	using protocols::fldsgn::topology::SS_Info2;
-	using protocols::fldsgn::topology::SS_Info2_OP;
-	using protocols::fldsgn::topology::SheetSet;
-	using protocols::fldsgn::topology::SheetSetOP;
-	using protocols::fldsgn::topology::StrandPairing;
-	using protocols::fldsgn::topology::StrandPairings;
-	using protocols::fldsgn::topology::StrandPairingSet;
-	using protocols::fldsgn::topology::StrandPairingSetOP;
-	using protocols::fldsgn::topology::BetaAlphaBetaMotifSet;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using core::chemical::oneletter_code_from_aa;
+		using protocols::fldsgn::topology::SS_Info2;
+		using protocols::fldsgn::topology::SS_Info2_OP;
+		using protocols::fldsgn::topology::SheetSet;
+		using protocols::fldsgn::topology::SheetSetOP;
+		using protocols::fldsgn::topology::StrandPairing;
+		using protocols::fldsgn::topology::StrandPairings;
+		using protocols::fldsgn::topology::StrandPairingSet;
+		using protocols::fldsgn::topology::StrandPairingSetOP;
+		using protocols::fldsgn::topology::BetaAlphaBetaMotifSet;
 
-	ThisApplication::register_options();
-  devel::init(argc, argv);
+		ThisApplication::register_options();
+		devel::init(argc, argv);
 
-	// blueprint output file
-	std::ofstream output;
-	std::ostringstream filename;
-	filename <<  option[ blue ]();
-	output.open( filename.str().c_str() ,std::ios::out );
+		// blueprint output file
+		std::ofstream output;
+		std::ostringstream filename;
+		filename <<  option[ blue ]();
+		output.open( filename.str().c_str() ,std::ios::out );
 
-	// calc secondary structure info
-	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, option[ in::file::s ].value().at( 1 ) );
-	protocols::moves::DsspMover dsm;
-	dsm.apply( pose );
+		// calc secondary structure info
+		core::pose::Pose pose;
+		core::import_pose::pose_from_pdb( pose, option[ in::file::s ].value().at( 1 ) );
+		protocols::moves::DsspMover dsm;
+		dsm.apply( pose );
 
-	// out secondaray structure info
-	SS_Info2_OP ssinfo( new SS_Info2( pose, pose.secstruct() ) );
-	output << *ssinfo;
+		// out secondaray structure info
+		SS_Info2_OP ssinfo( new SS_Info2( pose, pose.secstruct() ) );
+		output << *ssinfo;
 
-	// calc strand pairing set
-	StrandPairingSetOP spairset( new StrandPairingSet( protocols::fldsgn::topology::calc_strand_pairing_set( pose, ssinfo ) ) );
-	output << *spairset;
-	output << "SSPAIR " << spairset->name() << std::endl;
+		// calc strand pairing set
+		StrandPairingSetOP spairset( new StrandPairingSet( protocols::fldsgn::topology::calc_strand_pairing_set( pose, ssinfo ) ) );
+		output << *spairset;
+		output << "SSPAIR " << spairset->name() << std::endl;
 
-	// calc sheet
-	SheetSetOP sheet_set( new SheetSet( ssinfo, spairset ) );
-	output << *sheet_set;
+		// calc sheet
+		SheetSetOP sheet_set( new SheetSet( ssinfo, spairset ) );
+		output << *sheet_set;
 
-	// calc bab
-	BetaAlphaBetaMotifSet bab( ssinfo, sheet_set );
-	output << bab;
+		// calc bab
+		BetaAlphaBetaMotifSet bab( ssinfo, sheet_set );
+		output << bab;
 
 
-	core::sequence::ABEGOManager am;
-	Size level( option[ abego ]() );
-	utility::vector1< std::string > abego = core::sequence::get_abego( pose, level );
+		core::sequence::ABEGOManager am;
+		Size level( option[ abego ]() );
+		utility::vector1< std::string > abego = core::sequence::get_abego( pose, level );
 
-	if( level <= am.alllevel() ) {
-		for( Size i=1; i<= pose.total_residue(); i++ ){
-			// Size abego = am.torsion2index( pose.phi( i ), pose.psi( i ), pose.omega( i ), level );
-			output << i << " " << oneletter_code_from_aa( pose.aa( i ) ) << " " << pose.secstruct( i ) << abego[ i ] << " ." << std::endl;
+		if ( level <= am.alllevel() ) {
+			for ( Size i=1; i<= pose.total_residue(); i++ ) {
+				// Size abego = am.torsion2index( pose.phi( i ), pose.psi( i ), pose.omega( i ), level );
+				output << i << " " << oneletter_code_from_aa( pose.aa( i ) ) << " " << pose.secstruct( i ) << abego[ i ] << " ." << std::endl;
+			}
+		} else {
+			for ( Size i=1; i<= pose.total_residue(); i++ ) {
+				output << i << " " << oneletter_code_from_aa( pose.aa( i ) ) << " " << pose.secstruct( i ) << " ." << std::endl;
+			}
 		}
-	} else {
-		for( Size i=1; i<= pose.total_residue(); i++ ){
-			output << i << " " << oneletter_code_from_aa( pose.aa( i ) ) << " " << pose.secstruct( i ) << " ." << std::endl;
-		}
-	}
 
-	using namespace ObjexxFCL::format;
-	if ( option[ torsion ]() ) {
-		output << "## TORSION ANGLES" << std::endl;
-		for ( Size ii=1; ii<=pose.total_residue(); ii++ ) {
-			output << "# " << ii << " " << pose.secstruct( ii ) << " " << abego[ ii ] << " "
-							<< F( 8, 3, pose.phi( ii ) ) << F( 8, 3, pose.psi( ii ) ) << F( 8, 3, pose.omega( ii ) )
-							<< std::endl;
+		using namespace ObjexxFCL::format;
+		if ( option[ torsion ]() ) {
+			output << "## TORSION ANGLES" << std::endl;
+			for ( Size ii=1; ii<=pose.total_residue(); ii++ ) {
+				output << "# " << ii << " " << pose.secstruct( ii ) << " " << abego[ ii ] << " "
+					<< F( 8, 3, pose.phi( ii ) ) << F( 8, 3, pose.psi( ii ) ) << F( 8, 3, pose.omega( ii ) )
+					<< std::endl;
+			}
 		}
-	}
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

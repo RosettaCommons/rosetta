@@ -32,8 +32,8 @@ namespace devel {
 namespace sewing {
 
 Node::Node():
-pair_id_(0),
-addition_direction_(0)
+	pair_id_(0),
+	addition_direction_(0)
 {}
 
 Node::Node(
@@ -47,16 +47,16 @@ Node::Node(
 	core::Size helix_2_begin,
 	core::Size helix_2_end
 ):
-struct_id_(struct_id),
-bundle_id_(bundle_id), //change to substructure_id
-pair_id_(pair_id),
-helix_1_id_(helix_1_id), //change to list of substructures (substructure class has id, beginning, end)
-helix_1_begin_(helix_1_begin),
-helix_1_end_(helix_1_end),
-helix_2_id_(helix_2_id),
-helix_2_begin_(helix_2_begin),
-helix_2_end_(helix_2_end),
-addition_direction_(0)
+	struct_id_(struct_id),
+	bundle_id_(bundle_id), //change to substructure_id
+	pair_id_(pair_id),
+	helix_1_id_(helix_1_id), //change to list of substructures (substructure class has id, beginning, end)
+	helix_1_begin_(helix_1_begin),
+	helix_1_end_(helix_1_end),
+	helix_2_id_(helix_2_id),
+	helix_2_begin_(helix_2_begin),
+	helix_2_end_(helix_2_end),
+	addition_direction_(0)
 {}
 
 core::Size Node::addition_direction() const { return addition_direction_; }

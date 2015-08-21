@@ -24,39 +24,39 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	//Constructor
-	TagDefinition::TagDefinition( pose::Pose & pose,
-												StepWiseScreenerOP first_sampler,
-												bool const sampler_include_torsion_value_in_tag,
-												Size const moving_res, Size const reference_res,
-												std::string const extra_tag /* = ""*/  ):
-		pose_( pose ),
-		first_sampler_( first_sampler ),
-		sampler_include_torsion_value_in_tag_( sampler_include_torsion_value_in_tag ),
-		moving_res_( moving_res ),
-		reference_res_( reference_res ),
-		extra_tag_( extra_tag ),
-		tag_( tag_from_pose( pose ) )
-	{
-	}
+//Constructor
+TagDefinition::TagDefinition( pose::Pose & pose,
+	StepWiseScreenerOP first_sampler,
+	bool const sampler_include_torsion_value_in_tag,
+	Size const moving_res, Size const reference_res,
+	std::string const extra_tag /* = ""*/  ):
+	pose_( pose ),
+	first_sampler_( first_sampler ),
+	sampler_include_torsion_value_in_tag_( sampler_include_torsion_value_in_tag ),
+	moving_res_( moving_res ),
+	reference_res_( reference_res ),
+	extra_tag_( extra_tag ),
+	tag_( tag_from_pose( pose ) )
+{
+}
 
-	//Destructor
-	TagDefinition::~TagDefinition()
-	{}
+//Destructor
+TagDefinition::~TagDefinition()
+{}
 
-	///////////////////////////////////////////////////////////
-	// this action could also be in the update_mover, which would move forward to all poses in later screeners.
-	bool
-	TagDefinition::check_screen(){
-		using namespace modeler::rna;
-		tag_ = create_tag( "U" + extra_tag_, first_sampler_->count() );
-		if ( sampler_include_torsion_value_in_tag_ &&
-				 ( moving_res_ != 0 ) &&
-				 ( reference_res_ != 0 ) &&
-				 pose_.residue( moving_res_ ).is_RNA() &&
-				 pose_.residue( reference_res_ ).is_RNA() ) tag_ += create_rotamer_string( pose_, moving_res_, reference_res_ );
-		return true;
-	}
+///////////////////////////////////////////////////////////
+// this action could also be in the update_mover, which would move forward to all poses in later screeners.
+bool
+TagDefinition::check_screen(){
+	using namespace modeler::rna;
+	tag_ = create_tag( "U" + extra_tag_, first_sampler_->count() );
+	if ( sampler_include_torsion_value_in_tag_ &&
+			( moving_res_ != 0 ) &&
+			( reference_res_ != 0 ) &&
+			pose_.residue( moving_res_ ).is_RNA() &&
+			pose_.residue( reference_res_ ).is_RNA() ) tag_ += create_rotamer_string( pose_, moving_res_, reference_res_ );
+	return true;
+}
 
 } //screener
 } //stepwise

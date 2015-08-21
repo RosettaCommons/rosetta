@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 	 core/membrane/Span.cxxtest.hh
-/// @brief 	 Unit test for Span class
+/// @file   core/membrane/Span.cxxtest.hh
+/// @brief   Unit test for Span class
 /// @author  JKLeman (julia.koehler1982@gmail.com)
 
 // Test Headers
@@ -36,31 +36,31 @@ using namespace core::conformation;
 using namespace core::conformation::membrane;
 
 class SpanTest : public CxxTest::TestSuite {
-	
-public: // test functions
-    
-    /// Test Setup Functions ////////
-    
-    /// @brief Setup Test
-    void setUp(){
-	
-        // Initialize
-        core_init();
-	}
-    
-    /// @brief Standard Tear Down
-    void tearDown(){}
-	    
-    ///// Test Methods /////////////
 
-////////////////////////////////////////////////////////////////////////////////
+public: // test functions
+
+	/// Test Setup Functions ////////
+
+	/// @brief Setup Test
+	void setUp(){
+
+		// Initialize
+		core_init();
+	}
+
+	/// @brief Standard Tear Down
+	void tearDown(){}
+
+	///// Test Methods /////////////
+
+	////////////////////////////////////////////////////////////////////////////////
 
 	// create object from PDB
 	void test_is_valid(){
 
 		TS_TRACE("Test whether Span is valid.");
 		using namespace core::conformation::membrane;
-		
+
 		// normal span
 		SpanOP span1( new Span( 1, 20 ) );
 		TS_TRACE("...span1...");
@@ -90,7 +90,7 @@ public: // test functions
 		SpanOP span6( new Span( 5, 35 ) );
 		TS_TRACE("...span6...");
 		TS_ASSERT_EQUALS( span6->is_valid(), true );
-		
+
 		TS_TRACE("Finished span validity tests.");
 	}
 };

@@ -71,7 +71,7 @@ ResidueNetwork::average_shortest_path_length() const
 	core::Real total_path_length = 0.0;
 
 	//iterate over all starting notes
-	for ( std::list< NodeOP >::const_iterator it = nodes_.begin(); it != nodes_.end(); ++it) {
+	for ( std::list< NodeOP >::const_iterator it = nodes_.begin(); it != nodes_.end(); ++it ) {
 		dijkstras ((*it)->resi);
 
 		//add the paths from resi it to all other residues
@@ -153,7 +153,7 @@ NodeOP
 ExtractSmallest( std::list< NodeOP > & nodes )
 {
 	// AMW: cppcheck thinks this conditional might be inefficient
-	if ( nodes.empty() /*size() == 0 */) return NULL;
+	if ( nodes.empty() /*size() == 0 */ ) return NULL;
 	std::list< NodeOP >::iterator smallest( nodes.begin() );
 	for ( std::list< NodeOP >::iterator current = ++(nodes.begin()); current != nodes.end(); ++current ) {
 		if ( (*current)->distanceFromStart < (*smallest)->distanceFromStart ) {
@@ -174,8 +174,8 @@ AdjacentRemainingNodes( NodeOP node )
 	assert( ! node->in_list );
 	std::list< NodeOP > adjacentNodes;
 	for ( std::list< NodeOP >::const_iterator cur_neighbor = node->neighbors.begin();
-				cur_neighbor != node->neighbors.end();
-				++cur_neighbor ) {
+			cur_neighbor != node->neighbors.end();
+			++cur_neighbor ) {
 		if ( (*cur_neighbor)->in_list ) {
 			//if ( Contains( nodes, *cur_neighbor ) ) {
 			adjacentNodes.push_back( *cur_neighbor );
@@ -189,8 +189,9 @@ bool
 Contains( std::list< NodeOP > const & nodes, NodeCOP node)
 {
 	for ( std::list< NodeOP >::const_iterator it = nodes.begin(); it != nodes.end(); ++it ) {
-		if ( node == *it )
+		if ( node == *it ) {
 			return true;
+		}
 	}
 	return false;
 }
@@ -205,7 +206,7 @@ ResidueNetwork::clear_edges()
 }
 
 void
-DistanceResidueNetwork::generate_edges( core::pose::Pose const & pose ) 
+DistanceResidueNetwork::generate_edges( core::pose::Pose const & pose )
 {
 	clear_edges();
 
@@ -246,10 +247,10 @@ DistanceResidueNetwork::generate_edges( core::pose::Pose const & pose )
 						break;
 					}
 				}
-				if( closest <= distance_threshold ){
-				(*res_it_1)->neighbors.push_back( *res_it_2 );
-				(*res_it_2)->neighbors.push_back( *res_it_1 );
-				TR.Debug<<"Adding residue "<<(*res_it_2)->resi<<" as a neighbor of "<<(*res_it_1)->resi<<" -- Count = "<<(*res_it_1)->neighbors.size()<<","<<(*res_it_2)->neighbors.size()<<std::endl;
+				if ( closest <= distance_threshold ) {
+					(*res_it_1)->neighbors.push_back( *res_it_2 );
+					(*res_it_2)->neighbors.push_back( *res_it_1 );
+					TR.Debug<<"Adding residue "<<(*res_it_2)->resi<<" as a neighbor of "<<(*res_it_1)->resi<<" -- Count = "<<(*res_it_1)->neighbors.size()<<","<<(*res_it_2)->neighbors.size()<<std::endl;
 				}
 			}
 		}
@@ -257,23 +258,23 @@ DistanceResidueNetwork::generate_edges( core::pose::Pose const & pose )
 }
 
 void
-CovalentResidueNetwork::generate_edges( core::pose::Pose const & pose ) 
+CovalentResidueNetwork::generate_edges( core::pose::Pose const & pose )
 {
 	clear_edges();
 
 	//identify covalent bonds between residues
 	std::list< NodeOP >::const_iterator res_it_1 = nodes().begin();
-	for ( core::Size i=1; i != pose.total_residue(); ++i) {
+	for ( core::Size i=1; i != pose.total_residue(); ++i ) {
 		std::list< NodeOP >::const_iterator res_it_2 = nodes().begin();
 		std::advance(res_it_2,i);
-		for ( core::Size j=i + 1; j != pose.total_residue() + 1; ++j) {
-			if (pose.residue(i).is_bonded(pose.residue(j)) ){
+		for ( core::Size j=i + 1; j != pose.total_residue() + 1; ++j ) {
+			if ( pose.residue(i).is_bonded(pose.residue(j)) ) {
 				//TR << "bond found " << i << " " << j << std::endl;
-				if (j > i + 1) {
-					TR << "Non-peptide bond found (probably disulfide) " << i << "-" << j << std::endl;					
+				if ( j > i + 1 ) {
+					TR << "Non-peptide bond found (probably disulfide) " << i << "-" << j << std::endl;
 				}
 				(*res_it_1)->neighbors.push_back(*(res_it_2));
-				(*res_it_2)->neighbors.push_back(*(res_it_1));	
+				(*res_it_2)->neighbors.push_back(*(res_it_1));
 			}
 			++res_it_2;
 		}

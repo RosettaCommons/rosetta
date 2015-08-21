@@ -39,8 +39,8 @@ AmbiguousNMRConstraint::AmbiguousNMRConstraint( func::FuncOP func ):
 	MultiConstraint( atom_pair_constraint ),
 	func_( func )
 {
-	//	init_cst_score_types();
-debug_assert ( member_constraints().size() == 0 );
+	// init_cst_score_types();
+	debug_assert ( member_constraints().size() == 0 );
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Constructor
@@ -48,15 +48,15 @@ AmbiguousNMRConstraint::AmbiguousNMRConstraint( ConstraintCOPs const& cst_in, fu
 	MultiConstraint( cst_in, atom_pair_constraint ),
 	func_( func )
 {
-	//	init_cst_score_types();
-debug_assert ( member_constraints().size() > 0 );
+	// init_cst_score_types();
+	debug_assert ( member_constraints().size() > 0 );
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // void
 // AmbiguousNMRConstraint::init_cst_score_types()
 // {
-// 	cst_score_types_.clear();
-// 	cst_score_types_.push_back(atom_pair_constraint);
+//  cst_score_types_.clear();
+//  cst_score_types_.push_back(atom_pair_constraint);
 // }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief ScoreFunction, scores all member constraints but only reports the lowest one
@@ -130,14 +130,13 @@ ConstraintOP
 AmbiguousNMRConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const
 {
 	ConstraintCOPs new_csts;
-	for( ConstraintCOPs::const_iterator cst_it = member_constraints_.begin(); cst_it != member_constraints_.end(); ++cst_it ){
+	for ( ConstraintCOPs::const_iterator cst_it = member_constraints_.begin(); cst_it != member_constraints_.end(); ++cst_it ) {
 		ConstraintOP new_cst = (*cst_it)->remap_resid( seqmap );
-		if( new_cst ) new_csts.push_back( new_cst );
+		if ( new_cst ) new_csts.push_back( new_cst );
 	}
-	if( new_csts.size() > 0 ){
+	if ( new_csts.size() > 0 ) {
 		return ConstraintOP( new AmbiguousNMRConstraint( new_csts, get_func().clone() ) );
-	}
-	else return NULL;
+	} else return NULL;
 }
 
 
@@ -155,44 +154,44 @@ AmbiguousNMRConstraint::fill_f1_f2(
 	Real eff_dist = dist( xyz );
 	Real out_wderiv( weights[ score_type() ] * get_func().dfunc( eff_dist ));
 	Real in_deriv = -1.0/6.0 * pow( eff_dist, 7.0 );
-	//	tr.Trace << "deriv for atom " << atom << eff_dist << " " << out_wderiv << " " << in_deriv << std::endl;
+	// tr.Trace << "deriv for atom " << atom << eff_dist << " " << out_wderiv << " " << in_deriv << std::endl;
 
-	//	tr.Trace << "the_other_atoms: " << the_other_atoms.size() << " " << the_other_atoms.front() << std::endl;
+	// tr.Trace << "the_other_atoms: " << the_other_atoms.size() << " " << the_other_atoms.front() << std::endl;
 	//Vector f1(0.0), f2(0.0);
-	for ( ConstraintCOPs::const_iterator member_it = member_constraints().begin(), end = member_constraints().end(); member_it != end; ++member_it ){
-              Vector f1(0.0), f2(0.0);
+	for ( ConstraintCOPs::const_iterator member_it = member_constraints().begin(), end = member_constraints().end(); member_it != end; ++member_it ) {
+		Vector f1(0.0), f2(0.0);
 
-               //fpd hack to get at vector from atom i->j
-                (*member_it)->fill_f1_f2( atom, xyz, f1, f2, weights );
-    core::Real member_cst_is_scaled_by = weights[ (*member_it)->score_type() ] * (*member_it)->get_func().dfunc( eff_dist
-);
+		//fpd hack to get at vector from atom i->j
+		(*member_it)->fill_f1_f2( atom, xyz, f1, f2, weights );
+		core::Real member_cst_is_scaled_by = weights[ (*member_it)->score_type() ] * (*member_it)->get_func().dfunc( eff_dist
+		);
 
-               core::Real scale_i = -6.0*pow((*member_it)->dist( xyz ),-7.0);
+		core::Real scale_i = -6.0*pow((*member_it)->dist( xyz ),-7.0);
 
-               if (std::fabs(member_cst_is_scaled_by) > 1e-14) scale_i /= member_cst_is_scaled_by;
+		if ( std::fabs(member_cst_is_scaled_by) > 1e-14 ) scale_i /= member_cst_is_scaled_by;
 
-               F1 += 1.0 * scale_i * out_wderiv * in_deriv * f1;
-               F2 += 1.0 * scale_i * out_wderiv * in_deriv * f2;
-        }
-        //              tr.Trace << "wderiv " << wderiv << std::endl;
+		F1 += 1.0 * scale_i * out_wderiv * in_deriv * f1;
+		F2 += 1.0 * scale_i * out_wderiv * in_deriv * f2;
+	}
+	//              tr.Trace << "wderiv " << wderiv << std::endl;
 
 
-	//		tr.Trace << "wderiv " << wderiv << std::endl;
-//	F1 += out_wderiv * in_deriv * f1;
-//	F2 += out_wderiv * in_deriv * f2;
+	//  tr.Trace << "wderiv " << wderiv << std::endl;
+	// F1 += out_wderiv * in_deriv * f1;
+	// F2 += out_wderiv * in_deriv * f2;
 }
 
 
 // void
 // AmbiguousNMRConstraint::show( std::ostream& out) const
 // {
-// 	out << "AmbiguousNMRConstraint Active constraint:" << std::endl;
-// 	out << "AmbiguousNMRConstraint containing the following " << member_constraints().size() << " constraints: " << std::endl;
-// 	for( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(); cst_it != member_constraints().end(); cst_it++){
-// 		(*cst_it)->show(out);
-// 	}
+//  out << "AmbiguousNMRConstraint Active constraint:" << std::endl;
+//  out << "AmbiguousNMRConstraint containing the following " << member_constraints().size() << " constraints: " << std::endl;
+//  for( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(); cst_it != member_constraints().end(); cst_it++){
+//   (*cst_it)->show(out);
+//  }
 
-// 	out << " ...all member constraints of this AmbiguousNMRConstraint shown." << std::endl;
+//  out << " ...all member constraints of this AmbiguousNMRConstraint shown." << std::endl;
 // }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -211,8 +210,8 @@ AmbiguousNMRConstraint::read_def(
 	func_->read_data( data );
 
 	if ( data.good() ) {
-	//chu skip the rest of line since this is a single line defintion.
-		while( data.good() && (data.get() != '\n') ) {}
+		//chu skip the rest of line since this is a single line defintion.
+		while ( data.good() && (data.get() != '\n') ) {}
 		if ( !data.good() ) data.setstate( std::ios_base::eofbit );
 	}
 	MultiConstraint::read_def( data, pose, func_factory );
@@ -224,7 +223,7 @@ void AmbiguousNMRConstraint::show_def( std::ostream& out, pose::Pose const& pose
 	else out << std::endl;
 	for ( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(), end = member_constraints().end(); cst_it != end; ++cst_it ) {
 		(*cst_it)->show_def( out, pose );
-		//		out<<std::endl;
+		//  out<<std::endl;
 	}
 	out << "End_"<< type() << std::endl;
 }

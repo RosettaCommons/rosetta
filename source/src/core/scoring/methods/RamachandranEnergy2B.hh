@@ -95,8 +95,8 @@ public:
 	// data
 private:
 	Ramachandran2B const & potential_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

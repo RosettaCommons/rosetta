@@ -38,12 +38,12 @@ namespace protocols {
 namespace antibody {
 namespace task_operations {
 
-	using namespace core::pack::task::operation;
-	using namespace protocols::antibody::design;
-	using namespace protocols::antibody::clusters;
-	using namespace protocols::toolbox::task_operations;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+using namespace core::pack::task::operation;
+using namespace protocols::antibody::design;
+using namespace protocols::antibody::clusters;
+using namespace protocols::toolbox::task_operations;
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
 
 AddCDRProfilesOperation::AddCDRProfilesOperation():
 	TaskOperation(),
@@ -94,7 +94,7 @@ AddCDRProfilesOperation::set_defaults(){
 	std::string numbering_scheme = option [OptionKeys::antibody::numbering_scheme]();
 	numbering_scheme_ = manager.numbering_scheme_string_to_enum(numbering_scheme);
 
-	for (core::Size i = 1; i <=6; ++i){
+	for ( core::Size i = 1; i <=6; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		CDRSeqDesignOptionsOP opt = CDRSeqDesignOptionsOP(new CDRSeqDesignOptions(cdr));
 		seq_design_options_.push_back(opt);
@@ -140,7 +140,7 @@ AddCDRProfilesOperation::~AddCDRProfilesOperation(){}
 
 void
 AddCDRProfilesOperation::parse_tag(utility::tag::TagCOP tag, basic::datacache::DataMap&){
-	if (tag->hasOption("cdrs")){
+	if ( tag->hasOption("cdrs") ) {
 		TR << "Setting CDRs from settings" << std::endl;
 		set_cdrs(get_cdr_bool_from_tag(tag, "cdrs"));
 	}
@@ -155,14 +155,14 @@ AddCDRProfilesOperation::parse_tag(utility::tag::TagCOP tag, basic::datacache::D
 	zero_prob_sample_ = tag->getOption< core::Real >("sample_zero_probs_at", zero_prob_sample_);
 	set_cons_design_data_source( tag->getOption< std::string >("cons_design_data_source", cons_design_data_source_) );
 
-	if (tag->hasOption("numbering_scheme")){
+	if ( tag->hasOption("numbering_scheme") ) {
 
 
 		AntibodyEnumManager manager = AntibodyEnumManager();
 		numbering_scheme_ = manager.numbering_scheme_string_to_enum(tag->getOption<std::string>("numbering_scheme"));
 
 	}
-	if (tag->hasOption("cdr_definition") && tag->getOption<std::string>("cdr_definition") != "North"){
+	if ( tag->hasOption("cdr_definition") && tag->getOption<std::string>("cdr_definition") != "North" ) {
 		TR <<"This operation only works with the North CDR definition." <<std::endl;
 	}
 
@@ -172,13 +172,12 @@ AddCDRProfilesOperation::parse_tag(utility::tag::TagCOP tag, basic::datacache::D
 
 void
 AddCDRProfilesOperation::set_cdr_only(CDRNameEnum cdr){
-	for (core::Size i = 1; i <= 6; ++i){
+	for ( core::Size i = 1; i <= 6; ++i ) {
 		CDRNameEnum current_cdr = static_cast<CDRNameEnum>( i );
 
-		if (current_cdr == cdr){
+		if ( current_cdr == cdr ) {
 			seq_design_options_[ i ]->design(true);
-		}
-		else{
+		} else {
 			seq_design_options_[ i ]->design(false);
 		}
 	}
@@ -186,11 +185,10 @@ AddCDRProfilesOperation::set_cdr_only(CDRNameEnum cdr){
 
 void
 AddCDRProfilesOperation::set_cdrs(const utility::vector1<bool>& cdrs) {
-	for (core::Size i = 1; i <= 6; ++i){
-		if (cdrs[ i ]){
+	for ( core::Size i = 1; i <= 6; ++i ) {
+		if ( cdrs[ i ] ) {
 			seq_design_options_[ i ]->design(true);
-		}
-		else{
+		} else {
 			seq_design_options_[ i ]->design(false);
 		}
 	}
@@ -208,14 +206,14 @@ AddCDRProfilesOperation::set_add_to_current(bool add_to_current){
 
 void
 AddCDRProfilesOperation::set_fallback_strategy(SeqDesignStrategyEnum fallback_strategy){
-	for (core::Size i = 1; i <= 6; ++i){
+	for ( core::Size i = 1; i <= 6; ++i ) {
 		seq_design_options_[ i ]->fallback_strategy(fallback_strategy);
 	}
 }
 
 void
 AddCDRProfilesOperation::set_primary_strategy(SeqDesignStrategyEnum primary_strategy){
-	for (core::Size i = 1; i <= 6; ++i){
+	for ( core::Size i = 1; i <= 6; ++i ) {
 		seq_design_options_[ i ]->design_strategy(primary_strategy);
 	}
 }
@@ -254,7 +252,7 @@ void
 AddCDRProfilesOperation::set_cons_design_data_source(std::string data_source){
 
 	//Re-load conservative data
-	if (cons_design_data_source_ != data_source){
+	if ( cons_design_data_source_ != data_source ) {
 		cons_task_->set_data_source(data_source);
 	}
 	cons_design_data_source_ = data_source;
@@ -263,10 +261,10 @@ AddCDRProfilesOperation::set_cons_design_data_source(std::string data_source){
 utility::vector1<bool>
 AddCDRProfilesOperation::get_profile_and_design_cdrs() const {
 	utility::vector1<bool> profiles(6, false);
-	for (core::Size i = 1; i <= 6; ++i){
-		if (! seq_design_options_[ i ]->design()) continue;
+	for ( core::Size i = 1; i <= 6; ++i ) {
+		if ( ! seq_design_options_[ i ]->design() ) continue;
 		SeqDesignStrategyEnum strat = seq_design_options_[ i ]->design_strategy();
-		if (strat == seq_design_profiles || strat == seq_design_profile_sets_combined){
+		if ( strat == seq_design_profiles || strat == seq_design_profile_sets_combined ) {
 			profiles[ i ] = true;
 		}
 	}
@@ -276,11 +274,11 @@ AddCDRProfilesOperation::get_profile_and_design_cdrs() const {
 utility::vector1<bool>
 AddCDRProfilesOperation::get_profile_set_and_design_cdrs() const {
 	utility::vector1<bool> profiles(6, false);
-	for (core::Size i = 1; i <= 6; ++i){
-		if (! seq_design_options_[ i ]->design()) continue;
+	for ( core::Size i = 1; i <= 6; ++i ) {
+		if ( ! seq_design_options_[ i ]->design() ) continue;
 
 		SeqDesignStrategyEnum strat = seq_design_options_[ i ]->design_strategy();
-		if (strat == seq_design_profile_sets || strat == seq_design_profile_sets_combined){
+		if ( strat == seq_design_profile_sets || strat == seq_design_profile_sets_combined ) {
 			profiles[ i ] = true;
 		}
 	}
@@ -290,8 +288,8 @@ AddCDRProfilesOperation::get_profile_set_and_design_cdrs() const {
 utility::vector1<bool>
 AddCDRProfilesOperation::get_design_cdrs() const{
 	utility::vector1<bool> designing(6, false);
-	for (core::Size i = 1; i <= 6; ++i){
-		if (seq_design_options_[ i ]->design()){
+	for ( core::Size i = 1; i <= 6; ++i ) {
+		if ( seq_design_options_[ i ]->design() ) {
 			designing[ i ] = true;
 		}
 	}
@@ -306,11 +304,11 @@ AddCDRProfilesOperation::pre_load_data(const core::pose::Pose& pose){
 	core::Size n_profile_set_cdrs = count(profile_set_cdrs.begin(), profile_set_cdrs.end(), true);
 	core::Size n_profile_cdrs = count(profile_cdrs.begin(), profile_cdrs.end(), true);
 
-	if (! ab_info_){
+	if ( ! ab_info_ ) {
 		ab_info_ = AntibodyInfoOP(new AntibodyInfo(pose, numbering_scheme_, North));
 	}
 
-	if (n_profile_set_cdrs > 0 ){
+	if ( n_profile_set_cdrs > 0 ) {
 
 		profile_sets_task_ = AddCDRProfileSetsOperationOP( new AddCDRProfileSetsOperation(ab_info_));
 		profile_sets_task_->set_cdrs(profile_set_cdrs);
@@ -322,7 +320,7 @@ AddCDRProfilesOperation::pre_load_data(const core::pose::Pose& pose){
 
 	}
 
-	if (n_profile_cdrs > 0){
+	if ( n_profile_cdrs > 0 ) {
 
 		prob_set_ = get_cluster_profile_probability_data(
 			ab_info_,
@@ -344,10 +342,9 @@ AddCDRProfilesOperation::apply(const core::pose::Pose& pose, core::pack::task::P
 
 	//This is due to const apply and no pose in parse_my_tag.
 	AntibodyInfoOP local_ab_info;
-	if (! ab_info_){
+	if ( ! ab_info_ ) {
 		local_ab_info = AntibodyInfoOP(new AntibodyInfo(pose, numbering_scheme_, North));
-	}
-	else {
+	} else {
 		local_ab_info = ab_info_->clone();
 	}
 
@@ -363,13 +360,12 @@ AddCDRProfilesOperation::apply(const core::pose::Pose& pose, core::pack::task::P
 
 
 	/// Load, setup, and run ProfileSets operation.
-	if (n_profile_set_cdrs > 0){
+	if ( n_profile_set_cdrs > 0 ) {
 		AddCDRProfileSetsOperationOP profile_sets_task; //yay const apply
-		if (pre_loaded_data_){
+		if ( pre_loaded_data_ ) {
 			no_profile_set_cdrs = no_profile_sets_data_cdrs_;
 			profile_sets_task = AddCDRProfileSetsOperationOP( new AddCDRProfileSetsOperation( *profile_sets_task_ ) );
-		}
-		else{
+		} else {
 			profile_sets_task = AddCDRProfileSetsOperationOP( new AddCDRProfileSetsOperation( local_ab_info));
 
 			profile_sets_task->set_cdrs(profile_set_cdrs);
@@ -387,14 +383,13 @@ AddCDRProfilesOperation::apply(const core::pose::Pose& pose, core::pack::task::P
 		profile_sets_task->apply(pose, task);
 	}
 
-	if (n_profile_cdrs > 0 ){
+	if ( n_profile_cdrs > 0 ) {
 		std::map< core::Size, std::map< core::chemical::AA, core::Real > > prob_set;
 
-		if (pre_loaded_data_){
+		if ( pre_loaded_data_ ) {
 			prob_set = prob_set_;
 			no_profile_cdrs = no_profile_data_cdrs_;
-		}
-		else {
+		} else {
 			prob_set = get_cluster_profile_probability_data(
 				local_ab_info,
 				pose,
@@ -410,10 +405,9 @@ AddCDRProfilesOperation::apply(const core::pose::Pose& pose, core::pack::task::P
 		prob_task.set_picking_rounds(picking_rounds_);
 		prob_task.set_aa_probability_set( prob_set );
 
-		if (n_profile_set_cdrs > 0){
+		if ( n_profile_set_cdrs > 0 ) {
 			prob_task.set_keep_task_allowed_aas(true);
-		}
-		else{
+		} else {
 			prob_task.set_keep_task_allowed_aas( keep_task_allowed_aas_);
 		}
 		prob_task.set_include_native_restype( include_native_restype_ );
@@ -424,10 +418,9 @@ AddCDRProfilesOperation::apply(const core::pose::Pose& pose, core::pack::task::P
 
 	utility::vector1< bool > no_data_cdrs(6, false);
 
-	if (n_profile_cdrs > 0 ){
+	if ( n_profile_cdrs > 0 ) {
 		no_data_cdrs = no_profile_cdrs;
-	}
-	else if( n_profile_set_cdrs > 0){
+	} else if ( n_profile_set_cdrs > 0 ) {
 		no_data_cdrs = no_profile_set_cdrs;
 	}
 
@@ -436,18 +429,18 @@ AddCDRProfilesOperation::apply(const core::pose::Pose& pose, core::pack::task::P
 	cons_task_->include_native_aa(include_native_restype_);
 	core::Size cons_task_residues = 0;
 
-	for (core::Size i = 1; i <= core::Size(local_ab_info->get_total_num_CDRs()); ++i){
+	for ( core::Size i = 1; i <= core::Size(local_ab_info->get_total_num_CDRs()); ++i ) {
 		CDRNameEnum cdr = static_cast< CDRNameEnum >( i );
-		if ((no_data_cdrs[ i ]  && seq_design_options_[ i ]->fallback_strategy() == seq_design_conservative) || (seq_design_options_[ i ]->design() && seq_design_options_[ i ]->design_strategy() == seq_design_conservative)){
+		if ( (no_data_cdrs[ i ]  && seq_design_options_[ i ]->fallback_strategy() == seq_design_conservative) || (seq_design_options_[ i ]->design() && seq_design_options_[ i ]->design_strategy() == seq_design_conservative) ) {
 
 			TR << "Using conservative op for " << local_ab_info->get_CDR_name(cdr) << std::endl;
-			for (core::Size resnum = local_ab_info->get_CDR_start(cdr, pose, North); resnum <= local_ab_info->get_CDR_end(cdr, pose, North); ++resnum ){
+			for ( core::Size resnum = local_ab_info->get_CDR_start(cdr, pose, North); resnum <= local_ab_info->get_CDR_end(cdr, pose, North); ++resnum ) {
 				cons_task_->include_residue( resnum );
 				cons_task_residues += 1;
 			}
 		}
 	}
-	if (cons_task_residues > 0){
+	if ( cons_task_residues > 0 ) {
 		cons_task_->apply(pose, task);
 	}
 
@@ -456,19 +449,19 @@ AddCDRProfilesOperation::apply(const core::pose::Pose& pose, core::pack::task::P
 	RestrictResidueToRepacking restrict = RestrictResidueToRepacking();
 	core::Size restrict_residues = 0;
 	//TR << "No data cdrs: " << utility::to_string(no_data_cdrs) << std::endl;
-	for (core::Size i = 1; i <= core::Size(local_ab_info->get_total_num_CDRs()); ++i){
+	for ( core::Size i = 1; i <= core::Size(local_ab_info->get_total_num_CDRs()); ++i ) {
 		CDRNameEnum cdr = static_cast< CDRNameEnum >( i );
-		if ((no_data_cdrs[ cdr ] && seq_design_options_[ i ]->fallback_strategy() == seq_design_none) || (seq_design_options_[ i ]->design() && seq_design_options_[ i ]->design_strategy() == seq_design_none)){
+		if ( (no_data_cdrs[ cdr ] && seq_design_options_[ i ]->fallback_strategy() == seq_design_none) || (seq_design_options_[ i ]->design() && seq_design_options_[ i ]->design_strategy() == seq_design_none) ) {
 			TR << "Disabling design for " << local_ab_info->get_CDR_name(cdr) << std::endl;
 
-			for (core::Size resnum = local_ab_info->get_CDR_start(cdr, pose, North); resnum <= local_ab_info->get_CDR_end(cdr, pose, North); ++resnum){
+			for ( core::Size resnum = local_ab_info->get_CDR_start(cdr, pose, North); resnum <= local_ab_info->get_CDR_end(cdr, pose, North); ++resnum ) {
 				restrict.include_residue( resnum );
 				restrict_residues += 1;
 			}
 		}
 
 	}
-	if (restrict_residues > 0){
+	if ( restrict_residues > 0 ) {
 		restrict.apply(pose, task);
 	}
 }

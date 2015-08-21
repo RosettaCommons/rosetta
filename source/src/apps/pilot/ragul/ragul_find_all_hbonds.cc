@@ -72,37 +72,37 @@ int main( int argc, char * argv [] )
 {
 	try{
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	// create native pose from pdb
-	pose::Pose pose_init;
-	std::string const input_pdb_name( basic::options::start_file() );
-	core::import_pose::pose_from_pdb( pose_init, input_pdb_name );
+		// create native pose from pdb
+		pose::Pose pose_init;
+		std::string const input_pdb_name( basic::options::start_file() );
+		core::import_pose::pose_from_pdb( pose_init, input_pdb_name );
 
-	// fill hbond set
-	core::scoring::hbonds::HBondSet hbs1;
-	scoring::ScoreFunctionOP scorefxn(get_score_function());
-	(*scorefxn)(pose_init);
-	core::scoring::hbonds::fill_hbond_set(pose_init, false, hbs1);
+		// fill hbond set
+		core::scoring::hbonds::HBondSet hbs1;
+		scoring::ScoreFunctionOP scorefxn(get_score_function());
+		(*scorefxn)(pose_init);
+		core::scoring::hbonds::fill_hbond_set(pose_init, false, hbs1);
 
-	TR << "\n\nHBOND SET:\n";
-	for ( Size i=1; i<= Size(hbs1.nhbonds()); ++i ) {
-		core::scoring::hbonds::HBond const & hb( hbs1.hbond(i) );
-		core::conformation::Residue const & donor =	pose_init.residue( hb.don_res() );
-		core::conformation::Residue const & accep =	pose_init.residue( hb.acc_res() );
-		TR << i << ":" <<
-			chemical::oneletter_code_from_aa(donor.aa()) <<
-			pose_init.pdb_info()->number(donor.seqpos()) << pose_init.pdb_info()->chain(donor.seqpos()) << ' ' <<
-			'(' << donor.seqpos() << ')' <<
-			donor.atom_name( hb.don_hatm()) << " --- " <<
-			chemical::oneletter_code_from_aa(accep.aa()) <<
-			pose_init.pdb_info()->number(accep.seqpos()) << pose_init.pdb_info()->chain(accep.seqpos()) << ' ' <<
-			'(' << accep.seqpos() << ')' <<
-			accep.atom_name( hb.acc_atm()) << "\n";
-	}
-    } catch ( utility::excn::EXCN_Base const & e ) {
+		TR << "\n\nHBOND SET:\n";
+		for ( Size i=1; i<= Size(hbs1.nhbonds()); ++i ) {
+			core::scoring::hbonds::HBond const & hb( hbs1.hbond(i) );
+			core::conformation::Residue const & donor = pose_init.residue( hb.don_res() );
+			core::conformation::Residue const & accep = pose_init.residue( hb.acc_res() );
+			TR << i << ":" <<
+				chemical::oneletter_code_from_aa(donor.aa()) <<
+				pose_init.pdb_info()->number(donor.seqpos()) << pose_init.pdb_info()->chain(donor.seqpos()) << ' ' <<
+				'(' << donor.seqpos() << ')' <<
+				donor.atom_name( hb.don_hatm()) << " --- " <<
+				chemical::oneletter_code_from_aa(accep.aa()) <<
+				pose_init.pdb_info()->number(accep.seqpos()) << pose_init.pdb_info()->chain(accep.seqpos()) << ' ' <<
+				'(' << accep.seqpos() << ')' <<
+				accep.atom_name( hb.acc_atm()) << "\n";
+		}
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
-    }
+	}
 }
 

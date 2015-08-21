@@ -77,7 +77,7 @@ public:
 	/// @brief sim_annealing for fixed backbone design mode
 	void run();
 
- private:
+private:
 	void
 	setup_rotamer_couplings( RotamerCouplingsCOP rotamer_couplings );
 

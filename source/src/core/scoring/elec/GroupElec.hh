@@ -44,15 +44,15 @@ namespace elec {
 
 struct ElecGroup
 {
-  utility::vector1< core::Size > atms;
-  utility::vector1< core::Size > comatms;
-  Size n_acceptor;
-  Size n_donor;
-  Real qeps;
+	utility::vector1< core::Size > atms;
+	utility::vector1< core::Size > comatms;
+	Size n_acceptor;
+	Size n_donor;
+	Real qeps;
 };
 
 typedef utility::vector1< ElecGroup > ResElecGroup;
-	//typedef utility::pointer::shared_ptr< ResElecGroup const > ResElecGroupCOP;
+//typedef utility::pointer::shared_ptr< ResElecGroup const > ResElecGroupCOP;
 
 class GroupElec : public utility::pointer::ReferenceCount
 {
@@ -64,86 +64,86 @@ public:
 
 	void initialize( etable::coulomb::Coulomb const &coulomb );
 
-  Real
-  eval_respair_group_coulomb(
-     conformation::Residue const & rsd1,
-     conformation::Residue const & rsd2
-     //hbonds::HBondSet const & hbond_set
-     ) const;
+	Real
+	eval_respair_group_coulomb(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2
+		//hbonds::HBondSet const & hbond_set
+	) const;
 
-  void
-  eval_respair_group_derivatives(
-	  conformation::Residue const & rsd1,
-	  conformation::Residue const & rsd2,
-	  //hbonds::HBondSet const & hbond_set,
-	  utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	  utility::vector1< DerivVectorPair > & r2_atom_derivs,
+	void
+	eval_respair_group_derivatives(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		//hbonds::HBondSet const & hbond_set,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs,
 		core::Real const elec_weight,
 		core::Real & Erespair
- 	  ) const;
+	) const;
 
 private:
 
-  void
-  build_groupinfo( std::string const group_file,
-		   bool const extra = false );
+	void
+	build_groupinfo( std::string const group_file,
+		bool const extra = false );
 
-  ResElecGroup const &
-  get_group( core::chemical::ResidueType const &rsdtype ) const;
+	ResElecGroup const &
+	get_group( core::chemical::ResidueType const &rsdtype ) const;
 
 
-  Vector
-  get_grpdis2( conformation::Residue const & rsd1,
-	       conformation::Residue const & rsd2,
-	       utility::vector1< Size > const &com1atms,
-	       utility::vector1< Size > const &com2atms,
-	       core::Vector &com1,
-	       core::Vector &com2
-	       ) const ;
+	Vector
+	get_grpdis2( conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		utility::vector1< Size > const &com1atms,
+		utility::vector1< Size > const &com2atms,
+		core::Vector &com1,
+		core::Vector &com2
+	) const ;
 
 	bool
 	fade_hbonding_group_score( ElecGroup const &grp1,
-														 ElecGroup const &grp2,
-														 Real & group_score,
-														 Real & dw_dE ) const;
+		ElecGroup const &grp2,
+		Real & group_score,
+		Real & dw_dE ) const;
 
 	Real
-	get_grp_countpair( 
-										utility::vector1< Size > const &grp1atms,
-										utility::vector1< Size > const &grp2atms,
-										etable::count_pair::CountPairFunctionCOP cpfxn,
-										Size &path_dist
-										 ) const;
+	get_grp_countpair(
+		utility::vector1< Size > const &grp1atms,
+		utility::vector1< Size > const &grp2atms,
+		etable::count_pair::CountPairFunctionCOP cpfxn,
+		Size &path_dist
+	) const;
 
 	inline
 	Real
 	eval_standard_coulomb( Real const &q1, Real const &q2,
-												 Real const &dis2, 
-												 bool const &eval_deriv,
-												 Real &dE_dr
-												 ) const;
+		Real const &dis2,
+		bool const &eval_deriv,
+		Real &dE_dr
+	) const;
 
 	inline
 	Real
 	eval_grp_trunc( bool const &use_switch,
-									Real const &grpdis2,
-									bool const &eval_deriv,
-									Real &dsw_dr
-									) const;
+		Real const &grpdis2,
+		bool const &eval_deriv,
+		Real &dsw_dr
+	) const;
 
 	inline std::string fade_type() const { return fade_type_; }
 
 protected:
 
-  inline
-  etable::coulomb::Coulomb const &
-  coulomb() const {return *coulomb_; }
+	inline
+	etable::coulomb::Coulomb const &
+	coulomb() const {return *coulomb_; }
 
-  etable::coulomb::CoulombCOP coulomb_;
+	etable::coulomb::CoulombCOP coulomb_;
 
 private:
-  // mutable std::map< std::string, ElecGroup > rsdgrps_;
-  mutable std::map< std::string const , ResElecGroup > rsdgrps_;
+	// mutable std::map< std::string, ElecGroup > rsdgrps_;
+	mutable std::map< std::string const , ResElecGroup > rsdgrps_;
 
 	utility::vector1< Real > cpfxn_weight_;
 
@@ -151,7 +151,7 @@ private:
 	std::string fade_type_;
 	core::Real fade_param1_;
 	core::Real fade_param2_;
-  bool fade_hbond_;
+	bool fade_hbond_;
 	std::string group_file_;
 	bool grp_cpfxn_;
 	//std::string grp_cpfxn_mode_;
@@ -161,16 +161,16 @@ private:
 inline
 Real
 GroupElec::eval_grp_trunc( bool const &use_switch,
-													 Real const &grpdis2,
-													 bool const &eval_deriv,
-													 Real &dsw_dr
-													 ) const 
+	Real const &grpdis2,
+	bool const &eval_deriv,
+	Real &dsw_dr
+) const
 {
 	dsw_dr = 0.0;
 	Real const &max_dis2( coulomb().max_dis2() );
 	Real const &max_dis( coulomb().max_dis() );
 
-	if( grpdis2 > max_dis2 ) return 0.0;
+	if ( grpdis2 > max_dis2 ) return 0.0;
 
 	core::Real const grpdis( std::sqrt(grpdis2) );
 
@@ -188,26 +188,27 @@ GroupElec::eval_grp_trunc( bool const &use_switch,
 	// shift function
 	core::Size const nexp = (core::Size)( fade_param2_ );
 	Real arg = 1.0;
-	for( core::Size iexp = 1; iexp <= nexp; ++iexp ) 
+	for ( core::Size iexp = 1; iexp <= nexp; ++iexp ) {
 		arg *= (grpdis-min_sw)/dis_sw * (grpdis-min_sw)/dis_sw;
+	}
 
 	Real const sf1 = 1.0 - arg;
-	Real const darg = 2.0*nexp*arg/((grpdis-min_sw)*grpdis); 
+	Real const darg = 2.0*nexp*arg/((grpdis-min_sw)*grpdis);
 
 	// fade function
 	core::Real sw( 1.0 );
-	if( grpdis2 > sw_dis2 ){
-		if( use_switch ){
+	if ( grpdis2 > sw_dis2 ) {
+		if ( use_switch ) {
 			sw = dr1*dr1*dr2*Ron_off_3;
 		} else {
 			sw = sf1*sf1;
 		}
 	}
 
-	if( eval_deriv ){
+	if ( eval_deriv ) {
 		// fade function
-		if( grpdis2 > sw_dis2 ){
-			if( use_switch ){
+		if ( grpdis2 > sw_dis2 ) {
+			if ( use_switch ) {
 				dsw_dr = 4.0*dr1*Ron_off_3*(dr1-dr2);
 			} else {
 				dsw_dr = -2.0*darg*sf1;
@@ -225,10 +226,10 @@ GroupElec::eval_grp_trunc( bool const &use_switch,
 inline
 Real
 GroupElec::eval_standard_coulomb( Real const &q1, Real const &q2,
-																	Real const &dis2, 
-																	bool const &eval_deriv,
-																	Real &dE_dr
-																	) const {
+	Real const &dis2,
+	bool const &eval_deriv,
+	Real &dE_dr
+) const {
 	dE_dr = 0.0;
 	core::Real const d( std::sqrt( dis2 ) );
 
@@ -238,15 +239,15 @@ GroupElec::eval_standard_coulomb( Real const &q1, Real const &q2,
 	// choose dielectric
 	Real fdie, ddie_dr( 0.0 );
 	//std::string const &diefunc( coulomb().dielectric_function() );
-	if( dis2 < 1.0 ){
+	if ( dis2 < 1.0 ) {
 		fdie = die;
 		ddie_dr = 0.0;
-	} else if( !coulomb().no_dis_dep_die() ){  // ddd
+	} else if ( !coulomb().no_dis_dep_die() ) {  // ddd
 		/*
 		if( diefunc.compare("sigmoid") == 0 ){
-			fdie = coulomb().die_sigmoid( d, eval_deriv, ddie_dr );
+		fdie = coulomb().die_sigmoid( d, eval_deriv, ddie_dr );
 		} else if( diefunc.compare("warshel") == 0 ){
-			fdie = coulomb().die_warshel( d, eval_deriv, ddie_dr );
+		fdie = coulomb().die_warshel( d, eval_deriv, ddie_dr );
 		} else {
 		*/
 		fdie = die*d;
@@ -258,7 +259,7 @@ GroupElec::eval_standard_coulomb( Real const &q1, Real const &q2,
 	}
 
 	core::Real e( 0.0 );
-	if( dis2 < 1.0 ){
+	if ( dis2 < 1.0 ) {
 		e = -d+2.0;
 	} else { //regular
 		e = 1.0/d;
@@ -266,13 +267,13 @@ GroupElec::eval_standard_coulomb( Real const &q1, Real const &q2,
 
 	e *= q1*q2*C0;
 
-	if( eval_deriv ){
+	if ( eval_deriv ) {
 		core::Real de_dr( 0.0 ); // on Coulomb part without fdie
-		if( dis2 < 1.0 ){ //use linear softening at short-distance
+		if ( dis2 < 1.0 ) { //use linear softening at short-distance
 			de_dr = -q1*q2*C0/fdie;
 			//dE_dr = de_dr/(d+0.000001); // to prevent from being infinity
 			dE_dr = de_dr/d; // to prevent from being infinity
-		} else { // regular 
+		} else { // regular
 			de_dr = -e/d;
 			dE_dr = ( de_dr/fdie - e*ddie_dr/(fdie*fdie) )/d;
 		}

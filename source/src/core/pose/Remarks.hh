@@ -31,22 +31,22 @@ typedef std::string String;
 class RemarkInfo
 {
 public:
-/// @brief default constructor to initialize all values
-RemarkInfo() : num( 0 ), value() {}
+	/// @brief default constructor to initialize all values
+	RemarkInfo() : num( 0 ), value() {}
 
-/// For now, all member names have the same names as fields in PDB standard.
-int num;
-String value;
+	/// For now, all member names have the same names as fields in PDB standard.
+	int num;
+	String value;
 
-/// @brief Debug printing, serialazing to Tracer like object.
-friend std::ostream& operator <<(std::ostream &os, RemarkInfo const & ri) {
-	os << "<RemarkInfo>{" << "num=" << ri.num << " value=" << ri.value << "}";
+	/// @brief Debug printing, serialazing to Tracer like object.
+	friend std::ostream& operator <<(std::ostream &os, RemarkInfo const & ri) {
+		os << "<RemarkInfo>{" << "num=" << ri.num << " value=" << ri.value << "}";
 		return os;
-}
+	}
 
 };
 
-class Remarks : public	std::vector< RemarkInfo >, public utility::pointer::ReferenceCount
+class Remarks : public std::vector< RemarkInfo >, public utility::pointer::ReferenceCount
 {
 };
 

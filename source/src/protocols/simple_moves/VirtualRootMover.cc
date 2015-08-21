@@ -69,17 +69,17 @@ moves::MoverOP VirtualRootMover::fresh_instance() const {
 
 void
 VirtualRootMover::apply( core::pose::Pose & pose ) {
-	if( remove_ ) {
-		if( pose.residue( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
+	if ( remove_ ) {
+		if ( pose.residue( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
 			TR << "Can't remove virtual root - pose is not rooted on virtual residue." << std::endl;
 			return;
 		}
 		core::Real virtroot;
-		if( ! core::pose::getPoseExtraScore( pose, "VirtualRootMover_root", virtroot ) ) {
+		if ( ! core::pose::getPoseExtraScore( pose, "VirtualRootMover_root", virtroot ) ) {
 			TR << "Virtual root not added as removable by VirtualRootMover - not removing root." << std::endl;
 			return;
 		}
-		if( pose.residue( virtroot ).aa() != core::chemical::aa_vrt || virtroot != pose.fold_tree().root() ) {
+		if ( pose.residue( virtroot ).aa() != core::chemical::aa_vrt || virtroot != pose.fold_tree().root() ) {
 			TR.Warning << "Residue added by VirtualRootMover no longer virtual root - not removing root." << std::endl;
 		} else {
 			pose.conformation().delete_residue_slow(virtroot);

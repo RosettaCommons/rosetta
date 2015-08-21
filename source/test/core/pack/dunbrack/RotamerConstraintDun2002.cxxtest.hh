@@ -83,7 +83,7 @@ public:
 	}
 
 
-  /// Test for a bug where the unbound rot corrections weren't being correctly applied in subsequent applications (specifically for the end residues).
+	/// Test for a bug where the unbound rot corrections weren't being correctly applied in subsequent applications (specifically for the end residues).
 	void test_rescore_and_copy() {
 		using namespace core::pack::dunbrack;
 

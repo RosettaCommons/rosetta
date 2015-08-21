@@ -63,28 +63,27 @@
 #include <basic/options/keys/orbitals.OptionKeys.gen.hh>
 
 
-namespace core{
-namespace scoring{
-namespace orbitals{
+namespace core {
+namespace scoring {
+namespace orbitals {
 
 // REQUIRED FOR WINDOWS
 #ifdef _WIN32                       // REQUIRED FOR WINDOWS
-	double round( double d ) {      // REQUIRED FOR WINDOWS
-		return (d > 0.0) ? floor(d + 0.5) : ceil(d - 0.5);      // REQUIRED FOR WINDOWS
-	}                               // REQUIRED FOR WINDOWS
+double round( double d ) {      // REQUIRED FOR WINDOWS
+	return (d > 0.0) ? floor(d + 0.5) : ceil(d - 0.5);      // REQUIRED FOR WINDOWS
+}                               // REQUIRED FOR WINDOWS
 #endif                              // REQUIRED FOR WINDOWS
 // REQUIRED FOR WINDOWS
 
 OrbitalsStatistics::OrbitalsStatistics()
 {
-	if(
-		basic::options::option[basic::options::OptionKeys::orbitals::Haro] ||
-		basic::options::option[basic::options::OptionKeys::orbitals::Hpol])
-	{
+	if (
+			basic::options::option[basic::options::OptionKeys::orbitals::Haro] ||
+			basic::options::option[basic::options::OptionKeys::orbitals::Hpol] ) {
 		number_of_histograms_=7;
 	}
-	for(core::Size i=0; i <= 100; ++i){
-		for(core::SSize j=-10; j<= 10; ++j){
+	for ( core::Size i=0; i <= 100; ++i ) {
+		for ( core::SSize j=-10; j<= 10; ++j ) {
 			std::pair<core::Size, core::SSize> pair(i,j);
 			twoD_histogram_.insert_data(pair, 0);
 
@@ -123,70 +122,70 @@ core::Size OrbitalsStatistics::get_number_of_histograms()
 /// @brief increment the orbital histogram bin based upon a distance and angle.
 /// Currently the statistics are best with .1 incremented bins
 void OrbitalsStatistics::increment_histogram_bin(
-		core::Real & distance,
-		core::Real & angle,
-		numeric::histograms::TwoDHistogram<core::Size, core::SSize> & histogram
+	core::Real & distance,
+	core::Real & angle,
+	numeric::histograms::TwoDHistogram<core::Size, core::SSize> & histogram
 )
 {
 
-	if(angle >= -1 && angle <= -.9){
+	if ( angle >= -1 && angle <= -.9 ) {
 		angle = -.95;
 	}
-	if(angle >= -.89 && angle <= -.8){
+	if ( angle >= -.89 && angle <= -.8 ) {
 		angle = -.85;
 	}
-	if(angle >= -.79 && angle <= -.7){
+	if ( angle >= -.79 && angle <= -.7 ) {
 		angle = -.75;
 	}
-	if(angle >= -.69 && angle <= -.6){
+	if ( angle >= -.69 && angle <= -.6 ) {
 		angle = -.65;
 	}
-	if(angle >= -.59 && angle <= -.5){
+	if ( angle >= -.59 && angle <= -.5 ) {
 		angle = -.55;
 	}
-	if(angle >= -.49 && angle <= -.4){
+	if ( angle >= -.49 && angle <= -.4 ) {
 		angle = -.45;
 	}
-	if(angle >= -.39 && angle <= -.3){
+	if ( angle >= -.39 && angle <= -.3 ) {
 		angle = -.35;
 	}
-	if(angle >= -.29 && angle <= -.2){
+	if ( angle >= -.29 && angle <= -.2 ) {
 		angle = -.25;
 	}
-	if(angle >= -.19 && angle <= -.1){
+	if ( angle >= -.19 && angle <= -.1 ) {
 		angle = -.15;
 	}
-	if(angle >= -.09 && angle <= 0){
+	if ( angle >= -.09 && angle <= 0 ) {
 		angle = -.05;
 	}
-	if(angle >= 0.01 && angle <= .1){
+	if ( angle >= 0.01 && angle <= .1 ) {
 		angle = .05;
 	}
-	if(angle >= .11 && angle <= .2){
+	if ( angle >= .11 && angle <= .2 ) {
 		angle = .15;
 	}
-	if(angle >= .21 && angle <= .3){
+	if ( angle >= .21 && angle <= .3 ) {
 		angle = .25;
 	}
-	if(angle >= .31 && angle <= .4){
+	if ( angle >= .31 && angle <= .4 ) {
 		angle = .35;
 	}
-	if(angle >= .41 && angle <= .5){
+	if ( angle >= .41 && angle <= .5 ) {
 		angle = .45;
 	}
-	if(angle >= .51 && angle <= .6){
+	if ( angle >= .51 && angle <= .6 ) {
 		angle = .55;
 	}
-	if(angle >= .61 && angle <= .7){
+	if ( angle >= .61 && angle <= .7 ) {
 		angle = .65;
 	}
-	if(angle >= .71 && angle <= .8){
+	if ( angle >= .71 && angle <= .8 ) {
 		angle = .75;
 	}
-	if(angle >= .81 && angle <= .9){
+	if ( angle >= .81 && angle <= .9 ) {
 		angle = .85;
 	}
-	if(angle >= .91 && angle <= 1){
+	if ( angle >= .91 && angle <= 1 ) {
 		angle = .95;
 	}
 	core::SSize new_angle= static_cast<core::SSize> (round(angle/.1));
@@ -194,7 +193,7 @@ void OrbitalsStatistics::increment_histogram_bin(
 	std::pair< core::Size, core::SSize> new_pair(new_dist, new_angle);
 	histogram.increase_count(new_pair);
 	//++histogram[new_pair];
-//	std::cout << " outputing paired distance that was put in increment_histogram_bind "<<histogram.lookup_counts(new_pair) << std::endl;;
+	// std::cout << " outputing paired distance that was put in increment_histogram_bind "<<histogram.lookup_counts(new_pair) << std::endl;;
 }
 
 
@@ -210,14 +209,14 @@ OrbitalsStatistics::sc_H_orbital( core::pose::Pose & pdb )
 
 	//add histograms to the previously created vector. Notice that the number created is based
 	//upon number_of_histograms_ which is constructed in the
-	for(core::Size x=1; x<= number_of_histograms_; ++x){
+	for ( core::Size x=1; x<= number_of_histograms_; ++x ) {
 		histogram_vector.push_back(histogram);
 	}
 
 	//Let the magic begin!
-	for (core::Size res_num1 = 1; res_num1 <= pdb.n_residue(); ++res_num1) {
+	for ( core::Size res_num1 = 1; res_num1 <= pdb.n_residue(); ++res_num1 ) {
 		core::conformation::Residue resid1 = pdb.residue(res_num1);
-		if (resid1.has_sc_orbitals()) {
+		if ( resid1.has_sc_orbitals() ) {
 			numeric::xyzVector<core::Real> final_orb_xyz(0.0);
 			core::Real low_D = 11;
 			numeric::xyzVector<core::Real> res2_H_xyz;
@@ -230,39 +229,39 @@ OrbitalsStatistics::sc_H_orbital( core::pose::Pose & pdb )
 
 
 			//std::cout << "inside the resid1.has_sc_orbitals()!" << std::endl;
-			for (core::Size res_num2 = 1; res_num2 <= pdb.n_residue(); ++res_num2) {
+			for ( core::Size res_num2 = 1; res_num2 <= pdb.n_residue(); ++res_num2 ) {
 				core::conformation::Residue resid2 = pdb.residue(res_num2);
-				if (resid1.seqpos() != resid2.seqpos()) {
-					if (resid1.nbr_atom_xyz().distance(resid2.nbr_atom_xyz()) <= 10.0) {
+				if ( resid1.seqpos() != resid2.seqpos() ) {
+					if ( resid1.nbr_atom_xyz().distance(resid2.nbr_atom_xyz()) <= 10.0 ) {
 						numeric::xyzVector<core::Real> res2_H_xyz;
 						//iterate through atoms with orbitals
 						for ( core::chemical::AtomIndices::const_iterator
 								atom_index  =  resid1.atoms_with_orb_index().begin(),
 								atom_end = resid1.atoms_with_orb_index().end();
 								atom_index != atom_end; ++atom_index
-						){
-							if(!resid1.atom_is_backbone(*atom_index)){
+								) {
+							if ( !resid1.atom_is_backbone(*atom_index) ) {
 								utility::vector1<core::Size> const & orbital_indices(resid1.bonded_orbitals(*atom_index));
 								//iterate through the orbitals
-								for(
+								for (
 										utility::vector1<core::Size>::const_iterator
 										orbital_index = orbital_indices.begin(),
 										orbital_end = orbital_indices.end();
 										orbital_index != orbital_end; ++orbital_index
-								){
+										) {
 									numeric::xyzVector<core::Real> orb_xyz = resid1.orbital_xyz(*orbital_index);
 									numeric::xyzVector<core::Real> bonded_atom_xyz(resid1.atom(*atom_index).xyz());
 									if ( basic::options::option[basic::options::OptionKeys::orbitals::Hpol] ) {
 										//iterate only throught the sidechain polar hydrogens
-										for(
+										for (
 												core::chemical::AtomIndices::const_iterator
 												hpol_index = resid2.Hpol_index().begin(),
 												hpol_end = resid2.Hpol_index().end(); hpol_index != hpol_end; ++hpol_index
-										) {
+												) {
 											res2_H_xyz = resid2.atom( *hpol_index ).xyz();
 											numeric::xyzVector<core::Real> DHO_atom_xyz(resid2.atom(resid2.bonded_neighbor(*hpol_index)[1]).xyz() );
 											core::Real container = orb_xyz.distance( res2_H_xyz );
-											if(container <= low_D){
+											if ( container <= low_D ) {
 												final_orb_xyz = orb_xyz;
 												angle = cos_of(bonded_atom_xyz, orb_xyz, res2_H_xyz );
 												angle2 = cos_of(DHO_atom_xyz, res2_H_xyz, orb_xyz);
@@ -275,14 +274,14 @@ OrbitalsStatistics::sc_H_orbital( core::pose::Pose & pdb )
 										}
 									}  // end if Hpol
 									//haro
-									if(basic::options::option[basic::options::OptionKeys::orbitals::Haro]){
-										for(core::chemical::AtomIndices::const_iterator
+									if ( basic::options::option[basic::options::OptionKeys::orbitals::Haro] ) {
+										for ( core::chemical::AtomIndices::const_iterator
 												haro_index = resid2.Haro_index().begin(),
-												haro_end = resid2.Haro_index().end(); haro_index != haro_end; ++haro_index) {
+												haro_end = resid2.Haro_index().end(); haro_index != haro_end; ++haro_index ) {
 											res2_H_xyz = resid2.atom( *haro_index ).xyz();
 											numeric::xyzVector<core::Real> DHO_atom_xyz(resid2.atom(resid2.bonded_neighbor(*haro_index)[1]).xyz() );
 											core::Real container = orb_xyz.distance( res2_H_xyz  );
-											if (container <= low_D) {
+											if ( container <= low_D ) {
 												angle = cos_of(bonded_atom_xyz, orb_xyz, res2_H_xyz );
 												angle2 = cos_of(DHO_atom_xyz, res2_H_xyz, orb_xyz);
 												orbital_type = resid1.orbital_type(*orbital_index).name();
@@ -304,37 +303,36 @@ OrbitalsStatistics::sc_H_orbital( core::pose::Pose & pdb )
 				core::conformation::Residue res2 = pdb.residue(res2seqpos);
 				//std::cout << low_D << " angle: " << angle << std::endl;
 				//decompose_score(resid1, resid2, pdb, low_D, angle, electron_name);
-				if(orbital_type=="O.p.sp3" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1])){
+				if ( orbital_type=="O.p.sp3" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1]) ) {
 					statistics_output_.open("O.p.sp3.backbone", std::ios_base::app);
 
 					statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " "<< pdb.pdb_info()->name() << " " << final_orb_xyz.x() << " " << final_orb_xyz.y() << " " << final_orb_xyz.z() << std::endl;
 					statistics_output_.close();
-				}else if(orbital_type=="S.p.sp3" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1])) {
+				} else if ( orbital_type=="S.p.sp3" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1]) ) {
 					statistics_output_.open("S.p.sp3.backbone", std::ios_base::app);
 					statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " " << pdb.pdb_info()->name() << std::endl;
 					statistics_output_.close();
-				}else if(orbital_type=="C.pi.sp2" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1])) {
+				} else if ( orbital_type=="C.pi.sp2" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1]) ) {
 					statistics_output_.open("C.pi.sp2.backbone", std::ios_base::app);
 					statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " " << pdb.pdb_info()->name() << std::endl;
 					statistics_output_.close();
-				}
-				else if(orbital_type=="N.pi.sp2" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1])) {
+				} else if ( orbital_type=="N.pi.sp2" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1]) ) {
 					statistics_output_.open("N.pi.sp2.backbone", std::ios_base::app);
 					statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " " << pdb.pdb_info()->name() << std::endl;
 					statistics_output_.close();
-				}else if(orbital_type=="N.p.sp2" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1])) {
+				} else if ( orbital_type=="N.p.sp2" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1]) ) {
 					statistics_output_.open("N.p.sp2.backbone", std::ios_base::app);
 					statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " " << pdb.pdb_info()->name() << std::endl;
 					statistics_output_.close();
-				}else if(orbital_type=="O.pi.sp2" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1])) {
+				} else if ( orbital_type=="O.pi.sp2" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1]) ) {
 					statistics_output_.open("O.pi.sp2.backbone", std::ios_base::app);
 					statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " " << pdb.pdb_info()->name() << std::endl;
 					statistics_output_.close();
-				}else if(orbital_type=="O.p.sp2" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1])) {
+				} else if ( orbital_type=="O.p.sp2" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1]) ) {
 					statistics_output_.open("O.p.sp2.backbone", std::ios_base::app);
 					statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " " << pdb.pdb_info()->name() << std::endl;
 					statistics_output_.close();
-				}else {
+				} else {
 					statistics_output_.open(orbital_type.c_str(), std::ios_base::app);
 					statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " " << pdb.pdb_info()->name() << std::endl;
 					statistics_output_.close();
@@ -350,152 +348,148 @@ OrbitalsStatistics::sc_H_orbital( core::pose::Pose & pdb )
 
 
 void OrbitalsStatistics::bb_stats(
-		core::pose::Pose & pdb
+	core::pose::Pose & pdb
 ){
 	//std::cout << "Made it to the sc_H_orbital function!!!!!" << std::endl;
-		numeric::histograms::TwoDHistogram<core::Size, core::SSize> histogram=twoD_histogram_;
+	numeric::histograms::TwoDHistogram<core::Size, core::SSize> histogram=twoD_histogram_;
 
-		//a vector that will contain all the histograms.
-		utility::vector1<numeric::histograms::TwoDHistogram<core::Size, core::SSize> > histogram_vector;
+	//a vector that will contain all the histograms.
+	utility::vector1<numeric::histograms::TwoDHistogram<core::Size, core::SSize> > histogram_vector;
 
-		//add histograms to the previously created vector. Notice that the number created is based
-		//upon number_of_histograms_ which is constructed in the
-		for(core::Size x=1; x<= number_of_histograms_; ++x){
-			histogram_vector.push_back(histogram);
-		}
+	//add histograms to the previously created vector. Notice that the number created is based
+	//upon number_of_histograms_ which is constructed in the
+	for ( core::Size x=1; x<= number_of_histograms_; ++x ) {
+		histogram_vector.push_back(histogram);
+	}
 
-		//Let the magic begin!
-		for(core::Size res_num1 = 1; res_num1 <= pdb.n_residue(); ++res_num1){
-			core::conformation::Residue resid1 = pdb.residue(res_num1);
+	//Let the magic begin!
+	for ( core::Size res_num1 = 1; res_num1 <= pdb.n_residue(); ++res_num1 ) {
+		core::conformation::Residue resid1 = pdb.residue(res_num1);
 
-				core::Real low_D = 11;
-				numeric::xyzVector<core::Real> res2_H_xyz;
-				std::string orbital_type("");
-				core::Real angle=2;
-				core::Size atom_index_min_dist(0);
-				core::Size res2seqpos(0);
-				std::string res2name;
-				core::Real angle2=2;
+		core::Real low_D = 11;
+		numeric::xyzVector<core::Real> res2_H_xyz;
+		std::string orbital_type("");
+		core::Real angle=2;
+		core::Size atom_index_min_dist(0);
+		core::Size res2seqpos(0);
+		std::string res2name;
+		core::Real angle2=2;
 
-				//std::cout << "inside the resid1.has_sc_orbitals()!" << std::endl;
-				for(core::Size res_num2 = 1; res_num2 <= pdb.n_residue(); ++res_num2){
-					core::conformation::Residue resid2 = pdb.residue(res_num2);
-					if(resid1.seqpos() != resid2.seqpos()){
-						if(resid1.nbr_atom_xyz().distance(resid2.nbr_atom_xyz()) <= 10.0)
-						{
-						numeric::xyzVector<core::Real> res2_H_xyz;
-						//iterate through atoms with orbitals
-						for ( core::chemical::AtomIndices::const_iterator
-								atom_index  =  resid1.atoms_with_orb_index().begin(),
-								atom_end = resid1.atoms_with_orb_index().end();
-								atom_index != atom_end; ++atom_index
-						){
-							if(resid1.atom_is_backbone(*atom_index)){
+		//std::cout << "inside the resid1.has_sc_orbitals()!" << std::endl;
+		for ( core::Size res_num2 = 1; res_num2 <= pdb.n_residue(); ++res_num2 ) {
+			core::conformation::Residue resid2 = pdb.residue(res_num2);
+			if ( resid1.seqpos() != resid2.seqpos() ) {
+				if ( resid1.nbr_atom_xyz().distance(resid2.nbr_atom_xyz()) <= 10.0 ) {
+					numeric::xyzVector<core::Real> res2_H_xyz;
+					//iterate through atoms with orbitals
+					for ( core::chemical::AtomIndices::const_iterator
+							atom_index  =  resid1.atoms_with_orb_index().begin(),
+							atom_end = resid1.atoms_with_orb_index().end();
+							atom_index != atom_end; ++atom_index
+							) {
+						if ( resid1.atom_is_backbone(*atom_index) ) {
 
-									utility::vector1<core::Size> const & orbital_indices(resid1.bonded_orbitals(*atom_index));
-									//iterate through the orbitals
-									for(
-											utility::vector1<core::Size>::const_iterator
-											orbital_index = orbital_indices.begin(),
-											orbital_end = orbital_indices.end();
-											orbital_index != orbital_end; ++orbital_index
-									){
+							utility::vector1<core::Size> const & orbital_indices(resid1.bonded_orbitals(*atom_index));
+							//iterate through the orbitals
+							for (
+									utility::vector1<core::Size>::const_iterator
+									orbital_index = orbital_indices.begin(),
+									orbital_end = orbital_indices.end();
+									orbital_index != orbital_end; ++orbital_index
+									) {
 
-										numeric::xyzVector<core::Real> orb_xyz = resid1.orbital_xyz(*orbital_index);
-										numeric::xyzVector<core::Real> bonded_atom_xyz(resid1.atom(*atom_index).xyz());
-										if(
-												basic::options::option[basic::options::OptionKeys::orbitals::Hpol]
-										){
+								numeric::xyzVector<core::Real> orb_xyz = resid1.orbital_xyz(*orbital_index);
+								numeric::xyzVector<core::Real> bonded_atom_xyz(resid1.atom(*atom_index).xyz());
+								if (
+										basic::options::option[basic::options::OptionKeys::orbitals::Hpol]
+										) {
 
-											//iterate only throught the sidechain polar hydrogens
-											for(
-													core::chemical::AtomIndices::const_iterator
-													hpol_index = resid2.Hpol_index().begin(),
-													hpol_end = resid2.Hpol_index().end(); hpol_index != hpol_end; ++hpol_index
-											)
-											{
-												res2_H_xyz = resid2.atom( *hpol_index ).xyz();
-												core::Real container = orb_xyz.distance( res2_H_xyz );
-												numeric::xyzVector<core::Real> DHO_atom_xyz(resid2.atom(resid2.bonded_neighbor(*hpol_index)[1]).xyz() );
-												if(container <= low_D){
-													angle = cos_of(bonded_atom_xyz, orb_xyz, res2_H_xyz );
-													angle2 = cos_of(DHO_atom_xyz, res2_H_xyz, orb_xyz);
-													low_D = container;
-													orbital_type = resid1.orbital_type(*orbital_index).name();
-													res2name= resid2.name3();
-													res2seqpos=resid2.seqpos();
-													atom_index_min_dist=*hpol_index;
-												}
-											}
+									//iterate only throught the sidechain polar hydrogens
+									for (
+											core::chemical::AtomIndices::const_iterator
+											hpol_index = resid2.Hpol_index().begin(),
+											hpol_end = resid2.Hpol_index().end(); hpol_index != hpol_end; ++hpol_index
+											) {
+										res2_H_xyz = resid2.atom( *hpol_index ).xyz();
+										core::Real container = orb_xyz.distance( res2_H_xyz );
+										numeric::xyzVector<core::Real> DHO_atom_xyz(resid2.atom(resid2.bonded_neighbor(*hpol_index)[1]).xyz() );
+										if ( container <= low_D ) {
+											angle = cos_of(bonded_atom_xyz, orb_xyz, res2_H_xyz );
+											angle2 = cos_of(DHO_atom_xyz, res2_H_xyz, orb_xyz);
+											low_D = container;
+											orbital_type = resid1.orbital_type(*orbital_index).name();
+											res2name= resid2.name3();
+											res2seqpos=resid2.seqpos();
+											atom_index_min_dist=*hpol_index;
 										}
-										//haro
-										if(basic::options::option[basic::options::OptionKeys::orbitals::Haro]){
-											for(core::chemical::AtomIndices::const_iterator
-													haro_index = resid2.Haro_index().begin(),
-													haro_end = resid2.Haro_index().end(); haro_index != haro_end; ++haro_index)
-											{
-												res2_H_xyz = resid2.atom( *haro_index ).xyz();
-												core::Real container = orb_xyz.distance( res2_H_xyz  );
-												numeric::xyzVector<core::Real> DHO_atom_xyz(resid2.atom(resid2.bonded_neighbor(*haro_index)[1]).xyz() );
-												if(container <= low_D){
-													angle = cos_of(bonded_atom_xyz, orb_xyz, res2_H_xyz );
-													angle2 = cos_of(DHO_atom_xyz, res2_H_xyz, orb_xyz);
-													orbital_type = resid1.orbital_type(*orbital_index).name();
-													low_D = container;
-													res2name= resid2.name3();
-													res2seqpos=resid2.seqpos();
-													atom_index_min_dist=*haro_index;
-												}
-											}
+									}
+								}
+								//haro
+								if ( basic::options::option[basic::options::OptionKeys::orbitals::Haro] ) {
+									for ( core::chemical::AtomIndices::const_iterator
+											haro_index = resid2.Haro_index().begin(),
+											haro_end = resid2.Haro_index().end(); haro_index != haro_end; ++haro_index ) {
+										res2_H_xyz = resid2.atom( *haro_index ).xyz();
+										core::Real container = orb_xyz.distance( res2_H_xyz  );
+										numeric::xyzVector<core::Real> DHO_atom_xyz(resid2.atom(resid2.bonded_neighbor(*haro_index)[1]).xyz() );
+										if ( container <= low_D ) {
+											angle = cos_of(bonded_atom_xyz, orb_xyz, res2_H_xyz );
+											angle2 = cos_of(DHO_atom_xyz, res2_H_xyz, orb_xyz);
+											orbital_type = resid1.orbital_type(*orbital_index).name();
+											low_D = container;
+											res2name= resid2.name3();
+											res2seqpos=resid2.seqpos();
+											atom_index_min_dist=*haro_index;
 										}
 									}
 								}
 							}
 						}
 					}
-				}// end for resid2
-
-				if(low_D <= 10){
-					core::conformation::Residue res2 = pdb.residue(res2seqpos);
-					//std::cout << low_D << " angle: " << angle << std::endl;
-					//decompose_score(resid1, resid2, pdb, low_D, angle, electron_name);
-					if(orbital_type=="O.p.sp3" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1])){
-						statistics_output_.open("O.p.sp3.backbone", std::ios_base::app);
-						statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " " << pdb.pdb_info()->name() << std::endl;
-						statistics_output_.close();
-					}else if(orbital_type=="S.p.sp3" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1])) {
-						statistics_output_.open("S.p.sp3.backbone", std::ios_base::app);
-						statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " " << pdb.pdb_info()->name() << std::endl;
-						statistics_output_.close();
-					}else if(orbital_type=="C.pi.sp2" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1])) {
-							statistics_output_.open("C.pi.sp2.backbone", std::ios_base::app);
-							statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " " << pdb.pdb_info()->name() << std::endl;
-							statistics_output_.close();
-					}
-					else if(orbital_type=="N.pi.sp2" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1])) {
-							statistics_output_.open("N.pi.sp2.backbone", std::ios_base::app);
-							statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " " << pdb.pdb_info()->name() << std::endl;
-							statistics_output_.close();
-					}else if(orbital_type=="N.p.sp2" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1])) {
-							statistics_output_.open("N.p.sp2.backbone", std::ios_base::app);
-							statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " " << pdb.pdb_info()->name() << std::endl;
-							statistics_output_.close();
-					}else if(orbital_type=="O.pi.sp2" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1])) {
-							statistics_output_.open("O.pi.sp2.backbone", std::ios_base::app);
-							statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " " << pdb.pdb_info()->name() << std::endl;
-							statistics_output_.close();
-					}else if(orbital_type=="O.p.sp2" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1])) {
-							statistics_output_.open("O.p.sp2.backbone", std::ios_base::app);
-							statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " " << pdb.pdb_info()->name() << std::endl;
-							statistics_output_.close();
-					}else {
-						statistics_output_.open(orbital_type.c_str(), std::ios_base::app);
-						statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " " << pdb.pdb_info()->name() << std::endl;
-						statistics_output_.close();
-					}
 				}
+			}
+		}// end for resid2
+
+		if ( low_D <= 10 ) {
+			core::conformation::Residue res2 = pdb.residue(res2seqpos);
+			//std::cout << low_D << " angle: " << angle << std::endl;
+			//decompose_score(resid1, resid2, pdb, low_D, angle, electron_name);
+			if ( orbital_type=="O.p.sp3" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1]) ) {
+				statistics_output_.open("O.p.sp3.backbone", std::ios_base::app);
+				statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " " << pdb.pdb_info()->name() << std::endl;
+				statistics_output_.close();
+			} else if ( orbital_type=="S.p.sp3" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1]) ) {
+				statistics_output_.open("S.p.sp3.backbone", std::ios_base::app);
+				statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " " << pdb.pdb_info()->name() << std::endl;
+				statistics_output_.close();
+			} else if ( orbital_type=="C.pi.sp2" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1]) ) {
+				statistics_output_.open("C.pi.sp2.backbone", std::ios_base::app);
+				statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " " << pdb.pdb_info()->name() << std::endl;
+				statistics_output_.close();
+			} else if ( orbital_type=="N.pi.sp2" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1]) ) {
+				statistics_output_.open("N.pi.sp2.backbone", std::ios_base::app);
+				statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " " << pdb.pdb_info()->name() << std::endl;
+				statistics_output_.close();
+			} else if ( orbital_type=="N.p.sp2" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1]) ) {
+				statistics_output_.open("N.p.sp2.backbone", std::ios_base::app);
+				statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " " << pdb.pdb_info()->name() << std::endl;
+				statistics_output_.close();
+			} else if ( orbital_type=="O.pi.sp2" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1]) ) {
+				statistics_output_.open("O.pi.sp2.backbone", std::ios_base::app);
+				statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " " << pdb.pdb_info()->name() << std::endl;
+				statistics_output_.close();
+			} else if ( orbital_type=="O.p.sp2" && res2.atom_is_backbone(res2.bonded_neighbor(atom_index_min_dist)[1]) ) {
+				statistics_output_.open("O.p.sp2.backbone", std::ios_base::app);
+				statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " " << pdb.pdb_info()->name() << std::endl;
+				statistics_output_.close();
+			} else {
+				statistics_output_.open(orbital_type.c_str(), std::ios_base::app);
+				statistics_output_ << resid1.name3() << resid1.seqpos() << " " << res2name << res2seqpos << " "<< low_D << " " << angle << " " << angle2 << " " << pdb.pdb_info()->name() << std::endl;
+				statistics_output_.close();
+			}
 		}
-		histogram_vector_=histogram_vector;
+	}
+	histogram_vector_=histogram_vector;
 }
 
 

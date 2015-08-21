@@ -24,25 +24,25 @@ FilterReporterMover::FilterReporterMover() :
 	out_( /*streambuf=*/ NULL )
 {
 	filter_mover_ = protocols::moves::FilterMoverOP(
-			new protocols::moves::FilterMover() );
+		new protocols::moves::FilterMover() );
 }
 
 FilterReporterMover::FilterReporterMover( protocols::moves::MoverOP const & mover,
-		protocols::filters::FilterOP const & filter, core::Size const max_tries,
-		std::ostream & out, protocols::moves::MoverStatus const mover_status ) :
-		Mover( mover->type() ),
-		mover_( mover ),
-		filter_( filter ),
-		out_( /*streambuf=*/ NULL ) // default ctor is protected
+	protocols::filters::FilterOP const & filter, core::Size const max_tries,
+	std::ostream & out, protocols::moves::MoverStatus const mover_status ) :
+	Mover( mover->type() ),
+	mover_( mover ),
+	filter_( filter ),
+	out_( /*streambuf=*/ NULL ) // default ctor is protected
 {
 	filter_mover_ = protocols::moves::FilterMoverOP(
-			new protocols::moves::FilterMover( mover, filter, max_tries, mover_status ) );
+		new protocols::moves::FilterMover( mover, filter, max_tries, mover_status ) );
 	set_out( out );
 }
 
 FilterReporterMover::FilterReporterMover( FilterReporterMover const & rhs ) :
-		Mover( rhs ),
-		out_( /*streambuf=*/ NULL ) {
+	Mover( rhs ),
+	out_( /*streambuf=*/ NULL ) {
 	FilterReporterMover::assign( *this, rhs );
 }
 
@@ -54,13 +54,13 @@ void
 FilterReporterMover::apply( core::pose::Pose & pose ) {
 	filter_mover_->apply( pose );
 
-	if (out_.rdbuf() != NULL) {
+	if ( out_.rdbuf() != NULL ) {
 		filter_->report( out_, pose );
 	}
 }
 
 FilterReporterMover & FilterReporterMover::operator=( FilterReporterMover const & rhs ) {
-	if (this == &rhs) return *this;
+	if ( this == &rhs ) return *this;
 
 	Mover::operator=(rhs);
 	FilterReporterMover::assign( *this, rhs );
@@ -118,7 +118,7 @@ std::ostream & FilterReporterMover::get_out/*ta here*/() {
 
 void
 FilterReporterMover::set_out( std::ostream const & out ) {
-	// this seems to be the way to make two ostreams point to the 
+	// this seems to be the way to make two ostreams point to the
 	// same stream.
 	// e.g. http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0729a/stdug/loc-io/13-2.htm
 	// see also, https://gcc.gnu.org/onlinedocs/libstdc++/libstdc++-html-USERS-4.3/a00869.html

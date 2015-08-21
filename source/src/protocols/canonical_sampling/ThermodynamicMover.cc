@@ -102,7 +102,7 @@ ThermodynamicMover::set_metropolis_hastings_mover(
 {}
 
 
-/// @details Torsion DOFs that would be returned by torsion_id_ranges() are not 
+/// @details Torsion DOFs that would be returned by torsion_id_ranges() are not
 /// returned by this function too.
 utility::vector1<core::id::DOF_ID_Range>
 ThermodynamicMover::dof_id_ranges(

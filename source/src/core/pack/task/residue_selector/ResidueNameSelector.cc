@@ -62,7 +62,7 @@ ResidueNameSelector::apply( core::pose::Pose const & pose ) const
 
 	utility::vector1< std::string > const res_name_vec = utility::string_split( res_name_str_, ',' );
 	std::set< std::string > res_set;
-	for (	utility::vector1< std::string >::const_iterator n=res_name_vec.begin(), endn=res_name_vec.end(); n!=endn; ++n ) {
+	for ( utility::vector1< std::string >::const_iterator n=res_name_vec.begin(), endn=res_name_vec.end(); n!=endn; ++n ) {
 		if ( n->empty() ) {
 			continue;
 		}
@@ -81,7 +81,7 @@ ResidueNameSelector::apply( core::pose::Pose const & pose ) const
 
 	utility::vector1< std::string > const res_name3_vec = utility::string_split( res_name3_str_, ',' );
 	std::set< std::string > res_name3_set;
-	for (	utility::vector1< std::string >::const_iterator n=res_name3_vec.begin(), endn=res_name3_vec.end(); n!=endn; ++n ) {
+	for ( utility::vector1< std::string >::const_iterator n=res_name3_vec.begin(), endn=res_name3_vec.end(); n!=endn; ++n ) {
 		if ( n->empty() ) {
 			continue;
 		}
@@ -113,11 +113,11 @@ ResidueNameSelector::apply( core::pose::Pose const & pose ) const
 
 void
 ResidueNameSelector::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &)
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &)
 {
 	if ( tag->hasOption( "residue_name3" ) ) {
-	 set_residue_name3( tag->getOption< std::string >( "residue_name3" ) );
+		set_residue_name3( tag->getOption< std::string >( "residue_name3" ) );
 	}
 	if ( tag->hasOption( "residue_names" ) ) {
 		set_residue_names( tag->getOption< std::string >( "residue_names" ) );

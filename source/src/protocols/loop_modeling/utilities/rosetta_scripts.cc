@@ -39,17 +39,17 @@ namespace loop_modeling {
 namespace utilities {
 
 LoopMoverOP loop_mover_from_tag(
-		TagCOP tag,
-		DataMap & data,
-		Filters_map const & filters,
-		Movers_map const & movers,
-		Pose const & pose) {
+	TagCOP tag,
+	DataMap & data,
+	Filters_map const & filters,
+	Movers_map const & movers,
+	Pose const & pose) {
 
 	using protocols::moves::MoverOP;
 	using protocols::moves::MoverFactory;
 
 	MoverOP base_mover = MoverFactory::get_instance()->newMover(
-				tag, data, filters, movers, pose);
+		tag, data, filters, movers, pose);
 	LoopMoverOP loop_mover = dynamic_pointer_cast< LoopMover > ( base_mover );
 
 	if ( ! loop_mover ) {

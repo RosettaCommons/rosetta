@@ -49,10 +49,10 @@ public:
 	static std::string name() {
 		return "UNDEFINED NAME";
 	}
-	
+
 	/// @brief Each derived selector must specify its name
 	// Why do we have get_name() and name() ?
-	virtual std::string get_name() const = 0;	
+	virtual std::string get_name() const = 0;
 
 	/// @brief Report selector flags
 	virtual PoseSelectorFlags get_flags() const = 0;

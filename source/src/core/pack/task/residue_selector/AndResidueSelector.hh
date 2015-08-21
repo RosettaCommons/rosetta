@@ -44,7 +44,7 @@ public:
 	AndResidueSelector();
 	AndResidueSelector( ResidueSelectorCOP selector1);
 	AndResidueSelector( ResidueSelectorCOP selector1, ResidueSelectorCOP selector2 );
-	
+
 	virtual ~AndResidueSelector();
 
 	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;

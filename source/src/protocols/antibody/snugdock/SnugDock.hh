@@ -44,7 +44,7 @@ namespace antibody {
 
 /// @brief MoveSet step of Snugdock as described in:
 ///
-///Sircar A, Gray JJ (2010) SnugDock: Paratope Structural Optimization duringAntibody-Antigen Docking Compensates 
+///Sircar A, Gray JJ (2010) SnugDock: Paratope Structural Optimization duringAntibody-Antigen Docking Compensates
 /// for Errors in Antibody Homology Models.
 /// PLoS Comput Biol 6(1): e1000644. doi:10.1371/journal.pcbi.1000644
 ///
@@ -99,7 +99,7 @@ private: // data
 	moves::MoverContainerOP high_resolution_step_;
 	std::string loop_refinement_method_;
 	antibody::CDRsMinPackMinOP pre_minimization_;
-	
+
 	// H3 filter options
 	bool h3_filter_;
 	bool debug_;
@@ -107,7 +107,7 @@ private: // data
 
 private:
 	Size number_of_high_resolution_cycles_;
-	
+
 }; // class SnugDock
 
 } // namespace antibody

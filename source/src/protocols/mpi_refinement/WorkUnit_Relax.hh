@@ -29,16 +29,16 @@ class WorkUnit_bbGauss : public protocols::mpi_refinement::WorkUnit_Sampler
 public:
 	// initialize only via this
 	WorkUnit_bbGauss( core::Size const nstruct = 0,
-										core::Real const kT = 0.5,
-										bool const centroid = false,
-										bool const on_defined_segment = false );
+		core::Real const kT = 0.5,
+		bool const centroid = false,
+		bool const on_defined_segment = false );
 
 	virtual protocols::wum::WorkUnitBaseOP clone() const {
 		return protocols::wum::WorkUnitBaseOP( new WorkUnit_bbGauss( *this ) );
 	}
 
 	// Pure virtual functions
-	virtual	void run();
+	virtual void run();
 
 	void set_nstruct( core::Size setting ){ header.extra_data_1_ = setting; }
 	void set_kT( core::Real const setting ){ header.extra_data_2_ = (core::Size)(setting*1000); }
@@ -66,17 +66,17 @@ class WorkUnit_MD : public protocols::mpi_refinement::WorkUnit_Sampler
 public:
 	// initialize only via this
 	WorkUnit_MD( core::Size const relaxtype = 0,
-							 core::Size const scoretype = 0,
-							 core::Size const nstruct = 10,
-							 core::Real const cstweight = 0.0,
-							 bool const looponly = false );
+		core::Size const scoretype = 0,
+		core::Size const nstruct = 10,
+		core::Real const cstweight = 0.0,
+		bool const looponly = false );
 
 	virtual protocols::wum::WorkUnitBaseOP clone() const {
 		return protocols::wum::WorkUnitBaseOP( new WorkUnit_MD( *this ) );
 	}
 
 	// Pure virtual functions
-	virtual	void run();
+	virtual void run();
 
 	void set_relaxtype( core::Size const setting ){ header.extra_data_1_ = setting; }
 	void set_scoretype( core::Size const setting ){ header.extra_data_2_ = setting; }
@@ -103,18 +103,18 @@ class WorkUnit_Relax : public protocols::mpi_refinement::WorkUnit_Sampler
 
 public:
 	// initialize only via this
-	WorkUnit_Relax( 
-									core::Size const relaxtype = 0,
-									core::Size const scoretype = 0,
-									core::Size const nrepeat = 0,
-									core::Real const cstweight = 0.0 );
+	WorkUnit_Relax(
+		core::Size const relaxtype = 0,
+		core::Size const scoretype = 0,
+		core::Size const nrepeat = 0,
+		core::Real const cstweight = 0.0 );
 
 	virtual protocols::wum::WorkUnitBaseOP clone() const {
 		return protocols::wum::WorkUnitBaseOP( new WorkUnit_Relax( *this ) );
 	}
 
 	// Pure virtual functions
-	virtual	void run();
+	virtual void run();
 
 	void set_relaxtype( core::Size const setting ){ header.extra_data_1_ = setting; }
 	void set_scoretype( core::Size const setting ){ header.extra_data_2_ = setting; }

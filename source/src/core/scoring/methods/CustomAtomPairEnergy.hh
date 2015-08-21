@@ -145,8 +145,8 @@ private:
 	//mutable bool init_;
 	mutable utility::vector1< utility::vector1< core::scoring::func::SOGFunc_Impl > > funcs_;
 	mutable utility::vector1< utility::vector1< bool > > have_cst_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 };
 
 } // constraints

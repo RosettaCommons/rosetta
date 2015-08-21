@@ -152,7 +152,7 @@ public:
 		ResidueTypeSetCOP restypeset = cm->residue_type_set(tag);
 
 		ResidueTypeOP res( read_topology_file( "core/chemical/params/U26.params",
-				atom_types, elements, mm_atom_types, core::chemical::orbitals::OrbitalTypeSetCAP(), restypeset ) );
+			atom_types, elements, mm_atom_types, core::chemical::orbitals::OrbitalTypeSetCAP(), restypeset ) );
 
 		TR << "Testing U26" << std::endl;
 

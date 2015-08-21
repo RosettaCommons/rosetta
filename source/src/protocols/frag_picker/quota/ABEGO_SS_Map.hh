@@ -48,25 +48,25 @@ public:
 
 	inline bool check_status(char ss_type,char abego_type) const {
 
-	    return ss_abego_types_[ss_index(ss_type)][abego_index(abego_type)];
+		return ss_abego_types_[ss_index(ss_type)][abego_index(abego_type)];
 	}
 
 	inline bool check_status(char ss_type,Size abego_type) const {
 
-	    return ss_abego_types_[ss_index(ss_type)][abego_type];
+		return ss_abego_types_[ss_index(ss_type)][abego_type];
 	}
 
 	inline bool check_status(Size ss_type,char abego_type) const {
 
-	    return ss_abego_types_[ss_type][abego_index(abego_type)];
+		return ss_abego_types_[ss_type][abego_index(abego_type)];
 	}
 
 	inline bool check_status(std::pair<Size,Size> bin_index) const {
-	    return ss_abego_types_[bin_index.first][bin_index.second];
+		return ss_abego_types_[bin_index.first][bin_index.second];
 	}
 
 	inline void set_status(std::pair<Size,Size> bin_index,bool new_status) {
-    	    ss_abego_types_[bin_index.first][bin_index.second] = new_status;
+		ss_abego_types_[bin_index.first][bin_index.second] = new_status;
 	}
 
 	std::string show_valid();

@@ -176,17 +176,17 @@ public:
 		utility::vector1< Vector > & atom_coords       // ouput coordinates are placed in this array.
 	) const = 0;
 
-  virtual
-  toolbox::match_enzdes_util::LigandConformerOP
+	virtual
+	toolbox::match_enzdes_util::LigandConformerOP
 	get_lig_conformers(core::Size conf_id) const = 0;
 
-//  virtual
-//  utility::vector1< utility::vector1< std::pair< core::Size, core::Real > > >
-//  get_min_sep_d2_from_upstream_atoms() const = 0;
+	//  virtual
+	//  utility::vector1< utility::vector1< std::pair< core::Size, core::Real > > >
+	//  get_min_sep_d2_from_upstream_atoms() const = 0;
 
-  virtual
-  core::chemical::ResidueTypeCOP
-  get_upstream_restype() const = 0;
+	virtual
+	core::chemical::ResidueTypeCOP
+	get_upstream_restype() const = 0;
 
 	virtual
 	core::pose::PoseCOP

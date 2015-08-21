@@ -81,16 +81,16 @@ static thread_local basic::Tracer tr( "core.chemical.ResidueTypeSet" );
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief c-tor from directory
 ResidueTypeSet::ResidueTypeSet(
-		std::string const & name,
-		std::string const & directory
+	std::string const & name,
+	std::string const & directory
 ) :
 	name_( name ),
 	database_directory_(directory)
 {}
 
 void ResidueTypeSet::init(
-		std::vector< std::string > const & extra_res_param_files, // defaults to empty
-		std::vector< std::string > const & extra_patch_files // defaults to empty
+	std::vector< std::string > const & extra_res_param_files, // defaults to empty
+	std::vector< std::string > const & extra_patch_files // defaults to empty
 )
 {
 	using namespace basic::options;
@@ -123,7 +123,7 @@ void ResidueTypeSet::init(
 			// kp don't consider files for protonation versions of the residues if flag pH_mode is not used
 			// to make sure even applications that use ResidueTypeSet directly never run into problems
 			bool no_proton_states = false;
-			if ( line.size() > 20 ){
+			if ( line.size() > 20 ) {
 				if ( ( !option[ OptionKeys::pH::pH_mode ].user() ) &&
 						( line.substr (14,6) == "proton" ) ) {
 					no_proton_states = true;
@@ -144,9 +144,8 @@ void ResidueTypeSet::init(
 			}
 
 			//Skip mineral surface ResidueTypes unless included with surface_mode flag.
-			if ((!option[OptionKeys::in::include_surfaces]) &&
-				 (line.substr(0, 29) == "residue_types/mineral_surface"))
-			{
+			if ( (!option[OptionKeys::in::include_surfaces]) &&
+					(line.substr(0, 29) == "residue_types/mineral_surface") ) {
 				continue;
 			}
 
@@ -162,22 +161,22 @@ void ResidueTypeSet::init(
 			} else if ( tag == "MM_ATOM_TYPE_SET" ) {
 				l >> tag;
 				mm_atom_types_ = ChemicalManager::get_instance()->mm_atom_type_set( tag );
-			} else if(tag == "ORBITAL_TYPE_SET"){
+			} else if ( tag == "ORBITAL_TYPE_SET" ) {
 				l >> tag;
 				orbital_types_ = ChemicalManager::get_instance()->orbital_type_set(tag);
 			} else {
 				std::string const filename( database_directory_ + line );
 
 				ResidueTypeOP rsd_type( read_topology_file(
-						filename, atom_types_, elements_, mm_atom_types_, orbital_types_, get_self_weak_ptr() ) );
+					filename, atom_types_, elements_, mm_atom_types_, orbital_types_, get_self_weak_ptr() ) );
 
 				residue_types_.push_back( rsd_type );
 			}
 		}
 
-		BOOST_FOREACH(std::string filename, extra_res_param_files){
+		BOOST_FOREACH ( std::string filename, extra_res_param_files ) {
 			ResidueTypeOP rsd_type( read_topology_file(
-					filename, atom_types_, elements_, mm_atom_types_, orbital_types_, get_self_weak_ptr() ) );
+				filename, atom_types_, elements_, mm_atom_types_, orbital_types_, get_self_weak_ptr() ) );
 			residue_types_.push_back( rsd_type );
 		}
 
@@ -202,7 +201,7 @@ void ResidueTypeSet::init(
 		std::set< std::string > patches_to_avoid;
 		if ( option[ OptionKeys::chemical::exclude_patches ].user() ) {
 			utility::vector1< std::string > avoidlist =
-					option[ OptionKeys::chemical::exclude_patches ];
+				option[ OptionKeys::chemical::exclude_patches ];
 			for ( Size ii = 1; ii <= avoidlist.size(); ++ii ) {
 				utility::file::FileName fname( avoidlist[ ii ] );
 				patches_to_avoid.insert( fname.base() );
@@ -236,7 +235,7 @@ void ResidueTypeSet::init(
 			utility::file::FileName fname( line );
 			if ( patches_to_avoid.find( fname.base() ) != patches_to_avoid.end() ) {
 				tr << "While generating ResidueTypeSet " << name_ <<
-						": Skipping patch " << fname.base() << " as requested" << std::endl;
+					": Skipping patch " << fname.base() << " as requested" << std::endl;
 				continue;
 			}
 
@@ -246,10 +245,10 @@ void ResidueTypeSet::init(
 		// kdrew: include list allows patches to be included while being commented out in patches.txt,
 		// useful for testing non-canonical patches.
 		//tr << "include_patches activated? " <<
-		//		option[ OptionKeys::chemical::include_patches ].active() << std::endl;
+		//  option[ OptionKeys::chemical::include_patches ].active() << std::endl;
 		if ( option[ OptionKeys::chemical::include_patches ].active() ) {
 			utility::vector1< std::string > includelist =
-					option[ OptionKeys::chemical::include_patches ];
+				option[ OptionKeys::chemical::include_patches ];
 			for ( Size ii = 1; ii <= includelist.size(); ++ii ) {
 				utility::file::FileName fname( includelist[ ii ] );
 				if ( !utility::file::file_exists( database_directory_ + includelist[ ii ] ) ) {
@@ -258,7 +257,7 @@ void ResidueTypeSet::init(
 				}
 				patch_filenames.push_back( database_directory_ + includelist[ ii ]);
 				tr << "While generating ResidueTypeSet " << name_ <<
-						": Including patch " << fname << " as requested" << std::endl;
+					": Including patch " << fname << " as requested" << std::endl;
 			}
 		}
 
@@ -266,11 +265,13 @@ void ResidueTypeSet::init(
 		if ( option[ OptionKeys::in::missing_density_to_jump ]()
 				|| option[ OptionKeys::in::use_truncated_termini ]() ) {
 			if ( std::find( patch_filenames.begin(), patch_filenames.end(), database_directory_ + "patches/NtermTruncation.txt" )
-					== patch_filenames.end())
+					== patch_filenames.end() ) {
 				patch_filenames.push_back( database_directory_ + "patches/NtermTruncation.txt" );
+			}
 			if ( std::find( patch_filenames.begin(), patch_filenames.end(), database_directory_ + "patches/CtermTruncation.txt" )
-					== patch_filenames.end())
+					== patch_filenames.end() ) {
 				patch_filenames.push_back( database_directory_ + "patches/CtermTruncation.txt" );
+			}
 
 		}
 
@@ -280,8 +281,8 @@ void ResidueTypeSet::init(
 	// Generate combinations of adducts as specified by the user
 	place_adducts();
 
-	if(option[ OptionKeys::in::add_orbitals]){
-		for( Size ii = 1 ; ii <= residue_types_.size() ; ++ii ) {
+	if ( option[ OptionKeys::in::add_orbitals] ) {
+		for ( Size ii = 1 ; ii <= residue_types_.size() ; ++ii ) {
 			if ( residue_types_[ii]->finalized() ) {
 				ResidueTypeOP rsd_type_clone = residue_types_[ii]->clone();
 				orbitals::AssignOrbitals( rsd_type_clone ).assign_orbitals();
@@ -363,7 +364,7 @@ ResidueTypeSet::apply_patches(
 	//  which I might do later. For example, there's code in SwitchResidueTypeSet that will look for "MET" when it really should
 	//  look for "MET:protein_centroid_with_HA" and know about this patch.
 	// For now, apply them first, and force application/instantiation later.
-	//	-- rhiju
+	// -- rhiju
 	for ( Size ii=1; ii<= patches_.size(); ++ii ) {
 		PatchCOP p( patches_[ ii ] );
 		Size current_n_residue_types( residue_types_.size() );
@@ -447,7 +448,7 @@ ResidueTypeSet::name3_map_DO_NOT_USE( std::string const & name ) const
 		return empty_residue_list_;
 	}
 	/*bool did_instantiation = */ make_sure_instantiated( iter->second );
-	//	if ( did_instantiation ) tr << tr.Red << "Instantiating name3_map for: " << name << tr.Reset << std::endl;
+	// if ( did_instantiation ) tr << tr.Red << "Instantiating name3_map for: " << name << tr.Reset << std::endl;
 	return iter->second;
 }
 
@@ -461,14 +462,14 @@ ResidueTypeSet::name_map( std::string const & name_in ) const
 	if ( name_map_.find( name ) != name_map_.end() ) {
 		rsd_type = name_map_.find( name )->second;
 		//  Do not delete yet -- may revive later to 'properly' handle replace_residue_types -- rhiju.
-		//	} else if ( replaced_name_map_.find( name ) != replaced_name_map_.end() ) {
-		//		rsd_type = replaced_name_map_.find( name )->second;
+		// } else if ( replaced_name_map_.find( name ) != replaced_name_map_.end() ) {
+		//  rsd_type = replaced_name_map_.find( name )->second;
 	} else {
 		for ( std::map< std::string, ResidueTypeCOP >::const_iterator it = name_map_.begin();
-					it != name_map_.end(); ++it ) tr << it->first << std::endl;
+				it != name_map_.end(); ++it ) tr << it->first << std::endl;
 		//  Do not delete yet -- may revive later to 'properly' handle replace_residue_types -- rhiju.
-		//		for ( std::map< std::string, ResidueTypeCOP >::const_iterator it = replaced_name_map_.begin();
-		//					it != replaced_name_map_.end(); ++it ) tr << it->first << std::endl;
+		//  for ( std::map< std::string, ResidueTypeCOP >::const_iterator it = replaced_name_map_.begin();
+		//     it != replaced_name_map_.end(); ++it ) tr << it->first << std::endl;
 		utility_exit_with_message( "unrecognized residue name '"+name+"'" );
 	}
 	make_sure_instantiated( rsd_type );
@@ -480,7 +481,7 @@ bool
 ResidueTypeSet::generates_patched_residue_type_with_name3( std::string const &base_residue_name, std::string const &name3 ) const
 {
 	if ( name3_generated_by_base_residue_name_.find( base_residue_name ) ==
-			 name3_generated_by_base_residue_name_.end() ) return false;
+			name3_generated_by_base_residue_name_.end() ) return false;
 	std::set< std::string> const & name3_set = name3_generated_by_base_residue_name_.find( base_residue_name )->second;
 	return ( name3_set.count( name3 ) );
 }
@@ -493,8 +494,8 @@ ResidueTypeSet::make_sure_instantiated( ResidueTypeCOP const & rsd_type ) const
 	if ( rsd_type->finalized() ) return false;
 
 	runtime_assert( on_the_fly_ )
-	// get name (which holds patch information)
-	std::string rsd_name_base, patch_name;
+		// get name (which holds patch information)
+		std::string rsd_name_base, patch_name;
 	figure_out_last_patch_from_name( rsd_type->name(), rsd_name_base, patch_name );
 	if ( patch_name.size() == 0 ) utility_exit_with_message( "Problem: " + rsd_type->name() + " not instantiated." );
 
@@ -519,7 +520,7 @@ ResidueTypeSet::make_sure_instantiated( ResidueTypeCOP const & rsd_type ) const
 			utility_exit_with_message(  "Failed to apply: " + p->name() + " to " + rsd_base.name() );
 		} else {
 
-			if (option[ OptionKeys::in::add_orbitals]) orbitals::AssignOrbitals( rsd_instantiated ).assign_orbitals();
+			if ( option[ OptionKeys::in::add_orbitals] ) orbitals::AssignOrbitals( rsd_instantiated ).assign_orbitals();
 
 			replace_residue_type_in_set_defying_constness( rsd_type, *rsd_instantiated );
 		}
@@ -551,8 +552,8 @@ ResidueTypeSet::make_sure_instantiated( utility::vector1< ResidueTypeCOP > const
 //////////////////////////////////////////////////////////////////////////////
 void
 ResidueTypeSet::figure_out_last_patch_from_name( std::string const &rsd_name,
-																 std::string & rsd_name_base,
-																 std::string & patch_name ) const
+	std::string & rsd_name_base,
+	std::string & patch_name ) const
 {
 	Size pos = rsd_name.find_last_of( PATCH_LINKER );
 	runtime_assert( pos != std::string::npos );
@@ -697,12 +698,12 @@ ResidueTypeSet::has_name3( std::string const & name3 ) const
 ResidueTypeCOPs const &
 ResidueTypeSet::aa_map_DO_NOT_USE( AA const & aa ) const
 {
-	std::map< AA, ResidueTypeCOPs >::const_iterator iter =	aa_map_.find( aa );
+	std::map< AA, ResidueTypeCOPs >::const_iterator iter = aa_map_.find( aa );
 	if ( iter == aa_map_.end() ) {
 		return empty_residue_list_;
 	}
 	/*bool did_instantiation =*/ make_sure_instantiated( iter->second );
-	//	if ( did_instantiation ) tr << tr.Red << "Instantiating aa_map for: " << aa << tr.Reset << std::endl;
+	// if ( did_instantiation ) tr << tr.Red << "Instantiating aa_map for: " << aa << tr.Reset << std::endl;
 	return aa_map_.find( aa )->second;
 }
 
@@ -761,7 +762,7 @@ ResidueTypeSet::add_residue_type_to_maps( ResidueTypeCOP rsd_ptr )
 	aas_defined_.push_back( rsd_ptr->aa() );
 
 	// map by pdb string
-	//	tr << "ADDING name3 to map " << rsd_ptr->name3() << "  based on rsd_type " << rsd_ptr->name() << std::endl;
+	// tr << "ADDING name3 to map " << rsd_ptr->name3() << "  based on rsd_type " << rsd_ptr->name() << std::endl;
 	name3_map_[ rsd_ptr->name3() ].push_back( rsd_ptr );
 
 	// map by interchangeability group
@@ -788,11 +789,10 @@ ResidueTypeSet::remove_residue_type_from_maps( ResidueTypeCOP rsd )
 	name_map_.erase(rsd->name());
 
 	// clear this residue type from the aa_map_
-	if(rsd->aa() != aa_unk) {
+	if ( rsd->aa() != aa_unk ) {
 		ResidueTypeCOPs::iterator aa_it(std::find(aa_map_[rsd->aa()].begin(),aa_map_[rsd->aa()].end(),rsd));
 		aa_map_[rsd->aa()].erase(aa_it);
-		if(aa_map_[rsd->aa()].size() == 0)
-		{
+		if ( aa_map_[rsd->aa()].size() == 0 ) {
 			aa_map_.erase(rsd->aa());
 
 			// only clear the aa type from the aas_defined_ list if it was the last aa of this type in the aa_map_
@@ -818,8 +818,7 @@ ResidueTypeSet::remove_residue_type_from_maps( ResidueTypeCOP rsd )
 	// clear this residue type from the name3_map_
 	ResidueTypeCOPs::iterator name3_it(std::find(name3_map_[rsd->name3()].begin(),name3_map_[rsd->name3()].end(),rsd));
 	name3_map_[rsd->name3()].erase(name3_it);
-	if(name3_map_[rsd->name3()].size() == 0)
-	{
+	if ( name3_map_[rsd->name3()].size() == 0 ) {
 		name3_map_.erase(rsd->name3());
 	}
 
@@ -833,12 +832,10 @@ ResidueTypeSet::remove_residue_type_from_maps( ResidueTypeCOP rsd )
 		interchangeability_group_map_.erase( rsd->interchangeability_group() );
 	}
 
-	if(rsd->name3() != rsd->name().substr(0,3))
-	{
+	if ( rsd->name3() != rsd->name().substr(0,3) ) {
 		name3_it = std::find(name3_map_[rsd->name3().substr(0,3)].begin(),name3_map_[rsd->name3().substr(0,3)].end(),rsd);
 		name3_map_[rsd->name3().substr(0,3)].erase(name3_it);
-		if(name3_map_[rsd->name3().substr(0,3)].size() == 0)
-		{
+		if ( name3_map_[rsd->name3().substr(0,3)].size() == 0 ) {
 			name3_map_.erase(rsd->name3().substr(0,3));
 		}
 	}
@@ -882,8 +879,8 @@ ResidueTypeSet::select_residues_DO_NOT_USE(
 /// @remark  TODO: This should be refactored to make better use of the new ResidueProperties system. ~Labonte
 ResidueType const &
 ResidueTypeSet::get_residue_type_with_variant_added(
-		ResidueType const & init_rsd,
-		VariantType const new_type ) const
+	ResidueType const & init_rsd,
+	VariantType const new_type ) const
 {
 	if ( init_rsd.has_variant_type( new_type ) ) return init_rsd;
 
@@ -900,7 +897,7 @@ ResidueTypeSet::get_residue_type_with_variant_added(
 
 	if ( rsd_type == 0 ) {
 		utility_exit_with_message( "unable to find desired variant residue: " + init_rsd.name() + " " + base_name + " " +
-															 ResidueProperties::get_string_from_variant( new_type ) );
+			ResidueProperties::get_string_from_variant( new_type ) );
 	}
 
 	return *rsd_type;
@@ -912,8 +909,8 @@ ResidueTypeSet::get_residue_type_with_variant_added(
 /// @remark  TODO: This should be refactored to make better use of the new ResidueProperties system. ~Labonte
 ResidueType const &
 ResidueTypeSet::get_residue_type_with_variant_removed(
-		ResidueType const & init_rsd,
-		VariantType const old_type) const
+	ResidueType const & init_rsd,
+	VariantType const old_type) const
 {
 	if ( !init_rsd.has_variant_type( old_type ) ) return init_rsd;
 
@@ -923,13 +920,13 @@ ResidueTypeSet::get_residue_type_with_variant_removed(
 	// the desired set of variant types:
 	utility::vector1< std::string > target_variants( init_rsd.properties().get_list_of_variants() );
 	target_variants.erase( std::find( target_variants.begin(), target_variants.end(),
-			ResidueProperties::get_string_from_variant( old_type ) ) );
+		ResidueProperties::get_string_from_variant( old_type ) ) );
 
 	ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).residue_base_name( base_name ).variants( target_variants ).get_representative_type();
 
 	if ( rsd_type == 0 ) {
 		utility_exit_with_message( "unable to find desired non-variant residue: " + init_rsd.name() + " " + base_name +
-															 " " + ResidueProperties::get_string_from_variant( old_type ) );
+			" " + ResidueProperties::get_string_from_variant( old_type ) );
 	}
 
 	return *rsd_type;
@@ -949,7 +946,7 @@ ResidueTypeSet::place_adducts()
 		= option[ OptionKeys::packing::adducts ];
 
 	// No adducts, skip out
-	if( add_set.size() == 0 ) return;
+	if ( add_set.size() == 0 ) return;
 
 	// Convert to a map that takes a string descriptor of an adduct and
 	// gives the max number of adducts of that class to apply, so
@@ -966,16 +963,16 @@ ResidueTypeSet::place_adducts()
 
 	// Set up a starting point map where the int value is the number
 	// of adducts of a given type placed
-		AdductMap blank_map( add_map );
-		for( AdductMap::iterator add_iter = blank_map.begin(),
-						end_iter = blank_map.end() ;
-					add_iter != end_iter ; ++add_iter ) {
-			add_iter->second = 0;
-		}
+	AdductMap blank_map( add_map );
+	for ( AdductMap::iterator add_iter = blank_map.begin(),
+			end_iter = blank_map.end() ;
+			add_iter != end_iter ; ++add_iter ) {
+		add_iter->second = 0;
+	}
 
 	// Process the residues in turn
 	for ( ResidueTypeCOPs::const_iterator iter= residue_types_.begin(), iter_end = residue_types_.end();
-				iter != iter_end; ++iter ) {
+			iter != iter_end; ++iter ) {
 		ResidueType const & rsd( **iter );
 		if ( !rsd.finalized() ) continue;
 		AdductMap count_map( blank_map );
@@ -983,7 +980,7 @@ ResidueTypeSet::place_adducts()
 		create_adduct_combinations( rsd, add_map, count_map, add_mask, rsd.defined_adducts().begin() );
 	}
 
-//	utility_exit_with_message( "Debug stop point \n" );
+	// utility_exit_with_message( "Debug stop point \n" );
 
 	update_residue_maps();
 
@@ -992,12 +989,12 @@ ResidueTypeSet::place_adducts()
 void
 ResidueTypeSet::add_residue_type( ResidueTypeOP new_type )
 {
-	if(option[ OptionKeys::in::add_orbitals]){
+	if ( option[ OptionKeys::in::add_orbitals] ) {
 		orbitals::AssignOrbitals add_orbitals_to_residue(new_type);
 		add_orbitals_to_residue.assign_orbitals();
 	}
 	residue_types_.push_back( new_type );
- 	if ( residue_type_base_name( *new_type ) == new_type->name() ) base_residue_types_.push_back( new_type );
+	if ( residue_type_base_name( *new_type ) == new_type->name() ) base_residue_types_.push_back( new_type );
 	add_residue_type_to_maps( new_type );
 	aas_defined_.sort();
 	aas_defined_.unique();
@@ -1014,8 +1011,7 @@ void
 ResidueTypeSet::remove_residue_type(std::string const & name)
 {
 
-	if(!has_name(name))
-	{
+	if ( !has_name(name) ) {
 		utility_exit_with_message("ResidueTypeSet does not have a residue called "+name+ " so it cannot be deleted.");
 	}
 
@@ -1035,17 +1031,17 @@ ResidueTypeSet:: create_adduct_combinations(
 )
 {
 
-	if( work_iter == rsd.defined_adducts().end() ) {
+	if ( work_iter == rsd.defined_adducts().end() ) {
 		// Skip the 'no adduct' case - that has already been
 		// made when reading in files
-		if( std::find( add_mask.begin(), add_mask.end(), true ) == add_mask.end() ) {
+		if ( std::find( add_mask.begin(), add_mask.end(), true ) == add_mask.end() ) {
 			return;
 		}
 		// Make this combo and return;
-		//		std::cout << "Making an adduct" << std::endl;
+		//  std::cout << "Making an adduct" << std::endl;
 
 		utility::vector1< Adduct >::const_iterator add_iter = rsd.defined_adducts().begin() ;
-		BOOST_FOREACH(bool make, add_mask){
+		BOOST_FOREACH ( bool make, add_mask ) {
 			std::cout << "Adduct " << add_iter->adduct_name() << " make is " << make << std::endl;
 			++add_iter;
 		}
@@ -1060,10 +1056,10 @@ ResidueTypeSet:: create_adduct_combinations(
 	// 1. The adduct is in the map of requested adducts
 	// 2. we haven't exceeded the count limit for this adduct
 	AdductMap::iterator test_iter =
-			ref_map.find( work_iter->adduct_name() );
+		ref_map.find( work_iter->adduct_name() );
 
 	if ( test_iter != ref_map.end() &&
-				count_map[ test_iter->first ] < ref_map[ test_iter->first ]   ) {
+			count_map[ test_iter->first ] < ref_map[ test_iter->first ]   ) {
 		AdductMap new_count_map( count_map );
 		new_count_map[ work_iter->adduct_name() ]++;
 		utility::vector1< bool > new_add_mask( add_mask );

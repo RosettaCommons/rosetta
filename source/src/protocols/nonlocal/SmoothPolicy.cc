@@ -34,41 +34,41 @@ typedef utility::vector1<core::Real> ScoreList;
 
 /// @brief Convenience method for retrieving the single highest-weighted sample
 core::Size make_selection(numeric::random::WeightedReservoirSampler<core::Size>* sampler) {
-  assert(sampler);
-  utility::vector1<core::Size> results;
-  sampler->samples(&results);
-  return results[1];
+	assert(sampler);
+	utility::vector1<core::Size> results;
+	sampler->samples(&results);
+	return results[1];
 }
 
 SmoothPolicy::SmoothPolicy(core::fragment::FragSetCOP fragments)
-    : Policy(fragments) {}
+: Policy(fragments) {}
 
 core::Size SmoothPolicy::choose(const core::fragment::Frame& frame,
-                                const core::pose::Pose& pose) {
-  using core::Size;
-  using numeric::random::WeightedReservoirSampler;
-  assert(frame.nr_frags() > 0);
+	const core::pose::Pose& pose) {
+	using core::Size;
+	using numeric::random::WeightedReservoirSampler;
+	assert(frame.nr_frags() > 0);
 
-  ScoreList scores;
-  scorer_.score(frame, pose, scores);
+	ScoreList scores;
+	scorer_.score(frame, pose, scores);
 
-  WeightedReservoirSampler<Size> sampler(1);
-  for (Size i = 1; i <= scores.size(); ++i) {
-    double score = scores[i];
-    double fitness = std::sqrt(scorer_.cutoff() - score);
+	WeightedReservoirSampler<Size> sampler(1);
+	for ( Size i = 1; i <= scores.size(); ++i ) {
+		double score = scores[i];
+		double fitness = std::sqrt(scorer_.cutoff() - score);
 
-    if (score < scorer_.cutoff()) {
-      sampler.consider_sample(i, fitness);
-    }
-  }
+		if ( score < scorer_.cutoff() ) {
+			sampler.consider_sample(i, fitness);
+		}
+	}
 
-  // If no candidates met the score threshold, return the best scoring fragment.
-  // Otherwise, randomly choose among the candidates by score.
-  if (sampler.num_considered() == 0) {
-    return utility::argmin(scores);
-  } else {
-    return make_selection(&sampler);
-  }
+	// If no candidates met the score threshold, return the best scoring fragment.
+	// Otherwise, randomly choose among the candidates by score.
+	if ( sampler.num_considered() == 0 ) {
+		return utility::argmin(scores);
+	} else {
+		return make_selection(&sampler);
+	}
 }
 
 }  // namespace nonlocal

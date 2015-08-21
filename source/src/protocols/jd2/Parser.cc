@@ -63,7 +63,7 @@ protocols::jd2::Parser::generate_mover_from_job(
 	// (i.e. NOT if only the mover changed)
 	if ( generate_mover_from_pose( job, pose, mover, new_input,
 			"" /*empty xml_fname, this means go to options system*/,
-			guarantee_new_mover ) ){
+			guarantee_new_mover ) ) {
 
 		if ( allow_job_update && new_input ) {
 			// Store the modified pose into the job.  This is done only if new_input is true even if

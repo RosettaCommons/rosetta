@@ -59,7 +59,7 @@ MatchScoreWriter &
 MatchScoreWriter::operator=(MatchScoreWriter const & object_to_copy)
 {
 	// Abort self-assignment.
-	if (this == &object_to_copy) {
+	if ( this == &object_to_copy ) {
 		return *this;
 	}
 
@@ -78,10 +78,9 @@ MatchScoreWriter::show(std::ostream & output) const
 {
 	output << output_header_ << std::endl;
 
-	for(core::Size i = 1 ; i<=match_names_.size() ; i++)
-		{
-			output << match_names_[i] << "\t" << match_scores_[i] << std::endl;
-		}
+	for ( core::Size i = 1 ; i<=match_names_.size() ; i++ ) {
+		output << match_names_[i] << "\t" << match_scores_[i] << std::endl;
+	}
 }
 
 
@@ -107,17 +106,17 @@ void MatchScoreWriter::add_match(core::Real score)
 void MatchScoreWriter::write_match_scores()
 {
 	// Check to see if there is anything to do
-	if( (!write_file_) || (match_names_.size() == 0) )
+	if ( (!write_file_) || (match_names_.size() == 0) ) {
 		return;
+	}
 
 	std::ofstream fileout;
 	fileout.open(score_output_filename_.c_str());
 	fileout << output_header_ << std::endl;
 
-	for(core::Size i = 1 ; i<=match_names_.size() ; i++)
-		{
-			fileout << match_names_[i] << "\t" << match_scores_[i] << std::endl;
-		}
+	for ( core::Size i = 1 ; i<=match_names_.size() ; i++ ) {
+		fileout << match_names_[i] << "\t" << match_scores_[i] << std::endl;
+	}
 
 	TR << "Match scores written to file: " << score_output_filename_ << std::endl;
 	fileout.close();
@@ -151,8 +150,8 @@ MatchScoreWriter::init()
 // Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
 void
 MatchScoreWriter::copy_data(
-		MatchScoreWriter object_to_copy_to,
-		MatchScoreWriter object_to_copy_from)
+	MatchScoreWriter object_to_copy_to,
+	MatchScoreWriter object_to_copy_from)
 {
 	object_to_copy_to.score_output_filename_ = object_to_copy_from.score_output_filename_;
 	object_to_copy_to.output_header_ = object_to_copy_from.output_header_;

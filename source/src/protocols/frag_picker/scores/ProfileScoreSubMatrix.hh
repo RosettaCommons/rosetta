@@ -35,7 +35,7 @@ typedef utility::vector1<utility::vector1<Real> > Matrix;
 class ProfileScoreSubMatrix: public CachingScoringMethod {
 public:
 
-	ProfileScoreSubMatrix(Size priority, Real lowest_acceptable_value, bool use_lowest,													 std::string sequence,Size longest_vall_chunk,std::string subMatrixFile);
+	ProfileScoreSubMatrix(Size priority, Real lowest_acceptable_value, bool use_lowest,              std::string sequence,Size longest_vall_chunk,std::string subMatrixFile);
 	~ProfileScoreSubMatrix();
 
 	void do_caching(VallChunkOP);

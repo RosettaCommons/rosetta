@@ -142,10 +142,10 @@ using namespace core;
 
 
 RandomSheetBuilder::RandomSheetBuilder( core::fragment::SecondaryStructureOP ss, core::scoring::dssp::PairingsList const& pairings, SheetTopology const& sheet_topol) :
-  SheetBuilder( ss, pairings, sheet_topol ),
+	SheetBuilder( ss, pairings, sheet_topol ),
 	input_sheet_sizes_( sheet_topol )
 {
-  //...
+	//...
 }
 
 
@@ -165,7 +165,7 @@ SheetBuilder::SheetTopology RandomSheetBuilder::create_new_random_topol() const
 	numeric::random::random_permutation( strand_ids, numeric::random::rg() ); //want it really random
 
 	tr.Debug << "strand_ids.size(): "
-					 << strand_ids.size() << " ";
+		<< strand_ids.size() << " ";
 	utility::io::write_vector( tr.Debug, strand_ids );
 	tr.Debug << std::endl;
 

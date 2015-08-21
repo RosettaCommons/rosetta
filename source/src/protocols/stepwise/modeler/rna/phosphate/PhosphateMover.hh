@@ -33,95 +33,95 @@ namespace rna {
 namespace phosphate {
 
 
-	///////////////////////////////////////////////////////////////
-	class PhosphateMover: public protocols::moves::Mover {
+///////////////////////////////////////////////////////////////
+class PhosphateMover: public protocols::moves::Mover {
 
-	public:
+public:
 
-		//constructor
-		PhosphateMover( Size const sample_res,
-										PhosphateTerminus which_terminus_,
-										scoring::ScoreFunctionCOP scorefxn );
+	//constructor
+	PhosphateMover( Size const sample_res,
+		PhosphateTerminus which_terminus_,
+		scoring::ScoreFunctionCOP scorefxn );
 
-		//constructor
-		PhosphateMover( PhosphateMove const phosphate_move,
-										scoring::ScoreFunctionCOP scorefxn );
+	//constructor
+	PhosphateMover( PhosphateMove const phosphate_move,
+		scoring::ScoreFunctionCOP scorefxn );
 
-		//destructor
-		~PhosphateMover();
+	//destructor
+	~PhosphateMover();
 
-		virtual void apply( core::pose::Pose & pose_to_visualize );
+	virtual void apply( core::pose::Pose & pose_to_visualize );
 
-		virtual std::string get_name() const;
+	virtual std::string get_name() const;
 
-	public:
+public:
 
-		void
-		screen_phosphate( pose::Pose & pose );
+	void
+	screen_phosphate( pose::Pose & pose );
 
-		bool instantiated_phosphate() const{ return instantiated_phosphate_; }
+	bool instantiated_phosphate() const{ return instantiated_phosphate_; }
 
-		void set_force_phosphate_instantiation( bool const & setting ){ force_phosphate_instantiation_ = setting; }
-		bool force_phosphate_instantiation() const { return force_phosphate_instantiation_; }
+	void set_force_phosphate_instantiation( bool const & setting ){ force_phosphate_instantiation_ = setting; }
+	bool force_phosphate_instantiation() const { return force_phosphate_instantiation_; }
 
-	private:
+private:
 
-		void
-		initialize_variables();
+	void
+	initialize_variables();
 
-		void
-		setup_variants_and_free_pose_for_terminal_phosphate( pose::Pose & pose  );
+	void
+	setup_variants_and_free_pose_for_terminal_phosphate( pose::Pose & pose  );
 
-		void
-		setup_variants_and_free_pose_for_five_prime_phosphate( pose::Pose & pose );
+	void
+	setup_variants_and_free_pose_for_five_prime_phosphate( pose::Pose & pose );
 
-		void
-		setup_variants_and_free_pose_for_three_prime_phosphate( pose::Pose & pose );
+	void
+	setup_variants_and_free_pose_for_three_prime_phosphate( pose::Pose & pose );
 
-		void
-		screen_five_prime_phosphate( pose::Pose & pose );
+	void
+	screen_five_prime_phosphate( pose::Pose & pose );
 
-		void
-		screen_three_prime_phosphate( pose::Pose & pose );
+	void
+	screen_three_prime_phosphate( pose::Pose & pose );
 
-		void
-		setup_atom_and_neighbor_list( pose::Pose & pose );
+	void
+	setup_atom_and_neighbor_list( pose::Pose & pose );
 
-		bool
-		check_phosphate_contacts_donor( pose::Pose & pose ) const;
+	bool
+	check_phosphate_contacts_donor( pose::Pose & pose ) const;
 
-		bool
-		pass_clash_check( std::string const atom_name,
-											Size const n,
-											pose::Pose & pose );
+	bool
+	pass_clash_check( std::string const atom_name,
+		Size const n,
+		pose::Pose & pose );
 
-		void
-		apply_Aform_torsions_to_five_prime_phosphate( pose::Pose & pose, Size const sample_res ) const;
+	void
+	apply_Aform_torsions_to_five_prime_phosphate( pose::Pose & pose, Size const sample_res ) const;
 
-		void
-		apply_Aform_torsions_to_three_prime_phosphate( pose::Pose & pose, Size const sample_res ) const;
+	void
+	apply_Aform_torsions_to_three_prime_phosphate( pose::Pose & pose, Size const sample_res ) const;
 
-	private:
+private:
 
-		PhosphateMove const phosphate_move_;
-		scoring::ScoreFunctionCOP scorefxn_;
+	PhosphateMove const phosphate_move_;
+	scoring::ScoreFunctionCOP scorefxn_;
 
-		bool do_screening_;
-		bool screen_for_donor_contact_;
-		bool instantiated_phosphate_;
-		bool force_phosphate_instantiation_;
+	bool do_screening_;
+	bool screen_for_donor_contact_;
+	bool instantiated_phosphate_;
+	bool force_phosphate_instantiation_;
 
-		pose::PoseOP pose_free_;
+	pose::PoseOP pose_free_;
 
-		utility::vector1< Vector > donor_atom_xyz_list_;
-		utility::vector1< Vector > donor_base_atom_xyz_list_;
-		utility::vector1< Size > neighbor_copy_dofs_;
-		Size op1_atom_idx_, op2_atom_idx_;
-		Size number_score_calls_;
+	utility::vector1< Vector > donor_atom_xyz_list_;
+	utility::vector1< Vector > donor_base_atom_xyz_list_;
+	utility::vector1< Size > neighbor_copy_dofs_;
+	Size op1_atom_idx_, op2_atom_idx_;
+	Size number_score_calls_;
 
-		core::chemical::rna::RNA_FittedTorsionInfo const torsion_info_;
+	core::chemical::rna::RNA_FittedTorsionInfo const torsion_info_;
 
-	};
+};
 
 } //phosphate
 } //rna

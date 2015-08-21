@@ -81,7 +81,7 @@ public:
 
 	virtual std::string get_name() const;
 
-	//	virtual void init( core::pose::Pose const& pose );
+	// virtual void init( core::pose::Pose const& pose );
 
 protected:
 	/// @brief heuristic to select subset of loops from loops_

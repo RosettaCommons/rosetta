@@ -123,7 +123,7 @@ public:
 	get_all_rotamer_samples(
 		utility::fixedsizearray1< Real, 5 > bbs
 	) const;
-	
+
 	virtual
 	Real
 	get_probability_for_rotamer(
@@ -154,7 +154,7 @@ public:
 		Size rot_ind
 	) const;
 
-    virtual
+	virtual
 	Size nchi() const;
 
 	virtual
@@ -280,7 +280,7 @@ public:
 
 protected:
 
-    void
+	void
 	interpolate_rotamers(
 		RotamerLibraryScratchSpace & scratch,
 		Size const packed_rotno,
@@ -324,7 +324,7 @@ protected:
 	Real
 	get_psi_from_rsd(
 		conformation::Residue const & rsd
-                     ) const;
+	) const;
 
 	void
 	get_bb_bins(
@@ -378,7 +378,7 @@ private:
 		Size const psibin,
 		Size const phibin_next,
 		Size const psibin_next
-    ) const;
+	) const;
 
 	void verify_bb_bins(
 		utility::fixedsizearray1< Real, N > bbs,
@@ -457,13 +457,13 @@ private:
 	/// list of rotamers sorted by probability and the bb_bin_index is a composite
 	/// of what you would get from essentially expressing the backbone torsions as
 	/// a number in base N_PHIPSI_BINS (often 36).
-    typename ObjexxFCL::FArray2D< PackedDunbrackRotamer< T, N > > rotamers_;
+	typename ObjexxFCL::FArray2D< PackedDunbrackRotamer< T, N > > rotamers_;
 	/// Quick lookup that lists the sorted position for the packed rotamer number
 	/// given a phi/psi.  Indexed by (bb_bin_index, packed_rotno ).
-    ObjexxFCL::FArray2D< Size > packed_rotno_2_sorted_rotno_;
+	ObjexxFCL::FArray2D< Size > packed_rotno_2_sorted_rotno_;
 
 	// Entropy correction
-    utility::fixedsizearray1< ObjexxFCL::FArray1D< Real >, ( 1 << N ) > ShanonEntropy_n_derivs_;
+	utility::fixedsizearray1< ObjexxFCL::FArray1D< Real >, ( 1 << N ) > ShanonEntropy_n_derivs_;
 
 };
 

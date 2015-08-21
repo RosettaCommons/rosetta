@@ -17,8 +17,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace rigid{
+namespace protocols {
+namespace rigid {
 
 //Forwards and OP typedefs
 class RigidBodyMover;

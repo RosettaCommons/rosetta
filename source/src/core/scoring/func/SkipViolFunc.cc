@@ -29,36 +29,36 @@ namespace core {
 namespace scoring {
 namespace func {
 
-	Real
-	SkipViolFunc::func( Real const x ) const
-	{
-		return func_to_weight_->func( x ) * weight_;
-	}
+Real
+SkipViolFunc::func( Real const x ) const
+{
+	return func_to_weight_->func( x ) * weight_;
+}
 
-	Real
-	SkipViolFunc::dfunc( Real const x ) const
-	{
-		return func_to_weight_->dfunc( x ) * weight_;
-	}
+Real
+SkipViolFunc::dfunc( Real const x ) const
+{
+	return func_to_weight_->dfunc( x ) * weight_;
+}
 
-	void
-	SkipViolFunc::read_data( std::istream& in )
-	{
-		in >> count_viols_;
-		weight_ = 1.0;
-		FuncFactory func_factory;
-		std::string func_type;
-		in >> func_type;
-		func_to_weight_ = func_factory.new_func( func_type );
-    func_to_weight_->read_data( in );
-	}
+void
+SkipViolFunc::read_data( std::istream& in )
+{
+	in >> count_viols_;
+	weight_ = 1.0;
+	FuncFactory func_factory;
+	std::string func_type;
+	in >> func_type;
+	func_to_weight_ = func_factory.new_func( func_type );
+	func_to_weight_->read_data( in );
+}
 
-   /// @brief show some sort of stringified representation of the violations for this constraint.
+/// @brief show some sort of stringified representation of the violations for this constraint.
 core::Size SkipViolFunc::show_violations(
-			std::ostream& out,
-			Real r,
-			Size verbose_level,
-			Real threshold
+	std::ostream& out,
+	Real r,
+	Size verbose_level,
+	Real threshold
 ) const {
 	Size ct ( func_to_weight_->show_violations( out, r, verbose_level, threshold ) );
 	return ct;

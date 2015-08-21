@@ -63,7 +63,7 @@ public:
 		}
 	}
 	void do_test_ElectronDensityLoader() {
-		
+
 		std::string test_electron_density_filename =
 			"core/scoring/electron_density/1onc_8A.mrc";
 
@@ -72,7 +72,7 @@ public:
 		JobTag jTag = "job_tag";
 
 		ResourceLocatorOP binary_file_locator( new locator::FileSystemResourceLocator(
-				std::ios_base::binary | std::ios_base::in ) );
+			std::ios_base::binary | std::ios_base::in ) );
 
 		ResourceConfiguration my_config;
 		my_config.resource_tag = rTag;

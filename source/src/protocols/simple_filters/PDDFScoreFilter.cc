@@ -10,7 +10,7 @@
 /// @file PDDFScoreFilter.cc
 /// @brief runs reject or accept filters on pose
 /// @details
-///	  Contains currently: PDDFScoreFilter
+///   Contains currently: PDDFScoreFilter
 ///
 ///
 /// @author Dominik Gront
@@ -52,8 +52,9 @@ bool PDDFScoreFilter::apply( core::pose::Pose const & pose ) const {
 
 
 	score_value_ = score_->evaluate_pddf_energy( pose );
-	if ( score_value_ > cutoff_ )
+	if ( score_value_ > cutoff_ ) {
 		return false;
+	}
 	return true;
 }
 

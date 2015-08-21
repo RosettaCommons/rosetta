@@ -34,17 +34,17 @@ static thread_local basic::Tracer TR( "protocols.metal_interface.ZincSiteFinder"
 typedef numeric::xyzVector<core::Real> point;
 using namespace core;
 
-namespace protocols{
-namespace metal_interface{
+namespace protocols {
+namespace metal_interface {
 
 
 ZincSiteFinder::ZincSiteFinder() // default constructor
-	: n_ligands_ (0), zinc_res_(0), parse_error_(false) // 4 ligands to zinc are expected by default - if not 4, then the value must be set in 'set_expecting_n_ligands'
+: n_ligands_ (0), zinc_res_(0), parse_error_(false) // 4 ligands to zinc are expected by default - if not 4, then the value must be set in 'set_expecting_n_ligands'
 {
 	msr_.clear();
 }
 ZincSiteFinder::ZincSiteFinder( core::Size zinc_res ) // constructor for known zinc sites, particularly useful if there are multiple zinc sites because this protocol would stop after finding the first one
-	: n_ligands_ (0), zinc_res_(zinc_res), parse_error_(false)
+: n_ligands_ (0), zinc_res_(zinc_res), parse_error_(false)
 {
 	msr_.clear();
 }
@@ -78,7 +78,7 @@ ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 	Size index( 0 ); // used to fill the various metalsite vectors
 
 	//if the zinc residue position was given in the constructor...
-	if(zinc_res_ > 0 && zinc_res_ <= pose_length) {
+	if ( zinc_res_ > 0 && zinc_res_ <= pose_length ) {
 		std::string name3 = pose.residue(zinc_res_).name3();
 		assert( name3 == " ZN" || name3 == "ZN " || name3 == "ZN" || name3 == "ZNX" || name3 == "HIZ");
 		msr_.push_back( protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ) );
@@ -88,9 +88,7 @@ ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 		msr_[1]->set_ligand_atom_xyz( zinc );
 		msr_[1]->set_ligand_atom_name("ZN");
 		msr_[1]->set_ligand_atom_id( core::id::AtomID( 1 /*zinc is only atom*/, zinc_res_ ) );
-	}
-
-	else {
+	} else {
 		//The zinc atom must be found FIRST in order to subsequently find the liganding residues
 		for ( Size i(1); i <= pose_length; ++i ) {
 			std::string name3 = pose.residue(i).name3();
@@ -104,9 +102,8 @@ ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 				msr_[1]->set_ligand_atom_id( core::id::AtomID( 1 /*zinc is only atom*/, i ) );
 				TR << "Found zinc: res " << i << " name " << name3 << std::endl;
 				break; //found zinc
-			}
-			//HIZ contains a histidine + zinc, I used this as the transition state in RosettaMatch
-			else if ( pose.residue(i).name3() == "HIZ" ) {
+			} else if ( pose.residue(i).name3() == "HIZ" ) {
+				//HIZ contains a histidine + zinc, I used this as the transition state in RosettaMatch
 				msr_.push_back( protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ) );
 				index++;
 				zinc = pose.residue(i).atom(5).xyz(); //ZN1 is atom 5 of the HIZ residue
@@ -121,7 +118,7 @@ ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 	}
 
 	//Now that we have the zinc, iterate through Cys/His/Asp/Glu residues, if coordinating atom is within 3.0 Angstroms, store the residue number, residue name, atom ids
-	
+
 	for ( Size i(1); i <= pose_length; ++i ) {
 		// AMW: assignment based on residue identity and all the other stuff are separate tasks.
 		std::string lig_atom, pre_lig_atom, pre_pre_lig_atom;
@@ -149,7 +146,7 @@ ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 		} else {
 			continue;
 		}
-		
+
 		point p = pose.residue(i).atom(lig_atom).xyz();
 		Real dist = zinc.distance( p );
 		if ( dist * dist < 9.0 ) {
@@ -166,30 +163,28 @@ ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 		}
 	}
 
-	for (Size ii(1); ii <=index; ii++) {
+	for ( Size ii(1); ii <=index; ii++ ) {
 		TR << "msr_" << ii << " " << msr_[ii]->get_resname() << " " << msr_[ii]->get_seqpos() << " " << msr_[ii]->get_ligand_atom_xyz() << " " << msr_[ii]->get_ligand_atom_name() << std::endl;
 		TR << msr_[ii]->get_ligand_atom_id() << "  " << msr_[ii]->get_pre_ligand_atom_id() << msr_[ii]->get_pre_pre_ligand_atom_id() << std::endl;
 	}
 
 
 	// if zinc site was not fully found, use pare_error_ to skip this pose but not exit the job
-	if (msr_[1]->get_ligand_atom_name() != "ZN" && msr_[1]->get_ligand_atom_name() != "ZN1" && msr_[1]->get_ligand_atom_name() != "ZNX") {
+	if ( msr_[1]->get_ligand_atom_name() != "ZN" && msr_[1]->get_ligand_atom_name() != "ZN1" && msr_[1]->get_ligand_atom_name() != "ZNX" ) {
 		TR << "Zinc not found after parsing - parse_error=true" << std::endl;
 		parse_error_ = true;
 	}
-	if(n_ligands_ == 0) {
+	if ( n_ligands_ == 0 ) {
 		TR << "Didn't know how many ligands to expect, found " << index - 1 << " after parsing." << std::endl;
-	}
-	else if (index < n_ligands_ + 1 /*add 1 for the metal*/) {
+	} else if ( index < n_ligands_ + 1 /*add 1 for the metal*/ ) {
 		TR << "Metalsite incomplete after parsing (probably due to very bad geometry or incorrect number of expected ligands) - parse_error=true" << std::endl;
 		parse_error_ = true;
-	}
-	else if (index > n_ligands_ + 1 /*add 1 for the metal*/) {
+	} else if ( index > n_ligands_ + 1 /*add 1 for the metal*/ ) {
 		TR << "Found too many ligands - parse_error=true" << std::endl;
 		parse_error_ = true;
 	}
 
-  return msr_;
+	return msr_;
 }//find_zinc_site
 
 

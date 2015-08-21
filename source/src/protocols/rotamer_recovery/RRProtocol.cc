@@ -51,8 +51,8 @@ RRProtocol::measure_rotamer_recovery(
 
 	Real score;
 	bool recovered;
-	if(comparer->measure_rotamer_recovery(
-			pose1, pose2, res1, res2, score, recovered)){
+	if ( comparer->measure_rotamer_recovery(
+			pose1, pose2, res1, res2, score, recovered) ) {
 		reporter->report_rotamer_recovery(
 			pose1, pose2, res1, res2, score, recovered );
 	}

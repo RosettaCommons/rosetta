@@ -18,15 +18,15 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
-	namespace jd2 {
+namespace jd2 {
 
-		class LargeNstructJobInputter;
-		typedef utility::pointer::weak_ptr< LargeNstructJobInputter > LargeNstructJobInputterAP;
-		typedef utility::pointer::weak_ptr< LargeNstructJobInputter const > LargeNstructJobInputterCAP;
-		typedef utility::pointer::shared_ptr< LargeNstructJobInputter > LargeNstructJobInputterOP;
-		typedef utility::pointer::shared_ptr< LargeNstructJobInputter const > LargeNstructJobInputterCOP;
+class LargeNstructJobInputter;
+typedef utility::pointer::weak_ptr< LargeNstructJobInputter > LargeNstructJobInputterAP;
+typedef utility::pointer::weak_ptr< LargeNstructJobInputter const > LargeNstructJobInputterCAP;
+typedef utility::pointer::shared_ptr< LargeNstructJobInputter > LargeNstructJobInputterOP;
+typedef utility::pointer::shared_ptr< LargeNstructJobInputter const > LargeNstructJobInputterCOP;
 
-	}//jd2
+}//jd2
 }//protocols
 
 #endif //INCLUDED_protocols_jd2_LargeNstructJobInputter_FWD_HH

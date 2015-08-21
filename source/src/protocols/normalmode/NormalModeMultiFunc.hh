@@ -75,10 +75,10 @@ public: // Methods
 
 	void set_modes( utility::vector1< Size > );
 
-	Multivec 
+	Multivec
 	dofs_to_vars( Multivec const & dofs ) const;
 
-	Multivec 
+	Multivec
 	vars_to_dofs( Multivec const & vars ) const;
 
 	Size nmodes() const { return modes_using_.size(); }

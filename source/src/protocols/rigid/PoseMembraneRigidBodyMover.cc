@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	PoseMembraneRigidBodyMover.cc
+/// @file PoseMembraneRigidBodyMover.cc
 /// @brief
 /// @author Yifan Song
 
@@ -69,7 +69,7 @@ void MovePoseToMembraneCenterMover::apply( core::pose::Pose & pose )
 	Real const pose_shifted_from_membrane_center( membrane_normal.dot( current_pose_center-membrane_center ) );
 	using namespace ObjexxFCL::format;
 	//TR << "MovePoseToMembraneCenterMover: estimate membrane center " << F(8,3,current_pose_center.x()) << F(8,3,current_pose_center.y()) << F(8,3,current_pose_center.z()) << " shifted by:" << F(8,3,pose_shifted_from_membrane_center) << std::endl;
-	if ( fabs(pose_shifted_from_membrane_center) > 20.) {
+	if ( fabs(pose_shifted_from_membrane_center) > 20. ) {
 		Vector shift_back = -pose_shifted_from_membrane_center * membrane_normal;
 
 		WholeBodyTranslationMover whole_body_translation_mover(shift_back);
@@ -91,12 +91,11 @@ MovePoseToMembraneCenterMover::estimate_membrane_center( core::pose::Pose & pose
 	Vector sum_membrane_anchor(0);
 	Vector center(0);
 
-	for(Size i=1;i<=topology.tmhelix();++i)
-	{
+	for ( Size i=1; i<=topology.tmhelix(); ++i ) {
 		//using namespace ObjexxFCL::format;
 		//TR << "MovePoseToMembraneCenterMover: after moving center      " << I(4,i) << " " << topology.allow_tmh_scoring(i) << std::endl;
 
-		if(!topology.allow_tmh_scoring(i)) continue;
+		if ( !topology.allow_tmh_scoring(i) ) continue;
 		Vector const & start( pose.residue( topology.span_begin(i) ).atom( 2 ).xyz());
 		Vector const & end( pose.residue( topology.span_end(i) ).atom( 2 ).xyz());
 
@@ -110,13 +109,13 @@ MovePoseToMembraneCenterMover::estimate_membrane_center( core::pose::Pose & pose
 
 		using namespace core::conformation::symmetry;
 		SymmetricConformation const & symm_conf (
-												 dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
+			dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
 		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
-		for ( Size i_clone = 1; i_clone <= symm_info->num_bb_clones(); ++i_clone) {
+		for ( Size i_clone = 1; i_clone <= symm_info->num_bb_clones(); ++i_clone ) {
 
-			for(Size i=1;i<=topology.tmhelix();++i) {
-				if(!topology.allow_tmh_scoring(i)) continue;
+			for ( Size i=1; i<=topology.tmhelix(); ++i ) {
+				if ( !topology.allow_tmh_scoring(i) ) continue;
 
 				Vector const & start( pose.residue( symm_info->bb_clones( topology.span_begin(i) )[i_clone] ).atom( 2 ).xyz());
 				Vector const & end( pose.residue( symm_info->bb_clones( topology.span_end(i) )[i_clone] ).atom( 2 ).xyz());
@@ -143,7 +142,7 @@ MovePoseToMembraneCenterMover::get_name() const {
 
 /// perturb the pose along membrane normal
 MembraneCenterPerturbationMover::MembraneCenterPerturbationMover() : moves::Mover("MembraneCenterPerturbationMover"),
-trans_mag_(10.)
+	trans_mag_(10.)
 {
 }
 
@@ -170,8 +169,8 @@ std::string MembraneCenterPerturbationMover::get_name() const {
 
 /// randomly rotate the pose along an axis on membrane plane
 MembraneNormalPerturbationMover::MembraneNormalPerturbationMover() :
-Mover("MembraneNormalPerturbationMover"),
-rotation_mag_(15.)
+	Mover("MembraneNormalPerturbationMover"),
+	rotation_mag_(15.)
 {
 }
 
@@ -219,7 +218,7 @@ void WholeBodyTranslationMover::apply( core::pose::Pose & pose )
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		//utility::vector1 <kinematics::Jump> backup_jumps;
 		//for (Size i =1; i<= pose.num_jump(); ++i) {
-		//	backup_jumps.push_back(pose.jump(i));
+		// backup_jumps.push_back(pose.jump(i));
 		//}
 
 		core::kinematics::Jump first_jump = pose.jump( 1 );
@@ -233,30 +232,29 @@ void WholeBodyTranslationMover::apply( core::pose::Pose & pose )
 		/*
 		id::AtomID root_id(pose.conformation().atom_tree().root()->atom_id());
 		for (core::Size iatom=1; iatom <= pose.residue(root_id.rsd()).natoms(); ++iatom) {
-			using namespace ObjexxFCL::format;
-			id::AtomID atom_id(iatom, root_id.rsd());
+		using namespace ObjexxFCL::format;
+		id::AtomID atom_id(iatom, root_id.rsd());
 
-			Vector const curr_position(pose.xyz(atom_id));
-			Vector const new_position (curr_position + trans_);
-			pose.set_xyz(atom_id, new_position);
+		Vector const curr_position(pose.xyz(atom_id));
+		Vector const new_position (curr_position + trans_);
+		pose.set_xyz(atom_id, new_position);
 
-			//TR << "Yifan debug: curr_position     " << I(4, iatom) << F(8,3,curr_position.x()) << F(8,3,curr_position.y()) << F(8,3,curr_position.z()) << std::endl;
-			//TR << "Yifan debug: trans_            " << I(4, iatom) << F(8,3,trans_.x()) << F(8,3,trans_.y()) << F(8,3,trans_.z()) << std::endl;
-			//TR << "Yifan debug: new_position      " << I(4, iatom) << F(8,3,new_position.x()) << F(8,3,new_position.y()) << F(8,3,new_position.z()) << std::endl;
+		//TR << "Yifan debug: curr_position     " << I(4, iatom) << F(8,3,curr_position.x()) << F(8,3,curr_position.y()) << F(8,3,curr_position.z()) << std::endl;
+		//TR << "Yifan debug: trans_            " << I(4, iatom) << F(8,3,trans_.x()) << F(8,3,trans_.y()) << F(8,3,trans_.z()) << std::endl;
+		//TR << "Yifan debug: new_position      " << I(4, iatom) << F(8,3,new_position.x()) << F(8,3,new_position.y()) << F(8,3,new_position.z()) << std::endl;
 		}
 
 		for (Size i =1; i<= pose.num_jump(); ++i) {
-			using namespace core::conformation::symmetry;
-			SymmetricConformation const & symm_conf (
-				dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
-			SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
-			if (!symm_info->jump_is_independent(i)) continue;
+		using namespace core::conformation::symmetry;
+		SymmetricConformation const & symm_conf (
+		dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
+		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
+		if (!symm_info->jump_is_independent(i)) continue;
 
-			pose.set_jump(i, backup_jumps[i]);
+		pose.set_jump(i, backup_jumps[i]);
 		}
 		*/
-	}
-	else {
+	} else {
 		//numeric::xyzMatrix< Real > const & R( numeric::xyzMatrix< Real >::identity() );
 		//pose.apply_transform_Rx_plus_v(R,trans_);
 
@@ -293,7 +291,7 @@ WholeBodyRotationMover::WholeBodyRotationMover(
 	Vector const & center,
 	Real const & alpha /* degrees */
 )
-	: moves::Mover()
+: moves::Mover()
 {
 	axis_   = axis;
 	center_ = center;
@@ -309,7 +307,7 @@ rotation_m_ = R_in;
 
 void WholeBodyRotationMover::apply( core::pose::Pose & pose )
 {
-debug_assert (! core::pose::symmetry::is_symmetric( pose ) );
+	debug_assert (! core::pose::symmetry::is_symmetric( pose ) );
 	core::kinematics::Jump first_jump = pose.jump( 1 );
 
 	//TR << "Rotate: " << "Jump (before): " << first_jump << std::endl;

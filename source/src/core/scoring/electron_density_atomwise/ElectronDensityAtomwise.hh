@@ -69,7 +69,7 @@ public:
 
 	//Return the gradient of an atom
 	numeric::xyzVector< core::Real > atom_gradient ( core::pose::Pose const &
-	    pose, core::Size const & rsd_id, core::Size const & atm_id );
+		pose, core::Size const & rsd_id, core::Size const & atm_id );
 
 private:
 
@@ -92,7 +92,7 @@ private:
 	numeric::xyzVector< int > grid;
 	numeric::xyzVector< core::Real > orig;
 	numeric::xyzVector< float > cell_angles, cell_dimensions, r_cell_angles,
-	        cos_r_cell_angles, r_cell_dimensions;
+		cos_r_cell_angles, r_cell_dimensions;
 	//symmetry
 	utility::vector1< core::kinematics::RT > symmOps;
 
@@ -104,7 +104,7 @@ private:
 	//resize the map
 	void resize ( core::Real approxGridSpacing );
 
-//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
 	//compute index to cartesian transformation
 	void calculate_index2cart();
 
@@ -118,17 +118,17 @@ private:
 
 	//Spline interpolation
 	core::Real spline_interpolation ( ObjexxFCL::FArray3D < double >
-	                                  & coeffs, numeric::xyzVector< core::Real > const & idxX ) const;
+		& coeffs, numeric::xyzVector< core::Real > const & idxX ) const;
 
 	void spline_coeffs ( ObjexxFCL::FArray3D< double > & data,
-	                     ObjexxFCL::FArray3D< double > & coeffs );
+		ObjexxFCL::FArray3D< double > & coeffs );
 
 	//Trilinear Interpolation
 	core::Real trilinear_interpolation ( ObjexxFCL::FArray3D< double > & score,
-	                                     numeric::xyzVector< core::Real > const & index );
+		numeric::xyzVector< core::Real > const & index );
 
 	numeric::xyzVector<core::Real> trilinear_gradient ( ObjexxFCL::FArray3D
-	    <double> & score, numeric::xyzVector< core::Real > const & index );
+		<double> & score, numeric::xyzVector< core::Real > const & index );
 
 	//Convert a vector from xyz coordinate to index coordinate, shift w/ respect to the origin and fold into the unit cell
 	numeric::xyzVector< core::Real > xyz2index_in_cell ( numeric::xyzVector< core::Real > const & xyz_vector );

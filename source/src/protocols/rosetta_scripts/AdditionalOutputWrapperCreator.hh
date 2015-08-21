@@ -9,7 +9,7 @@
 
 /// @file protocols/rosetta_scripts/AdditionalOutputWrapperCreator.hh
 /// @brief This class will create instances of Mover AdditionalOutputWrapper for the MoverFactory
-/// @author Luki Goldschmidt 
+/// @author Luki Goldschmidt
 
 #ifndef INCLUDED_protocols_rosetta_scripts_AdditionalOutputWrapperCreator_hh
 #define INCLUDED_protocols_rosetta_scripts_AdditionalOutputWrapperCreator_hh

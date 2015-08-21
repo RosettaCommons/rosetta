@@ -10,7 +10,7 @@
 /// @file protocols/filters/Filter.cc
 /// @brief
 /// @details
-///	  Contains currently:
+///   Contains currently:
 ///
 ///
 /// @author Florian Richter, Sarel Fleishman (sarelf@uw.edu)
@@ -58,8 +58,8 @@ FilterCollection::~FilterCollection() {}
 bool
 FilterCollection::apply( core::pose::Pose const & pose ) const
 {
-	BOOST_FOREACH(protocols::filters::FilterCOP filter, filters_){
-		if( ! filter->apply( pose ) ){
+	BOOST_FOREACH ( protocols::filters::FilterCOP filter, filters_ ) {
+		if ( ! filter->apply( pose ) ) {
 			return false;
 		}
 	}
@@ -70,29 +70,29 @@ FilterCollection::apply( core::pose::Pose const & pose ) const
 void
 FilterCollection::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
-	BOOST_FOREACH(protocols::filters::FilterCOP filter, filters_){
+	BOOST_FOREACH ( protocols::filters::FilterCOP filter, filters_ ) {
 		filter->report( out, pose );
 	}
 }
 
 Filter::Filter()
-	: utility::pointer::ReferenceCount(),
-		type_( "UNDEFINED TYPE" ),
-		scorename_("defaultscorename")
+: utility::pointer::ReferenceCount(),
+	type_( "UNDEFINED TYPE" ),
+	scorename_("defaultscorename")
 {}
 
 Filter::Filter( std::string const & type )
-	: utility::pointer::ReferenceCount(),
-		type_( type ),
-		scorename_("defaultscorename")
+: utility::pointer::ReferenceCount(),
+	type_( type ),
+	scorename_("defaultscorename")
 {}
 
 Filter::Filter( Filter const & init )
-	:	utility::pointer::ReferenceCount(),
-		type_( init.type_ ),
-		user_defined_name_( init.user_defined_name_ ),
-		scorename_("defaultscorename")
-		
+: utility::pointer::ReferenceCount(),
+	type_( init.type_ ),
+	user_defined_name_( init.user_defined_name_ ),
+	scorename_("defaultscorename")
+
 {}
 
 Filter::~Filter() {}
@@ -109,9 +109,9 @@ Filter::parse_my_tag(
 // start mpr support
 void Filter::apply( core::io::serialization::PipeMap & pmap ) {
 	core::io::serialization::Pipe::iterator itr = pmap["input"]->begin(), end = pmap["input"]->end();
-	while( itr != end ) {
-		if( !apply ( **itr ) ) {
-			itr = pmap["input"]->erase( itr );	
+	while ( itr != end ) {
+		if ( !apply ( **itr ) ) {
+			itr = pmap["input"]->erase( itr );
 		} else {
 			++itr;
 		}
@@ -124,14 +124,14 @@ core::Real Filter::score( core::pose::Pose & pose ) {
 	return score;
 }
 void Filter::score( core::io::serialization::PipeMap & pmap ) {
-	for( core::io::serialization::Pipe::iterator itr = pmap["input"]->begin(), end = pmap["input"]->end(); itr != end; ++itr ) {
+	for ( core::io::serialization::Pipe::iterator itr = pmap["input"]->begin(), end = pmap["input"]->end(); itr != end; ++itr ) {
 		score( **itr );
 		clear();
 	}
 }
 void Filter::parse_def( utility::lua::LuaObject const & /*def*/,
-				utility::lua::LuaObject const & /*score_fxns*/,
-				utility::lua::LuaObject const & /*tasks*/ ){
+	utility::lua::LuaObject const & /*score_fxns*/,
+	utility::lua::LuaObject const & /*tasks*/ ){
 	utility_exit_with_message("This Filter has not implemented parse_def()");
 }
 // end mpr support

@@ -188,7 +188,7 @@ bool eq_OP_deref(
 }
 
 struct
-Vec1Hash {
+	Vec1Hash {
 	std::size_t operator() ( EntityElements const & vec1 ) const {
 		std::size_t seed = 0;
 		for ( EntityElements::const_iterator
@@ -200,7 +200,7 @@ Vec1Hash {
 };
 
 struct
-EntityElementsEqual{
+	EntityElementsEqual{
 	bool operator() (
 		EntityElements const & elems1,
 		EntityElements const & elems2

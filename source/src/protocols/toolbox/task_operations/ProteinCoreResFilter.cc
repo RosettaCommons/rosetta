@@ -39,17 +39,17 @@ ProteinCore::ProteinCore() :
 	bound_( false ),
 	jump_( 1 ),
 	neighbor_count_cutoff_( 6 )
-	{}
+{}
 
 void
 ProteinCore::parse_tag( TagCOP tag ){
-  distance_threshold_ = tag->getOption< core::Real >( "distance_threshold", 8.0 ) ;
-  neighbor_cutoff_ = tag->getOption< core::Size >( "neighbor_cutoff", 10 );
-  bound_ = tag->getOption< bool >( "bound", false );
-  jump_ = tag->getOption< core::Size >( "jump", 1 );
+	distance_threshold_ = tag->getOption< core::Real >( "distance_threshold", 8.0 ) ;
+	neighbor_cutoff_ = tag->getOption< core::Size >( "neighbor_cutoff", 10 );
+	bound_ = tag->getOption< bool >( "bound", false );
+	jump_ = tag->getOption< core::Size >( "jump", 1 );
 	neighbor_count_cutoff_ = tag->getOption< core::Size >( "neighbor_count_cutoff", 6 );
 
-  TR<<"jump: "<<jump_<<" distance_threshold: "<<distance_threshold_<<" neighbor_cutoff: "<<neighbor_cutoff_<<" bound: "<<bound_<<" neighbor_count_cutoff_: "<<neighbor_count_cutoff_<<std::endl;
+	TR<<"jump: "<<jump_<<" distance_threshold: "<<distance_threshold_<<" neighbor_cutoff: "<<neighbor_cutoff_<<" bound: "<<bound_<<" neighbor_count_cutoff_: "<<neighbor_count_cutoff_<<std::endl;
 }
 
 bool
@@ -58,11 +58,11 @@ ProteinCore::operator() ( core::pose::Pose const & pose, core::Size index ) cons
 
 	nsnf.distance_threshold( distance_threshold_ );
 	nsnf.neighbor_cutoff( neighbor_cutoff_ );
-  nsnf.bound( bound_ );
-  nsnf.resnum( index );
+	nsnf.bound( bound_ );
+	nsnf.resnum( index );
 	nsnf.jump( jump_ );
 
-  core::Size const neighbor_count( (core::Size) nsnf.compute( pose ) );
+	core::Size const neighbor_count( (core::Size) nsnf.compute( pose ) );
 	return( neighbor_count >= neighbor_count_cutoff_ );
 }
 

@@ -9,8 +9,8 @@
 
 /// @file   core/conformation/symmetry/SymmetricConformation.hh
 /// @brief  symmetry conformation container.
-//					Contains overloaded functions needed to
-//					make changes in conformation symmetric
+//     Contains overloaded functions needed to
+//     make changes in conformation symmetric
 /// @author Phil Bradley, Ingemar Andre
 
 
@@ -93,20 +93,20 @@ public:
 
 	/// JUMPS
 	/// @brief set a jump
-  virtual
-  void
-  set_jump(
-    int jump_number,
-    Jump const & new_jump
-  );
+	virtual
+	void
+	set_jump(
+		int jump_number,
+		Jump const & new_jump
+	);
 
 	/// @brief set a jump
-  virtual
-  void
-  set_jump(
-    AtomID const & id,
-    Jump const & new_jump
-  );
+	virtual
+	void
+	set_jump(
+		AtomID const & id,
+		Jump const & new_jump
+	);
 
 
 	virtual
@@ -214,16 +214,16 @@ public:
 	);
 
 	/// @brief Append a new conformation by a jump; clones this append to all copies
-  void
-  insert_conformation_by_jump(
-    Conformation const & conf,             // the conformation to be inserted
-    Size insert_seqpos,              // rsd 1 in conf goes here
-    Size insert_jumppos,             // jump#1 in conf goes here, see insert_fold_tree_by_jump
-    Size anchor_pos,                 // in the current sequence numbering, ie before insertion of conf
-    Size anchor_jump_number = 0,     // the desired jump number of the anchoring jump, default=0
-    std::string const & anchor_atom = "",  // "" means take default anchor atom
-    std::string const & root_atom   = ""   // "" means take default root   atom
-  );
+	void
+	insert_conformation_by_jump(
+		Conformation const & conf,             // the conformation to be inserted
+		Size insert_seqpos,              // rsd 1 in conf goes here
+		Size insert_jumppos,             // jump#1 in conf goes here, see insert_fold_tree_by_jump
+		Size anchor_pos,                 // in the current sequence numbering, ie before insertion of conf
+		Size anchor_jump_number = 0,     // the desired jump number of the anchoring jump, default=0
+		std::string const & anchor_atom = "",  // "" means take default anchor atom
+		std::string const & root_atom   = ""   // "" means take default root   atom
+	);
 
 	//fpd eventually we should have symmetric implementations of all the insert/append/delete residue functions
 

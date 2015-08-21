@@ -116,16 +116,13 @@ Real NVscore::neighbor_weight(Vector::Value const & distance2) const
 {
 
 
-	if(distance2 <= lower_bound_squared_)
-	{
+	if ( distance2 <= lower_bound_squared_ ) {
 		//neighbor count score is 1 if less than the lower bound
 		return(1);
-	}else if(distance2 >= upper_bound_squared_)
-	{
+	} else if ( distance2 >= upper_bound_squared_ ) {
 		//neighbor count score is 0 if greater than upper bound
 		return(0);
-	}else if( (lower_bound_squared_ < distance2) && (upper_bound_squared_ > distance2) )
-	{
+	} else if ( (lower_bound_squared_ < distance2) && (upper_bound_squared_ > distance2) ) {
 		//if between upper and lower bound, score follows a smooth function
 		core::Real distance(sqrt(distance2));
 		Real weight = ( cos( ( (distance-lower_bound_) / (upper_bound_-lower_bound_) ) * numeric::constants::r::pi ) + 1 )/2.0;
@@ -147,16 +144,15 @@ void NVscore::residue_energy( conformation::Residue const &current_residue,  pos
 	TwelveANeighborGraph const & graph(pose.energies().twelveA_neighbor_graph());
 
 	for ( graph::Graph::EdgeListConstIter
-		node_index  = graph.get_node( current_residue.seqpos() )->const_edge_list_begin(),
-		node_index_end = graph.get_node( current_residue.seqpos() )->const_edge_list_end();
-		node_index != node_index_end; ++node_index )
+			node_index  = graph.get_node( current_residue.seqpos() )->const_edge_list_begin(),
+			node_index_end = graph.get_node( current_residue.seqpos() )->const_edge_list_end();
+			node_index != node_index_end; ++node_index ) {
 
-	{
 		//get the residue to compare to the current residue
 		core::Size comparison_residue_index((*node_index)->get_other_ind(current_residue.seqpos()));
 		conformation::Residue const & comparison_residue = pose.residue(comparison_residue_index);
 		//you don't want to compare a residue to itself
-		if(current_residue.seqpos() == comparison_residue.seqpos()) continue;
+		if ( current_residue.seqpos() == comparison_residue.seqpos() ) continue;
 		Vector const & comparison_vector(comparison_residue.nbr_atom_xyz());
 		//calculate the distance between the two residues
 		Vector::Value distance2 = current_vector.distance_squared(comparison_vector);
@@ -164,8 +160,7 @@ void NVscore::residue_energy( conformation::Residue const &current_residue,  pos
 		Real weight = neighbor_weight(distance2);
 
 		//calculate the weighted neighbor vector for this pair and sum
-		if(weight != 0)
-		{
+		if ( weight != 0 ) {
 			Vector weighted_vector = ( (comparison_vector-current_vector) / sqrt(distance2)) * weight;
 			neighbor_count += weight;
 			neighbor_vector_sum += weighted_vector;

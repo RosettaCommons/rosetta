@@ -49,7 +49,7 @@ namespace sidechain_moves {
 class SidechainMoverBase : public protocols::canonical_sampling::ThermodynamicMover {
 
 public:
-//
+	//
 	typedef utility::vector1< core::Real > ChiVector;
 
 	/// @brief default constructor
@@ -93,9 +93,9 @@ public:
 	virtual core::conformation::ResidueOP
 	make_move( core::conformation::ResidueOP res );
 
-	virtual	void
+	virtual void
 	make_chi_move(
-	  core::conformation::Residue const& residue,
+		core::conformation::Residue const& residue,
 		ChiVector const& old_chi,
 		ChiVector&  new_chi
 	) = 0;
@@ -103,7 +103,7 @@ public:
 	virtual core::Size suggest_residue_number( core::pose::Pose const& ) const;
 
 	/// @brief apply a sidechain move to a Pose object
-	virtual	void apply( core::pose::Pose& pose );
+	virtual void apply( core::pose::Pose& pose );
 
 	virtual std::string get_name() const;
 
@@ -126,13 +126,13 @@ public:
 
 	/// @brief set the task factory
 	void
-	set_task_factory( core::pack::task::TaskFactoryCOP task_factory	);
+	set_task_factory( core::pack::task::TaskFactoryCOP task_factory );
 
 	/// @brief get the packer task
-	core::pack::task::PackerTaskCOP	task() const;
+	core::pack::task::PackerTaskCOP task() const;
 
 	/// @brief set the task
-	void set_task(	core::pack::task::PackerTaskCOP task );
+	void set_task( core::pack::task::PackerTaskCOP task );
 
 	/// @brief get whether detailed balance is preserved (i.e. proposal density ratio calculated)
 	bool
@@ -147,7 +147,7 @@ public:
 
 	/// @brief perform direct chi manipulations rather than using replace_residue to effect rotamer changes; useful if things are kinematically dependent on a sidechain.
 	void
-	set_change_chi_without_replacing_residue(	bool setting );
+	set_change_chi_without_replacing_residue( bool setting );
 
 	/// @brief return true if your last move has mutated residue --- make sure the residue is replaced entirely
 	virtual bool have_mutated_residue() const { return false; }
@@ -182,9 +182,9 @@ public:
 protected:
 
 
-	//	void set_last_proposal_density_ratio( core::Real setting ) {
-	//		last_proposal_density_ratio_ = setting;
-	//	}
+	// void set_last_proposal_density_ratio( core::Real setting ) {
+	//  last_proposal_density_ratio_ = setting;
+	// }
 
 private:
 

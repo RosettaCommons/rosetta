@@ -80,7 +80,7 @@ OPT_KEY( Boolean, graft_backbone_only )
 // by default all 5' phosphates are virtualized -- keep some of them in.
 void
 unvirtualize_phosphates( pose::Pose & pose, utility::vector1< Size > const & unvirtualize_phosphate_residues  ){
-	for ( Size n = 1; n <= pose.total_residue(); n++ ){
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 		if ( !unvirtualize_phosphate_residues.has_value( pose.pdb_info()->number( n ) ) ) continue;
 		core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, n );
 	}
@@ -106,7 +106,7 @@ get_pose_and_numbering( std::string const & pdb_file, pose::Pose & pose, utility
 
 	resnum.clear();
 	PDBInfoOP pdb_info = pose.pdb_info();
-	for ( Size n = 1; n <= pose.total_residue(); n++ )		resnum.push_back( pdb_info->number(n) );
+	for ( Size n = 1; n <= pose.total_residue(); n++ )  resnum.push_back( pdb_info->number(n) );
 
 }
 
@@ -114,7 +114,7 @@ get_pose_and_numbering( std::string const & pdb_file, pose::Pose & pose, utility
 ////////////////////////////////////////////////////////////////////////////
 Size
 find_index( Size const val, utility::vector1< Size > const & vec ){
-	for ( Size n = 1; n <= vec.size(); n++ ){
+	for ( Size n = 1; n <= vec.size(); n++ ) {
 		if ( val == vec[n] ) return n;
 	}
 	return 0;
@@ -123,8 +123,8 @@ find_index( Size const val, utility::vector1< Size > const & vec ){
 ////////////////////////////////////////////////////////////////////////////
 bool
 is_subset(  utility::vector1< Size > const & vec_sub,
-						utility::vector1< Size  >const & vec_big ){
-	for ( Size n = 1; n <= vec_sub.size(); n++ ){
+	utility::vector1< Size  >const & vec_big ){
+	for ( Size n = 1; n <= vec_sub.size(); n++ ) {
 		if ( !find_index(vec_sub[n], vec_big) ) return false;
 	}
 	return true;
@@ -134,15 +134,15 @@ is_subset(  utility::vector1< Size > const & vec_sub,
 ////////////////////////////////////////////////////////////////////////////
 std::map< Size, Size >
 calculate_res_map( utility::vector1< Size > const & superimpose_resnum,
-									 utility::vector1< Size > const & resnum1,
-									 utility::vector1< Size > const & resnum2 ){
+	utility::vector1< Size > const & resnum1,
+	utility::vector1< Size > const & resnum2 ){
 
 	runtime_assert( is_subset( superimpose_resnum, resnum1 ) );
 	runtime_assert( is_subset( superimpose_resnum, resnum2 ) );
 
 	std::map< Size, Size > res_map;
 
-	for ( Size n = 1; n <= superimpose_resnum.size(); n++ )	{
+	for ( Size n = 1; n <= superimpose_resnum.size(); n++ ) {
 		Size const i = find_index( superimpose_resnum[n],  resnum1 );
 		runtime_assert( i > 0 );
 		Size const j = find_index( superimpose_resnum[n],  resnum2 );
@@ -157,25 +157,25 @@ calculate_res_map( utility::vector1< Size > const & superimpose_resnum,
 ////////////////////////////////////////////////////////////////////////////
 void
 superimpose_pdb( pose::Pose & pose1 /* the 'parent pose'*/,
-								 pose::Pose & pose2 /*the one that got superimposed*/,
-								 utility::vector1< Size > const & resnum1,
-								 utility::vector1< Size > const & resnum2){
+	pose::Pose & pose2 /*the one that got superimposed*/,
+	utility::vector1< Size > const & resnum1,
+	utility::vector1< Size > const & resnum2){
 
 	using namespace core::pose;
 	using namespace basic::options;
 
 	utility::vector1< Size > superimpose_resnum;
-	if ( option[superimpose_res].user() ){
+	if ( option[superimpose_res].user() ) {
 		// check if all specified residues are actually in the file.
 		superimpose_resnum = option[ superimpose_res ]();
 	} else {
 		// find all shared residues
-		for ( Size n = 1; n <= resnum1.size(); n++ ){
+		for ( Size n = 1; n <= resnum1.size(); n++ ) {
 			Size const n2 =  find_index( resnum1[n], resnum2 );
 			if ( n2 == 0 ) continue;
 			superimpose_resnum.push_back( resnum1[n] );
 
-			if (pose1.aa(n) != pose2.aa(n2) ){
+			if ( pose1.aa(n) != pose2.aa(n2) ) {
 				std::cout << "Mismatch in sequence? " << std::endl;
 				std::cout << " residue " << resnum1[n]  << " " << pose1.sequence()[n -1] <<  "  at pose position " << n << std::endl;
 				std::cout << " residue " << resnum2[n2] << " " << pose2.sequence()[n2-1] <<  "  at pose position " << n2 << std::endl;
@@ -212,7 +212,7 @@ output_superimposed_pdb( pose::Pose const & pose2, std::string const & pdb_file2
 
 	std::string::size_type pos = pdb_file2.find( ".pdb", 0 );
 	std::string const new_prefix = ".sup.pdb";
-	if (pos == std::string::npos ){
+	if ( pos == std::string::npos ) {
 		utility_exit_with_message(  "If you want to output a lores silent file, better use .out suffix ==> " + pdb_file2 );
 	}
 	outfile.replace( pos, new_prefix.length(), new_prefix );
@@ -226,33 +226,33 @@ output_superimposed_pdb( pose::Pose const & pose2, std::string const & pdb_file2
 ////////////////////////////////////////////////////////////////////////////
 void
 graft_in_positions( pose::Pose const & pose1,
-										pose::Pose & pose_target,
-										utility::vector1< Size > const & resnum1,
-										utility::vector1< Size > const & resnum_target,
-										utility::vector1< Size > const & resnum_graft,
-										bool const graft_backbone_only){
+	pose::Pose & pose_target,
+	utility::vector1< Size > const & resnum1,
+	utility::vector1< Size > const & resnum_target,
+	utility::vector1< Size > const & resnum_graft,
+	bool const graft_backbone_only){
 
 	using namespace core::conformation;
 	using namespace core::id;
 
-	for ( Size i = 1; i <= pose1.total_residue(); i++ ){
+	for ( Size i = 1; i <= pose1.total_residue(); i++ ) {
 
 		Size q = find_index( resnum1[i], resnum_target );
 		if ( q == 0 ) continue;
 
-		if ( resnum_graft.size() > 0 ){ //only copy over 'graft res'
+		if ( resnum_graft.size() > 0 ) { //only copy over 'graft res'
 			Size r = find_index( resnum1[i], resnum_graft );
 			if ( r == 0 ) continue;
 		}
 
 		Residue const & rsd_i = pose1.residue(i);
 
-		for ( Size ii = 1; ii <= rsd_i.natoms(); ii++ ){
+		for ( Size ii = 1; ii <= rsd_i.natoms(); ii++ ) {
 
-			if (rsd_i.is_virtual( ii ) ) continue;
+			if ( rsd_i.is_virtual( ii ) ) continue;
 			if ( graft_backbone_only &&
-					 ( ( ii >= rsd_i.first_sidechain_atom() && ii <= rsd_i.nheavyatoms() ) ||
-						 ( ii >= rsd_i.first_sidechain_hydrogen() && ii <= rsd_i.natoms() ) ) ) continue;
+					( ( ii >= rsd_i.first_sidechain_atom() && ii <= rsd_i.nheavyatoms() ) ||
+					( ii >= rsd_i.first_sidechain_hydrogen() && ii <= rsd_i.natoms() ) ) ) continue;
 			std::string const & atom_name = rsd_i.atom_name( ii ) ;
 
 			if ( !pose_target.residue( q ).has( atom_name )  ) continue;
@@ -268,9 +268,9 @@ graft_in_positions( pose::Pose const & pose1,
 ////////////////////////////////////////////////////////////////////////////
 void
 graft_in_positions( pose::Pose const & pose1,
-										pose::Pose & pose_target,
-										utility::vector1< Size > const & resnum1,
-										utility::vector1< Size > const & resnum_target) {
+	pose::Pose & pose_target,
+	utility::vector1< Size > const & resnum1,
+	utility::vector1< Size > const & resnum_target) {
 	utility::vector1< Size > resnum_dummy;
 	graft_in_positions( pose1, pose_target, resnum1, resnum_target, resnum_dummy, false );
 
@@ -279,19 +279,19 @@ graft_in_positions( pose::Pose const & pose1,
 ////////////////////////////////////////////////////////////////////////////
 void
 close_loops( core::pose::Pose & pose,
-						 utility::vector1< Size > const & resnum ) {
+	utility::vector1< Size > const & resnum ) {
 
 	using namespace core::kinematics;
 
 	utility::vector1< Size > cutpoints;
-	for ( Size n = 2; n <= resnum.size(); n++ ){
+	for ( Size n = 2; n <= resnum.size(); n++ ) {
 		if ( resnum[n] == resnum[n-1] + 1 ) {
 			if ( ( pose.residue( n-1 ).xyz( " O3'" ) - pose.residue( n ).xyz( " P  " ) ).length() > 2.0 ) {
 				FoldTree f = pose.fold_tree();
 				f.new_jump( n-1, n, n-1 );
 				f.set_jump_atoms( f.num_jump(),
-													core::chemical::rna::chi1_torsion_atom( pose.residue( n-1 ) ),
-													core::chemical::rna::chi1_torsion_atom( pose.residue( n   ) )   );
+					core::chemical::rna::chi1_torsion_atom( pose.residue( n-1 ) ),
+					core::chemical::rna::chi1_torsion_atom( pose.residue( n   ) )   );
 				pose.fold_tree( f );
 				correctly_add_cutpoint_variants( pose, n-1 );
 				cutpoints.push_back( n-1 );
@@ -306,10 +306,10 @@ close_loops( core::pose::Pose & pose,
 ////////////////////////////////////////////////////////////////////////////
 void
 graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
-					 utility::vector1< Size > const & resnum1,
-					 utility::vector1< Size > const & resnum2,
-					 pose::Pose & pose_target,
-					 utility::vector1< Size > & resnum_target ){
+	utility::vector1< Size > const & resnum1,
+	utility::vector1< Size > const & resnum2,
+	pose::Pose & pose_target,
+	utility::vector1< Size > & resnum_target ){
 
 	using namespace core::pose;
 	using namespace core::chemical;
@@ -324,7 +324,7 @@ graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 	// what's the sequence?
 
 	utility::vector1< Size > graft_resnum;
-	if ( option[ graft_res ].user() ){
+	if ( option[ graft_res ].user() ) {
 		graft_resnum = option[ graft_res ]();
 	} else {
 		graft_resnum = resnum2; // copy over everything in pose2.
@@ -332,14 +332,14 @@ graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 
 	std::list< std::pair< Size, char > > resnum_seq_list; // need to use a list, since we can sort it.
 
-	for ( Size n = 1; n <= pose1.total_residue(); n++ ){
-		if ( !find_index( resnum1[n], graft_resnum ) ){
+	for ( Size n = 1; n <= pose1.total_residue(); n++ ) {
+		if ( !find_index( resnum1[n], graft_resnum ) ) {
 			resnum_seq_list.push_back( std::make_pair( resnum1[n], pose1.sequence()[ n-1 ] ) );
 		}
 	}
 
-	for ( Size n = 1; n <= pose2.total_residue(); n++ ){
-		if ( find_index( resnum2[n], graft_resnum ) ){
+	for ( Size n = 1; n <= pose2.total_residue(); n++ ) {
+		if ( find_index( resnum2[n], graft_resnum ) ) {
 			resnum_seq_list.push_back( std::make_pair( resnum2[n], pose2.sequence()[ n-1 ] ) );
 		}
 	}
@@ -348,14 +348,14 @@ graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 
 	std::string sequence_target;
 	for ( std::list< std::pair< Size, char > >::const_iterator iter = resnum_seq_list.begin(),
-					end = resnum_seq_list.end(); iter != end; ++iter ){
+			end = resnum_seq_list.end(); iter != end; ++iter ) {
 		resnum_target.push_back( iter->first );
 		sequence_target += iter->second;
 	}
 
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
-	make_pose_from_sequence( pose_target,	sequence_target,	*rsd_set );
+	make_pose_from_sequence( pose_target, sequence_target, *rsd_set );
 
 	// Copy in non-virtual atoms from pose1;
 	graft_in_positions( pose1, pose_target, resnum1, resnum_target );
@@ -371,7 +371,7 @@ graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 
 	// chain boundaries -- make sure they are virtualized [this could be semi-dangerous for group I ribozymes with
 	// discontinuous numbering -- so don't do it?
-	for ( Size n = 1; n <= resnum_target.size(); n++ ){
+	for ( Size n = 1; n <= resnum_target.size(); n++ ) {
 		if ( n == 1 || ( resnum_target[n] > resnum_target[n-1] + 1 ) ) {
 			add_variant_type_to_pose_residue( pose_target, core::chemical::VIRTUAL_PHOSPHATE, n );
 		}
@@ -386,7 +386,7 @@ graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 	std::cout << pose_target.annotated_sequence() << std::endl;
 
 	std::string outfile = "graft.pdb";
-	if ( option[ out::file::o ].user() )	outfile = option[ out::file::o ]();
+	if ( option[ out::file::o ].user() ) outfile = option[ out::file::o ]();
 
 	std::cout << "Outputting: " << outfile << std::endl;
 	pose_target.dump_pdb( outfile );
@@ -409,12 +409,12 @@ rna_superimpose_and_graft_test(){
 	// (which will be ignored in superposition).
 	get_pose_and_numbering( pdb_files[ 1 ], pose1, resnum1 );
 
-	for ( Size i = 2; i <= pdb_files.size(); i++ ){
+	for ( Size i = 2; i <= pdb_files.size(); i++ ) {
 		get_pose_and_numbering( pdb_files[ i ], pose2, resnum2 );
 		superimpose_pdb( pose1 /* the 'parent pose'*/,
-										 pose2 /*the one that got superimposed*/,
-										 resnum1,
-										 resnum2); // in principle could store resnum, pdb_file1 inside PDBInfo object!
+			pose2 /*the one that got superimposed*/,
+			resnum1,
+			resnum2); // in principle could store resnum, pdb_file1 inside PDBInfo object!
 		graft_pdb( pose1, pose2, resnum1, resnum2, pose_target, resnum_target );
 
 		resnum1 = resnum_target;
@@ -445,26 +445,26 @@ main( int argc, char * argv [] )
 
 	try {
 
-	using namespace basic::options;
+		using namespace basic::options;
 
-	utility::vector1< Size > blank_size_vector;
+		utility::vector1< Size > blank_size_vector;
 
-	//Uh, options?
-	NEW_OPT( superimpose_res, "residues over which to superimpose second pose onto first pose", blank_size_vector );
-	NEW_OPT( graft_res, "residues to graft from second pose", blank_size_vector );
-	NEW_OPT( unvirtualize_phosphate_res, "do not virtualize these phosphate (useful for cdiAMP)", blank_size_vector );
-	NEW_OPT( graft_backbone_only, "only graft backbone from 2nd PDB", false );
+		//Uh, options?
+		NEW_OPT( superimpose_res, "residues over which to superimpose second pose onto first pose", blank_size_vector );
+		NEW_OPT( graft_res, "residues to graft from second pose", blank_size_vector );
+		NEW_OPT( unvirtualize_phosphate_res, "do not virtualize these phosphate (useful for cdiAMP)", blank_size_vector );
+		NEW_OPT( graft_backbone_only, "only graft backbone from 2nd PDB", false );
 
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

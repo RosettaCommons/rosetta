@@ -75,8 +75,7 @@ void GridInitMover::parse_my_tag
 	core::pose::Pose const & /*pose*/
 )
 {
-	if ( tag->getName() != "GridInitMover" )
-	{
+	if ( tag->getName() != "GridInitMover" ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
 	}
 

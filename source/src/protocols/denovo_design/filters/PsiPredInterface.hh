@@ -83,9 +83,9 @@ private:
 
 	/// @brief Parses the psipred output and returns the predicted secondary structure and likelihoods of the blueprint secondary structure being present on the pose at each position.
 	PsiPredResult
-	parse_psipred_output(	std::string const & psipred_str,
-												std::string const & blueprint_ss,
-												std::string const & psipred_horiz_filename ) const;
+	parse_psipred_output( std::string const & psipred_str,
+		std::string const & blueprint_ss,
+		std::string const & psipred_horiz_filename ) const;
 
 	/// @brief Parses the psipred pass2 horiz file and returns predicted secondary structure and confidence for each position.
 	std::pair< std::string, utility::vector1< core::Size > >

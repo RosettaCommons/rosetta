@@ -32,39 +32,39 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	//constructor -- this is not in use, but has to be filled in.
-	SampleApplier::SampleApplier():
-		pose_( *( new pose::Pose ) )
-	{
-	}
+//constructor -- this is not in use, but has to be filled in.
+SampleApplier::SampleApplier():
+	pose_( *( new pose::Pose ) )
+{
+}
 
-	//constructor
-	SampleApplier::SampleApplier( pose::Pose & pose,
-																bool const apply_residue_alternative_sampler /* = true */ ):
-		pose_( pose ),
-		apply_residue_alternative_sampler_( apply_residue_alternative_sampler )
-	{
-	}
+//constructor
+SampleApplier::SampleApplier( pose::Pose & pose,
+	bool const apply_residue_alternative_sampler /* = true */ ):
+	pose_( pose ),
+	apply_residue_alternative_sampler_( apply_residue_alternative_sampler )
+{
+}
 
-	//Destructor
-	SampleApplier::~SampleApplier()
-	{}
+//Destructor
+SampleApplier::~SampleApplier()
+{}
 
-	void
-	SampleApplier::get_update( sampler::StepWiseSamplerBaseOP sampler ){
-		if ( !apply_residue_alternative_sampler_ &&
-				 sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ){
-			RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
-			rigid_body_rotamer_with_residue_alternatives.apply_rigid_body_only( pose_ );
-			return;
-		}
-		sampler->apply( pose_ );
+void
+SampleApplier::get_update( sampler::StepWiseSamplerBaseOP sampler ){
+	if ( !apply_residue_alternative_sampler_ &&
+			sampler->type() == RIGID_BODY_WITH_RESIDUE_ALTERNATIVES ) {
+		RigidBodyStepWiseSamplerWithResidueAlternatives & rigid_body_rotamer_with_residue_alternatives = *( static_cast< RigidBodyStepWiseSamplerWithResidueAlternatives * >( sampler.get() ) );
+		rigid_body_rotamer_with_residue_alternatives.apply_rigid_body_only( pose_ );
+		return;
 	}
+	sampler->apply( pose_ );
+}
 
-	void
-	SampleApplier::apply_mover( moves::CompositionMoverOP mover, Size const i, Size const j ){
-		mover->apply( pose_, i, j );
-	}
+void
+SampleApplier::apply_mover( moves::CompositionMoverOP mover, Size const i, Size const j ){
+	mover->apply( pose_, i, j );
+}
 
 } //screener
 } //stepwise

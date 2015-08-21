@@ -57,25 +57,25 @@ typedef utility::vector1< jumping::Interval > JumpList;
 //@details this class can handle all the intricacies of actually applying a choice of jumps and cuts to a pose
 class JumpSample  {
 public:
-  JumpSample ()
-    : njump_( 0 ),
-      bValidTree_( false )
-  {};
+	JumpSample ()
+	: njump_( 0 ),
+		bValidTree_( false )
+	{};
 
 	~JumpSample() {};
-  JumpSample ( JumpSetup const& );
+	JumpSample ( JumpSetup const& );
 
 	// generate fold-tree from jumps and cuts
-  JumpSample ( core::Size total_residue, core::Size njump, ObjexxFCL::FArray2D_int jumps, ObjexxFCL::FArray1D_int cuts, core::Size root = 1);
+	JumpSample ( core::Size total_residue, core::Size njump, ObjexxFCL::FArray2D_int jumps, ObjexxFCL::FArray1D_int cuts, core::Size root = 1);
 
 	// generate fold-tree from jumps, jump_atoms and cuts
-  JumpSample ( core::Size total_residue, core::Size njump, ObjexxFCL::FArray2D_int jumps, ObjexxFCL::FArray2D<std::string> jump_atoms, ObjexxFCL::FArray1D_int cuts, core::Size root = 1);
+	JumpSample ( core::Size total_residue, core::Size njump, ObjexxFCL::FArray2D_int jumps, ObjexxFCL::FArray2D<std::string> jump_atoms, ObjexxFCL::FArray1D_int cuts, core::Size root = 1);
 
 	// this one is not safe due to FArray,  generate random fold-tree  ( as used by SheetBuilder )
-  JumpSample ( core::Size total_residue, core::scoring::dssp::PairingsList const& jumps, ObjexxFCL::FArray1D_float const& cut_probability, core::Size root=1);
+	JumpSample ( core::Size total_residue, core::scoring::dssp::PairingsList const& jumps, ObjexxFCL::FArray1D_float const& cut_probability, core::Size root=1);
 
 	// generate random fold-tree  ( as used by SheetBuilder )
-  JumpSample ( core::Size total_residue, core::scoring::dssp::PairingsList const& jumps, core::fragment::SecondaryStructure const& ss_def, core::Size root=1 );
+	JumpSample ( core::Size total_residue, core::scoring::dssp::PairingsList const& jumps, core::fragment::SecondaryStructure const& ss_def, core::Size root=1 );
 
 
 	// wrap to a copy of an existing Fold-Tree
@@ -84,18 +84,18 @@ public:
 	// wrap an existing Fold-Tree
 	JumpSample( core::kinematics::FoldTreeOP f );
 
-  bool
-  is_valid() const {
-    return bValidTree_;
-  }
+	bool
+	is_valid() const {
+		return bValidTree_;
+	}
 
-  void
-  resize( core::Size njump );
+	void
+	resize( core::Size njump );
 
-  //void generate_tree( core::Size nres, core::kinematics::FoldTree &f ) const;
+	//void generate_tree( core::Size nres, core::kinematics::FoldTree &f ) const;
 
-  void
-  set_fold_tree_in_pose( core::pose::Pose &pose ) const;
+	void
+	set_fold_tree_in_pose( core::pose::Pose &pose ) const;
 
 	//@brief lengthen secondary structure elements around jump-points to be at least 5 residues ( -2..+2 ) long.
 	void
@@ -106,7 +106,7 @@ public:
 	transfer_jumps( core::pose::Pose &pose, core::pose::Pose &native_pose ) const;
 
 	//bool
-	//	close_chainbreaks( core::pose::Pose &pose ) const;
+	// close_chainbreaks( core::pose::Pose &pose ) const;
 
 	//@brief transfer native jump RT to FrameList
 	void
@@ -124,51 +124,51 @@ public:
 	void
 	steal_orientation_and_pleating( core::pose::Pose &native_pose );
 
-  //@brief generate fragset with RTs from library
-  void
-  generate_jump_frags(
-			PairingLibrary const& pairings,
-			core::kinematics::MoveMap const&,
-			bool bWithTorsion,
-			core::fragment::FrameList&
-  ) const;
+	//@brief generate fragset with RTs from library
+	void
+	generate_jump_frags(
+		PairingLibrary const& pairings,
+		core::kinematics::MoveMap const&,
+		bool bWithTorsion,
+		core::fragment::FrameList&
+	) const;
 
-  //@brief switch on chainbreak scores for all cuts ( add chainbreak variant )
-  void
-  add_chainbreaks( core::pose::Pose &pose ) const;
+	//@brief switch on chainbreak scores for all cuts ( add chainbreak variant )
+	void
+	add_chainbreaks( core::pose::Pose &pose ) const;
 
-  //@brief switch on chainbreaks-scores only if the separation in the foldtree is smaller than the threshold <max_dist>
-  void
-  add_chainbreaks( core::pose::Pose &pose, core::Size max_dist, core::kinematics::ShortestPathInFoldTree const& ) const;
+	//@brief switch on chainbreaks-scores only if the separation in the foldtree is smaller than the threshold <max_dist>
+	void
+	add_chainbreaks( core::pose::Pose &pose, core::Size max_dist, core::kinematics::ShortestPathInFoldTree const& ) const;
 
 	void
 	add_chainbreaks_as_distance_constraint( core::pose::Pose &pose ) const;
 
 	void
 	add_chainbreaks_as_distance_constraint(
-		 core::pose::Pose &pose,
-		 core::Size max_dist,
-		 core::kinematics::ShortestPathInFoldTree const& sp
+		core::pose::Pose &pose,
+		core::Size max_dist,
+		core::kinematics::ShortestPathInFoldTree const& sp
 	) const;
 
-  void
-  remove_chainbreaks( core::pose::Pose &pose ) const;
+	void
+	remove_chainbreaks( core::pose::Pose &pose ) const;
 
-  void
-  set_fold_tree_and_chainbreaks( core::pose::Pose &pose ) const {
-    set_fold_tree_in_pose( pose );
-    add_chainbreaks( pose );
-  }
+	void
+	set_fold_tree_and_chainbreaks( core::pose::Pose &pose ) const {
+		set_fold_tree_in_pose( pose );
+		add_chainbreaks( pose );
+	}
 
 	core::Size
 	downstream_res_nr( core::Size jump_nr ) const {
 		return  fold_tree_->downstream_jump_residue( jump_nr );
 	}
 
-  core::Size size() const
-  {
-    return njump_;
-  }
+	core::Size size() const
+	{
+		return njump_;
+	}
 
 	ObjexxFCL::FArray2D_int const& jumps() const {
 		return jumps_;
@@ -184,8 +184,8 @@ public:
 
 	bool has_orientation_and_pleating() const;
 
-  /// @brief output operator
-  friend std::ostream & operator <<(std::ostream & os, JumpSample const & t);
+	/// @brief output operator
+	friend std::ostream & operator <<(std::ostream & os, JumpSample const & t);
 
 	core::kinematics::FoldTree const& fold_tree() const {
 		return *fold_tree_;

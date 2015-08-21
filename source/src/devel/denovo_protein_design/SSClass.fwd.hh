@@ -12,8 +12,8 @@
 /// @author gsmurphy
 #ifndef INCLUDED_devel_denovo_protein_design_SSClass_fwd_hh
 #define INCLUDED_devel_denovo_protein_design_SSClass_fwd_hh
-namespace devel{
-namespace denovo_protein_design{
+namespace devel {
+namespace denovo_protein_design {
 // Forward
 class SS;
 class SSs;

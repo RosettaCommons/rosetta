@@ -33,14 +33,14 @@ class WorkUnit_LoopHash : public protocols::mpi_refinement::WorkUnit_Sampler
 public:
 	// initialize only via this
 	WorkUnit_LoopHash( core::Size start_ir = 0, core::Size end_ir = 0, core::Size ssid = 0,
-										 core::Size is_global = 0);
+		core::Size is_global = 0);
 
 	virtual protocols::wum::WorkUnitBaseOP clone() const {
-	  return protocols::wum::WorkUnitBaseOP( new WorkUnit_LoopHash( *this ) );
+		return protocols::wum::WorkUnitBaseOP( new WorkUnit_LoopHash( *this ) );
 	}
 
 	// Pure virtual functions
-	virtual	void run();
+	virtual void run();
 
 	virtual void init_from_cmd( const core::Size );
 
@@ -70,18 +70,18 @@ class WorkUnit_FragInsert : public protocols::mpi_refinement::WorkUnit_Sampler
 
 public:
 	// initialize only via this
-	WorkUnit_FragInsert( core::Size const nsteps = 0, 
-											 core::Size const scoretype = 0,
-											 core::Size const res1 = 0,
-											 core::Size const res2 = 0,
-											 bool const fullatom = false
-											 );
+	WorkUnit_FragInsert( core::Size const nsteps = 0,
+		core::Size const scoretype = 0,
+		core::Size const res1 = 0,
+		core::Size const res2 = 0,
+		bool const fullatom = false
+	);
 	virtual protocols::wum::WorkUnitBaseOP clone() const {
-	  return protocols::wum::WorkUnitBaseOP( new WorkUnit_FragInsert( *this ) );
+		return protocols::wum::WorkUnitBaseOP( new WorkUnit_FragInsert( *this ) );
 	}
 
 	// Pure virtual functions
-	virtual	void run();
+	virtual void run();
 
 	//void set_nstruct( core::Size const setting ){ header.extra_data_1_ = setting; }
 	void set_nsteps( core::Size const setting ){ header.extra_data_1_ = setting; }
@@ -112,18 +112,18 @@ class WorkUnit_KicCloser : public protocols::mpi_refinement::WorkUnit_Sampler
 
 public:
 	// initialize only via this
-	WorkUnit_KicCloser( core::Size const nsteps = 0, 
-											core::Size const scoretype = 0,
-											core::Size const res1 = 0,
-											core::Size const res2 = 0,
-											bool const kicclose = true
-											);
+	WorkUnit_KicCloser( core::Size const nsteps = 0,
+		core::Size const scoretype = 0,
+		core::Size const res1 = 0,
+		core::Size const res2 = 0,
+		bool const kicclose = true
+	);
 	virtual protocols::wum::WorkUnitBaseOP clone() const {
-	  return protocols::wum::WorkUnitBaseOP( new WorkUnit_KicCloser( *this ));
+		return protocols::wum::WorkUnitBaseOP( new WorkUnit_KicCloser( *this ));
 	}
 
 	// Pure virtual functions
-	virtual	void run();
+	virtual void run();
 
 	void set_nsteps( core::Size const setting ){ header.extra_data_1_ = setting; }
 	void set_scoretype( core::Size const setting ){ header.extra_data_2_ = setting; }
@@ -150,15 +150,15 @@ class WorkUnit_PartialAbinitio : public protocols::mpi_refinement::WorkUnit_Samp
 
 public:
 	// initialize only via this
-	WorkUnit_PartialAbinitio( core::Size const nsteps = 0, 
-				  bool const reconstruct = false
-				  );
+	WorkUnit_PartialAbinitio( core::Size const nsteps = 0,
+		bool const reconstruct = false
+	);
 	virtual protocols::wum::WorkUnitBaseOP clone() const {
-	  return protocols::wum::WorkUnitBaseOP( new WorkUnit_PartialAbinitio( *this ) );
+		return protocols::wum::WorkUnitBaseOP( new WorkUnit_PartialAbinitio( *this ) );
 	}
 
 	// Pure virtual functions
-	virtual	void run();
+	virtual void run();
 
 	void set_nsteps( core::Size const setting ){ header.extra_data_1_ = setting; }
 	void set_res1( core::Size const setting ){ header.extra_data_2_ = setting; }
@@ -177,11 +177,11 @@ private:
 	/*
 	void
 	setup_score( core::scoring::ScoreFunctionOP score0,
-							 core::scoring::ScoreFunctionOP score1,
-							 core::scoring::ScoreFunctionOP score2,
-							 core::scoring::ScoreFunctionOP score3,
-							 core::scoring::ScoreFunctionOP score5
-							 ) const;
+	core::scoring::ScoreFunctionOP score1,
+	core::scoring::ScoreFunctionOP score2,
+	core::scoring::ScoreFunctionOP score3,
+	core::scoring::ScoreFunctionOP score5
+	) const;
 	*/
 
 	core::scoring::ScoreFunctionOP

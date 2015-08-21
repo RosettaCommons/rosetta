@@ -50,7 +50,7 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 
 #ifdef WIN_PYROSETTA
-	#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
+#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
 #endif
 
 
@@ -138,7 +138,7 @@ SidechainMCMover::show_counters( std::ostream & out){
 
 protocols::moves::MoverOP
 SidechainMCMover::clone() const {
-  return( protocols::moves::MoverOP( new protocols::simple_moves::sidechain_moves::SidechainMCMover( *this ) ) );
+	return( protocols::moves::MoverOP( new protocols::simple_moves::sidechain_moves::SidechainMCMover( *this ) ) );
 }
 
 protocols::moves::MoverOP
@@ -172,31 +172,31 @@ SidechainMCMover::apply(
 	runtime_assert(ntrials_ != 0);
 	runtime_assert(packed_residues().size() > 0);
 
-	if (inherit_scorefxn_temperature_) {
+	if ( inherit_scorefxn_temperature_ ) {
 		protocols::canonical_sampling::MetropolisHastingsMoverOP metropolis_hastings_mover( metropolis_hastings_mover_ );
 		runtime_assert(metropolis_hastings_mover != 0);
 		// update temperature every time in case temperature changes are implemented in the future
 		set_temperature(metropolis_hastings_mover->monte_carlo()->temperature());
 	}
 
-	 // for debugging
+	// for debugging
 	pose::Pose temp(pose);
 	pose::Pose dummy(pose);
 
 
-	for(core::Size itr = 1; itr <= pose.total_residue(); itr++){
+	for ( core::Size itr = 1; itr <= pose.total_residue(); itr++ ) {
 		current_[ itr ] = core::conformation::ResidueOP( new core::conformation::Residue(pose.residue( itr )) );
 	}
 
-	//	PROF_START( SIMPLEINTGRAPH );
+	// PROF_START( SIMPLEINTGRAPH );
 	//SimpleInteractionGraphOP ig(new SimpleInteractionGraph()); //commented out debug
 	//ig->set_scorefunction( sfxn_ ); //commented out debug
 	ig_->initialize( pose ); //commented out debug
 	SidechainMover::init_task( pose );
-	//	PROF_STOP( SIMPLEINTGRAPH  );
+	// PROF_STOP( SIMPLEINTGRAPH  );
 	//runtime_assert(ig_ != 0);
 
-	for( core::Size iter_i = 1; iter_i <= ntrials_; iter_i++){
+	for ( core::Size iter_i = 1; iter_i <= ntrials_; iter_i++ ) {
 		//pick randomly
 		core::Size rand_res;
 		do {
@@ -207,21 +207,21 @@ SidechainMCMover::apply(
 		core::conformation::ResidueOP new_state( new core::conformation::Residue( pose.residue( rand_res ) ) );
 
 		/// APL Note: you have to remove output if you're trying to optimize.
-		if ( TR.visible( basic::t_debug )) {
+		if ( TR.visible( basic::t_debug ) ) {
 			TR.Debug << "old-chi-angles: ";
-			for(unsigned int i = 1; i <= new_state->nchi(); i++){
+			for ( unsigned int i = 1; i <= new_state->nchi(); i++ ) {
 				TR.Debug << new_state->chi( i ) << " ";
 			}
 			TR.Debug << std::endl;
 		}
-		//		if( !task_initialized() ){
-		//			init_task( pose );
-		//		}
+		//  if( !task_initialized() ){
+		//   init_task( pose );
+		//  }
 		new_state = make_move( new_state );
 		//new_state->update_actcoord();
-		if ( TR.visible( basic::t_debug )) {
+		if ( TR.visible( basic::t_debug ) ) {
 			TR.Debug << "new-chi-angles: ";
-			for(unsigned int i = 1; i <= new_state->nchi(); i++){
+			for ( unsigned int i = 1; i <= new_state->nchi(); i++ ) {
 				TR.Debug << new_state->chi( i ) << " ";
 			}
 			TR.Debug << std::endl;
@@ -232,9 +232,9 @@ SidechainMCMover::apply(
 		core::Real delta_energy = ig_->consider_substitution( rand_res, new_state );
 		PROF_STOP( SIMPLEINTGRAPH );
 
-		if( DEBUG )
-		{//debug
-			core::Real s1=	sfxn_->score(temp);
+		if ( DEBUG ) {
+			//debug
+			core::Real s1= sfxn_->score(temp);
 			dummy = temp;
 			//for(unsigned int i = 1; i <= new_state->nchi(); i++ ){
 			//dummy.set_chi( i, rand_res, new_state->chi( i ) );
@@ -242,22 +242,22 @@ SidechainMCMover::apply(
 			dummy.replace_residue( rand_res, *new_state, true );
 			core::Real s2 = sfxn_->score(dummy);
 
-			if( (s1 - s2) - delta_energy > 0.05 ) {
+			if ( (s1 - s2) - delta_energy > 0.05 ) {
 				TR.Debug << "WARNING: ENERGIES DON'T MATCH UP! " << s1 << " " << s2 << " " << (s1 - s2) << " " << delta_energy << std::endl;
 				dummy.dump_pdb("dummy.pdb");
 				temp.dump_pdb("temp.pdb");
 				//exit(1);
 
-			}else{
+			} else {
 				TR.Debug << "energies match up " << std::endl;
 			}
 		}//debug
 
 
-		if( pass_metropolis( delta_energy, SidechainMover::last_proposal_density_ratio() ) ){ //ek
-			if( DEBUG )
-			{ //debug//
-				core::Real s1=	sfxn_->score(temp);
+		if ( pass_metropolis( delta_energy, SidechainMover::last_proposal_density_ratio() ) ) { //ek
+			if ( DEBUG ) {
+				//debug//
+				core::Real s1= sfxn_->score(temp);
 				temp.replace_residue( rand_res, *new_state, true );
 				core::Real s2 = sfxn_->score(dummy);
 				TR.Debug << "current energy after accept: " << sfxn_->score(temp) << " delta " << (s2-s1) << std::endl;
@@ -266,7 +266,7 @@ SidechainMCMover::apply(
 				//}
 			}
 
-			if ( TR.visible( basic::t_debug )) {
+			if ( TR.visible( basic::t_debug ) ) {
 				TR.Debug << "passed metropolis! assigning new move to current " << std::endl;
 			}
 			previous_[ rand_res ] = current_[ rand_res ] ;
@@ -276,11 +276,11 @@ SidechainMCMover::apply(
 			PROF_STOP( SIMPLEINTGRAPH );
 			current_energy -= delta_energy;
 			current_[ rand_res ] =   new_state;
-			if( ( current_energy ) <  best_energy_ ){
+			if ( ( current_energy ) <  best_energy_ ) {
 				best_[ rand_res ] = new_state;
 				best_energy_ = current_energy;
 			}
-		} else{ //rejected metropolis criterion
+		} else { //rejected metropolis criterion
 			PROF_START( SIMPLEINTGRAPH );
 			ig_->reject_change( rand_res );
 			PROF_STOP( SIMPLEINTGRAPH );
@@ -288,15 +288,15 @@ SidechainMCMover::apply(
 	} // n_iterations
 
 
-	for(core::Size res_i = 1; res_i <= current_.size(); res_i++ ){
+	for ( core::Size res_i = 1; res_i <= current_.size(); res_i++ ) {
 		//for(core::Size chi_i = 1; chi_i <= current_[ res_i ]->nchi(); chi_i++){
-			//pose.set_chi( chi_i, res_i, current_[ res_i ]->chi( chi_i ) );
+		//pose.set_chi( chi_i, res_i, current_[ res_i ]->chi( chi_i ) );
 		//}
 		pose.replace_residue( res_i, (*current_[ res_i ]), true );
 	}
 
 	score_post_apply_ = current_energy;
-	if (!metropolis_hastings_mover_.expired()) {
+	if ( !metropolis_hastings_mover_.expired() ) {
 		score_post_apply_ = sfxn_->score(pose);
 		//TR << "Score Actual: " << score_post_apply_ << " Accumulated: " << current_energy << " Delta: " << current_energy - score_post_apply_ << std::endl;
 	}
@@ -315,17 +315,16 @@ SidechainMCMover::pass_metropolis(core::Real delta_energy , core::Real last_prop
 	core::Real boltz_factor = delta_energy / temperature_;
 	core::Real probability = std::exp( std::min( 40.0, std::max( -40.0, boltz_factor ))) *  last_proposal_density_ratio ;
 
-	if( probability < 1 && numeric::random::rg().uniform() >= probability ) {
+	if ( probability < 1 && numeric::random::rg().uniform() >= probability ) {
 		current_ntrial_++;
-		if ( TR.visible( basic::t_debug )) {
+		if ( TR.visible( basic::t_debug ) ) {
 			TR.Debug << "delta energy is " << delta_energy << " probability: " << probability << " accepted: FALSE " << std::endl;
 		}
 		return false;
-		}
-	else {
+	} else {
 		accepts_++;
 		current_ntrial_++;
-		if ( TR.visible( basic::t_debug )) {
+		if ( TR.visible( basic::t_debug ) ) {
 			TR.Debug << "delta energy is " << delta_energy << " probability: " << probability << " accepted: TRUE" << std::endl;
 		}
 		return true;
@@ -344,7 +343,7 @@ SidechainMCMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Data
 		typedef utility::vector1< std::string > StringVec;
 		StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
 		for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
-					t_o_key != end; ++t_o_key ) {
+				t_o_key != end; ++t_o_key ) {
 			if ( data.has( "task_operations", *t_o_key ) ) {
 				new_task_factory->push_back( data.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", *t_o_key ) );
 			} else {
@@ -394,7 +393,7 @@ SidechainMCMover::initialize_simulation(
 {
 	SidechainMover::initialize_simulation(pose, metropolis_hastings_mover,cycle);
 
-	if (inherit_scorefxn_temperature_) {
+	if ( inherit_scorefxn_temperature_ ) {
 		protocols::canonical_sampling::MetropolisHastingsMoverOP metropolis_hastings_mover( metropolis_hastings_mover_ );
 		runtime_assert(metropolis_hastings_mover != 0);
 		set_scorefunction(metropolis_hastings_mover->monte_carlo()->score_function());

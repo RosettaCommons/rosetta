@@ -67,7 +67,7 @@ void WrapFilterAsEvaluatorCreator::register_options() {
 	options_registered_ = true;
 
 	OPT( evaluation::I_sc );
- 	OPT( evaluation::Irms );
+	OPT( evaluation::Irms );
 	OPT( evaluation::Fnat );
 	OPT( evaluation::Lrmsd );
 	OPT( evaluation::Ca_Irms );

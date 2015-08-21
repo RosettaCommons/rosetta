@@ -112,21 +112,21 @@ loops_set_move_map(
 /// @brief Create a new MoveMapOP for use in minimizing the given loop.
 core::kinematics::MoveMapOP
 move_map_from_loops(
-		core::pose::Pose & pose,
-		Loops const & loops,
-		bool const fix_template_sc,
-		core::Real neighbor_dist = 10.0,
-		bool const flanking_residues = false
+	core::pose::Pose & pose,
+	Loops const & loops,
+	bool const fix_template_sc,
+	core::Real neighbor_dist = 10.0,
+	bool const flanking_residues = false
 );
 
 /// @brief Create a new MoveMapOP for use in minimizing the given loop.
 core::kinematics::MoveMapOP
 move_map_from_loop(
-		core::pose::Pose & pose,
-		Loop const & loop,
-		bool const fix_template_sc,
-		core::Real neighbor_dist = 10.0,
-		bool const flanking_residues = false
+	core::pose::Pose & pose,
+	Loop const & loop,
+	bool const fix_template_sc,
+	core::Real neighbor_dist = 10.0,
+	bool const flanking_residues = false
 );
 
 void
@@ -138,9 +138,9 @@ set_move_map_for_centroid_loop(
 /// @brief add flank stem residues to the loop movemap
 void //made by JQX
 add_loop_flank_residues_bb_to_movemap(
-    Loops const & loops,
-    core::kinematics::MoveMap & mm,
-    core::Size flank_size=2
+	Loops const & loops,
+	core::kinematics::MoveMap & mm,
+	core::Size flank_size=2
 );
 
 /// @brief close loops by the CCD mechanism
@@ -216,7 +216,7 @@ set_secstruct_from_dssp(
 
 /// @details   set ideal BB geometry; this must occur so that loops with missing density work.
 void idealize_loop(
-  core::pose::Pose & pose,
+	core::pose::Pose & pose,
 	Loop const & loop
 );
 

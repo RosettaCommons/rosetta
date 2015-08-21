@@ -34,11 +34,11 @@ static std::string TYPE_NAME() { return "JumpSampleData"; }
 
 namespace protocols {
 namespace abinitio {
-namespace abscript{
+namespace abscript {
 
 basic::datacache::WriteableCacheableDataOP
 JumpSampleDataCreator::create_data( std::istream &in ) const {
-  return basic::datacache::WriteableCacheableDataOP( new JumpSampleData( in ) );
+	return basic::datacache::WriteableCacheableDataOP( new JumpSampleData( in ) );
 }
 
 std::string JumpSampleDataCreator::keyname() const{
@@ -46,50 +46,51 @@ std::string JumpSampleDataCreator::keyname() const{
 }
 
 JumpSampleData::JumpSampleData( std::istream &in ) :
-  Parent()
+	Parent()
 {
-  utility::excn::EXCN_BadInput e( "JumpSampleData tried to read an improperly formatted SilentFile remark." );
+	utility::excn::EXCN_BadInput e( "JumpSampleData tried to read an improperly formatted SilentFile remark." );
 
-  std::string token;
+	std::string token;
 
-  in >> token;
-  if( token != "MOVERKEY")
-    throw e;
+	in >> token;
+	if ( token != "MOVERKEY" ) {
+		throw e;
+	}
 
-  in >> moverkey_;
+	in >> moverkey_;
 
-  core::kinematics::FoldTree ft;
-  in >> ft;
+	core::kinematics::FoldTree ft;
+	in >> ft;
 
-  jump_sample_ = jumping::JumpSample( ft );
+	jump_sample_ = jumping::JumpSample( ft );
 }
 
 JumpSampleData::JumpSampleData( std::string const& moverkey,
-                                jumping::JumpSample const& jump_sample ) :
-  Parent(),
-  jump_sample_( jump_sample ),
-  moverkey_( moverkey )
+	jumping::JumpSample const& jump_sample ) :
+	Parent(),
+	jump_sample_( jump_sample ),
+	moverkey_( moverkey )
 {}
 
 void JumpSampleData::write( std::ostream &out ) const {
 
 	out << TYPE_NAME() ;
-  out << " MOVERKEY ";
-  out << moverkey_ << " ";
+	out << " MOVERKEY ";
+	out << moverkey_ << " ";
 
-  // get rid of nonsense new line in FT out method.
-  std::stringstream ss;
-  ss << jump_sample_.fold_tree();
-  std::string ft( ss.str() );
-  ft.erase( ft.length() - 1 );
+	// get rid of nonsense new line in FT out method.
+	std::stringstream ss;
+	ss << jump_sample_.fold_tree();
+	std::string ft( ss.str() );
+	ft.erase( ft.length() - 1 );
 
-  out << ft;
+	out << ft;
 
 }
 
 basic::datacache::CacheableDataOP
 JumpSampleData::clone() const {
-  return basic::datacache::CacheableDataOP( new JumpSampleData( *this ) );
+	return basic::datacache::CacheableDataOP( new JumpSampleData( *this ) );
 }
 
 std::string JumpSampleData::datatype() const {

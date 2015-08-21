@@ -70,16 +70,18 @@ ReplicateTask::apply(
 	// on a per residue basis
 	runtime_assert( pose.total_residue() == native_task_->total_residue() );
 	//for all the residues in the pose copy the basic task logic
-	for( Size ii = 1; ii <= pose.total_residue(); ii++){
+	for ( Size ii = 1; ii <= pose.total_residue(); ii++ ) {
 		//if not being designed then restrict to repacking
-		if(!native_task_->nonconst_residue_task( ii ).being_designed())
+		if ( !native_task_->nonconst_residue_task( ii ).being_designed() ) {
 			task.nonconst_residue_task( ii ).restrict_to_repacking();
-			//task.nonconst_residue_task( ii ).add_behavior( "NATAA" );
+		}
+		//task.nonconst_residue_task( ii ).add_behavior( "NATAA" );
 
 		//if not being packed at all then prevent from repacking
-		if(!native_task_->nonconst_residue_task( ii ).being_packed())
+		if ( !native_task_->nonconst_residue_task( ii ).being_packed() ) {
 			task.nonconst_residue_task( ii ).prevent_repacking();
-			//task.nonconst_residue_task( ii ).add_behavior( "NATRO" );
+		}
+		//task.nonconst_residue_task( ii ).add_behavior( "NATRO" );
 
 	} //end loop over all residues
 } //end apply

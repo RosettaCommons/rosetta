@@ -104,27 +104,27 @@ public:
 		core::pose::Pose const & pose
 	) const;
 
-  core::Size
-  get_ligand_id(
-    core::pose::Pose const & pose,
-    core::Size jump_id
-  ) const;
+	core::Size
+	get_ligand_id(
+		core::pose::Pose const & pose,
+		core::Size jump_id
+	) const;
 
-    void
-  restrain_protein_Calphas(
-    core::pose::Pose & pose,
-    utility::vector1< bool > const & is_restrained,
-      //core::Real stddev_Angstroms,
-    core::scoring::func::FuncOP restr_func
-  ) const;
+	void
+	restrain_protein_Calphas(
+		core::pose::Pose & pose,
+		utility::vector1< bool > const & is_restrained,
+		//core::Real stddev_Angstroms,
+		core::scoring::func::FuncOP restr_func
+	) const;
 
-    void
-  reorder_foldtree_around_mobile_regions(
-    core::pose::Pose & pose,
-    core::Size const & jump_id,
-    utility::vector1< bool > const & mobile_bb,
-    core::Size const & lig_id
-  ) const;
+	void
+	reorder_foldtree_around_mobile_regions(
+		core::pose::Pose & pose,
+		core::Size const & jump_id,
+		utility::vector1< bool > const & mobile_bb,
+		core::Size const & lig_id
+	) const;
 
 	void
 	get_non_bb_clashing_rotamers(

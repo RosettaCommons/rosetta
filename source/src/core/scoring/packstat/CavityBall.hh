@@ -37,23 +37,23 @@ public:
 
 	std::string const hetero_atom_line( int hetresnum = 1, int chain = 0, core::Real radsub = 0.0 ) const ;
 	// bool cmp( CavityBall * a, CavityBall * b );
-	// inline PackstatReal  distto( CavityBall & b ) const { return distto( &b );	}
+	// inline PackstatReal  distto( CavityBall & b ) const { return distto( &b ); }
 	// inline bool  touches( CavityBall & b ) const { return touches( &b ); }
 	// inline PackstatReal overlap( CavityBall & b ) const { return overlap( &b ); }
 	//
 	// bool overlaps( CavityBall const *b) const ;
 	//
 	// inline PackstatReal distto( CavityBall const * b) const {
-	// 	return distance(this->xyz_,b->xyz_) - radius_ - b->radius();
+	//  return distance(this->xyz_,b->xyz_) - radius_ - b->radius();
 	// }
 	// inline bool touches( CavityBall * b) const {
-	// 	return distance_squared(this->xyz_,b->xyz_) <
-	// 	(radius_+b->radius())*(radius_+b->radius());
+	//  return distance_squared(this->xyz_,b->xyz_) <
+	//  (radius_+b->radius())*(radius_+b->radius());
 	// }
 	//
 	// inline PackstatReal overlap( CavityBall * b) const {
-	// 	PackstatReal o = std::abs(distance(this->xyz_,b->xyz_) - (radius_+b->radius()));
-	// 	return std::max( o/radius_, o/b->radius_ );
+	//  PackstatReal o = std::abs(distance(this->xyz_,b->xyz_) - (radius_+b->radius()));
+	//  return std::max( o/radius_, o/b->radius_ );
 	// }
 	// // int recursive_mark_hole_neighbors( utility::vector1<CavityBall> & holes, int const cluster );
 
@@ -73,7 +73,7 @@ public:
 
 
 	// int get_cluster_id() const { return cluster_id_; }
-//private: // make this stuf private at some point
+	//private: // make this stuf private at some point
 
 	int id_,sphere_,cluster_;
 	numeric::xyzVector<PackstatReal> xyz_;
@@ -84,7 +84,7 @@ public:
 	PackstatReal exposed_radius; // largest radius that can reach ball from "outside"
 	int anb;
 
-	// utility::vector1<PackstatReal> hole_sasa_;				// these will only be computed if
+	// utility::vector1<PackstatReal> hole_sasa_;    // these will only be computed if
 	// FArray2D_float surrounding_sasa_; // compute_packing_statistics is called
 	// //FArray1D_float surrounding_sasa_5A_; // withing 5A of center, like before for comparison
 	// utility::vector1<int>  neighbor_count_; // # atoms within 1A, 2A, 3A...

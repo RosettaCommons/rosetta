@@ -58,7 +58,7 @@ void calculate_rigid_matrix( ResidueType const & res, utility::vector1< utility:
 ///   * All atoms and bond are present
 ///   * All ideal_xyz coordinates have been set
 ///   * All elements have been set
-/// 	* All ring bonds have been annotated
+///  * All ring bonds have been annotated
 core::Real
 find_nbr_dist( ResidueType const & res, VD & nbr_atom );
 

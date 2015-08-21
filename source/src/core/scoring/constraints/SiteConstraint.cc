@@ -40,12 +40,12 @@ namespace constraints {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Constructor
 SiteConstraint::SiteConstraint():
-AmbiguousConstraint()
+	AmbiguousConstraint()
 {}
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Constructor
 SiteConstraint::SiteConstraint( ConstraintCOPs & cst_in ):
-AmbiguousConstraint( cst_in )
+	AmbiguousConstraint( cst_in )
 {}
 
 void
@@ -65,33 +65,33 @@ SiteConstraint::show( std::ostream& out) const
 
 void
 SiteConstraint::read_def(
-    std::istream & data,
-    core::pose::Pose const & pose,
-   func::FuncFactory const & func_factory
+	std::istream & data,
+	core::pose::Pose const & pose,
+	func::FuncFactory const & func_factory
 ) {
-    TR.Debug << "ConstraintIO::read_site_cst" << std::endl;
-    Size res;
-    std::string tempres;
-    std::string name;
-    std::string chain;
-    std::string func_type;
-    data >> name >> tempres >> chain >> func_type;
+	TR.Debug << "ConstraintIO::read_site_cst" << std::endl;
+	Size res;
+	std::string tempres;
+	std::string name;
+	std::string chain;
+	std::string func_type;
+	data >> name >> tempres >> chain >> func_type;
 
-    ConstraintIO::parse_residue( pose, tempres, res );
-    TR.Info << "read: " << name << " " << res << " " << "constrain to chain: " << chain << " func: " << func_type << std::endl;
+	ConstraintIO::parse_residue( pose, tempres, res );
+	TR.Info << "read: " << name << " " << res << " " << "constrain to chain: " << chain << " func: " << func_type << std::endl;
 
 
-    func::FuncOP aFunc = func_factory.new_func( func_type );
-    aFunc->read_data( data );
+	func::FuncOP aFunc = func_factory.new_func( func_type );
+	aFunc->read_data( data );
 
-    if ( TR.Debug.visible() ) {
-        aFunc->show_definition( TR.Debug ); TR.Debug<<std::endl;
-    }
-    setup_csts( res, name, chain, pose, aFunc );
+	if ( TR.Debug.visible() ) {
+		aFunc->show_definition( TR.Debug ); TR.Debug<<std::endl;
+	}
+	setup_csts( res, name, chain, pose, aFunc );
 
-    if ( data.good() ) {
-        //chu skip the rest of line since this is a single line defintion.
-		while( data.good() && (data.get() != '\n') ) {}
+	if ( data.good() ) {
+		//chu skip the rest of line since this is a single line defintion.
+		while ( data.good() && (data.get() != '\n') ) {}
 		if ( !data.good() ) data.setstate( std::ios_base::eofbit );
 	}
 
@@ -115,8 +115,8 @@ SiteConstraint::setup_csts(
 	Size start_res = pose.conformation().chain_begin( constraint_chain );
 	Size end_res = pose.conformation().chain_end( constraint_chain );
 	utility::vector1<bool> residues(pose.total_residue(), false);
-	
-	for (Size j = start_res ; j < end_res ; ++j ) {
+
+	for ( Size j = start_res ; j < end_res ; ++j ) {
 		residues[j] = true;
 	}
 	setup_csts(res, name, residues, pose, func);
@@ -131,18 +131,17 @@ SiteConstraint::setup_csts(
 	core::pose::Pose const & pose,
 	func::FuncOP const & func
 ) {
-debug_assert(pose.total_residue() == residues.size());
+	debug_assert(pose.total_residue() == residues.size());
 	id::AtomID target_atom( pose.residue_type( res ).atom_index( name ), res );
 
-	for (Size i = 1 ; i < pose.total_residue() ; ++i ) {
-		
-		if (residues[i])
-		{
+	for ( Size i = 1 ; i < pose.total_residue() ; ++i ) {
+
+		if ( residues[i] ) {
 			id::AtomID atom2( pose.residue_type( i ).atom_index( "CA" ), i );
 			runtime_assert( target_atom.valid() && atom2.valid() );
 			add_individual_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint( target_atom, atom2, func ) ) ) );
 		}
-    }
+	}
 
 } // setup_csts
 

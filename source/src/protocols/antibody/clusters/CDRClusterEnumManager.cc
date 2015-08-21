@@ -420,7 +420,7 @@ std::string
 CDRClusterEnumManager::cdr_cluster_enum_to_string(CDRClusterEnum const cluster) const {
 
 	//Help protect from bad memory access that will give the enum crazy values.
-	if (cluster > CDRClusterEnum_total || cluster < 0){
+	if ( cluster > CDRClusterEnum_total || cluster < 0 ) {
 		utility_exit_with_message("Bogus CDRClusterEnum passed to cdr_cluster_enum_to_string" + utility::to_string(int(cluster)));
 	}
 	return enum_to_string_[cluster];
@@ -431,7 +431,7 @@ CDRClusterEnumManager::cdr_cluster_string_to_enum(std::string const & cluster) c
 
 	//This is here due to const correctness issues with [] operator
 	std::map< std::string, CDRClusterEnum >::const_iterator iter( string_to_enum_.find( cluster ) );
-	if (iter == string_to_enum_.end()){
+	if ( iter == string_to_enum_.end() ) {
 		utility_exit_with_message("Cluster not found: " + cluster);
 	}
 	return iter->second;

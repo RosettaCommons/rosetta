@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/screener/AlignRMSD_Screener.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace stepwise {
 namespace screener {
-	
-	class AlignRMSD_Screener;
-	typedef utility::pointer::shared_ptr< AlignRMSD_Screener > AlignRMSD_ScreenerOP;
-	typedef utility::pointer::shared_ptr< AlignRMSD_Screener const > AlignRMSD_ScreenerCOP;
-	
+
+class AlignRMSD_Screener;
+typedef utility::pointer::shared_ptr< AlignRMSD_Screener > AlignRMSD_ScreenerOP;
+typedef utility::pointer::shared_ptr< AlignRMSD_Screener const > AlignRMSD_ScreenerCOP;
+
 } //screener
 } //stepwise
 } //protocols

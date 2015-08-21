@@ -84,7 +84,7 @@ public:
 	virtual ~RigidBodyMover();
 
 	/// @brief Manual override of rotation center.
-	void rot_center( core::Vector const rot_center_in )	{	rot_center_ = rot_center_in; }
+	void rot_center( core::Vector const rot_center_in ) { rot_center_ = rot_center_in; }
 
 	virtual void apply( core::pose::Pose & pose ) = 0;
 	virtual std::string get_name() const;
@@ -210,9 +210,9 @@ public:
 	RigidBodyPerturbRandomJumpMover();
 
 	RigidBodyPerturbRandomJumpMover(
-			core::Real const& rot_mag_in,
-			core::Real const& trans_mag_in,
-			core::Size const& num_jump_in);
+		core::Real const& rot_mag_in,
+		core::Real const& trans_mag_in,
+		core::Size const& num_jump_in);
 	void apply(core::pose::Pose& pose);
 	virtual std::string get_name() const;
 
@@ -225,11 +225,11 @@ private:
 };
 
 /// @brief does a perturbation defined by the rotational and translational magnitudes
-/// 	without setting up the center
-///		Can be defined through a move map or with rb_jump
-///		Defining through a movemap with multiple jumps leads to a random jump being
-///		chosen at apply time, NOT at construction time! This is done to simplify
-///		docking with more than one active jump.
+///  without setting up the center
+///  Can be defined through a move map or with rb_jump
+///  Defining through a movemap with multiple jumps leads to a random jump being
+///  chosen at apply time, NOT at construction time! This is done to simplify
+///  docking with more than one active jump.
 class RigidBodyPerturbNoCenterMover : public RigidBodyMover{
 	typedef RigidBodyMover Parent;
 public:
@@ -255,11 +255,11 @@ public:
 
 	// function for the parser with lots of accessors
 	void parse_my_tag(
-			 utility::tag::TagCOP tag,
-			 basic::datacache::DataMap &,
-			 protocols::filters::Filters_map const &,
-			 protocols::moves::Movers_map const &,
-			 core::pose::Pose const &
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
 	);
 
 	RigidBodyPerturbNoCenterMover( RigidBodyPerturbNoCenterMover const & src );
@@ -273,7 +273,7 @@ public:
 	void add_jump( core::Size );
 	void clear_jumps();
 
-	virtual	moves::MoverOP clone() const;
+	virtual moves::MoverOP clone() const;
 
 protected:
 	/// perturbation magnitudes (rotational and translational)
@@ -349,7 +349,7 @@ public:
 protected:
 	core::Vector spin_axis_;
 	bool update_spin_axis_;
-	
+
 };  // class RigidBodySpinMover
 
 
@@ -374,7 +374,7 @@ public:
 	void angle_magnitude( float angle_magnitude );
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
-	
+
 private:
 	float angle_magnitude_;
 };  // RigidBodyDeterministicSpinMover
@@ -426,20 +426,20 @@ public:
 private:
 
 	void tilt(
-			core::pose::Pose & pose,
-			std::string const & which,
-			core::Real tilt_mag,
-			core::Vector const & tilt_center,
-			core::Vector const & spin_axis,
-			core::Vector const & partner_center,
-			Direction dir,
-			core::kinematics::Stub const & upstream_stub,
-			core::kinematics::Stub const & downstream_stub ) const;
+		core::pose::Pose & pose,
+		std::string const & which,
+		core::Real tilt_mag,
+		core::Vector const & tilt_center,
+		core::Vector const & spin_axis,
+		core::Vector const & partner_center,
+		Direction dir,
+		core::kinematics::Stub const & upstream_stub,
+		core::kinematics::Stub const & downstream_stub ) const;
 
 	core::Vector find_tilt_center(
-			core::pose::Pose const & pose,
-			core::Size tilt_center_res,
-			core::Vector const & partner_center) const;
+		core::pose::Pose const & pose,
+		core::Size tilt_center_res,
+		core::Vector const & partner_center) const;
 
 protected:
 	core::Real tilt1_mag_;
@@ -486,10 +486,10 @@ public:
 	virtual std::string get_name() const;
 
 	virtual void parse_my_tag( utility::tag::TagCOP tag,
-			basic::datacache::DataMap &,
-			protocols::filters::Filters_map const &,
-			protocols::moves::Movers_map const &,
-			core::pose::Pose const &);
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &);
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
@@ -498,7 +498,7 @@ private:
 
 	core::Real step_size_;
 	core::Vector trans_axis_;
-	
+
 	bool vary_stepsize_;
 
 };  // class RigidBodyTransMover
@@ -698,7 +698,7 @@ public:
 	virtual std::string get_name() const;
 
 private:
-	 /// allowed dofs
+	/// allowed dofs
 	std::map< Size, core::conformation::symmetry::SymDof > dofs_;
 	// allowed jumps
 	utility::vector1 < int > rb_jumps_;
@@ -722,13 +722,13 @@ public:
 	//    moves::Mover::type( "RigidBodyDofPerturbMover" );
 	//  }
 
-  // constructor with arguments (rb_jump not defined)
-  // movemap used instead
-  RigidBodyDofPerturbMover(
+	// constructor with arguments (rb_jump not defined)
+	// movemap used instead
+	RigidBodyDofPerturbMover(
 		std::map< Size, core::conformation::symmetry::SymDof > dofs,
 		core::Real const rot_mag_in = 1.0,
 		core::Real const trans_mag_in = 3.0
-  );
+	);
 
 	RigidBodyDofPerturbMover(
 		int const rb_jump_in,
@@ -750,9 +750,9 @@ public:
 private:
 	/// allowed dofs
 	core::conformation::symmetry::SymDof dof_;
-  /// perturbation magnitudes (rotational and translational)
-  core::Real rot_mag_;
-  core::Real trans_mag_;
+	/// perturbation magnitudes (rotational and translational)
+	core::Real rot_mag_;
+	core::Real trans_mag_;
 }; // class RigidBodyDofPerturbMover
 
 
@@ -786,9 +786,9 @@ private:
 	std::map< Size, core::conformation::symmetry::SymDof > dofs_;
 	// allowed jumps
 	utility::vector1 < int > rb_jumps_;
-  /// perturbation magnitudes (rotational and translational)
-  core::Real rot_mag_;
-  core::Real trans_mag_;
+	/// perturbation magnitudes (rotational and translational)
+	core::Real rot_mag_;
+	core::Real trans_mag_;
 }; // class RigidBodyDofSeqPerturbMover
 
 } // rigid

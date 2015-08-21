@@ -34,81 +34,81 @@ namespace stepwise {
 namespace modeler {
 namespace options {
 
-	/////////////////////////////////////////////////////////////////////////////////////
-	//Constructor
-	StepWiseModelerOptions::StepWiseModelerOptions()
-	{
-		initialize_variables();
+/////////////////////////////////////////////////////////////////////////////////////
+//Constructor
+StepWiseModelerOptions::StepWiseModelerOptions()
+{
+	initialize_variables();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+//Destructor
+StepWiseModelerOptions::~StepWiseModelerOptions()
+{
+}
+
+/// @brief copy constructor
+StepWiseModelerOptions::StepWiseModelerOptions( StepWiseModelerOptions const & src ) :
+	ResourceOptions( src ),
+	StepWiseBasicModelerOptions( src ),
+	StepWiseProteinModelerOptions( src ),
+	StepWiseRNA_ModelerOptions( src )
+{
+	*this = src;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseModelerOptions::initialize_variables(){
+	StepWiseBasicModelerOptions::initialize_variables();
+	StepWiseProteinModelerOptions::initialize_variables();
+	StepWiseRNA_ModelerOptions::initialize_variables();
+}
+
+/// @brief clone the options
+StepWiseModelerOptionsOP
+StepWiseModelerOptions::clone() const
+{
+	return StepWiseModelerOptionsOP( new StepWiseModelerOptions( *this ) );
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseModelerOptions::initialize_from_command_line(){
+
+	StepWiseBasicModelerOptions::initialize_from_command_line();
+	StepWiseProteinModelerOptions::initialize_from_command_line();
+	StepWiseRNA_ModelerOptions::initialize_from_command_line();
+
+	if ( integration_test_mode() ) set_num_pose_minimize( 1 );
+	if ( option[ out::nstruct].user() ) utility_exit_with_message( "Can not use -out::nstruct anymore, use -sampler_num_pose_kept and/or -num_pose_minimize for fine control." );
+
+}
+
+////////////////////////////////////////////////////////////////
+void
+StepWiseModelerOptions::setup_options_for_VDW_bin_checker( rna::checker::RNA_VDW_BinCheckerOP user_input_VDW_bin_checker ) const {
+	user_input_VDW_bin_checker->set_VDW_rep_alignment_RMSD_CUTOFF ( VDW_rep_alignment_RMSD_CUTOFF() );
+	user_input_VDW_bin_checker->set_VDW_rep_delete_matching_res( VDW_rep_delete_matching_res() );
+	user_input_VDW_bin_checker->set_physical_pose_clash_dist_cutoff( VDW_rep_screen_physical_pose_clash_dist_cutoff() );
+	user_input_VDW_bin_checker->set_output_pdb( dump_ );
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+StepWiseModelerOptionsOP
+StepWiseModelerOptions::get_sampler_options() const {
+	StepWiseModelerOptionsOP sampler_options = clone();
+
+	// this wasn't even active -- StepWiseClusterer took 0.0 to mean 'default' and goes to 0.5 A.
+	//  if ( sampler_options->choose_random() ) sampler_options->set_cluster_rmsd( 0.0 ); // don't cluster.
+
+	if ( sampler_options->integration_test_mode() ) {
+		sampler_options->set_sampler_num_pose_kept( 2 );
+		sampler_options->set_rmsd_screen( 1.0 ); // StepWiseConnectionSampler will initially have this off, but toggle true later in integration test.
 	}
-
-	/////////////////////////////////////////////////////////////////////////////////////
-	//Destructor
-	StepWiseModelerOptions::~StepWiseModelerOptions()
-	{
-	}
-
-	/// @brief copy constructor
-	StepWiseModelerOptions::StepWiseModelerOptions( StepWiseModelerOptions const & src ) :
-		ResourceOptions( src ),
-		StepWiseBasicModelerOptions( src ),
-		StepWiseProteinModelerOptions( src ),
-		StepWiseRNA_ModelerOptions( src )
-	{
-		*this = src;
-	}
-
-
-	/////////////////////////////////////////////////////////////////////////////////////
-	void
-	StepWiseModelerOptions::initialize_variables(){
-		StepWiseBasicModelerOptions::initialize_variables();
-		StepWiseProteinModelerOptions::initialize_variables();
-		StepWiseRNA_ModelerOptions::initialize_variables();
-	}
-
-	/// @brief clone the options
-	StepWiseModelerOptionsOP
-	StepWiseModelerOptions::clone() const
-	{
-		return StepWiseModelerOptionsOP( new StepWiseModelerOptions( *this ) );
-	}
-
-	/////////////////////////////////////////////////////////////////////////////////////
-	void
-	StepWiseModelerOptions::initialize_from_command_line(){
-
-		StepWiseBasicModelerOptions::initialize_from_command_line();
-		StepWiseProteinModelerOptions::initialize_from_command_line();
-		StepWiseRNA_ModelerOptions::initialize_from_command_line();
-
-		if ( integration_test_mode() ) set_num_pose_minimize( 1 );
-		if ( option[ out::nstruct].user() )	utility_exit_with_message( "Can not use -out::nstruct anymore, use -sampler_num_pose_kept and/or -num_pose_minimize for fine control." );
-
-	}
-
-	////////////////////////////////////////////////////////////////
-	void
-	StepWiseModelerOptions::setup_options_for_VDW_bin_checker( rna::checker::RNA_VDW_BinCheckerOP user_input_VDW_bin_checker ) const {
-		user_input_VDW_bin_checker->set_VDW_rep_alignment_RMSD_CUTOFF ( VDW_rep_alignment_RMSD_CUTOFF() );
-		user_input_VDW_bin_checker->set_VDW_rep_delete_matching_res( VDW_rep_delete_matching_res() );
-		user_input_VDW_bin_checker->set_physical_pose_clash_dist_cutoff( VDW_rep_screen_physical_pose_clash_dist_cutoff() );
-		user_input_VDW_bin_checker->set_output_pdb( dump_ );
-	}
-
-	///////////////////////////////////////////////////////////////////////////////////
-	StepWiseModelerOptionsOP
-	StepWiseModelerOptions::get_sampler_options() const {
-		StepWiseModelerOptionsOP sampler_options = clone();
-
-		// this wasn't even active -- StepWiseClusterer took 0.0 to mean 'default' and goes to 0.5 A.
-		//		if ( sampler_options->choose_random() )	sampler_options->set_cluster_rmsd( 0.0 ); // don't cluster.
-
-		if ( sampler_options->integration_test_mode() ){
-			sampler_options->set_sampler_num_pose_kept( 2 );
-			sampler_options->set_rmsd_screen( 1.0 ); // StepWiseConnectionSampler will initially have this off, but toggle true later in integration test.
-		}
-		return sampler_options;
-	}
+	return sampler_options;
+}
 
 } //options
 } //modeler

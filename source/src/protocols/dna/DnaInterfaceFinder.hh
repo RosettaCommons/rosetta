@@ -50,12 +50,12 @@ public:
 		core::Real contact_threshold = 3.7 * 3.7,
 		core::Real z_cutoff = 10.,
 		bool base_only = false
-	) :	utility::pointer::ReferenceCount(),
-			close_threshold_( close_threshold ),
-			contact_threshold_( contact_threshold ),
-			z_cutoff_( z_cutoff ),
-			base_only_( base_only ),
-			initialized_( false )
+	) : utility::pointer::ReferenceCount(),
+		close_threshold_( close_threshold ),
+		contact_threshold_( contact_threshold ),
+		z_cutoff_( z_cutoff ),
+		base_only_( base_only ),
+		initialized_( false )
 	{}
 
 	virtual ~DnaInterfaceFinder(){}

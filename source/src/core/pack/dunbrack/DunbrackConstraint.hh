@@ -67,7 +67,7 @@ public:
 	/// parameters.
 	virtual void show( std::ostream & out ) const;
 
-  virtual void read_def(
+	virtual void read_def(
 		std::istream & in,
 		pose::Pose const & pose,
 		scoring::func::FuncFactory const & func_factory

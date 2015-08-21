@@ -27,21 +27,21 @@ namespace scoring {
 namespace rna {
 namespace data {
 
-	enum RNA_ReactivityType {
-		NO_REACTIVITY,
-		DMS,
-		CMCT,
-		SHAPE_1M7,
-		HRF
-	};
+enum RNA_ReactivityType {
+	NO_REACTIVITY,
+	DMS,
+	CMCT,
+	SHAPE_1M7,
+	HRF
+};
 
-  class RNA_DataInfo;
-  typedef utility::pointer::shared_ptr< RNA_DataInfo > RNA_DataInfoOP;
-  typedef utility::pointer::weak_ptr< RNA_DataInfo > RNA_DataInfoAP;
+class RNA_DataInfo;
+typedef utility::pointer::shared_ptr< RNA_DataInfo > RNA_DataInfoOP;
+typedef utility::pointer::weak_ptr< RNA_DataInfo > RNA_DataInfoAP;
 
-	class RNA_Reactivity;
-  typedef utility::pointer::shared_ptr< RNA_Reactivity > RNA_ReactivityOP;
-  typedef utility::pointer::weak_ptr< RNA_Reactivity > RNA_ReactivityAP;
+class RNA_Reactivity;
+typedef utility::pointer::shared_ptr< RNA_Reactivity > RNA_ReactivityOP;
+typedef utility::pointer::weak_ptr< RNA_Reactivity > RNA_ReactivityAP;
 
 } //data
 } //rna

@@ -56,9 +56,10 @@ StoreTaskMover::apply( core::pose::Pose & pose )
 
 	// Create the PackerTask using the TaskFactory created in parse_my_tag
 	runtime_assert( task_factory_ != 0 );
-	core::pack::task::PackerTaskOP 	task = task_factory_->create_task_and_apply_taskoperations( pose );
-	if (core::pose::symmetry::is_symmetric(pose))
+	core::pack::task::PackerTaskOP  task = task_factory_->create_task_and_apply_taskoperations( pose );
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::pack::make_symmetric_PackerTask_by_truncation(pose, task); // Does this need to be fixed or omitted?
+	}
 	// If the pose doesn't have STM_STORED_TASK data, put a blank STMStoredTask in there.
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) ) {
 		protocols::toolbox::task_operations::STMStoredTaskOP blank_tasks( new protocols::toolbox::task_operations::STMStoredTask() );
@@ -85,9 +86,9 @@ StoreTaskMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data
 }
 
 void StoreTaskMover::parse_def( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const &,
-		utility::lua::LuaObject const & tasks,
-		protocols::moves::MoverCacheSP ) {
+	utility::lua::LuaObject const &,
+	utility::lua::LuaObject const & tasks,
+	protocols::moves::MoverCacheSP ) {
 	task_factory_ =  protocols::elscripts::parse_taskdef( def["tasks"], tasks );
 	task_name_ = def["task_name"].to<std::string>();
 	overwrite_ = def["overwrite"] ? def["overwrite"].to<bool>() : false;

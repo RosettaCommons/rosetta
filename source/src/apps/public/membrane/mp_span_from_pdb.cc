@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		apps/pilot/membrane/mp_span_from_pdb.cc
+/// @file  apps/pilot/membrane/mp_span_from_pdb.cc
 ///
-/// @brief		Write span from pdb
+/// @brief  Write span from pdb
 ///
-/// @author		Julia Koehler Leman (julia.koehler1982@gmail.com)
-/// @note 		Last Updated: 5/18/15
+/// @author  Julia Koehler Leman (julia.koehler1982@gmail.com)
+/// @note   Last Updated: 5/18/15
 
 // App headers
 #include <devel/init.hh>
@@ -68,7 +68,7 @@ static thread_local basic::Tracer TR( "apps.public.membrane.mp_span_from_pdb" );
 // vector show function
 template< typename T_ >
 void show( utility::vector1< T_ > vector){
-	for ( Size i = 1; i <= vector.size(); ++i ){
+	for ( Size i = 1; i <= vector.size(); ++i ) {
 		TR << utility::to_string(vector[i]) << ", ";
 	}
 	TR << std::endl;
@@ -77,19 +77,19 @@ void show( utility::vector1< T_ > vector){
 ////////////////////////////////////////////////////////////////////////////////
 
 Pose read_pose() {
-	
+
 	// cry if PDB not given
-	if ( ! option[OptionKeys::in::file::s].user() ){
+	if ( ! option[OptionKeys::in::file::s].user() ) {
 		throw new utility::excn::EXCN_Msg_Exception("Please provide PDB file!");
 	}
-	
+
 	// read in pose
 	Pose pose;
 	core::import_pose::pose_from_pdb( pose, option[OptionKeys::in::file::s].value_string() );
 	TR.Debug << "got pose of length " << pose.total_residue() << std::endl;
-	
+
 	return pose;
-	
+
 }// read pose
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -98,30 +98,29 @@ Real read_thickness() {
 
 	// set or read in thickness
 	Real thickness;
-	if ( option[OptionKeys::mp::thickness].user() ){
+	if ( option[OptionKeys::mp::thickness].user() ) {
 		thickness = option[OptionKeys::mp::thickness]();
 		TR << "Taking user-defined thickness: " << thickness << std::endl;
-	}
-	else{
+	} else {
 		thickness = 15;
 		TR << "Taking default thickness: " << thickness << std::endl;
 	}
 	TR.Debug << "got thickness: " << thickness << std::endl;
 
 	return thickness;
-	
+
 }// get thickness
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void spanfile_for_each_chain( Pose & pose, Real thickness, std::string spanfile) {
-	
+
 	// split pose into chains
 	utility::vector1< PoseOP > split_poses = pose.split_by_chain();
-	
+
 	// loop over chains
-	for ( Size i = 1; i <= split_poses.size(); ++i ){
-		
+	for ( Size i = 1; i <= split_poses.size(); ++i ) {
+
 		// get pose info
 		std::pair< utility::vector1< Real >, utility::vector1< Size > > split_pose_info( get_chain_and_z( *split_poses[i] ));
 		utility::vector1< Real > split_z_coord( split_pose_info.first );
@@ -130,20 +129,19 @@ void spanfile_for_each_chain( Pose & pose, Real thickness, std::string spanfile)
 
 		// create SpanningTopology from poses
 		SpanningTopologyOP topo_pose( new SpanningTopology( split_z_coord, split_chain_info, split_secstruct, thickness ) );
-		
+
 		// get filename for spanfile for each chain
 		std::string split_spanfile( spanfile );
 		utility::trim( split_spanfile, ".span" );
-		
+
 		// output filename depends on number of chains
-		if ( pose.chain( pose.total_residue() ) > 1 ){
+		if ( pose.chain( pose.total_residue() ) > 1 ) {
 			char chain( split_poses[i]->pdb_info()->chain(i) );
 			split_spanfile = split_spanfile + chain + ".span";
-		}
-		else{
+		} else {
 			split_spanfile = split_spanfile + ".span";
 		}
-		
+
 		// print SpanningTopology for poses
 		topo_pose->write_spanfile( split_spanfile );
 	}
@@ -159,7 +157,7 @@ void spanfile_from_pdb(){
 	// read input
 	Pose pose = read_pose();
 	Real thickness = read_thickness();
-	
+
 	// get pose info
 	std::pair< utility::vector1< Real >, utility::vector1< Size > > pose_info( get_chain_and_z( pose ));
 	utility::vector1< Real > z_coord = pose_info.first;
@@ -167,13 +165,13 @@ void spanfile_from_pdb(){
 	utility::vector1< char > secstruct = get_secstruct( pose );
 
 	// for debugging
-//	for ( Size i = 1; i <= secstruct.size(); ++i ) {
-//		TR << "i: " << i << ", z: " << z_coord[i] << ", chain: " << chain_info[i] << ", SSE: " << secstruct[i] << std::endl;
-//	}
+	// for ( Size i = 1; i <= secstruct.size(); ++i ) {
+	//  TR << "i: " << i << ", z: " << z_coord[i] << ", chain: " << chain_info[i] << ", SSE: " << secstruct[i] << std::endl;
+	// }
 
 	// create SpanningTopology from pose
 	SpanningTopologyOP topo_whole_pose( new SpanningTopology( z_coord, chain_info, secstruct, thickness ) );
-	
+
 	// get filename for spanfile containing whole topology info
 	std::string pdbfile( option[OptionKeys::in::file::s].value_string() );
 	utility::trim( pdbfile );
@@ -182,13 +180,13 @@ void spanfile_from_pdb(){
 	spanfile = spanfile + ".span";
 
 	// if more than one chain, write SpanningTopology for whole pose
-	if ( pose.chain( pose.total_residue() ) > 1 ){
+	if ( pose.chain( pose.total_residue() ) > 1 ) {
 		topo_whole_pose->write_spanfile( spanfile );
 	}
 
 	// write spanfile for each individual chain
 	spanfile_for_each_chain( pose, thickness, spanfile );
-	
+
 }// spanfile_from_pdb
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -205,10 +203,10 @@ main( int argc, char * argv [] )
 
 		// call my function
 		spanfile_from_pdb();
-		
+
 	}
-	catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
-		return -1;
-	}
+catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+	return -1;
+}
 }

@@ -68,15 +68,16 @@ public:
 		using namespace core::chemical;
 		utility::vector1< std::string > params_files;
 		ResidueTypeSet & residue_set = ChemicalManager::get_instance()->nonconst_residue_type_set( FA_STANDARD );
-		if ( !residue_set.has_name("D2I") )
+		if ( !residue_set.has_name("D2I") ) {
 			params_files.push_back("devel/denovo_design/D2I.params");
+		}
 		residue_set.read_files(params_files);
 
 		// initialize common filters/movers/scorefxns
 		scorefxn = core::scoring::get_score_function( true );
 
 		num_trp = utility::pointer::shared_ptr< protocols::simple_filters::ResidueCountFilter >(
-				new protocols::simple_filters::ResidueCountFilter() );
+			new protocols::simple_filters::ResidueCountFilter() );
 		utility::vector1< std::string > res_to_count;
 		res_to_count.push_back( "TRP" );
 		num_trp->res_types( res_to_count );
@@ -92,9 +93,9 @@ public:
 
 		// get the total score
 		score_filter = utility::pointer::shared_ptr< protocols::simple_filters::ScoreTypeFilter >(
-				new protocols::simple_filters::ScoreTypeFilter( scorefxn,
-					core::scoring::score_type_from_name( "total_score" ),
-					999999.9 ) );
+			new protocols::simple_filters::ScoreTypeFilter( scorefxn,
+			core::scoring::score_type_from_name( "total_score" ),
+			999999.9 ) );
 
 		std::string const pdb_file( "devel/denovo_design/test_input.pdb" );
 		core::import_pose::pose_from_pdb( input_pose, pdb_file );

@@ -71,7 +71,7 @@ protocols::abinitio::Protocol::evaluate_pose(
 	std::string tag,
 	core::io::silent::SilentStruct &pss) const
 {
-	if ( evaluator_) {
+	if ( evaluator_ ) {
 		evaluator_->apply( pose, tag, pss );
 	}
 }
@@ -102,7 +102,7 @@ protocols::abinitio::Protocol::output_debug_structure( core::pose::Pose & pose, 
 		SilentFileData sfd;
 		//filename might have been changed -- e.g., to also have an MPI rank in there
 
-		//		ProteinSilentStruct pss;
+		//  ProteinSilentStruct pss;
 		io::silent::SilentStructOP pss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
 		pss->fill_struct( pose, get_current_tag() );
 
@@ -114,12 +114,12 @@ protocols::abinitio::Protocol::output_debug_structure( core::pose::Pose & pose, 
 void
 protocols::abinitio::Protocol::apply( core::pose::Pose& ) {
 	reset_status();
-	//	structure_store().clear(); // keep this to avoid memory leaks
+	// structure_store().clear(); // keep this to avoid memory leaks
 	// if (! bInitialized_ ) {
-// 		tr.Warning << "WARNING: ClassicAbinitio::apply is called without previous call to init(). Will self-initialize now... this overrides any"
-// 							 << " custom settings if they existed... ;" << std::endl; // could call init at
-// 		init( pose );
-// 	}
+	//   tr.Warning << "WARNING: ClassicAbinitio::apply is called without previous call to init(). Will self-initialize now... this overrides any"
+	//         << " custom settings if they existed... ;" << std::endl; // could call init at
+	//   init( pose );
+	//  }
 }
 
 std::string

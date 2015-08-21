@@ -236,13 +236,13 @@ public: // Assignment
 
 
 	/// @brief Find the index of an element. If not found then return 0;
- 	inline
- 	int
- 	index( bool const & t ) const {
+	inline
+	int
+	index( bool const & t ) const {
 		Size idx = 1 + std::distance( begin(), std::find(begin(), end(), t) );
 		if ( idx > size() ) return 0;
 		return idx;
- 	}
+	}
 
 }; // vector1
 

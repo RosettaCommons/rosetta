@@ -48,15 +48,15 @@ public:
 
 	void loops( protocols::loops::Loops const & loops_in ) {
 
-			loops_ = loops_in;
+		loops_ = loops_in;
 
-		}
+	}
 
 	void loops_pdb( core::pose::Pose const & loops_pdb ) {
 
-			loops_pdb_ = loops_pdb;
+		loops_pdb_ = loops_pdb;
 
-		}
+	}
 
 	void set_frag_3mers( core::fragment::FragSetOP const & frag_3mers){
 		frag_small_ = frag_3mers;
@@ -71,7 +71,7 @@ public:
 
 	void set_ca_csts( core::scoring::constraints::ConstraintSetOP const & ca_csts){
 
-			ca_csts_ = ca_csts;
+		ca_csts_ = ca_csts;
 
 	}
 

@@ -24,17 +24,17 @@ namespace pack {
 namespace task {
 namespace rna {
 
-	//Constructor
-	RNA_ResidueLevelTask::RNA_ResidueLevelTask():
-		sample_rna_chi_( false ),
-		sample_five_prime_phosphate_( false ),
-		sample_three_prime_phosphate_( false ),
-		allow_phosphate_virtualization_( false )
-	{}
+//Constructor
+RNA_ResidueLevelTask::RNA_ResidueLevelTask():
+	sample_rna_chi_( false ),
+	sample_five_prime_phosphate_( false ),
+	sample_three_prime_phosphate_( false ),
+	allow_phosphate_virtualization_( false )
+{}
 
-	//Destructor
-	RNA_ResidueLevelTask::~RNA_ResidueLevelTask()
-	{}
+//Destructor
+RNA_ResidueLevelTask::~RNA_ResidueLevelTask()
+{}
 
 } //rna
 } //task

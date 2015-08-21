@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/antibody_design/SasaCalc.fwd.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_core_scoring_sasa_SASACALC_FWD_HH
@@ -22,11 +22,11 @@ namespace sasa {
 
 class SasaCalc;
 
-	typedef utility::pointer::shared_ptr< SasaCalc> SasaCalcOP;
-	typedef utility::pointer::shared_ptr< SasaCalc const> SasaCalcCOP; 
+typedef utility::pointer::shared_ptr< SasaCalc> SasaCalcOP;
+typedef utility::pointer::shared_ptr< SasaCalc const> SasaCalcCOP;
 }
 }
 }
 
-#endif	//#ifndef INCLUDED_protocols/antibody_design_SASACALC_FWD_HH
+#endif //#ifndef INCLUDED_protocols/antibody_design_SASACALC_FWD_HH
 

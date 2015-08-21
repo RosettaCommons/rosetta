@@ -68,15 +68,15 @@ SequenceAlignment SWAligner::align(
 
 			//std::cout << scores << std::endl;
 			//std::cout << "(" << x << "," << y << ")"
-			//					<< " can choose from " << mm << "," << l_gap << "," << u_gap
-			//					<< std::endl;
+			//     << " can choose from " << mm << "," << l_gap << "," << u_gap
+			//     << std::endl;
 			//std::cout << "mm = " << mm << "("
-			//	<< scores( x-1, y-1 )->score() << "+"
-			//	<< ss->score( new_seq_x, new_seq_y, x, y ) << ")"
-			//	<< std::endl;
+			// << scores( x-1, y-1 )->score() << "+"
+			// << ss->score( new_seq_x, new_seq_y, x, y ) << ")"
+			// << std::endl;
 			CellOP current_cell = scores(x,y);
 			if ( mm > l_gap && mm > u_gap && mm >= threshold ) {
-			//if ( mm >= l_gap && mm >= u_gap && mm >= threshold ) {
+				//if ( mm >= l_gap && mm >= u_gap && mm >= threshold ) {
 				//std::cout << "came from diagonal with a score of " << mm << std::endl;
 				current_cell->score( mm );
 				current_cell->next( scores(x-1,y-1) );
@@ -96,8 +96,9 @@ SequenceAlignment SWAligner::align(
 				current_cell->came_from( end );
 			}
 
-			if ( current_cell->score() > best_cell->score() )
+			if ( current_cell->score() > best_cell->score() ) {
 				best_cell = current_cell;
+			}
 		} // x
 	} // y
 	//std::cout << scores << std::endl;

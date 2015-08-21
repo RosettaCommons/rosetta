@@ -10,7 +10,7 @@
 /// @file   core/scoring/methods/InterchainEnergy.cc
 /// @brief  Statistically derived rotamer pair potentials
 /// @details For docking (or between chains) only those residues at the interface
-///						and between the two interfaces need to be evaluated
+///      and between the two interfaces need to be evaluated
 /// @author Monica Berrondo
 
 #ifndef INCLUDED_protocols_scoring_InterfaceInfo_fwd_hh

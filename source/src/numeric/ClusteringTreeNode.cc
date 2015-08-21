@@ -20,13 +20,13 @@ ClusteringTreeNode::~ClusteringTreeNode() {}
 
 ClusteringTreeNodeOP ClusteringTreeNode::visit_next_leaf() {
 
-	if(flag_ == 1) {
-	    flag_ = 2;
-	    return right();
+	if ( flag_ == 1 ) {
+		flag_ = 2;
+		return right();
 	}
-	if(flag_ == 0) {
-	    flag_ = 1;
-	    return left();
+	if ( flag_ == 0 ) {
+		flag_ = 1;
+		return left();
 	}
 
 	return 0;

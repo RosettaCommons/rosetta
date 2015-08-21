@@ -36,24 +36,24 @@
 namespace protocols {
 namespace grafting {
 
-	using core::pose::Pose;
-	using core::kinematics::MoveMapCOP;
-	using core::kinematics::MoveMapOP;
-	using core::scoring::ScoreFunctionCOP;
-	using core::scoring::ScoreFunctionOP;
-	using protocols::simple_moves::MinMoverOP;
-	using protocols::simple_moves::SmallMoverOP;
-	
+using core::pose::Pose;
+using core::kinematics::MoveMapCOP;
+using core::kinematics::MoveMapOP;
+using core::scoring::ScoreFunctionCOP;
+using core::scoring::ScoreFunctionOP;
+using protocols::simple_moves::MinMoverOP;
+using protocols::simple_moves::SmallMoverOP;
+
 /// @brief Grafting class adapted from Steven Lewis' pose_into_pose algorithm.
 ///
 /// 1) Inserts the pose piece into the scaffold pose, deleting any overhang residues or residues in the region the insertion will occur between.
-/// 2) Connects the left side of the piece to the scaffold by inserting ideal geometry 
+/// 2) Connects the left side of the piece to the scaffold by inserting ideal geometry
 ///     (aka superposition of terminal overhangs is not needed)
 /// 3) Cycles of:
 ///      a) SmallMover for sampling
-///      b) CCD to close right (Nter) side of the graft.  
+///      b) CCD to close right (Nter) side of the graft.
 ///        The insert is included as dihedral-inflexible residues in the CCD arm.
-///        Residues on either side of the scaffold are used by default to close the loop. 
+///        Residues on either side of the scaffold are used by default to close the loop.
 ///        A Moevemap can be given to include more residues for CCD to use, such as loops connecting secondary structural elements
 ///      c) MinMover to help close the graft through chainbreak terms
 ///      d) Closure check - will stop if closed (This can be overridden)
@@ -80,42 +80,42 @@ namespace grafting {
 ///
 class AnchoredGraftMover : public protocols::grafting::GraftMoverBase {
 public:
-    
+
 	AnchoredGraftMover();
-	
+
 	///@brief Start and end are the residue numbers you want your insert to go between.  start->Insert<-end
 	AnchoredGraftMover(core::Size const start, core::Size const end, bool copy_pdbinfo = false);
 
 	AnchoredGraftMover(
-		core::Size const start, core::Size const end, 
+		core::Size const start, core::Size const end,
 		core::pose::Pose const & piece, core::Size Nter_overhang_length=0, core::Size Cter_overhang_length=0, bool copy_pdbinfo = false);
-    
+
 	AnchoredGraftMover(AnchoredGraftMover const & src);
-	
+
 	virtual ~AnchoredGraftMover();
 
-	void 
+	void
 	set_cycles(core::Size cycles);
-	
-	virtual void 
+
+	virtual void
 	set_defaults();
-	
+
 	/// @brief Grafts the piece into the pose, uses CCD to close the connection.  Insert does not change dihedral space, but DOES change cartesian space by default.
 	///Does not repack any sidechains.
 	///Deletes overhang and region between start and end if residues are present.
-	virtual void 
+	virtual void
 	apply(core::pose::Pose & pose);
-	
+
 public:
-	
+
 	protocols::moves::MoverOP
 	clone() const;
-	
+
 	protocols::moves::MoverOP
 	fresh_instance() const;
-	
-	
-	virtual void 
+
+
+	virtual void
 	parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
@@ -123,37 +123,37 @@ public:
 		moves::Movers_map const & movers,
 		core::pose::Pose const & pose
 	);
-	
-	
+
+
 public:
-	/// @brief Stop at closure of both ends? 
+	/// @brief Stop at closure of both ends?
 	/// Default True.
 	void stop_at_closure(bool stop_at_closure);
-	
+
 	/// @brief Stop at closure of both ends?
 	bool stop_at_closure();
-	
+
 	/// @brief Pack sidechains of flexible residues, insert and neighbors at end?
 	/// Default True.
 	void final_repack(bool final_repack);
-	
+
 	/// @brief Pack sidechains of flexible residues, insert and neighbors at end?
 	bool final_repack();
-	
+
 	void idealize_insert(bool idealize);
-	
+
 	bool idealize_insert() const {
 		return idealize_insert_;
 	}
-	
+
 public:
-    
+
 	virtual void
 	set_cen_scorefunction(core::scoring::ScoreFunctionCOP score);
-    
+
 	virtual void
 	set_fa_scorefunction(core::scoring::ScoreFunctionCOP score);
-	
+
 	///@brief Sets the mintype for the MinMover
 	void
 	set_mintype(std::string mintype);
@@ -161,40 +161,40 @@ public:
 	///@brief Sets the mover to skip the small mover sampling step.
 	void
 	set_skip_sampling(bool skip_sampling);
-	
+
 public:
 
 	///@brief Sets scaffold flexiblity on either end of scaffold
 	virtual void
 	set_scaffold_flexibility(core::Size const Nter_scaffold_flexibility, core::Size const Cter_scaffold_flexibility);
-	
+
 	///@brief Sets insert flexibility on either end of insert
 	virtual void
 	set_insert_flexibility(core::Size const Nter_insert_flexibility, core::Size const Cter_insert_flexibility);
-	
+
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief Advanced way to set flexibility and residues used for CCD
 	/// @details Will combine the movemaps for apply, and renumber everything. Flexible residues in multiple chains not recommended.
-	/// From the first bb flexible residue to the last will act as one giant CCD arm, 
-	///  using those residues for minimization and CCD that have bb true in movemap. 
+	/// From the first bb flexible residue to the last will act as one giant CCD arm,
+	///  using those residues for minimization and CCD that have bb true in movemap.
 	///  This can be amazing as you can use loop regions in various parts of your protein to help the graft complete.
 	/// Note: Will disregard flexibility settings, as the movemaps will be used as primary way to define flexibility.
 	/// May want to consider turning off the sampling step when passing crazy movemaps.
-	
+
 	virtual void set_movemaps(core::kinematics::MoveMapCOP const scaffold_mm, core::kinematics::MoveMapCOP const insert_mm);
 
 	/// @brief Neighbor distance for any repacking of side-chains.
 	void neighbor_dis(core::Real dis);
 	core::Real neighbor_dis() const;
-	
+
 public:
 	core::Size get_nterm_scaffold_flexibility();
-	
+
 	core::Size get_cterm_scaffold_flexibility() ;
 
 	core::Size get_nterm_insert_flexibility();
 	core::Size get_cterm_insert_flexibility();
-	
+
 	///@returns the Cterminal loop end (Last flexible residue).  Useful to use after insertion.
 	core::Size get_Cter_loop_end();
 
@@ -202,82 +202,82 @@ public:
 	get_loops() {
 		return *loops_;
 	};
-	
+
 	std::string
 	get_name() const;
-	
+
 protected:
-	
+
 	//ScoreFunction Setup
 	void
 	setup_scorefunction();
-    
-    	virtual void 
+
+	virtual void
 	set_default_fa_scorefunction();
-	
+
 	/// @brief Smooth version of Steven's original scorefunction used for grafting
 	virtual void
 	set_default_cen_scorefunction();
-	
+
 	void
 	set_loops(protocols::loops::LoopsOP loops);
-	
+
 protected:
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	// MOVEMAP + REGION +SCORE SETUP
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	
+
 	/// @brief sets up either the default movemap or a new combined movemap at apply time.  Updates regions as needed.
-	virtual void 
+	virtual void
 	setup_movemap_and_regions(core::pose::Pose & pose);
-	
+
 	/// @brief Sets up the default movemap
-	virtual void 
+	virtual void
 	set_default_movemap();
 
 	/// @brief Sets up the regions at apply using insert variables and flexibility.
-	virtual void 
+	virtual void
 	set_regions_from_flexibility();
-    
-	/// @brief Sets up region variables from the class movemap for the combined pose.  
-	virtual void 
+
+	/// @brief Sets up region variables from the class movemap for the combined pose.
+	virtual void
 	set_regions_from_movemap(core::pose::Pose & pose);
 
-	
+
 protected:
 	//Testing
-		
+
 	/// @brief TESTING ONLY Sets the protocol to 'randomize' the flexible residues before trying to graft.  This is used to test the protocol by grafting a piece of a protein back onto itself and looking at RMSD.
-	void 
+	void
 	set_test_control_mode(bool test_control_mode);
-	
+
 protected:
 	virtual protocols::simple_moves::MinMoverOP
 	setup_default_min_mover();
-	
+
 	virtual protocols::simple_moves::SmallMoverOP
 	setup_default_small_mover();
-	
+
 protected:
 	//Accessors and Mutators of private data for derived classes
 	void movemap(core::kinematics::MoveMapOP movemap);
 	core::kinematics::MoveMapOP movemap() const;
-	
+
 	void scaffold_movemap(core::kinematics::MoveMapCOP scaffold_movemap);
 	core::kinematics::MoveMapCOP scaffold_movemap() const;
-	
+
 	void insert_movemap(core::kinematics::MoveMapCOP insert_movemap);
 	core::kinematics::MoveMapCOP insert_movemap() const;
-	
+
 	core::scoring::ScoreFunctionOP cen_scorefxn() const;
 	core::scoring::ScoreFunctionOP fa_scorefxn() const;
-	
+
 	void use_default_movemap(bool use_default_movemap);
 	bool use_default_movemap() const;
-	
+
 	bool test_control_mode() const;
-	
+
 	Size Nter_scaffold_flexibility() const;
 	Size Cter_scaffold_flexibility() const;
 	Size Nter_insert_flexibility() const;
@@ -286,16 +286,16 @@ protected:
 	Size Nter_loop_end() const;
 	Size Cter_loop_start() const;
 	Size Cter_loop_end() const;
-	
+
 	std::string mintype() const;
 	Size cycles() const;
 	bool skip_sampling() const;
-	
+
 	TagCOP tag() const;
-	
+
 private:
 	core::Size cycles_;
-    
+
 	std::string mintype_;
 	bool skip_sampling_;//Option to skip the small mover sampling step.
 	bool test_control_mode_;//TESTING ONLY  Set to randomize the flexible residues before trying to graft.
@@ -303,30 +303,30 @@ private:
 	core::kinematics::MoveMapOP movemap_;
 	core::kinematics::MoveMapCOP scaffold_movemap_;
 	core::kinematics::MoveMapCOP insert_movemap_;
-	
+
 	core::scoring::ScoreFunctionOP cen_scorefxn_;
 	core::scoring::ScoreFunctionOP fa_scorefxn_;
-	
+
 	bool use_default_movemap_; //Instructs setup_movemap_and_regions what to do.
 	core::Size Nter_scaffold_flexibility_;
 	core::Size Nter_insert_flexibility_;
 	core::Size Nter_loop_start_;//First flexible residue
 	core::Size Nter_loop_end_;
-	
+
 	core::Size Cter_scaffold_flexibility_;
 	core::Size Cter_insert_flexibility_;
 	core::Size Cter_loop_start_;
 	core::Size Cter_loop_end_; //Last flexible residue
-	
+
 	bool stop_at_closure_;
 	bool final_repack_;
-	
+
 	core::Real neighbor_dis_;
 	TagCOP tag_; //This is so pdb_num can be parsed at apply time instead of construction time.
 	bool idealize_insert_;
-	
+
 	protocols::loops::LoopsOP loops_;
-	
+
 }; //Class AnchoredGraftMover
 
 

@@ -43,8 +43,8 @@ public:
 		utility::vector1< std::string > params_files;
 		ResidueTypeSetCOP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
-		if(!residue_set.has_name("ZNx")) params_files.push_back("protocols/ligand_docking/ZNx.params");
-		if(!residue_set.has_name("CP1")) params_files.push_back("protocols/ligand_docking/7cpa.params");
+		if ( !residue_set.has_name("ZNx") ) params_files.push_back("protocols/ligand_docking/ZNx.params");
+		if ( !residue_set.has_name("CP1") ) params_files.push_back("protocols/ligand_docking/7cpa.params");
 		residue_set.read_files(params_files);
 	}
 
@@ -102,13 +102,13 @@ public:
 		mover.chain("X");
 		mover.use_nbr( true );
 
-		for( core::Real pp(0); pp <= 25; pp += 5 ) {
+		for ( core::Real pp(0); pp <= 25; pp += 5 ) {
 			core::Vector v(pp,20.0,100.0);
 			mover.add_coords(v); //default
 		}
 
 		std::map< core::Size, core::Size > counts;
-		for( core::Size ii(1); ii <= 200; ++ii ) {
+		for ( core::Size ii(1); ii <= 200; ++ii ) {
 			mover.apply(pose);
 			core::Vector out( pose.residue(309).xyz("N1") );
 			// Deliberate conversion/rounding to eliminate noise
@@ -118,7 +118,7 @@ public:
 
 		TS_ASSERT_EQUALS( counts.size(), 6 ); // Only the specified coordinates
 		//Each should get roughly 200/6 = 33 items
-		for( core::Size pp(0); pp <= 25; pp += 5 ) {
+		for ( core::Size pp(0); pp <= 25; pp += 5 ) {
 			TS_ASSERT_LESS_THAN( 23, counts[pp] );
 			TS_ASSERT_LESS_THAN( counts[pp], 43 );
 		}
@@ -143,7 +143,7 @@ public:
 		core::Vector hv( 199.0, -96.0, 333.0 );
 		mover.add_coords_hash(hv, "aa2aff055d19bc32e483df7ff4ae08361a768931");
 
-		for( core::Size ii(1); ii <= 10; ++ii ) {
+		for ( core::Size ii(1); ii <= 10; ++ii ) {
 			mover.apply(pose);
 			core::Size jump_id = core::pose::get_jump_id_from_chain("X", pose);
 			core::Vector out( protocols::geometry::downstream_centroid_by_jump(pose, jump_id) );
@@ -170,7 +170,7 @@ public:
 		core::Vector hv( 199.0, -96.0, 333.0 );
 		mover.add_coords_hash(hv, "aa2aff055d19bc32e483df7ff4ae08361a768931");
 
-		for( core::Size ii(1); ii <= 10; ++ii ) {
+		for ( core::Size ii(1); ii <= 10; ++ii ) {
 			mover.apply(pose);
 			core::Size jump_id = core::pose::get_jump_id_from_chain("X", pose);
 			core::Vector out( protocols::geometry::downstream_centroid_by_jump(pose, jump_id) );
@@ -197,7 +197,7 @@ public:
 		core::Vector hv( 199.0, -96.0, 333.0 );
 		mover.add_coords_hash(hv, core::pose::get_sha1_hash_excluding_chain('X',pose) );
 
-		for( core::Size ii(1); ii <= 10; ++ii ) {
+		for ( core::Size ii(1); ii <= 10; ++ii ) {
 			mover.apply(pose);
 			core::Size jump_id = core::pose::get_jump_id_from_chain("X", pose);
 			core::Vector out( protocols::geometry::downstream_centroid_by_jump(pose, jump_id) );
@@ -220,7 +220,7 @@ public:
 		mover.parse_pdb_file("protocols/ligand_docking/ligand_pos.pdb");
 
 		std::map< core::Size, core::Size > counts;
-		for( core::Size ii(1); ii <= 100; ++ii ) {
+		for ( core::Size ii(1); ii <= 100; ++ii ) {
 			mover.apply(pose);
 			core::Size jump_id = core::pose::get_jump_id_from_chain("X", pose);
 			core::Vector out( protocols::geometry::downstream_centroid_by_jump(pose, jump_id) );
@@ -239,7 +239,7 @@ public:
 
 		TS_ASSERT_EQUALS( counts.size(), y_pos.size() ); // Only the specified coordinates
 		//Each should get roughly 100/4 = 25 items
-		for( core::Size pp(1); pp <= y_pos.size(); ++pp ) {
+		for ( core::Size pp(1); pp <= y_pos.size(); ++pp ) {
 			TS_ASSERT_LESS_THAN( 17, counts[y_pos[pp]] );
 			TS_ASSERT_LESS_THAN( counts[y_pos[pp]], 33 );
 		}
@@ -257,7 +257,7 @@ public:
 		mover.parse_pdb_file("protocols/ligand_docking/ligand_pos.pdb", "O1");
 
 		std::map< core::Size, core::Size > counts;
-		for( core::Size ii(1); ii <= 50; ++ii ) {
+		for ( core::Size ii(1); ii <= 50; ++ii ) {
 			mover.apply(pose);
 			core::Size jump_id = core::pose::get_jump_id_from_chain("X", pose);
 			core::Vector out( protocols::geometry::downstream_centroid_by_jump(pose, jump_id) );
@@ -276,7 +276,7 @@ public:
 
 		TS_ASSERT_EQUALS( counts.size(), y_pos.size() ); // Only the specified coordinates
 		//Each should get roughly 50/2 = 25 items
-		for( core::Size pp(1); pp <= y_pos.size(); ++pp ) {
+		for ( core::Size pp(1); pp <= y_pos.size(); ++pp ) {
 			TS_ASSERT_LESS_THAN( 17, counts[y_pos[pp]] );
 			TS_ASSERT_LESS_THAN( counts[y_pos[pp]], 33 );
 		}
@@ -294,7 +294,7 @@ public:
 		mover.parse_startfrom_file("protocols/ligand_docking/ligand_pos.json");
 
 		std::map< core::Size, core::Size > counts;
-		for( core::Size ii(1); ii <= 50; ++ii ) {
+		for ( core::Size ii(1); ii <= 50; ++ii ) {
 			mover.apply(pose);
 			core::Size jump_id = core::pose::get_jump_id_from_chain("X", pose);
 			core::Vector out( protocols::geometry::downstream_centroid_by_jump(pose, jump_id) );
@@ -313,7 +313,7 @@ public:
 
 		TS_ASSERT_EQUALS( counts.size(), x_pos.size() ); // Only the specified coordinates
 		//Each should get roughly 50/2 = 25 items
-		for( core::Size pp(1); pp <= x_pos.size(); ++pp ) {
+		for ( core::Size pp(1); pp <= x_pos.size(); ++pp ) {
 			TS_ASSERT_LESS_THAN( 17, counts[x_pos[pp]] );
 			TS_ASSERT_LESS_THAN( counts[x_pos[pp]], 33 );
 		}

@@ -151,28 +151,28 @@ public:
 
 	utility::vector1< Size > const & chain() const {return chain_;}
 
-// 	inline
-// 	bool
-// 	is_lower_terminus( Size const pos ) const
-// 	{
-// 		return ( ( pos == 1 ) ||
-// 						 ( std::abs( psi_[ pos-1 ] ) + std::abs( omega_[ pos-1 ] ) + std::abs( phi_[ pos   ] ) < Real(0.01) ) );
-// 	}
+	//  inline
+	//  bool
+	//  is_lower_terminus( Size const pos ) const
+	//  {
+	//   return ( ( pos == 1 ) ||
+	//        ( std::abs( psi_[ pos-1 ] ) + std::abs( omega_[ pos-1 ] ) + std::abs( phi_[ pos   ] ) < Real(0.01) ) );
+	//  }
 
-// 	inline
-// 	bool
-// 	is_upper_terminus( Size const pos ) const
-// 	{
-// 		return ( ( pos == size() ) ||
-// 						 ( std::abs( psi_[ pos   ] ) + std::abs( omega_[ pos   ] ) + std::abs( phi_[ pos+1 ] ) < 0.01 ) );
-// 	}
+	//  inline
+	//  bool
+	//  is_upper_terminus( Size const pos ) const
+	//  {
+	//   return ( ( pos == size() ) ||
+	//        ( std::abs( psi_[ pos   ] ) + std::abs( omega_[ pos   ] ) + std::abs( phi_[ pos+1 ] ) < 0.01 ) );
+	//  }
 
-// 	inline
-// 	bool
-// 	is_terminus( Size const pos ) const
-// 	{
-// 		return ( is_lower_terminus( pos ) || is_upper_terminus( pos ) );
-// 	}
+	//  inline
+	//  bool
+	//  is_terminus( Size const pos ) const
+	//  {
+	//   return ( is_lower_terminus( pos ) || is_upper_terminus( pos ) );
+	//  }
 
 
 	/// number of lines in Vall database
@@ -253,53 +253,53 @@ private:
 /// handles loading the vall if necessary
 void
 get_frags(
-					Size const nfrags,
-					std::string const & target_seq,
-					std::string const & target_ss,
-					Real const seq_weight,
-					Real const ss_weight,
-					bool const exclude_gly,
-					bool const exclude_pro,
-					bool const exclude_cis_peptides,
-					utility::vector1< Size > const & homs_to_exclude,
-					SingleResidueTorsionFragmentLibrary & library,
-					Real const bb_weight = 0.0,
-					std::string const & target_bb = std::string()
+	Size const nfrags,
+	std::string const & target_seq,
+	std::string const & target_ss,
+	Real const seq_weight,
+	Real const ss_weight,
+	bool const exclude_gly,
+	bool const exclude_pro,
+	bool const exclude_cis_peptides,
+	utility::vector1< Size > const & homs_to_exclude,
+	SingleResidueTorsionFragmentLibrary & library,
+	Real const bb_weight = 0.0,
+	std::string const & target_bb = std::string()
 );
 
 /// handles loading the vall if necessary
 void
 get_frags(
-					Size const nfrags,
-					std::string const & target_seq,
-					utility::vector1< std::map< char, core::Real > > const & target_ss, // HEL
-					Real const seq_weight,
-					Real const ss_weight,
-					bool const exclude_gly,
-					bool const exclude_pro,
-					bool const exclude_cis_peptides,
-					utility::vector1< Size > const & homs_to_exclude,
-					SingleResidueTorsionFragmentLibrary & library,
-					Real const bb_weight = 0.0,
-					std::string const & target_bb = std::string()
+	Size const nfrags,
+	std::string const & target_seq,
+	utility::vector1< std::map< char, core::Real > > const & target_ss, // HEL
+	Real const seq_weight,
+	Real const ss_weight,
+	bool const exclude_gly,
+	bool const exclude_pro,
+	bool const exclude_cis_peptides,
+	utility::vector1< Size > const & homs_to_exclude,
+	SingleResidueTorsionFragmentLibrary & library,
+	Real const bb_weight = 0.0,
+	std::string const & target_bb = std::string()
 );
 
 void
 get_cheating_frags(
-									 Size const nfrags,
-									 std::string const & target_seq,
-									 std::string const & target_ss,
-									 utility::vector1< Real > const & target_phi,
-									 utility::vector1< Real > const & target_psi,
-									 utility::vector1< Real > const & target_omega,
-									 Real const seq_weight,
-									 Real const ss_weight,
-									 Real const torsion_weight,
-									 Real const min_torsion_dev,
-									 Real const max_torsion_dev,
-									 utility::vector1< Size > const & homs_to_exclude,
-									 SingleResidueTorsionFragmentLibrary & library
-									 );
+	Size const nfrags,
+	std::string const & target_seq,
+	std::string const & target_ss,
+	utility::vector1< Real > const & target_phi,
+	utility::vector1< Real > const & target_psi,
+	utility::vector1< Real > const & target_omega,
+	Real const seq_weight,
+	Real const ss_weight,
+	Real const torsion_weight,
+	Real const min_torsion_dev,
+	Real const max_torsion_dev,
+	utility::vector1< Size > const & homs_to_exclude,
+	SingleResidueTorsionFragmentLibrary & library
+);
 
 
 void

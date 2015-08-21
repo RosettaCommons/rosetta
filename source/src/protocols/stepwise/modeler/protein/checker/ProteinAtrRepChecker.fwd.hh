@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/modeler/protein/checker/ProteinAtrRepChecker.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -23,11 +23,11 @@ namespace stepwise {
 namespace modeler {
 namespace protein {
 namespace checker {
-	
-	class ProteinAtrRepChecker;
-	typedef utility::pointer::shared_ptr< ProteinAtrRepChecker > ProteinAtrRepCheckerOP;
-	typedef utility::pointer::shared_ptr< ProteinAtrRepChecker const > ProteinAtrRepCheckerCOP;
-	
+
+class ProteinAtrRepChecker;
+typedef utility::pointer::shared_ptr< ProteinAtrRepChecker > ProteinAtrRepCheckerOP;
+typedef utility::pointer::shared_ptr< ProteinAtrRepChecker const > ProteinAtrRepCheckerCOP;
+
 } //checker
 } //protein
 } //modeler

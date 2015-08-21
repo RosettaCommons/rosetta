@@ -78,17 +78,17 @@ public:
 		pose::Pose const &,
 		ScoreFunction const &,
 		EnergyMap &
- ) const;
+	) const;
 
 	virtual
 	void
 	setup_for_minimizing_for_residue(
-																	 conformation::Residue const &,
-																	 pose::Pose const &,
-																	 ScoreFunction const &,
-																	 kinematics::MinimizerMapBase const &,
-																	 ResSingleMinimizationData &
-																	 ) const;
+		conformation::Residue const &,
+		pose::Pose const &,
+		ScoreFunction const &,
+		kinematics::MinimizerMapBase const &,
+		ResSingleMinimizationData &
+	) const;
 
 	virtual
 	void
@@ -124,13 +124,13 @@ public:
 	// virtual
 	// void
 	// eval_atom_derivative(
-	// 	id::AtomID const & atom_id,
-	// 	pose::Pose const & pose,
-	// 	kinematics::DomainMap const & domain_map,
-	// 	ScoreFunction const & scorefxn,
-	// 	EnergyMap const & weights,
-	// 	Vector & F1,
-	// 	Vector & F2
+	//  id::AtomID const & atom_id,
+	//  pose::Pose const & pose,
+	//  kinematics::DomainMap const & domain_map,
+	//  ScoreFunction const & scorefxn,
+	//  EnergyMap const & weights,
+	//  Vector & F1,
+	//  Vector & F2
 	// ) const;
 
 	virtual
@@ -151,56 +151,56 @@ public:
 	virtual
 	void
 	residue_pair_energy_ext(
-											conformation::Residue const & rsd1,
-											conformation::Residue const & rsd2,
-											ResPairMinimizationData const & min_data,
-											pose::Pose const & pose,
-											ScoreFunction const &,
-											EnergyMap & emap
-													) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		ResPairMinimizationData const & min_data,
+		pose::Pose const & pose,
+		ScoreFunction const &,
+		EnergyMap & emap
+	) const;
 
 private:
 
 	void
 	residue_pair_energy_one_way(
-															conformation::Residue const & rsd1, // The other residue
-															conformation::Residue const & rsd2, // The Mg(2+)
-															pose::Pose const & pose,
-															EnergyMap & emap
-															) const;
+		conformation::Residue const & rsd1, // The other residue
+		conformation::Residue const & rsd2, // The Mg(2+)
+		pose::Pose const & pose,
+		EnergyMap & emap
+	) const;
 
 	void
 	eval_residue_pair(
-										conformation::Residue const & ires,
-										conformation::Residue const & jres,
-										ResPairMinimizationData const & min_data,
-										pose::Pose const & pose, // provides context
-										EnergyMap & emap, // fill score values in here.
-										EnergyMap const & weights, // for derivs.
-										utility::vector1< DerivVectorPair > & r1_atom_derivs,
-										utility::vector1< DerivVectorPair > & r2_atom_derivs) const;
+		conformation::Residue const & ires,
+		conformation::Residue const & jres,
+		ResPairMinimizationData const & min_data,
+		pose::Pose const & pose, // provides context
+		EnergyMap & emap, // fill score values in here.
+		EnergyMap const & weights, // for derivs.
+		utility::vector1< DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs) const;
 
 	void
 	eval_mg_interaction(
-											 conformation::Residue const & rsd1 /* other residue */,
-											 Size const atomno1 /*other atomno */,
-											 conformation::Residue const & rsd2 /* mg residue */,
-											 pose::Pose const & pose, // provides context
-											 EnergyMap & emap,
-											 EnergyMap const & weights,
-											 utility::vector1< DerivVectorPair > & r1_atom_derivs /* other residue */,
-											 utility::vector1< DerivVectorPair > & r2_atom_derivs /* mg residue */
-											 ) const;
+		conformation::Residue const & rsd1 /* other residue */,
+		Size const atomno1 /*other atomno */,
+		conformation::Residue const & rsd2 /* mg residue */,
+		pose::Pose const & pose, // provides context
+		EnergyMap & emap,
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs /* other residue */,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs /* mg residue */
+	) const;
 
 	void
 	eval_mg_residue_pair_derivatives(
-																	 conformation::Residue const & rsd1 /* other residue */,
-																	 conformation::Residue const & rsd2 /* mg residue */,
-																	 pose::Pose const & pose, // provides context
-																	 EnergyMap const & weights,
-																	 utility::vector1< DerivVectorPair > & r1_atom_derivs /* other residue */,
-																	 utility::vector1< DerivVectorPair > & r2_atom_derivs /* mg residue */
-																	 ) const;
+		conformation::Residue const & rsd1 /* other residue */,
+		conformation::Residue const & rsd2 /* mg residue */,
+		pose::Pose const & pose, // provides context
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs /* other residue */,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs /* mg residue */
+	) const;
 
 	virtual
 	core::Size version() const;

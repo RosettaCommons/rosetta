@@ -55,13 +55,13 @@ public:
 	virtual ~JobOutputter();
 
 	/// @brief this function is meant to be redefined in child classes to allow for flushing of memory buffers.
-/// Here's the long version: The SilentFileJobOutputter wanted to buffer output, but needed to guaruntee that
-/// the output would be flushed at end of runtime.  The original implementation was to A) bend over backward to ensure
-/// that the destructor was run (JobOutputter lives inside static JobDistributor, which was previously not destructed
-/// because it's static) and B) flush the buffers in the destructor.  This caused a problem because the buffer-flushing
-/// tried to use the Tracers, which had already been destructed...boom crash.
-///
-/// 	New solution: re-forbid use of destructors within the static JobDistributor system, and create a flush function to force this stuff out.  So here it is:
+	/// Here's the long version: The SilentFileJobOutputter wanted to buffer output, but needed to guaruntee that
+	/// the output would be flushed at end of runtime.  The original implementation was to A) bend over backward to ensure
+	/// that the destructor was run (JobOutputter lives inside static JobDistributor, which was previously not destructed
+	/// because it's static) and B) flush the buffers in the destructor.  This caused a problem because the buffer-flushing
+	/// tried to use the Tracers, which had already been destructed...boom crash.
+	///
+	///  New solution: re-forbid use of destructors within the static JobDistributor system, and create a flush function to force this stuff out.  So here it is:
 	virtual void flush();
 
 	//////////////////////////////creating output functions/////////////////////////////////////////
@@ -100,15 +100,15 @@ public:
 
 	///////////////////////////////// evaluator interface ////////////////////////////////////////////
 public:
-  void add_evaluation( evaluation::PoseEvaluatorOP );
+	void add_evaluation( evaluation::PoseEvaluatorOP );
 
-  void set_evaluators( evaluation::PoseEvaluators const& );
+	void set_evaluators( evaluation::PoseEvaluators const& );
 
-  void clear_evaluators();
+	void clear_evaluators();
 
-  evaluation::PoseEvaluatorsCOP evaluators() const;
+	evaluation::PoseEvaluatorsCOP evaluators() const;
 
-  void evaluate( core::pose::Pose &pose, std::string tag, core::io::silent::SilentStruct &pss) const;
+	void evaluate( core::pose::Pose &pose, std::string tag, core::io::silent::SilentStruct &pss) const;
 
 	/// @brief call all output_observers
 	void call_output_observers( core::pose::Pose const& pose, JobOP job ) const;
@@ -116,7 +116,7 @@ public:
 
 private:
 
-  evaluation::PoseEvaluatorsOP evaluators_;
+	evaluation::PoseEvaluatorsOP evaluators_;
 
 	//////////////////////////////// end evaluator interface /////////////////////////////////////////
 

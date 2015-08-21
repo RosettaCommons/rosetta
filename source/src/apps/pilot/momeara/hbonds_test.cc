@@ -70,37 +70,38 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	// initialize
-	devel::init(argc, argv);
+		// initialize
+		devel::init(argc, argv);
 
-	// concatenate -s and -l flags together to get total list of PDB files
-	// (This was taken from Ian's early job distributor, thanks Ian)
-	std::vector< FileName > pdb_file_names;
-	if ( option[ in::file::s ].active() )
-		pdb_file_names = option[ in::file::s ]().vector(); // make a copy (-s)
-	std::vector< FileName > list_file_names;
-	if ( option[ in::file::l ].active() )
-		list_file_names = option[ in::file::l ]().vector(); // make a copy (-l)
-
-	for(std::vector< FileName >::iterator i = list_file_names.begin(), i_end = list_file_names.end(); i != i_end; ++i) {
-		std::string filename( i->name() );
-		std::ifstream data( filename.c_str() );
-		if ( !data.good() ) {
-			utility_exit_with_message( "Unable to open file: " + filename + '\n' );
+		// concatenate -s and -l flags together to get total list of PDB files
+		// (This was taken from Ian's early job distributor, thanks Ian)
+		std::vector< FileName > pdb_file_names;
+		if ( option[ in::file::s ].active() ) {
+			pdb_file_names = option[ in::file::s ]().vector(); // make a copy (-s)
 		}
-		std::string line;
-		while( getline(data, line) ) {
-			pdb_file_names.push_back( FileName(line) );
+		std::vector< FileName > list_file_names;
+		if ( option[ in::file::l ].active() ) {
+			list_file_names = option[ in::file::l ]().vector(); // make a copy (-l)
 		}
-		data.close();
-	}
+
+		for ( std::vector< FileName >::iterator i = list_file_names.begin(), i_end = list_file_names.end(); i != i_end; ++i ) {
+			std::string filename( i->name() );
+			std::ifstream data( filename.c_str() );
+			if ( !data.good() ) {
+				utility_exit_with_message( "Unable to open file: " + filename + '\n' );
+			}
+			std::string line;
+			while ( getline(data, line) ) {
+				pdb_file_names.push_back( FileName(line) );
+			}
+			data.close();
+		}
 
 
-	// run dump_hbonds for each name in list
-	for(std::vector< FileName >::iterator i = pdb_file_names.begin(), i_end = pdb_file_names.end(); i != i_end; ++i)
-	 {
-		dump_hbonds( i->name() );
-	}
+		// run dump_hbonds for each name in list
+		for ( std::vector< FileName >::iterator i = pdb_file_names.begin(), i_end = pdb_file_names.end(); i != i_end; ++i ) {
+			dump_hbonds( i->name() );
+		}
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
@@ -128,8 +129,7 @@ void dump_hbonds( std::string pdb_filename )
 	pose.update_residue_neighbors();
 	fill_hbond_set( pose, false, set1, false );
 	//note that the list of HBonds is indexed starting at 1
-	for (Size i = 1; i<= set1.nhbonds(); i++)
-	{
+	for ( Size i = 1; i<= set1.nhbonds(); i++ ) {
 		HBond bond = set1.hbond( i );
 		//need to access donor and acc Residues as well as ints
 		int hatm = bond.don_hatm();
@@ -159,8 +159,7 @@ void dump_hbonds( std::string pdb_filename )
 		std::string donResName = donRes.name3();
 		std::string accResName = accRes.name3();
 		bool isProtein = true;
-		if ( ! donRes.is_protein() || ! accRes.is_protein() )
-		{
+		if ( ! donRes.is_protein() || ! accRes.is_protein() ) {
 			isProtein = false;
 		}
 
@@ -170,66 +169,49 @@ void dump_hbonds( std::string pdb_filename )
 		const std::string accElement = accAtomType.element();
 		const std::string & donAtomName = donRes.atom_name( datm );
 		const std::string & accAtomName = accRes.atom_name( aatm );
-		int donElemNum, accElemNum;	//usual atomic numbers from periodic table
-		if ( ! donElement.compare( "O" ) )
-		{
+		int donElemNum, accElemNum; //usual atomic numbers from periodic table
+		if ( ! donElement.compare( "O" ) ) {
 			donElemNum = 8;
+		} else if ( ! donElement.compare("N") ) {
+			donElemNum = 7;
+		} else if ( ! donElement.compare("S") ) {
+			donElemNum = 16;
+		} else {
+			donElemNum = -1;
+		}
+
+		if ( ! accElement.compare( "O" ) ) {
+			accElemNum = 8;
+		} else if ( ! accElement.compare("N") ) {
+			accElemNum = 7;
+		} else if ( ! donElement.compare("S") ) {
+			accElemNum = 16;
+		} else {
+			accElemNum = -1;
+		}
+
+		/*
+		std::string donor_back;
+		if ( bond.don_hatm_is_protein_backbone() )
+		{
+		donor_back = "donBK";
 		}
 		else
-			if ( ! donElement.compare("N") )
-			{
-				donElemNum = 7;
-			}
-			else if ( ! donElement.compare("S") )
-			{
-				donElemNum = 16;
-			}
-			else
-			{
-				donElemNum = -1;
-			}
-
-			if ( ! accElement.compare( "O" ) )
-			{
-				accElemNum = 8;
-			}
-			else
-				if ( ! accElement.compare("N") )
-				{
-					accElemNum = 7;
-				}
-				else if ( ! donElement.compare("S") )
-				{
-					accElemNum = 16;
-				}
-				else
-				{
-					accElemNum = -1;
-				}
-
-/*
-		std::string donor_back;
-			if ( bond.don_hatm_is_protein_backbone() )
-			{
-					donor_back = "donBK";
-			}
-			else
-			{
-					donor_back = "donSC";
-			}
-			std::string acc_back;
-			if ( bond.acc_atm_is_protein_backbone() )
-			{
-					acc_back = "accBK";
-			}
-			else
-			{
-					acc_back = "accSC";
-			}
-*/
-
-		if ( ( set1.allow_hbond( i ) && isProtein ) || ( set1.allow_hbond( i ) && allowNonProtein ))		//make sure it's not excluded
 		{
+		donor_back = "donSC";
+		}
+		std::string acc_back;
+		if ( bond.acc_atm_is_protein_backbone() )
+		{
+		acc_back = "accBK";
+		}
+		else
+		{
+		acc_back = "accSC";
+		}
+		*/
+
+		if ( ( set1.allow_hbond( i ) && isProtein ) || ( set1.allow_hbond( i ) && allowNonProtein ) ) {  //make sure it's not excluded
 			fout << type << "\t";
 			fout << datm_xyz.x()         << "\t" << datm_xyz.y()         << "\t" << datm_xyz.z()         << "\t";
 			fout << hatm_xyz.x()         << "\t" << hatm_xyz.y()         << "\t" << hatm_xyz.z()         << "\t";
@@ -251,9 +233,9 @@ void dump_hbonds( std::string pdb_filename )
 			fout << deriv.h_deriv.f2()[ 0 ] << "\t" << deriv.h_deriv.f2()[ 1] << "\t" << deriv.h_deriv.f2()[ 2];
 			fout << "\t" << pdb_filename;
 			fout << "\n";
-		}	//close if ( set1.allow_hbond( i ) )
+		} //close if ( set1.allow_hbond( i ) )
 
-	}	//close for
+	} //close for
 	fout.close();
 }
 

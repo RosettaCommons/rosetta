@@ -23,7 +23,7 @@ namespace protocols {
 namespace features {
 namespace strand_assembly {
 
-using namespace core; 
+using namespace core;
 using namespace std;
 
 Real
@@ -49,17 +49,17 @@ cal_dis_angle_to_find_sheet( // calculate distance and angle to find sheet
 
 pair<Real, Real>
 cal_min_avg_dis_between_sheets_by_cen_res (
-	StructureID	struct_id,
-	utility::sql_database::sessionOP	db_session,
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
 	core::pose::Pose & dssp_pose,
-	utility::vector1<Size>	all_distinct_sheet_ids,
-	Size	min_num_strands_in_sheet_);
+	utility::vector1<Size> all_distinct_sheet_ids,
+	Size min_num_strands_in_sheet_);
 
 
 pair<float, float>
 cal_min_avg_dis_between_two_sheets_by_cen_res (
-	StructureID	struct_id,
-	utility::sql_database::sessionOP	db_session,
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
 	core::pose::Pose & dssp_pose,
 	Size sheet_id_1,
 	Size sheet_id_2);
@@ -67,37 +67,37 @@ cal_min_avg_dis_between_two_sheets_by_cen_res (
 
 float
 cal_min_dis_between_sheets_by_all_res (
-	StructureID	struct_id,
-	utility::sql_database::sessionOP	db_session,
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
 	core::pose::Pose & dssp_pose,
-	utility::vector1<Size>	all_distinct_sheet_ids);
+	utility::vector1<Size> all_distinct_sheet_ids);
 
 
 float
 cal_min_dis_between_two_sheets_by_all_res (
-	StructureID	struct_id,
-	utility::sql_database::sessionOP	db_session,
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
 	core::pose::Pose & dssp_pose,
 	Size sheet_id_1,
 	Size sheet_id_2);
 
 Size
 cal_num_of_sheets_that_surround_this_sheet (
-	StructureID	struct_id,
-	utility::sql_database::sessionOP	db_session,
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
 	core::pose::Pose & dssp_pose,
-	utility::vector1<Size>	all_distinct_sheet_ids,
+	utility::vector1<Size> all_distinct_sheet_ids,
 	Size sheet_id,
-	Size	min_num_strands_in_sheet_,
-	Real	inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_);
+	Size min_num_strands_in_sheet_,
+	Real inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_);
 
 float
 cal_shortest_dis_between_facing_aro_in_sw (
-	StructureID	struct_id,
-	utility::sql_database::sessionOP	db_session,
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
 	core::pose::Pose const & pose,
-	utility::vector1<Size>	all_distinct_sheet_ids,
-	Size	min_num_strands_in_sheet_);
+	utility::vector1<Size> all_distinct_sheet_ids,
+	Size min_num_strands_in_sheet_);
 
 
 string
@@ -144,11 +144,11 @@ check_PA(
 	Size residue_end);
 
 bool
-check_strand_too_closeness	(
+check_strand_too_closeness (
 	core::pose::Pose const & pose,
 	SandwichFragment strand_i,
 	SandwichFragment strand_j,
-	Real	min_inter_sheet_dis_CA_CA_);
+	Real min_inter_sheet_dis_CA_CA_);
 
 
 Real
@@ -157,8 +157,8 @@ check_sw_by_dis(
 	SandwichFragment strand_i,
 	SandwichFragment strand_j,
 	bool antiparalell,
-	Real	min_sheet_dis_,
-	Real	max_sheet_dis_);
+	Real min_sheet_dis_,
+	Real max_sheet_dis_);
 
 bool
 check_whether_hairpin_connects_short_strand(
@@ -206,8 +206,8 @@ check_whether_sheets_are_connected_with_near_bb_atoms(
 	utility::sql_database::sessionOP db_session,
 	core::pose::Pose & dssp_pose,
 	Size sw_can_by_sh_id,
-	Real	min_N_O_dis_between_two_sheets_,
-	Real	min_N_H_O_angle_between_two_sheets_);
+	Real min_N_O_dis_between_two_sheets_,
+	Real min_N_H_O_angle_between_two_sheets_);
 
 bool
 check_whether_strand_i_is_in_sheet(
@@ -218,7 +218,7 @@ check_whether_strand_i_is_in_sheet(
 vector<Size>
 count_AA_w_direction(
 	StructureID struct_id,
-	utility::sql_database::sessionOP	db_session,
+	utility::sql_database::sessionOP db_session,
 	core::pose::Pose const & pose,
 	core::pose::Pose const & pose_w_center_000,
 	Size sw_can_by_sh_id,
@@ -235,7 +235,7 @@ count_AA_wo_direction(
 string
 determine_core_heading_surface_heading_by_distance(
 	core::pose::Pose const & pose_w_center_000,
-	Size	residue_num);
+	Size residue_num);
 
 string
 determine_heading_direction_by_vector
@@ -247,24 +247,24 @@ determine_heading_direction_by_vector
 	Size sheet_id,
 	Size residue_begin,
 	Size residue_end,
-	Size	ii // residue_number
+	Size ii // residue_number
 );
 
 Size
-find_sheet	(
+find_sheet (
 	core::pose::Pose const & pose,
 	SandwichFragment strand_i,
 	SandwichFragment strand_j,
 	bool antiparalell, // if false, try to find a sheet in parallel way
-	Real	min_CA_CA_dis_,
-	Real	max_CA_CA_dis_,
-	Real	min_C_O_N_angle_
-	);
+	Real min_CA_CA_dis_,
+	Real max_CA_CA_dis_,
+	Real min_C_O_N_angle_
+);
 
 vector<Size>
 get_all_residues_in_this_sheet(
 	StructureID struct_id,
-	utility::sql_database::sessionOP	db_session,
+	utility::sql_database::sessionOP db_session,
 	Size sheet_id);
 
 
@@ -278,7 +278,7 @@ get_all_strands_in_sheet_i(
 vector<Size>
 get_aro_residues_in_this_sheet(
 	StructureID struct_id,
-	utility::sql_database::sessionOP	db_session,
+	utility::sql_database::sessionOP db_session,
 	core::pose::Pose const & pose,
 	Size sheet_id);
 
@@ -293,8 +293,8 @@ get_avg_dis_CA_CA(
 	Size j_resnum_1,
 	Size j_resnum_2,
 	Size j_resnum_3,
-	Real	min_sheet_dis_,
-	Real	max_sheet_dis_);
+	Real min_sheet_dis_,
+	Real max_sheet_dis_);
 
 Real
 get_avg_dis_strands(
@@ -305,7 +305,7 @@ get_avg_dis_strands(
 vector<Size>
 get_central_residues_in_other_sheet(
 	StructureID struct_id,
-	utility::sql_database::sessionOP	db_session,
+	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_id,
 	Size sheet_id);
 
@@ -313,7 +313,7 @@ vector<Size>
 //get_cen_residues_in_this_sheet
 get_central_residues_in_this_sheet(
 	StructureID struct_id,
-	utility::sql_database::sessionOP	db_session,
+	utility::sql_database::sessionOP db_session,
 	Size sheet_id);
 
 pair<int, int>
@@ -322,14 +322,14 @@ get_central_residues_in_each_of_two_edge_strands(
 	utility::sql_database::sessionOP db_session,
 	core::pose::Pose const & pose,
 	Size sheet_i,
-	Real	min_CA_CA_dis_,
-	Real	max_CA_CA_dis_);
+	Real min_CA_CA_dis_,
+	Real max_CA_CA_dis_);
 
 utility::vector1<Size>
 get_chain_B_resNum(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	Size	sw_can_by_sh_id);
+	Size sw_can_by_sh_id);
 
 
 Real
@@ -377,7 +377,7 @@ get_full_strands_from_sheet(
 
 utility::vector1<Size>
 get_list_of_residues_in_sheet_i(
-	utility::vector1<SandwichFragment>	all_strands_in_sheet_i);
+	utility::vector1<SandwichFragment> all_strands_in_sheet_i);
 
 
 Size
@@ -401,7 +401,7 @@ Size
 get_num_of_sheets_that_surround_this_sheet(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	Size	sheet_id);
+	Size sheet_id);
 
 Size
 get_num_strands_in_this_sheet(
@@ -463,7 +463,7 @@ utility::vector1<Size>
 get_vec_distinct_sheet_id(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	Size	sw_can_by_sh_id);
+	Size sw_can_by_sh_id);
 
 utility::vector1<Size>
 get_vec_of_sw_can_by_sh_id(
@@ -476,7 +476,7 @@ get_vector_of_strand_AA_distribution (
 	utility::sql_database::sessionOP db_session,
 	string heading_direction, // like core_heading, surface_heading
 	string strand_location // like edge_strand, core_strand
-	);
+);
 
 Size
 identify_sheet_id_by_residue_end(
@@ -486,15 +486,15 @@ identify_sheet_id_by_residue_end(
 
 // See whether this strand is an edge strand without 'sheet_antiparallel' info
 string
-is_this_strand_at_edge	(
+is_this_strand_at_edge (
 	core::pose::Pose const & pose,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	Size	sheet_id,
-	Size	residue_begin,
-	Size	residue_end,
-	Real	min_CA_CA_dis_,
-	Real	max_CA_CA_dis_);
+	Size sheet_id,
+	Size residue_begin,
+	Size residue_end,
+	Real min_CA_CA_dis_,
+	Real max_CA_CA_dis_);
 
 
 string
@@ -510,13 +510,13 @@ judge_facing(
 	core::pose::Pose const & pose,
 	Size sheet_i,
 	Size sheet_j,
-	Real	min_CA_CA_dis_,
-	Real	max_CA_CA_dis_,
-	Real	min_sheet_angle_by_four_term_cen_res_,
-	Real	max_sheet_angle_by_four_term_cen_res_,
-	Real	min_sheet_torsion_cen_res_,
-	Real	max_sheet_torsion_cen_res_,
-	Real	max_sheet_angle_with_cen_res_in_smaller_sheet_and_two_terminal_res_in_larger_sheet_);
+	Real min_CA_CA_dis_,
+	Real max_CA_CA_dis_,
+	Real min_sheet_angle_by_four_term_cen_res_,
+	Real max_sheet_angle_by_four_term_cen_res_,
+	Real min_sheet_torsion_cen_res_,
+	Real max_sheet_torsion_cen_res_,
+	Real max_sheet_angle_with_cen_res_in_smaller_sheet_and_two_terminal_res_in_larger_sheet_);
 
 
 void process_decoy(
@@ -525,7 +525,7 @@ void process_decoy(
 );
 
 string
-report_heading_directions_of_all_AA_in_a_strand	(
+report_heading_directions_of_all_AA_in_a_strand (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	core::pose::Pose const & pose,
@@ -538,9 +538,9 @@ utility::vector1<int>
 retrieve_residue_num_of_rkde(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	Size	sw_can_by_sh_id,
-	string	dssp_code,
-	string	heading_direction);
+	Size sw_can_by_sh_id,
+	string dssp_code,
+	string heading_direction);
 
 float
 round_to_float(
@@ -557,7 +557,7 @@ round_to_Size(
 string
 see_edge_or_core_or_loop_or_short_edge(
 	StructureID struct_id,
-	utility::sql_database::sessionOP	db_session,
+	utility::sql_database::sessionOP db_session,
 	Size residue_num);
 
 bool
@@ -567,9 +567,9 @@ see_whether_sheets_can_be_combined(
 	core::pose::Pose const & pose,
 	Size i_sheet,
 	Size j_sheet,
-	Real	min_CA_CA_dis_,
-	Real	max_CA_CA_dis_,
-	Real	min_C_O_N_angle_);
+	Real min_CA_CA_dis_,
+	Real max_CA_CA_dis_,
+	Real min_C_O_N_angle_);
 
 string
 see_whether_sheet_is_antiparallel(
@@ -577,9 +577,9 @@ see_whether_sheet_is_antiparallel(
 	utility::sql_database::sessionOP db_session,
 	core::pose::Pose const & pose,
 	Size i_sheet,
-	Real	min_CA_CA_dis_,
-	Real	max_CA_CA_dis_,
-	Real	min_C_O_N_angle_);
+	Real min_CA_CA_dis_,
+	Real max_CA_CA_dis_,
+	Real min_C_O_N_angle_);
 
 bool
 see_whether_this_sw_has_SS_bond(

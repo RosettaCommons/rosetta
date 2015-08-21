@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //
-/// @file 
-/// @brief 
+/// @file
+/// @brief
 /// @author Neil King ( neilking@uw.edu )
 
 // Unit headers
@@ -71,16 +71,16 @@ TaskAwareSymMinMoverCreator::mover_name()
 // -------------  Mover Creator -------------
 
 TaskAwareSymMinMover::TaskAwareSymMinMover() :
-  min_chi_(false),
-  min_bb_(false),
-  min_rb_(false),
-  min_type_("dfpmin_armijo_nonmonotone"),
-  tolerance_(1e-5),
+	min_chi_(false),
+	min_bb_(false),
+	min_rb_(false),
+	min_type_("dfpmin_armijo_nonmonotone"),
+	tolerance_(1e-5),
 	minmover_(/* 0 */),
 	factory_(/* 0 */),
 	designable_only_(true)
 { }
-	
+
 // constructor with TaskFactory
 TaskAwareSymMinMover::TaskAwareSymMinMover(
 	protocols::simple_moves::MinMoverOP minmover_in,
@@ -94,30 +94,30 @@ TaskAwareSymMinMover::TaskAwareSymMinMover(
 	minmover_(minmover_in),
 	factory_(factory_in),
 	designable_only_(true)
-	{}
-	//protocols::simple_moves::TaskAwareMinMover(
-	//	minmover_in, factory_in) {}
+{}
+//protocols::simple_moves::TaskAwareMinMover(
+// minmover_in, factory_in) {}
 
 TaskAwareSymMinMover::TaskAwareSymMinMover(const TaskAwareSymMinMover& rval) :
-//	protocols::moves::Mover(),
+	// protocols::moves::Mover(),
 	protocols::simple_moves::TaskAwareMinMover(), //Jeliazkov experimenat
-  scorefxn_( rval.scorefxn_ ),
-  min_chi_( rval.min_chi_),
-  min_bb_( rval.min_bb_),
-  min_rb_( rval.min_rb_),
-  min_type_( rval.min_type_),
-  tolerance_( rval.tolerance_),
+	scorefxn_( rval.scorefxn_ ),
+	min_chi_( rval.min_chi_),
+	min_bb_( rval.min_bb_),
+	min_rb_( rval.min_rb_),
+	min_type_( rval.min_type_),
+	tolerance_( rval.tolerance_),
 	minmover_( rval.minmover_ ),
-  factory_( rval.factory_),
+	factory_( rval.factory_),
 	designable_only_( rval.designable_only_ )
 { }
 
-protocols::moves::MoverOP 
+protocols::moves::MoverOP
 TaskAwareSymMinMover::clone() const {
 	return protocols::moves::MoverOP( new TaskAwareSymMinMover( *this ) );
 }
 
-protocols::moves::MoverOP 
+protocols::moves::MoverOP
 TaskAwareSymMinMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new TaskAwareSymMinMover() );
 }
@@ -138,12 +138,12 @@ TaskAwareSymMinMover::apply(Pose & pose) {
 	core::conformation::symmetry::SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 	core::Size nres_monomer = sym_info->num_independent_residues();
 	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
-  if ( factory_ != 0 ) {
-    task = factory_->create_task_and_apply_taskoperations( pose );
-  } else {
+	if ( factory_ != 0 ) {
+		task = factory_->create_task_and_apply_taskoperations( pose );
+	} else {
 		TR.Warning << "Warning: You have not provided any TaskOperations. A default will be used." << std::endl;
 	}
-	for (core::Size i = 1; i <= nres_monomer; i++) {
+	for ( core::Size i = 1; i <= nres_monomer; i++ ) {
 		if ( designable_only_ ) {
 			if ( task->design_residue( i ) ) {
 				movemap->set_bb (i, min_bb_);
@@ -163,28 +163,28 @@ TaskAwareSymMinMover::apply(Pose & pose) {
 	m1.apply(pose);
 
 	// If rigid body minimization is desired, minimize again with that
-  if (min_rb_) {
-    movemap->set_jump(true);
-    core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
-    protocols::simple_moves::symmetry::SymMinMover m2( movemap, scorefxn_, min_type_, tolerance_, true, false, false );
-    m2.apply(pose);
-  }
+	if ( min_rb_ ) {
+		movemap->set_jump(true);
+		core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
+		protocols::simple_moves::symmetry::SymMinMover m2( movemap, scorefxn_, min_type_, tolerance_, true, false, false );
+		m2.apply(pose);
+	}
 
 }
 
-void 
+void
 TaskAwareSymMinMover::parse_my_tag( utility::tag::TagCOP tag,
-										 basic::datacache::DataMap & data,
-										 protocols::filters::Filters_map const &,
-										 protocols::moves::Movers_map const &,
-										 core::pose::Pose const & ) {
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & ) {
 
 	scorefxn_name_ = tag->getOption< std::string >( "scorefxn", "score12_symm" );
 	min_chi_ = tag->getOption< bool >( "chi", true );
 	min_bb_ = tag->getOption< bool >( "bb", false );
 	min_rb_ = tag->getOption< bool >( "rb", false );
-  min_type_ = tag->getOption< std::string >( "type", "dfpmin_armijo_nonmonotone" );
-  tolerance_ = tag->getOption< core::Real >( "tolerance", 1e-5 );
+	min_type_ = tag->getOption< std::string >( "type", "dfpmin_armijo_nonmonotone" );
+	tolerance_ = tag->getOption< core::Real >( "tolerance", 1e-5 );
 	designable_only_ = tag->getOption< bool >( "designable_only", true );
 	// Get the ScoreFunction and TaskOperations from the basic::datacache::DataMap
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data, scorefxn_name_ );
@@ -193,9 +193,9 @@ TaskAwareSymMinMover::parse_my_tag( utility::tag::TagCOP tag,
 }
 
 void TaskAwareSymMinMover::parse_def( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const & score_fxns,
-		utility::lua::LuaObject const & tasks,
-		protocols::moves::MoverCacheSP ){
+	utility::lua::LuaObject const & score_fxns,
+	utility::lua::LuaObject const & tasks,
+	protocols::moves::MoverCacheSP ){
 	scorefxn_name_ = def["scorefxn"] ? def["scorefxn"].to<std::string>() : "score12_symm";
 	min_chi_ = def["chi"] ? def["chi"].to<bool>() : true;
 	min_bb_ = def["bb"] ? def["bb"].to<bool>() : false;

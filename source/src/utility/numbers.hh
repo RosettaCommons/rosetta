@@ -24,59 +24,59 @@
 #ifdef WIN32
 #include <float.h>
 namespace std {
-	inline int isnan(double x) { return _isnan(x); }
-    inline int isinf(double x) { return !_finite(x); }
+inline int isnan(double x) { return _isnan(x); }
+inline int isinf(double x) { return !_finite(x); }
 
 }
-	inline double round(double x) { return x < 0.0 ? ceil(x - 0.5) : floor(x + 0.5); }
-    inline double copysign(double x, double y) { return _copysign(x, y); }
+inline double round(double x) { return x < 0.0 ? ceil(x - 0.5) : floor(x + 0.5); }
+inline double copysign(double x, double y) { return _copysign(x, y); }
 #endif
 
 namespace utility {
 
-	/// @brief Get a numeric value for Size that represents an "undefined" value
-	inline
-	platform::Size get_undefined_size() {
-		return std::numeric_limits< platform::Size >::max(); // Choice of value same as the BCL (Meiler Lab)
-	}
+/// @brief Get a numeric value for Size that represents an "undefined" value
+inline
+platform::Size get_undefined_size() {
+	return std::numeric_limits< platform::Size >::max(); // Choice of value same as the BCL (Meiler Lab)
+}
 
-	/// @brief Check if a Size is undefined (i.e has the same value as utility::get_undefined_size() )
-	inline
-	bool is_undefined( platform::Size const & val) {
-		return val == get_undefined_size();
-	}
+/// @brief Check if a Size is undefined (i.e has the same value as utility::get_undefined_size() )
+inline
+bool is_undefined( platform::Size const & val) {
+	return val == get_undefined_size();
+}
 
-	/// @brief Get a numeric value for Real that represents an "undefined" value
-	inline
-	platform::Real get_undefined_real() {
-		return std::numeric_limits< platform::Real >::quiet_NaN(); // Choice of value same as the BCL (Meiler Lab)
-	}
+/// @brief Get a numeric value for Real that represents an "undefined" value
+inline
+platform::Real get_undefined_real() {
+	return std::numeric_limits< platform::Real >::quiet_NaN(); // Choice of value same as the BCL (Meiler Lab)
+}
 
-	/// @brief Check if a Real is undefined (i.e has the same value as utility::get_undefined_real() )
-	inline
-	bool is_undefined( platform::Real const & val) {
-		return std::isnan( val ) || std::isinf( val );
-	}
+/// @brief Check if a Real is undefined (i.e has the same value as utility::get_undefined_real() )
+inline
+bool is_undefined( platform::Real const & val) {
+	return std::isnan( val ) || std::isinf( val );
+}
 
-	inline
-	bool is_nan( platform::Real const & val) {
-		return std::isnan( val );
-	}
+inline
+bool is_nan( platform::Real const & val) {
+	return std::isnan( val );
+}
 
-	inline
-	bool is_inf( platform::Real const & val) {
-		return std::isinf( val );
-	}
+inline
+bool is_inf( platform::Real const & val) {
+	return std::isinf( val );
+}
 
-	inline
-	platform::Real round( platform::Real const & val) {
-		return ::round(val);
-	}
+inline
+platform::Real round( platform::Real const & val) {
+	return ::round(val);
+}
 
-	inline
-	platform::Real copysign(platform::Real const & x, platform::Real const & y) {
-		return ::copysign(x, y);
-	}
+inline
+platform::Real copysign(platform::Real const & x, platform::Real const & y) {
+	return ::copysign(x, y);
+}
 
 } // utility
 

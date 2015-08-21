@@ -21,28 +21,28 @@
 
 
 namespace core {
-  namespace scoring {
-    namespace methods {
+namespace scoring {
+namespace methods {
 
-      /// @details Creates and initializes a new LinearChainbreakEnergy object with the
-      /// specified options
-      EnergyMethodOP
-      LinearChainbreakEnergyCreator::create_energy_method(const EnergyMethodOptions& opt) const {
-				// EnergyMethodOptions is responsible for providing a reasonable default
-				// in the event that the caller does not specify a sequence separation
-				// constraint. Currently, cst_max_seq_sep() defaults to +inf.
-				Size allowable_sequence_separation = opt.cst_max_seq_sep();
-				return EnergyMethodOP( new LinearChainbreakEnergy(allowable_sequence_separation) );
-      }
+/// @details Creates and initializes a new LinearChainbreakEnergy object with the
+/// specified options
+EnergyMethodOP
+LinearChainbreakEnergyCreator::create_energy_method(const EnergyMethodOptions& opt) const {
+	// EnergyMethodOptions is responsible for providing a reasonable default
+	// in the event that the caller does not specify a sequence separation
+	// constraint. Currently, cst_max_seq_sep() defaults to +inf.
+	Size allowable_sequence_separation = opt.cst_max_seq_sep();
+	return EnergyMethodOP( new LinearChainbreakEnergy(allowable_sequence_separation) );
+}
 
-      ScoreTypes
-      LinearChainbreakEnergyCreator::score_types_for_method() const {
-				ScoreTypes types;
-				types.push_back(linear_chainbreak);
-				types.push_back(overlap_chainbreak);
-				return types;
-      }
+ScoreTypes
+LinearChainbreakEnergyCreator::score_types_for_method() const {
+	ScoreTypes types;
+	types.push_back(linear_chainbreak);
+	types.push_back(overlap_chainbreak);
+	return types;
+}
 
-    }  // namespace methods
-  }  // namespace scoring
+}  // namespace methods
+}  // namespace scoring
 }  // namespace core

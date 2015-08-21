@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/PcsDataCenterManager.cc
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/PcsDataCenterManager.cc
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 
 // Unit headers
@@ -47,17 +47,17 @@
 
 // C++ headers
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs2{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs2 {
 
 static thread_local basic::Tracer TR_PcsDataCenterManager( "protocols.scoring.methods.pcs.PcsDataCenterManager" );
 
 PcsDataCenterManager::PcsDataCenterManager(){
 
-	//	TR_PcsDataCenterManager << "Empty constructor called" << std::endl;
-	//	utility_exit_with_message( "You shouldn't call the empty constructor for PcsDataCenterManager class" );
+	// TR_PcsDataCenterManager << "Empty constructor called" << std::endl;
+	// utility_exit_with_message( "You shouldn't call the empty constructor for PcsDataCenterManager class" );
 }
 
 PcsDataCenterManager::~PcsDataCenterManager(){
@@ -67,7 +67,7 @@ PcsDataCenterManager &
 PcsDataCenterManager::operator=( PcsDataCenterManager const &other )
 {
 
-	//	TR_PcsDataCenterManager << " = called" << std::endl;
+	// TR_PcsDataCenterManager << " = called" << std::endl;
 
 	if ( this != &other ) {
 		PCS_data_all_ = other.PCS_data_all_;
@@ -78,7 +78,7 @@ PcsDataCenterManager::operator=( PcsDataCenterManager const &other )
 PcsDataCenterManager::PcsDataCenterManager(PcsDataCenterManager const &other):
 	CacheableData()
 {
-	//	TR_PcsDataCenterManager << " () called" << std::endl;
+	// TR_PcsDataCenterManager << " () called" << std::endl;
 	PCS_data_all_ = other.PCS_data_all_;
 }
 
@@ -89,7 +89,7 @@ PcsDataCenterManager::get_PCS_data_all() {
 
 basic::datacache::CacheableDataOP
 PcsDataCenterManager::clone() const {
-	//	TR_PcsDataCenterManager << "clone called" << std::endl;
+	// TR_PcsDataCenterManager << "clone called" << std::endl;
 	return basic::datacache::CacheableDataOP( new PcsDataCenterManager( *this ) );
 }
 
@@ -98,7 +98,7 @@ operator<<(std::ostream& out, const PcsDataCenterManager & m){
 	core::Size i;
 
 	out << "n paramagnetic center: " << m.get_n_multi_data() << std::endl;
-	for (i = 1 ; i <= m.get_n_multi_data(); ++i){
+	for ( i = 1 ; i <= m.get_n_multi_data(); ++i ) {
 		out << m.PCS_data_all_[i] << std::endl;
 	}
 	return out;

@@ -37,22 +37,22 @@ ResidualDipolarCouplingCOP retrieve_RDC_from_pose(core::pose::Pose const&);
 ///
 ///
 class ResidualDipolarCoupling: public basic::datacache::CacheableData {
-	//	friend class ResidualDipolarCouplingEnergy;
+	// friend class ResidualDipolarCouplingEnergy;
 public:
 	// typedefs
 	typedef core::Real Real;
 	typedef core::Size Size;
 	typedef utility::vector1<core::scoring::RDC> RDC_lines;
 	typedef core::Real Tensor[3][3];
-  typedef core::Real rvec[3];
+	typedef core::Real rvec[3];
 
 public:
 	/// @brief standard c'stor -- will access option -in:file:rdc to read RDC data
-// 	ResidualDipolarCoupling() :
-// 		nex_(0), nrows_(0) {
-// 		reserve_buffers();
-// 		read_RDC_file();
-// 	}
+	//  ResidualDipolarCoupling() :
+	//   nex_(0), nrows_(0) {
+	//   reserve_buffers();
+	//   read_RDC_file();
+	//  }
 
 	ResidualDipolarCoupling( std::string const& filename = "" ) :
 		nex_(0), nrows_(0), COMMON_DENOMINATOR(36.5089/1.041/1.041/1.041) {
@@ -100,7 +100,7 @@ public:
 
 	//wRDC (like wRMSD .. iter i + 1 tensor weights are ~exp(  - dev^2/sigma ))
 	Real iterate_tensor_weights(core::pose::Pose const& pose,
-			core::Real sigma2, core::Real tolerance, bool reset);
+		core::Real sigma2, core::Real tolerance, bool reset);
 
 	void show(std::ostream&) const;
 
@@ -131,7 +131,7 @@ public:
 		return R_;
 	}
 
-  //@brief return the number of experiments
+	//@brief return the number of experiments
 	core::Size get_n_alignments() const {return nex_;}
 
 	/// @brief return tensor of certain experiment... exp_id starts at 1
@@ -140,19 +140,19 @@ public:
 	}
 
 
-	/*	core::Real get_fractional_anisotropy(core::Size ex) const {
-		//		std::cout << "FFA " << FA_  <<std::endl;
-		return FA_[ex] != NULL ? FA_[ex] : -1;
-		}*/
+	/* core::Real get_fractional_anisotropy(core::Size ex) const {
+	//  std::cout << "FFA " << FA_  <<std::endl;
+	return FA_[ex] != NULL ? FA_[ex] : -1;
+	}*/
 
 	core::Real get_al_tensor_trace(core::Size ex) const {
-		//		std::cout << "FFA " << FA_  <<std::endl;
+		//  std::cout << "FFA " << FA_  <<std::endl;
 		return trace_[ex];
 	}
 
 
- core::Real get_al_tensor_max_z(core::Size ex) const {
-		//		std::cout << "FFA " << FA_  <<std::endl;
+	core::Real get_al_tensor_max_z(core::Size ex) const {
+		//  std::cout << "FFA " << FA_  <<std::endl;
 		return maxz_[ex];
 	}
 
@@ -165,14 +165,14 @@ public:
 	//void show_tensor_stats_nlsDa( std::ostream&, core::Size ex, const double tensorDa, const double *par) const;
 	//void show_tensor_stats_nlsR( std::ostream&, core::Size ex, const double tensorR, const double *par) const;
 	//void show_tensor_stats_nlsDaR( std::ostream&, core::Size ex, const double tensorDa, const double tensorR, const double *par) const;
-	
+
 	void do_correct_NH(
 		utility::vector1<core::scoring::RDC>::const_iterator it,
 		numeric::xyzVector<Real> & r,
 		core::Real & r2,
 		core::Real & invr
 	);
-	
+
 private:
 	/// @brief read RDC data from file
 	void read_RDC_file( Size nex, std::string const& filename );
@@ -202,7 +202,7 @@ private:
 	core::Real* trace_;
 	core::Real* maxz_;
 
-  //stuff for nls
+	//stuff for nls
 	core::Real* r0_;
 	core::Real* r1_;
 	core::Real* r2_;
@@ -210,7 +210,7 @@ private:
 	core::Real* rdcconst_;
 	core::Real* rdcweight_;
 	core::Size* lenex_;
-	
+
 	Real const COMMON_DENOMINATOR;
 };
 
@@ -228,14 +228,14 @@ public:
 	}
 
 	RDC(Size res1, std::string const& atom1, Size res2,
-			std::string const& atom2, Real Jdipolar, Real weight = 1.0,//for alignment calculation
-			Size expid = 1
-	//		core::Real Reduced_Jdipolar
+		std::string const& atom2, Real Jdipolar, Real weight = 1.0,//for alignment calculation
+		Size expid = 1
+		//  core::Real Reduced_Jdipolar
 	) :
 		type_(get_RDC_data_type(atom1, atom2)), res1_(res1), res2_(res2),
-				Jdipolar_(Jdipolar), weight_(weight), Jdipolar_computed_(-999),
-				expid_(expid), atom1_(atom1), atom2_(atom2)
-	//		Reduced_Jdipolar_( Reduced_Jdipolar )
+		Jdipolar_(Jdipolar), weight_(weight), Jdipolar_computed_(-999),
+		expid_(expid), atom1_(atom1), atom2_(atom2)
+		//  Reduced_Jdipolar_( Reduced_Jdipolar )
 	{
 	}
 
@@ -245,7 +245,7 @@ public:
 
 	/// @brief which type of RDC pairing are we dealing with ?
 	RDC_TYPE get_RDC_data_type(std::string const & atom1,
-			std::string const & atom2);
+		std::string const & atom2);
 
 	inline Size expid() const {
 		return expid_;
@@ -276,24 +276,25 @@ public:
 	}
 
 	inline Real fixed_dist() const {
-    //changed to reproduce constants from the DC server
-	  //http://spin.niddk.nih.gov/bax/software/dc/#dc_di
+		//changed to reproduce constants from the DC server
+		//http://spin.niddk.nih.gov/bax/software/dc/#dc_di
 		runtime_assert( 0 ); ///don't use this
-		if (type() == RDC_TYPE_NH)
+		if ( type() == RDC_TYPE_NH ) {
 			return 1.041;
+		} else if ( type() == RDC_TYPE_NC ) {
 			//return 1.042;
-		else if (type() == RDC_TYPE_NC)
 			return 1.329;
+		} else if ( type() == RDC_TYPE_CH ) {
 			//return 1.329;
-		else if (type() == RDC_TYPE_CH)
 			return 1.107;
+		} else if ( type() == RDC_TYPE_CC ) {
 			//return 1.08;
-		else if (type() == RDC_TYPE_CC)
 			return 1.525;
-		else if (type() == RDC_TYPE_CHN)
+		} else if ( type() == RDC_TYPE_CHN ) {
 			return 2.085;
-		else if (type() == RDC_TYPE_NCA)
+		} else if ( type() == RDC_TYPE_NCA ) {
 			return 1.458;
+		}
 		//should never get here...
 		runtime_assert( 0 );
 		return 0;
@@ -315,22 +316,28 @@ public:
 
 	inline Real Dconst() const {
 		core::Real Dcnst(0.0);
-		if (type() == RDC_TYPE_NH)
-    //Concepts in Magnetic Resonance Part A, 21, 10-21
+		if ( type() == RDC_TYPE_NH ) {
+			//Concepts in Magnetic Resonance Part A, 21, 10-21
 			Dcnst = 36.5089;
-		if (type() == RDC_TYPE_NC)
+		}
+		if ( type() == RDC_TYPE_NC ) {
 			Dcnst = 9.179532;
-		if (type() == RDC_TYPE_CH)
+		}
+		if ( type() == RDC_TYPE_CH ) {
 			Dcnst = 90.55324;
-			//Dcnst = -90.55324;
-		if (type() == RDC_TYPE_CC)
+		}
+		//Dcnst = -90.55324;
+		if ( type() == RDC_TYPE_CC ) {
 			Dcnst = 22.76805;
-		if (type() == RDC_TYPE_CHN)
+		}
+		if ( type() == RDC_TYPE_CHN ) {
 			Dcnst = 90.55324;
-		if (type() == RDC_TYPE_NCA)
+		}
+		if ( type() == RDC_TYPE_NCA ) {
 			Dcnst = 9.179532;
-		//		std::cout << Dcnst <<std::endl;
-				runtime_assert( Dcnst != 0 ); // at this position the type() should already
+		}
+		//  std::cout << Dcnst <<std::endl;
+		runtime_assert( Dcnst != 0 ); // at this position the type() should already
 		return Dcnst;
 	}
 	friend class ResidualDipolarCoupling;

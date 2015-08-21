@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/antibody_design/CDRClusterFeatures.fwd.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_antibody_clusters_CDRClusterFeatures_fwd_hh
@@ -16,16 +16,16 @@
 
 #include  <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
+namespace protocols {
 namespace antibody {
 namespace clusters {
-	
+
 class CDRClusterFeatures;
 typedef utility::pointer::shared_ptr< CDRClusterFeatures > CDRClusterFeaturesOP;
 typedef utility::pointer::shared_ptr< CDRClusterFeatures const > CDRClusterFeaturesCOP;
 
-		}
-	}
+}
+}
 }
 
 #endif //INCLUDED_protocols_antibody_clusters_CDRClusterFeatures_fwd_hh

@@ -84,14 +84,14 @@ MembraneEnvPenalties::clone() const
 /// the option -score::rms_target.
 
 
-	/*
+/*
 void
 MembraneEnvPenalties::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
-	// compute interpolated number of neighbors at various distance cutoffs
-	pose.update_residue_neighbors();
-	potential_.compute_centroid_environment( pose );
-	potential_.compute_membrane_embedding( pose );
+// compute interpolated number of neighbors at various distance cutoffs
+pose.update_residue_neighbors();
+potential_.compute_centroid_environment( pose );
+potential_.compute_membrane_embedding( pose );
 
 }
 */
@@ -102,8 +102,7 @@ MembraneEnvPenalties::finalize_total_energy(
 	EnergyMap & emap
 ) const {
 
-	if(potential_.Menv_penalties()) //bw quick hack before putting them as individual scoring terms....
-	{
+	if ( potential_.Menv_penalties() ) { //bw quick hack before putting them as individual scoring terms....
 		Real tm_projection(0);
 		Real non_helix_pen(0);
 		Real termini_pen(0);
@@ -115,10 +114,10 @@ MembraneEnvPenalties::finalize_total_energy(
 		emap[ Menv_tm_proj ]=tm_projection;
 
 
-//		std::cout << "Menv_penalties (tm_projection+hbond_pen+termini_pen+10) " << tm_projection << " " << hbond_pen << " " << termini_pen << std::endl;
+		//  std::cout << "Menv_penalties (tm_projection+hbond_pen+termini_pen+10) " << tm_projection << " " << hbond_pen << " " << termini_pen << std::endl;
 	}
 	potential_.finalize( pose );
-//	totals[ rms ]  = std::abs( rms_target_ - rmsd );
+	// totals[ rms ]  = std::abs( rms_target_ - rmsd );
 
 	// PROF_STOP( basic::RMS );
 }

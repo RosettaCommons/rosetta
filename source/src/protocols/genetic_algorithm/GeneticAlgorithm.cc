@@ -62,7 +62,7 @@ GeneticAlgorithmBase::GeneticAlgorithmBase() :
 GeneticAlgorithmBase::~GeneticAlgorithmBase()
 {
 	// ensure that checkpoint files are not accidentally reused
-	if (checkpoint_rename_) rename_checkpoint_files();
+	if ( checkpoint_rename_ ) rename_checkpoint_files();
 }
 
 Entity::OP
@@ -169,12 +169,12 @@ GeneticAlgorithmBase::propagate_best_from_previous_generation( core::Size size /
 	std::sort( sorted_entities.begin(), sorted_entities.end(), lt_OP_deref< Entity > );
 
 	// this will hopefully help keep population diversity higher
-	if (unique && size > 1) {
+	if ( unique && size > 1 ) {
 		pop_iter new_last(std::unique(sorted_entities.begin(), sorted_entities.end(), eq_OP_deref< Entity >));
 		sorted_entities.erase(new_last, sorted_entities.end());
 	}
 
-	for (core::Size i = 1; i <= size && i <= sorted_entities.size(); ++i) {
+	for ( core::Size i = 1; i <= size && i <= sorted_entities.size(); ++i ) {
 		add_entity(sorted_entities[i]);
 	}
 }
@@ -200,7 +200,7 @@ void
 GeneticAlgorithmBase::set_max_generations( core::Size s )
 {
 	max_generations_ = s;
-	if (generations_.size() < max_generations_) generations_.resize(max_generations_);
+	if ( generations_.size() < max_generations_ ) generations_.resize(max_generations_);
 }
 
 void
@@ -295,7 +295,7 @@ GeneticAlgorithmBase::evolve_next_generation()
 {
 
 	// if parents were not already added, use the current generation as parents
-	if (parent_entities_.size() == 0) add_parents_from_current_generation();
+	if ( parent_entities_.size() == 0 ) add_parents_from_current_generation();
 
 	// increment the generation counter and clear out the curr_gen_entities_ hash
 	++current_generation_;
@@ -315,8 +315,8 @@ GeneticAlgorithmBase::evolve_next_generation()
 bool
 GeneticAlgorithmBase::current_generation_complete()
 {
-	for (core::Size i = 1; i <= generations_[current_generation_].size(); ++i) {
-		if (!generations_[current_generation_][i]->fitness_valid()) return false;
+	for ( core::Size i = 1; i <= generations_[current_generation_].size(); ++i ) {
+		if ( !generations_[current_generation_][i]->fitness_valid() ) return false;
 	}
 
 	return true;
@@ -325,8 +325,8 @@ GeneticAlgorithmBase::current_generation_complete()
 bool
 GeneticAlgorithmBase::complete()
 {
-	if (current_generation_ < max_generations_) return false;
-	if (current_generation_ == max_generations_ && !current_generation_complete()) return false;
+	if ( current_generation_ < max_generations_ ) return false;
+	if ( current_generation_ == max_generations_ && !current_generation_complete() ) return false;
 	return true;
 }
 
@@ -353,9 +353,9 @@ GeneticAlgorithmBase::tournament_select(
 ) const
 {
 	using numeric::random::uniform;
-  Entity const & e1( *pvec[ static_cast<Size>( uniform() * pvec.size() ) + 1 ] );
-  Entity const & e2( *pvec[ static_cast<Size>( uniform() * pvec.size() ) + 1 ] );
-  return ( e1.fitness() < e2.fitness() ? e1 : e2 );
+	Entity const & e1( *pvec[ static_cast<Size>( uniform() * pvec.size() ) + 1 ] );
+	Entity const & e2( *pvec[ static_cast<Size>( uniform() * pvec.size() ) + 1 ] );
+	return ( e1.fitness() < e2.fitness() ? e1 : e2 );
 }
 
 GeneticAlgorithmBase::TraitEntityHashMap &
@@ -385,15 +385,15 @@ GeneticAlgorithmBase::print_generation_statistics(
 	std::set<EntityOP> current_generation_set;
 
 	// make a set of entities in the previous generation
-	if (gen_num-1 >= 1) {
+	if ( gen_num-1 >= 1 ) {
 		previous_generation_set.insert(generations_[gen_num-1].begin(), generations_[gen_num-1].end());
 	}
 
 	// make a set of entities in earlier generations but not in the previous one
-	for (core::Size i = 1; i+2 <= gen_num; ++i) {
-		for (pop_const_iter iter(generations_[i].begin()), iter_end(generations_[i].end()); iter != iter_end;
-		     ++iter) {
-			if (previous_generation_set.find(*iter) == previous_generation_set.end()) {
+	for ( core::Size i = 1; i+2 <= gen_num; ++i ) {
+		for ( pop_const_iter iter(generations_[i].begin()), iter_end(generations_[i].end()); iter != iter_end;
+				++iter ) {
+			if ( previous_generation_set.find(*iter) == previous_generation_set.end() ) {
 				earlier_generations_set.insert(*iter);
 			}
 		}
@@ -405,18 +405,18 @@ GeneticAlgorithmBase::print_generation_statistics(
 	core::Size new_entities(0);
 	EntityOP best_new_entity(NULL);
 
-	for (pop_const_iter iter(generations_[gen_num].begin()), iter_end(generations_[gen_num].end()); iter != iter_end;
-		     ++iter) {
-		if (previous_generation_set.find(*iter) != previous_generation_set.end()) {
+	for ( pop_const_iter iter(generations_[gen_num].begin()), iter_end(generations_[gen_num].end()); iter != iter_end;
+			++iter ) {
+		if ( previous_generation_set.find(*iter) != previous_generation_set.end() ) {
 			++heldover_entities;
-		} else if (earlier_generations_set.find(*iter) != earlier_generations_set.end()) {
+		} else if ( earlier_generations_set.find(*iter) != earlier_generations_set.end() ) {
 			++resurrected_entities;
-		} else if (current_generation_set.find(*iter) != current_generation_set.end()) {
+		} else if ( current_generation_set.find(*iter) != current_generation_set.end() ) {
 			++duplicate_new_entities;
 		} else {
 			current_generation_set.insert(*iter);
 			++new_entities;
-			if (!best_new_entity || ((*iter)->fitness_valid() && (*iter)->fitness() < best_new_entity->fitness())) {
+			if ( !best_new_entity || ((*iter)->fitness_valid() && (*iter)->fitness() < best_new_entity->fitness()) ) {
 				best_new_entity = *iter;
 			}
 		}
@@ -431,10 +431,10 @@ GeneticAlgorithmBase::print_generation_statistics(
 	os << "Entities from previous generation: " << heldover_entities << std::endl;
 	os << "Entities resurrected from earlier generations: " << resurrected_entities << std::endl;
 	os << "Fitness Percentiles: 0%=" << sorted_generation.front()->fitness()
-	   << " 25%=" << sorted_generation[static_cast<core::Size>(ceil(gen_size*.25))]->fitness()
-	   << " 50%=" << sorted_generation[static_cast<core::Size>(ceil(gen_size*.50))]->fitness()
-	   << " 75%=" << sorted_generation[static_cast<core::Size>(ceil(gen_size*.75))]->fitness()
-	   << " 100%=" << sorted_generation.back()->fitness() << std::endl;
+		<< " 25%=" << sorted_generation[static_cast<core::Size>(ceil(gen_size*.25))]->fitness()
+		<< " 50%=" << sorted_generation[static_cast<core::Size>(ceil(gen_size*.50))]->fitness()
+		<< " 75%=" << sorted_generation[static_cast<core::Size>(ceil(gen_size*.75))]->fitness()
+		<< " 100%=" << sorted_generation.back()->fitness() << std::endl;
 	os << "Best new entity:" << '\n';
 	os << *best_new_entity << std::endl;
 }
@@ -443,7 +443,7 @@ void
 GeneticAlgorithmBase::print_population( std::ostream & os ) const
 {
 	for ( pop_const_iter it( generations_[current_generation_].begin() ), end( generations_[current_generation_].end() );
-				it != end; ++it ) {
+			it != end; ++it ) {
 		os << **it << '\n';
 	}
 	os << std::flush;
@@ -454,8 +454,8 @@ void
 GeneticAlgorithmBase::print_cache( std::ostream & os ) const
 {
 	for ( TraitEntityHashMap::const_iterator it( entity_cache_.begin() ), end( entity_cache_.end() );
-				it != end; ++it ) {
-		if (it->second->fitness_valid()) {
+			it != end; ++it ) {
+		if ( it->second->fitness_valid() ) {
 			it->second->write_checkpoint(os);
 			os << '\n';
 		}
@@ -469,7 +469,7 @@ GeneticAlgorithmBase::entities_checkpoint_filename(std::string suffix /* = "" */
 	if ( checkpoint_prefix_ == "" ) return "";
 	std::string filename(checkpoint_prefix_ + ".ga.entities");
 	filename += suffix;
-	if (checkpoint_gzip_) filename += ".gz";
+	if ( checkpoint_gzip_ ) filename += ".gz";
 	return filename;
 }
 
@@ -532,7 +532,7 @@ GeneticAlgorithmBase::generations_checkpoint_filename(std::string suffix /* = ""
 	if ( checkpoint_prefix_ == "" ) return "";
 	std::string filename(checkpoint_prefix_ + ".ga.generations");
 	filename += suffix;
-	if (checkpoint_gzip_) filename += ".gz";
+	if ( checkpoint_gzip_ ) filename += ".gz";
 	return filename;
 }
 
@@ -550,14 +550,14 @@ GeneticAlgorithmBase::write_generations_checkpoint() const
 		return false;
 	}
 
-	for (core::Size i = 1; i <= generations_.size(); ++i) {
+	for ( core::Size i = 1; i <= generations_.size(); ++i ) {
 		utility::vector1< EntityOP > const & generation(generations_[i]);
-		if (generation.size()) {
+		if ( generation.size() ) {
 			file << "generation " << i << '\n';
-			for (core::Size j = 1; j <= generation.size(); ++j) {
+			for ( core::Size j = 1; j <= generation.size(); ++j ) {
 				EntityElements const & traits(generation[j]->traits());
-				for (core::Size k = 1; k <= traits.size(); ++k) {
-					if (k != 1) file << ' ';
+				for ( core::Size k = 1; k <= traits.size(); ++k ) {
+					if ( k != 1 ) file << ' ';
 					file << traits[k]->to_string();
 				}
 				file << '\n';
@@ -589,22 +589,22 @@ GeneticAlgorithmBase::read_generations_checkpoint()
 
 	core::Size gen_num = 0;
 	std::string line;
-	while (file.getline(line)) {
+	while ( file.getline(line) ) {
 		std::istringstream iss(line);
 		std::string word;
-		if (!(iss >> word)) return false;
+		if ( !(iss >> word) ) return false;
 		if ( word == "generation" ) {
-			if (!(iss >> gen_num)) return false;
+			if ( !(iss >> gen_num) ) return false;
 			runtime_assert(gen_num > 0);
 			runtime_assert(gen_num <= max_generations_);
-			if (generations_.size() < gen_num) generations_.resize(gen_num);
+			if ( generations_.size() < gen_num ) generations_.resize(gen_num);
 			current_generation_ = gen_num;
 		} else {
 			// make sure a generation number has been set
 			runtime_assert(gen_num > 0);
 			EntityElements traits;
 			traits.push_back( EntityElementFactory::get_instance()->element_from_string(word));
-			while (iss >> word) {
+			while ( iss >> word ) {
 				traits.push_back( EntityElementFactory::get_instance()->element_from_string(word));
 			}
 			add_entity(traits);
@@ -648,7 +648,7 @@ void GeneticAlgorithmBase::set_entity_template( EntityCOP entity ) { entity_temp
 Entity::OP
 GeneticAlgorithmBase::new_entity()
 {
-	if (entity_template_) {
+	if ( entity_template_ ) {
 		return entity_template_->clone();
 	} else {
 		return Entity::OP( new Entity );
@@ -690,11 +690,11 @@ GeneticAlgorithm::evaluate_fitnesses()
 	write_generations_checkpoint();
 	core::Size num_uncached(0);
 	for ( pop_iter it( current_generation_begin() ), end( current_generation_end() );
-	      it != end; ++it ) {
+			it != end; ++it ) {
 		if ( ! (*it)->fitness_valid() ) {
 			//TR << "Evaluating fitness for entity " << (*it).get() << std::endl;
 			//if ( (*it) != entity_cache_[ (*it)->traits() ] ) {
-			//	TR << "WEIRD: Evaluating fitness for entity that is not in the cache" << std::endl;
+			// TR << "WEIRD: Evaluating fitness for entity that is not in the cache" << std::endl;
 			//}
 			// entity's fitness not valid
 			fitness_function_->evaluate( **it );

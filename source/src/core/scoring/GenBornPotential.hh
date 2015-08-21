@@ -41,8 +41,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 /**
 
-	 This is a reimplementation of Jim Havranek's original rosetta++ Gen Born code.
-	 source files: rosetta++/gb_elec*
+This is a reimplementation of Jim Havranek's original rosetta++ Gen Born code.
+source files: rosetta++/gb_elec*
 
 **/
 //////////////////////////////////////////////////////////////////////////////////
@@ -197,7 +197,7 @@ public:
 	GenBornResidueInfo const &
 	placeholder_info( Size const seqpos ) const
 	{
-	debug_assert( placeholder_info_[ seqpos ] );
+		debug_assert( placeholder_info_[ seqpos ] );
 		return *placeholder_info_[ seqpos ];
 	}
 
@@ -205,7 +205,7 @@ public:
 	Residue const &
 	placeholder_residue( Size const seqpos ) const
 	{
-	debug_assert( placeholder_residue_[ seqpos ] );
+		debug_assert( placeholder_residue_[ seqpos ] );
 		return *placeholder_residue_[ seqpos ];
 	}
 

@@ -32,35 +32,35 @@ namespace legacy {
 namespace modeler {
 namespace protein {
 
-	utility::vector1< core::Size > const
-	convert_to_working_res( utility::vector1< core::Size > const & res_vector,
-													utility::vector1< core::Size > const & working_res ) ;
+utility::vector1< core::Size > const
+convert_to_working_res( utility::vector1< core::Size > const & res_vector,
+	utility::vector1< core::Size > const & working_res ) ;
 
-	void
-	output_pose_list( utility::vector1< core::pose::PoseOP > pose_list,
-										core::pose::PoseCOP native_pose,
-										std::string const & silent_file,
-										utility::vector1< core::Size > const & working_calc_rms_res,
-										bool const overwrite = true );
+void
+output_pose_list( utility::vector1< core::pose::PoseOP > pose_list,
+	core::pose::PoseCOP native_pose,
+	std::string const & silent_file,
+	utility::vector1< core::Size > const & working_calc_rms_res,
+	bool const overwrite = true );
 
-	void
-	output_silent_struct( core::pose::Pose const & pose, core::pose::PoseCOP const & native_pose_op,
-												std::string const & silent_file, std::string const & tag,
-												core::io::silent::SilentFileDataOP sfd_in = 0);
+void
+output_silent_struct( core::pose::Pose const & pose, core::pose::PoseCOP const & native_pose_op,
+	std::string const & silent_file, std::string const & tag,
+	core::io::silent::SilentFileDataOP sfd_in = 0);
 
 
-	void
-	output_silent_struct( core::pose::Pose const & pose, core::pose::PoseCOP const & native_pose_op,
-												std::string const & silent_file, std::string const & tag,
-												core::io::silent::SilentFileDataOP sfd_in,
-												utility::vector1< core::Size > const & calc_rms_res );
+void
+output_silent_struct( core::pose::Pose const & pose, core::pose::PoseCOP const & native_pose_op,
+	std::string const & silent_file, std::string const & tag,
+	core::io::silent::SilentFileDataOP sfd_in,
+	utility::vector1< core::Size > const & calc_rms_res );
 
-	core::Real get_pretend_psi_explicit( core::pose::Pose const & pose, core::Size const & res );
+core::Real get_pretend_psi_explicit( core::pose::Pose const & pose, core::Size const & res );
 
-	core::Real get_pretend_phi_explicit( core::pose::Pose const & pose, core::Size const & res );
+core::Real get_pretend_phi_explicit( core::pose::Pose const & pose, core::Size const & res );
 
-	bool
-	is_close_chain_break( core::pose::Pose const & pose);
+bool
+is_close_chain_break( core::pose::Pose const & pose);
 
 } //protein
 } //modeler

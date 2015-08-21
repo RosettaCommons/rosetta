@@ -59,7 +59,7 @@ DomainInterfaceFilter::DomainInterfaceFilter( DomainInterfaceFilter const & src 
 DomainInterfaceFilter::~DomainInterfaceFilter() {
 }
 
-  
+
 void DomainInterfaceFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
@@ -71,16 +71,16 @@ void DomainInterfaceFilter::parse_my_tag(
 	nearby_atom_cut( tag->getOption< core::Real >( "nearby_atom_cut", 5.5 ) );
 	vector_angle_cut( tag->getOption< core::Real >( "vector_angle_cut", 75.0 ) );
 	vector_dist_cut( tag->getOption< core::Real >( "vector_dist_cut", 9.0 ) );
-	
-	if( tag->hasOption( "target" ) ) {
+
+	if ( tag->hasOption( "target" ) ) {
 		target_region_string( tag->getOption< std::string >( "target" ) );
 	}
-	if( tag->hasOption( "query" ) ) {
+	if ( tag->hasOption( "query" ) ) {
 		query_region_string( tag->getOption< std::string >( "query" ) );
 	}
 
 }
-	
+
 filters::FilterOP DomainInterfaceFilter::clone() const {
 	return filters::FilterOP( new DomainInterfaceFilter( *this ) );
 }
@@ -96,28 +96,29 @@ filters::FilterOP DomainInterfaceFilter::fresh_instance() const {
 bool DomainInterfaceFilter::apply( core::pose::Pose const & pose ) const {
 	std::set< core::Size > query_local, target_local;
 
-	// set up query set	
-	if( !query_region_.empty() ) 
+	// set up query set
+	if ( !query_region_.empty() ) {
 		query_local.insert( query_region_.begin(), query_region_.end() );
-	else if( !query_region_str_.empty() ) 
-		 query_local = core::pose::get_resnum_list( query_region_str_, pose );
+	} else if ( !query_region_str_.empty() ) {
+		query_local = core::pose::get_resnum_list( query_region_str_, pose );
+	}
 
-	// set up target set	
-	if( !target_region_.empty() ) 
+	// set up target set
+	if ( !target_region_.empty() ) {
 		target_local.insert( target_region_.begin(), target_region_.end() );
-	else if( !target_region_str_.empty() ) 
-		 target_local = core::pose::get_resnum_list( target_region_str_, pose );
+	} else if ( !target_region_str_.empty() ) {
+		target_local = core::pose::get_resnum_list( target_region_str_, pose );
+	}
 
 	utility::vector1< bool > rs_subset( false, pose.total_residue() );
 	rs_subset = core::pack::task::operation::util::calc_interacting_vector( pose, target_local, query_local, cb_dist_cut_, nearby_atom_cut_, vector_angle_cut_, vector_dist_cut_ );
-	
-	for( std::set< core::Size >::const_iterator it = query_local.begin();
-		it != query_local.end();
-		++it)
-	{
-		if( *it <= rs_subset.size() && !rs_subset[ *it ] ) return false;
+
+	for ( std::set< core::Size >::const_iterator it = query_local.begin();
+			it != query_local.end();
+			++it ) {
+		if ( *it <= rs_subset.size() && !rs_subset[ *it ] ) return false;
 	}
-	return true;	
+	return true;
 }
 
 // Interface Selector Parameters

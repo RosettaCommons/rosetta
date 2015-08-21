@@ -35,7 +35,7 @@ VallLookbackData::VallLookbackData( core::pose::Pose &pose ) {
 	res_changed_history_.resize(nres,true);
 }
 
-void 
+void
 VallLookbackData::set_rmsd( core::Size resid, core::Real rmsd) {
 	runtime_assert( resid<=rmsd_history_.size() );
 	rmsd_history_[resid] = rmsd;
@@ -43,13 +43,14 @@ VallLookbackData::set_rmsd( core::Size resid, core::Real rmsd) {
 
 core::Real
 VallLookbackData::get_rmsd( core::Size resid ) const{
-	if ( resid <= rmsd_history_.size() )
+	if ( resid <= rmsd_history_.size() ) {
 		return rmsd_history_[resid];
-	else
+	} else {
 		return -1;
+	}
 }
 
-void 
+void
 VallLookbackData::set_res_changed( core::Size resid, bool changed) {
 	runtime_assert( resid<=res_changed_history_.size() );
 	res_changed_history_[resid] = changed;
@@ -57,10 +58,11 @@ VallLookbackData::set_res_changed( core::Size resid, bool changed) {
 
 bool
 VallLookbackData::get_res_changed( core::Size resid ) const{
-	if ( resid <= res_changed_history_.size() )
+	if ( resid <= res_changed_history_.size() ) {
 		return res_changed_history_[resid];
-	else
+	} else {
 		return false;
+	}
 }
 
 }//end methods

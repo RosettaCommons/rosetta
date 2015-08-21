@@ -84,8 +84,8 @@ static thread_local basic::Tracer TR( "antibody.util" );
 namespace protocols {
 namespace antibody {
 
-	using namespace core;
-	using namespace protocols::antibody::clusters;
+using namespace core;
+using namespace protocols::antibody::clusters;
 
 
 utility::vector1<bool>
@@ -93,7 +93,7 @@ get_cdr_bool_from_tag(utility::tag::TagCOP tag, std::string const & name){
 	utility::vector1<bool> cdrs (6, false);
 	vector1<std::string> cdr_strings = utility::string_split_multi_delim(tag->getOption<std::string>(name), ":,'`~+*&|;. ");
 	AntibodyEnumManager manager = AntibodyEnumManager();
-	for (core::Size i = 1; i <= cdr_strings.size(); ++i){
+	for ( core::Size i = 1; i <= cdr_strings.size(); ++i ) {
 		CDRNameEnum cdr = manager.cdr_name_string_to_enum(cdr_strings[i]);
 		cdrs[cdr] = true;
 	}
@@ -109,8 +109,8 @@ get_cdr_loops(
 
 	assert( cdrs.size() == 6 );
 	protocols::loops::LoopsOP cdr_loops( new protocols::loops::Loops() );
-	for ( core::Size i = 1; i <= CDRNameEnum_total; ++i ){
-		if (cdrs[ i ]){
+	for ( core::Size i = 1; i <= CDRNameEnum_total; ++i ) {
+		if ( cdrs[ i ] ) {
 			//TR <<"CDR: " << i << std::endl;
 			CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
 			cdr_loops->add_loop(ab_info->get_CDR_loop(cdr, pose, stem_size));
@@ -138,7 +138,7 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in ) {
 	// incorporating Ian's UnboundRotamer operation.
 	// note that nothing happens if unboundrot option is inactive!
 	pack::rotamer_set::UnboundRotamersOperationOP
-	unboundrot( new pack::rotamer_set::UnboundRotamersOperation() );
+		unboundrot( new pack::rotamer_set::UnboundRotamersOperation() );
 	unboundrot->initialize_from_command_line();
 
 	operation::AppendRotamerSetOP unboundrot_operation( new operation::AppendRotamerSet( unboundrot ) );
@@ -156,82 +156,82 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in ) {
 } // setup_packer_task
 
 /*    void
- dle_extreme_repack(
- pose::Pose & pose_in,
- int repack_cycles,
- ObjexxFCL::FArray1D_bool & allow_repack,
- bool rt_min,
- bool rotamer_trials,
- bool force_one_repack,
- bool use_unbounds
- )
- {
- using namespace pose;
+dle_extreme_repack(
+pose::Pose & pose_in,
+int repack_cycles,
+ObjexxFCL::FArray1D_bool & allow_repack,
+bool rt_min,
+bool rotamer_trials,
+bool force_one_repack,
+bool use_unbounds
+)
+{
+using namespace pose;
 
- // Exit if not fullatom
- if( !pose_in.fullatom() ) {
- std::cout << "Repack called in centroid mode" << std::endl;
- std::cout << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" << std::endl;
- std::cout << "------NOT REPACKING-----------" << std::endl;
- return;
- }
- // Saving parameters
- bool initial_rot_trial = score_get_try_rotamers();
- bool initial_min_rot = get_minimize_rot_flag();
- score_set_minimize_rot( rt_min );
- score_set_try_rotamers( rotamer_trials );
- // initial allowed chi movement
- FArray1D_bool old_chi_move( pose_in.total_residue(), false );
- for( int i = 1; i <= pose_in.total_residue(); i++ ) {
- // storing old
- old_chi_move(i) = pose_in.get_allow_chi_move(i);
- // setting new
- pose_in.set_allow_chi_move( i, allow_repack(i) || old_chi_move(i) );
- }
- Score_weight_map weight_map( score12 );
- Monte_carlo mc( pose_in, weight_map, 2.0 );
- // repack idealized native
- Pose start_native_pose;
- start_native_pose = pose_in;
- for(int i=1; i <= repack_cycles; i++) {
- pose_in = start_native_pose;
- if( use_unbounds )
- dle_pack_with_unbound( pose_in, allow_repack, true  ); // include_current = true
- else
- pose_in.repack( allow_repack, true ); //include_current =  true
- pose_in.score( weight_map );
- score_set_minimize_rot( false );
- score_set_try_rotamers( false );
- if( force_one_repack && (i == 1) ) mc.reset( pose_in );
- mc.boltzmann( pose_in );
- score_set_minimize_rot( rt_min );
- score_set_try_rotamers( rotamer_trials );
- }
- pose_in = mc.low_pose();
- pose_in.score( weight_map );
+// Exit if not fullatom
+if( !pose_in.fullatom() ) {
+std::cout << "Repack called in centroid mode" << std::endl;
+std::cout << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" << std::endl;
+std::cout << "------NOT REPACKING-----------" << std::endl;
+return;
+}
+// Saving parameters
+bool initial_rot_trial = score_get_try_rotamers();
+bool initial_min_rot = get_minimize_rot_flag();
+score_set_minimize_rot( rt_min );
+score_set_try_rotamers( rotamer_trials );
+// initial allowed chi movement
+FArray1D_bool old_chi_move( pose_in.total_residue(), false );
+for( int i = 1; i <= pose_in.total_residue(); i++ ) {
+// storing old
+old_chi_move(i) = pose_in.get_allow_chi_move(i);
+// setting new
+pose_in.set_allow_chi_move( i, allow_repack(i) || old_chi_move(i) );
+}
+Score_weight_map weight_map( score12 );
+Monte_carlo mc( pose_in, weight_map, 2.0 );
+// repack idealized native
+Pose start_native_pose;
+start_native_pose = pose_in;
+for(int i=1; i <= repack_cycles; i++) {
+pose_in = start_native_pose;
+if( use_unbounds )
+dle_pack_with_unbound( pose_in, allow_repack, true  ); // include_current = true
+else
+pose_in.repack( allow_repack, true ); //include_current =  true
+pose_in.score( weight_map );
+score_set_minimize_rot( false );
+score_set_try_rotamers( false );
+if( force_one_repack && (i == 1) ) mc.reset( pose_in );
+mc.boltzmann( pose_in );
+score_set_minimize_rot( rt_min );
+score_set_try_rotamers( rotamer_trials );
+}
+pose_in = mc.low_pose();
+pose_in.score( weight_map );
 
- // Restoring Globals
- score_set_minimize_rot( initial_rot_trial );
- score_set_try_rotamers( initial_min_rot );
- pose_in.set_allow_chi_move( old_chi_move );
+// Restoring Globals
+score_set_minimize_rot( initial_rot_trial );
+score_set_try_rotamers( initial_min_rot );
+pose_in.set_allow_chi_move( old_chi_move );
 
- return;
- }
- */
+return;
+}
+*/
 
 
 bool cutpoints_separation( core::pose::Pose & pose, AntibodyInfoOP & antibody_info ) {
 
 	bool closed_cutpoints = true;
 
-	for( loops::Loops::const_iterator it=antibody_info->get_AllCDRs_in_loopsop()->begin(),
-	        it_end=antibody_info->get_AllCDRs_in_loopsop()->end(),
-	        it_next; it != it_end; ++it ) {
+	for ( loops::Loops::const_iterator it=antibody_info->get_AllCDRs_in_loopsop()->begin(),
+			it_end=antibody_info->get_AllCDRs_in_loopsop()->end(),
+			it_next; it != it_end; ++it ) {
 		Size cutpoint   = it->cut();
 		//Real separation = 10.00; // an unlikely high number
 		Real separation = cutpoint_separation( pose, cutpoint );
 
-		if( separation > 1.9 ) {
+		if ( separation > 1.9 ) {
 			closed_cutpoints = false;
 			break;
 		}
@@ -246,8 +246,8 @@ Real cutpoint_separation(pose::Pose & pose_in, Size cutpoint) {
 
 	// Coordinates of the C atom of cutpoint res and N atom of res cutpoint+1
 	numeric::xyzVector_float peptide_C(pose_in.residue( cutpoint ).xyz( C )),
-	        peptide_N( pose_in.residue( cutpoint + 1 ).xyz( N ) );
-	//			Real cutpoint_separation=distance(peptide_C, peptide_N);
+		peptide_N( pose_in.residue( cutpoint + 1 ).xyz( N ) );
+	//   Real cutpoint_separation=distance(peptide_C, peptide_N);
 	Real cutpoint_separation=peptide_C.distance(peptide_N);
 
 	return( cutpoint_separation );
@@ -255,7 +255,7 @@ Real cutpoint_separation(pose::Pose & pose_in, Size cutpoint) {
 
 
 Real global_loop_rmsd (const pose::Pose & pose_in, const pose::Pose & native_pose,loops::LoopsOP current_loop ) {
-	if (pose_in.total_residue() != native_pose.total_residue() ) {
+	if ( pose_in.total_residue() != native_pose.total_residue() ) {
 		throw utility::excn::EXCN_BadInput("The pose sequence length does not match that of native_pose");
 	}
 
@@ -275,15 +275,15 @@ Real global_loop_rmsd (const pose::Pose & pose_in, const pose::Pose & native_pos
 }
 
 void align_to_native( core::pose::Pose & pose,
-                      core::pose::Pose const & native_pose,
-                      AntibodyInfoOP const ab_info,
-                      AntibodyInfoOP const native_ab_info,
-                      std::string const & reqeust_chain) {
+	core::pose::Pose const & native_pose,
+	AntibodyInfoOP const ab_info,
+	AntibodyInfoOP const native_ab_info,
+	std::string const & reqeust_chain) {
 
 
 	std::string pose_seq        = pose.sequence();
 	std::string native_pose_seq = native_pose.sequence();
-	if(pose_seq != native_pose_seq   ) {
+	if ( pose_seq != native_pose_seq   ) {
 		throw utility::excn::EXCN_BadInput(" the pose sequence does not match native_pose sequence ");
 	}
 
@@ -292,25 +292,25 @@ void align_to_native( core::pose::Pose & pose,
 	core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID );
 
 	// loop over the L and H chains
-	for (Size i_chain=1; i_chain<=ab_info->get_AntibodyFrameworkInfo().size(); i_chain++) {
+	for ( Size i_chain=1; i_chain<=ab_info->get_AntibodyFrameworkInfo().size(); i_chain++ ) {
 		vector1<FrameWork>        chain_frmwk =        ab_info->get_AntibodyFrameworkInfo()[i_chain];
 		vector1<FrameWork> native_chain_frmwk = native_ab_info->get_AntibodyFrameworkInfo()[i_chain];
 
-		if(  (chain_frmwk[1].chain_name == reqeust_chain ) || (reqeust_chain =="LH")  ) {
+		if (  (chain_frmwk[1].chain_name == reqeust_chain ) || (reqeust_chain =="LH")  ) {
 
 			// loop over the segments on the framework of one chain
-			for (Size j_seg=1; j_seg<=chain_frmwk.size(); j_seg++) { // for loop of the framework segments
+			for ( Size j_seg=1; j_seg<=chain_frmwk.size(); j_seg++ ) { // for loop of the framework segments
 				Size count=0;
 
 				// loop over the residues on one segment on one framework of one chain
-				for (Size k_res=chain_frmwk[j_seg].start; k_res<= chain_frmwk[j_seg].stop; k_res++) {
+				for ( Size k_res=chain_frmwk[j_seg].start; k_res<= chain_frmwk[j_seg].stop; k_res++ ) {
 					count++;
 					Size res_counter = k_res;
 					Size nat_counter = native_chain_frmwk[j_seg].start+count-1;
 					//TR<<"Matching Residue "<< res_counter<<" with  "<<nat_counter<<std::endl;
 
 					// loop over the backbone atoms including Oxygen
-					for( core::Size latm=1; latm <= 4; latm++ ) {
+					for ( core::Size latm=1; latm <= 4; latm++ ) {
 						core::id::AtomID const id1( latm, res_counter );
 						core::id::AtomID const id2( latm, nat_counter );
 						atom_map[ id1 ] = id2;
@@ -329,7 +329,7 @@ void align_to_native( core::pose::Pose & pose,
 vector1<bool>
 select_epitope_residues(AntibodyInfoCOP ab_info, core::pose::Pose const & pose, core::Size const interface_distance) {
 	vector1<bool> epitope(pose.total_residue(), false);
-	if (! ab_info->antigen_present()) return epitope;
+	if ( ! ab_info->antigen_present() ) return epitope;
 
 	std::string interface = ab_info->get_antibody_chain_string()+"_"+ab_info->get_antigen_chain_string();
 
@@ -338,9 +338,9 @@ select_epitope_residues(AntibodyInfoCOP ab_info, core::pose::Pose const & pose, 
 	vector1<bool> interface_residues = protocols::interface::select_interface_residues(pose, interface, interface_distance);
 
 	//Turn off L or H residues at the interface
-	for (core::Size i = 1; i <= pose.total_residue(); ++i){
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		char chain = core::pose::get_chain_from_chain_id(pose.chain(i), pose);
-		if (chain == 'L' || chain == 'H'){
+		if ( chain == 'L' || chain == 'H' ) {
 			interface_residues[i] = false;
 		}
 	}
@@ -350,13 +350,13 @@ select_epitope_residues(AntibodyInfoCOP ab_info, core::pose::Pose const & pose, 
 
 void
 check_fix_aho_cdr_numbering(AntibodyInfoCOP ab_info, CDRNameEnum cdr, core::pose::Pose & pose){
-	if (ab_info->get_current_AntibodyNumberingScheme() != "AHO_Scheme"){
+	if ( ab_info->get_current_AntibodyNumberingScheme() != "AHO_Scheme" ) {
 		return;
 	}
 
 	core::Size max_length = ab_info->get_CDR_end_PDB_num(cdr) - ab_info->get_CDR_start_PDB_num(cdr);
 	core::Size cdr_length = ab_info->get_CDR_length(cdr, pose);
-	if ( cdr_length > max_length){
+	if ( cdr_length > max_length ) {
 		TR << "adding insertion codes for long cdr loops." << std::endl;
 
 		std::string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -371,8 +371,8 @@ check_fix_aho_cdr_numbering(AntibodyInfoCOP ab_info, CDRNameEnum cdr, core::pose
 		core::Size i_code_end = ab_info->get_CDR_end(cdr, pose) - end_residues;
 		core::Size i = 0;
 
-		for (core::Size resnum = i_code_start; resnum <= i_code_end; ++resnum){
-			if (i > alphabet.size()){
+		for ( core::Size resnum = i_code_start; resnum <= i_code_end; ++resnum ) {
+			if ( i > alphabet.size() ) {
 				TR <<"Cannot have a CDR with insertion codes more than "<< alphabet.size() <<" skipping rest of fix.." << std::endl;
 				return;
 			}
@@ -383,8 +383,7 @@ check_fix_aho_cdr_numbering(AntibodyInfoCOP ab_info, CDRNameEnum cdr, core::pose
 			i+=1;
 		}
 
-	}
-	else{
+	} else {
 		return;
 	}
 
@@ -393,7 +392,7 @@ check_fix_aho_cdr_numbering(AntibodyInfoCOP ab_info, CDRNameEnum cdr, core::pose
 void
 check_fix_aho_cdr_numbering(AntibodyInfoCOP ab_info, core::pose::Pose & pose){
 
-	for (core::Size i = 1; i <= core::Size(ab_info->get_total_num_CDRs()); ++i){
+	for ( core::Size i = 1; i <= core::Size(ab_info->get_total_num_CDRs()); ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		check_fix_aho_cdr_numbering(ab_info, cdr, pose);
 	}
@@ -418,8 +417,8 @@ check_fix_aho_cdr_numbering(AntibodyInfoCOP ab_info, core::pose::Pose & pose){
 //            jump from 10->15, but you need manuly input
 
 void simple_one_loop_fold_tree(
-    pose::Pose & pose_in,
-    loops::Loop const & loop	) {
+	pose::Pose & pose_in,
+	loops::Loop const & loop ) {
 	using namespace kinematics;
 
 	TR.Debug <<  "Setting up simple one loop fold tree" << std::endl;
@@ -431,8 +430,8 @@ void simple_one_loop_fold_tree(
 	Size jumppoint1 = loop.start() - 1;
 	Size jumppoint2 = loop.stop() + 1;
 
-	if( jumppoint1 < 1 )   jumppoint1 = 1;
-	if( jumppoint2 > nres) jumppoint2 = nres;
+	if ( jumppoint1 < 1 )   jumppoint1 = 1;
+	if ( jumppoint2 > nres ) jumppoint2 = nres;
 
 	f.add_edge( 1, jumppoint1, Edge::PEPTIDE );
 	f.add_edge( jumppoint1, loop.cut(), Edge::PEPTIDE );
@@ -449,10 +448,10 @@ void simple_one_loop_fold_tree(
 } // simple_one_loop_fold_tree
 
 void simple_fold_tree(
-    pose::Pose & pose_in,
-    Size jumppoint1,
-    Size cutpoint,
-    Size jumppoint2 ) {
+	pose::Pose & pose_in,
+	Size jumppoint1,
+	Size cutpoint,
+	Size jumppoint2 ) {
 	using namespace kinematics;
 
 	TR.Debug <<  "Setting up simple fold tree" << std::endl;
@@ -462,8 +461,8 @@ void simple_fold_tree(
 	f.clear();
 	Size nres = pose_in.total_residue();
 
-	if( jumppoint1 < 1 )   jumppoint1 = 1;
-	if( jumppoint2 > nres) jumppoint2 = nres;
+	if ( jumppoint1 < 1 )   jumppoint1 = 1;
+	if ( jumppoint2 > nres ) jumppoint2 = nres;
 
 	f.add_edge( 1, jumppoint1, Edge::PEPTIDE );
 	f.add_edge( jumppoint1, cutpoint, Edge::PEPTIDE );
@@ -539,8 +538,9 @@ bool CDR_H3_filter_legacy_code_with_old_rule(const pose::Pose & pose_in, loops::
 
 	char const light_chain = 'L';
 
-	if(is_camelid )
+	if ( is_camelid ) {
 		return( true );
+	}
 
 	// Values read from plot in reference paper. Fig 1 on Page 3
 	// Values adjusted to match data from antibody training set
@@ -550,9 +550,9 @@ bool CDR_H3_filter_legacy_code_with_old_rule(const pose::Pose & pose_in, loops::
 	Real const extended_upper_bound = 185.00; // Shirai: ~180
 
 	// Hydrogen Bond maximum value is 3.9 Angstroms - not used
-	//	Real const h_bond(3.9);
+	// Real const h_bond(3.9);
 	// Salt Bridge maximum value is 2.0 Angstroms - not used
-	//	Real const s_bridge(4.0);
+	// Real const s_bridge(4.0);
 
 	// chop out the loop:
 	//JQX: 2 residues before h3, one residue after h3. Matched Rosetta2!
@@ -568,7 +568,7 @@ bool CDR_H3_filter_legacy_code_with_old_rule(const pose::Pose & pose_in, loops::
 	std::vector <std::string> aa_name; // loop residue 3 letter codes
 	//JQX: pay attention here!! It is vector, not vector1! too painful to compare to R2 code
 	//     just make vector, so it can match R2 code easily
-	for(Size ii=start; ii<=stop; ii++) {
+	for ( Size ii=start; ii<=stop; ii++ ) {
 		aa_name.push_back(pose_in.residue(ii).name3() );
 		//            TR<<pose_in.residue(ii).name1()<<std::endl;
 	}
@@ -577,10 +577,10 @@ bool CDR_H3_filter_legacy_code_with_old_rule(const pose::Pose & pose_in, loops::
 	// base dihedral angle to determine kinked/extended conformation
 
 	Real base_dihedral( numeric::dihedral_degrees(
-	                        pose_in.residue( stop ).xyz( CA ),
-	                        pose_in.residue( stop - 1).xyz( CA ),
-	                        pose_in.residue( stop - 2).xyz( CA ),
-	                        pose_in.residue( stop - 3).xyz( CA ) ) );
+		pose_in.residue( stop ).xyz( CA ),
+		pose_in.residue( stop - 1).xyz( CA ),
+		pose_in.residue( stop - 2).xyz( CA ),
+		pose_in.residue( stop - 3).xyz( CA ) ) );
 
 	//pose_in.dump_pdb("check_cter_dihedral.pdb");
 
@@ -595,12 +595,12 @@ bool CDR_H3_filter_legacy_code_with_old_rule(const pose::Pose & pose_in, loops::
 
 	bool H3_base_only=false;
 
-	if( H3_base_only) {
+	if ( H3_base_only ) {
 		std::string base;
-		if((base_dihedral > kink_lower_bound) && (base_dihedral < kink_upper_bound)) {
+		if ( (base_dihedral > kink_lower_bound) && (base_dihedral < kink_upper_bound) ) {
 			base = "KINK";
 			TR << "              " << base << std::endl;
-		} else if((base_dihedral > extended_lower_bound) && (base_dihedral < extended_upper_bound)) {
+		} else if ( (base_dihedral > extended_lower_bound) && (base_dihedral < extended_upper_bound) ) {
 			base = "EXTENDED";
 			TR << "              " << base << std::endl;
 		} else {
@@ -613,14 +613,14 @@ bool CDR_H3_filter_legacy_code_with_old_rule(const pose::Pose & pose_in, loops::
 
 
 	// setting up pseudo-periodic range used in extended base computation
-	if( base_dihedral < kink_lower_bound ) {
+	if ( base_dihedral < kink_lower_bound ) {
 		base_dihedral = base_dihedral + 360.00;
 	}
 
 	// Rule 1a for standard kink
-	if ((aa_name[aa_name.size()-3] != "ASP") && (aa_name[aa_name.size()-1] == "TRP")) { //aa_name.size()-3 = n-1
+	if ( (aa_name[aa_name.size()-3] != "ASP") && (aa_name[aa_name.size()-1] == "TRP") ) { //aa_name.size()-3 = n-1
 		//aa_name.size()-1 = n+1
-		if( (base_dihedral > kink_lower_bound) && (base_dihedral < kink_upper_bound)) {
+		if ( (base_dihedral > kink_lower_bound) && (base_dihedral < kink_upper_bound) ) {
 			// std::cout << "KINK Found" << std::endl; // aroop_temp remove
 			//is_kinked = true;  // unused ~Labonte
 			is_H3 = true;
@@ -629,34 +629,34 @@ bool CDR_H3_filter_legacy_code_with_old_rule(const pose::Pose & pose_in, loops::
 
 	// Rule 1b for standard extended form
 	if (  ( aa_name[ aa_name.size() - 3 ] == "ASP" ) &&
-	        ( ( aa_name[1] != "LYS" ) && ( aa_name[1] != "ARG" ) ) &&
-	        ( is_H3 != true )    ) {   //aa_name[1] = 0 position
+			( ( aa_name[1] != "LYS" ) && ( aa_name[1] != "ARG" ) ) &&
+			( is_H3 != true )    ) {   //aa_name[1] = 0 position
 
-		if( ( base_dihedral>extended_lower_bound) && (base_dihedral<extended_upper_bound) ) {
+		if ( ( base_dihedral>extended_lower_bound) && (base_dihedral<extended_upper_bound) ) {
 			// std::cout << "EXTENDED Found" << std::endl; // aroop_temp remove
 			//is_extended = true;  // unused ~Labonte
 			is_H3 = true;
 		}
 
-		if(!is_H3) {
+		if ( !is_H3 ) {
 			// Rule 1b extension for special kinked form
 			bool is_basic(false); // Special basic residue exception flag
-			for(Size ii = 2; ii <= Size(aa_name.size() - 5); ii++) {      //aa_name.size() - 5 = n-3
-				if( aa_name[ii] == "ARG" || aa_name[ii] == "LYS" ) {      //aa_name[2] =  0 position
+			for ( Size ii = 2; ii <= Size(aa_name.size() - 5); ii++ ) {      //aa_name.size() - 5 = n-3
+				if ( aa_name[ii] == "ARG" || aa_name[ii] == "LYS" ) {      //aa_name[2] =  0 position
 					is_basic = true;
 					break;
 				}
 			}
 
-			if(!is_basic) {
+			if ( !is_basic ) {
 				Size rosetta_number_of_L49 = pose_in.pdb_info()->pdb2pose(light_chain, 49 );
 				std::string let3_code_L49 = pose_in.residue( rosetta_number_of_L49 ).name3();
-				if( let3_code_L49 == "ARG" || let3_code_L49 == "LYS") {
+				if ( let3_code_L49 == "ARG" || let3_code_L49 == "LYS" ) {
 					is_basic = true;
 				}
 			}
-			if( is_basic && ( base_dihedral > kink_lower_bound ) &&
-			        ( base_dihedral < kink_upper_bound ) ) {
+			if ( is_basic && ( base_dihedral > kink_lower_bound ) &&
+					( base_dihedral < kink_upper_bound ) ) {
 				// aroop_temp remove
 				// std::cout << "KINK (special 1b) Found" << std::endl;
 				//is_kinked = true;  // unused ~Labonte
@@ -667,23 +667,23 @@ bool CDR_H3_filter_legacy_code_with_old_rule(const pose::Pose & pose_in, loops::
 
 	// Rule 1c for kinked form with salt bridge
 	if ( ( aa_name[ aa_name.size() - 3 ] == "ASP") &&
-	        ( ( aa_name[1] == "LYS") || ( aa_name[1] == "ARG" ) ) &&
-	        ( (aa_name[0] != "LYS" ) && ( aa_name[0] != "ARG" ) ) &&
-	        ( is_H3 != true) ) {
-		if( (base_dihedral > kink_lower_bound ) &&
-		        (base_dihedral < kink_upper_bound ) ) {
+			( ( aa_name[1] == "LYS") || ( aa_name[1] == "ARG" ) ) &&
+			( (aa_name[0] != "LYS" ) && ( aa_name[0] != "ARG" ) ) &&
+			( is_H3 != true) ) {
+		if ( (base_dihedral > kink_lower_bound ) &&
+				(base_dihedral < kink_upper_bound ) ) {
 			// aroop_temp remove
 			// std::cout << "KINK (w sb) Found" << std::endl;
 			//is_kinked = true;  // unused ~Labonte
 			is_H3 = true;
 		}
-		if(!is_H3) {
+		if ( !is_H3 ) {
 			bool is_basic(false); // Special basic residue exception flag
 			Size rosetta_number_of_L46 = pose_in.pdb_info()->pdb2pose( light_chain, 46 );
 			std::string let3_code_L46 = pose_in.residue( rosetta_number_of_L46 ).name3();
-			if( let3_code_L46 == "ARG" || let3_code_L46 == "LYS") is_basic = true;
-			if( is_basic && (base_dihedral > extended_lower_bound ) &&
-			        ( base_dihedral < extended_upper_bound ) ) {
+			if ( let3_code_L46 == "ARG" || let3_code_L46 == "LYS" ) is_basic = true;
+			if ( is_basic && (base_dihedral > extended_lower_bound ) &&
+					( base_dihedral < extended_upper_bound ) ) {
 				// aroop_temp remove
 				// std::cout << "EXTENDED (special 1c) Found" << std::endl;
 				//is_extended = true;  // unused ~Labonte
@@ -694,11 +694,11 @@ bool CDR_H3_filter_legacy_code_with_old_rule(const pose::Pose & pose_in, loops::
 
 	// Rule 1d for extened form with salt bridge
 	if (  (  aa_name[ aa_name.size() - 3 ] == "ASP") &&
-	        ( ( aa_name[1] == "LYS") || ( aa_name[1] == "ARG" ) ) &&
-	        ( ( aa_name[0] == "LYS") || ( aa_name[0] == "ARG") ) &&
-	        ( is_H3 != true )       ) {
-		if( ( base_dihedral > extended_lower_bound ) &&
-		        ( base_dihedral < extended_upper_bound ) ) {
+			( ( aa_name[1] == "LYS") || ( aa_name[1] == "ARG" ) ) &&
+			( ( aa_name[0] == "LYS") || ( aa_name[0] == "ARG") ) &&
+			( is_H3 != true )       ) {
+		if ( ( base_dihedral > extended_lower_bound ) &&
+				( base_dihedral < extended_upper_bound ) ) {
 			// aroop_temp remove
 			// std::cout << "EXTENDED (w sb) Found" << std::endl;
 			//is_extended = true;  // unused ~Labonte
@@ -715,7 +715,7 @@ bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info) {
 
 	TR <<  "Checking Kink/Extended CDR H3 Base Angle" << std::endl;
 
-	if(ab_info->is_camelid() ) {
+	if ( ab_info->is_camelid() ) {
 		return( true );
 	}
 
@@ -727,9 +727,9 @@ bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info) {
 	Real const extended_upper_bound = 185.00; // Shirai: ~180
 
 	// Hydrogen Bond maximum value is 3.9 Angstroms - not used
-	//	Real const h_bond(3.9);
+	// Real const h_bond(3.9);
 	// Salt Bridge maximum value is 2.0 Angstroms - not used
-	//	Real const s_bridge(4.0);
+	// Real const s_bridge(4.0);
 
 	// chop out the loop:
 	//JQX: 2 residues before h3, one residue after h3. Matched Rosetta2!
@@ -745,7 +745,7 @@ bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info) {
 	std::vector <std::string> aa_name; // loop residue 3 letter codes
 	//JQX: pay attention here!! It is vector, not vector1! too painful to compare to R2 code
 	//     just make vector, so it can match R2 code easily
-	for(Size ii=start; ii<=stop; ii++) {
+	for ( Size ii=start; ii<=stop; ii++ ) {
 		aa_name.push_back(pose_in.residue(ii).name3() );
 		//            TR<<pose_in.residue(ii).name1()<<std::endl;
 	}
@@ -754,35 +754,35 @@ bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info) {
 	// base dihedral angle to determine kinked/extended conformation
 
 	Real base_dihedral( numeric::dihedral_degrees(
-	                        pose_in.residue( stop ).xyz( CA ),
-	                        pose_in.residue( stop - 1).xyz( CA ),
-	                        pose_in.residue( stop - 2).xyz( CA ),
-	                        pose_in.residue( stop - 3).xyz( CA ) ) );
+		pose_in.residue( stop ).xyz( CA ),
+		pose_in.residue( stop - 1).xyz( CA ),
+		pose_in.residue( stop - 2).xyz( CA ),
+		pose_in.residue( stop - 3).xyz( CA ) ) );
 
 	//pose_in.dump_pdb("check_cter_dihedral.pdb");
 
 	TR << "Base Dihedral: " << base_dihedral << std::endl;
 
 	// setting up pseudo-periodic range used in extended base computation
-	if( base_dihedral < kink_lower_bound ) {
+	if ( base_dihedral < kink_lower_bound ) {
 		base_dihedral = base_dihedral + 360.00;
 	}
 
 
-	if( (base_dihedral > kink_lower_bound ) && (base_dihedral < kink_upper_bound ) ) {
-		if(ab_info->get_H3_kink_type()==Kinked) {
+	if ( (base_dihedral > kink_lower_bound ) && (base_dihedral < kink_upper_bound ) ) {
+		if ( ab_info->get_H3_kink_type()==Kinked ) {
 			matched_kinked = true;
 		}
 	}
-	if( (base_dihedral > extended_lower_bound ) && (base_dihedral < extended_upper_bound ) ) {
-		if(ab_info->get_H3_kink_type()==Extended) {
+	if ( (base_dihedral > extended_lower_bound ) && (base_dihedral < extended_upper_bound ) ) {
+		if ( ab_info->get_H3_kink_type()==Extended ) {
 			matched_extended = true;
 		}
 	}
 
 
 	bool passed;
-	if (matched_kinked || matched_extended) {
+	if ( matched_kinked || matched_extended ) {
 		passed=true;
 	} else {
 		passed=false;
@@ -800,11 +800,10 @@ is_H3_rama_kinked(std::string const & rama){
 
 	//TR <<"Last two "<< last_two << std::endl;
 
-	if (last_two == "AB" || last_two == "DB"){
+	if ( last_two == "AB" || last_two == "DB" ) {
 		//TR << "kinked. " << std::endl;
 		return true;
-	}
-	else{
+	} else {
 		return false;
 	}
 }

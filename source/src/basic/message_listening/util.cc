@@ -45,8 +45,8 @@ static thread_local basic::Tracer TR( "basic.message_listening" );
 
 string
 request_data_from_head_node(
-  listener_tags MPI_ONLY( listener_tag ) ,
-  string const & MPI_ONLY( data )
+	listener_tags MPI_ONLY( listener_tag ) ,
+	string const & MPI_ONLY( data )
 ){
 
 #ifdef USEMPI
@@ -67,23 +67,23 @@ request_data_from_head_node(
   return utility::receive_string_from_node(0/*head node*/);
 #endif
 #ifndef USEMPI
-  utility_exit_with_message(
-    "ERROR: You have tried to request a message from the head node but you are not in mpi mode (compile with extras=mpi)");
+	utility_exit_with_message(
+		"ERROR: You have tried to request a message from the head node but you are not in mpi mode (compile with extras=mpi)");
 #endif
 
-  return "";  // required for compilation on Windows
+	return "";  // required for compilation on Windows
 }
 
 void
 send_data_to_head_node(
-  std::string const & MPI_ONLY( data )
+	std::string const & MPI_ONLY( data )
 ){
 #ifdef USEMPI
   //send a string to be processed by the listener
   utility::send_string_to_node(0/*head node*/, data);
 #endif
 #ifndef USEMPI
-  utility_exit_with_message("ERROR: You have tried to send a message to the head node but you are not in mpi mode (compile with extras=mpi)");
+	utility_exit_with_message("ERROR: You have tried to send a message to the head node but you are not in mpi mode (compile with extras=mpi)");
 #endif
 }
 
@@ -91,21 +91,21 @@ std::string
 listener_tag_to_name(listener_tags tag)
 {
 	switch(tag){
-		case DATABASE_PROTOCOL_AND_BATCH_ID_TAG:
-			return "DATABAASE_PROTOCOL_AND_BATCH_ID_TAG";
-		default:
-			return "Unrecognized listener_tag: " + boost::lexical_cast<std::string>(tag);
+	case DATABASE_PROTOCOL_AND_BATCH_ID_TAG :
+		return "DATABAASE_PROTOCOL_AND_BATCH_ID_TAG";
+	default :
+		return "Unrecognized listener_tag: " + boost::lexical_cast<std::string>(tag);
 	}
 }
 
 
 listener_tags
 name_to_listener_tag(std::string const & listener_tag_name){
-  if(listener_tag_name == "DATABASE_PROTOCOL_AND_BATCH_ID_TAG"){
-    return DATABASE_PROTOCOL_AND_BATCH_ID_TAG;
-  } else {
-    utility_exit_with_message("Unknown listener tag name '" + listener_tag_name + "'");
-  }
+	if ( listener_tag_name == "DATABASE_PROTOCOL_AND_BATCH_ID_TAG" ) {
+		return DATABASE_PROTOCOL_AND_BATCH_ID_TAG;
+	} else {
+		utility_exit_with_message("Unknown listener tag name '" + listener_tag_name + "'");
+	}
 }
 
 

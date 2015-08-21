@@ -41,64 +41,64 @@ static basic::Tracer TR("test.protocols.toolbox.task_operations.ProteinInterface
 
 class ProteinInterfaceDesignOperationTests : public CxxTest::TestSuite {
 
-  core::pose::PoseOP pose;
-  core::scoring::ScoreFunctionOP scfxn;
+	core::pose::PoseOP pose;
+	core::scoring::ScoreFunctionOP scfxn;
 
 public:
 
-  // --------------- Fixtures --------------- //
+	// --------------- Fixtures --------------- //
 
 
-  void setUp() {
-      core_init();
-      //reuse for comparison with Interface class
-      pose = core::pose::PoseOP( new core::pose::Pose() );
-      scfxn = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
-      core::import_pose::pose_from_pdb( *pose, "core/conformation/dock_in.pdb" );
-      
-	//need to score the pose to find the interface in this case
-	scfxn->set_weight( core::scoring::fa_atr, 0.8  );
-	scfxn->set_weight( core::scoring::fa_rep, 0.44 );
-	(*scfxn)(*pose);
+	void setUp() {
+		core_init();
+		//reuse for comparison with Interface class
+		pose = core::pose::PoseOP( new core::pose::Pose() );
+		scfxn = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
+		core::import_pose::pose_from_pdb( *pose, "core/conformation/dock_in.pdb" );
 
-  }
+		//need to score the pose to find the interface in this case
+		scfxn->set_weight( core::scoring::fa_atr, 0.8  );
+		scfxn->set_weight( core::scoring::fa_rep, 0.44 );
+		(*scfxn)(*pose);
 
-  void tearDown() {}
+	}
 
-  // ------------- Helper Functions ------------- //
+	void tearDown() {}
+
+	// ------------- Helper Functions ------------- //
 
 
-  // --------------- Test Cases --------------- //
+	// --------------- Test Cases --------------- //
 
 	//test for default operation settings
-  void test_ProteinInterfaceDesignOperation() {
+	void test_ProteinInterfaceDesignOperation() {
 
-    using namespace core::pack::task;
-    using protocols::toolbox::task_operations::ProteinInterfaceDesignOperation;
-	using core::pack::task::operation::TaskOperationCOP;
+		using namespace core::pack::task;
+		using protocols::toolbox::task_operations::ProteinInterfaceDesignOperation;
+		using core::pack::task::operation::TaskOperationCOP;
 		TaskFactory PID_factory;
-    PID_factory.push_back( TaskOperationCOP( new ProteinInterfaceDesignOperation() ) );
+		PID_factory.push_back( TaskOperationCOP( new ProteinInterfaceDesignOperation() ) );
 		TR << "Running test_ProteinInterfaceDesignOperation" << std::endl;
-    test::UTracer UT_PID("protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.u");
-    UT_PID << *(PID_factory.create_task_and_apply_taskoperations( *pose ) ) << std::endl;
-  } // end test_ProteinInterfaceDesignOperation
+		test::UTracer UT_PID("protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.u");
+		UT_PID << *(PID_factory.create_task_and_apply_taskoperations( *pose ) ) << std::endl;
+	} // end test_ProteinInterfaceDesignOperation
 
 
 	//test for designing all aas at interface
-  void test_ProteinInterfaceDesignOperation_all() {
+	void test_ProteinInterfaceDesignOperation_all() {
 
-    using namespace core::pack::task;
-    using namespace protocols::toolbox::task_operations;
+		using namespace core::pack::task;
+		using namespace protocols::toolbox::task_operations;
 		ProteinInterfaceDesignOperationOP pid_op( new ProteinInterfaceDesignOperation() );
 		//allows design of Cys, Gly, Pro at all positions
 		pid_op->allow_all_aas( true );
 		pid_op->design_all_aas( true );
 		TaskFactory PID_factory;
-    PID_factory.push_back( pid_op );
+		PID_factory.push_back( pid_op );
 		TR << "Running test_ProteinInterfaceDesignOperation_all" << std::endl;
-    test::UTracer UT_PID("protocols/toolbox/task_operations/ProteinInterfaceDesignOperation_all.u");
+		test::UTracer UT_PID("protocols/toolbox/task_operations/ProteinInterfaceDesignOperation_all.u");
 		UT_PID << *(PID_factory.create_task_and_apply_taskoperations( *pose ) ) << std::endl;
-  } // end test_ProteinInterfaceDesignOperation_all
+	} // end test_ProteinInterfaceDesignOperation_all
 
 
 };

@@ -25,12 +25,12 @@ namespace refine {
 /// @brief creator for the LoopMover_Perturb_KICCreator class
 class LoopMover_Refine_KICCreator : public moves::MoverCreator {
 public:
-  LoopMover_Refine_KICCreator() {}
-  virtual ~LoopMover_Refine_KICCreator();
+	LoopMover_Refine_KICCreator() {}
+	virtual ~LoopMover_Refine_KICCreator();
 
-  virtual moves::MoverOP create_mover() const;
+	virtual moves::MoverOP create_mover() const;
 
-  virtual std::string keyname() const;
+	virtual std::string keyname() const;
 
 };
 

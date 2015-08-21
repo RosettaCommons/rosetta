@@ -49,13 +49,13 @@ namespace fragment {
 
 class BBTorsionAndAnglesSRFD : public BBTorsionSRFD {
 	typedef BBTorsionSRFD Parent;
-    typedef std::pair<std::vector<Size>, Real> AngleInfo;
+	typedef std::pair<std::vector<Size>, Real> AngleInfo;
 public:
 	/// @brief default constructor
 	BBTorsionAndAnglesSRFD() {}
 
 	BBTorsionAndAnglesSRFD( utility::vector1< AngleInfo > & angles_in, Size const nbb_in = 3, char secstruct = 'X', char sequence = 'X')
-		: BBTorsionSRFD(nbb_in, secstruct, sequence), angles_(angles_in)
+	: BBTorsionSRFD(nbb_in, secstruct, sequence), angles_(angles_in)
 	{};
 
 
@@ -95,7 +95,7 @@ public:
 
 	virtual
 	std::string type() const {
-		//		return "BBTorsion";
+		//  return "BBTorsion";
 		return _static_type_name();
 	}
 

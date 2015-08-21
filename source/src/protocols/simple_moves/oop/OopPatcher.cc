@@ -59,7 +59,7 @@ namespace oop {
 void OopPatcher::apply( core::pose::Pose & pose )
 {
 	TR<< "patching residues" <<std::endl;
-	
+
 	//kdrew: an oop pre position cannot be last position
 	runtime_assert_msg ( oop_pre_pos_ != pose.total_residue(), "beginning of oop cannot be last residue" );
 	//kdrew: an oop post position cannot be first position
@@ -74,22 +74,18 @@ void OopPatcher::apply( core::pose::Pose & pose )
 
 	//kdrew: check for proline
 	if ( pre_base_name == "PRO" || pre_base_name == "DPRO" ||
-		 post_base_name == "PRO" || post_base_name == "DPRO" )
-	{
-    	utility_exit_with_message("Cannot patch proline");
+			post_base_name == "PRO" || post_base_name == "DPRO" ) {
+		utility_exit_with_message("Cannot patch proline");
 	}
-	if ( pose.residue(oop_pre_pos_).has_variant_type(chemical::OOP_POST) == 1) 
-	{
-    	utility_exit_with_message("Cannot patch OOP_PRE on an OOP_POST");
+	if ( pose.residue(oop_pre_pos_).has_variant_type(chemical::OOP_POST) == 1 ) {
+		utility_exit_with_message("Cannot patch OOP_PRE on an OOP_POST");
 	}
-	if ( pose.residue(oop_post_pos_).has_variant_type(chemical::OOP_PRE) == 1) 
-	{
-    	utility_exit_with_message("Cannot patch OOP_POST on an OOP_PRE");
+	if ( pose.residue(oop_post_pos_).has_variant_type(chemical::OOP_PRE) == 1 ) {
+		utility_exit_with_message("Cannot patch OOP_POST on an OOP_PRE");
 	}
 
 	//kdrew: check if already patched
-	if ( pose.residue(oop_pre_pos_).has_variant_type(chemical::OOP_PRE) != 1)
-	{
+	if ( pose.residue(oop_pre_pos_).has_variant_type(chemical::OOP_PRE) != 1 ) {
 		TR<< "patching pre" <<std::endl;
 
 		//kdrew: get base residue type
@@ -145,8 +141,8 @@ OopPatcher::get_name() const {
 
 /// @brief
 OopPatcher::OopPatcher(
-		core::Size oop_seq_position
-	): Mover(), oop_pre_pos_(oop_seq_position), oop_post_pos_(oop_seq_position+1)
+	core::Size oop_seq_position
+): Mover(), oop_pre_pos_(oop_seq_position), oop_post_pos_(oop_seq_position+1)
 {
 	Mover::type( "OopPatcher" );
 

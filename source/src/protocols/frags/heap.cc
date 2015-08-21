@@ -148,7 +148,7 @@ heap_extract(
 	coheap(0) = coheap(heap(-1));
 
 	heap_down(heap,coheap,1);
-//  we use a temporary copy so that this can be done in place if need be
+	//  we use a temporary copy so that this can be done in place if need be
 	val = temp_val;
 	coval = temp_coval;
 }
@@ -239,7 +239,7 @@ heap_replace(
 	heap.dimension( SRange( -2, star ) );
 	coheap.dimension( SRange( 0, star ) );
 
-// modifes heap
+	// modifes heap
 
 	//bool err;
 	//err = false;  set but never used ~Labonte

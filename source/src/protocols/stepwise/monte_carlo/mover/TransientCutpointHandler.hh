@@ -27,43 +27,43 @@ namespace stepwise {
 namespace monte_carlo {
 namespace mover {
 
-	class TransientCutpointHandler: public utility::pointer::ReferenceCount {
+class TransientCutpointHandler: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
 	//constructor
-		TransientCutpointHandler( core::Size const sample_res );
+	TransientCutpointHandler( core::Size const sample_res );
 
-		TransientCutpointHandler( core::Size const sample_suite,
-															core::Size const cutpoint_suite );
+	TransientCutpointHandler( core::Size const sample_suite,
+		core::Size const cutpoint_suite );
 
 	//destructor
 	~TransientCutpointHandler();
 
-	public:
+public:
 
-		void put_in_cutpoints( core::pose::Pose & pose );
+	void put_in_cutpoints( core::pose::Pose & pose );
 
-		void take_out_cutpoints( core::pose::Pose & pose );
+	void take_out_cutpoints( core::pose::Pose & pose );
 
-		void set_minimize_res( utility::vector1< Size > const & setting ){ minimize_res_ = setting; }
+	void set_minimize_res( utility::vector1< Size > const & setting ){ minimize_res_ = setting; }
 
-		void set_move_jump_points_away( bool const & setting ){ move_jump_points_away_ = setting; }
-		bool move_jump_points_away() const{ return move_jump_points_away_; }
+	void set_move_jump_points_away( bool const & setting ){ move_jump_points_away_ = setting; }
+	bool move_jump_points_away() const{ return move_jump_points_away_; }
 
 
-	private:
+private:
 
-		void prepare_fold_tree_for_erraser( core::pose::Pose & pose );
+	void prepare_fold_tree_for_erraser( core::pose::Pose & pose );
 
-		core::Size const sample_suite_, cutpoint_suite_;
-		bool move_jump_points_away_;
+	core::Size const sample_suite_, cutpoint_suite_;
+	bool move_jump_points_away_;
 
-		utility::vector1< core::Size > fixed_res_;
-		utility::vector1< core::Size > minimize_res_;
-		core::kinematics::FoldTree fold_tree_save_;
+	utility::vector1< core::Size > fixed_res_;
+	utility::vector1< core::Size > minimize_res_;
+	core::kinematics::FoldTree fold_tree_save_;
 
-	};
+};
 
 } //mover
 } //monte_carlo

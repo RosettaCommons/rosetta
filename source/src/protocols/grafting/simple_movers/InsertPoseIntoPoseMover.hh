@@ -26,44 +26,44 @@ namespace simple_movers {
 /// @details Residues between start + end should be deleted before using this mover if needed.
 ///
 class InsertPoseIntoPoseMover : public  protocols::moves::Mover {
-	
+
 public:
-	
+
 	InsertPoseIntoPoseMover(bool copy_pdbinfo = false);
 	InsertPoseIntoPoseMover(core::pose::Pose const & src_pose, core::Size res_start, core::Size res_end, bool copy_pdbinfo = false);
 
 	InsertPoseIntoPoseMover( InsertPoseIntoPoseMover const & src);
-	
+
 	virtual ~InsertPoseIntoPoseMover();
-	
+
 	virtual void
 	apply(core::pose::Pose & pose);
-	
-	
+
+
 public:
-	void 
+	void
 	src_pose(core::pose::Pose const & src_pose);
-	
+
 	void
 	start(core::Size res_start);
-	
+
 	core::Size
 	start() const;
-	
+
 	void
 	end(core::Size res_end);
-	
+
 	core::Size
 	end() const;
-	
+
 public:
 	virtual std::string
 	get_name() const;
-	
+
 	protocols::moves::MoverOP
 	clone() const;
-	
-	virtual void 
+
+	virtual void
 	parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
@@ -71,7 +71,7 @@ public:
 		moves::Movers_map const & movers,
 		Pose const & pose
 	);
-	
+
 private:
 	core::Size start_;
 	core::Size end_;

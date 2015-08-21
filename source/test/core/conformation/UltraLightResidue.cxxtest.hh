@@ -75,23 +75,21 @@ public:
 
 		//std::cout.precision( 16 );
 		//for ( core::Size ii = 1; ii <= light_res.natoms(); ++ii ) {
-		//	std::cout << "correct_values.push_back(core::PointPosition(";
-		//	std::cout << light_res[ii].x() << ",";
-		//	std::cout << light_res[ii].y() << ",";
-		//	std::cout << light_res[ii].z() << "));" << std::endl;
+		// std::cout << "correct_values.push_back(core::PointPosition(";
+		// std::cout << light_res[ii].x() << ",";
+		// std::cout << light_res[ii].y() << ",";
+		// std::cout << light_res[ii].z() << "));" << std::endl;
 		//}
 
 
-		for(core::Size atom_index =1; atom_index <= light_res.natoms();++atom_index)
-		{
+		for ( core::Size atom_index =1; atom_index <= light_res.natoms(); ++atom_index ) {
 			TS_ASSERT_DELTA(correct_values[atom_index],light_res[atom_index],0.001);
 		}
 
 		light_res.update_conformation(pose_.conformation());
 		TS_ASSERT_EQUALS(pose_.residue(3).natoms(),light_res.natoms());
 
-		for(core::Size atom_index = 1; atom_index <= light_res.natoms(); ++atom_index)
-		{
+		for ( core::Size atom_index = 1; atom_index <= light_res.natoms(); ++atom_index ) {
 			TS_ASSERT_EQUALS(light_res[atom_index],pose_.residue(3).xyz(atom_index));
 		}
 

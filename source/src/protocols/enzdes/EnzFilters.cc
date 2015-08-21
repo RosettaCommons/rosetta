@@ -106,11 +106,10 @@ LigDSasaFilter::apply( core::pose::Pose const & pose ) const {
 	core::Real const dsasa( compute( pose ) );
 
 	TR<<"dsasa is "<<dsasa<<". ";
-	if( dsasa >= lower_threshold_ && dsasa <= upper_threshold_){
+	if ( dsasa >= lower_threshold_ && dsasa <= upper_threshold_ ) {
 		TR<<"passing." <<std::endl;
 		return true;
-	}
-	else {
+	} else {
 		TR<<"failing."<<std::endl;
 		return false;
 	}
@@ -133,17 +132,17 @@ LigDSasaFilter::compute( core::pose::Pose const & pose ) const {
 	basic::MetricValue< core::Real > mv_sasa;
 	core::Real sasa (0.0);
 	core::Size lig_chain(2), prot_chain;
-  for( core::Size i = 1;  i<= pose.total_residue(); ++i){
-		if (pose.residue_type( i ).is_ligand()) lig_chain = pose.chain( i );
+	for ( core::Size i = 1;  i<= pose.total_residue(); ++i ) {
+		if ( pose.residue_type( i ).is_ligand() ) lig_chain = pose.chain( i );
 	}
-  prot_chain = pose.chain( 1 );   //we're making the not so wild assumption that the the first residue in the pose belongs to the protein
-  //std::string lig_ch_string = utility::to_string( lig_chain );
-  //std::string prot_ch_string = utility::to_string( prot_chain );
-  if( lig_chain == prot_chain ) { utility_exit_with_message( "WTF?!? ligand and residue 1 are on the same chain... " );}
-	else{
-	TR<<"Now calculating SaSa"<<std::endl;
-	pose.metric( "sasa_interface", "frac_ch2_dsasa", mv_sasa); // if this seems like its come out of nowhere see declaration in protocols/jd2/DockDesignParser.cc
-	sasa =  mv_sasa.value() ;
+	prot_chain = pose.chain( 1 );   //we're making the not so wild assumption that the the first residue in the pose belongs to the protein
+	//std::string lig_ch_string = utility::to_string( lig_chain );
+	//std::string prot_ch_string = utility::to_string( prot_chain );
+	if ( lig_chain == prot_chain ) { utility_exit_with_message( "WTF?!? ligand and residue 1 are on the same chain... " );}
+	else {
+		TR<<"Now calculating SaSa"<<std::endl;
+		pose.metric( "sasa_interface", "frac_ch2_dsasa", mv_sasa); // if this seems like its come out of nowhere see declaration in protocols/jd2/DockDesignParser.cc
+		sasa =  mv_sasa.value() ;
 	}
 	return( sasa );
 }
@@ -151,10 +150,10 @@ LigDSasaFilter::compute( core::pose::Pose const & pose ) const {
 void
 LigDSasaFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
-  lower_threshold_ = tag->getOption<core::Real>( "lower_threshold", 0 );
-  upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 1 );
+	lower_threshold_ = tag->getOption<core::Real>( "lower_threshold", 0 );
+	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 1 );
 
-  TR<<"LigDSasaFilter with lower threshold of "<<lower_threshold_<<" and upper threshold of "<< upper_threshold_ <<std::endl;
+	TR<<"LigDSasaFilter with lower threshold of "<<lower_threshold_<<" and upper threshold of "<< upper_threshold_ <<std::endl;
 }
 
 LigDSasaFilter::~LigDSasaFilter() {}
@@ -163,28 +162,27 @@ DiffAtomSasaFilter::DiffAtomSasaFilter( core::Size resid1, core::Size resid2, st
 
 bool
 DiffAtomSasaFilter::apply( core::pose::Pose const & pose ) const {
-  bool const dsasa( compute( pose ) );
+	bool const dsasa( compute( pose ) );
 
-  if( dsasa ){
-    TR<<"Diff Atom Sasa filter passing." <<std::endl;
-    return true;
-  }
-  else {
-    TR<<"Diff Atom Sasa filter failing."<<std::endl;
-    return false;
-  }
+	if ( dsasa ) {
+		TR<<"Diff Atom Sasa filter passing." <<std::endl;
+		return true;
+	} else {
+		TR<<"Diff Atom Sasa filter failing."<<std::endl;
+		return false;
+	}
 }
 
 void
 DiffAtomSasaFilter::report( std::ostream & out, core::pose::Pose const & pose ) const {
-  bool const dsasa( compute( pose ));
-  out<<"Diff Sasa= "<< dsasa<<'\n';
+	bool const dsasa( compute( pose ));
+	out<<"Diff Sasa= "<< dsasa<<'\n';
 }
 
 core::Real
 DiffAtomSasaFilter::report_sm( core::pose::Pose const & pose ) const {
-  bool const dsasa( compute( pose ));
-	if( dsasa ) return 1;
+	bool const dsasa( compute( pose ));
+	if ( dsasa ) return 1;
 	else return 0;
 }
 
@@ -192,31 +190,30 @@ bool
 DiffAtomSasaFilter::compute( core::pose::Pose const & pose ) const {
 	basic::MetricValue< id::AtomID_Map< core::Real > > atom_sasa;
 	bool setting (false);
-  pose.metric( "sasa_interface", "delta_atom_sasa", atom_sasa );
+	pose.metric( "sasa_interface", "delta_atom_sasa", atom_sasa );
 	core::id::AtomID const atomid1 (core::id::AtomID( pose.residue( resid1_ ).atom_index(aname1_), resid1_ ));
-  core::id::AtomID const atomid2 (core::id::AtomID( pose.residue( resid2_ ).atom_index(aname2_), resid2_ ));
-  core::Real const atom1_delta_sasa( atom_sasa.value()( atomid1 ) );
-  core::Real const atom2_delta_sasa( atom_sasa.value()( atomid2 ) );
+	core::id::AtomID const atomid2 (core::id::AtomID( pose.residue( resid2_ ).atom_index(aname2_), resid2_ ));
+	core::Real const atom1_delta_sasa( atom_sasa.value()( atomid1 ) );
+	core::Real const atom2_delta_sasa( atom_sasa.value()( atomid2 ) );
 	TR<<"Atom1: Dsasa is "<< atom1_delta_sasa <<" and Atom2 Dsasa is "<< atom2_delta_sasa << std::endl;
-	if (sample_type_ == "more") {
-		if (atom1_delta_sasa > atom2_delta_sasa) setting=true;
-	}
-	else if (atom1_delta_sasa < atom2_delta_sasa) setting=true; //sample_type == less i.e. see if a1 is less buried than a2 upon binding
+	if ( sample_type_ == "more" ) {
+		if ( atom1_delta_sasa > atom2_delta_sasa ) setting=true;
+	} else if ( atom1_delta_sasa < atom2_delta_sasa ) setting=true; //sample_type == less i.e. see if a1 is less buried than a2 upon binding
 	return setting;
 }
 
 void
 DiffAtomSasaFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const &pose )
 {
-	 if ( tag->hasOption("res1_res_num") ) resid1_ =  tag->getOption<core::Size>( "res1_res_num", 0 );
-	 if ( tag->hasOption("res2_res_num") ) resid2_ =  tag->getOption<core::Size>( "res2_res_num", 0 );
-	 if ( tag->hasOption("res1_pdb_num") ) resid1_ = core::pose::get_resnum(tag, pose, "res1_");
-	 if ( tag->hasOption("res2_pdb_num") ) resid2_ = core::pose::get_resnum(tag, pose, "res2_");
-	if (resid1_==0 || resid2_==0){//ligand
-    protocols::ligand_docking::LigandBaseProtocol ligdock;
-    if (resid1_==0) resid1_ = ligdock.get_ligand_id(pose);
-    if (resid2_==0) resid2_ = ligdock.get_ligand_id(pose);
-  }
+	if ( tag->hasOption("res1_res_num") ) resid1_ =  tag->getOption<core::Size>( "res1_res_num", 0 );
+	if ( tag->hasOption("res2_res_num") ) resid2_ =  tag->getOption<core::Size>( "res2_res_num", 0 );
+	if ( tag->hasOption("res1_pdb_num") ) resid1_ = core::pose::get_resnum(tag, pose, "res1_");
+	if ( tag->hasOption("res2_pdb_num") ) resid2_ = core::pose::get_resnum(tag, pose, "res2_");
+	if ( resid1_==0 || resid2_==0 ) { //ligand
+		protocols::ligand_docking::LigandBaseProtocol ligdock;
+		if ( resid1_==0 ) resid1_ = ligdock.get_ligand_id(pose);
+		if ( resid2_==0 ) resid2_ = ligdock.get_ligand_id(pose);
+	}
 	aname1_  =  tag->getOption<std::string>("atomname1", "CA" );
 	aname2_  =  tag->getOption<std::string>("atomname2", "CA" );
 	sample_type_  =  tag->getOption<std::string>("sample_type", "more" ); //a1 is more buried than a2 i.e. dsasa is more
@@ -224,8 +221,8 @@ DiffAtomSasaFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &,
 	runtime_assert(resid2_>0 && resid2_<=pose.total_residue() );
 	runtime_assert (pose.residue( resid1_ ).has( aname1_ ));
 	runtime_assert (pose.residue( resid2_ ).has( aname2_ ));
- 	runtime_assert( sample_type_=="more" || sample_type_ == "less" );
-  TR<<" Defined LigDSasaFilter "<< std::endl;
+	runtime_assert( sample_type_=="more" || sample_type_ == "less" );
+	TR<<" Defined LigDSasaFilter "<< std::endl;
 }
 
 DiffAtomSasaFilter::~DiffAtomSasaFilter() {}
@@ -257,17 +254,17 @@ core::Size
 LigBurialFilter::compute( core::pose::Pose const & pose ) const {
 
 	core::Size real_lig_id (lig_id_);
-  if (real_lig_id==0) {
-  	protocols::ligand_docking::LigandBaseProtocol ligdock;
+	if ( real_lig_id==0 ) {
+		protocols::ligand_docking::LigandBaseProtocol ligdock;
 		real_lig_id = ligdock.get_ligand_id(pose);
 		TR<<"Calculating neighbors of Ligand resid is " << real_lig_id << std::endl;
 	}
 	core::Size count_neighbors( 0 );
 	core::conformation::Residue const res_target( pose.conformation().residue( real_lig_id ) );
-	for( core::Size i=1; i<=pose.total_residue(); ++i ){
+	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
 		core::conformation::Residue const resi( pose.residue( i ) );
 		core::Real const distance( resi.xyz( resi.nbr_atom() ).distance( res_target.xyz( res_target.nbr_atom() ) ) );
-		if( distance <= distance_threshold_ ) ++count_neighbors;
+		if ( distance <= distance_threshold_ ) ++count_neighbors;
 	}
 	return( count_neighbors);
 }
@@ -278,30 +275,30 @@ void
 LigBurialFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const &)
 {
 	lig_id_ =  tag->getOption<core::Size>( "lig_id", 0 );
-  distance_threshold_ = tag->getOption<core::Real>( "distance", 8.0 );
-  neighbors_ = tag->getOption<core::Size>( "neighbors", 1 );
+	distance_threshold_ = tag->getOption<core::Real>( "distance", 8.0 );
+	neighbors_ = tag->getOption<core::Size>( "neighbors", 1 );
 
-  TR<<"LigBurialFilter with distance threshold of "<<distance_threshold_<<" around residue "<<lig_id_<<" with "<<neighbors_<<" neighbors."<<std::endl;
+	TR<<"LigBurialFilter with distance threshold of "<<distance_threshold_<<" around residue "<<lig_id_<<" with "<<neighbors_<<" neighbors."<<std::endl;
 	TR.flush();
 }
 
 LigBurialFilter::~LigBurialFilter() {}
 
-LigInterfaceEnergyFilter::LigInterfaceEnergyFilter( core::scoring::ScoreFunctionOP scorefxn, core::Real const threshold, bool const include_cstE, core::Size const rb_jump, core::Real const interface_distance_cutoff ) : Filter( "LigInterfaceEnergy" ), threshold_( threshold ), 	include_cstE_ ( include_cstE ), rb_jump_ ( rb_jump ), interface_distance_cutoff_ ( interface_distance_cutoff )  {
+LigInterfaceEnergyFilter::LigInterfaceEnergyFilter( core::scoring::ScoreFunctionOP scorefxn, core::Real const threshold, bool const include_cstE, core::Size const rb_jump, core::Real const interface_distance_cutoff ) : Filter( "LigInterfaceEnergy" ), threshold_( threshold ),  include_cstE_ ( include_cstE ), rb_jump_ ( rb_jump ), interface_distance_cutoff_ ( interface_distance_cutoff )  {
 
-		using namespace core::scoring;
+	using namespace core::scoring;
 
-		if( scorefxn ) scorefxn_ = scorefxn->clone();
-		if (!include_cstE) enzutil::enable_constraint_scoreterms( scorefxn_);
-	}
+	if ( scorefxn ) scorefxn_ = scorefxn->clone();
+	if ( !include_cstE ) enzutil::enable_constraint_scoreterms( scorefxn_);
+}
 
-	LigInterfaceEnergyFilter::LigInterfaceEnergyFilter( LigInterfaceEnergyFilter const &init ) :
+LigInterfaceEnergyFilter::LigInterfaceEnergyFilter( LigInterfaceEnergyFilter const &init ) :
 	//utility::pointer::ReferenceCount(),
 	Filter( init ), threshold_( init.threshold_ ),
 	include_cstE_ (init.include_cstE_), rb_jump_ (init.rb_jump_), interface_distance_cutoff_ ( init.interface_distance_cutoff_){
-		using namespace core::scoring;
-		if( init.scorefxn_ ) scorefxn_ = init.scorefxn_->clone();
-	}
+	using namespace core::scoring;
+	if ( init.scorefxn_ ) scorefxn_ = init.scorefxn_->clone();
+}
 
 
 bool
@@ -310,14 +307,13 @@ LigInterfaceEnergyFilter::apply( core::pose::Pose const & pose ) const
 	using namespace core::scoring;
 
 	if ( pose.conformation().num_chains() < 2 ) {
-			TR << "pose must contain at least two chains!" << std::endl;
-			return false;
+		TR << "pose must contain at least two chains!" << std::endl;
+		return false;
+	} else {
+		TR<<" \n \t --------- computing  ---------- \n \t-------- ligand interface energies   --------\n \t \t------------------- \n" << std::endl;
+		core::Real interf_E (compute(pose));
+		return (interf_E < threshold_);
 	}
-		else {
-			TR<<" \n \t --------- computing  ---------- \n \t-------- ligand interface energies   --------\n \t \t------------------- \n" << std::endl;
-			core::Real interf_E (compute(pose));
-			return (interf_E < threshold_);
-		}
 }
 
 
@@ -328,41 +324,41 @@ LigInterfaceEnergyFilter::report( std::ostream & out, core::pose::Pose const & p
 	using namespace core::scoring;
 	using ObjexxFCL::FArray1D_bool;
 
-		core::pose::Pose in_pose = pose;
-		// TL 4/2013: If rb_jump_ is unset, determine jump number according to the number of jumps currently in the pose
-		// previously, if this filter was used in RosettaScripts, rb_jump_ was initialized to jump number according to the number of jumps in the pose when the XML was parsed. This enables adding a ligand to the pose after the XML/Lua is parsed
-		core::Size jump;
-		if ( rb_jump_ == 0 ) {
-			jump = pose.num_jump();
-		} else {
-			jump = rb_jump_;
-		}
-		FArray1D_bool prot_res( in_pose.total_residue(), false );
-		in_pose.fold_tree().partition_by_jump( jump, prot_res );
-		protocols::scoring::Interface interface_obj( jump );
-		in_pose.update_residue_neighbors();
-		interface_obj.distance( interface_distance_cutoff_ );
-		interface_obj.calculate( in_pose );
-		(*scorefxn_)( in_pose );
+	core::pose::Pose in_pose = pose;
+	// TL 4/2013: If rb_jump_ is unset, determine jump number according to the number of jumps currently in the pose
+	// previously, if this filter was used in RosettaScripts, rb_jump_ was initialized to jump number according to the number of jumps in the pose when the XML was parsed. This enables adding a ligand to the pose after the XML/Lua is parsed
+	core::Size jump;
+	if ( rb_jump_ == 0 ) {
+		jump = pose.num_jump();
+	} else {
+		jump = rb_jump_;
+	}
+	FArray1D_bool prot_res( in_pose.total_residue(), false );
+	in_pose.fold_tree().partition_by_jump( jump, prot_res );
+	protocols::scoring::Interface interface_obj( jump );
+	in_pose.update_residue_neighbors();
+	interface_obj.distance( interface_distance_cutoff_ );
+	interface_obj.calculate( in_pose );
+	(*scorefxn_)( in_pose );
 
-		out<<"\n"<<A(9, "chain")<<A( 9, "res")<<A( 9, "AA")<<A( 9, "total")<<A( 9, "contact")<<A( 9, "fa_atr")<<A( 9, "fa_rep")<<A( 9, "hb_bb_sc")<<A( 9, "hb_sc")<<A( 9, "fa_sol")<<A( 9, "fa_dun")<<A( 9, "fa_pair")<<"\n";
-		for ( core::Size resnum_ = 1; resnum_ <= pose.total_residue(); ++resnum_) {
-//			if ( !in_pose.residue(resnum_).is_protein() ) continue;
-			if( interface_obj.is_interface( resnum_ ) ) { // in interface
+	out<<"\n"<<A(9, "chain")<<A( 9, "res")<<A( 9, "AA")<<A( 9, "total")<<A( 9, "contact")<<A( 9, "fa_atr")<<A( 9, "fa_rep")<<A( 9, "hb_bb_sc")<<A( 9, "hb_sc")<<A( 9, "fa_sol")<<A( 9, "fa_dun")<<A( 9, "fa_pair")<<"\n";
+	for ( core::Size resnum_ = 1; resnum_ <= pose.total_residue(); ++resnum_ ) {
+		//   if ( !in_pose.residue(resnum_).is_protein() ) continue;
+		if ( interface_obj.is_interface( resnum_ ) ) { // in interface
 
-				Real total=in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( total_score ) ];
-				if (!include_cstE_) total-= constraint_energy(in_pose, resnum_ );
-				Real weighted_fa_atr=( (*scorefxn_)[ ScoreType( fa_atr) ] ) * ( in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( fa_atr ) ]);
-				Real weighted_fa_rep=( (*scorefxn_)[ ScoreType( fa_rep) ] ) * ( in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( fa_rep) ]);
-				Real weighted_hbond_bb_sc=( (*scorefxn_)[ ScoreType( hbond_bb_sc) ] ) * ( in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( hbond_bb_sc ) ]);
-				Real weighted_hbond_sc=( (*scorefxn_)[ ScoreType( hbond_sc) ] ) * ( in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( hbond_sc ) ]);
-				Real weighted_fa_sol=( (*scorefxn_)[ ScoreType( fa_sol) ] ) * ( in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( fa_sol ) ]);
-				Real weighted_contact_score = weighted_fa_atr + weighted_fa_rep + weighted_hbond_bb_sc + weighted_hbond_sc + weighted_fa_sol;
+			Real total=in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( total_score ) ];
+			if ( !include_cstE_ ) total-= constraint_energy(in_pose, resnum_ );
+			Real weighted_fa_atr=( (*scorefxn_)[ ScoreType( fa_atr) ] ) * ( in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( fa_atr ) ]);
+			Real weighted_fa_rep=( (*scorefxn_)[ ScoreType( fa_rep) ] ) * ( in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( fa_rep) ]);
+			Real weighted_hbond_bb_sc=( (*scorefxn_)[ ScoreType( hbond_bb_sc) ] ) * ( in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( hbond_bb_sc ) ]);
+			Real weighted_hbond_sc=( (*scorefxn_)[ ScoreType( hbond_sc) ] ) * ( in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( hbond_sc ) ]);
+			Real weighted_fa_sol=( (*scorefxn_)[ ScoreType( fa_sol) ] ) * ( in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( fa_sol ) ]);
+			Real weighted_contact_score = weighted_fa_atr + weighted_fa_rep + weighted_hbond_bb_sc + weighted_hbond_sc + weighted_fa_sol;
 
-				Real weighted_fa_dun=( (*scorefxn_)[ ScoreType( fa_dun) ] ) * ( in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( fa_dun ) ]);
-				Real weighted_fa_pair=( (*scorefxn_)[ ScoreType( fa_pair ) ] ) * ( in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( fa_pair ) ]);
+			Real weighted_fa_dun=( (*scorefxn_)[ ScoreType( fa_dun) ] ) * ( in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( fa_dun ) ]);
+			Real weighted_fa_pair=( (*scorefxn_)[ ScoreType( fa_pair ) ] ) * ( in_pose.energies().residue_total_energies( resnum_ )[ ScoreType( fa_pair ) ]);
 
-				out<<A (9 , in_pose.pdb_info()->chain( resnum_) )<< I(9,0, in_pose.pdb_info()->number(resnum_))<<A (9,in_pose.residue( resnum_).name3())
+			out<<A (9 , in_pose.pdb_info()->chain( resnum_) )<< I(9,0, in_pose.pdb_info()->number(resnum_))<<A (9,in_pose.residue( resnum_).name3())
 				<<F (9 , 3, total) <<" "
 				<<F (9 , 3, weighted_contact_score)<<" "
 				<<F (9 , 3, weighted_fa_atr) <<" "
@@ -374,8 +370,8 @@ LigInterfaceEnergyFilter::report( std::ostream & out, core::pose::Pose const & p
 				<<F (9 , 3, weighted_fa_pair )<<"\n";
 
 
-			}
 		}
+	}
 
 }
 
@@ -398,13 +394,13 @@ LigInterfaceEnergyFilter::compute( core::pose::Pose const & pose ) const
 	in_pose.update_residue_neighbors();
 	(*scorefxn_)( in_pose );
 	protocols::ligand_docking::LigandBaseProtocol ligdock;
-  core::Size const lig_id = ligdock.get_ligand_id(pose);
+	core::Size const lig_id = ligdock.get_ligand_id(pose);
 	enzutil::enable_constraint_scoreterms( scorefxn_);
 	basic::MetricValue< core::Real > mv_interfE;
 	in_pose.metric( "liginterfE","weighted_total", mv_interfE);  // if this seems like its come out of nowhere see declaration in protocols/jd2/DockDesignParser.cc
 	core::Real weighted_score = mv_interfE.value();
 	TR<<"Calculated Interface Energy is before cst correction is:"<<weighted_score<<std::endl;
-	if (!include_cstE_) weighted_score -= 2*constraint_energy(in_pose, lig_id);
+	if ( !include_cstE_ ) weighted_score -= 2*constraint_energy(in_pose, lig_id);
 	TR<<"Calculated Interface Energy is "<<weighted_score<<std::endl;
 	return( weighted_score );
 }
@@ -412,151 +408,146 @@ LigInterfaceEnergyFilter::compute( core::pose::Pose const & pose ) const
 core::Real
 LigInterfaceEnergyFilter::constraint_energy( core::pose::Pose const & in_pose , int which_res ) const
 {
- using namespace core::scoring;
-  core::pose::Pose pose (in_pose);
-  (*scorefxn_)(pose);
-  EnergyMap all_weights = pose.energies().weights();
-  EnergyMap scores;
+	using namespace core::scoring;
+	core::pose::Pose pose (in_pose);
+	(*scorefxn_)(pose);
+	EnergyMap all_weights = pose.energies().weights();
+	EnergyMap scores;
 
-  if( which_res == -1){ //means we want to know stuff for the whole pose
-    scores = pose.energies().total_energies();
-  }
-  else{ scores = pose.energies().residue_total_energies( which_res ); }
+	if ( which_res == -1 ) { //means we want to know stuff for the whole pose
+		scores = pose.energies().total_energies();
+	} else { scores = pose.energies().residue_total_energies( which_res ); }
 
-  return scores[ coordinate_constraint ] * all_weights[ coordinate_constraint ] + scores[atom_pair_constraint] * all_weights[ atom_pair_constraint] +
-    scores[ angle_constraint ] * all_weights[ angle_constraint ] + scores[ dihedral_constraint ] * all_weights[ dihedral_constraint ];
+	return scores[ coordinate_constraint ] * all_weights[ coordinate_constraint ] + scores[atom_pair_constraint] * all_weights[ atom_pair_constraint] +
+		scores[ angle_constraint ] * all_weights[ angle_constraint ] + scores[ dihedral_constraint ] * all_weights[ dihedral_constraint ];
 
 }
 void
 LigInterfaceEnergyFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
-  using namespace core::scoring;
+	using namespace core::scoring;
 
-  scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
+	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 
-  threshold_ = tag->getOption<core::Real>( "energy_cutoff", 0.0 );
-  include_cstE_ = tag->getOption<bool>( "include_cstE" , 0 );
-  rb_jump_ = tag->getOption<core::Size>( "jump_number", 0 );
-  interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_distance_cutoff" , 8.0 );
+	threshold_ = tag->getOption<core::Real>( "energy_cutoff", 0.0 );
+	include_cstE_ = tag->getOption<bool>( "include_cstE" , 0 );
+	rb_jump_ = tag->getOption<core::Size>( "jump_number", 0 );
+	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_distance_cutoff" , 8.0 );
 
 }
 void LigInterfaceEnergyFilter::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & score_fxns,
-				utility::lua::LuaObject const & /*tasks*/ ){
-  using namespace core::scoring;
+	utility::lua::LuaObject const & score_fxns,
+	utility::lua::LuaObject const & /*tasks*/ ){
+	using namespace core::scoring;
 
-	if( def["scorefxn"] ) {
+	if ( def["scorefxn"] ) {
 		scorefxn_ = protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns )->clone();
 	} else {
 		scorefxn_ = score_fxns["score12"].to<ScoreFunctionSP>()->clone();
 	}
-  threshold_ = def["threshold"] ? def["threshold"].to<core::Real>() : 0.0;
-  include_cstE_ = def["include_cstE"] ? def["include_cstE"].to<bool>() : false;
-  rb_jump_ = def["jump_number"] ? def["jump_number"].to<core::Size>() : 0;
-  interface_distance_cutoff_ = def["interface_distance_cutoff"] ? def["interface_distance_cutoff"].to<core::Real>() : 8.0;
+	threshold_ = def["threshold"] ? def["threshold"].to<core::Real>() : 0.0;
+	include_cstE_ = def["include_cstE"] ? def["include_cstE"].to<bool>() : false;
+	rb_jump_ = def["jump_number"] ? def["jump_number"].to<core::Size>() : 0;
+	interface_distance_cutoff_ = def["interface_distance_cutoff"] ? def["interface_distance_cutoff"].to<core::Real>() : 8.0;
 }
 
 LigInterfaceEnergyFilter::~LigInterfaceEnergyFilter() {}
 
 EnzScoreFilter::EnzScoreFilter( core::Size const resnum, std::string const cstid, core::scoring::ScoreFunctionOP scorefxn, core::scoring::ScoreType const score_type, core::Real const threshold, bool const whole_pose, bool const is_cstE ) : Filter( "EnzScore" ), resnum_( resnum ), cstid_( cstid ), score_type_( score_type ), threshold_( threshold ),  whole_pose_ ( whole_pose ), is_cstE_ ( is_cstE ) {
 
-    using namespace core::scoring;
+	using namespace core::scoring;
 
-    if( scorefxn ) scorefxn_ = scorefxn->clone();
-		//if(score_type_ == total_score || is_cstE_ ) enzutil::enable_constraint_scoreterms(scorefxn_);
-    if( score_type_ != total_score ) {
-      core::Real const old_weight( scorefxn_->get_weight( score_type_ ) );
-      scorefxn_->reset();
-      scorefxn_->set_weight( score_type_, old_weight );
-    }
-  }
+	if ( scorefxn ) scorefxn_ = scorefxn->clone();
+	//if(score_type_ == total_score || is_cstE_ ) enzutil::enable_constraint_scoreterms(scorefxn_);
+	if ( score_type_ != total_score ) {
+		core::Real const old_weight( scorefxn_->get_weight( score_type_ ) );
+		scorefxn_->reset();
+		scorefxn_->set_weight( score_type_, old_weight );
+	}
+}
 
-  EnzScoreFilter::EnzScoreFilter( EnzScoreFilter const &init ) :
+EnzScoreFilter::EnzScoreFilter( EnzScoreFilter const &init ) :
 	//utility::pointer::ReferenceCount(),
 	Filter( init ), resnum_( init.resnum_ ), cstid_( init.cstid_ ),score_type_( init.score_type_ ), threshold_( init.threshold_ ),
-  whole_pose_ (init.whole_pose_), is_cstE_ ( init.is_cstE_ ) {
-    using namespace core::scoring;
-    if( init.scorefxn_ ) scorefxn_ = init.scorefxn_->clone();
-  }
+	whole_pose_ (init.whole_pose_), is_cstE_ ( init.is_cstE_ ) {
+	using namespace core::scoring;
+	if ( init.scorefxn_ ) scorefxn_ = init.scorefxn_->clone();
+}
 
 bool
 EnzScoreFilter::apply( core::pose::Pose const & pose ) const
 {
-  using namespace core::scoring;
+	using namespace core::scoring;
 	core::Real energy (compute(pose));
 	TR<<"Score found as "<<energy <<" and threshold is " << threshold_<<std::endl;
-  return (energy<threshold_);
+	return (energy<threshold_);
 }
 
 void
 EnzScoreFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
 
 {
-  using namespace core::scoring;
+	using namespace core::scoring;
 	out<<"Weighted score "<<compute( pose )<<'\n';
 }
 
 core::Real
 EnzScoreFilter::report_sm( core::pose::Pose const & pose ) const {
-  return( compute( pose ) );
+	return( compute( pose ) );
 }
 
 core::Real
 EnzScoreFilter::compute( core::pose::Pose const & pose ) const {
 	using namespace core::pose;
-  using namespace core::scoring;
+	using namespace core::scoring;
 	PoseOP in_pose( new Pose( pose ) );
 	core::Size resnum = resnum_;
-	if (resnum==0){//means we want ligand scores
+	if ( resnum==0 ) { //means we want ligand scores
 		protocols::ligand_docking::LigandBaseProtocol ligdock;
-  	resnum = ligdock.get_ligand_id(pose);
+		resnum = ligdock.get_ligand_id(pose);
 	}
 	core::Real weight(0.0), score(0.0);
-	if (whole_pose_){
+	if ( whole_pose_ ) {
 		(*scorefxn_)( *in_pose );
-  	if (!is_cstE_ ) {
+		if ( !is_cstE_ ) {
 			weight = ( (*scorefxn_)[ ScoreType( score_type_ ) ] );
-  		score = ( in_pose->energies().total_energies()[ ScoreType( score_type_ ) ]);
-  		TR<<"Raw Score is: " << score << std::endl;
-			}
-		if( score_type_  == total_score ) {
-			if (pose.constraint_set()->has_constraints()) {//check if constraints exist, and remove their score
+			score = ( in_pose->energies().total_energies()[ ScoreType( score_type_ ) ]);
+			TR<<"Raw Score is: " << score << std::endl;
+		}
+		if ( score_type_  == total_score ) {
+			if ( pose.constraint_set()->has_constraints() ) { //check if constraints exist, and remove their score
 				enzutil::enable_constraint_scoreterms(scorefxn_);
-				 (*scorefxn_)( *in_pose );
-				 LigInterfaceEnergyFilter liginter( scorefxn_,0.0,false, 1, 0.0 );
-				 core::Real all_cstE = liginter.constraint_energy(*in_pose, -1);// for whole pose;
+				(*scorefxn_)( *in_pose );
+				LigInterfaceEnergyFilter liginter( scorefxn_,0.0,false, 1, 0.0 );
+				core::Real all_cstE = liginter.constraint_energy(*in_pose, -1);// for whole pose;
 				score -= all_cstE;
-				}
-			return( score );
 			}
-		else if (is_cstE_){
-				TR<<"Evaluating constraint score for whole pose..."<<std::endl;
-				enzutil::enable_constraint_scoreterms(scorefxn_);
-				 LigInterfaceEnergyFilter liginter( scorefxn_,0.0,false, 1, 0.0 );
-        core::Real all_cstE = liginter.constraint_energy(*in_pose, -1); // for whole pose;
-				TR<<"And constraint energy is..."<< all_cstE << std::endl;
-				return( all_cstE ) ;
-		}
-		else {
+			return( score );
+		} else if ( is_cstE_ ) {
+			TR<<"Evaluating constraint score for whole pose..."<<std::endl;
+			enzutil::enable_constraint_scoreterms(scorefxn_);
+			LigInterfaceEnergyFilter liginter( scorefxn_,0.0,false, 1, 0.0 );
+			core::Real all_cstE = liginter.constraint_energy(*in_pose, -1); // for whole pose;
+			TR<<"And constraint energy is..."<< all_cstE << std::endl;
+			return( all_cstE ) ;
+		} else {
 			core::Real const weighted_score( weight * score );
-  	  TR<<"Weighted Score is: " << weighted_score << std::endl;
-  		return( weighted_score );
+			TR<<"Weighted Score is: " << weighted_score << std::endl;
+			return( weighted_score );
 		}
-	}
-	else{ //score for a particular residue/cstid
-  	if (! (cstid_ =="")) resnum = enzutil::get_resnum_from_cstid( cstid_, *in_pose );
-    (*scorefxn_)( *in_pose );
+	} else { //score for a particular residue/cstid
+		if ( ! (cstid_ =="") ) resnum = enzutil::get_resnum_from_cstid( cstid_, *in_pose );
+		(*scorefxn_)( *in_pose );
 		TR<<"For Resid:"<< resnum << std::endl;
 		runtime_assert(resnum>0);
-		if (is_cstE_ || score_type_ == total_score ){
-		 	enzutil::enable_constraint_scoreterms(scorefxn_);
-      (*scorefxn_)( *in_pose );
-       LigInterfaceEnergyFilter liginter( scorefxn_,0.0,false, 1, 0.0 );
-       core::Real resnum_cstE = liginter.constraint_energy(*in_pose, resnum);
-       if (is_cstE_) return resnum_cstE;
-			 else return (in_pose->energies().residue_total_energies( resnum )[ ScoreType( score_type_ )] - resnum_cstE );
-		}
-		else return( ( (*scorefxn_)[ ScoreType( score_type_ ) ] ) * (in_pose->energies().residue_total_energies( resnum )[ ScoreType( score_type_ )]) );
+		if ( is_cstE_ || score_type_ == total_score ) {
+			enzutil::enable_constraint_scoreterms(scorefxn_);
+			(*scorefxn_)( *in_pose );
+			LigInterfaceEnergyFilter liginter( scorefxn_,0.0,false, 1, 0.0 );
+			core::Real resnum_cstE = liginter.constraint_energy(*in_pose, resnum);
+			if ( is_cstE_ ) return resnum_cstE;
+			else return (in_pose->energies().residue_total_energies( resnum )[ ScoreType( score_type_ )] - resnum_cstE );
+		} else return( ( (*scorefxn_)[ ScoreType( score_type_ ) ] ) * (in_pose->energies().residue_total_energies( resnum )[ ScoreType( score_type_ )]) );
 	}
 	return 0.0;
 }
@@ -564,21 +555,20 @@ EnzScoreFilter::compute( core::pose::Pose const & pose ) const {
 void
 EnzScoreFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, Filters_map const &, Movers_map const &, core::pose::Pose const &pose)
 {
-  using namespace core::scoring;
+	using namespace core::scoring;
 	is_cstE_ = false;
-	if (tag->hasOption( "pdb_num" )) resnum_ = core::pose::get_resnum(tag, pose);
-	else if (tag->hasOption( "res_num" )) resnum_ =  tag->getOption<core::Size>( "res_num", 0 );
+	if ( tag->hasOption( "pdb_num" ) ) resnum_ = core::pose::get_resnum(tag, pose);
+	else if ( tag->hasOption( "res_num" ) ) resnum_ =  tag->getOption<core::Size>( "res_num", 0 );
 	cstid_ = tag->getOption<std::string>( "cstid", "" );
 
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function(tag, data)->clone();
 	std::string sco_name = tag->getOption<std::string>( "score_type", "total_score" );
-	if (sco_name == "cstE") {
+	if ( sco_name == "cstE" ) {
 		is_cstE_ = true;
 		score_type_=atom_pair_constraint; //dummy assignment, never actually used.
-	}
-	else score_type_ = core::scoring::score_type_from_name( sco_name );
-  threshold_ = tag->getOption<core::Real>( "energy_cutoff", 0.0 );
-  whole_pose_ = tag->getOption<bool>( "whole_pose" , 0 );
+	} else score_type_ = core::scoring::score_type_from_name( sco_name );
+	threshold_ = tag->getOption<core::Real>( "energy_cutoff", 0.0 );
+	whole_pose_ = tag->getOption<bool>( "whole_pose" , 0 );
 
 	//check to make sure one and only one of resnum, cstid and whole_pose are specified
 	runtime_assert(tag->hasOption( "res_num" )|| tag->hasOption( "pdb_num" ) || tag->hasOption( "cstid" ) || whole_pose_==1 );
@@ -586,13 +576,12 @@ EnzScoreFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data
 	runtime_assert(!( (tag->hasOption( "res_num" )|| tag->hasOption( "pdb_num" )) &&  whole_pose_==1));
 	runtime_assert(!(tag->hasOption( "cstid" ) &&  whole_pose_==1));
 
-	if (whole_pose_==1 ) {
-    TR<<"energies for whole pose will be calculated "
-    << "\n and scorefxn " << protocols::rosetta_scripts::get_score_function_name(tag) <<" will be used" <<std::endl;
-  }
-  else {
-    TR<<"EnzScoreFilter for residue or cstid with cutoff "<<threshold_<<std::endl;
-    }
+	if ( whole_pose_==1 ) {
+		TR<<"energies for whole pose will be calculated "
+			<< "\n and scorefxn " << protocols::rosetta_scripts::get_score_function_name(tag) <<" will be used" <<std::endl;
+	} else {
+		TR<<"EnzScoreFilter for residue or cstid with cutoff "<<threshold_<<std::endl;
+	}
 }
 EnzScoreFilter::~EnzScoreFilter() {}
 
@@ -604,25 +593,24 @@ RepackWithoutLigandFilter::apply( core::pose::Pose const & pose ) const
 
 	core::Real const value( compute( pose ) );
 
-	if (calc_dE_) {
-		if (value > energy_threshold_) return false;
+	if ( calc_dE_ ) {
+		if ( value > energy_threshold_ ) return false;
 		else return true;
-		}
-	else if (calc_rms_){
-		if (value > rms_threshold_) return false;
+	} else if ( calc_rms_ ) {
+		if ( value > rms_threshold_ ) return false;
 		else return true;
-    }
+	}
 	return false;
 }
 
 void
 RepackWithoutLigandFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
- //Output to tracer triggers the compute function separately. Since this is an expensive filter, we don't want to unncessarily compute, hence disabled.
- // Dummy use of pose to avoid compiler warning.
-//  core::Real value( compute( pose ));
-//  if (calc_rms_) out<<"RMS= "<< value<<'\n';
-//  else out<<"dEnergy = "<< value<<'\n';
+	//Output to tracer triggers the compute function separately. Since this is an expensive filter, we don't want to unncessarily compute, hence disabled.
+	// Dummy use of pose to avoid compiler warning.
+	//  core::Real value( compute( pose ));
+	//  if (calc_rms_) out<<"RMS= "<< value<<'\n';
+	//  else out<<"dEnergy = "<< value<<'\n';
 	out<<"Ligand to take out is: "<< pose.total_residue();
 	out<<'\n';
 }
@@ -630,7 +618,7 @@ RepackWithoutLigandFilter::report( std::ostream & out, core::pose::Pose const & 
 core::Real
 RepackWithoutLigandFilter::report_sm( core::pose::Pose const & pose ) const
 {
-  return ( compute( pose ));
+	return ( compute( pose ));
 }
 
 core::Real
@@ -646,64 +634,61 @@ RepackWithoutLigandFilter::compute( core::pose::Pose const & pose ) const
 
 	protocols::enzdes::RepackLigandSiteWithoutLigandMover rnl( scorefxn_, false );
 	// same length
-    rnl.set_separate_prt_ligand( false );
+	rnl.set_separate_prt_ligand( false );
 
-    rnl.apply( rnl_pose );
+	rnl.apply( rnl_pose );
 
-    (*scorefxn_)(rnl_pose);
+	(*scorefxn_)(rnl_pose);
 	core::Real nl_score = rnl_pose.energies().total_energies()[total_score];
 
-	if (calc_dE_) {
+	if ( calc_dE_ ) {
 		TR<<"Total energy with ligand is: "<<wl_score<<" and total energy without ligand is "<<nl_score<<std::endl;
 		return (wl_score - nl_score);
-	}
-	else if (calc_rms_){
+	} else if ( calc_rms_ ) {
 		ObjexxFCL::FArray1D_bool rms_seqpos( pose.total_residue(), false );
 		utility::vector1< core::Size > trg_res;
-        TR << " Length of initial pose " << rnl_pose.total_residue() << std::endl;
-		if (rms_all_rpked_) {
-		TR<<"Getting identities of all pack residues... "<< std::endl;
+		TR << " Length of initial pose " << rnl_pose.total_residue() << std::endl;
+		if ( rms_all_rpked_ ) {
+			TR<<"Getting identities of all pack residues... "<< std::endl;
 			core::pack::task::PackerTaskCOP rnl_ptask = rnl.get_ptask();
-			for( core::Size i = 1; i <= rnl_ptask->total_residue(); ++i ){
+			for ( core::Size i = 1; i <= rnl_ptask->total_residue(); ++i ) {
 
-        if( rnl_ptask->residue_task( i ).being_packed() && pose.residue( i ).is_protein() ) {
+				if ( rnl_ptask->residue_task( i ).being_packed() && pose.residue( i ).is_protein() ) {
 					trg_res.push_back( i );
 				}
-    	}
-		}
-
-        else if( use_cstids_ ) {
+			}
+		} else if ( use_cstids_ ) {
 			enzutil::get_resnum_from_cstid_list(cstid_list_, pose, trg_res);
 		}
 
-        trg_res.insert( trg_res.begin(), target_res_.begin(), target_res_.end() );
-        utility::vector1< core::Size >::iterator last = std::unique( trg_res.begin(), trg_res.end() );
+		trg_res.insert( trg_res.begin(), target_res_.begin(), target_res_.end() );
+		utility::vector1< core::Size >::iterator last = std::unique( trg_res.begin(), trg_res.end() );
 		trg_res.erase( last, trg_res.end() );
 
 		TR<<"Calculating RMS for residues ";
-		for (core::Size i=1; i<=pose.total_residue(); ++i){
-			if (! (pose.residue_type( i ).is_ligand()) ){
+		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+			if ( ! (pose.residue_type( i ).is_ligand()) ) {
 				utility::vector1< core::Size >::const_iterator resfind = find( trg_res.begin(), trg_res.end(), i );
-				if (resfind != trg_res.end()) {
+				if ( resfind != trg_res.end() ) {
 					rms_seqpos( i ) =true;
 					TR<< i<< ", ";
 				}
 			}
 		}
 
-        TR<< std::endl;
+		TR<< std::endl;
 
 		core::Real rmsd( core::scoring::rmsd_no_super_subset( pose, rnl_pose, rms_seqpos, core::scoring::is_protein_sidechain_heavyatom ) );
-        // PG 21-05-2013
+		// PG 21-05-2013
 #ifdef WIN32
-        if( _isnan(rmsd) ){
+		if ( _isnan(rmsd) ) {
 #else
-        if( std::isnan(rmsd) ){
-            runtime_assert(!std::isnan(rmsd));
+		if ( std::isnan(rmsd) ) {
+			runtime_assert(!std::isnan(rmsd));
 #endif
-            utility_exit_with_message( "RMSD is NaN - there is something is wrong with how the interface is defined");
+			utility_exit_with_message( "RMSD is NaN - there is something is wrong with how the interface is defined");
 
-        }
+		}
 
 		TR<<"Total rms of requested region is: "<< rmsd <<std::endl;
 		return rmsd;
@@ -718,26 +703,25 @@ RepackWithoutLigandFilter::parse_my_tag( TagCOP const tag, basic::datacache::Dat
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	calc_rms_ = false; calc_dE_ = false; rms_all_rpked_ = false; use_cstids_ = false;
 	runtime_assert( tag->hasOption("energy_threshold") ||  tag->hasOption("rms_threshold") );
-	if (tag->hasOption("rms_threshold")) {
+	if ( tag->hasOption("rms_threshold") ) {
 		rms_threshold_ =  tag->getOption<core::Real>("rms_threshold", 0.5 );
 		calc_rms_ = true;
-		if( tag->hasOption("target_res") ) {
+		if ( tag->hasOption("target_res") ) {
 			std::string target_res = tag->getOption<std::string>("target_res", "" );
-			if (target_res=="all_repacked") rms_all_rpked_ = true;
+			if ( target_res=="all_repacked" ) rms_all_rpked_ = true;
 			else target_res_ = core::pose::get_resnum_list(tag, "target_res",pose);
 		}
-		if( tag->hasOption("target_cstids") ) {
+		if ( tag->hasOption("target_cstids") ) {
 			cstid_list_ = tag->getOption<std::string>("target_cstids", "" );
 			use_cstids_ = true;
 		}
-	}
-	else if (tag->hasOption("energy_threshold")) {
+	} else if ( tag->hasOption("energy_threshold") ) {
 		energy_threshold_  =  tag->getOption<core::Real>("energy_threshold", 0.0 );
 		calc_dE_ = true;
 	}
-    // 21-05-2013 PG
-    if( !calc_dE_ && target_res_.empty() && cstid_list_.empty() && !rms_all_rpked_  ){
-        throw utility::excn::EXCN_RosettaScriptsOption(" NO RESIDUES HAVE BEEN SPECIFIED FOR THE RMSD CALCULATION");
+	// 21-05-2013 PG
+	if ( !calc_dE_ && target_res_.empty() && cstid_list_.empty() && !rms_all_rpked_  ) {
+		throw utility::excn::EXCN_RosettaScriptsOption(" NO RESIDUES HAVE BEEN SPECIFIED FOR THE RMSD CALCULATION");
 	}
 	TR<<" Defined RepackWithoutLigandFilter "<< std::endl;
 }
@@ -754,8 +738,8 @@ ValueEvaluator::~ValueEvaluator(){}
 bool
 ValueEvaluator::value_passes( core::Real const value ) const
 {
-	if( mode_ == SMALLER ) return value < cutoff_;
-	else if( mode_ == LARGER ) return value > cutoff_;
+	if ( mode_ == SMALLER ) return value < cutoff_;
+	else if ( mode_ == LARGER ) return value > cutoff_;
 	else return value == cutoff_;
 }
 
@@ -763,7 +747,7 @@ ValueEvaluator::value_passes( core::Real const value ) const
 std::map< std::string, std::map<std::string, ValueEvaluator > > EnzdesScorefileFilter::evaluator_map_;
 
 EnzdesScorefileFilter::EnzdesScorefileFilter()
-	: Filter(),
+: Filter(),
 	no_packstat_calc_( basic::options::option[basic::options::OptionKeys::enzdes::no_packstat_calculation] ),
 	native_comparison_(basic::options::option[basic::options::OptionKeys::enzdes::compare_native].user() ),
 	repack_no_lig_(basic::options::option[basic::options::OptionKeys::enzdes::final_repack_without_ligand]),
@@ -771,10 +755,10 @@ EnzdesScorefileFilter::EnzdesScorefileFilter()
 	rnl_pose_(/* NULL */),
 	sfxn_(core::scoring::ScoreFunctionFactory::create_score_function("enzdes") ),
 	enzcst_io_(/* NULL */),
- 	native_comp_(/* NULL */),
- 	reqfile_name_("")
+	native_comp_(/* NULL */),
+	reqfile_name_("")
 {
-	if( native_comparison_ ) native_comp_ = DesignVsNativeComparisonOP( new protocols::enzdes::DesignVsNativeComparison() );
+	if ( native_comparison_ ) native_comp_ = DesignVsNativeComparisonOP( new protocols::enzdes::DesignVsNativeComparison() );
 	residue_calculators_.clear();
 	native_compare_calculators_.clear();
 	silent_Es_.clear();
@@ -819,24 +803,24 @@ EnzdesScorefileFilter::apply( core::pose::Pose const & pose ) const{
 
 	std::set<std::string> found_evaluators; //make sure all the desired values are returned by the scorefile
 
-	for( utility::vector1< core::io::silent::SilentEnergy >::const_iterator sco_it(silent_Es_.begin()), sco_end(silent_Es_.end()); sco_it != sco_end; ++sco_it){
+	for ( utility::vector1< core::io::silent::SilentEnergy >::const_iterator sco_it(silent_Es_.begin()), sco_end(silent_Es_.end()); sco_it != sco_end; ++sco_it ) {
 
 		//std::cerr << "iterating " << sco_it->name() << " val " << sco_it->value() << std::endl;
 		std::map< std::string, ValueEvaluator >::const_iterator val_it(evaluators.find(sco_it->name() ) );
-		if( val_it != evaluators.end() ){
+		if ( val_it != evaluators.end() ) {
 			found_evaluators.insert( sco_it->name() );
-			if( !val_it->second.value_passes( sco_it->value() ) ){
+			if ( !val_it->second.value_passes( sco_it->value() ) ) {
 				TR << "EnzdesScorefileFilter returning false for parameter " << sco_it->name() << " with cutoff " << val_it->second.cutoff_ << " and value " << sco_it->value() << "." << std::endl;
 				return false;
 			}
 		}
 	} //loop over all score terms produced by scorefile
 
-	if( found_evaluators.size() != evaluators.size() ){
+	if ( found_evaluators.size() != evaluators.size() ) {
 		std::cerr << "Not all parameters from requirement file " << reqfile_name_ << " were found in EnzdesScorefileFilter values, filering likely not working correctly." << std::endl;
 		std::cerr << "Missing parameters: ";
-		for( std::map< std::string, ValueEvaluator >::const_iterator val_it(evaluators.begin()), val_end(evaluators.end()); val_it != val_end; ++val_it){
-			if( found_evaluators.find( val_it->first ) == found_evaluators.end() ) std::cerr << val_it->first << ", ";
+		for ( std::map< std::string, ValueEvaluator >::const_iterator val_it(evaluators.begin()), val_end(evaluators.end()); val_it != val_end; ++val_it ) {
+			if ( found_evaluators.find( val_it->first ) == found_evaluators.end() ) std::cerr << val_it->first << ", ";
 		}
 		std::cerr << std::endl;
 	}
@@ -875,62 +859,60 @@ EnzdesScorefileFilter::examine_pose(
 	toolbox::match_enzdes_util::get_enzdes_observer( calc_pose )->set_cst_cache( NULL );
 	(*sfxn_)( calc_pose );
 
-	if( pose.observer_cache().has( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER) ){
+	if ( pose.observer_cache().has( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER) ) {
 		spec_segments_ = utility::pointer::static_pointer_cast< core::pose::datacache::SpecialSegmentsObserver const >(pose.observer_cache().get_const_ptr( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER ) )->segments();
 	}
 
 	bool separate_out_constraints = false;
 	utility::vector1< std::string >::const_iterator cstfind = find( relevant_scoreterms_.begin(), relevant_scoreterms_.end(),"all_cst");
-	if( cstfind != relevant_scoreterms_.end() ) separate_out_constraints = true;
+	if ( cstfind != relevant_scoreterms_.end() ) separate_out_constraints = true;
 
-    setup_pose_metric_calculators( pose, separate_out_constraints );
+	setup_pose_metric_calculators( pose, separate_out_constraints );
 
-  //first write out the relevant score terms for the pose total
-  for( utility::vector1< std::string >::const_iterator sco_it = relevant_scoreterms_.begin();
-       sco_it != relevant_scoreterms_.end(); ++sco_it ){
-    std::string sco_name = *sco_it;
-    int width = std::max( 10, (int) sco_name.length() + 3 );
+	//first write out the relevant score terms for the pose total
+	for ( utility::vector1< std::string >::const_iterator sco_it = relevant_scoreterms_.begin();
+			sco_it != relevant_scoreterms_.end(); ++sco_it ) {
+		std::string sco_name = *sco_it;
+		int width = std::max( 10, (int) sco_name.length() + 3 );
 
-    SilentEnergy new_se;
-    if( *sco_it == "all_cst" ) {
-      new_se = SilentEnergy ( sco_name, enzutil::sum_constraint_scoreterms(pose, -1 ), 1, width);
-    }
-		else if( separate_out_constraints && ( *sco_it == "total_score" ) ){
+		SilentEnergy new_se;
+		if ( *sco_it == "all_cst" ) {
+			new_se = SilentEnergy ( sco_name, enzutil::sum_constraint_scoreterms(pose, -1 ), 1, width);
+		} else if ( separate_out_constraints && ( *sco_it == "total_score" ) ) {
 			core::Real desired_value = pose.energies().total_energies()[ core::scoring::score_type_from_name( *sco_it ) ] - enzutil::sum_constraint_scoreterms(pose, -1 );
 			new_se = SilentEnergy(sco_name, desired_value, 1, width);
+		} else {
+			new_se = SilentEnergy ( sco_name, pose.energies().total_energies()[ core::scoring::score_type_from_name( *sco_it ) ] * pose.energies().weights()[ core::scoring::score_type_from_name( *sco_it ) ], 1 ,width);
 		}
-    else{
-      new_se = SilentEnergy ( sco_name, pose.energies().total_energies()[ core::scoring::score_type_from_name( *sco_it ) ] * pose.energies().weights()[ core::scoring::score_type_from_name( *sco_it ) ], 1 ,width);
-    }
-    silent_Es_.push_back( new_se );
+		silent_Es_.push_back( new_se );
 
-  }
+	}
 	//pose metric calculators for pose total
 	std::map< Size, utility::vector1< std::pair< std::string, std::string > > >::const_iterator totcalc_it = residue_calculators_.find( 0 );
-	if( totcalc_it != residue_calculators_.end() ){
+	if ( totcalc_it != residue_calculators_.end() ) {
 
-    utility::vector1< std::pair< std::string, std::string > > const & tot_calculators = totcalc_it->second;
-		for( utility::vector1< std::pair< std::string, std::string > >::const_iterator calc_it = tot_calculators.begin();
-				 calc_it != tot_calculators.end(); ++calc_it){
+		utility::vector1< std::pair< std::string, std::string > > const & tot_calculators = totcalc_it->second;
+		for ( utility::vector1< std::pair< std::string, std::string > >::const_iterator calc_it = tot_calculators.begin();
+				calc_it != tot_calculators.end(); ++calc_it ) {
 
 			std::string calc_name = "tot_" + calc_it->first;
-			if( calc_it->first == "charges_pm" ) calc_name = "tot_" + calc_it->second;
+			if ( calc_it->first == "charges_pm" ) calc_name = "tot_" + calc_it->second;
 			int width = std::max( 10, (int) calc_name.length() + 3 );
 
 			core::Real calc_value;
 
 			//following lines fairly hacky, but don't know a better solution at the moment
-			if( calc_it->first == "hbond_pm" || calc_it->first == "burunsat_pm" || calc_it->first == "NLconts_pm" || calc_it->second == "total_pos_charges" || calc_it->second == "total_neg_charges" ){
+			if ( calc_it->first == "hbond_pm" || calc_it->first == "burunsat_pm" || calc_it->first == "NLconts_pm" || calc_it->second == "total_pos_charges" || calc_it->second == "total_neg_charges" ) {
 				basic::MetricValue< core::Size > mval_size;
 				calc_pose.metric( calc_it->first, calc_it->second, mval_size );
 				calc_value = mval_size.value();
-			} else if (calc_it->first == "seq_recovery") {
+			} else if ( calc_it->first == "seq_recovery" ) {
 				if ( toolbox::match_enzdes_util::get_enzdes_observer( calc_pose ) -> get_seq_recovery_cache() ) {
 					calc_value = toolbox::match_enzdes_util::get_enzdes_observer( calc_pose ) -> get_seq_recovery_cache() -> sequence_recovery( calc_pose );
 				} else {
 					calc_value= 0.0;
 				}
-			}	else {
+			} else {
 				basic::MetricValue< core::Real > mval_real;
 				calc_pose.metric( calc_it->first, calc_it->second, mval_real );
 				calc_value = mval_real.value();
@@ -942,50 +924,50 @@ EnzdesScorefileFilter::examine_pose(
 
 	}
 
-  //then write out the relevant scoreterms (and potentially pose metrics) for each of the special residues
+	//then write out the relevant scoreterms (and potentially pose metrics) for each of the special residues
 	Size spec_res_counter(0);
 	utility::vector1< Size > special_res = enzutil::catalytic_res( pose );
 
-  for( utility::vector1<Size>::const_iterator res_it = special_res.begin(), end = special_res.end(); res_it != end; ++res_it ){
+	for ( utility::vector1<Size>::const_iterator res_it = special_res.begin(), end = special_res.end(); res_it != end; ++res_it ) {
 
-    spec_res_counter++;
-    //for convenience, the sequence number of the residue will be written out
-    std::stringstream temp;
-    temp << spec_res_counter;
-    std::string spec_res_name = "SR_" + temp.str();
-    //std::cerr << "name for res " << *res_it << " is " << spec_res_name ;
-    SilentEnergy res_name(spec_res_name, *res_it, 1, 10);
-    silent_Es_.push_back( res_name );
+		spec_res_counter++;
+		//for convenience, the sequence number of the residue will be written out
+		std::stringstream temp;
+		temp << spec_res_counter;
+		std::string spec_res_name = "SR_" + temp.str();
+		//std::cerr << "name for res " << *res_it << " is " << spec_res_name ;
+		SilentEnergy res_name(spec_res_name, *res_it, 1, 10);
+		silent_Es_.push_back( res_name );
 
 		utility::vector1< core::Size > dummy_vec;
 		dummy_vec.push_back( *res_it );
 		compute_metrics_for_residue_subset( spec_res_name, separate_out_constraints, calc_pose, dummy_vec);
 	}
 
-	for( core::Size specseg(1); specseg <= spec_segments_.size(); ++specseg ){
+	for ( core::Size specseg(1); specseg <= spec_segments_.size(); ++specseg ) {
 		std::string segname( "Seg_" + utility::to_string( specseg ) );
 		//SilentEnergy segname_e( segname, specseg, 1, 10 );
 		//silent_Es_.push_back( segname_e );
 		utility::vector1< core::Size > segment;
-		for( core::Size i = spec_segments_[specseg].first; i < spec_segments_[specseg].second; ++i ) segment.push_back( i );
+		for ( core::Size i = spec_segments_[specseg].first; i < spec_segments_[specseg].second; ++i ) segment.push_back( i );
 		compute_metrics_for_residue_subset( segname, separate_out_constraints, calc_pose, segment );
 	}
 
 	//if comparison to native is requested
-	if( native_comparison_ ){
+	if ( native_comparison_ ) {
 		native_comp_->compare_to_native( calc_pose, native_compare_calculators_, sfxn_, silent_Es_ );
 	}
 
 	//if repack without lig requested
-	if( repack_no_lig_ ){
+	if ( repack_no_lig_ ) {
 
 		core::pose::PoseOP rnlpose( new core::pose::Pose( pose ) );
 		protocols::enzdes::RepackLigandSiteWithoutLigandMover rnl_mov( sfxn_, true );
-		if( enzcst_io_ ) rnl_mov.set_cstio( enzcst_io_ );
+		if ( enzcst_io_ ) rnl_mov.set_cstio( enzcst_io_ );
 		rnl_mov.apply( *rnlpose );
-		for( core::Size i =1; i<= rnl_mov.silent_Es().size(); ++i ) silent_Es_.push_back( rnl_mov.silent_Es()[i] );
+		for ( core::Size i =1; i<= rnl_mov.silent_Es().size(); ++i ) silent_Es_.push_back( rnl_mov.silent_Es()[i] );
 
-		if( keep_rnl_pose_ ) rnl_pose_ = rnlpose;
+		if ( keep_rnl_pose_ ) rnl_pose_ = rnlpose;
 	}
 } //examine pose
 
@@ -995,7 +977,7 @@ EnzdesScorefileFilter::initialize_value_evaluators_from_file( std::string const 
 {
 
 	std::map< std::string, std::map< std::string, ValueEvaluator > >::iterator map_it( evaluator_map_.find( filename ) );
-	if( map_it != evaluator_map_.end() ) return; //means this has already been done
+	if ( map_it != evaluator_map_.end() ) return; //means this has already been done
 
 	evaluator_map_.insert( std::pair< std::string, std::map< std::string, ValueEvaluator > >( filename, std::map< std::string, ValueEvaluator >() ) );
 	map_it = evaluator_map_.find( filename );
@@ -1005,18 +987,18 @@ EnzdesScorefileFilter::initialize_value_evaluators_from_file( std::string const 
 	utility::io::izstream filedata( filename.c_str() );
 	utility::vector1< std::string > tokens;
 	std::string line("");
-	if( !filedata ) utility_exit_with_message("File " + filename + " couldn't be opened by EnzdesScorefileFilter.");
+	if ( !filedata ) utility_exit_with_message("File " + filename + " couldn't be opened by EnzdesScorefileFilter.");
 
-	while( !filedata.eof() ){
+	while ( !filedata.eof() ) {
 		getline(filedata,line);
 
 		tokens.clear(); tokens.push_back(""); //weird utilvec1 copy behaviour makes this necessary
 		tokens = utility::split( line );
-		if( tokens.size() < 1 ) continue;
+		if ( tokens.size() < 1 ) continue;
 
-		if( tokens[1] == "req"){
-			if(tokens.size() < 5 ) utility_exit_with_message("Could not initialize filter params from line '" + line + "' because it was too short. Check your file format.");
-			if( tokens[3] != "value"){
+		if ( tokens[1] == "req" ) {
+			if ( tokens.size() < 5 ) utility_exit_with_message("Could not initialize filter params from line '" + line + "' because it was too short. Check your file format.");
+			if ( tokens[3] != "value" ) {
 				TR << "Warning: instruction '" << tokens[3] << "' in filter requirements file could not be understand, line will be ignored." << std::endl;
 				continue;
 			}
@@ -1024,9 +1006,9 @@ EnzdesScorefileFilter::initialize_value_evaluators_from_file( std::string const 
 			std::string param_name( tokens[2] );
 			core::Real param_cutoff( core::Real(atof(tokens[5].c_str()) ) );
 			ValueEvaluator::CompareMode mode(ValueEvaluator::SMALLER);
-			if( tokens[4] == "<" ) mode = ValueEvaluator::SMALLER;
-			else if( tokens[4] == "=" ) mode = ValueEvaluator::EQUALS;
-			else if( tokens[4] == ">" ) mode = ValueEvaluator::LARGER;
+			if ( tokens[4] == "<" ) mode = ValueEvaluator::SMALLER;
+			else if ( tokens[4] == "=" ) mode = ValueEvaluator::EQUALS;
+			else if ( tokens[4] == ">" ) mode = ValueEvaluator::LARGER;
 			else utility_exit_with_message("Comparison mode " + tokens[4] + " for requirement " + param_name + " was not understood, needs to be either '>', '<' or '='");
 			map_it->second.insert( std::pair<std::string, ValueEvaluator>(param_name, ValueEvaluator(mode,param_cutoff )) );
 			TR << "Instantiated " << param_name << " requirement with cutoff " << param_cutoff << " and compare mode " << mode << "..." << std::endl;
@@ -1048,26 +1030,24 @@ EnzdesScorefileFilter::compute_metrics_for_residue_subset(
 
 	using namespace core::io::silent;
 
-	for( utility::vector1< std::string >::const_iterator sco_it = relevant_scoreterms_.begin();
-       sco_it != relevant_scoreterms_.end(); ++sco_it ){
+	for ( utility::vector1< std::string >::const_iterator sco_it = relevant_scoreterms_.begin();
+			sco_it != relevant_scoreterms_.end(); ++sco_it ) {
 
 		std::string sco_name = sub_name + "_" +  *sco_it ;
 		int width = std::max( 10, (int) sco_name.length() + 3 );
 
 		SilentEnergy new_se;
-		if( *sco_it == "all_cst" ) {
+		if ( *sco_it == "all_cst" ) {
 			core::Real value(0.0);
-			for( core::Size ii =1; ii <= res_subset.size(); ++ii ) value += enzutil::sum_constraint_scoreterms(calc_pose, res_subset[ii]);
+			for ( core::Size ii =1; ii <= res_subset.size(); ++ii ) value += enzutil::sum_constraint_scoreterms(calc_pose, res_subset[ii]);
 			new_se = SilentEnergy ( sco_name, value , 1, width);
-		}
-		else if( separate_out_constraints && ( *sco_it == "total_score" ) ){
+		} else if ( separate_out_constraints && ( *sco_it == "total_score" ) ) {
 			core::Real desired_value(0.0);
-			for( core::Size ii =1; ii <= res_subset.size(); ++ii ) desired_value +=	calc_pose.energies().residue_total_energies( res_subset[ii] )[ core::scoring::score_type_from_name( *sco_it ) ] - enzutil::sum_constraint_scoreterms(calc_pose, res_subset[ii] );
+			for ( core::Size ii =1; ii <= res_subset.size(); ++ii ) desired_value += calc_pose.energies().residue_total_energies( res_subset[ii] )[ core::scoring::score_type_from_name( *sco_it ) ] - enzutil::sum_constraint_scoreterms(calc_pose, res_subset[ii] );
 			new_se = SilentEnergy(sco_name, desired_value, 1, width);
-		}
-		else{
+		} else {
 			core::Real value(0.0);
-			for( core::Size ii =1; ii <= res_subset.size(); ++ii ) value += calc_pose.energies().residue_total_energies( res_subset[ii] )[ core::scoring::score_type_from_name( *sco_it ) ];
+			for ( core::Size ii =1; ii <= res_subset.size(); ++ii ) value += calc_pose.energies().residue_total_energies( res_subset[ii] )[ core::scoring::score_type_from_name( *sco_it ) ];
 			value *= calc_pose.energies().weights()[ core::scoring::score_type_from_name( *sco_it ) ];
 			new_se = SilentEnergy ( sco_name, value, 1 ,width);
 		}
@@ -1079,10 +1059,10 @@ EnzdesScorefileFilter::compute_metrics_for_residue_subset(
 	//if there are calculators that need to be evaluated for this residue, let's do that now
 	//note: section still under development, right now only calculators that return reals are supported
 	std::map< Size, utility::vector1< std::pair< std::string, std::string > > >::const_iterator res_calc_it = residue_calculators_.find( res_subset[1] );
-	if( res_calc_it != residue_calculators_.end() ){
+	if ( res_calc_it != residue_calculators_.end() ) {
 
 		utility::vector1< std::pair< std::string, std::string > > calculators_this_res = res_calc_it->second;
-		for( utility::vector1< std::pair< std::string, std::string > >::iterator calc_it = calculators_this_res.begin(), end = calculators_this_res.end(); calc_it != end; ++calc_it ){
+		for ( utility::vector1< std::pair< std::string, std::string > >::iterator calc_it = calculators_this_res.begin(), end = calculators_this_res.end(); calc_it != end; ++calc_it ) {
 
 			std::string res_calc_name = sub_name + "_" + calc_it->first;
 			int width = std::max( 10, (int) res_calc_name.length() + 3 );
@@ -1094,34 +1074,31 @@ EnzdesScorefileFilter::compute_metrics_for_residue_subset(
 			basic::MetricValue< utility::vector1< core::Real > >mval_realvec;
 
 			//following lines fairly hacky, but don't know a better solution at the moment
-			if( ( calc_it->first == "hbond_pm") || ( calc_it->first == "burunsat_pm") || ( calc_it->first == "NLconts_pm" ) ){
+			if ( ( calc_it->first == "hbond_pm") || ( calc_it->first == "burunsat_pm") || ( calc_it->first == "NLconts_pm" ) ) {
 				calc_pose.metric( calc_it->first, calc_it->second, mval_sizevec );
-				for( core::Size ii =1; ii <= res_subset.size(); ++ii ) calc_value += mval_sizevec.value()[ res_subset[ii] ];
-			}
-			else if( calc_it->first == "nlsurfaceE_pm" ){
+				for ( core::Size ii =1; ii <= res_subset.size(); ++ii ) calc_value += mval_sizevec.value()[ res_subset[ii] ];
+			} else if ( calc_it->first == "nlsurfaceE_pm" ) {
 				calc_pose.metric( calc_it->first, calc_it->second, mval_realvec );
-				for( core::Size ii =1; ii <= res_subset.size(); ++ii ) calc_value += mval_realvec.value()[ res_subset[ii] ];
-			}
-			else if( (calc_it->first == "pstat_pm") || (calc_it->first == "nlpstat_pm" ) ) {
+				for ( core::Size ii =1; ii <= res_subset.size(); ++ii ) calc_value += mval_realvec.value()[ res_subset[ii] ];
+			} else if ( (calc_it->first == "pstat_pm") || (calc_it->first == "nlpstat_pm" ) ) {
 				calc_pose.metric( calc_it->first, calc_it->second, mval_realvec );
 				core::Real pstat_sum(0.0);
-				for( core::Size ii =1; ii <= res_subset.size(); ++ii ) pstat_sum += mval_realvec.value()[ res_subset[ii] ];
+				for ( core::Size ii =1; ii <= res_subset.size(); ++ii ) pstat_sum += mval_realvec.value()[ res_subset[ii] ];
 				calc_value = pstat_sum / res_subset.size();
-			}
-			else {
+			} else {
 				calc_pose.metric( calc_it->first, calc_it->second, mval_real );
 				//for( core::Size ii =1; ii <= res_subset.size(); ++ii ) calc_value += mval_realvec.value()[ res_subset[ii] ];
 				calc_value = mval_real.value();
 			}
 			//std::cerr << " hehe, just executed pose metric for " << calc_it->first << " calculator   ";
 
-            SilentEnergy new_se( res_calc_name, calc_value, 1, width);
+			SilentEnergy new_se( res_calc_name, calc_value, 1, width);
 			silent_Es_.push_back( new_se );
 
 		} // for calculators this res
 
 	}// if calculators for this res
-    //else std::cerr << "resi " << *res_it << " has no calcs." << std::endl;
+	//else std::cerr << "resi " << *res_it << " has no calcs." << std::endl;
 } //compute_metrics_for_residue_subset
 
 
@@ -1151,41 +1128,41 @@ EnzdesScorefileFilter::setup_pose_metric_calculators( core::pose::Pose const & p
 	std::string charge_calc_name = "charges_pm";
 
 	//before starting, we make sure that all necessary calculators are instantiated
-	if( !CalculatorFactory::Instance().check_calculator_exists( hbond_calc_name ) ){
+	if ( !CalculatorFactory::Instance().check_calculator_exists( hbond_calc_name ) ) {
 		core::pose::metrics::PoseMetricCalculatorOP hb_calc( new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator() );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( hbond_calc_name, hb_calc );
 	}
-	if( !CalculatorFactory::Instance().check_calculator_exists( burunsat_calc_name ) ){
+	if ( !CalculatorFactory::Instance().check_calculator_exists( burunsat_calc_name ) ) {
 		core::pose::metrics::PoseMetricCalculatorOP burunsat_calc( new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", hbond_calc_name) );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( burunsat_calc_name, burunsat_calc );
 	}
-	if( !CalculatorFactory::Instance().check_calculator_exists( packstat_calc_name ) ){
+	if ( !CalculatorFactory::Instance().check_calculator_exists( packstat_calc_name ) ) {
 		core::pose::metrics::PoseMetricCalculatorOP pstat_calc( new protocols::toolbox::pose_metric_calculators::PackstatCalculator() );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( packstat_calc_name, pstat_calc );
 	}
-	if( !CalculatorFactory::Instance().check_calculator_exists( noligpackstat_calc_name ) ){
+	if ( !CalculatorFactory::Instance().check_calculator_exists( noligpackstat_calc_name ) ) {
 		core::pose::metrics::PoseMetricCalculatorOP noligpstat_calc( new protocols::toolbox::pose_metric_calculators::PackstatCalculator( true ) );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( noligpackstat_calc_name, noligpstat_calc );
 	}
-	if( !CalculatorFactory::Instance().check_calculator_exists( nonlocalcontacts_calc_name ) ){
+	if ( !CalculatorFactory::Instance().check_calculator_exists( nonlocalcontacts_calc_name ) ) {
 		core::pose::metrics::PoseMetricCalculatorOP nlcontacts_calc( new protocols::toolbox::pose_metric_calculators::NonlocalContactsCalculator() );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( nonlocalcontacts_calc_name, nlcontacts_calc );
 	}
-	if( !CalculatorFactory::Instance().check_calculator_exists( surface_calc_name ) ){
+	if ( !CalculatorFactory::Instance().check_calculator_exists( surface_calc_name ) ) {
 		core::pose::metrics::PoseMetricCalculatorOP surface_calc( new protocols::toolbox::pose_metric_calculators::SurfaceCalculator( true ) );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( surface_calc_name, surface_calc );
 	}
-if( !CalculatorFactory::Instance().check_calculator_exists( charge_calc_name ) ){
-	core::pose::metrics::PoseMetricCalculatorOP charge_calc( new protocols::toolbox::pose_metric_calculators::ChargeCalculator() );
+	if ( !CalculatorFactory::Instance().check_calculator_exists( charge_calc_name ) ) {
+		core::pose::metrics::PoseMetricCalculatorOP charge_calc( new protocols::toolbox::pose_metric_calculators::ChargeCalculator() );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( charge_calc_name, charge_calc );
- }
+	}
 
 
 	//first general pose calculators
 
 	utility::vector1< std::pair< std::string, std::string > > total_pose_calculators;
 
-	if( !no_packstat_calc_ ){
+	if ( !no_packstat_calc_ ) {
 		total_pose_calculators.push_back( std::pair< std::string, std::string > ( packstat_calc_name, "total_packstat") );
 		total_pose_calculators.push_back( std::pair< std::string, std::string > ( noligpackstat_calc_name, "total_packstat") );
 	}
@@ -1197,14 +1174,14 @@ if( !CalculatorFactory::Instance().check_calculator_exists( charge_calc_name ) )
 	total_pose_calculators.push_back( std::pair< std::string, std::string > (charge_calc_name, "total_charge") );
 	total_pose_calculators.push_back( std::pair< std::string, std::string > (charge_calc_name, "total_pos_charges") );
 	total_pose_calculators.push_back( std::pair< std::string, std::string > (charge_calc_name, "total_neg_charges") );
-  total_pose_calculators.push_back( std::pair< std::string, std::string > ( "seq_recovery", "seq_recovery") );
+	total_pose_calculators.push_back( std::pair< std::string, std::string > ( "seq_recovery", "seq_recovery") );
 
 	residue_calculators_.insert( std::pair< Size, utility::vector1< std::pair< std::string, std::string > > > ( 0, total_pose_calculators ) );
 
 	//if native compare is requested
-	if( native_comparison_ ){
+	if ( native_comparison_ ) {
 		native_compare_calculators_.push_back( std::pair< std::string, std::string > ( burunsat_calc_name, "all_bur_unsat_polars") );
-		if( !basic::options::option[basic::options::OptionKeys::enzdes::no_packstat_calculation] ){
+		if ( !basic::options::option[basic::options::OptionKeys::enzdes::no_packstat_calculation] ) {
 			native_compare_calculators_.push_back( std::pair< std::string, std::string > ( packstat_calc_name, "total_packstat") );
 		}
 		native_compare_calculators_.push_back( std::pair< std::string, std::string > ( hbond_calc_name, "all_Hbonds") );
@@ -1222,61 +1199,61 @@ if( !CalculatorFactory::Instance().check_calculator_exists( charge_calc_name ) )
 	std::set< core::Size > spec_seg_first_res;
 	utility::vector1< core::Size > scoreres( enzutil::catalytic_res( pose ) );
 
-	for( core::Size speccount =1; speccount <= spec_segments_.size(); ++speccount ){
+	for ( core::Size speccount =1; speccount <= spec_segments_.size(); ++speccount ) {
 		spec_seg_first_res.insert( spec_segments_[speccount].first );
 		scoreres.push_back(  spec_segments_[speccount].first );
 	}
 
-    //detect all protein chains
-    std::set< core::Size > protein_chains;
-    for( utility::vector1< core::Size >::const_iterator vecit( scoreres.begin() );  vecit != scoreres.end(); ++vecit){
-        if (pose.residue_type( *vecit ).is_protein()) {
-            protein_chains.insert(pose.chain( *vecit ));
-        }
-    }
+	//detect all protein chains
+	std::set< core::Size > protein_chains;
+	for ( utility::vector1< core::Size >::const_iterator vecit( scoreres.begin() );  vecit != scoreres.end(); ++vecit ) {
+		if ( pose.residue_type( *vecit ).is_protein() ) {
+			protein_chains.insert(pose.chain( *vecit ));
+		}
+	}
 
-	for( utility::vector1< core::Size >::const_iterator vecit( scoreres.begin() );  vecit != scoreres.end(); ++vecit){
+	for ( utility::vector1< core::Size >::const_iterator vecit( scoreres.begin() );  vecit != scoreres.end(); ++vecit ) {
 
 		//if( ! (enzutil::is_catalytic_seqpos( pose, i ) || (spec_seg_first_res.find( i ) != spec_seg_first_res.end()) ) ) continue;
 
 		utility::vector1< std::pair< std::string, std::string > > calculators_this_res;
 
 		//first a couple of ligand specific calculators ( interface SASA and interface energetics)
-		if( pose.residue_type( *vecit ).is_ligand() ){
-            Size lig_chain = pose.chain( *vecit );
-            std::string lig_ch_string = utility::to_string( lig_chain );
-            for (std::set< core::Size >::const_iterator vecit2(protein_chains.begin()); vecit2!=protein_chains.end(); ++vecit2) {
+		if ( pose.residue_type( *vecit ).is_ligand() ) {
+			Size lig_chain = pose.chain( *vecit );
+			std::string lig_ch_string = utility::to_string( lig_chain );
+			for ( std::set< core::Size >::const_iterator vecit2(protein_chains.begin()); vecit2!=protein_chains.end(); ++vecit2 ) {
 				Size prot_chain=*vecit2;
-                std::string prot_ch_string = utility::to_string( prot_chain );
-                if( lig_chain == prot_chain ) { utility_exit_with_message( "WTF?!? ligand and residue 1 are on the same chain... " );}
+				std::string prot_ch_string = utility::to_string( prot_chain );
+				if ( lig_chain == prot_chain ) { utility_exit_with_message( "WTF?!? ligand and residue 1 are on the same chain... " );}
 
-                std::string lig_interface_neighbor_calc_name = "neighbor_def_" + prot_ch_string + "_" + lig_ch_string;
-                std::string lig_dsasa_calc_name = "dsasa_" + prot_ch_string + "_" + lig_ch_string;
-                std::string lig_interface_e_calc_name = "interf_E_" + prot_ch_string + "_" + lig_ch_string;
+				std::string lig_interface_neighbor_calc_name = "neighbor_def_" + prot_ch_string + "_" + lig_ch_string;
+				std::string lig_dsasa_calc_name = "dsasa_" + prot_ch_string + "_" + lig_ch_string;
+				std::string lig_interface_e_calc_name = "interf_E_" + prot_ch_string + "_" + lig_ch_string;
 
-                if( !CalculatorFactory::Instance().check_calculator_exists( lig_interface_neighbor_calc_name ) ){
-                    PoseMetricCalculatorOP lig_neighbor_calc( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( prot_chain, lig_chain ) );
-                    CalculatorFactory::Instance().register_calculator( lig_interface_neighbor_calc_name, lig_neighbor_calc );
-                }
-                if( !CalculatorFactory::Instance().check_calculator_exists( lig_dsasa_calc_name ) ){
-                    PoseMetricCalculatorOP lig_dsasa_calc( new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator( prot_chain, lig_chain ) );
-                    CalculatorFactory::Instance().register_calculator( lig_dsasa_calc_name, lig_dsasa_calc );
-                }
-                if( !CalculatorFactory::Instance().check_calculator_exists( lig_interface_e_calc_name ) ){
-                    utility::vector1<ScoreType> score_types_to_ignore;
-                    if (separate_out_constraints) {
-                        score_types_to_ignore.push_back( ScoreType( coordinate_constraint ) );
-                        score_types_to_ignore.push_back( ScoreType( atom_pair_constraint ) );
-                        score_types_to_ignore.push_back( ScoreType( angle_constraint ) );
-                        score_types_to_ignore.push_back( ScoreType( dihedral_constraint ) );
-                    }
-                    PoseMetricCalculatorOP lig_interf_E_calc( new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator( lig_interface_neighbor_calc_name, score_types_to_ignore ) );
-                    CalculatorFactory::Instance().register_calculator( lig_interface_e_calc_name, lig_interf_E_calc );
-                }
+				if ( !CalculatorFactory::Instance().check_calculator_exists( lig_interface_neighbor_calc_name ) ) {
+					PoseMetricCalculatorOP lig_neighbor_calc( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( prot_chain, lig_chain ) );
+					CalculatorFactory::Instance().register_calculator( lig_interface_neighbor_calc_name, lig_neighbor_calc );
+				}
+				if ( !CalculatorFactory::Instance().check_calculator_exists( lig_dsasa_calc_name ) ) {
+					PoseMetricCalculatorOP lig_dsasa_calc( new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator( prot_chain, lig_chain ) );
+					CalculatorFactory::Instance().register_calculator( lig_dsasa_calc_name, lig_dsasa_calc );
+				}
+				if ( !CalculatorFactory::Instance().check_calculator_exists( lig_interface_e_calc_name ) ) {
+					utility::vector1<ScoreType> score_types_to_ignore;
+					if ( separate_out_constraints ) {
+						score_types_to_ignore.push_back( ScoreType( coordinate_constraint ) );
+						score_types_to_ignore.push_back( ScoreType( atom_pair_constraint ) );
+						score_types_to_ignore.push_back( ScoreType( angle_constraint ) );
+						score_types_to_ignore.push_back( ScoreType( dihedral_constraint ) );
+					}
+					PoseMetricCalculatorOP lig_interf_E_calc( new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator( lig_interface_neighbor_calc_name, score_types_to_ignore ) );
+					CalculatorFactory::Instance().register_calculator( lig_interface_e_calc_name, lig_interf_E_calc );
+				}
 
-                calculators_this_res.push_back( std::pair< std::string, std::string > ( lig_interface_e_calc_name, "weighted_total") );
-                calculators_this_res.push_back( std::pair< std::string, std::string > ( lig_dsasa_calc_name, "frac_ch2_dsasa") );
-            }
+				calculators_this_res.push_back( std::pair< std::string, std::string > ( lig_interface_e_calc_name, "weighted_total") );
+				calculators_this_res.push_back( std::pair< std::string, std::string > ( lig_dsasa_calc_name, "frac_ch2_dsasa") );
+			}
 		} //ligand specific calculators set up
 
 		//now calculators for every residue, for starters number of Hbonds and number of buried polars
@@ -1284,20 +1261,20 @@ if( !CalculatorFactory::Instance().check_calculator_exists( charge_calc_name ) )
 		calculators_this_res.push_back( std::pair< std::string, std::string > ( burunsat_calc_name, "residue_bur_unsat_polars") );
 
 		//and for protein residues, we also want to know the packstat
-		if( pose.residue_type( *vecit ).is_protein() && ( !basic::options::option[basic::options::OptionKeys::enzdes::no_packstat_calculation] ) ){
+		if ( pose.residue_type( *vecit ).is_protein() && ( !basic::options::option[basic::options::OptionKeys::enzdes::no_packstat_calculation] ) ) {
 			calculators_this_res.push_back( std::pair< std::string, std::string > ( packstat_calc_name, "residue_packstat") );
 			calculators_this_res.push_back( std::pair< std::string, std::string > ( noligpackstat_calc_name, "residue_packstat") );
 
 			//for loop residues also non local contacts and surface E
-			if(spec_seg_first_res.find( *vecit ) != spec_seg_first_res.end()){
+			if ( spec_seg_first_res.find( *vecit ) != spec_seg_first_res.end() ) {
 				calculators_this_res.push_back( std::pair< std::string, std::string > ( nonlocalcontacts_calc_name, "residue_nlcontacts") );
 				calculators_this_res.push_back( std::pair< std::string, std::string > ( surface_calc_name, "residue_surface") );
 			}
 		}
 		//debug
 		//for( utility::vector1< std::pair< std::string, std::string > >::iterator calc_it = calculators_this_res.begin();
-		//		 calc_it != calculators_this_res.end(); calc_it++ ){
-		//	std::cerr << "calculator " << calc_it->first << " created for residue " << *res_it << std::endl;
+		//   calc_it != calculators_this_res.end(); calc_it++ ){
+		// std::cerr << "calculator " << calc_it->first << " created for residue " << *res_it << std::endl;
 		//}
 		//debug over
 
@@ -1343,12 +1320,12 @@ bool
 ResidueConformerFilter::apply( core::pose::Pose const & pose ) const
 {
 	core::Size current_conformer( this->get_current_conformer( pose ) );
-	if( desired_conformer_ == 0 ){
+	if ( desired_conformer_ == 0 ) {
 		TR << "ResidueConformerFilter did not have a desired conformer set. Apply gets passed by default, conformer in pose is " << current_conformer << std::endl;
 		return true;
 		//throw utility::excn::EXCN_RosettaScriptsOption("For ResidueConformerFilter, desired conformer needs to be set if it is used in actual filtering.");
 	}
-	if( current_conformer == desired_conformer_ ) return true;
+	if ( current_conformer == desired_conformer_ ) return true;
 	else return false;
 }
 
@@ -1371,25 +1348,23 @@ ResidueConformerFilter::parse_my_tag(utility::tag::TagCOP tag , basic::datacache
 {
 	relevant_atom_indices_.clear();
 
-	if ( tag->hasOption("restype") ){
+	if ( tag->hasOption("restype") ) {
 		std::string resname =  tag->getOption<std::string>( "restype","" );
 		restype_ = & core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map( resname );
-	}
-	else throw utility::excn::EXCN_RosettaScriptsOption("For ResidueConformerFilter, the desired residue type needs to be specified.");
+	} else throw utility::excn::EXCN_RosettaScriptsOption("For ResidueConformerFilter, the desired residue type needs to be specified.");
 
-	if( tag->hasOption("relevant_atoms") ){
+	if ( tag->hasOption("relevant_atoms") ) {
 		utility::vector1< std::string > const atom_vec( utility::string_split( tag->getOption< std::string >("relevant_atoms", "" ), ',' ) );
-		for( core::Size i(1); i <= atom_vec.size(); ++i ){
+		for ( core::Size i(1); i <= atom_vec.size(); ++i ) {
 			relevant_atom_indices_.push_back( restype_->atom_index( atom_vec[i] ) );
 		}
-	}
-	else{ //use all heavy atoms
-		for( core::Size i(1); i <= restype_->nheavyatoms(); ++i ) relevant_atom_indices_.push_back( i );
+	} else { //use all heavy atoms
+		for ( core::Size i(1); i <= restype_->nheavyatoms(); ++i ) relevant_atom_indices_.push_back( i );
 	}
 
-	if( tag->hasOption("desired_conformer") ) desired_conformer_ = tag->getOption<core::Size>( "desired_conformer",0 );
-	if( tag->hasOption("seqpos") ) seqpos_ = tag->getOption<core::Size>( "seqpos",0 );
-	if( tag->hasOption("max_rms") ) max_rms_ = tag->getOption<core::Real>( "max_rms",0.0 );
+	if ( tag->hasOption("desired_conformer") ) desired_conformer_ = tag->getOption<core::Size>( "desired_conformer",0 );
+	if ( tag->hasOption("seqpos") ) seqpos_ = tag->getOption<core::Size>( "seqpos",0 );
+	if ( tag->hasOption("max_rms") ) max_rms_ = tag->getOption<core::Real>( "max_rms",0.0 );
 
 	this->initialize_internal_data();
 }
@@ -1418,15 +1393,15 @@ ResidueConformerFilter::get_current_conformer( core::pose::Pose const & pose ) c
 {
 	core::Size seqpos_to_check( seqpos_);
 
-	if( seqpos_to_check == 0 ){ //this means seqpos didn't get set by the users, and we have to look in the pose
+	if ( seqpos_to_check == 0 ) { //this means seqpos didn't get set by the users, and we have to look in the pose
 		utility::vector1< core::Size > possible_seqpos;
-		for( core::Size i = 1; i <= pose.total_residue(); ++i){
-			if( pose.residue( i ).name3() == restype_->name3() ) possible_seqpos.push_back( i );
+		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+			if ( pose.residue( i ).name3() == restype_->name3() ) possible_seqpos.push_back( i );
 		}
-		if( possible_seqpos.size() == 0 ){
+		if ( possible_seqpos.size() == 0 ) {
 			throw utility::excn::EXCN_RosettaScriptsOption("In ResidueConformerFilter, no residue of the desired type was found in the pose.");
 		}
-		if( possible_seqpos.size() > 1 ){
+		if ( possible_seqpos.size() > 1 ) {
 			std::cerr <<"In ResidueConformerFilter, more than one possible seqpos to check has been found. Taking only the first one (" << possible_seqpos[1] <<"), but this is probably not what you wanted." << std::endl;
 		}
 		seqpos_to_check = possible_seqpos[1];

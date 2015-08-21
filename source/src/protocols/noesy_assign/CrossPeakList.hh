@@ -53,77 +53,77 @@ namespace noesy_assign {
 
 class CrossPeakList : public utility::pointer::ReferenceCount {
 public:
-  typedef std::list< CrossPeakOP > CrossPeaks;
-  typedef CrossPeaks::const_iterator const_iterator;
-  typedef CrossPeaks::iterator iterator;
-  CrossPeakList();
-  virtual ~CrossPeakList();
+	typedef std::list< CrossPeakOP > CrossPeaks;
+	typedef CrossPeaks::const_iterator const_iterator;
+	typedef CrossPeaks::iterator iterator;
+	CrossPeakList();
+	virtual ~CrossPeakList();
 
-  void read_from_stream( std::istream&, PeakFileFormat& input_adaptor, ResonanceListOP resonances );
-  void write_to_stream( std::ostream&, PeakFileFormat& output_adaptor ) const;
-  void write_peak_files( std::string const& prefix, PeakFileFormat& output_adaptor ) const;
-  void find_assignments();
-  void update_chemshiftscore();
-  void update_symmetry_score();
-  void update_upperdistance_score();
+	void read_from_stream( std::istream&, PeakFileFormat& input_adaptor, ResonanceListOP resonances );
+	void write_to_stream( std::ostream&, PeakFileFormat& output_adaptor ) const;
+	void write_peak_files( std::string const& prefix, PeakFileFormat& output_adaptor ) const;
+	void find_assignments();
+	void update_chemshiftscore();
+	void update_symmetry_score();
+	void update_upperdistance_score();
 
-  template < class DecoyIterator >
-  void update_decoy_compatibility_score( DecoyIterator const& begin, DecoyIterator const& end ); //core::io::silent::SilentFileData const& sfd
+	template < class DecoyIterator >
+	void update_decoy_compatibility_score( DecoyIterator const& begin, DecoyIterator const& end ); //core::io::silent::SilentFileData const& sfd
 
-  void eliminate_spurious_peaks();
+	void eliminate_spurious_peaks();
 
-  template < class DecoyIterator >
-  void calibrate( DecoyIterator const& begin, DecoyIterator const& end );
-   //  void calibrate( core::io::silent::SilentFileData const& decoys );
+	template < class DecoyIterator >
+	void calibrate( DecoyIterator const& begin, DecoyIterator const& end );
+	//  void calibrate( core::io::silent::SilentFileData const& decoys );
 
 #if 0
-  core::scoring::constraints::ConstraintSetOP generate_constraints( core::pose::Pose const& pose, bool centroid = false, core::Size min_seq_separation = 2 ) const;
+	core::scoring::constraints::ConstraintSetOP generate_constraints( core::pose::Pose const& pose, bool centroid = false, core::Size min_seq_separation = 2 ) const;
 #endif
 
-  void generate_fa_and_cen_constraints(
-	core::scoring::constraints::ConstraintSetOP fa_set,
-	core::scoring::constraints::ConstraintSetOP cen_set,
-	core::pose::Pose const& pose,
-	core::pose::Pose const& centroid_pose,
-	core::Size min_seq_separation,
-	core::Size min_quali,
-	core::Size max_quali,
-	core::Real padding = 0.0,
-	bool ignore_elimination_candidates = true,
-	bool elimination_candidates = false
-  ) const;
+	void generate_fa_and_cen_constraints(
+		core::scoring::constraints::ConstraintSetOP fa_set,
+		core::scoring::constraints::ConstraintSetOP cen_set,
+		core::pose::Pose const& pose,
+		core::pose::Pose const& centroid_pose,
+		core::Size min_seq_separation,
+		core::Size min_quali,
+		core::Size max_quali,
+		core::Real padding = 0.0,
+		bool ignore_elimination_candidates = true,
+		bool elimination_candidates = false
+	) const;
 
-  PeakAssignmentResidueMap const& assignments() const {
-    return *assignments_;
-  }
+	PeakAssignmentResidueMap const& assignments() const {
+		return *assignments_;
+	}
 
-  PeakAssignmentResidueMap& assignments() {
-    return *assignments_;
-  }
+	PeakAssignmentResidueMap& assignments() {
+		return *assignments_;
+	}
 
-//   ResonanceList const& resonances() const {
-//     return *resonances_;
-//   }
+	//   ResonanceList const& resonances() const {
+	//     return *resonances_;
+	//   }
 
-  core::Size count_assignments() const;
-  void delete_diagonal_peaks();
-  void update_peak_volumina();
-  void network_analysis();// ResonanceList const& );
-  void set_trivial_decoy_compatibility_score();
-  CrossPeaks const& peaks() const { return peaks_; }
-  const_iterator begin() const { return peaks_.begin(); }
-  const_iterator end() const { return peaks_.end(); }
-  iterator begin() { return peaks_.begin(); }
-  core::Size size() const { return peaks_.size(); }
+	core::Size count_assignments() const;
+	void delete_diagonal_peaks();
+	void update_peak_volumina();
+	void network_analysis();// ResonanceList const& );
+	void set_trivial_decoy_compatibility_score();
+	CrossPeaks const& peaks() const { return peaks_; }
+	const_iterator begin() const { return peaks_.begin(); }
+	const_iterator end() const { return peaks_.end(); }
+	iterator begin() { return peaks_.begin(); }
+	core::Size size() const { return peaks_.size(); }
 private:
-  void update_assignment_list(); //after find_assignments or delete_diagonal_peaks()
+	void update_assignment_list(); //after find_assignments or delete_diagonal_peaks()
 
-  /// @brief return average upper distance bound
-  core::Real calibrate( PeakCalibrator const& calibrator );
-  CrossPeaks peaks_;
-  //probably good to have all things in this class?
-  //  ResonanceListOP resonances_;
-  PeakAssignmentResidueMapOP assignments_;
+	/// @brief return average upper distance bound
+	core::Real calibrate( PeakCalibrator const& calibrator );
+	CrossPeaks peaks_;
+	//probably good to have all things in this class?
+	//  ResonanceListOP resonances_;
+	PeakAssignmentResidueMapOP assignments_;
 };
 
 }

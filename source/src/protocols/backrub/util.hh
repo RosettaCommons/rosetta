@@ -9,7 +9,7 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file protocols/antibody_design/util.hh
-/// @brief 
+/// @brief
 /// @author Colin A. Smith (colin.smith@ucsf.edu)
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com) (copied from app)
 
@@ -24,7 +24,7 @@
 
 namespace protocols {
 namespace backrub {
-			
+
 bool
 read_fold_tree_from_file( core::kinematics::FoldTree & foldtree, std::string filepath );
 
@@ -44,5 +44,5 @@ get_pivot_residues_from_movemap( core::kinematics::MoveMapCOP movemap);
 } //backrub
 } //protocols
 
-#endif	//#ifndef INCLUDED_protocols_backrub_UTIL_HH
+#endif //#ifndef INCLUDED_protocols_backrub_UTIL_HH
 

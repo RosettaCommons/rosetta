@@ -27,61 +27,61 @@
 namespace protocols {
 namespace magnesium {
 
-	class MgHydrater: public moves::Mover {
+class MgHydrater: public moves::Mover {
 
-	public:
+public:
 
-		//constructor
-		MgHydrater();
+	//constructor
+	MgHydrater();
 
-		//constructor
-		MgHydrater( utility::vector1< Size > const & mg_res_list );
+	//constructor
+	MgHydrater( utility::vector1< Size > const & mg_res_list );
 
-		//destructor
-		~MgHydrater();
+	//destructor
+	~MgHydrater();
 
-		void set_use_fast_frame_heuristic( bool const & setting ){ use_fast_frame_heuristic_ = setting; }
-		bool use_fast_frame_heuristic() const { return use_fast_frame_heuristic_; }
+	void set_use_fast_frame_heuristic( bool const & setting ){ use_fast_frame_heuristic_ = setting; }
+	bool use_fast_frame_heuristic() const { return use_fast_frame_heuristic_; }
 
-	public:
+public:
 
-		virtual void apply( core::pose::Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
-		virtual std::string get_name() const{ return "MgHydrater"; }
+	virtual std::string get_name() const{ return "MgHydrater"; }
 
-		void set_excise_mini_pose( bool const & setting ){ excise_mini_pose_ = setting; }
-		bool excise_mini_pose() const { return excise_mini_pose_; }
+	void set_excise_mini_pose( bool const & setting ){ excise_mini_pose_ = setting; }
+	bool excise_mini_pose() const { return excise_mini_pose_; }
 
-		void set_verbose( bool const & setting ){ verbose_ = setting; }
-		bool verbose() const { return verbose_; }
+	void set_verbose( bool const & setting ){ verbose_ = setting; }
+	bool verbose() const { return verbose_; }
 
-	private:
+private:
 
-		void
-		hydrate_magnesium( core::pose::Pose & pose, core::Size const i );
+	void
+	hydrate_magnesium( core::pose::Pose & pose, core::Size const i );
 
-		void
-		hydrate_magnesium_in_pose( core::pose::Pose & pose, core::Size const i,
-															 bool force_full_shell = true );
+	void
+	hydrate_magnesium_in_pose( core::pose::Pose & pose, core::Size const i,
+		bool force_full_shell = true );
 
-		numeric::xyzMatrix< core::Real >
-		set_frame( core::Vector const & orig, core::Vector const & xyz1, core::Vector const & xyz2 ) const;
+	numeric::xyzMatrix< core::Real >
+	set_frame( core::Vector const & orig, core::Vector const & xyz1, core::Vector const & xyz2 ) const;
 
-		bool
-		hydrate_magnesium_with_orbital_frame( core::pose::Pose & pose,
-																					core::Size const i,
-																					utility::vector1< core::id::AtomID > const & nbr_atom_ids,
-																					numeric::xyzMatrix< core::Real > const & R,
-																					bool force_full_shell = true ) const;
-	private:
+	bool
+	hydrate_magnesium_with_orbital_frame( core::pose::Pose & pose,
+		core::Size const i,
+		utility::vector1< core::id::AtomID > const & nbr_atom_ids,
+		numeric::xyzMatrix< core::Real > const & R,
+		bool force_full_shell = true ) const;
+private:
 
-		utility::vector1< core::Size > mg_res_list_;
-    bool excise_mini_pose_;
-		bool use_fast_frame_heuristic_;
-    numeric::UniformRotationSamplerCOP urs_;
-		MgWaterHydrogenPackerOP mg_water_hydrogen_packer_;
-		bool verbose_;
-	};
+	utility::vector1< core::Size > mg_res_list_;
+	bool excise_mini_pose_;
+	bool use_fast_frame_heuristic_;
+	numeric::UniformRotationSamplerCOP urs_;
+	MgWaterHydrogenPackerOP mg_water_hydrogen_packer_;
+	bool verbose_;
+};
 
 } //magnesium
 } //protocols

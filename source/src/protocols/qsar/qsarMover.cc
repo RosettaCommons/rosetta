@@ -55,19 +55,19 @@ qsarCreator::mover_name()
 }
 
 qsarMover::qsarMover():
-		qsar_map_(/* 0 */),
-		chain_(),
-		initialize_(false)
+	qsar_map_(/* 0 */),
+	chain_(),
+	initialize_(false)
 {}
 
 //@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 qsarMover::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & /*datamap*/,
-		protocols::filters::Filters_map const & /*filters*/,
-		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & /*pose*/
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & /*datamap*/,
+	protocols::filters::Filters_map const & /*filters*/,
+	protocols::moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/
 )
 {
 	if ( tag->getName() != "qsarMover" ) throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
@@ -91,21 +91,17 @@ void qsarMover::apply(core::pose::Pose & pose)
 	/// TODO The next line assumes the chain is one residue. fix this.
 	core::conformation::ResidueOP residue( new core::conformation::Residue(pose.residue(begin)) );
 
-	if(grids_to_use_.size()==0)
-	{
+	if ( grids_to_use_.size()==0 ) {
 		TR << "WARNING: no grids specified, QSAR scoring function will be empty!!" <<std::endl;
 		return;
-	}else if(!initialize_)
-	{
+	} else if ( !initialize_ ) {
 		utility::vector1<std::string>::iterator grid_iterator(grids_to_use_.begin());
-		for(; grid_iterator != grids_to_use_.end();++grid_iterator)
-		{
+		for ( ; grid_iterator != grids_to_use_.end(); ++grid_iterator ) {
 			//grid_manager->make_new_grid(*grid_iterator);
 			grid_manager->get_grid(*grid_iterator);
 			TR.Debug << "getting grid: " << *grid_iterator << std::endl;
 		}
-		if(qsar_map_ == 0)
-		{
+		if ( qsar_map_ == 0 ) {
 
 			qsar_map_ = qsarMapOP( new qsarMap("default",residue) );
 
@@ -116,13 +112,11 @@ void qsarMover::apply(core::pose::Pose & pose)
 
 	}
 
-	if(!initialize_ || pose.conformation().structure_moved())
-	{
+	if ( !initialize_ || pose.conformation().structure_moved() ) {
 		core::Size const jump_id(core::pose::get_jump_id_from_chain_id(chain_id,pose));
 		core::Vector const center(geometry::downstream_centroid_by_jump(pose,jump_id));
 
-		if(!initialize_)
-		{
+		if ( !initialize_ ) {
 			TR.Debug <<"initializing grids" << std::endl;
 			grid_manager->initialize_all_grids(center);
 			TR.Debug <<"grids initialized" <<std::endl;
@@ -138,8 +132,9 @@ void qsarMover::apply(core::pose::Pose & pose)
 		grid_manager->append_cached_scores(job);
 		//grid_manager->write_grids("test_");
 	}
-	if(!initialize_)
+	if ( !initialize_ ) {
 		initialize_=true;
+	}
 }
 
 std::string qsarMover::get_name() const

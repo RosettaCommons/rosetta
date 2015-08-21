@@ -40,17 +40,18 @@ RelativeSegmentFilter::apply( Pose const & pose ) const {
 	core::pose::Pose source_pose;
 	core::import_pose::pose_from_pdb( source_pose, source_pose_ );
 
-  core::Size const nearest_to_from( protocols::rosetta_scripts::find_nearest_res( pose, source_pose, start_res() ) );
-  core::Size const nearest_to_to( protocols::rosetta_scripts::find_nearest_res( pose, source_pose, stop_res() ) );
+	core::Size const nearest_to_from( protocols::rosetta_scripts::find_nearest_res( pose, source_pose, start_res() ) );
+	core::Size const nearest_to_to( protocols::rosetta_scripts::find_nearest_res( pose, source_pose, stop_res() ) );
 
-  if( nearest_to_from == 0 || nearest_to_to == 0 ){
-    TR<<"nearest_to_from: "<<nearest_to_from<<" nearest_to_to: "<<nearest_to_to<<". Failing"<<std::endl;
-    return false;
-  }
+	if ( nearest_to_from == 0 || nearest_to_to == 0 ) {
+		TR<<"nearest_to_from: "<<nearest_to_from<<" nearest_to_to: "<<nearest_to_to<<". Failing"<<std::endl;
+		return false;
+	}
 	runtime_assert( nearest_to_to > nearest_to_from );
 	TR<<"Residues on source pose: ";
-	for( core::Size i = nearest_to_from; i <= nearest_to_to; ++i )
+	for ( core::Size i = nearest_to_from; i <= nearest_to_to; ++i ) {
 		TR<<i<<",";
+	}
 	TR<<std::endl;
 	return true;
 }

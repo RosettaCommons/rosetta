@@ -119,9 +119,9 @@ find_basepairs(
 
 /* void
 make_sequence_combinations(
-	ResTypeSequences & sequences,
-	utility::vector1< core::Size > const & seq_indices,
-	core::pack::task::PackerTaskCOP ptask
+ResTypeSequences & sequences,
+utility::vector1< core::Size > const & seq_indices,
+core::pack::task::PackerTaskCOP ptask
 ); */
 
 /// @brief make a list of all single mutants from a base sequence

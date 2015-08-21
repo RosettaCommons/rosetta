@@ -26,9 +26,9 @@ namespace scores {
 class DihedralConstraintsScore;
 
 typedef utility::pointer::shared_ptr<DihedralConstraintsScore>
-		DihedralConstraintsScoreOP;
+	DihedralConstraintsScoreOP;
 typedef utility::pointer::shared_ptr<DihedralConstraintsScore const>
-		DihedralConstraintsScoreCOP;
+	DihedralConstraintsScoreCOP;
 
 } // scores
 } // frag_picker

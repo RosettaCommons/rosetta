@@ -65,7 +65,7 @@ SavePoseMover::~SavePoseMover() {}
 void
 SavePoseMover::apply( core::pose::Pose & pose )
 {
-	if( !restore_pose_ ) *reference_pose_ = pose;
+	if ( !restore_pose_ ) *reference_pose_ = pose;
 	else pose = *reference_pose_;
 
 	//make sure this always counts as success
@@ -75,20 +75,18 @@ SavePoseMover::apply( core::pose::Pose & pose )
 void
 SavePoseMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
-	if( tag->hasOption("reference_name") ){
+	if ( tag->hasOption("reference_name") ) {
 		reference_pose_ = saved_reference_pose(tag,data_map );
-	}
+	} else throw utility::excn::EXCN_RosettaScriptsOption("Need to specify name under which to save pose.");
 
-	else throw utility::excn::EXCN_RosettaScriptsOption("Need to specify name under which to save pose.");
-	
-	if( tag->hasOption( "pdb_file" ) ){
+	if ( tag->hasOption( "pdb_file" ) ) {
 		std::string const template_pdb_fname( tag->getOption< std::string >( "pdb_file" ));
 		core::import_pose::pose_from_pdb( *reference_pose_, template_pdb_fname );
 		TR <<"reading in " << template_pdb_fname << " pdb with " << reference_pose_->total_residue() <<" residues"<<std::endl;
 	}
-	
 
-	if( tag->hasOption("restore_pose") ){
+
+	if ( tag->hasOption("restore_pose") ) {
 		restore_pose_ = tag->getOption<bool>("restore_pose",1);
 	}
 }

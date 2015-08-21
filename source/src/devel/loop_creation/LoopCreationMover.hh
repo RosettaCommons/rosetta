@@ -40,13 +40,13 @@
 
 namespace devel {
 namespace loop_creation {
-	
+
 class LoopCreationMover : public protocols::moves::Mover {
 
 public:
 
 	LoopCreationMover();
-	
+
 	LoopCreationMover(
 		LoopInserterOP loop_inserter,
 		LoopCloserOP loop_closer,
@@ -59,37 +59,37 @@ public:
 
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const;
-	
+
 	void
 	init();
-	
+
 	std::string get_name() const;
 
 	void
 	apply(
 		core::pose::Pose & pose
 	);
-	
+
 	void
 	copy_last_loop_to_new_anchor(
 		core::pose::Pose & pose,
 		core::Size new_anchor
 	);
-	
+
 	/// @brief design and minimize the loop region
 	core::Real
 	refine_loop(
 		core::pose::Pose & pose,
 		protocols::loops::Loop loop
 	);
-	
+
 	/// @brief return the most recently created loop
 	protocols::loops::Loop
 	get_last_created_loop() const;
-	
+
 	LoopInserterOP
 	loop_inserter() const;
-	
+
 	LoopCloserOP
 	loop_closer() const;
 
@@ -99,10 +99,10 @@ public:
 		protocols::loops::Loop const & new_loop,
 		core::Size index_of_new_loop
 	);
-	
-//	LoopRefinerOP
-//	loop_refiner() const;
-	
+
+	// LoopRefinerOP
+	// loop_refiner() const;
+
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -111,24 +111,24 @@ public:
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & pose
 	);
-	
+
 private:
-	
+
 	void
 	detect_loop_anchors(
 		core::pose::Pose const & pose
 	);
-	
-	
+
+
 private:
 	//LoopInserter is a mover subclass responsible for inserting the actual loop residues
 	LoopInserterOP loop_inserter_;
-	
+
 	//LoopCloser is a mover subclass responsible for closing the loop once loop residues have been inserted
 	LoopCloserOP loop_closer_;
-	
+
 	//LoopCloser is a mover subclass responsible for refining the closed loop (design, minimization, etc)
-	//	LoopRefinerOP loop_refiner_;
+	// LoopRefinerOP loop_refiner_;
 
 	//Loop filter
 	protocols::filters::FilterOP loop_filter_;
@@ -136,13 +136,13 @@ private:
 	//If a particular insertion+closure step fails to produce a structure
 	//that passes the loop filter, how many times should we retry?
 	core::Size attempts_per_anchor_;
-	
+
 	//Should any refinement steps be done (master bool, without this, no packing/minimization at all)
 	bool refine_;
 
 	//Should the loops be designed before evaluation?
 	bool design_loops_;
-	
+
 	//Should loop-neighbors be included in packing/design?
 	bool include_neighbors_;
 
@@ -152,10 +152,10 @@ private:
 	//Filter using the loop analyzer mover
 	bool filter_by_lam_;
 	core::Real lam_score_cutoff_;
-	
+
 	//The most recently created loop
 	protocols::loops::Loop last_created_loop_;
-	
+
 	//To close multiple loops. This overrides the loop anchor set by the loop inserter
 	utility::vector1<core::Size> loop_anchors_;
 
@@ -164,7 +164,7 @@ private:
 
 	//DEBUG
 	bool dump_pdbs_;
-	
+
 
 	core::scoring::ScoreFunctionOP scorefxn_;
 };

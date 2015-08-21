@@ -27,7 +27,7 @@
 
 
 namespace protocols {
-namespace protein_interface_design{
+namespace protein_interface_design {
 namespace filters {
 
 static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.Torsion" );
@@ -47,50 +47,51 @@ Torsion::Torsion() :
 bool
 Torsion::apply(core::pose::Pose const & pose ) const
 {
-	if( task_factory_set() ){
+	if ( task_factory_set() ) {
 		utility::vector1< core::Size > designable( protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, false/*packable*/ ) );
 		std::sort( designable.begin(), designable.end() );
 		core::Size const start( designable[ 1 ] );
 		core::Size const stop( designable[ designable.size() ] );
-		for( core::Size i = start; i<=stop; ++i )
+		for ( core::Size i = start; i<=stop; ++i ) {
 			TR_database<<pose.phi( i )<<" "<<pose.psi( i )<<" "<<pose.omega( i )<<" "<<pose.residue( i ).name3()<<" ";
+		}
 		TR_database<<std::endl;
 		return true;
-	}
-	else if( resnum() == 0 ){ // just print all torsions
+	} else if ( resnum() == 0 ) { // just print all torsions
 		std::stringstream s("");
-		for( core::Size i = 1; i <= pose.total_residue(); ++i ){
-			if( i % 5 == 0 ) s << pose.residue( i ).name1()<<pose.pdb_info()->number( i )<<pose.pdb_info()->chain( i )<<'\t';
+		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+			if ( i % 5 == 0 ) s << pose.residue( i ).name1()<<pose.pdb_info()->number( i )<<pose.pdb_info()->chain( i )<<'\t';
 			TR<<"Residue "<<pose.residue( i ).name1()<<pose.pdb_info()->number( i )<<pose.pdb_info()->chain( i )<<'\t';
-			if( torsion() == "phi" || torsion() == "" ){
+			if ( torsion() == "phi" || torsion() == "" ) {
 				TR<<" phi "<<pose.phi( i )<<'\t';
 				s<<pose.phi( i )<<' ';
 			}
-			if( torsion() == "psi" || torsion() == "" ){
+			if ( torsion() == "psi" || torsion() == "" ) {
 				TR<<" psi "<<pose.psi( i )<<'\t';
 				s<<pose.psi( i )<<' ';
 			}
-			if( torsion() == "omega" || torsion() == "" ){
+			if ( torsion() == "omega" || torsion() == "" ) {
 				TR<<" omega "<<pose.omega( i )<<std::endl;
 				s<<pose.omega( i )<<' ';
 			}
 		}
 		TR<<s.str()<<std::endl;
 		return true;
-	}
-	else{
+	} else {
 		TR<<"Residue "<<pose.residue( resnum() ).name1()<<pose.pdb_info()->number( resnum() )<<pose.pdb_info()->chain( resnum() )<<'\t';
-		if( torsion() == "phi" || torsion() == "" ){
+		if ( torsion() == "phi" || torsion() == "" ) {
 			core::Real const phi( pose.phi( resnum() ) );
 			TR<<" phi "<<phi<<std::endl;
-			if( torsion() == "phi" )
+			if ( torsion() == "phi" ) {
 				return( phi>=lower() && phi<=upper() );
+			}
 		}
-		if( torsion() == "psi" || torsion() == "" ){
+		if ( torsion() == "psi" || torsion() == "" ) {
 			core::Real const psi( pose.psi( resnum() ) );
 			TR<<" psi "<<pose.psi( resnum() )<<std::endl;
-			if( torsion() == "psi" )
+			if ( torsion() == "psi" ) {
 				return( psi>=lower() && psi<=upper() );
+			}
 		}
 	}
 
@@ -99,10 +100,10 @@ Torsion::apply(core::pose::Pose const & pose ) const
 
 core::Real
 Torsion::compute( core::pose::Pose const & p ) const{
-	if( resnum() > 0 ){
-		if( torsion() == "phi" ) return p.phi( resnum() );
-		if( torsion() == "psi" ) return p.psi( resnum() );
-		if( torsion() == "omega" ) return p.omega( resnum() );
+	if ( resnum() > 0 ) {
+		if ( torsion() == "phi" ) return p.phi( resnum() );
+		if ( torsion() == "psi" ) return p.psi( resnum() );
+		if ( torsion() == "omega" ) return p.omega( resnum() );
 	}
 	return 0.; // You gotta return something!
 }
@@ -121,22 +122,23 @@ Torsion::report( std::ostream & out, core::pose::Pose const & pose ) const
 
 void
 Torsion::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-		core::pose::Pose const & pose )
+	core::pose::Pose const & pose )
 {
 	task_factory_set( false );
-	if( tag->hasOption( "task_operations" ) )
+	if ( tag->hasOption( "task_operations" ) ) {
 		task_factory_set( true );
+	}
 	runtime_assert( task_factory_set_ != tag->hasOption( "resnum" ) );
 	lower( tag->getOption< core::Real >( "lower", 0 ) );
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	upper( tag->getOption< core::Real >( "upper", 0 ) );
 	torsion( tag->getOption< std::string >( "torsion", "" ) );
-	if( tag->hasOption( "resnum" ))
+	if ( tag->hasOption( "resnum" ) ) {
 		resnum( core::pose::parse_resnum( tag->getOption< std::string >( "resnum" ), pose ) );
-	else resnum( 0 );
+	} else resnum( 0 );
 	TR<<"resnum: "<<resnum()<<" lower "<<lower()<<" upper: "<<upper()<<std::endl;
 }
 

@@ -38,34 +38,31 @@ namespace protocols {
 namespace moves {
 
 static thread_local basic::Tracer tr( "protocols.TrialMover" );
-	
+
 using namespace core;
 
 MonteCarloUtil::MonteCarloUtil() : mc_(/* 0 */)
 {
-	
+
 }
-	
+
 MonteCarloUtil::MonteCarloUtil( protocols::moves::MonteCarloOP mc) : mc_(mc)
 {
-	
+
 }
-	
-	MonteCarloUtil::~MonteCarloUtil() {}
-	
+
+MonteCarloUtil::~MonteCarloUtil() {}
+
 void MonteCarloUtil::apply(Pose & pose)
 {
-	if(mode_ == "reset")
-	{
+	if ( mode_ == "reset" ) {
 		mc_->reset(pose);
-	}else if(mode_ == "recover_low")
-	{
+	} else if ( mode_ == "recover_low" ) {
 		mc_->recover_low(pose);
-	}else
-	{
+	} else {
 		utility_exit_with_message("MonteCarloUtil mode must be 'reset' or 'recover_low', this should have been caught earlier, dying");
 	}
-	
+
 }
 
 void MonteCarloUtil::parse_my_tag(
@@ -75,26 +72,23 @@ void MonteCarloUtil::parse_my_tag(
 	protocols::moves::Movers_map const & /* movers */,
 	core::pose::Pose const & /* pose */)
 {
-	if(!tag->hasOption("mode"))
-	{
+	if ( !tag->hasOption("mode") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("you must specify option mode in MonteCarloUtil");
 	}
-	if(!tag->hasOption("montecarlo"))
-	{
+	if ( !tag->hasOption("montecarlo") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("you must specify the option montecarlo in MonteCarloUtil");
 	}
-	
+
 	mode_ = tag->getOption<std::string>("mode");
 	std::string const mc_name(tag->getOption<std::string>("montecarlo"));
-	
-	if(mode_ != "reset" && mode_ != "recover_low")
-	{
+
+	if ( mode_ != "reset" && mode_ != "recover_low" ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("the option mode must be set to either reset or recover_low in MonteCarloUtil");
 	}
-	
+
 	mc_ = data.get_ptr<protocols::moves::MonteCarlo>( "montecarlos",mc_name);
 }
-	
+
 protocols::moves::MoverOP MonteCarloUtil::clone() const
 {
 	return protocols::moves::MoverOP( new MonteCarloUtil(mc_) );
@@ -111,7 +105,7 @@ std::string MonteCarloUtil::get_name() const
 	return "MonteCarloUtil";
 }
 
-	
+
 TrialMover::TrialMover() :
 	start_weight_( 0.0 ),
 	original_weight( 0.0 ),
@@ -122,11 +116,11 @@ TrialMover::TrialMover() :
 
 // constructor with arguments
 TrialMover::TrialMover( MoverOP mover_in, MonteCarloOP mc_in ) :
-		start_weight_( 0.0 ),
-		original_weight( 0.0 ),
-		ramp_weight( 0.0 ),
-		delta( 0.0 ),
-		stats_type_( all_stats )
+	start_weight_( 0.0 ),
+	original_weight( 0.0 ),
+	ramp_weight( 0.0 ),
+	delta( 0.0 ),
+	stats_type_( all_stats )
 {
 	mover_ = mover_in;
 	mc_ = mc_in;
@@ -134,13 +128,13 @@ TrialMover::TrialMover( MoverOP mover_in, MonteCarloOP mc_in ) :
 
 // Copy constructor
 TrialMover::TrialMover(TrialMover const & object_to_copy) : Mover(object_to_copy),
-		mover_(object_to_copy.mover_),
-		mc_(object_to_copy.mc_),
-		start_weight_(object_to_copy.start_weight_),
-		original_weight(object_to_copy.original_weight),
-		ramp_weight(object_to_copy.ramp_weight),
-		delta(object_to_copy.delta),
-		stats_type_(object_to_copy.stats_type_)
+	mover_(object_to_copy.mover_),
+	mc_(object_to_copy.mc_),
+	start_weight_(object_to_copy.start_weight_),
+	original_weight(object_to_copy.original_weight),
+	ramp_weight(object_to_copy.ramp_weight),
+	delta(object_to_copy.delta),
+	stats_type_(object_to_copy.stats_type_)
 {}
 
 TrialMover::~TrialMover() {}
@@ -164,14 +158,14 @@ void TrialMover::set_mc( MonteCarloOP mc_in ) {
 
 
 /// @brief:
-/// 	the apply function for a trial
-///	@details:
-///		the trial object is created with an mc object
-///		the mover is applied before doing an mc.boltzmann
+///  the apply function for a trial
+/// @details:
+///  the trial object is created with an mc object
+///  the mover is applied before doing an mc.boltzmann
 ///
-///	@author: Monica Berrondo
+/// @author: Monica Berrondo
 void TrialMover::apply( pose::Pose & pose )
-{	
+{
 	using scoring::total_score;
 
 	/// get the initial scores
@@ -236,16 +230,18 @@ int TrialMover::num_accepts() const
 void TrialMover::set_input_pose( PoseCOP pose )
 {
 	this->Mover::set_input_pose( pose );
-	if(mover_)
+	if ( mover_ ) {
 		mover_->set_input_pose( pose );
+	}
 }
 
 // sets the native pose also for the contained mover (barak)
 void TrialMover::set_native_pose( PoseCOP pose )
 {
 	this->Mover::set_native_pose( pose );
-	if(mover_)
+	if ( mover_ ) {
 		mover_->set_native_pose( pose );
+	}
 }
 
 void TrialMover::parse_my_tag(
@@ -265,10 +261,10 @@ void TrialMover::parse_my_tag(
 	// 2. Mover
 	std::string const movername( tag->getOption< std::string > ( "mover", "" ));
 	if ( movername == "" ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "TrialMover requires the 'mover' option which was not provided" );	
+		throw utility::excn::EXCN_RosettaScriptsOption( "TrialMover requires the 'mover' option which was not provided" );
 	}
 	Movers_map::const_iterator  find_mover ( movers.find( movername ));
-	if( find_mover == movers.end() && movername != "" ) {
+	if ( find_mover == movers.end() && movername != "" ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "TrialMover was not able to find the mover named '" + movername + "' in the Movers_map" );
 	}
 	mover_ = find_mover->second;
@@ -293,9 +289,9 @@ std::ostream &operator<< (std::ostream &os, TrialMover const &mover)
 {
 	//moves::operator<<(os, mover); // this line causes unexpected segmentation fault.
 	os << "Mover name: " << mover.get_name() << ", Mover type: " << mover.get_type() << ", Mover current tag: " << mover.get_current_tag() << std::endl <<
-			  "Mover being tried:   " << mover.mover() << std::endl <<
-			  "Moves were accepted: " << mover.num_accepts() << " times." << std::endl <<
-			  "Acceptance rate:     " << mover.stats_.acceptance_rate() << std::endl;
+		"Mover being tried:   " << mover.mover() << std::endl <<
+		"Moves were accepted: " << mover.num_accepts() << " times." << std::endl <<
+		"Acceptance rate:     " << mover.stats_.acceptance_rate() << std::endl;
 	os << "MonteCarlo:          ";
 	if ( mover.mc_ != 0 ) { os << mover.mc_ << std::endl; }
 	else { os << "none" << std::endl; }

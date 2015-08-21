@@ -129,7 +129,7 @@ public:
 	//get_sparse_mat_info_for_state( int state ) const
 	//{
 	//debug_assert( state > 0 && state <= get_num_states() );
-	//	return sparse_mat_info_for_state_[ state ];
+	// return sparse_mat_info_for_state_[ state ];
 	//}
 
 	inline
@@ -296,20 +296,20 @@ public:
 
 	/// @brief fullfilling base class virtual member request -- however, this function does not quite
 	/// make sense for a symmetric otf ig, so this is just stubbed out to return true.
-  virtual
-  bool get_sparse_aa_info( int, int ) const { return true; }
+	virtual
+	bool get_sparse_aa_info( int, int ) const { return true; }
 
 	/// @brief fullfilling base class virtual member request -- however, this funciton does not quite
 	/// make sense for a symmetric oft ig so this is just stubbed out as a noop.
-  virtual
-  void force_aa_neighbors( int, int ) {}
+	virtual
+	void force_aa_neighbors( int, int ) {}
 
 	/// @brief fullfilling base class virtual member request -- however, this funciton does not quite
 	/// make sense for a symmetric oft ig so this is just stubbed out as a noop.
-  virtual
-  void force_all_aa_neighbors() {}
+	virtual
+	void force_all_aa_neighbors() {}
 
-  virtual core::PackerEnergy get_two_body_energy( int const, int const ) const = 0;
+	virtual core::PackerEnergy get_two_body_energy( int const, int const ) const = 0;
 
 protected:
 
@@ -419,17 +419,17 @@ public:
 	ScoreFunction const &
 	score_function() const
 	{
-	debug_assert( score_function_ );
+		debug_assert( score_function_ );
 		return *score_function_;
 	}
 
 	/*
 	// for using ResidueWeightMap
 	inline void set_residue_weight_map(PackerTaskResidueWeightMap const & residue_weight_map_in) {
-		residue_weight_map_ = residue_weight_map_in;
+	residue_weight_map_ = residue_weight_map_in;
 	}
 	inline float get_residue_weights(int seqpos1, int aa1, int seqpos2, int aa2 ) const {
-		{ return residue_weight_map_.get_weight(seqpos1, aa1, seqpos2, aa2); };
+	{ return residue_weight_map_.get_weight(seqpos1, aa1, seqpos2, aa2); };
 	}
 	inline bool check_empty_weight_map() { return residue_weight_map_.check_empty_map(); };
 	*/
@@ -459,12 +459,12 @@ public:
 	core::PackerEnergy
 	get_one_body_energy_for_node_state( int node, int state);
 
-//	void
-//	set_sparse_aa_info_for_edge(
-//		int node1,
-//		int node2,
-//		FArray2_bool const & sparse_conn_info
-//	);
+	// void
+	// set_sparse_aa_info_for_edge(
+	//  int node1,
+	//  int node2,
+	//  FArray2_bool const & sparse_conn_info
+	// );
 
 	void
 	set_residues_adjacent_for_subunit_pair_for_edge(
@@ -557,7 +557,7 @@ inline
 SymmOnTheFlyEdge *
 SymmOnTheFlyNode::get_incident_otf_edge( int edge )
 {
-debug_assert( dynamic_cast< SymmOnTheFlyEdge * >  (get_incident_edge( edge )) );
+	debug_assert( dynamic_cast< SymmOnTheFlyEdge * >  (get_incident_edge( edge )) );
 	return static_cast< SymmOnTheFlyEdge * >  (get_incident_edge( edge ));
 }
 
@@ -565,7 +565,7 @@ inline
 SymmOnTheFlyEdge const *
 SymmOnTheFlyNode::get_incident_otf_edge( int edge ) const
 {
-debug_assert( dynamic_cast< SymmOnTheFlyEdge const * >  (get_incident_edge( edge )) );
+	debug_assert( dynamic_cast< SymmOnTheFlyEdge const * >  (get_incident_edge( edge )) );
 	return static_cast< SymmOnTheFlyEdge const * >  (get_incident_edge( edge ));
 }
 
@@ -573,7 +573,7 @@ inline
 SymmOnTheFlyNode *
 SymmOnTheFlyNode::get_adjacent_otf_node( int index )
 {
-debug_assert( dynamic_cast< SymmOnTheFlyNode * > ( get_adjacent_node( index ) ));
+	debug_assert( dynamic_cast< SymmOnTheFlyNode * > ( get_adjacent_node( index ) ));
 	return static_cast< SymmOnTheFlyNode * > ( get_adjacent_node( index ) );
 }
 
@@ -581,7 +581,7 @@ inline
 SymmOnTheFlyNode const *
 SymmOnTheFlyNode::get_adjacent_otf_node( int index ) const
 {
-debug_assert( dynamic_cast< SymmOnTheFlyNode const * > ( get_adjacent_node( index ) ));
+	debug_assert( dynamic_cast< SymmOnTheFlyNode const * > ( get_adjacent_node( index ) ));
 	return static_cast< SymmOnTheFlyNode const * > ( get_adjacent_node( index ) );
 }
 
@@ -590,7 +590,7 @@ inline
 SymmOnTheFlyInteractionGraph *
 SymmOnTheFlyNode::get_on_the_fly_owner()
 {
-debug_assert( dynamic_cast< SymmOnTheFlyInteractionGraph * > ( get_owner() ) );
+	debug_assert( dynamic_cast< SymmOnTheFlyInteractionGraph * > ( get_owner() ) );
 	return static_cast< SymmOnTheFlyInteractionGraph * > ( get_owner() );
 }
 
@@ -598,7 +598,7 @@ inline
 SymmOnTheFlyInteractionGraph const *
 SymmOnTheFlyNode::get_on_the_fly_owner() const
 {
-debug_assert( dynamic_cast< SymmOnTheFlyInteractionGraph const * > ( get_owner() ) );
+	debug_assert( dynamic_cast< SymmOnTheFlyInteractionGraph const * > ( get_owner() ) );
 	return static_cast< SymmOnTheFlyInteractionGraph const * > ( get_owner() );
 }
 

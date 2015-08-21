@@ -75,12 +75,12 @@ moves::MoverOP FindConsensusSequence::fresh_instance() const {
 }
 
 void FindConsensusSequence::parse_my_tag(
-		utility::tag::TagCOP const tag,
-		basic::datacache::DataMap & datamap,
-		filters::Filters_map const &,
-		moves::Movers_map const & ,//movers,
-		core::pose::Pose const &
-	)  {
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & datamap,
+	filters::Filters_map const &,
+	moves::Movers_map const & ,//movers,
+	core::pose::Pose const &
+)  {
 
 	if ( tag->hasOption("scorefxn") ) {
 		std::string const scorefxn_key( tag->getOption<std::string>("scorefxn") );
@@ -109,7 +109,7 @@ FindConsensusSequence::parse_resfiles ()
 	res_links_.clear();
 	if ( resfiles_.size() > 0 ) {
 		utility::vector1< core::pack::task::PackerTaskOP > design_tasks ( poses_.size() );
-		for (core::Size ii = 1; ii <= poses_.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= poses_.size(); ++ii ) {
 			design_tasks[ ii ] = core::pack::task::TaskFactory::create_packer_task( *poses_[ ii ] );
 			core::pack::task::parse_resfile( *poses_[ ii ], *design_tasks[ ii ], resfile_at( ii ) );
 
@@ -117,7 +117,7 @@ FindConsensusSequence::parse_resfiles ()
 		core::Size designable_residues = -1;
 		for ( core::Size i = 1; i <= design_tasks.size(); ++i ) {
 			res_links_.push_back( parse_resfile( design_tasks[ i ]) );
-			if ( i == 1)  designable_residues = res_links_[ 1 ].size();
+			if ( i == 1 )  designable_residues = res_links_[ 1 ].size();
 			else {
 				if ( res_links_[ i ].size() != designable_residues ) {
 					utility_exit_with_message( "All resfiles must have the same number of designable residues");
@@ -144,7 +144,7 @@ FindConsensusSequence::parse_resfile ( core::pack::task::PackerTaskCOP design_ta
 {
 	utility::vector1< core::Size > vector;
 	utility::vector1<bool> designing = design_task->designing_residues();
-	for (core::Size i = 1; i <= designing.size(); ++i ) {
+	for ( core::Size i = 1; i <= designing.size(); ++i ) {
 		if ( designing[ i ] ) {
 			vector.push_back( i );
 		}
@@ -154,7 +154,7 @@ FindConsensusSequence::parse_resfile ( core::pack::task::PackerTaskCOP design_ta
 
 std::string
 FindConsensusSequence::resfile_at ( core::Size index ) {
-	if ( resfiles_.size() == 1) {
+	if ( resfiles_.size() == 1 ) {
 		return resfiles_[ 1 ];
 	} else if ( resfiles_.size() == 0 ) {
 		utility_exit_with_message("No resfiles initialized");
@@ -183,11 +183,11 @@ void FindConsensusSequence::apply( core::pose::Pose & /*pose*/ ) {
 	parse_resfiles();
 	simple_moves::MutateResidueOP mutation_mover;
 	//bool diff;
-	for (core::Size i = 1; i <= res_links_[ 1 ].size(); ++i ) {
+	for ( core::Size i = 1; i <= res_links_[ 1 ].size(); ++i ) {
 		core::Size seqpos1 = res_links_[ 1 ][ i ];
 		//check to see if they are all the same
 		bool diff = false;
-		for (core::Size j = 2; j <= poses_.size(); ++j ) {
+		for ( core::Size j = 2; j <= poses_.size(); ++j ) {
 			core::Size seqpos2 = res_links_[ j ][ i ];
 			if ( poses_[ j ]->residue( seqpos2 ).aa() != poses_[ 1 ]->residue( seqpos1 ).aa() ) {
 				diff = true;
@@ -195,28 +195,28 @@ void FindConsensusSequence::apply( core::pose::Pose & /*pose*/ ) {
 			}
 		}
 		if ( diff ) {
-			#ifndef NDEBUG
-				TR << "picking the best residue at position " << seqpos1 << std::endl;
-			#endif
+#ifndef NDEBUG
+			TR << "picking the best residue at position " << seqpos1 << std::endl;
+#endif
 
 
 			core::Size min_index = 0;
 			core::Real min_score = 0;
 			utility::vector1< core::Real > scores ( poses_.size(), 0 );
-			for (core::Size ref = 1; ref <= poses_.size(); ++ref ) {
-				for (core::Size comp = 1; comp <= poses_.size(); ++comp ) {
+			for ( core::Size ref = 1; ref <= poses_.size(); ++ref ) {
+				for ( core::Size comp = 1; comp <= poses_.size(); ++comp ) {
 					//if residues at this position are same
 					if ( poses_[ ref ]->residue( res_links_[ ref ][ i ] ).aa() ==
-							poses_[ comp ]->residue( res_links_[ comp ][ i ] ).aa()) {
+							poses_[ comp ]->residue( res_links_[ comp ][ i ] ).aa() ) {
 						scores[ ref ] += poses_[ comp ]->energies().total_energy();
 						continue;
 					} else { //if they're different
 
 						core::pose::PoseOP mutpose = poses_[ comp ]->clone();
 						mutation_mover = simple_moves::MutateResidueOP ( new simple_moves::MutateResidue (
-								res_links_[ comp ][ i ], //position
-								poses_[ ref ]->residue( res_links_[ ref ][ i ] ).name3() //residue
-								) );
+							res_links_[ comp ][ i ], //position
+							poses_[ ref ]->residue( res_links_[ ref ][ i ] ).name3() //residue
+							) );
 						mutation_mover->apply( *mutpose );
 						packer->apply( *mutpose );
 						scores[ ref ] += mutpose->energies().total_energy();
@@ -228,16 +228,16 @@ void FindConsensusSequence::apply( core::pose::Pose & /*pose*/ ) {
 					min_score = scores[ ref ];
 				}
 			}
-			#ifndef NDEBUG
-				TR << "best residue is " << poses_[ min_index ]->residue( res_links_[ min_index ][ i ] ).name3() << std::endl;
-			#endif
+#ifndef NDEBUG
+			TR << "best residue is " << poses_[ min_index ]->residue( res_links_[ min_index ][ i ] ).name3() << std::endl;
+#endif
 			for ( core::Size pose = 1; pose <= poses_.size(); ++pose ) {
 				if ( poses_[ pose ]->residue( res_links_[ pose ][ i ] ).aa() !=
 						poses_[ min_index ]->residue( res_links_[ min_index ][ i ] ).aa() ) {
 					mutation_mover = simple_moves::MutateResidueOP ( new simple_moves::MutateResidue (
-							res_links_[ pose ][ i ], //position
-							poses_[ min_index ]->residue( res_links_[ min_index ][ i ] ).name3() //residue
-							) );
+						res_links_[ pose ][ i ], //position
+						poses_[ min_index ]->residue( res_links_[ min_index ][ i ] ).name3() //residue
+						) );
 					mutation_mover->apply( *poses_[ pose ] );
 					packer->apply( *poses_[ pose ] );
 				}

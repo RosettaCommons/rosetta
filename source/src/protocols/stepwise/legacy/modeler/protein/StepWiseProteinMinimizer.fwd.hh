@@ -24,9 +24,9 @@ namespace legacy {
 namespace modeler {
 namespace protein {
 
-	class StepWiseProteinMinimizer;
-	typedef utility::pointer::shared_ptr< StepWiseProteinMinimizer > StepWiseProteinMinimizerOP;
-	typedef utility::pointer::shared_ptr< StepWiseProteinMinimizer const > StepWiseProteinMinimizerCOP;
+class StepWiseProteinMinimizer;
+typedef utility::pointer::shared_ptr< StepWiseProteinMinimizer > StepWiseProteinMinimizerOP;
+typedef utility::pointer::shared_ptr< StepWiseProteinMinimizer const > StepWiseProteinMinimizerCOP;
 
 } //protein
 } //modeler

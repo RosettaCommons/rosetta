@@ -68,13 +68,13 @@ public: // Methods
 
 private:
 
-  core::pose::Pose input_pose;
-  std::vector< conformation::ResidueOP > residues;
-  protocols::pockets::PocketGrid pg;
-  core::Real cRad;
-  core::Real repW;
-  core::Real optimal;
-  core::Real vdWpen;
+	core::pose::Pose input_pose;
+	std::vector< conformation::ResidueOP > residues;
+	protocols::pockets::PocketGrid pg;
+	core::Real cRad;
+	core::Real repW;
+	core::Real optimal;
+	core::Real vdWpen;
 
 }; // PocketExemplarMultifunc
 

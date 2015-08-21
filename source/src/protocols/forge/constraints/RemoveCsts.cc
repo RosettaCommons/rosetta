@@ -33,9 +33,9 @@
 
 static thread_local basic::Tracer TR( "protocols.forge.constraints.RemoveCsts" );
 
-namespace protocols{
-namespace forge{
-namespace constraints{
+namespace protocols {
+namespace forge {
+namespace constraints {
 
 std::string
 RemoveCstsCreator::keyname() const
@@ -56,20 +56,20 @@ RemoveCstsCreator::mover_name()
 
 /// @brief
 RemoveCsts::RemoveCsts()
-	:	Mover(),
-		generator_( /* NULL */ ),
-		generator_id_( "" )
+: Mover(),
+	generator_( /* NULL */ ),
+	generator_id_( "" )
 {}
 
 RemoveCsts::RemoveCsts( RemoveCsts const & rval )
-	: Mover( rval ),
-		generator_( rval.generator_ ),
-		generator_id_( rval.generator_id_ )
+: Mover( rval ),
+	generator_( rval.generator_ ),
+	generator_id_( rval.generator_id_ )
 {}
 
 /// @brief
-	RemoveCsts::RemoveCsts( protocols::forge::remodel::RemodelConstraintGeneratorOP generator )
-	: Mover()
+RemoveCsts::RemoveCsts( protocols::forge::remodel::RemodelConstraintGeneratorOP generator )
+: Mover()
 {
 	set_generator( generator );
 }
@@ -79,10 +79,10 @@ RemoveCsts::~RemoveCsts() {}
 
 void
 RemoveCsts::parse_my_tag( TagCOP const tag,
-												basic::datacache::DataMap &,
-												protocols::filters::Filters_map const &,
-												protocols::moves::Movers_map const & movers,
-												core::pose::Pose const & )
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const & )
 {
 	generator_id_ = tag->getOption< std::string >( "generator", generator_id_ );
 	if ( generator_id_ == "" ) {

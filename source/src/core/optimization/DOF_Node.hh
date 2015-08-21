@@ -118,8 +118,8 @@ public:
 
 	/// get the rosetta torsion id for this DOF
 	/**
-		 This may not exist, of course. But it's useful to know what it
-		 is when calculating derivatives of terms like rama/dunbrack/paa
+	This may not exist, of course. But it's useful to know what it
+	is when calculating derivatives of terms like rama/dunbrack/paa
 	**/
 	TorsionID const &
 	torsion_id() const
@@ -130,8 +130,8 @@ public:
 
 	/// set the rosetta torsion id for this DOF
 	/**
-		 This may not exist, of course. But it's useful to know what it
-		 is when calculating derivatives of terms like rama/dunbrack/paa
+	This may not exist, of course. But it's useful to know what it
+	is when calculating derivatives of terms like rama/dunbrack/paa
 	**/
 	void
 	torsion_id(
@@ -175,7 +175,7 @@ public:
 	void
 	set_parent( DOF_NodeOP setting )
 	{
-	debug_assert( setting.get() != this ); // an object in an OP should never point to itself
+		debug_assert( setting.get() != this ); // an object in an OP should never point to itself
 		parent_ = setting;
 	}
 
@@ -215,7 +215,7 @@ DOF_Node::depth() const
 	} else if ( depth_ < 0 ) {
 		depth_ = parent_->depth() + 1;
 	}
-debug_assert( depth_ >= 0 );
+	debug_assert( depth_ >= 0 );
 	return depth_;
 }
 

@@ -118,8 +118,8 @@ NatbiasHelicesSheetPotential::hpairset( HelixPairingSetOP const hpairset )
 void
 NatbiasHelicesSheetPotential::set_atrdist_params_helix_strands(
 	Real const hs_dist_wts,
-  Real const hs_dist,
-  Real const hs_dist_sigma2 )
+	Real const hs_dist,
+	Real const hs_dist_sigma2 )
 {
 	hs_dist_wts_ = hs_dist_wts;
 	hs_dist_ = hs_dist;
@@ -137,8 +137,8 @@ NatbiasHelicesSheetPotential::set_repldist_params_helix_sheet( Real const hsheet
 void
 NatbiasHelicesSheetPotential::set_angle_params_helix_sheet(
 	Real const hs_angle_wts,
-  Real const hs_angle,
-  Real const hs_angle_sigma2 )
+	Real const hs_angle,
+	Real const hs_angle_sigma2 )
 {
 	hs_angle_wts_ = hs_angle_wts;
 	hs_angle_ = hs_angle;
@@ -163,15 +163,15 @@ NatbiasHelicesSheetPotential::show_params() const
 {
 
 	TR << "Distance pot of helix & strands: wts, atr_dist, sigma2 : "
-		 << hs_dist_wts_ << " " << hs_dist_ << " " << hs_dist_sigma2_ << std::endl;
+		<< hs_dist_wts_ << " " << hs_dist_ << " " << hs_dist_sigma2_ << std::endl;
 
 	TR << "Distance pot of helix & sheet: " << hsheet_dist_repulsive_ << std::endl;
 
 	TR << "Angle pot of helix & strands: wts, angle, sigma2 : "
-		 << hs_angle_wts_ << " " << hs_angle_ << " " << hs_angle_sigma2_ << std::endl;
+		<< hs_angle_wts_ << " " << hs_angle_ << " " << hs_angle_sigma2_ << std::endl;
 
 	TR << "Angle pot of helix-helix projected onto sheet: wts, angle, sigma2 : "
-		 << hh_align_angle_wts_ << " " <<	hh_align_angle_ << " "<< hh_align_angle_sigma2_ << std::endl;
+		<< hh_align_angle_wts_ << " " << hh_align_angle_ << " "<< hh_align_angle_sigma2_ << std::endl;
 }
 
 /// @brief calc score
@@ -203,7 +203,7 @@ NatbiasHelicesSheetPotential::score( SS_Info2_COP const ss_info, Real & hh_score
 	hs_scores_.resize( hss3set_->size() );
 
 	// interaction between helix and sheet
-	for( HSSConstIterator it=hss3set_->begin(), ite=hss3set_->end(); it !=ite; ++it ) {
+	for ( HSSConstIterator it=hss3set_->begin(), ite=hss3set_->end(); it !=ite; ++it ) {
 
 		num++;
 		hs_scores_[ num ] = 0.0;
@@ -213,7 +213,7 @@ NatbiasHelicesSheetPotential::score( SS_Info2_COP const ss_info, Real & hh_score
 		runtime_assert( helices.size() >= hssop->helix() );
 		runtime_assert( strands.size() >= hssop->strand1() );
 		runtime_assert( strands.size() >= hssop->strand2() );
-		
+
 		hssop->calc_geometry( ss_info );
 
 		Real hsheet_dist = hssop->hsheet_dist();
@@ -221,7 +221,7 @@ NatbiasHelicesSheetPotential::score( SS_Info2_COP const ss_info, Real & hh_score
 		Real hs2_dist = hssop->hs2_dist();
 
 		// repulsive between helix and sheet
-		if( hsheet_dist < hsheet_dist_repulsive_ ) {
+		if ( hsheet_dist < hsheet_dist_repulsive_ ) {
 
 			hs_scores_[ num ] += 10.0;
 			TR.Debug << "hseet_dist=" << hsheet_dist << std::endl;
@@ -231,7 +231,7 @@ NatbiasHelicesSheetPotential::score( SS_Info2_COP const ss_info, Real & hh_score
 			Real dist_score1( 0.0 ), dist_score2( 0.0 ), angle_score( 0.0 );
 
 			// distance energy between helix and 1st strand
-			if( hs1_dist <= hs_dist_ ) {
+			if ( hs1_dist <= hs_dist_ ) {
 				dist_score1 = -1.0;
 			} else {
 				Real r = numeric::square( hs1_dist - hs_dist_ )/hs_dist_sigma2;
@@ -239,7 +239,7 @@ NatbiasHelicesSheetPotential::score( SS_Info2_COP const ss_info, Real & hh_score
 			}
 
 			// distance energy between helix and 2nd strand
-			if( hs2_dist <= hs_dist_ ) {
+			if ( hs2_dist <= hs_dist_ ) {
 				dist_score2 = -1.0;
 			} else {
 				Real r = numeric::square( hs2_dist - hs_dist_ )/hs_dist_sigma2;
@@ -247,19 +247,19 @@ NatbiasHelicesSheetPotential::score( SS_Info2_COP const ss_info, Real & hh_score
 			}
 
 			TR.Debug << "HS_dist_score: "
-					<< hssop->helix() << "-" << hssop->strand1() << "," << hssop->strand2() << " "
-					<< hsheet_dist << " " << hs1_dist << " " << hs2_dist << " "
-					<< dist_score1 << " " << dist_score2 << std::endl;
+				<< hssop->helix() << "-" << hssop->strand1() << "," << hssop->strand2() << " "
+				<< hsheet_dist << " " << hs1_dist << " " << hs2_dist << " "
+				<< dist_score1 << " " << dist_score2 << std::endl;
 
 			// angle between helix and sheet
-			if( dist_score1 <= judge_hs_close && dist_score2 <= judge_hs_close ) {
+			if ( dist_score1 <= judge_hs_close && dist_score2 <= judge_hs_close ) {
 
 				is_hs_close[ hssop->helix() ] = true;
 
 				Real hs_angle = hssop->hs_angle();
 
 				///  90 < hs_angle < 180 has to have penalty !! this functionality need to be implemented.
-				if( hs_angle >= hs_angle_ ) {
+				if ( hs_angle >= hs_angle_ ) {
 					angle_score = -1.0;
 				} else {
 					Real r = numeric::square( hs_angle - hs_angle_ )/hs_angle_sigma2;
@@ -267,14 +267,14 @@ NatbiasHelicesSheetPotential::score( SS_Info2_COP const ss_info, Real & hh_score
 				}
 
 				TR.Debug << "HS_angle_score: "
-						<< hssop->helix() << "-" << hssop->strand1() << "," << hssop->strand2() << " "
-						<< hs_angle << " " << angle_score << " " << std::endl;
+					<< hssop->helix() << "-" << hssop->strand1() << "," << hssop->strand2() << " "
+					<< hs_angle << " " << angle_score << " " << std::endl;
 			}
 
 			// add to hs_score
-			hs_scores_[ num ] = hs_dist_wts * ( dist_score1 + dist_score2 ) + hs_angle_wts_ * angle_score;		
+			hs_scores_[ num ] = hs_dist_wts * ( dist_score1 + dist_score2 ) + hs_angle_wts_ * angle_score;
 		}
-		
+
 		hs_score += hs_scores_[ num ];
 
 	}
@@ -282,13 +282,13 @@ NatbiasHelicesSheetPotential::score( SS_Info2_COP const ss_info, Real & hh_score
 	Real hh_align_angle_sigma2 = 2*hh_align_angle_sigma2_;
 
 	// interaction of helix pair on sheet
-	if( hpairset_ ) {
+	if ( hpairset_ ) {
 
 		hh_scores_.resize( hpairset_->size() );
 
 		Size num( 0 );
 		HelixPairings const & hpairs = hpairset_->helix_pairings();
-		for( HelixPairings::const_iterator it=hpairs.begin(), ite=hpairs.end(); it != ite; ++it ) {
+		for ( HelixPairings::const_iterator it=hpairs.begin(), ite=hpairs.end(); it != ite; ++it ) {
 
 			num++;
 			hh_scores_[ num ] = 0.0;
@@ -298,7 +298,7 @@ NatbiasHelicesSheetPotential::score( SS_Info2_COP const ss_info, Real & hh_score
 			runtime_assert( helices.size() >= hpair.h1() && helices.size() >= hpair.h2() );
 
 			// only if both helices are close to sheet, helix pairing score is calculated
-			if( !is_hs_close[ hpair.h1() ] || !is_hs_close[ hpair.h2() ] ) continue;
+			if ( !is_hs_close[ hpair.h1() ] || !is_hs_close[ hpair.h2() ] ) continue;
 
 			Helix const & h1 = *helices[ hpair.h1() ];
 			Helix const & h2 = *helices[ hpair.h2() ];
@@ -316,17 +316,17 @@ NatbiasHelicesSheetPotential::score( SS_Info2_COP const ss_info, Real & hh_score
 			Size const s2 = hssop2->strand2();
 
 			Real ag = numeric::conversions::degrees( angle_of( strands[ s1 ]->orient(), strands[ s2 ]->orient() ) );
-			if( ag > 90.0 ) flip = -1.0;
+			if ( ag > 90.0 ) flip = -1.0;
 			Vector const v1 = strands[ s2 ]->mid_pos() - strands[ s1 ]->mid_pos();
 			Vector const v2 = strands[ s1 ]->orient() + flip*strands[ s2 ]->orient();
 			Vector const v3 = h1.orient().project_parallel( v1 ) + h1.orient().project_parallel( v2 );
 			Vector const v4 = h2.orient().project_parallel( v1 ) + h2.orient().project_parallel( v2 );
 
-			if( hpair.orient() == 'A' ) flip = -1.0;
+			if ( hpair.orient() == 'A' ) flip = -1.0;
 			Real angle = numeric::conversions::degrees( angle_of( v3, flip*v4 ) );
 
 			Real score;
-			if( angle <= hh_align_angle_ ) {
+			if ( angle <= hh_align_angle_ ) {
 				score = -hh_align_angle_wts_;
 			} else {
 				Real r = numeric::square( angle - hh_align_angle_ )/hh_align_angle_sigma2;
@@ -345,7 +345,7 @@ NatbiasHelicesSheetPotential::score( SS_Info2_COP const ss_info, Real & hh_score
 
 
 } // ns sspot
-}	// ns potentials
-}	// ns fldsgn
-}	// ns protocols
+} // ns potentials
+} // ns fldsgn
+} // ns protocols
 

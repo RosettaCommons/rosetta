@@ -61,15 +61,16 @@ namespace protein_interface_design {
 
 PatchdockReader::PatchdockReader(){
 	clear_internals();
-  random_entry( option[ parser::patchdock_random_entry ].user() );
-	if( random_entry() ){
-			utility::vector1< core::Size > entry_num_extrema = option[ parser::patchdock_random_entry ]();
-			runtime_assert( entry_num_extrema.size() == 2 );
-			from_entry( entry_num_extrema[ 1 ] );
-			to_entry( entry_num_extrema[ 2 ] );
+	random_entry( option[ parser::patchdock_random_entry ].user() );
+	if ( random_entry() ) {
+		utility::vector1< core::Size > entry_num_extrema = option[ parser::patchdock_random_entry ]();
+		runtime_assert( entry_num_extrema.size() == 2 );
+		from_entry( entry_num_extrema[ 1 ] );
+		to_entry( entry_num_extrema[ 2 ] );
 	}//fi patchdock_random_entry
-	if( option[ parser::patchdock ].user() )
+	if ( option[ parser::patchdock ].user() ) {
 		patchdock_fname_ = option[ parser::patchdock ]();
+	}
 }
 
 PatchdockReader::~PatchdockReader() {}
@@ -102,16 +103,18 @@ Transformation
 PatchdockReader::read_patchdock_entry()
 {
 	runtime_assert( patchdock_entry_num_ );
-	if( saved_transformations_.size() )
+	if ( saved_transformations_.size() ) {
 		return( saved_transformations_[ patchdock_entry_num_ ] );
+	}
 
-  utility::io::izstream data( patchdock_fname_ );
-  if ( !data )
-    utility_exit_with_message( "Cannot open patchdock file: " + patchdock_fname_ );
+	utility::io::izstream data( patchdock_fname_ );
+	if ( !data ) {
+		utility_exit_with_message( "Cannot open patchdock file: " + patchdock_fname_ );
+	}
 
-  std::string line;
+	std::string line;
 	bool entries_found( false );
-  while ( getline( data, line ) ) {
+	while ( getline( data, line ) ) {
 		using namespace std;
 
 		Transformation t;
@@ -119,18 +122,18 @@ PatchdockReader::read_patchdock_entry()
 		t.translation.zero() ;
 
 		istringstream line_stream( line );
-    string first_field;
-    line_stream >> first_field;
+		string first_field;
+		line_stream >> first_field;
 
-		if( first_field == "#" ) { entries_found = true; continue; }
-		if( !entries_found ) continue;
-    core::Size const wheres_pipe( line.find_first_of( "|" ) );
-		if( wheres_pipe == string::npos ) break; // no longer reading entries
+		if ( first_field == "#" ) { entries_found = true; continue; }
+		if ( !entries_found ) continue;
+		core::Size const wheres_pipe( line.find_first_of( "|" ) );
+		if ( wheres_pipe == string::npos ) break; // no longer reading entries
 		core::Size const transformation_begin( line.find_last_of( "||" ) + 2 );
 		std::istringstream transData( line.substr( transformation_begin, 10000) );
 		core::Real x,y,z;
 		transData >> t.alpha >> t.beta >> t.gamma >> x >> y >> z;
-		if( transData.fail() ) {
+		if ( transData.fail() ) {
 			TR<<"Error parsing transformation data in line\n"<<line<<std::endl;
 			runtime_assert( !transData.fail() );
 		}
@@ -150,25 +153,25 @@ PatchdockReader::transform_pose( core::pose::Pose & pose, core::Size const chain
 
 	numeric::xyzMatrix< core::Real > rotation;
 	{ //compute rotation matrix (taken from RBSMover), but here expecting radian rather than degrees
-	  core::Real const sa ( std::sin( t.alpha ));
-  	core::Real const ca ( std::cos( t.alpha ));
-  	core::Real const sb ( std::sin( t.beta  ));
-  	core::Real const cb ( std::cos( t.beta  ));
-  	core::Real const sg ( std::sin( t.gamma ));
-  	core::Real const cg ( std::cos( t.gamma ));
-// Adapted from code sent by Dina Schneidman of the Wolfson lab (Tel-Aviv U)
+		core::Real const sa ( std::sin( t.alpha ));
+		core::Real const ca ( std::cos( t.alpha ));
+		core::Real const sb ( std::sin( t.beta  ));
+		core::Real const cb ( std::cos( t.beta  ));
+		core::Real const sg ( std::sin( t.gamma ));
+		core::Real const cg ( std::cos( t.gamma ));
+		// Adapted from code sent by Dina Schneidman of the Wolfson lab (Tel-Aviv U)
 		rotation.xx( cg * cb ); rotation.xy( -sb*sa*cg - sg * ca ); rotation.xz(  -sb*ca*cg + sg * sa );
 		rotation.yx( sg * cb ); rotation.yy(  -sb*sa*sg + ca*cg ); rotation.yz( -sb*ca*sg - sa*cg );
 		rotation.zx( sb );            rotation.zy( cb*sa );            rotation.zz(  cb*ca );
 	}//compute rotation
 
-//rotate each atom around the geometric centre of the chain
-	for( core::Size residue=chain_begin; residue<=chain_end; ++residue ) {
+	//rotate each atom around the geometric centre of the chain
+	for ( core::Size residue=chain_begin; residue<=chain_end; ++residue ) {
 		core::Size const atom_begin( 1 );
 		core::Size const atom_end( pose.residue( residue ).natoms() );
 
 		numeric::xyzVector< core::Real > localX, localRX;
-		for( core::Size atom=atom_begin; atom<=atom_end; ++atom ) {
+		for ( core::Size atom=atom_begin; atom<=atom_end; ++atom ) {
 			id::AtomID const id( atom, residue );
 
 			localX = pose.xyz( id );
@@ -177,12 +180,12 @@ PatchdockReader::transform_pose( core::pose::Pose & pose, core::Size const chain
 		}
 	}
 
-//translate
-	for( core::Size residue=chain_begin; residue<=chain_end; ++residue ) {
+	//translate
+	for ( core::Size residue=chain_begin; residue<=chain_end; ++residue ) {
 		core::Size const atom_begin( 1 );
 		core::Size const atom_end( pose.residue( residue ).natoms() );
 
-		for( core::Size atom=atom_begin; atom<=atom_end; ++atom ) {
+		for ( core::Size atom=atom_begin; atom<=atom_end; ++atom ) {
 			id::AtomID const id( atom, residue );
 
 			numeric::xyzVector< core::Real > const new_pos( pose.xyz( id ) + t.translation );
@@ -193,8 +196,7 @@ PatchdockReader::transform_pose( core::pose::Pose & pose, core::Size const chain
 	if ( option[ in::detect_disulf ].user() ?
 			option[ in::detect_disulf ]() : // detect_disulf true
 			pose.is_fullatom() // detect_disulf default but fa pose
-		)
-	{
+			) {
 		pose.conformation().detect_disulfides();
 	}
 }
@@ -212,16 +214,17 @@ void
 PatchdockReader::read_patchdock( std::string & input_tag, std::string & native_tag )
 {
 	patchdock_entry_num_ = 0;
-	if( patchdock_fname_ == "" ) { // use default patchdock fname ( 1jjj_2xxx.pdb.gz -> 1jjj_2xxx.patchdock )
+	if ( patchdock_fname_ == "" ) { // use default patchdock fname ( 1jjj_2xxx.pdb.gz -> 1jjj_2xxx.patchdock )
 		core::Size const filename_end( input_tag.find_first_of( "." ) );
 
 		patchdock_fname_ = input_tag.substr( 0, filename_end ) + ".patchdock";
 	}
 	TR<<"Reading from patchdock file name: "<<patchdock_fname_<<std::endl;
 	core::Size const number_of_entries = number_of_patchdock_entries();
-	if( number_of_entries == 0 )
+	if ( number_of_entries == 0 ) {
 		utility_exit_with_message_status( "No patchdock entries found. Aborting", 0 );
-	if( random_entry() ) {
+	}
+	if ( random_entry() ) {
 		runtime_assert( to_entry() >= from_entry() );
 		runtime_assert( from_entry() > 0 );
 
@@ -235,17 +238,16 @@ PatchdockReader::read_patchdock( std::string & input_tag, std::string & native_t
 		std::stringstream ss;
 		ss << "." << patchdock_entry_num_;
 		option[ out::user_tag ].value( ss.str() ); // to set the output tag
-	}
-	else{
+	} else {
 		core::Size const entrynum_begin( input_tag.find_first_of( "." ) );
 		core::Size const entrynum_end( input_tag.find_last_of( "." ) );
-  	std::stringstream ss( input_tag.substr( entrynum_begin+1, entrynum_end - entrynum_begin ) );
+		std::stringstream ss( input_tag.substr( entrynum_begin+1, entrynum_end - entrynum_begin ) );
 		ss >> patchdock_entry_num_;
-		if( patchdock_entry_num_ > number_of_entries ){
+		if ( patchdock_entry_num_ > number_of_entries ) {
 			TR<<"number of patchdock entries exceeded. You've asked for entry "<< patchdock_entry_num_<<" but only "<<number_of_entries<<" entries were found"<<std::endl;
 			utility_exit_with_message_status("aborting.", 0 );
 		}
-		if( input_tag == native_tag ){
+		if ( input_tag == native_tag ) {
 			input_tag.replace( entrynum_begin, entrynum_end - entrynum_begin + 1, "." );
 			native_tag.replace( entrynum_begin, entrynum_end - entrynum_begin + 1, "." );
 		}
@@ -259,13 +261,12 @@ PatchdockReader::read_patchdock( std::string & input_tag, std::string & native_t
 void
 PatchdockReader::read_poses( core::pose::Pose & input_pose, core::pose::Pose & native_pose, std::string & input_tag, std::string & native_tag )
 {
-	if( saved_input_tag_ == input_tag && saved_native_tag_ == native_tag )
-	{//we've already read this pose, do not go to disk again
+	if ( saved_input_tag_ == input_tag && saved_native_tag_ == native_tag ) {
+		//we've already read this pose, do not go to disk again
 		input_pose = *saved_input_pose_;
 		native_pose = *saved_native_pose_;
 		TR<<"Skipped reading pose from disk"<<std::endl;
-	}
-	else{
+	} else {
 		clear_internals();
 		saved_input_tag_ = input_tag;
 		saved_native_tag_ = native_tag;
@@ -281,17 +282,17 @@ PatchdockReader::read_poses( core::pose::Pose & input_pose, core::pose::Pose & n
 			core::import_pose::pose_from_pdb( input_pose, *rsd_set, input_tag );
 			core::import_pose::pose_from_pdb( native_pose, *rsd_set, native_tag );
 		}//else
-		if( option[ in::file::fold_tree ].user() ){
+		if ( option[ in::file::fold_tree ].user() ) {
 			std::string const fold_tree_fname( option[ in::file::fold_tree ]() );
 			utility::io::izstream data( fold_tree_fname );
 			if ( !data ) {
-  			TR << "Cannot open  file: " << fold_tree_fname << std::endl;
-  			runtime_assert( data );
+				TR << "Cannot open  file: " << fold_tree_fname << std::endl;
+				runtime_assert( data );
 			}
 			std::string line;
 			bool ft_found( false );
-			while( getline( data, line ) ){
-				if( line.substr(0,10) == "FOLD_TREE " ){
+			while ( getline( data, line ) ) {
+				if ( line.substr(0,10) == "FOLD_TREE " ) {
 					std::istringstream line_stream( line );
 					kinematics::FoldTree f;
 					line_stream >> f;
@@ -311,7 +312,7 @@ PatchdockReader::read_poses( core::pose::Pose & input_pose, core::pose::Pose & n
 
 	read_patchdock( input_tag, native_tag );
 
-	if( !patchdock_entry_num_ ) return; // no need for transformations
+	if ( !patchdock_entry_num_ ) return; // no need for transformations
 	TR<<"Reading patchdock entry "<<patchdock_entry_num_<<" from file: "<<patchdock_fname_<<std::endl;
 	Transformation t( read_patchdock_entry() );
 

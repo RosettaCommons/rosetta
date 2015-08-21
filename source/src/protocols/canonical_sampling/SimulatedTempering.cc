@@ -105,7 +105,7 @@ SimulatedTempering::SimulatedTempering() {
 	set_defaults();
 }
 
-SimulatedTempering::SimulatedTempering(	SimulatedTempering const & other ) :
+SimulatedTempering::SimulatedTempering( SimulatedTempering const & other ) :
 	protocols::canonical_sampling::TemperingBase(other)
 {
 	self_transition_ = other.self_transition_;
@@ -180,7 +180,7 @@ core::Real
 SimulatedTempering::temperature_move( core::Real score ) {
 	check_temp_consistency();
 	if ( !time_for_temp_move() ) return temperature();
-		//temperature increase, decrease or wait?
+	//temperature increase, decrease or wait?
 	Size new_temp( current_temp() );
 	Size const nlevels( n_temp_levels() );
 	if ( temperature_jumps_ ) {
@@ -202,7 +202,7 @@ SimulatedTempering::temperature_move( core::Real score ) {
 		Real const prefac( weights_[ new_temp ]/weights_[ current_temp() ] );
 		Real const temp_ratio =
 			(temperature() - temperature( new_temp ))/(temperature() * temperature( new_temp ));
-		if ( numeric::random::rg().uniform() < std::min( 1.0, prefac*std::exp(-(score+score_offset_)*temp_ratio) )) {
+		if ( numeric::random::rg().uniform() < std::min( 1.0, prefac*std::exp(-(score+score_offset_)*temp_ratio) ) ) {
 			set_current_temp( new_temp );
 			real_temp = temperature();
 			tr.Debug << "set new temperature to level " << new_temp << " T=" << real_temp << std::endl;

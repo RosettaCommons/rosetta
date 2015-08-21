@@ -30,8 +30,8 @@
 #include <string>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 enum RamachandranHash {
 	A = 1,
@@ -68,7 +68,7 @@ public:
 	bool beta_turn_present( core::pose::Pose const & pose, Size first_residue ) const;
 
 	std::string const & beta_turn_type( core::pose::Pose const & pose, Size first_residue ) const;
-	
+
 	std::string determine_ramachandran_hash( core::pose::Pose const & pose, core::Size first_residue ) const;
 
 	std::string determine_ramachandran_hash_for_residue_with_dihedrals( core::Real phi, core::Real psi, core::Real omega ) const;

@@ -59,10 +59,10 @@ bool check_coords_match(
 	vector1<Vec> const & a,
 	vector1<Vec> const & b
 ){
-	if(a.size() != b.size()) utility_exit_with_message("ERROR");
+	if ( a.size() != b.size() ) utility_exit_with_message("ERROR");
 	bool err = false;
-	for(int ir = 1; ir <= (int)a.size(); ++ir) {
-		if( a[ir].distance(b[ir]) > 0.00001 ) {
+	for ( int ir = 1; ir <= (int)a.size(); ++ir ) {
+		if ( a[ir].distance(b[ir]) > 0.00001 ) {
 			// std::cerr << "different at " << ir << std::endl;
 			err = true;
 		}
@@ -75,8 +75,8 @@ vector1<Vec>
 chain_coords(Pose const & pose, char chain, core::Size nres) {
 	vector1<Vec> result;
 	std::map<int,char> conf2chain = core::pose::conf2pdb_chain(pose);
-	for(core::Size i = 1; i <= nres; ++i) {
-		if(conf2chain[pose.chain(i)] == chain) {
+	for ( core::Size i = 1; i <= nres; ++i ) {
+		if ( conf2chain[pose.chain(i)] == chain ) {
 			result.push_back(pose.xyz(AtomID(2,i)));
 		}
 	}
@@ -86,8 +86,8 @@ vector1<Vec>
 non_chain_coords(Pose const & pose, char chain, core::Size nres) {
 	vector1<Vec> result;
 	std::map<int,char> conf2chain = core::pose::conf2pdb_chain(pose);
-	for(core::Size i = 1; i <= nres; ++i) {
-		if(conf2chain[pose.chain(i)] != chain) {
+	for ( core::Size i = 1; i <= nres; ++i ) {
+		if ( conf2chain[pose.chain(i)] != chain ) {
 			result.push_back(pose.xyz(AtomID(2,i)));
 		}
 	}
@@ -104,41 +104,41 @@ int main (int argc, char *argv[]) {
 
 	try {
 
-	devel::init(argc,argv);
-	using basic::options::option;
-	using namespace basic::options::OptionKeys;
-	utility::vector1<std::string> files = option[in::file::s]();
-	for(int ifile = 1; ifile <= (int)files.size(); ++ifile) {
-		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb(pose,files[ifile]);
-		core::Size nres = pose.n_residue();
-		Pose init(pose);
-		core::pose::symmetry::make_symmetric_pose(pose);
-		Pose test;
-		core::pose::symmetry::extract_asymmetric_unit(pose,test);
-		if( core::scoring::CA_rmsd(init,test) > 0.001 ) {
-			TR << "FAIL " << files[ifile] << " " << option[basic::options::OptionKeys::symmetry::symmetry_definition]() << std::endl;
-			continue;
+		devel::init(argc,argv);
+		using basic::options::option;
+		using namespace basic::options::OptionKeys;
+		utility::vector1<std::string> files = option[in::file::s]();
+		for ( int ifile = 1; ifile <= (int)files.size(); ++ifile ) {
+			core::pose::Pose pose;
+			core::import_pose::pose_from_pdb(pose,files[ifile]);
+			core::Size nres = pose.n_residue();
+			Pose init(pose);
+			core::pose::symmetry::make_symmetric_pose(pose);
+			Pose test;
+			core::pose::symmetry::extract_asymmetric_unit(pose,test);
+			if ( core::scoring::CA_rmsd(init,test) > 0.001 ) {
+				TR << "FAIL " << files[ifile] << " " << option[basic::options::OptionKeys::symmetry::symmetry_definition]() << std::endl;
+				continue;
+			}
+			bool fail = false;
+			core::conformation::symmetry::SymmetryInfoCOP syminfo = core::pose::symmetry::symmetry_info(pose);
+			std::map<core::Size,core::conformation::symmetry::SymDof> dofs( syminfo->get_dofs() );
+			for ( std::map<core::Size,core::conformation::symmetry::SymDof>::const_iterator i = dofs.begin(); i != dofs.end(); ++i ) {
+				std::string jname = syminfo->get_jump_name(i->first);
+				char chain = jname[jname.size()-1];
+				vector1<Vec> preC   =     chain_coords(pose,chain,nres);
+				vector1<Vec> preNoC = non_chain_coords(pose,chain,nres);
+				move_jump(pose,i->first);
+				vector1<Vec> postC   =     chain_coords(pose,chain,nres);
+				vector1<Vec> postNoC = non_chain_coords(pose,chain,nres);
+				if (  check_coords_match(preC  ,postC)   ) TR.Error << "FAIL: chain " << chain << " not moved" << std::endl;
+				if ( !check_coords_match(preNoC,postNoC) ) TR.Error << "FAIL: not chain " << chain << " moved" << std::endl;
+				// The following expression result was unused; I have attempted to correct it. ~Labonte
+				fail = !check_coords_match(preC,postC) || !check_coords_match(preNoC,postNoC);
+			}
+			if ( !fail ) TR << "WOOT " << files[ifile] << " " << option[basic::options::OptionKeys::symmetry::symmetry_definition]() << std::endl;
 		}
-		bool fail = false;
-		core::conformation::symmetry::SymmetryInfoCOP syminfo = core::pose::symmetry::symmetry_info(pose);
-		std::map<core::Size,core::conformation::symmetry::SymDof> dofs( syminfo->get_dofs() );
-		for(std::map<core::Size,core::conformation::symmetry::SymDof>::const_iterator i = dofs.begin(); i != dofs.end(); ++i) {
-			std::string jname = syminfo->get_jump_name(i->first);
-			char chain = jname[jname.size()-1];
-			vector1<Vec> preC   =     chain_coords(pose,chain,nres);
-			vector1<Vec> preNoC = non_chain_coords(pose,chain,nres);
-			move_jump(pose,i->first);
-			vector1<Vec> postC   =     chain_coords(pose,chain,nres);
-			vector1<Vec> postNoC = non_chain_coords(pose,chain,nres);
-			if(  check_coords_match(preC  ,postC)   ) TR.Error << "FAIL: chain " << chain << " not moved" << std::endl;
-			if( !check_coords_match(preNoC,postNoC) ) TR.Error << "FAIL: not chain " << chain << " moved" << std::endl;
-			// The following expression result was unused; I have attempted to correct it. ~Labonte
-			fail = !check_coords_match(preC,postC) || !check_coords_match(preNoC,postNoC);
-		}
-		if(!fail) TR << "WOOT " << files[ifile] << " " << option[basic::options::OptionKeys::symmetry::symmetry_definition]() << std::endl;
-	}
-	return 0;
+		return 0;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

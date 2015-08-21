@@ -19,16 +19,16 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-    namespace scoring {
-        namespace constraints {
-            
-            class SiteConstraintResidues;
-            
-            typedef utility::pointer::shared_ptr< SiteConstraintResidues > SiteConstraintResiduesOP;
-            typedef utility::pointer::shared_ptr< SiteConstraintResidues const > SiteConstraintResiduesCOP;
-            
-        }
-    }
+namespace scoring {
+namespace constraints {
+
+class SiteConstraintResidues;
+
+typedef utility::pointer::shared_ptr< SiteConstraintResidues > SiteConstraintResiduesOP;
+typedef utility::pointer::shared_ptr< SiteConstraintResidues const > SiteConstraintResiduesCOP;
+
+}
+}
 }
 
 #endif

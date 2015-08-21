@@ -18,10 +18,10 @@ B1::~B1() {}
 B1::B1( B1 const & src ) : a_pointer_( src.a_pointer_ ) {}
 B1 const & B1::operator = ( B1 const & src )
 {
-	if ( this != & src ) {
-		a_pointer_ = src.a_pointer_;
-	}
-	return *this;
+if ( this != & src ) {
+a_pointer_ = src.a_pointer_;
+}
+return *this;
 }
 */
 
@@ -36,7 +36,7 @@ void B1::set_aptr( AOP aptr ) {
 }
 
 void B1::status() {
-   if ( a_pointer_ ) {
+	if ( a_pointer_ ) {
 		std::cout << "B1::status -- a_pointer_ active, a_pointer_->my_int() == " << a_pointer_->my_int() << std::endl;
 	} else {
 		std::cout << "B1::status -- a_pointer_ points at 0" << std::endl;
@@ -44,7 +44,7 @@ void B1::status() {
 }
 
 /*B1OP B1::clone() const {
-	return new B1( *this );
+return new B1( *this );
 }*/
 
 AOP B1::get() {

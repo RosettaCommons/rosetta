@@ -59,7 +59,7 @@ add_cutpoint_variants(
 	core::pose::Pose & pose,
 	core::Size const pos
 )
-{	// This function is implemented only because I don't want to
+{ // This function is implemented only because I don't want to
 	// waste time changing all the calls for the the existing function
 	// in protocols::loops code right now, which, for some reason, takes
 	// a Loop object instead of a residue position...
@@ -151,25 +151,25 @@ restore_residues(
 
 	for ( Old2New::const_iterator i = old2new.begin(), ie = old2new.end(); i != ie; ++i ) {
 
-	if ( i->second > pose.total_residue() || i->first > archive_pose.total_residue()){
-		//TR << "mappign beyond pose length.  only possible in repeat generation!!" << std::endl;
-		continue;
-	}
+		if ( i->second > pose.total_residue() || i->first > archive_pose.total_residue() ) {
+			//TR << "mappign beyond pose length.  only possible in repeat generation!!" << std::endl;
+			continue;
+		}
 
-	/*
+		/*
 		// check variant type
 		core::chemical::ResidueType const & rsd_type (pose.residue(i->second).type());
 		core::chemical::ResidueType const & archive_type ( archive_pose.residue(i->first).type());
 
 		if (! rsd_type.variants_match( archive_type )){
-			utility::vector1<core::chemical::VariantType> const & variant_types ( rsd_type.variant_types() );
-			utility::vector1<core::chemical::VariantType> missing_variant_types;
-			for ( utility::vector1<core::chemical::VariantType>::const_iterator it = variant_types.begin(), it_end = variant_types.end(); it != it_end; ++it) {
-			if (!archive_type.has_variant_type( *it )) missing_variant_types.push_back(*it);
-			}
-			for (utility::vector1<core::chemical::VariantType>::const_iterator it = missing_variant_types.begin(), it_end=missing_variant_types.end(); it != it_end; ++it) {
-				core::pose::add_variant_type_to_pose_residue( archive_pose, *it, i->first);
-			}
+		utility::vector1<core::chemical::VariantType> const & variant_types ( rsd_type.variant_types() );
+		utility::vector1<core::chemical::VariantType> missing_variant_types;
+		for ( utility::vector1<core::chemical::VariantType>::const_iterator it = variant_types.begin(), it_end = variant_types.end(); it != it_end; ++it) {
+		if (!archive_type.has_variant_type( *it )) missing_variant_types.push_back(*it);
+		}
+		for (utility::vector1<core::chemical::VariantType>::const_iterator it = missing_variant_types.begin(), it_end=missing_variant_types.end(); it != it_end; ++it) {
+		core::pose::add_variant_type_to_pose_residue( archive_pose, *it, i->first);
+		}
 		}
 		*/
 		pose.replace_residue( i->second, archive_pose.residue( i->first ), true );
@@ -187,8 +187,7 @@ restore_residues(
 	if ( option[ in::detect_disulf ].user() ?
 			option[ in::detect_disulf ]() : // detect_disulf true
 			pose.is_fullatom() // detect_disulf default but fa pose
-		)
-	{
+			) {
 		pose.conformation().detect_disulfides();
 	}
 

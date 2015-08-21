@@ -17,11 +17,11 @@
 
 //Auto Headers
 #include <utility/pointer/owning_ptr.hh>
-namespace protocols{
-namespace coarse_rna{
+namespace protocols {
+namespace coarse_rna {
 
-	class CoarseRNA_LoopCloser;
-	typedef utility::pointer::shared_ptr< CoarseRNA_LoopCloser > CoarseRNA_LoopCloserOP;
+class CoarseRNA_LoopCloser;
+typedef utility::pointer::shared_ptr< CoarseRNA_LoopCloser > CoarseRNA_LoopCloserOP;
 
 }
 }

@@ -120,9 +120,9 @@ public: // accessors
 
 	void scorefunction(ScoreFunctionOP const & sfxn);
 
-//	MoveMap const & movemap() const;
+	// MoveMap const & movemap() const;
 
-//	PackerTask const & packertask() const;
+	// PackerTask const & packertask() const;
 
 };
 

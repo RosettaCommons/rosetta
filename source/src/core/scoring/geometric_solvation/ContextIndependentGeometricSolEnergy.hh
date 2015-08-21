@@ -64,13 +64,13 @@ public:
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
-  /// attempt to precalculate backbone/backbone energies in advance
-  virtual
+	/// attempt to precalculate backbone/backbone energies in advance
+	virtual
 	void
 	setup_for_packing(
-    pose::Pose & pose,
-    utility::vector1< bool > const &,
-    utility::vector1< bool > const & ) const;
+		pose::Pose & pose,
+		utility::vector1< bool > const &,
+		utility::vector1< bool > const & ) const;
 
 	virtual
 	void
@@ -82,7 +82,7 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		bool res_moving_wrt_eachother
-		) const;
+	) const;
 
 	virtual
 	etable::count_pair::CountPairFunctionCOP
@@ -195,34 +195,34 @@ public:
 	// Undefined, commenting out to fix PyRosetta build
 	/* void
 	eval_atom_derivative_intra_RNA(
-		 id::AtomID const & atom_id,
-		 pose::Pose const & pose,
-		 EnergyMap const & weights,
-		 Vector & F1,
-		 Vector & F2
+	id::AtomID const & atom_id,
+	pose::Pose const & pose,
+	EnergyMap const & weights,
+	Vector & F1,
+	Vector & F2
 	) const;
 	*/
 
 
-  void
-  finalize_total_energy(
-    pose::Pose & pose,
-    ScoreFunction const &,
-    EnergyMap & totals
-  ) const;
+	void
+	finalize_total_energy(
+		pose::Pose & pose,
+		ScoreFunction const &,
+		EnergyMap & totals
+	) const;
 
 	/// f1 and f2 are zeroed
-//	virtual
-//	void
-//	eval_atom_derivative(
-//		id::AtomID const & atom_id,
-//		pose::Pose const & pose,
-//		kinematics::DomainMap const &,
-//		ScoreFunction const &,
-//		EnergyMap const & weights,
-//		Vector & F1,
-//		Vector & F2
-//	) const;
+	// virtual
+	// void
+	// eval_atom_derivative(
+	//  id::AtomID const & atom_id,
+	//  pose::Pose const & pose,
+	//  kinematics::DomainMap const &,
+	//  ScoreFunction const &,
+	//  EnergyMap const & weights,
+	//  Vector & F1,
+	//  Vector & F2
+	// ) const;
 
 
 	virtual
@@ -250,10 +250,10 @@ public:
 	void indicate_required_context_graphs(
 		utility::vector1< bool > & context_graphs_required ) const;
 
-  void
-  precalculate_bb_bb_energy_for_design(
-    pose::Pose const &
-  ) const;
+	void
+	precalculate_bb_bb_energy_for_design(
+		pose::Pose const &
+	) const;
 
 
 private:
@@ -263,11 +263,11 @@ private:
 	/////////////////////////////////////////////////////////////////////////////
 	methods::EnergyMethodOptions const & options_;
 
-  GeometricSolEnergyEvaluatorOP evaluator_;
+	GeometricSolEnergyEvaluatorOP evaluator_;
 
-  mutable Real precalculated_bb_bb_energy_;
+	mutable Real precalculated_bb_bb_energy_;
 
-  mutable bool using_extended_method_;
+	mutable bool using_extended_method_;
 
 
 };

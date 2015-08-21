@@ -139,7 +139,7 @@ public:
 	}
 
 
-//private: /*functions*/
+	//private: /*functions*/
 
 public:
 	/// Previously private member functions made public so that in the absence of atom_ids,

@@ -64,7 +64,7 @@ MolecularDynamics::MolecularDynamics(
 	core::pose::PoseOP & inputpose,
 	core::scoring::ScoreFunction const & scorefxn
 ):
-pose( inputpose )
+	pose( inputpose )
 {
 
 	scorefxn( *pose );
@@ -86,29 +86,29 @@ pose( inputpose )
 
 void MolecularDynamics::createCartesianArray( )
 {
- 	using namespace core;
+	using namespace core;
 
 	Size const nres( pose->total_residue() );
 	cartom.clear();
 	for ( Size ir = 1; ir <= nres; ++ir ) {
 		conformation::Residue const & rsd( pose->residue( ir ) );
-		for (Size i = 1; i <= rsd.natoms(); i++ ){
-			 id::AtomID atom_id(  i, ir );
-			 CartesianAtom atom;
-			 atom.index = i;
-			 atom.res = ir;
-			 atom.atom_id = atom_id;
+		for ( Size i = 1; i <= rsd.natoms(); i++ ) {
+			id::AtomID atom_id(  i, ir );
+			CartesianAtom atom;
+			atom.index = i;
+			atom.res = ir;
+			atom.atom_id = atom_id;
 
-			 atom.force = core::Vector(0,0,0);
-			 atom.velocity = core::Vector(0,0,0);
-			 atom.position = pose->xyz( atom_id );
+			atom.force = core::Vector(0,0,0);
+			atom.velocity = core::Vector(0,0,0);
+			atom.position = pose->xyz( atom_id );
 
-			 atom.old_force = core::Vector(0,0,0);
-			 atom.old_velocity = core::Vector(0,0,0);
-			 atom.old_position = core::Vector(0,0,0);
+			atom.old_force = core::Vector(0,0,0);
+			atom.old_velocity = core::Vector(0,0,0);
+			atom.old_position = core::Vector(0,0,0);
 
-			 atom.mass = 12.001;  // assume carbon for now, we can be more accurate later.
-			 cartom.push_back(atom);
+			atom.mass = 12.001;  // assume carbon for now, we can be more accurate later.
+			cartom.push_back(atom);
 		}
 	}
 
@@ -116,9 +116,9 @@ void MolecularDynamics::createCartesianArray( )
 
 void MolecularDynamics::setCartesianPositionsFromPose( )
 {
- 	using namespace core;
+	using namespace core;
 
-	for ( Size i = 1; i <= cartom.size(); i ++ ){
+	for ( Size i = 1; i <= cartom.size(); i ++ ) {
 		cartom[i].position = pose->xyz( cartom[i].atom_id );
 	}
 }
@@ -126,9 +126,9 @@ void MolecularDynamics::setCartesianPositionsFromPose( )
 
 void MolecularDynamics::setPosePositionsFromCartesian( )
 {
- 	using namespace core;
+	using namespace core;
 
-	for ( Size i = 1; i <= cartom.size(); i ++ ){
+	for ( Size i = 1; i <= cartom.size(); i ++ ) {
 		pose->set_xyz( cartom[i].atom_id,  cartom[i].position );
 	}
 }
@@ -136,9 +136,9 @@ void MolecularDynamics::setPosePositionsFromCartesian( )
 
 void MolecularDynamics::zeroForces( )
 {
- 	using namespace core;
+	using namespace core;
 
-	for ( Size i = 1; i <= cartom.size(); i ++ ){
+	for ( Size i = 1; i <= cartom.size(); i ++ ) {
 		cartom[i].force = core::Vector( 0,0,0 );
 	}
 }
@@ -147,15 +147,15 @@ int MolecularDynamics::findCartomAtom(
 	const core::id::AtomID  &id1
 )
 {
- 	using namespace core;
+	using namespace core;
 
 	int number=-1; int i;
-	for ( i = 1; i <= (int)cartom.size(); i ++ ){
-		if( (cartom[i].atom_id.rsd() == id1.rsd() ) &&
-		    (cartom[i].atom_id.atomno() == id1.atomno() )
-		) { number = i; break; }
+	for ( i = 1; i <= (int)cartom.size(); i ++ ) {
+		if ( (cartom[i].atom_id.rsd() == id1.rsd() ) &&
+				(cartom[i].atom_id.atomno() == id1.atomno() )
+				) { number = i; break; }
 	}
-	if( i > (int)cartom.size()) number = -1;
+	if ( i > (int)cartom.size() ) number = -1;
 	return number;
 }
 
@@ -163,15 +163,15 @@ void MolecularDynamics::getCartesianDerivatives(
 	core::scoring::ScoreFunction const & scorefxn
 )
 {
- 	using namespace core;
+	using namespace core;
 
- 	using namespace core::optimization;
+	using namespace core::optimization;
 	Size const nres( pose->total_residue() );
 	scorefxn.setup_for_derivatives( *pose);
 	int count = 1;
 	for ( Size ir = 1; ir <= nres; ++ir ) {
 		conformation::Residue const & rsd( pose->residue( ir ) );
-		for (Size i = 1; i <= rsd.natoms(); i++ ){
+		for ( Size i = 1; i <= rsd.natoms(); i++ ) {
 			id::AtomID atom_id(  i, ir );
 			core::Vector F1(0,0,0),F2(0,0,0);
 			scorefxn.eval_npd_atom_derivative( atom_id, *pose, min_map.domain_map(), F1, F2 );
@@ -188,7 +188,7 @@ void MolecularDynamics::getCartesianDerivatives(
 
 	int imap( 1 ); // for indexing into de_dvars( imap )
 	for ( MinimizerMap::iterator it=min_map.begin(), ite=min_map.end();
-				it != ite; ++it, ++imap ) {
+			it != ite; ++it, ++imap ) {
 		using namespace id;
 
 		DOF_Node const & dof_node( **it );
@@ -209,7 +209,7 @@ void MolecularDynamics::getCartesianDerivatives(
 		//Real deriv = 0.0;
 
 		/*kinematics::tree::Atom const & atom
-		  ( pose->atom_tree().atom( dof_node.atom_id() ) );*/
+		( pose->atom_tree().atom( dof_node.atom_id() ) );*/
 
 		// eg rama,Paa,dunbrack,and torsional constraints
 		Real deriv = scorefxn.eval_dof_derivative
@@ -217,7 +217,7 @@ void MolecularDynamics::getCartesianDerivatives(
 		// deriv /= min_map.torsion_scale_factor( dof_node );
 
 
-		if( deriv == 0 ) continue;
+		if ( deriv == 0 ) continue;
 		// work out which atoms are involved !
 		AtomID id1;
 		AtomID id2;
@@ -225,24 +225,24 @@ void MolecularDynamics::getCartesianDerivatives(
 		AtomID id4;
 
 		pose->conformation().get_torsion_angle_atom_ids(
-				dof_node.torsion_id(),
-				id1,id2,id3,id4	);
+			dof_node.torsion_id(),
+			id1,id2,id3,id4 );
 
 		// std::cout << " " << id1.atomno() << "  " << id2.atomno() << "  " << id3.atomno() << "  " << id4.atomno() << "  -- ";
 
 		// work out the inices in the cartom array !
 		//Size i;
-		int no1= findCartomAtom( id1 ); if( no1 < 0 ) std::cerr << "ERROR ERROR ERROR id1 \n";
-		int no2= findCartomAtom( id2 ); if( no2 < 0 ) std::cerr << "ERROR ERROR ERROR id2 \n";
-		int no3= findCartomAtom( id3 ); if( no3 < 0 ) std::cerr << "ERROR ERROR ERROR id3 \n";
-		int no4= findCartomAtom( id4 ); if( no4 < 0 ) std::cerr << "ERROR ERROR ERROR id4 \n";
-//		int no2=-1; for ( i = 1; i <= cartom.size(); i ++ ) if( cartom[i].atom_id == id2 ) { no2 = i; break; }	if( i > cartom.size()) std::cerr << "ERROR ERROR ERROR no2 \n";
-//		int no3=-1; for ( i = 1; i <= cartom.size(); i ++ ) if( cartom[i].atom_id == id3 ) { no3 = i; break; }	if( i > cartom.size()) std::cerr << "ERROR ERROR ERROR no3 \n";
-//		int no4=-1; for ( i = 1; i <= cartom.size(); i ++ ) if( cartom[i].atom_id == id4 ) { no4 = i; break; }	if( i > cartom.size()) std::cerr << "ERROR ERROR ERROR no4 \n";
+		int no1= findCartomAtom( id1 ); if ( no1 < 0 ) std::cerr << "ERROR ERROR ERROR id1 \n";
+		int no2= findCartomAtom( id2 ); if ( no2 < 0 ) std::cerr << "ERROR ERROR ERROR id2 \n";
+		int no3= findCartomAtom( id3 ); if ( no3 < 0 ) std::cerr << "ERROR ERROR ERROR id3 \n";
+		int no4= findCartomAtom( id4 ); if ( no4 < 0 ) std::cerr << "ERROR ERROR ERROR id4 \n";
+		//  int no2=-1; for ( i = 1; i <= cartom.size(); i ++ ) if( cartom[i].atom_id == id2 ) { no2 = i; break; } if( i > cartom.size()) std::cerr << "ERROR ERROR ERROR no2 \n";
+		//  int no3=-1; for ( i = 1; i <= cartom.size(); i ++ ) if( cartom[i].atom_id == id3 ) { no3 = i; break; } if( i > cartom.size()) std::cerr << "ERROR ERROR ERROR no3 \n";
+		//  int no4=-1; for ( i = 1; i <= cartom.size(); i ++ ) if( cartom[i].atom_id == id4 ) { no4 = i; break; } if( i > cartom.size()) std::cerr << "ERROR ERROR ERROR no4 \n";
 
 
 		//std::cout << " " << cartom[no1].atom_id.rsd() << " " << cartom[no2].atom_id.rsd()
-		 //         << " " << cartom[no3].atom_id.rsd() << " " << cartom[no4].atom_id.rsd();
+		//         << " " << cartom[no3].atom_id.rsd() << " " << cartom[no4].atom_id.rsd();
 		//std::cout << " " << deriv << "  ";
 
 
@@ -304,34 +304,34 @@ void MolecularDynamics::getCartesianDerivatives(
 			fab += deriv * update_5way_operation( vta_vtb, vti_vta, dsindnrml3, dsindnrml2, vtb_vtj );
 		}
 
-//		fi.mul(PhysicsConst::invAngstrom);
-//		fab.mul(PhysicsConst::invAngstrom);
-//		fj.mul(PhysicsConst::invAngstrom);
+		//  fi.mul(PhysicsConst::invAngstrom);
+		//  fab.mul(PhysicsConst::invAngstrom);
+		//  fj.mul(PhysicsConst::invAngstrom);
 
 		// add to cartesian derivatives
 
-  //  		std::cout << fi.x() << "   " ;
-  //  		std::cout << fi.y() << "   " ;
-  //  		std::cout << fi.z() << "   " ;
-  //  		std::cout << "   |  ";
-  //  		std::cout << fab.x() - fi.x() << "   " ;
-  //  		std::cout << fab.y() - fi.y() << "   " ;
-  //  		std::cout << fab.z() - fi.z() << "   " ;
-  //  		std::cout << "   |  ";
-  //  		std::cout << fj.x() - fab.x() << "   " ;
-  //  		std::cout << fj.y() - fab.y() << "   " ;
-  //  		std::cout << fj.z() - fab.z() << "   " ;
-  //  		std::cout << "   |  ";
-  //  		std::cout << fj.x() << "   " ;
-  //  		std::cout << fj.y() << "   " ;
-  //  		std::cout << fj.z() << "   " ;
-  //  		std::cout << std::endl;
+		//    std::cout << fi.x() << "   " ;
+		//    std::cout << fi.y() << "   " ;
+		//    std::cout << fi.z() << "   " ;
+		//    std::cout << "   |  ";
+		//    std::cout << fab.x() - fi.x() << "   " ;
+		//    std::cout << fab.y() - fi.y() << "   " ;
+		//    std::cout << fab.z() - fi.z() << "   " ;
+		//    std::cout << "   |  ";
+		//    std::cout << fj.x() - fab.x() << "   " ;
+		//    std::cout << fj.y() - fab.y() << "   " ;
+		//    std::cout << fj.z() - fab.z() << "   " ;
+		//    std::cout << "   |  ";
+		//    std::cout << fj.x() << "   " ;
+		//    std::cout << fj.y() << "   " ;
+		//    std::cout << fj.z() << "   " ;
+		//    std::cout << std::endl;
 
 		cartom[no1].force += fi;
 		cartom[no2].force += fab - fi;
 		cartom[no3].force += fj - fab;
 		cartom[no4].force -= fj;
-		
+
 		//epot_dihedral += epot_dihedral_this;
 
 		// DONE
@@ -344,23 +344,23 @@ void MolecularDynamics::getCartesianDerivatives(
 
 void MolecularDynamics::createBondList( )
 {
- 	using namespace core;
+	using namespace core;
 
- 	Size const nres( pose->total_residue() );
+	Size const nres( pose->total_residue() );
 	bondlist.clear();
 
-	for ( Size i = 1; i <= cartom.size(); i ++ ){
+	for ( Size i = 1; i <= cartom.size(); i ++ ) {
 		// for each atom get neighbours within the residue;
 		conformation::Residue const & rsd( pose->residue( cartom[i].atom_id.rsd() ) );
 		core::chemical::AtomIndices indices = rsd.bonded_neighbor( cartom[i].atom_id.atomno() );
-		for ( Size j = 1; j <= indices.size(); j++ ){
-			if( int(indices[j]) < int(cartom[i].atom_id.atomno()) ) continue;
+		for ( Size j = 1; j <= indices.size(); j++ ) {
+			if ( int(indices[j]) < int(cartom[i].atom_id.atomno()) ) continue;
 			//std::cout << indices[j] << "  ";
 			MD_Bond newbond;
 			newbond.atom_id_1 = cartom[i].atom_id;
 			newbond.atom_id_2 = id::AtomID( indices[j], cartom[i].atom_id.rsd()  );
-			newbond.index1	= -1;
-			newbond.index2	= -1;
+			newbond.index1 = -1;
+			newbond.index2 = -1;
 			newbond.length = 0.0;
 
 			bondlist.push_back( newbond );
@@ -372,7 +372,7 @@ void MolecularDynamics::createBondList( )
 		conformation::Residue const & rsd1( pose->residue( ir ) );
 		conformation::Residue const & rsd2( pose->residue( ir+1 ) );
 
-		if( !rsd1.is_bonded( rsd2 ) ) continue;
+		if ( !rsd1.is_bonded( rsd2 ) ) continue;
 
 		//`nstd::cout << "RES " << ir << std::endl;
 
@@ -382,8 +382,8 @@ void MolecularDynamics::createBondList( )
 		MD_Bond newbond;
 		newbond.atom_id_1 = id::AtomID( atom1, ir  );
 		newbond.atom_id_2 = id::AtomID( atom2, ir+1  );
-		newbond.index1	= atom1;
-		newbond.index2	= atom2;
+		newbond.index1 = atom1;
+		newbond.index2 = atom2;
 		newbond.length = 0.0;
 
 		bondlist.push_back( newbond );
@@ -391,30 +391,30 @@ void MolecularDynamics::createBondList( )
 
 	// post process the list
 	// find all the indices
-	for ( Size i = 1; i <= bondlist.size(); i ++ ){
-		bondlist[i].index1	= -1;
-		bondlist[i].index2	= -1;
-		for ( Size j = 1; j <= cartom.size(); j ++ ){
-			if( bondlist[i].atom_id_1 == cartom[j].atom_id ) bondlist[i].index1	= j;
-			if( bondlist[i].atom_id_2 == cartom[j].atom_id ) bondlist[i].index2	= j;
+	for ( Size i = 1; i <= bondlist.size(); i ++ ) {
+		bondlist[i].index1 = -1;
+		bondlist[i].index2 = -1;
+		for ( Size j = 1; j <= cartom.size(); j ++ ) {
+			if ( bondlist[i].atom_id_1 == cartom[j].atom_id ) bondlist[i].index1 = j;
+			if ( bondlist[i].atom_id_2 == cartom[j].atom_id ) bondlist[i].index2 = j;
 		}
-		if( bondlist[i].index1	<= 0) std::cout << "CODE ERROR!\n";
-		if( bondlist[i].index2	<= 0) std::cout << "CODE ERROR!\n";
+		if ( bondlist[i].index1 <= 0 ) std::cout << "CODE ERROR!\n";
+		if ( bondlist[i].index2 <= 0 ) std::cout << "CODE ERROR!\n";
 
 		// measure length
 
 		bondlist[i].length = pose->xyz( bondlist[i].atom_id_1 ).distance( pose->xyz( bondlist[i].atom_id_2 ) );
-/*
+		/*
 		std::cout <<
-		 bondlist[i].atom_id_1.rsd()       << "  " <<
-		 bondlist[i].atom_id_1.atomno()    << "  " <<
-		 bondlist[i].index1                << "  " <<
-		 bondlist[i].atom_id_2.rsd()       << "  " <<
-		 bondlist[i].atom_id_2.atomno()    << "  " <<
-		 bondlist[i].index2                << "  " <<
-		 bondlist[i].length                << "  " <<
-		 std::endl;
-*/
+		bondlist[i].atom_id_1.rsd()       << "  " <<
+		bondlist[i].atom_id_1.atomno()    << "  " <<
+		bondlist[i].index1                << "  " <<
+		bondlist[i].atom_id_2.rsd()       << "  " <<
+		bondlist[i].atom_id_2.atomno()    << "  " <<
+		bondlist[i].index2                << "  " <<
+		bondlist[i].length                << "  " <<
+		std::endl;
+		*/
 
 	}
 
@@ -424,58 +424,56 @@ void MolecularDynamics::createBondList( )
 
 void MolecularDynamics::createAngleList( )
 {
- 	using namespace core;
+	using namespace core;
 
- 	//Size const nres( pose->total_residue() );
+	//Size const nres( pose->total_residue() );
 	anglelist.clear();
 
-	for ( Size i = 1; i <= bondlist.size(); i ++ ){
-		for ( Size j = 1; j <= bondlist.size(); j ++ ){
-    	if(i == j) continue;
+	for ( Size i = 1; i <= bondlist.size(); i ++ ) {
+		for ( Size j = 1; j <= bondlist.size(); j ++ ) {
+			if ( i == j ) continue;
 
 			MD_Angle newangle;
-			if(  bondlist[i].index1 ==  bondlist[j].index1 ){
+			if (  bondlist[i].index1 ==  bondlist[j].index1 ) {
 				newangle.index1 = bondlist[i].index2;
 				newangle.index2 = bondlist[i].index1;
 				newangle.index3 = bondlist[j].index2;
-			} else
-			if(  bondlist[i].index1 ==  bondlist[j].index2 ){
+			} else if (  bondlist[i].index1 ==  bondlist[j].index2 ) {
 				newangle.index1 = bondlist[i].index2;
 				newangle.index2 = bondlist[i].index1;
 				newangle.index3 = bondlist[j].index1;
-			} else
-			if(  bondlist[i].index2 ==  bondlist[j].index1 ){
+			} else if (  bondlist[i].index2 ==  bondlist[j].index1 ) {
 				newangle.index1 = bondlist[i].index1;
 				newangle.index2 = bondlist[i].index2;
 				newangle.index3 = bondlist[j].index2;
-			} else
-			if(  bondlist[i].index2 ==  bondlist[j].index2 ){
+			} else if (  bondlist[i].index2 ==  bondlist[j].index2 ) {
 				newangle.index1 = bondlist[i].index1;
 				newangle.index2 = bondlist[i].index2;
 				newangle.index3 = bondlist[j].index1;
-			} else
-			continue;
+			} else {
+				continue;
+			}
 
-			if( newangle.index1 > newangle.index3 ) continue;
+			if ( newangle.index1 > newangle.index3 ) continue;
 
 			newangle.atom_id_1 = cartom[ newangle.index1 ].atom_id;
 			newangle.atom_id_2 = cartom[ newangle.index2 ].atom_id;
 			newangle.atom_id_3 = cartom[ newangle.index3 ].atom_id;
-		  newangle.length = pose->xyz( newangle.atom_id_1 ).distance( pose->xyz( newangle.atom_id_3 ) );
-		/*
+			newangle.length = pose->xyz( newangle.atom_id_1 ).distance( pose->xyz( newangle.atom_id_3 ) );
+			/*
 			std::cout <<
-				newangle.atom_id_1.rsd()       << "  " <<
-				newangle.atom_id_1.atomno()    << "  " <<
-				newangle.index1                << "  " <<
-				newangle.atom_id_2.rsd()       << "  " <<
-				newangle.atom_id_2.atomno()    << "  " <<
-				newangle.index2                << "  " <<
-				newangle.atom_id_3.rsd()       << "  " <<
-				newangle.atom_id_3.atomno()    << "  " <<
-				newangle.index3                << "  " <<
-				newangle.length                << "  " <<
-				std::endl;
-*/
+			newangle.atom_id_1.rsd()       << "  " <<
+			newangle.atom_id_1.atomno()    << "  " <<
+			newangle.index1                << "  " <<
+			newangle.atom_id_2.rsd()       << "  " <<
+			newangle.atom_id_2.atomno()    << "  " <<
+			newangle.index2                << "  " <<
+			newangle.atom_id_3.rsd()       << "  " <<
+			newangle.atom_id_3.atomno()    << "  " <<
+			newangle.index3                << "  " <<
+			newangle.length                << "  " <<
+			std::endl;
+			*/
 			anglelist.push_back( newangle );
 		}
 	}
@@ -484,16 +482,16 @@ void MolecularDynamics::createAngleList( )
 }
 
 MD_HarmonicDihedral MolecularDynamics::createDihedral(
-		  const core::conformation::Residue &rsd1,
-		  const core::conformation::Residue &rsd2,
-		  const core::conformation::Residue &rsd3,
-		  const core::conformation::Residue &rsd4,
-			std::string name1,
- 			std::string name2,
- 			std::string name3,
- 			std::string name4
+	const core::conformation::Residue &rsd1,
+	const core::conformation::Residue &rsd2,
+	const core::conformation::Residue &rsd3,
+	const core::conformation::Residue &rsd4,
+	std::string name1,
+	std::string name2,
+	std::string name3,
+	std::string name4
 ){
- 	using namespace core;
+	using namespace core;
 
 
 	MD_HarmonicDihedral newdihed;
@@ -506,30 +504,30 @@ MD_HarmonicDihedral MolecularDynamics::createDihedral(
 	newdihed.index3  = findCartomAtom(  newdihed.atom_id_3 );
 	newdihed.index4  = findCartomAtom(  newdihed.atom_id_4 );
 
-	if(	(newdihed.index1 < 0) ) std::cout << "Can't find" << name1 << std::endl;
-	if(	(newdihed.index2 < 0) ) std::cout << "Can't find" << name2 << std::endl;
-	if(	(newdihed.index3 < 0) ) std::cout << "Can't find" << name3 << std::endl;
-	if(	(newdihed.index4 < 0) ) std::cout << "Can't find" << name4 << std::endl;
-	if(
-		(newdihed.index1 < 0) ||
-		(newdihed.index2 < 0) ||
-		(newdihed.index3 < 0) ||
-		(newdihed.index4 < 0)
-	){
+	if ( (newdihed.index1 < 0) ) std::cout << "Can't find" << name1 << std::endl;
+	if ( (newdihed.index2 < 0) ) std::cout << "Can't find" << name2 << std::endl;
+	if ( (newdihed.index3 < 0) ) std::cout << "Can't find" << name3 << std::endl;
+	if ( (newdihed.index4 < 0) ) std::cout << "Can't find" << name4 << std::endl;
+	if (
+			(newdihed.index1 < 0) ||
+			(newdihed.index2 < 0) ||
+			(newdihed.index3 < 0) ||
+			(newdihed.index4 < 0)
+			) {
 		std::cout
-		<< name1 << " "
-		<< name2 << " "
-		<< name3 << " "
-		<< name4 << " "
-		<< newdihed.atom_id_1.rsd() << " "
-		<< newdihed.atom_id_2.rsd()  << " "
-		<< newdihed.atom_id_3.rsd()  << " "
-		<< newdihed.atom_id_4.rsd()  << " "
-		<< newdihed.atom_id_1.atomno() << " "
-		<< newdihed.atom_id_2.atomno() << " "
-		<< newdihed.atom_id_3.atomno() << " "
-		<< newdihed.atom_id_4.atomno() << " "
-		<< std::endl;
+			<< name1 << " "
+			<< name2 << " "
+			<< name3 << " "
+			<< name4 << " "
+			<< newdihed.atom_id_1.rsd() << " "
+			<< newdihed.atom_id_2.rsd()  << " "
+			<< newdihed.atom_id_3.rsd()  << " "
+			<< newdihed.atom_id_4.rsd()  << " "
+			<< newdihed.atom_id_1.atomno() << " "
+			<< newdihed.atom_id_2.atomno() << " "
+			<< newdihed.atom_id_3.atomno() << " "
+			<< newdihed.atom_id_4.atomno() << " "
+			<< std::endl;
 		exit(0);
 	}
 
@@ -539,13 +537,13 @@ MD_HarmonicDihedral MolecularDynamics::createDihedral(
 
 
 MD_HarmonicDihedral MolecularDynamics::createDihedral(
-		  const core::conformation::Residue &rsd,
-			std::string name1,
- 			std::string name2,
- 			std::string name3,
- 			std::string name4
+	const core::conformation::Residue &rsd,
+	std::string name1,
+	std::string name2,
+	std::string name3,
+	std::string name4
 ){
- 	using namespace core;
+	using namespace core;
 
 	MD_HarmonicDihedral newdihed;
 	newdihed.atom_id_1 = id::AtomID( rsd.atom_index( name1 ) ,rsd.seqpos() );
@@ -557,30 +555,30 @@ MD_HarmonicDihedral MolecularDynamics::createDihedral(
 	newdihed.index3  = findCartomAtom(  newdihed.atom_id_3 );
 	newdihed.index4  = findCartomAtom(  newdihed.atom_id_4 );
 
-	if(	(newdihed.index1 < 0) ) std::cout << "Can't find" << name1 << std::endl;
-	if(	(newdihed.index2 < 0) ) std::cout << "Can't find" << name2 << std::endl;
-	if(	(newdihed.index3 < 0) ) std::cout << "Can't find" << name3 << std::endl;
-	if(	(newdihed.index4 < 0) ) std::cout << "Can't find" << name4 << std::endl;
-	if(
-		(newdihed.index1 < 0) ||
-		(newdihed.index2 < 0) ||
-		(newdihed.index3 < 0) ||
-		(newdihed.index4 < 0)
-	){
+	if ( (newdihed.index1 < 0) ) std::cout << "Can't find" << name1 << std::endl;
+	if ( (newdihed.index2 < 0) ) std::cout << "Can't find" << name2 << std::endl;
+	if ( (newdihed.index3 < 0) ) std::cout << "Can't find" << name3 << std::endl;
+	if ( (newdihed.index4 < 0) ) std::cout << "Can't find" << name4 << std::endl;
+	if (
+			(newdihed.index1 < 0) ||
+			(newdihed.index2 < 0) ||
+			(newdihed.index3 < 0) ||
+			(newdihed.index4 < 0)
+			) {
 		std::cout
-		<< name1 << " "
-		<< name2 << " "
-		<< name3 << " "
-		<< name4 << " "
-		<< newdihed.atom_id_1.rsd() << " "
-		<< newdihed.atom_id_2.rsd()  << " "
-		<< newdihed.atom_id_3.rsd()  << " "
-		<< newdihed.atom_id_4.rsd()  << " "
-		<< newdihed.atom_id_1.atomno() << " "
-		<< newdihed.atom_id_2.atomno() << " "
-		<< newdihed.atom_id_3.atomno() << " "
-		<< newdihed.atom_id_4.atomno() << " "
-		<< std::endl;
+			<< name1 << " "
+			<< name2 << " "
+			<< name3 << " "
+			<< name4 << " "
+			<< newdihed.atom_id_1.rsd() << " "
+			<< newdihed.atom_id_2.rsd()  << " "
+			<< newdihed.atom_id_3.rsd()  << " "
+			<< newdihed.atom_id_4.rsd()  << " "
+			<< newdihed.atom_id_1.atomno() << " "
+			<< newdihed.atom_id_2.atomno() << " "
+			<< newdihed.atom_id_3.atomno() << " "
+			<< newdihed.atom_id_4.atomno() << " "
+			<< std::endl;
 		exit(0);
 	}
 
@@ -591,164 +589,164 @@ MD_HarmonicDihedral MolecularDynamics::createDihedral(
 /// Yes i know this is hard coded stuff. Read warning at the top of this file.
 void MolecularDynamics::createDihedralList(  )
 {
- 	using namespace core;
+	using namespace core;
 	int ir;
-	for( ir = 1; ir < (int)pose->total_residue(); ir ++ ){
+	for ( ir = 1; ir < (int)pose->total_residue(); ir ++ ) {
 		const  conformation::Residue &rsd = pose->residue( ir );
 
 
-		if( ( !(rsd.aa() == chemical::aa_pro) )  &&
-		    ( ir != 1 ) &&
+		if ( ( !(rsd.aa() == chemical::aa_pro) )  &&
+				( ir != 1 ) &&
 				( ir <  ( (int)pose->total_residue() - 1 ) )
-		  ){
+				) {
 
-				dihedrallist.push_back( createDihedral(
-						pose->residue( ir - 1 ),
-						pose->residue( ir ),
-						pose->residue( ir ),
-						pose->residue( ir ),
-						"C",  "CA",   "N",   "H"  ) );
+			dihedrallist.push_back( createDihedral(
+				pose->residue( ir - 1 ),
+				pose->residue( ir ),
+				pose->residue( ir ),
+				pose->residue( ir ),
+				"C",  "CA",   "N",   "H"  ) );
 
-				dihedrallist.push_back( createDihedral(
-						pose->residue( ir ),
-						pose->residue( ir + 1 ),
-						pose->residue( ir ),
-						pose->residue( ir ),
-						"CA",  "N",   "C",   "O" ) );
+			dihedrallist.push_back( createDihedral(
+				pose->residue( ir ),
+				pose->residue( ir + 1 ),
+				pose->residue( ir ),
+				pose->residue( ir ),
+				"CA",  "N",   "C",   "O" ) );
 
 		}
 
 		//if( rsd.aa() == chemical::aa_ala )
 		//if( rsd.aa() == chemical::aa_cys )
-		if( rsd.aa() == chemical::aa_asp ){
+		if ( rsd.aa() == chemical::aa_asp ) {
 			//std::cout << "Preparring ASP\n";
 			dihedrallist.push_back( createDihedral( rsd,   "CB",  "OD1",  "CG",  "OD2" ) );
 		}
-		if( rsd.aa() == chemical::aa_glu ){
+		if ( rsd.aa() == chemical::aa_glu ) {
 			//std::cout << "Preparring ASP\n";
 			dihedrallist.push_back( createDihedral( rsd,   "CG",  "OE1",  "CD",  "OE2" ) );
 		}
-		if( rsd.aa() == chemical::aa_phe ){
+		if ( rsd.aa() == chemical::aa_phe ) {
 			//std::cout << "Preparring PHE\n";
 
-			 // Ring Dihedrals
-			 dihedrallist.push_back( createDihedral( rsd,    "CB",  "CG", "CD2", "HD2"   ) );
+			// Ring Dihedrals
+			dihedrallist.push_back( createDihedral( rsd,    "CB",  "CG", "CD2", "HD2"   ) );
 
-			 dihedrallist.push_back( createDihedral( rsd,    "HE2", "CE2", "CZ", "HZ"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "HZ",  "CZ", "CE1","HE1"    ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "HE1",  "CE1","CD1", "HD1"    ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "HD1", "CD1", "CG", "CB"   ) );
+			dihedrallist.push_back( createDihedral( rsd,    "HE2", "CE2", "CZ", "HZ"   ) );
+			dihedrallist.push_back( createDihedral( rsd,    "HZ",  "CZ", "CE1","HE1"    ) );
+			dihedrallist.push_back( createDihedral( rsd,    "HE1",  "CE1","CD1", "HD1"    ) );
+			dihedrallist.push_back( createDihedral( rsd,    "HD1", "CD1", "CG", "CB"   ) );
 
-			 dihedrallist.push_back( createDihedral( rsd,    "CD1", "CG", "CD2", "HD2"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CG",  "CD2","CE2", "HE2"    ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CD2", "CE2", "CZ", "HZ"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CE2", "CZ", "CE1","HE1"    ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CZ",  "CE1","CD1", "HD1"    ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CE1", "CD1", "CG", "CB"   ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CD1", "CG", "CD2", "HD2"   ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CG",  "CD2","CE2", "HE2"    ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CD2", "CE2", "CZ", "HZ"   ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CE2", "CZ", "CE1","HE1"    ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CZ",  "CE1","CD1", "HD1"    ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CE1", "CD1", "CG", "CB"   ) );
 
-			 dihedrallist.push_back( createDihedral( rsd,    "CB",  "CG", "CD2", "CE2"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "HD2",  "CD2","CE2", "CZ"    ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "HE2", "CE2", "CZ", "CE1"  ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "HZ",  "CZ", "CE1","CD1"    ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "HE1",  "CE1","CD1", "CG"    ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "HD1", "CD1", "CG", "CD2"  ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CB",  "CG", "CD2", "CE2"   ) );
+			dihedrallist.push_back( createDihedral( rsd,    "HD2",  "CD2","CE2", "CZ"    ) );
+			dihedrallist.push_back( createDihedral( rsd,    "HE2", "CE2", "CZ", "CE1"  ) );
+			dihedrallist.push_back( createDihedral( rsd,    "HZ",  "CZ", "CE1","CD1"    ) );
+			dihedrallist.push_back( createDihedral( rsd,    "HE1",  "CE1","CD1", "CG"    ) );
+			dihedrallist.push_back( createDihedral( rsd,    "HD1", "CD1", "CG", "CD2"  ) );
 
-			 // Impropers
-			 dihedrallist.push_back( createDihedral( rsd,    "CG",  "CE2", "CD2", "HD2"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CD2",  "CZ", "CE2", "HE2"    ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CZ",  "CD2", "CE2", "HE2"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CE1",  "CE2", "CZ", "HZ"     ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CD1",  "CZ", "CE1", "HE1"    ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CG",  "CE1", "CD1", "HD1"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CD1",  "CD2", "CG", "CB"     ) );
+			// Impropers
+			dihedrallist.push_back( createDihedral( rsd,    "CG",  "CE2", "CD2", "HD2"   ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CD2",  "CZ", "CE2", "HE2"    ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CZ",  "CD2", "CE2", "HE2"   ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CE1",  "CE2", "CZ", "HZ"     ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CD1",  "CZ", "CE1", "HE1"    ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CG",  "CE1", "CD1", "HD1"   ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CD1",  "CD2", "CG", "CB"     ) );
 		}
 
 		//if( rsd.aa() == chemical::aa_gly )
-		if( rsd.aa() == chemical::aa_his ){
+		if ( rsd.aa() == chemical::aa_his ) {
 
-			 if( rsd.has( "HE2" ) ){
-				 dihedrallist.push_back( createDihedral( rsd,    "CE1",  "CD2", "NE2","HE2"    ) );
-				 dihedrallist.push_back( createDihedral( rsd,    "CG",  "NE2","CD2", "HD2"    ) );
-				 dihedrallist.push_back( createDihedral( rsd,    "ND1", "NE2", "CE1", "HE1"   ) );
-				 dihedrallist.push_back( createDihedral( rsd,    "ND1",  "CD2", "CG", "CB"     ) );
+			if ( rsd.has( "HE2" ) ) {
+				dihedrallist.push_back( createDihedral( rsd,    "CE1",  "CD2", "NE2","HE2"    ) );
+				dihedrallist.push_back( createDihedral( rsd,    "CG",  "NE2","CD2", "HD2"    ) );
+				dihedrallist.push_back( createDihedral( rsd,    "ND1", "NE2", "CE1", "HE1"   ) );
+				dihedrallist.push_back( createDihedral( rsd,    "ND1",  "CD2", "CG", "CB"     ) );
 
-				 dihedrallist.push_back( createDihedral( rsd,    "CB",  "CG", "CD2","HD2"    ) );
-				 dihedrallist.push_back( createDihedral( rsd,    "HD2","CD2",  "NE2","HE2"    ) );
-				 dihedrallist.push_back( createDihedral( rsd,    "HE2", "NE2", "CE1", "HE1"   ) );
-				 dihedrallist.push_back( createDihedral( rsd,    "HE1",  "CE1", "ND1","CG"     ) );
+				dihedrallist.push_back( createDihedral( rsd,    "CB",  "CG", "CD2","HD2"    ) );
+				dihedrallist.push_back( createDihedral( rsd,    "HD2","CD2",  "NE2","HE2"    ) );
+				dihedrallist.push_back( createDihedral( rsd,    "HE2", "NE2", "CE1", "HE1"   ) );
+				dihedrallist.push_back( createDihedral( rsd,    "HE1",  "CE1", "ND1","CG"     ) );
 
-				 dihedrallist.push_back( createDihedral( rsd,    "CB",  "CG", "CD2","NE2"    ) );
-				 dihedrallist.push_back( createDihedral( rsd,    "HD2","CD2",  "NE2","CE1"    ) );
-				 dihedrallist.push_back( createDihedral( rsd,    "HE2", "NE2", "CE1", "ND1"   ) );
-				}else{
-				 // HD1 torsions misssing - fix this - mike
-				 dihedrallist.push_back( createDihedral( rsd,    "CG",  "NE2","CD2", "HD2"    ) );
-				 dihedrallist.push_back( createDihedral( rsd,    "ND1", "NE2", "CE1", "HE1"   ) );
-				 dihedrallist.push_back( createDihedral( rsd,    "ND1",  "CD2", "CG", "CB"     ) );
+				dihedrallist.push_back( createDihedral( rsd,    "CB",  "CG", "CD2","NE2"    ) );
+				dihedrallist.push_back( createDihedral( rsd,    "HD2","CD2",  "NE2","CE1"    ) );
+				dihedrallist.push_back( createDihedral( rsd,    "HE2", "NE2", "CE1", "ND1"   ) );
+			} else {
+				// HD1 torsions misssing - fix this - mike
+				dihedrallist.push_back( createDihedral( rsd,    "CG",  "NE2","CD2", "HD2"    ) );
+				dihedrallist.push_back( createDihedral( rsd,    "ND1", "NE2", "CE1", "HE1"   ) );
+				dihedrallist.push_back( createDihedral( rsd,    "ND1",  "CD2", "CG", "CB"     ) );
 
-				 dihedrallist.push_back( createDihedral( rsd,    "CB",  "CG", "CD2","HD2"    ) );
-				 dihedrallist.push_back( createDihedral( rsd,    "HE1",  "CE1", "ND1","CG"     ) );
+				dihedrallist.push_back( createDihedral( rsd,    "CB",  "CG", "CD2","HD2"    ) );
+				dihedrallist.push_back( createDihedral( rsd,    "HE1",  "CE1", "ND1","CG"     ) );
 
-				 dihedrallist.push_back( createDihedral( rsd,    "CB",  "CG", "CD2","NE2"    ) );
-				 dihedrallist.push_back( createDihedral( rsd,    "HD2","CD2",  "NE2","CE1"    ) );
+				dihedrallist.push_back( createDihedral( rsd,    "CB",  "CG", "CD2","NE2"    ) );
+				dihedrallist.push_back( createDihedral( rsd,    "HD2","CD2",  "NE2","CE1"    ) );
 
 
-				}
+			}
 		}
 		//if( rsd.aa() == chemical::aa_ile )
 		//if( rsd.aa() == chemical::aa_lys )
 		//if( rsd.aa() == chemical::aa_leu )
 		//if( rsd.aa() == chemical::aa_met )
-		if( rsd.aa() == chemical::aa_asn ){
+		if ( rsd.aa() == chemical::aa_asn ) {
 			//std::cout << "Preparring ASN\n";
-			 dihedrallist.push_back( createDihedral( rsd,    "CB",  "ND2",  "CG",  "OD1"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CG",  "1HD2", "ND2", "2HD2"  ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CB",  "ND2",  "CG",  "OD1"   ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CG",  "1HD2", "ND2", "2HD2"  ) );
 
-			 dihedrallist.push_back( createDihedral( rsd,    "OD1", "CG",  "ND2", "1HD2"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "OD1", "CG",  "ND2", "2HD2"  ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CB", "CG",  "ND2", "1HD2"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CB", "CG",  "ND2", "2HD2"  ) );
+			dihedrallist.push_back( createDihedral( rsd,    "OD1", "CG",  "ND2", "1HD2"   ) );
+			dihedrallist.push_back( createDihedral( rsd,    "OD1", "CG",  "ND2", "2HD2"  ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CB", "CG",  "ND2", "1HD2"   ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CB", "CG",  "ND2", "2HD2"  ) );
 
 		}
 		//if( rsd.aa() == chemical::aa_pro )
-		if( rsd.aa() == chemical::aa_gln ){
+		if ( rsd.aa() == chemical::aa_gln ) {
 			//std::cout << "Preparring GLN\n";
-			 dihedrallist.push_back( createDihedral( rsd,  "CG", "NE2",  "CD",  "OE1" ) );
-			 dihedrallist.push_back( createDihedral( rsd,  "CD", "1HE2", "NE2", "2HE2" ) );
+			dihedrallist.push_back( createDihedral( rsd,  "CG", "NE2",  "CD",  "OE1" ) );
+			dihedrallist.push_back( createDihedral( rsd,  "CD", "1HE2", "NE2", "2HE2" ) );
 
-			 dihedrallist.push_back( createDihedral( rsd,    "OE1", "CG",  "NE2", "1HE2"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "OE1", "CG",  "NE2", "2HE2"  ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CG", "CD",  "NE2", "1HE2"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CG", "CD",  "NE2", "2HE2"  ) );
+			dihedrallist.push_back( createDihedral( rsd,    "OE1", "CG",  "NE2", "1HE2"   ) );
+			dihedrallist.push_back( createDihedral( rsd,    "OE1", "CG",  "NE2", "2HE2"  ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CG", "CD",  "NE2", "1HE2"   ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CG", "CD",  "NE2", "2HE2"  ) );
 		}
-		if( rsd.aa() == chemical::aa_arg ){
+		if ( rsd.aa() == chemical::aa_arg ) {
 			//std::cout << "Preparring ARG\n";
-			 dihedrallist.push_back( createDihedral( rsd,  "NE",   "NH1", "CZ",  "NH2"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,  "CD",   "CZ", "NE",  "HE"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,  "CZ",   "1HH1", "NH1",  "2HH1"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,  "CZ",   "1HH2", "NH2",  "2HH2"   ) );
+			dihedrallist.push_back( createDihedral( rsd,  "NE",   "NH1", "CZ",  "NH2"   ) );
+			dihedrallist.push_back( createDihedral( rsd,  "CD",   "CZ", "NE",  "HE"   ) );
+			dihedrallist.push_back( createDihedral( rsd,  "CZ",   "1HH1", "NH1",  "2HH1"   ) );
+			dihedrallist.push_back( createDihedral( rsd,  "CZ",   "1HH2", "NH2",  "2HH2"   ) );
 
-			 dihedrallist.push_back( createDihedral( rsd,  "NH1",   "CZ", "NH2",  "1HH2"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,  "NH1",   "CZ", "NH2",  "2HH2"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,  "NE",    "CZ", "NH2",  "1HH2"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,  "NE",    "CZ", "NH2",  "2HH2"   ) );
+			dihedrallist.push_back( createDihedral( rsd,  "NH1",   "CZ", "NH2",  "1HH2"   ) );
+			dihedrallist.push_back( createDihedral( rsd,  "NH1",   "CZ", "NH2",  "2HH2"   ) );
+			dihedrallist.push_back( createDihedral( rsd,  "NE",    "CZ", "NH2",  "1HH2"   ) );
+			dihedrallist.push_back( createDihedral( rsd,  "NE",    "CZ", "NH2",  "2HH2"   ) );
 
-			 dihedrallist.push_back( createDihedral( rsd,  "NH2",   "CZ", "NH1",  "1HH1"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,  "NH2",   "CZ", "NH1",  "2HH1"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,  "NE",    "CZ", "NH1",  "1HH1"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,  "NE",    "CZ", "NH1",  "2HH1"   ) );
+			dihedrallist.push_back( createDihedral( rsd,  "NH2",   "CZ", "NH1",  "1HH1"   ) );
+			dihedrallist.push_back( createDihedral( rsd,  "NH2",   "CZ", "NH1",  "2HH1"   ) );
+			dihedrallist.push_back( createDihedral( rsd,  "NE",    "CZ", "NH1",  "1HH1"   ) );
+			dihedrallist.push_back( createDihedral( rsd,  "NE",    "CZ", "NH1",  "2HH1"   ) );
 
-			 dihedrallist.push_back( createDihedral( rsd,  "NH2",   "CZ", "NE",  "CD"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,  "NH2",   "CZ", "NE",  "HE"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,  "NH1",    "CZ", "NE",  "CD"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,  "NH2",    "CZ", "NE",  "HE"   ) );
+			dihedrallist.push_back( createDihedral( rsd,  "NH2",   "CZ", "NE",  "CD"   ) );
+			dihedrallist.push_back( createDihedral( rsd,  "NH2",   "CZ", "NE",  "HE"   ) );
+			dihedrallist.push_back( createDihedral( rsd,  "NH1",    "CZ", "NE",  "CD"   ) );
+			dihedrallist.push_back( createDihedral( rsd,  "NH2",    "CZ", "NE",  "HE"   ) );
 
 
 		};
 		//if( rsd.aa() == chemical::aa_ser )
 		//if( rsd.aa() == chemical::aa_thr
 		//if( rsd.aa() == chemical::aa_val )
-		if( rsd.aa() == chemical::aa_trp ){
+		if ( rsd.aa() == chemical::aa_trp ) {
 
 			//std::cout << "Preparring TRP\n";
 
@@ -791,39 +789,39 @@ void MolecularDynamics::createDihedralList(  )
 
 		}
 
-		if( rsd.aa() == chemical::aa_tyr ){
-			 //std::cout << "Preparring TYR\n";
+		if ( rsd.aa() == chemical::aa_tyr ) {
+			//std::cout << "Preparring TYR\n";
 
-			 // Ring Dihedrals
-			 dihedrallist.push_back( createDihedral( rsd,    "CB",  "CG", "CD2", "HD2"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "HD2",  "CD2","CE2", "HE2"    ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "HE2", "CE2", "CZ", "OH"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "OH",  "CZ", "CE1","HE1"    ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "HE1",  "CE1","CD1", "HD1"    ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "HD1", "CD1", "CG", "CB"   ) );
+			// Ring Dihedrals
+			dihedrallist.push_back( createDihedral( rsd,    "CB",  "CG", "CD2", "HD2"   ) );
+			dihedrallist.push_back( createDihedral( rsd,    "HD2",  "CD2","CE2", "HE2"    ) );
+			dihedrallist.push_back( createDihedral( rsd,    "HE2", "CE2", "CZ", "OH"   ) );
+			dihedrallist.push_back( createDihedral( rsd,    "OH",  "CZ", "CE1","HE1"    ) );
+			dihedrallist.push_back( createDihedral( rsd,    "HE1",  "CE1","CD1", "HD1"    ) );
+			dihedrallist.push_back( createDihedral( rsd,    "HD1", "CD1", "CG", "CB"   ) );
 
-			 dihedrallist.push_back( createDihedral( rsd,    "CD1", "CG", "CD2", "HD2"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CG",  "CD2","CE2", "HE2"    ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CD2", "CE2", "CZ", "OH"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CE2", "CZ", "CE1","HE1"    ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CZ",  "CE1","CD1", "HD1"    ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CE1", "CD1", "CG", "CB"   ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CD1", "CG", "CD2", "HD2"   ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CG",  "CD2","CE2", "HE2"    ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CD2", "CE2", "CZ", "OH"   ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CE2", "CZ", "CE1","HE1"    ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CZ",  "CE1","CD1", "HD1"    ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CE1", "CD1", "CG", "CB"   ) );
 
-			 dihedrallist.push_back( createDihedral( rsd,    "CB",  "CG", "CD2", "CE2"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "HD2",  "CD2","CE2", "CZ"    ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "HE2", "CE2", "CZ", "CE1"  ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "OH",  "CZ", "CE1","CD1"    ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "HE1",  "CE1","CD1", "CG"    ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "HD1", "CD1", "CG", "CD2"  ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CB",  "CG", "CD2", "CE2"   ) );
+			dihedrallist.push_back( createDihedral( rsd,    "HD2",  "CD2","CE2", "CZ"    ) );
+			dihedrallist.push_back( createDihedral( rsd,    "HE2", "CE2", "CZ", "CE1"  ) );
+			dihedrallist.push_back( createDihedral( rsd,    "OH",  "CZ", "CE1","CD1"    ) );
+			dihedrallist.push_back( createDihedral( rsd,    "HE1",  "CE1","CD1", "CG"    ) );
+			dihedrallist.push_back( createDihedral( rsd,    "HD1", "CD1", "CG", "CD2"  ) );
 
-			 // Impropers
-			 dihedrallist.push_back( createDihedral( rsd,    "CG",  "CE2", "CD2", "HD2"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CD2",  "CZ", "CE2", "HE2"    ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CZ",  "CD2", "CE2", "HE2"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CE1",  "CE2", "CZ", "OH"     ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CD1",  "CZ", "CE1", "HE1"    ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CG",  "CE1", "CD1", "HD1"   ) );
-			 dihedrallist.push_back( createDihedral( rsd,    "CD1",  "CD2", "CG", "CB"     ) );
+			// Impropers
+			dihedrallist.push_back( createDihedral( rsd,    "CG",  "CE2", "CD2", "HD2"   ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CD2",  "CZ", "CE2", "HE2"    ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CZ",  "CD2", "CE2", "HE2"   ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CE1",  "CE2", "CZ", "OH"     ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CD1",  "CZ", "CE1", "HE1"    ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CG",  "CE1", "CD1", "HD1"   ) );
+			dihedrallist.push_back( createDihedral( rsd,    "CD1",  "CD2", "CG", "CB"     ) );
 
 
 		}
@@ -835,8 +833,8 @@ void MolecularDynamics::createDihedralList(  )
 
 
 void MolecularDynamics::setDihedralDerivatives( ){
- 	using namespace core;
-	for ( Size i = 1; i <= dihedrallist.size(); i ++ ){
+	using namespace core;
+	for ( Size i = 1; i <= dihedrallist.size(); i ++ ) {
 
 		// work out which atoms are involved !
 		int no1 = dihedrallist[i].index1;
@@ -894,7 +892,7 @@ void MolecularDynamics::setDihedralDerivatives( ){
 		nrml2.z() *= inv_nrml2_mag;
 
 		phi = -atan2(sin_phi, cos_phi);
-    dihedrallist[i].angle = phi;
+		dihedrallist[i].angle = phi;
 	}
 
 }
@@ -902,10 +900,10 @@ void MolecularDynamics::setDihedralDerivatives( ){
 
 void MolecularDynamics::doBondDerivatives( float &totalepot )
 {
- 	using namespace core;
+	using namespace core;
 
 	float k = 600;
-	for ( Size i = 1; i <= bondlist.size(); i ++ ){
+	for ( Size i = 1; i <= bondlist.size(); i ++ ) {
 
 		core::Vector f2 = pose->xyz( bondlist[i].atom_id_1 )   -    pose->xyz( bondlist[i].atom_id_2 );
 		float length =  pose->xyz( bondlist[i].atom_id_1 ).distance( pose->xyz( bondlist[i].atom_id_2 ) );
@@ -924,12 +922,12 @@ void MolecularDynamics::doBondDerivatives( float &totalepot )
 }
 
 
-void MolecularDynamics::doAngleDerivatives(	float &totalepot )
+void MolecularDynamics::doAngleDerivatives( float &totalepot )
 {
- 	using namespace core;
+	using namespace core;
 
 	float k = 600;
-	for ( Size i = 1; i <= anglelist.size(); i ++ ){
+	for ( Size i = 1; i <= anglelist.size(); i ++ ) {
 
 		core::Vector f2 = pose->xyz( anglelist[i].atom_id_1 )   -    pose->xyz( anglelist[i].atom_id_3 );
 		float length =  pose->xyz( anglelist[i].atom_id_1 ).distance( pose->xyz( anglelist[i].atom_id_3 ) );
@@ -951,12 +949,12 @@ void MolecularDynamics::doDihedralDerivatives(
 	float &totalepot
 )
 {
- 	using namespace core;
+	using namespace core;
 
 	//  float totene_b4 = totalepot;
 
 	float k = 200;
-	for ( Size i = 1; i <= dihedrallist.size(); i ++ ){
+	for ( Size i = 1; i <= dihedrallist.size(); i ++ ) {
 
 
 		// work out which atoms are involved !
@@ -1031,9 +1029,9 @@ void MolecularDynamics::doDihedralDerivatives(
 			fab += deriv * update_5way_operation( vta_vtb, vti_vta, dsindnrml3, dsindnrml2, vtb_vtj );
 		}
 
-//		fi.mul(PhysicsConst::invAngstrom);
-//		fab.mul(PhysicsConst::invAngstrom);
-//		fj.mul(PhysicsConst::invAngstrom);
+		//  fi.mul(PhysicsConst::invAngstrom);
+		//  fab.mul(PhysicsConst::invAngstrom);
+		//  fj.mul(PhysicsConst::invAngstrom);
 
 		// add to cartesian derivatives
 
@@ -1046,9 +1044,9 @@ void MolecularDynamics::doDihedralDerivatives(
 
 void MolecularDynamics::createCartesianDerivatives( core::scoring::ScoreFunction const & scorefxn )
 {
- 	using namespace core;
- 	//std::cout << "setup_for_scoring" << std::endl;
- 	Size const nres( pose->total_residue() );
+	using namespace core;
+	//std::cout << "setup_for_scoring" << std::endl;
+	Size const nres( pose->total_residue() );
 
 	scorefxn.setup_for_derivatives( *pose);
 	cartom.clear();
@@ -1059,23 +1057,23 @@ void MolecularDynamics::createCartesianDerivatives( core::scoring::ScoreFunction
 		//std::cout << "Res: " << ir << "  " <<  rsd.natoms() << std::endl;
 
 		// iterate across neighbors within 12 angstroms
-		for (Size i = 1; i <= rsd.natoms(); i++ ){
-			 id::AtomID atom_id(  i, ir );
+		for ( Size i = 1; i <= rsd.natoms(); i++ ) {
+			id::AtomID atom_id(  i, ir );
 
-			 CartesianAtom atom;
-			 core::Vector F1(0,0,0),F2(0,0,0);
-			 scorefxn.eval_npd_atom_derivative( atom_id, *pose, min_map.domain_map(), F1, F2 );
-			 atom.index = i;
-			 atom.res = ir;
-			 atom.atom_id = atom_id;
-			 atom.position = core::Vector(0,0,0); // RM: Added to avoid uninitialized variable error
-			 atom.velocity = core::Vector(0,0,0); // RM: Added to avoid uninitialized variable error
-			 atom.force = F2;
-			 atom.old_force = core::Vector(0,0,0);
-			 atom.old_velocity = core::Vector(0,0,0);
-			 atom.old_position = core::Vector(0,0,0);
-			 atom.mass = 12.001;  // assume carbon for now, we can be more accurate later. RN: Added to avoid uninitialized variable error
-			 cartom.push_back(atom);
+			CartesianAtom atom;
+			core::Vector F1(0,0,0),F2(0,0,0);
+			scorefxn.eval_npd_atom_derivative( atom_id, *pose, min_map.domain_map(), F1, F2 );
+			atom.index = i;
+			atom.res = ir;
+			atom.atom_id = atom_id;
+			atom.position = core::Vector(0,0,0); // RM: Added to avoid uninitialized variable error
+			atom.velocity = core::Vector(0,0,0); // RM: Added to avoid uninitialized variable error
+			atom.force = F2;
+			atom.old_force = core::Vector(0,0,0);
+			atom.old_velocity = core::Vector(0,0,0);
+			atom.old_position = core::Vector(0,0,0);
+			atom.mass = 12.001;  // assume carbon for now, we can be more accurate later. RN: Added to avoid uninitialized variable error
+			cartom.push_back(atom);
 
 		}
 
@@ -1087,12 +1085,11 @@ void MolecularDynamics::createCartesianDerivatives( core::scoring::ScoreFunction
 
 void MolecularDynamics::setInitialSpeeds(double tgtTemp )
 {
- 	using namespace core;
+	using namespace core;
 	//double sigma;
 	//int natom = cartom.size();
 
-	for ( Size i = 1; i <= cartom.size(); i ++ )
-	{
+	for ( Size i = 1; i <= cartom.size(); i ++ ) {
 		double sigma = sqrt( 1.38065E-23 * tgtTemp / (cartom[i].mass * 1.66053878E-27) );
 		cartom[i].velocity.x() = numeric::random::gaussian() * sigma;
 		cartom[i].velocity.y() = numeric::random::gaussian() * sigma;
@@ -1105,7 +1102,7 @@ void MolecularDynamics::calcKineticEnergy(
 	float &ekin,
 	float &Temp
 ) {
- 	using namespace core;
+	using namespace core;
 	ekin = 0;
 
 	for ( Size i = 1; i <= cartom.size(); i ++ ) {
@@ -1122,7 +1119,7 @@ void MolecularDynamics::applyForces_BeeMan(
 	float &kin,
 	float &temp
 ) {
- 	using namespace core;
+	using namespace core;
 
 	//int i;
 	double t;
@@ -1136,8 +1133,7 @@ void MolecularDynamics::applyForces_BeeMan(
 
 	float forcemul =  -( 1E10 / 6.0221418E23 * 4184.0);
 
-	for ( Size i = 1; i <= cartom.size(); i ++ )
-	{
+	for ( Size i = 1; i <= cartom.size(); i ++ ) {
 		tinvmass = t / (6.0 * (cartom[i].mass *  1.66053878E-27   ) ); // t div 6m
 
 		// finish change in velocity using a(n+1)
@@ -1152,8 +1148,7 @@ void MolecularDynamics::applyForces_BeeMan(
 	//applyThermostat();   //adjust velocities according to Thermostat
 
 	// predict new positions
-	for ( Size i = 1; i <= cartom.size(); i ++ )
-	{
+	for ( Size i = 1; i <= cartom.size(); i ++ ) {
 		tinvmass = t / (6.0 * cartom[i].mass *  1.66053878E-27 ); // t div 6m
 
 		// change in position
@@ -1182,7 +1177,7 @@ void MolecularDynamics::applyForces_LangevinIntegration(
 	float &temp
 )
 {
- 	using namespace core;
+	using namespace core;
 	//int i;
 	core::Vector dr, dv;
 	double t = 1E-15;
@@ -1219,7 +1214,7 @@ void MolecularDynamics::applyForces_LangevinIntegration(
 	core::Vector deltav;
 	core::Vector deltar;
 
-	if(gammat > 0.05) {
+	if ( gammat > 0.05 ) {
 		// when the friction coeffcient is relatively large, run langevin dynamics
 		// the parameters must be calculated using exponential functions
 		c0 = exp(-gammat); // langevin coefficients
@@ -1252,8 +1247,7 @@ void MolecularDynamics::applyForces_LangevinIntegration(
 	}
 
 	//if(Step > 0) {
-	for ( Size i = 1; i <= cartom.size(); i ++ )
-	{
+	for ( Size i = 1; i <= cartom.size(); i ++ ) {
 		tinvmass = t / (cartom[i].mass  *  1.66053878E-27); // t div m
 
 		// finish change in velocity using a(n+1)
@@ -1271,8 +1265,7 @@ void MolecularDynamics::applyForces_LangevinIntegration(
 	kin *= 6.0221418E23 /  4184.0;
 
 	//if(Step < (Steps - 1)) {
-	for ( Size i = 1; i <= cartom.size(); i ++ )
-	{
+	for ( Size i = 1; i <= cartom.size(); i ++ ) {
 		tinvmass = t / (cartom[i].mass  *  1.66053878E-27); // t div m
 
 		double kTdivm =  1.38065E-23 * T / (cartom[i].mass  * 1.66053878E-27);
@@ -1310,9 +1303,9 @@ void MolecularDynamics::applyForces_LangevinIntegration(
 
 void MolecularDynamics::applyForces_ConjugateGradient(
 	int Step,
- 	float &current_energy,
+	float &current_energy,
 	float &m_OldEnergy
-	)
+)
 {
 	using namespace core;
 
@@ -1323,8 +1316,8 @@ void MolecularDynamics::applyForces_ConjugateGradient(
 	//static bool backstep = false;
 
 	//std::cout << "-----> " << m_StepMultiplier << std::endl;
-	if(Step != 0) {
-		if((current_energy < m_OldEnergy)) { // energy did go down on last Step
+	if ( Step != 0 ) {
+		if ( (current_energy < m_OldEnergy) ) { // energy did go down on last Step
 
 			//if( !backstep ){
 			double  fmagold, fmagnew, gamma;
@@ -1340,12 +1333,13 @@ void MolecularDynamics::applyForces_ConjugateGradient(
 
 			//b = ( (gnew - gprev)*(new)   /   prev^2
 
-			if(fmagold != 0)
+			if ( fmagold != 0 ) {
 				gamma = fmagnew / fmagold;
-			else
+			} else {
 				gamma = 0;
+			}
 
-			if (gamma < 0 ) gamma = 0;
+			if ( gamma < 0 ) gamma = 0;
 			std::cout << "gamma: " << gamma << std::endl;
 
 			//gamma = 0;
@@ -1361,7 +1355,7 @@ void MolecularDynamics::applyForces_ConjugateGradient(
 			m_OldEnergy = current_energy;
 			//backstep = false;  // set but never used ~Labonte
 			//} else {
-			//	 std::cout << "BACKSTEP\n";
+			//  std::cout << "BACKSTEP\n";
 
 			//}
 		} else { // we went up the other side
@@ -1392,7 +1386,7 @@ void MolecularDynamics::applyForces_ConjugateGradient(
 		f = cartom[i].velocity;
 		f *= StepSize * m_StepMultiplier;
 		//if(  sqr(f.x()) + sqr(f.y()) + sqr (f.z())  > 0.2 )
-		//	  std::cout << "DISP:  " << i << f.x() << "  " << f.y() << "  " << f.z() << std::endl;
+		//   std::cout << "DISP:  " << i << f.x() << "  " << f.y() << "  " << f.z() << std::endl;
 		cartom[i].position += f;
 	}
 
@@ -1400,10 +1394,10 @@ void MolecularDynamics::applyForces_ConjugateGradient(
 
 
 void MolecularDynamics::doMinimising(
- 	core::scoring::ScoreFunction const & scorefxn
+	core::scoring::ScoreFunction const & scorefxn
 )
 {
- 	using namespace core;
+	using namespace core;
 
 	const int Steps = 400;
 	int Step = 0;
@@ -1423,7 +1417,7 @@ void MolecularDynamics::doMinimising(
 	//float current_energy;
 	float m_OldEnergy(0.0);
 
-	for( Step = 0; Step < Steps; Step ++ ){
+	for ( Step = 0; Step < Steps; Step ++ ) {
 		pose::Pose pose2( *pose);
 		float current_energy =  scorefxn( pose2 );
 		float pot = current_energy;
@@ -1438,16 +1432,16 @@ void MolecularDynamics::doMinimising(
 
 		std::cout << Step << "  " << pot << "  " << cov_epot << "  " << kin << "  " << pot+kin << std::endl;
 
-		if(Step == 0 ) m_OldEnergy = current_energy;
+		if ( Step == 0 ) m_OldEnergy = current_energy;
 		applyForces_ConjugateGradient( Step, current_energy, m_OldEnergy );
 
 		setPosePositionsFromCartesian( );
 
 		//if( ( Step % 50 ) == 0 ){
-			pdbfile << "MODEL    " << I(5, mcount ) << std::endl;
-			pose->dump_pdb( pdbfile );
-			pdbfile << "ENDMDL" << std::endl;
-			mcount++;
+		pdbfile << "MODEL    " << I(5, mcount ) << std::endl;
+		pose->dump_pdb( pdbfile );
+		pdbfile << "ENDMDL" << std::endl;
+		mcount++;
 		//}
 		pdbfile.flush();
 	}
@@ -1459,11 +1453,11 @@ void MolecularDynamics::doMinimising(
 
 
 void MolecularDynamics::doMD( core::scoring::ScoreFunction const & scorefxn,
-	         int Steps,
-					 float startTemp,
-	         float endTemp
+	int Steps,
+	float startTemp,
+	float endTemp
 ){
- 	using namespace core;
+	using namespace core;
 	setInitialSpeeds(startTemp);
 
 	int Step = 0;
@@ -1478,11 +1472,11 @@ void MolecularDynamics::doMD( core::scoring::ScoreFunction const & scorefxn,
 
 	float cov_epot=0;
 	float TargetTemp=startTemp;
-	for( Step = 0; Step < Steps; Step ++ ){
+	for ( Step = 0; Step < Steps; Step ++ ) {
 		pose::Pose pose2(*pose);
 		pot +=  scorefxn( pose2 );
-		if( ( Step % 20 ) == 0 ){
-				std::cout << Step << "  " << pot << "  " << cov_epot << "  " << kin << "  " << pot+kin+cov_epot << "   " << temp << "(" << TargetTemp << ")" << std::endl;
+		if ( ( Step % 20 ) == 0 ) {
+			std::cout << Step << "  " << pot << "  " << cov_epot << "  " << kin << "  " << pot+kin+cov_epot << "   " << temp << "(" << TargetTemp << ")" << std::endl;
 		}
 		//zeroForces( cartom );
 		getCartesianDerivatives( scorefxn );
@@ -1499,7 +1493,7 @@ void MolecularDynamics::doMD( core::scoring::ScoreFunction const & scorefxn,
 
 		setPosePositionsFromCartesian( );
 
-		if( ( Step % 100 ) == 0 ){
+		if ( ( Step % 100 ) == 0 ) {
 			pdbfile << "MODEL    " << I(5, mcount ) << std::endl;
 			pose->dump_pdb( pdbfile );
 			pdbfile << "ENDMDL" << std::endl;
@@ -1522,13 +1516,13 @@ void MolecularDynamics::testCartesianDerivatives( core::scoring::ScoreFunction c
 	Real start_score = scorefxn( *pose );
 	scorefxn.show(std::cout, *pose);
 	std::cout << "STARTSCORE: " << start_score << std::endl;
-/*
+	/*
 	Residue rsd_mod =  pose->residue(4);
 
 	std::cout << rsd_mod.xyz(4).z() << std::endl;
 	// move an atom
 	Vector test = rsd_mod.xyz(4).xyz();
-	Vector dd(0,0,0.1);	yy
+	Vector dd(0,0,0.1); yy
 	Vector newvec;
 
 	newvec = rsd_mod.xyz(4) + dd;
@@ -1540,7 +1534,7 @@ void MolecularDynamics::testCartesianDerivatives( core::scoring::ScoreFunction c
 	scorefxn( *pose );
 	scorefxn.show(std::cout, *pose);
 	std::cout << pose->residue(4).atom(3).xyz().z() << std::endl;
-*/
+	*/
 	const float dd = 0.00001;
 	Vector dx(dd,0,0);
 	Vector dy(0,dd,0);
@@ -1563,15 +1557,15 @@ void MolecularDynamics::testCartesianDerivatives( core::scoring::ScoreFunction c
 	scorefxn.show(std::cout, *pose);
 
 
- 	//std::cout << "setup_for_scoring" << std::endl;
- 	Size const nres( pose->total_residue() );
+	//std::cout << "setup_for_scoring" << std::endl;
+	Size const nres( pose->total_residue() );
 
 	for ( Size ir = 1; ir <= nres; ++ir ) {
 		// get the appropriate residue from the pose->
 		conformation::Residue const & rsd( pose->residue( ir ) );
 		std::cout << "IR: " << ir << std::endl;
 		// iterate across neighbors within 12 angstroms
-		for (Size i = 1; i <= rsd.natoms(); i++ ){
+		for ( Size i = 1; i <= rsd.natoms(); i++ ) {
 			id::AtomID atom_id( i, ir );
 
 			pose->energies().clear();
@@ -1607,34 +1601,34 @@ void MolecularDynamics::testCartesianDerivatives( core::scoring::ScoreFunction c
 	}
 
 
-	for( Size i = 1; i < cartom.size(); i++ ){
+	for ( Size i = 1; i < cartom.size(); i++ ) {
 
-		if(  ( fabs( cartom[i].force.x()  -  numeriv[i].x()     ) > 0.1 ) ||
-		     ( fabs( cartom[i].force.y()  -  numeriv[i].y()     ) > 0.1 ) ||
-         ( fabs( cartom[i].force.z()  -  numeriv[i].z()     ) > 0.1 )  ) {
-					std::cout << "DRV: "
-										<< cartom[i].res   << "  "
-										<< cartom[i].index  << "   "
-										<< cartom[i].force.x() << "  "
-										<< cartom[i].force.y() << "  "
-										<< cartom[i].force.z() << "  "
-										<< numeriv[i].x() << "  "
-										<< numeriv[i].y() << "  "
-										<< numeriv[i].z() << "  "
-										<< std::endl;
+		if (  ( fabs( cartom[i].force.x()  -  numeriv[i].x()     ) > 0.1 ) ||
+				( fabs( cartom[i].force.y()  -  numeriv[i].y()     ) > 0.1 ) ||
+				( fabs( cartom[i].force.z()  -  numeriv[i].z()     ) > 0.1 )  ) {
+			std::cout << "DRV: "
+				<< cartom[i].res   << "  "
+				<< cartom[i].index  << "   "
+				<< cartom[i].force.x() << "  "
+				<< cartom[i].force.y() << "  "
+				<< cartom[i].force.z() << "  "
+				<< numeriv[i].x() << "  "
+				<< numeriv[i].y() << "  "
+				<< numeriv[i].z() << "  "
+				<< std::endl;
 
 
-		}else{
-					std::cout << "DRVT: "
-										<< cartom[i].res   << "  "
-										<< cartom[i].index  << "   "
-										<< cartom[i].force.x() << "  "
-										<< cartom[i].force.y() << "  "
-										<< cartom[i].force.z() << "  "
-										<< numeriv[i].x() << "  "
-										<< numeriv[i].y() << "  "
-										<< numeriv[i].z() << "  "
-										<< std::endl;
+		} else {
+			std::cout << "DRVT: "
+				<< cartom[i].res   << "  "
+				<< cartom[i].index  << "   "
+				<< cartom[i].force.x() << "  "
+				<< cartom[i].force.y() << "  "
+				<< cartom[i].force.z() << "  "
+				<< numeriv[i].x() << "  "
+				<< numeriv[i].y() << "  "
+				<< numeriv[i].z() << "  "
+				<< std::endl;
 
 
 		}

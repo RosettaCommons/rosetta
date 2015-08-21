@@ -24,26 +24,26 @@ using namespace core;
 namespace protocols {
 namespace simple_moves {
 
-	//Constructor
-	TorsionSetMover::TorsionSetMover(
-										utility::vector1< id::TorsionID >  torsion_ids,
-										utility::vector1< Real > torsion_values ):
-		torsion_ids_( torsion_ids ),
-		torsion_values_( torsion_values )
-	{
-		runtime_assert( torsion_ids_.size() == torsion_values_.size() );
-	}
+//Constructor
+TorsionSetMover::TorsionSetMover(
+	utility::vector1< id::TorsionID >  torsion_ids,
+	utility::vector1< Real > torsion_values ):
+	torsion_ids_( torsion_ids ),
+	torsion_values_( torsion_values )
+{
+	runtime_assert( torsion_ids_.size() == torsion_values_.size() );
+}
 
-	//Destructor
-	TorsionSetMover::~TorsionSetMover()
-	{}
+//Destructor
+TorsionSetMover::~TorsionSetMover()
+{}
 
- void
-	TorsionSetMover::apply( core::pose::Pose & pose ) {
-		for ( Size n = 1; n <= torsion_ids_.size(); n++ ){
-			pose.set_torsion( torsion_ids_[ n ], torsion_values_[ n ] );
-		}
+void
+TorsionSetMover::apply( core::pose::Pose & pose ) {
+	for ( Size n = 1; n <= torsion_ids_.size(); n++ ) {
+		pose.set_torsion( torsion_ids_[ n ], torsion_values_[ n ] );
 	}
+}
 
 } //simple_moves
 } //protocols

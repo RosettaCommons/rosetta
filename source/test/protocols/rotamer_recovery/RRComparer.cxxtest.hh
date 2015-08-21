@@ -89,7 +89,7 @@ public:
 		Real score;
 		bool recovered;
 
-		for( Size i=1; i <= pose.total_residue(); ++i ){
+		for ( Size i=1; i <= pose.total_residue(); ++i ) {
 
 			rrc.measure_rotamer_recovery(
 				pose, pose, pose.residue(i), pose.residue(i), score, recovered);
@@ -137,7 +137,7 @@ public:
 		Real score;
 		bool recovered;
 
-		for( Size i=1; i <= pose.total_residue(); ++i ){
+		for ( Size i=1; i <= pose.total_residue(); ++i ) {
 
 			rrc.measure_rotamer_recovery(
 				pose, pose, pose.residue(i), pose.residue(i), score, recovered);

@@ -116,36 +116,36 @@ TaskAwareScoreTypeFilter::bb_bb( bool const bb ){
 }
 
 std::string
-TaskAwareScoreTypeFilter::mode() const { 
-	return mode_; 
+TaskAwareScoreTypeFilter::mode() const {
+	return mode_;
 }
 
-bool 
-TaskAwareScoreTypeFilter::write2pdb() const { 
-	return write2pdb_; 
+bool
+TaskAwareScoreTypeFilter::write2pdb() const {
+	return write2pdb_;
 }
 
-void 
-TaskAwareScoreTypeFilter::write2pdb( bool const write ) { 
-	write2pdb_ = write; 
+void
+TaskAwareScoreTypeFilter::write2pdb( bool const write ) {
+	write2pdb_ = write;
 }
 
-bool 
-TaskAwareScoreTypeFilter::individual_hbonds() const{ 
-	return individual_hbonds_; 
+bool
+TaskAwareScoreTypeFilter::individual_hbonds() const{
+	return individual_hbonds_;
 }
 
-void 
-TaskAwareScoreTypeFilter::individual_hbonds( bool individual_hbonds ){ 
-	individual_hbonds_ = individual_hbonds; 
+void
+TaskAwareScoreTypeFilter::individual_hbonds( bool individual_hbonds ){
+	individual_hbonds_ = individual_hbonds;
 }
 
-void 
-TaskAwareScoreTypeFilter::mode( std::string const mode ) { 
+void
+TaskAwareScoreTypeFilter::mode( std::string const mode ) {
 	if ( !((mode == "average") || (mode == "total") || (mode == "individual")) ) {
 		utility_exit_with_message( "InputError: The specified mode for the TaskAwareScoreTypeFilter does not match either average, total, or individual." );
 	}
-	mode_ = mode; 
+	mode_ = mode;
 }
 
 bool TaskAwareScoreTypeFilter::unbound() const { return unbound_; }
@@ -161,16 +161,16 @@ bool
 TaskAwareScoreTypeFilter::apply(core::pose::Pose const & pose ) const
 {
 	core::Real score(compute( pose, false ));
-	if( mode() == "individual" ) { //TODO: JBB - Modify to allow the user to specify both a per residue threshold and a threshold on the number of failing residues allowed to still pass the filter.
-		if( score == 0 ) {
+	if ( mode() == "individual" ) { //TODO: JBB - Modify to allow the user to specify both a per residue threshold and a threshold on the number of failing residues allowed to still pass the filter.
+		if ( score == 0 ) {
 			TR<<"passing."<<std::endl;
-    	return true;	
+			return true;
 		} else {
-    	TR<<"failing."<<std::endl;
-    	return false;
+			TR<<"failing."<<std::endl;
+			return false;
 		}
 	} else {
-		if( score <= threshold_) {
+		if ( score <= threshold_ ) {
 			TR<<"passing."<<std::endl;
 			return true;
 		} else {
@@ -185,11 +185,11 @@ TaskAwareScoreTypeFilter::compute( core::pose::Pose const & pose, bool const & w
 	runtime_assert( task_factory() != 0 );
 	core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 	core::Size total_residue;
-	if(core::pose::symmetry::is_symmetric( pose )) { 
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 		total_residue = symm_info->num_independent_residues();
 	} else {
-		total_residue = pose.total_residue(); 
+		total_residue = pose.total_residue();
 	}
 	std::string interface_pos("interface positions considered: ");
 	core::Real tie=0;
@@ -201,32 +201,32 @@ TaskAwareScoreTypeFilter::compute( core::pose::Pose const & pose, bool const & w
 
 	// If unbound energies are being evaluated, create the unbound state
 	if ( unbound() ) {
-	  int sym_aware_jump_id = 0;
-	  if ( sym_dof_names() != "" ) {
-	    utility::vector1<std::string> sym_dof_name_list;
-	    sym_dof_name_list = utility::string_split( sym_dof_names() , ',' );
-	    for (Size i = 1; i <= sym_dof_name_list.size(); i++) {
-	      sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name_list[i] );
-	      protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( p, sym_aware_jump_id ) );
-	      translate->step_size( 1000.0 );
-	      translate->apply( p );
-	    }
-  	} else if ( jump() != 0 ) {
-	    sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num( pose, jump() );
-	    protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( p, sym_aware_jump_id ) );
-	    translate->step_size( 1000.0 );
-		  translate->apply( p );
-  	} else {
+		int sym_aware_jump_id = 0;
+		if ( sym_dof_names() != "" ) {
+			utility::vector1<std::string> sym_dof_name_list;
+			sym_dof_name_list = utility::string_split( sym_dof_names() , ',' );
+			for ( Size i = 1; i <= sym_dof_name_list.size(); i++ ) {
+				sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name_list[i] );
+				protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( p, sym_aware_jump_id ) );
+				translate->step_size( 1000.0 );
+				translate->apply( p );
+			}
+		} else if ( jump() != 0 ) {
+			sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num( pose, jump() );
+			protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( p, sym_aware_jump_id ) );
+			translate->step_size( 1000.0 );
+			translate->apply( p );
+		} else {
 			utility_exit_with_message( "If unbound is set to true, you must provide either sym_dof_names or a jump in order to create the unbound pose!" );
 		}
 	}
 
 	core::scoring::hbonds::HBondSet hbset, hbset_ref;
-  core::scoring::EnergyMap em;
-  if ( score_type_name() == "hbond_bb_sc" ) {
+	core::scoring::EnergyMap em;
+	if ( score_type_name() == "hbond_bb_sc" ) {
 		core::scoring::methods::EnergyMethodOptions myopt = scorefxn()->energy_method_options();
 		myopt.hbond_options().decompose_bb_hb_into_pair_energies(true);
-		scorefxn()->set_energy_method_options(myopt); 
+		scorefxn()->set_energy_method_options(myopt);
 		scorefxn()->score( p );
 		// get the HBondSet
 		core::scoring::hbonds::fill_hbond_set(p,false,hbset);
@@ -234,25 +234,25 @@ TaskAwareScoreTypeFilter::compute( core::pose::Pose const & pose, bool const & w
 		scorefxn()->score( p );
 	}
 	//TODO JBB: Decide if this functionality is really needed/useful.  If so then, also consider adding the ability to do this with mode=individual.
-  if (individual_hbonds_) {
-		for( core::Size i=1; i<=total_residue; ++i ){
-			if( packer_task->being_packed( i ) ) {
+	if ( individual_hbonds_ ) {
+		for ( core::Size i=1; i<=total_residue; ++i ) {
+			if ( packer_task->being_packed( i ) ) {
 				bool flag = 0;
 				core::Real resi_hbond_bb_sc_energy = 0;
-				for (core::Size j=1; j<=total_residue; j++) {
-					for(Size ihb = 1; ihb <= hbset.nhbonds(); ++ihb){
+				for ( core::Size j=1; j<=total_residue; j++ ) {
+					for ( Size ihb = 1; ihb <= hbset.nhbonds(); ++ihb ) {
 						core::scoring::hbonds::HBond const & hb(hbset.hbond(ihb));
-						if( hb.don_res()==i && hb.acc_res()==j ){
-							if( !hb.don_hatm_is_protein_backbone() && hb.acc_atm_is_protein_backbone() ) {
-								if( flag == 0) interface_size++;
+						if ( hb.don_res()==i && hb.acc_res()==j ) {
+							if ( !hb.don_hatm_is_protein_backbone() && hb.acc_atm_is_protein_backbone() ) {
+								if ( flag == 0 ) interface_size++;
 								flag=1;
 								resi_hbond_bb_sc_energy += hb.energy();
 								//TR << "Donor sc resi: " << i << p.residue(i).name3() << ". Acceptor bb resi: " << j << p.residue(j).name3() << " Energy = " << hb.energy() << std::endl;
 							}
 						}
-						if( hb.don_res()==j && hb.acc_res()==i ){
-							if( hb.don_hatm_is_protein_backbone() && !hb.acc_atm_is_protein_backbone() ) {
-								if( flag == 0) interface_size++;
+						if ( hb.don_res()==j && hb.acc_res()==i ) {
+							if ( hb.don_hatm_is_protein_backbone() && !hb.acc_atm_is_protein_backbone() ) {
+								if ( flag == 0 ) interface_size++;
 								flag=1;
 								resi_hbond_bb_sc_energy += hb.energy();
 								//TR << "Acceptor sc resi: " << i << p.residue(i).name3() << ". Donor bb resi: " << j << p.residue(j).name3() << " Energy = " << hb.energy() << std::endl;
@@ -264,14 +264,14 @@ TaskAwareScoreTypeFilter::compute( core::pose::Pose const & pose, bool const & w
 			}
 		}
 	} else {
-		for( core::Size resi=1; resi<=total_residue; ++resi ){
-			if( packer_task->being_packed( resi ) ) {
+		for ( core::Size resi=1; resi<=total_residue; ++resi ) {
+			if ( packer_task->being_packed( resi ) ) {
 				interface_size += 1;
 				interface_pos.append(ObjexxFCL::string_of(resi) + "+");
-				if( mode() == "individual" ) {
+				if ( mode() == "individual" ) {
 					em = p.energies().residue_total_energies( resi );
 					em *= scorefxn()->weights();
-					if ( em[score_type()] <= threshold() ) { 
+					if ( em[score_type()] <= threshold() ) {
 						TR << score_type_name() << " " << pose.residue( resi ).name3() << "_" << resi << ": " << em[score_type()] << " pass" << std::endl;
 					} else {
 						TR << score_type_name() << " " << pose.residue( resi ).name3() << "_" << resi << ": " << em[score_type()] << " fail" << std::endl;
@@ -280,7 +280,7 @@ TaskAwareScoreTypeFilter::compute( core::pose::Pose const & pose, bool const & w
 						if ( !basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {
 							output_resi = pose.pdb_info()->number( resi );
 						}
-						pymol_selection.append(ObjexxFCL::string_of(output_resi) + "+");   
+						pymol_selection.append(ObjexxFCL::string_of(output_resi) + "+");
 						num_failing_resis += 1;
 					}
 				} else {
@@ -291,13 +291,13 @@ TaskAwareScoreTypeFilter::compute( core::pose::Pose const & pose, bool const & w
 		}
 		TR << pymol_selection << std::endl;
 	}
-	if( mode() == "individual" ) {
+	if ( mode() == "individual" ) {
 		return num_failing_resis;
 	} else {
 		if ( score_type_name() == "total_score" ) {
 			tie = interface_energy;
 		} else {
-		  em *= scorefxn()->weights();
+			em *= scorefxn()->weights();
 			tie = em[score_type()];
 		}
 		TR.Debug <<interface_pos<<std::endl;
@@ -341,10 +341,10 @@ TaskAwareScoreTypeFilter::report( std::ostream & out, core::pose::Pose const & p
 
 void
 TaskAwareScoreTypeFilter::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & )
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & )
 {
 	TR << "TaskAwareScoreTypeFilter"<<std::endl;
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
@@ -365,11 +365,11 @@ TaskAwareScoreTypeFilter::parse_my_tag( utility::tag::TagCOP tag,
 	TR<<"with options scoretype: "<<score_type()<<" and threshold: "<<threshold()<<std::endl;
 }
 void TaskAwareScoreTypeFilter::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & score_fxns,
-				utility::lua::LuaObject const & tasks ) {
+	utility::lua::LuaObject const & score_fxns,
+	utility::lua::LuaObject const & tasks ) {
 	TR << "TaskAwareScoreTypeFilter"<<std::endl;
 	task_factory( protocols::elscripts::parse_taskdef( def["tasks"], tasks ));
-	if( def["scorefxn"] ) {
+	if ( def["scorefxn"] ) {
 		scorefxn( protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns ) );
 	} else {
 		scorefxn( score_fxns["score12"].to<core::scoring::ScoreFunctionSP>()->clone()  );

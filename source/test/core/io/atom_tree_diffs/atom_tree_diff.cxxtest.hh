@@ -52,74 +52,74 @@ public:
 	}
 
 
-void test_save_and_restore()
-{
-	//test::UTracer UT("core/io/atom_tree_diffs/atom_tree_diff_test.u", &TR);
+	void test_save_and_restore()
+	{
+		//test::UTracer UT("core/io/atom_tree_diffs/atom_tree_diff_test.u", &TR);
 
-	/// Init random generators system to insure that random number sequence is the same for each run.
-	core::init::init_random_generators(1000, "mt19937");
+		/// Init random generators system to insure that random number sequence is the same for each run.
+		core::init::init_random_generators(1000, "mt19937");
 
 
-	pose::Pose start_pose( create_test_in_pdb_pose()), modified_pose, restored_pose;
-	//core::import_pose::pose_from_pdb( start_pose, "core/io/test_in.pdb" );
-	//UTRACE << pose.fold_tree() << std::endl;
+		pose::Pose start_pose( create_test_in_pdb_pose()), modified_pose, restored_pose;
+		//core::import_pose::pose_from_pdb( start_pose, "core/io/test_in.pdb" );
+		//UTRACE << pose.fold_tree() << std::endl;
 
-	// Randomize the pose a little
-	using numeric::random::rg;
-	modified_pose = start_pose; // make a copy
-	for(int i = 0; i < 20; ++i) {
-		Size rsd_no = rg().random_range( 1, modified_pose.total_residue() );
-		modified_pose.set_phi( rsd_no, 10*rg().gaussian() + modified_pose.phi(rsd_no) );
-		modified_pose.set_psi( rsd_no, 10*rg().gaussian() + modified_pose.psi(rsd_no) );
-		Size num_chi = modified_pose.residue(rsd_no).nchi();
-		for(Size j = 1; j < num_chi; ++j) {
-			modified_pose.set_chi( j, rsd_no, 10*rg().gaussian() + modified_pose.chi(j, rsd_no) );
+		// Randomize the pose a little
+		using numeric::random::rg;
+		modified_pose = start_pose; // make a copy
+		for ( int i = 0; i < 20; ++i ) {
+			Size rsd_no = rg().random_range( 1, modified_pose.total_residue() );
+			modified_pose.set_phi( rsd_no, 10*rg().gaussian() + modified_pose.phi(rsd_no) );
+			modified_pose.set_psi( rsd_no, 10*rg().gaussian() + modified_pose.psi(rsd_no) );
+			Size num_chi = modified_pose.residue(rsd_no).nchi();
+			for ( Size j = 1; j < num_chi; ++j ) {
+				modified_pose.set_chi( j, rsd_no, 10*rg().gaussian() + modified_pose.chi(j, rsd_no) );
+			}
 		}
-	}
 
-	// Verify that it's not like the input structure any more
-	Real rms_to_orig = scoring::rmsd_no_super(start_pose, modified_pose, scoring::is_heavyatom);
-	TR << "RMS to original: " << rms_to_orig << std::endl;
-	TS_ASSERT( rms_to_orig > 1.0 );
+		// Verify that it's not like the input structure any more
+		Real rms_to_orig = scoring::rmsd_no_super(start_pose, modified_pose, scoring::is_heavyatom);
+		TR << "RMS to original: " << rms_to_orig << std::endl;
+		TS_ASSERT( rms_to_orig > 1.0 );
 
-	// Now mutate it a little for good measure (can't do RMS to orig after this)
-	for(int i = 0; i < 10; ++i) {
-		// Don't mutate the ends because they're variant residue types
-		Size rsd_no = rg().random_range( 2, modified_pose.total_residue()-1 );
-		using namespace core::conformation;
-		ResidueOP newres = ResidueFactory::create_residue(
-			modified_pose.residue(rsd_no).residue_type_set().name_map("LYS"),
-			modified_pose.residue(rsd_no), modified_pose.conformation());
-		modified_pose.replace_residue(rsd_no, *newres, true /*orient backbone*/);
-		// Change chi angles for mutated res away from their default values
-		Size num_chi = modified_pose.residue(rsd_no).nchi();
-		for(Size j = 1; j < num_chi; ++j) {
-			modified_pose.set_chi( j, rsd_no, 90*rg().gaussian() + modified_pose.chi(j, rsd_no) );
+		// Now mutate it a little for good measure (can't do RMS to orig after this)
+		for ( int i = 0; i < 10; ++i ) {
+			// Don't mutate the ends because they're variant residue types
+			Size rsd_no = rg().random_range( 2, modified_pose.total_residue()-1 );
+			using namespace core::conformation;
+			ResidueOP newres = ResidueFactory::create_residue(
+				modified_pose.residue(rsd_no).residue_type_set().name_map("LYS"),
+				modified_pose.residue(rsd_no), modified_pose.conformation());
+			modified_pose.replace_residue(rsd_no, *newres, true /*orient backbone*/);
+			// Change chi angles for mutated res away from their default values
+			Size num_chi = modified_pose.residue(rsd_no).nchi();
+			for ( Size j = 1; j < num_chi; ++j ) {
+				modified_pose.set_chi( j, rsd_no, 90*rg().gaussian() + modified_pose.chi(j, rsd_no) );
+			}
 		}
+
+		// Serialize the modified structure as a atom_tree_diff file
+		std::ostringstream outss;
+		std::map< std::string, core::Real > my_scores; // empty
+		scoring::ScoreFunctionOP sfxn = scoring::get_score_function();
+		core::import_pose::atom_tree_diffs::map_of_weighted_scores(modified_pose, *sfxn, my_scores);
+		core::import_pose::atom_tree_diffs::dump_atom_tree_diff(outss, "tag", my_scores, start_pose, modified_pose);
+
+		// Restore headers and structure from atom_tree_diff file, assert minimal error introduced.
+		std::string tag_out;
+		std::map< std::string, core::Real > my_scores_out; // empty
+		std::istringstream inss( outss.str() );
+		TS_ASSERT( core::import_pose::atom_tree_diffs::header_from_atom_tree_diff(inss, tag_out, my_scores_out) );
+		TS_ASSERT( tag_out == "tag" );
+		for ( std::map< std::string, core::Real >::iterator pair = my_scores_out.begin(), pair_end = my_scores_out.end(); pair != pair_end; ++pair ) {
+			TS_ASSERT_DELTA( my_scores[ pair->first ], pair->second, (1e-4)*std::abs(pair->second) );
+		}
+
+		TS_ASSERT( core::import_pose::atom_tree_diffs::pose_from_atom_tree_diff(inss, start_pose, restored_pose) );
+		Real rms_to_modified = scoring::rmsd_no_super(modified_pose, restored_pose, scoring::is_heavyatom);
+		TR << "RMS error from save/restore: " << rms_to_modified << std::endl;
+		TS_ASSERT( rms_to_modified < 1e-3 );
 	}
-
-	// Serialize the modified structure as a atom_tree_diff file
-	std::ostringstream outss;
-	std::map< std::string, core::Real > my_scores; // empty
-	scoring::ScoreFunctionOP sfxn = scoring::get_score_function();
-	core::import_pose::atom_tree_diffs::map_of_weighted_scores(modified_pose, *sfxn, my_scores);
-	core::import_pose::atom_tree_diffs::dump_atom_tree_diff(outss, "tag", my_scores, start_pose, modified_pose);
-
-	// Restore headers and structure from atom_tree_diff file, assert minimal error introduced.
-	std::string tag_out;
-	std::map< std::string, core::Real > my_scores_out; // empty
-	std::istringstream inss( outss.str() );
-	TS_ASSERT( core::import_pose::atom_tree_diffs::header_from_atom_tree_diff(inss, tag_out, my_scores_out) );
-	TS_ASSERT( tag_out == "tag" );
-	for(std::map< std::string, core::Real >::iterator pair = my_scores_out.begin(), pair_end = my_scores_out.end(); pair != pair_end; ++pair) {
-		TS_ASSERT_DELTA( my_scores[ pair->first ], pair->second, (1e-4)*std::abs(pair->second) );
-	}
-
-	TS_ASSERT( core::import_pose::atom_tree_diffs::pose_from_atom_tree_diff(inss, start_pose, restored_pose) );
-	Real rms_to_modified = scoring::rmsd_no_super(modified_pose, restored_pose, scoring::is_heavyatom);
-	TR << "RMS error from save/restore: " << rms_to_modified << std::endl;
-	TS_ASSERT( rms_to_modified < 1e-3 );
-}
 
 
 };

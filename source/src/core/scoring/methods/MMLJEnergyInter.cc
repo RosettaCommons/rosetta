@@ -97,12 +97,12 @@ MMLJEnergyInter::MMLJEnergyInter() :
 EnergyMethodOP
 MMLJEnergyInter::clone() const
 {
-  return EnergyMethodOP( new MMLJEnergyInter() );
+	return EnergyMethodOP( new MMLJEnergyInter() );
 }
 
 void
 MMLJEnergyInter::setup_for_minimizing(
-  pose::Pose & pose,
+	pose::Pose & pose,
 	ScoreFunction const & sfxn,
 	kinematics::MinimizerMapBase const & min_map
 ) const
@@ -151,7 +151,7 @@ MMLJEnergyInter::setup_for_packing(
 	tries->total_residue( pose.total_residue() );
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		// Do not compute energy for virtual residues.
-		if ( pose.residue(ii).aa() == core::chemical::aa_vrt) continue;
+		if ( pose.residue(ii).aa() == core::chemical::aa_vrt ) continue;
 
 		RotamerTrieBaseOP one_rotamer_trie = create_rotamer_trie( pose.residue( ii ), pose );
 		tries->trie( ii, one_rotamer_trie );
@@ -253,85 +253,85 @@ MMLJEnergyInter::update_residue_for_packing(
 bool
 MMLJEnergyInter::defines_intrares_energy( EnergyMap const & ) const
 {
-  return false;
+	return false;
 }
 
 void
 MMLJEnergyInter::residue_pair_energy(
-   conformation::Residue const & rsd1,
-   conformation::Residue const & rsd2,
-   pose::Pose const & pose,
-   ScoreFunction const & scrfxn,
-   EnergyMap & emap
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	pose::Pose const & pose,
+	ScoreFunction const & scrfxn,
+	EnergyMap & emap
 ) const
 {
-  using namespace chemical;
-  using namespace conformation;
-  using namespace etable;
-  using namespace count_pair;
+	using namespace chemical;
+	using namespace conformation;
+	using namespace etable;
+	using namespace count_pair;
 
-  Real total_rep( 0.0 ), total_atr( 0.0 );
+	Real total_rep( 0.0 ), total_atr( 0.0 );
 
-  // get residue info
-  ResidueType const & rsd1type( rsd1.type() );
-  ResidueType const & rsd2type( rsd2.type() );
-  Size const & rsd1natom = rsd1type.natoms();
-  Size const & rsd2natom = rsd2type.natoms();
+	// get residue info
+	ResidueType const & rsd1type( rsd1.type() );
+	ResidueType const & rsd2type( rsd2.type() );
+	Size const & rsd1natom = rsd1type.natoms();
+	Size const & rsd2natom = rsd2type.natoms();
 
-  // get count pair function
-  //CountPairFunctionOP cpfxn =	CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_3 );
+	// get count pair function
+	//CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_3 );
 	CountPairFunctionCOP cpfxn( (*this).get_count_pair_function( rsd1, rsd2, pose, scrfxn ) );
 
-  // iterate over all pairs of atom between the residues
-  for ( int i = 1, i_end = rsd1natom; i <= i_end; ++i ) {
+	// iterate over all pairs of atom between the residues
+	for ( int i = 1, i_end = rsd1natom; i <= i_end; ++i ) {
 		conformation::Atom const & atom1( rsd1.atom(i) );
 		for ( int j = 1, j_end = rsd2natom; j <= j_end; ++j ) {
-      conformation::Atom const & atom2( rsd2.atom(j) );
+			conformation::Atom const & atom2( rsd2.atom(j) );
 
-      Real weight(1.0); // unused
-      Size path_dist(0);
+			Real weight(1.0); // unused
+			Size path_dist(0);
 
-      // ask count pair if we should score it
-      if ( cpfxn->count( i, j, weight, path_dist ) ) {
+			// ask count pair if we should score it
+			if ( cpfxn->count( i, j, weight, path_dist ) ) {
 				// calc dist
 				Real dist_squared( atom1.xyz().distance_squared( atom2.xyz() ) );
 				// calc energy
 				Real rep(0), atr(0);
-				potential_.score( rsd1type.atom( i ).mm_atom_type_index(),	rsd2type.atom( j ).mm_atom_type_index(),	path_dist, dist_squared, rep, atr );
+				potential_.score( rsd1type.atom( i ).mm_atom_type_index(), rsd2type.atom( j ).mm_atom_type_index(), path_dist, dist_squared, rep, atr );
 
-				if( rep != rep ){
+				if ( rep != rep ) {
 					std::cout << "REP NAN REP NAN REP NAN" << std::endl;
 					rep = 0;
-					potential_.score( rsd1type.atom( i ).mm_atom_type_index(),	rsd2type.atom( j ).mm_atom_type_index(),	path_dist, dist_squared, rep, atr );
+					potential_.score( rsd1type.atom( i ).mm_atom_type_index(), rsd2type.atom( j ).mm_atom_type_index(), path_dist, dist_squared, rep, atr );
 				}
-				if( atr != atr ){
+				if ( atr != atr ) {
 					std::cout << "ATR NAN ATR NAN ATR NAN" << std::endl;
 					atr = 0;
-					potential_.score( rsd1type.atom( i ).mm_atom_type_index(),	rsd2type.atom( j ).mm_atom_type_index(),	path_dist, dist_squared, rep, atr );
+					potential_.score( rsd1type.atom( i ).mm_atom_type_index(), rsd2type.atom( j ).mm_atom_type_index(), path_dist, dist_squared, rep, atr );
 				}
 
 				total_rep += rep;
 				total_atr += atr;
 
-// 				std::cout << "INTER"
-// 									<< " RSD1: " << std::setw(22) << rsd1type.name()
-// 									<< " ATM1: " << std::setw(4)  << rsd1type.atom(i).mm_atom_name()
-// 									<< " RSD2: " << std::setw(22) << rsd2type.name()
-// 									<< " ATM2: " << std::setw(4)  << rsd2type.atom(j).mm_atom_name()
-// 									<< " PDST: " << std::setw(3)  << path_dist
-// 									<< " DIST: " << std::setw(8)  << std::sqrt(dist_squared)
-// 									<< " WGHT: " << std::setw(4)  << weight
-// 									<< " REP: " << std::setw(8)  << rep
-// 									<< " ATR: " << std::setw(8)  << atr
-// 									<< std::endl;
+				//     std::cout << "INTER"
+				//          << " RSD1: " << std::setw(22) << rsd1type.name()
+				//          << " ATM1: " << std::setw(4)  << rsd1type.atom(i).mm_atom_name()
+				//          << " RSD2: " << std::setw(22) << rsd2type.name()
+				//          << " ATM2: " << std::setw(4)  << rsd2type.atom(j).mm_atom_name()
+				//          << " PDST: " << std::setw(3)  << path_dist
+				//          << " DIST: " << std::setw(8)  << std::sqrt(dist_squared)
+				//          << " WGHT: " << std::setw(4)  << weight
+				//          << " REP: " << std::setw(8)  << rep
+				//          << " ATR: " << std::setw(8)  << atr
+				//          << std::endl;
 
-      }
-    }
-  }
+			}
+		}
+	}
 
-  // add energies to emap
-  emap[ mm_lj_inter_rep ] += total_rep;
-  emap[ mm_lj_inter_atr ] += total_atr;
+	// add energies to emap
+	emap[ mm_lj_inter_rep ] += total_rep;
+	emap[ mm_lj_inter_atr ] += total_atr;
 }
 
 void
@@ -385,7 +385,7 @@ MMLJEnergyInter::eval_atom_derivative(
 				F2 += deriv * f2;
 			}
 		}
-	}	else {
+	} else {
 		utility_exit_with_message("non-nblist minimize!");
 	}
 }
@@ -408,7 +408,7 @@ MMLJEnergyInter::evaluate_rotamer_pair_energies(
 	ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 ) const
 {
-debug_assert( set1.resid() != set2.resid() );
+	debug_assert( set1.resid() != set2.resid() );
 
 	using namespace methods;
 	using namespace trie;
@@ -417,8 +417,8 @@ debug_assert( set1.resid() != set2.resid() );
 
 	temp_table1 = 0; temp_table2 = 0;
 
-// 	// save weight information so that its available during tvt execution
-// 	elec_weight_ = weights[ fa_elec ];
+	//  // save weight information so that its available during tvt execution
+	//  elec_weight_ = weights[ fa_elec ];
 
 	RotamerTrieBaseCOP trie1( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set1.get_trie( mm_lj_energy_inter_method ) ));
 	RotamerTrieBaseCOP trie2( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set2.get_trie( mm_lj_energy_inter_method ) ));
@@ -481,8 +481,8 @@ MMLJEnergyInter::evaluate_rotamer_background_energies(
 Distance
 MMLJEnergyInter::atomic_interaction_cutoff() const
 {
-  // this will probably screw up other stuff, but it might not since etable goes to zero at 5.5
-  return 7.0;
+	// this will probably screw up other stuff, but it might not since etable goes to zero at 5.5
+	return 7.0;
 }
 
 /// @brief MMLJEnergy is context independent; indicates that no context graphs are required
@@ -493,7 +493,7 @@ MMLJEnergyInter::indicate_required_context_graphs(utility::vector1< bool > & ) c
 /// @brief required for neighbor list and to be more lke the ETable
 etable::count_pair::CountPairFunctionCOP
 MMLJEnergyInter::get_count_pair_function(
-  Size res1,
+	Size res1,
 	Size res2,
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn
@@ -511,8 +511,8 @@ MMLJEnergyInter::get_count_pair_function(
 	ScoreFunction const & /*sfxn*/
 ) const
 {
-  using namespace etable;
-  using namespace count_pair;
+	using namespace etable;
+	using namespace count_pair;
 
 	return CountPairFunctionOP( CountPairFactory::create_count_pair_function( res1, res2, CP_CROSSOVER_3 ) );
 }
@@ -525,8 +525,8 @@ MMLJEnergyInter::get_intrares_countpair(
 	ScoreFunction const & /*sfxn*/
 ) const
 {
-  using namespace etable;
-  using namespace count_pair;
+	using namespace etable;
+	using namespace count_pair;
 
 	return CountPairFunctionOP( CountPairFactory::create_intrares_count_pair_function( res, CP_CROSSOVER_3 ) );
 }
@@ -594,7 +594,7 @@ MMLJEnergyInter::bump_energy_full(
 	EnergyMap tbemap;
 	MMLJEnergyInter::residue_pair_energy( rsd1, rsd2, pose, sfxn, tbemap );
 	emap[ mm_lj_inter_rep ] += tbemap[ mm_lj_inter_rep ];
-  emap[ mm_lj_inter_atr ] += tbemap[ mm_lj_inter_atr ];
+	emap[ mm_lj_inter_atr ] += tbemap[ mm_lj_inter_atr ];
 }
 
 void
@@ -611,7 +611,7 @@ MMLJEnergyInter::bump_energy_backbone(
 	EnergyMap tbemap;
 	MMLJEnergyInter::residue_pair_energy( rsd1, rsd2, pose, sfxn, tbemap );
 	emap[ mm_lj_inter_rep ] += tbemap[ mm_lj_inter_rep ];
-  emap[ mm_lj_inter_atr ] += tbemap[ mm_lj_inter_atr ];
+	emap[ mm_lj_inter_atr ] += tbemap[ mm_lj_inter_atr ];
 }
 core::Size
 MMLJEnergyInter::version() const

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file
-/// @brief Assigns a ResidueTypeConstraint to a pose. 
+/// @brief Assigns a ResidueTypeConstraint to a pose.
 /// @author Doo Nam Kim (doonam.kim@gmail.com)
 
 #ifndef INCLUDED_protocols_simple_moves_ResidueTypeConstraintMover_hh
@@ -30,14 +30,14 @@ namespace simple_moves {
 class ResidueTypeConstraintMover : public protocols::moves::Mover {
 
 public:
-  typedef core::scoring::constraints::ResidueTypeConstraint ResidueTypeConstraint;
+	typedef core::scoring::constraints::ResidueTypeConstraint ResidueTypeConstraint;
 	//  typedef core::scoring::constraints::ResidueTypeConstraintOP ResidueTypeConstraintOP;
 	//  typedef core::scoring::constraints::ResidueTypeConstraintCOP ResidueTypeConstraintCOP;
 
 public:
-  ResidueTypeConstraintMover();
-  virtual ~ResidueTypeConstraintMover();
-  ResidueTypeConstraintMover( std::string const & );
+	ResidueTypeConstraintMover();
+	virtual ~ResidueTypeConstraintMover();
+	ResidueTypeConstraintMover( std::string const & );
 
 	//  void constraint_file( std::string const & );
 	//
@@ -56,7 +56,7 @@ public:
 
 private:
 	std::string AA_name3_;
-	core::Real	favor_bonus_;
+	core::Real favor_bonus_;
 };
 
 } // moves

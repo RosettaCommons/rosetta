@@ -49,30 +49,30 @@ namespace filters {
 class SSShapeComplementarityFilter : public protocols::filters::Filter {
 public:
 
-  /// @brief Initialize SSShapeComplementarityFilter
-  SSShapeComplementarityFilter();
+	/// @brief Initialize SSShapeComplementarityFilter
+	SSShapeComplementarityFilter();
 
-  /// @brief copy constructor
-  SSShapeComplementarityFilter( SSShapeComplementarityFilter const & rval );
+	/// @brief copy constructor
+	SSShapeComplementarityFilter( SSShapeComplementarityFilter const & rval );
 
-  /// @brief virtual constructor to allow derivation
+	/// @brief virtual constructor to allow derivation
 	virtual ~SSShapeComplementarityFilter();
 
-  /// @brief Parses the SSShapeComplementarityFilter tags
+	/// @brief Parses the SSShapeComplementarityFilter tags
 	void parse_my_tag(
-	  utility::tag::TagCOP tag,
-	  basic::datacache::DataMap & data,
-	  protocols::filters::Filters_map const &,
-	  protocols::moves::Movers_map const &,
-	  core::pose::Pose const & );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & );
 
-  /// @brief Return the name of this mover.
-  virtual std::string get_name() const;
+	/// @brief Return the name of this mover.
+	virtual std::string get_name() const;
 
-  /// @brief return a fresh instance of this class in an owning pointer
+	/// @brief return a fresh instance of this class in an owning pointer
 	virtual protocols::filters::FilterOP clone() const;
 
-  /// @brief Apply the SSShapeComplementarityFilter. Overloaded apply function from filter base class.
+	/// @brief Apply the SSShapeComplementarityFilter. Overloaded apply function from filter base class.
 	virtual protocols::filters::FilterOP fresh_instance() const;
 	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
@@ -92,17 +92,17 @@ private:   // private functions
 	/// @brief sets up the underlying filter to work based on a helix
 	void
 	setup_sc( core::pose::Pose const & pose,
-						protocols::fldsgn::topology::SS_BaseCOP const ss ) const;
+		protocols::fldsgn::topology::SS_BaseCOP const ss ) const;
 
 	/// @brief sets up the underlying shapecomplementarity filter to work based on secondary structure elements
 	void
 	setup_sc_hss( core::pose::Pose const & pose,
-								protocols::fldsgn::topology::SS_Info2 const & ss_info,
-								protocols::fldsgn::topology::HSSTripletCOP hss_triplet ) const;
+		protocols::fldsgn::topology::SS_Info2 const & ss_info,
+		protocols::fldsgn::topology::HSSTripletCOP hss_triplet ) const;
 	void
 	setup_sc_hh( core::pose::Pose const & pose,
-							 protocols::fldsgn::topology::SS_Info2 const & ss_info,
-							 protocols::fldsgn::topology::HelixPairingCOP helix_pair ) const;
+		protocols::fldsgn::topology::SS_Info2 const & ss_info,
+		protocols::fldsgn::topology::HelixPairingCOP helix_pair ) const;
 
 	/// @brief Runs the SC calculator to obtain an SC score and an interaction area. Returns a result in the format core::scoring::sc::RESULTS.  Assumes the SC calculator has been initialized and has the correct residues added.
 	core::scoring::sc::RESULTS const &
@@ -115,7 +115,7 @@ private:   // options
 	bool calc_loops_;
 	/// @brief should we calculate SC from each helix to the rest of the protein?
 	bool calc_helices_;
-	
+
 	/// @brief Threshold below which structures are rejected.  Default 0.0 (no filtration).
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	core::Real rejection_thresh_;

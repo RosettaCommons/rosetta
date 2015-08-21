@@ -27,7 +27,7 @@ class QuotaCollector;
 
 typedef utility::pointer::shared_ptr<QuotaCollector> QuotaCollectorOP;
 typedef utility::pointer::shared_ptr<QuotaCollector const>
-		QuotaCollectorCOP;
+	QuotaCollectorCOP;
 
 } // quota
 } // frag_picker

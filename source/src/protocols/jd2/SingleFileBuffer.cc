@@ -46,7 +46,7 @@ std::string const END_BLOCK( "MPI_FILE_BUFFER_BLOCK_END" );
 SingleFileBuffer::~SingleFileBuffer() { runtime_assert( !has_open_slaves() ); }
 
 void SingleFileBuffer::flush( Size slave ) {
-	//	std::cout << "flush channel: " << filename() << " for slave : " << slave << std::endl;
+	// std::cout << "flush channel: " << filename() << " for slave : " << slave << std::endl;
 	if ( unfinished_blocks_[ slave ].size() ) {
 		write_lines( unfinished_blocks_[ slave ] );
 		unfinished_blocks_[ slave ].clear();
@@ -73,24 +73,24 @@ void SingleFileBuffer::close( Size slave ) {
 	tr.Debug << "close " << filename_ << " from slave " << slave << std::endl;
 	flush( slave );
 	//BufferMap::iterator iter = unfinished_blocks_.find( slave );
-	//	if ( iter!=unfinished_blocks_.end() ) {
-	//	unfinished_blocks_.erase( iter );
+	// if ( iter!=unfinished_blocks_.end() ) {
+	// unfinished_blocks_.erase( iter );
 	//} else {
-	//	tr.Warning << "tried to close non-existant channel to slave-node " << slave << " for file " << filename_ << std::endl;
+	// tr.Warning << "tried to close non-existant channel to slave-node " << slave << " for file " << filename_ << std::endl;
 	//}
 }
 
 void SingleFileBuffer::store_line( Size slave, Size channel, std::string const& line ) {
 	runtime_assert( channel == mpi_channel_ );
 	unfinished_blocks_[ slave ].push_back( line );
-	//	std::cout << "channel: " << mpi_channel_ << " slave: " << slave <<std::endl;// << "line: " << line << std::endl;
+	// std::cout << "channel: " << mpi_channel_ << " slave: " << slave <<std::endl;// << "line: " << line << std::endl;
 }
 
 core::Size SingleFileBuffer::length( core::Size slave ) {
 
 	core::Size length = 0;
 	LineBuffer & buf( unfinished_blocks_[ slave ] );
-	for (LineBuffer::iterator iter = buf.begin(); iter != buf.end(); ++iter) {
+	for ( LineBuffer::iterator iter = buf.begin(); iter != buf.end(); ++iter ) {
 		length += iter->length();
 	}
 
@@ -127,19 +127,19 @@ WriteFileSFB::WriteFileSFB( std::string const& filename, core::Size channel, boo
 		--trials;
 		if ( append ) {
 			if ( !utility::file::file_exists( filename ) ) {
-				//			out_.open( filename.c_str() );
+				//   out_.open( filename.c_str() );
 				tr.Debug << "open file " << filename << " ... " << std::endl;
 				out_.open( filename.c_str() );
 				if ( out_.good() ) status = MPI_SUCCESS_NEW;
 			} else {
 
 				tr.Debug << "open file (append) " << filename << " ... " << std::endl;
-				//			out_.open_append( filename.c_str() );
+				//   out_.open_append( filename.c_str() );
 				out_.open( filename.c_str(), std::ios::app );
 				if ( out_.good() ) status = MPI_SUCCESS_APPEND;
 			}
-		}	else {
-			//		out_.open( filename.c_str() );
+		} else {
+			//  out_.open( filename.c_str() );
 			tr.Debug << "open file " << filename << " ... " << std::endl;
 			out_.open( filename.c_str() );
 			if ( out_.good() ) status = MPI_SUCCESS_NEW;

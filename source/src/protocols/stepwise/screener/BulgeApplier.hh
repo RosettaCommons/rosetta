@@ -29,41 +29,41 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class BulgeApplier: public StepWiseScreener {
+class BulgeApplier: public StepWiseScreener {
 
-	public:
+public:
 
-		//constructor
-		BulgeApplier( RNA_AtrRepCheckerOP atr_rep_checker, RNA_BaseCentroidCheckerOP base_centroid_checker,
-									Size const moving_res );
+	//constructor
+	BulgeApplier( RNA_AtrRepCheckerOP atr_rep_checker, RNA_BaseCentroidCheckerOP base_centroid_checker,
+		Size const moving_res );
 
-		//destructor
-		~BulgeApplier();
+	//destructor
+	~BulgeApplier();
 
-	public:
+public:
 
-		std::string
-		name() const { return "BulgeApplier"; }
+	std::string
+	name() const { return "BulgeApplier"; }
 
-		StepWiseScreenerType
-		type() const { return BULGE_APPLIER; }
+	StepWiseScreenerType
+	type() const { return BULGE_APPLIER; }
 
-		virtual
-		void
-		add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
+	virtual
+	void
+	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
 
-	private:
+private:
 
-		bool bulge_variant_decision();
+	bool bulge_variant_decision();
 
-	private:
+private:
 
-		RNA_AtrRepCheckerOP atr_rep_checker_;
-		RNA_BaseCentroidCheckerOP base_centroid_checker_;
-		modeler::rna::bulge::BulgeApplyMoverOP   bulge_apply_mover_;
-		modeler::rna::bulge::BulgeUnApplyMoverOP bulge_unapply_mover_;
+	RNA_AtrRepCheckerOP atr_rep_checker_;
+	RNA_BaseCentroidCheckerOP base_centroid_checker_;
+	modeler::rna::bulge::BulgeApplyMoverOP   bulge_apply_mover_;
+	modeler::rna::bulge::BulgeUnApplyMoverOP bulge_unapply_mover_;
 
-	};
+};
 
 } //screener
 } //stepwise

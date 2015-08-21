@@ -51,7 +51,7 @@ public:
 	virtual ~RestrictAbsentCanonicalAASRLT();
 	virtual ResLvlTaskOperationOP clone() const;
 	virtual void apply( ResidueLevelTask & ) const;
-// if an amino acid is not present (false) in the boolean vector, then do not allow it at this position.  The boolean vector is a 20-length vector in alphabetical order by one-letter code.
+	// if an amino acid is not present (false) in the boolean vector, then do not allow it at this position.  The boolean vector is a 20-length vector in alphabetical order by one-letter code.
 	void aas_to_keep( utility::vector1< bool > const & );
 	void aas_to_keep( std::string const & );
 	virtual void parse_tag( TagCOP );
@@ -68,7 +68,7 @@ public:
 	DisallowIfNonnativeRLT( utility::vector1< bool > disallowed_aas );
 	virtual ~DisallowIfNonnativeRLT();
 	virtual ResLvlTaskOperationOP clone() const;
-	virtual	void apply(  ResidueLevelTask & rlt ) const;
+	virtual void apply(  ResidueLevelTask & rlt ) const;
 	//helper functions to define desired AAs
 	void clear();
 	//define as true which residues are NOT allowed

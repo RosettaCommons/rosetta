@@ -108,7 +108,7 @@ EdgeList::~EdgeList()
 void
 EdgeList::push_back( Edge * edgeptr )
 {
-debug_assert( edgeptr ); // Do not accept null-pointing edges
+	debug_assert( edgeptr ); // Do not accept null-pointing edges
 
 	//EdgeListElement * new_node = new EdgeListElement( edgeptr, end_->previous_, end_ );
 	EdgeListElement * new_node =  edge_list_element_pool_.construct( edgeptr, end_->previous_, end_ );
@@ -120,7 +120,7 @@ debug_assert( edgeptr ); // Do not accept null-pointing edges
 void
 EdgeList::push_front( Edge * edgeptr )
 {
-debug_assert( edgeptr ); // Do not accept null-pointing edges
+	debug_assert( edgeptr ); // Do not accept null-pointing edges
 
 	//EdgeListElement * new_node = new EdgeListElement( edgeptr, end_, end_->next_ );
 	EdgeListElement * new_node =  edge_list_element_pool_.construct( edgeptr, end_, end_->next_ );
@@ -137,8 +137,8 @@ EdgeList::insert(
 	Edge * edgeptr
 )
 {
-debug_assert( edgeptr );
-debug_assert( element_to_insert_before.owner_ == this );
+	debug_assert( edgeptr );
+	debug_assert( element_to_insert_before.owner_ == this );
 
 	EdgeListElement * next_node = element_to_insert_before.element_;
 	EdgeListElement * prev_node = element_to_insert_before.element_->previous_;
@@ -153,12 +153,12 @@ debug_assert( element_to_insert_before.owner_ == this );
 
 void EdgeList::erase( EdgeListIterator to_erase )
 {
-debug_assert( to_erase.owner_ == this );
+	debug_assert( to_erase.owner_ == this );
 	EdgeListElement * next_node = to_erase.element_->next_;
 	EdgeListElement * prev_node = to_erase.element_->previous_;
 
-debug_assert( next_node->previous_ == to_erase.element_ );
-debug_assert( prev_node->next_ == to_erase.element_ );
+	debug_assert( next_node->previous_ == to_erase.element_ );
+	debug_assert( prev_node->next_ == to_erase.element_ );
 
 	// deallocate the list element
 	//delete to_erase.element_;
@@ -228,7 +228,7 @@ Node::add_edge( Edge* edge_ptr, EdgeListIter & eiter )
 {
 	++num_incident_edges_;
 	platform::Size other_node_index = edge_ptr->get_other_ind( node_index_);
-	if (other_node_index <  node_index_) {
+	if ( other_node_index <  node_index_ ) {
 		++num_edges_to_smaller_indexed_nodes_;
 		eiter = incident_edge_list_.insert( incident_edge_list_.begin(), edge_ptr);
 	} else {
@@ -238,7 +238,7 @@ Node::add_edge( Edge* edge_ptr, EdgeListIter & eiter )
 		} else {
 			//loop already attached; return 0 eiter/ceiter as a dummy
 			// fixing odd iterator behavior with g++ -v 4.1.1
-		debug_assert( num_edges_to_larger_indexed_nodes_ != 0 );
+			debug_assert( num_edges_to_larger_indexed_nodes_ != 0 );
 			eiter = incident_edge_list_.end(); //eiter = 0;
 		}
 
@@ -263,11 +263,10 @@ void Node::drop_edge( EdgeListIter eiter )
 {
 	if ( first_upper_edge_ == eiter ) { ++first_upper_edge_; }
 
-	if ( ! (*eiter)->is_loop() )
-	{
+	if ( ! (*eiter)->is_loop() ) {
 
 		platform::Size other_node_index = (*eiter)->get_other_ind( node_index_ );
-		if (node_index_ < other_node_index) {
+		if ( node_index_ < other_node_index ) {
 			--num_edges_to_larger_indexed_nodes_;
 		} else {
 			--num_edges_to_smaller_indexed_nodes_;
@@ -296,12 +295,12 @@ void Node::drop_edge( EdgeListIter eiter )
 /// for loop.
 void Node::drop_all_edges()
 {
-	for (EdgeListIter iter = incident_edge_list_.begin();
+	for ( EdgeListIter iter = incident_edge_list_.begin();
 			iter != incident_edge_list_.end(); /*no increment statement*/ ) {
 
-			EdgeListIter nextiter = iter;
-			++nextiter;
-			owner_->delete_edge( *iter ); iter = nextiter;
+		EdgeListIter nextiter = iter;
+		++nextiter;
+		owner_->delete_edge( *iter ); iter = nextiter;
 	}
 }
 
@@ -309,7 +308,7 @@ void Node::drop_all_edges()
 /// for symmetry scoring
 void Node::set_num_neighbors_counting_self_static( platform::Size neighbor )
 {
-  num_neighbors_counting_self_static_ = neighbor;
+	num_neighbors_counting_self_static_ = neighbor;
 }
 
 /// @details Constant time if each vertex has a constant number of edges.  Edges are
@@ -332,8 +331,7 @@ Edge const * Node::find_edge(platform::Size other_node) const
 Edge * Node::find_edge(platform::Size other_node)
 {
 	EdgeListIter start, end;
-	if ( other_node > get_node_index() )
-	{
+	if ( other_node > get_node_index() ) {
 		start = first_upper_edge_;
 		end = incident_edge_list_.end();
 	} else {
@@ -342,9 +340,10 @@ Edge * Node::find_edge(platform::Size other_node)
 	}
 
 	//iterate over range of edges
-	for ( EdgeListIter iter = start; iter != end; ++iter) {
-		if ( (*iter)->same_edge( node_index_, other_node) )
+	for ( EdgeListIter iter = start; iter != end; ++iter ) {
+		if ( (*iter)->same_edge( node_index_, other_node) ) {
 			return (*iter);
+		}
 	}
 	return 0;
 }
@@ -353,13 +352,13 @@ Edge * Node::find_edge(platform::Size other_node)
 /// @brief virtual function to print node to standard out
 void Node::print() const
 {
-//	TR.Debug << "Node " << get_node_index() << " attached to edges: " << std::endl;
+	// TR.Debug << "Node " << get_node_index() << " attached to edges: " << std::endl;
 	for ( EdgeListConstIter
 			iter = incident_edge_list_.const_begin(),
 			iter_end = incident_edge_list_.const_end();
 			iter != iter_end; ++iter ) {
-//		TR.Debug << "   Edge( " << (*iter)->get_first_node_ind() << ", ";
-//		TR.Debug << (*iter)->get_second_node_ind() << ")" << std::endl;
+		//  TR.Debug << "   Edge( " << (*iter)->get_first_node_ind() << ", ";
+		//  TR.Debug << (*iter)->get_second_node_ind() << ")" << std::endl;
 	}
 }
 
@@ -415,9 +414,9 @@ Edge::Edge
 	platform::Size first_node_ind,
 	platform::Size second_node_ind
 )
-	: owner_(owner)
+: owner_(owner)
 {
-debug_assert( first_node_ind <= second_node_ind );
+	debug_assert( first_node_ind <= second_node_ind );
 	node_indices_[0]    = first_node_ind;
 	node_indices_[1]    = second_node_ind;
 	nodes_[0]           = owner->nodes_[ node_indices_[0] ];
@@ -438,14 +437,14 @@ void Edge::copy_from( Edge const * ) {}
 /// @brief returns the index of the other node that the edge is incident upon
 platform::Size Edge::get_other_ind(platform::Size node_ind) const
 {
-debug_assert( node_ind == node_indices_[0] || node_ind == node_indices_[1]);
+	debug_assert( node_ind == node_indices_[0] || node_ind == node_indices_[1]);
 	return node_indices_[0] == node_ind ? node_indices_[1] : node_indices_[0];
 }
 
 /// @brief returns a pointer to the other node that the edge is incident upon
 Node * Edge::get_other_node(platform::Size node_ind)
 {
-debug_assert( node_ind == node_indices_[0] || node_ind == node_indices_[1]);
+	debug_assert( node_ind == node_indices_[0] || node_ind == node_indices_[1]);
 	return node_indices_[0] == node_ind ? nodes_[1] : nodes_[0];
 }
 
@@ -458,7 +457,7 @@ Node const * Edge::get_other_node(platform::Size node_ind) const
 /// @brief sets the iterator for this edge's position in its owner's edge list
 void Edge::set_pos_in_owners_list( EdgeListIter iter )
 {
-debug_assert( this == *iter );
+	debug_assert( this == *iter );
 	pos_in_owners_edge_list_ = iter;
 	return;
 }
@@ -471,7 +470,7 @@ debug_assert( this == *iter );
 /// @param node2 - [in] - index of the other of the two nodes
 bool Edge::same_edge(platform::Size node1, platform::Size node2) const
 {
-	if (node1 > node2) {
+	if ( node1 > node2 ) {
 		platform::Size temp = node2;
 		node2 = node1;
 		node1 = temp;
@@ -561,7 +560,7 @@ Graph::Graph( Graph const & source ) :
 	edge_pool_( new boost::unordered_object_pool< Edge > ( 256 ) ),
 	focused_edge_( 0 )
 {
-	for (platform::Size ii = 1; ii <= num_nodes_; ++ii) {
+	for ( platform::Size ii = 1; ii <= num_nodes_; ++ii ) {
 		nodes_[ ii ] = create_new_node( ii );
 		nodes_[ ii ]->copy_from( source.nodes_[ii] );
 	}
@@ -588,10 +587,10 @@ Graph::operator = ( Graph const & source )
 {
 	if ( this == &source ) return *this;
 
-	if( num_nodes_ != source.num_nodes_ ) { set_num_nodes( source.num_nodes_ );}
+	if ( num_nodes_ != source.num_nodes_ ) { set_num_nodes( source.num_nodes_ );}
 	drop_all_edges();
 
-	for (platform::Size ii = 1; ii <= num_nodes_; ++ii) {
+	for ( platform::Size ii = 1; ii <= num_nodes_; ++ii ) {
 		nodes_[ ii ]->copy_from( source.nodes_[ii] );
 	}
 
@@ -609,7 +608,7 @@ Graph::operator = ( Graph const & source )
 /// (e.g. from an EnergyGraph into a Graph)
 void Graph::copy_connectivity( Graph const & source )
 {
-	if( num_nodes_ != source.num_nodes_ ) { set_num_nodes( source.num_nodes_ );}
+	if ( num_nodes_ != source.num_nodes_ ) { set_num_nodes( source.num_nodes_ );}
 	drop_all_edges();
 
 	for ( EdgeListConstIter
@@ -633,7 +632,7 @@ void Graph::copy_connectivity( Graph const & source )
 Edge *
 Graph::add_edge(platform::Size index1, platform::Size index2)
 {
-debug_assert( ! get_edge_exists( index1, index2 ) );
+	debug_assert( ! get_edge_exists( index1, index2 ) );
 
 	//swap so that index1 < index2
 	platform::Size temp = index1 < index2 ? index1 : index2;
@@ -656,7 +655,7 @@ debug_assert( ! get_edge_exists( index1, index2 ) );
 Edge *
 Graph::add_edge( Edge const * example_edge )
 {
-debug_assert( ! get_edge_exists(
+	debug_assert( ! get_edge_exists(
 		example_edge->get_first_node_ind(),
 		example_edge->get_second_node_ind() ) );
 
@@ -677,7 +676,7 @@ void Graph::set_num_nodes( platform::Size num_nodes )
 	delete_everything();
 	num_nodes_ = num_nodes;
 	nodes_.resize( num_nodes_ );
-	for ( platform::Size ii = 1; ii <= num_nodes_; ++ii) nodes_[ ii ] = create_new_node( ii );
+	for ( platform::Size ii = 1; ii <= num_nodes_; ++ii ) nodes_[ ii ] = create_new_node( ii );
 }
 
 /// @brief returns true if an edge between node1 and node2 exists
@@ -703,7 +702,7 @@ void Graph::drop_all_edges_for_node( platform::Size node )
 void Graph::drop_all_edges()
 {
 	for ( EdgeListIter iter = edge_list_.begin(), iter_end = edge_list_.end();
-		iter != iter_end; /*no increment*/ ) {
+			iter != iter_end; /*no increment*/ ) {
 
 		EdgeListIter iter_next = iter;
 		++iter_next;
@@ -716,8 +715,9 @@ void Graph::drop_all_edges()
 /// @brief calls print() on each of the nodes in the graph
 void Graph::print_vertices() const
 {
-	for (platform::Size ii = 1; ii <= num_nodes_; ii++)
+	for ( platform::Size ii = 1; ii <= num_nodes_; ii++ ) {
 		nodes_[ii]->print();
+	}
 	return;
 }
 
@@ -727,7 +727,7 @@ void Graph::print_vertices() const
 void Graph::output_connectivity(std::ostream & os) const
 {
 	platform::Size counter = 1;
-	for (EdgeListConstIter iter = edge_list_.begin(); iter != edge_list_.end(); ++iter) {
+	for ( EdgeListConstIter iter = edge_list_.begin(); iter != edge_list_.end(); ++iter ) {
 		os << "edge " << counter << " between " << (*iter)->get_first_node_ind()
 			<< " " << (*iter)->get_second_node_ind() << std::endl;
 		counter++;
@@ -744,7 +744,7 @@ void Graph::output_dimacs(std::ostream & os) const
 	platform::Size num_edges = edge_list_.size();
 	os << "DIMACS: " << "p edges " << num_nodes_ << " " ;
 	os << num_edges << std::endl;
-	for (EdgeListConstIter iter = edge_list_.begin(); iter != edge_list_.end(); ++iter) {
+	for ( EdgeListConstIter iter = edge_list_.begin(); iter != edge_list_.end(); ++iter ) {
 		os << "DIMACS: " << "e " << (*iter)->get_first_node_ind();
 		os << " " << (*iter)->get_second_node_ind() << std::endl;
 	}
@@ -760,17 +760,17 @@ FArray2D_int
 Graph::all_pairs_shortest_paths() const
 {
 	platform::Size const inf( 12345678 ); //assumption: fewer than 12 million nodes in the graph.
-debug_assert( num_nodes_ < inf );
+	debug_assert( num_nodes_ < inf );
 
 	FArray2D_int distance_table( num_nodes_, num_nodes_, inf);
 	for ( platform::Size ii = 1; ii <= num_nodes_; ++ii ) distance_table( ii, ii ) = 0; //nodes are 0 distance from themselves.
 
 	for ( EdgeListConstIter iter = edge_list_.begin();
-		iter != edge_list_.end(); ++iter ) {
+			iter != edge_list_.end(); ++iter ) {
 		platform::Size n1 = (*iter)->get_first_node_ind();
 		platform::Size n2 = (*iter)->get_second_node_ind();
 
-		if (! (*iter)->is_loop() ) {
+		if ( ! (*iter)->is_loop() ) {
 			distance_table( n2, n1 ) = 1;
 			distance_table( n1, n2 ) = 1;
 		}
@@ -810,7 +810,7 @@ debug_assert( num_nodes_ < inf );
 /// @param citer - [in] - the iterator in the const edge list pointing at the edge that's deleting itself
 void Graph::drop_edge( EdgeListIter iter )
 {
-	if (*iter == focused_edge_ ) focused_edge_ = NULL; //invalidate focused_edge_
+	if ( *iter == focused_edge_ ) focused_edge_ = NULL; //invalidate focused_edge_
 
 	--num_edges_;
 	edge_list_.erase(iter);
@@ -823,14 +823,14 @@ void Graph::drop_edge( EdgeListIter iter )
 /// @details its important to note that nodes must outlive their incident edges
 void Graph::delete_everything()
 {
-	for (EdgeListIter iter = edge_list_.begin();
+	for ( EdgeListIter iter = edge_list_.begin();
 			iter != edge_list_.end(); /*no increment*/ ) {
 		EdgeListIter next_iter = iter;
 		++next_iter;
 		delete_edge( *iter );
 		iter = next_iter;
 	}
-	for (platform::Size ii = 1; ii <= num_nodes_; ii++) { delete nodes_[ii]; nodes_[ii] = 0; }
+	for ( platform::Size ii = 1; ii <= num_nodes_; ii++ ) { delete nodes_[ii]; nodes_[ii] = 0; }
 	num_nodes_ = 0;
 	nodes_.resize( 0 );
 	focused_edge_ = 0;
@@ -849,7 +849,7 @@ void Graph::delete_everything()
 /// node2 - [in] - index of the second node
 Edge const * Graph::find_edge(platform::Size node1, platform::Size node2) const
 {
-	if (focused_edge_ == NULL || !( focused_edge_->same_edge(node1, node2)) ) {
+	if ( focused_edge_ == NULL || !( focused_edge_->same_edge(node1, node2)) ) {
 		focused_edge_ = nodes_[node1]->find_edge(node2);
 	}
 	return focused_edge_;
@@ -867,7 +867,7 @@ Edge const * Graph::find_edge(platform::Size node1, platform::Size node2) const
 /// node2 - [in] - index of the second node
 Edge * Graph::find_edge(platform::Size node1, platform::Size node2)
 {
-	if (focused_edge_ == NULL || !( focused_edge_->same_edge(node1, node2)) ) {
+	if ( focused_edge_ == NULL || !( focused_edge_->same_edge(node1, node2)) ) {
 		focused_edge_ = nodes_[node1]->find_edge(node2);
 	}
 	return focused_edge_;
@@ -883,11 +883,11 @@ platform::Size
 Graph::getTotalMemoryUsage() const
 {
 	platform::Size total_memory = 0;
-	for (platform::Size ii = 1; ii <= num_nodes(); ++ii) {
+	for ( platform::Size ii = 1; ii <= num_nodes(); ++ii ) {
 		total_memory += nodes_[ ii ]->count_dynamic_memory();
 		total_memory += nodes_[ ii ]->count_static_memory();
 	}
-	for (EdgeListConstIter iter = edge_list_.const_begin();
+	for ( EdgeListConstIter iter = edge_list_.const_begin();
 			iter != edge_list_.const_end(); ++iter ) {
 		total_memory += (*iter)->count_dynamic_memory();
 		total_memory += (*iter)->count_static_memory();

@@ -29,40 +29,40 @@ class StringResourceStreamTests : public CxxTest::TestSuite {
 
 public:
 
-  void test_null() {
-  }
+	void test_null() {
+	}
 
-//  void test_default_construction() {
-//
-//		using namespace basic::resource_manager;
-//		using namespace basic::resource_manager::locator;
-//
-//    StringResourceStream srs;
-//    srs.fill("abc");
-//
-//    std::stringstream out;
-//    out << srs.stream();
-//
-//    std::string out_str(out.str());
-//    TS_ASSERT_EQUALS("abc", out_str);
-//  }
+	//  void test_default_construction() {
+	//
+	//  using namespace basic::resource_manager;
+	//  using namespace basic::resource_manager::locator;
+	//
+	//    StringResourceStream srs;
+	//    srs.fill("abc");
+	//
+	//    std::stringstream out;
+	//    out << srs.stream();
+	//
+	//    std::string out_str(out.str());
+	//    TS_ASSERT_EQUALS("abc", out_str);
+	//  }
 
-// TODO: MAKE THIS TEST WORK
-//
-//  void test_stream_construction() {
-//
-//		using namespace basic::resource_manager;
-//		using namespace basic::resource_manager::locator;
-//
-//    std::stringstream in;
-//    in << "abc";
-//
-//    StringResourceStream srs(in);
-//
-//    std::stringstream out;
-//    out << srs.stream();
-//
-//    TS_ASSERT_EQUALS("abc", out.str());
-//  }
+	// TODO: MAKE THIS TEST WORK
+	//
+	//  void test_stream_construction() {
+	//
+	//  using namespace basic::resource_manager;
+	//  using namespace basic::resource_manager::locator;
+	//
+	//    std::stringstream in;
+	//    in << "abc";
+	//
+	//    StringResourceStream srs(in);
+	//
+	//    std::stringstream out;
+	//    out << srs.stream();
+	//
+	//    TS_ASSERT_EQUALS("abc", out.str());
+	//  }
 
 };

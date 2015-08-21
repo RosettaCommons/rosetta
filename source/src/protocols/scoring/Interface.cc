@@ -9,8 +9,8 @@
 
 /// @file Interface - information about the interface between to partners
 /// @brief contains the following information:
-///		calculate the interface between the two (or other?) partners
-///		set the packer task to only pack the interface
+///  calculate the interface between the two (or other?) partners
+///  set the packer task to only pack the interface
 /// @author Monica Berrondo
 
 
@@ -78,7 +78,7 @@ static core::Size max_interchain_sites ( 2 );
 ///
 /// @brief base for calculating the interface
 /// @details
-///				decide which type of an interface calculation to use
+///    decide which type of an interface calculation to use
 ///
 /// @author Monica Berrondo October 19 2007
 /////////////////////////////////////////////////////////////////////////////////
@@ -95,31 +95,32 @@ Interface::calculate( core::pose::Pose const & pose )
 	contact_list_.resize( pose.total_residue() );
 	kinematics::FoldTree const & fold_tree ( pose.fold_tree() );
 
-	 // Check if we are symmetric. We don't need the FoldTree partitioning for this
-  // so we check for symmetry here
-  if ( pose::symmetry::is_symmetric( pose.energies() ) ) {
-    symmetric_protein_calculate( pose );
-    return;
-  }
+	// Check if we are symmetric. We don't need the FoldTree partitioning for this
+	// so we check for symmetry here
+	if ( pose::symmetry::is_symmetric( pose.energies() ) ) {
+		symmetric_protein_calculate( pose );
+		return;
+	}
 
 	// partner is the same as is_upstream of Ian's code in LigandDockProtocol
-	if( !use_input_partners_ )
+	if ( !use_input_partners_ ) {
 		fold_tree.partition_by_jump( jump_number_, partner_ );
+	}
 
 	//for ( Size i=1; i<=pose.total_residue(); ++i ) {
-		// assuming if it is not a polymer residue, it must be a ligand
+	// assuming if it is not a polymer residue, it must be a ligand
 	Size upstream_jump_res, downstream_jump_res;
 	upstream_jump_res = fold_tree.upstream_jump_residue( jump_number_ );
 	downstream_jump_res = fold_tree.downstream_jump_residue( jump_number_ );
 	if ( pose.residue( upstream_jump_res ).is_ligand()  || pose.residue( downstream_jump_res ).is_ligand()  ) {
-			TR.Debug << "One of the residues is a ligand, calculating the interface between ligand and protein" << std::endl;
-			ligand_calculate( pose );
-			return;
+		TR.Debug << "One of the residues is a ligand, calculating the interface between ligand and protein" << std::endl;
+		ligand_calculate( pose );
+		return;
 		// check if some sort of nucleic acid
 	} else if ( pose.residue( upstream_jump_res ).is_NA() || pose.residue( downstream_jump_res ).is_NA() ) {
-			TR.Debug << "One of the residues is a nucleic acid, calculating interface of nucleic acids" << std::endl;
-			NA_calculate( pose );  //set to protein_calculate(pose)
-			return;
+		TR.Debug << "One of the residues is a nucleic acid, calculating interface of nucleic acids" << std::endl;
+		NA_calculate( pose );  //set to protein_calculate(pose)
+		return;
 	}
 	//}
 	// if it gets through the entire protein and all the residues were of type protein
@@ -132,17 +133,17 @@ Interface::calculate( core::pose::Pose const & pose )
 ///
 /// @brief calculate the protein-protien interface
 /// @details
-///				decide which type of an interface calculation to use
-///				calculate the residues that are at the interface
-///				this uses the CAlpha class (at least for now) which
-///				gets the distances between c-alpha atoms
-///				Returns a vector of bools, true if at interface, false otherwise
+///    decide which type of an interface calculation to use
+///    calculate the residues that are at the interface
+///    this uses the CAlpha class (at least for now) which
+///    gets the distances between c-alpha atoms
+///    Returns a vector of bools, true if at interface, false otherwise
 ///
-///				This uses partition_by_jump to determine which residues belong
-///				to each partner those on one side of the jump are set to 0,
-///				the others are set to 1
-///				A residue is at the interface if it is within 8A radius of the
-///				residue in question on the other partner
+///    This uses partition_by_jump to determine which residues belong
+///    to each partner those on one side of the jump are set to 0,
+///    the others are set to 1
+///    A residue is at the interface if it is within 8A radius of the
+///    residue in question on the other partner
 ///
 /// @references pose_docking_calc_interface from pose_docking.cc
 ///
@@ -157,23 +158,23 @@ Interface::protein_calculate( core::pose::Pose const & pose )
 
 	// update_residue_neighbors should be called before calling the energy_graph method
 	// however, the pose is const and can't be changed; needs to be fixed!
-//	pose.update_residue_neighbors();
+	// pose.update_residue_neighbors();
 
 	core::scoring::EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 	std::vector< int>::iterator new_end_pos;
 
 	for ( Size i=1; i<=Size(energy_graph.num_nodes()); ++i ) {
 		for ( graph::Graph::EdgeListConstIter
-					iru = energy_graph.get_node(i)->const_upper_edge_list_begin(),
-					irue = energy_graph.get_node(i)->const_upper_edge_list_end();
-					iru != irue; ++iru ) {
+				iru = energy_graph.get_node(i)->const_upper_edge_list_begin(),
+				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
+				iru != irue; ++iru ) {
 			core::scoring::EnergyEdge const * edge( static_cast< core::scoring::EnergyEdge const *> (*iru) );
 			Size const j( edge->get_second_node_ind() );
 			if ( partner_(i) == partner_(j) ) continue;
-		//	if ( is_interface_(i) && is_interface_(j) ) continue;
+			// if ( is_interface_(i) && is_interface_(j) ) continue;
 			Real const cendist = edge->square_distance();
 			if ( cendist < distance_squared_ ) {
-//				TR << "interface edge: " << i << ' ' << j << ' ' << cendist << std::endl;
+				//    TR << "interface edge: " << i << ' ' << j << ' ' << cendist << std::endl;
 				is_interface_(i) = is_interface_(j) = true;
 				pair_list_[1].push_back(i);
 				pair_list_[2].push_back(j);
@@ -215,7 +216,7 @@ Interface::ligand_calculate(
 {
 
 	using namespace core;
-	for(Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i) {
+	for ( Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
 		// all residues on ligand side can move
 		if ( ! partner_(i) ) {
 			is_interface_(i) = true;
@@ -223,10 +224,10 @@ Interface::ligand_calculate(
 		}
 		// on protein side, have to do distance check
 		conformation::Residue const & prot_rsd = pose.residue(i);
-		for(Size j = 1, j_end = pose.total_residue(); j <= j_end; ++j) {
+		for ( Size j = 1, j_end = pose.total_residue(); j <= j_end; ++j ) {
 			if ( partner_(j) ) continue; // compare against only ligand residues
 			conformation::Residue const & lig_rsd = pose.residue(j);
-			for(Size k = 1, k_end = lig_rsd.nheavyatoms(); k <= k_end; ++k) {
+			for ( Size k = 1, k_end = lig_rsd.nheavyatoms(); k <= k_end; ++k ) {
 				double dist2 = lig_rsd.xyz(k).distance_squared( prot_rsd.xyz(prot_rsd.nbr_atom()) );
 				double cutoff = prot_rsd.nbr_radius() + 6.0;
 				if ( dist2 <= cutoff * cutoff ) {
@@ -288,7 +289,7 @@ Interface::show( core::pose::Pose const & pose )
 			TR << "     " << rsd.aa() << ' ' << rsd.seqpos() << std::endl;
 			selection += string_of(rsd.seqpos()) + '+';
 		}
-		if (pair_list_[i].size() > 0) {
+		if ( pair_list_[i].size() > 0 ) {
 			TR << "     sele interface" << i << ", resi " << selection << std::endl;
 		}
 		if ( i==1 ) selection.clear();
@@ -333,12 +334,12 @@ Interface::set_pack(
 	// sc - fixed residue selection for norepack1 and norepack2 options to be compatible with docking foldtree
 	if ( option[ docking::norepack1 ]() ) {
 		for ( Size ii = 1 ; ii <= cutpoint; ++ii ) {
-			 task->nonconst_residue_task( ii ).prevent_repacking();
+			task->nonconst_residue_task( ii ).prevent_repacking();
 		}
 	}
 	if ( option[ docking::norepack2 ]() ) {
 		for ( Size ii = cutpoint ; ii <= pose.total_residue(); ++ii ) {
-			 task->nonconst_residue_task( ii ).prevent_repacking();
+			task->nonconst_residue_task( ii ).prevent_repacking();
 		}
 	}
 	// set to true for now
@@ -347,8 +348,8 @@ Interface::set_pack(
 }
 
 /// @details
-///		Function to determine whether two residues are a "pair" for docking-type
-///		scoring calculations, such as vdw and pair across an interface
+///  Function to determine whether two residues are a "pair" for docking-type
+///  scoring calculations, such as vdw and pair across an interface
 bool
 Interface::is_pair(
 	core::conformation::Residue const & rsd1,
@@ -359,30 +360,30 @@ Interface::is_pair(
 	using namespace core;
 	using namespace core::conformation;
 
-  bool is_pair = false;
+	bool is_pair = false;
 
-  for(Size i = 1; i <= contact_list_[rsd1.seqpos()].size(); i++){
-    if (rsd2.seqpos() == contact_list_[rsd1.seqpos()][i]) is_pair = true;
-    }
+	for ( Size i = 1; i <= contact_list_[rsd1.seqpos()].size(); i++ ) {
+		if ( rsd2.seqpos() == contact_list_[rsd1.seqpos()][i] ) is_pair = true;
+	}
 
-  return is_pair;
-//
-//	Real const cendist ( rsd1.nbr_atom_xyz().distance_squared( rsd2.nbr_atom_xyz() ) );
-//	if ( partner_(rsd1.seqpos()) == partner_(rsd2.seqpos()) ) return false;
-//	if ( is_interface_(rsd1.seqpos()) && is_interface_(rsd2.seqpos())
-//		&& (cendist < distance_ * distance_) )
-//		return true;
-//	else
-//		return false;
+	return is_pair;
+	//
+	// Real const cendist ( rsd1.nbr_atom_xyz().distance_squared( rsd2.nbr_atom_xyz() ) );
+	// if ( partner_(rsd1.seqpos()) == partner_(rsd2.seqpos()) ) return false;
+	// if ( is_interface_(rsd1.seqpos()) && is_interface_(rsd2.seqpos())
+	//  && (cendist < distance_ * distance_) )
+	//  return true;
+	// else
+	//  return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 ///
 /// @brief calculates the center of mass of interface residues
 /// @details
-///			 calculate the center of mass of the interface
-///			 loops over all residues at the interface and gets the xyz coordinates for
-///			 the c-alpha atom of that residue
+///    calculate the center of mass of the interface
+///    loops over all residues at the interface and gets the xyz coordinates for
+///    the c-alpha atom of that residue
 ///
 /// @references pose_docking_calc_interface from pose_docking.cc
 ///
@@ -402,14 +403,14 @@ Interface::center (
 
 	// first, calculate the residues that are at the interface
 	// this should be already calculated?
-//		calculate( pose );
+	//  calculate( pose );
 	for ( Size i=1; i<=pose.total_residue(); ++i ) {
 		if ( interface[i] ) {
-	// the c-alpha atom, this should probably be more generalized so that it can work
-	// with a ligand, surface, or dna.
-	// in that case it wouldn't be the ca atom, it would be something like the backbone
-	// phospate atom from dna, etc.
-	// jec generalized to be residue neighbor atom. Not the same as Ca, but much more general.
+			// the c-alpha atom, this should probably be more generalized so that it can work
+			// with a ligand, surface, or dna.
+			// in that case it wouldn't be the ca atom, it would be something like the backbone
+			// phospate atom from dna, etc.
+			// jec generalized to be residue neighbor atom. Not the same as Ca, but much more general.
 			Vector const nbr_pos( pose.residue( i ).nbr_atom_xyz() );
 			center += nbr_pos;
 			count++;
@@ -429,9 +430,9 @@ void Interface::jump( Size const jump_num ) { jump_number_ = jump_num; }
 core::Size Interface::interface_nres()
 {
 	Size nres = 0;
-	for (Size i=1; i<=is_interface_.size();i++){
-		if (is_interface_(i)) nres++;
-		}
+	for ( Size i=1; i<=is_interface_.size(); i++ ) {
+		if ( is_interface_(i) ) nres++;
+	}
 	return nres;
 }
 
@@ -441,14 +442,14 @@ void
 Interface::symmetric_protein_calculate( core::pose::Pose const & pose )
 {
 	using namespace core;
-  using namespace conformation;
+	using namespace conformation;
 	using namespace conformation::symmetry;
 
 	SymmetricConformation const & SymmConf (
-    dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
-  SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
+		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
+	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 	core::scoring::symmetry::SymmetricEnergies const & energies
-					( dynamic_cast< core::scoring::symmetry::SymmetricEnergies const & > ( pose.energies() ) );
+		( dynamic_cast< core::scoring::symmetry::SymmetricEnergies const & > ( pose.energies() ) );
 	core::scoring::EnergyGraph const & energy_graph( energies.energy_graph() );
 
 	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
@@ -456,68 +457,68 @@ Interface::symmetric_protein_calculate( core::pose::Pose const & pose )
 			partner_(i) = true;
 		}
 	}
-  std::vector< int>::iterator new_end_pos;
+	std::vector< int>::iterator new_end_pos;
 
-  for ( Size i=1; i<=Size(energy_graph.num_nodes()); ++i ) {
-    for ( graph::Graph::EdgeListConstIter
-          iru = energy_graph.get_node(i)->const_upper_edge_list_begin(),
-          irue = energy_graph.get_node(i)->const_upper_edge_list_end();
-          iru != irue; ++iru ) {
-      core::scoring::EnergyEdge const * edge( static_cast< core::scoring::EnergyEdge const *> (*iru) );
-      Size const j( edge->get_second_node_ind() );
+	for ( Size i=1; i<=Size(energy_graph.num_nodes()); ++i ) {
+		for ( graph::Graph::EdgeListConstIter
+				iru = energy_graph.get_node(i)->const_upper_edge_list_begin(),
+				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
+				iru != irue; ++iru ) {
+			core::scoring::EnergyEdge const * edge( static_cast< core::scoring::EnergyEdge const *> (*iru) );
+			Size const j( edge->get_second_node_ind() );
 			bool symm_add;
-			if (basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block].user()) {
+			if ( basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block].user() ) {
 				Size num_subs = basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block]();
 				symm_add = (symm_info->subunit_index(i) <= num_subs && symm_info->subunit_index(j) > num_subs) || (symm_info->subunit_index(j) <= num_subs && symm_info->subunit_index(i) > num_subs); // NK
 			} else {
 				symm_add = ( ( (symm_info->bb_is_independent(i) && !symm_info->bb_is_independent(j)) ) );//||
-												//(symm_info->bb_is_independent(i) && !symm_info->bb_is_independent(j)) ) );
+				//(symm_info->bb_is_independent(i) && !symm_info->bb_is_independent(j)) ) );
 			}
 			if ( !symm_add ) continue;
 			Size i_sym = i;
 			Size j_sym = j;
-      //if ( is_interface_(i_sym) && is_interface_(j_sym) ) continue; //commented out by Sid
-      Real const cendist = edge->square_distance();
-      if ( cendist < distance_squared_ ) {
-      //	TR << "interface edge: " << i << ' ' << j << ' ' << cendist << std::endl;
-        is_interface_(i_sym) = is_interface_(j_sym) = true;
-        pair_list_[1].push_back(i_sym);
-        pair_list_[2].push_back(j_sym);
+			//if ( is_interface_(i_sym) && is_interface_(j_sym) ) continue; //commented out by Sid
+			Real const cendist = edge->square_distance();
+			if ( cendist < distance_squared_ ) {
+				// TR << "interface edge: " << i << ' ' << j << ' ' << cendist << std::endl;
+				is_interface_(i_sym) = is_interface_(j_sym) = true;
+				pair_list_[1].push_back(i_sym);
+				pair_list_[2].push_back(j_sym);
 
 				contact_list_[i_sym].push_back(j_sym);
 				contact_list_[j_sym].push_back(i_sym);
 
 			} ///< set pack residue to true if within a predetermined distance (default 8A)
-    } ///< for j
-  } ///< for i
+		} ///< for j
+	} ///< for i
 
-  /// this is really ugly, there has to be a better way of doing this
-  std::sort( pair_list_[1].begin(), pair_list_[1].end() );
-  new_end_pos = std::unique( pair_list_[1].begin(), pair_list_[1].end() );
-  pair_list_[1].erase( new_end_pos, pair_list_[1].end() );
-  std::sort( pair_list_[2].begin(), pair_list_[2].end() );
-  new_end_pos = std::unique( pair_list_[2].begin(), pair_list_[2].end() );
-  pair_list_[2].erase( new_end_pos, pair_list_[2].end() );
+	/// this is really ugly, there has to be a better way of doing this
+	std::sort( pair_list_[1].begin(), pair_list_[1].end() );
+	new_end_pos = std::unique( pair_list_[1].begin(), pair_list_[1].end() );
+	pair_list_[1].erase( new_end_pos, pair_list_[1].end() );
+	std::sort( pair_list_[2].begin(), pair_list_[2].end() );
+	new_end_pos = std::unique( pair_list_[2].begin(), pair_list_[2].end() );
+	pair_list_[2].erase( new_end_pos, pair_list_[2].end() );
 }
 
 void
 Interface::set_symmetric_pack(
-  core::pose::Pose const & pose,
-  core::pack::task::PackerTaskOP task
+	core::pose::Pose const & pose,
+	core::pack::task::PackerTaskOP task
 )
 {
 	set_pack( pose, task );
 	using namespace core::conformation::symmetry;
 
-  SymmetricConformation const & SymmConf (
-    dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
-  SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
+	SymmetricConformation const & SymmConf (
+		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
+	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
-  for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-  if ( !symm_info->chi_is_independent(i) ) {
-      task->nonconst_residue_task( i ).prevent_repacking();
-    }
-  }
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( !symm_info->chi_is_independent(i) ) {
+			task->nonconst_residue_task( i ).prevent_repacking();
+		}
+	}
 }
 
 } // namespace scoring

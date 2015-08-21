@@ -65,10 +65,10 @@ ContingentFilter::get_value() const{
 
 void
 ContingentFilter::parse_my_tag( utility::tag::TagCOP const,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const &)
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &)
 {
 	TR.Info << "ContingentFilter"<<std::endl;
 }

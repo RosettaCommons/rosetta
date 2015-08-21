@@ -56,9 +56,9 @@ static thread_local basic::Tracer TR( "protocols.antibody.AntibodyFeatures" );
 
 namespace protocols {
 namespace antibody {
-	using namespace protocols::features;
-	using namespace protocols::analysis;
-	using namespace core::scoring;
+using namespace protocols::features;
+using namespace protocols::analysis;
+using namespace core::scoring;
 
 AntibodyFeatures::AntibodyFeatures():
 	InterfaceFeatures()
@@ -115,64 +115,59 @@ AntibodyFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 
 core::Size
 AntibodyFeatures::report_features(
-		core::pose::Pose const & pose,
-		const utility::vector1<bool>& relevant_residues,
-		StructureID struct_id,
-		utility::sql_database::sessionOP db_session) {
+	core::pose::Pose const & pose,
+	const utility::vector1<bool>& relevant_residues,
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session) {
 
-	if (! ab_info_){
+	if ( ! ab_info_ ) {
 		ab_info_ = AntibodyInfoOP( new AntibodyInfo(pose) );
 	}
 
 	std::map<std::string, std::string > db_interfaces;
 
 
-	if(intermediate_interfaces_.size() == 0){
+	if ( intermediate_interfaces_.size() == 0 ) {
 
-		if (! ab_info_->is_camelid()){
+		if ( ! ab_info_->is_camelid() ) {
 			db_interfaces["L_H"] = "L_H";
 		}
 
-		if (ab_info_->antigen_present() && ! skip_antigen_reports_){
+		if ( ab_info_->antigen_present() && ! skip_antigen_reports_ ) {
 			utility::vector1<char> antigen_chains = ab_info_->get_antigen_chains();
 			std::string antigen(antigen_chains.begin(), antigen_chains.end());
 
 			db_interfaces["H_"+antigen] = "H_A";
 
-			if (! ab_info_->is_camelid()){
+			if ( ! ab_info_->is_camelid() ) {
 				db_interfaces["LH_"+antigen] = "LH_A";
 				db_interfaces["L_"+antigen] = "L_A";
 			}
 		}
-	}
-	else{
+	} else {
 		//Could use Enums for this:
-		for (core::Size i = 1; i <= intermediate_interfaces_.size(); ++i){
-			if (intermediate_interfaces_[i] == "L_H" && ! ab_info_->is_camelid()){
+		for ( core::Size i = 1; i <= intermediate_interfaces_.size(); ++i ) {
+			if ( intermediate_interfaces_[i] == "L_H" && ! ab_info_->is_camelid() ) {
 				db_interfaces["L_H"] = "L_H";
 			}
 
-			if (ab_info_->antigen_present()){
+			if ( ab_info_->antigen_present() ) {
 				utility::vector1<char> antigen_chains = ab_info_->get_antigen_chains();
 				std::string antigen(antigen_chains.begin(), antigen_chains.end());
 
-				if (intermediate_interfaces_[i] == "L_A" && ! skip_antigen_reports_ && ! ab_info_->is_camelid()) {
+				if ( intermediate_interfaces_[i] == "L_A" && ! skip_antigen_reports_ && ! ab_info_->is_camelid() ) {
 					db_interfaces["L_"+antigen] = "L_A";
-				}
-				else if (intermediate_interfaces_[i] == "H_A" && ! skip_antigen_reports_) {
+				} else if ( intermediate_interfaces_[i] == "H_A" && ! skip_antigen_reports_ ) {
 					db_interfaces["H_"+antigen] = "H_A";
-				}
-				else if (intermediate_interfaces_[i] == "LH_A" && ! skip_antigen_reports_ && !ab_info_->is_camelid()){
+				} else if ( intermediate_interfaces_[i] == "LH_A" && ! skip_antigen_reports_ && !ab_info_->is_camelid() ) {
 					db_interfaces["LH_"+antigen] = "LH_A";
-				}
-				else if (intermediate_interfaces_[i] == "LH_A" && ! skip_antigen_reports_ && ab_info_->is_camelid()){
+				} else if ( intermediate_interfaces_[i] == "LH_A" && ! skip_antigen_reports_ && ab_info_->is_camelid() ) {
 					TR << "Replacing LH_A with H_A for camelid antibody.  Your welcome." << std::endl;
 					db_interfaces["H_"+antigen] ="H_A";
-				}
-				//else if (intermediate_interfaces_[i] == "NONE"){
-				//	TR << "Not reporting any InterfaceFeatures." << std::endl;
-				//}
-				else{
+				} else {
+					//else if (intermediate_interfaces_[i] == "NONE"){
+					// TR << "Not reporting any InterfaceFeatures." << std::endl;
+					//}
 					TR << "Skipping: " << intermediate_interfaces_[i] <<" please use InterfaceFeatures for general interfaces" << std::endl;
 					continue;
 				}
@@ -183,11 +178,10 @@ AntibodyFeatures::report_features(
 	//Find which per residue data to use from IAM.  We have camelid and regular LH antibody.  an LA antibody wouldn't be kosher in AntibodyInfo right now anyway.
 	//If its not in the interface, and not set to analyze, then we don't do anything (For speed issues?).
 	std::string match_interface_type;
-	if (ab_info_->antigen_present() ){
-		if (ab_info_->is_camelid()){
+	if ( ab_info_->antigen_present() ) {
+		if ( ab_info_->is_camelid() ) {
 			match_interface_type =  "H_A";
-		}
-		else{
+		} else {
 			match_interface_type = "LH_A";
 		}
 
@@ -196,10 +190,10 @@ AntibodyFeatures::report_features(
 
 	bool have_interface_data = false;
 	typedef std::map<std::string, std::string> map_type;
-	boost_foreach(const map_type::value_type& interface_pair, db_interfaces){
+	boost_foreach ( const map_type::value_type& interface_pair, db_interfaces ) {
 		report_all_interface_features(pose, relevant_residues, struct_id, db_session, interface_pair.first, interface_pair.second);
 
-		if (interface_pair.second == match_interface_type && ! skip_antigen_reports_){
+		if ( interface_pair.second == match_interface_type && ! skip_antigen_reports_ ) {
 			interface_data_ = interface_analyzer_->get_all_data();
 			interface_data_res_ = interface_analyzer_->get_all_per_residue_data();
 			have_interface_data = true;
@@ -208,14 +202,13 @@ AntibodyFeatures::report_features(
 	}
 
 	//We need zero values for interface_data and interface_data_res or we need to get data
-	if (! have_interface_data){
+	if ( ! have_interface_data ) {
 		protocols::analysis::InterfaceAnalyzerMoverOP IAM( new protocols::analysis::InterfaceAnalyzerMover(match_interface_type, true, scorefxn_, compute_packstat_, pack_together_, pack_separated_) );
-		if (! skip_antigen_reports_){
+		if ( ! skip_antigen_reports_ ) {
 			IAM->init_on_new_input(pose); //Zeros and initializes all values so we can use this as zero.
 			interface_data_ = IAM->get_all_data();
 			interface_data_res_ = IAM->get_all_per_residue_data();
-		}
-		else {
+		} else {
 			IAM->apply_const(pose);
 			interface_data_ = IAM->get_all_data();
 			interface_data_res_ = IAM->get_all_per_residue_data();
@@ -228,11 +221,11 @@ AntibodyFeatures::report_features(
 	utility::vector1<bool> antigen_residues(pose.total_residue(), false);
 
 	//Setup CDR residues:
-	for (core::SSize i = 1; i <= ab_info_->get_total_num_CDRs(include_proto_cdr4_); ++i){
+	for ( core::SSize i = 1; i <= ab_info_->get_total_num_CDRs(include_proto_cdr4_); ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		//TR << "Setting up CDR residues: " << ab_info_->get_CDR_name(cdr) << std::endl;
 
-		for (core::Size i = ab_info_->get_CDR_start(cdr, pose); i <= ab_info_->get_CDR_end(cdr, pose); ++i){
+		for ( core::Size i = ab_info_->get_CDR_start(cdr, pose); i <= ab_info_->get_CDR_end(cdr, pose); ++i ) {
 			//TR << "Residues: " << i << std::endl;
 			cdr_residues[i] = true;
 		}
@@ -240,8 +233,8 @@ AntibodyFeatures::report_features(
 
 	//Setup antigen residues:
 	vector1<core::Size> ag_chains = ab_info_->get_antigen_chain_ids(pose);
-	for (core::Size i = 1; i <= pose.total_residue(); ++i){
-		if (std::find(ag_chains.begin(), ag_chains.end(), pose.residue(i).chain()) != ag_chains.end()){
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( std::find(ag_chains.begin(), ag_chains.end(), pose.residue(i).chain()) != ag_chains.end() ) {
 			antigen_residues[i] = true;
 		}
 	}
@@ -256,7 +249,7 @@ AntibodyFeatures::report_features(
 
 
 
-	for (core::SSize i = 1; i <= ab_info_->get_total_num_CDRs(include_proto_cdr4_); ++i){
+	for ( core::SSize i = 1; i <= ab_info_->get_total_num_CDRs(include_proto_cdr4_); ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		report_cdr_metrics_features(pose, struct_id, db_session, cdr);
 		report_cdr_residue_features(pose, struct_id, db_session, cdr, relevant_residues);
@@ -330,29 +323,29 @@ AntibodyFeatures::report_ab_metrics_features(
 	utility::sql_database::sessionOP db_session)
 {
 	std::string stmt_string = "INSERT INTO ab_metrics("
-			"struct_id,"
-			"numbering_scheme,"
-			"cdr_definition,"
-			"cdr_residues,"
-			"antigen_present,"
-			"antigen_chains,"
-			"net_charge,"
-			"paratope_charge,"
-			"paratope_SASA,"
-			"paratope_hSASA,"
-			"paratope_pSASA,"
-			"VL_VH_opening_angle,"
-			"VL_VH_distance,"
-			"VL_VH_opposite_opening_angle,"
-			"VL_VH_packing_angle,"
-			"is_camelid"
-			") VALUES "+get_question_mark_string(16);
+		"struct_id,"
+		"numbering_scheme,"
+		"cdr_definition,"
+		"cdr_residues,"
+		"antigen_present,"
+		"antigen_chains,"
+		"net_charge,"
+		"paratope_charge,"
+		"paratope_SASA,"
+		"paratope_hSASA,"
+		"paratope_pSASA,"
+		"VL_VH_opening_angle,"
+		"VL_VH_distance,"
+		"VL_VH_opposite_opening_angle,"
+		"VL_VH_packing_angle,"
+		"is_camelid"
+		") VALUES "+get_question_mark_string(16);
 
 	cppdb::statement stmt(basic::database::safely_prepare_statement(stmt_string, db_session));
 
 	//Get CDR residue total - don't think this would be useful anywhere
 	core::Size cdr_residues = 0;
-	for(core::SSize i = 1; i <= ab_info_->get_total_num_CDRs(include_proto_cdr4_); ++i){
+	for ( core::SSize i = 1; i <= ab_info_->get_total_num_CDRs(include_proto_cdr4_); ++i ) {
 		CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
 		cdr_residues = cdr_residues + ab_info_->get_CDR_length(cdr_name, pose);
 	}
@@ -363,7 +356,7 @@ AntibodyFeatures::report_ab_metrics_features(
 	//Get chains
 	utility::vector1<char> antigen_chains = ab_info_->get_antigen_chains();
 	std::string antigen(antigen_chains.begin(), antigen_chains.end());
-	if (! ab_info_->antigen_present()){
+	if ( ! ab_info_->antigen_present() ) {
 		antigen = "NA";
 	}
 
@@ -456,25 +449,25 @@ AntibodyFeatures::report_cdr_metrics_features(
 
 
 	std::string stmt_string = "INSERT INTO cdr_metrics("
-			"struct_id,"
-			"CDR,"
-			"length,"
-			"start,"
-			"end,"
-			"ag_ab_contacts_total,"
-			"ag_ab_contacts_nres,"
-			"ag_ab_dSASA,"
-			"ag_ab_dSASA_sc,"
-			"ag_ab_dhSASA,"
-			"ag_ab_dhSASA_sc,"
-			"ag_ab_dhSASA_rel_by_charge,"
-			"ag_ab_dG,"
-			"SASA,"
-			"charge,"
-			"energy,"
-			"anchor_CN_distance,"
-			"aromatic_nres"
-			") VALUES " + get_question_mark_string(18);
+		"struct_id,"
+		"CDR,"
+		"length,"
+		"start,"
+		"end,"
+		"ag_ab_contacts_total,"
+		"ag_ab_contacts_nres,"
+		"ag_ab_dSASA,"
+		"ag_ab_dSASA_sc,"
+		"ag_ab_dhSASA,"
+		"ag_ab_dhSASA_sc,"
+		"ag_ab_dhSASA_rel_by_charge,"
+		"ag_ab_dG,"
+		"SASA,"
+		"charge,"
+		"energy,"
+		"anchor_CN_distance,"
+		"aromatic_nres"
+		") VALUES " + get_question_mark_string(18);
 	cppdb::statement stmt = basic::database::safely_prepare_statement(stmt_string, db_session);
 
 	std::string cdr_name = ab_info_->get_CDR_name(cdr);
@@ -551,9 +544,9 @@ AntibodyFeatures::report_cdr_residue_features(
 	CDRNameEnum const & cdr,
 	utility::vector1<bool> const & relevant_residues)
 {
-	for(core::Size i = 1; i <= ab_info_->get_CDR_length(cdr, pose); ++i){
+	for ( core::Size i = 1; i <= ab_info_->get_CDR_length(cdr, pose); ++i ) {
 		core::Size resnum = ab_info_->get_CDR_start(cdr, pose) + i - 1;
-		if (relevant_residues[resnum]){
+		if ( relevant_residues[resnum] ) {
 			report_cdr_residue_features_row(pose, struct_id, db_session, cdr, resnum, i);
 		}
 	}
@@ -570,12 +563,12 @@ AntibodyFeatures::report_cdr_residue_features_row(
 	core::Size position)
 {
 	std::string stmt_string = "INSERT INTO cdr_residues("
-			"struct_id,"
-			"resNum,"
-			"CDR,"
-			"position,"
-			"ag_contacts"
-			") VALUES" + get_question_mark_string(5);
+		"struct_id,"
+		"resNum,"
+		"CDR,"
+		"position,"
+		"ag_contacts"
+		") VALUES" + get_question_mark_string(5);
 
 	cppdb::statement stmt = basic::database::safely_prepare_statement(stmt_string, db_session);
 
@@ -633,18 +626,18 @@ AntibodyFeatures::report_ab_H3_kink_metrics_features(
 	utility::sql_database::sessionOP db_session)
 {
 	std::string stmt_string = "INSERT INTO ab_H3_kink_metrics("
-			"struct_id,"
-			"kink_type,"
-			"begin,"
-			"end,"
-			"anion_res,"
-			"cation_res,"
-			"RD_Hbond_dis,"
-			"bb_Hbond_dis,"
-			"Trp_Hbond_dis,"
-			"qdis,"
-			"qdih"
-			") VALUES "+get_question_mark_string(11);
+		"struct_id,"
+		"kink_type,"
+		"begin,"
+		"end,"
+		"anion_res,"
+		"cation_res,"
+		"RD_Hbond_dis,"
+		"bb_Hbond_dis,"
+		"Trp_Hbond_dis,"
+		"qdis,"
+		"qdih"
+		") VALUES "+get_question_mark_string(11);
 	cppdb::statement stmt = basic::database::safely_prepare_statement(stmt_string, db_session);
 
 	std::pair<core::Real, core::Real > k_dih = kink_dihedral(pose, *ab_info_);
@@ -669,22 +662,22 @@ AntibodyFeatures::report_ab_H3_kink_metrics_features(
 /* Not sure if this is useful.
 void
 AntibodyFeatures::write_cdr_definitions_schema_to_db(utility::sql_database::sessionOP db_session) const {
-	using namespace basic::database::schema_generator;
-	//struct_id
-	//cdr
-	//length in different definitions
-	//start and end in different definitions
+using namespace basic::database::schema_generator;
+//struct_id
+//cdr
+//length in different definitions
+//start and end in different definitions
 }
 */
 
 
 void
 AntibodyFeatures::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap& data,
-		protocols::filters::Filters_map const & /*data*/,
-		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & pose)
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap& data,
+	protocols::filters::Filters_map const & /*data*/,
+	protocols::moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & pose)
 {
 
 	pack_separated_ = tag->getOption<bool>("pack_separated", true);
@@ -693,28 +686,28 @@ AntibodyFeatures::parse_my_tag(
 	compute_packstat_ = tag->getOption<bool>("compute_packstat", true);
 	skip_antigen_reports_ = tag->getOption<bool>("skip_all_antigen_analysis", false); //By default if antigen is present, we will report some data on it.
 
-	if(tag->hasOption("scorefxn")){
+	if ( tag->hasOption("scorefxn") ) {
 		std::string const scorefxn_name(tag->getOption<std::string>("scorefxn"));
 		scorefxn_ = data.get_ptr<core::scoring::ScoreFunction>("scorefxns", scorefxn_name);
 	}
 
-	if (tag->hasOption("interfaces") && tag->hasOption("interface")){
+	if ( tag->hasOption("interfaces") && tag->hasOption("interface") ) {
 		utility_exit_with_message("Cannot specify both interface and interfaces option for InterfaceFeatures Reporter");
 	}
 
-	if (tag->hasOption("interface")){
+	if ( tag->hasOption("interface") ) {
 		std::string interface = tag->getOption<std::string>("interface");
-		if (interface.find(",") != std::string::npos){utility_exit_with_message("Only one interface should be specified using the interface option");}
+		if ( interface.find(",") != std::string::npos ) { utility_exit_with_message("Only one interface should be specified using the interface option");}
 		intermediate_interfaces_.push_back(interface);
 	}
 
-	if (tag->hasOption("interfaces")){
+	if ( tag->hasOption("interfaces") ) {
 		std::string interfaces = tag->getOption<std::string>("interfaces");
 		intermediate_interfaces_ = utility::string_split_multi_delim(interfaces, ":,'`~+*&|;.");//Why not?
 	}
 
 
-	if (tag->hasOption("cdr_definition") && tag->hasOption("numbering_scheme")){
+	if ( tag->hasOption("cdr_definition") && tag->hasOption("numbering_scheme") ) {
 
 
 		AntibodyEnumManager manager = AntibodyEnumManager();
@@ -724,8 +717,7 @@ AntibodyFeatures::parse_my_tag(
 
 		ab_info_ = AntibodyInfoOP( new AntibodyInfo(pose, scheme, definition) );
 
-	}
-	else if(tag->hasOption("cdr_definition") || tag->hasOption("numbering_scheme")){
+	} else if ( tag->hasOption("cdr_definition") || tag->hasOption("numbering_scheme") ) {
 		TR <<"Please pass both cdr_definition and numbering_scheme.  These can also be set via cmd line options of the same name." << std::endl;
 
 	}
@@ -740,7 +732,7 @@ AntibodyFeatures::calculate_cdr_totals(const CDRNameEnum cdr, const core::pose::
 	core::Size cdr_start = ab_info_->get_CDR_start(cdr, pose);
 	core::Size cdr_end = ab_info_->get_CDR_end(cdr, pose);
 
-	for (core::Size i = cdr_start; i <= cdr_end; ++i){
+	for ( core::Size i = cdr_start; i <= cdr_end; ++i ) {
 		result = result + data[i];
 	}
 	return result;
@@ -752,8 +744,8 @@ AntibodyFeatures::calculate_cdr_aromatic_nres(const core::pose::Pose & pose, con
 	core::Size cdr_start = ab_info_->get_CDR_start(cdr, pose);
 	core::Size cdr_end = ab_info_->get_CDR_end(cdr, pose);
 
-	for (core::Size i = cdr_start; i <= cdr_end; ++i){
-		if (pose.residue(i).type().is_aromatic()){
+	for ( core::Size i = cdr_start; i <= cdr_end; ++i ) {
+		if ( pose.residue(i).type().is_aromatic() ) {
 			nres+=1;
 		}
 	}
@@ -779,31 +771,31 @@ AntibodyFeatures::calculate_residue_atomic_contacts(const core::pose::Pose& pose
 
 	//CDR Residues:
 	TR << "Calculating antigen contacts" << std::endl;
-	for (core::Size ci = 1; ci <= pose.total_residue(); ++ci){
-		if (! residues_to_match[ci]) continue;
+	for ( core::Size ci = 1; ci <= pose.total_residue(); ++ci ) {
+		if ( ! residues_to_match[ci] ) continue;
 
 
 		//CDR Residue Atoms:
-		for (core::Size cx = 1; cx <= pose.residue(ci).natoms(); ++cx){
+		for ( core::Size cx = 1; cx <= pose.residue(ci).natoms(); ++cx ) {
 			core::Size contacts = 0;
 
 			//Antigen Residues:
-			for (core::Size ai = 1; ai <= pose.total_residue(); ++ai){
-				if (! antigen_residues[ai]) continue;
+			for ( core::Size ai = 1; ai <= pose.total_residue(); ++ai ) {
+				if ( ! antigen_residues[ai] ) continue;
 
 				//Antigen Residue Atoms:
-				for (core::Size ax = 1; ax <= pose.residue(ai).natoms(); ++ ax){
+				for ( core::Size ax = 1; ax <= pose.residue(ai).natoms(); ++ ax ) {
 					numeric::xyzVector<core::Real> cx_xyz= pose.residue(ci).xyz(cx);
 					numeric::xyzVector<core::Real> ax_xyz= pose.residue(ai).xyz(ax);
 					core::Real cx_ax_dis = cx_xyz.distance(ax_xyz);
-					if (cx_ax_dis <= dist_cutoff) {
+					if ( cx_ax_dis <= dist_cutoff ) {
 						++contacts;
 						//TR << "Contacts: " << contacts << std::endl;
 					}
 				}
 			}
 
-			if (contacts > contact_cutoff) ++ag_ab_atomic_contacts_[ci];
+			if ( contacts > contact_cutoff ) ++ag_ab_atomic_contacts_[ci];
 		}
 
 	}
@@ -813,14 +805,14 @@ AntibodyFeatures::calculate_residue_atomic_contacts(const core::pose::Pose& pose
 	core::Size v = 1;
 
 	for (core::Size i = 1; i <= pose.total_residue(); ++i){
-		//Skip residues not needed at all.
-		if (residues_to_match[i] || antigen_residues[i]){
-			for (core::Size x = 1; x <= pose.residue(i).natoms(); ++x){
-				vertex_map[v] = core::id::AtomID(x, i);
-				++v;
-				//TR << "V: " << v << " "<<x<<": "<<i << std::endl;
-			}
-		}
+	//Skip residues not needed at all.
+	if (residues_to_match[i] || antigen_residues[i]){
+	for (core::Size x = 1; x <= pose.residue(i).natoms(); ++x){
+	vertex_map[v] = core::id::AtomID(x, i);
+	++v;
+	//TR << "V: " << v << " "<<x<<": "<<i << std::endl;
+	}
+	}
 	}
 
 	//Setup the PointGraph to be used in find neighbors algorithms
@@ -828,7 +820,7 @@ AntibodyFeatures::calculate_residue_atomic_contacts(const core::pose::Pose& pose
 	pg->set_num_vertices(vertex_map.size());
 
 	for (core::Size i = 1; i <= vertex_map.size(); ++i){
-		pg->get_vertex(i).data().xyz() = pose.residue(vertex_map[i].rsd()).xyz(vertex_map[i].atomno());
+	pg->get_vertex(i).data().xyz() = pose.residue(vertex_map[i].rsd()).xyz(vertex_map[i].atomno());
 	}
 
 	find_neighbors<PointGraphVertexData,PointGraphEdgeData>(pg, dist_cutoff);
@@ -836,26 +828,26 @@ AntibodyFeatures::calculate_residue_atomic_contacts(const core::pose::Pose& pose
 	///Now we iterate over the atoms in our vector. For each atom, we get its edges.  If the vertex connected
 	// corresponds to an antigen residue, we count.
 	for (core::Size i = 1; i <= vertex_map.size(); ++i){
-		if (residues_to_match[vertex_map[i].rsd()]){
-			TR <<"matching res: " << vertex_map[i].rsd() << std::endl;
-			core::Size contacts = 0;
-			for ( PointGraph::UpperEdgeListConstIter edge_iter = pg->get_vertex( i ).upper_edge_list_begin(),
-					edge_end_iter = pg->get_vertex( i ).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
+	if (residues_to_match[vertex_map[i].rsd()]){
+	TR <<"matching res: " << vertex_map[i].rsd() << std::endl;
+	core::Size contacts = 0;
+	for ( PointGraph::UpperEdgeListConstIter edge_iter = pg->get_vertex( i ).upper_edge_list_begin(),
+	edge_end_iter = pg->get_vertex( i ).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
 
-				core::Size connected_res = vertex_map[edge_iter->upper_vertex()].rsd();
-				//if (connected_res != vertex_map[i].rsd()){
-				//	TR << "contacted res: " << connected_res << std::endl;
-				//}
-				if (antigen_residues[connected_res]){
-					++contacts;
-					TR << "Contacts: " << contacts << std::endl;
-				}
-			}
-
-			if (contacts > contact_cutoff) ++ag_ab_atomic_contacts_[vertex_map[i].rsd()];
-		}
+	core::Size connected_res = vertex_map[edge_iter->upper_vertex()].rsd();
+	//if (connected_res != vertex_map[i].rsd()){
+	// TR << "contacted res: " << connected_res << std::endl;
+	//}
+	if (antigen_residues[connected_res]){
+	++contacts;
+	TR << "Contacts: " << contacts << std::endl;
 	}
-	 */
+	}
+
+	if (contacts > contact_cutoff) ++ag_ab_atomic_contacts_[vertex_map[i].rsd()];
+	}
+	}
+	*/
 
 }
 
@@ -865,7 +857,7 @@ AntibodyFeatures::calculate_cdr_contacts_total(const core::pose::Pose & pose, CD
 	core::Size cdr_end = ab_info_->get_CDR_end(cdr, pose);
 
 	core::Size counts = 0;
-	for (core::Size i = cdr_start; i <= cdr_end; ++i){
+	for ( core::Size i = cdr_start; i <= cdr_end; ++i ) {
 		counts = counts + ag_ab_atomic_contacts_[i];
 	}
 
@@ -880,8 +872,8 @@ AntibodyFeatures::calculate_cdr_contacts_nres(const core::pose::Pose& pose, CDRN
 	core::Size cdr_end = ab_info_->get_CDR_end(cdr, pose);
 
 	core::Size counts = 0;
-	for (core::Size i = cdr_start; i <= cdr_end; ++i){
-		if (ag_ab_atomic_contacts_[i] > 0) ++counts;
+	for ( core::Size i = cdr_start; i <= cdr_end; ++i ) {
+		if ( ag_ab_atomic_contacts_[i] > 0 ) ++counts;
 	}
 
 	TR << "CDR contacts: "<< ab_info_->get_CDR_name(cdr) << " "<< counts << std::endl;

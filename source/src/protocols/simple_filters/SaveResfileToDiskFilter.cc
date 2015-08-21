@@ -89,12 +89,12 @@ SaveResfileToDiskFilter::~SaveResfileToDiskFilter() {}
 
 protocols::filters::FilterOP
 SaveResfileToDiskFilter::fresh_instance() const{
-  return protocols::filters::FilterOP( new SaveResfileToDiskFilter() );
+	return protocols::filters::FilterOP( new SaveResfileToDiskFilter() );
 }
 
 protocols::filters::FilterOP
 SaveResfileToDiskFilter::clone() const{
-  return protocols::filters::FilterOP( new SaveResfileToDiskFilter( *this ) );
+	return protocols::filters::FilterOP( new SaveResfileToDiskFilter( *this ) );
 }
 
 // @brief getters
@@ -128,22 +128,25 @@ utility::vector1< core::Size > SaveResfileToDiskFilter::select_residues( Pose co
 
 	// Prepare the PackerTask
 	runtime_assert( task_factory() != 0 );
-  core::pack::task::PackerTaskCOP task( task_factory()->create_task_and_apply_taskoperations( pose ) );
+	core::pack::task::PackerTaskCOP task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 
 	// Find out which residues are packable or designable
-	for( core::Size resi = 1; resi <= pose.total_residue(); ++resi ) {
+	for ( core::Size resi = 1; resi <= pose.total_residue(); ++resi ) {
 		if ( designable_only_ ) {
-    	if( task->residue_task( resi ).being_designed() && pose.residue(resi).is_protein() )
-      	selected_residues.push_back( resi );
+			if ( task->residue_task( resi ).being_designed() && pose.residue(resi).is_protein() ) {
+				selected_residues.push_back( resi );
+			}
 		} else {
-      if( task->residue_task( resi ).being_packed() && pose.residue(resi).is_protein() )
-        selected_residues.push_back( resi );
+			if ( task->residue_task( resi ).being_packed() && pose.residue(resi).is_protein() ) {
+				selected_residues.push_back( resi );
+			}
 		}
-  }
-  if( selected_residues.empty() )
-    TR.Warning << "WARNING: No residues were selected by your TaskOperations." << std::endl;
+	}
+	if ( selected_residues.empty() ) {
+		TR.Warning << "WARNING: No residues were selected by your TaskOperations." << std::endl;
+	}
 
-  return selected_residues;
+	return selected_residues;
 
 } // selectResidues
 
@@ -153,19 +156,19 @@ SaveResfileToDiskFilter::write_resfile( Pose const & pose, utility::vector1< cor
 {
 	std::string resfile_to_write = resfile_name();
 
-	if (resfile_suffix() == "" && resfile_prefix() == "" && resfile_to_write == "") {
+	if ( resfile_suffix() == "" && resfile_prefix() == "" && resfile_to_write == "" ) {
 		resfile_to_write = protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".resfile";
 	}
 
-	if ((resfile_suffix() != "" || resfile_prefix() != "") && resfile_to_write == "") {
+	if ( (resfile_suffix() != "" || resfile_prefix() != "") && resfile_to_write == "" ) {
 		resfile_to_write = resfile_prefix() + protocols::jd2::JobDistributor::get_instance()->current_output_name() + resfile_suffix() + ".resfile";
 	}
 
-  runtime_assert( resfile_to_write != "" );
-  runtime_assert( !selected_residues.empty() );
+	runtime_assert( resfile_to_write != "" );
+	runtime_assert( !selected_residues.empty() );
 	std::ofstream resfile;
-  resfile.open( resfile_to_write.c_str(), std::ios::out );
-  resfile << resfile_general_property() << "\nstart\n";
+	resfile.open( resfile_to_write.c_str(), std::ios::out );
+	resfile << resfile_general_property() << "\nstart\n";
 	for ( core::Size i=1; i<=selected_residues.size(); i++ ) {
 		if ( renumber_pdb() ) {
 			resfile << selected_residues[i] << '\t' << pose.pdb_info()->chain(selected_residues[i]);
@@ -177,8 +180,8 @@ SaveResfileToDiskFilter::write_resfile( Pose const & pose, utility::vector1< cor
 		} else {
 			resfile << " PIKAA " << pose.residue(selected_residues[i]).name1() << '\n';
 		}
-  }
-  resfile.close();
+	}
+	resfile.close();
 
 }
 
@@ -186,9 +189,10 @@ SaveResfileToDiskFilter::write_resfile( Pose const & pose, utility::vector1< cor
 bool SaveResfileToDiskFilter::apply( Pose const & pose ) const
 {
 
-  utility::vector1< core::Size > selected_residues = select_residues( pose );
-	if ( !selected_residues.empty() )
+	utility::vector1< core::Size > selected_residues = select_residues( pose );
+	if ( !selected_residues.empty() ) {
 		write_resfile( pose, selected_residues );
+	}
 
 	return 1;
 
@@ -203,7 +207,7 @@ SaveResfileToDiskFilter::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
-  task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
+	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	designable_only( tag->getOption< bool >( "designable_only", false ) );
 	renumber_pdb( tag->getOption< bool >( "renumber_pdb", false ) );
 	resfile_suffix( tag->getOption< std::string >( "resfile_suffix", "" ) );
@@ -216,13 +220,13 @@ SaveResfileToDiskFilter::parse_my_tag(
 core::Real
 SaveResfileToDiskFilter::report_sm( core::pose::Pose const & pose ) const
 {
-  return( compute( pose ) );
+return( compute( pose ) );
 }
 
 void
 SaveResfileToDiskFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
-  out << "SaveResfileToDiskFilter returns " << compute( pose ) << std::endl;
+out << "SaveResfileToDiskFilter returns " << compute( pose ) << std::endl;
 }
 */
 protocols::filters::FilterOP

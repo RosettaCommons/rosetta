@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/methods/RNA_FA_ElecEnergy.hh
 /// @brief  Electrostatics for RNA
-/// @author Joseph Yesselman 
+/// @author Joseph Yesselman
 
 
 #ifndef INCLUDED_core_scoring_elec_RNA_FA_ElecEnergy_hh
@@ -38,7 +38,7 @@ namespace core {
 namespace scoring {
 namespace elec {
 
-  
+
 ///
 class RNA_FA_ElecEnergy : public FA_ElecEnergy  {
 public:
@@ -112,7 +112,7 @@ public:
 
 
 	/// @brief Jan 10, 2012. Parin Sripakdeevon (sripakpa@stanford.edu)
-	/// Returns "false" to overwrite the behavior in the parent class (FA_ElecEnergy)! 
+	/// Returns "false" to overwrite the behavior in the parent class (FA_ElecEnergy)!
 	virtual
 	bool
 	use_extended_residue_pair_energy_interface() const { return false; }
@@ -138,17 +138,17 @@ public:
 		EnergyMap const & weights,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 	) const;
-  
-  
-  virtual
-  void
-  backbone_backbone_energy(
-    conformation::Residue const & rsd1,
-    conformation::Residue const & rsd2,
-    pose::Pose const & pose,
-    ScoreFunction const & sfxn,
-    EnergyMap & emap
-  ) const;
+
+
+	virtual
+	void
+	backbone_backbone_energy(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn,
+		EnergyMap & emap
+	) const;
 
 
 	//@brief overrides default rotamer/background energy calculation
@@ -165,17 +165,17 @@ public:
 	) const;
 
 
- 	virtual
- 	void
- 	eval_atom_derivative(
- 		id::AtomID const & atom_id,
- 		pose::Pose const & pose,
+	virtual
+	void
+	eval_atom_derivative(
+		id::AtomID const & atom_id,
+		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
- 		ScoreFunction const &,
- 		EnergyMap const & weights,
- 		Vector & F1,
- 		Vector & F2
- 	) const;
+		ScoreFunction const &,
+		EnergyMap const & weights,
+		Vector & F1,
+		Vector & F2
+	) const;
 
 	virtual
 	bool
@@ -186,29 +186,29 @@ public:
 
 public:
 
-  Real
-  rna_fa_elec_one_way(
-    conformation::Residue const &,
-    conformation::Residue const &,
-    RNAAtomType const &,
-    RNAAtomType const &
-    
-  ) const;
+	Real
+	rna_fa_elec_one_way(
+		conformation::Residue const &,
+		conformation::Residue const &,
+		RNAAtomType const &,
+		RNAAtomType const &
+
+	) const;
 
 
 	void
 	eval_atom_derivative_RNA(
-	   conformation::Residue const & rsd1,
-		 Size const & i,
-		 conformation::Residue const & rsd2,
-		 EnergyMap const & weights,
-		 Vector & F1,
-		 Vector & F2
+		conformation::Residue const & rsd1,
+		Size const & i,
+		conformation::Residue const & rsd2,
+		EnergyMap const & weights,
+		Vector & F1,
+		Vector & F2
 	) const;
-virtual
-core::Size version() const;
-  
-  
+	virtual
+	core::Size version() const;
+
+
 };
 
 

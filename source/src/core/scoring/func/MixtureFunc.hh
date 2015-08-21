@@ -31,18 +31,18 @@ class MixtureFunc : public Func {
 public:
 
 	/*!
-	 * Constructor for MixtureFunc. Arguments to the constructor are:
-	 * - anchor: parameter representing the value at which this function is anchored, represents the
-	 * mean of the Gaussian distribution and the highest point of the exponential distribution.
-	 * - gaussian_param: parameter for Gaussian portion of g(r), representing the standard deviation
-	 * of a Gaussian distribution around anchor.
-	 * - exp_param: parameter for Exponential portion of g(r), representing the rate at which
-	 * the exponential distribution drops off from anchor.
-	 * - mixture_param: parameter describing the mixture of the Gaussian and Exponential functions
-	 *   that make up g(r).
-	 * - bg_mean: parameter representing the mean of h(r).
-	 * - bg_sd: parameter representing the standard deviation of h(r).
-	 */
+	* Constructor for MixtureFunc. Arguments to the constructor are:
+	* - anchor: parameter representing the value at which this function is anchored, represents the
+	* mean of the Gaussian distribution and the highest point of the exponential distribution.
+	* - gaussian_param: parameter for Gaussian portion of g(r), representing the standard deviation
+	* of a Gaussian distribution around anchor.
+	* - exp_param: parameter for Exponential portion of g(r), representing the rate at which
+	* the exponential distribution drops off from anchor.
+	* - mixture_param: parameter describing the mixture of the Gaussian and Exponential functions
+	*   that make up g(r).
+	* - bg_mean: parameter representing the mean of h(r).
+	* - bg_sd: parameter representing the standard deviation of h(r).
+	*/
 
 	MixtureFunc (
 		Real const anchor,
@@ -60,8 +60,9 @@ public:
 		bg_mean_       ( bg_mean ),
 		bg_sd_         ( bg_sd )
 	{
-		if ( anchor_ > 1e-10 )
+		if ( anchor_ > 1e-10 ) {
 			verify_parameters_();
+		}
 	}
 
 	/// @brief returns a clone of this MixtureFunc
@@ -102,17 +103,17 @@ public:
 	/// @brief
 	/// The parameters are:
 	/*!
-	 * Initializes this MixtureFunc from the given istream. An example
-	 * of the type of string from which the istream should be constructed is:
-	 * "MIXTUREFUNC 6.9734 3.598 0.222 0.872 19.396 7.643". The interpretation is to
-	 * create initialize this MixtureFunc object with the following parameters:
-	 * - anchor 6.9734
-	 * - gaussian_param 3.598
-	 * - exp_param 0.222
-	 * - mixture_param 0.872
-	 * - bg_mean 19.396
-	 * - bg_sd 7.643
-	 */
+	* Initializes this MixtureFunc from the given istream. An example
+	* of the type of string from which the istream should be constructed is:
+	* "MIXTUREFUNC 6.9734 3.598 0.222 0.872 19.396 7.643". The interpretation is to
+	* create initialize this MixtureFunc object with the following parameters:
+	* - anchor 6.9734
+	* - gaussian_param 3.598
+	* - exp_param 0.222
+	* - mixture_param 0.872
+	* - bg_mean 19.396
+	* - bg_sd 7.643
+	*/
 	void read_data( std::istream& in );
 
 	/// @brief Returns the value of this MixtureFunc evaluated at distance x.

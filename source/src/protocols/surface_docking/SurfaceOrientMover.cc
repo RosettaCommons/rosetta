@@ -45,15 +45,15 @@ using namespace protocols::surface_docking;
 
 //constructor
 SurfaceOrientMover::SurfaceOrientMover():Mover()
-	{
-    Mover::type( "SurfaceOrientMover");
-	}
+{
+	Mover::type( "SurfaceOrientMover");
+}
 
 //destructor
 SurfaceOrientMover::~SurfaceOrientMover() {}
 
 void SurfaceOrientMover::apply(pose::Pose & pose)
-	{
+{
 	//displacement vector from protein centroid to surface centroid
 	Vector ProteinCG, SurfaceCG;
 	Size const rb_jump=pose.num_jump(); //last jump connects protein to surf
@@ -70,49 +70,49 @@ void SurfaceOrientMover::apply(pose::Pose & pose)
 	recenter_trans_mover.step_size(recenter_step_size);
 	recenter_trans_mover.apply(pose);
 	TR<<"SurfaceOrient Complete..."<<std::endl;
-	}
+}
 
 //TODO: make sure everywhere surface orient apply is called it is followed by slide into contact since that has changed, add check to insure that the score is unchanged by move
 
 
 void SurfaceOrientMover::set_surface_parameters(protocols::surface_docking::SurfaceParametersOP surface_parameters)
-	{
-		surface_parameters_ = surface_parameters;
-	}
+{
+	surface_parameters_ = surface_parameters;
+}
 
 std::string SurfaceOrientMover::get_name() const
-	{
-		return "SurfaceOrientMover";
-	}
+{
+	return "SurfaceOrientMover";
+}
 
 Vector SurfaceOrientMover::calculate_recenter_vector( core::Vector const & total_displacement )
-	{
-		// Change input vector from 'protein displacement from origin' to 'origin displacement from protein'
-		core::Vector neg_disp = total_displacement.negated();
+{
+	// Change input vector from 'protein displacement from origin' to 'origin displacement from protein'
+	core::Vector neg_disp = total_displacement.negated();
 
-		//component of total_displacement along the AB surface vector/////
-		Real AB_displacement_component = neg_disp.dot(surface_parameters_->vecAB().normalized());
+	//component of total_displacement along the AB surface vector/////
+	Real AB_displacement_component = neg_disp.dot(surface_parameters_->vecAB().normalized());
 
-		//component of total_displacement along the AC surface vector/////
-		Real AC_displacement_component = neg_disp.dot(surface_parameters_->vecAC().normalized());
+	//component of total_displacement along the AC surface vector/////
+	Real AC_displacement_component = neg_disp.dot(surface_parameters_->vecAC().normalized());
 
-		//how many unit cells are we off of center from in the AB direction?
-		SSize num_AB_unit_cells_displaced = SSize(AB_displacement_component/surface_parameters_->vecAB().magnitude());
+	//how many unit cells are we off of center from in the AB direction?
+	SSize num_AB_unit_cells_displaced = SSize(AB_displacement_component/surface_parameters_->vecAB().magnitude());
 
-		//how many unit cells are we off of center from in the AC direction?
-		SSize num_AC_unit_cells_displaced = SSize(AC_displacement_component/surface_parameters_->vecAC().magnitude());
+	//how many unit cells are we off of center from in the AC direction?
+	SSize num_AC_unit_cells_displaced = SSize(AC_displacement_component/surface_parameters_->vecAC().magnitude());
 
-	 	//needed AB translation to recenter
-		Vector AB_recenter_vector = num_AB_unit_cells_displaced * surface_parameters_->vecAB();
-		//needed AC translation to recenter
-		Vector AC_recenter_vector = num_AC_unit_cells_displaced * surface_parameters_->vecAC();
+	//needed AB translation to recenter
+	Vector AB_recenter_vector = num_AB_unit_cells_displaced * surface_parameters_->vecAB();
+	//needed AC translation to recenter
+	Vector AC_recenter_vector = num_AC_unit_cells_displaced * surface_parameters_->vecAC();
 
-		//net translation needed to recenter
-		Vector recenter_vector = AB_recenter_vector + AC_recenter_vector;
-		return recenter_vector;
-	}
+	//net translation needed to recenter
+	Vector recenter_vector = AB_recenter_vector + AC_recenter_vector;
+	return recenter_vector;
+}
 
 
-}	//surfaceDockingProtocol
+} //surfaceDockingProtocol
 
-}	//protocol
+} //protocol

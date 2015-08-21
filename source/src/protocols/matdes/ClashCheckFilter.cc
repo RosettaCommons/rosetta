@@ -63,8 +63,8 @@ namespace matdes {
 
 // @brief default constructor
 ClashCheckFilter::ClashCheckFilter():
-  task_factory_( /* NULL */ ),
-  clash_dist_( 3.5 ),
+	task_factory_( /* NULL */ ),
+	clash_dist_( 3.5 ),
 	sym_dof_names_( "" ),
 	nsub_bblock_( 1 ),
 	threshold_( 0 ),
@@ -100,12 +100,12 @@ ClashCheckFilter::~ClashCheckFilter() {}
 
 protocols::filters::FilterOP
 ClashCheckFilter::fresh_instance() const{
-  return protocols::filters::FilterOP( new ClashCheckFilter() );
+	return protocols::filters::FilterOP( new ClashCheckFilter() );
 }
 
 protocols::filters::FilterOP
 ClashCheckFilter::clone() const{
-  return protocols::filters::FilterOP( new ClashCheckFilter( *this ) );
+	return protocols::filters::FilterOP( new ClashCheckFilter( *this ) );
 }
 
 // @brief getters
@@ -143,80 +143,79 @@ core::Size ClashCheckFilter::compute( Pose const & pose, bool const & v, bool co
 
 	Sizes intra_subs1, intra_subs2;
 
-	if( sym_dof_name_list.size() == 2) {
-	intra_subs1 = get_jump_name_to_subunits(pose,sym_dof_name_list[1]);
-	intra_subs2 = get_jump_name_to_subunits(pose,sym_dof_name_list[2]);
+	if ( sym_dof_name_list.size() == 2 ) {
+		intra_subs1 = get_jump_name_to_subunits(pose,sym_dof_name_list[1]);
+		intra_subs2 = get_jump_name_to_subunits(pose,sym_dof_name_list[2]);
 	}
 
 	runtime_assert( task_factory() != 0 );
-  core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
+	core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 
 	utility::vector1<Real> clashing_pos;
 	std::string select_clashing_pos("select clashing_pos, (");
-  Size itype = 5;
-  Size jtype = 5;
+	Size itype = 5;
+	Size jtype = 5;
 	bool clash = false;
 
-	for(Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++) {
-		if(sym_info->subunit_index(ir) != 1) continue;
+	for ( Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++ ) {
+		if ( sym_info->subunit_index(ir) != 1 ) continue;
 		clash = false;
-		for(Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++) {
+		for ( Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++ ) {
 			//If one component, then check for clashes between all residues in primary subunit and subunits with indices > nsub_bb
-			if( sym_dof_names_ == "" ) {
-      	if ( sym_info->subunit_index(jr) <= nsub_bblock_ ) continue;
-			}
-			//If two component, then check for clashes between all residues in primary subunitA and other building blocks, and all resis in primary subB and other building blocks. 
-			else if( sym_dof_name_list.size() == 2 ) {
+			if ( sym_dof_names_ == "" ) {
+				if ( sym_info->subunit_index(jr) <= nsub_bblock_ ) continue;
+			} else if ( sym_dof_name_list.size() == 2 ) {
+				//If two component, then check for clashes between all residues in primary subunitA and other building blocks, and all resis in primary subB and other building blocks.
 				Sizes const & isubs( get_component_of_residue(pose,ir)=='A'?intra_subs1:intra_subs2);
-				if(get_component_of_residue(pose,ir)==get_component_of_residue(pose,jr)&&find(isubs.begin(),isubs.end(),sym_info->subunit_index(jr))!=isubs.end()) continue;
+				if ( get_component_of_residue(pose,ir)==get_component_of_residue(pose,jr)&&find(isubs.begin(),isubs.end(),sym_info->subunit_index(jr))!=isubs.end() ) continue;
 			} else {
 				utility_exit_with_message("Clash check filter currently only works for 1 or 2 component symmetries");
-			}	
-			if (chemical::name_from_aa(pose.aa(ir)) == "GLY") { // Use CAs instead of CBs for GLYs
+			}
+			if ( chemical::name_from_aa(pose.aa(ir)) == "GLY" ) { // Use CAs instead of CBs for GLYs
 				itype = 4;
 			} else {
 				itype = 5;
 			}
-      if (chemical::name_from_aa(pose.aa(jr)) == "GLY") {
-        jtype = 4;
-      } else {
-        jtype = 5;
-      }
-  //    if (pose.xyz(AtomID(itype,ir)).distance_squared(pose.xyz(AtomID(jtype,jr))) <= contact_dist_sq) { // Check if the CBs/CAs are within contact dist
-      for (Size ia=1; ia<=itype; ia++) {
-        for (Size ja=1; ja<=jtype; ja++) {
-          if (pose.xyz(AtomID(ia,ir)).distance_squared(pose.xyz(AtomID(ja,jr))) <= clash_dist_sq) { // Test for clashes
-            if ( (((ia == 1) && (ja == 4)) || ((ia == 4) && (ja == 1))) && (pose.xyz(AtomID(ia,ir)).distance_squared(pose.xyz(AtomID(ja,jr))) >= 6.76) ) { // But don't count bb-bb h-bonds as clashes
-              continue;
-            } else {
+			if ( chemical::name_from_aa(pose.aa(jr)) == "GLY" ) {
+				jtype = 4;
+			} else {
+				jtype = 5;
+			}
+			//    if (pose.xyz(AtomID(itype,ir)).distance_squared(pose.xyz(AtomID(jtype,jr))) <= contact_dist_sq) { // Check if the CBs/CAs are within contact dist
+			for ( Size ia=1; ia<=itype; ia++ ) {
+				for ( Size ja=1; ja<=jtype; ja++ ) {
+					if ( pose.xyz(AtomID(ia,ir)).distance_squared(pose.xyz(AtomID(ja,jr))) <= clash_dist_sq ) { // Test for clashes
+						if ( (((ia == 1) && (ja == 4)) || ((ia == 4) && (ja == 1))) && (pose.xyz(AtomID(ia,ir)).distance_squared(pose.xyz(AtomID(ja,jr))) >= 6.76) ) { // But don't count bb-bb h-bonds as clashes
+							continue;
+						} else {
 							clash = true;
 							clashing_pos.push_back(ir);
-							if ( w ) { 
-							write_to_pdb( pose, pose.residue(ir).name3(), ir, pose.residue(ir).atom_name(ia) ); 
+							if ( w ) {
+								write_to_pdb( pose, pose.residue(ir).name3(), ir, pose.residue(ir).atom_name(ia) );
 							}
 							core::Size output_resi = ir;
 							if ( !basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {
 								output_resi = pose.pdb_info()->number( ir );
 							}
-							select_clashing_pos.append( " resi " + ObjexxFCL::string_of(output_resi) + " and name " + pose.residue(ir).atom_name(ia) + "+" );   
-          	}
-        	}		
+							select_clashing_pos.append( " resi " + ObjexxFCL::string_of(output_resi) + " and name " + pose.residue(ir).atom_name(ia) + "+" );
+						}
+					}
 					if ( clash ) break;
 				}
 				if ( clash ) break;
-      }
-//			}
-			if (clash) break;
+			}
+			//   }
+			if ( clash ) break;
 		}
 	}
 	if ( v ) {
 		select_clashing_pos.erase(select_clashing_pos.end()-2,select_clashing_pos.end());
 		TR << select_clashing_pos << ") and " << protocols::jd2::JobDistributor::get_instance()->current_output_name() << std::endl;
 	}
-	if ( w ) { 
-		write_pymol_string_to_pdb( select_clashing_pos ); 
+	if ( w ) {
+		write_pymol_string_to_pdb( select_clashing_pos );
 	}
-  return( clashing_pos.size() );
+	return( clashing_pos.size() );
 } // compute
 
 void ClashCheckFilter::write_to_pdb( core::pose::Pose const & pose, std::string const residue_name, core::Size const residue, std::string const atom_name ) const
@@ -247,14 +246,13 @@ void ClashCheckFilter::write_pymol_string_to_pdb( std::string const pymol_select
 bool ClashCheckFilter::apply( Pose const & pose ) const
 {
 	// Get the number of clashes from the compute function and filter
-  core::Size const clashes( compute( pose, verbose(), write() ) );
+	core::Size const clashes( compute( pose, verbose(), write() ) );
 
 	TR<<"# clashing residues: "<< clashes <<". ";
-	if( clashes > threshold_ ){
+	if ( clashes > threshold_ ) {
 		TR<<"failing."<<std::endl;
 		return false;
-	}
-	else {
+	} else {
 		TR<<"passing."<<std::endl;
 		return true;
 	}
@@ -270,10 +268,10 @@ ClashCheckFilter::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
-  task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
-  clash_dist( tag->getOption< core::Real >( "clash_dist", 3.5 ) );
+	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
+	clash_dist( tag->getOption< core::Real >( "clash_dist", 3.5 ) );
 	sym_dof_names_ = tag->getOption< std::string >( "sym_dof_names", "" );
-  nsub_bblock_ = tag->getOption<core::Size>("nsub_bblock", 1);
+	nsub_bblock_ = tag->getOption<core::Size>("nsub_bblock", 1);
 	threshold_ = tag->getOption<core::Size>( "cutoff", 0 );
 	verbose_ = tag->getOption< bool >( "verbose", 0 );
 	write_ = tag->getOption< bool >("write2pdb", 0);
@@ -282,13 +280,13 @@ ClashCheckFilter::parse_my_tag(
 core::Real
 ClashCheckFilter::report_sm( core::pose::Pose const & pose ) const
 {
-  return( compute( pose, false, false ) );
-} 
+	return( compute( pose, false, false ) );
+}
 
 void
 ClashCheckFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
-  out << "ClashCheckFilter returns " << compute( pose, false, false ) << std::endl;
+	out << "ClashCheckFilter returns " << compute( pose, false, false ) << std::endl;
 }
 
 protocols::filters::FilterOP

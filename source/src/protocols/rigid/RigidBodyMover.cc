@@ -10,9 +10,9 @@
 /// @file docking_initialization_protocols
 /// @brief initialization protocols for docking
 /// @details
-///		This contains the functions that create initial positions for docking
-///		You can either randomize partner 1 or partner 2, spin partner 2, or
-///		perform a simple perturbation.
+///  This contains the functions that create initial positions for docking
+///  You can either randomize partner 1 or partner 2, spin partner 2, or
+///  perform a simple perturbation.
 /// @author Monica Berrondo
 
 // Unit headers
@@ -80,8 +80,8 @@ const Real max_allowed_rot_mag ( 60.0 );
 
 // default constructor
 RigidBodyMover::RigidBodyMover() :
-		protocols::canonical_sampling::ThermodynamicMover(),
-		rb_jump_( 1 ), dir_( n2c ), rot_center_( 0.0 ), freeze_(false)
+	protocols::canonical_sampling::ThermodynamicMover(),
+	rb_jump_( 1 ), dir_( n2c ), rot_center_( 0.0 ), freeze_(false)
 {
 	Mover::type( "RigidBodyBase" );
 }
@@ -135,17 +135,17 @@ RigidBodyMover::torsion_id_ranges(
 
 
 RigidBodyPerturbMover::RigidBodyPerturbMover(
-		int const rb_jump_in,
-		core::Real const rot_mag_in,
-		core::Real const trans_mag_in,
-		Partner const partner_in,
-		bool interface_in      //rot_center calculated at interface
-	):
-		RigidBodyMover( rb_jump_in ),
-		rot_mag_( rot_mag_in ),
-		trans_mag_( trans_mag_in ),
-		partner_( partner_in ),
-		interface_(interface_in)
+	int const rb_jump_in,
+	core::Real const rot_mag_in,
+	core::Real const trans_mag_in,
+	Partner const partner_in,
+	bool interface_in      //rot_center calculated at interface
+):
+	RigidBodyMover( rb_jump_in ),
+	rot_mag_( rot_mag_in ),
+	trans_mag_( trans_mag_in ),
+	partner_( partner_in ),
+	interface_(interface_in)
 {
 	movable_jumps_.push_back( rb_jump_in );
 	TRBM.Trace << "rb_jump " << rb_jump_in << std::endl;
@@ -163,18 +163,18 @@ RigidBodyPerturbMover::RigidBodyPerturbMover() :
 }
 
 RigidBodyPerturbMover::RigidBodyPerturbMover(
-		int const rb_jump_in,
-		core::Real const rot_mag_in,
-		core::Real const trans_mag_in,
-		Partner const partner_in,
-		utility::vector1< bool > ok_for_centroid_calculation
-	):
-		RigidBodyMover( rb_jump_in ),
-		rot_mag_( rot_mag_in ),
-		trans_mag_( trans_mag_in ),
-		partner_( partner_in ),
-		interface_( false ),
-		ok_for_centroid_calculation_( ok_for_centroid_calculation )
+	int const rb_jump_in,
+	core::Real const rot_mag_in,
+	core::Real const trans_mag_in,
+	Partner const partner_in,
+	utility::vector1< bool > ok_for_centroid_calculation
+):
+	RigidBodyMover( rb_jump_in ),
+	rot_mag_( rot_mag_in ),
+	trans_mag_( trans_mag_in ),
+	partner_( partner_in ),
+	interface_( false ),
+	ok_for_centroid_calculation_( ok_for_centroid_calculation )
 {
 	movable_jumps_.push_back( rb_jump_in );
 	TRBM.Trace << "rb_jump " << rb_jump_in << std::endl;
@@ -184,18 +184,18 @@ RigidBodyPerturbMover::RigidBodyPerturbMover(
 }
 
 RigidBodyPerturbMover::RigidBodyPerturbMover(
-		core::pose::Pose const & pose_in,
-		core::kinematics::MoveMap const & mm,
-		core::Real const rot_mag_in,
-		core::Real const trans_mag_in,
-		Partner const partner_in,
-		bool interface_in //rot_center calculated at interface
-	):
-		RigidBodyMover(),
-		rot_mag_( rot_mag_in ),
-		trans_mag_( trans_mag_in ),
-		partner_( partner_in ),
-		interface_(interface_in)
+	core::pose::Pose const & pose_in,
+	core::kinematics::MoveMap const & mm,
+	core::Real const rot_mag_in,
+	core::Real const trans_mag_in,
+	Partner const partner_in,
+	bool interface_in //rot_center calculated at interface
+):
+	RigidBodyMover(),
+	rot_mag_( rot_mag_in ),
+	trans_mag_( trans_mag_in ),
+	partner_( partner_in ),
+	interface_(interface_in)
 {
 	TRBM.Trace << "rot_mag " << rot_mag_ << std::endl;
 	TRBM.Trace << "trans_mag " << trans_mag_ << std::endl;
@@ -255,9 +255,9 @@ RigidBodyPerturbMover::apply( core::pose::Pose & pose )
 	TR.Trace << "Set movable jump #" << rb_jump_ << std::endl;
 
 	// Set center of rotation unless we are frozen.
-	if(!freeze_){
+	if ( !freeze_ ) {
 		core::Vector dummy_up, dummy_down;
-		if (interface_){
+		if ( interface_ ) {
 			protocols::geometry::centroids_by_jump_int(pose, rb_jump_, dummy_up, dummy_down);
 		} else {
 			protocols::geometry::centroids_by_jump(pose, rb_jump_, dummy_up, dummy_down, ok_for_centroid_calculation_ );
@@ -274,9 +274,9 @@ RigidBodyPerturbMover::apply( core::pose::Pose & pose )
 		Warning() << "Large Gaussian rotational perturbations don't make sense!  Bad choices with -dock_pert?  Use -randomize[12] instead." << std::endl;
 	}
 
-	if(!freeze_){
+	if ( !freeze_ ) {
 		rb_delta_ = flexible_jump.gaussian_move( dir_, trans_mag_, rot_mag_ );
-	}else{
+	} else {
 		flexible_jump.set_rb_deltas(dir_, rb_delta_);
 		flexible_jump.fold_in_rb_deltas();
 	}
@@ -293,7 +293,7 @@ RigidBodyPerturbMover::show(std::ostream & output) const
 {
 	RigidBodyMover::show(output);
 	output << "Magnitude of translational movement (deg): " << get_trans_mag() << std::endl <<
-			"Magnitude of rotational movement (deg):    " << get_rot_mag() << std::endl;
+		"Magnitude of rotational movement (deg):    " << get_rot_mag() << std::endl;
 }
 
 core::Distance
@@ -324,12 +324,12 @@ RigidBodyPerturbRandomJumpMover::RigidBodyPerturbRandomJumpMover() : rot_mag_in_
 RigidBodyPerturbRandomJumpMover::~RigidBodyPerturbRandomJumpMover(){}
 
 RigidBodyPerturbRandomJumpMover::RigidBodyPerturbRandomJumpMover(
-		core::Real const& rot_mag_in,
-		core::Real const& trans_mag_in,
-		core::Size const& num_jump_in) :
-		rot_mag_in_(rot_mag_in),
-		trans_mag_in_(trans_mag_in),
-		num_jump_(num_jump_in)
+	core::Real const& rot_mag_in,
+	core::Real const& trans_mag_in,
+	core::Size const& num_jump_in) :
+	rot_mag_in_(rot_mag_in),
+	trans_mag_in_(trans_mag_in),
+	num_jump_(num_jump_in)
 {}
 
 void
@@ -347,11 +347,11 @@ RigidBodyPerturbRandomJumpMover::get_name() const {
 
 void
 RigidBodyPerturbNoCenterMover::parse_my_tag(
-   utility::tag::TagCOP tag,
-	 basic::datacache::DataMap&,
-	 protocols::filters::Filters_map const &,
-	 protocols::moves::Movers_map const &,
-	 core::pose::Pose const &
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap&,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
 ) {
 	rot_mag_ = tag->getOption< core::Real >( "rot_mag", 0.1 );
 	trans_mag_ = tag->getOption< core::Real >( "trans_mag", 0.4 );
@@ -389,9 +389,9 @@ RigidBodyPerturbNoCenterMover::RigidBodyPerturbNoCenterMover(
 	int const rb_jump_in,
 	core::Real const rot_mag_in,
 	core::Real const trans_mag_in
-) :	RigidBodyMover(),
-		rot_mag_( rot_mag_in ),
-		trans_mag_( trans_mag_in )
+) : RigidBodyMover(),
+	rot_mag_( rot_mag_in ),
+	trans_mag_( trans_mag_in )
 {
 	movable_jumps_.push_back( rb_jump_in );
 	moves::Mover::type( "RigidBodyPerturbNoCenter" );
@@ -415,7 +415,7 @@ RigidBodyPerturbNoCenterMover::RigidBodyPerturbNoCenterMover(
 	moves::Mover::type( "RigidBodyPerturbNoCenter" );
 	for ( Size i=1, i_end = pose_in.num_jump(); i<= i_end; ++i ) {
 		if ( mm.get_jump(i) ) {
-			if( std::find(movable_jumps_.begin(), movable_jumps_.end(), i) == movable_jumps_.end() ) { // if jump is not already in the list
+			if ( std::find(movable_jumps_.begin(), movable_jumps_.end(), i) == movable_jumps_.end() ) { // if jump is not already in the list
 				movable_jumps_.push_back( i );
 			}
 		}
@@ -520,30 +520,30 @@ void
 RigidBodyRandomizeMover::apply( core::pose::Pose & pose )
 {
 	core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
-		TRBM << "Randomize: " << "Jump (before): " << flexible_jump << std::endl;
+	TRBM << "Randomize: " << "Jump (before): " << flexible_jump << std::endl;
 	core::kinematics::Stub upstream_stub = pose.conformation().upstream_jump_stub( rb_jump_ );
 	core::kinematics::Stub downstream_stub = pose.conformation().downstream_jump_stub( rb_jump_ );
-		TRBM << "Randomize: " << "Rot. Center (before): "
-		     << rot_center_.x() << " "
-			 << rot_center_.y() << " "
-			 << rot_center_.z() << std::endl;
+	TRBM << "Randomize: " << "Rot. Center (before): "
+		<< rot_center_.x() << " "
+		<< rot_center_.y() << " "
+		<< rot_center_.z() << std::endl;
 	// comments for set_rb_center() explain which stub to use when!
 	flexible_jump.set_rb_center( dir_, downstream_stub, rot_center_ );
-	if(!freeze_) rotation_matrix_ = protocols::geometry::random_reorientation_matrix(phi_angle_, psi_angle_);
+	if ( !freeze_ ) rotation_matrix_ = protocols::geometry::random_reorientation_matrix(phi_angle_, psi_angle_);
 	flexible_jump.rotation_by_matrix( upstream_stub, rot_center_,  rotation_matrix_);
-		TRBM << "Randomize: " << "Jump (after):  " << flexible_jump << std::endl;
+	TRBM << "Randomize: " << "Jump (after):  " << flexible_jump << std::endl;
 	pose.set_jump( rb_jump_, flexible_jump );
 
-	if(update_center_after_move_){ // update rot_center_ // TODO fix this so we don't update center, because that ruins our freezing ability
+	if ( update_center_after_move_ ) { // update rot_center_ // TODO fix this so we don't update center, because that ruins our freezing ability
 		core::Vector dummy_up, dummy_down;
 		protocols::geometry::centroids_by_jump(pose, rb_jump_, dummy_up, dummy_down);
 		rot_center_ = ( partner_ == 2 ) ? dummy_down : dummy_up;
 	}
 
 	TRBM << "Randomize: " << "Rot. Center (after):  "
-	     << rot_center_.x() << " "
-		 << rot_center_.y() << " "
-		 << rot_center_.z() << std::endl;
+		<< rot_center_.x() << " "
+		<< rot_center_.y() << " "
+		<< rot_center_.z() << std::endl;
 	TRBM << "Randomize: "  << "---" << std::endl;
 }
 
@@ -557,7 +557,7 @@ RigidBodyRandomizeMover::show(std::ostream & output) const
 {
 	RigidBodyMover::show(output);
 	output << "\nPhi angle:   " << get_phi() <<
-			"\nPsi angle:   " << get_psi() << std::endl;
+		"\nPsi angle:   " << get_psi() << std::endl;
 }
 
 core::Size
@@ -620,33 +620,33 @@ void
 RigidBodySpinMover::apply( core::pose::Pose & pose )
 {
 	core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
-		TRBM << "Spin: " << "Jump (before): " << flexible_jump << std::endl;
+	TRBM << "Spin: " << "Jump (before): " << flexible_jump << std::endl;
 	core::kinematics::Stub upstream_stub = pose.conformation().upstream_jump_stub( rb_jump_ );
 	core::kinematics::Stub downstream_stub = pose.conformation().downstream_jump_stub( rb_jump_ );
 
 	core::Vector dummy_up, dummy_down;
-	if ( update_spin_axis_ ){
+	if ( update_spin_axis_ ) {
 		protocols::geometry::centroids_by_jump(pose, rb_jump_, dummy_up, dummy_down);
 		rot_center_ = dummy_down;
 		spin_axis_ = dummy_up - rot_center_;
-		}
+	}
 
 	TRBM << "Spin: " << "Rot (before: "
-	     << rot_center_.x() << " "
-			 << rot_center_.y() << " "
-			 << rot_center_.z() << std::endl;
+		<< rot_center_.x() << " "
+		<< rot_center_.y() << " "
+		<< rot_center_.z() << std::endl;
 	// comments for set_rb_center() explain which stub to use when!
 	flexible_jump.set_rb_center( dir_, downstream_stub, rot_center_ );
 	flexible_jump.rotation_by_axis( upstream_stub, spin_axis_, rot_center_, 360.0f*numeric::random::rg().uniform() );
-		TRBM << "Spin: " << "Jump (after):  " << flexible_jump << std::endl;
+	TRBM << "Spin: " << "Jump (after):  " << flexible_jump << std::endl;
 	pose.set_jump( rb_jump_, flexible_jump );
 	protocols::geometry::centroids_by_jump(pose, rb_jump_, dummy_up, dummy_down);
 	rot_center_ = dummy_down;
-		TRBM << "Spin: " << "Rot  (after): "
-		     << rot_center_.x() << " "
-			 << rot_center_.y() << " "
-			 << rot_center_.z() << std::endl;
-		TRBM << "Spin: " << "---" << std::endl;
+	TRBM << "Spin: " << "Rot  (after): "
+		<< rot_center_.x() << " "
+		<< rot_center_.y() << " "
+		<< rot_center_.z() << std::endl;
+	TRBM << "Spin: " << "---" << std::endl;
 }
 
 std::string
@@ -658,26 +658,26 @@ RigidBodySpinMover::get_name() const {
 
 RigidBodyDeterministicSpinMover::RigidBodyDeterministicSpinMover() : parent()
 {
-    moves::Mover::type( "RigidBodyDeterministicSpin" );
-    angle_magnitude_ = 0.0;
+	moves::Mover::type( "RigidBodyDeterministicSpin" );
+	angle_magnitude_ = 0.0;
 
 }
 
 /// @brief constructor with arguments
 ///       takes a complete set of arguments needed for apply
 RigidBodyDeterministicSpinMover::RigidBodyDeterministicSpinMover( int const rb_jump_in, core::Vector spin_axis, core::Vector rot_center, float angle_magnitude ):
-parent( rb_jump_in )
+	parent( rb_jump_in )
 {
-    moves::Mover::type( "RigidBodyDeterministicSpin" );
-    spin_axis_ = spin_axis;
-    rot_center_ = rot_center;
-    angle_magnitude_ = angle_magnitude;
-    update_spin_axis_ = false;
+	moves::Mover::type( "RigidBodyDeterministicSpin" );
+	spin_axis_ = spin_axis;
+	rot_center_ = rot_center;
+	angle_magnitude_ = angle_magnitude;
+	update_spin_axis_ = false;
 }
 
 RigidBodyDeterministicSpinMover::RigidBodyDeterministicSpinMover( RigidBodyDeterministicSpinMover const & src ) :
-parent( src ),
-angle_magnitude_( src.angle_magnitude_)
+	parent( src ),
+	angle_magnitude_( src.angle_magnitude_)
 {}
 
 RigidBodyDeterministicSpinMover::~RigidBodyDeterministicSpinMover() {}
@@ -685,45 +685,45 @@ RigidBodyDeterministicSpinMover::~RigidBodyDeterministicSpinMover() {}
 void
 RigidBodyDeterministicSpinMover::angle_magnitude( float angle_magnitude )
 {
-    angle_magnitude_ = angle_magnitude;
+	angle_magnitude_ = angle_magnitude;
 }
 
 void
 RigidBodyDeterministicSpinMover::apply( core::pose::Pose & pose )
 {
-    core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
-    TRBM << "Spin: " << "Jump (before): " << flexible_jump << std::endl;
-    core::kinematics::Stub upstream_stub = pose.conformation().upstream_jump_stub( rb_jump_ );
-    core::kinematics::Stub downstream_stub = pose.conformation().downstream_jump_stub( rb_jump_ );
+	core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
+	TRBM << "Spin: " << "Jump (before): " << flexible_jump << std::endl;
+	core::kinematics::Stub upstream_stub = pose.conformation().upstream_jump_stub( rb_jump_ );
+	core::kinematics::Stub downstream_stub = pose.conformation().downstream_jump_stub( rb_jump_ );
 
-    core::Vector dummy_up, dummy_down;
-    if ( update_spin_axis_ ){
-        protocols::geometry::centroids_by_jump(pose, rb_jump_, dummy_up, dummy_down);
-        rot_center_ = dummy_down;
-        spin_axis_ = dummy_up - rot_center_;
-    }
+	core::Vector dummy_up, dummy_down;
+	if ( update_spin_axis_ ) {
+		protocols::geometry::centroids_by_jump(pose, rb_jump_, dummy_up, dummy_down);
+		rot_center_ = dummy_down;
+		spin_axis_ = dummy_up - rot_center_;
+	}
 
-    TRBM << "Spin: " << "Rot (before: "
-    << rot_center_.x() << " "
-    << rot_center_.y() << " "
-    << rot_center_.z() << std::endl;
-    // comments for set_rb_center() explain which stub to use when!
-    flexible_jump.set_rb_center( dir_, downstream_stub, rot_center_ );
-    flexible_jump.rotation_by_axis( upstream_stub, spin_axis_, rot_center_, angle_magnitude_ );
-    TRBM << "Spin: " << "Jump (after):  " << flexible_jump << std::endl;
-    pose.set_jump( rb_jump_, flexible_jump );
-    protocols::geometry::centroids_by_jump(pose, rb_jump_, dummy_up, dummy_down);
-    rot_center_ = dummy_down;
-    TRBM << "Spin: " << "Rot  (after): "
-    << rot_center_.x() << " "
-    << rot_center_.y() << " "
-    << rot_center_.z() << std::endl;
-    TRBM << "Spin: " << "---" << std::endl;
+	TRBM << "Spin: " << "Rot (before: "
+		<< rot_center_.x() << " "
+		<< rot_center_.y() << " "
+		<< rot_center_.z() << std::endl;
+	// comments for set_rb_center() explain which stub to use when!
+	flexible_jump.set_rb_center( dir_, downstream_stub, rot_center_ );
+	flexible_jump.rotation_by_axis( upstream_stub, spin_axis_, rot_center_, angle_magnitude_ );
+	TRBM << "Spin: " << "Jump (after):  " << flexible_jump << std::endl;
+	pose.set_jump( rb_jump_, flexible_jump );
+	protocols::geometry::centroids_by_jump(pose, rb_jump_, dummy_up, dummy_down);
+	rot_center_ = dummy_down;
+	TRBM << "Spin: " << "Rot  (after): "
+		<< rot_center_.x() << " "
+		<< rot_center_.y() << " "
+		<< rot_center_.z() << std::endl;
+	TRBM << "Spin: " << "---" << std::endl;
 }
 
 std::string
 RigidBodyDeterministicSpinMover::get_name() const {
-    return "RigidBodyDeterministicSpinMover";
+	return "RigidBodyDeterministicSpinMover";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -788,34 +788,34 @@ RigidBodyTiltMover::apply( core::pose::Pose & pose )
 
 	// update spin axis, if needed
 	core::Vector spin_axis( spin_axis_ );
-	if ( spin_axis.is_zero() ){
+	if ( spin_axis.is_zero() ) {
 		TRBM <<"Updating spin axis"<<std::endl;
 		spin_axis = partner1_center - partner2_center;
 	}
 
 	// tilt partner 1
-	if (tilt1_mag_ > 0) {
+	if ( tilt1_mag_ > 0 ) {
 		core::Vector tilt_center( find_tilt_center(pose, tilt1_center_, partner1_center ) );
 		tilt( pose, "1", tilt1_mag_, tilt_center, spin_axis, partner1_center, c2n, upstream_stub, downstream_stub);
 	}
 
 	// tilt partner 2
-	if (tilt2_mag_ > 0){
+	if ( tilt2_mag_ > 0 ) {
 		core::Vector tilt_center( find_tilt_center(pose, tilt2_center_, partner2_center ) );
 		tilt( pose, "2", tilt2_mag_, tilt_center, spin_axis, partner2_center, dir_, upstream_stub, downstream_stub);
 	}
 }
 
 void RigidBodyTiltMover::tilt(
-			core::pose::Pose & pose,
-			std::string const & which,
-			core::Real tilt_mag,
-			core::Vector const & tilt_center,
-			core::Vector const & spin_axis,
-			core::Vector const & partner_center,
-			Direction dir,
-			core::kinematics::Stub const & upstream_stub,
-			core::kinematics::Stub const & downstream_stub
+	core::pose::Pose & pose,
+	std::string const & which,
+	core::Real tilt_mag,
+	core::Vector const & tilt_center,
+	core::Vector const & spin_axis,
+	core::Vector const & partner_center,
+	Direction dir,
+	core::kinematics::Stub const & upstream_stub,
+	core::kinematics::Stub const & downstream_stub
 ) const {
 	// calculate a vector perpendicular to the spin axis
 	core::Vector rot_vector1 = (core::Vector(-(spin_axis.y()+spin_axis.z())/spin_axis.x(),1,1));
@@ -835,11 +835,11 @@ void RigidBodyTiltMover::tilt(
 }
 
 core::Vector RigidBodyTiltMover::find_tilt_center(
-			core::pose::Pose const & pose,
-			core::Size tilt_center_res,
-			core::Vector const & partner_center
+	core::pose::Pose const & pose,
+	core::Size tilt_center_res,
+	core::Vector const & partner_center
 ) const {
-	if( tilt_center_res == 0 ) {
+	if ( tilt_center_res == 0 ) {
 		TRBM.Debug << "Tilt center on center of mass." << std::endl;
 		return partner_center;
 	} else {
@@ -856,28 +856,28 @@ RigidBodyTiltMover::get_name() const {
 
 void
 RigidBodyTiltMover::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & pose )
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & pose )
 {
 	rb_jump( tag->getOption< int >( "jump", 1 ) );
 	core::Vector axis( tag->getOption< core::Real >( "x", 0.0 ), tag->getOption< core::Real >( "y", 0.0 ), tag->getOption< core::Real >( "z", 0.0 ));
 	spin_axis( axis );
 	tilt1_mag( tag->getOption< core::Real >( "tilt1_mag", 0.0 )  );
 	tilt2_mag( tag->getOption< core::Real >( "tilt2_mag", 0.0 )  );
-	if( tag->hasOption( "tilt1_center" ) ) {
+	if ( tag->hasOption( "tilt1_center" ) ) {
 		core::Size tilt1_cent( core::pose::parse_resnum( tag->getOption< std::string >( "tilt1_center" ), pose ) );
 		TRBM.Debug << "Tilt 1 center " << tilt1_cent << std::endl;
-		if( tilt1_cent == 0 ) {
+		if ( tilt1_cent == 0 ) {
 			throw utility::excn::EXCN_RosettaScriptsOption("In RigidBodyTiltMover: can't understand value passed to tilt1_center.");
 		}
 		tilt1_center( tilt1_cent );
 	}
-	if( tag->hasOption( "tilt2_center" ) ) {
+	if ( tag->hasOption( "tilt2_center" ) ) {
 		core::Size tilt2_cent( core::pose::parse_resnum( tag->getOption< std::string >( "tilt2_center" ), pose ) );
 		TRBM.Debug << "Tilt 2 center " << tilt2_cent << std::endl;
-		if( tilt2_cent == 0 ) {
+		if ( tilt2_cent == 0 ) {
 			throw utility::excn::EXCN_RosettaScriptsOption("In RigidBodyTiltMover: can't understand value passed to tilt2_center.");
 		}
 		tilt2_center( tilt2_cent );
@@ -952,9 +952,9 @@ RigidBodyTransMover::~RigidBodyTransMover() {}
 core::Vector
 RigidBodyTransMover::centroid_axis(core::pose::Pose const & pose_in) const
 {
-  core::Vector upstream_dummy, downstream_dummy;
-  protocols::geometry::centroids_by_jump(pose_in, rb_jump(), upstream_dummy, downstream_dummy );
-  return downstream_dummy - upstream_dummy;
+	core::Vector upstream_dummy, downstream_dummy;
+	protocols::geometry::centroids_by_jump(pose_in, rb_jump(), upstream_dummy, downstream_dummy );
+	return downstream_dummy - upstream_dummy;
 }
 
 void
@@ -983,8 +983,7 @@ RigidBodyTransMover::apply( core::pose::Pose & pose )
 		// if partners are close, take small stepsize of 1A
 		if ( distance <= 5 ) {
 			step_size_ = 1.0;
-		}
-		else {
+		} else {
 			step_size_ = std::sqrt( distance );
 		}
 		TRBM << "distance between partners: " << distance << std::endl;
@@ -1008,10 +1007,10 @@ RigidBodyTransMover::get_name() const {
 
 void
 RigidBodyTransMover::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & )
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & )
 {
 	step_size( tag->getOption< core::Real >( "distance", 1.0 ) );
 	rb_jump( tag->getOption< int >( "jump", 1 ) );
@@ -1095,7 +1094,7 @@ void UniformSphereTransMover::reset_trans_axis(){
 /// choosing a random distance and a random direction samples more near the center.
 void UniformSphereTransMover::apply( core::pose::Pose & pose )
 {
-	if(! freeze_) reset_trans_axis();
+	if ( ! freeze_ ) reset_trans_axis();
 
 	RigidBodyTransMover mover( pose, rb_jump_);
 	mover.trans_axis( trans_axis_ );
@@ -1170,17 +1169,17 @@ void RigidBodyDofRandomizeMover::apply( core::pose::Pose & pose )
 		// uniform randomization as well. Observe that randomizing x,y,z independent does not give
 		// uniform randomization!
 		if ( std::abs( dof_.range1_lower(X_ANGLE_DOF) - dof_.range1_upper(X_ANGLE_DOF) ) == 360 &&
-			  std::abs( dof_.range1_lower(Y_ANGLE_DOF) - dof_.range1_upper(Y_ANGLE_DOF) ) == 360 &&
-			  std::abs( dof_.range1_lower(Z_ANGLE_DOF) - dof_.range1_upper(Z_ANGLE_DOF) ) == 360 ) {
+				std::abs( dof_.range1_lower(Y_ANGLE_DOF) - dof_.range1_upper(Y_ANGLE_DOF) ) == 360 &&
+				std::abs( dof_.range1_lower(Z_ANGLE_DOF) - dof_.range1_upper(Z_ANGLE_DOF) ) == 360 ) {
 			if ( dof_.jump_direction(i) == c2n ) flexible_jump.reverse();
 			numeric::xyzMatrix< Real > rot = protocols::geometry::random_reorientation_matrix()*
-			flexible_jump.get_rotation();
+				flexible_jump.get_rotation();
 			flexible_jump.set_rotation( rot );
 			if ( dof_.jump_direction(i) == c2n ) flexible_jump.reverse();
 			pose.set_jump( rb_jump_, flexible_jump );
 			break;
 		}
-		//	randomize each rotational dof independently
+		// randomize each rotational dof independently
 		if ( dof_.allow_dof(i) && dof_.has_range1(i) ) {
 			numeric::xyzMatrix< Real > rot;
 			core::Real angle = numeric::random::rg().uniform()*(dof_.range1_upper(i) - dof_.range1_lower(i) ) + dof_.range1_lower(i);
@@ -1222,7 +1221,7 @@ RigidBodyDofSeqRandomizeMover::RigidBodyDofSeqRandomizeMover() :
 	moves::Mover::type( "RigidBodyDofRandomize" );
 }
 
-  // constructor with arguments
+// constructor with arguments
 RigidBodyDofSeqRandomizeMover::RigidBodyDofSeqRandomizeMover(
 	std::map< Size, core::conformation::symmetry::SymDof > const & dofs
 ):
@@ -1267,8 +1266,8 @@ RigidBodyDofSeqRandomizeMover::get_name() const {
 
 // default constructor
 RigidBodyDofTransMover::RigidBodyDofTransMover() : parent(),
-		last_slide_good_(false),
-		jump_dir_(n2c)
+	last_slide_good_(false),
+	jump_dir_(n2c)
 {
 	moves::Mover::type( "RigidBodyDofTrans" );
 }
@@ -1294,7 +1293,7 @@ RigidBodyDofTransMover::RigidBodyDofTransMover(
 	// This is fishy. We should not have different directions for the same jump
 	// need to put in checks for that...
 	if ( dof.jump_direction(1) == c2n || dof.jump_direction(2) == c2n
-		  || dof.jump_direction(3) == c2n ) jump_dir_ = c2n;
+			|| dof.jump_direction(3) == c2n ) jump_dir_ = c2n;
 	step_size_ = step_size;
 	core::Vector zero(0,0,0), x(1,0,0), y(0,1,0), z(0,0,1);
 	trans_axis_ = zero;
@@ -1350,7 +1349,7 @@ RigidBodyDofTransMover::RigidBodyDofTransMover(
 		// This is fishy. We should not have different directions for the same jump
 		// need to put in checks for that...
 		if ( dof_.jump_direction(1) == c2n || dof_.jump_direction(2) == c2n
-			  || dof_.jump_direction(3) == c2n ) jump_dir_ = c2n;
+				|| dof_.jump_direction(3) == c2n ) jump_dir_ = c2n;
 		core::Vector zero(0,0,0), x(1,0,0), y(0,1,0), z(0,0,1);
 		trans_axis_ = zero;
 		if ( dof_.allow_dof(1) ) {
@@ -1367,10 +1366,10 @@ RigidBodyDofTransMover::RigidBodyDofTransMover(
 }
 
 RigidBodyDofTransMover::RigidBodyDofTransMover( RigidBodyDofTransMover const & src ) : parent( src ),
-		last_slide_good_(false),
-		jump_dir_( src.jump_dir_ ),
-		step_size_( src.step_size_ ),
-		trans_axis_( src.trans_axis_ )
+	last_slide_good_(false),
+	jump_dir_( src.jump_dir_ ),
+	step_size_( src.step_size_ ),
+	trans_axis_( src.trans_axis_ )
 {}
 
 RigidBodyDofTransMover::~RigidBodyDofTransMover() {}
@@ -1379,7 +1378,7 @@ RigidBodyDofTransMover::~RigidBodyDofTransMover() {}
 void RigidBodyDofTransMover::apply( core::pose::Pose & pose )
 {
 	last_slide_good_ = true;
-  core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
+	core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
 	int c2n(-1);
 	TRBM.Debug << "Translate: " << "Jump (before): " << flexible_jump << std::endl;
 	Vector trans_start ( flexible_jump.get_translation() );
@@ -1387,18 +1386,18 @@ void RigidBodyDofTransMover::apply( core::pose::Pose & pose )
 
 	// if range2_is_bound is set, make sure jump stays within bound
 	core::Vector x_i = trans_start + step_size_*trans_axis_;
-	for (int ii=1; ii<=3; ++ii) {
-		if (dof_.allow_dof(ii) && dof_.range2_is_bound(ii) && dof_.has_range2_lower(ii)) {
+	for ( int ii=1; ii<=3; ++ii ) {
+		if ( dof_.allow_dof(ii) && dof_.range2_is_bound(ii) && dof_.has_range2_lower(ii) ) {
 			if ( x_i[ii] < dof_.range2_lower(ii) || x_i[ii] > dof_.range2_upper(ii) ) {
 				x_i[ii] = trans_start[ii];
 				last_slide_good_ = false;
 			}
 		}
 	}
-  flexible_jump.set_translation( x_i );
+	flexible_jump.set_translation( x_i );
 	if ( jump_dir_ == c2n ) flexible_jump.reverse();
 	TRBM.Debug << "Translate: " << "Jump (after):  " << flexible_jump << std::endl;
-  pose.set_jump( rb_jump_, flexible_jump );
+	pose.set_jump( rb_jump_, flexible_jump );
 }
 
 std::string
@@ -1417,9 +1416,9 @@ RigidBodyDofSeqTransMover::RigidBodyDofSeqTransMover() : RigidBodyMover()
 // and apply a translation
 // constructor with arguments
 RigidBodyDofSeqTransMover::RigidBodyDofSeqTransMover(
-																	  std::map< Size, core::conformation::symmetry::SymDof > dofs
-																	  ):
-RigidBodyMover()
+	std::map< Size, core::conformation::symmetry::SymDof > dofs
+):
+	RigidBodyMover()
 {
 
 	utility::vector1< int > trans_jumps;
@@ -1462,28 +1461,28 @@ RigidBodyDofSeqTransMover::~RigidBodyDofSeqTransMover() {}
 void RigidBodyDofSeqTransMover::apply( core::pose::Pose & pose )
 {
 
-  std::map< Size, core::conformation::symmetry::SymDof >::iterator jump_iterator;
-  utility::vector1< int >::iterator start, end, it;
-  start = rb_jumps_.begin();
-  end = rb_jumps_.end();
+	std::map< Size, core::conformation::symmetry::SymDof >::iterator jump_iterator;
+	utility::vector1< int >::iterator start, end, it;
+	start = rb_jumps_.begin();
+	end = rb_jumps_.end();
 
-  //random__shuffle(rb_jumps_.begin(), rb_jumps_.end() );
-    numeric::random::random_permutation(rb_jumps_.begin(), rb_jumps_.end(), numeric::random::rg());
+	//random__shuffle(rb_jumps_.begin(), rb_jumps_.end() );
+	numeric::random::random_permutation(rb_jumps_.begin(), rb_jumps_.end(), numeric::random::rg());
 
-  for ( it = start; it != end; ++it ) {
-    jump_iterator = dofs_.find( *it );
-    if ( jump_iterator == dofs_.end() ) {
-	    T("protocols.moves.rigid_body") << "[WARNING] jump dof not found!" << std::endl;
-    } else {
-      core::conformation::symmetry::SymDof dof( (*jump_iterator).second );
-      RigidBodyDofTransMover dofmover( dof, *it, step_size_ );
+	for ( it = start; it != end; ++it ) {
+		jump_iterator = dofs_.find( *it );
+		if ( jump_iterator == dofs_.end() ) {
+			T("protocols.moves.rigid_body") << "[WARNING] jump dof not found!" << std::endl;
+		} else {
+			core::conformation::symmetry::SymDof dof( (*jump_iterator).second );
+			RigidBodyDofTransMover dofmover( dof, *it, step_size_ );
 			// Silly, just reverse the direction if this vector is reversed
 			// Since we don't store the direction in this mover
 			// trans_axis_ serves as a storage for the direction
 			if ( trans_axis_(1) < 0 ) dofmover.trans_axis().negate();
-      dofmover.apply( pose );
-    }
-  }
+			dofmover.apply( pose );
+		}
+	}
 }
 
 
@@ -1498,10 +1497,10 @@ RigidBodyDofRandomTransMover::RigidBodyDofRandomTransMover() : parent()
 	moves::Mover::type( "RigidBodyDofRandomTrans" );
 }
 
-	// @details go randomly set a random translation. Select all
-	// movable dofs but apply the randomization in random order
+// @details go randomly set a random translation. Select all
+// movable dofs but apply the randomization in random order
 
-  // constructor with arguments
+// constructor with arguments
 RigidBodyDofRandomTransMover::RigidBodyDofRandomTransMover(
 	std::map< Size, core::conformation::symmetry::SymDof > dofs
 ):
@@ -1548,28 +1547,28 @@ RigidBodyDofRandomTransMover::~RigidBodyDofRandomTransMover() {}
 void RigidBodyDofRandomTransMover::apply( core::pose::Pose & pose )
 {
 
-  std::map< Size, core::conformation::symmetry::SymDof >::iterator jump_iterator;
-  utility::vector1< int >::iterator start, end, it;
-  start = rb_jumps_.begin();
-  end = rb_jumps_.end();
+	std::map< Size, core::conformation::symmetry::SymDof >::iterator jump_iterator;
+	utility::vector1< int >::iterator start, end, it;
+	start = rb_jumps_.begin();
+	end = rb_jumps_.end();
 
-  //random__shuffle(rb_jumps_.begin(), rb_jumps_.end() );
-  numeric::random::random_permutation(rb_jumps_.begin(), rb_jumps_.end(), numeric::random::rg());
+	//random__shuffle(rb_jumps_.begin(), rb_jumps_.end() );
+	numeric::random::random_permutation(rb_jumps_.begin(), rb_jumps_.end(), numeric::random::rg());
 
 	int jump_;
 	if ( rb_jumps_.size() < 1 ) return;
 	else jump_ = rb_jumps_[1];
-  jump_iterator = dofs_.find( jump_ );
-  if ( jump_iterator == dofs_.end() ) {
-	T("protocols.moves.rigid_body") << "[WARNING] jump dof not found!" << std::endl;
-  } else {
+	jump_iterator = dofs_.find( jump_ );
+	if ( jump_iterator == dofs_.end() ) {
+		T("protocols.moves.rigid_body") << "[WARNING] jump dof not found!" << std::endl;
+	} else {
 		core::conformation::symmetry::SymDof dof( (*jump_iterator).second );
-    RigidBodyDofTransMover dofmover( dof, (*jump_iterator).first, step_size_ );
+		RigidBodyDofTransMover dofmover( dof, (*jump_iterator).first, step_size_ );
 		// Silly, just reverse the direction if this vector is reversed
 		// Since we don't store the direction in this mover
 		// trans_axis_ serves as a storage for the direction
 		if ( trans_axis_(1) < 0 ) dofmover.trans_axis().negate();
-      dofmover.apply( pose );
+		dofmover.apply( pose );
 	}
 }
 
@@ -1592,12 +1591,12 @@ RigidBodyDofPerturbMover::RigidBodyDofPerturbMover(
 	rot_mag_( rot_mag_in ),
 	trans_mag_( trans_mag_in )
 {
-//  TRBM.Debug << "rot_mag " << rot_mag_in << std::endl;
-//  TRBM.Debug << "trans_mag " << trans_mag_in << std::endl;
+	//  TRBM.Debug << "rot_mag " << rot_mag_in << std::endl;
+	//  TRBM.Debug << "trans_mag " << trans_mag_in << std::endl;
 	moves::Mover::type( "RigidBodyDofPerturbMover" );
 
-  rb_jump_ = rb_jump_in;
-  dof_ = dof;
+	rb_jump_ = rb_jump_in;
+	dof_ = dof;
 }
 
 
@@ -1607,33 +1606,33 @@ RigidBodyDofPerturbMover::RigidBodyDofPerturbMover(
 // The jump is selected randomly from the allowed dofs
 RigidBodyDofPerturbMover::RigidBodyDofPerturbMover(
 	std::map< Size, core::conformation::symmetry::SymDof > dofs,
-  Real const rot_mag_in,
-  Real const trans_mag_in
+	Real const rot_mag_in,
+	Real const trans_mag_in
 ):
-  RigidBodyMover(),
-  rot_mag_( rot_mag_in ),
-  trans_mag_( trans_mag_in )
+	RigidBodyMover(),
+	rot_mag_( rot_mag_in ),
+	trans_mag_( trans_mag_in )
 {
-  utility::vector1< int > moving_jumps;
+	utility::vector1< int > moving_jumps;
 
-//  TRBM.Debug << "rot_mag " << rot_mag_in << std::endl;
-//  TRBM.Debug << "trans_mag " << trans_mag_in << std::endl;
+	//  TRBM.Debug << "rot_mag " << rot_mag_in << std::endl;
+	//  TRBM.Debug << "trans_mag " << trans_mag_in << std::endl;
 	moves::Mover::type( "RigidBodyDofPerturbMover" );
 
 	std::map< Size, core::conformation::symmetry::SymDof >::iterator it;
 	std::map< Size, core::conformation::symmetry::SymDof >::iterator it_begin = dofs.begin();
 	std::map< Size, core::conformation::symmetry::SymDof >::iterator it_end = dofs.end();
 	for ( it = it_begin; it != it_end; ++it ) {
-    moving_jumps.push_back( (*it).first );
-  }
+		moving_jumps.push_back( (*it).first );
+	}
 
-  if ( moving_jumps.empty() ) {
-    T("protocols.moves.rigid_body") << "[WARNING] no movable jumps!" << std::endl;
-    return;
-  }
-  rb_jump_ = numeric::random::rg().random_element( moving_jumps );
+	if ( moving_jumps.empty() ) {
+		T("protocols.moves.rigid_body") << "[WARNING] no movable jumps!" << std::endl;
+		return;
+	}
+	rb_jump_ = numeric::random::rg().random_element( moving_jumps );
 	std::map< Size, core::conformation::symmetry::SymDof >::iterator jump_iterator =
-																				dofs.find( rb_jump_ );
+		dofs.find( rb_jump_ );
 	if ( jump_iterator == dofs.end() ) {
 		T("protocols.moves.rigid_body") << "[WARNING] jump dof not found!" << std::endl;
 	} else {
@@ -1656,20 +1655,20 @@ void RigidBodyDofPerturbMover::apply( core::pose::Pose & pose )
 {
 	core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
 
-  int c2n(-1);
+	int c2n(-1);
 
 	for ( Size i = 1; i<= 3; ++i ) {
 		if ( dof_.allow_dof(i) ) {
 			// the dat in the dof takes precedence
 			core::Real transmag;
-			if ( dof_.has_range2_lower(i) && !dof_.range2_is_bound(i)) transmag = dof_.range2_lower(i);
+			if ( dof_.has_range2_lower(i) && !dof_.range2_is_bound(i) ) transmag = dof_.range2_lower(i);
 			else transmag = trans_mag_;
 			if ( dof_.jump_direction(i) == c2n ) flexible_jump.reverse();
 			flexible_jump.gaussian_move_single_rb( dir_, transmag, i );
 			if ( dof_.jump_direction(i) == c2n ) flexible_jump.reverse();
 
 			// if range2_is_bound is set, make sure jump stays within bound
-			if (dof_.has_range2_lower(i) && dof_.range2_is_bound(i)) {
+			if ( dof_.has_range2_lower(i) && dof_.range2_is_bound(i) ) {
 				core::Vector trans_i = flexible_jump.rt().get_translation();
 				trans_i(i) = std::max( dof_.range2_lower(i), trans_i(i) );
 				trans_i(i) = std::min( dof_.range2_upper(i), trans_i(i) );
@@ -1684,7 +1683,7 @@ void RigidBodyDofPerturbMover::apply( core::pose::Pose & pose )
 			if ( dof_.has_range2_lower(i) && !dof_.range2_is_bound(i) ) rotmag = dof_.range2_lower(i);
 			else rotmag = rot_mag_;
 			if ( dof_.jump_direction(i) == c2n ) flexible_jump.reverse();
-				flexible_jump.gaussian_move_single_rb( dir_, rotmag, i );
+			flexible_jump.gaussian_move_single_rb( dir_, rotmag, i );
 			if ( dof_.jump_direction(i) == c2n ) flexible_jump.reverse();
 		}
 	}
@@ -1699,31 +1698,31 @@ RigidBodyDofPerturbMover::get_name() const {
 // @details apply perturbations to all allowed dofs. Apply them in sequential order.
 RigidBodyDofSeqPerturbMover::RigidBodyDofSeqPerturbMover(
 	std::map< Size, core::conformation::symmetry::SymDof > dofs,
-  Real const rot_mag_in,
-  Real const trans_mag_in
+	Real const rot_mag_in,
+	Real const trans_mag_in
 ):
-  RigidBodyMover(),
-  rot_mag_( rot_mag_in ),
-  trans_mag_( trans_mag_in )
+	RigidBodyMover(),
+	rot_mag_( rot_mag_in ),
+	trans_mag_( trans_mag_in )
 {
-  utility::vector1< int > moving_jumps;
+	utility::vector1< int > moving_jumps;
 
-//  TRBM.Debug << "rot_mag " << rot_mag_in << std::endl;
-//  TRBM.Debug << "trans_mag " << trans_mag_in << std::endl;
+	//  TRBM.Debug << "rot_mag " << rot_mag_in << std::endl;
+	//  TRBM.Debug << "trans_mag " << trans_mag_in << std::endl;
 	moves::Mover::type( "RigidBodyDofSeqPerturbMover" );
 
 	std::map< Size, core::conformation::symmetry::SymDof >::iterator it;
-  std::map< Size, core::conformation::symmetry::SymDof >::iterator it_begin = dofs.begin();
-  std::map< Size, core::conformation::symmetry::SymDof >::iterator it_end = dofs.end();
-  for ( it = it_begin; it != it_end; ++it ) {
-    moving_jumps.push_back( (*it).first );
-  }
+	std::map< Size, core::conformation::symmetry::SymDof >::iterator it_begin = dofs.begin();
+	std::map< Size, core::conformation::symmetry::SymDof >::iterator it_end = dofs.end();
+	for ( it = it_begin; it != it_end; ++it ) {
+		moving_jumps.push_back( (*it).first );
+	}
 
-  if ( moving_jumps.empty() ) {
-    T("protocols.moves.rigid_body") << "[WARNING] no movable jumps!" << std::endl;
-    return;
-  }
-  rb_jumps_ = moving_jumps;
+	if ( moving_jumps.empty() ) {
+		T("protocols.moves.rigid_body") << "[WARNING] no movable jumps!" << std::endl;
+		return;
+	}
+	rb_jumps_ = moving_jumps;
 	dofs_ = dofs;
 }
 
@@ -1754,7 +1753,7 @@ void RigidBodyDofSeqPerturbMover::apply( core::pose::Pose & pose )
 	for ( it = start; it != end; ++it ) {
 		jump_iterator = dofs_.find( *it );
 		if ( jump_iterator == dofs_.end() ) {
-    T("protocols.moves.rigid_body") << "[WARNING] jump dof not found!" << std::endl;
+			T("protocols.moves.rigid_body") << "[WARNING] jump dof not found!" << std::endl;
 		} else {
 			core::conformation::symmetry::SymDof dof( (*jump_iterator).second );
 			RigidBodyDofPerturbMover dofmover( *it, dof, rot_mag_, trans_mag_ );

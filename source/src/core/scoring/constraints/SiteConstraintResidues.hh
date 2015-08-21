@@ -45,28 +45,28 @@ namespace constraints {
 class SiteConstraintResidues : public AmbiguousConstraint {
 public:
 
-    /// @brief Constructor
-    SiteConstraintResidues();
+	/// @brief Constructor
+	SiteConstraintResidues();
 
-    /// @brief Constructor
-    SiteConstraintResidues( ConstraintCOPs & cst_in ) ;
+	/// @brief Constructor
+	SiteConstraintResidues( ConstraintCOPs & cst_in ) ;
 
 
-    virtual
-    ConstraintOP clone() const {
-        return ConstraintOP( new SiteConstraintResidues(*this) );
-    }
+	virtual
+	ConstraintOP clone() const {
+		return ConstraintOP( new SiteConstraintResidues(*this) );
+	}
 
-    std::string type() const {
-        return "SiteConstraintResidues";
-    }
+	std::string type() const {
+		return "SiteConstraintResidues";
+	}
 
-    /// @brief read in constraint defiinition
-    void
-    read_def( std::istream& data, pose::Pose const& pose,func::FuncFactory const& func_factory );
+	/// @brief read in constraint defiinition
+	void
+	read_def( std::istream& data, pose::Pose const& pose,func::FuncFactory const& func_factory );
 
-    void show( std::ostream& out) const;
-    void setup_csts( Size res1, std::string name, Size res2, Size res3, core::pose::Pose const & pose, func::FuncOP const & func );
+	void show( std::ostream& out) const;
+	void setup_csts( Size res1, std::string name, Size res2, Size res3, core::pose::Pose const & pose, func::FuncOP const & func );
 
 private:
 

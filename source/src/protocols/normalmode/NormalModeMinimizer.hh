@@ -67,7 +67,7 @@ public:
 	deriv_check_result() const;
 
 	void set_modes( utility::vector1< core::Size > const modes_using_in ){
-	  modes_using_ = modes_using_in;
+		modes_using_ = modes_using_in;
 	}
 
 	virtual
@@ -86,8 +86,8 @@ public:
 private:
 	void
 	deriv_check_local(
-										pose::Pose const &pose,
-										protocols::normalmode::NormalModeMultifunc f ) const;
+		pose::Pose const &pose,
+		protocols::normalmode::NormalModeMultifunc f ) const;
 
 
 private:

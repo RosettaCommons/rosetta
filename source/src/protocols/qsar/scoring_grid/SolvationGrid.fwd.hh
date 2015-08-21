@@ -18,9 +18,9 @@
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {
-    
+
 class SolvationGrid;
-    
+
 
 typedef utility::pointer::shared_ptr<SolvationGrid> SolvationGridOP;
 typedef utility::pointer::shared_ptr<SolvationGrid const> SolvationGridCOP ;
@@ -30,4 +30,4 @@ typedef utility::pointer::shared_ptr<SolvationGrid const> SolvationGridCOP ;
 }
 
 
-#endif 
+#endif

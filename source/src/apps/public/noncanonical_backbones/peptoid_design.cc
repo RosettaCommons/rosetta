@@ -1,4 +1,4 @@
-	// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
@@ -9,7 +9,7 @@
 
 
 // based on code from mini/src/apps/public/scenarios/doug_dock_design_min_mod2_cal_cal.cc
-//			and https://svn.rosettacommons.org/source/branches/releases/rosetta-3.1/manual/advanced/example_protocol.cc
+//   and https://svn.rosettacommons.org/source/branches/releases/rosetta-3.1/manual/advanced/example_protocol.cc
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -122,17 +122,17 @@ IntegerVectorOptionKey const peptoid_design_positions( "peptoid_design::peptoid_
 
 class PeptoidDesignMover : public Mover {
 
-	public:
+public:
 
-		//default ctor
-		PeptoidDesignMover(): Mover("PeptoidDesignMover"){}
+	//default ctor
+	PeptoidDesignMover(): Mover("PeptoidDesignMover"){}
 
-		//default dtor
-		virtual ~PeptoidDesignMover(){}
+	//default dtor
+	virtual ~PeptoidDesignMover(){}
 
-		//methods
-		virtual void apply( core::pose::Pose & pose );
-		virtual std::string get_name() const { return "PeptoidDesignMover"; }
+	//methods
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const { return "PeptoidDesignMover"; }
 
 };
 
@@ -145,7 +145,7 @@ main( int argc, char* argv[] )
 {
 	try {
 		/*********************************************************************************************************************
-	Common Setup
+		Common Setup
 		**********************************************************************************************************************/
 
 		// add application specific options to options system
@@ -181,9 +181,9 @@ PeptoidDesignMover::apply(
 {
 	// create score function
 	scoring::ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( scoring::MM_STD_WTS ) );
-	score_fxn->set_weight(	atom_pair_constraint, 10 );
-	score_fxn->set_weight(	angle_constraint, 10 );
-	score_fxn->set_weight(	dihedral_constraint, 10 );
+	score_fxn->set_weight( atom_pair_constraint, 10 );
+	score_fxn->set_weight( angle_constraint, 10 );
+	score_fxn->set_weight( dihedral_constraint, 10 );
 
 	// get a fold tree suitable for docking (local helper function)
 	setup_pert_foldtree( pose );
@@ -269,7 +269,7 @@ PeptoidDesignMover::apply(
 	desn_mm->set_jump( 1, true );
 
 	// create minimization mover
-	simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( desn_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
+	simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( desn_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 
 	//definitely want sidechain minimization here
 	using protocols::simple_moves::TaskAwareMinMoverOP;
@@ -305,7 +305,7 @@ PeptoidDesignMover::apply(
 	peptoid_name_set.erase( peptoid_name_set.find( "704" ) ); // not sure what is up but don't want to design this anyway
 
 	TR << "Allowed sidechains: ";
-	for ( std::set< std::string >::const_iterator j(peptoid_name_set.begin()); j != peptoid_name_set.end(); ++j) {
+	for ( std::set< std::string >::const_iterator j(peptoid_name_set.begin()); j != peptoid_name_set.end(); ++j ) {
 		TR << *j << " ";
 	}
 	TR << std::endl;
@@ -318,16 +318,16 @@ PeptoidDesignMover::apply(
 	TR << "Main loop..." << std::endl;
 
 	ncbb_design_main_loop( Size( option[ peptoid_design::design_loop_num ].value() ),
-						  Size( option[ peptoid_design::pert_num ].value() ),
-						  pose,
-						  pert_trial,
-						  option[ peptoid_design::peptoid_design_positions ].value(),
-						  pep_start,
-						  pep_end,
-						  desn_ta_min,
-						  score_fxn,
-						  mc
-						  );
+		Size( option[ peptoid_design::pert_num ].value() ),
+		pose,
+		pert_trial,
+		option[ peptoid_design::peptoid_design_positions ].value(),
+		pep_start,
+		pep_end,
+		desn_ta_min,
+		score_fxn,
+		mc
+	);
 
 	mc->recover_low( pose );
 

@@ -66,10 +66,10 @@ static thread_local basic::Tracer TR( "core.scoring.ProQPotential" );
 
 ProQPotential::ProQPotential()
 {
-	//	 load the data
-	//	Size const num_models( 5 ); 
-	//Size const num_features( 260 ); 
-	Size const num_head( 11 ); 
+	//  load the data
+	// Size const num_models( 5 );
+	//Size const num_features( 260 );
+	Size const num_head( 11 );
 	//Size const num_features_=260;
 	//Size const num_features_proq2_=174;
 
@@ -79,8 +79,8 @@ ProQPotential::ProQPotential()
 	cross_val_=false;
 
 
-	if(basic::options::option[ basic::options::OptionKeys::ProQ::svmmodel].user()) {
-		svm_model_=basic::options::option[basic::options::OptionKeys::ProQ::svmmodel](); 
+	if ( basic::options::option[ basic::options::OptionKeys::ProQ::svmmodel].user() ) {
+		svm_model_=basic::options::option[basic::options::OptionKeys::ProQ::svmmodel]();
 		cross_val_=true;
 	}
 
@@ -88,12 +88,12 @@ ProQPotential::ProQPotential()
 	std::string tag,line;
 	//std::string aa;
 	Size pos;
-//	chemical::AA aa;
-//
+	// chemical::AA aa;
+	//
 	linear_weights_.dimension(num_models_,num_features_proqm_)=0;
 	b_.dimension(num_models_);
 	utility::io::izstream stream;
-	for ( Size i=1; i<= num_models_; ++i ){
+	for ( Size i=1; i<= num_models_; ++i ) {
 		std::ostringstream i_stream;
 		i_stream << i;;
 		//std::cout << file << "\n";
@@ -101,60 +101,62 @@ ProQPotential::ProQPotential()
 		std::string file("scoring/ProQ/ProQM_model." + i_stream.str() + ".linear_retrained_for_rosetta");
 		//std::cout << "file: " << file << std::endl;
 		//std::string file("scoring/ProQ/ProQM_model." + i_stream.str() + ".linear");
-		basic::database::open( stream, file); 
-		for( Size j=1;j<=num_features_proqm_+num_head;++j) {
+		basic::database::open( stream, file);
+		for ( Size j=1; j<=num_features_proqm_+num_head; ++j ) {
 			getline( stream, line );
 			std::istringstream l(line);
 			//std::cout << tag << " " << aa << std::endl;
-			if(j==1) {
+			if ( j==1 ) {
 				l >> tag;
 				if ( l.fail() || tag != "SVM-light"  ) utility_exit_with_message("bad format for " + file);
 			}
-			if(j==num_head)
+			if ( j==num_head ) {
 				l >> b_(i);
-			if(j>num_head) {
+			}
+			if ( j>num_head ) {
 				l >> tag;
 				l >> pos;
-				l >> linear_weights_(i,pos); 
+				l >> linear_weights_(i,pos);
 				//TR.Debug << j << " " << pos << " " << linear_weights_(i,pos) << " " << b_(i) << std::endl;
 			}
 		}
 		//std::cout << "Before outputing features..." << std::endl;
 		//for(Size j=1;j<=num_features_;++j) {
-		//	std::cout << j << " " << linear_weights_(i,j) << " " << b_(i) << std::endl;
+		// std::cout << j << " " << linear_weights_(i,j) << " " << b_(i) << std::endl;
 		//}
 	}
 
 	linear_weights_proq2_.dimension(num_models_,num_features_proq2_);
 	b_proq2_.dimension(num_models_);
 	//utility::io::izstream stream;
-	for ( Size i=1; i<= num_models_; ++i ){
+	for ( Size i=1; i<= num_models_; ++i ) {
 		std::ostringstream i_stream;
 		i_stream << i;;
 		//std::cout << file << "\n";
 		//utility::io::izstream stream;
 		std::string file("scoring/ProQ/ProQ2_model." + i_stream.str() + ".linear_retrained_for_rosetta"); //_retrained_for_rosetta");
 		basic::database::open( stream, file);
-		for( Size j=1;j<=num_features_proq2_+num_head;++j) {
+		for ( Size j=1; j<=num_features_proq2_+num_head; ++j ) {
 			getline( stream, line );
 			std::istringstream l(line);
 			//std::cout << tag << " " << aa << std::endl;
-			if(j==1) {
+			if ( j==1 ) {
 				l >> tag;
 				if ( l.fail() || tag != "SVM-light"  ) utility_exit_with_message("bad format for " + file);
 			}
-			if(j==num_head)
+			if ( j==num_head ) {
 				l >> b_proq2_(i);
-			if(j>num_head) {
+			}
+			if ( j>num_head ) {
 				l >> tag;
 				l >> pos;
 				l >> linear_weights_proq2_(i,pos);
 			}
 		}
-	/*	for(Size j=1;j<=num_features_proq2_;++j) {
-			TR.Debug << j << " " << linear_weights_proq2_(i,j) << " " << b_proq2_(i) << std::endl;
+		/* for(Size j=1;j<=num_features_proq2_;++j) {
+		TR.Debug << j << " " << linear_weights_proq2_(i,j) << " " << b_proq2_(i) << std::endl;
 		}
-	 */
+		*/
 	}
 }
 
@@ -165,53 +167,55 @@ ProQPotential::setup_for_scoring( pose::Pose & ) const
 
 void
 ProQPotential::score(pose::Pose & pose,
-											ObjexxFCL::FArray2D< Real > & feature_vector,
-											ObjexxFCL::FArray1D< Real > & score,
-											bool ProQ2) const
+	ObjexxFCL::FArray2D< Real > & feature_vector,
+	ObjexxFCL::FArray1D< Real > & score,
+	bool ProQ2) const
 {
 
 	Size nres=pose.total_residue();
 	Size n=1; //if position in sequence.
-	if(!ProQ2) {
-		for(Size l=1;l<=nres;++l) {
-			if (pose.residue(l).type().aa() == core::chemical::aa_vrt) continue;
+	if ( !ProQ2 ) {
+		for ( Size l=1; l<=nres; ++l ) {
+			if ( pose.residue(l).type().aa() == core::chemical::aa_vrt ) continue;
 			//if(pose.residue(l).is_virtual_residue()) continue;
 			score(n)=0;
-			for(Size i=1;i<=num_models_;++i) {
-				if(cross_val_ && i!=svm_model_) continue;
+			for ( Size i=1; i<=num_models_; ++i ) {
+				if ( cross_val_ && i!=svm_model_ ) continue;
 				Real pred(-b_(i));
-				for(Size k=1;k<=num_features_proqm_;++k) {
+				for ( Size k=1; k<=num_features_proqm_; ++k ) {
 					//Real factor=feature_vector(l,k)*linear_weights_(i,k);
 					//std::cout << "SVMcalc: " << l << " " << i << " " << k << " " << feature_vector(l,k) << " " << linear_weights_(i,k) << " " << pred << std::endl;
 					pred+=feature_vector(l,k)*linear_weights_(i,k);
 				}
 				score(n)+=pred;
 			}
-			if(!cross_val_)
+			if ( !cross_val_ ) {
 				score(n)/=num_models_;
+			}
 			n++;
 		}
 	} else { //ProQ2
-		for(Size l=1;l<=nres;++l) {
+		for ( Size l=1; l<=nres; ++l ) {
 			//if(pose.residue(l).is_virtual_residue()) continue; //This was not true for some VRT residue !
 			//std::cout << l << " " << pose.residue(l).type().aa() << std::endl;
-			if (pose.residue(l).type().aa() == core::chemical::aa_vrt) continue;
+			if ( pose.residue(l).type().aa() == core::chemical::aa_vrt ) continue;
 			//std::cout << "PASSED: " << l << std::endl;
 			//if(pose.residue(l).name().compare("VRT")==0) continue;
 			//std::cout << pose.residue(l) << "dimension " << dim1 << " " << dim2 << "l: " << l << " n: " << l << " virtual: " << pose.residue(l).is_virtual_residue() << " virt_from_name: " << pose.residue(l).name().compare("VRT") << " res: " << pose.residue(l).name3() << " " << pose.residue(l).name() << std::endl;
 			score(n)=0;
-			for(Size i=1;i<=num_models_;++i) {
-				if(cross_val_ && i!=svm_model_) continue;
+			for ( Size i=1; i<=num_models_; ++i ) {
+				if ( cross_val_ && i!=svm_model_ ) continue;
 				Real pred(-b_proq2_(i));
-				for(Size k=1;k<=num_features_proq2_;++k) {
+				for ( Size k=1; k<=num_features_proq2_; ++k ) {
 					//Real factor=feature_vector(l,k)*linear_weights_proq2_(i,k);
 					//std::cout << "SVMcalc: " << l << " " << i << " " << k << " " << feature_vector(l,k) << " " << linear_weights_(i,k) << " " << pred << std::endl;
 					pred+=feature_vector(l,k)*linear_weights_proq2_(i,k);
 				}
 				score(n)+=pred;
 			}
-			if(!cross_val_)
+			if ( !cross_val_ ) {
 				score(n)/=num_models_;
+			}
 			n++;
 		}
 

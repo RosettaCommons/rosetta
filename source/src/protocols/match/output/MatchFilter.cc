@@ -26,13 +26,13 @@ namespace match {
 namespace output {
 
 MatchFilter::MatchFilter( std::string filter_name )
-	: filter_name_(filter_name)
+: filter_name_(filter_name)
 {}
 
 MatchFilter::~MatchFilter() {}
 
 StateAccumulatingMatchFilter::StateAccumulatingMatchFilter( std::string filter_name )
-	: MatchFilter( filter_name )
+: MatchFilter( filter_name )
 {}
 
 StateAccumulatingMatchFilter::~StateAccumulatingMatchFilter() {}

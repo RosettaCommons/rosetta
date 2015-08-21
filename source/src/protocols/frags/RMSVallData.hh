@@ -137,8 +137,8 @@ public:
 	/// read in one more line from Vall input file
 	void
 	add_line( const char sq, const char ss,
-	          const Real x,  const Real y,  const Real z,
-	          const Real ph, const Real ps, const Real om ) {
+		const Real x,  const Real y,  const Real z,
+		const Real ph, const Real ps, const Real om ) {
 		sequence_.push_back( sq );
 		secstruct_.push_back( ss );
 
@@ -178,7 +178,7 @@ public:
 		// reset heaps
 		Size const my_size( size() );
 		Size bucket1_size( (Size)std::ceil(oversample*nfrags) );
-		if (oversample<=0) { bucket1_size =  my_size - frag_size + 1; }
+		if ( oversample<=0 ) { bucket1_size =  my_size - frag_size + 1; }
 		FArray1D_int heap( bucket1_size + 2 );
 		FArray1D_float coheap( bucket1_size + 2 );
 		protocols::frags::heap_init( heap, coheap, bucket1_size );
@@ -192,8 +192,9 @@ public:
 			for ( int k = 0; k < 3; ++k ) tmpl_pos(k+1,i) = x_i[k];
 		}
 		tmpl_com /= frag_size;
-		for (int i=1; i<=(int)frag_size; ++i)
+		for ( int i=1; i<=(int)frag_size; ++i ) {
 			for ( int k = 0; k < 3; ++k ) tmpl_pos(k+1,i) -= tmpl_com[k];
+		}
 
 		// set up other tmp store data
 		ObjexxFCL::FArray1D< numeric::Real > ww( frag_size, 1.0 );
@@ -216,11 +217,11 @@ public:
 				char const seq  ( sequence_ [ vall_pos+k ] );
 				char const ss   ( secstruct_[ vall_pos+k ] );
 				if ( ( std::abs( phi ) < 0.01 ) ||
-						 ( std::abs( psi ) + std::abs( omega ) < 0.01 ) ||
-						 ( seq == 'G' && exclude_gly ) ||
-						 ( seq == 'P' && exclude_pro ) ||
-						 ( std::abs( omega ) < 90.0 && exclude_cys_peptides ) ||
-				     ( ss != force_ss && (force_ss == 'H' || force_ss == 'E' || force_ss == 'L') ) ) {
+						( std::abs( psi ) + std::abs( omega ) < 0.01 ) ||
+						( seq == 'G' && exclude_gly ) ||
+						( seq == 'P' && exclude_pro ) ||
+						( std::abs( omega ) < 90.0 && exclude_cys_peptides ) ||
+						( ss != force_ss && (force_ss == 'H' || force_ss == 'E' || force_ss == 'L') ) ) {
 					bad_frag = true;
 					break;
 				}
@@ -236,8 +237,9 @@ public:
 
 			// center tgt
 			tgt_com /= frag_size;
-			for (int i=1; i<=(int)frag_size; ++i)
+			for ( int i=1; i<=(int)frag_size; ++i ) {
 				for ( int j = 0; j < 3; ++j ) tgt_pos(j+1,i) -= tgt_com[j];
+			}
 
 			// score == rms (?)
 			//float rms_out=999.0;
@@ -279,8 +281,9 @@ public:
 
 			// center tgt
 			tgt_com /= frag_size;
-			for (int i=1; i<=(int)frag_size; ++i)
+			for ( int i=1; i<=(int)frag_size; ++i ) {
 				for ( int j = 0; j < 3; ++j ) tgt_pos(j+1,i) -= tgt_com[j];
+			}
 
 			// score == rms (?)
 			float rms_out=999.0;
@@ -316,7 +319,7 @@ public:
 			}
 			// we must manually mark the fragment as valid
 			// why???? this is dumb
-			if (current_fragment->size() == frag_size) current_fragment->set_valid();
+			if ( current_fragment->size() == frag_size ) current_fragment->set_valid();
 
 			// goes at the beginning
 			if ( !frame->add_fragment( current_fragment ) ) {
@@ -327,10 +330,10 @@ public:
 
 
 		std::cerr << "rms-frags: " <<
-		             nfrags << " of " << bucket1_size <<
-		             " exact_matches: " << exact_matches <<
-	               " best_score: "    << best_score <<
-		             " worst_score: "   << worst_score << std::endl;
+			nfrags << " of " << bucket1_size <<
+			" exact_matches: " << exact_matches <<
+			" best_score: "    << best_score <<
+			" worst_score: "   << worst_score << std::endl;
 
 	}
 

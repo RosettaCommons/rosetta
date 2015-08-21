@@ -21,15 +21,15 @@ namespace devel {
 namespace denovo_design {
 namespace task_operations {
 
-  // Forward declaration
-  class HighestEnergyRegionOperation;
-	class DesignByFragmentQualityOperation;
+// Forward declaration
+class HighestEnergyRegionOperation;
+class DesignByFragmentQualityOperation;
 
-  // Types
-  typedef utility::pointer::shared_ptr< HighestEnergyRegionOperation > HighestEnergyRegionOperationOP;
-  typedef utility::pointer::shared_ptr< HighestEnergyRegionOperation const > HighestEnergyRegionOperationCOP;
-  typedef utility::pointer::shared_ptr< DesignByFragmentQualityOperation > DesignByFragmentQualityOperationOP;
-  typedef utility::pointer::shared_ptr< DesignByFragmentQualityOperation const > DesignByFragmentQualityOperationCOP;
+// Types
+typedef utility::pointer::shared_ptr< HighestEnergyRegionOperation > HighestEnergyRegionOperationOP;
+typedef utility::pointer::shared_ptr< HighestEnergyRegionOperation const > HighestEnergyRegionOperationCOP;
+typedef utility::pointer::shared_ptr< DesignByFragmentQualityOperation > DesignByFragmentQualityOperationOP;
+typedef utility::pointer::shared_ptr< DesignByFragmentQualityOperation const > DesignByFragmentQualityOperationCOP;
 
 }
 }

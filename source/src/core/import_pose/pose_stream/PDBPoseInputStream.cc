@@ -74,7 +74,7 @@ void PDBPoseInputStream::fill_pose(
 	}
 
 	core::import_pose::pose_from_pdb( pose, residue_set, *current_position_ );
-	
+
 	// set up a tag using input filename.
 	using namespace basic::datacache;
 	pose.data().set(
@@ -113,7 +113,7 @@ utility::vector1< core::pose::PoseOP > PDBPoseInputStream::get_all_poses(
 	utility::vector1< core::pose::PoseOP > pose_list;
 	pose_list.resize( filenames_.size() );
 
-	while( has_another_pose() ) {
+	while ( has_another_pose() ) {
 		core::pose::PoseOP pose( new core::pose::Pose );
 		fill_pose( *pose, residue_set );
 		pose_list.push_back( pose );
@@ -129,14 +129,15 @@ void PDBPoseInputStream::add_list_filenames(
 	using utility::vector1;
 	bool init_current_position( filenames_.size() == 0 );
 
-	BOOST_FOREACH(utility::file::FileName filename_obj, list_fns){
+	BOOST_FOREACH ( utility::file::FileName filename_obj, list_fns ) {
 		std::string filename( filename_obj.name() );
 		utility::io::izstream data( filename.c_str() );
-		if ( !data.good() )
+		if ( !data.good() ) {
 			utility_exit_with_message( "Unable to open file: " + filename + '\n' );
+		}
 
 		std::string line;
-		while( getline(data, line) ) {
+		while ( getline(data, line) ) {
 			filenames_.push_back( utility::file::FileName(line) );
 		}
 		data.close();

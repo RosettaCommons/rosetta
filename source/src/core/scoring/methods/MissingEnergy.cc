@@ -98,7 +98,7 @@ MissingEnergy::eval_atom_derivative(
 	EnergyMap const &,
 	Vector &,
 	Vector &
- 	) const
+) const
 {
 	// no op.
 } // eval atom derivative

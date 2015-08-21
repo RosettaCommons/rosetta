@@ -47,10 +47,10 @@ public:
 
 
 	ResidueTypeConstraint(
-	  pose::Pose const & pose,
-	  Size seqpos,
-	  std::string AAname,
-	  Real favor_native_bonus
+		pose::Pose const & pose,
+		Size seqpos,
+		std::string AAname,
+		Real favor_native_bonus
 	);
 
 	ResidueTypeConstraint(

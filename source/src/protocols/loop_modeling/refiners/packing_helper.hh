@@ -29,9 +29,9 @@ namespace refiners {
 
 template <typename PackingRefiner, typename PackingAlgorithm>
 bool packing_helper(
-		core::pose::Pose & pose,
-		PackingRefiner * refiner,
-		PackingAlgorithm packer) {
+	core::pose::Pose & pose,
+	PackingRefiner * refiner,
+	PackingAlgorithm packer) {
 
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
@@ -44,7 +44,7 @@ bool packing_helper(
 
 	// If not, create a default one that just packs within 10A of the loops.
 
-	if (! task_factory) {
+	if ( ! task_factory ) {
 		RestrictToLoopsAndNeighborsOP restrict_to_loops( new RestrictToLoopsAndNeighbors );
 		restrict_to_loops->set_loops(refiner->get_loops());
 		restrict_to_loops->set_include_neighbors(true);

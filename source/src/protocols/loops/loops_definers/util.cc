@@ -37,7 +37,7 @@ load_loop_definitions(
 
 	std::string loops_str( tag->getOption< std::string >( "loops" ) );
 
-	if(data.has("loops_definers", loops_str)){
+	if ( data.has("loops_definers", loops_str) ) {
 		LoopsDefinerOP loops_definer(
 			data.get_ptr< LoopsDefiner >("loops_definers", loops_str));
 		return LoopsOP( new Loops(loops_definer->apply(pose)) );

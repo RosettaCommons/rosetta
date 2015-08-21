@@ -18,8 +18,8 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class ProteinBondGeometryFeatures;
 typedef utility::pointer::shared_ptr< ProteinBondGeometryFeatures > ProteinBondGeometryFeaturesOP;

@@ -58,12 +58,12 @@ PeptoidRotamerLibrarySpecification::PeptoidRotamerLibrarySpecification(std::stri
 PeptoidRotamerLibrarySpecification::PeptoidRotamerLibrarySpecification( std::istream & input )
 {
 	input >> peptoid_rotlib_path_;
-	if( ! input ) {
+	if ( ! input ) {
 		utility_exit_with_message("Must provide rotamer library path for Peptoid rotamer library specification.");
 	}
 	core::Size nbins;
 	input >> nbins;
-	while( input ) {
+	while ( input ) {
 		peptoid_rotlib_n_bins_per_rot_.push_back( nbins );
 		input >> nbins;
 	}
@@ -87,7 +87,7 @@ PeptoidRotamerLibrarySpecification::cache_tag(core::chemical::ResidueType const 
 	std::ostringstream ss;
 	assert( peptoid_rotlib_path_.size() );
 	ss << peptoid_rotlib_path_;
-	for( core::Size ii(1); ii <= peptoid_rotlib_n_bins_per_rot_.size(); ++ii ) {
+	for ( core::Size ii(1); ii <= peptoid_rotlib_n_bins_per_rot_.size(); ++ii ) {
 		ss << "|" << peptoid_rotlib_n_bins_per_rot_[ii];
 	}
 	return ss.str();

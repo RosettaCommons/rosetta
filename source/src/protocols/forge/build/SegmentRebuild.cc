@@ -283,13 +283,13 @@ void SegmentRebuild::on_residue_delete( LengthEvent const & event ) {
 	// during modify().
 	if ( event.position < interval_.left ) { // left
 		//--interval_.left;
-		if( int(interval_.left) + event.length_change < int(event.position) ) interval_.left = event.position;
+		if ( int(interval_.left) + event.length_change < int(event.position) ) interval_.left = event.position;
 		else interval_.left += event.length_change;
 	}
 
 	if ( event.position < interval_.right ) { // right
 		//--interval_.right;
-		if( int(interval_.right) + event.length_change < int(event.position) ) interval_.right = event.position;
+		if ( int(interval_.right) + event.length_change < int(event.position) ) interval_.right = event.position;
 		else interval_.right += event.length_change;
 	}
 }
@@ -375,43 +375,43 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 	using protocols::forge::methods::order;
 	using protocols::forge::methods::trans_omega;
 	using namespace core::conformation;
-/*
+	/*
 
 	//special case for two chain build -- danger, primitive at the moment, only
 	//works with non-N,C term extension.  Try placing in SegRebuld
 	if (basic::options::option[basic::options::OptionKeys::remodel::two_chain_tree].user()){
-		Size second_start = basic::options::option[basic::options::OptionKeys::remodel::two_chain_tree];
-		Size nres( pose.total_residue());
+	Size second_start = basic::options::option[basic::options::OptionKeys::remodel::two_chain_tree];
+	Size nres( pose.total_residue());
 
-		//FoldTree f(pose.fold_tree());
-	  FoldTree f;
-		//make cutpoint
-		f.add_edge(1, second_start-1, Edge::PEPTIDE);
-		f.add_edge(second_start, nres, Edge::PEPTIDE);
-		f.add_edge(second_start-1,second_start,1);//jump across the cut
-		f.reorder(nres);
-		pose.fold_tree(f);
+	//FoldTree f(pose.fold_tree());
+	FoldTree f;
+	//make cutpoint
+	f.add_edge(1, second_start-1, Edge::PEPTIDE);
+	f.add_edge(second_start, nres, Edge::PEPTIDE);
+	f.add_edge(second_start-1,second_start,1);//jump across the cut
+	f.reorder(nres);
+	pose.fold_tree(f);
 
-		protocols:loops::Loops chain_def_loops;
-		chain_def_loops.add_loop(protocols::loops::Loop(1,second_start));
-		chain_def_loops.add_loop(protocols::loops::Loop(second_start,pose.total_residue()));
+	protocols:loops::Loops chain_def_loops;
+	chain_def_loops.add_loop(protocols::loops::Loop(1,second_start));
+	chain_def_loops.add_loop(protocols::loops::Loop(second_start,pose.total_residue()));
 
-		//add virtual residue, as star foldtree requires it
-		if (pose.residue( pose.total_residue()).aa() != core::chemical::aa_vrt){
-			pose.append_residue_by_jump(*core::conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map("VRT")), pose.total_residue());
-		}
+	//add virtual residue, as star foldtree requires it
+	if (pose.residue( pose.total_residue()).aa() != core::chemical::aa_vrt){
+	pose.append_residue_by_jump(*core::conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map("VRT")), pose.total_residue());
+	}
 
-		//update foldtree to new foldtree
-		f = pose.fold_tree();
+	//update foldtree to new foldtree
+	f = pose.fold_tree();
 
-		//update nres to include the new residue
-		nres =  pose.total_residue();
+	//update nres to include the new residue
+	nres =  pose.total_residue();
 
-		f.reorder(nres);
-		pose.fold_tree(f);
-		protocols::forge::methods::make_star_foldtree(pose, chain_def_loops);
-		}
-*/
+	f.reorder(nres);
+	pose.fold_tree(f);
+	protocols::forge::methods::make_star_foldtree(pose, chain_def_loops);
+	}
+	*/
 	//typedef utility::vector1< Edge > Edges;
 
 	//for nojump operation, need to keep track of the new cuts introduced
@@ -432,7 +432,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 	// a multi-chain Pose.  This class currently doesn't handle those cases
 	// properly and will likely break.
 	// but when only the case of single chain is allowed
-	if( pose.conformation().num_chains() != 1 ){
+	if ( pose.conformation().num_chains() != 1 ) {
 		runtime_assert( !( has_lower_terminus && has_upper_terminus ) );
 	}
 
@@ -509,8 +509,8 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 
 	}
 
-//testing
-//first identify the number of jups at this stage, this is the number to keep.
+	//testing
+	//first identify the number of jups at this stage, this is the number to keep.
 	Size num_jumps_pre_processing (pose.num_jump());
 
 
@@ -609,11 +609,10 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 
 		//in order to synchronize all cutting, unfortunately this has to be in this
 		//file
-		if (basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
-			if (basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::force_cutting_N].user()){
+		if ( basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::bypass_closure].user() ) {
+			if ( basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::force_cutting_N].user() ) {
 				cut_index = 1;
-			}
-			else {
+			} else {
 				cut_index = r_types.size()-1;
 			}
 		}
@@ -629,13 +628,12 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 		// merge chains if different.  Here we check the position currently at
 		// interval.left - 1 and remove it from the chain endings list.
 		if (
-			std::find(
+				std::find(
 				pose.conformation().chain_endings().begin(),
 				pose.conformation().chain_endings().end(),
 				interval_.left
-			) != pose.conformation().chain_endings().end()
-		)
-		{
+				) != pose.conformation().chain_endings().end()
+				) {
 			pose.conformation().delete_chain_ending( interval_.left );
 		}
 
@@ -793,11 +791,11 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 	//std::cout << ft << std::endl;
 
 	// special case for Remodel
-	if (basic::options::option[basic::options::OptionKeys::remodel::no_jumps]){
+	if ( basic::options::option[basic::options::OptionKeys::remodel::no_jumps] ) {
 		//ft.simple_tree(pose.total_residue());
 		//idealize across the loop, in case they are not -- a big problem when taking out jumps
-	//	protocols:loops::Loops loops_def_for_idealization;
-   // loops_def_for_idealization.add_loop(protocols::loops::Loop(interval_.left-2,interval_.right+2, 1));
+		// protocols:loops::Loops loops_def_for_idealization;
+		// loops_def_for_idealization.add_loop(protocols::loops::Loop(interval_.left-2,interval_.right+2, 1));
 
 		utility::vector1<Size> cuts;
 		utility::vector1< std::pair<Size,Size> > jumps;
@@ -808,7 +806,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 		ObjexxFCL::FArray1D_int Fcuts( num_jumps_pre_processing);
 		ObjexxFCL::FArray2D_int Fjumps(2, num_jumps_pre_processing);
 
-	for ( Size i = 1; i<= num_jumps_pre_processing; ++i ) { // only keeping the old jumps, wipe new ones
+		for ( Size i = 1; i<= num_jumps_pre_processing; ++i ) { // only keeping the old jumps, wipe new ones
 			//std::cout << (int)jumps[i].first << " " << (int)jumps[i].second << std::endl;
 
 			Fjumps(1,i) = std::min( (int)jumps[i].first, (int)jumps[i].second);
@@ -822,7 +820,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 		for ( Size i = 1; i<= cuts.size(); ++i ) {
 			//std::cout << "cut " << (int)cuts[i] << std::endl;
 			Fcuts(i) = (int)cuts[i];
-	//		std::cout << " cut " << i << " : " << cuts(i) << std::endl;
+			//  std::cout << " cut " << i << " : " << cuts(i) << std::endl;
 		}
 
 		// 4 make the foldtree
@@ -833,10 +831,10 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 		pose.fold_tree(nojump_ft);
 		//std::cout << "IDEALIZE " << interval_.left << " to " << interval_.right << std::endl;
 		//protocols::loops::set_extended_torsions_and_idealize_loops( pose, loops_def_for_idealization);
-		for (Size i = interval_.left; i <= interval_.right; i++){
+		for ( Size i = interval_.left; i <= interval_.right; i++ ) {
 			core::conformation::idealize_position(i, pose.conformation());
 		}
-pose.dump_pdb("test_idl.pdb");
+		pose.dump_pdb("test_idl.pdb");
 	}
 
 
@@ -881,10 +879,10 @@ pose.dump_pdb("test_idl.pdb");
 		pose.set_secstruct( r, ss_.at( i ) );
 	}
 
-// safety, make sure PDBInfo leaves obsolete
-  if ( pose.pdb_info().get() ) {
-	    pose.pdb_info()->obsolete( true );
-			  }
+	// safety, make sure PDBInfo leaves obsolete
+	if ( pose.pdb_info().get() ) {
+		pose.pdb_info()->obsolete( true );
+	}
 
 
 }

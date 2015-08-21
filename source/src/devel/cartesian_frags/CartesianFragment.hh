@@ -90,27 +90,27 @@ public:
 
 
 	/// c-tor -- >= 1 outgoing, 1 new bond
- 	CartesianFragment(
- 		TorsionStubID const & incoming,
- 		SafeAtomID const & root,
- 		TorsionStubID const & outgoing,
- 		SafeBondID const & new_bond,
- 		Conformation const & conf
- 	)
+	CartesianFragment(
+		TorsionStubID const & incoming,
+		SafeAtomID const & root,
+		TorsionStubID const & outgoing,
+		SafeBondID const & new_bond,
+		Conformation const & conf
+	)
 	{
 		initialize( incoming, root, utility::vector1< TorsionStubID >( 1, outgoing), utility::vector1< SafeBondID >( 1, new_bond ), conf );
 	}
 
- 	CartesianFragment(
- 		TorsionStubID const & incoming,
- 		SafeAtomID const & root,
- 		utility::vector1< TorsionStubID > const & outgoing,
- 		utility::vector1< SafeBondID > const & new_bonds,
- 		Conformation const & conf
- 	)
- 	{
- 		initialize( incoming, root, outgoing, new_bonds, conf );
- 	}
+	CartesianFragment(
+		TorsionStubID const & incoming,
+		SafeAtomID const & root,
+		utility::vector1< TorsionStubID > const & outgoing,
+		utility::vector1< SafeBondID > const & new_bonds,
+		Conformation const & conf
+	)
+	{
+		initialize( incoming, root, outgoing, new_bonds, conf );
+	}
 
 
 	/////////
@@ -178,21 +178,21 @@ public:
 
 	void
 	set_torsion_angle(
-										SafeAtomID const & id1,
-										SafeAtomID const & id2,
-										SafeAtomID const & id3,
-										SafeAtomID const & id4,
-										Real const setting
-										);
+		SafeAtomID const & id1,
+		SafeAtomID const & id2,
+		SafeAtomID const & id3,
+		SafeAtomID const & id4,
+		Real const setting
+	);
 
 
 	void
 	set_bond_angle(
-								 SafeAtomID const & id1,
-								 SafeAtomID const & id2,
-								 SafeAtomID const & id3,
-								 Real const setting
-								 );
+		SafeAtomID const & id1,
+		SafeAtomID const & id2,
+		SafeAtomID const & id3,
+		Real const setting
+	);
 
 
 	Size
@@ -261,7 +261,7 @@ private: // private methods:
 	skip_bond( AtomID const & id1, AtomID const & id2, utility::vector1< core::id::BondID > const & cuts ) const
 	{
 		return ( std::find( cuts.begin(), cuts.end(), core::id::BondID( id1, id2 ) ) != cuts.end() ||
-						 std::find( cuts.begin(), cuts.end(), core::id::BondID( id2, id1 ) ) != cuts.end() );
+			std::find( cuts.begin(), cuts.end(), core::id::BondID( id2, id1 ) ) != cuts.end() );
 	}
 
 

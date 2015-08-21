@@ -73,7 +73,7 @@ DatabaseOccSolEne::read_datafile(
 
 	// initialize the values
 	Size const n_atom_types( atom_set.n_atomtypes() );
-  occ_data_.clear();
+	occ_data_.clear();
 	occ_data_.resize( n_atom_types );
 	for ( Size j=1; j <= n_atom_types; ++j ) {
 		occ_data_[j].resize( n_atom_types );
@@ -92,7 +92,7 @@ DatabaseOccSolEne::read_datafile(
 	// skip header line
 	std::string line;
 	// no header for now...
-	//	getline( stream, line );
+	// getline( stream, line );
 
 	// process lines containing data
 	// Note: file format is: polar_atom_name  occ_atom_name  5 params (amp, 2x mu, 2x sigma)
@@ -111,9 +111,9 @@ DatabaseOccSolEne::read_datafile(
 			if ( polar_atom_type_name == "NH2O" ) {
 				amp_reweighting *= 0.8534;
 			} else if ( polar_atom_type_name == "Narg" ) {
-		  	amp_reweighting *= 0.9365;
-		  } else if ( polar_atom_type_name == "Nbb" ) {
-		    amp_reweighting *= 0.7724;
+				amp_reweighting *= 0.9365;
+			} else if ( polar_atom_type_name == "Nbb" ) {
+				amp_reweighting *= 0.7724;
 			} else if ( polar_atom_type_name == "Nlys" ) {
 				amp_reweighting *= 0.8122;
 			} else if ( polar_atom_type_name == "Ntrp" ) {
@@ -174,8 +174,8 @@ DatabaseOccSolEne::compute_jumpout_diff( Real const & amp, Real const & twice_si
 {
 
 	// At what difference from mu will this gaussian (passed in) give a value less than min_occ_energy_ ?
-debug_assert ( amp > min_occ_energy_ );
-debug_assert ( twice_sigma_sq > 0. );
+	debug_assert ( amp > min_occ_energy_ );
+	debug_assert ( twice_sigma_sq > 0. );
 	return sqrt ( - twice_sigma_sq * log( min_occ_energy_ / amp ) );
 
 }

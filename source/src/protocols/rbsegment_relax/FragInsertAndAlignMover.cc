@@ -60,9 +60,9 @@ FragInsertAndAlignMover::~FragInsertAndAlignMover() {}
 
 
 FragInsertAndAlignMover::FragInsertAndAlignMover(
-	          utility::vector1< RBSegment > const &rbsegs,
-	          core::pose::Pose const &ref_pose,
-            core::Real randomness/*=0.0*/ ) {
+	utility::vector1< RBSegment > const &rbsegs,
+	core::pose::Pose const &ref_pose,
+	core::Real randomness/*=0.0*/ ) {
 	initialize_rb_fragments(rbsegs,ref_pose,randomness );
 }
 
@@ -70,9 +70,9 @@ FragInsertAndAlignMover::FragInsertAndAlignMover(
 /// @brief Initialize fragment library
 /// @brief     Loads RMS vall data, sets up frame set
 void FragInsertAndAlignMover::initialize_rb_fragments(
-             utility::vector1< RBSegment > const &rbsegs,
-             core::pose::Pose const &ref_pose,
-             core::Real randomness/*=0.0*/ )
+	utility::vector1< RBSegment > const &rbsegs,
+	core::pose::Pose const &ref_pose,
+	core::Real randomness/*=0.0*/ )
 {
 	using namespace basic::options;
 
@@ -95,8 +95,8 @@ void FragInsertAndAlignMover::initialize_rb_fragments(
 	frames_.clear();
 
 	// TO DO: COMPOUND SEGMENT SUPPORT(??)
-	for (int i =  1; i <= (int)rbsegs.size(); ++i) {
-		if (rbsegs[i].isCompound()) {
+	for ( int i =  1; i <= (int)rbsegs.size(); ++i ) {
+		if ( rbsegs[i].isCompound() ) {
 			TR.Warning << "[ WARNING ]  FragInsertAndAlignMover::initialize_rb_fragments() undefined for compound segments! continuing..." << std::endl;
 			continue;
 		}
@@ -108,12 +108,13 @@ void FragInsertAndAlignMover::initialize_rb_fragments(
 		frames_.push_back( core::fragment::FrameOP( new core::fragment::Frame( frag_start, frag_size ) ) );
 
 		utility::vector1< numeric::xyzVector< core::Real> > cas( frag_size );
-		for (int k=0; k<frag_size; ++k)
+		for ( int k=0; k<frag_size; ++k ) {
 			cas[k+1] = ref_pose.residue(frag_start+k).atom("CA").xyz();
+		}
 
 		std::string frag_seq = input_seq.substr( rbsegs[i][1].start()-1, frag_size );
 		rms_vall.get_frags(
-			200, cas, frag_seq,  rbsegs[i][1].char_type(), frames_[frames_.size()],	randomness
+			200, cas, frag_seq,  rbsegs[i][1].char_type(), frames_[frames_.size()], randomness
 		);
 	}
 	TR.Debug << "Read " << frames_.size() << " frames" << std::endl;
@@ -121,7 +122,7 @@ void FragInsertAndAlignMover::initialize_rb_fragments(
 
 
 void FragInsertAndAlignMover::apply( core::pose::Pose & pose ) {
-	if (frames_.size() == 0) {
+	if ( frames_.size() == 0 ) {
 		TR.Warning << "[ WARNING ]  FragInsertAndAlignMover::apply()called with no frames defined! continuing..." << std::endl;
 		return;
 	}
@@ -145,21 +146,24 @@ void FragInsertAndAlignMover::apply( core::pose::Pose & pose, int idx, bool idea
 	// grab coords
 	ObjexxFCL::FArray2D< core::Real > init_coords( 3, len );
 	numeric::xyzVector< core::Real > com1(0,0,0);
-	for (int i=0; i<(int)len; ++i) {
+	for ( int i=0; i<(int)len; ++i ) {
 		numeric::xyzVector< core::Real > x_i = pose.residue(start+i).atom("CA").xyz();  // CA
 		com1 += x_i;
-		for (int j=0; j<3; ++j)
+		for ( int j=0; j<3; ++j ) {
 			init_coords(j+1,i+1) = x_i[j];
+		}
 	}
 	com1 /= len;
-	for (int i=0; i<(int)len; ++i)
-		for ( int j=0; j<3; ++j )
+	for ( int i=0; i<(int)len; ++i ) {
+		for ( int j=0; j<3; ++j ) {
 			init_coords(j+1,i+1) -= com1[j];
+		}
+	}
 
-//core::pose::Pose pose_copy = pose;
+	//core::pose::Pose pose_copy = pose;
 
-	if (idealize) {
-		for (int i=0; i<(int)len; ++i) {
+	if ( idealize ) {
+		for ( int i=0; i<(int)len; ++i ) {
 			core::conformation::idealize_position(start+i, pose.conformation());
 		}
 	}
@@ -171,16 +175,19 @@ void FragInsertAndAlignMover::apply( core::pose::Pose & pose, int idx, bool idea
 	// grab new coords
 	ObjexxFCL::FArray2D< core::Real > final_coords( 3, len );
 	numeric::xyzVector< core::Real > com2(0,0,0);
-	for (int i=0; i<(int)len; ++i) {
+	for ( int i=0; i<(int)len; ++i ) {
 		numeric::xyzVector< core::Real > x_i = pose.residue(start+i).atom(" CA ").xyz();  // CA
 		com2 += x_i;
-		for (int j=0; j<3; ++j)
+		for ( int j=0; j<3; ++j ) {
 			final_coords(j+1,i+1) = x_i[j];
+		}
 	}
 	com2 /= len;
-	for (int i=0; i<(int)len; ++i)
-		for ( int j=0; j<3; ++j )
+	for ( int i=0; i<(int)len; ++i ) {
+		for ( int j=0; j<3; ++j ) {
 			final_coords(j+1,i+1) -= com2[j];
+		}
+	}
 
 	// get optimal superposition
 	// rotate >final< to >init<
@@ -199,7 +206,7 @@ void FragInsertAndAlignMover::apply( core::pose::Pose & pose, int idx, bool idea
 
 
 	for ( Size i = 0; i < len; ++i ) {
-//std::cout << i << " " << j << "  " << pose.xyz(id) << "   " << R * ( pose.xyz(id) - com2) + com1
+		//std::cout << i << " " << j << "  " << pose.xyz(id) << "   " << R * ( pose.xyz(id) - com2) + com1
 		for ( Size j = 1; j <= pose.residue_type(start+i).natoms(); ++j ) {
 			id::AtomID id( j, start+i );
 			pose.set_xyz( id, R * ( pose.xyz(id) - com2) + com1 );
@@ -209,7 +216,7 @@ void FragInsertAndAlignMover::apply( core::pose::Pose & pose, int idx, bool idea
 
 /// @brief take a CA-only pose and insert idealized fragments close to the trace
 void FragInsertAndAlignMover::bootstrapCATrace( core::pose::Pose & start_pose ) {
-	for (int i=1; i<=(int)frames_.size(); ++i) {
+	for ( int i=1; i<=(int)frames_.size(); ++i ) {
 		apply( start_pose , i , true);
 	}
 }

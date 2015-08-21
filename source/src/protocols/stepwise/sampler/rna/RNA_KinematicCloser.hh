@@ -75,15 +75,15 @@ private:
 	void figure_out_dof_ids_and_offsets();
 
 	void figure_out_offset( core::id::DOF_ID const & dof_id,
-	  core::Real const original_torsion_value );
+		core::Real const original_torsion_value );
 
 	void fill_chainTORS();
 
 	void output_chainTORS() const;
 
 	//Disable copy constructor and assignment
-  RNA_KinematicCloser( const RNA_KinematicCloser & );
-  void operator=( const RNA_KinematicCloser & );
+	RNA_KinematicCloser( const RNA_KinematicCloser & );
+	void operator=( const RNA_KinematicCloser & );
 
 	core::pose::PoseOP ref_pose_;
 	core::Size const moving_suite_, chainbreak_suite_;

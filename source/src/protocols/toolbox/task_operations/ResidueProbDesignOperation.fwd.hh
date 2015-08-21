@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/antibody_design/ResidueProbDesignOperation.fwd.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
@@ -30,5 +30,5 @@ typedef utility::pointer::shared_ptr< ResidueProbDesignOperation const > Residue
 } //namespace toolbox
 } //namespace task_operations
 
-#endif	//INCLUDED_protocols_antibody_design_ResidueProbDesignOperation_fwd_hh
+#endif //INCLUDED_protocols_antibody_design_ResidueProbDesignOperation_fwd_hh
 

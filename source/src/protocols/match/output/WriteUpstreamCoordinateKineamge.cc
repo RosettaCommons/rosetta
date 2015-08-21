@@ -52,7 +52,7 @@ void print_node(
 {
 	// atom_num is often 0 in fold tree, means no specific atom.
 	// might as well use the first() one:
-	if (atom_num == 0) atom_num = 1;
+	if ( atom_num == 0 ) atom_num = 1;
 	core::chemical::AtomType const & atom_type = res.atom_type(atom_num);
 	// This info appears when you click on the point
 	out << "{" << res.name3() << " " << residue_num
@@ -88,9 +88,9 @@ void print_node(
 	// might as well use the first one:
 
 	int atom_num;
-	if (atom_name == "") {
+	if ( atom_name == "" ) {
 		atom_num = 1;
-	}	else {
+	} else {
 		atom_num = res.atom_index( atom_name );
 	}
 	print_node( out, residue_num, atom_num, res, extras );
@@ -138,21 +138,21 @@ ResidueKinemageWriter::write_rsd_coords(
 		ostr << rsd.name() << " " << scaffold_build_point_id;
 	}
 	ostr << "} color= " << color;
-	if ( master_ != "" )	ostr << " master= {" << master_ << "}";
+	if ( master_ != "" ) ostr << " master= {" << master_ << "}";
 	if ( is_instance ) {
 		ostr << " instance= {" << rsd.name() << " " << scaffold_build_point_id << "}";
 	}
 	ostr << "\n";
 
 	if ( ! is_instance ) {
-		for( core::Size atom_i = 1; atom_i <= rsd.natoms(); ++atom_i) {
+		for ( core::Size atom_i = 1; atom_i <= rsd.natoms(); ++atom_i ) {
 			core::conformation::Residue::AtomIndices const & nbrs = rsd.nbrs(atom_i);
-			for(core::conformation::Residue::AtomIndices::const_iterator j = nbrs.begin(), end_j = nbrs.end(); j != end_j; ++j) {
+			for ( core::conformation::Residue::AtomIndices::const_iterator j = nbrs.begin(), end_j = nbrs.end(); j != end_j; ++j ) {
 				core::Size atom_j = *j;
-				if(atom_j <= atom_i) continue; // so we draw each bond just once, not twice
+				if ( atom_j <= atom_i ) continue; // so we draw each bond just once, not twice
 				bool const is_H = rsd.atom_is_hydrogen(atom_j) || rsd.atom_is_hydrogen(atom_i);
 
-				if ( ! write_virtual_atoms_ && ( rsd.atom_type( atom_i ).element() == "X" || rsd.atom_type( atom_j ).element() == "X" )) continue;
+				if ( ! write_virtual_atoms_ && ( rsd.atom_type( atom_i ).element() == "X" || rsd.atom_type( atom_j ).element() == "X" ) ) continue;
 
 				/// no backbone hydrogens...
 				if ( rsd.atom_is_backbone( atom_i ) && rsd.atom_is_hydrogen( atom_i ) ) continue;
@@ -292,7 +292,7 @@ WriteUpstreamCoordinateKinemage::build(
 		++n_output_so_far_;
 	}
 
-	if ( 	return_pseudo_hits_ ) {
+	if (  return_pseudo_hits_ ) {
 		Hit hit;
 		hit.first()[ 1 ] = scaffold_build_point_id;
 		hit.first()[ 2 ] = upstream_conf_id;
@@ -369,7 +369,7 @@ WriteUpstreamCoordinateKinemage::set_n_downstream_to_output( Size n_downstream_t
 }
 
 WriteUpstreamHitKinemage::WriteUpstreamHitKinemage()
- :
+:
 	matches_output_count_( 0 ),
 	use_default_master_( true ),
 	animate_( false ),
@@ -555,7 +555,7 @@ SingleDownstreamResidueWriter::write_downstream_coordinates(
 {
 	//std::cout << "outputting hit: ";
 	//for ( Size ii = 1; ii <= 6; ++ii ) {
-	//	std::cout << hit.second[ ii ] << " ";
+	// std::cout << hit.second[ ii ] << " ";
 	//}
 	//std::cout << std::endl;
 
@@ -582,9 +582,9 @@ SingleDownstreamResidueWriter::write_downstream_coordinates(
 	}
 	ostr << "\n";
 
-	for ( core::Size atom_i = 1; atom_i <= restype_->natoms(); ++atom_i) {
+	for ( core::Size atom_i = 1; atom_i <= restype_->natoms(); ++atom_i ) {
 		core::chemical::AtomIndices const & nbrs = restype_->nbrs(atom_i);
-		for(core::chemical::AtomIndices::const_iterator j = nbrs.begin(), end_j = nbrs.end(); j != end_j; ++j) {
+		for ( core::chemical::AtomIndices::const_iterator j = nbrs.begin(), end_j = nbrs.end(); j != end_j; ++j ) {
 			core::Size atom_j = *j;
 			if ( atom_j <= atom_i ) continue; // so we draw each bond just once, not twice
 			bool const is_H = restype_->atom_is_hydrogen(atom_j) || restype_->atom_is_hydrogen(atom_i);

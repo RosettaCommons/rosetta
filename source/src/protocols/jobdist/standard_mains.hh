@@ -57,7 +57,7 @@ int main_plain_pdb_mover(
 /// @brief Reads inputs from -s/-l/-nstruct and writes atomtree_diff silent files.
 /// Supplied Mover is used to transform input structure into output structure.
 /// undefined - commenting out to make pyrosetta compile...
-//int main_atomtree_diff_mover(	protocols::moves::Mover & mover, 	core::scoring::ScoreFunctionOP scorefxn);
+//int main_atomtree_diff_mover( protocols::moves::Mover & mover,  core::scoring::ScoreFunctionOP scorefxn);
 
 
 /// @brief Makes BasicJob objects from command line flags -s, -l, and -nstruct.

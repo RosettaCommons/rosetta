@@ -35,21 +35,21 @@ namespace jumping {
 // note that pose_out will have weird structure --> use e.g., SlidingWindowLoopClosure to repair that
 // returns false if there is a failure
 bool remove_cut(
-  core::Size cutpoint,
+	core::Size cutpoint,
 	core::pose::Pose& pose,
 	core::kinematics::FoldTree const& final_fold_tree = core::kinematics::FoldTree()
 );
 
 bool remove_cut(
- core::Size cutpoint,
- core::kinematics::FoldTree &fold_tree,
- core::kinematics::FoldTree const& final_fold_tree = core::kinematics::FoldTree()
+	core::Size cutpoint,
+	core::kinematics::FoldTree &fold_tree,
+	core::kinematics::FoldTree const& final_fold_tree = core::kinematics::FoldTree()
 );
 
 //@brief remove all cutpoints, close loops using the supplied closure_protocol
 void close_chainbreaks(
-  loops::loop_closure::ccd::SlidingWindowLoopClosureOP closure_protocol,
-  core::pose::Pose& pose,
+	loops::loop_closure::ccd::SlidingWindowLoopClosureOP closure_protocol,
+	core::pose::Pose& pose,
 	checkpoint::CheckPointer &checkpoint,
 	const std::string &decoy_tag,
 	core::kinematics::FoldTree const& final_fold_tree = core::kinematics::FoldTree()
@@ -60,7 +60,7 @@ void safe_secstruct( core::pose::Pose& pose );
 
 void
 get_pleating(
-  core::pose::Pose const& pose,
+	core::pose::Pose const& pose,
 	core::Size const pos1,
 	core::Size const pos2,
 	core::Size &orientation,
@@ -69,7 +69,7 @@ get_pleating(
 
 void
 get_pairing_geometry(
-  core::pose::Pose const& pose,
+	core::pose::Pose const& pose,
 	core::Size const res1,
 	core::Size const res2,
 	core::Real& orientation,

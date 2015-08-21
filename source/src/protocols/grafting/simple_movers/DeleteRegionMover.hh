@@ -26,62 +26,62 @@ namespace simple_movers {
 
 /// @brief Delete a region of a pose. Mover Wrapper to grafting utility function.
 class DeleteRegionMover : public  protocols::moves::Mover {
-	
+
 public:
-	
+
 	DeleteRegionMover();
 	DeleteRegionMover(core::Size res_start, core::Size res_end);
 
 	DeleteRegionMover(DeleteRegionMover const & src);
-	
+
 	virtual ~DeleteRegionMover();
-	
+
 	virtual void
 	apply(core::pose::Pose & pose);
-	
-	
+
+
 public:
-	
+
 	/// @brief Set the region of the pose where deletion will occur
 	void
 	region(core::Size res_start, core::Size res_end);
-	
+
 	std::pair<core::Size, core::Size>
 	region() const;
-	
+
 	/// @brief Set the first residue that will be deleted.
 	void
 	start(core::Size res_start);
-	
+
 	core::Size
 	start() const;
-	
+
 	/// @brief Set the last residue that will be deleted.
 	void
 	end(core::Size res_end);
-	
+
 	core::Size
 	end() const;
-	
+
 public:
-	
+
 	virtual std::string
 	get_name() const;
-	
+
 	protocols::moves::MoverOP
 	clone() const;
 
 	protocols::moves::MoverOP
 	fresh_instance() const;
-	
-	virtual void 
+
+	virtual void
 	parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const & filters,
 		moves::Movers_map const & movers,
 		Pose const & pose);
-	
+
 private:
 	core::Size start_;
 	core::Size end_;

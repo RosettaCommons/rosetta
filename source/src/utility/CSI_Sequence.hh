@@ -42,25 +42,25 @@ private:
 /// @details Constant static string objects to hold various ASCII CSI codes
 ///          Codes below is all Hogwarts-approved magic numbers, so do not modify them.
 ///          For reference see: http://en.wikipedia.org/wiki/ANSI_escape_code#CSI_codes
-static std::string const 	CSI_Reset("\x1b[0m"),
-							CSI_Bold("\x1b[1m"),
-							CSI_Underline("\x1b[4m"),
-							CSI_Black("\x1b[30m"),
-							CSI_Red("\x1b[31m"),
-							CSI_Green("\x1b[32m"),
-							CSI_Yellow("\x1b[33m"),
-							CSI_Blue("\x1b[34m"),
-							CSI_Magenta("\x1b[35m"),
-							CSI_Cyan("\x1b[36m"),
-							CSI_White("\x1b[37m"),
-							CSI_bgBlack("\x1b[40m"),
-							CSI_bgRed("\x1b[41m"),
-							CSI_bgGreen("\x1b[42m"),
-							CSI_bgYellow("\x1b[43m"),
-							CSI_bgBlue("\x1b[44m"),
-							CSI_bgMagenta("\x1b[45m"),
-							CSI_bgCyan("\x1b[46m"),
-							CSI_bgWhite("\x1b[47m");
+static std::string const  CSI_Reset("\x1b[0m"),
+CSI_Bold("\x1b[1m"),
+CSI_Underline("\x1b[4m"),
+CSI_Black("\x1b[30m"),
+CSI_Red("\x1b[31m"),
+CSI_Green("\x1b[32m"),
+CSI_Yellow("\x1b[33m"),
+CSI_Blue("\x1b[34m"),
+CSI_Magenta("\x1b[35m"),
+CSI_Cyan("\x1b[36m"),
+CSI_White("\x1b[37m"),
+CSI_bgBlack("\x1b[40m"),
+CSI_bgRed("\x1b[41m"),
+CSI_bgGreen("\x1b[42m"),
+CSI_bgYellow("\x1b[43m"),
+CSI_bgBlue("\x1b[44m"),
+CSI_bgMagenta("\x1b[45m"),
+CSI_bgCyan("\x1b[46m"),
+CSI_bgWhite("\x1b[47m");
 
 
 } // utility

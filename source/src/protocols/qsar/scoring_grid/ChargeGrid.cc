@@ -99,12 +99,11 @@ utility::json_spirit::Value ChargeGrid::serialize()
 {
 	using utility::json_spirit::Value;
 	using utility::json_spirit::Pair;
-    
+
 	Pair base_data("base_data",SingleGrid::serialize());
 
 	std::vector<Value> charge_atom_data;
-	for(std::list<ChargeAtom>::iterator it = charge_atom_list_.begin(); it != charge_atom_list_.end();++it)
-	{
+	for ( std::list<ChargeAtom>::iterator it = charge_atom_list_.begin(); it != charge_atom_list_.end(); ++it ) {
 		charge_atom_data.push_back(it->serialize());
 	}
 
@@ -118,8 +117,7 @@ void ChargeGrid::deserialize(utility::json_spirit::mObject data)
 
 	charge_atom_list_.clear();
 	utility::json_spirit::mArray charge_atom_data(data["atoms"].get_array());
-	for(utility::json_spirit::mArray::iterator it = charge_atom_data.begin(); it != charge_atom_data.end();++it)
-	{
+	for ( utility::json_spirit::mArray::iterator it = charge_atom_data.begin(); it != charge_atom_data.end(); ++it ) {
 		ChargeAtom current_atom;
 		current_atom.deserialize(it->get_obj());
 		charge_atom_list_.push_back(current_atom);
@@ -135,39 +133,32 @@ void ChargeGrid::refresh(core::pose::Pose const & pose, core::Vector const & )
 	setup_charge_atoms(pose);
 
 	numeric::xyzVector<core::Size> dimensions = get_dimensions();
-	for(core::Size x_index =0; x_index < dimensions.x(); ++x_index)
-	{
-		for(core::Size y_index = 0; y_index < dimensions.y(); ++y_index)
-		{
-			for(core::Size z_index = 0; z_index < dimensions.z(); ++z_index)
-			{
+	for ( core::Size x_index =0; x_index < dimensions.x(); ++x_index ) {
+		for ( core::Size y_index = 0; y_index < dimensions.y(); ++y_index ) {
+			for ( core::Size z_index = 0; z_index < dimensions.z(); ++z_index ) {
 
 				core::Vector pdb_coords(get_pdb_coords(x_index,y_index,z_index));
 				core::Size neighbor_count = 0;
 				//first loop through the charge atoms to calculate neighbor count
 				//Maybe we should use a b-tree to do atom count calculation but it might not be worth the effort
 				std::list<ChargeAtom>::iterator protein_charge_atom_it = charge_atom_list_.begin();
-				for(; protein_charge_atom_it != charge_atom_list_.end(); ++protein_charge_atom_it)
-				{
-					if(protein_charge_atom_it->xyz.distance(pdb_coords) <= 4.0)
-					{
+				for ( ; protein_charge_atom_it != charge_atom_list_.end(); ++protein_charge_atom_it ) {
+					if ( protein_charge_atom_it->xyz.distance(pdb_coords) <= 4.0 ) {
 						++neighbor_count;
 					}
-					if(neighbor_count >= 12)
-					{
+					if ( neighbor_count >= 12 ) {
 						break;
 					}
 				}
 
-                //dummy charge value is ignored on the grid atom side during
-                //el calculations.  fix this later
+				//dummy charge value is ignored on the grid atom side during
+				//el calculations.  fix this later
 				ChargeAtom grid_charge_atom(pdb_coords,0.0,neighbor_count);
 
 				//second loop through the charge atoms to calculate charge
 				protein_charge_atom_it = charge_atom_list_.begin();
 				core::Real total_el = 0.0;
-				for(; protein_charge_atom_it != charge_atom_list_.end(); ++protein_charge_atom_it)
-				{
+				for ( ; protein_charge_atom_it != charge_atom_list_.end(); ++protein_charge_atom_it ) {
 					total_el += charge_charge_electrostatic(pose,*protein_charge_atom_it,grid_charge_atom);
 				}
 
@@ -193,17 +184,15 @@ void ChargeGrid::parse_my_tag(utility::tag::TagCOP const /*tag*/)
 {
 
 }
-    
+
 
 core::Real ChargeGrid::score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP)
 {
-    core::Real score = 0.0;
-    for(core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index )
-	{
+	core::Real score = 0.0;
+	for ( core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index ) {
 		core::Vector const & atom_coord(residue[atom_index]);
-		if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
-		{
-            core::Real protein_charge = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
+		if ( this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()) ) {
+			core::Real protein_charge = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
 
 
 			score += protein_charge*residue.residue()->atomic_charge(atom_index);
@@ -215,28 +204,24 @@ core::Real ChargeGrid::score(core::conformation::UltraLightResidue const & resid
 core::Real ChargeGrid::atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP)
 {
 	core::Vector const & atom_coord(residue[atomno]);
-	if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
-	{
+	if ( this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()) ) {
 		core::Real protein_charge = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
 		return protein_charge*residue.residue()->atomic_charge(atomno);
-	}else
-	{
+	} else {
 		return 0;
 	}
 }
 
 core::Real ChargeGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP /*qsar_map*/)
 {
-    core::Real score = 0.0;
-    for(core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index )
-	{
+	core::Real score = 0.0;
+	for ( core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index ) {
 		core::Vector const & atom_coord(residue.xyz(atom_index));
-		if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
-		{
-            core::Real protein_charge = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
+		if ( this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()) ) {
+			core::Real protein_charge = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
 
-            
-            
+
+
 			score += protein_charge*residue.atomic_charge(atom_index);
 		}
 	}
@@ -246,12 +231,10 @@ core::Real ChargeGrid::score(core::conformation::Residue const & residue, core::
 core::Real ChargeGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP /*qsar_map*/)
 {
 	core::Vector const & atom_coord(residue.xyz(atomno));
-	if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
-	{
+	if ( this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()) ) {
 		core::Real protein_charge = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
 		return protein_charge*residue.atomic_charge(atomno);
-	}else
-	{
+	} else {
 		return 0;
 	}
 }
@@ -259,35 +242,32 @@ core::Real ChargeGrid::atom_score(core::conformation::Residue const & residue, c
 core::Real ChargeGrid::nominal_depth(core::Size const & n_atoms) const
 {
 	switch(n_atoms)
-	{
-	case 7:
-		return(0.4);
-		break;
-	case 8:
-		return(0.9);
-		break;
-	case 9:
-		return(1.4);
-		break;
-	case 10:
-		return(1.9);
-		break;
-	case 11:
-		return(2.6);
-		break;
-	default:
-		if(n_atoms <= 6)
-		{
-			return(0.0);
-		}else if(n_atoms >= 12)
-		{
-			return(4.0);
-		}else
-		{
-			utility_exit_with_message("This should never have happened");
-		}
-		break;
-	}
+			{
+			case 7 :
+				return(0.4);
+				break;
+			case 8 :
+				return(0.9);
+				break;
+			case 9 :
+				return(1.4);
+				break;
+			case 10 :
+				return(1.9);
+				break;
+			case 11 :
+				return(2.6);
+				break;
+			default :
+				if ( n_atoms <= 6 ) {
+					return(0.0);
+				} else if ( n_atoms >= 12 ) {
+					return(4.0);
+				} else {
+					utility_exit_with_message("This should never have happened");
+				}
+				break;
+			}
 	return(-1.0); //Something has gone rather wrong
 }
 
@@ -313,31 +293,25 @@ void ChargeGrid::setup_charge_atoms(core::pose::Pose const & pose)
 	core::Size chain_begin = pose.conformation().chain_begin(chain_id);
 	core::Size chain_end = pose.conformation().chain_end(chain_id);
 
-	for(core::Size current_residue_index = chain_begin; current_residue_index <= chain_end; ++current_residue_index)
-	{
+	for ( core::Size current_residue_index = chain_begin; current_residue_index <= chain_end; ++current_residue_index ) {
 		core::conformation::Residue current_residue = pose.residue(current_residue_index);
-		for(core::Size current_atom_index = 1; current_atom_index <= current_residue.natoms();++current_atom_index)
-		{
+		for ( core::Size current_atom_index = 1; current_atom_index <= current_residue.natoms(); ++current_atom_index ) {
 			core::id::AtomID current_atom_id(current_atom_index,current_residue_index);
 			core::Vector current_atom_coords(pose.xyz(current_atom_id));
 			core::Real current_atom_charge = current_residue.atomic_charge(current_atom_index);
 			core::Size current_atom_neighbor_count = 0;
 
-			for(core::Size neighbor_residue_index = chain_begin; neighbor_residue_index <= chain_end; ++neighbor_residue_index)
-			{
+			for ( core::Size neighbor_residue_index = chain_begin; neighbor_residue_index <= chain_end; ++neighbor_residue_index ) {
 				//calculate neighbors within 12 A.  stop counting after 12 since thats where the lookup table cuts off.
 				core::conformation::Residue neighbor_residue = pose.residue(neighbor_residue_index);
-				for(core::Size neighbor_atom_index = 1; neighbor_atom_index <= neighbor_residue.natoms();++neighbor_atom_index)
-				{
+				for ( core::Size neighbor_atom_index = 1; neighbor_atom_index <= neighbor_residue.natoms(); ++neighbor_atom_index ) {
 					core::id::AtomID neighbor_atom_id(neighbor_atom_index,neighbor_residue_index);
 					core::Vector neighbor_atom_coords(pose.xyz(neighbor_atom_id));
-					if(neighbor_atom_coords.distance(neighbor_atom_coords) <= 4.0)
-					{
+					if ( neighbor_atom_coords.distance(neighbor_atom_coords) <= 4.0 ) {
 						current_atom_neighbor_count++;
 					}
 
-					if(current_atom_neighbor_count >= 12)
-					{
+					if ( current_atom_neighbor_count >= 12 ) {
 						break;
 					}
 				}

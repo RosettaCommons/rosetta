@@ -77,7 +77,7 @@ Constraints::copy_from( Constraints const & other ) {
 void
 Constraints::setup_for_scoring( func::XYZ_Func const & xyz, ScoreFunction const &scfxn ) const {
 	for ( ConstraintCOPs::const_iterator it= constraints_.begin(), ite=constraints_.end();
-				it != ite; ++it ) {
+			it != ite; ++it ) {
 		(*it)->setup_for_scoring( xyz, scfxn );
 	}
 }
@@ -86,7 +86,7 @@ Constraints::setup_for_scoring( func::XYZ_Func const & xyz, ScoreFunction const 
 void
 Constraints::setup_for_derivatives( func::XYZ_Func const & xyz, ScoreFunction const &scfxn ) const {
 	for ( ConstraintCOPs::const_iterator it= constraints_.begin(), ite=constraints_.end();
-				it != ite; ++it ) {
+			it != ite; ++it ) {
 		(*it)->setup_for_derivatives( xyz, scfxn );
 	}
 }
@@ -103,7 +103,7 @@ Constraints::eval_intrares_atom_derivative(
 {
 	func::ResidueXYZ resxyz( residue );
 	for ( ConstraintCOPs::const_iterator it= constraints_.begin(), ite=constraints_.end();
-				it != ite; ++it ) {
+			it != ite; ++it ) {
 		Constraint const & cst( **it );
 		Vector f1(0.0), f2(0.0);
 		cst.fill_f1_f2( atom_id, resxyz, f1, f2, weights );
@@ -232,10 +232,10 @@ Constraints::remove_constraint(
 )
 {
 
-	if( object_comparison ){
-		for( ConstraintCOPs::iterator cst_it = constraints_.begin(), cst_end = constraints_.end(); cst_it != cst_end; ++cst_it ){
+	if ( object_comparison ) {
+		for ( ConstraintCOPs::iterator cst_it = constraints_.begin(), cst_end = constraints_.end(); cst_it != cst_end; ++cst_it ) {
 
-			if( *cst == **cst_it ){
+			if ( *cst == **cst_it ) {
 				constraints_.erase( cst_it );
 				return true;
 			}
@@ -244,7 +244,7 @@ Constraints::remove_constraint(
 	}
 
 	ConstraintCOPs::iterator where = std::find( constraints_.begin(), constraints_.end(), cst );
-	if( where == constraints_.end() ) return false;
+	if ( where == constraints_.end() ) return false;
 	constraints_.erase( where );
 	return true;
 }
@@ -252,8 +252,8 @@ Constraints::remove_constraint(
 void
 Constraints::show( std::ostream & out ) {
 	for ( ConstraintCOPs::const_iterator it=constraints_.begin(), ite = constraints_.end();
-				it != ite;
-				++it ) {
+			it != ite;
+			++it ) {
 		Constraint const & cst( **it );
 		cst.show( out );
 	}
@@ -265,8 +265,8 @@ Constraints::show_definition(
 	pose::Pose const & pose
 ) const {
 	for ( ConstraintCOPs::const_iterator it=constraints_.begin(), ite = constraints_.end();
-				it != ite;
-				++it ) {
+			it != ite;
+			++it ) {
 		Constraint const & cst( **it );
 		cst.show_def( out, pose );
 	}
@@ -282,13 +282,13 @@ Constraints::show_violations(
 	Size total_viol( 0 );
 	Size total_cst( 0 );
 	for ( ConstraintCOPs::const_iterator it=constraints_.begin(), ite = constraints_.end();
-				it != ite;
-				++it ) {
+			it != ite;
+			++it ) {
 		Constraint const & cst( **it );
 		total_viol+=cst.show_violations( out, pose, verbose_level, threshold );
 		total_cst++;
 	}
- 	if ( verbose_level > 60 ) out << " of total: " << total_cst << " ";
+	if ( verbose_level > 60 ) out << " of total: " << total_cst << " ";
 	return total_viol;
 }
 

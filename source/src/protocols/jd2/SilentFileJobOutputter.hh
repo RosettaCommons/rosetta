@@ -43,27 +43,27 @@ class SilentFileJobOutputter : public protocols::jd2::FileJobOutputter
 {
 public:
 
-  typedef protocols::jd2::FileJobOutputter parent;
+	typedef protocols::jd2::FileJobOutputter parent;
 
-  SilentFileJobOutputter();
-  virtual ~SilentFileJobOutputter();
+	SilentFileJobOutputter();
+	virtual ~SilentFileJobOutputter();
 
 	/// @brief this function flushes any internal buffers - see parent class for explanation
 	virtual void flush();
 
-  //////////////////////////////creating output functions/////////////////////////////////////////
-  /// @brief this function outputs the final result of a job.
-  virtual
-  void final_pose( JobOP job, core::pose::Pose const & pose, std::string const & tag );
+	//////////////////////////////creating output functions/////////////////////////////////////////
+	/// @brief this function outputs the final result of a job.
+	virtual
+	void final_pose( JobOP job, core::pose::Pose const & pose, std::string const & tag );
 
 	/// @brief this function is intended for saving
 	/// mid-protocol poses; for example the final centroid
 	/// structure in a combined centroid/fullatom protocol.
 	/// --->these go to file silent_filename+tag
-  virtual
-  void other_pose( JobOP job, core::pose::Pose const & pose, std::string const & tag, int copy_count = -1, bool score_only = false );
+	virtual
+	void other_pose( JobOP job, core::pose::Pose const & pose, std::string const & tag, int copy_count = -1, bool score_only = false );
 
-  /////////////////////////////////state of output functions/////////////////////////////////
+	/////////////////////////////////state of output functions/////////////////////////////////
 
 	/// @brief this function is not used for output, but it
 	/// belongs here since it needs to check the same output
@@ -71,15 +71,15 @@ public:
 	/// checks wherever output goes to see if the job's
 	/// expected output already exists (on disk or whatever).
 	/// This is the most basic form of checkpointing.
-  virtual
-  bool job_has_completed( JobCOP job );
+	virtual
+	bool job_has_completed( JobCOP job );
 
 public: // accessors
 
 	/// @brief this is the master function for determining the
 	/// unique output identifier for a job
-  virtual
-  std::string output_name( JobCOP job );
+	virtual
+	std::string output_name( JobCOP job );
 
 	virtual
 	std::string filename( JobCOP ) const {
@@ -100,9 +100,9 @@ public: // accessors
 		bWriteIntermediateStructures_ = !value && bWriteIntermediateStructures_;
 	}
 
-  //////////////////////////////////////scorefile functions/////////////////////////////////////
+	//////////////////////////////////////scorefile functions/////////////////////////////////////
 protected:
-  //called by final_- and other_pose methods
+	//called by final_- and other_pose methods
 	core::io::silent::SilentStructOP dump_pose(
 		utility::file::FileName const & filename,
 		JobCOP job,
@@ -119,8 +119,8 @@ private: // methods
 		utility::file::FileName const & fn
 	);
 
-  /// @brief called by the constructor to set filename and options
-  void set_defaults();
+	/// @brief called by the constructor to set filename and options
+	void set_defaults();
 
 	void read_done_jobs();
 
@@ -129,12 +129,12 @@ private: // methods
 
 private: // members
 
-  // write intermediate files ( from calls to other_pose )
-  bool bWriteIntermediateFiles_;
+	// write intermediate files ( from calls to other_pose )
+	bool bWriteIntermediateFiles_;
 
 	// write also structural information to intermediate files
 	// ( from calls to other_pose )
-  bool bWriteIntermediateStructures_;
+	bool bWriteIntermediateStructures_;
 
 	/// @brief toggle to switch off writing of structures
 	bool bWriteNoStructures_;
@@ -143,8 +143,8 @@ private: // members
 	///the scorelines from the silent file
 	bool write_separate_scorefile_;
 
-  //  file name for silent-output
-  utility::file::FileName silent_file_;
+	//  file name for silent-output
+	utility::file::FileName silent_file_;
 
 	// list of tags already written
 	utility::vector1< std::string > silent_file_tags_;

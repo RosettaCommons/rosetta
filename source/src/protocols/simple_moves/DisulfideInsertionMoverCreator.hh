@@ -30,8 +30,8 @@ class DisulfideInsertionMoverCreator : public protocols::moves::MoverCreator {
 public:
 	DisulfideInsertionMoverCreator() { }
 	virtual ~DisulfideInsertionMoverCreator() { }
-    virtual protocols::moves::MoverOP create_mover() const;
-    virtual std::string keyname() const;
+	virtual protocols::moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
 };
 
 

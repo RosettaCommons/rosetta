@@ -44,14 +44,14 @@ ResidueXYZ::ResidueXYZ( Residue const & rsd_in ): rsd_( rsd_in ) {}
 Vector const &
 ResidueXYZ::operator()( AtomID const & id ) const
 {
-debug_assert( id.rsd() == rsd_.seqpos() && id.atomno() <= rsd_.natoms() );
+	debug_assert( id.rsd() == rsd_.seqpos() && id.atomno() <= rsd_.natoms() );
 	return rsd_.xyz( id.atomno() );
 }
 
 
 conformation::Residue const &
 ResidueXYZ::residue( Size ASSERT_ONLY( seqpos ) ) const {
-debug_assert( (Size) rsd_.seqpos() == seqpos );
+	debug_assert( (Size) rsd_.seqpos() == seqpos );
 	return rsd_;
 }
 
@@ -69,14 +69,14 @@ Vector const &
 ResiduePairXYZ::operator()( AtomID const & id ) const
 {
 	Residue const & rsd( ( id.rsd() == rsd1_.seqpos() ) ? rsd1_ : rsd2_ );
-debug_assert( id.rsd() == rsd.seqpos() && id.atomno() <= rsd.natoms() );
+	debug_assert( id.rsd() == rsd.seqpos() && id.atomno() <= rsd.natoms() );
 	return rsd.xyz( id.atomno() );
 }
 
 
 conformation::Residue const &
 ResiduePairXYZ::residue( Size seqpos ) const {
-debug_assert( (Size) rsd1_.seqpos() == seqpos || (Size) rsd2_.seqpos() == seqpos );
+	debug_assert( (Size) rsd1_.seqpos() == seqpos || (Size) rsd2_.seqpos() == seqpos );
 	return (Size) rsd1_.seqpos() == seqpos ? rsd1_ : rsd2_;
 }
 

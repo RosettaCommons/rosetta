@@ -37,14 +37,14 @@ namespace raw_data {
 ///
 /// @section format File Format
 /// The disulfide file format is pretty flexible. It looks for three kinds of lines:
-///  - '12	42' Lines with two integers are interpreted as a disulfide
+///  - '12 42' Lines with two integers are interpreted as a disulfide
 ///    bond, indexed by internal rosetta residue number, i.e. the 12th and 42nd
 ///    residues from the start of the pose.
-///  - '12A	42A' If a single character is appended to the numbers, DisulfideFile
+///  - '12A 42A' If a single character is appended to the numbers, DisulfideFile
 ///    assumes that these refer to the pdb number and chain, i.e. the residues
 ///    of chain A numbered 12 and 42 in the pdb.
 ///  - 'SSBOND   1 CYS A   12    CYS A   42' The
-///	   <a href="http://www.wwpdb.org/documentation/format32/sect6.html#SSBOND">
+///    <a href="http://www.wwpdb.org/documentation/format32/sect6.html#SSBOND">
 ///    PDB format</a> for disulfide bond annotations.
 ///
 /// All lines not matching these criteria are silently ignored. This implies
@@ -95,11 +95,11 @@ public:
 
 	/// @brief Get a list of disulfide bonds declared in the file
 	///        (renumbered to rosetta numbering if necessary)
-    /// also manually set the disulfides in the conformation of the provided pose
-    /// (this is a necessary workaround for dealing with multiple disulfide specification
-    /// files in PyRosetta
-    void read_in_and_set_disulfides(
-        core::pose::Pose &pose );
+	/// also manually set the disulfides in the conformation of the provided pose
+	/// (this is a necessary workaround for dealing with multiple disulfide specification
+	/// files in PyRosetta
+	void read_in_and_set_disulfides(
+		core::pose::Pose &pose );
 private:
 	/// @brief helper function to read in the file
 	void parse_disulf_file() const;

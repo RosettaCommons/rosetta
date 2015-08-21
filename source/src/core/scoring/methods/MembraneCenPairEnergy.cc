@@ -120,59 +120,58 @@ MembraneCenPairEnergy::residue_pair_energy(
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		using namespace core::conformation::symmetry;
 		SymmetricConformation const & symm_conf (
-												 dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
+			dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
 		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
-		if (!symm_info->bb_is_independent(rsd1.seqpos())) {
+		if ( !symm_info->bb_is_independent(rsd1.seqpos()) ) {
 			rsd1Seq = symm_info->bb_follows(rsd1.seqpos());
 		}
-		if (symm_info->is_virtual(rsd1.seqpos())) {
+		if ( symm_info->is_virtual(rsd1.seqpos()) ) {
 			rsd1Seq = 0;
 		}
 
-		if (!symm_info->bb_is_independent(rsd2.seqpos())) {
+		if ( !symm_info->bb_is_independent(rsd2.seqpos()) ) {
 			rsd2Seq = symm_info->bb_follows(rsd2.seqpos());
 		}
-		if (symm_info->is_virtual(rsd2.seqpos())) {
+		if ( symm_info->is_virtual(rsd2.seqpos()) ) {
 			rsd2Seq = 0;
 		}
 
 	}
-	if (rsd1Seq ==0 || rsd2Seq ==0 ) {
+	if ( rsd1Seq ==0 || rsd2Seq ==0 ) {
 		return;
 	}
 
 
-	if(MembraneTopology_from_pose( pose ).allow_scoring(rsd1Seq) && MembraneTopology_from_pose( pose ).allow_scoring(rsd2Seq))
-	{
-	/// assumes centroids are being used
-	conformation::Atom const & cen1 ( rsd1.atom( rsd1.nbr_atom() ) ), cen2 (rsd2.atom( rsd2.nbr_atom() ) );
-	Real const cendist = cen1.xyz().distance_squared( cen2.xyz() );
+	if ( MembraneTopology_from_pose( pose ).allow_scoring(rsd1Seq) && MembraneTopology_from_pose( pose ).allow_scoring(rsd2Seq) ) {
+		/// assumes centroids are being used
+		conformation::Atom const & cen1 ( rsd1.atom( rsd1.nbr_atom() ) ), cen2 (rsd2.atom( rsd2.nbr_atom() ) );
+		Real const cendist = cen1.xyz().distance_squared( cen2.xyz() );
 
-	/// accumulate total energies
+		/// accumulate total energies
 
-	potential_.evaluate_pair( pose, rsd1, rsd2, cendist, pair_score);
+		potential_.evaluate_pair( pose, rsd1, rsd2, cendist, pair_score);
 
-	//if ( rsd1.aa() == chemical::aa_his && rsd2.aa() == chemical::aa_his && true /*replace with option[ no_his_his_pairE ]*/ ) {
-	//	pair_score = 0;
-	//}
+		//if ( rsd1.aa() == chemical::aa_his && rsd2.aa() == chemical::aa_his && true /*replace with option[ no_his_his_pairE ]*/ ) {
+		// pair_score = 0;
+		//}
 
-//pair_score *= 2.019f;
-	//	cenpack_score *= 2.0f;
+		//pair_score *= 2.019f;
+		// cenpack_score *= 2.0f;
 
-	//core::Real rsd_wt = 0.5 *
-	//	( get_residue_weight_by_ss( pose.conformation().secstruct( rsd1.seqpos() ) ) +
-	//	  get_residue_weight_by_ss( pose.conformation().secstruct( rsd2.seqpos() ) )
-	//	);
+		//core::Real rsd_wt = 0.5 *
+		// ( get_residue_weight_by_ss( pose.conformation().secstruct( rsd1.seqpos() ) ) +
+		//   get_residue_weight_by_ss( pose.conformation().secstruct( rsd2.seqpos() ) )
+		// );
 
-	//Rosetta++ used the first residue's weight for both sides of the pair. I hate that. The above
-	//comment is an example of an alternative we should probably test in the distant future.
-	//bw is this something we like?
-//	core::Real rsd_wt =  get_residue_weight_by_ss( pose.conformation().secstruct( rsd1.seqpos() )) ;
+		//Rosetta++ used the first residue's weight for both sides of the pair. I hate that. The above
+		//comment is an example of an alternative we should probably test in the distant future.
+		//bw is this something we like?
+		// core::Real rsd_wt =  get_residue_weight_by_ss( pose.conformation().secstruct( rsd1.seqpos() )) ;
 	}
 	emap[ Mpair ]    += pair_score ; // * rsd_wt;
 	//}
-	//	emap[ cenpack ] += cenpack_score;
+	// emap[ cenpack ] += cenpack_score;
 }
 
 void
@@ -195,7 +194,7 @@ Distance
 MembraneCenPairEnergy::atomic_interaction_cutoff() const
 {
 	return 6.0; /// now subtracted off 6.0 from cutoffs in MembraneCentroid params files
-// 	return 0.0; /// since all the cutoffs for MembraneCentroid mode are rolled into the MembraneCendist check
+	//  return 0.0; /// since all the cutoffs for MembraneCentroid mode are rolled into the MembraneCendist check
 }
 core::Size
 MembraneCenPairEnergy::version() const

@@ -49,637 +49,637 @@ namespace core {
 namespace io {
 namespace rna {
 
-	std::string const RDAT_VERSION_NUM_STRING = "0.33";
+std::string const RDAT_VERSION_NUM_STRING = "0.33";
 
-	// kind of ghetto -- should probably have in a text file in database/ somewhere.
-	vector1< std::string > const ok_annotations = utility::tools::make_vector1( "chemical","modifier","experimentType","temperature","chemical","mutation","processing","ERROR","warning","EteRNA","sequence","structure","MAPseq","sequenceSource","signal_to_noise","feature","lig_pos","offset","scaling" );
+// kind of ghetto -- should probably have in a text file in database/ somewhere.
+vector1< std::string > const ok_annotations = utility::tools::make_vector1( "chemical","modifier","experimentType","temperature","chemical","mutation","processing","ERROR","warning","EteRNA","sequence","structure","MAPseq","sequenceSource","signal_to_noise","feature","lig_pos","offset","scaling" );
 
-	std::string const numbers = "0123456789-";
+std::string const numbers = "0123456789-";
 
-	//Constructor
-	RDAT::RDAT():
-		version_( RDAT_VERSION_NUM_STRING ),
-		name_( "" ),
-		sequence_( "" ),
-		structure_( "" ), // dot-paren notation.
-		offset_( 0 )
-	{
-	}
+//Constructor
+RDAT::RDAT():
+	version_( RDAT_VERSION_NUM_STRING ),
+	name_( "" ),
+	sequence_( "" ),
+	structure_( "" ), // dot-paren notation.
+	offset_( 0 )
+{
+}
 
-	//Constructor
-	RDAT::RDAT( std::string const name,
-							std::string const sequence,
-							Size const offset,
-							utility::vector1< Size > const & seqpos,
-							std::string const structure,
-							utility::vector1< Annotation > const & annotations,
-							utility::vector1< utility::vector1< Annotation > > const & data_annotations,
-							utility::vector1< utility::vector1< core::Real > > const & reactivity,
-							utility::vector1< utility::vector1< core::Real > > const & reactivity_error,
-							utility::vector1< std::string > const & comments	):
-		version_( RDAT_VERSION_NUM_STRING ),
-		name_( name ),
-		sequence_( sequence ),
-		structure_( structure ),
-		offset_( offset ),
-		seqpos_( seqpos ),
-		annotations_( annotations ),
-		data_annotations_( data_annotations ),
-		reactivity_( reactivity ),
-		reactivity_error_( reactivity_error ),
-		comments_( comments )
-	{
-		fill_sequences_and_structures();
-		check_rdat();
-	}
+//Constructor
+RDAT::RDAT( std::string const name,
+	std::string const sequence,
+	Size const offset,
+	utility::vector1< Size > const & seqpos,
+	std::string const structure,
+	utility::vector1< Annotation > const & annotations,
+	utility::vector1< utility::vector1< Annotation > > const & data_annotations,
+	utility::vector1< utility::vector1< core::Real > > const & reactivity,
+	utility::vector1< utility::vector1< core::Real > > const & reactivity_error,
+	utility::vector1< std::string > const & comments ):
+	version_( RDAT_VERSION_NUM_STRING ),
+	name_( name ),
+	sequence_( sequence ),
+	structure_( structure ),
+	offset_( offset ),
+	seqpos_( seqpos ),
+	annotations_( annotations ),
+	data_annotations_( data_annotations ),
+	reactivity_( reactivity ),
+	reactivity_error_( reactivity_error ),
+	comments_( comments )
+{
+	fill_sequences_and_structures();
+	check_rdat();
+}
 
 
-	//Constructor
-	RDAT::RDAT( std::string const filename )
-	{
-		read_rdat_file( filename );
-	}
+//Constructor
+RDAT::RDAT( std::string const filename )
+{
+	read_rdat_file( filename );
+}
 
-	//Destructor
-	RDAT::~RDAT()
-	{}
+//Destructor
+RDAT::~RDAT()
+{}
 
-	/////////////////////////////////////////////////////////////////////////////
-	void
-	RDAT::fill_header_information( pose::Pose & pose ) {
-		name_ = pose.pdb_info()->name();
+/////////////////////////////////////////////////////////////////////////////
+void
+RDAT::fill_header_information( pose::Pose & pose ) {
+	name_ = pose.pdb_info()->name();
 
-		// string -- currently RNA-focused. Could we use full_model_info [!?] instead.
-		int prev_resnum( 0 );
-		bool found_rna( false );
-		sequence_ = "";
-		for (Size i = 1; i <= pose.total_residue(); i++) {
-			core::conformation::Residue const & rsd = pose.residue( i );
-			if ( !rsd.is_RNA() ) continue;
-			int resnum = pose.pdb_info()->number(i);
-			if ( !found_rna ) {
-				found_rna = true;
-				prev_resnum = resnum - 1;
-			}
-			if ( (resnum > prev_resnum) && ( resnum - prev_resnum ) < 20 ) {
-				for ( int n = prev_resnum+1; n <= resnum-1; n++ ) sequence_ += "n";
-				sequence_ += rsd.name1();
-				prev_resnum = resnum;
-			}
+	// string -- currently RNA-focused. Could we use full_model_info [!?] instead.
+	int prev_resnum( 0 );
+	bool found_rna( false );
+	sequence_ = "";
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		core::conformation::Residue const & rsd = pose.residue( i );
+		if ( !rsd.is_RNA() ) continue;
+		int resnum = pose.pdb_info()->number(i);
+		if ( !found_rna ) {
+			found_rna = true;
+			prev_resnum = resnum - 1;
 		}
-
-		// later can replace this with actual structure...
-		structure_ = "";
-		for ( Size n = 1; n <= sequence_.size(); n++ ) structure_ += '.';
-
-		comments_.clear();
-		comments_.push_back( "Generated by rna_features in Rosetta." );
-
-		annotations_.clear();
-		annotations_.push_back( std::make_pair( "sequenceSource", "PDB:"+name_ ) );
-
-		// offset -- could be an issue -- need to devise a better solution, like ALL_SEQPOS or something, which is an alternative.
-		offset_ = pose.pdb_info()->number(1) - 1;
+		if ( (resnum > prev_resnum) && ( resnum - prev_resnum ) < 20 ) {
+			for ( int n = prev_resnum+1; n <= resnum-1; n++ ) sequence_ += "n";
+			sequence_ += rsd.name1();
+			prev_resnum = resnum;
+		}
 	}
 
-	/////////////////////////////////////////////////////////////////////////////
-	void
-	RDAT::output_rdat_header( utility::io::ozstream & out ) const {
-		out << "RDAT_VERSION\t" << version_   << std::endl;
-		out << "NAME\t"         << name_      << std::endl;
-		out << "SEQUENCE\t"     << sequence_  << std::endl;
-		out << "STRUCTURE\t"    << structure_ << std::endl;
+	// later can replace this with actual structure...
+	structure_ = "";
+	for ( Size n = 1; n <= sequence_.size(); n++ ) structure_ += '.';
+
+	comments_.clear();
+	comments_.push_back( "Generated by rna_features in Rosetta." );
+
+	annotations_.clear();
+	annotations_.push_back( std::make_pair( "sequenceSource", "PDB:"+name_ ) );
+
+	// offset -- could be an issue -- need to devise a better solution, like ALL_SEQPOS or something, which is an alternative.
+	offset_ = pose.pdb_info()->number(1) - 1;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void
+RDAT::output_rdat_header( utility::io::ozstream & out ) const {
+	out << "RDAT_VERSION\t" << version_   << std::endl;
+	out << "NAME\t"         << name_      << std::endl;
+	out << "SEQUENCE\t"     << sequence_  << std::endl;
+	out << "STRUCTURE\t"    << structure_ << std::endl;
+	out << std::endl;
+	for ( Size n = 1; n <= comments_.size(); n++ ) out << "COMMENT\t" << comments_[n] << std::endl;
+	out << std::endl;
+	out << "ANNOTATION";
+	for ( Size n = 1; n <= annotations_.size(); n++ ) out << "\t" << annotations_[n].first << ":" << annotations_[n].second;
+	out << std::endl << std::endl;
+	out << "OFFSET\t" << offset_ << std::endl;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void
+RDAT::output_rdat_to_file( std::string const outfile ) const {
+	utility::io::ozstream out( outfile.c_str());
+	TR << "Creating output RDAT file: " << outfile << std::endl;
+	output_rdat_header( out );
+	output_data( out );
+	out.close();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void
+RDAT::fill_data_from_features( utility::vector1< char > const & seqchars,
+	utility::vector1< Size > const & resnum,
+	utility::vector1< std::string > const & feature_names,
+	utility::vector1< utility::vector1< Real > > const & all_feature_vals ) {
+
+	data_annotations_.clear();
+	Size const num_features = feature_names.size();
+	for ( Size n = 1; n <= num_features; n++ ) {
+		data_annotations_.push_back( utility::tools::make_vector1( std::make_pair( "feature", feature_names[n] ) ) );
+	}
+
+	seqpos_.clear();
+	for ( Size n = 1; n <= resnum.size(); n++ ) {
+		seqpos_.push_back( resnum[n] );
+		runtime_assert( seqchars[n] == sequence_[ resnum[n] - offset_ - 1] );
+	}
+
+	for ( Size k = 1; k <= num_features; k++ ) {
+
+		utility::vector1< Real > reactivity_line;
+		for ( Size n = 1; n <= all_feature_vals.size(); n++ ) {
+			runtime_assert( all_feature_vals[ n ].size() == num_features );
+			reactivity_line.push_back( all_feature_vals[ n ][ k ] );
+		}
+		reactivity_.push_back( reactivity_line );
+	}
+
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void
+RDAT::output_data( utility::io::ozstream & out ) const {
+	for ( Size n = 1; n <= data_annotations_.size(); n++ ) {
+		out << "ANNOTATION_DATA:" << n;
+		for ( Size m = 1; m <= data_annotations_[n].size(); m++ ) {
+			Annotation annot = data_annotations_[n][m];
+			out << '\t'<< annot.first << ":" << annot.second << std::endl;
+		}
+	}
+	out << std::endl;
+
+	// SEQPOS line
+	out << "SEQPOS";
+	for ( Size n = 1; n <= seqpos_.size(); n++ ) {
+		out << "\t" << sequence_[ seqpos_[n] - offset_ - 1 ] << seqpos_[n];
+	}
+	out << std::endl;
+
+	// REACTIVITY line [or should this be called feature_value?]
+	for ( Size k = 1; k <= reactivity_.size(); k++ ) {
+		out << "REACTIVITY:"<< k;
+		runtime_assert( reactivity_[k].size() == seqpos_.size() );
+		for ( Size n = 1; n <= reactivity_[ k ].size(); n++ ) {
+			out << '\t' << reactivity_[ k ][ n ];
+		}
 		out << std::endl;
-		for (Size n = 1; n <= comments_.size(); n++ ) out << "COMMENT\t" << comments_[n] << std::endl;
-		out << std::endl;
-		out << "ANNOTATION";
-		for (Size n = 1; n <= annotations_.size(); n++ ) out << "\t" << annotations_[n].first << ":" << annotations_[n].second;
-		out << std::endl << std::endl;
-		out << "OFFSET\t" << offset_ << std::endl;
 	}
 
-	/////////////////////////////////////////////////////////////////////////////
-	void
-	RDAT::output_rdat_to_file( std::string const outfile ) const {
-		utility::io::ozstream out( outfile.c_str());
-		TR << "Creating output RDAT file: " << outfile << std::endl;
-		output_rdat_header( out );
-		output_data( out );
-		out.close();
-	}
-
-	/////////////////////////////////////////////////////////////////////////////
-	void
-	RDAT::fill_data_from_features( utility::vector1< char > const & seqchars,
-																 utility::vector1< Size > const & resnum,
-																 utility::vector1< std::string > const & feature_names,
-																 utility::vector1< utility::vector1< Real > > const & all_feature_vals ) {
-
-		data_annotations_.clear();
-		Size const num_features = feature_names.size();
-		for ( Size n = 1; n <= num_features; n++ ) {
-			data_annotations_.push_back( utility::tools::make_vector1( std::make_pair( "feature", feature_names[n] ) ) );
-		}
-
-		seqpos_.clear();
-		for ( Size n = 1; n <= resnum.size(); n++ ) {
-			seqpos_.push_back( resnum[n] );
-			runtime_assert( seqchars[n] == sequence_[ resnum[n] - offset_ - 1] );
-		}
-
-		for ( Size k = 1; k <= num_features; k++ ) {
-
-			utility::vector1< Real > reactivity_line;
-			for ( Size n = 1; n <= all_feature_vals.size(); n++ ) {
-				runtime_assert( all_feature_vals[ n ].size() == num_features );
-				reactivity_line.push_back( all_feature_vals[ n ][ k ] );
-			}
-			reactivity_.push_back( reactivity_line );
-		}
-
-	}
-
-	/////////////////////////////////////////////////////////////////////////////
-	void
-	RDAT::output_data( utility::io::ozstream & out ) const {
-		for ( Size n = 1; n <= data_annotations_.size(); n++ ) {
-			out << "ANNOTATION_DATA:" << n;
-			for ( Size m = 1; m <= data_annotations_[n].size(); m++ ) {
-				Annotation annot = data_annotations_[n][m];
-				out << '\t'<< annot.first << ":" << annot.second << std::endl;
-			}
+	// REACTIVITY_ERROR line [or should this be called feature_value?]
+	for ( Size k = 1; k <= reactivity_error_.size(); k++ ) {
+		out << "REACTIVITY_ERROR:"<< k;
+		runtime_assert( reactivity_error_[k].size() == seqpos_.size() );
+		for ( Size n = 1; n <= reactivity_error_[ k ].size(); n++ ) {
+			out << '\t' << reactivity_error_[ k ][ n ];
 		}
 		out << std::endl;
-
-		// SEQPOS line
-		out << "SEQPOS";
-		for ( Size n = 1; n <= seqpos_.size(); n++ ) {
-			out << "\t" << sequence_[ seqpos_[n] - offset_ - 1 ] << seqpos_[n];
-		}
-		out << std::endl;
-
-		// REACTIVITY line [or should this be called feature_value?]
-		for ( Size k = 1; k <= reactivity_.size(); k++ ) {
-			out << "REACTIVITY:"<< k;
-			runtime_assert( reactivity_[k].size() == seqpos_.size() );
-			for ( Size n = 1; n <= reactivity_[ k ].size(); n++ ) {
-				out << '\t' << reactivity_[ k ][ n ];
-			}
-			out << std::endl;
-		}
-
-		// REACTIVITY_ERROR line [or should this be called feature_value?]
-		for ( Size k = 1; k <= reactivity_error_.size(); k++ ) {
-			out << "REACTIVITY_ERROR:"<< k;
-			runtime_assert( reactivity_error_[k].size() == seqpos_.size() );
-			for ( Size n = 1; n <= reactivity_error_[ k ].size(); n++ ) {
-				out << '\t' << reactivity_error_[ k ][ n ];
-			}
-			out << std::endl;
-		}
-
 	}
 
-	/////////////////////////////////////////////////////////////////////////////
-	void
-	RDAT::read_rdat_file( std::string const filename ) {
+}
 
-		TR <<  "Parsing file from rdat: " <<  filename  << std::endl;
+/////////////////////////////////////////////////////////////////////////////
+void
+RDAT::read_rdat_file( std::string const filename ) {
 
-		utility::io::izstream stream( filename );
-		if ( !stream.good() ) utility_exit_with_message( "Unable to open "+filename );
+	TR <<  "Parsing file from rdat: " <<  filename  << std::endl;
 
-		std::string line, sequence_seqpos;
+	utility::io::izstream stream( filename );
+	if ( !stream.good() ) utility_exit_with_message( "Unable to open "+filename );
 
-		while ( getline( stream, line ) ) {
+	std::string line, sequence_seqpos;
 
-			vector1< std::string > tags = string_split_simple( line );
-			line = utility::replace_in( line, "\n","" );
+	while ( getline( stream, line ) ) {
 
-			if ( line.find( "VERSION") != std::string::npos ) {
-				version_ = remove_tag( line, "VERSION");
-			} else if ( line.find( "RDAT_VERSION") != std::string::npos ) {
-				version_ = remove_tag( line, "RDAT_VERSION");
-			} else if ( line.find( "COMMENT") != std::string::npos ) {
-				comments_.push_back( remove_tag(line, "COMMENT") );
-			} else if ( ( line.find( "ANNOTATION") != std::string::npos ) &&
-									( line.find( "ANNOTATION_DATA") == std::string::npos ) ) {
-				vector1< std::string > tags = str2cell( remove_tag(line,"ANNOTATION") );
-				for ( Size k = 1; k <= tags.size(); k++ ) annotations_.push_back( get_annotation( tags[k] ) );
-			} else if ( line.find( "NAME") != std::string::npos ) {
-				name_ = remove_tag(line, "NAME");
-			} else if ( line.find( "SEQUENCE") != std::string::npos ) {
-				vector1< std::string > cols = str2cell( remove_tag( line, "SEQUENCE" ) );
-				if ( cols.size() > 1 ) {
-					Size idx( int_of(cols[1]) );
-					save_data_with_idx( sequences_, idx,  cols[2] );
-				} else {
-					sequence_ = strip_whitespace( cols[1] );
-				}
-			} else if ( line.find( "OFFSET") != std::string::npos ) {
-				offset_ = int_of( remove_tag(line,"OFFSET"));
-			} else if ( line.find( "SEQPOS") != std::string::npos ) {
-				fill_seqpos( remove_tag(line,"SEQPOS"), sequence_seqpos );
-			} else if ( line.find( "MUTPOS") != std::string::npos ) {
-				TR << "No longer reading in MUTPOS" << std::endl;
-			} else if ( line.find( "STRUCTURE") != std::string::npos ) {
-				vector1< std::string > cols = str2cell( remove_tag( line, "STRUCTURE" ) );
-				if ( cols.size() > 1 ) {
-					Size idx( int_of(cols[1]) );
-					save_data_with_idx( structures_, idx,  cols[2] );
-				} else {
-					structure_ = strip_whitespace( cols[1] );
-				}
-			} else if ( line.find( "ANNOTATION_DATA") != std::string::npos ) {
-				line = remove_tag( line, "ANNOTATION_DATA" );
-				vector1< std::string > cols = str2cell( line );
-				runtime_assert( cols.size() > 0 );
-				int idx = int_of( cols[1] );
-				for ( Size k = 2; k <= cols.size(); k++ ) {
-					Annotation anot = get_annotation( cols[k] );
-					save_data_with_idx( data_annotations_, idx, anot );
-					if ( anot.first == "sequence" )	 save_data_with_idx( sequences_ , idx,  anot.second );
-					if ( anot.first == "structure" ) save_data_with_idx( structures_, idx,  anot.second );
-				}
-			} else if ( line.find( "REACTIVITY_ERROR") != std::string::npos ) {
-				save_data( remove_tag( line, "REACTIVITY_ERROR" ), reactivity_error_ );
-			} else if ( line.find( "REACTIVITY") != std::string::npos ) {
-				save_data( remove_tag( line, "REACTIVITY" ), reactivity_ );
-			} else if ( line.find( "AREA_PEAK_ERROR") != std::string::npos ) { // backwards compatibility
-				save_data( remove_tag( line, "AREA_PEAK_ERROR" ), reactivity_error_ );
-			} else if ( line.find( "AREA_PEAK") != std::string::npos ) { // backwards compatibility
-				save_data( remove_tag( line, "AREA_PEAK" ), reactivity_ );
-			} else if ( line.find( "TRACE") != std::string::npos ) {
-				save_data( remove_tag( line, "TRACE" ), trace_ );
-			} else if ( line.find( "XSEL_REFINE") != std::string::npos ) {
-				save_data( remove_tag( line, "XSEL_REFINE" ), trace_ );
-			} else if ( line.find( "XSEL") != std::string::npos ) {
-				save_data( remove_tag( line, "XSEL" ), xsel_ );
-			}	else { // might be a blank line
-				if ( strip_whitespace( line ).size() > 0 ) {
-					utility_exit_with_message( "\nError parsing line "+line );
-				}
-			}
-		}
+		vector1< std::string > tags = string_split_simple( line );
+		line = utility::replace_in( line, "\n","" );
 
-		fill_data_annotations_if_empty();
-		fill_sequences_and_structures();
-
-		fill_if_empty( sequence_,  sequences_,  "sequence" );
-		fill_if_empty( structure_, structures_, "structure" );
-
-		// output a warning of the sequence characters in "SEQPOS" don"t match up with the given sequence...
-		runtime_assert( check_sequence_seqpos( sequence_seqpos ) );
-
-		if ( trace_.size() > 0 ) TR <<  "Number of traces         : " << trace_.size() << std::endl;
-		TR <<  "Number of reactivity lines : " << reactivity_.size() << std::endl;
-		stream.close();
-
-		runtime_assert( check_rdat() );
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	RDAT::fill_if_empty( std::string & data_string,
-											 utility::vector1< std::string > & data_strings,
-											 std::string const tag ) const {
-		if ( data_string.size() == 0 ) {
-			if ( data_strings.size() == 0 ) {
-				TR.Warning << "No "+tag+"s detected or "+tag+" indices do not start at one" << std::endl;
+		if ( line.find( "VERSION") != std::string::npos ) {
+			version_ = remove_tag( line, "VERSION");
+		} else if ( line.find( "RDAT_VERSION") != std::string::npos ) {
+			version_ = remove_tag( line, "RDAT_VERSION");
+		} else if ( line.find( "COMMENT") != std::string::npos ) {
+			comments_.push_back( remove_tag(line, "COMMENT") );
+		} else if ( ( line.find( "ANNOTATION") != std::string::npos ) &&
+				( line.find( "ANNOTATION_DATA") == std::string::npos ) ) {
+			vector1< std::string > tags = str2cell( remove_tag(line,"ANNOTATION") );
+			for ( Size k = 1; k <= tags.size(); k++ ) annotations_.push_back( get_annotation( tags[k] ) );
+		} else if ( line.find( "NAME") != std::string::npos ) {
+			name_ = remove_tag(line, "NAME");
+		} else if ( line.find( "SEQUENCE") != std::string::npos ) {
+			vector1< std::string > cols = str2cell( remove_tag( line, "SEQUENCE" ) );
+			if ( cols.size() > 1 ) {
+				Size idx( int_of(cols[1]) );
+				save_data_with_idx( sequences_, idx,  cols[2] );
 			} else {
-				data_string = data_strings[1];
+				sequence_ = strip_whitespace( cols[1] );
+			}
+		} else if ( line.find( "OFFSET") != std::string::npos ) {
+			offset_ = int_of( remove_tag(line,"OFFSET"));
+		} else if ( line.find( "SEQPOS") != std::string::npos ) {
+			fill_seqpos( remove_tag(line,"SEQPOS"), sequence_seqpos );
+		} else if ( line.find( "MUTPOS") != std::string::npos ) {
+			TR << "No longer reading in MUTPOS" << std::endl;
+		} else if ( line.find( "STRUCTURE") != std::string::npos ) {
+			vector1< std::string > cols = str2cell( remove_tag( line, "STRUCTURE" ) );
+			if ( cols.size() > 1 ) {
+				Size idx( int_of(cols[1]) );
+				save_data_with_idx( structures_, idx,  cols[2] );
+			} else {
+				structure_ = strip_whitespace( cols[1] );
+			}
+		} else if ( line.find( "ANNOTATION_DATA") != std::string::npos ) {
+			line = remove_tag( line, "ANNOTATION_DATA" );
+			vector1< std::string > cols = str2cell( line );
+			runtime_assert( cols.size() > 0 );
+			int idx = int_of( cols[1] );
+			for ( Size k = 2; k <= cols.size(); k++ ) {
+				Annotation anot = get_annotation( cols[k] );
+				save_data_with_idx( data_annotations_, idx, anot );
+				if ( anot.first == "sequence" )  save_data_with_idx( sequences_ , idx,  anot.second );
+				if ( anot.first == "structure" ) save_data_with_idx( structures_, idx,  anot.second );
+			}
+		} else if ( line.find( "REACTIVITY_ERROR") != std::string::npos ) {
+			save_data( remove_tag( line, "REACTIVITY_ERROR" ), reactivity_error_ );
+		} else if ( line.find( "REACTIVITY") != std::string::npos ) {
+			save_data( remove_tag( line, "REACTIVITY" ), reactivity_ );
+		} else if ( line.find( "AREA_PEAK_ERROR") != std::string::npos ) { // backwards compatibility
+			save_data( remove_tag( line, "AREA_PEAK_ERROR" ), reactivity_error_ );
+		} else if ( line.find( "AREA_PEAK") != std::string::npos ) { // backwards compatibility
+			save_data( remove_tag( line, "AREA_PEAK" ), reactivity_ );
+		} else if ( line.find( "TRACE") != std::string::npos ) {
+			save_data( remove_tag( line, "TRACE" ), trace_ );
+		} else if ( line.find( "XSEL_REFINE") != std::string::npos ) {
+			save_data( remove_tag( line, "XSEL_REFINE" ), trace_ );
+		} else if ( line.find( "XSEL") != std::string::npos ) {
+			save_data( remove_tag( line, "XSEL" ), xsel_ );
+		} else { // might be a blank line
+			if ( strip_whitespace( line ).size() > 0 ) {
+				utility_exit_with_message( "\nError parsing line "+line );
 			}
 		}
 	}
 
-	////////////////////////////////////////////////////////////////////////
-	void
-	RDAT::fill_sequences_and_structures() {
-		fill_sequences_if_empty();
-		fill_structures_if_empty();
-	}
+	fill_data_annotations_if_empty();
+	fill_sequences_and_structures();
 
-	//////////////////////////////////////////////////////////////////////////////////////
-	void
-	RDAT::fill_sequences_if_empty() {
+	fill_if_empty( sequence_,  sequences_,  "sequence" );
+	fill_if_empty( structure_, structures_, "structure" );
 
-		if ( data_annotations_.size() == 0) return;
-
-		for ( Size i = 1; i <= reactivity_.size(); i++ ){
-
-			if ( ( i > sequences_.size() ||  sequences_[i].size() == 0 ) ){
-				save_data_with_idx( sequences_, i, sequence_ );
-			}
-
-			if ( i > data_annotations_.size() ) continue;
-			vector1< Annotation > const & data_annotation = data_annotations_[i];
-
-			for ( Size m = 1; m <= data_annotation.size(); m++ ) {
-				if ( data_annotation[m].first == "sequence" ){
-					save_data_with_idx( sequences_, i, data_annotation[m].second );
-					continue;
-				}
-			}
-
-			for ( Size m = 1; m <= data_annotation.size(); m++ ) {
-				if ( data_annotation[m].first == "mutation" ){
-					// examples: A152U,  ACG(152:154)UUU
-					std::string start_seq, mut_seq, mut_num;
-					std::string const tag = data_annotation[m].second;
-
-					Size q( 0 );
-					while ( q < tag.size() &&
-									( numbers.find( tag[q] ) == std::string::npos ) && tag[q] != '(' ) {
-						start_seq += tag[ q ];
-						q++;
-					}
-
-					if ( q < tag.size() && tag[q] == '(' ) q++;
-
-					while ( q < tag.size() &&
-									( numbers.find( tag[q] ) != std::string::npos || tag[q]==':' ) ){
-						mut_num += tag[ q ];
-						q++;
-					}
-
-					if ( q < tag.size() && tag[q] == ')' ) q++;
-					while ( q < tag.size() ) {
-						mut_seq += tag[ q ];
-						q++;
-					}
-
-					if  ( mut_num.size() == 0 ) {
-						if ( start_seq != "WT" ) {
-							TR.Warning <<  "WARNING! Could not find mutation position in mutation annotation: "+tag << std::endl;
-						}
-						continue;
-					}
-					if  ( start_seq.size() == 0 ) {
-						TR.Warning << "WARNING! Could not find starting nucleotide in mutation annotation: "+tag << std::endl;
-					}
-					if  ( mut_seq.size() == 0 ) {
-						TR.Warning << "WARNING! Could not find mutation nucleotide in mutation annotation: "+tag << std::endl;
-					}
-
-					std::vector< int > mut_res = ObjexxFCL::ints_of( utility::replace_in( mut_num, ":", "-" ) );
-					vector1< Size > mut_res_shifted;
-					for ( Size k = 1; k <= mut_res.size(); k++ ){
-						mut_res_shifted.push_back( mut_res[k-1] - offset_ );
-						if ( sequence_[ mut_res_shifted[k] - 1 ] != start_seq[ k-1 ] ) {
-							TR.Warning << "WARNING! Mismatch between mutation nucleotides (mutation annotation) vs. (sequence)\n"+tag << std::endl;
-							mut_res_shifted[k] = mut_res[ k - 1 ];
-							if ( sequence_[ mut_res_shifted[k] - 1 ] != start_seq[ k-1 ] ) {
-								TR.Warning << "OK, specified mutpos without taking into account offset..." << std::endl;
-							}
-						}
-					}
-
-					sequences_[i] = sequence_.substr( 0, mut_res_shifted[1] ) + mut_seq + sequence_.substr( mut_res_shifted[ mut_res_shifted.size() ]+1 );
-				}
-			}
-		}
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////
-	void
-	RDAT::fill_structures_if_empty() {
-
-		if ( reactivity_.size() == 0 ) return;
-
-		for ( Size i = 1; i <= reactivity_.size(); i++ ){
-
-			if ( ( i > structures_.size() ||  structures_[i].size() == 0 ) ){
-				save_data_with_idx( structures_, i, structure_ );
-			}
-
-			if ( i > data_annotations_.size() ) continue;
-			vector1< Annotation > const & data_annotation = data_annotations_[i];
-
-			for ( Size m = 1; m <= data_annotation.size(); m++ ) {
-				if ( data_annotation[m].first == "structure" ){
-					save_data_with_idx( structures_, i, data_annotation[m].second );
-					continue;
-				}
-			}
-		}
-	}
-
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////
-	Annotation
-	RDAT::get_annotation( std::string const tag ) const {
-		Size const colon_idx = tag.find( ':' );
-		runtime_assert( colon_idx > 0 );
-		return std::make_pair( tag.substr( 0, colon_idx ), tag.substr( colon_idx + 1 ) );
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	RDAT::save_data( std::string const & line, utility::vector1< utility::vector1< Real > > & var  ) const {
-		vector1< std::string > cols = str2cell( line );
-		Size const idx( int_of( cols[1] ) );
-		if ( var.size() < idx ) {
-			runtime_assert( var.size() == idx - 1 );
-			var.push_back( vector1< Real >() );
-		}
-
-		vector1< Real > values;
-		for ( Size n = 2; n <= cols.size(); n++ ) values.push_back( double_of( cols[n] ) );
-		var[ idx ] = values;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	RDAT::save_data( std::string const & line, utility::vector1< Real > & var  ) const {
-		vector1< std::string > cols = str2cell( line );
-		var.clear();
-		for ( Size n = 1; n <= cols.size(); n++ ) var.push_back( double_of( cols[n] ) );
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	RDAT::save_data_with_idx( utility::vector1< std::string > & var,
-														Size const idx,  std::string const & value ) const {
-		runtime_assert( idx > 0 );
-		for ( Size n = var.size(); n < idx; n++ ) var.push_back( "" );
-		var[ idx ] = value;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	RDAT::save_data_with_idx( utility::vector1< utility::vector1< Annotation > > & var,
-														Size const idx,  Annotation & value ) const {
-		runtime_assert( idx > 0 );
-		for ( Size n = var.size(); n < idx; n++ ) var.push_back( vector1< Annotation >() );
-		runtime_assert( idx <= var.size() );
-		var[ idx ].push_back( value );
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////
-	utility::vector1< std::string >
-	RDAT::str2cell( std::string const s ) const {
-		char delim( '\t' );
-		if ( s.find( '\t' ) == std::string::npos )    delim = ' ';
-		return string_split_simple( s, delim );
-	}
-
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-	std::string
-	RDAT::remove_tag( std::string & line, std::string const tag ) const {
-		//char delim( '\t' );
-		//if ( line.find( '\t' ) == std::string::npos )  delim = ' ';
-
-		std::string const tag_with_colon = tag + ":";
-		if ( line.find( tag_with_colon ) != std::string::npos ) {
-			line = utility::replace_in( line, tag_with_colon, "");
-		} else {
-			line = utility::replace_in( line, tag, "" );
-		}
-		return line;
-	}
-
-
-	//////////////////////////////////////////////////////////////////////////////////////
-	void
-	RDAT::fill_data_annotations_if_empty() {
-		for ( Size i = 1; i <= reactivity_.size(); i++ ) {
-			if ( i > data_annotations_.size() ) {
-				data_annotations_.push_back( utility::vector1< Annotation >() );
-			}
-		}
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////
-	void
-	RDAT::fill_seqpos( std::string const & seqpos_info,
-										 std::string & sequence_seqpos ) {
-
-		vector1< std::string > seqpos_tags = str2cell( seqpos_info );
-		sequence_seqpos = "";
-		seqpos_.clear();
-
-		for ( Size i = 1; i <= seqpos_tags.size(); i++ ) {
-
-			std::string tag = seqpos_tags[i];
-
-			if ( numbers.find( tag[0] ) == std::string::npos ) { // first letter is a character not a number of minus sign.
-				sequence_seqpos += tag[0];
-				tag = tag.substr( 1 );
-			}
-
-			seqpos_.push_back( int_of( tag ) );
-		}
-
-	}
-
-
-	//////////////////////////////////////////////////////////////////////////////////////
 	// output a warning of the sequence characters in "SEQPOS" don"t match up with the given sequence...
-	bool
-	RDAT::check_sequence_seqpos( std::string const & sequence_seqpos ) const {
+	runtime_assert( check_sequence_seqpos( sequence_seqpos ) );
 
-		if ( sequence_seqpos.size() == 0 ) return true;
+	if ( trace_.size() > 0 ) TR <<  "Number of traces         : " << trace_.size() << std::endl;
+	TR <<  "Number of reactivity lines : " << reactivity_.size() << std::endl;
+	stream.close();
 
-		if ( sequence_seqpos.size() != seqpos_.size() ) {
-			TR.Warning <<  "Number of characters in sequence_seqpos does not match seqpos_ length" << std::endl;
-			return false;
+	runtime_assert( check_rdat() );
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+RDAT::fill_if_empty( std::string & data_string,
+	utility::vector1< std::string > & data_strings,
+	std::string const tag ) const {
+	if ( data_string.size() == 0 ) {
+		if ( data_strings.size() == 0 ) {
+			TR.Warning << "No "+tag+"s detected or "+tag+" indices do not start at one" << std::endl;
+		} else {
+			data_string = data_strings[1];
+		}
+	}
+}
+
+////////////////////////////////////////////////////////////////////////
+void
+RDAT::fill_sequences_and_structures() {
+	fill_sequences_if_empty();
+	fill_structures_if_empty();
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
+void
+RDAT::fill_sequences_if_empty() {
+
+	if ( data_annotations_.size() == 0 ) return;
+
+	for ( Size i = 1; i <= reactivity_.size(); i++ ) {
+
+		if ( ( i > sequences_.size() ||  sequences_[i].size() == 0 ) ) {
+			save_data_with_idx( sequences_, i, sequence_ );
 		}
 
-		std::string s1( sequence_seqpos );
-		std::string s2( sequence_ );
-		std::transform(s1.begin(), s1.end(), s1.begin(), ::tolower);
-		std::transform(s2.begin(), s2.end(), s2.begin(), ::tolower);
+		if ( i > data_annotations_.size() ) continue;
+		vector1< Annotation > const & data_annotation = data_annotations_[i];
 
-		for ( Size i = 1; i <= sequence_seqpos.size(); i++ ) {
-			char const c1 = s1[ i-1 ];
-			Size const m = seqpos_[ i ] - offset_;
-			if ( m < 1 || m > sequence_.size() ) {
-				TR.Warning <<  "Warning: seqpos is not inside sequence, given offset" << std::endl;
-				return false;
-			}
-			char const c2 = s2[ m-1 ];
-			if ( c1 != 'x' && c2 != 'x' && c1 != 'n' && c2 != 'n' && c1 != c2 ) {
-				TR.Warning << "Warning: mismatch between SEQPOS nucleotide and SEQUENCE nucleotide\n" << std::endl;
-				return false;
+		for ( Size m = 1; m <= data_annotation.size(); m++ ) {
+			if ( data_annotation[m].first == "sequence" ) {
+				save_data_with_idx( sequences_, i, data_annotation[m].second );
+				continue;
 			}
 		}
-		return true;
+
+		for ( Size m = 1; m <= data_annotation.size(); m++ ) {
+			if ( data_annotation[m].first == "mutation" ) {
+				// examples: A152U,  ACG(152:154)UUU
+				std::string start_seq, mut_seq, mut_num;
+				std::string const tag = data_annotation[m].second;
+
+				Size q( 0 );
+				while ( q < tag.size() &&
+						( numbers.find( tag[q] ) == std::string::npos ) && tag[q] != '(' ) {
+					start_seq += tag[ q ];
+					q++;
+				}
+
+				if ( q < tag.size() && tag[q] == '(' ) q++;
+
+				while ( q < tag.size() &&
+						( numbers.find( tag[q] ) != std::string::npos || tag[q]==':' ) ) {
+					mut_num += tag[ q ];
+					q++;
+				}
+
+				if ( q < tag.size() && tag[q] == ')' ) q++;
+				while ( q < tag.size() ) {
+					mut_seq += tag[ q ];
+					q++;
+				}
+
+				if  ( mut_num.size() == 0 ) {
+					if ( start_seq != "WT" ) {
+						TR.Warning <<  "WARNING! Could not find mutation position in mutation annotation: "+tag << std::endl;
+					}
+					continue;
+				}
+				if  ( start_seq.size() == 0 ) {
+					TR.Warning << "WARNING! Could not find starting nucleotide in mutation annotation: "+tag << std::endl;
+				}
+				if  ( mut_seq.size() == 0 ) {
+					TR.Warning << "WARNING! Could not find mutation nucleotide in mutation annotation: "+tag << std::endl;
+				}
+
+				std::vector< int > mut_res = ObjexxFCL::ints_of( utility::replace_in( mut_num, ":", "-" ) );
+				vector1< Size > mut_res_shifted;
+				for ( Size k = 1; k <= mut_res.size(); k++ ) {
+					mut_res_shifted.push_back( mut_res[k-1] - offset_ );
+					if ( sequence_[ mut_res_shifted[k] - 1 ] != start_seq[ k-1 ] ) {
+						TR.Warning << "WARNING! Mismatch between mutation nucleotides (mutation annotation) vs. (sequence)\n"+tag << std::endl;
+						mut_res_shifted[k] = mut_res[ k - 1 ];
+						if ( sequence_[ mut_res_shifted[k] - 1 ] != start_seq[ k-1 ] ) {
+							TR.Warning << "OK, specified mutpos without taking into account offset..." << std::endl;
+						}
+					}
+				}
+
+				sequences_[i] = sequence_.substr( 0, mut_res_shifted[1] ) + mut_seq + sequence_.substr( mut_res_shifted[ mut_res_shifted.size() ]+1 );
+			}
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
+void
+RDAT::fill_structures_if_empty() {
+
+	if ( reactivity_.size() == 0 ) return;
+
+	for ( Size i = 1; i <= reactivity_.size(); i++ ) {
+
+		if ( ( i > structures_.size() ||  structures_[i].size() == 0 ) ) {
+			save_data_with_idx( structures_, i, structure_ );
+		}
+
+		if ( i > data_annotations_.size() ) continue;
+		vector1< Annotation > const & data_annotation = data_annotations_[i];
+
+		for ( Size m = 1; m <= data_annotation.size(); m++ ) {
+			if ( data_annotation[m].first == "structure" ) {
+				save_data_with_idx( structures_, i, data_annotation[m].second );
+				continue;
+			}
+		}
+	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+Annotation
+RDAT::get_annotation( std::string const tag ) const {
+	Size const colon_idx = tag.find( ':' );
+	runtime_assert( colon_idx > 0 );
+	return std::make_pair( tag.substr( 0, colon_idx ), tag.substr( colon_idx + 1 ) );
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+RDAT::save_data( std::string const & line, utility::vector1< utility::vector1< Real > > & var  ) const {
+	vector1< std::string > cols = str2cell( line );
+	Size const idx( int_of( cols[1] ) );
+	if ( var.size() < idx ) {
+		runtime_assert( var.size() == idx - 1 );
+		var.push_back( vector1< Real >() );
 	}
 
-	////////////////////////////////////////////////////////////////////////
-	// consistency checks
-	bool
-	RDAT::check_rdat() const {
+	vector1< Real > values;
+	for ( Size n = 2; n <= cols.size(); n++ ) values.push_back( double_of( cols[n] ) );
+	var[ idx ] = values;
+}
 
-		if ( name_.size() == 0 ){
-			TR.Warning <<  "\nWARNING! Must give a name!\n" << std::endl;
-			return false;
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+RDAT::save_data( std::string const & line, utility::vector1< Real > & var  ) const {
+	vector1< std::string > cols = str2cell( line );
+	var.clear();
+	for ( Size n = 1; n <= cols.size(); n++ ) var.push_back( double_of( cols[n] ) );
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+RDAT::save_data_with_idx( utility::vector1< std::string > & var,
+	Size const idx,  std::string const & value ) const {
+	runtime_assert( idx > 0 );
+	for ( Size n = var.size(); n < idx; n++ ) var.push_back( "" );
+	var[ idx ] = value;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+RDAT::save_data_with_idx( utility::vector1< utility::vector1< Annotation > > & var,
+	Size const idx,  Annotation & value ) const {
+	runtime_assert( idx > 0 );
+	for ( Size n = var.size(); n < idx; n++ ) var.push_back( vector1< Annotation >() );
+	runtime_assert( idx <= var.size() );
+	var[ idx ].push_back( value );
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< std::string >
+RDAT::str2cell( std::string const s ) const {
+	char delim( '\t' );
+	if ( s.find( '\t' ) == std::string::npos )    delim = ' ';
+	return string_split_simple( s, delim );
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+std::string
+RDAT::remove_tag( std::string & line, std::string const tag ) const {
+	//char delim( '\t' );
+	//if ( line.find( '\t' ) == std::string::npos )  delim = ' ';
+
+	std::string const tag_with_colon = tag + ":";
+	if ( line.find( tag_with_colon ) != std::string::npos ) {
+		line = utility::replace_in( line, tag_with_colon, "");
+	} else {
+		line = utility::replace_in( line, tag, "" );
+	}
+	return line;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+void
+RDAT::fill_data_annotations_if_empty() {
+	for ( Size i = 1; i <= reactivity_.size(); i++ ) {
+		if ( i > data_annotations_.size() ) {
+			data_annotations_.push_back( utility::vector1< Annotation >() );
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
+void
+RDAT::fill_seqpos( std::string const & seqpos_info,
+	std::string & sequence_seqpos ) {
+
+	vector1< std::string > seqpos_tags = str2cell( seqpos_info );
+	sequence_seqpos = "";
+	seqpos_.clear();
+
+	for ( Size i = 1; i <= seqpos_tags.size(); i++ ) {
+
+		std::string tag = seqpos_tags[i];
+
+		if ( numbers.find( tag[0] ) == std::string::npos ) { // first letter is a character not a number of minus sign.
+			sequence_seqpos += tag[0];
+			tag = tag.substr( 1 );
 		}
 
-		if ( sequence_.size() == 0 ){
-			TR.Warning <<  "\nWARNING! Must supply sequence!" << std::endl;
-			return false;
-		}
-
-		if ( sequence_.find( 'T' ) != std::string::npos ){
-			TR.Warning << "\nWARNING! Warning: you have a T instead of a U in the sequence!!\n" << std::endl;
-			return false;
-		}
-
-		if ( seqpos_[1] - offset_ < 1 ){
-			TR.Warning << "\nWARNING! Offset/seqpos does not look right -- at least one index is too low for sequence\n" << std::endl;
-			return false;
-		}
-
-		if ( seqpos_[ seqpos_.size() ] - offset_ > static_cast<int>( sequence_.size() ) ) {
-			TR.Warning << "\nWARNING! Offset/seqpos does not look right -- at least one index is too high for sequence\n" << std::endl;
-			return false;
-		}
-
-		for ( Size n = 1; n <= reactivity_.size(); n++ ) {
-			if ( reactivity_[n].size() != seqpos_.size() ) {
-				TR.Warning << "\nWARNING! Number of bands in reactivity does not match length of seqpos\n" << std::endl;
-				return false;
-			}
-		}
-
-		if ( data_annotations_.size() > 0 && data_annotations_.size() != reactivity_.size() ) {
-			TR.Warning << "\nWARNING! Number of bands in data_annotations does not match number of lanes in reactivity\n" << std::endl;
-			return false;
-		}
-
-		if ( xsel_.size() > 0 ) {
-			if ( reactivity_[1].size() != xsel_.size() ) {
-				TR.Warning << "\nWARNING! Number of bands in xsel does not match number of bands in reactivity\n" << std::endl;
-			return false;
-			}
-		}
-
-		if ( xsel_refine_.size() > 0 ) {
-			if ( reactivity_.size() != xsel_refine_.size() ) {
-				TR.Warning << "\nWARNING! Number of lanes in xsel_refine does not match number of lanes in reactivity \n" << std::endl;
-				return false;
-			}
-			if ( reactivity_[1].size() != xsel_refine_.size() ){
-				TR.Warning << "\nWARNING! Number of bands in xsel_refine  does not match number of bands in reactivity \n" << std::endl;
-			}
-		}
-
-		check_annotations( annotations_ ); // don't do an early exit here - -just print warning.
-
-		if ( data_annotations_.size() > 0 ){
-			for ( Size n = 1; n <= data_annotations_.size(); n++ ){
-				check_annotations( data_annotations_[n] ); // don't do an early exit here - -just print warning.
-			}
-		}
-
-		return true;
+		seqpos_.push_back( int_of( tag ) );
 	}
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	bool
-	RDAT::check_annotations( utility::vector1< Annotation > const & annotations ) const {
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+// output a warning of the sequence characters in "SEQPOS" don"t match up with the given sequence...
+bool
+RDAT::check_sequence_seqpos( std::string const & sequence_seqpos ) const {
+
+	if ( sequence_seqpos.size() == 0 ) return true;
+
+	if ( sequence_seqpos.size() != seqpos_.size() ) {
+		TR.Warning <<  "Number of characters in sequence_seqpos does not match seqpos_ length" << std::endl;
+		return false;
+	}
+
+	std::string s1( sequence_seqpos );
+	std::string s2( sequence_ );
+	std::transform(s1.begin(), s1.end(), s1.begin(), ::tolower);
+	std::transform(s2.begin(), s2.end(), s2.begin(), ::tolower);
+
+	for ( Size i = 1; i <= sequence_seqpos.size(); i++ ) {
+		char const c1 = s1[ i-1 ];
+		Size const m = seqpos_[ i ] - offset_;
+		if ( m < 1 || m > sequence_.size() ) {
+			TR.Warning <<  "Warning: seqpos is not inside sequence, given offset" << std::endl;
+			return false;
+		}
+		char const c2 = s2[ m-1 ];
+		if ( c1 != 'x' && c2 != 'x' && c1 != 'n' && c2 != 'n' && c1 != c2 ) {
+			TR.Warning << "Warning: mismatch between SEQPOS nucleotide and SEQUENCE nucleotide\n" << std::endl;
+			return false;
+		}
+	}
+	return true;
+}
+
+////////////////////////////////////////////////////////////////////////
+// consistency checks
+bool
+RDAT::check_rdat() const {
+
+	if ( name_.size() == 0 ) {
+		TR.Warning <<  "\nWARNING! Must give a name!\n" << std::endl;
+		return false;
+	}
+
+	if ( sequence_.size() == 0 ) {
+		TR.Warning <<  "\nWARNING! Must supply sequence!" << std::endl;
+		return false;
+	}
+
+	if ( sequence_.find( 'T' ) != std::string::npos ) {
+		TR.Warning << "\nWARNING! Warning: you have a T instead of a U in the sequence!!\n" << std::endl;
+		return false;
+	}
+
+	if ( seqpos_[1] - offset_ < 1 ) {
+		TR.Warning << "\nWARNING! Offset/seqpos does not look right -- at least one index is too low for sequence\n" << std::endl;
+		return false;
+	}
+
+	if ( seqpos_[ seqpos_.size() ] - offset_ > static_cast<int>( sequence_.size() ) ) {
+		TR.Warning << "\nWARNING! Offset/seqpos does not look right -- at least one index is too high for sequence\n" << std::endl;
+		return false;
+	}
+
+	for ( Size n = 1; n <= reactivity_.size(); n++ ) {
+		if ( reactivity_[n].size() != seqpos_.size() ) {
+			TR.Warning << "\nWARNING! Number of bands in reactivity does not match length of seqpos\n" << std::endl;
+			return false;
+		}
+	}
+
+	if ( data_annotations_.size() > 0 && data_annotations_.size() != reactivity_.size() ) {
+		TR.Warning << "\nWARNING! Number of bands in data_annotations does not match number of lanes in reactivity\n" << std::endl;
+		return false;
+	}
+
+	if ( xsel_.size() > 0 ) {
+		if ( reactivity_[1].size() != xsel_.size() ) {
+			TR.Warning << "\nWARNING! Number of bands in xsel does not match number of bands in reactivity\n" << std::endl;
+			return false;
+		}
+	}
+
+	if ( xsel_refine_.size() > 0 ) {
+		if ( reactivity_.size() != xsel_refine_.size() ) {
+			TR.Warning << "\nWARNING! Number of lanes in xsel_refine does not match number of lanes in reactivity \n" << std::endl;
+			return false;
+		}
+		if ( reactivity_[1].size() != xsel_refine_.size() ) {
+			TR.Warning << "\nWARNING! Number of bands in xsel_refine  does not match number of bands in reactivity \n" << std::endl;
+		}
+	}
+
+	check_annotations( annotations_ ); // don't do an early exit here - -just print warning.
+
+	if ( data_annotations_.size() > 0 ) {
+		for ( Size n = 1; n <= data_annotations_.size(); n++ ) {
+			check_annotations( data_annotations_[n] ); // don't do an early exit here - -just print warning.
+		}
+	}
+
+	return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+RDAT::check_annotations( utility::vector1< Annotation > const & annotations ) const {
 
 	for ( Size j = 1; j <= annotations.size(); j++ ) {
 		if ( !check_annotation( annotations[j] ) ) {
@@ -690,31 +690,31 @@ namespace rna {
 	return true;
 }
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	bool
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool
 RDAT::check_annotation( Annotation const & annotation ) const {
 	return ok_annotations.has_value( annotation.first );
-	}
+}
 
 
-	////////////////////////////////////////////////////////////////////////////////////////////////
-	std::string
-	get_tag( utility::vector1< Annotation > const & annotations, std::string const & tag ) {
-		for ( Size n = 1; n <= annotations.size(); n++ ){
-			if ( annotations[n].first == tag ) return annotations[n].second;
-		}
-		return "";
+////////////////////////////////////////////////////////////////////////////////////////////////
+std::string
+get_tag( utility::vector1< Annotation > const & annotations, std::string const & tag ) {
+	for ( Size n = 1; n <= annotations.size(); n++ ) {
+		if ( annotations[n].first == tag ) return annotations[n].second;
 	}
+	return "";
+}
 
-	////////////////////////////////////////////////////////////////////////////////////////////////
-	utility::vector1< std::string >
-	get_tags( utility::vector1< utility::vector1< Annotation > > const & data_annotations, std::string const & tag ) {
-		utility::vector1< std::string > tags;
-		for ( Size k = 1; k <= data_annotations.size(); k++ ){
-			tags.push_back( get_tag( data_annotations[k], tag ) );
-		}
-		return tags;
+////////////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< std::string >
+get_tags( utility::vector1< utility::vector1< Annotation > > const & data_annotations, std::string const & tag ) {
+	utility::vector1< std::string > tags;
+	for ( Size k = 1; k <= data_annotations.size(); k++ ) {
+		tags.push_back( get_tag( data_annotations[k], tag ) );
 	}
+	return tags;
+}
 
 
 } //rna

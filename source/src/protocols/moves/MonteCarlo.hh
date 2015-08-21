@@ -40,7 +40,7 @@
 #include <string>
 
 #ifdef WIN32
-	#include <protocols/moves/MonteCarloExceptionConverge.hh>
+#include <protocols/moves/MonteCarloExceptionConverge.hh>
 #endif
 
 
@@ -221,12 +221,12 @@ public:
 	set_last_accepted_pose(
 		Pose const & pose
 	);
-	
+
 	/// @brief Sets the last accepted pose and last accepted score
 	/// @note (does not reset counters)
 	void
 	set_last_accepted_pose(
-    core::pose::Pose const& pose,
+		core::pose::Pose const& pose,
 		core::Real score
 	);
 
@@ -234,7 +234,7 @@ public:
 	set_lowest_score_pose(
 		core::pose::Pose const& pose
 	);
-	
+
 	void
 	set_lowest_score_pose(
 		core::pose::Pose const& pose,
@@ -257,13 +257,13 @@ public:
 
 
 	/// @brief Returns the lowest score pose encountered
-    ///
-    /// example(s):
-    ///     mc.lowest_score_pose()
-    /// See also:
-    ///     MonteCarlo
-    ///     MonteCarlo.last_accepted_pose
-    ///     MonteCarlo.lowest_score
+	///
+	/// example(s):
+	///     mc.lowest_score_pose()
+	/// See also:
+	///     MonteCarlo
+	///     MonteCarlo.last_accepted_pose
+	///     MonteCarlo.lowest_score
 	Pose const &
 	lowest_score_pose() const
 	{
@@ -278,12 +278,12 @@ public:
 	/// @note Does not update simulation statistics or last accepts by default.
 	///
 	/// example(s):
-	///		mc.eval_lowest_score_pose( pose )
-	///	See also:
-	///		MonteCarlo
-	///		MonteCarlo.lowest_score
-	///		MonteCarlo.lowest_score_pose
-	///		MonteCarlo.recover_low
+	///  mc.eval_lowest_score_pose( pose )
+	/// See also:
+	///  MonteCarlo
+	///  MonteCarlo.lowest_score
+	///  MonteCarlo.lowest_score_pose
+	///  MonteCarlo.recover_low
 	bool eval_lowest_score_pose(
 		Pose & pose,
 		bool score_pose = true,
@@ -451,7 +451,7 @@ public:
 
 	/// @brief Returns the total number of trials since the last reset
 	/// @note: MonteCarlo.boltzmann(pose) updates the number of trials
-    ///
+	///
 	/// example(s):
 	///     mc.total_trials()
 	/// See also:

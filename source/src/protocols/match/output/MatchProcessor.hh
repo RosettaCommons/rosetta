@@ -34,7 +34,7 @@
 #include <map>
 
 #ifdef WIN32
-	#include <protocols/match/Hit.hh>
+#include <protocols/match/Hit.hh>
 #endif
 
 
@@ -113,12 +113,12 @@ protected:
 
 	bool
 	passes_filters(
-			match const & m
+		match const & m
 	);
 
 	bool
 	passes_filters(
-			match_dspos1 const & m
+		match_dspos1 const & m
 	);
 
 	void

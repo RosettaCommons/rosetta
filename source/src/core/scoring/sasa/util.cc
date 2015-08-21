@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/antibody_design/util.cc
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #include <core/chemical/AtomType.hh>
@@ -62,24 +62,24 @@ using namespace ObjexxFCL::format;
 namespace core {
 namespace scoring {
 namespace sasa {
-	using namespace core;
-	using namespace ObjexxFCL::format;
+using namespace core;
+using namespace ObjexxFCL::format;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///  Convenience Functions
-///	
+///
 ///
 
 /// @brief Relative per residue sidechain SASA
 /// @details Added by JKLeman (julia.koehler1982@gmail.com)
-///			GXG tripeptide values for sidechain SASA are taken from
-///			http://www.proteinsandproteomics.org/content/free/tables_1/table08.pdf
+///   GXG tripeptide values for sidechain SASA are taken from
+///   http://www.proteinsandproteomics.org/content/free/tables_1/table08.pdf
 utility::vector1< Real > per_res_sc_sasa( const pose::Pose & pose ) {
 
 	// get per-residue SASA
 	SasaCalc calc = SasaCalc();
 	calc.calculate( pose );
-	
+
 	// get residue SASA
 	return calc.get_residue_sasa_sc();
 
@@ -87,19 +87,19 @@ utility::vector1< Real > per_res_sc_sasa( const pose::Pose & pose ) {
 
 /// @brief Relative per residue sidechain SASA
 /// @details Added by JKLeman (julia.koehler1982@gmail.com)
-///			GXG tripeptide values for sidechain SASA are taken from
-///			http://www.proteinsandproteomics.org/content/free/tables_1/table08.pdf
+///   GXG tripeptide values for sidechain SASA are taken from
+///   http://www.proteinsandproteomics.org/content/free/tables_1/table08.pdf
 utility::vector1< Real > rel_per_res_sc_sasa( const pose::Pose & pose ) {
-	
+
 	using namespace core::pose;
-	
+
 	// get residue SASA
 	utility::vector1< Real > res_sasa = per_res_sc_sasa( pose );
-	
+
 	// create map of sidechain SASAs
 	// http://www.proteinsandproteomics.org/content/free/tables_1/table08.pdf
 	std::map< char, Real > sc_sasa;
-	
+
 	sc_sasa[ 'A' ] = 67;
 	sc_sasa[ 'R' ] = 196;
 	sc_sasa[ 'N' ] = 113;
@@ -120,95 +120,95 @@ utility::vector1< Real > rel_per_res_sc_sasa( const pose::Pose & pose ) {
 	sc_sasa[ 'W' ] = 217;
 	sc_sasa[ 'Y' ] = 187;
 	sc_sasa[ 'V' ] = 117;
-	
+
 	// create vector with relative sasa
 	utility::vector1< Real > rel_sasa;
 	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
 		rel_sasa.push_back( res_sasa[ i ] / sc_sasa[ pose.residue( i ).name1() ] );
 	}
-	
+
 	return rel_sasa;
-	
+
 } // relative per residue sidechain sasa
 
 /// @brief Is residue exposed?
 /// @details Added by JKLeman (julia.koehler1982@gmail.com)
-///			Uses the function rel_per_res_sc_sasa above
-///			THIS IS EXPENSIVE, BE AWARE!!! IF YOU NEED TO RUN IT OVER THE ENTIRE
-///			PROTEIN, USE THE rel_per_res_sc_sasa FUNCTION INSTEAD!
+///   Uses the function rel_per_res_sc_sasa above
+///   THIS IS EXPENSIVE, BE AWARE!!! IF YOU NEED TO RUN IT OVER THE ENTIRE
+///   PROTEIN, USE THE rel_per_res_sc_sasa FUNCTION INSTEAD!
 bool is_res_exposed( const pose::Pose & pose, core::Size resnum ) {
-	
+
 	// get relative sidechain SASA
 	utility::vector1< Real > rel_sasa = rel_per_res_sc_sasa( pose );
-	
+
 	// if relative sc SASA > 0.5, residue is exposed
 	if ( rel_sasa[ resnum ] >= 0.5 ) {
 		return true;
 	}
-	
+
 	// otherwise residue is buried
 	return false;
-	
+
 } // is residue exposed?
 
 
 /// @brief Calculate the sidechain and backbone sasa from atom sasa
 std::pair<Real, Real>
 get_sc_bb_sasa(const pose::Pose & pose, const id::AtomID_Map<Real> & atom_sasa) {
-	
+
 	Real sc_sasa = 0.0;
 	Real bb_sasa = 0.0;
-	
-	for (Size i = 1; i <= atom_sasa.n_residue(); ++i ){
+
+	for ( Size i = 1; i <= atom_sasa.n_residue(); ++i ) {
 		utility::vector1< Size> bb_atoms = pose.residue_type(i).all_bb_atoms();
 		utility::vector1< Size> sc_atoms = pose.residue_type(i).all_sc_atoms();
-		
+
 		//BB Calculation
-		for (Size x = 1; x <= bb_atoms.size(); ++x){
+		for ( Size x = 1; x <= bb_atoms.size(); ++x ) {
 			core::id::AtomID atomid(bb_atoms[x], i);
-			if (atom_sasa[atomid] < 0) continue; //Non-computed sasa
+			if ( atom_sasa[atomid] < 0 ) continue; //Non-computed sasa
 			bb_sasa += atom_sasa[atomid];
 		}
-		
+
 		//SC Calculation
-		for (Size x = 1; x <= sc_atoms.size(); ++x){
+		for ( Size x = 1; x <= sc_atoms.size(); ++x ) {
 			core::id::AtomID atomid(sc_atoms[x], i);
-			if (atom_sasa[atomid] < 0) continue; // Non-computed sasa
+			if ( atom_sasa[atomid] < 0 ) continue; // Non-computed sasa
 			sc_sasa += atom_sasa[atomid];
-			
+
 		}
 	}
-	
+
 	std::pair<Real, Real> split_sasa = std::make_pair(sc_sasa, bb_sasa);
 	return split_sasa;
 }
 
 std::pair<utility::vector1<Real>, utility::vector1<Real> >
 get_sc_bb_sasa_per_res(const pose::Pose & pose, const id::AtomID_Map<Real> & atom_sasa) {
-	
+
 	utility::vector1< Real > sc_sasa(pose.total_residue(), 0.0);
 	utility::vector1< Real > bb_sasa(pose.total_residue(), 0.0);
-	
-	for (Size i = 1; i <= atom_sasa.n_residue(); ++i ){
+
+	for ( Size i = 1; i <= atom_sasa.n_residue(); ++i ) {
 		utility::vector1< Size> bb_atoms = pose.residue_type(i).all_bb_atoms();
 		utility::vector1< Size> sc_atoms = pose.residue_type(i).all_sc_atoms();
-		
+
 		//BB Calculation
-		for (Size x = 1; x <= bb_atoms.size(); ++x){
+		for ( Size x = 1; x <= bb_atoms.size(); ++x ) {
 			core::id::AtomID atomid(bb_atoms[x], i);
-			if (atom_sasa[atomid] < 0) continue; //Non-computed sasa
+			if ( atom_sasa[atomid] < 0 ) continue; //Non-computed sasa
 			bb_sasa[i] += atom_sasa[atomid];
 		}
-		
+
 		//SC Calculation
-		for (Size x = 1; x <= sc_atoms.size(); ++x){
+		for ( Size x = 1; x <= sc_atoms.size(); ++x ) {
 			core::id::AtomID atomid(sc_atoms[x], i);
-			if (atom_sasa[atomid] < 0) continue; // Non-computed sasa
+			if ( atom_sasa[atomid] < 0 ) continue; // Non-computed sasa
 			sc_sasa[i] += atom_sasa[atomid];
-			
+
 		}
 	}
-	
+
 	std::pair<utility::vector1<Real>, utility::vector1<Real> > split_sasa = std::make_pair(sc_sasa, bb_sasa);
 	return split_sasa;
 }
@@ -216,18 +216,18 @@ get_sc_bb_sasa_per_res(const pose::Pose & pose, const id::AtomID_Map<Real> & ato
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///  Enum Management.  Can go in separate file if it gets large.
-///	
 ///
 ///
-	
+///
+
 SasaMethodEnum
 get_sasa_method_from_string(std::string method) {
 	std::map<std::string, SasaMethodEnum> methods;
-	
+
 	methods["LeGrand"] = LeGrand;
-	
+
 	//if (methods.find(method) == methods.end()){
-	//	utility_exit_with_message("SasaMethod unrecognized");
+	// utility_exit_with_message("SasaMethod unrecognized");
 	//}
 	return methods[method];
 }
@@ -235,17 +235,17 @@ get_sasa_method_from_string(std::string method) {
 std::string
 get_sasa_radii_parameter_name(SasaRadii radii_set) {
 	utility::vector1<std::string> radii_names;
-	
+
 	radii_names.resize(SasaRadii_total);
-	
+
 	radii_names[LJ] = "LJ_RADII";
 	radii_names[legacy] = "SASA_RADIUS_LEGACY";
 	radii_names[naccess] = "NACCESS_SASA_RADIUS";
 	radii_names[reduce] = "REDUCE_SASA_RADIUS";
 	radii_names[chothia] = radii_names[naccess];
-	
+
 	//if (std::find(radii_names.begin(), radii_names.end(), radii_set) == radii_names.end()){
-	//	utility_exit_with_message("Sasa Radii set unrecognized");
+	// utility_exit_with_message("Sasa Radii set unrecognized");
 	//}
 	return radii_names[radii_set];
 }
@@ -258,16 +258,16 @@ get_sasa_radii_set_from_string(std::string radii_set){
 	radii_enums["reduce"] = reduce;
 	radii_enums["legacy"] = legacy;
 	radii_enums["LJ"] = LJ;
-	
+
 	//if (radii_enums.find(radii_set) == radii_enums.end()){
-	//	utility_exit_with_message("Sasa Radii set unrecognized");
+	// utility_exit_with_message("Sasa Radii set unrecognized");
 	//}
-	
+
 	return radii_enums[radii_set];
 }
-	
 
-	
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 //// Functions used for molecular surface approximation
 //// LeGrand S, Merz KM. Rapid approximation to molecular surface area via the use of Boolean logic and look-up tables.
@@ -276,8 +276,8 @@ get_sasa_radii_set_from_string(std::string radii_set){
 ////  Implementation: Jerry Tsai
 ////  C++ Translation: Jeff Gray
 ////
-	
-	
+
+
 // These are needed currently by get_legrand_sasa_masks and get_legrand_sasa_angles:
 int const num_bytes = 21;
 int const num_phi = 64;
@@ -325,8 +325,9 @@ void input_legrand_sasa_dats() {
 
 	// this booleans checks whether we've done this already or not. if we have, then return immediately.
 	static bool init = false;
-	if ( init )
+	if ( init ) {
 		return;
+	}
 	init = true;
 
 	//j inputting the masks. they are 21 ubytes long, 162x100 (see header). expects file to be complete
@@ -505,8 +506,9 @@ void get_legrand_orientation( Vector const & a_xyz, Vector const & b_xyz, int & 
 #endif
 	phi_index = static_cast< int >( phi );
 	++phi_index; // for fortran goes from 1 to n
-	if ( phi_index > num_phi )
+	if ( phi_index > num_phi ) {
 		phi_index = 1; // reset back to index of 1?
+	}
 
 	//j figuring theta
 	//ronj atan2 is the arc tangent of y/x, expressed in radians.
@@ -593,8 +595,9 @@ get_legrand_2way_orientation( Vector const & a_xyz, Vector const & b_xyz, int & 
 #endif
 	phi_a2b_index = static_cast< int >( phi_a2b );
 	++phi_a2b_index; // for fortran goes from 1 to n
-	if ( phi_a2b_index > num_phi )
+	if ( phi_a2b_index > num_phi ) {
 		phi_a2b_index = 1; // reset back to index of 1?
+	}
 
 	// can take a shortcut to get phi_b2a
 	Real phi_b2a = num_phi / 2 - phi_a2b;
@@ -603,8 +606,9 @@ get_legrand_2way_orientation( Vector const & a_xyz, Vector const & b_xyz, int & 
 #endif
 	phi_b2a_index = static_cast< int >( phi_b2a );
 	++phi_b2a_index; // for fortran goes from 1 to n
-	if ( phi_b2a_index > num_phi )
+	if ( phi_b2a_index > num_phi ) {
 		phi_b2a_index = 1;
+	}
 
 
 	//j figuring theta
@@ -634,8 +638,9 @@ get_legrand_2way_orientation( Vector const & a_xyz, Vector const & b_xyz, int & 
 
 	// can use a shortcut to get theta_b2a
 	Real theta_b2a = num_theta / 2.0f + theta_a2b;
-	if ( theta_b2a > num_theta / 2.0f )
+	if ( theta_b2a > num_theta / 2.0f ) {
 		theta_b2a -= num_theta;
+	}
 #ifdef FILE_DEBUG
 	Real temp_theta_b2a = theta_b2a;
 #endif
@@ -663,7 +668,7 @@ get_legrand_2way_orientation( Vector const & a_xyz, Vector const & b_xyz, int & 
 #endif
 
 }
-	
+
 
 
 }

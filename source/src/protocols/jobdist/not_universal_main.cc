@@ -70,8 +70,8 @@ bool pose_matches_user_tag(
 
 	typedef vector1< string >::const_iterator iter;
 	for ( iter it = user_tags.begin(), end = user_tags.end();
-				it != end && !valid_tag && this_id != ""; ++it
-	) {
+			it != end && !valid_tag && this_id != ""; ++it
+			) {
 		if ( this_id.find( *it ) != std::string::npos ) {
 			break;
 			//valid_tag = true;
@@ -138,7 +138,7 @@ int not_universal_main(
 	Size const n_repeats( option[ run::repeat ]() );
 
 	SilentFileData sfd_out;
-	while( input.has_another_pose() ) {
+	while ( input.has_another_pose() ) {
 		input.fill_pose( current_pose, *rsd_set );
 
 		if ( option[ in::file::user_tags ].user() ) {

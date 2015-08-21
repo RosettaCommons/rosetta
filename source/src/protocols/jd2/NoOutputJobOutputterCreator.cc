@@ -23,12 +23,12 @@ namespace jd2 {
 std::string
 NoOutputJobOutputterCreator::keyname() const
 {
-        return "NoOutputJobOutputter";
+	return "NoOutputJobOutputter";
 }
 
 protocols::jd2::JobOutputterOP
 NoOutputJobOutputterCreator::create_JobOutputter() const {
-        return protocols::jd2::JobOutputterOP( new NoOutputJobOutputter );
+	return protocols::jd2::JobOutputterOP( new NoOutputJobOutputter );
 }
 
 } // namespace jd2

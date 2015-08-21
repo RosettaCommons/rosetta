@@ -35,32 +35,32 @@ namespace protocols {
 namespace environment {
 
 class AutoCutData : public basic::datacache::WriteableCacheableData {
-  typedef basic::datacache::WriteableCacheableData Parent;
-  typedef basic::datacache::WriteableCacheableDataOP ParentOP;
+	typedef basic::datacache::WriteableCacheableData Parent;
+	typedef basic::datacache::WriteableCacheableDataOP ParentOP;
 
 public:
-  AutoCutData( std::istream &in );
+	AutoCutData( std::istream &in );
 
-  AutoCutData( core::Size const& hash,
-               std::set< Size > const& cuts );
+	AutoCutData( core::Size const& hash,
+		std::set< Size > const& cuts );
 
-  void write( std::ostream &out ) const;
+	void write( std::ostream &out ) const;
 
-  basic::datacache::CacheableDataOP clone() const;
+	basic::datacache::CacheableDataOP clone() const;
 
-  std::string datatype() const;
+	std::string datatype() const;
 
-  utility::vector1< Size > const& cuts() const{
-    return auto_cuts_;
-  }
+	utility::vector1< Size > const& cuts() const{
+		return auto_cuts_;
+	}
 
-  core::Size const& hash() const {
-    return hash_;
-  }
+	core::Size const& hash() const {
+		return hash_;
+	}
 
 private:
-  utility::vector1< core::Size > auto_cuts_;
-  core::Size hash_;
+	utility::vector1< core::Size > auto_cuts_;
+	core::Size hash_;
 };
 
 } // environment

@@ -29,25 +29,25 @@ namespace optimization {
 
 
 /**************************************************
- *
- * Rough outline of how to structure this:
- *
- * Make a base 'minimizer' class
- *
- * Sub-class into univariate and multivariate minimizers
- * -> actually, could we treat linmin as an instance of multivariate
- *  	minimization, with a single pass of steepest descent
- *
- * The trick is how to mix and match convergence criteria, descent
- * direction generation, and line minimization schemes
- *
- * convergence criteria could be a function or a functor.  Descent
- * direction algorithms probably need to be functors, since they
- * have different storage needs.
- *
- *
- *
- **********************************************/
+*
+* Rough outline of how to structure this:
+*
+* Make a base 'minimizer' class
+*
+* Sub-class into univariate and multivariate minimizers
+* -> actually, could we treat linmin as an instance of multivariate
+*   minimization, with a single pass of steepest descent
+*
+* The trick is how to mix and match convergence criteria, descent
+* direction generation, and line minimization schemes
+*
+* convergence criteria could be a function or a functor.  Descent
+* direction algorithms probably need to be functors, since they
+* have different storage needs.
+*
+*
+*
+**********************************************/
 
 //**************************************
 //*** Begin convergence test section ***
@@ -93,7 +93,7 @@ private:
 class DescentDirectionAlgorithm {
 public:
 	DescentDirectionAlgorithm( Multifunc const & ) {} // func_ is unused? what's this class for? : func_( in_func_ ) {}
-//	Multivec operator()(){};
+	// Multivec operator()(){};
 	void initialize(){};
 private:
 	// Multifunc const & func_;
@@ -117,7 +117,7 @@ private:
 	Multifunc const & _func;
 	LineMinimizationAlgorithm & _line_min;
 	ConvergenceTest & _converged;
-	DescentDirectionAlgorithm &	_get_direction;
+	DescentDirectionAlgorithm & _get_direction;
 };
 
 //********************************************

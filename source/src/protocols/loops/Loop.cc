@@ -43,9 +43,9 @@ static thread_local basic::Tracer tr( "protocols.loops.Loop" );
 /// with id::JUMP
 void
 Loop::switch_movemap(
-   core::kinematics::MoveMap& movemap,
-	 core::id::TorsionType id,
-	 bool allow_moves
+	core::kinematics::MoveMap& movemap,
+	core::id::TorsionType id,
+	bool allow_moves
 ) const {
 	for ( Size pos = start(); pos <= stop(); pos++ ) {
 		movemap.set( core::kinematics::MoveMap::MoveMapTorsionID( pos, id ), allow_moves );
@@ -80,7 +80,7 @@ Loop::choose_cutpoint( core::pose::Pose const & pose ) {
 	// choose the cut_:
 	cut_ = 0;
 
-	if ( start_ > 1 && stop_ < nres ){
+	if ( start_ > 1 && stop_ < nres ) {
 		//char ss;
 		Size nfail( 0 );
 		do {
@@ -95,20 +95,20 @@ Loop::choose_cutpoint( core::pose::Pose const & pose ) {
 			char ss = pose.secstruct( cut_ );
 
 			// First try to put cutpoint outside of secondary structure
-			if( nfail < 20 ) if( ( ss == 'H' || ss == 'E' ) ) continue;
+			if ( nfail < 20 ) if ( ( ss == 'H' || ss == 'E' ) ) continue;
 			// later only insist that cutpoint is not infront of proline
-			if( nfail < 40 ) if( pose.residue(cut_+1).aa() == core::chemical::aa_pro ) continue;
-			if( nfail >= 40 ) tr.Error << "Cutpoint choice problem, setting cut_ = "	<< cut_ << std::endl;
+			if ( nfail < 40 ) if ( pose.residue(cut_+1).aa() == core::chemical::aa_pro ) continue;
+			if ( nfail >= 40 ) tr.Error << "Cutpoint choice problem, setting cut_ = " << cut_ << std::endl;
 		}while(false);
 
 		if ( cut_ == 0 ) {
 			cut_ = ( start_ + n_cut_s/2 );
-			tr.Warning << "Cutpoint choice problem, setting cut_ = "	<< cut_ << std::endl;
+			tr.Warning << "Cutpoint choice problem, setting cut_ = " << cut_ << std::endl;
 		}
 		runtime_assert ( cut_ >= start_ && cut_ <= stop_ );
-	} else if( start_ == 1 ) {
+	} else if ( start_ == 1 ) {
 		cut_ = 1;
-	} else if ( stop_ == nres ){
+	} else if ( stop_ == nres ) {
 		cut_ = nres;
 	} else {
 		utility_exit_with_message(
@@ -154,8 +154,8 @@ void
 Loop::show( std::ostream & output ) const
 {
 	output << "LOOP start: " << start_ << "  stop: " << stop_ << "  cut: " << cut_ <<
-	"  size: " << size() << "  skip rate: " << skip_rate_ << "  extended?: " <<
-	( extended_ ? "True" : "False" ) <<  std::endl;
+		"  size: " << size() << "  skip rate: " << skip_rate_ << "  extended?: " <<
+		( extended_ ? "True" : "False" ) <<  std::endl;
 }
 
 //////////////////////////////////////////////////////////////////////

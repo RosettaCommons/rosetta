@@ -42,7 +42,7 @@ public:
 	/// @details User may provide names of atoms that will be cached when a new
 	/// chunk is considered (i.e. at every do_caching() call)
 	AtomBasedConstraintsScore(Size, Real, bool, Size, utility::vector1<
-			std::string>, std::string);
+		std::string>, std::string);
 
 	/// @brief Prepare an atom-based score that utilizes the following predefined atoms: N, CA, C, O and CB
 	/// @details These atoms that will be cached when a new
@@ -70,7 +70,7 @@ public:
 	///    the last one depends on the size of a pose i.e. the size of the current chunk
 	/// @param atom_id the residue order number, the first is 1
 	inline numeric::xyzVector<Real> get_atom_coordinates(Size residue_id,
-			Size atom_id) {
+		Size atom_id) {
 		assert(residue_id<=chunk_atoms_xyz_.size());
 		assert(atom_id<=chunk_atoms_xyz_[residue_id].size());
 		return chunk_atoms_xyz_[residue_id][atom_id];
@@ -85,7 +85,7 @@ public:
 
 	/// @brief returns an internal ID assigned to a given atom name
 	/// @details this ID remains the same for all residues
-        inline Size get_constrained_atom_id(std::string atom_name) {
+	inline Size get_constrained_atom_id(std::string atom_name) {
 		return constrainable_atoms_.find(atom_name)->second;
 	}
 
@@ -101,7 +101,7 @@ public:
 private:
 	Size query_size_;
 	utility::vector1<utility::vector1<numeric::xyzVector<Real> > >
-			chunk_atoms_xyz_;
+		chunk_atoms_xyz_;
 	utility::vector1<utility::vector1<bool> > atom_flags_;
 	Size get_atom_type(std::string atom_name);
 	std::map<std::string, Size> constrainable_atoms_;

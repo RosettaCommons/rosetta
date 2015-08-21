@@ -50,7 +50,7 @@ namespace protocols {
 namespace simple_moves {
 
 
-	/// @brief
+/// @brief
 class DOFHistogramRecorder
 {
 	// Friends

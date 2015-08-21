@@ -88,8 +88,8 @@ InterfaceRecapitulationMover::InterfaceRecapitulationMover() :
 	saved_pose_( /* NULL */ ),
 	design_mover_( /* NULL */ ),
 	design_mover2_( /* NULL */ ),
-  pssm_( false )
-	{}
+	pssm_( false )
+{}
 
 MoverOP
 InterfaceRecapitulationMover::clone() const
@@ -118,33 +118,32 @@ InterfaceRecapitulationMover::apply( core::pose::Pose & pose ){
 	runtime_assert( saved_pose_ != 0 );
 	runtime_assert( design_mover_ || design_mover2_ );
 	core::pack::task::PackerTaskCOP task;
-	if( design_mover_ ){
+	if ( design_mover_ ) {
 		design_mover_->apply( pose );
 		task = design_mover_->task();
-	}
-	else{
+	} else {
 		design_mover2_->apply( pose );
 		task = design_mover2_->task();
 	}
 	core::Size designable_positions( 0 );
-	for( Size i( 1 ); i<= pose.total_residue(); ++i )
-		if( task->being_designed( i ) ) ++designable_positions;
+	for ( Size i( 1 ); i<= pose.total_residue(); ++i ) {
+		if ( task->being_designed( i ) ) ++designable_positions;
+	}
 
 	protocols::jd2::JobDistributor* jd = protocols::jd2::JobDistributor::get_instance();
 	ReportPSSMDifferences rsd;
-	if ( pssm_ && !rsd.load_pssm_data( jd->current_job()->input_tag() ) ){
+	if ( pssm_ && !rsd.load_pssm_data( jd->current_job()->input_tag() ) ) {
 		pssm_ = false;
 	}
 
-	if (!pssm_){
+	if ( !pssm_ ) {
 		ReportSequenceDifferences rsd( core::scoring::get_score_function() );
 		rsd.calculate( *get_reference_pose(), pose );
 		std::map< core::Size, std::string > const res_names1( rsd.res_name1() );
 		core::Size const mutated( res_names1.size() );
 		core::Real const rate( (core::Real) mutated / designable_positions );
 		TR<<"Your design mover mutated "<<mutated<<" positions out of "<<designable_positions<<" designable positions. Sequence recovery is: "<<1-rate<<std::endl;
-	}
-	else{
+	} else {
 		core::Real pssm = rsd.calculate( *get_reference_pose(), pose, task );
 		TR << "PSSM-Score: " << pssm << " at " << designable_positions << " designable positions. Mean score is " << pssm / (core::Real)designable_positions << std::endl;
 	}
@@ -162,12 +161,13 @@ InterfaceRecapitulationMover::parse_my_tag( utility::tag::TagCOP tag, basic::dat
 	std::string const mover_name( tag->getOption<std::string>( "mover_name" ) );
 	std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( mover_name ));
 	bool const mover_found( find_mover != movers.end() );
-	if( mover_found ){
+	if ( mover_found ) {
 		design_mover_ = utility::pointer::dynamic_pointer_cast< simple_moves::DesignRepackMover > ( find_mover->second );
-		if( !design_mover_ ){
+		if ( !design_mover_ ) {
 			design_mover2_ = utility::pointer::dynamic_pointer_cast< protocols::simple_moves::PackRotamersMover > ( find_mover->second );
-			if( !design_mover2_ )
+			if ( !design_mover2_ ) {
 				throw utility::excn::EXCN_RosettaScriptsOption( "dynamic cast failed in tag in RecapitulateMover. Make sure that the mover is either PackRotamers or DesignRepackMover derived" );
+			}
 		}
 		pssm_ = tag->getOption<bool>( "pssm", false );
 	}

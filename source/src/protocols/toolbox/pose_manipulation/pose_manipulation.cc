@@ -60,7 +60,7 @@
 
 namespace protocols {
 namespace toolbox {
-namespace pose_manipulation{
+namespace pose_manipulation {
 
 static thread_local basic::Tracer TR( "protocols.toolbox.pose_manipulation" );
 static thread_local basic::Tracer TR_DI( "protocols.toolbox.pose_manipulation.insert_pose_into_pose" );
@@ -109,16 +109,15 @@ construct_poly_uniq_restype_pose(
 
 	conformation::Residue const replace_res( restype, true );
 
-	for( utility::vector1< Size >::const_iterator pos_it = positions.begin();
-			 pos_it != positions.end(); ++pos_it ) {
+	for ( utility::vector1< Size >::const_iterator pos_it = positions.begin();
+			pos_it != positions.end(); ++pos_it ) {
 
 		chemical::ResidueType const * cur_restype = & pose.residue_type( *pos_it );
 
 
-		if( ( keep_pro && ( cur_restype->aa() == chemical::aa_pro ) )
+		if ( ( keep_pro && ( cur_restype->aa() == chemical::aa_pro ) )
 				||( keep_gly && ( cur_restype->aa() == chemical::aa_gly ) )
-				||( keep_disulfide_cys && ( cur_restype->aa() == chemical::aa_cys ) && cur_restype->has_variant_type( chemical::DISULFIDE ) ) )
-		{
+				||( keep_disulfide_cys && ( cur_restype->aa() == chemical::aa_cys ) && cur_restype->has_variant_type( chemical::DISULFIDE ) ) ) {
 			continue;
 		}
 
@@ -131,13 +130,13 @@ construct_poly_uniq_restype_pose(
 		// either we don't want to keep disulfide cys or the current restype is not cys
 		// so ignore disulfide variant type
 		if ( ! variants_match_with_exceptions( *cur_restype, replace_res.type(), utility::vector1< core::chemical::VariantType >( 1, core::chemical::DISULFIDE ) ) ) {
-				current_variants = cur_restype->properties().get_list_of_variants();
-				chemical::ResidueTypeCOP var_replace_type = replace_res.type().get_self_ptr();
+			current_variants = cur_restype->properties().get_list_of_variants();
+			chemical::ResidueTypeCOP var_replace_type = replace_res.type().get_self_ptr();
 
 			for ( core::Size var = 1; var <= current_variants.size(); ++var ) {
 				if ( current_variants[ var ] != "DISULFIDE" ) {
 					var_replace_type = restype_set->get_residue_type_with_variant_added( * var_replace_type,
-							core::chemical::ResidueProperties::get_variant_from_string( current_variants[ var ] ) ).get_self_ptr();
+						core::chemical::ResidueProperties::get_variant_from_string( current_variants[ var ] ) ).get_self_ptr();
 				}
 			}
 
@@ -182,18 +181,17 @@ construct_poly_XXX_pose(
 )
 {
 	using namespace core;
-	
+
 	conformation::Residue const replace_res( restype_set->name_map( aa ), true );
 
 	for ( utility::vector1< Size >::const_iterator pos_it = positions.begin();
-			 pos_it != positions.end(); ++pos_it ) {
+			pos_it != positions.end(); ++pos_it ) {
 
 		chemical::ResidueType const * cur_restype = & pose.residue_type( *pos_it );
 
-		if( ( keep_pro && ( cur_restype->aa() == chemical::aa_pro ) )
+		if ( ( keep_pro && ( cur_restype->aa() == chemical::aa_pro ) )
 				||( keep_gly && ( cur_restype->aa() == chemical::aa_gly ) )
-				||( keep_disulfide_cys && ( cur_restype->aa() == chemical::aa_cys ) && cur_restype->has_variant_type( chemical::DISULFIDE ) ) )
-		{
+				||( keep_disulfide_cys && ( cur_restype->aa() == chemical::aa_cys ) && cur_restype->has_variant_type( chemical::DISULFIDE ) ) ) {
 			continue;
 		}
 		utility::vector1< std::string > current_variants;
@@ -204,9 +202,9 @@ construct_poly_XXX_pose(
 
 			for ( core::Size var = 1; var <= current_variants.size(); ++var ) {
 				if ( ( cur_restype->has_variant_type( chemical::DISULFIDE ) && keep_disulfide_cys) ||
-					( ! cur_restype->has_variant_type( chemical::DISULFIDE ) ) ) {
+						( ! cur_restype->has_variant_type( chemical::DISULFIDE ) ) ) {
 					var_replace_type = restype_set->get_residue_type_with_variant_added( * var_replace_type,
-							chemical::ResidueProperties::get_variant_from_string( current_variants[ var ] ) ).get_self_ptr();
+						chemical::ResidueProperties::get_variant_from_string( current_variants[ var ] ) ).get_self_ptr();
 				}
 			}
 
@@ -228,15 +226,15 @@ remove_non_protein_residues(
 
 	bool residues_deleted(false);
 
-	for( core::Size i = pose.total_residue(); i > 0 ; --i){
+	for ( core::Size i = pose.total_residue(); i > 0 ; --i ) {
 
-		if( ! pose.residue_type( i ).is_protein() ){
+		if ( ! pose.residue_type( i ).is_protein() ) {
 			pose.conformation().delete_residue_slow( i );
 			residues_deleted = true;
 		}
 	}
 
-	if( residues_deleted ) pose.energies().clear();
+	if ( residues_deleted ) pose.energies().clear();
 
 } //remove_non_protein_residues
 
@@ -244,7 +242,7 @@ remove_non_protein_residues(
 void
 add_chainbreaks_according_to_jumps( core::pose::Pose & pose )
 {
-	for( core::Size i =1; i <= pose.fold_tree().num_jump(); ++i ){
+	for ( core::Size i =1; i <= pose.fold_tree().num_jump(); ++i ) {
 
 		core::Size this_cutpoint( pose.fold_tree().cutpoint( i ) );
 
@@ -255,10 +253,10 @@ add_chainbreaks_according_to_jumps( core::pose::Pose & pose )
 		if ( !pose.residue_type( this_cutpoint ).is_protein() ) continue;
 		if ( !pose.residue_type( this_cutpoint +1 ).is_protein() ) continue;
 
-		if( !pose.residue_type( this_cutpoint ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ){
+		if ( !pose.residue_type( this_cutpoint ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ) {
 			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_LOWER, this_cutpoint );
 		}
-		if( !pose.residue_type( this_cutpoint +1 ).has_variant_type( core::chemical::CUTPOINT_UPPER ) ){
+		if ( !pose.residue_type( this_cutpoint +1 ).has_variant_type( core::chemical::CUTPOINT_UPPER ) ) {
 			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_UPPER, this_cutpoint +1 );
 		}
 	}
@@ -267,7 +265,7 @@ add_chainbreaks_according_to_jumps( core::pose::Pose & pose )
 void
 add_chainbreaks_according_to_jumps( core::pose::Pose & pose, utility::vector1< core::Size > const& no_cutpoint_residues  )
 {
-	for( core::Size i =1; i <= pose.fold_tree().num_jump(); ++i ){
+	for ( core::Size i =1; i <= pose.fold_tree().num_jump(); ++i ) {
 
 		core::Size this_cutpoint( pose.fold_tree().cutpoint( i ) );
 		//exclude residue numbers in array
@@ -279,10 +277,10 @@ add_chainbreaks_according_to_jumps( core::pose::Pose & pose, utility::vector1< c
 
 		if ( pose.residue_type( this_cutpoint +1 ).has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) continue;
 
-		if( !pose.residue_type( this_cutpoint ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ){
+		if ( !pose.residue_type( this_cutpoint ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ) {
 			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_LOWER, this_cutpoint );
 		}
-		if( !pose.residue_type( this_cutpoint +1 ).has_variant_type( core::chemical::CUTPOINT_UPPER ) ){
+		if ( !pose.residue_type( this_cutpoint +1 ).has_variant_type( core::chemical::CUTPOINT_UPPER ) ) {
 			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_UPPER, this_cutpoint +1 );
 		}
 	}
@@ -292,14 +290,14 @@ add_chainbreaks_according_to_jumps( core::pose::Pose & pose, utility::vector1< c
 void
 remove_chainbreaks_according_to_jumps( core::pose::Pose & pose )
 {
-	for( core::Size i =1; i <= pose.fold_tree().num_jump(); ++i ){
+	for ( core::Size i =1; i <= pose.fold_tree().num_jump(); ++i ) {
 
 		core::Size this_cutpoint( pose.fold_tree().cutpoint( i ) );
 
-		if( pose.residue_type( this_cutpoint ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ){
+		if ( pose.residue_type( this_cutpoint ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ) {
 			core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::CUTPOINT_LOWER, this_cutpoint );
 		}
-		if( pose.residue_type( this_cutpoint + 1).has_variant_type( core::chemical::CUTPOINT_UPPER ) ){
+		if ( pose.residue_type( this_cutpoint + 1).has_variant_type( core::chemical::CUTPOINT_UPPER ) ) {
 			core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::CUTPOINT_UPPER, this_cutpoint+1 );
 		}
 	}
@@ -319,7 +317,7 @@ superimpose_pose_on_subset_CA(
 
 	core::pose::initialize_atomid_map( atom_map, pose, BOGUS_ATOM_ID );
 
-	for( utility::vector1< core::Size >::const_iterator res_it = positions.begin(); res_it != positions.end(); ++res_it){
+	for ( utility::vector1< core::Size >::const_iterator res_it = positions.begin(); res_it != positions.end(); ++res_it ) {
 
 		AtomID id1( pose.residue( *res_it + offset).atom_index("CA"), *res_it + offset );
 		AtomID id2( ref_pose.residue( *res_it ).atom_index("CA"), *res_it );

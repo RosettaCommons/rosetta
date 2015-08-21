@@ -93,7 +93,7 @@ LoopsDefinerFactory::create_loops_definer(
 
 	tr.Trace << "generate LoopsDefiner of type " << type_name << std::endl;
 	LoopsDefinerCreatorMap::const_iterator iter = types_.find( type_name );
-	if (iter != types_.end()) {
+	if ( iter != types_.end() ) {
 		return iter->second->create_loops_definer();
 	} else {
 		stringstream error_msg;
@@ -104,7 +104,7 @@ LoopsDefinerFactory::create_loops_definer(
 			<< "register a new LoopsDefiner with the LoopsDefinerFactory" << endl
 			<< "known LoopsDefiner types are:" << endl;
 
-		BOOST_FOREACH(const LoopsDefinerCreatorMap::value_type& type, types_){
+		BOOST_FOREACH ( const LoopsDefinerCreatorMap::value_type& type, types_ ) {
 			error_msg << "\t" << type.first << endl;
 		}
 		utility_exit_with_message(error_msg.str());

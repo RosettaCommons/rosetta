@@ -103,61 +103,61 @@ SaveAndRetrieveSidechains::~SaveAndRetrieveSidechains() {}
 void
 SaveAndRetrieveSidechains::apply( Pose & pose )
 {
-	if( two_step() && first_apply_->obj ){
+	if ( two_step() && first_apply_->obj ) {
 		TR<<"Saving sidechains."<<std::endl;
 		*init_pose_ = pose;
 		first_apply_->obj = false;
 		return;
 	}
-	if (multi_use()) {
-        first_apply_->obj = true;
-  }
+	if ( multi_use() ) {
+		first_apply_->obj = true;
+	}
 	TR << "Retrieving sidechains..."<<std::endl;
 	Size nres = pose.total_residue();
-	if (nres != init_pose_->total_residue() && core::pose::symmetry::is_symmetric(pose)) {
+	if ( nres != init_pose_->total_residue() && core::pose::symmetry::is_symmetric(pose) ) {
 		conformation::symmetry::SymmetricConformation & symm_conf (
-				dynamic_cast<conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+			dynamic_cast<conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		nres = symm_conf.Symmetry_Info()->num_independent_residues();
 	}
 	runtime_assert( nres == init_pose_->total_residue() );
 	kinematics::Jump new_jump;
 	core::Size const rb_jump( jumpid_ );
 	if ( jumpid_ > 0 ) {
-	new_jump = pose.jump( rb_jump );
+		new_jump = pose.jump( rb_jump );
 	}
 
-	for( core::Size res=1; res<=nres; ++res ) {
-		if( allsc_ ) { // replace all sidechains
+	for ( core::Size res=1; res<=nres; ++res ) {
+		if ( allsc_ ) { // replace all sidechains
 			pose.replace_residue( res, init_pose_->residue( res ), true/*orient_backbone*/ );
 			continue;
-		}
-		else {
-			if( pose.residue( res ).name3() == "ALA" ) // only replace Ala positions
-			pose.replace_residue( res, init_pose_->residue( res ), true/*orient_backbone*/ );
+		} else {
+			if ( pose.residue( res ).name3() == "ALA" ) { // only replace Ala positions
+				pose.replace_residue( res, init_pose_->residue( res ), true/*orient_backbone*/ );
+			}
 		}
 	}
-	if (ensure_variant_matching_){
+	if ( ensure_variant_matching_ ) {
 		//make sure variants match, if not put back the initial variants
 		using namespace core;
-		for (core::uint i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+		for ( core::uint i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
 			if ( ! variants_match( pose.residue_type( i ), init_pose_->residue_type( i ) ) ) {
 				utility::vector1< std::string > const new_var_types(
-						pose.residue_type( i ).properties().get_list_of_variants() );
+					pose.residue_type( i ).properties().get_list_of_variants() );
 				utility::vector1< std::string > const old_var_types(
-						init_pose_->residue_type( i ).properties().get_list_of_variants() );
+					init_pose_->residue_type( i ).properties().get_list_of_variants() );
 				for ( utility::vector1< std::string >::const_iterator newvars = new_var_types.begin();
 						newvars != new_var_types.end(); ++newvars ) {
-					if( ! (init_pose_->residue_type( i ).has_variant_type( *newvars ) ) ) {
+					if ( ! (init_pose_->residue_type( i ).has_variant_type( *newvars ) ) ) {
 						core::pose::remove_variant_type_from_pose_residue( pose,
-								core::chemical::ResidueProperties::get_variant_from_string( *newvars ), i );
+							core::chemical::ResidueProperties::get_variant_from_string( *newvars ), i );
 					}
 				}
 
 				for ( utility::vector1< std::string >::const_iterator oldvars = old_var_types.begin();
 						oldvars != old_var_types.end(); ++oldvars ) {
-					if( !pose.residue_type( i ).has_variant_type( *oldvars ) ) {
+					if ( !pose.residue_type( i ).has_variant_type( *oldvars ) ) {
 						core::pose::add_variant_type_to_pose_residue( pose,
-								core::chemical::ResidueProperties::get_variant_from_string( *oldvars ), i );
+							core::chemical::ResidueProperties::get_variant_from_string( *oldvars ), i );
 					}
 				}
 			} //if variants don't match
@@ -181,14 +181,15 @@ SaveAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::Dat
 	allsc_ = tag->getOption<bool>( "allsc", 0 );
 	multi_use( tag->getOption< bool >( "multi_use", false ) );
 	two_step( tag->getOption< bool >( "two_step", false ) );
-	if( !two_step() )
+	if ( !two_step() ) {
 		init_pose_ = PoseOP( new core::pose::Pose( pose ) );
+	}
 	jumpid_ = tag->getOption<core::Size>( "jumpid", 1 );
 }
 
 protocols::moves::MoverOP
 SaveAndRetrieveSidechains::clone() const {
-  return( protocols::moves::MoverOP( new SaveAndRetrieveSidechains( *this ) ));
+	return( protocols::moves::MoverOP( new SaveAndRetrieveSidechains( *this ) ));
 }
 
 } //movers

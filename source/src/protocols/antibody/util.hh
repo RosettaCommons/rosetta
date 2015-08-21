@@ -37,12 +37,12 @@
 namespace protocols {
 namespace antibody {
 
-	
-	
+
+
 ///@brief Geta boolean vector of CDRs from a RosettaScripts tag.
 utility::vector1<bool>
 get_cdr_bool_from_tag(utility::tag::TagCOP tag, std::string const & name);
-	
+
 
 ///@brief Get a set of loops for a boolean vector of CDRNameEnums including any stem residues.
 protocols::loops::LoopsOP
@@ -56,8 +56,8 @@ get_cdr_loops(
 ////////////////////////////////////////// things to compare to native //////////////////////////////////////////
 core::Real
 global_loop_rmsd ( const core::pose::Pose & pose_in,
-                   const core::pose::Pose & native_pose,
-                   loops::LoopsOP current_loop );
+	const core::pose::Pose & native_pose,
+	loops::LoopsOP current_loop );
 
 
 /// @brief return false if any cdr cutpoint is broken
@@ -77,7 +77,7 @@ cutpoint_separation(core::pose::Pose & pose_in, core::Size cutpoint);
 
 /////////////////////////////////// Epitope + Paratope ////////////////////////////////////////////////////////////////////
 
-///@brief Get the epitope residues using the InterGroupNeighborsCalculator.  
+///@brief Get the epitope residues using the InterGroupNeighborsCalculator.
 utility::vector1<bool>
 select_epitope_residues(AntibodyInfoCOP ab_info, core::pose::Pose const & pose, core::Size const interface_distance = 10.0);
 
@@ -103,15 +103,15 @@ check_fix_aho_cdr_numbering(AntibodyInfoCOP ab_info, core::pose::Pose & pose);
 ///////////////////////////////// Etc. /////////////////////////////////////
 void
 simple_one_loop_fold_tree(
-    core::pose::Pose & pose,
-    loops::Loop const & loop);
+	core::pose::Pose & pose,
+	loops::Loop const & loop);
 
 void
 simple_fold_tree(
-    core::pose::Pose & pose_in,
-    core::Size jumppoint1,
-    core::Size cutpoint,
-    core::Size jumppoint2);
+	core::pose::Pose & pose_in,
+	core::Size jumppoint1,
+	core::Size cutpoint,
+	core::Size jumppoint2);
 
 ///@brief Setup LH_A foldtree via docking.  Return dock_chains string.
 std::string
@@ -131,25 +131,25 @@ setup_packer_task( core::pose::Pose & pose_in);
 /// @brief align current Fv to native.Fv
 void
 align_to_native( core::pose::Pose & pose,
-                 core::pose::Pose const & native_pose,
-                 AntibodyInfoOP const ab_info,
-                 AntibodyInfoOP const native_ab_info,
-                 std::string const & request_chain="LH");
+	core::pose::Pose const & native_pose,
+	AntibodyInfoOP const ab_info,
+	AntibodyInfoOP const native_ab_info,
+	std::string const & request_chain="LH");
 
 bool
 CDR_H3_filter_legacy_code_with_old_rule(
-    const core::pose::Pose & pose_in,
-    loops::Loop & input_loop,
-    bool is_camelid);
+	const core::pose::Pose & pose_in,
+	loops::Loop & input_loop,
+	bool is_camelid);
 
 bool
 CDR_H3_cter_filter(
-    const core::pose::Pose & pose_in,
-    AntibodyInfoOP ab_info);
+	const core::pose::Pose & pose_in,
+	AntibodyInfoOP ab_info);
 
 ///@brief Very basic kink function based on rama groups.  Kink is defined as having AB + DB at the C-terminal stem.
 /// This is in the North/Dunbrack CDR definition.
-/// Avoid this definition if you can and talk to brain.  This is currently used for a quick filtering for design. 
+/// Avoid this definition if you can and talk to brain.  This is currently used for a quick filtering for design.
 bool
 is_H3_rama_kinked(std::string const & rama);
 

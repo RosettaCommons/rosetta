@@ -132,7 +132,7 @@ public: // Friends
 		NamedAtomID const & b
 	) {
 		return ( a.rsd_ <  b.rsd_ ||
-		( a.rsd_ == b.rsd_ && a.atom_ < b.atom_ ) );
+			( a.rsd_ == b.rsd_ && a.atom_ < b.atom_ ) );
 	}
 
 private: // Fields

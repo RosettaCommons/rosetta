@@ -48,7 +48,7 @@
 #include <map>
 #include <string>
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 
@@ -78,11 +78,11 @@ IndependentLoopMover::IndependentLoopMover(
 }
 
 IndependentLoopMover::IndependentLoopMover(
-  utility::vector1< bool > const& selection
+	utility::vector1< bool > const& selection
 ) : LoopMover( protocols::loops::LoopsOP( new protocols::loops::Loops( selection ) ) )
 {
-  Mover::type("IndependentLoopMover");
-  set_defaults();
+	Mover::type("IndependentLoopMover");
+	set_defaults();
 }
 
 IndependentLoopMover::IndependentLoopMover(
@@ -123,7 +123,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 
 	resolve_loop_indices( pose );
 
- 	// Select Loops to be built
+	// Select Loops to be built
 	all_loops_closed_ = true;
 	tr().Info << "ALL_LOOPS:" << *loops() << std::endl;
 
@@ -143,13 +143,13 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 	LoopResult result_of_loopModel;
 
 	for ( Loops::iterator it=selected_loops.v_begin(), it_end=selected_loops.v_end();
-		 it != it_end; ++it ) {
+			it != it_end; ++it ) {
 		lcount++;
 		// Make loal copy of loop to be build
 		Loop buildloop( *it );
 
 		// either extend or at least idealize the loop (just in case).
-		if ( buildloop.is_extended() ){
+		if ( buildloop.is_extended() ) {
 			// store starting fold tree and cut pose_initial
 			set_single_loop_fold_tree( pose_initial, buildloop );
 			tr().Info << "Setting extended torsions: " << buildloop << std::endl;
@@ -171,12 +171,12 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 		Real       best_score = 10000000.0;
 		Size       best_count = 0;
 		// code below goes for grow_attempts + 1 ...
-		for ( int extension_attempt = 0; extension_attempt <= grow_attempts_; extension_attempt ++ ){
+		for ( int extension_attempt = 0; extension_attempt <= grow_attempts_; extension_attempt ++ ) {
 
-			if ( !strict_loops_ && extension_attempt > 0 ){
-                loops()->grow_loop_away_from_sheets( pose, buildloop, 1.0 );
+			if ( !strict_loops_ && extension_attempt > 0 ) {
+				loops()->grow_loop_away_from_sheets( pose, buildloop, 1.0 );
 			}
-			for ( int build_attempt = 0; build_attempt < build_attempts_; build_attempt ++ ){
+			for ( int build_attempt = 0; build_attempt < build_attempts_; build_attempt ++ ) {
 				tr().Info << "Building Loop attempt: " << build_attempt << std::endl;
 				pose = pose_initial;
 
@@ -206,8 +206,8 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 				}
 
 				// If the loop bas built and closed ok.
-				if ( result_of_loopModel == Success || accept_aborted_loops_ ){
-					if ( ! checkpoint_recovery ){
+				if ( result_of_loopModel == Success || accept_aborted_loops_ ) {
+					if ( ! checkpoint_recovery ) {
 						get_checkpoints()->checkpoint( pose, curr_job_tag, checkname + "_S", true );
 					}
 
@@ -219,7 +219,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 					get_checkpoints()->debug(  curr_job_tag, checkname, pose_score);
 
 					// compare to previous score - if better "accept"
-					if ( pose_score < best_score || best_count == 0 ){
+					if ( pose_score < best_score || best_count == 0 ) {
 						best_pose = pose;
 						best_score = pose_score;
 						best_count ++;
@@ -231,16 +231,16 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 				nfailure++;
 
 				//fpd if we have strict loops on, keep trying rather than immediately failing
-				if ( result_of_loopModel == ExtendFailure && !strict_loops_ ){ // means extend loop immediately!
-					if ( ! checkpoint_recovery ){
+				if ( result_of_loopModel == ExtendFailure && !strict_loops_ ) { // means extend loop immediately!
+					if ( ! checkpoint_recovery ) {
 						get_checkpoints()->checkpoint( pose, curr_job_tag, checkname + "_F", true );
 					}
 					get_checkpoints()->debug(  curr_job_tag, checkname, -1);
 					break;
 				}
 
-				if ( result_of_loopModel == CriticalFailure ){
-					if ( ! checkpoint_recovery ){
+				if ( result_of_loopModel == CriticalFailure ) {
+					if ( ! checkpoint_recovery ) {
 						get_checkpoints()->checkpoint( pose, curr_job_tag, checkname + "_C", true );
 					}
 					get_checkpoints()->debug(  curr_job_tag, checkname, -2);
@@ -259,12 +259,12 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 		}
 
 		tr().Info << "result of loop closure:0 success, 3 failure " << result_of_loopModel << std::endl;
-		if(result_of_loopModel != Success){
+		if ( result_of_loopModel != Success ) {
 			all_loops_closed_ = false;
 			break; //no need to check the rest of the loops if one can't be closed the result will be an open structure.
 		}
 
-		if ( (best_count > 0) || accept_aborted_loops_ ){
+		if ( (best_count > 0) || accept_aborted_loops_ ) {
 			pose_initial = best_pose;
 			pose = best_pose;
 		}
@@ -306,33 +306,33 @@ void IndependentLoopMover::select_loops( Loops & selected_loops ){
 		);
 
 		for ( Size i = 1; i <= loop_numbers.size(); ++i ) {
-				if ( loop_numbers[i]  <= 0 ){
-					utility_exit_with_message( "Specified loop numbers is 0 or below.");
-				}
-				if ( (Size)loop_numbers[i]  > loops()->size()  ){
-					utility_exit_with_message( "Specified loop number is greater than the number of loops in the loop file itself.");
-				}
-				temp_loops.add_loop( ( *loops() )[ loop_numbers[i] ] );
+			if ( loop_numbers[i]  <= 0 ) {
+				utility_exit_with_message( "Specified loop numbers is 0 or below.");
+			}
+			if ( (Size)loop_numbers[i]  > loops()->size()  ) {
+				utility_exit_with_message( "Specified loop number is greater than the number of loops in the loop file itself.");
+			}
+			temp_loops.add_loop( ( *loops() )[ loop_numbers[i] ] );
 		}
 
 	} else {
 		// Choose loops by skiprate
 		for ( Loops::const_iterator it=loops()->begin(), it_end=loops()->end(); it != it_end; ++it ) {
 			if ( build_all_loops_ ||
-				( numeric::random::uniform() >= it->skip_rate() )
-			) {
+					( numeric::random::uniform() >= it->skip_rate() )
+					) {
 				temp_loops.add_loop( *it );
 			}
 		}
 	}
 
-  // combine loops sing combine_rate
+	// combine loops sing combine_rate
 	std::sort( temp_loops.v_begin(), temp_loops.v_end(), Loop_lt() );  // necessary
 
-  for ( Size l=1; l <= temp_loops.size(); l++  ) {
+	for ( Size l=1; l <= temp_loops.size(); l++  ) {
 		if ( ( l == temp_loops.size() ) ||
-			( numeric::random::uniform() >= loop_combine_rate_ )
-		) {
+				( numeric::random::uniform() >= loop_combine_rate_ )
+				) {
 			comb_loops.add_loop( temp_loops[ l ] );
 		} else {
 			Loop combined_loop(

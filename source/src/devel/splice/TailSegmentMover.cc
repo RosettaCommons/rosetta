@@ -109,26 +109,26 @@ TailSegmentMover::TailSegmentMover( TailSegmentMover const & rhs ) :
 TailSegmentMover & TailSegmentMover::operator=( TailSegmentMover const & rhs ){
 
 	//abort self-assignment
-	if (this == &rhs) return *this;
+	if ( this == &rhs ) return *this;
 
-	start_									= rhs.start_;
-	stop_										= rhs.stop_;
-	init_for_input_yet_			= rhs.init_for_input_yet_;
-	centroid_scorefunction_	= rhs.centroid_scorefunction_->clone();
-	fullatom_scorefunction_	= rhs.fullatom_scorefunction_->clone();
-	task_factory_						= rhs.task_factory_->clone();
-	movemap_								= rhs.movemap_->clone();
-	movemap_lesstail_				= rhs.movemap_lesstail_->clone();
+	start_         = rhs.start_;
+	stop_          = rhs.stop_;
+	init_for_input_yet_   = rhs.init_for_input_yet_;
+	centroid_scorefunction_ = rhs.centroid_scorefunction_->clone();
+	fullatom_scorefunction_ = rhs.fullatom_scorefunction_->clone();
+	task_factory_      = rhs.task_factory_->clone();
+	movemap_        = rhs.movemap_->clone();
+	movemap_lesstail_    = rhs.movemap_lesstail_->clone();
 	foldtree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(*rhs.foldtree_) ); //no clone operation, and no proper copy ctor
 	return *this;
 }
 
 void TailSegmentMover::set_movemap(core::kinematics::MoveMapOP const movemap){
-    movemap_ = movemap->clone();
+	movemap_ = movemap->clone();
 }
 
 void TailSegmentMover::set_fa_scorefxn(core::scoring::ScoreFunctionOP const fa_scorefxn){
-    fullatom_scorefunction_=fa_scorefxn->clone();
+	fullatom_scorefunction_=fa_scorefxn->clone();
 }
 
 void TailSegmentMover::set_task_factory(
@@ -143,7 +143,7 @@ void TailSegmentMover::set_task_factory(
 void TailSegmentMover::apply( core::pose::Pose & pose ){
 	//First setup movemap, this should be already set, if not then exit with error msg
 	fullatom_scorefunction_->show(pose); //test scorefunction to make sure all constraints are in place. remove after
-	if (!movemap_){
+	if ( !movemap_ ) {
 		utility_exit_with_message( "Movemap not defined. Can't apply TailSegmentMover\n");
 
 	}
@@ -166,14 +166,14 @@ void TailSegmentMover::apply( core::pose::Pose & pose ){
 	using protocols::simple_moves::TaskAwareMinMover;
 	//getting the start and end tail residues from the movemap
 	core::Size const nres(pose.total_residue());
-	for( core::Size i(1); i<=nres; ++i ){
-		if( movemap_->get_bb(i) ){
+	for ( core::Size i(1); i<=nres; ++i ) {
+		if ( movemap_->get_bb(i) ) {
 			start_ = i;
 			break;
 		}
 	}
-	for( core::Size i(nres); i>=1; --i) {
-		if( movemap_->get_bb(i) ){
+	for ( core::Size i(nres); i>=1; --i ) {
+		if ( movemap_->get_bb(i) ) {
 			stop_ = i;
 			break;
 		}
@@ -184,8 +184,8 @@ void TailSegmentMover::apply( core::pose::Pose & pose ){
 	DesignAroundOperationOP dao( new DesignAroundOperation );
 	dao->design_shell(0.001); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
 	dao->repack_shell(6);
-	for (core::Size i = start_; i <=stop_;++i) {
-			dao->include_residue(i);
+	for ( core::Size i = start_; i <=stop_; ++i ) {
+		dao->include_residue(i);
 
 	} //for
 	task_factory_min->push_back(dao);
@@ -221,10 +221,10 @@ void TailSegmentMover::apply( core::pose::Pose & pose ){
 	using protocols::simple_moves::RotamerTrialsMoverOP;
 	using protocols::simple_moves::EnergyCutRotamerTrialsMover;
 	protocols::simple_moves::RotamerTrialsMoverOP rt_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover(
-			fullatom_scorefunction_,
-			task_factory_,
-			mc_fa,
-			0.01 /*energycut*/ ) );
+		fullatom_scorefunction_,
+		task_factory_,
+		mc_fa,
+		0.01 /*energycut*/ ) );
 
 	/////////////////////////////////////////refine loop///////////////////////////////////////////
 	using namespace basic::options;
@@ -236,7 +236,7 @@ void TailSegmentMover::apply( core::pose::Pose & pose ){
 	shear_mover_fa->movemap(movemap_);
 	for ( core::Size i(1); i <= refine_applies; ++i ) {
 		//TR<<"TSM fold tree::"<<pose.fold_tree()<<std::endl;
-		if( (i % repack_cycles == 0) || (i == refine_applies) ) { //full repack
+		if ( (i % repack_cycles == 0) || (i == refine_applies) ) { //full repack
 			TR<<"Doing Repacking"<<std::endl;
 			pack_mover->apply(pose);
 			TAmin_mover_fa->apply(pose);

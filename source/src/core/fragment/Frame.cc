@@ -62,7 +62,7 @@ make_pose_from_sequence_(
 	// setup the pose by appending the appropriate residues residues
 	for ( Size seqpos = 1; seqpos <= sequence.length(); ++seqpos ) {
 		char aa = sequence[seqpos-1]; // string indexing is zero-based!
-		//		std::cerr<<  aa << " aminoacid requested" << std::endl;
+		//  std::cerr<<  aa << " aminoacid requested" << std::endl;
 		AA my_aa = aa_from_oneletter_code( aa );
 		//ResidueTypeCOPs const & rsd_type_list( residue_set.aa_map( my_aa ) );
 		ResidueTypeCOP rsd_type( residue_set.get_representative_type_aa( my_aa ) );
@@ -81,7 +81,7 @@ make_pose_from_sequence_(
 		}
 	} // for seqpos
 
-	//	if ( pose.total_residue() > 1)  pose.conformation().insert_chain_ending( pose.total_residue() - 1 );		// probably not necessary
+	// if ( pose.total_residue() > 1)  pose.conformation().insert_chain_ending( pose.total_residue() - 1 );  // probably not necessary
 
 } // make_pose_match_sequence_
 
@@ -119,9 +119,9 @@ Frame::Frame( core::Size start, FragDataCOP const& frag1 ) :
 }
 
 Frame::Frame( core::Size start, core::Size length, SingleResidueFragDataOP srfd )
-	: start_( start ),
-		end_( start + length - 1),
-		nr_res_( length )
+: start_( start ),
+	end_( start + length - 1),
+	nr_res_( length )
 {
 	add_fragment( FragDataCOP( FragDataOP( new FragData( srfd, length ) ) ) );
 }
@@ -166,7 +166,7 @@ FragData const & Frame::fragment( core::Size frag_num ) const {
 
 /// @brief accessor for underlying FragData
 //FragData const& Frame::fragment( core::Size frag_num ) {
-//	return *frag_list_[ frag_num ];
+// return *frag_list_[ frag_num ];
 //}
 
 /// @brief accessor for underlying FragData as owning ptr
@@ -176,13 +176,13 @@ FragDataCOP Frame::fragment_ptr( core::Size frag_num ) const {
 
 /// @brief accessor for underlying FragData as owning ptr
 //FragDataOP Frame::fragment_ptr( core::Size frag_num ) {
-	//return frag_list_[ frag_num ];
+//return frag_list_[ frag_num ];
 //}
 
 /// @brief a frame is considered valid if at least one fragment is contained and this fragment is also valid
 /// (not an empty template fragment)
 bool Frame::is_valid() const {
- // why check both 1 and 2?
+	// why check both 1 and 2?
 	return ( nr_frags() >= 2 && fragment( 2 ).is_valid() )
 		||   ( nr_frags() >= 1 && fragment( 1 ).is_valid() );
 }
@@ -224,8 +224,8 @@ core::Size Frame::end() const {
 	return end_;
 }
 
-///	/// @brief set stop position
-//	core::Size stop( core::Size setting );
+/// /// @brief set stop position
+// core::Size stop( core::Size setting );
 
 /// @brief last sequence position affected by this frame
 core::Size Frame::stop() const {
@@ -271,9 +271,9 @@ void Frame::clone_cache_data( Frame const& source, core::Size sid, core::Size ni
 
 
 bool Frame::is_mergeable( Frame const& other ) const {
-	if ( !( other.length() == length() && other.start() == start() && other.stop() == stop() )) return false;
+	if ( !( other.length() == length() && other.start() == start() && other.stop() == stop() ) ) return false;
 	if ( other.nr_frags()==0 || nr_frags()==0 ) return true;
-	if ( other.fragment( 1 ).is_compatible( fragment( 1 ) )) return true;
+	if ( other.fragment( 1 ).is_compatible( fragment( 1 ) ) ) return true;
 	return false;
 }
 
@@ -293,15 +293,15 @@ bool Frame::is_compatible( FragDataCOP new_frag ) const {
 			return true;
 		} else return (new_frag->size() == length() );
 	}
-	/*			if ( frag_list_.size() ) {
-			kinematics::MoveMap new_move_map;
-			new_frag->generate_move_map( new_move_map, *this );
-			return true;
-			//			return move_map_ == new_move_map;
-		} else {
-			new_frag->generate_move_map( move_map_, *this );
-			return true;
-		}
+	/*   if ( frag_list_.size() ) {
+	kinematics::MoveMap new_move_map;
+	new_frag->generate_move_map( new_move_map, *this );
+	return true;
+	//   return move_map_ == new_move_map;
+	} else {
+	new_frag->generate_move_map( move_map_, *this );
+	return true;
+	}
 	*/
 }
 
@@ -315,7 +315,7 @@ void Frame::init_length( core::Size start, core::Size end, core::Size length ) {
 ////////////////////////////////////////// I M P L E M E N T A T I O N S ///////////////////////////////////////////////
 
 core::Size Frame::add_fragment( FragDataCOP new_frag ) {
-debug_assert( new_frag );
+	debug_assert( new_frag );
 	bool success ( is_compatible( new_frag ) );
 	if ( success ) frag_list_.push_back( new_frag );
 	return frag_list_.size();
@@ -324,16 +324,16 @@ debug_assert( new_frag );
 
 // void Frame::delete_fragment( core::Size frag_num )
 // {
-// 	std::cerr << "SPEED WARNING: fragment deleted -- cache invalidated"
-// 						<< "for now we  use frag_num as frag_id, so all cached data is invalidated" << std::endl;
-// 	cache_.clear();
+//  std::cerr << "SPEED WARNING: fragment deleted -- cache invalidated"
+//       << "for now we  use frag_num as frag_id, so all cached data is invalidated" << std::endl;
+//  cache_.clear();
 
-// 	//and now delete fragment...
-// 	std::cerr << "delete stubbed out" << frag_num << std::endl;
+//  //and now delete fragment...
+//  std::cerr << "delete stubbed out" << frag_num << std::endl;
 // }
 
 core::Size Frame::is_applicable( kinematics::MoveMap const& mm ) const {
-	//	if ( nr_frags()==0 ) return true;
+	// if ( nr_frags()==0 ) return true;
 	if ( is_continuous() ) {
 		return fragment( 1 ).is_applicable( mm, start(), end() );
 	} else {
@@ -373,7 +373,7 @@ void Frame::shift_to( core::Size setting ) {
 	}
 	// set start second
 	start_ = setting;
-debug_assert( nr_res_ == ( end_ - start_ + 1 ) ); //OL: changed assert to use == instead of "=",  much better now
+	debug_assert( nr_res_ == ( end_ - start_ + 1 ) ); //OL: changed assert to use == instead of "=",  much better now
 }
 
 void Frame::shift_by( int offset ) {
@@ -397,20 +397,20 @@ void Frame::fragment_as_pose(
 	pose::Pose & pose,
 	chemical::ResidueTypeSetCAP restype_set ) const
 {
-	//	if (!my_static_pose_for_testing_ ) {
-	//		std::string const pdbfile ( "protocols/abinitio/2GB3.pdb" );
+	// if (!my_static_pose_for_testing_ ) {
+	//  std::string const pdbfile ( "protocols/abinitio/2GB3.pdb" );
 	//my_static_pose_for_testing_=new pose::Pose;
 	pose.clear();
 	make_pose_from_sequence_( frag_list_[ frag_num ]->sequence(),
 		*(restype_set.lock()),
 		pose );
-		//		core::import_pose::pose_from_pdb( *my_static_pose_for_testing_, pdbfile );
+	//  core::import_pose::pose_from_pdb( *my_static_pose_for_testing_, pdbfile );
 	fragment( frag_num ).apply( pose, 1, length() );
 }
 
 bool Frame::add_fragment( FragDataCOPs new_frag ) {
 	for ( FragDataCOPs::const_iterator it=new_frag.begin(), eit=new_frag.end();
-				it!=eit; ++it ) {
+			it!=eit; ++it ) {
 		bool success ( add_fragment( *it ) );
 		if ( !success ) return false;
 	}
@@ -428,8 +428,8 @@ void Frame::show_classic( std::ostream &out ) const {
 }
 
 void Frame::show( std::ostream &out ) const {
-// 	using namespace ObjexxFCL::format;
-// 	out << "FRAME " << " " << RJ( 10, start() ) << RJ( 10, end() ) << std::endl;
+	//  using namespace ObjexxFCL::format;
+	//  out << "FRAME " << " " << RJ( 10, start() ) << RJ( 10, end() ) << std::endl;
 	show_header( out );
 	show_fragments( out );
 }
@@ -441,7 +441,7 @@ void Frame::show_header( std::ostream &out ) const {
 
 void Frame::read( std::istream &in ) {
 	//because of one FragData - multiple frames.. reading of fragments is outsourced to FragmentIO
-	//	std::string tag;
+	// std::string tag;
 	in >> start_ >> end_;
 	nr_res_ = end_ - start_ + 1;
 }
@@ -449,10 +449,10 @@ void Frame::read( std::istream &in ) {
 void Frame::show_fragments( std::ostream& out ) const {
 	for ( Size nr = 1; nr <= nr_frags(); nr ++ ) {
 		runtime_assert( fragment_ptr( nr ) != 0 );
-		//		std::cerr << "FRAME::show_fragments " << nr << " seqpos:" << start() << std::endl;
+		//  std::cerr << "FRAME::show_fragments " << nr << " seqpos:" << start() << std::endl;
 		fragment( nr ).show( out, *this );
 		out << std::endl << std::endl;
-		//		std::cerr << "FRAME::show_fragments done" << std::endl;
+		//  std::cerr << "FRAME::show_fragments done" << std::endl;
 	}
 }
 
@@ -463,7 +463,7 @@ bool Frame::merge( Frame const& other ) {
 	Size insert_pos = frag_list_.size()+1;
 	Size other_frag_num = 1;
 	for ( FragDataCOPs::const_iterator it = other.frag_list_.begin(),
-					eit = other.frag_list_.end(); it!=eit; ++it ) {
+			eit = other.frag_list_.end(); it!=eit; ++it ) {
 		frag_list_.push_back( *it );
 		clone_cache_data( other, other_frag_num++, insert_pos++ );
 	}
@@ -473,7 +473,7 @@ bool Frame::merge( Frame const& other ) {
 /// @brief change frames residue numbers according to map
 bool Frame::align( core::id::SequenceMapping const& map) {
 	Size s( map[ start() ] );
-  Size e( map[ end() ] );
+	Size e( map[ end() ] );
 	bool success = ( s>0 && e>0 );
 	if ( is_continuous() && success ) {
 		success = ( (e - s + 1 ) == length() );
@@ -498,7 +498,7 @@ FrameOP Frame::generate_sub_frame(  Size length, Size start /* = 1*/ ) const {
 	sub_frame->nr_res_ = length;
 	sub_frame->end_ = sub_frame->start_ + length - 1;
 	for ( FragDataCOPs::const_iterator it = frag_list_.begin(), eit = frag_list_.end();
-				it!=eit; ++it ) {
+			it!=eit; ++it ) {
 		sub_frame->add_fragment( (*it)->generate_sub_fragment( start, start + length - 1 ) );
 	}
 	runtime_assert( nr_frags() == sub_frame->nr_frags() );

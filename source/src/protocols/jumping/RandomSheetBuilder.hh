@@ -64,7 +64,7 @@ protected:
 		return "RandomSheetBuilder";
 	}
 private:
-  SheetTopology input_sheet_sizes_;
+	SheetTopology input_sheet_sizes_;
 
 };
 

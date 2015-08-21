@@ -43,55 +43,55 @@ class RNA_CentroidInfo: public basic::datacache::CacheableData  {
 
 public:
 
-RNA_CentroidInfo(): calculated_( false ) {};
+	RNA_CentroidInfo(): calculated_( false ) {};
 
-  RNA_CentroidInfo( RNA_CentroidInfo const & src );
+	RNA_CentroidInfo( RNA_CentroidInfo const & src );
 
-  basic::datacache::CacheableDataOP
-  clone() const
-  {
-    return basic::datacache::CacheableDataOP( new RNA_CentroidInfo( *this ) );
-  }
+	basic::datacache::CacheableDataOP
+	clone() const
+	{
+		return basic::datacache::CacheableDataOP( new RNA_CentroidInfo( *this ) );
+	}
 
 	void
 	update( pose::Pose const & pose );
 
-  Size
-  size() const {
-    return base_centroids_.size();
-  }
+	Size
+	size() const {
+		return base_centroids_.size();
+	}
 
-  bool
-  calculated() const
-  {
-    return calculated_;
-  }
+	bool
+	calculated() const
+	{
+		return calculated_;
+	}
 
-  bool &
-  calculated()
-  {
-    return calculated_;
-  }
+	bool &
+	calculated()
+	{
+		return calculated_;
+	}
 
-  void
-  set_calculated( bool const & setting )
-  {
-    calculated_ = setting;
-  }
+	void
+	set_calculated( bool const & setting )
+	{
+		calculated_ = setting;
+	}
 
-  utility::vector1< Vector > const &
+	utility::vector1< Vector > const &
 	base_centroids() const
 	{
 		return base_centroids_;
 	}
 
-  utility::vector1< kinematics::Stub > const &
+	utility::vector1< kinematics::Stub > const &
 	base_stubs() const
 	{
 		return base_stubs_;
 	}
 
- 	Vector
+	Vector
 	get_base_centroid( conformation::Residue const & rsd ) const;
 
 	kinematics::Stub
@@ -102,12 +102,12 @@ RNA_CentroidInfo(): calculated_( false ) {};
 
 private:
 
-  void
-  initialize_base_centroids_and_stubs( pose::Pose const & pose );
+	void
+	initialize_base_centroids_and_stubs( pose::Pose const & pose );
 
-  utility::vector1< Vector > base_centroids_;
-  utility::vector1< kinematics::Stub > base_stubs_;
-  bool calculated_;
+	utility::vector1< Vector > base_centroids_;
+	utility::vector1< kinematics::Stub > base_stubs_;
+	bool calculated_;
 
 };
 

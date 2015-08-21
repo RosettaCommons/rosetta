@@ -103,8 +103,8 @@ rna_sequence_recovery_metrics( pose::Pose const & reference_pose, utility::vecto
 	protocols::farna::check_base_pair( pose, struct_type );
 
 	FArray1D_float recovery( nres, 0.0 );
-	for (Size n = 1; n <= pose_list.size(); n++ ) {
-		for (Size i = 1; i <= nres; i++ ) {
+	for ( Size n = 1; n <= pose_list.size(); n++ ) {
+		for ( Size i = 1; i <= nres; i++ ) {
 			if ( (pose_list[n])->residue(i).aa() == pose.residue(i).aa() ) {
 				recovery( i ) += 1.0;
 			}
@@ -115,18 +115,18 @@ rna_sequence_recovery_metrics( pose::Pose const & reference_pose, utility::vecto
 
 	Size num_ss( 0 ), num_ds( 0 ), num_ts( 0 );
 	Real frac_ss( 0.0 ), frac_ds( 0.0 ), frac_ts( 0.0 ), frac_overall( 0.0 );
-	for (Size i = 1; i <= nres; i++ ) {
+	for ( Size i = 1; i <= nres; i++ ) {
 		frac_overall += recovery(i);
 		switch ( struct_type(i) ) {
-		case 0:
+		case 0 :
 			num_ss++;
 			frac_ss += recovery(i);
 			break;
-		case 1:
+		case 1 :
 			num_ds++;
 			frac_ds += recovery(i);
 			break;
-		case 2:
+		case 2 :
 			num_ts++;
 			frac_ts += recovery(i);
 			break;
@@ -145,7 +145,7 @@ rna_sequence_recovery_metrics( pose::Pose const & reference_pose, utility::vecto
 
 	utility::io::ozstream out( sequence_recovery_file );
 
-	for (Size i = 1; i <= nres; i++ ) {
+	for ( Size i = 1; i <= nres; i++ ) {
 		out << pose.residue(i).name1() << I(3,i) << " " << F(8,3,recovery(i)) << " " << struct_symbol[ struct_type(i) ] << std::endl;
 	}
 
@@ -186,7 +186,7 @@ rna_design_test()
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line();
 
-	if( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ){
+	if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
 		pack::task::parse_resfile(pose, *task);
 	} else {
 		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
@@ -208,19 +208,19 @@ rna_design_test()
 		if ( option[ sample_chi ]() ) task->nonconst_residue_task(ii).nonconst_rna_task().set_sample_rna_chi( true );
 
 		// Can input this from command line:
-		//		task->nonconst_residue_task( ii ).or_ex4( true );
+		//  task->nonconst_residue_task( ii ).or_ex4( true );
 
 		// Can input this from command line?
-		//		task->nonconst_residue_task( ii ).or_ex1( true );
+		//  task->nonconst_residue_task( ii ).or_ex1( true );
 
 		// Screw this, can figure this out from command line.
-		//		if ( !option[ disable_include_current ]() ) task->nonconst_residue_task( ii ).or_include_current( true );
+		//  if ( !option[ disable_include_current ]() ) task->nonconst_residue_task( ii ).or_include_current( true );
 
 	}
 
 	ScoreFunctionOP scorefxn = get_score_function();
 
-	//	scorefxn->energy_method_options().exclude_DNA_DNA( exclude_DNA_DNA );
+	// scorefxn->energy_method_options().exclude_DNA_DNA( exclude_DNA_DNA );
 	methods::EnergyMethodOptions options( scorefxn->energy_method_options() );
 	options.exclude_DNA_DNA( false );
 	scorefxn->set_energy_method_options( options );
@@ -244,8 +244,8 @@ rna_design_test()
 	sequence_recovery_file.replace( pos, 4, ".sequence_recovery.txt" );
 	rna_sequence_recovery_metrics( save_pose, pose_list, sequence_recovery_file );
 
-	//	std::string const out_file_tag = "S_"+lead_zero_string_of( n, 4 );
-	//	dump_pdb( pose, out_file_tag + ".pdb" );
+	// std::string const out_file_tag = "S_"+lead_zero_string_of( n, 4 );
+	// dump_pdb( pose, out_file_tag + ".pdb" );
 
 	pose = *( pose_list[1] );
 	scorefxn->show( std::cout,pose );
@@ -268,7 +268,7 @@ ss_ds_ts_assign_test()
 	pose::PoseOP pose_op( new pose::Pose );
 	utility::vector1 < std::string > pdb_files  = option[ in::file::s ]();
 
-	for (Size n = 1; n <= pdb_files.size(); n++ )  {
+	for ( Size n = 1; n <= pdb_files.size(); n++ )  {
 		std::string const & pdb_file = pdb_files[ n ] ;
 		core::import_pose::pose_from_pdb( *pose_op, *rsd_set, pdb_file );
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( *pose_op );
@@ -306,30 +306,30 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-	using namespace basic::options;
+		using namespace basic::options;
 
-	std::cout << std::endl << "Basic usage:  " << argv[0] << "  -s <pdb file> [ -resfile <resfile>] " << std::endl;
-	std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
+		std::cout << std::endl << "Basic usage:  " << argv[0] << "  -s <pdb file> [ -resfile <resfile>] " << std::endl;
+		std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
 
-	//Uh, options? MOVE THESE TO OPTIONS NAMESPACE INSIDE CORE/OPTIONS.
-	NEW_OPT( disable_o2prime_rotamers, "In designing, don't sample 2'-OH",false);
-	NEW_OPT( disable_include_current, "In designing, don't include current",false);
-	NEW_OPT( sample_chi,  "In designing RNA, chi torsion sample",false);
-	NEW_OPT( ss_ds_ts_assign, "Figure out assignment of residues to single-stranded, double-stranded, tertiary contact categories",false);
-	NEW_OPT( dump, "Dump pdb", false );
-
-
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	core::init::init(argc, argv);
+		//Uh, options? MOVE THESE TO OPTIONS NAMESPACE INSIDE CORE/OPTIONS.
+		NEW_OPT( disable_o2prime_rotamers, "In designing, don't sample 2'-OH",false);
+		NEW_OPT( disable_include_current, "In designing, don't include current",false);
+		NEW_OPT( sample_chi,  "In designing RNA, chi torsion sample",false);
+		NEW_OPT( ss_ds_ts_assign, "Figure out assignment of residues to single-stranded, double-stranded, tertiary contact categories",false);
+		NEW_OPT( dump, "Dump pdb", false );
 
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		core::init::init(argc, argv);
 
-	protocols::viewer::viewer_main( my_main );
+
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
+
+		protocols::viewer::viewer_main( my_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

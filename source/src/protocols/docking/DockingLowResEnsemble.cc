@@ -69,57 +69,57 @@ DockingLowResEnsemble::DockingLowResEnsemble() : DockingLowRes()
 {
 	type( "DockingLowResEnsemble" );
 }
-    
-// constructor with arguments    
+
+// constructor with arguments
 DockingLowResEnsemble::DockingLowResEnsemble(
-    core::scoring::ScoreFunctionCOP scorefxn,
-    DockJumps const movable_jumps
+	core::scoring::ScoreFunctionCOP scorefxn,
+	DockJumps const movable_jumps
 ) : DockingLowRes( scorefxn, movable_jumps )
 {
-    type( "DockingLowResEnsemble" );
+	type( "DockingLowResEnsemble" );
 }
 
 //destructor
 DockingLowResEnsemble::~DockingLowResEnsemble() {}
 
-    
+
 protocols::moves::MoverOP DockingLowResEnsemble::clone() const {
 	return protocols::moves::MoverOP( new DockingLowResEnsemble(*this) );
 }
 
- 
+
 void DockingLowResEnsemble::set_ensemble1( DockingEnsembleOP ensemble1 )
 {
-    ensemble1_mover_ = protocols::docking::ConformerSwitchMoverOP( new protocols::docking::ConformerSwitchMover( ensemble1 ) );
+	ensemble1_mover_ = protocols::docking::ConformerSwitchMoverOP( new protocols::docking::ConformerSwitchMover( ensemble1 ) );
 }
 
 void DockingLowResEnsemble::set_ensemble2( DockingEnsembleOP ensemble2 )
 {
-    ensemble2_mover_ = protocols::docking::ConformerSwitchMoverOP( new protocols::docking::ConformerSwitchMover( ensemble2 ) );
+	ensemble2_mover_ = protocols::docking::ConformerSwitchMoverOP( new protocols::docking::ConformerSwitchMover( ensemble2 ) );
 }
 
 void DockingLowResEnsemble::finalize_setup( core::pose::Pose & pose){
 	using namespace moves;
 
-    DockingLowRes::finalize_setup( pose );
-    
-    // add if ens_mover1 ...
-    // inner_move_sequence
+	DockingLowRes::finalize_setup( pose );
+
+	// add if ens_mover1 ...
+	// inner_move_sequence
 	docking_lowres_protocol_->add_mover( ensemble1_mover_ );
-	docking_lowres_protocol_->add_mover( ensemble2_mover_ );        
+	docking_lowres_protocol_->add_mover( ensemble2_mover_ );
 }
 
 void DockingLowResEnsemble::show( std::ostream & out ) const
 {
-    DockingLowRes::show( out );
-    
-    using namespace ObjexxFCL::format;
-    std::string line_marker = "///";
-    out << line_marker << " Ensemble 1: " << ( ( ensemble1_mover_ ) ? ( "on" ) : ( "off " ) );
-    out << space( 59 ) << line_marker << std::endl;
-    out << line_marker << " Ensemble 2: " << ( ( ensemble2_mover_ ) ? ( "on" ) : ( "off " ) );
-    out << space( 59 ) << line_marker << std::endl;
+	DockingLowRes::show( out );
+
+	using namespace ObjexxFCL::format;
+	std::string line_marker = "///";
+	out << line_marker << " Ensemble 1: " << ( ( ensemble1_mover_ ) ? ( "on" ) : ( "off " ) );
+	out << space( 59 ) << line_marker << std::endl;
+	out << line_marker << " Ensemble 2: " << ( ( ensemble2_mover_ ) ? ( "on" ) : ( "off " ) );
+	out << space( 59 ) << line_marker << std::endl;
 }
-    
+
 } // namespace docking
 } // namespace protocols

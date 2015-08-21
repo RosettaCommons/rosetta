@@ -59,14 +59,14 @@
 
 // C POSIX library header for directory manipulation
 #if (defined WIN32) //&& (!defined WIN_PYROSETTA)
-	#include <windows.h>
-	#include <direct.h>
-	#include <io.h>
+#include <windows.h>
+#include <direct.h>
+#include <io.h>
 #endif
 
 #ifdef WIN_PYROSETTA
-	#include <direct.h>
-	#define mkdir _mkdir
+#include <direct.h>
+#define mkdir _mkdir
 #endif
 
 // Windows compatibility shim (*nixes should have it already defined.)
@@ -82,28 +82,28 @@ namespace file {
 bool
 file_exists( std::string const & path )
 {
-    // NOTE: this is not entirely reliable, stat may fail also when a file does exist
+	// NOTE: this is not entirely reliable, stat may fail also when a file does exist
 #if defined USE_FILE_PROVIDER
-    utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
-    // if file exists in file_provider then this will be the one used. Thus return true - file exists.
-    if( provider->file_exists( path ) ) return true;
-    //otherwise try and locate the file on the file system
+	utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
+	// if file exists in file_provider then this will be the one used. Thus return true - file exists.
+	if ( provider->file_exists( path ) ) return true;
+	//otherwise try and locate the file on the file system
 #endif
 
 #ifdef _WIN32
-    /*bool res = false;
-    std::fstream f;
-    f.open( path.c_str(), std::ios::in );
-    if( f.is_open() ) res = true;
-    f.close();
-    return res; */
+	/*bool res = false;
+	std::fstream f;
+	f.open( path.c_str(), std::ios::in );
+	if( f.is_open() ) res = true;
+	f.close();
+	return res; */
 
-    if( access(path.c_str(), 0) ) return false;
-    else return true;
+	if ( access(path.c_str(), 0) ) return false;
+	else return true;
 
 #else
-    struct stat buf;
-    return !stat( path.c_str(), &buf ); // stat() returns zero on success
+	struct stat buf;
+	return !stat( path.c_str(), &buf ); // stat() returns zero on success
 #endif
 }
 
@@ -114,7 +114,7 @@ is_directory( std::string const & path ) {
 	// Does this need to be specialized for Windows builds, etc.?
 	// As far as I can tell, not necessarily.
 	struct stat buf;
-	if( stat(path.c_str(), &buf) ) { // stat() returns non-zero on failure
+	if ( stat(path.c_str(), &buf) ) { // stat() returns non-zero on failure
 		return false; // A non-existant file is not a directory.
 	}
 	return S_ISDIR(buf.st_mode);
@@ -250,7 +250,7 @@ create_directory(
 	return !mkdir(dir_path.c_str(), 0777);
 #endif // _WIN32
 #endif
-return false;
+	return false;
 }
 
 
@@ -267,11 +267,11 @@ create_directory_recursive(
 	// This code works on Linux and Mac, and it *appears* that Windows uses the same error codes:
 	// http://msdn.microsoft.com/en-us/library/2fkk4dzw(VS.80).aspx
 	bool success = create_directory(dir_path);
-	if( success ) return true;
-	else if( errno == EEXIST ) return true; // directory already exists
-	else if( errno == ENOENT ) {
+	if ( success ) return true;
+	else if ( errno == EEXIST ) return true; // directory already exists
+	else if ( errno == ENOENT ) {
 		std::string const parent = PathName(dir_path).parent().name();
-		if( parent == dir_path ) return false;
+		if ( parent == dir_path ) return false;
 		else return create_directory_recursive(parent) && create_directory(dir_path);
 	} else return false;
 }
@@ -407,22 +407,22 @@ trytry_ofstream_open(
 int list_dir (std::string dir, utility::vector1<std::string> & files)
 {
 	//#ifndef WIN_PYROSETTA
-		#if (defined WIN32) //&& (!defined PYROSETTA)
-			std::string file_name = dir + "\\*";
+#if (defined WIN32) //&& (!defined PYROSETTA)
+	std::string file_name = dir + "\\*";
 
-			WIN32_FIND_DATA find_file_data;
-			HANDLE h_find;
+	WIN32_FIND_DATA find_file_data;
+	HANDLE h_find;
 
-			h_find = FindFirstFile(file_name.c_str(), &find_file_data);
-			if (h_find == INVALID_HANDLE_VALUE) {
-				return -1;
-			}
+	h_find = FindFirstFile(file_name.c_str(), &find_file_data);
+	if ( h_find == INVALID_HANDLE_VALUE ) {
+		return -1;
+	}
 
-			do {
-				files.push_back(find_file_data.cFileName);
-			} while(FindNextFile(h_find, &find_file_data) != 0);
-			FindClose(h_find);
-		#else
+	do {
+		files.push_back(find_file_data.cFileName);
+	} while(FindNextFile(h_find, &find_file_data) != 0);
+	FindClose(h_find);
+#else
 			DIR *dp;
 			struct dirent *dirp;
 			if((dp  = opendir(dir.c_str())) == NULL) {
@@ -434,15 +434,15 @@ int list_dir (std::string dir, utility::vector1<std::string> & files)
 				files.push_back(std::string(dirp->d_name));
 			}
 			closedir(dp);
-		#endif
+#endif
 	//#endif
-    return 0;
+	return 0;
 }
 
 FileName combine_names(utility::vector1<std::string> file_name_strings){
 	std::vector<FileName> file_names;
 	std::vector<std::string>::const_iterator begin= file_name_strings.begin();
-	for(; begin != file_name_strings.end(); ++begin){
+	for ( ; begin != file_name_strings.end(); ++begin ) {
 		file_names.push_back(FileName(*begin));
 	}
 	return FileName(file_names);

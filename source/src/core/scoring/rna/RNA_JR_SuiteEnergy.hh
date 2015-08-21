@@ -43,14 +43,14 @@ public:
 	RNA_JR_SuiteEnergy();
 
 	/// clone
-	virtual	methods::EnergyMethodOP	clone() const;
+	virtual methods::EnergyMethodOP clone() const;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Evaluate the intra-residue constraint energy for a given residue
-	virtual	void
+	virtual void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
@@ -59,7 +59,7 @@ public:
 	) const {};
 
 
-	virtual	void
+	virtual void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
@@ -70,10 +70,10 @@ public:
 
 	/// called during gradient-based minimization inside dfunc
 	/**
-		 F1 and F2 are not zeroed -- contributions from this atom are
-		 just summed in
+	F1 and F2 are not zeroed -- contributions from this atom are
+	just summed in
 	**/
-	virtual	void
+	virtual void
 	eval_atom_derivative(
 		id::AtomID const &,
 		pose::Pose const &,
@@ -89,16 +89,16 @@ public:
 	bool
 	defines_residue_pair_energy( EnergyMap const & ) const { return true; }
 
-	virtual	Distance atomic_interaction_cutoff() const { return 0; }
+	virtual Distance atomic_interaction_cutoff() const { return 0; }
 
-	virtual	void
+	virtual void
 	indicate_required_context_graphs( utility::vector1< bool > & ) const {};
-/////////////////////////////////////////////////////////////////////////////
-// data
-/////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////
+	// data
+	/////////////////////////////////////////////////////////////////////////////
 
 private:
-	virtual	Size version() const { return 0; }
+	virtual Size version() const { return 0; }
 
 	core::pose::rna::RNA_SuiteName suitename_;
 };

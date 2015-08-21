@@ -115,7 +115,7 @@ DDGBindOptEData::process_score(
 
 	// if there are no structures to go through, return immediately
 	if ( wt_complexes_.size() == 0 || mutant_complexes_.size() == 0 ||
-         wt_unbounds_.size()  == 0 || mutant_unbounds_.size()  == 0 ) return 0.0;
+			wt_unbounds_.size()  == 0 || mutant_unbounds_.size()  == 0 ) return 0.0;
 
 
 	// these vectors are sized to the number of structures there are for each of the four types of structures
@@ -134,35 +134,41 @@ DDGBindOptEData::process_score(
 
 	for ( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
 		for ( Size jj = 1; jj <= wt_complexes_.size(); ++jj ) {
-		// cap the fa_rep term at some value - this at least keeps it around for most of the mutants; this is how it would be done for wt_complexes
-		//#ifdef CAP_FA_REP
-		//	if ( ( score_list[ ii ] == fa_rep ) && ( vars[ ii ] * wts_[ jj ]->free_data()[ ii ] > 10 ) ) { wt_energies[ jj ] += 10; }
-		//	else
-		//#endif
-            wt_complexes_energies[ jj ] += vars[ ii ] * wt_complexes_[ jj ]->free_data()[ ii ];
+			// cap the fa_rep term at some value - this at least keeps it around for most of the mutants; this is how it would be done for wt_complexes
+			//#ifdef CAP_FA_REP
+			// if ( ( score_list[ ii ] == fa_rep ) && ( vars[ ii ] * wts_[ jj ]->free_data()[ ii ] > 10 ) ) { wt_energies[ jj ] += 10; }
+			// else
+			//#endif
+			wt_complexes_energies[ jj ] += vars[ ii ] * wt_complexes_[ jj ]->free_data()[ ii ];
 		}
 		for ( Size jj = 1; jj <= mutant_complexes_.size(); ++jj ) {
-			mutant_complexes_energies[ jj ] += vars[ ii ] * mutant_complexes_[ jj ]->free_data()[ ii ]; }
+			mutant_complexes_energies[ jj ] += vars[ ii ] * mutant_complexes_[ jj ]->free_data()[ ii ];
+		}
 		for ( Size jj = 1; jj <= wt_unbounds_.size(); ++jj ) {
-			wt_unbounds_energies[ jj ] += vars[ ii ] * wt_unbounds_[ jj ]->free_data()[ ii ]; }
+			wt_unbounds_energies[ jj ] += vars[ ii ] * wt_unbounds_[ jj ]->free_data()[ ii ];
+		}
 		for ( Size jj = 1; jj <= mutant_unbounds_.size(); ++jj ) {
-			mutant_unbounds_energies[ jj ] += vars[ ii ] * mutant_unbounds_[ jj ]->free_data()[ ii ]; }
+			mutant_unbounds_energies[ jj ] += vars[ ii ] * mutant_unbounds_[ jj ]->free_data()[ ii ];
+		}
 	}
 
 	for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
 		for ( Size jj = 1; jj <= wt_complexes_.size(); ++jj ) {
-		//#ifdef CAP_FA_REP
-		//	if ( ( fixed_score_list[ ii ] == fa_rep ) && ( fixed_terms[ fixed_score_list[ ii ] ] * wts_[ jj ]->fixed_data()[ ii ] > 10 ) ) { wt_energies[ jj ] += 10; }
-		//	else
-		//#endif
-            wt_complexes_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * wt_complexes_[ jj ]->fixed_data()[ ii ];
+			//#ifdef CAP_FA_REP
+			// if ( ( fixed_score_list[ ii ] == fa_rep ) && ( fixed_terms[ fixed_score_list[ ii ] ] * wts_[ jj ]->fixed_data()[ ii ] > 10 ) ) { wt_energies[ jj ] += 10; }
+			// else
+			//#endif
+			wt_complexes_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * wt_complexes_[ jj ]->fixed_data()[ ii ];
 		}
 		for ( Size jj = 1; jj <= mutant_complexes_.size(); ++jj ) {
-			mutant_complexes_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * mutant_complexes_[ jj ]->fixed_data()[ ii ]; }
+			mutant_complexes_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * mutant_complexes_[ jj ]->fixed_data()[ ii ];
+		}
 		for ( Size jj = 1; jj <= wt_unbounds_.size(); ++jj ) {
-			wt_unbounds_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * wt_unbounds_[ jj ]->fixed_data()[ ii ]; }
+			wt_unbounds_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * wt_unbounds_[ jj ]->fixed_data()[ ii ];
+		}
 		for ( Size jj = 1; jj <= mutant_unbounds_.size(); ++jj ) {
-			mutant_unbounds_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * mutant_unbounds_[ jj ]->fixed_data()[ ii ]; }
+			mutant_unbounds_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * mutant_unbounds_[ jj ]->fixed_data()[ ii ];
+		}
 	}
 
 	// num_energy_dofs is the number of free, non-reference energy parameters in the run; num_ref_dofs are the reference energies
@@ -170,13 +176,17 @@ DDGBindOptEData::process_score(
 	if ( num_ref_dofs != 0 ) {
 		for ( Size ii = 1; ii <= mutations_.size(); ++ii ) {
 			for ( Size jj = 1; jj <= wt_complexes_.size(); ++jj ) {
-                wt_complexes_energies[ jj ] += vars[ num_energy_dofs + mutations_[ ii ].second.first ]; }
+				wt_complexes_energies[ jj ] += vars[ num_energy_dofs + mutations_[ ii ].second.first ];
+			}
 			for ( Size jj = 1; jj <= mutant_complexes_.size(); ++jj ) {
-                mutant_complexes_energies[ jj ] += vars[ num_energy_dofs + mutations_[ ii ].second.second ]; }
+				mutant_complexes_energies[ jj ] += vars[ num_energy_dofs + mutations_[ ii ].second.second ];
+			}
 			for ( Size jj = 1; jj <= wt_unbounds_.size(); ++jj ) {
-                wt_unbounds_energies[ jj ] += vars[ num_energy_dofs + mutations_[ ii ].second.first ]; }
+				wt_unbounds_energies[ jj ] += vars[ num_energy_dofs + mutations_[ ii ].second.first ];
+			}
 			for ( Size jj = 1; jj <= mutant_unbounds_.size(); ++jj ) {
-                mutant_unbounds_energies[ jj ] += vars[ num_energy_dofs + mutations_[ ii ].second.second ]; }
+				mutant_unbounds_energies[ jj ] += vars[ num_energy_dofs + mutations_[ ii ].second.second ];
+			}
 		}
 	}
 
@@ -235,13 +245,13 @@ DDGBindOptEData::process_score(
 
 	} else {
 
-		for( core::Size e_dof = 1; e_dof <= num_energy_dofs; ++e_dof ) {
+		for ( core::Size e_dof = 1; e_dof <= num_energy_dofs; ++e_dof ) {
 			// may want to deal with really bad repulsive energy cases here somehow
 			dE_dvars[ e_dof ] += 2 * component_weights[ ddG_bind_correlation ] * ddG_bind_diff *
 				( mutant_complexes_[ best_mutant_complex_index ]->free_data()[ e_dof ]
-					- mutant_unbounds_[ best_mutant_unbounds_index ]->free_data()[ e_dof ] ) -
+				- mutant_unbounds_[ best_mutant_unbounds_index ]->free_data()[ e_dof ] ) -
 				( wt_complexes_[ best_wt_complex_index ]->free_data()[ e_dof ]
-					- wt_unbounds_[ best_wt_unbounds_index ]->free_data()[ e_dof ] );
+				- wt_unbounds_[ best_wt_unbounds_index ]->free_data()[ e_dof ] );
 		}
 		if ( num_ref_dofs != 0 ) {
 			for ( Size ii = 1; ii <= mutations_.size(); ++ii ) {

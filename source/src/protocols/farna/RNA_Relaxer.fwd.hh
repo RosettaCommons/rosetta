@@ -17,9 +17,9 @@
 namespace protocols {
 namespace farna {
 
-	//Auto Headers
-	class RNA_Relaxer;
-	typedef utility::pointer::shared_ptr< RNA_Relaxer > RNA_RelaxerOP;
+//Auto Headers
+class RNA_Relaxer;
+typedef utility::pointer::shared_ptr< RNA_Relaxer > RNA_RelaxerOP;
 
 } //farna
 } //protocols

@@ -49,34 +49,34 @@ public:
 		using namespace utility;
 
 		res_size_["ALA"] =  5;
-      res_size_["ARG"] = 11;
-      res_size_["ASN"] =  8;
-      res_size_["ASP"] =  8;
-      res_size_["CYS"] =  6;
-      res_size_["GLN"] =  9;
-      res_size_["GLU"] =  9;
-      res_size_["GLY"] =  4;
-      res_size_["HIS"] = 10;
-      res_size_["ILE"] =  8;
-      res_size_["LEU"] =  8;
-      res_size_["LYS"] =  9;
-      res_size_["MET"] =  8;
-      res_size_["PHE"] = 11;
-      res_size_["PRO"] =  8;
-      res_size_["SER"] =  6;
-      res_size_["THR"] =  7;
-      res_size_["TRP"] = 14;
-      res_size_["TYR"] = 12;
-      res_size_["VAL"] =  7;
+		res_size_["ARG"] = 11;
+		res_size_["ASN"] =  8;
+		res_size_["ASP"] =  8;
+		res_size_["CYS"] =  6;
+		res_size_["GLN"] =  9;
+		res_size_["GLU"] =  9;
+		res_size_["GLY"] =  4;
+		res_size_["HIS"] = 10;
+		res_size_["ILE"] =  8;
+		res_size_["LEU"] =  8;
+		res_size_["LYS"] =  9;
+		res_size_["MET"] =  8;
+		res_size_["PHE"] = 11;
+		res_size_["PRO"] =  8;
+		res_size_["SER"] =  6;
+		res_size_["THR"] =  7;
+		res_size_["TRP"] = 14;
+		res_size_["TYR"] = 12;
+		res_size_["VAL"] =  7;
 
 		utility::io::izstream in;
-		if( "" != fname ) {
+		if ( "" != fname ) {
 			in.close();
 			in.clear();
 			in.open( fname.c_str() );
 		} else {
 			std::string paramfile = (std::string)( basic::options::option[ basic::options::OptionKeys::holes::params ]() );
-			if( paramfile[0] == '/' || paramfile[0] == '.' || paramfile[0] == '~' ) {
+			if ( paramfile[0] == '/' || paramfile[0] == '.' || paramfile[0] == '~' ) {
 				in.close();
 				in.clear();
 				in.open( paramfile.c_str() );
@@ -87,19 +87,19 @@ public:
 		string s;
 		core::Real r;
 		in >> s;
-		while( s != "END" ) {
-			if( s == "INTERCEPT" ) {
+		while ( s != "END" ) {
+			if ( s == "INTERCEPT" ) {
 				in >> r;
 				rho_ = r;
 			} else {
-				if( res_size_.find(s) == res_size_.end() ) {
+				if ( res_size_.find(s) == res_size_.end() ) {
 					std::cerr << "HOLES: can't find res type '" << s << "'" << endl;
 					utility_exit_with_message( "HOLES: can't find res type" );
 				}
 				residues_.push_back(s);
 				int size = res_size_[s];
 				params_[s].reserve(24*size+1);
-				for( int i = 1; i <= 24*size+1; i++ ) {
+				for ( int i = 1; i <= 24*size+1; i++ ) {
 					in >> r;
 					params_[s].push_back(r);
 				}
@@ -115,9 +115,9 @@ public:
 	core::Real rho() const { return rho_; }
 
 	core::Real rho( std::string res ) const {
-		if( have_params(res) )
+		if ( have_params(res) ) {
 			return params_.find(res)->second[params_.find(res)->second.size()];
-		else return 0;
+		} else return 0;
 	}
 
 	std::string residues( core::Size i ) const {

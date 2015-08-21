@@ -52,12 +52,12 @@ LocalCoordinateConstraint::show_violations(
 	Size verbose_level,
 	Real threshold
 ) const{
-  if ( verbose_level > 80 ) {
-    out << "CoordConstraint ("
-		<< pose.residue_type(atom_.rsd() ).atom_name( atom_.atomno() )
-		<< ":" << atom_.atomno() << "," << atom_.rsd() << " ) ";
-  }
-  return func_->show_violations( out, dist( pose ), verbose_level, threshold );
+	if ( verbose_level > 80 ) {
+		out << "CoordConstraint ("
+			<< pose.residue_type(atom_.rsd() ).atom_name( atom_.atomno() )
+			<< ":" << atom_.atomno() << "," << atom_.rsd() << " ) ";
+	}
+	return func_->show_violations( out, dist( pose ), verbose_level, threshold );
 }
 
 
@@ -67,7 +67,7 @@ LocalCoordinateConstraint::show_violations(
 /// to the new object. Intended to be implemented by derived classes.
 ConstraintOP LocalCoordinateConstraint::remapped_clone( pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP smap ) const {
 	id::NamedAtomID atom1( core::pose::atom_id_to_named_atom_id(atom(1), src ));
-    id::NamedAtomID atom2( core::pose::atom_id_to_named_atom_id(atom(2), src ));
+	id::NamedAtomID atom2( core::pose::atom_id_to_named_atom_id(atom(2), src ));
 	id::NamedAtomID atom3( core::pose::atom_id_to_named_atom_id(atom(3), src ));
 	id::NamedAtomID atom4( core::pose::atom_id_to_named_atom_id(atom(4), src ));
 
@@ -94,25 +94,25 @@ ConstraintOP
 LocalCoordinateConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const
 {
 	if ( seqmap[atom_.rsd()] !=0
-		&& seqmap[ fixed_stub_.atom( 1 ).rsd() ] != 0
-		&& seqmap[ fixed_stub_.atom( 2 ).rsd() ] != 0
-		&& seqmap[ fixed_stub_.atom( 3 ).rsd() ] != 0 ) {
+			&& seqmap[ fixed_stub_.atom( 1 ).rsd() ] != 0
+			&& seqmap[ fixed_stub_.atom( 2 ).rsd() ] != 0
+			&& seqmap[ fixed_stub_.atom( 3 ).rsd() ] != 0 ) {
 		id::AtomID remap_a( atom_.atomno(), seqmap[ atom_.rsd() ] );
 		id::AtomID remap_s1( fixed_stub_.atom( 1 ).atomno(), seqmap[ fixed_stub_.atom( 1 ).rsd() ] );
 		id::AtomID remap_s2( fixed_stub_.atom( 2 ).atomno(), seqmap[ fixed_stub_.atom( 2 ).rsd() ] );
 		id::AtomID remap_s3( fixed_stub_.atom( 3 ).atomno(), seqmap[ fixed_stub_.atom( 3 ).rsd() ] );
 		id::StubID remap_stub( remap_s1, remap_s2, remap_s3 );
-    return ConstraintOP( new LocalCoordinateConstraint( remap_a, remap_stub, xyz_target_, this->func_, score_type() ) );
-  } else {
-    return NULL;
-  }
+		return ConstraintOP( new LocalCoordinateConstraint( remap_a, remap_stub, xyz_target_, this->func_, score_type() ) );
+	} else {
+		return NULL;
+	}
 }
 
 
 Real
 LocalCoordinateConstraint::dist( pose::Pose const & pose ) const {
-  conformation::Conformation const & conformation( pose.conformation() );
-  Vector const & xyz( conformation.xyz( atom_ ) );
+	conformation::Conformation const & conformation( pose.conformation() );
+	Vector const & xyz( conformation.xyz( atom_ ) );
 	kinematics::Stub my_stub( conformation.stub_from_id( fixed_stub_ ) );
 	return func( xyz_target_.distance( my_stub.global2local( xyz ) ) );
 }
@@ -121,8 +121,8 @@ void
 LocalCoordinateConstraint::steal_def( pose::Pose const& pose ) {
 	conformation::Conformation const & conformation( pose.conformation() );
 	kinematics::Stub my_stub( conformation.stub_from_id( fixed_stub_ ) );
-  xyz_target_ = my_stub.global2local( conformation.xyz( atom_ ) );
-	//tr.Trace << "get local xyz for " << atom_ << " " << xyz_target_.x() << " " << xyz_target_.y() << " " << xyz_target_.z() << " vs global: " //	Vector bla( conformation.xyz( atom_ ) );
+	xyz_target_ = my_stub.global2local( conformation.xyz( atom_ ) );
+	//tr.Trace << "get local xyz for " << atom_ << " " << xyz_target_.x() << " " << xyz_target_.y() << " " << xyz_target_.z() << " vs global: " // Vector bla( conformation.xyz( atom_ ) );
 	//tr.Trace << bla.x() << " " << bla.y() << " " << bla.z() << " " << std::endl;
 }
 
@@ -164,9 +164,9 @@ LocalCoordinateConstraint::read_def(
 	ConstraintIO::parse_residue( pose, tempres2, res2 );
 
 	tr.Debug << "read: " << name1 << " " << res1 << " " << name2 << " " << name3
-					 <<	" " << name4 << " " << res2 << " func: " << func_type << std::endl;
+		<< " " << name4 << " " << res2 << " func: " << func_type << std::endl;
 	if ( res1 > pose.total_residue() || res2 > pose.total_residue() ) {
-		tr.Warning 	<< "ignored constraint (no such atom in pose!)"
+		tr.Warning  << "ignored constraint (no such atom in pose!)"
 			<< name1 << " " << name2 << " " << res1 << " " << res2 << std::endl;
 		data.setstate( std::ios_base::failbit );
 		return;
@@ -176,8 +176,8 @@ LocalCoordinateConstraint::read_def(
 	fixed_stub_ = id::StubID( core::pose::named_stub_id_to_stub_id( id::NamedStubID( name2, name3, name4, res2 ), pose ));
 	if ( !atom_.valid() || !fixed_stub_.valid() ) {
 		tr.Warning << "Error reading atoms: read in atom names("
-							 << name1 << "," << name2 << "), "
-							 << "and found AtomIDs (" << atom_ << "," << fixed_stub_ << ")" << std::endl;
+			<< name1 << "," << name2 << "), "
+			<< "and found AtomIDs (" << atom_ << "," << fixed_stub_ << ")" << std::endl;
 		data.setstate( std::ios_base::failbit );
 		return;
 	}
@@ -186,8 +186,8 @@ LocalCoordinateConstraint::read_def(
 	func_->read_data( data );
 
 	if ( data.good() ) {
-	//chu skip the rest of line since this is a single line defintion.
-		while( data.good() && (data.get() != '\n') ) {}
+		//chu skip the rest of line since this is a single line defintion.
+		while ( data.good() && (data.get() != '\n') ) {}
 		if ( !data.good() ) data.setstate( std::ios_base::eofbit );
 	}
 
@@ -215,10 +215,10 @@ LocalCoordinateConstraint::show_def(
 
 Real
 LocalCoordinateConstraint::score(
-			Vector const & xyz, //target
-			Vector const & s1, //fixed_stub.a
-			Vector const & s2, //fixed_stub.b
-			Vector const & s3 //fixed_stub.c
+	Vector const & xyz, //target
+	Vector const & s1, //fixed_stub.a
+	Vector const & s2, //fixed_stub.b
+	Vector const & s3 //fixed_stub.c
 ) const
 {
 

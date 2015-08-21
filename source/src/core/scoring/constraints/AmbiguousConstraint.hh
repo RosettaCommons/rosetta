@@ -104,7 +104,7 @@ public:
 
 	ConstraintCOP active_constraint() const;
 
-	//	void read_def( std::istream& in, pose::Pose const& pose,func::FuncFactory const& func_factory );
+	// void read_def( std::istream& in, pose::Pose const& pose,func::FuncFactory const& func_factory );
 
 	Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1.0 ) const;
 

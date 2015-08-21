@@ -22,23 +22,23 @@ namespace core {
 namespace scoring {
 namespace sasa {
 
-	/// @brief Type of Radii to use.
-	/// @details
-	///       LJ:  Refers to Leonard Jones radii - Rosetta uses radii at the minimum of the potential (sigma2).
-	///       Legacy:  Refers to radii optimized for a no longer in use term, but some protocols have been optimized to use it.
-	///       naccess:  Refers to radii used in the program naccess.  Originally derived from Chothia.  Do not use for all-atom SASA as hydrogens are implicitly included.
-	///                           'The Nature of the Accessible and Buried Surfaces in Proteins' J. Mol. Biol. (1976) 105, 1-14
-	///       reduce:   Radii used by the program reduce.  Hydrogens are explicitly included in the radii.
-	///
-	enum SasaRadii {
-		LJ = 1,
-		legacy,
-		naccess,
-		reduce,
+/// @brief Type of Radii to use.
+/// @details
+///       LJ:  Refers to Leonard Jones radii - Rosetta uses radii at the minimum of the potential (sigma2).
+///       Legacy:  Refers to radii optimized for a no longer in use term, but some protocols have been optimized to use it.
+///       naccess:  Refers to radii used in the program naccess.  Originally derived from Chothia.  Do not use for all-atom SASA as hydrogens are implicitly included.
+///                           'The Nature of the Accessible and Buried Surfaces in Proteins' J. Mol. Biol. (1976) 105, 1-14
+///       reduce:   Radii used by the program reduce.  Hydrogens are explicitly included in the radii.
+///
+enum SasaRadii {
+	LJ = 1,
+	legacy,
+	naccess,
+	reduce,
 
-		chothia=naccess,
-		SasaRadii_total = reduce
-	};
+	chothia=naccess,
+	SasaRadii_total = reduce
+};
 
 
 /// @brief Abstract base class for SasaMethods.  Feel free to edit as needed.
@@ -53,10 +53,10 @@ public:
 	/// @brief Calculate Sasa.  Atoms not calculated have -1 sasa in AtomID_Map.  This is carried over for compatability purposes.
 	virtual Real
 	calculate(
-			const pose::Pose & pose,
-			const id::AtomID_Map<bool> & atom_subset,
-			id::AtomID_Map< Real > & atom_sasa,
-			utility::vector1< Real > & rsd_sasa) = 0;
+		const pose::Pose & pose,
+		const id::AtomID_Map<bool> & atom_subset,
+		id::AtomID_Map< Real > & atom_sasa,
+		utility::vector1< Real > & rsd_sasa) = 0;
 
 	virtual std::string
 	get_name() const = 0;
@@ -77,7 +77,7 @@ public:
 	set_radii_set(SasaRadii radii_set);
 
 
-///////////Legacy Options ///////////
+	///////////Legacy Options ///////////
 public:
 	//void
 	//set_expand_polar_radii(bool expand_polars, core::Size expansion_radius = 1.0);
@@ -101,4 +101,4 @@ protected:
 }
 }
 
-#endif	//#ifndef INCLUDED_protocols/antibody_design_SASAMETHOD_HH
+#endif //#ifndef INCLUDED_protocols/antibody_design_SASAMETHOD_HH

@@ -60,8 +60,8 @@
 
 #include <protocols/jd2/Job.hh>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 static thread_local basic::Tracer TR( "protocols.features.ProteinSilentReport" );
 
@@ -94,7 +94,7 @@ ProteinSilentReport::ProteinSilentReport() :
 {
 	database_filter_=get_DB_filter_ptr();
 
-	if( basic::options::option[basic::options::OptionKeys::out::database_protocol_id].user() ){
+	if ( basic::options::option[basic::options::OptionKeys::out::database_protocol_id].user() ) {
 		protocol_id_ = basic::options::option[basic::options::OptionKeys::out::database_protocol_id];
 	}
 	features_reporters_.push_back(structure_features_);
@@ -166,7 +166,7 @@ ProteinSilentReport::apply(
 	std::string const & tag
 ) {
 
-	if(pose.energies().energies_updated()){
+	if ( pose.energies().energies_updated() ) {
 		features_reporters_.push_back(structure_scores_features_);
 	}
 
@@ -177,7 +177,7 @@ ProteinSilentReport::apply(
 	std::string input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
 	structure_features_->mark_structure_as_sampled(batch_id_,tag,input_tag,db_session);
 
-	if(!database_filter_){
+	if ( !database_filter_ ) {
 		write_full_report(pose,db_session,tag);
 		return;
 	}
@@ -185,10 +185,10 @@ ProteinSilentReport::apply(
 	std::pair<bool, utility::vector1<StructureID> > temp= (*database_filter_)(pose, db_session, protocol_id_);
 	bool write_this_pose = temp.first;
 	utility::vector1<StructureID> struct_ids_to_delete = temp.second;
-	BOOST_FOREACH(StructureID struct_id, struct_ids_to_delete){
+	BOOST_FOREACH ( StructureID struct_id, struct_ids_to_delete ) {
 		delete_pose(db_session,struct_id);
 	}
-	if(write_this_pose){
+	if ( write_this_pose ) {
 		write_full_report(pose,db_session,tag);
 	}
 }
@@ -200,7 +200,7 @@ ProteinSilentReport::load_pose(
 	Pose & pose){
 
 	bool ideal = true; // Set by load_into_pose, and then used by protein_residue_conformation_features to determine
-                     // if backbone torsions should be loaded into pose
+	// if backbone torsions should be loaded into pose
 	pose_conformation_features_->load_into_pose(db_session, struct_id, pose, ideal);
 	pdb_data_features_->load_into_pose(db_session,struct_id,pose);
 	job_data_features_->load_into_pose(db_session, struct_id, pose);
@@ -222,9 +222,9 @@ ProteinSilentReport::load_pose(
 
 	int total_res=pose.total_residue();
 	int num_removed_residues=0;
-	for(int i=1; i<=total_res; ++i){
+	for ( int i=1; i<=total_res; ++i ) {
 		//if the residue wasn't specified, delete it
-		if(residue_numbers.find(i)==residue_numbers.end()){
+		if ( residue_numbers.find(i)==residue_numbers.end() ) {
 			pose.conformation().delete_residue_slow(i-num_removed_residues);
 			++num_removed_residues;
 		}
@@ -238,8 +238,7 @@ bool ProteinSilentReport::is_initialized() const
 
 void ProteinSilentReport::initialize(sessionOP db_session)
 {
-	if(!initialized_)
-	{
+	if ( !initialized_ ) {
 		write_schema_to_db(db_session);
 		write_protocol_report(db_session);
 		initialized_ = true;
@@ -248,7 +247,7 @@ void ProteinSilentReport::initialize(sessionOP db_session)
 
 void
 ProteinSilentReport::write_protocol_report(
-		utility::sql_database::sessionOP db_session
+	utility::sql_database::sessionOP db_session
 ){
 	//initialize protocol and batch id
 	std::pair<Size, Size> ids = get_protocol_and_batch_id("db_job_outputter", "", features_reporters_, db_session);
@@ -282,7 +281,7 @@ ProteinSilentReport::write_full_report(
 	pdb_data_features_->report_features(
 		pose,relevant_residues,struct_id,db_session);
 
-	if(pose.energies().energies_updated()){
+	if ( pose.energies().energies_updated() ) {
 		structure_scores_features_->report_features(
 			pose, relevant_residues, struct_id, db_session);
 	}
@@ -328,7 +327,7 @@ core::Size ProteinSilentReport::get_protocol_id() const
 
 core::Size ProteinSilentReport::get_batch_id() const
 {
-		return batch_id_;
+	return batch_id_;
 }
 
 

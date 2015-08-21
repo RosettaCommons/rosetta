@@ -116,8 +116,9 @@ BaseJobDistributor::BaseJobDistributor( BaseJobDistributor const & src ) :
 
 BaseJobDistributor::~BaseJobDistributor()
 {
-	if( is_started_ )
+	if ( is_started_ ) {
 		basic::Error() << "Must call shutdown() when finished using job distributor!" << std::endl;
+	}
 }
 
 
@@ -131,16 +132,15 @@ bool BaseJobDistributor::next_job(BasicJobOP & job, int & struct_n)
 #endif
 
 	int elapsedtime = time(NULL) - start_time_;
-	if( ( basic::options::option[ basic::options::OptionKeys::run::maxruntime ].user() ) &&
-		  ( basic::options::option[ basic::options::OptionKeys::run::maxruntime ]() > 0 ) &&
-		  ( basic::options::option[ basic::options::OptionKeys::run::maxruntime ]() < elapsedtime ) )
-	{
+	if ( ( basic::options::option[ basic::options::OptionKeys::run::maxruntime ].user() ) &&
+			( basic::options::option[ basic::options::OptionKeys::run::maxruntime ]() > 0 ) &&
+			( basic::options::option[ basic::options::OptionKeys::run::maxruntime ]() < elapsedtime ) ) {
 		std::cerr << "JobTerminated because runtime of " << elapsedtime << " s exceeded maxruntime of " << basic::options::option[ basic::options::OptionKeys::run::maxruntime ]() << " s " << std::endl;
 		return false;
 	}
 
 
-	if( !is_started_ ) {
+	if ( !is_started_ ) {
 		basic::Error() << "Must call startup() before using job distributor!" << std::endl;
 		return false;
 	}
@@ -185,7 +185,7 @@ bool BaseJobDistributor::find_available_job()
 	while ( current_job_ <= jobs_.size() ) {
 
 		// if shuffle mode then choose a random job and reset current_nstruct_ to 0. It should then work out which ones it's already done.
-		if( shuffle_mode ){
+		if ( shuffle_mode ) {
 
 			do{
 				current_job_ = get_next_random_range( 1, jobs_.size() );
@@ -193,23 +193,23 @@ bool BaseJobDistributor::find_available_job()
 			current_nstruct_ = 0;
 
 			// in shuffle mode nstruct means how many structures **in total** not per job.
-			if( (int)curr_jobid_ >= (int)basic::options::option[ basic::options::OptionKeys::out::nstruct]() ) return false;
+			if ( (int)curr_jobid_ >= (int)basic::options::option[ basic::options::OptionKeys::out::nstruct]() ) return false;
 		}
 		while ( current_nstruct_ < jobs_[ current_job_ ]->nstruct() ) {
 			++current_nstruct_; //running number within  current job
 			++curr_jobid_; //running number across all jobs
-      if( shuffle_mode ) current_nstruct_ = curr_jobid_;
+			if ( shuffle_mode ) current_nstruct_ = curr_jobid_;
 
 			JobDistributorTracer << "Looking for an available job: "
-													 << current_nstruct_ << " "
-													 << current_job_ << " "
-													 << jobs_[ current_job_ ]->input_tag() << " "
-													 << curr_jobid_
-													 << std::endl;
+				<< current_nstruct_ << " "
+				<< current_job_ << " "
+				<< jobs_[ current_job_ ]->input_tag() << " "
+				<< curr_jobid_
+				<< std::endl;
 
 			bool processed( !overwrite_ && is_finished( jobs_[ current_job_ ], current_nstruct_ ) );
 			bool skipped(  nproc_ && numeric::mod( curr_jobid_, nproc_ ) != ( proc_id_ - 1 ) );
-      if( shuffle_mode && processed ){ break; }
+			if ( shuffle_mode && processed ) { break; }
 			if ( !processed && !skipped ) {
 #ifdef BOINC
 				if( shuffle_mode ) {
@@ -231,9 +231,9 @@ bool BaseJobDistributor::find_available_job()
 /// If overriden by a subclass, it MUST call the superclass implementation.
 void BaseJobDistributor::startup()
 {
-	if( is_started_ )
+	if ( is_started_ ) {
 		basic::Error() << "Distributor already started, don't call startup() again!" << std::endl;
-	else {
+	} else {
 		checkpoint_read();
 
 #ifdef USEMPI
@@ -255,9 +255,9 @@ void BaseJobDistributor::startup()
 /// If overriden by a subclass, it MUST call the superclass implementation.
 void BaseJobDistributor::shutdown()
 {
-	if( !is_started_ )
+	if ( !is_started_ ) {
 		basic::Error() << "Distributor not started or already stopped, don't call shutdown() again!" << std::endl;
-	else {
+	} else {
 		checkpoint_clear();
 		is_started_ = false;
 	}
@@ -354,7 +354,7 @@ void BaseJobDistributor::checkpoint_write()
 	time_t time_now = time(NULL);
 	// Refuse to checkpoint more than once a minute, no matter what BOINC wants.
 	// Random number checkpoint files can be large (100k or more uncompressed).
-	if( time_now - last_chkpt_time > 60 ) {
+	if ( time_now - last_chkpt_time > 60 ) {
 #ifdef BOINC
 		// BOINC automatically handles begin/end_critical_section() calls.
 		utility::io::ozstream ozs("rng.state.gz");
@@ -474,14 +474,14 @@ bool BaseJobDistributor::request_job_from_master_node()
 int BaseJobDistributor::get_next_random_range(int low, int high)
 {
 	// save yourself some random numbers.
-	if ( random_store_.size() == 0 ){
-		for ( int k = 0; k < 1000; k ++ ){
+	if ( random_store_.size() == 0 ) {
+		for ( int k = 0; k < 1000; k ++ ) {
 			random_store_.push_back( numeric::random::uniform() );
 		}
 		random_counter_ = 1;
 	}
 
-	if( random_counter_ > 1000 ) random_counter_ = 1;
+	if ( random_counter_ > 1000 ) random_counter_ = 1;
 
 	if ( low > high ) {
 		int temp;
@@ -511,26 +511,26 @@ AtomTreeDiffJobDistributor::AtomTreeDiffJobDistributor(JobVector jobs, std::stri
 		utility::file::FileName outfile(outfile_name);
 		std::ostringstream oss;
 		oss << basic::options::option[ basic::options::OptionKeys::out::prefix ]() << outfile.base()
-		    << basic::options::option[ basic::options::OptionKeys::out::suffix ]();
+			<< basic::options::option[ basic::options::OptionKeys::out::suffix ]();
 		outfile.base( oss.str() );
 		outfile.path( basic::options::option[ basic::options::OptionKeys::out::path::pdb ]().path() );
 		outfile.vol( basic::options::option[ basic::options::OptionKeys::out::path::pdb ]().vol() );
-		if( basic::options::option[ basic::options::OptionKeys::out::pdb_gz ] && outfile.ext() != "gz" ) {
+		if ( basic::options::option[ basic::options::OptionKeys::out::pdb_gz ] && outfile.ext() != "gz" ) {
 			outfile.ext( ".gz" ); // else use input extension
 		}
 		outfile_name = outfile.name();
 	}
 
-	if( utility::file::file_exists(outfile_name) ) {
+	if ( utility::file::file_exists(outfile_name) ) {
 		// load list of tags
 		utility::io::izstream in( outfile_name.c_str() );
 		if ( !in.good() ) {
 			utility_exit_with_message( "Unable to open file: " + outfile_name + "\n" );
 		}
-		while( !in.eof() ) {
+		while ( !in.eof() ) {
 			std::string tmp_tag;
 			std::map< std::string, core::Real > tmp_scores;
-			if( ! core::import_pose::atom_tree_diffs::header_from_atom_tree_diff(in, tmp_tag, tmp_scores) ) break;
+			if ( ! core::import_pose::atom_tree_diffs::header_from_atom_tree_diff(in, tmp_tag, tmp_scores) ) break;
 			used_tags_.insert( tmp_tag );
 		}
 		in.close();
@@ -538,7 +538,7 @@ AtomTreeDiffJobDistributor::AtomTreeDiffJobDistributor(JobVector jobs, std::stri
 		out_.open_append( outfile_name.c_str() );
 	} else {
 		out_.open( outfile_name.c_str() );
-		if( basic::options::option[ basic::options::OptionKeys::run::version ] ) {
+		if ( basic::options::option[ basic::options::OptionKeys::run::version ] ) {
 			out_ << "# Mini-Rosetta version " << core::minirosetta_svn_version() << " from " << core::minirosetta_svn_url() << "\n";
 		}
 	}
@@ -557,13 +557,14 @@ void AtomTreeDiffJobDistributor::dump_pose(
 )
 {
 	this->begin_critical_section();
-	if( last_ref_pose_ != &ref_pose ) {
+	if ( last_ref_pose_ != &ref_pose ) {
 		std::map< std::string, core::Real > empty_scores;
 		core::import_pose::atom_tree_diffs::dump_reference_pose(out_, "%REF%_"+tag, empty_scores, ref_pose);
 		last_ref_pose_ = &ref_pose;
 	}
-	if( used_tags_.find(tag) != used_tags_.end() )
+	if ( used_tags_.find(tag) != used_tags_.end() ) {
 		basic::Error() << "Tag " << tag << " already exists in silent file; writing structure anyway..." << std::endl;
+	}
 	core::import_pose::atom_tree_diffs::dump_atom_tree_diff(out_, tag, scores, ref_pose, pose, bb_precision_, sc_precision_, bondlen_precision_);
 	used_tags_.insert(tag);
 	// Can't flush compressed streams -- results in file truncation
@@ -599,18 +600,18 @@ PlainPdbJobDistributor::PlainPdbJobDistributor(JobVector jobs, std::string outfi
 	BaseJobDistributor(jobs),
 	scorefile_name_()
 {
-	if (outfile_name != "none" ) {
+	if ( outfile_name != "none" ) {
 		scorefile_ = true;
 		// set up all the information for the scorefile
 		utility::file::FileName outfile("");
 		std::ostringstream oss;
 		oss << basic::options::option[ basic::options::OptionKeys::out::prefix ]() << outfile.base()
-		    << basic::options::option[ basic::options::OptionKeys::out::suffix ]();
+			<< basic::options::option[ basic::options::OptionKeys::out::suffix ]();
 		outfile.base( oss.str() );
 		outfile.path( basic::options::option[ basic::options::OptionKeys::out::path::pdb ]().path() );
 		outfile.vol( basic::options::option[ basic::options::OptionKeys::out::path::pdb ]().vol() );
 		// determine the extension based on fullatom or centroid
-		if( basic::options::option[ basic::options::OptionKeys::out::file::fullatom ] && outfile.ext() != "fasc" ) {
+		if ( basic::options::option[ basic::options::OptionKeys::out::file::fullatom ] && outfile.ext() != "fasc" ) {
 			outfile.ext( ".fasc" ); // else use input extension
 		} else {
 			outfile.ext( ".sc" );
@@ -643,7 +644,7 @@ std::string PlainPdbJobDistributor::get_output_filename(std::string const & tag)
 	output_pdb_name.path( basic::options::option[ basic::options::OptionKeys::out::path::pdb ]().path() );
 	output_pdb_name.vol( basic::options::option[ basic::options::OptionKeys::out::path::pdb ]().vol() );
 	output_pdb_name.base( tag ); // could contain embedded dots that look ~ like extensions
-	if( basic::options::option[ basic::options::OptionKeys::out::pdb_gz ] ) {
+	if ( basic::options::option[ basic::options::OptionKeys::out::pdb_gz ] ) {
 		output_pdb_name.ext( ".pdb.gz" );
 	} else {
 		output_pdb_name.ext( ".pdb" );
@@ -683,7 +684,7 @@ void PlainPdbJobDistributor::dump_pose_and_map(
 	core::pose::Pose & pose
 )
 {
-	if( BaseJobDistributor::nooutput() ) return;
+	if ( BaseJobDistributor::nooutput() ) return;
 
 	this->begin_critical_section();
 	std::string outfile_name = this->get_output_filename(tag);
@@ -714,7 +715,7 @@ void PlainPdbJobDistributor::dump_pose_and_map(
 
 bool PlainPdbJobDistributor::is_finished( BasicJobOP const & job, int struct_n )
 {
-	if( BaseJobDistributor::ignorefinished() ) return false;
+	if ( BaseJobDistributor::ignorefinished() ) return false;
 	bool file_exists (false);
 	std::string filename ( get_output_filename(job->output_tag(struct_n))+".in_progress" );
 	if ( utility::file::file_exists(filename) ) {
@@ -741,7 +742,7 @@ void PlainPdbJobDistributor::dump_scores(
 	core::scoring::EnergyMap weights = pose.energies().weights();
 	typedef utility::vector1<core::scoring::ScoreType> ScoreTypeVec;
 	ScoreTypeVec score_types;
-	for(int i = 1; i <= core::scoring::n_score_types; ++i) {
+	for ( int i = 1; i <= core::scoring::n_score_types; ++i ) {
 		core::scoring::ScoreType ii = core::scoring::ScoreType(i);
 		if ( weights[ii] != 0 ) score_types.push_back(ii);
 	}
@@ -749,25 +750,27 @@ void PlainPdbJobDistributor::dump_scores(
 	out << "# All scores below are weighted scores, not raw scores.\n";
 	out << "#BEGIN_POSE_ENERGIES_TABLE " << tag << "\n";
 	out << "label";
-	for(ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii)
+	for ( ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii ) {
 		out << " " << name_from_score_type(*ii);
+	}
 	out << " total\n";
 	out << "weights";
-	for(ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii)
+	for ( ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii ) {
 		out << " " << weights[*ii];
+	}
 	out << " NA\n";
 	out << "pose";
 	core::Real pose_total = 0.0;
-	for(ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii) {
+	for ( ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii ) {
 		core::Real score = (weights[*ii] * pose.energies().total_energies()[ *ii ]);
 		out << " " << score;
 		pose_total += score;
 	}
 	out << " " << pose_total << "\n";
-	for(core::Size j = 1, end_j = pose.total_residue(); j <= end_j; ++j) {
+	for ( core::Size j = 1, end_j = pose.total_residue(); j <= end_j; ++j ) {
 		core::Real rsd_total = 0.0;
 		out << pose.residue(j).name() << "_" << j;
-		for(ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii) {
+		for ( ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii ) {
 			core::Real score = (weights[*ii] * pose.energies().residue_total_energies(j)[ *ii ]);
 			out << " " << score;
 			rsd_total += score;
@@ -783,27 +786,27 @@ void PlainPdbJobDistributor::dump_scores(
 	//yaml->write("total_score", total_score);
 	//yaml->start_list("score_names", false);
 	//for(ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii)
-	//	yaml->write(name_from_score_type(*ii));
+	// yaml->write(name_from_score_type(*ii));
 	//yaml->end_list();
 	//yaml->start_list("score_weights", false);
 	//for(ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii)
-	//	yaml->write(scorefxn.get_weight(*ii));
+	// yaml->write(scorefxn.get_weight(*ii));
 	//yaml->end_list();
 	//yaml->start_list("scores_raw", false);
 	//for(ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii)
-	//	yaml->write(pose.energies().total_energies()[ *ii ]);
+	// yaml->write(pose.energies().total_energies()[ *ii ]);
 	//yaml->end_list();
 	//yaml->start_list("scores_weighted", false);
 	//for(ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii)
-	//	yaml->write(scorefxn.get_weight(*ii) * pose.energies().total_energies()[ *ii ]);
+	// yaml->write(scorefxn.get_weight(*ii) * pose.energies().total_energies()[ *ii ]);
 	//yaml->end_list();
 	//yaml->start_map("per_res_weighted");
 	//for(core::Size j = 1, end_j = pose.total_residue(); j <= end_j; ++j) {
-	//	std::ostringstream resname; resname << pose.residue(j).name() << " " << j;
-	//	yaml->start_list(resname.str(), false);
-	//	for(ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii)
-	//		yaml->write(scorefxn.get_weight(*ii) * pose.energies().residue_total_energies(j)[ *ii ]);
-	//	yaml->end_list();
+	// std::ostringstream resname; resname << pose.residue(j).name() << " " << j;
+	// yaml->start_list(resname.str(), false);
+	// for(ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii)
+	//  yaml->write(scorefxn.get_weight(*ii) * pose.energies().residue_total_energies(j)[ *ii ]);
+	// yaml->end_list();
 	//}
 	//yaml->end_map();
 	//yaml->end_map();
@@ -817,14 +820,14 @@ PlainRawJobDistributor::PlainRawJobDistributor(JobVector jobs, std::string outfi
 	utility::file::FileName outfile(outfile_name);
 	std::ostringstream oss;
 	oss << basic::options::option[ basic::options::OptionKeys::out::prefix ]() << outfile.base()
-	    << basic::options::option[ basic::options::OptionKeys::out::suffix ]();
+		<< basic::options::option[ basic::options::OptionKeys::out::suffix ]();
 	outfile.base( oss.str() );
 	outfile.path( basic::options::option[ basic::options::OptionKeys::out::path::pdb ]().path() );
 	outfile.vol( basic::options::option[ basic::options::OptionKeys::out::path::pdb ]().vol() );
 	outfile_name = outfile.name();
 	rawfile_name_ = outfile.name();
 
-	if (!utility::file::file_exists( rawfile_name_ )) return;
+	if ( !utility::file::file_exists( rawfile_name_ ) ) return;
 	core::io::raw_data::DecoyFileData dfd(rawfile_name_);
 	core::io::raw_data::StructureMap::const_iterator iter;
 	used_tags_ = dfd.read_tags_fast( rawfile_name_ );
@@ -882,7 +885,7 @@ bool PlainRawJobDistributor::is_finished(BasicJobOP const & job, int struct_n )
 	bool already_processed = false;
 	utility::vector1< std::string >::const_iterator i;
 	for ( i = used_tags_.begin(); i != used_tags_.end(); ++i ) {
-		if( (*i) == output_tag ) {
+		if ( (*i) == output_tag ) {
 			already_processed = true;
 			JobDistributorTracer << "Tag: " << output_tag << " " << job->output_tag(struct_n) <<
 				" - already processed"  << std::endl;
@@ -909,7 +912,7 @@ void PlainSilentFileJobDistributor::dump_pose(
 	core::pose::Pose & pose
 )
 {
-	if( BaseJobDistributor::nooutput() ) return;
+	if ( BaseJobDistributor::nooutput() ) return;
 
 	this->begin_critical_section();
 	std::string silent_file = get_output_filename();
@@ -958,7 +961,7 @@ void PlainSilentFileJobDistributor::startup() {
 	//this call requires that startup() has been called.... moved from constructor
 	std::string const silent_filename = get_output_filename();
 
-	if (!utility::file::file_exists( silent_filename )) return;
+	if ( !utility::file::file_exists( silent_filename ) ) return;
 	core::io::silent::SilentFileData sfd;
 	core::io::silent::Structure_Map::const_iterator iter;
 	used_tags_ = sfd.read_tags_fast( silent_filename );
@@ -1009,7 +1012,7 @@ void PlainSilentFileJobDistributor::dump_silent(
 }
 
 void PlainSilentFileJobDistributor::dump_silent(
-  core::io::silent::SilentFileData const& sfd
+	core::io::silent::SilentFileData const& sfd
 )
 {
 	this->begin_critical_section();
@@ -1034,9 +1037,9 @@ std::string PlainSilentFileJobDistributor::get_output_tag( BasicJobOP const & jo
 
 	std::string number("");
 	//why not:
-	//	if ( job->nstruct() > 1 ) { causes problems ... probably in query_tag
-		number = "_"+ ObjexxFCL::right_string_of(struct_n, TAG_NUM_FORMAT_LENGTH, '0');
-		//	}
+	// if ( job->nstruct() > 1 ) { causes problems ... probably in query_tag
+	number = "_"+ ObjexxFCL::right_string_of(struct_n, TAG_NUM_FORMAT_LENGTH, '0');
+	// }
 
 	std::string itag( job->input_tag() );
 	if ( itag.size() ) itag = "_" + itag;

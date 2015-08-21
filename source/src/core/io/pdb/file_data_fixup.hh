@@ -62,7 +62,7 @@ convert_res_name( std::string const & name );
 std::string
 convert_atom_name( std::string const & res_name, std::string atom_name );
 
-void convert_nucleic_acid_residue_info_to_standard( 	utility::vector1< ResidueInformation > & rinfo, bool const force_RNA = false );
+void convert_nucleic_acid_residue_info_to_standard(  utility::vector1< ResidueInformation > & rinfo, bool const force_RNA = false );
 
 bool is_potential_old_DNA( std::string const & res_name );
 
@@ -73,7 +73,7 @@ bool is_NA( std::string const & res_name );
 bool missing_O2prime( utility::vector1< AtomInformation > const & atoms );
 
 /// @brief  This is a pretty good framework and could allow for other crazy nucleic acid atom name schemes.
-	void convert_nucleic_acid_atom_names_to_standard( ResidueInformation & rinfo, bool const force_RNA = false  );
+void convert_nucleic_acid_atom_names_to_standard( ResidueInformation & rinfo, bool const force_RNA = false  );
 
 void convert_nucleic_acid_atom_name_to_standard( AtomInformation & atom_info );
 
@@ -98,21 +98,21 @@ check_and_correct_sister_atom_based_on_outgroup( core::conformation::ResidueOP &
 
 
 void flip_atom_xyz( core::conformation::ResidueOP & rsd,
-										std::string const & sister1_name,
-										std::string const & sister2_name );
+	std::string const & sister1_name,
+	std::string const & sister2_name );
 
 int sgn( Real const & x );
 
 int
 get_chirality_sign(  Vector const & xyz_sister1,
-										 Vector const & xyz_sister2,
-										 Vector const & xyz_parent,
-										 Vector const & xyz_outer_ref );
+	Vector const & xyz_sister2,
+	Vector const & xyz_parent,
+	Vector const & xyz_outer_ref );
 
 int
 get_closest_sister(  Vector const & xyz_sister1,
-										 Vector const & xyz_sister2,
-										 Vector const & xyz_outgroup );
+	Vector const & xyz_sister2,
+	Vector const & xyz_outgroup );
 
 
 /// @brief Get theshold distance below which two atoms are considered bonded. (1.2*covalent)
@@ -122,14 +122,14 @@ bonding_distance_threshold( std::string element1, std::string element2 );
 /// @brief Scoring scheme for the heuristic PDB renaming
 core::Real
 score_mapping( NameBimap const & mapping,
-				ResidueInformation const & rinfo,
-				chemical::ResidueType const & rsd_type );
+	ResidueInformation const & rinfo,
+	chemical::ResidueType const & rsd_type );
 
 /// @brief Attempt to use element identity and connectivity to map atom names from the rinfo object onto the rsd_type object names.
 void
 remap_names_on_geometry( NameBimap & mapping,
-				ResidueInformation const & rinfo,
-				chemical::ResidueType const & rsd_type);
+	ResidueInformation const & rinfo,
+	chemical::ResidueType const & rsd_type);
 
 
 } // namespace pdb

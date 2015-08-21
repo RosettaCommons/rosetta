@@ -101,7 +101,7 @@ public:
 	{
 		std::map< three_atom_set, core::Size >::const_iterator iter(bondangle_index_.find(atom_set));
 
-		if (iter == bondangle_index_.end()) return 0;
+		if ( iter == bondangle_index_.end() ) return 0;
 
 		return iter->second;
 	}
@@ -147,7 +147,7 @@ public:
 	{
 		std::map< two_atom_set, core::Size >::const_iterator iter(connection_index_[ connection ].find(atom_set));
 
-		if (iter == connection_index_[ connection ].end()) return 0;
+		if ( iter == connection_index_[ connection ].end() ) return 0;
 
 		return iter->second;
 	}

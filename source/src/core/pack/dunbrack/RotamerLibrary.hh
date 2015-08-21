@@ -39,9 +39,9 @@
 #include <core/pose/Pose.fwd.hh>
 
 #ifdef WIN32 //VC++ needs full class declaration
-	#include <core/graph/Graph.hh>
-	#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
-	#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/graph/Graph.hh>
+#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 #endif
 
 // Utility headers
@@ -128,12 +128,12 @@ public:
 		RotamerLibraryScratchSpace & scratch
 	) const;
 
-  Real
-  best_rotamer_energy(
-    Residue const & rsd,
-    bool curr_rotamer_only,
-    RotamerLibraryScratchSpace & scratch
-  ) const;
+	Real
+	best_rotamer_energy(
+		Residue const & rsd,
+		bool curr_rotamer_only,
+		RotamerLibraryScratchSpace & scratch
+	) const;
 
 	/// to do:
 	Real
@@ -142,9 +142,9 @@ public:
 		RotamerLibraryScratchSpace & scratch
 	) const;
 
-// // get_rsd_library() is no longer valid! Use core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( restype ); instead.
-//	SingleResidueRotamerLibraryCOP
-//	get_rsd_library( chemical::ResidueType const & rsd_type ) const;
+	// // get_rsd_library() is no longer valid! Use core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( restype ); instead.
+	// SingleResidueRotamerLibraryCOP
+	// get_rsd_library( chemical::ResidueType const & rsd_type ) const;
 
 	rotamers::SingleResidueRotamerLibraryCOP
 	get_library_by_aa( chemical::AA const & aa ) const;
@@ -232,7 +232,7 @@ private:
 	create_rotameric_dunlib(
 		chemical::AA aa,
 		Size const n_chi,
-        Size const n_bb,
+		Size const n_bb,
 		utility::io::izstream & library,
 		bool dun02,
 		std::string & next_aa_in_library,
@@ -243,16 +243,16 @@ private:
 	create_rotameric_dunlib(
 		chemical::AA aa,
 		Size const n_chi,
-        Size const n_bb,
+		Size const n_bb,
 		bool dun02
 	) const;
 
-    SingleResidueDunbrackLibraryOP
-    create_rotameric_dunlib(
-        chemical::AA aa,
-        Size const n_chi,
-        bool dun02
-    ) const;
+	SingleResidueDunbrackLibraryOP
+	create_rotameric_dunlib(
+		chemical::AA aa,
+		Size const n_chi,
+		bool dun02
+	) const;
 
 	/// @brief Instantiate the appropriate SRSRDL< T > library given the nchi input.  nchi indicates
 	/// the number of rotameric chi -- there are nchi+1 chi described by the library, the last of which
@@ -263,7 +263,7 @@ private:
 	create_semi_rotameric_dunlib(
 		chemical::AA aa,
 		Size const nchi,
-        Size const nbb,
+		Size const nbb,
 		bool const use_bbind_rnchi_scoring,
 		bool const use_bbind_rnchi_sampling,
 		bool const nrchi_is_symmetric,
@@ -285,16 +285,16 @@ private:
 	) const;
 
 
-    SingleResidueDunbrackLibraryOP
-    create_semi_rotameric_dunlib(
-                                 chemical::AA aa,
-                                 Size const nchi,
-                                 Size const nbb,
-                                 bool const use_bbind_rnchi_scoring,
-                                 bool const use_bbind_rnchi_sampling,
-                                 bool const nrchi_is_symmetric,
-                                 Real const nrchi_start_angle
-                                 ) const;
+	SingleResidueDunbrackLibraryOP
+	create_semi_rotameric_dunlib(
+		chemical::AA aa,
+		Size const nchi,
+		Size const nbb,
+		bool const use_bbind_rnchi_scoring,
+		bool const use_bbind_rnchi_sampling,
+		bool const nrchi_is_symmetric,
+		Real const nrchi_start_angle
+	) const;
 
 	SingleResidueDunbrackLibraryOP
 	create_srdl(

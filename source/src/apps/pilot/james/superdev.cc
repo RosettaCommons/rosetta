@@ -206,26 +206,26 @@ int
 main( int argc, char * argv [] ) {
 	try {
 
-	using namespace protocols::moves;
-	using namespace protocols::jobdist;
-	using namespace core::chemical;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace protocols::moves;
+		using namespace protocols::jobdist;
+		using namespace core::chemical;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-	// setup residue types
-	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
-	// read in a native pose
-	core::pose::Pose native_pose;
-	core::import_pose::pose_from_pdb(
-		native_pose, *rsd_set, option[ in::file::native ]()
-	);
-	core::pose::tag_into_pose( native_pose, option[ in::file::native ]() );
+		// setup residue types
+		ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
+		// read in a native pose
+		core::pose::Pose native_pose;
+		core::import_pose::pose_from_pdb(
+			native_pose, *rsd_set, option[ in::file::native ]()
+		);
+		core::pose::tag_into_pose( native_pose, option[ in::file::native ]() );
 
-	SuperDeviationMoverOP mover( new SuperDeviationMover( native_pose ) );
-	not_universal_main( *mover );
-	mover->print_stats();
+		SuperDeviationMoverOP mover( new SuperDeviationMover( native_pose ) );
+		not_universal_main( *mover );
+		mover->print_stats();
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

@@ -97,7 +97,7 @@ LengthEventCollector::copy_length_events(
 	using namespace core::conformation::signals;
 	length_events_.clear();
 
-	BOOST_FOREACH(LengthEvent event, events){
+	BOOST_FOREACH ( LengthEvent event, events ) {
 		length_events_.push_back( LengthEvent( event ) );
 	}
 
@@ -129,7 +129,7 @@ SpecialSegmentsObserver::SpecialSegmentsObserver()
 : Parent() {}
 
 SpecialSegmentsObserver::SpecialSegmentsObserver( SpecialSegmentsObserver const & rval )
-	: Parent( rval ), segments_(rval.segments_ ) {}
+: Parent( rval ), segments_(rval.segments_ ) {}
 
 SpecialSegmentsObserver::~SpecialSegmentsObserver() {
 	detach_from(); }
@@ -170,7 +170,7 @@ SpecialSegmentsObserver::add_segment(
 	Size end
 ){
 	//dummy check
-	if( begin > end ) utility_exit_with_message("Negative length segment added to SpecialSegmentsObserver.");
+	if ( begin > end ) utility_exit_with_message("Negative length segment added to SpecialSegmentsObserver.");
 
 	segments_.push_back( std::pair< Size, Size >(begin, end ) );
 }
@@ -183,12 +183,12 @@ SpecialSegmentsObserver::set_farray_from_sso(
 	bool const value
 ){
 
-	if( pose.observer_cache().has( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER) ){
+	if ( pose.observer_cache().has( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER) ) {
 		utility::vector1< std::pair< core::Size, core::Size > > const & segments = utility::pointer::static_pointer_cast< core::pose::datacache::SpecialSegmentsObserver const >(pose.observer_cache().get_const_ptr( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER ) )->segments();
 
 
-		for( core::Size i = 1; i <= segments.size(); ++i ){
-			for( core::Size j = segments[i].first; j < segments[i].second; ++j ) array[ j - 1 ] = value;
+		for ( core::Size i = 1; i <= segments.size(); ++i ) {
+			for ( core::Size j = segments[i].first; j < segments[i].second; ++j ) array[ j - 1 ] = value;
 		}
 	}
 }
@@ -201,7 +201,7 @@ SpecialSegmentsObserver::on_length_change( conformation::signals::LengthEvent co
 
 	std::set< Size > deleted_segments; //in case stuff gets deleted, we have to rearrange the segment vector
 	//std::cerr << "SSO getting hit with event at pos " << event.position << " of change " << event.length_change << "   ";
-	for( Size i(1); i<= segments_.size(); ++i ){
+	for ( Size i(1); i<= segments_.size(); ++i ) {
 		//3 possibilites:
 		//1. event downstream of segment, segment remains unchanged
 		//2. event upstream of segment, segment gets shifted or (partially) deleted
@@ -209,42 +209,35 @@ SpecialSegmentsObserver::on_length_change( conformation::signals::LengthEvent co
 		//std::cerr << "(" << segments_[i].first << "," << segments_[i].second << ")" << "moves to ";
 
 		//1.
-		if( event.position > segments_[i].second ){} //event happened downstream of the segment, i.e. segment unchanged
+		if ( event.position > segments_[i].second ) {} //event happened downstream of the segment, i.e. segment unchanged
 
 		//2.
-		else if( event.position < segments_[i].first ){
+		else if ( event.position < segments_[i].first ) {
 
-			if( event.length_change < 0 ) { //deletion?
+			if ( event.length_change < 0 ) { //deletion?
 
-				if( int( event.position - event.length_change ) > int(segments_[i].second) ){ //complete segment deleted?
+				if ( int( event.position - event.length_change ) > int(segments_[i].second) ) { //complete segment deleted?
 					deleted_segments.insert(i);
-				}
-				else if(  int( event.position - event.length_change ) > int(segments_[i].first) ){ //partial segment deleted?
+				} else if (  int( event.position - event.length_change ) > int(segments_[i].first) ) { //partial segment deleted?
 					segments_[i].first = event.position - event.length_change;
 					segments_[i].second += event.length_change;
-				}
-				else{ //deletion before segment
+				} else { //deletion before segment
 					segments_[i].first += event.length_change;
 					segments_[i].second += event.length_change;
 				}
-			} //if length_change < 0 //deletion
-			else{ //insertion before segment
+			} else { //if length_change < 0 //deletion //insertion before segment
 				segments_[i].first += event.length_change;
 				segments_[i].second += event.length_change;
 			}
-		} //if event.position < segments_[i].first
-
-		//3. event in segment
-		else{
-			if( event.length_change < 0 ){ //deletion?
-				if( int( event.position - event.length_change ) > int(segments_[i].second) ){ //deletion past end of segment?
+		} else { //if event.position < segments_[i].first
+			//3. event in segment
+			if ( event.length_change < 0 ) { //deletion?
+				if ( int( event.position - event.length_change ) > int(segments_[i].second) ) { //deletion past end of segment?
 					segments_[i].second = event.position;
-				}
-				else{ //deletion within segment
+				} else { //deletion within segment
 					segments_[i].second += event.length_change;
 				}
-			} //if deletion
-			else{ //insertion in segment
+			} else { //if deletion //insertion in segment
 				segments_[i].second += event.length_change;
 			}
 		}
@@ -253,10 +246,10 @@ SpecialSegmentsObserver::on_length_change( conformation::signals::LengthEvent co
 	//std::cerr << std::endl;
 
 	//in case complete segments have been deleted, we need to restructure the vector
-	if( !deleted_segments.empty() ) { //size() > 0 ){
+	if ( !deleted_segments.empty() ) { //size() > 0 ){
 		utility::vector1< Segment > new_segments;
-		for( Size i = 1; i <= segments_.size(); ++i){
-			if( deleted_segments.find( i ) != deleted_segments.end() ) new_segments.push_back( segments_[i] );
+		for ( Size i = 1; i <= segments_.size(); ++i ) {
+			if ( deleted_segments.find( i ) != deleted_segments.end() ) new_segments.push_back( segments_[i] );
 		}
 		segments_ = new_segments;
 	}

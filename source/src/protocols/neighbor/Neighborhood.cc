@@ -30,16 +30,16 @@ static thread_local basic::Tracer TR( "protocols.neighbor" );
 /// @brief Neighborhood's constructor.
 ///
 /// @param[in] set: pose indexes of the residues whose neighborhood is to be
-/// 	computed
+///  computed
 /// @param[in] ps: the pose
 /// @param[in] ngb_fun: function determining whether two residues are neighbors
-/// 	of one another
+///  of one another
 ///
 /// @details At the end of this function, ngb_mask[i], for i in {1,...,NPS} such
-/// 	that i is not a member of set, is true iff is_ngb(R_j, N_i, ps) equals
-/// 	true for at least one j in {1,...,NSET}, where	R_j indicates
-/// 	ps.residue(set[j]) and N_i indicates ps.residue(i); for i in {1,...,NPS}
-/// 	such that i is a member of set, ngb_mask[i] equals false.
+///  that i is not a member of set, is true iff is_ngb(R_j, N_i, ps) equals
+///  true for at least one j in {1,...,NSET}, where R_j indicates
+///  ps.residue(set[j]) and N_i indicates ps.residue(i); for i in {1,...,NPS}
+///  such that i is a member of set, ngb_mask[i] equals false.
 ///
 Neighborhood::Neighborhood(vector1<Size> const& set, Pose const& ps,
 	NGB_FUN_PTR ngb_fun) : is_ngb(ngb_fun), ngb_mask(ps.total_residue(), false) {
@@ -47,26 +47,29 @@ Neighborhood::Neighborhood(vector1<Size> const& set, Pose const& ps,
 	/// build neighbor mask
 	Size NSET = set.size();
 	Size NPS = ps.total_residue();
-	for(Size i=1; i<=NSET; ++i) {
+	for ( Size i=1; i<=NSET; ++i ) {
 		Residue const& res = ps.residue(set[i]);
-		for(Size j=1; j<=NPS; ++j) {
+		for ( Size j=1; j<=NPS; ++j ) {
 			Residue const& ngb = ps.residue(j);
-			if(is_ngb(res, ngb, ps))
+			if ( is_ngb(res, ngb, ps) ) {
 				ngb_mask[j] = true;
+			}
 		}
 	}
 
 	/// ignore neighbors that are part of the set
-	for(Size i=1; i<=NSET; ++i) {
+	for ( Size i=1; i<=NSET; ++i ) {
 		ngb_mask[set[i]] = false;
 	}
 
 	// collect neighbors based on mask: the ith element of ngbs is the index of
 	// the ith true element in ngb_mask, namely, the pose index of the ith neigbor
 	// (i=1,...,T, where T is the number of neighbors).
-	for(Size i=1; i<=NPS; ++i)
-		if(ngb_mask[i])
+	for ( Size i=1; i<=NPS; ++i ) {
+		if ( ngb_mask[i] ) {
 			ngbs.push_back(i);
+		}
+	}
 }
 
 
@@ -78,14 +81,14 @@ Neighborhood::Neighborhood(vector1<Size> const& set, Pose const& ps,
 void Neighborhood::print_ngb_mask() const {
 
 	Size const SIZ = ngb_mask.size();
-	for(Size i=1; i<=SIZ; ++i) {
+	for ( Size i=1; i<=SIZ; ++i ) {
 		TR << (ngb_mask[i] ? "1" : "0");
 	}
 }
 
 
 /// @brief: returns true iff r2 is a residue whose node in the energy graph is
-/// 	connected to r1's.
+///  connected to r1's.
 ///
 /// @param[in] r1 residue r1
 /// @param[in] r2 residue r2
@@ -98,25 +101,27 @@ bool in_nrg_graph(Residue const& r1, Residue const& r2, Pose const& ps) {
 
 	core::scoring::EnergyGraph const& energy_graph( ps.energies().energy_graph() );
 	for ( core::graph::Graph::EdgeListConstIter
-		nit = energy_graph.get_node(i1)->const_edge_list_begin(),
-		nite = energy_graph.get_node(i1)->const_edge_list_end();
-		nit != nite; ++nit )
-		if((*nit)->get_other_ind(i1) == i2)
+			nit = energy_graph.get_node(i1)->const_edge_list_begin(),
+			nite = energy_graph.get_node(i1)->const_edge_list_end();
+			nit != nite; ++nit ) {
+		if ( (*nit)->get_other_ind(i1) == i2 ) {
 			return true;
+		}
+	}
 
 	return false;
 }
 
 
 /// @brief: returns true iff r2's neighbor atom falls within a cutoff distance
-/// 	of r1's neighbor atom.
+///  of r1's neighbor atom.
 ///
 /// @param[in] r1 residue r1
 /// @param[in] r2 residue r2
 /// @param[in] ps pose to which both residues belong
 ///
 /// @details The squared cutoff distance is specified within the function by
-/// 	constant DCUT2.
+///  constant DCUT2.
 ///
 bool in_ngbat_sphere(Residue const& r1, Residue const& r2, Pose const&) {
 

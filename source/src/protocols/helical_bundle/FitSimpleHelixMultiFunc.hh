@@ -69,16 +69,16 @@ public: // Methods
 	dfunc( Multivec const & vars, Multivec & dE_dvars ) const;
 
 	/// @brief Error state reached -- derivative does not match gradient
-  ///
+	///
 	virtual
 	void
 	dump( Multivec const & vars, Multivec const & vars2 ) const;
 
 private:
 
-/*************************************************************
-					PRIVATE DATA
-*************************************************************/
+	/*************************************************************
+	PRIVATE DATA
+	*************************************************************/
 
 	/// @brief A copy of the pose on which we'll be operating.  X,Y,Z coordinates of relevant residues will be extracted from this.
 	///
@@ -91,7 +91,7 @@ private:
 	/// @brief The Rosetta-numbering index of the first residue in the helix that will be fit.
 	///
 	core::Size first_res_index_;
-	
+
 	/// @brief The number of residues per repeating unit in the helix.
 	///
 	core::Size residues_per_repeat_;
@@ -104,24 +104,24 @@ private:
 	///
 	core::Size end_index_;
 
-	/// @brief The minimization mode. 
+	/// @brief The minimization mode.
 	/// @details If set to 0, the minimizer fits r1, omega1, and dz1, aligning the generated
 	/// helix to the input pose at every step.  If set to 1, the minimizer fits r1, delta-omega1,
-  /// and delta-z, with no alignment (i.e. the input pose must already be aligned to an ideal
+	/// and delta-z, with no alignment (i.e. the input pose must already be aligned to an ideal
 	/// helix).
 	core::Size minimization_mode_;
 
 
-/*************************************************************
-					PRIVATE MEMBER FUNCTIONS
-*************************************************************/
+	/*************************************************************
+	PRIVATE MEMBER FUNCTIONS
+	*************************************************************/
 
 	/// @brief Convert the vars Multivec to the Crick parameters.
 	///
 	void vars_to_params( Multivec const &vars, core::Real &r1, core::Real &omega1, core::Real &dz1, core::Real &delta_omega1, core::Real &delta_z1 ) const;
 
 	/// @brief Convert the Crick parameter derivatives to the derivative Multivec.
-	/// 
+	///
 	void params_derivs_to_vars( Multivec &deriv_vars, core::Real const &dE_dr1, core::Real const &dE_domega1, core::Real const &dE_ddz1, core::Real const &dE_ddelta_omega1, core::Real const &dE_ddelta_z1 ) const;
 
 

@@ -62,7 +62,7 @@ static thread_local basic::Tracer TR( "protocols.trajectory.DbTrajectoryWriter" 
 // }}}1
 
 DbTrajectoryWriter::DbTrajectoryWriter( // {{{1
-		Size job_id, Pose const & pose, Size frequency, Size cache_limit) {
+	Size job_id, Pose const & pose, Size frequency, Size cache_limit) {
 
 	job_id_ = job_id;
 	iteration_ = 0;
@@ -82,12 +82,12 @@ void DbTrajectoryWriter::set_cache_limit(Size setting) { // {{{1
 }
 
 // {{{1
-/// @details This method should be called on every iteration.  If you don't 
-/// want to actually store a frame every iteration, the optional frequency 
-/// argument to the constructor can be used to specify how often frames should 
+/// @details This method should be called on every iteration.  If you don't
+/// want to actually store a frame every iteration, the optional frequency
+/// argument to the constructor can be used to specify how often frames should
 /// be recorded.
 void DbTrajectoryWriter::update(Pose const & pose) {
-	if (iteration_ % frequency_ == 0) {
+	if ( iteration_ % frequency_ == 0 ) {
 		Frame frame;
 		frame.iteration = iteration_;
 		frame.pose = pose;
@@ -96,7 +96,7 @@ void DbTrajectoryWriter::update(Pose const & pose) {
 
 	iteration_ += 1;
 
-	if (frame_cache_.size() >= cache_limit_) {
+	if ( frame_cache_.size() >= cache_limit_ ) {
 		write_cache_to_db();
 	}
 
@@ -140,18 +140,18 @@ void DbTrajectoryWriter::write_cache_to_db() const { // {{{1
 
 	RowDataBaseOP job( new RowData<Size>("job_id", job_id_) );
 
-	BOOST_FOREACH(Frame frame, frame_cache_) {
+	BOOST_FOREACH ( Frame frame, frame_cache_ ) {
 		stringstream string_stream;
 		SilentFileData silent_file;
 		SilentStructOP silent_data( new BinarySilentStruct(frame.pose, "db") );
 		silent_file._write_silent_struct(*silent_data, string_stream);
 
 		RowDataBaseOP iteration( new RowData<Size>(
-				"iteration", frame.iteration) );
+			"iteration", frame.iteration) );
 		RowDataBaseOP score( new RowData<Real>(
-				"score", frame.pose.energies().total_energy()) );
+			"score", frame.pose.energies().total_energy()) );
 		RowDataBaseOP silent_pose( new RowData<string>(
-				"silent_pose", string_stream.str()) );
+			"silent_pose", string_stream.str()) );
 
 		trajectory_insert.add_row(make_vector(job, iteration, score, silent_pose));
 	}

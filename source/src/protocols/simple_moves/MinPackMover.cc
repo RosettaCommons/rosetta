@@ -43,11 +43,11 @@ namespace protocols {
 namespace simple_moves {
 
 using namespace core;
-	using namespace basic::options;
-	using namespace pack;
-		using namespace task;
-			using namespace operation;
-	using namespace scoring;
+using namespace basic::options;
+using namespace pack;
+using namespace task;
+using namespace operation;
+using namespace scoring;
 
 using basic::Warning;
 using basic::t_warning;
@@ -91,7 +91,7 @@ MinPackMover::MinPackMover( std::string const & type_name ) :
 	init();
 }
 
-	// constructors with arguments
+// constructors with arguments
 MinPackMover::MinPackMover(
 	ScoreFunctionCOP scorefxn
 ) :
@@ -200,13 +200,13 @@ MinPackMover::parse_my_tag(
 	parse_score_function( tag, datamap, filters, movers, pose );
 	parse_task_operations( tag, datamap, filters, movers, pose );
 
-	if (tag->hasOption( "nonideal" )) {
+	if ( tag->hasOption( "nonideal" ) ) {
 		nonideal_ = tag->getOption<bool>( "nonideal" );
 	}
-	if (tag->hasOption( "cartesian" )) {
+	if ( tag->hasOption( "cartesian" ) ) {
 		cartesian_ = tag->getOption<bool>( "cartesian" );
 	}
-	if (tag->hasOption( "off_rotamer_pack" )) {
+	if ( tag->hasOption( "off_rotamer_pack" ) ) {
 		off_rotamer_pack_ = tag->getOption<bool>( "off_rotamer_pack" );
 	}
 }
@@ -237,7 +237,7 @@ MinPackMover::parse_task_operations(
 )
 {
 	TaskFactoryOP new_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
-	if ( new_task_factory == 0) return;
+	if ( new_task_factory == 0 ) return;
 	task_factory( new_task_factory );
 }
 

@@ -50,9 +50,9 @@ int grid_score(
 )
 {
 	int score = 0;
-	for(core::Size i = 1, i_end = rsd.nheavyatoms(); i <= i_end && score < max_score; ++i) {
+	for ( core::Size i = 1, i_end = rsd.nheavyatoms(); i <= i_end && score < max_score; ++i ) {
 		core::Vector const & atom = rsd.xyz(i);
-		if( grid.is_in_grid( atom.x(), atom.y(), atom.z() ) ) {
+		if ( grid.is_in_grid( atom.x(), atom.y(), atom.z() ) ) {
 			score += grid.getValue( atom.x(), atom.y(), atom.z() );
 		}
 	}
@@ -70,11 +70,11 @@ void grid_score_atr_rep(
 	int max_rep /*= 9999*/
 )
 {
-	for(core::Size i = 1, i_end = rsd.nheavyatoms(); i <= i_end && rep_out <= max_rep; ++i) {
+	for ( core::Size i = 1, i_end = rsd.nheavyatoms(); i <= i_end && rep_out <= max_rep; ++i ) {
 		core::Vector const & atom = rsd.xyz(i);
-		if( grid.is_in_grid( atom.x(), atom.y(), atom.z() ) ) {
+		if ( grid.is_in_grid( atom.x(), atom.y(), atom.z() ) ) {
 			int val = grid.getValue( atom.x(), atom.y(), atom.z() );
-			if( val > 0 ) rep_out += val;
+			if ( val > 0 ) rep_out += val;
 			else atr_out += val;
 		}
 	}
@@ -91,17 +91,17 @@ void rb_grid_score_atr_rep(
 	int & rep_out, //< sum of positive grid values
 	int max_rep
 ){
-	for(; begin <= end; ++begin){
+	for ( ; begin <= end; ++begin ) {
 		core::conformation::Residue const & r= pose.residue(begin);
 		grid_score_atr_rep(grid, r, atr_out, rep_out, max_rep);
 	}
 }
 
 std::pair<int, int> get_rb_atr_and_rep_scores(
-		core::grid::CartGrid<int> const & grid,
-		core::pose::Pose const & pose,
-		core::Size begin,
-		core::Size end
+	core::grid::CartGrid<int> const & grid,
+	core::pose::Pose const & pose,
+	core::Size begin,
+	core::Size end
 ){
 	int atr=0;
 	int rep=0;
@@ -123,24 +123,24 @@ void grid_rotamer_trials(
 	// Retrieve list of conformers
 	utility::vector1< ResidueOP > conformers;
 	rotamers_for_trials(pose, rsd_no, conformers);
-	if( conformers.empty() ) return;
+	if ( conformers.empty() ) return;
 	// Conformers are already aligned onto original residue coords at this point.
 
 	// Select best conformer, stopping early if score == 0
 	int best_score = 9999;
 	core::Size best_i = 0;
-	for(core::Size i = 1, i_end = conformers.size(); i <= i_end; ++i) {
+	for ( core::Size i = 1, i_end = conformers.size(); i <= i_end; ++i ) {
 		ResidueOP rsd = conformers[i];
 		int const new_score = grid_score(grid, *rsd, best_score);
-		if( new_score < best_score && new_score >= min_score ) {
+		if ( new_score < best_score && new_score >= min_score ) {
 			best_score = new_score;
 			best_i = i;
-			if(best_score == min_score) break;
+			if ( best_score == min_score ) break;
 		}
 	}
 
 	// Replace current residue with best residue
-	if( best_i > 0 ) {
+	if ( best_i > 0 ) {
 		TR << "Best fit is conformer " << best_i << " with score " << best_score << std::endl;
 		// Residue library has already superimpose residues appropriately, so don't orient again
 		pose.replace_residue(rsd_no, *(conformers[best_i]), false /*orient backbone*/);
@@ -159,7 +159,7 @@ void grid_rotamer_trials_atr_rep(
 	// Retrieve list of conformers
 	utility::vector1< ResidueOP > conformers;
 	rotamers_for_trials(pose, rsd_no, conformers);
-	if( conformers.empty() ) return;
+	if ( conformers.empty() ) return;
 	TR<< "conformers.size: "<< conformers.size()<< std::endl;
 	// Conformers are already aligned onto original residue coords at this point.
 
@@ -167,20 +167,20 @@ void grid_rotamer_trials_atr_rep(
 	int const perfect_rep = 0, perfect_atr = -(pose.residue(rsd_no).nheavyatoms());
 	int best_rep = 9999, best_atr = 0;
 	core::Size best_i = 0;
-	for(core::Size i = 1, i_end = conformers.size(); i <= i_end; ++i) {
+	for ( core::Size i = 1, i_end = conformers.size(); i <= i_end; ++i ) {
 		ResidueOP rsd = conformers[i];
 		int new_atr(0), new_rep(0);
 		grid_score_atr_rep(grid, *rsd, new_atr, new_rep, best_rep);
-		if( new_rep < best_rep || (new_rep == best_rep && new_atr < best_atr) ) {
+		if ( new_rep < best_rep || (new_rep == best_rep && new_atr < best_atr) ) {
 			best_rep = new_rep;
 			best_atr = new_atr;
 			best_i = i;
-			if(best_rep == perfect_rep && best_atr == perfect_atr) break;
+			if ( best_rep == perfect_rep && best_atr == perfect_atr ) break;
 		}
 	}
 
 	// Replace current residue with best residue
-	if( best_i > 0 ) {
+	if ( best_i > 0 ) {
 		TR << "Best fit is conformer " << best_i << " with score rep=" << best_rep << " atr=" << best_atr << std::endl;
 		// Residue library has already superimpose residues appropriately, so don't orient again
 		pose.replace_residue(rsd_no, *(conformers[best_i]), false /*orient backbone*/);
@@ -188,17 +188,17 @@ void grid_rotamer_trials_atr_rep(
 }
 
 void rb_grid_rotamer_trials_atr_rep(
-		core::grid::CartGrid<int> const & grid,
-		core::pose::Pose & pose,
-		core::Size begin,
-		core::Size end
+	core::grid::CartGrid<int> const & grid,
+	core::pose::Pose & pose,
+	core::Size begin,
+	core::Size end
 ){
 	// Residues don't interact with each other -- no reason to do this more than
 	// once with the same pose. Likewise, ligand residues don't interact.
-	for(; begin <= end; ++begin){
-			TR<< "now performing rotamer trials on "<< begin << std::endl;
-			grid_rotamer_trials_atr_rep(grid, pose, begin);
-		}
+	for ( ; begin <= end; ++begin ) {
+		TR<< "now performing rotamer trials on "<< begin << std::endl;
+		grid_rotamer_trials_atr_rep(grid, pose, begin);
+	}
 }
 
 void rotamers_for_trials(
@@ -217,7 +217,7 @@ void rotamers_for_trials(
 	core::graph::GraphCOP empty_graph( core::graph::GraphOP( new core::graph::Graph() ) );
 	// Retrieve conformers
 	core::pack::rotamers::SingleResidueRotamerLibraryCOP reslib = core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( pose.residue_type(rsd_no) );
-	if( reslib.get() == NULL ) return;
+	if ( reslib.get() == NULL ) return;
 
 	core::chemical::ResidueType const & res_type =  pose.residue_type(rsd_no);
 	utility::vector1< utility::vector1< core::Real > > empty_extra_chi_steps( res_type.nchi(), utility::vector1< core::Real >() );
@@ -262,13 +262,13 @@ void set_sphere(
 	Vector vec_rad( radius );
 	GridPt grid_min = grid.gridpt( center - vec_rad );
 	GridPt grid_max = grid.gridpt( center + vec_rad );
-	for(int i = max(0, grid_min.x()), i_end = min(nx-1, grid_max.x()); i <= i_end; ++i) {
-		for(int j = max(0, grid_min.y()), j_end = min(ny-1, grid_max.y()); j <= j_end; ++j) {
-			for(int k = max(0, grid_min.z()), k_end = min(nz-1, grid_max.z()); k <= k_end; ++k) {
+	for ( int i = max(0, grid_min.x()), i_end = min(nx-1, grid_max.x()); i <= i_end; ++i ) {
+		for ( int j = max(0, grid_min.y()), j_end = min(ny-1, grid_max.y()); j <= j_end; ++j ) {
+			for ( int k = max(0, grid_min.z()), k_end = min(nz-1, grid_max.z()); k <= k_end; ++k ) {
 				GridPt grid_pt(i, j, k);
 				//std::cout << "Checking grid pt " << i << " " << j << " " << k << std::endl;
 				Vector box_ctr = grid.coords( grid_pt );
-				if( box_ctr.distance_squared(center) <= radius2 ) grid.setValue(grid_pt, value);
+				if ( box_ctr.distance_squared(center) <= radius2 ) grid.setValue(grid_pt, value);
 			}
 		}
 	}
@@ -276,14 +276,14 @@ void set_sphere(
 
 void set_repulsive_bb_cores( utility::pointer::shared_ptr<core::grid::CartGrid<int> >grid, core::pose::Pose const & pose, core::Real const rep_rad){
 	// Set repulsive core around each backbone heavy atom (including CB)
-	for(core::Size r = 1, r_end = pose.total_residue(); r <= r_end; ++r) {
+	for ( core::Size r = 1, r_end = pose.total_residue(); r <= r_end; ++r ) {
 		core::conformation::Residue const & rsd = pose.residue(r);
-		if( !rsd.is_protein() ) continue;
-		if( rsd.has("CB") ) set_sphere(*grid, rsd.xyz("CB"), rep_rad, 1);
-		if( rsd.has("N") ) set_sphere(*grid, rsd.xyz("N"), rep_rad, 1);
-		if( rsd.has("CA") ) set_sphere(*grid, rsd.xyz("CA"), rep_rad, 1);
-		if( rsd.has("C") ) set_sphere(*grid, rsd.xyz("C"), rep_rad, 1);
-		if( rsd.has("O") ) set_sphere(*grid, rsd.xyz("O"), rep_rad, 1);
+		if ( !rsd.is_protein() ) continue;
+		if ( rsd.has("CB") ) set_sphere(*grid, rsd.xyz("CB"), rep_rad, 1);
+		if ( rsd.has("N") ) set_sphere(*grid, rsd.xyz("N"), rep_rad, 1);
+		if ( rsd.has("CA") ) set_sphere(*grid, rsd.xyz("CA"), rep_rad, 1);
+		if ( rsd.has("C") ) set_sphere(*grid, rsd.xyz("C"), rep_rad, 1);
+		if ( rsd.has("O") ) set_sphere(*grid, rsd.xyz("O"), rep_rad, 1);
 	}
 }
 
@@ -314,21 +314,19 @@ utility::pointer::shared_ptr<core::grid::CartGrid<int> > make_atr_rep_grid(
 
 	// Set attractive zones around all heavy atoms -- assume most ligand atoms
 	// will be near *something*, and most sidechains will stay put.
-	for(Size r = 1, r_end = pose.total_residue(); r <= r_end; ++r) {
+	for ( Size r = 1, r_end = pose.total_residue(); r <= r_end; ++r ) {
 		conformation::Residue const & rsd = pose.residue(r);
-		if( !rsd.is_protein() ) continue;
-		for(Size a = 1, a_end = rsd.nheavyatoms(); a <= a_end; ++a)
-		{
+		if ( !rsd.is_protein() ) continue;
+		for ( Size a = 1, a_end = rsd.nheavyatoms(); a <= a_end; ++a ) {
 			set_sphere(*grid, rsd.xyz(a), atr_rad, -1);
 		}
 	}
 
 	// Set neutral core around each sidechain heavy atom, as MOST of these stay put.
-	for(Size r = 1, r_end = pose.total_residue(); r <= r_end; ++r) {
+	for ( Size r = 1, r_end = pose.total_residue(); r <= r_end; ++r ) {
 		conformation::Residue const & rsd = pose.residue(r);
-		if( !rsd.is_protein() ) continue;
-		for(Size a = rsd.first_sidechain_atom(), a_end = rsd.nheavyatoms(); a <= a_end; ++a)
-		{
+		if ( !rsd.is_protein() ) continue;
+		for ( Size a = rsd.first_sidechain_atom(), a_end = rsd.nheavyatoms(); a <= a_end; ++a ) {
 			set_sphere(*grid, rsd.xyz(a), rep_rad, 0);
 		}
 	}
@@ -378,41 +376,38 @@ utility::pointer::shared_ptr<core::grid::CartGrid<int> > make_atr_rep_grid_witho
 
 	// Set attractive zones around all heavy atoms -- assume most ligand atoms
 	// will be near *something*, and most sidechains will stay put.
-	for(Size r = 1, r_end = pose.total_residue(); r <= r_end; ++r) {
+	for ( Size r = 1, r_end = pose.total_residue(); r <= r_end; ++r ) {
 		conformation::Residue const & rsd = pose.residue(r);
-		if( find(
+		if ( find(
 				ligand_chain_ids_to_exclude.begin(),
 				ligand_chain_ids_to_exclude.end(),
 				rsd.chain()
-			) !=  ligand_chain_ids_to_exclude.end()
-		) {
+				) !=  ligand_chain_ids_to_exclude.end()
+				) {
 			continue;
 		}
-		for(Size a = 1, a_end = rsd.nheavyatoms(); a <= a_end; ++a)
-		{
+		for ( Size a = 1, a_end = rsd.nheavyatoms(); a <= a_end; ++a ) {
 			set_sphere(*grid, rsd.xyz(a), atr_rad, -1);
 		}
 	}
 
 	// Set neutral core around each sidechain heavy atom, as MOST of these stay put.
-	for(Size r = 1, r_end = pose.total_residue(); r <= r_end; ++r) {
+	for ( Size r = 1, r_end = pose.total_residue(); r <= r_end; ++r ) {
 		conformation::Residue const & rsd = pose.residue(r);
-		if( find(
+		if ( find(
 				ligand_chain_ids_to_exclude.begin(),
 				ligand_chain_ids_to_exclude.end(),
 				rsd.chain()
-			) !=  ligand_chain_ids_to_exclude.end()
-		) {
+				) !=  ligand_chain_ids_to_exclude.end()
+				) {
 			continue;
 		}
-		if( rsd.is_protein() ){
-			for(Size a = rsd.first_sidechain_atom(), a_end = rsd.nheavyatoms(); a <= a_end; ++a)
-			{
+		if ( rsd.is_protein() ) {
+			for ( Size a = rsd.first_sidechain_atom(), a_end = rsd.nheavyatoms(); a <= a_end; ++a ) {
 				set_sphere(*grid, rsd.xyz(a), rep_rad, 0);//ligand can run into side-chains, they'll be repacked
 			}
-		}else{
-			for(Size a = 1, a_end = rsd.nheavyatoms(); a <= a_end; ++a)
-			{
+		} else {
+			for ( Size a = 1, a_end = rsd.nheavyatoms(); a <= a_end; ++a ) {
 				set_sphere(*grid, rsd.xyz(a), rep_rad, 1); //ligand shouldn't run into other ligands
 			}
 		}

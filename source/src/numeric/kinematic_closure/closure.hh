@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-// This file is contains all the same functions as `bridgeObjects.cc', but 
-// radians are assumed for all angles.  Although this is easier to use in most 
-// cases, it is not backwards compatible.  That's why a new file was created.  
+// This file is contains all the same functions as `bridgeObjects.cc', but
+// radians are assumed for all angles.  Although this is easier to use in most
+// cases, it is not backwards compatible.  That's why a new file was created.
 
 
 /// @file   bridgeObjects.hh
@@ -33,59 +33,59 @@ namespace kinematic_closure {
 namespace radians {
 
 void bridge_objects (
-		const utility::vector1<utility::vector1<numeric::Real> >& atoms,
-		const utility::vector1<numeric::Real> & dt,
-		const utility::vector1<numeric::Real> & da,
-		const utility::vector1<numeric::Real> & db,
-		const utility::vector1<int>& pivots,
-		const utility::vector1<int>& order,
-		utility::vector1<utility::vector1<numeric::Real> >& t_ang,
-		utility::vector1<utility::vector1<numeric::Real> >& b_ang,
-		utility::vector1<utility::vector1<numeric::Real> >& b_len,
-		int& nsol);
+	const utility::vector1<utility::vector1<numeric::Real> >& atoms,
+	const utility::vector1<numeric::Real> & dt,
+	const utility::vector1<numeric::Real> & da,
+	const utility::vector1<numeric::Real> & db,
+	const utility::vector1<int>& pivots,
+	const utility::vector1<int>& order,
+	utility::vector1<utility::vector1<numeric::Real> >& t_ang,
+	utility::vector1<utility::vector1<numeric::Real> >& b_ang,
+	utility::vector1<utility::vector1<numeric::Real> >& b_len,
+	int& nsol);
 
 void chainTORS (
-		const int& n,
-		const utility::vector1<utility::vector1<numeric::Real> >& atoms,
-		utility::vector1<numeric::Real>& t_ang,
-		utility::vector1<numeric::Real>& b_ang,
-		utility::vector1<numeric::Real>& b_len,
-		utility::vector1<numeric::Real>& R0,
-		utility::vector1<utility::vector1<numeric::Real> >& Q);
+	const int& n,
+	const utility::vector1<utility::vector1<numeric::Real> >& atoms,
+	utility::vector1<numeric::Real>& t_ang,
+	utility::vector1<numeric::Real>& b_ang,
+	utility::vector1<numeric::Real>& b_len,
+	utility::vector1<numeric::Real>& R0,
+	utility::vector1<utility::vector1<numeric::Real> >& Q);
 
 numeric::Real torsion(
-		const utility::vector1<numeric::Real>& a,
-		const utility::vector1<numeric::Real>& b,
-		const utility::vector1<numeric::Real>& c,
-		const utility::vector1<numeric::Real>& d);
+	const utility::vector1<numeric::Real>& a,
+	const utility::vector1<numeric::Real>& b,
+	const utility::vector1<numeric::Real>& c,
+	const utility::vector1<numeric::Real>& d);
 
 void chainXYZ  (
-		const int& n,
-		const utility::vector1<numeric::Real>& b_len,
-		const utility::vector1<numeric::Real>& b_ang,
-		const utility::vector1<numeric::Real>& t_ang,
-		const bool space,
-		const utility::vector1<numeric::Real>& R0,
-		const utility::vector1<utility::vector1<numeric::Real> >& Q,
-		utility::vector1<utility::vector1<numeric::Real> >& atoms);
+	const int& n,
+	const utility::vector1<numeric::Real>& b_len,
+	const utility::vector1<numeric::Real>& b_ang,
+	const utility::vector1<numeric::Real>& t_ang,
+	const bool space,
+	const utility::vector1<numeric::Real>& R0,
+	const utility::vector1<utility::vector1<numeric::Real> >& Q,
+	utility::vector1<utility::vector1<numeric::Real> >& atoms);
 
 void chainXYZ  (
-		const int& n,
-		const utility::vector1<numeric::Real>& b_len,
-		const utility::vector1<numeric::Real>& b_ang,
-		const utility::vector1<numeric::Real>& t_ang,
-		utility::vector1<utility::vector1<numeric::Real> >& atoms);
+	const int& n,
+	const utility::vector1<numeric::Real>& b_len,
+	const utility::vector1<numeric::Real>& b_ang,
+	const utility::vector1<numeric::Real>& t_ang,
+	utility::vector1<utility::vector1<numeric::Real> >& atoms);
 
 numeric::Real bondangle(
-		const utility::vector1<numeric::Real>& a,
-		const utility::vector1<numeric::Real>& b,
-		const utility::vector1<numeric::Real>& c);
+	const utility::vector1<numeric::Real>& a,
+	const utility::vector1<numeric::Real>& b,
+	const utility::vector1<numeric::Real>& c);
 
 void to_radians(
-		utility::vector1<Real> & degrees);
+	utility::vector1<Real> & degrees);
 
 void to_degrees(
-		utility::vector1<Real> & radians);
+	utility::vector1<Real> & radians);
 
 } // end namespace radians
 } // end namespace kinematic_closure

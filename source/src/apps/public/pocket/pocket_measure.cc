@@ -74,116 +74,116 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-  NEW_OPT ( num_angles, "Number of different pose angles to measure score at", 1);
+		NEW_OPT ( num_angles, "Number of different pose angles to measure score at", 1);
 
-	devel::init(argc, argv);
-  int angles = option[ num_angles ];
-  if (angles <1){
-    fprintf (stderr, "Error: invalid number of angles.  Must be greather than 0\n");
-    return -1;
-  }
+		devel::init(argc, argv);
+		int angles = option[ num_angles ];
+		if ( angles <1 ) {
+			fprintf (stderr, "Error: invalid number of angles.  Must be greather than 0\n");
+			return -1;
+		}
 
-	//std::string const output_tag = option[ OptionKeys::out::output_tag ]();
-	pose::Pose input_pose;
+		//std::string const output_tag = option[ OptionKeys::out::output_tag ]();
+		pose::Pose input_pose;
 
-	//read in pdb file from command line
-	std::string const input_pdb_name ( basic::options::start_file() );
-	core::import_pose::pose_from_pdb( input_pose, input_pdb_name );
-
-
-	scoring::ScoreFunctionOP scorefxn( get_score_function() );
-
-	(*scorefxn)(input_pose);
-  core::Real const starting_total_score = input_pose.energies().total_energies()[ total_score ];
-	std::cout << "Total score at start without constraint is: " << starting_total_score << std::endl;
+		//read in pdb file from command line
+		std::string const input_pdb_name ( basic::options::start_file() );
+		core::import_pose::pose_from_pdb( input_pose, input_pdb_name );
 
 
-  std::string resid(option[ OptionKeys::pocket_grid::central_relax_pdb_num ]);
+		scoring::ScoreFunctionOP scorefxn( get_score_function() );
+
+		(*scorefxn)(input_pose);
+		core::Real const starting_total_score = input_pose.energies().total_energies()[ total_score ];
+		std::cout << "Total score at start without constraint is: " << starting_total_score << std::endl;
 
 
-  std::vector< conformation::ResidueOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(input_pose, resid);
+		std::string resid(option[ OptionKeys::pocket_grid::central_relax_pdb_num ]);
 
-/*
-  int  central_relax_pdb_number;
-  char chain = ' ';
-  std::size_t fpos( resid.find(':') );
-  if ( fpos != std::string::npos ) {
-    central_relax_pdb_number = ObjexxFCL::int_of( resid.substr(0,fpos) );
-    if (fpos != resid.size()-1 ) {
-      chain = resid[ fpos+1 ];
-    }
-  } else {
-    central_relax_pdb_number = ObjexxFCL::int_of( resid );
-  }
 
-  int seqpos = 0;
-  for ( int j = 1, resnum = input_pose.total_residue(); j <= resnum; ++j ) {
-    if ( input_pose.pdb_info()->number(j) == central_relax_pdb_number ) {
-      //seqpos_ = j;
-      if (chain != ' '){
-        if ( input_pose.pdb_info()->chain(j) == chain ) {
-          seqpos = j;
-        }
-      }else{
-        seqpos = j;
-      }
-    }
-  }
+		std::vector< conformation::ResidueOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(input_pose, resid);
 
-  if ( seqpos == 0 ) {
-*/
-  if ( residues.size() == 0 ) {
-    std::cout << "ERROR!! Invalid residue to backrub around" << std::endl;
-    exit(1);
-  }
+		/*
+		int  central_relax_pdb_number;
+		char chain = ' ';
+		std::size_t fpos( resid.find(':') );
+		if ( fpos != std::string::npos ) {
+		central_relax_pdb_number = ObjexxFCL::int_of( resid.substr(0,fpos) );
+		if (fpos != resid.size()-1 ) {
+		chain = resid[ fpos+1 ];
+		}
+		} else {
+		central_relax_pdb_number = ObjexxFCL::int_of( resid );
+		}
 
-  core::Real constraint_pocket_score = 0;
-  core::Real largest_pocket_score = 0;
+		int seqpos = 0;
+		for ( int j = 1, resnum = input_pose.total_residue(); j <= resnum; ++j ) {
+		if ( input_pose.pdb_info()->number(j) == central_relax_pdb_number ) {
+		//seqpos_ = j;
+		if (chain != ' '){
+		if ( input_pose.pdb_info()->chain(j) == chain ) {
+		seqpos = j;
+		}
+		}else{
+		seqpos = j;
+		}
+		}
+		}
 
-  protocols::pockets::PocketGrid pg( residues );
-  for (int i=0; i<angles; ++i){
-    if (i>0){
-/*      core::Real x,y,z;
-      x = (int) (numeric::random::uniform() *89 +1);
-      y = (int) (numeric::random::uniform() *89 +1);
-      z = (int) (numeric::random::uniform() *89 +1);
-      numeric::xyzMatrix<core::Real> x_rot_mat( numeric::x_rotation_matrix_degrees(x) );
-      numeric::xyzMatrix<core::Real> y_rot_mat( numeric::y_rotation_matrix_degrees(y) );
-      numeric::xyzMatrix<core::Real> z_rot_mat( numeric::z_rotation_matrix_degrees(z) );
-      core::Vector v(0,0,0);
-      input_pose.apply_transform_Rx_plus_v(x_rot_mat, v);
-      input_pose.apply_transform_Rx_plus_v(y_rot_mat, v);
-      input_pose.apply_transform_Rx_plus_v(z_rot_mat, v);
-*/
-      pg.randomAngle();
-    }else{
-      pg.zeroAngle();
-    }
-    //protocols::pockets::PocketGrid pg( input_pose.conformation().residue(seqpos) );
-    //if ( pg.autoexpanding_pocket_eval( input_pose.conformation().residue(seqpos), input_pose ) ){
-    if ( pg.autoexpanding_pocket_eval( residues, input_pose ) ){
-      constraint_pocket_score += pg.netTargetPocketVolume();
-      largest_pocket_score += pg.netTargetPocketVolume();
-      //std::cout<<pg.netTargetPocketVolume()<<std::endl;
-    }//else std::cout<<"0\n";
+		if ( seqpos == 0 ) {
+		*/
+		if ( residues.size() == 0 ) {
+			std::cout << "ERROR!! Invalid residue to backrub around" << std::endl;
+			exit(1);
+		}
 
-    if (i==0){
-      if (option[ OptionKeys::pocket_grid::pocket_dump_pdbs ]()){
-        pg.dumpGridToFile();
-      }
-      if (option[ OptionKeys::pocket_grid::pocket_dump_exemplars ]()){
-        pg.dumpExemplarToFile();
-      }
-    }
-  }
-  constraint_pocket_score /= angles;
-  largest_pocket_score /= angles;
-	std::cout << "Pocket score (unweighted) is: " << constraint_pocket_score << std::endl;
-	std::cout << "Largest pocket score (unweighted) is: " << largest_pocket_score << std::endl;
-  } catch ( utility::excn::EXCN_Base const & e ) {
+		core::Real constraint_pocket_score = 0;
+		core::Real largest_pocket_score = 0;
+
+		protocols::pockets::PocketGrid pg( residues );
+		for ( int i=0; i<angles; ++i ) {
+			if ( i>0 ) {
+				/*      core::Real x,y,z;
+				x = (int) (numeric::random::uniform() *89 +1);
+				y = (int) (numeric::random::uniform() *89 +1);
+				z = (int) (numeric::random::uniform() *89 +1);
+				numeric::xyzMatrix<core::Real> x_rot_mat( numeric::x_rotation_matrix_degrees(x) );
+				numeric::xyzMatrix<core::Real> y_rot_mat( numeric::y_rotation_matrix_degrees(y) );
+				numeric::xyzMatrix<core::Real> z_rot_mat( numeric::z_rotation_matrix_degrees(z) );
+				core::Vector v(0,0,0);
+				input_pose.apply_transform_Rx_plus_v(x_rot_mat, v);
+				input_pose.apply_transform_Rx_plus_v(y_rot_mat, v);
+				input_pose.apply_transform_Rx_plus_v(z_rot_mat, v);
+				*/
+				pg.randomAngle();
+			} else {
+				pg.zeroAngle();
+			}
+			//protocols::pockets::PocketGrid pg( input_pose.conformation().residue(seqpos) );
+			//if ( pg.autoexpanding_pocket_eval( input_pose.conformation().residue(seqpos), input_pose ) ){
+			if ( pg.autoexpanding_pocket_eval( residues, input_pose ) ) {
+				constraint_pocket_score += pg.netTargetPocketVolume();
+				largest_pocket_score += pg.netTargetPocketVolume();
+				//std::cout<<pg.netTargetPocketVolume()<<std::endl;
+			}//else std::cout<<"0\n";
+
+			if ( i==0 ) {
+				if ( option[ OptionKeys::pocket_grid::pocket_dump_pdbs ]() ) {
+					pg.dumpGridToFile();
+				}
+				if ( option[ OptionKeys::pocket_grid::pocket_dump_exemplars ]() ) {
+					pg.dumpExemplarToFile();
+				}
+			}
+		}
+		constraint_pocket_score /= angles;
+		largest_pocket_score /= angles;
+		std::cout << "Pocket score (unweighted) is: " << constraint_pocket_score << std::endl;
+		std::cout << "Largest pocket score (unweighted) is: " << largest_pocket_score << std::endl;
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-  }
+	}
 	return 0;
 }
 

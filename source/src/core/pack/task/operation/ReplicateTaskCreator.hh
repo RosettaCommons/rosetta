@@ -26,8 +26,8 @@ namespace operation {
 
 class ReplicateTaskCreator : public TaskOperationCreator {
 public:
-  virtual TaskOperationOP create_task_operation() const;
-  virtual std::string keyname() const { return "ReplicateTask"; }
+	virtual TaskOperationOP create_task_operation() const;
+	virtual std::string keyname() const { return "ReplicateTask"; }
 };
 
 } //namespace operation

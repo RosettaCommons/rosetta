@@ -34,14 +34,14 @@ class RerootEdgeSorter;
 
 void
 reroot_restype(
-		core::chemical::ResidueType & restype,
-		core::chemical::ResidueGraph const & graph,
-		core::chemical::VD root);
+	core::chemical::ResidueType & restype,
+	core::chemical::ResidueGraph const & graph,
+	core::chemical::VD root);
 
 void
 fill_ideal_xyz_from_icoor(
-		core::chemical::ResidueType & restype,
-		core::chemical::ResidueGraph const & graph);
+	core::chemical::ResidueType & restype,
+	core::chemical::ResidueGraph const & graph);
 
 } // chemical
 } // core

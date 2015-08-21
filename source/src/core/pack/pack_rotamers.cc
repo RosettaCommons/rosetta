@@ -209,10 +209,10 @@ pack_rotamers_setup(
 	ig = InteractionGraphFactory::create_interaction_graph( *task, *rotsets, pose, scfxn );
 
 	tt << "built " << rotsets->nrotamers() << " rotamers at "
-		 << rotsets->nmoltenres() << " positions." << std::endl;
+		<< rotsets->nmoltenres() << " positions." << std::endl;
 
 	//for ( Size i=1; i<= pose.total_residue(); ++i ) {
-	//	if ( task->design_residue(i) ) tt << "designing at position: " << i << std::endl;
+	// if ( task->design_residue(i) ) tt << "designing at position: " << i << std::endl;
 	//}
 
 	PROF_START( basic::GET_ENERGIES );
@@ -249,12 +249,12 @@ setup_IG_res_res_weights(
 {
 	task::IGEdgeReweightContainerCOP edge_reweights = task->IGEdgeReweights();
 
-	if( edge_reweights ){
+	if ( edge_reweights ) {
 
-		for( Size ii = 1; ii<= rotsets->nmoltenres(); ++ii){
+		for ( Size ii = 1; ii<= rotsets->nmoltenres(); ++ii ) {
 			Size const res1id = rotsets->moltenres_2_resid( ii );
 
-			for( ig->reset_edge_list_iterator_for_node( ii ); !ig->edge_list_iterator_at_end(); ig->increment_edge_list_iterator() ){
+			for ( ig->reset_edge_list_iterator_for_node( ii ); !ig->edge_list_iterator_at_end(); ig->increment_edge_list_iterator() ) {
 
 				interaction_graph::EdgeBase const & edge( ig->get_edge() );
 				Size const other_node = edge.get_other_ind( ii );
@@ -292,12 +292,12 @@ pack_rotamers_run(
 		uint iibestrot = rotsets->rotid_on_moltenresidue( bestrotamer_at_seqpos( iiresid ) );
 		conformation::ResidueCOP bestrot( rotsets->rotamer_set_for_moltenresidue( ii )->rotamer( iibestrot ) );
 
-//		for( Size i = 1 ; i <= bestrot->natoms() ; ++i ) {
-//			std::cout << "bestrot " << bestrot->atom_name(i) <<
-//					" x " << bestrot->xyz(i)[0] <<
-//					" y " << bestrot->xyz(i)[1] <<
-//					" z " << bestrot->xyz(i)[2] << std::endl;
-//		}
+		//  for( Size i = 1 ; i <= bestrot->natoms() ; ++i ) {
+		//   std::cout << "bestrot " << bestrot->atom_name(i) <<
+		//     " x " << bestrot->xyz(i)[0] <<
+		//     " y " << bestrot->xyz(i)[1] <<
+		//     " z " << bestrot->xyz(i)[2] << std::endl;
+		//  }
 
 		conformation::ResidueOP newresidue( bestrot->create_residue() );
 		pose.replace_residue ( iiresid, *newresidue, false );
@@ -349,87 +349,87 @@ pack_rotamers_run(
 
 void
 symmetric_pack_rotamers(
-  pose::Pose & pose,
-  scoring::ScoreFunction const & scfxn,
-  task::PackerTaskCOP non_symmetric_task
+	pose::Pose & pose,
+	scoring::ScoreFunction const & scfxn,
+	task::PackerTaskCOP non_symmetric_task
 )
 {
-  using namespace interaction_graph;
-  using namespace rotamer_set;
-  PROF_START( basic::PACK_ROTAMERS );
+	using namespace interaction_graph;
+	using namespace rotamer_set;
+	PROF_START( basic::PACK_ROTAMERS );
 
-  task::PackerTaskCOP task = make_new_symmetric_PackerTask_by_requested_method(pose,non_symmetric_task);
+	task::PackerTaskCOP task = make_new_symmetric_PackerTask_by_requested_method(pose,non_symmetric_task);
 
-  pack_scorefxn_pose_handshake( pose, scfxn);
+	pack_scorefxn_pose_handshake( pose, scfxn);
 
-  //replace this with RotSetsFactory
-  rotamer_set::symmetry::SymmetricRotamerSetsOP rotsets( new rotamer_set::symmetry::SymmetricRotamerSets() );
-  InteractionGraphBaseOP ig = NULL;
+	//replace this with RotSetsFactory
+	rotamer_set::symmetry::SymmetricRotamerSetsOP rotsets( new rotamer_set::symmetry::SymmetricRotamerSets() );
+	InteractionGraphBaseOP ig = NULL;
 
-  symmetric_pack_rotamers_setup( pose, scfxn, task, rotsets, ig );
-  symmetric_pack_rotamers_run( pose, task, rotsets, ig );
+	symmetric_pack_rotamers_setup( pose, scfxn, task, rotsets, ig );
+	symmetric_pack_rotamers_run( pose, task, rotsets, ig );
 
 	// rescore here to make the state of the Energies good.
-  scfxn( pose );
+	scfxn( pose );
 
-  PROF_STOP ( basic::PACK_ROTAMERS );
+	PROF_STOP ( basic::PACK_ROTAMERS );
 }
 
 void
 symmetric_pack_rotamers_setup(
-  pose::Pose & pose,
-  scoring::ScoreFunction const & scfxn,
-  task::PackerTaskCOP task,
-  rotamer_set::symmetry::SymmetricRotamerSetsOP rotsets,
-  interaction_graph::InteractionGraphBaseOP & ig
+	pose::Pose & pose,
+	scoring::ScoreFunction const & scfxn,
+	task::PackerTaskCOP task,
+	rotamer_set::symmetry::SymmetricRotamerSetsOP rotsets,
+	interaction_graph::InteractionGraphBaseOP & ig
 )
 {
-  using namespace interaction_graph;
+	using namespace interaction_graph;
 
-  pack_scorefxn_pose_handshake( pose, scfxn);
+	pack_scorefxn_pose_handshake( pose, scfxn);
 
-  pose.update_residue_neighbors();
-  scfxn.setup_for_packing( pose, task->repacking_residues(), task->designing_residues() );
+	pose.update_residue_neighbors();
+	scfxn.setup_for_packing( pose, task->repacking_residues(), task->designing_residues() );
 
-  graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scfxn, task );
+	graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scfxn, task );
 
-  //rotsets->set_symmetrical_task( task, pose );
-  rotsets->set_task( task );
-  rotsets->build_rotamers( pose, scfxn, packer_neighbor_graph );
-  rotsets->prepare_sets_for_packing( pose, scfxn );
+	//rotsets->set_symmetrical_task( task, pose );
+	rotsets->set_task( task );
+	rotsets->build_rotamers( pose, scfxn, packer_neighbor_graph );
+	rotsets->prepare_sets_for_packing( pose, scfxn );
 
-  if ( basic::options::option[ basic::options::OptionKeys::packing::dump_rotamer_sets ] ) { // hacking
-    static int counter(0);
-    ++counter;
-    std::string const filename( "rotset"+lead_zero_string_of( counter,4 )+".pdb" );
-    tt << "dump rotsets: " << filename << std::endl;
-    rotsets->dump_pdb( pose, filename );
-  }
+	if ( basic::options::option[ basic::options::OptionKeys::packing::dump_rotamer_sets ] ) { // hacking
+		static int counter(0);
+		++counter;
+		std::string const filename( "rotset"+lead_zero_string_of( counter,4 )+".pdb" );
+		tt << "dump rotsets: " << filename << std::endl;
+		rotsets->dump_pdb( pose, filename );
+	}
 
-  ig = InteractionGraphFactory::create_interaction_graph( *task, *rotsets, pose, scfxn );
+	ig = InteractionGraphFactory::create_interaction_graph( *task, *rotsets, pose, scfxn );
 
-  tt << "built " << rotsets->nrotamers() << " rotamers at "
-     << rotsets->nmoltenres() << " positions." << std::endl;
+	tt << "built " << rotsets->nrotamers() << " rotamers at "
+		<< rotsets->nmoltenres() << " positions." << std::endl;
 
-  //for ( Size i=1; i<= pose.total_residue(); ++i ) {
-  //  if ( task->design_residue(i) ) tt << "designing at position: " << i << std::endl;
-  //}
+	//for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	//  if ( task->design_residue(i) ) tt << "designing at position: " << i << std::endl;
+	//}
 
-  PROF_START( basic::GET_ENERGIES );
-  rotsets->compute_energies( pose, scfxn, packer_neighbor_graph, ig );
-  PROF_STOP( basic::GET_ENERGIES );
+	PROF_START( basic::GET_ENERGIES );
+	rotsets->compute_energies( pose, scfxn, packer_neighbor_graph, ig );
+	PROF_STOP( basic::GET_ENERGIES );
 
-  tt << "IG: " << ig->getTotalMemoryUsage() << " bytes" << std::endl;
+	tt << "IG: " << ig->getTotalMemoryUsage() << " bytes" << std::endl;
 
 }
 
 // PyRosetta compatible version
 interaction_graph::InteractionGraphBaseOP
 symmetric_pack_rotamers_setup(
-  pose::Pose & pose,
-  scoring::ScoreFunction const & scfxn,
-  task::PackerTaskCOP task,
-  rotamer_set::symmetry::SymmetricRotamerSetsOP rotsets
+	pose::Pose & pose,
+	scoring::ScoreFunction const & scfxn,
+	task::PackerTaskCOP task,
+	rotamer_set::symmetry::SymmetricRotamerSetsOP rotsets
 )
 {
 	interaction_graph::InteractionGraphBaseOP ig;
@@ -457,9 +457,9 @@ symmetric_pack_rotamers_run(
 	// did not instruct it to.
 
 	// Symmetry info
-		SymmetricConformation const & SymmConf (
-    dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
-  	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
+	SymmetricConformation const & SymmConf (
+		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
+	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 
 	/// Parameters passed by reference in task's constructor to which it writes at the
@@ -475,9 +475,9 @@ symmetric_pack_rotamers_run(
 		task, rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, ig,
 		rotsets, current_rot_index, calc_rot_freq, rot_freq );
 
-//	SimAnnealerBaseOP annealer = new annealer::symmetry::SymFixbbSimAnnealer(
-//      rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, ig,
-//      rotsets, current_rot_index, calc_rot_freq, rot_freq, symm_info );
+	// SimAnnealerBaseOP annealer = new annealer::symmetry::SymFixbbSimAnnealer(
+	//      rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, ig,
+	//      rotsets, current_rot_index, calc_rot_freq, rot_freq, symm_info );
 
 	// Following additional initialization would be cleaner if above suggestion
 	// regarding the removal of "too many parameters" is implemented properly.
@@ -495,25 +495,25 @@ symmetric_pack_rotamers_run(
 		uint iibestrot = rotsets->rotid_on_moltenresidue( bestrotamer_at_seqpos( iiresid ) );
 		conformation::ResidueCOP bestrot( rotsets->rotamer_set_for_moltenresidue( ii )->rotamer( iibestrot ) );
 
-//		for( Size i = 1 ; i <= bestrot->natoms() ; ++i ) {
-//			std::cout << "bestrot " << bestrot->atom_name(i) <<
-//					" x " << bestrot->xyz(i)[0] <<
-//					" y " << bestrot->xyz(i)[1] <<
-//					" z " << bestrot->xyz(i)[2] << std::endl;
-//		}
+		//  for( Size i = 1 ; i <= bestrot->natoms() ; ++i ) {
+		//   std::cout << "bestrot " << bestrot->atom_name(i) <<
+		//     " x " << bestrot->xyz(i)[0] <<
+		//     " y " << bestrot->xyz(i)[1] <<
+		//     " z " << bestrot->xyz(i)[2] << std::endl;
+		//  }
 
 		conformation::ResidueOP newresidue( bestrot->create_residue() );
 		pose.replace_residue ( iiresid, *newresidue, false );
 
-	//fpd replace residue is symmetric now
-	//for ( std::vector< Size>::const_iterator
-	//      clone     = symm_info.bb_clones( iiresid ).begin(),
-	//      clone_end = symm_info.bb_clones( iiresid ).end();
-	//      clone != clone_end; ++clone ){
-	//	conformation::ResidueOP sym_rsd = newresidue->clone();
-	// 	sym_rsd->orient_onto_residue(pose.residue( *clone) );
-	// 	pose.replace_residue ( *clone, *sym_rsd, false );
-	// }
+		//fpd replace residue is symmetric now
+		//for ( std::vector< Size>::const_iterator
+		//      clone     = symm_info.bb_clones( iiresid ).begin(),
+		//      clone_end = symm_info.bb_clones( iiresid ).end();
+		//      clone != clone_end; ++clone ){
+		// conformation::ResidueOP sym_rsd = newresidue->clone();
+		//  sym_rsd->orient_onto_residue(pose.residue( *clone) );
+		//  pose.replace_residue ( *clone, *sym_rsd, false );
+		// }
 	}
 	return bestenergy;
 }

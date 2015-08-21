@@ -53,15 +53,15 @@ my_main( void* )
 	protocols::jd2::register_options();
 	// initialize core
 
-//	devel::init_random_generators(3,numeric::random::_RND_TestRun_, "mt19937"); //JQX from Sergery
+	// devel::init_random_generators(3,numeric::random::_RND_TestRun_, "mt19937"); //JQX from Sergery
 
 	DockingProtocolOP dp( new DockingProtocol() );
 
 	if ( option[ OptionKeys::docking::multibody ].user() ) {
-			utility::vector1< core::Size > const movable_jumps(
-				option[ OptionKeys::docking::multibody ]()
-			);
-			dp->set_movable_jumps( movable_jumps );
+		utility::vector1< core::Size > const movable_jumps(
+			option[ OptionKeys::docking::multibody ]()
+		);
+		dp->set_movable_jumps( movable_jumps );
 	}
 
 	JobDistributor::get_instance()->go(dp);
@@ -79,8 +79,8 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	devel::init(argc, argv);
-	protocols::viewer::viewer_main( my_main );
+		devel::init(argc, argv);
+		protocols::viewer::viewer_main( my_main );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

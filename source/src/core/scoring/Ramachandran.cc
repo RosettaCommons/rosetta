@@ -93,46 +93,34 @@ Ramachandran::Ramachandran() :
 	phi_psi_bins_above_thold_( n_aa_ )
 {
 	//MaximCode
-	if (!basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
-			|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_rama_enable])
-	{
+	if ( !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
+			|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_rama_enable] ) {
 		read_rama(
-				basic::options::option[basic::options::OptionKeys::corrections::score::rama_map]().name(),
-				basic::options::option[basic::options::OptionKeys::corrections::score::use_bicubic_interpolation]);
-	}
-	else
-	{
+			basic::options::option[basic::options::OptionKeys::corrections::score::rama_map]().name(),
+			basic::options::option[basic::options::OptionKeys::corrections::score::use_bicubic_interpolation]);
+	} else {
 		//MaximCode
 		{
 			std::string _smoothingRequsted = basic::options::option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_rama_smooth_level ];
 			std::string _smoothingAsKeyword = "undefined";
 
-			if (_smoothingRequsted.compare("1")==0)
-			{
+			if ( _smoothingRequsted.compare("1")==0 ) {
 				_smoothingAsKeyword = "lowest_smooth";
-			}
-			else if (_smoothingRequsted.compare("2")==0)
-			{
+			} else if ( _smoothingRequsted.compare("2")==0 ) {
 				_smoothingAsKeyword = "lower_smooth";
-			}
-			else if (_smoothingRequsted.compare("3")==0)
-			{
+			} else if ( _smoothingRequsted.compare("3")==0 ) {
 				_smoothingAsKeyword = "higher_smooth";
-			}
-			else if (_smoothingRequsted.compare("4")==0)
-			{
+			} else if ( _smoothingRequsted.compare("4")==0 ) {
 				_smoothingAsKeyword = "highest_smooth";
-			}
-			else
-			{
+			} else {
 				_smoothingAsKeyword = "unknown";
 			}
 			TR << "shapovalov_lib::shap_rama_smooth_level of " << _smoothingRequsted << "( aka " << _smoothingAsKeyword << " )" << " got activated." << std::endl;
 		}
 
 		read_rama(
-				basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_rama_map]().name(),
-				basic::options::option[basic::options::OptionKeys::corrections::score::use_bicubic_interpolation]);
+			basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_rama_map]().name(),
+			basic::options::option[basic::options::OptionKeys::corrections::score::use_bicubic_interpolation]);
 	}
 }
 
@@ -212,25 +200,23 @@ Ramachandran::eval_rama_score_all(
 	// if so, Pose must provide it 'cause we're offing all global data
 	//
 	//kinematics::FoldTree const & fold_tree(
-	//		pose.fold_tree() );
+	//  pose.fold_tree() );
 	//int const n_cut( fold_tree.num_cutpoint() );
 
 	//FArray1D< Real > cut_weight( n_cut,
-	//	scorefxns::jmp_chainbreak_weight == 0.0 ? 0.0 : 1.0 ); // apl need to handle
+	// scorefxns::jmp_chainbreak_weight == 0.0 ? 0.0 : 1.0 ); // apl need to handle
 
 	//if( cut_weight.size1() == scorefxns::cut_weight.size1() )
-	//	cut_weight = scorefxns::cut_weight;
+	// cut_weight = scorefxns::cut_weight;
 
 	// exclude chain breaks
 
 	Energies & pose_energies( pose.energies() );
 
-	for ( int ii = 1; ii <= total_residue; ++ii )
-	{
-		if ( pose.residue(ii).is_protein()  && ! pose.residue(ii).is_terminus() && ! pose.residue(ii).is_virtual_residue() )
-		{
+	for ( int ii = 1; ii <= total_residue; ++ii ) {
+		if ( pose.residue(ii).is_protein()  && ! pose.residue(ii).is_terminus() && ! pose.residue(ii).is_virtual_residue() ) {
 			Real rama_score,dphi,dpsi;
-			if(is_normally_connected(pose.residue(ii))) {
+			if ( is_normally_connected(pose.residue(ii)) ) {
 				eval_rama_score_residue(pose.residue(ii),rama_score,dphi,dpsi);
 				//printf("Residue %i is normal.\n", ii); fflush(stdout); //DELETE ME -- FOR TESTING ONLY
 				//std::cout << "Rama: residue " << ii << " = " << rama_score << std::endl;
@@ -270,7 +256,7 @@ Ramachandran::random_phipsi_from_rama(
 {
 	AA res_aa2 = res_aa;
 	core::Real phipsi_multiplier=1.0;
-	if(is_canonical_d_aminoacid(res_aa)) {
+	if ( is_canonical_d_aminoacid(res_aa) ) {
 		res_aa2=get_l_equivalent(res_aa);
 		phipsi_multiplier=-1.0;
 	}
@@ -373,7 +359,7 @@ Ramachandran::eval_rama_score_residue_nonstandard_connection(
 	Real & drama_dpsi
 ) const {
 
-	if(res.connection_incomplete(1) || res.connection_incomplete(2)) { //If this is an open terminus, don't score this residue.
+	if ( res.connection_incomplete(1) || res.connection_incomplete(2) ) { //If this is an open terminus, don't score this residue.
 		rama=0.0;
 		drama_dphi=0.0;
 		drama_dpsi=0.0;
@@ -404,7 +390,7 @@ Ramachandran::eval_rama_score_residue_nonstandard_connection(
 	//printf("rsd %lu phi=%.3f psi=%.3f\n", res.seqpos(), phi, psi); fflush(stdout); //DELETE ME
 
 	core::chemical::AA ref_aa = res.aa();
-	if(res.backbone_aa() != core::chemical::aa_unk) ref_aa = res.backbone_aa(); //If this is a noncanonical that specifies a canonical to use as a Rama template, use the template.
+	if ( res.backbone_aa() != core::chemical::aa_unk ) ref_aa = res.backbone_aa(); //If this is a noncanonical that specifies a canonical to use as a Rama template, use the template.
 
 	eval_rama_score_residue( ref_aa, phi, psi, rama, drama_dphi, drama_dpsi );
 
@@ -542,15 +528,15 @@ Ramachandran::eval_rama_score_residue(
 		//Real ramaTest1 = rama_energy_splines_[ resTest ].F(300,320);
 		//Real ramaTest2 = rama_energy_splines_[ resTest ].F(305,325);
 		//Real ramaTest3 = rama_energy_splines_[ resTest ].F(295,315);
-        //
+		//
 		//ramaTest1 = 0;
 		//ramaTest2 = 0;
 		//ramaTest3 = 0;
-        //
+		//
 		//core::chemical::AA resTest2 = chemical::aa_pro;
 		//Real ramaTest4 = rama_energy_splines_[ resTest2 ].F(295,145);
 		//Real ramaTest5 = rama_energy_splines_[ resTest2 ].F(295,155);
-        //
+		//
 		//ramaTest4 = 0;
 		//ramaTest5 = 0;
 
@@ -575,9 +561,9 @@ Ramachandran::eval_rama_score_residue(
 			drama_dpsi = interp_p_inv_neg * d_multiplier * dp_dpsi;
 		} else {
 			//if ( runlevel > silent ) { //apl fix this
-			//	std::cout << "rama prob = 0. in eval_rama_score_residue!" << std::endl;
-			//	std::cout << "phi" << SS( phi ) << " psi" << SS( psi ) <<
-			//	 " ss " << SS( ss ) << std::endl;
+			// std::cout << "rama prob = 0. in eval_rama_score_residue!" << std::endl;
+			// std::cout << "phi" << SS( phi ) << " psi" << SS( psi ) <<
+			//  " ss " << SS( ss ) << std::endl;
 			//}
 			drama_dphi = 0.0;
 			drama_dpsi = 0.0;
@@ -606,10 +592,10 @@ Ramachandran::eval_rama_score_residue(
 
 ///////////////////////////////////////////////////////////////////////////////
 //void Ramachandran::eval_procheck_rama(
-//	Pose const & /*pose*/,
-//	Real & /*favorable*/,
-//	Real & /*allowed*/,
-//	Real & /*generous*/
+// Pose const & /*pose*/,
+// Real & /*favorable*/,
+// Real & /*allowed*/,
+// Real & /*generous*/
 //) const
 //{}
 
@@ -624,8 +610,8 @@ Ramachandran::is_normally_connected (
 
 	bool firstconn = true, secondconn=true;
 
-	if(!res.connection_incomplete(1)) firstconn= (res.residue_connection_partner(1) == res.seqpos()-1);
-	if(!res.connection_incomplete(2)) secondconn= (res.residue_connection_partner(2) == res.seqpos()+1);
+	if ( !res.connection_incomplete(1) ) firstconn= (res.residue_connection_partner(1) == res.seqpos()-1);
+	if ( !res.connection_incomplete(2) ) secondconn= (res.residue_connection_partner(2) == res.seqpos()+1);
 
 	return (firstconn && secondconn);
 }
@@ -700,37 +686,37 @@ Ramachandran::read_rama_map_file (
 
 					if ( scan_count == EOF ) continue; // Read problem: NO ERROR DETECTION
 
-// This is the Slick & Slow (S&S) stream-based method that is too slow for large
-// files like this one, at least under the GCC 3.3.1 stream implementation.
-// It should be retried on future releases and target compilers because there is
-// no reason it cannot be competitive with good optimization and inlining.
-// If this is used the <cstdio> can be removed.
-//
-//					iunit >> bite( 5, aa_num ) >> skip( 1 ) >>
-//					 bite( 5, ss_type ) >> skip( 1 ) >>
-//					 bite( 5, phi_bin ) >> skip( 1 ) >>
-//					 bite( 5, psi_bin ) >> skip( 1 ) >>
-//					 bite( 5, ram_counts(j,k,ii,i) ) >> skip( 1 ) >>
-//					 bite( 12, ram_probabil(j,k,ii,i) ) >> skip( 1 ) >>
-//					 bite( 12, ram_energ(j,k,ii,i) ) >> skip;
-//					if ( iunit.eof() ) {
-//						goto L100;
-//					} else if ( iunit.fail() ) { // Clear and continue: NO ERROR DETECTION
-//						iunit.clear();
-//						iunit >> skip;
-//					}
+					// This is the Slick & Slow (S&S) stream-based method that is too slow for large
+					// files like this one, at least under the GCC 3.3.1 stream implementation.
+					// It should be retried on future releases and target compilers because there is
+					// no reason it cannot be competitive with good optimization and inlining.
+					// If this is used the <cstdio> can be removed.
+					//
+					//     iunit >> bite( 5, aa_num ) >> skip( 1 ) >>
+					//      bite( 5, ss_type ) >> skip( 1 ) >>
+					//      bite( 5, phi_bin ) >> skip( 1 ) >>
+					//      bite( 5, psi_bin ) >> skip( 1 ) >>
+					//      bite( 5, ram_counts(j,k,ii,i) ) >> skip( 1 ) >>
+					//      bite( 12, ram_probabil(j,k,ii,i) ) >> skip( 1 ) >>
+					//      bite( 12, ram_energ(j,k,ii,i) ) >> skip;
+					//     if ( iunit.eof() ) {
+					//      goto L100;
+					//     } else if ( iunit.fail() ) { // Clear and continue: NO ERROR DETECTION
+					//      iunit.clear();
+					//      iunit >> skip;
+					//     }
 
 					check += ram_probabil_(j,k,ii,i);
 					entropy += ram_probabil_(j,k,ii,i) *
-					 std::log( static_cast< double >( ram_probabil_(j,k,ii,i) ) );
+						std::log( static_cast< double >( ram_probabil_(j,k,ii,i) ) );
 					min_prob = std::min(ram_probabil_(j,k,ii,i),min_prob);
 					max_prob = std::max(ram_probabil_(j,k,ii,i),max_prob);
 				}
 			}
 			ram_entropy_(ii,i) = entropy;
 		}
-//cj		std::cout << SS( check ) << SS( std::log(min_prob) ) <<
-//cj		 SS( std::log(max_prob) ) << SS( entropy ) << std::endl;
+		//cj  std::cout << SS( check ) << SS( std::log(min_prob) ) <<
+		//cj   SS( std::log(max_prob) ) << SS( entropy ) << std::endl;
 	}
 
 }
@@ -743,24 +729,24 @@ Ramachandran::read_rama(
 
 	utility::io::izstream  iunit;
 
-  // search in the local directory first
-  iunit.open( rama_map_filename );
+	// search in the local directory first
+	iunit.open( rama_map_filename );
 
-  if ( !iunit.good() ) {
-    iunit.close();
-    if(!basic::database::open( iunit, rama_map_filename )){
+	if ( !iunit.good() ) {
+		iunit.close();
+		if ( !basic::database::open( iunit, rama_map_filename ) ) {
 			std::stringstream err_msg;
 			err_msg << "Unable to open Ramachandran map '" << rama_map_filename << "'.";
 			utility_exit_with_message(err_msg.str());
 		}
-  }
+	}
 
-//cj      std::cout << "index" << "aa" << "ramachandran entropy" << std::endl;
-//KMa add_phospho_ser 2006-01
+	//cj      std::cout << "index" << "aa" << "ramachandran entropy" << std::endl;
+	//KMa add_phospho_ser 2006-01
 
 	//MaximCode
-	if (!basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
-			|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_rama_enable]) {
+	if ( !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
+			|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_rama_enable] ) {
 		read_rama_map_file(&iunit);
 	} else {
 		read_rama_map_file_shapovalov(&iunit);
@@ -779,12 +765,9 @@ Ramachandran::read_rama(
 			for ( Size jj = 0; jj < 36; ++jj ) {
 				for ( Size kk = 0; kk < 36; ++kk ) {
 					//MaximCode:
-					if (true)
-					{
+					if ( true ) {
 						energy_vals( jj, kk ) = -std::log( ram_probabil_(jj+1,kk+1,3,ii )) + ram_entropy_(3,ii) ;
-					}
-					else
-					{
+					} else {
 						energy_vals( jj, kk ) = ram_probabil_(jj+1,kk+1,3,ii );
 					}
 				}
@@ -793,16 +776,15 @@ Ramachandran::read_rama(
 			Real start_vals[2];
 			if (
 					(
-						basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable] &&
-						basic::options::option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_rama_nogridshift ]
+					basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable] &&
+					basic::options::option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_rama_nogridshift ]
 					)
 					||
 					(
-						basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable] &&
-						basic::options::option[basic::options::OptionKeys::corrections::correct]
+					basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable] &&
+					basic::options::option[basic::options::OptionKeys::corrections::correct]
 					)
-			   )
-			{
+					) {
 				start_vals[0] = start_vals[1] = 0.0; // if this flag is on, then the Rama table is not shifted and aligns with the ten-degree boundaries.
 			} else {
 				start_vals[0] = start_vals[1] = 5.0; // otherwise, the grid is shifted by five degrees.
@@ -855,7 +837,7 @@ Ramachandran::init_rama_sampling_table( conformation::ppo_torsion_bin torsion_bi
 
 
 				conformation::ppo_torsion_bin cur_tb = conformation::ppo_torbin_X;
-				if (torsion_bin != conformation::ppo_torbin_X) {
+				if ( torsion_bin != conformation::ppo_torbin_X ) {
 					//  AS -- how can we get the factor properly / without hard-coding? - also: this takes very long...
 					cur_tb = core::conformation::get_torsion_bin(cur_phi, cur_psi);
 				}
@@ -886,7 +868,7 @@ Ramachandran::init_rama_sampling_table( conformation::ppo_torsion_bin torsion_bi
 		for ( int jj = 1; jj <= n_phi_ * n_psi_; ++jj ) {
 			inner_cdf[ jj ] *= inv_allowed_probability_sum;
 			//if ( inner_cdf[ jj ] == 0 && jj != 1 ) {
-			//	inner_cdf[ jj ] = inner_cdf[ jj-1 ];
+			// inner_cdf[ jj ] = inner_cdf[ jj-1 ];
 			//}
 		}
 
@@ -946,7 +928,7 @@ Ramachandran::draw_random_phi_psi_from_cdf(
 //MaximCode
 void
 Ramachandran::read_rama_map_file_shapovalov (
-		utility::io::izstream * iunit
+	utility::io::izstream * iunit
 ) {
 	//...
 	//# Analysis      dataPoints-adaptive KDE
@@ -972,13 +954,11 @@ Ramachandran::read_rama_map_file_shapovalov (
 	{
 		iunit->getline( line, 255 );
 
-		if (iunit->eof())
-		{
+		if ( iunit->eof() ) {
 			break;
 		}
 
-		if (line[0]=='#' || line[0]=='\n' || line[0]=='\r')
-		{
+		if ( line[0]=='#' || line[0]=='\n' || line[0]=='\r' ) {
 			continue;
 		}
 
@@ -987,10 +967,8 @@ Ramachandran::read_rama_map_file_shapovalov (
 		aaStr = std::string(aa);
 		boost::to_upper(aaStr);
 		i = core::chemical::aa_from_name(aaStr);
-		if (aaStr != prevAAStr)
-		{
-			if (false)
-			{
+		if ( aaStr != prevAAStr ) {
+			if ( false ) {
 				TR << "MaximCode test: " << "aa " << prevAAStr << "\tsumP " << check << "\tminP " << min_prob << "\tmaxP " << max_prob << std::endl;
 			}
 
@@ -1002,10 +980,10 @@ Ramachandran::read_rama_map_file_shapovalov (
 
 		//j, k (aka phi and psi indices) start with 1 and correspond to 0 and go all way to 36 corresponding to 350
 		//since the storage type is FArray4D, Fortran-Compatible 4D Array where indices start from 1 by default
-		if (phi < 0) {
+		if ( phi < 0 ) {
 			phi += 360;
 		}
-		if (psi < 0) {
+		if ( psi < 0 ) {
 			psi += 360;
 		}
 		//MaximCode

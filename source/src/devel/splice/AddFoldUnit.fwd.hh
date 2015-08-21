@@ -15,24 +15,24 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace devel{
-    namespace splice{
-        class AddFoldUnitMover;
-        typedef utility::pointer::shared_ptr< AddFoldUnitMover > AddFoldUnitMoverOP;
-        typedef utility::pointer::shared_ptr< AddFoldUnitMover const > AddFoldUnitMoverCOP;
+namespace devel {
+namespace splice {
+class AddFoldUnitMover;
+typedef utility::pointer::shared_ptr< AddFoldUnitMover > AddFoldUnitMoverOP;
+typedef utility::pointer::shared_ptr< AddFoldUnitMover const > AddFoldUnitMoverCOP;
 
-        class FoldUnitUtils;
-        typedef utility::pointer::shared_ptr< FoldUnitUtils > FoldUnitUtilsOP;
-        typedef utility::pointer::shared_ptr< FoldUnitUtils const > FoldUnitUtilsCOP;
+class FoldUnitUtils;
+typedef utility::pointer::shared_ptr< FoldUnitUtils > FoldUnitUtilsOP;
+typedef utility::pointer::shared_ptr< FoldUnitUtils const > FoldUnitUtilsCOP;
 
-				class PoseFragmentInfo;
-        typedef utility::pointer::shared_ptr< PoseFragmentInfo > PoseFragmentInfoOP;
-        typedef utility::pointer::shared_ptr< PoseFragmentInfo const > PoseFragmentInfoCOP;
+class PoseFragmentInfo;
+typedef utility::pointer::shared_ptr< PoseFragmentInfo > PoseFragmentInfoOP;
+typedef utility::pointer::shared_ptr< PoseFragmentInfo const > PoseFragmentInfoCOP;
 
-				class StartFreshMover;
-        typedef utility::pointer::shared_ptr< StartFreshMover > StartFreshMoverOP;
-        typedef utility::pointer::shared_ptr< StartFreshMover const > StartFreshMoverCOP;
-    }
+class StartFreshMover;
+typedef utility::pointer::shared_ptr< StartFreshMover > StartFreshMoverOP;
+typedef utility::pointer::shared_ptr< StartFreshMover const > StartFreshMoverCOP;
+}
 }
 
 #endif

@@ -32,9 +32,9 @@ using namespace std;
 using numeric::random::random_range;
 
 bool RandomSolutions::pick_and_apply(
-		Pose & pose, SolutionList const & solutions) {
+	Pose & pose, SolutionList const & solutions) {
 
-	if (solutions.empty()) return false;
+	if ( solutions.empty() ) return false;
 
 	Size index = random_range(1, solutions.size());
 	solutions[index]->apply(pose);

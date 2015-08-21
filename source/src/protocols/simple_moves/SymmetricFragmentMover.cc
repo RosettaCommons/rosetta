@@ -47,10 +47,10 @@ SymmetricFragmentMover::get_name() const {
 
 bool
 SymmetricFragmentMover::apply_fragment(
-		core::fragment::Frame const& frame,
-		Size frag_num,
-		core::kinematics::MoveMap const& movemap,
-		core::pose::Pose &pose
+	core::fragment::Frame const& frame,
+	Size frag_num,
+	core::kinematics::MoveMap const& movemap,
+	core::pose::Pose &pose
 ) const {
 	bool success = ClassicFragmentMover::apply_fragment( frame, frag_num, movemap, pose );
 	if ( success ) {

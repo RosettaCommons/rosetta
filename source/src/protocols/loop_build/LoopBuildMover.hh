@@ -16,8 +16,8 @@
 #include <protocols/loop_build/LoopBuildMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-namespace protocols{
-namespace loop_build{
+namespace protocols {
+namespace loop_build {
 
 
 class LoopBuildMover : public moves::Mover {

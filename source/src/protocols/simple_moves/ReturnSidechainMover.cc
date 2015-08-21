@@ -61,33 +61,36 @@ ReturnSidechainMover::apply( core::pose::Pose & pose )
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(remembered_pose_) ) {
 		core::conformation::symmetry::SymmetricConformation & SymmConf (
-				dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 	}
 
-	if( nres != saved_input_pose.total_residue() )
+	if ( nres != saved_input_pose.total_residue() ) {
 		utility_exit_with_message("ReturnSidechainMover used with poses of different length; aborting");
+	}
 
-	for (Size i=start_res_, j=1; i<= end_res_; ++i, ++j ) {
+	for ( Size i=start_res_, j=1; i<= end_res_; ++i, ++j ) {
 		bool copy_this_residue( false );
 
-		if( copy_all_chi_ )
+		if ( copy_all_chi_ ) {
 			copy_this_residue = true;
-		else {
-			if( allow_chi_copy_[i] )
+		} else {
+			if ( allow_chi_copy_[i] ) {
 				copy_this_residue = true;
+			}
 		}
 
-		if (symm_info && !symm_info->bb_is_independent( i )) continue;
-		if (pose.residue_type(i).aa() == core::chemical::aa_vrt) continue;
+		if ( symm_info && !symm_info->bb_is_independent( i ) ) continue;
+		if ( pose.residue_type(i).aa() == core::chemical::aa_vrt ) continue;
 
-		if( copy_this_residue ) {
+		if ( copy_this_residue ) {
 			core::chemical::ResidueType const & rsd_type ( pose.residue(i).type() );
 			core::chemical::ResidueType const & saved_rsd_type( saved_input_pose.residue(j).type() );
 
 			//ensure that there is no sequence change
-			if( rsd_type.name3() != saved_rsd_type.name3() )
+			if ( rsd_type.name3() != saved_rsd_type.name3() ) {
 				utility_exit_with_message("ReturnSidechainMover used with poses of different sequence; aborting");
+			}
 
 			//we need to check variant types in case there are cutpoints for loop modeling or whatever
 			if ( ! variants_match( rsd_type, saved_rsd_type ) ) {
@@ -104,7 +107,7 @@ ReturnSidechainMover::apply( core::pose::Pose & pose )
 				for ( utility::vector1< std::string >::const_iterator it = missing_variant_types.begin(),
 						it_end=missing_variant_types.end(); it != it_end; ++it ) {
 					core::pose::add_variant_type_to_pose_residue( saved_input_pose,
-							core::chemical::ResidueProperties::get_variant_from_string( *it ), i);
+						core::chemical::ResidueProperties::get_variant_from_string( *it ), i);
 				}
 			} //checking variants
 
@@ -163,12 +166,12 @@ ReturnSidechainMover::ReturnSidechainMover(
 
 // copy constructor
 ReturnSidechainMover::ReturnSidechainMover(ReturnSidechainMover const & object_to_copy) :
-		protocols::moves::Mover(object_to_copy),
-		copy_all_chi_(object_to_copy.copy_all_chi_),
-		allow_chi_copy_(object_to_copy.allow_chi_copy_),
-		remembered_pose_(object_to_copy.remembered_pose_),
-		start_res_(object_to_copy.start_res_),
-		end_res_(object_to_copy.end_res_)
+	protocols::moves::Mover(object_to_copy),
+	copy_all_chi_(object_to_copy.copy_all_chi_),
+	allow_chi_copy_(object_to_copy.allow_chi_copy_),
+	remembered_pose_(object_to_copy.remembered_pose_),
+	start_res_(object_to_copy.start_res_),
+	end_res_(object_to_copy.end_res_)
 {}
 
 ReturnSidechainMover::~ReturnSidechainMover() {}

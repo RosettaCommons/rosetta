@@ -28,7 +28,7 @@
 
 
 namespace protocols {
-namespace docking{
+namespace docking {
 
 //DockMinMover
 class DockMinMover : public DockingHighRes {
@@ -44,12 +44,12 @@ public:
 	);
 	//JQX: constructor with mc_ object
 	DockMinMover(
-				 DockJumps const movable_jumps,
-				 core::scoring::ScoreFunctionOP scorefxn,
-				 moves::MonteCarloOP mc
+		DockJumps const movable_jumps,
+		core::scoring::ScoreFunctionOP scorefxn,
+		moves::MonteCarloOP mc
 	);
-	
-	
+
+
 	/// @brief Constructor with seven arguments.  The first is the DockJumps, the second is a movemap, the third is a
 	/// scorefunction, the fourth is the minimization type (as a string), the fifth is the tolerance, the sixth is a boolean
 	/// for the nb_list and the seventh is a MonteCarloOP

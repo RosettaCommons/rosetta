@@ -109,8 +109,8 @@ RotamerSet_::build_rotamers(
 	}
 
 	tt.flush();
-//	tt << "Built " << num_rotamers() << " rotamers for residue " << resid() << " " << pose.residue(resid()).name() << std::endl;
-//	tt << *this << std::endl;
+	// tt << "Built " << num_rotamers() << " rotamers for residue " << resid() << " " << pose.residue(resid()).name() << std::endl;
+	// tt << *this << std::endl;
 }
 
 void
@@ -212,13 +212,13 @@ RotamerSet_::build_rotamers_for_concrete_virt(
 
 void
 RotamerSet_::build_rotamers_for_concrete(
-		pose::Pose const & pose,
-		scoring::ScoreFunction const & scorefxn,
-		task::PackerTask const & task,
-		chemical::ResidueTypeCOP concrete_residue,
-		conformation::Residue const & existing_residue,
-		graph::GraphCOP packer_neighbor_graph,
-		bool use_neighbor_context)
+	pose::Pose const & pose,
+	scoring::ScoreFunction const & scorefxn,
+	task::PackerTask const & task,
+	chemical::ResidueTypeCOP concrete_residue,
+	conformation::Residue const & existing_residue,
+	graph::GraphCOP packer_neighbor_graph,
+	bool use_neighbor_context)
 {
 	using namespace conformation;
 	using namespace pack::task;
@@ -227,8 +227,8 @@ RotamerSet_::build_rotamers_for_concrete(
 
 	if ( task.residue_task( resid() ).optimize_h() ) {
 		build_optimize_H_rotamers( pose, task, concrete_residue, existing_residue, packer_neighbor_graph );
-	// The behavior depends on the residue type.  This should be refactored -- at least into several separate methods
-	// that this one switches between....
+		// The behavior depends on the residue type.  This should be refactored -- at least into several separate methods
+		// that this one switches between....
 	} else if ( concrete_residue->is_DNA() ) { // DNA /////////////////////////////////////////////////////////////////
 		utility::vector1< ResidueOP > new_rotamers;
 
@@ -256,20 +256,20 @@ RotamerSet_::build_rotamers_for_concrete(
 			push_back_rotamer( new_rotamers[ii] );
 		}
 
-	} else if (concrete_residue->is_carbohydrate()) { // Carbohydrates ////////////////////////////////////////////////
+	} else if ( concrete_residue->is_carbohydrate() ) { // Carbohydrates ////////////////////////////////////////////////
 		// For now, rotamer bins are stored in the params files themselves.  This code will generate all the rotamers
 		// from the torsion angles listed in the params files.  (The params files do not contain PROTON_CHI records and
 		// use CHI_ROTAMER records exclusively.)  All of this will likely change in the future.
 
 		tt.Warning << "Residue " << resid() <<
-				" is a carbohydrate; rotamers for carbohydrates are not yet fully implemented." << std::endl;
+			" is a carbohydrate; rotamers for carbohydrates are not yet fully implemented." << std::endl;
 
 		utility::vector1<ResidueOP> new_rotamers;
 
 		build_rotamers_from_rotamer_bins(existing_residue, new_rotamers);
 
 		// Add current rotamer, if applicable.
-		if (task.include_current(resid()) && existing_residue.name() == concrete_residue->name()) {
+		if ( task.include_current(resid()) && existing_residue.name() == concrete_residue->name() ) {
 			ResidueOP rot = existing_residue.create_rotamer();
 			new_rotamers.push_back(rot);
 			id_for_current_rotamer_ = new_rotamers.size();
@@ -277,7 +277,7 @@ RotamerSet_::build_rotamers_for_concrete(
 
 		// Push back rotamers.
 		Size n_rotamers = new_rotamers.size();
-		for (uint i=1; i <= n_rotamers; ++i) {
+		for ( uint i=1; i <= n_rotamers; ++i ) {
 			push_back_rotamer(new_rotamers[i]);
 		}
 
@@ -315,31 +315,31 @@ RotamerSet_::build_rotamers_for_concrete(
 		utility::vector1< ResidueOP > suggested_rotamers;
 		rotamers::SingleResidueRotamerLibraryCOP rotlib = rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( *concrete_residue ); //For D-amino acids, returns the rotamer library for the corresponding L-amino acid
 
-		if (rotlib) {
+		if ( rotlib ) {
 			/// DOUG DOUG DOUG DEBUG OUTPUT
 			//std::cout << "EXTRA_CHI_STEPS::build_rotamers_for_concrete\t" << extra_chi_steps.size() << std::endl;
 			//for ( Size i(1); i <= extra_chi_steps.size(); ++i ) std::cout << extra_chi_steps[i].size() << std::endl;
 
 			//for ( Size i(1); i <= extra_chi_steps.size(); ++i ) {
-			//	for ( Size j(1); j <= extra_chi_steps[i].size(); ++j ) {
-			//		std::cout << i << "/" << j << ":\t" << extra_chi_steps[i][j] << "\t" << std::flush;
-			//	}
-			//	std::cout << std::endl;
+			// for ( Size j(1); j <= extra_chi_steps[i].size(); ++j ) {
+			//  std::cout << i << "/" << j << ":\t" << extra_chi_steps[i][j] << "\t" << std::flush;
+			// }
+			// std::cout << std::endl;
 			//}
 			//std::cout << std::endl;
 
 			rotlib->fill_rotamer_vector( pose, scorefxn, task, packer_neighbor_graph, concrete_residue, existing_residue, extra_chi_steps, buried, suggested_rotamers);
-			if(core::chemical::is_canonical_D_aa( existing_residue.aa() ) && suggested_rotamers.size() > 0 ) { //If this is a D-amino acid, flip all the chi values in the suggested_rotamers vector
-				for(core::Size i=1; i<=suggested_rotamers.size(); i++) {
-					if(suggested_rotamers[i]->nchi() > 0) {
-						for(core::Size j=1; j<=suggested_rotamers[i]->nchi(); j++) {
+			if ( core::chemical::is_canonical_D_aa( existing_residue.aa() ) && suggested_rotamers.size() > 0 ) { //If this is a D-amino acid, flip all the chi values in the suggested_rotamers vector
+				for ( core::Size i=1; i<=suggested_rotamers.size(); i++ ) {
+					if ( suggested_rotamers[i]->nchi() > 0 ) {
+						for ( core::Size j=1; j<=suggested_rotamers[i]->nchi(); j++ ) {
 							suggested_rotamers[i]->set_chi(j, -1.0*suggested_rotamers[i]->chi(j));
 						}
 					}
 				}
 			}
 		} else {
-			if( concrete_residue->aa() != core::chemical::aa_gly && concrete_residue->aa() != core::chemical::aa_ala ) {
+			if ( concrete_residue->aa() != core::chemical::aa_gly && concrete_residue->aa() != core::chemical::aa_ala ) {
 				// Suppress printing of info message in common known null-return cases
 				tt << "Using simple Rotamer generation logic for " << concrete_residue->name() << std::endl;
 			}
@@ -362,7 +362,7 @@ RotamerSet_::build_rotamers_for_concrete(
 
 		// Do we include the current residue
 		core::Size curres = rotlib->current_rotamer( suggested_rotamers, resid(), task, concrete_residue, existing_residue );
-		if( curres ) {
+		if ( curres ) {
 			curres += num_rotamers();
 		}
 
@@ -371,7 +371,7 @@ RotamerSet_::build_rotamers_for_concrete(
 
 		// We assume here that all of the rotamers in the suggested_rotamers list are of the same type and group.
 		push_back_rotamers( suggested_rotamers );
-		if( curres ) {
+		if ( curres ) {
 			id_for_current_rotamer_ = curres;
 		}
 		push_back_rotamers( virt_sidechains );
@@ -405,7 +405,7 @@ RotamerSet_::build_optimize_H_rotamers(
 
 
 	if ( task.residue_task( resid() ).flip_HNQ() && (
-		  concrete_residue->aa() == aa_his ||
+			concrete_residue->aa() == aa_his ||
 			concrete_residue->aa() == aa_asn ||
 			concrete_residue->aa() == aa_gln ) ) {
 
@@ -442,15 +442,15 @@ RotamerSet_::build_optimize_H_rotamers(
 			ResidueOP flipped_rotamer = existing_residue.clone();
 			Size chi_to_flip( 0 );
 			switch ( concrete_residue->aa() ) {
-				case aa_his :
-				case aa_asn :
-					chi_to_flip = 2;
+			case aa_his :
+			case aa_asn :
+				chi_to_flip = 2;
 				break;
-				case aa_gln :
-					chi_to_flip = 3;
+			case aa_gln :
+				chi_to_flip = 3;
 				break;
-				default:
-					utility_exit_with_message("Illegal case statement option.");
+			default :
+				utility_exit_with_message("Illegal case statement option.");
 				break;
 			}
 
@@ -462,8 +462,8 @@ RotamerSet_::build_optimize_H_rotamers(
 		}
 
 	} else if ( concrete_residue->is_NA() ) {
-			/// merely clone the input residue
-			push_back_rotamer( existing_residue.clone() );
+		/// merely clone the input residue
+		push_back_rotamer( existing_residue.clone() );
 	} else if ( concrete_residue->name() != pose.residue( resid() ).name() ) {
 		// in particular, HIS can be protonated on either ND1 or NE2
 		// Note: there is an assumption here that there are no proton chi
@@ -500,9 +500,9 @@ RotamerSet_::build_optimize_H_rotamers(
 			for ( Size ii = 1; ii <= concrete_residue->n_proton_chi(); ++ii ) {
 				pack::dunbrack::expand_proton_chi(
 					task.residue_task( resid() ).extrachi_sample_level(
-						true, // ignore buriedness when adding extra proton chi rotamers
-						concrete_residue->proton_chi_2_chi( ii ),
-						*concrete_residue ),
+					true, // ignore buriedness when adding extra proton chi rotamers
+					concrete_residue->proton_chi_2_chi( ii ),
+					*concrete_residue ),
 					concrete_residue,
 					ii, proton_chi_chisets);
 			}
@@ -543,64 +543,64 @@ RotamerSet_::set_extra_samples(
 	using namespace task;
 	bool buried = ( num_10A_neighbors >= int(task.residue_task( resid()).extrachi_cutoff()) );
 	switch ( task.residue_task( resid() ).extrachi_sample_level( buried, chi, *concrete_residue ) ) {
-		case NO_EXTRA_CHI_SAMPLES :
+	case NO_EXTRA_CHI_SAMPLES :
 		break;
-		case EX_ONE_STDDEV :
-			extra_chi_steps.push_back(1);
-			extra_chi_steps.push_back(-1);
+	case EX_ONE_STDDEV :
+		extra_chi_steps.push_back(1);
+		extra_chi_steps.push_back(-1);
 		break;
-		case EX_ONE_HALF_STEP_STDDEV :
-			extra_chi_steps.push_back(0.5);
-			extra_chi_steps.push_back(-0.5);
+	case EX_ONE_HALF_STEP_STDDEV :
+		extra_chi_steps.push_back(0.5);
+		extra_chi_steps.push_back(-0.5);
 		break;
-		case EX_TWO_FULL_STEP_STDDEVS :
-			extra_chi_steps.push_back(1);
-			extra_chi_steps.push_back(2);
-			extra_chi_steps.push_back(-1);
-			extra_chi_steps.push_back(-2);
+	case EX_TWO_FULL_STEP_STDDEVS :
+		extra_chi_steps.push_back(1);
+		extra_chi_steps.push_back(2);
+		extra_chi_steps.push_back(-1);
+		extra_chi_steps.push_back(-2);
 		break;
-		case EX_TWO_HALF_STEP_STDDEVS :
-			extra_chi_steps.push_back(0.5);
-			extra_chi_steps.push_back(1);
-			extra_chi_steps.push_back(-0.5);
-			extra_chi_steps.push_back(-1);
+	case EX_TWO_HALF_STEP_STDDEVS :
+		extra_chi_steps.push_back(0.5);
+		extra_chi_steps.push_back(1);
+		extra_chi_steps.push_back(-0.5);
+		extra_chi_steps.push_back(-1);
 		break;
-		case EX_FOUR_HALF_STEP_STDDEVS :
-			extra_chi_steps.push_back(0.5);
-			extra_chi_steps.push_back(1);
-			extra_chi_steps.push_back(1.5);
-			extra_chi_steps.push_back(2.0);
-			extra_chi_steps.push_back(-0.5);
-			extra_chi_steps.push_back(-1);
-			extra_chi_steps.push_back(-1.5);
-			extra_chi_steps.push_back(-2);
+	case EX_FOUR_HALF_STEP_STDDEVS :
+		extra_chi_steps.push_back(0.5);
+		extra_chi_steps.push_back(1);
+		extra_chi_steps.push_back(1.5);
+		extra_chi_steps.push_back(2.0);
+		extra_chi_steps.push_back(-0.5);
+		extra_chi_steps.push_back(-1);
+		extra_chi_steps.push_back(-1.5);
+		extra_chi_steps.push_back(-2);
 		break;
-		case EX_THREE_THIRD_STEP_STDDEVS :
-			extra_chi_steps.push_back(0.33);
-			extra_chi_steps.push_back(0.67);
-			extra_chi_steps.push_back(1);
-			extra_chi_steps.push_back(-0.33);
-			extra_chi_steps.push_back(-0.67);
-			extra_chi_steps.push_back(-1);
+	case EX_THREE_THIRD_STEP_STDDEVS :
+		extra_chi_steps.push_back(0.33);
+		extra_chi_steps.push_back(0.67);
+		extra_chi_steps.push_back(1);
+		extra_chi_steps.push_back(-0.33);
+		extra_chi_steps.push_back(-0.67);
+		extra_chi_steps.push_back(-1);
 		break;
-		case EX_SIX_QUARTER_STEP_STDDEVS :
-			extra_chi_steps.push_back(0.25);
-			extra_chi_steps.push_back(0.5);
-			extra_chi_steps.push_back(0.75);
-			extra_chi_steps.push_back(1);
-			extra_chi_steps.push_back(1.25);
-			extra_chi_steps.push_back(1.5);
-			extra_chi_steps.push_back(-0.25);
-			extra_chi_steps.push_back(-0.5);
-			extra_chi_steps.push_back(-0.75);
-			extra_chi_steps.push_back(-1);
-			extra_chi_steps.push_back(-1.25);
-			extra_chi_steps.push_back(-1.5);
+	case EX_SIX_QUARTER_STEP_STDDEVS :
+		extra_chi_steps.push_back(0.25);
+		extra_chi_steps.push_back(0.5);
+		extra_chi_steps.push_back(0.75);
+		extra_chi_steps.push_back(1);
+		extra_chi_steps.push_back(1.25);
+		extra_chi_steps.push_back(1.5);
+		extra_chi_steps.push_back(-0.25);
+		extra_chi_steps.push_back(-0.5);
+		extra_chi_steps.push_back(-0.75);
+		extra_chi_steps.push_back(-1);
+		extra_chi_steps.push_back(-1.25);
+		extra_chi_steps.push_back(-1.5);
 		break;
-		case ExtraRotSampleCardinality :
-		default :
-			std::cerr << "Error in RotamerSet_::set_extrachi_samples, invalid ExtraChiSample type" << '\n';
-			utility_exit();
+	case ExtraRotSampleCardinality :
+	default :
+		std::cerr << "Error in RotamerSet_::set_extrachi_samples, invalid ExtraChiSample type" << '\n';
+		utility_exit();
 		break;
 	}
 }
@@ -730,7 +730,7 @@ RotamerSet_::compute_one_and_two_body_energies(
 		sf.eval_cd_1b( *rotamers_[ ii ], pose, emap1b );
 		one_body_energies[ ii ] += static_cast< core::PackerEnergy > (sf.weights().dot( emap1b )); // precision loss here.
 		two_body_energies[ ii ].resize(num_packable_neighbors);
-		for (core::Size jj = 1; jj <= packable_neighbors.size(); jj++) {
+		for ( core::Size jj = 1; jj <= packable_neighbors.size(); jj++ ) {
 			Residue const & neighbor( pose.residue( packable_neighbors[jj] ) );
 			EnergyMap emap2b;
 			sf.eval_ci_2b( neighbor, *rotamers_[ ii ], pose, emap2b );
@@ -760,7 +760,7 @@ RotamerSet_::compute_one_and_two_body_energies(
 
 			//debug_assert( neighbor_id != theresid );
 			//if ( task.pack_residue( neighbor_id ) ) continue;
-			if (theresid == neighbor_id) continue;
+			if ( theresid == neighbor_id ) continue;
 
 			(*lr_iter)->evaluate_rotamer_background_energies(
 				*this, pose.residue( neighbor_id ), pose, sf,
@@ -863,12 +863,12 @@ RotamerSet_::compute_one_body_energy_maps(
 
 		// Potentially O(N^2) operation...
 		for ( ResidueNeighborConstIteratorOP rni = lrec->const_neighbor_iterator_begin( theresid ),
-					rniend = lrec->const_neighbor_iterator_end( theresid );
-					(*rni) != (*rniend); ++(*rni) ) {
+				rniend = lrec->const_neighbor_iterator_end( theresid );
+				(*rni) != (*rniend); ++(*rni) ) {
 
 			Size const neighbor_id = rni->neighbor_id();
 
-			if( theresid == neighbor_id ) continue;
+			if ( theresid == neighbor_id ) continue;
 
 			(*lr_iter)->evaluate_rotamer_background_energy_maps(
 				*this, pose.residue( neighbor_id ), pose, sf, sf.weights(), energies );
@@ -1062,11 +1062,11 @@ RotamerSet_::bump_check(
 /// and also in optimizeH.
 void
 RotamerSet_::build_tp3_water_rotamers(
-		pose::Pose const & pose,
-		task::PackerTask const & task,
-		chemical::ResidueTypeCOP concrete_residue,
-		conformation::Residue const & existing_residue,
-		graph::GraphCOP packer_neighbor_graph
+	pose::Pose const & pose,
+	task::PackerTask const & task,
+	chemical::ResidueTypeCOP concrete_residue,
+	conformation::Residue const & existing_residue,
+	graph::GraphCOP packer_neighbor_graph
 )
 {
 
@@ -1101,10 +1101,10 @@ RotamerSet_::prepare_for_new_residue_type( core::chemical::ResidueType const & r
 		return;
 	}
 
-	if ( different_restype( rotamers_[ num_rotamers() ]->type(), restype )) {
+	if ( different_restype( rotamers_[ num_rotamers() ]->type(), restype ) ) {
 		new_residue_type();
 	}
-	if (  different_resgroup( rotamers_[ num_rotamers() ]->type(), restype )) {
+	if (  different_resgroup( rotamers_[ num_rotamers() ]->type(), restype ) ) {
 		new_residue_group();
 	}
 }
@@ -1309,22 +1309,22 @@ void
 RotamerSet_::show( std::ostream & out ) const {
 	out << "RotamerSet for residue " << resid() << "; " << num_rotamers() << " rotamers for "
 		<< get_n_residue_types() << " types in " << get_n_residue_groups() << " groups. " << std::endl;
-	for( core::Size ii(1); ii <= rotamers_.size(); ++ii) {
+	for ( core::Size ii(1); ii <= rotamers_.size(); ++ii ) {
 		Residue const & rot( *rotamers_[ii] );
 		out << "Rotamer " << ii << ": " << rot.name() << " ";
 		utility::vector1< Real > const & mainchains( rot.mainchain_torsions() );
-		for( core::Size jj(1); jj <= mainchains.size(); ++jj ) {
+		for ( core::Size jj(1); jj <= mainchains.size(); ++jj ) {
 			out << mainchains[jj] << " ";
 		}
 		out << "| ";
 		utility::vector1< Real > const & chis( rot.chi() );
-		for( core::Size jj(1); jj <= chis.size(); ++jj ) {
+		for ( core::Size jj(1); jj <= chis.size(); ++jj ) {
 			out << chis[jj] << " ";
 		}
 		utility::vector1< Real > const & nus( rot.nus() );
-		if( nus.size() ) {
+		if ( nus.size() ) {
 			out << "| ";
-			for( core::Size jj(1); jj <= nus.size(); ++jj ) {
+			for ( core::Size jj(1); jj <= nus.size(); ++jj ) {
 				out << nus[jj] << " ";
 			}
 		}

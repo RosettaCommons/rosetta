@@ -47,16 +47,16 @@ public:
 
 	virtual ~PoissonBoltzmannPotential(); // auto-removing definition from header{}
 
-	core::Real get_potential(ObjexxFCL::FArray3D< core::Real > const & potential, 
-													 numeric::xyzVector<core::Real> const & cartX) const;
+	core::Real get_potential(ObjexxFCL::FArray3D< core::Real > const & potential,
+		numeric::xyzVector<core::Real> const & cartX) const;
 	void
 	eval_PB_energy_residue(
-	   core::conformation::Residue const & rsd,
-	   Real & PB_energy_residue,
-	   Real & PB_energy_backbone,
-	   Real & PB_energy_sidechain,
-	   Real const & PB_burial_weight
-	   ) const;
+		core::conformation::Residue const & rsd,
+		Real & PB_energy_residue,
+		Real & PB_energy_backbone,
+		Real & PB_energy_sidechain,
+		Real const & PB_burial_weight
+	) const;
 
 	//////////////////////////////////
 	//////////////////////////////////
@@ -77,9 +77,9 @@ public:
 	}
 
 	bool out_of_bounds(numeric::xyzVector< core::Real > const cartX) const {
-		for (core::Size i=0;i<3;++i) {
-			if (cartX[i] < lower_bound()[i]) return true;
-			if (cartX[i] > upper_bound()[i]) return true;
+		for ( core::Size i=0; i<3; ++i ) {
+			if ( cartX[i] < lower_bound()[i] ) return true;
+			if ( cartX[i] > upper_bound()[i] ) return true;
 		}
 		return false;
 	}
@@ -88,9 +88,9 @@ public:
 	/// @param pose  The pose
 	/// @param state_tag Arbitrary string for generating APBS files.  e.g. The current energy state.
 	/// @param is_residue_charged_by_name Which residues are charged?  The key is the residue name.
-	void solve_pb( core::pose::Pose const & pose, 
-								 std::string const & state_tag,
-								 std::map<std::string, bool> const & is_residue_charged_by_name );
+	void solve_pb( core::pose::Pose const & pose,
+		std::string const & state_tag,
+		std::map<std::string, bool> const & is_residue_charged_by_name );
 private:
 	numeric::xyzMatrix< core::Real > i2c_, c2i_;
 	numeric::xyzVector< core::Real > lower_bound_;
@@ -107,7 +107,7 @@ private:
 
 	/// Prepare ABPS - generate .in and .pqr
 	void write_config (
-			core::pose::Pose const & pose) const;
+		core::pose::Pose const & pose) const;
 
 	/// Read & load the APBS results
 #ifdef LINK_APBS_LIB
@@ -119,7 +119,7 @@ private:
 
 	/// Write out .pqr
 	void write_pqr( core::pose::Pose const & pose,
-									std::map<std::string, bool> const & is_residue_charged_by_name) const;
+		std::map<std::string, bool> const & is_residue_charged_by_name) const;
 
 };
 

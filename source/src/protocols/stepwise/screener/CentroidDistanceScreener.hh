@@ -27,43 +27,43 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class CentroidDistanceScreener: public StepWiseScreener {
+class CentroidDistanceScreener: public StepWiseScreener {
 
-	public:
+public:
 
-		//constructor
-		CentroidDistanceScreener(  pose::Pose & screening_pose,
-															 Size const moving_res,
-															 Vector const & reference_centroid,
-															 core::Real const max_distance_squared );
-		//destructor
-		~CentroidDistanceScreener();
+	//constructor
+	CentroidDistanceScreener(  pose::Pose & screening_pose,
+		Size const moving_res,
+		Vector const & reference_centroid,
+		core::Real const max_distance_squared );
+	//destructor
+	~CentroidDistanceScreener();
 
-	public:
+public:
 
-		virtual
-		bool check_screen();
+	virtual
+	bool check_screen();
 
-		virtual
-		std::string
-		name() const { return "CentroidDistanceScreener"; }
+	virtual
+	std::string
+	name() const { return "CentroidDistanceScreener"; }
 
-		virtual
-		StepWiseScreenerType
-		type() const { return CENTROID_DISTANCE; }
+	virtual
+	StepWiseScreenerType
+	type() const { return CENTROID_DISTANCE; }
 
-		virtual
-		void
-		fast_forward( sampler::StepWiseSamplerBaseOP sampler );
+	virtual
+	void
+	fast_forward( sampler::StepWiseSamplerBaseOP sampler );
 
-	private:
+private:
 
-		pose::Pose & screening_pose_;
-		Size const moving_res_;
-		Vector const & reference_centroid_;
-		core::Real const max_distance_squared_;
+	pose::Pose & screening_pose_;
+	Size const moving_res_;
+	Vector const & reference_centroid_;
+	core::Real const max_distance_squared_;
 
-	};
+};
 
 } //screener
 } //stepwise

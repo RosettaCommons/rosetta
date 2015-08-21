@@ -86,38 +86,38 @@ int main( int argc, char * argv [] ) {
 
 	try{
 
-	NEW_OPT( eggshell1_fname, "eggshell1_fname", "fname" );
-	NEW_OPT( eggshell2_fname, "eggshell2_fname", "fname" );
+		NEW_OPT( eggshell1_fname, "eggshell1_fname", "fname" );
+		NEW_OPT( eggshell2_fname, "eggshell2_fname", "fname" );
 
-	//initializes Rosetta functions
-	devel::init(argc, argv);
+		//initializes Rosetta functions
+		devel::init(argc, argv);
 
-	std::string const fname1 ( option[ eggshell1_fname ] );
-	std::string const fname2 ( option[ eggshell2_fname ] );
+		std::string const fname1 ( option[ eggshell1_fname ] );
+		std::string const fname2 ( option[ eggshell2_fname ] );
 
-	TR << "Starting eggshell compare" << std::endl;
+		TR << "Starting eggshell compare" << std::endl;
 
-	protocols::pockets::EggshellGrid eggshell1( fname1 );
-	//	eggshell1.load_eggshell( fname1 ) ;
-	protocols::pockets::EggshellGrid eggshell2( fname2 );
-	//	eggshell2.load_eggshell( fname2 ) ;
+		protocols::pockets::EggshellGrid eggshell1( fname1 );
+		// eggshell1.load_eggshell( fname1 ) ;
+		protocols::pockets::EggshellGrid eggshell2( fname2 );
+		// eggshell2.load_eggshell( fname2 ) ;
 
-	// call function to compare template and comparison EggshellGrids, report score
-	core::Real d1 = eggshell1.get_eggshell_distance( eggshell2 );
-	TR << "Distance is: " << d1 << std::endl;
+		// call function to compare template and comparison EggshellGrids, report score
+		core::Real d1 = eggshell1.get_eggshell_distance( eggshell2 );
+		TR << "Distance is: " << d1 << std::endl;
 
-	//utility::io::ozstream fout;
-	//fout.open("distance.txt", std::ios::out);
-	//fout << d1 << std::endl;
-	//fout.close();
-	//		fout.clear();
+		//utility::io::ozstream fout;
+		//fout.open("distance.txt", std::ios::out);
+		//fout << d1 << std::endl;
+		//fout.close();
+		//  fout.clear();
 
-	TR << "Done!" << std::endl;
+		TR << "Done!" << std::endl;
 
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-	return -1;
-    }
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 	return 0;
 
 }

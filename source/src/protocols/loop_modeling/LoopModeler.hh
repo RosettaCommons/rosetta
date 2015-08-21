@@ -34,21 +34,21 @@ namespace protocols {
 namespace loop_modeling {
 
 /// @brief Attempt to find the native structure for one or more loops.
-/// @details The typical loop modeling simulation in rosetta has three steps: 
-/// loop building, centroid refinement, and fullatom refinement.  LoopModeler 
-/// carries out all three of these steps and allows each to to be enabled, 
-/// disabled, and otherwise configured.  By default, nothing needs to be 
+/// @details The typical loop modeling simulation in rosetta has three steps:
+/// loop building, centroid refinement, and fullatom refinement.  LoopModeler
+/// carries out all three of these steps and allows each to to be enabled,
+/// disabled, and otherwise configured.  By default, nothing needs to be
 /// specified and a standard loop modeling simulation will be performed.
 ///
-/// Note that this class is a fairly thin wrapper around other LoopMovers.  
-/// LoopBuilder and LoopProtocol in particular do all the heavy lifting.  The  
-/// main role of this class is actually to provide a reasonable set of default 
-/// values, some nice tracer output, and a sophisticated parse_my_tag() method 
+/// Note that this class is a fairly thin wrapper around other LoopMovers.
+/// LoopBuilder and LoopProtocol in particular do all the heavy lifting.  The
+/// main role of this class is actually to provide a reasonable set of default
+/// values, some nice tracer output, and a sophisticated parse_my_tag() method
 /// for use with rosetta scripts.
-/// 
-/// Note that LoopModeler doesn't implement a proper copy constructor.  (In 
-/// fact, no LoopMover does.)  This means that if a simulation breaks and 
-/// nstruct > 1, the remaining simulations will probably break for weird 
+///
+/// Note that LoopModeler doesn't implement a proper copy constructor.  (In
+/// fact, no LoopMover does.)  This means that if a simulation breaks and
+/// nstruct > 1, the remaining simulations will probably break for weird
 /// reasons.
 class LoopModeler : public LoopMover {
 
@@ -68,11 +68,11 @@ public:
 
 	/// @copydoc LoopMover::parse_my_tag
 	void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & data,
-			protocols::filters::Filters_map const & filters,
-			protocols::moves::Movers_map const & movers,
-			Pose const & pose);
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		Pose const & pose);
 
 protected:
 
@@ -87,7 +87,7 @@ public:
 	/// @brief Setup the LoopModeler using the "next-gen KIC" configuration.
 	void setup_kic_config();
 
-	/// @brief Setup the LoopModeler using the "KIC with fragments" 
+	/// @brief Setup the LoopModeler using the "KIC with fragments"
 	/// configuration.
 	void setup_kic_with_fragments_config();
 
@@ -125,7 +125,7 @@ public:
 	/// @brief Get the task factory to be used on the next call to apply().
 	/// @details If no task factory has been set, the fallback will be returned.
 	core::pack::task::TaskFactoryOP get_task_factory(
-			core::pack::task::TaskFactoryOP fallback);
+		core::pack::task::TaskFactoryOP fallback);
 
 	/// @brief Set the task factory to be used on the next call to apply().
 	void set_task_factory(core::pack::task::TaskFactoryOP task_factory);
@@ -135,7 +135,7 @@ public:
 
 	/// @brief Set the score function to be used for the centroid stage.
 	void set_cen_scorefxn(core::scoring::ScoreFunctionOP scorefxn);
-	
+
 
 private:
 

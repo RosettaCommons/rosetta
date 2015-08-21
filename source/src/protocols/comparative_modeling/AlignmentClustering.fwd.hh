@@ -20,13 +20,13 @@
 namespace protocols {
 namespace comparative_modeling {
 
-  class AlignmentCluster;
-  typedef utility::pointer::shared_ptr< AlignmentCluster >  AlignmentClusterOP;
-  typedef utility::pointer::shared_ptr< AlignmentCluster const >  AlignmentClusterCOP;
+class AlignmentCluster;
+typedef utility::pointer::shared_ptr< AlignmentCluster >  AlignmentClusterOP;
+typedef utility::pointer::shared_ptr< AlignmentCluster const >  AlignmentClusterCOP;
 
-  class AlignmentClustering;
-  typedef utility::pointer::shared_ptr< AlignmentClustering >  AlignmentClusteringOP;
-  typedef utility::pointer::shared_ptr< AlignmentClustering const >  AlignmentClusteringCOP;
+class AlignmentClustering;
+typedef utility::pointer::shared_ptr< AlignmentClustering >  AlignmentClusteringOP;
+typedef utility::pointer::shared_ptr< AlignmentClustering const >  AlignmentClusteringCOP;
 
 } // comparative_modeling
 } // protocols

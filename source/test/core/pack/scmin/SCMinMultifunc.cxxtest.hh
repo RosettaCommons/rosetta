@@ -158,7 +158,7 @@ public:
 		//std::cout << "chi: ";
 		for ( Size ii = 1; ii <= 3; ++ii ) {
 			chi[ ii ] = collection->residue_atomtree_collection( 7 ).active_residue().chi( ii );
-		//	std::cout << chi[ ii ] << " ";
+			// std::cout << chi[ ii ] << " ";
 		}
 		//std::cout << std::endl;
 		Real score = scmf( chi );
@@ -167,7 +167,7 @@ public:
 		scmf.dfunc( chi, dEdchi );
 		//std::cout << "dEdchi: ";
 		//for ( Size ii = 1; ii <= 3; ++ii ) {
-		//	std::cout << dEdchi[ ii ] << " ";
+		// std::cout << dEdchi[ ii ] << " ";
 		//}
 		//std::cout << std::endl;
 		Real step = 0.1;
@@ -175,7 +175,7 @@ public:
 		//std::cout << "chi_stepped: ";
 		for ( Size ii = 1; ii <= 3; ++ii ) {
 			chi_step[ ii ] = chi[ ii ] - step * dEdchi[ ii ];
-		//	std::cout << chi_step[ ii ] << " ";
+			// std::cout << chi_step[ ii ] << " ";
 		}
 		//std::cout << std::endl;
 		Real score2 = scmf( chi_step );
@@ -183,8 +183,8 @@ public:
 		//std::cout << "score2: " << score2 << std::endl;
 		//std::cout << "chi2: ";
 		//for ( Size ii = 1; ii <= 3; ++ii ) {
-		//	chi[ ii ] = collection->residue_atomtree_collection( 7 ).active_residue().chi( ii );
-		//	std::cout << chi[ ii ] << " ";
+		// chi[ ii ] = collection->residue_atomtree_collection( 7 ).active_residue().chi( ii );
+		// std::cout << chi[ ii ] << " ";
 		//}
 		//std::cout << std::endl;
 	}

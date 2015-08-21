@@ -36,16 +36,16 @@ public:
 
 	/// @brief populate the grid with values based on a passed pose
 	virtual void refresh(
-			core::pose::Pose const & /*pose*/,
-			core::Vector const & /*center*/,
-			core::Size const & /*ligand_chain_id_to_exclude*/)
+		core::pose::Pose const & /*pose*/,
+		core::Vector const & /*center*/,
+		core::Size const & /*ligand_chain_id_to_exclude*/)
 	{}
 
 	/// @brief populate the grid with values based on a passed pose
 	virtual void refresh(
-			core::pose::Pose const & /*pose*/,
-			core::Vector const & /*center*/,
-			utility::vector1<core::Size> /*ligand_chain_ids_to_exclude*/)
+		core::pose::Pose const & /*pose*/,
+		core::Vector const & /*center*/,
+		utility::vector1<core::Size> /*ligand_chain_ids_to_exclude*/)
 	{}
 
 	/// @brief populate the grid with values based on a passed pose

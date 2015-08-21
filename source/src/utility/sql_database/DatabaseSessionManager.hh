@@ -39,7 +39,7 @@ namespace utility {
 namespace sql_database {
 
 //TODO alexford
-// Need to refactor this class to move data members into correct members of 
+// Need to refactor this class to move data members into correct members of
 // cppdb::session. Specifically, should generate a connection specific information
 // class to store connection metadata.
 

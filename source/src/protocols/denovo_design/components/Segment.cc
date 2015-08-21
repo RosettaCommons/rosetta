@@ -54,17 +54,17 @@ Segment::Segment() :
 }
 
 Segment::Segment(
-		core::Size const pose_length_val,
-		core::Size const local_saferes,
-		core::Size const local_cutpoint,
-		core::Size const movable_group_val,
-		bool const is_loop_val,
-		bool const start_inc,
-		bool const stop_inc,
-		std::string const & lower,
-		std::string const & upper,
-		std::string const & ss_val,
-		utility::vector1< std::string > const & abego_val ) :
+	core::Size const pose_length_val,
+	core::Size const local_saferes,
+	core::Size const local_cutpoint,
+	core::Size const movable_group_val,
+	bool const is_loop_val,
+	bool const start_inc,
+	bool const stop_inc,
+	std::string const & lower,
+	std::string const & upper,
+	std::string const & ss_val,
+	utility::vector1< std::string > const & abego_val ) :
 	movable_group( movable_group_val ),
 	is_loop( is_loop_val ),
 	posestart_( 1 ),

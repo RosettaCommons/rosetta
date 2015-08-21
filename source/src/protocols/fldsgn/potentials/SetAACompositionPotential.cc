@@ -109,19 +109,19 @@ SetAACompositionPotential::fresh_instance() const
 bool
 SetAACompositionPotential::set_parameters( String const & file )
 {
-  utility::io::izstream data( file );
-  if ( !data ) {
-    TR.Error << "can not open file " << file << std::endl;
-    return false;
-  }
+	utility::io::izstream data( file );
+	if ( !data ) {
+		TR.Error << "can not open file " << file << std::endl;
+		return false;
+	}
 
 	String line;
-  Size linecount( 0 );
-  while( getline( data, line ) ) {
+	Size linecount( 0 );
+	while ( getline( data, line ) ) {
 
-    linecount++;
-    utility::vector1< String > tokens ( utility::split( line ) );
-    if( tokens[1][0] == '#' ) continue;  		// skip reading line that is commented out
+		linecount++;
+		utility::vector1< String > tokens ( utility::split( line ) );
+		if ( tokens[1][0] == '#' ) continue;    // skip reading line that is commented out
 		runtime_assert( tokens.size() == 3 );
 
 		core::chemical::AA const aa = core::chemical::aa_from_name( tokens[1] );
@@ -139,7 +139,7 @@ SetAACompositionPotential::set_parameters( String const & file )
 
 	Real checkL( 0.0 ), checkU( 0.0 );
 	std::map< AA, std::pair< Real, Real > >::iterator it = comp_constraint_aas_.begin();
-	while( it != comp_constraint_aas_.end() ) {
+	while ( it != comp_constraint_aas_.end() ) {
 		AA aa( it->first );
 		checkL += comp_constraint_aas_[ aa ].first;
 		checkU += comp_constraint_aas_[ aa ].second;
@@ -158,7 +158,7 @@ SetAACompositionPotential::apply( Pose & )
 {
 	using core::scoring::ScoreType;
 
-	if( loaded_ ) return;
+	if ( loaded_ ) return;
 
 	protocols::fldsgn::potentials::AACompositionEnergy cce( comp_constraint_aas_ );
 
@@ -188,18 +188,18 @@ SetAACompositionPotential::parse_my_tag(
 {
 
 	std::string const file( tag->getOption<String>( "file", "" ) );
-	if( file == "" ){
+	if ( file == "" ) {
 		TR << "No input of file ! " << std::endl;
 		runtime_assert( false );
 	}
 	set_parameters( file );
 
-  weight_ = ( tag->getOption<Real>( "weight", 1.0 ) );
+	weight_ = ( tag->getOption<Real>( "weight", 1.0 ) );
 
 	// set scorefxn
 	String const sfxn ( tag->getOption<String>( "scorefxn", "" ) );
 	sfx_ = data.get_ptr<ScoreFunction>( "scorefxns", sfxn );
-	if( sfxn == "" ) {
+	if ( sfxn == "" ) {
 		TR << "No input of sfxn ! " << std::endl;
 		runtime_assert( false );
 	}

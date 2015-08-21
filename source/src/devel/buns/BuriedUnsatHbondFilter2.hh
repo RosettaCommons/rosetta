@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	devel/buns/BuriedUnsatHbondFilter2.hh
+/// @file devel/buns/BuriedUnsatHbondFilter2.hh
 /// @brief
-/// @author	Kevin Houlihan (khouli@unc.edu)
+/// @author Kevin Houlihan (khouli@unc.edu)
 
 #ifndef INCLUDED_devel_buns_BuriedUnsatHbondFilter2_hh
 #define INCLUDED_devel_buns_BuriedUnsatHbondFilter2_hh

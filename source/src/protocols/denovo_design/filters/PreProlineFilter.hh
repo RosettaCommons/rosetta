@@ -45,11 +45,11 @@ public:
 
 	/// @brief Parses the PreProlineFilter tags
 	void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & data,
-			protocols::filters::Filters_map const &,
-			protocols::moves::Movers_map const &,
-			core::pose::Pose const & );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & );
 
 	/// @brief Return the name of this mover.
 	virtual std::string get_name() const;
@@ -70,12 +70,12 @@ public:
 	void setup_spline();
 
 	core::Real compute_simple(
-			core::pose::Pose const & pose,
-			utility::vector1< bool > const & selection ) const;
+		core::pose::Pose const & pose,
+		utility::vector1< bool > const & selection ) const;
 
 	core::Real compute_spline(
-			core::pose::Pose const & pose,
-			utility::vector1< bool > const & selection ) const;
+		core::pose::Pose const & pose,
+		utility::vector1< bool > const & selection ) const;
 
 private:   // options
 	/// @brief If total calculated filter score is <= theshold_, the filter passes, otherwise it fails.

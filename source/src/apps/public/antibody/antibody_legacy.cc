@@ -36,16 +36,16 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	using namespace protocols;
-	using namespace protocols::moves;
+		using namespace protocols;
+		using namespace protocols::moves;
 
-	// initialize core
-	devel::init( argc, argv );
+		// initialize core
+		devel::init( argc, argv );
 
-	MoverOP RosettaAntibody( new antibody_legacy::AntibodyModeler( ) );
-	// protocols::jd2::JobDistributor::get_instance()->go( RosettaAntibody );
-	protocols::jobdist::main_plain_mover( *RosettaAntibody );
-	 } catch ( utility::excn::EXCN_Base const & e ) {
+		MoverOP RosettaAntibody( new antibody_legacy::AntibodyModeler( ) );
+		// protocols::jd2::JobDistributor::get_instance()->go( RosettaAntibody );
+		protocols::jobdist::main_plain_mover( *RosettaAntibody );
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

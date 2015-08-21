@@ -94,7 +94,7 @@ void RNA_MC_Suite::init() {
 
 	for ( Size i = 1; i <= 2; ++i ) {
 		MC_OneTorsionOP chi_sampler( new MC_OneTorsion(
-				torsion_ids_[5 + i], init_torsions_[5 + i] ) );
+			torsion_ids_[5 + i], init_torsions_[5 + i] ) );
 		chi_sampler->set_gaussian_stdev( gaussian_stdev_ );
 		if ( sample_near_a_form_ ) {
 			Real const min_angle( a_form_torsions_[5 + i] - a_form_range_ );
@@ -103,15 +103,18 @@ void RNA_MC_Suite::init() {
 			chi_sampler->set_angle_range( min_angle, max_angle );
 		}
 		RNA_MC_SugarOP sugar_sampler( new RNA_MC_Sugar(
-				rsd_id_ - 1 + i, pucker_flip_rate_, init_pucker_ ) );
+			rsd_id_ - 1 + i, pucker_flip_rate_, init_pucker_ ) );
 		sugar_sampler->set_skip_same_pucker( skip_same_pucker_ );
 		sugar_sampler->set_idealize_coord( idealize_coord_ );
 		chi_samplers_.push_back( chi_sampler );
 		sugar_samplers_.push_back( sugar_sampler );
 	}
 
-	if ( sample_bb_ ) for ( Size i = 1; i <= bb_samplers_.size(); ++ i )
+	if ( sample_bb_ ) {
+		for ( Size i = 1; i <= bb_samplers_.size(); ++ i ) {
 			add_external_loop_rotamer( bb_samplers_[i] );
+		}
+	}
 
 	if ( sample_lower_nucleoside_ ) {
 		add_external_loop_rotamer( chi_samplers_[1] );
@@ -128,8 +131,9 @@ void RNA_MC_Suite::init() {
 }
 ///////////////////////////////////////////////////////////////////////////
 void RNA_MC_Suite::set_init_from_pose( pose::Pose const & pose ) {
-	for ( Size i = 1; i <= init_torsions_.size(); ++i )
-			init_torsions_[i] = pose.torsion( torsion_ids_[i] );
+	for ( Size i = 1; i <= init_torsions_.size(); ++i ) {
+		init_torsions_[i] = pose.torsion( torsion_ids_[i] );
+	}
 	init_pucker_ = assign_pucker( pose, rsd_id_ );
 	set_init( false );
 }
@@ -145,10 +149,11 @@ void RNA_MC_Suite::set_pucker_flip_rate( Real const setting ) {
 void RNA_MC_Suite::set_gaussian_stdev( Real const setting ) {
 	gaussian_stdev_ = setting;
 	if ( is_init() ) {
-		 chi_samplers_[1]->set_gaussian_stdev( setting );
-		 chi_samplers_[2]->set_gaussian_stdev( setting );
-		 for ( Size i = 1; i <= bb_samplers_.size(); ++i )
-				bb_samplers_[i]->set_gaussian_stdev( gaussian_stdev_ );
+		chi_samplers_[1]->set_gaussian_stdev( setting );
+		chi_samplers_[2]->set_gaussian_stdev( setting );
+		for ( Size i = 1; i <= bb_samplers_.size(); ++i ) {
+			bb_samplers_[i]->set_gaussian_stdev( gaussian_stdev_ );
+		}
 	}
 }
 ///////////////////////////////////////////////////////////////////////////

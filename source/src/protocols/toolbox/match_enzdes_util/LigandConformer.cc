@@ -123,7 +123,7 @@ LigandConformer::coordinates_from_orientation(
 ) const
 {
 	//for ( Size jj=1; jj != points_in_global_orintation_frame_.size(); ++jj ) {
-	//	std::cout << "atomno " << jj << " " << points_in_global_orintation_frame_[jj][0] << "  " << points_in_global_orintation_frame_[jj][1] << "  " << points_in_global_orintation_frame_[jj][2] << std::endl;
+	// std::cout << "atomno " << jj << " " << points_in_global_orintation_frame_[jj][0] << "  " << points_in_global_orintation_frame_[jj][1] << "  " << points_in_global_orintation_frame_[jj][2] << std::endl;
 	//}
 
 	//std::cout << "LigandConformer::coordinates from hit begin" << std::endl;
@@ -137,7 +137,7 @@ LigandConformer::coordinates_from_orientation(
 		//std::cout << "atom_indices[ ii ].atomno() " << ii << " " << atom_indices[ ii ].atomno() << std::endl;
 		assert( atom_indices[ ii ].rsd() == 1 );
 		atom_coords[ ii ] = global_frame * points_in_global_orintation_frame_[ atom_indices[ ii ].atomno() ];
-    //std::cout << "x: "  << atom_coords[ ii ][0] << " y: " << atom_coords[ ii ][1] << " z: "<< atom_coords[ ii ][2] << std::endl;
+		//std::cout << "x: "  << atom_coords[ ii ][0] << " y: " << atom_coords[ ii ][1] << " z: "<< atom_coords[ ii ][2] << std::endl;
 	}
 
 	//std::cout << "LigandConformer::coordinates from hit begin" << std::endl;
@@ -249,33 +249,33 @@ LigandConformer::global_orientation_from_frame3(
 
 	/*if ( false ) {
 
-		Vector oat1_coord = frame3 * oats_in_at3_frame_[ 1 ];
-		Vector oat2_coord = frame3 * oats_in_at3_frame_[ 2 ];
-		Vector oat3_coord = frame3 * oats_in_at3_frame_[ 3 ];
-		HTReal global_frame2( oat1_coord, oat2_coord, oat3_coord );
-		Vector euler_angles2 = global_frame2.euler_angles_deg();
-		std::cout << "Euler angle comparison.";
-		std::cout << " 1: " << euler_angles( 1 ) << " vs " << euler_angles2( 1 ) << " ";
-		std::cout << " 2: " << euler_angles( 2 ) << " vs " << euler_angles2( 2 ) << " ";
-		std::cout << " 3: " << euler_angles( 3 ) << " vs " << euler_angles2( 3 ) << std::endl;
+	Vector oat1_coord = frame3 * oats_in_at3_frame_[ 1 ];
+	Vector oat2_coord = frame3 * oats_in_at3_frame_[ 2 ];
+	Vector oat3_coord = frame3 * oats_in_at3_frame_[ 3 ];
+	HTReal global_frame2( oat1_coord, oat2_coord, oat3_coord );
+	Vector euler_angles2 = global_frame2.euler_angles_deg();
+	std::cout << "Euler angle comparison.";
+	std::cout << " 1: " << euler_angles( 1 ) << " vs " << euler_angles2( 1 ) << " ";
+	std::cout << " 2: " << euler_angles( 2 ) << " vs " << euler_angles2( 2 ) << " ";
+	std::cout << " 3: " << euler_angles( 3 ) << " vs " << euler_angles2( 3 ) << std::endl;
 
-		for ( Size ii = 1; ii <= points_in_D3_frame_.size(); ++ii ) {
-			Vector ii3loc = frame3 * points_in_D3_frame_[ ii ];
-			Vector iigloc = global_frame * points_in_global_orintation_frame_[ at3_frame_id_2_restype_id_[ ii ]];
-			for ( Size jj = 1; jj <= 3; ++jj ) {
-				std::cout << ii << " " << jj << " " << ii3loc( jj ) << " " << iigloc( jj ) << std::endl;
-			}
-		}
+	for ( Size ii = 1; ii <= points_in_D3_frame_.size(); ++ii ) {
+	Vector ii3loc = frame3 * points_in_D3_frame_[ ii ];
+	Vector iigloc = global_frame * points_in_global_orintation_frame_[ at3_frame_id_2_restype_id_[ ii ]];
+	for ( Size jj = 1; jj <= 3; ++jj ) {
+	std::cout << ii << " " << jj << " " << ii3loc( jj ) << " " << iigloc( jj ) << std::endl;
+	}
+	}
 
-		HTReal global_frame3;
-		global_frame3.from_euler_angles_deg( euler_angles );
-		global_frame3.set_point( oat3_coord );
-		//std::cout.precision( 12 );
-		std::cout << "Global frame3" << std::endl;
-		std::cout << "  " << global_frame3.xx() << " " << global_frame3.yx() << " " << global_frame3.zx() << " " << global_frame3.px() << std::endl;
-		std::cout << "  " << global_frame3.xy() << " " << global_frame3.yy() << " " << global_frame3.zy() << " " << global_frame3.py() << std::endl;
-		std::cout << "  " << global_frame3.xz() << " " << global_frame3.yz() << " " << global_frame3.zz() << " " << global_frame3.pz() << std::endl;
-		//std::cout.precision( 6 );
+	HTReal global_frame3;
+	global_frame3.from_euler_angles_deg( euler_angles );
+	global_frame3.set_point( oat3_coord );
+	//std::cout.precision( 12 );
+	std::cout << "Global frame3" << std::endl;
+	std::cout << "  " << global_frame3.xx() << " " << global_frame3.yx() << " " << global_frame3.zx() << " " << global_frame3.px() << std::endl;
+	std::cout << "  " << global_frame3.xy() << " " << global_frame3.yy() << " " << global_frame3.zy() << " " << global_frame3.py() << std::endl;
+	std::cout << "  " << global_frame3.xz() << " " << global_frame3.yz() << " " << global_frame3.zz() << " " << global_frame3.pz() << std::endl;
+	//std::cout.precision( 6 );
 	}*/
 
 	return global_coords;
@@ -355,7 +355,7 @@ LigandConformer::get_global_coords_as_FArray2D(
 	utility::vector1< core::Size > const & restype_atomnos
 ) const
 {
-	for( core::Size ii = 1; ii <= restype_atomnos.size(); ++ii ){
+	for ( core::Size ii = 1; ii <= restype_atomnos.size(); ++ii ) {
 		Vector coord( orientation_frame * points_in_global_orintation_frame_[ restype_atomnos[ ii ] ] );
 		coords( 1, ii ) = coord[0];
 		coords( 2, ii ) = coord[1];
@@ -382,7 +382,7 @@ LigandConformer::create_collcheck_ordering(
 		if ( ligand_restype_->atom_type( ii ).element() == "X" ) ignore[ ii ] = true;
 		if ( ignore[ ii ] ) continue;
 
-		for( Size jj = ii + 1; jj <= natoms; ++jj ) {
+		for ( Size jj = ii + 1; jj <= natoms; ++jj ) {
 			atdists( ii, jj ) = atdists( jj, ii ) = points_in_D3_frame_[ ii ].distance( points_in_D3_frame_[ jj ] );
 		}
 	}

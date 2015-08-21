@@ -60,23 +60,24 @@ using core::scoring::electron_density::poseCoord;
 void
 symmetrizeBfactors( core::pose::Pose & pose ) {
 
-  if ( !core::pose::symmetry::is_symmetric(pose) )
+	if ( !core::pose::symmetry::is_symmetric(pose) ) {
 		return;
+	}
 
 	core::conformation::symmetry::SymmetryInfoOP symm_info;
-  core::conformation::symmetry::SymmetricConformation & SymmConf (
+	core::conformation::symmetry::SymmetricConformation & SymmConf (
 		dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 	symm_info = SymmConf.Symmetry_Info();
 
-	for (core::Size resid=1; resid<=pose.total_residue(); ++resid) {
+	for ( core::Size resid=1; resid<=pose.total_residue(); ++resid ) {
 		if ( symm_info && !symm_info->bb_is_independent( resid ) ) continue;
 		core::conformation::Residue const & rsd( pose.residue(resid) );
 		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
 
 		for ( core::conformation::symmetry::SymmetryInfo::Clones::const_iterator pos=symm_info->bb_clones( resid ).begin(),
-		      epos=symm_info->bb_clones( resid ).end(); pos != epos; ++pos ) {
+				epos=symm_info->bb_clones( resid ).end(); pos != epos; ++pos ) {
 			core::Size natoms = rsd.natoms();
-			for (core::Size atmid = 1; atmid <= natoms; ++atmid) {
+			for ( core::Size atmid = 1; atmid <= natoms; ++atmid ) {
 				core::Real B = pose.pdb_info()->temperature( resid, atmid );
 				pose.pdb_info()->temperature( *pos, atmid , B );
 			}
@@ -86,42 +87,42 @@ symmetrizeBfactors( core::pose::Pose & pose ) {
 
 
 BfactorMultifunc::BfactorMultifunc(
-		core::pose::Pose & pose_in,
-		core::Real wt_adp,
-		core::Real wt_dens,
-		core::Real rmax,
-		core::Real radius_exp,
-		core::Real scorescale,
-		bool exact, bool verbose, bool deriv_check ) :
-		pose_(pose_in),
-		scorescale_( scorescale ),
-		wt_adp_(wt_adp),
-		wt_dens_(wt_dens),
-		rmax_(rmax),
-		radius_exp_(radius_exp),
-		exact_( exact ),
-		verbose_(verbose),
-		deriv_check_( deriv_check )
+	core::pose::Pose & pose_in,
+	core::Real wt_adp,
+	core::Real wt_dens,
+	core::Real rmax,
+	core::Real radius_exp,
+	core::Real scorescale,
+	bool exact, bool verbose, bool deriv_check ) :
+	pose_(pose_in),
+	scorescale_( scorescale ),
+	wt_adp_(wt_adp),
+	wt_dens_(wt_dens),
+	rmax_(rmax),
+	radius_exp_(radius_exp),
+	exact_( exact ),
+	verbose_(verbose),
+	deriv_check_( deriv_check )
 {
 	B_EPS=0.0001;
 
 	// map AtomIDs <-> indices
 	core::pose::initialize_atomid_map( atom_indices_, pose_in );
 	core::conformation::symmetry::SymmetryInfoOP symm_info;
-  if ( core::pose::symmetry::is_symmetric(pose_in) ) {
-    core::conformation::symmetry::SymmetricConformation & SymmConf (
-      dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose_in.conformation()) );
+	if ( core::pose::symmetry::is_symmetric(pose_in) ) {
+		core::conformation::symmetry::SymmetricConformation & SymmConf (
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose_in.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
-  }
+	}
 
-	for (Size resid=1; resid<=pose_in.total_residue(); ++resid) {
+	for ( Size resid=1; resid<=pose_in.total_residue(); ++resid ) {
 		if ( symm_info && !symm_info->bb_is_independent( resid ) ) continue;
 		core::conformation::Residue const & rsd( pose_in.residue(resid) );
 		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
 
 		core::Size natoms = rsd.nheavyatoms();
-		for (core::Size atmid = 1; atmid <= natoms; ++atmid) {
-			if (rsd.atom_type( atmid ).is_virtual()) continue;
+		for ( core::Size atmid = 1; atmid <= natoms; ++atmid ) {
+			if ( rsd.atom_type( atmid ).is_virtual() ) continue;
 			core::id::AtomID a_i( atmid, resid );
 			moving_atoms_.push_back(a_i);
 			atom_indices_[ a_i ] = moving_atoms_.size();
@@ -138,7 +139,7 @@ BfactorMultifunc::poseBfacts2multivec( core::pose::Pose & pose, core::optimizati
 	core::Size natoms = moving_atoms_.size();
 	y.resize(natoms);
 
-	for (core::Size i = 1; i <= natoms; ++i) {
+	for ( core::Size i = 1; i <= natoms; ++i ) {
 		core::id::AtomID a_i = moving_atoms_[i];
 		core::Real B = pose.pdb_info()->temperature( a_i.rsd(), a_i.atomno() );
 		y[i] = log( B );
@@ -154,7 +155,7 @@ BfactorMultifunc::multivec2poseBfacts( core::optimization::Multivec const &y, co
 	core::Size natoms = moving_atoms_.size();
 	runtime_assert( y.size() == natoms );
 
-	for (core::Size i = 1; i <= natoms; ++i) {
+	for ( core::Size i = 1; i <= natoms; ++i ) {
 		core::id::AtomID a_i = moving_atoms_[i];
 		// fpd! upper limit must match what is in xray_scattering.hh
 		//  THIS SHOULD BE SELECTABLE
@@ -178,7 +179,7 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 	}
 
 	core::Real dens_score = 0;
-	if (!exact_) {
+	if ( !exact_ ) {
 		for ( Size i = 1; i <= pose_copy.total_residue(); ++i ) {
 			if ( symm_info && !symm_info->bb_is_independent( i ) ) continue;
 			core::conformation::Residue const & rsd ( pose_copy.residue(i) );
@@ -187,13 +188,13 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 		}
 	} else {
 		core::scoring::electron_density::poseCoords litePose;
-		for (core::Size i = 1; i <= pose_copy.total_residue(); ++i) {
-			if (symm_info && !symm_info->bb_is_independent( i ) ) continue;
+		for ( core::Size i = 1; i <= pose_copy.total_residue(); ++i ) {
+			if ( symm_info && !symm_info->bb_is_independent( i ) ) continue;
 			core::conformation::Residue const & rsd_i ( pose_copy.residue(i) );
 			if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
 
 			core::Size natoms = rsd_i.nheavyatoms();
-			for (core::Size j = 1; j <= natoms; ++j) {
+			for ( core::Size j = 1; j <= natoms; ++j ) {
 				if ( rsd_i.atom_type(j).is_virtual() ) continue;
 				core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 
@@ -213,7 +214,7 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 	// [[2]]  constraint score
 	core::Real cst_score=0;
 	core::Size nedge=0;
-	if (wt_adp_ != 0) {
+	if ( wt_adp_ != 0 ) {
 		core::scoring::EnergyGraph const & energy_graph( pose_copy.energies().energy_graph() );
 
 		for ( Size i = 1; i <= pose_copy.total_residue(); ++i ) {
@@ -222,18 +223,18 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 			if ( rsd1.aa() == core::chemical::aa_vrt ) continue;
 
 			core::Size natoms = rsd1.nheavyatoms();
-			for (core::Size k = 1; k <= natoms; ++k) {
+			for ( core::Size k = 1; k <= natoms; ++k ) {
 				core::Real B_k = pose_copy.pdb_info()->temperature( i, k );
-				if (atom_indices_[core::id::AtomID(k,i)] == 0) continue;
+				if ( atom_indices_[core::id::AtomID(k,i)] == 0 ) continue;
 
-				for (core::Size l = k + 1; l <= natoms; ++l) {
+				for ( core::Size l = k + 1; l <= natoms; ++l ) {
 					core::Real B_l = pose_copy.pdb_info()->temperature( i, l );
-					if (atom_indices_[core::id::AtomID(l,i)] == 0) continue;
+					if ( atom_indices_[core::id::AtomID(l,i)] == 0 ) continue;
 
 					core::Real dist_kl = (rsd1.atom( k ).xyz() - rsd1.atom( l ).xyz()).length();
-					if (radius_exp_ != 1.0) dist_kl = std::pow( dist_kl, radius_exp_ );
+					if ( radius_exp_ != 1.0 ) dist_kl = std::pow( dist_kl, radius_exp_ );
 
-					if (dist_kl < rmax_) {
+					if ( dist_kl < rmax_ ) {
 						cst_score += (B_k-B_l)*(B_k-B_l) / ( dist_kl*(B_k+B_l+B_EPS) );
 						nedge++;
 					}
@@ -251,17 +252,17 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 				core::Size natoms2 = rsd2.nheavyatoms();
 
 				// inter-atom
-				for (core::Size k = 1; k <= natoms; ++k) {
+				for ( core::Size k = 1; k <= natoms; ++k ) {
 					core::Real B_k = pose_copy.pdb_info()->temperature( i, k );
-					if (atom_indices_[core::id::AtomID(k,i)] == 0) continue;
-					for (core::Size l = 1; l <= natoms2; ++l) {
+					if ( atom_indices_[core::id::AtomID(k,i)] == 0 ) continue;
+					for ( core::Size l = 1; l <= natoms2; ++l ) {
 						core::Real B_l = pose_copy.pdb_info()->temperature( j, l );
-						if (atom_indices_[core::id::AtomID(l,j)] == 0) continue;
+						if ( atom_indices_[core::id::AtomID(l,j)] == 0 ) continue;
 
 						core::Real dist_kl = (rsd1.atom( k ).xyz() - rsd2.atom( l ).xyz()).length();
-						if (radius_exp_ != 1.0) dist_kl = std::pow( dist_kl, radius_exp_ );
+						if ( radius_exp_ != 1.0 ) dist_kl = std::pow( dist_kl, radius_exp_ );
 
-						if (dist_kl < rmax_) {
+						if ( dist_kl < rmax_ ) {
 							cst_score += (B_k-B_l)*(B_k-B_l) / ( dist_kl*(B_k+B_l+B_EPS) );
 							nedge++;
 						}
@@ -271,7 +272,7 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 		}
 	}
 
-	if (verbose_) {
+	if ( verbose_ ) {
 		//core::optimization::Multivec varsCopy = vars;
 		//std::cerr << "[score] evaluated " << natom << " atoms and " << nedge << " edges" << std::endl;
 		std::cerr << "[score] score = " << scorescale_* (wt_dens_*dens_score + wt_adp_*cst_score) << " [ " << dens_score*10.0/moving_atoms_.size() << " , " << cst_score << " ] " << std::endl;
@@ -287,9 +288,9 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 	multivec2poseBfacts( vars, pose_copy );
 	dE_dvars.resize( vars.size(), 0.0 );
 
-	if (!exact_) {
+	if ( !exact_ ) {
 		// [[1]] density deriv
-		for (core::Size i = 1; i <= vars.size(); ++i) {
+		for ( core::Size i = 1; i <= vars.size(); ++i ) {
 			core::id::AtomID a_i = moving_atoms_[i];
 			core::Real dCCdb = core::scoring::electron_density::getDensityMap().dCCdB_fastRes(
 				a_i.atomno(), a_i.rsd(), pose_copy.residue( a_i.rsd() ), pose_copy );
@@ -297,13 +298,14 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 		}
 	} else {
 		core::scoring::electron_density::getDensityMap().dCCdBs( pose_copy, dE_dvars, rhoMask_ );
-		for (core::Size i = 1; i <= vars.size(); ++i)
+		for ( core::Size i = 1; i <= vars.size(); ++i ) {
 			dE_dvars[i] *= -(moving_atoms_.size()/10.0)*scorescale_*wt_dens_ * exp(vars[i]);
+		}
 	}
 
 	// [[2]]  constraint deriv
 	core::Size nedge=0;
-	if (wt_adp_ != 0) {
+	if ( wt_adp_ != 0 ) {
 		core::conformation::symmetry::SymmetryInfoOP symm_info;
 		if ( core::pose::symmetry::is_symmetric(pose_copy) ) {
 			core::conformation::symmetry::SymmetricConformation & SymmConf (
@@ -320,17 +322,17 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 
 			// intra-res
 			core::Size natoms = rsd1.nheavyatoms();
-			for (core::Size k = 1; k <= natoms; ++k) {
+			for ( core::Size k = 1; k <= natoms; ++k ) {
 				core::Real B_k = pose_copy.pdb_info()->temperature( i, k );
-				if (atom_indices_[core::id::AtomID(k,i)] == 0) continue;
-				for (core::Size l = k + 1; l <= natoms; ++l) {
+				if ( atom_indices_[core::id::AtomID(k,i)] == 0 ) continue;
+				for ( core::Size l = k + 1; l <= natoms; ++l ) {
 					core::Real B_l = pose_copy.pdb_info()->temperature( i, l );
-					if (atom_indices_[core::id::AtomID(l,i)] == 0) continue;
+					if ( atom_indices_[core::id::AtomID(l,i)] == 0 ) continue;
 
 					core::Real dist_kl = (rsd1.atom( k ).xyz() - rsd1.atom( l ).xyz()).length();
-					if (radius_exp_ != 1.0) dist_kl = std::pow( dist_kl, radius_exp_ );
+					if ( radius_exp_ != 1.0 ) dist_kl = std::pow( dist_kl, radius_exp_ );
 
-					if (dist_kl < rmax_) {
+					if ( dist_kl < rmax_ ) {
 						core::Size atomK = atom_indices_[ core::id::AtomID( k,i ) ];
 						core::Size atomL = atom_indices_[ core::id::AtomID( l,i ) ];
 
@@ -356,18 +358,18 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 				core::Size natoms2 = rsd2.nheavyatoms();
 
 				// inter-res
-				for (core::Size k = 1; k <= natoms; ++k) {
+				for ( core::Size k = 1; k <= natoms; ++k ) {
 					core::Real B_k = pose_copy.pdb_info()->temperature( i, k );
-					if (atom_indices_[core::id::AtomID(k,i)] == 0) continue;
+					if ( atom_indices_[core::id::AtomID(k,i)] == 0 ) continue;
 
-					for (core::Size l = 1; l <= natoms2; ++l) {
+					for ( core::Size l = 1; l <= natoms2; ++l ) {
 						core::Real B_l = pose_copy.pdb_info()->temperature( j, l );
-						if (atom_indices_[core::id::AtomID(l,j)] == 0) continue;
+						if ( atom_indices_[core::id::AtomID(l,j)] == 0 ) continue;
 
 						core::Real dist_kl = (rsd1.atom( k ).xyz() - rsd2.atom( l ).xyz()).length();
-						if (radius_exp_ != 1.0) dist_kl = std::pow( dist_kl, radius_exp_ );
+						if ( radius_exp_ != 1.0 ) dist_kl = std::pow( dist_kl, radius_exp_ );
 
-						if (dist_kl < rmax_) {
+						if ( dist_kl < rmax_ ) {
 							core::Size atomK = atom_indices_[ core::id::AtomID( k,i ) ];
 							core::Size atomL = atom_indices_[ core::id::AtomID( l,j ) ];
 
@@ -385,7 +387,7 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 		}
 	}
 
-	if (verbose_) {
+	if ( verbose_ ) {
 		core::Real score = (*this)(vars);
 		//std::cerr << "[deriv] evaluated " << vars.size() << " atoms and " << nedge << " edges" << std::endl;
 		std::cerr << "[deriv] score = " << score << std::endl;
@@ -395,22 +397,22 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 void
 BfactorMultifunc::dump( core::optimization::Multivec const & x1, core::optimization::Multivec const & ) const {
 	// debug
-	if (deriv_check_) {
- 		 core::optimization::Multivec varsCopy = x1;
- 		 core::optimization::Multivec dE_dvars;
- 		 this->dfunc(x1,dE_dvars);
+	if ( deriv_check_ ) {
+		core::optimization::Multivec varsCopy = x1;
+		core::optimization::Multivec dE_dvars;
+		this->dfunc(x1,dE_dvars);
 
- 		 core::Real score = (*this)(x1);
- 		 std::cerr << "[deriv] score = " << score << std::endl;
- 		 for (core::Size i = 1; i <= x1.size(); ++i) {
- 		 	varsCopy[i]+=0.0001;
- 		 	core::Real scorep = (*this)(varsCopy);
- 		 	varsCopy[i]-=0.0002;
- 		 	core::Real scoren = (*this)(varsCopy);
- 		 	varsCopy[i]+=0.0001;
- 		 	std::cerr << "[deriv] x:" << i << "  B: " << x1[i] << "  A: " << dE_dvars[i] << "  N: "
- 				<< (scorep-scoren)/0.0002 << "    r: " << 0.0002*dE_dvars[i]/(scorep-score) << std::endl;
- 		}
+		core::Real score = (*this)(x1);
+		std::cerr << "[deriv] score = " << score << std::endl;
+		for ( core::Size i = 1; i <= x1.size(); ++i ) {
+			varsCopy[i]+=0.0001;
+			core::Real scorep = (*this)(varsCopy);
+			varsCopy[i]-=0.0002;
+			core::Real scoren = (*this)(varsCopy);
+			varsCopy[i]+=0.0001;
+			std::cerr << "[deriv] x:" << i << "  B: " << x1[i] << "  A: " << dE_dvars[i] << "  N: "
+				<< (scorep-scoren)/0.0002 << "    r: " << 0.0002*dE_dvars[i]/(scorep-score) << std::endl;
+		}
 	}
 }
 
@@ -449,12 +451,12 @@ void BfactorFittingMover::init() {
 }
 
 void BfactorFittingMover::apply(core::pose::Pose & pose) {
-	if (!basic::options::option[ basic::options::OptionKeys::cryst::crystal_refine ]()) {
+	if ( !basic::options::option[ basic::options::OptionKeys::cryst::crystal_refine ]() ) {
 		utility_exit_with_message( "Bfactor optimization _must_ be run with the -cryst::crystal_refine option" );
 	}
 
 	// make sure pose has pdbinfo
-	if (! pose.pdb_info() ) {
+	if ( ! pose.pdb_info() ) {
 		core::pose::PDBInfoOP newinfo( new core::pose::PDBInfo(pose) );
 		pose.pdb_info( newinfo );
 	}
@@ -468,10 +470,11 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 
 	// make sure interaction graphs are set up
 	core::scoring::ScoreFunctionOP sf;
-	if ( core::pose::symmetry::is_symmetric(pose) )
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		sf = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction() );
-	else
+	} else {
 		sf = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
+	}
 	sf->set_weight( core::scoring::fa_rep, 1.0 );
 	(*sf)(pose);
 
@@ -480,7 +483,7 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 	f_b.poseBfacts2multivec( pose, y );
 
 	// if b=0 set b to some small value
-	for (core::Size i = 1; i <= y.size(); ++i) if (y[i] < 1e-6) y[i] = 5;
+	for ( core::Size i = 1; i <= y.size(); ++i ) if ( y[i] < 1e-6 ) y[i] = 5;
 
 	core::scoring::electron_density::getDensityMap().rescale_fastscoring_temp_bins( pose, init_ );
 
@@ -488,18 +491,19 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 	core::Size nvalues = weights_to_scan_.size();
 	core::Real bestVal = 0, bestScore = 0;
 
-	if (init_) {
-		for (core::Size j=1; j<=nvalues; ++j) {
-			for (core::Size i = 1; i <= y.size(); ++i)
+	if ( init_ ) {
+		for ( core::Size j=1; j<=nvalues; ++j ) {
+			for ( core::Size i = 1; i <= y.size(); ++i ) {
 				y[i] = log( weights_to_scan_[j] );
+			}
 			core::Real thisScore = f_b(y);
 			TR << "B=" << weights_to_scan_[j] << ": score=" << thisScore << std::endl;
-			if (thisScore<bestScore || j==1) {
+			if ( thisScore<bestScore || j==1 ) {
 				bestScore = thisScore;
 				bestVal = weights_to_scan_[j];
 			}
 		}
-		for (core::Size i = 1; i <= y.size(); ++i) y[i] = log(bestVal);
+		for ( core::Size i = 1; i <= y.size(); ++i ) y[i] = log(bestVal);
 	}
 
 	// MAIN LOOP
@@ -513,7 +517,7 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 BfactorFittingMover::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &, Filters_map const &,
-		moves::Movers_map const &, Pose const &)
+	moves::Movers_map const &, Pose const &)
 {
 	if ( tag->hasOption("wt_adp") ) {
 		wt_adp_ = tag->getOption<core::Real>("wt_adp");
@@ -565,8 +569,9 @@ BfactorFittingMover::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &,
 		std::string weight_string = tag->getOption<std::string>("weights_to_scan");
 		utility::vector1< std::string > tokens ( utility::string_split( weight_string, ',' ) );
 		weights_to_scan_.clear();
-		for (core::Size j = 1; j <= tokens.size(); ++j)
+		for ( core::Size j = 1; j <= tokens.size(); ++j ) {
 			weights_to_scan_.push_back( atof(tokens[j].c_str()) );
+		}
 	}
 }
 

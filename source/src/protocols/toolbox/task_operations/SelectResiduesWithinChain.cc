@@ -71,43 +71,47 @@ SelectResiduesWithinChainOperation::apply( core::pose::Pose const & pose, core::
 {
 	utility::vector1< core::Size > packing_residues, prevent_repacking_residues;
 	packing_residues.clear(); prevent_repacking_residues.clear();
- if (chain()>pose.conformation().num_chains()) {
-    utility_exit_with_message("Number of chains in pose is smaller than the number defined in the xml under \"chain=\"! Aborting!");
-  }
-	if( allow_design() )
+	if ( chain()>pose.conformation().num_chains() ) {
+		utility_exit_with_message("Number of chains in pose is smaller than the number defined in the xml under \"chain=\"! Aborting!");
+	}
+	if ( allow_design() ) {
 		TR<<"Residues set to design ";
-	else
+	} else {
 		TR<<"Residues set to repacking ";
+	}
 
-	if( modify_unselected_residues() )
+	if ( modify_unselected_residues() ) {
 		TR<<"(all others are prevented from repacking): ";
-	else
+	} else {
 		TR<<"(I'm leaving all other residues as they are, not changing their packing status): ";
+	}
 
-	for( core::Size i = 1; i <= pose.total_residue(); ++i ){
-		if( pose.residue( i ).chain() != chain() && modify_unselected_residues() ){
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( pose.residue( i ).chain() != chain() && modify_unselected_residues() ) {
 			prevent_repacking_residues.push_back( i );
 			continue;
 		}
 		core::Size const within_chain_idx( std::max( 0, (int)( i - pose.conformation().chain_begin( chain() ) + 1 )) );
-		if( std::find( resid_.begin(), resid_.end(), within_chain_idx ) != resid_.end() ){
+		if ( std::find( resid_.begin(), resid_.end(), within_chain_idx ) != resid_.end() ) {
 			TR<<i<<',';
-			if( !allow_design() )
+			if ( !allow_design() ) {
 				packing_residues.push_back( i );
-			if( !allow_repacking() )
+			}
+			if ( !allow_repacking() ) {
 				prevent_repacking_residues.push_back( i );
-		}//fi std::find
-		else if( modify_unselected_residues() )
-				prevent_repacking_residues.push_back( i );
+			}
+		} else if ( modify_unselected_residues() ) { //fi std::find
+			prevent_repacking_residues.push_back( i );
+		}
 	}//for i
 	TR<<std::endl;
 	OperateOnCertainResidues oocr_repacking, oocr_prevent_repacking;
-	if( packing_residues.size() ){
+	if ( packing_residues.size() ) {
 		oocr_repacking.op( ResLvlTaskOperationCOP( new RestrictToRepackingRLT ) );
 		oocr_repacking.residue_indices( packing_residues );
 		oocr_repacking.apply( pose, task );
 	}
-	if( prevent_repacking_residues.size() ){
+	if ( prevent_repacking_residues.size() ) {
 		oocr_prevent_repacking.op( ResLvlTaskOperationCOP( new PreventRepackingRLT ) );
 		oocr_prevent_repacking.residue_indices( prevent_repacking_residues );
 		oocr_prevent_repacking.apply( pose, task );
@@ -127,7 +131,7 @@ SelectResiduesWithinChainOperation::parse_tag( TagCOP tag , DataMap & )
 
 	resid_ = utility::string_split< core::Size >( res, ',', core::Size() );
 	TR<<"chain: "<<chain()<<" allow_design: "<<allow_design()<<" allow_repacking; "<<allow_repacking()<<" modify_unselected_residues: "<<modify_unselected_residues()<<" over residues: ";
-	BOOST_FOREACH( core::Size const r, resid() ){
+	BOOST_FOREACH ( core::Size const r, resid() ) {
 		TR<<r<<", ";
 	}
 	TR<<std::endl;

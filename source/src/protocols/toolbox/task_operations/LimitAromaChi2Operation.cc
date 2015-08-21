@@ -31,7 +31,7 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-	#include <core/graph/Graph.hh>
+#include <core/graph/Graph.hh>
 #endif
 
 namespace protocols {
@@ -63,37 +63,36 @@ LimitAromaChi2_RotamerSetOperation::clone() const
 
 void
 LimitAromaChi2_RotamerSetOperation::alter_rotamer_set(
-		Pose const &,
-		ScoreFunction const &,
-		//mjo commenting out 'ptask' because it is unused and causes a warning
-		PackerTask const & /*ptask*/,
-		GraphCOP,
-		RotamerSet & rotamer_set
+	Pose const &,
+	ScoreFunction const &,
+	//mjo commenting out 'ptask' because it is unused and causes a warning
+	PackerTask const & /*ptask*/,
+	GraphCOP,
+	RotamerSet & rotamer_set
 )
 {
 
 	utility::vector1< bool > rotamers_to_delete;
 	rotamers_to_delete.resize( rotamer_set.num_rotamers() );
 	Size irot( 0 ), num_to_delete(0);
-	for( Rotamers::const_iterator it=rotamer_set.begin(), ite=rotamer_set.end(); it != ite; ++it ) {
+	for ( Rotamers::const_iterator it=rotamer_set.begin(), ite=rotamer_set.end(); it != ite; ++it ) {
 
 		irot ++;
 		rotamers_to_delete[ irot ] = false;
 		core::conformation::ResidueOP rop ( *it );
-		if( rop->aa() == core::chemical::aa_tyr ||
+		if ( rop->aa() == core::chemical::aa_tyr ||
 				rop->aa() == core::chemical::aa_phe ||
 				rop->aa() == core::chemical::aa_his ||
-			 (rop->aa() == core::chemical::aa_trp && include_trp_) )
-		{
+				(rop->aa() == core::chemical::aa_trp && include_trp_) ) {
 
 			runtime_assert( rop->nchi() >= 2 );
 			utility::vector1< Real > chi( rop->chi() );
 
-			if( chi[ 2 ] < 0 ) {
+			if ( chi[ 2 ] < 0 ) {
 				chi[ 2 ] += 180.0;
 			}
 
-			if( chi[ 2 ] > chi2max_ || chi[ 2 ] < chi2min_ ) {
+			if ( chi[ 2 ] > chi2max_ || chi[ 2 ] < chi2min_ ) {
 				rotamers_to_delete[ irot ] = true;
 				num_to_delete++;
 			}
@@ -103,7 +102,7 @@ LimitAromaChi2_RotamerSetOperation::alter_rotamer_set(
 	//flo nov 2010: if all the rotamers in the rotamer set are to be deleted,
 	//and there is no input rotamer at that position, this will cause a program exit
 	//if this is the case (rare), it's probably best to not delete any rotamers
-	if( (num_to_delete == rotamer_set.num_rotamers() ) && (rotamer_set.id_for_current_rotamer() == 0 ) ){
+	if ( (num_to_delete == rotamer_set.num_rotamers() ) && (rotamer_set.id_for_current_rotamer() == 0 ) ) {
 		//std::cerr << "bad condition at position " << rotamer_set.resid() << ", not deleting any of the " << rotamer_set.num_rotamers() << " rotamers." << std::endl;
 		return;
 	}

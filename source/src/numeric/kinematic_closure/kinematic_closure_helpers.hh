@@ -29,11 +29,11 @@ namespace kinematic_closure {
 void printVector(const utility::vector1<numeric::Real>& V);
 void printMatrix(const utility::vector1<utility::vector1<numeric::Real> >& M);
 void multMatrix(const utility::vector1<utility::vector1<numeric::Real> >& A,
-				const utility::vector1<utility::vector1<numeric::Real> >& B,
-				utility::vector1<utility::vector1<numeric::Real> >& C);
+	const utility::vector1<utility::vector1<numeric::Real> >& B,
+	utility::vector1<utility::vector1<numeric::Real> >& C);
 void multTransMatrix(const utility::vector1<utility::vector1<numeric::Real> >& A,
-					 const utility::vector1<utility::vector1<numeric::Real> >& B,
-					 utility::vector1<utility::vector1<numeric::Real> >& C);
+	const utility::vector1<utility::vector1<numeric::Real> >& B,
+	utility::vector1<utility::vector1<numeric::Real> >& C);
 bool vectorsEqual(const utility::vector1<numeric::Real>& A, const utility::vector1<numeric::Real>& B);
 
 } // end namespace kinematic_closure

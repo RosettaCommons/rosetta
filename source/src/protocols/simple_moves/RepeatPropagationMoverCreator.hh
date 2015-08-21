@@ -18,16 +18,16 @@
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
-    namespace simple_moves {
-        
-        class RepeatPropagationMoverCreator : public protocols::moves::MoverCreator {
-        public:
-            virtual protocols::moves::MoverOP create_mover() const;
-            virtual std::string keyname() const;
-            static  std::string mover_name();
-        };
-        
-    }
+namespace simple_moves {
+
+class RepeatPropagationMoverCreator : public protocols::moves::MoverCreator {
+public:
+	virtual protocols::moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
+	static  std::string mover_name();
+};
+
+}
 }
 
 #endif

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/modeler/working_parameters/StepWiseBasicWorkingParameters.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -22,11 +22,11 @@ namespace protocols {
 namespace stepwise {
 namespace modeler {
 namespace working_parameters {
-	
-	class StepWiseBasicWorkingParameters;
-	typedef utility::pointer::shared_ptr< StepWiseBasicWorkingParameters > StepWiseBasicWorkingParametersOP;
-	typedef utility::pointer::shared_ptr< StepWiseBasicWorkingParameters const > StepWiseBasicWorkingParametersCOP;
-	
+
+class StepWiseBasicWorkingParameters;
+typedef utility::pointer::shared_ptr< StepWiseBasicWorkingParameters > StepWiseBasicWorkingParametersOP;
+typedef utility::pointer::shared_ptr< StepWiseBasicWorkingParameters const > StepWiseBasicWorkingParametersCOP;
+
 } //working_parameters
 } //modeler
 } //stepwise

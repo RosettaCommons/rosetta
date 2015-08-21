@@ -10,11 +10,11 @@
 /// @file       protocols/membrane/RandomMembranePositionMover.hh
 ///
 /// @brief      Random membrane position mover
-/// @details	Make random perturbations in the position of the membrane
-///				as define by some center position and normal coordinate
-///				(also of fixed thickness). Rotation mover rotates normal
-///				from a random angle, Translation mover picks a randomly
-///				translated position from the current position.
+/// @details Make random perturbations in the position of the membrane
+///    as define by some center position and normal coordinate
+///    (also of fixed thickness). Rotation mover rotates normal
+///    from a random angle, Translation mover picks a randomly
+///    translated position from the current position.
 ///
 /// @author     Rebecca Alford (rfalford12@gmail.com)
 /// @note       Last Modified (7/10/14)
@@ -43,105 +43,105 @@ using namespace protocols::moves;
 /// @details Rotate the orientation of the membrane position to a new
 /// normal position. Angle chosen randomnly - moved from current axis
 class RandomPositionRotationMover : public Mover {
-	
+
 public:
-	
+
 	////////////////////
 	/// Constructors ///
 	////////////////////
-	
+
 	/// @brief Construct a Default Membrane Position Mover
 	RandomPositionRotationMover();
-	
+
 	/// @brief Custom Constructor
 	/// @details Specify an order of magnitude to rotate
 	RandomPositionRotationMover(
-								Real rot_mag,
-								core::SSize rb_jump
-								);
-	
+		Real rot_mag,
+		core::SSize rb_jump
+	);
+
 	/// @brief Copy Constructor
 	/// @details Make a deep copy of this mover object
 	RandomPositionRotationMover( RandomPositionRotationMover const & src );
-	
+
 	/// @brief Assignment Operator
 	/// @details Make a deep copy of this mover object, overriding the assignment operator
 	RandomPositionRotationMover &
 	operator=( RandomPositionRotationMover const & src );
-	
+
 	/// @brief Destructor
 	~RandomPositionRotationMover();
-	
+
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
-	
+
 	/// @brief Get the name of this mover
 	virtual std::string get_name() const;
-	
+
 	/// @brief Apply Rotation
 	virtual void apply( Pose & pose );
-	
+
 private:
-	
+
 	// Store new normal
 	Real rot_mag_;
-	
+
 	// Store jump num
 	core::SSize rb_jump_;
-	
+
 };
 
 /// @brief Random Position Translation Move
 class RandomPositionTranslationMover : public Mover {
-	
+
 public:
-	
+
 	////////////////////
 	/// Constructors ///
 	////////////////////
-	
+
 	/// @brief Construct a Default Random Position Mover
 	RandomPositionTranslationMover();
-	
+
 	/// @brief Custom Constructor
 	/// @details Specify a magnitude of translation
 	RandomPositionTranslationMover(
-								   Real trans_mag,
-								   SSize rb_jump = 2
-								   );
-	
+		Real trans_mag,
+		SSize rb_jump = 2
+	);
+
 	/// @brief Copy Constructor
 	/// @details Make a deep copy of this mover object
 	RandomPositionTranslationMover( RandomPositionTranslationMover const & src );
-	
+
 	/// @brief Assignment Operator
 	/// @details Make a deep copy of this mover object, overriding the assignment operator
 	RandomPositionTranslationMover &
 	operator=( RandomPositionTranslationMover const & src );
-	
+
 	/// @brief Destructor
 	~RandomPositionTranslationMover();
-	
+
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
-	
+
 	/// @brief Get the name of this mover
 	virtual std::string get_name() const;
-	
+
 	/// @brief Apply Translation to membrane position
 	/// @brief Translate membrane position to new center
 	virtual void apply( Pose & pose );
-	
+
 private:
-	
+
 	// Store trans mag
 	Real trans_mag_;
-	
+
 	// Store jump num
 	core::SSize rb_jump_;
-	
+
 };
 
 } // membrane

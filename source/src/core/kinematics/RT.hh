@@ -162,15 +162,15 @@ public:
 	distance_squared( RT const & b ) const
 	{
 		return ( translation    .distance_squared( b.translation ) +
-						 rotation.col(1).distance_squared( b.rotation.col(1) ) +
-						 rotation.col(2).distance_squared( b.rotation.col(2) ) +
-						 rotation.col(3).distance_squared( b.rotation.col(3) ) );
+			rotation.col(1).distance_squared( b.rotation.col(1) ) +
+			rotation.col(2).distance_squared( b.rotation.col(2) ) +
+			rotation.col(3).distance_squared( b.rotation.col(3) ) );
 	}
 
 
 	/// @brief update the transform to include small additional rigid-body rotations and translations
 	/// @note PHIL: IT WOULD BE GOOD TO ELIMINATE ARGUMENT ARRAYS IN MINI BY USE OF
-	///	 APPROPRIATE LAYERED DATA STRUCTURES
+	///  APPROPRIATE LAYERED DATA STRUCTURES
 	void
 	fold_in_rb_deltas(
 		utility::vector1<Real> const &  rb,
@@ -228,9 +228,9 @@ distance( RT const & a, RT const & b )
 	using namespace numeric;
 	return
 		std::sqrt( a.rotation.col(1).distance_squared( b.rotation.col(1) ) +
-							 a.rotation.col(2).distance_squared( b.rotation.col(2) ) +
-							 a.rotation.col(3).distance_squared( b.rotation.col(3) ) +
-							 a.translation    .distance_squared( b.translation ) );
+		a.rotation.col(2).distance_squared( b.rotation.col(2) ) +
+		a.rotation.col(3).distance_squared( b.rotation.col(3) ) +
+		a.translation    .distance_squared( b.translation ) );
 }
 
 } // kinematics

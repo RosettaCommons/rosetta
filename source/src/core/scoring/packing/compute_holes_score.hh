@@ -35,92 +35,92 @@ namespace core {
 namespace scoring {
 namespace packing {
 
-	/// the result class holding the three scores and the per-atom scores
-	class HolesResult : public utility::pointer::ReferenceCount {
-	public:
+/// the result class holding the three scores and the per-atom scores
+class HolesResult : public utility::pointer::ReferenceCount {
+public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~HolesResult();
-		HolesResult() : score(0.0),decoy_score(0.0),resl_score(0.0),dec15_score(0.0) {}
-		core::Real score, decoy_score, resl_score, dec15_score, natom;
-		core::id::AtomID_Map< core::Real > atom_scores;
-	};
+	HolesResult() : score(0.0),decoy_score(0.0),resl_score(0.0),dec15_score(0.0) {}
+	core::Real score, decoy_score, resl_score, dec15_score, natom;
+	core::id::AtomID_Map< core::Real > atom_scores;
+};
 
-	/// for the standard scores
-	HolesResult
-	compute_rosettaholes_score(
-		pose::Pose const & pose
-	);
+/// for the standard scores
+HolesResult
+compute_rosettaholes_score(
+	pose::Pose const & pose
+);
 
-	Real
-	compute_dec15_score(
-		pose::Pose const & pose
-	);
+Real
+compute_dec15_score(
+	pose::Pose const & pose
+);
 
-	/// if you have custom parameters, or want per-atom scores for a specific score
-	/// result goes into the "score" field
-	HolesResult
-	compute_holes_score(
-		pose::Pose  const & pose,
-		HolesParams const & params
-	);
+/// if you have custom parameters, or want per-atom scores for a specific score
+/// result goes into the "score" field
+HolesResult
+compute_holes_score(
+	pose::Pose  const & pose,
+	HolesParams const & params
+);
 
-	/// computes the cartesian space derivative WRT the given params
-	HolesResult
-	compute_holes_deriv(
-		pose::Pose  const & pose,
-		HolesParams const & params,
-		core::id::AtomID_Map< numeric::xyzVector<core::Real> > & deriv
-	);
+/// computes the cartesian space derivative WRT the given params
+HolesResult
+compute_holes_deriv(
+	pose::Pose  const & pose,
+	HolesParams const & params,
+	core::id::AtomID_Map< numeric::xyzVector<core::Real> > & deriv
+);
 
 //////
 
-	HolesResult
-	compute_holes_deriv(
-		pose::Pose  const & pose,
-		PoseBalls         & pb,
-		HolesParams const & params,
-		core::id::AtomID_Map< numeric::xyzVector<core::Real> > & deriv
-	);
+HolesResult
+compute_holes_deriv(
+	pose::Pose  const & pose,
+	PoseBalls         & pb,
+	HolesParams const & params,
+	core::id::AtomID_Map< numeric::xyzVector<core::Real> > & deriv
+);
 
-	HolesResult
-	compute_rosettaholes_score(
-		pose::Pose const & pose,
-		PoseBalls & pb,
-		HolesParams const & resl_params,
-		HolesParams const & dec_params,
-		HolesParams const & dec15_params,
-		bool use_cached_surfs = false,
-		std::string cmd = ""
-	);
+HolesResult
+compute_rosettaholes_score(
+	pose::Pose const & pose,
+	PoseBalls & pb,
+	HolesParams const & resl_params,
+	HolesParams const & dec_params,
+	HolesParams const & dec15_params,
+	bool use_cached_surfs = false,
+	std::string cmd = ""
+);
 
-   HolesResult
-   compute_rosettaholes_score(
-	   pose::Pose const & pose,
-		PoseBalls & pb
-   );
+HolesResult
+compute_rosettaholes_score(
+	pose::Pose const & pose,
+	PoseBalls & pb
+);
 
-	HolesResult
-	compute_rosettaholes_score(
-		pose::Pose  const & pose,
-		HolesParams const & resl_params,
-		HolesParams const & dec_params,
-		HolesParams const & dec15_params
-   );
+HolesResult
+compute_rosettaholes_score(
+	pose::Pose  const & pose,
+	HolesParams const & resl_params,
+	HolesParams const & dec_params,
+	HolesParams const & dec15_params
+);
 
-   HolesResult
-   compute_holes_score(
-	   pose::Pose  const & pose,
-	   PoseBalls         & pb,
-	   HolesParams const & params,
-		 bool use_cached_surfs = false,
-		 std::string cmd = ""
-	);
+HolesResult
+compute_holes_score(
+	pose::Pose  const & pose,
+	PoseBalls         & pb,
+	HolesParams const & params,
+	bool use_cached_surfs = false,
+	std::string cmd = ""
+);
 
-   HolesResult
-   compute_holes_score(
-	   pose::Pose  const & pose,
-		 std::string const & cmd
-   );
+HolesResult
+compute_holes_score(
+	pose::Pose  const & pose,
+	std::string const & cmd
+);
 
 
 }

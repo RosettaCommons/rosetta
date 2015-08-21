@@ -20,40 +20,40 @@ namespace core {
 namespace scoring {
 namespace loop_graph {
 
-	//Constructor
-	LoopCycle::LoopCycle()
-	{}
+//Constructor
+LoopCycle::LoopCycle()
+{}
 
-	LoopCycle::LoopCycle( utility::vector1< Loop > const & loops ):
-		loops_( loops )
-	{}
+LoopCycle::LoopCycle( utility::vector1< Loop > const & loops ):
+	loops_( loops )
+{}
 
-	//Destructor
-	LoopCycle::~LoopCycle()
-	{}
+//Destructor
+LoopCycle::~LoopCycle()
+{}
 
-	//////////////////////////////////////////////
-	Loop const &
-	LoopCycle::loop( Size const n ) const{
-		return loops_[ n ];
+//////////////////////////////////////////////
+Loop const &
+LoopCycle::loop( Size const n ) const{
+	return loops_[ n ];
+}
+
+//////////////////////////////////////////////
+Size
+LoopCycle::find_index_for_loop_landing_at_domain( Size const & domain ){
+	for ( Size n = 1; n <= loops_.size(); n++ ) {
+		if ( loops_[ n ].landing_domain() == domain ) return n;
 	}
+	return 0;
+}
 
-	//////////////////////////////////////////////
-	Size
-	LoopCycle::find_index_for_loop_landing_at_domain( Size const & domain ){
-		for ( Size n = 1; n <= loops_.size(); n++ ){
-			if ( loops_[ n ].landing_domain() == domain ) return n;
-		}
-		return 0;
+/// @brief Test IO operator for debug and Python bindings
+std::ostream & operator << ( std::ostream & os, LoopCycle const & loop_cycle){
+	for ( Size n = 1; n <= loop_cycle.loops_.size(); n++  ) {
+		os << " " << loop_cycle.loops_[ n ];
 	}
-
-	/// @brief Test IO operator for debug and Python bindings
-	std::ostream & operator << ( std::ostream & os, LoopCycle const & loop_cycle){
-		for ( Size n = 1; n <= loop_cycle.loops_.size(); n++  ){
-			os << " " << loop_cycle.loops_[ n ];
-		}
-		return os;
-	}
+	return os;
+}
 
 } //loop_graph
 } //scoring

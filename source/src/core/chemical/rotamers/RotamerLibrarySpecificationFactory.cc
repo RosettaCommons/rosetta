@@ -71,10 +71,10 @@ RotamerLibrarySpecificationFactory::has_type( std::string const & selector_type 
 RotamerLibrarySpecificationCreatorCOP
 RotamerLibrarySpecificationFactory::get_creator( std::string const & tag ) const {
 	CreatorMap::const_iterator entry( creator_map_.find( tag ) );
-	if( entry == creator_map_.end() ) {
+	if ( entry == creator_map_.end() ) {
 		TR << "Can't find RotamerLibrarySpecificationCreators of type " << tag << ". Known types are: " << std::endl;
 		TR << "\t";
-		for( CreatorMap::const_iterator iter( creator_map_.begin() ), iter_end( creator_map_.end() ); iter != iter_end; ++iter ) {
+		for ( CreatorMap::const_iterator iter( creator_map_.begin() ), iter_end( creator_map_.end() ); iter != iter_end; ++iter ) {
 			TR << iter->first << ", ";
 		}
 		TR << std::endl;

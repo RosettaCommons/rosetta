@@ -9,8 +9,8 @@
 
 /// @file Interface - information about the interface between to partners
 /// @brief contains the following information:
-///		calculate the interface between the two (or other?) partners
-///		set the packer task to only pack the interface
+///  calculate the interface between the two (or other?) partners
+///  set the packer task to only pack the interface
 /// @author Monica Berrondo
 
 
@@ -39,7 +39,7 @@ namespace protocols {
 namespace scoring {
 
 class
-Interface : public utility::pointer::ReferenceCount {
+	Interface : public utility::pointer::ReferenceCount {
 public:
 
 	typedef core::pack::task::PackerTaskOP PackerTaskOP;

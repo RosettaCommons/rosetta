@@ -32,105 +32,105 @@ namespace protocols {
 namespace mpi_refinement {
 
 class MPI_Refinement: public protocols::wum::MPI_WorkUnitManager {
-  public:
-    MPI_Refinement( char machine_letter );
+public:
+	MPI_Refinement( char machine_letter );
 
-		void set_defaults();
+	void set_defaults();
 
-    virtual ~MPI_Refinement(){}
+	virtual ~MPI_Refinement(){}
 
-	protected: // overloaded functions
+protected: // overloaded functions
 
-	  // --none-- this is a pure virtual class
+	// --none-- this is a pure virtual class
 
-	protected: // added functions
+protected: // added functions
 
-		void load_structures_from_cmdline_into_library(
-			 protocols::wum::SilentStructStore &library );
+	void load_structures_from_cmdline_into_library(
+		protocols::wum::SilentStructStore &library );
 
-		void save_state(std::string prefix = "default" );
+	void save_state(std::string prefix = "default" );
 
-		void save_state_auto();
+	void save_state_auto();
 
-		void load_state(std::string prefix = "default" );
+	void load_state(std::string prefix = "default" );
 
-		void print_stats();
+	void print_stats();
 
 	void print_summary( std::string const prefix = "SUMM " );
 
 	void print_library(protocols::wum::SilentStructStore &library,
-										 std::string const prefix = "LIB " );
+		std::string const prefix = "LIB " );
 
-		// adding arriving structures to library
-		virtual bool add_structures_to_library( protocols::wum::SilentStructStore &new_structs, std::string add_algorithm = "" );
+	// adding arriving structures to library
+	virtual bool add_structures_to_library( protocols::wum::SilentStructStore &new_structs, std::string add_algorithm = "" );
 
-		virtual bool add_structure_to_library( core::io::silent::SilentStructOP pss, std::string add_algorithm = "" );
+	virtual bool add_structure_to_library( core::io::silent::SilentStructOP pss, std::string add_algorithm = "" );
 
-		bool add_structure_to_library_direct( core::io::silent::SilentStruct &pss );
+	bool add_structure_to_library_direct( core::io::silent::SilentStruct &pss );
 
-		bool add_structure_to_library_add_n_replace( core::io::silent::SilentStruct &pss );
+	bool add_structure_to_library_add_n_replace( core::io::silent::SilentStruct &pss );
 
-		bool add_structure_to_library_single_replace( core::io::silent::SilentStruct &pss );
+	bool add_structure_to_library_single_replace( core::io::silent::SilentStruct &pss );
 
-	  void update_library_NSGAII( protocols::wum::SilentStructStore &new_structs );
+	void update_library_NSGAII( protocols::wum::SilentStructStore &new_structs );
 
-	  void setup_multi_objective();
+	void setup_multi_objective();
 
-	  void send_sortedpick_library_structs( core::Size dest_rank, 
-																					core::Size nsend,
-																					std::string const scorename,
-																					bool const weighted,
-																					bool const inverse = false,
-																					core::Real const kT = 0.2 );
+	void send_sortedpick_library_structs( core::Size dest_rank,
+		core::Size nsend,
+		std::string const scorename,
+		bool const weighted,
+		bool const inverse = false,
+		core::Real const kT = 0.2 );
 
-	  void send_random_library_structs( core::Size dest_rank, core::Size nsend );
+	void send_random_library_structs( core::Size dest_rank, core::Size nsend );
 
-		void send_random_library_struct( core::Size dest_rank, core::Size ssid ) const ;
+	void send_random_library_struct( core::Size dest_rank, core::Size ssid ) const ;
 
-		void limit_library();
+	void limit_library();
 
-  	void shave_library( protocols::wum::SilentStructStore &new_structs,
-												std::string const scorename,
-												core::Real const frac ) const;
+	void shave_library( protocols::wum::SilentStructStore &new_structs,
+		std::string const scorename,
+		core::Real const frac ) const;
 
-		void dump_structures( const protocols::wum::SilentStructStore &new_structs, 
-													bool score_only = true,
-													std::string const prefix = "" ) const;
+	void dump_structures( const protocols::wum::SilentStructStore &new_structs,
+		bool score_only = true,
+		std::string const prefix = "" ) const;
 
-		void set_ident_string( std::string new_ident ){ ident_string_ = new_ident; }
+	void set_ident_string( std::string new_ident ){ ident_string_ = new_ident; }
 
-	  void report_time( ) const;
+	void report_time( ) const;
 
-	protected: // accesors
-		const std::string &mpi_resume(){ return mpi_resume_; }
+protected: // accesors
+	const std::string &mpi_resume(){ return mpi_resume_; }
 
-		core::Size & totaltime_loophash(){ return totaltime_loophash_; }
+	core::Size & totaltime_loophash(){ return totaltime_loophash_; }
 
-		protocols::wum::SilentStructStore  &library_central(){ return library_central_;}
-		protocols::wum::SilentStructStore  &library_ref(){ return library_ref_;}
-
-
-		const std::string & mpi_feedback( ){ return mpi_feedback_; }
-
-		void set_mpi_feedback( const std::string &mpi_feedback){ mpi_feedback_ = mpi_feedback; }
+	protocols::wum::SilentStructStore  &library_central(){ return library_central_;}
+	protocols::wum::SilentStructStore  &library_ref(){ return library_ref_;}
 
 
-		core::Size  max_lib_size(){ return max_lib_size_; }
-		core::Size  max_ref_lib_size(){ return max_ref_lib_size_; }
+	const std::string & mpi_feedback( ){ return mpi_feedback_; }
 
-		void set_max_lib_size( core::Size max_lib_size){ max_lib_size_ = max_lib_size; }
-		void set_max_ref_lib_size( core::Size max_ref_lib_size){ max_ref_lib_size_ = max_ref_lib_size; }
+	void set_mpi_feedback( const std::string &mpi_feedback){ mpi_feedback_ = mpi_feedback; }
 
-		core::Real score( const core::io::silent::SilentStructOP &ss ) const;
 
-	  void retag_library( protocols::wum::SilentStructStore &store,
-												std::string const prefix ) const;
+	core::Size  max_lib_size(){ return max_lib_size_; }
+	core::Size  max_ref_lib_size(){ return max_ref_lib_size_; }
 
-		std::string format_silent_struct( const core::io::silent::SilentStructOP &ss ) const;
+	void set_max_lib_size( core::Size max_lib_size){ max_lib_size_ = max_lib_size; }
+	void set_max_ref_lib_size( core::Size max_ref_lib_size){ max_ref_lib_size_ = max_ref_lib_size; }
 
-		core::Real score( const core::io::silent::SilentStruct &ss ) const;
+	core::Real score( const core::io::silent::SilentStructOP &ss ) const;
 
-		std::string format_silent_struct( const core::io::silent::SilentStruct &ss ) const;
+	void retag_library( protocols::wum::SilentStructStore &store,
+		std::string const prefix ) const;
+
+	std::string format_silent_struct( const core::io::silent::SilentStructOP &ss ) const;
+
+	core::Real score( const core::io::silent::SilentStruct &ss ) const;
+
+	std::string format_silent_struct( const core::io::silent::SilentStruct &ss ) const;
 
 protected:
 	// Multiobjective
@@ -157,25 +157,25 @@ private:
 	core::Size last_save_state_;
 
 protected: // statistics can be protected such that derived classes can modify their values.
-		// Statistics
-	  core::Size starttime_;
-		core::Size totaltime_loophash_;
-		core::Size n_loophash_;
-		core::Size totaltime_batchrelax_;
-		core::Size n_batchrelax_;
-		core::Size total_structures_;
-		core::Size total_structures_relax_;
-		core::Size total_metropolis_;
-		core::Size total_metropolis_accepts_;
+	// Statistics
+	core::Size starttime_;
+	core::Size totaltime_loophash_;
+	core::Size n_loophash_;
+	core::Size totaltime_batchrelax_;
+	core::Size n_batchrelax_;
+	core::Size total_structures_;
+	core::Size total_structures_relax_;
+	core::Size total_metropolis_;
+	core::Size total_metropolis_accepts_;
 
-	// Native 
+	// Native
 	bool native_given_;
 	core::pose::Pose native_pose_;
 	core::pose::Pose pose0_;
 
 private:
-		std::string ident_string_; // Unique identified for this job.
-  	std::string sim_replace_obj_;
+	std::string ident_string_; // Unique identified for this job.
+	std::string sim_replace_obj_;
 };
 
 

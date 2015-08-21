@@ -25,33 +25,33 @@ class AddEncounterConstraintMover : public protocols::moves::Mover {
 
 public:
 
-  AddEncounterConstraintMover();
+	AddEncounterConstraintMover();
 
-  virtual ~AddEncounterConstraintMover();
+	virtual ~AddEncounterConstraintMover();
 
-  virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP clone() const;
 
-  virtual void apply( core::pose::Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
-  core::scoring::constraints::AtomPairConstraintCOP generate_encounter_cst( core::pose::Pose & pose );
+	core::scoring::constraints::AtomPairConstraintCOP generate_encounter_cst( core::pose::Pose & pose );
 
-  //  void get_interface_info( core::pose::Pose & pose ) const;
-  protocols::scoring::InterfaceInfo const & interface_from_pose( core::pose::Pose const & ) const;
+	//  void get_interface_info( core::pose::Pose & pose ) const;
+	protocols::scoring::InterfaceInfo const & interface_from_pose( core::pose::Pose const & ) const;
 
-  virtual std::string get_name() const;
+	virtual std::string get_name() const;
 
-  void parse_my_tag(
-		    utility::tag::TagCOP tag,
-		    basic::datacache::DataMap &,
-		    protocols::filters::Filters_map const &,
-		    protocols::moves::Movers_map const &,
-		    core::pose::Pose const &
-  );
+	void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
+	);
 
 private:
-  core::Real gap_;
-  core::Size interface_jump_;
-  core::scoring::constraints::AtomPairConstraintCOP cst_;
+	core::Real gap_;
+	core::Size interface_jump_;
+	core::scoring::constraints::AtomPairConstraintCOP cst_;
 
 };
 

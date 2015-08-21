@@ -29,74 +29,74 @@ namespace scoring {
 namespace rna {
 namespace data {
 
-	class RNA_DMS_LowResolutionPotential: public utility::pointer::ReferenceCount {
+class RNA_DMS_LowResolutionPotential: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//constructor
-		RNA_DMS_LowResolutionPotential();
+	//constructor
+	RNA_DMS_LowResolutionPotential();
 
-		//destructor
-		~RNA_DMS_LowResolutionPotential();
+	//destructor
+	~RNA_DMS_LowResolutionPotential();
 
-	public:
+public:
 
-		void
-		initialize( core::pose::Pose & pose,
-								bool const rna_base_pair_computed = false );
+	void
+	initialize( core::pose::Pose & pose,
+		bool const rna_base_pair_computed = false );
 
-		core::Real
-		evaluate( core::pose::Pose const & pose,
-							RNA_Reactivity const & rna_reactivity );
+	core::Real
+	evaluate( core::pose::Pose const & pose,
+		RNA_Reactivity const & rna_reactivity );
 
 
-		void
-		update_edge_paired(  core::Size const i, core::Size const k,
-												 utility::vector1< bool > & wc_edge_paired,
-												 utility::vector1< bool > & hoogsteen_edge_paired,
-												 utility::vector1< bool > & sugar_edge_paired );
+	void
+	update_edge_paired(  core::Size const i, core::Size const k,
+		utility::vector1< bool > & wc_edge_paired,
+		utility::vector1< bool > & hoogsteen_edge_paired,
+		utility::vector1< bool > & sugar_edge_paired );
 
-		void
-		get_rna_base_pairing_status( core::pose::Pose & pose,
-																 utility::vector1< bool > & wc_edge_paired,
-																 utility::vector1< bool > & hoogsteen_edge_paired,
-																 utility::vector1< bool > & sugar_edge_paired,
-																 utility::vector1< bool > & is_bulged,
-																 bool const already_scored = false );
+	void
+	get_rna_base_pairing_status( core::pose::Pose & pose,
+		utility::vector1< bool > & wc_edge_paired,
+		utility::vector1< bool > & hoogsteen_edge_paired,
+		utility::vector1< bool > & sugar_edge_paired,
+		utility::vector1< bool > & is_bulged,
+		bool const already_scored = false );
 
-		bool
-		get_wc_near_o2prime( core::pose::Pose const & pose, core::Size const i );
+	bool
+	get_wc_near_o2prime( core::pose::Pose const & pose, core::Size const i );
 
-		utility::vector1< bool > const & wc_edge_paired() const { return wc_edge_paired_; }
-		utility::vector1< bool > const & hoog_edge_paired() const { return hoog_edge_paired_; }
-		utility::vector1< bool > const & sugar_edge_paired() const { return sugar_edge_paired_; }
-		utility::vector1< bool > const & is_bulged() const { return is_bulged_; }
+	utility::vector1< bool > const & wc_edge_paired() const { return wc_edge_paired_; }
+	utility::vector1< bool > const & hoog_edge_paired() const { return hoog_edge_paired_; }
+	utility::vector1< bool > const & sugar_edge_paired() const { return sugar_edge_paired_; }
+	utility::vector1< bool > const & is_bulged() const { return is_bulged_; }
 
-		void set_careful_base_pair_classifier( bool const & setting ){ careful_base_pair_classifier_ = setting; }
-		bool careful_base_pair_classifier() const { return careful_base_pair_classifier_; }
+	void set_careful_base_pair_classifier( bool const & setting ){ careful_base_pair_classifier_ = setting; }
+	bool careful_base_pair_classifier() const { return careful_base_pair_classifier_; }
 
-	private:
+private:
 
-		void
-		initialize_DMS_low_resolution_potential();
+	void
+	initialize_DMS_low_resolution_potential();
 
-		utility::vector1< core::Real > // this is silly -- should use a grid object
-		read_DMS_low_resolution_stats_file( std::string const & potential_file );
+	utility::vector1< core::Real > // this is silly -- should use a grid object
+	read_DMS_low_resolution_stats_file( std::string const & potential_file );
 
-		void
-		figure_out_low_resolution_potential( utility::vector1< utility::vector1< core::Real > > & all_DMS_stats );
+	void
+	figure_out_low_resolution_potential( utility::vector1< utility::vector1< core::Real > > & all_DMS_stats );
 
-	private:
+private:
 
-		bool careful_base_pair_classifier_;
-		utility::vector1< bool > wc_edge_paired_, hoog_edge_paired_, sugar_edge_paired_, is_bulged_;
-		utility::vector1< bool > is_protected_values_;
-		utility::vector1< Real > DMS_values_;
+	bool careful_base_pair_classifier_;
+	utility::vector1< bool > wc_edge_paired_, hoog_edge_paired_, sugar_edge_paired_, is_bulged_;
+	utility::vector1< bool > is_protected_values_;
+	utility::vector1< Real > DMS_values_;
 
-		// this is ridiculous -- there should be a universal grid object in Rosetta -- but will do the job for now:
-		utility::vector1< utility::vector1< Real > > DMS_low_resolution_potential_;
+	// this is ridiculous -- there should be a universal grid object in Rosetta -- but will do the job for now:
+	utility::vector1< utility::vector1< Real > > DMS_low_resolution_potential_;
 
-	};
+};
 
 } //data
 } //rna

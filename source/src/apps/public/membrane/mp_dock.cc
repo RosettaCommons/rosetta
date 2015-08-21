@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		apps/pilot/membrane/mp_dock.cc
+/// @file  apps/pilot/membrane/mp_dock.cc
 ///
-/// @brief		RosettaMP Membrane Protein-Protein Docking Protocol
-/// @details	Dock to wproteins in the membrane
+/// @brief  RosettaMP Membrane Protein-Protein Docking Protocol
+/// @details Dock to wproteins in the membrane
 ///
-/// @author		Julia Koehler Leman (julia.koehler1982@gmail.com)
-/// @author 	Rebecca Faye Alford (rfalford12@gmail.com)
-/// @note 		Last Updated: 5/18/15
+/// @author  Julia Koehler Leman (julia.koehler1982@gmail.com)
+/// @author  Rebecca Faye Alford (rfalford12@gmail.com)
+/// @note   Last Updated: 5/18/15
 
 // App headers
 #include <devel/init.hh>
@@ -37,17 +37,17 @@ main( int argc, char * argv [] )
 		using namespace protocols::jd2;
 		using namespace protocols::docking::membrane;
 
-		
+
 		// initialize options, RNG, and factory-registrators
 		devel::init(argc, argv);
-		
+
 		MPDockingMoverOP mpdm( new MPDockingMover() );
 		JobDistributor::get_instance()->go(mpdm);
 	}
-	catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
-		return -1;
-	}
+catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+	return -1;
+}
 
 	return 0;
 }

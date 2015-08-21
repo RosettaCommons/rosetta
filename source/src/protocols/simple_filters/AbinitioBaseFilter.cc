@@ -10,7 +10,7 @@
 /// @file src/protocols/filters/Filters.hh
 /// @brief header file for Filters.cc
 /// @details
-///	  Contains currently: Filters
+///   Contains currently: Filters
 ///
 ///
 /// @author Robert Vernon
@@ -71,15 +71,15 @@ AbinitioBaseFilter::get_protein_sstype( core::pose::Pose const & pose ) const {
 
 	utility::vector1< char > secstructs = read_psipred_ss2_file( pose );
 
-	if( secstructs.size() == 0 ) {
+	if ( secstructs.size() == 0 ) {
 		tr.Error << "Warning: Needs psipred_ss2 to run filters" << std::endl;
-		//		disable_all_filters_ = true;
+		//  disable_all_filters_ = true;
 		return "fail";
 	}
 
-	//	float beta_ratio;
+	// float beta_ratio;
 	int alpha = 0;
-	//	int
+	// int
 	beta_ = 0;
 	int helix_length = 0;
 	max_helix_length_ = 0;
@@ -101,20 +101,20 @@ AbinitioBaseFilter::get_protein_sstype( core::pose::Pose const & pose ) const {
 	}
 	max_helix_fraction_ = static_cast< core::Real >( max_helix_length_ ) / pose.total_residue();
 
-//car protein_ss_type
+	//car protein_ss_type
 	std::string protein_sstype;
 	beta_ratio_ = static_cast< float >( beta_ ) / ( alpha + beta_ );
 	if ( beta_ratio_ >= 0.8 ) {
 		tr.Trace << "Protein type: all beta  Fraction beta: " <<
-		 F( 6, 3, beta_ratio_ ) << std::endl;
+			F( 6, 3, beta_ratio_ ) << std::endl;
 		protein_sstype = 'b';
 	} else if ( beta_ratio_ > 0.2 && beta_ >= 10 ) {
 		tr.Trace << "Protein type: alpha/beta  Fraction beta: " <<
-		 F( 6, 3, beta_ratio_ ) << std::endl;
+			F( 6, 3, beta_ratio_ ) << std::endl;
 		protein_sstype = "ab";
 	} else {
 		tr.Trace << "Protein type: all alpha  Fraction beta: " <<
-		 F( 6, 3, beta_ratio_ ) << "nbeta" << I( 6, beta_ ) << std::endl;
+			F( 6, 3, beta_ratio_ ) << "nbeta" << I( 6, beta_ ) << std::endl;
 		protein_sstype = 'a';
 	}
 

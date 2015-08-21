@@ -116,36 +116,36 @@ namespace protocols {
 namespace ncbb {
 
 NcbbDockDesignProtocol::NcbbDockDesignProtocol():
-		mc_temp_ ( 1.0),
-		pert_mc_temp_ (0.8),
-		pert_dock_rot_mag_ (1.0),
-		pert_dock_trans_mag_ (0.5),
-		pert_pep_small_temp_ (0.8),
-		pert_pep_small_H_ (2.0),
-		pert_pep_small_L_ (2.0),
-		pert_pep_small_E_ (2.0),
-		pert_pep_shear_temp_ (0.8),
-		pert_pep_shear_H_ (2.0),
-		pert_pep_shear_L_ (2.0),
-		pert_pep_shear_E_ (2.0),
+	mc_temp_ ( 1.0),
+	pert_mc_temp_ (0.8),
+	pert_dock_rot_mag_ (1.0),
+	pert_dock_trans_mag_ (0.5),
+	pert_pep_small_temp_ (0.8),
+	pert_pep_small_H_ (2.0),
+	pert_pep_small_L_ (2.0),
+	pert_pep_small_E_ (2.0),
+	pert_pep_shear_temp_ (0.8),
+	pert_pep_shear_H_ (2.0),
+	pert_pep_shear_L_ (2.0),
+	pert_pep_shear_E_ (2.0),
 
-		pert_pep_num_rep_ (100),
-		pert_num_ (10),
-		dock_design_loop_num_ (10),
+	pert_pep_num_rep_ (100),
+	pert_num_ (10),
+	dock_design_loop_num_ (10),
 
-		no_design_(false),
-		final_design_min_ (true),
-		use_soft_rep_ (false),
-		mc_initial_pose_ (false),
-		ncbb_design_first_ (false),
+	no_design_(false),
+	final_design_min_ (true),
+	use_soft_rep_ (false),
+	mc_initial_pose_ (false),
+	ncbb_design_first_ (false),
 
-		pymol_ (false),
-		keep_history_ (false)
+	pymol_ (false),
+	keep_history_ (false)
 {
-		Mover::type("NcbbDockDesignProtocol");
+	Mover::type("NcbbDockDesignProtocol");
 
-		score_fxn_ = get_score_function();
-		scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn_);
+	score_fxn_ = get_score_function();
+	scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn_);
 }
 
 NcbbDockDesignProtocol::NcbbDockDesignProtocol(
@@ -253,10 +253,11 @@ NcbbDockDesignProtocol::apply(
 
 	scoring::ScoreFunctionOP pert_score_fxn;
 
-	if ( use_soft_rep_ )
+	if ( use_soft_rep_ ) {
 		pert_score_fxn = soft_score_fxn;
-	else
+	} else {
 		pert_score_fxn = score_fxn_;
+	}
 
 	scoring::constraints::add_fa_constraints_from_cmdline_to_pose(pose);
 
@@ -293,12 +294,12 @@ NcbbDockDesignProtocol::apply(
 	utility::vector1< core::Size > oop_seq_positions = core::pose::ncbb::initialize_oops(pose);
 	utility::vector1< core::Size > hbs_seq_positions = core::pose::ncbb::initialize_hbs(pose);
 
-	for( Size i = 1; i <= ncbb_seq_positions.size(); ++i  )
-	{
+	for ( Size i = 1; i <= ncbb_seq_positions.size(); ++i  ) {
 		pert_pep_mm->set_bb( ncbb_seq_positions[i], false );
 
-		if ( score_fxn_->has_zero_weight( core::scoring::atom_pair_constraint ) )
+		if ( score_fxn_->has_zero_weight( core::scoring::atom_pair_constraint ) ) {
 			score_fxn_->set_weight( core::scoring::atom_pair_constraint, 1.0 );
+		}
 	}
 
 
@@ -354,7 +355,7 @@ NcbbDockDesignProtocol::apply(
 	pert_random->add_mover( pert_dock_rbpm, 1 );
 	pert_random->add_mover( pert_pep_repeat, 0.5 );
 	//pert_random->add_mover( hpm_small, 0.5 );
-	if (oop_seq_positions.size() > 0) {
+	if ( oop_seq_positions.size() > 0 ) {
 		pert_random->add_mover( opm_small, 0.5 );
 		pert_random->add_mover( opm_puck, 0.1 );
 	}
@@ -378,8 +379,7 @@ NcbbDockDesignProtocol::apply(
 	desn_rrop->default_filename();
 	desn_tf->push_back( desn_rrop );
 
-	if( no_design_ )
-	{
+	if ( no_design_ ) {
 		core::pack::task::operation::RestrictToRepackingOP rtrp( new core::pack::task::operation::RestrictToRepacking() );
 		desn_tf->push_back( rtrp );
 	}
@@ -401,7 +401,7 @@ NcbbDockDesignProtocol::apply(
 	desn_mm->set_jump( 1, true );
 
 	// create minimization mover
-	simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( desn_mm, score_fxn_, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
+	simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( desn_mm, score_fxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 
 	// definitely want sidechain minimization here
 	using protocols::simple_moves::TaskAwareMinMoverOP;
@@ -422,15 +422,17 @@ NcbbDockDesignProtocol::apply(
 
 	protocols::jd2::JobOP curr_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
-	if( pymol_ )
+	if ( pymol_ ) {
 		protocols::moves::PyMolObserverOP pymover = protocols::moves::AddPyMolObserver(pose, keep_history_ );
+	}
 
 	//pose.dump_pdb("pre_main_loop.pdb");
 	for ( Size k = 1; k <= Size( dock_design_loop_num_ ); ++k ) {
 		pert_mc->reset(pose);
 
-		if ( k == 1 && ncbb_design_first_ )
+		if ( k == 1 && ncbb_design_first_ ) {
 			desn_sequence->apply( pose );
+		}
 
 		// Perturbation phase - loop
 		for ( Size j = 1; j <= Size( pert_num_ ); ++j ) {
@@ -469,7 +471,7 @@ NcbbDockDesignProtocol::apply(
 	// calc energy
 	//energy_complex = (*score_fxn_)(pose);
 	// no actual cutoff applied?!
-	
+
 	TR << "Energy less than cutoff, doing final design and running filters..." << std::endl;
 
 	if ( final_design_min_ ) {
@@ -479,33 +481,33 @@ NcbbDockDesignProtocol::apply(
 	calculate_statistics( curr_job, pose, score_fxn_ );
 
 }
-	
+
 protocols::moves::MoverOP
 NcbbDockDesignProtocol::clone() const
 {
 	return protocols::moves::MoverOP( new NcbbDockDesignProtocol (
 		score_fxn_,
-  		mc_temp_,
-  		pert_mc_temp_,
-  		pert_dock_rot_mag_,
-  		pert_dock_trans_mag_,
-  		pert_pep_small_temp_,
-  		pert_pep_small_H_,
-  		pert_pep_small_L_,
-  		pert_pep_small_E_,
-  		pert_pep_shear_temp_,
-  		pert_pep_shear_H_,
-  		pert_pep_shear_L_,
-  		pert_pep_shear_E_,
-  		pert_pep_num_rep_,
-  		pert_num_,
-  		dock_design_loop_num_,
-  		no_design_,
-  		final_design_min_,
-  		use_soft_rep_,
-  		mc_initial_pose_,
-  		ncbb_design_first_,
-  		pymol_,
+		mc_temp_,
+		pert_mc_temp_,
+		pert_dock_rot_mag_,
+		pert_dock_trans_mag_,
+		pert_pep_small_temp_,
+		pert_pep_small_H_,
+		pert_pep_small_L_,
+		pert_pep_small_E_,
+		pert_pep_shear_temp_,
+		pert_pep_shear_H_,
+		pert_pep_shear_L_,
+		pert_pep_shear_E_,
+		pert_pep_num_rep_,
+		pert_num_,
+		dock_design_loop_num_,
+		no_design_,
+		final_design_min_,
+		use_soft_rep_,
+		mc_initial_pose_,
+		ncbb_design_first_,
+		pymol_,
 		keep_history_
 		) );
 }
@@ -521,28 +523,29 @@ NcbbDockDesignProtocol::parse_my_tag
 ) {
 
 	init_common_options( tag, data, score_fxn_, mc_temp_, pert_mc_temp_, pert_dock_rot_mag_, pert_dock_trans_mag_, pert_pep_small_temp_,
-						pert_pep_small_H_, pert_pep_small_L_, pert_pep_small_E_, pert_pep_shear_temp_,
-						pert_pep_shear_H_, pert_pep_shear_L_, pert_pep_shear_E_, pert_pep_num_rep_, pert_num_, dock_design_loop_num_,
-						no_design_, final_design_min_, use_soft_rep_, mc_initial_pose_, pymol_, keep_history_ );
-	
-	if(tag->hasOption( "ncbb_design_first"))
+		pert_pep_small_H_, pert_pep_small_L_, pert_pep_small_E_, pert_pep_shear_temp_,
+		pert_pep_shear_H_, pert_pep_shear_L_, pert_pep_shear_E_, pert_pep_num_rep_, pert_num_, dock_design_loop_num_,
+		no_design_, final_design_min_, use_soft_rep_, mc_initial_pose_, pymol_, keep_history_ );
+
+	if ( tag->hasOption( "ncbb_design_first") ) {
 		ncbb_design_first_ = tag->getOption<bool>("ncbb_design_first", ncbb_design_first_);
- 	else
+	} else {
 		ncbb_design_first_ = false;
+	}
 
 }
 
 // MoverCreator
 moves::MoverOP NcbbDockDesignProtocolCreator::create_mover() const {
-        return moves::MoverOP( new NcbbDockDesignProtocol() );
+	return moves::MoverOP( new NcbbDockDesignProtocol() );
 }
 
 std::string NcbbDockDesignProtocolCreator::keyname() const {
-        return NcbbDockDesignProtocolCreator::mover_name();
+	return NcbbDockDesignProtocolCreator::mover_name();
 }
 
 std::string NcbbDockDesignProtocolCreator::mover_name(){
-        return "NcbbDockDesign";
+	return "NcbbDockDesign";
 }
 
 

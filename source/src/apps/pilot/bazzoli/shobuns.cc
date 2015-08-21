@@ -12,7 +12,7 @@
 
 
 /// @brief computes, using the SHO solvation model, the buried unsatisfied atoms
-/// 	among a target set of polar atoms
+///  among a target set of polar atoms
 ///
 /// @author Andrea Bazzoli (bazzoli@ku.edu)
 ///
@@ -70,62 +70,61 @@ using basic::options::option;
 
 int main( int argc, char * argv [] )
 {
-try {
+	try {
 
-	//// build pose and score function
-	devel::init(argc, argv);
+		//// build pose and score function
+		devel::init(argc, argv);
 
-	core::pose::Pose ps;
-	std::string const input_pdb_name( basic::options::start_file() );
-	core::import_pose::pose_from_pdb( ps, input_pdb_name );
+		core::pose::Pose ps;
+		std::string const input_pdb_name( basic::options::start_file() );
+		core::import_pose::pose_from_pdb( ps, input_pdb_name );
 
-	core::scoring::ScoreFunctionOP scorefxn(core::scoring::get_score_function());
-	(*scorefxn)(ps);
+		core::scoring::ScoreFunctionOP scorefxn(core::scoring::get_score_function());
+		(*scorefxn)(ps);
 
-	//// initialize SHO buried unsatisfied calculator from command line
-	using protocols::toolbox::pose_metric_calculators::SHOBuriedUnsatisfiedPolarsCalculator;
-	using protocols::toolbox::pose_metric_calculators::SHOBuriedUnsatisfiedPolarsCalculatorOP;
-	SHOBuriedUnsatisfiedPolarsCalculatorOP shobuns_calculator;
+		//// initialize SHO buried unsatisfied calculator from command line
+		using protocols::toolbox::pose_metric_calculators::SHOBuriedUnsatisfiedPolarsCalculator;
+		using protocols::toolbox::pose_metric_calculators::SHOBuriedUnsatisfiedPolarsCalculatorOP;
+		SHOBuriedUnsatisfiedPolarsCalculatorOP shobuns_calculator;
 
-	using basic::options::OptionKeys::pose_metrics::shobuns::sho_cutoff;
-	core::Real cutoff = option[sho_cutoff];
+		using basic::options::OptionKeys::pose_metrics::shobuns::sho_cutoff;
+		core::Real cutoff = option[sho_cutoff];
 
-	using basic::options::OptionKeys::pose_metrics::shobuns::tgt_amino;
-	if(option[tgt_amino].user()) {
+		using basic::options::OptionKeys::pose_metrics::shobuns::tgt_amino;
+		if ( option[tgt_amino].user() ) {
 
-		// select by amino acid type and atom name
+			// select by amino acid type and atom name
 
-		using basic::options::OptionKeys::pose_metrics::shobuns::tgt_atom;
+			using basic::options::OptionKeys::pose_metrics::shobuns::tgt_atom;
 
-		std::string amino = option[tgt_amino];
-		std::string atom = option[tgt_atom];
-		shobuns_calculator = SHOBuriedUnsatisfiedPolarsCalculatorOP(
-			new SHOBuriedUnsatisfiedPolarsCalculator(
+			std::string amino = option[tgt_amino];
+			std::string atom = option[tgt_atom];
+			shobuns_calculator = SHOBuriedUnsatisfiedPolarsCalculatorOP(
+				new SHOBuriedUnsatisfiedPolarsCalculator(
 				cutoff, amino, atom, scorefxn));
-	}
-	else {
+		} else {
 
-		// select by residue indexes
+			// select by residue indexes
 
-		using protocols::toolbox::pose_metric_calculators::residue_subset;
-		using basic::options::OptionKeys::pose_metrics::shobuns::tgt_res;
+			using protocols::toolbox::pose_metric_calculators::residue_subset;
+			using basic::options::OptionKeys::pose_metrics::shobuns::tgt_res;
 
-		utility::vector1<core::Size> res;
-		if(option[tgt_res].user()) {
-			std::string resfil = option[tgt_res];
-			residue_subset(resfil, res, ps);
+			utility::vector1<core::Size> res;
+			if ( option[tgt_res].user() ) {
+				std::string resfil = option[tgt_res];
+				residue_subset(resfil, res, ps);
+			}
+			shobuns_calculator = SHOBuriedUnsatisfiedPolarsCalculatorOP(
+				new SHOBuriedUnsatisfiedPolarsCalculator(cutoff, res, scorefxn));
 		}
-		shobuns_calculator = SHOBuriedUnsatisfiedPolarsCalculatorOP(
-			new SHOBuriedUnsatisfiedPolarsCalculator(cutoff, res, scorefxn));
-	}
 
-	core::pose::metrics::CalculatorFactory::Instance().register_calculator(
-		"shobuns", shobuns_calculator);
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator(
+			"shobuns", shobuns_calculator);
 
-	//// compute and print SHO buried unsatisfied polar atoms
-	shobuns_calculator->recompute_and_print(ps);
+		//// compute and print SHO buried unsatisfied polar atoms
+		shobuns_calculator->recompute_and_print(ps);
 
-} // try
+	} // try
 catch ( utility::excn::EXCN_Base const & e ) {
 	std::cerr << "caught exception " << e.msg() << std::endl;
 	return -1;

@@ -58,7 +58,7 @@ namespace abinitio {
 using namespace core;
 
 bool KinematicControl::prepare_pose_for_sampling( pose::Pose& pose ) const {
-  pose.fold_tree( sampling_fold_tree() );
+	pose.fold_tree( sampling_fold_tree() );
 	if ( jump_mover() ) jump_mover()->apply_at_all_positions( pose ); //make sure each jump is initialized
 	jumping::safe_secstruct( pose ); //make sure that secstruct is valid (in the sense of FragmentMover::valid_ss)
 	return true;
@@ -67,74 +67,74 @@ bool KinematicControl::prepare_pose_for_sampling( pose::Pose& pose ) const {
 //@brief find all cutpoints that are only present in the "sampling" fold-tree.
 void
 find_sampling_cuts(
-  kinematics::FoldTree const& sampling,
-  kinematics::FoldTree const& final,
-  utility::vector1< Size >& sample_cuts )
+	kinematics::FoldTree const& sampling,
+	kinematics::FoldTree const& final,
+	utility::vector1< Size >& sample_cuts )
 {
-  sample_cuts.clear();
-  for ( Size i = 1; i <= (Size) sampling.num_cutpoint(); i++ ) {
-    if ( !final.is_cutpoint( sampling.cutpoint( i ) ) ) sample_cuts.push_back( sampling.cutpoint( i ));
-  }
+	sample_cuts.clear();
+	for ( Size i = 1; i <= (Size) sampling.num_cutpoint(); i++ ) {
+		if ( !final.is_cutpoint( sampling.cutpoint( i ) ) ) sample_cuts.push_back( sampling.cutpoint( i ));
+	}
 }
 
 void
 KinematicControl::add_chainbreak_variants( pose::Pose &pose ) const {
-  utility::vector1< Size > sample_cuts;
-  find_sampling_cuts( pose.fold_tree(), final_fold_tree(), sample_cuts );
-  for ( utility::vector1< Size >::const_iterator it = sample_cuts.begin(), eit = sample_cuts.end();
-	it != eit; ++ it ) {
-    core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, *it );
-    core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, *it+1 );
-  }
+	utility::vector1< Size > sample_cuts;
+	find_sampling_cuts( pose.fold_tree(), final_fold_tree(), sample_cuts );
+	for ( utility::vector1< Size >::const_iterator it = sample_cuts.begin(), eit = sample_cuts.end();
+			it != eit; ++ it ) {
+		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, *it );
+		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, *it+1 );
+	}
 }
 
 void
 KinematicControl::add_chainbreak_variants( pose::Pose &pose, Size max_dist, core::kinematics::ShortestPathInFoldTree const& sp) const {
-  //remove_chainbreaks( pose ); not necessary if max_dist is monotonoically increaseing
-  utility::vector1< Size > sample_cuts;
-  find_sampling_cuts( pose.fold_tree(), final_fold_tree(), sample_cuts );
-  for ( utility::vector1< Size >::const_iterator it = sample_cuts.begin(), eit = sample_cuts.end();
-	it != eit; ++ it ) {
-    if ( sp.dist( *it, *it+1 ) <= max_dist ) {
-      tr.Debug << "add chainbreak variant to residues " << *it << " and " << *it+1 << std::endl;
-      core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, *it );
-      core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, *it+1 );
-    }
-  }
+	//remove_chainbreaks( pose ); not necessary if max_dist is monotonoically increaseing
+	utility::vector1< Size > sample_cuts;
+	find_sampling_cuts( pose.fold_tree(), final_fold_tree(), sample_cuts );
+	for ( utility::vector1< Size >::const_iterator it = sample_cuts.begin(), eit = sample_cuts.end();
+			it != eit; ++ it ) {
+		if ( sp.dist( *it, *it+1 ) <= max_dist ) {
+			tr.Debug << "add chainbreak variant to residues " << *it << " and " << *it+1 << std::endl;
+			core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, *it );
+			core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, *it+1 );
+		}
+	}
 }
 
 KinematicControl::KinematicControl() {}
 KinematicControl::~KinematicControl() {}
 
 void KinematicControl::set_movemap( core::kinematics::MoveMapCOP mm ) {
- movemap_ = mm;
+	movemap_ = mm;
 	if ( jump_mover_ ) jump_mover_->set_movemap( movemap_ptr() );
 }
 
 void KinematicControl::set_strict_movemap( core::kinematics::MoveMapCOP mm ) {
- strict_movemap_ = mm;
+	strict_movemap_ = mm;
 }
 
 core::kinematics::MoveMapCOP
 KinematicControl::movemap_ptr() const {
- return movemap_;
+	return movemap_;
 }
 
 core::kinematics::MoveMap const &
 KinematicControl::movemap() const {
- return *movemap_;
+	return *movemap_;
 }
 
 //return a jump-Mover for jumps that you want to be sampled
 simple_moves::FragmentMoverOP
 KinematicControl::jump_mover() const {
- return jump_mover_;
+	return jump_mover_;
 }
 
 //return a jump-Mover for jumps that you want to be sampled
 void
 KinematicControl::set_jump_mover( simple_moves::FragmentMoverOP jm ) {
- jump_mover_ = jm;
+	jump_mover_ = jm;
 	if ( jump_mover_ && movemap_ ) jump_mover_->set_movemap( movemap_ );
 }
 

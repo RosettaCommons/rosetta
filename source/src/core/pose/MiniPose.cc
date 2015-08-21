@@ -65,8 +65,8 @@ MiniPose::MiniPose( core::pose::Pose const & pose )
 
 //////////////////////////////////////////////////////////////////////////////////
 MiniPose::MiniPose( utility::vector1< utility::vector1< PointPosition > > const & coords,
-										core::kinematics::FoldTree const & fold_tree,
-										std::string const & sequence ):
+	core::kinematics::FoldTree const & fold_tree,
+	std::string const & sequence ):
 	coords_( coords ),
 	fold_tree_( fold_tree ),
 	sequence_( sequence )
@@ -80,14 +80,14 @@ MiniPose::fold_tree() const{
 
 utility::vector1< utility::vector1< PointPosition > > const &
 MiniPose::coords() const{
-	if(coords_.size()==0) utility_exit_with_message("coords_ is empty!");
+	if ( coords_.size()==0 ) utility_exit_with_message("coords_ is empty!");
 
 	return coords_;
 }
 
 utility::vector1< utility::vector1< std::string > > const &
 MiniPose::atom_names_list() const{
-	if(atom_names_list_.size()==0) utility_exit_with_message("atom_names_list_ is empty!");
+	if ( atom_names_list_.size()==0 ) utility_exit_with_message("atom_names_list_ is empty!");
 	return atom_names_list_;
 }
 
@@ -117,14 +117,14 @@ MiniPose::sequence() const {
 PointPosition const &
 MiniPose::xyz( core::id::AtomID atom_id ) const{
 
-	if(coords_.size()==0) utility_exit_with_message("coords_ is empty!");
+	if ( coords_.size()==0 ) utility_exit_with_message("coords_ is empty!");
 
-	if(coords_.size()<atom_id.rsd()){
+	if ( coords_.size()<atom_id.rsd() ) {
 		std::cout << "atom_id.rsd()= " << atom_id.rsd() << " coords_.size()= " << coords_.size() << std::endl;
 		utility_exit_with_message("atom_id.rsd()" +ObjexxFCL::string_of(atom_id.rsd())+ " is out of range!");
 	}
 
-	if(coords_[ atom_id.rsd() ].size()<atom_id.atomno()){
+	if ( coords_[ atom_id.rsd() ].size()<atom_id.atomno() ) {
 		std::cout << "atom_id.atomno()= " << atom_id.atomno() << " coords_[" << atom_id.rsd() << "].size()= " << coords_[ atom_id.rsd() ].size() << std::endl;
 		utility_exit_with_message("atom_id.atomno()" +ObjexxFCL::string_of(atom_id.atomno())+ " is out of range!");
 	}
@@ -134,14 +134,14 @@ MiniPose::xyz( core::id::AtomID atom_id ) const{
 
 std::string const &
 MiniPose::atom_name( core::id::AtomID atom_id ) const{
-	if(atom_names_list_.size()==0) utility_exit_with_message("atom_names_list_ is empty!");
+	if ( atom_names_list_.size()==0 ) utility_exit_with_message("atom_names_list_ is empty!");
 
-	if(atom_names_list_.size()<atom_id.rsd()){
+	if ( atom_names_list_.size()<atom_id.rsd() ) {
 		std::cout << "atom_id.rsd()= " << atom_id.rsd() << " atom_names_list_.size()= " << atom_names_list_.size() << std::endl;
 		utility_exit_with_message("atom_id.rsd()" +ObjexxFCL::string_of(atom_id.rsd())+ " is out of range!");
 	}
 
-	if(atom_names_list_[ atom_id.rsd() ].size()<atom_id.atomno()){
+	if ( atom_names_list_[ atom_id.rsd() ].size()<atom_id.atomno() ) {
 		std::cout << "atom_id.atomno()= " << atom_id.atomno() << " atom_names_list_[" << atom_id.rsd() << "].size()= " << atom_names_list_[ atom_id.rsd() ].size() << std::endl;
 		utility_exit_with_message("atom_id.atomno()" +ObjexxFCL::string_of(atom_id.atomno())+ " is out of range!");
 	}

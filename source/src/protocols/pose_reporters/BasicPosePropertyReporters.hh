@@ -40,14 +40,14 @@ namespace pose_reporters {
 ////////////////////////////////////////////////////////////////////////
 // EnergyReporter
 
-/// @brief Report the pose score or a specific energy term 
+/// @brief Report the pose score or a specific energy term
 
 class EnergyReporter : public protocols::rosetta_scripts::PosePropertyReporter {
 
 public:
 	EnergyReporter();
 
-	static std::string name() {	return "EnergyReporter"; }
+	static std::string name() { return "EnergyReporter"; }
 	std::string get_name() const { return name(); }
 
 	core::Real report_property( core::pose::Pose & p ) const;
@@ -79,7 +79,7 @@ class FilterReporter : public protocols::rosetta_scripts::PosePropertyReporter {
 public:
 	FilterReporter();
 
-	static std::string name() {	return "FilterReporter"; }
+	static std::string name() { return "FilterReporter"; }
 	std::string get_name() const { return name(); }
 
 	core::Real report_property( core::pose::Pose & p ) const;
@@ -108,15 +108,15 @@ private:
 class RMSDReporter : public protocols::rosetta_scripts::PosePropertyReporter {
 
 	enum {
-		MODE_NONE, 
-		MODE_CA_rmsd, 
+		MODE_NONE,
+		MODE_CA_rmsd,
 		MODE_all_atom_rmsd
 	};
 
 public:
 	RMSDReporter();
 
-	static std::string name() {	return "RMSDReporter"; }
+	static std::string name() { return "RMSDReporter"; }
 	std::string get_name() const { return name(); }
 
 	core::Real report_property( core::pose::Pose & p1, core::pose::Pose & p2 ) const;

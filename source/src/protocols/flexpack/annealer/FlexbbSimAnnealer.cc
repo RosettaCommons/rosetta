@@ -58,13 +58,13 @@ FlexbbSimAnnealer::FlexbbSimAnnealer(
 	ObjexxFCL::FArray1D< PackerEnergy > & rot_freq
 ):
 	parent(
-		ig->get_num_total_states(),
-		bestrotamer_at_seqpos,
-		bestenergy,
-		start_with_current, // start simulation with current rotamers
-		current_rot_index,
-		calc_rot_freq,
-		rot_freq
+	ig->get_num_total_states(),
+	bestrotamer_at_seqpos,
+	bestenergy,
+	start_with_current, // start simulation with current rotamers
+	current_rot_index,
+	calc_rot_freq,
+	rot_freq
 	),
 	ig_(ig),
 	rotsets_( rotsets )
@@ -131,7 +131,7 @@ void FlexbbSimAnnealer::run()
 	set_lowtemp( 0.2 ); // go colder than regular SA!
 
 	if ( start_with_current() ) {
-		for (Size ii = 1; ii <= nmoltenres; ++ii) {
+		for ( Size ii = 1; ii <= nmoltenres; ++ii ) {
 			state_on_node(ii) = current_rot_index()( rotsets_->moltenres_2_resid( ii ));
 		}
 		ig_->set_network_state( state_on_node );
@@ -189,8 +189,8 @@ void FlexbbSimAnnealer::run()
 	bool sconly_move_accessible_state_list_current( false );
 
 	//outer loop
-  PackerEnergy last_temperature = 100000;
-	for (Size nn = 1; nn <= outeriterations; ++nn ) {
+	PackerEnergy last_temperature = 100000;
+	for ( Size nn = 1; nn <= outeriterations; ++nn ) {
 
 		Size num_fixbb_move_accepts = 0;
 		Size num_fixbb_move_valid = 0;
@@ -203,11 +203,11 @@ void FlexbbSimAnnealer::run()
 		setup_temperature(loopenergy,nn);
 		Size inneriterations = inneriterations_usual;
 
-		if ( nn > 1 && get_temperature() > last_temperature) {
+		if ( nn > 1 && get_temperature() > last_temperature ) {
 			/// short circuit -- do not return to high temperature.
 			//assert( outeriterations > 0 ); // don't wrap to 4 billion
 			//nn = outeriterations - 1; // force quence next round
-      //continue;
+			//continue;
 			set_temperature( 0.5 ); // don't return to high temperatures /// ? maybe?
 		}
 		last_temperature = get_temperature();
@@ -227,22 +227,22 @@ void FlexbbSimAnnealer::run()
 		//default mode, which is a combination of move side chain, move backbone
 		//need to test how many cycles for each mode
 		PackerEnergy temperature = get_temperature();
-		for (Size j = 1; j <= inneriterations; ++j) {
+		for ( Size j = 1; j <= inneriterations; ++j ) {
 
 			if ( ! sconly_move_accessible_state_list_current ) {
 				ig_->get_accessible_states( FlexbbInteractionGraph::SC_ONLY, accessible_state_list );
 				sconly_move_accessible_state_list_current = true;
 			}
 
-			//	    std::cout<<"num_accessible = "<<num_accessible<<"totalinnner = "<<inneriterations<<'\n'
-			for (Size n = 1; n <= cycle1; ++n ) {//move side chain only
+			//     std::cout<<"num_accessible = "<<num_accessible<<"totalinnner = "<<inneriterations<<'\n'
+			for ( Size n = 1; n <= cycle1; ++n ) {//move side chain only
 				//pick random rotamers from the rotamer list,this subroutine should go into the base class
 				//  ranrotamer = pick_a_rotamer(list,n,nn);
 
 
 				ranrotamer = pick_a_rotamer( j, n, cycle1, accessible_state_list);
 
-				if (quench()) {
+				if ( quench() ) {
 					//std::cout<<"inneriteration = "<<j<<"cycle1 = "<<n<<"rannum="<<rannum<<"ranrot="<<ranrotamer<<'\n';
 				}
 
@@ -252,7 +252,7 @@ void FlexbbSimAnnealer::run()
 				rotamer_state_on_moltenres = rotsets_->local_rotid_for_rotamer_on_moltenres( moltenres_id, ranrotamer );
 				prevrotamer_state = state_on_node( moltenres_id );
 
-				if (rotamer_state_on_moltenres == prevrotamer_state ) continue;// rotamer is already assigned; skip iteration
+				if ( rotamer_state_on_moltenres == prevrotamer_state ) continue;// rotamer is already assigned; skip iteration
 
 				++num_fixbb_move_valid;
 				//std::cout << "State on node: ";
@@ -262,12 +262,12 @@ void FlexbbSimAnnealer::run()
 				ig_->consider_substitution( moltenres_id, rotamer_state_on_moltenres,
 					delta_energy, previous_energy_for_node);
 
-				if ((prevrotamer_state == 0)||pass_metropolis(previous_energy_for_node,delta_energy)) {
+				if ( (prevrotamer_state == 0)||pass_metropolis(previous_energy_for_node,delta_energy) ) {
 					//std::cerr << "pass_metropolis sc only: " << delta_energy << ", " << alternate_energy_total << ", " << bestenergy_ << std::endl;
 					++num_fixbb_move_accepts;
 					currentenergy = ig_->commit_considered_substitution();
 					state_on_node( moltenres_id ) = rotamer_state_on_moltenres;
-					if ((prevrotamer_state == 0)||(currentenergy < bestenergy() )) {
+					if ( (prevrotamer_state == 0)||(currentenergy < bestenergy() ) ) {
 						bestenergy() = currentenergy;
 						best_state_on_node = state_on_node;
 					}
@@ -286,16 +286,16 @@ void FlexbbSimAnnealer::run()
 
 			//switch to moving the backbone only
 			ig_->get_backbone_list( accessible_state_list_bbfrag );
-			for (Size n = 1; n <= cycle2; ++n ) {
+			for ( Size n = 1; n <= cycle2; ++n ) {
 				//pick a random backbone fragment from the list
-				//	  ranbbfrag = accessible_state_list_bbfrag( static_cast< int > (ran3() * num_accessible_bb) + 1 );
+				//   ranbbfrag = accessible_state_list_bbfrag( static_cast< int > (ran3() * num_accessible_bb) + 1 );
 
 				ranbbfrag = pick_a_rotamer(j,n,cycle2,accessible_state_list_bbfrag);
 
 				//figure out the old energy and newenergy, at this circustance, the
 				//rotamers are unchanged or at least very close to the old rotamer
 				//  frag_index = bbfrag_index(ranbbfrag);
-				//	  std::cout<<"ranbbfrag="<<ranbbfrag<<'\n';
+				//   std::cout<<"ranbbfrag="<<ranbbfrag<<'\n';
 				if ( ig_->get_backbone_currently_assigned( ranbbfrag ) ) continue;
 				int num_changing_nodes = 0;
 
@@ -308,11 +308,11 @@ void FlexbbSimAnnealer::run()
 				ig_->consider_backbone_move( ranbbfrag, delta_energy,
 					previous_energy_for_bbfrag, valid_bb_move, num_changing_nodes);
 				//std::cout << valid_bb_move << std::endl;
-				if (! valid_bb_move ) continue;
+				if ( ! valid_bb_move ) continue;
 
 				++num_bb_move_valid;
-				if (pass_metropolis_multiple_nodes_changing(
-						previous_energy_for_bbfrag,delta_energy, num_changing_nodes)) {
+				if ( pass_metropolis_multiple_nodes_changing(
+						previous_energy_for_bbfrag,delta_energy, num_changing_nodes) ) {
 					++num_bb_move_accepts;
 					sconly_move_accessible_state_list_current = false;
 					//std::cerr << "pass_metropolis: bb(2) " << delta_energy << ", " << alternate_energy_newbbfrag << ", " << bestenergy_ << std::endl;
@@ -342,7 +342,7 @@ void FlexbbSimAnnealer::run()
 			//get this list once at the beginning of simulation and reuse it.
 			//ig_->get_accessible_states( FlexbbInteractionGraph::BOTH_SC_AND_BB, list, num_accessible);
 			//all states are accessible;
-			for (Size n = 1; n <= cycle3; ++n ) {
+			for ( Size n = 1; n <= cycle3; ++n ) {
 				//return a list of all rotamers,not sure this is fair enough, because
 				//those residues with alternate backbone conformations defitenly have higher
 				//probability to get picked, but at least in the quench step, the annealer needs to go through
@@ -355,7 +355,7 @@ void FlexbbSimAnnealer::run()
 				rotamer_state_on_moltenres = rotsets_->local_rotid_for_rotamer_on_moltenres( moltenres_id, ranrotamer );
 				prevrotamer_state = state_on_node( moltenres_id );
 
-				if (prevrotamer_state == rotamer_state_on_moltenres ) continue;
+				if ( prevrotamer_state == rotamer_state_on_moltenres ) continue;
 
 				int num_changing_nodes = 0;
 
@@ -370,7 +370,7 @@ void FlexbbSimAnnealer::run()
 					delta_energy, previous_energy_for_bbfrag,
 					valid_bb_move, num_changing_nodes );
 				//std::cout << valid_bb_move << std::endl;
-				if (! valid_bb_move ) continue;
+				if ( ! valid_bb_move ) continue;
 
 				++num_bb_sub_valid;
 				if ( (prevrotamer_state == 0) ||
@@ -379,13 +379,13 @@ void FlexbbSimAnnealer::run()
 					++num_bb_sub_accepts;
 
 					/// If we accept a change in backbone conformation, then mark the state list for SCONLY moves as out-of-date.
-					if ( ! rotsets_->rotamers_on_same_bbconf( moltenres_id, rotamer_state_on_moltenres, prevrotamer_state )) {
+					if ( ! rotsets_->rotamers_on_same_bbconf( moltenres_id, rotamer_state_on_moltenres, prevrotamer_state ) ) {
 						sconly_move_accessible_state_list_current = false;
 					}
 
 					//std::cerr << "pass_metropolis: bb & sc " << delta_energy << ", " << alternate_energy_total << ", " << bestenergy_ << std::endl;
 					currentenergy = ig_->commit_considered_backbone_move(state_on_node);
-					if ((prevrotamer_state == 0)||(currentenergy < bestenergy())) {
+					if ( (prevrotamer_state == 0)||(currentenergy < bestenergy()) ) {
 						bestenergy() = currentenergy;
 						best_state_on_node = state_on_node;
 					}
@@ -421,7 +421,7 @@ void FlexbbSimAnnealer::run()
 	//std::cerr << "bestenergy after quench: " << bestenergy() << std::endl;
 	//apl now convert best_state_on_node into bestrotamer_at_seqpos
 
-	for (Size ii = 1; ii <= nmoltenres; ++ii) {
+	for ( Size ii = 1; ii <= nmoltenres; ++ii ) {
 		Size iiresid = rotsets_->moltenres_2_resid( ii );
 		bestrotamer_at_seqpos()( iiresid ) = best_state_on_node( ii ) + rotsets_->nrotamer_offset_for_moltenres( ii );
 	}
@@ -445,7 +445,7 @@ FlexbbSimAnnealer::pick_a_rotamer(
 
 	if ( quench() ) {
 		num = numeric::mod<Size>( (outercycle - 1) * inner_loop_iteration_limit + innercycle - 1, accessible_state_list.size() ) + 1;
-		if (num == 1 ) {
+		if ( num == 1 ) {
 			numeric::random::random_permutation( accessible_state_list, numeric::random::rg() );
 		}
 	} else {
@@ -462,7 +462,7 @@ FlexbbSimAnnealer::pass_metropolis_multiple_nodes_changing(
 ) const
 {
 	assert( num_changing_nodes > 0 );
-  if ( get_temperature() > 0.5 ) {
+	if ( get_temperature() > 0.5 ) {
 		return pass_metropolis( previous_fragmentE / num_changing_nodes , deltaE / ( num_changing_nodes > 4 ? 4 : num_changing_nodes)  );
 	} else {
 		return pass_metropolis( previous_fragmentE, deltaE );

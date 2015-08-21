@@ -43,7 +43,7 @@ namespace dssp {
 using core::Size;
 
 class Pairing {
- public:
+public:
 	Pairing() :
 		pos1_( 0 ),
 		pos2_( 0 ),
@@ -69,14 +69,14 @@ class Pairing {
 	{}
 
 	Size Pos1() const {
-    return pos1_;
+		return pos1_;
 	}
 
 	void Pos1(Size pos1) {
 		pos1_ = pos1;
 	}
 
-  Size Pos2() const {
+	Size Pos2() const {
 		return pos2_;
 	}
 
@@ -136,9 +136,9 @@ class Pairing {
 
 	bool operator ==( Pairing const& p ) const {
 		return ( (p.Pos1() == Pos1())
-					&& ( p.Pos2() == Pos2() )
-				  && ( p.Orientation() == Orientation() )
-				  && ( p.Pleating() == Pleating() )
+			&& ( p.Pos2() == Pos2() )
+			&& ( p.Orientation() == Orientation() )
+			&& ( p.Pleating() == Pleating() )
 		);
 	}
 
@@ -149,14 +149,14 @@ class Pairing {
 	bool operator < ( Pairing const& p ) const {
 		return p.Pos1() != Pos1() ? Pos1() < p.Pos1() :
 			( p.Pos2() != Pos2() ? Pos2() < p.Pos2() :
-				( p.Orientation() != Orientation() ? Orientation() < p.Orientation() : Pleating() < p.Pleating() ) );
+			( p.Orientation() != Orientation() ? Orientation() < p.Orientation() : Pleating() < p.Pleating() ) );
 	}
 
- private:
-  Size pos1_;
-  Size pos2_;
-  Size orientation_;
-  Size pleating_;
+private:
+	Size pos1_;
+	Size pos2_;
+	Size orientation_;
+	Size pleating_;
 };
 
 /// @brief list of pairings

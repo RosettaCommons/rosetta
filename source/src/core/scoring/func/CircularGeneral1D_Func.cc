@@ -49,7 +49,7 @@ CircularGeneral1D_Func::CircularGeneral1D_Func( std::string const & filename )
 	Size count( 0 );
 	utility::vector1< Real > all_vals;
 
-	while( getline( stream, line ) ){
+	while ( getline( stream, line ) ) {
 
 		std::istringstream l( line );
 		l >> x >> val;
@@ -68,8 +68,8 @@ CircularGeneral1D_Func::CircularGeneral1D_Func( std::string const & filename )
 	data_.dimension( num_bins_ );
 
 	for ( Size i = 1; i <= num_bins_; i++ ) data_( i ) = all_vals[ i ];
-	//		std::cout << "READ: " << num_bins_ << " from " << filename << "   --> " <<
-	//			" " << xmin_ << " " << xbin_ << " " << all_vals[ num_bins_ ] << std::endl;
+	//  std::cout << "READ: " << num_bins_ << " from " << filename << "   --> " <<
+	//   " " << xmin_ << " " << xbin_ << " " << all_vals[ num_bins_ ] << std::endl;
 
 	stream.close();
 }
@@ -81,7 +81,7 @@ CircularGeneral1D_Func::func( Real const x ) const {
 
 	Real const bin_wrap_real = bin_real - num_bins_ * floor( bin_real / num_bins_ ) + 1;
 
-debug_assert( bin_wrap_real >= 1 && bin_wrap_real < num_bins_+1 );
+	debug_assert( bin_wrap_real >= 1 && bin_wrap_real < num_bins_+1 );
 
 	Size const bin = static_cast< Size >( bin_wrap_real );
 	Real const leftover = bin_wrap_real - bin;
@@ -89,8 +89,8 @@ debug_assert( bin_wrap_real >= 1 && bin_wrap_real < num_bins_+1 );
 	Size next_bin = bin + 1;
 	if ( next_bin > num_bins_ ) next_bin = 1; //wrap around.
 
-	//	runtime_assert( bin >= 1      && bin <= data_.size() );
-	//	runtime_assert( next_bin >= 1 && next_bin <= data_.size() );
+	// runtime_assert( bin >= 1      && bin <= data_.size() );
+	// runtime_assert( next_bin >= 1 && next_bin <= data_.size() );
 
 	return  (data_( bin ) * ( 1 - leftover ))   +   (data_( next_bin ) * leftover) ;
 
@@ -102,7 +102,7 @@ CircularGeneral1D_Func::dfunc( Real const x ) const {
 	Real bin_real =  ( x - xmin_ ) / xbin_;
 
 	Real const bin_wrap_real = bin_real - num_bins_ * floor( bin_real / num_bins_ ) + 1;
-debug_assert( bin_wrap_real >= 1 && bin_wrap_real < num_bins_ + 1 );
+	debug_assert( bin_wrap_real >= 1 && bin_wrap_real < num_bins_ + 1 );
 
 	Size const bin = static_cast< Size >( bin_wrap_real );
 	//Real const leftover = bin_wrap_real - bin;

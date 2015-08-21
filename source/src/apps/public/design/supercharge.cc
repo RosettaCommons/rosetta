@@ -104,7 +104,7 @@ typedef core::pose::Pose Pose;
 typedef std::set< Size > SizeSet;
 
 //local options
-namespace local{
+namespace local {
 
 //AvNAPSA-mode
 basic::options::BooleanOptionKey const AvNAPSA_positive("AvNAPSA_positive");
@@ -144,51 +144,47 @@ basic::options::BooleanOptionKey const compare_residue_energies_mut("compare_res
 /// @brief Adds charged residues to a protein surface
 class supercharge : public protocols::moves::Mover {
 public:
-  supercharge(){}
-  virtual ~supercharge(){};
+	supercharge(){}
+	virtual ~supercharge(){};
 
 
-  virtual
-  void
-  apply( Pose & pose ) {
+	virtual
+	void
+	apply( Pose & pose ) {
 		using namespace basic::options;
 		out_path_ = basic::options::option[ OptionKeys::out::path::path ]();
 
 		//check for chain ID
 		char chain = pose.pdb_info()->chain(1);
-		if(chain == ' ') {
+		if ( chain == ' ' ) {
 			TR << "chain is whitespace, setting chain ID to 'A' " << std::endl;
-			for(Size i=1; i<=pose.total_residue(); ++i) {
+			for ( Size i=1; i<=pose.total_residue(); ++i ) {
 				pose.pdb_info()->chain(i, 'A');
 			}
 		}
 
 
 		//If the target net charge is -10, current net charge is -4, need to perform positive-supercharging
-		if( option[local::target_net_charge_active] ) {
+		if ( option[local::target_net_charge_active] ) {
 
 			int current_net_charge = get_net_charge( pose );
 			int target_net_charge = option[local::target_net_charge];
 			int delta_charge = target_net_charge - current_net_charge;
 
-			if( delta_charge < 0 ) {
+			if ( delta_charge < 0 ) {
 
-				if( !option[local::include_asp] && !option[local::include_glu] && !option[local::AvNAPSA_negative] ) {
+				if ( !option[local::include_asp] && !option[local::include_glu] && !option[local::AvNAPSA_negative] ) {
 					TR << "Current charge: " << current_net_charge << ".  Target charge: " << target_net_charge << ".  Incompatible user inputs.  Cannot add negative charge with current options.  Try using the flags include_asp include_glu (Rosetta-mode) or AvNAPSA_negative (AvNAPSA-mode)." << std::endl;
 					set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
 					return;
 				}
-			}
-
-			else if( delta_charge > 0 ) {
-				if( !option[local::include_arg] && !option[local::include_lys] && !option[local::AvNAPSA_positive] ) {
+			} else if ( delta_charge > 0 ) {
+				if ( !option[local::include_arg] && !option[local::include_lys] && !option[local::AvNAPSA_positive] ) {
 					TR << "Current charge: " << current_net_charge << ".  Target charge: " << target_net_charge << ".  Incompatible user inputs.  Cannot add positive charge with current options.  Try using the flags include_arg include_lys (Rosetta-mode) or AvNAPSA_positive (AvNAPSA-mode)." << std::endl;
 					set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
 					return;
 				}
-			}
-
-			else if(delta_charge == 0) {
+			} else if ( delta_charge == 0 ) {
 				TR << "Current charge: " << current_net_charge << ".  Target charge: " << target_net_charge << ".  Current charge equals target charge, no supercharging necessary." << std::endl;
 				set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
 				return;
@@ -203,14 +199,12 @@ public:
 		Pose native( starting_pose );
 
 		//AvNAPSA mode.  Does not use Rosetta energy calculation, chooses mutable positions solely by number of atom neighbors per sidechain
-		if(option[local::AvNAPSA_positive] || option[local::AvNAPSA_negative] ){
+		if ( option[local::AvNAPSA_positive] || option[local::AvNAPSA_negative] ) {
 			AvNAPSA_values( pose );
 			set_resfile_AvNAPSA( pose );
 			design_supercharge_AvNAPSA( starting_pose, pose );
-		}
-
-		//Rosetta mode.  Uses Rosetta energy function to choose which residues to mutate and to what residue type.
-		else {
+		} else {
+			//Rosetta mode.  Uses Rosetta energy function to choose which residues to mutate and to what residue type.
 			//score pose for hbond detection
 			using namespace core::scoring;
 			ScoreFunctionOP scorefxn = get_score_function();
@@ -224,12 +218,12 @@ public:
 			design_supercharge( starting_pose, pose ); // sets reference energies, designs the surface, outputs with an informative name
 		}
 
-		if(option[local::compare_residue_energies_all] || option[local::compare_residue_energies_mut]) {
+		if ( option[local::compare_residue_energies_all] || option[local::compare_residue_energies_mut] ) {
 			energy_comparison( native, pose );
 		}
 
 		return;
-  }
+	}
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -248,18 +242,17 @@ public:
 
 			std::string name3 = pose.residue(i).name3();
 
-			if( name3 == "ASP" || name3 == "GLU" || name3 == "ARG" || name3 == "LYS" || name3 == "ASN" || name3 == "GLN") {
+			if ( name3 == "ASP" || name3 == "GLU" || name3 == "ARG" || name3 == "LYS" || name3 == "ASN" || name3 == "GLN" ) {
 
 				//don't mutate correct charge
-				if( basic::options::option[local::AvNAPSA_positive] ) {
-					if( name3 == "ARG" || name3 == "LYS" ) {
+				if ( basic::options::option[local::AvNAPSA_positive] ) {
+					if ( name3 == "ARG" || name3 == "LYS" ) {
 						AvNAPSA_values_.push_back( avnapsa_value );
 						TR << "residue " << i << " is already positive" << std::endl;
 						continue;
 					}
-				}
-				else if( basic::options::option[local::AvNAPSA_negative] ) {
-					if( name3 == "ASP" || name3 == "GLU") {
+				} else if ( basic::options::option[local::AvNAPSA_negative] ) {
+					if ( name3 == "ASP" || name3 == "GLU" ) {
 						AvNAPSA_values_.push_back( avnapsa_value );
 						TR << "residue " << i << " is already negative" << std::endl;
 						continue;
@@ -323,21 +316,20 @@ public:
 		std::stringstream pymol_avnapsa_residues;
 		utility::vector1< Size > residues_to_mutate; //will be appended either to acheive correct charge or based on AvNAPSA value cutoff
 
-		if( ! basic::options::option[local::target_net_charge_active] ) {
+		if ( ! basic::options::option[local::target_net_charge_active] ) {
 			largest_mutated_AvNAPSA_ = (Size) basic::options::option[local::surface_atom_cutoff]; // no specified net charge, largest AvNAPSA allowed equals the cutoff.  This value is used to name output PDBs.
-			for( Size i(1); i <= AvNAPSA_values_.size(); ++i) {
-				if( AvNAPSA_values_[i] < basic::options::option[local::surface_atom_cutoff] && AvNAPSA_values_[i] != 9999 ) {
+			for ( Size i(1); i <= AvNAPSA_values_.size(); ++i ) {
+				if ( AvNAPSA_values_[i] < basic::options::option[local::surface_atom_cutoff] && AvNAPSA_values_[i] != 9999 ) {
 					residues_to_mutate.push_back( i );
 					TR << "Mutate " << i << std::endl;
 				}
 			}
-		}
-		// if a target net charge is included, the AvNAPSA cutoff is ignored
-		else {
+		} else {
+			// if a target net charge is included, the AvNAPSA cutoff is ignored
 			//sort residues by their avnapsa value in ascending order
 			utility::vector1<std::pair<Size,Real> > pair_residue_avnapsa;
-			for(Size i(1); i<= AvNAPSA_values_.size(); ++i) {
-				if(AvNAPSA_values_[i] != 9999) {
+			for ( Size i(1); i<= AvNAPSA_values_.size(); ++i ) {
+				if ( AvNAPSA_values_[i] != 9999 ) {
 					pair_residue_avnapsa.push_back( std::pair<Size,Real>(i,AvNAPSA_values_[i]) );
 				}
 			}
@@ -348,40 +340,34 @@ public:
 			int net_charge = get_net_charge( pose );
 			TR << "Starting net charge is " << net_charge << " and target_net_charge is " << basic::options::option[local::target_net_charge] << std::endl;
 
-			for(Size i(1); i <= pair_residue_avnapsa.size(); ++i) {
+			for ( Size i(1); i <= pair_residue_avnapsa.size(); ++i ) {
 				Size this_res = pair_residue_avnapsa[i].first;
 				std::string name3 = pose.residue(this_res).name3();
 
-				if( basic::options::option[local::AvNAPSA_positive] && net_charge >= basic::options::option[local::target_net_charge] ) {
+				if ( basic::options::option[local::AvNAPSA_positive] && net_charge >= basic::options::option[local::target_net_charge] ) {
 					break; // if positive enough
-				}
-				else if( basic::options::option[local::AvNAPSA_negative] && net_charge <= basic::options::option[local::target_net_charge] ) {
+				} else if ( basic::options::option[local::AvNAPSA_negative] && net_charge <= basic::options::option[local::target_net_charge] ) {
 					break; // if negative enough
-				}
-				else if( pair_residue_avnapsa[i].second != 9999 ) { // if not charged enough, add another residue to mutate
+				} else if ( pair_residue_avnapsa[i].second != 9999 ) { // if not charged enough, add another residue to mutate
 					residues_to_mutate.push_back(this_res);
 					TR << "Mutate " << this_res << std::endl;
 				}
 
-				if(basic::options::option[local::AvNAPSA_positive] ) {
-					if(name3 == "ASP" || name3 == "GLU") {
+				if ( basic::options::option[local::AvNAPSA_positive] ) {
+					if ( name3 == "ASP" || name3 == "GLU" ) {
 						net_charge += 2;
-					}
-					else if (name3 == "ARG" || name3 == "LYS") {
+					} else if ( name3 == "ARG" || name3 == "LYS" ) {
 						net_charge += 0;
-					}
-					else {
+					} else {
 						net_charge += 1;
 					}
 				}
-				if(basic::options::option[local::AvNAPSA_negative] ) {
-					if(name3 == "ARG" || name3 == "LYS") {
+				if ( basic::options::option[local::AvNAPSA_negative] ) {
+					if ( name3 == "ARG" || name3 == "LYS" ) {
 						net_charge -= 2;
-					}
-					else if (name3 == "ASP" || name3 == "GLU") {
+					} else if ( name3 == "ASP" || name3 == "GLU" ) {
 						net_charge -= 0;
-					}
-					else {
+					} else {
 						net_charge -= 1;
 					}
 				}
@@ -396,18 +382,16 @@ public:
 
 
 		////////// if no target net charge //////////////
-		for( Size i(1); i <= residues_to_mutate.size(); ++i) {
+		for ( Size i(1); i <= residues_to_mutate.size(); ++i ) {
 			Size j = residues_to_mutate[i];
 			pymol_avnapsa_residues << j << "+";
-			if( basic::options::option[local::AvNAPSA_positive] ) {
+			if ( basic::options::option[local::AvNAPSA_positive] ) {
 				OutputResfile << "   " << pose.pdb_info()->pose2pdb( j ) /*prints resnum and chain*/ << "  PIKAA  K" << std::endl; //lysine only, see SuppInfo of Lawrence et al. 2007
-			}
-			else if( basic::options::option[local::AvNAPSA_negative] ) {
+			} else if ( basic::options::option[local::AvNAPSA_negative] ) {
 				std::string resname = pose.residue(j).name3();
-				if(resname == "ASN") {
+				if ( resname == "ASN" ) {
 					OutputResfile << "   " << pose.pdb_info()->pose2pdb( j ) /*prints resnum and chain*/ << "  PIKAA  D" << std::endl; //Asp only if Asn is native
-				}
-				else {
+				} else {
 					OutputResfile << "   " << pose.pdb_info()->pose2pdb( j ) /*prints resnum and chain*/ << "  PIKAA  E" << std::endl; //Glu by default
 				}
 			}
@@ -456,10 +440,9 @@ public:
 
 
 		std::string pos_or_neg;
-		if(option[local::AvNAPSA_positive]) {
+		if ( option[local::AvNAPSA_positive] ) {
 			pos_or_neg = "pos";
-		}
-		else {
+		} else {
 			pos_or_neg = "neg";
 		}
 
@@ -489,13 +472,13 @@ public:
 
 	virtual
 	void
-		prepack_input_structure( Pose & pose ) {
+	prepack_input_structure( Pose & pose ) {
 
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;
 		using namespace basic::options;
 		TaskFactoryOP task_factory( new TaskFactory() );
-    task_factory->push_back(TaskOperationCOP( new operation::InitializeFromCommandline() )); //use_input_sc
+		task_factory->push_back(TaskOperationCOP( new operation::InitializeFromCommandline() )); //use_input_sc
 
 		using namespace core::scoring;
 		ScoreFunctionOP scorefxn = get_score_function();
@@ -528,7 +511,7 @@ public:
 		packrot_mover->apply( pose );
 		packrot_mover->apply( pose );
 
-		if(basic::options::option[local::pre_packminpack]) {
+		if ( basic::options::option[local::pre_packminpack] ) {
 			TR << "Minimizing sidechains..." << std::endl;
 			min_sc->apply( pose );
 			TR << "Packrotamers" << std::endl;
@@ -555,18 +538,17 @@ public:
 	void set_surface( Pose const & pose ){
 
 		//define surface by residue neighbors
-		if( ! basic::options::option[local::surface_atom_cutoff].user() ) {
+		if ( ! basic::options::option[local::surface_atom_cutoff].user() ) {
 			// registering the calculators (in this way will not allow nstruct > 1)
 			Size biggest_calc(0);
 			std::string const calc_stem("nbr_dist_calc_");
 			std::ostringstream calcname;
-			for(Size res(1); res <= pose.total_residue(); ++res){
-				if(biggest_calc < res){ //create calculator
+			for ( Size res(1); res <= pose.total_residue(); ++res ) {
+				if ( biggest_calc < res ) { //create calculator
 					calcname << calc_stem << res;
-					if( pose::metrics::CalculatorFactory::Instance().check_calculator_exists( calcname.str() ) ){
-						basic::Warning() << "Calculator " << calcname.str()	<< " already exists, this is hopefully correct for your purposes" << std::endl;
-					}
-					else {
+					if ( pose::metrics::CalculatorFactory::Instance().check_calculator_exists( calcname.str() ) ) {
+						basic::Warning() << "Calculator " << calcname.str() << " already exists, this is hopefully correct for your purposes" << std::endl;
+					} else {
 						using pose::metrics::PoseMetricCalculatorOP;
 						pose::metrics::CalculatorFactory::Instance().register_calculator( calcname.str(), PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::NeighborsByDistanceCalculator(res) ) );
 					}
@@ -579,29 +561,27 @@ public:
 
 			basic::MetricValue< Size > num_n; // number of neighbors
 			TR << pose.pdb_info()->name() << std::endl;
-			for(Size i(1); i<=pose.total_residue(); ++i){
+			for ( Size i(1); i<=pose.total_residue(); ++i ) {
 				calcname << calc_stem << i;
 				pose.metric( calcname.str(), "num_neighbors", num_n);
 				calcname.str("");
 
 				//TR << "residue " << i << " num_neighbors " << num_n.value() << std::endl;
 
-				if( num_n.value() <= core::Size(basic::options::option[local::surface_residue_cutoff].value())) {
+				if ( num_n.value() <= core::Size(basic::options::option[local::surface_residue_cutoff].value()) ) {
 					TR << "adding " << i << " to surface set" << std::endl;
 					surface_res_.insert(i);
 				}
 			}
-		}
-
-		//define surface by atom neighbors
-		else {
+		} else {
+			//define surface by atom neighbors
 
 			for ( Size i=1; i <= pose.n_residue(); ++i ) {
 				Real avnapsa_value( 9999 ); //high value will mean don't mutate, don't mutate by default
 
 				std::string name3 = pose.residue(i).name3();
 
-				if( name3 == "GLY") {
+				if ( name3 == "GLY" ) {
 					continue;
 				}
 
@@ -639,8 +619,8 @@ public:
 				AvNAPSA_values_.push_back( avnapsa_value ); //index must equal the residue number
 				TR << "AvNAPSA score for residue " << i << "  " << avnapsa_value << std::endl;
 
-				for(Size i(1); i<= AvNAPSA_values_.size(); ++i) {
-					if(AvNAPSA_values_[i] <= basic::options::option[local::surface_atom_cutoff]) { //every residue has an AvNAPSA value, so i equals residue number
+				for ( Size i(1); i<= AvNAPSA_values_.size(); ++i ) {
+					if ( AvNAPSA_values_[i] <= basic::options::option[local::surface_atom_cutoff] ) { //every residue has an AvNAPSA value, so i equals residue number
 						surface_res_.insert(i);
 					}
 				}
@@ -668,61 +648,61 @@ public:
 		core::scoring::hbonds::HBondSet hbond_set;
 		hbond_set.setup_for_residue_pair_energies( pose, false, false );
 
-		for(SizeSet::const_iterator it(surface_res_.begin()), end(surface_res_.end()); it!=end; ++it){
+		for ( SizeSet::const_iterator it(surface_res_.begin()), end(surface_res_.end()); it!=end; ++it ) {
 
 			char NATAA_oneletter = pose.residue(*it).name1();
 
 			//gly, pro, and cys are specialized residues that might be better of unchanged
-			if( option[local::dont_mutate_glyprocys] ) {
-				if(NATAA_oneletter == 'G' || NATAA_oneletter == 'P' || NATAA_oneletter == 'C') {
+			if ( option[local::dont_mutate_glyprocys] ) {
+				if ( NATAA_oneletter == 'G' || NATAA_oneletter == 'P' || NATAA_oneletter == 'C' ) {
 					continue;
 				}
 			}
 
 			//if same-charge, leave as NATAA
-			if( option[local::dont_mutate_correct_charge] ) {
-				if( option[local::include_arg] && NATAA_oneletter == 'R' ) {
+			if ( option[local::dont_mutate_correct_charge] ) {
+				if ( option[local::include_arg] && NATAA_oneletter == 'R' ) {
 					OutputResfile << "   " << pose.pdb_info()->pose2pdb(*it) /*prints resnum and chain*/ << "  NATAA  #same charge" << std::endl;
 					continue;
 				}
-				if( option[local::include_lys] && NATAA_oneletter == 'K' ) {
+				if ( option[local::include_lys] && NATAA_oneletter == 'K' ) {
 					OutputResfile << "   " << pose.pdb_info()->pose2pdb(*it) /*prints resnum and chain*/ << "  NATAA  #same charge" << std::endl;
 					continue;
 				}
-				if( option[local::include_asp] && NATAA_oneletter == 'D' ) {
+				if ( option[local::include_asp] && NATAA_oneletter == 'D' ) {
 					OutputResfile << "   " << pose.pdb_info()->pose2pdb(*it) /*prints resnum and chain*/ << "  NATAA  #same charge" << std::endl;
 					continue;
 				}
-				if( option[local::include_glu] && NATAA_oneletter == 'E' ) {
+				if ( option[local::include_glu] && NATAA_oneletter == 'E' ) {
 					OutputResfile << "   " << pose.pdb_info()->pose2pdb(*it) /*prints resnum and chain*/ << "  NATAA  #same charge" << std::endl;
 					continue;
 				}
 			}
 
 			//dont_mutate strong sidechain hbonds
-			if( option[local::dont_mutate_hbonded_sidechains] ) {
+			if ( option[local::dont_mutate_hbonded_sidechains] ) {
 				//hbond detection
 				bool found_sc_hbond( false );
 
-				for (Size i = 1; i<= hbond_set.nhbonds(); i++) {
+				for ( Size i = 1; i<= hbond_set.nhbonds(); i++ ) {
 					core::scoring::hbonds::HBondCOP hbond(hbond_set.hbond(i).get_self_ptr());
-					if(hbond->energy() > -0.5) { // a fun semi-arbitrary value for hbond strength cutoff
+					if ( hbond->energy() > -0.5 ) { // a fun semi-arbitrary value for hbond strength cutoff
 						continue;
 					}
-					if(hbond->don_res() == *it && !hbond->don_hatm_is_backbone() ) {
+					if ( hbond->don_res() == *it && !hbond->don_hatm_is_backbone() ) {
 
 						OutputResfile << "   " << pose.pdb_info()->pose2pdb(*it) /*prints resnum and chain*/ << "  NATRO  #has sc hbond energy=" << hbond->energy() << std::endl;
 
 						found_sc_hbond = true;
 						break;
 					}
-					if(hbond->acc_res() == *it && !hbond->acc_atm_is_protein_backbone() ) {
+					if ( hbond->acc_res() == *it && !hbond->acc_atm_is_protein_backbone() ) {
 						OutputResfile << "   " << pose.pdb_info()->pose2pdb(*it) /*prints resnum and chain*/ << "  NATRO  #has sc hbond energy=" << hbond->energy() << std::endl;
 						found_sc_hbond = true;
 						break;
 					}
 				}
-				if( found_sc_hbond ) {
+				if ( found_sc_hbond ) {
 					continue;
 				}
 			}
@@ -731,22 +711,22 @@ public:
 			//if there hasn't been a continue, it's a mutable position
 			utility::vector1<char> PIKAA_residues;
 			PIKAA_residues.push_back(NATAA_oneletter); // the native amino acid is allowed
-			if( option[local::include_arg].value() ) {
+			if ( option[local::include_arg].value() ) {
 				PIKAA_residues.push_back('R');
 			}
-			if( option[local::include_lys].value() ) {
+			if ( option[local::include_lys].value() ) {
 				PIKAA_residues.push_back('K');
 			}
-			if( option[local::include_asp].value() ) {
+			if ( option[local::include_asp].value() ) {
 				PIKAA_residues.push_back('D');
 			}
-			if( option[local::include_glu].value() ) {
+			if ( option[local::include_glu].value() ) {
 				PIKAA_residues.push_back('E');
 			}
 
 			// print lines in the resfile uch as:  3  A  PIKAA NRK
 			OutputResfile << "   " << pose.pdb_info()->pose2pdb(*it) /*prints resnum and chain*/ << "  PIKAA ";
-			for(core::Size j(1); j<=PIKAA_residues.size(); ++j){
+			for ( core::Size j(1); j<=PIKAA_residues.size(); ++j ) {
 				OutputResfile << PIKAA_residues[j];
 			}
 			OutputResfile << std::endl;
@@ -827,54 +807,54 @@ public:
 
 
 		//if a target net charge is given as an option, iterate between packrot and incrementing refweights until target charge is acheived
-		if( option[local::target_net_charge_active] ) {
+		if ( option[local::target_net_charge_active] ) {
 
 			int net_charge_target = option[local::target_net_charge];
 			int charge_diff = std::abs( get_net_charge(pose) - net_charge_target );
 
 
-      Real refweight_max_absvalue(3.2);
-      bool refweight_under_max( true );
-      Real refweight_increment(0.10);
-      Size counter(0);
+			Real refweight_max_absvalue(3.2);
+			bool refweight_under_max( true );
+			Real refweight_increment(0.10);
+			Size counter(0);
 			while ( charge_diff > 1 && counter < 40 && refweight_under_max ) {
 
 				int net_charge = get_net_charge( pose );
 
 				//fine-tunes the changes to refweight depending on the charge difference
-				if( std::abs(net_charge - net_charge_target) > 10 )     { refweight_increment = 0.5; }
-				else if( std::abs(net_charge - net_charge_target) > 2 ) { refweight_increment = 0.1; }
-				else if( std::abs(net_charge - net_charge_target) < 2 ) { refweight_increment = 0.02;}
+				if ( std::abs(net_charge - net_charge_target) > 10 )     { refweight_increment = 0.5; }
+				else if ( std::abs(net_charge - net_charge_target) > 2 ) { refweight_increment = 0.1; }
+				else if ( std::abs(net_charge - net_charge_target) < 2 ) { refweight_increment = 0.02;}
 
 
 				//not positive enough
-				if( net_charge < net_charge_target && option[local::include_arg] ) {
+				if ( net_charge < net_charge_target && option[local::include_arg] ) {
 					custom_ref_weights[15] = custom_ref_weights[15] - refweight_increment;
 				}
-				if( net_charge < net_charge_target && option[local::include_lys] ) {
+				if ( net_charge < net_charge_target && option[local::include_lys] ) {
 					custom_ref_weights[9] = custom_ref_weights[9] - refweight_increment;
 				}
 				//too positive
-				if( net_charge > net_charge_target && option[local::include_arg] ) {
+				if ( net_charge > net_charge_target && option[local::include_arg] ) {
 					custom_ref_weights[15] = custom_ref_weights[15] + refweight_increment;
 				}
-				if( net_charge > net_charge_target && option[local::include_lys] ) {
+				if ( net_charge > net_charge_target && option[local::include_lys] ) {
 					custom_ref_weights[9] = custom_ref_weights[9] + refweight_increment;
 				}
 
 				//not negative enough
-				if( net_charge > net_charge_target && option[local::include_asp] ) {
+				if ( net_charge > net_charge_target && option[local::include_asp] ) {
 					custom_ref_weights[3] = custom_ref_weights[3] - refweight_increment;
 					//TR << "TEST " << refweight_increment << std::endl;
 				}
-				if( net_charge > net_charge_target && option[local::include_glu] ) {
+				if ( net_charge > net_charge_target && option[local::include_glu] ) {
 					custom_ref_weights[4] = custom_ref_weights[4] - refweight_increment;
 				}
 				//too negative
-				if( net_charge < net_charge_target && option[local::include_asp] ) {
+				if ( net_charge < net_charge_target && option[local::include_asp] ) {
 					custom_ref_weights[3] = custom_ref_weights[3] + refweight_increment;
 				}
-				if( net_charge < net_charge_target && option[local::include_glu] ) {
+				if ( net_charge < net_charge_target && option[local::include_glu] ) {
 					custom_ref_weights[4] = custom_ref_weights[4] + refweight_increment;
 				}
 
@@ -893,9 +873,9 @@ public:
 
 				counter++;
 
-        if( fabs(custom_ref_weights[15]) > refweight_max_absvalue || fabs(custom_ref_weights[9]) > refweight_max_absvalue || fabs(custom_ref_weights[3]) > refweight_max_absvalue || fabs(custom_ref_weights[4]) > refweight_max_absvalue ) {
-          refweight_under_max = false;
-        }
+				if ( fabs(custom_ref_weights[15]) > refweight_max_absvalue || fabs(custom_ref_weights[9]) > refweight_max_absvalue || fabs(custom_ref_weights[3]) > refweight_max_absvalue || fabs(custom_ref_weights[4]) > refweight_max_absvalue ) {
+					refweight_under_max = false;
+				}
 
 			}
 
@@ -909,44 +889,44 @@ public:
 		std::string include_RKDE = "_";
 		std::string weights_RKDE = "_";
 
-		if(option[local::include_arg]) {
+		if ( option[local::include_arg] ) {
 			include_RKDE = include_RKDE + "R";
 			std::string s;
 			std::stringstream out;
 			out << std::setprecision(2) << std::fixed << custom_ref_weights[15];
 			//out << option[local::refweight_arg];
 			s = out.str();
-			if(custom_ref_weights[15] > 0.0) { s = "+" + s;	}
+			if ( custom_ref_weights[15] > 0.0 ) { s = "+" + s; }
 			weights_RKDE = weights_RKDE + s + "_";
 		}
-		if(option[local::include_lys]) {
+		if ( option[local::include_lys] ) {
 			include_RKDE = include_RKDE + "K";
 			std::string s;
 			std::stringstream out;
 			out << std::setprecision(2) << std::fixed << custom_ref_weights[9];
 			//out << option[local::refweight_lys];
 			s = out.str();
-			if(custom_ref_weights[9] > 0.0) { s = "+" + s; }
+			if ( custom_ref_weights[9] > 0.0 ) { s = "+" + s; }
 			weights_RKDE = weights_RKDE + s + "_";
 		}
-		if(option[local::include_asp]) {
+		if ( option[local::include_asp] ) {
 			include_RKDE = include_RKDE + "D";
 			std::string s;
 			std::stringstream out;
 			out << std::setprecision(2) << std::fixed << custom_ref_weights[3];
 			//out << option[local::refweight_asp];
 			s = out.str();
-			if(custom_ref_weights[3] > 0.0) { s = "+" + s;	}
+			if ( custom_ref_weights[3] > 0.0 ) { s = "+" + s; }
 			weights_RKDE = weights_RKDE + s + "_";
 		}
-		if(option[local::include_glu]) {
+		if ( option[local::include_glu] ) {
 			include_RKDE = include_RKDE + "E";
 			std::string s;
 			std::stringstream out;
 			out << std::setprecision(2) << std::fixed << custom_ref_weights[4];
 			//out << option[local::refweight_glu];
 			s = out.str();
-			if(custom_ref_weights[4] > 0.0) { s = "+" + s; }
+			if ( custom_ref_weights[4] > 0.0 ) { s = "+" + s; }
 			weights_RKDE = weights_RKDE + s + "_";
 		}
 
@@ -954,14 +934,14 @@ public:
 		std::stringstream ss_i;
 		std::string i_string;
 
-		if( ! option[local::target_net_charge_active] ) {
+		if ( ! option[local::target_net_charge_active] ) {
 
 			Size nstruct = (Size) option[local::nstruct].value();
-			for( Size i=1; i <= nstruct; ++i ) {
+			for ( Size i=1; i <= nstruct; ++i ) {
 				ss_i << i;
-				if(i < 10) { i_string = "000" + ss_i.str(); }
-				else if (i < 100) { i_string = "00" + ss_i.str(); }
-				else if (i < 1000) { i_string = "0" + ss_i.str(); }
+				if ( i < 10 ) { i_string = "000" + ss_i.str(); }
+				else if ( i < 100 ) { i_string = "00" + ss_i.str(); }
+				else if ( i < 1000 ) { i_string = "0" + ss_i.str(); }
 				else { i_string = ss_i.str(); }
 				ss_i.str(""); // clear stringstream
 
@@ -986,9 +966,7 @@ public:
 
 			}//for nstruct
 
-		}//don't do nstruct if specifying a target charge
-
-		else {
+		} else { //don't do nstruct if specifying a target charge
 			//apply packrot mover was already done until converging on target charge
 			ss_i << get_net_charge( pose );
 			i_string = ss_i.str();
@@ -1015,11 +993,11 @@ public:
 		Size num_asp = 0;
 		Size num_glu = 0;
 
-		for(Size i=1; i<=pose.total_residue(); i++) {
-			if(pose.residue(i).name3() == "ARG")      { num_arg++; }
-			else if(pose.residue(i).name3() == "LYS") { num_lys++; }
-			else if(pose.residue(i).name3() == "ASP") { num_asp++; }
-			else if(pose.residue(i).name3() == "GLU") { num_glu++; }
+		for ( Size i=1; i<=pose.total_residue(); i++ ) {
+			if ( pose.residue(i).name3() == "ARG" )      { num_arg++; }
+			else if ( pose.residue(i).name3() == "LYS" ) { num_lys++; }
+			else if ( pose.residue(i).name3() == "ASP" ) { num_asp++; }
+			else if ( pose.residue(i).name3() == "GLU" ) { num_glu++; }
 		}
 		int net_charge = num_arg + num_lys - num_asp - num_glu;
 		TR << outputname_ << "  Net Charge of input structure = " << get_net_charge( starting_pose ) << std::endl;
@@ -1029,9 +1007,9 @@ public:
 		Size num_mutations = 0;
 		std::string pymol_sel_mutations = "select ";
 		TR << outputname_ << "  Mutations: ";
-		for(Size i=1; i<=pose.total_residue(); i++) {
+		for ( Size i=1; i<=pose.total_residue(); i++ ) {
 			//TR << "name1: " << starting_pose.residue(i).name1() << "  " << pose.residue(i).name1() << std::endl;
-			if( pose.residue(i).name1() != starting_pose.residue(i).name1() ) {
+			if ( pose.residue(i).name1() != starting_pose.residue(i).name1() ) {
 				num_mutations++;
 				Size whitespace = pose.pdb_info()->pose2pdb(i).find(" ");
 				std::string resnum_only = pose.pdb_info()->pose2pdb(i).substr(0, whitespace);
@@ -1049,12 +1027,11 @@ public:
 	int
 	get_net_charge( Pose const & pose ) {
 		int net_charge(0);
-		for(Size i(1); i<=pose.total_residue(); ++i) {
+		for ( Size i(1); i<=pose.total_residue(); ++i ) {
 			std::string name3 = pose.residue(i).name3();
-			if(name3 == "ARG" || name3 == "LYS") {
+			if ( name3 == "ARG" || name3 == "LYS" ) {
 				net_charge++;
-			}
-			else if(name3 == "ASP" || name3 == "GLU") {
+			} else if ( name3 == "ASP" || name3 == "GLU" ) {
 				net_charge--;
 			}
 		}
@@ -1068,39 +1045,39 @@ public:
 		TR << "Comparing energies of native and designed" << std::endl;
 		assert(native.total_residue() == pose.total_residue());
 
-    using namespace core::pack::task;
-    using namespace core::pack::task::operation;
-    using namespace basic::options;
-    TaskFactoryOP task_factory( new TaskFactory() );
-    task_factory->push_back(TaskOperationCOP( new operation::InitializeFromCommandline() )); //need for use_input_sc
+		using namespace core::pack::task;
+		using namespace core::pack::task::operation;
+		using namespace basic::options;
+		TaskFactoryOP task_factory( new TaskFactory() );
+		task_factory->push_back(TaskOperationCOP( new operation::InitializeFromCommandline() )); //need for use_input_sc
 		core::pack::task::operation::RestrictToRepackingOP restrict_to_repack( new core::pack::task::operation::RestrictToRepacking() );
-    task_factory->push_back( restrict_to_repack );
+		task_factory->push_back( restrict_to_repack );
 
 		protocols::simple_moves::PackRotamersMoverOP packrot_mover( new protocols::simple_moves::PackRotamersMover );
-    packrot_mover->score_function( scorefxn_ );
-    packrot_mover->task_factory( task_factory );
+		packrot_mover->score_function( scorefxn_ );
+		packrot_mover->task_factory( task_factory );
 
 		//kinematics::MoveMapOP movemap_sc = new kinematics::MoveMap;
 		//kinematics::MoveMapOP movemap_scbb = new kinematics::MoveMap;
-    //movemap_sc->set_chi( true );
-    //movemap_scbb->set_chi( true );
-    //movemap_scbb->set_bb( true );
+		//movemap_sc->set_chi( true );
+		//movemap_scbb->set_chi( true );
+		//movemap_scbb->set_bb( true );
 
 		//protocols::simple_moves::MinMoverOP min_sc = new protocols::simple_moves::MinMover( movemap_sc, scorefxn_, "dfpmin_armijo", 0.01, true );
 		//protocols::simple_moves::MinMoverOP min_scbb = new protocols::simple_moves::MinMover( movemap_scbb, scorefxn_, "dfpmin_armijo", 0.01, true );
 
 		TR << "Packing designed" << std::endl;
-    packrot_mover->apply( pose );
-    packrot_mover->apply( pose );
-    packrot_mover->apply( pose );
+		packrot_mover->apply( pose );
+		packrot_mover->apply( pose );
+		packrot_mover->apply( pose );
 		TR << "Packing native" << std::endl;
-    packrot_mover->apply( native );
-    packrot_mover->apply( native );
-    packrot_mover->apply( native );
+		packrot_mover->apply( native );
+		packrot_mover->apply( native );
+		packrot_mover->apply( native );
 
-    //min_sc->apply( pose );
-    //min_scbb->apply( pose );
-    //packrot_mover->apply( pose );
+		//min_sc->apply( pose );
+		//min_scbb->apply( pose );
+		//packrot_mover->apply( pose );
 
 
 		TR << "Scoring native and design" << std::endl;
@@ -1175,7 +1152,7 @@ public:
 
 		TR << "Initialized vectors" << std::endl;
 		TR << "Adding native energies" << std::endl;
-		for( Size i(1); i <= native.total_residue(); ++i ) {
+		for ( Size i(1); i <= native.total_residue(); ++i ) {
 
 			total_native.push_back(        native.energies().residue_total_energy(i) );
 			fa_atr_native.push_back(       native.energies().residue_total_energies(i)[scoring::fa_atr] );
@@ -1197,7 +1174,7 @@ public:
 		}
 
 		TR << "Adding designed energies" << std::endl;
-		for( Size i(1); i <= pose.total_residue(); ++i ) {
+		for ( Size i(1); i <= pose.total_residue(); ++i ) {
 
 			total.push_back(        pose.energies().residue_total_energy(i) );
 			fa_atr.push_back(       pose.energies().residue_total_energies(i)[scoring::fa_atr] );
@@ -1243,7 +1220,7 @@ public:
 
 		TR << "Subtracting design from native energies" << std::endl;
 
-		for( Size jj(1); jj <= resnums.size(); ++jj ) {
+		for ( Size jj(1); jj <= resnums.size(); ++jj ) {
 
 			Size ii = resnums[jj];
 
@@ -1255,7 +1232,7 @@ public:
 
 			//TR << "comparing residue " << ii << " " << native_name3 << " " << pose_name3 << " mutation? " << is_mutation << " mutation_option " << is_mutation_option << std::endl;
 
-			if(is_mutation || !is_mutation_option) {
+			if ( is_mutation || !is_mutation_option ) {
 
 				Real diff_total = total[ii] - total_native[ii];
 				Real diff_fa_atr = fa_atr[ii] - fa_atr_native[ii];
@@ -1341,7 +1318,7 @@ public:
 		TR << pose.pdb_info()->name() << " score_terms: total fa_atr fa_rep fa_sol fa_intra_rep fa_elec pro_close hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_fa13 rama omega fa_dun p_aa_pp ref" << std::endl;
 
 		return;
-  }
+	}
 
 
 	virtual
@@ -1366,43 +1343,43 @@ int main( int argc, char* argv[] )
 {
 	try {
 
-	using basic::options::option;
-	option.add( local::AvNAPSA_positive, "AvNAPSA positive supercharge").def(false);
-	option.add( local::AvNAPSA_negative, "AvNAPSA negative supercharge").def(false);
+		using basic::options::option;
+		option.add( local::AvNAPSA_positive, "AvNAPSA positive supercharge").def(false);
+		option.add( local::AvNAPSA_negative, "AvNAPSA negative supercharge").def(false);
 
-	option.add( local::target_net_charge_active, "target net charge active").def(false);
-	option.add( local::target_net_charge, "target net charge").def(0);
+		option.add( local::target_net_charge_active, "target net charge active").def(false);
+		option.add( local::target_net_charge, "target net charge").def(0);
 
-	option.add( local::surface_atom_cutoff, "AvNAPSA neighbor atom cutoff").def(120); // this is how AvNAPSA defines surface, can be used in the Rosetta approach
-	option.add( local::surface_residue_cutoff, "cutoff for surface residues ( <= # is surface)" ).def(16);
+		option.add( local::surface_atom_cutoff, "AvNAPSA neighbor atom cutoff").def(120); // this is how AvNAPSA defines surface, can be used in the Rosetta approach
+		option.add( local::surface_residue_cutoff, "cutoff for surface residues ( <= # is surface)" ).def(16);
 
-	option.add( local::include_arg, "include arg in supercharge design").def(false);
-	option.add( local::include_lys, "include lys in supercharge design").def(false);
-	option.add( local::include_asp, "include asp in supercharge design").def(false);
-	option.add( local::include_glu, "include glu in supercharge design").def(false);
-	option.add( local::refweight_arg, "reference energy for Arg").def(-0.14916);
-	option.add( local::refweight_lys, "reference energy for Lys").def(-0.287374);
-	option.add( local::refweight_asp, "reference energy for Asp").def(-1.28682);
-	option.add( local::refweight_glu, "reference energy for Glu").def(-1.55374);
-	option.add( local::dont_mutate_glyprocys, "don't mutate gly, pro, cys").def(true);
-	option.add( local::dont_mutate_correct_charge, "don't mutate correct charge").def(true);
-	option.add( local::dont_mutate_hbonded_sidechains, "don't mutate hbonded sidechains").def(true);
-	option.add( local::pre_packminpack, "pack-min-pack before supercharging").def(false);
+		option.add( local::include_arg, "include arg in supercharge design").def(false);
+		option.add( local::include_lys, "include lys in supercharge design").def(false);
+		option.add( local::include_asp, "include asp in supercharge design").def(false);
+		option.add( local::include_glu, "include glu in supercharge design").def(false);
+		option.add( local::refweight_arg, "reference energy for Arg").def(-0.14916);
+		option.add( local::refweight_lys, "reference energy for Lys").def(-0.287374);
+		option.add( local::refweight_asp, "reference energy for Asp").def(-1.28682);
+		option.add( local::refweight_glu, "reference energy for Glu").def(-1.55374);
+		option.add( local::dont_mutate_glyprocys, "don't mutate gly, pro, cys").def(true);
+		option.add( local::dont_mutate_correct_charge, "don't mutate correct charge").def(true);
+		option.add( local::dont_mutate_hbonded_sidechains, "don't mutate hbonded sidechains").def(true);
+		option.add( local::pre_packminpack, "pack-min-pack before supercharging").def(false);
 
-	option.add( local::nstruct, "local nstruct").def(1);
+		option.add( local::nstruct, "local nstruct").def(1);
 
-	option.add( local::compare_residue_energies_all, "compare energy terms for all residues").def(false);
-	option.add( local::compare_residue_energies_mut, "compare energy terms for mutated residues only").def(true);
+		option.add( local::compare_residue_energies_all, "compare energy terms for all residues").def(false);
+		option.add( local::compare_residue_energies_mut, "compare energy terms for mutated residues only").def(true);
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-  protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new supercharge ));
+		protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new supercharge ));
 
-  TR << "************************d**o**n**e**************************************" << std::endl;
+		TR << "************************d**o**n**e**************************************" << std::endl;
 
-	 } catch ( utility::excn::EXCN_Base const & e ) {
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
-  return 0;
+	return 0;
 }

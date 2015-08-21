@@ -24,13 +24,10 @@ namespace sdf {
 BondData::BondData(core::Size index1, core::Size index2, core::Size type)
 {
 	bondType = type;
-	if(index1 <= index2)
-	{
+	if ( index1 <= index2 ) {
 		lower=index1;
 		upper=index2;
-	}
-	else
-	{
+	} else {
 		lower=index2;
 		upper=index1;
 	}
@@ -49,20 +46,16 @@ bool BondData::operator ==(const core::chemical::sdf::BondData& other) const
 std::set<BondData> parse_bond_type_data(std::string raw_data)
 {
 	std::set<BondData> bond_set;
-	if(raw_data == "")
-	{
+	if ( raw_data == "" ) {
 		return bond_set;
 	}
 	utility::vector1<std::string> tokens(utility::string_split(raw_data,'\n'));
-	if(tokens.size() == 0	)
-	{
+	if ( tokens.size() == 0 ) {
 		return bond_set;
 	}
-	for(core::Size index = 1; index <= tokens.size();++index)
-	{
+	for ( core::Size index = 1; index <= tokens.size(); ++index ) {
 		utility::vector1<std::string> current_token(utility::split(tokens[index]));
-		if(current_token.size() < 3)
-		{
+		if ( current_token.size() < 3 ) {
 			continue;
 		}
 
@@ -78,24 +71,18 @@ std::set<BondData> parse_bond_type_data(std::string raw_data)
 std::map<core::Size,std::string> parse_atom_type_data(std::string raw_data)
 {
 	std::map<core::Size, std::string> data_map;
-	if(raw_data == "")
-	{
+	if ( raw_data == "" ) {
 		return data_map;
 	}
 	utility::vector1<std::string> tokens(utility::string_split(raw_data,' '));
-	if(tokens.size() == 0)
-	{
+	if ( tokens.size() == 0 ) {
 		return data_map;
-	}
-	else
-	{
+	} else {
 		//utility::vector1<std::string> tokens=utility::split(atom_type_data);
-		for(core::Size index = 1; index <= tokens.size();++index)
-		{
+		for ( core::Size index = 1; index <= tokens.size(); ++index ) {
 
 			std::string current_token = tokens[index];
-			if(current_token.size() <=1)
-			{
+			if ( current_token.size() <=1 ) {
 				continue;
 			}
 			utility::vector1<std::string> token_split=utility::string_split(current_token,',');

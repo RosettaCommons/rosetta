@@ -44,13 +44,13 @@ using namespace protocols::moves;
 /// @name SmallMoverTest
 /// @brief: test a single small move using all default values
 /// @details Default values used are 0, 5, 6 (H,E,L)
-///						nmoves=1, all residues movable
-///  					The values for the new phi and psi torsion angles
-///						were checked against values calculated by hand using
-///						4 significant figures for the calculations.
-///						Residue number 77 is the residue that is picked
-///						The new phi angle is -73.1381 (assuming only L is being used)
-///						The new psi angle is -26.9266
+///      nmoves=1, all residues movable
+///       The values for the new phi and psi torsion angles
+///      were checked against values calculated by hand using
+///      4 significant figures for the calculations.
+///      Residue number 77 is the residue that is picked
+///      The new phi angle is -73.1381 (assuming only L is being used)
+///      The new psi angle is -26.9266
 ///
 /// @author Monica Berrondo October 09 2007
 ///////////////////////////////////////////////////////////////////////////
@@ -147,11 +147,11 @@ public:
 		int max_c_phi = 0;
 		int min_c_psi = N;
 		int max_c_psi = 0;
-		for(unsigned int i=0; i<phi_V.size(); i++) {
-			if( min_c_phi > phi_V[i] ) min_c_phi = phi_V[i];
-			if( max_c_phi < phi_V[i] ) max_c_phi = phi_V[i];
-			if( min_c_psi > psi_V[i] ) min_c_psi = psi_V[i];
-			if( max_c_psi < psi_V[i] ) max_c_psi = psi_V[i];
+		for ( unsigned int i=0; i<phi_V.size(); i++ ) {
+			if ( min_c_phi > phi_V[i] ) min_c_phi = phi_V[i];
+			if ( max_c_phi < phi_V[i] ) max_c_phi = phi_V[i];
+			if ( min_c_psi > psi_V[i] ) min_c_psi = psi_V[i];
+			if ( max_c_psi < psi_V[i] ) max_c_psi = psi_V[i];
 		}
 		double phi_rate = double(min_c_phi)/max_c_phi;
 		TR << min_c_phi << " ";

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/features/InterfaceFeaturesCreator.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_features_INTERFACEFEATURESCREATOR_HH
@@ -39,5 +39,5 @@ public:
 } //namespace protocols
 
 
-#endif	//#ifndef INCLUDED_protocols/antibody_design_INTERFACEFEATURESCREATOR_HH
+#endif //#ifndef INCLUDED_protocols/antibody_design_INTERFACEFEATURESCREATOR_HH
 

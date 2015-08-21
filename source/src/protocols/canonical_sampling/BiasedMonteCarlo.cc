@@ -37,17 +37,17 @@ using namespace core;
 
 // std::string
 // BiasedMonteCarloCreator::keyname() const {
-// 	return BiasedMonteCarloCreator::mover_name();
+//  return BiasedMonteCarloCreator::mover_name();
 // }
 
 // protocols::moves::MoverOP
 // BiasedMonteCarloCreator::create_mover() const {
-// 	return new BiasedMonteCarlo;
+//  return new BiasedMonteCarlo;
 // }
 
 // std::string
 // BiasedMonteCarloCreator::mover_name() {
-// 	return "BiasedMonteCarlo";
+//  return "BiasedMonteCarlo";
 // }
 BiasedMonteCarlo::BiasedMonteCarlo(
 	Pose const & init_pose, // PoseCOP init_pose,
@@ -55,7 +55,7 @@ BiasedMonteCarlo::BiasedMonteCarlo(
 	Real const temperature,
 	BiasEnergyOP bias_energy
 ) : Parent( init_pose, scorefxn, temperature ),
-		bias_energy_( bias_energy )
+	bias_energy_( bias_energy )
 {
 	runtime_assert( bias_energy_ != 0 );
 	bias_energy_->set_temperature( temperature );
@@ -66,7 +66,7 @@ BiasedMonteCarlo::BiasedMonteCarlo(
 	Real const temperature,
 	BiasEnergyOP bias_energy
 ) : Parent( scorefxn, temperature ),
-		bias_energy_( bias_energy )
+	bias_energy_( bias_energy )
 {
 	runtime_assert( bias_energy_ != 0 );
 	bias_energy_->set_temperature( temperature );
@@ -96,10 +96,11 @@ BiasedMonteCarlo::boltzmann(
 )
 {
 
-// Work around a current bug in the pose observer classes..
+	// Work around a current bug in the pose observer classes..
 #ifdef BOINC_GRAPHICS
-	if( get_update_boinc() )
+	if ( get_update_boinc() ) {
 		boinc::Boinc::update_graphics_current( pose );
+	}
 #endif
 
 	// score the pose:
@@ -115,14 +116,14 @@ BiasedMonteCarlo::boltzmann(
 	Real const last_lowest_score( lowest_score() );
 
 	tr.Trace << "BiasedMC: (score/biased/last/lowest) " << score << " " << biased_score
-					 << " " << last_accepted_score() << " " << last_lowest_score << std::endl;
+		<< " " << last_accepted_score() << " " << last_lowest_score << std::endl;
 	// now delegate deciscion making...
 	bool const accept( Parent::boltzmann(
-								biased_score,
-								move_type,
-								proposal_density_ratio,
-								inner_score_delta_over_temperature,
-								false /*don't check lowest_score */ )
+		biased_score,
+		move_type,
+		proposal_density_ratio,
+		inner_score_delta_over_temperature,
+		false /*don't check lowest_score */ )
 	);
 
 	// keep the lowest scoring pose ( based on the naked score )
@@ -130,8 +131,9 @@ BiasedMonteCarlo::boltzmann(
 		set_lowest_score_pose( pose, score );
 		set_mc_accepted( protocols::moves::MCA_accepted_score_beat_low ); //3;
 #ifdef BOINC_GRAPHICS
-		if (get_update_boinc())
+		if ( get_update_boinc() ) {
 			boinc::Boinc::update_graphics_low_energy( pose, lowest_score() );
+		}
 #endif
 	} //MCA_accepted_score_beat_low
 
@@ -156,8 +158,9 @@ BiasedMonteCarlo::boltzmann(
 	}
 
 #ifdef BOINC_GRAPHICS
-	if (get_update_boinc())
+	if ( get_update_boinc() ) {
 		boinc::Boinc::update_graphics_last_accepted( pose, score );
+	}
 #endif
 
 	return accept; // accept!

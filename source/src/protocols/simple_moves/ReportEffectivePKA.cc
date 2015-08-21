@@ -73,169 +73,167 @@ ReportEffectivePKA::ReportEffectivePKA() : moves::Mover() {
 }
 
 void ReportEffectivePKA::init() {
-    IonizableResidue his = IonizableResidue( "HIS", 6.1, 1.0 );
-    his.add_neutral_restype("HIS");
-    his.add_neutral_restype("HIS_D");
-    his.add_ionized_restype("HIS_P");
-    ionizables_.push_back(his);
+	IonizableResidue his = IonizableResidue( "HIS", 6.1, 1.0 );
+	his.add_neutral_restype("HIS");
+	his.add_neutral_restype("HIS_D");
+	his.add_ionized_restype("HIS_P");
+	ionizables_.push_back(his);
 
-    IonizableResidue asp = IonizableResidue( "ASP", 3.9, -1.0 );
-    asp.add_neutral_restype("ASP_P1");
-    asp.add_neutral_restype("ASP_P2");
-    asp.add_ionized_restype("ASP");
-    ionizables_.push_back(asp);
+	IonizableResidue asp = IonizableResidue( "ASP", 3.9, -1.0 );
+	asp.add_neutral_restype("ASP_P1");
+	asp.add_neutral_restype("ASP_P2");
+	asp.add_ionized_restype("ASP");
+	ionizables_.push_back(asp);
 
-    IonizableResidue glu = IonizableResidue( "GLU", 4.2, -1.0 );
-    glu.add_neutral_restype("GLU_P1");
-    glu.add_neutral_restype("GLU_P2");
-    glu.add_ionized_restype("GLU");
-    ionizables_.push_back(glu);
+	IonizableResidue glu = IonizableResidue( "GLU", 4.2, -1.0 );
+	glu.add_neutral_restype("GLU_P1");
+	glu.add_neutral_restype("GLU_P2");
+	glu.add_ionized_restype("GLU");
+	ionizables_.push_back(glu);
 
-    IonizableResidue lys = IonizableResidue( "LYS", 10.1, 1.0 );
-    lys.add_neutral_restype("LYS_D");
-    lys.add_ionized_restype("LYS");
-    ionizables_.push_back(lys);
+	IonizableResidue lys = IonizableResidue( "LYS", 10.1, 1.0 );
+	lys.add_neutral_restype("LYS_D");
+	lys.add_ionized_restype("LYS");
+	ionizables_.push_back(lys);
 
 }
 
 void ReportEffectivePKA::apply(core::pose::Pose & pose) {
-    
-    if (task_factory() != 0) {
-        task_ = task_factory()->create_task_and_apply_taskoperations( pose );
-    }
-    
+
+	if ( task_factory() != 0 ) {
+		task_ = task_factory()->create_task_and_apply_taskoperations( pose );
+	}
+
 	core::conformation::symmetry::SymmetryInfoOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetricConformation & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 	}
-	for (core::Size i = 1; i <= pose.total_residue(); ++i) {
-		if (symm_info && !symm_info->bb_is_independent( i ) ) continue;
-		if (task_factory() != 0 && !task_->residue_task(i).being_designed()) {
-            // if task operation is used, only calculated pka for the residue that is being designed
-            continue;
-        }
-        core::conformation::Residue const & rsd_i ( pose.residue(i) );
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( symm_info && !symm_info->bb_is_independent( i ) ) continue;
+		if ( task_factory() != 0 && !task_->residue_task(i).being_designed() ) {
+			// if task operation is used, only calculated pka for the residue that is being designed
+			continue;
+		}
+		core::conformation::Residue const & rsd_i ( pose.residue(i) );
 		if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
-        
-        for (Size i_restype =1 ; i_restype<=ionizables_.size(); ++i_restype) {
-            if (ionizables_[i_restype].name3() == rsd_i.type().name3()) {
-                core::pose::Pose pose_copy(pose);
-                
-                chemical::ResidueTypeSet const& restype_set( pose_copy.residue(i).residue_type_set() );
-                
-                core::pose::Pose ref_pose;
-                ref_pose.append_residue_by_bond(rsd_i);
-                
-                Real score_neutral(0.), score_neutral_ref(0.);
-                for (Size i_neutral_type = 1; i_neutral_type<=ionizables_[i_restype].neutral_restypes().size(); ++i_neutral_type) {
 
-                    // Create the new residue and replace it
-                    conformation::ResidueOP new_res = conformation::ResidueFactory::create_residue(
-                                                                                                   restype_set.name_map(ionizables_[i_restype].neutral_restypes()[i_neutral_type] ), pose_copy.residue(i),
-                                                                                                   pose_copy.conformation());
-                    // Make sure we retain as much info from the previous res as possible
-                    conformation::copy_residue_coordinates_and_rebuild_missing_atoms( pose_copy.residue(i),
-                                                                                     *new_res, pose_copy.conformation() );
-                    
-                    pose_copy.replace_residue(i, *new_res, false );
-                    ref_pose.replace_residue(1, *new_res, false );
+		for ( Size i_restype =1 ; i_restype<=ionizables_.size(); ++i_restype ) {
+			if ( ionizables_[i_restype].name3() == rsd_i.type().name3() ) {
+				core::pose::Pose pose_copy(pose);
 
-                    if (i_neutral_type == 1) {
-                        score_neutral = (*scorefxn_)(pose_copy);
-                        score_neutral_ref = (*scorefxn_)(ref_pose);
+				chemical::ResidueTypeSet const& restype_set( pose_copy.residue(i).residue_type_set() );
 
-                    }
-                    else {
-                        Real score = (*scorefxn_)(pose_copy);
-                        if (score < score_neutral) {
-                            score_neutral = score;
-                        }
+				core::pose::Pose ref_pose;
+				ref_pose.append_residue_by_bond(rsd_i);
 
-                        Real score_ref = (*scorefxn_)(ref_pose);
-                        if (score_ref < score_neutral_ref) {
-                            score_neutral_ref = score_ref;
-                        }
-                    }
-                    
-                }
-                
-                Real score_ionized(0.), score_ionized_ref(0.);
-                for (Size i_ionized_type = 1; i_ionized_type<=ionizables_[i_restype].ionized_restypes().size(); ++i_ionized_type) {
-                    
-                    // Create the new residue and replace it
-                    conformation::ResidueOP new_res = conformation::ResidueFactory::create_residue(
-                                                                                                   restype_set.name_map(ionizables_[i_restype].ionized_restypes()[i_ionized_type] ), pose_copy.residue(i),
-                                                                                                   pose_copy.conformation());
-                    // Make sure we retain as much info from the previous res as possible
-                    conformation::copy_residue_coordinates_and_rebuild_missing_atoms( pose_copy.residue(i),
-                                                                                     *new_res, pose_copy.conformation() );
-                    
-                    pose_copy.replace_residue(i, *new_res, false );
-                    ref_pose.replace_residue(1, *new_res, false );
-                    
-                    if (i_ionized_type == 1) {
-                        score_ionized = (*scorefxn_)(pose_copy);
-                        score_ionized_ref = (*scorefxn_)(ref_pose);
-                        
-                    }
-                    else {
-                        Real score = (*scorefxn_)(pose_copy);
-                        if (score < score_ionized) {
-                            score_ionized = score;
-                        }
-                        
-                        Real score_ref = (*scorefxn_)(ref_pose);
-                        if (score_ref < score_ionized_ref) {
-                            score_ionized_ref = score_ref;
-                        }
-                    }
-                }
-                
-                using namespace ObjexxFCL::format;
-                //TR.Debug << "Effective pKa of " << rsd_i.type().name3() << I(4,i) << " is: " << F(8,3, score_ionized) << F(8,3, score_neutral) << F(8,3, score_ionized_ref) << F(8,3, score_neutral_ref) << std::endl;
-                
-                core::Size output_resi = i;
-                if ( !basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {
-                    output_resi = pose.pdb_info()->number( i );
-                }
+				Real score_neutral(0.), score_neutral_ref(0.);
+				for ( Size i_neutral_type = 1; i_neutral_type<=ionizables_[i_restype].neutral_restypes().size(); ++i_neutral_type ) {
 
-                
-                TR << "Effective pKa of " << rsd_i.type().name3() << I(4,output_resi) << " is: " << F(8,3,ionizables_[i_restype].ref_pKa()-ionizables_[i_restype].acid_base_coefficient()*(score_ionized-score_neutral-score_ionized_ref+score_neutral_ref)/1.36) << ", pKa shift is " << F(8,3, -ionizables_[i_restype].acid_base_coefficient()*(score_ionized-score_neutral-score_ionized_ref+score_neutral_ref)/1.36) << std::endl;
+					// Create the new residue and replace it
+					conformation::ResidueOP new_res = conformation::ResidueFactory::create_residue(
+						restype_set.name_map(ionizables_[i_restype].neutral_restypes()[i_neutral_type] ), pose_copy.residue(i),
+						pose_copy.conformation());
+					// Make sure we retain as much info from the previous res as possible
+					conformation::copy_residue_coordinates_and_rebuild_missing_atoms( pose_copy.residue(i),
+						*new_res, pose_copy.conformation() );
+
+					pose_copy.replace_residue(i, *new_res, false );
+					ref_pose.replace_residue(1, *new_res, false );
+
+					if ( i_neutral_type == 1 ) {
+						score_neutral = (*scorefxn_)(pose_copy);
+						score_neutral_ref = (*scorefxn_)(ref_pose);
+
+					} else {
+						Real score = (*scorefxn_)(pose_copy);
+						if ( score < score_neutral ) {
+							score_neutral = score;
+						}
+
+						Real score_ref = (*scorefxn_)(ref_pose);
+						if ( score_ref < score_neutral_ref ) {
+							score_neutral_ref = score_ref;
+						}
+					}
+
+				}
+
+				Real score_ionized(0.), score_ionized_ref(0.);
+				for ( Size i_ionized_type = 1; i_ionized_type<=ionizables_[i_restype].ionized_restypes().size(); ++i_ionized_type ) {
+
+					// Create the new residue and replace it
+					conformation::ResidueOP new_res = conformation::ResidueFactory::create_residue(
+						restype_set.name_map(ionizables_[i_restype].ionized_restypes()[i_ionized_type] ), pose_copy.residue(i),
+						pose_copy.conformation());
+					// Make sure we retain as much info from the previous res as possible
+					conformation::copy_residue_coordinates_and_rebuild_missing_atoms( pose_copy.residue(i),
+						*new_res, pose_copy.conformation() );
+
+					pose_copy.replace_residue(i, *new_res, false );
+					ref_pose.replace_residue(1, *new_res, false );
+
+					if ( i_ionized_type == 1 ) {
+						score_ionized = (*scorefxn_)(pose_copy);
+						score_ionized_ref = (*scorefxn_)(ref_pose);
+
+					} else {
+						Real score = (*scorefxn_)(pose_copy);
+						if ( score < score_ionized ) {
+							score_ionized = score;
+						}
+
+						Real score_ref = (*scorefxn_)(ref_pose);
+						if ( score_ref < score_ionized_ref ) {
+							score_ionized_ref = score_ref;
+						}
+					}
+				}
+
+				using namespace ObjexxFCL::format;
+				//TR.Debug << "Effective pKa of " << rsd_i.type().name3() << I(4,i) << " is: " << F(8,3, score_ionized) << F(8,3, score_neutral) << F(8,3, score_ionized_ref) << F(8,3, score_neutral_ref) << std::endl;
+
+				core::Size output_resi = i;
+				if ( !basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {
+					output_resi = pose.pdb_info()->number( i );
+				}
 
 
-                // tag
-                core::pose::RemarkInfo remark;
-                std::stringstream oss;
-                
-                protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
+				TR << "Effective pKa of " << rsd_i.type().name3() << I(4,output_resi) << " is: " << F(8,3,ionizables_[i_restype].ref_pKa()-ionizables_[i_restype].acid_base_coefficient()*(score_ionized-score_neutral-score_ionized_ref+score_neutral_ref)/1.36) << ", pKa shift is " << F(8,3, -ionizables_[i_restype].acid_base_coefficient()*(score_ionized-score_neutral-score_ionized_ref+score_neutral_ref)/1.36) << std::endl;
 
-                oss << "Effective pKa of " << rsd_i.type().name3() << I(4,output_resi) << " is: " << F(8,3,ionizables_[i_restype].ref_pKa()-ionizables_[i_restype].acid_base_coefficient()*(score_ionized-score_neutral-score_ionized_ref+score_neutral_ref)/1.36) << ", pKa shift is " << F(8,3, -ionizables_[i_restype].acid_base_coefficient()*(score_ionized-score_neutral-score_ionized_ref+score_neutral_ref)/1.36);
-                job->add_string(oss.str());
 
-            }
-        }
+				// tag
+				core::pose::RemarkInfo remark;
+				std::stringstream oss;
+
+				protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
+
+				oss << "Effective pKa of " << rsd_i.type().name3() << I(4,output_resi) << " is: " << F(8,3,ionizables_[i_restype].ref_pKa()-ionizables_[i_restype].acid_base_coefficient()*(score_ionized-score_neutral-score_ionized_ref+score_neutral_ref)/1.36) << ", pKa shift is " << F(8,3, -ionizables_[i_restype].acid_base_coefficient()*(score_ionized-score_neutral-score_ionized_ref+score_neutral_ref)/1.36);
+				job->add_string(oss.str());
+
+			}
+		}
 	}
 }
 
-    
+
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 ReportEffectivePKA::parse_my_tag(
-		TagCOP const tag,
-		basic::datacache::DataMap & datamap,
-		Filters_map const &,
-		moves::Movers_map const &,
-		Pose const &)
+	TagCOP const tag,
+	basic::datacache::DataMap & datamap,
+	Filters_map const &,
+	moves::Movers_map const &,
+	Pose const &)
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-    scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn", datamap, "talaris2013" )->clone();
-	if( tag->hasOption( "task_operations" ) ) {
+	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn", datamap, "talaris2013" )->clone();
+	if ( tag->hasOption( "task_operations" ) ) {
 		TR << "WARNING: task_operations only active for proteins" << std::endl;
-        task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
+		task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
 	}
 }
 

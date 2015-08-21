@@ -73,9 +73,9 @@ DoubleLazyNode::~DoubleLazyNode()
 void
 DoubleLazyNode::prepare_for_simulated_annealing()
 {
-	if (! get_edge_vector_up_to_date() ) update_internal_vectors();
+	if ( ! get_edge_vector_up_to_date() ) update_internal_vectors();
 	/*for (int ii = 1; ii <= get_num_states(); ++ii) {
-		mark_coordinates_current( ii ); /// What did this used to to?
+	mark_coordinates_current( ii ); /// What did this used to to?
 	}*/
 	return;
 }
@@ -91,7 +91,7 @@ DoubleLazyNode::print() const
 	std::cout << curr_state_sparse_mat_info_.get_state_ind_for_this_aa_type() << " ";
 	std::cout << "Curr One Body Energy: " << curr_state_one_body_energy_ << std::endl;
 	std::cout << "Curr Two Body Energies:";
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii) {
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		std::cout << " " << get_index_of_adjacent_node(ii) << ":" << curr_state_two_body_energies_[ ii ];
 	}
 	std::cout << std::endl;
@@ -99,7 +99,7 @@ DoubleLazyNode::print() const
 	if ( ! alternate_state_is_being_considered_ ) return;
 	std::cout << "Alt One Body Energy: " << alternate_state_one_body_energy_ << std::endl;
 	std::cout << "Alt Two Body Energies:";
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii) {
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		std::cout << " " << get_index_of_adjacent_node(ii) << ":" << alternate_state_two_body_energies_[ ii ];
 	}
 	std::cout << std::endl  << "-----------------" << std::endl;
@@ -191,7 +191,7 @@ DoubleLazyNode::assign_zero_state()
 	std::fill( position1, curr_state_two_body_energies_.end(), core::PackerEnergy( 0.0 ));
 	curr_state_total_energy_ = core::PackerEnergy( 0.0 );
 
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		get_incident_dlazy_edge(ii)->acknowledge_state_zeroed( get_node_index() );
 	}
 
@@ -220,9 +220,9 @@ DoubleLazyNode::assign_zero_state()
 void
 DoubleLazyNode::assign_state(int new_state)
 {
-debug_assert( new_state >= 0 && new_state <= get_num_states());
+	debug_assert( new_state >= 0 && new_state <= get_num_states());
 
-	if (new_state == 0) {
+	if ( new_state == 0 ) {
 		assign_zero_state();
 	} else {
 		//std::cout << "assign_state: node -  " << get_node_index() <<
@@ -233,7 +233,7 @@ debug_assert( new_state >= 0 && new_state <= get_num_states());
 		curr_state_total_energy_ = curr_state_one_body_energy_;
 		alternate_state_is_being_considered_ = false;
 
-		for (int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
+		for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 			get_incident_dlazy_edge(ii)->acknowledge_state_change(
 				get_node_index(),
 				current_state_,
@@ -269,7 +269,7 @@ debug_assert( new_state >= 0 && new_state <= get_num_states());
 void
 DoubleLazyNode::partial_assign_state( int new_state )
 {
-	if (new_state == 0 ) {
+	if ( new_state == 0 ) {
 		assign_zero_state();
 		return;
 	}
@@ -277,7 +277,7 @@ DoubleLazyNode::partial_assign_state( int new_state )
 	current_state_ = new_state;
 	curr_state_sparse_mat_info_ =
 		get_sparse_mat_info_for_state( current_state_ );
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		get_incident_dlazy_edge(ii)->acknowledge_partial_state_change(
 			get_node_index(),
 			current_state_,
@@ -312,7 +312,7 @@ void DoubleLazyNode::complete_state_assignment()
 
 	curr_state_total_energy_ = curr_state_one_body_energy_ =
 		get_one_body_energy( current_state_ );
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii) {
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		curr_state_two_body_energies_[ ii ] =
 			get_incident_dlazy_edge( ii )->
 			get_energy_following_partial_state_assignment();
@@ -343,7 +343,7 @@ void DoubleLazyNode::complete_state_assignment()
 void
 DoubleLazyNode::commit_considered_substitution()
 {
-debug_assert( alternate_state_is_being_considered_ );
+	debug_assert( alternate_state_is_being_considered_ );
 
 	current_state_ = alternate_state_;
 	curr_state_sparse_mat_info_ = alt_state_sparse_mat_info_;
@@ -362,17 +362,17 @@ debug_assert( alternate_state_is_being_considered_ );
 
 	//if ( procrastinated_ )
 	//{
-	//	curr_state_total_energy_ = curr_state_one_body_energy_;
-	//	for (int ii = 1; ii <= get_num_incident_edges(); ++ii)
-	//	{
-	//		if ( curr_state_two_body_energies_[ ii ] == DoubleLazyEdge::NOT_YET_COMPUTED_ENERGY )
-	//		{
-	//			curr_state_two_body_energies_[ ii ] = compute_pair_energy_for_current_state( ii );
-	//		}
-	//		curr_state_total_energy_ += curr_state_two_body_energies_[ ii ];
-	//	}
-	//	procrastinated_ = false;
-	//	++num_procrastinated_committed;
+	// curr_state_total_energy_ = curr_state_one_body_energy_;
+	// for (int ii = 1; ii <= get_num_incident_edges(); ++ii)
+	// {
+	//  if ( curr_state_two_body_energies_[ ii ] == DoubleLazyEdge::NOT_YET_COMPUTED_ENERGY )
+	//  {
+	//   curr_state_two_body_energies_[ ii ] = compute_pair_energy_for_current_state( ii );
+	//  }
+	//  curr_state_total_energy_ += curr_state_two_body_energies_[ ii ];
+	// }
+	// procrastinated_ = false;
+	// ++num_procrastinated_committed;
 	//}
 
 
@@ -485,7 +485,7 @@ DoubleLazyNode::print_internal_energies() const
 	std::cout << "curr_state_one_body_energy_ ";
 	std::cout << curr_state_one_body_energy_ << " ";
 	std::cout << "curr_state_total_energy_" << curr_state_total_energy_ << " ";
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii) {
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		std::cout << "(" << curr_state_two_body_energies_[ ii ] << ") ";
 	}
 	std::cout << std::endl;
@@ -513,9 +513,9 @@ DoubleLazyNode::print_internal_energies() const
 void
 DoubleLazyNode::update_internal_energy_sums()
 {
-debug_assert( get_edge_vector_up_to_date() );
+	debug_assert( get_edge_vector_up_to_date() );
 	curr_state_total_energy_ = 0;
-	for (int ii = 1; ii <= get_num_incident_edges(); ++ii) {
+	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		curr_state_total_energy_ += get_incident_dlazy_edge(ii)->get_current_two_body_energy();
 	}
 	curr_state_total_energy_ += curr_state_one_body_energy_;
@@ -596,13 +596,13 @@ DoubleLazyEdge::DoubleLazyEdge(
 ):
 	OnTheFlyEdge( owner, first_node_ind, second_node_ind),
 	sparse_aa_neighbors_(
-		get_dlazy_ig_owner()->get_num_aatypes(),
-		get_dlazy_ig_owner()->get_num_aatypes(),
-		(unsigned char) 0 ),
+	get_dlazy_ig_owner()->get_num_aatypes(),
+	get_dlazy_ig_owner()->get_num_aatypes(),
+	(unsigned char) 0 ),
 	two_body_energies_(
-		get_dlazy_ig_owner()->get_num_aatypes(),
-		get_dlazy_ig_owner()->get_num_aatypes(),
-		( ObjexxFCL::FArray2D< core::PackerEnergy > * ) ( 0 ) ),
+	get_dlazy_ig_owner()->get_num_aatypes(),
+	get_dlazy_ig_owner()->get_num_aatypes(),
+	( ObjexxFCL::FArray2D< core::PackerEnergy > * ) ( 0 ) ),
 	curr_state_energy_( 0.0f ),
 	partial_state_assignment_( false ),
 	ran_annealing_since_pair_energy_table_cleared_( false ),
@@ -631,7 +631,7 @@ DoubleLazyEdge::set_sparse_aa_info(
 	sparse_aa_neighbors_ = aa_neighbors;
 	for ( Size ii = 1; ii <= two_body_energies_.size2(); ++ii ) {
 		for ( Size jj = 1; jj <= two_body_energies_.size1(); ++jj ) {
-			if ( two_body_energies_( jj, ii ) && sparse_aa_neighbors_( jj, ii )) {
+			if ( two_body_energies_( jj, ii ) && sparse_aa_neighbors_( jj, ii ) ) {
 				(*two_body_energies_(jj,ii)) = NOT_YET_COMPUTED_ENERGY;
 			} else if ( two_body_energies_(jj,ii) ) {
 				delete two_body_energies_(jj,ii); two_body_energies_(jj,ii) = 0;
@@ -676,7 +676,7 @@ DoubleLazyEdge::get_two_body_energy_smi(
 	SparseMatrixIndex const & node2info
 ) const
 {
-	if ( ! sparse_aa_neighbors_( node2info.get_aa_type(), node1info.get_aa_type() )) {
+	if ( ! sparse_aa_neighbors_( node2info.get_aa_type(), node1info.get_aa_type() ) ) {
 		return 0.0;
 	}
 	prep_aa_submatrix( node1info.get_aa_type(), node2info.get_aa_type() );
@@ -698,7 +698,7 @@ DoubleLazyEdge::prep_aa_submatrix(
 	int node2aa
 ) const
 {
-debug_assert( sparse_aa_neighbors_( node2aa, node1aa ));
+	debug_assert( sparse_aa_neighbors_( node2aa, node1aa ));
 
 	if ( ! two_body_energies_( node2aa, node1aa ) ) {
 		two_body_energies_( node2aa, node1aa ) = new ObjexxFCL::FArray2D< core::PackerEnergy >(
@@ -718,7 +718,7 @@ DoubleLazyEdge::read_aa_submatrix(
 	SparseMatrixIndex node2info
 ) const
 {
-debug_assert( two_body_energies_( node2info.get_aa_type(), node1info.get_aa_type() ) );
+	debug_assert( two_body_energies_( node2info.get_aa_type(), node1info.get_aa_type() ) );
 
 	return (*two_body_energies_( node2info.get_aa_type(), node1info.get_aa_type() ))
 		( node2info.get_state_ind_for_this_aa_type(), node1info.get_state_ind_for_this_aa_type() );
@@ -732,7 +732,7 @@ DoubleLazyEdge::set_aa_submatrix(
 	core::PackerEnergy setting
 ) const
 {
-debug_assert( two_body_energies_( node2info.get_aa_type(), node1info.get_aa_type() ) );
+	debug_assert( two_body_energies_( node2info.get_aa_type(), node1info.get_aa_type() ) );
 	(*two_body_energies_( node2info.get_aa_type(), node1info.get_aa_type() ))
 		( node2info.get_state_ind_for_this_aa_type(), node1info.get_state_ind_for_this_aa_type() ) = setting;
 }
@@ -824,7 +824,7 @@ DoubleLazyEdge::set_edge_index(
 	int index
 )
 {
-debug_assert( index > -1 && edge_index_ == -1 ); // set this only once
+	debug_assert( index > -1 && edge_index_ == -1 ); // set this only once
 	edge_index_ = index;
 }
 
@@ -834,7 +834,7 @@ DoubleLazyEdge::drop_aa_submatrix(
 ) const
 {
 	std::pair< int, int > aainds = aa_indices_from_submatrix_index( submat_ind );
-debug_assert( two_body_energies_( aainds.second, aainds.first ) );
+	debug_assert( two_body_energies_( aainds.second, aainds.first ) );
 	delete two_body_energies_( aainds.second, aainds.first ); two_body_energies_( aainds.second, aainds.first ) = 0;
 	return submatrix_size( aainds.first, aainds.second );
 }
@@ -1040,11 +1040,11 @@ void DoubleLazyEdge::acknowledge_partial_state_change(
 core::PackerEnergy
 DoubleLazyEdge::get_energy_following_partial_state_assignment()
 {
-	if (partial_state_assignment_) {
+	if ( partial_state_assignment_ ) {
 		int nodes_curr_states[2];
 		SparseMatrixIndex nodes_curr_states_sparse_info[2];
 
-		for (int ii = 0; ii < 2; ++ii) {
+		for ( int ii = 0; ii < 2; ++ii ) {
 			nodes_curr_states[ ii ] =
 				get_dlazy_node( ii )->get_current_state();
 			nodes_curr_states_sparse_info[ ii ] =
@@ -1128,14 +1128,14 @@ DoubleLazyEdge::get_aa_submatrix_energies(
 	int node2aa
 ) const
 {
-	if ( ! sparse_aa_neighbors_( node2aa, node1aa )) {
+	if ( ! sparse_aa_neighbors_( node2aa, node1aa ) ) {
 		ObjexxFCL::FArray2D< core::PackerEnergy > empty;
 		return empty;
 	}
 
 	prep_aa_submatrix( node1aa, node2aa );
 
-debug_assert( two_body_energies_( node2aa, node1aa ) );
+	debug_assert( two_body_energies_( node2aa, node1aa ) );
 	ObjexxFCL::FArray2D< core::PackerEnergy > submat( * two_body_energies_( node2aa, node1aa ));
 	int const iioffset = get_dlazy_node(0)->get_state_offset_for_aatype( node1aa );
 	int const jjoffset = get_dlazy_node(1)->get_state_offset_for_aatype( node2aa );
@@ -1164,21 +1164,21 @@ debug_assert( two_body_energies_( node2aa, node1aa ) );
 
 /*void
 DoubleLazyEdge::wipe_two_body_energies_for_node_state(
-	int node,
-	int state
+int node,
+int state
 )
 {
-	int other_node = node == 0 ? 1 : 0;
+int other_node = node == 0 ? 1 : 0;
 
-	SparseMatrixIndex states[ 2 ];
-	states[ node ] = get_dlazy_node( node )->get_sparse_mat_info_for_state( state );
-	int const other_node_num_states = get_dlazy_node( other_node )->get_num_states();
+SparseMatrixIndex states[ 2 ];
+states[ node ] = get_dlazy_node( node )->get_sparse_mat_info_for_state( state );
+int const other_node_num_states = get_dlazy_node( other_node )->get_num_states();
 
-	for (int ii = 1; ii <= other_node_num_states; ++ii) {
-		states[ other_node ] = get_dlazy_node( other_node )->get_sparse_mat_info_for_state( ii );
-		two_body_energies_.set( states[ 0 ], states[ 1 ], NOT_YET_COMPUTED_ENERGY );
+for (int ii = 1; ii <= other_node_num_states; ++ii) {
+states[ other_node ] = get_dlazy_node( other_node )->get_sparse_mat_info_for_state( ii );
+two_body_energies_.set( states[ 0 ], states[ 1 ], NOT_YET_COMPUTED_ENERGY );
 
-	}
+}
 
 }*/
 
@@ -1300,7 +1300,7 @@ DoubleLazyInteractionGraph::prepare_for_simulated_annealing()
 	aa_submatrix_history_list_ = InPlaceIntListOP( new utility::in_place_list< int >( n_submatrices ) );
 
 	int count = 0; // index nodes from 0 -- makes module arithmetic easier
-	for( std::list< EdgeBase* >::const_iterator eiter = get_edge_list_begin(),
+	for ( std::list< EdgeBase* >::const_iterator eiter = get_edge_list_begin(),
 			eiter_end = get_edge_list_end(); eiter != eiter_end; ++eiter ) {
 		DoubleLazyEdge * dledge = static_cast< DoubleLazyEdge * >  (* eiter );
 		dledge->set_edge_index( count );
@@ -1445,7 +1445,7 @@ DoubleLazyInteractionGraph::commit_considered_substitution()
 		total_energy_alternate_state_assignment_;
 
 	++num_commits_since_last_update_;
-	if (num_commits_since_last_update_ == COMMIT_LIMIT_BETWEEN_UPDATES) {
+	if ( num_commits_since_last_update_ == COMMIT_LIMIT_BETWEEN_UPDATES ) {
 		update_internal_energy_totals();
 	}
 
@@ -1504,8 +1504,8 @@ int
 DoubleLazyInteractionGraph::get_edge_memory_usage() const
 {
 	int sum = 0;
-	for (std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
-			iter != get_edge_list_end(); ++iter) {
+	for ( std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
+			iter != get_edge_list_end(); ++iter ) {
 		sum += ((DoubleLazyEdge*) *iter)->get_two_body_table_size();
 	}
 	return sum;
@@ -1539,8 +1539,8 @@ DoubleLazyInteractionGraph::print_current_state_assignment() const
 		get_dlazy_node(ii)->print();
 	}
 
-	for (std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
-			iter != get_edge_list_end(); ++iter) {
+	for ( std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
+			iter != get_edge_list_end(); ++iter ) {
 		((DoubleLazyEdge*) (*iter))->print_current_energy();
 	}
 	std::cout << "Energy: " << total_energy_current_state_assignment_ << std::endl;
@@ -1611,7 +1611,7 @@ DoubleLazyInteractionGraph::get_energy_sum_for_vertex_group( int group_id )
 		int second_node_ind = (*edge_iter)->get_second_node_ind();
 
 		if ( get_vertex_member_of_energy_sum_group( first_node_ind, group_id )
-				&& get_vertex_member_of_energy_sum_group( second_node_ind, group_id )) {
+				&& get_vertex_member_of_energy_sum_group( second_node_ind, group_id ) ) {
 			esum += ((DoubleLazyEdge*) (*edge_iter))->get_current_two_body_energy();
 		}
 	}
@@ -1696,7 +1696,7 @@ void DoubleLazyInteractionGraph::note_submatrix_added(
 
 	while ( curr_memory_for_rpes_ > memory_max_for_rpes_ ) {
 		int global_submatrix_index = aa_submatrix_history_list_->tail();
-	debug_assert( global_submatrix_index ); /// should never be zero if curr_memroy_for_rpes > memory_max_for_rpes_
+		debug_assert( global_submatrix_index ); /// should never be zero if curr_memroy_for_rpes > memory_max_for_rpes_
 		aa_submatrix_history_list_->remove( global_submatrix_index );
 
 		--global_submatrix_index; // convert to a 0-based index for modular arithmetic
@@ -1801,7 +1801,7 @@ DoubleLazyInteractionGraph::update_internal_energy_totals()
 			get_one_body_energy_current_state();
 	}
 
-	for (std::list<EdgeBase*>::iterator iter = get_edge_list_begin();
+	for ( std::list<EdgeBase*>::iterator iter = get_edge_list_begin();
 			iter != get_edge_list_end(); ++iter ) {
 		total_energy_current_state_assignment_ +=
 			((DoubleLazyEdge*) *iter)->get_current_two_body_energy();

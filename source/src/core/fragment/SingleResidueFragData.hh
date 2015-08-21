@@ -62,11 +62,11 @@ public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~SingleResidueFragData();
 	SingleResidueFragData( char sequence )
-		: sequence_( sequence )
+	: sequence_( sequence )
 	{};
 
 	SingleResidueFragData(  )
-		: sequence_( 'X' )
+	: sequence_( 'X' )
 	{};
 
 	virtual
@@ -131,7 +131,7 @@ public:
 
 	virtual char secstruct() const {
 		// this shouldn't be called for an SRFD that does not have secstruct
-	debug_assert( 0 );
+		debug_assert( 0 );
 		return 'X';
 	}
 

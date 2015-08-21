@@ -38,7 +38,7 @@ DenseNeighborIterator::DenseNeighborIterator(
 ResidueNeighborIterator const &
 DenseNeighborIterator::operator = ( ResidueNeighborIterator const & src )
 {
-debug_assert( dynamic_cast< DenseNeighborIterator const * >( &src ) );
+	debug_assert( dynamic_cast< DenseNeighborIterator const * >( &src ) );
 	DenseNeighborIterator const & my_src( static_cast< DenseNeighborIterator const & >( src ) );
 	pos1_ = my_src.pos1_;
 	pos2_ = my_src.pos2_;
@@ -59,7 +59,7 @@ bool
 DenseNeighborIterator::operator == ( ResidueNeighborIterator const & other ) const
 {
 	return ( residue_iterated_on() == other.residue_iterated_on() &&
-					 neighbor_id() == other.neighbor_id() );
+		neighbor_id() == other.neighbor_id() );
 }
 
 bool
@@ -153,7 +153,7 @@ DenseNeighborConstIterator::DenseNeighborConstIterator(
 ResidueNeighborConstIterator const &
 DenseNeighborConstIterator::operator = ( ResidueNeighborConstIterator const & src )
 {
-debug_assert( dynamic_cast< DenseNeighborConstIterator const * >( &src ) );
+	debug_assert( dynamic_cast< DenseNeighborConstIterator const * >( &src ) );
 	DenseNeighborConstIterator const & my_src( static_cast< DenseNeighborConstIterator const & >( src ) );
 	pos1_ = my_src.pos1_;
 	pos2_ = my_src.pos2_;
@@ -174,7 +174,7 @@ bool
 DenseNeighborConstIterator::operator == ( ResidueNeighborConstIterator const & other ) const
 {
 	return ( residue_iterated_on() == other.residue_iterated_on() &&
-					 neighbor_id() == other.neighbor_id() );
+		neighbor_id() == other.neighbor_id() );
 }
 
 bool

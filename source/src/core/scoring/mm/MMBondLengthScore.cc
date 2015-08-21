@@ -49,7 +49,7 @@ MMBondLengthScore::MMBondLengthScore( MMBondLengthLibrary const & mmtl ) :
 	mm_bondlength_library_( mmtl )
 { }
 
-/// @details dscore takes Kb, b0, and a distance; 
+/// @details dscore takes Kb, b0, and a distance;
 /// returns an energy.
 Real
 MMBondLengthScore::score( Real Kb, Real b0, Real d ) const
@@ -59,7 +59,7 @@ MMBondLengthScore::score( Real Kb, Real b0, Real d ) const
 }
 
 /// @details Score take a set of 2 mm atom types in the form of an mm_bondlength_pair and a distance in Ang, and returns
-/// the energy. 
+/// the energy.
 Real MMBondLengthScore::score( mm_bondlength_atom_pair mm_atomtype_set, Real d ) const {
 	Real score = 0;
 
@@ -75,7 +75,7 @@ Real MMBondLengthScore::score( mm_bondlength_atom_pair mm_atomtype_set, Real d )
 	return score;
 }
 
-/// @details dscore takes Kb, b0, and a distance; 
+/// @details dscore takes Kb, b0, and a distance;
 /// returns an energy derivative.
 Real
 MMBondLengthScore::dscore( Real Kb, Real b0, Real d ) const {

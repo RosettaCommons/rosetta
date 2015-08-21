@@ -42,7 +42,7 @@ namespace methods {
 
 class Fa_MbenvEnergy : public ContextDependentOneBodyEnergy {
 public:
-  typedef ContextDependentOneBodyEnergy  parent;
+	typedef ContextDependentOneBodyEnergy  parent;
 public:
 
 	Fa_MbenvEnergy( etable::MembEtable const & memb_etable_in );
@@ -53,70 +53,70 @@ public:
 	virtual
 	void residue_energy( conformation::Residue const & rsd, pose::Pose const & pose, EnergyMap & emap ) const;
 
-  virtual
-  void
-  finalize_total_energy(
-    pose::Pose & pose,
-    ScoreFunction const &,
-    EnergyMap & emap
-  ) const;
+	virtual
+	void
+	finalize_total_energy(
+		pose::Pose & pose,
+		ScoreFunction const &,
+		EnergyMap & emap
+	) const;
 
-  virtual
-  void
-  setup_for_derivatives(
-    pose::Pose & pose,
-    ScoreFunction const & scfxn
-  ) const;
+	virtual
+	void
+	setup_for_derivatives(
+		pose::Pose & pose,
+		ScoreFunction const & scfxn
+	) const;
 
-  virtual
-  void
-  eval_atom_derivative(
-    id::AtomID const & id,
-    pose::Pose const & pose,
-    kinematics::DomainMap const & domain_map,
-    ScoreFunction const & sfxn,
-    EnergyMap const & emap,
-    Vector & F1,
-    Vector & F2
-  ) const;
+	virtual
+	void
+	eval_atom_derivative(
+		id::AtomID const & id,
+		pose::Pose const & pose,
+		kinematics::DomainMap const & domain_map,
+		ScoreFunction const & sfxn,
+		EnergyMap const & emap,
+		Vector & F1,
+		Vector & F2
+	) const;
 
 	/// @brief Fa_MbenvEnergy is context independent; indicates that no context graphs are required
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
 
 
-  MembraneTopology const & MembraneTopology_from_pose( pose::Pose const & ) const;
-  Membrane_FAEmbed const & Membrane_FAEmbed_from_pose( pose::Pose const & ) const;
-  MembraneEmbed const & MembraneEmbed_from_pose( pose::Pose const & ) const;
+	MembraneTopology const & MembraneTopology_from_pose( pose::Pose const & ) const;
+	Membrane_FAEmbed const & Membrane_FAEmbed_from_pose( pose::Pose const & ) const;
+	MembraneEmbed const & MembraneEmbed_from_pose( pose::Pose const & ) const;
 
 
-  void
-  setup_for_scoring(
-    pose::Pose & pose,
-    ScoreFunction const &
-  ) const;
-
-private:
-
-
-  Real
-  eval_fa_mbenv(
-    conformation::Atom const & atom1,
-    Real const & f1
-  ) const;
+	void
+	setup_for_scoring(
+		pose::Pose & pose,
+		ScoreFunction const &
+	) const;
 
 private:
 
-  etable::MembEtable const & memb_etable_;
 
-  //taken from the MembEtable
-  ObjexxFCL::FArray1< Real > const & lk_dgrefce_;
-  ObjexxFCL::FArray1< Real > const & memb_lk_dgrefce_;
+	Real
+	eval_fa_mbenv(
+		conformation::Atom const & atom1,
+		Real const & f1
+	) const;
 
-  Membrane_FAPotential const & potential_;
-  mutable Real fa_mbenv_weight_; // hold this while calculating derivatives.
-virtual
-core::Size version() const;
+private:
+
+	etable::MembEtable const & memb_etable_;
+
+	//taken from the MembEtable
+	ObjexxFCL::FArray1< Real > const & lk_dgrefce_;
+	ObjexxFCL::FArray1< Real > const & memb_lk_dgrefce_;
+
+	Membrane_FAPotential const & potential_;
+	mutable Real fa_mbenv_weight_; // hold this while calculating derivatives.
+	virtual
+	core::Size version() const;
 
 };
 

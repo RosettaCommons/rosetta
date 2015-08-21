@@ -48,8 +48,9 @@ public:
 	/// @brief creates a new deep copy of this map
 	FragmentScoreMapOP clone() const {
 		FragmentScoreMapOP f( new FragmentScoreMap(small_scores_.size()) );
-		for (Size i = 1; i <= small_scores_.size(); i++)
+		for ( Size i = 1; i <= small_scores_.size(); i++ ) {
 			f->small_scores_[i] = small_scores_[i];
+		}
 		f->was_modified_ = was_modified_;
 		f->recent_total_ = recent_total_;
 

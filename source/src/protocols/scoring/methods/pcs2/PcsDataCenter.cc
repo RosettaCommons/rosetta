@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/methods/pcs2/PcsDataCenter.cc
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/methods/pcs2/PcsDataCenter.cc
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 
 // Unit headers
@@ -54,10 +54,10 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs2{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs2 {
 
 static thread_local basic::Tracer TR_PcsDataCenter( "protocols.scoring.methods.pcs.PcsDataCenter" );
 
@@ -71,7 +71,7 @@ PcsDataCenter::~PcsDataCenter(){
 PcsDataCenter &
 PcsDataCenter::operator=( PcsDataCenter const &other )
 {
-	//	TR_PcsDataCenter << " = called" << std::endl;
+	// TR_PcsDataCenter << " = called" << std::endl;
 	if ( this != &other ) {
 		n_lanthanides_ = other.n_lanthanides_;
 		n_pcs_spin_ = other.n_pcs_spin_;
@@ -88,7 +88,7 @@ PcsDataCenter::operator=( PcsDataCenter const &other )
 PcsDataCenter::PcsDataCenter(PcsDataCenter const &other):
 	ReferenceCount()
 {
-	//	TR_PcsDataCenter << " () called" << std::endl;
+	// TR_PcsDataCenter << " () called" << std::endl;
 	n_lanthanides_ = other.n_lanthanides_;
 	n_pcs_spin_ = other.n_pcs_spin_;
 	PCS_data_line_all_spin_ = other.PCS_data_line_all_spin_;
@@ -101,12 +101,12 @@ PcsDataCenter::PcsDataCenter(PcsDataCenter const &other):
 
 core::Real
 fill_A_line_fast(utility::vector1<core::Real> & A_line,
-								 core::Real const xM,
-								 core::Real const yM,
-								 core::Real const zM,
-								 core::Real const x,
-								 core::Real const y,
-								 core::Real const z){
+	core::Real const xM,
+	core::Real const yM,
+	core::Real const zM,
+	core::Real const x,
+	core::Real const y,
+	core::Real const z){
 
 
 	core::Real r2;
@@ -137,15 +137,15 @@ fill_A_line_fast(utility::vector1<core::Real> & A_line,
 
 void
 fill_A_line_slow(utility::vector1<core::Real> & A_line,
-								 core::Real const xM,
-								 core::Real const yM,
-								 core::Real const zM,
-								 core::Real const x,
-								 core::Real const y,
-								 core::Real const z){
+	core::Real const xM,
+	core::Real const yM,
+	core::Real const zM,
+	core::Real const x,
+	core::Real const y,
+	core::Real const z){
 
 
-	//	static const core::Real FACT_USI_PRECALC_FOR_A_3( (10000.0/12.0/ core::Real( numeric::constants::d::pi ) ) * 3.0 );
+	// static const core::Real FACT_USI_PRECALC_FOR_A_3( (10000.0/12.0/ core::Real( numeric::constants::d::pi ) ) * 3.0 );
 
 	core::Real v_x ( x - xM);
 	core::Real v_y ( y - yM);
@@ -188,7 +188,7 @@ PcsDataCenter::get_pcs_data_per_lanthanides_all() const {
 void
 PcsDataCenter::update_matrix_A(){
 	core::Size i;
-	for( i = 1; i <= PCS_data_per_lanthanides_all_.size(); ++i){
+	for ( i = 1; i <= PCS_data_per_lanthanides_all_.size(); ++i ) {
 		PCS_data_per_lanthanides_all_[i].update_my_A_matrix_for_svd(A_all_);
 	}
 }
@@ -196,7 +196,7 @@ PcsDataCenter::update_matrix_A(){
 void
 PcsDataCenter::update_matrix_A_cstyle(){
 	core::Size i;
-	for( i = 1; i <= PCS_data_per_lanthanides_all_.size(); ++i){
+	for ( i = 1; i <= PCS_data_per_lanthanides_all_.size(); ++i ) {
 		PCS_data_per_lanthanides_all_[i].update_my_A_matrix_for_cstyle(A_all_);
 	}
 }
@@ -204,23 +204,23 @@ PcsDataCenter::update_matrix_A_cstyle(){
 
 void
 PcsDataCenter::update_matrix_A_all(core::Real const X,
-																	 core::Real const Y,
-																	 core::Real const Z){
+	core::Real const Y,
+	core::Real const Z){
 	core::Size i;
 
-	for( i = 1; i <= n_pcs_spin_; ++i){
+	for ( i = 1; i <= n_pcs_spin_; ++i ) {
 		fill_A_line_slow(A_all_[i], X, Y, Z, X_all_[i], Y_all_[i], Z_all_[i]);
 	}
 }
 
 void
 PcsDataCenter::update_matrix_A_all_for_svd(core::Real const X,
-																					 core::Real const Y,
-																					 core::Real const Z){
+	core::Real const Y,
+	core::Real const Z){
 	core::Size i;
 	core::Real x, y, z;
 
-	for( i = 1; i <= n_pcs_spin_; ++i){
+	for ( i = 1; i <= n_pcs_spin_; ++i ) {
 		x = X_all_[i];
 		y = Y_all_[i];
 		z = Z_all_[i];
@@ -231,12 +231,12 @@ PcsDataCenter::update_matrix_A_all_for_svd(core::Real const X,
 
 void
 PcsDataCenter::update_matrix_A_all_for_cstyle(core::Real const X,
-																							core::Real const Y,
-																							core::Real const Z){
+	core::Real const Y,
+	core::Real const Z){
 	core::Size i;
 	core::Real x, y, z;
 
-	for( i = 1; i <= n_pcs_spin_; ++i){
+	for ( i = 1; i <= n_pcs_spin_; ++i ) {
 		x = X_all_[i];
 		y = Y_all_[i];
 		z = Z_all_[i];
@@ -253,9 +253,9 @@ PcsDataCenter::update_X_Y_Z_all(core::pose::Pose const & pose){
 	std::string at;
 	numeric::xyzVector< core::Real > coo;
 
-	for( i = 1; i <= PCS_data_line_all_spin_.size(); ++i){
+	for ( i = 1; i <= PCS_data_line_all_spin_.size(); ++i ) {
 		res = PCS_data_line_all_spin_[i].get_residue_num();
-		if(res > pose.total_residue()){
+		if ( res > pose.total_residue() ) {
 			std::cerr << "Error: Couldn't find residue " << res << std::endl;
 			std::cerr << "Numbering residue within Rosetta match the sequence provided as input" << std::endl;
 			std::cerr << "Make sure the numbering between the sequence and the PseudocontactShift (npc) input file match" << std::endl;
@@ -263,7 +263,7 @@ PcsDataCenter::update_X_Y_Z_all(core::pose::Pose const & pose){
 		}
 
 		at = PCS_data_line_all_spin_[i].get_atom_name();
-		if( ! pose.residue(res).has(at)){
+		if ( ! pose.residue(res).has(at) ) {
 			std::cerr << "Error: Couldn't find the atom " << at << " in residue " << res << std::endl;
 			std::cerr << "Numbering residue within Rosetta match the sequence provided as input" << std::endl;
 			std::cerr << "Make sure the numbering between the sequence and the PseudocontactShift (npc) input file match" << std::endl;
@@ -285,8 +285,8 @@ PcsDataCenter::where_is_line(PcsInputLine & pcs_i_l){
 	core::Size index;
 	index = 1;
 	for ( it = PCS_data_line_all_spin_.begin(); it != PCS_data_line_all_spin_.end(); ++it ) {
-		if ((*it).get_residue_num() == pcs_i_l.get_residue_num()){
-			if ((*it).get_atom_name() == pcs_i_l.get_atom_name()){
+		if ( (*it).get_residue_num() == pcs_i_l.get_residue_num() ) {
+			if ( (*it).get_atom_name() == pcs_i_l.get_atom_name() ) {
 				return(index);
 			}
 		}
@@ -295,9 +295,9 @@ PcsDataCenter::where_is_line(PcsInputLine & pcs_i_l){
 	return (0);
 }
 
-	PcsDataCenter::PcsDataCenter(PcsInputCenter & pcs_i_c, core::Size start, core::Size end, core::Real individual_scale){
+PcsDataCenter::PcsDataCenter(PcsInputCenter & pcs_i_c, core::Size start, core::Size end, core::Real individual_scale){
 
-	//	TR_PcsDataCenter << " constructor called" << std::endl;
+	// TR_PcsDataCenter << " constructor called" << std::endl;
 
 	std::map< std::string, PcsInputFile >::iterator it;
 
@@ -315,7 +315,7 @@ PcsDataCenter::where_is_line(PcsInputLine & pcs_i_l){
 
 		PcsInputFile & pcs_i_f = (it->second);
 		n_lanthanides_ = n_lanthanides_ + 1;
-		//		TR_PcsDataCenter << "Filename " << filename  <<std::endl;
+		//  TR_PcsDataCenter << "Filename " << filename  <<std::endl;
 		core::Real weight(pcs_i_f.get_weight());
 
 		utility::vector1<PcsInputLine>::iterator it2;
@@ -324,30 +324,29 @@ PcsDataCenter::where_is_line(PcsInputLine & pcs_i_l){
 		PcsDataLanthanide pcs_d_l = PcsDataLanthanide(filename, weight, pcs_i_l_all, start, end, individual_scale);
 
 		j = 1;
-		for ( it2 = pcs_i_l_all.begin(); it2 != pcs_i_l_all.end(); ++it2 ){
+		for ( it2 = pcs_i_l_all.begin(); it2 != pcs_i_l_all.end(); ++it2 ) {
 
 			pcs_i_l_temp = &(*it2);
-			if(do_I_skip(*pcs_i_l_temp, start, end)){
+			if ( do_I_skip(*pcs_i_l_temp, start, end) ) {
 				continue;
 			}
 
 			index = where_is_line(*pcs_i_l_temp);
-			if(index == 0){
+			if ( index == 0 ) {
 				PCS_data_line_all_spin_.push_back(*it2);
 				n_pcs_spin_ = n_pcs_spin_ + 1;
 				pcs_d_l.set_A_index(j, n_pcs_spin_);
-			}
-			else{
+			} else {
 				pcs_d_l.set_A_index(j, index);
 			}
 			j = j + 1;
 		}
 		PCS_data_per_lanthanides_all_.push_back(pcs_d_l);
 	}
-	//	TR_PcsDataCenter << "Total spin independent: " <<	n_pcs_spin_ << std::endl;
+	// TR_PcsDataCenter << "Total spin independent: " << n_pcs_spin_ << std::endl;
 
 	A_all_.resize(n_pcs_spin_);
-	for(i = 1; i <= n_pcs_spin_; i++){
+	for ( i = 1; i <= n_pcs_spin_; i++ ) {
 		(A_all_[i]).resize(5);
 	}
 	X_all_.resize(n_pcs_spin_);
@@ -362,7 +361,7 @@ PcsDataCenter::get_n_lanthanides() const{
 }
 
 
-const	utility::vector1< utility::vector1<core::Real> > &
+const utility::vector1< utility::vector1<core::Real> > &
 PcsDataCenter::get_A_all() const{
 	return(A_all_);
 }
@@ -387,7 +386,7 @@ operator<<(std::ostream& out, const PcsDataCenter & me){
 	core::Size i;
 	out << "n lanthanides experiment: " << me.get_n_lanthanides() << std::endl;
 	out << "n independent spins in total: " << me.n_pcs_spin_ << std::endl;
-	for (i = 1 ; i <= me.n_lanthanides_; ++i){
+	for ( i = 1 ; i <= me.n_lanthanides_; ++i ) {
 		out << me.PCS_data_per_lanthanides_all_[i] << std::endl;
 	}
 

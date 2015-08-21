@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	    protocols/membrane/VisualizeMembraneMover.hh
+/// @file     protocols/membrane/VisualizeMembraneMover.hh
 /// @brief      Visualize Membrane Planes by many atoms
 /// @details    This does not represent the membrane planes as planes but rather
-///				as a large number of additional HETATOMs in the PDB file.
-///				IF YOU USE PYMOL, IT'S BETTER TO USE THE PYMOLMOVER INSTEAD!
-///				If you use Chimera or alternate methods for visualization, it
-///				it is still useful.
-///				Last Modified: 6/19/14
-/// @author		Rebecca Alford (rflaford12@gmail.com)
+///    as a large number of additional HETATOMs in the PDB file.
+///    IF YOU USE PYMOL, IT'S BETTER TO USE THE PYMOLMOVER INSTEAD!
+///    If you use Chimera or alternate methods for visualization, it
+///    it is still useful.
+///    Last Modified: 6/19/14
+/// @author  Rebecca Alford (rflaford12@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_visualize_VisualizeMembraneMover_hh
 #define INCLUDED_protocols_membrane_visualize_VisualizeMembraneMover_hh
@@ -44,7 +44,7 @@ using namespace core::pose;
 using namespace core::conformation;
 
 /// @brief Add membrane planes to the pose represented by
-///			2 layers of MEM virtual residues
+///   2 layers of MEM virtual residues
 class VisualizeMembraneMover : public protocols::moves::Mover {
 
 public:
@@ -53,14 +53,14 @@ public:
 	/// Constructors ///
 	////////////////////
 
-	/// @brief	  Defualt Constructor
+	/// @brief   Defualt Constructor
 	/// @details  Construct membrane residues with spacing = 5,
-	///	          width = 100, and the pose membrane and center
+	///           width = 100, and the pose membrane and center
 	VisualizeMembraneMover();
 
 	/// @brief    Construct with User specified spacing & width
 	/// @details  Construct membranes with a given spacing and
-	///			  width in angstroms
+	///     width in angstroms
 	VisualizeMembraneMover( Real spacing, Real width, Real thicnkess );
 
 	/// @brief Copy Constructor
@@ -92,7 +92,7 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-		);
+	);
 
 	/////////////////////
 	/// Mover Methods ///
@@ -100,7 +100,7 @@ public:
 
 	/// @brief    Apply Visualize Transform "Move"
 	/// @details  Adds a series of virtiaul residues to the pose given a
-	///			  spacing and width specified at construction time
+	///     spacing and width specified at construction time
 	virtual void apply( Pose & pose );
 
 	/// @brief   Return the name of this mover

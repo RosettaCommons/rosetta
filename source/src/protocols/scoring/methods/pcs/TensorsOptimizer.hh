@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file protocols/scoring/TensorsOptimizer.hh
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file protocols/scoring/TensorsOptimizer.hh
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs_TensorsOptimizer_hh
@@ -48,10 +48,10 @@
 // C++ headers
 
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs {
 
 
 class TensorsOptimizer : public core::optimization::Multifunc {
@@ -62,29 +62,29 @@ public:
 private:
 	/// @brief No default constructor: You must provide a PCS_data object when constructing.
 	// The unimplemented private constructor turns off automatic generation
-  TensorsOptimizer();
+	TensorsOptimizer();
 
 public:
-  TensorsOptimizer(PCS_data const & pcs_d);
+	TensorsOptimizer(PCS_data const & pcs_d);
 
-  virtual
-  ~TensorsOptimizer();
+	virtual
+	~TensorsOptimizer();
 
-  // @brief OptE func
-  virtual
-  core::Real
-  operator ()( core::optimization::Multivec const & vars ) const;
+	// @brief OptE func
+	virtual
+	core::Real
+	operator ()( core::optimization::Multivec const & vars ) const;
 
-  /// @brief OptE dfunc
-  virtual
-  void
-  dfunc(core::optimization::Multivec const & vars,
+	/// @brief OptE dfunc
+	virtual
+	void
+	dfunc(core::optimization::Multivec const & vars,
 		core::optimization::Multivec & dE_dvars
 	) const;
 
 
-	//	void
-	//	dfunc_test(optimization::Multivec const & vars) const;
+	// void
+	// dfunc_test(optimization::Multivec const & vars) const;
 
 private:
 

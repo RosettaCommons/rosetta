@@ -27,7 +27,7 @@
 // Unit headers
 
 namespace protocols {
-namespace protein_interface_design{
+namespace protein_interface_design {
 namespace filters {
 
 class BoltzmannFilter : public protocols::filters::Filter
@@ -62,7 +62,7 @@ public:
 	core::Real triage_threshold() const;
 	core::Real fitness_threshold() const;
 	void fitness_threshold( core::Real const f );
-  bool norm_neg() const;
+	bool norm_neg() const;
 	void norm_neg( bool const n );
 private:
 	utility::vector1< protocols::filters::FilterOP > positive_filters_;

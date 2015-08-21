@@ -26,34 +26,34 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class StubApplier: public StepWiseScreener {
+class StubApplier: public StepWiseScreener {
 
-	public:
+public:
 
-		//constructor
-		StubApplier( kinematics::Stub & stub );
+	//constructor
+	StubApplier( kinematics::Stub & stub );
 
-		//destructor
-		~StubApplier();
+	//destructor
+	~StubApplier();
 
-	public:
+public:
 
-		virtual
-		void
-		get_update( sampler::StepWiseSamplerBaseOP sampler );
+	virtual
+	void
+	get_update( sampler::StepWiseSamplerBaseOP sampler );
 
-		virtual
-		std::string
-		name() const { return "StubApplier"; }
+	virtual
+	std::string
+	name() const { return "StubApplier"; }
 
-		virtual
-		StepWiseScreenerType
-		type() const { return STUB_APPLIER; }
+	virtual
+	StepWiseScreenerType
+	type() const { return STUB_APPLIER; }
 
-	private:
+private:
 
-		kinematics::Stub & stub_;
-	};
+	kinematics::Stub & stub_;
+};
 
 } //screener
 } //stepwise

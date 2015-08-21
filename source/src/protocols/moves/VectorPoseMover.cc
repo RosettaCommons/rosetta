@@ -25,15 +25,15 @@ namespace moves {
 // Default constructor does nothing
 VectorPoseMover::VectorPoseMover() :
 	Mover ()
-	{}
+{}
 
 VectorPoseMover::VectorPoseMover( std::string const& name ) :
 	Mover( name )
-	{}
+{}
 
 VectorPoseMover::VectorPoseMover( VectorPoseMover const & other ) :
 	Mover( other )
-	{}
+{}
 
 VectorPoseMover::~VectorPoseMover() {}
 

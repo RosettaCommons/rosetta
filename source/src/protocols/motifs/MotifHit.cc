@@ -30,17 +30,17 @@
 // C++ Headers
 
 namespace protocols {
-namespace motifs{
+namespace motifs {
 
 MotifHit::MotifHit(
 	Motif const & motif,
 	Size const & vbpos,
 	bool const passed_automorphism
 ) : motifcop_( motif.clone() ),
-		vbpos_( vbpos ),
-		passed_automorphism_( passed_automorphism ),
-		build_rotamer_(/* 0 */),
-		target_conformer_(/* 0 */)
+	vbpos_( vbpos ),
+	passed_automorphism_( passed_automorphism ),
+	build_rotamer_(/* 0 */),
+	target_conformer_(/* 0 */)
 {}
 
 MotifHit::~MotifHit()

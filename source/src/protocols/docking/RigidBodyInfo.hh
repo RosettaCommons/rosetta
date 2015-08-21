@@ -25,13 +25,13 @@ class RigidBodyInfo : public utility::pointer::ReferenceCount
 {
 public:
 
-  RigidBodyInfo();
-  void add_jump( core::Size );
-  utility::vector1< core::Size > const& movable_jumps() const { return movable_jumps_; }
-  virtual ~RigidBodyInfo();
+	RigidBodyInfo();
+	void add_jump( core::Size );
+	utility::vector1< core::Size > const& movable_jumps() const { return movable_jumps_; }
+	virtual ~RigidBodyInfo();
 
 private:
-  utility::vector1< core::Size > movable_jumps_;
+	utility::vector1< core::Size > movable_jumps_;
 };
 
 } // docking

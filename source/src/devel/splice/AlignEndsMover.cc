@@ -120,53 +120,57 @@ AlignEndsMover::reference_positions( core::pose::Pose const & pose ) const{
 		}  // fi dssp.get_dssp_secstruct(resi)
 	}  // for resi outer loop
 	TR<<"DEBUG: strand positions: ";
-	BOOST_FOREACH( core::Size const sp, strand_positions )
-	  TR<<sp<<'+';
+	BOOST_FOREACH ( core::Size const sp, strand_positions ) {
+		TR<<sp<<'+';
+	}
 	TR<<std::endl;
-  utility::vector1< core::Size > strand_ntermini;
-  strand_ntermini.clear();
+	utility::vector1< core::Size > strand_ntermini;
+	strand_ntermini.clear();
 	odd_strand = true; // antiparallel strands have neighboring c/n terminal positions whereas parallel strands have neighboring n terminal positions.
-  for( utility::vector1< core::Size >::const_iterator resi = strand_positions.begin(); resi != strand_positions.end(); resi += strand_length() ){ /// find strand ntermini
-			if( !odd_strand && !parallel() )
-				strand_ntermini.push_back( *(resi + strand_length() - 1 ) );
-			else
-				strand_ntermini.push_back( *resi );
-			odd_strand = !odd_strand;/// flip odd->even->odd...
+	for ( utility::vector1< core::Size >::const_iterator resi = strand_positions.begin(); resi != strand_positions.end(); resi += strand_length() ) { /// find strand ntermini
+		if ( !odd_strand && !parallel() ) {
+			strand_ntermini.push_back( *(resi + strand_length() - 1 ) );
+		} else {
+			strand_ntermini.push_back( *resi );
+		}
+		odd_strand = !odd_strand;/// flip odd->even->odd...
 	}
 	TR<<"DEBUG: nterminal positions: ";
-	BOOST_FOREACH( core::Size const resi, strand_ntermini )
-	  TR<<resi<<'+';
+	BOOST_FOREACH ( core::Size const resi, strand_ntermini ) {
+		TR<<resi<<'+';
+	}
 	TR<<std::endl;
-  utility::vector1< core::Size > ntermini_w_neighbors;
-  ntermini_w_neighbors.clear();
-/// In the following we ensure that each of the ntermini has neighbors within the ntermini array. We're looking for tightly packed barrel structures.
-	BOOST_FOREACH( core::Size const res, strand_ntermini ){ /// strand_ntermini with enough neighbors
-      core::Size const resi_neighbors( neighbors_in_vector( pose, res, strand_ntermini, distance_threshold(), dssp, sequence_separation() ));
-      if( resi_neighbors >= neighbors() ){
-          ntermini_w_neighbors.push_back( res );
-          TR<<res<<" has "<<resi_neighbors<<" neighbors"<<std::endl;
-      }//fi resi_neighbors
-  }//foreach res
+	utility::vector1< core::Size > ntermini_w_neighbors;
+	ntermini_w_neighbors.clear();
+	/// In the following we ensure that each of the ntermini has neighbors within the ntermini array. We're looking for tightly packed barrel structures.
+	BOOST_FOREACH ( core::Size const res, strand_ntermini ) { /// strand_ntermini with enough neighbors
+		core::Size const resi_neighbors( neighbors_in_vector( pose, res, strand_ntermini, distance_threshold(), dssp, sequence_separation() ));
+		if ( resi_neighbors >= neighbors() ) {
+			ntermini_w_neighbors.push_back( res );
+			TR<<res<<" has "<<resi_neighbors<<" neighbors"<<std::endl;
+		}//fi resi_neighbors
+	}//foreach res
 
- 	utility::vector1< core::Size > ntermini_w_close_neighbors; // ntermini with 2 close neighbors
+	utility::vector1< core::Size > ntermini_w_close_neighbors; // ntermini with 2 close neighbors
 	ntermini_w_close_neighbors.clear();
-	if( parallel() ){
-	  BOOST_FOREACH( core::Size const res, ntermini_w_neighbors ){
-	      core::Size const close_neighbors( neighbors_in_vector( pose, res, strand_ntermini, 10.0, dssp, sequence_separation() ));
-	      if( close_neighbors >= 2 )
-	          ntermini_w_close_neighbors.push_back( res );
-	      else{
-	          core::Size const close_neighbors_one_down( neighbors_in_vector( pose, res+1, strand_ntermini, 10.0, dssp, sequence_separation() ));
-	          if( close_neighbors_one_down >= 2 )
-	              ntermini_w_close_neighbors.push_back( res + 1);
-	      }
-	      TR<<res<<" has "<<close_neighbors<<" close neighbors"<<std::endl;
-	  }
-	}//fi parallel
-	else /// antiparallel beta barrels are less well packed; ignoring close neighbors condition
+	if ( parallel() ) {
+		BOOST_FOREACH ( core::Size const res, ntermini_w_neighbors ) {
+			core::Size const close_neighbors( neighbors_in_vector( pose, res, strand_ntermini, 10.0, dssp, sequence_separation() ));
+			if ( close_neighbors >= 2 ) {
+				ntermini_w_close_neighbors.push_back( res );
+			} else {
+				core::Size const close_neighbors_one_down( neighbors_in_vector( pose, res+1, strand_ntermini, 10.0, dssp, sequence_separation() ));
+				if ( close_neighbors_one_down >= 2 ) {
+					ntermini_w_close_neighbors.push_back( res + 1);
+				}
+			}
+			TR<<res<<" has "<<close_neighbors<<" close neighbors"<<std::endl;
+		}
+	} else { //fi parallel /// antiparallel beta barrels are less well packed; ignoring close neighbors condition
 		ntermini_w_close_neighbors = ntermini_w_neighbors;
+	}
 	TR<<"Found "<<ntermini_w_close_neighbors.size()<<" strands that fit all of the criteria"<<std::endl;
-	if( ntermini_w_close_neighbors.size() > max_strands() ){
+	if ( ntermini_w_close_neighbors.size() > max_strands() ) {
 		TR<<"max_strands = "<<max_strands()<<std::endl;
 		ntermini_w_close_neighbors.resize( max_strands() );
 		TR<<"Only considering the first (n-terminal) "<<ntermini_w_close_neighbors.size()<<" strands. The c-terminal strands are ignored"<<std::endl;
@@ -175,15 +179,16 @@ AlignEndsMover::reference_positions( core::pose::Pose const & pose ) const{
 	utility::vector1< core::Size > positions_for_alignment;
 	positions_for_alignment.clear();
 	odd_strand = true;
-	BOOST_FOREACH( core::Size const res, ntermini_w_close_neighbors ){
-		if( ( odd_strand && odd() ) || ( !odd_strand && even() ) ){
-			if( !odd_strand && !parallel() ){
-				for( core::Size count = 0; count < N_terminal_count(); ++count )
+	BOOST_FOREACH ( core::Size const res, ntermini_w_close_neighbors ) {
+		if ( ( odd_strand && odd() ) || ( !odd_strand && even() ) ) {
+			if ( !odd_strand && !parallel() ) {
+				for ( core::Size count = 0; count < N_terminal_count(); ++count ) {
 					positions_for_alignment.push_back( res - count ); // count residues backwards if antiparallel and even
-			}
-			else{
-				for( core::Size count = 0; count < N_terminal_count(); ++count )
+				}
+			} else {
+				for ( core::Size count = 0; count < N_terminal_count(); ++count ) {
 					positions_for_alignment.push_back( res + count );
+				}
 			}
 		}//fi
 		odd_strand = !odd_strand;
@@ -196,7 +201,7 @@ Ca_coords( core::pose::Pose const & pose, utility::vector1< core::Size > const p
 	utility::vector1< numeric::xyzVector< core::Real > > coords;
 
 	coords.clear();
-	BOOST_FOREACH( core::Size const pos, positions ){
+	BOOST_FOREACH ( core::Size const pos, positions ) {
 		coords.push_back( pose.residue( pos ).xyz( "CA" ) );
 	}
 	return coords;
@@ -210,22 +215,23 @@ AlignEndsMover::apply( Pose & pose ){
 	runtime_assert( residues_to_align_on_pose_.size() == residues_to_align_on_template_.size() );
 	utility::vector1< core::Size > template_positions, pose_positions;
 	template_positions.clear(); pose_positions.clear();
-	if( residues_to_align_on_pose_.size() == 0 ){
+	if ( residues_to_align_on_pose_.size() == 0 ) {
 		template_positions = reference_positions( *template_pose() );
 		pose_positions = reference_positions( pose );
-	}
-	else{
+	} else {
 		template_positions = residues_to_align_on_template_;
 		pose_positions = residues_to_align_on_pose_;
 	}
 
 	TR<<"Aligning positions on template: ";
-	BOOST_FOREACH( core::Size const p, template_positions ){
-		TR<<p<<'+';}
+	BOOST_FOREACH ( core::Size const p, template_positions ) {
+		TR<<p<<'+';
+	}
 	TR<<std::endl;
 	TR<<"To pose positions: ";
-	BOOST_FOREACH( core::Size const p, pose_positions ){
-		TR<<p<<'+';}
+	BOOST_FOREACH ( core::Size const p, pose_positions ) {
+		TR<<p<<'+';
+	}
 	TR<<std::endl;
 
 
@@ -280,17 +286,17 @@ AlignEndsMover::parse_my_tag(
 	max_strands( tag->getOption< core::Size >( "max_strands", 10 ) );
 	chain( tag->getOption< core::Size >( "chain", 1 ) );
 	sequence_separation( tag->getOption< core::Size >( "sequence_separation", 15 ) );
-	if( tag->hasOption( "residues_to_align_on_pose" ) && tag->hasOption( "residues_to_align_on_template" ) ){
+	if ( tag->hasOption( "residues_to_align_on_pose" ) && tag->hasOption( "residues_to_align_on_template" ) ) {
 		TR<<"Will respect user defined residues for alignment, ignoring beta-strand calculations"<<std::endl;
 		residues_to_align_on_pose_ = utility::string_split(tag->getOption<std::string>("residues_to_align_on_pose"),'+',core::Size());
 		residues_to_align_on_template_ = utility::string_split(tag->getOption<std::string>("residues_to_align_on_template"),'+',core::Size());
 		runtime_assert( residues_to_align_on_pose_.size() == residues_to_align_on_template_.size() );
 		TR<<"Aligning pose residues: ";
-		BOOST_FOREACH( core::Size const s, residues_to_align_on_pose_ ){
+		BOOST_FOREACH ( core::Size const s, residues_to_align_on_pose_ ) {
 			TR<<s<<',';
 		}
 		TR<<"\nwith template residues";
-		BOOST_FOREACH( core::Size const s, residues_to_align_on_template_ ){
+		BOOST_FOREACH ( core::Size const s, residues_to_align_on_template_ ) {
 			TR<<s<<',';
 		}
 		TR<<std::endl;

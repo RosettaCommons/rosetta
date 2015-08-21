@@ -39,9 +39,9 @@
 
 using namespace core::pack::task;
 
-namespace protocols{
-namespace toolbox{
-namespace task_operations{
+namespace protocols {
+namespace toolbox {
+namespace task_operations {
 
 class SeqprofConsensusOperation : public core::pack::task::operation::TaskOperation {
 public:
@@ -62,7 +62,7 @@ public:
 	SeqprofConsensusOperation();
 
 	/// @brief destructor
-	 ~SeqprofConsensusOperation();
+	~SeqprofConsensusOperation();
 
 	/// @brief make clone
 	virtual TaskOperationOP clone() const;
@@ -125,7 +125,7 @@ private:
 	bool debug_; // dflt false; if true be more chatty
 	bool keep_native_;//if set to true then the the native sequence of the protein is allowed in design, even if not favored by the PSSM, Gideon Lapidoth 2014
 	core::Size chain_num_; //dflt set to 1
-bool restrict_to_repacking_;
+	bool restrict_to_repacking_;
 
 
 };

@@ -16,9 +16,9 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace toolbox{
-namespace task_operations{
+namespace protocols {
+namespace toolbox {
+namespace task_operations {
 
 class JointSequenceOperation;
 class RestrictConservedLowDdgOperation;

@@ -451,7 +451,7 @@ public:
 
 		/*TR << "test_rotamerdots_increment_this_and_cache_expanded_polars(): rd5 expanded polar atom sasas: [ ";
 		for ( Size ii=1; ii <= res1->nheavyatoms(); ++ii ) {
-			TR << rd5.get_atom_sasa( ii ) << ", ";
+		TR << rd5.get_atom_sasa( ii ) << ", ";
 		}
 		TR << "]" << std::endl;*/
 
@@ -571,7 +571,7 @@ public:
 
 		/*TR << "test_rotamerdots_increment_and_decrement_from_cached_expanded_polars(): rd1 expanded polar atom sasas: [ ";
 		for ( Size ii=1; ii <= res1->nheavyatoms(); ++ii ) {
-			TR << rd1.get_atom_sasa( ii ) << ", ";
+		TR << rd1.get_atom_sasa( ii ) << ", ";
 		}
 		TR << "]" << std::endl;*/
 
@@ -658,12 +658,12 @@ public:
 
 		/*TR << "test_rotamerdots_increment_both_and_cache_expanded_polars(): rd1 (expanded polar) atom sasas: [ ";
 		for ( Size ii=1; ii <= res1->nheavyatoms(); ++ii ) {
-			TR << rd1.get_atom_sasa( ii ) << ", ";
+		TR << rd1.get_atom_sasa( ii ) << ", ";
 		}
 		TR << "]" << std::endl;
 		TR << "test_rotamerdots_increment_both_and_cache_expanded_polars(): rd2 (expanded polar) atom sasas: [ ";
 		for ( Size ii=1; ii <= res2->nheavyatoms(); ++ii ) {
-			TR << rd2.get_atom_sasa( ii ) << ", ";
+		TR << rd2.get_atom_sasa( ii ) << ", ";
 		}
 		TR << "]" << std::endl;*/
 
@@ -736,7 +736,7 @@ public:
 		for ( Size ii = 1; ii <= pose.residue_type(1).nheavyatoms(); ++ii ) {
 			for ( Size jj = 1; jj <= 162; ++jj ) { /// ugh... fix this constant, andrew.
 				TS_ASSERT_EQUALS( rd1.get_atom_counts()[ ii ].get_dot_covered( jj ), ! inv1.dot_exposed( ii, jj ) );
-				if ( rd1.get_atom_counts()[ ii ].get_dot_covered( jj ) == inv1.dot_exposed( ii, jj ) ){
+				if ( rd1.get_atom_counts()[ ii ].get_dot_covered( jj ) == inv1.dot_exposed( ii, jj ) ) {
 					std::cout << "Error on residue 1 on atom " << ii << " " << jj << " " << rd1.get_atom_counts()[ ii ].get_dot_covered( jj ) << " vs " << inv1.dot_exposed( ii, jj )  << std::endl;
 				}
 			}
@@ -745,7 +745,7 @@ public:
 		for ( Size ii = 1; ii <= pose.residue_type(2).nheavyatoms(); ++ii ) {
 			for ( Size jj = 1; jj <= 162; ++jj ) { /// ugh... fix this constant, andrew.
 				TS_ASSERT_EQUALS( rd2.get_atom_counts()[ ii ].get_dot_covered( jj ), ! inv2.dot_exposed( ii, jj ) );
-				if ( rd2.get_atom_counts()[ ii ].get_dot_covered( jj ) == inv2.dot_exposed( ii, jj ) ){
+				if ( rd2.get_atom_counts()[ ii ].get_dot_covered( jj ) == inv2.dot_exposed( ii, jj ) ) {
 					std::cout << "Error on residue 2 on atom " << ii << " " << jj << " " << rd2.get_atom_counts()[ ii ].get_dot_covered( jj ) << " vs " << inv2.dot_exposed( ii, jj )  << std::endl;
 				}
 			}
@@ -804,7 +804,7 @@ public:
 
 		pose::Pose second_pose;
 		core::import_pose::pose_from_pdb( second_pose, "core/pack/1FKB.pdb.gz" );
-		
+
 		utility::vector1< RotamerDotsOP > rdots( 107 );
 		utility::vector1< InvRotamerDotsOP > invdots( 107 );
 		for ( Size ii = 1; ii <= 107; ++ii ) {
@@ -823,7 +823,7 @@ public:
 
 		//invdots[84]->write_exposed_dots_to_kinemage( std::cout, true );
 		//invdots[85]->write_exposed_dots_to_kinemage( std::cout, true );
-		
+
 		// the overlap between this atom pair is definitely buried. make sure buried overlap is called buried.
 		TS_ASSERT( ! invdots[ ala84_cb.rsd() ]->atom_overlap_is_exposed( ala84_cb.atomno(), *( invdots[ thr85_cg2.rsd()] ), thr85_cg2.atomno() ));
 		//invdots[ ala84_cb.rsd() ]->write_circle_intersection_mask_to_kinemage( std::cout, ala84_cb.atomno(), *(invdots[ thr85_cg2.rsd() ]), thr85_cg2.atomno(), true );

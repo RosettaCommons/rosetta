@@ -63,11 +63,11 @@ public:
 	///if this Sequence has been moved from position 1 --- needs to issue a fixed CUT in the fold-tree
 	virtual void generate_claims( claims::DofClaims& );
 
-	//	virtual bool allow_claim( DofClaim const& foreign_claim );
+	// virtual bool allow_claim( DofClaim const& foreign_claim );
 
-	//	virtual void initialize_residues( core::pose::Pose&, claims::SequenceClaimOP init_claim, claims::DofClaims& failed_to_init );
+	// virtual void initialize_residues( core::pose::Pose&, claims::SequenceClaimOP init_claim, claims::DofClaims& failed_to_init );
 
-	// 	virtual void initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init );
+	//  virtual void initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init );
 
 	/// @brief type() is specifying the output name of the TopologyClaimer
 	virtual std::string type() const {

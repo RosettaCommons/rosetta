@@ -38,72 +38,72 @@ using namespace std;
 int main(int argc, char* argv[]) {
 	try {
 
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using namespace core::io::silent;
-  devel::init(argc, argv);
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::io::silent;
+		devel::init(argc, argv);
 
-  if (!option[in::file::fasta].user()) {
-    utility_exit_with_message("Failed to provide required argument -in:file:fasta");
-  }
+		if ( !option[in::file::fasta].user() ) {
+			utility_exit_with_message("Failed to provide required argument -in:file:fasta");
+		}
 
-  if (!option[in::file::silent].user()) {
-    utility_exit_with_message("Failed to provide required argument -in:file:silent");
-  }
+		if ( !option[in::file::silent].user() ) {
+			utility_exit_with_message("Failed to provide required argument -in:file:silent");
+		}
 
-  if (!option[out::file::silent].user()) {
-    utility_exit_with_message("Failed to provide required argument -out:file:silent");
-  }
+		if ( !option[out::file::silent].user() ) {
+			utility_exit_with_message("Failed to provide required argument -out:file:silent");
+		}
 
-  // Prevent the silent file parser from aborting on malformed input
-  option[in::file::silent_read_through_errors].value(true);
+		// Prevent the silent file parser from aborting on malformed input
+		option[in::file::silent_read_through_errors].value(true);
 
-  utility::vector1<string> sequences = core::sequence::read_fasta_file_str(option[in::file::fasta]()[1]);
-  const string ref_sequence = sequences[1];
-  const string input_file = option[in::file::silent]()[1];
-  const string output_file = option[out::file::silent]();
+		utility::vector1<string> sequences = core::sequence::read_fasta_file_str(option[in::file::fasta]()[1]);
+		const string ref_sequence = sequences[1];
+		const string input_file = option[in::file::silent]()[1];
+		const string output_file = option[out::file::silent]();
 
-  cout << "Reference: " << ref_sequence << endl;
+		cout << "Reference: " << ref_sequence << endl;
 
-  SilentFileData sfd_in, sfd_out;
-  sfd_in.read_file(input_file);
+		SilentFileData sfd_in, sfd_out;
+		sfd_in.read_file(input_file);
 
-  size_t num_good = 0, num_failed = 0, num_mismatch = 0;
+		size_t num_good = 0, num_failed = 0, num_mismatch = 0;
 
-  utility::vector1<string> tags = sfd_in.tags();
-  for (utility::vector1<string>::const_iterator i = tags.begin(); i != tags.end(); ++i) {
-    SilentStructOP decoy = sfd_in[*i];
-    string decoy_id = *i;
-    string sequence = decoy->sequence().one_letter_sequence();
+		utility::vector1<string> tags = sfd_in.tags();
+		for ( utility::vector1<string>::const_iterator i = tags.begin(); i != tags.end(); ++i ) {
+			SilentStructOP decoy = sfd_in[*i];
+			string decoy_id = *i;
+			string sequence = decoy->sequence().one_letter_sequence();
 
-    // Because we're not using jd2, we're responsible for removing failed simulations
-    bool failed_simulation = boost::starts_with(decoy_id, "W_");
-    bool sequence_mismatch = ref_sequence.compare(0, ref_sequence.length(), sequence, 0, ref_sequence.length()) != 0;
+			// Because we're not using jd2, we're responsible for removing failed simulations
+			bool failed_simulation = boost::starts_with(decoy_id, "W_");
+			bool sequence_mismatch = ref_sequence.compare(0, ref_sequence.length(), sequence, 0, ref_sequence.length()) != 0;
 
-    if (failed_simulation) {
-      cerr << "Removed tag " << decoy_id << " (failed simulation)" << endl;
-      ++num_failed;
-    } else if (sequence_mismatch) {
-      cerr << "Removed tag " << decoy_id << " (sequence mismatch)" << endl;
-      ++num_mismatch;
-    } else {
-      sfd_out.write_silent_struct(*decoy, output_file, false);
-      ++num_good;
-    }
-  }
+			if ( failed_simulation ) {
+				cerr << "Removed tag " << decoy_id << " (failed simulation)" << endl;
+				++num_failed;
+			} else if ( sequence_mismatch ) {
+				cerr << "Removed tag " << decoy_id << " (sequence mismatch)" << endl;
+				++num_mismatch;
+			} else {
+				sfd_out.write_silent_struct(*decoy, output_file, false);
+				++num_good;
+			}
+		}
 
-  // print summary statistics
-  double total = num_good + num_failed + num_mismatch;
-  double pct_good = num_good / total;
-  double pct_failed = num_failed / total;
-  double pct_mismatch = num_mismatch / total;
-  cout << "pct_good: " << pct_good << " pct_failed: " << pct_failed << " pct_mismatch: " << pct_mismatch << endl;
+		// print summary statistics
+		double total = num_good + num_failed + num_mismatch;
+		double pct_good = num_good / total;
+		double pct_failed = num_failed / total;
+		double pct_mismatch = num_mismatch / total;
+		cout << "pct_good: " << pct_good << " pct_failed: " << pct_failed << " pct_mismatch: " << pct_mismatch << endl;
 
-  // If the percentage of failures exceeds a threshold, signal
-  // failure to external callers using the return code
-  return (pct_good >= PCT_THRESHOLD) ? 0 : 1;
+		// If the percentage of failures exceeds a threshold, signal
+		// failure to external callers using the return code
+		return (pct_good >= PCT_THRESHOLD) ? 0 : 1;
 
-	 } catch ( utility::excn::EXCN_Base const & e ) {
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

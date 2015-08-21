@@ -18,13 +18,13 @@
 #include <utility/pointer/owning_ptr.fwd.hh>
 
 namespace protocols {
-	namespace docking {
-		/// @brief this mover does the high resolution refinement stage of the RosettaDock algorithm
-		class DockingHighResLegacy;
-		typedef utility::pointer::shared_ptr< DockingHighResLegacy > DockingHighResLegacyOP;
-		typedef utility::pointer::shared_ptr< DockingHighResLegacy const > DockingHighResLegacyCOP;
+namespace docking {
+/// @brief this mover does the high resolution refinement stage of the RosettaDock algorithm
+class DockingHighResLegacy;
+typedef utility::pointer::shared_ptr< DockingHighResLegacy > DockingHighResLegacyOP;
+typedef utility::pointer::shared_ptr< DockingHighResLegacy const > DockingHighResLegacyCOP;
 
-	} //docking
+} //docking
 } //protocols
 
 #endif

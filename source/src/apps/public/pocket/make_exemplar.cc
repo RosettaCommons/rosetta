@@ -104,23 +104,23 @@ static thread_local basic::Tracer TR( "apps.public.make_exemplar.main", basic::t
 class ExemplarMover : public moves::Mover {
 
 public:
-  ExemplarMover();
+	ExemplarMover();
 
-  ~ExemplarMover();
+	~ExemplarMover();
 
-  virtual MoverOP clone() const;
-  virtual MoverOP fresh_instance() const;
+	virtual MoverOP clone() const;
+	virtual MoverOP fresh_instance() const;
 
-  virtual void apply( Pose & pose );
-  virtual std::string get_name() const;
-  virtual void test_move( Pose & pose )
-  {
-    apply(pose);
-  }
+	virtual void apply( Pose & pose );
+	virtual std::string get_name() const;
+	virtual void test_move( Pose & pose )
+	{
+		apply(pose);
+	}
 };
 
 ExemplarMover::ExemplarMover() :
-  Mover( "benchmark" )
+	Mover( "benchmark" )
 {
 
 }
@@ -128,43 +128,43 @@ ExemplarMover::ExemplarMover() :
 ExemplarMover::~ExemplarMover() {}
 
 MoverOP ExemplarMover::clone() const {
-  return MoverOP( new ExemplarMover( *this ) );
+	return MoverOP( new ExemplarMover( *this ) );
 }
 
 MoverOP ExemplarMover::fresh_instance() const {
-  return MoverOP( new ExemplarMover );
+	return MoverOP( new ExemplarMover );
 }
 
 void ExemplarMover::apply( Pose & pose ) {
-  using namespace pose;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using namespace core;
+	using namespace pose;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace core;
 
-  std::string const resid_c = option[central_relax_pdb_num];
+	std::string const resid_c = option[central_relax_pdb_num];
 
-  //validate that the exemplar_target_pdb_num is properly formatted
-  if (resid_c.length()){
-    std::string resid_tag = resid_c;
-    while ( true) {
-      std::size_t fpos( resid_tag.find(','));
-      if ( fpos == std::string::npos ) break;
-        resid_tag[fpos]='-';
-    }
-    std::string out_exfname = get_current_tag().substr(0,get_current_tag().find_last_of("_")) +".pdb."+ resid_tag + ".exemplar.pdb";
+	//validate that the exemplar_target_pdb_num is properly formatted
+	if ( resid_c.length() ) {
+		std::string resid_tag = resid_c;
+		while ( true ) {
+			std::size_t fpos( resid_tag.find(','));
+			if ( fpos == std::string::npos ) break;
+			resid_tag[fpos]='-';
+		}
+		std::string out_exfname = get_current_tag().substr(0,get_current_tag().find_last_of("_")) +".pdb."+ resid_tag + ".exemplar.pdb";
 
-    std::vector< conformation::ResidueOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(pose, resid_c);
+		std::vector< conformation::ResidueOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(pose, resid_c);
 
-    protocols::pockets::PocketGrid comparison_pg( residues );
-    comparison_pg.zeroAngle();
-    comparison_pg.autoexpanding_pocket_eval( residues, pose ) ;
-    comparison_pg.dumpExemplarToFile( out_exfname.c_str() );
-  }
+		protocols::pockets::PocketGrid comparison_pg( residues );
+		comparison_pg.zeroAngle();
+		comparison_pg.autoexpanding_pocket_eval( residues, pose ) ;
+		comparison_pg.dumpExemplarToFile( out_exfname.c_str() );
+	}
 
 }
 
 std::string ExemplarMover::get_name() const {
-  return "ExemplarMover";
+	return "ExemplarMover";
 }
 
 
@@ -172,31 +172,31 @@ std::string ExemplarMover::get_name() const {
 int main( int argc, char * argv [] ) {
 
 	try{
-  using namespace core;
-  using namespace protocols::moves;
-  using namespace scoring;
-  using namespace basic::options;
-  using namespace protocols::jobdist;
-  using namespace basic::options::OptionKeys;
-  using protocols::moves::MoverOP;
+		using namespace core;
+		using namespace protocols::moves;
+		using namespace scoring;
+		using namespace basic::options;
+		using namespace protocols::jobdist;
+		using namespace basic::options::OptionKeys;
+		using protocols::moves::MoverOP;
 
-	NEW_OPT( central_relax_pdb_num, "target residue(s)", "-1");
+		NEW_OPT( central_relax_pdb_num, "target residue(s)", "-1");
 
-	// APL NOTE: Tracers cannot be written to before devel::init gets called. TR << "Calling init" << std::endl;
-	//initializes Rosetta functions
-  jd2::register_options();
-  option.add_relevant( OptionKeys::in::file::fullatom );
-  option.add_relevant( OptionKeys::in::file::movemap );
-	devel::init(argc, argv);
+		// APL NOTE: Tracers cannot be written to before devel::init gets called. TR << "Calling init" << std::endl;
+		//initializes Rosetta functions
+		jd2::register_options();
+		option.add_relevant( OptionKeys::in::file::fullatom );
+		option.add_relevant( OptionKeys::in::file::movemap );
+		devel::init(argc, argv);
 
-  MoverOP protocol( new ExemplarMover() );
-  protocols::jd2::JobDistributor::get_instance()->go( protocol,  jd2::JobOutputterOP( new jd2::NoOutputJobOutputter ) );
+		MoverOP protocol( new ExemplarMover() );
+		protocols::jd2::JobDistributor::get_instance()->go( protocol,  jd2::JobOutputterOP( new jd2::NoOutputJobOutputter ) );
 
-  }
-	catch ( utility::excn::EXCN_Base const & e ) {
-		std::cerr << "caught exception " << e.msg() << std::endl;
-    return -1;
-  }
+	}
+catch ( utility::excn::EXCN_Base const & e ) {
+	std::cerr << "caught exception " << e.msg() << std::endl;
+	return -1;
+}
 	return 0;
 }
 

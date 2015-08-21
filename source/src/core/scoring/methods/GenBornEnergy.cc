@@ -47,8 +47,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 /**
 
-	 This is a reimplementation of Jim Havranek's original rosetta++ Gen Born code.
-	 source files: rosetta++/gb_elec*
+This is a reimplementation of Jim Havranek's original rosetta++ Gen Born code.
+source files: rosetta++/gb_elec*
 
 **/
 //////////////////////////////////////////////////////////////////////////////////
@@ -136,11 +136,11 @@ GenBornEnergy::prepare_rotamers_for_packing(
 }
 
 
-// 	void
-// 	update_residue_for_packing(
-// 		pose::Pose &,
-// 		Size /*resid*/ ) const
-// 	{}
+//  void
+//  update_residue_for_packing(
+//   pose::Pose &,
+//   Size /*resid*/ ) const
+//  {}
 void
 GenBornEnergy::update_residue_for_packing(
 	pose::Pose & pose,
@@ -211,7 +211,7 @@ GenBornEnergy::residue_pair_energy(
 		( static_cast< GenBornPoseInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ) ) ); // SHOULD BE FAST!
 
 	emap[ gb_elec ] += potential_.get_res_res_elecE( rsd1, gb_info.residue_info( rsd1.seqpos() ),
-																									 rsd2, gb_info.residue_info( rsd2.seqpos() ) );
+		rsd2, gb_info.residue_info( rsd2.seqpos() ) );
 }
 
 void
@@ -236,7 +236,7 @@ GenBornEnergy::evaluate_rotamer_intrares_energies(
 
 		Real const elecE
 			( potential_.get_res_res_elecE( *set.rotamer( ii ), gb_info.residue_info( ii ),
-																			*set.rotamer( ii ), gb_info.residue_info( ii ) ) );
+			*set.rotamer( ii ), gb_info.residue_info( ii ) ) );
 
 		energies[ ii ] += static_cast< core::PackerEnergy > ( sfxn[ gb_elec ] * elecE );
 	}
@@ -256,7 +256,7 @@ GenBornEnergy::evaluate_rotamer_intrares_energy_maps(
 
 	if ( exclude_DNA_DNA_ && pose.residue( set.resid() ).is_DNA() ) return;
 
-//	std::cout << "GenBorn rotamer_intrares_energies: " << set.resid() << std::endl;
+	// std::cout << "GenBorn rotamer_intrares_energies: " << set.resid() << std::endl;
 
 	GenBornRotamerSetInfo const & gb_info
 		( set.data().get< GenBornRotamerSetInfo >( GEN_BORN_ROTAMER_SET_INFO ) );
@@ -265,7 +265,7 @@ GenBornEnergy::evaluate_rotamer_intrares_energy_maps(
 
 		Real const elecE
 			( potential_.get_res_res_elecE( *set.rotamer( ii ), gb_info.residue_info( ii ),
-																			*set.rotamer( ii ), gb_info.residue_info( ii ) ) );
+			*set.rotamer( ii ), gb_info.residue_info( ii ) ) );
 
 		(emaps[ ii ])[ gb_elec ] += elecE ;
 	}
@@ -312,7 +312,7 @@ GenBornEnergy::evaluate_rotamer_pair_energies(
 			Vector const & jj_coord( jj_example_rotamer.nbr_atom_xyz() );
 			Real const jj_radius( jj_example_rotamer.nbr_radius() );
 
-			if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 )) {
+			if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) {
 				for ( Size kk = 1, kke = set1.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
 					Size const kk_rot_id = ii_offset + kk - 1;
 					for ( Size ll = 1, lle = set2.get_n_rotamers_for_residue_type( jj ); ll <= lle; ++ll ) {
@@ -367,7 +367,7 @@ GenBornEnergy::evaluate_rotamer_background_energies(
 		Vector const & jj_coord( rsd.nbr_atom_xyz() );
 		Real const jj_radius( rsd.nbr_radius() );
 
-		if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 )) {
+		if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) {
 			for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
 				Size const kk_rot_id = ii_offset + kk - 1;
 
@@ -391,7 +391,7 @@ GenBornEnergy::evaluate_rotamer_background_energy_maps(
 	utility::vector1< EnergyMap > & emaps
 ) const
 {
-//	std::cout << "GenBornEnergy: rotamer background: " << set.resid() << ' ' << rsd.seqpos() << std::endl;
+	// std::cout << "GenBornEnergy: rotamer background: " << set.resid() << ' ' << rsd.seqpos() << std::endl;
 
 	using conformation::Residue;
 	using core::conformation::RotamerSetCacheableDataType::GEN_BORN_ROTAMER_SET_INFO;
@@ -417,13 +417,13 @@ GenBornEnergy::evaluate_rotamer_background_energy_maps(
 		Vector const & jj_coord( rsd.nbr_atom_xyz() );
 		Real const jj_radius( rsd.nbr_radius() );
 
-		if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 )) {
+		if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) {
 			for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
 				Size const kk_rot_id = ii_offset + kk - 1;
 
 				Real const elecE
 					( potential_.get_res_res_elecE( *set.rotamer( kk_rot_id ), gb_set_info.residue_info( kk_rot_id ),
-																					rsd, gb_rsd_info ) );
+					rsd, gb_rsd_info ) );
 				(emaps[ kk_rot_id ])[ gb_elec ] += elecE;
 			} // kk - rotamers for residue types
 		} // nbrs
@@ -450,7 +450,7 @@ GenBornEnergy::eval_atom_derivative(
 // Distance
 // GenBornEnergy::atomic_interaction_cutoff() const
 // {
-// 	return 5.5; /// APL remove this magic number!
+//  return 5.5; /// APL remove this magic number!
 // }
 
 /// @brief GenBornEnergy requires no context graphs

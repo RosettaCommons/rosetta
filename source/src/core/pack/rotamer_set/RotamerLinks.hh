@@ -42,8 +42,9 @@ public:
 	get_equiv( Size const index ) const
 	{
 		utility::vector1< Size > dumb_return;
-		if (index <= links_.size())
-		return links_[index];
+		if ( index <= links_.size() ) {
+			return links_[index];
+		}
 		return dumb_return;
 	}
 
@@ -63,9 +64,9 @@ public:
 	has (Size index) const
 	{
 		//return true;
-		if (!links_[index].empty()){
+		if ( !links_[index].empty() ) {
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 	}

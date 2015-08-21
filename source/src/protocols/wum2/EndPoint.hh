@@ -39,7 +39,7 @@ public:
 	// real memory usage
 	virtual boost::uint64_t current_mem() {
 		return inq_.current_mem() +
-				outq_.current_mem();
+			outq_.current_mem();
 	}
 
 	WUQueue & inq() { return inq_; }

@@ -139,11 +139,9 @@ void GridManager::set_qsar_map(qsarMapOP qsar_map)
 
 bool GridManager::is_qsar_map_attached()
 {
-	if(qsar_map_ != 0)
-	{
+	if ( qsar_map_ != 0 ) {
 		return true;
-	}else
-	{
+	} else {
 		return false;
 	}
 }
@@ -152,14 +150,13 @@ void GridManager::make_new_grid(utility::tag::TagCOP tag)
 {
 
 	std::string name= tag->getName();
-	
+
 	//Sometimes creating grids can be time consuming
 	//so check before we do something that calls a grid constructor.
-	//Access the various options anyways so we don't die for unaccessed options. 
+	//Access the various options anyways so we don't die for unaccessed options.
 	core::Real weight = tag->getOption<core::Real>("weight");
 	tag->getOption<std::string>("grid_type");
-	if(grid_map_.find(name) == grid_map_.end())
-	{
+	if ( grid_map_.find(name) == grid_map_.end() ) {
 		grid_weights_.insert(std::make_pair(name,weight));
 		GridManagerTracer.Debug << name <<std::endl;
 		GridBaseOP new_grid(GridFactory::get_instance()->new_grid(tag));
@@ -176,12 +173,9 @@ void GridManager::insert_grid(std::string const name, GridBaseOP const grid)
 
 bool GridManager::is_normalization_enabled()
 {
-	if(norm_function_)
-	{
+	if ( norm_function_ ) {
 		return true;
-	}
-	else
-	{
+	} else {
 		return false;
 	}
 }
@@ -196,8 +190,7 @@ utility::vector1<std::string> GridManager::get_grid_names()
 	utility::vector1<std::string> grid_names;
 
 	std::map<std::string,GridBaseOP>::const_iterator it;
-	for(it = grid_map_.begin();it != grid_map_.end();++it)
-	{
+	for ( it = grid_map_.begin(); it != grid_map_.end(); ++it ) {
 		grid_names.push_back(it->first);
 	}
 	return grid_names;
@@ -210,8 +203,7 @@ core::Real GridManager::total_score(core::conformation::UltraLightResidue const 
 	core::Real total_score =0.0;
 	const core::Real max_score = 9999.0;
 	std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
-	for(;map_iterator != grid_map_.end();++map_iterator)
-	{
+	for ( ; map_iterator != grid_map_.end(); ++map_iterator ) {
 		core::Real component_score =0;
 		GridBaseOP current_grid(map_iterator->second);
 
@@ -225,13 +217,11 @@ core::Real GridManager::total_score(core::conformation::UltraLightResidue const 
 		score_map_.insert(new_score);
 	}
 
-	if(norm_function_)
-	{
+	if ( norm_function_ ) {
 		core::Real normalized_score = (*norm_function_)(total_score,*residue.residue());
 		GridManagerTracer.Trace << "Score normalized from " << total_score << " to "<< normalized_score << std::endl;
 		return normalized_score;
-	}else
-	{
+	} else {
 		return total_score;
 	}
 }
@@ -243,8 +233,7 @@ core::Real GridManager::total_score(core::conformation::Residue const & residue)
 	core::Real total_score =0.0;
 	const core::Real max_score = 9999.0;
 	std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
-	for(;map_iterator != grid_map_.end();++map_iterator)
-	{
+	for ( ; map_iterator != grid_map_.end(); ++map_iterator ) {
 		core::Real component_score =0;
 		GridBaseOP current_grid(map_iterator->second);
 
@@ -258,13 +247,11 @@ core::Real GridManager::total_score(core::conformation::Residue const & residue)
 		score_map_.insert(new_score);
 	}
 
-	if(norm_function_)
-	{
+	if ( norm_function_ ) {
 		core::Real normalized_score = (*norm_function_)(total_score,residue);
 		GridManagerTracer.Trace << "Score normalized from " << total_score << " to "<< normalized_score << std::endl;
 		return normalized_score;
-	}else
-	{
+	} else {
 		return total_score;
 	}
 }
@@ -279,13 +266,11 @@ core::Real GridManager::total_score(core::pose::Pose const & pose, core::Size co
 	core::conformation::ResidueCOPs residue_vector = core::pose::get_chain_residues(pose,chain_id);
 
 	std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
-	for(;map_iterator != grid_map_.end();++map_iterator)
-	{
+	for ( ; map_iterator != grid_map_.end(); ++map_iterator ) {
 		core::Real component_score = 0;
 		GridBaseOP current_grid(map_iterator->second);
 		core::Real weight(grid_weights_[map_iterator->first]);
-		for(core::Size residue_count = 1; residue_count <= residue_vector.size(); ++residue_count )
-		{
+		for ( core::Size residue_count = 1; residue_count <= residue_vector.size(); ++residue_count ) {
 			core::conformation::ResidueCOP residue(residue_vector[residue_count]);
 			core::Real current_score(current_grid->score(*residue,max_score,qsar_map_));
 			component_score += current_score;
@@ -295,13 +280,11 @@ core::Real GridManager::total_score(core::pose::Pose const & pose, core::Size co
 		score_map_.insert(new_score);
 	}
 
-	if(norm_function_)
-	{
+	if ( norm_function_ ) {
 		core::Real normalized_score = (*norm_function_)(total_score,residue_vector);
 		GridManagerTracer.Trace << "Score normalized from " << total_score << " to "<< normalized_score << std::endl;
 		return normalized_score;
-	}else
-	{
+	} else {
 		return total_score;
 	}
 }
@@ -311,8 +294,7 @@ std::map<std::string,core::Real> GridManager::atom_score(core::pose::Pose const 
 {
 	std::map<std::string,core::Real> score_map;
 	std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
-	for(;map_iterator != grid_map_.end();++map_iterator)
-	{
+	for ( ; map_iterator != grid_map_.end(); ++map_iterator ) {
 		GridBaseOP current_grid(map_iterator->second);
 		core::Real weight(grid_weights_[map_iterator->first]);
 		core::Real atom_score = current_grid->atom_score(residue,atomindex,qsar_map_);
@@ -325,8 +307,7 @@ std::map<std::string,core::Real> GridManager::atom_score(core::pose::Pose const 
 void GridManager::update_grids(core::pose::Pose const & pose, core::Vector const & center,utility::vector1<core::Size> ligand_chain_ids_to_exclude)
 {
 	std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
-	for(;map_iterator != grid_map_.end(); ++map_iterator)
-	{
+	for ( ; map_iterator != grid_map_.end(); ++map_iterator ) {
 		GridBaseOP current_grid(map_iterator->second);
 		current_grid->initialize(center,width_,resolution_);
 		current_grid->set_chain(chain_);
@@ -338,8 +319,7 @@ void GridManager::update_grids(core::pose::Pose const & pose, core::Vector const
 void GridManager::update_grids(core::pose::Pose const & pose, core::Vector const & center, core::Size const & ligand_chain_id_to_exclude)
 {
 	std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
-	for(;map_iterator != grid_map_.end();++map_iterator)
-	{
+	for ( ; map_iterator != grid_map_.end(); ++map_iterator ) {
 		GridBaseOP current_grid(map_iterator->second);
 		current_grid->initialize(center,width_,resolution_);
 		current_grid->set_chain(chain_);
@@ -356,29 +336,23 @@ void GridManager::update_grids(core::pose::Pose const & pose,  core::Vector cons
 
 	bool grid_directory_active = basic::options::option[basic::options::OptionKeys::qsar::grid_dir].user();
 
-	if(!grid_directory_active)
-	{
+	if ( !grid_directory_active ) {
 		GridManagerTracer << "WARNING: option -qsar:grid_dir is not set.  Use this flag to specify a directory to store scoring grids.  This will save you a huge amount of time" <<std::endl;
-	}else if(!utility::file::file_exists(basic::options::option[basic::options::OptionKeys::qsar::grid_dir]()))
-    {
-        utility_exit_with_message(basic::options::option[basic::options::OptionKeys::qsar::grid_dir]()+" does not exist. specify a valid path with -qsar:grid_dir");
-    }
+	} else if ( !utility::file::file_exists(basic::options::option[basic::options::OptionKeys::qsar::grid_dir]()) ) {
+		utility_exit_with_message(basic::options::option[basic::options::OptionKeys::qsar::grid_dir]()+" does not exist. specify a valid path with -qsar:grid_dir");
+	}
 
-	if(grid_cache_entry != grid_map_cache_.end()) //we've already seen this conformation, load the associated grid out of the map
-	{
+	if ( grid_cache_entry != grid_map_cache_.end() ) { //we've already seen this conformation, load the associated grid out of the map
 		GridManagerTracer << "Found a conformation matching hash: " << chain_hash << " Loading from grid cache" <<std::endl;
 		grid_map_ = grid_cache_entry->second;
-	}else // This is a new conformation
-	{
+	} else { // This is a new conformation
 
 		//Try to read it off the disk
-		if(grid_directory_active)
-		{
+		if ( grid_directory_active ) {
 			//files are in the format grid_directory/hash.json.gz
 			std::string directory_path(basic::options::option[basic::options::OptionKeys::qsar::grid_dir]());
 			utility::io::izstream grid_file(directory_path+"/"+chain_hash+".json.gz");
-			if(grid_file)
-			{
+			if ( grid_file ) {
 				utility::json_spirit::mValue gridmap_data;
 				utility::json_spirit::read(grid_file,gridmap_data);
 				deserialize(gridmap_data.get_array());
@@ -394,8 +368,7 @@ void GridManager::update_grids(core::pose::Pose const & pose,  core::Vector cons
 
 		std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
 
-		for(;map_iterator != grid_map_.end();++map_iterator)
-		{
+		for ( ; map_iterator != grid_map_.end(); ++map_iterator ) {
 
 			GridBaseOP current_grid(map_iterator->second);
 			GridManagerTracer.Debug <<"updating grid " << map_iterator->first << std::endl;
@@ -405,21 +378,18 @@ void GridManager::update_grids(core::pose::Pose const & pose,  core::Vector cons
 			GridManagerTracer.Debug <<"done updating grid" <<std::endl;
 		}
 
-		if(basic::options::option[basic::options::OptionKeys::qsar::max_grid_cache_size].user() &&
-			grid_map_cache_.size() >= core::Size(basic::options::option[basic::options::OptionKeys::qsar::max_grid_cache_size]() ) )
-		{
+		if ( basic::options::option[basic::options::OptionKeys::qsar::max_grid_cache_size].user() &&
+				grid_map_cache_.size() >= core::Size(basic::options::option[basic::options::OptionKeys::qsar::max_grid_cache_size]() ) ) {
 			GridManagerTracer << "Grid cache exceeds max_cache_size, clearing old scoring grids to save memory." <<std::endl;
 			grid_map_cache_.clear();
 		}
 		grid_map_cache_.insert(std::make_pair(chain_hash,grid_map_));
 
-		if(grid_directory_active)
-		{
+		if ( grid_directory_active ) {
 			//if we just made a grid, we should write it to the disk for safekeeping.
 			std::string directory_path(basic::options::option[basic::options::OptionKeys::qsar::grid_dir]());
 			std::string temp_path(directory_path+"/"+chain_hash+".inprogress");
-			if(!utility::file::file_exists(temp_path))  //If the inprogress file is there something else is busy writing
-			{
+			if ( !utility::file::file_exists(temp_path) ) {  //If the inprogress file is there something else is busy writing
 				utility::io::ozstream progress_file(temp_path);
 				progress_file << "temp" <<std::endl;
 				progress_file.close();
@@ -441,13 +411,12 @@ void GridManager::update_grids(core::pose::Pose const & pose,  core::Vector cons
 
 void GridManager::initialize_all_grids(core::Vector const & center)
 {
-	if(grid_map_.size() == 0)
+	if ( grid_map_.size() == 0 ) {
 		utility_exit_with_message("hmm, no grids in the grid manager. Are they defined in the XML script?");
-	if(!initialized_)
-	{
+	}
+	if ( !initialized_ ) {
 		std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
-		for(;map_iterator != grid_map_.end();++map_iterator)
-		{
+		for ( ; map_iterator != grid_map_.end(); ++map_iterator ) {
 			GridBaseOP current_grid(map_iterator->second);
 			current_grid->initialize(center,width_,resolution_);
 		}
@@ -470,8 +439,7 @@ void GridManager::append_cached_scores(jd2::JobOP job)
 {
 	std::map<std::string,core::Real>::iterator map_iterator(score_map_.begin());
 	int total_score =0;
-	for(;map_iterator !=score_map_.end(); ++map_iterator)
-	{
+	for ( ; map_iterator !=score_map_.end(); ++map_iterator ) {
 		std::string type_name(map_iterator->first);
 		int score(static_cast<int>(map_iterator->second));
 		total_score +=score;
@@ -486,8 +454,7 @@ void GridManager::append_cached_scores(jd2::JobOP job)
 void GridManager::write_grids(std::string prefix)
 {
 	std::map<std::string, GridBaseOP>::iterator map_iterator(grid_map_.begin());
-	for(;map_iterator != grid_map_.end(); ++map_iterator)
-	{
+	for ( ; map_iterator != grid_map_.end(); ++map_iterator ) {
 		GridBaseOP current_grid(map_iterator->second);
 		current_grid->dump_BRIX(prefix);
 	}
@@ -497,8 +464,7 @@ utility::json_spirit::Value GridManager::serialize()
 {
 	using utility::json_spirit::Value;
 	std::vector<Value> gridmap_data;
-	for(GridMap::iterator it = grid_map_.begin(); it != grid_map_.end();++it)
-	{
+	for ( GridMap::iterator it = grid_map_.begin(); it != grid_map_.end(); ++it ) {
 		Value grid_name(it->first);
 		Value grid(it->second->serialize());
 		std::vector<Value> grid_pair_values;
@@ -513,8 +479,7 @@ utility::json_spirit::Value GridManager::serialize()
 void GridManager::deserialize(utility::json_spirit::mArray data)
 {
 	grid_map_.clear();
-	for(utility::json_spirit::mArray::iterator it = data.begin(); it != data.end();++it)
-	{
+	for ( utility::json_spirit::mArray::iterator it = data.begin(); it != data.end(); ++it ) {
 		utility::json_spirit::mArray grid_data(it->get_array());
 		std::string grid_name = grid_data[0].get_str();
 		GridBaseOP grid(GridFactory::get_instance()->new_grid(grid_data[1].get_obj()));
@@ -524,30 +489,26 @@ void GridManager::deserialize(utility::json_spirit::mArray data)
 
 bool GridManager::is_in_grid(core::conformation::UltraLightResidue const & residue)
 {
-    std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
-    for(;map_iterator != grid_map_.end();++map_iterator)
-    {
-        GridBaseOP current_grid(map_iterator->second);
-        if(!current_grid->is_in_grid(residue))
-        {
-            return false;
-        }
-    }
-    return true;
+	std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
+	for ( ; map_iterator != grid_map_.end(); ++map_iterator ) {
+		GridBaseOP current_grid(map_iterator->second);
+		if ( !current_grid->is_in_grid(residue) ) {
+			return false;
+		}
+	}
+	return true;
 }
 
 bool GridManager::is_in_grid(core::conformation::Residue const & residue)
 {
-    std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
-    for(;map_iterator != grid_map_.end();++map_iterator)
-    {
-        GridBaseOP current_grid(map_iterator->second);
-        if(!current_grid->is_in_grid(residue))
-        {
-            return false;
-        }
-    }
-    return true;
+	std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
+	for ( ; map_iterator != grid_map_.end(); ++map_iterator ) {
+		GridBaseOP current_grid(map_iterator->second);
+		if ( !current_grid->is_in_grid(residue) ) {
+			return false;
+		}
+	}
+	return true;
 }
 
 }

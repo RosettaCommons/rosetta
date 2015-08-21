@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file    core/pose/ncbb/util.hh
-/// @brief   Utility function declarations for poses with noncanonical backbone. 
+/// @brief   Utility function declarations for poses with noncanonical backbone.
 /// @author  kdrew
 /// @author  Andy Watkins
 
@@ -32,17 +32,17 @@ namespace pose {
 namespace ncbb {
 
 // @brief initializes ncbbs in pose, returns residue numbers of oops
-utility::vector1< core::Size > initialize_ncbbs( Pose & pose); 
+utility::vector1< core::Size > initialize_ncbbs( Pose & pose);
 // @brief initializes oops in pose, returns residue numbers of oops
-utility::vector1< core::Size > initialize_oops( Pose & pose); 
-utility::vector1< core::Size > initialize_hbs( Pose & pose); 
+utility::vector1< core::Size > initialize_oops( Pose & pose);
+utility::vector1< core::Size > initialize_hbs( Pose & pose);
 /// @brief  Add constraints to keep oligooxopiperazine (oop) ring closed, default values (distance = 1.5, std = 0.05)
 void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position );
-/// @brief  Add constraints to keep oligooxopiperazine (oop) ring closed 
+/// @brief  Add constraints to keep oligooxopiperazine (oop) ring closed
 void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position, core::Real distance, core::Real std );
 /// @brief  Add constraints to keep hydrogen bond surrogate (hbs) macrocycle closed, default values (distance = 1.52, std = 0.05)
 void add_hbs_constraint( core::pose::Pose & pose, core::Size oop_seq_position );
-/// @brief  Add constraints to keep hydrogen bond surrogate (hbs) ring closed 
+/// @brief  Add constraints to keep hydrogen bond surrogate (hbs) ring closed
 void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_seq_position, core::Real distance, core::Real std );
 /// @brief  Add constraints to keep a3b hydrogen bond surrogate (hbs) macrocycle closed, default values (distance = 1.52, std = 0.05)
 void add_a3b_hbs_constraint( core::pose::Pose & pose, core::Size oop_seq_position );

@@ -36,48 +36,48 @@ namespace farna {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Keep track of RNA centroid information inside the pose.
 //// Rhiju move this to its own namespace!
-	class RNA_SecStructInfo: public basic::datacache::CacheableData  {
+class RNA_SecStructInfo: public basic::datacache::CacheableData  {
 
 public:
 
-RNA_SecStructInfo(): initialized_(false) {};
+	RNA_SecStructInfo(): initialized_(false) {};
 
-  RNA_SecStructInfo( std::string const rna_secstruct_string ) { rna_secstruct_  = rna_secstruct_string; }
+	RNA_SecStructInfo( std::string const rna_secstruct_string ) { rna_secstruct_  = rna_secstruct_string; }
 
-  RNA_SecStructInfo( RNA_SecStructInfo const & src );
+	RNA_SecStructInfo( RNA_SecStructInfo const & src );
 
- basic::datacache::CacheableDataOP
-  clone() const
-  {
-    return basic::datacache::CacheableDataOP( new RNA_SecStructInfo( *this ) );
-  }
+	basic::datacache::CacheableDataOP
+	clone() const
+	{
+		return basic::datacache::CacheableDataOP( new RNA_SecStructInfo( *this ) );
+	}
 
- 	// Undefinded, comented out to make python bindings complile
+	// Undefinded, comented out to make python bindings complile
 	//void
 	//update( core::pose::Pose const & pose );
 
-  Size
-  size() const {
-    return rna_secstruct_.size();
-  }
+	Size
+	size() const {
+		return rna_secstruct_.size();
+	}
 
-  bool
-  initialized() const
-  {
-    return initialized_;
-  }
+	bool
+	initialized() const
+	{
+		return initialized_;
+	}
 
-  bool &
-  initialized()
-  {
-    return initialized_;
-  }
+	bool &
+	initialized()
+	{
+		return initialized_;
+	}
 
-  void
-  set_initialized( bool const & setting)
-  {
-    initialized_ = setting;
-  }
+	void
+	set_initialized( bool const & setting)
+	{
+		initialized_ = setting;
+	}
 
 	void
 	set_secstruct( std::string const secstruct ){ rna_secstruct_ = secstruct; initialized_ = true; }
@@ -89,7 +89,7 @@ private:
 
 	std::string rna_secstruct_;
 
-  bool initialized_;
+	bool initialized_;
 
 };
 

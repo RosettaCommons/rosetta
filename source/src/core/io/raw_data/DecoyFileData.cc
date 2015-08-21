@@ -37,39 +37,39 @@ namespace core {
 namespace io {
 namespace raw_data {
 
-	/// @brief write the given DecoyStruct to the supplied filename.
-	bool DecoyFileData::write_struct(
-		DecoyStruct s,
-		std::map < std::string, core::Real > const & score_map
-	) {
-		bool success = false;
+/// @brief write the given DecoyStruct to the supplied filename.
+bool DecoyFileData::write_struct(
+	DecoyStruct s,
+	std::map < std::string, core::Real > const & score_map
+) {
+	bool success = false;
 
-		utility::io::ozstream output;
-		if ( !utility::file::file_exists( filename_ ) ) {
-			output.open( filename_ );
-			s.print_header( output, score_map );
-		} else {
-			output.open_append( filename_ );
-		}
-
-		s.print_scores      ( output, score_map );
-		s.print_conformation( output );
-
-		return success;
+	utility::io::ozstream output;
+	if ( !utility::file::file_exists( filename_ ) ) {
+		output.open( filename_ );
+		s.print_header( output, score_map );
+	} else {
+		output.open_append( filename_ );
 	}
 
+	s.print_scores      ( output, score_map );
+	s.print_conformation( output );
 
-	/// @brief write the given DecoyStruct to the supplied filename.
-	bool DecoyFileData::write_pose(
-		const core::pose::Pose & pose,
-		std::map < std::string, core::Real > const & score_map,
-		std::string tag = "empty_tag",
-		bool fullatom = false
-	) {
-		DecoyStruct s( pose, tag, fullatom );
-		bool success = write_struct( s, score_map );
-		return success;
-	}
+	return success;
+}
+
+
+/// @brief write the given DecoyStruct to the supplied filename.
+bool DecoyFileData::write_pose(
+	const core::pose::Pose & pose,
+	std::map < std::string, core::Real > const & score_map,
+	std::string tag = "empty_tag",
+	bool fullatom = false
+) {
+	DecoyStruct s( pose, tag, fullatom );
+	bool success = write_struct( s, score_map );
+	return success;
+}
 
 } // namespace silent
 } // namespace io

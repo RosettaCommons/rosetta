@@ -10,10 +10,10 @@
 /// @file DockingHighRes
 /// @brief protocols that are specific to high resolution docking
 /// @details
-///		This contains the functions that create initial positions for docking
-///		You can either randomize partner 1 or partner 2, spin partner 2, or
-///		perform a simple perturbation.
-/// 	Also contains docking mcm protocol
+///  This contains the functions that create initial positions for docking
+///  You can either randomize partner 1 or partner 2, spin partner 2, or
+///  perform a simple perturbation.
+///  Also contains docking mcm protocol
 /// @author Monica Berrondo
 /// @author Modified by Sergey Lyskov
 /// @author Modified by Sid Chaudhury
@@ -176,22 +176,22 @@ void DockingHighRes::set_scorefxn_pack( core::scoring::ScoreFunctionOP scorefxn_
 
 void DockingHighRes::set_interface_definition_task_operation( protocols::toolbox::task_operations::InterfaceTaskOperationOP interface_definition )
 {
-    tf2_->set_interface_definition_task_operation( interface_definition );
+	tf2_->set_interface_definition_task_operation( interface_definition );
 }
 
 void DockingHighRes::set_additional_task_operarations( utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations )
 {
-    tf2_->set_additional_task_operarations( additional_task_operations );
+	tf2_->set_additional_task_operarations( additional_task_operations );
 }
 
 void DockingHighRes::add_additional_task_operaration( core::pack::task::operation::TaskOperationOP task_operation )
 {
-    tf2_->add_additional_task_operaration( task_operation );
+	tf2_->add_additional_task_operaration( task_operation );
 }
 
 utility::vector1< core::pack::task::operation::TaskOperationOP > DockingHighRes::get_additional_task_operarations()
 {
-    return tf2_->get_additional_task_operarations();
+	return tf2_->get_additional_task_operarations();
 }
 
 core::scoring::ScoreFunctionOP DockingHighRes::scorefxn() const

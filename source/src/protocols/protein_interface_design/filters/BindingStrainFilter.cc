@@ -34,7 +34,7 @@
 
 
 namespace protocols {
-namespace protein_interface_design{
+namespace protein_interface_design {
 namespace filters {
 
 static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.BindingStrainFilter" );
@@ -116,12 +116,13 @@ BindingStrainFilter::compute( core::pose::Pose const & p ) const{
 	unbind( pose );
 	core::Real const energy_before_pack( stf.compute( pose ));
 
-  protocols::simple_moves::PackRotamersMoverOP prm;
-  if( core::pose::symmetry::is_symmetric( pose ) )
-    prm = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), pack ) );
-  else
-    prm = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( scorefxn(), pack ) );
-  prm->apply( pose );
+	protocols::simple_moves::PackRotamersMoverOP prm;
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		prm = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), pack ) );
+	} else {
+		prm = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( scorefxn(), pack ) );
+	}
+	prm->apply( pose );
 	core::Real const energy_after_pack( stf.compute( pose ) );
 	return( energy_before_pack - energy_after_pack );
 }
@@ -140,10 +141,10 @@ BindingStrainFilter::report( std::ostream & out, core::pose::Pose const & pose )
 
 void
 BindingStrainFilter::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & )
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const & )
 {
 	using namespace protocols::rosetta_scripts;
 	TR << "BindingStrainFilter"<<std::endl;

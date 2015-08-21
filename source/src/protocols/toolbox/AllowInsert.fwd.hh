@@ -17,13 +17,13 @@
 #include <utility/pointer/owning_ptr.hh>
 
 
-namespace protocols{
-namespace toolbox{
+namespace protocols {
+namespace toolbox {
 
-	class AllowInsert;
+class AllowInsert;
 
-	typedef utility::pointer::shared_ptr< AllowInsert >AllowInsertOP;
-	typedef utility::pointer::shared_ptr< AllowInsert const >AllowInsertCOP;
+typedef utility::pointer::shared_ptr< AllowInsert >AllowInsertOP;
+typedef utility::pointer::shared_ptr< AllowInsert const >AllowInsertCOP;
 
 }
 }

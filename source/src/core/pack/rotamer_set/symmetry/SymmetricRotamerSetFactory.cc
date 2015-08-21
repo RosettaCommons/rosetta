@@ -36,12 +36,9 @@ namespace symmetry {
 RotamerSetOP
 SymmetricRotamerSetFactory::create_rotamer_set( conformation::Residue const & res )
 {
-	if ( res.is_protein() ) // This check will be removed when we get rotamers for NAs and Ligands online
-	{
+	if ( res.is_protein() ) { // This check will be removed when we get rotamers for NAs and Ligands online
 		return RotamerSetOP( new SymmetricRotamerSet_() );
-	}
-	else
-	{
+	} else {
 		//std::cout << "[ WARNING ] PB HACK -- SHOULD DIE HERE!" << std::endl; // seems OK?
 		return RotamerSetOP( new SymmetricRotamerSet_() );
 		//utility_exit_with_message( "Error in RotamerSetFactory, unsupported packing object" ); // get backtrace in gdb

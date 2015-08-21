@@ -83,35 +83,35 @@ static thread_local basic::Tracer TR( "apps.pilot.david_pocket_compare.main" );
 /// General testing code
 int main( int argc, char * argv [] ) {
 
-  try {
+	try {
 
-	//NEW_OPT( pocket1_fname, "pocket", "fname" );
+		//NEW_OPT( pocket1_fname, "pocket", "fname" );
 
-	//initializes Rosetta functions
-	devel::init(argc, argv);
+		//initializes Rosetta functions
+		devel::init(argc, argv);
 
-  std::string const resid (option[ OptionKeys::pocket_grid::central_relax_pdb_num ]  );
+		std::string const resid (option[ OptionKeys::pocket_grid::central_relax_pdb_num ]  );
 
-  for (core::Size f=1; f <= basic::options::start_files().size(); f++) {
-	  std::string const fname1 = basic::options::start_files().at(f);
-    pose::Pose input_pose;
+		for ( core::Size f=1; f <= basic::options::start_files().size(); f++ ) {
+			std::string const fname1 = basic::options::start_files().at(f);
+			pose::Pose input_pose;
 
-    //read in pdb file from command line
-    core::import_pose::pose_from_pdb( input_pose, fname1 );
-    std::vector< conformation::ResidueOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(input_pose, resid);
-
-
-    protocols::pockets::PocketGrid pg( residues );
-    pg.autoexpanding_pocket_eval( residues, input_pose );
+			//read in pdb file from command line
+			core::import_pose::pose_from_pdb( input_pose, fname1 );
+			std::vector< conformation::ResidueOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(input_pose, resid);
 
 
-	  std::stringstream out_fname;
+			protocols::pockets::PocketGrid pg( residues );
+			pg.autoexpanding_pocket_eval( residues, input_pose );
 
-    out_fname << fname1 << "."<< option[ OptionKeys::out::output_tag ]()<<".min.pdb";
-	  pg.dumpTargetPocketsToPDB ( out_fname.str(), true);
-  }
 
-	TR << "Done!" << std::endl;
+			std::stringstream out_fname;
+
+			out_fname << fname1 << "."<< option[ OptionKeys::out::output_tag ]()<<".min.pdb";
+			pg.dumpTargetPocketsToPDB ( out_fname.str(), true);
+		}
+
+		TR << "Done!" << std::endl;
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

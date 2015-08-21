@@ -43,18 +43,18 @@ namespace simple_filters {
 using namespace core;
 
 /* It probably would be nice to change the interface away from using jump_nr towards
-	 explicit naming of the Stubs one wants to evaluate
+explicit naming of the Stubs one wants to evaluate
 
-	 New interface would be :
-	 NamedStubID up_stub
-	 NamedStubID down_stub
+New interface would be :
+NamedStubID up_stub
+NamedStubID down_stub
 
-	 that would enable us to get rid of the current distinction ( is_protein() ) which
-	 switches between using the assumption that stub is N, CA, C or using the intrinsic atom-tree stubs
+that would enable us to get rid of the current distinction ( is_protein() ) which
+switches between using the assumption that stub is N, CA, C or using the intrinsic atom-tree stubs
 
-	 using the atom-tree stubs is a bit against the philosophy of this evaluator since its existence was actually
-	 prompted by the problem that the atom-tree was using different atoms for the stub then expected and thus screwing
-	 up the simulation. An Evaluator using the atom-tree stubs would not have detected this problem.
+using the atom-tree stubs is a bit against the philosophy of this evaluator since its existence was actually
+prompted by the problem that the atom-tree was using different atoms for the stub then expected and thus screwing
+up the simulation. An Evaluator using the atom-tree stubs would not have detected this problem.
 
 */
 
@@ -95,7 +95,7 @@ JumpEvaluator::JumpEvaluator( pose::Pose const& native_pose, Size jump_nr ) :
 
 core::Real
 JumpEvaluator::apply(
- pose::Pose& pose
+	pose::Pose& pose
 ) const {
 
 	kinematics::Stub up, down;
@@ -113,17 +113,17 @@ JumpEvaluator::apply(
 
 	Real rms( 0.0 );
 	for ( Size i=1; i<=3; i++ ) {
-			Vector tv = test_down.build_fake_xyz( i );
-			Vector nv = native_down_.build_fake_xyz( i );
-			Vector d = nv-tv;
-			rms += d.length();
+		Vector tv = test_down.build_fake_xyz( i );
+		Vector nv = native_down_.build_fake_xyz( i );
+		Vector d = nv-tv;
+		rms += d.length();
 	}
 	return rms;
 }
 
 core::Size
 JumpNrEvaluator::apply(
- pose::Pose& pose
+	pose::Pose& pose
 ) const {
 	return pose.num_jump();
 }

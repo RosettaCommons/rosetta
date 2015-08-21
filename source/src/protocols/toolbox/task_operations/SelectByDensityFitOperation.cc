@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @brief  Restrict design to residues with electron density correlation above threshold value 
+/// @brief  Restrict design to residues with electron density correlation above threshold value
 /// @author Patrick Conway
 
 // Unit Headers
@@ -91,18 +91,19 @@ SelectByDensityFitOperation::apply( core::pose::Pose const & const_pose, core::p
 
 	core::scoring::electron_density::getDensityMap().set_nres( nres );
 	core::scoring::electron_density::getDensityMap().setScoreWindowContext( true );
-	if ( option[ edensity::sliding_window ].user() )
+	if ( option[ edensity::sliding_window ].user() ) {
 		core::scoring::electron_density::getDensityMap().setWindow( option[ edensity::sliding_window ] );
+	}
 
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	scorefxn->set_weight( core::scoring::elec_dens_window, 1.0 );
 	(*scorefxn)(pose);
 
-	for (Size r=1; r<=nres; ++r) {
-		if (task.nonconst_residue_task(r).being_designed() || task.nonconst_residue_task(r).being_packed()) {
+	for ( Size r=1; r<=nres; ++r ) {
+		if ( task.nonconst_residue_task(r).being_designed() || task.nonconst_residue_task(r).being_packed() ) {
 			Real score = core::scoring::electron_density::getDensityMap().matchRes( r , pose.residue(r), pose, NULL , false);
 			TR.Debug << pose.pdb_info()->name() << " residue: " << r << " density_score: " << score << std::endl;
-			if ( (score < threshold_) != invert_ ) { 								// != invert_ flips the Boolean when true
+			if ( (score < threshold_) != invert_ ) {         // != invert_ flips the Boolean when true
 				task.nonconst_residue_task(r).prevent_repacking();
 			}
 		}

@@ -97,15 +97,15 @@ main( int argc, char * argv[] ) {
 		// pose::Pose orig_pose;
 		// core::import_pose::pose_from_pdb(orig_pose, start_file());
 		protocols::analysis::PeptideDeriverFilterOP filter =
-				protocols::analysis::PeptideDeriverFilterOP(
-						new protocols::analysis::PeptideDeriverFilter );
+			protocols::analysis::PeptideDeriverFilterOP(
+			new protocols::analysis::PeptideDeriverFilter );
 
 		protocols::moves::MoverOP null_mover = protocols::moves::MoverOP(
-				new protocols::moves::NullMover );
+			new protocols::moves::NullMover );
 
 		protocols::moves::MoverOP mover = protocols::moves::MoverOP(
-				new protocols::moves::FilterReporterMover(null_mover, filter,
-						1 /*max_tries*/, TR /*out*/) );
+			new protocols::moves::FilterReporterMover(null_mover, filter,
+			1 /*max_tries*/, TR /*out*/) );
 
 		// GO!
 		protocols::jd2::JobDistributor::get_instance()->go(mover);

@@ -76,9 +76,9 @@ public:
 		core::pose::Pose const & pose
 	);
 
-	virtual	void
+	virtual void
 	make_chi_move(
-	  core::conformation::Residue const& residue,
+		core::conformation::Residue const& residue,
 		ChiVector const& old_chi,
 		ChiVector&  new_chi
 	);
@@ -106,7 +106,7 @@ protected:
 public:
 	typedef utility::vector1< core::pack::dunbrack::DunbrackRotamerSampleData > RotamerList;
 	void build_rotamer_list(
-    core::conformation::Residue const&,
+		core::conformation::Residue const&,
 		bool filter, /* filter out low probabilities p<0.01 */
 		RotamerList&
 	) const;

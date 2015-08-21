@@ -40,8 +40,8 @@ namespace sequence {
 /// alignments found in <files>. Each alignment is required to have
 /// format <format>.
 void read_all_alignments(const std::string& format,
-                         const utility::vector1<std::string>& files,
-                         utility::vector1<SequenceAlignment>* alignments);
+	const utility::vector1<std::string>& files,
+	utility::vector1<SequenceAlignment>* alignments);
 
 /// @brief helper function for reading a SequenceMapping from an alignment
 /// file.
@@ -77,7 +77,7 @@ utility::vector1< SequenceAlignment > read_general_aln(
 );
 
 utility::vector1< SequenceAlignment > read_grishin_aln_file(
-   std::string const & filename
+	std::string const & filename
 );
 
 utility::vector1< SequenceAlignment > read_general_aln_file(
@@ -152,9 +152,9 @@ void alignment_into_pose(
 /*
 core::Real
 calpha_superimpose_via_alignment(
-	core::pose::Pose & mod_pose,
-	core::pose::Pose const & ref_pose,
-	core::sequence::SequenceAlignment const & aln
+core::pose::Pose & mod_pose,
+core::pose::Pose const & ref_pose,
+core::sequence::SequenceAlignment const & aln
 ); */
 
 core::Real

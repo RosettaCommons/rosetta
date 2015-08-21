@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	 utility/sql_database/DatabaseSessionManager.cc
+/// @file  utility/sql_database/DatabaseSessionManager.cc
 /// @author Matthew O'Meara
 /// @author Sam Deluca
 /// @author Chris Miles
@@ -58,80 +58,79 @@ session::~session(){
 
 void
 session::begin_transaction(){
-	if(!cur_transaction_){
+	if ( !cur_transaction_ ) {
 		switch(transaction_mode_){
-			case(TransactionMode::none):
-				//do nothing
-				break;
-			case(TransactionMode::standard):
-				cur_transaction_ = transactionOP( new transaction(*this) );
-				break;
-			case(TransactionMode::chunk):
-				cur_transaction_ = transactionOP( new transaction(*this) );
-				break;
-			default:
-				utility_exit_with_message(
-					"Unrecognized transaction mode: '" +
-					name_from_transaction_mode(transaction_mode_) + "'");
+		case(TransactionMode::none) :
+			//do nothing
+			break;
+		case(TransactionMode::standard) :
+			cur_transaction_ = transactionOP( new transaction(*this) );
+			break;
+		case(TransactionMode::chunk) :
+			cur_transaction_ = transactionOP( new transaction(*this) );
+			break;
+		default :
+			utility_exit_with_message(
+				"Unrecognized transaction mode: '" +
+				name_from_transaction_mode(transaction_mode_) + "'");
 		}
 	}
 }
 
 void
 session::commit_transaction(){
-	if(cur_transaction_){
+	if ( cur_transaction_ ) {
 		switch(transaction_mode_){
-			case(TransactionMode::none):
-				utility_exit_with_message("You have specified a transaction mode of none, but have an open transaction. Please file a bug");
-				break;
-			case(TransactionMode::standard):
+		case(TransactionMode::none) :
+			utility_exit_with_message("You have specified a transaction mode of none, but have an open transaction. Please file a bug");
+			break;
+		case(TransactionMode::standard) :
+			cur_transaction_->commit();
+			cur_transaction_.reset();
+			break;
+		case(TransactionMode::chunk) :
+			if ( transaction_counter_==chunk_size_ ) {
 				cur_transaction_->commit();
+				transaction_counter_=0;
 				cur_transaction_.reset();
-				break;
-			case(TransactionMode::chunk):
-				if(transaction_counter_==chunk_size_){
-					cur_transaction_->commit();
-					transaction_counter_=0;
-					cur_transaction_.reset();
-				}
-				else{
-					++transaction_counter_;
-				}
-				break;
-			default:
-				utility_exit_with_message(
-					"Unrecognized transaction mode: '" +
-					name_from_transaction_mode(transaction_mode_) + "'");
+			} else {
+				++transaction_counter_;
+			}
+			break;
+		default :
+			utility_exit_with_message(
+				"Unrecognized transaction mode: '" +
+				name_from_transaction_mode(transaction_mode_) + "'");
 		}
 	}
 }
 
 void
 session::force_commit_transaction(){
-	if(cur_transaction_){
+	if ( cur_transaction_ ) {
 		switch(transaction_mode_){
-			case(TransactionMode::none):
-				utility_exit_with_message("You have specified a transaction mode of none, but have an open transaction. Please file a bug");
-				break;
-			case(TransactionMode::standard):
-				cur_transaction_->commit();
-				cur_transaction_.reset();
-				break;
-			case(TransactionMode::chunk):
-				cur_transaction_->commit();
-				cur_transaction_.reset();
-				break;
-			default:
-				utility_exit_with_message(
-					"Unrecognized transaction mode: '" +
-					name_from_transaction_mode(transaction_mode_) + "'");
+		case(TransactionMode::none) :
+			utility_exit_with_message("You have specified a transaction mode of none, but have an open transaction. Please file a bug");
+			break;
+		case(TransactionMode::standard) :
+			cur_transaction_->commit();
+			cur_transaction_.reset();
+			break;
+		case(TransactionMode::chunk) :
+			cur_transaction_->commit();
+			cur_transaction_.reset();
+			break;
+		default :
+			utility_exit_with_message(
+				"Unrecognized transaction mode: '" +
+				name_from_transaction_mode(transaction_mode_) + "'");
 		}
 	}
 }
 
 DatabaseSessionManager *
 DatabaseSessionManager::get_instance(){
-	if( instance_.get() == 0 ){
+	if ( instance_.get() == 0 ) {
 		instance_.reset( new DatabaseSessionManager() );
 	}
 	return instance_.get();
@@ -140,7 +139,7 @@ DatabaseSessionManager::get_instance(){
 DatabaseSessionManager::DatabaseSessionManager() {}
 
 DatabaseSessionManager::DatabaseSessionManager(
-const DatabaseSessionManager &
+	const DatabaseSessionManager &
 ) {}
 
 DatabaseSessionManager::~DatabaseSessionManager() {}
@@ -162,33 +161,33 @@ DatabaseSessionManager::get_db_session(
 {
 
 	switch(db_mode){
-	case DatabaseMode::sqlite3:
+	case DatabaseMode::sqlite3 :
 		return get_session_sqlite3(
-							db_name,
-							transaction_mode,
-							chunk_size,
-							readonly,
-							db_partition);
-	case DatabaseMode::mysql:
+			db_name,
+			transaction_mode,
+			chunk_size,
+			readonly,
+			db_partition);
+	case DatabaseMode::mysql :
 		return get_session_mysql(
-							db_name,
-							transaction_mode,
-							chunk_size,
-							host,
-							user,
-							password,
-							port);
-	case DatabaseMode::postgres:
+			db_name,
+			transaction_mode,
+			chunk_size,
+			host,
+			user,
+			password,
+			port);
+	case DatabaseMode::postgres :
 		return get_session_postgres(
-							db_name,
-							transaction_mode,
-							chunk_size,
-							pq_schema,
-							host,
-							user,
-							password,
-							port);
-	default:
+			db_name,
+			transaction_mode,
+			chunk_size,
+			pq_schema,
+			host,
+			user,
+			password,
+			port);
+	default :
 		utility_exit_with_message(
 			"Unrecognized database mode: '" + name_from_database_mode(db_mode) + "'");
 	}
@@ -219,15 +218,13 @@ DatabaseSessionManager::get_session_sqlite3(
 
 	connection_string << "sqlite3:";
 
-	if(readonly)
-	{
+	if ( readonly ) {
 		connection_string << "mode=readonly;";
 	}
 
 	connection_string << "db=" << FileName(database).name();
 
-	if(s->is_db_partitioned())
-	{
+	if ( s->is_db_partitioned() ) {
 		connection_string << "_" << s->get_db_partition();
 	}
 
@@ -390,7 +387,7 @@ DatabaseSessionManager::set_postgres_schema_search_path(
 ) {
 	stringstream stmt_str;
 	stmt_str << "SET search_path TO ";
-	for(Size i=1; i <= schema_search_path.size(); ++i){
+	for ( Size i=1; i <= schema_search_path.size(); ++i ) {
 		stmt_str << (i==1 ? "" : ", ") << schema_search_path[i];
 	}
 	stmt_str << ";";

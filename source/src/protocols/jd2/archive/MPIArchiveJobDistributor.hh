@@ -102,9 +102,9 @@ public:
 	public:
 		CompletionMessage() : batch_id( 0 ), final( false ), bad( 0 ), good( 0 ), njobs( 0 ), msg_tag( JOB_COMPLETION ) {};
 		CompletionMessage( core::Size id, bool fi, core::Size bad_in, core::Size good_in, core::Size total_in )
-			: batch_id( id ), final( fi), bad( bad_in ),good( good_in ), njobs( total_in ), msg_tag( JOB_COMPLETION ) {};
+		: batch_id( id ), final( fi), bad( bad_in ),good( good_in ), njobs( total_in ), msg_tag( JOB_COMPLETION ) {};
 		CompletionMessage( core::Size batch_id, core::Size tag )
-			: batch_id( batch_id ), final( false ), bad( 0 ), good( 0 ), njobs( 0 ), msg_tag( QUEUE_EMPTY )
+		: batch_id( batch_id ), final( false ), bad( 0 ), good( 0 ), njobs( 0 ), msg_tag( QUEUE_EMPTY )
 		{ runtime_assert( tag == QUEUE_EMPTY ); };
 		core::Size batch_id;
 		bool final;
@@ -143,7 +143,7 @@ protected:
 
 	/// @brief act on a message, return true if message was understood
 	virtual bool process_message(
-    core::Size msg_tag,
+		core::Size msg_tag,
 		core::Size slave_rank,
 		core::Size slave_job_id,
 		core::Size slave_batch_id,

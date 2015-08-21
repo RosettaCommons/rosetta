@@ -69,8 +69,8 @@ public:
 private:
 	pose::Pose native_pose_;
 	core::Real rms_target_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 };
 
 

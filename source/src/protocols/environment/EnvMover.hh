@@ -35,40 +35,40 @@ namespace environment {
 class EnvMover : public moves::Mover {
 
 public:
-  EnvMover();
+	EnvMover();
 
-  virtual void
-  parse_my_tag( utility::tag::TagCOP tag,
-               basic::datacache::DataMap & data,
-               protocols::filters::Filters_map const & filters,
-               protocols::moves::Movers_map const & movers,
-               core::pose::Pose const& pose );
+	virtual void
+	parse_my_tag( utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const& pose );
 
-  virtual ~EnvMover();
+	virtual ~EnvMover();
 
-  virtual void apply( Pose& pose );
+	virtual void apply( Pose& pose );
 
-  void add_apply_mover( protocols::moves::MoverOP );
+	void add_apply_mover( protocols::moves::MoverOP );
 
-  void add_registered_mover( protocols::moves::MoverOP );
+	void add_registered_mover( protocols::moves::MoverOP );
 
-  Environment& env() { return *env_; }
+	Environment& env() { return *env_; }
 
 
-  virtual std::string get_name() const;
+	virtual std::string get_name() const;
 
-  virtual moves::MoverOP clone() const;
+	virtual moves::MoverOP clone() const;
 
 private:
-  void parse_subtag( utility::tag::TagCOP tag,
-                     basic::datacache::DataMap & data,
-                     protocols::filters::Filters_map const & filters,
-                     protocols::moves::Movers_map const & movers,
-                     core::pose::Pose const& pose );
+	void parse_subtag( utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const& pose );
 
-  EnvironmentOP env_;
-  moves::SequenceMoverOP movers_;
-  std::set< moves::MoverOP > reg_only_movers_;
+	EnvironmentOP env_;
+	moves::SequenceMoverOP movers_;
+	std::set< moves::MoverOP > reg_only_movers_;
 
 }; // end EnvMover base class
 

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/screener/IntegrationTestBreaker.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace stepwise {
 namespace screener {
-	
-	class IntegrationTestBreaker;
-	typedef utility::pointer::shared_ptr< IntegrationTestBreaker > IntegrationTestBreakerOP;
-	typedef utility::pointer::shared_ptr< IntegrationTestBreaker const > IntegrationTestBreakerCOP;
-	
+
+class IntegrationTestBreaker;
+typedef utility::pointer::shared_ptr< IntegrationTestBreaker > IntegrationTestBreakerOP;
+typedef utility::pointer::shared_ptr< IntegrationTestBreaker const > IntegrationTestBreakerCOP;
+
 } //screener
 } //stepwise
 } //protocols

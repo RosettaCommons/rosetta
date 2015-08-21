@@ -110,9 +110,9 @@ SidechainMetropolisHastingsMover::pass_metropolis(core::Real delta_energy, core:
 	core::Real boltz_factor = delta_energy / monte_carlo()->temperature();
 	if ( tr.Trace.visible() ) {
 		tr.Trace << " temperature: " << monte_carlo()->temperature()
-						 << " deltaE= " << delta_energy
-						 << " boltzman=" << boltz_factor
-						 << " lpd= " << last_proposal_density_ratio << std::endl;
+			<< " deltaE= " << delta_energy
+			<< " boltzman=" << boltz_factor
+			<< " lpd= " << last_proposal_density_ratio << std::endl;
 	}
 	core::Real probability = std::exp( std::min( 40.0, std::max( -40.0, boltz_factor ))) *  last_proposal_density_ratio ;
 	if ( probability < 1 && numeric::random::rg().uniform() >= probability ) {
@@ -135,7 +135,7 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 	utility::vector1< Real > new_chi;
 	Real current_energy = sfxn(pose);
 
-	//	std::string const traj_file_tag( jd2::current_output_name() );
+	// std::string const traj_file_tag( jd2::current_output_name() );
 	//  counters_.reset();
 
 	jd2::JobOP job;
@@ -145,18 +145,18 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 
 	//ek for fast sidechain sampling and internal mc trials
 	utility::vector1< conformation::ResidueOP > current;
-	//	utility::vector1< conformation::ResidueOP > previous;
-	//	utility::vector1< pack::dunbrack::ChiVector > chi_vectors;
-	//	utility::vector1< pack::dunbrack::RotVector > rot_vectors;
+	// utility::vector1< conformation::ResidueOP > previous;
+	// utility::vector1< pack::dunbrack::ChiVector > chi_vectors;
+	// utility::vector1< pack::dunbrack::RotVector > rot_vectors;
 
 
 	current.resize(pose.total_residue());
-	//	previous.resize(pose.total_residue());
+	// previous.resize(pose.total_residue());
 
-	//	rot_vectors.resize( pose.total_residue() );
-	//	chi_vectors.resize( pose.total_residue() );
+	// rot_vectors.resize( pose.total_residue() );
+	// chi_vectors.resize( pose.total_residue() );
 
-	for ( core::Size i = 1; i <= pose.total_residue(); i++ ){
+	for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
 		current[ i ] = core::conformation::ResidueOP( new core::conformation::Residue( pose.residue( i ) ) );
 	}
 
@@ -166,7 +166,7 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 	ig->initialize( pose );
 	Real last_accepted_prop_density( 1.0 );
 	Real last_accepted_dE( 0.0 );
-	for ( Size ct = 1; ct <= ntrials(); ct++) {
+	for ( Size ct = 1; ct <= ntrials(); ct++ ) {
 		protocols::simple_moves::sidechain_moves::SidechainMoverBaseOP move = utility::pointer::dynamic_pointer_cast< protocols::simple_moves::sidechain_moves::SidechainMoverBase > ( random_mover() );
 		runtime_assert( move != 0 ); //fow now only Sidechain Movers...
 
@@ -193,7 +193,7 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 
 		Size model_count( output_count( ct ) );
 		if ( model_count ) {
-			for( Size res_i = 1; res_i <= current.size(); res_i++ ){
+			for ( Size res_i = 1; res_i <= current.size(); res_i++ ) {
 				pose.replace_residue( res_i, (*current[ res_i ]), true );
 			}
 			core::Real const score( sfxn( pose ) );
@@ -213,7 +213,7 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 			}
 		}
 
-		for (Size i = 1; i <= observers().size(); ++i) {
+		for ( Size i = 1; i <= observers().size(); ++i ) {
 			if ( observers()[ i ]->requires_pose() && !model_count ) continue;
 			observers()[i]->observe_after_metropolis(*this);
 		}
@@ -227,7 +227,7 @@ core::Size
 SidechainMetropolisHastingsMover::output_count( Size ct ) const {
 	if ( ct % stride_ == 0 ) {
 		return ct / stride_;
-	}	else return 0;
+	} else return 0;
 }
 
 std::string

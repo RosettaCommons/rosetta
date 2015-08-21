@@ -60,7 +60,7 @@ HelixPairing::HelixPairing():
 
 /// @brief value constructor
 HelixPairing::HelixPairing(
-  Size const h1,
+	Size const h1,
 	Size const h2,
 	char const o
 ):
@@ -130,10 +130,10 @@ HelixPairingOP HelixPairing::clone()
 /// @brief return name
 std::ostream & operator<<(std::ostream & out, const HelixPairing &hp )
 {
-  using ObjexxFCL::format::F;
-  using ObjexxFCL::format::A;
+	using ObjexxFCL::format::F;
+	using ObjexxFCL::format::A;
 	out << A( 7, hp.name() ) << " "
-			<< F( 8, 3, hp.dist() ) << F( 8, 3, hp.cross_angle() ) << F( 8, 3, hp.align_angle() );
+		<< F( 8, 3, hp.dist() ) << F( 8, 3, hp.cross_angle() ) << F( 8, 3, hp.align_angle() );
 	//out << A( 7, hp.name() ) << " "
 	//<< F( 8, 3, hp.dist() ) << F( 8, 3, hp.cross_angle() );
 	return out;
@@ -141,9 +141,9 @@ std::ostream & operator<<(std::ostream & out, const HelixPairing &hp )
 
 /// @brief
 bool HelixPairing::is_parallel() const {
-	if( orient_ == 'P' ) {
+	if ( orient_ == 'P' ) {
 		return true;
-	}else{
+	} else {
 		return false;
 	}
 }
@@ -158,7 +158,7 @@ HelixPairing::calc_geometry( SS_Info2_COP const ss_info )
 	using protocols::fldsgn::topology::Strands;
 
 	Real flip( 1.0 );
-	if( orient() == 'A' ) flip = -1.0;
+	if ( orient() == 'A' ) flip = -1.0;
 
 	Helices const & helices( ss_info->helices() );
 	Strands const & strands( ss_info->strands() );
@@ -172,16 +172,16 @@ HelixPairing::calc_geometry( SS_Info2_COP const ss_info )
 
 	int r1 = int( hx1.begin() ) - int( loop_length_ );
 	int r2 = int( hx2.begin() ) - int( loop_length_ );
-	if( r1 < 1 || r2 < 1 ) return;
+	if ( r1 < 1 || r2 < 1 ) return;
 
 	Size const s1 = ss_info->strand_id( Size( r1 ) );
 	Size const s2 = ss_info->strand_id( Size( r2 ) );
-	if( s1 == 0 || s2 == 0 ) return;
+	if ( s1 == 0 || s2 == 0 ) return;
 
 	// check the strand pairing of s1 and s2 is parallel, otherwise skip this calculation
 	Real dot = ss_info->strand( s1 )->orient().dot( ss_info->strand( s2 )->orient() );
 	Real sign( 1.0 );
-	if( dot < 0 ) sign = -1.0;
+	if ( dot < 0 ) sign = -1.0;
 
 	Vector const v1 = ( strands[ s2 ]->mid_pos() - strands[ s1 ]->mid_pos() ).normalized();
 	Vector const v2 = ( strands[ s1 ]->orient() + sign*strands[ s2 ]->orient() ).normalized();
@@ -216,12 +216,12 @@ HelixPairingSet::HelixPairingSet( String const & helix_pairings ):
 	num_helices_( 0 ),
 	initialize_map_helix_pairings_( false )
 {
-	if( helix_pairings == "" ) {
+	if ( helix_pairings == "" ) {
 		return;
 	}
 
 	utility::vector1< String > hpairs( utility::string_split( helix_pairings, ';' ) );
-	for( utility::vector1< String >::const_iterator iter = hpairs.begin(); iter != hpairs.end() ; ++iter) {
+	for ( utility::vector1< String >::const_iterator iter = hpairs.begin(); iter != hpairs.end() ; ++iter ) {
 		helix_pairings_.push_back( protocols::fldsgn::topology::HelixPairingOP( new HelixPairing( *iter ) ) );
 	}
 }
@@ -234,11 +234,11 @@ HelixPairingSet::HelixPairingSet( HelixPairings const & helix_pairings ):
 	initialize_map_helix_pairings_( false )
 {
 	// set hpairset_name_
-	for ( HelixPairings::const_iterator it=helix_pairings_.begin(),	ite=helix_pairings_.end(); it != ite; ++it ) {
+	for ( HelixPairings::const_iterator it=helix_pairings_.begin(), ite=helix_pairings_.end(); it != ite; ++it ) {
 		HelixPairing const & hpair( **it );
-		if( hpairset_name_ == "" ){
+		if ( hpairset_name_ == "" ) {
 			hpairset_name_ = hpair.name();
-		}else{
+		} else {
 			hpairset_name_ += ';' + hpair.name();
 		}
 	}
@@ -246,7 +246,7 @@ HelixPairingSet::HelixPairingSet( HelixPairings const & helix_pairings ):
 
 /// @brief copy constructor
 HelixPairingSet::HelixPairingSet( HelixPairingSet const & s ):
- 	ReferenceCount(),
+	ReferenceCount(),
 	helix_pairings_( s.helix_pairings_ ),
 	hpairset_name_( s.hpairset_name_ ),
 	num_helices_( s.num_helices_ ),
@@ -267,13 +267,13 @@ HelixPairingSet::clone() const
 /// @brief return helix pairing
 std::ostream & operator<<( std::ostream & out, const HelixPairingSet &s )
 {
- 	out << "#### HelixPairingSet Info " << std::endl;
+	out << "#### HelixPairingSet Info " << std::endl;
 	out << "# " << s.name() << std::endl;
 	out << "# name distance cross_angle align_angle " << std::endl;
 	HelixPairings const & hpairs( s.helix_pairings() );
-	for( HelixPairings::const_iterator iter = hpairs.begin(); iter != hpairs.end(); ++iter ) {
+	for ( HelixPairings::const_iterator iter = hpairs.begin(); iter != hpairs.end(); ++iter ) {
 		out << "# " << (**iter) << std::endl;
-  }
+	}
 	return out;
 }
 
@@ -283,9 +283,9 @@ HelixPairingSet::push_back( HelixPairingOP const hop )
 {
 	helix_pairings_.push_back( hop );
 	initialize_map_helix_pairings_ = false;
-	if( hpairset_name_ == "" ){
+	if ( hpairset_name_ == "" ) {
 		hpairset_name_ = hop->name();
-	}else{
+	} else {
 		hpairset_name_ += ';' + hop->name();
 	}
 }
@@ -312,11 +312,11 @@ HelixPairingSet::helix_pairing( Size const s ) const
 HelixPairingOP
 HelixPairingSet::helix_pairing( Size const h1, Size const h2 )
 {
-	if( ! initialize_map_helix_pairings_ ){
+	if ( ! initialize_map_helix_pairings_ ) {
 		create_map_helix_pairings();
 	}
 
-	if( h1 <= num_helices_ && h2 <= num_helices_ ) {
+	if ( h1 <= num_helices_ && h2 <= num_helices_ ) {
 		return map_helix_pairings_[ h1 ][ h2 ];
 	} else {
 		return 0;
@@ -348,31 +348,31 @@ HelixPairingSet::name() const
 void
 HelixPairingSet::calc_geometry( SS_Info2_COP const ss_info )
 {
-	for( HelixPairings::const_iterator iter = helix_pairings_.begin(); iter != helix_pairings_.end(); ++iter ) {
+	for ( HelixPairings::const_iterator iter = helix_pairings_.begin(); iter != helix_pairings_.end(); ++iter ) {
 		HelixPairingOP const hpair(*iter);
 		hpair->calc_geometry( ss_info );
-  }
+	}
 }
 
 /// @brief create 2D table of helix pairings
 void HelixPairingSet::create_map_helix_pairings()
 {
 	initialize_map_helix_pairings_ = true;
-	for ( HelixPairings::const_iterator it=helix_pairings_.begin(),	ite=helix_pairings_.end(); it != ite; ++it ) {
+	for ( HelixPairings::const_iterator it=helix_pairings_.begin(), ite=helix_pairings_.end(); it != ite; ++it ) {
 		HelixPairing hpair(**it);
-		if(	hpair.h2() > num_helices_ ){
+		if ( hpair.h2() > num_helices_ ) {
 			num_helices_ = hpair.h2();
 		}
 	}
 	map_helix_pairings_.resize( num_helices_ );
-	for( Size i=1; i<=num_helices_; i++ ){
+	for ( Size i=1; i<=num_helices_; i++ ) {
 		map_helix_pairings_[i].resize( num_helices_ );
-		for( Size j=1; j<=num_helices_; j++ ){
+		for ( Size j=1; j<=num_helices_; j++ ) {
 			map_helix_pairings_[i][j] = 0;
 		}
 	}
 
-	for ( HelixPairings::const_iterator it=helix_pairings_.begin(),	ite=helix_pairings_.end(); it != ite; ++it ) {
+	for ( HelixPairings::const_iterator it=helix_pairings_.begin(), ite=helix_pairings_.end(); it != ite; ++it ) {
 		HelixPairingOP const hpair( *it );
 		map_helix_pairings_[ hpair->h1() ][ hpair->h2() ] = hpair;
 		map_helix_pairings_[ hpair->h2() ][ hpair->h1() ] = hpair;

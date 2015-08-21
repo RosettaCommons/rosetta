@@ -37,7 +37,7 @@
 #include <utility/io/izstream.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 // AS -- to get access to get_torsion_bin()
@@ -130,23 +130,21 @@ Ramachandran2B::eval_rama_score_all(
 	// if so, Pose must provide it 'cause we're offing all global data
 	//
 	//kinematics::FoldTree const & fold_tree(
-	//		pose.fold_tree() );
+	//  pose.fold_tree() );
 	//int const n_cut( fold_tree.num_cutpoint() );
 
 	//FArray1D< Real > cut_weight( n_cut,
-	//	scorefxns::jmp_chainbreak_weight == 0.0 ? 0.0 : 1.0 ); // apl need to handle
+	// scorefxns::jmp_chainbreak_weight == 0.0 ? 0.0 : 1.0 ); // apl need to handle
 
 	//if( cut_weight.size1() == scorefxns::cut_weight.size1() )
-	//	cut_weight = scorefxns::cut_weight;
+	// cut_weight = scorefxns::cut_weight;
 
 	// exclude chain breaks
 
 	Energies & pose_energies( pose.energies() );
 
-	for ( int ii = 1; ii <= total_residue; ++ii )
-	{
-		if ( pose.residue(ii).is_protein()  && ! pose.residue(ii).is_terminus()  )
-		{
+	for ( int ii = 1; ii <= total_residue; ++ii ) {
+		if ( pose.residue(ii).is_protein()  && ! pose.residue(ii).is_terminus()  ) {
 			Real rama_score,dphi,dpsi;
 			eval_rama_score_residue(pose.residue(ii), pose.residue(ii-1).aa(), pose.residue(ii+1).aa(), rama_score, dphi, dpsi);
 			T << "Rama:eval_all: residue " << ii << " " << pose.residue(ii).name() <<
@@ -175,8 +173,8 @@ Ramachandran2B::eval_rama_score_residue(
 {
 	using namespace numeric;
 
-//debug_assert( pose.residue(res).is_protein() );
-debug_assert( rsd.is_protein() );
+	//debug_assert( pose.residue(res).is_protein() );
+	debug_assert( rsd.is_protein() );
 
 	Real const phi
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1)));
@@ -186,7 +184,7 @@ debug_assert( rsd.is_protein() );
 	// amw replacing anything that would set rama to 0 because of an incidental phi/psi of 0
 	// (rare but possible)
 	if ( rsd.type().has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT )
-		|| rsd.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) || rsd.is_terminus() ) { // begin or end of chain
+			|| rsd.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) || rsd.is_terminus() ) { // begin or end of chain
 		rama = 0.0;
 		drama_dphi = 0.0;
 		drama_dpsi = 0.0;
@@ -210,7 +208,7 @@ Ramachandran2B::eval_rama_score_residue(
 {
 	using namespace numeric;
 
-debug_assert( center.is_protein() );
+	debug_assert( center.is_protein() );
 
 	Real const phi
 		( nonnegative_principal_angle_degrees( center.mainchain_torsion(1)));
@@ -218,14 +216,14 @@ debug_assert( center.is_protein() );
 		( nonnegative_principal_angle_degrees( center.mainchain_torsion(2)));
 
 	if ( center.type().has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT )
-		|| center.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) { //phi == 0.0 || psi == 0.0 ) { // begin or end of chain
+			|| center.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) { //phi == 0.0 || psi == 0.0 ) { // begin or end of chain
 		rama = 0.0;
 		drama_dphi = 0.0;
 		drama_dpsi = 0.0;
 		return;
 	}
 
-	if( ! basic::options::option[ basic::options::OptionKeys::score::ramaneighbors ] ) {
+	if ( ! basic::options::option[ basic::options::OptionKeys::score::ramaneighbors ] ) {
 		eval_rama_score_residue( center.aa(), phi, psi, rama, drama_dphi, drama_dpsi );
 	} else {
 		rama = eval_rama_score_residue( phi, psi, center.aa(), left_aa, right_aa, drama_dphi, drama_dpsi );
@@ -284,7 +282,7 @@ Ramachandran2B::IdealizeRamaEnergy(
 	Real interp_E = bilinearly_interpolated( phi, psi, binw_, n_phi_, rama_for_res, drama_dphi, drama_dpsi );
 	// rama = IdealizeRamaEnergy(ram_entropy_(center.aa(), leftIndex, rightIndex), interp_E, drama_dphi, drama_dpsi);
 	rama = entropy + interp_E;
-	//	std::cout << "Rama::eval_res: " <<  interp_E << " rama " << rama << std::endl;
+	// std::cout << "Rama::eval_res: " <<  interp_E << " rama " << rama << std::endl;
 
 	if ( ! basic::options::option[basic::options::OptionKeys::corrections::score::rama_not_squared] ) {
 		if ( rama > 1.0 ) {
@@ -330,7 +328,7 @@ Ramachandran2B::RamaE_Lower(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-debug_assert( rsd.is_protein() );
+	debug_assert( rsd.is_protein() );
 
 	Real const phi
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1)));
@@ -338,12 +336,12 @@ debug_assert( rsd.is_protein() );
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2)));
 
 	if ( rsd.type().has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT )
-		|| rsd.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) { //phi == 0.0 || psi == 0.0 ) { // begin or end of chain
+			|| rsd.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) { //phi == 0.0 || psi == 0.0 ) { // begin or end of chain
 		return 0.0;
 	}
 
 	// if neighbor independent protocol is selected, return 0.0
-	if( ! option[ score::ramaneighbors ] ) {
+	if ( ! option[ score::ramaneighbors ] ) {
 		return 0.0;
 	}
 
@@ -401,7 +399,7 @@ Ramachandran2B::RamaE_Upper(
 {
 	using namespace numeric;
 
-debug_assert( rsd.is_protein() );
+	debug_assert( rsd.is_protein() );
 
 	Real const phi
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1)));
@@ -409,13 +407,12 @@ debug_assert( rsd.is_protein() );
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2)));
 
 	if ( rsd.type().has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT )
-		|| rsd.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) { // begin or end of chain
+			|| rsd.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) { // begin or end of chain
 		return 0.0;
 	}
 
 	// if neighbor independent protocol is selected, return 0.0
-	if( ! basic::options::option[ basic::options::OptionKeys::score::ramaneighbors ] )
-	{
+	if ( ! basic::options::option[ basic::options::OptionKeys::score::ramaneighbors ] ) {
 		return 0.0;
 	}
 
@@ -472,7 +469,7 @@ Ramachandran2B::RamaE(
 
 	using namespace numeric;
 
-debug_assert( rsd.is_protein() );
+	debug_assert( rsd.is_protein() );
 
 	Real const phi
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1)));
@@ -480,7 +477,7 @@ debug_assert( rsd.is_protein() );
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2)));
 
 	if ( rsd.type().has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT )
-		|| rsd.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) { //phi == 0.0 || psi == 0.0 ) { // begin or end of chain
+			|| rsd.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) { //phi == 0.0 || psi == 0.0 ) { // begin or end of chain
 		return 0.0;
 	}
 
@@ -741,25 +738,25 @@ Ramachandran2B::read_rama()
 	T << "Read in ramachandran map: " <<  energyFileName << std::endl;
 	utility::io::izstream iRamaEnergy;
 	basic::database::open( iRamaEnergy, energyFileName );
-	while( ! iRamaEnergy.eof() ) {
+	while ( ! iRamaEnergy.eof() ) {
 		++line_count;
 		iRamaEnergy >> aa_num >> aa_num_left >> aa_num_right >> ss_type >> phi_bin >> psi_bin >> tCounts >> tProb >> tEnergy;
 		// std::cout << " aa_num " << aa_num << " aa_num_left " << aa_num_left << " aa_num_right " << aa_num_right << " ss_type " << ss_type <<
-		// 			" phi_bin " << phi_bin << " psi_bin " << psi_bin << " tProb " << tProb << " tEnergy " << tEnergy << std::endl;
-		if(aa_num > n_aa_) continue;
+		//    " phi_bin " << phi_bin << " psi_bin " << psi_bin << " tProb " << tProb << " tEnergy " << tEnergy << std::endl;
+		if ( aa_num > n_aa_ ) continue;
 
 		int phiIndex = phi_bin / 10 + 1;
 		int psiIndex = psi_bin / 10 + 1;
 		Real entropy = -1.0 * tProb * tEnergy;
 
-		if( aa_num_left == nullaa && aa_num_right == nullaa ) {
+		if ( aa_num_left == nullaa && aa_num_right == nullaa ) {
 			ram_energ_( phiIndex, psiIndex, aa_num ) = tEnergy;
 			ram_entropy_( aa_num ) += entropy;
-		} else if( aa_num_left != nullaa ) {
+		} else if ( aa_num_left != nullaa ) {
 			ram_energ_left_( phiIndex, psiIndex, aa_num, aa_num_left ) = tEnergy;
 			ram_entropy_left_( aa_num, aa_num_left ) += entropy;
 			left_ram_probabil_( phiIndex, psiIndex, aa_num_left, aa_num ) = tProb;
-		} else if( aa_num_right != nullaa ) {
+		} else if ( aa_num_right != nullaa ) {
 			ram_energ_right_( phiIndex, psiIndex, aa_num, aa_num_right ) = tEnergy;
 			ram_entropy_right_( aa_num, aa_num_right ) += entropy;
 			right_ram_probabil_( phiIndex, psiIndex, aa_num_right, aa_num ) = tProb; // APL changing the indexing here to be consistent w/ left_ram_probabil_
@@ -806,11 +803,11 @@ Ramachandran2B::initialize_rama_sampling_tables()
 /// the input torsion_bin (as answered by core::conformation::get_torsion_bin)
 void
 Ramachandran2B::init_rama_sampling_table(
-   const conformation::ppo_torsion_bin torsion_bin,
-	 ObjexxFCL::FArray4D< Real > const & ram_probability,
-	 ObjexxFCL::FArray2D< utility::vector1< Real > > & cdf,
-	 ObjexxFCL::FArray3D< utility::vector1< Real > > & cdf_by_torsion_bin,
-	 ObjexxFCL::FArray3D< Size > & n_valid_pp_bins_by_ppo_torbin
+	const conformation::ppo_torsion_bin torsion_bin,
+	ObjexxFCL::FArray4D< Real > const & ram_probability,
+	ObjexxFCL::FArray2D< utility::vector1< Real > > & cdf,
+	ObjexxFCL::FArray3D< utility::vector1< Real > > & cdf_by_torsion_bin,
+	ObjexxFCL::FArray3D< Size > & n_valid_pp_bins_by_ppo_torbin
 ) const
 {
 	FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1);
@@ -826,7 +823,7 @@ Ramachandran2B::init_rama_sampling_table(
 			// current_rama_sampling_table[left_aa][aa][right_aa].resize(max_allowed); // I think this is resized later anyway
 			Real allowed_probability_sum = 0.0;
 			for ( int kk = 0; kk < (int) n_phi_; ++kk ) {
-				for (int ll = 0; ll < (int) n_psi_; ++ll) {
+				for ( int ll = 0; ll < (int) n_psi_; ++ll ) {
 
 					// store the cumulative sum up to the current table entry
 					inner_cdf[ kk*n_psi_ + ll +  1 ] = allowed_probability_sum;
@@ -839,7 +836,7 @@ Ramachandran2B::init_rama_sampling_table(
 					Real const cur_psi = binw_ * ( ll - ( ll > n_psi_ / 2 ? n_psi_ : 0 ));
 
 					conformation::ppo_torsion_bin cur_tb = conformation::ppo_torbin_X;
-					if (torsion_bin != conformation::ppo_torbin_X) {
+					if ( torsion_bin != conformation::ppo_torbin_X ) {
 						//  AS -- how can we get the factor properly / without hard-coding? - also: this takes very long...
 						cur_tb = core::conformation::get_torsion_bin(cur_phi, cur_psi);
 					}

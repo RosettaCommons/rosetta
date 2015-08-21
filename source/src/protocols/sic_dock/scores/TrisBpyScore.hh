@@ -32,7 +32,7 @@ namespace scores {
 using core::pose::Pose;
 
 class TrisBpyScore : public RigidScore {
- public:
+public:
 	TrisBpyScore(Pose const & pose, Real const & tolerance=0.3, Real const & min_bpy_contacts_=15);
 	virtual ~TrisBpyScore();
 	core::Real score      ( Xforms const & x1s, Xforms const & x2s ) const;
@@ -41,8 +41,8 @@ class TrisBpyScore : public RigidScore {
 	void show(std::ostream & out                                      , int width=10) const;
 	void show(std::ostream & out, Xforms const & x1s, Xforms const & x2s, int width=10) const;
 	std::string type() const { return "TrisBpy"; }
- private:
- 	Pose const & pose_;
+private:
+	Pose const & pose_;
 	numeric::Xforms bbx_;
 	core::pose::xyzStripeHashPoseCOP cc_;
 	Vecs cb_;

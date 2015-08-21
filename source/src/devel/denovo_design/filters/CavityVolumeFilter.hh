@@ -50,27 +50,27 @@ namespace filters {
 class CavityVolumeFilter : public protocols::filters::Filter {
 public:
 
-  /// @brief Initialize CavityVolumeFilter
-  CavityVolumeFilter();
+	/// @brief Initialize CavityVolumeFilter
+	CavityVolumeFilter();
 
-  /// @brief virtual constructor to allow derivation
+	/// @brief virtual constructor to allow derivation
 	virtual ~CavityVolumeFilter();
 
-  /// @brief Parses the CavityVolumeFilter tags
+	/// @brief Parses the CavityVolumeFilter tags
 	void parse_my_tag(
-	  utility::tag::TagCOP tag,
-	  basic::datacache::DataMap & data,
-	  protocols::filters::Filters_map const &,
-	  protocols::moves::Movers_map const &,
-	  core::pose::Pose const & );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & );
 
-  /// @brief Return the name of this mover.
-  virtual std::string get_name() const;
+	/// @brief Return the name of this mover.
+	virtual std::string get_name() const;
 
-  /// @brief return a fresh instance of this class in an owning pointer
+	/// @brief return a fresh instance of this class in an owning pointer
 	virtual protocols::filters::FilterOP clone() const;
 
-  /// @brief Apply the CavityVolumeFilter. Overloaded apply function from filter base class.
+	/// @brief Apply the CavityVolumeFilter. Overloaded apply function from filter base class.
 	virtual protocols::filters::FilterOP fresh_instance() const;
 	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	virtual core::Real report_sm( core::pose::Pose const & pose ) const;

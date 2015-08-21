@@ -29,47 +29,47 @@ namespace simple_filters {
 
 class StemFinder : public filters::Filter
 {
-  public:
-    StemFinder();
-    virtual ~StemFinder();
-		filters::FilterOP clone() const {
-			return filters::FilterOP( new StemFinder( *this ) );
-		}
-		filters::FilterOP fresh_instance() const{
-			return filters::FilterOP( new StemFinder() );
-		}
+public:
+	StemFinder();
+	virtual ~StemFinder();
+	filters::FilterOP clone() const {
+		return filters::FilterOP( new StemFinder( *this ) );
+	}
+	filters::FilterOP fresh_instance() const{
+		return filters::FilterOP( new StemFinder() );
+	}
 
-		virtual bool apply( core::pose::Pose const & pose ) const;
-		virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
-		virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-		void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & );
+	virtual bool apply( core::pose::Pose const & pose ) const;
+	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
+	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & );
 
-		core::Real from_res() const{ return from_res_; }
-		void from_res( core::Real const r ){ from_res_ = r; }
-		core::Real to_res() const{ return to_res_; }
-		void to_res( core::Real const r ){ to_res_ = r; }
-		core::Real rmsd() const{ return rmsd_; }
-		void rmsd( core::Real const c ){ rmsd_ = c ;}
+	core::Real from_res() const{ return from_res_; }
+	void from_res( core::Real const r ){ from_res_ = r; }
+	core::Real to_res() const{ return to_res_; }
+	void to_res( core::Real const r ){ to_res_ = r; }
+	core::Real rmsd() const{ return rmsd_; }
+	void rmsd( core::Real const c ){ rmsd_ = c ;}
 
-		utility::vector1< std::string > filenames() const{ return filenames_; }
-		void add_filename( std::string const s );
+	utility::vector1< std::string > filenames() const{ return filenames_; }
+	void add_filename( std::string const s );
 
-		bool stems_on_sse() const{ return stems_on_sse_; }
-		void stems_on_sse( bool const b ){ stems_on_sse_ = b; }
-		core::Real neighbor_distance() const{ return neighbor_distance_; }
-		void neighbor_distance( core::Real const n ) { neighbor_distance_ = n; }
-		void stems_are_neighbors( bool const b ){ stems_are_neighbors_ = b; }
-		bool stems_are_neighbors() const{ return stems_are_neighbors_; }
-		void neighbor_separation( core::Size const c ){ neighbor_separation_ = c; }
-		core::Size neighbor_separation() const{ return neighbor_separation_; }
-	private:
-		core::Size from_res_, to_res_; // dflt 0,0; If not specified goes across the entire range of the -s pdb
-		core::Real rmsd_; //dflt 0.7; the maximal RMSd. If no positions fall under this, the filter fails
-		utility::vector1< std::string > filenames_; //dflt empty; the PDB file names to search
-		bool stems_on_sse_; //dflt false; if false look for stems on any bb
-		bool stems_are_neighbors_; //dflt true; stems need to be within a certain 3D distance
-		core::Real neighbor_distance_; //dflt 4.0A
-		core::Size neighbor_separation_; //dflt 10; at least 10 aa separation between residues
+	bool stems_on_sse() const{ return stems_on_sse_; }
+	void stems_on_sse( bool const b ){ stems_on_sse_ = b; }
+	core::Real neighbor_distance() const{ return neighbor_distance_; }
+	void neighbor_distance( core::Real const n ) { neighbor_distance_ = n; }
+	void stems_are_neighbors( bool const b ){ stems_are_neighbors_ = b; }
+	bool stems_are_neighbors() const{ return stems_are_neighbors_; }
+	void neighbor_separation( core::Size const c ){ neighbor_separation_ = c; }
+	core::Size neighbor_separation() const{ return neighbor_separation_; }
+private:
+	core::Size from_res_, to_res_; // dflt 0,0; If not specified goes across the entire range of the -s pdb
+	core::Real rmsd_; //dflt 0.7; the maximal RMSd. If no positions fall under this, the filter fails
+	utility::vector1< std::string > filenames_; //dflt empty; the PDB file names to search
+	bool stems_on_sse_; //dflt false; if false look for stems on any bb
+	bool stems_are_neighbors_; //dflt true; stems need to be within a certain 3D distance
+	core::Real neighbor_distance_; //dflt 4.0A
+	core::Size neighbor_separation_; //dflt 10; at least 10 aa separation between residues
 };
 
 /// potentially useful utility functions
@@ -86,7 +86,7 @@ utility::vector1< core::pose::PoseOP > load_poses( utility::vector1< std::string
 /// @brief find the minimal atom-atom distance between two residues
 core::Real
 res_res_min_distance( core::pose::Pose const &p1, core::Size const r1,
-											core::pose::Pose const &p2, core::Size const r2 );
+	core::pose::Pose const &p2, core::Size const r2 );
 
 }
 }

@@ -97,7 +97,7 @@ NormalizedEvaluatedArchive::NormalizedEvaluatedArchive() {
 }
 
 NormalizedEvaluatedArchive::NormalizedEvaluatedArchive( ArchiveManagerAP ptr )
-	: EvaluatedArchive( ptr )
+: EvaluatedArchive( ptr )
 {
 	runtime_assert( options_registered_ );
 	score_variations_are_clean_ = false;
@@ -132,10 +132,10 @@ void NormalizedEvaluatedArchive::initialize() {
 
 //completely overwrites the EvaluatedArchive  version. Doesn't call Parent function.
 bool NormalizedEvaluatedArchive::add_evaluated_structure(
-  core::io::silent::SilentStructOP evaluated_decoy,
+	core::io::silent::SilentStructOP evaluated_decoy,
 	core::io::silent::SilentStructOP alternative_decoy,
 	Batch const& batch
- ) {
+) {
 	bool added( Parent::add_evaluated_structure( evaluated_decoy, alternative_decoy, batch ) );
 	bool added_variance( added );
 	if ( variance_archive_ ) {
@@ -202,13 +202,13 @@ bool NormalizedEvaluatedArchive::determine_score_variations() const {
 				if ( is_start_zero_score( it->first ) ) {
 					score_variations_[ it->first ] = values[highQ];
 					tr.Info << "score variation of " << score_variations_[ it->first ] << " for " << name
-									<< " between 0 (forced)"
-									<< " and "     << values[highQ] << " at " << highQ << std::endl;
+						<< " between 0 (forced)"
+						<< " and "     << values[highQ] << " at " << highQ << std::endl;
 				} else {
 					score_variations_[ it->first ] = std::abs( values[highQ]-values[lowQ] );
 					tr.Info << "score variation of " << score_variations_[ it->first ] << " for " << name
-									<< " between " << values[lowQ]  << " at " << lowQ
-									<< " and "     << values[highQ] << " at " << highQ << std::endl;
+						<< " between " << values[lowQ]  << " at " << lowQ
+						<< " and "     << values[highQ] << " at " << highQ << std::endl;
 				}
 			} else { //not enough decoys or not activated
 				score_variations_[ it->first ] = 1.0;

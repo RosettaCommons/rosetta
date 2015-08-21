@@ -38,76 +38,76 @@ namespace stepwise {
 namespace sampler {
 namespace rigid_body {
 
-	//Constructor
-	EulerAngles::EulerAngles():
-		alpha_( 0.0 ),
-		beta_( 0.0 ),
-		gamma_( 0.0 ),
-		z_( 1.0 )
-	{}
+//Constructor
+EulerAngles::EulerAngles():
+	alpha_( 0.0 ),
+	beta_( 0.0 ),
+	gamma_( 0.0 ),
+	z_( 1.0 )
+{}
 
-	//Constructor
-	EulerAngles::EulerAngles( numeric::xyzMatrix< core::Real > const & rotation_matrix )
-	{
-		initialize_from_rotation_matrix( rotation_matrix );
-	}
+//Constructor
+EulerAngles::EulerAngles( numeric::xyzMatrix< core::Real > const & rotation_matrix )
+{
+	initialize_from_rotation_matrix( rotation_matrix );
+}
 
-	//Destructor
-	EulerAngles::~EulerAngles()
-	{}
+//Destructor
+EulerAngles::~EulerAngles()
+{}
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	EulerAngles::set_beta( Real const setting ){
-		beta_ = setting;
-		z_ = cos( beta_ );
-	}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+EulerAngles::set_beta( Real const setting ){
+	beta_ = setting;
+	z_ = cos( beta_ );
+}
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	EulerAngles::set_z( Real const setting ){
-		z_ = setting;
-		runtime_assert( (z_ >= -1.0 ) && ( z_ <= 1.0 ) );
-		beta_ = acos( z_ );
-	}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+EulerAngles::set_z( Real const setting ){
+	z_ = setting;
+	runtime_assert( (z_ >= -1.0 ) && ( z_ <= 1.0 ) );
+	beta_ = acos( z_ );
+}
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	EulerAngles::initialize_from_rotation_matrix( numeric::xyzMatrix< core::Real > const & rotation_matrix ){
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+EulerAngles::initialize_from_rotation_matrix( numeric::xyzMatrix< core::Real > const & rotation_matrix ){
 
-		Real determinant = rotation_matrix.det();
-		runtime_assert(  std::abs( determinant - 1.0 ) < 0.000001 );
+	Real determinant = rotation_matrix.det();
+	runtime_assert(  std::abs( determinant - 1.0 ) < 0.000001 );
 
-		numeric::xyzMatrix< core::Real > const & M = rotation_matrix;
-		const Real DEGS_PER_RAD = 180. / numeric::NumericTraits < Real > ::pi();
+	numeric::xyzMatrix< core::Real > const & M = rotation_matrix;
+	const Real DEGS_PER_RAD = 180. / numeric::NumericTraits < Real > ::pi();
 
-		alpha_ = atan2( M.xz(),  - M.yz() ) * DEGS_PER_RAD;
-		z_     = M.zz();
-		gamma_ = atan2( M.zx(), M.zy() ) * DEGS_PER_RAD ;  //tan2(y,x)=gamma
+	alpha_ = atan2( M.xz(),  - M.yz() ) * DEGS_PER_RAD;
+	z_     = M.zz();
+	gamma_ = atan2( M.zx(), M.zy() ) * DEGS_PER_RAD ;  //tan2(y,x)=gamma
 
-		beta_ = acos( z_ );
-	}
+	beta_ = acos( z_ );
+}
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	EulerAngles::convert_to_rotation_matrix( numeric::xyzMatrix< core::Real > & rotation_matrix ){
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+EulerAngles::convert_to_rotation_matrix( numeric::xyzMatrix< core::Real > & rotation_matrix ){
 
-		//Probably could save time if determine x and y and take cross product to determine z
-		//Should determine using both ways and check for consistency
+	//Probably could save time if determine x and y and take cross product to determine z
+	//Should determine using both ways and check for consistency
 
-		rotation_matrix.xx( cos( alpha_ )*cos( gamma_ ) - sin( alpha_ )*cos( beta_ )*sin( gamma_ ) );
-		rotation_matrix.xy(  - cos( alpha_ )*sin( gamma_ ) - sin( alpha_ )*cos( beta_ )*cos( gamma_ ) );
-		rotation_matrix.xz( sin( alpha_ )*sin( beta_ ) );
-		rotation_matrix.yx( sin( alpha_ )*cos( gamma_ ) + cos( alpha_ )*cos( beta_ )*sin( gamma_ ) );
-		rotation_matrix.yy(  - sin( alpha_ )*sin( gamma_ ) + cos( alpha_ )*cos( beta_ )*cos( gamma_ ) ); //Found bug on Feb 13, 2010...previously had cos(gamma_) instead of sin(gamma_)
-		rotation_matrix.yz(  - cos( alpha_ )*sin( beta_ ) );
-		rotation_matrix.zx( sin( beta_ ) *sin( gamma_ ) );
-		rotation_matrix.zy( sin( beta_ ) *cos( gamma_ ) );
-		rotation_matrix.zz( cos( beta_ ) );
+	rotation_matrix.xx( cos( alpha_ )*cos( gamma_ ) - sin( alpha_ )*cos( beta_ )*sin( gamma_ ) );
+	rotation_matrix.xy(  - cos( alpha_ )*sin( gamma_ ) - sin( alpha_ )*cos( beta_ )*cos( gamma_ ) );
+	rotation_matrix.xz( sin( alpha_ )*sin( beta_ ) );
+	rotation_matrix.yx( sin( alpha_ )*cos( gamma_ ) + cos( alpha_ )*cos( beta_ )*sin( gamma_ ) );
+	rotation_matrix.yy(  - sin( alpha_ )*sin( gamma_ ) + cos( alpha_ )*cos( beta_ )*cos( gamma_ ) ); //Found bug on Feb 13, 2010...previously had cos(gamma_) instead of sin(gamma_)
+	rotation_matrix.yz(  - cos( alpha_ )*sin( beta_ ) );
+	rotation_matrix.zx( sin( beta_ ) *sin( gamma_ ) );
+	rotation_matrix.zy( sin( beta_ ) *cos( gamma_ ) );
+	rotation_matrix.zz( cos( beta_ ) );
 
-		Real determinant = rotation_matrix.det();
-		runtime_assert(  std::abs( determinant - 1.0 ) < 0.000001 );
-	}
+	Real determinant = rotation_matrix.det();
+	runtime_assert(  std::abs( determinant - 1.0 ) < 0.000001 );
+}
 
 
 } //rigid_body

@@ -30,7 +30,7 @@ public:
 
 private:
 	/// @brief Array of filters applied to a constellation.
-  static utility::vector1<FiltPtr> filters;
+	static utility::vector1<FiltPtr> filters;
 
 public:
 

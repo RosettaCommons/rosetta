@@ -42,7 +42,7 @@ public:
 public:
 
 	RotamerLibraryScratchSpace();
-    //RotamerLibraryScratchSpace();
+	//RotamerLibraryScratchSpace();
 
 
 	virtual ~RotamerLibraryScratchSpace();
@@ -54,7 +54,7 @@ public:
 	Real4 const & chisd() const { return chisd_; }
 	Real4 const & chidev() const { return chidev_; }
 	Real4 const & chidevpen() const { return chidevpen_; }
-    Real5 const & drotprob_dbb() const { return drotprob_dbb_; } // Only preserved temporarily for use in the semirotameric libraries ('08, '10)
+	Real5 const & drotprob_dbb() const { return drotprob_dbb_; } // Only preserved temporarily for use in the semirotameric libraries ('08, '10)
 	Real5 const & dneglnrotprob_dbb() const { return dneglnrotprob_dbb_; }
 	FiveReal4 const & dchimean_dbb() const { return dchimean_dbb_; }
 	FiveReal4 const & dchisd_dbb() const { return dchisd_dbb_; }
@@ -68,7 +68,7 @@ public:
 	Real4 const & dE_dchi_semi() const { return dE_dchi_semi_; }
 
 	FiveReal4 const & dE_dbb_dev_perchi() const { return dE_dbb_dev_perchi_; }
-	
+
 	Real fa_dun_tot() const { return fa_dun_tot_; }
 	Real fa_dun_rot() const { return fa_dun_rot_; }
 	Real fa_dun_semi() const { return fa_dun_semi_; }
@@ -97,7 +97,7 @@ public:
 	Real4  & dE_dchi_semi() { return dE_dchi_semi_; }
 
 	FiveReal4 & dE_dbb_dev_perchi() { return dE_dbb_dev_perchi_; }
-	
+
 	Real & fa_dun_tot() { return fa_dun_tot_; }
 	Real & fa_dun_rot() { return fa_dun_rot_; }
 	Real & fa_dun_semi() { return fa_dun_semi_; }
@@ -111,12 +111,12 @@ public:
 
 private:
 
-  //////////////////////////////////////////////////////
-  // IMPORTANT: If you add a new member variable here,
-  // be sure it's zero initialized in the constructor.
-  // (Not all uses of RotamerLibraryScratchSpace will be
-  // handed to a Dunbrack rotamer library before use.)
-  //////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////
+	// IMPORTANT: If you add a new member variable here,
+	// be sure it's zero initialized in the constructor.
+	// (Not all uses of RotamerLibraryScratchSpace will be
+	// handed to a Dunbrack rotamer library before use.)
+	//////////////////////////////////////////////////////
 
 	Real rotprob_;
 	Real negln_rotprob_;

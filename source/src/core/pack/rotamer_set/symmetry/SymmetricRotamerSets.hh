@@ -42,7 +42,7 @@ class SymmetricRotamerSets : public RotamerSets
 public:
 	typedef task::PackerTaskCOP PackerTaskCOP;
 	typedef conformation::symmetry::SymmetricConformation SymmetricConformation;
-  typedef conformation::symmetry::SymmetryInfoCOP SymmetryInfoCOP;
+	typedef conformation::symmetry::SymmetryInfoCOP SymmetryInfoCOP;
 
 public:
 	SymmetricRotamerSets();

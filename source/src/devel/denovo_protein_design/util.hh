@@ -42,7 +42,7 @@ core::Size numberhelices( core::pose::Pose & pose);
 //
 void create_nucleated_sequence_from_template_pdb( std::string & nucleated_sequence , utility::vector1< bool > & KeepNativeTorsions );
 // reads in a secondary structure file from the command line and places info in a vector
-void read_ss_file_into_vector( std::string const & filename, 	utility::vector1< char > & secstructs  );
+void read_ss_file_into_vector( std::string const & filename,  utility::vector1< char > & secstructs  );
 //
 void read_hp_file_into_vector( std::string const & filename,  utility::vector1< char > & hydrophobic_polar_sequence_v );
 // creates a hydrophobic polar pattern from a secondary structure

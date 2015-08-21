@@ -97,14 +97,14 @@ EvaluatorFactory::add_evaluators(
 
 	bool found(false);
 
-	for(EvaluatorCreatorMap::const_iterator type = types_.begin(), type_end = types_.end(); type != type_end; ++type) {
-		if(type->first == type_name){
+	for ( EvaluatorCreatorMap::const_iterator type = types_.begin(), type_end = types_.end(); type != type_end; ++type ) {
+		if ( type->first == type_name ) {
 			type->second->add_evaluators(eval);
 			found=true;
 			break;
 		}
 	}
-	if (!found) {
+	if ( !found ) {
 		stringstream error_msg;
 		error_msg
 			<< "Attempting to create unrecognized Evaluator "
@@ -113,7 +113,7 @@ EvaluatorFactory::add_evaluators(
 			<< "register a new Evaluator in the EvaluatorFactory" << endl
 			<< "known Evaluator types are:" << endl;
 
-	for(EvaluatorCreatorMap::const_iterator type = types_.begin(), type_end = types_.end(); type != type_end; ++type) {
+		for ( EvaluatorCreatorMap::const_iterator type = types_.begin(), type_end = types_.end(); type != type_end; ++type ) {
 			error_msg << "\t" << type->first << endl;
 		}
 		utility_exit_with_message(error_msg.str());
@@ -125,7 +125,7 @@ EvaluatorFactory::add_all_evaluators(
 	MetaPoseEvaluator & eval
 ) {
 
-	for(EvaluatorCreatorMap::const_iterator type = types_.begin(), type_end = types_.end(); type != type_end; ++type) {
+	for ( EvaluatorCreatorMap::const_iterator type = types_.begin(), type_end = types_.end(); type != type_end; ++type ) {
 		type->second->add_evaluators(eval);
 	}
 }

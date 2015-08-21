@@ -91,10 +91,10 @@ public:
 	}
 
 private:
-  AA this_aa_;
-  Size rot_number_;
-  utility::vector1< Real > data_;
-  utility::vector1< Real > fixed_data_;
+	AA this_aa_;
+	Size rot_number_;
+	utility::vector1< Real > data_;
+	utility::vector1< Real > fixed_data_;
 };
 
 class PNatRotOptERotamerData : public utility::pointer::ReferenceCount
@@ -1201,7 +1201,7 @@ public:
 	OptEData(
 		ScoreTypes const & fixed_score_list,
 		ScoreTypes const & free_score_list )
-	 :
+	:
 		fixed_energy_terms_( fixed_score_list ),
 		energy_terms_( free_score_list )
 	{}

@@ -9,17 +9,17 @@
 
 /// @file       protocols/membrane/SpinAroundPartnerMover.cc
 /// @brief      Spins the downstream partner around the upstream partner
-/// @details	Spins the downstream partner around the upstream partner in the
-///				membrane to probe all kinds of interfaces. Both embedding normals
-///				are approximately conserved, i.e. the partners aren't flipped
-///				in the membrane.
+/// @details Spins the downstream partner around the upstream partner in the
+///    membrane to probe all kinds of interfaces. Both embedding normals
+///    are approximately conserved, i.e. the partners aren't flipped
+///    in the membrane.
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_SpinAroundPartnerMover_cc
 #define INCLUDED_protocols_membrane_SpinAroundPartnerMover_cc
 
 // Unit Headers
-#include <protocols/membrane/SpinAroundPartnerMover.hh> 
+#include <protocols/membrane/SpinAroundPartnerMover.hh>
 #include <protocols/membrane/SpinAroundPartnerMoverCreator.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -62,15 +62,15 @@ using namespace core;
 using namespace core::pose;
 using namespace core::conformation::membrane;
 using namespace protocols::moves;
-	
+
 /////////////////////
 /// Constructors  ///
 /////////////////////
 
 /// @brief Default Constructor
 /// @details Defaults: jump = 1, sampling range = 100
-///			 Sampling range of 100 means that both x and y are sampled from
-///			 -100 to +100 before calling DockingSlideIntoContact
+///    Sampling range of 100 means that both x and y are sampled from
+///    -100 to +100 before calling DockingSlideIntoContact
 SpinAroundPartnerMover::SpinAroundPartnerMover() : protocols::moves::Mover()
 {
 	set_defaults();
@@ -83,7 +83,7 @@ SpinAroundPartnerMover::SpinAroundPartnerMover( Size jump_num )
 {
 	set_defaults();
 	register_options();
-	
+
 	jump_ = jump_num;
 }
 
@@ -93,7 +93,7 @@ SpinAroundPartnerMover::SpinAroundPartnerMover( Size jump_num, Size range )
 {
 	set_defaults();
 	register_options();
-	
+
 	jump_ = jump_num;
 	rand_range_ = true;
 	range_ = range;
@@ -111,12 +111,12 @@ SpinAroundPartnerMover::SpinAroundPartnerMover( SpinAroundPartnerMover const & s
 
 /// @brief Assignment Operator
 SpinAroundPartnerMover & SpinAroundPartnerMover::operator = ( SpinAroundPartnerMover const & src ) {
-	
+
 	// Abort self-assignment.
-	if (this == &src) {
+	if ( this == &src ) {
 		return *this;
 	}
-		
+
 	// Otherwise, create a new object
 	return *( new SpinAroundPartnerMover( *this ) );
 }
@@ -143,15 +143,15 @@ SpinAroundPartnerMover::fresh_instance() const {
 /// @brief Pase Rosetta Scripts Options for this Mover
 void
 SpinAroundPartnerMover::parse_my_tag(
-	 utility::tag::TagCOP /*tag*/,
-	 basic::datacache::DataMap &,
-	 protocols::filters::Filters_map const &,
-	 protocols::moves::Movers_map const &,
-	 core::pose::Pose const &
-	 ) {
+	utility::tag::TagCOP /*tag*/,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
+) {
 
 	// TODO: implement this
-	
+
 }
 
 /// @brief Create a new copy of this mover
@@ -203,20 +203,20 @@ void SpinAroundPartnerMover::set_y( Real y ) {
 
 /// @brief Flip the downstream partner in the membrane
 void SpinAroundPartnerMover::apply( Pose & pose ) {
-	
+
 	using namespace numeric;
 	using namespace core::conformation::membrane;
 	using namespace protocols::rigid;
 	using namespace protocols::membrane::geometry;
 	using namespace protocols::membrane;
-	
+
 	TR << "Spinning downstream partner around upstream partner in the membrane..." << std::endl;
 
 	// starting foldtree
 	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
 	pose.fold_tree().show( TR );
 	core::kinematics::FoldTree orig_ft = pose.fold_tree();
-	
+
 	// compute downstream empedding
 	SpanningTopologyOP topo = pose.conformation().membrane_info()->spanning_topology();
 	SpanningTopologyOP topo_up_( new SpanningTopology() );
@@ -237,7 +237,7 @@ void SpinAroundPartnerMover::apply( Pose & pose ) {
 		x_ -= ( range_ / 2 );
 		y_ -= ( range_ / 2 );
 	}
-	
+
 	// set new embedding vector of downstream partner
 	core::Vector new_emb_center( x_, y_, 0 );
 	TR << "translation: new emb center: " << new_emb_center.to_string() << std::endl;
@@ -245,7 +245,7 @@ void SpinAroundPartnerMover::apply( Pose & pose ) {
 	TR << "translation: vector: " << trans_vector.to_string() << std::endl;
 	TranslationMoverOP trans( new TranslationMover( trans_vector, jump_ ) );
 	trans->apply( pose );
-	
+
 	// reset foldtree and show final one
 	pose.fold_tree( orig_ft );
 	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
@@ -259,21 +259,21 @@ void SpinAroundPartnerMover::apply( Pose & pose ) {
 
 /// @brief Register Options from Command Line
 void SpinAroundPartnerMover::register_options() {
-	
+
 	using namespace basic::options;
 	option.add_relevant( OptionKeys::mp::setup::spanfiles );
-	
+
 }
 
 /// @brief Set default values
 void SpinAroundPartnerMover::set_defaults() {
-	
+
 	jump_ = 1;
 	rand_range_ = true;
 	range_ = 100;
 	x_ = 50.0;
 	y_ = 50.0;
-	
+
 }// set_defaults
 
 

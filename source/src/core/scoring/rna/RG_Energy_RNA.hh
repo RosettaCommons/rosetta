@@ -71,10 +71,10 @@ public:
 		EnergyMap & totals
 	) const;
 
-/////////////////////////////////
+	/////////////////////////////////
 	void
 	eval_atom_derivative(
-	  id::AtomID const & atom_id,
+		id::AtomID const & atom_id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
 		ScoreFunction const &,
@@ -91,8 +91,8 @@ private:
 
 	mutable core::Vector center_of_mass_;
 	mutable core::Real rg_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

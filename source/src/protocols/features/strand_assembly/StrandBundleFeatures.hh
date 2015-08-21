@@ -11,13 +11,13 @@
 /// @brief extract beta strand, strand pairs, sandwiches in pdb file, see wiki.rosettacommons.org/index.php/MultiBodyFeaturesReporters#StrandBundleFeatures for detail
 /// @author Doo Nam Kim (based on Tim Jacobs' helix_assembly)
 /// @overview
-///		@ task 1: Identify all beta-strands
-///			@ task 1-1: Write beta-strands into database
-///		@ task 2: Identify all beta-sheets with these strands
-///			@ task 2-1: Identify beta-sheets if their strands' two consecutive N-O pairs H-bond to each other
-///			@ task 2-2: Write beta-sheets into database
-///		@ task 3: Identify all beta-sandwiches with these sheets
-///			@ task 3-1: Write beta-sandwiches into database
+///  @ task 1: Identify all beta-strands
+///   @ task 1-1: Write beta-strands into database
+///  @ task 2: Identify all beta-sheets with these strands
+///   @ task 2-1: Identify beta-sheets if their strands' two consecutive N-O pairs H-bond to each other
+///   @ task 2-2: Write beta-sheets into database
+///  @ task 3: Identify all beta-sandwiches with these sheets
+///   @ task 3-1: Write beta-sandwiches into database
 
 #ifndef INCLUDED_protocols_features_strand_assembly_StrandBundleFeatures_hh
 #define INCLUDED_protocols_features_strand_assembly_StrandBundleFeatures_hh
@@ -78,15 +78,15 @@ public:
 
 	utility::vector1<StrandFragment> get_full_strands(StructureID struct_id, utility::sql_database::sessionOP db_session);
 	utility::vector1<StrandFragment> get_selected_strands(StructureID struct_id, utility::sql_database::sessionOP db_session);
-	
+
 	utility::vector1<StrandFragment> get_strand_pairs(StructureID struct_id, utility::sql_database::sessionOP db_session);
 
 	utility::vector1<StrandFragment> get_strand_from_bss_id(StructureID struct_id, utility::sql_database::sessionOP db_session, core::Size bss_id);
-	
-	bool find_antiparallel	(core::pose::Pose const & pose, StrandFragment strand_i, StrandFragment strand_j);
-	bool find_parallel	(core::pose::Pose const & pose, StrandFragment strand_i, StrandFragment strand_j);
 
-	bool 
+	bool find_antiparallel (core::pose::Pose const & pose, StrandFragment strand_i, StrandFragment strand_j);
+	bool find_parallel (core::pose::Pose const & pose, StrandFragment strand_i, StrandFragment strand_j);
+
+	bool
 	check_strand_too_closeness (
 		core::pose::Pose const & pose,
 		StrandFragment strand_i, StrandFragment strand_j);
@@ -110,7 +110,7 @@ public:
 		StrandFragment strand_j,
 		bool antiparalell);
 
-	bool 
+	bool
 	final_check_sw_by_dis (
 		core::pose::Pose const & pose,
 		StrandFragment temp_strand_ii_i,
@@ -118,22 +118,22 @@ public:
 		StrandFragment temp_strand_jj_i,
 		StrandFragment temp_strand_jj_j,
 		bool antiparalell // if false, find parallel way
-		);
+	);
 
-	bool	judge_sw_dis_too_close (
+	bool judge_sw_dis_too_close (
 		core::pose::Pose const & pose,
 		StrandFragment temp_strand_ii_i,
 		StrandFragment temp_strand_ii_j,
 		StrandFragment temp_strand_jj_i,
 		StrandFragment temp_strand_jj_j);
-		
-	bool	judge_sw_torsion (
+
+	bool judge_sw_torsion (
 		core::pose::Pose const & pose,
 		StrandFragment temp_strand_ii_i,
 		StrandFragment temp_strand_ii_j,
 		StrandFragment temp_strand_jj_i,
 		StrandFragment temp_strand_jj_j);
-	
+
 	core::Real
 	judge_sw_inter_dis (
 		core::pose::Pose const & pose,
@@ -141,45 +141,45 @@ public:
 		StrandFragment temp_strand_ii_j,
 		StrandFragment temp_strand_jj_i,
 		StrandFragment temp_strand_jj_j);
-	
-	core::Size round	(core::Real x);
-	
-	core::Size	get_nearest_res_from_strand(
+
+	core::Size round (core::Real x);
+
+	core::Size get_nearest_res_from_strand(
 		core::pose::Pose const & pose,
 		StrandFragment strand_to_be_searched,
-		core::Size	rounded_resnum);
-	
-	core::Real 
-	sheet_torsion	(
+		core::Size rounded_resnum);
+
+	core::Real
+	sheet_torsion (
 		core::pose::Pose const & pose,
 		StrandFragment strand_i,
 		StrandFragment strand_j);
-	
-	bool judge_facing	(
+
+	bool judge_facing (
 		core::pose::Pose const & pose,
 		StrandFragment strand_ii_i,
 		StrandFragment strand_ii_j,
 		StrandFragment strand_jj_i,
 		StrandFragment strand_jj_j);
-	
-	core::Real shortest_dis_sidechain	(core::pose::Pose const & pose, StrandFragment strand_i, StrandFragment strand_j);
-	
-	core::Real get_shortest_among_4	(
+
+	core::Real shortest_dis_sidechain (core::pose::Pose const & pose, StrandFragment strand_i, StrandFragment strand_j);
+
+	core::Real get_shortest_among_4 (
 		core::Real val_shortest_dis_sidechain_1,
 		core::Real val_shortest_dis_sidechain_2,
 		core::Real val_shortest_dis_sidechain_3,
-		core::Real val_shortest_dis_sidechain_4);	
-	
-	core::Real sheet_dis_by_terminals	(core::pose::Pose const & pose, StrandFragment strand_i, StrandFragment strand_j);
-	
+		core::Real val_shortest_dis_sidechain_4);
+
+	core::Real sheet_dis_by_terminals (core::pose::Pose const & pose, StrandFragment strand_i, StrandFragment strand_j);
+
 
 private:
 
 	core::Size
-	min_num_strands_to_deal_;
+		min_num_strands_to_deal_;
 
 	core::Size
-	max_num_strands_to_deal_;
+		max_num_strands_to_deal_;
 
 	bool extract_native_only_;
 	core::Size min_res_in_strand_;
@@ -189,7 +189,7 @@ private:
 	core::Real min_sheet_dis_;
 	core::Real max_sheet_dis_;
 	core::Real min_sheet_torsion_;
-	core::Real max_sheet_torsion_;	
+	core::Real max_sheet_torsion_;
 	core::Real min_sheet_angle_;
 	core::Real max_sheet_angle_;
 	core::Real min_shortest_dis_sidechain_inter_sheet_;

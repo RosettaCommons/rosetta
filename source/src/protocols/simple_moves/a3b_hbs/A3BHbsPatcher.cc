@@ -60,7 +60,7 @@ namespace protocols {
 namespace simple_moves {
 namespace a3b_hbs {
 
-	
+
 void A3BHbsPatcher::apply( core::pose::Pose & pose )
 {
 	TR<< "patching residues" <<std::endl;
@@ -73,7 +73,7 @@ void A3BHbsPatcher::apply( core::pose::Pose & pose )
 	runtime_assert ( hbs_post_pos_ != 1 );
 
 	chemical::ResidueTypeSetCOP restype_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-	
+
 	std::string const pre_base_name( core::chemical::residue_type_base_name( pose.residue_type( hbs_pre_pos_ ) ) );
 	std::string const post_base_name( core::chemical::residue_type_base_name( pose.residue_type( hbs_post_pos_ ) ) );
 	TR << "pre restype basename: " << pre_base_name << std::endl;
@@ -81,35 +81,35 @@ void A3BHbsPatcher::apply( core::pose::Pose & pose )
 
 	//awatkins: check for proline
 	if ( pre_base_name == "PRO" || pre_base_name == "DPRO" ||
-		 post_base_name == "PRO" || post_base_name == "DPRO" ) {
-    	utility_exit_with_message("Cannot patch proline");
+			post_base_name == "PRO" || post_base_name == "DPRO" ) {
+		utility_exit_with_message("Cannot patch proline");
 	}
-	if ( pose.residue(hbs_pre_pos_).has_variant_type(chemical::A3B_HBS_POST) == 1) {
-    	utility_exit_with_message("Cannot patch A3B_HBS_PRE on an A3B_HBS_POST");
+	if ( pose.residue(hbs_pre_pos_).has_variant_type(chemical::A3B_HBS_POST) == 1 ) {
+		utility_exit_with_message("Cannot patch A3B_HBS_PRE on an A3B_HBS_POST");
 	}
-	if ( pose.residue(hbs_post_pos_).has_variant_type(chemical::A3B_HBS_PRE) == 1) {
-    	utility_exit_with_message("Cannot patch A3B_HBS_POST on an A3B_HBS_PRE");
+	if ( pose.residue(hbs_post_pos_).has_variant_type(chemical::A3B_HBS_PRE) == 1 ) {
+		utility_exit_with_message("Cannot patch A3B_HBS_POST on an A3B_HBS_PRE");
 	}
 
 	//awatkins: check if already patched
 	if ( !pose.residue( hbs_pre_pos_ ).has_variant_type( chemical::A3B_HBS_PRE ) ) {
 		TR<< "patching pre" <<std::endl;
-		
+
 		//awatkins: get base residue type
 		chemical::ResidueType const & pre_base_type = pose.residue(hbs_pre_pos_).type();
 		TR<< pre_base_type.name() << std::endl;
-		
+
 		//awatkins: add variant
-		
+
 		std::string const base_name( core::chemical::residue_type_base_name( pre_base_type ) );
-		
+
 		// the desired set of variant types:
 		utility::vector1< std::string > target_variants( pre_base_type.properties().get_list_of_variants() );
 		if ( !pre_base_type.has_variant_type( chemical::A3B_HBS_PRE ) ) {
 			target_variants.push_back( "A3B_HBS_PRE" );
 			target_variants.push_back( "LOWER_TERMINUS_VARIANT" );
 		}
-		
+
 		ResidueTypeCOP rsd = ResidueTypeFinder( *restype_set ).residue_base_name( base_name ).variants( target_variants ).get_representative_type();
 		//restype_set->make_sure_instantiated( rsd.get_self_ptr() );
 		//*new_type = rsd;
@@ -121,43 +121,43 @@ void A3BHbsPatcher::apply( core::pose::Pose & pose )
 		conformation::idealize_position( hbs_pre_pos_, pose.conformation() );
 		TR<< replace_res_pre.name() << std::endl;
 		//conformation::Residue replace_res_pre( *new_type, true );
-		
+
 		//pose.dump_pdb( "rosetta_out_hbs_post_patch.pdb" );
-		
+
 	}// if pre
 	if ( !pose.residue(hbs_post_pos_).has_variant_type( chemical::A3B_HBS_POST ) ) {
 		TR<< "patching post" <<std::endl;
 		//awatkins: get base residue type
 		chemical::ResidueType const & post_base_type = pose.residue(hbs_post_pos_).type();
 		TR<< post_base_type.name() << std::endl;
-		
+
 		std::string const base_name( core::chemical::residue_type_base_name( post_base_type ) );
-		
+
 		// the desired set of variant types:
 		utility::vector1< std::string > target_variants( post_base_type.properties().get_list_of_variants() );
 		if ( !post_base_type.has_variant_type( chemical::A3B_HBS_POST ) ) {
 			target_variants.push_back( "A3B_HBS_POST" );
 		}
-	
+
 		ResidueTypeCOP rsd = ResidueTypeFinder( *restype_set ).residue_base_name( base_name ).variants( target_variants ).get_representative_type();
 		//restype_set->make_sure_instantiated( rsd.get_self_ptr() );
 		//*new_type = rsd;
 		conformation::Residue replace_res_post( *rsd, true );
 		replace_res_post.set_all_chi(pose.residue(hbs_post_pos_).chi());
 		//replace_res_pre.update_residue_connection_mapping();
-					
+
 		//replace_res_pre.mainchain_torsions(pose.residue(hbs_pre_pos_).mainchain_torsions());
-					
+
 		pose.replace_residue( hbs_post_pos_, replace_res_post, true );
 		conformation::idealize_position( hbs_post_pos_, pose.conformation() );
 		TR<< replace_res_post.name() << std::endl;
-					
+
 	}// if post
-	
+
 	core::pose::ncbb::add_a3b_hbs_constraint( pose, hbs_pre_pos_ );
-	
+
 	pose.conformation().declare_chemical_bond( hbs_pre_pos_, "CYH", hbs_post_pos_, "CZH" );
-	
+
 	pose.conformation().update_polymeric_connection( hbs_pre_pos_ );
 	pose.conformation().update_polymeric_connection( hbs_post_pos_ );
 }
@@ -170,8 +170,8 @@ A3BHbsPatcher::get_name() const {
 
 ///@brief
 A3BHbsPatcher::A3BHbsPatcher(
-		core::Size hbs_seq_position
-	): Mover(), hbs_pre_pos_(hbs_seq_position), hbs_post_pos_(hbs_seq_position+2)
+	core::Size hbs_seq_position
+): Mover(), hbs_pre_pos_(hbs_seq_position), hbs_post_pos_(hbs_seq_position+2)
 {
 	Mover::type( "A3BHbsPatcher" );
 

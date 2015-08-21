@@ -27,25 +27,25 @@ namespace stepwise {
 namespace modeler {
 namespace packer {
 
-	StepWisePackerOP
-	get_packer(
-		 core::scoring::ScoreFunctionCOP pack_scorefxn,
-		 utility::vector1< core::Size > const & moving_res_list,
-		 protocols::stepwise::modeler::options::StepWiseModelerOptionsCOP options );
+StepWisePackerOP
+get_packer(
+	core::scoring::ScoreFunctionCOP pack_scorefxn,
+	utility::vector1< core::Size > const & moving_res_list,
+	protocols::stepwise::modeler::options::StepWiseModelerOptionsCOP options );
 
-	utility::vector1< core::Size >
-	figure_out_working_interface_res( core::pose::Pose const & pose,
-																		utility::vector1< core::Size > const & working_moving_res );
+utility::vector1< core::Size >
+figure_out_working_interface_res( core::pose::Pose const & pose,
+	utility::vector1< core::Size > const & working_moving_res );
 
-	utility::vector1< core::Size >
-	figure_out_working_interface_res( core::pose::Pose const & pose,
-																		core::Size const working_moving_res );
+utility::vector1< core::Size >
+figure_out_working_interface_res( core::pose::Pose const & pose,
+	core::Size const working_moving_res );
 
-	void
- 	figure_out_working_interface_res( core::pose::Pose const & pose,
- 																		core::Size const working_moving_res,
-																		utility::vector1< bool > & interface_res /* save work here */,
-																		utility::vector1< utility::vector1< bool > > & checked_pair /* save work here */ );
+void
+figure_out_working_interface_res( core::pose::Pose const & pose,
+	core::Size const working_moving_res,
+	utility::vector1< bool > & interface_res /* save work here */,
+	utility::vector1< utility::vector1< bool > > & checked_pair /* save work here */ );
 
 } //packer
 } //modeler

@@ -80,13 +80,13 @@ StepWiseMasterMover::apply( pose::Pose & pose ) {
 	success_ = false;
 	proposal_density_ratio_ = 1;
 
-	if ( apply_legacy( pose ) )	return;
+	if ( apply_legacy( pose ) ) return;
 
 	success_ = stepwise_move_selector_->figure_out_all_possible_moves( pose );
 	if ( !success_ ) return;
 
 	StepWiseMove const stepwise_move = ( options_->enumerate() ) ? stepwise_move_selector_->swa_moves()[ 1 ] :
-		                                                             stepwise_move_selector_->select_random_move( pose ) ;
+		stepwise_move_selector_->select_random_move( pose ) ;
 
 	apply( pose, stepwise_move, false /* figure_out_all_possible_moves */ );
 
@@ -95,8 +95,8 @@ StepWiseMasterMover::apply( pose::Pose & pose ) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseMasterMover::apply( pose::Pose & pose,
-										StepWiseMove const & stepwise_move,
-										bool const figure_out_all_possible_moves /* = true */ ) {
+	StepWiseMove const & stepwise_move,
+	bool const figure_out_all_possible_moves /* = true */ ) {
 
 	if ( figure_out_all_possible_moves ) stepwise_move_selector_->figure_out_all_possible_moves( pose );
 
@@ -106,7 +106,7 @@ StepWiseMasterMover::apply( pose::Pose & pose,
 
 	if ( stepwise_move.attachments().size() > 0 ) {
 		switch_focus_to_other_pose( pose, const_full_model_info( pose ).get_idx_for_other_pose_with_residue( stepwise_move.attachments()[1].attached_res() ),
-																scorefxn_ /* allows score-based check on other poses */  );
+			scorefxn_ /* allows score-based check on other poses */  );
 	}
 
 	do_the_move( stepwise_move, pose );
@@ -128,11 +128,11 @@ StepWiseMasterMover::apply( pose::Pose & pose,
 void
 StepWiseMasterMover::do_the_move( StepWiseMove const & move, core::pose::Pose & pose ) {
 	MoveType const & move_type = move.move_type();
-	if ( move_type == ADD || move_type == DELETE || move_type == FROM_SCRATCH || move_type == ADD_SUBMOTIF ){
+	if ( move_type == ADD || move_type == DELETE || move_type == FROM_SCRATCH || move_type == ADD_SUBMOTIF ) {
 		add_or_delete_mover_->apply( pose, move );
 	} else {
 		runtime_assert( move_type == RESAMPLE ||
-										move_type == RESAMPLE_INTERNAL_LOCAL );
+			move_type == RESAMPLE_INTERNAL_LOCAL );
 		resample_mover_->apply( pose, move, move_type_string_ );
 	}
 }
@@ -140,7 +140,7 @@ StepWiseMasterMover::do_the_move( StepWiseMove const & move, core::pose::Pose & 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
 StepWiseMasterMover::test_all_moves( pose::Pose & pose ) {
-	//	Pose working_pose = pose; // this is to prevent graphics threads from having a cow. [really?]
+	// Pose working_pose = pose; // this is to prevent graphics threads from having a cow. [really?]
 	num_tested_moves_ = 0;
 	test_all_moves_recursively( pose );
 	return true;
@@ -200,7 +200,7 @@ StepWiseMasterMover::apply_legacy( pose::Pose & pose ) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseMasterMover::initialize( core::scoring::ScoreFunctionCOP scorefxn,
-												 options::StepWiseMonteCarloOptionsCOP options ){
+	options::StepWiseMonteCarloOptionsCOP options ){
 	scorefxn_ = scorefxn;
 	options_ = options;
 	initialize();
@@ -266,21 +266,21 @@ StepWiseMasterMover::initialize(){
 // used in all movers.
 modeler::StepWiseModelerOP
 StepWiseMasterMover::setup_unified_stepwise_modeler(){
- 	using namespace modeler;
+	using namespace modeler;
 	using namespace modeler::rna;
- 	using namespace modeler::protein;
- 	using namespace modeler::precomputed;
+	using namespace modeler::protein;
+	using namespace modeler::precomputed;
 
- 	StepWiseModelerOP stepwise_modeler( new StepWiseModeler( scorefxn_ ) );
+	StepWiseModelerOP stepwise_modeler( new StepWiseModeler( scorefxn_ ) );
 	protocols::stepwise::modeler::options::StepWiseModelerOptionsOP options = options_->setup_modeler_options();
 	stepwise_modeler->set_options( options );
 
 	// Precomputed library will probably be deprecated in favor of SubmotifLibrary soon. -- rhiju, jan 2015.
-	if ( options_->use_precomputed_library() ){
+	if ( options_->use_precomputed_library() ) {
 		PrecomputedLibraryMoverOP precomputed_library_mover( new PrecomputedLibraryMover );
 		stepwise_modeler->set_precomputed_library_mover( precomputed_library_mover );
 	}
- 	return stepwise_modeler;
+	return stepwise_modeler;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -310,7 +310,7 @@ StepWiseMasterMover::preminimize_pose( pose::Pose & pose ) {
 	stepwise_modeler_->set_working_minimize_res( get_moving_res_from_full_model_info( pose ) );
 	stepwise_modeler_->apply( pose );
 	utility::vector1< pose::PoseOP > const & other_pose_list = nonconst_full_model_info( pose ).other_pose_list();
-	for ( Size n = 1; n <= other_pose_list.size(); n++ ){
+	for ( Size n = 1; n <= other_pose_list.size(); n++ ) {
 		preminimize_pose( *( other_pose_list[ n ] ) );
 	}
 }
@@ -319,7 +319,7 @@ StepWiseMasterMover::preminimize_pose( pose::Pose & pose ) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
 StepWiseMasterMover::do_test_move( StepWiseMove const & move,
-													 pose::Pose & pose ) {
+	pose::Pose & pose ) {
 	// preminimization stuff.
 	if ( options_->preminimize() ) preminimize_pose( pose );
 	if ( options_->test_all_moves() ) return test_all_moves( pose );
@@ -354,7 +354,7 @@ StepWiseMasterMover::build_full_model( pose::Pose const & start_pose, pose::Pose
 	add_mover_->set_presample_added_residue(      false );
 
 	std::string move_type_string;
-	while( add_or_delete_mover_->apply( full_model_pose, move_type_string ) ){
+	while ( add_or_delete_mover_->apply( full_model_pose, move_type_string ) ) {
 		TR.Debug << "Building full model: " << move_type_string << std::endl;
 	}
 

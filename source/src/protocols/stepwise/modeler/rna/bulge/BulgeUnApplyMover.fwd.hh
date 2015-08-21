@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/modeler/rna/bulge/BulgeUnApplyMover.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -23,11 +23,11 @@ namespace stepwise {
 namespace modeler {
 namespace rna {
 namespace bulge {
-	
-	class BulgeUnApplyMover;
-	typedef utility::pointer::shared_ptr< BulgeUnApplyMover > BulgeUnApplyMoverOP;
-	typedef utility::pointer::shared_ptr< BulgeUnApplyMover const > BulgeUnApplyMoverCOP;
-	
+
+class BulgeUnApplyMover;
+typedef utility::pointer::shared_ptr< BulgeUnApplyMover > BulgeUnApplyMoverOP;
+typedef utility::pointer::shared_ptr< BulgeUnApplyMover const > BulgeUnApplyMoverCOP;
+
 } //bulge
 } //rna
 } //modeler

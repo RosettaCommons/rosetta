@@ -148,19 +148,19 @@ LoopModeler::LoopModeler() { // {{{1
 LoopModeler::~LoopModeler() {} // {{{1
 
 MoverOP LoopModeler::clone() const { // {{{1
-	// This is dangerous.  It only works if something else is holding a shared 
-	// pointer to this object.  The proper thing to do would be to construct a 
-	// new loop modeler on the fly, but I think this is impossible because 
+	// This is dangerous.  It only works if something else is holding a shared
+	// pointer to this object.  The proper thing to do would be to construct a
+	// new loop modeler on the fly, but I think this is impossible because
 	// there's no way to make a deep copy of a data map.
 	return utility::pointer::const_pointer_cast<Mover>(shared_from_this());
 }
 
 void LoopModeler::parse_my_tag( // {{{1
-		TagCOP tag,
-		DataMap & data,
-		Filters_map const & filters,
-		Movers_map const & movers,
-		Pose const & pose) {
+	TagCOP tag,
+	DataMap & data,
+	Filters_map const & filters,
+	Movers_map const & movers,
+	Pose const & pose) {
 
 	LoopMover::parse_my_tag(tag, data, filters, movers, pose);
 	utilities::set_task_factory_from_tag(*this, tag, data);
@@ -169,13 +169,13 @@ void LoopModeler::parse_my_tag( // {{{1
 
 	string config = tag->getOption<string>("config", "kic");
 
-	if (config == "empty") {
+	if ( config == "empty" ) {
 		setup_empty_config();
-	} else if (config == "kic") {
+	} else if ( config == "kic" ) {
 		setup_kic_config();
-	} else if (config == "kic_with_frags") {
+	} else if ( config == "kic_with_frags" ) {
 		setup_kic_with_fragments_config();
-	} else { 
+	} else {
 		stringstream message;
 		message << "Unknown <LoopModeler> config option: '" << config << "'";
 		throw utility::excn::EXCN_Msg_Exception(message.str());
@@ -183,7 +183,7 @@ void LoopModeler::parse_my_tag( // {{{1
 
 	// Parse the 'auto_refine' option.
 
-	if (! tag->getOption<bool>("auto_refine", true)) {
+	if ( ! tag->getOption<bool>("auto_refine", true) ) {
 		centroid_stage_->clear_refiners();
 		fullatom_stage_->clear_refiners();
 	}
@@ -192,52 +192,43 @@ void LoopModeler::parse_my_tag( // {{{1
 
 	using protocols::rosetta_scripts::parse_score_function;
 
-	if (tag->hasOption("scorefxn_fa")) {
+	if ( tag->hasOption("scorefxn_fa") ) {
 		set_fa_scorefxn(parse_score_function(tag, "scorefxn_fa", data, ""));
 	}
-	if (tag->hasOption("scorefxn_cen")) {
+	if ( tag->hasOption("scorefxn_cen") ) {
 		set_cen_scorefxn(parse_score_function(tag, "scorefxn_cen", data, ""));
 	}
 
 	// Parse the 'fast' option.
-	
-	if (tag->getOption<bool>("fast", false)) {
+
+	if ( tag->getOption<bool>("fast", false) ) {
 		centroid_stage_->mark_as_test_run();
 		fullatom_stage_->mark_as_test_run();
 	}
 
 	// Parse subtags.
 
-	foreach (TagCOP subtag, tag->getTags()) {
+	foreach ( TagCOP subtag, tag->getTags() ) {
 
 		// Ignore <Loop> subtags (parsed by parent class).
 
-		if (subtag->getName() == "Loop") { continue; }
+		if ( subtag->getName() == "Loop" ) { continue; }
 
 		// Parse <Build> subtags.
 
-		else if (subtag->getName() == "Build") {
+		else if ( subtag->getName() == "Build" ) {
 			build_stage_->parse_my_tag(subtag, data, filters, movers, pose);
 			is_build_stage_enabled_ = ! subtag->getOption<bool>("skip", ! is_build_stage_enabled_);
-		}
-
-		// Parse <Centroid> subtags.
-
-		else if (subtag->getName() == "Centroid") {
+		} else if ( subtag->getName() == "Centroid" ) {
+			// Parse <Centroid> subtags.
 			centroid_stage_->parse_my_tag(subtag, data, filters, movers, pose);
 			is_centroid_stage_enabled_ = ! subtag->getOption<bool>("skip", ! is_centroid_stage_enabled_);
-		}
-
-		// Parse <Fullatom> subtags.
-
-		else if (subtag->getName() == "Fullatom") {
+		} else if ( subtag->getName() == "Fullatom" ) {
+			// Parse <Fullatom> subtags.
 			fullatom_stage_->parse_my_tag(subtag, data, filters, movers, pose);
 			is_fullatom_stage_enabled_ = ! subtag->getOption<bool>("skip", ! is_fullatom_stage_enabled_);
-		}
-
-		// Parse LoopMover subtags.
-
-		else {
+		} else {
+			// Parse LoopMover subtags.
 			LoopMoverOP centroid_mover = utilities::loop_mover_from_tag(subtag, data, filters, movers, pose);
 			LoopMoverOP fullatom_mover = utilities::loop_mover_from_tag(subtag, data, filters, movers, pose);
 
@@ -249,22 +240,22 @@ void LoopModeler::parse_my_tag( // {{{1
 
 bool LoopModeler::do_apply(Pose & pose) { // {{{1
 	Pose native_pose(pose);
-	if (option[OptionKeys::in::file::native].user() ) {
+	if ( option[OptionKeys::in::file::native].user() ) {
 		pose_from_pdb(native_pose, option[OptionKeys::in::file::native]());
 	}
 	prepare_for_fullatom_->set_original_pose(pose);
 
-	// Converting the pose to centroid mode can sometimes cause headaches with 
-	// non-canonical residue type sets, so this conditional makes sure that this 
+	// Converting the pose to centroid mode can sometimes cause headaches with
+	// non-canonical residue type sets, so this conditional makes sure that this
 	// conversion only happens if necessary.
-	
-	if (is_build_stage_enabled_ || is_centroid_stage_enabled_) {
+
+	if ( is_build_stage_enabled_ || is_centroid_stage_enabled_ ) {
 		prepare_for_centroid_->apply(pose);
 	}
-	
+
 	// Build stage
 
-	if (is_build_stage_enabled_) {
+	if ( is_build_stage_enabled_ ) {
 		long start_time = time(NULL);
 		TR << "Build Stage" << endl;
 		build_stage_->apply(pose);
@@ -273,32 +264,32 @@ bool LoopModeler::do_apply(Pose & pose) { // {{{1
 	}
 
 	// Output score and RMSD to debug tracer?  That sounds good.  I need two
-	// versions of a function that outputs score and rmsd.  One version uses the 
-	// standard tracer, fills up the pose extra scores, and deals with buried 
+	// versions of a function that outputs score and rmsd.  One version uses the
+	// standard tracer, fills up the pose extra scores, and deals with buried
 	// H-bonds.  The other version just outputs to a debug tracer.
 	//
-	// Actually, I'm starting to think that I should move the score and rmsd code 
-	// to LoopProtocol.  LoopModeler shouldn't do anything but combine other bits 
-	// of code, and right now there's no other way to get this output behavior.  
-	// If I were to move the code into LoopProtocol, both fullatom and centroid 
-	// would report scores and RMSDs to the log.  The full atom extra pose scores 
-	// would overwrite the centroid ones, which is good.  But LoopBuilder isn't a 
-	// LoopProtocol, so I will have to move all this stuff into its own function 
-	// in order to reuse it.  That's not so bad.  This really would be a 
-	// generally useful function for evaluating the quality of a loop.  The 
+	// Actually, I'm starting to think that I should move the score and rmsd code
+	// to LoopProtocol.  LoopModeler shouldn't do anything but combine other bits
+	// of code, and right now there's no other way to get this output behavior.
+	// If I were to move the code into LoopProtocol, both fullatom and centroid
+	// would report scores and RMSDs to the log.  The full atom extra pose scores
+	// would overwrite the centroid ones, which is good.  But LoopBuilder isn't a
+	// LoopProtocol, so I will have to move all this stuff into its own function
+	// in order to reuse it.  That's not so bad.  This really would be a
+	// generally useful function for evaluating the quality of a loop.  The
 	// argument would have to be a pose, a reference pose, a loop, and a tracer.
-	// 
-	// Actually, only the LoopModeler knows about the original pose, doesn't it.  
-	// So I probably can't move this function to the LoopProtocol.  Also, I 
-	// should consider the fact that in real application the RMSD is meaningless 
-	// and should probably not be displayed.  You know, I could have my utility 
-	// function query -in:file:native.  Then I don't need to pass it a reference 
-	// structure and I can easily omit RMSDs if there is no starting structure.  
+	//
+	// Actually, only the LoopModeler knows about the original pose, doesn't it.
+	// So I probably can't move this function to the LoopProtocol.  Also, I
+	// should consider the fact that in real application the RMSD is meaningless
+	// and should probably not be displayed.  You know, I could have my utility
+	// function query -in:file:native.  Then I don't need to pass it a reference
+	// structure and I can easily omit RMSDs if there is no starting structure.
 	// That's perfect!
 
 	// Centroid stage
 
-	if (is_centroid_stage_enabled_) {
+	if ( is_centroid_stage_enabled_ ) {
 		long start_time = time(NULL);
 		TR << "Centroid Stage" << endl;
 		centroid_stage_->apply(pose);
@@ -308,7 +299,7 @@ bool LoopModeler::do_apply(Pose & pose) { // {{{1
 
 	// Fullatom stage
 
-	if (is_fullatom_stage_enabled_) {
+	if ( is_fullatom_stage_enabled_ ) {
 		long start_time = time(NULL);
 		TR << "Fullatom Stage" << endl;
 		prepare_for_fullatom_->apply(pose);
@@ -318,24 +309,24 @@ bool LoopModeler::do_apply(Pose & pose) { // {{{1
 	}
 
 	// Report score and rmsd
-	
+
 	LoopsCOP loops = get_loops();
 	ObjexxFCL::FArray1D_bool loop_residues (pose.total_residue(), false);
 
-	for (Size i = 1; i <= pose.total_residue(); i++) {
-		if (loops->is_loop_residue(i)) { loop_residues[i-1] = true; }
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		if ( loops->is_loop_residue(i) ) { loop_residues[i-1] = true; }
 	}
 
 	using core::scoring::rmsd_no_super_subset;
 	using core::scoring::is_protein_backbone;
 	using core::scoring::chainbreak;
 
-	Real total_score = pose.is_fullatom() ? 
+	Real total_score = pose.is_fullatom() ?
 		fullatom_stage_->get_score_function()->score(pose):
 		centroid_stage_->get_score_function()->score(pose);
 	Real chainbreak_score = pose.energies().total_energies()[chainbreak];
 	Real backbone_rmsd = rmsd_no_super_subset(
-			native_pose, pose, loop_residues, is_protein_backbone);
+		native_pose, pose, loop_residues, is_protein_backbone);
 
 	TR << "Total Score: " << total_score << endl;
 	TR << "Chainbreak Score: " << chainbreak_score << endl;
@@ -345,7 +336,7 @@ bool LoopModeler::do_apply(Pose & pose) { // {{{1
 	core::pose::setPoseExtraScore(pose, "chainbreak_score", chainbreak_score);
 	core::pose::setPoseExtraScore(pose, "loop_backbone_rmsd", backbone_rmsd);
 
-	if (pose.is_fullatom()) {
+	if ( pose.is_fullatom() ) {
 		protocols::simple_filters::BuriedUnsatHbondFilter unsats(20, 0);
 		Real delta_unsats = unsats.compute(pose) - unsats.compute(native_pose);
 		TR << "Delta Buried Unsatisfied H-bonds: " << showpos << delta_unsats << endl;
@@ -400,7 +391,7 @@ void LoopModeler::setup_kic_with_fragments_config() { // {{{1
 
 	vector1<core::fragment::FragSetOP> frag_libs;
 
-	if ( option[ OptionKeys::loops::frag_files ].user()) {
+	if ( option[ OptionKeys::loops::frag_files ].user() ) {
 		loops::read_loop_fragments(frag_libs);
 	} else {
 		stringstream message;
@@ -427,9 +418,9 @@ void LoopModeler::setup_kic_with_fragments_config() { // {{{1
 	fullatom_stage_->add_mover(fullatom_kic_mover);
 	fullatom_stage_->mark_as_default();
 
-	// Note: Because loop movers can query their parents for attributes like 
-	// score functions and task operations, no loop mover can have more than one 
-	// parent.  This is why two separate centroid and fullatom KicMover objects 
+	// Note: Because loop movers can query their parents for attributes like
+	// score functions and task operations, no loop mover can have more than one
+	// parent.  This is why two separate centroid and fullatom KicMover objects
 	// must be created.
 }
 

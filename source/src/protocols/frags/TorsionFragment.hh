@@ -41,8 +41,8 @@
 namespace protocols {
 namespace frags {
 
-	//using core::Real;
-	//using core::Size;
+//using core::Real;
+//using core::Size;
 
 ///\brief a class for single piece of torsion fragment
 ///
@@ -163,12 +163,12 @@ class SingleResidueTorsionFragmentLibrary : public utility::pointer::ReferenceCo
 public:
 	typedef core::Real Real;
 	typedef core::Size Size;
-/// ******************************************************************************************************
-///  Code duplication alert:  TorsionFragment is going to be phased out
-///   Please avoid writing any new code using these classes: look in core/fragment/ instead
-///   look in /protocols/abinitio/FragmentMover  for usage examples
-///
-/// ******************************************************************************************************
+	/// ******************************************************************************************************
+	///  Code duplication alert:  TorsionFragment is going to be phased out
+	///   Please avoid writing any new code using these classes: look in core/fragment/ instead
+	///   look in /protocols/abinitio/FragmentMover  for usage examples
+	///
+	/// ******************************************************************************************************
 
 public:
 	virtual ~SingleResidueTorsionFragmentLibrary();
@@ -234,16 +234,16 @@ operator >> ( std::istream & data, SingleResidueTorsionFragmentLibrary & lib );
 ///
 ///essentially a collection of SingleResidueTorsionFragmentLibrary (indexed by residue position)
 ///
-class	TorsionFragmentLibrary : public utility::pointer::ReferenceCount{
+class TorsionFragmentLibrary : public utility::pointer::ReferenceCount{
 public:
 	typedef core::Real Real;
 	typedef core::Size Size;
-/// ******************************************************************************************************
-///  Code duplication alert:  TorsionFragment is going to be phased out
-///   Please avoid writing any new code using these classes: look in core/fragment/ instead
-///   look in /protocols/abinitio/FragmentMover  for usage examples
-///
-/// ******************************************************************************************************
+	/// ******************************************************************************************************
+	///  Code duplication alert:  TorsionFragment is going to be phased out
+	///   Please avoid writing any new code using these classes: look in core/fragment/ instead
+	///   look in /protocols/abinitio/FragmentMover  for usage examples
+	///
+	/// ******************************************************************************************************
 
 public:
 	/// default constructor
@@ -389,101 +389,101 @@ operator >> ( std::istream & data, FragLib & lib );
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 extern utility::vector1< core::Size > const empty_size_list;
-	//extern std::string const empty_string;
+//extern std::string const empty_string;
 
 void
 add_vall_fragments(
-									 utility::vector1< core::Size > const & frag_sizes,
-									 core::Size const nfrags,
-									 core::pose::Pose const & pose,
-									 core::kinematics::MoveMap const & mm,
-									 std::string const & secstruct,
-									 core::Real const seq_weight,
-									 core::Real const ss_weight,
-									 FragLib & frag_lib,
-									 utility::vector1< core::Size > const & homs_to_exclude = empty_size_list,
-									 core::Real const bb_weight = 0.0,
-									 std::string const & bigbins = std::string(),
-									 std::string const & inputseq = std::string()
-									 );
+	utility::vector1< core::Size > const & frag_sizes,
+	core::Size const nfrags,
+	core::pose::Pose const & pose,
+	core::kinematics::MoveMap const & mm,
+	std::string const & secstruct,
+	core::Real const seq_weight,
+	core::Real const ss_weight,
+	FragLib & frag_lib,
+	utility::vector1< core::Size > const & homs_to_exclude = empty_size_list,
+	core::Real const bb_weight = 0.0,
+	std::string const & bigbins = std::string(),
+	std::string const & inputseq = std::string()
+);
 void
 add_vall_fragments(
-									 utility::vector1< core::Size > const & frag_sizes,
-									 core::Size const nfrags,
-									 core::pose::Pose const & pose,
-									 core::kinematics::MoveMap const & mm,
-									 utility::vector1< std::map< char, core::Real > > const & target_ss, //// THIS IS THE DIFFERENCE
-									 core::Real const seq_weight,
-									 core::Real const ss_weight,
-									 FragLib & frag_lib,
-									 utility::vector1< core::Size > const & homs_to_exclude = empty_size_list,
-									 core::Real const bb_weight = 0.0,
-									 std::string const & bigbins = std::string(),
-									 std::string const & inputseq = std::string()
-									 );
+	utility::vector1< core::Size > const & frag_sizes,
+	core::Size const nfrags,
+	core::pose::Pose const & pose,
+	core::kinematics::MoveMap const & mm,
+	utility::vector1< std::map< char, core::Real > > const & target_ss, //// THIS IS THE DIFFERENCE
+	core::Real const seq_weight,
+	core::Real const ss_weight,
+	FragLib & frag_lib,
+	utility::vector1< core::Size > const & homs_to_exclude = empty_size_list,
+	core::Real const bb_weight = 0.0,
+	std::string const & bigbins = std::string(),
+	std::string const & inputseq = std::string()
+);
 
 FragLibOP
 setup_vall_fragments(
-										 utility::vector1< core::Size > const & frag_sizes,
-										 core::Size const nfrags,
-										 core::pose::Pose const & pose,
-										 core::kinematics::MoveMap const & mm,
-										 std::string const & secstruct,
-										 core::Real const seq_weight,
-										 core::Real const ss_weight,
-										 utility::vector1< core::Size > const & homs_to_exclude = empty_size_list
-										 );
+	utility::vector1< core::Size > const & frag_sizes,
+	core::Size const nfrags,
+	core::pose::Pose const & pose,
+	core::kinematics::MoveMap const & mm,
+	std::string const & secstruct,
+	core::Real const seq_weight,
+	core::Real const ss_weight,
+	utility::vector1< core::Size > const & homs_to_exclude = empty_size_list
+);
 
 void
 add_vall_cheating_fragments(
-														utility::vector1< core::Size > const & frag_sizes,
-														core::Size const nfrags,
-														core::pose::Pose const & pose,
-														core::kinematics::MoveMap const & mm,
-														std::string const & secstruct,
-														core::Real const seq_weight,
-														core::Real const ss_weight,
-														core::Real const torsion_weight,
-														core::Real const min_torsion_dev,
-														core::Real const max_torsion_dev,
-														FragLib & frag_lib,
-														utility::vector1< core::Size > const & homs_to_exclude = empty_size_list
-														);
+	utility::vector1< core::Size > const & frag_sizes,
+	core::Size const nfrags,
+	core::pose::Pose const & pose,
+	core::kinematics::MoveMap const & mm,
+	std::string const & secstruct,
+	core::Real const seq_weight,
+	core::Real const ss_weight,
+	core::Real const torsion_weight,
+	core::Real const min_torsion_dev,
+	core::Real const max_torsion_dev,
+	FragLib & frag_lib,
+	utility::vector1< core::Size > const & homs_to_exclude = empty_size_list
+);
 
 FragLibOP
 setup_vall_cheating_fragments(
-															utility::vector1< core::Size > const & frag_sizes,
-															core::Size const nfrags,
-															core::pose::Pose const & pose,
-															core::kinematics::MoveMap const & mm,
-															std::string const & secstruct,
-															core::Real const seq_weight,
-															core::Real const ss_weight,
-															core::Real const torsion_weight,
-															core::Real const min_torsion_dev,
-															core::Real const max_torsion_dev,
-															utility::vector1< core::Size > const & homs_to_exclude = empty_size_list
-															);
+	utility::vector1< core::Size > const & frag_sizes,
+	core::Size const nfrags,
+	core::pose::Pose const & pose,
+	core::kinematics::MoveMap const & mm,
+	std::string const & secstruct,
+	core::Real const seq_weight,
+	core::Real const ss_weight,
+	core::Real const torsion_weight,
+	core::Real const min_torsion_dev,
+	core::Real const max_torsion_dev,
+	utility::vector1< core::Size > const & homs_to_exclude = empty_size_list
+);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 fill_in_gaps(
-						 core::Size const nfrags,
-						 core::pose::Pose const & pose,
-						 std::string const & secstruct,
-						 core::Real const seq_weight,
-						 core::Real const ss_weight,
-						 FragLib & frag_lib,
-						 utility::vector1< core::Size > const & homs_to_exclude = empty_size_list,
-						 bool const allow_uninitialized_secstruct = false
-						 );
+	core::Size const nfrags,
+	core::pose::Pose const & pose,
+	std::string const & secstruct,
+	core::Real const seq_weight,
+	core::Real const ss_weight,
+	FragLib & frag_lib,
+	utility::vector1< core::Size > const & homs_to_exclude = empty_size_list,
+	bool const allow_uninitialized_secstruct = false
+);
 
 bool
 ss_length_check(
-								core::Size const min_len_helix,
-								core::Size const min_len_strand,
-								core::pose::Pose const & pose
-								);
+	core::Size const min_len_helix,
+	core::Size const min_len_strand,
+	core::pose::Pose const & pose
+);
 
 class TorsionFragmentMover : public protocols::moves::Mover {
 public:
@@ -556,20 +556,20 @@ private:
 
 void
 insert_fragment(
-								int const begin,
-								int const end,
-								core::pose::Pose & pose,
-								TorsionFragmentLibrary const & lib,
-								int const desired_insert_pos = 0
-								);
+	int const begin,
+	int const end,
+	core::pose::Pose & pose,
+	TorsionFragmentLibrary const & lib,
+	int const desired_insert_pos = 0
+);
 
 
 void
 insert_random_fragments_in_flexible_protein_regions(
-																										utility::vector1< core::Size > const & flex_protein,
-																										FragLib const & frag_lib,
-																										core::pose::Pose & pose
-																										);
+	utility::vector1< core::Size > const & flex_protein,
+	FragLib const & frag_lib,
+	core::pose::Pose & pose
+);
 
 } // ns frags
 } // ns protocols

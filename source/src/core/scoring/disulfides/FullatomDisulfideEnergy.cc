@@ -78,7 +78,7 @@ DisulfMinData::CacheableDataOP DisulfMinData::clone() const { return DisulfMinDa
 /// @brief which_res should be 1 or 2
 void DisulfMinData::set_res_inds( Size which_res, DisulfideAtomIndices const & dais )
 {
-debug_assert( which_res == 1 || which_res == 2 );
+	debug_assert( which_res == 1 || which_res == 2 );
 	if ( which_res == 1 ) res1_inds_ = dais;
 	else res2_inds_ = dais;
 }
@@ -86,7 +86,7 @@ debug_assert( which_res == 1 || which_res == 2 );
 DisulfideAtomIndices const &
 DisulfMinData::res_inds( Size which_res ) const
 {
-debug_assert( which_res == 1 || which_res == 2 );
+	debug_assert( which_res == 1 || which_res == 2 );
 	return which_res == 1 ? res1_inds_ : res2_inds_;
 }
 
@@ -181,17 +181,17 @@ FullatomDisulfideEnergy::defines_score_for_residue_pair(
 {
 	using namespace chemical;
 	std::string atom1 = res1.type().get_disulfide_atom_name();
-    std::string atom2 = res2.type().get_disulfide_atom_name();
-	
+	std::string atom2 = res2.type().get_disulfide_atom_name();
+
 	// Formerly tested if the residue had its own disulfide atom name,
 	// but checking if it is NONE is just clearer (and heads off the
 	// case where a new residue is added with an atom named NONE
 	return res_moving_wrt_eachother
-        && res1.has_variant_type( DISULFIDE ) && res2.has_variant_type( DISULFIDE )
-        && res1.type().get_disulfide_atom_name() != "NONE"
-        && res1.connect_map( res1.type().residue_connection_id_for_atom( res1.atom_index( atom1 ) ) ).resid() == res2.seqpos()
-        && res2.type().get_disulfide_atom_name() != "NONE"
-        && res2.connect_map( res2.type().residue_connection_id_for_atom( res2.atom_index( atom2 ) ) ).resid() == res1.seqpos();
+		&& res1.has_variant_type( DISULFIDE ) && res2.has_variant_type( DISULFIDE )
+		&& res1.type().get_disulfide_atom_name() != "NONE"
+		&& res1.connect_map( res1.type().residue_connection_id_for_atom( res1.atom_index( atom1 ) ) ).resid() == res2.seqpos()
+		&& res2.type().get_disulfide_atom_name() != "NONE"
+		&& res2.connect_map( res2.type().residue_connection_id_for_atom( res2.atom_index( atom2 ) ) ).resid() == res1.seqpos();
 }
 
 bool
@@ -211,18 +211,18 @@ FullatomDisulfideEnergy::residue_pair_energy_ext(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ){
+	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ) {
 		return;
 	}
 
 	conformation::Residue const & rsdl( rsd1.seqpos() < rsd2.seqpos() ? rsd1 : rsd2 );
 	conformation::Residue const & rsdu( rsd1.seqpos() < rsd2.seqpos() ? rsd2 : rsd1 );
 
-debug_assert( utility::pointer::dynamic_pointer_cast< DisulfMinData const > ( min_data.get_data( fa_dslf_respair_data ) ) );
+	debug_assert( utility::pointer::dynamic_pointer_cast< DisulfMinData const > ( min_data.get_data( fa_dslf_respair_data ) ) );
 	DisulfMinData const & disulf_inds = static_cast< DisulfMinData const & > ( *min_data.get_data( fa_dslf_respair_data ) );
 
 	//fpd old version
-	if (sfxn.has_nonzero_weight(dslf_ss_dst) || sfxn.has_nonzero_weight(dslf_cs_ang) || sfxn.has_nonzero_weight(dslf_ss_dih) || sfxn.has_nonzero_weight(dslf_ca_dih) ) {
+	if ( sfxn.has_nonzero_weight(dslf_ss_dst) || sfxn.has_nonzero_weight(dslf_cs_ang) || sfxn.has_nonzero_weight(dslf_ss_dih) || sfxn.has_nonzero_weight(dslf_ca_dih) ) {
 		Energy distance_score_this_disulfide;
 		Energy csangles_score_this_disulfide;
 		Energy dihedral_score_this_disulfide;
@@ -239,14 +239,14 @@ debug_assert( utility::pointer::dynamic_pointer_cast< DisulfMinData const > ( mi
 			ca_dihedral_sc_this_disulf,
 			truefalse_fa_disulf
 		);
-        
-        //amw
-        /*std::cout << "scoring dslf old: " <<std::endl;
-        std::cout << emap[ dslf_ss_dst ] << " += " << distance_score_this_disulfide << std::endl;
-        std::cout << emap[ dslf_cs_ang ] << " += " << csangles_score_this_disulfide << std::endl;
-        std::cout << emap[ dslf_ss_dih ] << " += " << dihedral_score_this_disulfide << std::endl;
-        std::cout << emap[ dslf_ca_dih ] << " += " << ca_dihedral_sc_this_disulf << std::endl;
-         */
+
+		//amw
+		/*std::cout << "scoring dslf old: " <<std::endl;
+		std::cout << emap[ dslf_ss_dst ] << " += " << distance_score_this_disulfide << std::endl;
+		std::cout << emap[ dslf_cs_ang ] << " += " << csangles_score_this_disulfide << std::endl;
+		std::cout << emap[ dslf_ss_dih ] << " += " << dihedral_score_this_disulfide << std::endl;
+		std::cout << emap[ dslf_ca_dih ] << " += " << ca_dihedral_sc_this_disulf << std::endl;
+		*/
 
 		emap[ dslf_ss_dst ] += distance_score_this_disulfide;
 		emap[ dslf_cs_ang ] += csangles_score_this_disulfide;
@@ -261,10 +261,10 @@ debug_assert( utility::pointer::dynamic_pointer_cast< DisulfMinData const > ( mi
 			rsdl, rsdu,
 			disulf_inds.res_inds( 1 ), disulf_inds.res_inds( 2 ),
 			score_i );
-        //amw
-        /*std::cout << "scoring dslf new: " <<std::endl;
-        std::cout << emap[ dslf_fa13 ] << " += " << score_i << std::endl;
-         */
+		//amw
+		/*std::cout << "scoring dslf new: " <<std::endl;
+		std::cout << emap[ dslf_fa13 ] << " += " << score_i << std::endl;
+		*/
 		emap[ dslf_fa13 ] += score_i;
 	}
 }
@@ -282,7 +282,7 @@ FullatomDisulfideEnergy::setup_for_minimizing_for_residue_pair(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ){
+	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ) {
 		return;
 	}
 
@@ -308,18 +308,18 @@ FullatomDisulfideEnergy::eval_residue_pair_derivatives(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ){
+	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ) {
 		return;
 	}
 
-debug_assert( utility::pointer::dynamic_pointer_cast< DisulfMinData const > ( min_data.get_data( fa_dslf_respair_data ) ) );
+	debug_assert( utility::pointer::dynamic_pointer_cast< DisulfMinData const > ( min_data.get_data( fa_dslf_respair_data ) ) );
 	DisulfMinData const & disulf_inds = static_cast< DisulfMinData const & > ( *min_data.get_data( fa_dslf_respair_data ) );
 
 	/// this could be substantially more efficient, but there are only ever a handful of disulfides in proteins,
 	/// so there's basically no point in spending time making this code faster
 
 	//fpd old version
-	if (weights[dslf_ss_dst] != 0 || weights[dslf_cs_ang] != 0 || weights[dslf_ss_dih] != 0 || weights[dslf_ca_dih] != 0 ) {
+	if ( weights[dslf_ss_dst] != 0 || weights[dslf_cs_ang] != 0 || weights[dslf_ss_dih] != 0 || weights[dslf_ca_dih] != 0 ) {
 		potential_.get_disulfide_derivatives_old(
 			rsd1, rsd2, disulf_inds.res_inds( 1 ), disulf_inds.res_inds( 2 ),
 			disulf_inds.res_inds(1).c_alpha_index(), weights,
@@ -380,7 +380,7 @@ FullatomDisulfideEnergy::old_eval_atom_derivative(
 	runtime_assert( !sfxn.has_nonzero_weight(dslf_fa13) );
 
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( pose.residue( atomid.rsd() ).has_variant_type( core::chemical::REPLONLY )){
+	if ( pose.residue( atomid.rsd() ).has_variant_type( core::chemical::REPLONLY ) ) {
 		return;
 	}
 
@@ -439,17 +439,17 @@ FullatomDisulfideEnergy::residue_pair_energy(
 	}
 
 	if ( ( !rsd1.type().is_disulfide_bonded() && !rsd1.type().is_sidechain_thiol() )
-      || ( !rsd2.type().is_disulfide_bonded() && !rsd2.type().is_sidechain_thiol() ) ) return;
-	
-    FullatomDisulfideEnergyContainerCOP dec = FullatomDisulfideEnergyContainerCOP (
+			|| ( !rsd2.type().is_disulfide_bonded() && !rsd2.type().is_sidechain_thiol() ) ) return;
+
+	FullatomDisulfideEnergyContainerCOP dec = FullatomDisulfideEnergyContainerCOP (
 		utility::pointer::static_pointer_cast< core::scoring::disulfides::FullatomDisulfideEnergyContainer const > ( pose.energies().long_range_container( methods::fa_disulfide_energy ) ));
 	if ( ! dec->residue_forms_disulfide( rsd1.seqpos() ) ||
-			dec->other_neighbor_id( rsd1.seqpos() ) != (Size) rsd2.seqpos() ){
+			dec->other_neighbor_id( rsd1.seqpos() ) != (Size) rsd2.seqpos() ) {
 		return;
 	}
 
 	//fpd old version
-	if (sfxn.has_nonzero_weight(dslf_ss_dst) || sfxn.has_nonzero_weight(dslf_cs_ang) || sfxn.has_nonzero_weight(dslf_ss_dih) || sfxn.has_nonzero_weight(dslf_ca_dih) ) {
+	if ( sfxn.has_nonzero_weight(dslf_ss_dst) || sfxn.has_nonzero_weight(dslf_cs_ang) || sfxn.has_nonzero_weight(dslf_ss_dih) || sfxn.has_nonzero_weight(dslf_ca_dih) ) {
 		Energy distance_score_this_disulfide;
 		Energy csangles_score_this_disulfide;
 		Energy dihedral_score_this_disulfide;
@@ -460,7 +460,7 @@ FullatomDisulfideEnergy::residue_pair_energy(
 			rsd1, rsd2,
 			dec->disulfide_atom_indices( rsd1.seqpos() ),
 			dec->other_neighbor_atom_indices( rsd1.seqpos() ), //The function change from the above line changes which index we get;
-																												 // if we also change which rsd we use then it turns everything upside down twice and the disulfide_atom_indices inappropriately match
+			// if we also change which rsd we use then it turns everything upside down twice and the disulfide_atom_indices inappropriately match
 			distance_score_this_disulfide,
 			csangles_score_this_disulfide,
 			dihedral_score_this_disulfide,
@@ -468,13 +468,13 @@ FullatomDisulfideEnergy::residue_pair_energy(
 			truefalse_fa_disulf
 		);
 
-        // amw
-        /*std::cout << "scoring dslf old: " <<std::endl;
-        std::cout << emap[ dslf_ss_dst ] << " += " << distance_score_this_disulfide << std::endl;
-        std::cout << emap[ dslf_cs_ang ] << " += " << csangles_score_this_disulfide << std::endl;
-        std::cout << emap[ dslf_ss_dih ] << " += " << dihedral_score_this_disulfide << std::endl;
-        std::cout << emap[ dslf_ca_dih ] << " += " << ca_dihedral_sc_this_disulf << std::endl;
-         */
+		// amw
+		/*std::cout << "scoring dslf old: " <<std::endl;
+		std::cout << emap[ dslf_ss_dst ] << " += " << distance_score_this_disulfide << std::endl;
+		std::cout << emap[ dslf_cs_ang ] << " += " << csangles_score_this_disulfide << std::endl;
+		std::cout << emap[ dslf_ss_dih ] << " += " << dihedral_score_this_disulfide << std::endl;
+		std::cout << emap[ dslf_ca_dih ] << " += " << ca_dihedral_sc_this_disulf << std::endl;
+		*/
 		emap[ dslf_ss_dst ] += distance_score_this_disulfide;
 		emap[ dslf_cs_ang ] += csangles_score_this_disulfide;
 		emap[ dslf_ss_dih ] += dihedral_score_this_disulfide;
@@ -482,18 +482,18 @@ FullatomDisulfideEnergy::residue_pair_energy(
 	}
 
 	//fpd new version
-	if ( sfxn.has_nonzero_weight(dslf_fa13)) {
+	if ( sfxn.has_nonzero_weight(dslf_fa13) ) {
 		Energy score_i;
 		potential_.score_this_disulfide(
 			rsd1, rsd2,
 			dec->disulfide_atom_indices( rsd1.seqpos() ), dec->other_neighbor_atom_indices( rsd1.seqpos() ),
 			score_i );
-        // amw
-        
-        /*std::cout << "scoring dslf new: " <<std::endl;
-        std::cout << emap[ dslf_fa13 ] << " += " << score_i << std::endl;
-		 */
-        emap[ dslf_fa13 ] += score_i;
+		// amw
+
+		/*std::cout << "scoring dslf new: " <<std::endl;
+		std::cout << emap[ dslf_fa13 ] << " += " << score_i << std::endl;
+		*/
+		emap[ dslf_fa13 ] += score_i;
 	}
 }
 
@@ -531,7 +531,7 @@ FullatomDisulfideEnergy::defines_residue_pair_energy(
 {
 
 	using namespace methods;
-	if ( ! pose.energies().long_range_container( fa_disulfide_energy )) return false;
+	if ( ! pose.energies().long_range_container( fa_disulfide_energy ) ) return false;
 
 	FullatomDisulfideEnergyContainerCOP dec = FullatomDisulfideEnergyContainerCOP (
 		utility::pointer::static_pointer_cast< core::scoring::disulfides::FullatomDisulfideEnergyContainer const > ( pose.energies().long_range_container( fa_disulfide_energy ) ));

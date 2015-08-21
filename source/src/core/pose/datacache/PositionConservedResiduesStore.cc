@@ -23,15 +23,15 @@ namespace datacache {
 PositionConservedResiduesStore::PositionConservedResiduesStore() {}
 
 basic::datacache::CacheableDataOP PositionConservedResiduesStore::clone() const {
-  return basic::datacache::CacheableDataOP( new PositionConservedResiduesStore(*this) );
+	return basic::datacache::CacheableDataOP( new PositionConservedResiduesStore(*this) );
 }
 
 bool PositionConservedResiduesStore::is_conserved(core::Size residue) const {
-  return (conservation_.find(residue) != conservation_.end()) ? conservation_[residue] : false;
+	return (conservation_.find(residue) != conservation_.end()) ? conservation_[residue] : false;
 }
 
 void PositionConservedResiduesStore::set_conserved(core::Size residue, bool conserved) {
-  conservation_[residue] = conserved;
+	conservation_[residue] = conserved;
 }
 
 }  // namespace datacache

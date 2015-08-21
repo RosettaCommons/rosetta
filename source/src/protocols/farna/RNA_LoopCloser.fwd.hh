@@ -18,8 +18,8 @@
 namespace protocols {
 namespace farna {
 
-	class RNA_LoopCloser;
-	typedef utility::pointer::shared_ptr< RNA_LoopCloser > RNA_LoopCloserOP;
+class RNA_LoopCloser;
+typedef utility::pointer::shared_ptr< RNA_LoopCloser > RNA_LoopCloserOP;
 
 } //farna
 } //protocols

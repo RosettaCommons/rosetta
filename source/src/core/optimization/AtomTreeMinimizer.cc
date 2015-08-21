@@ -149,22 +149,22 @@ AtomTreeMinimizer::run(
 /// @brief Do consistency checks for minimizer setup.
 void
 AtomTreeMinimizer::check_setup(pose::Pose const &,
-		kinematics::MoveMap const & move_map,
-		scoring::ScoreFunction const & scorefxn,
-		MinimizerOptions const & options) const {
+	kinematics::MoveMap const & move_map,
+	scoring::ScoreFunction const & scorefxn,
+	MinimizerOptions const & options) const {
 
 	// Do we have any nonideal bond length/bond angle settings in the movemap?
 	bool nonideal( move_map.get( core::id::D ) || move_map.get( core::id::THETA ) );
-	if( ! nonideal ) {
-		for( kinematics::MoveMap::DOF_ID_Map::const_iterator iter( move_map.dof_id_begin() ); iter != move_map.dof_id_end(); ++iter ) {
-			if( iter->second && ( iter->first.type() == core::id::D || iter->first.type() == core::id::THETA ) ) {
+	if ( ! nonideal ) {
+		for ( kinematics::MoveMap::DOF_ID_Map::const_iterator iter( move_map.dof_id_begin() ); iter != move_map.dof_id_end(); ++iter ) {
+			if ( iter->second && ( iter->first.type() == core::id::D || iter->first.type() == core::id::THETA ) ) {
 				nonideal = true;
 				break;
 			}
 		}
 	}
 
-	if( nonideal && ! scorefxn.ready_for_nonideal_scoring() ) {
+	if ( nonideal && ! scorefxn.ready_for_nonideal_scoring() ) {
 		// It would be good to have this be a hard error, but several protocols are currently
 		// almost-but-not-quite ready_for_nonideal_scoring().
 		//TR.Error << "** Non-ideal Movemap used in minimization:" << std::endl;
@@ -179,9 +179,9 @@ AtomTreeMinimizer::check_setup(pose::Pose const &,
 		TR.Warning << "***************************************************************" << std::endl;
 	}
 
-	if( nonideal && options.min_type() != "lbfgs_armijo_nonmonotone" ) {
+	if ( nonideal && options.min_type() != "lbfgs_armijo_nonmonotone" ) {
 		TR.Warning << "WARNING: Use of the 'lbfgs_armijo_nonmonotone' minimizer with nonideal minimization is recommended " <<
-				"for better runtime performance. (Using '" << options.min_type() << "' minimizer instead.)" << std::endl;
+			"for better runtime performance. (Using '" << options.min_type() << "' minimizer instead.)" << std::endl;
 	}
 }
 

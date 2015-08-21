@@ -89,69 +89,69 @@ public:
 
 private:
 	void rotate_ligand(
-			utility::pointer::shared_ptr<core::grid::CartGrid<int> >  const & grid,
-			core::pose::Pose & pose
+		utility::pointer::shared_ptr<core::grid::CartGrid<int> >  const & grid,
+		core::pose::Pose & pose
 	);
 
 	void rotate_ligand(core::pose::Pose & pose);
 
 	/// @brief  These should have repulsive and attractive scores under the threshold
 	utility::vector1< Ligand_info> create_random_rotations(
-			utility::pointer::shared_ptr<core::grid::CartGrid<int> > const & grid,
-			protocols::rigid::RigidBodyMoverOP const mover,
-			core::pose::Pose & pose,
-			core::Size chain_begin
+		utility::pointer::shared_ptr<core::grid::CartGrid<int> > const & grid,
+		protocols::rigid::RigidBodyMoverOP const mover,
+		core::pose::Pose & pose,
+		core::Size chain_begin
 	)const;
 
-//	utility::vector1<Ligand_info> create_random_rotations(
-//			protocols::rigid::RigidBodyMoverOP const ,
-//			core::Size const begin,
-//			core::pose::Pose & pose) const;
+	// utility::vector1<Ligand_info> create_random_rotations(
+	//   protocols::rigid::RigidBodyMoverOP const ,
+	//   core::Size const begin,
+	//   core::pose::Pose & pose) const;
 
 	Ligand_info create_random_rotation(
-			utility::pointer::shared_ptr<core::grid::CartGrid<int> > const & grid,
-			protocols::rigid::RigidBodyMoverOP const mover,
-			core::Vector const center,
-			core::Size const begin,
-			core::Size const end,
-			core::pose::Pose & local_pose
+		utility::pointer::shared_ptr<core::grid::CartGrid<int> > const & grid,
+		protocols::rigid::RigidBodyMoverOP const mover,
+		core::Vector const center,
+		core::Size const begin,
+		core::Size const end,
+		core::pose::Pose & local_pose
 	) const;
-/*
+	/*
 	Ligand_info create_random_rotation(
-			protocols::rigid::RigidBodyMoverOP const mover,
-			core::Vector const center,
-			core::Size const begin,
-			core::Size const end,
-			core::pose::Pose & local_pose) const;
-*/
+	protocols::rigid::RigidBodyMoverOP const mover,
+	core::Vector const center,
+	core::Size const begin,
+	core::Size const end,
+	core::pose::Pose & local_pose) const;
+	*/
 	Rotate_info rotate_info_;
 }; // class Rotate
 
 /// Convenience Functions for use with Rotate
 
 bool check_score(
-		Ligand_info const ligand,
-		core::Size const heavy_atom_number
+	Ligand_info const ligand,
+	core::Size const heavy_atom_number
 );
 
 bool check_RMSD(
-		Ligand_info const ligand,
-		core::Size const heavy_atom_number,
-		utility::vector1< Ligand_info> const & ligands
+	Ligand_info const ligand,
+	core::Size const heavy_atom_number,
+	utility::vector1< Ligand_info> const & ligands
 );
 
 void apply_rotate(
-		protocols::rigid::RigidBodyMoverOP mover,
-		core::pose::Pose & pose,
-		core::Vector const & center,
-		core::Size jump_id,
-		utility::vector1<core::Size> tag_along_chains
+	protocols::rigid::RigidBodyMoverOP mover,
+	core::pose::Pose & pose,
+	core::Vector const & center,
+	core::Size jump_id,
+	utility::vector1<core::Size> tag_along_chains
 );
 
 void add_ligand_conditionally(
-		Ligand_info const & ligand_info,
-		utility::vector1< Ligand_info> & ligands,
-		core::Size const heavy_atom_number
+	Ligand_info const & ligand_info,
+	utility::vector1< Ligand_info> & ligands,
+	core::Size const heavy_atom_number
 );
 
 } //namespace ligand_docking

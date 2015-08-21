@@ -90,34 +90,34 @@ using namespace protocols;
 // tracer - used to replace cout
 static thread_local basic::Tracer TR( "Hotspot Placement" );
 
-namespace scaffold_matcher{
-	BooleanOptionKey const pymol( "scaffold_matcher::pymol" );
-	BooleanOptionKey const keep_history( "scaffold_matcher::keep_history" );
+namespace scaffold_matcher {
+BooleanOptionKey const pymol( "scaffold_matcher::pymol" );
+BooleanOptionKey const keep_history( "scaffold_matcher::keep_history" );
 
-	StringOptionKey const primary_hs_stub_lib( "scaffold_matcher::primary_hs_stub_lib" );
-	FileVectorOptionKey const ancillary_hs_stub_libs( "scaffold_matcher::ancillary_hs_stub_libs" );
-	StringOptionKey const hstarget( "scaffold_matcher::hstarget" );
+StringOptionKey const primary_hs_stub_lib( "scaffold_matcher::primary_hs_stub_lib" );
+FileVectorOptionKey const ancillary_hs_stub_libs( "scaffold_matcher::ancillary_hs_stub_libs" );
+StringOptionKey const hstarget( "scaffold_matcher::hstarget" );
 
-	BooleanOptionKey const hs_repack_only( "scaffold_matcher::hs_repack_only" );
-	RealOptionKey const stub_constraint_strength("scaffold_matcher::stub_constraint_strength");
+BooleanOptionKey const hs_repack_only( "scaffold_matcher::hs_repack_only" );
+RealOptionKey const stub_constraint_strength("scaffold_matcher::stub_constraint_strength");
 }
 
 class HotspotPlacementMover : public moves::Mover {
 
-	public:
+public:
 
-		//default ctor
-		HotspotPlacementMover(): Mover("HotspotPlacementMover"){}
+	//default ctor
+	HotspotPlacementMover(): Mover("HotspotPlacementMover"){}
 
-		//default dtor
-		virtual ~HotspotPlacementMover(){}
+	//default dtor
+	virtual ~HotspotPlacementMover(){}
 
-		//methods
-		void setup_pert_foldtree( core::pose::Pose & pose);
-		void setup_pert_foldtree_byres( core::pose::Pose & pose, Size dock_jump_pos_pro, Size dock_jump_pos_pep );
+	//methods
+	void setup_pert_foldtree( core::pose::Pose & pose);
+	void setup_pert_foldtree_byres( core::pose::Pose & pose, Size dock_jump_pos_pro, Size dock_jump_pos_pep );
 
-		virtual void apply( core::pose::Pose & pose );
-		virtual std::string get_name() const { return "OopHotspotPlacementMover"; }
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const { return "OopHotspotPlacementMover"; }
 
 };
 
@@ -128,14 +128,14 @@ typedef utility::pointer::shared_ptr< HotspotPlacementMover const > HotspotPlace
 int
 main( int argc, char* argv[] )
 {
-    try {
+	try {
 		option.add( scaffold_matcher::pymol, "Set up pymol mover. Default false" ).def(false);
 		option.add( scaffold_matcher::keep_history, "Keep history in pymol. Requires ohp::pymol set to true. Default false" ).def(false);
 		option.add( scaffold_matcher::primary_hs_stub_lib, "The path to primary hotspot stub pdb" ).def( "" );
 		option.add( scaffold_matcher::ancillary_hs_stub_libs, "The path to additional hotspot stub pdbs" ).def( "" );
 		option.add( scaffold_matcher::hstarget, "Target pdb" ).def( "" );
 		option.add( scaffold_matcher::hs_repack_only, "Keep scaffold fixed, only repack sidechains" ).def( true );
-                option.add( scaffold_matcher::stub_constraint_strength, "strength of stub constraints (reasonable: 0.5 - 5.0)" ).def( 5.0 );
+		option.add( scaffold_matcher::stub_constraint_strength, "strength of stub constraints (reasonable: 0.5 - 5.0)" ).def( 5.0 );
 
 		devel::init(argc, argv);
 
@@ -145,11 +145,11 @@ main( int argc, char* argv[] )
 		//call job distributor
 		protocols::jd2::JobDistributor::get_instance()->go( HP_mover );
 
-  } catch ( utility::excn::EXCN_Base const & e ) {
-    std::cerr << "caught exception " << e.msg() << std::endl;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
-  }
-  return 0;
+	}
+	return 0;
 
 }//main
 
@@ -166,12 +166,12 @@ HotspotPlacementMover::apply(
 
 	//kdrew: create starting pose by combining the target pose and the scaffold pose
 	core::pose::Pose combined_pose = core::pose::Pose(target_pose);
-	for ( Size i = 1; i <= scaffold_pose.total_residue(); ++i )
-	{
-		if ( 1 == i )
+	for ( Size i = 1; i <= scaffold_pose.total_residue(); ++i ) {
+		if ( 1 == i ) {
 			combined_pose.append_residue_by_jump(scaffold_pose.residue(i), combined_pose.total_residue(), "", "", true );
-		else
+		} else {
 			combined_pose.append_residue_by_bond( scaffold_pose.residue(i) );
+		}
 	}
 
 	std::stringstream startpdbname;
@@ -183,8 +183,9 @@ HotspotPlacementMover::apply(
 
 	setup_pert_foldtree(start_pose);
 
-	if( option[ scaffold_matcher::pymol ].value() )
+	if ( option[ scaffold_matcher::pymol ].value() ) {
 		protocols::moves::PyMolObserverOP pymover = protocols::moves::AddPyMolObserver(start_pose, option[ scaffold_matcher::keep_history ].value() );
+	}
 
 	core::scoring::ScoreFunctionOP place_hs_score_fxn( new core::scoring::ScoreFunction() );
 
@@ -201,12 +202,13 @@ HotspotPlacementMover::apply(
 	Size pep_start( start_pose.conformation().chain_begin( 2 ) ); Size pep_end( start_pose.total_residue() );
 	TR << "pep_start: " << pep_start << " pep_end: " << pep_end << std::endl;
 
-  ////kdrew: automatically find ncbb positions
+	////kdrew: automatically find ncbb positions
 	utility::vector1< core::Size > ncbb_seq_positions = core::pose::ncbb::initialize_ncbbs(start_pose);
 
 	//kdrew: turn on atom pair constraints if not already on
-	if( ncbb_seq_positions.size() > 0 && score_fxn->has_zero_weight( core::scoring::atom_pair_constraint ) )
+	if ( ncbb_seq_positions.size() > 0 && score_fxn->has_zero_weight( core::scoring::atom_pair_constraint ) ) {
 		score_fxn->set_weight( core::scoring::atom_pair_constraint, 1.0 );
+	}
 
 
 	core::kinematics::MoveMapOP place_hs_mm( new core::kinematics::MoveMap() );
@@ -224,7 +226,7 @@ HotspotPlacementMover::apply(
 	utility::vector1<protocols::hotspot_hashing::HotspotStubSetOP> ancillary_stubs;
 	utility::vector1<std::string> ancillary_stub_locations =  option[ scaffold_matcher::ancillary_hs_stub_libs ]();
 
-	for (core::Size i = 1; i <= ancillary_stub_locations.size(); ++i) {
+	for ( core::Size i = 1; i <= ancillary_stub_locations.size(); ++i ) {
 		protocols::hotspot_hashing::HotspotStubSetOP hotspot_stub_set2OP( new protocols::hotspot_hashing::HotspotStubSet );
 		hotspot_stub_set2OP->read_data(ancillary_stub_locations[i]);
 		ancillary_stubs.push_back (hotspot_stub_set2OP);
@@ -253,7 +255,7 @@ HotspotPlacementMover::apply(
 	min_mm->set_jump( 1, true );
 
 	// create minimization mover
-	simple_moves::MinMoverOP min( new simple_moves::MinMover( min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
+	simple_moves::MinMoverOP min( new simple_moves::MinMover( min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 
 	//kdrew: setup default packer task for both L and D residues
 	utility::vector1< bool > aas(20,false);
@@ -264,8 +266,8 @@ HotspotPlacementMover::apply(
 		std::list< core::chemical::ResidueTypeCOP > allowed_aas = packer_task->residue_task(resnum).allowed_residue_types();
 		if ( rtype.is_d_aa() ) {
 			packer_task->nonconst_residue_task(resnum).restrict_absent_canonical_aas(aas);
-			for (std::list< core::chemical::ResidueTypeCOP >::const_iterator restype = allowed_aas.begin();
-					 restype != allowed_aas.end(); ++restype) {
+			for ( std::list< core::chemical::ResidueTypeCOP >::const_iterator restype = allowed_aas.begin();
+					restype != allowed_aas.end(); ++restype ) {
 
 				core::chemical::ResidueType allowed_rtype =  **restype;
 				core::chemical::ResidueType const & chiral_aa = protocols::simple_moves::chiral::get_chiral_residue_type(allowed_rtype, protocols::simple_moves::chiral::D_CHIRALITY);
@@ -275,8 +277,7 @@ HotspotPlacementMover::apply(
 		}
 	}
 
-	for ( core::Size resnum=pep_start; resnum <= pep_end; ++resnum )
-	{
+	for ( core::Size resnum=pep_start; resnum <= pep_end; ++resnum ) {
 		core::chemical::ResidueType rtype = start_pose.residue_type( resnum );
 
 		// Check that this position is allowed to be used for stub constraints
@@ -284,8 +285,8 @@ HotspotPlacementMover::apply(
 
 
 		std::list< core::chemical::ResidueTypeCOP > allowed_aas = packer_task->residue_task( resnum ).allowed_residue_types();
-		for (std::list< core::chemical::ResidueTypeCOP >::const_iterator restype = allowed_aas.begin();
-				 restype != allowed_aas.end(); ++restype) {
+		for ( std::list< core::chemical::ResidueTypeCOP >::const_iterator restype = allowed_aas.begin();
+				restype != allowed_aas.end(); ++restype ) {
 
 			TR << "residues allowed: "<< (*restype)->name3() << " is allowed AA" << std::endl;
 			// Loop over all stubs with this restype
@@ -293,8 +294,7 @@ HotspotPlacementMover::apply(
 
 			protocols::hotspot_hashing::HotspotStubSet::Hotspots res_stub_set( hotspot_stub_setOP->retrieve( (*restype )->name3() ) );
 
-			for (std::multimap<core::Real,protocols::hotspot_hashing::HotspotStubOP >::iterator hs_stub = res_stub_set.begin(); hs_stub != res_stub_set.end(); ++hs_stub)
-			{
+			for ( std::multimap<core::Real,protocols::hotspot_hashing::HotspotStubOP >::iterator hs_stub = res_stub_set.begin(); hs_stub != res_stub_set.end(); ++hs_stub ) {
 				Pose pose( start_pose );
 
 				//kdrew: setup fold tree centered around resnum
@@ -365,8 +365,9 @@ HotspotPlacementMover::apply(
 				//kdrew: now use full score term to evaluate "goodness" of scaffold placement
 				TR << "Full score without stub: " << (*score_fxn)(pose) << std::endl;
 
-				if( score_fxn->has_zero_weight( core::scoring::backbone_stub_constraint) )
+				if ( score_fxn->has_zero_weight( core::scoring::backbone_stub_constraint) ) {
 					score_fxn->set_weight( core::scoring::backbone_stub_constraint, 1.0 );
+				}
 
 				core::Real stub_bonus_value = hs_stub->second->bonus_value();
 				core::Real const force_constant = option[ scaffold_matcher::stub_constraint_strength ].value();
@@ -383,48 +384,43 @@ HotspotPlacementMover::apply(
 				core::scoring::constraints::ConstraintCOPs additional_hs_constraints;
 				//kdrew: put additional constraints to satisify other hotspot residues
 				//kdrew: for each residue in scaffold (peptide)
-				for ( core::Size resnum2=pep_start; resnum2 <= pep_end; ++resnum2 )
-				{
+				for ( core::Size resnum2=pep_start; resnum2 <= pep_end; ++resnum2 ) {
 
 					core::chemical::ResidueType rtype2 = pose.residue_type( resnum2 );
 
-					if ( resnum != resnum2 )
-					{
+					if ( resnum != resnum2 ) {
 						utility::vector1< core::scoring::constraints::ConstraintCOP > ambig_csts;
 						//kdrew: Check packer (resfile) that this position is allowed to be used for stub constraints
 						if ( ! packer_task->pack_residue(resnum2) ) continue;
 
 						//kdrew: for each allowed type at this position
 						std::list< core::chemical::ResidueTypeCOP > allowed_aas2 = packer_task->residue_task( resnum2 ).allowed_residue_types();
-						for (std::list< core::chemical::ResidueTypeCOP >::const_iterator restype2 = allowed_aas2.begin();
-								 restype2 != allowed_aas2.end(); ++restype2)
-						{
+						for ( std::list< core::chemical::ResidueTypeCOP >::const_iterator restype2 = allowed_aas2.begin();
+								restype2 != allowed_aas2.end(); ++restype2 ) {
 							//kdrew: for each inverse rotamer in stub set
-							for (core::Size jjj = 1; jjj <= ancillary_stubs.size(); ++jjj) {
+							for ( core::Size jjj = 1; jjj <= ancillary_stubs.size(); ++jjj ) {
 								protocols::hotspot_hashing::HotspotStubSet::Hotspots res_stub_set2( ancillary_stubs[jjj]->retrieve( (*restype2 )->name3() ) );
-								for (std::multimap<core::Real,protocols::hotspot_hashing::HotspotStubOP >::iterator hs_stub2 = res_stub_set2.begin();
-										hs_stub2 != res_stub_set2.end(); ++hs_stub2)
-								{
+								for ( std::multimap<core::Real,protocols::hotspot_hashing::HotspotStubOP >::iterator hs_stub2 = res_stub_set2.begin();
+										hs_stub2 != res_stub_set2.end(); ++hs_stub2 ) {
 									core::pose::Pose stub2_pose = core::pose::Pose();
 									stub2_pose.append_residue_by_bond( *(hs_stub2->second->residue()) );
 									core::Real stub_bonus_value2 = hs_stub2->second->bonus_value();
 									ambig_csts.push_back(
-												core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubConstraint( pose,
-																		resnum2,
-																		fixed_atom,
-																		stub2_pose,
-																		1, //kdrew: assuming stub is in pose with only one residue, change for peptoids
-																		stub_bonus_value2,
-																		force_constant ) ) )
-											);
+										core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubConstraint( pose,
+										resnum2,
+										fixed_atom,
+										stub2_pose,
+										1, //kdrew: assuming stub is in pose with only one residue, change for peptoids
+										stub_bonus_value2,
+										force_constant ) ) )
+									);
 								}
 							}
 						}
-							if ( ambig_csts.size() > 0 )
-							{
-								TR << "adding ambiguous constraints to resnum: "<<resnum2<<std::endl;
-								additional_hs_constraints.push_back( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AmbiguousConstraint(ambig_csts) ) ) );
-							}
+						if ( ambig_csts.size() > 0 ) {
+							TR << "adding ambiguous constraints to resnum: "<<resnum2<<std::endl;
+							additional_hs_constraints.push_back( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AmbiguousConstraint(ambig_csts) ) ) );
+						}
 					}
 				}
 
@@ -435,10 +431,11 @@ HotspotPlacementMover::apply(
 				TR << "Total score with long-range constraints is: " << pose.energies().total_energies()[ core::scoring::total_score ] << std::endl;
 				TR << "Stub score with long-range constraints is: " << pose.energies().total_energies()[ core::scoring::backbone_stub_constraint ] << std::endl;
 
-				if( option[ scaffold_matcher::hs_repack_only].value() )
+				if ( option[ scaffold_matcher::hs_repack_only].value() ) {
 					packer->apply( pose );
-				else // sample scaffold conformations
+				} else { // sample scaffold conformations
 					NDDP_mover->apply( pose );
+				}
 
 				//min->apply( pose );
 

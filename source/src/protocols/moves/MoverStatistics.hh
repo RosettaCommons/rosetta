@@ -56,7 +56,7 @@ public:
 
 	void accepted( bool result ) const
 	{
-		if ( result )	accepted_++;
+		if ( result ) accepted_++;
 		else rejected_++;
 	}
 

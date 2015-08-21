@@ -103,8 +103,8 @@ public: // Friends
 	)
 	{
 		return ( a.torsion_id_ < b.torsion_id_ ||
-				 ( ( a.torsion_id_ == b.torsion_id_ && a.min_ < b.min_ ) ||
-				 ( a.min_ == b.min_ && a.max_ < b.max_ ) ) );
+			( ( a.torsion_id_ == b.torsion_id_ && a.min_ < b.min_ ) ||
+			( a.min_ == b.min_ && a.max_ < b.max_ ) ) );
 	}
 
 private: // Fields

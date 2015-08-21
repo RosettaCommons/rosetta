@@ -10,7 +10,7 @@
 /// @file FragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -66,40 +66,40 @@ bool covalent_compliance( core::id::NamedAtomID const& atom1, core::id::NamedAto
 
 //   Real model_sum_dist( 0 );
 //   for ( ResonanceList::const_iterator it1 = resonances.begin(); it1 != resonances.end(); ++it1 ) {
-// 		if ( it1->second.atom().atom()[0]=='C' ) continue;
-// 		ResonanceList::const_iterator it2 = it1;
-// 		++it2;
+//   if ( it1->second.atom().atom()[0]=='C' ) continue;
+//   ResonanceList::const_iterator it2 = it1;
+//   ++it2;
 //     for ( ; it2 != resonances.end(); ++it2 ) {
 //       //cross peaks have also symmetry.. so double count all things later...
 
 //       //abuse the constraint code to parse atom names...
-// 			if ( it2->second.atom().atom()[0]=='C' ) continue;
-// 			core::scoring::constraints::AmbiguousNMRDistanceConstraint a_cst( it1->second.atom(), it2->second.atom(), pose, NULL );
+//    if ( it2->second.atom().atom()[0]=='C' ) continue;
+//    core::scoring::constraints::AmbiguousNMRDistanceConstraint a_cst( it1->second.atom(), it2->second.atom(), pose, NULL );
 //       bool proton_at_it1( pose.residue_type( a_cst.atom( 1 ).rsd() ).atom_is_hydrogen( a_cst.atom( 1 ).atomno() ) );
 //       Size second_atom_index( a_cst.natoms( 1 ) + 1 );
 //       bool proton_at_it2( pose.residue_type( a_cst.atom( second_atom_index ).rsd() ).atom_is_hydrogen( a_cst.atom( second_atom_index ).atomno() ) );
 //       if ( proton_at_it1 && proton_at_it2 ) {
-// 				Real dist( a_cst.dist( pose ) );
-// 				Real invd = 1.0/dist;
-// 				Real invd3 = invd*invd*invd;
-// 				Real invd6 = invd3*invd3;
-// 				model_sum_dist+=2*invd6; //times 2 due to symmetry
+//     Real dist( a_cst.dist( pose ) );
+//     Real invd = 1.0/dist;
+//     Real invd3 = invd*invd*invd;
+//     Real invd6 = invd3*invd3;
+//     model_sum_dist+=2*invd6; //times 2 due to symmetry
 //       }
-// 		}
-// 	}
+//   }
+//  }
 
-// 	Real peak_sum_dist( 0 );
-// 	Size nr_true_peaks( 0 );
-// 	for ( CrossPeakList::const_iterator it = cpl.begin(); it != cpl.end(); ++it ) {
-// 		//		core::scoring::constraints::AmbiguousNMRConstraintOP peak_cst( (*it)->create_constraint( cpl.resonances(), pose ) );
-// 		//Real dist( peak_cst->dist( pose ) );
-// 		//		peak_sum_dist += pow( dist, -6 );
-// 		//		nr_true_peaks += dist <= dcut ;
+//  Real peak_sum_dist( 0 );
+//  Size nr_true_peaks( 0 );
+//  for ( CrossPeakList::const_iterator it = cpl.begin(); it != cpl.end(); ++it ) {
+//   //  core::scoring::constraints::AmbiguousNMRConstraintOP peak_cst( (*it)->create_constraint( cpl.resonances(), pose ) );
+//   //Real dist( peak_cst->dist( pose ) );
+//   //  peak_sum_dist += pow( dist, -6 );
+//   //  nr_true_peaks += dist <= dcut ;
 //   }
 
-// 	Real RPF_precision(  model_sum_dist/peak_sum_dist );
-// 	Real RPF_recall( nr_true_peaks/cpl.size() );
-// 	return 2*RPF_recall*RPF_precision/( RPF_recall + RPF_precision );
+//  Real RPF_precision(  model_sum_dist/peak_sum_dist );
+//  Real RPF_recall( nr_true_peaks/cpl.size() );
+//  return 2*RPF_recall*RPF_precision/( RPF_recall + RPF_precision );
 
 // }
 

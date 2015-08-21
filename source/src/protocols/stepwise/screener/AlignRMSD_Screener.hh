@@ -28,48 +28,48 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class AlignRMSD_Screener: public StepWiseScreener {
+class AlignRMSD_Screener: public StepWiseScreener {
 
-	public:
+public:
 
-		//constructor
-		AlignRMSD_Screener( core::pose::Pose const & align_pose,
-												 core::pose::Pose const & screening_pose,
-												 utility::vector1< core::Size > const & moving_res_list_,
-												 core::Real const rmsd_cutoff,
-												 bool const do_screen = true );
+	//constructor
+	AlignRMSD_Screener( core::pose::Pose const & align_pose,
+		core::pose::Pose const & screening_pose,
+		utility::vector1< core::Size > const & moving_res_list_,
+		core::Real const rmsd_cutoff,
+		bool const do_screen = true );
 
-		//destructor
-		~AlignRMSD_Screener();
+	//destructor
+	~AlignRMSD_Screener();
 
-	public:
+public:
 
-		bool
-		check_screen();
+	bool
+	check_screen();
 
-		void set_do_screen( bool const & setting ) { do_screen_ = setting; }
-		bool do_screen() const { return do_screen_; }
+	void set_do_screen( bool const & setting ) { do_screen_ = setting; }
+	bool do_screen() const { return do_screen_; }
 
-		std::string
-		name() const { return "AlignRMSD_Screener"; }
+	std::string
+	name() const { return "AlignRMSD_Screener"; }
 
-		StepWiseScreenerType
-		type() const { return ALIGN_RMSD; }
+	StepWiseScreenerType
+	type() const { return ALIGN_RMSD; }
 
-		core::Size pass_count() const { return pass_count_; }
+	core::Size pass_count() const { return pass_count_; }
 
-	private:
+private:
 
-		core::pose::Pose const & align_pose_;
-		core::pose::Pose const & screening_pose_;
-		utility::vector1< core::Size > const & moving_res_list_;
-		core::Real const rmsd_cutoff_;
-		bool do_screen_;
-		core::Size pass_count_;
+	core::pose::Pose const & align_pose_;
+	core::pose::Pose const & screening_pose_;
+	utility::vector1< core::Size > const & moving_res_list_;
+	core::Real const rmsd_cutoff_;
+	bool do_screen_;
+	core::Size pass_count_;
 
-		modeler::align::StepWisePoseAlignerOP pose_aligner_;
+	modeler::align::StepWisePoseAlignerOP pose_aligner_;
 
-	};
+};
 
 } //screener
 } //stepwise

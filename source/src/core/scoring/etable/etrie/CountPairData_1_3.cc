@@ -32,8 +32,8 @@ void CountPairData_1_3::set_dist_to_connect_point(
 	Size connection_dist
 )
 {
-debug_assert( entry > 0 && entry <= 3 );
-debug_assert( connpoint == 1 );
+	debug_assert( entry > 0 && entry <= 3 );
+	debug_assert( connpoint == 1 );
 	connection_distances_[ entry - 1 ] = connection_dist;
 }
 
@@ -46,11 +46,11 @@ void CountPairData_1_3::print( std::ostream & os ) const
 /*
 void
 CountPairData_1_3::set_count_pair_data_to_use(
-	Size connection_id
+Size connection_id
 ) const
 {
 debug_assert( connection_id == 1 || connection_id == 2 || connection_id == 3 );
-	connection_distance_at_hand_ = connection_distances_[ connection_id - 1 ];
+connection_distance_at_hand_ = connection_distances_[ connection_id - 1 ];
 }
 */
 

@@ -30,7 +30,7 @@ namespace func {
 class LinearPenaltyFunction : public Func {
 public:
 	LinearPenaltyFunction( Real const x_middle, Real const well_depth, Real const half_width, Real const slope ):
-	    x_middle_( x_middle ), well_depth_( well_depth ), half_width_ ( half_width ), slope_ ( slope ) {}
+		x_middle_( x_middle ), well_depth_( well_depth ), half_width_ ( half_width ), slope_ ( slope ) {}
 
 	FuncOP
 	clone() const { return FuncOP( new LinearPenaltyFunction( *this ) ); }

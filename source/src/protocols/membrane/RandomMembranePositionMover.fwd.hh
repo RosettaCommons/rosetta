@@ -10,11 +10,11 @@
 /// @file       protocols/membrane/RandomMembranePositionMover.fwd.hh
 ///
 /// @brief      Random membrane position mover
-/// @details	Make random perturbations in the position of the membrane
-///				as define by some center position and normal coordinate
-///				(also of fixed thickness). Rotation mover rotates normal
-///				from a random angle, Translation mover picks a randomly
-///				translated position from the current position.
+/// @details Make random perturbations in the position of the membrane
+///    as define by some center position and normal coordinate
+///    (also of fixed thickness). Rotation mover rotates normal
+///    from a random angle, Translation mover picks a randomly
+///    translated position from the current position.
 ///
 /// @author     Rebecca Alford (rfalford12@gmail.com)
 /// @note       Last Modified (7/10/14)

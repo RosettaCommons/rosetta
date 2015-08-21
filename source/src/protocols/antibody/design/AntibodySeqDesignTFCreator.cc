@@ -41,11 +41,11 @@ namespace protocols {
 namespace antibody {
 namespace design {
 
-	using namespace core::pack::task;
-	using namespace core::pack::task::operation;
-	using namespace protocols::toolbox::task_operations;
-	using namespace protocols::loops;
-	using namespace protocols::antibody::task_operations;
+using namespace core::pack::task;
+using namespace core::pack::task::operation;
+using namespace protocols::toolbox::task_operations;
+using namespace protocols::loops;
+using namespace protocols::antibody::task_operations;
 
 AntibodySeqDesignTFCreator::AntibodySeqDesignTFCreator( AntibodyInfoCOP ab_info, bool force_north_paper_db ):
 	utility::pointer::ReferenceCount(),
@@ -60,10 +60,10 @@ AntibodySeqDesignTFCreator::AntibodySeqDesignTFCreator( AntibodyInfoCOP ab_info,
 AntibodySeqDesignTFCreator::AntibodySeqDesignTFCreator( AntibodyInfoCOP ab_info,
 	const utility::vector1<CDRSeqDesignOptionsOP> design_options,
 	bool force_north_paper_db, core::Size stem_size):
-		utility::pointer::ReferenceCount(),
-		ab_info_( ab_info ),
-		stem_size_(stem_size),
-		force_north_paper_db_(force_north_paper_db)
+	utility::pointer::ReferenceCount(),
+	ab_info_( ab_info ),
+	stem_size_(stem_size),
+	force_north_paper_db_(force_north_paper_db)
 
 {
 	assert( design_options.size() == 6 );
@@ -79,7 +79,7 @@ AntibodySeqDesignTFCreator::~AntibodySeqDesignTFCreator() {}
 void
 AntibodySeqDesignTFCreator::setup_default_options(){
 	cdr_design_options_.clear();
-	for (core::Size i = 1; i <= 6; ++i){
+	for ( core::Size i = 1; i <= 6; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
 		CDRSeqDesignOptionsOP options( new CDRSeqDesignOptions( cdr ) );
 		cdr_design_options_.push_back( options );
@@ -88,9 +88,9 @@ AntibodySeqDesignTFCreator::setup_default_options(){
 	design_antigen_ = false;
 	design_framework_ = false;
 
-	for ( core::Size i = 1; i <= 6; ++i ){
+	for ( core::Size i = 1; i <= 6; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
-		if ( ! ab_info_->has_CDR( cdr ) ){
+		if ( ! ab_info_->has_CDR( cdr ) ) {
 			cdr_design_options_[ cdr ]->design( false);
 		}
 	}
@@ -121,7 +121,7 @@ AntibodySeqDesignTFCreator::read_command_line_options(){
 void
 AntibodySeqDesignTFCreator::set_cdr_design_options( CDRNameEnum cdr, CDRSeqDesignOptionsCOP design_options ){
 	cdr_design_options_[ cdr ] = design_options->clone();
-	if ( ! ab_info_->has_CDR( cdr ) ){
+	if ( ! ab_info_->has_CDR( cdr ) ) {
 		cdr_design_options_[ cdr ]->design( false);
 	}
 }
@@ -129,9 +129,9 @@ AntibodySeqDesignTFCreator::set_cdr_design_options( CDRNameEnum cdr, CDRSeqDesig
 void
 AntibodySeqDesignTFCreator::set_cdr_design_options( const utility::vector1<CDRSeqDesignOptionsOP> design_options ){
 	cdr_design_options_ = design_options;
-	for ( core::Size i = 1; i <= 6; ++i ){
+	for ( core::Size i = 1; i <= 6; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
-		if ( ! ab_info_->has_CDR( cdr ) ){
+		if ( ! ab_info_->has_CDR( cdr ) ) {
 			cdr_design_options_[ cdr ]->design( false);
 		}
 	}
@@ -212,19 +212,19 @@ AntibodySeqDesignTFCreator::generate_tf_seq_design( const core::pose::Pose & pos
 	//Use conservative mutations for non-cluster positions + Optionally H3.
 	ConservativeDesignOperationOP cons_task = generate_task_op_cdr_conservative( pose );
 
-	 */
+	*/
 
 	add_extra_restrict_operations(tf, pose);
-	
+
 	AddCDRProfilesOperationOP profile_strategy_task = this->generate_task_op_cdr_profiles(pose);
 	tf->push_back( profile_strategy_task );
 
-	if (design_framework_conservative_){
+	if ( design_framework_conservative_ ) {
 		ConservativeDesignOperationOP cons_task = get_framework_conservative_op(pose);
 		tf->push_back(cons_task);
 	}
 
-	if (disable_non_designing_cdrs) {
+	if ( disable_non_designing_cdrs ) {
 		disable_design_for_non_designing_cdrs(tf, pose);
 	}
 
@@ -236,9 +236,9 @@ AntibodySeqDesignTFCreator::generate_tf_seq_design( const core::pose::Pose & pos
 
 core::pack::task::TaskFactoryOP
 AntibodySeqDesignTFCreator::generate_tf_seq_design_graft_design(
-		const core::pose::Pose& pose,
-		CDRNameEnum cdr,
-		utility::vector1<bool> const & neighbor_cdr_min)
+	const core::pose::Pose& pose,
+	CDRNameEnum cdr,
+	utility::vector1<bool> const & neighbor_cdr_min)
 {
 
 	assert( neighbor_cdr_min.size() == 6 );
@@ -253,9 +253,9 @@ AntibodySeqDesignTFCreator::generate_tf_seq_design_graft_design(
 
 	//Create a vector of CDRs that should only min.
 	utility::vector1<bool> only_min_cdrs(6, false);
-	for ( core::Size i = 1; i <= 6; ++i ){
+	for ( core::Size i = 1; i <= 6; ++i ) {
 		CDRNameEnum cdr_i = static_cast<CDRNameEnum>( i );
-		if (neighbor_cdr_min[ i ] && (! local_options[ i ]->design()) && ab_info_->has_CDR( cdr_i ) ){
+		if ( neighbor_cdr_min[ i ] && (! local_options[ i ]->design()) && ab_info_->has_CDR( cdr_i ) ) {
 			only_min_cdrs[ i ] = true;
 		}
 	}
@@ -275,8 +275,8 @@ AntibodySeqDesignTFCreator::generate_tf_seq_design_graft_design(
 
 	//Restrict Design to only CDRs enabled in instructions - aka if we are not design L2, do not try and design L2.
 	//Still pack L2 though
-	for ( core::Size i = 1; i <= core::Size( ab_info_->get_total_num_CDRs() ); ++i ){
-		if (!cdr_design_options_[ i ]->design()){
+	for ( core::Size i = 1; i <= core::Size( ab_info_->get_total_num_CDRs() ); ++i ) {
+		if ( !cdr_design_options_[ i ]->design() ) {
 			CDRNameEnum cdr_i = static_cast<CDRNameEnum>( i );
 			//TR << "CCC "<< ab_info_->get_CDR_name( cdr_i );
 			RestrictResidueToRepackingOP restrict= disable_design_cdr( ab_info_, cdr_i, pose );
@@ -290,7 +290,7 @@ AntibodySeqDesignTFCreator::generate_tf_seq_design_graft_design(
 	AddCDRProfilesOperationOP profile_strategy_task = this->generate_task_op_cdr_profiles(pose);
 	tf->push_back( profile_strategy_task );
 
-	if (design_framework_conservative_){
+	if ( design_framework_conservative_ ) {
 		ConservativeDesignOperationOP cons_task = get_framework_conservative_op(pose);
 		tf->push_back(cons_task);
 	}
@@ -305,7 +305,7 @@ AntibodySeqDesignTFCreator::generate_tf_seq_design_graft_design(
 	tf->push_back( cons_task );
 
 	disable_design_for_no_fallback_cdrs(tf, pose);
-	 */
+	*/
 
 	return tf;
 
@@ -331,14 +331,14 @@ AntibodySeqDesignTFCreator::get_framework_conservative_op(const core::pose::Pose
 
 	utility::vector1<core::Size> conservative_positions;
 
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ){
-		if ( ab_info_->get_region_of_residue(pose, i) ==  framework_region ){
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( ab_info_->get_region_of_residue(pose, i) ==  framework_region ) {
 			conservative_positions.push_back( i );
 		}
 	}
 
 	ConservativeDesignOperationOP cons_task( new ConservativeDesignOperation() );
-	if (!conservative_positions.empty()){
+	if ( !conservative_positions.empty() ) {
 		TR << "Adding ConservativeDesignOp for Framework Residues"<<std::endl;
 
 		cons_task->limit_to_positions( conservative_positions );
@@ -352,10 +352,10 @@ void
 AntibodySeqDesignTFCreator::disable_design_for_non_designing_cdrs(
 	core::pack::task::TaskFactoryOP tf,
 	const core::pose::Pose& pose) {
-	for (core::Size i =1; i <= core::Size( ab_info_->get_total_num_CDRs() ); ++i){
+	for ( core::Size i =1; i <= core::Size( ab_info_->get_total_num_CDRs() ); ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
 		//TR << "I???? "<< i << std::endl;
-		if ( ! cdr_design_options_[ i ]->design() ){
+		if ( ! cdr_design_options_[ i ]->design() ) {
 			tf->push_back(protocols::antibody::design::disable_design_cdr(ab_info_, cdr, pose));
 		}
 	}
@@ -367,8 +367,8 @@ AntibodySeqDesignTFCreator::disable_proline_design(core::pack::task::TaskFactory
 
 	//One restrict op per CDR.  That way we can pop them off the TF  individually if we need to.
 	core::pack::task::operation::RestrictResidueToRepackingOP restrict( new core::pack::task::operation::RestrictResidueToRepacking() );
-	for (core::Size i = 1; i <= pose.total_residue(); ++i){
-		if (pose.residue( i ).aa() == core::chemical::aa_pro){
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( pose.residue( i ).aa() == core::chemical::aa_pro ) {
 			restrict->include_residue( i );
 		}
 
@@ -380,8 +380,8 @@ protocols::loops::LoopsOP
 AntibodySeqDesignTFCreator::get_design_cdr_loops(const core::pose::Pose& pose, core::Size stem_size /* 0 */ ) const{
 	utility::vector1<bool> design_cdrs( 6, false );
 
-	for (core::Size i = 1; i <= core::Size(CDRNameEnum_total); ++i){
-		if (cdr_design_options_[ i ]->design()){
+	for ( core::Size i = 1; i <= core::Size(CDRNameEnum_total); ++i ) {
+		if ( cdr_design_options_[ i ]->design() ) {
 			design_cdrs[ i ] = true;
 		}
 	}
@@ -430,12 +430,12 @@ AntibodySeqDesignTFCreator::get_general_loop_task_op(LoopsOP loops, bool design_
 void
 AntibodySeqDesignTFCreator::add_extra_restrict_operations(core::pack::task::TaskFactoryOP tf, const core::pose::Pose & pose) const{
 
-	if (! design_antigen_ ){
+	if ( ! design_antigen_ ) {
 		RestrictResidueToRepackingOP restrict_antigen = disable_design_region( ab_info_, pose, antigen_region );
 		tf->push_back( restrict_antigen );
 	}
 
-	if ( ! design_framework_ ){
+	if ( ! design_framework_ ) {
 		RestrictResidueToRepackingOP restrict_framework = disable_design_region( ab_info_, pose, framework_region );
 		tf->push_back( restrict_framework );
 	}
@@ -445,7 +445,7 @@ AntibodySeqDesignTFCreator::add_extra_restrict_operations(core::pack::task::Task
 		tf->push_back( restrict_conserved );
 	}
 
-	if ( ! design_h3_stem_ ){
+	if ( ! design_h3_stem_ ) {
 		RestrictResidueToRepackingOP restrict_h3_stem = disable_h3_stem_positions(ab_info_, pose);
 		tf->push_back( restrict_h3_stem );
 	}
@@ -453,7 +453,7 @@ AntibodySeqDesignTFCreator::add_extra_restrict_operations(core::pack::task::Task
 	tf->push_back(TaskOperationCOP( new operation::NoRepackDisulfides() ));
 
 	//Optionally disable Proline design
-	if ( !design_proline_ ){
+	if ( !design_proline_ ) {
 		disable_proline_design( tf, pose );
 	}
 
@@ -462,112 +462,112 @@ AntibodySeqDesignTFCreator::add_extra_restrict_operations(core::pack::task::Task
 /*
 void
 AntibodySeqDesignTFCreator::remove_conservative_design_residues_from_prob_set(vector1<core::Size> const & positions, std::map< core::Size, std::map< core::chemical::AA, core::Real > > & prob_set){
-	for (core::Size i = 1; i<= positions.size(); ++i){
-		std::map< core::Size, std::map<core::chemical::AA, core::Real > >::iterator it = prob_set.find(positions[ i ]);
-		if ( it != prob_set.end() ){
-			prob_set.erase( it );
-			TR << "Removing "<< i << "  from probabilistic design" <<std::endl;
-		}
-	}
+for (core::Size i = 1; i<= positions.size(); ++i){
+std::map< core::Size, std::map<core::chemical::AA, core::Real > >::iterator it = prob_set.find(positions[ i ]);
+if ( it != prob_set.end() ){
+prob_set.erase( it );
+TR << "Removing "<< i << "  from probabilistic design" <<std::endl;
+}
+}
 }
 
 
 vector1<core::Size>
 AntibodySeqDesignTFCreator::get_conservative_design_residues(const core::pose::Pose& pose){
 
-	vector1<core::Size> conservative_positions;
+vector1<core::Size> conservative_positions;
 
-	//If NO  or sparse data then use fallback strategy
-	for (core::Size i = CDRNameEnum_start; i <= core::Size(ab_info_->get_total_num_CDRs()); ++i){
-		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
-		bool no_data_cdr = no_data_cdrs_[ cdr];
+//If NO  or sparse data then use fallback strategy
+for (core::Size i = CDRNameEnum_start; i <= core::Size(ab_info_->get_total_num_CDRs()); ++i){
+CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+bool no_data_cdr = no_data_cdrs_[ cdr];
 
-		///Add conservative positions if the design strategy is set, or if we are falling back and conservative is set as the fallback configuration.
-		if ( ( cdr_design_options_[ cdr ]->design_strategy() ==  seq_design_conservative ) ||
-			( no_data_cdr  &&
-			( cdr_design_options_[ cdr ]->fallback_strategy() == seq_design_conservative ) &&
-			cdr_design_options_[ cdr ]->fallback() )) {
-
-
-			//TR << "Treating "<< ab_info_->get_CDR_name(cdr)<< " as conservative"<<std::endl<<std::endl;
-			core::Size start = ab_info_->get_CDR_start( cdr, pose );
-			core::Size end = ab_info_->get_CDR_end( cdr, pose );
-
-			for ( core::Size res = start; res <= end; ++res ){
-				conservative_positions.push_back( res );
-				//TR << "Treating "<< res << " as conservative " << std::endl;
-			}
+///Add conservative positions if the design strategy is set, or if we are falling back and conservative is set as the fallback configuration.
+if ( ( cdr_design_options_[ cdr ]->design_strategy() ==  seq_design_conservative ) ||
+( no_data_cdr  &&
+( cdr_design_options_[ cdr ]->fallback_strategy() == seq_design_conservative ) &&
+cdr_design_options_[ cdr ]->fallback() )) {
 
 
-		}
-	}
-	if ( design_framework_conservative_ ){
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ){
-			if ( ab_info_->get_region_of_residue(pose, i) ==  framework_region ){
-				conservative_positions.push_back( i );
-			}
-		}
-	}
-	return conservative_positions;
+//TR << "Treating "<< ab_info_->get_CDR_name(cdr)<< " as conservative"<<std::endl<<std::endl;
+core::Size start = ab_info_->get_CDR_start( cdr, pose );
+core::Size end = ab_info_->get_CDR_end( cdr, pose );
+
+for ( core::Size res = start; res <= end; ++res ){
+conservative_positions.push_back( res );
+//TR << "Treating "<< res << " as conservative " << std::endl;
+}
+
+
+}
+}
+if ( design_framework_conservative_ ){
+for ( core::Size i = 1; i <= pose.total_residue(); ++i ){
+if ( ab_info_->get_region_of_residue(pose, i) ==  framework_region ){
+conservative_positions.push_back( i );
+}
+}
+}
+return conservative_positions;
 }
 
 ResidueProbDesignOperationOP
 AntibodySeqDesignTFCreator::generate_task_op_cdr_profile( core::pose::Pose const & pose ){
 
-	ResidueProbDesignOperationOP prob_task( new ResidueProbDesignOperation() );
+ResidueProbDesignOperationOP prob_task( new ResidueProbDesignOperation() );
 
-	std::map< core::Size, std::map< core::chemical::AA, core::Real > > prob_set = get_cluster_profile_probability_data(
-			ab_info_,
-			pose,
-			cdr_design_options_,
-			no_data_cdrs_,
-			prob_cutoff_,
-			use_outliers_,
-			force_north_paper_db_);
+std::map< core::Size, std::map< core::chemical::AA, core::Real > > prob_set = get_cluster_profile_probability_data(
+ab_info_,
+pose,
+cdr_design_options_,
+no_data_cdrs_,
+prob_cutoff_,
+use_outliers_,
+force_north_paper_db_);
 
-	vector1<core::Size> conservative_positions = get_conservative_design_residues( pose );
+vector1<core::Size> conservative_positions = get_conservative_design_residues( pose );
 
-	remove_conservative_design_residues_from_prob_set( conservative_positions, prob_set );
+remove_conservative_design_residues_from_prob_set( conservative_positions, prob_set );
 
-	prob_task->set_picking_rounds(profile_picking_rounds_);
-	prob_task->set_aa_probability_set( prob_set );
-	prob_task->set_keep_task_allowed_aas( false );
-	prob_task->set_include_native_restype( true );
-	prob_task->set_sample_zero_probs_at( zero_prob_weight_ ); //Control by cmd line flag. We do want to have some variability that isn't known.;
-	return prob_task;
+prob_task->set_picking_rounds(profile_picking_rounds_);
+prob_task->set_aa_probability_set( prob_set );
+prob_task->set_keep_task_allowed_aas( false );
+prob_task->set_include_native_restype( true );
+prob_task->set_sample_zero_probs_at( zero_prob_weight_ ); //Control by cmd line flag. We do want to have some variability that isn't known.;
+return prob_task;
 }
 
 ConservativeDesignOperationOP
 AntibodySeqDesignTFCreator::generate_task_op_cdr_conservative( core::pose::Pose const & pose ){
-	vector1<core::Size> conservative_positions = get_conservative_design_residues( pose );
-	ConservativeDesignOperationOP cons_task( new ConservativeDesignOperation() );
-	if (!conservative_positions.empty()){
-		TR << "Adding ConservativeDesignOp "<<std::endl;
+vector1<core::Size> conservative_positions = get_conservative_design_residues( pose );
+ConservativeDesignOperationOP cons_task( new ConservativeDesignOperation() );
+if (!conservative_positions.empty()){
+TR << "Adding ConservativeDesignOp "<<std::endl;
 
-		cons_task->limit_to_positions( conservative_positions );
-		cons_task->include_native_aa( true );
-		cons_task->add_to_allowed_aas( false );
-	}
-	else{
-		TR << "No conservative positions to add!" << std::endl;
-	}
-	return cons_task;
+cons_task->limit_to_positions( conservative_positions );
+cons_task->include_native_aa( true );
+cons_task->add_to_allowed_aas( false );
+}
+else{
+TR << "No conservative positions to add!" << std::endl;
+}
+return cons_task;
 }
 
 void
 AntibodySeqDesignTFCreator::disable_design_for_no_fallback_cdrs(
-	core::pack::task::TaskFactoryOP tf,
-	const core::pose::Pose& pose) const
+core::pack::task::TaskFactoryOP tf,
+const core::pose::Pose& pose) const
 {
-	for (core::Size i =1; i <= core::Size( ab_info_->get_total_num_CDRs() ); ++i){
-		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
-		//TR << "I???? "<< i << std::endl;
-		if ( cdr_design_options_[ i ]->design() && no_data_cdrs_[ cdr ] && cdr_design_options_[ i ]->fallback() == false){
-			tf->push_back(protocols::antibody::design::disable_design_cdr(ab_info_, cdr, pose));
-		}
-	}
+for (core::Size i =1; i <= core::Size( ab_info_->get_total_num_CDRs() ); ++i){
+CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+//TR << "I???? "<< i << std::endl;
+if ( cdr_design_options_[ i ]->design() && no_data_cdrs_[ cdr ] && cdr_design_options_[ i ]->fallback() == false){
+tf->push_back(protocols::antibody::design::disable_design_cdr(ab_info_, cdr, pose));
 }
- */
+}
+}
+*/
 
 
 }

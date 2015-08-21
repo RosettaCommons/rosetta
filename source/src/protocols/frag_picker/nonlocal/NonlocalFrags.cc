@@ -75,13 +75,13 @@ using namespace core;
 static thread_local basic::Tracer TR( "protocols.frag_picker.nonlocal.NonlocalFrags" );
 
 void NonlocalFrags::register_options() {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	// input
-	option.add_relevant( in::file::s );			// PDB
-	option.add_relevant( in::file::l );			// PDB list
-	option.add_relevant( in::file::list );	// PDB list
+	option.add_relevant( in::file::s );   // PDB
+	option.add_relevant( in::file::l );   // PDB list
+	option.add_relevant( in::file::list ); // PDB list
 	option.add_relevant( frags::nonlocal::single_chain ); // pairs from same chain only
 	// relax options
 	option.add_relevant( frags::nonlocal::relax_input );
@@ -121,53 +121,54 @@ void NonlocalFrags::initialize() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if (!option[ in::file::s ].user() && !option[ in::file::l ].user() && !option[ in::file::list ].user()) {
+	if ( !option[ in::file::s ].user() && !option[ in::file::l ].user() && !option[ in::file::list ].user() ) {
 		utility_exit_with_message( "Error: in:file:s or in:file:l option required!" );
 	}
-	if (option[ frags::nonlocal::single_chain ].user()) {
+	if ( option[ frags::nonlocal::single_chain ].user() ) {
 		single_chain_ = option[ frags::nonlocal::single_chain ]();
 	}
-	if (option[ frags::nonlocal::relax_input ].user()) {
+	if ( option[ frags::nonlocal::relax_input ].user() ) {
 		relax_input_ = option[ frags::nonlocal::relax_input ]();
 	}
-	if (option[ frags::nonlocal::relax_input_with_coordinate_constraints ].user()) {
+	if ( option[ frags::nonlocal::relax_input_with_coordinate_constraints ].user() ) {
 		relax_input_with_coordinate_constraints_ = option[ frags::nonlocal::relax_input_with_coordinate_constraints ]();
 	}
-	if (option[ frags::nonlocal::relax_frags_repeats ].user()) {
+	if ( option[ frags::nonlocal::relax_frags_repeats ].user() ) {
 		relax_frags_repeats_ = option[ frags::nonlocal::relax_frags_repeats ]();
 	}
 	// non-local contact definition
-	if (option[ frags::contacts::min_seq_sep ].user()) {
+	if ( option[ frags::contacts::min_seq_sep ].user() ) {
 		min_seq_sep_ = option[ frags::contacts::min_seq_sep ]();
 	}
-	if (option[ frags::contacts::dist_cutoffs ].user()) {
+	if ( option[ frags::contacts::dist_cutoffs ].user() ) {
 		utility::vector1<Real> dist_cutoffs = option[ frags::contacts::dist_cutoffs ]();
-		if (dist_cutoffs.size() != 1)
+		if ( dist_cutoffs.size() != 1 ) {
 			utility_exit_with_message( "Error: only one frags::contacts::dist_cutoffs value is allowed!" );
+		}
 		Real min_dist = dist_cutoffs[1];
 		ca_dist_squared_ = min_dist*min_dist;
 	}
-	if (option[ frags::nonlocal::min_contacts_per_res ].user()) {
+	if ( option[ frags::nonlocal::min_contacts_per_res ].user() ) {
 		min_contacts_per_res_ = (Size)option[ frags::nonlocal::min_contacts_per_res ]();
 	}
 	// for valid interacting pair
-	if (option[ frags::nonlocal::max_ddg_score ].user()) {
+	if ( option[ frags::nonlocal::max_ddg_score ].user() ) {
 		max_ddg_score_ = option[ frags::nonlocal::max_ddg_score ]();
 	}
-	if (option[ frags::nonlocal::max_rmsd_after_relax ].user()) {
+	if ( option[ frags::nonlocal::max_rmsd_after_relax ].user() ) {
 		max_rmsd_after_relax_ = option[ frags::nonlocal::max_rmsd_after_relax ]();
 	}
 	// fragment sizes
-	if (option[ frags::frag_sizes ].user()) {
+	if ( option[ frags::frag_sizes ].user() ) {
 		frag_sizes_ = option[ frags::frag_sizes ]();
 	} else {
 		frag_sizes_.clear(); // default to no frag sizes
 	}
-	if (option[ frags::nonlocal::output_idealized ].user()) {
+	if ( option[ frags::nonlocal::output_idealized ].user() ) {
 		output_idealized_ = option[ frags::nonlocal::output_idealized ]();
 	}
 
-	if (option[ frags::nonlocal::output_frags_pdbs ].user()) {
+	if ( option[ frags::nonlocal::output_frags_pdbs ].user() ) {
 		output_frags_pdbs_ = option[ frags::nonlocal::output_frags_pdbs ]();
 	}
 
@@ -180,9 +181,9 @@ void NonlocalFrags::initialize() {
 bool NonlocalFrags::recover_checkpoint( const std::string tag, pose::Pose& pose ) {
 	std::map<std::string, std::string>::iterator it;
 	it=checkpoints_map_.find(tag);
-	if (it != checkpoints_map_.end()) {
+	if ( it != checkpoints_map_.end() ) {
 		// add recovered data to pose as a comment for output
-		if (checkpoints_map_[ tag ].size()) pose::add_comment( pose, tag, checkpoints_map_[ tag ] );
+		if ( checkpoints_map_[ tag ].size() ) pose::add_comment( pose, tag, checkpoints_map_[ tag ] );
 		TR.Info << "Recovered checkpoint " << tag << std::endl;
 		return true;
 	}
@@ -191,7 +192,7 @@ bool NonlocalFrags::recover_checkpoint( const std::string tag, pose::Pose& pose 
 
 void NonlocalFrags::write_checkpoint( const std::string tag, const std::string data ) {
 	std::ofstream checkpoint( checkpointfile_.c_str(), std::ios_base::app );
-	if (!checkpoint.good()) {
+	if ( !checkpoint.good() ) {
 		TR.Debug << "Warning: cannot open checkpoint file for writing!" << std::endl;
 		return;
 	}
@@ -200,14 +201,14 @@ void NonlocalFrags::write_checkpoint( const std::string tag, const std::string d
 #ifdef BOINC
 	boinc_begin_critical_section();
 #endif
-	if (data.size()) {
+	if ( data.size() ) {
 		Size pdbinfonumberj, pdbinfonumberk, contact_cnt;
 		Real sub_pose_score, relaxed_rmsd, relaxed_score, relaxed_ddg_score;
 		std::string chainj, chaink;
 		std::istringstream line_stream(data);
 		line_stream >> pdbinfonumberj >> chainj >> pdbinfonumberk >> chaink >>
 			contact_cnt >> sub_pose_score >> relaxed_rmsd >> relaxed_score >> relaxed_ddg_score;
-		if (line_stream.fail()) {
+		if ( line_stream.fail() ) {
 			TR.Debug << "Warning: cannot parse checkpoint data!" << std::endl;
 			return;
 		}
@@ -224,22 +225,22 @@ void NonlocalFrags::write_checkpoint( const std::string tag, const std::string d
 }
 
 void NonlocalFrags::read_checkpoint_file() {
-	if (!utility::file::file_exists( checkpointfile_ )) return;
+	if ( !utility::file::file_exists( checkpointfile_ ) ) return;
 	std::string line;
 	std::ifstream checkpoint( checkpointfile_.c_str() );
-	while( getline(checkpoint,line) ) {
+	while ( getline(checkpoint,line) ) {
 		Size pdbinfonumberj, pdbinfonumberk, contact_cnt;
 		Real sub_pose_score, relaxed_rmsd, relaxed_score, relaxed_ddg_score;
 		std::string tag, chainj, chaink;
 
 		std::istringstream line_stream(line);
 		line_stream >> tag;
-		if (line_stream.eof()) {
+		if ( line_stream.eof() ) {
 			checkpoints_map_[ tag ] = "";
 		} else {
 			line_stream >> pdbinfonumberj >> chainj >> pdbinfonumberk >> chaink >>
 				contact_cnt >> sub_pose_score >> relaxed_rmsd >> relaxed_score >> relaxed_ddg_score;
-			if (line_stream.fail()) utility_exit_with_message( "Error: checkpoint file parse error!" );
+			if ( line_stream.fail() ) utility_exit_with_message( "Error: checkpoint file parse error!" );
 			std::stringstream data;
 			data << pdbinfonumberj << " " << chainj << " " << pdbinfonumberk << " " << chaink <<
 				" " << contact_cnt << " " << sub_pose_score << " " << relaxed_rmsd << " " << relaxed_score <<
@@ -279,7 +280,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 #endif
 
 	// relax input pose before picking non-local fragment pairs?
-	if (frag_sizes_.size() > 0 && (relax_input_ || relax_input_with_coordinate_constraints_)) {
+	if ( frag_sizes_.size() > 0 && (relax_input_ || relax_input_with_coordinate_constraints_) ) {
 
 #ifdef BOINC_GRAPHICS
 		// for some reason this is necessary to display the structures initially, i.e. the relax protocol may not
@@ -287,7 +288,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 		protocols::boinc::Boinc::update_graphics_last_accepted( pose, unmodified_pose_score );
 		protocols::boinc::Boinc::update_mc_trial_info( step_cnt++, "Relax_" + input_tag );
 #endif
-		if (relax_input_with_coordinate_constraints_) {
+		if ( relax_input_with_coordinate_constraints_ ) {
 			// a hack to turn on coordinate constraints (we don't want to use them for relaxing the fragment pairs later)
 			option[OptionKeys::relax::constrain_relax_to_start_coords].value(true);
 		}
@@ -301,7 +302,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 		// restore original option value
 		option[run::delete_checkpoints].value(origval);
 
-		if (relax_input_with_coordinate_constraints_) {
+		if ( relax_input_with_coordinate_constraints_ ) {
 			// turn off coordinate constraints
 			option[OptionKeys::relax::constrain_relax_to_start_coords].value(false);
 			scorefxn->set_weight(scoring::coordinate_constraint, 0.0 );
@@ -333,179 +334,179 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 	// note: shall this be random for BOINC?
 	Size total_residue = pose.total_residue();
 
-// Size frag_len = numeric::random::random_element( frag_sizes_ );  //  = frag_sizes_[ i ]; // frag size
+	// Size frag_len = numeric::random::random_element( frag_sizes_ );  //  = frag_sizes_[ i ]; // frag size
 	for ( Size i=1; i <= frag_sizes_.size(); ++i ) {   // frag_sizes_ loop
 
 		Size frag_len = frag_sizes_[ i ]; // frag size
 
 
-	Size total_len = frag_len*2;
-	if (total_residue >= frag_len+min_seq_sep_+frag_len) {    // continue; // skip if pose is too small
+		Size total_len = frag_len*2;
+		if ( total_residue >= frag_len+min_seq_sep_+frag_len ) {    // continue; // skip if pose is too small
 
-		Size min_contacts = min_contacts_per_res_*frag_len; // min non-local contacts
+			Size min_contacts = min_contacts_per_res_*frag_len; // min non-local contacts
 
 #ifdef BOINC_GRAPHICS
-		pose::Pose best_energy_pose;
-		Real min_relaxed_score = 100000000.0;
+			pose::Pose best_energy_pose;
+			Real min_relaxed_score = 100000000.0;
 #endif
 
-		// find non-local pairs
-		Size contact_cnt = 0;
-		bool continue_k = false;
-		for ( Size j=1; j<=total_residue-frag_len-min_seq_sep_; ++j ) {
-			for ( Size k=j+frag_len+min_seq_sep_; k<=total_residue-frag_len; ++k ) {
-				if (single_chain_ && (pose.residue(j).chain() != pose.residue(k).chain())) continue;
+			// find non-local pairs
+			Size contact_cnt = 0;
+			bool continue_k = false;
+			for ( Size j=1; j<=total_residue-frag_len-min_seq_sep_; ++j ) {
+				for ( Size k=j+frag_len+min_seq_sep_; k<=total_residue-frag_len; ++k ) {
+					if ( single_chain_ && (pose.residue(j).chain() != pose.residue(k).chain()) ) continue;
 
-				// get tag for this frag pair
-				std::stringstream sstream;
-				sstream << "_" << frag_len << "_" << j << "_" << k;
-				std::string tag = sstream.str();
+					// get tag for this frag pair
+					std::stringstream sstream;
+					sstream << "_" << frag_len << "_" << j << "_" << k;
+					std::string tag = sstream.str();
 
-				// recover checkpoint
-				if (recover_checkpoint( output_name + tag, pose )) {
+					// recover checkpoint
+					if ( recover_checkpoint( output_name + tag, pose ) ) {
 #ifdef BOINC_GRAPHICS
-					protocols::boinc::Boinc::update_mc_trial_info( step_cnt++, "NonLocalFrags_" + input_tag + tag );
+						protocols::boinc::Boinc::update_mc_trial_info( step_cnt++, "NonLocalFrags_" + input_tag + tag );
 #endif
-					continue;
-				}
-
-				pose::PDBInfoCOP pdbinfo = pose.pdb_info();
-
-				// j and k are starting positions for fragment pairs
-				// count CA contacts
-				contact_cnt = 0;
-				continue_k = false;
-				Size prev_chain_m = 0;
-				Size prev_chain_n = 0;
-				Size prev_resnum_m = 0;
-				Size prev_resnum_n = 0;
-				numeric::xyzVector< Real> prev_ca_xyz_m(0.0), prev_ca_xyz_n(0.0);
-				for ( Size m=0; m<frag_len; ++m) {
-					conformation::Residue const & rsd_m = pose.residue(j+m);
-					if (!rsd_m.has("CA") || !rsd_m.is_protein()) { continue_k = true; break; }
-					Size chain_m = rsd_m.chain();
-					Size resnum_m = pdbinfo->number(j+m);
-					numeric::xyzVector< Real> ca_xyz_m = rsd_m.xyz("CA");
-					// make sure the fragment residues are sequential in the orig PDB and from the same chain!
-					if (m>0 && (chain_m != prev_chain_m || resnum_m != prev_resnum_m+1 ||
-							ca_xyz_m.distance_squared(prev_ca_xyz_m) > 25)) { // CA-CA distance must be within 5 angstroms (i.e. no chainbreak)
-						continue_k = true; break;
+						continue;
 					}
-					prev_chain_m = chain_m;
-					prev_resnum_m = resnum_m;
-					prev_ca_xyz_m = ca_xyz_m;
-					for ( Size n=0; n<frag_len; ++n) {
-						conformation::Residue const & rsd_n = pose.residue(k+n);
-						Size chain_n = rsd_n.chain();
-						if (!rsd_n.has("CA") || !rsd_n.is_protein() || (single_chain_ && chain_m != chain_n)) { continue_k = true; break; }
-						Size resnum_n = pdbinfo->number(k+n);
-						numeric::xyzVector< Real> ca_xyz_n = rsd_n.xyz("CA");
+
+					pose::PDBInfoCOP pdbinfo = pose.pdb_info();
+
+					// j and k are starting positions for fragment pairs
+					// count CA contacts
+					contact_cnt = 0;
+					continue_k = false;
+					Size prev_chain_m = 0;
+					Size prev_chain_n = 0;
+					Size prev_resnum_m = 0;
+					Size prev_resnum_n = 0;
+					numeric::xyzVector< Real> prev_ca_xyz_m(0.0), prev_ca_xyz_n(0.0);
+					for ( Size m=0; m<frag_len; ++m ) {
+						conformation::Residue const & rsd_m = pose.residue(j+m);
+						if ( !rsd_m.has("CA") || !rsd_m.is_protein() ) { continue_k = true; break; }
+						Size chain_m = rsd_m.chain();
+						Size resnum_m = pdbinfo->number(j+m);
+						numeric::xyzVector< Real> ca_xyz_m = rsd_m.xyz("CA");
 						// make sure the fragment residues are sequential in the orig PDB and from the same chain!
-						if (n>0 && (chain_n != prev_chain_n || resnum_n != prev_resnum_n+1 ||
-								ca_xyz_n.distance_squared(prev_ca_xyz_n) > 25)) {  // CA-CA distance must be within 5 angstroms (i.e. no chainbreak)
+						if ( m>0 && (chain_m != prev_chain_m || resnum_m != prev_resnum_m+1 ||
+								ca_xyz_m.distance_squared(prev_ca_xyz_m) > 25) ) { // CA-CA distance must be within 5 angstroms (i.e. no chainbreak)
 							continue_k = true; break;
 						}
-						prev_chain_n = chain_n;
-						prev_resnum_n = resnum_n;
-						prev_ca_xyz_n = ca_xyz_n;
-						if (rsd_m.xyz("CA").distance_squared(rsd_n.xyz("CA")) < ca_dist_squared_) contact_cnt++;
+						prev_chain_m = chain_m;
+						prev_resnum_m = resnum_m;
+						prev_ca_xyz_m = ca_xyz_m;
+						for ( Size n=0; n<frag_len; ++n ) {
+							conformation::Residue const & rsd_n = pose.residue(k+n);
+							Size chain_n = rsd_n.chain();
+							if ( !rsd_n.has("CA") || !rsd_n.is_protein() || (single_chain_ && chain_m != chain_n) ) { continue_k = true; break; }
+							Size resnum_n = pdbinfo->number(k+n);
+							numeric::xyzVector< Real> ca_xyz_n = rsd_n.xyz("CA");
+							// make sure the fragment residues are sequential in the orig PDB and from the same chain!
+							if ( n>0 && (chain_n != prev_chain_n || resnum_n != prev_resnum_n+1 ||
+									ca_xyz_n.distance_squared(prev_ca_xyz_n) > 25) ) {  // CA-CA distance must be within 5 angstroms (i.e. no chainbreak)
+								continue_k = true; break;
+							}
+							prev_chain_n = chain_n;
+							prev_resnum_n = resnum_n;
+							prev_ca_xyz_n = ca_xyz_n;
+							if ( rsd_m.xyz("CA").distance_squared(rsd_n.xyz("CA")) < ca_dist_squared_ ) contact_cnt++;
+						}
+						if ( continue_k ) break;
 					}
-					if (continue_k) break;
+
+					if ( !continue_k && contact_cnt >= min_contacts ) {
+						// At this point, fragment pair has enough non-local contacts, no missing CA, and is a protein.
+
+#ifdef BOINC_GRAPHICS
+						protocols::boinc::Boinc::update_mc_trial_info( step_cnt++, "NonLocalFrags_" + input_tag + tag );
+#endif
+						// Create a sub pose representing the pair
+						Size midpoint = static_cast<Size>(ceil(frag_len / 2.0));
+						kinematics::FoldTree tree(total_len);
+						int jump_id = tree.new_jump( midpoint, frag_len+midpoint, frag_len );
+						tree.set_jump_atoms(jump_id, "CA", "CA");
+						assert(tree.check_fold_tree());
+						//   Create the sub pose
+						pose::Pose sub_pose;
+						utility::vector1<Size> positions;
+						for ( Size m=0; m<frag_len; ++m ) positions.push_back( j+m );
+						for ( Size m=0; m<frag_len; ++m ) positions.push_back( k+m );
+						pose::create_subpose( pose, positions, tree, sub_pose );
+
+						//   Detect disulfides
+						sub_pose.conformation().detect_disulfides();
+
+						//   Treat the fragments as separate chains
+						sub_pose.conformation().insert_chain_ending( frag_len );
+
+						// RELAX non-local fragment pair
+						pose::Pose relax_sub_pose = sub_pose;
+						Real sub_pose_score = (*scorefxn)( sub_pose );
+#ifdef BOINC_GRAPHICS
+						protocols::boinc::Boinc::attach_graphics_current_pose_observer( relax_sub_pose );
+						protocols::boinc::Boinc::update_graphics_low_energy( relax_sub_pose, sub_pose_score );
+#endif
+						sub_pose_relax_protocol->set_current_tag( output_name + tag );
+						sub_pose_relax_protocol->apply( relax_sub_pose );
+
+						// check relaxed pose
+						Real relaxed_rmsd = scoring::CA_rmsd( relax_sub_pose, sub_pose );
+						if ( relaxed_rmsd > max_rmsd_after_relax_ ) {
+							write_checkpoint( output_name + tag, "" );
+							continue;
+						}
+						Real relaxed_score = (*scorefxn)( relax_sub_pose );
+
+						// DDG of relaxed fragment pair
+						protocols::simple_filters::DdgFilter ddg = protocols::simple_filters::DdgFilter( 1000, scorefxn, 1, 5);
+						Real relaxed_ddg_score = ddg.compute( relax_sub_pose );
+						if ( relaxed_ddg_score >= max_ddg_score_ ) {  // DDG FILTER VALUE
+							write_checkpoint( output_name + tag, "" );
+							continue;
+						}
+
+#ifdef BOINC_GRAPHICS
+						if ( relaxed_score < min_relaxed_score ) {
+							min_relaxed_score = relaxed_score;
+							best_energy_pose = relax_sub_pose;
+							protocols::boinc::Boinc::update_graphics_low_energy( best_energy_pose, min_relaxed_score, protocols::boinc::Boinc::PERSIST );
+						}
+#endif
+
+						// add comment in pose for output, this is the main data for non-local fragment pairs
+						// make sure this data format matches the checkpoint methods
+						//seqj = sub_pose.sequence().substr(0,frag_len)
+						//seqk = sub_pose.sequence().substr(frag_len)
+						std::stringstream pair_data;
+						pair_data << pdbinfo->number(j) << " " << pdbinfo->chain(j) << " " << pdbinfo->number(k) << " " << pdbinfo->chain(k) <<
+							" " << contact_cnt << " " << sub_pose_score << " " << relaxed_rmsd << " " << relaxed_score << " " << relaxed_ddg_score;
+						pose::add_comment( pose, output_name + tag, pair_data.str() );
+						// should we also use this info?
+						//  pose.pdb_info()->occupancy( seqpos, ii );
+						//  pose.pdb_info()->temperature( seqpos, ii );
+
+						// DEBUG
+						TR.Debug << output_name << tag << " " << pair_data.str() << std::endl;
+						if ( output_frags_pdbs_ ) sub_pose.dump_pdb( output_name + tag + ".pdb" );
+
+						write_checkpoint( output_name + tag, pair_data.str() );
+
+#ifdef BOINC_GRAPHICS
+						protocols::boinc::Boinc::update_graphics_last_accepted( relax_sub_pose, relaxed_score );
+#endif
+					}
+					//else {  // don't bother checkpointing at this point
+					// write_checkpoint( output_name + tag, "" );
+					//}
 				}
-
-				if (!continue_k && contact_cnt >= min_contacts) {
-					// At this point, fragment pair has enough non-local contacts, no missing CA, and is a protein.
-
-#ifdef BOINC_GRAPHICS
-					protocols::boinc::Boinc::update_mc_trial_info( step_cnt++, "NonLocalFrags_" + input_tag + tag );
-#endif
-					// Create a sub pose representing the pair
-					Size midpoint = static_cast<Size>(ceil(frag_len / 2.0));
-					kinematics::FoldTree tree(total_len);
-					int jump_id = tree.new_jump( midpoint, frag_len+midpoint, frag_len );
-					tree.set_jump_atoms(jump_id, "CA", "CA");
-					assert(tree.check_fold_tree());
-					//   Create the sub pose
-					pose::Pose sub_pose;
-					utility::vector1<Size> positions;
-					for ( Size m=0; m<frag_len; ++m) positions.push_back( j+m );
-					for ( Size m=0; m<frag_len; ++m) positions.push_back( k+m );
-					pose::create_subpose( pose, positions, tree, sub_pose );
-
-					//   Detect disulfides
-					sub_pose.conformation().detect_disulfides();
-
-					//   Treat the fragments as separate chains
-					sub_pose.conformation().insert_chain_ending( frag_len );
-
-					// RELAX non-local fragment pair
-					pose::Pose relax_sub_pose = sub_pose;
-					Real sub_pose_score = (*scorefxn)( sub_pose );
-#ifdef BOINC_GRAPHICS
-					protocols::boinc::Boinc::attach_graphics_current_pose_observer( relax_sub_pose );
-					protocols::boinc::Boinc::update_graphics_low_energy( relax_sub_pose, sub_pose_score );
-#endif
-					sub_pose_relax_protocol->set_current_tag( output_name + tag );
-					sub_pose_relax_protocol->apply( relax_sub_pose );
-
-					// check relaxed pose
-					Real relaxed_rmsd = scoring::CA_rmsd( relax_sub_pose, sub_pose );
-					if (relaxed_rmsd > max_rmsd_after_relax_) {
-						write_checkpoint( output_name + tag, "" );
-						continue;
-					}
-					Real relaxed_score = (*scorefxn)( relax_sub_pose );
-
-					// DDG of relaxed fragment pair
-					protocols::simple_filters::DdgFilter ddg = protocols::simple_filters::DdgFilter( 1000, scorefxn, 1, 5);
-					Real relaxed_ddg_score = ddg.compute( relax_sub_pose );
-					if (relaxed_ddg_score >= max_ddg_score_) {  // DDG FILTER VALUE
-						write_checkpoint( output_name + tag, "" );
-						continue;
-					}
-
-#ifdef BOINC_GRAPHICS
-					if (relaxed_score < min_relaxed_score) {
-						min_relaxed_score = relaxed_score;
-						best_energy_pose = relax_sub_pose;
-						protocols::boinc::Boinc::update_graphics_low_energy( best_energy_pose, min_relaxed_score, protocols::boinc::Boinc::PERSIST );
-					}
-#endif
-
-					// add comment in pose for output, this is the main data for non-local fragment pairs
-					// make sure this data format matches the checkpoint methods
-					//seqj = sub_pose.sequence().substr(0,frag_len)
-					//seqk = sub_pose.sequence().substr(frag_len)
-					std::stringstream pair_data;
-					pair_data << pdbinfo->number(j) << " " << pdbinfo->chain(j) << " " << pdbinfo->number(k) << " " << pdbinfo->chain(k) <<
-						" " << contact_cnt << " " << sub_pose_score << " " << relaxed_rmsd << " " << relaxed_score << " " << relaxed_ddg_score;
-					pose::add_comment( pose, output_name + tag, pair_data.str() );
-					// should we also use this info?
-					//  pose.pdb_info()->occupancy( seqpos, ii );
-					//  pose.pdb_info()->temperature( seqpos, ii );
-
-					// DEBUG
-					TR.Debug << output_name << tag << " " << pair_data.str() << std::endl;
-					if (output_frags_pdbs_) sub_pose.dump_pdb( output_name + tag + ".pdb" );
-
-					write_checkpoint( output_name + tag, pair_data.str() );
-
-#ifdef BOINC_GRAPHICS
-					protocols::boinc::Boinc::update_graphics_last_accepted( relax_sub_pose, relaxed_score );
-#endif
-				}
-				//else {  // don't bother checkpointing at this point
-				//	write_checkpoint( output_name + tag, "" );
-				//}
 			}
-		}
 
-	}   // frag_sizes_ loop
+		}   // frag_sizes_ loop
 
 
 	}
 
-	if (output_idealized_) {
+	if ( output_idealized_ ) {
 
 		pose::Pose idealize_pose = unmodified_pose;
 
@@ -534,7 +535,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 #endif
 
 		// relax idealized
-		if (relax_input_with_coordinate_constraints_) {
+		if ( relax_input_with_coordinate_constraints_ ) {
 			// a hack to turn on coordinate constraints (we don't want to use them for relaxing the fragment pairs later)
 			option[OptionKeys::relax::constrain_relax_to_start_coords].value(true);
 		}
@@ -549,7 +550,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 		// restore original option value
 		option[run::delete_checkpoints].value(origval);
 
-		if (relax_input_with_coordinate_constraints_) {
+		if ( relax_input_with_coordinate_constraints_ ) {
 			// turn off coordinate constraints
 			option[OptionKeys::relax::constrain_relax_to_start_coords].value(false);
 			scorefxn->set_weight(scoring::coordinate_constraint, 0.0 );
@@ -574,13 +575,13 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 #endif
 
 	// output relaxed pose?
-	if (relax_input_ || relax_input_with_coordinate_constraints_) {
+	if ( relax_input_ || relax_input_with_coordinate_constraints_ ) {
 		// first check if it has already been done (from a preempted run)
-    // a hack since JobOutputter::affixed_numbered_name( JobCOP job ) is used to create the silent file
-    // output name and uses the out::prefix option
-    std::string origprefix = option[ out::prefix ].value();
-    option[ out::prefix ].value("relaxed_");
-    if (!jd->job_outputter()->job_has_completed( jd->current_job() ) && relaxed_pose.total_residue()) {
+		// a hack since JobOutputter::affixed_numbered_name( JobCOP job ) is used to create the silent file
+		// output name and uses the out::prefix option
+		std::string origprefix = option[ out::prefix ].value();
+		option[ out::prefix ].value("relaxed_");
+		if ( !jd->job_outputter()->job_has_completed( jd->current_job() ) && relaxed_pose.total_residue() ) {
 			(*scorefxn)(relaxed_pose);
 			jd->job_outputter()->final_pose( jd->current_job(), relaxed_pose );
 		}
@@ -590,15 +591,15 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 }
 
 std::string NonlocalFrags::get_name() const {
-  return "NonlocalFrags";
+	return "NonlocalFrags";
 }
 
 protocols::moves::MoverOP NonlocalFrags::clone() const {
-  return protocols::moves::MoverOP( new NonlocalFrags(*this) );
+	return protocols::moves::MoverOP( new NonlocalFrags(*this) );
 }
 
 protocols::moves::MoverOP NonlocalFrags::fresh_instance() const {
-  return protocols::moves::MoverOP( new NonlocalFrags() );
+	return protocols::moves::MoverOP( new NonlocalFrags() );
 }
 
 

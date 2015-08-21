@@ -70,7 +70,7 @@ angle_diff( Real a1, Real a2 )
 void
 asp_corrections( RotVec & rotamers )
 {
-	for( Size i = 1; i <= rotamers.size(); ++i ) {
+	for ( Size i = 1; i <= rotamers.size(); ++i ) {
 		Real temp_chi( rotamers[i].get_min_chi(2) );
 		if ( temp_chi >= 90 && temp_chi <= 180 ) {
 			rotamers[i].set_min_chi( temp_chi+180, 2 );
@@ -83,7 +83,7 @@ asp_corrections( RotVec & rotamers )
 void
 glu_corrections( RotVec & rotamers )
 {
-	for( Size i = 1; i <= rotamers.size(); ++i ) {
+	for ( Size i = 1; i <= rotamers.size(); ++i ) {
 		Real temp_chi( rotamers[i].get_min_chi(3) );
 		if ( temp_chi >= 90 && temp_chi <= 180 ) {
 			rotamers[i].set_min_chi( temp_chi+180, 3 );
@@ -96,7 +96,7 @@ glu_corrections( RotVec & rotamers )
 void
 phe_tyr_corrections( RotVec & rotamers )
 {
-	for( Size i = 1; i <= rotamers.size(); ++i ) {
+	for ( Size i = 1; i <= rotamers.size(); ++i ) {
 		Real temp_chi( rotamers[i].get_min_chi(2) );
 		if ( temp_chi >= 135 && temp_chi <= 180 ) {
 			rotamers[i].set_min_chi( temp_chi+180, 2 );
@@ -108,7 +108,7 @@ phe_tyr_corrections( RotVec & rotamers )
 
 
 void
-min_rotamers( RotVec & rotamers, 	core::scoring::ScoreFunctionOP scrfxn, std::string aa_name )
+min_rotamers( RotVec & rotamers,  core::scoring::ScoreFunctionOP scrfxn, std::string aa_name )
 {
 	using namespace core;
 	using namespace pose;
@@ -120,7 +120,7 @@ min_rotamers( RotVec & rotamers, 	core::scoring::ScoreFunctionOP scrfxn, std::st
 
 	// iterate over rotamers array
 	Size const nrot( rotamers.size() );
-	for (Size i = 1; i <= nrot; ++i ) {
+	for ( Size i = 1; i <= nrot; ++i ) {
 
 		std::cout << "Working on rotamer " << i << " of " << nrot << std::flush << std::endl;
 
@@ -139,24 +139,24 @@ min_rotamers( RotVec & rotamers, 	core::scoring::ScoreFunctionOP scrfxn, std::st
 		// create filenames
 		/*std::stringstream start_name;
 		if( is_peptoid ) {
-			start_name << "tripeptide_" << rotamers[i].get_omg() << "_" << rotamers[i].get_phi() << "_" << rotamers[i].get_psi() << "_";
+		start_name << "tripeptide_" << rotamers[i].get_omg() << "_" << rotamers[i].get_phi() << "_" << rotamers[i].get_psi() << "_";
 		} else {
-			start_name << "tripeptide_" << rotamers[i].get_phi() << "_" << rotamers[i].get_psi() << "_";
+		start_name << "tripeptide_" << rotamers[i].get_phi() << "_" << rotamers[i].get_psi() << "_";
 		}
 		for(Size j = 1; j <= nchi; ++j ) {
-			start_name << rotamers[i].get_inp_chi( j ) << "_";
+		start_name << rotamers[i].get_inp_chi( j ) << "_";
 		}
 		start_name << "start.pdb";
 		//std::string start_filename( start_name.str() );
 
 		std::stringstream end_name;
 		if( is_peptoid ) {
-			end_name << "tripeptide_" << rotamers[i].get_omg() << "_" << rotamers[i].get_phi() << "_" << rotamers[i].get_psi() << "_";
+		end_name << "tripeptide_" << rotamers[i].get_omg() << "_" << rotamers[i].get_phi() << "_" << rotamers[i].get_psi() << "_";
 		} else {
-			end_name << "tripeptide_" << rotamers[i].get_phi() << "_" << rotamers[i].get_psi() << "_";
+		end_name << "tripeptide_" << rotamers[i].get_phi() << "_" << rotamers[i].get_psi() << "_";
 		}
 		for(Size j = 1; j <= nchi; ++j ) {
-			end_name << rotamers[i].get_inp_chi( j ) << "_";
+		end_name << rotamers[i].get_inp_chi( j ) << "_";
 		}
 		end_name << "end.pdb";
 		*/
@@ -177,7 +177,7 @@ min_rotamers( RotVec & rotamers, 	core::scoring::ScoreFunctionOP scrfxn, std::st
 		pose.set_torsion( bb3, rotamers[i].get_psi() );
 		pose.set_torsion( bb4, rotamers[i].get_eps() );
 
-		for(Size j = 1; j <= nchi; ++j ) {
+		for ( Size j = 1; j <= nchi; ++j ) {
 			pose.set_chi( j, 1, rotamers[i].get_inp_chi( j ) );
 		}
 
@@ -228,7 +228,7 @@ min_rotamers( RotVec & rotamers, 	core::scoring::ScoreFunctionOP scrfxn, std::st
 		rotamers[i].set_solvation( em[ fa_sol ] );
 
 		// record min chi, energy
-		for(Size j = 1; j <= nchi; ++j ) {
+		for ( Size j = 1; j <= nchi; ++j ) {
 			rotamers[i].set_min_chi( pose.chi( j, 1 ), j );
 		}
 		rotamers[i].set_energy( min_ener );
@@ -256,7 +256,7 @@ init_rotamers_centroids
 	std::string line;
 
 	// check to see if options file exists
-	if( ! utility::file::file_exists( options_filename.c_str() ) ) {
+	if ( ! utility::file::file_exists( options_filename.c_str() ) ) {
 		utility_exit_with_message("Cannot find options file"+options_filename);
 	}
 
@@ -280,7 +280,7 @@ init_rotamers_centroids
 	// and aa name before parsing the rest of the file
 	Size nchi( 0 );
 	std::string base_aa_name;
-	for (Size i=1; i<= nlines; ++i ) {
+	for ( Size i=1; i<= nlines; ++i ) {
 		std::string const & line( lines[i] );
 		std::istringstream l( line );
 		std::string tag;
@@ -290,15 +290,11 @@ init_rotamers_centroids
 		// get number of chi
 		if ( tag == "NUM_CHI" ) {
 			l >> nchi;
-		}
-
-		// get number of clusters
-		else if ( tag == "CENTROID" ) {
+		} else if ( tag == "CENTROID" ) {
+			// get number of clusters
 			++ncluster;
-		}
-
-		// get amino acid name
-		else if ( tag == "AA_NAME" ) {
+		} else if ( tag == "AA_NAME" ) {
+			// get amino acid name
 			l >> base_aa_name;
 		}
 
@@ -324,7 +320,7 @@ init_rotamers_centroids
 	utility::vector1<int> chi_lower, chi_upper, chi_increment;
 	chi_lower.resize(nchi, 0); chi_upper.resize(nchi, 0); chi_increment.resize(nchi, 0);
 
-	for (Size i=1; i<= nlines; ++i ) {
+	for ( Size i=1; i<= nlines; ++i ) {
 		std::string const & line( lines[i] );
 		std::istringstream l( line );
 		std::string tag;
@@ -334,32 +330,24 @@ init_rotamers_centroids
 		// get phi range
 		if ( tag == "PHI_RANGE" ) {
 			l >> phi_lower >> phi_upper >> phi_increment;
-		}
-
-		// get psi range
-		else if ( tag == "PSI_RANGE" ) {
+		} else if ( tag == "PSI_RANGE" ) {
+			// get psi range
 			l >> psi_lower >> psi_upper >> psi_increment;
-		}
-
-		// get omg range
-		else if ( tag == "OMG_RANGE" ) {
+		} else if ( tag == "OMG_RANGE" ) {
+			// get omg range
 			l >> omg_lower >> omg_upper >> omg_increment;
-		}
-
-		// get chi range(s)
-		else if ( tag == "CHI_RANGE" ) {
+		} else if ( tag == "CHI_RANGE" ) {
+			// get chi range(s)
 			Size chi_num(0); int temp_lower, temp_upper, temp_increment;
 			l >> chi_num >> temp_lower >> temp_upper >> temp_increment;
 			assert( chi_num <= nchi );
 			chi_lower[chi_num] = temp_lower;
 			chi_upper[chi_num] = temp_upper;
 			chi_increment[chi_num] = temp_increment;
-		}
-
-		// get centoids
-		else if ( tag == "CENTROID" ) {
+		} else if ( tag == "CENTROID" ) {
+			// get centoids
 			RotData temp( nchi, ncluster );
-			for(Size i = 1; i<= nchi; ++i ) {
+			for ( Size i = 1; i<= nchi; ++i ) {
 				Real chi_val(0); int lib_chi_val(0);
 				l >> chi_val >> lib_chi_val;
 				temp.set_inp_chi( chi_val, i );
@@ -374,10 +362,10 @@ init_rotamers_centroids
 	utility::vector1<Size> total_chi_num_bins;
 	total_chi_num_bins.resize(nchi, 0);
 	Size nrotamers(1);
-	for( Size i = 1; i <= nchi; ++i ) {
+	for ( Size i = 1; i <= nchi; ++i ) {
 		if ( (chi_upper[i] - chi_lower[i])%chi_increment[i] != 0 ) {
 			utility_exit_with_message("Number of chi bins not integer for chi: " +
-					boost::lexical_cast<std::string>(i));
+				boost::lexical_cast<std::string>(i));
 		}
 		total_chi_num_bins[i] = ((chi_upper[i] - chi_lower[i])/chi_increment[i])+1;
 		nrotamers *= total_chi_num_bins[i];
@@ -387,11 +375,11 @@ init_rotamers_centroids
 	RotData temp( nchi, ncluster );
 	rotamers.resize(nrotamers, temp);
 
-	for (Size i = 1; i <= nchi; ++i ) {
+	for ( Size i = 1; i <= nchi; ++i ) {
 
 		// calc all chi(i) valuse based on upper, lower, inc
 		utility::vector1<Real> chi_values;
-		for (int k = chi_lower[i]; k <= chi_upper[i]; k+=chi_increment[i] ){
+		for ( int k = chi_lower[i]; k <= chi_upper[i]; k+=chi_increment[i] ) {
 			chi_values.push_back( k );
 		}
 
@@ -400,29 +388,27 @@ init_rotamers_centroids
 
 		// calc number of rotmater combos for larger chi numbers
 		Size count_up(1);
-		if( i >= nchi ) {
+		if ( i >= nchi ) {
 			count_up = 1;
-		}
-		else {
-			for (Size m = i+1; m <= nchi; ++m ) {
+		} else {
+			for ( Size m = i+1; m <= nchi; ++m ) {
 				count_up *= total_chi_num_bins[m];
 			}
 		}
 		// calc number of rotmater combos for smaller chi numbers
 		Size count_down(1);
-		if( i <= 1) {
+		if ( i <= 1 ) {
 			count_down = 1;
-		}
-		else {
-			for (Size m = 1; m < i; ++m ) {
+		} else {
+			for ( Size m = 1; m < i; ++m ) {
 				count_down *= total_chi_num_bins[m];
 			}
 		}
 
 		// assign chi values
-		for (Size n = 1; n <= count_down; ++n ) {
-			for (Size j = 1; j <= chi_values.size(); ++j ) {
-				for (Size l = 1; l <= count_up; ++l ) {
+		for ( Size n = 1; n <= count_down; ++n ) {
+			for ( Size j = 1; j <= chi_values.size(); ++j ) {
+				for ( Size l = 1; l <= count_up; ++l ) {
 					rotamers[rot_iter].set_inp_chi(chi_values[j], i);
 					++rot_iter;
 				}
@@ -433,7 +419,7 @@ init_rotamers_centroids
 	// set phi and psi
 	// ultimatly this will be done higher up in the code to initialize EVERYTHING
 	// but i don't think that we will run that way at first
-	for( Size i = 1; i <= nrotamers; ++i ) {
+	for ( Size i = 1; i <= nrotamers; ++i ) {
 		rotamers[i].set_phi( phi_lower );
 		rotamers[i].set_psi( psi_lower );
 		if ( is_peptoid ) {
@@ -448,14 +434,14 @@ init_rotamers_centroids
 bool
 calc_rotamer_clusters( RotVec & rotamers )
 {
- 	// for all rotamers find closest centroid and assign cluster_num
+	// for all rotamers find closest centroid and assign cluster_num
 	// compare pt to its old cluster see if it changed locations
 	bool clust_change = false;
-	for (Size i=1; i<=rotamers.size(); ++i){
+	for ( Size i=1; i<=rotamers.size(); ++i ) {
 		Size oldclust = rotamers[i].get_cluster_num();
 		Size clust = rotamers[i].get_min_cent_dist(); //to get closest centroid
 		rotamers[i].set_cluster_num(clust);
-		if ( oldclust != clust ){
+		if ( oldclust != clust ) {
 			clust_change = true;
 		}
 	}
@@ -472,7 +458,7 @@ calc_centroids(RotVec & rotamers, RotVec & centroids)
 
 	typedef vector1<Real> rvec;
 
-  Size ncluster( centroids.size() );
+	Size ncluster( centroids.size() );
 	Size nchi( rotamers[1].get_num_chi() );
 
 	// init num_rots
@@ -482,14 +468,14 @@ calc_centroids(RotVec & rotamers, RotVec & centroids)
 	// init total_chi_angle
 	vector1< rvec > total_chi_angle;
 	total_chi_angle.resize(ncluster);
-	for( Size i = 1; i <= total_chi_angle.size(); ++i ) {
+	for ( Size i = 1; i <= total_chi_angle.size(); ++i ) {
 		total_chi_angle[i].resize(nchi, 0);
 	}
 
 	// sum up chi angle totals
-	for( Size i = 1; i <= rotamers.size(); ++i ) {
+	for ( Size i = 1; i <= rotamers.size(); ++i ) {
 		Size clusternum = rotamers[i].get_cluster_num();
-		for( Size j = 1; j <= nchi; ++j) {
+		for ( Size j = 1; j <= nchi; ++j ) {
 			total_chi_angle[clusternum][j] += rotamers[i].get_min_chi(j);
 		}
 		num_rots[clusternum]++;
@@ -497,18 +483,18 @@ calc_centroids(RotVec & rotamers, RotVec & centroids)
 
 	//get average angles and assign new centroid chi's
 	bool centroid_change(false);
-	for (Size i=1;i <= ncluster; ++i){
-		for (Size j=1; j <= nchi; ++j ){
+	for ( Size i=1; i <= ncluster; ++i ) {
+		for ( Size j=1; j <= nchi; ++j ) {
 			Real old_angle = centroids[i].get_min_chi( j );
 			Real avg_angle = total_chi_angle[i][j] / num_rots[i];
 			centroids[i].set_min_chi( avg_angle, j );
-			if(old_angle != avg_angle) {
+			if ( old_angle != avg_angle ) {
 				centroid_change = true;
 			}
 		}
 	}
 
-  return centroid_change;
+	return centroid_change;
 }
 
 Real
@@ -517,7 +503,7 @@ calc_dist( RotData & point1, RotData & point2 )
 	Size nchi(point1.get_num_chi());
 	Real sd(0);
 
-	for( Size i = 1; i <= nchi; ++i ) {
+	for ( Size i = 1; i <= nchi; ++i ) {
 		sd += pow( angle_diff(point1.get_min_chi(i), point2.get_min_chi(i) ), 2 );
 	}
 
@@ -536,20 +522,20 @@ avg_cluster_cen_dist(RotVec & rotamers, Size & ncluster)
 	num_rots.resize(ncluster,0);
 
 
-	for( Size i = 1; i <= rotamers.size(); ++i ) {
+	for ( Size i = 1; i <= rotamers.size(); ++i ) {
 		Size clusternum = rotamers[i].get_cluster_num();
 		total_dist[clusternum] += rotamers[i].get_cen_dist(clusternum);
 		num_rots[clusternum]++;
 	}
 
 	//print out how many rots in each cluster
-	for (Size i=1; i <= ncluster; ++i){
+	for ( Size i=1; i <= ncluster; ++i ) {
 		std::cout << "Cluster: "<< i << " contains "<< num_rots[i] << " of "<< rotamers.size()<< "   or %=" << static_cast<Real>(num_rots[i]) / static_cast<Real>(rotamers.size())  <<std::endl;
 	}
 
 	std::cout <<"AVG_CLUST_CENT_DST:   " <<std::endl;
 	Real avgdist(0);
-	for( Size i = 1; i <= ncluster; ++i ) {
+	for ( Size i = 1; i <= ncluster; ++i ) {
 		std::cout  << total_dist[i]/num_rots[i] << "\t";
 		avgdist += (total_dist[i]/num_rots[i]);
 	}
@@ -561,12 +547,12 @@ avg_cluster_cen_dist(RotVec & rotamers, Size & ncluster)
 void
 calc_all_dist(RotVec & rotamers, RotVec & centroids)
 {
-	for (Size i=1; i <= rotamers.size(); ++i){
-		for (Size j=1; j<= centroids.size(); ++j){
+	for ( Size i=1; i <= rotamers.size(); ++i ) {
+		for ( Size j=1; j<= centroids.size(); ++j ) {
 			Real dist = calc_dist (rotamers[i], centroids[j]);
 			rotamers[i].set_cen_dist(dist, j);
 		}
-  }
+	}
 }
 
 // pull out best rots from rotamers and add them to final_rotamers
@@ -576,14 +562,14 @@ get_final_rots(RotVec & rotamers , RotVec & final_rotamers, Size & nclusters ){
 	final_rotamers.resize(nclusters, temp);
 
 	//sets high energies for later minimization (probably better way to do this)
-	for (Size j=1; j<= nclusters ; ++j){
+	for ( Size j=1; j<= nclusters ; ++j ) {
 		final_rotamers[j].set_energy(6000);
 	}
 	//finds lowest E rotamer in each cluster
-	for (Size i=1; i<= rotamers.size(); ++i){
+	for ( Size i=1; i<= rotamers.size(); ++i ) {
 		Size cluster_num( rotamers[i].get_cluster_num() );
-		if (rotamers[i].get_energy() <= final_rotamers[cluster_num].get_energy()){
-				final_rotamers[cluster_num] = rotamers[i];
+		if ( rotamers[i].get_energy() <= final_rotamers[cluster_num].get_energy() ) {
+			final_rotamers[cluster_num] = rotamers[i];
 		}
 	}
 }
@@ -602,19 +588,19 @@ get_final_rot_probs( RotVec & final_rotamers)
 
 	// get the minimum energy
 	Real min_ener(final_rotamers[1].get_energy()); // seed
-	for (Size i=1; i<=final_rotamers.size(); ++i){
+	for ( Size i=1; i<=final_rotamers.size(); ++i ) {
 		if ( final_rotamers[i].get_energy() < min_ener ) {
 			min_ener = final_rotamers[i].get_energy();
 		}
 	}
 
 	// calc the normalized energies
-	for (Size i=1; i<=final_rotamers.size(); ++i){
+	for ( Size i=1; i<=final_rotamers.size(); ++i ) {
 		normalized_ener[i] = final_rotamers[i].get_energy() - min_ener;
 	}
 
 	// finds probabilities from energy
-	for (Size i=1; i<=final_rotamers.size(); ++i){
+	for ( Size i=1; i<=final_rotamers.size(); ++i ) {
 		prob_temp[i] = exp( ( -normalized_ener[i] ) / KbT ) ;
 		total_prob += prob_temp[i];
 		std::cout <<"Cluster:  " << i << "   Probability=" << prob_temp[i] << std::endl;
@@ -623,7 +609,7 @@ get_final_rot_probs( RotVec & final_rotamers)
 	std::cout <<"Kb T value used: " << KbT << std::endl;
 
 	//normalizes and sets probabilities of final_rotamers
-	for (Size i=1; i<=final_rotamers.size(); ++i){
+	for ( Size i=1; i<=final_rotamers.size(); ++i ) {
 		final_rotamers[i].set_probability(prob_temp[i] / total_prob);
 	}
 }
@@ -648,7 +634,7 @@ calc_std_dev (RotVec & final_rotamers, core::scoring::ScoreFunctionOP scrfxn, st
 	bool is_peptoid( RT.is_peptoid() );
 
 	// itterate over final rotamers
-	for (Size i = 1; i<= final_rotamers.size(); ++i){
+	for ( Size i = 1; i<= final_rotamers.size(); ++i ) {
 		Size const nchi (final_rotamers[i].get_num_chi() );
 
 		// set phi, psi, chi
@@ -661,7 +647,7 @@ calc_std_dev (RotVec & final_rotamers, core::scoring::ScoreFunctionOP scrfxn, st
 		pose.set_torsion( bb3, final_rotamers[i].get_psi() );
 		pose.set_torsion( bb4, final_rotamers[i].get_eps() );
 
-		for(Size l = 1; l <= nchi; ++l ) {
+		for ( Size l = 1; l <= nchi; ++l ) {
 			pose.set_chi( l, 1, final_rotamers[i].get_inp_chi( l ) );
 		}
 
@@ -681,17 +667,17 @@ calc_std_dev (RotVec & final_rotamers, core::scoring::ScoreFunctionOP scrfxn, st
 		// dump coords to a file
 		/*std::stringstream final_name;
 		if( is_peptoid ) {
-			final_name << pose.residue(1).type().name3() << "_" <<  final_rotamers[i].get_omg() << "_" << final_rotamers[i].get_phi() << "_" << final_rotamers[i].get_psi() << "_";
+		final_name << pose.residue(1).type().name3() << "_" <<  final_rotamers[i].get_omg() << "_" << final_rotamers[i].get_phi() << "_" << final_rotamers[i].get_psi() << "_";
 		} else {
-			final_name << pose.residue(1).type().name3() << "_" <<  final_rotamers[i].get_phi() << "_" << final_rotamers[i].get_psi() << "_";
+		final_name << pose.residue(1).type().name3() << "_" <<  final_rotamers[i].get_phi() << "_" << final_rotamers[i].get_psi() << "_";
 		}
 		final_name << "INP_CHI_";
 		for(Size j = 1; j <= nchi; ++j ) {
-			final_name << final_rotamers[i].get_inp_chi( j ) << "_";
+		final_name << final_rotamers[i].get_inp_chi( j ) << "_";
 		}
 		final_name << "MIN_CHI_";
 		for(Size j = 1; j <= nchi; ++j ) {
-			final_name << final_rotamers[i].get_min_chi( j ) << "_";
+		final_name << final_rotamers[i].get_min_chi( j ) << "_";
 		}
 		final_name << "final.pdb";
 		*/
@@ -706,7 +692,7 @@ calc_std_dev (RotVec & final_rotamers, core::scoring::ScoreFunctionOP scrfxn, st
 		//test to see if getting right Energy for this rotamer
 		Real test_ener ( (*scrfxn)(pose) );
 		Real found_ener (final_rotamers[i].get_energy());
-		if (test_ener != found_ener){
+		if ( test_ener != found_ener ) {
 			std::cout << "--------WARNING---------"<< std::endl;
 			std::cout << "For Final_Rot: " << i << "  Scored E: "<<  test_ener  << "  but Min Rot E: "<< found_ener <<std::endl;
 		}
@@ -716,15 +702,15 @@ calc_std_dev (RotVec & final_rotamers, core::scoring::ScoreFunctionOP scrfxn, st
 
 		// search around minimized chi's
 		//std::cout <<"pre-for loop" <<std::endl;
-		for(Size j = 1; j <= nchi; ++j ) {
+		for ( Size j = 1; j <= nchi; ++j ) {
 			Size k(0);
 			Real new_ener (0);
 			//std::cout <<"pre-while loop" <<std::endl;
-			while(new_ener < cut_off_ener && (k * chi_step) <= 30 ){
+			while ( new_ener < cut_off_ener && (k * chi_step) <= 30 ) {
 				k=k+1;
-				pose.set_chi( j, 1,	numeric::nonnegative_principal_angle_degrees( final_rotamers[i].get_min_chi( j ) + k * chi_step ));
+				pose.set_chi( j, 1, numeric::nonnegative_principal_angle_degrees( final_rotamers[i].get_min_chi( j ) + k * chi_step ));
 				Real plus_ener( (*scrfxn)( pose ) );
-				pose.set_chi( j, 1,	numeric::nonnegative_principal_angle_degrees( final_rotamers[i].get_min_chi( j ) - k * chi_step ));
+				pose.set_chi( j, 1, numeric::nonnegative_principal_angle_degrees( final_rotamers[i].get_min_chi( j ) - k * chi_step ));
 				Real neg_ener( (*scrfxn)( pose ) );
 				// set new_ener to highest energy in either direction
 				new_ener = (plus_ener >= neg_ener ? plus_ener : neg_ener);
@@ -747,38 +733,38 @@ pretty_print_rd( RotData & rot )
 	using namespace std;
 
 	cout << "PHI: " << setw(4) << setprecision(2) << fixed << rot.get_phi() << " "
-			 << "PSI: " << setw(4) << setprecision(2) << fixed << rot.get_psi() << " "
-			 << "OMG: " << setw(8) << setprecision(4) << fixed << rot.get_min_omg() << " "
-			 << "ESL: " << setw(8) << setprecision(4) << fixed << rot.get_min_eps() << " "
-			 << "PRB: " << setw(4) << setprecision(4) << fixed << rot.get_probability() << " "
-			 << "ENR: " << setw(8) << setprecision(4) << fixed << rot.get_energy() << " "
-			 << "TWS: " << setw(8) << setprecision(4) << fixed << rot.get_twist() << " "
-			 << "RAR: " << setw(8) << setprecision(4) << fixed << rot.get_intra_rep() << " "
-			 << "RAA: " << setw(8) << setprecision(4) << fixed << rot.get_intra_atr() << " "
+		<< "PSI: " << setw(4) << setprecision(2) << fixed << rot.get_psi() << " "
+		<< "OMG: " << setw(8) << setprecision(4) << fixed << rot.get_min_omg() << " "
+		<< "ESL: " << setw(8) << setprecision(4) << fixed << rot.get_min_eps() << " "
+		<< "PRB: " << setw(4) << setprecision(4) << fixed << rot.get_probability() << " "
+		<< "ENR: " << setw(8) << setprecision(4) << fixed << rot.get_energy() << " "
+		<< "TWS: " << setw(8) << setprecision(4) << fixed << rot.get_twist() << " "
+		<< "RAR: " << setw(8) << setprecision(4) << fixed << rot.get_intra_rep() << " "
+		<< "RAA: " << setw(8) << setprecision(4) << fixed << rot.get_intra_atr() << " "
 		//<< "ERR: " << setw(8) << setprecision(4) << fixed << rot.get_inter_rep() << " "
 		// << "ERA: " << setw(8) << setprecision(4) << fixed << rot.get_inter_atr() << " "
 		// << "SOL: " << setw(8) << setprecision(4) << fixed << rot.get_solvation() << " "
-			 << "NCH: " << setw(4) << fixed << rot.get_num_chi() << " "
-			 << "CLN: " << setw(4) << fixed << rot.get_cluster_num() << " ";
+		<< "NCH: " << setw(4) << fixed << rot.get_num_chi() << " "
+		<< "CLN: " << setw(4) << fixed << rot.get_cluster_num() << " ";
 
 	// print inp_chi_ vector
 	cout << "ICHI:";
-	for(Size i=1; i<=rot.get_num_chi(); ++i) {
+	for ( Size i=1; i<=rot.get_num_chi(); ++i ) {
 		cout << setw(7) << setprecision(2) << fixed << rot.get_inp_chi(i) << " ";
 	}
 	// print min_chi_ vector
 	cout << "MCHI:";
-	for(Size i=1; i<=rot.get_num_chi(); ++i) {
+	for ( Size i=1; i<=rot.get_num_chi(); ++i ) {
 		cout <<  setw(7) <<  setprecision(2) << fixed << rot.get_min_chi(i) << " ";
 	}
 	// print std_dev_ vector
 	cout << "STDD:";
-	for(Size i=1; i<=rot.get_num_chi(); ++i) {
+	for ( Size i=1; i<=rot.get_num_chi(); ++i ) {
 		cout <<  setw(7) <<  setprecision(2) << fixed << rot.get_std_dev(i) << " ";
 	}
 	// print cen_dst_ vector
 	cout << "CDST:";
-	for(Size i=1; i<=rot.get_num_clusters(); ++i) {
+	for ( Size i=1; i<=rot.get_num_clusters(); ++i ) {
 		cout <<  setw(7) <<  setprecision(2) << fixed << rot.get_cen_dist(i) << " ";
 	}
 
@@ -820,7 +806,7 @@ dunbrack_print( RotVec  & final_rotamers, RotVec & centroids, std::string aa_nam
 	for ( Size i = 1; i <= nrot; ++i ) {
 		Size max(i);
 		for ( Size j = i+1; j <= nrot; ++j ) {
-			if( final_rotamers[j].get_probability() > final_rotamers[max].get_probability() ) {
+			if ( final_rotamers[j].get_probability() > final_rotamers[max].get_probability() ) {
 				max = j;
 			}
 		}
@@ -836,26 +822,26 @@ dunbrack_print( RotVec  & final_rotamers, RotVec & centroids, std::string aa_nam
 	vector1<Size> chi1_bin_nums; vector1<Size> chi2_bin_nums; vector1<Size> chi3_bin_nums; vector1<Size> chi4_bin_nums;
 	chi1_bin_nums.resize( nrot, 0 ); chi4_bin_nums.resize( nrot, 0 ); chi3_bin_nums.resize( nrot, 0 ); chi2_bin_nums.resize( nrot, 0 );
 
-	if( nchi >= 1) {
-		for( Size i = 1; i <= nrot; ++i ) {
+	if ( nchi >= 1 ) {
+		for ( Size i = 1; i <= nrot; ++i ) {
 			chi1_bin_nums[i] = Size( centroids[i].get_lib_chi_val(1) );
 		}
 	}
 
-	if( nchi >= 2) {
-		for( Size i = 1; i <= nrot; ++i ) {
+	if ( nchi >= 2 ) {
+		for ( Size i = 1; i <= nrot; ++i ) {
 			chi2_bin_nums[i] = Size( centroids[i].get_lib_chi_val(2) );
 		}
 	}
 
-	if( nchi >= 3) {
-		for( Size i = 1; i <= nrot; ++i ) {
+	if ( nchi >= 3 ) {
+		for ( Size i = 1; i <= nrot; ++i ) {
 			chi3_bin_nums[i] = Size( centroids[i].get_lib_chi_val(3) );
 		}
 	}
 
-	if( nchi >= 4) {
-		for( Size i = 1; i <= nrot; ++i ) {
+	if ( nchi >= 4 ) {
+		for ( Size i = 1; i <= nrot; ++i ) {
 			chi4_bin_nums[i] = Size( centroids[i].get_lib_chi_val(4) );
 		}
 	}
@@ -869,32 +855,32 @@ dunbrack_print( RotVec  & final_rotamers, RotVec & centroids, std::string aa_nam
 	rotlib.open( lib_name.str().c_str() );
 
 	// now print out lines
-	for( Size i = 1; i <= nrot; ++i ) {
+	for ( Size i = 1; i <= nrot; ++i ) {
 		rotlib << setw(3) << aa_name3
-					 << "  "
-					 << setw(4) << setprecision(0) << fixed << phi
-					 << " "
-					 << setw(4) << setprecision(0) << fixed << psi
-					 << "  "
-					 << setw(4) << setprecision(0) << fixed << omg
-					 << "  "
-					 << setw(4) << count
-					 << "    "
-					 << chi1_bin_nums[i] << " " << chi2_bin_nums[i] << " " << chi3_bin_nums[i] << " " << chi4_bin_nums[i]
-					 << "  "
-					 << setw(8) << setprecision(6) << fixed << final_rotamers[i].get_probability()
-					 << "  ";
+			<< "  "
+			<< setw(4) << setprecision(0) << fixed << phi
+			<< " "
+			<< setw(4) << setprecision(0) << fixed << psi
+			<< "  "
+			<< setw(4) << setprecision(0) << fixed << omg
+			<< "  "
+			<< setw(4) << count
+			<< "    "
+			<< chi1_bin_nums[i] << " " << chi2_bin_nums[i] << " " << chi3_bin_nums[i] << " " << chi4_bin_nums[i]
+			<< "  "
+			<< setw(8) << setprecision(6) << fixed << final_rotamers[i].get_probability()
+			<< "  ";
 
-		for( Size j = 1; j <= 4; ++j ){
-			if( j <= nchi )	rotlib << setw(6) << setprecision(1) << fixed << numeric::principal_angle_degrees( final_rotamers[i].get_min_chi(j) );
+		for ( Size j = 1; j <= 4; ++j ) {
+			if ( j <= nchi ) rotlib << setw(6) << setprecision(1) << fixed << numeric::principal_angle_degrees( final_rotamers[i].get_min_chi(j) );
 			else rotlib << setw(6) << setprecision(1) << fixed << "0.0";
 			rotlib << "  ";
 		}
 
 		rotlib << "  ";
 
-		for( Size j = 1; j <= 4; ++j ){
-			if( j <= nchi )	rotlib << setw(6) << setprecision(1) << fixed << final_rotamers[i].get_std_dev(j);
+		for ( Size j = 1; j <= 4; ++j ) {
+			if ( j <= nchi ) rotlib << setw(6) << setprecision(1) << fixed << final_rotamers[i].get_std_dev(j);
 			else rotlib << setw(6) << setprecision(1) << fixed << "0.0";
 			rotlib << "  ";
 		}

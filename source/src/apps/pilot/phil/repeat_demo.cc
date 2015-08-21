@@ -58,13 +58,13 @@ using namespace std;
 
 // OPTIONS
 namespace my_options {
-	IntegerOptionKey nrepeat("my:nrepeat");
+IntegerOptionKey nrepeat("my:nrepeat");
 }
 
 void
 add_my_options()
 {
- 	option.add( my_options::nrepeat, "nrepeat" );
+	option.add( my_options::nrepeat, "nrepeat" );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -72,11 +72,11 @@ add_my_options()
 ///
 void
 setup_repeat_symminfo(
-											Size const repeatlen,
-											Size const nrepeat,
-											Size const base_repeat,
-											conformation::symmetry::SymmetryInfo & symminfo
-											)
+	Size const repeatlen,
+	Size const nrepeat,
+	Size const base_repeat,
+	conformation::symmetry::SymmetryInfo & symminfo
+)
 {
 
 	Size const base_offset( (base_repeat-1)*repeatlen );
@@ -111,11 +111,11 @@ setup_repeat_symminfo(
 
 void
 setup_repeat_pose(
-									Size const repeatlen,
-									Size const nrepeat,
-									Size const base_repeat, // repeat number of the independent repeat (aka "monomer")
-									Pose & pose
-									)
+	Size const repeatlen,
+	Size const nrepeat,
+	Size const base_repeat, // repeat number of the independent repeat (aka "monomer")
+	Pose & pose
+)
 {
 	runtime_assert( !pose::symmetry::is_symmetric( pose ) ); // not to begin with...
 	runtime_assert( nrepeat * repeatlen == pose.total_residue() );
@@ -226,7 +226,7 @@ rebuild_test()
 		bool const use_nblist( true ), deriv_check( true ), deriv_check_verbose( false );
 		protocols::simple_moves::symmetry::SymMinMoverOP min_mover
 			( new protocols::simple_moves::symmetry::SymMinMover(movemap, fa_scorefxn, "dfpmin_armijo_nonmonotone", 1e-2,
-																													 use_nblist, deriv_check, deriv_check_verbose ) );
+			use_nblist, deriv_check, deriv_check_verbose ) );
 
 		min_mover->apply( pose );
 

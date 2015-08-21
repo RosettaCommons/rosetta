@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/simple_moves/TorsionSetMover.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -20,12 +20,12 @@
 
 namespace protocols {
 namespace simple_moves {
-	
-	class TorsionSetMover;
-	typedef utility::pointer::shared_ptr< TorsionSetMover > TorsionSetMoverOP;
-	typedef utility::pointer::shared_ptr< TorsionSetMover const > TorsionSetMoverCOP;
-	
-} //simple_moves 
-} //protocols 
+
+class TorsionSetMover;
+typedef utility::pointer::shared_ptr< TorsionSetMover > TorsionSetMoverOP;
+typedef utility::pointer::shared_ptr< TorsionSetMover const > TorsionSetMoverCOP;
+
+} //simple_moves
+} //protocols
 
 #endif

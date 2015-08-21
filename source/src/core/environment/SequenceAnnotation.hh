@@ -42,56 +42,56 @@ namespace environment {
 typedef core::environment::LocalPosition LocalPosition;
 
 class SequenceAnnotation : public utility::pointer::ReferenceCount {
-  typedef utility::vector1< std::map< std::string, core::Size> > NumMap;
-  typedef std::map< std::string, utility::vector1< core::Size > > SeqLabelMap;
-  typedef std::map< std::string, core::Size > JumpLabelMap;
-  //typedef std::map< core::Size, std::string > JumpNumMap;
+	typedef utility::vector1< std::map< std::string, core::Size> > NumMap;
+	typedef std::map< std::string, utility::vector1< core::Size > > SeqLabelMap;
+	typedef std::map< std::string, core::Size > JumpLabelMap;
+	//typedef std::map< core::Size, std::string > JumpNumMap;
 
 public:
-  SequenceAnnotation( core::Size length );
+	SequenceAnnotation( core::Size length );
 
-  virtual ~SequenceAnnotation() {}
+	virtual ~SequenceAnnotation() {}
 
-  void add_seq_label( std::string const&, std::vector< core::Size > const& );
+	void add_seq_label( std::string const&, std::vector< core::Size > const& );
 
-  void add_seq_label( std::string const&, utility::vector1< core::Size > const& );
+	void add_seq_label( std::string const&, utility::vector1< core::Size > const& );
 
-  void add_jump_label( std::string const&, core::Size );
+	void add_jump_label( std::string const&, core::Size );
 
-  void rm_seq_label( std::string const& );
+	void rm_seq_label( std::string const& );
 
-  // Undefined, commenting out to fix PyRosetta build  void rm_jump_label( std::string const& );
+	// Undefined, commenting out to fix PyRosetta build  void rm_jump_label( std::string const& );
 
-  /// @brief append a single residue with the given label to the end of the Annotation
-  void append_seq( std::string const& label );
+	/// @brief append a single residue with the given label to the end of the Annotation
+	void append_seq( std::string const& label );
 
-  // Undefined, commenting out to fix PyRosetta build  void shift_notify( core::Size const seqpos, core::Size const shift_size );
+	// Undefined, commenting out to fix PyRosetta build  void shift_notify( core::Size const seqpos, core::Size const shift_size );
 
-  core::Size resolve_seq( LocalPosition const& ) const;
+	core::Size resolve_seq( LocalPosition const& ) const;
 
-  utility::vector1< core::Size > const&
-  resolve_seq( std::string const& label ) const;
+	utility::vector1< core::Size > const&
+	resolve_seq( std::string const& label ) const;
 
-  core::Size resolve_jump( std::string const& label ) const;
+	core::Size resolve_jump( std::string const& label ) const;
 
-  core::Size const& length() const { return length_; }
+	core::Size const& length() const { return length_; }
 
-  core::Size length( std::string const& label ) const;
+	core::Size length( std::string const& label ) const;
 
-  bool has_seq_label( std::string const& ) const;
+	bool has_seq_label( std::string const& ) const;
 
 private:
-  void _add_seq_label( std::string const&, utility::vector1< core::Size > );
+	void _add_seq_label( std::string const&, utility::vector1< core::Size > );
 
-  core::Size length_;
+	core::Size length_;
 
-  // For residue positions
-  NumMap pose_to_local_numbers_;
-  SeqLabelMap label_to_pose_numbers_;
+	// For residue positions
+	NumMap pose_to_local_numbers_;
+	SeqLabelMap label_to_pose_numbers_;
 
-  // For Jumps
-  //JumpNumMap jump_number_to_label_;
-  JumpLabelMap jump_label_to_number_;
+	// For Jumps
+	//JumpNumMap jump_number_to_label_;
+	JumpLabelMap jump_label_to_number_;
 
 }; // end SequenceAnnotation base class
 

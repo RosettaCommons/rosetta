@@ -27,29 +27,29 @@ namespace monte_carlo {
 
 void
 output_to_silent_file( std::string const & out_tag,
-											 std::string const & silent_file,
-											 core::pose::Pose & pose,
-											 core::pose::PoseCOP native_pose,
-											 bool const superimpose_over_all_instantiated = false,
-											 bool const do_rms_fill_calculation = false );
+	std::string const & silent_file,
+	core::pose::Pose & pose,
+	core::pose::PoseCOP native_pose,
+	bool const superimpose_over_all_instantiated = false,
+	bool const do_rms_fill_calculation = false );
 
 core::io::silent::SilentStructOP
 prepare_silent_struct( std::string const & out_tag,
-											 core::pose::Pose & pose,
-											 core::pose::PoseCOP native_pose,
-											 bool const superimpose_over_all_instantiated = false,
-											 bool const do_rms_fill_calculation = false,
-											 core::pose::PoseOP full_model_pose  = 0 );
+	core::pose::Pose & pose,
+	core::pose::PoseCOP native_pose,
+	bool const superimpose_over_all_instantiated = false,
+	bool const do_rms_fill_calculation = false,
+	core::pose::PoseOP full_model_pose  = 0 );
 
 void
 output_to_silent_file( std::string const & out_tag,
-											 std::string const & silent_file,
-											 core::pose::Pose const & pose );
+	std::string const & silent_file,
+	core::pose::Pose const & pose );
 
 void
 output_to_silent_file( std::string const & silent_file,
-											 utility::vector1< core::pose::PoseOP > & pose_list,
-											 core::pose::PoseCOP native_pose );
+	utility::vector1< core::pose::PoseOP > & pose_list,
+	core::pose::PoseCOP native_pose );
 
 void
 build_full_model( core::pose::Pose const & start_pose, core::pose::Pose & full_model_pose );

@@ -38,11 +38,11 @@ namespace constraints {
 class NamedAngleConstraint : public AngleConstraint {
 public:
 	NamedAngleConstraint(
-			id::NamedAtomID const & a1,
-			id::NamedAtomID const & a2,
-			id::NamedAtomID const & a3,
-			func::FuncOP func,
-			ScoreType scoretype = angle_constraint );
+		id::NamedAtomID const & a1,
+		id::NamedAtomID const & a2,
+		id::NamedAtomID const & a3,
+		func::FuncOP func,
+		ScoreType scoretype = angle_constraint );
 
 	virtual std::string type() const;
 
@@ -53,17 +53,17 @@ public:
 	/// if a sequence_mapping is present it is used to map residue numbers .. NULL = identity mapping
 	/// to the new object. Intended to be implemented by derived classes.
 	virtual ConstraintOP remapped_clone(
-			pose::Pose const & src,
-			pose::Pose const & dest,
-			id::SequenceMappingCOP map = NULL ) const;
+		pose::Pose const & src,
+		pose::Pose const & dest,
+		id::SequenceMappingCOP map = NULL ) const;
 
 	virtual void show_def( std::ostream & out, pose::Pose const & pose ) const;
 	void show_def_nopose( std::ostream & out ) const;
 
 	virtual void read_def(
-			std::istream & in,
-			pose::Pose const & pose,
-			func::FuncFactory const & func_factory );
+		std::istream & in,
+		pose::Pose const & pose,
+		func::FuncFactory const & func_factory );
 
 	virtual void score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
 

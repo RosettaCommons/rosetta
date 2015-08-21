@@ -99,9 +99,9 @@ void quat2R( Quat &Q ,numeric::xyzMatrix< core::Real > R ) {
 
 //rms wrapper
 core::Real RMSwrapper( utility::vector1 <numeric::xyzVector< core::Real > > chainA,
-                       utility::vector1 <numeric::xyzVector< core::Real > > chainB,
-                       numeric::xyzMatrix< core::Real > &R, 
-                       numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT) {
+	utility::vector1 <numeric::xyzVector< core::Real > > chainB,
+	numeric::xyzMatrix< core::Real > &R,
+	numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT) {
 	core::Size motiflen = std::min( chainA.size(), chainB.size() );
 	ObjexxFCL::FArray2D< core::Real > final_coords( 3, motiflen );
 	ObjexxFCL::FArray2D< core::Real > init_coords( 3, motiflen );
@@ -110,8 +110,8 @@ core::Real RMSwrapper( utility::vector1 <numeric::xyzVector< core::Real > > chai
 
 	numeric::Real ctx;
 	preT = postT = numeric::xyzVector< core::Real >(0,0,0);
-	for (int j=1; j<=(int)motiflen; ++j) {
-		for (int k=0; k<3; ++k) { 
+	for ( int j=1; j<=(int)motiflen; ++j ) {
+		for ( int k=0; k<3; ++k ) {
 			init_coords(k+1,j)  = chainA[j][k];
 			final_coords(k+1,j) = chainB[j][k];
 		}
@@ -120,8 +120,8 @@ core::Real RMSwrapper( utility::vector1 <numeric::xyzVector< core::Real > > chai
 	}
 	preT /= motiflen;
 	postT /= motiflen;
-	for (int j=1; j<=(int)motiflen; ++j) {
-		for (int k=0; k<3; ++k) { 
+	for ( int j=1; j<=(int)motiflen; ++j ) {
+		for ( int k=0; k<3; ++k ) {
 			init_coords(k+1,j)  -= preT[k];
 			final_coords(k+1,j) -= postT[k];
 		}
@@ -146,8 +146,8 @@ SymmetricMotifFilter::SymmetricMotifFilter() :
 	set_defaults();
 }
 
-SymmetricMotifFilter::SymmetricMotifFilter( utility::vector1<core::pose::PoseOP> reference_motifs, std::string symm_type_in) 
-		: protocols::filters::Filter( "SymmetricMotif" ), symm_type_(symm_type_in)
+SymmetricMotifFilter::SymmetricMotifFilter( utility::vector1<core::pose::PoseOP> reference_motifs, std::string symm_type_in)
+: protocols::filters::Filter( "SymmetricMotif" ), symm_type_(symm_type_in)
 {
 	ref_motifs_ = reference_motifs;
 	process_motifs();
@@ -160,12 +160,12 @@ void
 SymmetricMotifFilter::set_defaults() {
 	angle_thresh_ = 5.0;
 	trans_thresh_ = 4.0;
-  rmsd_thresh_ = 2.0;
+	rmsd_thresh_ = 2.0;
 	clash_thresh_ = 0;
 
 	angle_wt_ = 1.0;
 	trans_wt_ = 5.0;
-  rmsd_wt_ = 10.0;
+	rmsd_wt_ = 10.0;
 	clash_wt_ = 100.0;
 }
 
@@ -180,7 +180,7 @@ SymmetricMotifFilter::apply( core::pose::Pose const & pose ) const {
 	core::Real bestscore;
 	std::string hitLocation;
 	bool found_motif = compute( pose, bestscore, hitLocation );
-	if (found_motif) { 
+	if ( found_motif ) {
 		TR.Debug << "Motif hit at " << hitLocation << std::endl;
 	}
 	return( found_motif );
@@ -196,7 +196,7 @@ SymmetricMotifFilter::report( std::ostream & /*out*/, core::pose::Pose const & p
 	core::Real bestscore;
 	std::string hitLocation;
 	bool found_motif = compute( pose, bestscore, hitLocation );
-	if (found_motif) { 
+	if ( found_motif ) {
 		TR << "Motif hit at " << hitLocation << std::endl;
 	} else {
 		TR << "No motif hits found." << std::endl;
@@ -216,7 +216,7 @@ SymmetricMotifFilter::report_sm( core::pose::Pose const & /*pose*/ ) const {
 // compute
 bool
 SymmetricMotifFilter::compute( core::pose::Pose const & pose, core::Real &best_score, std::string &motifhit ) const {
-	if (symm_type_ == "D2") {
+	if ( symm_type_ == "D2" ) {
 		return compute_d2( pose, best_score, motifhit );
 	}
 	return false;  // added to remove compiler warning; I assume false is warranted here? ~ Labonte
@@ -247,7 +247,7 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 		symm_info = SymmConf.Symmetry_Info();
 		nres = symm_info->num_independent_residues();
 	}
-	for (Size i=1; i<=nres; ++i) {
+	for ( Size i=1; i<=nres; ++i ) {
 		if ( !pose.residue_type(i).is_protein() ) continue;
 		cas_pose.push_back( pose.residue(i).atom(" CA ").xyz() );
 		cas_pose.push_back( pose.residue(i).atom(" C  ").xyz() );
@@ -264,7 +264,7 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 
 	core::Size segmentCounter = 0;
 
-	for (int i=1; i<=2; ++i) {
+	for ( int i=1; i<=2; ++i ) {
 		utility::vector1< utility::vector1< int > > &motif_hits_i = (i==1 ? motif_hits1 : motif_hits2);
 		utility::vector1< core::Real > &motif_rms_i = (i==1 ? motif_rms1 : motif_rms2);
 		utility::vector1< numeric::xyzMatrix< core::Real > > &Rs_i = (i==1 ? Rs1 : Rs2);
@@ -278,20 +278,20 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 
 
 		// build up multi-segment motifs one segment at a time
-		for (Size j=2; j<=motif_cuts_i.size(); ++j) {
+		for ( Size j=2; j<=motif_cuts_i.size(); ++j ) {
 			prev_Is = motif_hits_i;
 			motif_hits_i.clear();
 			segmentCounter++;
 
-			for (Size k=1; k<=prev_Is.size(); ++k) {
+			for ( Size k=1; k<=prev_Is.size(); ++k ) {
 				utility::vector1< numeric::xyzVector< core::Real > > prevCAs;
 				utility::vector1< bool > elim(nres_prot, false);
 
 				// load prev hits' CA coords
-				for (Size j_prev = 2; j_prev<j; ++j_prev) {
+				for ( Size j_prev = 2; j_prev<j; ++j_prev ) {
 					core::Size segstart_x = prev_Is[k][j_prev-1];
 					core::Size seglen_x   = motif_cuts_i[j_prev] - motif_cuts_i[j_prev-1] - 1;
-					for (Size l=segstart_x; l<=segstart_x+seglen_x; ++l) {
+					for ( Size l=segstart_x; l<=segstart_x+seglen_x; ++l ) {
 						prevCAs.push_back( cas_pose[4*l-3] );
 						prevCAs.push_back( cas_pose[4*l-2] );
 						prevCAs.push_back( cas_pose[4*l-1] );
@@ -302,22 +302,22 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 
 				// scan through all possible placements of this motif
 				int lstart=1, lstop=nres_prot;
-				if (!noforce && forced_pos_[segmentCounter]!=-1) {
+				if ( !noforce && forced_pos_[segmentCounter]!=-1 ) {
 					lstart=lstop=forced_pos_[segmentCounter];
 				}
 
-				for (int l=lstart; l<=lstop; ++l) {
+				for ( int l=lstart; l<=lstop; ++l ) {
 					core::Size segstart_l = l;
 					core::Size seglen_l   = motif_cuts_i[j] - motif_cuts_i[j-1] - 1;
 					bool overlap=false;
-					if (segstart_l+seglen_l > nres_prot) continue;
-					for (Size m=segstart_l; m<=segstart_l+seglen_l && !overlap; ++m) {
+					if ( segstart_l+seglen_l > nres_prot ) continue;
+					for ( Size m=segstart_l; m<=segstart_l+seglen_l && !overlap; ++m ) {
 						overlap |= elim[m];
 					}
-					if (overlap) continue;
+					if ( overlap ) continue;
 
 					utility::vector1< numeric::xyzVector< core::Real > > ca_chunk_pose = prevCAs;
-					for (Size m=segstart_l; m<=segstart_l+seglen_l; ++m) {
+					for ( Size m=segstart_l; m<=segstart_l+seglen_l; ++m ) {
 						ca_chunk_pose.push_back( cas_pose[4*m-3] );
 						ca_chunk_pose.push_back( cas_pose[4*m-2] );
 						ca_chunk_pose.push_back( cas_pose[4*m-1] );
@@ -331,17 +331,17 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 					// this will only align the subset of CAs present in 'ca_chunk_pose'
 					core::Real rms = RMSwrapper( cas_tgt_i, ca_chunk_pose, R, preT, postT);
 
-					if (rms < rmsd_thresh_) {
+					if ( rms < rmsd_thresh_ ) {
 						utility::vector1< int > newI;
-						if (j != 2) newI = prev_Is[k];
+						if ( j != 2 ) newI = prev_Is[k];
 						newI.push_back(l);
 						motif_hits_i.push_back( newI );
 
 						TR.Debug << "Motif " << i << " hit at ";
-						for (Size z=1; z<=newI.size(); ++z) TR.Debug << newI[z] << " ";
+						for ( Size z=1; z<=newI.size(); ++z ) TR.Debug << newI[z] << " ";
 						TR.Debug << " rms = " << rms << std::endl;
 
-						if (j == motif_cuts_i.size()) {   // last segment has been placed
+						if ( j == motif_cuts_i.size() ) {   // last segment has been placed
 							Rs_i.push_back( R );
 							motif_rms_i.push_back( rms );
 							preTs_i.push_back( preT );
@@ -354,25 +354,26 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 	}
 
 	//  2) for each backbone hit pair combination, measure angle error
-	for (Size i=1; i<=motif_hits1.size(); ++i) {
-		for (Size j=1; j<=motif_hits2.size(); ++j) {
+	for ( Size i=1; i<=motif_hits1.size(); ++i ) {
+		for ( Size j=1; j<=motif_hits2.size(); ++j ) {
 			// a) check for overlap
 			utility::vector1< bool > elim(nres_prot, false);
-			for (Size x=1; x<=motif_hits1[i].size(); ++x) {
+			for ( Size x=1; x<=motif_hits1[i].size(); ++x ) {
 				core::Size segstart_x = motif_hits1[i][x];
 				core::Size seglen_x = motif_cuts[1][x+1] - motif_cuts[1][x] - 1;
-				for (Size k=segstart_x; k<=segstart_x+seglen_x; ++k)
+				for ( Size k=segstart_x; k<=segstart_x+seglen_x; ++k ) {
 					elim[k] = true;
+				}
 			}
 			bool overlap = false;
-			for (Size x=1; x<=motif_hits2[j].size() && !overlap; ++x) {
+			for ( Size x=1; x<=motif_hits2[j].size() && !overlap; ++x ) {
 				core::Size segstart_x = motif_hits2[j][x];
 				core::Size seglen_x = motif_cuts[2][x+1] - motif_cuts[2][x] - 1;
-				for (Size k=segstart_x; k<=segstart_x+seglen_x && !overlap; ++k) {
+				for ( Size k=segstart_x; k<=segstart_x+seglen_x && !overlap; ++k ) {
 					overlap |= elim[k];
 				}
 			}
-			if (overlap) continue;
+			if ( overlap ) continue;
 
 			// symm axes in global frame
 			numeric::xyzVector< core::Real > x1 = numeric::inverse(Rs1[i])*symm_axes[1];
@@ -381,7 +382,7 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 			core::Real angle12 = angle_of( x1, x2 ) * 180/pi;
 			core::Real angle_i = std::fabs(90-angle12);
 			TR.Debug << "Hit " << i << "," << j << ": angle = " << angle_i << std::endl;
-			if (angle_i > angle_thresh_) continue;
+			if ( angle_i > angle_thresh_ ) continue;
 
 			// centers of mass of motifs in all subunits ... somewhat tricky
 			numeric::xyzMatrix< core::Real > R2 = (numeric::inverse(Rs1[i])*Rdimers[1])*Rs1[i];
@@ -393,7 +394,7 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 			numeric::xyzVector< core::Real > m1a = postTs1[i];
 			numeric::xyzVector< core::Real > m2a = postTs2[j];
 			numeric::xyzVector< core::Real > m1to2 = m2a-m1a;
-	
+
 			// ... in chain B
 			numeric::xyzVector< core::Real > m1b = m1a + (numeric::inverse(Rs1[i])*Rdimers[1])*delta_coms[1];
 			numeric::xyzVector< core::Real > m2b = m1b + (R2)*m1to2;
@@ -401,7 +402,7 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 			// ... in chain C
 			numeric::xyzVector< core::Real > m2c = m2a + (numeric::inverse(Rs2[j])*Rdimers[2])*delta_coms[2];
 			numeric::xyzVector< core::Real > m1c = m2c - (R3)*m1to2;
-	
+
 			// ... in chain D
 			numeric::xyzVector< core::Real > m1d = m1c + R4a*numeric::inverse(Rs1[i])*delta_coms[1];
 			numeric::xyzVector< core::Real > m2d = m2b + R4b*numeric::inverse(Rs2[j])*delta_coms[2];
@@ -411,8 +412,8 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 			core::Real trans_i = (m2d).distance(m2d_alt);
 
 			TR.Debug << "Hit " << i << "," << j << ": trans = " << trans_i << std::endl;
-			if (trans_i > trans_thresh_) continue;
-	
+			if ( trans_i > trans_thresh_ ) continue;
+
 			core::Real rms_i = std::max( motif_rms1[i], motif_rms2[j] );
 
 			// i,j has passed RMS and angle filters
@@ -431,28 +432,28 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 			bool clashcheck = false;
 			Size nclashes = 0;
 			int CUTOFF2 = 3*3;
-			for (Size x=1; x<=nres_prot && !clashcheck; ++x) {
-				for (Size y=1; y<=nres_prot && !clashcheck; ++y) {
+			for ( Size x=1; x<=nres_prot && !clashcheck; ++x ) {
+				for ( Size y=1; y<=nres_prot && !clashcheck; ++y ) {
 					numeric::xyzVector< core::Real > x_x = R1A*(cas_pose[4*x-3]-postTs1[i]) + com1A;  // just check CA
 					numeric::xyzVector< core::Real > x_y = R1B*(cas_pose[4*y-3]-postTs1[i]) + com1B;  // just check CA
-					if (x_x.distance_squared(x_y) < CUTOFF2) {
+					if ( x_x.distance_squared(x_y) < CUTOFF2 ) {
 						nclashes++;
 						clashcheck = (nclashes>clash_thresh_);
 					}
 				}
 			}
-			for (Size x=1; x<=cas_pose.size() && !clashcheck; ++x) {
-				for (Size y=1; y<=cas_pose.size() && !clashcheck; ++y) {
+			for ( Size x=1; x<=cas_pose.size() && !clashcheck; ++x ) {
+				for ( Size y=1; y<=cas_pose.size() && !clashcheck; ++y ) {
 					numeric::xyzVector< core::Real > x_x = R2A*(cas_pose[4*x]-postTs2[j]) + com2A;
 					numeric::xyzVector< core::Real > x_y = R2B*(cas_pose[4*y]-postTs2[j]) + com2B;
-					if (x_x.distance_squared(x_y) < CUTOFF2) {
+					if ( x_x.distance_squared(x_y) < CUTOFF2 ) {
 						nclashes++;
 						clashcheck = (nclashes>clash_thresh_);
 					}
 				}
 			}
 
-			if (clashcheck) {
+			if ( clashcheck ) {
 				TR.Debug << "Hit " << i << "," << j << ": clash > " << clash_thresh_ << std::endl;
 				continue;
 			}
@@ -460,13 +461,13 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 			// passed! report rms, angle and clash
 			foundOne = true;
 			core::Real score_i = score_d2(rms_i,angle_i,trans_i,nclashes);
-			if (score_i < best_score) {
+			if ( score_i < best_score ) {
 				// dump ID to a string for reporting purposes
 				std::ostringstream oss;
 				oss << "( ";
-				for (Size k=1; k<=motif_hits1[i].size(); ++k) oss << motif_hits1[i][k] << " ";
+				for ( Size k=1; k<=motif_hits1[i].size(); ++k ) oss << motif_hits1[i][k] << " ";
 				oss << ") ( ";
-				for (Size k=1; k<=motif_hits2[j].size(); ++k) oss << motif_hits2[j][k] << " ";
+				for ( Size k=1; k<=motif_hits2[j].size(); ++k ) oss << motif_hits2[j][k] << " ";
 				oss << ")";
 				motifhit = oss.str();
 				best_score = score_i;
@@ -492,17 +493,17 @@ SymmetricMotifFilter::process_motifs() {
 
 	// parse motifs
 	nsegs_ = 0;
-	for (Size i=1; i<=nmotifs; ++i) {
+	for ( Size i=1; i<=nmotifs; ++i ) {
 		motif_cuts[i].push_back( 0 );
 		core::pose::PoseOP motif_i = ref_motifs_[i];
-		for (Size j=1; j<=motif_i->total_residue(); ++j) {
-			if (motif_i->pdb_info()->chain(j) == 'A') {
+		for ( Size j=1; j<=motif_i->total_residue(); ++j ) {
+			if ( motif_i->pdb_info()->chain(j) == 'A' ) {
 				cas_chainA[i].push_back( motif_i->residue(j).atom(" CA ").xyz() );
 				cas_chainA[i].push_back( motif_i->residue(j).atom(" C  ").xyz() );
 				cas_chainA[i].push_back( motif_i->residue(j).atom(" N  ").xyz() );
 				cas_chainA[i].push_back( motif_i->residue(j).atom(" O  ").xyz() );
 
-				if (j>1 && (motif_i->pdb_info()->number(j) != motif_i->pdb_info()->number(j-1)+1) ) {
+				if ( j>1 && (motif_i->pdb_info()->number(j) != motif_i->pdb_info()->number(j-1)+1) ) {
 					motif_cuts[i].push_back( j-1 );
 					TR.Debug << i << ": add cut " << j-1 << std::endl;
 				}
@@ -524,21 +525,21 @@ SymmetricMotifFilter::process_motifs() {
 	delta_coms.resize(nmotifs);
 	symm_orders.resize(nmotifs);
 	symm_axes.resize(nmotifs);
-	for (Size i=1; i<=nmotifs; ++i) {
+	for ( Size i=1; i<=nmotifs; ++i ) {
 		numeric::xyzVector< core::Real > preT(0,0,0), postT(0,0,0);
 		core::Real rms = RMSwrapper( cas_chainB[i], cas_chainA[i], Rdimers[i], preT, postT);
 
 		// check if near identity
-		core::Real residual = 
+		core::Real residual =
 			std::fabs(Rdimers[i].xx()-1) + std::fabs(Rdimers[i].yy()-1) + std::fabs(Rdimers[i].zz()-1) +
 			std::fabs(Rdimers[i].xy()) + std::fabs(Rdimers[i].yx()) + std::fabs(Rdimers[i].zy()) +
 			std::fabs(Rdimers[i].xz()) + std::fabs(Rdimers[i].yz()) + std::fabs(Rdimers[i].zx());
 
-		if (residual < 1e-6) {
+		if ( residual < 1e-6 ) {
 			utility_exit_with_message( "Chains related by transformation only!" );
 		}
 
-		if (rms > 1.0) {
+		if ( rms > 1.0 ) {
 			TR << "RMS = " << rms << std::endl;
 			utility_exit_with_message( "Interchain RMS > 1 ... aborting" );
 		}
@@ -546,7 +547,7 @@ SymmetricMotifFilter::process_motifs() {
 		// make transformation perfectly symmetrical
 		R2quat( Rdimers[i], Qs[i]);
 		core::Real Wmult = 1;
-		if (Qs[i].w < 0) { Qs[i].w = -Qs[i].w; Wmult = -1; }
+		if ( Qs[i].w < 0 ) { Qs[i].w = -Qs[i].w; Wmult = -1; }
 		core::Real omega = acos( Qs[i].w );
 		symm_orders[i] = (core::Size)floor(pi/omega + 0.5);
 
@@ -563,12 +564,12 @@ SymmetricMotifFilter::process_motifs() {
 	}
 
 	// symmetry / motif count agreement
-	if (symm_type_ == "D2") {
-		if (nmotifs != 2) {
+	if ( symm_type_ == "D2" ) {
+		if ( nmotifs != 2 ) {
 			TR << "nmotifs = " << nmotifs << std::endl;
 			utility_exit_with_message( "Symmetry group D2: 2 motifs expected!" );
 		}
-		if (symm_orders[1] != 2 || symm_orders[2] != 2) {
+		if ( symm_orders[1] != 2 || symm_orders[2] != 2 ) {
 			TR << "Symm_orders = " << symm_orders[1] << "," << symm_orders[2] << std::endl;
 			utility_exit_with_message( "Symmetry group D2: 2 homodimeric motifs expected!" );
 		}
@@ -581,15 +582,15 @@ SymmetricMotifFilter::process_motifs() {
 // parse_my_tag
 void
 SymmetricMotifFilter::parse_my_tag(
-				utility::tag::TagCOP tag,
-				basic::datacache::DataMap & /*data_map*/,
-				protocols::filters::Filters_map const &,
-				protocols::moves::Movers_map const &,
-				core::pose::Pose const & /*reference_pose*/ ) {
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & /*data_map*/,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & /*reference_pose*/ ) {
 	symm_type_ = tag->getOption<std::string>( "symm_type", "D2" );
 
 	utility::vector1<std::string> motif_files( utility::string_split( tag->getOption< std::string >("motifs"), ',') );
-	for (Size i=1; i<=motif_files.size(); ++i) {
+	for ( Size i=1; i<=motif_files.size(); ++i ) {
 		core::pose::PoseOP motif( new core::pose::Pose() );
 		core::import_pose::pose_from_pdb( *motif, motif_files[i] );
 		ref_motifs_.push_back( motif );
@@ -599,27 +600,36 @@ SymmetricMotifFilter::parse_my_tag(
 	//to do: save on datamap?
 
 	// override default options
-	if (tag->hasOption("angle_thresh"))
+	if ( tag->hasOption("angle_thresh") ) {
 		angle_thresh_ = tag->getOption<core::Real>( "angle_thresh" );
-	if (tag->hasOption("trans_thresh"))
+	}
+	if ( tag->hasOption("trans_thresh") ) {
 		trans_thresh_ = tag->getOption<core::Real>( "trans_thresh" );
-	if (tag->hasOption("rmsd_thresh"))
+	}
+	if ( tag->hasOption("rmsd_thresh") ) {
 		rmsd_thresh_ = tag->getOption<core::Real>( "rmsd_thresh" );
-	if (tag->hasOption("clash_thresh"))
+	}
+	if ( tag->hasOption("clash_thresh") ) {
 		clash_thresh_ = tag->getOption<core::Size>( "clash_thresh" );
-	if (tag->hasOption("angle_wt"))
+	}
+	if ( tag->hasOption("angle_wt") ) {
 		angle_wt_ = tag->getOption<core::Real>( "angle_wt" );
-	if (tag->hasOption("trans_wt"))
+	}
+	if ( tag->hasOption("trans_wt") ) {
 		trans_wt_ = tag->getOption<core::Real>( "trans_wt" );
-	if (tag->hasOption("rmsd_wt"))
+	}
+	if ( tag->hasOption("rmsd_wt") ) {
 		rmsd_wt_ = tag->getOption<core::Real>( "rmsd_wt" );
-	if (tag->hasOption("clash_wt"))
+	}
+	if ( tag->hasOption("clash_wt") ) {
 		clash_wt_ = tag->getOption<core::Real>( "clash_wt" );
+	}
 
-	if (tag->hasOption("force_pos")) {
+	if ( tag->hasOption("force_pos") ) {
 		utility::vector1<std::string> forced( utility::string_split( tag->getOption< std::string >("force_pos"), ',') );
-		for (Size i=1; i<=forced.size(); ++i)
+		for ( Size i=1; i<=forced.size(); ++i ) {
 			forced_pos_.push_back( std::atoi( forced[i].c_str() ) );
+		}
 	}
 
 	process_motifs();

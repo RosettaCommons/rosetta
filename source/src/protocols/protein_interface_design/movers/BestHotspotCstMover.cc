@@ -75,7 +75,7 @@ BestHotspotCstMover::BestHotspotCstMover(
 	host_chain_( host_chain ),
 	n_resi_( n_resi )
 {
-	if( stub_set ) stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new protocols::hotspot_hashing::HotspotStubSet( *stub_set ) );
+	if ( stub_set ) stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new protocols::hotspot_hashing::HotspotStubSet( *stub_set ) );
 }
 
 BestHotspotCstMover::BestHotspotCstMover( BestHotspotCstMover const & init ) :
@@ -83,7 +83,7 @@ BestHotspotCstMover::BestHotspotCstMover( BestHotspotCstMover const & init ) :
 	protocols::moves::Mover( init ),
 	host_chain_(init.host_chain_), n_resi_( init.n_resi_ )
 {
-	if( init.stub_set_ ) stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new protocols::hotspot_hashing::HotspotStubSet( *init.stub_set_ ) );
+	if ( init.stub_set_ ) stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new protocols::hotspot_hashing::HotspotStubSet( *init.stub_set_ ) );
 }
 
 BestHotspotCstMover::~BestHotspotCstMover() {}
@@ -101,8 +101,8 @@ BestHotspotCstMover::apply( pose::Pose & pose )
 
 	// make a packer task containing only the best residues
 	core::pack::task::PackerTaskOP packer_task = core::pack::task::TaskFactory::create_packer_task( pose );
-	for( core::Size i=1; i <= pose.total_residue(); ++i ) {
-		if(( find( best_cst_residues.begin(), best_cst_residues.end(), i ) != best_cst_residues.end() ))  continue;
+	for ( core::Size i=1; i <= pose.total_residue(); ++i ) {
+		if ( ( find( best_cst_residues.begin(), best_cst_residues.end(), i ) != best_cst_residues.end() ) )  continue;
 		else packer_task->nonconst_residue_task( i ).prevent_repacking();
 	}
 
@@ -126,7 +126,7 @@ BestHotspotCstMover::apply( pose::Pose & pose )
 	);
 
 	TR<<"Reapplied constraints to residues ";
-	for( core::Size i=1; i<=best_cst_residues.size(); ++i ) {
+	for ( core::Size i=1; i<=best_cst_residues.size(); ++i ) {
 		TR<< best_cst_residues[i] << " ";
 	}
 	TR << std::endl;

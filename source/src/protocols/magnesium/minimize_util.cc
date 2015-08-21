@@ -45,9 +45,9 @@ namespace magnesium {
 ////////////////////////////////////////////////////////////////////////////////
 void
 minimize_magnesium_and_hydration_shell( pose::Pose & pose,
-																				utility::vector1< Size > const mg_res,
-																				core::scoring::ScoreFunctionCOP minimize_scorefxn /* = 0 */,
-																				core::Distance const mg_coord_cst_dist /* = 0.2 */ ) {
+	utility::vector1< Size > const mg_res,
+	core::scoring::ScoreFunctionCOP minimize_scorefxn /* = 0 */,
+	core::Distance const mg_coord_cst_dist /* = 0.2 */ ) {
 	MgMinimizer mg_minimizer;
 	mg_minimizer.set_mg_res( mg_res );
 	mg_minimizer.set_minimize_scorefxn( minimize_scorefxn );
@@ -58,10 +58,10 @@ minimize_magnesium_and_hydration_shell( pose::Pose & pose,
 //////////////////////////////////////////
 void
 minimize_magnesium_and_hydration_shell( pose::Pose & pose /*for viewing*/,
-																			  utility::vector1< pose::PoseOP > & pose_list,
-																				utility::vector1< Size > const mg_res,
-																				core::scoring::ScoreFunctionCOP minimize_scorefxn /* = 0 */,
-																				core::Distance const mg_coord_cst_dist /* = 0.2 */ ) {
+	utility::vector1< pose::PoseOP > & pose_list,
+	utility::vector1< Size > const mg_res,
+	core::scoring::ScoreFunctionCOP minimize_scorefxn /* = 0 */,
+	core::Distance const mg_coord_cst_dist /* = 0.2 */ ) {
 	MgMinimizer mg_minimizer;
 	mg_minimizer.set_mg_res( mg_res );
 	mg_minimizer.set_minimize_scorefxn( minimize_scorefxn );
@@ -194,7 +194,7 @@ get_closest_non_hoh_contact( pose::Pose const & pose, Size const i, std::string 
 		if ( rsd.name3() == "HOH" ) continue;
 		if ( rsd.name3() == exclude_rsd ) continue;
 		for ( Size jj = 1; jj <= rsd.nheavyatoms(); jj++ ) {
-			if ( rsd.heavyatom_is_an_acceptor( jj ) || rsd.heavyatom_has_polar_hydrogens( jj ) ){
+			if ( rsd.heavyatom_is_an_acceptor( jj ) || rsd.heavyatom_has_polar_hydrogens( jj ) ) {
 				Distance const d = ( rsd.xyz( jj ) - i_xyz ).length();
 				if ( d < best_d ) {
 					best_partner = AtomID( jj, j );

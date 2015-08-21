@@ -33,10 +33,10 @@ public:
 	/// @brief ctor.  Note that it takes only the input tag and max nstruct,
 	/// pose instantiation is deferred until the pose is needed
 	/* InnerMultiThreadingJob(
-		std::string const & input_tag,
-		core::Size nstruct_max,
-		utility::vector1< core::sequence::SequenceAlignment > const & alns,
-		utility::vector1< core::pose::Pose > const & templates
+	std::string const & input_tag,
+	core::Size nstruct_max,
+	utility::vector1< core::sequence::SequenceAlignment > const & alns,
+	utility::vector1< core::pose::Pose > const & templates
 	); */
 
 	/// @brief ctor.

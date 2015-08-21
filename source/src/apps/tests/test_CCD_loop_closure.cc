@@ -134,7 +134,7 @@ randomly_open_pose_loop( Pose & pose, Loop const & loop )
 int
 main( int argc, char *argv[] )
 {
-    try {
+	try {
 		// Initialize core.
 		devel::init( argc, argv );
 

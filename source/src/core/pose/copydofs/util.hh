@@ -31,103 +31,103 @@ namespace copydofs {
 /// @author rhiju, 2009.
 void
 copy_dofs(
-					pose::Pose & pose,
-					MiniPose const & scratch_pose,
-					core::pose::ResMap const & res_map );
+	pose::Pose & pose,
+	MiniPose const & scratch_pose,
+	core::pose::ResMap const & res_map );
 
 void
 copy_dofs_match_atom_names( //Parin Sripakdeevong Dec 27, 2011.
-					pose::Pose & pose,
-					MiniPose const & chunk_pose,
-					core::pose::ResMap const & res_map );
+	pose::Pose & pose,
+	MiniPose const & chunk_pose,
+	core::pose::ResMap const & res_map );
 
 void
 copy_dofs_match_atom_names(
-					pose::Pose & pose,
-					Pose const & scratch_pose);
+	pose::Pose & pose,
+	Pose const & scratch_pose);
 
 void
 copy_dofs(
-					pose::Pose & pose,
-					pose::Pose const & scratch_pose );
+	pose::Pose & pose,
+	pose::Pose const & scratch_pose );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
 copy_dofs(
-					pose::Pose & pose,
-					pose::Pose const & scratch_pose,
-					core::pose::ResMap const & res_map );
+	pose::Pose & pose,
+	pose::Pose const & scratch_pose,
+	core::pose::ResMap const & res_map );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
 copy_dofs_match_atom_names(
-					pose::Pose & pose,
-					Pose const & scratch_pose,
-					core::pose::ResMap const & res_map,
-					bool const backbone_only   = false,
-					bool const side_chain_only = false ,
-					bool const ignore_virtual  = true );
+	pose::Pose & pose,
+	Pose const & scratch_pose,
+	core::pose::ResMap const & res_map,
+	bool const backbone_only   = false,
+	bool const side_chain_only = false ,
+	bool const ignore_virtual  = true );
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
 copy_dofs(
-					pose::Pose & pose,
-					Pose const & scratch_pose,
-					std::map < id::AtomID , id::AtomID > const & atom_id_map);
+	pose::Pose & pose,
+	Pose const & scratch_pose,
+	std::map < id::AtomID , id::AtomID > const & atom_id_map);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
 copy_dofs(
-					pose::Pose & pose,
-					MiniPose const & scratch_pose,
-					std::map < id::AtomID , id::AtomID > const & atom_id_map);
+	pose::Pose & pose,
+	MiniPose const & scratch_pose,
+	std::map < id::AtomID , id::AtomID > const & atom_id_map);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
 copy_dofs(
-					pose::Pose & pose,
-					MiniPose const & scratch_pose,
-					std::map < id::AtomID , id::AtomID > const & atom_id_map );
+	pose::Pose & pose,
+	MiniPose const & scratch_pose,
+	std::map < id::AtomID , id::AtomID > const & atom_id_map );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
 copy_dofs(
-					pose::Pose & pose,
-					MiniPose const & scratch_pose,
-					std::map < id::AtomID , id::AtomID > const & atom_id_map,
-					std::map< id::AtomID, Size > const & atom_id_domain_map  );
+	pose::Pose & pose,
+	MiniPose const & scratch_pose,
+	std::map < id::AtomID , id::AtomID > const & atom_id_map,
+	std::map< id::AtomID, Size > const & atom_id_domain_map  );
 
 ///////////////////////////////////////////////////////////////////
 void
 setup_atom_id_map(
-									std::map < core::id::AtomID , core::id::AtomID > & atom_id_map,
-									core::pose::ResMap const & res_map,
-									core::pose::Pose const & pose );
+	std::map < core::id::AtomID , core::id::AtomID > & atom_id_map,
+	core::pose::ResMap const & res_map,
+	core::pose::Pose const & pose );
 
 ///////////////////////////////////////////////////////////////////
 void
 setup_atom_id_map_match_atom_names( //June 16, 2011 Parin Sripakdeevong
-									std::map < core::id::AtomID , core::id::AtomID > & atom_id_map,
-									ResMap const & res_map,
-									core::pose::Pose const & pose,
-									MiniPose const & chunk_pose );
+	std::map < core::id::AtomID , core::id::AtomID > & atom_id_map,
+	ResMap const & res_map,
+	core::pose::Pose const & pose,
+	MiniPose const & chunk_pose );
 
 ///////////////////////////////////////////////////////////////////
 void
 setup_atom_id_map_match_atom_names(
-									std::map < core::id::AtomID , core::id::AtomID > & atom_id_map,
-									ResMap const & res_map,
-									core::pose::Pose const & pose,
-									core::pose::Pose const & reference_pose,
-									bool const backbone_only   = false,
-									bool const side_chain_only = false,
-									bool const ignore_virtual  = true );
+	std::map < core::id::AtomID , core::id::AtomID > & atom_id_map,
+	ResMap const & res_map,
+	core::pose::Pose const & pose,
+	core::pose::Pose const & reference_pose,
+	bool const backbone_only   = false,
+	bool const side_chain_only = false,
+	bool const ignore_virtual  = true );
 
 ///////////////////////////////////////////////////////////////////
 void
 apply_dofs( pose::Pose & pose, CopyDofsInfo const & copy_dofs_info,
-							core::Real const dof_tolerance = 1.0e-5 );
+	core::Real const dof_tolerance = 1.0e-5 );
 
 std::map< id::AtomID, Size >
 blank_atom_id_domain_map( pose::Pose const & pose );

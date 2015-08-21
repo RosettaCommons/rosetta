@@ -229,95 +229,95 @@ public:
 
 	/*void dont_test_atom_deriv_old_vs_new()
 	{
-		using namespace core;
-		using namespace core::graph;
-		using namespace core::pose;
-		using namespace core::scoring;
-		using namespace core::scoring::etable;
-		using namespace core::scoring::methods;
+	using namespace core;
+	using namespace core::graph;
+	using namespace core::pose;
+	using namespace core::scoring;
+	using namespace core::scoring::etable;
+	using namespace core::scoring::methods;
 
-		Pose pose = create_trpcage_ideal_pose();
-		EnergyMethodOptions options; // default is fine
+	Pose pose = create_trpcage_ideal_pose();
+	EnergyMethodOptions options; // default is fine
 
-		EtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
+	EtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
 
-		EnergyMap emap;
-		ScoreFunction sfxn;
-		sfxn.set_weight( fa_atr, 0.5 );
-		sfxn.set_weight( fa_rep, 0.25 );
-		sfxn.set_weight( fa_sol, 0.125 );
+	EnergyMap emap;
+	ScoreFunction sfxn;
+	sfxn.set_weight( fa_atr, 0.5 );
+	sfxn.set_weight( fa_rep, 0.25 );
+	sfxn.set_weight( fa_sol, 0.125 );
 
-		//sfxn.set_weight( fa_intra_rep, 0.02 );
+	//sfxn.set_weight( fa_intra_rep, 0.02 );
 
-		sfxn( pose );
-		optimization::MinimizerMap minmap;
-		kinematics::MoveMap movemap;
-		movemap.set_bb( true );
-		movemap.set_chi( true );
-		minmap.setup( pose, movemap );
+	sfxn( pose );
+	optimization::MinimizerMap minmap;
+	kinematics::MoveMap movemap;
+	movemap.set_bb( true );
+	movemap.set_chi( true );
+	minmap.setup( pose, movemap );
 
-		MinimizationGraph g( pose.total_residue() );
-		g.copy_connectivity( pose.energies().energy_graph() );
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-			etab_energy.setup_for_minimizing_for_residue(
-				pose.residue( ii ), pose, sfxn, minmap, g.get_minimization_node( ii )->res_min_data() );
-		}
-		for ( Graph::EdgeListIter edge_iter = g.edge_list_begin(),
-				edge_iter_end = g.edge_list_end(); edge_iter != edge_iter_end;
-				++edge_iter ) {
-			Size const node1 = (*edge_iter)->get_first_node_ind();
-			Size const node2 = (*edge_iter)->get_second_node_ind();
-			MinimizationEdge * minedge = dynamic_cast< MinimizationEdge * > ( *edge_iter );
-			//std::cout << "Setting up minimization data for pair " << node1 << " " << node2 << std::endl;
-			etab_energy.setup_for_minimizing_for_residue_pair(
-				pose.residue( node1 ), pose.residue( node2 ), pose, sfxn,  minmap,
-				g.get_minimization_node( node1 )->res_min_data(),
-				g.get_minimization_node( node2 )->res_min_data(),
-				minedge->res_pair_min_data() );
-		}
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-			MinimizationNode * iinode = g.get_minimization_node( ii );
-			etab_energy.setup_for_minimizing_for_residue( pose.residue( ii ), pose, sfxn, minmap, iinode->res_min_data() );
-		}
+	MinimizationGraph g( pose.total_residue() );
+	g.copy_connectivity( pose.energies().energy_graph() );
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	etab_energy.setup_for_minimizing_for_residue(
+	pose.residue( ii ), pose, sfxn, minmap, g.get_minimization_node( ii )->res_min_data() );
+	}
+	for ( Graph::EdgeListIter edge_iter = g.edge_list_begin(),
+	edge_iter_end = g.edge_list_end(); edge_iter != edge_iter_end;
+	++edge_iter ) {
+	Size const node1 = (*edge_iter)->get_first_node_ind();
+	Size const node2 = (*edge_iter)->get_second_node_ind();
+	MinimizationEdge * minedge = dynamic_cast< MinimizationEdge * > ( *edge_iter );
+	//std::cout << "Setting up minimization data for pair " << node1 << " " << node2 << std::endl;
+	etab_energy.setup_for_minimizing_for_residue_pair(
+	pose.residue( node1 ), pose.residue( node2 ), pose, sfxn,  minmap,
+	g.get_minimization_node( node1 )->res_min_data(),
+	g.get_minimization_node( node2 )->res_min_data(),
+	minedge->res_pair_min_data() );
+	}
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	MinimizationNode * iinode = g.get_minimization_node( ii );
+	etab_energy.setup_for_minimizing_for_residue( pose.residue( ii ), pose, sfxn, minmap, iinode->res_min_data() );
+	}
 
-		/// Let's measure the derivatie for the CD2 atom on residue 6
-		id::AtomID cd2( pose.residue(6).atom_index("CD2"), 6 );
+	/// Let's measure the derivatie for the CD2 atom on residue 6
+	id::AtomID cd2( pose.residue(6).atom_index("CD2"), 6 );
 
-		pose.energies().set_use_nblist( pose, minmap.domain_map(), false ); // false = autoupdate
-		sfxn.setup_for_minimizing( pose, minmap );
-		sfxn.setup_for_derivatives( pose );
+	pose.energies().set_use_nblist( pose, minmap.domain_map(), false ); // false = autoupdate
+	sfxn.setup_for_minimizing( pose, minmap );
+	sfxn.setup_for_derivatives( pose );
 
-		Vector goldF1(0.0), goldF2(0.0);
-		sfxn.eval_atom_derivative( cd2, pose, minmap.domain_map(), goldF1, goldF2 );
+	Vector goldF1(0.0), goldF2(0.0);
+	sfxn.eval_atom_derivative( cd2, pose, minmap.domain_map(), goldF1, goldF2 );
 
 
-		Vector decompF1(0.0), decompF2(0.0);
-		EnergyMap weights;
-		weights[ fa_atr ] = 0.5;
-		weights[ fa_rep ] = 0.25;
-		weights[ fa_sol ] = 0.125;
-		//weights[ fa_intra_rep ] = 0.02;
-		for ( Graph::EdgeListConstIter edge_iter = g.get_node( 6 )->const_edge_list_begin(),
-				edge_iter_end = g.get_node( 6 )->const_edge_list_end(); edge_iter != edge_iter_end; ++edge_iter ) {
-			MinimizationEdge const * minedge = dynamic_cast< MinimizationEdge const * > ( *edge_iter );
-			Size const node2 = (*edge_iter)->get_other_ind( 6 );
-			//std::cout << "Evaluating derivative for pair " << (*edge_iter)->get_first_node_ind() << " " << node2 << std::endl;
-			etab_energy.eval_atom_derivative_for_residue_pair(
-				cd2.atomno(), pose.residue( 6 ), pose.residue( node2 ),
-				g.get_minimization_node( 6 )->res_min_data(), g.get_minimization_node( node2 )->res_min_data(),
-				minedge->res_pair_min_data(), pose, minmap.domain_map(),
-				sfxn, weights, decompF1, decompF2 );
-		}
-		etab_energy.eval_intrares_atom_derivative( cd2.atomno(), pose.residue( 6 ),
-			g.get_minimization_node(6)->res_min_data(), pose, minmap.domain_map(),
-			sfxn, weights, decompF1, decompF2 );
+	Vector decompF1(0.0), decompF2(0.0);
+	EnergyMap weights;
+	weights[ fa_atr ] = 0.5;
+	weights[ fa_rep ] = 0.25;
+	weights[ fa_sol ] = 0.125;
+	//weights[ fa_intra_rep ] = 0.02;
+	for ( Graph::EdgeListConstIter edge_iter = g.get_node( 6 )->const_edge_list_begin(),
+	edge_iter_end = g.get_node( 6 )->const_edge_list_end(); edge_iter != edge_iter_end; ++edge_iter ) {
+	MinimizationEdge const * minedge = dynamic_cast< MinimizationEdge const * > ( *edge_iter );
+	Size const node2 = (*edge_iter)->get_other_ind( 6 );
+	//std::cout << "Evaluating derivative for pair " << (*edge_iter)->get_first_node_ind() << " " << node2 << std::endl;
+	etab_energy.eval_atom_derivative_for_residue_pair(
+	cd2.atomno(), pose.residue( 6 ), pose.residue( node2 ),
+	g.get_minimization_node( 6 )->res_min_data(), g.get_minimization_node( node2 )->res_min_data(),
+	minedge->res_pair_min_data(), pose, minmap.domain_map(),
+	sfxn, weights, decompF1, decompF2 );
+	}
+	etab_energy.eval_intrares_atom_derivative( cd2.atomno(), pose.residue( 6 ),
+	g.get_minimization_node(6)->res_min_data(), pose, minmap.domain_map(),
+	sfxn, weights, decompF1, decompF2 );
 
-		TS_ASSERT_DELTA( goldF1.x(), decompF1.x(), 1e-12 );
-		TS_ASSERT_DELTA( goldF1.y(), decompF1.y(), 1e-12 );
-		TS_ASSERT_DELTA( goldF1.z(), decompF1.z(), 1e-12 );
-		TS_ASSERT_DELTA( goldF2.x(), decompF2.x(), 1e-12 );
-		TS_ASSERT_DELTA( goldF2.y(), decompF2.y(), 1e-12 );
-		TS_ASSERT_DELTA( goldF2.z(), decompF2.z(), 1e-12 );
+	TS_ASSERT_DELTA( goldF1.x(), decompF1.x(), 1e-12 );
+	TS_ASSERT_DELTA( goldF1.y(), decompF1.y(), 1e-12 );
+	TS_ASSERT_DELTA( goldF1.z(), decompF1.z(), 1e-12 );
+	TS_ASSERT_DELTA( goldF2.x(), decompF2.x(), 1e-12 );
+	TS_ASSERT_DELTA( goldF2.y(), decompF2.y(), 1e-12 );
+	TS_ASSERT_DELTA( goldF2.z(), decompF2.z(), 1e-12 );
 	}*/
 
 	void test_start_func_matches_start_score_w_full_bbflex_table_version()
@@ -556,8 +556,8 @@ public:
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
 		core::scoring::methods::EnergyMethodOptions options;
-    options.analytic_etable_evaluation( false );
-    sfxn.set_energy_method_options( options );
+		options.analytic_etable_evaluation( false );
+		sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -581,8 +581,8 @@ public:
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
 		core::scoring::methods::EnergyMethodOptions options;
-    options.analytic_etable_evaluation( true );
-    sfxn.set_energy_method_options( options );
+		options.analytic_etable_evaluation( true );
+		sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -605,8 +605,8 @@ public:
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
 		core::scoring::methods::EnergyMethodOptions options;
-    options.analytic_etable_evaluation( false );
-    sfxn.set_energy_method_options( options );
+		options.analytic_etable_evaluation( false );
+		sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -629,8 +629,8 @@ public:
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
 		core::scoring::methods::EnergyMethodOptions options;
-    options.analytic_etable_evaluation( true );
-    sfxn.set_energy_method_options( options );
+		options.analytic_etable_evaluation( true );
+		sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -651,8 +651,8 @@ public:
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
 		core::scoring::methods::EnergyMethodOptions options;
-    options.analytic_etable_evaluation( false );
-    sfxn.set_energy_method_options( options );
+		options.analytic_etable_evaluation( false );
+		sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -673,8 +673,8 @@ public:
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
 		core::scoring::methods::EnergyMethodOptions options;
-    options.analytic_etable_evaluation( true );
-    sfxn.set_energy_method_options( options );
+		options.analytic_etable_evaluation( true );
+		sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -695,8 +695,8 @@ public:
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
 		core::scoring::methods::EnergyMethodOptions options;
-    options.analytic_etable_evaluation( false );
-    sfxn.set_energy_method_options( options );
+		options.analytic_etable_evaluation( false );
+		sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -760,8 +760,8 @@ public:
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
 		core::scoring::methods::EnergyMethodOptions options;
-    options.analytic_etable_evaluation( true );
-    sfxn.set_energy_method_options( options );
+		options.analytic_etable_evaluation( true );
+		sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -782,8 +782,8 @@ public:
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
 		core::scoring::methods::EnergyMethodOptions options;
-    options.analytic_etable_evaluation( false );
-    sfxn.set_energy_method_options( options );
+		options.analytic_etable_evaluation( false );
+		sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -810,8 +810,8 @@ public:
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
 		core::scoring::methods::EnergyMethodOptions options;
-    options.analytic_etable_evaluation( true );
-    sfxn.set_energy_method_options( options );
+		options.analytic_etable_evaluation( true );
+		sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -838,8 +838,8 @@ public:
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
 		core::scoring::methods::EnergyMethodOptions options;
-    options.analytic_etable_evaluation( false );
-    sfxn.set_energy_method_options( options );
+		options.analytic_etable_evaluation( false );
+		sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -862,8 +862,8 @@ public:
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
 		core::scoring::methods::EnergyMethodOptions options;
-    options.analytic_etable_evaluation( true );
-    sfxn.set_energy_method_options( options );
+		options.analytic_etable_evaluation( true );
+		sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -933,8 +933,8 @@ public:
 		Pose pose = create_trpcage_ideal_pose();
 		ScoreFunction sfxn;
 		core::scoring::methods::EnergyMethodOptions options;
-    options.analytic_etable_evaluation( false );
-    sfxn.set_energy_method_options( options );
+		options.analytic_etable_evaluation( false );
+		sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -981,8 +981,8 @@ public:
 		Pose pose = create_trpcage_ideal_pose();
 		ScoreFunction sfxn;
 		core::scoring::methods::EnergyMethodOptions options;
-    options.analytic_etable_evaluation( true );
-    sfxn.set_energy_method_options( options );
+		options.analytic_etable_evaluation( true );
+		sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -1085,7 +1085,7 @@ public:
 
 		// Create tries for each of the three rotamer sets
 		for ( Size ii = 8; ii <= 11; ++ii ) etab_energy.prepare_rotamers_for_packing( pose, *rotsets.rotamer_set_for_residue( ii ) );
-		for ( Size ii = 8; ii <= 11; ++ii )	TS_ASSERT( rotsets.rotamer_set_for_residue(ii)->get_trie( etable_method ).get() != 0 );
+		for ( Size ii = 8; ii <= 11; ++ii ) TS_ASSERT( rotsets.rotamer_set_for_residue(ii)->get_trie( etable_method ).get() != 0 );
 
 		Size count_comparisons( 0 );
 		for ( Size ii = 8; ii <= 11; ++ii ) {

@@ -34,18 +34,18 @@ namespace protocols {
 namespace nonlocal {
 
 TreeBuilderOP TreeBuilderFactory::get_builder(const std::string& builder_name) {
-  // case-insensitive input
-  std::string type = builder_name;
-  boost::to_lower(type);
+	// case-insensitive input
+	std::string type = builder_name;
+	boost::to_lower(type);
 
-  if (type == "star") {
-    return TreeBuilderOP( new StarTreeBuilder() );
-  } else if (type == "simple") {
-    return TreeBuilderOP( new SimpleTreeBuilder() );
-  } else {
-    utility_exit_with_message("Invalid builder_type: " + type);
-  }
-  return NULL;
+	if ( type == "star" ) {
+		return TreeBuilderOP( new StarTreeBuilder() );
+	} else if ( type == "simple" ) {
+		return TreeBuilderOP( new SimpleTreeBuilder() );
+	} else {
+		utility_exit_with_message("Invalid builder_type: " + type);
+	}
+	return NULL;
 }
 
 }  // namespace nonlocal

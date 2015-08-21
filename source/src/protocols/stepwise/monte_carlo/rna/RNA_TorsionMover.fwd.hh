@@ -26,8 +26,8 @@ namespace stepwise {
 namespace monte_carlo {
 namespace rna {
 
-	class RNA_TorsionMover;
-	typedef utility::pointer::shared_ptr< RNA_TorsionMover > RNA_TorsionMoverOP;
+class RNA_TorsionMover;
+typedef utility::pointer::shared_ptr< RNA_TorsionMover > RNA_TorsionMoverOP;
 
 } //rna
 } //monte_carlo

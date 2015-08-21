@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/scoring/memb_etable/MembEtable.cc
+/// @file  core/scoring/memb_etable/MembEtable.cc
 ///
-/// @brief		Generate the table for fa_atr/rep and fa_sol with membrane additions
-/// @details	Used by the scoring manager. becasue computing LJ potentials is time
-///				consuming, precomputes and discritizes the potential (broken down into bins).
-///				Once bins are created, will smooth bins for better interpolation.
-///				Last Modified: 5/13/14
+/// @brief  Generate the table for fa_atr/rep and fa_sol with membrane additions
+/// @details Used by the scoring manager. becasue computing LJ potentials is time
+///    consuming, precomputes and discritizes the potential (broken down into bins).
+///    Once bins are created, will smooth bins for better interpolation.
+///    Last Modified: 5/13/14
 ///
-/// @author	Patrick Barth
-/// @author	(Updates) Rebecca Alford (rfalford12@gmail.com)
+/// @author Patrick Barth
+/// @author (Updates) Rebecca Alford (rfalford12@gmail.com)
 
 // Unit Headers
 #include <core/scoring/memb_etable/MembEtable.hh>
@@ -98,15 +98,15 @@ MembEtable::MembEtable(
 	epsilon                   ( 0.0001 ),
 	safe_max_dis2             ( max_dis2 - epsilon ),
 	hydrogen_interaction_cutoff2_( option[ score::fa_Hatr ] ?
-		std::pow( max_dis_ + 2*chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH, 2 ) :
-		std::pow(5.0,2) ),
+	std::pow( max_dis_ + 2*chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH, 2 ) :
+	std::pow(5.0,2) ),
 	nblist_dis2_cutoff_XX_    ((options.max_dis+1.5)          *  (options.max_dis+1.5)          ),
 	nblist_dis2_cutoff_XH_    ( option[ score::fa_Hatr ] ?
-															nblist_dis2_cutoff_XX_ :
-															((options.max_dis+0.5)/2.0+2.2) * ((options.max_dis+0.5)/2.0+2.2) ),
+	nblist_dis2_cutoff_XX_ :
+	((options.max_dis+0.5)/2.0+2.2) * ((options.max_dis+0.5)/2.0+2.2) ),
 	nblist_dis2_cutoff_HH_    ( option[ score::fa_Hatr ] ?
-															nblist_dis2_cutoff_XX_ :
-															4.4 * 4.4 ),
+	nblist_dis2_cutoff_XX_ :
+	4.4 * 4.4 ),
 	max_non_hydrogen_lj_radius_( 0.0 ),
 	max_hydrogen_lj_radius_( 0.0 )
 
@@ -147,24 +147,24 @@ MembEtable::MembEtable(
 
 	std::string param_name;
 
-    param_name = "LK_DGFREE";
+	param_name = "LK_DGFREE";
 	TR << "Using alternate parameters: " << param_name << " in MembEtable construction." << std::endl;
 	Size const lkfree_index( atom_set_in->extra_parameter_index( param_name ) );
 	for ( int i=1; i<= n_atomtypes; ++i ) lk_dgfree_[i] = (*atom_set_in)[i].extra_parameter( lkfree_index );
 
 
-    param_name = "MEMB_LK_DGFREE";
+	param_name = "MEMB_LK_DGFREE";
 	TR << "Using alternate parameters: " << param_name << " in MembEtable construction." << std::endl;
 	Size const mb_lkfree_index( atom_set_in->extra_parameter_index( param_name ) );
 	for ( int i=1; i<= n_atomtypes; ++i ) memb_lk_dgfree_[i] = (*atom_set_in)[i].extra_parameter( mb_lkfree_index );
 
-    param_name = "LK_DGREFCE";
+	param_name = "LK_DGREFCE";
 	TR << "Using alternate parameters: " << param_name << " in MembEtable construction." << std::endl;
 	Size const lkref_index( atom_set_in->extra_parameter_index( param_name ) );
 	for ( int i=1; i<= n_atomtypes; ++i ) lk_dgrefce_(i) = (*atom_set_in)[i].extra_parameter( lkref_index );
 
 
-    param_name = "MEMB_LK_DGREFCE";
+	param_name = "MEMB_LK_DGREFCE";
 	TR << "Using alternate parameters: " << param_name << " in MembEtable construction." << std::endl;
 	Size const mb_lkref_index( atom_set_in->extra_parameter_index( param_name ) );
 	for ( int i=1; i<= n_atomtypes; ++i ) memb_lk_dgrefce_(i) = (*atom_set_in)[i].extra_parameter( mb_lkref_index );
@@ -215,7 +215,7 @@ MembEtable::make_pairenergy_table()
 
 	// calc distance**2 step per bin
 	dis2_step = 1.0 / bins_per_A2;
-	
+
 	int normal_disbins;
 	// get the number of damping disbins
 	if ( add_long_range_damping ) {
@@ -230,15 +230,15 @@ MembEtable::make_pairenergy_table()
 	// ctsa - step through distance**2 bins and calculate potential
 	for ( int atype1 = 1, atype_end = n_atomtypes; atype1 <= atype_end; ++atype1 ) {
 		for ( int atype2 = 1; atype2 <= atype_end; ++atype2 ) {
-			
+
 			// ctsa - normal bins have their lj and lk values
 			// calculated analytically
 			for ( int disbin = 1; disbin <= normal_disbins; ++disbin ) {
 				dis2 = ( disbin - 1 ) * dis2_step;
 
 				calc_etable_value(dis2,atype1,atype2,solvE1,solvE2,dsolvE1,dsolvE2,lj_sigma,lk_inv_lambda2,
-				lk_coeff, lk_min_dis2sigma_value,memb_solvE1, memb_solvE2,
-				memb_lk_coeff, memb_lk_min_dis2sigma_value, memb_dsolvE1, memb_dsolvE2); //pba
+					lk_coeff, lk_min_dis2sigma_value,memb_solvE1, memb_solvE2,
+					memb_lk_coeff, memb_lk_min_dis2sigma_value, memb_dsolvE1, memb_dsolvE2); //pba
 
 				solv1_(disbin,atype2,atype1) = solvE1;
 				solv2_(disbin,atype2,atype1) = solvE2;
@@ -253,19 +253,19 @@ MembEtable::make_pairenergy_table()
 			if ( add_long_range_damping ) {
 
 				dsolv1_damp = -solv1_(normal_disbins,atype2,atype1) /
-				 long_range_damping_length;
+					long_range_damping_length;
 				dsolv2_damp = -solv2_(normal_disbins,atype2,atype1) /
-				 long_range_damping_length;
+					long_range_damping_length;
 				//pba
 				memb_dsolv1_damp = -memb_solv1_(normal_disbins,atype2,atype1) /
-				 long_range_damping_length;
+					long_range_damping_length;
 				memb_dsolv2_damp = -memb_solv2_(normal_disbins,atype2,atype1) /
-				 long_range_damping_length;
+					long_range_damping_length;
 
 
 				intercept_solv1_damp = -dsolv1_damp*max_dis_;
 				intercept_solv2_damp = -dsolv2_damp*max_dis_;
-				
+
 				intercept_memb_solv1_damp = -memb_dsolv1_damp*max_dis_;
 				intercept_memb_solv2_damp = -memb_dsolv2_damp*max_dis_;
 
@@ -286,11 +286,11 @@ MembEtable::make_pairenergy_table()
 				}
 			}
 
-		solv1_(etable_disbins,atype2,atype1) = 0.0;
-		solv2_(etable_disbins,atype2,atype1) = 0.0;
-		memb_solv1_(etable_disbins,atype2,atype1) = 0.0;
-		memb_solv2_(etable_disbins,atype2,atype1) = 0.0;
-		
+			solv1_(etable_disbins,atype2,atype1) = 0.0;
+			solv2_(etable_disbins,atype2,atype1) = 0.0;
+			memb_solv1_(etable_disbins,atype2,atype1) = 0.0;
+			memb_solv2_(etable_disbins,atype2,atype1) = 0.0;
+
 		}
 	}
 
@@ -307,7 +307,7 @@ MembEtable::make_pairenergy_table()
 	//db  after extensive refinement.
 	modify_pot();
 
-	if( !option[ score::no_smooth_etables ] ) smooth_etables();
+	if ( !option[ score::no_smooth_etables ] ) smooth_etables();
 
 	////////////////////////////////////////////////////////
 	// etable I/O stuff
@@ -317,8 +317,8 @@ MembEtable::make_pairenergy_table()
 
 	// just for convenience in input/output_etables
 	map< string, FArray3D<Real>* > etables;
-	
-	etables[ "solv1"] = &  solv1_;	etables[ "solv2"] = &  solv2_;
+
+	etables[ "solv1"] = &  solv1_; etables[ "solv2"] = &  solv2_;
 	etables["dsolv1"]  = & dsolv1_;
 	etables["dsolv2"]  = & dsolv2_;
 	etables[ "memb_solv1"] = &  memb_solv1_;  etables[ "memb_solv2"] = &  memb_solv2_; //pba
@@ -358,7 +358,7 @@ MembEtable::make_pairenergy_table()
 ///
 /// @detailes
 /// The Etables are  modified in three ways:
-///	   (1) the LK solvation energy is set to a constant below 4.2A to avoid shifting the position
+///    (1) the LK solvation energy is set to a constant below 4.2A to avoid shifting the position
 ///    of the minimum on the LJatr potential.  in refined decoys the peak in the C C pair
 ///    distribution function shifts to around 3.8 A from ~4.0A in native structures; the LJatr
 ///    potential has a minimum at 4.0A but this shifts towards smaller values because of the LK
@@ -392,13 +392,13 @@ MembEtable::modify_pot()
 	Real const e = 0.0;// fullatom_setup_ns::mod_hhrep_exponent;
 
 
-	if(mod_hhrep) {
+	if ( mod_hhrep ) {
 		TR << "fullatom_setup: modifying h-h repulsion "
-							<< " hhrep center "   << c
-							<< " hhrep height "   << h
-							<< " hhrep width "    << w
-							<< " hhrep exponent " << e
-							<< std::endl;
+			<< " hhrep center "   << c
+			<< " hhrep height "   << h
+			<< " hhrep width "    << w
+			<< " hhrep exponent " << e
+			<< std::endl;
 	}
 
 	{
@@ -409,20 +409,20 @@ MembEtable::modify_pot()
 		chemical::AtomTypeSetCOP atom_set( atom_set_ );
 		for ( int k = 1; k <= etable_disbins; ++k ) {
 			dis = std::sqrt( ( k - 1 ) * .05f ); //SGM Off-by-1 bug fix: k -> ( k - 1 )
-		
+
 			utility::vector1<int> carbon_types;
 			carbon_types.push_back( atom_set->atom_type_index("CH1") );
 			carbon_types.push_back( atom_set->atom_type_index("CH2") );
 			carbon_types.push_back( atom_set->atom_type_index("CH3") );
 			carbon_types.push_back( atom_set->atom_type_index("aroC") );
-			
+
 			if ( dis < 4.2 ) {
 				for ( int i = 1, i_end = carbon_types.size(); i <= i_end; ++i ) {
 					for ( int j = 1, j_end = carbon_types.size(); j <= j_end; ++j ) {
-			
+
 						int const ii = carbon_types[i];
 						int const jj = carbon_types[j];
-						
+
 						solv1_(k,jj,ii) = solv1_(ibin,jj,ii);
 						solv1_(k,ii,jj) = solv1_(ibin,ii,jj); // Why is this duplicated?
 						solv2_(k,jj,ii) = solv2_(ibin,jj,ii);
@@ -458,9 +458,9 @@ MembEtable::smooth_etables()
 	for ( int i = 1; i <= etable_disbins; ++i ) {
 		dis(i) = sqrt( ( i - 1 ) * 1.0 / bins_per_A2 );
 	}
-	
+
 	FArray1D<int> bin_of_dis(100);
-  
+
 	for ( int i = 1; i <= 100; ++i ) {
 		float d = ((float)i)/10.0;
 		bin_of_dis(i) = (int)( d*d * bins_per_A2 + 1 );
@@ -469,19 +469,19 @@ MembEtable::smooth_etables()
 	/////////////////////////////////////////////////////////////////////////////
 	// 2) spline smooth solv1/solv2 at fa_max_dis cut && and first switchpoint
 	/////////////////////////////////////////////////////////////////////////////
- 
-   using namespace numeric::interpolation::spline;
+
+	using namespace numeric::interpolation::spline;
 	TR << "smooth_etable: spline smoothing solvation etables (max_dis = " << max_dis_ << ")" << std::endl;
-	
-	for( int at1 = 1; at1 <= n_atomtypes; ++at1 ) {
-		for( int at2 = 1; at2 <= n_atomtypes; ++at2 ) {
+
+	for ( int at1 = 1; at1 <= n_atomtypes; ++at1 ) {
+		for ( int at2 = 1; at2 <= n_atomtypes; ++at2 ) {
 
 			int SWTCH = 1;
-			for( SWTCH=1; SWTCH <= etable_disbins; ++SWTCH) {
-				if( (solv1_(SWTCH,at1,at2) != solv1_(1,at1,at2)) ||
+			for ( SWTCH=1; SWTCH <= etable_disbins; ++SWTCH ) {
+				if ( (solv1_(SWTCH,at1,at2) != solv1_(1,at1,at2)) ||
 						(solv2_(SWTCH,at1,at2) != solv2_(1,at1,at2)) ||
-            (memb_solv1_(SWTCH,at1,at2) != memb_solv1_(1,at1,at2)) ||
-            (memb_solv2_(SWTCH,at1,at2) != memb_solv2_(1,at1,at2)) ) {
+						(memb_solv1_(SWTCH,at1,at2) != memb_solv1_(1,at1,at2)) ||
+						(memb_solv2_(SWTCH,at1,at2) != memb_solv2_(1,at1,at2)) ) {
 					break;
 				}
 			}
@@ -502,10 +502,10 @@ MembEtable::smooth_etables()
 			Real mdsolv2e1 = (memb_solv2_(E1+1,at1,at2)-memb_solv2_(E1  ,at1,at2))/(dis(E1+1)-dis(E1  ));
 			Real mdsolv2s2 = (memb_solv2_(S2  ,at1,at2)-memb_solv2_(S2-1,at1,at2))/(dis(S2  )-dis(S2-1));
 
-			SplineGenerator gen11( dis(S1), solv1_(S1,at1,at2), 0.0     ,	dis(E1), solv1_(E1,at1,at2), dsolv1e1 );
-			SplineGenerator gen21( dis(S1), solv2_(S1,at1,at2), 0.0     ,	dis(E1), solv2_(E1,at1,at2), dsolv2e1 );
-			SplineGenerator gen12( dis(S2), solv1_(S2,at1,at2), dsolv1s2,	dis(E2), solv1_(E2,at1,at2), 0.0      );
-			SplineGenerator gen22( dis(S2), solv2_(S2,at1,at2), dsolv2s2,	dis(E2), solv2_(E2,at1,at2), 0.0      );
+			SplineGenerator gen11( dis(S1), solv1_(S1,at1,at2), 0.0     , dis(E1), solv1_(E1,at1,at2), dsolv1e1 );
+			SplineGenerator gen21( dis(S1), solv2_(S1,at1,at2), 0.0     , dis(E1), solv2_(E1,at1,at2), dsolv2e1 );
+			SplineGenerator gen12( dis(S2), solv1_(S2,at1,at2), dsolv1s2, dis(E2), solv1_(E2,at1,at2), 0.0      );
+			SplineGenerator gen22( dis(S2), solv2_(S2,at1,at2), dsolv2s2, dis(E2), solv2_(E2,at1,at2), 0.0      );
 
 			SplineGenerator mgen11( dis(S1), memb_solv1_(S1,at1,at2), 0.0     , dis(E1), memb_solv1_(E1,at1,at2), mdsolv1e1 );
 			SplineGenerator mgen21( dis(S1), memb_solv2_(S1,at1,at2), 0.0     , dis(E1), memb_solv2_(E1,at1,at2), mdsolv2e1 );
@@ -518,7 +518,7 @@ MembEtable::smooth_etables()
 			InterpolatorOP minterp11( mgen11.get_interpolator() );
 			InterpolatorOP minterp21( mgen21.get_interpolator() );
 
-			for( int i = S1; i <= E1; ++i ) {
+			for ( int i = S1; i <= E1; ++i ) {
 				Real d1,d2;
 				interp11->interpolate( dis(i), solv1_(i,at1,at2), d1 );
 				interp21->interpolate( dis(i), solv2_(i,at1,at2), d2 );
@@ -536,7 +536,7 @@ MembEtable::smooth_etables()
 			InterpolatorOP minterp12( mgen12.get_interpolator() );
 			InterpolatorOP minterp22( mgen22.get_interpolator() );
 
-			for( int i = S2; i <= E2; ++i ) {
+			for ( int i = S2; i <= E2; ++i ) {
 				Real d1,d2;
 				interp12->interpolate( dis(i), solv1_(i,at1,at2), d1 );
 				interp22->interpolate( dis(i), solv2_(i,at1,at2), d2 );
@@ -556,7 +556,7 @@ MembEtable::smooth_etables()
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Output Etable: Output etable data in a file in the same format used in input
-/// @details	File first line is <etable> <etable_disbins> and other lines are <atom type 1>
+/// @details File first line is <etable> <etable_disbins> and other lines are <atom type 1>
 /// <atomtype 1> <eval bin 1> <eval bin 2>...
 ///
 /// @author sheffler (last modified: mar 19 2006)
@@ -572,11 +572,11 @@ MembEtable::output_etable(
 	using namespace ObjexxFCL;
 
 	out << label << " " << etable_disbins << endl;
-	for(int at1 = 1; at1 <= n_atomtypes; at1++) {
-		for(int at2 = 1; at2 <= n_atomtypes; at2++) {
+	for ( int at1 = 1; at1 <= n_atomtypes; at1++ ) {
+		for ( int at2 = 1; at2 <= n_atomtypes; at2++ ) {
 			out << at1 << " "
-					<< at2 << " ";
-			for(int bin = 1; bin <= etable_disbins; bin++) {
+				<< at2 << " ";
+			for ( int bin = 1; bin <= etable_disbins; bin++ ) {
 				float evalue = etable(bin,at1,at2);
 				out << evalue << ' ';
 			}
@@ -611,34 +611,34 @@ MembEtable::input_etable(
 	// check header
 	in.getline(buf,100000);
 	intmp.str(buf);
-	if( !(intmp >> lblin >> numdisbin) ) {
+	if ( !(intmp >> lblin >> numdisbin) ) {
 		TR << "input_etable: WARNING bad etable header " << buf << endl;
 		return;
 	}
-	if( lblin != label || etable_disbins != numdisbin ) {
+	if ( lblin != label || etable_disbins != numdisbin ) {
 		TR << "input_etable: WARNING etable types don't match! "<< endl;
 		TR << "              expected " << label << "," << etable_disbins
-			 << " got " << lblin << ',' << numdisbin<< endl;
+			<< " got " << lblin << ',' << numdisbin<< endl;
 		utility_exit_with_message( "input_etable: WARNING etable types don't match! " );
 	} else {
 		TR << "input_etable expected etable " << label << " of size " << etable_disbins
-				 << ", got " << lblin << ',' << numdisbin<< endl;
+			<< ", got " << lblin << ',' << numdisbin<< endl;
 
 	}
 
 	// read in etable
 	int at1,at2,count=0,scount=0;
 	float evalue;
-	while( in.getline(buf,100000) ) {
+	while ( in.getline(buf,100000) ) {
 		//TR << "ASDFF buf  " << buf << endl;
 		count++;
 		intmp.clear();
 		intmp.str(buf);
-		if( ! (intmp >> at1 >> at2 ) ) {
+		if ( ! (intmp >> at1 >> at2 ) ) {
 			TR << "input_etable: error reading etable line: " << buf << endl;
 		} else {
-			for(int bin = 1; bin <=numdisbin; bin++) {
-				if( !(intmp >> evalue) ) {
+			for ( int bin = 1; bin <=numdisbin; bin++ ) {
+				if ( !(intmp >> evalue) ) {
 					TR << "input_etable: not enough bins on etable line: " << buf << endl;
 					utility_exit_with_message( "input_etable: not enough bins on etable line: " );
 				}
@@ -716,10 +716,10 @@ MembEtable::precalc_etable_coefficients(
 
 			if ( lj_use_hbond_radii ) {
 				if ( ( atom_type(i).is_acceptor() && atom_type(j).is_donor() ) ||
-						 ( atom_type(i).is_donor() && atom_type(j).is_acceptor() ) ) {
+						( atom_type(i).is_donor() && atom_type(j).is_acceptor() ) ) {
 					sigma = lj_hbond_dis;
 				} else if ( ( atom_type(i).is_acceptor() && atom_type(j).is_polar_hydrogen() ) ||
-										( atom_type(i).is_polar_hydrogen() && atom_type(j).is_acceptor() ) ) {
+						( atom_type(i).is_polar_hydrogen() && atom_type(j).is_acceptor() ) ) {
 					sigma = lj_hbond_hdis;
 
 				}
@@ -728,23 +728,23 @@ MembEtable::precalc_etable_coefficients(
 			//lin   modify sigma for water and hbond donors/acceptors
 			if ( lj_use_water_radii ) {
 				if ( ( ( atom_type(i).is_acceptor() ||
-								 atom_type(i).is_donor() ) &&
-							 atom_type(j).is_h2o() ) ||
-						 ( ( atom_type(j).is_acceptor() ||
-								 atom_type(j).is_donor() ) &&
-							 atom_type(i).is_h2o() ) ) {
+						atom_type(i).is_donor() ) &&
+						atom_type(j).is_h2o() ) ||
+						( ( atom_type(j).is_acceptor() ||
+						atom_type(j).is_donor() ) &&
+						atom_type(i).is_h2o() ) ) {
 					sigma = lj_water_dis;
 				} else if ( ( atom_type(i).is_polar_hydrogen() &&
-											atom_type(j).is_h2o() ) ||
-										( atom_type(j).is_polar_hydrogen() &&
-											atom_type(i).is_h2o() ) ) {
+						atom_type(j).is_h2o() ) ||
+						( atom_type(j).is_polar_hydrogen() &&
+						atom_type(i).is_h2o() ) ) {
 					sigma = lj_water_hdis;
 				}
 			}
 
 			lj_sigma(i,j) = sigma;
 			lj_sigma(j,i) = lj_sigma(i,j);
-			
+
 			// ctsa - precalculated lk solvation coefficients
 			lk_coeff(i,j) = lk_coeff_tmp(i) * lk_volume(j);
 			lk_coeff(j,i) = lk_coeff_tmp(j) * lk_volume(i);
@@ -760,16 +760,16 @@ MembEtable::precalc_etable_coefficients(
 			Real dis_rad = thresh_dis - lj_radius(i);
 			x_thresh = ( dis_rad * dis_rad ) * lk_inv_lambda2(i);
 			lk_min_dis2sigma_value(i,j) = std::exp(-x_thresh) * lk_coeff(i,j) *
-			 inv_thresh_dis2;
-      memb_lk_min_dis2sigma_value(i,j) = std::exp(-x_thresh) * memb_lk_coeff(i,j) *
-       inv_thresh_dis2; //pba
+				inv_thresh_dis2;
+			memb_lk_min_dis2sigma_value(i,j) = std::exp(-x_thresh) * memb_lk_coeff(i,j) *
+				inv_thresh_dis2; //pba
 
 			dis_rad = thresh_dis - lj_radius(j);
 			x_thresh = ( dis_rad * dis_rad ) * lk_inv_lambda2(j);
 			lk_min_dis2sigma_value(j,i) = std::exp(-x_thresh) * lk_coeff(j,i) *
-			 inv_thresh_dis2;
-      memb_lk_min_dis2sigma_value(j,i) = std::exp(-x_thresh) * memb_lk_coeff(j,i) *
-       inv_thresh_dis2;
+				inv_thresh_dis2;
+			memb_lk_min_dis2sigma_value(j,i) = std::exp(-x_thresh) * memb_lk_coeff(j,i) *
+				inv_thresh_dis2;
 		}
 	}
 }
@@ -832,9 +832,9 @@ MembEtable::calc_etable_value(
 	Real & memb_dsolvE2
 )
 {
-	// 	using namespace etable;
-	// 	using namespace param;
-	// 	using namespace pdbstatistics_pack;
+	//  using namespace etable;
+	//  using namespace param;
+	//  using namespace pdbstatistics_pack;
 
 	// locals
 	//Real ljE,d_ljE,
@@ -867,21 +867,21 @@ MembEtable::calc_etable_value(
 
 	//  ctsa - switch to disulfide bonded atom types
 	//    when conditions are met
-// 	if ( ( atype1 == atype_sulfur && atype2 == atype_sulfur ) &&
-// 	 dis < disulfide_dis_thresh ) {
-// 		xtra_atype1 = n_atomtypes + 1;
-// 		xtra_atype2 = n_atomtypes + 1;
-// 	} else {
-		xtra_atype1 = atype1;
-		xtra_atype2 = atype2;
-		//}
+	//  if ( ( atype1 == atype_sulfur && atype2 == atype_sulfur ) &&
+	//   dis < disulfide_dis_thresh ) {
+	//   xtra_atype1 = n_atomtypes + 1;
+	//   xtra_atype2 = n_atomtypes + 1;
+	//  } else {
+	xtra_atype1 = atype1;
+	xtra_atype2 = atype2;
+	//}
 
 
 	dis2sigma = dis / lj_sigma(xtra_atype1,xtra_atype2);
 
-    //pbadebug WARNING
-    //if(atype1==18 && atype2==19)
-    //  std::cout << "d lj d2s lkmin " << dis << " " << lj_sigma(xtra_atype1,xtra_atype2) << " " << dis2sigma << " " << lk_min_dis2sigma << std::endl;
+	//pbadebug WARNING
+	//if(atype1==18 && atype2==19)
+	//  std::cout << "d lj d2s lkmin " << dis << " " << lj_sigma(xtra_atype1,xtra_atype2) << " " << dis2sigma << " " << lk_min_dis2sigma << std::endl;
 	// ctsa - calc lk
 	if ( dis2sigma < lk_min_dis2sigma ) {
 		// ctsa - solvation is constant when the dis/sigma ratio
@@ -907,20 +907,20 @@ MembEtable::calc_etable_value(
 		solvE2 = std::exp(-x2) * lk_coeff(atype2,atype1) * inv_dis2;
 		memb_solvE1 = std::exp(-x1) * memb_lk_coeff(atype1,atype2) * inv_dis2; //pba
 		memb_solvE2 = std::exp(-x2) * memb_lk_coeff(atype2,atype1) * inv_dis2;
-	
+
 		// ctsa - get d(lk_E)/dr
 		dsolvE1 = -2.0 * solvE1 *
-		 (((dis-lj_radius(atype1))*lk_inv_lambda2(atype1))+inv_dis);
+			(((dis-lj_radius(atype1))*lk_inv_lambda2(atype1))+inv_dis);
 		//(((dis-atom_type(atype1).lj_radius())*lk_inv_lambda2(atype1))+inv_dis);
 		dsolvE2 = -2.0 * solvE2 *
-		 (((dis-lj_radius(atype2))*lk_inv_lambda2(atype2))+inv_dis);
+			(((dis-lj_radius(atype2))*lk_inv_lambda2(atype2))+inv_dis);
 		//(((dis-atom_type(atype2).lj_radius())*lk_inv_lambda2(atype2))+inv_dis);
 
-	// pba - get d(memblk_E)/dr
-	memb_dsolvE1 = -2.0 * memb_solvE1 *
-	 (((dis-lj_radius(atype1))*lk_inv_lambda2(atype1))+inv_dis);
-	memb_dsolvE2 = -2.0 * memb_solvE2 *
-	 (((dis-lj_radius(atype2))*lk_inv_lambda2(atype2))+inv_dis);
+		// pba - get d(memblk_E)/dr
+		memb_dsolvE1 = -2.0 * memb_solvE1 *
+			(((dis-lj_radius(atype1))*lk_inv_lambda2(atype1))+inv_dis);
+		memb_dsolvE2 = -2.0 * memb_solvE2 *
+			(((dis-lj_radius(atype2))*lk_inv_lambda2(atype2))+inv_dis);
 
 	}
 

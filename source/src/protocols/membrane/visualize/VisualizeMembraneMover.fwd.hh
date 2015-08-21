@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	    protocols/membrane/VisualizeMembraneMover.hh
+/// @file     protocols/membrane/VisualizeMembraneMover.hh
 ///
 /// @brief      Visualize Membrane Planes with Virtual Residues
 /// @details    Add a set of virtual residues as a third chain to the
-///				membrane pose. This tool is strictly for visualization of
-///				the implicit membrane and should not be present in modeling.
-///				Last Modified: 6/19/14
+///    membrane pose. This tool is strictly for visualization of
+///    the implicit membrane and should not be present in modeling.
+///    Last Modified: 6/19/14
 ///
-/// @author		Rebecca Alford (rflaford12@gmail.com)
+/// @author  Rebecca Alford (rflaford12@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_visualize_VisualizeMembraneMover_fwd_hh
 #define INCLUDED_protocols_membrane_visualize_VisualizeMembraneMover_fwd_hh
@@ -28,7 +28,7 @@ namespace membrane {
 namespace visualize {
 
 /// @brief Add membrane planes to the pose represented by
-///			2 layers of MEM virtual residues
+///   2 layers of MEM virtual residues
 class VisualizeMembraneMover;
 typedef utility::pointer::shared_ptr< VisualizeMembraneMover > VisualizeMembraneMoverOP;
 typedef utility::pointer::shared_ptr< VisualizeMembraneMover const > VisualizeMembraneMoverCOP;

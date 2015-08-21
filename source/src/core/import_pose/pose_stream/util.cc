@@ -53,16 +53,17 @@ utility::vector1< utility::file::FileName > filenames_from_list_file(
 	vector1< FileName > fns_to_return;
 
 	for ( vector1< FileName >::const_iterator it = list_fns.begin(),
-				it_end = list_fns.end();
-				it != it_end; ++it
-	) {
+			it_end = list_fns.end();
+			it != it_end; ++it
+			) {
 		std::string filename( it->name() );
 		utility::io::izstream data( filename.c_str() );
-		if ( !data.good() )
+		if ( !data.good() ) {
 			utility_exit_with_message( "Unable to open file: " + filename + '\n' );
+		}
 
 		std::string line;
-		while( getline(data, line) ) {
+		while ( getline(data, line) ) {
 			fns_to_return.push_back( utility::file::FileName(line) );
 		}
 		data.close();
@@ -94,7 +95,7 @@ MetaPoseInputStream streams_from_cmd_line( bool const do_renumber_decoys ) {
 
 			if ( option[ in::file::silent_list ].user() ) {
 				LazySilentFilePoseInputStreamOP silent_list_input( new LazySilentFilePoseInputStream( filenames_from_list_file(
-						option[ in::file::silent_list ]()
+					option[ in::file::silent_list ]()
 					) ) );
 				input.add_pose_input_stream(silent_list_input);
 			}
@@ -102,14 +103,14 @@ MetaPoseInputStream streams_from_cmd_line( bool const do_renumber_decoys ) {
 			SilentFilePoseInputStreamOP silent_input;
 			if ( option[ in::file::tags ].user() ) {
 				silent_input = SilentFilePoseInputStreamOP( new SilentFilePoseInputStream(
-						option[ in::file::silent ](),
-						option[ in::file::tags ](),
-						option[ in::file::silent_energy_cut ]()
+					option[ in::file::silent ](),
+					option[ in::file::tags ](),
+					option[ in::file::silent_energy_cut ]()
 					) );
 			} else {
 				silent_input = SilentFilePoseInputStreamOP( new SilentFilePoseInputStream(
 					option[ in::file::silent ](), option[ in::file::silent_energy_cut ]()
-				) );
+					) );
 			}
 			silent_input->renumber_decoys( do_renumber_decoys && option[ in::file::silent_renumber ]() );
 			input.add_pose_input_stream( silent_input );
@@ -124,8 +125,8 @@ MetaPoseInputStream streams_from_cmd_line( bool const do_renumber_decoys ) {
 
 		vector1< FileName > fasta_files( option[ in::file::fasta ]() );
 		for ( vector1< FileName >::const_iterator it = fasta_files.begin(),
-					end = fasta_files.end(); it != end; ++it
-		) {
+				end = fasta_files.end(); it != end; ++it
+				) {
 
 			std::string sequence
 				= core::sequence::read_fasta_file( option[ in::file::fasta ]()[1] )[1]->sequence();
@@ -139,7 +140,7 @@ MetaPoseInputStream streams_from_cmd_line( bool const do_renumber_decoys ) {
 } // streams_from_cmd_line
 
 /// @brief Get all input streams based on command-line input, sorting silent file decoys in alphabetical order of tags.
-/// 
+///
 MetaPoseInputStream streams_from_cmd_line () {
 	return streams_from_cmd_line(true);
 }

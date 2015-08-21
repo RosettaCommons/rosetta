@@ -43,8 +43,8 @@ SingleResidueFragData::~SingleResidueFragData() {}
 //static basic::Tracer tr("core.fragment");
 
 bool SingleResidueFragData::steal(pose::Pose const& pose,  Size seq_pos) {
-  sequence_ = oneletter_code_from_aa( pose.residue( seq_pos ).aa() );
-  return true;
+	sequence_ = oneletter_code_from_aa( pose.residue( seq_pos ).aa() );
+	return true;
 }
 
 // insert fragment_data into pose at position given by Frame.seqpos( intra_frame_pos );
@@ -60,17 +60,17 @@ bool SingleResidueFragData::apply( kinematics::MoveMap const & movemap, pose::Po
 
 // insert fragment_data sec-struct into ss-string at position seq_pos
 bool SingleResidueFragData::apply_ss( std::string& ss, Size intra_frame_pos, Frame const& frame) const {
-  return apply_ss( ss, frame.seqpos( intra_frame_pos ) );
+	return apply_ss( ss, frame.seqpos( intra_frame_pos ) );
 }
 
 // insert fragment_data into pose at position seq_pos
 bool SingleResidueFragData::steal(pose::Pose const& pose, Size intra_frame_pos, Frame const& frame) {
-  return steal( pose, frame.seqpos( intra_frame_pos ) );
+	return steal( pose, frame.seqpos( intra_frame_pos ) );
 }
 
 // check weather dofs can be moved
 bool SingleResidueFragData::is_applicable( kinematics::MoveMap const& mm, Size intra_frame_pos, Frame const& frame) const {
-  return is_applicable( mm, frame.seqpos( intra_frame_pos ) );
+	return is_applicable( mm, frame.seqpos( intra_frame_pos ) );
 }
 
 void SingleResidueFragData::show( std::ostream &out ) const {

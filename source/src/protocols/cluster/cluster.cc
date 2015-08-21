@@ -81,14 +81,14 @@ std::map< std::string, core::Real > read_template_scores( const std::string & fi
 
 	std::map< std::string, core::Real > score_data;
 	std::string line;//,tag;
-	while( getline(data,line) ) {
-			std::istringstream l( line );
-			std::string template_name;
-			core::Real  template_score;
-			l >> template_name;
-			l >> template_score;
+	while ( getline(data,line) ) {
+		std::istringstream l( line );
+		std::string template_name;
+		core::Real  template_score;
+		l >> template_name;
+		l >> template_score;
 
-			score_data[template_name] = template_score;
+		score_data[template_name] = template_score;
 	}
 
 	return score_data;
@@ -103,18 +103,18 @@ bool compareIndexEnergyPair(
 
 /*
 class PoseComparator {
-	public:
-		PoseComparator() { }
-		virtual Real measure( Pose &pose1, Pose &pose2 ) = 0;
-	private:
+public:
+PoseComparator() { }
+virtual Real measure( Pose &pose1, Pose &pose2 ) = 0;
+private:
 };
 
 
 class PoseComparator_RMSD : public PoseComparator {
-	public:
-		PoseComparator() { }
-		ual Real measure( Pose &pose1, Pose &pose2 ) = 0;
-	private:
+public:
+PoseComparator() { }
+ual Real measure( Pose &pose1, Pose &pose2 ) = 0;
+private:
 };
 
 */
@@ -132,8 +132,7 @@ GatherPosesMover::GatherPosesMover() : Mover()
 		template_scores = read_template_scores( option[ OptionKeys::cluster::template_scores]() );
 
 		tr.Info << "Read template scores: " << std::endl;
-		for( std::map<std::string, core::Real >::iterator ii=template_scores.begin(); ii!=template_scores.end(); ++ii)
-		{
+		for ( std::map<std::string, core::Real >::iterator ii=template_scores.begin(); ii!=template_scores.end(); ++ii ) {
 			tr.Info << (*ii).first << ": " << (*ii).second << std::endl;
 		}
 	}
@@ -143,15 +142,16 @@ GatherPosesMover::GatherPosesMover() : Mover()
 // This should probably be replaced with an object -- "PosePoseRMSD" or something.
 Real
 GatherPosesMover::get_distance_measure(
-        const Pose & pose1,
-				const Pose & pose2
+	const Pose & pose1,
+	const Pose & pose2
 ) const {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
 	if ( option[ basic::options::OptionKeys::symmetry::symmetric_rmsd ]() &&
-					!core::pose::symmetry::is_symmetric( pose1 ) )
-						tr.Info << "Warning!!! For symmetric rmsd selected but pose is not symmetric. Ignoring symmetry" << std::endl;
+			!core::pose::symmetry::is_symmetric( pose1 ) ) {
+		tr.Info << "Warning!!! For symmetric rmsd selected but pose is not symmetric. Ignoring symmetry" << std::endl;
+	}
 
 	if ( option[ OptionKeys::cluster::hotspot_hash ]() ) {
 		Size const resnum1 = pose1.total_residue();
@@ -177,20 +177,20 @@ GatherPosesMover::get_distance_measure(
 		core::scoring::invert_exclude_residues( pose1.total_residue(), option[ OptionKeys::cluster::exclude_res ](), residues );
 		if ( pose1.residue(1).is_RNA() ) utility_exit_with_message( "Hey put in all atom rmsd code for residue subset!\n" ) ;
 		if ( option[ basic::options::OptionKeys::symmetry::symmetric_rmsd ]() &&
-					core::pose::symmetry::is_symmetric( pose1 ) ) {
-					tr.Info << "Warning!!! For symmetric clustering currently only all CA clustering is available. Calculating all CA rmsd instead..." << std::endl;
-					return scoring::CA_rmsd_symmetric( pose1, pose2 );
+				core::pose::symmetry::is_symmetric( pose1 ) ) {
+			tr.Info << "Warning!!! For symmetric clustering currently only all CA clustering is available. Calculating all CA rmsd instead..." << std::endl;
+			return scoring::CA_rmsd_symmetric( pose1, pose2 );
 		}
 		return scoring::CA_rmsd( pose1, pose2, residues );
 	} else {
 		// no residues excluded from the native.
 		if ( option[ basic::options::OptionKeys::symmetry::symmetric_rmsd ]() &&
-					core::pose::symmetry::is_symmetric( pose1 ) ) return scoring::CA_rmsd_symmetric( pose1, pose2 );
-        if ( option[ basic::options::OptionKeys::cluster::skip_align ].user() ) return scoring::rmsd_no_super( pose1, pose2, scoring::is_protein_backbone );
+				core::pose::symmetry::is_symmetric( pose1 ) ) return scoring::CA_rmsd_symmetric( pose1, pose2 );
+		if ( option[ basic::options::OptionKeys::cluster::skip_align ].user() ) return scoring::rmsd_no_super( pose1, pose2, scoring::is_protein_backbone );
 		if ( pose1.residue(1).is_RNA() ) return scoring::all_atom_rmsd( pose1, pose2 );
 		if ( cluster_by_all_atom_ ) return scoring::all_atom_rmsd( pose1, pose2 );
 		if ( cluster_by_protein_backbone_ ) return scoring::rmsd_with_super( pose1, pose2, scoring::is_protein_backbone );
-        if ( option[ basic::options::OptionKeys::cluster::skip_align ].user() ) return scoring::rmsd_no_super( pose1, pose2, scoring::is_protein_backbone );
+		if ( option[ basic::options::OptionKeys::cluster::skip_align ].user() ) return scoring::rmsd_no_super( pose1, pose2, scoring::is_protein_backbone );
 		return scoring::CA_rmsd( pose1, pose2 );
 	}
 
@@ -229,7 +229,7 @@ void GatherPosesMover::apply( Pose & pose ) {
 
 			if ( get_native_pose() ) {
 				setPoseExtraScore(
-						 pose, "rms", get_distance_measure( pose, *get_native_pose() )
+					pose, "rms", get_distance_measure( pose, *get_native_pose() )
 				);
 			}
 			pose.energies().clear();
@@ -240,9 +240,9 @@ void GatherPosesMover::apply( Pose & pose ) {
 		tag_list.push_back( core::pose::extract_tag_from_pose( pose ) );
 	}
 
-	if( template_scores.size() > 0 ){
+	if ( template_scores.size() > 0 ) {
 
-		std::map< std::string, std::string > score_line_strings(	core::pose::get_all_score_line_strings( pose ) );
+		std::map< std::string, std::string > score_line_strings( core::pose::get_all_score_line_strings( pose ) );
 
 		std::string template_name = score_line_strings["aln_id"];
 		template_name = template_name.substr(0,5);
@@ -281,7 +281,7 @@ bool GatherPosesMover::check_tag( const std::string &query_tag ) {
 }
 
 ClusterBase::ClusterBase()
-	: GatherPosesMover(),
+: GatherPosesMover(),
 	export_only_low_(false),
 	median_rms_( 0.0 ),
 	population_weight_( 0.09 ),
@@ -324,7 +324,7 @@ void ClusterBase::calculate_distance_matrix() {
 				Real dist  = get_distance_measure( poselist[i],poselist[j]);
 				distance_matrix( i+1, j+1 ) = dist;
 				distance_matrix( j+1, i+1 ) = dist;
-				//				tr.Info << "( " << i+1 << ";" << j+1 << " ) " << dist << std::endl;
+				//    tr.Info << "( " << i+1 << ";" << j+1 << " ) " << dist << std::endl;
 				int histbin = int(dist/hist_resolution);
 				if ( histbin < hist_size ) histcount[histbin]+=1;
 
@@ -333,8 +333,8 @@ void ClusterBase::calculate_distance_matrix() {
 				if ( count % 5000 == 0 ) {
 					Real const percent_done ( 200.0 * static_cast< Real > ( count ) / ( (poselist.size() - 1) * poselist.size()  ) );
 					tr.Info << count
-										<< "/" << ( poselist.size() - 1 )*( poselist.size() )/2
-										<< " ( " << F(8,1,percent_done) << "% )"
+						<< "/" << ( poselist.size() - 1 )*( poselist.size() )/2
+						<< " ( " << F(8,1,percent_done) << "% )"
 						<< std::endl;
 				}
 			}
@@ -347,7 +347,7 @@ void ClusterBase::calculate_distance_matrix() {
 	int maxcount_i = 0;
 	for ( Size i = 0; i <(Size)hist_size; i++ ) {
 		tr.Info << "hist " <<  Real(i)*hist_resolution << "   " << histcount[i] << std::endl;
-		if( histcount[i] > maxcount_count){
+		if ( histcount[i] > maxcount_count ) {
 			maxcount_count = histcount[i];
 			maxcount_i = i;
 		}
@@ -365,27 +365,27 @@ void ClusterBase::add_structure( Pose & pose ) {
 	int nexindex = poselist.size() - 1;
 	int lowrmsi=-1;
 	Real lowrms=1000000.0;
-	for (int m=0;m<(int)clusterlist.size();m++ ) {
+	for ( int m=0; m<(int)clusterlist.size(); m++ ) {
 		Real rms;
 		rms =   get_distance_measure(
-				poselist[ nexindex ],
-				poselist[ clusterlist[m].get_cluster_center() ]  ); // clustercentre m
-		if (rms < lowrms) {
+			poselist[ nexindex ],
+			poselist[ clusterlist[m].get_cluster_center() ]  ); // clustercentre m
+		if ( rms < lowrms ) {
 			lowrms  = rms;
 			lowrmsi = m;
 		}
 	}
 
-	if (lowrms <= 0.001 ){
+	if ( lowrms <= 0.001 ) {
 		tr.Info << "Structure identical to existing structure - ignoring" << std::endl;
 		return;
 	}
 
-	if (lowrmsi >= 0) {
-		if ( lowrms < get_cluster_radius() ) {		// if within our radius - then add to cluster
+	if ( lowrmsi >= 0 ) {
+		if ( lowrms < get_cluster_radius() ) {  // if within our radius - then add to cluster
 			clusterlist[lowrmsi].add_member(nexindex);
 			tr.Info << "Adding to cluster " << lowrmsi << " Cluster_rad: " << get_cluster_radius() << std::endl;
-		}else{            			                  // else make a new cluster !!
+		} else {                                 // else make a new cluster !!
 			Cluster new_cluster( nexindex );
 			clusterlist.push_back( new_cluster );
 			tr.Info << "Adding as new cluster " << " Cluster_rad: " << get_cluster_radius() << std::endl;
@@ -395,22 +395,22 @@ void ClusterBase::add_structure( Pose & pose ) {
 
 void Cluster::shuffle(){
 	// fisher-yates
-	for(int i=member.size()-1; i>-1; i--) {
-			 int j = numeric::random::rg().random_range(0, 100000000) % (i + 1);
-			 if(i != j) {
-				 std::swap(member[j], member[i]);
-			 }
-	 }
+	for ( int i=member.size()-1; i>-1; i-- ) {
+		int j = numeric::random::rg().random_range(0, 100000000) % (i + 1);
+		if ( i != j ) {
+			std::swap(member[j], member[i]);
+		}
+	}
 }
 // PostProcessing ---------------------------------------------------------
 
 void ClusterBase::sort_each_group_by_energy( ) {
 	tr.Info << "Sorting each cluster's structures by energy: " << std::endl;
 	int i,j;
-	for (i=0;i<(int)clusterlist.size();i++ ) {
+	for ( i=0; i<(int)clusterlist.size(); i++ ) {
 
 		std::vector< std::pair< int, Real > > cluster_energies;
-		for (j=0;j<(int)clusterlist[i].size();j++ ) {
+		for ( j=0; j<(int)clusterlist[i].size(); j++ ) {
 			Real score=0.0;
 			if ( !getPoseExtraScore( poselist[ clusterlist[i][j] ], "silent_score", score ) ) {
 				tr.Error << "Warning: no score available for " << std::endl;
@@ -420,7 +420,7 @@ void ClusterBase::sort_each_group_by_energy( ) {
 
 		std::sort( cluster_energies.begin(), cluster_energies.end(), compareIndexEnergyPair );
 		clusterlist[i].clear();  // This retains the cluster center!
-		for (j=0;j<(int)cluster_energies.size();j++ ) clusterlist[i].push_back( cluster_energies[j].first );
+		for ( j=0; j<(int)cluster_energies.size(); j++ ) clusterlist[i].push_back( cluster_energies[j].first );
 
 	}
 
@@ -430,12 +430,12 @@ void ClusterBase::sort_each_group_by_energy( ) {
 
 void ClusterBase::remove_highest_energy_member_of_each_group() {
 	int i,j;
-	for (i=0;i<(int)clusterlist.size();i++ ) {
+	for ( i=0; i<(int)clusterlist.size(); i++ ) {
 		if ( clusterlist[i].size() <= 1 ) continue;
 
 		// sort group by energy
 		std::vector< std::pair< int, Real > > cluster_energies;
-		for (j=0;j<(int)clusterlist[i].size();j++ ) {
+		for ( j=0; j<(int)clusterlist[i].size(); j++ ) {
 			Real score=0.0;
 			if ( !getPoseExtraScore( poselist[ clusterlist[i][j] ], "silent_score", score ) ) {
 				tr.Error << "Warning: no score available for " << std::endl;
@@ -445,7 +445,7 @@ void ClusterBase::remove_highest_energy_member_of_each_group() {
 		}
 		std::sort( cluster_energies.begin(), cluster_energies.end(), compareIndexEnergyPair );
 		clusterlist[i].clear();
-		for (j=0;j<(int)(cluster_energies.size()-1);j++ ) clusterlist[i].push_back( cluster_energies[j].first );
+		for ( j=0; j<(int)(cluster_energies.size()-1); j++ ) clusterlist[i].push_back( cluster_energies[j].first );
 	}
 
 }
@@ -457,7 +457,7 @@ void ClusterBase::sort_groups_by_energy() {
 	std::vector < Cluster >   temp = clusterlist;
 
 	std::vector< std::pair< int, Real > > cluster_energies;
-	for (i=0;i<(int)clusterlist.size();i++ ) {
+	for ( i=0; i<(int)clusterlist.size(); i++ ) {
 		Real score;
 
 		// This assumes that the first member is already the lowest energy one!
@@ -476,7 +476,7 @@ void ClusterBase::sort_groups_by_energy() {
 	clusterlist.clear();
 
 	// now put back every cluster in the order of energies
-	for (i=0;i<(int)cluster_energies.size();i++ ) clusterlist.push_back( temp[cluster_energies[i].first ] );
+	for ( i=0; i<(int)cluster_energies.size(); i++ ) clusterlist.push_back( temp[cluster_energies[i].first ] );
 
 }
 
@@ -486,7 +486,7 @@ void ClusterBase::remove_singletons() {
 	clusterlist.clear();
 
 	//std::vector< std::pair< int, Real > > cluster_energies;
-	for (i=0;i<(int)clusterlist_copy.size();i++ ) {
+	for ( i=0; i<(int)clusterlist_copy.size(); i++ ) {
 		if ( clusterlist_copy[i].group_size() > 1 ) {
 			clusterlist.push_back( clusterlist_copy[i] );
 		}
@@ -505,10 +505,10 @@ void ClusterBase::limit_groupsize( int limit ) {
 	tr.Info << "Limiting each cluster to a total size of : " << limit << std::endl;
 	int i,j;
 	if ( limit < 1 ) return;
-	for (i=0;i<(int)clusterlist.size();i++ ) {
+	for ( i=0; i<(int)clusterlist.size(); i++ ) {
 		Cluster temp = clusterlist[i];
 		clusterlist[i].clear();
-		for (j=0;(j<(int)temp.size()) && (j<limit);j++ ) {
+		for ( j=0; (j<(int)temp.size()) && (j<limit); j++ ) {
 			clusterlist[i].push_back( temp[j] );
 		}
 	}
@@ -518,12 +518,12 @@ void ClusterBase::limit_groupsize( int limit ) {
 void ClusterBase::limit_groupsize( core::Real percent_limit ) {
 	int i,j;//, limit;
 	if ( percent_limit > 1.0 ) return;
-	for (i=0;i<(int)clusterlist.size();i++ ) {
+	for ( i=0; i<(int)clusterlist.size(); i++ ) {
 		Cluster temp = clusterlist[i];
 		clusterlist[i].clear();
 		int limit = static_cast<core::Size>( std::floor(percent_limit*temp.size()) );
 		tr << "truncating from " << temp.size() << " to " << limit << std::endl;
-		for (j=0;j<limit;j++ ) {
+		for ( j=0; j<limit; j++ ) {
 			clusterlist[i].push_back( temp[j] );
 		}
 	}
@@ -533,13 +533,13 @@ void ClusterBase::limit_groupsize( core::Real percent_limit ) {
 void ClusterBase::random_limit_groupsize( core::Real percent_limit ) {
 	int i,j;//,limit;
 	if ( percent_limit >= 1.0 ) return;
-	for (i=0;i<(int)clusterlist.size();i++ ) {
+	for ( i=0; i<(int)clusterlist.size(); i++ ) {
 		Cluster temp = clusterlist[i];
 		clusterlist[i].clear();
 		int limit = static_cast<core::Size> (std::floor(percent_limit*temp.size()) );
 		tr << "truncating from " << temp.size() << " to " << limit << std::endl;
 		temp.shuffle();
-		for (j=0;j<limit;j++ ) {
+		for ( j=0; j<limit; j++ ) {
 			clusterlist[i].push_back( temp[j] );
 		}
 	}
@@ -552,14 +552,14 @@ void ClusterBase::limit_groups( int limit ) {
 	if ( limit < 0 ) return;
 	std::vector < Cluster >   temp = clusterlist;
 	clusterlist.clear();
-	for (i=0;i<(int)limit;i++ ) {
-		if( (int)i >= (int)temp.size() ) break;
+	for ( i=0; i<(int)limit; i++ ) {
+		if ( (int)i >= (int)temp.size() ) break;
 		clusterlist.push_back( temp[i] );
 	}
 
 	// Remove the Poses from the removed clusters!
-	for (i=limit; i<(int)temp.size() ;i++ ) {
-		for (int j=0;j<(int)temp[i].size();j++ ) {
+	for ( i=limit; i<(int)temp.size() ; i++ ) {
+		for ( int j=0; j<(int)temp[i].size(); j++ ) {
 			poselist[ temp[i].member[j] ] = Pose();
 		}
 	}
@@ -573,16 +573,16 @@ void ClusterBase::limit_total_structures( int limit) {
 	std::vector < Cluster >   temp = clusterlist;
 	clusterlist.clear();
 	int count=0;
-	for (i=0;i<(int)temp.size();i++ ) {
+	for ( i=0; i<(int)temp.size(); i++ ) {
 		Cluster newcluster( temp[i].get_cluster_center() );
 		newcluster.clear();
-		for (j=0;j<(int)temp[i].size();j++ ) {
+		for ( j=0; j<(int)temp[i].size(); j++ ) {
 			if ( count < limit ) {
 				newcluster.push_back( temp[i][j] );
 			}
 			count ++;
 		}
-		if ( newcluster.size() > 0 ){
+		if ( newcluster.size() > 0 ) {
 			clusterlist.push_back( newcluster );
 		}
 	}
@@ -596,14 +596,14 @@ void ClusterBase::clean_pose_store() {
 		bool ispresent = false;
 		// try and find it in the cluster assigments
 		Size i,j;
-		for (i=0;i<clusterlist.size();i++ ) {
-			for (j=0;j<clusterlist[i].size();j++ ) {
+		for ( i=0; i<clusterlist.size(); i++ ) {
+			for ( j=0; j<clusterlist[i].size(); j++ ) {
 				if ( (int)index == clusterlist[i][j] ) { ispresent = true; break; }
 			}
 			if ( (int)index == clusterlist[i].get_cluster_center() )  ispresent = true;
-			if ( ispresent) break;
+			if ( ispresent ) break;
 		}
-		if ( !ispresent) {
+		if ( !ispresent ) {
 			// zap the pose (but retain a DUMMY POSE so that the indexing stays the smae !!! )
 			// i know this is retarded, PoseOP would be better at least.
 			poselist[index] = Pose() ;
@@ -620,17 +620,17 @@ void ClusterBase::print_summary() {
 
 	int count=0;
 
-	for (i=0;i<(int)clusterlist.size();i++ ) {
+	for ( i=0; i<(int)clusterlist.size(); i++ ) {
 		tr.Info << "Cluster:  " << i << "  N: " << (int)clusterlist[i].size() <<  "GN: " <<  (int)clusterlist[i].group_size() << "   c." << i <<".*.pdb " ;
 		tr.Info << std::endl;
 		count += clusterlist[i].size();
-		for (j=0;j<(int)clusterlist[i].size();j++ ) {
+		for ( j=0; j<(int)clusterlist[i].size(); j++ ) {
 			tr.Info << "    ";
 			tr.Info << core::pose::extract_tag_from_pose( poselist[ clusterlist[i][j] ]  ) << "  " ;
 			Real score = 0.0;
 			if ( !getPoseExtraScore( poselist[ clusterlist[i][j] ], "silent_score", score ) ) {
 				tr.Info << "----" ;
-			}else{
+			} else {
 				tr.Info << score ;
 			}
 
@@ -645,9 +645,9 @@ void ClusterBase::print_summary() {
 
 void ClusterBase::print_raw_numbers() {
 	int i,j;
-	for (i=0;i<(int)clusterlist.size();i++ ) {
+	for ( i=0; i<(int)clusterlist.size(); i++ ) {
 		tr.Info << i << " : ";
-		for (j=0;j<(int)clusterlist[i].size();j++ ) {
+		for ( j=0; j<(int)clusterlist[i].size(); j++ ) {
 			tr.Info << clusterlist[i][j] << "  ";
 		}
 		tr.Info << std::endl;
@@ -656,11 +656,11 @@ void ClusterBase::print_raw_numbers() {
 
 void ClusterBase::print_cluster_assignment() {
 	int i,j;
-	for (i=0;i<(int)clusterlist.size();i++ ) {
-		for (j=0;j<(int)clusterlist[i].size();j++ ) {
+	for ( i=0; i<(int)clusterlist.size(); i++ ) {
+		for ( j=0; j<(int)clusterlist[i].size(); j++ ) {
 			tr.Info << clusterlist[i][j]
-							<< " " << core::pose::extract_tag_from_pose( poselist[ clusterlist[i][j] ]  )
-							<< "  " << i << "  " << j << std::endl;
+				<< " " << core::pose::extract_tag_from_pose( poselist[ clusterlist[i][j] ]  )
+				<< "  " << i << "  " << j << std::endl;
 		}
 	}
 }
@@ -670,11 +670,11 @@ void ClusterBase::print_cluster_PDBs( std::string prefix ) {
 	using namespace basic::options::OptionKeys;
 	bool idealize_final = option[ OptionKeys::cluster::idealize_final_structures ]();
 	int i,j;
-	for ( i=0;i<(int)clusterlist.size();i++ ) {
+	for ( i=0; i<(int)clusterlist.size(); i++ ) {
 		//std::vector< int > new_cluster;
-		for ( j=0;j<(int)clusterlist[i].size();j++ ) {
-			if (export_only_low_){
-				if( clusterlist[i].size() >= 1 && j!=0 ) continue; // print only clustercenter
+		for ( j=0; j<(int)clusterlist[i].size(); j++ ) {
+			if ( export_only_low_ ) {
+				if ( clusterlist[i].size() >= 1 && j!=0 ) continue; // print only clustercenter
 			}
 			//std::string output_name = "c." + string_of( i ) + "." + string_of( j ) + "." +
 			//                         core::pose::extract_tag_from_pose( poselist[ clusterlist[i][j] ] ) + ".pdb";
@@ -688,28 +688,27 @@ void ClusterBase::print_cluster_PDBs( std::string prefix ) {
 			// make sure the parent/template name gets included in the REMARK line of the PDB
 			using std::map;
 			using std::string;
-			map< string, string > score_line_strings(	core::pose::get_all_score_line_strings( pose ) );
+			map< string, string > score_line_strings( core::pose::get_all_score_line_strings( pose ) );
 			for ( map< string, string >::const_iterator it = score_line_strings.begin(),
-											end = score_line_strings.end();
-											it != end; ++it )
-			{
-							if ( it->first != "aln_id" ) continue;
-							core::pose::add_comment( pose, "parents", it->second );
+					end = score_line_strings.end();
+					it != end; ++it ) {
+				if ( it->first != "aln_id" ) continue;
+				core::pose::add_comment( pose, "parents", it->second );
 			}
 
 			map< string, string > comments = core::pose::get_all_comments( pose );
 			for ( map< string, string >::const_iterator it = comments.begin(),
-											end = comments.end(); it != end; ++it
+					end = comments.end(); it != end; ++it
 					) {
-							if ( it->first != "aln_id" ) continue;
-							core::pose::add_comment( pose, "parents", it->second );
+				if ( it->first != "aln_id" ) continue;
+				core::pose::add_comment( pose, "parents", it->second );
 			}
 
 
 			if ( idealize_final ) {
-						protocols::idealize::IdealizeMover idealizer;
-						idealizer.fast( false );
-						idealizer.apply( pose );
+				protocols::idealize::IdealizeMover idealizer;
+				idealizer.fast( false );
+				idealizer.apply( pose );
 			}
 
 			pose.dump_pdb( prefix + output_name );
@@ -718,39 +717,39 @@ void ClusterBase::print_cluster_PDBs( std::string prefix ) {
 }
 
 std::vector< PoseOP >  ClusterBase::return_lowest_poses_in_clusters() {
- 	int i;
- 	std::vector< PoseOP > templist;
- 	for ( i=0;i<(int)clusterlist.size();i++ ) {
- 	 	PoseOP tempPointer;
- 		if (clusterlist[i].size() > 0) templist.push_back( core::pose::PoseOP( new Pose(poselist[ clusterlist[i][0] ]) ) );
- 	}
- 	return templist;
+	int i;
+	std::vector< PoseOP > templist;
+	for ( i=0; i<(int)clusterlist.size(); i++ ) {
+		PoseOP tempPointer;
+		if ( clusterlist[i].size() > 0 ) templist.push_back( core::pose::PoseOP( new Pose(poselist[ clusterlist[i][0] ]) ) );
+	}
+	return templist;
 }
 
 std::vector< core::pose::PoseOP >  ClusterBase::return_top_poses_in_clusters( core::Size count) {
- 	int i;
- 	std::vector< core::pose::PoseOP > templist;
- 	for ( i=0;i<(int)clusterlist.size();i++ ) {
+	int i;
+	std::vector< core::pose::PoseOP > templist;
+	for ( i=0; i<(int)clusterlist.size(); i++ ) {
 
- 	 	core::pose::PoseOP tempPointer;
- 		if (clusterlist[i].size() < 2){
- 		//if singleton return the cluster center
- 			tempPointer = core::pose::PoseOP( new core::pose::Pose(poselist[ clusterlist[i][0]]) );
- 			templist.push_back(tempPointer);
- 		} else if (clusterlist[i].size() >= 2 &&
-						   clusterlist[i].size() <= count+1){ //+1 because of cluster center
-			for (Size j = 1; j < clusterlist[i].size(); j++){
- 				tempPointer = core::pose::PoseOP( new core::pose::Pose(poselist[ clusterlist[i][j]]) );
- 				templist.push_back(tempPointer);
+		core::pose::PoseOP tempPointer;
+		if ( clusterlist[i].size() < 2 ) {
+			//if singleton return the cluster center
+			tempPointer = core::pose::PoseOP( new core::pose::Pose(poselist[ clusterlist[i][0]]) );
+			templist.push_back(tempPointer);
+		} else if ( clusterlist[i].size() >= 2 &&
+				clusterlist[i].size() <= count+1 ) { //+1 because of cluster center
+			for ( Size j = 1; j < clusterlist[i].size(); j++ ) {
+				tempPointer = core::pose::PoseOP( new core::pose::Pose(poselist[ clusterlist[i][j]]) );
+				templist.push_back(tempPointer);
 			}
- 		} else if (clusterlist[i].size() > count+1){
-			for (Size j = 1; j <= count; j++){
- 				tempPointer = core::pose::PoseOP( new core::pose::Pose(poselist[ clusterlist[i][j]]) );
- 				templist.push_back(tempPointer);
+		} else if ( clusterlist[i].size() > count+1 ) {
+			for ( Size j = 1; j <= count; j++ ) {
+				tempPointer = core::pose::PoseOP( new core::pose::Pose(poselist[ clusterlist[i][j]]) );
+				templist.push_back(tempPointer);
 			}
-		} else {}
- 	}
- 	return templist;
+		} else { }
+	}
+	return templist;
 }
 
 void ClusterBase::print_clusters_silentfile( std::string prefix ) {
@@ -768,12 +767,12 @@ void ClusterBase::print_clusters_silentfile( std::string prefix ) {
 	ss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
 	std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
 
-	for ( i=0;i<(int)clusterlist.size();i++ ) {
+	for ( i=0; i<(int)clusterlist.size(); i++ ) {
 		//std::vector< int > new_cluster;
-		for ( j=0;j<(int)clusterlist[i].size();j++ ) {
+		for ( j=0; j<(int)clusterlist[i].size(); j++ ) {
 
-			if (export_only_low_){
-				if( clusterlist[i].size() >= 1 && j!=0 ) continue; // print only clustercenter
+			if ( export_only_low_ ) {
+				if ( clusterlist[i].size() >= 1 && j!=0 ) continue; // print only clustercenter
 			}
 
 			std::string tag = prefix + "c." + string_of( i ) + "." + string_of( j ) + "." + "pdb";
@@ -783,9 +782,9 @@ void ClusterBase::print_clusters_silentfile( std::string prefix ) {
 			Pose pose;
 			pose = poselist[ clusterlist[i][j] ];
 			if ( idealize_final ) {
-						protocols::idealize::IdealizeMover idealizer;
-						idealizer.fast( false );
-						idealizer.apply( pose );
+				protocols::idealize::IdealizeMover idealizer;
+				idealizer.fast( false );
+				idealizer.apply( pose );
 			}
 
 			ss->fill_struct( pose, tag );
@@ -802,9 +801,9 @@ void ClusterBase::create_constraints(
 {
 	int i,j;
 	tr.Info << "Making constraints .. " << std::endl;
-	for (i=0;i<(int)clusterlist.size();i++ ) {
+	for ( i=0; i<(int)clusterlist.size(); i++ ) {
 		constraint_maker.clear();
-		for (j=0;j<(int)clusterlist[i].size();j++ ) {
+		for ( j=0; j<(int)clusterlist[i].size(); j++ ) {
 			constraint_maker.push_back(  poselist[ clusterlist[i][j] ]  );
 		}
 
@@ -835,7 +834,7 @@ void ClusterPhilStyle::do_clustering( Size max_total_cluster ) {
 
 
 	int listsize = poselist.size();
-	if( listsize <= 0 ) return;
+	if ( listsize <= 0 ) return;
 
 	tr.Info << "Clustering an initial set of " << listsize << " structures " << std::endl;
 	calculate_distance_matrix();
@@ -851,15 +850,15 @@ void ClusterPhilStyle::do_clustering( Size max_total_cluster ) {
 		utility_exit_with_message( "Error: no Poses to cluster! Try -in:file:s or -in:file:silent!" );
 	}
 
-	if ( get_cluster_radius() < 0 ){
+	if ( get_cluster_radius() < 0 ) {
 
 		cluster_radius_ = get_median_rms()*1.1;
 
 		// slightly different rule for gdtmm clsutering
 		if ( option[ OptionKeys::cluster::gdtmm ]() ) {
 			cluster_radius_ = get_median_rms() * 0.7;
-			if( cluster_radius_ > 5.0 ) cluster_radius_ = 5.0; // Cluster radius of GDTMM < 0.5 is just too coarse.
-			if( cluster_radius_ < 1.0 ) cluster_radius_ = 1.0; // Cluster radius of GDTMM > 0.9 is too fine for clustering
+			if ( cluster_radius_ > 5.0 ) cluster_radius_ = 5.0; // Cluster radius of GDTMM < 0.5 is just too coarse.
+			if ( cluster_radius_ < 1.0 ) cluster_radius_ = 1.0; // Cluster radius of GDTMM > 0.9 is too fine for clustering
 		}
 
 		tr.Info << "Clustering of " << listsize << "structures with radius " <<  get_cluster_radius() << " (auto) " << std::endl;
@@ -871,27 +870,27 @@ void ClusterPhilStyle::do_clustering( Size max_total_cluster ) {
 
 	tr.Info << "Assigning initial cluster centres " << std::endl;
 	// now assign groupings
-	while(true) {
+	while ( true ) {
 		// count each's neighbors
-		for (i=0;i<listsize;i++ ) {
+		for ( i=0; i<listsize; i++ ) {
 			neighbors[i] = 0;
-			if (clusternr[i]>=0) continue; // ignore ones already taken
-			for (j=0;j<listsize;j++ ) {
-				if (clusternr[j]>=0) continue; // ignore ones already taken
-				if ( distance_matrix( i+1, j+1 ) < get_cluster_radius()) neighbors[i]++;
+			if ( clusternr[i]>=0 ) continue; // ignore ones already taken
+			for ( j=0; j<listsize; j++ ) {
+				if ( clusternr[j]>=0 ) continue; // ignore ones already taken
+				if ( distance_matrix( i+1, j+1 ) < get_cluster_radius() ) neighbors[i]++;
 			}
 		}
 
 		mostneighbors = 0;
-		for (i=0;i<listsize;i++ ) {
-			if (neighbors[i]>neighbors[mostneighbors]) mostneighbors=i;
+		for ( i=0; i<listsize; i++ ) {
+			if ( neighbors[i]>neighbors[mostneighbors] ) mostneighbors=i;
 		}
-		if (neighbors[mostneighbors] <= 0) break;  // finished!
+		if ( neighbors[mostneighbors] <= 0 ) break;  // finished!
 
 
-		for (i=0;i<listsize;i++ ) {
-			if (clusternr[i]>=0) continue; // ignore ones already taken
-			if ( distance_matrix( i+1, mostneighbors+1 ) < get_cluster_radius()) {
+		for ( i=0; i<listsize; i++ ) {
+			if ( clusternr[i]>=0 ) continue; // ignore ones already taken
+			if ( distance_matrix( i+1, mostneighbors+1 ) < get_cluster_radius() ) {
 				clusternr[i] = mostneighbors;
 			}
 		}
@@ -899,18 +898,18 @@ void ClusterPhilStyle::do_clustering( Size max_total_cluster ) {
 		clustercentre.push_back(mostneighbors);
 		nclusters++;
 
-		if (nclusters > max_total_cluster ) break;  // currently fixed but ought to be a paraemter
-		if ((nclusters%10)==0) tr.Info << ".";
+		if ( nclusters > max_total_cluster ) break;  // currently fixed but ought to be a paraemter
+		if ( (nclusters%10)==0 ) tr.Info << ".";
 		tr.Info.flush();
 	}
 	tr.Info << std::endl;
 
-	for (i=0;i<(int)clustercentre.size();i++ ) {
+	for ( i=0; i<(int)clustercentre.size(); i++ ) {
 		Cluster new_cluster( clustercentre[i] );
 		new_cluster.clear();
-		for (j=0;j<listsize;j++ ) {
+		for ( j=0; j<listsize; j++ ) {
 			// if that struture belongs to a given cluster
-			if (clusternr[j] == clustercentre[i]) {
+			if ( clusternr[j] == clustercentre[i] ) {
 				new_cluster.add_member(j);         // add structure
 			}
 		}
@@ -932,21 +931,21 @@ void ClusterPhilStyle::do_redistribution() {
 	tr.Info << "Redistributing groups ..." << clusterlist.size() << " cluster centers";
 
 	// redistribute groups - i.e. take each structure, calculate the rms to each cluster centre.
-	for (i=0;i<(int)clusterlist.size();i++ ) {
-		for (j=1;j<(int)clusterlist[i].size();j++ ) {
+	for ( i=0; i<(int)clusterlist.size(); i++ ) {
+		for ( j=1; j<(int)clusterlist[i].size(); j++ ) {
 			int lowrmsi=i;
 			Real lowrms=10000.0;
-			for (int m=0;m<(int)clusterlist.size();m++ ) {
+			for ( int m=0; m<(int)clusterlist.size(); m++ ) {
 				Real rms;
 				rms = distance_matrix( clusterlist[i][j]+1,                    // current structure vs
-						                   clusterlist[m].get_cluster_center()+1); // clustercentre of cluster m
+					clusterlist[m].get_cluster_center()+1); // clustercentre of cluster m
 
-				if (rms < lowrms) {
+				if ( rms < lowrms ) {
 					lowrms  = rms;
 					lowrmsi = m;
 				}
 			}
-			if (lowrmsi != i) { // is a different cluster centre closer to us than our current centre ?
+			if ( lowrmsi != i ) { // is a different cluster centre closer to us than our current centre ?
 				tr.Info << "Switched " << lowrmsi << "<--" << i << std::endl;
 				// switch over;
 				clusterlist[lowrmsi].add_member(clusterlist[i][j]);
@@ -968,9 +967,9 @@ ClusterPhilStyle_Loop::get_name() const {
 Real
 ClusterPhilStyle_Loop::
 get_distance_measure(
-								const Pose & pose1,
-								const Pose & pose2
-								) const
+	const Pose & pose1,
+	const Pose & pose2
+) const
 {
 	return protocols::loops::loop_rmsd_with_superimpose(pose2, pose1, loop_def_, false );
 }
@@ -987,8 +986,8 @@ ClusterPhilStyle_PoseReporter::get_name() const {
 Real
 ClusterPhilStyle_PoseReporter::
 get_distance_measure(
-		const Pose & pose1,
-		const Pose & pose2
+	const Pose & pose1,
+	const Pose & pose2
 ) const
 {
 	// NOTE: reporter_ takes non-const poses because one of the implemented reporters is the
@@ -1044,17 +1043,17 @@ void AssignToClustersMover::apply( Pose & pose ) {
 		<< "  " << score
 		<< std::endl;
 
-	if (( (count+1) %  150 ) == 0 ){
-			cluster_base_->print_summary();
-			cluster_base_->sort_each_group_by_energy();
-			cluster_base_->print_summary();
-			cluster_base_->sort_groups_by_energy();
-			cluster_base_->print_summary();
-			cluster_base_->limit_groupsize( option[ OptionKeys::cluster::limit_cluster_size] );
-			cluster_base_->limit_groups( option[OptionKeys::cluster::limit_clusters] );
-			cluster_base_->limit_total_structures( option[ OptionKeys::cluster::limit_total_structures] );
-			cluster_base_->clean_pose_store();
-			cluster_base_->print_summary();
+	if ( ( (count+1) %  150 ) == 0 ) {
+		cluster_base_->print_summary();
+		cluster_base_->sort_each_group_by_energy();
+		cluster_base_->print_summary();
+		cluster_base_->sort_groups_by_energy();
+		cluster_base_->print_summary();
+		cluster_base_->limit_groupsize( option[ OptionKeys::cluster::limit_cluster_size] );
+		cluster_base_->limit_groups( option[OptionKeys::cluster::limit_clusters] );
+		cluster_base_->limit_total_structures( option[ OptionKeys::cluster::limit_total_structures] );
+		cluster_base_->clean_pose_store();
+		cluster_base_->print_summary();
 	}
 
 	count++;
@@ -1082,8 +1081,8 @@ void EnsembleConstraints_Simple::createConstraints( std::ostream &out) {
 
 	out << "[ atompairs ]" << std::endl;
 
-	for (int ir = 1; ir <= nres; ir ++ ) {
-		for (int jr = 1; jr <= nres; jr ++ ) {
+	for ( int ir = 1; ir <= nres; ir ++ ) {
+		for ( int jr = 1; jr <= nres; jr ++ ) {
 			if ( ir >= (jr - residuesep) ) continue;
 
 			Real lowdist=1000000.0;
@@ -1093,7 +1092,7 @@ void EnsembleConstraints_Simple::createConstraints( std::ostream &out) {
 				Vector jr_CA = poselist[i].residue(jr).xyz( "CA" );
 				Real dist = ir_CA.distance( jr_CA );
 				if ( dist < lowdist ) lowdist = dist;
-				if ( dist > highdist)highdist = dist;
+				if ( dist > highdist ) highdist = dist;
 			}
 
 			if ( lowdist > 11.0 ) continue;
@@ -1105,14 +1104,14 @@ void EnsembleConstraints_Simple::createConstraints( std::ostream &out) {
 			}
 
 			out << "     CA" << right_string_of(ir,7,' ')
-					<< "     CA" << right_string_of(jr,7,' ')
-					<< " BOUNDED"
-				 << F( 12, 3, lowdist)
-				 << F( 12, 3, highdist)
-				 << F(4,1,strength )
-				 << "  na"
-				 << "; " <<  F( 12, 3, highdist - lowdist)
-				 << std::endl;
+				<< "     CA" << right_string_of(jr,7,' ')
+				<< " BOUNDED"
+				<< F( 12, 3, lowdist)
+				<< F( 12, 3, highdist)
+				<< F(4,1,strength )
+				<< "  na"
+				<< "; " <<  F( 12, 3, highdist - lowdist)
+				<< std::endl;
 		}
 	}
 }

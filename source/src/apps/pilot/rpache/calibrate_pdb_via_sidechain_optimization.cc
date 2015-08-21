@@ -84,7 +84,7 @@ my_main( void* )
 	}
 	pose::Pose pose;
 	import_pose::pose_from_pdb( pose, input_jobs[ 1 ]->input_tag() );
- 	int const nres( pose.total_residue() );
+	int const nres( pose.total_residue() );
 
 	//define score function
 	scoring::ScoreFunctionOP scorefxn=core::scoring::get_score_function();
@@ -107,31 +107,30 @@ my_main( void* )
 	kinematics::MoveMap mm_all_sc;
 	mm_all_sc.set_bb( false );
 	mm_all_sc.set_chi( false );
-	for (Size i=1; i<= pose.total_residue(); i++) {
+	for ( Size i=1; i<= pose.total_residue(); i++ ) {
 		if ( pose.residue(i).type().is_disulfide_bonded() || pose.residue(i).has_variant_type( chemical::SIDECHAIN_CONJUGATION ) ) {
 			allow_repacked[i] = false;
 			TR << "Disabling side-chain optimization of disulfide bonded residue " << i << std::endl;
-		}
-		else {
+		} else {
 			mm_all_sc.set_chi( true );
 		}
 	}
 	this_packer_task->restrict_to_residues( allow_repacked );
 
 	//repack
-	if (!option[calibrate_pdb::no_repacking].user()) {
+	if ( !option[calibrate_pdb::no_repacking].user() ) {
 		TR << std::endl << "repacking pose..." << std::endl;
 		pack::pack_rotamers( pose, *scorefxn, this_packer_task );
 	}
 
 	//perform rotamer trials
-	if (!option[calibrate_pdb::no_rottrials].user()) {
+	if ( !option[calibrate_pdb::no_rottrials].user() ) {
 		TR << std::endl << "performing one round of rotamer trials..." << std::endl;
 		pack::rotamer_trials( pose, *scorefxn, this_packer_task );
 	}
 
 	//minimize sidechains
-	if (!option[calibrate_pdb::no_minimization].user()) {
+	if ( !option[calibrate_pdb::no_minimization].user() ) {
 		TR << std::endl << "minimizing pose..." << std::endl;
 		minimizer.run( pose, mm_all_sc, *scorefxn, options );
 	}
@@ -158,15 +157,15 @@ main( int argc, char * argv [] )
 
 	try {
 
-	// define viable options
-	NEW_OPT(calibrate_pdb::no_repacking, "skip repacking", false);
-	NEW_OPT(calibrate_pdb::no_rottrials, "skip rotamer trials", false);
-	NEW_OPT(calibrate_pdb::no_minimization, "skip minimization", false);
+		// define viable options
+		NEW_OPT(calibrate_pdb::no_repacking, "skip repacking", false);
+		NEW_OPT(calibrate_pdb::no_rottrials, "skip rotamer trials", false);
+		NEW_OPT(calibrate_pdb::no_minimization, "skip minimization", false);
 
-	// initialize option and random number system
-	devel::init( argc, argv );
+		// initialize option and random number system
+		devel::init( argc, argv );
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

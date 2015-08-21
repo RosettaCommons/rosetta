@@ -21,9 +21,9 @@ namespace stepwise {
 namespace modeler {
 namespace rna {
 
-	class StepWiseRNA_CombineLongLoopFilterer;
-	typedef utility::pointer::shared_ptr< StepWiseRNA_CombineLongLoopFilterer > StepWiseRNA_CombineLongLoopFiltererOP;
-	typedef utility::pointer::shared_ptr< StepWiseRNA_CombineLongLoopFilterer const > StepWiseRNA_CombineLongLoopFiltererpCOP;
+class StepWiseRNA_CombineLongLoopFilterer;
+typedef utility::pointer::shared_ptr< StepWiseRNA_CombineLongLoopFilterer > StepWiseRNA_CombineLongLoopFiltererOP;
+typedef utility::pointer::shared_ptr< StepWiseRNA_CombineLongLoopFilterer const > StepWiseRNA_CombineLongLoopFiltererpCOP;
 
 } //rna
 } //modeler

@@ -55,17 +55,17 @@ public:
 	virtual void deserialize(utility::json_spirit::mObject data);
 
 private:
-	
+
 	/// @brief get the appropriate score from the KBP tables
 	core::Real get_score_from_angles(std::string const & name3,core::Real distance, core::Real theta, core::Real phi);
-	
+
 	/// @brief given a KDPointList and a set of query coordinates get the score to place in the grid
 	core::Real get_point_score(numeric::kdtree::KDPointList const & nearest_residues,core::Vector const &  query_coords);
-	
-	
+
+
 	/// @brief the KBP data is stored as a compressed json file in the database.  It is read during construction
 	void load_kbp_data();
-	
+
 	/// @brief data store for the KBP data.  key is the name3 of the amino acid
 	/// This is being done with an unordered map to allow for constant lookup but
 	/// still allow for KBP data about NCAAs to be introduced eventually if needed

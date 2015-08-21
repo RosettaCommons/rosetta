@@ -8,11 +8,11 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief      Optimizes the membrane position given the high-res score function
-/// @details	Optimizes the membrane position given the smooth high-res score
-///				function; scans the center along the normal around the initial center
-///				in 0.1A steps; scans the normal in 0.2degree steps along arches
-///				over the x-axis, y-axis, xy-direction, -xy-direction; outcome is
-///				deterministic
+/// @details Optimizes the membrane position given the smooth high-res score
+///    function; scans the center along the normal around the initial center
+///    in 0.1A steps; scans the normal in 0.2degree steps along arches
+///    over the x-axis, y-axis, xy-direction, -xy-direction; outcome is
+///    deterministic
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_OptimizeMembranePositionMover_hh
@@ -29,7 +29,7 @@
 
 // Package Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/types.hh> 
+#include <core/types.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
@@ -46,7 +46,7 @@ namespace membrane {
 using namespace core;
 using namespace core::pose;
 using namespace protocols::moves;
-	  
+
 class OptimizeMembranePositionMover : public protocols::moves::Mover {
 
 public:
@@ -58,73 +58,73 @@ public:
 	/// @brief Default Constructor
 	/// @details Defaults: scorefxn = smooth2012
 	OptimizeMembranePositionMover();
-	
+
 	/// @brief Copy Constructor
 	OptimizeMembranePositionMover( OptimizeMembranePositionMover const & src );
 
 	/// @brief Assignment Operator
 	OptimizeMembranePositionMover & operator = ( OptimizeMembranePositionMover const & src );
-	
+
 	/// @brief Destructor
 	virtual ~OptimizeMembranePositionMover();
-	
+
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
 	///////////////////////////////
-	
+
 	/// @brief Create a Clone of this mover
 	virtual protocols::moves::MoverOP clone() const;
-	
+
 	/// @brief Create a Fresh Instance of this Mover
 	virtual protocols::moves::MoverOP fresh_instance() const;
-	
+
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void parse_my_tag(
-	  utility::tag::TagCOP tag,
-	  basic::datacache::DataMap &,
-	  protocols::filters::Filters_map const &,
-	  protocols::moves::Movers_map const &,
-	  core::pose::Pose const &
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
 	);
-	
+
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
-	
+
 	/// @brief Get the name of this Mover (OptimizeMembranePositionMover)
 	virtual std::string get_name() const;
-		
+
 	/// @brief Flip the downstream partner in the membrane
 	virtual void apply( Pose & pose );
-	
+
 private: // methods
-	
+
 	/////////////////////
 	/// Setup Methods ///
 	/////////////////////
 
 	/// @brief Register Options from Command Line
 	void register_options();
-	
+
 	/// @brief Set default values
 	void set_defaults();
-	
+
 	/// @brief optimize membrane center
 	void optimize_membrane_center( Pose & pose );
-	
+
 	/// @brief Optimize membrane normal
 	void optimize_membrane_normal( Pose & pose );
-	
+
 private: // data
 
 	/// @brief Original foldtree before optimization
-	///	@details Will be reset to original after the optimization
+	/// @details Will be reset to original after the optimization
 	core::kinematics::FoldTree ft_;
-	
+
 	/// @brief Scorefunction
 	core::scoring::ScoreFunctionOP sfxn_;
 	Real score_best_;
-	
+
 	/// @brief center search
 	Real starting_z_;
 	Real best_z_;
@@ -134,7 +134,7 @@ private: // data
 	/// @brief Normal search
 	Real stepsize_angle_;
 	core::Vector best_normal_;
-	
+
 };
 
 } // membrane

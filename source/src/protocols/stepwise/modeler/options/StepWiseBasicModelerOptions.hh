@@ -25,73 +25,73 @@ namespace stepwise {
 namespace modeler {
 namespace options {
 
-	class StepWiseBasicModelerOptions: public protocols::stepwise::options::StepWiseBasicOptions {
+class StepWiseBasicModelerOptions: public protocols::stepwise::options::StepWiseBasicOptions {
 
-	public:
+public:
 
-		//constructor
-		StepWiseBasicModelerOptions();
+	//constructor
+	StepWiseBasicModelerOptions();
 
-		StepWiseBasicModelerOptions( StepWiseBasicModelerOptions const & src );
+	StepWiseBasicModelerOptions( StepWiseBasicModelerOptions const & src );
 
-		//destructor
-		~StepWiseBasicModelerOptions();
+	//destructor
+	~StepWiseBasicModelerOptions();
 
-	public:
+public:
 
-		StepWiseBasicModelerOptionsOP clone() const;
+	StepWiseBasicModelerOptionsOP clone() const;
 
-		/// @brief Initialize from the recursive "tag" structure.
-		virtual
-		void
-		parse_my_tag( utility::tag::TagCOP ){}
+	/// @brief Initialize from the recursive "tag" structure.
+	virtual
+	void
+	parse_my_tag( utility::tag::TagCOP ){}
 
-		/// @brief The class name (its type) for a particular ResourceOptions instance.
-		/// This function allows for better error message delivery.
-		virtual
-		std::string
-		type() const{ return "StepWiseBasicModelerOptions";}
+	/// @brief The class name (its type) for a particular ResourceOptions instance.
+	/// This function allows for better error message delivery.
+	virtual
+	std::string
+	type() const{ return "StepWiseBasicModelerOptions";}
 
-		bool const & use_green_packer() const { return use_green_packer_; }
-		void set_use_green_packer( bool const & setting ){ use_green_packer_ = setting; }
+	bool const & use_green_packer() const { return use_green_packer_; }
+	void set_use_green_packer( bool const & setting ){ use_green_packer_ = setting; }
 
-		bool const & verbose() const { return verbose_; }
-		void set_verbose( bool const & setting ){ verbose_ = setting; }
+	bool const & verbose() const { return verbose_; }
+	void set_verbose( bool const & setting ){ verbose_ = setting; }
 
-		bool const & choose_random() const { return choose_random_; }
-		void set_choose_random( bool const & setting ){ choose_random_ = setting; }
+	bool const & choose_random() const { return choose_random_; }
+	void set_choose_random( bool const & setting ){ choose_random_ = setting; }
 
-		void set_dump( bool const & setting ){ dump_ = setting; }
-		bool dump() const{ return dump_; }
+	void set_dump( bool const & setting ){ dump_ = setting; }
+	bool dump() const{ return dump_; }
 
-		void set_skip_minimize( bool const & setting ){ skip_minimize_ = setting; }
-		bool skip_minimize() const{ return skip_minimize_; }
+	void set_skip_minimize( bool const & setting ){ skip_minimize_ = setting; }
+	bool skip_minimize() const{ return skip_minimize_; }
 
-		bool const & disallow_realign() const { return disallow_realign_; }
-		void set_disallow_realign( bool const & setting ){ disallow_realign_ = setting; }
+	bool const & disallow_realign() const { return disallow_realign_; }
+	void set_disallow_realign( bool const & setting ){ disallow_realign_ = setting; }
 
-		bool const & virtualize_packable_moieties_in_screening_pose() const { return virtualize_packable_moieties_in_screening_pose_; }
-		void set_virtualize_packable_moieties_in_screening_pose( bool const & setting ){ virtualize_packable_moieties_in_screening_pose_ = setting; }
-
-protected:
-
-		void
-		initialize_from_command_line();
-
-    void
-		initialize_variables();
+	bool const & virtualize_packable_moieties_in_screening_pose() const { return virtualize_packable_moieties_in_screening_pose_; }
+	void set_virtualize_packable_moieties_in_screening_pose( bool const & setting ){ virtualize_packable_moieties_in_screening_pose_ = setting; }
 
 protected:
 
-		bool use_green_packer_;
-		bool verbose_;
-		bool choose_random_;
-		bool dump_;
-		bool skip_minimize_;
-		bool disallow_realign_;
-		bool virtualize_packable_moieties_in_screening_pose_;
+	void
+	initialize_from_command_line();
 
-	};
+	void
+	initialize_variables();
+
+protected:
+
+	bool use_green_packer_;
+	bool verbose_;
+	bool choose_random_;
+	bool dump_;
+	bool skip_minimize_;
+	bool disallow_realign_;
+	bool virtualize_packable_moieties_in_screening_pose_;
+
+};
 
 } //options
 } //modeler

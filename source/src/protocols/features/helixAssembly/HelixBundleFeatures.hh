@@ -34,8 +34,8 @@ namespace helixAssembly {
 struct FragmentPair
 {
 	FragmentPair(HelicalFragmentOP frag1, HelicalFragmentOP frag2):
-	fragment_1(frag1),
-	fragment_2(frag2)
+		fragment_1(frag1),
+		fragment_2(frag2)
 	{}
 
 	HelicalFragmentOP fragment_1;

@@ -80,22 +80,22 @@ public:
 
 	virtual void init( core::pose::Pose const& pose );
 
-  KinematicControlOP current_kinematics() {
-    runtime_assert( current_kinematics_ != 0 );
-    return current_kinematics_;
-  }
+	KinematicControlOP current_kinematics() {
+		runtime_assert( current_kinematics_ != 0 );
+		return current_kinematics_;
+	}
 
 	void set_input_pose_is_fa( bool setting = true ) {
 		b_input_is_fullatom_ = setting;
 	}
 
-// 	virtual StructureStore const& structure_store() const {
-// 		return sampling_protocol_->structure_store();
-// 	}
+	//  virtual StructureStore const& structure_store() const {
+	//   return sampling_protocol_->structure_store();
+	//  }
 
-// 	virtual StructureStore& structure_store() {
-// 		return sampling_protocol_->structure_store();
-// 	}
+	//  virtual StructureStore& structure_store() {
+	//   return sampling_protocol_->structure_store();
+	//  }
 
 	ProtocolOP sampling_protocol() {
 		return sampling_protocol_;
@@ -106,7 +106,7 @@ public:
 protected:
 	virtual bool inner_loop( core::pose::Pose &pose );
 	mutable KinematicControlOP current_kinematics_;
-	void 	set_extended_torsions_and_idealize_loops( core::pose::Pose& pose, loops::Loops loops ) const;
+	void  set_extended_torsions_and_idealize_loops( core::pose::Pose& pose, loops::Loops loops ) const;
 	ResolutionSwitcher& res_switch() {
 		return *res_switch_;
 	}

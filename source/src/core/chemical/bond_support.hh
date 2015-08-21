@@ -31,7 +31,7 @@ ED get_bond(ResidueType const & res, VD const & source, VD const & target);
 
 //this will create a bond length based on gasteiger atom type definitions of bonds
 Real create_bond_length(gasteiger::GasteigerAtomTypeData const & atom1,
-		gasteiger::GasteigerAtomTypeData const & atom2, BondName bond_type);
+	gasteiger::GasteigerAtomTypeData const & atom2, BondName bond_type);
 
 /// @brief Find which bonds are rotatatable (chi) bonds
 /// Returns a list of four vds representing the chi

@@ -37,47 +37,47 @@ static thread_local basic::Tracer TR( "core.chemical.sdf.CtabV3000Parser" );
 
 bool CtabV3000Parser::parse(std::istream & tablein, std::string const & headerline, MolFileIOMolecule & molecule) {
 
-debug_assert( headerline.compare(33,5,"V3000") == 0 );
+	debug_assert( headerline.compare(33,5,"V3000") == 0 );
 
 	std::string line;
 	std::string M, V30, entry, tag;
 	core::Size natoms(0),nbonds(0); //,nsg(0),n3d(0),chiral(0);
-	for( getline(tablein,line); tablein; getline(tablein,line) ) {
+	for ( getline(tablein,line); tablein; getline(tablein,line) ) {
 		std::stringstream lstream( line );
 		lstream >> M >> V30;
-		if( V30 == "END" ) { break; } // The "M  END" line ends the Ctab
+		if ( V30 == "END" ) { break; } // The "M  END" line ends the Ctab
 		lstream >> entry;
-		if( entry == "COUNTS" ) {\
+		if ( entry == "COUNTS" ) { \
 			// Parse counts line
 			lstream >> natoms >> nbonds; // >> nsg >> n3d >> chiral;
 			// Should we be checking these values? We read them in but never use them.
 			continue;
 		}
 		// The blocks we're currently interested all start with BEGIN - ignore lines until we get there
-		if( entry != "BEGIN") { continue; }
+		if ( entry != "BEGIN" ) { continue; }
 		lstream >> tag;
-		if( tag == "ATOM" ) {
+		if ( tag == "ATOM" ) {
 			std::string line2;
-			for( getline(tablein,line2); tablein; getline(tablein,line2) ) {
-				if( line2.compare(7,3,"END") == 0 ) {
+			for ( getline(tablein,line2); tablein; getline(tablein,line2) ) {
+				if ( line2.compare(7,3,"END") == 0 ) {
 					break;
 				}
 				MolFileIOAtomOP atom( new MolFileIOAtom );
-				if( !parse_atom_line( line, *atom) ) { return false; }
+				if ( !parse_atom_line( line, *atom) ) { return false; }
 				molecule.add_atom(atom);
 			}
-		} else if( tag == "BOND" ) {
+		} else if ( tag == "BOND" ) {
 			std::string line2;
-			for( getline(tablein,line2); tablein; getline(tablein,line2) ) {
-				if( line2.compare(7,3,"END") == 0 ) {
+			for ( getline(tablein,line2); tablein; getline(tablein,line2) ) {
+				if ( line2.compare(7,3,"END") == 0 ) {
 					break;
 				}
 				MolFileIOBondOP bond( new MolFileIOBond );
-				if( !parse_bond_line( line, *bond) ) { return false; }
+				if ( !parse_bond_line( line, *bond) ) { return false; }
 				molecule.add_bond(bond);
 			}
 
-		} else {;} // Ignore the other blocks - including the CTAB BEGIN statement.
+		} else { ; } // Ignore the other blocks - including the CTAB BEGIN statement.
 	}
 	/// The SDF file data block (with '>' headers) is handled in SDFParser,
 	/// as it is not V2000/V3000 specific.
@@ -91,7 +91,7 @@ bool CtabV3000Parser::parse_atom_line( std::string line, MolFileIOAtom & atom) {
 	core::Real x,y,z;
 
 	lstream >> M >> V30 >> index >> type >> x >> y >> z >> aamap;
-	if( !lstream ) {
+	if ( !lstream ) {
 		TR.Error << "Error reading Atom line in sdf/mol file." << std::endl;
 		return false;
 	}
@@ -99,12 +99,12 @@ bool CtabV3000Parser::parse_atom_line( std::string line, MolFileIOAtom & atom) {
 	atom.position( Vector(x,y,z) );
 	atom.element( type );
 	//Now we read the key/value pairs.
-	for( lstream >> kvpair; lstream; lstream >> kvpair ) {
+	for ( lstream >> kvpair; lstream; lstream >> kvpair ) {
 		std::string key,value;
 		splitkv(kvpair,key,value);
-		if( key == "CHG") {
+		if ( key == "CHG" ) {
 			core::Real charge( utility::string2Real(value));
-			if( utility::is_undefined(charge) ) {
+			if ( utility::is_undefined(charge) ) {
 				TR.Warning << "Problem parsing formal charge in sdf/mol file, skipping." << std::endl;
 				continue;
 			}
@@ -121,7 +121,7 @@ bool CtabV3000Parser::parse_bond_line( std::string line, MolFileIOBond & bond) {
 	core::Size type, atom1, atom2, index;
 
 	lstream >> M >> V30 >> index >> type >> atom1 >> atom2;
-	if( !lstream ) {
+	if ( !lstream ) {
 		TR.Error << "Error reading Bond line in sdf/mol file." << std::endl;
 		return false;
 	}
@@ -130,19 +130,19 @@ bool CtabV3000Parser::parse_bond_line( std::string line, MolFileIOBond & bond) {
 	bond.atom2( atom2 );
 	bond.sdf_type( type );
 	//Now we read the key/value pairs -- if we were to care about any of them
-//	for( lstream >> kvpair; lstream; lstream >> kvpair ) {
-//		std::string key,value;
-//		splitkv(kvpair,key,value);
-//		if( key == "CFG") {
-//			core::Size config( utility::string2Real(value));
-//			if( utility::is_undefined(config) ) {
-//				TR.Warning << "Problem parsing bod configuration in sdf/mol file, skipping." << std::endl;
-//				continue;
-//			}
-//			bond.configuration( config );
-//		}
-//		// Put other properties here -- we don't care about them at the moment, though.
-//	}
+	// for( lstream >> kvpair; lstream; lstream >> kvpair ) {
+	//  std::string key,value;
+	//  splitkv(kvpair,key,value);
+	//  if( key == "CFG") {
+	//   core::Size config( utility::string2Real(value));
+	//   if( utility::is_undefined(config) ) {
+	//    TR.Warning << "Problem parsing bod configuration in sdf/mol file, skipping." << std::endl;
+	//    continue;
+	//   }
+	//   bond.configuration( config );
+	//  }
+	//  // Put other properties here -- we don't care about them at the moment, though.
+	// }
 	return true;
 }
 
@@ -152,11 +152,11 @@ CtabV3000Parser::getline(std::istream & istream, std::string line) const {
 	std::getline(istream,line);
 	char lastchar;
 	while ( istream ) {
-		while( lastchar = line[ line.size()-1 ], lastchar == '\n' || lastchar == '\r' || lastchar == ' ' ) {
+		while ( lastchar = line[ line.size()-1 ], lastchar == '\n' || lastchar == '\r' || lastchar == ' ' ) {
 			line.erase(line.size()-1); //Erase last character to end of string.
 		}
 		lastchar = line[ line.size()-1 ];
-		if( lastchar == '-' ) {
+		if ( lastchar == '-' ) {
 			line.erase(line.size()-1); //Erase '-' from end of string.
 			std::string newline;
 			std::getline(istream,newline);
@@ -171,7 +171,7 @@ CtabV3000Parser::getline(std::istream & istream, std::string line) const {
 void
 CtabV3000Parser::splitkv(std::string const & kvpair, std::string & key, std::string & value) const {
 	core::Size location( kvpair.find('=') );
-	if( location == std::string::npos ) { // Not found
+	if ( location == std::string::npos ) { // Not found
 		key = kvpair;
 		value.clear();
 	}

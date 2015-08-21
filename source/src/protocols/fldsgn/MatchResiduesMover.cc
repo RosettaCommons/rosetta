@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/fldsgn/MatchResiduesMover.cc
-/// @brief  
+/// @brief
 /// @author Javier Castellanos ( javiercv@uw.edu )
 
 // Unit Headers
@@ -68,36 +68,37 @@ MatchResiduesMover::~MatchResiduesMover() {}
 
 protocols::moves::MoverOP
 MatchResiduesMover::fresh_instance() const{
-  return protocols::moves::MoverOP( new MatchResiduesMover() );
+	return protocols::moves::MoverOP( new MatchResiduesMover() );
 }
 
 protocols::moves::MoverOP
 MatchResiduesMover::clone() const{
-  return protocols::moves::MoverOP( new MatchResiduesMover( *this ) );
+	return protocols::moves::MoverOP( new MatchResiduesMover( *this ) );
 }
 
 
 void
-MatchResiduesMover::apply( core::pose::Pose & pose ) 
+MatchResiduesMover::apply( core::pose::Pose & pose )
 {
 	using protocols::moves::MS_SUCCESS;
 	using protocols::moves::FAIL_DO_NOT_RETRY;
 
 	VecSize matched_pos;
 	core::Real rms = compute(pose, matched_pos);
-	bool pass( rms < threshold() );	
-	if(pass)
+	bool pass( rms < threshold() );
+	if ( pass ) {
 		set_last_move_status( MS_SUCCESS );
-	else
+	} else {
 		set_last_move_status( FAIL_DO_NOT_RETRY );
-	
-	if(superimpose_ && pass ){
+	}
+
+	if ( superimpose_ && pass ) {
 		superimpose_comb(pose, matched_pos);
 	}
 }
 
-void 
-MatchResiduesMover::parse_my_tag( 
+void
+MatchResiduesMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & filters,
@@ -105,7 +106,7 @@ MatchResiduesMover::parse_my_tag(
 	core::pose::Pose const & pose )
 {
 	MatchResidues::parse_my_tag(tag, data, filters, movers, pose);
-  superimpose_ = tag->getOption< bool >("superimpose", false);
+	superimpose_ = tag->getOption< bool >("superimpose", false);
 }
 
 } // fldsgn

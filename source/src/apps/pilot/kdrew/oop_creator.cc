@@ -106,63 +106,63 @@ using utility::file::FileName;
 //kdrew: this app adds oop patches to the given pdb strucure
 
 // application specific options
-namespace oop_creator{
-	// pert options
-	IntegerVectorOptionKey const oop_plus_positions( "oop_creator::oop_plus_positions" );
-	IntegerVectorOptionKey const oop_minus_positions( "oop_creator::oop_minus_positions" );
-	IntegerVectorOptionKey const oop_d_plus_positions( "oop_creator::oop_d_plus_positions" );
-	IntegerVectorOptionKey const oop_d_minus_positions( "oop_creator::oop_d_minus_positions" );
-	IntegerVectorOptionKey const oop_low_e_puck_positions( "oop_creator::oop_low_e_puck_positions" );
-	IntegerOptionKey const prepend_n_residues( "oop_creator::prepend_n_residues" );
-	IntegerOptionKey const append_n_residues( "oop_creator::append_n_residues" );
-	BooleanOptionKey const final_repack( "oop_creator::final_repack" );
-	BooleanOptionKey const final_minimize( "oop_creator::final_minimize" );
-	BooleanOptionKey const final_mc ( "oop_creator::final_mc" );
-	BooleanOptionKey const correct_oop_post ( "oop_creator::correct_oop_post" );
+namespace oop_creator {
+// pert options
+IntegerVectorOptionKey const oop_plus_positions( "oop_creator::oop_plus_positions" );
+IntegerVectorOptionKey const oop_minus_positions( "oop_creator::oop_minus_positions" );
+IntegerVectorOptionKey const oop_d_plus_positions( "oop_creator::oop_d_plus_positions" );
+IntegerVectorOptionKey const oop_d_minus_positions( "oop_creator::oop_d_minus_positions" );
+IntegerVectorOptionKey const oop_low_e_puck_positions( "oop_creator::oop_low_e_puck_positions" );
+IntegerOptionKey const prepend_n_residues( "oop_creator::prepend_n_residues" );
+IntegerOptionKey const append_n_residues( "oop_creator::append_n_residues" );
+BooleanOptionKey const final_repack( "oop_creator::final_repack" );
+BooleanOptionKey const final_minimize( "oop_creator::final_minimize" );
+BooleanOptionKey const final_mc ( "oop_creator::final_mc" );
+BooleanOptionKey const correct_oop_post ( "oop_creator::correct_oop_post" );
 
 }
 
 int
 main( int argc, char* argv[] )
 {
-    try {
-	utility::vector1< Size > empty_vector(0);
-	option.add( oop_creator::oop_plus_positions, "The positions of the first residues of plus oop rings" ).def( empty_vector );
-	option.add( oop_creator::oop_minus_positions, "The positions of the first residues of minus oop rings" ).def( empty_vector );
-	option.add( oop_creator::oop_d_plus_positions, "The positions of the first residues of chiral d plus oop rings" ).def( empty_vector );
-	option.add( oop_creator::oop_d_minus_positions, "The positions of the first residues of chiral d minus oop rings" ).def( empty_vector );
-	option.add( oop_creator::oop_low_e_puck_positions, "The positions of the first oop residues, pucker will change to low e conformation" ).def( empty_vector );
-	option.add( oop_creator::prepend_n_residues, "Number of residues to prepend" ).def( 0 );
-	option.add( oop_creator::append_n_residues, "Number of residues to append" ).def( 0 );
-	option.add( oop_creator::final_repack, "Do a final repack. Default false" ).def(false);
-	option.add( oop_creator::final_minimize, "Do a final minimization. Default false" ).def(false);
-	option.add( oop_creator::final_mc, "Do a final monte carlo on oop. Default false" ).def(false);
-	option.add( oop_creator::correct_oop_post, "Correct oop post phi/psi to low energy well. Default false" ).def(false);
+	try {
+		utility::vector1< Size > empty_vector(0);
+		option.add( oop_creator::oop_plus_positions, "The positions of the first residues of plus oop rings" ).def( empty_vector );
+		option.add( oop_creator::oop_minus_positions, "The positions of the first residues of minus oop rings" ).def( empty_vector );
+		option.add( oop_creator::oop_d_plus_positions, "The positions of the first residues of chiral d plus oop rings" ).def( empty_vector );
+		option.add( oop_creator::oop_d_minus_positions, "The positions of the first residues of chiral d minus oop rings" ).def( empty_vector );
+		option.add( oop_creator::oop_low_e_puck_positions, "The positions of the first oop residues, pucker will change to low e conformation" ).def( empty_vector );
+		option.add( oop_creator::prepend_n_residues, "Number of residues to prepend" ).def( 0 );
+		option.add( oop_creator::append_n_residues, "Number of residues to append" ).def( 0 );
+		option.add( oop_creator::final_repack, "Do a final repack. Default false" ).def(false);
+		option.add( oop_creator::final_minimize, "Do a final minimization. Default false" ).def(false);
+		option.add( oop_creator::final_mc, "Do a final monte carlo on oop. Default false" ).def(false);
+		option.add( oop_creator::correct_oop_post, "Correct oop post phi/psi to low energy well. Default false" ).def(false);
 
-	// init command line options
+		// init command line options
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	//create mover instance
-    OopCreatorMoverOP OC_mover( new OopCreatorMover(option[oop_creator::oop_plus_positions].value(),
-                                                        option[oop_creator::oop_minus_positions].value(),
-                                                        option[oop_creator::oop_d_plus_positions].value(),
-                                                        option[oop_creator::oop_d_minus_positions].value(),
-                                                        option[oop_creator::oop_low_e_puck_positions].value(),
-                                                        option[oop_creator::prepend_n_residues].value(),
-                                                        option[oop_creator::append_n_residues].value(),
-                                                        option[oop_creator::final_repack].value(),
-                                                        option[oop_creator::final_minimize].value(),
-                                                        option[oop_creator::final_mc].value(),
-                                                        option[oop_creator::correct_oop_post].value()) );
+		//create mover instance
+		OopCreatorMoverOP OC_mover( new OopCreatorMover(option[oop_creator::oop_plus_positions].value(),
+			option[oop_creator::oop_minus_positions].value(),
+			option[oop_creator::oop_d_plus_positions].value(),
+			option[oop_creator::oop_d_minus_positions].value(),
+			option[oop_creator::oop_low_e_puck_positions].value(),
+			option[oop_creator::prepend_n_residues].value(),
+			option[oop_creator::append_n_residues].value(),
+			option[oop_creator::final_repack].value(),
+			option[oop_creator::final_minimize].value(),
+			option[oop_creator::final_mc].value(),
+			option[oop_creator::correct_oop_post].value()) );
 
-	//call job distributor
-	protocols::jd2::JobDistributor::get_instance()->go( OC_mover );
+		//call job distributor
+		protocols::jd2::JobDistributor::get_instance()->go( OC_mover );
 
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-				return -1;
-    }
-    return 0;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }//main
 

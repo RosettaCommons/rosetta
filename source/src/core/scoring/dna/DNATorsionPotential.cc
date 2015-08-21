@@ -64,7 +64,7 @@ DNATorsionPotential::DNATorsionPotential():
 	// Parameters for alpha,beta,gamma,delta, etc. torsion constraints...
 	////////////////////////////////////////////////////////////////////////////
 	DELTA_CUTOFF_( 115.0 ),
-//	scale_dna_torsion_tether_( 0.05 ), // THIS IS A SCALING FACTOR FOR ALL CONSTRAINTS.
+	// scale_dna_torsion_tether_( 0.05 ), // THIS IS A SCALING FACTOR FOR ALL CONSTRAINTS.
 	scale_dna_torsion_tether_( 0.05 ), // THIS IS A SCALING FACTOR FOR ALL CONSTRAINTS.
 	scale_dna_torsion_sd_( 1.0 / std::sqrt( scale_dna_torsion_tether_ ) ),
 	////////////////////////////////////////////////////////////////////////////
@@ -76,15 +76,15 @@ DNATorsionPotential::DNATorsionPotential():
 
 	c4prime_c3prime_c2prime_bond_angle_( numeric::conversions::radians( 109.50 ) ),
 	c4prime_c3prime_c2prime_angle_harm_func_(
-		func::HarmonicFuncOP( new func::HarmonicFunc( c4prime_c3prime_c2prime_bond_angle_, scale_dna_torsion_sd_ * 1.0/sqrt( numeric::conversions::radians( 40.0 ) ) ) ) ),
+	func::HarmonicFuncOP( new func::HarmonicFunc( c4prime_c3prime_c2prime_bond_angle_, scale_dna_torsion_sd_ * 1.0/sqrt( numeric::conversions::radians( 40.0 ) ) ) ) ),
 
 	o3prime_c3prime_c2prime_bond_angle_( numeric::conversions::radians( 109.50 ) ),
 	o3prime_c3prime_c2prime_angle_harm_func_(
-		func::HarmonicFuncOP( new func::HarmonicFunc( o3prime_c3prime_c2prime_bond_angle_, scale_dna_torsion_sd_ * 1.0/sqrt( numeric::conversions::radians( 50.0 ) ) ) ) ),
+	func::HarmonicFuncOP( new func::HarmonicFunc( o3prime_c3prime_c2prime_bond_angle_, scale_dna_torsion_sd_ * 1.0/sqrt( numeric::conversions::radians( 50.0 ) ) ) ) ),
 
 	c3prime_c2prime_c1prime_bond_angle_( numeric::conversions::radians( 109.50 ) ),
 	c3prime_c2prime_c1prime_angle_harm_func_(
-		func::HarmonicFuncOP( new func::HarmonicFunc( c3prime_c2prime_c1prime_bond_angle_, scale_dna_torsion_sd_ * 1.0/sqrt( numeric::conversions::radians( 40.0 ) ) ) ) )
+	func::HarmonicFuncOP( new func::HarmonicFunc( c3prime_c2prime_c1prime_bond_angle_, scale_dna_torsion_sd_ * 1.0/sqrt( numeric::conversions::radians( 40.0 ) ) ) ) )
 
 	// Might also be good to have additional angle or torsional potentials
 	// to preserve sugar geometry.
@@ -98,23 +98,23 @@ DNATorsionPotential::DNATorsionPotential():
 /////////////////////////////////////////////////////////////////////////////////////////
 void
 DNATorsionPotential::setup_constraints(
-   pose::Pose & pose,
-	 constraints::ConstraintSetOP & dna_torsion_constraints,
-	 constraints::ConstraintSetOP & dna_sugar_close_constraints,
-	 constraints::ConstraintSetOP & dna_base_distance_constraints) const
+	pose::Pose & pose,
+	constraints::ConstraintSetOP & dna_torsion_constraints,
+	constraints::ConstraintSetOP & dna_sugar_close_constraints,
+	constraints::ConstraintSetOP & dna_base_distance_constraints) const
 {
 
 	// dna_torsion_constraints->clear()  ...   doesn't exist!
 	//Constraints are atom-pair, angle, dihedral...
 	dna_sugar_close_constraints = constraints::ConstraintSetOP( new constraints::ConstraintSet );
 	add_sugar_ring_closure_constraints( pose, *dna_sugar_close_constraints );
-	//	add_o2prime_torsion_constraints(     pose, *dna_torsion_constraints );
+	// add_o2prime_torsion_constraints(     pose, *dna_torsion_constraints );
 
 	// Why can't these terms be "constraints", in dna_torsion_constraints above? Because
 	//  some involve atoms that change types when residues are switched in and out (during design!).
 	// Could either define a different sort of constraint ("TorsionConstraint")
 	dna_torsion_constraints = constraints::ConstraintSetOP( new constraints::ConstraintSet );
- 	add_dna_torsion_tethers(  pose, *dna_torsion_constraints );
+	add_dna_torsion_tethers(  pose, *dna_torsion_constraints );
 
 	dna_base_distance_constraints = constraints::ConstraintSetOP( new constraints::ConstraintSet );
 	add_dna_base_distance_constraints( pose, *dna_base_distance_constraints );
@@ -123,7 +123,7 @@ DNATorsionPotential::setup_constraints(
 /////////////////////////////////////////////////////////////////////////////////////////
 void
 DNATorsionPotential::add_sugar_ring_closure_constraints( pose::Pose & pose, constraints::ConstraintSet & cst_set ) const {
-	for (Size i = 1; i <= pose.total_residue(); i++ ){
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 		add_sugar_ring_closure_constraints( pose.residue( i ), cst_set );
 	}
 }
@@ -142,31 +142,31 @@ DNATorsionPotential::add_sugar_ring_closure_constraints( conformation::Residue c
 	Size const c4prime_index = rsd.atom_index( "C4'" );
 
 	constraints::ConstraintCOP pair_constraint( constraints::ConstraintOP( new constraints::AtomPairConstraint( id::AtomID( c2prime_index, i),
-																															 id::AtomID( c3prime_index, i),
-																															 c2prime_c3prime_dist_harm_func_,
-																															 dna_sugar_close ) ) );
+		id::AtomID( c3prime_index, i),
+		c2prime_c3prime_dist_harm_func_,
+		dna_sugar_close ) ) );
 
 	cst_set.add_constraint( pair_constraint );
 
 	constraints::ConstraintOP angle1( new constraints::AngleConstraint( id::AtomID( c4prime_index, i),
-																																			 id::AtomID( c3prime_index, i),
-																																			 id::AtomID( c2prime_index, i),
-																																			 c4prime_c3prime_c2prime_angle_harm_func_,
-																																			 dna_sugar_close ) );
+		id::AtomID( c3prime_index, i),
+		id::AtomID( c2prime_index, i),
+		c4prime_c3prime_c2prime_angle_harm_func_,
+		dna_sugar_close ) );
 	cst_set.add_constraint( angle1 );
 
 	constraints::ConstraintOP angle2( new constraints::AngleConstraint( id::AtomID( o3prime_index, i),
-																																			 id::AtomID( c3prime_index, i),
-																																			 id::AtomID( c2prime_index, i),
-																																			 o3prime_c3prime_c2prime_angle_harm_func_,
-																																			 dna_sugar_close ) );
+		id::AtomID( c3prime_index, i),
+		id::AtomID( c2prime_index, i),
+		o3prime_c3prime_c2prime_angle_harm_func_,
+		dna_sugar_close ) );
 	cst_set.add_constraint( angle2 );
 
 	constraints::ConstraintOP angle3( new constraints::AngleConstraint( id::AtomID( c3prime_index, i),
-																																			 id::AtomID( c2prime_index, i),
-																																			 id::AtomID( c1prime_index, i),
-																																			 c3prime_c2prime_c1prime_angle_harm_func_,
-																																			 dna_sugar_close ) );
+		id::AtomID( c2prime_index, i),
+		id::AtomID( c1prime_index, i),
+		c3prime_c2prime_c1prime_angle_harm_func_,
+		dna_sugar_close ) );
 	cst_set.add_constraint( angle3 );
 
 	// Need to add an improper dihedral to keep the hydrogens correct on C2'
@@ -176,68 +176,70 @@ DNATorsionPotential::add_sugar_ring_closure_constraints( conformation::Residue c
 ///////////////////////////////////////
 void
 DNATorsionPotential::add_dna_base_distance_constraints(
-		pose::Pose & pose,
-		constraints::ConstraintSet & cst_set ) const
+	pose::Pose & pose,
+	constraints::ConstraintSet & cst_set ) const
 {
 	using namespace core::chemical;
 	Size const nres = pose.total_residue();
-	for( Size i = 1; i < nres; ++i ){
+	for ( Size i = 1; i < nres; ++i ) {
 		conformation::Residue const & rsd( pose.residue( i ) );
 		conformation::Residue const & next_rsd( pose.residue( i + 1 ) );
-		if( !rsd.is_DNA() || !next_rsd.is_DNA() || rsd.is_upper_terminus() ) continue; //job undone: need to add conditions when the rsd is not basepaired
+		if ( !rsd.is_DNA() || !next_rsd.is_DNA() || rsd.is_upper_terminus() ) continue; //job undone: need to add conditions when the rsd is not basepaired
 
 		Size const H2prime_index = pose.residue( i ).atom_index( "H2''" );
 		Size const H1prime_index = pose.residue( i ).atom_index( " H2'" );
 		Size H68_index, next_H68_index;
-		if( rsd.type().aa() == na_ade || rsd.type().aa() == na_gua )
+		if ( rsd.type().aa() == na_ade || rsd.type().aa() == na_gua ) {
 			H68_index = pose.residue( i ).atom_index( "H8" );
-		else
+		} else {
 			H68_index = pose.residue( i ).atom_index( "H6" );
+		}
 
-		if( next_rsd.type().aa() == na_ade || next_rsd.type().aa() == na_gua )
+		if ( next_rsd.type().aa() == na_ade || next_rsd.type().aa() == na_gua ) {
 			next_H68_index = pose.residue( i + 1 ).atom_index( "H8" );
-		else
+		} else {
 			next_H68_index = pose.residue( i + 1 ).atom_index( "H6" );
-//set up harmonic function
+		}
+		//set up harmonic function
 		Real angle_diff ( rsd.mainchain_torsion(5) - rsd.mainchain_torsion(6) );
 		Real dist_1H = 0.0041 * angle_diff + 2.7092;
 		func::HarmonicFuncOP H1_harm_func( new func::HarmonicFunc( dist_1H, 0.307 ) );
 		cst_set.add_constraint( constraints::ConstraintOP( new constraints::AtomPairConstraint( id::AtomID( H1prime_index, i),
-																															 id::AtomID( next_H68_index, i + 1),
-																															 H1_harm_func,
-																															 dna_base_distance ) ) );
+			id::AtomID( next_H68_index, i + 1),
+			H1_harm_func,
+			dna_base_distance ) ) );
 
 		Real dist_2H = 0.0081 * angle_diff + 4.0213;
 		func::HarmonicFuncOP H2_harm_func( new func::HarmonicFunc( dist_2H, 0.381 ) );
 		cst_set.add_constraint( constraints::ConstraintOP( new constraints::AtomPairConstraint( id::AtomID( H2prime_index, i),
-																															 id::AtomID( next_H68_index, i + 1),
-																															 H2_harm_func,
-																															 dna_base_distance ) ) );
+			id::AtomID( next_H68_index, i + 1),
+			H2_harm_func,
+			dna_base_distance ) ) );
 
 		Real dist_H68 = 0.0068 * angle_diff + 5.4228;
 		func::HarmonicFuncOP H68_harm_func( new func::HarmonicFunc( dist_H68, 0.373 ) );
 		cst_set.add_constraint( constraints::ConstraintOP( new constraints::AtomPairConstraint( id::AtomID( H68_index, i),
-																															 id::AtomID( next_H68_index, i + 1),
-																															 H68_harm_func,
-																															 dna_base_distance ) ) );
-//	std::cout << "TEST" << " angle " << angle_diff << " dist_1H " << dist_1H << std::endl;
-}
+			id::AtomID( next_H68_index, i + 1),
+			H68_harm_func,
+			dna_base_distance ) ) );
+		// std::cout << "TEST" << " angle " << angle_diff << " dist_1H " << dist_1H << std::endl;
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void
 DNATorsionPotential::add_dna_torsion_tethers(
-	 pose::Pose & pose,
-	 constraints::ConstraintSet & cst_set ) const
+	pose::Pose & pose,
+	constraints::ConstraintSet & cst_set ) const
 {
 	using namespace numeric;
 
 	Size const nres = pose.total_residue();
 
-	for (Size i = 1; i <=nres; i++ ){
+	for ( Size i = 1; i <=nres; i++ ) {
 
 		conformation::Residue const & rsd( pose.residue( i ) );
-		if (!rsd.is_DNA() ) continue;
+		if ( !rsd.is_DNA() ) continue;
 
 		/////////////////////////////////////
 		// alpha --
@@ -319,11 +321,11 @@ DNATorsionPotential::add_dna_torsion_tethers(
 ///////////////////////////////////////////////////////////////////////////////
 void
 DNATorsionPotential::add_DNA_torsion_constraint(
-			 pose::Pose & pose,
-			 Size const i,
-			 constraints::ConstraintSet & cst_set,
-			 Size const dna_torsion_number,
-			 utility::vector1< func::AmberPeriodicFuncOP > const & torsion_components ) const
+	pose::Pose & pose,
+	Size const i,
+	constraints::ConstraintSet & cst_set,
+	Size const dna_torsion_number,
+	utility::vector1< func::AmberPeriodicFuncOP > const & torsion_components ) const
 {
 
 	conformation::Residue rsd( pose.residue( i ) );
@@ -331,17 +333,17 @@ DNATorsionPotential::add_DNA_torsion_constraint(
 	// Get the atoms involved
 	id::AtomID id1,id2,id3,id4;
 	bool fail = get_atom_ids_by_torsion( dna_torsion_number, pose, i, id1, id2, id3, id4 );
-	if( fail ) {
-//		tr << "Failed to get atom ids at residue " << i << " for torsion number " << dna_torsion_number << std::endl;
+	if ( fail ) {
+		//  tr << "Failed to get atom ids at residue " << i << " for torsion number " << dna_torsion_number << std::endl;
 		return;
 	}
 
 	// Generate dihedral constraints for each term in the vector of Fourier components
 
-	for( Size this_comp = 1 ; this_comp <= torsion_components.size() ; ++this_comp ) {
-//		tr << "Adding torsion at residue " << i << " ids " << id1 << " " << id2 << " " << id3 << " " << id4 << std::endl;
+	for ( Size this_comp = 1 ; this_comp <= torsion_components.size() ; ++this_comp ) {
+		//  tr << "Adding torsion at residue " << i << " ids " << id1 << " " << id2 << " " << id3 << " " << id4 << std::endl;
 		constraints::ConstraintOP dihedral( new constraints::DihedralConstraint( id1, id2, id3, id4,
-											torsion_components[ this_comp ], dna_bb_torsion ) );
+			torsion_components[ this_comp ], dna_bb_torsion ) );
 		cst_set.add_constraint( dihedral );
 
 	}
@@ -353,7 +355,7 @@ void
 DNATorsionPotential::init_dna_torsion_parameters()
 {
 
-  // Parameters for DNA backbone torsions are taken from the Amber MM code -
+	// Parameters for DNA backbone torsions are taken from the Amber MM code -
 	// Alpha and gamma are from the refitting of Perez et.al. in Biophys. J. (2007)
 	// v92 pp. 3816-3829.
 	// The rest are taken from the parm99 parameter set available with the Ambertools
@@ -457,103 +459,103 @@ DNATorsionPotential::init_dna_torsion_parameters()
 
 }
 
-	bool
-	DNATorsionPotential::get_atom_ids_by_torsion(
-		Size const dna_torsion_number,
-		pose::Pose & pose,
-		Size const resid,
-		id::AtomID & id1,
-		id::AtomID & id2,
-		id::AtomID & id3,
-		id::AtomID & id4 ) const
+bool
+DNATorsionPotential::get_atom_ids_by_torsion(
+	Size const dna_torsion_number,
+	pose::Pose & pose,
+	Size const resid,
+	id::AtomID & id1,
+	id::AtomID & id2,
+	id::AtomID & id3,
+	id::AtomID & id4 ) const
 {
 
 	// Note:  A return value of 'true' denotes failure / not applicable!
 
-	if( ( dna_torsion_number == ALPHA ) &&
+	if ( ( dna_torsion_number == ALPHA ) &&
 			( pose.residue_type( resid ).is_lower_terminus() ) ) {
 		return true;
 	}
 
-	if( ( dna_torsion_number == EPSILON ) &&
+	if ( ( dna_torsion_number == EPSILON ) &&
 			( pose.residue_type( resid ).is_upper_terminus() ) ) {
 		return true;
 	}
 
-	if( ( dna_torsion_number == ZETA ) &&
+	if ( ( dna_torsion_number == ZETA ) &&
 			( pose.residue_type( resid ).is_upper_terminus() ) ) {
 		return true;
 	}
 
 
 	switch ( dna_torsion_number ) {
-	case ALPHA:
+	case ALPHA :
 		id1 = id::AtomID( pose.residue( resid - 1 ).atom_index( alpha_atom_names_[1] ), resid - 1 );
 		id2 = id::AtomID( pose.residue( resid ).atom_index( alpha_atom_names_[2] ), resid );
 		id3 = id::AtomID( pose.residue( resid ).atom_index( alpha_atom_names_[3] ), resid );
 		id4 = id::AtomID( pose.residue( resid ).atom_index( alpha_atom_names_[4] ), resid );
 		return false;
-	case BETA:
+	case BETA :
 		id1 = id::AtomID( pose.residue( resid ).atom_index( beta_atom_names_[1] ), resid );
 		id2 = id::AtomID( pose.residue( resid ).atom_index( beta_atom_names_[2] ), resid );
 		id3 = id::AtomID( pose.residue( resid ).atom_index( beta_atom_names_[3] ), resid );
 		id4 = id::AtomID( pose.residue( resid ).atom_index( beta_atom_names_[4] ), resid );
 		return false;
-	case GAMMA:
+	case GAMMA :
 		id1 = id::AtomID( pose.residue( resid ).atom_index( gamma_atom_names_[1] ), resid );
 		id2 = id::AtomID( pose.residue( resid ).atom_index( gamma_atom_names_[2] ), resid );
 		id3 = id::AtomID( pose.residue( resid ).atom_index( gamma_atom_names_[3] ), resid );
 		id4 = id::AtomID( pose.residue( resid ).atom_index( gamma_atom_names_[4] ), resid );
 		return false;
-	case DELTA:
+	case DELTA :
 		id1 = id::AtomID( pose.residue( resid ).atom_index( delta_atom_names_[1] ), resid );
 		id2 = id::AtomID( pose.residue( resid ).atom_index( delta_atom_names_[2] ), resid );
 		id3 = id::AtomID( pose.residue( resid ).atom_index( delta_atom_names_[3] ), resid );
 		id4 = id::AtomID( pose.residue( resid ).atom_index( delta_atom_names_[4] ), resid );
 		return false;
-	case EPSILON:
+	case EPSILON :
 		id1 = id::AtomID( pose.residue( resid ).atom_index( epsilon_atom_names_[1] ), resid );
 		id2 = id::AtomID( pose.residue( resid ).atom_index( epsilon_atom_names_[2] ), resid );
 		id3 = id::AtomID( pose.residue( resid ).atom_index( epsilon_atom_names_[3] ), resid );
 		id4 = id::AtomID( pose.residue( resid + 1 ).atom_index( epsilon_atom_names_[4] ), resid + 1);
 		return false;
-	case ZETA:
+	case ZETA :
 		id1 = id::AtomID( pose.residue( resid ).atom_index( zeta_atom_names_[1] ), resid );
 		id2 = id::AtomID( pose.residue( resid ).atom_index( zeta_atom_names_[2] ), resid );
 		id3 = id::AtomID( pose.residue( resid + 1 ).atom_index( zeta_atom_names_[3] ), resid + 1);
 		id4 = id::AtomID( pose.residue( resid + 1 ).atom_index( zeta_atom_names_[4] ), resid + 1);
 		return false;
-	case NU0:
+	case NU0 :
 		id1 = id::AtomID( pose.residue( resid ).atom_index( nu0_atom_names_[1] ), resid );
 		id2 = id::AtomID( pose.residue( resid ).atom_index( nu0_atom_names_[2] ), resid );
 		id3 = id::AtomID( pose.residue( resid ).atom_index( nu0_atom_names_[3] ), resid );
 		id4 = id::AtomID( pose.residue( resid ).atom_index( nu0_atom_names_[4] ), resid );
 		return false;
-	case NU1:
+	case NU1 :
 		id1 = id::AtomID( pose.residue( resid ).atom_index( nu1_atom_names_[1] ), resid );
 		id2 = id::AtomID( pose.residue( resid ).atom_index( nu1_atom_names_[2] ), resid );
 		id3 = id::AtomID( pose.residue( resid ).atom_index( nu1_atom_names_[3] ), resid );
 		id4 = id::AtomID( pose.residue( resid ).atom_index( nu1_atom_names_[4] ), resid );
 		return false;
-	case NU2:
+	case NU2 :
 		id1 = id::AtomID( pose.residue( resid ).atom_index( nu2_atom_names_[1] ), resid );
 		id2 = id::AtomID( pose.residue( resid ).atom_index( nu2_atom_names_[2] ), resid );
 		id3 = id::AtomID( pose.residue( resid ).atom_index( nu2_atom_names_[3] ), resid );
 		id4 = id::AtomID( pose.residue( resid ).atom_index( nu2_atom_names_[4] ), resid );
 		return false;
-	case NU3:
+	case NU3 :
 		id1 = id::AtomID( pose.residue( resid ).atom_index( nu3_atom_names_[1] ), resid );
 		id2 = id::AtomID( pose.residue( resid ).atom_index( nu3_atom_names_[2] ), resid );
 		id3 = id::AtomID( pose.residue( resid ).atom_index( nu3_atom_names_[3] ), resid );
 		id4 = id::AtomID( pose.residue( resid ).atom_index( nu3_atom_names_[4] ), resid );
 		return false;
-	case NU4:
+	case NU4 :
 		id1 = id::AtomID( pose.residue( resid ).atom_index( nu4_atom_names_[1] ), resid );
 		id2 = id::AtomID( pose.residue( resid ).atom_index( nu4_atom_names_[2] ), resid );
 		id3 = id::AtomID( pose.residue( resid ).atom_index( nu4_atom_names_[3] ), resid );
 		id4 = id::AtomID( pose.residue( resid ).atom_index( nu4_atom_names_[4] ), resid );
 		return false;
-	default:
+	default :
 		utility_exit_with_message("bad dna torsion type for DNATorsionPotential: " );
 	}
 

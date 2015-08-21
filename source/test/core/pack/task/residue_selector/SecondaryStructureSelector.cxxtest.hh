@@ -85,7 +85,7 @@ public:
 		acceptTrue.insert( 20 );
 		for ( core::Size ii = 1; ii <= subset.size(); ++ii ) {
 			TS_ASSERT( ( !subset[ ii ] && ( acceptTrue.find( ii ) == acceptTrue.end() ) ) ||
-					( subset[ ii ] && ( acceptTrue.find( ii ) != acceptTrue.end() ) ) );
+				( subset[ ii ] && ( acceptTrue.find( ii ) != acceptTrue.end() ) ) );
 		}
 
 		// now include terminal "loop"
@@ -96,7 +96,7 @@ public:
 		acceptTrue.insert( 1 );
 		for ( core::Size ii = 1; ii <= subset.size(); ++ii ) {
 			TS_ASSERT( ( !subset[ ii ] && ( acceptTrue.find( ii ) == acceptTrue.end() ) ) ||
-					( subset[ ii ] && ( acceptTrue.find( ii ) != acceptTrue.end() ) ) );
+				( subset[ ii ] && ( acceptTrue.find( ii ) != acceptTrue.end() ) ) );
 		}
 	}
 
@@ -143,7 +143,7 @@ public:
 		acceptTrue.insert( 15 );
 		for ( core::Size ii = 1; ii <= subset.size(); ++ii ) {
 			TS_ASSERT( ( !subset[ ii ] && ( acceptTrue.find( ii ) == acceptTrue.end() ) ) ||
-					( subset[ ii ] && ( acceptTrue.find( ii ) != acceptTrue.end() ) ) );
+				( subset[ ii ] && ( acceptTrue.find( ii ) != acceptTrue.end() ) ) );
 		}
 	}
 

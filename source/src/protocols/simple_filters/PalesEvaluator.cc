@@ -34,7 +34,7 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#ifdef  __native_client__ 
+#ifdef  __native_client__
 #define system(a) 1
 #endif
 
@@ -47,16 +47,16 @@ using namespace core;
 
 
 PalesEvaluator::PalesEvaluator( std::string tag, std::string pales_rdc_file )
-  : ExternalEvaluator( tag )
+: ExternalEvaluator( tag )
 {
-	#ifdef WIN32
+#ifdef WIN32
 	utility_exit_with_message("don't use PalesEvaluator on a BillBox");
-  #endif
-	//	if (!utility::file::file_exists( scratch_dir()+"/SPARTA" ) ) {
+#endif
+	// if (!utility::file::file_exists( scratch_dir()+"/SPARTA" ) ) {
 	// std::string command( "cp -Rf $HOME/SPARTA "+scratch_dir());
 	std::string command( "rsync -azvu $HOME/pales "+scratch_dir());
 	int ret(system(command.c_str()));
-	if( ret ){
+	if ( ret ) {
 		utility_exit_with_message("System command failed:'" + command + "'" );
 	}
 
@@ -72,7 +72,7 @@ PalesEvaluator::PalesEvaluator( std::string tag, std::string pales_rdc_file )
 }
 
 bool PalesEvaluator::applicable( pose::Pose const& pose ) const {
-  return pose.is_fullatom();
+	return pose.is_fullatom();
 }
 
 

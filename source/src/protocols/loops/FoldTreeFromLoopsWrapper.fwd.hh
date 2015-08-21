@@ -17,8 +17,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace loops{
+namespace protocols {
+namespace loops {
 
 //Forwards and OP typedefs
 class FoldTreeFromLoops;

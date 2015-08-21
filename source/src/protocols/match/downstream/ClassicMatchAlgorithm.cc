@@ -120,7 +120,7 @@ ClassicMatchAlgorithm::build_and_discard_first_round_hits_at_all_positions(
 	assert( geom_cst_id() == 1 );
 
 	utility::vector1< upstream::ScaffoldBuildPointCOP > const & launch_points
-	( matcher.per_constraint_build_points( geom_cst_id() ) );
+		( matcher.per_constraint_build_points( geom_cst_id() ) );
 	Size n_build_points = launch_points.size();
 
 	std::list< Hit > return_hits; // Only return a single hit from this function
@@ -131,7 +131,7 @@ ClassicMatchAlgorithm::build_and_discard_first_round_hits_at_all_positions(
 		// many that get generated
 		std::list< Hit > iihits = matcher.upstream_builder( geom_cst_id() )->build( * launch_points[ ii ] );
 		for ( std::list< Hit >::const_iterator iter = iihits.begin(), iter_end = iihits.end();
-					iter != iter_end; ++iter ) {
+				iter != iter_end; ++iter ) {
 			occspace->insert_hit_geometry( iter->second() );
 		}
 		// save one hit so that the Matcher doesn't exit early (it will if we return 0 hits)
@@ -365,7 +365,7 @@ ClassicMatchAlgorithm::build_from_three_coords(
 				HTReal ht_kk = ht_jj;
 				ht_kk.walk_along_z( exsampler.dis_U1D1_samples()[ kk ] );
 				Vector pD1 = ht_kk.point();
-				if ( radD1 > ZERO && bbgrid().occupied( radD1, pD1 )) continue; /// Collision check atom D1
+				if ( radD1 > ZERO && bbgrid().occupied( radD1, pD1 ) ) continue; /// Collision check atom D1
 				if ( active_site_check_D1 && ! active_site_grid().occupied( pD1 ) ) continue;
 
 				for ( Size ll = 1; ll <= exsampler.n_tor_U2D2_samples(); ++ll ) {
@@ -374,13 +374,13 @@ ClassicMatchAlgorithm::build_from_three_coords(
 					for ( Size mm = 1; mm <= exsampler.n_ang_U1D2_samples(); ++mm ) {
 						HTReal ht_mm = ht_ll * exsampler.transform( HT_ang_U1D2, mm );
 						Vector pD2 = ht_mm.point();
-						if ( radD2 > ZERO && bbgrid().occupied( radD2, pD2 )) continue; /// Collision check atom D2
+						if ( radD2 > ZERO && bbgrid().occupied( radD2, pD2 ) ) continue; /// Collision check atom D2
 						if ( active_site_check_D2 && ! active_site_grid().occupied( pD2 ) ) continue;
 
 						for ( Size nn = 1; nn <= exsampler.n_tor_U1D3_samples(); ++nn ) {
 							HTReal ht_nn = ht_mm * exsampler.transform( HT_tor_U1D3, nn );
 							Vector pD3 = ht_nn.point();
-							if ( radD3 > ZERO && bbgrid().occupied( radD3, pD3 )) continue; /// Collision check atom D3
+							if ( radD3 > ZERO && bbgrid().occupied( radD3, pD3 ) ) continue; /// Collision check atom D3
 							if ( active_site_check_D3 && ! active_site_grid().occupied( pD3 ) ) continue;
 
 							std::list< Hit > nn_hits = dsbuilder->build(
@@ -403,44 +403,44 @@ ClassicMatchAlgorithm::build_from_three_coords(
 
 ////// Debugging code below -- insert this after atom 6's collision check.
 /*
-							std::cout << "Collision free placement of atoms 4 5 and 6: ";
-							std::cout << "p4: ";
-							for ( Size oo = 1; oo <= 3; ++oo ) std::cout << p4( oo ) << " ";
-							std::cout << "p5: ";
-							for ( Size oo = 1; oo <= 3; ++oo ) std::cout << p5( oo ) << " ";
-							std::cout << "p6: ";
-							for ( Size oo = 1; oo <= 3; ++oo ) std::cout << p6( oo ) << " ";
-							std::cout << std::endl;
+std::cout << "Collision free placement of atoms 4 5 and 6: ";
+std::cout << "p4: ";
+for ( Size oo = 1; oo <= 3; ++oo ) std::cout << p4( oo ) << " ";
+std::cout << "p5: ";
+for ( Size oo = 1; oo <= 3; ++oo ) std::cout << p5( oo ) << " ";
+std::cout << "p6: ";
+for ( Size oo = 1; oo <= 3; ++oo ) std::cout << p6( oo ) << " ";
+std::cout << std::endl;
 
-							std::cout << "tor_U3D1: expected: " << exsampler.tor_U3D1_samples()[ ii ] << " real: "
-								<< numeric::constants::d::radians_to_degrees * numeric::dihedral_radians(
-								coord1, coord2, coord3, p4 ) << std::endl;
+std::cout << "tor_U3D1: expected: " << exsampler.tor_U3D1_samples()[ ii ] << " real: "
+<< numeric::constants::d::radians_to_degrees * numeric::dihedral_radians(
+coord1, coord2, coord3, p4 ) << std::endl;
 
-							std::cout << "ang_U2D1: expected: " << exsampler.ang_U2D1_samples()[ jj ] << " real: "
-								<< numeric::constants::d::radians_to_degrees * numeric::angle_radians(
-								coord2, coord3, p4 ) << std::endl;
+std::cout << "ang_U2D1: expected: " << exsampler.ang_U2D1_samples()[ jj ] << " real: "
+<< numeric::constants::d::radians_to_degrees * numeric::angle_radians(
+coord2, coord3, p4 ) << std::endl;
 
-							std::cout << "dis_U1D1: expected: " << exsampler.dis_U1D1_samples()[ kk ] << " real: "
-								<< p4.distance( coord3 ) << std::endl;
+std::cout << "dis_U1D1: expected: " << exsampler.dis_U1D1_samples()[ kk ] << " real: "
+<< p4.distance( coord3 ) << std::endl;
 
-							std::cout << "tor_U2D2: expected: " << exsampler.tor_U2D2_samples()[ ll ] << " real: "
-								<< numeric::constants::d::radians_to_degrees * numeric::dihedral_radians(
-								coord2, coord3, p4, p5 ) << std::endl;
+std::cout << "tor_U2D2: expected: " << exsampler.tor_U2D2_samples()[ ll ] << " real: "
+<< numeric::constants::d::radians_to_degrees * numeric::dihedral_radians(
+coord2, coord3, p4, p5 ) << std::endl;
 
-							std::cout << "ang_U1D2: expected: " << exsampler.ang_U1D2_samples()[ mm ] << " real: "
-								<< numeric::constants::d::radians_to_degrees * numeric::angle_radians(
-								coord3, p4, p5 ) << std::endl;
+std::cout << "ang_U1D2: expected: " << exsampler.ang_U1D2_samples()[ mm ] << " real: "
+<< numeric::constants::d::radians_to_degrees * numeric::angle_radians(
+coord3, p4, p5 ) << std::endl;
 
-							std::cout << "tor_U1D3: expected: " << exsampler.tor_U1D3_samples()[ nn ] << " real: "
-								<< numeric::constants::d::radians_to_degrees * numeric::dihedral_radians(
-								coord3, p4, p5, p6 ) << std::endl;
+std::cout << "tor_U1D3: expected: " << exsampler.tor_U1D3_samples()[ nn ] << " real: "
+<< numeric::constants::d::radians_to_degrees * numeric::dihedral_radians(
+coord3, p4, p5, p6 ) << std::endl;
 
-							std::cout << "EXGEOM SAMPLE tor_U3D1: " << exsampler.tor_U3D1_samples()[ ii ];
-							std::cout << " ang_U2D1: " << exsampler.ang_U2D1_samples()[ jj ];
-							std::cout << " dis_U1D1: " << exsampler.dis_U1D1_samples()[ kk ];
-							std::cout << " tor_U2D2: " << exsampler.tor_U2D2_samples()[ ll ];
-							std::cout << " ang_U1D2: " << exsampler.ang_U1D2_samples()[ mm ];
-							std::cout << " tor_U1D3: " << exsampler.tor_U1D3_samples()[ nn ] << std::endl;
+std::cout << "EXGEOM SAMPLE tor_U3D1: " << exsampler.tor_U3D1_samples()[ ii ];
+std::cout << " ang_U2D1: " << exsampler.ang_U2D1_samples()[ jj ];
+std::cout << " dis_U1D1: " << exsampler.dis_U1D1_samples()[ kk ];
+std::cout << " tor_U2D2: " << exsampler.tor_U2D2_samples()[ ll ];
+std::cout << " ang_U1D2: " << exsampler.ang_U1D2_samples()[ mm ];
+std::cout << " tor_U1D3: " << exsampler.tor_U1D3_samples()[ nn ] << std::endl;
 
 
 */

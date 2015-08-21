@@ -37,7 +37,7 @@ public:
 	}
 
 private:
-	int	bb_;
+	int bb_;
 };
 
 }

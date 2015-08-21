@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/antibody_design/CentroidRelax.fwd.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_relax_CENTROIDRELAX_FWD_HH
@@ -36,4 +36,4 @@ typedef  utility::pointer::weak_ptr< CentroidRelax const >  CentroidRelaxCAP;
 } // namespace kinematics
 } // namespace core
 
-#endif	//#ifndef INCLUDED_protocols/relax_CENTROIDRELAX_FWD_HH
+#endif //#ifndef INCLUDED_protocols/relax_CENTROIDRELAX_FWD_HH

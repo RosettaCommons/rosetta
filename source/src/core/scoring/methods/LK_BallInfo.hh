@@ -62,12 +62,12 @@ namespace methods {
 class WaterBuilder {
 public:
 	WaterBuilder(
-							 Vector const & water,
-							 conformation::Residue const & rsd,
-							 Size const atom1,
-							 Size const atom2,
-							 Size const atom3
-							 );
+		Vector const & water,
+		conformation::Residue const & rsd,
+		Size const atom1,
+		Size const atom2,
+		Size const atom3
+	);
 
 	Vector
 	build( conformation::Residue const & rsd ) const;
@@ -94,7 +94,7 @@ typedef utility::vector1< WaterBuilder > WaterBuilders;
 class LKB_ResidueInfo; // fwd
 typedef utility::pointer::shared_ptr< LKB_ResidueInfo > LKB_ResidueInfoOP;
 
-	class LKB_ResidueInfo : public basic::datacache::CacheableData {
+class LKB_ResidueInfo : public basic::datacache::CacheableData {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~LKB_ResidueInfo();
@@ -130,10 +130,10 @@ public:
 
 	void
 	remove_irrelevant_waters(
-													 Size const atom,
-													 chemical::ResidueType const & rsd_type,
-													 utility::vector1< Vector > & waters
-													 ) const;
+		Size const atom,
+		chemical::ResidueType const & rsd_type,
+		utility::vector1< Vector > & waters
+	) const;
 
 
 	/// danger
@@ -147,10 +147,10 @@ public:
 	chemical::ResidueType const &
 	residue_type() const { return *rsd_type_; }
 
-/////////////////////////////////////////////////////////////////////////////
-// STATIC data
+	/////////////////////////////////////////////////////////////////////////////
+	// STATIC data
 private:
-/////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////
 
 	typedef std::map< chemical::ResidueType const *, utility::vector1< WaterBuilders > > WaterBuilderMap;
 	static WaterBuilderMap water_builder_map_;
@@ -163,10 +163,10 @@ private:
 
 	void
 	setup_atom_weights(
-										 chemical::ResidueType const & rsd_type,
-										 utility::vector1< WaterBuilders > const & rsd_water_builders, // for sanity
-										 utility::vector1< utility::vector1< Real > > & atom_wts
-										 ) const;
+		chemical::ResidueType const & rsd_type,
+		utility::vector1< WaterBuilders > const & rsd_water_builders, // for sanity
+		utility::vector1< utility::vector1< Real > > & atom_wts
+	) const;
 
 private:
 	chemical::ResidueType const * rsd_type_; // bad form

@@ -36,16 +36,16 @@ public:
 
 public:
 	/// @brief
-	/// 	empty constructor fills values with the values
-	///		read in from the commandline
+	///  empty constructor fills values with the values
+	///  read in from the commandline
 	ScoreMover();
 
 	~ScoreMover();
 
 	/// @brief constructor
 	/// @details creates the ScoreMover with the names passed in rather than
-	///		taken from the commandline
-	///		patch is not necessary
+	///  taken from the commandline
+	///  patch is not necessary
 	ScoreMover( std::string const &, std::string const & patch = "" );
 
 	/// @brief constructor
@@ -62,7 +62,7 @@ public:
 		protocols::filters::Filters_map const &,
 		moves::Movers_map const &,
 		Pose const & );
-  void parse_def( utility::lua::LuaObject const & def,
+	void parse_def( utility::lua::LuaObject const & def,
 		utility::lua::LuaObject const & score_fxns,
 		utility::lua::LuaObject const & tasks,
 		protocols::moves::MoverCacheSP cache );

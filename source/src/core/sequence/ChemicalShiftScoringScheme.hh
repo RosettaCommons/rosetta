@@ -38,7 +38,7 @@ public:
 		return ScoringSchemeOP( new ChemicalShiftScoringScheme(
 			gap_open(),
 			gap_extend()
-		) );
+			) );
 	}
 
 	/// @brief dtor

@@ -32,15 +32,15 @@ public:
 
 	/// @copydoc Perturber::perturb_subset
 	void perturb_subset(
-			Pose const & pose,
-			IndexList const & residues,
-			ClosureProblemOP problem);
+		Pose const & pose,
+		IndexList const & residues,
+		ClosureProblemOP problem);
 
 	/// @copydoc Perturber::perturb_subset_with_balance
 	void perturb_subset_with_balance(
-			Pose const & pose,
-			IndexList const & residues,
-			ClosureProblemOP problem);
+		Pose const & pose,
+		IndexList const & residues,
+		ClosureProblemOP problem);
 
 private:
 	Real magnitude_;

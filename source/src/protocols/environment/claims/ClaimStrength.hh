@@ -36,49 +36,49 @@ namespace environment {
 namespace claims {
 
 class ClaimStrength : public utility::pointer::ReferenceCount {
-  typedef utility::pointer::ReferenceCount Parent;
+	typedef utility::pointer::ReferenceCount Parent;
 
 public:
-  // PrioSubtypes indicate the level of control over the dof desired by the mover.
-  // DOES_NOT_CONTROL is the lowest level, used for protocols that exert no control
-  //   over the claimed dof (perhaps, for example, because they only require that it exists).
-  // CAN_CONTROL is also a low, uncommon level indicating the mover would like to control
-  //   (i.e. samples) the dof, but needn't. Fragment Insertion is often reliant on claims
-  //   of this type, because other movers can take priority (i.e. if a region is fixed).
-  // MUST_CONTROL asserts a need to sample the degree of freedom (e.g. jumps in docking).
-  //   This level allows the mover, however, to share the dof with other movers.
-  // EXCLUSIVE is as MUST_CONTROL, except that no other mover can be granted access to the dof.
-  enum PrioSubtype  {
-    DOES_NOT_CONTROL = 0,
-    CAN_CONTROL = 1,
-    MUST_CONTROL,
-    EXCLUSIVE
-  };
+	// PrioSubtypes indicate the level of control over the dof desired by the mover.
+	// DOES_NOT_CONTROL is the lowest level, used for protocols that exert no control
+	//   over the claimed dof (perhaps, for example, because they only require that it exists).
+	// CAN_CONTROL is also a low, uncommon level indicating the mover would like to control
+	//   (i.e. samples) the dof, but needn't. Fragment Insertion is often reliant on claims
+	//   of this type, because other movers can take priority (i.e. if a region is fixed).
+	// MUST_CONTROL asserts a need to sample the degree of freedom (e.g. jumps in docking).
+	//   This level allows the mover, however, to share the dof with other movers.
+	// EXCLUSIVE is as MUST_CONTROL, except that no other mover can be granted access to the dof.
+	enum PrioSubtype  {
+		DOES_NOT_CONTROL = 0,
+		CAN_CONTROL = 1,
+		MUST_CONTROL,
+		EXCLUSIVE
+	};
 
-  ClaimStrength( PrioSubtype type, Size subprio = 0 );
+	ClaimStrength( PrioSubtype type, Size subprio = 0 );
 
-  ClaimStrength( ClaimStrength const& );
+	ClaimStrength( ClaimStrength const& );
 
-  bool operator<( ClaimStrength const& ) const;
+	bool operator<( ClaimStrength const& ) const;
 
-  bool operator==( ClaimStrength const& ) const;
+	bool operator==( ClaimStrength const& ) const;
 
-  bool operator!=( ClaimStrength const& ) const;
+	bool operator!=( ClaimStrength const& ) const;
 
-  bool operator>( ClaimStrength const& ) const;
+	bool operator>( ClaimStrength const& ) const;
 
-  bool operator>= (ClaimStrength const& ) const;
+	bool operator>= (ClaimStrength const& ) const;
 
-  bool operator<= ( ClaimStrength const& ) const;
+	bool operator<= ( ClaimStrength const& ) const;
 
-  PrioSubtype subtype() const;
+	PrioSubtype subtype() const;
 
-  Size subprio() const;
+	Size subprio() const;
 
 private:
 
-  PrioSubtype subtype_;
-  Size subprio_;
+	PrioSubtype subtype_;
+	Size subprio_;
 
 };
 

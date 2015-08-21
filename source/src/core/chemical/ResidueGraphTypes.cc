@@ -39,77 +39,77 @@
 namespace core {
 namespace chemical {
 
-				/////////////////////////////////////////////////////////////
-				////////// PREDICATES for FILTERED GRAPHS ///////////////////
-				////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+////////// PREDICATES for FILTERED GRAPHS ///////////////////
+////////////////////////////////////////////////////////////
 
 
-				bool RealFilter::operator()(VD const vd) const {
-				    return ! (*graph_)[ vd ].is_fake();
-				}
+bool RealFilter::operator()(VD const vd) const {
+	return ! (*graph_)[ vd ].is_fake();
+}
 
-				bool RealFilter::operator()(ED const ed) const {
-				    return ! (*graph_)[ ed ].is_fake();
-				}
-
-
-        bool HeavyAtomFilter::operator()(VD const vd) const{
-            AtomTypeSetCOP atom_types( atom_types_ );
-            return (*atom_types)[ (*graph_)[vd].atom_type_index() ].is_heavyatom();
-        }
-
-        bool AcceptorAtomFilter::operator()(VD const vd) const{
-            AtomTypeSetCOP atom_types( atom_types_ );
-            return (*atom_types)[ (*graph_)[vd].atom_type_index() ].is_acceptor();
-        }
-
-        bool HeavyAtomWithPolarHydrogensFilter::operator()(VD const vd) const{
-
-            AtomTypeSetCOP atom_types( atom_types_ );
-            for(OutEdgeIterPair ep = boost::out_edges(vd, *graph_); ep.first != ep.second; ++ep.first){
-            	OutEdgeIter e_iter= ep.first;
-            	ED ed = *e_iter;
-            	VD target = boost::target(ed, *graph_);
-                Atom const& a =  (*graph_)[target];
-                AtomType const& at = (*atom_types)[ a.atom_type_index() ];
-                if( at.is_polar_hydrogen() ) return true;
-            }
-            return false;
-        }
-
-        bool HeavyAtomWithHydrogensFilter::operator()(VD const vd) const{
-
-            AtomTypeSetCOP atom_types( atom_types_ );
-            for(OutEdgeIterPair ep = boost::out_edges(vd, *graph_); ep.first != ep.second; ++ep.first){
-            	OutEdgeIter e_iter= ep.first;
-                ED ed = *e_iter;
-                VD target = boost::target(ed, *graph_);
-                Atom const& a =  (*graph_)[target];
-                AtomType const& at = (*atom_types)[ a.atom_type_index() ];
-                if( at.is_hydrogen() ) return true;
-            }
-            return false;
-        }
+bool RealFilter::operator()(ED const ed) const {
+	return ! (*graph_)[ ed ].is_fake();
+}
 
 
-        bool HydrogenAtomFilter::operator()(VD const vd) const{
-            AtomTypeSetCOP atom_types( atom_types_ );
-            return (*atom_types)[ (*graph_)[vd].atom_type_index() ].is_hydrogen();
-        }
+bool HeavyAtomFilter::operator()(VD const vd) const{
+	AtomTypeSetCOP atom_types( atom_types_ );
+	return (*atom_types)[ (*graph_)[vd].atom_type_index() ].is_heavyatom();
+}
 
-        bool AromaticAtomFilter::operator()(VD const vd) const{
-            AtomTypeSetCOP atom_types( atom_types_ );
-            return (*atom_types)[ (*graph_)[vd].atom_type_index() ].is_aromatic();
-        }
-        bool PolarHydrogenFilter::operator()(VD const vd) const{
-            AtomTypeSetCOP atom_types( atom_types_ );
-            return (*atom_types)[ (*graph_)[vd].atom_type_index() ].is_polar_hydrogen();
-        }
+bool AcceptorAtomFilter::operator()(VD const vd) const{
+	AtomTypeSetCOP atom_types( atom_types_ );
+	return (*atom_types)[ (*graph_)[vd].atom_type_index() ].is_acceptor();
+}
 
-        bool APolarHydrogenFilter::operator()(VD const vd) const{
-            AtomTypeSetCOP atom_types( atom_types_ );
-            return  (*atom_types)[ (*graph_)[vd].atom_type_index() ].is_hydrogen() && !(*atom_types)[ (*graph_)[vd].atom_type_index() ].is_polar_hydrogen();
-        }
+bool HeavyAtomWithPolarHydrogensFilter::operator()(VD const vd) const{
+
+	AtomTypeSetCOP atom_types( atom_types_ );
+	for ( OutEdgeIterPair ep = boost::out_edges(vd, *graph_); ep.first != ep.second; ++ep.first ) {
+		OutEdgeIter e_iter= ep.first;
+		ED ed = *e_iter;
+		VD target = boost::target(ed, *graph_);
+		Atom const& a =  (*graph_)[target];
+		AtomType const& at = (*atom_types)[ a.atom_type_index() ];
+		if ( at.is_polar_hydrogen() ) return true;
+	}
+	return false;
+}
+
+bool HeavyAtomWithHydrogensFilter::operator()(VD const vd) const{
+
+	AtomTypeSetCOP atom_types( atom_types_ );
+	for ( OutEdgeIterPair ep = boost::out_edges(vd, *graph_); ep.first != ep.second; ++ep.first ) {
+		OutEdgeIter e_iter= ep.first;
+		ED ed = *e_iter;
+		VD target = boost::target(ed, *graph_);
+		Atom const& a =  (*graph_)[target];
+		AtomType const& at = (*atom_types)[ a.atom_type_index() ];
+		if ( at.is_hydrogen() ) return true;
+	}
+	return false;
+}
+
+
+bool HydrogenAtomFilter::operator()(VD const vd) const{
+	AtomTypeSetCOP atom_types( atom_types_ );
+	return (*atom_types)[ (*graph_)[vd].atom_type_index() ].is_hydrogen();
+}
+
+bool AromaticAtomFilter::operator()(VD const vd) const{
+	AtomTypeSetCOP atom_types( atom_types_ );
+	return (*atom_types)[ (*graph_)[vd].atom_type_index() ].is_aromatic();
+}
+bool PolarHydrogenFilter::operator()(VD const vd) const{
+	AtomTypeSetCOP atom_types( atom_types_ );
+	return (*atom_types)[ (*graph_)[vd].atom_type_index() ].is_polar_hydrogen();
+}
+
+bool APolarHydrogenFilter::operator()(VD const vd) const{
+	AtomTypeSetCOP atom_types( atom_types_ );
+	return  (*atom_types)[ (*graph_)[vd].atom_type_index() ].is_hydrogen() && !(*atom_types)[ (*graph_)[vd].atom_type_index() ].is_polar_hydrogen();
+}
 
 }
 }

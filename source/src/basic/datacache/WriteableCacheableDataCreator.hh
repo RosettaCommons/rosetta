@@ -31,11 +31,11 @@ namespace datacache {
 class WriteableCacheableDataCreator : public utility::pointer::ReferenceCount
 {
 public:
-  WriteableCacheableDataCreator();
-  virtual ~WriteableCacheableDataCreator();
+	WriteableCacheableDataCreator();
+	virtual ~WriteableCacheableDataCreator();
 
-  virtual WriteableCacheableDataOP create_data( std::istream &in ) const = 0;
-  virtual std::string keyname() const = 0;
+	virtual WriteableCacheableDataOP create_data( std::istream &in ) const = 0;
+	virtual std::string keyname() const = 0;
 };
 
 typedef utility::pointer::shared_ptr< WriteableCacheableDataCreator > WriteableCacheableDataCreatorOP;

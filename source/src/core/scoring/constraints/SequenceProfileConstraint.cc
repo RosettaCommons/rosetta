@@ -56,11 +56,11 @@ using basic::t_trace;
 static thread_local basic::Tracer TR( "core.scoring.constraints.SequenceProfileConstraint" );
 
 SequenceProfileConstraint::SequenceProfileConstraint()
-	: Constraint( res_type_constraint ),
-		seqpos_(0),
-		sequence_profile_(/* NULL */),
-		mapping_(/* NULL */),
-		weight_( 1.0 )
+: Constraint( res_type_constraint ),
+	seqpos_(0),
+	sequence_profile_(/* NULL */),
+	mapping_(/* NULL */),
+	weight_( 1.0 )
 {}
 
 SequenceProfileConstraint::SequenceProfileConstraint(
@@ -105,9 +105,9 @@ SequenceProfileConstraint::read_def(
 {
 
 	int version = 0;
-//	note: is >> "SequenceProfile" has already occured
+	// note: is >> "SequenceProfile" has already occured
 	is >> version;
-	if( version == -1 ) {
+	if ( version == -1 ) {
 		std::string tmp;
 		std::getline( is, tmp );
 		std::stringstream tmpss(tmp);
@@ -115,12 +115,12 @@ SequenceProfileConstraint::read_def(
 		tmpss >> residue_index >> aa_count;
 		utility::vector1<Real> aa_scores;
 		TR(t_debug) << "Loading seqprof constraint for resi " << residue_index << " with aa_count " << aa_count << std::endl;
-		for( Size i = 1; i <= aa_count; i++ ) {
+		for ( Size i = 1; i <= aa_count; i++ ) {
 			Real tmp;
 			tmpss >> tmp;
 			aa_scores.push_back( tmp );
 		}
-		if( ! sequence_profile_ )  {
+		if ( ! sequence_profile_ )  {
 			SequenceProfileOP newseqprof( new SequenceProfile );
 			sequence_profile_ = newseqprof;
 			mapping_ = NULL;
@@ -180,22 +180,23 @@ void
 SequenceProfileConstraint::show( std::ostream & os ) const {
 	if ( sequence_profile_ )  {
 		core::Size profile_pos( seqpos_ );
-		if( mapping_ ) {
+		if ( mapping_ ) {
 			profile_pos = (*mapping_)[seqpos_];
-			if( profile_pos == 0 ) return; // safety/relevance check
+			if ( profile_pos == 0 ) return; // safety/relevance check
 		}
 		typedef utility::vector1<Real> RealVec;
 		//if( profile_pos == 1 )
-//			os << "SequenceProfile start" << std::endl;
+		//   os << "SequenceProfile start" << std::endl;
 
-		if( profile_pos <= sequence_profile_->size() ) {
+		if ( profile_pos <= sequence_profile_->size() ) {
 			RealVec const & aa_scores( sequence_profile_->prof_row( profile_pos ) );
 			os << "SequenceProfile -1 " << seqpos_ << " "<< profile_pos << " " << aa_scores.size() << " ";
 			for ( Size aa(1); aa <= aa_scores.size(); ++aa ) {
 				os << aa_scores[aa] << " ";
 			}
-			if( profile_pos != sequence_profile_->size() )
+			if ( profile_pos != sequence_profile_->size() ) {
 				os << '\n';
+			}
 		}
 	}
 }
@@ -234,7 +235,7 @@ SequenceProfileConstraint::remap_resid(
 		new_map->downstream_combine( *mapping_ ); // Combine new->old and old->profile into new->profile
 	}
 
-	return ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint(	newseqpos, sequence_profile_, new_map ) );
+	return ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( newseqpos, sequence_profile_, new_map ) );
 }
 
 ConstraintOP
@@ -244,7 +245,7 @@ SequenceProfileConstraint::remapped_clone(
 	id::SequenceMappingCOP map /*=NULL*/ ) const
 {
 	if ( ! map ) {
-		return ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint(	seqpos_, sequence_profile_, mapping_ ) );
+		return ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( seqpos_, sequence_profile_, mapping_ ) );
 	}
 
 	// Hereafter map is valid
@@ -260,7 +261,7 @@ SequenceProfileConstraint::remapped_clone(
 		new_map->downstream_combine( *mapping_ ); // Combine new->old and old->profile into new->profile
 	}
 
-	return ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint(	newseqpos, sequence_profile_, new_map ) );
+	return ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( newseqpos, sequence_profile_, new_map ) );
 }
 
 
@@ -278,9 +279,9 @@ SequenceProfileConstraint::score(
 	runtime_assert( sequence_profile_ != 0 );
 
 	core::Size profile_pos( seqpos_ );
-	if( mapping_ ) {
+	if ( mapping_ ) {
 		profile_pos = (*mapping_)[seqpos_];
-		if( profile_pos == 0 ) return; // safety/relevance check
+		if ( profile_pos == 0 ) return; // safety/relevance check
 	}
 	chemical::AA aa( xyz_func.residue( seqpos_ ).type().aa() );
 	utility::vector1< utility::vector1< Real > > const & profile( sequence_profile_->profile() );
@@ -290,7 +291,7 @@ SequenceProfileConstraint::score(
 	Real const score( position_profile[aa] );
 	TR(t_trace) << "seqpos " << seqpos_ << " aa " << aa << " " << weight() * score << std::endl;
 
-	if( sequence_profile_->negative_better() ) {
+	if ( sequence_profile_->negative_better() ) {
 		emap[ this->score_type() ] += weight() * score;
 	} else {
 		emap[ this->score_type() ] -= weight() * score;
@@ -316,13 +317,13 @@ SequenceProfileConstraintCreator::~SequenceProfileConstraintCreator() {}
 core::scoring::constraints::ConstraintOP
 SequenceProfileConstraintCreator::create_constraint() const
 {
-        return core::scoring::constraints::ConstraintOP( new SequenceProfileConstraint );
+	return core::scoring::constraints::ConstraintOP( new SequenceProfileConstraint );
 }
 
 std::string
 SequenceProfileConstraintCreator::keyname() const
 {
-        return "SequenceProfile";
+	return "SequenceProfile";
 }
 
 core::Real

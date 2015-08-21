@@ -43,7 +43,7 @@ using namespace core;
 
 DisulfJumpClaimer::DisulfJumpClaimer() :
 	//jump_def_( NULL ),
-	//	init_mover_( NULL ),
+	// init_mover_( NULL ),
 	bKeepJumpsFromInputPose_( true )
 {
 	set_bInitDofs( true ); //we want to initialize jumps
@@ -58,23 +58,23 @@ TopologyClaimerOP DisulfJumpClaimer::clone() const {
 void DisulfJumpClaimer::new_decoy() {
 	generate_jump_frags( *jumping::StandardDisulfPairingLibrary::get_instance(), all_frames_ );
 
- 	core::fragment::FragSetOP jump_frags( new core::fragment::OrderedFragSet );
- 	jump_frags->add( all_frames_ );
+	core::fragment::FragSetOP jump_frags( new core::fragment::OrderedFragSet );
+	jump_frags->add( all_frames_ );
 
 	simple_moves::ClassicFragmentMoverOP mover;
-  mover = simple_moves::ClassicFragmentMoverOP( new simple_moves::ClassicFragmentMover( jump_frags, movemap_ ) );
+	mover = simple_moves::ClassicFragmentMoverOP( new simple_moves::ClassicFragmentMover( jump_frags, movemap_ ) );
 	mover->type( mover_tag() );
-  mover->set_check_ss( false ); // this doesn't make sense with jump fragments
+	mover->set_check_ss( false ); // this doesn't make sense with jump fragments
 	mover->enable_end_bias_check( false ); //no sense for discontinuous fragments
 	set_mover( mover );
 
 	//Size attempts( 10 );
 	//do {
-	//	current_jumps_ = jump_def_->create_jump_sample();
+	// current_jumps_ = jump_def_->create_jump_sample();
 	//} while ( !current_jumps_.is_valid() && attempts-- );
 
 	//if ( !current_jumps_.is_valid() ) {
-  //    utility_exit_with_message( "not able to build valid fold-tree in DisulfJumpClaimer" );
+	//    utility_exit_with_message( "not able to build valid fold-tree in DisulfJumpClaimer" );
 	//}
 	//tr.Debug << "current_jumps " << current_jumps_ << std::endl;
 }
@@ -91,29 +91,29 @@ void DisulfJumpClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClai
 
 	//init_mover_ = new simple_moves::ClassicFragmentMover( jump_frags, movemap_ );
 	//init_mover_->type( mover_tag() );
- 	//init_mover_->set_check_ss( false ); // this doesn't make sense with jump fragments
- 	//init_mover_->enable_end_bias_check( false ); //no sense for discontinuous fragments
+	//init_mover_->set_check_ss( false ); // this doesn't make sense with jump fragments
+	//init_mover_->enable_end_bias_check( false ); //no sense for discontinuous fragments
 
-// 	kinematics::MoveMapOP movemap = new kinematics::MoveMap();
+	//  kinematics::MoveMapOP movemap = new kinematics::MoveMap();
 
-// 	for ( DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
-// 				it != eit; ++it ) {
-//     if ( (*it)->owner()==this ) {
-//       (*it)->toggle( *movemap, true );
-// 		}
-// 	}
+	//  for ( DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
+	//     it != eit; ++it ) {
+	//     if ( (*it)->owner()==this ) {
+	//       (*it)->toggle( *movemap, true );
+	//   }
+	//  }
 
 
 	//need to copy coords and jumps --- if chunks were idealized no problem .... but non-idealized stuff ?
-// 	if ( init_mover_ ) {
-// 		simple_moves::FragmentMoverOP frag_mover = get_frag_mover_ptr();
-// 		set_mover( init_mover_ );
-// 		FragmentClaimer::initialize_dofs( pose, init_dofs, failed_to_init );
-// 		set_mover( frag_mover );
-// 		init_mover_ = NULL;
-// 	} else {
- 		FragmentClaimer::initialize_dofs( pose, init_dofs, failed_to_init );
-// 	}
+	//  if ( init_mover_ ) {
+	//   simple_moves::FragmentMoverOP frag_mover = get_frag_mover_ptr();
+	//   set_mover( init_mover_ );
+	//   FragmentClaimer::initialize_dofs( pose, init_dofs, failed_to_init );
+	//   set_mover( frag_mover );
+	//   init_mover_ = NULL;
+	//  } else {
+	FragmentClaimer::initialize_dofs( pose, init_dofs, failed_to_init );
+	//  }
 }
 
 void DisulfJumpClaimer::generate_jump_frags(
@@ -129,7 +129,7 @@ void DisulfJumpClaimer::generate_jump_frags(
 	core::fragment::FragDataOPs frag_data;
 	lib.create_jump_fragments( false, frag_data );
 
-	for ( Size i = 1; i <= all_jump_pairings_.size(); ++i) {
+	for ( Size i = 1; i <= all_jump_pairings_.size(); ++i ) {
 		int const startpos( all_jump_pairings_[i].pos1 );
 		int const endpos( all_jump_pairings_[i].pos2 );
 
@@ -147,33 +147,33 @@ void DisulfJumpClaimer::generate_jump_frags(
 }
 
 // void DisulfJumpClaimer::generate_jump_frames(
-// 	 core::fragment::FrameList& all_frames,
-// 	 core::kinematics::MoveMap const& mm
+//   core::fragment::FrameList& all_frames,
+//   core::kinematics::MoveMap const& mm
 // ) const
 // {
-// 	all_frames.reserve( all_frames.size() + all_jump_pairings_.size() );
+//  all_frames.reserve( all_frames.size() + all_jump_pairings_.size() );
 
-// 	for ( Size i = 1; i <= all_jump_pairings_.size(); ++i) {
-// 		int const startpos( all_jump_pairings_[i].pos1 );
-// 		int const endpos( all_jump_pairings_[i].pos2 );
+//  for ( Size i = 1; i <= all_jump_pairings_.size(); ++i) {
+//   int const startpos( all_jump_pairings_[i].pos1 );
+//   int const endpos( all_jump_pairings_[i].pos2 );
 
-// 		core::fragment::FragDataOP frag_data = new core::fragment::FragData;
+//   core::fragment::FragDataOP frag_data = new core::fragment::FragData;
 
-// 		frag_data->add_residue( new core::fragment::UpJumpSRFD );
-// 		frag_data->add_residue( new core::fragment::DownJumpSRFD );
+//   frag_data->add_residue( new core::fragment::UpJumpSRFD );
+//   frag_data->add_residue( new core::fragment::DownJumpSRFD );
 
-// 		core::fragment::JumpingFrameOP frame =
-// 			new core::fragment::JumpingFrame( startpos, endpos, frag_data->size () );
+//   core::fragment::JumpingFrameOP frame =
+//    new core::fragment::JumpingFrame( startpos, endpos, frag_data->size () );
 
-// 		Size pos = 1;
-// 		frame->set_pos( pos++, startpos );
-// 		frame->set_pos( pos++, endpos );
+//   Size pos = 1;
+//   frame->set_pos( pos++, startpos );
+//   frame->set_pos( pos++, endpos );
 
-// 		frame->add_fragment( frag_data );
+//   frame->add_fragment( frag_data );
 
-// 		runtime_assert( frame->nr_frags() );
-// 		all_frames.push_back( frame );
-// 	}
+//   runtime_assert( frame->nr_frags() );
+//   all_frames.push_back( frame );
+//  }
 // }
 
 
@@ -182,8 +182,8 @@ void DisulfJumpClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	using std::pair;
 
 	//Initialize all_jump_pairings_ list with the data gathered during read_tag
-	for( utility::vector1< claims::JumpClaimOP >::iterator bond_it = local_disulf_data_.begin();
-			 bond_it != local_disulf_data_.end(); ++bond_it ) {
+	for ( utility::vector1< claims::JumpClaimOP >::iterator bond_it = local_disulf_data_.begin();
+			bond_it != local_disulf_data_.end(); ++bond_it ) {
 		claims::JumpClaimOP claim( *bond_it );
 
 		core::Size pos1 = claim->global_pos1();
@@ -200,9 +200,9 @@ void DisulfJumpClaimer::generate_claims( claims::DofClaims& new_claims ) {
 		all_jump_pairings_.push_back( dis_pair );
 
 		new_claims.push_back( claims::DofClaimOP( new claims::JumpClaim( get_self_weak_ptr(),
-																								 claim->local_pos1(),
-																								 claim->local_pos2(),
-																								 claims::DofClaim::INIT ) ) );
+			claim->local_pos1(),
+			claim->local_pos2(),
+			claims::DofClaim::INIT ) ) );
 	}
 
 	// get flexible jumps ( beta-sheet stuff etc. )
@@ -211,11 +211,11 @@ void DisulfJumpClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	movemap_->set_jump( true ); //we switch them off on a as-need basis
 	movemap_->set_bb( true );
 
-// 	core::fragment::FragSetOP jump_frags = new core::fragment::OrderedFragSet;
-// 	core::fragment::FrameList jump_frames;
+	//  core::fragment::FragSetOP jump_frags = new core::fragment::OrderedFragSet;
+	//  core::fragment::FrameList jump_frames;
 
-// 	//generate_jump_frames( jump_frames, *movemap_ );
-// 	jump_frags->add( jump_frames );
+	//  //generate_jump_frames( jump_frames, *movemap_ );
+	//  jump_frags->add( jump_frames );
 }
 
 bool DisulfJumpClaimer::read_tag( std::string tag, std::istream& is ) {
@@ -229,14 +229,14 @@ bool DisulfJumpClaimer::read_tag( std::string tag, std::istream& is ) {
 
 		is >> pos1 >> label1 >> ss1 >> pos2 >> label2 >> ss2;
 
-		if( !( ss1 == "S" || ss1 == "H" || ss1 == "E" )  ) {
+		if ( !( ss1 == "S" || ss1 == "H" || ss1 == "E" )  ) {
 			throw utility::excn::EXCN_BadInput(
-           "When reading DisulfJumpClaimer, secondary structure character '"
-					 +ss1+"' was invalid. Valid characters are 'S', 'H', and 'E'." );
-		} else if( !( ss2 == "S" || ss2 == "H" || ss2 == "E" )  ) {
+				"When reading DisulfJumpClaimer, secondary structure character '"
+				+ss1+"' was invalid. Valid characters are 'S', 'H', and 'E'." );
+		} else if ( !( ss2 == "S" || ss2 == "H" || ss2 == "E" )  ) {
 			throw utility::excn::EXCN_BadInput(
-					 "When reading DisulfJumpClaimer, secondary structure character '"
-					 +ss2+"' was invalid. Valid characters are 'S', 'H', and 'E'." );
+				"When reading DisulfJumpClaimer, secondary structure character '"
+				+ss2+"' was invalid. Valid characters are 'S', 'H', and 'E'." );
 		}
 
 		claims::LocalPosition local_pos1 = std::make_pair( label1, pos1 );
@@ -244,10 +244,10 @@ bool DisulfJumpClaimer::read_tag( std::string tag, std::istream& is ) {
 
 		//Use jump claim's atom to keep track of the secondary structure (a bit hacky, I know)
 		claims::JumpClaimOP disulf_bond( new claims::JumpClaim( get_self_weak_ptr(),
-																														 std::make_pair( label1, pos1 ),
-																														 std::make_pair( label2, pos2 ),
-																														 ss1,
-																														 ss2 ) );
+			std::make_pair( label1, pos1 ),
+			std::make_pair( label2, pos2 ),
+			ss1,
+			ss2 ) );
 
 		local_disulf_data_.push_back( disulf_bond );
 

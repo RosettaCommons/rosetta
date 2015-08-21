@@ -46,9 +46,9 @@ public:
 	void
 	ncaa_rotlib_path( std::string const & path ) { ncaa_rotlib_path_ = path; }
 
-//	/// @brief Sets the number of rotatable bonds described by the NCAA rotlib  (not nesesarily equal to nchi)
-//	void
-//	ncaa_rotlib_n_rotameric_bins( core::Size nbins ) { ncaa_rotlib_n_rots_ = nbins; }
+	// /// @brief Sets the number of rotatable bonds described by the NCAA rotlib  (not nesesarily equal to nchi)
+	// void
+	// ncaa_rotlib_n_rotameric_bins( core::Size nbins ) { ncaa_rotlib_n_rots_ = nbins; }
 
 	/// @brief Sets the number of rotamers for each rotatable bond described by the NCAA rotlib
 	void
@@ -100,8 +100,8 @@ private:
 
 	/// @brief path to the NCAA rotlib
 	std::string ncaa_rotlib_path_;
-//	/// @brief the number of non-hydrogen chi angles in the NCAA rotlib
-//	core::Size ncaa_rotlib_n_rots_;
+	// /// @brief the number of non-hydrogen chi angles in the NCAA rotlib
+	// core::Size ncaa_rotlib_n_rots_;
 	/// @brief the number of rotamer bins for each chi angle in the NCAA rotlib
 	utility::vector1< Size > ncaa_rotlib_n_bins_per_rot_;
 

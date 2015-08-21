@@ -51,11 +51,11 @@ namespace numeric {
 //xyzVector< T >
 //operator *( xyzMatrix< T > const & m, xyzVector< T > const & v )
 //{
-//	return xyzVector< T >(
-//		m.xx_ * v.x_ + m.xy_ * v.y_ + m.xz_ * v.z_,
-//		m.yx_ * v.x_ + m.yy_ * v.y_ + m.yz_ * v.z_,
-//		m.zx_ * v.x_ + m.zy_ * v.y_ + m.zz_ * v.z_
-//	);
+// return xyzVector< T >(
+//  m.xx_ * v.x_ + m.xy_ * v.y_ + m.xz_ * v.z_,
+//  m.yx_ * v.x_ + m.yy_ * v.y_ + m.yz_ * v.z_,
+//  m.zx_ * v.x_ + m.zy_ * v.y_ + m.zz_ * v.z_
+// );
 //}
 
 /// @brief return the point closest to point p3 that lies on the line
@@ -79,10 +79,9 @@ xyzVector< T >
 center_of_mass( utility::vector1< xyzVector< T > > const & coords )
 {
 	xyzVector< T > center_of_mass( 0.0, 0.0, 0.0 );
-	for(typename utility::vector1< xyzVector< T > >::const_iterator it = coords.begin();
-		it != coords.end();
-		++it)
-	{
+	for ( typename utility::vector1< xyzVector< T > >::const_iterator it = coords.begin();
+			it != coords.end();
+			++it ) {
 		center_of_mass += *it;
 	}
 	center_of_mass /= coords.size();
@@ -174,13 +173,13 @@ inline
 xyzVector<T>
 geometric_center(std::vector<xyzVector<T> > const & points)
 {
-	xyzVector<T> total(0.0,0.0,0.0);
-	std::vector<xyzVector<T> >::iterator points_it = points.begin();
-	for(; points_it != points.end();++points_it)
-	{
-		total += *points_it;
-	}
-	return total/points.size();
+xyzVector<T> total(0.0,0.0,0.0);
+std::vector<xyzVector<T> >::iterator points_it = points.begin();
+for(; points_it != points.end();++points_it)
+{
+total += *points_it;
+}
+return total/points.size();
 }
 */
 
@@ -194,10 +193,10 @@ xyzMatrix< T >
 projection_matrix( xyzVector< T > const & v )
 {
 	return ( xyzMatrix< T >(
-	 v.x_ * v.x_, v.x_ * v.y_, v.x_ * v.z_,
-	 v.y_ * v.x_, v.y_ * v.y_, v.y_ * v.z_,
-	 v.z_ * v.x_, v.z_ * v.y_, v.z_ * v.z_
-	) /= v.length_squared() );
+		v.x_ * v.x_, v.x_ * v.y_, v.x_ * v.z_,
+		v.y_ * v.x_, v.y_ * v.y_, v.y_ * v.z_,
+		v.z_ * v.x_, v.z_ * v.y_, v.z_ * v.z_
+		) /= v.length_squared() );
 }
 
 template< typename T >
@@ -206,9 +205,9 @@ xyzMatrix< T >
 inverse( xyzMatrix< T > const & a ) {
 	T D = a.det();
 	return xyzMatrix< T >(
-		 (a.yy_*a.zz_-a.yz_*a.zy_)/D, -(a.xy_*a.zz_-a.xz_*a.zy_)/D,  (a.xy_*a.yz_-a.xz_*a.yy_)/D,
+		(a.yy_*a.zz_-a.yz_*a.zy_)/D, -(a.xy_*a.zz_-a.xz_*a.zy_)/D,  (a.xy_*a.yz_-a.xz_*a.yy_)/D,
 		-(a.yx_*a.zz_-a.zx_*a.yz_)/D,  (a.xx_*a.zz_-a.xz_*a.zx_)/D, -(a.xx_*a.yz_-a.xz_*a.yx_)/D,
-		 (a.yx_*a.zy_-a.zx_*a.yy_)/D, -(a.xx_*a.zy_-a.xy_*a.zx_)/D,  (a.xx_*a.yy_-a.xy_*a.yx_)/D
+		(a.yx_*a.zy_-a.zx_*a.yy_)/D, -(a.xx_*a.zy_-a.xy_*a.zx_)/D,  (a.xx_*a.yy_-a.xy_*a.yx_)/D
 	);
 }
 
@@ -320,7 +319,7 @@ inline double angle_radians_double(
 
 /// @brief Angle between two vectors in radians
 /// @note  Given two vectors (p1->p2 & p3->p4),
-///	calculate the angle between them
+/// calculate the angle between them
 /// @note  Angle returned is on [ 0, pi ]
 template< typename T >
 inline
@@ -388,12 +387,12 @@ dihedral_radians(
 
 // PyRosetta, creating concreate function for template one
 inline void dihedral_radians_double(
-    xyzVector< double > const & p1,
+	xyzVector< double > const & p1,
 	xyzVector< double > const & p2,
 	xyzVector< double > const & p3,
 	xyzVector< double > const & p4,
 	double & angle // Angle (radians)
-		) { dihedral_radians(p1, p2, p3, p4, angle); }
+) { dihedral_radians(p1, p2, p3, p4, angle); }
 
 
 /// @brief Dihedral (torsion) angle in radians: angle value returned
@@ -422,11 +421,11 @@ dihedral_radians(
 
 // PyRosetta, creating concreate function for template one
 inline double dihedral_radians_double(
-    xyzVector< double > const & p1,
+	xyzVector< double > const & p1,
 	xyzVector< double > const & p2,
 	xyzVector< double > const & p3,
 	xyzVector< double > const & p4
-									  ) { return dihedral_radians(p1, p2, p3, p4); }
+) { return dihedral_radians(p1, p2, p3, p4); }
 
 
 /// @brief Dihedral (torsion) angle in degrees: angle value passed
@@ -447,12 +446,12 @@ dihedral_degrees(
 
 // PyRosetta, creating concreate function for template one
 inline void dihedral_degrees_double(
-    xyzVector< double > const & p1,
+	xyzVector< double > const & p1,
 	xyzVector< double > const & p2,
 	xyzVector< double > const & p3,
 	xyzVector< double > const & p4,
 	double & angle // Angle (radians)
-		) { dihedral_degrees(p1, p2, p3, p4, angle); }
+) { dihedral_degrees(p1, p2, p3, p4, angle); }
 
 
 /// @brief Dihedral (torsion) angle in degrees: angle value returned
@@ -472,11 +471,11 @@ dihedral_degrees(
 
 // PyRosetta, creating concreate function for template one
 inline double dihedral_degrees_double(
-    xyzVector< double > const & p1,
+	xyzVector< double > const & p1,
 	xyzVector< double > const & p2,
 	xyzVector< double > const & p3,
 	xyzVector< double > const & p4
-									  ) { return dihedral_degrees(p1, p2, p3, p4); }
+) { return dihedral_degrees(p1, p2, p3, p4); }
 
 
 /// @brief Dihedral (torsion) angle in degrees: angle value passed
@@ -498,12 +497,12 @@ dihedral(
 
 // PyRosetta, creating concreate function for template one
 inline void dihedral_double(
-    xyzVector< double > const & p1,
+	xyzVector< double > const & p1,
 	xyzVector< double > const & p2,
 	xyzVector< double > const & p3,
 	xyzVector< double > const & p4,
 	double & angle // Angle (degrees)
-									) { dihedral(p1, p2, p3, p4, angle); }
+) { dihedral(p1, p2, p3, p4, angle); }
 
 
 /// @brief Dihedral (torsion) angle in degrees: angle value returned
@@ -524,11 +523,11 @@ dihedral(
 
 // PyRosetta, creating concreate function for template one
 inline double dihedral_double(
-    xyzVector< double > const & p1,
+	xyzVector< double > const & p1,
 	xyzVector< double > const & p2,
 	xyzVector< double > const & p3,
 	xyzVector< double > const & p4
-									) { return dihedral(p1, p2, p3, p4); }
+) { return dihedral(p1, p2, p3, p4); }
 
 
 // @brief Rotation matrix for rotation from axis-angle representation
@@ -647,8 +646,8 @@ y_rotation_matrix(
 	T const cos_theta( std::cos( theta ) );
 
 	return xyzMatrix< T >::rows(
-		 cos_theta, T( 0 ), sin_theta,
-		 T( 0 ),    T( 1 ), T( 0 ),
+		cos_theta, T( 0 ), sin_theta,
+		T( 0 ),    T( 1 ), T( 0 ),
 		-sin_theta, T( 0 ), cos_theta
 	);
 }
@@ -726,10 +725,10 @@ template< typename T >
 inline
 xyzMatrix< T >
 alignVectorSets(
-		xyzVector< T > A1,
-		xyzVector< T > B1,
-		xyzVector< T > A2,
-		xyzVector< T > B2 ) {
+	xyzVector< T > A1,
+	xyzVector< T > B1,
+	xyzVector< T > A2,
+	xyzVector< T > B2 ) {
 	// 1) find rotation to align canonic +z to each vector pair's +z (defined as the avg of the two vectors)
 	xyzVector< T > X1 = (A1+B1); X1.normalize();
 	xyzVector< T > X2 = (A2+B2); X2.normalize();
@@ -841,11 +840,11 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 		// Compute sign and absolute value of axis vector elements from matrix elements
 		// Sign of axis vector is chosen to correspond to a positive sin_theta value
 		T x = ( R.zy_ > R.yz_ ? ONE : -ONE ) *
-		 sqrt( max( ZERO, ( R.xx_ - cos_theta ) / ( ONE - cos_theta ) ) );
+			sqrt( max( ZERO, ( R.xx_ - cos_theta ) / ( ONE - cos_theta ) ) );
 		T y = ( R.xz_ > R.zx_ ? ONE : -ONE ) *
-		 sqrt( max( ZERO, ( R.yy_ - cos_theta ) / ( ONE - cos_theta ) ) );
+			sqrt( max( ZERO, ( R.yy_ - cos_theta ) / ( ONE - cos_theta ) ) );
 		T z = ( R.yx_ > R.xy_ ? ONE : -ONE ) *
-		 sqrt( max( ZERO, ( R.zz_ - cos_theta ) / ( ONE - cos_theta ) ) );
+			sqrt( max( ZERO, ( R.zz_ - cos_theta ) / ( ONE - cos_theta ) ) );
 		// Above method appears to cover a greater range of cases than the original method:
 		//
 		// return ( xyzVector< T >( R.zy_ - R.yz_, R.xz_ - R.zx_, R.yx_ - R.xy_ )
@@ -954,8 +953,8 @@ eigenvalue_jacobi( xyzMatrix< T > const & a, T const & tol )
 		// After four iterations, skip the rotation if the off-diagonal element is small
 		T const ij_scaled = std::abs( T( 100 ) * m(i,j) );
 		if ( ( n_iterations > 4 )
-		 && std::abs( m(i,i) ) + ij_scaled == std::abs( m(i,i) )
-		 && std::abs( m(j,j) ) + ij_scaled == std::abs( m(j,j) ) ) {
+				&& std::abs( m(i,i) ) + ij_scaled == std::abs( m(i,i) )
+				&& std::abs( m(j,j) ) + ij_scaled == std::abs( m(j,j) ) ) {
 			m(i,j) = m(j,i) = T( 0 );
 		} else {
 			// Compute the rotation matrix
@@ -1019,8 +1018,8 @@ eigenvector_jacobi( xyzMatrix< T > const & a, T const & tol, xyzMatrix< T > & J 
 		// After four iterations, skip the rotation if the off-diagonal element is small
 		T const ij_scaled = std::abs( T( 100 ) * m(i,j) );
 		if ( ( n_iterations > 4 )
-		 && std::abs( m(i,i) ) + ij_scaled == std::abs( m(i,i) )
-		 && std::abs( m(j,j) ) + ij_scaled == std::abs( m(j,j) ) ) {
+				&& std::abs( m(i,i) ) + ij_scaled == std::abs( m(i,i) )
+				&& std::abs( m(j,j) ) + ij_scaled == std::abs( m(j,j) ) ) {
 			m(i,j) = m(j,i) = T( 0 );
 		} else {
 			// Compute the rotation matrix
@@ -1121,8 +1120,7 @@ ObjexxFCL::FArray2D<T>
 vector_of_xyzvectors_to_FArray(utility::vector1< xyzVector<T> > const & input)
 {
 	ObjexxFCL::FArray2D< T > output(3,input.size());
-	for(numeric::Real index = 1; index <= input.size();++index)
-	{
+	for ( numeric::Real index = 1; index <= input.size(); ++index ) {
 		output(1,(int)index) = input[(int)index].x(); // bazzoli: added cast to silence warning.
 		output(2,(int)index) = input[(int)index].y();
 		output(3,(int)index) = input[(int)index].z();
@@ -1138,8 +1136,7 @@ FArray_to_vector_of_xyzvectors(ObjexxFCL::FArray2D<T> const & input)
 {
 	assert(input.size1() == 3);
 	utility::vector1< xyzVector<T> > output(input.size2(),xyzVector<T>());
-	for(numeric::Real index = 1; index <= input.size2();++index)
-	{
+	for ( numeric::Real index = 1; index <= input.size2(); ++index ) {
 		output[(int)index].x(input(1,(int)index));
 		output[(int)index].y(input(2,(int)index));
 		output[(int)index].z(input(3,(int)index));

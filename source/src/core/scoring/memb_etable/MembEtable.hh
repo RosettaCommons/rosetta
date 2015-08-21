@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/scoring/memb_etable/MembEtable.hh
+/// @file  core/scoring/memb_etable/MembEtable.hh
 ///
-/// @brief		Generate the table for fa_atr/rep and fa_sol with membrane additions
-/// @details	Used by the scoring manager. becasue computing LJ potentials is time
-///				consuming, precomputes and discritizes the potential (broken down into bins).
-///				Once bins are created, will smooth bins for better interpolation.
-///				Last Modified: 5/13/14
+/// @brief  Generate the table for fa_atr/rep and fa_sol with membrane additions
+/// @details Used by the scoring manager. becasue computing LJ potentials is time
+///    consuming, precomputes and discritizes the potential (broken down into bins).
+///    Once bins are created, will smooth bins for better interpolation.
+///    Last Modified: 5/13/14
 ///
-/// @author	Patrick Barth
-/// @author	(Updates) Rebecca Alford (rfalford12@gmail.com)
+/// @author Patrick Barth
+/// @author (Updates) Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_scoring_memb_etable_MembEtable_hh
 #define INCLUDED_core_scoring_memb_etable_MembEtable_hh
@@ -54,7 +54,7 @@ public:
 
 	/// @brief Construct Membrane Etable
 	/// @details Construct membrane etable from an atom typeset, generic
-	///	set of etable options and alternate parameter set
+	/// set of etable options and alternate parameter set
 	MembEtable(
 		chemical::AtomTypeSetCAP atom_set_in,
 		EtableOptions const & options,
@@ -79,13 +79,13 @@ public:
 	ObjexxFCL::FArray3D< Real > const &
 	memb_solv1() const
 	{
-	return memb_solv1_;
+		return memb_solv1_;
 	}
 
 	ObjexxFCL::FArray3D< Real > const &
 	memb_solv2() const
 	{
-	return memb_solv2_;
+		return memb_solv2_;
 	}
 
 	/// @brief Return the solvation derivative table for the desolvation of atom1 by atom2
@@ -106,14 +106,14 @@ public:
 	ObjexxFCL::FArray3D< Real > const &
 	memb_dsolv1() const
 	{
-	return memb_dsolv1_;
+		return memb_dsolv1_;
 	}
 
 	/// @brief return the solvation derivative table that combines atom1 and atom2's desolvations
 	ObjexxFCL::FArray3D< Real > const &
 	memb_dsolv2() const
 	{
-	return memb_dsolv2_;
+		return memb_dsolv2_;
 	}
 
 	Real
@@ -210,19 +210,19 @@ public:
 	Real
 	memb_lk_dgfree( int const i ) const
 	{
-	return memb_lk_dgfree_[i];
+		return memb_lk_dgfree_[i];
 	}
 
 	ObjexxFCL::FArray1D< Real > const &
 	lk_dgrefce() const
 	{
-	return lk_dgrefce_;
+		return lk_dgrefce_;
 	}
 
 	ObjexxFCL::FArray1D< Real > const &
 	memb_lk_dgrefce() const
 	{
-	return memb_lk_dgrefce_;
+		return memb_lk_dgrefce_;
 	}
 
 private:
@@ -305,7 +305,7 @@ private: // methods
 
 	/// @brief Get Atom Type corresponding to index
 	chemical::AtomType const &
-		atom_type( int const type )
+	atom_type( int const type )
 	{
 		chemical::AtomTypeSetCOP atom_set( atom_set_ );
 		return (*atom_set)[ type ];

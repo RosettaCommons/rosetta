@@ -65,74 +65,74 @@ namespace stepwise {
 namespace modeler {
 namespace precomputed {
 
-	//Constructor
-	PrecomputedLibraryMover::PrecomputedLibraryMover()
-	{
-		initialize_from_directory( basic::database::full_name( "sampling/rna/precomputed/" ) );
+//Constructor
+PrecomputedLibraryMover::PrecomputedLibraryMover()
+{
+	initialize_from_directory( basic::database::full_name( "sampling/rna/precomputed/" ) );
+}
+
+//Destructor
+PrecomputedLibraryMover::~PrecomputedLibraryMover()
+{}
+
+void
+PrecomputedLibraryMover::initialize_from_directory( std::string const dir_name ){
+	utility::vector1< std::string > filenames;
+	utility::file::list_dir( dir_name, filenames );
+	for ( Size n = 1; n <= filenames.size(); n++ ) {
+		std::string const & filename = filenames[ n ];
+		if ( filename.size() < 5 ) continue;
+		if ( filename.substr(  filename.size()-4, 4 ) != ".out" ) continue;
+		std::string const full_filename = dir_name + "/" + filename ;
+		TR.Debug << TR.Magenta << "Reading in file: " << full_filename << TR.Reset << std::endl;
+
+		SilentFileDataOP silent_file_data( new SilentFileData );
+		silent_file_data->set_verbose( false );
+		silent_file_data->read_file( full_filename );
+		TR.Debug << TR.Magenta << "Number of models: " << silent_file_data->size() << TR.Reset << std::endl;
+		std::string const sequence = silent_file_data->begin()->one_letter_sequence();
+		library_map_[ sequence ] = silent_file_data;
 	}
+}
 
-	//Destructor
-	PrecomputedLibraryMover::~PrecomputedLibraryMover()
-	{}
-
-	void
-	PrecomputedLibraryMover::initialize_from_directory( std::string const dir_name ){
-		utility::vector1< std::string > filenames;
-		utility::file::list_dir( dir_name, filenames );
-		for ( Size n = 1; n <= filenames.size(); n++ ){
-			std::string const & filename = filenames[ n ];
-			if ( filename.size() < 5 ) continue;
-			if ( filename.substr(  filename.size()-4, 4 ) != ".out" ) continue;
-			std::string const full_filename = dir_name + "/" + filename ;
-			TR.Debug << TR.Magenta << "Reading in file: " << full_filename << TR.Reset << std::endl;
-
-			SilentFileDataOP silent_file_data( new SilentFileData );
-			silent_file_data->set_verbose( false );
-			silent_file_data->read_file( full_filename );
-			TR.Debug << TR.Magenta << "Number of models: " << silent_file_data->size() << TR.Reset << std::endl;
-			std::string const sequence = silent_file_data->begin()->one_letter_sequence();
-			library_map_[ sequence ] = silent_file_data;
-		}
+///////////////////////////////////////////////////////////////////
+// for now, only can apply precomputed library moves to
+//  poses that are totally 'free' -- could be generalized easily.
+//
+// Appropriate generalization is in SubMotifLibrary!
+//
+bool
+PrecomputedLibraryMover::has_precomputed_move( core::pose::Pose const & pose ) const {
+	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
+	utility::vector1< Size > const & sample_res = const_full_model_info( pose ).sample_res();
+	for ( Size i = 1; i <= res_list.size(); i++ ) {
+		if ( !sample_res.has_value( res_list[ i ] ) ) return false;
 	}
-
-	///////////////////////////////////////////////////////////////////
-	// for now, only can apply precomputed library moves to
-	//  poses that are totally 'free' -- could be generalized easily.
-	//
-	// Appropriate generalization is in SubMotifLibrary!
-	//
-	bool
-	PrecomputedLibraryMover::has_precomputed_move( core::pose::Pose const & pose ) const {
-		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
-		utility::vector1< Size > const & sample_res = const_full_model_info( pose ).sample_res();
-		for ( Size i = 1; i <= res_list.size(); i++ ) {
-			if ( !sample_res.has_value( res_list[ i ] ) ) return false;
-		}
-		for ( Size n = 1; n < pose.total_residue(); n++ ) {
-			if ( pose.fold_tree().is_cutpoint( n ) ) return false;
-		}
-		return ( library_map_.find( pose.sequence() ) != library_map_.end() );
+	for ( Size n = 1; n < pose.total_residue(); n++ ) {
+		if ( pose.fold_tree().is_cutpoint( n ) ) return false;
 	}
+	return ( library_map_.find( pose.sequence() ) != library_map_.end() );
+}
 
-	///////////////////////////////////////////////////////////////////////////////////////
-	void
-	PrecomputedLibraryMover::apply( core::pose::Pose &  ){
-		utility_exit_with_message( "call the const apply() function, not this one." );
-	}
-	///////////////////////////////////////////////////////////////////////////////////////
-	void
-	PrecomputedLibraryMover::apply( core::pose::Pose & pose ) const {
-		runtime_assert( has_precomputed_move( pose ) );
-		SilentFileDataOP library = library_map_.find( pose.sequence() )->second;
-		SilentStructOP silent_struct = numeric::random::rg().random_element( library->structure_list() );
+///////////////////////////////////////////////////////////////////////////////////////
+void
+PrecomputedLibraryMover::apply( core::pose::Pose &  ){
+	utility_exit_with_message( "call the const apply() function, not this one." );
+}
+///////////////////////////////////////////////////////////////////////////////////////
+void
+PrecomputedLibraryMover::apply( core::pose::Pose & pose ) const {
+	runtime_assert( has_precomputed_move( pose ) );
+	SilentFileDataOP library = library_map_.find( pose.sequence() )->second;
+	SilentStructOP silent_struct = numeric::random::rg().random_element( library->structure_list() );
 
-		Pose pose_scratch;
-		silent_struct->fill_pose( pose_scratch, pose.residue( 1 ).residue_type_set() );
-		pose.conformation() = pose_scratch.conformation();
+	Pose pose_scratch;
+	silent_struct->fill_pose( pose_scratch, pose.residue( 1 ).residue_type_set() );
+	pose.conformation() = pose_scratch.conformation();
 
-		//simple fold_tree --> generalized in SubMotifLibrary.
-		for ( Size n = 1; n < pose.total_residue(); n++ ) runtime_assert( !pose.fold_tree().is_cutpoint( n ) );
-	}
+	//simple fold_tree --> generalized in SubMotifLibrary.
+	for ( Size n = 1; n < pose.total_residue(); n++ ) runtime_assert( !pose.fold_tree().is_cutpoint( n ) );
+}
 
 
 } //precomputed

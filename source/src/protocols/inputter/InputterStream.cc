@@ -41,13 +41,14 @@ InputterStream::~InputterStream(){}
 
 bool InputterStream::has_pose() {
 	input_itr itr = inputters_.begin();
-	while( itr != inputters_.end() ) {
-		if( (**itr).offset() ) {
-			if( (**itr).has_nth_pose( num_masters_ ) )
+	while ( itr != inputters_.end() ) {
+		if ( (**itr).offset() ) {
+			if ( (**itr).has_nth_pose( num_masters_ ) ) {
 				return true;
-		} else if ( (**itr).has_nth_pose( master_rank_ ) ){
+			}
+		} else if ( (**itr).has_nth_pose( master_rank_ ) ) {
 			return true;
-		} 
+		}
 		// if we got here, this inputter is all out of poses for us
 		itr = inputters_.erase(itr);
 	}
@@ -57,11 +58,11 @@ bool InputterStream::has_pose() {
 core::pose::PoseSP InputterStream::get_pose() {
 	// it is assumed that you call has_pose before this
 	// so the first inputter always is valid
-	if( inputters_.front()->offset() ) {
+	if ( inputters_.front()->offset() ) {
 		return inputters_.front()->get_nth_pose( num_masters_ );
 	} else {
 		return inputters_.front()->get_nth_pose( master_rank_ );
-	} 
+	}
 	// should never reach here
 	return core::pose::PoseSP();
 }

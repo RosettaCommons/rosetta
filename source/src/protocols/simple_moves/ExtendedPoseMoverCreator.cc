@@ -27,15 +27,15 @@ namespace protocols {
 namespace simple_moves {
 
 protocols::moves::MoverOP ExtendedPoseMoverCreator::create_mover() const {
-  return protocols::moves::MoverOP( new protocols::simple_moves::ExtendedPoseMover() );
+	return protocols::moves::MoverOP( new protocols::simple_moves::ExtendedPoseMover() );
 }
 
 std::string ExtendedPoseMoverCreator::keyname() const {
-  return mover_name();
+	return mover_name();
 }
 
 std::string ExtendedPoseMoverCreator::mover_name() {
-  return "ExtendedPoseMover";
+	return "ExtendedPoseMover";
 }
 
 }  // namespace simple_moves

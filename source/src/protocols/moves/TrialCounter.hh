@@ -33,29 +33,29 @@ namespace moves {
 
 class TrialCounter : public utility::pointer::ReferenceCount {
 public:
-  TrialCounter() {};
-  virtual void reset();
+	TrialCounter() {};
+	virtual void reset();
 
-  virtual void count_trial( std::string const& );
-  virtual void count_accepted( std::string const& );
-  virtual void count_energy_drop( std::string const&, core::Real );
+	virtual void count_trial( std::string const& );
+	virtual void count_accepted( std::string const& );
+	virtual void count_energy_drop( std::string const&, core::Real );
 
-  virtual core::Size total_trials() const;
-  virtual core::Size trial( std::string const& ) const;
-  virtual core::Size accepted( std::string const& ) const;
-  virtual core::Real energy_drop( std::string const& ) const;
+	virtual core::Size total_trials() const;
+	virtual core::Size trial( std::string const& ) const;
+	virtual core::Size accepted( std::string const& ) const;
+	virtual core::Real energy_drop( std::string const& ) const;
 	virtual utility::vector1< std::string > const tags () const;
 
-  void show() const;
-  virtual void show(
-			std::ostream&,
-			std::string line_header="",
-			bool with_end_line = true ) const;
+	void show() const;
+	virtual void show(
+		std::ostream&,
+		std::string line_header="",
+		bool with_end_line = true ) const;
 
 private:
-  std::map< std::string, int > trial_counter_;
-  std::map< std::string, int > accept_counter_;
-  std::map< std::string, core::Real > energy_drop_counter_;
+	std::map< std::string, int > trial_counter_;
+	std::map< std::string, int > accept_counter_;
+	std::map< std::string, core::Real > energy_drop_counter_;
 };
 
 

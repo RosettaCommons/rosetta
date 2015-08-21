@@ -17,8 +17,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class TaskOperationFeatures;
 typedef utility::pointer::shared_ptr< TaskOperationFeatures > TaskOperationFeaturesOP;

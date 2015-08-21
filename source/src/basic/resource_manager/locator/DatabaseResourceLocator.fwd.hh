@@ -16,8 +16,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace basic{
-namespace resource_manager{
+namespace basic {
+namespace resource_manager {
 namespace locator {
 
 class FileStream;

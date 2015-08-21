@@ -30,43 +30,43 @@ namespace simple_moves {
 
 class IonizableResidue {
 public:
-    IonizableResidue(
-                     std::string resname,
-                     core::Real ref_pKa,
-                     core::Real acid_base
-                     ) {
-        resname_ = resname;
-        ref_pKa_ = ref_pKa;
-        acid_base_ = acid_base;
-    }
-    void add_neutral_restype(std::string restype) {
-        neutral_restype_.push_back(restype);
-    }
-    void add_ionized_restype(std::string restype) {
-        ionized_restype_.push_back(restype);
-    }
-    core::Real ref_pKa() {
-        return ref_pKa_;
-    }
-    core::Real acid_base_coefficient() {
-        return acid_base_;
-    }
-    utility::vector1 < std::string > & neutral_restypes() {
-        return neutral_restype_;
-    }
-    utility::vector1 < std::string > & ionized_restypes() {
-        return ionized_restype_;
-    }
-    std::string name3() {
-        return resname_;
-    }
+	IonizableResidue(
+		std::string resname,
+		core::Real ref_pKa,
+		core::Real acid_base
+	) {
+		resname_ = resname;
+		ref_pKa_ = ref_pKa;
+		acid_base_ = acid_base;
+	}
+	void add_neutral_restype(std::string restype) {
+		neutral_restype_.push_back(restype);
+	}
+	void add_ionized_restype(std::string restype) {
+		ionized_restype_.push_back(restype);
+	}
+	core::Real ref_pKa() {
+		return ref_pKa_;
+	}
+	core::Real acid_base_coefficient() {
+		return acid_base_;
+	}
+	utility::vector1 < std::string > & neutral_restypes() {
+		return neutral_restype_;
+	}
+	utility::vector1 < std::string > & ionized_restypes() {
+		return ionized_restype_;
+	}
+	std::string name3() {
+		return resname_;
+	}
 
 private:
-    std::string resname_;
-    utility::vector1<std::string> neutral_restype_;
-    utility::vector1<std::string> ionized_restype_;
-    core::Real ref_pKa_;
-    core::Real acid_base_;
+	std::string resname_;
+	utility::vector1<std::string> neutral_restype_;
+	utility::vector1<std::string> ionized_restype_;
+	core::Real ref_pKa_;
+	core::Real acid_base_;
 };
 
 /// scale density map intensities to match a pose's
@@ -84,17 +84,17 @@ public:
 	moves::MoverOP clone() const { return moves::MoverOP( new ReportEffectivePKA( *this ) ); }
 	moves::MoverOP fresh_instance() const { return moves::MoverOP( new ReportEffectivePKA ); }
 
-    void task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
-    core::pack::task::TaskFactoryOP task_factory() const { return task_factory_; }
+	void task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
+	core::pack::task::TaskFactoryOP task_factory() const { return task_factory_; }
 
 	virtual void
 	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & );
 
 private:
-    core::scoring::ScoreFunctionOP scorefxn_; //dflt NULL
+	core::scoring::ScoreFunctionOP scorefxn_; //dflt NULL
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::pack::task::PackerTaskOP task_;
-    utility::vector1<IonizableResidue> ionizables_;
+	utility::vector1<IonizableResidue> ionizables_;
 };
 
 } // moves

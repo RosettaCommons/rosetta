@@ -41,12 +41,12 @@ namespace core {
 namespace fragment {
 
 class BBTorsionSRFD : public SecstructSRFD {
-typedef SecstructSRFD Parent;
+	typedef SecstructSRFD Parent;
 
 public:
 	/// @brief constructor
 	BBTorsionSRFD( Size const nbb_in = 3, char secstruct = 'X', char sequence = 'X')
-		: SecstructSRFD(secstruct, sequence), torsions_(nbb_in), coords_(3), has_coords_(false) {}
+	: SecstructSRFD(secstruct, sequence), torsions_(nbb_in), coords_(3), has_coords_(false) {}
 
 	/// @brief copy assignment
 	BBTorsionSRFD & operator =( BBTorsionSRFD const & rval );
@@ -86,24 +86,27 @@ public:
 
 	/// @brief Returns the x coordinate of this residue's CA
 	Real x() const {
-		if (!has_coords_)
+		if ( !has_coords_ ) {
 			utility_exit_with_message("Cartesian coordinates uninitialized!");
+		}
 
 		return coords_[1];
 	}
 
-  /// @brief Returns the y coordinate of this residue's CA
+	/// @brief Returns the y coordinate of this residue's CA
 	Real y() const {
-		if (!has_coords_)
+		if ( !has_coords_ ) {
 			utility_exit_with_message("Cartesian coordinates uninitialized!");
+		}
 
 		return coords_[2];
 	}
 
 	/// @brief Returns the z coordinate of this residue's CA
 	Real z() const {
-		if (!has_coords_)
+		if ( !has_coords_ ) {
 			utility_exit_with_message("Cartesian coordinates uninitialized!");
+		}
 
 		return coords_[3];
 	}

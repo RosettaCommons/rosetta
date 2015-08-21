@@ -44,7 +44,7 @@ typedef utility::vector1 < Size > PositionList;
 
 class FragData : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< FragData >
 {
-	typedef	utility::vector1 < SingleResidueFragDataOP > SRFD_List;
+	typedef utility::vector1 < SingleResidueFragDataOP > SRFD_List;
 
 public:
 	FragData () : valid_( false ), score_( 0.0 ) {};
@@ -84,7 +84,7 @@ public:
 	// set FragData from the given pose ( inverse of apply )
 	virtual bool steal( pose::Pose const&, Size start, Size end ); // continous application to length residues
 	virtual bool steal( pose::Pose const&, Frame const& ); //application to any set of residues specified by the Frame
-	
+
 	// copy FragData from the given FragData
 	virtual void copy(FragData const& frag_data);
 
@@ -109,7 +109,7 @@ public:
 
 	std::string secstruct() const {
 		std::string str;
-		for (Size pos=1; pos<=size(); pos++ ) {
+		for ( Size pos=1; pos<=size(); pos++ ) {
 			str.push_back( secstruct( pos) );
 		};
 		return str;
@@ -117,7 +117,7 @@ public:
 
 	std::string sequence() const {
 		std::string str;
-		for (Size pos=1; pos<=size(); pos++ ) {
+		for ( Size pos=1; pos<=size(); pos++ ) {
 			str.push_back( sequence( pos) );
 		};
 		return str;
@@ -160,7 +160,7 @@ public:
 		return "no_pdb";
 	}
 
-  /// @brief Returns the chain if it has been specified, '_' otherwise.
+	/// @brief Returns the chain if it has been specified, '_' otherwise.
 	virtual char chain() const {
 		return '_';
 	}
@@ -196,7 +196,7 @@ private:
 
 /// @brief FragData that contains additional information
 class AnnotatedFragData : public FragData {
-typedef FragData Parent;
+	typedef FragData Parent;
 
 public:
 	AnnotatedFragData(const std::string& pdb_id, Size start_pos, char chain='_') {
@@ -205,7 +205,7 @@ public:
 	}
 
 	AnnotatedFragData(const std::string& pdb_id, Size start_pos, const FragData& frag, char chain='_')
-		: FragData(frag) {
+	: FragData(frag) {
 		initialize(pdb_id, chain, start_pos);
 	}
 
@@ -224,23 +224,23 @@ public:
 		return startpos_;
 	}
 
-  virtual char chain() const {
-    return chain_;
-  }
+	virtual char chain() const {
+		return chain_;
+	}
 
 
 private:
-  /// @brief common initialization routine
-  void initialize(const std::string& pdb_id, char chain, Size start_pos) {
-    pdbid_ = pdb_id;
-    chain_ = chain;
-    startpos_ = start_pos;
-  }
+	/// @brief common initialization routine
+	void initialize(const std::string& pdb_id, char chain, Size start_pos) {
+		pdbid_ = pdb_id;
+		chain_ = chain;
+		startpos_ = start_pos;
+	}
 
 	std::string pdbid_;
 
 	/// @brief 1-letter chain identifier or '' if it was not specified.
-  char chain_;
+	char chain_;
 
 	Size startpos_; //or list of indices
 };

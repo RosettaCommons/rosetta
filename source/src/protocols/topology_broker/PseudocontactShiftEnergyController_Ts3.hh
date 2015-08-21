@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- /// @file PseudocontactShiftEnergyController.hh
- ///
- /// @authorv Christophe Schmitz //kalabharath & Oliver Lange
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+/// @file PseudocontactShiftEnergyController.hh
+///
+/// @authorv Christophe Schmitz //kalabharath & Oliver Lange
+///
+////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_topology_broker_PseudocontactShiftEnergyController_Ts3_hh
 #define INCLUDED_protocols_topology_broker_PseudocontactShiftEnergyController_Ts3_hh
@@ -49,7 +49,7 @@ class PseudocontactShiftEnergyController_Ts3 : public TopologyClaimer {
 
 	typedef TopologyClaimer Parent;
 public:
-                 	PseudocontactShiftEnergyController_Ts3(); //for factory
+	PseudocontactShiftEnergyController_Ts3(); //for factory
 
 	virtual TopologyClaimerOP clone() const {
 		return TopologyClaimerOP( new PseudocontactShiftEnergyController_Ts3( *this ) );
@@ -70,7 +70,7 @@ public:
 
 
 	virtual void add_mover(
-    moves::RandomMover& /* random_mover */,
+		moves::RandomMover& /* random_mover */,
 		core::pose::Pose const& /*pose*/,
 		abinitio::StageID /*stageID*/, /* abinitio sampler stage */
 		core::scoring::ScoreFunction const& /*scorefxn*/,

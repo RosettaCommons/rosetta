@@ -46,7 +46,7 @@ protected:
 	virtual ~LogicalSelector();
 
 public:
-	static std::string name() {	return "LogicalSelector"; }
+	static std::string name() { return "LogicalSelector"; }
 	virtual std::string get_name() const { return name(); }
 	rosetta_scripts::PoseSelectorFlags get_flags() const;
 
@@ -66,7 +66,7 @@ protected:
 	virtual inline bool selection_operation( bool, bool ) const { return false; }
 	// virtual inline bool get_default() const = 0;
 	virtual inline bool get_default() const { return false; }
-	
+
 private:
 	std::vector < protocols::rosetta_scripts::PoseSelectorOP > selectors_;
 
@@ -80,7 +80,7 @@ public:
 	AndSelector() {}
 	~AndSelector() {}
 
-	static std::string name() {	return "AndSelector"; }
+	static std::string name() { return "AndSelector"; }
 	std::string get_name() const { return name(); }
 
 protected:
@@ -97,7 +97,7 @@ public:
 	OrSelector() {}
 	~OrSelector() {}
 
-	static std::string name() {	return "OrSelector"; }
+	static std::string name() { return "OrSelector"; }
 	std::string get_name() const { return name(); }
 
 protected:
@@ -114,7 +114,7 @@ public:
 	TopNByProperty();
 	~TopNByProperty() {}
 
-	static std::string name() {	return "TopNByProperty"; }
+	static std::string name() { return "TopNByProperty"; }
 	std::string get_name() const { return name(); }
 	rosetta_scripts::PoseSelectorFlags get_flags() const { return rosetta_scripts::PSF_NEED_FULL_POSE_SET; }
 
@@ -130,7 +130,7 @@ public:
 	utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses );
 
 protected:
-	
+
 private:
 	core::Size n_;
 	protocols::rosetta_scripts::PosePropertyReporterOP reporter_;
@@ -163,7 +163,7 @@ public:
 	utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses );
 
 protected:
-	
+
 private:
 	protocols::filters::FilterOP filter_;
 

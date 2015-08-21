@@ -128,9 +128,9 @@ SingleBasicRotamerLibrary::fill_rotamer_vector(
 		for ( Size ii = 1; ii <= concrete_residue->n_proton_chi(); ++ii ) {
 			pack::dunbrack::expand_proton_chi(
 				task.residue_task( existing_residue.seqpos() ).extrachi_sample_level(
-					buried,
-					concrete_residue->proton_chi_2_chi( ii ),
-					*concrete_residue ),
+				buried,
+				concrete_residue->proton_chi_2_chi( ii ),
+				*concrete_residue ),
 				concrete_residue,
 				ii, proton_chi_chisets);
 		}
@@ -147,7 +147,7 @@ SingleBasicRotamerLibrary::fill_rotamer_vector(
 		}
 	}
 	TR.Debug << "Building rotamers for " << concrete_residue->name() << ": Total number suggested: " <<
-			nrotadded << std::endl;
+		nrotadded << std::endl;
 }
 
 /// @details Not implemented -- will cause program termination.

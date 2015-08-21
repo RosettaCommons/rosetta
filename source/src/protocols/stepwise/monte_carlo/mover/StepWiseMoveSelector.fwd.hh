@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/monte_carlo/mover/StepWiseMoveSelector.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -22,11 +22,11 @@ namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
 namespace mover {
-	
-	class StepWiseMoveSelector;
-	typedef utility::pointer::shared_ptr< StepWiseMoveSelector > StepWiseMoveSelectorOP;
-	typedef utility::pointer::shared_ptr< StepWiseMoveSelector const > StepWiseMoveSelectorCOP;
-	
+
+class StepWiseMoveSelector;
+typedef utility::pointer::shared_ptr< StepWiseMoveSelector > StepWiseMoveSelectorOP;
+typedef utility::pointer::shared_ptr< StepWiseMoveSelector const > StepWiseMoveSelectorCOP;
+
 } //mover
 } //monte_carlo
 } //stepwise

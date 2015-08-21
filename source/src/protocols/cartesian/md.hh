@@ -85,107 +85,107 @@ struct MD_HarmonicDihedral{
 
 class MolecularDynamics {
 public:
-    MolecularDynamics(
-        core::pose::PoseOP & inputpose,
-        core::scoring::ScoreFunction const & scorefxn
-    );
+	MolecularDynamics(
+		core::pose::PoseOP & inputpose,
+		core::scoring::ScoreFunction const & scorefxn
+	);
 
 
 private: //functions
 
-    void createCartesianArray( );
-    void setCartesianPositionsFromPose( );
-    void setPosePositionsFromCartesian( );
-    void zeroForces();
-    int  findCartomAtom( const core::id::AtomID  &id1 );
-    void getCartesianDerivatives( core::scoring::ScoreFunction const & scorefxn );
+	void createCartesianArray( );
+	void setCartesianPositionsFromPose( );
+	void setPosePositionsFromCartesian( );
+	void zeroForces();
+	int  findCartomAtom( const core::id::AtomID  &id1 );
+	void getCartesianDerivatives( core::scoring::ScoreFunction const & scorefxn );
 
 
-    void createBondList( );
-    void createAngleList( );
-    void createDihedralList( );
-    MD_HarmonicDihedral createDihedral(
-                const core::conformation::Residue &rsd,
-                std::string name1,
-                std::string name2,
-                std::string name3,
-                std::string name4
-    );
-    MD_HarmonicDihedral createDihedral(
-                const core::conformation::Residue &rsd1,
-                const core::conformation::Residue &rsd2,
-                const core::conformation::Residue &rsd3,
-                const core::conformation::Residue &rsd4,
-                std::string name1,
-                std::string name2,
-                std::string name3,
-                std::string name4
-    );
+	void createBondList( );
+	void createAngleList( );
+	void createDihedralList( );
+	MD_HarmonicDihedral createDihedral(
+		const core::conformation::Residue &rsd,
+		std::string name1,
+		std::string name2,
+		std::string name3,
+		std::string name4
+	);
+	MD_HarmonicDihedral createDihedral(
+		const core::conformation::Residue &rsd1,
+		const core::conformation::Residue &rsd2,
+		const core::conformation::Residue &rsd3,
+		const core::conformation::Residue &rsd4,
+		std::string name1,
+		std::string name2,
+		std::string name3,
+		std::string name4
+	);
 
-    void setDihedralDerivatives( );
-
-
-    void doBondDerivatives( float &totalepot );
-    void doAngleDerivatives(float &totalepot );
-    void doDihedralDerivatives( float &totalepot );
+	void setDihedralDerivatives( );
 
 
-    void createCartesianDerivatives( core::pose::Pose & pose,
-                                                                     core::scoring::ScoreFunction const & scorefxn );
+	void doBondDerivatives( float &totalepot );
+	void doAngleDerivatives(float &totalepot );
+	void doDihedralDerivatives( float &totalepot );
 
 
-    void setInitialSpeeds(double tgtTemp);
-
-    void calcKineticEnergy(
-        float &ekin,
-        float &Temp
-    );
+	void createCartesianDerivatives( core::pose::Pose & pose,
+		core::scoring::ScoreFunction const & scorefxn );
 
 
-    void applyForces_BeeMan(
-        float &kin,
-        float &temp);
+	void setInitialSpeeds(double tgtTemp);
+
+	void calcKineticEnergy(
+		float &ekin,
+		float &Temp
+	);
 
 
-    void applyForces_LangevinIntegration(
-        double T,
-        float &kin,
-        float &temp);
+	void applyForces_BeeMan(
+		float &kin,
+		float &temp);
 
 
-    void applyForces_ConjugateGradient(
-        int Step,
-        float &current_energy,
-        float &m_OldEnergy
-    );
+	void applyForces_LangevinIntegration(
+		double T,
+		float &kin,
+		float &temp);
 
-    void createCartesianDerivatives( core::scoring::ScoreFunction const & scorefxn );
+
+	void applyForces_ConjugateGradient(
+		int Step,
+		float &current_energy,
+		float &m_OldEnergy
+	);
+
+	void createCartesianDerivatives( core::scoring::ScoreFunction const & scorefxn );
 
 
 public:
 
-    void doMinimising( core::scoring::ScoreFunction const & scorefxn );
+	void doMinimising( core::scoring::ScoreFunction const & scorefxn );
 
-    void doMD(core::scoring::ScoreFunction const & scorefxn,
-                         int Steps,
-                         float startTemp,
-                         float endTemp);
+	void doMD(core::scoring::ScoreFunction const & scorefxn,
+		int Steps,
+		float startTemp,
+		float endTemp);
 
-    void testCartesianDerivatives( core::scoring::ScoreFunction const & scorefxn );
+	void testCartesianDerivatives( core::scoring::ScoreFunction const & scorefxn );
 
 
 private:  //data
 
-    utility::vector1< CartesianAtom > cartom;
-    utility::vector1< MD_Bond > bondlist;
-    utility::vector1< MD_Angle > anglelist;
-    utility::vector1< MD_HarmonicDihedral > dihedrallist;
+	utility::vector1< CartesianAtom > cartom;
+	utility::vector1< MD_Bond > bondlist;
+	utility::vector1< MD_Angle > anglelist;
+	utility::vector1< MD_HarmonicDihedral > dihedrallist;
 
-    core::kinematics::MoveMap mm;
-    core::optimization::MinimizerMap min_map;
-    core::kinematics::DomainMap domain_map;
+	core::kinematics::MoveMap mm;
+	core::optimization::MinimizerMap min_map;
+	core::kinematics::DomainMap domain_map;
 
-    core::pose::PoseOP pose;
+	core::pose::PoseOP pose;
 
 
 };

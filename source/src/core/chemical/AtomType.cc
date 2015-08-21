@@ -50,12 +50,12 @@ AtomType::print(
 
 	out
 		<< "Atom Type: " << name() << std::endl
-		<< "	element: " << element() << std::endl
-		<< "	Lennard Jones: radius=" << lj_radius() << " wdepth=" << lj_wdepth() << std::endl
-		<< "	Lazaridis Karplus: lambda=" << lk_lambda() << " "
+		<< "\telement: " << element() << std::endl
+		<< "\tLennard Jones: radius=" << lj_radius() << " wdepth=" << lj_wdepth() << std::endl
+		<< "\tLazaridis Karplus: lambda=" << lk_lambda() << " "
 		<< "volume=" << lk_volume() << " "
 		<< "dgfree=" << lk_dgfree() << std::endl
-		<< "	properties: "
+		<< "\tproperties: "
 		<< (is_acceptor() ? "ACCEPTOR " : "")
 		<< (is_donor() ? "DONOR " : "")
 		<< (is_polar_hydrogen() ? "POLAR_HYDROGEN " : "")
@@ -63,17 +63,17 @@ AtomType::print(
 		<< (is_aromatic() ? "AROMATIC " : "")
 		<< (atom_has_orbital() ? "ORBITALS " : "");
 	switch(hybridization()){
-	case SP2_HYBRID: out << "SP2_HYBRID "; break;
-	case SP3_HYBRID: out << "SP3_HYBRID "; break;
-	case RING_HYBRID: out << "RING_HYBRID "; break;
-	case UNKNOWN_HYBRID: break;
-	default:
+	case SP2_HYBRID : out << "SP2_HYBRID "; break;
+	case SP3_HYBRID : out << "SP3_HYBRID "; break;
+	case RING_HYBRID : out << "RING_HYBRID "; break;
+	case UNKNOWN_HYBRID : break;
+	default :
 		utility_exit_with_message("Attempting retrive hydrid for atom type '" + name() +
-				"', however the hybridization type is not recognized.");
+			"', however the hybridization type is not recognized.");
 	}
 	out << std::endl;
 	out << "Extra Parameters:";
-	for(Size i = 1; i <= extra_parameters_.size(); ++i){
+	for ( Size i = 1; i <= extra_parameters_.size(); ++i ) {
 		out << " " << extra_parameters_[i];
 	}
 	out << std::endl;
@@ -116,12 +116,12 @@ AtomType::set_parameter(
 		lk_dgfree_ = setting;
 	} else if ( param == "LK_LAMBDA" ) {
 		lk_lambda_ = setting;
-  /*} else if ( param == "MEMB_LK_DGFREE" ) {  //pba
-    memb_lk_dgfree_ = setting;
-  } else if ( param == "LK_DGREFCE" ) {      //pba
-    lk_dgrefce_ = setting;
-  } else if ( param == "MEMB_LK_DGREFCE" ) { //pba
-    memb_lk_dgrefce_ = setting;*/
+		/*} else if ( param == "MEMB_LK_DGFREE" ) {  //pba
+		memb_lk_dgfree_ = setting;
+		} else if ( param == "LK_DGREFCE" ) {      //pba
+		lk_dgrefce_ = setting;
+		} else if ( param == "MEMB_LK_DGREFCE" ) { //pba
+		memb_lk_dgrefce_ = setting;*/
 	} else {
 		utility_exit_with_message( "unrecognized atomtype parameter "+param );
 	}
@@ -148,13 +148,13 @@ AtomType::set_property(
 		is_donor_ = setting;
 	} else if ( property == "POLAR_HYDROGEN" ) {
 		is_polar_hydrogen_ = setting;
-	} else if(property == "AROMATIC"){
+	} else if ( property == "AROMATIC" ) {
 		is_aromatic_ = setting;
 	} else if ( property == "H2O" ) {
 		is_h2o_ = setting;
-	} else if (property == "ORBITALS"){ //is the atom type orbital? defined in atom_properties.txt
+	} else if ( property == "ORBITALS" ) { //is the atom type orbital? defined in atom_properties.txt
 		atom_has_orbitals_ = setting;
-	} else if(property == "VIRTUAL"){ //is the atom type virtual? defined in atom_properties.txt
+	} else if ( property == "VIRTUAL" ) { //is the atom type virtual? defined in atom_properties.txt
 		atom_is_virtual_ = setting;
 	} else if ( property == "SP2_HYBRID" ) {
 		hybridization_ = SP2_HYBRID;
@@ -174,7 +174,7 @@ AtomType::clear_properties() {
 	is_polar_hydrogen_ = false;
 	is_aromatic_ = false;
 	is_h2o_ = false;
- 	atom_has_orbitals_ = false;
+	atom_has_orbitals_ = false;
 	atom_is_virtual_ = false;
 	hybridization_ = UNKNOWN_HYBRID;
 	extra_parameters_.clear();
@@ -190,13 +190,13 @@ AtomType::add_property(
 		is_donor_ = true;
 	} else if ( property == "POLAR_HYDROGEN" ) {
 		is_polar_hydrogen_ = true;
-	} else if(property == "AROMATIC"){
+	} else if ( property == "AROMATIC" ) {
 		is_aromatic_ = true;
 	} else if ( property == "H2O" ) {
 		is_h2o_ = true;
-	} else if (property == "ORBITALS"){
+	} else if ( property == "ORBITALS" ) {
 		atom_has_orbitals_ = true;
-	} else if(property == "VIRTUAL"){
+	} else if ( property == "VIRTUAL" ) {
 		atom_is_virtual_ = true;
 	} else if ( property == "SP2_HYBRID" ) {
 		hybridization_ = SP2_HYBRID;
@@ -206,7 +206,7 @@ AtomType::add_property(
 		hybridization_ = RING_HYBRID;
 	} else {
 		utility_exit_with_message("Attempting to set non-existant property '" + property +
-				"' on atom type '" + name() + "'.");
+			"' on atom type '" + name() + "'.");
 	}
 }
 
@@ -214,22 +214,22 @@ AtomType::add_property(
 utility::vector1< std::string >
 AtomType::get_all_properties() const {
 	utility::vector1< std::string > properties;
-	if(is_acceptor()) properties.push_back("ACCEPTOR");
-	if(is_donor()) properties.push_back("DONOR");
-	if(is_polar_hydrogen()) properties.push_back("POLAR_HYDROGEN");
-	if(is_aromatic()) properties.push_back("AROMATIC");
-	if(is_h2o()) properties.push_back("H2O");
-	if(atom_has_orbital()) properties.push_back("ORBITALS");
-	if(is_virtual()) properties.push_back("VIRTUAL");
+	if ( is_acceptor() ) properties.push_back("ACCEPTOR");
+	if ( is_donor() ) properties.push_back("DONOR");
+	if ( is_polar_hydrogen() ) properties.push_back("POLAR_HYDROGEN");
+	if ( is_aromatic() ) properties.push_back("AROMATIC");
+	if ( is_h2o() ) properties.push_back("H2O");
+	if ( atom_has_orbital() ) properties.push_back("ORBITALS");
+	if ( is_virtual() ) properties.push_back("VIRTUAL");
 
 	switch(hybridization()){
-	case SP2_HYBRID: properties.push_back("SP2_HYBRID"); break;
-	case SP3_HYBRID: properties.push_back("SP3_HYBRID"); break;
-	case RING_HYBRID: properties.push_back("RING_HYBRID"); break;
-	case UNKNOWN_HYBRID: break;
-	default:
+	case SP2_HYBRID : properties.push_back("SP2_HYBRID"); break;
+	case SP3_HYBRID : properties.push_back("SP3_HYBRID"); break;
+	case RING_HYBRID : properties.push_back("RING_HYBRID"); break;
+	case UNKNOWN_HYBRID : break;
+	default :
 		utility_exit_with_message("Attempting retrive hydrid for atom type '" + name() +
-				"', however the hybridization type is not recognized.");
+			"', however the hybridization type is not recognized.");
 	}
 	return properties;
 }

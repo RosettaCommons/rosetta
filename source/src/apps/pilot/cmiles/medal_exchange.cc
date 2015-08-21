@@ -20,13 +20,13 @@
 //Auto Headers
 #include <utility/vector1.hh>
 int main(int argc, char* argv[]) {
-    try {
-  devel::init(argc, argv);
-  protocols::viewer::viewer_main(
-      protocols::medal::MedalExchange_main);
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                             std::cout << "caught exception " << e.msg() << std::endl;
+	try {
+		devel::init(argc, argv);
+		protocols::viewer::viewer_main(
+			protocols::medal::MedalExchange_main);
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                }
-       return 0;
+	}
+	return 0;
 }

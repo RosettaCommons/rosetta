@@ -32,49 +32,49 @@ namespace core {
 namespace scoring {
 namespace func {
 
-	ScalarWeightedFunc::~ScalarWeightedFunc() {}
+ScalarWeightedFunc::~ScalarWeightedFunc() {}
 
-	Real
-	ScalarWeightedFunc::func( Real const x ) const
-	{
-		return func_to_weight_->func( x ) * weight_;
-	}
-
-
-	Real
-	ScalarWeightedFunc::dfunc( Real const x ) const
-	{
-		return func_to_weight_->dfunc( x ) * weight_;
-	}
-
-	void
-	ScalarWeightedFunc::read_data( std::istream& in )
-	{
-		in >> weight_;
-
-		FuncFactory func_factory;
-		std::string func_type;
-		in >> func_type;
-		func_to_weight_ = func_factory.new_func( func_type );
-		func_to_weight_->read_data( in );
-	}
+Real
+ScalarWeightedFunc::func( Real const x ) const
+{
+	return func_to_weight_->func( x ) * weight_;
+}
 
 
-	void
-	ScalarWeightedFunc::show_definition( std::ostream &out ) const
-	{
-		out << "SCALARWEIGHTEDFUNC  " << weight_ << " ";
-		func_to_weight_->show_definition(out);
-	}
+Real
+ScalarWeightedFunc::dfunc( Real const x ) const
+{
+	return func_to_weight_->dfunc( x ) * weight_;
+}
 
-	Size
-	ScalarWeightedFunc::show_violations(std::ostream &out, Real x, Size verbose_level, Real threshold) const
-	{
-		out << "SCALARWEIGHTEDFUNC with weight:  " << weight_ << std::endl;
-		func_to_weight_->show_definition(out);
-		out << " with verbose_level " << verbose_level << ", threshold " << threshold << " and weighted_score " << ScalarWeightedFunc::func(x) << std::endl;
-		return func_to_weight_->show_violations(out,x,verbose_level,threshold);
-	}
+void
+ScalarWeightedFunc::read_data( std::istream& in )
+{
+	in >> weight_;
+
+	FuncFactory func_factory;
+	std::string func_type;
+	in >> func_type;
+	func_to_weight_ = func_factory.new_func( func_type );
+	func_to_weight_->read_data( in );
+}
+
+
+void
+ScalarWeightedFunc::show_definition( std::ostream &out ) const
+{
+	out << "SCALARWEIGHTEDFUNC  " << weight_ << " ";
+	func_to_weight_->show_definition(out);
+}
+
+Size
+ScalarWeightedFunc::show_violations(std::ostream &out, Real x, Size verbose_level, Real threshold) const
+{
+	out << "SCALARWEIGHTEDFUNC with weight:  " << weight_ << std::endl;
+	func_to_weight_->show_definition(out);
+	out << " with verbose_level " << verbose_level << ", threshold " << threshold << " and weighted_score " << ScalarWeightedFunc::func(x) << std::endl;
+	return func_to_weight_->show_violations(out,x,verbose_level,threshold);
+}
 
 
 } // namespace constraints

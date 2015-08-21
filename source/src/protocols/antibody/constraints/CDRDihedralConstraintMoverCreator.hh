@@ -9,7 +9,7 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file /CDRDihedralConstraintMoverCreator.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_antibody_constraints_CDRDihedralConstraintMoverCreator_hh
@@ -20,7 +20,7 @@
 namespace protocols {
 namespace antibody {
 namespace constraints {
-			
+
 
 class CDRDihedralConstraintMoverCreator : public protocols::moves::MoverCreator {
 public:

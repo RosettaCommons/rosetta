@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		protocols/membrane/SetMembranePositionMoverCreator.hh
+/// @file  protocols/membrane/SetMembranePositionMoverCreator.hh
 ///
-/// @brief		Sets the membrane position normal and center
-///	@details	Sets the membrane position normal and center
-///				CAUTION: ONLY FOR FLEXIBLE MEMBRANE AND FIXED PROTEIN!!!
-///				Last Modified: 6/28/14
+/// @brief  Sets the membrane position normal and center
+/// @details Sets the membrane position normal and center
+///    CAUTION: ONLY FOR FLEXIBLE MEMBRANE AND FIXED PROTEIN!!!
+///    Last Modified: 6/28/14
 ///
-/// @author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_SetMembranePositionMoverCreator_hh
 #define INCLUDED_protocols_membrane_SetMembranePositionMoverCreator_hh
@@ -27,35 +27,35 @@ namespace membrane {
 
 /// @brief Mover Creator for composed RT mover
 class SetMembranePositionMoverCreator : public protocols::moves::MoverCreator {
-	
+
 public:
-	
+
 	virtual protocols::moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
 	static std::string mover_name();
-	
+
 };
 
 /// @brief Mover creator for membrane rotation mover
 class SetMembraneNormalMoverCreator : public protocols::moves::MoverCreator {
-	
+
 public:
-	
+
 	virtual protocols::moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
 	static std::string mover_name();
-	
+
 };
 
 /// @brief Mover Creator for membrane translation mover
 class SetMembraneCenterMoverCreator : public protocols::moves::MoverCreator {
-	
+
 public:
-	
+
 	virtual protocols::moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
 	static std::string mover_name();
-	
+
 };
 
 } // membrane

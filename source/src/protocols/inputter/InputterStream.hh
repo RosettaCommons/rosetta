@@ -33,25 +33,25 @@ void lregister_InputterStream( lua_State * lstate );
 #endif
 
 class InputterStream {
-		typedef std::list< InputterSP >::iterator input_itr;
+	typedef std::list< InputterSP >::iterator input_itr;
 
-	public:
-		InputterStream( int master_rank, int num_masters) :
-				master_rank_(master_rank),
-				num_masters_(num_masters){}
+public:
+	InputterStream( int master_rank, int num_masters) :
+		master_rank_(master_rank),
+		num_masters_(num_masters){}
 
-		virtual ~InputterStream();
+	virtual ~InputterStream();
 
-		virtual bool has_pose();
-		virtual core::pose::PoseSP get_pose();
-		virtual void add_inputter( InputterSP inputter );
-		virtual void parse_def( utility::lua::LuaObject const & def );
-		virtual int size() { return inputters_.size(); }
+	virtual bool has_pose();
+	virtual core::pose::PoseSP get_pose();
+	virtual void add_inputter( InputterSP inputter );
+	virtual void parse_def( utility::lua::LuaObject const & def );
+	virtual int size() { return inputters_.size(); }
 
-	private:
-		std::list< InputterSP > inputters_;
-		int master_rank_;
-		int num_masters_;
+private:
+	std::list< InputterSP > inputters_;
+	int master_rank_;
+	int num_masters_;
 
 }; // end class
 

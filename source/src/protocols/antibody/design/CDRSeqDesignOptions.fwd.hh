@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 
+/// @file
 /// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
@@ -22,7 +22,7 @@
 namespace protocols {
 namespace antibody {
 namespace design {
-		
+
 
 // Forward
 class CDRSeqDesignOptions;
@@ -36,13 +36,13 @@ class CDRSeqDesignOptionsParser;
 typedef utility::pointer::shared_ptr< CDRSeqDesignOptionsParser > CDRSeqDesignOptionsParserOP;
 typedef utility::pointer::shared_ptr< CDRSeqDesignOptionsParser const > CDRSeqDesignOptionsParserCOP;
 
-typedef utility::vector1<CDRSeqDesignOptionsOP> AntibodyCDRSeqDesignOptions;	
+typedef utility::vector1<CDRSeqDesignOptionsOP> AntibodyCDRSeqDesignOptions;
 
 }
 }
 }
 
-#endif	//INCLUDED_ TestClass2.fwd.hh
+#endif //INCLUDED_ TestClass2.fwd.hh
 
 
 

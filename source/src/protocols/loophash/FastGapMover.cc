@@ -66,16 +66,16 @@ using std::string;
 static thread_local basic::Tracer TR( "protocols.loophash.FastGapMover" );
 
 FastGapMover::FastGapMover() :
-		Mover("FastGapMover"),
-		min_loop_size_(3),
-		max_loop_size_(14),
-		max_rms_(0.3),
-		min_rms_(0.0),
-		non_ideal_(true) 
-	{
+	Mover("FastGapMover"),
+	min_loop_size_(3),
+	max_loop_size_(14),
+	max_rms_(0.3),
+	min_rms_(0.0),
+	non_ideal_(true)
+{
 	// initialize lhlibrary
 	utility::vector1 < core::Size > loop_sizes;
-	for (Size i = min_loop_size_; i<= max_loop_size_; i++ ) {
+	for ( Size i = min_loop_size_; i<= max_loop_size_; i++ ) {
 		loop_sizes.push_back(i);
 	}
 
@@ -84,47 +84,47 @@ FastGapMover::FastGapMover() :
 	lhlibrary_->load_mergeddb();
 
 	lhsampler_ = LoopHashSamplerOP( new LoopHashSampler( lhlibrary_, simple_inserter_ ) );
-} 
+}
 
 void
 FastGapMover::apply( pose::Pose & pose ) {
-		lhsampler_->set_max_rms( max_rms_ );
-		lhsampler_->set_nonideal( non_ideal_ );
-		lhsampler_->set_min_rms( min_rms_ );
+	lhsampler_->set_max_rms( max_rms_ );
+	lhsampler_->set_nonideal( non_ideal_ );
+	lhsampler_->set_min_rms( min_rms_ );
 
-		// copy pose
-		PoseOP working_pose( new Pose(pose) );
-		//Size idx = 1;
+	// copy pose
+	PoseOP working_pose( new Pose(pose) );
+	//Size idx = 1;
 
-		// convert pose to centroid pose:
-		if( working_pose->is_fullatom() ){
-			core::util::switch_to_residue_type_set( *working_pose, core::chemical::CENTROID);
+	// convert pose to centroid pose:
+	if ( working_pose->is_fullatom() ) {
+		core::util::switch_to_residue_type_set( *working_pose, core::chemical::CENTROID);
+	}
+	// Now go through each gap and try increasingly larger lh until something is returned
+	Size next_gap = 0;
+	Real gap_dist;
+	find_next_gap( *working_pose, next_gap, gap_dist );
+	while ( next_gap != 0 ) {
+		TR << "Attempting to fix gap following residue " << next_gap << std::endl;
+		std::vector< Pose > lib_structs;
+
+		// gogo loophash
+		// increase loophash size until we get anything returned
+		//Size loop_size = std::max((Size)(gap_dist/3.5), min_loop_size_); // no point in trying anything that cant reach across the gap
+		Size loop_size = min_loop_size_; // no point in trying anything that cant reach across the gap
+		while ( lib_structs.size() == 0 && loop_size < max_loop_size_ ) {
+			TR << "Trying loopsize " << ++loop_size << std::endl;
+			lhsampler_->set_start_res( next_gap + 3 < loop_size ? 0 : next_gap + 3 - loop_size );
+			lhsampler_->set_stop_res ( next_gap );
+			lhsampler_->close_gaps( *working_pose, lib_structs, loop_size );
 		}
-		// Now go through each gap and try increasingly larger lh until something is returned
-		Size next_gap = 0;
-		Real gap_dist;
+		if ( lib_structs.size() != 0 ) {
+			working_pose = PoseOP( new Pose (lib_structs[0]) );
+		}
+
 		find_next_gap( *working_pose, next_gap, gap_dist );
-		while( next_gap != 0 ) {
-			TR << "Attempting to fix gap following residue " << next_gap << std::endl;
-			std::vector< Pose > lib_structs;
-			
-			// gogo loophash
-			// increase loophash size until we get anything returned
-			//Size loop_size = std::max((Size)(gap_dist/3.5), min_loop_size_); // no point in trying anything that cant reach across the gap
-			Size loop_size = min_loop_size_; // no point in trying anything that cant reach across the gap
-			while( lib_structs.size() == 0 && loop_size < max_loop_size_ ) {
-				TR << "Trying loopsize " << ++loop_size << std::endl;
-				lhsampler_->set_start_res( next_gap + 3 < loop_size ? 0 : next_gap + 3 - loop_size );
-				lhsampler_->set_stop_res ( next_gap );
-				lhsampler_->close_gaps( *working_pose, lib_structs, loop_size );
-			}
-			if( lib_structs.size() != 0 ) {
-				working_pose = PoseOP( new Pose (lib_structs[0]) );
-			}
-
-			find_next_gap( *working_pose, next_gap, gap_dist );
-		}
-		pose = *working_pose;
+	}
+	pose = *working_pose;
 
 } // apply
 
@@ -138,19 +138,19 @@ FastGapMover::find_next_gap( Pose & pose, Size & idx, Real & gap_distance ) {
 	// find chain breaks to add to gaplist
 	kinematics::FoldTree f( pose.fold_tree() );
 	for ( Size i = idx + 1; i < nres; ++i ) {
-			//bool chain_break = false;
-			Size j = i+1;
-			conformation::Residue const & rsd = pose.residue(i);
-			conformation::Residue const & next_rsd = pose.residue(j);
-			if (rsd.is_polymer() && next_rsd.is_polymer()) {
-					Real dist_squared = rsd.atom( rsd.upper_connect_atom() ).xyz().distance_squared(next_rsd.atom( next_rsd.lower_connect_atom() ).xyz());
-					gap_distance = std::sqrt(dist_squared);
-					if (dist_squared > chain_break_cutoff || dist_squared < 0.1) {
-							//chain_break = true;  // set but never used ~Labonte
-							idx = i;
-							return;
-					}
+		//bool chain_break = false;
+		Size j = i+1;
+		conformation::Residue const & rsd = pose.residue(i);
+		conformation::Residue const & next_rsd = pose.residue(j);
+		if ( rsd.is_polymer() && next_rsd.is_polymer() ) {
+			Real dist_squared = rsd.atom( rsd.upper_connect_atom() ).xyz().distance_squared(next_rsd.atom( next_rsd.lower_connect_atom() ).xyz());
+			gap_distance = std::sqrt(dist_squared);
+			if ( dist_squared > chain_break_cutoff || dist_squared < 0.1 ) {
+				//chain_break = true;  // set but never used ~Labonte
+				idx = i;
+				return;
 			}
+		}
 	}
 	idx = 0;
 }

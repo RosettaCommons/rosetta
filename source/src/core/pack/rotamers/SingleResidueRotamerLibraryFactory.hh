@@ -79,7 +79,7 @@ private:
 	static std::mutex cache_mutex_;
 #endif
 #endif
-	mutable std::map<	std::pair< std::string, std::string >, core::pack::rotamers::SingleResidueRotamerLibraryCOP > cache_;
+	mutable std::map< std::pair< std::string, std::string >, core::pack::rotamers::SingleResidueRotamerLibraryCOP > cache_;
 };
 
 } //namespace rotamers

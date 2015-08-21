@@ -24,58 +24,58 @@ namespace linear_algebra {
 using namespace fem::major_types;
 
 double epslon(
-		double const & x);
+	double const & x);
 
 void qzhes(
-		int const & nm,
-		int const & n,
-		arr_ref<double,2> a,
-		arr_ref<double,2> b,
-		bool const & matz,
-		arr_ref<double,2> z);
+	int const & nm,
+	int const & n,
+	arr_ref<double,2> a,
+	arr_ref<double,2> b,
+	bool const & matz,
+	arr_ref<double,2> z);
 
 void qzit(
-		int const & nm,
-		int const & n,
-		arr_ref<double,2> a,
-		arr_ref<double,2> b,
-		double const & eps1,
-		bool const & matz,
-		arr_ref<double,2> z,
-		int & ierr);
+	int const & nm,
+	int const & n,
+	arr_ref<double,2> a,
+	arr_ref<double,2> b,
+	double const & eps1,
+	bool const & matz,
+	arr_ref<double,2> z,
+	int & ierr);
 
 void qzval(
-		int const & nm,
-		int const & n,
-		arr_ref<double,2> a,
-		arr_ref<double,2> b,
-		arr_ref<double> alfr,
-		arr_ref<double> alfi,
-		arr_ref<double> beta,
-		bool const & matz,
-		arr_ref<double,2> z);
+	int const & nm,
+	int const & n,
+	arr_ref<double,2> a,
+	arr_ref<double,2> b,
+	arr_ref<double> alfr,
+	arr_ref<double> alfi,
+	arr_ref<double> beta,
+	bool const & matz,
+	arr_ref<double,2> z);
 
 void qzvec(
-		int const & nm,
-		int const & n,
-		arr_cref<double,2> a,
-		arr_ref<double,2> b,
-		arr_cref<double> alfr,
-		arr_cref<double> alfi,
-		arr_cref<double> beta,
-		arr_ref<double,2> z);
+	int const & nm,
+	int const & n,
+	arr_cref<double,2> a,
+	arr_ref<double,2> b,
+	arr_cref<double> alfr,
+	arr_cref<double> alfi,
+	arr_cref<double> beta,
+	arr_ref<double,2> z);
 
 void rgg(
-		int const & nm,
-		int const & n,
-		arr_ref<double,2> a,
-		arr_ref<double,2> b,
-		arr_ref<double> alfr,
-		arr_ref<double> alfi,
-		arr_ref<double> beta,
-		int const & matz,
-		arr_ref<double,2> z,
-		int & ierr);
+	int const & nm,
+	int const & n,
+	arr_ref<double,2> a,
+	arr_ref<double,2> b,
+	arr_ref<double> alfr,
+	arr_ref<double> alfi,
+	arr_ref<double> beta,
+	int const & matz,
+	arr_ref<double,2> z,
+	int & ierr);
 
 } // namespace linear_algebra
 } // namespace numeric

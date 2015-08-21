@@ -54,7 +54,7 @@ public:
 
 	/// @brief Re-dimension the storage capacity of this ScoreFileSilentStruct to the given number of
 	/// residues.
-	//void resize(Size const nres_in	);
+	//void resize(Size const nres_in );
 
 	// destructor
 	~ScoreFileSilentStruct() {}

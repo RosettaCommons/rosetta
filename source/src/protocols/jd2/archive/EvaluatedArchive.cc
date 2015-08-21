@@ -64,15 +64,15 @@ bool protocols::jd2::archive::EvaluatedArchive::options_registered_( false );
 void protocols::jd2::archive::EvaluatedArchive::register_options() {
 	Parent::register_options();
 	if ( !options_registered_ ) {
-		//		NEW_OPT( iterative::chainbreak_evaluator_exponent, "exponent for nrjump_weighted_chainbreaks", 1.5 );
-		//	NEW_OPT( iterative::simulate_bg4_cbtreatment, "this gives special cb weights", false );
+		//  NEW_OPT( iterative::chainbreak_evaluator_exponent, "exponent for nrjump_weighted_chainbreaks", 1.5 );
+		// NEW_OPT( iterative::simulate_bg4_cbtreatment, "this gives special cb weights", false );
 		NEW_OPT( iterative::evaluate_only_on_slaves,"do not re-evaluate decoys when they are read into archvie (e.g. on BlueGene)", false );
 		NEW_OPT( iterative::penalize_initial_decoys, "decoys read from input_pool have X extra score", 1000.0 );
 		options_registered_ = true;
 	}
 }
 
-#define OBSOLETE(key)														\
+#define OBSOLETE(key)              \
 	if ( basic::options::option[ key ].user() ) {													\
 		tr.Warning << "WARNING: Option "<< #key<< " is deprecated!" << std::endl; \
 	}
@@ -89,22 +89,22 @@ EvaluatedArchive::~EvaluatedArchive() {}
 
 
 EvaluatedArchive::EvaluatedArchive()
-	: scorefxn_( /* NULL */ ),
-		scores_are_clean_( true ),
-		b_evaluate_incoming_decoys_( !basic::options::option[ basic::options::OptionKeys::iterative::evaluate_only_on_slaves ]() ) ///yields bottleneck on BG
+: scorefxn_( /* NULL */ ),
+	scores_are_clean_( true ),
+	b_evaluate_incoming_decoys_( !basic::options::option[ basic::options::OptionKeys::iterative::evaluate_only_on_slaves ]() ) ///yields bottleneck on BG
 {
 	runtime_assert( options_registered_ );
 	setup_default_evaluators();
 	OBSOLETE(basic::options::OptionKeys::iterative::evaluate_only_on_slaves)
-}
+		}
 
-EvaluatedArchive::EvaluatedArchive( ArchiveManagerAP ptr )
-	: ArchiveBase( ptr ),
-		scorefxn_( /* NULL */ ),
-		scores_are_clean_( true ),
-		b_evaluate_incoming_decoys_( !basic::options::option[ basic::options::OptionKeys::iterative::evaluate_only_on_slaves ]() ) ///yields bottleneck on BG
-{
-	runtime_assert( options_registered_ );
+		EvaluatedArchive::EvaluatedArchive( ArchiveManagerAP ptr )
+		: ArchiveBase( ptr ),
+			scorefxn_( /* NULL */ ),
+			scores_are_clean_( true ),
+			b_evaluate_incoming_decoys_( !basic::options::option[ basic::options::OptionKeys::iterative::evaluate_only_on_slaves ]() ) ///yields bottleneck on BG
+			{
+			runtime_assert( options_registered_ );
 	setup_default_evaluators();
 }
 
@@ -131,7 +131,7 @@ void EvaluatedArchive::score( pose::Pose & pose ) const {
 }
 
 bool EvaluatedArchive::add_evaluated_structure(
-  core::io::silent::SilentStructOP evaluated_decoy,
+	core::io::silent::SilentStructOP evaluated_decoy,
 	core::io::silent::SilentStructOP alternative_decoy,
 	Batch const&
 ) {
@@ -158,9 +158,9 @@ bool EvaluatedArchive::add_evaluated_structure(
 
 //overloaded to add some tracer output
 void EvaluatedArchive::read_structures(
-   core::io::silent::SilentFileData& sfd,
-	 core::io::silent::SilentFileData& alternative_decoys,
-	 Batch const& batch
+	core::io::silent::SilentFileData& sfd,
+	core::io::silent::SilentFileData& alternative_decoys,
+	Batch const& batch
 ) {
 	tr.Info << "structures are scored with the following weights: " << std::endl;
 	WeightMap const& variations( score_variations() );
@@ -200,7 +200,7 @@ EvaluatedArchive::evaluate_silent_struct( core::io::silent::SilentStructOP iss )
 	//note: clear_energies should not kill the comments (TAG_IN_FILE, SOURCE_FILE ) should still be present...
 	//need to keep prefa_centroid_score...
 
-	//	runtime_assert( pss->has_energy( "chem_shifts" ) );
+	// runtime_assert( pss->has_energy( "chem_shifts" ) );
 	//make pose for scoring and evaluation purposes
 	PROF_START( basic::ARCHIVE_FILL_POSE );
 	pose::Pose pose;
@@ -214,7 +214,7 @@ EvaluatedArchive::evaluate_silent_struct( core::io::silent::SilentStructOP iss )
 
 
 	for ( utility::vector1< SilentEnergy >::const_iterator it = old_energies.begin(); it != old_energies.end(); ++it ) {
-		if ( it->name() != "_archive_select_score_" && !pss->has_energy( it->name() )) {
+		if ( it->name() != "_archive_select_score_" && !pss->has_energy( it->name() ) ) {
 			pss->add_energy( it->name(), it->value(), it->weight() );
 		}
 	}
@@ -242,10 +242,10 @@ EvaluatedArchive::evaluate_pose( core::io::silent::SilentStructOP iss, core::pos
 
 	//apply evaluators
 	PROF_START( basic::ARCHIVE_EVALUATORS );
- 	for ( EvaluatorMap::const_iterator it=evaluators_.begin(), eit=evaluators_.end();
-				it!=eit; ++it ) {
-		//		tr.Trace << "evaluate with " << it->first << std::endl;
-		//		basic::DynamicProfileThis here( "Evaluate "+it->first );
+	for ( EvaluatorMap::const_iterator it=evaluators_.begin(), eit=evaluators_.end();
+			it!=eit; ++it ) {
+		//  tr.Trace << "evaluate with " << it->first << std::endl;
+		//  basic::DynamicProfileThis here( "Evaluate "+it->first );
 		it->second->apply( pose, iss->decoy_tag(), *iss );
 	}
 	PROF_STOP( basic::ARCHIVE_EVALUATORS );
@@ -273,7 +273,7 @@ Real EvaluatedArchive::select_score( SilentStructOP evaluated_decoy ) {
 		Real const& weight( it->second );
 		if ( weight == 0.0 ) continue;
 
-		if ( name == SPECIAL_INITIAL_DECOY_PENALTY ) {		///special evaluator name--- compute score-contribution for this one
+		if ( name == SPECIAL_INITIAL_DECOY_PENALTY ) {  ///special evaluator name--- compute score-contribution for this one
 			//crude hack to test things out ...
 			if ( evaluated_decoy->get_comment( "source_file" ).find( "batch_000000/" ) != std::string::npos ) {
 				sum += weight;
@@ -290,8 +290,8 @@ Real EvaluatedArchive::select_score( SilentStructOP evaluated_decoy ) {
 
 	//tracer output with full result
 	tr.Trace << "evaluated select_score for " << evaluated_decoy->decoy_tag()
-					 << " that was tagged as " << evaluated_decoy->get_comment( "tag_in_file")
-					 << " : " << sum << " with " << select_weights_.size() << " evaluators" << std::endl;
+		<< " that was tagged as " << evaluated_decoy->get_comment( "tag_in_file")
+		<< " : " << sum << " with " << select_weights_.size() << " evaluators" << std::endl;
 
 	//add energy to cache
 	evaluated_decoy->add_energy( "_archive_select_score_", sum );
@@ -346,11 +346,11 @@ void EvaluatedArchive::rescore() {
 	sort(); //here the summing is done via select_score() and a new _archive_select_score_ is computed
 
 	tr.Debug << "...done rescoring and sorting " << std::endl;
-// 	if ( tr.Trace.visible() ) {
-// 		for ( SilentStructs::const_iterator it = decoys().begin(); it != decoys().end(); ++it ) {
-// 			tr.Trace << select_score( *it ) << " " << (*it)->decoy_tag() << std::endl;
-// 		}
-// 	}
+	//  if ( tr.Trace.visible() ) {
+	//   for ( SilentStructs::const_iterator it = decoys().begin(); it != decoys().end(); ++it ) {
+	//    tr.Trace << select_score( *it ) << " " << (*it)->decoy_tag() << std::endl;
+	//   }
+	//  }
 }
 
 
@@ -371,7 +371,7 @@ void EvaluatedArchive::remove_evaluation( std::string const& name ) {
 	std::string const& column( name );
 
 	EvaluatorMap::iterator iter = evaluators_.find( column );
-	if ( iter != evaluators_.end() ) 	evaluators_.erase( iter );
+	if ( iter != evaluators_.end() )  evaluators_.erase( iter );
 
 	WeightMap::iterator iter2 = select_weights_.find( column );
 	if ( iter2 != select_weights_.end() ) {
@@ -384,7 +384,7 @@ void EvaluatedArchive::remove_evaluation( std::string const& name ) {
 
 void EvaluatedArchive::set_weight( std::string const& column, core::Real weight ) {
 	tr.Info << "set_weight " << column << " to " << weight << " in " << name() << std::endl;
-	//	runtime_assert( has_evaluator( column ) ); or part of score!
+	// runtime_assert( has_evaluator( column ) ); or part of score!
 	WeightMap::const_iterator iter = select_weights_.find( column );
 	if ( iter != select_weights_.end() && std::abs( iter->second - weight ) < 0.001 ) return;
 	tr.Info << "set_weight " << column << " to " << weight << " in " << name() << std::endl;
@@ -417,7 +417,7 @@ void EvaluatedArchive::set_evaluators( EvaluatorMap const& evaluators, WeightMap
 }
 
 core::Real EvaluatedArchive::get_weight( std::string const& column ) const {
-	//	runtime_assert( has_evaluator( column ) ); or part of score!
+	// runtime_assert( has_evaluator( column ) ); or part of score!
 	WeightMap::const_iterator iter = select_weights_.find( column );
 	if ( iter != select_weights_.end() ) return iter->second;
 	else return 0.0;
@@ -453,24 +453,24 @@ void EvaluatedArchive::setup_default_evaluators() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	//using namespace scoring::constraints;
-// 	if ( evaluate_local() && option[ constraints::cst_file ].user() ) {
-// 		std::string filename( option[ constraints::cst_file ]()[ 1 ] );
-// 		evaluation::PoseEvaluatorOP ev_cst ( new evaluation::ConstraintEvaluator( "cmdline", filename ) );
-// 		add_evaluation( ev_cst, option[ constraints::cst_weight ] );
-// 		//The ConstraintEvaluator creates two columns: cmdline_cst and cmdline_viol...
-// 		set_weight( "cmdline_viol", 0.0 );
-// 	}
+	//  if ( evaluate_local() && option[ constraints::cst_file ].user() ) {
+	//   std::string filename( option[ constraints::cst_file ]()[ 1 ] );
+	//   evaluation::PoseEvaluatorOP ev_cst ( new evaluation::ConstraintEvaluator( "cmdline", filename ) );
+	//   add_evaluation( ev_cst, option[ constraints::cst_weight ] );
+	//   //The ConstraintEvaluator creates two columns: cmdline_cst and cmdline_viol...
+	//   set_weight( "cmdline_viol", 0.0 );
+	//  }
 	set_weight( "score", 1.0 );
 	if ( option[ OptionKeys::iterative::penalize_initial_decoys ]() > 0.0 ) {
 		set_weight( SPECIAL_INITIAL_DECOY_PENALTY , option[ OptionKeys::iterative::penalize_initial_decoys ]() );
 	}
 
-	//	evaluation::MetaPoseEvaluator cmdline_evals;
-	//	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(cmdline_evals);
-	//	for ( evaluation::MetaPoseEvaluator::EvaluatorList::const_iterator it = cmdline_evals.evaluators().begin();
-	//				it != cmdline_evals.evaluators().end(); ++it ) {
-	// 		add_evaluation( *it );
-	//	}
+	// evaluation::MetaPoseEvaluator cmdline_evals;
+	// evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(cmdline_evals);
+	// for ( evaluation::MetaPoseEvaluator::EvaluatorList::const_iterator it = cmdline_evals.evaluators().begin();
+	//    it != cmdline_evals.evaluators().end(); ++it ) {
+	//   add_evaluation( *it );
+	// }
 }
 
 /* =================== end maintenance of evaluators and weights ====================== */

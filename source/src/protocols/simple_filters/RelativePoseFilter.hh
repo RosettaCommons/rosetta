@@ -62,7 +62,7 @@ public:
 	void dump_pose_fname( std::string const s );
 
 	core::scoring::ScoreFunctionOP scorefxn() const;
-  void scorefxn( core::scoring::ScoreFunctionOP const s );
+	void scorefxn( core::scoring::ScoreFunctionOP const s );
 	void packing_shell( core::Real const s );
 	core::Real packing_shell() const;
 	core::pose::PoseOP thread_seq( core::pose::Pose const & p) const; //key functionality of this filter: thread relevant sections, repack and relax

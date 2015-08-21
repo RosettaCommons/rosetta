@@ -111,7 +111,7 @@ RNA_DataBackboneEnergy::initialize_atom_numbers_sugar() {
 	///ResidueTypeCOP const & rsd_type_coarse( rsd_set->aa_map( na_rad )[ 1 ] ); //Check out adenine.
 
 	//atom_numbers_sugar_coarse_.clear();
-	//	atom_numbers_sugar_coarse_.push_back( rsd_type_coarse->atom_index( " S  " ) );
+	// atom_numbers_sugar_coarse_.push_back( rsd_type_coarse->atom_index( " S  " ) );
 
 }
 
@@ -138,7 +138,7 @@ RNA_DataBackboneEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction 
 	pose.update_residue_neighbors();
 }
 
-	/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
 void
 RNA_DataBackboneEnergy::setup_for_packing(
 	pose::Pose & pose,
@@ -167,9 +167,9 @@ RNA_DataBackboneEnergy::residue_pair_energy(
 	if ( !rsd1.is_RNA() ) return;
 	if ( !rsd2.is_RNA() ) return;
 
-	//	if ( std::abs( static_cast<int>( rsd1.seqpos() ) - static_cast<int>( rsd2.seqpos() )  ) < 2 ) return;
+	// if ( std::abs( static_cast<int>( rsd1.seqpos() ) - static_cast<int>( rsd2.seqpos() )  ) < 2 ) return;
 
-	//		rna_filtered_base_base_info.set_calculated( false );
+	//  rna_filtered_base_base_info.set_calculated( false );
 	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
 	rna::data::RNA_DataInfo const & rna_data_info( rna_scoring_info.rna_data_info() );
 	ObjexxFCL::FArray1D < bool > const & rna_data_backbone_burial( rna_data_info.backbone_burial() );
@@ -177,7 +177,7 @@ RNA_DataBackboneEnergy::residue_pair_energy(
 
 	if ( rna_data_backbone_burial.size() == 0.0 ) return;
 
-debug_assert( rna_data_backbone_burial.size() == pose.total_residue() );
+	debug_assert( rna_data_backbone_burial.size() == pose.total_residue() );
 
 	if ( rna_data_backbone_burial( rsd1.seqpos() ) ) {
 		emap[ rna_data_backbone ]         += well_depth_burial_ * get_sugar_env_score( rsd1 /*buried sugar*/, rsd2 /*other*/ );
@@ -201,7 +201,7 @@ RNA_DataBackboneEnergy::get_sugar_env_score( core::conformation::Residue const &
 
 	Real score( 0.0 );
 
-	//	Vector const mean_sugar_pos = get_mean_sugar_pos( rsd_buried );
+	// Vector const mean_sugar_pos = get_mean_sugar_pos( rsd_buried );
 	bool is_coarse = ( rsd_buried.is_coarse() );
 
 	utility::vector1< Size > const & atom_numbers_sugar = ( is_coarse ? atom_numbers_sugar_coarse_ : atom_numbers_sugar_ );
@@ -245,14 +245,14 @@ RNA_DataBackboneEnergy::check_sugar_atom( Size const & n ) const {
 ////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DataBackboneEnergy::eval_atom_derivative(
-		id::AtomID const & atom_id,
- 		pose::Pose const & pose,
-		kinematics::DomainMap const & domain_map,
- 		ScoreFunction const &,
- 		EnergyMap const & weights,
- 		Vector & F1,
- 		Vector & F2
- 	) const
+	id::AtomID const & atom_id,
+	pose::Pose const & pose,
+	kinematics::DomainMap const & domain_map,
+	ScoreFunction const &,
+	EnergyMap const & weights,
+	Vector & F1,
+	Vector & F2
+) const
 {
 
 	Size const i( atom_id.rsd() );
@@ -263,14 +263,14 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 
 	if ( m > rsd1.nheavyatoms() ) return;
 
-  rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
+	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
 	rna::data::RNA_DataInfo const & rna_data_info( rna_scoring_info.rna_data_info() );
 	ObjexxFCL::FArray1D < bool > const & rna_data_backbone_burial( rna_data_info.backbone_burial() );
 	ObjexxFCL::FArray1D < bool > const & rna_data_backbone_exposed( rna_data_info.backbone_exposed() );
 
 	if ( rna_data_backbone_burial.size() == 0.0 ) return;
 
-debug_assert( rna_data_backbone_burial.size() == pose.total_residue() );
+	debug_assert( rna_data_backbone_burial.size() == pose.total_residue() );
 
 	Vector const heavy_atom_i( rsd1.xyz( m ) );
 

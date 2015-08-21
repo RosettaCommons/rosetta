@@ -56,15 +56,15 @@ namespace rotamer_recovery {
 
 static Tracer TR("protocol.moves.RRProtocolRelax");
 
-RRProtocolRelax::RRProtocolRelax() : 
+RRProtocolRelax::RRProtocolRelax() :
 	nonideal_(false),
-  cartesian_(false)
+	cartesian_(false)
 {}
 
 RRProtocolRelax::RRProtocolRelax( RRProtocolRelax const & src ) :
 	RRProtocol(src),
 	nonideal_(src.nonideal_),
-  cartesian_(src.cartesian_)
+	cartesian_(src.cartesian_)
 {}
 
 RRProtocolRelax::~RRProtocolRelax() {}
@@ -111,38 +111,39 @@ RRProtocolRelax::get_cartesian() const {
 /// @details apply FastRelax and measure rotamer recovery for each residue
 void
 RRProtocolRelax::run(
-		RRComparerOP comparer,
-		RRReporterOP reporter,
-		Pose const & pose,
-		ScoreFunction const &,
-		PackerTask const & packer_task
+	RRComparerOP comparer,
+	RRReporterOP reporter,
+	Pose const & pose,
+	ScoreFunction const &,
+	PackerTask const & packer_task
 ) {
 	// Assume score_function.setup_for_scoring(pose) has already been called.
 
 	Pose working_pose = pose; // deep copy
 	RelaxProtocolBaseOP relax = generate_relax_from_cmd();
-	MoveMapOP movemap( new MoveMap() );	
+	MoveMapOP movemap( new MoveMap() );
 
-	if (cartesian_)
+	if ( cartesian_ ) {
 		relax->cartesian(true);
+	}
 
-	for(Size ii = 1; ii <= pose.total_residue(); ++ii){
-		if (!packer_task.pack_residue(ii)) continue;
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		if ( !packer_task.pack_residue(ii) ) continue;
 
 		// set movemap to allow sidechain DOFs only for residue ii
 		core::conformation::Residue res = pose.residue(ii);
 		movemap->clear();
-		movemap->set_chi( ii, true ); 
-		if ( nonideal_) {
+		movemap->set_chi( ii, true );
+		if ( nonideal_ ) {
 			for ( Size jj = 1; jj <= res.natoms(); ++jj ) {
-				if (res.atom_is_backbone(jj)) continue;
-				if (res.is_virtual(jj)) continue;
+				if ( res.atom_is_backbone(jj) ) continue;
+				if ( res.is_virtual(jj) ) continue;
 				movemap->set( DOF_ID( AtomID( jj, ii ), core::id::THETA ), true );
 				movemap->set( DOF_ID( AtomID( jj, ii ), core::id::D ), true );
 			}
 		}
-		relax->set_movemap( movemap );	
-		
+		relax->set_movemap( movemap );
+
 		// relax!
 		relax->apply(working_pose);
 
@@ -153,7 +154,7 @@ RRProtocolRelax::run(
 			pose.residue(ii), working_pose.residue(ii) );
 
 		// reset
-		working_pose.replace_residue( ii, pose.residue( ii ), false ); 	// restore the original conformation.
+		working_pose.replace_residue( ii, pose.residue( ii ), false );  // restore the original conformation.
 	}
 }
 

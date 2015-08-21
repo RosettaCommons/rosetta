@@ -19,7 +19,7 @@
 
 namespace protocols {
 namespace toolbox {
-namespace match_enzdes_util{
+namespace match_enzdes_util {
 
 
 class EnzConstraintParameters;

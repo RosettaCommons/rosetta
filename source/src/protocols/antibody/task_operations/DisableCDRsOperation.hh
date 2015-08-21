@@ -42,65 +42,65 @@ public:
 
 	///@brief Default Constructor.
 	DisableCDRsOperation();
-	
+
 	///@brief Regular Constructor
 	DisableCDRsOperation(AntibodyInfoCOP ab_info);
-	
+
 	///@brief Constructor Specifying set of cdrs to use
 	DisableCDRsOperation(AntibodyInfoCOP ab_info, utility::vector1<bool> const & cdrs);
-	
+
 	///@brief Constructor Specifying set of cdrs and what to disable
 	DisableCDRsOperation(
 		AntibodyInfoCOP ab_info,
 		utility::vector1<bool> const & cdrs,
 		bool disable_packing_and_design);
-	
+
 	virtual ~DisableCDRsOperation();
-	
+
 	DisableCDRsOperation(DisableCDRsOperation const & src);
 
-	virtual core::pack::task::operation::TaskOperationOP 
+	virtual core::pack::task::operation::TaskOperationOP
 	clone() const;
-	
+
 
 	/// @brief Configure from a RosettaScripts XML tag.
 	virtual void
 	parse_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & );
-	
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & );
+
 	//////////////////////
-	
+
 	virtual
 	void
 	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
-	
+
 	///@brief Set the CDRs we will be disabling - 3/6 long vector corresponding to Enum.
 	void
 	set_cdrs(utility::vector1<bool> const & cdrs);
-	
+
 	///@brief Set only a single CDR to disable.
 	void
 	set_cdr_only(CDRNameEnum cdr);
-	
+
 	///@brief Set to disable packing and design, or only just design.
 	void
 	set_disable_packing_and_design(bool disable_packing_and_design);
-	
-	
+
+
 	void
 	set_defaults();
-	
+
 private:
 	AntibodyInfoCOP ab_info_;
 	utility::vector1<bool> cdrs_;
-	
+
 	bool disable_packing_and_design_;
-	
+
 	///Needed for default and RS constructor.
 	AntibodyNumberingSchemeEnum numbering_scheme_;
 	CDRDefinitionEnum cdr_definition_;
-	
+
 };
 
 class DisableCDRsOperationCreator : public core::pack::task::operation::TaskOperationCreator {
@@ -114,7 +114,7 @@ public:
 } //antibody
 } //protocols
 
-#endif	//INCLUDED_protocols_antibody_task_operations_DisableCDRsOperation_hh
+#endif //INCLUDED_protocols_antibody_task_operations_DisableCDRsOperation_hh
 
 
 

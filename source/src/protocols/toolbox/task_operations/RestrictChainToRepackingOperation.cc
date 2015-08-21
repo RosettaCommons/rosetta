@@ -47,7 +47,7 @@ using namespace core::pack::task::operation;
 RestrictChainToRepackingOperation::RestrictChainToRepackingOperation() {}
 
 RestrictChainToRepackingOperation::RestrictChainToRepackingOperation( core::Size const chain )
-	: parent(), chain_( chain )
+: parent(), chain_( chain )
 {
 }
 
@@ -68,15 +68,16 @@ void
 RestrictChainToRepackingOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {
 	runtime_assert(chain_);
-	if (chain()>pose.conformation().num_chains()) {
+	if ( chain()>pose.conformation().num_chains() ) {
 		utility_exit_with_message("Number of chains in pose is smaller than the number defined in the xml under \"chain=\"! Aborting!");
-  }
+	}
 	core::Size const chain_begin( pose.conformation().chain_begin( chain_ ) );
 	core::Size const chain_end( pose.conformation().chain_end( chain_ ) );
 
 	core::pack::task::operation::RestrictResidueToRepacking rrtr;
-	for( core::Size i( chain_begin ); i<=chain_end; ++i )
+	for ( core::Size i( chain_begin ); i<=chain_end; ++i ) {
 		rrtr.include_residue( i );
+	}
 
 	rrtr.apply( pose, task );
 }
@@ -97,7 +98,7 @@ RestrictChainToRepackingOperation::chain() const
 void
 RestrictChainToRepackingOperation::parse_tag( TagCOP tag , DataMap & )
 {
-  chain( tag->getOption< core::Size >( "chain", 1 ) );
+	chain( tag->getOption< core::Size >( "chain", 1 ) );
 }
 
 } //namespace protocols

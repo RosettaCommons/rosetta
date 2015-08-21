@@ -31,7 +31,7 @@ class PDBReloadMover : public moves::Mover {
 
 public:
 	/// @brief
-	/// 	empty constructor
+	///  empty constructor
 	PDBReloadMover();
 
 	// Undefined, commenting out to fix PyRosetta build  PDBReloadMover( core::pose::Pose const & pose );

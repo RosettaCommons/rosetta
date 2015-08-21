@@ -203,20 +203,20 @@ public:
 		return loop_start_pdb_; }
 
 	core::Size
-  stop_pdb() const {
-    return loop_end_pdb_; }
-
-  char
-  start_pdb_chain() const {
-    return loop_start_pdb_chain_; }
+	stop_pdb() const {
+		return loop_end_pdb_; }
 
 	char
-  stop_pdb_chain() const {
-    return loop_end_pdb_chain_; }
+	start_pdb_chain() const {
+		return loop_start_pdb_chain_; }
 
- core::Size
-  start() const {
-    return loop_start_; }
+	char
+	stop_pdb_chain() const {
+		return loop_end_pdb_chain_; }
+
+	core::Size
+	start() const {
+		return loop_start_; }
 
 	core::Size
 	stop() const {
@@ -274,7 +274,7 @@ protected:
 	void
 	generate_ss_strings_from_blueprint( std::string const & ss_blueprint );
 
-//data
+	//data
 private:
 
 	//some basic information about the loop

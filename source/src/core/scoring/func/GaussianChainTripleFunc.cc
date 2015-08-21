@@ -34,8 +34,8 @@ namespace scoring {
 namespace func {
 
 GaussianChainTripleFunc::GaussianChainTripleFunc( Real const gaussian_variance,
-																									Real const loop_fixed_cost,
-																									Real const D2, Real const D3 ):
+	Real const loop_fixed_cost,
+	Real const D2, Real const D3 ):
 	gaussian_variance_( gaussian_variance ),
 	loop_fixed_cost_( loop_fixed_cost ),
 	D2_( D2 ),

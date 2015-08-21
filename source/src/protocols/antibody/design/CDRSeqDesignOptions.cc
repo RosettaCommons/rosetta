@@ -41,12 +41,12 @@ namespace protocols {
 namespace antibody {
 namespace design {
 
-	using namespace boost;
-	using namespace protocols::antibody;
-	using namespace protocols::antibody::clusters;
-	using utility::io::izstream;
-	using std::string;
-	using utility::vector1;
+using namespace boost;
+using namespace protocols::antibody;
+using namespace protocols::antibody::clusters;
+using utility::io::izstream;
+using std::string;
+using utility::vector1;
 
 CDRSeqDesignOptions::CDRSeqDesignOptions():
 	utility::pointer::ReferenceCount()
@@ -93,12 +93,11 @@ CDRSeqDesignOptions::fallback_strategy(SeqDesignStrategyEnum strategy) {
 
 bool
 CDRSeqDesignOptions::fallback() const{
-		if (fallback_strategy_ == seq_design_none) {
-			return false;
-		}
-		else{
-			return true;
-		}
+	if ( fallback_strategy_ == seq_design_none ) {
+		return false;
+	} else {
+		return true;
+	}
 }
 
 void
@@ -133,7 +132,7 @@ CDRSeqDesignOptionsParser::~CDRSeqDesignOptionsParser() {}
 utility::vector1<CDRSeqDesignOptionsOP>
 CDRSeqDesignOptionsParser::parse_default_and_user_options(std::string filename) {
 	utility::vector1<CDRSeqDesignOptionsOP> antibody_options;
-	for (core::Size i = 1; i <= 6; ++i){
+	for ( core::Size i = 1; i <= 6; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
 		antibody_options.push_back( parse_default_and_user_options( cdr, filename ) );
 	}
@@ -156,7 +155,7 @@ CDRSeqDesignOptionsParser::parse_default_and_user_options(CDRNameEnum cdr, std::
 utility::vector1<CDRSeqDesignOptionsOP>
 CDRSeqDesignOptionsParser::parse_options(std::string filename) {
 	utility::vector1<CDRSeqDesignOptionsOP> antibody_options;
-	for (core::Size i = 1; i <= 6; ++i){
+	for ( core::Size i = 1; i <= 6; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
 		antibody_options.push_back( parse_options( cdr, filename ) );
 	}
@@ -169,10 +168,9 @@ CDRSeqDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 	using namespace utility;
 	using namespace std;
 
-	if (default_and_user_){
+	if ( default_and_user_ ) {
 		cdr_options_->set_cdr(cdr);
-	}
-	else{
+	} else {
 		cdr_options_ = CDRSeqDesignOptionsOP( new CDRSeqDesignOptions(cdr) );
 	}
 
@@ -182,18 +180,18 @@ CDRSeqDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 	//This is straight from C++ tutorials.
 	string line;
 	izstream instruction_file(instructions_path_);
-	if(instruction_file.bad()){
+	if ( instruction_file.bad() ) {
 		utility_exit_with_message("Unable to open grafting instruction file.");
 	}
 	//TR <<"Reading "<<path << " for "<< ab_manager_->cdr_name_enum_to_string(cdr) << std::endl;
-	while (getline(instruction_file, line)){
+	while ( getline(instruction_file, line) ) {
 
 		//Skip any comments + empty lines
 		utility::trim(line, "\n"); //Remove trailing line break
 		boost::algorithm::trim(line); //Remove any whitespace on either side of the string
 
 		//Continue to next line on empty string, comment
-		if (startswith(line, "#") || startswith(line, "\n") || line.empty()  ||  (line.find_first_not_of(' ') == std::string::npos) ){
+		if ( startswith(line, "#") || startswith(line, "\n") || line.empty()  ||  (line.find_first_not_of(' ') == std::string::npos) ) {
 			continue;
 		}
 
@@ -208,15 +206,13 @@ CDRSeqDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 		std::string mode = lineSP[2];
 		boost::to_upper(mode);
 
-		if (cdr_type == "ALL"){
+		if ( cdr_type == "ALL" ) {
 			parse_cdr_option(mode, lineSP);
-		}
-		else if (ab_manager_->cdr_name_is_present(cdr_type)){
-			if (ab_manager_->cdr_name_string_to_enum(cdr_type) == cdr){
+		} else if ( ab_manager_->cdr_name_is_present(cdr_type) ) {
+			if ( ab_manager_->cdr_name_string_to_enum(cdr_type) == cdr ) {
 				parse_cdr_option(mode, lineSP);
 			}
-		}
-		else {
+		} else {
 			//If expansion to chains, frameworks, etc.  Do it here.
 			//We may have separate parsers for framework or L2.5 or whatever.
 			//If its not a CDR, just skip it for now so we can have
@@ -233,14 +229,13 @@ void
 CDRSeqDesignOptionsParser::check_path() {
 	using namespace std;
 	izstream check( instructions_path_, ifstream::in);
-	if (check.good()){return;}
-	else{
+	if ( check.good() ) { return;}
+	else {
 		ifstream check2((basic::database::full_name(instructions_path_, false)).c_str(), ifstream::in);
-		if (check2.good()){
+		if ( check2.good() ) {
 			instructions_path_ = basic::database::full_name(instructions_path_);
 			return;
-		}
-		else{
+		} else {
 			utility_exit_with_message("Instructions file path not good.  Please check path.");
 		}
 	}
@@ -249,13 +244,12 @@ CDRSeqDesignOptionsParser::check_path() {
 void
 CDRSeqDesignOptionsParser::parse_cdr_option(std::string const mode, vector1<string>& lineSP) {
 
-	if (mode == "DESIGN" || mode == "SEQDESIGN" || mode == "SEQ_DESIGN" || mode == "SEQUENCEDESIGN" || mode == "SEQUENCE_DESIGN"){
+	if ( mode == "DESIGN" || mode == "SEQDESIGN" || mode == "SEQ_DESIGN" || mode == "SEQUENCEDESIGN" || mode == "SEQUENCE_DESIGN" ) {
 		check_line_len(lineSP, 3);
 		std::string adjective = lineSP[3];
 		boost::to_upper(adjective);
 		parse_cdr_design_option(adjective, lineSP);
-	}
-	else {
+	} else {
 		parse_cdr_general_option(lineSP);
 	}
 
@@ -263,7 +257,7 @@ CDRSeqDesignOptionsParser::parse_cdr_option(std::string const mode, vector1<stri
 
 void
 CDRSeqDesignOptionsParser::check_line_len(const vector1<string> & lineSP, const core::Size len_check) const {
-	if (lineSP.size() < len_check){
+	if ( lineSP.size() < len_check ) {
 		utility_exit_with_message("Could not parse design instructions. Line not long enough: "+utility::to_string(len_check)+" "+utility::to_string(lineSP));
 	}
 }
@@ -273,10 +267,9 @@ CDRSeqDesignOptionsParser::parse_cdr_general_option(vector1<string> & lineSP) {
 
 	check_line_len(lineSP, 2);
 	std::string setting = lineSP[2];
-	if (setting == "FIX"){
+	if ( setting == "FIX" ) {
 		cdr_options_->design(false);
-	}
-	else if (setting == "ALLOW") {
+	} else if ( setting == "ALLOW" ) {
 		cdr_options_->design(true);
 	}
 }
@@ -286,25 +279,21 @@ CDRSeqDesignOptionsParser::parse_cdr_design_option(std::string const name, vecto
 
 	using namespace utility;
 
-	if (name=="FIX"){
+	if ( name=="FIX" ) {
 		cdr_options_->design(false);
-	}
-	else if (name == "ALLOW") {
+	} else if ( name == "ALLOW" ) {
 		cdr_options_->design(true);
-	}
-	else if(name=="PROFILES" || name == "PROFILE" || name == "STRATEGY" || name == "PRIMARY_STRATEGY" || name == "PRIMARYSTRATEGY"){
+	} else if ( name=="PROFILES" || name == "PROFILE" || name == "STRATEGY" || name == "PRIMARY_STRATEGY" || name == "PRIMARYSTRATEGY" ) {
 		check_line_len(lineSP, 4);
 		std::string option = lineSP[4];
 		boost::to_upper(option);
 		set_cdr_design_primary_option(option);
-	}
-	else if(name=="FALLBACK_STRATEGY" || name == "FALLBACKSTRATEGY"){
+	} else if ( name=="FALLBACK_STRATEGY" || name == "FALLBACKSTRATEGY" ) {
 		check_line_len(lineSP, 4);
 		std::string option = lineSP[4];
 		boost::to_upper(option);
 		set_cdr_design_fallback_option(option);
-	}
-	else{
+	} else {
 		utility_exit_with_message("Could not parse ab design instruction.  Unknown option: "+name);
 	}
 }
@@ -321,15 +310,14 @@ void
 CDRSeqDesignOptionsParser::set_cdr_design_fallback_option(const std::string option) {
 
 	SeqDesignStrategyEnum strategy= seq_design_strategy_to_enum( option );
-	
-	if (strategy == seq_design_profiles || strategy == seq_design_profile_sets || strategy == seq_design_profile_sets_combined) {
+
+	if ( strategy == seq_design_profiles || strategy == seq_design_profile_sets || strategy == seq_design_profile_sets_combined ) {
 		utility_exit_with_message("SeqDesign Fallback Strategy cannot be profile-based");
-	}
-	else {
+	} else {
 		cdr_options_->design_strategy(strategy);
 		//TR << "Setting fallback " << seq_design_strategy_to_string(strategy) << std::endl;
 	}
-	
+
 }
 
 

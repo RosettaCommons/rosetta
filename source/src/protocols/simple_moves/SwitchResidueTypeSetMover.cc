@@ -50,12 +50,12 @@ SwitchResidueTypeSetMoverCreator::mover_name()
 }
 
 SwitchResidueTypeSetMover::SwitchResidueTypeSetMover()
-	: moves::Mover("SwitchResidueTypeSetMover")
+: moves::Mover("SwitchResidueTypeSetMover")
 {}
 
 SwitchResidueTypeSetMover::SwitchResidueTypeSetMover( std::string const & type_set_tag_in )
-	: moves::Mover("SwitchResidueTypeSetMover"),
-		type_set_tag_( type_set_tag_in )
+: moves::Mover("SwitchResidueTypeSetMover"),
+	type_set_tag_( type_set_tag_in )
 {}
 
 std::string
@@ -106,10 +106,10 @@ SwitchResidueTypeSetMover::parse_my_tag(
 
 void
 SwitchResidueTypeSetMover::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & /*score_fxns*/,
-				utility::lua::LuaObject const & /*tasks*/,
-				protocols::moves::MoverCacheSP /*cache*/ ) {
-  if( def["set"] ) type_set_tag_ = def["set"].to<std::string>();
+	utility::lua::LuaObject const & /*score_fxns*/,
+	utility::lua::LuaObject const & /*tasks*/,
+	protocols::moves::MoverCacheSP /*cache*/ ) {
+	if ( def["set"] ) type_set_tag_ = def["set"].to<std::string>();
 }
 
 std::ostream &operator<< (std::ostream &os, SwitchResidueTypeSetMover const &mover)

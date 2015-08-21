@@ -35,7 +35,7 @@ namespace sequence {
 class DerivedSequenceMapping : public core::id::SequenceMapping {
 
 public:
-// constructors, destructors and assignment operator
+	// constructors, destructors and assignment operator
 	/// @brief ctor
 	DerivedSequenceMapping() :
 		core::id::SequenceMapping(),
@@ -96,7 +96,7 @@ public:
 private:
 	std::string seq1_; //target=query sequence ... might be empty if not available
 	std::string seq2_; //template sequence
- 	Size start_seq2_; // which is the first seq_pos of seq2_
+	Size start_seq2_; // which is the first seq_pos of seq2_
 }; // class SequenceMapping
 
 } // sequence

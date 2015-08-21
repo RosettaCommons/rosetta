@@ -45,137 +45,137 @@
 // Unit headers
 
 namespace protocols {
-	namespace simple_moves {
-		namespace bin_transitions {
+namespace simple_moves {
+namespace bin_transitions {
 
-			/// @brief A mover to set mainchain torsions by bin transition probabilities
-			///
-			class PerturbByBins : public protocols::moves::Mover
-			{
-			private:
-				typedef protocols::moves::Mover moverclass;
-			public:
-				/// @brief Default constructor.
-				///
-				PerturbByBins();
-	
-				/// @brief Copy constructor.
-				///
-				PerturbByBins( PerturbByBins const &src );
-	
-				/// @brief Destructor.
-				///
-				virtual ~PerturbByBins();
+/// @brief A mover to set mainchain torsions by bin transition probabilities
+///
+class PerturbByBins : public protocols::moves::Mover
+{
+private:
+	typedef protocols::moves::Mover moverclass;
+public:
+	/// @brief Default constructor.
+	///
+	PerturbByBins();
 
-				virtual std::string get_name() const;
-	
-				/// @brief Clone -- i.e. create a new object copying this one and return an owning pointer to the copy.
-				///
-				virtual protocols::moves::MoverOP clone() const {
-					return (protocols::moves::MoverOP( new protocols::simple_moves::bin_transitions::PerturbByBins( *this ) ) );
-				}
-	
-				/// @brief Get a new instance of this mover (NOT copying).
-				///
-				virtual protocols::moves::MoverOP fresh_instance() const {
-					return protocols::moves::MoverOP( new PerturbByBins );
-				}
+	/// @brief Copy constructor.
+	///
+	PerturbByBins( PerturbByBins const &src );
 
-				/// @brief Apply the mover to a pose.
-				///
-				virtual void apply( core::pose::Pose & pose );
+	/// @brief Destructor.
+	///
+	virtual ~PerturbByBins();
 
-				/// @brief Parse XML for RosettaScripts.
-				///
-				void parse_my_tag( utility::tag::TagCOP tag,
-					basic::datacache::DataMap &,
-					protocols::filters::Filters_map const &,
-					protocols::moves::Movers_map const &,
-					core::pose::Pose const & );
-					
-				/******************************
-				 ** SETTERS                  **
-				 ******************************/
-					
-				/// @brief Set the bin transition probability file.
-				/// @details Also, loads the object.
-				void set_binfile_and_load( std::string const &name );
-				
-				/// @brief Set the residue ranges.  If set to (0,0), the
-				/// start and end of the pose are used as the range bounds.
-				void set_residue_range( core::Size const start, core::Size const end );
-				
-				/// @brief Set the number of repeats.
-				/// @details A value of 1 means that a single residue in the range will randomly be selected and
-				/// flipped to another bin (with probabilities based on its neighbours and the bin transition
-				/// probabilities.  Higher values mean that this operation will be repeated.  If set to 0, defaults
-				/// to 1.
-				void set_repeats( core::Size const repeats_in );
-				
-				/// @brief Sets whether the residue that is being perturbed can stay within its own bin (in which case new mainchain
-				/// torsions are drawn from within the bin), or whether it must jump to a different bin.  True means it must jump.
-				void set_must_switch_bins( bool const val );
+	virtual std::string get_name() const;
 
-				/******************************
-				 ** GETTERS                  **
-				 ******************************/
-				 
-				/// @brief Return the number of iterations at apply time.
-				/// @details A value of 1 means that a single residue in the range will randomly be selected and
-				/// flipped to another bin (with probabilities based on its neighbours and the bin transition
-				/// probabilities.  Higher values mean that this operation will be repeated.  If set to 0, defaults
-				/// to 1.
-				core::Size repeats() const { return repeats_; }
-				
-				/// @brief Can the residue that is being perturbed stay within its own bin (in which case new mainchain
-				/// torsions are drawn from within the bin), or must it jump to a different bin?
-				bool must_switch_bins() const { return must_switch_bins_; }
+	/// @brief Clone -- i.e. create a new object copying this one and return an owning pointer to the copy.
+	///
+	virtual protocols::moves::MoverOP clone() const {
+		return (protocols::moves::MoverOP( new protocols::simple_moves::bin_transitions::PerturbByBins( *this ) ) );
+	}
 
-			private:
-				///////////////////////
-				// PRIVATE VARIABLES //
-				///////////////////////
-				
-				/// @brief Start of residue range.
-				///
-				core::Size start_res_;
+	/// @brief Get a new instance of this mover (NOT copying).
+	///
+	virtual protocols::moves::MoverOP fresh_instance() const {
+		return protocols::moves::MoverOP( new PerturbByBins );
+	}
 
-				/// @brief End of residue range.
-				///
-				core::Size end_res_;
-				
-				/// @brief Bin transition probability data file.
-				///
-				std::string binfile_;
+	/// @brief Apply the mover to a pose.
+	///
+	virtual void apply( core::pose::Pose & pose );
 
-				/// @brief Has the bin transition probability file been loaded already?
-				/// @details This mover is not made to be re-used.  Probability file should only be loaded once.
-				bool binfile_loaded_;
-				
-				/// @brief Owning pointer to the BinTransitionCalculator object used by this mover.
-				/// @details Object created when the PerturbByBins mover is created.
-				core::scoring::bin_transitions::BinTransitionCalculatorOP bin_transition_calculator_;
-				
-				/// @brief How many times will this be applied?
-				/// @details A value of 1 means that a single residue in the range will randomly be selected and
-				/// flipped to another bin (with probabilities based on its neighbours and the bin transition
-				/// probabilities.  Higher values mean that this operation will be repeated.  Defaults to 1.
-				core::Size repeats_;
-				
-				/// @brief Can the residue that is being perturbed stay within its own bin (in which case new mainchain
-				/// torsions are drawn from within the bin), or must it jump to a different bin?  Default false (i.e.
-				/// need not switch bins).
-				bool must_switch_bins_;
-	
-				///////////////////////
-				// PRIVATE FUNCTIONS //
-				///////////////////////
+	/// @brief Parse XML for RosettaScripts.
+	///
+	void parse_my_tag( utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & );
+
+	/******************************
+	** SETTERS                  **
+	******************************/
+
+	/// @brief Set the bin transition probability file.
+	/// @details Also, loads the object.
+	void set_binfile_and_load( std::string const &name );
+
+	/// @brief Set the residue ranges.  If set to (0,0), the
+	/// start and end of the pose are used as the range bounds.
+	void set_residue_range( core::Size const start, core::Size const end );
+
+	/// @brief Set the number of repeats.
+	/// @details A value of 1 means that a single residue in the range will randomly be selected and
+	/// flipped to another bin (with probabilities based on its neighbours and the bin transition
+	/// probabilities.  Higher values mean that this operation will be repeated.  If set to 0, defaults
+	/// to 1.
+	void set_repeats( core::Size const repeats_in );
+
+	/// @brief Sets whether the residue that is being perturbed can stay within its own bin (in which case new mainchain
+	/// torsions are drawn from within the bin), or whether it must jump to a different bin.  True means it must jump.
+	void set_must_switch_bins( bool const val );
+
+	/******************************
+	** GETTERS                  **
+	******************************/
+
+	/// @brief Return the number of iterations at apply time.
+	/// @details A value of 1 means that a single residue in the range will randomly be selected and
+	/// flipped to another bin (with probabilities based on its neighbours and the bin transition
+	/// probabilities.  Higher values mean that this operation will be repeated.  If set to 0, defaults
+	/// to 1.
+	core::Size repeats() const { return repeats_; }
+
+	/// @brief Can the residue that is being perturbed stay within its own bin (in which case new mainchain
+	/// torsions are drawn from within the bin), or must it jump to a different bin?
+	bool must_switch_bins() const { return must_switch_bins_; }
+
+private:
+	///////////////////////
+	// PRIVATE VARIABLES //
+	///////////////////////
+
+	/// @brief Start of residue range.
+	///
+	core::Size start_res_;
+
+	/// @brief End of residue range.
+	///
+	core::Size end_res_;
+
+	/// @brief Bin transition probability data file.
+	///
+	std::string binfile_;
+
+	/// @brief Has the bin transition probability file been loaded already?
+	/// @details This mover is not made to be re-used.  Probability file should only be loaded once.
+	bool binfile_loaded_;
+
+	/// @brief Owning pointer to the BinTransitionCalculator object used by this mover.
+	/// @details Object created when the PerturbByBins mover is created.
+	core::scoring::bin_transitions::BinTransitionCalculatorOP bin_transition_calculator_;
+
+	/// @brief How many times will this be applied?
+	/// @details A value of 1 means that a single residue in the range will randomly be selected and
+	/// flipped to another bin (with probabilities based on its neighbours and the bin transition
+	/// probabilities.  Higher values mean that this operation will be repeated.  Defaults to 1.
+	core::Size repeats_;
+
+	/// @brief Can the residue that is being perturbed stay within its own bin (in which case new mainchain
+	/// torsions are drawn from within the bin), or must it jump to a different bin?  Default false (i.e.
+	/// need not switch bins).
+	bool must_switch_bins_;
+
+	///////////////////////
+	// PRIVATE FUNCTIONS //
+	///////////////////////
 
 
-			};
+};
 
-		} // bin_transitions
-	} // simple_moves
+} // bin_transitions
+} // simple_moves
 } // protocols
 
 #endif //INCLUDED_protocols_simple_moves_bin_transitions_PerturbByBins_HH_

@@ -59,12 +59,12 @@ AddOrRemoveMatchCstsCreator::mover_name()
 }
 
 AddOrRemoveMatchCsts::AddOrRemoveMatchCsts()
-	: Mover("AddOrRemoveMatchCsts"),
-		option_cstfile_(""), cstfile_(""),
-		cst_action_(VOID), keep_covalent_(false),
-		accept_blocks_missing_header_(false), fail_on_constraints_missing_(true)
+: Mover("AddOrRemoveMatchCsts"),
+	option_cstfile_(""), cstfile_(""),
+	cst_action_(VOID), keep_covalent_(false),
+	accept_blocks_missing_header_(false), fail_on_constraints_missing_(true)
 {
-	if( basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ){
+	if ( basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ) {
 		option_cstfile_ = basic::options::option[basic::options::OptionKeys::enzdes::cstfile].value();
 	}
 	sfxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
@@ -106,7 +106,7 @@ AddOrRemoveMatchCsts::apply( core::pose::Pose & pose )
 {
 	std::string cstfile( cstfile_ != "" ? cstfile_ : option_cstfile_ );
 	//safety check for this function being called without a cstfile having been specified
-	if( (cstfile == "") && (cstfile_map_.size() == 0) ){
+	if ( (cstfile == "") && (cstfile_map_.size() == 0) ) {
 		tr.Warning << "Warning: apply function of enzdes constraints mover called even though no cstfile has been specified on the commandline, in the tag, or programmatically. This function will have no effect." << std::endl;
 		return;
 	}
@@ -114,16 +114,16 @@ AddOrRemoveMatchCsts::apply( core::pose::Pose & pose )
 	toolbox::match_enzdes_util::EnzConstraintIOOP cst_io( this->get_EnzConstraintIO_for_cstfile( cstfile ) );
 
 	switch (cst_action_)  {
-	case ADD_NEW:
+	case ADD_NEW :
 		cst_io->add_constraints_to_pose( pose, sfxn_, accept_blocks_missing_header_ );
 		break;
-	case ADD_PREGENERATED:
+	case ADD_PREGENERATED :
 		cst_io->add_pregenerated_constraints_to_pose( pose, sfxn_ );
 		break;
-	case REMOVE:
+	case REMOVE :
 		cst_io->remove_constraints_from_pose( pose, keep_covalent_, fail_on_constraints_missing_ );
 		break;
-	case VOID:
+	case VOID :
 		utility_exit_with_message("Illegal action for AddOrRemoveMatchCsts mover specified.");
 		break;
 	}
@@ -138,15 +138,15 @@ void
 AddOrRemoveMatchCsts::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	cstfile_ = tag->getOption<std::string>( "cstfile", "" );
-	if( (cstfile_ == "") && ( option_cstfile_ == "" ) ){
+	if ( (cstfile_ == "") && ( option_cstfile_ == "" ) ) {
 		tr.Warning << "WARNING: No name for the enzdes .cst file was specified in either the options, the xml tag, or programatically. AddOrRemoveMatchCsts will turn into a null operation." << std::endl;
 	}
 
 	std::string cst_instruction = tag->getOption<std::string>( "cst_instruction", "void" );
-	if( cst_instruction == "add_new" ) cst_action_ = ADD_NEW;
-	else if( cst_instruction == "add_pregenerated") cst_action_ = ADD_PREGENERATED;
-	else if( cst_instruction == "remove" ) cst_action_ = REMOVE;
-	else{
+	if ( cst_instruction == "add_new" ) cst_action_ = ADD_NEW;
+	else if ( cst_instruction == "add_pregenerated" ) cst_action_ = ADD_PREGENERATED;
+	else if ( cst_instruction == "remove" ) cst_action_ = REMOVE;
+	else {
 		throw utility::excn::EXCN_RosettaScriptsOption("Illegal or no value for cst_instruction in xml tag given. Has to be either 'add_new', 'add_pregenerated', or 'remove'.");
 	}
 
@@ -156,20 +156,20 @@ AddOrRemoveMatchCsts::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 }
 
 void AddOrRemoveMatchCsts::parse_def( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const & ,
-		utility::lua::LuaObject const & ,
-		protocols::moves::MoverCacheSP ) {
+	utility::lua::LuaObject const & ,
+	utility::lua::LuaObject const & ,
+	protocols::moves::MoverCacheSP ) {
 
 	cstfile_ = def["cstfile"] ? def[ "cstfile" ].to<std::string>() : "";
-	if( (cstfile_ == "") && ( option_cstfile_ == "" ) ){
+	if ( (cstfile_ == "") && ( option_cstfile_ == "" ) ) {
 		tr.Warning << "WARNING: No name for the enzdes .cst file was specified in either the options, the xml tag, or programatically. AddOrRemoveMatchCsts will turn into a null operation." << std::endl;
 	}
 
 	std::string cst_instruction = def["cst_instruction"] ? def[ "cst_instruction" ].to<std::string>() : "void";
-	if( cst_instruction == "add_new" ) cst_action_ = ADD_NEW;
-	else if( cst_instruction == "add_pregenerated") cst_action_ = ADD_PREGENERATED;
-	else if( cst_instruction == "remove" ) cst_action_ = REMOVE;
-	else{
+	if ( cst_instruction == "add_new" ) cst_action_ = ADD_NEW;
+	else if ( cst_instruction == "add_pregenerated" ) cst_action_ = ADD_PREGENERATED;
+	else if ( cst_instruction == "remove" ) cst_action_ = REMOVE;
+	else {
 		utility_exit_with_message("Illegal or no value for cst_instruction in xml tag given. Has to be either 'add_new', 'add_pregenerated', or 'remove'.");
 	}
 
@@ -189,11 +189,11 @@ toolbox::match_enzdes_util::EnzConstraintIOCOP
 AddOrRemoveMatchCsts::get_const_EnzConstraintIO_for_cstfile( std::string cstfile )
 {
 
-	if( cstfile == "" ){
-		if( cstfile_map_.size() == 1 ) return cstfile_map_.begin()->second;
+	if ( cstfile == "" ) {
+		if ( cstfile_map_.size() == 1 ) return cstfile_map_.begin()->second;
 	}
 	std::map< std::string, toolbox::match_enzdes_util::EnzConstraintIOOP>::const_iterator enzio_it = cstfile_map_.find( cstfile );
-	if( enzio_it == cstfile_map_.end() ){
+	if ( enzio_it == cstfile_map_.end() ) {
 		tr.Warning << "WARNING: trying to get an EnzConstraintIOOP object for cstfile " << cstfile << " that hasn't been instantiated yet. Returning NULL pointer." << std::endl;
 		return NULL;
 	}
@@ -207,7 +207,7 @@ AddOrRemoveMatchCsts::get_EnzConstraintIO_for_cstfile(
 {
 	std::map< std::string, toolbox::match_enzdes_util::EnzConstraintIOOP >::iterator cstio_it = cstfile_map_.find( cstfile );
 
-	if( cstio_it == cstfile_map_.end() ){
+	if ( cstio_it == cstfile_map_.end() ) {
 		toolbox::match_enzdes_util::EnzConstraintIOOP new_cst_io( new toolbox::match_enzdes_util::EnzConstraintIO( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) ) );
 		new_cst_io->read_enzyme_cstfile( cstfile );
 		cstfile_map_.insert( std::pair< std::string, toolbox::match_enzdes_util::EnzConstraintIOOP >( cstfile, new_cst_io ) );

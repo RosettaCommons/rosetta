@@ -33,15 +33,15 @@ StepWiseSamplerOneValue::StepWiseSamplerOneValue():
 {}
 
 StepWiseSamplerOneValue::StepWiseSamplerOneValue(
-		ValueList const & allowed_values
+	ValueList const & allowed_values
 ):
 	StepWiseSamplerSized(),
 	values_( allowed_values )
 {}
 
 StepWiseSamplerOneValue::StepWiseSamplerOneValue(
-		ValueList const & allowed_values,
-		std::string const & tag
+	ValueList const & allowed_values,
+	std::string const & tag
 ):
 	StepWiseSamplerSized(),
 	values_( allowed_values ),

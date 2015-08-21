@@ -56,12 +56,12 @@ std::string AtrGridCreator::grid_name()
 
 
 AtrGrid::AtrGrid() :
-		SingleGrid("AtrGrid"),
-		inner_radius_(2.25),
-		outer_radius_(4.75),
-		bb_(-1),
-		sc_(-1),
-		ligand_(-1)
+	SingleGrid("AtrGrid"),
+	inner_radius_(2.25),
+	outer_radius_(4.75),
+	bb_(-1),
+	sc_(-1),
+	ligand_(-1)
 {
 	//
 }
@@ -69,9 +69,9 @@ AtrGrid::AtrGrid() :
 void
 AtrGrid::parse_my_tag(utility::tag::TagCOP tag){
 
-	if (tag->hasOption("bb") || tag->hasOption("sc") || tag->hasOption("ligand") ){
+	if ( tag->hasOption("bb") || tag->hasOption("sc") || tag->hasOption("ligand") ) {
 		// the user MUST provide all 3 if he/she is providing any of these 3 options
-		if (!(tag->hasOption("bb") && tag->hasOption("sc") && tag->hasOption("ligand") ) ){
+		if ( !(tag->hasOption("bb") && tag->hasOption("sc") && tag->hasOption("ligand") ) ) {
 			throw utility::excn::EXCN_RosettaScriptsOption("'AtrGrid' requires bb, sc, and ligand if any one of these are used");
 		}
 		bb_= tag->getOption<core::Real>("bb");
@@ -79,9 +79,9 @@ AtrGrid::parse_my_tag(utility::tag::TagCOP tag){
 		ligand_= tag->getOption<core::Real>("ligand");
 	}
 
-	if(tag->hasOption("inner_radius") || tag->hasOption("outer_radius")){
+	if ( tag->hasOption("inner_radius") || tag->hasOption("outer_radius") ) {
 		// the user MUST provide both if he/she is providing either of these options
-		if(!(tag->hasOption("inner_radius") && tag->hasOption("outer_radius"))){
+		if ( !(tag->hasOption("inner_radius") && tag->hasOption("outer_radius")) ) {
 			throw utility::excn::EXCN_RosettaScriptsOption("'AtrGrid' requires outer_radius and inner_radius if either of these options are used");
 		}
 		inner_radius_= tag->getOption<core::Real>("inner_radius");
@@ -131,46 +131,43 @@ void AtrGrid::refresh(core::pose::Pose const & pose, core::Vector const & center
 
 void AtrGrid::set_protein_rings( core::conformation::Residue const & rsd)
 {
-	for(core::Size a=1, a_end = rsd.last_backbone_atom(); a <= a_end; ++a)
-	{
+	for ( core::Size a=1, a_end = rsd.last_backbone_atom(); a <= a_end; ++a ) {
 		set_ring(rsd.xyz(a), inner_radius_, outer_radius_, bb_);
 	}
-	for(core::Size a = rsd.first_sidechain_atom(), a_end = rsd.nheavyatoms(); a <= a_end; ++a)
-	{
+	for ( core::Size a = rsd.first_sidechain_atom(), a_end = rsd.nheavyatoms(); a <= a_end; ++a ) {
 		set_ring(rsd.xyz(a), inner_radius_, outer_radius_, sc_);
 	}
 
 }
 
 void AtrGrid::set_ligand_rings(
-		core::conformation::Residue const & rsd,
-		utility::vector1<core::Size> ligand_chain_ids_to_exclude
+	core::conformation::Residue const & rsd,
+	utility::vector1<core::Size> ligand_chain_ids_to_exclude
 
 ){
-	if( find(
+	if ( find(
 			ligand_chain_ids_to_exclude.begin(),
 			ligand_chain_ids_to_exclude.end(),
 			rsd.chain()
-		) ==  ligand_chain_ids_to_exclude.end()
-	) {
+			) ==  ligand_chain_ids_to_exclude.end()
+			) {
 		return;
 	}
-	for(core::Size a = 1, a_end = rsd.nheavyatoms(); a <= a_end; ++a)
-	{
+	for ( core::Size a = 1, a_end = rsd.nheavyatoms(); a <= a_end; ++a ) {
 		set_ring(rsd.xyz(a), inner_radius_, outer_radius_, ligand_);
 	}
 }
 
 void AtrGrid::refresh(
-		core::pose::Pose const & pose,
-		core::Vector const &,
-		utility::vector1<core::Size> ligand_chain_ids_to_exclude
+	core::pose::Pose const & pose,
+	core::Vector const &,
+	utility::vector1<core::Size> ligand_chain_ids_to_exclude
 ){
 	// Set neutral core around each sidechain heavy atom, as MOST of these stay put.
-	for(Size r = 1, r_end = pose.total_residue(); r <= r_end; ++r) {
+	for ( Size r = 1, r_end = pose.total_residue(); r <= r_end; ++r ) {
 		core::conformation::Residue const & rsd = pose.residue(r);
-		if( rsd.is_protein() ) set_protein_rings(rsd);
-		else{
+		if ( rsd.is_protein() ) set_protein_rings(rsd);
+		else {
 			set_ligand_rings(rsd, ligand_chain_ids_to_exclude);
 
 		}

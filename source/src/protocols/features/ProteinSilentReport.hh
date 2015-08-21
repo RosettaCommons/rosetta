@@ -48,8 +48,8 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class ProteinSilentReport : public protocols::features::Report {
 
@@ -80,13 +80,13 @@ public:
 		core::pose::Pose const & pose,
 		utility::sql_database::sessionOP db_sesion,
 		std::string const & tag);
-		
+
 	void
 	load_pose(
 		utility::sql_database::sessionOP db_session,
 		StructureID struct_id,
 		core::pose::Pose & pose);
-		
+
 	void
 	load_pose(
 		utility::sql_database::sessionOP db_session,
@@ -114,7 +114,7 @@ public:
 private:
 	void
 	write_protocol_report(
-			utility::sql_database::sessionOP db_session
+		utility::sql_database::sessionOP db_session
 	);
 
 	void write_full_report(

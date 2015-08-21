@@ -250,7 +250,7 @@ private:
 	bool partial_state_assignment_;
 	bool preped_for_sim_annealing_;
 
-		//no default constructor, uncopyable
+	//no default constructor, uncopyable
 	SymmMinimalistEdge();
 	SymmMinimalistEdge( SymmMinimalistEdge const & );
 	SymmMinimalistEdge & operator = ( SymmMinimalistEdge const & );

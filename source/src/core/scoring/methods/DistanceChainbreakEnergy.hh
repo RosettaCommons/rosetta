@@ -44,30 +44,30 @@ public:
 
 public:
 
-  DistanceChainbreakEnergy();
+	DistanceChainbreakEnergy();
 
-  /// clone
-  virtual
-  EnergyMethodOP
-  clone() const
-  {
-    return EnergyMethodOP( new DistanceChainbreakEnergy );
-  }
+	/// clone
+	virtual
+	EnergyMethodOP
+	clone() const
+	{
+		return EnergyMethodOP( new DistanceChainbreakEnergy );
+	}
 
-  /// called at the end of energy evaluation
-  virtual
-  void
-  finalize_total_energy(
-     pose::Pose & pose,
-     ScoreFunction const &,
-     EnergyMap & totals
-  ) const;
+	/// called at the end of energy evaluation
+	virtual
+	void
+	finalize_total_energy(
+		pose::Pose & pose,
+		ScoreFunction const &,
+		EnergyMap & totals
+	) const;
 
-  virtual
-  void
-  indicate_required_context_graphs( utility::vector1< bool > & ) const;
-virtual
-core::Size version() const;
+	virtual
+	void
+	indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	virtual
+	core::Size version() const;
 
 
 };

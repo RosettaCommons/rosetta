@@ -43,8 +43,8 @@ namespace ligand_docking {
 static thread_local basic::Tracer MinimizeLigand_tracer( "protocols.ligand_docking.MinimizeLigand", basic::t_debug );
 
 MinimizeLigand::MinimizeLigand():
-		//utility::pointer::ReferenceCount(),
-		protocols::moves::Mover("MinimizeLigand")
+	//utility::pointer::ReferenceCount(),
+	protocols::moves::Mover("MinimizeLigand")
 {
 	ligand_torsion_restraints_.clear();
 }
@@ -56,10 +56,10 @@ MinimizeLigand::MinimizeLigand(char chain, core::Real degrees):
 }
 
 MinimizeLigand::MinimizeLigand(MinimizeLigand const & that):
-		//utility::pointer::ReferenceCount(),
-		protocols::moves::Mover( that ),
-		chain_(that.chain_),
-		degrees_(that.degrees_)
+	//utility::pointer::ReferenceCount(),
+	protocols::moves::Mover( that ),
+	chain_(that.chain_),
+	degrees_(that.degrees_)
 {}
 
 MinimizeLigand::~MinimizeLigand() {}
@@ -73,7 +73,7 @@ MinimizeLigand::apply( core::pose::Pose & pose ){
 	core::Size chain_id= core::pose::get_chain_id_from_chain(chain_, pose);
 	core::Size begin = pose.conformation().chain_begin(chain_id);
 	core::Size const end = pose.conformation().chain_end(chain_id);
-	for (; begin <= end; ++begin) {
+	for ( ; begin <= end; ++begin ) {
 		ligand_torsion_restraints_.push_back(
 			protocols::ligand_docking::ResidueTorsionRestraintsOP( new protocols::ligand_docking::ResidueTorsionRestraints(pose, begin, degrees_) ));
 	}

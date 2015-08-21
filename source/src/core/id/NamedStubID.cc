@@ -53,7 +53,7 @@ NamedStubID::NamedStubID( std::string const& a1, Size rsd1, std::string const& a
 {}
 
 NamedStubID::NamedStubID( AtomList const& atoms, core::Size rsd ) {
-debug_assert( atoms.size() == 3 || atoms.size() == 4 );
+	debug_assert( atoms.size() == 3 || atoms.size() == 4 );
 	Size ind;
 	if ( atoms.size() == 4 ) {
 		center_.atom() = atoms[ 1 ];
@@ -71,25 +71,25 @@ debug_assert( atoms.size() == 3 || atoms.size() == 4 );
 NamedAtomID const &
 NamedStubID::atom( Size const index ) const
 {
-  switch ( index ) {
-  case 1:
-    return atom1;
-  case 2:
-    return atom2;
-  case 3:
-    return atom3;
-  default:
-    utility_exit_with_message("StubID's have exactly three atoms, 1-3");
-  }
-  return atom1; // won't get here
+	switch ( index ) {
+	case 1 :
+		return atom1;
+	case 2 :
+		return atom2;
+	case 3 :
+		return atom3;
+	default :
+		utility_exit_with_message("StubID's have exactly three atoms, 1-3");
+	}
+	return atom1; // won't get here
 }
 
 /// @brief stream << NamedStubID
 std::ostream &
 operator <<( std::ostream& os, NamedStubID const & a )
 {
-  os << "STUB: " << a.center_ << ' ' << a.atom1 << ' ' << a.atom2 << ' ' << a.atom3 << ' ';
-  return os;
+	os << "STUB: " << a.center_ << ' ' << a.atom1 << ' ' << a.atom2 << ' ' << a.atom3 << ' ';
+	return os;
 }
 
 /////////////////////////////////////////////////////////////////////////////

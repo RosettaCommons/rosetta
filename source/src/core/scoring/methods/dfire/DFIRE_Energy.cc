@@ -64,8 +64,8 @@ DFIRE_Energy::DFIRE_Energy() :
 }
 
 methods::LongRangeEnergyType
-DFIRE_Energy::long_range_type() const { 
-	return scoring::methods::DFIRE; 
+DFIRE_Energy::long_range_type() const {
+	return scoring::methods::DFIRE;
 }
 
 void
@@ -75,10 +75,10 @@ DFIRE_Energy::setup_for_scoring(
 	using namespace core::scoring::methods;
 	//std::cout << "called setup_for_scoring" << std::endl;
 	// Do we have a potential yet?
-	if (!potential_is_loaded_) {
+	if ( !potential_is_loaded_ ) {
 		utility_exit_with_message("No potential loaded.");
 	}
-	
+
 	LongRangeEnergyType const & lr_type( long_range_type() );
 	// create a container
 	Energies & energies( pose.energies() );
@@ -131,9 +131,9 @@ bool DFIRE_Energy::defines_residue_pair_energy(
 ) const {
 	//std::cout << "testing " << res1 << "," << res2 << " ";
 	//if (pose.residue_type(res1).is_protein() && pose.residue_type(res2).is_protein() ) {
-	//	std::cout << "true!" << std::endl;
+	// std::cout << "true!" << std::endl;
 	//} else {
-	//	std::cout << "false!" << std::endl;
+	// std::cout << "false!" << std::endl;
 	//}
 
 	return ( pose.residue_type(res1).is_protein() && pose.residue_type(res2).is_protein() );

@@ -39,11 +39,11 @@ public:
 public:
 
 	/// constructor
-	FastDensEnergy(	methods::EnergyMethodOptions const & opts );
+	FastDensEnergy( methods::EnergyMethodOptions const & opts );
 
 
 	/// clone
-	virtual	methods::EnergyMethodOP	clone() const;
+	virtual methods::EnergyMethodOP clone() const;
 
 	/// lr container name
 	methods::LongRangeEnergyType long_range_type() const;

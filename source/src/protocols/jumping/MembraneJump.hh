@@ -59,32 +59,32 @@ class MembraneJump : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~MembraneJump();
-MembraneJump();
+	MembraneJump();
 
-void
-init(std::string const& template_file,std::string const& pairings_file);
+	void
+	init(std::string const& template_file,std::string const& pairings_file);
 
-bool
-defined() const {
-	return(template_size_ > 0 && pairings_size_ > 0);
-}
+	bool
+	defined() const {
+		return(template_size_ > 0 && pairings_size_ > 0);
+	}
 
-Size
-template_size() const {
-	return template_size_;
-}
+	Size
+	template_size() const {
+		return template_size_;
+	}
 
-Size
-pairings_size() const {
-	return pairings_size_;
-}
+	Size
+	pairings_size() const {
+		return pairings_size_;
+	}
 
 
-void
-setup_fold_tree(core::pose::Pose & pose, core::Size njumps);
+	void
+	setup_fold_tree(core::pose::Pose & pose, core::Size njumps);
 
-void
-rt_templates(core::pose::Pose & pose);
+	void
+	rt_templates(core::pose::Pose & pose);
 
 private:
 	PairingLibrary templates_;

@@ -33,85 +33,85 @@ namespace core {
 namespace environment {
 
 LocalPosition::LocalPosition():
-  ReferenceCount(),
-  label_( "" ),
-  position_( 0 )
+	ReferenceCount(),
+	label_( "" ),
+	position_( 0 )
 {}
 
 LocalPosition::LocalPosition( std::string const& label, core::Size const& position ):
-  ReferenceCount(),
-  label_( label ),
-  position_( position )
+	ReferenceCount(),
+	label_( label ),
+	position_( position )
 {}
 
 LocalPosition::LocalPosition( std::string const& comma_deliniated ):
-  ReferenceCount()
+	ReferenceCount()
 {
-  using core::Size;
+	using core::Size;
 
-  utility::vector1< std::string > str_split = utility::string_split( comma_deliniated, ',' );
-  if( str_split.size() == 1 ){
-    try {
-      // try casting to an integer, and use as global sequence number
-      core::Size global_seqpos = boost::lexical_cast< core::Size >( str_split[1] );
-      label( "BASE" );
-      position( global_seqpos );
-    } catch ( boost::bad_lexical_cast & ) {
-      // use string as a label
-      label( str_split[1] );
-      position( 1 );
-    }
-  } else if( str_split.size() == 2 ){
-    label( str_split[1] );
-    position( boost::lexical_cast< core::Size >( str_split[2] ) );
-  }
+	utility::vector1< std::string > str_split = utility::string_split( comma_deliniated, ',' );
+	if ( str_split.size() == 1 ) {
+		try {
+			// try casting to an integer, and use as global sequence number
+			core::Size global_seqpos = boost::lexical_cast< core::Size >( str_split[1] );
+			label( "BASE" );
+			position( global_seqpos );
+		} catch ( boost::bad_lexical_cast & ) {
+			// use string as a label
+			label( str_split[1] );
+			position( 1 );
+		}
+	} else if ( str_split.size() == 2 ) {
+		label( str_split[1] );
+		position( boost::lexical_cast< core::Size >( str_split[2] ) );
+	}
 }
 
 std::string const& LocalPosition::label() const {
-  return label_;
+	return label_;
 }
 
 core::Size const& LocalPosition::position() const {
-  return position_;
+	return position_;
 }
 
 void LocalPosition::label( std::string const& label ) {
-  label_ = label;
+	label_ = label;
 }
 
 void LocalPosition::position( core::Size position ){
-  position_ = position;
+	position_ = position;
 }
 
 
 bool LocalPosition::operator< ( LocalPosition const& other ) const {
-  Size cmp = label_.compare( other.label_ );
-  if( cmp == 0 ){
-    return position_ < other.position_;
-  } else if ( cmp > 0 ){
-    return true;
-  } else {
-    return false;
-  }
+	Size cmp = label_.compare( other.label_ );
+	if ( cmp == 0 ) {
+		return position_ < other.position_;
+	} else if ( cmp > 0 ) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 bool LocalPosition::operator==( LocalPosition const& other ) const {
-  if( label_.compare( other.label_ ) == 0 &&
-      position_ == other.position_ ){
-    return true;
-  } else {
-    return false;
-  }
+	if ( label_.compare( other.label_ ) == 0 &&
+			position_ == other.position_ ) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 bool LocalPosition::operator!=( LocalPosition const& other ) const {
-  return !this->operator==( other );
+	return !this->operator==( other );
 }
 
 
 std::ostream& operator<<( std::ostream& str, LocalPosition const& dof_passport ) {
-  str << "( " << dof_passport.label() << ", " << dof_passport.position() << " )" ;
-  return str;
+	str << "( " << dof_passport.label() << ", " << dof_passport.position() << " )" ;
+	return str;
 }
 
 } // environment

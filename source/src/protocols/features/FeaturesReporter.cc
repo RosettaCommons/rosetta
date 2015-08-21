@@ -80,7 +80,7 @@ FeaturesReporter::write_schema_to_db(
 	sessionOP db_session
 ) const {
 
-  string schema_str(schema());
+	string schema_str(schema());
 	try{
 		basic::database::write_schema_to_database(schema_str,db_session);
 	} catch (cppdb::cppdb_error & error){
@@ -143,11 +143,11 @@ FeaturesReporter::find_tag(
 ) const {
 	//silent files and pdbs set the name of the pose differently
 	string name = "";
-	if (pose.pdb_info()){
+	if ( pose.pdb_info() ) {
 		name = pose.pdb_info()->name();
 	}
-	if (name == ""){
-		if (pose.data().has(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG)) {
+	if ( name == "" ) {
+		if ( pose.data().has(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG) ) {
 			name = static_cast< basic::datacache::CacheableString const & >
 				(pose.data().get(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG)).str();
 		} else {
@@ -187,13 +187,13 @@ FeaturesReporter::check_relevant_residues(
 	Size res1
 ) const {
 	switch(relevant_residues_mode_){
-		case RelevantResiduesMode::Exclusive:
-			return relevant_residues[res1];
-		case RelevantResiduesMode::Inclusive:
-			return relevant_residues[res1];
-		default:
-			utility_exit_with_message("Unrecognized relevant_residues_mode: " +
-					boost::lexical_cast<std::string>(relevant_residues_mode_));
+	case RelevantResiduesMode::Exclusive :
+		return relevant_residues[res1];
+	case RelevantResiduesMode::Inclusive :
+		return relevant_residues[res1];
+	default :
+		utility_exit_with_message("Unrecognized relevant_residues_mode: " +
+			boost::lexical_cast<std::string>(relevant_residues_mode_));
 	}
 }
 
@@ -204,13 +204,13 @@ FeaturesReporter::check_relevant_residues(
 	Size res2
 ) const {
 	switch(relevant_residues_mode_){
-		case RelevantResiduesMode::Exclusive:
-			return relevant_residues[res1] && relevant_residues[res2];
-		case RelevantResiduesMode::Inclusive:
-			return relevant_residues[res1] || relevant_residues[res2];
-		default:
-			utility_exit_with_message("Unrecognized relevant_residues_mode: " +
-					boost::lexical_cast<std::string>(relevant_residues_mode_));
+	case RelevantResiduesMode::Exclusive :
+		return relevant_residues[res1] && relevant_residues[res2];
+	case RelevantResiduesMode::Inclusive :
+		return relevant_residues[res1] || relevant_residues[res2];
+	default :
+		utility_exit_with_message("Unrecognized relevant_residues_mode: " +
+			boost::lexical_cast<std::string>(relevant_residues_mode_));
 	}
 }
 
@@ -221,25 +221,25 @@ FeaturesReporter::check_relevant_residues_range(
 	Size end
 ) const {
 	switch(relevant_residues_mode_){
-		case RelevantResiduesMode::Exclusive: {
-			for(Size ii=begin; ii != end; ++ii){
-				if (!relevant_residues[ii]) {
-					return false;
-				}
+	case RelevantResiduesMode::Exclusive : {
+		for ( Size ii=begin; ii != end; ++ii ) {
+			if ( !relevant_residues[ii] ) {
+				return false;
 			}
-			return true;
 		}
-		case RelevantResiduesMode::Inclusive: {
-			for(Size ii=begin; ii != end; ++ii){
-				if (relevant_residues[ii]) {
-					return true;
-				}
+		return true;
+	}
+	case RelevantResiduesMode::Inclusive : {
+		for ( Size ii=begin; ii != end; ++ii ) {
+			if ( relevant_residues[ii] ) {
+				return true;
 			}
-			return false;
 		}
-		default:
-			utility_exit_with_message("Unrecognized relevant_residues_mode: " +
-					boost::lexical_cast<std::string>(relevant_residues_mode_));
+		return false;
+	}
+	default :
+		utility_exit_with_message("Unrecognized relevant_residues_mode: " +
+			boost::lexical_cast<std::string>(relevant_residues_mode_));
 	}
 }
 
@@ -250,25 +250,25 @@ FeaturesReporter::check_relevant_residues(
 	vector1< Size > const & residues
 ) const {
 	switch(relevant_residues_mode_){
-		case RelevantResiduesMode::Exclusive: {
-			for( vector1< Size >::const_iterator ii = residues.begin(), ii_end = residues.end(); ii != ii_end; ++ii){
-				if (!relevant_residues[*ii]) {
-					return false;
-				}
+	case RelevantResiduesMode::Exclusive : {
+		for ( vector1< Size >::const_iterator ii = residues.begin(), ii_end = residues.end(); ii != ii_end; ++ii ) {
+			if ( !relevant_residues[*ii] ) {
+				return false;
 			}
-			return true;
 		}
-		case RelevantResiduesMode::Inclusive: {
-			for( vector1< Size >::const_iterator ii = residues.begin(), ii_end = residues.end(); ii != ii_end; ++ii){
-				if (relevant_residues[*ii]) {
-					return true;
-				}
+		return true;
+	}
+	case RelevantResiduesMode::Inclusive : {
+		for ( vector1< Size >::const_iterator ii = residues.begin(), ii_end = residues.end(); ii != ii_end; ++ii ) {
+			if ( relevant_residues[*ii] ) {
+				return true;
 			}
-			return false;
 		}
-		default:
-			utility_exit_with_message("Unrecognized relevant_residues_mode: " +
-					boost::lexical_cast<std::string>(relevant_residues_mode_));
+		return false;
+	}
+	default :
+		utility_exit_with_message("Unrecognized relevant_residues_mode: " +
+			boost::lexical_cast<std::string>(relevant_residues_mode_));
 	}
 }
 

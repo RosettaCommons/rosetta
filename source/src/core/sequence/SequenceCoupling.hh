@@ -48,7 +48,7 @@ public:
 
 	/*
 	void profile(
-		utility::vector1< utility::vector1< Real > > const & new_profile
+	utility::vector1< utility::vector1< Real > > const & new_profile
 	);
 	utility::vector1< utility::vector1< Real > > const & profile() const;
 	*/
@@ -133,8 +133,8 @@ public:
 	///Size width() const;
 
 	///virtual SequenceOP clone() const {
-	///	SequenceOP new_seq_op( new SequenceProfile( *this ) );
-	///	return new_seq_op;
+	/// SequenceOP new_seq_op( new SequenceProfile( *this ) );
+	/// return new_seq_op;
 	///}
 
 

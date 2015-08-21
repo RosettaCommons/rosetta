@@ -18,7 +18,7 @@
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
-namespace protein_interface_design{
+namespace protein_interface_design {
 namespace movers {
 class LoopMoverFromCommandLineCreator : public moves::MoverCreator
 {

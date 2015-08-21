@@ -49,14 +49,14 @@ FASTERAnnealer::FASTERAnnealer(
 	ObjexxFCL::FArray1D< core::PackerEnergy > & rot_freq
 ):
 	parent(
-		ig->get_num_total_states(),
-		bestrotamer_at_seqpos,
-		bestenergy,
-		start_with_current, // start simulation with current rotamers
-		rotamer_sets,
-		current_rot_index,
-		calc_rot_freq,
-		rot_freq
+	ig->get_num_total_states(),
+	bestrotamer_at_seqpos,
+	bestenergy,
+	start_with_current, // start simulation with current rotamers
+	rotamer_sets,
+	current_rot_index,
+	calc_rot_freq,
+	rot_freq
 	),
 	ig_(ig),
 	rotamer_sets_( rotamer_sets ),
@@ -75,7 +75,7 @@ FASTERAnnealer::FASTERAnnealer(
 	sBR_limit_( -1 )
 	//rot_2_moltenres_( 2,ig_->get_num_total_states(), 0)
 {
-	for (unsigned int ii =1; ii <= sBR_rotamers_.size(); ++ii) {
+	for ( unsigned int ii =1; ii <= sBR_rotamers_.size(); ++ii ) {
 		sBR_rotamers_[ ii-1 ] = ii;
 	}
 }
@@ -93,7 +93,7 @@ FASTERAnnealer::run( )
 		ig_->prepare_for_FASTER();
 		ig_->blanket_assign_state_0();
 		ig_->assign_BMEC();
-		if ( ig_->any_vertex_state_unassigned()) {
+		if ( ig_->any_vertex_state_unassigned() ) {
 			std::cout << "Failed to assign BMEC; some vertices have 0 states" << std::endl;
 		}
 		//ciBR();
@@ -110,28 +110,28 @@ FASTERAnnealer::run( )
 
 	//clock_t starttime = clock();
 
-	for (int ii = 1; ii <= num_sa_trajectories_; ++ii ) {
+	for ( int ii = 1; ii <= num_sa_trajectories_; ++ii ) {
 		{ // scope
-		FixbbSimAnnealer fixbb_annealer(
-			bestrotamer_at_seqpos(),
-			bestenergy(),
-			false,
-			ig_,
-			rotamer_sets_,
-			dummy,
-			calc_rot_freq(),
-			rot_freq()
-		);
-		fixbb_annealer.scale_inneriterations( sa_inner_iterations_length_scale_ );
-		fixbb_annealer.set_assign_state_to_all_nodes_immediately( true );
-		fixbb_annealer.run();
+			FixbbSimAnnealer fixbb_annealer(
+				bestrotamer_at_seqpos(),
+				bestenergy(),
+				false,
+				ig_,
+				rotamer_sets_,
+				dummy,
+				calc_rot_freq(),
+				rot_freq()
+			);
+			fixbb_annealer.scale_inneriterations( sa_inner_iterations_length_scale_ );
+			fixbb_annealer.set_assign_state_to_all_nodes_immediately( true );
+			fixbb_annealer.run();
 		}
 
 		if ( ii == 1 || best_energy > ig_->get_energy_current_state_assignment() ) {
 			ig_->get_current_network_state( best_network_state );
 			//std::cout << "Best network state:";
 			//for ( Size jj = 1; jj <= best_network_state.size(); ++jj ) {
-			//	std::cout << " " << best_network_state( jj );
+			// std::cout << " " << best_network_state( jj );
 			//}
 			//std::cout << std::endl;
 			best_energy = ig_->get_energy_current_state_assignment();
@@ -150,10 +150,10 @@ FASTERAnnealer::run( )
 			ig_->get_current_network_state( best_network_state );
 			//for (int jj = 1; jj <= num_nodes_; ++jj)
 			//{
-			//	if ( best_network_state( jj ) < 100 ) std::cout << " ";
-			//	if ( best_network_state( jj ) < 10  ) std::cout << " ";
-			//	std::cout << best_network_state( jj ) << " ";
-			//	if ( jj == 20 ) std::cout << std::endl;
+			// if ( best_network_state( jj ) < 100 ) std::cout << " ";
+			// if ( best_network_state( jj ) < 10  ) std::cout << " ";
+			// std::cout << best_network_state( jj ) << " ";
+			// if ( jj == 20 ) std::cout << std::endl;
 			//}
 			//std::cout << std::endl;
 		}
@@ -161,11 +161,11 @@ FASTERAnnealer::run( )
 
 	//for (int jj = 1; jj <= num_nodes_; ++jj)
 	//{
-	//	std::cout << "best network state " << std::endl;
-	//	if ( best_network_state( jj ) < 100 ) std::cout << " ";
-	//	if ( best_network_state( jj ) < 10  ) std::cout << " ";
-	//	std::cout << best_network_state( jj ) << " ";
-	//	if ( jj == 20 ) std::cout << std::endl;
+	// std::cout << "best network state " << std::endl;
+	// if ( best_network_state( jj ) < 100 ) std::cout << " ";
+	// if ( best_network_state( jj ) < 10  ) std::cout << " ";
+	// std::cout << best_network_state( jj ) << " ";
+	// if ( jj == 20 ) std::cout << std::endl;
 	//}
 	//std::cout << std::endl;
 
@@ -187,7 +187,7 @@ FASTERAnnealer::iBR()
 	ObjexxFCL::FArray1D_int current_network_state( num_nodes_, 0 );
 
 	while ( ! stuck_in_network_state_loop() )
-	{
+			{
 		ig_->relax_in_current_context();
 		ig_->commit_relaxation();
 
@@ -209,13 +209,11 @@ FASTERAnnealer::trySeveral_ciBRs()
 	ObjexxFCL::FArray1D_int best_ciBRs_state( ig_->get_num_nodes() );
 	core::PackerEnergy best_energy = 0;
 
-	for (int ii = 1; ii < 10; ++ii)
-	{
+	for ( int ii = 1; ii < 10; ++ii ) {
 		ig_->set_network_state( iBRstate );
 		ciBR();
 		core::PackerEnergy ciBR_energy = ig_->get_energy_current_state_assignment();
-		if ( ii == 1 || ciBR_energy < best_energy )
-		{
+		if ( ii == 1 || ciBR_energy < best_energy ) {
 			ig_->get_current_network_state( best_ciBRs_state );
 			best_energy = ciBR_energy;
 		}
@@ -299,7 +297,7 @@ FASTERAnnealer::sBR()
 			}
 
 		} else {
-			 ig_->reject_perturbation();
+			ig_->reject_perturbation();
 		}
 		if ( sBR_limit_ != -1 && count_sBR >= sBR_limit_ ) {
 			break;
@@ -314,11 +312,11 @@ void
 FASTERAnnealer::dBR()
 {
 	core::PackerEnergy last_energy = ig_->get_energy_current_state_assignment();
-	for (int ii = 1; ii < 10000; ++ii) {
+	for ( int ii = 1; ii < 10000; ++ii ) {
 		int node1 = ((int) ( numeric::random::rg().uniform() * num_nodes_)) + 1;
 		int node2 = ig_->get_random_neighbor_for_node( node1 );
 
-		if (node2 == 0) continue;
+		if ( node2 == 0 ) continue;
 
 		int rot1 = pick_rotamer_for_node( node1 );
 		int rot2 = pick_rotamer_for_node( node2 );
@@ -365,7 +363,7 @@ FASTERAnnealer::finalize_output()
 	ig_->get_current_network_state( best_state_on_node );
 
 	//convert best_state_on_node into best_rotamer_at_seqpos
-	for ( Size ii = 1; ii <= rotamer_sets_->nmoltenres(); ++ii){
+	for ( Size ii = 1; ii <= rotamer_sets_->nmoltenres(); ++ii ) {
 		int const iiresid = rotamer_sets_->moltenres_2_resid( ii );
 		bestrotamer_at_seqpos()( iiresid ) = rotamer_sets_->moltenres_rotid_2_rotid( ii, best_state_on_node(ii));
 	}
@@ -406,14 +404,14 @@ FASTERAnnealer::note_current_network_state( ObjexxFCL::FArray1_int const & netst
 	int num_same_hash = recent_history_hash_count_( hash );
 	if ( num_same_hash != 0 ) {
 		//possible duplicate: stupid, slow method -- look at them all
-		for (int ii = 1; ii <= curr_in_recent_history_; ++ii) {
+		for ( int ii = 1; ii <= curr_in_recent_history_; ++ii ) {
 			if ( recent_history_head_ == ii ) continue;
 			if ( hash == recent_history_hash_values_( ii ) ) {
 				--num_same_hash;
 				bool same = true;
-				for (int jj = 1; jj <= num_nodes_; ++jj ) {
+				for ( int jj = 1; jj <= num_nodes_; ++jj ) {
 					if ( recent_network_state_history_( jj, recent_history_head_ ) !=
-							recent_network_state_history_( jj, ii ) )	{
+							recent_network_state_history_( jj, ii ) ) {
 						same = false;
 						break;
 					}
@@ -469,7 +467,7 @@ FASTERAnnealer::run_quench_cycles()
 		if ( state_on_node( node ) == 0 || deltaE < 0 ) {
 			core::PackerEnergy totalE = ig_->commit_considered_substitution();
 			state_on_node( node ) = ran_rotamer_on_node;
-			if ( totalE + 1e-4 < best_energy) {
+			if ( totalE + 1e-4 < best_energy ) {
 				count_since_last_commit = 0;
 				best_energy = totalE;
 			}
@@ -511,7 +509,7 @@ int
 FASTERAnnealer::hash_recent_history( int history_index )
 {
 	int hash = 0;
-	for ( int ii = 1; ii <= num_nodes_; ++ii) {
+	for ( int ii = 1; ii <= num_nodes_; ++ii ) {
 		hash += ii * recent_network_state_history_( ii, history_index );
 		hash = hash % hash_size_;
 	}

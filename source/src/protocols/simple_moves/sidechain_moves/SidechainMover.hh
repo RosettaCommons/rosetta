@@ -51,7 +51,7 @@ namespace sidechain_moves {
 class SidechainMover : public protocols::canonical_sampling::ThermodynamicMover {
 
 public:
-//
+	//
 	/// @brief default constructor
 	SidechainMover();
 
@@ -257,15 +257,15 @@ public:
 	update_type();
 
 	/// @brief set temperature for bias sampling at dunbrack distribution
-  void
-  set_sampling_temperature( core::Real temp ){
-    sampling_temperature_ = temp;
-  }
+	void
+	set_sampling_temperature( core::Real temp ){
+		sampling_temperature_ = temp;
+	}
 
-  core::Real
-  sampling_temperature(){
-    return sampling_temperature_;
-  }
+	core::Real
+	sampling_temperature(){
+		return sampling_temperature_;
+	}
 
 private:
 

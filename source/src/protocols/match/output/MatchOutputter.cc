@@ -35,7 +35,7 @@ namespace match {
 namespace output {
 
 MatchOutputter::MatchOutputter()
-	: MatchProcessor()
+: MatchProcessor()
 {}
 
 MatchOutputter::~MatchOutputter() {}
@@ -59,7 +59,7 @@ MatchOutputter::process_match(
 )
 {
 	note_match_processed();
-	if( !this->passes_filters( m ) ) return;
+	if ( !this->passes_filters( m ) ) return;
 
 	if ( writer_ ) {
 		runtime_assert( evaluator_ != 0 );
@@ -75,7 +75,7 @@ MatchOutputter::process_match(
 )
 {
 	note_match_processed();
-	if( !this->passes_filters( m ) ) return;
+	if ( !this->passes_filters( m ) ) return;
 
 	if ( writer_ ) {
 		writer_->record_match( m );

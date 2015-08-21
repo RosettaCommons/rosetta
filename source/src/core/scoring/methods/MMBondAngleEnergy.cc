@@ -140,19 +140,19 @@ MMBondAngleEnergy::defines_intrares_energy( EnergyMap const & ) const
 
 void
 MMBondAngleEnergy::residue_pair_energy(
-   conformation::Residue const & rsd1,
-	 conformation::Residue const & rsd2,
-	 pose::Pose const & pose,
-	 ScoreFunction const & ,
-	 EnergyMap & emap
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	pose::Pose const & pose,
+	ScoreFunction const & ,
+	EnergyMap & emap
 ) const
 {
 	// bail out if the residues aren't bonded
-	if (!rsd1.is_bonded(rsd2)) return;
+	if ( !rsd1.is_bonded(rsd2) ) return;
 
 	Real energy = 0;
 
-/*
+	/*
 	//TR << "Processing residues " << rsd1.seqpos() << "-" << rsd2.seqpos() << std::endl;
 
 	// get residue types
@@ -164,114 +164,114 @@ MMBondAngleEnergy::residue_pair_energy(
 	// loop over all connections of residue 1 to residue 2
 	for ( Size i = 1; i <= resconn_ids.size(); ++i ) {
 
-		// get residue connection ids
-		Size const resconn_id1( resconn_ids[i] );
-		Size const resconn_id2( rsd1.residue_connection_conn_id( resconn_id1 ) );
+	// get residue connection ids
+	Size const resconn_id1( resconn_ids[i] );
+	Size const resconn_id2( rsd1.residue_connection_conn_id( resconn_id1 ) );
 
-		// get connection atom numbers
-		Size const resconn_atomno1( rsd1.residue_connection( resconn_id1 ).atomno() );
-		Size const resconn_atomno2( rsd2.residue_connection( resconn_id2 ).atomno() );
+	// get connection atom numbers
+	Size const resconn_atomno1( rsd1.residue_connection( resconn_id1 ).atomno() );
+	Size const resconn_atomno2( rsd2.residue_connection( resconn_id2 ).atomno() );
 
-		// get mm atom type indecies
-		Size resconn_mmat1 = rsd_type1.mm_atom_type_index( resconn_atomno1 );
-		Size resconn_mmat2 = rsd_type2.mm_atom_type_index( resconn_atomno2 );
+	// get mm atom type indecies
+	Size resconn_mmat1 = rsd_type1.mm_atom_type_index( resconn_atomno1 );
+	Size resconn_mmat2 = rsd_type2.mm_atom_type_index( resconn_atomno2 );
 
-		// determine if residue connection atoms should be scored
-		bool should_score1(true);
-		bool should_score2(true);
+	// determine if residue connection atoms should be scored
+	bool should_score1(true);
+	bool should_score2(true);
 
-		if (central_atoms_to_score_.size()) {
+	if (central_atoms_to_score_.size()) {
 
-			should_score1 = false;
-			for ( Size central_atomindex = 1; central_atomindex <= central_atoms_to_score_.size(); ++central_atomindex) {
-				if (rsd_type1.has(central_atoms_to_score_[central_atomindex]) &&
-				    rsd_type1.atom_index(central_atoms_to_score_[central_atomindex]) == resconn_atomno1) {
-					should_score1 = true;
-					break;
-				}
-			}
-
-			should_score2 = false;
-			for ( Size central_atomindex = 1; central_atomindex <= central_atoms_to_score_.size(); ++central_atomindex) {
-				if (rsd_type2.has(central_atoms_to_score_[central_atomindex]) &&
-				    rsd_type2.atom_index(central_atoms_to_score_[central_atomindex]) == resconn_atomno2) {
-					should_score2 = true;
-					break;
-				}
-			}
-		}
-
-		//TR << "Found residue connection id " << resconn_id1 << "-" << resconn_id2 << ": "
-		//<< rsd1.atom_name( resconn_atomno1 ) << "-" << rsd2.atom_name( resconn_atomno2 ) << "\n";
-
-		if (should_score1) {
-			core::chemical::AtomIndices const & bonded_neighbors1( rsd1.bonded_neighbor( resconn_atomno1 ) );
-			Size const num_bonded_neighbors1( bonded_neighbors1.size() );
-
-			// loop over all atoms neighboring resconn_atomno1
-			for ( Size neighbor = 1; neighbor <= num_bonded_neighbors1; ++neighbor ) {
-
-				// get neihbor atom number and mm atom type index
-				Size const neighbor_atomno( bonded_neighbors1[neighbor] );
-				Size neighbor_mmat = rsd_type1.mm_atom_type_index( neighbor_atomno );
-
-				// get angle
-				Real angle = numeric::angle_radians( rsd1.atom( neighbor_atomno ).xyz(), rsd1.atom( resconn_atomno1 ).xyz(),
-																						 rsd2.atom( resconn_atomno2 ).xyz() );
-
-				//TR << rsd1.atom_name( neighbor_atomno ) << "(" << rsd_type1.atom( neighbor_atomno ).mm_name() << ") - "
-				//<< rsd1.atom_name( resconn_atomno1 ) << "(" << rsd_type1.atom( resconn_atomno1 ).mm_name() << ") - "
-				//<< rsd2.atom_name( resconn_atomno2 ) << "(" << rsd_type2.atom( resconn_atomno2 ).mm_name() << ")" << std::endl;
-
-				// score bond angle
-				energy += potential_.mm::MMBondAngleScore::score
-					(  mm::mm_bondangle_atom_tri( neighbor_mmat, resconn_mmat1, resconn_mmat2 ), angle );
-
-				// debug code
-				//TR << rsd1.atom_name( neighbor_atomno ) << "(" << rsd_type1.atom( neighbor_atomno ).mm_name() << ") - "
-				//<< rsd1.atom_name( resconn_atomno1 ) << "(" << rsd_type1.atom( resconn_atomno1 ).mm_name() << ") - "
-				//<< rsd2.atom_name( resconn_atomno2 ) << "(" << rsd_type2.atom( resconn_atomno2 ).mm_name() << ")   \t"
-				//<< potential_.mm::MMBondAngleScore::score
-				//(  mm::mm_bondangle_atom_tri( neighbor_mmat, resconn_mmat1, resconn_mmat2 ), angle ) << std::endl;
-			}
-		}
-
-		if (should_score2) {
-			core::chemical::AtomIndices const & bonded_neighbors2( rsd2.bonded_neighbor( resconn_atomno2 ) );
-			Size const num_bonded_neighbors2( bonded_neighbors2.size() );
-
-			// loop over all atoms neighboring resconn_atomno2
-			for ( Size neighbor = 1; neighbor <= num_bonded_neighbors2; ++neighbor ) {
-
-				// get neihbor atom number and mm atom type index
-				Size const neighbor_atomno( bonded_neighbors2[neighbor] );
-				Size neighbor_mmat = rsd_type2.mm_atom_type_index( neighbor_atomno );
-
-				// get angle
-				Real angle = numeric::angle_radians( rsd1.atom( resconn_atomno1 ).xyz(), rsd2.atom( resconn_atomno2 ).xyz(),
-																						 rsd2.atom( neighbor_atomno ).xyz() );
-
-				//TR << rsd1.atom_name( resconn_atomno1 ) << "(" << rsd_type1.atom( resconn_atomno1 ).mm_name() << ") - "
-				//<< rsd2.atom_name( resconn_atomno2 ) << "(" << rsd_type2.atom( resconn_atomno2 ).mm_name() << ") - "
-				//<< rsd2.atom_name( neighbor_atomno ) << "(" << rsd_type2.atom( neighbor_atomno ).mm_name() << ")" << std::endl;
-
-				// score bond angle
-				energy += potential_.mm::MMBondAngleScore::score
-					(  mm::mm_bondangle_atom_tri( resconn_mmat1, resconn_mmat2, neighbor_mmat ), angle );
-
-				// debug code
-				//TR << rsd1.atom_name( resconn_atomno1 ) << "(" << rsd_type1.atom( resconn_atomno1 ).mm_name() << ") - "
-				//<< rsd2.atom_name( resconn_atomno2 ) << "(" << rsd_type2.atom( resconn_atomno2 ).mm_name() << ") - "
-				//<< rsd2.atom_name( neighbor_atomno ) << "(" << rsd_type2.atom( neighbor_atomno ).mm_name() << ")   \t"
-				//<< potential_.mm::MMBondAngleScore::score
-				//(  mm::mm_bondangle_atom_tri( resconn_mmat1, resconn_mmat2, neighbor_mmat ), angle ) << std::endl;
-			}
-		}
+	should_score1 = false;
+	for ( Size central_atomindex = 1; central_atomindex <= central_atoms_to_score_.size(); ++central_atomindex) {
+	if (rsd_type1.has(central_atoms_to_score_[central_atomindex]) &&
+	rsd_type1.atom_index(central_atoms_to_score_[central_atomindex]) == resconn_atomno1) {
+	should_score1 = true;
+	break;
+	}
 	}
 
-*/
+	should_score2 = false;
+	for ( Size central_atomindex = 1; central_atomindex <= central_atoms_to_score_.size(); ++central_atomindex) {
+	if (rsd_type2.has(central_atoms_to_score_[central_atomindex]) &&
+	rsd_type2.atom_index(central_atoms_to_score_[central_atomindex]) == resconn_atomno2) {
+	should_score2 = true;
+	break;
+	}
+	}
+	}
 
-/**/
+	//TR << "Found residue connection id " << resconn_id1 << "-" << resconn_id2 << ": "
+	//<< rsd1.atom_name( resconn_atomno1 ) << "-" << rsd2.atom_name( resconn_atomno2 ) << "\n";
+
+	if (should_score1) {
+	core::chemical::AtomIndices const & bonded_neighbors1( rsd1.bonded_neighbor( resconn_atomno1 ) );
+	Size const num_bonded_neighbors1( bonded_neighbors1.size() );
+
+	// loop over all atoms neighboring resconn_atomno1
+	for ( Size neighbor = 1; neighbor <= num_bonded_neighbors1; ++neighbor ) {
+
+	// get neihbor atom number and mm atom type index
+	Size const neighbor_atomno( bonded_neighbors1[neighbor] );
+	Size neighbor_mmat = rsd_type1.mm_atom_type_index( neighbor_atomno );
+
+	// get angle
+	Real angle = numeric::angle_radians( rsd1.atom( neighbor_atomno ).xyz(), rsd1.atom( resconn_atomno1 ).xyz(),
+	rsd2.atom( resconn_atomno2 ).xyz() );
+
+	//TR << rsd1.atom_name( neighbor_atomno ) << "(" << rsd_type1.atom( neighbor_atomno ).mm_name() << ") - "
+	//<< rsd1.atom_name( resconn_atomno1 ) << "(" << rsd_type1.atom( resconn_atomno1 ).mm_name() << ") - "
+	//<< rsd2.atom_name( resconn_atomno2 ) << "(" << rsd_type2.atom( resconn_atomno2 ).mm_name() << ")" << std::endl;
+
+	// score bond angle
+	energy += potential_.mm::MMBondAngleScore::score
+	(  mm::mm_bondangle_atom_tri( neighbor_mmat, resconn_mmat1, resconn_mmat2 ), angle );
+
+	// debug code
+	//TR << rsd1.atom_name( neighbor_atomno ) << "(" << rsd_type1.atom( neighbor_atomno ).mm_name() << ") - "
+	//<< rsd1.atom_name( resconn_atomno1 ) << "(" << rsd_type1.atom( resconn_atomno1 ).mm_name() << ") - "
+	//<< rsd2.atom_name( resconn_atomno2 ) << "(" << rsd_type2.atom( resconn_atomno2 ).mm_name() << ")   \t"
+	//<< potential_.mm::MMBondAngleScore::score
+	//(  mm::mm_bondangle_atom_tri( neighbor_mmat, resconn_mmat1, resconn_mmat2 ), angle ) << std::endl;
+	}
+	}
+
+	if (should_score2) {
+	core::chemical::AtomIndices const & bonded_neighbors2( rsd2.bonded_neighbor( resconn_atomno2 ) );
+	Size const num_bonded_neighbors2( bonded_neighbors2.size() );
+
+	// loop over all atoms neighboring resconn_atomno2
+	for ( Size neighbor = 1; neighbor <= num_bonded_neighbors2; ++neighbor ) {
+
+	// get neihbor atom number and mm atom type index
+	Size const neighbor_atomno( bonded_neighbors2[neighbor] );
+	Size neighbor_mmat = rsd_type2.mm_atom_type_index( neighbor_atomno );
+
+	// get angle
+	Real angle = numeric::angle_radians( rsd1.atom( resconn_atomno1 ).xyz(), rsd2.atom( resconn_atomno2 ).xyz(),
+	rsd2.atom( neighbor_atomno ).xyz() );
+
+	//TR << rsd1.atom_name( resconn_atomno1 ) << "(" << rsd_type1.atom( resconn_atomno1 ).mm_name() << ") - "
+	//<< rsd2.atom_name( resconn_atomno2 ) << "(" << rsd_type2.atom( resconn_atomno2 ).mm_name() << ") - "
+	//<< rsd2.atom_name( neighbor_atomno ) << "(" << rsd_type2.atom( neighbor_atomno ).mm_name() << ")" << std::endl;
+
+	// score bond angle
+	energy += potential_.mm::MMBondAngleScore::score
+	(  mm::mm_bondangle_atom_tri( resconn_mmat1, resconn_mmat2, neighbor_mmat ), angle );
+
+	// debug code
+	//TR << rsd1.atom_name( resconn_atomno1 ) << "(" << rsd_type1.atom( resconn_atomno1 ).mm_name() << ") - "
+	//<< rsd2.atom_name( resconn_atomno2 ) << "(" << rsd_type2.atom( resconn_atomno2 ).mm_name() << ") - "
+	//<< rsd2.atom_name( neighbor_atomno ) << "(" << rsd_type2.atom( neighbor_atomno ).mm_name() << ")   \t"
+	//<< potential_.mm::MMBondAngleScore::score
+	//(  mm::mm_bondangle_atom_tri( resconn_mmat1, resconn_mmat2, neighbor_mmat ), angle ) << std::endl;
+	}
+	}
+	}
+
+	*/
+
+	/**/
 
 	// get residue types
 	chemical::ResidueType const & rsd1_type = rsd1.type();
@@ -315,7 +315,7 @@ MMBondAngleEnergy::residue_pair_energy(
 			utility::vector1< chemical::two_atom_set > const & rsd1_atoms_wi1_bond_of_ii(
 				rsd1_type.atoms_within_one_bond_of_a_residue_connection( resconn_id1 ));
 			for ( Size jj = 1; jj <= rsd1_atoms_wi1_bond_of_ii.size(); ++jj ) {
-			debug_assert( rsd1_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno1 );
+				debug_assert( rsd1_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno1 );
 				Size const res1_lower_atomno = rsd1_atoms_wi1_bond_of_ii[ jj ].key2();
 				Size const res1_lower_mmtype = rsd1_type.atom( res1_lower_atomno ).mm_atom_type_index();
 
@@ -370,7 +370,7 @@ MMBondAngleEnergy::residue_pair_energy(
 			utility::vector1< chemical::two_atom_set > const & rsd2_atoms_wi1_bond_of_ii(
 				rsd2_type.atoms_within_one_bond_of_a_residue_connection( resconn_id2 ));
 			for ( Size jj = 1; jj <= rsd2_atoms_wi1_bond_of_ii.size(); ++jj ) {
-			debug_assert( rsd2_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno2 );
+				debug_assert( rsd2_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno2 );
 				Size const res2_lower_atomno = rsd2_atoms_wi1_bond_of_ii[ jj ].key2();
 				Size const res2_lower_mmtype = rsd2_type.atom( res2_lower_atomno ).mm_atom_type_index();
 
@@ -419,7 +419,7 @@ MMBondAngleEnergy::residue_pair_energy(
 		}
 
 	}
-/**/
+	/**/
 	emap[ mm_bend ] += energy;
 }
 
@@ -436,7 +436,7 @@ MMBondAngleEnergy::eval_intrares_energy(
 	// get residue type
 	chemical::ResidueType const & rsd_type = rsd.type();
 
-	if (param_set_) {
+	if ( param_set_ ) {
 
 		mm::MMBondAngleResidueTypeParam const & rsd_param(param_set_->get(rsd_type));
 
@@ -468,24 +468,24 @@ MMBondAngleEnergy::eval_intrares_energy(
 		<< std::endl;
 
 	// for each dihedral angle in the residue type
-	for ( Size bondang = 1; bondang <= rsd_type.num_bondangles(); ++bondang )
-	{
+	for ( Size bondang = 1; bondang <= rsd_type.num_bondangles(); ++bondang ) {
 		// get ResidueType ints
 		Size rt1 = ( rsd_type.bondangle( bondang ) ).key1();
 		Size rt2 = ( rsd_type.bondangle( bondang ) ).key2();
 		Size rt3 = ( rsd_type.bondangle( bondang ) ).key3();
 
-		if (central_atoms_to_score_.size()) {
+		if ( central_atoms_to_score_.size() ) {
 
 			bool should_score( score_atom_centrally( rsd_type, rt2 ));
-			if (!should_score) continue;
+			if ( !should_score ) continue;
 		}
 
 		// check for vrt
 		if ( rsd_type.atom_type(rt1).is_virtual()
-		       || rsd_type.atom_type(rt2).is_virtual()
-		       || rsd_type.atom_type(rt3).is_virtual() )
+				|| rsd_type.atom_type(rt2).is_virtual()
+				|| rsd_type.atom_type(rt3).is_virtual() ) {
 			continue;
+		}
 
 		// get mm atom type index
 		int mmat1 = rsd_type.atom( rt1 ).mm_atom_type_index();
@@ -510,7 +510,7 @@ MMBondAngleEnergy::eval_intrares_energy(
 		//   << rsd.atom_name( rt2 ) << "(" << rsd_type.atom( rt2 ).mm_name() << ") - "
 		//   << rsd.atom_name( rt3 ) << "(" << rsd_type.atom( rt3 ).mm_name() << ")   \t"
 		//   << potential_.mm::MMBondAngleScore::score
-		//	             (  mm::mm_bondangle_atom_tri( mmat1, mmat2, mmat3 ), angle ) << std::endl;
+		//              (  mm::mm_bondangle_atom_tri( mmat1, mmat2, mmat3 ), angle ) << std::endl;
 	}
 
 	// add energy to emap
@@ -526,7 +526,7 @@ MMBondAngleEnergy::score_atom_centrally(
 	if ( central_atoms_to_score_.size() == 0 ) return true;
 
 	for ( Size ii = 1; ii <= central_atoms_to_score_.size(); ++ii ) {
-		if ( utility::same_ignoring_spaces( restype.atom_name( atomno ), central_atoms_to_score_[ ii ] )) {
+		if ( utility::same_ignoring_spaces( restype.atom_name( atomno ), central_atoms_to_score_[ ii ] ) ) {
 			//std::cout << "Counting atom " << atomno << " " << restype.name() << " " << restype.atom_name( atomno ) << std::endl;
 			return true;
 		}
@@ -577,7 +577,7 @@ MMBondAngleEnergy::eval_atom_derivative(
 
 	for ( Size ii = 1, ii_end = angs.size(); ii <= ii_end; ++ii ) {
 		chemical::bondangle_atom_set const & ii_bangle( restype.bondangle( angs[ ii ] ) );
-	debug_assert( ii_bangle.key1() == atomno || ii_bangle.key2() == atomno || ii_bangle.key3() == atomno );
+		debug_assert( ii_bangle.key1() == atomno || ii_bangle.key2() == atomno || ii_bangle.key3() == atomno );
 		if ( score_everything ||
 				( score_this_atom_centrally && ii_bangle.key2() == atomno ) ||
 				( score_atom_centrally( restype, ii_bangle.key2() ) ) ) {    // could be faster here
@@ -601,9 +601,10 @@ MMBondAngleEnergy::eval_atom_derivative(
 
 			// check for vrt
 			if ( restype.atom_type(ii_bangle.key1()).is_virtual()
-						 || restype.atom_type(ii_bangle.key2()).is_virtual()
-						 || restype.atom_type(ii_bangle.key3()).is_virtual() )
+					|| restype.atom_type(ii_bangle.key2()).is_virtual()
+					|| restype.atom_type(ii_bangle.key3()).is_virtual() ) {
 				continue;
+			}
 
 			Vector f1(0.0), f2(0.0);
 			Real theta(0.0);
@@ -629,7 +630,7 @@ MMBondAngleEnergy::eval_atom_derivative(
 
 			Real dE_dtheta;
 			if ( param_set_ ) {
-				dE_dtheta	= weights[ mm_bend ] * potential_.dscore( Ktheta, theta0, theta );
+				dE_dtheta = weights[ mm_bend ] * potential_.dscore( Ktheta, theta0, theta );
 			} else {
 				Size const mmat1 = restype.atom( ii_bangle.key1() ).mm_atom_type_index();
 				Size const mmat2 = restype.atom( ii_bangle.key2() ).mm_atom_type_index();
@@ -656,7 +657,7 @@ MMBondAngleEnergy::eval_atom_derivative(
 		Size const ii_whichpair = interres_wi1_for_this_atom[ ii ].second;
 		chemical::two_atom_set const & ii_pair = restype.
 			atoms_within_one_bond_of_a_residue_connection( ii_resconn )[ ii_whichpair ];
-	debug_assert( ii_pair.key1() == atomno || ii_pair.key2() == atomno );
+		debug_assert( ii_pair.key1() == atomno || ii_pair.key2() == atomno );
 
 		/// Find the neighbor residue and atom
 		Size const ii_neighb      = res.residue_connection_partner( ii_resconn );
@@ -704,7 +705,7 @@ MMBondAngleEnergy::eval_atom_derivative(
 
 			Real dE_dtheta;
 			if ( param_set_ ) {
-				dE_dtheta	= weights[ mm_bend ] * potential_.dscore( Ktheta, theta0, theta );
+				dE_dtheta = weights[ mm_bend ] * potential_.dscore( Ktheta, theta0, theta );
 			} else {
 				Size const mmat1 = neighb_restype.atom( neighb_atom ).mm_atom_type_index();
 				Size const mmat2 = restype.atom( ii_pair.key1() ).mm_atom_type_index();
@@ -736,7 +737,7 @@ MMBondAngleEnergy::eval_atom_derivative(
 		chemical::ResidueType const & neighb_restype( pose.residue_type( ii_neighb ) );
 		Size const neighb_atom1    = neighb_restype.residue_connection( neighb_resconn ).atomno();
 
-		if ( ! score_everything && ! score_atom_centrally( neighb_restype, neighb_atom1 )) continue;
+		if ( ! score_everything && ! score_atom_centrally( neighb_restype, neighb_atom1 ) ) continue;
 		// Beyond this point, we will score all atom triples
 
 		Size const mmat1 = restype.atom( atomno ).mm_atom_type_index();
@@ -749,7 +750,7 @@ MMBondAngleEnergy::eval_atom_derivative(
 		for ( Size jj = 1; jj <= neighb_atoms_wi1.size(); ++jj ) {
 
 			chemical::two_atom_set const & neighb_pair = neighb_atoms_wi1[ jj ];
-		debug_assert( neighb_pair.key1() == neighb_atom1 );
+			debug_assert( neighb_pair.key1() == neighb_atom1 );
 
 			Size const neighb_atom2 = neighb_pair.key2();
 			Size const mmat3 = neighb_restype.atom( neighb_atom2 ).mm_atom_type_index();
@@ -782,7 +783,7 @@ MMBondAngleEnergy::eval_atom_derivative(
 
 			Real dE_dtheta;
 			if ( param_set_ ) {
-				dE_dtheta	= weights[ mm_bend ] * potential_.dscore( Ktheta, theta0, theta );
+				dE_dtheta = weights[ mm_bend ] * potential_.dscore( Ktheta, theta0, theta );
 			} else {
 				dE_dtheta = weights[ mm_bend ] * potential_.mm::MMBondAngleScore::dscore(
 					mm::mm_bondangle_atom_tri( mmat1, mmat2, mmat3 ), theta );

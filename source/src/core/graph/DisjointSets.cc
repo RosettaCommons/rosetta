@@ -104,8 +104,9 @@ platform::Size DisjointSets::n_disjoint_sets() const {
 
 	platform::Size n_disjoint( 0 );
 	for ( platform::Size ii = 1; ii <= n_nodes(); ++ii ) {
-		if ( nodes_[ ii ].parent == ii )
+		if ( nodes_[ ii ].parent == ii ) {
 			++n_disjoint;
+		}
 	}
 	return n_disjoint;
 }
@@ -120,8 +121,9 @@ DisjointSets::disjoint_set_sizes() const {
 	utility::vector1< platform::Size > index_2_ds( n_nodes(), 0 );
 	platform::Size n_disjoint( 0 );
 	for ( platform::Size ii = 1; ii <= n_nodes(); ++ii ) {
-		if ( nodes_[ ii ].parent == ii )
+		if ( nodes_[ ii ].parent == ii ) {
 			index_2_ds[ ii ] = ++n_disjoint;
+		}
 	}
 
 	utility::vector1< platform::Size > ds_set_sizes( n_disjoint, 0 );

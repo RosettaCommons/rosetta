@@ -34,21 +34,21 @@ class AddResiduesRotamerSetOperation : public core::pack::rotamer_set::RotamerSe
 {
 public:
 
-AddResiduesRotamerSetOperation(
-	utility::vector1<core::conformation::ResidueOP> const & residues
-);
+	AddResiduesRotamerSetOperation(
+		utility::vector1<core::conformation::ResidueOP> const & residues
+	);
 
-core::pack::rotamer_set::RotamerSetOperationOP
-clone() const;
+	core::pack::rotamer_set::RotamerSetOperationOP
+	clone() const;
 
-void
-alter_rotamer_set(
-	core::pose::Pose const & pose,
-	core::scoring::ScoreFunction const & /*sfxn*/,
-	core::pack::task::PackerTask const & /*ptask*/,
-	core::graph::GraphCOP /*packer_neighbor_graph*/,
-	core::pack::rotamer_set::RotamerSet & rotamer_set
-);
+	void
+	alter_rotamer_set(
+		core::pose::Pose const & pose,
+		core::scoring::ScoreFunction const & /*sfxn*/,
+		core::pack::task::PackerTask const & /*ptask*/,
+		core::graph::GraphCOP /*packer_neighbor_graph*/,
+		core::pack::rotamer_set::RotamerSet & rotamer_set
+	);
 
 private:
 	utility::vector1<core::conformation::ResidueOP> residues_;

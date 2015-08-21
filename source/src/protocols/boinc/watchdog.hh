@@ -25,7 +25,7 @@ namespace watchdog {
 // Currently this is only set by the CheckPointer.
 #ifdef WIN32
 #else
-	extern pthread_mutex_t bailout_mutex;
+extern pthread_mutex_t bailout_mutex;
 #endif
 extern std::string bailout_silent_structure;
 extern std::string bailout_silent_structure_header;

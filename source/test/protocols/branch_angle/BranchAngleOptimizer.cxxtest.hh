@@ -60,44 +60,44 @@ optimize_atom_tree(
 	kinematics::tree::AtomCOP center_atom = NULL
 )
 {
-	if (!main_atom1 && !center_atom) {
+	if ( !main_atom1 && !center_atom ) {
 		main_atom1 = pose.atom_tree().root();
 	}
 
-	if (center_atom) {
+	if ( center_atom ) {
 
 		kinematics::tree::AtomCOP const main_atom2(center_atom->get_nonjump_atom(0));
 
-		if (main_atom2) {
+		if ( main_atom2 ) {
 
 			id::AtomID const main_atomid1(main_atom1->id());
 			id::AtomID const center_atomid(center_atom->id());
 			id::AtomID const main_atomid2(main_atom2->id());
 
-			if (!(pose.residue(main_atomid1.rsd()).atom_type(main_atomid1.atomno()).name() == "VIRT" ||
-			      pose.residue(center_atomid.rsd()).atom_type(center_atomid.atomno()).name() == "VIRT" ||
-			      pose.residue(main_atomid2.rsd()).atom_type(main_atomid2.atomno()).name() == "VIRT")) {
+			if ( !(pose.residue(main_atomid1.rsd()).atom_type(main_atomid1.atomno()).name() == "VIRT" ||
+					pose.residue(center_atomid.rsd()).atom_type(center_atomid.atomno()).name() == "VIRT" ||
+					pose.residue(main_atomid2.rsd()).atom_type(main_atomid2.atomno()).name() == "VIRT") ) {
 
 				out << "Optimizing:" << main_atomid1 << pose.residue(main_atomid1.rsd()).atom_name(main_atomid1.atomno()) << " "
-														 << center_atomid << pose.residue(center_atomid.rsd()).atom_name(center_atomid.atomno()) << " "
-														 << main_atomid2 << pose.residue(main_atomid2.rsd()).atom_name(main_atomid2.atomno()) << std::endl;
+					<< center_atomid << pose.residue(center_atomid.rsd()).atom_name(center_atomid.atomno()) << " "
+					<< main_atomid2 << pose.residue(main_atomid2.rsd()).atom_name(main_atomid2.atomno()) << std::endl;
 				Size const index(branchopt.optimize_angles(pose, main_atomid1, center_atomid, main_atomid2));
 				out << "Got branching index: " << index << std::endl;
 			}
 
-			for (Size i = 1; i < center_atom->n_nonjump_children(); ++i) {
+			for ( Size i = 1; i < center_atom->n_nonjump_children(); ++i ) {
 				optimize_atom_tree(branchopt, out, pose, center_atom, center_atom->get_nonjump_atom(i));
 			}
 
-			if (center_atom->n_nonjump_children()) {
+			if ( center_atom->n_nonjump_children() ) {
 				optimize_atom_tree(branchopt, out, pose, center_atom, center_atom->get_nonjump_atom(0));
 			}
 		}
 
 	} else {
 
-		for (Size i = 0; i < main_atom1->n_nonjump_children(); ++i) {
-				optimize_atom_tree(branchopt, out, pose, main_atom1, main_atom1->get_nonjump_atom(i));
+		for ( Size i = 0; i < main_atom1->n_nonjump_children(); ++i ) {
+			optimize_atom_tree(branchopt, out, pose, main_atom1, main_atom1->get_nonjump_atom(i));
 		}
 	}
 }
@@ -131,15 +131,15 @@ public:
 
 		UT << "Testing for fully connected atoms..." << std::endl;
 
-		for (Size i = 1; i <= the_pose->total_residue(); ++i) {
-			for (Size j = 1; j <= the_pose->residue(i).natoms(); ++j) {
+		for ( Size i = 1; i <= the_pose->total_residue(); ++i ) {
+			for ( Size j = 1; j <= the_pose->residue(i).natoms(); ++j ) {
 				TS_ASSERT(!the_pose->residue(i).has_incomplete_connection(j));
 				Size const neighbor_count(the_pose->residue(i).n_bonded_neighbor_all_res(j));
 				utility::vector1<core::id::AtomID> const neighbors(the_pose->conformation().bonded_neighbor_all_res(id::AtomID(j, i)));
 				TS_ASSERT(neighbor_count == neighbors.size());
 				UT << "Residue " << i << ", atom " << j << ":" << std::endl;
 				UT << " neighbor count: " << neighbor_count << std::endl;
-				for (Size k = 1; k <= neighbors.size(); ++k) {
+				for ( Size k = 1; k <= neighbors.size(); ++k ) {
 					UT << neighbors[k] << std::endl;
 				}
 			}
@@ -154,21 +154,20 @@ public:
 		kinematics::tree::AtomCOP atom2(atom1->child(1));
 		kinematics::tree::AtomCOP atom3(atom2->child(0));
 
-		while (atom3) {
+		while ( atom3 ) {
 			UT << "Branching atoms for" << atom1->id() << "->" << atom2->id() << "->" << atom3->id() << ":" << std::endl;
 			Size const neighbor_count(the_pose->residue(atom2->id().rsd()).n_bonded_neighbor_all_res(atom2->id().atomno()));
-			if (neighbor_count == 3) {
+			if ( neighbor_count == 3 ) {
 				branching_atomid1(*the_pose, atom1->id(), atom2->id(), atom3->id(), branch_atomid1);
 				UT << branch_atomid1 << std::endl;
-			} else if (neighbor_count == 4) {
+			} else if ( neighbor_count == 4 ) {
 				branching_atomids2(*the_pose, atom1->id(), atom2->id(), atom3->id(), branch_atomid1, branch_atomid2);
 				UT << branch_atomid1 << std::endl;
 				UT << branch_atomid2 << std::endl;
 			}
 
-			if (!(the_pose->residue(atom2->id().rsd()).name3() == "PRO" &&
-			      the_pose->residue(atom2->id().rsd()).atom_name(atom2->id().atomno()) == " N  ")) {
-			}
+			if ( !(the_pose->residue(atom2->id().rsd()).name3() == "PRO" &&
+					the_pose->residue(atom2->id().rsd()).atom_name(atom2->id().atomno()) == " N  ") ) {}
 
 			atom1 = atom2;
 			atom2 = atom3;
@@ -187,8 +186,8 @@ public:
 
 		UT << "Optimizing atom tree root" << std::endl;
 		index = branchopt.optimize_angles(*the_pose, the_pose->atom_tree().root()->child(0)->id(),
-		                                  the_pose->atom_tree().root()->id(),
-												        			the_pose->atom_tree().root()->child(1)->id());
+			the_pose->atom_tree().root()->id(),
+			the_pose->atom_tree().root()->child(1)->id());
 		UT << "Got branching index: " << index << std::endl;
 
 		UT << std::endl << "Optimizing PDB structure..." << std::endl;
@@ -219,11 +218,11 @@ public:
 		// This seems to fail for planar atoms at the end of residues
 		/*
 		for (Size i = 1; i <= pose_ideal->total_residue(); ++i) {
-			for (Size j = 1; j <= pose_ideal->residue(i).natoms(); ++j) {
-				Real atom_distance(pose_ideal->xyz(id::AtomID(j, i)).distance(pose_ideal_optimized->xyz(id::AtomID(j, i))));
-				std::cout << i << "\t" << j << "\t" << pose_ideal->residue(i).name() << "\t" << pose_ideal->residue(i).atom_name(j) << "\t" << atom_distance << std::endl;
-				TS_ASSERT(atom_distance < 0.01);
-			}
+		for (Size j = 1; j <= pose_ideal->residue(i).natoms(); ++j) {
+		Real atom_distance(pose_ideal->xyz(id::AtomID(j, i)).distance(pose_ideal_optimized->xyz(id::AtomID(j, i))));
+		std::cout << i << "\t" << j << "\t" << pose_ideal->residue(i).name() << "\t" << pose_ideal->residue(i).atom_name(j) << "\t" << atom_distance << std::endl;
+		TS_ASSERT(atom_distance < 0.01);
+		}
 		}
 		*/
 	}

@@ -23,7 +23,7 @@
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
-			
+
 
 // Forward
 class MutationSetDesignOperation;
@@ -33,7 +33,7 @@ typedef utility::pointer::shared_ptr< MutationSetDesignOperation const > Mutatio
 
 }
 }
-} 
+}
 
 #endif
 

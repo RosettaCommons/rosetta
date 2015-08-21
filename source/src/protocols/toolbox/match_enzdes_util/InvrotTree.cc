@@ -48,7 +48,7 @@ static thread_local basic::Tracer tr( "protocols.toolbox.match_enzdes_util.Invro
 
 
 InvrotTree::InvrotTree()
-	: ReferenceCount()
+: ReferenceCount()
 {
 	invrot_targets_.clear();
 	invrot_tree_constraints_.clear();
@@ -67,11 +67,11 @@ InvrotTree::generate_inverse_rotamer_constraints(
 	AllowedSeqposForGeomCstCOP geomcst_seqpos
 )
 {
-	if( invrot_targets_.size() == 0 ) utility_exit_with_message("InvrotTree is asked to generate constraints even though no target states exist. Something is wrong somewhere.");
+	if ( invrot_targets_.size() == 0 ) utility_exit_with_message("InvrotTree is asked to generate constraints even though no target states exist. Something is wrong somewhere.");
 
 	invrot_tree_constraints_.clear();
 
-	for( Size i = 1; i <= invrot_targets_.size(); ++i){
+	for ( Size i = 1; i <= invrot_targets_.size(); ++i ) {
 		invrot_tree_constraints_.push_back( invrot_targets_[i]->generate_constraints( pose, geomcst_seqpos ) );
 	}
 
@@ -81,7 +81,7 @@ utility::vector1< InvrotCollectorCOP >
 InvrotTree::collect_all_inverse_rotamers( ) const
 {
 	utility::vector1< InvrotCollectorOP > invrot_collectors;
-	for(Size i =1; i <= invrot_targets_.size(); ++i ) invrot_targets_[i]->collect_all_inverse_rotamers( invrot_collectors );
+	for ( Size i =1; i <= invrot_targets_.size(); ++i ) invrot_targets_[i]->collect_all_inverse_rotamers( invrot_collectors );
 	return invrot_collectors;
 }
 
@@ -91,7 +91,7 @@ InvrotTree::dump_invrots_tree_as_multimodel_pdbs( std::string filename_base) con
 	tr << "Writing InvrotTree to file(s).... " << std::endl;
 	//1. collect all the invrots
 	utility::vector1< InvrotCollectorCOP > invrot_collectors( this->collect_all_inverse_rotamers() );
-	if( invrot_collectors.size() == 0 ){
+	if ( invrot_collectors.size() == 0 ) {
 		tr <<"Error when trying to dump inverse rotamer tree to file. No inverse rotamers found in tree.";
 		return;
 	}
@@ -100,14 +100,14 @@ InvrotTree::dump_invrots_tree_as_multimodel_pdbs( std::string filename_base) con
 	Size files_to_write( invrot_collectors.size() );
 	tr <<"A total of " << files_to_write << " unique definitions of the invrot tree exist." << std::endl;
 
-	for( Size i =1; i <= files_to_write; ++i ){
+	for ( Size i =1; i <= files_to_write; ++i ) {
 		std::string filename( filename_base + "_" + utility::to_string( i ) + ".pdb" );
 		std::vector< std::list< core::conformation::ResidueCOP > > const & invrot_lists( invrot_collectors[i]->invrots() );
 		Size num_rotamer_lists( invrot_lists.size() );
 		std::vector< std::list< core::conformation::ResidueCOP >::const_iterator > res_iterators( num_rotamer_lists );
 
 		tr << "Writing definition " << i << " to file " << filename << "... " << std::endl;
-		for( Size j =0; j < num_rotamer_lists; ++j ){
+		for ( Size j =0; j < num_rotamer_lists; ++j ) {
 			res_iterators[ j ] = invrot_lists[j].begin();
 			tr << invrot_lists[j].size() << " invrots for list " << j << ", ";
 		}
@@ -118,16 +118,16 @@ InvrotTree::dump_invrots_tree_as_multimodel_pdbs( std::string filename_base) con
 		std::ofstream file_out( filename.c_str() );
 		file_out << "MODEL   1\n";
 
-		while( !all_res_iterators_at_end ){
+		while ( !all_res_iterators_at_end ) {
 			all_res_iterators_at_end = true;
-			for( core::Size j =0; j < num_rotamer_lists; ++j ){
-				if( res_iterators[ j ] != invrot_lists[j].end() ){
+			for ( core::Size j =0; j < num_rotamer_lists; ++j ) {
+				if ( res_iterators[ j ] != invrot_lists[j].end() ) {
 					all_res_iterators_at_end = false;
 					core::io::pdb::dump_pdb_residue( **(res_iterators[ j ]), atomcounter, file_out );
 					res_iterators[ j ]++;
 				}
 			}
-			if( !all_res_iterators_at_end ){
+			if ( !all_res_iterators_at_end ) {
 				file_out << "ENDMDL \n";
 				file_out << "MODEL    "+utility::to_string( ++modelcount )+"\n";
 			}
@@ -150,7 +150,7 @@ InvrotTree::add_to_targets( InvrotTargetOP invrot_target )
 
 
 TheozymeInvrotTree::TheozymeInvrotTree( EnzConstraintIOCOP enzcst_io )
-	: InvrotTree(), enzcst_io_(enzcst_io)
+: InvrotTree(), enzcst_io_(enzcst_io)
 {}
 
 TheozymeInvrotTree::~TheozymeInvrotTree(){}
@@ -158,7 +158,7 @@ TheozymeInvrotTree::~TheozymeInvrotTree(){}
 
 bool
 TheozymeInvrotTree::check_pose_tree_compatibility(
-		core::pose::Pose & ) const
+	core::pose::Pose & ) const
 {
 	utility_exit_with_message("stubbed out");
 	return false;  // required for compilation on Windows
@@ -175,16 +175,14 @@ TheozymeInvrotTree::generate_targets_and_inverse_rotamers()
 
 	utility::vector1< core::conformation::ResidueCOP > all_rots;
 	//amino acid target?
-	if( ligres->is_protein() ) all_rots = core::pack::rotamer_set::bb_independent_rotamers( ligres->type().get_self_ptr() );
+	if ( ligres->is_protein() ) all_rots = core::pack::rotamer_set::bb_independent_rotamers( ligres->type().get_self_ptr() );
 
 	//ligand?
-	else if( ligres->is_ligand() ){
+	else if ( ligres->is_ligand() ) {
 		//for now
 		//all_rots.push_back( ligres );
 		all_rots = core::pack::rotamer_set::bb_independent_rotamers( ligres->type().get_self_ptr() );
-	}
-
-	else{
+	} else {
 		//one residue only
 		all_rots.push_back( ligres );
 	}
@@ -195,17 +193,17 @@ TheozymeInvrotTree::generate_targets_and_inverse_rotamers()
 	//code from the matcher task to EnzConstraintIO
 	//
 	//hack for now
-	utility::vector1< 	utility::vector1< core::conformation::ResidueCOP > > conformer_groups;
+	utility::vector1<  utility::vector1< core::conformation::ResidueCOP > > conformer_groups;
 	conformer_groups.push_back( all_rots );
 
 	//but at afer this, we'll generate a bunch of ligand targets
-	for( Size i =1; i <= conformer_groups.size(); ++i ){
+	for ( Size i =1; i <= conformer_groups.size(); ++i ) {
 
 		SingleResidueInvrotTargetOP invtarg( new SingleResidueInvrotTarget( conformer_groups[i] ) );
-		if( !invtarg->initialize_tree_nodes_from_enzcst_io( enzcst_io_ ) ) tr << "Target from conformer group " << i << " failed to initialize, cstfile geometry (clashes?) is bad somewhere." << std::endl;
+		if ( !invtarg->initialize_tree_nodes_from_enzcst_io( enzcst_io_ ) ) tr << "Target from conformer group " << i << " failed to initialize, cstfile geometry (clashes?) is bad somewhere." << std::endl;
 		else this->add_to_targets( invtarg );
 	}
-	if( this->num_target_states() == 0 ) utility_exit_with_message("No targets could be initialized by TheozymeInvrotTree. check cstfile");
+	if ( this->num_target_states() == 0 ) utility_exit_with_message("No targets could be initialized by TheozymeInvrotTree. check cstfile");
 }
 
 } //match_enzdes_util

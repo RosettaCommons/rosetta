@@ -74,7 +74,7 @@ public:
 	inline void set_camelid( bool setting ) {
 		is_camelid_ = setting;
 
-		if( is_camelid_ ) {
+		if ( is_camelid_ ) {
 			H3_filter_ = false;
 			snug_fit_ = false;
 			docking_local_refine_ = false;
@@ -105,13 +105,13 @@ public:
 	/// @brief set scorefunction for low resolution of CDR H3 modeling
 	/// @details
 	void set_lowres_score_func(
-	    core::scoring::ScoreFunctionOP lowres_scorefxn );
+		core::scoring::ScoreFunctionOP lowres_scorefxn );
 
 	/////////////////////////////////////////////////////////////////////////
 	/// @brief set scorefunction for high resolution of CDR H3 modeling
 	/// @details
 	void set_highres_score_func(
-	    core::scoring::ScoreFunctionOP highres_scorefxn
+		core::scoring::ScoreFunctionOP highres_scorefxn
 	);
 
 	/// @brief insert C-terminal fragments
@@ -119,7 +119,7 @@ public:
 
 	/// @brief store CDR H3 C-terminal fragments
 	void store_H3_cter_fragment(
-	    utility::vector1< core::fragment::FragData > & base_library_in
+		utility::vector1< core::fragment::FragData > & base_library_in
 	);
 
 	/// @brief return false if any cdr cutpoint is broken
@@ -129,31 +129,31 @@ public:
 	// peptide bond which should be formed at the cutpoint. A closed loop is
 	// assumed to have a gap < 1.9 Ang
 	core::Real cutpoint_separation(
-	    core::pose::Pose & pose_in,
-	    Size cutpoint
+		core::pose::Pose & pose_in,
+		Size cutpoint
 	);
 
 	void scored_frag_close(
-	    core::pose::Pose & pose_in,
-	    loops::Loop const trimmed_cdr_h3
+		core::pose::Pose & pose_in,
+		loops::Loop const trimmed_cdr_h3
 	);
 
 	bool CDR_H3_filter(
-	    const core::pose::Pose & pose_in,
-	    core::Size const loop_begin,
-	    core::Size const size,
-	    char const light_chain = 'L' );
+		const core::pose::Pose & pose_in,
+		core::Size const loop_begin,
+		core::Size const size,
+		char const light_chain = 'L' );
 
 	void loop_fa_relax(
-	    core::pose::Pose & pose_in,
-	    core::Size const loop_begin,
-	    core::Size const loop_end
+		core::pose::Pose & pose_in,
+		core::Size const loop_begin,
+		core::Size const loop_end
 	);
 
 	void loop_centroid_relax(
-	    core::pose::Pose & pose_in,
-	    core::Size const loop_begin,
-	    core::Size const loop_end );
+		core::pose::Pose & pose_in,
+		core::Size const loop_begin,
+		core::Size const loop_end );
 
 	void setup_packer_task( core::pose::Pose & pose_in );
 
@@ -233,21 +233,21 @@ private:
 
 // read CDR H3 C-terminal fragments (size: 4)
 void read_H3_cter_fragment(
-    Antibody & antibody_in,
-    utility::vector1< core::fragment::FragData > & H3_base_library,
-    bool is_camelid
+	Antibody & antibody_in,
+	utility::vector1< core::fragment::FragData > & H3_base_library,
+	bool is_camelid
 );
 
 void simple_one_loop_fold_tree(
-    core::pose::Pose & pose,
-    loops::Loop const & loop
+	core::pose::Pose & pose,
+	loops::Loop const & loop
 );
 
 void simple_fold_tree(
-    core::pose::Pose & pose_in,
-    core::Size jumppoint1,
-    core::Size cutpoint,
-    core::Size jumppoint2
+	core::pose::Pose & pose_in,
+	core::Size jumppoint1,
+	core::Size cutpoint,
+	core::Size jumppoint2
 );
 
 } // moves

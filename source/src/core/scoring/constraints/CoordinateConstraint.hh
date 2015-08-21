@@ -50,7 +50,7 @@ public:
 		AtomID const & a1,
 		AtomID const & fixed_atom_in,
 		Vector const & xyz_target_in,
-	 	core::scoring::func::FuncOP func,
+		core::scoring::func::FuncOP func,
 		ScoreType scotype = coordinate_constraint
 	);
 
@@ -107,7 +107,7 @@ public:
 		AtomID const & atom,
 		func::XYZ_Func const & xyz,
 		Vector & F1,
- 		Vector & F2,
+		Vector & F2,
 		EnergyMap const & weights
 	) const;
 

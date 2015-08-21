@@ -25,7 +25,7 @@
 #include <utility/string_util.hh>
 #include <protocols/toolbox/NetworkAlgorithms.hh>
 
-namespace protocols{
+namespace protocols {
 namespace simple_filters {
 
 using namespace core;
@@ -108,13 +108,13 @@ AveragePathLengthFilter::parse_my_tag(
 	core::pose::Pose const &
 ) {
 
-	if(tag->hasOption("path_tightness")){
+	if ( tag->hasOption("path_tightness") ) {
 		path_tightness(tag->getOption< core::Real >("path_tightness",1));
 		TR << "setting path_tightness" << std::endl;
 	}
 
 
-	if(tag->hasOption("max_path_length")){
+	if ( tag->hasOption("max_path_length") ) {
 		max_path_length(tag->getOption< core::Real >("max_path_length",99999));
 		TR << "setting max_path_length" << std::endl;
 	}
@@ -126,12 +126,12 @@ bool
 AveragePathLengthFilter::apply(
 	core::pose::Pose const & pose
 ) const {
-	
+
 	//calculate the path length
 	core::Real path_length = compute(pose);
 
 	//must be below the maximum path length
-	if (path_length > max_path_length_) {
+	if ( path_length > max_path_length_ ) {
 		TR << "Failed average path length filter (current: " << path_length << " | user inputted maximum " << max_path_length_ << ")" << std::endl;
 		return false;
 	}
@@ -139,16 +139,16 @@ AveragePathLengthFilter::apply(
 	//must also be below the path tightness.
 	//calculate number of disulfides
 	int n_disulfides = 0;
-	for ( core::Size i=1; i != pose.total_residue(); ++i) {
-		for ( core::Size j=i + 2; j < pose.total_residue() + 1; ++j) {
-			if (pose.residue(i).is_bonded(pose.residue(j)) ){
+	for ( core::Size i=1; i != pose.total_residue(); ++i ) {
+		for ( core::Size j=i + 2; j < pose.total_residue() + 1; ++j ) {
+			if ( pose.residue(i).is_bonded(pose.residue(j)) ) {
 				n_disulfides++;
 			}
 		}
 	}
 
 	core::Real expected_path_length = ((0.1429 * pose.total_residue()) + 0.8635);
-	if (path_length > (expected_path_length + path_tightness_) ) {
+	if ( path_length > (expected_path_length + path_tightness_) ) {
 		TR << "Failed average path length filter (current: " << path_length << " | expected base ";
 		TR << expected_path_length << " + tightness " << path_tightness_ << ")" << std::endl;
 		return false;

@@ -83,12 +83,12 @@ public:
 
 	inline void scale_outeriterations( core::PackerEnergy const so )
 	{
-			outeriterations_scaling_ = so; return;
+		outeriterations_scaling_ = so; return;
 	}
 
 	inline void scale_inneriterations( core::PackerEnergy const si )
 	{
-			inneriterations_scaling_ = si; return;
+		inneriterations_scaling_ = si; return;
 	}
 
 protected:

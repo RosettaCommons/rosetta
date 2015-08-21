@@ -71,7 +71,7 @@ void ChemicalShiftEvaluatorCreator::add_evaluators( protocols::evaluation::MetaP
 
 
 	if ( option[ OptionKeys::evaluation::chemical_shifts ].user() ) {
-    typedef utility::vector1< std::string > CSVector;
+		typedef utility::vector1< std::string > CSVector;
 		CSVector const& cs_shifts( option[ OptionKeys::evaluation::chemical_shifts ]() );
 
 		for ( CSVector::const_iterator it=cs_shifts.begin(); it!=cs_shifts.end(); ++it ) {
@@ -82,7 +82,7 @@ void ChemicalShiftEvaluatorCreator::add_evaluators( protocols::evaluation::MetaP
 				column = *it;
 			} else {
 				utility_exit_with_message(
-							 "need to specify dupletss <cs_shifts> <column> with option -evaluation:chemical_shifts   last read: "+fname );
+					"need to specify dupletss <cs_shifts> <column> with option -evaluation:chemical_shifts   last read: "+fname );
 			}
 			eval.add_evaluation( PoseEvaluatorOP( new ChemicalShiftEvaluator( column, fname ) ) );
 		}

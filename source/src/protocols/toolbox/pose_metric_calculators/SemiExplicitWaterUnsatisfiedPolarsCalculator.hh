@@ -37,7 +37,7 @@
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 
@@ -45,19 +45,19 @@ class SemiExplicitWaterUnsatisfiedPolarsCalculator : public core::pose::metrics:
 
 public:
 
-  SemiExplicitWaterUnsatisfiedPolarsCalculator(
-    std::string hbond_calc,
+	SemiExplicitWaterUnsatisfiedPolarsCalculator(
+		std::string hbond_calc,
 		core::scoring::ScoreFunctionOP scorefxn,
 		core::Real semiexpl_water_cutoff = basic::options::option[basic::options::OptionKeys::pose_metrics::semiex_water_burial_cutoff]
-  );
+	);
 
 
-  SemiExplicitWaterUnsatisfiedPolarsCalculator(
-    std::string hbond_calc,
+	SemiExplicitWaterUnsatisfiedPolarsCalculator(
+		std::string hbond_calc,
 		core::scoring::ScoreFunctionOP scorefxn,
-    std::set< core::Size > const & special_region,
+		std::set< core::Size > const & special_region,
 		core::Real semiexpl_water_cutoff = basic::options::option[basic::options::OptionKeys::pose_metrics::semiex_water_burial_cutoff]
-  );
+	);
 
 
 	core::Real
@@ -70,40 +70,40 @@ public:
 		core::Size new_atomno
 	);
 
-  core::pose::metrics::PoseMetricCalculatorOP clone() const {
-    return core::pose::metrics::PoseMetricCalculatorOP( new SemiExplicitWaterUnsatisfiedPolarsCalculator( name_of_hbond_calc_, scorefxn_, semiexpl_water_cutoff_ ) ); };
+	core::pose::metrics::PoseMetricCalculatorOP clone() const {
+		return core::pose::metrics::PoseMetricCalculatorOP( new SemiExplicitWaterUnsatisfiedPolarsCalculator( name_of_hbond_calc_, scorefxn_, semiexpl_water_cutoff_ ) ); };
 
 	std::string const & name_of_hbond_calc() const { return name_of_hbond_calc_; }
 
 protected:
 
-  virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-  virtual std::string print( std::string const & key ) const;
-  virtual void recompute( core::pose::Pose const & this_pose );
+	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
+	virtual std::string print( std::string const & key ) const;
+	virtual void recompute( core::pose::Pose const & this_pose );
 
 
 private:
 
-  void assert_calculators();
+	void assert_calculators();
 
-  static
-  core::Size satisfaction_cutoff( std::string atom_type );
+	static
+	core::Size satisfaction_cutoff( std::string atom_type );
 
 
-  core::scoring::hbonds::HBondDatabaseCOP hb_database_;
-  core::Size all_unsat_polars_;
-  core::Size special_region_unsat_polars_;
-  core::id::AtomID_Map< bool > atom_unsat_;
-  utility::vector1< core::Size > residue_unsat_polars_;
-  utility::vector1< core::Real > residue_semiexpl_score_;
-  core::id::AtomID_Map< core::Real > atom_semiexpl_score_;
-  core::Real semiexpl_water_cutoff_;
+	core::scoring::hbonds::HBondDatabaseCOP hb_database_;
+	core::Size all_unsat_polars_;
+	core::Size special_region_unsat_polars_;
+	core::id::AtomID_Map< bool > atom_unsat_;
+	utility::vector1< core::Size > residue_unsat_polars_;
+	utility::vector1< core::Real > residue_semiexpl_score_;
+	core::id::AtomID_Map< core::Real > atom_semiexpl_score_;
+	core::Real semiexpl_water_cutoff_;
 
-  //holds the atom hbonds calculators necessary for this calculator
-  std::string name_of_hbond_calc_;
-  core::scoring::ScoreFunctionOP scorefxn_;
+	//holds the atom hbonds calculators necessary for this calculator
+	std::string name_of_hbond_calc_;
+	core::scoring::ScoreFunctionOP scorefxn_;
 
-  std::set< core::Size > special_region_;
+	std::set< core::Size > special_region_;
 
 };
 

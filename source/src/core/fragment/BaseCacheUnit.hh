@@ -48,7 +48,7 @@ public:
 
 	// one could call this when frags are added... that might avoid some breaking via out-of-range errors,
 	// but the values would still be nonsense ... maybe out-of-range errors are preferrable
-	//	virtual void register_frag_id( Size frag_id ) = 0;
+	// virtual void register_frag_id( Size frag_id ) = 0;
 };
 
 

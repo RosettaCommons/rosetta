@@ -27,46 +27,46 @@ namespace stepwise {
 namespace sampler {
 namespace protein {
 
-	class ProteinFragmentStepWiseSampler: public protocols::stepwise::sampler::StepWiseSamplerSized {
+class ProteinFragmentStepWiseSampler: public protocols::stepwise::sampler::StepWiseSamplerSized {
 
-	public:
+public:
 
-		//constructor
-		ProteinFragmentStepWiseSampler( std::string const frag_file,
-														utility::vector1< core::Size > const & slice_res,
-														utility::vector1< core::Size > const & moving_residues	 );
+	//constructor
+	ProteinFragmentStepWiseSampler( std::string const frag_file,
+		utility::vector1< core::Size > const & slice_res,
+		utility::vector1< core::Size > const & moving_residues  );
 
 
-		//destructor
-		~ProteinFragmentStepWiseSampler();
+	//destructor
+	~ProteinFragmentStepWiseSampler();
 
-	public:
+public:
 
-		/// @brief Get the total number of rotamers in sampler
-		virtual core::Size size() const;
+	/// @brief Get the total number of rotamers in sampler
+	virtual core::Size size() const;
 
-		/// @brief Apply the i-th rotamer to pose
-		virtual void apply( core::pose::Pose &, core::Size const );
+	/// @brief Apply the i-th rotamer to pose
+	virtual void apply( core::pose::Pose &, core::Size const );
 
-		/// @brief Name of the class
-		virtual std::string get_name() const { return "ProteinFragmentStepWiseSampler"; }
+	/// @brief Name of the class
+	virtual std::string get_name() const { return "ProteinFragmentStepWiseSampler"; }
 
-		/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-		virtual StepWiseSamplerType type() const { return PROTEIN_FRAGMENT; }
+	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
+	virtual StepWiseSamplerType type() const { return PROTEIN_FRAGMENT; }
 
-	private:
+private:
 
-		void
-		initialize( std::string const frag_file,
-								utility::vector1< core::Size > const & slice_res,
-								utility::vector1< core::Size > const & moving_residues	 );
+	void
+	initialize( std::string const frag_file,
+		utility::vector1< core::Size > const & slice_res,
+		utility::vector1< core::Size > const & moving_residues  );
 
-	private:
+private:
 
-		core::Size insert_pos_;
-		core::fragment::FrameOP frame_;
+	core::Size insert_pos_;
+	core::fragment::FrameOP frame_;
 
-	};
+};
 
 } //protein
 } //sampler

@@ -290,11 +290,11 @@ public:
 					}
 
 					if ( ! ( ( emap[ fa_rep ] < 0.01 && emap_ana[ fa_rep ] < 0.01 ) ||
-							std::abs( emap[ fa_rep ] - emap_ana[ fa_rep ] ) / std::max( std::abs( emap[ fa_rep ]), std::abs(emap_ana[ fa_rep ])) < ana_vs_table_percent_diff_tolerance )) {
+							std::abs( emap[ fa_rep ] - emap_ana[ fa_rep ] ) / std::max( std::abs( emap[ fa_rep ]), std::abs(emap_ana[ fa_rep ])) < ana_vs_table_percent_diff_tolerance ) ) {
 						std::cout <<  (*etable.atom_set().lock())[ii].name() << " " << (*etable.atom_set().lock())[jj].name() << " " << step * kk << " fa_rep " <<
 							emap[ fa_rep ] << " " << emap_ana[ fa_rep ] << " " <<
 							std::abs( emap[ fa_rep ] - emap_ana[ fa_rep ] ) / std::max( std::abs( emap[ fa_rep ]), std::abs(emap_ana[ fa_rep ])) << std::endl;
-          }
+					}
 					if ( ! ( ( emap[ fa_sol ] < 0.01 && emap_ana[ fa_sol ] < 0.01 ) ||
 							std::abs( emap[ fa_sol ] - emap_ana[ fa_sol ] ) / std::max( std::abs( emap[ fa_sol ]), std::abs(emap_ana[ fa_sol ])) < ana_vs_table_percent_diff_tolerance ) ) {
 						std::cout <<  (*etable.atom_set().lock())[ii].name() << " " << (*etable.atom_set().lock())[jj].name() << " " << step * kk << " fa_sol " <<
@@ -303,7 +303,7 @@ public:
 					}
 
 					//if ( ii==OCbb_idx && jj==OCbb_idx && step*kk >= 2.1 && step*kk <=3.6 ) {
-					//	std::cout << "OCbb vs OCbb " << step*kk << " " << emap[fa_atr] << " " << emap[fa_rep] << " " << emap[ fa_sol ] << std::endl;
+					// std::cout << "OCbb vs OCbb " << step*kk << " " << emap[fa_atr] << " " << emap[fa_rep] << " " << emap[ fa_sol ] << std::endl;
 					//}
 					Real an_ljatrE, an_ljrepE, an_fasolE;
 					etable.interpolated_analytic_etable_evaluation( at1, at2, an_ljatrE, an_ljrepE, an_fasolE, dummy );

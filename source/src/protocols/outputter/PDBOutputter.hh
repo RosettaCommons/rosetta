@@ -30,23 +30,23 @@ using core::pose::PoseSP;
 
 class PDBOutputter : public FormatStringOutputter {
 
-	public:
-		PDBOutputter();
-		virtual ~PDBOutputter();
+public:
+	PDBOutputter();
+	virtual ~PDBOutputter();
 
-		virtual void write( Pose & p );
+	virtual void write( Pose & p );
 
-		// factory functions
-		OutputterSP create();
-		static std::string name() {
-			return "PDBOutputter";
-		}
+	// factory functions
+	OutputterSP create();
+	static std::string name() {
+		return "PDBOutputter";
+	}
 
 #ifdef USELUA
 		virtual void lregister( lua_State * lstate );
 #endif
 
-}; // end 
+}; // end
 
 } // outputter
 } // protocols

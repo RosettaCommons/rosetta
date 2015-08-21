@@ -119,7 +119,7 @@ public:
 	}
 
 	void set_fast( core::Real const setting ) {
-		if ( setting ){
+		if ( setting ) {
 			extra_chi_ = false;
 			extra_epsilon_ = false;
 			set_and_reinit( bin_size_, 40.0 /*setting*/ );
@@ -135,8 +135,8 @@ private:
 	void get_next_valid_bb();
 
 	//Disable copy constructor and assignment
-  RNA_KIC_Sampler( const RNA_KIC_Sampler & );
-  void operator=( const RNA_KIC_Sampler & );
+	RNA_KIC_Sampler( const RNA_KIC_Sampler & );
+	void operator=( const RNA_KIC_Sampler & );
 
 	core::pose::PoseOP const ref_pose_;
 	core::Size const moving_suite_, chainbreak_suite_;
@@ -146,7 +146,7 @@ private:
 	core::Real bin_size_;
 	core::Size max_tries_;
 	bool verbose_, extra_epsilon_, extra_chi_, skip_same_pucker_,
-			idealize_coord_, torsion_screen_, random_chain_closed_;
+		idealize_coord_, torsion_screen_, random_chain_closed_;
 
 	StepWiseSamplerSizedCombOP bb_rotamer_;
 	RNA_KinematicCloserOP loop_closer_;

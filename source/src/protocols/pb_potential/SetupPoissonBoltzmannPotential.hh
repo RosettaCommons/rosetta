@@ -46,23 +46,23 @@ namespace pb_potential {
 class SetupPoissonBoltzmannPotential : public moves::Mover {
 public:
 
-  static const std::string APBS_CONFIG_EXT;
-  static const std::string APBS_PQR_EXT;
-  static const std::string APBS_DX_EXT;
-  static const std::string DEFAULT_STATE;
+	static const std::string APBS_CONFIG_EXT;
+	static const std::string APBS_PQR_EXT;
+	static const std::string APBS_DX_EXT;
+	static const std::string DEFAULT_STATE;
 	static const std::string DEFAULT_APBS_PATH;
 
-  SetupPoissonBoltzmannPotential();
-  virtual ~SetupPoissonBoltzmannPotential();
-  virtual void apply( core::pose::Pose & pose );
-  virtual std::string get_name() const;
-  virtual void parse_my_tag( utility::tag::TagCOP,
-			     basic::datacache::DataMap &,
-			     protocols::filters::Filters_map const &,
-			     protocols::moves::Movers_map const &,
-			     core::pose::Pose const &);
-  virtual protocols::moves::MoverOP fresh_instance() const;
-  protocols::moves::MoverOP clone() const;
+	SetupPoissonBoltzmannPotential();
+	virtual ~SetupPoissonBoltzmannPotential();
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const;
+	virtual void parse_my_tag( utility::tag::TagCOP,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &);
+	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const;
 
 private:
 	protocols::simple_moves::ddGOP ddg_;  // used as pre-scoring & caching state data

@@ -145,7 +145,7 @@ public:
 	typedef utility::vector1< ResidueConstraintsOP > ResiduePairConstraints;
 	typedef ResidueConstraints::const_iterator ResiduePairConstraintsIterator;
 
-	//	typedef utility::vector1< DOF_ConstraintOP > DOF_Constraints;
+	// typedef utility::vector1< DOF_ConstraintOP > DOF_Constraints;
 
 public:
 	ConstraintSet();
@@ -230,11 +230,11 @@ public:
 	) const;
 
 
- 	virtual void
- 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn ) const;
+	virtual void
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn ) const;
 
- 	virtual void
- 	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & scfxn ) const;
+	virtual void
+	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & scfxn ) const;
 
 
 	virtual
@@ -250,40 +250,40 @@ public:
 	/// @brief Switching over to a pairwise decomposable eval-atom-deriv system for
 	/// RTMin means deprecating the old "evaluate an atom's derivative wrt the entire structure"
 	/// This function is preserved (for now) for use by the RNA_TorsionEnergy
- 	virtual
+	virtual
 	void
- 	deprecated_eval_atom_derivative(
- 		id::AtomID const & atom_id,
- 		pose::Pose const & pose,
- 		ScoreFunction const &,
- 		EnergyMap const & weights,
- 		Vector & F1,
- 		Vector & F2
- 	) const;
+	deprecated_eval_atom_derivative(
+		id::AtomID const & atom_id,
+		pose::Pose const & pose,
+		ScoreFunction const &,
+		EnergyMap const & weights,
+		Vector & F1,
+		Vector & F2
+	) const;
 
 	/// @brief evaluate the derivatives for an atom that contains 3- or higher-body
 	/// constraints.  Such derivatives cannot be evalauated in an extra-posal context
 	/// (e.g. such as in RTMin).
- 	virtual
+	virtual
 	void
- 	eval_multibody_atom_derivative(
- 		id::AtomID const & atom_id,
- 		pose::Pose const & pose,
- 		ScoreFunction const &,
- 		EnergyMap const & weights,
- 		Vector & F1,
- 		Vector & F2
- 	) const;
+	eval_multibody_atom_derivative(
+		id::AtomID const & atom_id,
+		pose::Pose const & pose,
+		ScoreFunction const &,
+		EnergyMap const & weights,
+		Vector & F1,
+		Vector & F2
+	) const;
 
 	/// uses the dof constraints
 	/*
 	Real
 	eval_dof_derivative(
-		id::DOF_ID const & id,
-		id::TorsionID const & tor,
-		pose::Pose const & pose,
-		ScoreFunction const & scorefxn,
-		EnergyMap const & weights
+	id::DOF_ID const & id,
+	id::TorsionID const & tor,
+	pose::Pose const & pose,
+	ScoreFunction const & scorefxn,
+	EnergyMap const & weights
 	) const;*/
 
 
@@ -299,7 +299,7 @@ public:
 	virtual bool
 	residue_pair_constraints_exists( Size const pos ) const {
 		return ( (residue_pair_constraints_.size() >= pos ) &&
-							residue_pair_constraints_[ pos ]
+			residue_pair_constraints_[ pos ]
 		);
 	}
 
@@ -315,16 +315,16 @@ public:
 
 	void
 	eval_intrares_energy(
-											 conformation::Residue const & rsd,
-											 EnergyMap & emap
-											 ) const;
+		conformation::Residue const & rsd,
+		EnergyMap & emap
+	) const;
 
 	/// Does *NOT* zero the emap values, just adds the additional contribution to the
 	/// existing emap energies (so can be called inside finalize_total_energies)
 	virtual void
 	eval_non_residue_pair_energy(
 		Pose const & pose,
- 		ScoreFunction const & sfxn,
+		ScoreFunction const & sfxn,
 		EnergyMap & emap
 	) const;
 

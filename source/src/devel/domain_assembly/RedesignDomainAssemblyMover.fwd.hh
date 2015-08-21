@@ -18,8 +18,8 @@
 #include <utility/pointer/owning_ptr.hh>
 
 
-namespace devel{
-namespace domain_assembly{
+namespace devel {
+namespace domain_assembly {
 
 class RedesignDomainAssemblyMover;
 

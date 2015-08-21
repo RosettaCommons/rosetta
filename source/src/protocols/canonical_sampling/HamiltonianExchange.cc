@@ -111,7 +111,7 @@ HamiltonianExchange::HamiltonianExchange() :
 	set_defaults();
 }
 
-HamiltonianExchange::HamiltonianExchange(	HamiltonianExchange const & other ) :
+HamiltonianExchange::HamiltonianExchange( HamiltonianExchange const & other ) :
 	Parent( other ),
 	hamiltonians_( other.hamiltonians_ ),
 	exchange_schedules_( other.exchange_schedules_ ),
@@ -198,7 +198,7 @@ void HamiltonianExchange::init_from_options() {
 
 void
 HamiltonianExchange::set_monte_carlo(
-  protocols::moves::MonteCarloOP monte_carlo
+	protocols::moves::MonteCarloOP monte_carlo
 ) {
 	Parent::set_monte_carlo( monte_carlo );
 	BiasedMonteCarloOP biased_mc = utility::pointer::dynamic_pointer_cast< protocols::canonical_sampling::BiasedMonteCarlo > ( monte_carlo );
@@ -209,13 +209,13 @@ HamiltonianExchange::set_monte_carlo(
 
 void
 HamiltonianExchange::initialize_simulation(
-	 core::pose::Pose& pose,
-		MetropolisHastingsMover const& metropolis_hastings_mover,
-	 core::Size cycle //default=0; non-zero if trajectory is restarted
+	core::pose::Pose& pose,
+	MetropolisHastingsMover const& metropolis_hastings_mover,
+	core::Size cycle //default=0; non-zero if trajectory is restarted
 ) {
 	show( tr.Info );
 	Parent::initialize_simulation( pose, metropolis_hastings_mover, cycle );
-	//	Size const nlevels( n_temp_levels() );
+	// Size const nlevels( n_temp_levels() );
 	set_current_temp( rank()+1 );
 	current_exchange_schedule_ = 0;
 	next_exchange_schedule();
@@ -224,11 +224,11 @@ HamiltonianExchange::initialize_simulation(
 
 void
 HamiltonianExchange::initialize_simulation(
-		core::pose::Pose & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const & mhm,
-		core::Size level,
-		core::Real temp_in,
-		core::Size cycle //default=0; non-zero if trajectory is restarted
+	core::pose::Pose & pose,
+	protocols::canonical_sampling::MetropolisHastingsMover const & mhm,
+	core::Size level,
+	core::Real temp_in,
+	core::Size cycle //default=0; non-zero if trajectory is restarted
 ) {
 	show( tr.Info );
 	Parent::initialize_simulation( pose, mhm, level, temp_in, cycle );
@@ -276,40 +276,40 @@ void HamiltonianExchange::setup_exchange_schedule() {
 
 	if ( ! initialize_exchange_schedule_from_file( exchange_schedule_file_ ) ) { // if not initialize from file, do the next
 
-	for ( Size dim=1; (int)dim<=n_dim; ++dim ) {
-		//make list of uniqe groups: if dim==2 (1,1,1), (1,2,1), (1,3,1), ... (1, N, 1) should be one group
-		typedef std::list< std::pair< core::Size, core::Size > > Level2GridpointList;
-		typedef std::map< core::Size, Level2GridpointList > Groups;
-		Groups groups;
-		for ( Size i=1; i<=exchange_grid_.size(); ++i ) {
-			GridCoord const& coord( exchange_grid_[ i ] );
-			Size key( coord2key( coord, max_coord, dim ) );
-			groups[ key ].push_back( std::make_pair( coord[ dim ], i ) );
-		}
-
-		//sort witin groups
-		for ( Groups::iterator it = groups.begin(); it != groups.end(); ++it ) {
-			it->second.sort();
-		}
-
-		for ( Size phase = 1; phase <= 2; ++phase ) {
-			//PHASE 2 	2<->3, 4<->5...
-			list.clear();
-			for ( Groups::const_iterator git = groups.begin(); git != groups.end(); ++git ) {
-				Level2GridpointList::const_iterator lit=git->second.begin();
-				if ( phase==2 && git->second.size() > 2 ) ++lit;   //if more than 2 elements we need to switch phases
-				for ( ; lit != git->second.end(); ++lit ) {
-					Level2GridpointList::const_iterator first_lit = lit;
-					Level2GridpointList::const_iterator second_lit = ++lit;
-					if ( second_lit != git->second.end() ) {
-						std::pair<int, int> elem( first_lit->second, second_lit->second );
-						list.push_back(elem);
-					} else break;
-				}
+		for ( Size dim=1; (int)dim<=n_dim; ++dim ) {
+			//make list of uniqe groups: if dim==2 (1,1,1), (1,2,1), (1,3,1), ... (1, N, 1) should be one group
+			typedef std::list< std::pair< core::Size, core::Size > > Level2GridpointList;
+			typedef std::map< core::Size, Level2GridpointList > Groups;
+			Groups groups;
+			for ( Size i=1; i<=exchange_grid_.size(); ++i ) {
+				GridCoord const& coord( exchange_grid_[ i ] );
+				Size key( coord2key( coord, max_coord, dim ) );
+				groups[ key ].push_back( std::make_pair( coord[ dim ], i ) );
 			}
-			exchange_schedules_.push_back(list);
-		} // phase
-	} // per dimension
+
+			//sort witin groups
+			for ( Groups::iterator it = groups.begin(); it != groups.end(); ++it ) {
+				it->second.sort();
+			}
+
+			for ( Size phase = 1; phase <= 2; ++phase ) {
+				//PHASE 2  2<->3, 4<->5...
+				list.clear();
+				for ( Groups::const_iterator git = groups.begin(); git != groups.end(); ++git ) {
+					Level2GridpointList::const_iterator lit=git->second.begin();
+					if ( phase==2 && git->second.size() > 2 ) ++lit;   //if more than 2 elements we need to switch phases
+					for ( ; lit != git->second.end(); ++lit ) {
+						Level2GridpointList::const_iterator first_lit = lit;
+						Level2GridpointList::const_iterator second_lit = ++lit;
+						if ( second_lit != git->second.end() ) {
+							std::pair<int, int> elem( first_lit->second, second_lit->second );
+							list.push_back(elem);
+						} else break;
+					}
+				}
+				exchange_schedules_.push_back(list);
+			} // phase
+		} // per dimension
 	} // !initialize_exchange_schedule_from_file
 }
 
@@ -329,7 +329,7 @@ HamiltonianExchange::next_exchange_level() const {
 core::Real
 HamiltonianExchange::temperature_move( core::Real ) {
 	utility_exit_with_message( "HamiltonianExchange::temperature_move() called without pose... HamEx requires pose "
-  "to evaluate alternative energy function prior to switching..." );
+		"to evaluate alternative energy function prior to switching..." );
 	return -1;
 }
 
@@ -337,7 +337,7 @@ core::Real
 HamiltonianExchange::temperature_move( pose::Pose& MPI_ONLY( pose ) ) {
 	using namespace ObjexxFCL::format;
 	check_temp_consistency();
-	//	tr.Trace << "counter: "<< temp_trial_count_+1 << " " << temperature_stride_ << " " << temp_trial_count_ % temperature_stride_ << std::endl;
+	// tr.Trace << "counter: "<< temp_trial_count_+1 << " " << temperature_stride_ << " " << temp_trial_count_ % temperature_stride_ << std::endl;
 	if ( !time_for_temp_move() ) return temperature();
 	tr.Trace << "time for temp-move! " << std::endl;
 
@@ -429,7 +429,7 @@ HamiltonianExchange::temperature_move( pose::Pose& MPI_ONLY( pose ) ) {
 void HamiltonianExchange::next_exchange_schedule() {
 	do {
 		current_exchange_schedule_ = ( current_exchange_schedule_ + 1 ) % exchange_schedules_.size();
-	}	while( !next_exchange_level() );
+	} while( !next_exchange_level() );
 }
 
 void HamiltonianExchange::clear() {
@@ -465,7 +465,7 @@ public:
 			} else if ( op_ == "=" ) {
 				score.set_weight( score_type_, wt_ );
 			} else {
-				utility_exit_with_message("unrecognized scorefunction patch operation "+op_	);
+				utility_exit_with_message("unrecognized scorefunction patch operation "+op_ );
 			}
 		} //direct operation
 	} //apply
@@ -674,7 +674,7 @@ void HamiltonianExchange::show( std::ostream& os ) const {
 	os << line_marker << space( 74 ) << line_marker << std::endl;
 	// Display the movable jumps that will be used in docking
 	os << line_marker << A( 20, "Hamiltonian Cells: " ) << I( 5, n_temp_levels() )
-		 << A( 40, "Hamiltonian Grid Dimension: " ) << I( 5, exchange_grid_dimension_ ) << space( 4 ) << line_marker << std::endl;
+		<< A( 40, "Hamiltonian Grid Dimension: " ) << I( 5, exchange_grid_dimension_ ) << space( 4 ) << line_marker << std::endl;
 	os << line_marker << repeat( 74, '-' ) << line_marker << std::endl;
 	for ( Size level=1; level<= n_temp_levels(); ++level ) {
 		os << line_marker << A( 20, "Grid Cell: " );
@@ -682,7 +682,7 @@ void HamiltonianExchange::show( std::ostream& os ) const {
 			os << I( 2, exchange_grid_[ level ][ d ] );
 		}
 		os << A( 15, " Temperature: " ) << F( 5, 3, temperature( level ) )
-			 << space( 74-20-20-3*exchange_grid_dimension_ ) << line_marker << std::endl;
+			<< space( 74-20-20-3*exchange_grid_dimension_ ) << line_marker << std::endl;
 		if ( tr.Debug.visible() ) hamiltonians_[ level ]->show( os );
 		os << std::endl;
 		os << line_marker << repeat( 74, '-' ) << line_marker << std::endl;

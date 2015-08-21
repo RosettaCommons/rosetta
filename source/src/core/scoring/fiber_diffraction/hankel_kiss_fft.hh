@@ -28,20 +28,20 @@ namespace fiber_diffraction {
 
 //TODO:Can be revritten to class
 typedef struct Hankel{
-  	core::Size n;
-  	core::Real k1;		
-  	core::Real k2;		
-  	core::Real rp0;		
-  	core::Real alpha;		
-  	core::Real *f;		
-  	core::Real *j;		
-  	core::Real *rp;
-		//utility::vector0< core::Real > rp_vec;		
-  	int lec_order;	
-  	core::Real *f0;		
-  	int l;		
-  	core::Real *snn;
-		std::complex<double> * data_in_fft;
+	core::Size n;
+	core::Real k1;
+	core::Real k2;
+	core::Real rp0;
+	core::Real alpha;
+	core::Real *f;
+	core::Real *j;
+	core::Real *rp;
+	//utility::vector0< core::Real > rp_vec;
+	int lec_order;
+	core::Real *f0;
+	int l;
+	core::Real *snn;
+	std::complex<double> * data_in_fft;
 } Hankel;
 
 void hankel_free (
@@ -53,9 +53,9 @@ void hankel_trans_no_lec (
 );
 
 Hankel * hankel_make_input (
-	core::Size length, 
-	core::Real k1, 
-	core::Real k2, 
+	core::Size length,
+	core::Real k1,
+	core::Real k2,
 	core::Real b,
 	int lec_order,
 	core::Real *f0,
@@ -69,7 +69,7 @@ core::Real hankel_get_rc (
 	Hankel *p_hankel
 );
 
-void c_array_mult ( 
+void c_array_mult (
 	core::Size length,
 	core::Real *dp_1,
 	core::Real *dp_2
@@ -78,82 +78,82 @@ void c_array_mult (
 void d_array_scale (
 	core::Size length,
 	core::Real factor,
-	core::Real *dp_in 
+	core::Real *dp_in
 );
 
 void set_r_array (
-        core::Size num_r_points,
-        core::Real k1,
-        core::Real k2,
-        core::Real max_r,
-        ObjexxFCL::FArray1D<float> & rc
+	core::Size num_r_points,
+	core::Real k1,
+	core::Real k2,
+	core::Real max_r,
+	ObjexxFCL::FArray1D<float> & rc
 );
 
 void set_r_inv_array (
-        core::Size num_r_points,
-        core::Real k1,
-        core::Real k2,
-        core::Real max_r,
-        ObjexxFCL::FArray1D<float> & Rinv
+	core::Size num_r_points,
+	core::Real k1,
+	core::Real k2,
+	core::Real max_r,
+	ObjexxFCL::FArray1D<float> & Rinv
 );
 
 core::Real alpha_func(
 	core::Size n,
-        core::Real k1,
-        core::Real k2,
- 	core::Real alpha 
+	core::Real k1,
+	core::Real k2,
+	core::Real alpha
 );
 
 core::Real alpha_deriv_func(
-	core::Size n, 
-	core::Real alpha 
+	core::Size n,
+	core::Real alpha
 );
 
 
-void hankel_set_alpha( 
-	Hankel *p_hankel 
+void hankel_set_alpha(
+	Hankel *p_hankel
 );
 
-void c_mult_ip( 
+void c_mult_ip(
 	core::Real *one ,
-	core::Real *two 
+	core::Real *two
 );
 
-void hankel_r_mult( 
-	Hankel *p_hankel 
+void hankel_r_mult(
+	Hankel *p_hankel
 );
 
-void hankel_r_div( 
-	Hankel *p_hankel 
+void hankel_r_div(
+	Hankel *p_hankel
 );
 
-core::Real hankel_get_p0( 
-	Hankel *p_hankel 
+core::Real hankel_get_p0(
+	Hankel *p_hankel
 );
 
-void hankel_make_snn( 
-	Hankel *p_hankel 
+void hankel_make_snn(
+	Hankel *p_hankel
 );
 
-void hankel_in_machine( 
-	Hankel *p_hankel 
+void hankel_in_machine(
+	Hankel *p_hankel
 );
 
-core::Real hankel_get_rc( 
-	Hankel *p_hankel 
+core::Real hankel_get_rc(
+	Hankel *p_hankel
 );
 
-void hankel_make_j( 
-	Hankel *p_hankel 
+void hankel_make_j(
+	Hankel *p_hankel
 );
 
-void hankel_make_rp ( 
-	Hankel *p_hankel 
+void hankel_make_rp (
+	Hankel *p_hankel
 );
 
 void dfour1_plan(
-	double *data, 
-	core::Size nn, 
+	double *data,
+	core::Size nn,
 	int isign,
 	std::complex<double> *in
 	//numeric::fourier::kiss_fft_cpx *in
@@ -162,8 +162,8 @@ void dfour1_plan(
 core::Real NRbisafe(
 	core::Size n,
 	core::Real k1,
-	core::Real k2, 
-	core::Real X1, 
+	core::Real k2,
+	core::Real X1,
 	core::Real X2 );
 }
 }

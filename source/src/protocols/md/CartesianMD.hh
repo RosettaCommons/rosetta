@@ -41,16 +41,16 @@ public:
 
 	//constructor
 	CartesianMD( core::pose::Pose const &pose,
-	 core::scoring::ScoreFunctionCOP sfxn,
-	 core::kinematics::MoveMapCOP movemap = 0 );
+		core::scoring::ScoreFunctionCOP sfxn,
+		core::kinematics::MoveMapCOP movemap = 0 );
 
-	CartesianMD( core::pose::Pose const & pose, 
-							 core::scoring::ScoreFunction const &sfxn );
+	CartesianMD( core::pose::Pose const & pose,
+		core::scoring::ScoreFunction const &sfxn );
 
-	CartesianMD( core::pose::Pose const & pose, 
-							 core::scoring::ScoreFunction const &sfxn,
-							 core::kinematics::MoveMap const &movemap );
-	
+	CartesianMD( core::pose::Pose const & pose,
+		core::scoring::ScoreFunction const &sfxn,
+		core::kinematics::MoveMap const &movemap );
+
 	void
 	init( );
 
@@ -58,7 +58,7 @@ public:
 	virtual ~CartesianMD();
 
 	// From Mover
-	virtual	protocols::moves::MoverOP	fresh_instance() const { return protocols::moves::MoverOP( new CartesianMD() ); };
+	virtual protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new CartesianMD() ); };
 	virtual protocols::moves::MoverOP clone() const;
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
@@ -74,15 +74,15 @@ public:
 
 	Multivec get_current_eqxyz() const;
 	void update_restraint( pose::Pose & pose,
-												 CartesianMinimizerMap const &min_map );
+		CartesianMinimizerMap const &min_map );
 
 	void cst_on_pose_simple( pose::Pose &pose ) const;
 
-	void cst_on_pose_dynamic( pose::Pose &pose, 
-														Multivec const &ref_xyz, 
-														Multivec const &curr_eqxyz, 
-														Multivec &prv_eqxyz,
-														CartesianMinimizerMap const &min_map ) const;
+	void cst_on_pose_dynamic( pose::Pose &pose,
+		Multivec const &ref_xyz,
+		Multivec const &curr_eqxyz,
+		Multivec &prv_eqxyz,
+		CartesianMinimizerMap const &min_map ) const;
 
 	virtual
 	void parse_my_tag(
@@ -94,19 +94,19 @@ public:
 
 	void
 	parse_opts(
-  	TagCOP tag,
-	  basic::datacache::DataMap & data,
-  	//Filters_map const &,
-  	//protocols::moves::Movers_map const &,
-  	Pose const & pose );
+		TagCOP tag,
+		basic::datacache::DataMap & data,
+		//Filters_map const &,
+		//protocols::moves::Movers_map const &,
+		Pose const & pose );
 
 	void
 	parse_movemap(
-  	TagCOP tag,
-  	basic::datacache::DataMap & data,
-  	//Filters_map const &,
-  	//protocols::moves::Movers_map const &,
-  	Pose const & pose );
+		TagCOP tag,
+		basic::datacache::DataMap & data,
+		//Filters_map const &,
+		//protocols::moves::Movers_map const &,
+		Pose const & pose );
 
 	utility::vector1< pose::Pose >
 	dump_poses( pose::Pose const &pose_ref ) const;
@@ -118,27 +118,27 @@ private:
 
 	// deprecated
 	void Berendsen_Integrator( core::pose::Pose & pose,
-														 core::optimization::CartesianMinimizerMap &min_map );
+		core::optimization::CartesianMinimizerMap &min_map );
 
 	void VelocityVerlet_Integrator( core::pose::Pose & pose,
-																	core::optimization::CartesianMinimizerMap &min_map,
-																	md::Rattle & rattle,
-																	bool const update_score = false );
+		core::optimization::CartesianMinimizerMap &min_map,
+		md::Rattle & rattle,
+		bool const update_score = false );
 
 	void do_minimize( pose::Pose &pose,
-										core::optimization::MinimizerOptions const &options,
-										bool const &show_energy );
+		core::optimization::MinimizerOptions const &options,
+		bool const &show_energy );
 
 	void do_MD( core::pose::Pose & pose,
-							core::Size const &nstep,
-							core::Real const &temp0 = 300,
-							bool const &initialize = false );
+		core::Size const &nstep,
+		core::Real const &temp0 = 300,
+		bool const &initialize = false );
 
 	void initialize_velocity( core::Real const &temperature );
 
 	void report_MD( core::pose::Pose &pose,
-									CartesianMinimizerMap const &min_map,
-									bool const report_trj );
+		CartesianMinimizerMap const &min_map,
+		bool const report_trj );
 
 private:
 

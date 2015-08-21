@@ -94,8 +94,8 @@ SymDofMoverSampler::set_angle_ranges(utility::vector1<Real> angles_range_min, ut
 	if ( angles_range_min.size() != angles_range_max.size() || angles_range_min.size() != angle_steps.size() ) {
 		utility_exit_with_message("SymDofMoverSampler angle lists are not all the same length");
 	}
-	for (Size i = 1; i <= angles_range_min.size(); i++) {
-		if( angle_steps[i] > angles_range_max[i] - angles_range_min[i]) {
+	for ( Size i = 1; i <= angles_range_min.size(); i++ ) {
+		if ( angle_steps[i] > angles_range_max[i] - angles_range_min[i] ) {
 			utility_exit_with_message("angle_step has to be less than or equal to (angle_max - angle_min)");
 		}
 		angles_range_min_.push_back(angles_range_min[i]);
@@ -111,8 +111,8 @@ SymDofMoverSampler::set_radial_disp_ranges(utility::vector1<Real> radial_disps_r
 	if ( radial_disps_range_min.size() != radial_disps_range_max.size() || radial_disps_range_min.size() != radial_disp_steps.size() ) {
 		utility_exit_with_message("SymDofMoverSampler radial disps lists are not all the same length");
 	}
-	for (Size i = 1; i <= radial_disps_range_min.size(); i++) {
-		if( radial_disp_steps[i] > radial_disps_range_max[i] - radial_disps_range_min[i]) {
+	for ( Size i = 1; i <= radial_disps_range_min.size(); i++ ) {
+		if ( radial_disp_steps[i] > radial_disps_range_max[i] - radial_disps_range_min[i] ) {
 			utility_exit_with_message("radial_disp_step has to be less than or equal to (radial_disp_max - radial_disp_min)");
 		}
 		radial_disps_range_min_.push_back(radial_disps_range_min[i]);
@@ -131,7 +131,7 @@ SymDofMoverSampler::step() {
 	utility::vector1<Real> new_angles;
 	utility::vector1<Real> new_radial_disps;
 	std::string current_values = "\t" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb:";
-	for (Size i = 1; i <= radial_disp_steps_.size(); i++) {
+	for ( Size i = 1; i <= radial_disp_steps_.size(); i++ ) {
 		current_values.append(" [radial_disp " + ObjexxFCL::string_of(i) + " = " + ObjexxFCL::string_of(current_radial_disps_[i]) + "] [angle " + ObjexxFCL::string_of(i) + " = " + ObjexxFCL::string_of(current_angles_[i]) + "]");
 		new_angles.push_back(current_angles_[i] + angle_steps_[i]);
 		new_radial_disps.push_back(current_radial_disps_[i] + radial_disp_steps_[i]);
@@ -139,20 +139,20 @@ SymDofMoverSampler::step() {
 
 	TR << current_values << std::endl;
 
-	if(new_angles[1] <= angles_range_max_[1] && !(angles_range_min_[1] == angles_range_max_[1]) ) {
+	if ( new_angles[1] <= angles_range_max_[1] && !(angles_range_min_[1] == angles_range_max_[1]) ) {
 		current_angles_[1] = new_angles[1];
-  }	else {
+	} else {
 		current_angles_[1] = angles_range_min_[1];
-		if( new_radial_disps[1] <= radial_disps_range_max_[1] && !(radial_disps_range_min_[1] == radial_disps_range_max_[1]) ) {
+		if ( new_radial_disps[1] <= radial_disps_range_max_[1] && !(radial_disps_range_min_[1] == radial_disps_range_max_[1]) ) {
 			current_radial_disps_[1] = new_radial_disps[1];
 		} else {
 			current_radial_disps_[1] = radial_disps_range_min_[1];
-			if( angle_steps_.size() == 2) {
-				if( new_angles[2] <= angles_range_max_[2] && !(angles_range_min_[2] == angles_range_max_[2]) ) {
+			if ( angle_steps_.size() == 2 ) {
+				if ( new_angles[2] <= angles_range_max_[2] && !(angles_range_min_[2] == angles_range_max_[2]) ) {
 					current_angles_[2] = new_angles[2];
 				} else {
 					current_angles_[2] = angles_range_min_[2];
-					if( new_radial_disps[2] <= radial_disps_range_max_[2] && !(radial_disps_range_min_[2] == radial_disps_range_max_[2]) ) {
+					if ( new_radial_disps[2] <= radial_disps_range_max_[2] && !(radial_disps_range_min_[2] == radial_disps_range_max_[2]) ) {
 						current_radial_disps_[2] = new_radial_disps[2];
 					} else {
 						current_radial_disps_[2] = radial_disps_range_min_[2];
@@ -163,7 +163,7 @@ SymDofMoverSampler::step() {
 	}
 
 	std::string new_values = "\tNext:";
-	for (Size i = 1; i <= radial_disp_steps_.size(); i++) {
+	for ( Size i = 1; i <= radial_disp_steps_.size(); i++ ) {
 		new_values.append(" [radial_disp " + ObjexxFCL::string_of(i) + " = " + ObjexxFCL::string_of(current_radial_disps_[i]) + "] [angle " + ObjexxFCL::string_of(i) + " = " + ObjexxFCL::string_of(current_angles_[i]) + "]");
 	}
 	TR << new_values << std::endl;

@@ -26,7 +26,7 @@ utility::vector1<MasterFilter::FiltPtr> MasterFilter::filters;
 ///
 void MasterFilter::addfilt(FiltPtr f) {
 
-  filters.push_back(f);
+	filters.push_back(f);
 }
 
 
@@ -34,22 +34,24 @@ void MasterFilter::addfilt(FiltPtr f) {
 ///
 /// @param[in] ps pose to which all residues forming the constellation belong.
 /// @param[in] cnl indexes in the pose of the residues forming the
-/// 	constellation.
+///  constellation.
 ///
 /// @return true if the constellation is valid, false otherwise.
 ///
 /// @details Currently, a constellation is deemed to be valid if and only if it
-/// 	passes all the filters. It is up to the user to decide which filters are
-/// 	to be applied.
+///  passes all the filters. It is up to the user to decide which filters are
+///  to be applied.
 ///
 bool MasterFilter::is_constel_valid(Pose const& ps,
 	utility::vector1<Size> const& cnl) {
 
-  for(unsigned int i=1; i<=filters.size(); ++i)
-    if( !filters[i](ps, cnl) )
-      return false;
+	for ( unsigned int i=1; i<=filters.size(); ++i ) {
+		if ( !filters[i](ps, cnl) ) {
+			return false;
+		}
+	}
 
-  return true;
+	return true;
 }
 
 } // constel

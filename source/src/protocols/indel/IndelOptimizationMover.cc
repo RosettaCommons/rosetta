@@ -85,60 +85,61 @@ IndelOptimizationMover::apply(
 	using namespace scoring;
 	using namespace constraints;
 	using namespace func;
-	
+
 	ScoreFunctionOP score_fxn = get_score_function();
 	add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn);
 	add_fa_constraints_from_cmdline_to_pose(pose);
-	
+
 	pose.conformation().delete_residue_range_slow( start_res_, end_res_ );
 	pose.conformation().detect_disulfides();
 	pose.conformation().declare_chemical_bond( start_res_-1, "C", end_res_, "N" );
 	TR << pose.fold_tree();
-	
+
 	// Add constraint
 	/*if ( resnum > 1 ) {
-		TR << "adding AtomPairConstraint between residues " << resnum-1 << " and " << resnum << std::endl;
-		
-		HarmonicFuncOP harm_func( new HarmonicFunc( 1.33, .02 ) );
-		AtomID aidC( pose.residue( resnum-1 ).atom_index("C"), resnum-1 );
-		AtomID aidN( pose.residue( resnum ).atom_index("N"), resnum );
-		ConstraintCOP atompair( ConstraintOP( new AtomPairConstraint( aidC, aidN, harm_func ) ) );
-		pose.add_constraint( atompair );
-		score_fxn->set_weight( atom_pair_constraint, 1 );
-	 }*/
-	
+	TR << "adding AtomPairConstraint between residues " << resnum-1 << " and " << resnum << std::endl;
+
+	HarmonicFuncOP harm_func( new HarmonicFunc( 1.33, .02 ) );
+	AtomID aidC( pose.residue( resnum-1 ).atom_index("C"), resnum-1 );
+	AtomID aidN( pose.residue( resnum ).atom_index("N"), resnum );
+	ConstraintCOP atompair( ConstraintOP( new AtomPairConstraint( aidC, aidN, harm_func ) ) );
+	pose.add_constraint( atompair );
+	score_fxn->set_weight( atom_pair_constraint, 1 );
+	}*/
+
 	// Loop model the remaining segment; range size before and
 	Size loop_start = ( start_res_ < 2 + loop_length_ ) ? 2 : start_res_ - loop_length_;
 	Size loop_end   = ( end_res_ + loop_length_ > pose.total_residue() ) ? pose.total_residue() : end_res_ + loop_length_;
-	
+
 	TR << "loop is from " << loop_start << " to " << loop_end << std::endl;
-	
+
 	bool there_is_a_jump = ( pose.conformation().num_chains() > 1 );
 
 	std::string partners( &pose.pdb_info()->chain( loop_start ) );
 	if ( there_is_a_jump ) {
 		using namespace basic::options;
-		if ( option[ OptionKeys::docking::partners ].user() )
+		if ( option[ OptionKeys::docking::partners ].user() ) {
 			partners = option[ OptionKeys::docking::partners ].value();
+		}
 		/*.append( "_" );
 		std::set< char > other_chains;
 		//utility::vector1< Size > chain_endings = pose.conformation().chain_endings();
 		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-			
-			TR << "Residue " << i << " chain " << pose.pdb_info()->chain( i ) << std::endl;
-			if ( pose.pdb_info()->chain( i ) != pose.pdb_info()->chain( loop_start ) ) {
-				other_chains.insert( pose.pdb_info()->chain( i ) );
-				TR << "Residue " << i << " chain " << pose.pdb_info()->chain( i ) << std::endl;
-			}
+
+		TR << "Residue " << i << " chain " << pose.pdb_info()->chain( i ) << std::endl;
+		if ( pose.pdb_info()->chain( i ) != pose.pdb_info()->chain( loop_start ) ) {
+		other_chains.insert( pose.pdb_info()->chain( i ) );
+		TR << "Residue " << i << " chain " << pose.pdb_info()->chain( i ) << std::endl;
+		}
 		}
 		for ( std::set< char >::iterator it = other_chains.begin(),
-			 end = other_chains.end(); it != end; ++it ) {
-			partners.append( &(*it) );
+		end = other_chains.end(); it != end; ++it ) {
+		partners.append( &(*it) );
 		}
 		*/
 		TR << "Partners will be " << partners << std::endl;
 	}
-	
+
 	Size cutpoint = Size( ( loop_start + loop_end ) / 2 );
 	if ( cutpoint == loop_start ) ++cutpoint;
 	if ( cutpoint == loop_end   ) --cutpoint;
@@ -147,22 +148,22 @@ IndelOptimizationMover::apply(
 	loops::LoopsOP loops( new protocols::loops::Loops );
 	loops->push_back( loop_start, loop_end, cutpoint );//loop );
 	TR << (*loops) << std::endl;
-	
+
 	// Add constraints to native except loop
 	pose::PoseOP native_pose( new core::pose::Pose( pose ) );
 	native_pose->conformation().delete_residue_range_slow(loop_start, loop_end);
 	native_pose->conformation().detect_disulfides();
-	
+
 	relax::AtomCoordinateCstMover coord_cst;
 	coord_cst.set_refstruct( native_pose );
 	coord_cst.apply( pose );
-	
+
 	// fragment initialization (not necessary in this case)
 	utility::vector1< core::fragment::FragSetOP > frag_libs;
 	if ( frag_files_ ) {
 		loops::read_loop_fragments( frag_libs );
 	}
-	
+
 	//setup of looprelax_mover
 	comparative_modeling::LoopRelaxMover looprelax_mover;
 	looprelax_mover.loops( loops );
@@ -172,13 +173,13 @@ IndelOptimizationMover::apply(
 	looprelax_mover.refine( refine_ );
 	looprelax_mover.remodel( remodel_ );
 	looprelax_mover.intermedrelax( intermedrelax_ );
-	
+
 	loop_build::LoopBuildMoverOP loopbuild_mover( new loop_build::LoopBuildMover(looprelax_mover) );
 	pose::Pose pose_saved( pose );
 	loopbuild_mover->apply( pose );
-	
+
 	TR << "Finished first structure. Score is: " << ( *score_fxn )( pose ) << std::endl;
-	
+
 	jd2::JobOP job( jd2::JobDistributor::get_instance()->current_job() );
 
 	if ( dump_initial_results_ ) {
@@ -188,7 +189,7 @@ IndelOptimizationMover::apply(
 	}
 	// If there is a jump, we may want to reoptimize the jump!
 	// because our new structure is different
-	
+
 	// So grab the chain of the loop and build a docking protocol between that chain and the rest of the pose
 	// Importantly, I think that we should actually keep 10 structures from the last operation
 	// and dock each of them and return the best. Arbitrary number for now.
@@ -201,20 +202,20 @@ IndelOptimizationMover::apply(
 			pose::Pose temp_pose( pose_saved );
 			loopbuild_mover->apply( temp_pose );
 			poses.push_back( temp_pose );
-			
+
 			TR << "Finished another structure. Score is: " << ( *score_fxn )( temp_pose ) << std::endl;
-			
+
 			if ( dump_initial_results_ ) {
 				std::stringstream fn;
 				fn << "pose_" << job->nstruct_index() << "_firstpass_" << i << ".pdb";
 				temp_pose.dump_pdb( fn.str() );
 			}
 		}
-		
+
 		for ( Size i = 1; i <= num_to_dock_; ++i ) {
 			TR << "Score for pose " << i << " is " << ( *score_fxn )( poses[ i ] ) << std::endl;
 		}
-		
+
 		// What jumps should be moveable? The ones that lead to the Special Chain
 		// Therefore, the jumps for which the upstream residue or downstream residue are Special Chain
 		utility::vector1< Size > moveable_jumps;
@@ -231,14 +232,14 @@ IndelOptimizationMover::apply(
 				continue;
 			}
 		}
-		
+
 		docking::DockingPrepackProtocolOP ppk( new docking::DockingPrepackProtocol() );
 		ppk->set_partners( partners );
 		docking::DockingProtocolOP dock( new docking::DockingProtocol( moveable_jumps, false, true ) );
 		dock->set_partners( partners );
 
 		// Create a docking prepack protocol and a docking protocol
-		
+
 		// Now apply all our docking stuff
 		Real min_score = 100000;
 		Size best_i = 1;
@@ -251,12 +252,12 @@ IndelOptimizationMover::apply(
 				best_i = i;
 			}
 		}
-		
+
 		pose = poses[ best_i ];
 	}
-	
+
 	return;
 }
-	
+
 }
 }

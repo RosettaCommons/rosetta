@@ -32,24 +32,24 @@ namespace rna {
 namespace sugar {
 
 
-	//Constructor
-	SugarVirtualizeMover::SugarVirtualizeMover( Size const moving_res ):
-		moving_res_( moving_res )
-	{}
+//Constructor
+SugarVirtualizeMover::SugarVirtualizeMover( Size const moving_res ):
+	moving_res_( moving_res )
+{}
 
-	//Destructor
-	SugarVirtualizeMover::~SugarVirtualizeMover()
-	{}
+//Destructor
+SugarVirtualizeMover::~SugarVirtualizeMover()
+{}
 
-	void
-	SugarVirtualizeMover::apply( pose::Pose & pose ){
-		if ( !pose.residue( moving_res_ ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) {
-			pose::add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, moving_res_ ); //May 31, 2010
-		}
-		if ( !pose.residue( moving_res_ ).has_variant_type( core::chemical::VIRTUAL_O2PRIME_HYDROGEN ) ) {
-			pose::add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_O2PRIME_HYDROGEN, moving_res_ );
-		}
+void
+SugarVirtualizeMover::apply( pose::Pose & pose ){
+	if ( !pose.residue( moving_res_ ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) {
+		pose::add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, moving_res_ ); //May 31, 2010
 	}
+	if ( !pose.residue( moving_res_ ).has_variant_type( core::chemical::VIRTUAL_O2PRIME_HYDROGEN ) ) {
+		pose::add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_O2PRIME_HYDROGEN, moving_res_ );
+	}
+}
 
 } //sugar
 } //rna

@@ -61,8 +61,8 @@ public:
 
 	/// @copydoc RestrictToLoops::parse_tag
 	void parse_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & );
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & );
 
 	virtual
 	void
@@ -73,14 +73,14 @@ public:
 
 	bool design_neighbors() const;
 	void set_design_neighbors( bool design_neighbors );
-	
+
 	core::Real cutoff_distance() const;
 	void set_cutoff_distance( core::Real cutoff_distance );
 
 private:
 	void init();
 	void init_for_copy( RestrictToLoopsAndNeighbors & lhs, RestrictToLoopsAndNeighbors const & rhs);
-	
+
 private:
 	bool include_neighbors_;
 	bool design_neighbors_;

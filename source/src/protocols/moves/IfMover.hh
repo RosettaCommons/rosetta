@@ -35,42 +35,42 @@ namespace protocols {
 namespace moves {
 
 class IfMover : public protocols::moves::Mover {
- public:
-  /// @brief No-argument constructor
-  IfMover() : protocols::moves::Mover("If") {}
+public:
+	/// @brief No-argument constructor
+	IfMover() : protocols::moves::Mover("If") {}
 
-  /// @brief Virtual destructor
-  virtual ~IfMover() {};
+	/// @brief Virtual destructor
+	virtual ~IfMover() {};
 
-  protocols::moves::MoverOP clone() const {
-    return protocols::moves::MoverOP( new IfMover(*this) );
-  }
+	protocols::moves::MoverOP clone() const {
+		return protocols::moves::MoverOP( new IfMover(*this) );
+	}
 
-  protocols::moves::MoverOP fresh_instance() const {
-    return protocols::moves::MoverOP( new IfMover() );
-  }
+	protocols::moves::MoverOP fresh_instance() const {
+		return protocols::moves::MoverOP( new IfMover() );
+	}
 
-  void apply(core::pose::Pose& pose);
+	void apply(core::pose::Pose& pose);
 
-  // Required for backwards compatibility.
-  // Synonym for `get_additional_output_true_mover().`
-  core::pose::PoseOP get_additional_output();
+	// Required for backwards compatibility.
+	// Synonym for `get_additional_output_true_mover().`
+	core::pose::PoseOP get_additional_output();
 
-  core::pose::PoseOP get_additional_output_true_mover();
-  core::pose::PoseOP get_additional_output_false_mover();
+	core::pose::PoseOP get_additional_output_true_mover();
+	core::pose::PoseOP get_additional_output_false_mover();
 
-  virtual std::string get_name() const;
+	virtual std::string get_name() const;
 
-  void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
- private:
-  protocols::filters::FilterOP filter_;
+private:
+	protocols::filters::FilterOP filter_;
 
-  /// @brief Invoked when filter evaluates to true
-  protocols::moves::MoverOP true_mover_;
+	/// @brief Invoked when filter evaluates to true
+	protocols::moves::MoverOP true_mover_;
 
-  /// @brief Invoked when filter evaluates to false
-  protocols::moves::MoverOP false_mover_;
+	/// @brief Invoked when filter evaluates to false
+	protocols::moves::MoverOP false_mover_;
 };
 
 } // moves

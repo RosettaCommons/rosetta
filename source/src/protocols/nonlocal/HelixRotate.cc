@@ -63,34 +63,34 @@ void HelixRotate::apply(core::pose::Pose& pose) {
 	using numeric::xyzVector;
 	using protocols::loops::Loops;
 	using protocols::nonlocal::StarTreeBuilder;
-	
-	if (!is_valid()) {
+
+	if ( !is_valid() ) {
 		TR.Warning << "HelixRotate::apply() invoked with invalid or incomplete information." << std::endl;
 		TR.Warning << "  helix_ => " << get_helix() << std::endl;
 		TR.Warning << "  degrees_ => " << get_degrees() << std::endl;
 		return;
 	}
-	
+
 	// Retain a copy of the input fold tree, since we're responsible for restoring it
 	FoldTree input_tree = pose.fold_tree();
-	
+
 	// Configure new kinematics
 	Loops chunks;
 	decompose_structure(pose.total_residue(), &chunks);
-	
+
 	StarTreeBuilder builder;
 	builder.set_up(chunks, &pose);
-	
+
 	// Define the axis of translation
 	xyzVector<double> axis, point;
 	get_rotation_parameters(pose, &axis, &point);
-	
+
 	// Rotation about the axis
 	unsigned jump_num = jump_containing_helix(chunks);
 	Jump jump = pose.jump(jump_num);
 	jump.rotation_by_axis(pose.conformation().upstream_jump_stub(jump_num), axis, point, get_degrees());
 	pose.set_jump(jump_num, jump);
-	
+
 	// Restore input fold tree
 	builder.tear_down(&pose);
 	pose.fold_tree(input_tree);
@@ -104,7 +104,7 @@ void avg_ca_position(
 	assert(point);
 
 	point->zero();
-	for (unsigned i = region.start(); i <= region.stop(); ++i) {
+	for ( unsigned i = region.start(); i <= region.stop(); ++i ) {
 		(*point) += pose.xyz(core::id::NamedAtomID("CA", i));
 	}
 
@@ -126,7 +126,7 @@ void HelixRotate::get_rotation_parameters(
 	// Define the point of rotation to be the average of the midpoint +/- 1 residue
 	avg_ca_position(pose, Loop(helix_.midpoint() - 1, helix_.midpoint() + 1), point);
 
-	if (helix_.length() < 6) {
+	if ( helix_.length() < 6 ) {
 		*axis = pose.xyz(NamedAtomID("CA", helix_.stop())) - pose.xyz(NamedAtomID("CA", helix_.start()));
 		return;
 	}
@@ -140,9 +140,10 @@ void HelixRotate::get_rotation_parameters(
 }
 
 unsigned HelixRotate::jump_containing_helix(const protocols::loops::Loops& chunks) const {
-	for (unsigned i = 1; i <= chunks.num_loop(); ++i) {
-		if (chunks[i].start() == helix_.start())
-		return i;
+	for ( unsigned i = 1; i <= chunks.num_loop(); ++i ) {
+		if ( chunks[i].start() == helix_.start() ) {
+			return i;
+		}
 	}
 	return 0;  // invalid
 }
@@ -156,7 +157,7 @@ void HelixRotate::decompose_structure(unsigned num_residues, protocols::loops::L
 	const unsigned stop = get_helix().stop();
 
 	// Residues 1 to (helix - 1)
-	if (start > 1) {
+	if ( start > 1 ) {
 		chunks->add_loop(Loop(1, start - 1));
 	}
 
@@ -164,7 +165,7 @@ void HelixRotate::decompose_structure(unsigned num_residues, protocols::loops::L
 	chunks->add_loop(Loop(start, stop));
 
 	// Residues (helix + 1) to end
-	if (stop < num_residues) {
+	if ( stop < num_residues ) {
 		chunks->add_loop(Loop(stop + 1, num_residues));
 	}
 
@@ -192,7 +193,7 @@ void HelixRotate::set_degrees(double degrees) {
 }
 
 std::string HelixRotate::get_name() const {
-  return "HelixRotate";
+	return "HelixRotate";
 }
 
 moves::MoverOP HelixRotate::fresh_instance() const {

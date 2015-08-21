@@ -50,15 +50,15 @@ public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~ShortestPathInFoldTree();
 
-  // types
-  typedef utility::vector1< Edge > EdgeList;
+	// types
+	typedef utility::vector1< Edge > EdgeList;
 
-  /// @brief cs-tor, parses fold-tree and caches important distances:
-  ///        memory N^2+M*5    N: 2 x number of jumps     M: number of residues
-  ShortestPathInFoldTree( core::kinematics::FoldTree const& f );
+	/// @brief cs-tor, parses fold-tree and caches important distances:
+	///        memory N^2+M*5    N: 2 x number of jumps     M: number of residues
+	ShortestPathInFoldTree( core::kinematics::FoldTree const& f );
 
-  /// @brief returns the shortest distance of two residues going along Fold-Tree edges.
-  Size dist( Size pos1, Size pos2 ) const;
+	/// @brief returns the shortest distance of two residues going along Fold-Tree edges.
+	Size dist( Size pos1, Size pos2 ) const;
 
 	/// @brief returns the shortest distance for the two residues that are furthest apart
 	Size max_dist() const {
@@ -67,45 +67,45 @@ public:
 
 private:
 
-  /// @brief build table that gives for each residue the distance to the next jump(s) (1 or 2)
-  void build_peptide_table( core::kinematics::FoldTree const& f);
+	/// @brief build table that gives for each residue the distance to the next jump(s) (1 or 2)
+	void build_peptide_table( core::kinematics::FoldTree const& f);
 
-  /// @brief build N^2 table of distances between jump-residues
-  void build_jumpres_distmap( core::kinematics::FoldTree const& f);
+	/// @brief build N^2 table of distances between jump-residues
+	void build_jumpres_distmap( core::kinematics::FoldTree const& f);
 
-  /// @brief if seqpos is a jump_res resturn its internal number
-  int get_jump( Size seqpos ) const {
-    std::map< Size, Size >::const_iterator fit = jump_res_.find ( seqpos );
-    if ( fit != jump_res_.end() ) {
-      return fit->second;
-    }	else {
-      return -1;
-    }
-  }
+	/// @brief if seqpos is a jump_res resturn its internal number
+	int get_jump( Size seqpos ) const {
+		std::map< Size, Size >::const_iterator fit = jump_res_.find ( seqpos );
+		if ( fit != jump_res_.end() ) {
+			return fit->second;
+		} else {
+			return -1;
+		}
+	}
 
-  /// @brief helper of build_jumpres_distmap
-  void compute_dist_map( core::kinematics::FoldTree const&);
-  void init_dist_map( EdgeList const& );
+	/// @brief helper of build_jumpres_distmap
+	void compute_dist_map( core::kinematics::FoldTree const&);
+	void init_dist_map( EdgeList const& );
 
-  /// private data ===============================
+	/// private data ===============================
 
-  /// @brief map from pose-numbering to internal numbering --> jump_res are counted from 1...N
-  /// first: pose-numbering, second internal number
-  std::map< Size, Size > jump_res_;
+	/// @brief map from pose-numbering to internal numbering --> jump_res are counted from 1...N
+	/// first: pose-numbering, second internal number
+	std::map< Size, Size > jump_res_;
 
-  /// @brief 2D array for distances between each pair of jump_residues
-  ObjexxFCL::FArray2D_int node_dist_;
+	/// @brief 2D array for distances between each pair of jump_residues
+	ObjexxFCL::FArray2D_int node_dist_;
 
-  /// @brief 1D array for distances of residue j to
-  /// each of max 2 jump_residues that are on the same peptide edge in the fold-tree
-  ///  --> for each residue 1+2x2 entries.
-  ///  < edgenr >  <jump1> <dist1>  <jump2> <dist2>
-  ///  jump1 upstream jump_residue (internal numbering) jump2 downstream jump-residues
-  ///  no up/downstream jumps --> -1
-  ObjexxFCL::FArray2D_int res2jumps_;
+	/// @brief 1D array for distances of residue j to
+	/// each of max 2 jump_residues that are on the same peptide edge in the fold-tree
+	///  --> for each residue 1+2x2 entries.
+	///  < edgenr >  <jump1> <dist1>  <jump2> <dist2>
+	///  jump1 upstream jump_residue (internal numbering) jump2 downstream jump-residues
+	///  no up/downstream jumps --> -1
+	ObjexxFCL::FArray2D_int res2jumps_;
 
-  /// @brief for error checking what is nres_ in the fold-tree
-  Size nres_;
+	/// @brief for error checking what is nres_ in the fold-tree
+	Size nres_;
 
 	/// @brief if fold-tree is simple (no jumps) don't compute anything.
 	bool simple_fold_tree_;

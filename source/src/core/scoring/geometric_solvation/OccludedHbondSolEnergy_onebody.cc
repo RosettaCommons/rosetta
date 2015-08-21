@@ -135,7 +135,7 @@ void
 OccludedHbondSolEnergy_onebody::setup_for_derivatives( pose::Pose & , ScoreFunction const & ) const
 {
 	tr << "Error - no derivatives yet for OccludedHbondSolEnergy_onebody (occ_sol_fitted_onebody)" << std::endl;
-debug_assert(false);
+	debug_assert(false);
 	exit(1);
 }
 
@@ -143,7 +143,7 @@ void
 OccludedHbondSolEnergy_onebody::setup_for_minimizing( pose::Pose & , ScoreFunction const & , kinematics::MinimizerMapBase const & ) const
 {
 	tr << "Error - no derivatives yet for OccludedHbondSolEnergy_onebody (occ_sol_fitted_onebody)" << std::endl;
-debug_assert(false);
+	debug_assert(false);
 	exit(1);
 }
 
@@ -171,9 +171,9 @@ void OccludedHbondSolEnergy_onebody::residue_energy(
 	utility::vector1 <core::Size> neighborlist;
 	neighborlist.push_back( polar_resnum);
 	for ( core::graph::Graph::EdgeListConstIter
-					neighbor_iter = graph.get_node( polar_resnum )->const_edge_list_begin(),
-					neighbor_iter_end = graph.get_node( polar_resnum )->const_edge_list_end();
-				neighbor_iter != neighbor_iter_end; ++neighbor_iter ) {
+			neighbor_iter = graph.get_node( polar_resnum )->const_edge_list_begin(),
+			neighbor_iter_end = graph.get_node( polar_resnum )->const_edge_list_end();
+			neighbor_iter != neighbor_iter_end; ++neighbor_iter ) {
 		neighborlist.push_back( (*neighbor_iter)->get_other_ind( polar_resnum ) );
 	}
 
@@ -192,7 +192,7 @@ void OccludedHbondSolEnergy_onebody::residue_energy(
 		}
 		residue_geosol += polar_group_energy;
 		//std::string const base_atom_name = polar_rsd.atom_name( base_atom );
-		//		std::cout << "jk FITTED_ONEBODY Donor " << base_atom_name << "  " << pose.residue(polar_resnum).aa() << " " << polar_resnum << "  " << polar_group_energy << std::endl;
+		//  std::cout << "jk FITTED_ONEBODY Donor " << base_atom_name << "  " << pose.residue(polar_resnum).aa() << " " << polar_resnum << "  " << polar_group_energy << std::endl;
 	}
 
 	// cycle through acceptors in polar_rsd
@@ -210,7 +210,7 @@ void OccludedHbondSolEnergy_onebody::residue_energy(
 		}
 		residue_geosol += polar_group_energy;
 		//std::string const base_atom_name = polar_rsd.atom_name( base_atom );
-		//		std::cout << "jk FITTED_ONEBODY Acceptor " << base_atom_name << "  " << pose.residue(polar_resnum).aa() << " " << polar_resnum << "  " << polar_group_energy << std::endl;
+		//  std::cout << "jk FITTED_ONEBODY Acceptor " << base_atom_name << "  " << pose.residue(polar_resnum).aa() << " " << polar_resnum << "  " << polar_group_energy << std::endl;
 	}
 
 	emap[ occ_sol_fitted_onebody ] += residue_geosol;
@@ -276,7 +276,7 @@ OccludedHbondSolEnergy_onebody::get_atom_atom_occ_solvation(
 
 	// note: after testing, hydrogens need not occlude
 	if ( occ_rsd.atom_is_hydrogen(occ_atom) ) return;
-	//	if ( occ_atom > occ_rsd.nheavyatoms() ) return;
+	// if ( occ_atom > occ_rsd.nheavyatoms() ) return;
 
 	// note: the lines above don't exclude Proline NV...
 	// catch proline NV here (and other virtual atoms, etc.)
@@ -308,7 +308,7 @@ OccludedHbondSolEnergy_onebody::get_atom_atom_occ_solvation(
 		}
 	}
 
-debug_assert( ( polar_atom_donates && atom_is_donor_h( polar_rsd, polar_atom ) ) ||
+	debug_assert( ( polar_atom_donates && atom_is_donor_h( polar_rsd, polar_atom ) ) ||
 		( ( ! polar_atom_donates ) && atom_is_acceptor( polar_rsd, polar_atom ) ) );
 
 	// If acceptor, do lookup on polar atom. If donor (ie. polar atom is a hydrogen), use the base atom instead
@@ -350,8 +350,8 @@ debug_assert( ( polar_atom_donates && atom_is_donor_h( polar_rsd, polar_atom ) )
 
 Real
 OccludedHbondSolEnergy_onebody::get_cos_angle( Vector const & base_atom_xyz,
-																	 Vector const & polar_atom_xyz,
-																	 Vector const & occluding_atom_xyz ) const
+	Vector const & polar_atom_xyz,
+	Vector const & occluding_atom_xyz ) const
 {
 	return dot( (polar_atom_xyz - base_atom_xyz).normalize(), (occluding_atom_xyz - polar_atom_xyz).normalize() );
 }

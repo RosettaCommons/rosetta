@@ -30,42 +30,42 @@ namespace modeler {
 namespace rna {
 namespace phosphate {
 
-	enum PhosphateTerminus { NONE, FIVE_PRIME_PHOSPHATE, THREE_PRIME_PHOSPHATE };
+enum PhosphateTerminus { NONE, FIVE_PRIME_PHOSPHATE, THREE_PRIME_PHOSPHATE };
 
-	std::string
-	to_string( PhosphateTerminus const & phosphate_terminus );
+std::string
+to_string( PhosphateTerminus const & phosphate_terminus );
 
-	class PhosphateMove: public utility::pointer::ReferenceCount {
+class PhosphateMove: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//constructor
-		PhosphateMove( Size const rsd,
-									 PhosphateTerminus const terminus ):
-			rsd_( rsd ),
-			terminus_( terminus )
-		{
-		}
+	//constructor
+	PhosphateMove( Size const rsd,
+		PhosphateTerminus const terminus ):
+		rsd_( rsd ),
+		terminus_( terminus )
+	{
+	}
 
-		//destructor
-		~PhosphateMove();
+	//destructor
+	~PhosphateMove();
 
-		bool operator== ( PhosphateMove const & other) const;
+	bool operator== ( PhosphateMove const & other) const;
 
-	public:
+public:
 
-		core::Size rsd() const { return rsd_; }
-		PhosphateTerminus terminus() const { return terminus_; }
+	core::Size rsd() const { return rsd_; }
+	PhosphateTerminus terminus() const { return terminus_; }
 
-	private:
+private:
 
-		core::Size rsd_;
-		PhosphateTerminus terminus_;
+	core::Size rsd_;
+	PhosphateTerminus terminus_;
 
-	};
+};
 
-	std::ostream &
-	operator <<( std::ostream & os, PhosphateMove const & phosphate_move );
+std::ostream &
+operator <<( std::ostream & os, PhosphateMove const & phosphate_move );
 
 } //phosphate
 } //rna

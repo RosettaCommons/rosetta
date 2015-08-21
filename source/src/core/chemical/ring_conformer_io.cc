@@ -88,7 +88,7 @@ read_conformers_from_database_file_for_ring_size( std::string const & filename, 
 
 	if ( TR.Debug.visible() ) {
 		TR.Debug << "Read " << conformers.size() << " " <<
-				ring_size << "-membered ring conformers from the carbohydrate database." << endl;
+			ring_size << "-membered ring conformers from the carbohydrate database." << endl;
 	}
 
 	return conformers;

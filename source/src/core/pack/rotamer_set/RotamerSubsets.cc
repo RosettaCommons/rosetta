@@ -52,7 +52,7 @@ RotamerSubsets::RotamerSubsets(
 	/*subset_mapping rotamer_subset_map( source.nrotamers() );
 	rotamer_subset_map.reserve_destination_size( rotamer_subset_map.size() );
 	for ( Size ii = 0; ii < rotamer_subset.size(); ++ii ) {
-		rotamer_subset_map.set_next_correspondence( rotamer_subset_map[ ii ] );
+	rotamer_subset_map.set_next_correspondence( rotamer_subset_map[ ii ] );
 	}*/
 
 	for ( Size ii = 0; ii < rotamer_subset.size(); ++ii ) {
@@ -80,7 +80,7 @@ RotamerSubsets::RotamerSubsets(
 		set_of_rotamer_sets_[ ii ] = RotamerSetOP( new RotamerSubset(
 			*source.rotamer_set_for_moltenresidue( ii ),
 			moltenres_subsets[ ii ]
-		) );
+			) );
 	}
 }
 
@@ -104,8 +104,7 @@ RotamerSubsets::update_offset_data()
 	uint count_moltenres = 1;
 	for ( uint ii = 1; ii <= nrotamers_; ++ii ) {
 		moltenres_for_rotamer_[ ii ] = count_moltenres;
-		if ( count_rots_for_moltenres == nrotamers_for_moltenres_[ count_moltenres ] )
-		{
+		if ( count_rots_for_moltenres == nrotamers_for_moltenres_[ count_moltenres ] ) {
 			count_rots_for_moltenres = 1;
 			++count_moltenres;
 		} else {
@@ -184,7 +183,7 @@ RotamerSubsets::moltenres_rotid_2_rotid( uint moltenres, uint moltenresrotid ) c
 void
 RotamerSubsets::show( std::ostream & out ) const {
 	out << "RotamerSubsets with " << nmoltenres_ << " molten residues for " << total_residue_ << " total residues and " << nrotamers_ << " rotamers." << std::endl;
-	for( core::Size ii(1); ii <= set_of_rotamer_sets_.size(); ++ii) {
+	for ( core::Size ii(1); ii <= set_of_rotamer_sets_.size(); ++ii ) {
 		out << ii << ": " << *(set_of_rotamer_sets_[ii]) << std::endl;
 	}
 }

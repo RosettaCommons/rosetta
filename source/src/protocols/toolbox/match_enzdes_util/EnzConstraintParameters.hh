@@ -60,13 +60,13 @@ public:
 
 	CovalentConnectionReplaceInfo(
 		std::string resA_base_in,
-			std::string resB_base_in,
-			std::string resA_var_in,
-			std::string resB_var_in,
-			core::Size Apos_in,
-			core::Size Bpos_in,
-			core::chemical::ResidueTypeSetCAP restype_set_in
-		);
+		std::string resB_base_in,
+		std::string resA_var_in,
+		std::string resB_var_in,
+		core::Size Apos_in,
+		core::Size Bpos_in,
+		core::chemical::ResidueTypeSetCAP restype_set_in
+	);
 
 	CovalentConnectionReplaceInfo( CovalentConnectionReplaceInfo const & other );
 
@@ -145,7 +145,7 @@ public:
 	/// according to the geometry specified in the mcfi
 	//utility::vector1< core::conformation::ResidueCOP >
 	//inverse_rotamers_for_residue_missing_in_pose(
-	//	core::pose::Pose const & pose ) const;
+	// core::pose::Pose const & pose ) const;
 
 	core::Size
 	cst_block() const {
@@ -235,7 +235,7 @@ private:
 		core::Real itorsion,
 		core::Real iangle,
 		core::Real idis,
-	 	std::string & res_varname
+		std::string & res_varname
 	) const;
 
 	core::Size

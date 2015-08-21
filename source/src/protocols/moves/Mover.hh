@@ -54,7 +54,7 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-	#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.hh>
 #endif
 
 #ifdef USELUA
@@ -113,9 +113,9 @@ public:
 
 	// called once, when mover is instantiated
 	virtual void parse_def( utility::lua::LuaObject const & def,
-					utility::lua::LuaObject const & score_fxns,
-					utility::lua::LuaObject const & tasks,
-					MoverCacheSP cache );
+		utility::lua::LuaObject const & score_fxns,
+		utility::lua::LuaObject const & tasks,
+		MoverCacheSP cache );
 
 	virtual void save_state( SerializableState & state );
 
@@ -146,7 +146,7 @@ public:
 	/// by this Mover. get_current_tag() returns the tag, and set_current_tag( std::string tag )
 	/// sets the tag.  This functionality is not intended for use with the 2008 job distributor.
 	std::string get_current_tag() const {
-		//		if ( jd2::jd2_used() ) return jd2::current_output_name();
+		//  if ( jd2::jd2_used() ) return jd2::current_output_name();
 		return current_tag_;
 	}
 
@@ -162,7 +162,7 @@ public:
 	PoseCOP get_native_pose() const; // ---- we should get rid of this method? it is widely used, but a bit unsafe
 
 	/// @brief: Unit test support function.  Apply one move to a given pose.
-	///  			 Allows extra test specific functions to be called before applying
+	///      Allows extra test specific functions to be called before applying
 	virtual void test_move( Pose & pose ) {
 		apply( pose );
 	}
@@ -225,7 +225,7 @@ public:
 	virtual bool reinitialize_for_new_input() const;
 
 	/// @brief Generates a new Mover object freshly created with the default ctor.
-	virtual MoverOP	fresh_instance() const /*= 0*/;
+	virtual MoverOP fresh_instance() const /*= 0*/;
 
 	///////////////////////////////end Job Distributor interface////////////////////////////////////////
 

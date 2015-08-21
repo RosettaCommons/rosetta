@@ -33,17 +33,17 @@ bool SingResCnlCrea::stripped_;
 
 
 /// @brief mutation-specific lists of constellation atoms whose occupancy must
-/// 	be zeroed	when the constellation is output to file.
+///  be zeroed when the constellation is output to file.
 std::map<SingResCnlCrea::MutTyp, std::string> SingResCnlCrea::zeroed_occ_;
 
 
 /// @brief initializes the static members of this class
 /// @param[in] stripped true if one wants to output stripped constellations;
-/// 	false if one wants to output full constellations.
+///  false if one wants to output full constellations.
 ///
 void SingResCnlCrea::init(bool const stripped) {
 
-	if(stripped) {
+	if ( stripped ) {
 
 		stripped_ = true;
 
@@ -59,14 +59,14 @@ void SingResCnlCrea::init(bool const stripped) {
 		zeroed_occ_[MutTyp('Y','L')] = "CE1 CE2";
 		zeroed_occ_[MutTyp('W','L')] = "CE2 CE3 NE1";
 		zeroed_occ_[MutTyp('V','A')] = "CG1 CG2";
-	}
-	else
+	} else {
 		stripped_ = false;
+	}
 }
 
 
 /// @brief Returns the list of amino acid types that a given amino acid
-/// 	type can be reduced to.
+///  type can be reduced to.
 ///
 /// @param[in] starting_aa the given amino acid type.
 ///
@@ -103,7 +103,7 @@ utility::vector1<char> SingResCnlCrea::list_allowable_mutations(
 		allowed_list.push_back('L');
 	}
 	// Trp can become Leu
-	if ( starting_aa ==	'W' ) {
+	if ( starting_aa == 'W' ) {
 		allowed_list.push_back('L');
 	}
 
@@ -112,7 +112,7 @@ utility::vector1<char> SingResCnlCrea::list_allowable_mutations(
 
 
 /// @brief sets occupancy to 0 for a residue's backbone atoms and hydrogen
-/// 	atoms. Sets occupancy to 1 for the residue's remaining atoms.
+///  atoms. Sets occupancy to 1 for the residue's remaining atoms.
 ///
 /// @param[in] ps pose to which the residue belongs.
 /// @param[in] seqpos index of the residue in the pose.
@@ -134,9 +134,9 @@ void SingResCnlCrea::zero_occ_bb_h(Pose& ps, core::Size seqpos) {
 /// @brief Sets occupancy to zero for a residue's non-constellation atoms.
 ///
 /// @details Given a residue to be reduced to a smaller amino acid type, sets
-/// 	occupancy to zero for all atoms that are not to be printed (those
-/// 	forming the new residue too) and sets occupancy to 1 for all atoms
-/// 	that are to be printed (those forming the constellation).
+///  occupancy to zero for all atoms that are not to be printed (those
+///  forming the new residue too) and sets occupancy to 1 for all atoms
+///  that are to be printed (those forming the constellation).
 ///
 /// @param[out] pose pose to which the residue belongs.
 /// @param[in] seqpos index of the residue in the pose.
@@ -164,29 +164,35 @@ void SingResCnlCrea::zero_occ_for_deleted_atoms(Pose & pose, core::Size seqpos,
 	// I-->V: suppress everything other than CD1
 	if ( ( starting_aa == 'I' ) && ( target_aa == 'V' ) ) {
 		Size atom_inx_to_keep = rsd.atom_index("CD1");
-		for ( Size i=1; i<= rsd.natoms(); ++i )
-			if ( i != atom_inx_to_keep )
+		for ( Size i=1; i<= rsd.natoms(); ++i ) {
+			if ( i != atom_inx_to_keep ) {
 				pose.pdb_info()->occupancy( seqpos, i, 0. );
+			}
+		}
 		return;
 	}
 
 	// T-->S: suppress everything other than CG2
 	if ( ( starting_aa == 'T' ) && ( target_aa == 'S' ) ) {
 		Size atom_inx_to_keep = rsd.atom_index("CG2");
-		for ( Size i=1; i<= rsd.natoms(); ++i )
-			if ( i != atom_inx_to_keep )
+		for ( Size i=1; i<= rsd.natoms(); ++i ) {
+			if ( i != atom_inx_to_keep ) {
 				pose.pdb_info()->occupancy( seqpos, i, 0. );
+			}
+		}
 		return;
 	}
 
 	// Y-->F: suppress everything other than OH
 	if ( ( starting_aa == 'Y' ) && ( target_aa == 'F' ) ) {
 		Size atom_inx_to_keep = rsd.atom_index("OH");
-		for ( Size i=1; i<= rsd.natoms(); ++i )
-			if ( i != atom_inx_to_keep )
+		for ( Size i=1; i<= rsd.natoms(); ++i ) {
+			if ( i != atom_inx_to_keep ) {
 				pose.pdb_info()->occupancy( seqpos, i, 0. );
-    		return;
-  	}
+			}
+		}
+		return;
+	}
 
 	// Y-->L: suppress everything other than OH, CE1, CE2, CZ
 	if ( ( starting_aa == 'Y' ) && ( target_aa == 'L' ) ) {
@@ -194,9 +200,11 @@ void SingResCnlCrea::zero_occ_for_deleted_atoms(Pose & pose, core::Size seqpos,
 		Size inx2 = rsd.atom_index("CE1");
 		Size inx3 = rsd.atom_index("CE2");
 		Size inx4 = rsd.atom_index("CZ");
-		for ( Size i=1; i<= rsd.natoms(); ++i )
-			if ( (i != inx1) && (i != inx2) && (i != inx3) && (i !=inx4) )
+		for ( Size i=1; i<= rsd.natoms(); ++i ) {
+			if ( (i != inx1) && (i != inx2) && (i != inx3) && (i !=inx4) ) {
 				pose.pdb_info()->occupancy( seqpos, i, 0. );
+			}
+		}
 		return;
 	}
 
@@ -205,11 +213,13 @@ void SingResCnlCrea::zero_occ_for_deleted_atoms(Pose & pose, core::Size seqpos,
 		Size inx1 = rsd.atom_index("CE1");
 		Size inx2 = rsd.atom_index("CE2");
 		Size inx3 = rsd.atom_index("CZ");
-		for ( Size i=1; i<= rsd.natoms(); ++i )
-			if ( (i != inx1) && (i != inx2) && (i != inx3) )
+		for ( Size i=1; i<= rsd.natoms(); ++i ) {
+			if ( (i != inx1) && (i != inx2) && (i != inx3) ) {
 				pose.pdb_info()->occupancy( seqpos, i, 0. );
-    		return;
-  	}
+			}
+		}
+		return;
+	}
 
 	// W-->L: suppress everything other than NE1, CE2, CE3, CZ2, CZ3, CH2
 	if ( ( starting_aa == 'W' ) && ( target_aa == 'L' ) ) {
@@ -219,9 +229,11 @@ void SingResCnlCrea::zero_occ_for_deleted_atoms(Pose & pose, core::Size seqpos,
 		Size inx4 = rsd.atom_index("CZ2");
 		Size inx5 = rsd.atom_index("CZ3");
 		Size inx6 = rsd.atom_index("CH2");
-		for ( Size i=1; i<= rsd.natoms(); ++i )
-			if ( (i != inx1) && (i != inx2) && (i != inx3) && (i != inx4) && (i != inx5) && (i != inx6) )
+		for ( Size i=1; i<= rsd.natoms(); ++i ) {
+			if ( (i != inx1) && (i != inx2) && (i != inx3) && (i != inx4) && (i != inx5) && (i != inx6) ) {
 				pose.pdb_info()->occupancy( seqpos, i, 0. );
+			}
+		}
 		return;
 	}
 
@@ -232,7 +244,7 @@ void SingResCnlCrea::zero_occ_for_deleted_atoms(Pose & pose, core::Size seqpos,
 
 
 /// @brief sets occupancy to zero for constellation atoms that are not
-/// 	to be printed on output.
+///  to be printed on output.
 ///
 /// @param[out] pose pose to which the residue belongs.
 /// @param[in] seqpos index of the residue in the pose.
@@ -240,7 +252,7 @@ void SingResCnlCrea::zero_occ_for_deleted_atoms(Pose & pose, core::Size seqpos,
 ///     into.
 ///
 /// @details: it is assumed that function zero_occ_for_deleted_atoms(pose,
-/// 	seqpos, target_aa) was previously called.
+///  seqpos, target_aa) was previously called.
 ///
 void SingResCnlCrea::strip_atoms(Pose & pose, core::Size seqpos,
 	char const target_aa) {
@@ -250,44 +262,44 @@ void SingResCnlCrea::strip_atoms(Pose & pose, core::Size seqpos,
 	core::conformation::Residue const & rsd( pose.residue(seqpos) );
 
 	// if target is Gly, always suppress CB.
-	if(target_aa == 'G') {
+	if ( target_aa == 'G' ) {
 		pose.pdb_info()->occupancy( seqpos, rsd.atom_index("CB"), 0. );
-		if(starting_aa == 'P')
+		if ( starting_aa == 'P' ) {
 			pose.pdb_info()->occupancy( seqpos, rsd.atom_index("CD"), 0. );
+		}
 		return;
 	}
 
 	// if target is Ala, suppress CB and CG for several amino acid types
-	if(target_aa == 'A') {
+	if ( target_aa == 'A' ) {
 		switch(starting_aa) {
-			case 'R':
-			case 'N':
-			case 'D':
-			case 'Q':
-			case 'E':
-			case 'H':
-			case 'L':
-			case 'K':
-			case 'M':
-			case 'F':
-			case 'W':
-			case 'Y':
-				pose.pdb_info()->occupancy( seqpos, rsd.atom_index("CG"), 0. );
-				return;
+		case 'R':
+		case 'N':
+		case 'D':
+		case 'Q':
+		case 'E':
+		case 'H':
+		case 'L':
+		case 'K':
+		case 'M':
+		case 'F':
+		case 'W':
+		case 'Y' :
+			pose.pdb_info()->occupancy( seqpos, rsd.atom_index("CG"), 0. );
+			return;
 		}
 	}
 
 	// if it's another kind of mutation, suppress its corresponding set of atoms
 	MutTyp mt(starting_aa, target_aa);
 	std::map<MutTyp, std::string>::const_iterator mti = zeroed_occ_.find(mt);
-	if(mti != zeroed_occ_.end()) {
+	if ( mti != zeroed_occ_.end() ) {
 		std::stringstream zatoms(mti->second);
 		std::string atom;
-		while(zatoms >> atom) {
+		while ( zatoms >> atom ) {
 			pose.pdb_info()->occupancy(seqpos, rsd.atom_index(atom), 0. );
 		}
-	}
-	else {
+	} else {
 		TR << "ERROR: cannot mutate " << starting_aa << " into " << target_aa
 			<< std::endl;
 		exit(1);

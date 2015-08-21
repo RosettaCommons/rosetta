@@ -76,16 +76,16 @@ public:
 	/*
 	PackerEnergy
 	project_deltaE_with_backbone_move(
-		int new_state,
-		PackerEnergy & prev_energy_for_flexseg,
-		bool & valid_motion
+	int new_state,
+	PackerEnergy & prev_energy_for_flexseg,
+	bool & valid_motion
 	);
 
 	PackerEnergy
 	project_deltaE_for_backbone_move(
-		int alt_bb,
-		PackerEnergy & prev_energy_for_flexseg,
-		bool & valid_motion
+	int alt_bb,
+	PackerEnergy & prev_energy_for_flexseg,
+	bool & valid_motion
 	);
 	*/
 
@@ -326,55 +326,55 @@ private:
 inline
 MinimalistFlexbbEdge const *
 MinimalistFlexbbNode::get_incident_minimalistflexbb_edge( int index ) const
-{	return static_cast< MinimalistFlexbbEdge const * > ( get_incident_edge( index )); }
+{ return static_cast< MinimalistFlexbbEdge const * > ( get_incident_edge( index )); }
 
 inline
 MinimalistFlexbbEdge *
 MinimalistFlexbbNode::get_incident_minimalistflexbb_edge( int index )
-{	return static_cast< MinimalistFlexbbEdge * > ( get_incident_edge( index )); }
+{ return static_cast< MinimalistFlexbbEdge * > ( get_incident_edge( index )); }
 
 inline
 MinimalistFlexbbNode const *
 MinimalistFlexbbNode::get_adjacent_minimalistflexbb_node( int index ) const
-{	return static_cast< MinimalistFlexbbNode const * > ( get_adjacent_node( index )); }
+{ return static_cast< MinimalistFlexbbNode const * > ( get_adjacent_node( index )); }
 
 inline
 MinimalistFlexbbNode *
 MinimalistFlexbbNode::get_adjacent_minimalistflexbb_node( int index )
-{	return static_cast< MinimalistFlexbbNode * > ( get_adjacent_node( index )); }
+{ return static_cast< MinimalistFlexbbNode * > ( get_adjacent_node( index )); }
 
 
 inline
 MinimalistFlexbbInteractionGraph const *
 MinimalistFlexbbNode::get_minimalistflexbbig_owner() const
-{	return static_cast< MinimalistFlexbbInteractionGraph const * > (get_owner()); }
+{ return static_cast< MinimalistFlexbbInteractionGraph const * > (get_owner()); }
 
 inline
 MinimalistFlexbbInteractionGraph *
 MinimalistFlexbbNode::get_minimalistflexbbig_owner()
-{	return static_cast< MinimalistFlexbbInteractionGraph * > (get_owner()); }
+{ return static_cast< MinimalistFlexbbInteractionGraph * > (get_owner()); }
 
 /// Edge Downcasts
 
 inline
 MinimalistFlexbbNode const *
 MinimalistFlexbbEdge::get_minimalistflexbb_node( int index ) const
-{	return static_cast< MinimalistFlexbbNode const * > (get_node( index )); }
+{ return static_cast< MinimalistFlexbbNode const * > (get_node( index )); }
 
 inline
 MinimalistFlexbbNode *
 MinimalistFlexbbEdge::get_minimalistflexbb_node( int index )
-{	return static_cast< MinimalistFlexbbNode * > (get_node( index )); }
+{ return static_cast< MinimalistFlexbbNode * > (get_node( index )); }
 
 inline
 MinimalistFlexbbInteractionGraph const *
 MinimalistFlexbbEdge::get_minimalistflexbbig_owner() const
-{	return static_cast< MinimalistFlexbbInteractionGraph const * > (get_owner()); }
+{ return static_cast< MinimalistFlexbbInteractionGraph const * > (get_owner()); }
 
 inline
 MinimalistFlexbbInteractionGraph *
 MinimalistFlexbbEdge::get_minimalistflexbbig_owner()
-{	return static_cast< MinimalistFlexbbInteractionGraph * > (get_owner()); }
+{ return static_cast< MinimalistFlexbbInteractionGraph * > (get_owner()); }
 
 
 /// Graph Downcasts

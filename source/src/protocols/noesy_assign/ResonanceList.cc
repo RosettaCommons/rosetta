@@ -75,46 +75,46 @@ ResonanceList::~ResonanceList() {}
 
 /// translate sequence information into AA
 core::chemical::AA ResonanceList::aa_from_resid( core::Size resi ) const {
-  runtime_assert(  resi <= sequence_.size() );
-  return core::chemical::aa_from_oneletter_code( sequence_[ resi-1 ] );
+	runtime_assert(  resi <= sequence_.size() );
+	return core::chemical::aa_from_oneletter_code( sequence_[ resi-1 ] );
 }
 
 
 /* helper function for 'read_from_stream'
-	 each element is first put into a DEQUE such that atoms like methyl-protons can be combined if they are assigned the same frequency.
-	 -HB1, HB2 -- > QB
+each element is first put into a DEQUE such that atoms like methyl-protons can be combined if they are assigned the same frequency.
+-HB1, HB2 -- > QB
 
- example:
-	 input:
-	  HB1  1.00
-		HB2  1.00
-		CD  13.00
+example:
+input:
+HB1  1.00
+HB2  1.00
+CD  13.00
 
-	 output:
-	  QB   1.00
-		CD  13.00
+output:
+QB   1.00
+CD  13.00
 */
 void process_last_resonances( std::deque< ResonanceOP >& last_resonances, bool drain=false ) {
-  ResonanceOP first_res = last_resonances.front();
-  last_resonances.pop_front();
+	ResonanceOP first_res = last_resonances.front();
+	last_resonances.pop_front();
 	first_res->combine( last_resonances, drain );
 	last_resonances.push_front( first_res );
 }
 
 void ResonanceList::read_from_stream( std::istream& is ) {
-  using namespace core::chemical; //for AA
+	using namespace core::chemical; //for AA
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
-  std::string line;
-  std::deque< ResonanceOP > last_resonances;
+	std::string line;
+	std::deque< ResonanceOP > last_resonances;
 	bool has_ambiguity_column( false );
 	std::string sequence_from_header( "" );
-  while( getline( is, line ) ) {
-    core::Size label;
-    core::Real freq;
-    core::Real error;
-    std::string name;
-    core::Size resn;
-    AA aa;
+	while ( getline( is, line ) ) {
+		core::Size label;
+		core::Real freq;
+		core::Real error;
+		std::string name;
+		core::Size resn;
+		AA aa;
 		if ( line.find( "##" ) < 10 ) {
 			std::istringstream line_stream( line.substr( line.find("##")+2 ) );
 			std::string comment_type;
@@ -127,7 +127,7 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 				std::string data_type;
 				line_stream >> data_type;
 				if ( data_type == "SEQUENCE" ) {
-					while( line_stream.good() ) {
+					while ( line_stream.good() ) {
 						std::string sequence_bit;
 						line_stream >> sequence_bit;
 						sequence_from_header+=sequence_bit;
@@ -136,10 +136,10 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 			}
 			continue;
 		}
-    std::istringstream line_stream( line );
+		std::istringstream line_stream( line );
 		//read from stream...
 		tr.Trace << "read line: " << line << std::endl;
-    line_stream >> label >> freq >> error >> name;
+		line_stream >> label >> freq >> error >> name;
 		if ( params.ignore_resonancefile_tolerances_ ) error = 0.0;
 
 		//check for stream-error
@@ -160,37 +160,37 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 			//what counts for us are the float-groups...
 		}
 		line_stream >> resn;
-    std::string aa_name;
-    line_stream >> aa_name;
+		std::string aa_name;
+		line_stream >> aa_name;
 
 		//process optional fields...
-    if ( line_stream.good() ) { //optional field present?
-      if ( aa_name.size() == 1 ) {
+		if ( line_stream.good() ) { //optional field present?
+			if ( aa_name.size() == 1 ) {
 				aa = aa_from_oneletter_code( aa_name[ 0 ] );
-      } else if ( aa_name.size() == 3 ) {
+			} else if ( aa_name.size() == 3 ) {
 				aa = aa_from_name( aa_name );
-      } else {
+			} else {
 				throw utility::excn::EXCN_BadInput( "did not recognize aminoacid: " + aa_name);
-      }
-      if ( sequence_.size() < resn ) {
+			}
+			if ( sequence_.size() < resn ) {
 				while ( sequence_.size() < resn-1 ) sequence_.push_back('X');
 				sequence_[ resn-1 ]=oneletter_code_from_aa( aa );
-      } else if ( sequence_[ resn-1 ]!=oneletter_code_from_aa( aa ) ) {
+			} else if ( sequence_[ resn-1 ]!=oneletter_code_from_aa( aa ) ) {
 				tr.Warning << "sequence mismatch!! check your data: found " << name_from_aa( aa ) << " in line " << line
-									 << " which does not match " << sequence_[ resn-1 ] << "\n" << sequence_ << std::endl;
-      }
-    } else { //optional field was not present... use the pre-supplied fasta-sequence
-		  aa = aa_from_resid( resn );
+					<< " which does not match " << sequence_[ resn-1 ] << "\n" << sequence_ << std::endl;
+			}
+		} else { //optional field was not present... use the pre-supplied fasta-sequence
+			aa = aa_from_resid( resn );
 		}
 		line_stream >> aa_name; //1-letter
 
 		Real intensity( 1.0 );
 		// 3/8/13: this is totally buggy, as input files are not curated accordingly
 		// remove completely for now.
-		//	line_stream >> intensity;
-		//		if ( !line_stream ) { //option field intensity present ?
-		//			intensity=1.0;
-		//		}
+		// line_stream >> intensity;
+		//  if ( !line_stream ) { //option field intensity present ?
+		//   intensity=1.0;
+		//  }
 
 		std::string fl_tag;
 		line_stream >> fl_tag;
@@ -250,31 +250,31 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 		} else {
 			save_resonance = ResonanceOP( new LabelResonance( label, freq, error,  core::id::NamedAtomID( name, resn ), aa, intensity ) );
 		}
-		
+
 		if ( !floats.empty() ) { //size() ) {
 			save_resonance = ResonanceOP( new FloatingResonance( *save_resonance, floats, this ) );
 		}
 
 		// before assigning to Resonance List put it in DEQUE (push_back), maybe it will get combined with next resonance...
-    last_resonances.push_back( save_resonance );
-    if ( freq != last_resonances.front()->freq() ) { ///if we have just read a new frequency we need to finalize what is in the DEQUE
-      if ( last_resonances.size() > 2 ) process_last_resonances( last_resonances ); //just 2 --> 1 old freq and 1 new freq
-      map_[ last_resonances.front()->label() ] = last_resonances.front(); ///assign most forward value in our DEQUE
-      last_resonances.pop_front(); ///remove the just-assigned value
-    }
-  }
+		last_resonances.push_back( save_resonance );
+		if ( freq != last_resonances.front()->freq() ) { ///if we have just read a new frequency we need to finalize what is in the DEQUE
+			if ( last_resonances.size() > 2 ) process_last_resonances( last_resonances ); //just 2 --> 1 old freq and 1 new freq
+			map_[ last_resonances.front()->label() ] = last_resonances.front(); ///assign most forward value in our DEQUE
+			last_resonances.pop_front(); ///remove the just-assigned value
+		}
+	}
 
 	//still unprocessed data in DEQUE ?
-  if ( last_resonances.size() > 1 ) process_last_resonances( last_resonances, true /*drain*/ );
-  map_[ last_resonances.front()->label() ]= last_resonances.front();
+	if ( last_resonances.size() > 1 ) process_last_resonances( last_resonances, true /*drain*/ );
+	map_[ last_resonances.front()->label() ]= last_resonances.front();
 
 	//ASSERT: we have captured everything...
-  runtime_assert( last_resonances.size() == 1 );
+	runtime_assert( last_resonances.size() == 1 );
 
 	///no problems ?
-  if ( is.fail() && is.eof() && is.bad() ) {
-    tr.Error << "[ERROR WHILE READING]" << std::endl;
-  }
+	if ( is.fail() && is.eof() && is.bad() ) {
+		tr.Error << "[ERROR WHILE READING]" << std::endl;
+	}
 
 	//post-process input...
 	update_residue_map();
@@ -311,17 +311,17 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 
 /// @brief write ResonanceList to stream
 void ResonanceList::write_to_stream( std::ostream& os   ) const {
-  for ( ResonanceIDs::const_iterator it = map_.begin(); it != map_.end(); ++it ) {
-    runtime_assert( it->first == it->second->label() );
-    if ( sequence_.size() ) {
+	for ( ResonanceIDs::const_iterator it = map_.begin(); it != map_.end(); ++it ) {
+		runtime_assert( it->first == it->second->label() );
+		if ( sequence_.size() ) {
 			using namespace core::chemical; //for AA
 			AA aa( aa_from_resid( it->second->resid() ) );
 			it->second->write_to_stream( os, aa );
 		} else {
 			it->second->write_to_stream( os );
 		}
-    os << std::endl;
-  }
+		os << std::endl;
+	}
 }
 
 /// @brief write ResonanceList in TALOS format
@@ -348,8 +348,8 @@ void ResonanceList::write_talos_format( std::ostream& os, bool backbone_only ) c
 
 
 	///write resonances
-  for ( ResonanceIDs::const_iterator it = map_.begin(); it != map_.end(); ++it ) {
-    runtime_assert( it->first == it->second->label() );
+	for ( ResonanceIDs::const_iterator it = map_.begin(); it != map_.end(); ++it ) {
+		runtime_assert( it->first == it->second->label() );
 		if ( sequence_.size() < it->second->resid() ) {
 			tr.Error << " no sequence information for residue " << it->second->resid() << std::endl;
 			utility_exit_with_message( "sequence information required for all residues to write TALOS format -- use -in:file:fasta" );
@@ -359,10 +359,10 @@ void ResonanceList::write_talos_format( std::ostream& os, bool backbone_only ) c
 
 		//are we backbone
 		bool const is_backbone( //backbone im Sinne von SPARTA
-													 atom=="H" || atom=="HN" ||
-													 atom=="CA" || atom=="CB" ||
-													 atom=="N" ||
-													 atom=="1HA" || atom=="2HA" || atom=="3HA" );
+			atom=="H" || atom=="HN" ||
+			atom=="CA" || atom=="CB" ||
+			atom=="N" ||
+			atom=="1HA" || atom=="2HA" || atom=="3HA" );
 		//write individual atom
 		if ( is_backbone || !backbone_only ) {
 			if ( atom=="1HA" ) atom="HA3";
@@ -389,23 +389,23 @@ Resonance const& ResonanceList::operator[] ( core::id::NamedAtomID const& atom )
 		}
 	}
 	throw EXCN_UnknownResonance( atom, "can't find atom ");
-  return *(map_.begin()->second); //to make compiler happy
+	return *(map_.begin()->second); //to make compiler happy
 }
 
 ///retrieve Resonance ---  throws EXCN_UnknonwResonance if atom not found
 Resonance const& ResonanceList::operator[] ( core::Size key ) const {
-  ResonanceIDs::const_iterator iter = map_.find( key );
-  if ( iter == map_.end() ) {
-    throw EXCN_UnknownResonance( id::BOGUS_NAMED_ATOM_ID, "can't find resonance " + ObjexxFCL::string_of( key ) );
-  }
-  return *(iter->second);
+	ResonanceIDs::const_iterator iter = map_.find( key );
+	if ( iter == map_.end() ) {
+		throw EXCN_UnknownResonance( id::BOGUS_NAMED_ATOM_ID, "can't find resonance " + ObjexxFCL::string_of( key ) );
+	}
+	return *(iter->second);
 }
 
 ///create map with all resonances sorted by residue number
 void ResonanceList::update_residue_map() {
 	by_resid_.clear();
 	for ( ResonanceIDs::const_iterator it = map_.begin(); it != map_.end(); ++it ) {
-    runtime_assert( it->first == it->second->label() );
+		runtime_assert( it->first == it->second->label() );
 		by_resid_[ it->second->resid() ].push_back( it->second );
 	}
 }
@@ -426,7 +426,7 @@ bool ResonanceList::has_residue( core::Size resid ) const {
 }
 
 std::string label_atom_name( std::string const& proton_name, core::chemical::AA aa ) {
-  using namespace core::chemical; //for AA
+	using namespace core::chemical; //for AA
 	std::string name;
 	if ( aa == aa_arg ) {
 		if ( proton_name == "HE" ) return "NE";
@@ -482,8 +482,8 @@ std::string label_atom_name( std::string const& proton_name, core::chemical::AA 
 	if ( tr.Trace.visible() ) {
 		tr.Trace << "no label for proton_name " + proton_name + " on " + name_from_aa( aa ) << std::endl;
 	}
-  throw EXCN_UnknownAtomname("");
-  return "no_atom";
+	throw EXCN_UnknownAtomname("");
+	return "no_atom";
 }
 
 void ResonanceList::update_bond_connections() {

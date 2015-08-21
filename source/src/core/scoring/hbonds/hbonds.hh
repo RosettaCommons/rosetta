@@ -47,7 +47,7 @@ struct SSWeightParameters {
 
 bool
 calculate_intra_res_hbonds( conformation::Residue const & rsd,
-														HBondOptions const & options );
+	HBondOptions const & options );
 
 //fpd calc (new) env-dep burial weights
 core::Real
@@ -113,8 +113,8 @@ get_hbond_energies(
 
 /*void
 get_hbond_energies(
- HBondSet const & hbond_set,
- EnergyMap & emap);*/
+HBondSet const & hbond_set,
+EnergyMap & emap);*/
 
 void
 identify_hbonds_1way(
@@ -153,21 +153,21 @@ identify_hbonds_1way(
 
 void
 identify_hbonds_1way(
-	 HBondDatabase const & database,
-	 conformation::Residue const & don_rsd,
-	 conformation::Residue const & acc_rsd,
-	 Size const don_nb,
-	 Size const acc_nb,
-	 bool const evaluate_derivative,
-	 bool const exclude_don_bb,
-	 bool const exclude_don_bsc,
-	 bool const exclude_acc_scb,
-	 bool const exclude_acc_sc,
-	 HBondOptions const & options,
-	 // output
-	 EnergyMap & emap,
-	 boost::unordered_map<core::Size, core::Size> & num_hbonds,
-	 Real ssdep_weight_factor = 1.0
+	HBondDatabase const & database,
+	conformation::Residue const & don_rsd,
+	conformation::Residue const & acc_rsd,
+	Size const don_nb,
+	Size const acc_nb,
+	bool const evaluate_derivative,
+	bool const exclude_don_bb,
+	bool const exclude_don_bsc,
+	bool const exclude_acc_scb,
+	bool const exclude_acc_sc,
+	HBondOptions const & options,
+	// output
+	EnergyMap & emap,
+	boost::unordered_map<core::Size, core::Size> & num_hbonds,
+	Real ssdep_weight_factor = 1.0
 );
 
 void
@@ -184,9 +184,9 @@ identify_hbonds_1way_AHdist(
 void
 identify_intra_res_hbonds(
 	HBondDatabase const & database,
-  conformation::Residue const & rsd,
+	conformation::Residue const & rsd,
 	Size const rsd_nb,
-  bool const evaluate_derivative,
+	bool const evaluate_derivative,
 	HBondSet & hbond_set,
 	bool const exclude_bb  = false,
 	bool const exclude_bsc = false,
@@ -244,56 +244,56 @@ nonzero_hbond_weight( ScoreFunction const & scorefxn );
 /// TODO: REMOVE THE CODE DUPLICATION!!!!
 void
 identify_hbonds_1way_membrane(
-    HBondDatabase const & database,
-    conformation::Residue const & don_rsd,
-    conformation::Residue const & acc_rsd,
-    Size const don_nb,
-    Size const acc_nb,
-    bool const evaluate_derivative,
-    bool const exclude_don_bb,
-    bool const exclude_don_bsc,
-    bool const exclude_acc_scb,
-    bool const exclude_acc_sc,
-    HBondSet & hbond_set,
-    pose::Pose const & pose
+	HBondDatabase const & database,
+	conformation::Residue const & don_rsd,
+	conformation::Residue const & acc_rsd,
+	Size const don_nb,
+	Size const acc_nb,
+	bool const evaluate_derivative,
+	bool const exclude_don_bb,
+	bool const exclude_don_bsc,
+	bool const exclude_acc_scb,
+	bool const exclude_acc_sc,
+	HBondSet & hbond_set,
+	pose::Pose const & pose
 );
 
 void
 identify_hbonds_1way_membrane(
-    HBondDatabase const & database,
-    conformation::Residue const & don_rsd,
-    conformation::Residue const & acc_rsd,
-    Size const don_nb,
-    Size const acc_nb,
-    bool const evaluate_derivative,
-    bool const exclude_don_bb,
-    bool const exclude_don_bsc,
-    bool const exclude_acc_scb,
-    bool const exclude_acc_sc,
-    HBondOptions const & options,
-    EnergyMap & emap,
-    pose::Pose const & pose
+	HBondDatabase const & database,
+	conformation::Residue const & don_rsd,
+	conformation::Residue const & acc_rsd,
+	Size const don_nb,
+	Size const acc_nb,
+	bool const evaluate_derivative,
+	bool const exclude_don_bb,
+	bool const exclude_don_bsc,
+	bool const exclude_acc_scb,
+	bool const exclude_acc_sc,
+	HBondOptions const & options,
+	EnergyMap & emap,
+	pose::Pose const & pose
 );
 
 Real
 get_membrane_depth_dependent_weight(
-    pose::Pose const & pose,
-    int const don_nb,
-    int const acc_nb,
-    Vector const & Hxyz,
-    Vector const & Axyz
-    );
+	pose::Pose const & pose,
+	int const don_nb,
+	int const acc_nb,
+	Vector const & Hxyz,
+	Vector const & Axyz
+);
 
 Real
 get_membrane_depth_dependent_weight(
-    Vector const & normal,
-    Vector const & center,
-    Real const & thickness,
-    Real const & steepness,
-    int const don_nb,
-    int const acc_nb,
-    Vector const & Hxyz, // proton
-    Vector const & Axyz  // acceptor
+	Vector const & normal,
+	Vector const & center,
+	Real const & thickness,
+	Real const & steepness,
+	int const don_nb,
+	int const acc_nb,
+	Vector const & Hxyz, // proton
+	Vector const & Axyz  // acceptor
 );
 
 } // hbonds

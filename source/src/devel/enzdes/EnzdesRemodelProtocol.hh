@@ -28,8 +28,8 @@
 
 #include <utility/vector1.hh>
 
-namespace devel{
-namespace enzdes{
+namespace devel {
+namespace enzdes {
 
 class EnzdesRemodelProtocol;
 typedef utility::pointer::shared_ptr< EnzdesRemodelProtocol > EnzdesRemodelProtocolOP;
@@ -128,13 +128,13 @@ public:
 		protocols::toolbox::match_enzdes_util::ResInteractions const & res_ints
 	);
 
-  void
-  set_seq_mapping( core::id::SequenceMappingOP seq_map_in);
+	void
+	set_seq_mapping( core::id::SequenceMappingOP seq_map_in);
 
 	void
 	set_keep_existing_aa_identities( bool setting );
 
-  core::id::SequenceMappingCOP get_seq_mapping() const;
+	core::id::SequenceMappingCOP get_seq_mapping() const;
 
 	utility::vector1< core::Size > get_flex_region( ) const;
 

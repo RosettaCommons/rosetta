@@ -55,7 +55,7 @@ RNA_TorsionEnergyCreator::score_types_for_method() const {
 
 /// ctor
 RNA_TorsionEnergy::RNA_TorsionEnergy( RNA_EnergyMethodOptions const & options,
-																			RNA_TorsionPotentialOP rna_torsion_potential /* = 0 */ ) :
+	RNA_TorsionPotentialOP rna_torsion_potential /* = 0 */ ) :
 	parent( methods::EnergyMethodCreatorOP( new RNA_TorsionEnergyCreator ) ),
 	options_( options ),
 	rna_torsion_potential_( rna_torsion_potential )
@@ -74,11 +74,11 @@ RNA_TorsionEnergy::clone() const
 ///////////////////////////////////////////////////////////////////////////////
 void
 RNA_TorsionEnergy::residue_pair_energy(
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap ) const {
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	pose::Pose const & pose,
+	ScoreFunction const &,
+	EnergyMap & emap ) const {
 
 	emap[ rna_torsion ] += rna_torsion_potential_->residue_pair_energy( rsd1, rsd2, pose );
 
@@ -88,10 +88,10 @@ RNA_TorsionEnergy::residue_pair_energy(
 ///////////////////////////////////////////////////////////////////////////////
 void
 RNA_TorsionEnergy::eval_intrares_energy(
-		conformation::Residue const & rsd,
-		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap 	) const {
+	conformation::Residue const & rsd,
+	pose::Pose const & pose,
+	ScoreFunction const &,
+	EnergyMap & emap  ) const {
 
 	emap[ rna_torsion ]    += rna_torsion_potential_->eval_intrares_energy( rsd, pose );
 	emap[ rna_torsion_sc ] += rna_torsion_potential_->intrares_side_chain_score(); // evaluated at same time as above.

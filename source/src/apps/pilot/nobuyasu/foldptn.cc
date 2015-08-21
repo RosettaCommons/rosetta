@@ -120,7 +120,7 @@ public: // constructor/deconstructor
 	{
 		// read blueprint
 		ssinput_ = false;
-		if( option[ blue ].user() ) {
+		if ( option[ blue ].user() ) {
 			BluePrintOP blueprint( new BluePrint( option[ blue ]() ) );
 			ssinfo_ = protocols::fldsgn::topology::SS_Info2_OP( new SS_Info2( blueprint->secstruct() ) );
 			ssinput_ = true;
@@ -144,7 +144,7 @@ public: // constructor/deconstructor
 		std::ostringstream header;
 		header << "filename " << "foldname " << "strand_pairs " << "fullE " << "cenE ";
 
-		if( option[ in::file::native ].user() ) {
+		if ( option[ in::file::native ].user() ) {
 			header << "rms";
 		}
 
@@ -178,7 +178,7 @@ public: // apply
 		String me( JobDistributor::get_instance()->job_outputter()->output_name( job_me ) );
 
 		core::scoring::dssp::Dssp dssp( pose );
-		if( ssinput_ ) {
+		if ( ssinput_ ) {
 			ssinfo_->set_SSorient( pose );
 		} else {
 			ssinfo_->initialize( pose, dssp.get_dssp_secstruct() );
@@ -195,15 +195,15 @@ public: // apply
 		// calc bab
 		bool lefty = false;
 		BetaAlphaBetaMotifSet babset( ssinfo_, sheet_set );
-		for( BetaAlphaBetaMotifs::const_iterator iter = babset.bab_motifs().begin(),
-					 iter_end = babset.bab_motifs().end(); iter != iter_end; ++iter ) {
+		for ( BetaAlphaBetaMotifs::const_iterator iter = babset.bab_motifs().begin(),
+				iter_end = babset.bab_motifs().end(); iter != iter_end; ++iter ) {
 			BetaAlphaBetaMotif bab( **iter );
 			bab.calc_geometry( ssinfo_, sheet_set );
 			if ( bab.is_lefthanded() ) lefty = true;
 		}
 
 		Size bab_inout = 0;
-		if( option[ bab ]() && spairset->num_strands() == 2 && babset.size() >= 1 ) {
+		if ( option[ bab ]() && spairset->num_strands() == 2 && babset.size() >= 1 ) {
 			bab_inout = babset.bab_motif( 1 )->calc_inout( ssinfo_, ssinfo_->strand( 1 )->end() );
 		}
 
@@ -224,7 +224,7 @@ public: // apply
 		}
 
 		String foldname;
-		if( lefty ) {
+		if ( lefty ) {
 			foldname = "LeftHanded";
 		} else {
 			foldname = sm_.name_from_foldtype( sfold );
@@ -232,7 +232,7 @@ public: // apply
 
 		// output
 		String spair_string;
-		if( foldname == "NO_STRANDS" ) {
+		if ( foldname == "NO_STRANDS" ) {
 			spair_string = "-";
 		} else {
 			spair_string = spairset->name();
@@ -240,23 +240,23 @@ public: // apply
 
 
 		String inout("");
-		if( bab_inout != 0 ) {
-			if( bab_inout == 1 ) {
+		if ( bab_inout != 0 ) {
+			if ( bab_inout == 1 ) {
 				inout = "UP";
 			} else {
 				inout = "DOWN";
 			}
 
 			output_ << me << " " << foldname << "_" << inout << " " << spair_string << " "
-					<< fullE << " " << cenE << " ";
+				<< fullE << " " << cenE << " ";
 
 		} else {
 
 			output_ << me << " " << foldname << " " << spair_string << " "
-					<< fullE << " " << cenE << " ";
+				<< fullE << " " << cenE << " ";
 		}
 
-		if( rms > 0.0 ) {
+		if ( rms > 0.0 ) {
 			output_ << " " << rms << std::endl;
 		} else {
 			output_ << " " << std::endl;
@@ -286,17 +286,17 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	ThisApplication::register_options();
+		ThisApplication::register_options();
 
-	// init
-	devel::init(argc, argv);
+		// init
+		devel::init(argc, argv);
 
-	// mover
-	protocols::moves::MoverOP protocol;
-	protocol = protocols::moves::MoverOP( new Foldptn() );
+		// mover
+		protocols::moves::MoverOP protocol;
+		protocol = protocols::moves::MoverOP( new Foldptn() );
 
-	// run
-	protocols::jd2::JobDistributor::get_instance()->go( protocol );
+		// run
+		protocols::jd2::JobDistributor::get_instance()->go( protocol );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

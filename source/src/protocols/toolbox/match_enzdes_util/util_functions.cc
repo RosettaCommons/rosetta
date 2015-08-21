@@ -44,7 +44,7 @@
 
 namespace protocols {
 namespace toolbox {
-namespace match_enzdes_util{
+namespace match_enzdes_util {
 
 static thread_local basic::Tracer tr( "protocols.toolbox.match_enzdes_util.util_functions" );
 
@@ -59,23 +59,22 @@ replace_residue_keeping_all_atom_positions(
 	//have to set the position of the new res to their old values, so we gotta save them now
 	std::map< std::string, core::PointPosition > atom_name_to_xyz;
 
-	for( core::Size at_ct = 1; at_ct <= pose.residue(res_pos).natoms(); at_ct++){
-		atom_name_to_xyz.insert( 	std::pair< std::string, core::PointPosition > (pose.residue(res_pos).atom_name(at_ct), pose.residue(res_pos).xyz( at_ct ) ) );
+	for ( core::Size at_ct = 1; at_ct <= pose.residue(res_pos).natoms(); at_ct++ ) {
+		atom_name_to_xyz.insert(  std::pair< std::string, core::PointPosition > (pose.residue(res_pos).atom_name(at_ct), pose.residue(res_pos).xyz( at_ct ) ) );
 	}
 
 	//replacing the residue
 	pose.replace_residue( res_pos, new_res, true);
 
 	//and resetting the xyz positions
-	for( core::Size at_ct = 1; at_ct <= pose.residue(res_pos).natoms(); at_ct++){
+	for ( core::Size at_ct = 1; at_ct <= pose.residue(res_pos).natoms(); at_ct++ ) {
 
 		std::map< std::string, core::PointPosition>::iterator xyz_map_it = atom_name_to_xyz.find( pose.residue(res_pos).atom_name(at_ct) );
 
-		if(xyz_map_it == atom_name_to_xyz.end() ) {
+		if ( xyz_map_it == atom_name_to_xyz.end() ) {
 			std::cerr << "ERROR: when trying to make dsflkj constraint covalent, atom " << pose.residue(res_pos).atom_name(at_ct) << " was not found for residue " << pose.residue(res_pos).name3() << " at position " << res_pos << std::endl;
 			utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
-		}
-		else{
+		} else {
 			pose.set_xyz( core::id::AtomID (at_ct, res_pos), xyz_map_it->second );
 		}
 	}
@@ -109,7 +108,7 @@ constrain_pose_res_to_invrots(
 {
 	using namespace core::scoring::constraints;
 
-	if( !constraint_func ) constraint_func = core::scoring::func::FuncOP( new BoundFunc( 0, 0.05, 0.4, "invrot") );
+	if ( !constraint_func ) constraint_func = core::scoring::func::FuncOP( new BoundFunc( 0, 0.05, 0.4, "invrot") );
 	//see the comment in protocols/ligand_docking/LigandBaseProtocol.cc::restrain_protein_Calphas
 	//core::id::AtomID fixed_pt( pose.atom_tree().root()->atom_id() );
 	//tr << "Hackack fixed_pt was passed in to be AtomID " << fixed_pt << std::endl;
@@ -117,17 +116,17 @@ constrain_pose_res_to_invrots(
 	utility::vector1< ConstraintCOP > all_res_invrot_csts;
 	core::Size totrescount(0);
 
-	for( core::Size i =1; i <= seqpos.size(); ++i ){
+	for ( core::Size i =1; i <= seqpos.size(); ++i ) {
 
 		core::conformation::ResidueCOP cur_remodel_res( pose.residue( seqpos[i] ).get_self_ptr() );
-		if( cur_remodel_res->name3() == "GLY" ) continue;
+		if ( cur_remodel_res->name3() == "GLY" ) continue;
 		totrescount++;
 
 		core::id::AtomID rem_CA( cur_remodel_res->type().atom_index("CA"), seqpos[i] );
 		core::id::AtomID rem_CB( cur_remodel_res->type().atom_index("CB"), seqpos[i] );
 		core::id::AtomID rem_N( cur_remodel_res->type().atom_index("N"), seqpos[i] );
 
-		for( std::list< core::conformation::ResidueCOP >::const_iterator invrot_it( invrots.begin() ), invrot_end( invrots.end() ); invrot_it != invrot_end; ++invrot_it ){
+		for ( std::list< core::conformation::ResidueCOP >::const_iterator invrot_it( invrots.begin() ), invrot_end( invrots.end() ); invrot_it != invrot_end; ++invrot_it ) {
 
 			utility::vector1< ConstraintCOP > cur_res_invrot_csts;
 			cur_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new BackboneStubConstraint( pose, seqpos[i], fixed_pt, **invrot_it, -20.0, 0.8) ) );
@@ -135,10 +134,10 @@ constrain_pose_res_to_invrots(
 			//old style: coordinate constraints for all atoms, backbone stub csts
 			// might be working better
 			cur_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( rem_CA, fixed_pt, (*invrot_it)->xyz("CA"), constraint_func ) ) );
-				cur_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( rem_CB, fixed_pt, (*invrot_it)->xyz("CB"), constraint_func ) ) );
-				cur_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( rem_N, fixed_pt, (*invrot_it)->xyz("N"), constraint_func ) ) );
+			cur_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( rem_CB, fixed_pt, (*invrot_it)->xyz("CB"), constraint_func ) ) );
+			cur_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( rem_N, fixed_pt, (*invrot_it)->xyz("N"), constraint_func ) ) );
 
-				all_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new MultiConstraint( cur_res_invrot_csts ) ) );
+			all_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new MultiConstraint( cur_res_invrot_csts ) ) );
 		}// loop over invrots
 	}//loop over seqpos
 
@@ -158,11 +157,11 @@ cst_residue_in_pose(
 {
 
 	EnzdesCacheableObserverCOP enz_ob( get_enzdes_observer( pose ) );
-	if( !enz_ob ) return NULL;
+	if ( !enz_ob ) return NULL;
 
 	EnzCstTemplateResCacheCOP res_cache( enz_ob->cst_cache()->param_cache( geomcst )->template_res_cache( geomcst_template_res) );
 	runtime_assert( res_cache != 0 );
-	if( res_cache->not_in_pose() ) return NULL;
+	if ( res_cache->not_in_pose() ) return NULL;
 
 	runtime_assert( res_cache->seqpos_map_size() == 1 );
 
@@ -214,19 +213,19 @@ split_up_remark_line(
 	line_stream.str( line );
 
 	line_stream >> buffer >> tag;
-	if( tag == "TEMPLATE"){
+	if ( tag == "TEMPLATE" ) {
 		line_stream >> chainA >> resA >> seqposA >> buffer >> buffer;
 		line_stream >> chainB >> resB >> seqposB >> cst_block;
-		if( resA.size() == 2 ) resA = " " + resA;
-		if( resB.size() == 2 ) resB = " " + resB;
+		if ( resA.size() == 2 ) resA = " " + resA;
+		if ( resB.size() == 2 ) resB = " " + resB;
 
-		if( line_stream.bad() ){
+		if ( line_stream.bad() ) {
 			tr << "ERROR when trying to split up pdb remark line. Not all fields seem to have been specified." << std::endl;
 			return false;
 		}
 
 		line_stream >> ex_geom_id;
-		if( !line_stream.good() ) ex_geom_id = 1;
+		if ( !line_stream.good() ) ex_geom_id = 1;
 
 		return true;
 	}
@@ -243,8 +242,8 @@ get_first_protein_residue( core::pose::Pose const & pose )
 
 	// briefly, loop through the list of residues in the pose, from 1 to N
 	// if the pose is not in the list of ligands, it is the N-terminal residue
-	for( core::Size i = 1; i <= pose.total_residue(); i++) {
-		if ( pose.residue( i ).is_protein() ){
+	for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
+		if ( pose.residue( i ).is_protein() ) {
 			return i;
 		}
 	}
@@ -263,8 +262,8 @@ get_last_protein_residue( core::pose::Pose const & pose )
 
 	// briefly, loop through the list of residues in the pose, from 1 to N
 	// if the pose is not in the list of ligands, it is the N-terminal residue
-	for( core::Size i = pose.total_residue(); i >= 1; i--) {
-		if ( pose.residue( i ).is_protein() ){
+	for ( core::Size i = pose.total_residue(); i >= 1; i-- ) {
+		if ( pose.residue( i ).is_protein() ) {
 			return i;
 		}
 	}

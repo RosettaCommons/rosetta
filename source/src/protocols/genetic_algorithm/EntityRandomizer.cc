@@ -60,7 +60,7 @@ EntityRandomizer::random_entity()
 {
 	runtime_assert( entity_length_ );
 	EntityOP entity;
-	if (entity_template_) {
+	if ( entity_template_ ) {
 		entity = entity_template_->clone();
 	} else {
 		entity = EntityOP( new Entity );
@@ -112,7 +112,7 @@ DiscreteRandomizer::mutate( Entity & entity )
 	EntityElements traits( entity.traits() );
 	core::Size const size_choices( choices_.size() );
 	for ( EntityElements::iterator it( traits.begin() ), end( traits.end() );
-				it != end; ++it ) {
+			it != end; ++it ) {
 		if ( this->mutation_rate() < numeric::random::uniform() ) continue;
 		*it = choices_[ static_cast< core::Size >( numeric::random::uniform() * size_choices ) + 1 ];
 	}

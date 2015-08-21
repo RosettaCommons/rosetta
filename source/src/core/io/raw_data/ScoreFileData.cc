@@ -45,60 +45,60 @@ namespace core {
 namespace io {
 namespace raw_data {
 
-	/// @brief write the given structure to the supplied filename.
-	bool ScoreFileData::write_struct(
-		const RawStructOP s,
-		std::map < std::string, core::Real > const & score_map,
-		std::map < std::string, std::string > const & string_map
-	) {
+/// @brief write the given structure to the supplied filename.
+bool ScoreFileData::write_struct(
+	const RawStructOP s,
+	std::map < std::string, core::Real > const & score_map,
+	std::map < std::string, std::string > const & string_map
+) {
 
-		bool success = false;
-		utility::io::ozstream output;
+	bool success = false;
+	utility::io::ozstream output;
 
-		runtime_assert( s != 0 );
-		
-		if ( ! utility::file::file_exists( filename_ ) ) {
-			output.open( filename_ );
-			s->print_header( output, score_map, string_map );
-		}
+	runtime_assert( s != 0 );
 
-		output.open_append( filename_ );
-		s->print_scores( output, score_map, string_map );
-		success = output.good();
-
-		return success;
+	if ( ! utility::file::file_exists( filename_ ) ) {
+		output.open( filename_ );
+		s->print_header( output, score_map, string_map );
 	}
 
+	output.open_append( filename_ );
+	s->print_scores( output, score_map, string_map );
+	success = output.good();
 
-	/// @brief write the given pose to the supplied filename.
-	bool ScoreFileData::write_pose(
-		const core::pose::Pose & pose,
-		std::map < std::string, core::Real > const & score_map,
-		std::string tag = "empty_tag",
-        std::map < std::string, std::string > const & string_map
-	) {
+	return success;
+}
 
-		using namespace basic::options;
-		using namespace basic::options::OptionKeys;
 
-		RawStructOP outputter(NULL);
-		std::string format = option[ out::file::scorefile_format ].value();
+/// @brief write the given pose to the supplied filename.
+bool ScoreFileData::write_pose(
+	const core::pose::Pose & pose,
+	std::map < std::string, core::Real > const & score_map,
+	std::string tag = "empty_tag",
+	std::map < std::string, std::string > const & string_map
+) {
 
-		if(format == "text") {
-			// Old plain-text format
-			outputter = RawStructOP( new ScoreStructText( pose, tag ) );
-		} else if(format == "json" || format == "JSON") {
-			// JSON
-			outputter = RawStructOP( new ScoreStructJSON( pose, tag ) ); 
-		}
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-		if(!outputter) {
-			TR << "Invalid score file format specified: \"" << format << "\". No output generated!" << std::endl;
-			return false;
-		}
+	RawStructOP outputter(NULL);
+	std::string format = option[ out::file::scorefile_format ].value();
 
-		return write_struct( outputter, score_map, string_map );
+	if ( format == "text" ) {
+		// Old plain-text format
+		outputter = RawStructOP( new ScoreStructText( pose, tag ) );
+	} else if ( format == "json" || format == "JSON" ) {
+		// JSON
+		outputter = RawStructOP( new ScoreStructJSON( pose, tag ) );
 	}
+
+	if ( !outputter ) {
+		TR << "Invalid score file format specified: \"" << format << "\". No output generated!" << std::endl;
+		return false;
+	}
+
+	return write_struct( outputter, score_map, string_map );
+}
 
 } // namespace silent
 } // namespace io

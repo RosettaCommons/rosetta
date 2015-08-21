@@ -34,41 +34,41 @@ namespace environment {
 core::Size EnvCore::current_maximum_id_ = 0;
 
 EnvCore::EnvCore( std::string const& name ):
-  name_( name ),
-  id_( generate_id() )
+	name_( name ),
+	id_( generate_id() )
 {}
 
 EnvCore::~EnvCore() {}
 
 std::string const& EnvCore::name() const{
-  return name_;
+	return name_;
 }
 
 DofPassportOP EnvCore::issue_passport( std::string const& mover_name ) const{
 	// This method doesn't register the passport with the mover because that would
 	// require including movers, which violates the inclusion hierarchy.
-  return DofPassportOP( new DofPassport( mover_name, id() ) );
+	return DofPassportOP( new DofPassport( mover_name, id() ) );
 }
 
 EnvCoreCAP EnvCore::superenv() const{
-  return superenv_;
+	return superenv_;
 }
 
 void EnvCore::set_superenv( EnvCoreCAP env ){
-  if( superenv_.expired() || utility::pointer::equal(superenv_, env) ){
-    superenv_ = env;
-  } else {
-    throw utility::excn::EXCN_Msg_Exception( "Superenvironment already assigned.");
-  }
+	if ( superenv_.expired() || utility::pointer::equal(superenv_, env) ) {
+		superenv_ = env;
+	} else {
+		throw utility::excn::EXCN_Msg_Exception( "Superenvironment already assigned.");
+	}
 }
 
 core::Size const& EnvCore::id() const {
-  return id_;
+	return id_;
 }
 
 core::Size EnvCore::generate_id(){
-  current_maximum_id_ += 1;
-  return current_maximum_id_;
+	current_maximum_id_ += 1;
+	return current_maximum_id_;
 }
 
 

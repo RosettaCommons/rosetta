@@ -79,8 +79,7 @@ residue_fast_pair_energy_attached_H(
 
 
 	// Heavy Atom in res1 to Hs in res2
-	for ( Size i = at2hbegin; i<= at2hend; ++i )
-	{
+	for ( Size i = at2hbegin; i<= at2hend; ++i ) {
 		Atom const & H2( res2.atom( i ) );
 		weight = 1.0;
 		path_dist = 0;
@@ -91,8 +90,7 @@ residue_fast_pair_energy_attached_H(
 
 
 	// Hs in res1 to heavy Atom and Hs in res2
-	for ( Size i = at1hbegin; i<= at1hend; ++i )
-	{
+	for ( Size i = at1hbegin; i<= at1hend; ++i ) {
 		Atom const & H1( res1.atom(i) );
 		weight = 1.0;
 		path_dist = 0;
@@ -151,14 +149,14 @@ inline_residue_atom_pair_energy(
 
 	//std::cout << "inline_residue_atom_pair_energy( res" << res1.seqpos() << ", res";
 	//std::cout << res2.seqpos() << ");" << std::endl;
-//debug_assert ( !( res1.is_DNA() && res2.is_DNA() ) ); // pb for testing, will remove
+	//debug_assert ( !( res1.is_DNA() && res2.is_DNA() ) ); // pb for testing, will remove
 
 	DistanceSquared dsq;
 	Weight weight;
 	Size path_dist;
 	// get hydrogen interaction cutoff
 	Real const Hydrogen_interaction_cutoff2
-	( etable_energy.hydrogen_interaction_cutoff2() );
+		( etable_energy.hydrogen_interaction_cutoff2() );
 
 	typedef utility::vector1< Size > const & vect;
 
@@ -178,29 +176,29 @@ inline_residue_atom_pair_energy(
 			Atom const & atom2( res2.atom(j) );
 			weight = 1.0;
 			path_dist = 0;
-			if(atom1_virtual || atom2_virtual){
+			if ( atom1_virtual || atom2_virtual ) {
 				// NOOP! etable_energy.virtual_atom_pair_energy(emap);
-			}else{
+			} else {
 				if ( count_pair( i, j, weight, path_dist ) ) {
-					//							std::cout << "Atom Pair Energy: " << i << " with " << j << "   ";
+					//       std::cout << "Atom Pair Energy: " << i << " with " << j << "   ";
 					etable_energy.atom_pair_energy( atom1, atom2, weight, emap, dsq );
-					// 				std::cout << "atr: " << emap[ coarse_fa_atr ] << " ";
-					// 				std::cout << "rep: " << emap[ coarse_fa_rep ] << " ";
-					// 				std::cout << "sol: " << emap[ coarse_fa_sol ] << " ";
-					// 				std::cout << std::endl;
+					//     std::cout << "atr: " << emap[ coarse_fa_atr ] << " ";
+					//     std::cout << "rep: " << emap[ coarse_fa_rep ] << " ";
+					//     std::cout << "sol: " << emap[ coarse_fa_sol ] << " ";
+					//     std::cout << std::endl;
 
 				} else {
 					dsq = atom1.xyz().distance_squared( atom2.xyz() );
 				}
 				if ( dsq < Hydrogen_interaction_cutoff2 ) {
 					residue_fast_pair_energy_attached_H(
-							res1, i, res2, j,
-							r1hbegin[ i ], r1hend[ i ],
-							r2hbegin[ j ], r2hend[ j ],
-							count_pair, etable_energy , emap);
-					//			std::cout << "atr: " << emap[ fa_atr ] << " ";
-					//			std::cout << "rep: " << emap[ fa_rep ] << " ";
-					//			std::cout << std::endl;
+						res1, i, res2, j,
+						r1hbegin[ i ], r1hend[ i ],
+						r2hbegin[ j ], r2hend[ j ],
+						count_pair, etable_energy , emap);
+					//   std::cout << "atr: " << emap[ fa_atr ] << " ";
+					//   std::cout << "rep: " << emap[ fa_rep ] << " ";
+					//   std::cout << std::endl;
 
 				}
 			}
@@ -248,33 +246,33 @@ inline_intraresidue_atom_pair_energy(
 			Atom const & atom2( res.atom(j) );
 			weight = 1.0;
 			path_dist = 0;
-			if(atom1_virtual || atom2_virtual){
+			if ( atom1_virtual || atom2_virtual ) {
 				//etable_energy.virtual_atom_pair_energy(emap);
-			}else{
-
-			if ( count_pair( i, j, weight, path_dist ) ) {
-				//	std::cout << "Intra Res Atom Pair Energy: atom " << i << " with atom " << j << "   ";
-				etable_energy.atom_pair_energy( atom1, atom2, weight, emap, dsq );
- 				//std::cout << "atr: " << emap[ coarse_fa_atr ] << " ";
- 				//std::cout << "rep: " << emap[ coarse_fa_rep ] << " ";
- 				//std::cout << "sol: " << emap[ coarse_fa_sol ] << " ";
- 				//std::cout << std::endl;
 			} else {
-				dsq = atom1.xyz().distance_squared( atom2.xyz() );
-			}
 
-			if ( dsq < Hydrogen_interaction_cutoff2 ) {
-				residue_fast_pair_energy_attached_H(
-					res, i, res, j,
-					rhbegin[ i ], rhend[ i ],
-					rhbegin[ j ], rhend[ j ],
-					count_pair, etable_energy, emap);
-				//std::cout << "atr: " << emap[ fa_atr ] << " ";
-				//std::cout << "rep: " << emap[ fa_rep ] << " ";
-				//std::cout << std::endl;
+				if ( count_pair( i, j, weight, path_dist ) ) {
+					// std::cout << "Intra Res Atom Pair Energy: atom " << i << " with atom " << j << "   ";
+					etable_energy.atom_pair_energy( atom1, atom2, weight, emap, dsq );
+					//std::cout << "atr: " << emap[ coarse_fa_atr ] << " ";
+					//std::cout << "rep: " << emap[ coarse_fa_rep ] << " ";
+					//std::cout << "sol: " << emap[ coarse_fa_sol ] << " ";
+					//std::cout << std::endl;
+				} else {
+					dsq = atom1.xyz().distance_squared( atom2.xyz() );
+				}
 
+				if ( dsq < Hydrogen_interaction_cutoff2 ) {
+					residue_fast_pair_energy_attached_H(
+						res, i, res, j,
+						rhbegin[ i ], rhend[ i ],
+						rhbegin[ j ], rhend[ j ],
+						count_pair, etable_energy, emap);
+					//std::cout << "atr: " << emap[ fa_atr ] << " ";
+					//std::cout << "rep: " << emap[ fa_rep ] << " ";
+					//std::cout << std::endl;
+
+				}
 			}
-		}
 		}
 	}
 }

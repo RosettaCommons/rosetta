@@ -38,19 +38,19 @@ DipolarCouplingCOP retrieve_DC_from_pose(core::pose::Pose const&);
 ///                         DipolarCouplingEnergy -- an energy method which triggers computations handled by this class.
 ///
 class DipolarCoupling: public basic::datacache::CacheableData {
-	//	friend class DipolarCouplingEnergy;
+	// friend class DipolarCouplingEnergy;
 public:
 	// typedefs
 	typedef core::Size Size;
 	typedef utility::vector1<core::scoring::DC> DC_lines;
 
 public:
-//need to make sure it reads as the flags
+	//need to make sure it reads as the flags
 	/// @brief standard c'stor -- will access option -in:file:dc to read DC data
 	DipolarCoupling( std::string const& filename ="" ) {
-		if (filename != "" ) {
+		if ( filename != "" ) {
 			read_DC_file( filename );
-			}else {
+		} else {
 			read_DC_file( );
 		}
 	}
@@ -74,10 +74,10 @@ public:
 
 	void show(std::ostream&) const;
 
-  /// @brief get the raw DC data
-  inline DC_lines const& get_DC_data() const {
-    return All_DC_lines_;
-  }
+	/// @brief get the raw DC data
+	inline DC_lines const& get_DC_data() const {
+		return All_DC_lines_;
+	}
 
 private:
 	/// @brief read DC data from file
@@ -119,93 +119,97 @@ public:
 		weight_(weight)
 	{}
 
-  DC_TYPE type() const {
-                return type_;
-  }
+	DC_TYPE type() const {
+		return type_;
+	}
 
-  DC_TYPE get_DC_data_type(std::string const & atom1, std::string const & atom2);
+	DC_TYPE get_DC_data_type(std::string const & atom1, std::string const & atom2);
 
-  inline Size res1() const {
-    return res1_;
-  }
+	inline Size res1() const {
+		return res1_;
+	}
 
-  inline Size res2() const {
-    return res2_;
-  }
+	inline Size res2() const {
+		return res2_;
+	}
 
-  std::string const& atom1() const {
-    return atom1_;
-  }
+	std::string const& atom1() const {
+		return atom1_;
+	}
 
-  std::string const& atom2() const {
-    return atom2_;
-  }
+	std::string const& atom2() const {
+		return atom2_;
+	}
 
-  inline Real DCval() const {
-    return DCval_;
-  }
+	inline Real DCval() const {
+		return DCval_;
+	}
 
-  inline Real DCerr() const {
-    return DCerr_;
-  }
+	inline Real DCerr() const {
+		return DCerr_;
+	}
 
-  Real const& DCcomputed() const {
-    return DCval_computed_;
-  }
+	Real const& DCcomputed() const {
+		return DCval_computed_;
+	}
 
-  Real& DCcomputed() {
-    return DCval_computed_;
-  }
+	Real& DCcomputed() {
+		return DCval_computed_;
+	}
 
-  Vector f1ij() const {
-    return f1ij_;
-  }
+	Vector f1ij() const {
+		return f1ij_;
+	}
 
-  Vector f2ij() const {
-    return f2ij_;
-  }
-
-
-  Real weight() const {
-    return weight_;
-  }
-
-  void set_weight(Real w_in) {
-    weight_ = w_in;
-  }
+	Vector f2ij() const {
+		return f2ij_;
+	}
 
 
-//Dcconst()/3/r^3/2
-  inline Real Dconst() const {
-          core::Real Dcnst(0.0);
-          if (type() == DC_TYPE_NH)
-                  Dcnst = 10.735/2;
-                  //Dcnst = 36.5089/3/1.04/1.04/1.04/2;
-          if (type() == DC_TYPE_NC)
-                  Dcnst = 9.179532/3/1.341/1.341/1.341/2;
-          if (type() == DC_TYPE_CH)
-                  Dcnst = 90.55324/3/1.08/1.08/1.08/2;
-          if (type() == DC_TYPE_CC)
-                  Dcnst = 22.76805/3/1.525/1.525/1.525/2;
-          runtime_assert( Dcnst != 0 );
-          return Dcnst;
-  }
+	Real weight() const {
+		return weight_;
+	}
 
-  friend class DipolarCoupling;
+	void set_weight(Real w_in) {
+		weight_ = w_in;
+	}
 
-  void show(std::ostream&) const;
+
+	//Dcconst()/3/r^3/2
+	inline Real Dconst() const {
+		core::Real Dcnst(0.0);
+		if ( type() == DC_TYPE_NH ) {
+			Dcnst = 10.735/2;
+		}
+		//Dcnst = 36.5089/3/1.04/1.04/1.04/2;
+		if ( type() == DC_TYPE_NC ) {
+			Dcnst = 9.179532/3/1.341/1.341/1.341/2;
+		}
+		if ( type() == DC_TYPE_CH ) {
+			Dcnst = 90.55324/3/1.08/1.08/1.08/2;
+		}
+		if ( type() == DC_TYPE_CC ) {
+			Dcnst = 22.76805/3/1.525/1.525/1.525/2;
+		}
+		runtime_assert( Dcnst != 0 );
+		return Dcnst;
+	}
+
+	friend class DipolarCoupling;
+
+	void show(std::ostream&) const;
 
 public :
-  Real DCval_computed_;
-  core::Vector f1ij_;
-  core::Vector f2ij_;
+	Real DCval_computed_;
+	core::Vector f1ij_;
+	core::Vector f2ij_;
 
 private:
-  DC_TYPE type_;
-  Size res1_, res2_;
-  std::string atom1_,atom2_;
-  Real DCval_, DCerr_;
-  Real weight_;
+	DC_TYPE type_;
+	Size res1_, res2_;
+	std::string atom1_,atom2_;
+	Real DCval_, DCerr_;
+	Real weight_;
 
 };
 

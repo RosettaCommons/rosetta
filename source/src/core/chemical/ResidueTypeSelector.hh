@@ -111,7 +111,7 @@ private:
 class Selector_CMDFLAG : public ResidueTypeSelectorSingle {
 public:
 	Selector_CMDFLAG(
-  	std::string const& flags_in,
+		std::string const& flags_in,
 		bool const result
 	);
 
@@ -167,7 +167,7 @@ public:
 	bool
 	operator[]( ResidueType const & rsd ) const {
 		for ( utility::vector1< std::string >::const_iterator it = properties_.begin(),
-						it_end = properties_.end(); it!= it_end; ++it ) {
+				it_end = properties_.end(); it!= it_end; ++it ) {
 			if ( rsd.has_property( *it ) ) return desired_result();
 		}
 		return !desired_result();
@@ -194,7 +194,7 @@ public:
 	bool
 	operator[]( ResidueType const & rsd ) const {
 		for ( utility::vector1< std::string >::const_iterator it = variants_.begin(),
-						it_end = variants_.end(); it!= it_end; ++it ) {
+				it_end = variants_.end(); it!= it_end; ++it ) {
 			if ( rsd.has_variant_type( *it ) ) return desired_result();
 		}
 		return !desired_result();
@@ -229,8 +229,8 @@ public:
 	/// better to create a datum for storing the main-chain position in ResidueType.
 	bool
 	operator[](ResidueType const & rsd) const {
-		if (rsd.is_carbohydrate()) {  // only option for now
-			if (rsd.carbohydrate_info()->mainchain_glycosidic_bond_acceptor() == position_) {
+		if ( rsd.is_carbohydrate() ) {  // only option for now
+			if ( rsd.carbohydrate_info()->mainchain_glycosidic_bond_acceptor() == position_ ) {
 				return desired_result();
 			}
 		}
@@ -258,7 +258,7 @@ public:
 	bool
 	operator[]( ResidueType const & rsd ) const {
 		for ( utility::vector1< std::string >::const_iterator it = variants_.begin(),
-						it_end = variants_.end(); it!= it_end; ++it ) {
+				it_end = variants_.end(); it!= it_end; ++it ) {
 			if ( !rsd.has_variant_type( *it ) ) return !desired_result(); // rsd is missing one of our variants
 		}
 		if ( rsd.properties().get_list_of_variants().size() == variants_.size() ) return desired_result();

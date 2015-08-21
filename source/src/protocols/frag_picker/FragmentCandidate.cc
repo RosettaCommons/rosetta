@@ -67,23 +67,24 @@ namespace protocols {
 namespace frag_picker {
 
 static thread_local basic::Tracer trFragmentCandidate(
-		"protocols.frag_picker.FragmentCandidate");
+	"protocols.frag_picker.FragmentCandidate");
 
 const std::string FragmentCandidate::unknown_pool_name_ = "UNKNOWN_POOL_NAME";
 
 
 utility::vector1<FragmentCandidateOP> read_fragment_candidates(
-		std::string file_name, VallProviderOP chunk_owner, Size max_nfrags_per_pos) {
+	std::string file_name, VallProviderOP chunk_owner, Size max_nfrags_per_pos) {
 
 	utility::vector1<FragmentCandidateOP> candidates;
 
 	utility::io::izstream data(file_name.c_str());
 	trFragmentCandidate.Info << "Reading fragments  from: " << file_name
-			<< std::endl;
+		<< std::endl;
 
-	if (!data)
+	if ( !data ) {
 		utility_exit_with_message(
-				"[ERROR] Unable to open a file with fragments: " + file_name);
+			"[ERROR] Unable to open a file with fragments: " + file_name);
+	}
 
 	std::string pdb_id = "";
 	char chain_id;
@@ -91,71 +92,74 @@ utility::vector1<FragmentCandidateOP> read_fragment_candidates(
 	std::string line;
 	std::string tmp;
 	Size n_frags = 0;
-	while (data) {
+	while ( data ) {
 		getline(data, line);
 		Size found = line.find_first_not_of(" \t");
-		if (found == std::string::npos) { // the line is empty!
-			if (n_res > 0) {
+		if ( found == std::string::npos ) { // the line is empty!
+			if ( n_res > 0 ) {
 				Size vpos = 0;
 				VallChunkOP chunk = chunk_owner->find_chunk(pdb_id, chain_id,
-						res_id);
-				if (chunk != 0) {
-					for (Size j = 1; j <= chunk->size(); ++j) {
-						if (chunk->at(j)->resi() == res_id) {
+					res_id);
+				if ( chunk != 0 ) {
+					for ( Size j = 1; j <= chunk->size(); ++j ) {
+						if ( chunk->at(j)->resi() == res_id ) {
 							vpos = j;
-							if (vpos > 99999)
+							if ( vpos > 99999 ) {
 								trFragmentCandidate.Warning
-										<< "Supprisingly high residue id for a vall postion: "
-										<< vpos << std::endl;
+									<< "Supprisingly high residue id for a vall postion: "
+									<< vpos << std::endl;
+							}
 							break;
 						}
 					}
 				} else {
 					trFragmentCandidate.Warning
-							<< "Can't find the following chunk in a vall: "
-							<< pdb_id << " " << chain_id << " " << res_id
-							<< std::endl;
+						<< "Can't find the following chunk in a vall: "
+						<< pdb_id << " " << chain_id << " " << res_id
+						<< std::endl;
 					n_res = 0;
 					pdb_id = "";
 					continue;
 				}
-				if (vpos == 0) {
+				if ( vpos == 0 ) {
 					trFragmentCandidate.Warning << "Can't find a residue: "
-							<< res_id << " within a chunk" << std::endl;
+						<< res_id << " within a chunk" << std::endl;
 					n_res = 0;
 					pdb_id = "";
 					continue;
 				}
 				FragmentCandidateOP c( new FragmentCandidate(qpos, vpos,
-						chunk, n_res) );
-				if (n_frags < max_nfrags_per_pos) candidates.push_back(c);
+					chunk, n_res) );
+				if ( n_frags < max_nfrags_per_pos ) candidates.push_back(c);
 				++n_frags;
 				n_res = 0;
 				pdb_id = "";
 			}
 			continue;
 		}
-		if ((line.substr(0, 9) == "Position:") || (line.substr(0, 9)
+		if ( (line.substr(0, 9) == "Position:") || (line.substr(0, 9)
 				== "position:") || (line.substr(0, 9) == " Position")
-				|| (line.substr(0, 9) == " position")) {
+				|| (line.substr(0, 9) == " position") ) {
 			std::istringstream line_stream(line);
 			line_stream >> tmp >> qpos;
-			if (n_frags > 0)
+			if ( n_frags > 0 ) {
 				trFragmentCandidate.Info << " ... " << n_frags << " found"
-						<< std::endl;
+					<< std::endl;
+			}
 			trFragmentCandidate.Info << "Reading fragments for a position: "
-					<< qpos << " in a query";
+				<< qpos << " in a query";
 			n_frags = 0;
 			continue;
 		}
 		n_res++;
-		if ((pdb_id.size() == 4) && (res_id > 0) && (res_id < 99999))
+		if ( (pdb_id.size() == 4) && (res_id > 0) && (res_id < 99999) ) {
 			continue;
+		}
 		std::istringstream line_stream(line);
 		line_stream >> pdb_id >> chain_id >> res_id;
-		if (pdb_id.size() != 4) {
+		if ( pdb_id.size() != 4 ) {
 			trFragmentCandidate.Info << "Skiping strange PDB ID: " << pdb_id
-					<< std::endl;
+				<< std::endl;
 			pdb_id = "";
 			continue;
 		}
@@ -174,23 +178,23 @@ void FragmentCandidate::print_fragment(std::ostream& out, scores::FragmentScoreM
 	bool if_ca_in_output = false;
 	//bool score_in_output = false;
 	if ( option[frags::write_ca_coordinates].user() ) {
-		//		std::cerr << "pf 2" << std::endl;
+		//  std::cerr << "pf 2" << std::endl;
 		if_ca_in_output = option[frags::write_ca_coordinates]();
 	}
 	// optionally add the total score as a comment line.
 	// code for reading this score is in src/core/fragment/ConstantLengthFragSet.cc
-	if (option[frags::write_scores].user() && option[frags::write_scores]() && sc && ms) {
+	if ( option[frags::write_scores].user() && option[frags::write_scores]() && sc && ms ) {
 		out << "# score " << F(9,3, ms->total_score(sc)) << std::endl;
 	}
 	for ( Size i = 1; i <= fragmentLength_; ++i ) {
-		//		std::cerr << "pf 4 " << i << std::endl;
+		//  std::cerr << "pf 4 " << i << std::endl;
 		VallResidueOP r = get_residue(i);
 		if ( !r ) continue;
-		//		std::cerr << "pf 5 " << i << std::endl;
+		//  std::cerr << "pf 5 " << i << std::endl;
 		char aa_upper( toupper(r->aa()) );
 		out << " " << get_pdb_id() << " " << get_chain_id() << " " << I(5,r->resi())
-				<<" " << aa_upper << " " << r->ss() << F(9, 3, r->phi())
-				<< F(9, 3, r->psi()) << F(9, 3, r->omega());
+			<<" " << aa_upper << " " << r->ss() << F(9, 3, r->phi())
+			<< F(9, 3, r->psi()) << F(9, 3, r->omega());
 		if ( if_ca_in_output ) {
 			out << F(9, 3,r->x()) << F(9, 3, r->y()) << F(9, 3, r->z());
 		}
@@ -201,13 +205,13 @@ void FragmentCandidate::print_fragment(std::ostream& out, scores::FragmentScoreM
 
 /* To be used in the nearest future...
 ConstantLengthFragSet FragmentCandidate::create_frag_set(utility::vector1<std::pair<
-                        FragmentCandidateOP, scores::FragmentScoreMapOP> >& selected_fragments) {
+FragmentCandidateOP, scores::FragmentScoreMapOP> >& selected_fragments) {
 
-    std::stringstream s;
-    for (Size fi = 1; fi <= out.size(); ++fi) {
-        selected_fragments[i].first->print_fragment(output);
-        s << std::endl;
-    }
+std::stringstream s;
+for (Size fi = 1; fi <= out.size(); ++fi) {
+selected_fragments[i].first->print_fragment(output);
+s << std::endl;
+}
 } */
 
 /// @brief Prints fragment data, the output can be directly loaded to minirosetta
@@ -218,7 +222,7 @@ void FragmentCandidate::print_fragment_seq(std::ostream& out) {
 	out << " " << get_pdb_id() << " " << get_chain_id();
 	VallResidueOP r1 = get_residue(1);
 	out << " " << I(5,r1->resi()) << " ";
-	for (Size i = 1; i <= fragmentLength_; ++i) {
+	for ( Size i = 1; i <= fragmentLength_; ++i ) {
 		VallResidueOP r = get_residue(i);
 		char aa_upper( toupper(r->aa()) );
 		out << aa_upper;
@@ -231,8 +235,8 @@ void FragmentCandidate::output_silent(core::io::silent::SilentFileData & sfd, co
 	using namespace ObjexxFCL;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-				    //if (option[frags::write_ca_coordinates].user())
-						  //    if_ca_in_output = option[frags::write_ca_coordinates]();
+	//if (option[frags::write_ca_coordinates].user())
+	//    if_ca_in_output = option[frags::write_ca_coordinates]();
 
 	pose::Pose pose;
 	// make pose from frag
@@ -240,13 +244,14 @@ void FragmentCandidate::output_silent(core::io::silent::SilentFileData & sfd, co
 	fragdata.push_back(get_frag_data());
 	fragment::make_pose_from_frags( pose, sequence, fragdata, false );
 
-	if (option[frags::score_output_silent]()) {
+	if ( option[frags::score_output_silent]() ) {
 		pose::Pose relax_pose = pose;
 
 		core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 
-		if ( !relax_pose.is_fullatom() )
+		if ( !relax_pose.is_fullatom() ) {
 			core::util::switch_to_residue_type_set( relax_pose, core::chemical::FA_STANDARD );
+		}
 
 
 		relax_pose.energies().clear();
@@ -300,19 +305,19 @@ void FragmentCandidate::output_silent(core::io::silent::SilentFileData & sfd, co
 	bool if_quota = false;
 	if ( sc->get_quota_score() < 999.98 ) if_quota = true;
 
-	for (Size i = 1; i <= sc->size(); i++) {
+	for ( Size i = 1; i <= sc->size(); i++ ) {
 		scores::FragmentScoringMethodOP ms_i = ms->get_component(i);
 		core::pose::setPoseExtraScore( pose, ms_i->get_score_name(), sc->at(i) );
 	}
-  if (if_quota) {
+	if ( if_quota ) {
 		core::pose::setPoseExtraScore( pose, "QUOTA_TOT", sc->get_quota_score());
 		core::pose::setPoseExtraScore( pose, "TOTAL", ms->total_score(sc));
 		core::pose::add_score_line_string( pose, "POOL_NAME", get_pool_name());
-  } else {
+	} else {
 		core::pose::setPoseExtraScore( pose, "TOTAL", ms->total_score(sc));
-  }
-debug_assert ( key() > 0 );
-debug_assert ( key() < 40000000 );
+	}
+	debug_assert ( key() > 0 );
+	debug_assert ( key() < 40000000 );
 	core::pose::add_score_line_string( pose, "FRAG_ID", string_of(key()));
 
 	core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( pose );
@@ -321,7 +326,7 @@ debug_assert ( key() < 40000000 );
 }
 
 bool FragmentCandidate::same_chain( FragmentCandidateCOP fr ) {
-	if (get_pdb_id() != fr->get_pdb_id() || get_chain_id() != fr->get_chain_id()) return false;
+	if ( get_pdb_id() != fr->get_pdb_id() || get_chain_id() != fr->get_chain_id() ) return false;
 	return true;
 }
 

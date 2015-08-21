@@ -26,15 +26,15 @@ namespace kinematic_closure {
 namespace perturbers {
 
 void BondAnglePerturber::perturb_subset(
-		Pose const &, IndexList const & residues, ClosureProblemOP problem) {
+	Pose const &, IndexList const & residues, ClosureProblemOP problem) {
 
 	using numeric::random::gaussian;
 	using numeric::conversions::DEGREES;
 
-	// Sorry for using magic numbers.  Both values were taken from a gaussian fit 
+	// Sorry for using magic numbers.  Both values were taken from a gaussian fit
 	// of the bond angle distribution observed in the Top8000 database.
 
-	BOOST_FOREACH(Size residue, residues) {
+	BOOST_FOREACH ( Size residue, residues ) {
 		Real angle = 111.24096 + 2.27632 * gaussian();
 		problem->perturb_n_ca_c(residue, angle, DEGREES);
 	}

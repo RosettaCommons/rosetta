@@ -48,66 +48,66 @@ namespace datacache {
 /// @brief Wrapper for a map< string, string >.
 class WriteableCacheableMap : public CacheableData
 {
-  typedef std::map< std::string, std::set< WriteableCacheableDataOP > > DataMap;
+	typedef std::map< std::string, std::set< WriteableCacheableDataOP > > DataMap;
 
 public:
-  WriteableCacheableMap() : CacheableData() {}
+	WriteableCacheableMap() : CacheableData() {}
 
-  WriteableCacheableMap( WriteableCacheableMap const& other ): CacheableData(other),
-    map_( other.map_ )
-  {}
+	WriteableCacheableMap( WriteableCacheableMap const& other ): CacheableData(other),
+		map_( other.map_ )
+	{}
 
-  virtual ~WriteableCacheableMap() {}
+	virtual ~WriteableCacheableMap() {}
 
-  virtual CacheableDataOP clone() const {
-    return CacheableDataOP( new WriteableCacheableMap(*this) );
-  }
+	virtual CacheableDataOP clone() const {
+		return CacheableDataOP( new WriteableCacheableMap(*this) );
+	}
 
-  virtual DataMap & map() {
-    return map_;
-  }
+	virtual DataMap & map() {
+		return map_;
+	}
 
-  virtual const DataMap & map() const {
-    return map_;
-  }
+	virtual const DataMap & map() const {
+		return map_;
+	}
 
-  virtual void erase( WriteableCacheableDataOP d ) {
-    DataMap::const_iterator it = map_.find( d->datatype() );
-    if( it != map_.end() ){
-      map_[ d->datatype() ].erase( d );
-    }
-  }
+	virtual void erase( WriteableCacheableDataOP d ) {
+		DataMap::const_iterator it = map_.find( d->datatype() );
+		if ( it != map_.end() ) {
+			map_[ d->datatype() ].erase( d );
+		}
+	}
 
-  virtual DataMap::const_iterator begin() const {
-    return map_.begin();
-  }
+	virtual DataMap::const_iterator begin() const {
+		return map_.begin();
+	}
 
-  virtual DataMap::const_iterator end() const {
-    return map_.end();
-  }
+	virtual DataMap::const_iterator end() const {
+		return map_.end();
+	}
 
-  virtual std::set< WriteableCacheableDataOP >& operator[]( std::string const& str ){
-    return map_[ str ];
-  }
+	virtual std::set< WriteableCacheableDataOP >& operator[]( std::string const& str ){
+		return map_[ str ];
+	}
 
-  virtual DataMap::const_iterator find( std::string const& str ) const {
-    return map_.find( str );
-  }
+	virtual DataMap::const_iterator find( std::string const& str ) const {
+		return map_.find( str );
+	}
 
-  virtual bool has( WriteableCacheableDataOP data ){
-    if( map_.find( data->datatype() ) != map_.end() ){
-      return ( map_[ data->datatype() ].find( data ) != map_[ data->datatype() ].end() );
-    }
-    return false;
-  }
+	virtual bool has( WriteableCacheableDataOP data ){
+		if ( map_.find( data->datatype() ) != map_.end() ) {
+			return ( map_[ data->datatype() ].find( data ) != map_[ data->datatype() ].end() );
+		}
+		return false;
+	}
 
-  virtual void insert( WriteableCacheableDataOP data ){
-    map_[ data->datatype() ].insert( data );
-  }
+	virtual void insert( WriteableCacheableDataOP data ){
+		map_[ data->datatype() ].insert( data );
+	}
 
 private:
 
-  DataMap map_;
+	DataMap map_;
 };
 
 

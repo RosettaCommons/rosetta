@@ -98,7 +98,7 @@ OPT_1GRP_KEY( File, rigid, in )
 void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-  OPT( in::file::s );
+	OPT( in::file::s );
 	OPT( in::file::silent );
 	OPT( in::file::native );
 	OPT( cluster::limit_cluster_size );
@@ -186,7 +186,7 @@ void run() {
 	protocols::jd2::SilentFileJobInputterOP sfd_inputter ( utility::pointer::dynamic_pointer_cast< protocols::jd2::SilentFileJobInputter > ( protocols::jd2::JobDistributor::get_instance()->job_inputter() ) );
 	if ( sfd_inputter ) { //option[ in::file::silent ].user() ) {
 		io::silent::SilentFileData const& sfd( sfd_inputter->silent_file_data() );
-		//		sfd.read_file( option[ in::file::silent ]
+		//  sfd.read_file( option[ in::file::silent ]
 		rmsf_tool->eval_.push_back_CA_xyz_from_silent_file( sfd, store_energies );
 	} else {
 		protocols::jd2::JobDistributor::get_instance()->go( rmsf_tool, jd2::JobOutputterOP( new jd2::NoOutputJobOutputter ) );
@@ -196,28 +196,28 @@ void run() {
 	FArray1D_double input_weights( rmsf_tool->eval_.n_atoms(), 1.0 );
 
 	if ( option[ rigid::in ].user() ) {
-			std::ifstream is( option[ rigid::in ]().name().c_str() );
+		std::ifstream is( option[ rigid::in ]().name().c_str() );
 
-			if (!is.good()) {
-				utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ rigid::in ]().name() + "'" );
-			}
+		if ( !is.good() ) {
+			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ rigid::in ]().name() + "'" );
+		}
 
-			loops::PoseNumberedLoopFileReader reader;
-			reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
-			loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file(is, option[ rigid::in ](), false );
-			loops::Loops rigid = loops::Loops( loops );
+		loops::PoseNumberedLoopFileReader reader;
+		reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
+		loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file(is, option[ rigid::in ](), false );
+		loops::Loops rigid = loops::Loops( loops );
 
-			for ( Size i=1;i<=rmsf_tool->eval_.n_atoms(); ++i ) {
-				if (rigid.is_loop_residue( i ) ) weights( i )=1.0;
-				else weights( i )=0.0;
-			}
+		for ( Size i=1; i<=rmsf_tool->eval_.n_atoms(); ++i ) {
+			if ( rigid.is_loop_residue( i ) ) weights( i )=1.0;
+			else weights( i )=0.0;
+		}
 	}
 	input_weights=weights;
 	rmsf_tool->eval_.set_weights( weights );
 
 	utility::vector1< Real > result;
 	Size icenter = 1;
-	if ( option[ rmsf::out ].user() || option[ coord_cst::out ].user() || option[ rigid::out ].user() || option[ dump_fit ] )	{//output rmsf file
+	if ( option[ rmsf::out ].user() || option[ coord_cst::out ].user() || option[ rigid::out ].user() || option[ dump_fit ] ) { //output rmsf file
 		rmsf_tool->eval_.superimpose();
 		if ( option[ wRMSD ].user() ) {
 			icenter = rmsf_tool->eval_.wRMSD( option[ wRMSD ], option[ tolerance ](), weights );
@@ -232,8 +232,8 @@ void run() {
 		}
 	}
 
-	if ( option[ rigid::out ].user() ) {//create RIGID output
-		//		utility::ozstream os_core( option[ out::rigid ]() );
+	if ( option[ rigid::out ].user() ) { //create RIGID output
+		//  utility::ozstream os_core( option[ out::rigid ]() );
 		Real const cutoff ( option[ rigid::cutoff ] );
 		tr.Info << "make rigid with cutoff " << cutoff << " and write to file... " << option[ rigid::out ]() << std::endl;
 		loops::Loops rigid;
@@ -269,16 +269,16 @@ void run() {
 
 	if ( option[ dist_cst::out ].user() ) {
 		scoring::constraints::ConstraintSet cst_set;
-		rmsf_tool->eval_.create_dist_constraints(	cst_set );
+		rmsf_tool->eval_.create_dist_constraints( cst_set );
 		scoring::constraints::ConstraintIO::write_constraints( option[ dist_cst::out ], cst_set, rmsf_tool->eval_.ref_pose() );
 	}
 
 	if ( option[ coord_cst::out ].user() ) {
 		scoring::constraints::ConstraintSet cst_set;
 		rmsf_tool->eval_.create_xyz_constraints_median(
-					cst_set,
-					rmsf_tool->eval_.ref_pose(),
-					1
+			cst_set,
+			rmsf_tool->eval_.ref_pose(),
+			1
 		);
 		scoring::constraints::ConstraintIO::write_constraints( option[ coord_cst::out ], cst_set, rmsf_tool->eval_.ref_pose() );
 	}
@@ -294,11 +294,11 @@ void run() {
 		protocols::jd2::JobDistributor::get_instance()->restart();
 		protocols::jd2::JobDistributor::get_instance()->go( fit_tool );
 		if ( option[ in::file::native ].user() ) {
-				pose::Pose native_pose;
-				core::import_pose::pose_from_pdb( native_pose,
-					*core::chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID ), option[ in::file::native ]() );
-				fit_tool->apply( native_pose );
-				native_pose.dump_pdb( "fit_native.pdb");
+			pose::Pose native_pose;
+			core::import_pose::pose_from_pdb( native_pose,
+				*core::chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID ), option[ in::file::native ]() );
+			fit_tool->apply( native_pose );
+			native_pose.dump_pdb( "fit_native.pdb");
 		}
 	}
 
@@ -312,14 +312,14 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	register_options();
-	devel::init( argc, argv );
+		register_options();
+		devel::init( argc, argv );
 
-	try{
-		run();
-	} catch ( utility::excn::EXCN_Base& excn ) {
-		excn.show( std::cerr );
-	}
+		try{
+			run();
+		} catch ( utility::excn::EXCN_Base& excn ) {
+			excn.show( std::cerr );
+		}
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

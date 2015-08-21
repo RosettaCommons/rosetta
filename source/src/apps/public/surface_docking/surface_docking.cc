@@ -26,15 +26,15 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-	using namespace protocols::surface_docking;
-	using namespace protocols::jd2;
+		using namespace protocols::surface_docking;
+		using namespace protocols::jd2;
 
-	// initialize option system, random number generators, and all factory-registrators
-	devel::init(argc, argv);
-	//protocols::init(argc, argv);
+		// initialize option system, random number generators, and all factory-registrators
+		devel::init(argc, argv);
+		//protocols::init(argc, argv);
 
-	SurfaceDockingProtocolOP dp( new SurfaceDockingProtocol() );
-	JobDistributor::get_instance()->go(dp);
+		SurfaceDockingProtocolOP dp( new SurfaceDockingProtocol() );
+		JobDistributor::get_instance()->go(dp);
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

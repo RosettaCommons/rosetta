@@ -28,8 +28,8 @@ namespace task_operations {
 /*
 class ConservativeDesignOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
-	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "ConservativeDesignOperation"; }
+virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
+virtual std::string keyname() const { return "ConservativeDesignOperation"; }
 };
 */
 
@@ -37,4 +37,4 @@ public:
 } //namespace toolbox
 } //namespace task_operations
 
-#endif	//INCLUDED_protocols_antibody_design_ConservativeDesignOperationCreator.hh
+#endif //INCLUDED_protocols_antibody_design_ConservativeDesignOperationCreator.hh

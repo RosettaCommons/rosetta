@@ -79,7 +79,7 @@ public: // construct/destruct
 	CircularPermutation( CircularPermutation const & rval );
 
 	/// @brief default destructor
-	virtual	~CircularPermutation();
+	virtual ~CircularPermutation();
 
 
 private: // disallow assignment
@@ -140,10 +140,10 @@ public: //parser
 
 	/// @brief parse xml file
 	void parse_my_tag( TagCOP tag,
-										 basic::datacache::DataMap &,
-										 Filters_map const &,
-										 Movers_map const &,
-										 Pose const & );
+		basic::datacache::DataMap &,
+		Filters_map const &,
+		Movers_map const &,
+		Pose const & );
 
 
 private: // data

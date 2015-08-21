@@ -40,7 +40,7 @@ namespace surface_docking {
 class CentroidRelaxMover : public moves::Mover {
 
 public:
-// Standard methods ////////////////////////////////////////////////////////
+	// Standard methods ////////////////////////////////////////////////////////
 	/// @brief Default constructor
 	CentroidRelaxMover();
 
@@ -109,7 +109,7 @@ private:
 	core::Size inner_loop_cycles_;
 	core::Size outer_loop_cycles_;
 
-	};
+};
 
 
 } // surfaceDockingProtocols

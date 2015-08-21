@@ -63,7 +63,7 @@ void coordinate_constrain_selection(
 	if ( pose.residue(pose.total_residue()).name() != "VRT" ) {
 		pose.append_residue_by_jump(
 			*ResidueFactory::create_residue(
-				pose.residue(1).residue_type_set().name_map( "VRT" )
+			pose.residue(1).residue_type_set().name_map( "VRT" )
 			),
 			static_cast< Size > (pose.total_residue() / 2)
 		);
@@ -84,19 +84,19 @@ void coordinate_constrain_selection(
 	);
 
 	//for ( Size idx = 1; idx <= nres - 1; ++idx ) {
-	//	if ( map[idx] != 0 ) {
-	//		using namespace core::conformation;
-	//		Residue const & rsd( pose.residue(idx) );
-	//		for ( Size ii = 1; ii <= rsd.last_backbone_atom(); ++ii ) {
-	//			using namespace core::scoring::constraints;
-	//			pose.add_constraint(
-	//				new CoordinateConstraint(
-	//					AtomID(ii,idx), AtomID(1,nres), rsd.xyz(ii),
-	//					new HarmonicFunc(0.0,coord_sdev)
-	//				)
-	//			);
-	//		} // ii
-	//	} // if residue is aligned
+	// if ( map[idx] != 0 ) {
+	//  using namespace core::conformation;
+	//  Residue const & rsd( pose.residue(idx) );
+	//  for ( Size ii = 1; ii <= rsd.last_backbone_atom(); ++ii ) {
+	//   using namespace core::scoring::constraints;
+	//   pose.add_constraint(
+	//    new CoordinateConstraint(
+	//     AtomID(ii,idx), AtomID(1,nres), rsd.xyz(ii),
+	//     new HarmonicFunc(0.0,coord_sdev)
+	//    )
+	//   );
+	//  } // ii
+	// } // if residue is aligned
 	//} // nres
 } // coordinate_constraint_selection
 
@@ -121,8 +121,8 @@ generate_bb_coordinate_constraints(
 					core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc(0.0,coord_sdev) );
 					cst_set->add_constraint(
 						ConstraintCOP( ConstraintOP( new CoordinateConstraint(
-							AtomID(ii,idx), AtomID(1,pose.total_residue()), rsd.xyz(ii),
-							fx
+						AtomID(ii,idx), AtomID(1,pose.total_residue()), rsd.xyz(ii),
+						fx
 						) ) )
 					);
 				}
@@ -171,7 +171,7 @@ void add_virtual_residue_to_cterm(
 	if ( pose.residue(pose.total_residue()).name() != "VRT" ) {
 		pose.append_residue_by_jump(
 			*ResidueFactory::create_residue(
-				pose.residue(1).residue_type_set().name_map( "VRT" )
+			pose.residue(1).residue_type_set().name_map( "VRT" )
 			),
 			static_cast< Size > (pose.total_residue() / 2)
 		);
@@ -204,8 +204,8 @@ void derive_sc_sc_restraints(
 						core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( distance, cst_sdev ) );
 						pose.add_constraint(
 							core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new AtomPairConstraint(
-								AtomID(atm_ii,ii), AtomID(atm_jj,jj),
-								fx
+							AtomID(atm_ii,ii), AtomID(atm_jj,jj),
+							fx
 							) ) ) );
 						tr << "adding restraint from "
 							<< "AtomID(" << atm_ii << "," << ii

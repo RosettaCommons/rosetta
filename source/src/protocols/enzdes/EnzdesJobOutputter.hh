@@ -37,11 +37,11 @@ class EnzdesJobOutputter : public protocols::jd2::PDBJobOutputter
 {
 public: //constructor / destructor
 
-  typedef protocols::jd2::PDBJobOutputter parent;
+	typedef protocols::jd2::PDBJobOutputter parent;
 
-  EnzdesJobOutputter();
+	EnzdesJobOutputter();
 
-  ~EnzdesJobOutputter();
+	~EnzdesJobOutputter();
 
 	virtual void final_pose( protocols::jd2::JobOP job, core::pose::Pose const & pose, std::string const & tag );
 
@@ -50,11 +50,11 @@ public: //constructor / destructor
 protected: //Job Outputter interface
 
 	virtual void scorefile(
-			protocols::jd2::JobCOP job,
-			core::pose::Pose const & pose,
-			std::string tag = "",
-			std::string suffix_tag = "",
-			std::string scorefile = ""
+		protocols::jd2::JobCOP job,
+		core::pose::Pose const & pose,
+		std::string tag = "",
+		std::string suffix_tag = "",
+		std::string scorefile = ""
 	);
 
 private: //data

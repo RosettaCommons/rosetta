@@ -52,7 +52,7 @@ public:
 	void tearDown() {
 	}
 
-  //FIX THIS ASAP
+	//FIX THIS ASAP
 
 	// --------------- Test Cases --------------- //
 	void test_BestMatchesCollection_not_full() {
@@ -64,7 +64,7 @@ public:
 		TS_ASSERT( bmc.n_kept_matches() == 2 );
 		TS_ASSERT( bmc.kept_match( 1 )[ 1 ].first()[ 1 ] == 1 );
 		TS_ASSERT( bmc.kept_match( 2 )[ 1 ].first()[ 1 ] == 2 );
-		
+
 	}
 
 	void test_BestMatchesCollection_full() {

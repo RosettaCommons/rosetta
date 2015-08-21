@@ -52,9 +52,9 @@
 
 static thread_local basic::Tracer tr( "MPIHPool_ConvergenceCheck" );
 
-namespace protocols{
-namespace canonical_sampling{
-namespace mc_convergence_checks{
+namespace protocols {
+namespace canonical_sampling {
+namespace mc_convergence_checks {
 
 #ifdef USEMPI
 

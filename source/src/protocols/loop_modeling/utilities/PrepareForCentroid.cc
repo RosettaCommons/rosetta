@@ -39,7 +39,7 @@ bool PrepareForCentroid::do_apply(Pose & pose) {
 	using core::util::switch_to_residue_type_set;
 	using core::chemical::CENTROID;
 
-	if (! pose.is_centroid()) {
+	if ( ! pose.is_centroid() ) {
 		switch_to_residue_type_set(pose, CENTROID);
 	}
 

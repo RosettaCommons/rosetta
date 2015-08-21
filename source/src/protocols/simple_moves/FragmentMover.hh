@@ -43,7 +43,7 @@ namespace simple_moves {
 
 /// @brief abstract base class for FragmentMovers
 class FragmentMover : public moves::MoveMapMover {
-  typedef moves::MoveMapMover Parent;
+	typedef moves::MoveMapMover Parent;
 public:
 	~FragmentMover();
 
@@ -91,16 +91,16 @@ protected:
 		std::string type
 	);
 
- 	virtual void on_new_fragments() {
+	virtual void on_new_fragments() {
 		update_insert_map();
 		//invalid_insert_map();
 	}
 
-// 	void invalid_insert_map() {
-// 		bValidInsertMap_ = false;
-// 		insert_map_.clear();
-// 		insert_size_.clear();
-// 	}
+	//  void invalid_insert_map() {
+	//   bValidInsertMap_ = false;
+	//   insert_map_.clear();
+	//   insert_size_.clear();
+	//  }
 
 	void update_insert_map();
 
@@ -109,7 +109,7 @@ protected:
 	core::fragment::FragSetCOP fragset_;
 	core::kinematics::MoveMapCOP movemap_;
 
-	//	bool bValidInsertMap_;
+	// bool bValidInsertMap_;
 	core::fragment::InsertMap insert_map_;
 	core::fragment::InsertSize insert_size_;
 };  // class FragmentMover
@@ -126,15 +126,15 @@ public:
 
 	/// @brief Constructor with supplied FragSet and MoveMap
 	ClassicFragmentMover(
-			core::fragment::FragSetCOP fragset,
-			core::kinematics::MoveMapCOP movemap
+		core::fragment::FragSetCOP fragset,
+		core::kinematics::MoveMapCOP movemap
 	);
 
 	/// @brief Constructor with supplied ConstantLengthFragSet and MoveMap
 	/// @note Temp workaround for PyRosetta code, until we find a way to handle owning pointers in this case
 	ClassicFragmentMover(
-			core::fragment::ConstantLengthFragSet const & fragset,
-			core::kinematics::MoveMap const & movemap
+		core::fragment::ConstantLengthFragSet const & fragset,
+		core::kinematics::MoveMap const & movemap
 	);
 
 	~ClassicFragmentMover();
@@ -296,7 +296,7 @@ public:
 	~LoggedFragmentMover();
 
 	LoggedFragmentMover(
-  	core::fragment::FragSetCOP fragset,
+		core::fragment::FragSetCOP fragset,
 		core::kinematics::MoveMapCOP movemap
 	);
 

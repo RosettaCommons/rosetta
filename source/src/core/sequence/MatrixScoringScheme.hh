@@ -74,7 +74,7 @@ public:
 			gap_open(),
 			gap_extend(),
 			scoring_matrix()
-		) );
+			) );
 	}
 
 	/// @brief dtor

@@ -46,10 +46,10 @@ public:
 
 
 	NonResidueTypeConstraint(
-	  pose::Pose const & pose,
-	  Size seqpos,
-	  std::string AAname,
-	  Real favor_non_native_bonus
+		pose::Pose const & pose,
+		Size seqpos,
+		std::string AAname,
+		Real favor_non_native_bonus
 	);
 
 	NonResidueTypeConstraint(

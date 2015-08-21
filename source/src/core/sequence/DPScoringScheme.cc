@@ -52,7 +52,7 @@ Real DPScoringScheme::score(
 		Real const & p1_num( prof1->prof_row(pos1)[i] );
 		Real const & p2_num( prof2->prof_row(pos2)[i] );
 		if ( is_good( p1_num ) && is_good( p2_num ) && i == 2 ) {
-		//if ( is_good( p1_num ) && is_good( p2_num ) ) {
+			//if ( is_good( p1_num ) && is_good( p2_num ) ) {
 			//for ( Size jj = 1; jj < i; ++jj ) std::cout << " ";
 			//std::cout << "comparing " << p1_num << " and " << p2_num << std::endl;
 			//score += std::min( std::abs( p1_num * p2_num ), 1.0 );

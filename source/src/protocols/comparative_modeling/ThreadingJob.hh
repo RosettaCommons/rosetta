@@ -76,8 +76,8 @@ private:
 	core::sequence::SequenceAlignmentCOP alignment_; // alignment from input .ali file
 	core::sequence::SequenceAlignmentCOP fasta2template_;
 	core::Size nres_template_;
-		// alignment from template seq (in .ali) to template pdb
-		//    accounts for missing density in the input file
+	// alignment from template seq (in .ali) to template pdb
+	//    accounts for missing density in the input file
 	utility::vector1< core::Size > extra_residues_to_steal_;
 };
 

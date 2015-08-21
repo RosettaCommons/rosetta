@@ -40,7 +40,7 @@ using namespace core::pose::metrics;
 
 static thread_local basic::Tracer tr( "protocols.metrics.ClashCountCalculator" );
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 ClashCountCalculator::ClashCountCalculator( core::Real clash_threshold ) :
@@ -66,12 +66,12 @@ void ClashCountCalculator::lookup( std::string const & key, basic::MetricValueBa
 std::string ClashCountCalculator::print( std::string const & /*key*/) const {
 	/*
 	if ( key == "total_sasa" ) {
-		return utility::to_string( total_sasa_ );
+	return utility::to_string( total_sasa_ );
 	} else if ( key == "atom_sasa" ) {
-		basic::Error() << "id::AtomID_Map< Real > has no output operator, for metric " << key << std::endl;
-		utility_exit();
+	basic::Error() << "id::AtomID_Map< Real > has no output operator, for metric " << key << std::endl;
+	utility_exit();
 	} else if ( key == "residue_sasa" ) {
-		return utility::to_string( residue_sasa_ );
+	return utility::to_string( residue_sasa_ );
 	}
 
 	basic::Error() << "This Calculator cannot compute metric " << key << std::endl;
@@ -88,7 +88,7 @@ void ClashCountCalculator::recompute( Pose const& pose ) {
 	std::string atom_type_set_name;
 	if ( pose.is_fullatom() ) {
 		return;
-		//		atom_type_set_name = chemical::FA_STANDARD;
+		//  atom_type_set_name = chemical::FA_STANDARD;
 	} else {
 		atom_type_set_name = chemical::CENTROID;
 	}
@@ -99,7 +99,7 @@ void ClashCountCalculator::recompute( Pose const& pose ) {
 		for ( Size jpos = ipos+2; jpos <= pose.total_residue(); jpos++ ) {
 			conformation::Residue const & rsd1( pose.residue( ipos ) );
 			conformation::Residue const & rsd2( pose.residue( jpos ) );
-			if (!( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) )) {
+			if ( !( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) ) {
 				for ( Size i = 1, i_end = rsd1.natoms(); i <= i_end; ++i ) {
 					Vector const & i_xyz( rsd1.xyz(i) );
 					Size const i_type( rsd1.atom_type_index(i) );
@@ -113,9 +113,9 @@ void ClashCountCalculator::recompute( Pose const& pose ) {
 								using namespace ObjexxFCL::format;
 								std::string const TAG( ( i <= 4 && j <= 4 ) ? "BB BUMP: " : "   BUMP: ");
 								tr.Info << TAG << I(4,rsd1.seqpos() ) << I(4,rsd2.seqpos() )
-													<<' ' << rsd1.atom_name(i) << ' ' << rsd2.atom_name(j) << ' '
-													<< ( clash * clash ) / bump_dsq * vdw_scale_factor_
-													<< ' ' << i_xyz.distance_squared( rsd2.xyz(j) ) <<  std::endl;
+									<<' ' << rsd1.atom_name(i) << ' ' << rsd2.atom_name(j) << ' '
+									<< ( clash * clash ) / bump_dsq * vdw_scale_factor_
+									<< ' ' << i_xyz.distance_squared( rsd2.xyz(j) ) <<  std::endl;
 
 								++total_clashes_;
 								if ( i <= 5 && j <= 5 ) ++bb_clashes_;

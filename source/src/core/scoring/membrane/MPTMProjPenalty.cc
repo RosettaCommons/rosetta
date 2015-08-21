@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/scoring/membrane/MPTMProjPenalty.cc
+/// @file  core/scoring/membrane/MPTMProjPenalty.cc
 ///
-///	@brief		Membrane Protein TM Proj Penalty
-///	@details	Whole structure energy - Penalty for unreasonable tm-helix length compared to predicted
-///				helix length (from topology) and uses mpframework data
-///				Last Modified: 4/3/14
+/// @brief  Membrane Protein TM Proj Penalty
+/// @details Whole structure energy - Penalty for unreasonable tm-helix length compared to predicted
+///    helix length (from topology) and uses mpframework data
+///    Last Modified: 4/3/14
 ///
-///	@author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_scoring_membrane_MPTMProjPenalty_cc
 #define INCLUDED_core_scoring_membrane_MPTMProjPenalty_cc
@@ -55,14 +55,14 @@
 namespace core {
 namespace scoring {
 namespace membrane {
-	
+
 /// Creator Methods ///////////////////////
 
 /// @brief Return a Fresh Instance of the Energy Method
 methods::EnergyMethodOP
 MPTMProjPenaltyCreator::create_energy_method(
-											   methods::EnergyMethodOptions const &
-											   ) const {
+	methods::EnergyMethodOptions const &
+) const {
 	return methods::EnergyMethodOP( new MPTMProjPenalty );
 }
 
@@ -92,74 +92,74 @@ MPTMProjPenalty::clone() const
 
 void
 MPTMProjPenalty::finalize_total_energy(
-										 pose::Pose & pose,
-										 ScoreFunction const &,
-										 EnergyMap & emap
-										 ) const {
-	
+	pose::Pose & pose,
+	ScoreFunction const &,
+	EnergyMap & emap
+) const {
+
 	using namespace core::conformation::membrane;
 	using namespace core::scoring::membrane;
-	
+
 	// Initialize TM Projection
 	core::Real tm_proj( 0.0 );
-	
+
 
 	// Initialize WHole Pose Data
 	core::Vector center = pose.conformation().membrane_info()->membrane_center();
 	core::Vector normal = pose.conformation().membrane_info()->membrane_normal();
 
 	// Get Topology from the pose
-    SpanningTopologyOP topology = pose.conformation().membrane_info()->spanning_topology();
-	
+	SpanningTopologyOP topology = pose.conformation().membrane_info()->spanning_topology();
+
 	// Read through spanning topology
 	for ( Size j = 1; j <= topology->nspans(); ++j ) {
-		
+
 		// Get the center and normal z position
 		Real const & start_z_pos = pose.conformation().membrane_info()->residue_z_position( topology->span(j)->start() );
 		Real const & end_z_pos = pose.conformation().membrane_info()->residue_z_position( topology->span(j)->end() );
-		
+
 		// Compute seuqnece distance between the two residues
 		core::Real dist = topology->span(j)->end()-topology->span(j)->start()+1;
-		
+
 		// Compute TM Pcoj penalty for the given helix
 		tm_proj += compute_tmproj_penalty( start_z_pos, end_z_pos, dist );
-		
+
 	}
-	
+
 	// Finalize penaltty
 	tm_proj*=50;
 	emap[ MPTMProj ] = tm_proj;
-	
+
 	// FInalize whole structure energy
 	mpdata_.finalize( pose );
 }
-	
+
 /// @brief Compute Penalty for Length of Helix
 core::Real
 MPTMProjPenalty::compute_tmproj_penalty(
-										core::Real start_z_pos,
-										core::Real end_z_pos,
-										core::Real dist
-										) const {
-	
+	core::Real start_z_pos,
+	core::Real end_z_pos,
+	core::Real dist
+) const {
+
 	// Initialize TM projection penalty
 	Real tm_proj( 0.0 );
-	
+
 	// Calculate helix length
 	Real tm_length = std::abs( start_z_pos - end_z_pos );
-	
+
 	// Calculate ratio
 	Real ratio = tm_length / dist;
-	
+
 	// Evaluate penalty
-	if(tm_length<15) { tm_proj++; }
-	if(ratio<1 || ratio > 1.5) { tm_proj++; }
-	
+	if ( tm_length<15 ) { tm_proj++; }
+	if ( ratio<1 || ratio > 1.5 ) { tm_proj++; }
+
 	return tm_proj;
 }
-	
-	
-	
+
+
+
 } // membrane
 } // scoring
 } // core

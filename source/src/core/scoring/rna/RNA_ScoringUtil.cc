@@ -22,19 +22,19 @@ namespace rna {
 // Simple cubic spline.
 void
 get_fade_correction(
-   Real const z,
-	 Real const cutoff_lower,
-	 Real const cutoff_upper,
-	 Real const fade_zone,
-	 Real & fade_value,
-	 Real & fade_deriv )
+	Real const z,
+	Real const cutoff_lower,
+	Real const cutoff_upper,
+	Real const fade_zone,
+	Real & fade_value,
+	Real & fade_deriv )
 {
-debug_assert( fade_zone > 0 );
+	debug_assert( fade_zone > 0 );
 
 	fade_value = 1.0;
 	fade_deriv = 0.0;
 
-	if ( z < cutoff_lower || z > cutoff_upper ){
+	if ( z < cutoff_lower || z > cutoff_upper ) {
 		fade_value = 0.0;
 	} else if ( z < cutoff_lower + fade_zone ) {
 		//Check little strip near lower cutoff.

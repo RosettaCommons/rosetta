@@ -54,9 +54,9 @@ void test( std::string fname ) {
 
 	// Real m,a,d = 0.00001;
 	// while( d < 1.0 ) {
-	// 	test_deriv(d,m,a);
-	// 	std::cout << d << " " << m << " " << a << std::endl;
-	// 	d *= 10;
+	//  test_deriv(d,m,a);
+	//  std::cout << d << " " << m << " " << a << std::endl;
+	//  d *= 10;
 	// }
 	// return;
 
@@ -77,9 +77,9 @@ void test( std::string fname ) {
 	// std::string cmd = basic::options::option[ OptionKeys::holes::dalphaball ]();
 	// redi::pstream proc( cmd + " cavballs" );
 	cout << "NPOINTS" << endl << pb.nballs() << endl << "COORDS" << endl;
-	for( Size i = 1; i <= pb.nballs(); i++ ) {
+	for ( Size i = 1; i <= pb.nballs(); i++ ) {
 		Ball & b(pb.ball(i));
-	// 	// cout << "PoseBalls " << i << " " << pb.index_to_id(i) << " " << b.x() << " " << b.y() << " " << b.z() << " " << b.r() <<  endl;
+		//  // cout << "PoseBalls " << i << " " << pb.index_to_id(i) << " " << b.x() << " " << b.y() << " " << b.z() << " " << b.r() <<  endl;
 		cout << b.x() << " " << b.y() << " " << b.z() << " " << b.r() << " " << endl;
 	}
 	cout << "END" << endl << redi::peof;
@@ -94,33 +94,33 @@ main (int argc, char *argv[])
 	try {
 
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using namespace utility;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace utility;
 
-	// test_gradient();
-	// return 0;
+		// test_gradient();
+		// return 0;
 
-	if( option[ in::file::s ].user() ) {
-  	vector1<file::FileName> files( option[ in::file::s ]() );
-  	for( size_t i = 1; i <= files.size(); ++i ) {
-    	test( files[i] );
-  	}
-	} else if( option[ in::file::l ].user() ) {
-  		vector1<file::FileName> files( option[ in::file::l ]() );
-  		for( size_t i = 1; i <= files.size(); ++i ) {
-			utility::io::izstream list( files[i] );
-			std::string fname;
-			while( list >> fname ) {
-				// std::cerr << "'" << fname << "'" << std::endl;
-    		test( fname );
+		if ( option[ in::file::s ].user() ) {
+			vector1<file::FileName> files( option[ in::file::s ]() );
+			for ( size_t i = 1; i <= files.size(); ++i ) {
+				test( files[i] );
 			}
-  		}
-	}
+		} else if ( option[ in::file::l ].user() ) {
+			vector1<file::FileName> files( option[ in::file::l ]() );
+			for ( size_t i = 1; i <= files.size(); ++i ) {
+				utility::io::izstream list( files[i] );
+				std::string fname;
+				while ( list >> fname ) {
+					// std::cerr << "'" << fname << "'" << std::endl;
+					test( fname );
+				}
+			}
+		}
 
-	return 0;
+		return 0;
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

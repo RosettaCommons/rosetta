@@ -58,7 +58,7 @@ TorsionDOFMover::TorsionDOFMover() :
 	mmt_(/* NULL */),
 	temp_(0),
 	tries_(0)
-{	protocols::moves::Mover::type( "TorsionDOFMover" ); }
+{ protocols::moves::Mover::type( "TorsionDOFMover" ); }
 
 /// @details random angle constructor.  Magic numbers 180 and -179.9999999... maintain the uniform range.  I'm sure there's a better way to get [180, -180) but I can't figure out what it is.
 TorsionDOFMover::TorsionDOFMover(
@@ -78,7 +78,7 @@ TorsionDOFMover::TorsionDOFMover(
 	mmt_(/* NULL */),
 	temp_(0.8),
 	tries_(1)
-{	protocols::moves::Mover::type( "TorsionDOFMover" ); }
+{ protocols::moves::Mover::type( "TorsionDOFMover" ); }
 
 /// @details range of angles constructor - takes DEGREES not RADIANS.
 TorsionDOFMover::TorsionDOFMover(
@@ -100,7 +100,7 @@ TorsionDOFMover::TorsionDOFMover(
 	mmt_(/* NULL */),
 	temp_(0.8),
 	tries_(1)
-{	protocols::moves::Mover::type( "TorsionDOFMover" ); }
+{ protocols::moves::Mover::type( "TorsionDOFMover" ); }
 
 /// @details particular angle constructor - takes DEGREES not RADIANS.
 TorsionDOFMover::TorsionDOFMover( core::id::AtomID const & atom1, core::id::AtomID const & atom2, core::id::AtomID const & atom3, core::id::AtomID const & atom4, core::Angle const angle )
@@ -115,55 +115,56 @@ TorsionDOFMover::TorsionDOFMover( core::id::AtomID const & atom1, core::id::Atom
 	mmt_(/* NULL */),
 	temp_(0.8),
 	tries_(1)
-{	protocols::moves::Mover::type( "TorsionDOFMover" ); }
+{ protocols::moves::Mover::type( "TorsionDOFMover" ); }
 
 TorsionDOFMover::~TorsionDOFMover(){}
 
 void TorsionDOFMover::apply( core::pose::Pose & pose ){
 
-	if (!(pose.atom_tree().torsion_angle_dof_id( atom1_, atom2_, atom3_, atom4_ ).valid())){
+	if ( !(pose.atom_tree().torsion_angle_dof_id( atom1_, atom2_, atom3_, atom4_ ).valid()) ) {
 
 		Warning() << "In TorsionDOFMover, atoms not valid against pose; atoms:"
-							<< " atom1 " << atom1_
-							<< " atom2 " << atom2_
-							<< " atom3 " << atom3_
-							<< " atom4 " << atom4_ << std::endl;
+			<< " atom1 " << atom1_
+			<< " atom2 " << atom2_
+			<< " atom3 " << atom3_
+			<< " atom4 " << atom4_ << std::endl;
 		return;
 	}
 
 	//TR << "atoms:" << " atom1 " << atom1_ << " atom2 " << atom2_ << " atom3 " << atom3_ << " atom4 " << atom4_ << std::endl;
 
 	//if we want this score, fill the pointer!
-	if(check_MMT_ && !mmt_){
+	if ( check_MMT_ && !mmt_ ) {
 		mmt_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
 		mmt_->set_weight(core::scoring::mm_twist, 1.0);
 	}
 
 	//if scoring, pre-score
 	core::Energy pre_score(0), post_score(0);
-	if(check_MMT_) pre_score = score_torsion(pose);
+	if ( check_MMT_ ) pre_score = score_torsion(pose);
 
 	//n_tries loop: continue rotating until a good angle is found
 	core::Size ntries(1);
-	for(; ntries <= tries_; ++ntries){
+	for ( ; ntries <= tries_; ++ntries ) {
 
 		//make a move
 		core::Angle const pre_torsion(pose.atom_tree().torsion_angle(atom1_, atom2_, atom3_, atom4_));
 		pose.conformation().set_torsion_angle( atom1_, atom2_, atom3_, atom4_, pre_torsion+calc_angle() );
 
 		//if scoring, post-score and boltzmann
-		if(check_MMT_){
+		if ( check_MMT_ ) {
 			post_score = score_torsion(pose);
 
 			//if scoring, decide if try again
-			if( boltzmann( pre_score, post_score ) ) break;
+			if ( boltzmann( pre_score, post_score ) ) break;
 			else pose.conformation().set_torsion_angle( atom1_, atom2_, atom3_, atom4_, pre_torsion );
 		}
 
 	}
 
-	if (ntries > tries_)
+	if ( ntries > tries_ ) {
 		Error() << "TorsionDOFMover gave up after " << tries_ << " attempts, no move made" << std::endl;
+	}
 
 	//TR << pre_score << " " << post_score << " " <<  pose.atom_tree().torsion_angle(atom1_, atom2_, atom3_, atom4_) << std::endl;
 
@@ -178,7 +179,7 @@ TorsionDOFMover::get_name() const {
 
 /// @brief calculate angle for perturbation - call to RNG
 core::Angle TorsionDOFMover::calc_angle()
-{	return numeric::conversions::radians(lower_angle_ + ((upper_angle_ - lower_angle_) * numeric::random::rg().uniform())); }
+{ return numeric::conversions::radians(lower_angle_ + ((upper_angle_ - lower_angle_) * numeric::random::rg().uniform())); }
 
 /// @brief calculate mmt score for the moving bond
 ///This is the stupidest possible method - score the whole pose.  It would be much better if this could directly use MMTorsionEnergy to calculate about just the one bond in question, but I can't figure out how to reliably look up exactly the set of residues modified by this torsion (remember that changing this 4-body torsion affects other 4-bodies with a shared central bond).

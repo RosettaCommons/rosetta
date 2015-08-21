@@ -35,8 +35,8 @@ namespace features {
 namespace helixAssembly {
 
 HelicalFragment::HelicalFragment(core::Size start, core::Size end):
-start_(start),
-end_(end)
+	start_(start),
+	end_(end)
 {}
 
 HelicalFragment::~HelicalFragment(){}
@@ -59,7 +59,7 @@ void HelicalFragment::principal_component(numeric::xyzVector<core::Real> princip
 {
 	this->principal_component_ = principal_component;
 }
-	
+
 core::Real HelicalFragment::sasa() const { return sasa_; }
 void HelicalFragment::sasa(core::Real sasa)
 {
@@ -77,7 +77,7 @@ operator <<( std::ostream & os, HelicalFragment const & t )
 	os << "(" << t.start() << ", " << t.end() << ")";
 	return os;
 }
-	
+
 } //namespace helixAssembly
 } //namespace features
 } //namespace protocols

@@ -110,31 +110,31 @@ private:
 
 	core::Real
 	get_aro_axis_score_ANGLE(
-													 Real const cos_theta,
-													 Real & deriv ) const;
+		Real const cos_theta,
+		Real & deriv ) const;
 
 	core::Real
 	get_aro_axis_score_DIST(
-													Real const dist,
-													Real & deriv ) const;
+		Real const dist,
+		Real & deriv ) const;
 
 	void
 	residue_pair_energy_aro_aro(
-															conformation::Residue const & rsd1,
-															conformation::Residue const & rsd2,
-															EnergyMap & emap) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		EnergyMap & emap) const;
 
 
 	void
 	eval_atom_derivative_aro_aro(
-															 conformation::Residue const & rsd1,
-															 conformation::Residue const & rsd2,
-															 EnergyMap const & weights,
-															 Vector & F1,
-															 Vector & F2
-															 ) const;
-virtual
-core::Size version() const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		EnergyMap const & weights,
+		Vector & F1,
+		Vector & F2
+	) const;
+	virtual
+	core::Size version() const;
 
 private:
 

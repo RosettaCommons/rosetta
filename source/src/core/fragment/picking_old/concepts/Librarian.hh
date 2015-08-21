@@ -269,10 +269,10 @@ private: // data
 };
 
 class Librarian_VallFragmentScore_VallFragmentEval_VallFragmentGen_VallLibrary: public
-Librarian<core::fragment::picking_old::vall::scores::VallFragmentScore,
-          core::fragment::picking_old::vall::eval::VallFragmentEval,
-          core::fragment::picking_old::vall::gen::VallFragmentGen,
-          core::fragment::picking_old::vall::VallLibrary> {};
+	Librarian<core::fragment::picking_old::vall::scores::VallFragmentScore,
+	core::fragment::picking_old::vall::eval::VallFragmentEval,
+	core::fragment::picking_old::vall::gen::VallFragmentGen,
+	core::fragment::picking_old::vall::VallLibrary> {};
 
 } // concepts
 } // picking_old

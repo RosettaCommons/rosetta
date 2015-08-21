@@ -38,7 +38,7 @@ using namespace utility;
 
 namespace protocols {
 namespace ncbb {
-		
+
 class SecStructFinder : public moves::Mover
 {
 public:
@@ -58,7 +58,7 @@ public:
 		bool cart = false,
 		bool constrain = false
 	);
-	
+
 	virtual ~SecStructFinder(){}
 	virtual void apply( Pose & pose );
 	virtual std::string get_name() const { return "SecStructFinder"; }
@@ -81,7 +81,7 @@ private:
 	bool cart_;
 	bool constrain_;
 	Real dissimilarity_;
-	
+
 	std::string alpha_to_beta( std::string alpha );
 	std::string expand_pattern_to_fit( std::string pattern, Size length );
 	bool uniq_refers_to_beta ( char uniq );

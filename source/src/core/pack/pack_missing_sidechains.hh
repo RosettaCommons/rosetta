@@ -34,7 +34,7 @@ pack_missing_sidechains(
 
 /// @brief return vector of bools with true for each residue that has >=1 atom in to_repack that is not VIRTUAL, ORBS or LPbb
 bool figure_out_repackable_residues(
-  core::pose::Pose & pose,
+	core::pose::Pose & pose,
 	core::id::AtomID_Mask const& to_repack,
 	utility::vector1_bool& repackable
 );

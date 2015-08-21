@@ -102,7 +102,7 @@ public: // Creation
 		Value const & phi_a,
 		Value const & theta_a,
 		Value const & radius_a
-	 ) :
+	) :
 		phi_( phi_a ),
 		theta_( theta_a ),
 		radius_( radius_a )
@@ -573,9 +573,9 @@ public: // Methods
 	min( sphericalVector const & a, sphericalVector const & b )
 	{
 		return sphericalVector(
-		 ( a.phi_ <= b.phi_ ? a.phi_ : b.phi_ ),
-		 ( a.theta_ <= b.theta_ ? a.theta_ : b.theta_ ),
-		 ( a.radius_ <= b.radius_ ? a.radius_ : b.radius_ )
+			( a.phi_ <= b.phi_ ? a.phi_ : b.phi_ ),
+			( a.theta_ <= b.theta_ ? a.theta_ : b.theta_ ),
+			( a.radius_ <= b.radius_ ? a.radius_ : b.radius_ )
 		);
 	}
 
@@ -587,9 +587,9 @@ public: // Methods
 	max( sphericalVector const & a, sphericalVector const & b )
 	{
 		return sphericalVector(
-		 ( a.phi_ >= b.phi_ ? a.phi_ : b.phi_ ),
-		 ( a.theta_ >= b.theta_ ? a.theta_ : b.theta_ ),
-		 ( a.radius_ >= b.radius_ ? a.radius_ : b.radius_ )
+			( a.phi_ >= b.phi_ ? a.phi_ : b.phi_ ),
+			( a.theta_ >= b.theta_ ? a.theta_ : b.theta_ ),
+			( a.radius_ >= b.radius_ ? a.radius_ : b.radius_ )
 		);
 	}
 

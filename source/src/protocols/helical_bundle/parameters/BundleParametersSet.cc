@@ -37,61 +37,61 @@
 
 
 namespace protocols {
-	namespace helical_bundle {
-		namespace parameters {
+namespace helical_bundle {
+namespace parameters {
 
-			static thread_local basic::Tracer TR( "protocols.helical_bundle.parameters.BundleParametersSet" );
+static thread_local basic::Tracer TR( "protocols.helical_bundle.parameters.BundleParametersSet" );
 
-			/// @brief Constructor.
-			///
-			BundleParametersSet::BundleParametersSet() :
-				bundle_symmetry_(0),
-				bundle_symmetry_copies_(0),
-				n_helices_(0)
-			{
-			}
+/// @brief Constructor.
+///
+BundleParametersSet::BundleParametersSet() :
+	bundle_symmetry_(0),
+	bundle_symmetry_copies_(0),
+	n_helices_(0)
+{
+}
 
-			BundleParametersSet::BundleParametersSet( BundleParametersSet const & src ) :
-				core::conformation::parametric::ParametersSet(src),
-				bundle_symmetry_( src.bundle_symmetry_ ),
-				bundle_symmetry_copies_( src.bundle_symmetry_copies_ ),
-				n_helices_(src.n_helices_)
-			{
-			}
+BundleParametersSet::BundleParametersSet( BundleParametersSet const & src ) :
+	core::conformation::parametric::ParametersSet(src),
+	bundle_symmetry_( src.bundle_symmetry_ ),
+	bundle_symmetry_copies_( src.bundle_symmetry_copies_ ),
+	n_helices_(src.n_helices_)
+{
+}
 
-			BundleParametersSet::~BundleParametersSet() {}
+BundleParametersSet::~BundleParametersSet() {}
 
 
-			/// @brief make a copy of this residue( allocate actual memory for it )
-			///
-			core::conformation::parametric::ParametersSetOP
-			BundleParametersSet::clone() const
-			{
-				return ParametersSetOP( new BundleParametersSet( *this ) );
-			}
+/// @brief make a copy of this residue( allocate actual memory for it )
+///
+core::conformation::parametric::ParametersSetOP
+BundleParametersSet::clone() const
+{
+	return ParametersSetOP( new BundleParametersSet( *this ) );
+}
 
-			/// @brief Get a summary of this ParametersSet object, for output to remark lines of a PDB file.
-			/// @details Default function can be overridden by derived classes.  This version actually outputs
-			/// Crick parameter information.
-			void BundleParametersSet::get_pdb_remark(std::stringstream &remark) const {
-				//                                                                    X Anything from the X onward gets truncated
-				remark << "----------------------------------------"                  << std::endl;
-				remark << "CRICK PARAMETER INFORMATION"                               << std::endl;
-				remark << "Bundle symmetry: " << bundle_symmetry() << (bundle_symmetry()==0 ? " (not symmetric)" : "") << std::endl;
-				remark << "Bundle symmetry copies: " << bundle_symmetry_copies()      << std::endl;
-				remark << "Number of helices per copy: " << n_helices()               << std::endl;
-				if(n_helices() > 0) {
-					for(core::Size i=1, imax=n_helices(); i<=imax; ++i) {
-						BundleParametersCOP cur_helix( utility::pointer::dynamic_pointer_cast<BundleParameters const>( parameters(i) ) );
-						remark << "---HELIX " << i << " PARAMETERS:---" << std::endl;
-						cur_helix->get_pdb_remark(remark);
-					}
-				}
-				remark << "----------------------------------------"                  << std::endl;
-				return;
-			}
+/// @brief Get a summary of this ParametersSet object, for output to remark lines of a PDB file.
+/// @details Default function can be overridden by derived classes.  This version actually outputs
+/// Crick parameter information.
+void BundleParametersSet::get_pdb_remark(std::stringstream &remark) const {
+	//                                                                    X Anything from the X onward gets truncated
+	remark << "----------------------------------------"                  << std::endl;
+	remark << "CRICK PARAMETER INFORMATION"                               << std::endl;
+	remark << "Bundle symmetry: " << bundle_symmetry() << (bundle_symmetry()==0 ? " (not symmetric)" : "") << std::endl;
+	remark << "Bundle symmetry copies: " << bundle_symmetry_copies()      << std::endl;
+	remark << "Number of helices per copy: " << n_helices()               << std::endl;
+	if ( n_helices() > 0 ) {
+		for ( core::Size i=1, imax=n_helices(); i<=imax; ++i ) {
+			BundleParametersCOP cur_helix( utility::pointer::dynamic_pointer_cast<BundleParameters const>( parameters(i) ) );
+			remark << "---HELIX " << i << " PARAMETERS:---" << std::endl;
+			cur_helix->get_pdb_remark(remark);
+		}
+	}
+	remark << "----------------------------------------"                  << std::endl;
+	return;
+}
 
-		} // namespace parameters
-	} // namespace helical_bundle
+} // namespace parameters
+} // namespace helical_bundle
 } // namespace protocols
 

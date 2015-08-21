@@ -50,7 +50,7 @@ struct atoms_and_func_struct
 {
 	Size resA_atom_index_;
 	Size resB_atom_index_;
-	DistanceFuncCOP	func_;
+	DistanceFuncCOP func_;
 };
 
 struct resatom_and_func_struct
@@ -144,21 +144,21 @@ public:
 	/*virtual
 	void
 	setup_for_minimizing(
-		pose::Pose & pose,
-		ScoreFunction const & sfxn,
-		kinematics::MinimizerMapBase const & min_map
+	pose::Pose & pose,
+	ScoreFunction const & sfxn,
+	kinematics::MinimizerMapBase const & min_map
 	) const;*/
 
 	/*virtual
 	void
 	eval_atom_derivative(
-		id::AtomID const & id,
-		pose::Pose const & pose,
-		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & emap,
-		Vector & F1,
-		Vector & F2
+	id::AtomID const & id,
+	pose::Pose const & pose,
+	kinematics::DomainMap const & domain_map,
+	ScoreFunction const & sfxn,
+	EnergyMap const & emap,
+	Vector & F1,
+	Vector & F2
 	) const;*/
 
 	/// @brief Returns true if there are atoms on residue 1 & 2 that have interactions defined between them,
@@ -245,7 +245,7 @@ private:
 	void
 	set_pair_and_func_map();
 
-// DATA
+	// DATA
 
 private:
 
@@ -275,17 +275,17 @@ private:
 /*class CacheableAtomPairFuncMap : public basic::datacache::CacheableData
 {
 public:
-	typedef utility::fixedsizearray1< Size, 2 > ResAtomIndex;
-	typedef utility::OrderedTuple< ResAtomIndex > ResAtomIndexTuple;
-	typedef std::map< ResAtomIndexTuple, std::list< resatom_and_func_struct > > ResAtomIndexFuncMap;
+typedef utility::fixedsizearray1< Size, 2 > ResAtomIndex;
+typedef utility::OrderedTuple< ResAtomIndex > ResAtomIndexTuple;
+typedef std::map< ResAtomIndexTuple, std::list< resatom_and_func_struct > > ResAtomIndexFuncMap;
 
-	CacheableAtomPairFuncMap(){};
-	virtual ~CacheableAtomPairFuncMap(){};
-	virtual basic::datacache::CacheableDataOP clone() const { return new CacheableAtomPairFuncMap( *this ); }
-	ResAtomIndexFuncMap & map() { return map_; }
-	ResAtomIndexFuncMap const & map() const { return map_; }
+CacheableAtomPairFuncMap(){};
+virtual ~CacheableAtomPairFuncMap(){};
+virtual basic::datacache::CacheableDataOP clone() const { return new CacheableAtomPairFuncMap( *this ); }
+ResAtomIndexFuncMap & map() { return map_; }
+ResAtomIndexFuncMap const & map() const { return map_; }
 private:
-	ResAtomIndexFuncMap map_;
+ResAtomIndexFuncMap map_;
 virtual
 core::Size version() const;
 };*/

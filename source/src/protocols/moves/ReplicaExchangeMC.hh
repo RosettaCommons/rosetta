@@ -51,28 +51,28 @@ public:
 
 	using Parent::boltzmann;
 
-    virtual bool
-    boltzmann(
-        Pose & pose,//PoseOP pose,
-        std::string const & move_type = "unk",
-        core::Real const proposal_density_ratio = 1,
-				core::Real const inner_score_delta_over_temperature = 0
-    );
+	virtual bool
+	boltzmann(
+		Pose & pose,//PoseOP pose,
+		std::string const & move_type = "unk",
+		core::Real const proposal_density_ratio = 1,
+		core::Real const inner_score_delta_over_temperature = 0
+	);
 
-    //void set_noutput(core::Size n){noutput_=n;}
+	//void set_noutput(core::Size n){noutput_=n;}
 
 private:
-    int rank_;
-    int size_;
-    core::Size nreplica_frequency_;
-    //core::Size noutput_;
-    core::Size ntrials_;
-    utility::vector1<core::Real> Tlist_;
-    utility::vector1< utility::vector1<std::pair<int, int> > > exchange_schedule;
-    double *last_energylist;
-    int *T_tag;
-    int *T_rev;
-    int T_ndx;
+	int rank_;
+	int size_;
+	core::Size nreplica_frequency_;
+	//core::Size noutput_;
+	core::Size ntrials_;
+	utility::vector1<core::Real> Tlist_;
+	utility::vector1< utility::vector1<std::pair<int, int> > > exchange_schedule;
+	double *last_energylist;
+	int *T_tag;
+	int *T_rev;
+	int T_ndx;
 };
 
 } // moves

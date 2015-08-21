@@ -10,7 +10,7 @@
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
 /// @details
-///	  MultiResolutionProtocol
+///   MultiResolutionProtocol
 ///   if your protocol wants to switch between full-atom and centroid representation derive it from this one
 ///   functionality to copy side-chains for fixed residues from an initial fa-pose to an  post-centroid fa-pose is provided
 ///

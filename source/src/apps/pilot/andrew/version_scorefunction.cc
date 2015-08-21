@@ -220,33 +220,33 @@ int main( int argc, char ** argv )
 {
 	try {
 
-	using namespace utility;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace utility;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	NEW_OPT( sfxnfprnt::output_fingerprint_file, "Fingerprint file destination", "" );
-	//NEW_OPT( sfxnfprnt::input_fingerprint_file,  "Input fingerprint to verify against", "" );
+		NEW_OPT( sfxnfprnt::output_fingerprint_file, "Fingerprint file destination", "" );
+		//NEW_OPT( sfxnfprnt::input_fingerprint_file,  "Input fingerprint to verify against", "" );
 
-	devel::init( argc, argv );
-	if ( ! option[ sfxnfprnt::output_fingerprint_file ].user() ) {
-		utility_exit_with_message( "Must specify either an output fingerprint file" );
-	}
-
-
-	ScoreFunctionFingerprintMoverOP sffm( new ScoreFunctionFingerprintMover );
-	sffm->sfxn( core::scoring::get_score_function() );
-
-	protocols::jd2::JobDistributor::get_instance()->go(sffm);
-
-	std::ofstream output_file( option[ sfxnfprnt::output_fingerprint_file ]().c_str() );
-
-	utility::vector1< std::list< std::string > > lines = sffm->lines_for_jobs();
-	for ( Size ii = 1; ii <= lines.size(); ++ii ) {
-		for ( std::list< std::string >::const_iterator iter = lines[ii].begin(), iter_end = lines[ii].end();
-				iter != iter_end; ++iter ) {
-			output_file << *iter;
+		devel::init( argc, argv );
+		if ( ! option[ sfxnfprnt::output_fingerprint_file ].user() ) {
+			utility_exit_with_message( "Must specify either an output fingerprint file" );
 		}
-	}
+
+
+		ScoreFunctionFingerprintMoverOP sffm( new ScoreFunctionFingerprintMover );
+		sffm->sfxn( core::scoring::get_score_function() );
+
+		protocols::jd2::JobDistributor::get_instance()->go(sffm);
+
+		std::ofstream output_file( option[ sfxnfprnt::output_fingerprint_file ]().c_str() );
+
+		utility::vector1< std::list< std::string > > lines = sffm->lines_for_jobs();
+		for ( Size ii = 1; ii <= lines.size(); ++ii ) {
+			for ( std::list< std::string >::const_iterator iter = lines[ii].begin(), iter_end = lines[ii].end();
+					iter != iter_end; ++iter ) {
+				output_file << *iter;
+			}
+		}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

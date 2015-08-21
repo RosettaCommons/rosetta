@@ -86,7 +86,7 @@ public:
 
 	void apply( Pose & pose ) {
 		protocols::loops::loop_closure::ccd::CCDLoopClosureMover ccd_mover(
-				protocols::loops::Loop( start_, stop_, cut_ ), movemap_ );
+			protocols::loops::Loop( start_, stop_, cut_ ), movemap_ );
 		ccd_mover.max_cycles( 125 );
 		ccd_mover.apply( pose );
 	}
@@ -166,14 +166,14 @@ AutoRBMover::apply( core::pose::Pose & pose ) {
 
 	core::pose::Pose start_pose = pose;
 
-	while( !loops_closed ) {
+	while ( !loops_closed ) {
 		pose = start_pose;
 
 		// setup fragment movers
 		utility::vector1< protocols::simple_moves::FragmentMoverOP > fragmover;
 		for ( utility::vector1< core::fragment::FragSetOP >::const_iterator
-					it = frag_libs_.begin(), it_end = frag_libs_.end();
-					it != it_end; ++it ) {
+				it = frag_libs_.begin(), it_end = frag_libs_.end();
+				it != it_end; ++it ) {
 			protocols::simple_moves::ClassicFragmentMoverOP cfm( new protocols::simple_moves::ClassicFragmentMover( *it, movemap_ ) );
 			cfm->set_check_ss( false );
 			cfm->enable_end_bias_check( false );
@@ -197,37 +197,40 @@ AutoRBMover::apply( core::pose::Pose & pose ) {
 
 		// loop fragment insertion
 		for ( std::vector< protocols::simple_moves::FragmentMoverOP >::const_iterator
-				it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it )
+				it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it ) {
 			random_move.add_mover(*it, rb_chunks_.size());
+		}
 
 		// rigid-body move
-		for (int i=1; i<=(int)rb_chunks_.size(); ++i)
+		for ( int i=1; i<=(int)rb_chunks_.size(); ++i ) {
 			random_move.add_mover(MoverOP( new rigid::RigidBodyPerturbMover( i , 3.0 , 1.0 ) ));
+		}
 
 		//TODO rigid-chunk fragment insertion
 		//if (allowSSFragInserts_) ;
 
 		// sequence shift
-		if (allowSeqShiftMoves_) {
-			for (int i=1; i<=(int)rb_chunks_.size(); ++i)
-			for (int j=1; j<=(int)rb_chunks_[i].nContinuousSegments(); ++j) {
-				protocols::moves::SequenceMoverOP seq_shift_move( new protocols::moves::SequenceMover );
-				seq_shift_move->add_mover( MoverOP( new SequenceShiftMover(rb_chunks_[i][j]) ) );
+		if ( allowSeqShiftMoves_ ) {
+			for ( int i=1; i<=(int)rb_chunks_.size(); ++i ) {
+				for ( int j=1; j<=(int)rb_chunks_[i].nContinuousSegments(); ++j ) {
+					protocols::moves::SequenceMoverOP seq_shift_move( new protocols::moves::SequenceMover );
+					seq_shift_move->add_mover( MoverOP( new SequenceShiftMover(rb_chunks_[i][j]) ) );
 
-				// find adjacent loops
-				for (core::Size k=1; k<=loops_.size(); ++k) {
-					bool adjLoopN = (loops_[k].stop() >= rb_chunks_[i][j].start()-1) && (loops_[k].stop() <= rb_chunks_[i][j].end()+1);
-					bool adjLoopC = (loops_[k].start() >= rb_chunks_[i][j].start()-1) && (loops_[k].start() <= rb_chunks_[i][j].end()+1);
-					if ( adjLoopN || adjLoopC ) {
-						seq_shift_move->add_mover( MoverOP( new CCDMoveWrapper(movemap_, loops_[k].start(), loops_[k].stop(), loops_[k].cut() ) ) );
+					// find adjacent loops
+					for ( core::Size k=1; k<=loops_.size(); ++k ) {
+						bool adjLoopN = (loops_[k].stop() >= rb_chunks_[i][j].start()-1) && (loops_[k].stop() <= rb_chunks_[i][j].end()+1);
+						bool adjLoopC = (loops_[k].start() >= rb_chunks_[i][j].start()-1) && (loops_[k].start() <= rb_chunks_[i][j].end()+1);
+						if ( adjLoopN || adjLoopC ) {
+							seq_shift_move->add_mover( MoverOP( new CCDMoveWrapper(movemap_, loops_[k].start(), loops_[k].stop(), loops_[k].cut() ) ) );
+						}
 					}
+					random_move.add_mover(seq_shift_move, 0.5);
 				}
-				random_move.add_mover(seq_shift_move, 0.5);
 			}
 		}
 
 		scorefxn_->set_weight( core::scoring::chainbreak, 0.0 );
-		for( int n1 = 1; n1 <= (int)nouter_cycles_; ++n1 ) {
+		for ( int n1 = 1; n1 <= (int)nouter_cycles_; ++n1 ) {
 			mc_->recover_low( pose );
 			scorefxn_->set_weight( core::scoring::chainbreak, n1*delta_weight );
 
@@ -236,13 +239,13 @@ AutoRBMover::apply( core::pose::Pose & pose ) {
 			tr.Info << std::endl;
 			mc_->score_function( *scorefxn_ );
 
-			for( int n2 = 1; n2 <= (int)ninner_cycles_; ++n2 ) {
+			for ( int n2 = 1; n2 <= (int)ninner_cycles_; ++n2 ) {
 				// cool
 				temperature *= gamma;
 				mc_->set_temperature( temperature );
 
 				// randomly do something
-				if( numeric::random::uniform()*nouter_cycles_ > n1 ) {
+				if ( numeric::random::uniform()*nouter_cycles_ > n1 ) {
 					random_move.apply(pose);
 				} else {
 					protocols::loops::Loops::const_iterator it( loops_.one_random_loop() );
@@ -261,15 +264,15 @@ AutoRBMover::apply( core::pose::Pose & pose ) {
 		(*scorefxn_)(pose);
 
 		loops_closed = ( pose.energies().total_energies()[ core::scoring::chainbreak ] ) <= loops_.size()*0.5;
-		if (!loops_closed) {
+		if ( !loops_closed ) {
 			tr << "Loops not closed! ("
-			   << pose.energies().total_energies()[ core::scoring::chainbreak ]
-			   << " > " << loops_.size()*0.5 << ")" << std::endl;
+				<< pose.energies().total_energies()[ core::scoring::chainbreak ]
+				<< " > " << loops_.size()*0.5 << ")" << std::endl;
 			grow_flexible( loop_melt_, nres );
 		} else {
 			tr << "Loops closed! ("
-			   << pose.energies().total_energies()[ core::scoring::chainbreak ]
-			   << " <= " << loops_.size()*0.5 << ")" << std::endl;
+				<< pose.energies().total_energies()[ core::scoring::chainbreak ]
+				<< " <= " << loops_.size()*0.5 << ")" << std::endl;
 		}
 	}
 
@@ -284,27 +287,29 @@ AutoRBMover::apply( core::pose::Pose & pose ) {
 //// dont allow jump residues to be flexible
 void
 AutoRBMover::grow_flexible( core::Size maxlen , core::Size nres , core::Size minlen ) {
-	if (maxlen == 0) return;
+	if ( maxlen == 0 ) return;
 
 	tr << "EXTENDING LOOPS:" << std::endl;
 	for ( core::Size i=1; i <= loops_.size(); i++ ) {
 		core::Size extend_start = (core::Size) numeric::random::random_range(minlen, maxlen-minlen);
 		core::Size extend_stop  = (core::Size) numeric::random::random_range(minlen, maxlen-minlen);
 		if ( ( extend_start == 0 ) && ( extend_stop == 0 ) ) {
-			if ( numeric::random::uniform() > 0.5) extend_start = 1;
+			if ( numeric::random::uniform() > 0.5 ) extend_start = 1;
 			else extend_stop  = 1;
 		}
 
 		// dont go past termini
-		if (loops_[i].start()  < 1 + extend_start) extend_start = loops_[i].start()-1;
-		if (loops_[i].stop() + extend_stop > nres ) extend_stop = nres - loops_[i].stop();
+		if ( loops_[i].start()  < 1 + extend_start ) extend_start = loops_[i].start()-1;
+		if ( loops_[i].stop() + extend_stop > nres ) extend_stop = nres - loops_[i].stop();
 
 		// make sure we dont go over a jump point
-		for (core::Size j=1; j<=jumps_.size(); ++j) {
-			if (loops_[i].start()-extend_start <= jumps_[j] && loops_[i].start() > jumps_[j])
+		for ( core::Size j=1; j<=jumps_.size(); ++j ) {
+			if ( loops_[i].start()-extend_start <= jumps_[j] && loops_[i].start() > jumps_[j] ) {
 				extend_start = loops_[i].start() - jumps_[j] + 1;
-			if (loops_[i].stop()+extend_stop >= jumps_[j] && loops_[i].stop() < jumps_[j])
+			}
+			if ( loops_[i].stop()+extend_stop >= jumps_[j] && loops_[i].stop() < jumps_[j] ) {
 				extend_stop = jumps_[j] - loops_[i].stop() +1;
+			}
 		}
 
 		loops_[i].set_start( loops_[i].start()-extend_start );

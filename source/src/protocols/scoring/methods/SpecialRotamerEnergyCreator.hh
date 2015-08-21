@@ -29,7 +29,7 @@ public:
 	/// @brief Instantiate a new SpecialRotamerEnergy
 	virtual
 	core::scoring::methods::EnergyMethodOP
-		create_energy_method(
+	create_energy_method(
 		core::scoring::methods::EnergyMethodOptions const &
 	) const;
 

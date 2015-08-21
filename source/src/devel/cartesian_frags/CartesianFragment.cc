@@ -60,9 +60,9 @@ CartesianFragment::add_atom( SafeAtomID const & id, Stub const & instub, Vector 
 /// Private.
 int
 CartesianFragment::get_seqpos_offset_for_new_component(
-																											 Size const component_root_seqpos,
-																											 Size const component_index
-																											 ) const
+	Size const component_root_seqpos,
+	Size const component_index
+) const
 {
 	return component_root_seqpos - ( component_index - 1 ) * BIG_OFFSET_;
 }
@@ -92,7 +92,7 @@ CartesianFragment::get_seqpos_for_fragment_insertion( int const frag_seqpos, Com
 	assert( component_index >= 1 && component_index <= int(ncomponents_) );
 	int const new_conf_seqpos( component_local_seqpos + offsets[ component_index ] );
 	assert( new_conf_seqpos - get_seqpos_offset_for_new_component( offsets[ component_index ], component_index ) ==
-					frag_seqpos );
+		frag_seqpos );
 	return new_conf_seqpos;
 }
 
@@ -102,10 +102,10 @@ CartesianFragment::get_seqpos_for_fragment_insertion( int const frag_seqpos, Com
 ///
 int
 CartesianFragment::get_seqpos_offset_for_torsion_stub(
-																											TorsionStubID const & id,
-																											Conformation const & conf,
-																											SeqposOffsetMap const & seqpos_offset_map
-																											) const
+	TorsionStubID const & id,
+	Conformation const & conf,
+	SeqposOffsetMap const & seqpos_offset_map
+) const
 {
 	id::BondID const bond( torsion_bond( id, conf ) );
 	if ( seqpos_offset_map[ bond.atom1 ] != 0 ) {
@@ -204,12 +204,12 @@ CartesianFragment::insert( Conformation & conf, ComponentOffsets const & offsets
 ///
 void
 CartesianFragment::add_stub_atoms(
-																	TorsionStubID const & torstub_id,
-																	Stub const & instub,
-																	Conformation const & conf,
-																	SeqposOffsetMap const & seqpos_offset_map,
-																	std::string const & atom_name_prefix
-																	)
+	TorsionStubID const & torstub_id,
+	Stub const & instub,
+	Conformation const & conf,
+	SeqposOffsetMap const & seqpos_offset_map,
+	std::string const & atom_name_prefix
+)
 {
 	int const seqpos_offset( get_seqpos_offset_for_torsion_stub( torstub_id, conf, seqpos_offset_map ) );
 
@@ -252,12 +252,12 @@ CartesianFragment::add_stub_atoms(
 ///
 void
 CartesianFragment::initialize(
-															TorsionStubID const & incoming,
-															SafeAtomID const & root,
-															vector1< TorsionStubID > const & outgoing,
-															vector1< SafeBondID > const & new_bonds_in,
-															conformation::Conformation const & conf
-															)
+	TorsionStubID const & incoming,
+	SafeAtomID const & root,
+	vector1< TorsionStubID > const & outgoing,
+	vector1< SafeBondID > const & new_bonds_in,
+	conformation::Conformation const & conf
+)
 {
 	BIG_OFFSET_ = conf.size() * 10;
 	ncomponents_ = new_bonds_in.size() + 1;
@@ -330,14 +330,14 @@ CartesianFragment::initialize(
 
 Size
 CartesianFragment::add_frag_atom(
-																 id::AtomID const & id,
-																 SeqposOffsetMap & seqpos_offset_map,
-																 kinematics::Stub const & instub,
-																 conformation::Conformation const & conf,
-																 vector1< id::BondID > const & cuts,
-																 vector1< id::BondID > const & new_bonds,
-																 id::AtomID_Mask & added
-																 )
+	id::AtomID const & id,
+	SeqposOffsetMap & seqpos_offset_map,
+	kinematics::Stub const & instub,
+	conformation::Conformation const & conf,
+	vector1< id::BondID > const & cuts,
+	vector1< id::BondID > const & new_bonds,
+	id::AtomID_Mask & added
+)
 {
 	using namespace conformation;
 	using namespace chemical;
@@ -369,7 +369,7 @@ CartesianFragment::add_frag_atom(
 			assert( !skip_bond( id, other_id, cuts ) ); // that would be weird
 			seqpos_offset_map[ other_id ] = get_seqpos_offset_for_new_component( other_id.rsd(), i+1 /* the new component */);
 			links_[ my_atom_index ].push_back( add_frag_atom( other_id, seqpos_offset_map,
-																												instub, conf, cuts, new_bonds, added ) );
+				instub, conf, cuts, new_bonds, added ) );
 		}
 	}
 
@@ -393,11 +393,11 @@ CartesianFragment::add_frag_atom(
 			if ( skip_bond( id, other_id, cuts ) ) continue;
 			seqpos_offset_map[ other_id ] = seqpos_offset_map[ id ];
 			links_[ my_atom_index ].push_back( add_frag_atom( other_id, seqpos_offset_map, instub, conf, cuts,
-																												new_bonds, added ) );
+				new_bonds, added ) );
 		}
 	} // scope
 
-		// now the intra-residue nbrs: ////////////////////////
+	// now the intra-residue nbrs: ////////////////////////
 	{
 		AtomIndices const & nbrs( rsd_type.nbrs( atomno ) );
 		for ( Size i=1; i<= nbrs.size(); ++i ) {
@@ -406,7 +406,7 @@ CartesianFragment::add_frag_atom(
 			if ( skip_bond( id, nbr_id, cuts ) ) continue;
 			seqpos_offset_map[ nbr_id ] = seqpos_offset_map[ id ];
 			links_[ my_atom_index ].push_back( add_frag_atom( nbr_id, seqpos_offset_map, instub, conf, cuts,
-																												new_bonds, added ) );
+				new_bonds, added ) );
 		}
 	} // scope
 
@@ -448,20 +448,20 @@ CartesianFragment::atom_index( SafeAtomID id ) const
 
 void
 CartesianFragment::set_torsion_angle(
-																		 SafeAtomID const & id1,
-																		 SafeAtomID const & id2,
-																		 SafeAtomID const & id3,
-																		 SafeAtomID const & id4,
-																		 Real const setting
-																		 )
+	SafeAtomID const & id1,
+	SafeAtomID const & id2,
+	SafeAtomID const & id3,
+	SafeAtomID const & id4,
+	Real const setting
+)
 {
 	if ( tree_.empty() ) setup_atom_tree();
 	tree_.set_torsion_angle( atom_tree_id( id1 ),
-													 atom_tree_id( id2 ),
-													 atom_tree_id( id3 ),
-													 atom_tree_id( id4 ),
-													 setting
-													 );
+		atom_tree_id( id2 ),
+		atom_tree_id( id3 ),
+		atom_tree_id( id4 ),
+		setting
+	);
 	update_xyz_from_tree(); // silly: refold every time
 }
 
@@ -469,18 +469,18 @@ CartesianFragment::set_torsion_angle(
 
 void
 CartesianFragment::set_bond_angle(
-																	SafeAtomID const & id1,
-																	SafeAtomID const & id2,
-																	SafeAtomID const & id3,
-																	Real const setting
-																	)
+	SafeAtomID const & id1,
+	SafeAtomID const & id2,
+	SafeAtomID const & id3,
+	Real const setting
+)
 {
 	if ( tree_.empty() ) setup_atom_tree();
 	tree_.set_bond_angle( atom_tree_id( id1 ),
-												atom_tree_id( id2 ),
-												atom_tree_id( id3 ),
-												setting
-												);
+		atom_tree_id( id2 ),
+		atom_tree_id( id3 ),
+		setting
+	);
 	update_xyz_from_tree(); // silly: refold every time
 }
 
@@ -497,8 +497,8 @@ CartesianFragment::update_xyz_from_tree()
 	for ( Size i=1; i<= n_outgoing(); ++i ) {
 		std::string const prefix( "outstub"+string_of(i)+"_atom" );
 		Stub const outstub( xyz( SafeAtomID( prefix+string_of(1), 0 ) ),
-												xyz( SafeAtomID( prefix+string_of(2), 0 ) ),
-												xyz( SafeAtomID( prefix+string_of(3), 0 ) ) );
+			xyz( SafeAtomID( prefix+string_of(2), 0 ) ),
+			xyz( SafeAtomID( prefix+string_of(3), 0 ) ) );
 		stub_transforms_[i] = RT( Stub(), outstub );
 	}
 }

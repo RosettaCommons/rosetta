@@ -52,8 +52,8 @@ public:
 	RBSegmentRelax();
 
 	RBSegmentRelax( core::scoring::ScoreFunctionOP scorefxn,
-	                utility::vector1< RBSegment > const &RBSegment_input,
-	                protocols::loops::Loops const &Loops_input );
+		utility::vector1< RBSegment > const &RBSegment_input,
+		protocols::loops::Loops const &Loops_input );
 	~RBSegmentRelax();
 
 	void initialize( utility::vector1< core::fragment::FragSetOP > const &frag_libs , core::Real rnd=0.0);
@@ -72,7 +72,7 @@ public:
 
 	void set_temperature( core::Real start, core::Real final );
 	void set_helicalMoveStepsize( core::Real onAxisTrans, core::Real onAxisRot,
-	                              core::Real offAxisTrans, core::Real offAxisRot );
+		core::Real offAxisTrans, core::Real offAxisRot );
 	void set_genericRBMoveStepsize( core::Real trans, core::Real rot );
 	void set_ncycles( int ncycles );
 
@@ -137,48 +137,48 @@ private:
 ////////////////////////////////////////////////////////////
 
 class SimAnnealMover : public protocols::moves::Mover {
- public:
-	SimAnnealMover() {}
+public:
+SimAnnealMover() {}
 
-	SimAnnealMover(
-		protocols::moves::MoverOP mover_in,
-		protocols::moves::MonteCarloOP mc_in,
-		core::Real init_temp,
-		core::Real final_temp,
-		core::Size cycles
-	) : moves::Mover("SimAnnealMover"),
-			mover_( mover_in ),
-			mc_( mc_in ),
-			init_temp_( init_temp ),
-			final_temp_( final_temp ),
-			cycles_( cycles )
-	{}
+SimAnnealMover(
+protocols::moves::MoverOP mover_in,
+protocols::moves::MonteCarloOP mc_in,
+core::Real init_temp,
+core::Real final_temp,
+core::Size cycles
+) : moves::Mover("SimAnnealMover"),
+mover_( mover_in ),
+mc_( mc_in ),
+init_temp_( init_temp ),
+final_temp_( final_temp ),
+cycles_( cycles )
+{}
 
 
-	virtual void apply( core::pose::Pose & pose )
-	{
-		core::Real gamma = std::pow( ( float( final_temp_/ init_temp_ ) ),
-			float( 1.0f/cycles_ ) );
-		core::Real temperature( init_temp_ );
-		mc_->set_temperature( temperature );
+virtual void apply( core::pose::Pose & pose )
+{
+core::Real gamma = std::pow( ( float( final_temp_/ init_temp_ ) ),
+float( 1.0f/cycles_ ) );
+core::Real temperature( init_temp_ );
+mc_->set_temperature( temperature );
 
-		for ( Size i = 1; i <= cycles_; ++i  ) {
-			mover_->apply( pose );
-			temperature *= gamma;
-			//std::cout << "Temperature " << temperature << std::endl;
-			mc_->set_temperature( temperature );
-		}
-	}
+for ( Size i = 1; i <= cycles_; ++i  ) {
+mover_->apply( pose );
+temperature *= gamma;
+//std::cout << "Temperature " << temperature << std::endl;
+mc_->set_temperature( temperature );
+}
+}
 
 protected:
-	protocols::moves::MoverOP mover_;
-	protocols::moves::MonteCarloOP mc_;
-	//	MoverStatistics stats_;
+protocols::moves::MoverOP mover_;
+protocols::moves::MonteCarloOP mc_;
+// MoverStatistics stats_;
 
 
 private:
-	core::Real init_temp_, final_temp_;
-	core::Size cycles_;
+core::Real init_temp_, final_temp_;
+core::Size cycles_;
 };
 
 */

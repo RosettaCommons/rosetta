@@ -48,53 +48,53 @@ using namespace protocols::moves;
 
 //constructor
 CentroidRelaxMover::CentroidRelaxMover() : Mover()
-	{
-		init();
-	}
+{
+	init();
+}
 
 CentroidRelaxMover::CentroidRelaxMover(CentroidRelaxMover const & src) : Mover(src)
-	{
-		copy_data(*this, src);
-	}
+{
+	copy_data(*this, src);
+}
 
 //destructor
 CentroidRelaxMover::~CentroidRelaxMover() {}
 
 protocols::moves::MoverOP
 CentroidRelaxMover::clone() const
-	{
-		return protocols::moves::MoverOP( new CentroidRelaxMover(*this) );
-	}
+{
+	return protocols::moves::MoverOP( new CentroidRelaxMover(*this) );
+}
 
 protocols::moves::MoverOP
 CentroidRelaxMover::fresh_instance() const
-	{
-		return protocols::moves::MoverOP( new CentroidRelaxMover() );
-	}
+{
+	return protocols::moves::MoverOP( new CentroidRelaxMover() );
+}
 
 void CentroidRelaxMover::show(std::ostream & output) const
-	{
-		using namespace std;
+{
+	using namespace std;
 
-		Mover::show(output);  // name, type, tag
-	}
+	Mover::show(output);  // name, type, tag
+}
 
 
 void CentroidRelaxMover::setup_defaults()
-	{
+{
 	TR << "Setting Defaults" << std::endl;
 	// setting MoveMaps
 	// Setting up default score function -->place to add modified score6 from
 	// rosetta++
 	score_low_res_ =
-			scoring::ScoreFunctionFactory::create_score_function("RS_centroid.wts");//("cen_std.wts");
+		scoring::ScoreFunctionFactory::create_score_function("RS_centroid.wts");//("cen_std.wts");
 	small_min_type_="linmin";
 	shear_min_type_="dfpmin";
-	}
+}
 
 
 void CentroidRelaxMover::setup_movers( const core::pose::Pose & pose)
-	{
+{
 	// Setting Common Parameters for movers
 	core::kinematics::MoveMapOP move_map( new core::kinematics::MoveMap() );
 	move_map->set_bb( true );
@@ -108,8 +108,8 @@ void CentroidRelaxMover::setup_movers( const core::pose::Pose & pose)
 	small_mover->angle_max(30); // max angle deviation.
 	//Default Values copied from  MinMover.cc
 	simple_moves::MinMoverOP small_min_mover( new simple_moves::MinMover(move_map ,
-                      score_low_res_,small_min_type_,tolerance,true,false,false) );
-        //smallsequenceMover_ =
+		score_low_res_,small_min_type_,tolerance,true,false,false) );
+	//smallsequenceMover_ =
 	///     new moves::SequenceMover(smallmover_,smallminmover_);
 	moves::SequenceMoverOP small_sequence_mover( new moves::SequenceMover() );
 	small_sequence_mover->add_mover(small_mover);
@@ -122,7 +122,7 @@ void CentroidRelaxMover::setup_movers( const core::pose::Pose & pose)
 	shear_mover->angle_max(30);
 	//Default Values copied from  MinMover.cc
 	simple_moves::MinMoverOP shear_min_mover( new simple_moves::MinMover(move_map ,score_low_res_,
-	                 shear_min_type_,tolerance,true,false,false) );
+		shear_min_type_,tolerance,true,false,false) );
 
 	moves::SequenceMoverOP shear_sequence_mover( new moves::SequenceMover() );
 	shear_sequence_mover->add_mover(shear_mover);
@@ -139,69 +139,67 @@ void CentroidRelaxMover::setup_movers( const core::pose::Pose & pose)
 	//shearTrialMover
 	TR << "Finalizing shear Movers" << std::endl;
 	shear_trial_min_mover_ = moves::TrialMoverOP( new moves::TrialMover(shear_sequence_mover ,monte_carlo_) );
-	}
+}
 
 void CentroidRelaxMover::apply(pose::Pose & pose)
-	{
+{
 	setup_movers(pose);
 
-	for ( Size outer_loop = 1; outer_loop <= outer_loop_cycles_; ++outer_loop )
-	{
-			TR << "CentroidRelax OuterLoop Execution Number:"<< outer_loop << std::endl;
-			monte_carlo_->recover_low(pose);
-			shear_trial_min_mover_->apply(pose);
-			for ( Size inner_loop = 1; inner_loop <=inner_loop_cycles_; ++inner_loop )
-			{
-				TR << "CentroidRelax InnerLoop Execution Number:"<< inner_loop << std::endl;
-				small_trial_min_mover_->apply(pose);
-			}
+	for ( Size outer_loop = 1; outer_loop <= outer_loop_cycles_; ++outer_loop ) {
+		TR << "CentroidRelax OuterLoop Execution Number:"<< outer_loop << std::endl;
+		monte_carlo_->recover_low(pose);
+		shear_trial_min_mover_->apply(pose);
+		for ( Size inner_loop = 1; inner_loop <=inner_loop_cycles_; ++inner_loop ) {
+			TR << "CentroidRelax InnerLoop Execution Number:"<< inner_loop << std::endl;
+			small_trial_min_mover_->apply(pose);
+		}
 	}
 	monte_carlo_->show_counters();
 	monte_carlo_->recover_low(pose);
-	}
+}
 
 void CentroidRelaxMover::set_nmoves( core::Size const nmoves_in )
-	{
-		nmoves_ = nmoves_in;
-	}
+{
+	nmoves_ = nmoves_in;
+}
 
 void CentroidRelaxMover::set_inner_loop_cycles(const core::Size setting)
-	{
-		inner_loop_cycles_ = setting;
-	}
+{
+	inner_loop_cycles_ = setting;
+}
 
 void CentroidRelaxMover::set_outer_loop_cycles(const core::Size setting)
-	{
-		outer_loop_cycles_ = setting;
-	}
+{
+	outer_loop_cycles_ = setting;
+}
 std::string CentroidRelaxMover::get_name() const
-	{
+{
 	return "CentroidRelaxMover";
-	}
+}
 
 void CentroidRelaxMover::init()
-	{
-		nmoves_=2;
-		kT_=0.5;
-		Mover::type( "CentroidRelaxMover");
-		TR << "CentroidRelaxMover Constructor Called" << std::endl;
-		setup_defaults();
-	}
+{
+	nmoves_=2;
+	kT_=0.5;
+	Mover::type( "CentroidRelaxMover");
+	TR << "CentroidRelaxMover Constructor Called" << std::endl;
+	setup_defaults();
+}
 
 void CentroidRelaxMover::copy_data(CentroidRelaxMover object_to_copy_to, CentroidRelaxMover object_to_copy_from)
-	{
-		object_to_copy_to.nmoves_ = object_to_copy_from.nmoves_;
-		object_to_copy_to.kT_ = object_to_copy_from.kT_;
-		object_to_copy_to.score_low_res_ = object_to_copy_from.score_low_res_;
-		object_to_copy_to.small_min_type_ = object_to_copy_from.small_min_type_;
-		object_to_copy_to.shear_min_type_ = object_to_copy_from.shear_min_type_;
-		object_to_copy_to.monte_carlo_ = object_to_copy_from.monte_carlo_;
-		object_to_copy_to.small_trial_min_mover_ = object_to_copy_from.small_trial_min_mover_;
-		object_to_copy_to.shear_trial_min_mover_ = object_to_copy_from.shear_trial_min_mover_;
-		object_to_copy_to.inner_loop_cycles_ = object_to_copy_from.inner_loop_cycles_;
-		object_to_copy_to.outer_loop_cycles_ = object_to_copy_from.outer_loop_cycles_;
-	}
+{
+	object_to_copy_to.nmoves_ = object_to_copy_from.nmoves_;
+	object_to_copy_to.kT_ = object_to_copy_from.kT_;
+	object_to_copy_to.score_low_res_ = object_to_copy_from.score_low_res_;
+	object_to_copy_to.small_min_type_ = object_to_copy_from.small_min_type_;
+	object_to_copy_to.shear_min_type_ = object_to_copy_from.shear_min_type_;
+	object_to_copy_to.monte_carlo_ = object_to_copy_from.monte_carlo_;
+	object_to_copy_to.small_trial_min_mover_ = object_to_copy_from.small_trial_min_mover_;
+	object_to_copy_to.shear_trial_min_mover_ = object_to_copy_from.shear_trial_min_mover_;
+	object_to_copy_to.inner_loop_cycles_ = object_to_copy_from.inner_loop_cycles_;
+	object_to_copy_to.outer_loop_cycles_ = object_to_copy_from.outer_loop_cycles_;
+}
 
-}	//surfaceDockingProtocol
+} //surfaceDockingProtocol
 
-}	//protocol
+} //protocol

@@ -20,7 +20,7 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-class LigandPropertyScore :	public ConstantScoreBase
+class LigandPropertyScore : public ConstantScoreBase
 {
 public:
 	LigandPropertyScore();

@@ -90,9 +90,9 @@ using namespace core;
 //
 // These angles are specific to the following functions:
 //
-//	CACBSGSG Dihedral = cbsg_dihedral_func_( new CBSG_Dihedral_Func ) = dslf_ss_dih
-//	CBSGSGCB Dihedral = sgsg_dihedral_func_( new SGSG_Dihedral_Func ) = dslf_ca_dih
-//	    CBSGSG Aangle =      cb_angle_func_( new CB_Angle_Func )      = dslf_cs_ang
+// CACBSGSG Dihedral = cbsg_dihedral_func_( new CBSG_Dihedral_Func ) = dslf_ss_dih
+// CBSGSGCB Dihedral = sgsg_dihedral_func_( new SGSG_Dihedral_Func ) = dslf_ca_dih
+//     CBSGSG Aangle =      cb_angle_func_( new CB_Angle_Func )      = dslf_cs_ang
 //
 //  SG--SG Distances are done by the following rosetta++ antique, which uses a fitted histogram
 //
@@ -101,44 +101,44 @@ using namespace core;
 //  -Robert Vernon (March 2010)
 
 
-//	core::Real const ideal_ss_dist_in_disulfide = { 2.02 };
-//	 // mean sulfur-sulfur distance in natives // angstroms
+// core::Real const ideal_ss_dist_in_disulfide = { 2.02 };
+//  // mean sulfur-sulfur distance in natives // angstroms
 //
-//	core::Real const disulf_ss_dist_stdev = { 0.35 };
-//	 // standard dev. of s-s dist in natives // degrees 0.35
+// core::Real const disulf_ss_dist_stdev = { 0.35 };
+//  // standard dev. of s-s dist in natives // degrees 0.35
 //
-//	core::Real const ideal_cs_angle_in_disulfide = { 103.4 };
-//	 // mean cbeta-sulfur-sulfur angle in natives // degrees
+// core::Real const ideal_cs_angle_in_disulfide = { 103.4 };
+//  // mean cbeta-sulfur-sulfur angle in natives // degrees
 //
-//	core::Real const disulf_cs_angle_stdev = { 5.0 };
-//	 // standard dev. of cbeta-s-s angle in natives // degrees  2.6
+// core::Real const disulf_cs_angle_stdev = { 5.0 };
+//  // standard dev. of cbeta-s-s angle in natives // degrees  2.6
 //
-//	core::Real const mean_pos_dihedral_in_disulf = { 87.9 };
-//	 // mean positive cbeta-sulfur-sulfur-cbeta dihedral angle // degrees
+// core::Real const mean_pos_dihedral_in_disulf = { 87.9 };
+//  // mean positive cbeta-sulfur-sulfur-cbeta dihedral angle // degrees
 //
-//	core::Real const disulf_pos_dihedral_stdev = { 21.8 };
-//	 // standard dev. of pos. dihedral angle in natives // degrees
+// core::Real const disulf_pos_dihedral_stdev = { 21.8 };
+//  // standard dev. of pos. dihedral angle in natives // degrees
 //
-//	core::Real const mean_pos_dihedral_gauss1 = { 87.4 };
-//	 // mean positive cbeta-sulfur-sulfur-cbeta dihedral angle // degrees
+// core::Real const mean_pos_dihedral_gauss1 = { 87.4 };
+//  // mean positive cbeta-sulfur-sulfur-cbeta dihedral angle // degrees
 //
-//	core::Real const stdev_pos_dihedral_gauss1 = { 20.9 };
-//	 // standard dev. of pos. dihedral angle in natives // degrees
+// core::Real const stdev_pos_dihedral_gauss1 = { 20.9 };
+//  // standard dev. of pos. dihedral angle in natives // degrees
 //
-//	core::Real const mean_pos_dihedral_gauss2 = { 95.6 };
-//	 // mean positive cbeta-sulfur-sulfur-cbeta dihedral angle // degrees
+// core::Real const mean_pos_dihedral_gauss2 = { 95.6 };
+//  // mean positive cbeta-sulfur-sulfur-cbeta dihedral angle // degrees
 //
-//	core::Real const stdev_pos_dihedral_gauss2 = { 3.0 };
-//	 // standard dev. of pos. dihedral angle in natives // degrees
+// core::Real const stdev_pos_dihedral_gauss2 = { 3.0 };
+//  // standard dev. of pos. dihedral angle in natives // degrees
 //
-//	core::Real const mean_neg_dihedral_in_disulf = { -86.2 };
-//	 // mean negative cbeta-sulfur-sulfur-cbeta dihedral angle // degrees
+// core::Real const mean_neg_dihedral_in_disulf = { -86.2 };
+//  // mean negative cbeta-sulfur-sulfur-cbeta dihedral angle // degrees
 //
-//	core::Real const disulf_neg_dihedral_stdev = { 11.1 };
-//	 // standard dev. of neg. dihedral angle in natives // degrees
+// core::Real const disulf_neg_dihedral_stdev = { 11.1 };
+//  // standard dev. of neg. dihedral angle in natives // degrees
 //
-//	core::Real const ideal_ca_dihedral_in_disulf = { 74.0 };
-//	 // ideal calpha-cbeta-sulfur-sulfur dihedral (abs val) // degrees
+// core::Real const ideal_ca_dihedral_in_disulf = { 74.0 };
+//  // ideal calpha-cbeta-sulfur-sulfur dihedral (abs val) // degrees
 
 
 FullatomDisulfidePotential::FullatomDisulfidePotential() :
@@ -163,36 +163,36 @@ void
 FullatomDisulfidePotential::print_score_functions() const
 {
 	using namespace numeric::constants::d;
-	for (Real angle = -360.0; angle <= 360.0; angle = angle + 0.1) {
+	for ( Real angle = -360.0; angle <= 360.0; angle = angle + 0.1 ) {
 
 		std::cout << "ANGLE: " << angle
-							<< " CBSGSG " << cb_angle_func_->func(angle*degrees_to_radians)
-							<< " CBSGSGCB " << sgsg_dihedral_func_->func(angle*degrees_to_radians)
-							<< " CACBSGSG " << cbsg_dihedral_func_->func(angle*degrees_to_radians)
-							<< std::endl;
+			<< " CBSGSG " << cb_angle_func_->func(angle*degrees_to_radians)
+			<< " CBSGSGCB " << sgsg_dihedral_func_->func(angle*degrees_to_radians)
+			<< " CACBSGSG " << cbsg_dihedral_func_->func(angle*degrees_to_radians)
+			<< std::endl;
 	}
 
-	for (Real distance = 0.0; distance <= 10; distance = distance + 0.01) {
+	for ( Real distance = 0.0; distance <= 10; distance = distance + 0.01 ) {
 		std::cout << "DISTANCE: " << distance << " SCORE: " << sg_dist_func_->func(distance) << std::endl;
 	}
 }
 
 /**
- * @brief Calculated scores for a disulfide bond between two residues
- *
- * @param[in] res1 The lower residue of the disulfide
- * @param[in] res2 The upper residue of the disulfide. Assumed to be bonded to res1
- * @param[out] distance_score_this_disulfide A score based on S-S distance
- * @param[out] csangles_score_this_disulfide A score based on the Cb-S angles
- * @param[out] dihedral_score_this_disulfide A score based on the S-S dihedral
- * @param[out] ca_dihedral_sc_this_disulf A score based on the Cb-S dihedrals
- * @param[out] truefalse_fa_disulf True if these residues should be disulfide bonded
- *
- * @details Scores are interpolated from the histograms created by the
- *  farlx_*_initializer methods.
- *  The distance score has such a histogram as its core with two linear
- *  functions at either side so that the score increases to infinity
- */
+* @brief Calculated scores for a disulfide bond between two residues
+*
+* @param[in] res1 The lower residue of the disulfide
+* @param[in] res2 The upper residue of the disulfide. Assumed to be bonded to res1
+* @param[out] distance_score_this_disulfide A score based on S-S distance
+* @param[out] csangles_score_this_disulfide A score based on the Cb-S angles
+* @param[out] dihedral_score_this_disulfide A score based on the S-S dihedral
+* @param[out] ca_dihedral_sc_this_disulf A score based on the Cb-S dihedrals
+* @param[out] truefalse_fa_disulf True if these residues should be disulfide bonded
+*
+* @details Scores are interpolated from the histograms created by the
+*  farlx_*_initializer methods.
+*  The distance score has such a histogram as its core with two linear
+*  functions at either side so that the score increases to infinity
+*/
 void
 FullatomDisulfidePotential::score_this_disulfide_old(
 	conformation::Residue const & res1,
@@ -204,7 +204,7 @@ FullatomDisulfidePotential::score_this_disulfide_old(
 	Energy & dihedral_score_this_disulfide,
 	Energy & ca_dihedral_sc_this_disulf,
 	bool & truefalse_fa_disulf
-	) const
+) const
 {
 	// Allocate memory for disulf params. Values are set by get_disulfide_params
 	// dist between cys sulfurs
@@ -262,7 +262,7 @@ FullatomDisulfidePotential::score_this_disulfide_old(
 	//std::cout << "DUMP_SS_DIH " << dihed << " " << sgsg_dihedral_func_->func(dihed*degrees_to_radians) << std::endl;
 
 	//std::cout << "DUMP_ANG " << csang_1 << " " << cb_angle_func_->func(csang_1*degrees_to_radians) << std::endl;
-		//std::cout << "DUMP_ANG " << csang_2 << " " << cb_angle_func_->func(csang_2*degrees_to_radians) << std::endl;
+	//std::cout << "DUMP_ANG " << csang_2 << " " << cb_angle_func_->func(csang_2*degrees_to_radians) << std::endl;
 
 	//std::cout << "DUMP_DIST " << ssdist << " " << sg_dist_func_->func(ssdist) << std::endl;
 
@@ -298,7 +298,7 @@ FullatomDisulfidePotential::get_disulfide_derivatives_old(
 			AtomID( res1_atom_indices.c_beta_index(), res1.seqpos() ),
 			AtomID( res1_atom_indices.disulf_atom_index(), res1.seqpos() ),
 			AtomID( res2_atom_indices.disulf_atom_index(), res2.seqpos() ),
-				cbsg_dihedral_func_, dslf_ca_dih );
+			cbsg_dihedral_func_, dslf_ca_dih );
 		dihedral_ang_cst.fill_f1_f2( AtomID( at1, res1.seqpos() ), respairxyz, f1, f2, weights );
 		F1 += 0.5 * f1;
 		F2 += 0.5 * f2;
@@ -310,7 +310,7 @@ FullatomDisulfidePotential::get_disulfide_derivatives_old(
 			AtomID( at1, res1.seqpos() ),
 			AtomID( res1_atom_indices.disulf_atom_index(), res1.seqpos() ),
 			AtomID( res2_atom_indices.disulf_atom_index(), res2.seqpos() ),
-				cb_angle_func_, dslf_cs_ang );
+			cb_angle_func_, dslf_cs_ang );
 		ang_cst.fill_f1_f2( AtomID( at1, res1.seqpos() ), respairxyz, f1, f2, weights );
 		F1 += 0.5 * f1;
 		F2 += 0.5 * f2;
@@ -321,7 +321,7 @@ FullatomDisulfidePotential::get_disulfide_derivatives_old(
 			AtomID( at1, res1.seqpos() ),
 			AtomID( res1_atom_indices.disulf_atom_index(), res1.seqpos() ),
 			AtomID( res2_atom_indices.disulf_atom_index(), res2.seqpos() ),
-				cbsg_dihedral_func_, dslf_ca_dih );
+			cbsg_dihedral_func_, dslf_ca_dih );
 		dihedral_ang_cst.fill_f1_f2( AtomID( at1, res1.seqpos() ), respairxyz, f1, f2, weights );
 		F1 += 0.5 * f1;
 		F2 += 0.5 * f2;
@@ -332,7 +332,7 @@ FullatomDisulfidePotential::get_disulfide_derivatives_old(
 			AtomID( res1_atom_indices.disulf_atom_index(), res1.seqpos() ),
 			AtomID( res2_atom_indices.disulf_atom_index(), res2.seqpos() ),
 			AtomID( res2_atom_indices.c_beta_index(), res2.seqpos() ),
-				sgsg_dihedral_func_, dslf_ss_dih );
+			sgsg_dihedral_func_, dslf_ss_dih );
 		ss_dihedral_ang_cst.fill_f1_f2( AtomID( at1, res1.seqpos() ), respairxyz, f1, f2, weights );
 		F1 += f1;
 		F2 += f2;
@@ -349,7 +349,7 @@ FullatomDisulfidePotential::get_disulfide_derivatives_old(
 			AtomID( res1_atom_indices.c_beta_index(), res1.seqpos() ),
 			AtomID( at1, res1.seqpos() ),
 			AtomID( res2_atom_indices.disulf_atom_index(), res2.seqpos() ),
-				cb_angle_func_, dslf_cs_ang );
+			cb_angle_func_, dslf_cs_ang );
 		ang_cst1.fill_f1_f2( AtomID( at1, res1.seqpos() ), respairxyz, f1, f2, weights );
 		F1 += 0.5 * f1;
 		F2 += 0.5 * f2;
@@ -359,7 +359,7 @@ FullatomDisulfidePotential::get_disulfide_derivatives_old(
 			AtomID( at1, res1.seqpos() ),
 			AtomID( res2_atom_indices.disulf_atom_index(), res2.seqpos() ),
 			AtomID( res2_atom_indices.c_beta_index(), res2.seqpos() ),
-				cb_angle_func_, dslf_cs_ang );
+			cb_angle_func_, dslf_cs_ang );
 		ang_cst2.fill_f1_f2( AtomID( at1, res1.seqpos() ), respairxyz, f1, f2, weights );
 		F1 += 0.5 * f1;
 		F2 += 0.5 * f2;
@@ -370,7 +370,7 @@ FullatomDisulfidePotential::get_disulfide_derivatives_old(
 			AtomID( res1_atom_indices.c_beta_index(), res1.seqpos() ),
 			AtomID( at1, res1.seqpos() ),
 			AtomID( res2_atom_indices.disulf_atom_index(), res2.seqpos() ),
-				cbsg_dihedral_func_, dslf_ca_dih );
+			cbsg_dihedral_func_, dslf_ca_dih );
 		dihedral_ang_cst1.fill_f1_f2( AtomID( at1, res1.seqpos() ), respairxyz, f1, f2, weights );
 		F1 += 0.5 * f1;
 		F2 += 0.5 * f2;
@@ -381,7 +381,7 @@ FullatomDisulfidePotential::get_disulfide_derivatives_old(
 			AtomID( res2_atom_indices.c_beta_index(), res2.seqpos() ),
 			AtomID( res2_atom_indices.disulf_atom_index(), res2.seqpos() ),
 			AtomID( at1, res1.seqpos() ),
-				cbsg_dihedral_func_, dslf_ca_dih );
+			cbsg_dihedral_func_, dslf_ca_dih );
 		dihedral_ang_cst2.fill_f1_f2( AtomID( at1, res1.seqpos() ), respairxyz, f1, f2, weights );
 		F1 += 0.5 * f1;
 		F2 += 0.5 * f2;
@@ -392,7 +392,7 @@ FullatomDisulfidePotential::get_disulfide_derivatives_old(
 			AtomID( at1, res1.seqpos() ),
 			AtomID( res2_atom_indices.disulf_atom_index(), res2.seqpos() ),
 			AtomID( res2_atom_indices.c_beta_index(), res2.seqpos() ),
-				sgsg_dihedral_func_, dslf_ss_dih );
+			sgsg_dihedral_func_, dslf_ss_dih );
 		ss_dihedral_ang_cst.fill_f1_f2( AtomID( at1, res1.seqpos() ), respairxyz, f1, f2, weights );
 		F1 += f1;
 		F2 += f2;
@@ -421,7 +421,7 @@ FullatomDisulfidePotential::score_this_disulfide(
 
 	{ // distance
 		// z <- (x-location)/scale;
-	  // score <- x^2/2 - Log[Erfc[-((s x)/Sqrt[2])]] + (1/2) (Log[2] + Log[\[Pi]]) + Log[s]
+		// score <- x^2/2 - Log[Erfc[-((s x)/Sqrt[2])]] + (1/2) (Log[2] + Log[\[Pi]]) + Log[s]
 		core::Real z = (ssdist-params_.d_location)/params_.d_scale;
 		core::Real score_d = z*z/2 - log( errfc( -params_.d_shape*z / sqrt(2.) ) + mest_ );
 		score += wt_len_*score_d;
@@ -483,9 +483,9 @@ FullatomDisulfidePotential::get_disulfide_derivatives(
 	Vector f1,f2;
 	Real d, theta, phi;
 
- 	{ // distance
+	{ // distance
 		// z <- (x-location)/scale;
-	  // score <- x^2/2 - Log[Erfc[-((s x)/Sqrt[2])]] + (1/2) (Log[2] + Log[\[Pi]]) + Log[s]
+		// score <- x^2/2 - Log[Erfc[-((s x)/Sqrt[2])]] + (1/2) (Log[2] + Log[\[Pi]]) + Log[s]
 		core::Real z = (ssdist-params_.d_location)/params_.d_scale;
 		core::Real dscore_d = z/params_.d_scale -
 			( exp( -0.5*z*z*params_.d_shape*params_.d_shape ) * sqrt(2./pi) * params_.d_shape ) / (params_.d_scale * errfc(-params_.d_shape*z / sqrt(2.) ) + 1.e-12 );
@@ -638,7 +638,7 @@ FullatomDisulfidePotential::get_disulfide_params(
 	Real & cs_bond_angle_2,
 	Real & disulf_dihedral_angle, // dihedral (torsion) angle, cbeta-s-s-cbeta
 	Real & disulf_ca_dihedral_angle_1,
-	 // dihedral (torsion) angle, calpha1-cbeta1-s1-s2
+	// dihedral (torsion) angle, calpha1-cbeta1-s1-s2
 	Real & disulf_ca_dihedral_angle_2 // dihedral (torsion) angle, calpha2-cbeta2-s2-s1
 ) const
 {
@@ -695,11 +695,11 @@ CBSG_Dihedral_Func::dfunc( Real const ang ) const {
 // negCBSGSGCB MEAN: -1.517302   SDEV: 0.203992
 
 SGSG_Dihedral_Func::SGSG_Dihedral_Func() :
-csf_cbang1a_( 1.641426, 0.25, -2.3, 0.0),
-csf_cbang2a_( 1.641426, 0.9, -20, 0.0),
-csf_cbang1b_(-1.517302, 0.25, -2.3, 0.0),
-csf_cbang2b_(-1.517302, 0.9, -20, 0.0)
- {}
+	csf_cbang1a_( 1.641426, 0.25, -2.3, 0.0),
+	csf_cbang2a_( 1.641426, 0.9, -20, 0.0),
+	csf_cbang1b_(-1.517302, 0.25, -2.3, 0.0),
+	csf_cbang2b_(-1.517302, 0.9, -20, 0.0)
+{}
 
 SGSG_Dihedral_Func::~SGSG_Dihedral_Func() {}
 
@@ -804,7 +804,7 @@ SG_Dist_Func::fa_ssdist_scores()
 {
 	using namespace numeric::interpolation;
 	static HistogramCOP<Real,Real>::Type scores(0); // NEEDS FIXING: static in multi-threading?
-	if(scores == 0) {
+	if ( scores == 0 ) {
 		utility::io::izstream scores_stream;
 		basic::database::open( scores_stream, "scoring/score_functions/disulfides/fa_SS_distance_score");
 		scores = HistogramCOP<Real,Real>::Type( HistogramOP<Real, Real>::Type( new Histogram<Real,Real>( scores_stream() ) ) );

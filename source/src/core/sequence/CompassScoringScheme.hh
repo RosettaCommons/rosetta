@@ -41,7 +41,7 @@ public:
 		return ScoringSchemeOP( new CompassScoringScheme(
 			gap_open(),
 			gap_extend()
-		) );
+			) );
 	}
 
 	/// @brief dtor

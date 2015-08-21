@@ -44,10 +44,10 @@ namespace jumping {
 
 class DisulfPairing {
 public:
-  core::Size pos1;
-  core::Size pos2;
-  core::Size seq_sep;
-  core::Size ss_type;
+	core::Size pos1;
+	core::Size pos2;
+	core::Size seq_sep;
+	core::Size ss_type;
 
 	DisulfPairing() :
 		pos1( 0 ),
@@ -81,11 +81,11 @@ public:
 		);
 	};
 
-	//	bool operator < ( DisulfPairing const& p ) const {
-	//		return p.pos1 != pos1  ?  pos1 < p.pos1  :
-	//			 (  p.pos2 != pos2  ? pos2 < p.pos2 :
-	//				 ( p.seq_sep != seq_sep ? seq_sep < p.seq_sep : ss_type < p.ss_type ) );
-	//	};
+	// bool operator < ( DisulfPairing const& p ) const {
+	//  return p.pos1 != pos1  ?  pos1 < p.pos1  :
+	//    (  p.pos2 != pos2  ? pos2 < p.pos2 :
+	//     ( p.seq_sep != seq_sep ? seq_sep < p.seq_sep : ss_type < p.ss_type ) );
+	// };
 };
 
 /// @brief list of pairings

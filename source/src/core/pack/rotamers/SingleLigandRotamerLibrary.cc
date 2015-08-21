@@ -65,7 +65,7 @@ static thread_local basic::Tracer TR( "core.pack.rotamers.SingleLigandRotamerLib
 void dump_library(std::string filename, RotamerVector const & rotamers)
 {
 	std::ofstream out( filename.c_str() );
-	for(Size i = 1; i <= rotamers.size(); ++i) {
+	for ( Size i = 1; i <= rotamers.size(); ++i ) {
 		out << "MODEL \n";
 		Size atomno = 1;
 		core::io::pdb::dump_pdb_residue(*rotamers[i], atomno, out);
@@ -79,10 +79,10 @@ SingleLigandRotamerLibrary::SingleLigandRotamerLibrary():
 	SingleResidueRotamerLibrary(),
 	atom_positions_(),
 	ref_energy_(0.0)
-//	rigid_frags_(),
-//	automorphs_(),
-//	frag_automorphs_(),
-//	total_superpos_(0)
+	// rigid_frags_(),
+	// automorphs_(),
+	// frag_automorphs_(),
+	// total_superpos_(0)
 {}
 
 SingleLigandRotamerLibrary::~SingleLigandRotamerLibrary()
@@ -110,9 +110,9 @@ SingleLigandRotamerLibrary::init_from_file(
 	// Any atoms in the residue that don't have coordinate entries will be
 	// left with their default values, leading to really weird bugs.
 	// We can do a limited building from ideal coordinates, for hydrogens and virtual atoms.
-	while( std::getline( (std::istream&)data, line) ) {
-		if( utility::startswith(line, "ATOM  ") || utility::startswith(line, "HETATM") ) {
-			if( line.length() < 54 ) {
+	while ( std::getline( (std::istream&)data, line) ) {
+		if ( utility::startswith(line, "ATOM  ") || utility::startswith(line, "HETATM") ) {
+			if ( line.length() < 54 ) {
 				TR << "ATOM/HETATM line too short in PDB-format rotamer file!" << std::endl;
 				continue; // to next line
 			}
@@ -123,28 +123,28 @@ SingleLigandRotamerLibrary::init_from_file(
 			z = std::atof( line.substr(46,8).c_str() );
 			//std::cout << x << " " << y << " " << z << "\n";
 
-			if( name_map.count( atom_name ) != 0 ) {
+			if ( name_map.count( atom_name ) != 0 ) {
 				//TODO: cache so we only print this once.
 				TR.Warning << "ATOM name " << atom_name << " found more than once in rotamer - using later position. " << std::endl;
 			}
 			name_map[ atom_name ] = core::Vector( x, y, z );
 
-		} else if( utility::startswith(line, "REF_EN") ) {
-			if( found_ref_energy ) {
+		} else if ( utility::startswith(line, "REF_EN") ) {
+			if ( found_ref_energy ) {
 				TR.Error << "Reference energy specified more than once in PDB-format rotamer file!" << std::endl;
 			}
 			found_ref_energy = true;
 			ref_energy_ = std::atof( line.substr(6).c_str() );
 			TR << "Reference energy for " << restype.name() << " is " << ref_energy_ << std::endl;
 		} else { // e.g. TER lines
-			if( name_map.size() ) {
+			if ( name_map.size() ) {
 				atom_positions_.push_back( name_map );
 			}
 			name_map.clear();
 		}
 	}
 	// Catch the last entry if we don't end with a TER
-	if( name_map.size() ) {
+	if ( name_map.size() ) {
 		atom_positions_.push_back( name_map );
 	}
 
@@ -211,47 +211,47 @@ SingleLigandRotamerLibrary::best_rotamer_energy(
 
 /// Helper function for superposition
 //void SingleLigandRotamerLibrary::superimpose(
-//	conformation::Residue const & existing,
-//	conformation::Residue & conformer,
-//	Fragment const & frag,
-//	Automorphism const & morph
+// conformation::Residue const & existing,
+// conformation::Residue & conformer,
+// Fragment const & frag,
+// Automorphism const & morph
 //) const
 //{
-//	//utility_exit_with_message("not implemented yet");
-//	using ObjexxFCL::FArray1D;
-//	using ObjexxFCL::FArray2D;
-//	using namespace numeric;
+// //utility_exit_with_message("not implemented yet");
+// using ObjexxFCL::FArray1D;
+// using ObjexxFCL::FArray2D;
+// using namespace numeric;
 //
-//	Size const natoms = frag.size();
-//	FArray2D< Real > xx( 3, natoms, 0. );
-//	FArray2D< Real > yy( 3, natoms, 0. );
-//	FArray1D< Real > ww( natoms, 1.0 ); // uniform weighting
-//	FArray2D< Real > uu( 3, 3, 0.0 );
-//	Real ctx(0); // not really used
+// Size const natoms = frag.size();
+// FArray2D< Real > xx( 3, natoms, 0. );
+// FArray2D< Real > yy( 3, natoms, 0. );
+// FArray1D< Real > ww( natoms, 1.0 ); // uniform weighting
+// FArray2D< Real > uu( 3, 3, 0.0 );
+// Real ctx(0); // not really used
 //
-//	Vector e_ctr(0.), c_ctr(0.);
-//	for(Size i = 1; i <= natoms; ++i) {
-//		Size const e_atom = frag[i];
-//		Size const c_atom = morph[e_atom];
-//		for(Size j = 1; j <= 3; ++j) {
-//			xx(j, i) =  existing.xyz(e_atom)(j);
-//			yy(j, i) = conformer.xyz(c_atom)(j);
-//		}
-//		e_ctr +=  existing.xyz(e_atom);
-//		c_ctr += conformer.xyz(c_atom);
-//	}
+// Vector e_ctr(0.), c_ctr(0.);
+// for(Size i = 1; i <= natoms; ++i) {
+//  Size const e_atom = frag[i];
+//  Size const c_atom = morph[e_atom];
+//  for(Size j = 1; j <= 3; ++j) {
+//   xx(j, i) =  existing.xyz(e_atom)(j);
+//   yy(j, i) = conformer.xyz(c_atom)(j);
+//  }
+//  e_ctr +=  existing.xyz(e_atom);
+//  c_ctr += conformer.xyz(c_atom);
+// }
 //debug_assert(natoms > 0);
-//	e_ctr /= natoms;
-//	c_ctr /= natoms;
+// e_ctr /= natoms;
+// c_ctr /= natoms;
 //
-//	// This is not actually very accurate, in my experience so far!
-//	numeric::model_quality::findUU( xx, yy, ww, natoms, uu, ctx );
+// // This is not actually very accurate, in my experience so far!
+// numeric::model_quality::findUU( xx, yy, ww, natoms, uu, ctx );
 //
-//	typedef xyzMatrix< Real > Rotation;
-//	Rotation rot(Rotation::rows( uu(1,1), uu(1,2), uu(1,3), uu(2,1), uu(2,2), uu(2,3), uu(3,1), uu(3,2), uu(3,3) ));
-//	for(Size i = 1, i_end = existing.natoms(); i <= i_end; ++i) {
-//		conformer.set_xyz( i, (rot * (conformer.xyz(i) - c_ctr)) + e_ctr );
-//	}
+// typedef xyzMatrix< Real > Rotation;
+// Rotation rot(Rotation::rows( uu(1,1), uu(1,2), uu(1,3), uu(2,1), uu(2,2), uu(2,3), uu(3,1), uu(3,2), uu(3,3) ));
+// for(Size i = 1, i_end = existing.natoms(); i <= i_end; ++i) {
+//  conformer.set_xyz( i, (rot * (conformer.xyz(i) - c_ctr)) + e_ctr );
+// }
 //}
 
 
@@ -311,8 +311,7 @@ SingleLigandRotamerLibrary::fill_rotamer_vector(
 	Size const max_total_rotamers = 21654; // = 401 rotamers * 54 hydroxyl variations = 401 * (2 * 3^3)
 	RotamerVector new_rotamers;
 
-	if(basic::options::option[ basic::options::OptionKeys::packing::ignore_ligand_chi]() == true)
-	{
+	if ( basic::options::option[ basic::options::OptionKeys::packing::ignore_ligand_chi]() == true ) {
 		expand_proton_chi = false;
 	}
 
@@ -323,15 +322,15 @@ SingleLigandRotamerLibrary::fill_rotamer_vector(
 		for ( Size ii = 1; ii <= concrete_residue->n_proton_chi(); ++ii ) {
 			pack::dunbrack::expand_proton_chi(
 				task.residue_task( existing_residue.seqpos() ).extrachi_sample_level(
-					buried,
-					concrete_residue->proton_chi_2_chi( ii ),
-					*concrete_residue ),
+				buried,
+				concrete_residue->proton_chi_2_chi( ii ),
+				*concrete_residue ),
 				concrete_residue,
 				ii, proton_chi_chisets);
 			// In a pathological case, I've seen 30 rotamers * 20,000 proton chi variations = 600,000 rotamers = out of memory
 			// That's 9, count 'em 9, hydroxyls in the ligand for PDB 1u33.
 			// Wait, wait -- I can do better -- 19 hydroxyls in PDB 1xd1.
-			if( base_rotamers.size()*proton_chi_chisets.size() > max_total_rotamers ) {
+			if ( base_rotamers.size()*proton_chi_chisets.size() > max_total_rotamers ) {
 				TR.Warning << "Aborting proton_chi expansion for " << concrete_residue->name() << " because we would exceed " << max_total_rotamers << " rotamers!" << std::endl;
 				proton_chi_chisets.resize( max_total_rotamers / base_rotamers.size() );
 				break;
@@ -344,10 +343,9 @@ SingleLigandRotamerLibrary::fill_rotamer_vector(
 
 
 	// Fill new_rotamers with new Residues, including proton_chi expansions
-	for(Size i = 1; i <= base_rotamers.size(); ++i)
-	{
+	for ( Size i = 1; i <= base_rotamers.size(); ++i ) {
 		debug_assert( concrete_residue->name() == base_rotamers[i]->name() );
-		if( concrete_residue->in_residue_type_set() ) {
+		if ( concrete_residue->in_residue_type_set() ) {
 			debug_assert( concrete_residue->residue_type_set().name() == base_rotamers[i]->residue_type_set().name() ); // fa_standard / centroid
 		}
 		if ( expand_proton_chi ) {
@@ -375,31 +373,31 @@ SingleLigandRotamerLibrary::fill_rotamer_vector(
 	// So, this code is not sound during scoring -- DO NOT USE.
 	//bool const do_multiple_superpos = false;
 	//if( do_multiple_superpos ) {
-	//	using utility::vector1;
-	//	rotamers.reserve( rotamers.size() + new_rotamers.size()*total_superpos_ );
-	//	// For all rigid fragments...
-	//	for(Size i = 1, i_end = rigid_frags_.size(); i <= i_end; ++i) {
-	//		Fragment const & frag = rigid_frags_[i];
-	//		// And for all of their automorphisms...
-	//		vector1< Automorphism * > const & morphs = frag_automorphs_[i];
-	//		for(Size j = 1, j_end = morphs.size(); j <= j_end; ++j) {
-	//			Automorphism const & morph = *(morphs[j]);
-	//			// Try superimposing each conformer using that grouping of atoms!
-	//			for(Size k = 1, k_end = new_rotamers.size(); k <= k_end; ++k) {
-	//				conformation::ResidueOP newrsd = dup_residue( existing_residue, *new_rotamers[k] );
-	//				superimpose( existing_residue, *newrsd, frag, morph );
-	//				rotamers.push_back(newrsd);
-	//			}
-	//		}
-	//	}
+	// using utility::vector1;
+	// rotamers.reserve( rotamers.size() + new_rotamers.size()*total_superpos_ );
+	// // For all rigid fragments...
+	// for(Size i = 1, i_end = rigid_frags_.size(); i <= i_end; ++i) {
+	//  Fragment const & frag = rigid_frags_[i];
+	//  // And for all of their automorphisms...
+	//  vector1< Automorphism * > const & morphs = frag_automorphs_[i];
+	//  for(Size j = 1, j_end = morphs.size(); j <= j_end; ++j) {
+	//   Automorphism const & morph = *(morphs[j]);
+	//   // Try superimposing each conformer using that grouping of atoms!
+	//   for(Size k = 1, k_end = new_rotamers.size(); k <= k_end; ++k) {
+	//    conformation::ResidueOP newrsd = dup_residue( existing_residue, *new_rotamers[k] );
+	//    superimpose( existing_residue, *newrsd, frag, morph );
+	//    rotamers.push_back(newrsd);
+	//   }
+	//  }
+	// }
 	//} else {
-		rotamers.reserve( rotamers.size() + new_rotamers.size() );
-		for(Size k = 1, k_end = new_rotamers.size(); k <= k_end; ++k) {
-			conformation::ResidueOP newrsd = new_rotamers[k];
-			// Superimposes on nbr_atom and 2 of its neighbors
-			newrsd->place( existing_residue, pose.conformation() );
-			rotamers.push_back(newrsd);
-		}
+	rotamers.reserve( rotamers.size() + new_rotamers.size() );
+	for ( Size k = 1, k_end = new_rotamers.size(); k <= k_end; ++k ) {
+		conformation::ResidueOP newrsd = new_rotamers[k];
+		// Superimposes on nbr_atom and 2 of its neighbors
+		newrsd->place( existing_residue, pose.conformation() );
+		rotamers.push_back(newrsd);
+	}
 	//}
 
 	int const end_size = rotamers.size();
@@ -425,24 +423,24 @@ SingleLigandRotamerLibrary::build_base_rotamers( chemical::ResidueType const & r
 	// We can do a limited building from ideal coordinates, for hydrogens and virtual atoms.
 	std::set< std::string > skipped_atom_names;
 	utility::vector1< bool > missed(restype.natoms(),false); // Don't reset - only notify once, instead of for each library entry
-	for( core::Size resn(1); resn <= atom_positions_.size(); ++resn ) {
+	for ( core::Size resn(1); resn <= atom_positions_.size(); ++resn ) {
 		NamePosMap const & name_map( atom_positions_[resn] );
 		conformation::ResidueOP rsd = conformation::ResidueFactory::create_residue( restype );
 		core::Size set_xyzs = 0;
 		utility::vector1< bool > missing(rsd->natoms(),true);
-		for( NamePosMap::const_iterator iter( name_map.begin() ), iter_end( name_map.end() ); iter != iter_end; ++iter ) {
+		for ( NamePosMap::const_iterator iter( name_map.begin() ), iter_end( name_map.end() ); iter != iter_end; ++iter ) {
 			std::string const & atom_name( iter->first );
 			core::Vector const & pos( iter->second );
-			if( rsd->has( atom_name ) ) {
+			if ( rsd->has( atom_name ) ) {
 				rsd->set_xyz( atom_name, pos );
 				missing[ rsd->atom_index(atom_name) ] = false;
 				set_xyzs += 1;
-			} else if( skipped_atom_names.count(atom_name) == 0 ) {
+			} else if ( skipped_atom_names.count(atom_name) == 0 ) {
 				TR.Warning << "Skipping unrecognized atom '" << atom_name << "' in library for " << restype.name() << std::endl;
 				skipped_atom_names.insert(atom_name);
 			}
 		}
-		if( set_xyzs < rsd->natoms() ) { fill_missing_atoms( missing, rsd, missed ); }
+		if ( set_xyzs < rsd->natoms() ) { fill_missing_atoms( missing, rsd, missed ); }
 		// Torsion angles are not automatically calculated from the coordinates.
 		// We should manually assign chi() and mainchain_torsions() for each conformer.
 		conformation::set_chi_according_to_coordinates( *rsd );
@@ -455,8 +453,8 @@ SingleLigandRotamerLibrary::build_base_rotamers( chemical::ResidueType const & r
 void
 SingleLigandRotamerLibrary::fill_missing_atoms( utility::vector1< bool > missing, conformation::ResidueOP rsd, utility::vector1< bool > & missed ) const
 {
-debug_assert( rsd );
-debug_assert( missing.size() == rsd->natoms() );
+	debug_assert( rsd );
+	debug_assert( missing.size() == rsd->natoms() );
 	//Unlike Residue::fill_missing_atoms(), only do a single pass -
 	// The residue should be constructed so that any atoms which would be typically missing
 	// (i.e. hydrogens and virtual atoms) are either built from present atoms, or can be built
@@ -481,7 +479,7 @@ debug_assert( missing.size() == rsd->natoms() );
 			// no stub atoms missing: build our ideal coordinates
 			missing[i] = false; // In case we're building later residues off of this one.
 			rsd->set_xyz( i, ic.build( *rsd ) ); // We just checked that all stub atoms exist in this residue, so we should be safe with the build call.
-			if( ! missed[ i ] ) {
+			if ( ! missed[ i ] ) {
 				missed[ i ] = true;
 				TR << "Atom " << rsd->atom_name(i) << " from residue " << rsd->name() << " not found in PDB_ROTAMERS library, creating based on idealized geometry." << std::endl;
 			}
@@ -502,119 +500,119 @@ SingleLigandRotamerLibrary::write_to_file( utility::io::ozstream & /*out*/ ) con
 // Helper function
 //bool bond_is_rotatable(chemical::ResidueTypeCOP restype, core::Size a1, core::Size a2)
 //{
-//	for(core::Size i = 1, i_end = restype->nchi(); i <= i_end; ++i) {
-//		chemical::AtomIndices chi = restype->chi_atoms(i);
-//	debug_assert( chi.size() == 4 );
-//		if( (chi[2] == a1 && chi[3] == a2) || (chi[2] == a2 && chi[3] == a1) ) return true;
-//	}
-//	return false;
+// for(core::Size i = 1, i_end = restype->nchi(); i <= i_end; ++i) {
+//  chemical::AtomIndices chi = restype->chi_atoms(i);
+// debug_assert( chi.size() == 4 );
+//  if( (chi[2] == a1 && chi[3] == a2) || (chi[2] == a2 && chi[3] == a1) ) return true;
+// }
+// return false;
 //}
 
 
 //void SingleLigandRotamerLibrary::find_fragments(chemical::ResidueTypeCOP restype)
 //{
-//	// Fragments are delimited by rotatable bonds, but the atom on the far end
-//	// of the bond is still part of the fragment.
-//	// Thus, fragments may overlap slightly.
-//	using core::Size;
-//	using utility::vector1;
-//	using namespace core::chemical;
+// // Fragments are delimited by rotatable bonds, but the atom on the far end
+// // of the bond is still part of the fragment.
+// // Thus, fragments may overlap slightly.
+// using core::Size;
+// using utility::vector1;
+// using namespace core::chemical;
 //
-//	Size const natoms = restype->nheavyatoms();
-//	vector1<bool> in_frag_core(natoms, false); // atoms on far side of rot bond aren't in "core"
-//	for(Size root = 1; root <= natoms; ++root) {
-//		if( in_frag_core[root] ) continue; // already got this fragment!
-//		Fragment the_frag;
-//		vector1<bool> visited(natoms, false);
-//		AtomIndices to_visit;
-//		to_visit.push_back(root); // will only hold atoms in fragment core
-//		while( !to_visit.empty() ) {
-//			Size const curr = to_visit.back();
-//			to_visit.pop_back();
-//			if( visited[curr] ) continue;
-//			visited[curr] = true;
-//			the_frag.push_back(curr);
-//			in_frag_core[curr] = true;
-//			AtomIndices const & nbrs = restype->nbrs(curr);
-//			for(Size i = 1; i <= nbrs.size(); ++i) {
-//				Size const nbr = nbrs[i];
-//				if( nbr > natoms ) continue; // e.g. hydrogens!
-//				if( visited[nbr] ) continue;
-//				if( bond_is_rotatable(restype, curr, nbr) ) {
-//					// don't "recurse", handle everything here
-//					visited[nbr] = true;
-//					the_frag.push_back(nbr);
-//				} else { // non-rotatable bond, part of fragment core
-//					// "recurse"; flags will be set in main loop
-//					to_visit.push_back(nbr);
-//				}
-//			}
-//		}
-//		// Only keep frags with 3+ atoms -- can't superimpose on less.
-//		if( the_frag.size() >= 3 ) rigid_frags_.push_back(the_frag);
-//	}
+// Size const natoms = restype->nheavyatoms();
+// vector1<bool> in_frag_core(natoms, false); // atoms on far side of rot bond aren't in "core"
+// for(Size root = 1; root <= natoms; ++root) {
+//  if( in_frag_core[root] ) continue; // already got this fragment!
+//  Fragment the_frag;
+//  vector1<bool> visited(natoms, false);
+//  AtomIndices to_visit;
+//  to_visit.push_back(root); // will only hold atoms in fragment core
+//  while( !to_visit.empty() ) {
+//   Size const curr = to_visit.back();
+//   to_visit.pop_back();
+//   if( visited[curr] ) continue;
+//   visited[curr] = true;
+//   the_frag.push_back(curr);
+//   in_frag_core[curr] = true;
+//   AtomIndices const & nbrs = restype->nbrs(curr);
+//   for(Size i = 1; i <= nbrs.size(); ++i) {
+//    Size const nbr = nbrs[i];
+//    if( nbr > natoms ) continue; // e.g. hydrogens!
+//    if( visited[nbr] ) continue;
+//    if( bond_is_rotatable(restype, curr, nbr) ) {
+//     // don't "recurse", handle everything here
+//     visited[nbr] = true;
+//     the_frag.push_back(nbr);
+//    } else { // non-rotatable bond, part of fragment core
+//     // "recurse"; flags will be set in main loop
+//     to_visit.push_back(nbr);
+//    }
+//   }
+//  }
+//  // Only keep frags with 3+ atoms -- can't superimpose on less.
+//  if( the_frag.size() >= 3 ) rigid_frags_.push_back(the_frag);
+// }
 //debug_assert( rigid_frags_.size() <= restype->nchi()+1 );
 //
-//	for(Size i = 1; i <= rigid_frags_.size(); ++i) {
-//		TR << "Fragment " << i << ":";
-//		Fragment const & frag = rigid_frags_[i];
-//		for(Size j = 1; j <= frag.size(); ++j) TR << " " << restype->atom_name(frag[j]);
-//		TR << std::endl;
-//	}
+// for(Size i = 1; i <= rigid_frags_.size(); ++i) {
+//  TR << "Fragment " << i << ":";
+//  Fragment const & frag = rigid_frags_[i];
+//  for(Size j = 1; j <= frag.size(); ++j) TR << " " << restype->atom_name(frag[j]);
+//  TR << std::endl;
+// }
 //}
 
 
 //void SingleLigandRotamerLibrary::list_automorphisms(chemical::ResidueTypeCOP restype)
 //{
-//	using namespace core::chemical;
-//	AutomorphismIterator ai( restype, false /*don't include H*/ );
-//	while(true) {
-//		Automorphism a = ai.next();
-//		if( a.empty() ) break;
-//		automorphs_.push_back( a );
-//	}
+// using namespace core::chemical;
+// AutomorphismIterator ai( restype, false /*don't include H*/ );
+// while(true) {
+//  Automorphism a = ai.next();
+//  if( a.empty() ) break;
+//  automorphs_.push_back( a );
+// }
 //debug_assert( automorphs_.size() > 0 );
-//	TR << "Ligand has " << automorphs_.size() << " automorphisms" << std::endl;
+// TR << "Ligand has " << automorphs_.size() << " automorphisms" << std::endl;
 //}
 
 
 //void SingleLigandRotamerLibrary::unique_auto_for_frags()
 //{
-//	using utility::vector1;
-//	total_superpos_ = 0;
-//	frag_automorphs_.resize( rigid_frags_.size() ); // one entry per fragment
-//	// For each fragment...
-//	for(Size i = 1, i_end = rigid_frags_.size(); i <= i_end; ++i) {
-//		Fragment const & frag = rigid_frags_[i];
-//		vector1< Automorphism * > const & frag_morphs = frag_automorphs_[i];
-//		// Look at each whole-molecule automorphism...
-//		for(Size j = 1, j_end = automorphs_.size(); j <= j_end; ++j) {
-//			Automorphism /*const*/ & new_morph = automorphs_[j];
-//			bool already_have_it = false;
-//			// And add it if it's not equivalent to some other one we already added.
-//			for(Size k = 1, k_end = frag_morphs.size(); k <= k_end && !already_have_it; ++k) {
-//				Automorphism const & old_morph = *(frag_morphs[k]);
-//			debug_assert( new_morph.size() == old_morph.size() );
-//				bool are_same = true;
-//				// Two automorphisms are the same from a fragment's point of view
-//				// if they contain the same mapping for all fragment atom positions.
-//				for(Size l = 1, l_end = frag.size(); l <= l_end; ++l) {
-//					Size const atom = frag[l];
-//					if( new_morph[atom] != old_morph[atom] ) {
-//						are_same = false;
-//						break;
-//					}
-//				} // end compare two automorphisms
-//				if( are_same ) already_have_it = true;
-//			} // end search over existing automorphisms for fragment
-//			if( !already_have_it ) {
-//				frag_automorphs_[i].push_back( &new_morph );
-//				total_superpos_ += 1;
-//			}
-//		} // end search over whole-molecule automorphisms
-//	} // end search over fragments
+// using utility::vector1;
+// total_superpos_ = 0;
+// frag_automorphs_.resize( rigid_frags_.size() ); // one entry per fragment
+// // For each fragment...
+// for(Size i = 1, i_end = rigid_frags_.size(); i <= i_end; ++i) {
+//  Fragment const & frag = rigid_frags_[i];
+//  vector1< Automorphism * > const & frag_morphs = frag_automorphs_[i];
+//  // Look at each whole-molecule automorphism...
+//  for(Size j = 1, j_end = automorphs_.size(); j <= j_end; ++j) {
+//   Automorphism /*const*/ & new_morph = automorphs_[j];
+//   bool already_have_it = false;
+//   // And add it if it's not equivalent to some other one we already added.
+//   for(Size k = 1, k_end = frag_morphs.size(); k <= k_end && !already_have_it; ++k) {
+//    Automorphism const & old_morph = *(frag_morphs[k]);
+//   debug_assert( new_morph.size() == old_morph.size() );
+//    bool are_same = true;
+//    // Two automorphisms are the same from a fragment's point of view
+//    // if they contain the same mapping for all fragment atom positions.
+//    for(Size l = 1, l_end = frag.size(); l <= l_end; ++l) {
+//     Size const atom = frag[l];
+//     if( new_morph[atom] != old_morph[atom] ) {
+//      are_same = false;
+//      break;
+//     }
+//    } // end compare two automorphisms
+//    if( are_same ) already_have_it = true;
+//   } // end search over existing automorphisms for fragment
+//   if( !already_have_it ) {
+//    frag_automorphs_[i].push_back( &new_morph );
+//    total_superpos_ += 1;
+//   }
+//  } // end search over whole-molecule automorphisms
+// } // end search over fragments
 //debug_assert( total_superpos_ > 0 );
-//	TR << total_superpos_ << " unique possible rotamer-substitution superpositions" << std::endl;
+// TR << total_superpos_ << " unique possible rotamer-substitution superpositions" << std::endl;
 //}
 
 

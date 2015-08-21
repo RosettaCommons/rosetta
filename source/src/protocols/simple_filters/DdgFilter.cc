@@ -70,9 +70,9 @@ DdgFilter::DdgFilter() :
 
 
 DdgFilter::DdgFilter( core::Real const ddg_threshold,
-											core::scoring::ScoreFunctionCOP scorefxn,
-											core::Size const rb_jump/*=1*/,
-											core::Size const repeats/*=1*/) :
+	core::scoring::ScoreFunctionCOP scorefxn,
+	core::Size const rb_jump/*=1*/,
+	core::Size const repeats/*=1*/) :
 	Filter("Ddg" ),
 	ddg_threshold_(ddg_threshold),
 	scorefxn_(scorefxn->clone()),
@@ -88,12 +88,11 @@ DdgFilter::DdgFilter( core::Real const ddg_threshold,
 	extreme_value_removal_( false )
 {
 	// Determine if this PB enabled.
-	if( scorefxn_->get_weight(core::scoring::PB_elec) != 0.) {
+	if ( scorefxn_->get_weight(core::scoring::PB_elec) != 0. ) {
 		// Set this to PB enabled
 		pb_enabled_ = true;
 		TR << "PB enabled" << std::endl;
-	}
-	else{
+	} else {
 		pb_enabled_ = false;
 	}
 }
@@ -121,10 +120,10 @@ DdgFilter::repack() const
 
 void
 DdgFilter::parse_my_tag( utility::tag::TagCOP tag,
-												 basic::datacache::DataMap & data,
-												 filters::Filters_map const & filters,
-												 moves::Movers_map const & movers,
-												 core::pose::Pose const & )
+	basic::datacache::DataMap & data,
+	filters::Filters_map const & filters,
+	moves::Movers_map const & movers,
+	core::pose::Pose const & )
 {
 	using namespace core::scoring;
 
@@ -133,30 +132,33 @@ DdgFilter::parse_my_tag( utility::tag::TagCOP tag,
 	rb_jump_ = tag->getOption< core::Size >( "jump", 1 );
 	repeats( tag->getOption< core::Size >( "repeats", 1 ) );
 	repack( tag->getOption< bool >( "repack", 1 ) );
-	if( tag->hasOption( "symmetry" ) ) {
+	if ( tag->hasOption( "symmetry" ) ) {
 		TR << "DdgFilter autodetermines symmetry from input pose - symmetry option has no effect." << std::endl;
 	}
 	use_custom_task( tag->hasOption("task_operations") );
-  task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
+	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	repack_bound( tag->getOption<bool>( "repack_bound", 1 ) );
 	relax_bound( tag->getOption<bool>( "relax_bound", 0 ) );
 	translate_by_ = tag->getOption<core::Real>( "translate_by", 1000 );
 
-	if( tag->hasOption( "relax_mover" ) )
+	if ( tag->hasOption( "relax_mover" ) ) {
 		relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover" ), movers ) );
-	if( tag->hasOption( "filter" ) )
+	}
+	if ( tag->hasOption( "filter" ) ) {
 		filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), filters ) );
+	}
 
-	if(tag->hasOption("chain_num"))
-	{
+	if ( tag->hasOption("chain_num") ) {
 		chain_ids_ = utility::string_split(tag->getOption<std::string>("chain_num"),',',core::Size());
 	}
 	extreme_value_removal( tag->getOption< bool >( "extreme_value_removal", false ) );
-	if( extreme_value_removal() )
+	if ( extreme_value_removal() ) {
 		runtime_assert( repeats() >= 3 ); // otherwise makes no sense...
+	}
 
-	if( repeats() > 1 && !repack() )
+	if ( repeats() > 1 && !repack() ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "ERROR: it doesn't make sense to have repeats if repack is false, since the values converge very well." );
+	}
 
 	TR
 		<< "ddg filter with threshold " << ddg_threshold_
@@ -167,31 +169,32 @@ DdgFilter::parse_my_tag( utility::tag::TagCOP tag,
 		<< " and repack " << repack() << std::endl;
 
 	// Determine if this PB enabled.
-	if( scorefxn_->get_weight(core::scoring::PB_elec) != 0.) {
+	if ( scorefxn_->get_weight(core::scoring::PB_elec) != 0. ) {
 		// Set this to PB enabled
 		pb_enabled_ = true;
 		TR << "PB enabled.  Translation distance = " << translate_by_ << " A" << std::endl;
-		if( tag->hasOption("translate_by") && translate_by_ > 100) {
-		        TR.Warning << "Translation distance may be too large for PB-enabled scoring.  Consider 100 (default for PB enabled runs) if you run out of memory."<< std::endl;
-		        TR.Warning.flush();
-		} else if( !tag->hasOption("translate_by") ){
-		        translate_by_ = 100;
-		        TR.Warning << "Translation distance set to 100 in order to save memory for the PB calculations."<<std::endl;
-						TR.Warning.flush();
+		if ( tag->hasOption("translate_by") && translate_by_ > 100 ) {
+			TR.Warning << "Translation distance may be too large for PB-enabled scoring.  Consider 100 (default for PB enabled runs) if you run out of memory."<< std::endl;
+			TR.Warning.flush();
+		} else if ( !tag->hasOption("translate_by") ) {
+			translate_by_ = 100;
+			TR.Warning << "Translation distance set to 100 in order to save memory for the PB calculations."<<std::endl;
+			TR.Warning.flush();
 		}
 	} else {
-	pb_enabled_ = false;
+		pb_enabled_ = false;
 	}
 	TR.flush();
 }
 
 void DdgFilter::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & score_fxns,
-				utility::lua::LuaObject const & /*tasks*/ ) {
+	utility::lua::LuaObject const & score_fxns,
+	utility::lua::LuaObject const & /*tasks*/ ) {
 	using namespace core::scoring;
-	if( def["scorename"] )
+	if ( def["scorename"] ) {
 		scorename_ = def["scorename"].to<std::string>();
-	if( def["scorefxn"] ) {
+	}
+	if ( def["scorefxn"] ) {
 		scorefxn_ = protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns );
 	} else {
 		scorefxn_ = score_fxns["score12"].to<ScoreFunctionSP>()->clone();
@@ -204,15 +207,16 @@ void DdgFilter::parse_def( utility::lua::LuaObject const & def,
 	relax_bound_ = def["relax_bound"] ? def["relax_bound"].to<bool>() : false;
 	translate_by_ = def["translate_by"] ? def["translate_by"].to<core::Real>() : 1000;
 	// ignoring relax_mover option
-	if( def["chain_num"] ) {
+	if ( def["chain_num"] ) {
 		chain_ids_.clear();
-		for (utility::lua::LuaIterator i=def["chain_num"].begin(), end; i != end; ++i) {
+		for ( utility::lua::LuaIterator i=def["chain_num"].begin(), end; i != end; ++i ) {
 			chain_ids_.push_back( (*i).to<core::Size>() );
 		}
 	}
 
-	if( repeats() > 1 && !repack() )
+	if ( repeats() > 1 && !repack() ) {
 		utility_exit_with_message( "ERROR: it doesn't make sense to have repeats if repack is false, since the values converge very well." );
+	}
 
 	TR<<"ddg filter with threshold "<< ddg_threshold_<<" repeats="<<repeats()<<" over jump "<<rb_jump_<<" and repack "<<repack()<<std::endl;
 }
@@ -222,7 +226,7 @@ DdgFilter::apply( core::pose::Pose const & pose ) const
 {
 	core::Real const pose_ddg( compute( pose ) );
 	TR<<"ddg is "<<pose_ddg<<" ";
-	if( pose_ddg <= ddg_threshold_ ) {
+	if ( pose_ddg <= ddg_threshold_ ) {
 		TR<<"passing"<<std::endl;
 		return true;
 	}
@@ -270,7 +274,7 @@ DdgFilter::translate_by( core::Real const translate_by )
 core::Real
 DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 	core::pose::Pose pose(pose_in);
-	if( repack() ){
+	if ( repack() ) {
 		protocols::simple_moves::ddG ddg( scorefxn_, rb_jump_, chain_ids_ );
 		if ( use_custom_task() ) {
 			ddg.use_custom_task( use_custom_task() );
@@ -288,26 +292,25 @@ DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 		core::Real average( 0.0 );
 		utility::vector1< core::Real > repeat_values;
 		repeat_values.clear();
-		for( core::Size i = 1; i<=repeats_; ++i ){
+		for ( core::Size i = 1; i<=repeats_; ++i ) {
 			ddg.calculate( pose );
 			repeat_values.push_back( ddg.sum_ddG() );
 			ddg.report_ddG( TR );
 		}
-		if( extreme_value_removal() ){
+		if ( extreme_value_removal() ) {
 			runtime_assert( repeat_values.size() >= 3 );
 			utility::vector1< core::Real > non_extreme_vals( repeat_values.size() - 2 );
 			TR<<"removing extreme values. Considering values: ";
 			std::sort( repeat_values.begin(), repeat_values.end() );
 			std::copy( repeat_values.begin() + 1, repeat_values.end() - 1, non_extreme_vals.begin() );
-			BOOST_FOREACH( core::Real const val, non_extreme_vals ){
+			BOOST_FOREACH ( core::Real const val, non_extreme_vals ) {
 				average += val;
 				TR<<val<<", ";
 			}
 			average /= (core::Real) non_extreme_vals.size();
 			TR<<'\n'<<" average value: "<<average<<std::endl;
-		}// fi extreme_value_removal
-		else{
-			BOOST_FOREACH( core::Real const val, repeat_values ){
+		} else { // fi extreme_value_removal
+			BOOST_FOREACH ( core::Real const val, repeat_values ) {
 				average += val;
 				TR<<val<<", ";
 			}
@@ -317,24 +320,23 @@ DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 
 		return average;
 	} else {
-		if( repeats() > 1 && !repack() )
+		if ( repeats() > 1 && !repack() ) {
 			utility_exit_with_message( "ERROR: it doesn't make sense to have repeats if repack is false, since the values converge very well." );
+		}
 		using namespace protocols::moves;
 
 		filters::FilterCOP scoring_filter;
-		if( filter_ ) {
+		if ( filter_ ) {
 			scoring_filter = filter_;
 		} else {
 			scoring_filter = filters::FilterCOP( filters::FilterOP( new simple_filters::ScoreTypeFilter( scorefxn_, core::scoring::total_score, 10000/*threshold*/ ) ) );
 		}
 		//JBB This is not handling symmetric poses properly. This needs to be fixed.
 		core::pose::Pose split_pose( pose );
-		if(chain_ids_.size() > 0)
-		{
+		if ( chain_ids_.size() > 0 ) {
 			//We want to translate each chain the same direction, though it doesnt matter much which one
 			core::Vector translation_axis(1,0,0);
-			for(utility::vector1<core::Size>::const_iterator chain_it = chain_ids_.begin(); chain_it != chain_ids_.end();++chain_it)
-			{
+			for ( utility::vector1<core::Size>::const_iterator chain_it = chain_ids_.begin(); chain_it != chain_ids_.end(); ++chain_it ) {
 				core::Size current_chain_id = *chain_it;
 				core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,split_pose);
 				rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( split_pose, current_jump_id) );
@@ -342,8 +344,7 @@ DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 				translate->trans_axis(translation_axis);
 				translate->apply( split_pose );
 			}
-		}else
-		{
+		} else {
 			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( split_pose, rb_jump_ ) );
 			translate->step_size( translate_by_ );
 			translate->apply( split_pose );

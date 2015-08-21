@@ -35,37 +35,37 @@ namespace environment {
 class LocalPosition : public utility::pointer::ReferenceCount {
 
 public:
-  LocalPosition();
+	LocalPosition();
 
-  LocalPosition( std::string const& comma_deliniated );
+	LocalPosition( std::string const& comma_deliniated );
 
-  LocalPosition( std::string const&, core::Size const& );
+	LocalPosition( std::string const&, core::Size const& );
 
-  std::string const& label() const;
+	std::string const& label() const;
 
-  core::Size const& position() const;
+	core::Size const& position() const;
 
-  bool operator<( LocalPosition const& ) const;
+	bool operator<( LocalPosition const& ) const;
 
-  bool operator==( LocalPosition const& ) const;
+	bool operator==( LocalPosition const& ) const;
 
-  bool operator!=( LocalPosition const& ) const;
+	bool operator!=( LocalPosition const& ) const;
 
-//  bool operator>( LocalPosition const& ) const;
-//
-//  bool operator>=( LocalPosition const& ) const;
-//
-//  bool operator<=( LocalPosition const& ) const;
+	//  bool operator>( LocalPosition const& ) const;
+	//
+	//  bool operator>=( LocalPosition const& ) const;
+	//
+	//  bool operator<=( LocalPosition const& ) const;
 
 protected:
-  void label( std::string const& );
+	void label( std::string const& );
 
-  void position( core::Size );
+	void position( core::Size );
 
 private:
-  std::string label_;
+	std::string label_;
 
-  core::Size position_;
+	core::Size position_;
 
 }; // end LocalPosition base class
 

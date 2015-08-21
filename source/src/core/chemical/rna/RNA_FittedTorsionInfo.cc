@@ -98,7 +98,7 @@ RNA_FittedTorsionInfo::init_rna_torsion_gaussian_parameters()
 	} else {
 		gaussian_parameter_set_zeta_alpha_sc_minus_.push_back( GaussianParameter( 78.74, -68.60, 16.19) );
 	}
-	//	gaussian_parameter_set_zeta_alpha_sc_minus_.push_back( GaussianParameter(  2.43, 178.84, 114.82) );
+	// gaussian_parameter_set_zeta_alpha_sc_minus_.push_back( GaussianParameter(  2.43, 178.84, 114.82) );
 	gaussian_parameter_set_zeta_alpha_sc_minus_.push_back( GaussianParameter(  2.43, 178.84, 40.00) );
 
 	gaussian_parameter_set_zeta_alpha_sc_plus_.push_back( GaussianParameter(2.08, -137.28,  63.12) );
@@ -108,13 +108,13 @@ RNA_FittedTorsionInfo::init_rna_torsion_gaussian_parameters()
 	gaussian_parameter_set_zeta_alpha_ap_.push_back( GaussianParameter(2.69, 63.03,  33.61) );
 
 	//These need to be flipped by -180.0, due to change in chi def. from r++ to mini.
-	//	gaussian_parameter_set_chi_north_.push_back( GaussianParameter(228.92, -100.57, 11.43) );
-	//	gaussian_parameter_set_chi_north_.push_back( GaussianParameter( 1.07, 129.24, 26.11) );
+	// gaussian_parameter_set_chi_north_.push_back( GaussianParameter(228.92, -100.57, 11.43) );
+	// gaussian_parameter_set_chi_north_.push_back( GaussianParameter( 1.07, 129.24, 26.11) );
 	gaussian_parameter_set_chi_north_.push_back( GaussianParameter(228.92, 79.43, 11.43) );
 	gaussian_parameter_set_chi_north_.push_back( GaussianParameter( 1.07, -50.76, 26.11) );
 
-	//	gaussian_parameter_set_chi_south_.push_back( GaussianParameter(12.53, -63.40, 25.23) );
-	//	gaussian_parameter_set_chi_south_.push_back( GaussianParameter( 0.64, 130.09, 28.10) );
+	// gaussian_parameter_set_chi_south_.push_back( GaussianParameter(12.53, -63.40, 25.23) );
+	// gaussian_parameter_set_chi_south_.push_back( GaussianParameter( 0.64, 130.09, 28.10) );
 	gaussian_parameter_set_chi_south_.push_back( GaussianParameter(12.53, 116.60, 25.23) );
 	gaussian_parameter_set_chi_south_.push_back( GaussianParameter( 0.64, -49.91, 28.10) );
 

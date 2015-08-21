@@ -62,7 +62,7 @@ public:
 	core::Real active_angle() const { return active_angle_; }
 
 	/// @brief Set the stored angle
-	void set_angle( core::Real const setting	) { stored_angle_ = setting; }
+	void set_angle( core::Real const setting ) { stored_angle_ = setting; }
 
 	/// @brief Set the angle range
 	void set_angle_range( core::Real const min, core::Real const max ) {

@@ -13,22 +13,22 @@
 /// The ScreeningJobInputter takes in a JSON file using the -in:file:screening_job_file option
 /// This file is in the following format:
 /// {
-///		"jobs" :
-///			[
-///				{
-///					"group_name" : "group_name_a",
-///					"proteins" :
-///						["protein_a.pdb", "protein_b.pdb"],
-///					"ligands" :
-///						["ligand_a.pdb", "ligand_b.pdb"]
-///				}
-///			]
-///		"params :
-///			[
-///			 	 "aaa.param",
-///			 	 "aab.param"
-//			 ]
-///	}
+///  "jobs" :
+///   [
+///    {
+///     "group_name" : "group_name_a",
+///     "proteins" :
+///      ["protein_a.pdb", "protein_b.pdb"],
+///     "ligands" :
+///      ["ligand_a.pdb", "ligand_b.pdb"]
+///    }
+///   ]
+///  "params :
+///   [
+///      "aaa.param",
+///      "aab.param"
+//    ]
+/// }
 /// In this scheme, jobs will be created for all combinations of rpoteins and ligands, and the job will be tagged with
 /// "group_name" using a job string/real pair, in the form "input_group_name group_name_a"
 /// @author Sam DeLuca <samuel.l.deluca@vanderbilt.edu>
@@ -60,12 +60,12 @@ static thread_local basic::Tracer TR( "protocols.jd2.ScreeningJobInputter" );
 std::string
 ScreeningJobInputterCreator::keyname() const
 {
-        return "ScreeningJobInputter";
+	return "ScreeningJobInputter";
 }
 
 protocols::jd2::JobInputterOP
 ScreeningJobInputterCreator::create_JobInputter() const {
-        return protocols::jd2::JobInputterOP( new ScreeningJobInputter );
+	return protocols::jd2::JobInputterOP( new ScreeningJobInputter );
 }
 
 
@@ -83,7 +83,7 @@ void ScreeningJobInputter::pose_from_job(core::pose::Pose & pose, JobOP job)
 {
 	TR << "ScreeningJobInputter::pose_from_job" << std::endl;
 
-	if( !job->inner_job()->get_pose() ){
+	if ( !job->inner_job()->get_pose() ) {
 		TR << "filling pose from PDB " << job->input_tag() << std::endl;
 		core::import_pose::pose_from_pdb( pose, job->input_tag() );
 		load_pose_into_job(pose, job);
@@ -97,8 +97,7 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 {
 	std::string file_name(basic::options::option[basic::options::OptionKeys::in::file::screening_job_file]());
 	utility::io::izstream data(file_name.c_str(),std::ifstream::in);
-	if(!data.good())
-	{
+	if ( !data.good() ) {
 		utility_exit_with_message("Unable to open Screening Job File: " + file_name);
 	}
 	core::Size const nstruct( get_nstruct() );
@@ -106,11 +105,11 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 	utility::json_spirit::mValue job_json_data;
 	utility::json_spirit::mObject job_object_data;
 	try
-	{
+{
 		utility::json_spirit::read(data,job_json_data);
 		job_object_data = job_json_data.get_obj();
 	}catch(std::runtime_error &)
-	{
+{
 		throw utility::excn::EXCN_BadInput(
 			"screening file " + file_name + "is incorrectly formatted. "
 			"it must be a dict with two keys: 'params' containing a list of needed params, and "
@@ -120,18 +119,16 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 
 	utility::json_spirit::mArray param_group_data;
 	try
-	{
+{
 		param_group_data = job_object_data["params"].get_array();
 	}catch(std::runtime_error &)
-	{
+{
 		throw utility::excn::EXCN_BadInput("the screening file " + file_name + " does not contain a 'params' section");
 	}
 
-	//parse params files and insert them into the chemical manager
-	if(param_group_data.size() > 0 )
-	{
-		for(core::Size i = 0; i < param_group_data.size(); ++i)
-		{
+//parse params files and insert them into the chemical manager
+	if ( param_group_data.size() > 0 ) {
+		for ( core::Size i = 0; i < param_group_data.size(); ++i ) {
 			std::string param_name = param_group_data[i].get_str();
 			core::chemical::ChemicalManager::get_instance()->
 				nonconst_residue_type_set(core::chemical::FA_STANDARD).add_residue_type(param_name);
@@ -141,14 +138,13 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 
 	utility::json_spirit::mArray job_group_data;
 	try
-	{
+{
 		job_group_data = job_object_data["jobs"].get_array();
 	}catch(std::runtime_error & )
-	{
+{
 		throw utility::excn::EXCN_BadInput("the screening file " + file_name + " does not contain a 'jobs' section");
 	}
-	for(core::Size i = 0; i < job_group_data.size();++i)
-	{
+	for ( core::Size i = 0; i < job_group_data.size(); ++i ) {
 		utility::json_spirit::mObject group_map(job_group_data[i].get_obj());
 
 		std::string group_name;
@@ -157,71 +153,65 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 
 		//The exceptions thrown by json_spirit are incredibly generic and meaningless. we catch them and throw more useful ones
 		try
-		{
+{
 			group_name = group_map["group_name"].get_str();
 		}catch(std::runtime_error &)
-		{
+{
 			throw utility::excn::EXCN_BadInput("a group in screening file " + file_name + " does not contain the element 'group_name' or is misformatted");
 		}
 
 		utility::json_spirit::mArray startfrom_data;
 		bool startfrom_present = false;
-		if(group_map.find("startfrom") != group_map.end())
-		{
+		if ( group_map.find("startfrom") != group_map.end() ) {
 			startfrom_data = group_map["startfrom"].get_array();
 			startfrom_present = true;
 		}
 
 		try
-		{
+{
 			protein_path_data = group_map["proteins"].get_array();
 		}catch(std::runtime_error &)
-		{
+{
 			throw utility::excn::EXCN_BadInput("the group " + group_name +" in screening file " + file_name + " does not contain the element 'proteins' or is misformatted");
 		}
 
 		try
-		{
+{
 			ligand_path_data = group_map["ligands"].get_array();
 		}catch(std::runtime_error &)
-		{
+{
 			throw utility::excn::EXCN_BadInput("the group " + group_name +" in screening file " + file_name + " does not contain the element 'ligands' or is misformatted");
 		}
 
-		//If we specify a native structure, store it
+//If we specify a native structure, store it
 		bool native_present = false;
 		std::string native_string;
-		if(group_map.find("native") != group_map.end())
-		{
+		if ( group_map.find("native") != group_map.end() ) {
 			native_string = group_map["native"].get_str();
 			native_present = true;
 		}
 		//Make a job for each combination of a protein and a ligand defined in the group
-		for(core::Size protein_path_index = 0; protein_path_index < protein_path_data.size();++protein_path_index)
-		{
+		for ( core::Size protein_path_index = 0; protein_path_index < protein_path_data.size(); ++protein_path_index ) {
 			std::string protein_path(protein_path_data[protein_path_index].get_str());
 
-			for(core::Size ligand_path_index = 0; ligand_path_index < ligand_path_data.size();++ligand_path_index)
-			{
+			for ( core::Size ligand_path_index = 0; ligand_path_index < ligand_path_data.size(); ++ligand_path_index ) {
 				std::string ligand_path(ligand_path_data[ligand_path_index].get_str());
 				//multiple pdb paths combined with a space get concatenated into a single pose
 				std::string input_tag(protein_path + " " + ligand_path);
 
 				InnerJobOP ijob( new InnerJob( input_tag,nstruct) );
-				for( core::Size index(1); index <= nstruct; ++index){
+				for ( core::Size index(1); index <= nstruct; ++index ) {
 					JobOP current_job( new Job(ijob,index) );
 					//Tag the current job with the group name so that we can keep track of what is is
 					current_job->add_string_string_pair("input_group_name",group_name);
 					//Add the path to the native structure so that we can compute RMS values later
 					//This has to be explicitly supported at the protocol level.  It is not equivilent
 					//to -in:file:native
-					if(native_present)
-					{
+					if ( native_present ) {
 						current_job->add_string_string_pair("native_path",native_string);
 					}
 
-					if(startfrom_present)
-					{
+					if ( startfrom_present ) {
 						core::Real xcoord = startfrom_data[0].get_real();
 						core::Real ycoord = startfrom_data[1].get_real();
 						core::Real zcoord = startfrom_data[2].get_real();
@@ -239,8 +229,7 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 
 	}
 
-	if(basic::options::option[basic::options::OptionKeys::in::file::shuffle_screening_jobs]())
-	{
+	if ( basic::options::option[basic::options::OptionKeys::in::file::shuffle_screening_jobs]() ) {
 		jobs.shuffle();
 		//std::random_shuffle(jobs.begin(),jobs.end());
 	}

@@ -109,7 +109,7 @@
 
 /// We want to isolate static instances of DummyMover so we put it inside privet namespace.
 namespace MoveContainerCxxTest {
-	#include <test/protocols/moves/DummyMover.hh>
+#include <test/protocols/moves/DummyMover.hh>
 }
 using namespace MoveContainerCxxTest;
 typedef utility::pointer::shared_ptr< DummyMover > DummyMoverOP;
@@ -137,10 +137,10 @@ public:
 
 	void setUp() {
 		extern int command_line_argc; extern char ** command_line_argv;
-		if( command_line_argc > 1 ) core::init::init(command_line_argc, command_line_argv);
+		if ( command_line_argc > 1 ) core::init::init(command_line_argc, command_line_argv);
 		else {
 			std::string commandline = "core.test -mute all";
- 				initialize_from_commandline_w_db( commandline );
+			initialize_from_commandline_w_db( commandline );
 		}
 
 		core::init::init_random_generators(1000, "mt19937");
@@ -152,7 +152,7 @@ public:
 	void test_RepeatMover() {
 		pose::Pose pose;
 
-		for(Size i=0; i<256; i++) {
+		for ( Size i=0; i<256; i++ ) {
 			DummyMover::reset();
 			DummyMoverOP dm( new DummyMover );
 			RepeatMover RM(dm, i);
@@ -172,13 +172,13 @@ public:
 
 		DummyMover::reset();
 		SequenceMover SM;
-		for(Size i=0; i<N; i++) SM.add_mover(MoverOP( new DummyMover(i) ));
+		for ( Size i=0; i<N; i++ ) SM.add_mover(MoverOP( new DummyMover(i) ));
 
 		SM.apply(pose);
 
 		TS_ASSERT_EQUALS(DummyMover::call_records().size(), N);
-		if( DummyMover::call_records().size() == N ) {
-			for(Size i=0; i<N; i++) {
+		if ( DummyMover::call_records().size() == N ) {
+			for ( Size i=0; i<N; i++ ) {
 				TS_ASSERT_EQUALS(DummyMover::call_records()[i], int(i));
 			}
 		}
@@ -193,14 +193,14 @@ public:
 		pose::Pose pose;
 
 		CycleMover CM;
-		for(Size i=0; i<N; i++) CM.add_mover(MoverOP( new DummyMover(i) ));
+		for ( Size i=0; i<N; i++ ) CM.add_mover(MoverOP( new DummyMover(i) ));
 
-		for(Size s=0; s<NSteps; s++) {
+		for ( Size s=0; s<NSteps; s++ ) {
 			DummyMover::reset();
 			CM.apply(pose);
 
 			TS_ASSERT_EQUALS(DummyMover::call_records().size(), 1u);
-			if( DummyMover::call_records().size() == 1 ) {
+			if ( DummyMover::call_records().size() == 1 ) {
 				int k = s % N;
 				TS_ASSERT_EQUALS(DummyMover::call_records()[0], k);
 			}

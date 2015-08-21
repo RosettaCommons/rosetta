@@ -60,20 +60,20 @@ static thread_local basic::Tracer TRps( "packstat" );
 using namespace core::scoring::packstat;
 
 inline std::string base_name(const std::string& str) {
-  size_t begin = 0;
-  size_t end = str.length();
+	size_t begin = 0;
+	size_t end = str.length();
 
-  for (size_t i=0; i<str.length(); ++i) {
-    if (str[i] == '/') begin = i+1;
-  }
+	for ( size_t i=0; i<str.length(); ++i ) {
+		if ( str[i] == '/' ) begin = i+1;
+	}
 
-  return str.substr(begin,end);
+	return str.substr(begin,end);
 }
 
 std::string get_out_tag(std::string fname) {
 	std::string base = base_name(fname);
 	std::transform( base.begin(), base.end(), base.begin(), tolower );
-	if (system( ("mkdir -p out/" + base.substr(1,2)).c_str() ) == -1) {
+	if ( system( ("mkdir -p out/" + base.substr(1,2)).c_str() ) == -1 ) {
 		TRps.Error << "Unable to make directory!" << std::endl;
 	}
 	std::string OUT_TAG = "out/" + base.substr(1,2) + "/" + base;
@@ -83,7 +83,7 @@ std::string get_out_tag(std::string fname) {
 void output_packstat_pdb( std::string fname, utility::vector1<core::Real> const & res_scores ) {
 	using core::Size;
 	using namespace core::scoring::packstat;
- 	using namespace std;
+	using namespace std;
 	using namespace core;
 	using namespace basic::options;
 	using namespace ObjexxFCL::format;
@@ -116,10 +116,10 @@ void output_packstat_pdb( std::string fname, utility::vector1<core::Real> const 
 	opts.min_cav_ball_radius = option[ OptionKeys::packstat::min_cav_ball_radius ]();
 	opts.min_cluster_overlap = option[ OptionKeys::packstat::min_cluster_overlap ]();
 	opts.cluster_min_volume = option[ OptionKeys::packstat::cluster_min_volume ]();
-	for( PackstatReal pr = 3.0; pr >= 0.4; pr -= 0.1 ) opts.probe_radii.push_back(pr);
+	for ( PackstatReal pr = 3.0; pr >= 0.4; pr -= 0.1 ) opts.probe_radii.push_back(pr);
 	opts.prune_cavity_burial_probe_radii.push_back( burial_radius );
-	if( surface_accessibility ) {
-		for( PackstatReal pr = burial_radius-0.1; pr >= 0.1; pr -= 0.1 ) {
+	if ( surface_accessibility ) {
+		for ( PackstatReal pr = burial_radius-0.1; pr >= 0.1; pr -= 0.1 ) {
 			opts.prune_cavity_burial_probe_radii.push_back(pr);
 		}
 	}
@@ -135,27 +135,27 @@ void output_packstat_pdb( std::string fname, utility::vector1<core::Real> const 
 	//TRps << "pruning exposed cav balls " << cavballs.size() << std::endl;
 	cavballs = prune_cavity_balls( spheres, cavballs, opts );
 
-	//TRps << "compute cav ball volumes	" << cavballs.size() << std::endl;
+	//TRps << "compute cav ball volumes " << cavballs.size() << std::endl;
 	compute_cav_ball_volumes( cavballs, opts );
 
 	vector1< CavityBallCluster > clusters =
-	compute_cav_ball_clusters( cavballs, opts );
+		compute_cav_ball_clusters( cavballs, opts );
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	//TRps << "writting stupid pdb to "+OUT_TAG+".pdb" << std::endl;
 	ostringstream out;
 	// if( pdb.atoms().size() != spheres.size() ) { // hydrogens!
-	// 	TRps << "WARNING: output_packstat_pdb: size of pdb.atoms() != size of spheres" << std::endl;
-	// 	TRps << "         spheres: " << spheres.size() << ", pdb.atoms(): " << pdb.atoms().size() << std::endl;
+	//  TRps << "WARNING: output_packstat_pdb: size of pdb.atoms() != size of spheres" << std::endl;
+	//  TRps << "         spheres: " << spheres.size() << ", pdb.atoms(): " << pdb.atoms().size() << std::endl;
 	// }
 	int prev_resnum = -12345;
 	int resnum = 0;
 	int res_atom_count = 999;
-	for( int i = 1; i <= (int)pdb.atoms().size(); ++i ) {
+	for ( int i = 1; i <= (int)pdb.atoms().size(); ++i ) {
 		SimplePDB_Atom & atom( pdb.atoms()[i] );
 		// std::cerr << "FOO " << resnum << " " << res_atom_count << " " << prev_resnum << " " << atom.resnum << std::endl;
-		if( prev_resnum != atom.resnum ) {
-			if( res_atom_count > 3 ) {
+		if ( prev_resnum != atom.resnum ) {
+			if ( res_atom_count > 3 ) {
 				resnum++;
 			}
 			prev_resnum = atom.resnum;
@@ -163,50 +163,50 @@ void output_packstat_pdb( std::string fname, utility::vector1<core::Real> const 
 		}
 		res_atom_count++;
 		core::Real bfac = 1.0;
-		if( resnum > (int)res_scores.size() ) {
+		if ( resnum > (int)res_scores.size() ) {
 			TRps << "ERROR: more residues than res scores " << resnum << " " << res_scores.size() << std::endl;
 		} else {
 			bfac = res_scores[resnum];
 		}
 		// std::cerr << "bfac " << resnum << " " << res_scores.size() << " " << res_scores[resnum] << std::endl;
 		out << atom.whole_line.substr(0,61) << F(4,2,bfac) << atom.whole_line.substr(65) << std::endl;
-	  // out << LJ(6,atom.ATOM) + I( 5, ( atom.num ) ) + " "
-	  // 				+ LJ(4,atom.type) + " " + LJ(3,atom.res) + " " + atom.chain
-	  // 				+ I( 4, atom.resnum ) + "    "
-	  // 				+ F( 8, 3, atom.x ) + F( 8, 3, atom.y ) + F( 8, 3, atom.z )
-	  // 				+ F( 6, 2, atom.occ ) + ' ' + F( 5, 2, atom.bfac ) << std::endl;
+		// out << LJ(6,atom.ATOM) + I( 5, ( atom.num ) ) + " "
+		//     + LJ(4,atom.type) + " " + LJ(3,atom.res) + " " + atom.chain
+		//     + I( 4, atom.resnum ) + "    "
+		//     + F( 8, 3, atom.x ) + F( 8, 3, atom.y ) + F( 8, 3, atom.z )
+		//     + F( 6, 2, atom.occ ) + ' ' + F( 5, 2, atom.bfac ) << std::endl;
 	}
 	// for( size_t cb = 1; cb <= cavballs.size(); ++cb ) {
-	// 	// if( cavballs[cb].radius() > 0.9 )
-	// 		out << cavballs[cb].hetero_atom_line() << std::endl;
+	//  // if( cavballs[cb].radius() > 0.9 )
+	//   out << cavballs[cb].hetero_atom_line() << std::endl;
 	// }
 	// for( size_t cb = 1; cb <= sel_cbs.size(); ++cb) {
-	// 	out << sel_cbs[cb].hetero_atom_line(7) << std::endl;
+	//  out << sel_cbs[cb].hetero_atom_line(7) << std::endl;
 	// }
 
-	 std::cout << "Add Cavities to PDB:" << std::endl;
+	std::cout << "Add Cavities to PDB:" << std::endl;
 	Size count = 1;
-	for( Size i = 1; i <= clusters.size(); i++ ) {
+	for ( Size i = 1; i <= clusters.size(); i++ ) {
 		// if( clusters[i].volume < 150.0 ) continue;
-		if( clusters[i].surface_accessibility < option[ OptionKeys::packstat::min_surface_accessibility ]() ) continue;
+		if ( clusters[i].surface_accessibility < option[ OptionKeys::packstat::min_surface_accessibility ]() ) continue;
 		std::cout << "Cavity: " << count
 			<< " volume "       << clusters[i].volume
 			<< " surf "         << clusters[i].surface_area
 			<< " surf. acc. "   << clusters[i].surface_accessibility
-  			 << std::endl;
-		for( Size j = 1; j <= clusters[i].cavballs.size(); j++ ) {
+			<< std::endl;
+		for ( Size j = 1; j <= clusters[i].cavballs.size(); j++ ) {
 			// if( clusters[i].cavballs[j].radius() > 0.7 )
-				out << clusters[i].cavballs[j].hetero_atom_line( centers.size()+count, count, 0.0 ) << std::endl;
+			out << clusters[i].cavballs[j].hetero_atom_line( centers.size()+count, count, 0.0 ) << std::endl;
 		}
 		count++;
 	}
 
 	// for( Size i = 1; i <= clusters.size(); i++ ) {
-	// 	numeric::xyzVector<core::Real> xyz_ = clusters[i].center;
-	// 	out << "HETATM" + I( 5, 1 ) + "  V   CTR Z"
-	// 		+ I( 4, 1 ) + "    "
-	// 		+ F( 8, 3, xyz_.x() ) + F( 8, 3, xyz_.y() ) + F( 8, 3, xyz_.z() )
-	// 		+ F( 6, 2, 0.0 ) + ' ' + F( 5, 2, 0.0 ) << std::endl;
+	//  numeric::xyzVector<core::Real> xyz_ = clusters[i].center;
+	//  out << "HETATM" + I( 5, 1 ) + "  V   CTR Z"
+	//   + I( 4, 1 ) + "    "
+	//   + F( 8, 3, xyz_.x() ) + F( 8, 3, xyz_.y() ) + F( 8, 3, xyz_.z() )
+	//   + F( 6, 2, 0.0 ) + ' ' + F( 5, 2, 0.0 ) << std::endl;
 	// }
 
 	utility::io::ozstream outz((OUT_TAG+".pdb").c_str());
@@ -220,7 +220,7 @@ void output_packstat( std::string fname ) {
 
 	using core::Size;
 	using namespace core::scoring::packstat;
-  	using namespace std;
+	using namespace std;
 	using namespace core;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -254,27 +254,27 @@ void output_packstat( std::string fname ) {
 	core::Real packing_score = compute_packing_score( pd, oversample );
 
 	TRps << "packing score: " << fname << " " << centers.size() << " " << spheres.size() << " " << packing_score;
-	if( include_water ) {
+	if ( include_water ) {
 		TRps << " ( with " << pdb.num_water() << " waters )";
 	}
 	TRps << std::endl;
 
 	utility::vector1<core::Real> res_scores; // needed if output res scores or pdb
-	if( packstat_pdb || residue_scores ) {
+	if ( packstat_pdb || residue_scores ) {
 		res_scores = compute_residue_packing_scores( pd, oversample );
 	}
 
-	if( packstat_pdb ) {
+	if ( packstat_pdb ) {
 		output_packstat_pdb( fname, res_scores );
 	}
 
-	if( residue_scores ) {
-		for( int i = 1; i <= (int)res_scores.size(); ++i ) {
+	if ( residue_scores ) {
+		for ( int i = 1; i <= (int)res_scores.size(); ++i ) {
 			TRps << "packing score: residue " << i << " " << res_scores[i] << std::endl;
 		}
 	}
 
-	if( raw_stats ) {	// stupid duplicate code....
+	if ( raw_stats ) { // stupid duplicate code....
 
 		assert( pd.spheres.size() > 0 );
 		assert( pd.centers.size() > 0 );
@@ -282,21 +282,21 @@ void output_packstat( std::string fname ) {
 		SasaOptions opts;
 		opts.surrounding_sasa_smoothing_window = 1+2*oversample;
 		opts.num_surrounding_sasa_bins = 7;
-		for( core::Size ipr = 1; ipr <= 31; ++ipr ) {
+		for ( core::Size ipr = 1; ipr <= 31; ++ipr ) {
 			PackstatReal pr = 3.0 - ((double)(ipr-1))/10.0;
 			PackstatReal ostep = 0.1 / (oversample*2.0+1.0);
-			for( core::Size i = 1; i <= oversample; ++i )	opts.probe_radii.push_back( pr + i*ostep );
+			for ( core::Size i = 1; i <= oversample; ++i ) opts.probe_radii.push_back( pr + i*ostep );
 			opts.probe_radii.push_back( pr );
-			for( core::Size i = 1; i <= oversample; ++i )	opts.probe_radii.push_back( pr - i*ostep );
+			for ( core::Size i = 1; i <= oversample; ++i ) opts.probe_radii.push_back( pr - i*ostep );
 		}
 
 		SasaResultOP result = compute_sasa( pd.spheres, opts );
-		for( core::Size i = 1; i <= pd.centers.size(); ++i ) {
+		for ( core::Size i = 1; i <= pd.centers.size(); ++i ) {
 			// std::cout << i << " ";
 			PackingScoreResDataCOP dat( compute_surrounding_sasa( pd.centers[i], pd.spheres, result, opts ) );
 			TRps << "RAW_STATS " << i << " ";
-			for( Size i =1; i <= dat->nrad(); ++i ) {
-				for( Size j =1; j <= dat->npr(); ++j ) {
+			for ( Size i =1; i <= dat->nrad(); ++i ) {
+				for ( Size j =1; j <= dat->npr(); ++j ) {
 					TRps << dat->msa(i,j) << " ";
 				}
 			}
@@ -311,46 +311,46 @@ void output_packstat( std::string fname ) {
 int main (int argc, char *argv[]) {
 	try {
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-  using namespace core::scoring::packstat;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using namespace utility;
+		using namespace core::scoring::packstat;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace utility;
 
-  // test_io();
+		// test_io();
 
-	// test_sasa_dots();
-	if( !option[ out::output ].user() ){
-		option[ out::nooutput ].value( true );
-	}
-
-	if( option[ in::file::silent ].user() ) {
-
-		protocols::analysis::PackStatMoverOP pack_mover;
-		//protocols::jobdist::universal_main(m);
-		protocols::jd2::JobDistributor::get_instance()->go(pack_mover);
-
-	} else {
-
-		if( option[ in::file::s ].user() ) {
-	  	vector1<file::FileName> files( option[ in::file::s ]() );
-	  	for( size_t i = 1; i <= files.size(); ++i ) {
-				output_packstat( files[i] );
-	  	}
-		} else if( option[ in::file::l ].user() ) {
-	  	vector1<file::FileName> files( option[ in::file::l ]() );
-	  	for( size_t i = 1; i <= files.size(); ++i ) {
-				utility::io::izstream list( files[i] );
-				std::string fname;
-				while( list >> fname ) {
-					// std::cerr << "'" << fname << "'" << std::endl;
-					output_packstat( fname );
-				}
-	  	}
+		// test_sasa_dots();
+		if ( !option[ out::output ].user() ) {
+			option[ out::nooutput ].value( true );
 		}
 
-	}
+		if ( option[ in::file::silent ].user() ) {
+
+			protocols::analysis::PackStatMoverOP pack_mover;
+			//protocols::jobdist::universal_main(m);
+			protocols::jd2::JobDistributor::get_instance()->go(pack_mover);
+
+		} else {
+
+			if ( option[ in::file::s ].user() ) {
+				vector1<file::FileName> files( option[ in::file::s ]() );
+				for ( size_t i = 1; i <= files.size(); ++i ) {
+					output_packstat( files[i] );
+				}
+			} else if ( option[ in::file::l ].user() ) {
+				vector1<file::FileName> files( option[ in::file::l ]() );
+				for ( size_t i = 1; i <= files.size(); ++i ) {
+					utility::io::izstream list( files[i] );
+					std::string fname;
+					while ( list >> fname ) {
+						// std::cerr << "'" << fname << "'" << std::endl;
+						output_packstat( fname );
+					}
+				}
+			}
+
+		}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

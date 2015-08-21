@@ -38,18 +38,18 @@ namespace canonical_sampling {
 
 /// @brief Base class for moves that can obey detailed balance.
 ///
-/// @details In order to sample a thermodynamic state using a Monte Carlo 
-/// simulation, the moves must obey detailed balance.  This base class provides 
-/// a framework for writing moves that can obey this condition.  One 
-/// interesting method is set_preserve_detailed_balance(), which indicates 
-/// whether or not detailed balance needs to be obeyed.  This flag makes it 
-/// possible to implement fancy (but biased) features for use in contexts where 
-/// rigorous thermodynamic sampling isn't needed.  If the move requires a 
-/// non-unity proposal ratio to obey detailed balance, it can reimplement 
-/// last_proposal_density_ratio().  Support for movers that make multiple trial 
-/// moves under the hood is provided by is_multi_trial() and its related 
-/// methods.  A number of callbacks, including  initialize_simulation(), 
-/// observe_after_metropolis(), and finalize_simulation(), are also defined to 
+/// @details In order to sample a thermodynamic state using a Monte Carlo
+/// simulation, the moves must obey detailed balance.  This base class provides
+/// a framework for writing moves that can obey this condition.  One
+/// interesting method is set_preserve_detailed_balance(), which indicates
+/// whether or not detailed balance needs to be obeyed.  This flag makes it
+/// possible to implement fancy (but biased) features for use in contexts where
+/// rigorous thermodynamic sampling isn't needed.  If the move requires a
+/// non-unity proposal ratio to obey detailed balance, it can reimplement
+/// last_proposal_density_ratio().  Support for movers that make multiple trial
+/// moves under the hood is provided by is_multi_trial() and its related
+/// methods.  A number of callbacks, including  initialize_simulation(),
+/// observe_after_metropolis(), and finalize_simulation(), are also defined to
 /// let the mover react to certain milestones in the simulation.
 
 class ThermodynamicMover : public protocols::moves::Mover {
@@ -92,14 +92,14 @@ public:
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
-	/// @brief Return true if detailed balance is being preserved (i.e. no branch 
+	/// @brief Return true if detailed balance is being preserved (i.e. no branch
 	/// angle optimization).
 	virtual
 	bool
 	preserve_detailed_balance() const = 0;
 
-	/// @brief Set to true if detailed balance should be preserved (i.e. no 
-	/// branch angle optimization).  This will be set to true for all movers used 
+	/// @brief Set to true if detailed balance should be preserved (i.e. no
+	/// branch angle optimization).  This will be set to true for all movers used
 	/// by MetropolisHastingsMover.
 	virtual
 	void
@@ -115,21 +115,21 @@ public:
 	bool
 	is_multi_trial();
 
-	/// @brief If this is a multi-trial move, return the change in internal 
+	/// @brief If this is a multi-trial move, return the change in internal
 	/// score/temperature caused by the last call to apply().
 	/// @see is_multi_trial()
 	virtual
 	core::Real
 	last_inner_score_delta_over_temperature();
 
-	/// @brief If this is a multi-trial move, return the MetropolisHastingsMover 
+	/// @brief If this is a multi-trial move, return the MetropolisHastingsMover
 	/// being used internally.
 	/// @see is_multi_trial()
 	virtual
 	protocols::canonical_sampling::MetropolisHastingsMoverAP
 	metropolis_hastings_mover();
 
-	/// @brief If this is a multi-trial move, set the MetropolisHastingsMover to 
+	/// @brief If this is a multi-trial move, set the MetropolisHastingsMover to
 	/// be used internally.
 	/// @see is_multi_trial()
 	virtual
@@ -138,13 +138,13 @@ public:
 		protocols::canonical_sampling::MetropolisHastingsMoverAP metropolis_hastings_mover
 	);
 
-	/// @brief Return a list specifying which torsions may be perturbed by 
+	/// @brief Return a list specifying which torsions may be perturbed by
 	/// apply(), and the in what range each perturbation may be.
-	/// @details This method should probably not be pure virtual, and in fact 
-	/// should probably not even exist.  I searched most of the codebase, and 
-	/// could only find it being used in one pilot app.  It is also a somewhat 
-	/// difficult method to write, which means that most of the implementations 
-	/// are either untested or no-ops.  It might be better to remove the method 
+	/// @details This method should probably not be pure virtual, and in fact
+	/// should probably not even exist.  I searched most of the codebase, and
+	/// could only find it being used in one pilot app.  It is also a somewhat
+	/// difficult method to write, which means that most of the implementations
+	/// are either untested or no-ops.  It might be better to remove the method
 	/// altogether and implement it on a class-by-class basis as necessary.
 	virtual
 	utility::vector1<core::id::TorsionID_Range>
@@ -152,8 +152,8 @@ public:
 		core::pose::Pose & pose
 	) = 0;
 
-	/// @brief Return a list specifying which degrees of freedom may be perturbed 
-	/// by apply(), and the in what range each perturbation may be.  
+	/// @brief Return a list specifying which degrees of freedom may be perturbed
+	/// by apply(), and the in what range each perturbation may be.
 	virtual
 	utility::vector1<core::id::DOF_ID_Range>
 	dof_id_ranges(

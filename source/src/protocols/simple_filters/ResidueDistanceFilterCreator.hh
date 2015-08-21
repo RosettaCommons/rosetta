@@ -25,7 +25,7 @@
 
 namespace protocols {
 namespace simple_filters {
-	
+
 class ResidueDistanceFilterCreator : public protocols::filters::FilterCreator
 {
 public:

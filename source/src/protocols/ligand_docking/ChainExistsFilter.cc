@@ -42,7 +42,7 @@ ChainExistsFilter::apply( core::pose::Pose const & pose ) const {
 	assert(chain_.size()==1 );
 	utility::vector1<core::Size> chain_ids= core::pose::get_chain_ids_from_chain(chain_, pose);
 
-	if(chain_ids.empty()) return false;
+	if ( chain_ids.empty() ) return false;
 
 	return true;
 }
@@ -56,7 +56,7 @@ ChainExistsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 		assert(false);
 		return;
 	}
-	if ( ! tag->hasOption("chain")){
+	if ( ! tag->hasOption("chain") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("ChainExists filter needs a 'chain' option");
 	}
 	chain_ = tag->getOption<std::string>("chain");

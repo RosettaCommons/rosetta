@@ -55,7 +55,7 @@ utility::vector1< MolFileIOMoleculeOP > MolFileIOReader::parse_file( std::string
 		utility::file::FileName fn( filename );
 		std::string ext( fn.extension() ); // The fn.extension() machinery should seamlessly ignore the .gz ending.
 		ObjexxFCL::lowercase( ext );
-		if( ext == ".mol" || ext == ".sdf" || ext == ".pdb" || ext == ".mol2" || ext == ".params" ) {
+		if ( ext == ".mol" || ext == ".sdf" || ext == ".pdb" || ext == ".mol2" || ext == ".params" ) {
 			type = ext.substr(1); // Everything from the second character to the end of the string.
 		} else {
 			TR << "Extension of '" << ext << "' for file '" << filename << "' not recognized - attempting autodetection of type." << std::endl;
@@ -66,30 +66,30 @@ utility::vector1< MolFileIOMoleculeOP > MolFileIOReader::parse_file( std::string
 			bool ATOM_line = false;
 			bool BOND_line = false;
 			bool Tripos_line = false;
-			for( getline(test_type, line);  test_type; getline(test_type, line) ) {
-				if( utility::startswith(line, "M  END") ) { M_END_line = true; }
-				if( utility::startswith(line, "$$$$") ) { dollars_line = true; }
-				if( utility::startswith(line, "ATOM") ) { ATOM_line = true; }
-				if( utility::startswith(line, "BOND") ) { BOND_line = true; }
-				if( utility::startswith(line, "@<TRIPOS>") ) { Tripos_line = true; }
+			for ( getline(test_type, line);  test_type; getline(test_type, line) ) {
+				if ( utility::startswith(line, "M  END") ) { M_END_line = true; }
+				if ( utility::startswith(line, "$$$$") ) { dollars_line = true; }
+				if ( utility::startswith(line, "ATOM") ) { ATOM_line = true; }
+				if ( utility::startswith(line, "BOND") ) { BOND_line = true; }
+				if ( utility::startswith(line, "@<TRIPOS>") ) { Tripos_line = true; }
 			}
-			if( M_END_line || dollars_line ) {
-				if( ATOM_line || BOND_line || Tripos_line ) {
+			if ( M_END_line || dollars_line ) {
+				if ( ATOM_line || BOND_line || Tripos_line ) {
 					TR.Warning << "Warning: Ambiguous filetype for loading " << filename << ", assuming SDF." << std::endl;
 				}
 				type = "sdf";
-			} else if( Tripos_line ) {
-				if( ATOM_line || BOND_line || M_END_line || dollars_line ) {
+			} else if ( Tripos_line ) {
+				if ( ATOM_line || BOND_line || M_END_line || dollars_line ) {
 					TR.Warning << "Warning: Ambiguous filetype for loading " << filename << ", assuming mol2." << std::endl;
 				}
 				type = "mol2";
-			} else if( ATOM_line && BOND_line ) {
-				if( Tripos_line || M_END_line || dollars_line ) {
+			} else if ( ATOM_line && BOND_line ) {
+				if ( Tripos_line || M_END_line || dollars_line ) {
 					TR.Warning << "Warning: Ambiguous filetype for loading " << filename << ", assuming Rosetta params." << std::endl;
 				}
 				type = "params";
-			} else if( ATOM_line && ! BOND_line ) {
-				if( Tripos_line || M_END_line || dollars_line ) {
+			} else if ( ATOM_line && ! BOND_line ) {
+				if ( Tripos_line || M_END_line || dollars_line ) {
 					TR.Warning << "Warning: Ambiguous filetype for loading " << filename << ", assuming PDB." << std::endl;
 				}
 				type = "pdb";
@@ -106,20 +106,20 @@ utility::vector1< MolFileIOMoleculeOP > MolFileIOReader::parse_file( std::istrea
 	ObjexxFCL::lowercase( type );
 	utility::vector1< MolFileIOMoleculeOP > molecules;
 
-	if( type == "mol" || type == "sdf" ) {
+	if ( type == "mol" || type == "sdf" ) {
 		SDFParser parser;
 		molecules = parser.parse( file );
-	} else if( type == "mol2" ) {
+	} else if ( type == "mol2" ) {
 		TR.Error << "Loading of mol2 files via this method not currently supported." << std::endl;
-	} else if( type == "pdb" ) {
+	} else if ( type == "pdb" ) {
 		TR.Error << "Loading of pdb files via this method not currently supported." << std::endl;
-	} else if( type == "params" ) {
+	} else if ( type == "params" ) {
 		TR.Error << "Loading of params files via this method not currently supported." << std::endl;
 	} else {
 		utility_exit_with_message( "Do not know how to handle molecule file of type " + type );
 	}
 
-	if( ! molecules.size() ) {
+	if ( ! molecules.size() ) {
 		TR.Error << "Error: Stream contained no recognized molecules!" << std::endl;
 	}
 	return molecules;
@@ -127,9 +127,9 @@ utility::vector1< MolFileIOMoleculeOP > MolFileIOReader::parse_file( std::istrea
 
 
 ResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > molfile_data,
-			std::string atom_type_tag,
-			std::string elements_tag,
-			std::string mm_atom_type_tag) {
+	std::string atom_type_tag,
+	std::string elements_tag,
+	std::string mm_atom_type_tag) {
 
 	AtomTypeSetCOP atom_types( ChemicalManager::get_instance()->atom_type_set( atom_type_tag ) );
 	ElementSetCOP elements( ChemicalManager::get_instance()->element_set( elements_tag ) );
@@ -138,25 +138,25 @@ ResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > mo
 }
 
 ResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > molfile_data,
-			AtomTypeSetCOP atom_types,
-			ElementSetCOP element_type_set,
-			MMAtomTypeSetCOP mm_atom_types) {
+	AtomTypeSetCOP atom_types,
+	ElementSetCOP element_type_set,
+	MMAtomTypeSetCOP mm_atom_types) {
 
-	if( molfile_data.size() == 0 ) {
+	if ( molfile_data.size() == 0 ) {
 		utility_exit_with_message("ERROR: Cannot convert an empty vector of molecules to a ResidueType.");
 	}
 
 	std::map< core::chemical::sdf::AtomIndex, std::string > index_name_map;
 	ResidueTypeOP restype = molfile_data[1]->convert_to_ResidueType(index_name_map, atom_types, element_type_set, mm_atom_types);
 
-	if( molfile_data.size() > 1 ) {
+	if ( molfile_data.size() > 1 ) {
 		rotamers::StoredRotamerLibrarySpecificationOP rotlib( new rotamers::StoredRotamerLibrarySpecification );
-		for( core::Size ii(1); ii <= molfile_data.size(); ++ii ) {
+		for ( core::Size ii(1); ii <= molfile_data.size(); ++ii ) {
 			std::map< std::string, core::Vector > location_map;
-			for( std::map< core::chemical::sdf::AtomIndex, std::string >::const_iterator itr( index_name_map.begin() ), itr_end( index_name_map.end() );
+			for ( std::map< core::chemical::sdf::AtomIndex, std::string >::const_iterator itr( index_name_map.begin() ), itr_end( index_name_map.end() );
 					itr != itr_end; ++itr ) {
 				MolFileIOAtomOP atom = molfile_data[ ii ]->atom_index( itr->first );
-				if( atom ) {
+				if ( atom ) {
 					location_map[ itr->second ] = atom->position();
 				}
 			}
@@ -170,10 +170,10 @@ ResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > mo
 
 utility::vector1< ResidueTypeOP >
 convert_to_ResidueTypes( utility::vector1< MolFileIOMoleculeOP > molfile_data,
-			bool load_rotamers,
-			std::string atom_type_tag,
-			std::string elements_tag,
-			std::string mm_atom_type_tag) {
+	bool load_rotamers,
+	std::string atom_type_tag,
+	std::string elements_tag,
+	std::string mm_atom_type_tag) {
 
 	AtomTypeSetCOP atom_types( ChemicalManager::get_instance()->atom_type_set( atom_type_tag ) );
 	ElementSetCOP elements( ChemicalManager::get_instance()->element_set( elements_tag ) );
@@ -183,17 +183,17 @@ convert_to_ResidueTypes( utility::vector1< MolFileIOMoleculeOP > molfile_data,
 
 utility::vector1< ResidueTypeOP >
 convert_to_ResidueTypes( utility::vector1< MolFileIOMoleculeOP > molfile_data,
-			bool load_rotamers,
-			AtomTypeSetCOP atom_types,
-			ElementSetCOP element_types,
-			MMAtomTypeSetCOP mm_atom_types) {
+	bool load_rotamers,
+	AtomTypeSetCOP atom_types,
+	ElementSetCOP element_types,
+	MMAtomTypeSetCOP mm_atom_types) {
 
 	std::map< std::string, core::Size > name_index_map;
 	utility::vector1< utility::vector1< MolFileIOMoleculeOP > > separated_molecules;
 	std::string previous_entry("");
 
-	for( core::Size ii(1); ii <= molfile_data.size(); ++ii ) {
-		if( ! load_rotamers ) {
+	for ( core::Size ii(1); ii <= molfile_data.size(); ++ii ) {
+		if ( ! load_rotamers ) {
 			separated_molecules.resize( separated_molecules.size() + 1 );
 			separated_molecules[ separated_molecules.size() ].push_back( molfile_data[ii] );
 		} else if ( previous_entry != "" && molfile_data[ii]->name() == "" ) {
@@ -213,7 +213,7 @@ convert_to_ResidueTypes( utility::vector1< MolFileIOMoleculeOP > molfile_data,
 	}
 
 	utility::vector1< ResidueTypeOP > residue_types;
-	for( core::Size jj(1); jj <= separated_molecules.size(); ++jj ) {
+	for ( core::Size jj(1); jj <= separated_molecules.size(); ++jj ) {
 		residue_types.push_back( convert_to_ResidueType(separated_molecules[jj], atom_types, element_types, mm_atom_types) );
 	}
 

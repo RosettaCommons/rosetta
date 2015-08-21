@@ -150,7 +150,7 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 
 	//TR << "process_score(): best_energy_by_aa before: [ ";
 	//for ( Size i=1; i <= best_energy_by_aa.size(); ++i ) {
-	//	TR << F(6,2,best_energy_by_aa[i]) << ", ";
+	// TR << F(6,2,best_energy_by_aa[i]) << ", ";
 	//}
 	//TR << std::endl;
 
@@ -163,7 +163,7 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 	// If you neglect to multiply the total unfolded state energy of an aa by the current unfolded term weight, then
 	// the unfolded term weight varies wildly and minimization doesn't do anything.
 
-	for( Size aa = 1; aa <= chemical::num_canonical_aas; ++aa ) {
+	for ( Size aa = 1; aa <= chemical::num_canonical_aas; ++aa ) {
 
 		Real unfolded_energy_for_one_aa = 0.0;
 		Real weighted_unfolded_energy_for_one_aa = 0.0;
@@ -178,14 +178,14 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 		// The neat thing about this setup is that if a score12 energy term is not included as a free or fixed param, then
 		// it won't be included in the unfolded state energy either.
 		//
-		for( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
+		for ( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
 			//if ( print ) {
-				//TR << "process_score(): adding unfolded energy for aa '" << chemical::name_from_aa( (chemical::AA) aa )
-				//	<< "' for unweighted free '" << name_from_score_type( score_list[ ii ] ) << "' energy: "
-				//	<< unfolded_energy_emap_vector_[ aa ][ score_list[ ii ]] << " * '"
-				//	<< name_from_score_type( score_list[ ii ] )
-				//	<< "' weight: " << vars[ ii ]
-				//	<< " to local unfolded_energy_for_one_aa variable." << std::endl;
+			//TR << "process_score(): adding unfolded energy for aa '" << chemical::name_from_aa( (chemical::AA) aa )
+			// << "' for unweighted free '" << name_from_score_type( score_list[ ii ] ) << "' energy: "
+			// << unfolded_energy_emap_vector_[ aa ][ score_list[ ii ]] << " * '"
+			// << name_from_score_type( score_list[ ii ] )
+			// << "' weight: " << vars[ ii ]
+			// << " to local unfolded_energy_for_one_aa variable." << std::endl;
 			//}
 			// the unweighted, unfolded energy for this ScoreType times the weight
 			unfolded_energy_for_one_aa += (unfolded_energy_emap_vector_[ aa ][ score_list[ ii ]] * vars[ ii ]);
@@ -210,13 +210,13 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 
 		// Part 1b:
 		// Fixed-weight energy terms
-		for( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
+		for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
 			//if ( print ) {
-				//TR << "process_score(): adding unfolded energy for aa '" << chemical::name_from_aa( (chemical::AA) aa )
-				//	<< "' unweighted fixed '" << name_from_score_type( fixed_score_list[ ii ] ) << "' energy: "
-				//	<< unfolded_energy_emap_vector_[ aa ][ fixed_score_list[ ii ]] << " * '"
-				//	<<  name_from_score_type( fixed_score_list[ ii ] )
-				//	<< "' weight: " << fixed_terms[ fixed_score_list[ ii ] ] << std::endl;
+			//TR << "process_score(): adding unfolded energy for aa '" << chemical::name_from_aa( (chemical::AA) aa )
+			// << "' unweighted fixed '" << name_from_score_type( fixed_score_list[ ii ] ) << "' energy: "
+			// << unfolded_energy_emap_vector_[ aa ][ fixed_score_list[ ii ]] << " * '"
+			// <<  name_from_score_type( fixed_score_list[ ii ] )
+			// << "' weight: " << fixed_terms[ fixed_score_list[ ii ] ] << std::endl;
 			//}
 			unfolded_energy_for_one_aa += (unfolded_energy_emap_vector_[ aa ][ fixed_score_list[ ii ] ] * fixed_terms[ fixed_score_list[ ii ] ]);
 		}
@@ -229,24 +229,24 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 		// Part 2: Now use the current 'unfolded' term weight
 		// 'unfolded' could be a free or fixed term so iterate over both lists; here it's necessary because this energy gets added
 		// to the best energy by aa array regardless.
-		for( Size tt = 1; tt <= num_energy_dofs; ++tt ) {
+		for ( Size tt = 1; tt <= num_energy_dofs; ++tt ) {
 			if ( name_from_score_type( score_list[ tt ] ) == "unfolded" ) {
 				//if ( print ) {
-				//	TR << chemical::name_from_aa( (chemical::AA) aa )
-				//		<< " unweighted unfolded energy: " << unfolded_energy_for_one_aa << ", free '"
-				//		<< name_from_score_type( score_list[ tt ] ) << "' term weight: " << vars[tt]
-				//		<< ", weighted unfolded energy: " << unfolded_energy_for_one_aa * vars[ tt ] << std::endl;
+				// TR << chemical::name_from_aa( (chemical::AA) aa )
+				//  << " unweighted unfolded energy: " << unfolded_energy_for_one_aa << ", free '"
+				//  << name_from_score_type( score_list[ tt ] ) << "' term weight: " << vars[tt]
+				//  << ", weighted unfolded energy: " << unfolded_energy_for_one_aa * vars[ tt ] << std::endl;
 				//}
 				weighted_unfolded_energy_for_one_aa = unfolded_energy_for_one_aa * vars[ tt ];
 			}
 		}
-		for( Size tt = 1; tt <= fixed_score_list.size(); ++tt ) {
+		for ( Size tt = 1; tt <= fixed_score_list.size(); ++tt ) {
 			if ( name_from_score_type( fixed_score_list[ tt ] ) == "unfolded" ) {
 				//if ( print ) {
-				//	TR << chemical::name_from_aa( (chemical::AA) aa )
-				//		<< " unfolded energy: " << unfolded_energy_for_one_aa << ", FIXED '"
-				//		<< name_from_score_type( fixed_score_list[ tt ] ) << "' term weight: " << fixed_terms[ fixed_score_list[ tt ] ]
-				//		<< ", weighted unfolded energy: " << unfolded_energy_for_one_aa * fixed_terms[ fixed_score_list[ tt ] ] << std::endl;
+				// TR << chemical::name_from_aa( (chemical::AA) aa )
+				//  << " unfolded energy: " << unfolded_energy_for_one_aa << ", FIXED '"
+				//  << name_from_score_type( fixed_score_list[ tt ] ) << "' term weight: " << fixed_terms[ fixed_score_list[ tt ] ]
+				//  << ", weighted unfolded energy: " << unfolded_energy_for_one_aa * fixed_terms[ fixed_score_list[ tt ] ] << std::endl;
 				//}
 				weighted_unfolded_energy_for_one_aa = unfolded_energy_for_one_aa * fixed_terms[ fixed_score_list[ tt ] ];
 			}
@@ -259,16 +259,17 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 
 		// do a check to make sure the energy doesn't exceed our cutoff (APL set at 300) or otherwise we get INF/NAN errors during minimization
 		Real const cutoff( 300.0 );
-		if ( best_energy_by_aa[ aa ] > cutoff )
+		if ( best_energy_by_aa[ aa ] > cutoff ) {
 			best_energy_by_aa[ aa ] = cutoff;
-		else if ( best_energy_by_aa[ aa ] < -1.0*cutoff )
+		} else if ( best_energy_by_aa[ aa ] < -1.0*cutoff ) {
 			best_energy_by_aa[ aa ] = -1.0*cutoff;
+		}
 
 	}
 
 	//TR << "process_score(): best_energy_by_aa after : [ ";
 	//for ( Size i=1; i <= best_energy_by_aa.size(); ++i ) {
-	//	TR << F(6,2,best_energy_by_aa[i]) << ", ";
+	// TR << F(6,2,best_energy_by_aa[i]) << ", ";
 	//}
 	//TR << std::endl;
 
@@ -279,12 +280,13 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 	Real numerator(0.0), partition(0.0);
 	Multivec dpartition( vars.size(), 0.0 ), dnumerator( vars.size(), 0.0 );
 
-	for( Size aa(1); aa <= chemical::num_canonical_aas; ++aa ) {
+	for ( Size aa(1); aa <= chemical::num_canonical_aas; ++aa ) {
 
 		Real const exp_term( std::exp( -1.0 * inv_kT * best_energy_by_aa[ aa ] ) );
 		partition += exp_term;
-		if ( aa == size_t( this_native_aa ) )
+		if ( aa == size_t( this_native_aa ) ) {
 			numerator = exp_term;
+		}
 
 		// for reference energy derivatives, but don't assume the protocol is using them
 		// note for derivatives: dE/dw( e^-(E*w+...) ) = -E * e^-(E*w+...) but as this is an energy, the 'weight' here is 0 or 1
@@ -293,8 +295,9 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 		if ( num_ref_dofs != 0 ) {
 			Real const ref_deriv_term( -1.0 * inv_kT * ref_deriv_weight[ aa ] * exp_term );
 			dpartition[ num_energy_dofs + aa ] = ref_deriv_term;
-			if ( aa == size_t(this_native_aa) )
+			if ( aa == size_t(this_native_aa) ) {
 				dnumerator[ num_energy_dofs + aa ] = ref_deriv_term;
+			}
 		}
 
 		// partitions for energy derivatives
@@ -305,11 +308,12 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 		// there's a potential problem here I'm not sure how it happens. If the best energy by aa is something really small (e.g. -700)
 		// then the exponential e(700) is an extremely large number. the runtime just assigns it INF.  Then when you multiply it by
 		// zero, you still get INF for some reason.
-		for( Size e_term = 1; e_term <= num_energy_dofs; ++e_term ) {
+		for ( Size e_term = 1; e_term <= num_energy_dofs; ++e_term ) {
 			Real e_term_deriv( -1.0 * inv_kT * unweighted_E_dof[ aa ][ e_term ] * exp_term );
 			dpartition[ e_term ] += e_term_deriv;
-			if ( aa == size_t( this_native_aa ) )
+			if ( aa == size_t( this_native_aa ) ) {
 				dnumerator[ e_term ] = e_term_deriv;
+			}
 		}
 	}
 
@@ -321,36 +325,36 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 		if ( score_list[ dof ] == hbond_lr_bb ) { dE_dvars[ dof ] = 0.0; }
 
 		/*if ( tag() == "1nls_" && (int)this_native_aa == 3 ) {
-			if ( score_list[ dof ] == omega ) {
-				TR << "PNATAA " << tag() << X(1) << this_native_aa << "," << I(2, (int)this_native_aa) << X(1)
-					<< "-lnp: " << F(6,4,-1.0 * std::log( numerator / partition ))
-					<< ", dE_dvars[ omega ]: " << F(6,4, dE_dvars[ dof ])
-					<< ", best_energy_by_aa: [ ";
-				for ( Size i=1; i <= best_energy_by_aa.size(); ++i ) { TR << F(5,2,best_energy_by_aa[i]) << ", "; } TR << "], ";
-				TR << ", dpart[ omega ]: " << F(7,3,dpartition[dof]) << ", part: " << F(7,3,partition)
-					<< ", dnum[ omega ]: " << F(7,3,dnumerator[dof]) << ", num: " << F(7,3,numerator) << std::endl;
-			}
-			if ( score_list[ dof ] == unfolded ) {
-				TR << "PNATAA " << tag() << X(1) << this_native_aa << "," << I(2, (int)this_native_aa) << X(1)
-						<< " dpart[ unfolded ]: " << F(7,3,dpartition[dof]) << " part: " << F(7,3,partition)
-						<< " dnum[ unfolded ]: " << F(7,3,dnumerator[dof]) << " num: " << F(7,3,numerator)
-						<< " dE_dvars[ unfolded ]: " << F(6,4, dE_dvars[ dof ])
-						<< " dE_dvars: [ ";
-				for ( Size ii=1; ii <= vars.size(); ++ii ) { TR << F(5,2,dE_dvars[ii]) << ", "; }
-				TR << "]" << std::endl;
-			}
+		if ( score_list[ dof ] == omega ) {
+		TR << "PNATAA " << tag() << X(1) << this_native_aa << "," << I(2, (int)this_native_aa) << X(1)
+		<< "-lnp: " << F(6,4,-1.0 * std::log( numerator / partition ))
+		<< ", dE_dvars[ omega ]: " << F(6,4, dE_dvars[ dof ])
+		<< ", best_energy_by_aa: [ ";
+		for ( Size i=1; i <= best_energy_by_aa.size(); ++i ) { TR << F(5,2,best_energy_by_aa[i]) << ", "; } TR << "], ";
+		TR << ", dpart[ omega ]: " << F(7,3,dpartition[dof]) << ", part: " << F(7,3,partition)
+		<< ", dnum[ omega ]: " << F(7,3,dnumerator[dof]) << ", num: " << F(7,3,numerator) << std::endl;
+		}
+		if ( score_list[ dof ] == unfolded ) {
+		TR << "PNATAA " << tag() << X(1) << this_native_aa << "," << I(2, (int)this_native_aa) << X(1)
+		<< " dpart[ unfolded ]: " << F(7,3,dpartition[dof]) << " part: " << F(7,3,partition)
+		<< " dnum[ unfolded ]: " << F(7,3,dnumerator[dof]) << " num: " << F(7,3,numerator)
+		<< " dE_dvars[ unfolded ]: " << F(6,4, dE_dvars[ dof ])
+		<< " dE_dvars: [ ";
+		for ( Size ii=1; ii <= vars.size(); ++ii ) { TR << F(5,2,dE_dvars[ii]) << ", "; }
+		TR << "]" << std::endl;
+		}
 		}*/
 
 	}
 
 	if ( print ) {
 		ostr << "PNATAA " << tag() << X(1) << this_native_aa << "," << I(2, (int)this_native_aa) << X(1)
-				<< " nbs: " << I(2,neighbor_count())
-				<< " num: " << F(7,3,numerator) << " part: " << F(7,3,partition)
-				<< " p: " << F(7,5,numerator / partition)
-				<< " -lnp: " << F(6,4,-1.0 * std::log( numerator / partition ))
-				<< " -compwt_lnp: " << F(6, 4, component_weights[ type() ] * (-1.0 * std::log( numerator / partition )) )
-				<< " best_energy_by_aa: [ ";
+			<< " nbs: " << I(2,neighbor_count())
+			<< " num: " << F(7,3,numerator) << " part: " << F(7,3,partition)
+			<< " p: " << F(7,5,numerator / partition)
+			<< " -lnp: " << F(6,4,-1.0 * std::log( numerator / partition ))
+			<< " -compwt_lnp: " << F(6, 4, component_weights[ type() ] * (-1.0 * std::log( numerator / partition )) )
+			<< " best_energy_by_aa: [ ";
 
 		for ( Size i=1; i <= best_energy_by_aa.size(); ++i ) {
 			ostr << F(5,2,best_energy_by_aa[i]) << ", ";
@@ -392,7 +396,7 @@ NestedEnergyTermPNatAAOptEPositionData::write_to_file( std::ofstream & outfile )
 	}
 	outfile << std::endl;
 
-	outfile	<< "nrots " << data().size() << "\n";
+	outfile << "nrots " << data().size() << "\n";
 	for ( PNatAAOptERotamerDataOPs::const_iterator rot( rotamer_data_begin() ); rot != rotamer_data_end(); ++rot ) {
 		outfile << *rot << std::endl;
 	}
@@ -786,35 +790,35 @@ NestedEnergyTermDDGMutationOptEData::process_score(
 	for ( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
 		for ( Size jj = 1; jj <= wts_.size(); ++jj ) {
 
-		// cap the fa_rep term at some value - this at least keeps it around for most of the mutants
-		#ifdef CAP_FA_REP
+			// cap the fa_rep term at some value - this at least keeps it around for most of the mutants
+#ifdef CAP_FA_REP
 			if ( ( score_list[ ii ] == fa_rep ) && ( vars[ ii ] * wts_[ jj ]->free_data()[ ii ] > 10 ) ) { wt_energies[ jj ] += 10; }
 			else
-		#endif
-				wt_energies[ jj ] += vars[ ii ] * wts_[ jj ]->free_data()[ ii ];
+#endif
+			wt_energies[ jj ] += vars[ ii ] * wts_[ jj ]->free_data()[ ii ];
 		}
 		for ( Size jj = 1; jj <= muts_.size(); ++jj ) {
-		#ifdef CAP_FA_REP
+#ifdef CAP_FA_REP
 			if ( ( score_list[ ii ] == fa_rep ) && ( vars[ ii ] * muts_[ jj ]->free_data()[ ii ] > 10 ) ) { mut_energies[ jj ] += 10; }
 			else
-		#endif
-				mut_energies[ jj ] += vars[ ii ] * muts_[ jj ]->free_data()[ ii ];
+#endif
+			mut_energies[ jj ] += vars[ ii ] * muts_[ jj ]->free_data()[ ii ];
 		}
 	}
 	for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
 		for ( Size jj = 1; jj <= wts_.size(); ++jj ) {
-		#ifdef CAP_FA_REP
+#ifdef CAP_FA_REP
 			if ( ( fixed_score_list[ ii ] == fa_rep ) && ( fixed_terms[ fixed_score_list[ ii ] ] * wts_[ jj ]->fixed_data()[ ii ] > 10 ) ) { wt_energies[ jj ] += 10; }
 			else
-		#endif
-				wt_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * wts_[ jj ]->fixed_data()[ ii ];
+#endif
+			wt_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * wts_[ jj ]->fixed_data()[ ii ];
 		}
 		for ( Size jj = 1; jj <= muts_.size(); ++jj ) {
-		#ifdef CAP_FA_REP
+#ifdef CAP_FA_REP
 			if ( ( fixed_score_list[ ii ] == fa_rep ) && ( fixed_terms[ fixed_score_list[ ii ] ] * muts_[ jj ]->fixed_data()[ ii ] > 10 ) ) { mut_energies[ jj ] += 10; }
 			else
-		#endif
-				mut_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * muts_[ jj ]->fixed_data()[ ii ];
+#endif
+			mut_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * muts_[ jj ]->fixed_data()[ ii ];
 		}
 	}
 
@@ -845,13 +849,13 @@ NestedEnergyTermDDGMutationOptEData::process_score(
 	for ( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
 
 		//TR << name_from_score_type( score_list[ ii ] ) << ": "
-		//	<< ( vars[ii] * wt_unfolded_energies_emap_[ score_list[ ii ] ] ) << ", "
-		//	<< ( vars[ii] * mut_unfolded_energies_emap_[ score_list[ ii ] ] ) << " / ";
+		// << ( vars[ii] * wt_unfolded_energies_emap_[ score_list[ ii ] ] ) << ", "
+		// << ( vars[ii] * mut_unfolded_energies_emap_[ score_list[ ii ] ] ) << " / ";
 
 		//TR << "process_score(): adding unfolded '" << name_from_score_type( score_list[ ii ] )
-		//	<< "' energy: " << wt_unfolded_energies_emap_[ score_list[ ii ] ]
-		//	<< " * free weight: " << vars[ ii ]
-		//	<< " = " << ( vars[ii] * wt_unfolded_energies_emap_[ score_list[ ii ] ] ) << std::endl;
+		// << "' energy: " << wt_unfolded_energies_emap_[ score_list[ ii ] ]
+		// << " * free weight: " << vars[ ii ]
+		// << " = " << ( vars[ii] * wt_unfolded_energies_emap_[ score_list[ ii ] ] ) << std::endl;
 
 		// Assume free params are fa_rep, solubility, and unfolded. The unfolded_energy_emap_vector only contains energies
 		// for fa_rep; solubility and unfolded always return zeros.  Thus, even though we iterate through all the free terms
@@ -869,13 +873,13 @@ NestedEnergyTermDDGMutationOptEData::process_score(
 	for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
 
 		//TR << name_from_score_type( fixed_score_list[ ii ] ) << ": "
-		//	<< ( fixed_terms[ fixed_score_list[ ii ] ] * wt_unfolded_energies_emap_[ fixed_score_list[ ii ] ] ) << ", "
-		//	<< ( fixed_terms[ fixed_score_list[ ii ] ] * mut_unfolded_energies_emap_[ fixed_score_list[ ii ] ] ) << " / ";
+		// << ( fixed_terms[ fixed_score_list[ ii ] ] * wt_unfolded_energies_emap_[ fixed_score_list[ ii ] ] ) << ", "
+		// << ( fixed_terms[ fixed_score_list[ ii ] ] * mut_unfolded_energies_emap_[ fixed_score_list[ ii ] ] ) << " / ";
 
 		//TR << "process_score(): adding unfolded '" << name_from_score_type( fixed_score_list[ ii ] )
-		//	<< "' energy: " << wt_unfolded_energies_emap_[ fixed_score_list[ ii ] ]
-		//	<< " * fixed weight: " << fixed_terms[ fixed_score_list[ ii ] ]
-		//	<< " = " << ( fixed_terms[ fixed_score_list[ ii ] ] * wt_unfolded_energies_emap_[ fixed_score_list[ ii ] ] ) << std::endl;
+		// << "' energy: " << wt_unfolded_energies_emap_[ fixed_score_list[ ii ] ]
+		// << " * fixed weight: " << fixed_terms[ fixed_score_list[ ii ] ]
+		// << " = " << ( fixed_terms[ fixed_score_list[ ii ] ] * wt_unfolded_energies_emap_[ fixed_score_list[ ii ] ] ) << std::endl;
 
 		wt_unweighted_unfolded_energy += ( fixed_terms[ fixed_score_list[ ii ] ] * wt_unfolded_energies_emap_[ fixed_score_list[ ii ] ] );
 		mut_unweighted_unfolded_energy += ( fixed_terms[ fixed_score_list[ ii ] ] * mut_unfolded_energies_emap_[ fixed_score_list[ ii ] ] );
@@ -891,8 +895,8 @@ NestedEnergyTermDDGMutationOptEData::process_score(
 			mut_weighted_unfolded_energy = vars[ii] * mut_unweighted_unfolded_energy;
 			unfolded_weight = vars[ii];
 			//TR << "process_score(): weighting unweighted unfolded energy: '" << wt_unweighted_unfolded_energy
-			//	<< " by free unfolded term weight: " << vars[ii]
-			//	<< " = " << vars[ii] * wt_unweighted_unfolded_energy << std::endl;
+			// << " by free unfolded term weight: " << vars[ii]
+			// << " = " << vars[ii] * wt_unweighted_unfolded_energy << std::endl;
 		}
 	}
 
@@ -906,8 +910,8 @@ NestedEnergyTermDDGMutationOptEData::process_score(
 			mut_weighted_unfolded_energy = fixed_terms[ fixed_score_list[ ii ] ] * mut_unweighted_unfolded_energy;
 			unfolded_weight = fixed_terms[ fixed_score_list[ ii ] ];
 			//TR << "process_score(): weighting unweighted unfolded energy: '" << wt_unweighted_unfolded_energy
-			//	<< " by fixed unfolded term weight: " << fixed_terms[ fixed_score_list[ ii ] ]
-			//	<< " = " << fixed_terms[ fixed_score_list[ ii ] ] * wt_unweighted_unfolded_energy << std::endl;
+			// << " by fixed unfolded term weight: " << fixed_terms[ fixed_score_list[ ii ] ]
+			// << " = " << fixed_terms[ fixed_score_list[ ii ] ] * wt_unweighted_unfolded_energy << std::endl;
 		}
 	}
 
@@ -919,7 +923,7 @@ NestedEnergyTermDDGMutationOptEData::process_score(
 
 	//TR << "process_score(): unf weight: " << unfolded_weight
 	//  << ", unweighted energy: " << wt_unweighted_unfolded_energy << ", " << mut_unweighted_unfolded_energy
-	//	<< "; weighted unfolded energy: " << F(7,2,wt_weighted_unfolded_energy) << ", "  << F(7,2,mut_weighted_unfolded_energy) << std::endl;
+	// << "; weighted unfolded energy: " << F(7,2,wt_weighted_unfolded_energy) << ", "  << F(7,2,mut_weighted_unfolded_energy) << std::endl;
 
 	//TR << "process_score(): after unfolded wts_: [ ";
 	//for ( Size jj = 1; jj <= wts_.size(); ++jj ) { TR << F(6,1,wt_energies[ jj ]) << ", "; }
@@ -960,7 +964,7 @@ NestedEnergyTermDDGMutationOptEData::process_score(
 
 	} else {
 
-		for( Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
+		for ( Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
 
 			if ( ( score_list[ e_dof ] == fa_rep ) && ( muts_[ best_mut ]->free_data()[ e_dof ] - wts_[ best_wt ]->free_data()[ e_dof ] ) > 10 ) {
 				// deal with the really bad repulsive energy cases here
@@ -970,9 +974,10 @@ NestedEnergyTermDDGMutationOptEData::process_score(
 				dE_dvars[ e_dof ] += 2 * component_weights[ ddG_mutation_correlation_with_unfolded_energy ] * ddG_diff *
 					( mut_unweighted_unfolded_energy - wt_unweighted_unfolded_energy );
 
-			} else
+			} else {
 				dE_dvars[ e_dof ] += 2 * component_weights[ ddG_mutation_correlation_with_unfolded_energy ] * ddG_diff *
 					( muts_[ best_mut ]->free_data()[ e_dof ] - wts_[ best_wt ]->free_data()[ e_dof ] );
+			}
 		}
 
 		if ( num_ref_dofs != 0 ) {

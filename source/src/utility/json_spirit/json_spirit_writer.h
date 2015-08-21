@@ -16,7 +16,7 @@
 
 namespace utility {
 namespace json_spirit {
-    // these functions to convert JSON Values to text
+// these functions to convert JSON Values to text
 
 #ifdef JSON_SPIRIT_VALUE_ENABLED
     void         write( const Value&  value, std::ostream&  os, unsigned int options = 0 );
@@ -29,17 +29,17 @@ namespace json_spirit {
 #endif
 
 #if defined( JSON_SPIRIT_WVALUE_ENABLED ) && !defined( BOOST_NO_STD_WSTRING )
-    void         write( const wValue&  value, std::wostream& os, unsigned int options = 0 );
-    std::wstring write( const wValue&  value, unsigned int options = 0 );
+void         write( const wValue&  value, std::wostream& os, unsigned int options = 0 );
+std::wstring write( const wValue&  value, unsigned int options = 0 );
 #endif
 
 #if defined( JSON_SPIRIT_WMVALUE_ENABLED ) && !defined( BOOST_NO_STD_WSTRING )
-    void         write( const wmValue& value, std::wostream& os, unsigned int options = 0 );
-    std::wstring write( const wmValue& value, unsigned int options = 0 );
+void         write( const wmValue& value, std::wostream& os, unsigned int options = 0 );
+std::wstring write( const wmValue& value, unsigned int options = 0 );
 #endif
 
-    // these "formatted" versions of the "write" functions are the equivalent of the above functions
-    // with option "pretty_print"
+// these "formatted" versions of the "write" functions are the equivalent of the above functions
+// with option "pretty_print"
 
 #ifdef JSON_SPIRIT_VALUE_ENABLED
     void         write_formatted( const Value& value, std::ostream&  os );
@@ -51,12 +51,12 @@ namespace json_spirit {
 #endif
 
 #if defined( JSON_SPIRIT_WVALUE_ENABLED ) && !defined( BOOST_NO_STD_WSTRING )
-    void         write_formatted( const wValue& value, std::wostream& os );
-    std::wstring write_formatted( const wValue& value );
+void         write_formatted( const wValue& value, std::wostream& os );
+std::wstring write_formatted( const wValue& value );
 #endif
 #if defined( JSON_SPIRIT_WMVALUE_ENABLED ) && !defined( BOOST_NO_STD_WSTRING )
-    void         write_formatted( const wmValue& value, std::wostream& os );
-    std::wstring write_formatted( const wmValue& value );
+void         write_formatted( const wmValue& value, std::wostream& os );
+std::wstring write_formatted( const wmValue& value );
 #endif
 
 } // namespace json_spirit

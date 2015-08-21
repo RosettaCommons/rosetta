@@ -62,7 +62,7 @@ FragmentMover::FragmentMover(std::string type) {
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	movemap->set_bb(true); // standard MoveMap
 
-  set_movemap( movemap );
+	set_movemap( movemap );
 	protocols::moves::Mover::type(type);
 }
 
@@ -87,7 +87,7 @@ FragmentMover::FragmentMover(
 	fragset_( fragset )
 {
 	protocols::moves::Mover::type( type );
-  set_movemap( movemap );
+	set_movemap( movemap );
 }
 
 bool FragmentMover::apply( pose::Pose & pose, Size pos ) const {
@@ -111,7 +111,7 @@ Size FragmentMover::apply_at_all_positions( core::pose::Pose& pose ) const {
 			one_frame.push_back( *fit );
 			apply_frames( pose, one_frame );
 		}
-		//		ct += apply( pose, *it );
+		//  ct += apply( pose, *it );
 	}
 	return ct;
 }
@@ -125,8 +125,8 @@ core::fragment::FragSetCOP FragmentMover::fragments() const {
 void
 FragmentMover::set_fragments( core::fragment::FragSetCOP new_frags_ ) {
 	fragset_ = new_frags_;
-  Size size_of_frags = fragset_->max_pos() - fragset_->min_pos() + 1;
-  tr.Debug << " got new fragments with size " << size_of_frags << std::endl;
+	Size size_of_frags = fragset_->max_pos() - fragset_->min_pos() + 1;
+	tr.Debug << " got new fragments with size " << size_of_frags << std::endl;
 	on_new_fragments();
 }
 
@@ -144,10 +144,10 @@ FragmentMover::movemap() const {
 
 void
 FragmentMover::update_insert_map() {
-	//	if ( !bValidInsertMap_ ) {
+	// if ( !bValidInsertMap_ ) {
 	fragset_->generate_insert_map( *movemap_, insert_map_, insert_size_ );
-	//	bValidInsertMap_ = true;
-	//	}
+	// bValidInsertMap_ = true;
+	// }
 }
 
 
@@ -160,7 +160,7 @@ ClassicFragmentMover::ClassicFragmentMover() : FragmentMover( "ClassicFragmentMo
 // constructor
 ClassicFragmentMover::ClassicFragmentMover(
 	core::fragment::FragSetCOP fragset
-)	: FragmentMover( fragset, "ClassicFragmentMover" )
+) : FragmentMover( fragset, "ClassicFragmentMover" )
 {
 	set_defaults();
 }
@@ -169,7 +169,7 @@ ClassicFragmentMover::ClassicFragmentMover(
 ClassicFragmentMover::ClassicFragmentMover(
 	core::fragment::FragSetCOP fragset,
 	core::kinematics::MoveMapCOP movemap
-)	: FragmentMover( fragset, movemap, "ClassicFragmentMover" )
+) : FragmentMover( fragset, movemap, "ClassicFragmentMover" )
 {
 	set_defaults();
 }
@@ -178,7 +178,7 @@ ClassicFragmentMover::ClassicFragmentMover(
 ClassicFragmentMover::ClassicFragmentMover(
 	core::fragment::ConstantLengthFragSet const & fragset,
 	core::kinematics::MoveMap const & movemap
-)	: FragmentMover(fragset.clone(), core::kinematics::MoveMapCOP( core::kinematics::MoveMapOP( new core::kinematics::MoveMap(movemap) ) ), "ClassicFragmentMover" )
+) : FragmentMover(fragset.clone(), core::kinematics::MoveMapCOP( core::kinematics::MoveMapOP( new core::kinematics::MoveMap(movemap) ) ), "ClassicFragmentMover" )
 {
 	set_defaults();
 }
@@ -191,7 +191,7 @@ ClassicFragmentMover::ClassicFragmentMover(
 	core::fragment::FragSetCOP fragset,
 	core::kinematics::MoveMapCOP movemap,
 	std::string type
-)	: FragmentMover( fragset, movemap, type )
+) : FragmentMover( fragset, movemap, type )
 {
 	set_defaults();
 }
@@ -200,7 +200,7 @@ ClassicFragmentMover::ClassicFragmentMover(
 ClassicFragmentMover::ClassicFragmentMover(
 	core::fragment::FragSetCOP fragset,
 	std::string type
-)	: FragmentMover( fragset, type )
+) : FragmentMover( fragset, type )
 {
 	set_defaults();
 }
@@ -216,12 +216,12 @@ ClassicFragmentMover::show(std::ostream & output) const
 	Mover::show(output);
 	output << "-------------------Settings--------------------" << std::endl;
 	output << "End bias:            " << end_bias_ << std::endl <<
-					"Min overlap:         " << min_overlap_ << std::endl <<
-					"Min fragment length: " << min_frag_length_ << std::endl <<
-					"Check ss:            " << ( (check_ss_) ? "True" : "False" ) << std::endl <<
-					"bApplyEndBias:       " << ( ( bApplyEndBias_ ) ? "True" : "False" ) << std::endl <<
-					"Use predefined window start: " << ( (use_predefined_window_start_) ? "True": "False" ) << std::endl <<
-					"Predefined window start:     " << predefined_window_start_ << std::endl;
+		"Min overlap:         " << min_overlap_ << std::endl <<
+		"Min fragment length: " << min_frag_length_ << std::endl <<
+		"Check ss:            " << ( (check_ss_) ? "True" : "False" ) << std::endl <<
+		"bApplyEndBias:       " << ( ( bApplyEndBias_ ) ? "True" : "False" ) << std::endl <<
+		"Use predefined window start: " << ( (use_predefined_window_start_) ? "True": "False" ) << std::endl <<
+		"Predefined window start:     " << predefined_window_start_ << std::endl;
 	output << "-----------------------------------------------" << std::endl;
 	output << "Movemap: " << std::endl;
 	movemap()->show();
@@ -281,7 +281,7 @@ ClassicFragmentMover::set_defaults() {
 // accept with probability 1 if the fragment window is centered on the center of the protein.
 // accept with probability .3677 if the fragment window is centered end-bias residues away from
 // the center of the protein
-//		if ( total_insert+frag_length != pose.total_residue() ||  r <= std::exp( -( end_dist / end_bias ) ) ) {
+//  if ( total_insert+frag_length != pose.total_residue() ||  r <= std::exp( -( end_dist / end_bias ) ) ) {
 // the question of total_insert+frag_length == pose.total_residue() doesn't make sense if different frag_lengths are involved
 bool ClassicFragmentMover::end_bias_check( core::pose::Pose const& pose, Size begin ) const {
 	Real r = numeric::random::rg().uniform();
@@ -294,7 +294,7 @@ bool ClassicFragmentMover::end_bias_check( core::pose::Pose const& pose, Size be
 
 	// the following assertion can happen if non-continuous (eg. Jump) fragments are inserted with bias-check, switch it off!
 
-	if ( ( begin + size - 1 ) > pose.total_residue() ){
+	if ( ( begin + size - 1 ) > pose.total_residue() ) {
 		tr.Error << "BEGIN: " << begin << " SIZE: " << size  << " TOTAL_RES: " << pose.total_residue() << std::endl;
 		tr.Error << "Are the fragments compatible with the fasta or the input PDB used to extract the folding sequence ? " << std::endl;
 		tr.Error << "It appears that the fragments go up to residue " << begin + size - 1 << " while the pose only has " << pose.total_residue() << " residues!" << std::endl;
@@ -309,15 +309,15 @@ bool ClassicFragmentMover::end_bias_check( core::pose::Pose const& pose, Size be
 	Size const fixed_residues =
 		pose.fold_tree().count_fixed_residues( begin, size, min_fixed_residues );
 
-//if symmetric, we just consider a single subunit;
+	//if symmetric, we just consider a single subunit;
 	Real factor ( 1.0 );
-	if( core::pose::symmetry::is_symmetric( pose ) ) {
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		factor = 1.0 / (Real) core::pose::symmetry::symmetry_info(pose)->subunits();
-  }
+	}
 
 	Real bias = std::exp( factor * ( (Real) min_fixed_residues - fixed_residues ) / end_bias() );
-	//	tr.Trace << "biascheck: " << begin << " " << size << " " << factor << " " << min_fixed_residues << " " << fixed_residues << " " << end_bias() << " ("<<bias
-	//					 << " => " << r << ")" << std::endl;
+	// tr.Trace << "biascheck: " << begin << " " << size << " " << factor << " " << min_fixed_residues << " " << fixed_residues << " " << end_bias() << " ("<<bias
+	//      << " => " << r << ")" << std::endl;
 	return ( r <= bias );
 }
 
@@ -405,11 +405,11 @@ bool ClassicFragmentMover::valid_ss( std::string const & new_ss ) const {
 /// @brief choose and insert a Fragment from the protocols::moves::Movers Fragment-Set into a Pose.
 void ClassicFragmentMover::apply( core::pose::Pose & pose ) {
 	PROF_START( basic::FRAGMENT_MOVER );
-	//	update_insert_map( ); // checks if bValidInsertMap == false
+	// update_insert_map( ); // checks if bValidInsertMap == false
 
 	// If the insert map is empty dont attempt fragment insertions
 	// to avoid corrupting the pose, memory and/or your grandmother.
-	if( insert_size_.size() == 0 ){
+	if ( insert_size_.size() == 0 ) {
 		return;
 	}
 
@@ -434,16 +434,16 @@ void ClassicFragmentMover::apply( core::pose::Pose & pose ) {
 
 
 			// choose an insertion point
-			if( use_predefined_window_start_ )
+			if ( use_predefined_window_start_ ) {
 				frag_begin = predefined_window_start_;
-			else if ( !choose_window_start( pose, window_length, frag_begin ) ) {
+			} else if ( !choose_window_start( pose, window_length, frag_begin ) ) {
 				nfail++;
 				continue;
 			}
 
 			// retrieve fragments for this position
 			if ( !fragset_->region( *movemap(), frag_begin, frag_begin + window_length - 1,
-					min_overlap_, min_frag_length_,	frames ) ) {
+					min_overlap_, min_frag_length_, frames ) ) {
 				// if we are here, we couldn't find fragments at this position --- maybe recompute insert_map
 				if ( !insert_map_definitely_right ) {
 					insert_map_definitely_right = true;
@@ -456,9 +456,9 @@ void ClassicFragmentMover::apply( core::pose::Pose & pose ) {
 				continue;
 			} // if fragset_->region
 		} // while ( frames.size() == 0 )
-			// if ssblock or random_frag only a subset of fragments was there to choose from, this decision could be made
-			// outside of this code by supplying a Subset of the frag_set. Alternatively, we could do weight-based sampling
-			// like the original design of mini fragments and just set some weights to zero.
+		// if ssblock or random_frag only a subset of fragments was there to choose from, this decision could be made
+		// outside of this code by supplying a Subset of the frag_set. Alternatively, we could do weight-based sampling
+		// like the original design of mini fragments and just set some weights to zero.
 
 		if ( frames.size() ) { // we got fragments
 			success = apply_frames( pose, frames );
@@ -479,15 +479,17 @@ bool ClassicFragmentMover::apply_frames( pose::Pose &pose, FrameList const& fram
 	Size frag_num;
 	bool success( false );
 	if ( !choose_fragment( frames, pose, frame_num /*output*/, frag_num /*output*/ ) ) return false;
-	if ( tr.Trace.visible() ) tr.Trace
-															<< "frag (" << frames[ frame_num ]->start() << ","
-															<< frag_num << ","
-															<< frames[ frame_num ]->nr_res_affected( *movemap_ )
-															<< ")" << std::endl;
+	if ( tr.Trace.visible() ) {
+		tr.Trace
+			<< "frag (" << frames[ frame_num ]->start() << ","
+			<< frag_num << ","
+			<< frames[ frame_num ]->nr_res_affected( *movemap_ )
+			<< ")" << std::endl;
+	}
 	if ( !check_ss() ) return apply_fragment( *frames[ frame_num ], frag_num, *movemap_, pose );
 
 	// now do the ss-check!
-	//	tr.Trace << "now do the ss-check!"<< std::endl;
+	// tr.Trace << "now do the ss-check!"<< std::endl;
 	// get actual ss from pose
 	std::string proposed_ss;
 	proposed_ss.reserve( pose.total_residue() );
@@ -501,15 +503,15 @@ bool ClassicFragmentMover::apply_frames( pose::Pose &pose, FrameList const& fram
 	// if old ss was fine ---> check fragments effect on ss
 	if ( !valid ) { // if old_ss was valid we check if proposed_ss is still valid.
 		frames[ frame_num ]->apply_ss( *movemap_, frag_num, proposed_ss );
-		//		tr.Trace << !valid << " old_ss: " << old_ss << std::endl;
+		//  tr.Trace << !valid << " old_ss: " << old_ss << std::endl;
 		valid = valid_ss( proposed_ss );
-		//		tr.Trace << valid << "new_ss: " << proposed_ss << std::endl;
+		//  tr.Trace << valid << "new_ss: " << proposed_ss << std::endl;
 	}
-	//	tr.Trace << "finished the ss-check! : " << valid << std::endl;
+	// tr.Trace << "finished the ss-check! : " << valid << std::endl;
 	if ( valid ) {
 		success = apply_fragment( *frames[ frame_num ], frag_num, *movemap_, pose );
 	} else {
-		//		tr.Trace << "dissallow insertion due to short helix/strand " << std::endl;
+		//  tr.Trace << "dissallow insertion due to short helix/strand " << std::endl;
 	}
 	return success;
 }
@@ -522,9 +524,9 @@ std::ostream &operator<< ( std::ostream &os, ClassicFragmentMover const &cfmover
 
 
 LoggedFragmentMover::LoggedFragmentMover(
-core::fragment::FragSetCOP fragset,
+	core::fragment::FragSetCOP fragset,
 	core::kinematics::MoveMapCOP movemap
-)	: ClassicFragmentMover( fragset, movemap, "ClassicFragmentMover" )
+) : ClassicFragmentMover( fragset, movemap, "ClassicFragmentMover" )
 {}
 
 LoggedFragmentMover::~LoggedFragmentMover()
@@ -537,10 +539,10 @@ LoggedFragmentMover::get_name() const {
 
 bool
 LoggedFragmentMover::apply_fragment(
-		core::fragment::Frame const& frame,
-		Size frag_num,
-		core::kinematics::MoveMap const& movemap,
-		core::pose::Pose &pose
+	core::fragment::Frame const& frame,
+	Size frag_num,
+	core::kinematics::MoveMap const& movemap,
+	core::pose::Pose &pose
 ) const {
 	bool success = Parent::apply_fragment( frame, frag_num, movemap, pose );
 	if ( success ) {
@@ -552,7 +554,7 @@ LoggedFragmentMover::apply_fragment(
 void
 LoggedFragmentMover::show( std::ostream& out ) const {
 	using namespace ObjexxFCL::format;
-	for ( Storage::const_iterator it=logs_.begin(), eit=logs_.end(); it!=eit; ++it) {
+	for ( Storage::const_iterator it=logs_.begin(), eit=logs_.end(); it!=eit; ++it ) {
 		out << RJ(5, it->frame_pos) << ' ' << RJ(5, it->frag_num) << std::endl;
 	}
 }

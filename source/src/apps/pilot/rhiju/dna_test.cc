@@ -120,22 +120,22 @@ dna_test(){
 
 	Pose pose;
 
-	Real const	ALPHA_A_FORM( -64.11),	BETA_A_FORM( 176.33),	GAMMA_A_FORM( 53.08),	EPSILON_A_FORM( -150.17),	ZETA_A_FORM( -71.45),	CHI_A_FORM( 79.43);
+	Real const ALPHA_A_FORM( -64.11), BETA_A_FORM( 176.33), GAMMA_A_FORM( 53.08), EPSILON_A_FORM( -150.17), ZETA_A_FORM( -71.45), CHI_A_FORM( 79.43);
 
-	for ( Size n = 1; n <= sequence.size(); n++ ){
+	for ( Size n = 1; n <= sequence.size(); n++ ) {
 
 		char const new_seq = sequence[ n-1 ];
 		// The representative type should have no/minimal variants
 		ResidueTypeCOP new_rsd_type( rsd_set->get_representative_type_name1( new_seq ) );
 		ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type ) );
-		if ( n == 1) {
+		if ( n == 1 ) {
 			pose.append_residue_by_bond( *new_rsd );
 		} else {
 			pose.append_polymer_residue_after_seqpos( *new_rsd, n-1, true /*build ideal geometry*/ );
 		}
 	}
 
-	for ( Size n = 1; n <= sequence.size(); n++ ){
+	for ( Size n = 1; n <= sequence.size(); n++ ) {
 		pose.set_torsion( TorsionID( n, BB, 1),  ALPHA_A_FORM);
 		pose.set_torsion( TorsionID( n, BB, 2),   BETA_A_FORM);
 		pose.set_torsion( TorsionID( n, BB, 3),  GAMMA_A_FORM);
@@ -172,20 +172,20 @@ main( int argc, char * argv [] )
 
 	try {
 
-	using namespace basic::options;
+		using namespace basic::options;
 
 
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

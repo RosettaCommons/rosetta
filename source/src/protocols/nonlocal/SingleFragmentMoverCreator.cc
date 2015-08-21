@@ -29,15 +29,15 @@ namespace protocols {
 namespace nonlocal {
 
 protocols::moves::MoverOP SingleFragmentMoverCreator::create_mover() const {
-  return protocols::moves::MoverOP( new SingleFragmentMover() );
+	return protocols::moves::MoverOP( new SingleFragmentMover() );
 }
 
 std::string SingleFragmentMoverCreator::keyname() const {
-  return mover_name();
+	return mover_name();
 }
 
 std::string SingleFragmentMoverCreator::mover_name() {
-  return "SingleFragmentMover";
+	return "SingleFragmentMover";
 }
 
 }  // namespace nonlocal

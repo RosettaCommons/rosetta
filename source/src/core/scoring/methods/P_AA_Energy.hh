@@ -71,8 +71,8 @@ public:
 private:
 
 	P_AA const & p_aa_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

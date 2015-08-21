@@ -75,10 +75,10 @@ MembraneTopology::get_name() const {
 }
 
 void MembraneTopology::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		Pose const & )
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	Pose const & )
 {
 
 	span_file( tag->getOption< std::string >( "span_file" ) );

@@ -175,8 +175,9 @@ public:
 	void
 	set_bb( utility::vector1< bool > allow_bb )
 	{
-		for( Size ii = 1; ii <= allow_bb.size(); ++ii )
+		for ( Size ii = 1; ii <= allow_bb.size(); ++ii ) {
 			set( MoveMapTorsionID( ii, id::BB ), allow_bb[ii] );
+		}
 	}
 
 	/// @brief Sets the BB torsions between residues  <begin>  and  <end>
@@ -202,7 +203,7 @@ public:
 		PyAssert( (end>0), "MoveMap::set_bb_true_range( Size const begin , Size const end ): input variable end has a meaningless value");
 		PyAssert( (begin <= end), "MoveMap::set_bb_true_range( Size const begin, Size const end): input variable begin < input variable end");
 		set_bb(false);
-		for( Size ir=begin; ir<=end; ++ir ) set_bb(ir, true);
+		for ( Size ir=begin; ir<=end; ++ir ) set_bb(ir, true);
 	}
 
 	/// @brief Prevents backbone torsion modifications to the intervals specified
@@ -242,7 +243,7 @@ public:
 	///     Pose
 	///     MinMover
 	///     ShearMover
-	///     SmallMover	inline
+	///     SmallMover inline
 	void
 	set_chi( Size const seqpos, bool const setting )
 	{
@@ -255,8 +256,9 @@ public:
 	void
 	set_chi( utility::vector1< bool > allow_chi )
 	{
-		for( Size ii = 1; ii <= allow_chi.size(); ++ii )
+		for ( Size ii = 1; ii <= allow_chi.size(); ++ii ) {
 			set( MoveMapTorsionID( ii, id::CHI ), allow_chi[ii] );
+		}
 	}
 
 	/// @brief Sets the chi torsions between residues <begin> and <end>
@@ -281,13 +283,13 @@ public:
 	void set_chi_true_range(core::uint const begin, core::uint const end)
 	{
 		PyAssert((begin > 0), "MoveMap::set_chi_true_range(core::uint const begin, core::uint const end): "
-				"Input variable <begin> has a meaningless value.");
+			"Input variable <begin> has a meaningless value.");
 		PyAssert((end > 0), "MoveMap::set_chi_true_range(core::uint const begin, core::uint const end): "
-				"Input variable <end> has a meaningless value.");
+			"Input variable <end> has a meaningless value.");
 		PyAssert((begin <= end), "MoveMap::set_chi_true_range(core::uint const begin, core::uint const end): "
-				"Input variable <begin> must be <= input variable <end>.");
+			"Input variable <begin> must be <= input variable <end>.");
 		set_chi(false);
-		for(Size res = begin; res <= end; ++res) {
+		for ( Size res = begin; res <= end; ++res ) {
 			set_chi(res, true);
 		}
 	}
@@ -325,7 +327,7 @@ public:
 	set_nu( core::uint const seqpos, bool const setting )
 	{
 		PyAssert( ( seqpos > 0 ), "MoveMap::set_nu( core::uint const seqpos, bool const setting ): "
-				"Input variable <seqpos> has a meaningless value." );
+			"Input variable <seqpos> has a meaningless value." );
 		set( MoveMapTorsionID( seqpos, id::NU ), setting );
 	}
 
@@ -359,11 +361,11 @@ public:
 	set_nu_true_range( core::uint const begin, core::uint const end )
 	{
 		PyAssert( ( begin > 0 ), "MoveMap::set_nu_true_range( core::uint const begin, core::uint const end ): "
-				"Input variable <begin> has a meaningless value." );
+			"Input variable <begin> has a meaningless value." );
 		PyAssert( ( end > 0 ), "MoveMap::set_nu_true_range( core::uint const begin, core::uint const end ): "
-				"Input variable <end> has a meaningless value." );
+			"Input variable <end> has a meaningless value." );
 		PyAssert( ( begin <= end ), "MoveMap::set_nu_true_range( core::uint const begin, core::uint const end ): "
-				"Input variable <begin> must be <= input variable <end>." );
+			"Input variable <begin> must be <= input variable <end>." );
 		set_nu( false );
 		for ( uint resnum( begin ); resnum <= end; ++resnum ) {
 			set_nu( resnum, true );
@@ -405,7 +407,7 @@ public:
 	set_branches( core::uint const seqpos, bool const setting )
 	{
 		PyAssert( ( seqpos > 0 ), "MoveMap::set_branches( core::uint const seqpos, bool const setting ): "
-				"Input variable <seqpos> has a meaningless value." );
+			"Input variable <seqpos> has a meaningless value." );
 		set( MoveMapTorsionID( seqpos, id::BRANCH ), setting );
 	}
 
@@ -439,11 +441,11 @@ public:
 	set_branches_true_range( core::uint const begin, core::uint const end )
 	{
 		PyAssert( ( begin > 0 ), "MoveMap::set_branches_true_range( core::uint const begin, core::uint const end ): "
-				"Input variable <begin> has a meaningless value." );
+			"Input variable <begin> has a meaningless value." );
 		PyAssert( ( end > 0 ), "MoveMap::set_branches_true_range( core::uint const begin, core::uint const end ): "
-				"Input variable <end> has a meaningless value." );
+			"Input variable <end> has a meaningless value." );
 		PyAssert( ( begin <= end ), "MoveMap::set_branches_true_range( core::uint const begin, core::uint const end ): "
-				"Input variable <begin> must be <= input variable <end>." );
+			"Input variable <begin> must be <= input variable <end>." );
 		set_branches( false );
 		for ( uint resnum( begin ); resnum <= end; ++resnum ) {
 			set_branches( resnum, true );
@@ -540,7 +542,7 @@ public: // accessors
 	get_nu( core::uint const seqpos ) const
 	{
 		PyAssert( ( seqpos > 0 ), "MoveMap::get_nu(core::uint const seqpos): "
-				"Input variable <seqpos> has a meaningless value." );
+			"Input variable <seqpos> has a meaningless value." );
 		return get( MoveMapTorsionID( seqpos, id::NU ) );
 	}
 
@@ -551,7 +553,7 @@ public: // accessors
 	get_branches( core::uint const seqpos ) const
 	{
 		PyAssert( ( seqpos > 0 ), "MoveMap::get_branches(core::uint const seqpos): "
-				"Input variable <seqpos> has a meaningless value." );
+			"Input variable <seqpos> has a meaningless value." );
 		return get( MoveMapTorsionID( seqpos, id::BRANCH ) );
 	}
 
@@ -645,7 +647,7 @@ public: // accessors
 	DOF_ID_Map::const_iterator
 	find( DOF_ID const & id ) const;
 
- public: // iterators
+public: // iterators
 	/// @brief return an iterator pointing just past the last element of the TorsionTypeMap
 	inline
 	TorsionTypeMap::const_iterator
@@ -772,7 +774,7 @@ private: // movemap-movemap functionality
 		bool const import_false_settings
 	);
 
- private:
+private:
 	// implementation of the data
 	// WARNING: if you add something here also add it to ::clear() and ::import()
 

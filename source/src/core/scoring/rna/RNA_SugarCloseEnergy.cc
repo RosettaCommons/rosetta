@@ -78,13 +78,13 @@ RNA_SugarCloseEnergy::RNA_SugarCloseEnergy() :
 	angle_sd_( numeric::conversions::radians( 1.0 ) ),
 	o4prime_c1prime_c2prime_bond_angle_( numeric::conversions::radians( 106.39 ) ),
 	o4prime_c1prime_c2prime_angle_harm_func_(
-		func::HarmonicFuncOP( new func::HarmonicFunc( o4prime_c1prime_c2prime_bond_angle_, scale_rna_torsion_sd_ * angle_sd_ ) ) ),
+	func::HarmonicFuncOP( new func::HarmonicFunc( o4prime_c1prime_c2prime_bond_angle_, scale_rna_torsion_sd_ * angle_sd_ ) ) ),
 	o4prime_c1prime_first_base_bond_angle_( numeric::conversions::radians( 108.2 ) ),
 	o4prime_c1prime_first_base_angle_harm_func_(
-		func::HarmonicFuncOP( new func::HarmonicFunc( o4prime_c1prime_first_base_bond_angle_, angle_sd_ ) ) ),
+	func::HarmonicFuncOP( new func::HarmonicFunc( o4prime_c1prime_first_base_bond_angle_, angle_sd_ ) ) ),
 	c4prime_o4prime_c1prime_bond_angle_( numeric::conversions::radians( 110.4 ) ),
 	c4prime_o4prime_c1prime_angle_harm_func_(
-																				func::HarmonicFuncOP( new func::HarmonicFunc( c4prime_o4prime_c1prime_bond_angle_, scale_rna_torsion_sd_ * angle_sd_ ) ) ),
+	func::HarmonicFuncOP( new func::HarmonicFunc( c4prime_o4prime_c1prime_bond_angle_, scale_rna_torsion_sd_ * angle_sd_ ) ) ),
 	//phenix_based_sugar_close params
 	use_phenix_sugar_close_( basic::options::option[ basic::options::OptionKeys::rna::corrected_geo ]() ),
 	o4prime_c1prime_bond_north_( 1.412 ),
@@ -122,8 +122,8 @@ RNA_SugarCloseEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction co
 ///////////////////////////////////////////////////////////////////////////////
 void
 RNA_SugarCloseEnergy::residue_energy(
-		conformation::Residue const & rsd,
-		EnergyMap & emap 	) const {
+	conformation::Residue const & rsd,
+	EnergyMap & emap  ) const {
 
 	constraints::ConstraintSet residue_rna_sugar_close_constraints;
 	add_sugar_ring_closure_constraints( rsd, residue_rna_sugar_close_constraints );
@@ -134,9 +134,9 @@ RNA_SugarCloseEnergy::residue_energy(
 ///////////////////////////////////////////////////////////////////////////////
 void
 RNA_SugarCloseEnergy::residue_energy(
-		conformation::Residue const & rsd,
-		pose::Pose const &,
-		EnergyMap & emap 	) const {
+	conformation::Residue const & rsd,
+	pose::Pose const &,
+	EnergyMap & emap  ) const {
 	return residue_energy( rsd, emap );
 }
 
@@ -163,7 +163,7 @@ void
 RNA_SugarCloseEnergy::setup_sugar_ring_closure_constraints( pose::Pose & pose ) const{
 	rna_sugar_close_constraints_ = constraints::ConstraintSetOP( new constraints::ConstraintSet );
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ){
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 		add_sugar_ring_closure_constraints( pose.residue( i ), *rna_sugar_close_constraints_ );
 	}
 

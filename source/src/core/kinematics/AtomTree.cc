@@ -109,7 +109,7 @@ AtomTree::AtomTree( AtomTree const & src ) :
 
 void AtomTree::set_weak_pointer_to_self( AtomTreeCAP self_pointer )
 {
-debug_assert( utility::pointer::equal(self_pointer, this) );
+	debug_assert( utility::pointer::equal(self_pointer, this) );
 	this_weak_ptr_ = self_pointer;
 }
 
@@ -121,9 +121,9 @@ AtomTree::find_root_from_atom_pointer()
 	root_.reset();
 	for ( Size i=1; i<= atom_pointer_.size(); ++i ) {
 		for ( Size j=1; j<= atom_pointer_[i].size(); ++j ) {
-		debug_assert( atom_pointer_[i][j] && atom_pointer_[i][j]->id() == AtomID( j,i ) );
+			debug_assert( atom_pointer_[i][j] && atom_pointer_[i][j]->id() == AtomID( j,i ) );
 			if ( atom_pointer_[i][j]->parent() == 0 ) {
-			debug_assert( !root_ );
+				debug_assert( !root_ );
 				root_ = atom_pointer_[i][j];
 			}
 		}
@@ -155,7 +155,7 @@ AtomTree::replace_tree(
 	} else {
 		xyz_coords_need_updating_ = true;
 		internal_coords_need_updating_ = false;
-		
+
 		update_xyz_coords();
 	}
 
@@ -211,14 +211,14 @@ AtomTree::delete_seqpos( Size const seqpos )
 		AtomOP atom( atom_pointer_[seqpos][i] );
 		if ( !atom ) continue;
 		if ( Size(atom->parent()->id().rsd()) != seqpos ) {
-		debug_assert( !anchor );
+			debug_assert( !anchor );
 			root = atom;
 			anchor = atom->parent();
 			// could break but debug 1 incoming connxn by continuing
 		}
 		for ( Atom::Atoms_ConstIterator iter=atom->atoms_begin(), iter_end = atom->atoms_end(); iter!= iter_end; ++iter ) {
 			if ( Size((*iter)->id().rsd()) != seqpos ) {
-			debug_assert( !child );
+				debug_assert( !child );
 				child = *iter;
 				// could break but debug at most 1 outgoing connxn by continuing
 			}
@@ -236,10 +236,10 @@ AtomTree::delete_seqpos( Size const seqpos )
 		anchor->delete_atom( root );
 	}
 
-// 	// now delete atoms
-// 	for ( Size i=1; i<= natoms; ++i ) {
-// 		delete atom_pointer_[seqpos][i];
-// 	}
+	//  // now delete atoms
+	//  for ( Size i=1; i<= natoms; ++i ) {
+	//   delete atom_pointer_[seqpos][i];
+	//  }
 
 	atom_pointer_[ seqpos ].resize(0);
 
@@ -293,8 +293,8 @@ AtomTree::replace_residue_subtree(
 	AtomPointer1D const & old_atoms( atom_pointer_[ seqpos ] );
 
 	// confirm that bond id's go from parent to child, atom1 to atom2
-	for ( Size i=1; i<= outgoing.size(); ++i )debug_assert( outgoing[i].atom1.rsd() == seqpos );
-	for ( Size i=1; i<= new_atoms.size(); ++i )debug_assert( new_atoms[i]->id() == AtomID( i, seqpos ) );
+	for ( Size i=1; i<= outgoing.size(); ++i ) debug_assert( outgoing[i].atom1.rsd() == seqpos );
+	for ( Size i=1; i<= new_atoms.size(); ++i ) debug_assert( new_atoms[i]->id() == AtomID( i, seqpos ) );
 
 
 	AtomOP anchor_atom(0);
@@ -309,16 +309,16 @@ AtomTree::replace_residue_subtree(
 	for ( Size i=1; i<= outgoing.size(); ++i ) {
 		AtomOP child( atom_pointer( outgoing[i].atom2 ) );
 		AtomOP old_parent( child->parent() );
-	debug_assert( child->id().rsd() != seqpos );
+		debug_assert( child->id().rsd() != seqpos );
 		if ( !old_parent ) {
 			// we're becoming the new root residue
-		debug_assert( old_atoms.empty() && !incoming.atom1.valid() ); // implies anchor_atom == 0
-		debug_assert( !old_root_atom );
+			debug_assert( old_atoms.empty() && !incoming.atom1.valid() ); // implies anchor_atom == 0
+			debug_assert( !old_root_atom );
 			old_root_atom = child;
 		} else if ( old_parent->id().rsd() != seqpos ) {
 			// we're inserting into a bond
-		debug_assert( old_atoms.empty() && old_parent->id() == incoming.atom1 );
-		debug_assert( !old_root_atom );
+			debug_assert( old_atoms.empty() && old_parent->id() == incoming.atom1 );
+			debug_assert( !old_root_atom );
 			old_root_atom = child;
 		} else {
 			// only necessary for debugging purposes
@@ -330,24 +330,24 @@ AtomTree::replace_residue_subtree(
 
 	// potentially have to look for old_root_atom
 	if ( old_root_atom ) {
-	debug_assert( old_atoms.empty() );
+		debug_assert( old_atoms.empty() );
 	} else {
 		for ( Size i=1; i<= old_atoms.size(); ++i ) {
 			AtomOP old_atom( old_atoms[i] );
-		debug_assert( old_atom ); // atom_pointer_ is ragged, always keep dimension equal to actual number of atoms
+			debug_assert( old_atom ); // atom_pointer_ is ragged, always keep dimension equal to actual number of atoms
 			if ( ! old_atom->parent() ) {
 				// this was the root of the atomtree
-			debug_assert( !incoming.atom1.valid() );
-			debug_assert( !old_root_atom );
+				debug_assert( !incoming.atom1.valid() );
+				debug_assert( !old_root_atom );
 				old_root_atom = old_atom;
 			} else if ( old_atom->parent()->id().rsd() != seqpos ) {
 				// this is the root of the old tree
-			debug_assert( incoming.atom1 == old_atom->parent()->id() );
-			debug_assert( !old_root_atom );
+				debug_assert( incoming.atom1 == old_atom->parent()->id() );
+				debug_assert( !old_root_atom );
 				old_root_atom = old_atom;
 			}
 			// this is just debugging to confirm that outgoing vector actually contains all the outgoing connections
-			for ( Size i=0; i< old_atom->n_children(); ++i )debug_assert( old_atom->child(i)->id().rsd() == seqpos );
+			for ( Size i=0; i< old_atom->n_children(); ++i ) debug_assert( old_atom->child(i)->id().rsd() == seqpos );
 		}
 	}
 
@@ -356,12 +356,12 @@ AtomTree::replace_residue_subtree(
 		if ( old_root_atom ) {
 			atom_pointer( incoming.atom1 )->replace_atom( old_root_atom, new_root_atom );
 		} else {
-		debug_assert( outgoing.empty() && old_atoms.empty() );
+			debug_assert( outgoing.empty() && old_atoms.empty() );
 			atom_pointer( incoming.atom1 )->insert_atom( new_root_atom );
 		}
 
 	} else {
-	debug_assert( root_ == old_root_atom );
+		debug_assert( root_ == old_root_atom );
 		root_ = new_root_atom;
 		new_root_atom->parent(tree::AtomAP());
 	}
@@ -401,9 +401,9 @@ AtomTree::xyz( AtomID const & id ) const
 {
 	update_xyz_coords();
 	// if ( !has(id) ) {
-// 		std::cerr << "AtomTree::atom_pointer_ has not the atom " << id << std::endl;
-// 	}
-// 	runtime_assert( has( id ) );
+	//   std::cerr << "AtomTree::atom_pointer_ has not the atom " << id << std::endl;
+	//  }
+	//  runtime_assert( has( id ) );
 	return atom_pointer_[ id ]->position();
 }
 
@@ -446,12 +446,12 @@ AtomTree::jump( AtomID const & id ) const
 /// to it is calculated as improper angle with respect to its sibling.
 id::DOF_ID
 AtomTree::torsion_angle_dof_id(
-		AtomID const & atom1_in_id,
-		AtomID const & atom2_in_id,
-		AtomID const & atom3_in_id,
-		AtomID const & atom4_in_id,
-		Real & offset,
-		bool const quiet
+	AtomID const & atom1_in_id,
+	AtomID const & atom2_in_id,
+	AtomID const & atom3_in_id,
+	AtomID const & atom4_in_id,
+	Real & offset,
+	bool const quiet
 ) const
 {
 	using numeric::conversions::degrees;
@@ -460,7 +460,7 @@ AtomTree::torsion_angle_dof_id(
 	using numeric::dihedral;
 	using numeric::dihedral_radians;
 
-    //TR << "Getting a torsion_angle_dof_id for " << atom1_in_id << "-" << atom2_in_id << "-" << atom3_in_id << "-" << atom4_in_id << std::endl;
+	//TR << "Getting a torsion_angle_dof_id for " << atom1_in_id << "-" << atom2_in_id << "-" << atom3_in_id << "-" << atom4_in_id << std::endl;
 	//bool const debug( false );
 
 	// We use the internal DoFs if necessary to calculate the offset.
@@ -469,11 +469,11 @@ AtomTree::torsion_angle_dof_id(
 	//if ( debug ) update_xyz_coords();
 
 	debug_assert( atom_pointer( atom1_in_id ) && atom_pointer( atom2_in_id ) &&
-			atom_pointer( atom3_in_id ) && atom_pointer( atom4_in_id ) );
+		atom_pointer( atom3_in_id ) && atom_pointer( atom4_in_id ) );
 
 	// TODO: STUART -- (low priority) I'd like to be able to cache the results of this calculation
 	// to allow faster access.
-    
+
 	Atom const * atom1_in( atom_pointer_( atom1_in_id ).get() ); // not atom_pointer_( ).get()
 	Atom const * atom2_in( atom_pointer_( atom2_in_id ).get() );
 	Atom const * atom3_in( atom_pointer_( atom3_in_id ).get() );
@@ -483,7 +483,7 @@ AtomTree::torsion_angle_dof_id(
 	Atom const * atom2( atom2_in );
 	Atom const * atom3( atom3_in );
 	Atom const * atom4( atom4_in );
-	
+
 	// Reorder the atoms if necessary.
 	// We want it to be the case that atom4 has input_stub_atom1 == atom3 and input_stub_atom2 == atom2.
 
@@ -501,14 +501,14 @@ AtomTree::torsion_angle_dof_id(
 		atom2 = atom3_in;
 		atom3 = atom2_in;
 		atom4 = atom1_in;
-	}/* else if (atom1_in_id.rsd() == atom2_in_id.rsd() &&
-			   atom1_in_id.rsd() != atom3_in_id.rsd() &&
-			   atom3_in_id.rsd() == atom4_in_id.rsd() ) {
+	} else { /* else if (atom1_in_id.rsd() == atom2_in_id.rsd() &&
+		atom1_in_id.rsd() != atom3_in_id.rsd() &&
+		atom3_in_id.rsd() == atom4_in_id.rsd() ) {
 		// BRANCH case: torsion includes 2 atoms from each of 2 residues
 		TR << "Noncanonical connection torsion does not have a corresponding DOF_ID" << std::endl;
 		return id::BOGUS_DOF_ID;
-	}*/ else {
-	
+		}*/
+
 		// AMW: We should note that this is FINE. This doesn't mean that we cannot have a fine
 		// time with the data we need. If we return id:BOGUS_DOF_ID, then conformation will
 		// catch that and just calculate the torsion manually (in atom_tree_torsion) or return
@@ -520,7 +520,7 @@ AtomTree::torsion_angle_dof_id(
 			TR.Error << atom2_in_id.rsd() << "-" << atom2_in_id.atomno() << ", ";
 			TR.Error << atom3_in_id.rsd() << "-" << atom3_in_id.atomno() << ", ";
 			TR.Error << atom4_in_id.rsd() << "-" << atom4_in_id.atomno() << "!" << std::endl;
-			
+
 			/*
 			TR.Error << "What condition failed?" << std::endl;
 			TR.Error << "!atom4->is_jump() = " << !atom4->is_jump() << std::endl;
@@ -528,7 +528,7 @@ AtomTree::torsion_angle_dof_id(
 			TR.Error << "atom4->raw_input_stub_atom1() == ( atom3 = " << atom3_in_id.rsd() << "-" << atom3_in_id.atomno() << " ) = " << ( atom4->raw_input_stub_atom1() == atom3 ) << std::endl;
 			TR.Error << "atom4->raw_input_stub_atom2() == ( atom2 = " << atom2_in_id.rsd() << "-" << atom2_in_id.atomno() << " ) = " << ( atom4->raw_input_stub_atom2() == atom2 ) << std::endl;
 			TR.Error << " or... " << std::endl;
-			
+
 			TR.Error << "!atom1->is_jump() = " << !atom1->is_jump() << std::endl;
 			TR.Error << "!atom1->keep_dof_fixed( id::PHI ) = " << !atom1->keep_dof_fixed( id::PHI ) << std::endl;
 			TR.Error << "atom1->raw_input_stub_atom1() == ( atom2 = " << atom2_in_id.rsd() << "-" << atom2_in_id.atomno() << " ) = " << ( atom1->raw_input_stub_atom1() == atom2 ) << std::endl;
@@ -546,10 +546,10 @@ AtomTree::torsion_angle_dof_id(
 	}
 
 	debug_assert( !atom4->is_jump() &&
-			atom4->raw_input_stub_atom0() == atom3 &&
-			atom4->raw_input_stub_atom1() == atom3 &&
-			atom4->raw_input_stub_atom2() == atom2 &&
-			atom4->raw_parent() == atom3 );
+		atom4->raw_input_stub_atom0() == atom3 &&
+		atom4->raw_input_stub_atom1() == atom3 &&
+		atom4->raw_input_stub_atom2() == atom2 &&
+		atom4->raw_parent() == atom3 );
 
 	// special case if atoms 1 and 4 are siblings -- not really well defined!
 	if ( atom1->raw_parent() == atom3 ) {
@@ -560,18 +560,18 @@ AtomTree::torsion_angle_dof_id(
 			offset = current_value - atom4->dof(id::PHI); // since torsion(id1...id4) = dof + offset;
 
 			ASSERT_ONLY( Real const actual_current_value
-					( dihedral_radians( atom4->xyz(), atom3->xyz(), atom2->xyz(), atom1->xyz() ) );)
-		debug_assert( std::abs( basic::subtract_radian_angles( actual_current_value, current_value ) ) < 1e-3 );
-		debug_assert( std::abs( basic::subtract_radian_angles( current_value, atom4->dof( id::PHI ) + offset ) ) < 1e-3 );
+				( dihedral_radians( atom4->xyz(), atom3->xyz(), atom2->xyz(), atom1->xyz() ) );)
+				debug_assert( std::abs( basic::subtract_radian_angles( actual_current_value, current_value ) ) < 1e-3 );
+			debug_assert( std::abs( basic::subtract_radian_angles( current_value, atom4->dof( id::PHI ) + offset ) ) < 1e-3 );
 
 			return DOF_ID( atom4->id(), id::PHI );
 		} else {
 			Real const current_value( atom3->dihedral_between_bonded_children( *atom1, *atom4 ) );
 			offset = current_value - atom1->dof( id::PHI ); // since torsion(id1...id4) = dof + offset;
 			ASSERT_ONLY( Real const actual_current_value
-					( dihedral_radians( atom4->xyz(), atom3->xyz(), atom2->xyz(), atom1->xyz() ) );)
-		debug_assert( std::abs( basic::subtract_radian_angles( actual_current_value, current_value ) ) < 1e-3 );
-		debug_assert( std::abs( basic::subtract_radian_angles( current_value, atom1->dof( id::PHI ) + offset ) ) < 1e-3 );
+				( dihedral_radians( atom4->xyz(), atom3->xyz(), atom2->xyz(), atom1->xyz() ) );)
+				debug_assert( std::abs( basic::subtract_radian_angles( actual_current_value, current_value ) ) < 1e-3 );
+			debug_assert( std::abs( basic::subtract_radian_angles( current_value, atom1->dof( id::PHI ) + offset ) ) < 1e-3 );
 			return DOF_ID( atom1->id(), id::PHI );
 		}
 	}
@@ -581,11 +581,11 @@ AtomTree::torsion_angle_dof_id(
 		offset += atom3->dihedral_between_bonded_children( *new_atom4, *atom4 );
 
 		/* if ( debug ) { // debugging
-			ASSERT_ONLY( Real const actual_dihedral
-				( dihedral_radians( atom4->xyz(), atom3->xyz(), atom2->xyz(),
-					new_atom4->xyz() ) );)
+		ASSERT_ONLY( Real const actual_dihedral
+		( dihedral_radians( atom4->xyz(), atom3->xyz(), atom2->xyz(),
+		new_atom4->xyz() ) );)
 		debug_assert( std::abs( basic::subtract_radian_angles
-					( actual_dihedral, offset ) ) < 1e-3 );
+		( actual_dihedral, offset ) ) < 1e-3 );
 		} */
 
 		atom4 = new_atom4;
@@ -598,7 +598,7 @@ AtomTree::torsion_angle_dof_id(
 	if ( dof_atom1 == atom1 ) {
 		return dof_id;
 	} else if ( atom1->raw_parent() == atom2 && !atom1->is_jump() &&
-		atom3->raw_parent() == atom2 && !atom3->is_jump() ) {
+			atom3->raw_parent() == atom2 && !atom3->is_jump() ) {
 
 		// handle offset between atom1 and dof_atom1
 		// the only case we can do is if atom1->parent() == atom2
@@ -701,42 +701,42 @@ AtomTree::torsion_angle_dof_id(
 		offset += dihedral_from_atom1_to_dof_atom1;
 
 		/*if ( debug ) { // debugging
-			using basic::periodic_range;
-			using basic::subtract_radian_angles;
-			Real const actual_dihedral_from_atom1_to_dof_atom1
-				( dihedral_radians( atom1->xyz(), atom2->xyz(), atom3->xyz(),
-					dof_atom1->xyz()) );
+		using basic::periodic_range;
+		using basic::subtract_radian_angles;
+		Real const actual_dihedral_from_atom1_to_dof_atom1
+		( dihedral_radians( atom1->xyz(), atom2->xyz(), atom3->xyz(),
+		dof_atom1->xyz()) );
 
-			Real const actual_dihedral_of_interest
-				( dihedral_radians( atom1_in->xyz(), atom2_in->xyz(),
-					atom3_in->xyz(), atom4_in->xyz()) );
+		Real const actual_dihedral_of_interest
+		( dihedral_radians( atom1_in->xyz(), atom2_in->xyz(),
+		atom3_in->xyz(), atom4_in->xyz()) );
 
-			ASSERT_ONLY(Real const dev1
-				( std::abs( subtract_radian_angles
-					( actual_dihedral_from_atom1_to_dof_atom1,
-						dihedral_from_atom1_to_dof_atom1 ) ) );)
+		ASSERT_ONLY(Real const dev1
+		( std::abs( subtract_radian_angles
+		( actual_dihedral_from_atom1_to_dof_atom1,
+		dihedral_from_atom1_to_dof_atom1 ) ) );)
 
-			ASSERT_ONLY(Real const dev2
-				( std::abs( subtract_radian_angles( actual_dihedral_of_interest,
-						dof( dof_id ) + offset ) ) );)
+		ASSERT_ONLY(Real const dev2
+		( std::abs( subtract_radian_angles( actual_dihedral_of_interest,
+		dof( dof_id ) + offset ) ) );)
 
-			ASSERT_ONLY(Real const dev3
-				( std::abs( subtract_radian_angles
-					( dof( dof_id ),
-						dihedral_radians( atom4->xyz(),
-							atom4->input_stub_atom1()->xyz(),
-							atom4->input_stub_atom2()->xyz(),
-							atom4->input_stub_atom3()->xyz()))));)
+		ASSERT_ONLY(Real const dev3
+		( std::abs( subtract_radian_angles
+		( dof( dof_id ),
+		dihedral_radians( atom4->xyz(),
+		atom4->input_stub_atom1()->xyz(),
+		atom4->input_stub_atom2()->xyz(),
+		atom4->input_stub_atom3()->xyz()))));)
 
 		debug_assert( dev1 < 1e-3 && dev2 < 1e-3 && dev3 < 1e-3 );
 
-			if ( false ) {
-				TR.Trace << "offset: " << offset << " sgn_fac: " << sign_factor <<
-					' ' << dihedral_from_atom1_to_dof_atom1 << " =?= " <<
-					actual_dihedral_from_atom1_to_dof_atom1 <<
-					' ' << periodic_range( dof( dof_id ) + offset, pi_2 ) <<
-					" =?= " << actual_dihedral_of_interest << std::endl;
-			}
+		if ( false ) {
+		TR.Trace << "offset: " << offset << " sgn_fac: " << sign_factor <<
+		' ' << dihedral_from_atom1_to_dof_atom1 << " =?= " <<
+		actual_dihedral_from_atom1_to_dof_atom1 <<
+		' ' << periodic_range( dof( dof_id ) + offset, pi_2 ) <<
+		" =?= " << actual_dihedral_of_interest << std::endl;
+		}
 		}*/
 
 		return dof_id;
@@ -751,8 +751,8 @@ AtomTree::torsion_angle_dof_id(
 // set a specific DOF in the tree
 void
 AtomTree::set_dof(
-		DOF_ID const & id,
-		Real const setting
+	DOF_ID const & id,
+	Real const setting
 )
 {
 	update_internal_coords();
@@ -771,7 +771,7 @@ AtomTree::set_xyz(
 	update_xyz_coords();
 	atom_pointer_[ id ]->position( xyz );
 	internal_coords_need_updating_ = true;
-	
+
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -784,8 +784,9 @@ AtomTree::batch_set_xyz(
 {
 	runtime_assert( ids.size() == xyzs.size() );
 	update_xyz_coords();
-	for (core::Size i=1; i<=ids.size(); ++i)
+	for ( core::Size i=1; i<=ids.size(); ++i ) {
 		atom_pointer_[ ids[i] ]->position( xyzs[i] );
+	}
 	internal_coords_need_updating_ = true;
 }
 
@@ -823,8 +824,8 @@ AtomTree::set_jump_now(
 	// We use our parent atoms' positions to find our stub,
 	// which we can't do if their positions aren't correct.
 	//if( xyz_coords_need_updating_ ) {
-	//	set_jump(id, jump);
-	//	return;
+	// set_jump(id, jump);
+	// return;
 	//}
 	//update_internal_coords();
 	//atom_pointer_[ id ]->jump( jump );
@@ -843,15 +844,15 @@ AtomTree::set_jump_now(
 /// input setting to set the real DOF value properly.
 id::DOF_ID
 AtomTree::set_torsion_angle(
-		AtomID const & atom1,
-		AtomID const & atom2,
-		AtomID const & atom3,
-		AtomID const & atom4,
-		Real const setting,
-		bool const quiet
+	AtomID const & atom1,
+	AtomID const & atom2,
+	AtomID const & atom3,
+	AtomID const & atom4,
+	Real const setting,
+	bool const quiet
 )
 {
-    //TR << "amw can we get a dof for " << atom1.atomno() << "-" << atom2.atomno() << "-" << atom3.atomno() << "-" << atom4.atomno() << "?" << std::endl;
+	//TR << "amw can we get a dof for " << atom1.atomno() << "-" << atom2.atomno() << "-" << atom3.atomno() << "-" << atom4.atomno() << "?" << std::endl;
 	Real offset;
 	DOF_ID const & id( torsion_angle_dof_id( atom1, atom2, atom3, atom4, offset, quiet ) );
 
@@ -884,7 +885,7 @@ AtomTree::set_bond_angle(
 	DOF_ID const dof_id( bond_angle_dof_id( atom1, atom2, atom3, offset ) );
 
 	if ( dof_id.valid() ) {
-	debug_assert( offset == 0.0 ); // not handling this case right now
+		debug_assert( offset == 0.0 ); // not handling this case right now
 
 		set_dof( dof_id, numeric::constants::d::pi - setting );
 	}
@@ -906,7 +907,7 @@ AtomTree::bond_angle(
 	DOF_ID const dof_id( bond_angle_dof_id( atom1, atom2, atom3, offset ) );
 
 	if ( dof_id.valid() ) {
-	debug_assert( offset == 0.0 ); // not handling this case right now
+		debug_assert( offset == 0.0 ); // not handling this case right now
 		return numeric::constants::d::pi - dof( dof_id );
 	} else {
 		TR << "unable to find DOF_ID for bond_angle: " << atom1 << ' ' << atom2 << ' ' << atom3 << std::endl;
@@ -932,7 +933,7 @@ AtomTree::bond_angle_dof_id(
 	// II.  the bond angle is the THETA dof of atom1 (atom1's parent is atom2 and atom2's parent is atom3)
 	// III. the bond angle is set by a torsion offset (atom1's parent is atom2 and atom3's parent is atom2)
 
-debug_assert( atom_pointer( atom1_in_id ) && atom_pointer( atom2_in_id ) && atom_pointer( atom3_in_id ) );
+	debug_assert( atom_pointer( atom1_in_id ) && atom_pointer( atom2_in_id ) && atom_pointer( atom3_in_id ) );
 
 	AtomCOP
 		atom1_in( atom_pointer( atom1_in_id ) ),
@@ -946,16 +947,16 @@ debug_assert( atom_pointer( atom1_in_id ) && atom_pointer( atom2_in_id ) && atom
 	DOF_ID dof_id( id::BOGUS_DOF_ID );
 
 	if ( !atom3->is_jump() &&
-			 !atom3->keep_dof_fixed( THETA ) && // not stub atom2 of a jump
-			 atom3->input_stub_atom1() == atom2 &&
-			 atom3->input_stub_atom2() == atom1 ) {
+			!atom3->keep_dof_fixed( THETA ) && // not stub atom2 of a jump
+			atom3->input_stub_atom1() == atom2 &&
+			atom3->input_stub_atom2() == atom1 ) {
 		// case I
 		dof_id = DOF_ID( atom3->id(), THETA );
 
 	} else if ( !atom1->is_jump() &&
-							!atom1->keep_dof_fixed( THETA ) && // not stub atom2 of a jump
-							atom1->input_stub_atom1() == atom2 &&
-							atom1->input_stub_atom2() == atom3 ) {
+			!atom1->keep_dof_fixed( THETA ) && // not stub atom2 of a jump
+			atom1->input_stub_atom1() == atom2 &&
+			atom1->input_stub_atom2() == atom3 ) {
 		// case II, perfect case in reverse, want to reverse the order of the atoms
 		atom1 = atom3_in;
 		atom2 = atom2_in;
@@ -1017,17 +1018,17 @@ AtomTree::bond_length_dof_id(
 ) const
 {
 
-debug_assert( atom_pointer( atom1_id ) && atom_pointer( atom2_id ) );
+	debug_assert( atom_pointer( atom1_id ) && atom_pointer( atom2_id ) );
 
 	AtomCOP atom1( atom_pointer( atom1_id ) ), atom2( atom_pointer( atom2_id ) );
 
 	if ( !atom2->is_jump() &&
-			 atom2->input_stub_atom1() == atom1 ) {
+			atom2->input_stub_atom1() == atom1 ) {
 		// case I
 		return DOF_ID( atom2->id(), D );
 
 	} else if ( !atom1->is_jump() &&
-							atom1->input_stub_atom1() == atom2 ) {
+			atom1->input_stub_atom1() == atom2 ) {
 		// case II
 		return DOF_ID( atom1->id(), D );
 
@@ -1051,7 +1052,7 @@ AtomTree::torsion_angle(
 	AtomID const & atom4
 ) const
 {
- 	update_internal_coords();
+	update_internal_coords();
 
 	// find the atomtree degree of freedom that corresponds to this torsion
 	// angle
@@ -1070,7 +1071,7 @@ AtomTree::torsion_angle(
 	//
 	// torsion(atom1,atom2,atom3,atom4) = dof(id) + offset
 	//
-    //TR << "amw in torsion_angle" << std::endl;
+	//TR << "amw in torsion_angle" << std::endl;
 
 	return atom_pointer_[ id.atom_id() ]->dof( id.type() ) + offset;
 }
@@ -1141,7 +1142,7 @@ AtomTree::update_atom_ids_from_atom_pointer()
 {
 	for ( Size i=1, i_end = atom_pointer_.size(); i<= i_end; ++i ) {
 		for ( Size j=1, j_end = atom_pointer_[i].size(); j<= j_end; ++j ) {
-		debug_assert( atom_pointer_[i][j] );
+			debug_assert( atom_pointer_[i][j] );
 			if ( atom_pointer_[i][j] ) atom_pointer_[i][j]->id( AtomID(j,i) );
 		}
 	}
@@ -1157,7 +1158,7 @@ AtomTree::update_sequence_numbering(
 	/// ResidueCoordinateChangeList is not setup to handle a remapping.  It must
 	/// be empty, which means the Conformation its tracking moved data for must have
 	/// already retrieved its moved data.
-debug_assert( external_coordinate_residues_changed_->empty() );
+	debug_assert( external_coordinate_residues_changed_->empty() );
 	external_coordinate_residues_changed_->total_residue( new_size );
 
 	atom_pointer_.update_sequence_numbering( new_size, old2new );
@@ -1173,7 +1174,7 @@ debug_assert( external_coordinate_residues_changed_->empty() );
 AtomTree &
 AtomTree::operator=( AtomTree const & src )
 {
-	if (this == &src) {
+	if ( this == &src ) {
 		return *this;
 	}
 
@@ -1206,7 +1207,7 @@ AtomTree::operator=( AtomTree const & src )
 	if ( !utility::pointer::equal(topological_match_to_, (&src)) ) {
 		AtomTreeCOP topological_match_to( topological_match_to_.lock() );
 		if ( topological_match_to ) {
-		debug_assert( !this_weak_ptr_.expired() );
+			debug_assert( !this_weak_ptr_.expired() );
 			topological_match_to->detatch_topological_observer( this_weak_ptr_ );
 		}
 		/// topological observation only allowed if both this, and src hold weak pointers to themselves.
@@ -1248,26 +1249,26 @@ AtomTree::update_internal_coords() const
 
 id::AtomID
 AtomTree::get_jump_atom_id( StubID const& stub_id1,
-                            StubID const& stub_id2,
-                            int& direction ) const {
+	StubID const& stub_id2,
+	int& direction ) const {
 	AtomCOP jump_atom(0);
 	for ( Size i=1; i<= 3; ++i ) {
 		AtomCOP atom1( atom_pointer( stub_id1.atom( i ) ) );
 		for ( Size j=1; j<= 3; ++j ) {
 			AtomCOP atom2( atom_pointer( stub_id2.atom( j ) ) );
 			if ( atom1->is_jump() && atom1->parent() == atom2 ) {
-			debug_assert( !jump_atom );
+				debug_assert( !jump_atom );
 				jump_atom = atom1;
 				direction = -1;
 			} else if ( atom2->is_jump() && atom2->parent() == atom1 ) {
-			debug_assert( !jump_atom );
+				debug_assert( !jump_atom );
 				jump_atom = atom2;
 				direction = 1;
 			}
 		}
 	}
 
-  return jump_atom->id();
+	return jump_atom->id();
 }
 
 /// @details  Set the transform between two stubs
@@ -1280,9 +1281,9 @@ AtomTree::set_stub_transform(
 	RT const & target_rt
 )
 {
-  int dir = 0;
-  AtomOP jump_atom = atom_pointer( get_jump_atom_id( stub_id1, stub_id2, dir ) );
-  if ( !jump_atom ) {
+	int dir = 0;
+	AtomOP jump_atom = atom_pointer( get_jump_atom_id( stub_id1, stub_id2, dir ) );
+	if ( !jump_atom ) {
 		utility_exit_with_message( "AtomTree::set_stub_transform: No jump between these atoms!" );
 	}
 
@@ -1298,7 +1299,7 @@ AtomTree::set_stub_transform(
 	internal_coords_need_updating_ = true; // this could be more efficient!
 
 	// confirm that things worked
-debug_assert( RT( stub_from_id( stub_id1 ), stub_from_id( stub_id2 ) ).distance_squared( target_rt ) < 1e-3 );
+	debug_assert( RT( stub_from_id( stub_id1 ), stub_from_id( stub_id2 ) ).distance_squared( target_rt ) < 1e-3 );
 	return jump_atom->id();
 }
 
@@ -1318,7 +1319,7 @@ void
 AtomTree::update_xyz_coords() const
 {
 	// this would be bad:
-debug_assert( ! ( xyz_coords_need_updating_ && internal_coords_need_updating_ ) );
+	debug_assert( ! ( xyz_coords_need_updating_ && internal_coords_need_updating_ ) );
 
 
 	if ( xyz_coords_need_updating_ ) {
@@ -1394,14 +1395,14 @@ void
 AtomTree::attach_topological_observer( AtomTreeCAP observer_ap ) const
 {
 	AtomTreeCOP observer( observer_ap );
-debug_assert( !observer->this_weak_ptr_.expired() && !this_weak_ptr_.expired() );
-debug_assert( observer->topological_match_to_.expired() );
+	debug_assert( !observer->this_weak_ptr_.expired() && !this_weak_ptr_.expired() );
+	debug_assert( observer->topological_match_to_.expired() );
 	bool resize_topo_observers_array_( false );
 	for ( Size ii = 1; ii <= topological_observers_.size(); ++ii ) {
 		if ( topological_observers_[ ii ].expired() ) {
 			resize_topo_observers_array_ = true;
 			/// Make sure the observer is not already observing me
-		debug_assert( !utility::pointer::equal(topological_observers_[ ii ], observer) );
+			debug_assert( !utility::pointer::equal(topological_observers_[ ii ], observer) );
 		}
 	}
 
@@ -1430,7 +1431,7 @@ debug_assert( observer->topological_match_to_.expired() );
 void
 AtomTree::notify_topological_change( AtomTreeCAP ASSERT_ONLY( observee ) ) const
 {
-debug_assert( utility::pointer::equal(observee, topological_match_to_) );
+	debug_assert( utility::pointer::equal(observee, topological_match_to_) );
 	topological_match_to_.reset();
 }
 
@@ -1442,7 +1443,7 @@ void
 AtomTree::detatch_topological_observer( AtomTreeCAP observer_ap ) const
 {
 	AtomTreeCOP observer( observer_ap );
-debug_assert( utility::pointer::equal(observer->topological_match_to_, this) );
+	debug_assert( utility::pointer::equal(observer->topological_match_to_, this) );
 #ifndef NDEBUG
 	bool found( false );
 #endif
@@ -1456,7 +1457,7 @@ debug_assert( utility::pointer::equal(observer->topological_match_to_, this) );
 			break;
 		}
 	}
-debug_assert( found );
+	debug_assert( found );
 }
 
 /// @details If this tree changes its topology, then its no longer a match in topology
@@ -1541,7 +1542,7 @@ AtomTree::get_frag_pseudo_stub_id(
 	bool & fail
 ) const
 {
-debug_assert( frag_xyz.count( id ) );
+	debug_assert( frag_xyz.count( id ) );
 
 	utility::vector1< AtomID > ids;
 
@@ -1603,16 +1604,16 @@ AtomTree::get_frag_local_stub(
 	AtomCOP stub_atom1( atom_pointer( stub_atom1_id ) );
 
 	if ( !frag_xyz.count( stub_atom1_id ) && stub_atom1->is_jump() &&
-			 stub_atom1->parent() && frag_xyz.count( stub_atom1->parent()->atom_id()) &&
-			 stub_atom1->stub_atom1_id() == stub_atom1_id &&
-			 stub_atom1->stub_atom2_id() == stub_atom2_id &&
-			 stub_atom1->stub_atom3_id() == stub_atom3_id ) {
+			stub_atom1->parent() && frag_xyz.count( stub_atom1->parent()->atom_id()) &&
+			stub_atom1->stub_atom1_id() == stub_atom1_id &&
+			stub_atom1->stub_atom2_id() == stub_atom2_id &&
+			stub_atom1->stub_atom3_id() == stub_atom3_id ) {
 
 		/// special case: handled more easily this way
 		StubID const instub_id( stub_atom1->input_stub_atom1_id(),
-														stub_atom1->input_stub_atom2_id(),
-														stub_atom1->input_stub_atom3_id() );
-	debug_assert( stub_atom1->input_stub_atom0_id() == stub_atom1->input_stub_atom1_id() );
+			stub_atom1->input_stub_atom2_id(),
+			stub_atom1->input_stub_atom3_id() );
+		debug_assert( stub_atom1->input_stub_atom0_id() == stub_atom1->input_stub_atom1_id() );
 
 		// current xyz transform:
 		RT const current_rt( stub_from_id( instub_id ), stub_from_id( stubid ) );
@@ -1628,8 +1629,8 @@ AtomTree::get_frag_local_stub(
 
 
 	return Stub( get_frag_local_xyz( stub_atom1_id, frag_xyz, fail ),
-							 get_frag_local_xyz( stub_atom2_id, frag_xyz, fail ),
-							 get_frag_local_xyz( stub_atom3_id, frag_xyz, fail ) );
+		get_frag_local_xyz( stub_atom2_id, frag_xyz, fail ),
+		get_frag_local_xyz( stub_atom3_id, frag_xyz, fail ) );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1649,7 +1650,7 @@ AtomTree::get_frag_local_xyz(
 	AtomCOP atom( atom_pointer(id) );
 
 	if ( ( atom->parent() && frag_xyz.count( atom->parent()->atom_id() ) ) ||
-			 ( atom->parent() && atom->parent()->parent() && frag_xyz.count( atom->parent()->parent()->atom_id() ) ) ) {
+			( atom->parent() && atom->parent()->parent() && frag_xyz.count( atom->parent()->parent()->atom_id() ) ) ) {
 		// child or grand child
 		return get_frag_descendant_local_xyz( atom, frag_xyz, fail );
 	}
@@ -1658,11 +1659,11 @@ AtomTree::get_frag_local_xyz(
 	AtomCOP child( 0 );
 	for ( Size i=0; i< atom->n_children(); ++i ) {
 		if ( frag_xyz.count( atom->child(i)->atom_id() ) ) {
-		debug_assert( child == 0 );
+			debug_assert( child == 0 );
 			child = atom->child(i);
 		}
 	}
-debug_assert( child ); // this is a known hole: could be asked for a grandparent of a frag, not just a parent. fix this phil
+	debug_assert( child ); // this is a known hole: could be asked for a grandparent of a frag, not just a parent. fix this phil
 	return get_frag_parent_local_xyz( child, frag_xyz, fail );
 
 
@@ -1678,16 +1679,16 @@ AtomTree::get_frag_descendant_local_xyz(
 ) const
 {
 	AtomID const id( atom->atom_id() );
-debug_assert( !frag_xyz.count( id ) );
+	debug_assert( !frag_xyz.count( id ) );
 	bool const frag_child( atom->parent() && frag_xyz.count( atom->parent()->atom_id() ) );
 	ASSERT_ONLY(bool const frag_gchild
 		( atom->parent() && atom->parent()->parent() && frag_xyz.count( atom->parent()->parent()->atom_id() ) );)
-debug_assert( frag_child || frag_gchild );
+		debug_assert( frag_child || frag_gchild );
 
 	AtomID id1( atom->input_stub_atom1_id() );
 	AtomID id2( atom->input_stub_atom2_id() );
 	AtomID id3( atom->input_stub_atom3_id() );
-debug_assert( atom->input_stub_atom0_id() == id1 ); // cant handle this case yet
+	debug_assert( atom->input_stub_atom0_id() == id1 ); // cant handle this case yet
 
 	if ( id == id1 || id == id2 || id == id3 ) {
 		/// circular!!! potential for infinite loop!
@@ -1720,15 +1721,15 @@ AtomTree::get_frag_parent_local_xyz(
 ) const
 {
 	AtomCOP parent( child->parent() );
-//debug_assert( !parent->is_jump() ); // dont think we have to handle this case...
-debug_assert( frag_xyz.count( child->atom_id() ) && ! frag_xyz.count( parent->atom_id() ) );
+	//debug_assert( !parent->is_jump() ); // dont think we have to handle this case...
+	debug_assert( frag_xyz.count( child->atom_id() ) && ! frag_xyz.count( parent->atom_id() ) );
 
 	// build a pseudo-stub for the parent
 	StubID const pseudo_stubid( get_frag_pseudo_stub_id( child->atom_id(), frag_xyz, fail ) );
 	if ( fail ) return Vector(0.0);
 	Stub const current_stub( stub_from_id( pseudo_stubid ) );
 	Stub const   local_stub( get_frag_local_stub( pseudo_stubid, frag_xyz, fail ) );
-debug_assert( !fail ); // since pseudo stub atoms are all in the fragment
+	debug_assert( !fail ); // since pseudo stub atoms are all in the fragment
 	return local_stub.local2global( current_stub.global2local( xyz( parent->atom_id() ) ) );
 }
 
@@ -1754,7 +1755,7 @@ AtomTree::insert_single_fragment(
 	AtomCOP instub_frag_atom(0), instub_nonfrag_atom(0);
 	get_frag_atoms( instub_id, frag_xyz, instub_frag_atom, instub_nonfrag_atom );
 
-debug_assert( instub_frag_atom->parent() == instub_nonfrag_atom ); // sanity check
+	debug_assert( instub_frag_atom->parent() == instub_nonfrag_atom ); // sanity check
 
 	utility::vector1< AtomCOP > outstub_nonfrag_atoms; // just for debugging
 
@@ -1763,7 +1764,7 @@ debug_assert( instub_frag_atom->parent() == instub_nonfrag_atom ); // sanity che
 		AtomCOP outstub_frag_atom(0), outstub_nonfrag_atom(0);
 		get_frag_atoms( outstub_id, frag_xyz, outstub_frag_atom, outstub_nonfrag_atom );
 		outstub_nonfrag_atoms.push_back( outstub_nonfrag_atom ); // for debugging
-	debug_assert( outstub_nonfrag_atom->parent() == outstub_frag_atom );
+		debug_assert( outstub_nonfrag_atom->parent() == outstub_frag_atom );
 
 		// now transform outstub_nonfrag_atom so that current transform becomes desired transform
 		//
@@ -1808,13 +1809,13 @@ debug_assert( instub_frag_atom->parent() == instub_nonfrag_atom ); // sanity che
 
 		{ // sanity check/debug
 			// if parent not in frag, assert this is instub_frag_atom
-		debug_assert( ( atom->parent() && frag_xyz.count( atom->parent()->atom_id() ) ) || atom == instub_frag_atom );
+			debug_assert( ( atom->parent() && frag_xyz.count( atom->parent()->atom_id() ) ) || atom == instub_frag_atom );
 
 			// if has a child not in frag, assert child is in outstub_nonfrag_atoms
 			for ( Size i=0; i< atom->n_children(); ++i ) {
-			debug_assert( frag_xyz.count( atom->child(i)->atom_id() ) ||
-								( std::find( outstub_nonfrag_atoms.begin(), outstub_nonfrag_atoms.end(), atom->child(i) ) !=
-									outstub_nonfrag_atoms.end()));
+				debug_assert( frag_xyz.count( atom->child(i)->atom_id() ) ||
+					( std::find( outstub_nonfrag_atoms.begin(), outstub_nonfrag_atoms.end(), atom->child(i) ) !=
+					outstub_nonfrag_atoms.end()));
 			}
 		}
 		moving_atoms.push_back( id );
@@ -1825,7 +1826,7 @@ debug_assert( instub_frag_atom->parent() == instub_nonfrag_atom ); // sanity che
 
 	// now debug transforms
 	for ( FragRT::const_iterator it= outstub_transforms.begin(), ite= outstub_transforms.end(); it != ite; ++it ) {
-	debug_assert( RT( instub, stub_from_id( it->first )).distance_squared( it->second ) < 1e-3 );
+		debug_assert( RT( instub, stub_from_id( it->first )).distance_squared( it->second ) < 1e-3 );
 	}
 
 
@@ -1844,7 +1845,7 @@ AtomTree::set_jump_atom_stub_id(
 	AtomOP atom2( atom_pointer( id.atom2 ) );
 	AtomOP atom3( atom_pointer( id.atom3 ) );
 	if ( !atom1->is_jump() || atom2->is_jump() || atom3->is_jump() ||
-			 atom2->parent() != atom1 || atom3->parent() != atom2 ) {
+			atom2->parent() != atom1 || atom3->parent() != atom2 ) {
 		utility_exit_with_message( "set_jump_atom_stub_id failed!" );
 	}
 
@@ -1855,7 +1856,7 @@ AtomTree::set_jump_atom_stub_id(
 
 	internal_coords_need_updating_ = true;
 
-debug_assert( atom1->stub_atom1() == atom1 && atom1->stub_atom2() == atom2 && atom1->stub_atom3() == atom3 );
+	debug_assert( atom1->stub_atom1() == atom1 && atom1->stub_atom2() == atom2 && atom1->stub_atom3() == atom3 );
 
 }
 
@@ -1915,8 +1916,8 @@ AtomTree::insert_fragment(
 		//AtomID const & id( it->first );
 		AtomOP atom( atom_pointer( it->first ) );
 		if ( ( atom->parent() == 0 || !frag_xyz.count( atom->parent()->atom_id() ) ) &&
-				 ( std::find( incoming_stub_frag_atoms.begin(), incoming_stub_frag_atoms.end(), atom ) ==
-					 incoming_stub_frag_atoms.end() ) ) {
+				( std::find( incoming_stub_frag_atoms.begin(), incoming_stub_frag_atoms.end(), atom ) ==
+				incoming_stub_frag_atoms.end() ) ) {
 			// found a new incoming connection!
 			TR.Trace << "AtomTree::insert_fragment: found new incoming connection: " << atom->atom_id() << std::endl;
 			// now want to generate a StubID for this guy as well as a local stub
@@ -1931,7 +1932,7 @@ AtomTree::insert_fragment(
 					incoming_local_stubs.push_back( stub );
 					incoming_stub_ids.push_back( stubid );
 				}
-			debug_assert( !fail ); // could fail
+				debug_assert( !fail ); // could fail
 			} else {
 				// incoming bonded-atom connection
 				bool fail( false );
@@ -1940,9 +1941,9 @@ AtomTree::insert_fragment(
 					incoming_stub_frag_atoms.push_back( atom );
 					incoming_stub_ids.push_back( stubid );
 					incoming_local_stubs.push_back( get_frag_local_stub( stubid, frag_xyz, fail ) );
-				debug_assert( !fail ); // shouldnt fail for a frag_pseudo_stub -- all atoms are already in frag
+					debug_assert( !fail ); // shouldnt fail for a frag_pseudo_stub -- all atoms are already in frag
 				}
-			debug_assert( !fail ); // could fail
+				debug_assert( !fail ); // could fail
 			}
 		}
 
@@ -1950,8 +1951,8 @@ AtomTree::insert_fragment(
 		for ( Size i=0; i< atom->n_children(); ++i ) {
 			AtomOP child( atom->child(i) );
 			if ( !frag_xyz.count( child->atom_id() ) &&
-					 ( std::find( outgoing_stub_nonfrag_atoms.begin(), outgoing_stub_nonfrag_atoms.end(), child ) ==
-						 outgoing_stub_nonfrag_atoms.end() ) ) {
+					( std::find( outgoing_stub_nonfrag_atoms.begin(), outgoing_stub_nonfrag_atoms.end(), child ) ==
+					outgoing_stub_nonfrag_atoms.end() ) ) {
 				// new outgoing connection!
 				TR.Trace << "AtomTree::insert_fragment: found new outgoing connection: " << atom->atom_id() << std::endl;
 				bool fail( false );
@@ -1962,7 +1963,7 @@ AtomTree::insert_fragment(
 					outgoing_stub_ids.push_back( stubid );
 					outgoing_local_stubs.push_back( outstub );
 				}
-			debug_assert( !fail );
+				debug_assert( !fail );
 			}
 		}
 	}
@@ -2017,7 +2018,7 @@ AtomTree::promote_sameresidue_nonjump_child( AtomID const & parent_atom_id )
 		}
 	}
 	if ( sameresidue_child ) {
-	debug_assert( !sameresidue_child->is_jump() );
+		debug_assert( !sameresidue_child->is_jump() );
 		parent->delete_atom( sameresidue_child );
 		parent->insert_atom( sameresidue_child );
 	} else {

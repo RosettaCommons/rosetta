@@ -130,7 +130,7 @@ public:
 		utility::vector1< ddG_data_tuple > ddG_data = ddg_scan_mover_->calculate( TR, *test_dimer_pose_ );
 
 		core::Size resNum; std::string resname; core::Real ddG_value;
-		for( utility::vector1<ddG_data_tuple>::const_iterator iter = ddG_data.begin(), iter_end = ddG_data.end() ; iter != iter_end ; ++iter ) {
+		for ( utility::vector1<ddG_data_tuple>::const_iterator iter = ddG_data.begin(), iter_end = ddG_data.end() ; iter != iter_end ; ++iter ) {
 			boost::tie(resNum, resname, ddG_value) = *iter;
 			TS_ASSERT_EQUALS( resNum, 2 );
 			TS_ASSERT_EQUALS( resname, "ALA" );
@@ -138,13 +138,13 @@ public:
 		}
 	}
 
-  void test_filter_parsing() {
-    basic::datacache::DataMap data;
-    Filters_map filters;
-    Movers_map movers;
+	void test_filter_parsing() {
+		basic::datacache::DataMap data;
+		Filters_map filters;
+		Movers_map movers;
 
 		prime_Data( data );
-    movers["ddg_mover_name"] = ddg_mover_;
+		movers["ddg_mover_name"] = ddg_mover_;
 
 		(*scorefxn_)(*test_dimer_pose_);
 
@@ -154,12 +154,12 @@ public:
 
 		utility::vector1< ddG_data_tuple > ddG_data = ddg_scan_mover_->calculate( TR, *test_dimer_pose_ );
 		core::Size resNum; std::string resname; core::Real ddG_value;
-		for( utility::vector1<ddG_data_tuple>::const_iterator iter = ddG_data.begin(), iter_end = ddG_data.end() ; iter != iter_end ; ++iter ) {
+		for ( utility::vector1<ddG_data_tuple>::const_iterator iter = ddG_data.begin(), iter_end = ddG_data.end() ; iter != iter_end ; ++iter ) {
 			boost::tie(resNum, resname, ddG_value) = *iter;
 			TS_ASSERT_EQUALS( resNum, 2 );
 			TS_ASSERT_EQUALS( resname, "ALA" );
 			TS_ASSERT_EQUALS( ddG_value, 100 );
 		}
-  }
+	}
 
 };

@@ -60,7 +60,7 @@ BackboneStubLinearConstraint::BackboneStubLinearConstraint(
 	fixed_atom_id_( fixed_atom_id )
 {
 	// store info about the target residue
-debug_assert( target_rsd.is_protein() );
+	debug_assert( target_rsd.is_protein() );
 	if ( (target_rsd.aa() == chemical::aa_gly ) ) {
 		TR << "ERROR - Gly residues cannot be used in BackboneStubLinearConstraints." << std::endl;
 		return;
@@ -74,7 +74,7 @@ debug_assert( target_rsd.is_protein() );
 
 	// constraint depends on CB, CA, C coordinates
 	conformation::Residue const & rsd( pose.residue(seqpos_) );
-debug_assert( rsd.is_protein() );
+	debug_assert( rsd.is_protein() );
 	if ( (rsd.aa() == chemical::aa_gly) ) {
 		TR << "ERROR - Gly residues cannot be used in BackboneStubLinearConstraints." << std::endl;
 		return;
@@ -113,28 +113,28 @@ void BackboneStubLinearConstraint::show( std::ostream& out ) const
 bool BackboneStubLinearConstraint::operator == ( Constraint const & other_cst ) const
 {
 
-	if( !dynamic_cast< BackboneStubLinearConstraint const * > ( &other_cst ) ) return false;
+	if ( !dynamic_cast< BackboneStubLinearConstraint const * > ( &other_cst ) ) return false;
 
 	BackboneStubLinearConstraint const & other( static_cast< BackboneStubLinearConstraint const & > (other_cst) );
 
-	if( superposition_bonus_ != other.superposition_bonus_ ) return false;
-	if( CB_force_constant_ != other.CB_force_constant_ ) return false;
-	if( seqpos_ != other.seqpos_ ) return false;
+	if ( superposition_bonus_ != other.superposition_bonus_ ) return false;
+	if ( CB_force_constant_ != other.CB_force_constant_ ) return false;
+	if ( seqpos_ != other.seqpos_ ) return false;
 
-	if( CB_atom_id_ != other.CB_atom_id_ ) return false;
-	if( CA_atom_id_ != other.CA_atom_id_ ) return false;
-	if( C_atom_id_ != other.C_atom_id_ ) return false;
-	if( N_atom_id_ != other.N_atom_id_ ) return false;
+	if ( CB_atom_id_ != other.CB_atom_id_ ) return false;
+	if ( CA_atom_id_ != other.CA_atom_id_ ) return false;
+	if ( C_atom_id_ != other.C_atom_id_ ) return false;
+	if ( N_atom_id_ != other.N_atom_id_ ) return false;
 
-	if( CB_target_ != other.CB_target_ ) return false;
-	if( CA_target_ != other.CA_target_ ) return false;
-	if( C_target_ != other.C_target_ ) return false;
-	if( N_target_ != other.N_target_ ) return false;
-	if( CB_CA_target_ != other.CB_CA_target_ ) return false;
-	if( C_N_target_ != other.C_N_target_ ) return false;
+	if ( CB_target_ != other.CB_target_ ) return false;
+	if ( CA_target_ != other.CA_target_ ) return false;
+	if ( C_target_ != other.C_target_ ) return false;
+	if ( N_target_ != other.N_target_ ) return false;
+	if ( CB_CA_target_ != other.CB_CA_target_ ) return false;
+	if ( C_N_target_ != other.C_N_target_ ) return false;
 
-	if( fixed_atom_id_ != other.fixed_atom_id_ ) return false;
-	if( fixed_reference_point_ != other.fixed_reference_point_ ) return false;
+	if ( fixed_atom_id_ != other.fixed_atom_id_ ) return false;
+	if ( fixed_reference_point_ != other.fixed_reference_point_ ) return false;
 
 	return true;
 }
@@ -165,7 +165,7 @@ void BackboneStubLinearConstraint::score( func::XYZ_Func const & xyz_func, Energ
 	if ( weights[ this->score_type() ] == 0 ) return;
 
 	core::conformation::Residue const & curr_rsd = xyz_func.residue(seqpos_);
-debug_assert( curr_rsd.is_protein() );
+	debug_assert( curr_rsd.is_protein() );
 
 	// verify that the fixed reference point is in the same place
 	core::Vector curr_ref_location = xyz_func(fixed_atom_id_);
@@ -177,60 +177,60 @@ debug_assert( curr_rsd.is_protein() );
 	}
 
 	// return a value between superposition_bonus_ (-ve) and zero
-  // This bonus really does nothing. Just used to keep the same interface
+	// This bonus really does nothing. Just used to keep the same interface
 	core::Real cst_val(0.);
 	//core::Real cst_val(superposition_bonus_);
-//debug_assert( cst_val < 0. );
+	//debug_assert( cst_val < 0. );
 
 	// apply a harmonic constraint on the CB's
 	core::Vector CB_curr,CA_curr,C_curr,N_curr;
 	if ( (curr_rsd.aa() == chemical::aa_gly) ) {
-			TR << "ERROR - Gly residues cannot be used in BackboneStubLinearConstraints." << std::endl;
-			return;
+		TR << "ERROR - Gly residues cannot be used in BackboneStubLinearConstraints." << std::endl;
+		return;
 	}
 
 	CB_curr = curr_rsd.xyz("CB");
 	core::Real CB_d2 = CB_curr.distance_squared( CB_target_ );
-  cst_val += CB_force_constant_ * CB_d2;
-  //TR << "CB_CB_dist curr: "<< CB_d2 << "," << CB_curr[0] << "," << CB_curr[1] << ","<< CB_curr[2] << std::endl;
-  //TR << "CB_CB_dist target: "<< CB_d2 << "," << CB_target_[0] << "," << CB_target_[1] << ","<< CB_target_[2] << std::endl;
+	cst_val += CB_force_constant_ * CB_d2;
+	//TR << "CB_CB_dist curr: "<< CB_d2 << "," << CB_curr[0] << "," << CB_curr[1] << ","<< CB_curr[2] << std::endl;
+	//TR << "CB_CB_dist target: "<< CB_d2 << "," << CB_target_[0] << "," << CB_target_[1] << ","<< CB_target_[2] << std::endl;
 	//cst_val += CB_force_constant_*(1-std::exp(-CB_d2/2));
 
 	CA_curr = curr_rsd.xyz("CA");
 	core::Real CA_d2 = CA_curr.distance_squared( CA_target_ );
-  cst_val += CA_d2;
+	cst_val += CA_d2;
 
 	C_curr = curr_rsd.xyz("C");
 	core::Real C_d2 = C_curr.distance_squared( C_target_ );
-  cst_val += CB_force_constant_ * C_d2;
+	cst_val += CB_force_constant_ * C_d2;
 
 	N_curr = curr_rsd.xyz("N");
 	core::Real N_d2 = N_curr.distance_squared( N_target_ );
-  cst_val += N_d2;
+	cst_val += N_d2;
 
-/*
+	/*
 	// plus by the (cos-1)^2 of the angle between the CB-CA and CB'-CA' vectors
 	core::Vector const CA_curr = curr_rsd.xyz("CA");
 	//cst_val *= (ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_)-1)*(ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_)-1)/2;
 	cst_val += 1.0-ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_);
 	//cst_val += (ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_)-1)*(ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_)-1)/2;
-*/
+	*/
 
-/*
+	/*
 	// plus by the (cos-1)^2 of the angle between the C-N and C'-N' vectors
 	core::Vector const C_curr = curr_rsd.xyz("C");
 	core::Vector const N_curr = curr_rsd.xyz("N");
 	//cst_val *= (ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1)*(ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1)/2;
 	cst_val += 1.0-ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ );
 	//cst_val += (ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1)*(ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1)/2;
-*/
+	*/
 
-  //TR << "cst_val dist: " << CB_force_constant_*(1-std::exp(-CB_d2/2)) << std::endl;
-  //TR << "cst_val angle1: " << (ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_)-1)*(ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_)-1)/2 << std::endl;
-  //TR << "cst_val angle2: " << (ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1)*(ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1)/2 << std::endl;
-  //TR << "cst_val bonus: " << superposition_bonus_ << std::endl;
-  //TR << "cst_val geometry: " << cst_val-superposition_bonus_ << std::endl;
-  //TR << "cst_val total: " << cst_val  << std::endl;
+	//TR << "cst_val dist: " << CB_force_constant_*(1-std::exp(-CB_d2/2)) << std::endl;
+	//TR << "cst_val angle1: " << (ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_)-1)*(ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_)-1)/2 << std::endl;
+	//TR << "cst_val angle2: " << (ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1)*(ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1)/2 << std::endl;
+	//TR << "cst_val bonus: " << superposition_bonus_ << std::endl;
+	//TR << "cst_val geometry: " << cst_val-superposition_bonus_ << std::endl;
+	//TR << "cst_val total: " << cst_val  << std::endl;
 
 	emap[ this->score_type() ] += cst_val;
 }
@@ -248,7 +248,7 @@ BackboneStubLinearConstraint::fill_f1_f2(
 
 	core::conformation::Residue const & curr_rsd = xyz.residue( seqpos_ );
 
-debug_assert( curr_rsd.is_protein() );
+	debug_assert( curr_rsd.is_protein() );
 
 	if ( ( atom != CB_atom_id_ ) && ( atom != CA_atom_id_ ) && ( atom != C_atom_id_ ) && ( atom != N_atom_id_ ) ) {
 		return;
@@ -257,14 +257,14 @@ debug_assert( curr_rsd.is_protein() );
 	// return a value between superposition_bonus_ (-ve) and zero
 	core::Real cst_val(0.);
 	//core::Real cst_val(superposition_bonus_);
-//debug_assert( cst_val < 0. );
-  //TR << " cst_val1: "<< cst_val << std::endl;
+	//debug_assert( cst_val < 0. );
+	//TR << " cst_val1: "<< cst_val << std::endl;
 
 	// start by computing the cst value normally, collecting score components along the way. if cst_val is non-negative no derivative is computed
 
 	if ( (curr_rsd.aa() == chemical::aa_gly) ) {
-			TR << "ERROR - Gly residues cannot be used in BackboneStubLinearConstraints." << std::endl;
-			return;
+		TR << "ERROR - Gly residues cannot be used in BackboneStubLinearConstraints." << std::endl;
+		return;
 	}
 
 	// apply a harmonic constraint on the CB's
@@ -289,67 +289,67 @@ debug_assert( curr_rsd.is_protein() );
 	cst_val += N_pos_term;
 
 
-  //derivatives
+	//derivatives
 	core::Real const constant_dist_term( weights[ this->score_type() ] );
 
-  if ( atom == CB_atom_id_ ) {
-    Vector const CB_f2( CB_curr - CB_target_ );
-    core::Real const CB_dist( CB_f2.length() );
-    core::Real const CB_deriv = 2 * CB_force_constant_ * CB_dist;
-    if ( CB_deriv != 0.0 && CB_dist != 0.0 ) {
-      Vector const CB_f1( CB_curr.cross( CB_target_ ) );
-      F1 += ( ( CB_deriv / CB_dist ) * CB_f1 ) * constant_dist_term;
-      F2 += ( ( CB_deriv / CB_dist ) * CB_f2 ) * constant_dist_term;
-    }
-    return;
-  }
+	if ( atom == CB_atom_id_ ) {
+		Vector const CB_f2( CB_curr - CB_target_ );
+		core::Real const CB_dist( CB_f2.length() );
+		core::Real const CB_deriv = 2 * CB_force_constant_ * CB_dist;
+		if ( CB_deriv != 0.0 && CB_dist != 0.0 ) {
+			Vector const CB_f1( CB_curr.cross( CB_target_ ) );
+			F1 += ( ( CB_deriv / CB_dist ) * CB_f1 ) * constant_dist_term;
+			F2 += ( ( CB_deriv / CB_dist ) * CB_f2 ) * constant_dist_term;
+		}
+		return;
+	}
 
-  if ( atom == CA_atom_id_ ) {
-    Vector const CA_f2( CA_curr - CA_target_ );
-    core::Real const CA_dist( CA_f2.length() );
-    core::Real const CA_deriv = 2 * CA_dist;
-    if ( CA_deriv != 0.0 && CA_dist != 0.0 ) {
-      Vector const CA_f1( CA_curr.cross( CA_target_ ) );
-      F1 += ( ( CA_deriv / CA_dist ) * CA_f1 ) * constant_dist_term;
-      F2 += ( ( CA_deriv / CA_dist ) * CA_f2 ) * constant_dist_term;
-    }
-    return;
-  }
+	if ( atom == CA_atom_id_ ) {
+		Vector const CA_f2( CA_curr - CA_target_ );
+		core::Real const CA_dist( CA_f2.length() );
+		core::Real const CA_deriv = 2 * CA_dist;
+		if ( CA_deriv != 0.0 && CA_dist != 0.0 ) {
+			Vector const CA_f1( CA_curr.cross( CA_target_ ) );
+			F1 += ( ( CA_deriv / CA_dist ) * CA_f1 ) * constant_dist_term;
+			F2 += ( ( CA_deriv / CA_dist ) * CA_f2 ) * constant_dist_term;
+		}
+		return;
+	}
 
-  if ( atom == C_atom_id_ ) {
-    Vector const C_f2( C_curr - C_target_ );
-    core::Real const C_dist( C_f2.length() );
-    core::Real const C_deriv = 2 * CB_force_constant_ * C_dist;
-    if ( C_deriv != 0.0 && C_dist != 0.0 ) {
-      Vector const C_f1( C_curr.cross( C_target_ ) );
-      F1 += ( ( C_deriv / C_dist ) * C_f1 ) * constant_dist_term;
-      F2 += ( ( C_deriv / C_dist ) * C_f2 ) * constant_dist_term;
-    }
-    return;
-  }
+	if ( atom == C_atom_id_ ) {
+		Vector const C_f2( C_curr - C_target_ );
+		core::Real const C_dist( C_f2.length() );
+		core::Real const C_deriv = 2 * CB_force_constant_ * C_dist;
+		if ( C_deriv != 0.0 && C_dist != 0.0 ) {
+			Vector const C_f1( C_curr.cross( C_target_ ) );
+			F1 += ( ( C_deriv / C_dist ) * C_f1 ) * constant_dist_term;
+			F2 += ( ( C_deriv / C_dist ) * C_f2 ) * constant_dist_term;
+		}
+		return;
+	}
 
-  if ( atom == N_atom_id_ ) {
-    Vector const N_f2( N_curr - N_target_ );
-    core::Real const N_dist( N_f2.length() );
-    core::Real const N_deriv = 2 * N_dist;
-    if ( N_deriv != 0.0 && N_dist != 0.0 ) {
-      Vector const N_f1( N_curr.cross( N_target_ ) );
-      F1 += ( ( N_deriv / N_dist ) * N_f1 ) * constant_dist_term;
-      F2 += ( ( N_deriv / N_dist ) * N_f2 ) * constant_dist_term;
-    }
-    return;
-  }
+	if ( atom == N_atom_id_ ) {
+		Vector const N_f2( N_curr - N_target_ );
+		core::Real const N_dist( N_f2.length() );
+		core::Real const N_deriv = 2 * N_dist;
+		if ( N_deriv != 0.0 && N_dist != 0.0 ) {
+			Vector const N_f1( N_curr.cross( N_target_ ) );
+			F1 += ( ( N_deriv / N_dist ) * N_f1 ) * constant_dist_term;
+			F2 += ( ( N_deriv / N_dist ) * N_f2 ) * constant_dist_term;
+		}
+		return;
+	}
 
-/*
+	/*
 	// multiply by the cos of the angle between the CB-CA and CB'-CA' vectors
 	core::Vector const CA_curr = curr_rsd.xyz("CA");
 	core::Vector const CB_CA_curr = CB_curr - CA_curr;
 	core::Real const CB_CA_angle_term( 1.0-ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_ ));
 	//core::Real const CB_CA_angle_term( (ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_ )-1)*(ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_ )-1)/2 );
-  cst_val += CB_CA_angle_term;
-  //cst_val *= CB_CA_angle_term;
-  //TR << " CB_CA_angle: "<< ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_ ) << std::endl;
-  //TR << " CB_CA_angle_term: "<< CB_CA_angle_term << std::endl;
+	cst_val += CB_CA_angle_term;
+	//cst_val *= CB_CA_angle_term;
+	//TR << " CB_CA_angle: "<< ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_ ) << std::endl;
+	//TR << " CB_CA_angle_term: "<< CB_CA_angle_term << std::endl;
 
 	// multiply by the cos of the angle between the C-N and C'-N' vectors
 	core::Vector const C_curr = curr_rsd.xyz("C");
@@ -357,10 +357,10 @@ debug_assert( curr_rsd.is_protein() );
 	core::Vector const C_N_curr = C_curr - N_curr;
 	core::Real const C_N_angle_term( 1.0-ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ ));
 	//core::Real const C_N_angle_term( (ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1)*(ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1)/2 );
-  cst_val += C_N_angle_term;
-  //cst_val *= C_N_angle_term;
-  //TR << " C_N_angle: "<< ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ ) << std::endl;
-  //TR << " C_N_angle_term: "<< C_N_angle_term << std::endl;
+	cst_val += C_N_angle_term;
+	//cst_val *= C_N_angle_term;
+	//TR << " C_N_angle: "<< ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ ) << std::endl;
+	//TR << " C_N_angle_term: "<< C_N_angle_term << std::endl;
 
 	core::Real const constant_dist_term( weights[ this->score_type() ] );
 	core::Real const constant_ang_term( constant_dist_term  * ( 0. + CB_pos_term ) );
@@ -369,76 +369,76 @@ debug_assert( curr_rsd.is_protein() );
 	// contribution from differentiating CB_dist ( * CA_angle_term * C_angle_term from product rule)
 	// and then adding the effect of the angular constraint on cb using the chain rule
 	if ( atom == CB_atom_id_ ) {
-// the effects of the coordinate constraint
-		Vector const CB_f2( CB_curr - CB_target_ );
-		core::Real const CB_dist( CB_f2.length() );
-		//core::Real const CB_deriv = CB_force_constant_ ;
-		core::Real const CB_deriv = 2 * CB_force_constant_ * CB_dist;
-		//core::Real const CB_deriv = CB_force_constant_ * (std::exp(-CB_d2/2)) * CB_dist;
-		if ( CB_deriv != 0.0 && CB_dist != 0.0 ) {
-			Vector const CB_f1( CB_curr.cross( CB_target_ ) );
-			//F1 += ( ( CB_deriv / CB_dist ) * CB_f1 ) * CB_CA_angle_term * C_N_angle_term * constant_dist_term;
-			//F2 += ( ( CB_deriv / CB_dist ) * CB_f2 ) * CB_CA_angle_term * C_N_angle_term * constant_dist_term;
-			F1 += ( ( CB_deriv / CB_dist ) * CB_f1 ) * constant_dist_term;
-			F2 += ( ( CB_deriv / CB_dist ) * CB_f2 ) * constant_dist_term;
-		}
-
-// the angular constraint on cb
-		Vector partial_F1(0.), partial_F2(0.);
-		ang_cst_->p1_deriv( CB_curr, CA_curr, CA_curr + CB_CA_target_, partial_F1, partial_F2 );
-		//F1 += partial_F1 * (ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_ )-1) * C_N_angle_term * constant_ang_term;
-		//F2 += partial_F2 * (ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_ )-1) * C_N_angle_term * constant_ang_term;
-		F1 += partial_F1 * (-1) * constant_dist_term;
-		F2 += partial_F2 * (-1) * constant_dist_term;
-		//F1 += partial_F1 * (ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_ )-1) * constant_dist_term;
-		//F2 += partial_F2 * (ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_ )-1) * constant_dist_term;
-		return;
+	// the effects of the coordinate constraint
+	Vector const CB_f2( CB_curr - CB_target_ );
+	core::Real const CB_dist( CB_f2.length() );
+	//core::Real const CB_deriv = CB_force_constant_ ;
+	core::Real const CB_deriv = 2 * CB_force_constant_ * CB_dist;
+	//core::Real const CB_deriv = CB_force_constant_ * (std::exp(-CB_d2/2)) * CB_dist;
+	if ( CB_deriv != 0.0 && CB_dist != 0.0 ) {
+	Vector const CB_f1( CB_curr.cross( CB_target_ ) );
+	//F1 += ( ( CB_deriv / CB_dist ) * CB_f1 ) * CB_CA_angle_term * C_N_angle_term * constant_dist_term;
+	//F2 += ( ( CB_deriv / CB_dist ) * CB_f2 ) * CB_CA_angle_term * C_N_angle_term * constant_dist_term;
+	F1 += ( ( CB_deriv / CB_dist ) * CB_f1 ) * constant_dist_term;
+	F2 += ( ( CB_deriv / CB_dist ) * CB_f2 ) * constant_dist_term;
 	}
 
-// the angular constraint on ca
-// See N atom for explanation on the derivs
+	// the angular constraint on cb
+	Vector partial_F1(0.), partial_F2(0.);
+	ang_cst_->p1_deriv( CB_curr, CA_curr, CA_curr + CB_CA_target_, partial_F1, partial_F2 );
+	//F1 += partial_F1 * (ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_ )-1) * C_N_angle_term * constant_ang_term;
+	//F2 += partial_F2 * (ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_ )-1) * C_N_angle_term * constant_ang_term;
+	F1 += partial_F1 * (-1) * constant_dist_term;
+	F2 += partial_F2 * (-1) * constant_dist_term;
+	//F1 += partial_F1 * (ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_ )-1) * constant_dist_term;
+	//F2 += partial_F2 * (ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_ )-1) * constant_dist_term;
+	return;
+	}
+
+	// the angular constraint on ca
+	// See N atom for explanation on the derivs
 	if ( atom == CA_atom_id_ ) {
-		Vector partial_F1(0.), partial_F2(0.);
-		ang_cst_->p1_deriv( CA_curr, CA_curr - CB_CA_curr, CA_curr + CB_CA_target_ - CB_CA_curr, partial_F1, partial_F2 );
-		//F1 += -partial_F1 * (ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_ )-1) * C_N_angle_term * constant_ang_term;
-		//F2 += -partial_F2 * (ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_ )-1) * C_N_angle_term * constant_ang_term;
-		F1 += -partial_F1 * (-1) * constant_dist_term;
-		F2 += -partial_F2 * (-1) * constant_dist_term;
-		//F1 += -partial_F1 * (ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_ )-1) * constant_dist_term;
-		//F2 += -partial_F2 * (ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_ )-1) * constant_dist_term;
-		return;
+	Vector partial_F1(0.), partial_F2(0.);
+	ang_cst_->p1_deriv( CA_curr, CA_curr - CB_CA_curr, CA_curr + CB_CA_target_ - CB_CA_curr, partial_F1, partial_F2 );
+	//F1 += -partial_F1 * (ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_ )-1) * C_N_angle_term * constant_ang_term;
+	//F2 += -partial_F2 * (ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_ )-1) * C_N_angle_term * constant_ang_term;
+	F1 += -partial_F1 * (-1) * constant_dist_term;
+	F2 += -partial_F2 * (-1) * constant_dist_term;
+	//F1 += -partial_F1 * (ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_ )-1) * constant_dist_term;
+	//F2 += -partial_F2 * (ang_cst_->score( CB_curr, CA_curr, CA_curr + CB_CA_target_ )-1) * constant_dist_term;
+	return;
 	}
 
-// the angular constraint on c
+	// the angular constraint on c
 	if ( atom == C_atom_id_ ) {
-		Vector partial_F1(0.), partial_F2(0.);
-		ang_cst_->p1_deriv( C_curr, N_curr, N_curr + C_N_target_, partial_F1, partial_F2 );
-		//F1 += partial_F1 * (ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1) * CB_CA_angle_term * constant_ang_term;
-		//F2 += partial_F2 * (ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1) * CB_CA_angle_term * constant_ang_term;
-		F1 += partial_F1 * (-1) * constant_dist_term;
-		F2 += partial_F2 * (-1) * constant_dist_term;
-		//F1 += partial_F1 * (ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1) * constant_dist_term;
-		//F2 += partial_F2 * (ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1) * constant_dist_term;
-		return;
+	Vector partial_F1(0.), partial_F2(0.);
+	ang_cst_->p1_deriv( C_curr, N_curr, N_curr + C_N_target_, partial_F1, partial_F2 );
+	//F1 += partial_F1 * (ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1) * CB_CA_angle_term * constant_ang_term;
+	//F2 += partial_F2 * (ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1) * CB_CA_angle_term * constant_ang_term;
+	F1 += partial_F1 * (-1) * constant_dist_term;
+	F2 += partial_F2 * (-1) * constant_dist_term;
+	//F1 += partial_F1 * (ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1) * constant_dist_term;
+	//F2 += partial_F2 * (ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1) * constant_dist_term;
+	return;
 	}
 
-// the angular constraint on n
-// This is tricky, and thanks to Frank for coming up with this!
-// Ang_cst uses the actual coordinates of p1 in computing the derivatives, requiring it to be constant.
-// But in our case, p1 changes with respect to p2->p3. Solution: translate the vectors by -C_N_curr.
-// Now, p1 is at the site of the nonchanging vector, and so the coordinates are safe for ang_cst.
-// However, the derivative for the angular constraint is reversed, so we multiply by -1
+	// the angular constraint on n
+	// This is tricky, and thanks to Frank for coming up with this!
+	// Ang_cst uses the actual coordinates of p1 in computing the derivatives, requiring it to be constant.
+	// But in our case, p1 changes with respect to p2->p3. Solution: translate the vectors by -C_N_curr.
+	// Now, p1 is at the site of the nonchanging vector, and so the coordinates are safe for ang_cst.
+	// However, the derivative for the angular constraint is reversed, so we multiply by -1
 	if( atom == N_atom_id_ ) {
-		Vector partial_F1(0.), partial_F2(0.);
-		ang_cst_->p1_deriv( N_curr, N_curr - C_N_curr, N_curr + C_N_target_ - C_N_curr, partial_F1, partial_F2 );
-		//F1 += -partial_F1 * (ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1) * CB_CA_angle_term * constant_ang_term;
-		//F2 += -partial_F2 * (ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1) * CB_CA_angle_term * constant_ang_term;
-		F1 += -partial_F1 * (-1) * constant_dist_term;
-		F2 += -partial_F2 * (-1) * constant_dist_term;
-		//F1 += -partial_F1 * (ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1) * constant_dist_term;
-		//F2 += -partial_F2 * (ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1) * constant_dist_term;
+	Vector partial_F1(0.), partial_F2(0.);
+	ang_cst_->p1_deriv( N_curr, N_curr - C_N_curr, N_curr + C_N_target_ - C_N_curr, partial_F1, partial_F2 );
+	//F1 += -partial_F1 * (ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1) * CB_CA_angle_term * constant_ang_term;
+	//F2 += -partial_F2 * (ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1) * CB_CA_angle_term * constant_ang_term;
+	F1 += -partial_F1 * (-1) * constant_dist_term;
+	F2 += -partial_F2 * (-1) * constant_dist_term;
+	//F1 += -partial_F1 * (ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1) * constant_dist_term;
+	//F2 += -partial_F2 * (ang_cst_->score( C_curr, N_curr, N_curr + C_N_target_ )-1) * constant_dist_term;
 	}
-*/
+	*/
 
 	return;
 }
@@ -460,7 +460,7 @@ ConstraintOP BackboneStubLinearConstraint::remapped_clone( pose::Pose const& /*s
 	if ( smap ) {
 		new_seqpos = (*smap)[ seqpos_ ];
 		new_fixed_atom_id.rsd() = (*smap)[ fixed_atom_id_.rsd() ];
-		if( new_seqpos == 0 ) return NULL;
+		if ( new_seqpos == 0 ) return NULL;
 	}
 
 	// make an alanine

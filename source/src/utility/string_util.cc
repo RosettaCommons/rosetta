@@ -41,15 +41,15 @@ void ReadFromFileOrDie(const std::string& filename, std::string* contents) {
 	assert(contents);
 
 	ifstream in(filename.c_str());
-	if (!in) {
+	if ( !in ) {
 		stringstream ss;
 		ss << "The specified file " << filename
-				<< "does not exist or lacks sufficient permissions";
+			<< "does not exist or lacks sufficient permissions";
 		utility_exit_with_message(ss.str());
 	}
 
 	string line;
-	while(in.good()) {
+	while ( in.good() ) {
 		getline(in, line);
 		(*contents) +=line + "\n";
 	}
@@ -60,16 +60,16 @@ utility::vector1< std::string > split(const std::string &s)
 {
 	utility::vector1<std::string> r;
 	unsigned int start=0, i=0;
-	while( start < s.size() ) {
-		if( s[i] == ' ' /*|| i==s.size()-1 */) {
+	while ( start < s.size() ) {
+		if ( s[i] == ' ' /*|| i==s.size()-1 */ ) {
 			std::string add(s.begin()+start, s.begin()+i);
-			if( add.size() != 0 ) r.push_back( add );
+			if ( add.size() != 0 ) r.push_back( add );
 			start = i+1;
 		}
 		i++;
-		if( i == s.size() ) {
+		if ( i == s.size() ) {
 			std::string add(s.begin()+start, s.begin()+i);
-			if( add.size() != 0 ) r.push_back( add );
+			if ( add.size() != 0 ) r.push_back( add );
 			break;
 		}
 	}
@@ -92,7 +92,7 @@ std::string join(utility::vector1<std::string> const & s, std::string const & co
 	std::ostringstream os;
 	utility::vector1<std::string>::const_iterator begin= s.begin();
 	os << *begin++;
-	for(; begin != s.end(); ++begin){
+	for ( ; begin != s.end(); ++begin ) {
 		os<< connector<< *begin;
 	}
 	return os.str();
@@ -102,7 +102,7 @@ std::string join(std::vector<std::string> const & s, std::string const & connect
 	std::ostringstream os;
 	utility::vector1<std::string>::const_iterator begin= s.begin();
 	os << *begin++;
-	for(; begin != s.end(); ++begin){
+	for ( ; begin != s.end(); ++begin ) {
 		os<< connector<< *begin;
 	}
 	return os.str();
@@ -118,16 +118,16 @@ std::string join(std::string const & string_w_spaces, std::string const & connec
 std::list< std::string > split_to_list(const std::string &s) {
 	std::list<std::string> r;
 	unsigned int start=0, i=0;
-	while( start < s.size() ) {
-		if( s[i] == ' ' /*|| i==s.size()-1 */) {
+	while ( start < s.size() ) {
+		if ( s[i] == ' ' /*|| i==s.size()-1 */ ) {
 			std::string add(s.begin()+start, s.begin()+i);
-			if( add.size() != 0 ) r.push_back( add );
+			if ( add.size() != 0 ) r.push_back( add );
 			start = i+1;
 		}
 		i++;
-		if( i == s.size() ) {
+		if ( i == s.size() ) {
 			std::string add(s.begin()+start, s.begin()+i);
-			if( add.size() != 0 ) r.push_back( add );
+			if ( add.size() != 0 ) r.push_back( add );
 			break;
 		}
 	}
@@ -138,16 +138,16 @@ std::list< std::string > split_to_list(const std::string &s) {
 std::set< std::string > split_to_set(const std::string &s) {
 	std::set<std::string> r;
 	unsigned int start=0, i=0;
-	while( start < s.size() ) {
-		if( s[i] == ' ' /*|| i==s.size()-1 */) {
+	while ( start < s.size() ) {
+		if ( s[i] == ' ' /*|| i==s.size()-1 */ ) {
 			std::string add(s.begin()+start, s.begin()+i);
-			if( add.size() != 0 ) r.insert( add );
+			if ( add.size() != 0 ) r.insert( add );
 			start = i+1;
 		}
 		i++;
-		if( i == s.size() ) {
+		if ( i == s.size() ) {
 			std::string add(s.begin()+start, s.begin()+i);
-			if( add.size() != 0 ) r.insert( add );
+			if ( add.size() != 0 ) r.insert( add );
 			break;
 		}
 	}
@@ -181,7 +181,7 @@ string_split_simple( std::string const & in, char splitchar /* = ' ' */ )
 			parts.push_back( part );
 		}
 		i = j+1;
-		}
+	}
 	return parts;
 }
 
@@ -207,7 +207,7 @@ float string2float( std::string st ){
 	float i;
 	std::stringstream ss( st );
 	ss >> i;
-	if(!ss){
+	if ( !ss ) {
 		return -1;
 	}
 	return i;
@@ -218,7 +218,7 @@ int string2int( std::string st ){
 	int i;
 	std::stringstream ss( st );
 	ss >> i;
-	if(!ss){
+	if ( !ss ) {
 		return -1;
 	}
 	return i;
@@ -229,7 +229,7 @@ platform::Size string2Size( std::string st ){
 	platform::Size i;
 	std::stringstream ss( st );
 	ss >> i;
-	if(!ss){
+	if ( !ss ) {
 		return get_undefined_size();
 	}
 	return i;
@@ -240,7 +240,7 @@ platform::Real string2Real( std::string st ){
 	platform::Real i;
 	std::stringstream ss( st );
 	ss >> i;
-	if(!ss){
+	if ( !ss ) {
 		return get_undefined_real();
 	}
 	return i;
@@ -273,7 +273,7 @@ bool trimmed_compare( std::string const & s1, std::string const & s2 )
 
 bool startswith(std::string const & haystack, std::string const & needle)
 {
-	if( haystack.length() < needle.length() ) return false;
+	if ( haystack.length() < needle.length() ) return false;
 	else return ( haystack.compare(0, needle.length(), needle) == 0 );
 }
 
@@ -287,7 +287,7 @@ void slurp(std::istream & in, std::string & out)
 {
 	std::string line;
 	std::ostringstream os;
-	while (std::getline(in,line)) {
+	while ( std::getline(in,line) ) {
 		os << line << std::endl;
 	}
 	out.append( os.str());
@@ -311,7 +311,7 @@ trim( std::string const & s, std::string const & drop )
 void add_spaces_left_align( std::string & st, std::size_t const newlen )
 {
 	std::size_t const to_add = newlen - st.length();
-	if( to_add > 0 ){
+	if ( to_add > 0 ) {
 		std::string st_to_add("");
 		st_to_add.append(to_add,' ');
 		st = st + st_to_add;
@@ -321,7 +321,7 @@ void add_spaces_left_align( std::string & st, std::size_t const newlen )
 void add_spaces_right_align( std::string & st, std::size_t const newlen )
 {
 	std::size_t const to_add = newlen - st.length();
-	if( to_add > 0 ){
+	if ( to_add > 0 ) {
 		std::string st_to_add("");
 		st_to_add.append(to_add,' ');
 		st = st_to_add + st;
@@ -331,14 +331,11 @@ void add_spaces_right_align( std::string & st, std::size_t const newlen )
 bool is_string_numeric(std::string const & input)
 {
 	std::locale loc;
-	for(platform::Size i = 0 ; i < input.size();++i)
-	{
+	for ( platform::Size i = 0 ; i < input.size(); ++i ) {
 		char current = input[i];
-		if(std::isdigit(current,loc) || current == '-' || current == '+' || current =='E' ||current=='e')
-		{
+		if ( std::isdigit(current,loc) || current == '-' || current == '+' || current =='E' ||current=='e' ) {
 			continue;
-		}else
-		{
+		} else {
 			return false;
 		}
 	}
@@ -363,7 +360,7 @@ file_contents( std::string const & file_name )
 
 	std::string alltext;
 	alltext.reserve( strsize );
-	for ( unsigned int ii = 1; ii <= text.size(); ++ ii) {
+	for ( unsigned int ii = 1; ii <= text.size(); ++ ii ) {
 		alltext += text[ii];
 	}
 	return alltext;
@@ -388,14 +385,12 @@ std::string replace_environment_variables(std::string input)
 	const std::string end("}");
 
 	platform::Size start_position = 0;
-	while(true)
-	{
-		start_position = input.find(start);
-		if(start_position != std::string::npos)
-		{
-			platform::Size end_position = input.find(end,start_position);
-			if(start_position == std::string::npos)
+	while ( true )
 			{
+		start_position = input.find(start);
+		if ( start_position != std::string::npos ) {
+			platform::Size end_position = input.find(end,start_position);
+			if ( start_position == std::string::npos ) {
 				utility_exit_with_message("opening ${ but no closing } around an environment variable, check your options file");
 			}
 
@@ -403,15 +398,13 @@ std::string replace_environment_variables(std::string input)
 
 			std::string env_name = input.substr(start_position+2,env_length-2);
 			char * env_value = getenv(env_name.c_str());
-			if(!env_value)
-			{
+			if ( !env_value ) {
 				utility_exit_with_message("environment variable "+env_name+" does not exist");
 			}
 
 			input.replace(start_position, env_length+1,env_value);
 
-		}else
-		{
+		} else {
 			return input;
 		}
 	}
@@ -430,8 +423,7 @@ std::string string_to_sha1(std::string const & input_string)
 
 	hasher.get_digest(digest);
 
-	for(int i = 0; i < 5;++i)
-	{
+	for ( int i = 0; i < 5; ++i ) {
 		const char* tmp = reinterpret_cast<char*>(digest);
 		hash[i*4] = tmp[i*4+3];
 		hash[i*4+1] = tmp[i*4+2];
@@ -441,8 +433,7 @@ std::string string_to_sha1(std::string const & input_string)
 
 	output_hash << std::hex;
 
-	for(int i = 0; i < 20 ; ++i)
-	{
+	for ( int i = 0; i < 20 ; ++i ) {
 		output_hash << ((hash[i] & 0x000000F0) >> 4) <<  (hash[i] & 0x0000000F);
 	}
 
@@ -456,7 +447,7 @@ std::string string_to_sha1(std::string const & input_string)
 //
 std::string
 make_tag_with_dashes( utility::vector1< int > res_vector,
-											char const delimiter /* = ' ' */){
+	char const delimiter /* = ' ' */){
 	utility::vector1< char > chains;
 	for ( platform::Size n = 0; n < res_vector.size(); n++ ) chains.push_back( ' ' );
 	return make_tag_with_dashes( res_vector, chains, delimiter );
@@ -468,46 +459,46 @@ make_tag_with_dashes( utility::vector1< int > res_vector,
 //
 std::string
 make_tag_with_dashes( utility::vector1< int > res_vector,
-											utility::vector1< char > chain_vector,
-											char const delimiter /* = ' ' */){
+	utility::vector1< char > chain_vector,
+	char const delimiter /* = ' ' */){
 
-  using namespace ObjexxFCL;
-  std::string tag = "";
+	using namespace ObjexxFCL;
+	std::string tag = "";
 
-  if ( res_vector.size() == 0 ) return tag;
-  runtime_assert( res_vector.size() == chain_vector.size() );
+	if ( res_vector.size() == 0 ) return tag;
+	runtime_assert( res_vector.size() == chain_vector.size() );
 
-  int start_segment = res_vector[1];
-  int last_res = res_vector[1];
-  int last_chain = chain_vector[1];
-  utility::vector1< std::pair<int,int> > res_vector_segments;
-  utility::vector1< char > chains_for_segments;
-  for (platform::Size n = 2; n<= res_vector.size(); n++ ){
-    if ( res_vector[n] != last_res+1  || chain_vector[n] != last_chain ){
-      res_vector_segments.push_back( std::make_pair( start_segment, last_res ) );
-      chains_for_segments.push_back( last_chain );
-      start_segment = res_vector[n];
-    }
-    last_res = res_vector[n];
-    last_chain = chain_vector[n];
-  }
-  res_vector_segments.push_back( std::make_pair( start_segment, last_res ) );
-  chains_for_segments.push_back( last_chain );
+	int start_segment = res_vector[1];
+	int last_res = res_vector[1];
+	int last_chain = chain_vector[1];
+	utility::vector1< std::pair<int,int> > res_vector_segments;
+	utility::vector1< char > chains_for_segments;
+	for ( platform::Size n = 2; n<= res_vector.size(); n++ ) {
+		if ( res_vector[n] != last_res+1  || chain_vector[n] != last_chain ) {
+			res_vector_segments.push_back( std::make_pair( start_segment, last_res ) );
+			chains_for_segments.push_back( last_chain );
+			start_segment = res_vector[n];
+		}
+		last_res = res_vector[n];
+		last_chain = chain_vector[n];
+	}
+	res_vector_segments.push_back( std::make_pair( start_segment, last_res ) );
+	chains_for_segments.push_back( last_chain );
 
-  for (platform::Size n = 1; n <= res_vector_segments.size(); n++ ){
-    if ( n > 1 ) tag += delimiter;
-    std::pair< int, int > const & segment = res_vector_segments[n];
-    if ( chains_for_segments[n] != '\0' &&
+	for ( platform::Size n = 1; n <= res_vector_segments.size(); n++ ) {
+		if ( n > 1 ) tag += delimiter;
+		std::pair< int, int > const & segment = res_vector_segments[n];
+		if ( chains_for_segments[n] != '\0' &&
 				chains_for_segments[n] != ' '  &&
 				chains_for_segments[n] != '_' ) tag += std::string(1,chains_for_segments[n]) + ":";
-    if ( segment.first == segment.second ){
-      tag += string_of( segment.first );
-    } else{
-      tag += string_of( segment.first )+"-"+string_of(segment.second);
-    }
-  }
+		if ( segment.first == segment.second ) {
+			tag += string_of( segment.first );
+		} else {
+			tag += string_of( segment.first )+"-"+string_of(segment.second);
+		}
+	}
 
-  return tag;
+	return tag;
 }
 
 
@@ -518,7 +509,7 @@ make_tag( utility::vector1< int > res_vector ){
 	using namespace ObjexxFCL;
 	std::string tag = "";
 
-	for (platform::Size n = 1; n <= res_vector.size(); ++n ){
+	for ( platform::Size n = 1; n <= res_vector.size(); ++n ) {
 		if ( n > 1 ) tag += " ";
 		tag += string_of( res_vector[n] );
 	}
@@ -534,49 +525,49 @@ make_tag( utility::vector1< int > res_vector ){
 std::pair< std::vector< int >, std::vector< char > >
 get_resnum_and_chain( std::string const & s, bool & string_is_ok ){
 
-  string_is_ok = true;
-  std::vector< int  > resnum;
-  std::vector< char > chain;
+	string_is_ok = true;
+	std::vector< int  > resnum;
+	std::vector< char > chain;
 
 	std::string s_nocommas = replace_in( s, ",", " " ); // order of operations issue?
-  utility::vector1< std::string > const tags = utility::string_split( s_nocommas );
-  for ( platform::Size n = 1; n <= tags.size(); n++ ){
-    string_is_ok = get_resnum_and_chain_from_one_tag( tags[n], resnum, chain );
-    if ( !string_is_ok ) break;
-  }
-  return std::make_pair( resnum,chain );
+	utility::vector1< std::string > const tags = utility::string_split( s_nocommas );
+	for ( platform::Size n = 1; n <= tags.size(); n++ ) {
+		string_is_ok = get_resnum_and_chain_from_one_tag( tags[n], resnum, chain );
+		if ( !string_is_ok ) break;
+	}
+	return std::make_pair( resnum,chain );
 }
 
 /// @brief helper function for get_resnum_and_chain
 bool
 get_resnum_and_chain_from_one_tag( std::string const & tag,
-			std::vector< int > & resnum,
-			std::vector< char > & chains ){
-  bool string_is_ok( false );
-  std::vector< int > resnum_from_tag;
-  char chain( ' ' );
+	std::vector< int > & resnum,
+	std::vector< char > & chains ){
+	bool string_is_ok( false );
+	std::vector< int > resnum_from_tag;
+	char chain( ' ' );
 	std::string const numerical("-0123456789");
 
-  size_t found_colon = tag.find( ":" );
-  if ( found_colon == std::string::npos ){
+	size_t found_colon = tag.find( ":" );
+	if ( found_colon == std::string::npos ) {
 		if ( numerical.find( tag[0] ) == std::string::npos ) { // looks like a chain character at beginning
 			chain= tag[0];
 			resnum_from_tag = ObjexxFCL::ints_of( tag.substr(1), string_is_ok );
 		} else {
 			resnum_from_tag = ObjexxFCL::ints_of( tag, string_is_ok );
 		}
-  } else {
-    if ( found_colon != 1 ) return false;
-    chain = tag[0];
-    resnum_from_tag = ObjexxFCL::ints_of( tag.substr(2), string_is_ok );
-  }
+	} else {
+		if ( found_colon != 1 ) return false;
+		chain = tag[0];
+		resnum_from_tag = ObjexxFCL::ints_of( tag.substr(2), string_is_ok );
+	}
 
-  for (platform::Size n = 0; n < resnum_from_tag.size(); n++ ) {
-    resnum.push_back( resnum_from_tag[ n ] );
-    chains.push_back( chain );
-  }
+	for ( platform::Size n = 0; n < resnum_from_tag.size(); n++ ) {
+		resnum.push_back( resnum_from_tag[ n ] );
+		chains.push_back( chain );
+	}
 
-  return string_is_ok;
+	return string_is_ok;
 }
 
 platform::Size
@@ -591,7 +582,7 @@ replace_in( std::string const & name_in, std::string const & find_string, std::s
 	//                          is not the same as size_t and algorithm below is sensitive to this
 	// platform::Size pos = name.find( find_string );
 	size_t pos = name.find( find_string );
-	while ( pos != std::string::npos ){
+	while ( pos != std::string::npos ) {
 		name = name.replace( pos, find_string.size(), replace_string );
 
 		//pos = name.find( find_string );

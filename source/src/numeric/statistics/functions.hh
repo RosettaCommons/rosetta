@@ -39,10 +39,10 @@ mean( Iterator first, Iterator last, T )
 {
 	T mean = T(0);
 	int size(0);
-	for( ; first != last; ++first){
+	for ( ; first != last; ++first ) {
 		mean += *first;
 		size++;
-		//	std::cout << "D2H " << *first << " " << size << std::endl;
+		// std::cout << "D2H " << *first << " " << size << std::endl;
 	}
 	return mean / size;
 }
@@ -55,12 +55,12 @@ std_dev_with_provided_mean( Iterator first, Iterator last, T mean )
 {
 	T std_dev2 = T(0);
 	int size(0);
-	for( ; first != last; ++first){
+	for ( ; first != last; ++first ) {
 		T meandev = *first - mean;
 		std_dev2 += (meandev * meandev);
 		size++;
 	}
-  std_dev2 /= size;
+	std_dev2 /= size;
 	return sqrt( std_dev2 );
 }
 
@@ -110,29 +110,29 @@ numeric::Real kl_divergence(
 
 numeric::Real
 corrcoef(
-					utility::vector1< numeric::Real > const & vec1,
-					utility::vector1< numeric::Real > const & vec2);
+	utility::vector1< numeric::Real > const & vec1,
+	utility::vector1< numeric::Real > const & vec2);
 
 numeric::Real
 corrcoef_with_provided_mean_and_std_dev(
-																				 utility::vector1< numeric::Real > const & vec1,
-																				 numeric::Real m1,
-																				 numeric::Real sd1,
-																				 utility::vector1< numeric::Real > const & vec2,
-																				 numeric::Real m2,
-																				 numeric::Real sd2);
+	utility::vector1< numeric::Real > const & vec1,
+	numeric::Real m1,
+	numeric::Real sd1,
+	utility::vector1< numeric::Real > const & vec2,
+	numeric::Real m2,
+	numeric::Real sd2);
 
 numeric::Real
 cov(
-					utility::vector1< numeric::Real > const & vec1,
-					utility::vector1< numeric::Real > const & vec2);
+	utility::vector1< numeric::Real > const & vec1,
+	utility::vector1< numeric::Real > const & vec2);
 
 numeric::Real
 cov_with_provided_mean(
-																				 utility::vector1< numeric::Real > const & vec1,
-																				 numeric::Real m1,
-																				 utility::vector1< numeric::Real > const & vec2,
-																				 numeric::Real m2);
+	utility::vector1< numeric::Real > const & vec1,
+	numeric::Real m1,
+	utility::vector1< numeric::Real > const & vec2,
+	numeric::Real m2);
 
 
 } // namespace statistics

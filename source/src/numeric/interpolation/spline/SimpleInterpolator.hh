@@ -37,10 +37,10 @@ class SimpleInterpolator : public Interpolator {
 public:
 
 	SimpleInterpolator(
-	  utility::vector1<Real> const & x,
-	  utility::vector1<Real> const & y,
-	  Real lbdy,
-	  Real ubdy
+		utility::vector1<Real> const & x,
+		utility::vector1<Real> const & y,
+		Real lbdy,
+		Real ubdy
 	);
 
 	SimpleInterpolator();

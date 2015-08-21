@@ -27,68 +27,68 @@ namespace stepwise {
 namespace sampler {
 namespace copy_dofs {
 
-	class ResidueAlternativeStepWiseSampler: public CopyDofStepWiseSampler {
+class ResidueAlternativeStepWiseSampler: public CopyDofStepWiseSampler {
 
-	public:
+public:
 
-		//constructor
-		ResidueAlternativeStepWiseSampler( ResidueAlternativeSet const & residue_alternative_set,
-															 core::pose::Pose const & starting_pose );
+	//constructor
+	ResidueAlternativeStepWiseSampler( ResidueAlternativeSet const & residue_alternative_set,
+		core::pose::Pose const & starting_pose );
 
-		//constructor
-		ResidueAlternativeStepWiseSampler( ResidueAlternativeSet const & residue_alternative_set );
+	//constructor
+	ResidueAlternativeStepWiseSampler( ResidueAlternativeSet const & residue_alternative_set );
 
-		//constructor
-		ResidueAlternativeStepWiseSampler( utility::vector1< core::pose::PoseOP > const & pose_list,
-															 std::map< Size, Size > const & res_map,
-															 Size const representative_seqpos,
-															 core::pose::Pose const & starting_pose );
+	//constructor
+	ResidueAlternativeStepWiseSampler( utility::vector1< core::pose::PoseOP > const & pose_list,
+		std::map< Size, Size > const & res_map,
+		Size const representative_seqpos,
+		core::pose::Pose const & starting_pose );
 
-		//constructor
-		ResidueAlternativeStepWiseSampler( utility::vector1< core::pose::PoseOP > const & pose_list,
-															 std::map< Size, Size > const & res_map,
-															 Size const representative_seqpos );
+	//constructor
+	ResidueAlternativeStepWiseSampler( utility::vector1< core::pose::PoseOP > const & pose_list,
+		std::map< Size, Size > const & res_map,
+		Size const representative_seqpos );
 
-		//constructor
-		ResidueAlternativeStepWiseSampler( utility::vector1< core::pose::PoseOP > const & pose_list,
-															 Size const seqpos );
+	//constructor
+	ResidueAlternativeStepWiseSampler( utility::vector1< core::pose::PoseOP > const & pose_list,
+		Size const seqpos );
 
-		~ResidueAlternativeStepWiseSampler();
+	~ResidueAlternativeStepWiseSampler();
 
-	public:
+public:
 
-		core::conformation::Residue const &
-		get_residue_at_origin();
+	core::conformation::Residue const &
+	get_residue_at_origin();
 
-		core::conformation::Residue const &
-		get_residue_at_origin_with_matching_type( core::conformation::Residue const & rsd_in );
+	core::conformation::Residue const &
+	get_residue_at_origin_with_matching_type( core::conformation::Residue const & rsd_in );
 
-		/// @brief Name of the class
-		virtual std::string get_name() const;
+	/// @brief Name of the class
+	virtual std::string get_name() const;
 
-		/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-		virtual StepWiseSamplerType type() const { return RESIDUE_ALTERNATIVE; }
+	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
+	virtual StepWiseSamplerType type() const { return RESIDUE_ALTERNATIVE; }
 
-		Size representative_seqpos() const { return representative_seqpos_; }
+	Size representative_seqpos() const { return representative_seqpos_; }
 
-	private:
+private:
 
-		std::map< Size, Size >
-		simple_res_map( Size const i );
+	std::map< Size, Size >
+	simple_res_map( Size const i );
 
-		void
-		initialize_residues();
+	void
+	initialize_residues();
 
-		void
-		initialize_residues_for_type( core::conformation::Residue const & rsd_in );
+	void
+	initialize_residues_for_type( core::conformation::Residue const & rsd_in );
 
-	private:
+private:
 
-		Size const representative_seqpos_;
-		std::map< std::string, utility::vector1< core::conformation::ResidueOP > > residues_for_each_type_;
-		std::string original_type_;
+	Size const representative_seqpos_;
+	std::map< std::string, utility::vector1< core::conformation::ResidueOP > > residues_for_each_type_;
+	std::string original_type_;
 
-	};
+};
 
 } //copy_dofs
 } //sampler

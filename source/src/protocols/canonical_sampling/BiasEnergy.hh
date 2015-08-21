@@ -90,9 +90,9 @@ class BiasEnergy : public ThermodynamicObserver, public protocols::jd2::JobOutpu
 		core::Real delta_grid_;
 		core::Size ngrid_cells_;
 	};
-/// @details
+	/// @details
 
- public:
+public:
 	BiasEnergy();
 	BiasEnergy( core::Size stride, core::Real omega, core::Real gamma );
 	virtual ~BiasEnergy();
@@ -154,17 +154,17 @@ class BiasEnergy : public ThermodynamicObserver, public protocols::jd2::JobOutpu
 	virtual
 	bool
 	restart_simulation(
-	  core::pose::Pose &,
+		core::pose::Pose &,
 		MetropolisHastingsMover &,
 		core::Size& cycle,
 		core::Size& temp_level,
 		core::Real& temperature
 	);
 
- protected:
+protected:
 	virtual core::Real extract_collective_var( core::pose::Pose const& ) const = 0;
 
- private:
+private:
 	//Histogram<float>::OP bias_grid_;
 	//Histogram<int>::OP count_grid_;
 	// To help with auto code rewriting:

@@ -35,7 +35,7 @@
 #include <set>
 
 #ifdef WIN32
-	#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.hh>
 #endif
 
 namespace protocols {
@@ -56,23 +56,23 @@ public:
 	void target_region( std::set< core::Size > & region );
 	void query_region_string( std::string const & region_str  );
 	void target_region_string( std::string const & region_str  );
- 
+
 	core::Real cb_dist_cut() const;
 	core::Real nearby_atom_cut() const;
 	core::Real vector_angle_cut() const;
 	core::Real vector_dist_cut() const;
 	void cb_dist_cut( core::Real setting );
 	void nearby_atom_cut( core::Real setting );
-	void vector_angle_cut( core::Real setting ); 
+	void vector_angle_cut( core::Real setting );
 	void vector_dist_cut( core::Real setting );
- 
+
 	std::string get_type() const{ return type_; }
 	std::string get_user_defined_name() const { return user_defined_name_; }
 	void set_user_defined_name( std::string const & name ) { user_defined_name_ = name; };
 
 	/// @brief used to clear internal variables if needed. Using fresh_instance is preferred since it's a pure virtual
 	//void clear() {};
-	
+
 	void parse_my_tag(
 		utility::tag::TagCOP,
 		basic::datacache::DataMap &,
@@ -80,13 +80,13 @@ public:
 		moves::Movers_map const &,
 		core::pose::Pose const &
 	);
-	
+
 	virtual filters::FilterOP clone() const;
 	virtual filters::FilterOP fresh_instance() const;
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.
 	virtual bool apply( core::pose::Pose const & pose ) const;
-	
+
 	virtual
 	std::string name() const { return "DomainInterfaceFilter"; };
 

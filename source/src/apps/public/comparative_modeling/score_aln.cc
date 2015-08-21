@@ -176,174 +176,174 @@ void save_per_residue_scores(
 int
 main( int argc, char* argv [] ) {
 	try {
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	using std::map;
-	using std::string;
-	using core::Real;
-	using core::Size;
-	using core::pose::Pose;
-	using utility::vector1;
-	using core::sequence::SequenceAlignment;
-	using core::sequence::SequenceProfile;
-	using core::import_pose::pose_from_pdb;
-	using namespace core::chemical;
-	using namespace core::io::silent;
+		using std::map;
+		using std::string;
+		using core::Real;
+		using core::Size;
+		using core::pose::Pose;
+		using utility::vector1;
+		using core::sequence::SequenceAlignment;
+		using core::sequence::SequenceProfile;
+		using core::import_pose::pose_from_pdb;
+		using namespace core::chemical;
+		using namespace core::io::silent;
 
-	basic::Tracer tr( "score_aln" );
+		basic::Tracer tr( "score_aln" );
 
-	SequenceProfileOP query_prof( new SequenceProfile );
-	map< string, SequenceOP > seqs;
-	if ( option[ in::file::pssm ].user() ) {
-		query_prof->read_from_file( option[ in::file::pssm ]()[1] );
-		query_prof->convert_profile_to_probs( 1.0 ); // was previously implicit in read_from_file()
-		seqs = sequences_from_cmd_line(
-			option[ in::file::pssm ]()
-		);
-	}
+		SequenceProfileOP query_prof( new SequenceProfile );
+		map< string, SequenceOP > seqs;
+		if ( option[ in::file::pssm ].user() ) {
+			query_prof->read_from_file( option[ in::file::pssm ]()[1] );
+			query_prof->convert_profile_to_probs( 1.0 ); // was previously implicit in read_from_file()
+			seqs = sequences_from_cmd_line(
+				option[ in::file::pssm ]()
+			);
+		}
 
-	vector1< std::string > align_fns = option[ in::file::alignment ]();
-	//std::string fasta_seq = core::sequence::read_fasta_file_return_str( option[ in::file::fasta ](1) );
-	std::string fasta_seq = read_fasta_file_str(option[ in::file::fasta ](1))[1] ;
-	Pose native_pose;
-	bool have_native( false );
-	if ( option[ in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb(
-			native_pose,
-			*(rsd_set_from_cmd_line().lock()),
-			option[ in::file::native ]()
-		);
-		have_native = true;
-	}
+		vector1< std::string > align_fns = option[ in::file::alignment ]();
+		//std::string fasta_seq = core::sequence::read_fasta_file_return_str( option[ in::file::fasta ](1) );
+		std::string fasta_seq = read_fasta_file_str(option[ in::file::fasta ](1))[1] ;
+		Pose native_pose;
+		bool have_native( false );
+		if ( option[ in::file::native ].user() ) {
+			core::import_pose::pose_from_pdb(
+				native_pose,
+				*(rsd_set_from_cmd_line().lock()),
+				option[ in::file::native ]()
+			);
+			have_native = true;
+		}
 
-	map< string, Pose > poses;
-	if ( have_native ) {
-		poses = poses_from_cmd_line(
-			option[ in::file::template_pdb ]()
-		);
-	}
+		map< string, Pose > poses;
+		if ( have_native ) {
+			poses = poses_from_cmd_line(
+				option[ in::file::template_pdb ]()
+			);
+		}
 
-	// scoring scheme for aligning profiles
-	std::string const scoring_scheme_type( option[ cm::seq_score ]()[1] );
-	ScoringSchemeFactory ssf;
-	ScoringSchemeOP ss( ssf.get_scoring_scheme( scoring_scheme_type ) );
+		// scoring scheme for aligning profiles
+		std::string const scoring_scheme_type( option[ cm::seq_score ]()[1] );
+		ScoringSchemeFactory ssf;
+		ScoringSchemeOP ss( ssf.get_scoring_scheme( scoring_scheme_type ) );
 
-	// for the ProfSim scoring scheme, the optimal opening and extension
-	// penalties were 2 and 0.2, with a scoring shift of -0.45 applied to
-	// all ungapped aligned pairs for database searches.
-	Real const gap_open  ( option[ cm::min_gap_open ]() );
-	Real const gap_extend( option[ cm::min_gap_extend ]() );
-	ss->gap_open  ( gap_open   );
-	ss->gap_extend( gap_extend );
+		// for the ProfSim scoring scheme, the optimal opening and extension
+		// penalties were 2 and 0.2, with a scoring shift of -0.45 applied to
+		// all ungapped aligned pairs for database searches.
+		Real const gap_open  ( option[ cm::min_gap_open ]() );
+		Real const gap_extend( option[ cm::min_gap_extend ]() );
+		ss->gap_open  ( gap_open   );
+		ss->gap_extend( gap_extend );
 
-	SilentFileData sfd;
+		SilentFileData sfd;
 
-	typedef vector1< string >::const_iterator aln_iter;
-	for ( aln_iter aln_fn = align_fns.begin(), aln_end = align_fns.end();
+		typedef vector1< string >::const_iterator aln_iter;
+		for ( aln_iter aln_fn = align_fns.begin(), aln_end = align_fns.end();
 				aln_fn != aln_end; ++aln_fn
-	) {
-		vector1< SequenceAlignment > alns = core::sequence::read_aln(
-			option[ cm::aln_format ](), *aln_fn
-		);
+				) {
+			vector1< SequenceAlignment > alns = core::sequence::read_aln(
+				option[ cm::aln_format ](), *aln_fn
+			);
 
-		for ( vector1< SequenceAlignment >::iterator it = alns.begin(),
-				end = alns.end();
-				it != end; ++it
-		) {
-			string const template_id( it->sequence(2)->id().substr(0,5) );
-			tr << *it << std::endl;
-			tr << "id " << it->sequence(2)->id() << " => " << template_id
-				<< std::endl;
-			string const ungapped_query( it->sequence(1)->ungapped_sequence() );
-
-			SilentStructOP ss_out( new ScoreFileSilentStruct );
-			//bool encountered_error(false);
-			map< string, SequenceOP >::iterator seq_it = seqs.find( template_id );
-			if ( seq_it == seqs.end() ) {
-				//print_seq_map( std::cerr, seqs );
-				string msg( "Error: can't find seq (id = " + template_id + ")" );
-				//utility_exit_with_message(msg);
-				tr.Error << msg << std::endl;
-				//continue;
-			} else {
-				SequenceOP template_prof = seq_it->second;
-
-				utility::vector1< SequenceOP > my_seqs;
-				my_seqs.push_back( query_prof->clone() );
-				my_seqs.push_back( template_prof->clone() );
-				SequenceAlignment rescore_aln = steal_alignment( *it, my_seqs );
-				Real const aln_score( rescore_aln.calculate_score_sum_of_pairs( ss ) );
-				rescore_aln.score( aln_score );
-				//string const ungapped_templ( it->sequence(2)->ungapped_sequence() );
-				save_per_residue_scores(
-					it->sequence(2)->id() + ".dat", rescore_aln, ss,
-					it->sequence(2)->id()
-				);
-
-				ss_out->add_energy( "aln_score", aln_score );
-				//ss_out->add_energy( "n_ali_templ", ungapped_templ.length() );
-				tr.Debug << "score(" << ss_out->decoy_tag() << ") = " << aln_score
+			for ( vector1< SequenceAlignment >::iterator it = alns.begin(),
+					end = alns.end();
+					it != end; ++it
+					) {
+				string const template_id( it->sequence(2)->id().substr(0,5) );
+				tr << *it << std::endl;
+				tr << "id " << it->sequence(2)->id() << " => " << template_id
 					<< std::endl;
-			}
+				string const ungapped_query( it->sequence(1)->ungapped_sequence() );
 
-			if ( have_native ) {
-				// calc rmsd/gdt stats
-				Pose query_pose, template_pose;
-				core::pose::make_pose_from_sequence(query_pose, fasta_seq, *(rsd_set_from_cmd_line().lock()));
-
-				map< string, Pose >::iterator pose_it = poses.find( template_id );
-				if ( pose_it == poses.end() ) {
-					string msg( "Error: can't find pose (id = "
-						+ template_id + ")"
-					);
+				SilentStructOP ss_out( new ScoreFileSilentStruct );
+				//bool encountered_error(false);
+				map< string, SequenceOP >::iterator seq_it = seqs.find( template_id );
+				if ( seq_it == seqs.end() ) {
+					//print_seq_map( std::cerr, seqs );
+					string msg( "Error: can't find seq (id = " + template_id + ")" );
 					//utility_exit_with_message(msg);
 					tr.Error << msg << std::endl;
-					continue;
+					//continue;
 				} else {
-					template_pose = pose_it->second;
+					SequenceOP template_prof = seq_it->second;
 
-					using utility::vector1;
-					using numeric::model_quality::calc_rms;
-					using numeric::model_quality::rms_wrapper;
-					using core::scoring::xyz_gdtmm;
-
-					int natoms = 0;
-					ObjexxFCL::FArray2D< core::Real > p1a( 3, natoms );
-					ObjexxFCL::FArray2D< core::Real > p2a( 3, natoms );
-
-					protocols::comparative_modeling::PartialThreadingMover pt(*it,template_pose);
-					pt.apply(query_pose);
-					SequenceAlignment aln = core::sequence::align_poses_naive(query_pose,native_pose);
-
-					protocols::comparative_modeling::gather_coords(
-						query_pose, native_pose, aln,
-						natoms, p1a, p2a
+					utility::vector1< SequenceOP > my_seqs;
+					my_seqs.push_back( query_prof->clone() );
+					my_seqs.push_back( template_prof->clone() );
+					SequenceAlignment rescore_aln = steal_alignment( *it, my_seqs );
+					Real const aln_score( rescore_aln.calculate_score_sum_of_pairs( ss ) );
+					rescore_aln.score( aln_score );
+					//string const ungapped_templ( it->sequence(2)->ungapped_sequence() );
+					save_per_residue_scores(
+						it->sequence(2)->id() + ".dat", rescore_aln, ss,
+						it->sequence(2)->id()
 					);
 
-					Real const rmsd_ali  = rms_wrapper( natoms, p1a, p2a );
-					Real const gdtmm_ali = xyz_gdtmm( p1a, p2a );
-					Real const coverage  = (Real) natoms / (Real) native_pose.total_residue();
-					Real const gdtmm_overall( gdtmm_ali * coverage );
+					ss_out->add_energy( "aln_score", aln_score );
+					//ss_out->add_energy( "n_ali_templ", ungapped_templ.length() );
+					tr.Debug << "score(" << ss_out->decoy_tag() << ") = " << aln_score
+						<< std::endl;
+				}
 
-					ss_out->add_energy( "coverage", coverage );
-					ss_out->add_energy( "rmsd_ali", rmsd_ali );
-					ss_out->add_energy( "gdtmm_ali", gdtmm_ali );
-					ss_out->add_energy( "gdtmm_overall", gdtmm_overall );
-					ss_out->add_energy( "n_ali_query", natoms );
-					ss_out->add_energy( "nres_query", native_pose.total_residue() );
-				} // template pdb check
-			} // have native
-			ss_out->scoreline_prefix( "" );
-			ss_out->decoy_tag( it->sequence(2)->id() );
-			ss_out->add_string_value( "template", template_id );
-			sfd.write_silent_struct( *ss_out, option[ out::file::silent ]() );
-		} // alns
-	} // for ( it in aligns )
+				if ( have_native ) {
+					// calc rmsd/gdt stats
+					Pose query_pose, template_pose;
+					core::pose::make_pose_from_sequence(query_pose, fasta_seq, *(rsd_set_from_cmd_line().lock()));
 
-	tr.Debug << "finished rescoring alignments." << std::endl;
-	tr.flush_all_channels();
-	 } catch ( utility::excn::EXCN_Base const & e ) {
+					map< string, Pose >::iterator pose_it = poses.find( template_id );
+					if ( pose_it == poses.end() ) {
+						string msg( "Error: can't find pose (id = "
+							+ template_id + ")"
+						);
+						//utility_exit_with_message(msg);
+						tr.Error << msg << std::endl;
+						continue;
+					} else {
+						template_pose = pose_it->second;
+
+						using utility::vector1;
+						using numeric::model_quality::calc_rms;
+						using numeric::model_quality::rms_wrapper;
+						using core::scoring::xyz_gdtmm;
+
+						int natoms = 0;
+						ObjexxFCL::FArray2D< core::Real > p1a( 3, natoms );
+						ObjexxFCL::FArray2D< core::Real > p2a( 3, natoms );
+
+						protocols::comparative_modeling::PartialThreadingMover pt(*it,template_pose);
+						pt.apply(query_pose);
+						SequenceAlignment aln = core::sequence::align_poses_naive(query_pose,native_pose);
+
+						protocols::comparative_modeling::gather_coords(
+							query_pose, native_pose, aln,
+							natoms, p1a, p2a
+						);
+
+						Real const rmsd_ali  = rms_wrapper( natoms, p1a, p2a );
+						Real const gdtmm_ali = xyz_gdtmm( p1a, p2a );
+						Real const coverage  = (Real) natoms / (Real) native_pose.total_residue();
+						Real const gdtmm_overall( gdtmm_ali * coverage );
+
+						ss_out->add_energy( "coverage", coverage );
+						ss_out->add_energy( "rmsd_ali", rmsd_ali );
+						ss_out->add_energy( "gdtmm_ali", gdtmm_ali );
+						ss_out->add_energy( "gdtmm_overall", gdtmm_overall );
+						ss_out->add_energy( "n_ali_query", natoms );
+						ss_out->add_energy( "nres_query", native_pose.total_residue() );
+					} // template pdb check
+				} // have native
+				ss_out->scoreline_prefix( "" );
+				ss_out->decoy_tag( it->sequence(2)->id() );
+				ss_out->add_string_value( "template", template_id );
+				sfd.write_silent_struct( *ss_out, option[ out::file::silent ]() );
+			} // alns
+		} // for ( it in aligns )
+
+		tr.Debug << "finished rescoring alignments." << std::endl;
+		tr.flush_all_channels();
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

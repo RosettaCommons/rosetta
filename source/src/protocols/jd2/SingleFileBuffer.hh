@@ -46,7 +46,7 @@ namespace jd2 {
 class SingleFileBuffer : public utility::pointer::ReferenceCount {
 protected:
 	typedef utility::vector1< std::string > LineBuffer;
-  typedef std::map< int, LineBuffer> BufferMap;
+	typedef std::map< int, LineBuffer> BufferMap;
 public:
 	SingleFileBuffer( std::string const & filename, core::Size channel, core::Size&  status ) : filename_( filename ), mpi_channel_( channel ) { status = 0; };
 	virtual ~SingleFileBuffer();

@@ -49,36 +49,36 @@ namespace jd2 {
 class MPIMultiCommJobDistributor : public MPIFileBufJobDistributor {
 	typedef MPIFileBufJobDistributor Parent;
 protected:
-  /// @brief ctor is protected; singleton pattern
-  MPIMultiCommJobDistributor( core::Size sub_size );
+	/// @brief ctor is protected; singleton pattern
+	MPIMultiCommJobDistributor( core::Size sub_size );
 
 	virtual void handle_interrupt() {}
 
 public:
 
 	/// @brief dummy for master/slave version
-  virtual core::Size get_new_job_id();
+	virtual core::Size get_new_job_id();
 
 	/// @brief overloaded to suppress message from higher-rank replicas
-	virtual	void job_succeeded(core::pose::Pose & pose, core::Real run_timei, std::string const & tag);
+	virtual void job_succeeded(core::pose::Pose & pose, core::Real run_timei, std::string const & tag);
 
 	/// @brief overloaded to suppress message from higher-rank replicas
-	virtual	void job_failed( core::pose::Pose & pose, bool );
+	virtual void job_failed( core::pose::Pose & pose, bool );
 
-  #ifdef USEMPI
+#ifdef USEMPI
 	/// @brief return current communicator ( or MPI_COMM_WORLD ).
 	/// this inteface could be put into an abstract base derived directly from JobDistributor
 	/// JobDistributor->MPIJobDistributor->MPIXXXJobDistributor
 	/// but for now it is only used by MPIMultiCommJobDistributor...
 	/// access via utility function jd2::current_mpi_comm()
 	MPI_Comm const& current_mpi_comm();
-	#endif
+#endif
 
 	core::Size sub_rank() {
 		return sub_rank_;
 	}
 
-  friend class JobDistributorFactory; //ctor access
+	friend class JobDistributorFactory; //ctor access
 
 private:
 

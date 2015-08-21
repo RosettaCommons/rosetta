@@ -24,13 +24,13 @@
 namespace core {
 namespace kinematics {
 
-	using id::PHI;
-	using id::THETA;
-	using id::D;
+using id::PHI;
+using id::THETA;
+using id::D;
 
-	using id::BB;
-	using id::CHI;
-	using id::JUMP;
+using id::BB;
+using id::CHI;
+using id::JUMP;
 
 } // namespace kinematics
 } // namespace core

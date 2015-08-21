@@ -100,13 +100,13 @@ read_additional_pdb_data(
 	utility::vector1< std::string > lines;
 	Size start=0, i=0;
 
-	while(start < s.size()) {
-		if( s[i] == '\n' || s[i] == '\r' /* || i==s.size()-1 */) {
+	while ( start < s.size() ) {
+		if ( s[i] == '\n' || s[i] == '\r' /* || i==s.size()-1 */ ) {
 			lines.push_back( std::string(s.begin()+start, s.begin()+i) );
 			start = i+1;
 		}
 		i++;
-		if( i == s.size() ) {
+		if ( i == s.size() ) {
 			lines.push_back( std::string(s.begin()+start, s.begin()+i) );
 			break;
 		}
@@ -116,29 +116,29 @@ read_additional_pdb_data(
 	//TR.Debug << "Setting PDBinfo-labels from PDB file." << std::endl;
 	for ( i=1; i<= lines.size(); ++i ) {
 		std::string const & line( lines[i] );
-		if( line.size() > 21 && line.substr(0,21) == "REMARK PDBinfo-LABEL:" ){
+		if ( line.size() > 21 && line.substr(0,21) == "REMARK PDBinfo-LABEL:" ) {
 			//Parse and split string
 			utility::vector1 < std::string > remark_values;
 			utility::vector1 < std::string > tmp_remark_values = utility::string_split(line, ' ');
 			//Copy non-empty (i.e. !' ') elements to remark_values
-			if ( tmp_remark_values .size() > 3){
+			if ( tmp_remark_values .size() > 3 ) {
 				for ( Size j=3; j<= tmp_remark_values.size(); ++j ) {
-					if(tmp_remark_values[j] != ""){
+					if ( tmp_remark_values[j] != "" ) {
 						remark_values.push_back(tmp_remark_values[j]);
 					}
 				}
 			}
 			//Check that we have at least two elements left ([1]=index, [2-n]=PDBinfo-labels)
-			if (remark_values.size() > 1){
+			if ( remark_values.size() > 1 ) {
 				core::Size tmp_ndx=atoi(remark_values[1].c_str());
 				if ( tmp_ndx <= pose.total_residue() ) {
 					for ( Size j=2; j<= remark_values.size(); ++j ) {
 						pose.pdb_info()->add_reslabel(tmp_ndx,remark_values[j]);
 					}
-				}else{
+				} else {
 					TR.Fatal << "pose_io:: PDBinfo-LABEL io failure: " << line << ' ' << pose.total_residue()  << std::endl;
 				}
-			}else{
+			} else {
 				TR.Fatal << "pose_io:: PDBinfo-LABEL io failure: " << line << ' ' << pose.total_residue() << std::endl;
 			}
 		}
@@ -175,7 +175,7 @@ pose::PoseOP pose_from_pdb(std::string const & filename, bool read_fold_tree)
 }
 
 
-pose::PoseOP pose_from_pdb(chemical::ResidueTypeSet const & residue_set, std::string const & filename, 	bool read_fold_tree)
+pose::PoseOP pose_from_pdb(chemical::ResidueTypeSet const & residue_set, std::string const & filename,  bool read_fold_tree)
 {
 	pose::PoseOP pose( new pose::Pose() );
 	pose_from_pdb( *pose, residue_set, filename, read_fold_tree);
@@ -208,9 +208,9 @@ pose_from_pdb(
 
 	std::string res;
 
-	BOOST_FOREACH(std::string filename, filenames){
+	BOOST_FOREACH ( std::string filename, filenames ) {
 		utility::io::izstream file( filename );
-		if (!file) {
+		if ( !file ) {
 			TR.Error << "PDB File:" << filename << " not found!" << std::endl;
 			utility_exit_with_message( "Cannot open PDB file \"" + filename + "\"" );
 		} else {
@@ -343,9 +343,9 @@ read_all_poses(
 	using core::pose::Pose;
 	using std::string;
 	using utility::vector1;
-debug_assert(poses);
+	debug_assert(poses);
 
-	for (vector1<string>::const_iterator i = filenames.begin(); i != filenames.end(); ++i) {
+	for ( vector1<string>::const_iterator i = filenames.begin(); i != filenames.end(); ++i ) {
 		Pose pose;
 		pose_from_pdb(pose, *i);
 		poses->push_back(pose);
@@ -419,7 +419,7 @@ pose_from_pdb(
 	std::string all_lines, sub_lines;
 
 	utility::io::izstream file( filename );
-	if (!file) {
+	if ( !file ) {
 		TR.Error << "File:" << filename << " not found!" << std::endl;
 		utility_exit_with_message( "Cannot open file " + filename );
 	} else {
@@ -435,11 +435,10 @@ pose_from_pdb(
 	Size n_models = 0;
 
 	// count the number of poses will be reading
-	while( pos1 != std::string::npos )
-	{
+	while ( pos1 != std::string::npos )
+			{
 		pos1 = all_lines.find( "\nMODEL ", pos1 );
-		if ( pos1 != std::string::npos )
-		{
+		if ( pos1 != std::string::npos ) {
 			++n_models;
 			++pos1;
 		}
@@ -456,7 +455,7 @@ pose_from_pdb(
 
 	if ( pos1 != std::string::npos ) {
 		pos2 = 0;
-		while( pos2 != std::string::npos ) {
+		while ( pos2 != std::string::npos ) {
 			// set pos1 == "M" in MODEL
 			++pos1;
 
@@ -591,11 +590,11 @@ void build_pose(
 }
 
 void build_pose_as_is2(
-		io::pdb::FileData & fd,
-		pose::Pose & pose,
-		chemical::ResidueTypeSet const & residue_set,
-		id::AtomID_Mask & missing,
-		ImportPoseOptions const & options );
+	io::pdb::FileData & fd,
+	pose::Pose & pose,
+	chemical::ResidueTypeSet const & residue_set,
+	id::AtomID_Mask & missing,
+	ImportPoseOptions const & options );
 
 // "super-simple" (C) by Phil
 /// @brief Try to Build pose object from pdb 'as-is'. PDB file must be _really_ clean.
@@ -632,21 +631,21 @@ void build_pose_as_is2(
 	// optimize H if using a full-atom residue type set, and no_optH is not specified
 	if ( residue_set.name() == FA_STANDARD ) {
 		//if pack_missing_density specified, repack residues w/ missing density
-		if( options.pack_missing_sidechains()  && ! options.membrane() ) {
+		if ( options.pack_missing_sidechains()  && ! options.membrane() ) {
 			pack::pack_missing_sidechains( pose, missing );
 		}
 		// optimize H if using a fullatom residue type set, and no_optH is not specified
-		if( !options.no_optH() ) {
+		if ( !options.no_optH() ) {
 			pack::optimize_H_and_notify( pose, missing );
 		}
 	}
 
 
 	// If pose contains carbohydrate residues, assure that their virtual atoms have the correct coordinates.
-	if (pose.conformation().contains_carbohydrate_residues()) {
-		for (uint i = 1, n_residues = pose.total_residue(); i <= n_residues; ++i) {
+	if ( pose.conformation().contains_carbohydrate_residues() ) {
+		for ( uint i = 1, n_residues = pose.total_residue(); i <= n_residues; ++i ) {
 			ResidueType const & res_type = pose.residue_type(i);
-			if (res_type.is_carbohydrate()) {
+			if ( res_type.is_carbohydrate() ) {
 				pose::carbohydrates::align_virtual_atoms_in_carbohydrate_residue(pose, i);
 			}
 		}
@@ -654,9 +653,9 @@ void build_pose_as_is2(
 
 	// If the user has set appropriate flags, check whether the pose contains metal ions,
 	// and automatically set up covalent bonds and constraints to them.
-	if( options.set_up_metal_bonds() ) {
+	if ( options.set_up_metal_bonds() ) {
 		core::util::auto_setup_all_metal_bonds(pose, options.metal_bond_LJ_multiplier(), true);
-		if( options.set_up_metal_constraints() ) {
+		if ( options.set_up_metal_constraints() ) {
 			core::util::auto_setup_all_metal_constraints( pose, options.metal_bond_dist_constraint_multiplier(), options.metal_bond_angle_constraint_multiplier() );
 		}
 	}
@@ -675,9 +674,9 @@ void build_pose_as_is2(
 /// @author Joseph Harrison
 bool
 change_jump_to_this_residue_into_chemical_edge(
-		core::uint end_resnum,
-		core::pose::Pose const & pose,
-		core::kinematics::FoldTree & ft )
+	core::uint end_resnum,
+	core::pose::Pose const & pose,
+	core::kinematics::FoldTree & ft )
 {
 	using namespace std;
 	using namespace core::chemical;
@@ -710,8 +709,8 @@ change_jump_to_this_residue_into_chemical_edge(
 
 				if ( TR.Trace.visible() ) {
 					TR.Trace << "Adding  EDGE " <<
-							start_resnum << ' ' << end_resnum << ' ' << start_atm_name << ' ' << end_atm_name <<
-							" to the new FoldTree." << endl;
+						start_resnum << ' ' << end_resnum << ' ' << start_atm_name << ' ' << end_atm_name <<
+						" to the new FoldTree." << endl;
 				}
 				ft.add_edge( start_resnum, end_resnum, start_atm_name, end_atm_name );
 
@@ -771,7 +770,7 @@ set_reasonable_fold_tree( pose::Pose & pose )
 				} else /* We couldn't find a chemical connection. */ {
 					if ( pose.residue_type( ii ).n_residue_connections() > 0 ) {
 						TR.Warning << "Can't find a chemical connection for residue " << ii << " " <<
-								pose.residue_type( ii ).name() << endl;
+							pose.residue_type( ii ).name() << endl;
 					}
 				}
 			} else {
@@ -801,7 +800,7 @@ set_reasonable_fold_tree( pose::Pose & pose )
 						} else /* We couldn't find a chemical connection. */ {
 							if ( pose.residue_type( jj ).n_residue_connections() > 0 ) {
 								TR.Warning << "Can't find a chemical connection for residue " << jj << " " <<
-										pose.residue_type( jj ).name() << endl;
+									pose.residue_type( jj ).name() << endl;
 							}
 						}
 					}

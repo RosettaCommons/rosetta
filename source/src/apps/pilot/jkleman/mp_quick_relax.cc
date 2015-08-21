@@ -34,18 +34,18 @@ main( int argc, char * argv [] )
 		using namespace protocols::jd2;
 		using namespace protocols::membrane;
 
-		
+
 		// initialize options, RNG, and factory-registrators
 		devel::init(argc, argv);
-		
+
 		MPQuickRelaxMoverOP mqr( new MPQuickRelaxMover() );
 		mqr->add_membrane_again( true );
 		JobDistributor::get_instance()->go(mqr);
 	}
-	catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
-		return -1;
-	}
+catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+	return -1;
+}
 
 	return 0;
 }

@@ -58,8 +58,8 @@ using protocols::jd2::JobDistributor;
 
 static thread_local basic::Tracer TR( "protocols.docking.DockingEnsemblePrepackProtocol" );
 
-namespace protocols{
-namespace docking{
+namespace protocols {
+namespace docking {
 
 DockingEnsemblePrepackProtocol::DockingEnsemblePrepackProtocol(): DockingHighRes()
 {
@@ -87,20 +87,25 @@ DockingEnsemblePrepackProtocol::~DockingEnsemblePrepackProtocol(){
 void DockingEnsemblePrepackProtocol::init_from_options()
 {
 	using namespace basic::options;
-	if( option[ OptionKeys::docking::dock_rtmin ].user() )
+	if ( option[ OptionKeys::docking::dock_rtmin ].user() ) {
 		set_rt_min(option[ OptionKeys::docking::dock_rtmin ]());
+	}
 
-	if( option[ OptionKeys::docking::sc_min ].user() )
+	if ( option[ OptionKeys::docking::sc_min ].user() ) {
 		set_sc_min(option[ OptionKeys::docking::sc_min ]());
+	}
 
-	if( option[ OptionKeys::docking::partners ].user() )
+	if ( option[ OptionKeys::docking::partners ].user() ) {
 		set_partners(option[ OptionKeys::docking::partners ]());
+	}
 
-	if ( option[ OptionKeys::docking::ensemble1 ].user() )
+	if ( option[ OptionKeys::docking::ensemble1 ].user() ) {
 		set_ensemble1(option[ OptionKeys::docking::ensemble1 ]());
+	}
 
-	if ( option[ OptionKeys::docking::ensemble2 ].user() )
+	if ( option[ OptionKeys::docking::ensemble2 ].user() ) {
 		set_ensemble2(option[ OptionKeys::docking::ensemble2 ]());
+	}
 }
 
 void DockingEnsemblePrepackProtocol::register_options()
@@ -121,13 +126,13 @@ void DockingEnsemblePrepackProtocol::setup_pack_operation_movers()
 	prepack_full_repack_->task_factory( task_factory() );
 	pack_operations_->add_mover(prepack_full_repack_);
 
-	if ( rt_min() ){
+	if ( rt_min() ) {
 		rtmin_mover_ = protocols::simple_moves::RotamerTrialsMinMoverOP( new protocols::simple_moves::RotamerTrialsMinMover( ) );
 		rtmin_mover_->score_function( scorefxn_pack() );
 		rtmin_mover_->task_factory( task_factory() );
 		pack_operations_->add_mover( rtmin_mover_ );
 	}
-	if ( sc_min() ){
+	if ( sc_min() ) {
 		scmin_mover_ = SidechainMinMoverOP( new SidechainMinMover() );
 		scmin_mover_->set_scorefxn( scorefxn_pack() );
 		scmin_mover_->set_task_factory( task_factory() );
@@ -177,14 +182,14 @@ void DockingEnsemblePrepackProtocol::apply( core::pose::Pose & pose )
 		switch_mover->switch_conformer( pose, i );
 
 		//Move each partners away from the others
-		for( DockJumps::const_iterator jump = movable_jumps().begin() ; jump != movable_jumps().end() ; ++jump ) {
+		for ( DockJumps::const_iterator jump = movable_jumps().begin() ; jump != movable_jumps().end() ; ++jump ) {
 			rigid::RigidBodyTransMoverOP translate_away( new rigid::RigidBodyTransMover(pose, *jump) );
 			translate_away->step_size( trans_magnitude_ );
 			translate_away->apply(pose);
 		}
 		ensemble1_->calculate_lowres_ref_energy( pose );
 		//bringing the packed structures together
-		for(  DockJumps::const_iterator jump= movable_jumps().begin() ; jump != movable_jumps().end(); ++jump ) {
+		for (  DockJumps::const_iterator jump= movable_jumps().begin() ; jump != movable_jumps().end(); ++jump ) {
 			rigid::RigidBodyTransMoverOP translate_back( new rigid::RigidBodyTransMover(pose, *jump) );
 			translate_back->step_size( trans_magnitude_ );
 			translate_back->trans_axis().negate();
@@ -207,14 +212,14 @@ void DockingEnsemblePrepackProtocol::apply( core::pose::Pose & pose )
 		switch_mover->switch_conformer( pose, i );
 
 		//Move each partners away from the others
-		for( DockJumps::const_iterator jump = movable_jumps().begin() ; jump != movable_jumps().end() ; ++jump ) {
+		for ( DockJumps::const_iterator jump = movable_jumps().begin() ; jump != movable_jumps().end() ; ++jump ) {
 			rigid::RigidBodyTransMoverOP translate_away( new rigid::RigidBodyTransMover(pose, *jump) );
 			translate_away->step_size( trans_magnitude_ );
 			translate_away->apply(pose);
 		}
 		ensemble2_->calculate_lowres_ref_energy( pose );
 		//bringing the packed structures together
-		for(  DockJumps::const_iterator jump= movable_jumps().begin() ; jump != movable_jumps().end(); ++jump ) {
+		for (  DockJumps::const_iterator jump= movable_jumps().begin() ; jump != movable_jumps().end(); ++jump ) {
 			rigid::RigidBodyTransMoverOP translate_back( new rigid::RigidBodyTransMover(pose, *jump) );
 			translate_back->step_size( trans_magnitude_ );
 			translate_back->trans_axis().negate();

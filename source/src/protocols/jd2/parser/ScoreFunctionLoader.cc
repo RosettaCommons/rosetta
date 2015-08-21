@@ -60,7 +60,7 @@ void ScoreFunctionLoader::load_data(
 
 	TagCOPs const & scorefxn_tags( tag->getTags() );
 
-	BOOST_FOREACH(TagCOP scorefxn_tag, scorefxn_tags){
+	BOOST_FOREACH ( TagCOP scorefxn_tag, scorefxn_tags ) {
 		using namespace core::scoring;
 		using namespace core::scoring::symmetry;
 
@@ -70,7 +70,7 @@ void ScoreFunctionLoader::load_data(
 			basic::options::option[ basic::options::OptionKeys::mistakes::restore_pre_talaris_2013_behavior ] ?
 			"pre_talaris_2013_standard.wts" : "talaris2013" );
 		std::string const scorefxn_weights( scorefxn_tag->getOption<std::string>( "weights", default_sfxn_weights ) );
-		if(  scorefxn_tag->hasOption( "weights" ) && scorefxn_tag->hasOption( "patch" ) ) {
+		if (  scorefxn_tag->hasOption( "weights" ) && scorefxn_tag->hasOption( "patch" ) ) {
 			std::string const scorefxn_patch( scorefxn_tag->getOption<std::string>( "patch" ) );
 			in_scorefxn = ScoreFunctionFactory::create_score_function( scorefxn_weights, scorefxn_patch);
 			TR << "defined score function \"" << scorefxn_name << "\" with weights \""
@@ -84,8 +84,8 @@ void ScoreFunctionLoader::load_data(
 			in_scorefxn->reset();
 			TR << "***WARNING***: No weights/patch defined. Defining " << scorefxn_name << " with all-zero weights.\n";
 		}
-		BOOST_FOREACH(TagCOP mod_tag, scorefxn_tag->getTags()){
-			if( mod_tag->getName() == "Reweight" ) {
+		BOOST_FOREACH ( TagCOP mod_tag, scorefxn_tag->getTags() ) {
+			if ( mod_tag->getName() == "Reweight" ) {
 				std::string const scoretype_name( mod_tag->getOption<std::string>( "scoretype" ) );
 				core::Real const weight( mod_tag->getOption<core::Real>( "weight" ) );
 				TR<<"setting "<<scorefxn_name<<" weight " << scoretype_name << " to " << weight<<'\n';
@@ -94,63 +94,64 @@ void ScoreFunctionLoader::load_data(
 			}
 
 			// Set energy method options:
-			if( mod_tag->getName() == "Set" ){
+			if ( mod_tag->getName() == "Set" ) {
 				core::scoring::methods::EnergyMethodOptions emoptions( in_scorefxn->energy_method_options() );
 				emoptions.hbond_options().parse_my_tag(mod_tag);
 				emoptions.etable_options().parse_my_tag(mod_tag);
 
-				if( mod_tag->hasOption( "softrep_etable" )) {
-					if ( mod_tag->getOption<bool>( "softrep_etable" )) {
+				if ( mod_tag->hasOption( "softrep_etable" ) ) {
+					if ( mod_tag->getOption<bool>( "softrep_etable" ) ) {
 						emoptions.etable_type( core::scoring::FA_STANDARD_SOFT );
 
 					}
 				}
 
-				if( mod_tag->hasOption( "fa_elec_min_dis" )) {
+				if ( mod_tag->hasOption( "fa_elec_min_dis" ) ) {
 					emoptions.elec_min_dis( mod_tag->getOption<core::Real>( "fa_elec_min_dis" ) );
 				}
-				if( mod_tag->hasOption( "fa_elec_max_dis" )) {
+				if ( mod_tag->hasOption( "fa_elec_max_dis" ) ) {
 					emoptions.elec_max_dis( mod_tag->getOption<core::Real>( "fa_elec_max_dis" ) );
 				}
-				if( mod_tag->hasOption( "fa_elec_dielectric" )) {
+				if ( mod_tag->hasOption( "fa_elec_dielectric" ) ) {
 					emoptions.elec_die( mod_tag->getOption<core::Real>( "fa_elec_dielectric" ) );
 				}
-				if( mod_tag->hasOption( "fa_elec_no_dis_dep_die" )) {
+				if ( mod_tag->hasOption( "fa_elec_no_dis_dep_die" ) ) {
 					emoptions.elec_no_dis_dep_die( mod_tag->getOption<bool>( "fa_elec_no_dis_dep_die" ) );
 				}
-				if( mod_tag->hasOption( "exclude_protein_protein_fa_elec" )) {
+				if ( mod_tag->hasOption( "exclude_protein_protein_fa_elec" ) ) {
 					emoptions.exclude_protein_protein_fa_elec( mod_tag->getOption<bool>( "exclude_protein_protein_fa_elec" ) );
 				}
-				if( mod_tag->hasOption( "exclude_DNA_DNA" )) {
+				if ( mod_tag->hasOption( "exclude_DNA_DNA" ) ) {
 					emoptions.exclude_DNA_DNA( mod_tag->getOption<bool>( "exclude_DNA_DNA" ) );
 				}
 
-				if( mod_tag->hasOption( "pb_bound_tag" )) {
+				if ( mod_tag->hasOption( "pb_bound_tag" ) ) {
 					emoptions.pb_bound_tag( mod_tag->getOption<std::string>("pb_bound_tag" ) );
 					TR << "User defined bound tag: " << emoptions.pb_bound_tag() << std::endl;
 				}
-				if( mod_tag->hasOption( "pb_unbound_tag" )) {
+				if ( mod_tag->hasOption( "pb_unbound_tag" ) ) {
 					emoptions.pb_unbound_tag( mod_tag->getOption<std::string>("pb_unbound_tag" ) );
 					TR << "User defined unbound tag: " << emoptions.pb_unbound_tag() << std::endl;
 				}
-				if( mod_tag->hasOption( "scale_sc_dens" )) {
+				if ( mod_tag->hasOption( "scale_sc_dens" ) ) {
 					core::Real scale_sc_dens = mod_tag->getOption<core::Real>("scale_sc_dens" );
 					emoptions.set_density_sc_scale_byres( scale_sc_dens );
 					TR << "User defined sidechain density reweighing: " << scale_sc_dens << std::endl;
 				}
-				if( mod_tag->hasOption( "scale_sc_dens_byres" )) {
+				if ( mod_tag->hasOption( "scale_sc_dens_byres" ) ) {
 					utility::vector1< std::string > scale_sc_dens_byres
-							= utility::string_split_multi_delim( mod_tag->getOption<std::string>("scale_sc_dens_byres" ), " ,");
+						= utility::string_split_multi_delim( mod_tag->getOption<std::string>("scale_sc_dens_byres" ), " ,");
 
-					for (int i=1; i<=(int)scale_sc_dens_byres.size(); ++i) {
+					for ( int i=1; i<=(int)scale_sc_dens_byres.size(); ++i ) {
 						utility::vector1< std::string > tag = utility::string_split( scale_sc_dens_byres[i] , ':');
 						core::chemical::AA aa_i = core::chemical::aa_from_oneletter_code( tag[1][0] );
 						core::Real value = std::atof( tag[2].c_str() );
-						if (aa_i<=core::chemical::num_canonical_aas)
+						if ( aa_i<=core::chemical::num_canonical_aas ) {
 							emoptions.set_density_sc_scale_byres( aa_i, value );
+						}
 					}
 					TR << "User defined per-residue sidechain density reweighing: " << std::endl;
-					for (int i=1; i<=(int)core::chemical::num_canonical_aas; ++i) {
+					for ( int i=1; i<=(int)core::chemical::num_canonical_aas; ++i ) {
 						TR << "   " << (core::chemical::AA)i << " " << emoptions.get_density_sc_scale_byres()[i] << std::endl;
 					}
 				}
@@ -170,21 +171,21 @@ void ScoreFunctionLoader::load_data(
 
 		//fpd should we symmetrize scorefunction?
 		bool const scorefxn_symm( scorefxn_tag->getOption<bool>( "symmetric", 0 ) );
-		if (scorefxn_symm) {
+		if ( scorefxn_symm ) {
 			in_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *in_scorefxn );
 			TR<<"symmetrizing "<<scorefxn_name<<'\n';
 		}
 
 		// auto-generate and set cache-tags for bound and unbound energy states, if PB term is used.
-		if( !in_scorefxn->has_zero_weight(PB_elec) ) {
+		if ( !in_scorefxn->has_zero_weight(PB_elec) ) {
 
 			core::scoring::methods::EnergyMethodOptions emoptions( in_scorefxn->energy_method_options() );
 			// Don't overwrite if it's already set, by "Set" modifier.
-			if( emoptions.pb_bound_tag() == "" ){
+			if ( emoptions.pb_bound_tag() == "" ) {
 				//std::string bound_tag = scorefxn_name + "_" + "bound";
 				emoptions.pb_bound_tag( "bound" );
 			}
-			if( emoptions.pb_unbound_tag() == "" ){
+			if ( emoptions.pb_unbound_tag() == "" ) {
 				//std::string unbound_tag = scorefxn_name + "_" + "unbound";
 				emoptions.pb_unbound_tag( "unbound" );
 			}
@@ -193,8 +194,9 @@ void ScoreFunctionLoader::load_data(
 
 		bool const data_add_status = data.add( "scorefxns" , scorefxn_name, in_scorefxn );
 
-		if( !data_add_status )
+		if ( !data_add_status ) {
 			utility_exit_with_message( "scorefxn " + scorefxn_name + " already exists in the basic::datacache::DataMap, possibly as a default scorefxn. Please rename." );
+		}
 
 	}//end user-defined scorefxns
 	TR.flush();

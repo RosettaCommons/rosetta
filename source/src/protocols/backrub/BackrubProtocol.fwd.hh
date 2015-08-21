@@ -23,8 +23,8 @@
 
 // Forward
 namespace protocols {
-	namespace backrub {
-		
+namespace backrub {
+
 
 class BackrubProtocol;
 
@@ -32,11 +32,11 @@ typedef utility::pointer::shared_ptr< BackrubProtocol > BackrubProtocolOP;
 typedef utility::pointer::shared_ptr< BackrubProtocol const > BackrubProtocolCOP;
 
 
-	}
+}
 }
 
 
-#endif	//INCLUDED_ %<%CLASSNAME%>%.fwd.hh
+#endif //INCLUDED_ %<%CLASSNAME%>%.fwd.hh
 
 
 

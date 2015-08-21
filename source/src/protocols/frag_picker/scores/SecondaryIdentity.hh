@@ -42,9 +42,9 @@ public:
 	static const int PENALTY = 1;
 
 	SecondaryIdentity(Size priority, Real lowest_acceptable_value, bool use_lowest,
-			std::string& query_secondary_structure,std::string prediction_name) :
+		std::string& query_secondary_structure,std::string prediction_name) :
 		FragmentScoringMethod(priority, lowest_acceptable_value, use_lowest,
-				"SecondaryIdentity"), query_(query_secondary_structure),prediction_name_(prediction_name) {
+		"SecondaryIdentity"), query_(query_secondary_structure),prediction_name_(prediction_name) {
 	}
 
 	/// @brief Computes the score
@@ -54,7 +54,7 @@ public:
 	/// @details besides extensive output, the method should return the same result as score()
 	bool describe_score(FragmentCandidateOP, FragmentScoreMapOP, std::ostream&);
 
-        inline std::string& get_prediction_name() { return prediction_name_; };
+	inline std::string& get_prediction_name() { return prediction_name_; };
 private:
 	std::string& query_;
 	std::string prediction_name_;
@@ -69,10 +69,10 @@ public:
 	}
 
 	FragmentScoringMethodOP make(Size priority, Real lowest_acceptable_value,
-			bool use_lowest, FragmentPickerOP picker, std::string prediction_id) {
+		bool use_lowest, FragmentPickerOP picker, std::string prediction_id) {
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new SecondaryIdentity(priority,
-				lowest_acceptable_value, use_lowest, picker->get_query_ss_string(
-						prediction_id),prediction_id) );
+			lowest_acceptable_value, use_lowest, picker->get_query_ss_string(
+			prediction_id),prediction_id) );
 	}
 };
 

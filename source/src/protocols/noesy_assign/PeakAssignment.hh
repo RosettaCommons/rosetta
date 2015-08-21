@@ -61,18 +61,18 @@ public:
 	typedef core::scoring::constraints::AmbiguousNMRDistanceConstraintOP NmrConstraintOP;
 	typedef core::scoring::constraints::AmbiguousNMRDistanceConstraint NmrConstraint;
 
-  PeakAssignment( CrossPeak *, core::Size assign_spin1, core::Size assign_spin2 );
+	PeakAssignment( CrossPeak *, core::Size assign_spin1, core::Size assign_spin2 );
 
-  core::Size spin_id( core::Size select ) const {
-    runtime_assert( select == 1 || select == 2 );
-    return select == 1 ? spin_assign_index1_ : spin_assign_index2_;
-  }
+	core::Size spin_id( core::Size select ) const {
+		runtime_assert( select == 1 || select == 2 );
+		return select == 1 ? spin_assign_index1_ : spin_assign_index2_;
+	}
 
-  /// @brief return resonance_id, i.e., pointer into Resonance list that will resolve in assigned atom
-  core::Size resonance_id( core::Size select ) const {
-    runtime_assert( select == 1 || select == 2 );
-    return select == 1 ? resonance1_ : resonance2_;
-  }
+	/// @brief return resonance_id, i.e., pointer into Resonance list that will resolve in assigned atom
+	core::Size resonance_id( core::Size select ) const {
+		runtime_assert( select == 1 || select == 2 );
+		return select == 1 ? resonance1_ : resonance2_;
+	}
 
 	bool has_label( core::Size select ) const {
 		return  crosspeak_->has_label( select );
@@ -85,16 +85,16 @@ public:
 	core::Size float_ambiguity() const;
 
 	/// @brief return resonance_id, i.e., pointer into Resonance list that will resolve in assigned atom
-  core::Size label_resonance_id( core::Size select ) const;
+	core::Size label_resonance_id( core::Size select ) const;
 
- /// @brief returns atom 1 or 2 of the assigned cross-peak.  --- might throw Exception if atom not found in ResonanceList
-  core::id::NamedAtomID const& atom( core::Size iatom ) const{
-    return resonances()[ resonance_id( iatom ) ].atom();
-  }
+	/// @brief returns atom 1 or 2 of the assigned cross-peak.  --- might throw Exception if atom not found in ResonanceList
+	core::id::NamedAtomID const& atom( core::Size iatom ) const{
+		return resonances()[ resonance_id( iatom ) ].atom();
+	}
 
-  core::id::NamedAtomID const& label_atom( core::Size iatom ) const{
-    return resonances()[ label_resonance_id( iatom ) ].atom();
-  }
+	core::id::NamedAtomID const& label_atom( core::Size iatom ) const{
+		return resonances()[ label_resonance_id( iatom ) ].atom();
+	}
 
 	Resonance const& resonance( core::Size iatom ) const {
 		return resonances()[ resonance_id( iatom ) ];
@@ -105,37 +105,37 @@ public:
 	}
 
 	CALIBRATION_ATOM_TYPE calibration_atom_type( core::Size iatom ) const{
-    return resonances()[ resonance_id( iatom ) ].calibration_atom_type();
-  }
+		return resonances()[ resonance_id( iatom ) ].calibration_atom_type();
+	}
 
 	core::scoring::constraints::ConstraintOP create_constraint(
-  	core::pose::Pose const& pose,
+		core::pose::Pose const& pose,
 		core::scoring::func::FuncOP = NULL  ) const;
 
 
 	NmrConstraintOP create_constraint(
-  	core::pose::Pose const& pose,
+		core::pose::Pose const& pose,
 		core::Size ifloat, //if float ambiguity is present enumerate all possible constraints with 1<=ifloat <=float_ambiguity()
 		core::scoring::func::FuncOP = NULL  ) const;
 
-  /// @brief returns residue number of a1 or a2 of the assigned cross-peak, --- might throw Exception if atom not found
-  core::Size resid( core::Size iatom ) const {
-    return resonances()[ resonance_id( iatom ) ].resid();
-  }
+	/// @brief returns residue number of a1 or a2 of the assigned cross-peak, --- might throw Exception if atom not found
+	core::Size resid( core::Size iatom ) const {
+		return resonances()[ resonance_id( iatom ) ].resid();
+	}
 
-  bool operator==( PeakAssignment const& other ) const {
-    return crosspeak_ == other.crosspeak_ && spin_id( 1 ) == other.spin_id( 1 ) && spin_id( 2 ) == other.spin_id( 2 );
-  }
+	bool operator==( PeakAssignment const& other ) const {
+		return crosspeak_ == other.crosspeak_ && spin_id( 1 ) == other.spin_id( 1 ) && spin_id( 2 ) == other.spin_id( 2 );
+	}
 
-  bool is_symmetric_partner_of( PeakAssignment const& other ) const;
+	bool is_symmetric_partner_of( PeakAssignment const& other ) const;
 
 	ResonanceList const& resonances() const; //can't inline due to circularity
-  //void invalidate_assignment();
+	//void invalidate_assignment();
 
-  CrossPeak& crosspeak() { return *crosspeak_; };
-  CrossPeak const& crosspeak() const { return *crosspeak_; }
+	CrossPeak& crosspeak() { return *crosspeak_; };
+	CrossPeak const& crosspeak() const { return *crosspeak_; }
 
-  //core::Size assignment_index() const { return assignment_index_; }
+	//core::Size assignment_index() const { return assignment_index_; }
 	void set_symmetry( core::Real setting = 0 ) {
 		symmetry_compliance_ = setting;
 	}
@@ -150,7 +150,7 @@ public:
 
 	void set_network_anchoring( core::Real setting ) {
 		network_anchoring_ = setting;
-		//		network_anchoring_per_residue_ = reswise_setting;
+		//  network_anchoring_per_residue_ = reswise_setting;
 	}
 
 	void set_network_anchoring_per_residue( core::Real reswise_setting ) {
@@ -197,22 +197,22 @@ private:
 	void update_resonances_from_peak();
 
 	core::scoring::constraints::AmbiguousNMRConstraintOP create_float_constraint(
-  	core::pose::Pose const& pose,
+		core::pose::Pose const& pose,
 		core::scoring::func::FuncOP = NULL  ) const;
 
-  CrossPeak * crosspeak_;
-  core::Size spin_assign_index1_; //points to assignment of spin1 and spin2
-  core::Size spin_assign_index2_; //points to assignment of spin1 and spin2
-  core::Size resonance1_; //the spin1 and spin2 resonance (short cut to avoid lengthy access thru CrossPeak)
-  core::Size resonance2_; //the spin1 and spin2 resonance (short cut to avoid lengthy access thru CrossPeak)
+	CrossPeak * crosspeak_;
+	core::Size spin_assign_index1_; //points to assignment of spin1 and spin2
+	core::Size spin_assign_index2_; //points to assignment of spin1 and spin2
+	core::Size resonance1_; //the spin1 and spin2 resonance (short cut to avoid lengthy access thru CrossPeak)
+	core::Size resonance2_; //the spin1 and spin2 resonance (short cut to avoid lengthy access thru CrossPeak)
 
 
-  // should these live in inherited class or in PeakAssignmentWeights ?
-  core::Real chemshift_overlap_; //Ck
+	// should these live in inherited class or in PeakAssignmentWeights ?
+	core::Real chemshift_overlap_; //Ck
 	core::Real symmetry_compliance_; //Tk
-  bool covalent_compliance_; //Ok
-  core::Real decoy_compatibility_; //Dk
-  core::Real network_anchoring_; //Nk
+	bool covalent_compliance_; //Ok
+	core::Real decoy_compatibility_; //Dk
+	core::Real network_anchoring_; //Nk
 	core::Real network_anchoring_per_residue_; //N_{AB}
 	core::Real native_distance_viol_;
 

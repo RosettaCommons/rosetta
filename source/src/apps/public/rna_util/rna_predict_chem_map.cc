@@ -95,13 +95,13 @@ using ObjexxFCL::format::F;
 
 void
 get_max_and_intervals( utility::vector1< Real > const & DMS_values,
-											 utility::vector1< Real > const & logL_values,
-											 Real & DMS_mean,
-											 Real & DMS_std,
-											 Real & DMS_maxL,
-											 Real & DMS_interval_low,
-											 Real & DMS_interval_high,
-											 Real const /* confidence_level = 0.68 one-sigma */ ) {
+	utility::vector1< Real > const & logL_values,
+	Real & DMS_mean,
+	Real & DMS_std,
+	Real & DMS_maxL,
+	Real & DMS_interval_low,
+	Real & DMS_interval_high,
+	Real const /* confidence_level = 0.68 one-sigma */ ) {
 	DMS_maxL = 0.0;
 	DMS_mean = 0.0;
 	DMS_std  = 0.0;
@@ -109,8 +109,8 @@ get_max_and_intervals( utility::vector1< Real > const & DMS_values,
 	DMS_interval_high = 0.0;
 
 	Real max_logL( 0.0 );
-	for ( Size n = 1; n <= logL_values.size(); n++ ){
-		if ( n == 1 || logL_values[ n ] > max_logL ){
+	for ( Size n = 1; n <= logL_values.size(); n++ ) {
+		if ( n == 1 || logL_values[ n ] > max_logL ) {
 			max_logL = logL_values[ n ];
 			DMS_maxL = DMS_values[ n ];
 		}
@@ -118,7 +118,7 @@ get_max_and_intervals( utility::vector1< Real > const & DMS_values,
 	if ( max_logL == 0.0 ) return; // sign that there's no data here.
 
 	Real p_tot( 0.0 ), DMS_squared_mean( 0.0 );
-	for ( Size n = 1; n <= logL_values.size(); n++ ){
+	for ( Size n = 1; n <= logL_values.size(); n++ ) {
 		Real const p = exp( logL_values[ n ] );
 		p_tot += p;
 		DMS_mean         += p * DMS_values[ n ];
@@ -172,9 +172,9 @@ get_max_and_intervals( utility::vector1< Real > const & DMS_values,
 ///////////////////////////////////////////////
 void
 get_logL_DMS( pose::Pose & pose,
-							vector1< vector1< Real > > & logL_values,
-							vector1< Real >            & DMS_values,
-							vector1< Size > & probed_res	) {
+	vector1< vector1< Real > > & logL_values,
+	vector1< Real >            & DMS_values,
+	vector1< Size > & probed_res ) {
 
 	logL_values.clear();
 	DMS_values.clear();
@@ -187,12 +187,12 @@ get_logL_DMS( pose::Pose & pose,
 	// Input of DMS_values & interpolation not supported yet, but should be in the future.
 	// Real DMS_value( 0.0 );
 	// while( DMS_value <= 7.0 ){
-	// 	DMS_values.push_back( DMS_value );
-	// 	DMS_value += 0.05;
+	//  DMS_values.push_back( DMS_value );
+	//  DMS_value += 0.05;
 	// }
 	DMS_values = rna_dms_potential.DMS_values();
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ){
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 		if ( !pose.residue_type( i ).is_RNA() ) continue;
 		probed_res.push_back( i );
 		logL_values.push_back( rna_dms_potential.get_logL_values( pose, i /*, DMS_values*/ ) );
@@ -244,7 +244,7 @@ predict_chem_map_test()
 			logL_out << ' ' << A( 10, restag );
 		}
 		logL_out << std::endl;
-		for ( Size k = 1; k <= DMS_values.size(); k++ ){
+		for ( Size k = 1; k <= DMS_values.size(); k++ ) {
 			logL_out << F( 10, 2, DMS_values[ k ] );
 			for ( Size n = 1; n <= logL_values.size(); n++ ) logL_out << ' ' << F( 10, 2, logL_values[ n ][ k ] );
 			logL_out << std::endl;

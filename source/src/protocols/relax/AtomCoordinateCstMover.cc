@@ -65,22 +65,22 @@ AtomCoordinateCstMoverCreator::mover_name()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 AtomCoordinateCstMover::AtomCoordinateCstMover() :
-		cst_sd_( 0.5 ),
-		bounded_( false ),
-		cst_width_( 0 ),
-		cst_sidechain_( false ),
-		amb_hnq_( false )
+	cst_sd_( 0.5 ),
+	bounded_( false ),
+	cst_width_( 0 ),
+	cst_sidechain_( false ),
+	amb_hnq_( false )
 {}
 
 AtomCoordinateCstMover::AtomCoordinateCstMover( AtomCoordinateCstMover const & other ) : protocols::moves::Mover(other),
-		refpose_( other.refpose_ ),
-		cst_sd_( other.cst_sd_ ),
-		bounded_( other.bounded_ ),
-		cst_width_( other.cst_width_ ),
-		cst_sidechain_( other.cst_sidechain_ ),
-		amb_hnq_( other.amb_hnq_ ),
-		loop_segments_( other.loop_segments_ ),
-		task_segments_( other.task_segments_ )
+	refpose_( other.refpose_ ),
+	cst_sd_( other.cst_sd_ ),
+	bounded_( other.bounded_ ),
+	cst_width_( other.cst_width_ ),
+	cst_sidechain_( other.cst_sidechain_ ),
+	amb_hnq_( other.amb_hnq_ ),
+	loop_segments_( other.loop_segments_ ),
+	task_segments_( other.task_segments_ )
 {}
 
 AtomCoordinateCstMover::~AtomCoordinateCstMover() {}
@@ -114,7 +114,7 @@ void AtomCoordinateCstMover::apply( core::pose::Pose & pose) {
 	core::pose::Pose constraint_target_pose = pose;
 	core::id::SequenceMapping seq_map; // A mapping of pose -> constraint_target_pose numbering
 
-	if( refpose_ ) {
+	if ( refpose_ ) {
 		constraint_target_pose = *refpose_;
 
 		if (  pose.total_residue() == constraint_target_pose.total_residue() &&
@@ -124,7 +124,7 @@ void AtomCoordinateCstMover::apply( core::pose::Pose & pose) {
 		} else {
 			// Try to match on a PDB-identity basis, or a sequence alignment basis if that fails.
 			TR << "Length " << (cst_sidechain_?"and/or identities ":"") <<
-					"of input structure and native don't match - aligning on PDB identity or sequence." << std::endl;
+				"of input structure and native don't match - aligning on PDB identity or sequence." << std::endl;
 			seq_map = core::pose::sequence_map_from_pdbinfo( pose, constraint_target_pose );
 		}
 		// Align the native pose to the input pose to avoid rotation/translation based
@@ -144,10 +144,10 @@ void AtomCoordinateCstMover::apply( core::pose::Pose & pose) {
 
 	utility::vector1< bool > constrain_residues( nres, false );
 	core::pack::task::PackerTaskOP task;
-	if( task_segments_ ) {
+	if ( task_segments_ ) {
 		task = task_segments_->create_task_and_apply_taskoperations(pose);
 	}
-	for( core::Size ii = 1; ii <= nres; ++ii ) {
+	for ( core::Size ii = 1; ii <= nres; ++ii ) {
 		// Constrain residue if it's in a loop, or in the task, or if we don't have task/loop limitations.
 		if ( (loop_segments_ && loop_segments_->is_loop_residue( ii )) ||
 				( task && task->being_packed(ii) ) ||
@@ -166,7 +166,7 @@ void AtomCoordinateCstMover::apply( core::pose::Pose & pose) {
 
 		if ( constrain_residues[i] ) {
 			core::Size j(seq_map[i]);
-			if( j == 0 ) continue;
+			if ( j == 0 ) continue;
 			assert( j <= constraint_target_pose.total_residue() ); // Should be, if map was set up properly.
 
 			core::conformation::Residue const & pose_i_rsd( pose.residue(i) );
@@ -196,21 +196,21 @@ void AtomCoordinateCstMover::apply( core::pose::Pose & pose) {
 					jj = targ_j_rsd.atom_index( atomname );
 				}
 				core::scoring::func::FuncOP function;
-				if( bounded_ ) {
+				if ( bounded_ ) {
 					function = core::scoring::func::FuncOP( new BoundFunc( 0, cst_width_, cst_sd_, "xyz" ) );
 				} else {
 					function = core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( 0.0, cst_sd_ ) );
 				}
 
 				// Rely on shortcutting evaluation to speed things up - get to else clause as soon as possible.
-				if( amb_hnq_ && cst_sidechain_ &&
+				if ( amb_hnq_ && cst_sidechain_ &&
 						( (pose_i_rsd.aa() == core::chemical::aa_asn && targ_j_rsd.aa() == core::chemical::aa_asn &&
-								( pose_i_rsd.atom_name(ii) == " OD1" || pose_i_rsd.atom_name(ii) == " ND2" )) ||
+						( pose_i_rsd.atom_name(ii) == " OD1" || pose_i_rsd.atom_name(ii) == " ND2" )) ||
 						(pose_i_rsd.aa() == core::chemical::aa_gln && targ_j_rsd.aa() == core::chemical::aa_gln &&
-								( pose_i_rsd.atom_name(ii) == " OE1" || pose_i_rsd.atom_name(ii) == " NE2" )) ||
+						( pose_i_rsd.atom_name(ii) == " OE1" || pose_i_rsd.atom_name(ii) == " NE2" )) ||
 						(pose_i_rsd.aa() == core::chemical::aa_his && targ_j_rsd.aa() == core::chemical::aa_his &&
-								(pose_i_rsd.atom_name(ii) == " ND1" || pose_i_rsd.atom_name(ii) == " NE2" ||
-										pose_i_rsd.atom_name(ii) == " CD2" || pose_i_rsd.atom_name(ii) == " CE1")) ) ) {
+						(pose_i_rsd.atom_name(ii) == " ND1" || pose_i_rsd.atom_name(ii) == " NE2" ||
+						pose_i_rsd.atom_name(ii) == " CD2" || pose_i_rsd.atom_name(ii) == " CE1")) ) ) {
 					std::string atom1, atom2;
 					if ( pose_i_rsd.aa() == core::chemical::aa_asn ) {
 						atom1 = " OD1";
@@ -231,13 +231,13 @@ void AtomCoordinateCstMover::apply( core::pose::Pose & pose) {
 					}
 					core::scoring::constraints::AmbiguousConstraintOP amb_constr( new core::scoring::constraints::AmbiguousConstraint );
 					amb_constr->add_individual_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint(  core::id::AtomID(ii,i),
-							core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( atom1 ), function ) ) ) );
+						core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( atom1 ), function ) ) ) );
 					amb_constr->add_individual_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint(  core::id::AtomID(ii,i),
-							core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( atom2 ), function ) ) ) );
+						core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( atom2 ), function ) ) ) );
 					pose.add_constraint( amb_constr );
 				} else {
 					pose.add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( core::id::AtomID(ii,i),
-							core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( jj ), function ) ) ) );
+						core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( jj ), function ) ) ) );
 				}
 			} // for atom
 		} // if(loop)

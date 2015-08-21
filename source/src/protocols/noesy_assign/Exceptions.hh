@@ -32,27 +32,27 @@ namespace protocols {
 namespace noesy_assign {
 
 class EXCN_NoesyAssign : public virtual utility::excn::EXCN_Msg_Exception {
-  typedef EXCN_Msg_Exception Parent;
+	typedef EXCN_Msg_Exception Parent;
 protected:
-  EXCN_NoesyAssign() : EXCN_Msg_Exception( "" ){};
+	EXCN_NoesyAssign() : EXCN_Msg_Exception( "" ){};
 public:
-  virtual void show( std::ostream& os ) const {
-    os << "\n[NOE Exception]: ";
-    Parent::show( os );
-  }
+	virtual void show( std::ostream& os ) const {
+		os << "\n[NOE Exception]: ";
+		Parent::show( os );
+	}
 };
 
 class EXCN_UnknownAtomname : public EXCN_NoesyAssign {
 public:
-  EXCN_UnknownAtomname( std::string const& msg )
-		: utility::excn::EXCN_Msg_Exception( msg ) {};
+	EXCN_UnknownAtomname( std::string const& msg )
+	: utility::excn::EXCN_Msg_Exception( msg ) {};
 };
 
 
 class EXCN_UnknownResonance : public EXCN_NoesyAssign {
 public:
-  EXCN_UnknownResonance( core::id::NamedAtomID atom, std::string const& msg )
-  : utility::excn::EXCN_Msg_Exception( msg ), atom_( atom ) {};
+	EXCN_UnknownResonance( core::id::NamedAtomID atom, std::string const& msg )
+	: utility::excn::EXCN_Msg_Exception( msg ), atom_( atom ) {};
 
 	core::id::NamedAtomID const& atom() { return atom_; }
 	virtual void show( std::ostream& os ) const {
@@ -65,9 +65,9 @@ private:
 
 class EXCN_AssignmentNotFound : public EXCN_NoesyAssign {
 public:
-  EXCN_AssignmentNotFound( PeakAssignment const& assignment, std::string const& msg )
-		: utility::excn::EXCN_Msg_Exception( msg ), assignment_( assignment ) {};
-  PeakAssignment assignment_;
+	EXCN_AssignmentNotFound( PeakAssignment const& assignment, std::string const& msg )
+	: utility::excn::EXCN_Msg_Exception( msg ), assignment_( assignment ) {};
+	PeakAssignment assignment_;
 };
 
 class EXCN_FileFormat : public EXCN_NoesyAssign {

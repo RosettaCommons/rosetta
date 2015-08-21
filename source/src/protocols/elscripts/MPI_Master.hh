@@ -26,28 +26,28 @@ namespace elscripts {
 void lregister_MPI_Master( lua_State * lstate );
 
 class MPI_Master : public Master {
-  public:
-    // default memory limit is 1GB
-    // default reserved mem size is 100MB as recommended by fpd
-    MPI_Master( boost::mpi::communicator world, std::vector<int> slaves, int num_trajectories = 1, boost::uint64_t mem_limit=2147483648, boost::uint64_t reserved_mem=104857600, boost::uint64_t reserved_mem_multiplier=5 );
-    ~MPI_Master(){}
-    void go();
+public:
+	// default memory limit is 1GB
+	// default reserved mem size is 100MB as recommended by fpd
+	MPI_Master( boost::mpi::communicator world, std::vector<int> slaves, int num_trajectories = 1, boost::uint64_t mem_limit=2147483648, boost::uint64_t reserved_mem=104857600, boost::uint64_t reserved_mem_multiplier=5 );
+	~MPI_Master(){}
+	void go();
 
-  private:
-		int inputter_rank() {
-			// handles if there is or is not pool logic, needed for inputter offset
-			// doesnt do anything now
-			return world_.rank() + 1;
-		}
+private:
+	int inputter_rank() {
+		// handles if there is or is not pool logic, needed for inputter offset
+		// doesnt do anything now
+		return world_.rank() + 1;
+	}
 
-    //void request_pool_structures( std::vector< int > needs_replace );
-    //void request_pool_structure( int trajectory_idx );
-		
-  private:
-		boost::mpi::communicator world_;
+	//void request_pool_structures( std::vector< int > needs_replace );
+	//void request_pool_structure( int trajectory_idx );
 
-    std::vector< int > slaves_;
-		boost::posix_time::ptime last_status_sweep_time_;
+private:
+	boost::mpi::communicator world_;
+
+	std::vector< int > slaves_;
+	boost::posix_time::ptime last_status_sweep_time_;
 };
 
 } //elscripts

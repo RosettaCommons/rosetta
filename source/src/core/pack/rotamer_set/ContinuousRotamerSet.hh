@@ -90,7 +90,7 @@ public:
 
 	utility::vector1< Vector > const &
 	current_rotamer_coords() const;
-	
+
 	Size resid() const;
 
 	chemical::ResidueTypeCOP

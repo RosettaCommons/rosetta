@@ -58,7 +58,7 @@ public:
 	~StrandPairing();
 
 	core::Size operator==(const StrandPairing &rhs) const;
-	//	core::Size operator!=(const StrandPairing &rhs) const;
+	// core::Size operator!=(const StrandPairing &rhs) const;
 	core::Size operator<(const StrandPairing &rhs) const;
 
 	core::Size size() const {

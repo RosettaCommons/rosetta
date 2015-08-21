@@ -182,27 +182,27 @@ Bool3DGrid::or_by_sphere_conservative( Vector const & center, Real radius )
 void
 Bool3DGrid::or_by_sphere_liberal( Vector const & center, Real radius )
 {
-/*	Real rad2 = radius * radius;
+	/* Real rad2 = radius * radius;
 	Bin3D bin;
 	for ( Size ii = 0; ii < dimsizes_[ 1 ]; ++ii ) {
-		bin[ 1 ] = ii;
-		for ( Size jj = 0; jj < dimsizes_[ 2 ]; ++jj ) {
-			bin[ 2 ] = jj;
-			for ( Size kk = 0; kk < dimsizes_[ 3 ]; ++kk ) {
-				bin[ 3 ] = kk;
-				utility::fixedsizearray1< Vector, 8 > grid_corners = corners( bin );
-				bool any_contained( false );
-				for ( Size ll = 1; ll <= 8; ++ll ) {
-					Real d2 = center.distance_squared( grid_corners[ ll ] );
-					if ( d2 <= rad2 ) { any_contained = true; break; }
-				}
-				if ( any_contained ) {
-					set_value_for_bin( bin, true );
-				}
-			}
-		}
+	bin[ 1 ] = ii;
+	for ( Size jj = 0; jj < dimsizes_[ 2 ]; ++jj ) {
+	bin[ 2 ] = jj;
+	for ( Size kk = 0; kk < dimsizes_[ 3 ]; ++kk ) {
+	bin[ 3 ] = kk;
+	utility::fixedsizearray1< Vector, 8 > grid_corners = corners( bin );
+	bool any_contained( false );
+	for ( Size ll = 1; ll <= 8; ++ll ) {
+	Real d2 = center.distance_squared( grid_corners[ ll ] );
+	if ( d2 <= rad2 ) { any_contained = true; break; }
 	}
-*/
+	if ( any_contained ) {
+	set_value_for_bin( bin, true );
+	}
+	}
+	}
+	}
+	*/
 
 	using namespace core;
 
@@ -277,7 +277,7 @@ Bool3DGrid::or_by_sphere_liberal( Vector const & center, Real radius )
 							}
 
 							Real dim_edge;
-							if ( center( dim_out_of_range ) < grid_corners[ 1 ]( dim_out_of_range )) {
+							if ( center( dim_out_of_range ) < grid_corners[ 1 ]( dim_out_of_range ) ) {
 								dim_edge = grid_corners[ 1 ]( dim_out_of_range );
 							} else {
 								dim_edge = grid_corners[ 8 ]( dim_out_of_range );
@@ -482,19 +482,19 @@ void Bool3DGrid::set_value_for_bin( Bin3D const & bin, bool setting )
 	/*std::cout << "Setting " << setting << " for bin " << bin[ 1 ] << " " << bin[ 2 ] << " " << bin[ 3 ] << " (index " << index << ")";
 	std::cout << " with offset " << xmod2 << " " << ymod2 << " " << zmod2 << " original: ";
 	for ( Size ii = 0; ii <= 1; ++ii ) {
-		for ( Size jj = 0; jj <= 1; ++jj ) {
-			for ( Size kk = 0; kk <= 1; ++kk ) {
-			  std::cout << ( mask_from_offsets( ii, jj, kk ) & original_bits ? 1 : 0 );
-			}
-		}
+	for ( Size jj = 0; jj <= 1; ++jj ) {
+	for ( Size kk = 0; kk <= 1; ++kk ) {
+	std::cout << ( mask_from_offsets( ii, jj, kk ) & original_bits ? 1 : 0 );
+	}
+	}
 	}
 	std::cout << " becomes ";
 	for ( Size ii = 0; ii <= 1; ++ii ) {
-		for ( Size jj = 0; jj <= 1; ++jj ) {
-			for ( Size kk = 0; kk <= 1; ++kk ) {
-			  std::cout << ( mask_from_offsets( ii, jj, kk ) & voxel_bits ? 1 : 0  );
-			}
-		}
+	for ( Size jj = 0; jj <= 1; ++jj ) {
+	for ( Size kk = 0; kk <= 1; ++kk ) {
+	std::cout << ( mask_from_offsets( ii, jj, kk ) & voxel_bits ? 1 : 0  );
+	}
+	}
 	}
 	std::cout << std::endl;*/
 }
@@ -573,7 +573,7 @@ void Bool3DGrid::or_with( Bool3DGrid const & other )
 
 void Bool3DGrid::and_with( Bool3DGrid const & other )
 {
-		assert( bin_width_ == other.bin_width_ );
+	assert( bin_width_ == other.bin_width_ );
 
 	/// 1. Compute the bin overlap
 	Vector overlap_low(
@@ -860,14 +860,14 @@ Bool3DGrid::mask_from_offsets( Size xmod2, Size ymod2, Size zmod2 ) const
 
 	Size offset = 4 * xmod2 + 2 * ymod2 + zmod2;
 	switch ( offset ) {
-		case 0 : return 0x01;
-		case 1 : return 0x02;
-		case 2 : return 0x04;
-		case 3 : return 0x08;
-		case 4 : return 0x10;
-		case 5 : return 0x20;
-		case 6 : return 0x40;
-		case 7 : return 0x80;
+	case 0 : return 0x01;
+	case 1 : return 0x02;
+	case 2 : return 0x04;
+	case 3 : return 0x08;
+	case 4 : return 0x10;
+	case 5 : return 0x20;
+	case 6 : return 0x40;
+	case 7 : return 0x80;
 	}
 	utility_exit_with_message( "ERROR: Bad input to Bool3DGrid mask from offsets" );
 	return 0x0;
@@ -882,14 +882,14 @@ Bool3DGrid::negmask_from_offsets( Size xmod2, Size ymod2, Size zmod2 ) const
 
 	Size offset = 4 * xmod2 + 2 * ymod2 + zmod2;
 	switch ( offset ) {
-		case 0 : return 0xFE;
-		case 1 : return 0xFD;
-		case 2 : return 0xFB;
-		case 3 : return 0xF7;
-		case 4 : return 0xEF;
-		case 5 : return 0xDF;
-		case 6 : return 0xBF;
-		case 7 : return 0x7F;
+	case 0 : return 0xFE;
+	case 1 : return 0xFD;
+	case 2 : return 0xFB;
+	case 3 : return 0xF7;
+	case 4 : return 0xEF;
+	case 5 : return 0xDF;
+	case 6 : return 0xBF;
+	case 7 : return 0x7F;
 	}
 	utility_exit_with_message( "ERROR: Bad input to Bool3DGrid negmask from offsets" );
 	return 0x0;
@@ -1175,7 +1175,7 @@ bump_grid_to_enclose_pose( core::pose::Pose const & pose )
 			if ( pose.residue( ii ).natoms() > 0 ) {
 				first_xyz = pose.residue( ii ).xyz( 1 );
 				at1rad = probe_radius_for_atom_type( pose.residue( ii ).atom( 1 ).type() );
- 				found_an_atom = true;
+				found_an_atom = true;
 				break;
 			}
 		}
@@ -1468,38 +1468,38 @@ void Bool3DGridKinemageWriter::write_grid_to_kinemage(
 
 					Bool3DGrid::CornerPoints c = grid.corners( bin );
 					for ( Size ll = 1; ll <= 8; ++ll ) c[ ll ] += corner_offsets[ ll ];
-						ostr << "@ribbonlist {} color= " << facet_color_ << " master= {" << facet_master_ << "} ";
-						if ( transparent_facets_ ) ostr << " alpha= " << facet_alpha_ << " ";
-						ostr << "\n";
+					ostr << "@ribbonlist {} color= " << facet_color_ << " master= {" << facet_master_ << "} ";
+					if ( transparent_facets_ ) ostr << " alpha= " << facet_alpha_ << " ";
+					ostr << "\n";
 
-						ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[H].x() << " " << c[H].y() << " " << c[H].z() << "\n";
-						ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[D].x() << " " << c[D].y() << " " << c[D].z() << "\n";
-						ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[E].x() << " " << c[E].y() << " " << c[E].z() << "\n";
-						ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[A].x() << " " << c[A].y() << " " << c[A].z() << "\n";
-						ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[F].x() << " " << c[F].y() << " " << c[F].z() << "\n";
-						ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[B].x() << " " << c[B].y() << " " << c[B].z() << "\n";
-						ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[G].x() << " " << c[G].y() << " " << c[G].z() << "\n";
-						ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[C].x() << " " << c[C].y() << " " << c[C].z() << "\n";
-						ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[H].x() << " " << c[H].y() << " " << c[H].z() << "\n";
-						ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[D].x() << " " << c[D].y() << " " << c[D].z() << "\n";
+					ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[H].x() << " " << c[H].y() << " " << c[H].z() << "\n";
+					ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[D].x() << " " << c[D].y() << " " << c[D].z() << "\n";
+					ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[E].x() << " " << c[E].y() << " " << c[E].z() << "\n";
+					ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[A].x() << " " << c[A].y() << " " << c[A].z() << "\n";
+					ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[F].x() << " " << c[F].y() << " " << c[F].z() << "\n";
+					ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[B].x() << " " << c[B].y() << " " << c[B].z() << "\n";
+					ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[G].x() << " " << c[G].y() << " " << c[G].z() << "\n";
+					ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[C].x() << " " << c[C].y() << " " << c[C].z() << "\n";
+					ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[H].x() << " " << c[H].y() << " " << c[H].z() << "\n";
+					ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[D].x() << " " << c[D].y() << " " << c[D].z() << "\n";
 
-						ostr << "@ribonlist {} color= " << facet_color_ << " master= {" << facet_master_ << "} ";
-						if ( transparent_facets_ ) ostr << " alpha= " << facet_alpha_ << " ";
-						ostr << "\n";
+					ostr << "@ribonlist {} color= " << facet_color_ << " master= {" << facet_master_ << "} ";
+					if ( transparent_facets_ ) ostr << " alpha= " << facet_alpha_ << " ";
+					ostr << "\n";
 
-						ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[E].x() << " " << c[E].y() << " " << c[E].z() << "\n";
-						ostr << "{\"} " << ( unselectable_ ? " U ": " " ) << c[H].x() << " " << c[H].y() << " " << c[H].z() << "\n";
-						ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[F].x() << " " << c[F].y() << " " << c[F].z() << "\n";
-						ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[G].x() << " " << c[G].y() << " " << c[G].z() << "\n";
+					ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[E].x() << " " << c[E].y() << " " << c[E].z() << "\n";
+					ostr << "{\"} " << ( unselectable_ ? " U ": " " ) << c[H].x() << " " << c[H].y() << " " << c[H].z() << "\n";
+					ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[F].x() << " " << c[F].y() << " " << c[F].z() << "\n";
+					ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[G].x() << " " << c[G].y() << " " << c[G].z() << "\n";
 
-						ostr << "@ribonlist {} color= " << facet_color_ << " master= {" << facet_master_ << "} ";
-						if ( transparent_facets_ ) ostr << " alpha= " << facet_alpha_ << " ";
-						ostr << "\n";
+					ostr << "@ribonlist {} color= " << facet_color_ << " master= {" << facet_master_ << "} ";
+					if ( transparent_facets_ ) ostr << " alpha= " << facet_alpha_ << " ";
+					ostr << "\n";
 
-						ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[A].x() << " " << c[A].y() << " " << c[A].z() << "\n";
-						ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[B].x() << " " << c[B].y() << " " << c[B].z() << "\n";
-						ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[D].x() << " " << c[D].y() << " " << c[D].z() << "\n";
-						ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[C].x() << " " << c[C].y() << " " << c[C].z() << "\n";
+					ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[A].x() << " " << c[A].y() << " " << c[A].z() << "\n";
+					ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[B].x() << " " << c[B].y() << " " << c[B].z() << "\n";
+					ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[D].x() << " " << c[D].y() << " " << c[D].z() << "\n";
+					ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[C].x() << " " << c[C].y() << " " << c[C].z() << "\n";
 
 				}
 			}
@@ -1521,20 +1521,20 @@ void Bool3DGridKinemageWriter::write_grid_to_file(
 
 /*
 private:
-	bool unselectable_;
-	std::string line_color_
-	std::string master_;
-	Real shrink_factor_;
+bool unselectable_;
+std::string line_color_
+std::string master_;
+Real shrink_factor_;
 
 
-	bool write_empty_voxels_;
-	std::string empty_voxel_color_;
+bool write_empty_voxels_;
+std::string empty_voxel_color_;
 
-	bool write_facets_;
-	std::string facet_master_;
-	std::string facet_color_;
-	bool transparent_facets_;
-	Real facet_alpha_;
+bool write_facets_;
+std::string facet_master_;
+std::string facet_color_;
+bool transparent_facets_;
+Real facet_alpha_;
 */
 
 

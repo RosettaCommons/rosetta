@@ -90,7 +90,7 @@ public:
 		//std::cout << "sb=" << sb.str() << std::endl;
 		basic::Tracer::super_mute(false);  // unmute all channels
 
-		if( sb.str() != "" ) {
+		if ( sb.str() != "" ) {
 			std::cout << "Pose code contain cout statements: " << sb.str() << std::endl;
 			TS_FAIL("");
 		}

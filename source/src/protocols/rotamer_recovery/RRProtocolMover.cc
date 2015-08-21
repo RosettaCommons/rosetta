@@ -80,24 +80,24 @@ RRProtocolMover::get_parameters() const {
 /// @details apply Mover and measure rotamer recovery for each residue
 void
 RRProtocolMover::run(
-  RRComparerOP comparer,
-  RRReporterOP reporter,
-  Pose const & pose,
+	RRComparerOP comparer,
+	RRReporterOP reporter,
+	Pose const & pose,
 	ScoreFunction const &,
-  PackerTask const & packer_task
+	PackerTask const & packer_task
 ) {
 	// Assume score_function.setup_for_scoring(pose) has already been called.
 
 	Pose working_pose = pose; // deep copy
 
-	if(!mover_){
+	if ( !mover_ ) {
 		utility_exit_with_message("Attempting to run RotamerRecovery with the 'RRProtocolMover' protocol, but no mover was specified.");
 	}
 
 	mover_->apply(working_pose);
 
-	for(Size ii = 1; ii <= pose.total_residue(); ++ii){
-		if (!packer_task.pack_residue(ii)) continue;
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		if ( !packer_task.pack_residue(ii) ) continue;
 		measure_rotamer_recovery(
 			comparer, reporter,
 			pose, working_pose,

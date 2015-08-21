@@ -42,14 +42,14 @@ bb_independent_rotamers(
 	core::conformation::Residue firstres( *rot_restype, true );
 	core::pose::Pose dummy_pose;
 	dummy_pose.append_residue_by_jump( firstres, (core::Size) 0 );
-	if( rot_restype->is_polymer() ){
+	if ( rot_restype->is_polymer() ) {
 		core::pose::add_lower_terminus_type_to_pose_residue( dummy_pose, 1 ); //prolly critical so that the dunbrack library uses neutral phi
 		core::pose::add_upper_terminus_type_to_pose_residue( dummy_pose, 1 ); //prolly critical so that the dunbrack library uses neutral psi
 	}
 	core::scoring::ScoreFunction dummy_sfxn;
 	dummy_sfxn( dummy_pose );
 	core::pack::task::PackerTaskOP dummy_task = core::pack::task::TaskFactory::create_packer_task( dummy_pose );
-	if( !ignore_cmdline ) dummy_task->initialize_from_command_line();
+	if ( !ignore_cmdline ) dummy_task->initialize_from_command_line();
 	dummy_task->nonconst_residue_task( 1 ).restrict_to_repacking();
 	dummy_task->nonconst_residue_task( 1 ).or_include_current( false ); //need to do this because the residue was built from internal coords and is probably crumpled up
 	dummy_task->nonconst_residue_task( 1 ).or_fix_his_tautomer( true ); //since we only want rotamers for the specified restype
@@ -63,9 +63,9 @@ bb_independent_rotamers(
 	utility::vector1< core::conformation::ResidueCOP > to_return;
 
 	//now when creating the rotamers, we have to make sure we don't sneak in the additional variant types
-	for( core::Size i = 1; i <= rotset->num_rotamers(); ++i ){
+	for ( core::Size i = 1; i <= rotset->num_rotamers(); ++i ) {
 		core::conformation::ResidueOP rot( firstres.clone() );
-		for( core::Size j =1; j <= firstres.nchi(); ++j ) rot->set_chi( j, rotset->rotamer( i )->chi( j ) );
+		for ( core::Size j =1; j <= firstres.nchi(); ++j ) rot->set_chi( j, rotset->rotamer( i )->chi( j ) );
 		to_return.push_back( rot );
 	}
 

@@ -24,35 +24,35 @@ static thread_local basic::Tracer TR( "protocols.moves.MoverForPoseList" );
 namespace protocols {
 namespace moves {
 
-	//Constructor
-	MoverForPoseList::MoverForPoseList():
-		Mover()
-	{}
+//Constructor
+MoverForPoseList::MoverForPoseList():
+	Mover()
+{}
 
-	//Destructor
-	MoverForPoseList::~MoverForPoseList()
-	{}
+//Destructor
+MoverForPoseList::~MoverForPoseList()
+{}
 
-	// Yup, that's all this is for.
-	void
-	MoverForPoseList::apply( utility::vector1< core::pose::PoseOP > & pose_list ){
-		for ( core::Size n = 1; n <= pose_list.size(); n++ ) {
-			apply( *( pose_list[n] ) );
-		}
+// Yup, that's all this is for.
+void
+MoverForPoseList::apply( utility::vector1< core::pose::PoseOP > & pose_list ){
+	for ( core::Size n = 1; n <= pose_list.size(); n++ ) {
+		apply( *( pose_list[n] ) );
 	}
+}
 
-	// Could save time and memory by not copying into viewer_pose (see above)
-	void
-	MoverForPoseList::apply( utility::vector1< core::pose::PoseOP > & pose_list,
-													 core::pose::Pose & viewer_pose ){
-		utility::vector1< core::pose::PoseOP > output_pose_list;
-		for ( core::Size n = 1; n <= pose_list.size(); n++ ){
-			viewer_pose = ( *pose_list[n] ); //set viewer_pose;
-			apply( viewer_pose );
-			output_pose_list.push_back( viewer_pose.clone() );
-		}
-		pose_list = output_pose_list;
+// Could save time and memory by not copying into viewer_pose (see above)
+void
+MoverForPoseList::apply( utility::vector1< core::pose::PoseOP > & pose_list,
+	core::pose::Pose & viewer_pose ){
+	utility::vector1< core::pose::PoseOP > output_pose_list;
+	for ( core::Size n = 1; n <= pose_list.size(); n++ ) {
+		viewer_pose = ( *pose_list[n] ); //set viewer_pose;
+		apply( viewer_pose );
+		output_pose_list.push_back( viewer_pose.clone() );
 	}
+	pose_list = output_pose_list;
+}
 
 
 } //moves

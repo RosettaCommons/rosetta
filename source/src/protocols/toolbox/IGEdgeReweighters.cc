@@ -22,26 +22,24 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace toolbox{
+namespace protocols {
+namespace toolbox {
 
 using namespace core;
 
 core::Real
 IGLigandDesignEdgeUpweighter::get_edge_reweight(
-  pose::Pose const & pose,
-  pack::task::PackerTask const & task,
-  Size res1,
-  Size res2
+	pose::Pose const & pose,
+	pack::task::PackerTask const & task,
+	Size res1,
+	Size res2
 ) const
 {
 
-  if( ( pose.residue( res1 ).is_ligand() && task.design_residue( res2 ) )
-    ||( pose.residue( res2 ).is_ligand() && task.design_residue( res1 ) ) ){
-    return weight_factor_;
-  }
-
-  else return default_weight_;
+	if ( ( pose.residue( res1 ).is_ligand() && task.design_residue( res2 ) )
+			||( pose.residue( res2 ).is_ligand() && task.design_residue( res1 ) ) ) {
+		return weight_factor_;
+	} else return default_weight_;
 
 }
 
@@ -49,18 +47,18 @@ IGLigandDesignEdgeUpweighter::get_edge_reweight(
 template <class T>
 core::Real
 ResidueGroupIGEdgeUpweighter::get_edge_reweight(
-  pose::Pose const & pose,
-  pack::task::PackerTask const & task,
-  Size res1,
-  Size res2
+pose::Pose const & pose,
+pack::task::PackerTask const & task,
+Size res1,
+Size res2
 ) const
 {
 
-	if( (group1_.find(res1) != group1_.end()) && (group2_.find(res2) != group2_.end() )
-		||(group2_.find(res1) != group2_.end()) && (group1_.find(res2) != group1_.end() ) ){
-		return weight_factor_;
-	}
-	else return default_weight_;
+if( (group1_.find(res1) != group1_.end()) && (group2_.find(res2) != group2_.end() )
+||(group2_.find(res1) != group2_.end()) && (group1_.find(res2) != group1_.end() ) ){
+return weight_factor_;
+}
+else return default_weight_;
 
 }
 */

@@ -9,7 +9,7 @@
 
 /// @file   protocols/elscripts/BaseRole.cc
 /// @brief  BaseRole, which handles a lot of common functions between all the elscripts roles
-/// 				including a lot of lua stuff
+///     including a lot of lua stuff
 /// @author Ken Jung
 
 

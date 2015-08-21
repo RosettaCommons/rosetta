@@ -124,7 +124,7 @@ public:
 	bool
 	replaces( ResidueType const & rsd ) const
 	{
-		return 	applies_to( rsd ) && replaces_residue_type_;
+		return  applies_to( rsd ) && replaces_residue_type_;
 	}
 
 	/// @brief returns patched residue, 0 if patch failed

@@ -48,7 +48,7 @@ public:
 	// @brief constructor with arguments
 	// mover_status when filter failed
 	FilterMover( MoverOP const & my_mover, FilterOP const & my_filter, Size const max_tries,
-							 MoverStatus const mover_status = FAIL_DO_NOT_RETRY );
+		MoverStatus const mover_status = FAIL_DO_NOT_RETRY );
 
 	~FilterMover();
 

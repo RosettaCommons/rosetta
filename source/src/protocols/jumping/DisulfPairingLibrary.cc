@@ -240,14 +240,14 @@ RT dis_RT_from_epos( FArray2A_float Epos1, FArray2A_float Epos2)
 	rotation = m1.transposed() * m2;
 	/************************Phil's legacy code *********************/
 	// rotation(j,*) is the j-th unit vector of 2nd coord sys written in 1st coord-sys
-	// 	for ( int i=1; i<=3; ++i ) {
-	// 			for ( int j=1; j<=3; ++j ) {
-	// 				// DANGER: not sure about the order... ////////////////////////
-	// 				// should sync with make_jump
-	//  				rotation(j,i) = Ddotprod( m1(1,i), m2(1,j) ); // 2nd guess
-	//  				//rotation(j,i) = Ddotprod( m1(1,j), m2(1,i) ); // 1st guess
-	// 			}
-	// 		}
+	//  for ( int i=1; i<=3; ++i ) {
+	//    for ( int j=1; j<=3; ++j ) {
+	//     // DANGER: not sure about the order... ////////////////////////
+	//     // should sync with make_jump
+	//      rotation(j,i) = Ddotprod( m1(1,i), m2(1,j) ); // 2nd guess
+	//      //rotation(j,i) = Ddotprod( m1(1,j), m2(1,i) ); // 1st guess
+	//    }
+	//   }
 	/************************Phil's legacy code ********************/
 	RT rt;
 	rt.set_translation( translation );
@@ -294,7 +294,7 @@ DisulfPairingLibrary::read_from_file( std::string const& fn)
 	std::string tag,filename;
 	int pos1,pos2,seq_sep;
 	char ss1, ss2;
-  //float o,p1,p2,mn_dist,mx_dist,
+	//float o,p1,p2,mn_dist,mx_dist,
 	//phi1,psi1,omega1,phi2,psi2,omega2;
 	Size const MAX_POS( 5 ); // param::MAX_POS
 	FArray2D_float Epos1(3,MAX_POS), Epos2(3,MAX_POS);
@@ -341,7 +341,7 @@ void DisulfPairingLibrary::create_jump_fragments(
 ) const {
 	using namespace core::fragment;
 
-	//	read_jump_templates(); // self-initializing
+	// read_jump_templates(); // self-initializing
 	runtime_assert( all_pairings_.size() > 0 );
 
 	const DisulfTemplateList & templates
@@ -351,8 +351,8 @@ void DisulfPairingLibrary::create_jump_fragments(
 	const int iStart( 1 ); // in templates start residue is number 1
 	const int iStop ( 2 ); // in templates stop residue is number 2
 	frags.reserve( ntemplates );
-	for ( DisulfTemplateList::const_iterator it=templates.begin(),	eit=templates.end();
-				it!=eit; ++it ) {
+	for ( DisulfTemplateList::const_iterator it=templates.begin(), eit=templates.end();
+			it!=eit; ++it ) {
 		frags.push_back( core::fragment::FragDataOP( new FragData ) );
 		if ( bWithTorsion ) {
 			BBTorsionSRFDOP start( new BBTorsionSRFD( 3, 'E', 'X' ) );
@@ -390,7 +390,7 @@ DisulfPairingLibrary::generate_jump_frags(
 	fragment::FragDataOPs frag_data;
 	create_jump_fragments( bWithTorsion, frag_data );
 
-	for ( Size jump_nr = 1; jump_nr <= pairings.size(); ++jump_nr) {
+	for ( Size jump_nr = 1; jump_nr <= pairings.size(); ++jump_nr ) {
 
 		//int const jump_nr ( jump_nr );
 		int const startpos( pairings[ jump_nr ].pos1 );
@@ -404,8 +404,8 @@ DisulfPairingLibrary::generate_jump_frags(
 			frags_accumulator.add( frame );
 		} else {
 			utility_exit_with_message("need to implement this: make ss-library fragments that only contain those torsions for residues "
-						"that can move according to movemap -- call this function with "
-						"bWithTorsions = false ... and it works for now");
+				"that can move according to movemap -- call this function with "
+				"bWithTorsions = false ... and it works for now");
 		}
 	}
 } // method

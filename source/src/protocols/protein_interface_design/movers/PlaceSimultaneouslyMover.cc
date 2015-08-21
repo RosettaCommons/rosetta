@@ -134,7 +134,7 @@ PlaceSimultaneouslyMover::minimize_no_bb( core::pose::Pose & pose ) const {
 	core::scoring::ScoreFunctionCOP stub_scorefxn( make_stub_scorefxn() );
 	simple_filters::ScoreTypeFilter const stf( stub_scorefxn, backbone_stub_constraint, 1.0 );
 	core::Real const before_min( stf.compute( pose ) );
-	if( before_min >= -0.0001 ){
+	if ( before_min >= -0.0001 ) {
 		TR<<"bb_cst evalutes to 0. Failing";
 		return false;
 	}
@@ -162,8 +162,8 @@ PlaceSimultaneouslyMover::minimize_all( core::pose::Pose & pose, core::Size cons
 
 	core::scoring::ScoreFunctionCOP stub_scorefxn( make_stub_scorefxn() );
 
-	for( core::Size repeat( 1 ); repeat<=minimization_steps; ++repeat ){
-		BOOST_FOREACH( MoverRealPair const curr, minimization_movers_ ){
+	for ( core::Size repeat( 1 ); repeat<=minimization_steps; ++repeat ) {
+		BOOST_FOREACH ( MoverRealPair const curr, minimization_movers_ ) {
 			using namespace core::scoring;
 
 			simple_moves::DesignRepackMoverOP const curr_mover( curr.first );
@@ -177,18 +177,20 @@ PlaceSimultaneouslyMover::minimize_all( core::pose::Pose & pose, core::Size cons
 			TR<<"using weight: "<<bb_cst_weight<<" for the stub bb constraints" << std::endl;
 			TR<<"and 1.0 for coordinate constraints"<<std::endl;
 			ScoreFunctionOP minimize_mover_scorefxn_repack( curr_mover->scorefxn_repack() );
-			if( minimize_mover_scorefxn_repack )
+			if ( minimize_mover_scorefxn_repack ) {
 				minimize_mover_scorefxn_repack->set_weight( backbone_stub_constraint, bb_cst_weight );
+			}
 			ScoreFunctionOP minimize_mover_scorefxn_minimize( curr_mover->scorefxn_minimize() );
-			if( minimize_mover_scorefxn_minimize )
+			if ( minimize_mover_scorefxn_minimize ) {
 				minimize_mover_scorefxn_minimize->set_weight( backbone_stub_constraint, bb_cst_weight );
+			}
 			curr_mover->apply( pose );
 			utility::vector1< bool > sc_min( pose.total_residue(), false );
 			utility::vector1< bool > const no_min( pose.total_residue(), false );
 			utility::vector1< core::Size > targets;
-			BOOST_FOREACH( StubSetStubPos const stubset_pos_pair, stub_sets_ ){
+			BOOST_FOREACH ( StubSetStubPos const stubset_pos_pair, stub_sets_ ) {
 				core::Size const pos( stubset_pos_pair.second.second );
-				if( pos!=0 ){
+				if ( pos!=0 ) {
 					targets.push_back( pos );
 					sc_min[ pos ] = true;
 				}
@@ -202,7 +204,7 @@ PlaceSimultaneouslyMover::minimize_all( core::pose::Pose & pose, core::Size cons
 			utility::vector1< bool > min_host( pose.total_residue(), false );
 			core::Size const host_chain_begin( pose.conformation().chain_begin( host_chain_ ) );
 			core::Size const host_chain_end  ( pose.conformation().chain_end( host_chain_ ) );
-			for( core::Size i( host_chain_begin ); i<=host_chain_end; ++i ) min_host[ i ] = true;
+			for ( core::Size i( host_chain_begin ); i<=host_chain_end; ++i ) min_host[ i ] = true;
 			utility::vector1< bool > const no_min_rb( pose.num_jump(), false );
 			MinimizeInterface( pose, scorefxn_mod, min_host/*bb*/, sc_min, no_min_rb/*rb*/, optimize_foldtree(), targets, true/*simultaneous optimization*/ );
 			TR<<"Doing rb minimization towards the stub and sc minimization of placed stubs" <<std::endl;
@@ -227,18 +229,19 @@ PlaceSimultaneouslyMover::create_task_for_hotspot_packing( core::pose::Pose cons
 	using namespace core::pack::task;
 
 	residue_level_tasks_for_placed_hotspots_->clear();
-	if( task_factory() )
+	if ( task_factory() ) {
 		*residue_level_tasks_for_placed_hotspots_ = *(task_factory()); // this will allow PlaceStub's TaskAware paragraph to affect what is happening here, including trickling down to design movers
-	BOOST_FOREACH( StubSetStubPos const stubset_pos, stub_sets_ ){
+	}
+	BOOST_FOREACH ( StubSetStubPos const stubset_pos, stub_sets_ ) {
 		core::Size const pos( stubset_pos.second.second );
 		runtime_assert( pos );
 		HotspotStubSetCOP hs_set = stubset_pos.first;
 		using namespace core::pack::task::operation;
 		RotamerExplosionOP re_op( new RotamerExplosion( pos, EX_THREE_THIRD_STEP_STDDEVS, explosion_ ) );
 		utility::vector1< bool > allowed_aas( chemical::num_canonical_aas, false );
-		BOOST_FOREACH( ResidueAuctionItem const item, auction_->auction_results() ){
+		BOOST_FOREACH ( ResidueAuctionItem const item, auction_->auction_results() ) {
 			HotspotStubSetCOP hs_set_curr( item.second.second.first );
-			if( hs_set_curr != hs_set ) continue;
+			if ( hs_set_curr != hs_set ) continue;
 			HotspotStubCOP hs_stub_curr( item.second.second.second );
 			chemical::ResidueType const type( hs_stub_curr->residue()->type() );
 			allowed_aas[ hs_stub_curr->residue()->type().aa() ] = true;
@@ -257,58 +260,59 @@ PlaceSimultaneouslyMover::create_task_for_hotspot_packing( core::pose::Pose cons
 core::pack::task::PackerTaskOP
 PlaceSimultaneouslyMover::create_task_for_allhotspot_packing( core::pose::Pose const & pose )
 {
-  using namespace protocols::hotspot_hashing;
-  using namespace core::pack::task;
+	using namespace protocols::hotspot_hashing;
+	using namespace core::pack::task;
 
-  residue_level_tasks_for_placed_hotspots_->clear();
-  if( task_factory() )
-    *residue_level_tasks_for_placed_hotspots_ = *(task_factory()); // this will allow PlaceStub's TaskAware paragraph to affect what is happening here, including trickling down to design movers
-  BOOST_FOREACH( StubSetStubPos const stubset_pos, stub_sets_ ){
-    core::Size const pos( stubset_pos.second.second );
-    runtime_assert( pos );
-    HotspotStubSetCOP hs_set = stubset_pos.first;
-    using namespace core::pack::task::operation;
-    RotamerExplosionOP re_op( new RotamerExplosion( pos, EX_THREE_THIRD_STEP_STDDEVS, explosion_ ) );
-    utility::vector1< bool > allowed_aas( chemical::num_canonical_aas, false );
-    BOOST_FOREACH( ResidueAuctionItem const item, auction_->auction_results() ){
-      HotspotStubSetCOP hs_set_curr( item.second.second.first );
-      if( pos==item.second.first ) {
-      HotspotStubCOP hs_stub_curr( item.second.second.second );
-      chemical::ResidueType const type( hs_stub_curr->residue()->type() );
-      allowed_aas[ hs_stub_curr->residue()->type().aa() ] = true;
-      TR << "RestrictAbsentCanonicalAAS: " << pos << " " << hs_stub_curr->residue()->type().aa() << " " << item.first <<  std::endl;
+	residue_level_tasks_for_placed_hotspots_->clear();
+	if ( task_factory() ) {
+		*residue_level_tasks_for_placed_hotspots_ = *(task_factory()); // this will allow PlaceStub's TaskAware paragraph to affect what is happening here, including trickling down to design movers
+	}
+	BOOST_FOREACH ( StubSetStubPos const stubset_pos, stub_sets_ ) {
+		core::Size const pos( stubset_pos.second.second );
+		runtime_assert( pos );
+		HotspotStubSetCOP hs_set = stubset_pos.first;
+		using namespace core::pack::task::operation;
+		RotamerExplosionOP re_op( new RotamerExplosion( pos, EX_THREE_THIRD_STEP_STDDEVS, explosion_ ) );
+		utility::vector1< bool > allowed_aas( chemical::num_canonical_aas, false );
+		BOOST_FOREACH ( ResidueAuctionItem const item, auction_->auction_results() ) {
+			HotspotStubSetCOP hs_set_curr( item.second.second.first );
+			if ( pos==item.second.first ) {
+				HotspotStubCOP hs_stub_curr( item.second.second.second );
+				chemical::ResidueType const type( hs_stub_curr->residue()->type() );
+				allowed_aas[ hs_stub_curr->residue()->type().aa() ] = true;
+				TR << "RestrictAbsentCanonicalAAS: " << pos << " " << hs_stub_curr->residue()->type().aa() << " " << item.first <<  std::endl;
 			}
-    }//foreach item in auction_->auction_results()
-    RestrictAbsentCanonicalAASOP rac_op( new RestrictAbsentCanonicalAAS( pos, allowed_aas ) );
+		}//foreach item in auction_->auction_results()
+		RestrictAbsentCanonicalAASOP rac_op( new RestrictAbsentCanonicalAAS( pos, allowed_aas ) );
 
-    residue_level_tasks_for_placed_hotspots_->push_back( rac_op );
-    residue_level_tasks_for_placed_hotspots_->push_back( re_op );
-  }//foreach stubset_pos
-  PackerTaskOP task = residue_level_tasks_for_placed_hotspots_->create_task_and_apply_taskoperations( pose );
-  return( task );
+		residue_level_tasks_for_placed_hotspots_->push_back( rac_op );
+		residue_level_tasks_for_placed_hotspots_->push_back( re_op );
+	}//foreach stubset_pos
+	PackerTaskOP task = residue_level_tasks_for_placed_hotspots_->create_task_and_apply_taskoperations( pose );
+	return( task );
 }
 
 /// @add coordinate constraints to pose
 void PlaceSimultaneouslyMover::add_coordinatecst_for_hotspot_packing( core::pose::Pose & pose ) {
-  using namespace protocols::hotspot_hashing;
-  BOOST_FOREACH( StubSetStubPos const stubset_pos, stub_sets_ ){
-    core::Size const pos( stubset_pos.second.second );
-    runtime_assert( pos );
-    HotspotStubSetCOP hs_set = stubset_pos.first;
+	using namespace protocols::hotspot_hashing;
+	BOOST_FOREACH ( StubSetStubPos const stubset_pos, stub_sets_ ) {
+		core::Size const pos( stubset_pos.second.second );
+		runtime_assert( pos );
+		HotspotStubSetCOP hs_set = stubset_pos.first;
 
-    BOOST_FOREACH( ResidueAuctionItem const item, auction_->auction_results() ){
-      HotspotStubSetCOP hs_set_curr( item.second.second.first );
-      HotspotStubCOP hs_stub_curr( item.second.second.second );
-      chemical::ResidueType const type( hs_stub_curr->residue()->type() );
-      if( pos==item.second.first ) {
-        //loop through sidechain heavy atom of pos and the coordinates of hs_stub_curr->residue()->xyz(heavy_sidechain)
-        //create coordinate constraints
-        core::scoring::func::HarmonicFuncOP dummy_cst;
-        add_coordinate_constraints( pose, *hs_stub_curr->residue(), host_chain_, pos, 0.5, dummy_cst );
-        TR<<"applied coordinate constraints at position " << pos << std::endl;
-    }
-  }//foreach stubset_pos
- }
+		BOOST_FOREACH ( ResidueAuctionItem const item, auction_->auction_results() ) {
+			HotspotStubSetCOP hs_set_curr( item.second.second.first );
+			HotspotStubCOP hs_stub_curr( item.second.second.second );
+			chemical::ResidueType const type( hs_stub_curr->residue()->type() );
+			if ( pos==item.second.first ) {
+				//loop through sidechain heavy atom of pos and the coordinates of hs_stub_curr->residue()->xyz(heavy_sidechain)
+				//create coordinate constraints
+				core::scoring::func::HarmonicFuncOP dummy_cst;
+				add_coordinate_constraints( pose, *hs_stub_curr->residue(), host_chain_, pos, 0.5, dummy_cst );
+				TR<<"applied coordinate constraints at position " << pos << std::endl;
+			}
+		}//foreach stubset_pos
+	}
 }
 
 /// @details positions on the scaffold are auctioned to hotspot stub sets. The stubset that has a stub with the
@@ -329,7 +333,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 	auction_->stub_sets( stub_sets_ );
 	auction_->apply( pose );
 	protocols::moves::MoverStatus const auction_stat( auction_->get_last_move_status() );
-	if( auction_stat != protocols::moves::MS_SUCCESS ){
+	if ( auction_stat != protocols::moves::MS_SUCCESS ) {
 		TR<<"Auction failed => PlaceSimultaneously failing." << std::endl;
 		return( false );
 	}
@@ -337,9 +341,9 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 	utility::vector1< bool > sc_min( pose.total_residue(), false );
 	utility::vector1< bool > const no_min( pose.total_residue(), false );
 	utility::vector1< core::Size > targets;
-	BOOST_FOREACH( StubSetStubPos const stubset_pos_pair, auction_->stub_sets() ){
+	BOOST_FOREACH ( StubSetStubPos const stubset_pos_pair, auction_->stub_sets() ) {
 		core::Size const pos( stubset_pos_pair.second.second );
-    TR << "pos: " << pos << std::endl;
+		TR << "pos: " << pos << std::endl;
 		targets.push_back( pos );
 		sc_min[ pos ] = true;
 	}//foreach stubset_pos_pair
@@ -354,180 +358,183 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 	//end add to prevent repacking
 	ScoreFunctionCOP scorefxn = get_score_function();
 
- if ( auction_->get_stub_scorefxn() == "backbone_stub_constraint" ) {
-	using namespace core::pack;
-	using namespace core::pack::task;
-	PackerTaskOP task = create_task_for_hotspot_packing( pose );
-//  task->/*initialize_from_command_line().*/or_include_current( true ); // we don't want rotamer explosion with ex1 ex2
-	for( core::Size i=1; i<=pose.total_residue(); ++i ){
-		if( !pose.residue(i).is_protein() ) continue;
-		if( std::find( targets.begin(), targets.end(), i ) == targets.end() )
-			task->nonconst_residue_task(i).prevent_repacking();
-	}//for residue i in pose
-	using namespace core::scoring;
-	pack_rotamers( pose, *scorefxn, task );
-	using namespace core::scoring;
-	ScoreFunctionCOP stub_scorefxn( make_stub_scorefxn() );
-	MinimizeInterface( pose, stub_scorefxn, no_min/*bb*/, sc_min, min_rb()/*rb*/, optimize_foldtree()/*optimize foldtree*/, targets, true/*simultaneous optimization*/ );
-   } else if ( auction_->get_stub_scorefxn() == "backbone_stub_linear_constraint") {
-        using namespace core::pack;
-        using namespace core::pack::task;
-        using core::pack::task::operation::TaskOperationCOP;
-        protocols::scoring::Interface interface_obj(pose.num_jump());
-        pose.update_residue_neighbors(); // o/w fails assertion `graph_state_ == GOOD`
-        interface_obj.distance( 8 );
-        interface_obj.calculate( pose );
+	if ( auction_->get_stub_scorefxn() == "backbone_stub_constraint" ) {
+		using namespace core::pack;
+		using namespace core::pack::task;
+		PackerTaskOP task = create_task_for_hotspot_packing( pose );
+		//  task->/*initialize_from_command_line().*/or_include_current( true ); // we don't want rotamer explosion with ex1 ex2
+		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+			if ( !pose.residue(i).is_protein() ) continue;
+			if ( std::find( targets.begin(), targets.end(), i ) == targets.end() ) {
+				task->nonconst_residue_task(i).prevent_repacking();
+			}
+		}//for residue i in pose
+		using namespace core::scoring;
+		pack_rotamers( pose, *scorefxn, task );
+		using namespace core::scoring;
+		ScoreFunctionCOP stub_scorefxn( make_stub_scorefxn() );
+		MinimizeInterface( pose, stub_scorefxn, no_min/*bb*/, sc_min, min_rb()/*rb*/, optimize_foldtree()/*optimize foldtree*/, targets, true/*simultaneous optimization*/ );
+	} else if ( auction_->get_stub_scorefxn() == "backbone_stub_linear_constraint" ) {
+		using namespace core::pack;
+		using namespace core::pack::task;
+		using core::pack::task::operation::TaskOperationCOP;
+		protocols::scoring::Interface interface_obj(pose.num_jump());
+		pose.update_residue_neighbors(); // o/w fails assertion `graph_state_ == GOOD`
+		interface_obj.distance( 8 );
+		interface_obj.calculate( pose );
 
-        std::multimap< core::Real, std::pair< core::Size, StubsetStubPair > > saved_auction = auction_->auction_results();
-        std::multimap< core::Real, std::pair< core::Size, StubsetStubPair > > new_auction;
+		std::multimap< core::Real, std::pair< core::Size, StubsetStubPair > > saved_auction = auction_->auction_results();
+		std::multimap< core::Real, std::pair< core::Size, StubsetStubPair > > new_auction;
 
-       utility::vector1< Size > scanned_position;
-       core::pose::Pose saved_pose=pose;
+		utility::vector1< Size > scanned_position;
+		core::pose::Pose saved_pose=pose;
 
- 			 for( PlacementAuctionMover::ResidueAuction::iterator each_auction_result = saved_auction.begin(); each_auction_result != saved_auction.end(); ++each_auction_result) {
-         //old copy of pose and cleared auction
-           auction_->clear();
-           saved_pose=pose;
-           auction_->insert(*each_auction_result);
-           PackerTaskOP task = create_task_for_allhotspot_packing( saved_pose );
-           //TR << "test loop through saved_auction: " << auction_->auction_results().size() << " , " << new_auction.size() << std::endl;
+		for ( PlacementAuctionMover::ResidueAuction::iterator each_auction_result = saved_auction.begin(); each_auction_result != saved_auction.end(); ++each_auction_result ) {
+			//old copy of pose and cleared auction
+			auction_->clear();
+			saved_pose=pose;
+			auction_->insert(*each_auction_result);
+			PackerTaskOP task = create_task_for_allhotspot_packing( saved_pose );
+			//TR << "test loop through saved_auction: " << auction_->auction_results().size() << " , " << new_auction.size() << std::endl;
 
-           //Size residue= each_auction_result->second.first;  // unused ~Labonte
-           residue_level_tasks_for_placed_hotspots_->clear();
-           core::pack::task::TaskFactoryOP pack_around_placed_hotspots_ = residue_level_tasks_for_placed_hotspots_->clone();
-           pack_around_placed_hotspots_->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
-           core::pack::task::operation::PreventRepackingOP prop( new core::pack::task::operation::PreventRepacking );
+			//Size residue= each_auction_result->second.first;  // unused ~Labonte
+			residue_level_tasks_for_placed_hotspots_->clear();
+			core::pack::task::TaskFactoryOP pack_around_placed_hotspots_ = residue_level_tasks_for_placed_hotspots_->clone();
+			pack_around_placed_hotspots_->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+			core::pack::task::operation::PreventRepackingOP prop( new core::pack::task::operation::PreventRepacking );
 
-           for( core::Size i=1; i<=saved_pose.total_residue(); ++i ){
-             if( !saved_pose.residue(i).is_protein() ) continue;
-             if( std::find( targets.begin(), targets.end(), i ) == targets.end() ) {
-                     //prevents everything else from repacking
-                   task->nonconst_residue_task(i).prevent_repacking();
+			for ( core::Size i=1; i<=saved_pose.total_residue(); ++i ) {
+				if ( !saved_pose.residue(i).is_protein() ) continue;
+				if ( std::find( targets.begin(), targets.end(), i ) == targets.end() ) {
+					//prevents everything else from repacking
+					task->nonconst_residue_task(i).prevent_repacking();
 
-                   //if i in interface and in chain 1 and inpair with prev_pack
-                   if ( interface_obj.is_interface( i ) ) {
-                     bool contact_any=false;
-                     for( core::Size j=1; j<=prev_pack.size(); ++j ){
-                         if ( interface_obj.is_pair( saved_pose.residue(prev_pack[j]), saved_pose.residue(i) ) )  {
-                               contact_any=true;
-                               continue;
-                         }
-                     }
-                     if (contact_any==true)
-                         ;
-                     else
-                         prop->include_residue(i);
-                   } else {
-                         prop->include_residue(i);
-                     } //non-interface residues
+					//if i in interface and in chain 1 and inpair with prev_pack
+					if ( interface_obj.is_interface( i ) ) {
+						bool contact_any=false;
+						for ( core::Size j=1; j<=prev_pack.size(); ++j ) {
+							if ( interface_obj.is_pair( saved_pose.residue(prev_pack[j]), saved_pose.residue(i) ) )  {
+								contact_any=true;
+								continue;
+							}
+						}
+						if ( contact_any==true ) {
+							;
+						} else {
+							prop->include_residue(i);
+						}
+					} else {
+						prop->include_residue(i);
+					} //non-interface residues
 
-             }
-          }//for residue i in saved_pose
+				}
+			}//for residue i in saved_pose
 
-          using namespace core::scoring;
-          add_coordinatecst_for_hotspot_packing(saved_pose);
-          pack_rotamers( saved_pose, *scorefxn, task );
+			using namespace core::scoring;
+			add_coordinatecst_for_hotspot_packing(saved_pose);
+			pack_rotamers( saved_pose, *scorefxn, task );
 
-          ScoreFunctionOP scorefxnc = get_score_function();
-          scorefxnc->set_weight( coordinate_constraint, 1.0 );
-          (*scorefxnc)(saved_pose);
-          Real cst_score = saved_pose.energies().total_energies()[core::scoring::coordinate_constraint ];
-          //TR << "residue: " << residue << " coordinate constraint energy: " << cst_score << std::endl;
-          TR << std::endl;
-          remove_coordinate_constraints_from_pose( saved_pose );
+			ScoreFunctionOP scorefxnc = get_score_function();
+			scorefxnc->set_weight( coordinate_constraint, 1.0 );
+			(*scorefxnc)(saved_pose);
+			Real cst_score = saved_pose.energies().total_energies()[core::scoring::coordinate_constraint ];
+			//TR << "residue: " << residue << " coordinate constraint energy: " << cst_score << std::endl;
+			TR << std::endl;
+			remove_coordinate_constraints_from_pose( saved_pose );
 
-         //decide whether to keep it or not
-         //complexity for the unknown number of hotspot
-         if ( new_auction.empty() ) { //size()==0) {
-             new_auction.insert( std::make_pair( cst_score, std::make_pair( each_auction_result->second.first, std::make_pair( each_auction_result->second.second.first, each_auction_result->second.second.second) ) ) );
-         } else {
-             Size status=0;
-             // Modifying a container you're iterating over is perilous, as iterators may become invalid.
-             // Luckily for a multimap only the iterator being deleted is invalidated. We can make a copy and increment the main iterator before we delete the copy.
-             for( PlacementAuctionMover::ResidueAuction::iterator selected_auction_iterator = new_auction.begin(); selected_auction_iterator != new_auction.end(); /*intentionally left blank*/ ) {
-               PlacementAuctionMover::ResidueAuction::iterator selected_auction_result( selected_auction_iterator );
-               ++selected_auction_iterator; // Increment before delete, because it will be invalid after the deletion of the copy
-               if ( each_auction_result->second.first == selected_auction_result->second.first ) {
-                   if ( cst_score < selected_auction_result->first ) {
-                         new_auction.erase( selected_auction_result );
-                         // selected_auction_result is now an invalid iterator
-                         // NOTE: Inserting into a multimap we're iterating over doesn't invalidate iterators, but it may mean we will encounter the inserted value during the current round of iteration.
-                         //       This may not be the behavior we're after here.
-                         new_auction.insert( std::make_pair( cst_score, std::make_pair( each_auction_result->second.first, std::make_pair( each_auction_result->second.second.first, each_auction_result->second.second.second) ) ) );
-                   }
-                   status=1;
-               }
-             }
+			//decide whether to keep it or not
+			//complexity for the unknown number of hotspot
+			if ( new_auction.empty() ) { //size()==0) {
+				new_auction.insert( std::make_pair( cst_score, std::make_pair( each_auction_result->second.first, std::make_pair( each_auction_result->second.second.first, each_auction_result->second.second.second) ) ) );
+			} else {
+				Size status=0;
+				// Modifying a container you're iterating over is perilous, as iterators may become invalid.
+				// Luckily for a multimap only the iterator being deleted is invalidated. We can make a copy and increment the main iterator before we delete the copy.
+				for ( PlacementAuctionMover::ResidueAuction::iterator selected_auction_iterator = new_auction.begin(); selected_auction_iterator != new_auction.end(); /*intentionally left blank*/ ) {
+					PlacementAuctionMover::ResidueAuction::iterator selected_auction_result( selected_auction_iterator );
+					++selected_auction_iterator; // Increment before delete, because it will be invalid after the deletion of the copy
+					if ( each_auction_result->second.first == selected_auction_result->second.first ) {
+						if ( cst_score < selected_auction_result->first ) {
+							new_auction.erase( selected_auction_result );
+							// selected_auction_result is now an invalid iterator
+							// NOTE: Inserting into a multimap we're iterating over doesn't invalidate iterators, but it may mean we will encounter the inserted value during the current round of iteration.
+							//       This may not be the behavior we're after here.
+							new_auction.insert( std::make_pair( cst_score, std::make_pair( each_auction_result->second.first, std::make_pair( each_auction_result->second.second.first, each_auction_result->second.second.second) ) ) );
+						}
+						status=1;
+					}
+				}
 
-           if (status==0) {
-                   new_auction.insert( std::make_pair( cst_score, std::make_pair( each_auction_result->second.first, std::make_pair( each_auction_result->second.second.first, each_auction_result->second.second.second) ) ) );
-           }
+				if ( status==0 ) {
+					new_auction.insert( std::make_pair( cst_score, std::make_pair( each_auction_result->second.first, std::make_pair( each_auction_result->second.second.first, each_auction_result->second.second.second) ) ) );
+				}
 
-         } //insert when there is something
+			} //insert when there is something
 
-         remove_coordinate_constraints_from_pose( saved_pose );
-       } //pack through each position
+			remove_coordinate_constraints_from_pose( saved_pose );
+		} //pack through each position
 
-       //loop through each position, save best score for each position and insert to new_auction_results
-       auction_->clear();
-       for( PlacementAuctionMover::ResidueAuction::iterator selected_auction_result = new_auction.begin(); selected_auction_result != new_auction.end(); ++selected_auction_result) {
-           auction_->insert(*selected_auction_result);
-           TR << "selected coordinate constraint score: " << selected_auction_result->first << " residue: " << selected_auction_result->second.first << std::endl;
-           if ( selected_auction_result->first >= coor_cst_cutoff_ ){
-             TR<<"coordinate constraint energy: " << selected_auction_result->first << " Failed cutoff "<<coor_cst_cutoff_<<", Can be bad rotamer" << std::endl;
-             return( false );
-         }
-       }
+		//loop through each position, save best score for each position and insert to new_auction_results
+		auction_->clear();
+		for ( PlacementAuctionMover::ResidueAuction::iterator selected_auction_result = new_auction.begin(); selected_auction_result != new_auction.end(); ++selected_auction_result ) {
+			auction_->insert(*selected_auction_result);
+			TR << "selected coordinate constraint score: " << selected_auction_result->first << " residue: " << selected_auction_result->second.first << std::endl;
+			if ( selected_auction_result->first >= coor_cst_cutoff_ ) {
+				TR<<"coordinate constraint energy: " << selected_auction_result->first << " Failed cutoff "<<coor_cst_cutoff_<<", Can be bad rotamer" << std::endl;
+				return( false );
+			}
+		}
 
-       PackerTaskOP task = create_task_for_allhotspot_packing( pose );
-       //PackerTaskOP taskc = task->clone();
+		PackerTaskOP task = create_task_for_allhotspot_packing( pose );
+		//PackerTaskOP taskc = task->clone();
 
-       //create a new task that does not allow design
-       core::pack::task::TaskFactoryOP pack_around_placed_hotspots_ = residue_level_tasks_for_placed_hotspots_->clone();
-       //core::pack::task::TaskFactoryOP pack_around_placed_hotspots_ = new core::pack::task::TaskFactory;
-       //if( task_factory() )
-       //  *pack_around_placed_hotspots_ = *(task_factory());
-       pack_around_placed_hotspots_->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
-       core::pack::task::operation::PreventRepackingOP prop( new core::pack::task::operation::PreventRepacking );
+		//create a new task that does not allow design
+		core::pack::task::TaskFactoryOP pack_around_placed_hotspots_ = residue_level_tasks_for_placed_hotspots_->clone();
+		//core::pack::task::TaskFactoryOP pack_around_placed_hotspots_ = new core::pack::task::TaskFactory;
+		//if( task_factory() )
+		//  *pack_around_placed_hotspots_ = *(task_factory());
+		pack_around_placed_hotspots_->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+		core::pack::task::operation::PreventRepackingOP prop( new core::pack::task::operation::PreventRepacking );
 
-			//  task->/*initialize_from_command_line().*/or_include_current( true ); // we don't want rotamer explosion with ex1 ex2
+		//  task->/*initialize_from_command_line().*/or_include_current( true ); // we don't want rotamer explosion with ex1 ex2
 
-       for( core::Size i=1; i<=pose.total_residue(); ++i ){
-         if( !pose.residue(i).is_protein() ) continue;
-         if( std::find( targets.begin(), targets.end(), i ) == targets.end() ) {
-                 //prevents everything else from repacking
-               task->nonconst_residue_task(i).prevent_repacking();
+		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+			if ( !pose.residue(i).is_protein() ) continue;
+			if ( std::find( targets.begin(), targets.end(), i ) == targets.end() ) {
+				//prevents everything else from repacking
+				task->nonconst_residue_task(i).prevent_repacking();
 
-               //if i in interface and in chain 1 and inpair with prev_pack
-               if ( interface_obj.is_interface( i ) ) {
-                 bool contact_any=false;
-                 for( core::Size j=1; j<=prev_pack.size(); ++j ){
-                     if ( interface_obj.is_pair( pose.residue(prev_pack[j]), pose.residue(i) ) )  {
-                           contact_any=true;
-                           continue;
-                     }
-                 }
-                 if (contact_any==true)
-                     TR << "only repack " << i << std::endl;
-                 else
-                     prop->include_residue(i);
-                     //taskc->nonconst_residue_task(i).prevent_repacking();
-               } else {
-                     prop->include_residue(i);
-                    //taskc->nonconst_residue_task(i).prevent_repacking();
-                 } //non-interface residues
+				//if i in interface and in chain 1 and inpair with prev_pack
+				if ( interface_obj.is_interface( i ) ) {
+					bool contact_any=false;
+					for ( core::Size j=1; j<=prev_pack.size(); ++j ) {
+						if ( interface_obj.is_pair( pose.residue(prev_pack[j]), pose.residue(i) ) )  {
+							contact_any=true;
+							continue;
+						}
+					}
+					if ( contact_any==true ) {
+						TR << "only repack " << i << std::endl;
+					} else {
+						prop->include_residue(i);
+					}
+					//taskc->nonconst_residue_task(i).prevent_repacking();
+				} else {
+					prop->include_residue(i);
+					//taskc->nonconst_residue_task(i).prevent_repacking();
+				} //non-interface residues
 
-         }
-      }//for residue i in pose
+			}
+		}//for residue i in pose
 
-      using namespace core::scoring;
-      TR << "Add hotspot" << std::endl;
-      pack_rotamers( pose, *scorefxn, task );
+		using namespace core::scoring;
+		TR << "Add hotspot" << std::endl;
+		pack_rotamers( pose, *scorefxn, task );
 
-  } // end of backbone_stub_linear_constraint
+	} // end of backbone_stub_linear_constraint
 
 	//filter each placed hotspot
-	BOOST_FOREACH( StubSetStubPos & stubset_pos_pair, stub_sets_ ){
+	BOOST_FOREACH ( StubSetStubPos & stubset_pos_pair, stub_sets_ ) {
 		using namespace core::scoring;
 		core::Size const pos( stubset_pos_pair.second.second );
 		HotspotStubSetOP stubset( stubset_pos_pair.first );
@@ -539,22 +546,22 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 		protocols::moves::modify_ResId_based_object( modified_filter, pos );
 		bool const pass_stub_set_filter( modified_filter->apply( pose ) );
 		core::Real const distance( pose.residue( pos ).xyz( "CB" ).distance( stub->residue()->xyz( "CB" ) ) );
-    if( distance >= max_cb_cb_dist_ ){
-      TR<<"distance: " << distance << " Failed distance cutoff " << max_cb_cb_dist_ << std::endl;
-      return( false );
-    } else if ( !pass_tot_energy || !pass_stub_set_filter ){
-      TR<<"Failed stub filters " << std::endl;
-      return( false );
-    }
+		if ( distance >= max_cb_cb_dist_ ) {
+			TR<<"distance: " << distance << " Failed distance cutoff " << max_cb_cb_dist_ << std::endl;
+			return( false );
+		} else if ( !pass_tot_energy || !pass_stub_set_filter ) {
+			TR<<"Failed stub filters " << std::endl;
+			return( false );
+		}
 	}
 
 	bool const after_placement_pass( after_placement_filter_->apply( pose ) );
-	if( !after_placement_pass ){
+	if ( !after_placement_pass ) {
 		TR<<"Failed after_placement_filter" << std::endl;
 		return( false );
 	}
 
-	BOOST_FOREACH( StubSetStubPos const hs_set, stub_sets_ ){
+	BOOST_FOREACH ( StubSetStubPos const hs_set, stub_sets_ ) {
 		core::Size const position( hs_set.second.second );
 		TR<<"Paired position "<<position<<std::endl;
 	}
@@ -571,20 +578,23 @@ PlaceSimultaneouslyMover::place_stubs( core::pose::Pose & pose ) const
 	core::Size const chain_begin( pose.conformation().chain_begin( host_chain_ ) );
 	core::Size const chain_end( pose.conformation().chain_end( host_chain_ ) );
 
-	BOOST_FOREACH( StubSetStubPos hs_set, stub_sets_ ){
+	BOOST_FOREACH ( StubSetStubPos hs_set, stub_sets_ ) {
 		HotspotStubCOP stub( hs_set.second.first );
 		core::Size const res_num( hs_set.second.second );
 		pose.replace_residue( res_num, *(stub->residue()), true );
 
 		using namespace core::chemical;
-//removing variant types can only be done if the residue would still be connected to the chain
-		if( res_num < chain_end )
+		//removing variant types can only be done if the residue would still be connected to the chain
+		if ( res_num < chain_end ) {
 			core::pose::remove_upper_terminus_type_from_pose_residue( pose, res_num );
-		if( res_num > chain_begin )
+		}
+		if ( res_num > chain_begin ) {
 			core::pose::remove_lower_terminus_type_from_pose_residue( pose, res_num );
+		}
 		pose.conformation().update_polymeric_connection( res_num, true ); // o/w residues connections mess up
-		if( res_num > chain_begin )
+		if ( res_num > chain_begin ) {
 			pose.conformation().update_polymeric_connection( res_num - 1, true );
+		}
 	}
 
 	pose.update_residue_neighbors();
@@ -598,11 +608,11 @@ PlaceSimultaneouslyMover::refresh_coordinate_constraints( core::pose::Pose & pos
 {
 	remove_coordinate_constraints_from_pose( pose );
 	saved_coord_constraints_ = pose.add_constraints( saved_coord_constraints_ );
-	if( coord_sdev < 0.0001 ){
+	if ( coord_sdev < 0.0001 ) {
 		TR<<"no coordinate constraints applied" << std::endl;
 		return;
 	}
-	BOOST_FOREACH( StubSetStubPos hs_set, stub_sets_ ){
+	BOOST_FOREACH ( StubSetStubPos hs_set, stub_sets_ ) {
 		using namespace protocols::hotspot_hashing;
 
 		HotspotStubCOP stub( hs_set.second.first );
@@ -623,8 +633,8 @@ PlaceSimultaneouslyMover::design( core::pose::Pose & pose )
 
 	BuildAlaPose toAla( host_chain_ == 1/*partner1*/, host_chain_ == 2 /*partner2*/ );
 	utility::vector1< core::Size > no_repack;
-	if( !prevent_repacking().empty() ) no_repack = prevent_repacking();
-	if( !no_repack.empty() ){
+	if ( !prevent_repacking().empty() ) no_repack = prevent_repacking();
+	if ( !no_repack.empty() ) {
 		std::sort( no_repack.begin(), no_repack.end() );
 		utility::vector1< core::Size >::iterator last = std::unique( no_repack.begin(), no_repack.end() );
 		no_repack.erase( last, no_repack.end() );
@@ -635,18 +645,18 @@ PlaceSimultaneouslyMover::design( core::pose::Pose & pose )
 	toAla.apply( pose );
 
 	saved_coord_constraints_ = remove_coordinate_constraints_from_pose( pose );
-	BOOST_FOREACH( MoverRealPair const mover_coord_cst, design_movers_ ){//design movers
+	BOOST_FOREACH ( MoverRealPair const mover_coord_cst, design_movers_ ) {//design movers
 		core::Real const sdev( mover_coord_cst.second );
 		simple_moves::DesignRepackMoverOP mover( mover_coord_cst.first );
 		TR<<"applying design mover "<<mover->get_name()<<std::endl;
-		if( sdev >= 0 ){//use constraints
+		if ( sdev >= 0 ) { //use constraints
 			core::Size const before_refresh( pose.constraint_set()->get_all_constraints().size() );
 			refresh_coordinate_constraints( pose, sdev );
 			core::Size const after_refresh( pose.constraint_set()->get_all_constraints().size() );
 			TR.Debug<<"before refreshing coord cst "<<before_refresh<<" constraints. after: "<<after_refresh<<std::endl;
-		}//use constraints
-		else
+		} else { //use constraints
 			TR<<"no constraints applied"<< std::endl;
+		}
 
 		core::Size const before_apply_design_mover( pose.constraint_set()->get_all_constraints().size() );
 		mover->prevent_repacking( prevent_repacking() );
@@ -656,12 +666,12 @@ PlaceSimultaneouslyMover::design( core::pose::Pose & pose )
 		TR<<"setting coordinate constraint weights to 1.0 in design movers" << std::endl;
 		core::scoring::ScoreFunctionOP scorefxn_rep( mover->scorefxn_repack() );
 		core::scoring::ScoreFunctionOP scorefxn_min( mover->scorefxn_minimize() );
-		if( scorefxn_rep ) scorefxn_rep->set_weight( coordinate_constraint, 1.0 );
-		if( scorefxn_min ) scorefxn_min->set_weight( coordinate_constraint, 1.0 );
+		if ( scorefxn_rep ) scorefxn_rep->set_weight( coordinate_constraint, 1.0 );
+		if ( scorefxn_min ) scorefxn_min->set_weight( coordinate_constraint, 1.0 );
 		mover->apply( pose );
 		core::Size const after_apply_design_mover( pose.constraint_set()->get_all_constraints().size() );
 		TR.Debug<<"before applying design mover "<<before_apply_design_mover<<" constraints. After: "<<after_apply_design_mover<<std::endl;
-		if( before_apply_design_mover != after_apply_design_mover ){
+		if ( before_apply_design_mover != after_apply_design_mover ) {
 			TR<<"ERROR: This design mover changed the number of constraints on the pose. Before: "<< before_apply_design_mover<<" after: "<<after_apply_design_mover<<". This behaviour is unsupported."<<std::endl;
 			runtime_assert( before_apply_design_mover != after_apply_design_mover );
 		}
@@ -678,7 +688,7 @@ PlaceSimultaneouslyMover::apply( core::pose::Pose & pose )
 	using namespace protocols::hotspot_hashing;
 
 	bool const stub_score_filter_pass( stub_score_filter_->apply( pose ) );
-	if( !stub_score_filter_pass ){
+	if ( !stub_score_filter_pass ) {
 		TR<<"Stub score filter reported failure at the beginning of PlaceSimultaneously. Failing"<<std::endl;
 		set_last_move_status( protocols::moves::FAIL_RETRY );
 		return;
@@ -690,16 +700,16 @@ PlaceSimultaneouslyMover::apply( core::pose::Pose & pose )
 	core::scoring::ScoreFunctionOP bbcst_scorefxn( new core::scoring::ScoreFunction );
 	bbcst_scorefxn->reset();
 	if ( auction_->get_stub_scorefxn() == "backbone_stub_linear_constraint" ) {
-			bbcst_scorefxn->set_weight( core::scoring::backbone_stub_constraint, 1.0 );
+		bbcst_scorefxn->set_weight( core::scoring::backbone_stub_constraint, 1.0 );
 	}// else if ( auction_->get_stub_scorefxn() == "backbone_stub_linear_constraint" ) {
-	//		bbcst_scorefxn->set_weight( core::scoring::backbone_stub_linear_constraint, 1.0 );
+	//  bbcst_scorefxn->set_weight( core::scoring::backbone_stub_linear_constraint, 1.0 );
 	//}
 	(*bbcst_scorefxn)( pose );
 
 	rbstub_minimization_->apply( pose );
 	minimize_all( pose, minimization_repeats_before_placement_ );
 	bool const pairing( pair_sets_with_positions( pose ) );
-	if( !pairing ){
+	if ( !pairing ) {
 		TR<<"Failed to pair sets with individual scaffold positions"<<std::endl;
 		final_cleanup( pose );
 		set_last_move_status( protocols::moves::FAIL_RETRY );
@@ -731,38 +741,39 @@ PlaceSimultaneouslyMover::final_cleanup( core::pose::Pose & pose )
 	saved_bb_constraints_.clear();
 	stub_sets_ = saved_stub_sets_;
 	auction_->clear();
-/// The statement below would clear task_factories of child design movers
-//	if( residue_level_tasks_for_placed_hotspots_ )
-//		residue_level_tasks_for_placed_hotspots_->clear();
+	/// The statement below would clear task_factories of child design movers
+	// if( residue_level_tasks_for_placed_hotspots_ )
+	//  residue_level_tasks_for_placed_hotspots_->clear();
 	TR.flush();
 }
 
 void
 PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
-		basic::datacache::DataMap &data,
-		protocols::filters::Filters_map const &filters,
-		Movers_map const &movers,
-		core::pose::Pose const & pose )
+	basic::datacache::DataMap &data,
+	protocols::filters::Filters_map const &filters,
+	Movers_map const &movers,
+	core::pose::Pose const & pose )
 {
 	using namespace protocols::hotspot_hashing;
 	using namespace protocols::filters;
 	using namespace core::pack::task;
 
 	TR<<"Parsing PlaceSimultaneouslyMover----"<<std::endl;
-/// auction, rbstub_minimization, and stub_score_filter are different, private
-/// instantiations and should parse the stubset, chain, etc. information
+	/// auction, rbstub_minimization, and stub_score_filter are different, private
+	/// instantiations and should parse the stubset, chain, etc. information
 	auction_->parse_my_tag( tag, data, filters, movers, pose );
 	rbstub_minimization_->parse_my_tag( tag, data, filters, movers, pose );
 	stub_score_filter_->parse_my_tag( tag, data, filters, movers, pose );
 
-	if( tag->hasOption( "task_operations" ) ){
-		if( task_factory() )
+	if ( tag->hasOption( "task_operations" ) ) {
+		if ( task_factory() ) {
 			TR<<"*****WARNING: ERASING existing task_factory, b/c of specifications for new task operations in " << std::endl<<tag<<std::endl;
+		}
 		task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	}
 
 	host_chain_ = tag->getOption<core::Size>( "chain_to_design", 2 );
-  coor_cst_cutoff_ = tag->getOption< core::Real >( "coor_cst_cutoff", 100 );
+	coor_cst_cutoff_ = tag->getOption< core::Real >( "coor_cst_cutoff", 100 );
 	optimize_foldtree( tag->getOption< bool >( "optimize_fold_tree", 1 ) );
 	TR<<"optimize_foldtree set to: "<<optimize_foldtree()<<std::endl;
 
@@ -771,26 +782,27 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 
 	std::string const after_placement_filter_name( tag->getOption<std::string>( "after_placement_filter", "true_filter" ) );
 	Filters_map::const_iterator ap_filter( filters.find( after_placement_filter_name ) );
-	if( after_placement_filter_name == "true_filter" )
+	if ( after_placement_filter_name == "true_filter" ) {
 		after_placement_filter_ = protocols::filters::FilterOP( new protocols::filters::TrueFilter );
-	else
+	} else {
 		after_placement_filter_ = ap_filter->second->clone();
+	}
 	//parsing stub minimize movers and design movers for place stub
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
 
-	BOOST_FOREACH( TagCOP const btag, branch_tags ){
-		if( btag->getName() == "StubMinimize" ){
+	BOOST_FOREACH ( TagCOP const btag, branch_tags ) {
+		if ( btag->getName() == "StubMinimize" ) {
 			minimization_repeats_before_placement_ = btag->getOption< core::Size >( "min_repeats_before_placement", 0 );
 			minimization_repeats_after_placement_ = btag->getOption< core::Size >( "min_repeats_after_placement", 1 );
 			utility::vector0< TagCOP > const & stub_min_tags( btag->getTags() );
-			BOOST_FOREACH( TagCOP stub_m_tag, stub_min_tags ){
+			BOOST_FOREACH ( TagCOP stub_m_tag, stub_min_tags ) {
 				std::string const stub_mover_name( stub_m_tag->getOption<std::string>( "mover_name" ) );
 				core::Real  const bb_stub_constraint_weight( stub_m_tag->getOption< core::Real > ( "bb_cst_weight", 10.0 ) );
 				std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( stub_mover_name ));
 				bool const stub_mover_found( find_mover != movers.end() );
-				if( stub_mover_found ){
+				if ( stub_mover_found ) {
 					simple_moves::DesignRepackMoverOP drSOP = utility::pointer::dynamic_pointer_cast< simple_moves::DesignRepackMover > ( find_mover->second->clone() );
-					if( !drSOP ){
+					if ( !drSOP ) {
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
 						runtime_assert( drSOP != 0 );
 					}//done cast check
@@ -798,53 +810,51 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 					TR<<"added stub minimize mover "<<stub_mover_name<<" to minimize towards the stub. Using this weight for the bb stub constraints: "<< bb_stub_constraint_weight<<std::endl;
 				}
 			}
-		}
-		else if( btag->getName() == "DesignMovers" ){
+		} else if ( btag->getName() == "DesignMovers" ) {
 			utility::vector0< TagCOP > const & design_tags( btag->getTags() );
-			BOOST_FOREACH( TagCOP const m_tag_ptr, design_tags ){
+			BOOST_FOREACH ( TagCOP const m_tag_ptr, design_tags ) {
 				std::string const mover_name( m_tag_ptr->getOption< std::string >( "mover_name" ) );
 				bool const apply_coord_constraints( m_tag_ptr->getOption< bool >( "use_constraints", 1 ) );
 				core::Real const coord_cst_std( m_tag_ptr->getOption< core::Real >( "coord_cst_std", 0.5 ) );
 
 				std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( mover_name ));
 				bool const mover_found( find_mover != movers.end() );
-				if( mover_found ){
+				if ( mover_found ) {
 					simple_moves::DesignRepackMoverOP drOP = utility::pointer::dynamic_pointer_cast< simple_moves::DesignRepackMover > ( find_mover->second );
-					if( !drOP ){
+					if ( !drOP ) {
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
 						runtime_assert( drOP != 0 );
 					}
 					design_movers_.push_back( std::make_pair( drOP, ( apply_coord_constraints ? coord_cst_std : -1 ) ) );
 					TR<<"added design mover "<<mover_name<<" to place simultaneously ";
-					if( apply_coord_constraints )
+					if ( apply_coord_constraints ) {
 						TR<<"with with std "<< coord_cst_std<< std::endl;
-					else
+					} else {
 						TR<<"with no coord cst" << std::endl;
-				}
-				else{
+					}
+				} else {
 					TR<<"***WARNING WARNING! Mover defined for PlaceSimultaneouslyMoverMover not found in mover_list. EXITING ***"<<std::endl;
 					runtime_assert( mover_found );
 				}
 			}
-		}
-		else if( btag->getName() == "StubSets" ){
+		} else if ( btag->getName() == "StubSets" ) {
 			//PlaceSimultaneously doesn't use the utility function parse_stub_sets b/c it needs to connect filters with stubsets
 			explosion_ = btag->getOption< core::Size >( "explosion", 0 );
 			stub_energy_threshold_ = btag->getOption<core::Real>( "stub_energy_threshold", 1.0 );
 			max_cb_cb_dist_ = btag->getOption< core::Real >( "max_cb_dist", 3.0 );
 
 			utility::vector0< TagCOP > const & stubset_tags( btag->getTags() );
-			BOOST_FOREACH( TagCOP const stubset_tag, stubset_tags ){
+			BOOST_FOREACH ( TagCOP const stubset_tag, stubset_tags ) {
 				std::string const stub_fname = stubset_tag->getOption< std::string >( "stubfile" );
 				HotspotStubSetOP stubset( new HotspotStubSet );
-				if( data.has( "hotspot_library", stub_fname ) ){
+				if ( data.has( "hotspot_library", stub_fname ) ) {
 					stubset = data.get_ptr<protocols::hotspot_hashing::HotspotStubSet>( "hotspot_library", stub_fname );
 					TR<<"Associated mover with an already read stubset named "<<stub_fname<<std::endl;
-				}
-				else
+				} else {
 					stubset->read_data( stub_fname );
+				}
 
-                stub_sets_.push_back(std::make_pair(stubset, std::make_pair(HotspotStubOP( new HotspotStub() ), 0)));  // REQUIRED FOR WINDOWS
+				stub_sets_.push_back(std::make_pair(stubset, std::make_pair(HotspotStubOP( new HotspotStub() ), 0)));  // REQUIRED FOR WINDOWS
 				//stub_sets_.push_back( StubSetStubPos( stubset, std::pair< HotspotStubOP, core::Size >( 0, 0 ) ) );
 				core::pose::PoseOP ala_pose( new core::pose::Pose( pose ) );
 				pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( *ala_pose ));
@@ -856,21 +866,22 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 				core::Size const chain_begin( ala_pose->conformation().chain_begin( host_chain_ ) );
 				core::Size const chain_end( ala_pose->conformation().chain_end( host_chain_ ) );
 
-				for ( core::Size i = 1; i <= pose.total_residue(); i++) {
+				for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
 					if ( !pose.residue(i).is_protein() ) continue;
-					if( i >= chain_begin && i <=chain_end ) {
+					if ( i >= chain_begin && i <=chain_end ) {
 						core::Size const restype( ala_pose->residue(i).aa() );
-						if( ( restype == chemical::aa_pro  && !basic::options::option[basic::options::OptionKeys::hotspot::allow_proline] ) || restype == chemical::aa_gly )
+						if ( ( restype == chemical::aa_pro  && !basic::options::option[basic::options::OptionKeys::hotspot::allow_proline] ) || restype == chemical::aa_gly ) {
 							task->nonconst_residue_task(i).prevent_repacking();
-						else
+						} else {
 							task->nonconst_residue_task(i).restrict_absent_canonical_aas( allowed_aas );
-					}
-					else {
+						}
+					} else {
 						task->nonconst_residue_task( i ).prevent_repacking();
 					}
 				}
-				if( basic::options::option[basic::options::OptionKeys::packing::resfile].user() )
+				if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
 					core::pack::task::parse_resfile(pose, *task);
+				}
 
 				core::scoring::ScoreFunctionOP scorefxn( get_score_function() );
 				pack::pack_rotamers( *ala_pose, *scorefxn, task);
@@ -881,18 +892,19 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 				runtime_assert( stub_set_filter != filters.end() );
 				stub_set_filters_[ stubset ] = stub_set_filter->second->clone();
 			}//foreach stubset_tag
-		}// fi stubsets
-		else if( btag->getName() != "NotifyMovers" )
+		} else if ( btag->getName() != "NotifyMovers" ) { // fi stubsets
 			utility_exit_with_message( "ERROR: tag in PlaceSimultaneouslyMover not defined\n" );
+		}
 		generate_taskfactory_and_add_task_awareness( btag, movers, data, task_factory() );//residue_level_tasks_for_placed_hotspots_ );
 	}
-	if( minimization_movers_.size() == 0 )
+	if ( minimization_movers_.size() == 0 ) {
 		TR<<"No StubMinimize movers defined by user, defaulting to minimize_rb and _sc of stubs only" << std::endl;
+	}
 
 	auction_->task_factory( data.get_ptr< TaskFactory >( "TaskFactory", "placement" ) );
 	rbstub_minimization_->task_factory( data.get_ptr< TaskFactory >( "TaskFactory", "placement" ) );
-//	stub_score_filter_->parse_my_tag( tag, data, filters, movers, pose );
-//	stub_score_filter_->stub_sets( stub_sets_ );
+	// stub_score_filter_->parse_my_tag( tag, data, filters, movers, pose );
+	// stub_score_filter_->stub_sets( stub_sets_ );
 	TR<<"Using "<<minimization_repeats_before_placement_<<" minimization steps before placement (bbcst constraints on)" << std::endl;
 	TR<<"Using "<<minimization_repeats_after_placement_<<" minimization steps after placement (no constraints on)" << std::endl;
 	TR<<"max cb cb distance set to "<<max_cb_cb_dist_<<std::endl;
@@ -904,9 +916,9 @@ PlaceSimultaneouslyMover::PlaceSimultaneouslyMover() :
 	simple_moves::DesignRepackMover( PlaceSimultaneouslyMoverCreator::mover_name() )
 {
 	residue_level_tasks_for_placed_hotspots_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory );//watch out! Never allocate a new task factory for this guy after parsing has been done, b/c in parsing all task aware movers will be watching it through their task_factory_
-//	user_defined_auction_ = false;
-//	user_defined_stub_score_filter_ = false;
-//	user_defined_bbstub_minimization_ = false;
+	// user_defined_auction_ = false;
+	// user_defined_stub_score_filter_ = false;
+	// user_defined_bbstub_minimization_ = false;
 	auction_ = PlacementAuctionMoverOP( new PlacementAuctionMover );
 	rbstub_minimization_ = PlacementMinimizationMoverOP( new PlacementMinimizationMover );
 	stub_score_filter_ = protocols::protein_interface_design::filters::StubScoreFilterOP( new protocols::protein_interface_design::filters::StubScoreFilter );

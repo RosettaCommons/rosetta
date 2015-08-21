@@ -313,54 +313,54 @@ BluePrintBDR::set_instruction_blueprint( Pose const & pose )
 	String aa, ss, insert_name, ins_sec;
 	Size left( 0 ), right( 0 ), count( 0 ), insnum( 0 );
 	Pose insert_pose;
-	for( Size i=1; i<=blueprint_->total_residue(); i++ ){
+	for ( Size i=1; i<=blueprint_->total_residue(); i++ ) {
 
-		if( blueprint_->resnum( i ) != 0 ){
+		if ( blueprint_->resnum( i ) != 0 ) {
 			count++;
-			if( count > pose.total_residue() ){
+			if ( count > pose.total_residue() ) {
 				TR.Error << "Residue number in blueprint file is more than that of pose!,  pose/blueprint= "
-								 << pose.total_residue() << "/" << count << std::endl;
+					<< pose.total_residue() << "/" << count << std::endl;
 				return false;
 			}
 		}
 
 		//if( blueprint_->buildtype( i ) != '.' && !flag ) {  // found R or X at first
-		if( blueprint_->buildtype( i ) == 'R' && blueprint_->buildtype( i ) != 'I' && !flag ) {  // found R at first
+		if ( blueprint_->buildtype( i ) == 'R' && blueprint_->buildtype( i ) != 'I' && !flag ) {  // found R at first
 
-			if( count == 0 || i==1 ){ // N-terminal extensione
+			if ( count == 0 || i==1 ) { // N-terminal extensione
 				left = 1;
-			}else{
+			} else {
 				left = blueprint_->resnum( i-1 )+1; // insert in the middle of sequence
-				if( left > pose.total_residue() ){  // C-terminal extension
+				if ( left > pose.total_residue() ) {  // C-terminal extension
 					left = pose.total_residue();
 				}
 			}
 			flag = true;
 
 			// } else if( blueprint_->buildtype( i ) == '.' && flag ){ // add instruction
-		} else if( blueprint_->buildtype( i ) != 'R' && blueprint_->buildtype( i ) != 'I' && flag ){ // add instruction
+		} else if ( blueprint_->buildtype( i ) != 'R' && blueprint_->buildtype( i ) != 'I' && flag ) { // add instruction
 
 			right = blueprint_->resnum( i )-1;
 			if ( right == 0 ) { // at the N-termianl
 				right = 1;
-			} else if( right < left ){ // insert residues into the successive residue numbers
+			} else if ( right < left ) { // insert residues into the successive residue numbers
 				right = left;
 			}
 			runtime_assert( right <= pose.total_residue() );
 
-			if( insert ) {
-				if( ins_sec.length() == 1 ) {
+			if ( insert ) {
+				if ( ins_sec.length() == 1 ) {
 					TR << "Secondary structure of insert pose will be given by Dssp" << std::endl;
 					Dssp dssp( pose );
 					dssp.insert_ss_into_pose( insert_pose );
 				} else {
 					runtime_assert( insert_pose.total_residue() == ins_sec.length() );
-					for( Size j=1; j<=insert_pose.total_residue(); j++ ) {
+					for ( Size j=1; j<=insert_pose.total_residue(); j++ ) {
 						insert_pose.set_secstruct( j, ins_sec[ j-1 ] );
 					}
 				}
-				TR << "SegmentInsert left " << left	<< ", right: " << right
-					 << ", ss: " << ss << ", aa:" << aa << ", pdb:" << insert_name << std::endl;
+				TR << "SegmentInsert left " << left << ", right: " << right
+					<< ", ss: " << ss << ", aa:" << aa << ", pdb:" << insert_name << std::endl;
 				add_instruction( BuildInstructionOP( new SegmentInsert( Interval( left, right ), ss, aa, insert_pose ) ) );
 			} else {
 				TR << "SegmentRebuild left: " << left << ", right: " << right << ", ss: " << ss << ", aa:" << aa << std::endl;
@@ -374,8 +374,8 @@ BluePrintBDR::set_instruction_blueprint( Pose const & pose )
 
 		} //blurprint_->buildtype()
 
-		if( flag ){
-			if( blueprint_->buildtype( i ) == 'I' && !insert ) {
+		if ( flag ) {
+			if ( blueprint_->buildtype( i ) == 'I' && !insert ) {
 				insert = true;
 				insnum ++;
 				ins_sec = blueprint_->secstruct( i );
@@ -383,7 +383,7 @@ BluePrintBDR::set_instruction_blueprint( Pose const & pose )
 				core::import_pose::pose_from_pdb( insert_pose, insert_name );
 				aa += '^';
 				ss += '^';
-			} else if( blueprint_->buildtype( i ) == 'I' ) {
+			} else if ( blueprint_->buildtype( i ) == 'I' ) {
 				ins_sec += blueprint_->secstruct( i );
 			} else {
 				aa += blueprint_->sequence( i );
@@ -393,10 +393,10 @@ BluePrintBDR::set_instruction_blueprint( Pose const & pose )
 
 	} // blueprint_->total_residue()
 
-	if( flag ){
-		if( blueprint_->resnum( blueprint_->total_residue() ) == 0 ) {
+	if ( flag ) {
+		if ( blueprint_->resnum( blueprint_->total_residue() ) == 0 ) {
 			right = pose.total_residue();
-		}else{
+		} else {
 			right = blueprint_->resnum( blueprint_->total_residue() );
 			runtime_assert( right <= pose.total_residue() );
 		}
@@ -404,7 +404,7 @@ BluePrintBDR::set_instruction_blueprint( Pose const & pose )
 		TR << "SegmentRebuild left: " << left << ", right: " << right << ", ss: " << ss << ", aa:" << aa << std::endl;
 	}
 
-	if( instruction_size() < 1 ) {
+	if ( instruction_size() < 1 ) {
 		TR << "There is no instruction in blueprint. " << std::endl;
 		return false;
 	}
@@ -437,7 +437,7 @@ BluePrintBDR::setup_invrot_tree_in_vlb( VarLengthBuild & vlb, Pose & pose  ) con
 	vlb.clear_user_provided_movers();
 	vlb.add_user_provided_mover( run_align_pose );
 
-	if( use_abego_bias_ ) {
+	if ( use_abego_bias_ ) {
 		utility::vector1< std::string > abego_to_use( blueprint_->abego() );
 		abego_to_use.push_back("X"); //kinda hacky, assuming we're only adding one ligand to pose. Ideally we'd query InvrotTree for the number of targets
 		vlb_->set_abego( abego_to_use );
@@ -455,12 +455,12 @@ BluePrintBDR::apply( Pose & pose )
 	using protocols::moves::FAIL_RETRY;
 
 	//set instruction by blueprint file and store secondary structure information
-	if( !blueprint_ && !initialized_ ){
+	if ( !blueprint_ && !initialized_ ) {
 		TR << "You need to set a blueprint file" << std::endl;
 		set_last_move_status( FAIL_BAD_INPUT );
 		return;
-	}else if( !initialized_ ){
-		if( ! set_instruction_blueprint( pose ) ){
+	} else if ( !initialized_ ) {
+		if ( ! set_instruction_blueprint( pose ) ) {
 			set_last_move_status( FAIL_BAD_INPUT );
 			return;
 		}
@@ -468,7 +468,7 @@ BluePrintBDR::apply( Pose & pose )
 		// if( !ss_from_blueprint_ ){
 		// Dssp dssp( pose );
 		// dssp.insert_ss_into_pose( pose );
-		//		}else{
+		//  }else{
 		// insert_ss_into_pose( pose );
 		// }
 		//initial_pose_ = new Pose( pose );
@@ -476,10 +476,10 @@ BluePrintBDR::apply( Pose & pose )
 	}
 
 	// assign secondary structure
-	if( !ss_from_blueprint_ ){
+	if ( !ss_from_blueprint_ ) {
 		Dssp dssp( pose );
 		dssp.insert_ss_into_pose( pose );
-	}else{
+	} else {
 		blueprint_->insert_ss_into_pose( pose );
 	}
 
@@ -488,7 +488,7 @@ BluePrintBDR::apply( Pose & pose )
 		set_last_move_status( FAIL_RETRY );
 
 		// dump pdb when failed
-		if( dump_pdb_when_fail_ != "" ){
+		if ( dump_pdb_when_fail_ != "" ) {
 			pose.dump_pdb( dump_pdb_when_fail_ );
 		}
 		return;
@@ -500,7 +500,7 @@ BluePrintBDR::apply( Pose & pose )
 	// sfx_->show( TR, pose );
 
 	//fpd reinitialize PDBinfo
-	if (!pose.pdb_info() || pose.pdb_info()->obsolete()) {
+	if ( !pose.pdb_info() || pose.pdb_info()->obsolete() ) {
 		pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo(pose, true) ) );
 	}
 }
@@ -552,7 +552,7 @@ bool BluePrintBDR::centroid_build(
 		core::util::switch_to_residue_type_set( modified_archive_pose, core::chemical::FA_STANDARD );
 	}
 
-	if( use_poly_val_ ) {
+	if ( use_poly_val_ ) {
 		// flip to poly-ala-gly-pro-disulf pose
 		utility::vector1< Size > protein_residues;
 		for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
@@ -571,31 +571,31 @@ bool BluePrintBDR::centroid_build(
 	}
 
 	// set weight of constraints
-	if( constraints_NtoC_ > 0.0 || constraints_sheet_ > 0.0 ){
+	if ( constraints_NtoC_ > 0.0 || constraints_sheet_ > 0.0 ) {
 		Real cst_weight( sfx_->get_weight( core::scoring::atom_pair_constraint ) );
 		runtime_assert( cst_weight > 0.0 );
 	}
 
-	if( constraints_NtoC_ > 0.0 ){
+	if ( constraints_NtoC_ > 0.0 ) {
 		NtoC_RCGOP rcg( new NtoC_RCG );
 		vlb_->add_rcg( rcg );
 	}
 
-	if( constraints_sheet_ > 0.0 ){
+	if ( constraints_sheet_ > 0.0 ) {
 		SheetConstraintsRCGOP rcg( new SheetConstraintsRCG( blueprint_, constraints_sheet_ ) );
 		vlb_->add_rcg( rcg );
 	}
 
-	if( constraint_file_ != "" ){
+	if ( constraint_file_ != "" ) {
 		ConstraintFileRCGOP cst( new ConstraintFileRCG( constraint_file_ ) );
 		vlb_->add_rcg( cst );
 	}
 
 	// TL: add user-specified RCGS
-	for ( core::Size i=1; i<=rcgs_.size(); ++i ){
- 		vlb_->add_rcg( rcgs_[i] );
- 		rcgs_[i]->init( pose );
- 		TR << "Initialized an RCG called " << rcgs_[i]->get_name() << std::endl;
+	for ( core::Size i=1; i<=rcgs_.size(); ++i ) {
+		vlb_->add_rcg( rcgs_[i] );
+		rcgs_[i]->init( pose );
+		TR << "Initialized an RCG called " << rcgs_[i]->get_name() << std::endl;
 	}
 
 	vlb_->scorefunction( sfx_ );
@@ -605,17 +605,17 @@ bool BluePrintBDR::centroid_build(
 	vlb_->loop_mover_str( loop_mover_str_ );
 	vlb_->num_fragpick( num_fragpick_ );
 
-	if( use_abego_bias_ ) {
+	if ( use_abego_bias_ ) {
 		vlb_->set_abego( blueprint_->abego() );
 	}
 
-	if( tell_vlb_to_not_touch_fold_tree_ ){
+	if ( tell_vlb_to_not_touch_fold_tree_ ) {
 		vlb_->loop_mover_fold_tree_constant( true );
 	}
 
-	if( invrot_tree_ ){
-    this->setup_invrot_tree_in_vlb( *vlb_, pose );
-  }
+	if ( invrot_tree_ ) {
+		this->setup_invrot_tree_in_vlb( *vlb_, pose );
+	}
 
 
 	if ( use_sequence_bias_ ) {
@@ -669,7 +669,7 @@ BluePrintBDR::parse_my_tag(
 	Pose const & )
 {
 	String const blueprint( tag->getOption<std::string>( "blueprint", "" ) );
-	if( blueprint == "" ){
+	if ( blueprint == "" ) {
 		TR << "No input of blueprint file ! " << std::endl;
 		runtime_assert( false );
 	}
@@ -680,7 +680,7 @@ BluePrintBDR::parse_my_tag(
 
 	// set scorefxn
 	String const sfxn ( tag->getOption<String>( "scorefxn", "" ) );
-	if( sfxn != "" ) {
+	if ( sfxn != "" ) {
 		sfx_ = data.get_ptr<ScoreFunction>( "scorefxns", sfxn );
 		TR << "score function, " << sfxn << ", is used. " << std::endl;
 	}
@@ -715,22 +715,22 @@ BluePrintBDR::parse_my_tag(
 	// Use specified constraint generator movers
 	// these are called from VLB after the residues are added, but before the actual fragment insertions take place
 	utility::vector1< std::string > const mover_names( utility::string_split( tag->getOption< std::string >( "constraint_generators", "" ), ',' ) );
- 	for ( core::Size i=1; i<=mover_names.size(); ++i ) {
- 		if ( mover_names[i] == "" ) continue;
- 		protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( mover_names[i], movers );
+	for ( core::Size i=1; i<=mover_names.size(); ++i ) {
+		if ( mover_names[i] == "" ) continue;
+		protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( mover_names[i], movers );
 		// check to make sure the mover provided is a RemodelConstraintGenerator and if so, add it to the list
- 		assert( utility::pointer::dynamic_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover ) );
- 		protocols::forge::remodel::RemodelConstraintGeneratorOP rcg = utility::pointer::static_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover );
- 		rcgs_.push_back( rcg );
- 		TR << "Added RCG " << mover_names[i] << std::endl;
- 	}
+		assert( utility::pointer::dynamic_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover ) );
+		protocols::forge::remodel::RemodelConstraintGeneratorOP rcg = utility::pointer::static_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover );
+		rcgs_.push_back( rcg );
+		TR << "Added RCG " << mover_names[i] << std::endl;
+	}
 
-	if( tag->hasOption("keep_fold_tree") ){
+	if ( tag->hasOption("keep_fold_tree") ) {
 		tell_vlb_to_not_touch_fold_tree_ = tag->getOption<bool>( "keep_fold_tree", false );
 	}
 
 	//in case we'ref folding up around a ligand
-	if( tag->hasOption("invrot_tree")){
+	if ( tag->hasOption("invrot_tree") ) {
 		String cstfilename = tag->getOption<String>( "invrot_tree", "");
 		toolbox::match_enzdes_util::EnzConstraintIOOP enzcst_io( new toolbox::match_enzdes_util::EnzConstraintIO( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) ) );
 		enzcst_io->read_enzyme_cstfile( cstfilename );
@@ -739,11 +739,11 @@ BluePrintBDR::parse_my_tag(
 		enzcst_io_ = enzcst_io;
 
 		//this also means that we'd like the constraint score terms turned on
-		if( sfx_->has_zero_weight( core::scoring::coordinate_constraint ) ) sfx_->set_weight( core::scoring::coordinate_constraint, 1.0 );
-		if( sfx_->has_zero_weight( core::scoring::atom_pair_constraint ) ) sfx_->set_weight( core::scoring::atom_pair_constraint, 1.0 );
-		if( sfx_->has_zero_weight( core::scoring::angle_constraint ) ) sfx_->set_weight( core::scoring::angle_constraint, 1.0 );
-		if( sfx_->has_zero_weight( core::scoring::dihedral_constraint ) ) sfx_->set_weight( core::scoring::dihedral_constraint, 1.0 );
-		if( sfx_->has_zero_weight( core::scoring::backbone_stub_constraint ) ) sfx_->set_weight( core::scoring::backbone_stub_constraint, 1.0 );
+		if ( sfx_->has_zero_weight( core::scoring::coordinate_constraint ) ) sfx_->set_weight( core::scoring::coordinate_constraint, 1.0 );
+		if ( sfx_->has_zero_weight( core::scoring::atom_pair_constraint ) ) sfx_->set_weight( core::scoring::atom_pair_constraint, 1.0 );
+		if ( sfx_->has_zero_weight( core::scoring::angle_constraint ) ) sfx_->set_weight( core::scoring::angle_constraint, 1.0 );
+		if ( sfx_->has_zero_weight( core::scoring::dihedral_constraint ) ) sfx_->set_weight( core::scoring::dihedral_constraint, 1.0 );
+		if ( sfx_->has_zero_weight( core::scoring::backbone_stub_constraint ) ) sfx_->set_weight( core::scoring::backbone_stub_constraint, 1.0 );
 
 	}
 }

@@ -30,8 +30,8 @@ namespace protocols {
 namespace nonlocal {
 
 class SimpleTreeBuilder : public TreeBuilder {
- public:
-  void set_up(const protocols::loops::Loops& chunks, core::pose::Pose* pose);
+public:
+	void set_up(const protocols::loops::Loops& chunks, core::pose::Pose* pose);
 };
 
 }  // namespace nonlocal

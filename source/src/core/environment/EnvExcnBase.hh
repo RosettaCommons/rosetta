@@ -33,34 +33,34 @@ namespace core {
 namespace environment {
 
 class EXCN_Env_Exception : public utility::excn::EXCN_Msg_Exception {
-  typedef utility::excn::EXCN_Msg_Exception Parent;
+	typedef utility::excn::EXCN_Msg_Exception Parent;
 public:
-  EXCN_Env_Exception( EnvCoreCAP env_ap ) : Parent("") {
-    EnvCoreCOP env = env_ap.lock(); // avoids throwing weak_ptr exception
-    std::ostringstream elab_msg;
+	EXCN_Env_Exception( EnvCoreCAP env_ap ) : Parent("") {
+		EnvCoreCOP env = env_ap.lock(); // avoids throwing weak_ptr exception
+		std::ostringstream elab_msg;
 
-    if(!env) {
-      elab_msg << "Environment exception in unknown environment!";
+		if ( !env ) {
+			elab_msg << "Environment exception in unknown environment!";
 
-    } else {
-      elab_msg << "Environment exception in environment: '" << env->name();
+		} else {
+			elab_msg << "Environment exception in environment: '" << env->name();
 
-      EnvCoreCAP superenv = env->superenv();
-      while( ! superenv.expired() ) {
-        EnvCoreCOP superenv_op = superenv.lock();
-        if(!superenv_op) break;
-        elab_msg << superenv_op->name() << ">";
-        superenv = superenv_op->superenv();
-      }
+			EnvCoreCAP superenv = env->superenv();
+			while ( ! superenv.expired() ) {
+				EnvCoreCOP superenv_op = superenv.lock();
+				if ( !superenv_op ) break;
+				elab_msg << superenv_op->name() << ">";
+				superenv = superenv_op->superenv();
+			}
 
-      elab_msg << "'";
-    }
+			elab_msg << "'";
+		}
 
-    add_msg( elab_msg.str() );
-  }
+		add_msg( elab_msg.str() );
+	}
 
 protected:
-  EXCN_Env_Exception() : Parent() {};
+	EXCN_Env_Exception() : Parent() {};
 };
 
 } // environment

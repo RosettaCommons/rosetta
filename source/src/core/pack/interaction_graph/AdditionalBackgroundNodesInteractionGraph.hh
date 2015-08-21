@@ -53,64 +53,64 @@ template < typename V, typename E, typename G > class AdditionalBackgroundNodesI
 template < typename V, typename E, typename G >
 class FirstClassNode : public V {
 
-	public:
-		typedef typename std::list< BackgroundToFirstClassEdge< V, E, G >* >             BackgroundEdgeList;
-		typedef typename std::list< BackgroundToFirstClassEdge< V, E, G >* >::iterator   BackgroundEdgeListIter;
+public:
+	typedef typename std::list< BackgroundToFirstClassEdge< V, E, G >* >             BackgroundEdgeList;
+	typedef typename std::list< BackgroundToFirstClassEdge< V, E, G >* >::iterator   BackgroundEdgeListIter;
 
-		typedef typename std::vector< BackgroundNode< V, E, G >* >                       BackgroundNodeVector;
-		typedef typename std::vector< BackgroundToFirstClassEdge< V, E, G >* >           BackgroundEdgeVector;
-		typedef typename std::vector< BackgroundToFirstClassEdge< V, E, G >* >::iterator BackgroundEdgeVectorIter;
+	typedef typename std::vector< BackgroundNode< V, E, G >* >                       BackgroundNodeVector;
+	typedef typename std::vector< BackgroundToFirstClassEdge< V, E, G >* >           BackgroundEdgeVector;
+	typedef typename std::vector< BackgroundToFirstClassEdge< V, E, G >* >::iterator BackgroundEdgeVectorIter;
 
-	public:
-		virtual ~FirstClassNode();
-		FirstClassNode( G * owner, int node_id, int num_states);
-		BackgroundEdgeListIter add_background_edge(BackgroundToFirstClassEdge< V, E, G >* edge );
-		void drop_background_edge( BackgroundEdgeListIter edge );
-		virtual unsigned int count_dynamic_memory() const;
+public:
+	virtual ~FirstClassNode();
+	FirstClassNode( G * owner, int node_id, int num_states);
+	BackgroundEdgeListIter add_background_edge(BackgroundToFirstClassEdge< V, E, G >* edge );
+	void drop_background_edge( BackgroundEdgeListIter edge );
+	virtual unsigned int count_dynamic_memory() const;
 
-	protected:
-		inline
-		int get_num_edges_to_background_nodes() const {
-			return num_edges_to_bg_nodes_;
-		}
+protected:
+	inline
+	int get_num_edges_to_background_nodes() const {
+		return num_edges_to_bg_nodes_;
+	}
 
-		inline
-		BackgroundToFirstClassEdge< V, E, G >* get_edge_to_bg_node( int index ) const {
+	inline
+	BackgroundToFirstClassEdge< V, E, G >* get_edge_to_bg_node( int index ) const {
 		debug_assert( bg_edge_vector_up_to_date_ );
-			return bg_edge_vector_[ index ];
-		}
+		return bg_edge_vector_[ index ];
+	}
 
-		inline
-		int get_index_of_adjacent_background_node( int index ) const {
+	inline
+	int get_index_of_adjacent_background_node( int index ) const {
 		debug_assert( bg_edge_vector_up_to_date_ );
-			return adjacent_bg_node_indices_[ index ];
-		}
+		return adjacent_bg_node_indices_[ index ];
+	}
 
-		inline
-		BackgroundNode< V, E, G >* get_adjacent_background_node( int index ) const {
+	inline
+	BackgroundNode< V, E, G >* get_adjacent_background_node( int index ) const {
 		debug_assert( bg_edge_vector_up_to_date_ );
-			return bg_node_vector_[ index ];
-		}
+		return bg_node_vector_[ index ];
+	}
 
-		inline
-		bool get_bg_edge_vector_up_to_date_() const {
-			return bg_edge_vector_up_to_date_;
-		}
+	inline
+	bool get_bg_edge_vector_up_to_date_() const {
+		return bg_edge_vector_up_to_date_;
+	}
 
-		void update_bg_edge_vector();
+	void update_bg_edge_vector();
 
-	private:
-		int num_edges_to_bg_nodes_;
-		BackgroundEdgeList bg_edge_list_;
-		BackgroundEdgeVector bg_edge_vector_;
-		std::vector< int > adjacent_bg_node_indices_;
-		BackgroundNodeVector bg_node_vector_;
-		bool bg_edge_vector_up_to_date_;
+private:
+	int num_edges_to_bg_nodes_;
+	BackgroundEdgeList bg_edge_list_;
+	BackgroundEdgeVector bg_edge_vector_;
+	std::vector< int > adjacent_bg_node_indices_;
+	BackgroundNodeVector bg_node_vector_;
+	bool bg_edge_vector_up_to_date_;
 
-		//no default constructor, uncopyable
-		FirstClassNode();
-		FirstClassNode( FirstClassNode< V, E, G > const & );
-		FirstClassNode< V, E, G > & operator = ( FirstClassNode< V, E, G > const & );
+	//no default constructor, uncopyable
+	FirstClassNode();
+	FirstClassNode( FirstClassNode< V, E, G > const & );
+	FirstClassNode< V, E, G > & operator = ( FirstClassNode< V, E, G > const & );
 };
 
 
@@ -129,16 +129,16 @@ class FirstClassNode : public V {
 template < typename V, typename E, typename G >
 class FirstClassEdge : public E {
 
-	public:
-		virtual ~FirstClassEdge();
-		FirstClassEdge( G * owner, int first_node_ind, int second_node_ind );
-		virtual unsigned int count_dynamic_memory() const { return E::count_dynamic_memory(); }
+public:
+	virtual ~FirstClassEdge();
+	FirstClassEdge( G * owner, int first_node_ind, int second_node_ind );
+	virtual unsigned int count_dynamic_memory() const { return E::count_dynamic_memory(); }
 
-	private:
-		//no default constructor, uncopyable
-		FirstClassEdge();
-		FirstClassEdge( FirstClassEdge< V, E, G > const & );
-		FirstClassEdge< V, E, G > & operator = ( FirstClassEdge< V, E, G > const & );
+private:
+	//no default constructor, uncopyable
+	FirstClassEdge();
+	FirstClassEdge( FirstClassEdge< V, E, G > const & );
+	FirstClassEdge< V, E, G > & operator = ( FirstClassEdge< V, E, G > const & );
 
 };
 
@@ -164,74 +164,74 @@ class FirstClassEdge : public E {
 template < typename V, typename E, typename G >
 class BackgroundNode {
 
-	public:
-		typedef typename std::list< BackgroundToFirstClassEdge< V, E, G >* >::iterator   BackgroundEdgeListIter;
-		typedef typename std::list< BackgroundToFirstClassEdge< V, E, G >* >             BackgroundEdgeList;
-		typedef typename std::vector< BackgroundToFirstClassEdge< V, E, G >* >           BackgroundEdgeVector;
-		typedef typename std::vector< BackgroundToFirstClassEdge< V, E, G >* >::iterator BackgroundEdgeVectorIter;
-		typedef typename std::vector< FirstClassNode< V, E, G >* >                       FirstClassNodeVector;
+public:
+	typedef typename std::list< BackgroundToFirstClassEdge< V, E, G >* >::iterator   BackgroundEdgeListIter;
+	typedef typename std::list< BackgroundToFirstClassEdge< V, E, G >* >             BackgroundEdgeList;
+	typedef typename std::vector< BackgroundToFirstClassEdge< V, E, G >* >           BackgroundEdgeVector;
+	typedef typename std::vector< BackgroundToFirstClassEdge< V, E, G >* >::iterator BackgroundEdgeVectorIter;
+	typedef typename std::vector< FirstClassNode< V, E, G >* >                       FirstClassNodeVector;
 
-	public:
-		virtual ~BackgroundNode();
-		BackgroundNode( AdditionalBackgroundNodesInteractionGraph< V, E, G >* owner, int node_index );
+public:
+	virtual ~BackgroundNode();
+	BackgroundNode( AdditionalBackgroundNodesInteractionGraph< V, E, G >* owner, int node_index );
 
-		BackgroundEdgeListIter add_edge( BackgroundToFirstClassEdge< V, E, G >* edge_ptr);
-		void drop_edge( BackgroundEdgeListIter edge);
-		BackgroundToFirstClassEdge< V, E, G >* find_edge( int fc_node_index );
+	BackgroundEdgeListIter add_edge( BackgroundToFirstClassEdge< V, E, G >* edge_ptr);
+	void drop_edge( BackgroundEdgeListIter edge);
+	BackgroundToFirstClassEdge< V, E, G >* find_edge( int fc_node_index );
 
-		virtual void prepare_for_simulated_annealing() = 0;
-		virtual void print() const = 0;
-		virtual unsigned int count_static_memory() const = 0;
-		virtual unsigned int count_dynamic_memory() const;
+	virtual void prepare_for_simulated_annealing() = 0;
+	virtual void print() const = 0;
+	virtual unsigned int count_static_memory() const = 0;
+	virtual unsigned int count_dynamic_memory() const;
 
-	protected:
-		void update_edge_vector();
+protected:
+	void update_edge_vector();
 
-		inline
-		int get_node_index() const { return node_index_; }
+	inline
+	int get_node_index() const { return node_index_; }
 
-		inline
-		int get_num_incident_edges() const { return num_incident_edges_; }
+	inline
+	int get_num_incident_edges() const { return num_incident_edges_; }
 
-		inline
-		BackgroundToFirstClassEdge< V, E, G >* get_incident_edge( int index ) const {
+	inline
+	BackgroundToFirstClassEdge< V, E, G >* get_incident_edge( int index ) const {
 		debug_assert( edge_vector_up_to_date_ );
-			return edge_vector_[ index ];
-		}
+		return edge_vector_[ index ];
+	}
 
-		inline
-		int get_index_of_adjacent_first_class_node( int index ) const {
+	inline
+	int get_index_of_adjacent_first_class_node( int index ) const {
 		debug_assert( edge_vector_up_to_date_ );
-			return adjacent_first_class_node_indices_[ index ];
-		}
+		return adjacent_first_class_node_indices_[ index ];
+	}
 
-		inline
-		FirstClassNode< V, E, G>* get_adjacent_first_class_node( int index ) const {
+	inline
+	FirstClassNode< V, E, G>* get_adjacent_first_class_node( int index ) const {
 		debug_assert( edge_vector_up_to_date_ );
-			return adjacent_nodes_[ index ];
-		}
+		return adjacent_nodes_[ index ];
+	}
 
-		inline
-		bool get_edge_vector_up_to_date() const { return edge_vector_up_to_date_; }
+	inline
+	bool get_edge_vector_up_to_date() const { return edge_vector_up_to_date_; }
 
-		inline
-		AdditionalBackgroundNodesInteractionGraph< V, E, G >* get_owner() const { return owner_; }
+	inline
+	AdditionalBackgroundNodesInteractionGraph< V, E, G >* get_owner() const { return owner_; }
 
 
-	private:
-		int node_index_;
-		int num_incident_edges_;
-		BackgroundEdgeList edge_list_;
-		BackgroundEdgeVector edge_vector_;
-		std::vector< int > adjacent_first_class_node_indices_;
-		FirstClassNodeVector adjacent_nodes_;
-		bool edge_vector_up_to_date_;
-		AdditionalBackgroundNodesInteractionGraph< V, E, G >* owner_;
+private:
+	int node_index_;
+	int num_incident_edges_;
+	BackgroundEdgeList edge_list_;
+	BackgroundEdgeVector edge_vector_;
+	std::vector< int > adjacent_first_class_node_indices_;
+	FirstClassNodeVector adjacent_nodes_;
+	bool edge_vector_up_to_date_;
+	AdditionalBackgroundNodesInteractionGraph< V, E, G >* owner_;
 
-		//no default constructor, uncopyable
-		BackgroundNode();
-		BackgroundNode( BackgroundNode< V, E, G > const & );
-		BackgroundNode< V, E, G > & operator = ( BackgroundNode< V, E, G > const & );
+	//no default constructor, uncopyable
+	BackgroundNode();
+	BackgroundNode( BackgroundNode< V, E, G > const & );
+	BackgroundNode< V, E, G > & operator = ( BackgroundNode< V, E, G > const & );
 };
 
 
@@ -254,66 +254,66 @@ class BackgroundNode {
 template < typename V, typename E, typename G >
 class BackgroundToFirstClassEdge {
 
-	public:
-		typedef typename std::list< BackgroundToFirstClassEdge< V, E, G >* >::iterator BackgroundEdgeListIter;
+public:
+	typedef typename std::list< BackgroundToFirstClassEdge< V, E, G >* >::iterator BackgroundEdgeListIter;
 
-	public:
-		virtual ~BackgroundToFirstClassEdge();
-		BackgroundToFirstClassEdge( AdditionalBackgroundNodesInteractionGraph< V, E, G >* owner, int fc_node_index, int bg_node_index);
+public:
+	virtual ~BackgroundToFirstClassEdge();
+	BackgroundToFirstClassEdge( AdditionalBackgroundNodesInteractionGraph< V, E, G >* owner, int fc_node_index, int bg_node_index);
 
-		inline
-		int get_first_class_node_index() const { return first_class_node_index_; }
+	inline
+	int get_first_class_node_index() const { return first_class_node_index_; }
 
-		inline
-		int get_background_node_index() const { return background_node_index_; }
+	inline
+	int get_background_node_index() const { return background_node_index_; }
 
-		int get_other_ind( FirstClassNode< V, E, G >* ) const;
-		int get_other_ind( BackgroundNode< V, E, G >* ) const;
+	int get_other_ind( FirstClassNode< V, E, G >* ) const;
+	int get_other_ind( BackgroundNode< V, E, G >* ) const;
 
-		FirstClassNode< V, E, G >* get_other_node( BackgroundNode< V, E, G >*  ) const;
-		BackgroundNode< V, E, G >* get_other_node( FirstClassNode< V, E, G >*  ) const;
+	FirstClassNode< V, E, G >* get_other_node( BackgroundNode< V, E, G >*  ) const;
+	BackgroundNode< V, E, G >* get_other_node( FirstClassNode< V, E, G >*  ) const;
 
-		void set_pos_in_owners_list( BackgroundEdgeListIter );
-		void set_pos_in_node_edgevector( FirstClassNode< V, E, G >* caller, int pos );
-		void set_pos_in_node_edgevector( BackgroundNode< V, E, G >* caller, int pos);
+	void set_pos_in_owners_list( BackgroundEdgeListIter );
+	void set_pos_in_node_edgevector( FirstClassNode< V, E, G >* caller, int pos );
+	void set_pos_in_node_edgevector( BackgroundNode< V, E, G >* caller, int pos);
 
-		bool same_edge( int fc_node_index, int bg_node_index ) const;
+	bool same_edge( int fc_node_index, int bg_node_index ) const;
 
-		virtual void prepare_for_simulated_annealing() = 0;
+	virtual void prepare_for_simulated_annealing() = 0;
 
-		virtual unsigned int count_static_memory() const = 0;
-		virtual unsigned int count_dynamic_memory() const;
+	virtual unsigned int count_static_memory() const = 0;
+	virtual unsigned int count_dynamic_memory() const;
 
-	protected:
-		inline
-		FirstClassNode< V, E, G >* get_first_class_node() const { return first_class_node_; }
+protected:
+	inline
+	FirstClassNode< V, E, G >* get_first_class_node() const { return first_class_node_; }
 
-		inline
-		BackgroundNode< V, E, G >* get_background_node() const { return background_node_; }
+	inline
+	BackgroundNode< V, E, G >* get_background_node() const { return background_node_; }
 
-		inline
-		AdditionalBackgroundNodesInteractionGraph< V, E, G >* get_owner() const { return owner_; }
+	inline
+	AdditionalBackgroundNodesInteractionGraph< V, E, G >* get_owner() const { return owner_; }
 
 
-	private:
-		int first_class_node_index_;
-		int background_node_index_;
+private:
+	int first_class_node_index_;
+	int background_node_index_;
 
-		FirstClassNode< V, E, G >* first_class_node_;
-		BackgroundNode< V, E, G >* background_node_;
+	FirstClassNode< V, E, G >* first_class_node_;
+	BackgroundNode< V, E, G >* background_node_;
 
-		int pos_in_fc_edge_vector_;
-		int pos_in_bg_edge_vector_;
-		BackgroundEdgeListIter pos_in_fc_nodes_edge_list_;
-		BackgroundEdgeListIter pos_in_bg_nodes_edge_list_;
-		BackgroundEdgeListIter pos_in_owners_edge_list_;
+	int pos_in_fc_edge_vector_;
+	int pos_in_bg_edge_vector_;
+	BackgroundEdgeListIter pos_in_fc_nodes_edge_list_;
+	BackgroundEdgeListIter pos_in_bg_nodes_edge_list_;
+	BackgroundEdgeListIter pos_in_owners_edge_list_;
 
-		AdditionalBackgroundNodesInteractionGraph< V, E, G > * owner_;
+	AdditionalBackgroundNodesInteractionGraph< V, E, G > * owner_;
 
-		//no default constructor, uncopyable
-		BackgroundToFirstClassEdge();
-		BackgroundToFirstClassEdge(BackgroundToFirstClassEdge< V, E, G > const &);
-		BackgroundToFirstClassEdge< V, E, G > & operator = (BackgroundToFirstClassEdge< V, E, G > const & );
+	//no default constructor, uncopyable
+	BackgroundToFirstClassEdge();
+	BackgroundToFirstClassEdge(BackgroundToFirstClassEdge< V, E, G > const &);
+	BackgroundToFirstClassEdge< V, E, G > & operator = (BackgroundToFirstClassEdge< V, E, G > const & );
 
 };
 
@@ -329,70 +329,70 @@ class BackgroundToFirstClassEdge {
 template < typename V, typename E, typename G >
 class AdditionalBackgroundNodesInteractionGraph : public G {
 
-	public:
-		typedef typename std::vector< BackgroundNode< V, E, G > * >                           BackgroundNodeVector;
-		typedef typename std::list< BackgroundToFirstClassEdge< V, E, G > * >                 BackgroundEdgeList;
-		typedef typename std::list< BackgroundToFirstClassEdge< V, E, G > * >::iterator       BackgroundEdgeListIter;
-		typedef typename std::list< BackgroundToFirstClassEdge< V, E, G > * >::const_iterator BackgroundEdgeListConstIter;
+public:
+	typedef typename std::vector< BackgroundNode< V, E, G > * >                           BackgroundNodeVector;
+	typedef typename std::list< BackgroundToFirstClassEdge< V, E, G > * >                 BackgroundEdgeList;
+	typedef typename std::list< BackgroundToFirstClassEdge< V, E, G > * >::iterator       BackgroundEdgeListIter;
+	typedef typename std::list< BackgroundToFirstClassEdge< V, E, G > * >::const_iterator BackgroundEdgeListConstIter;
 
-	public:
-		AdditionalBackgroundNodesInteractionGraph( int num_nodes );
-		virtual ~AdditionalBackgroundNodesInteractionGraph();
+public:
+	AdditionalBackgroundNodesInteractionGraph( int num_nodes );
+	virtual ~AdditionalBackgroundNodesInteractionGraph();
 
-		friend class BackgroundToFirstClassEdge< V, E, G >;
+	friend class BackgroundToFirstClassEdge< V, E, G >;
 
-		virtual unsigned int getTotalMemoryUsage() const;
-		virtual unsigned int count_dynamic_memory() const;
+	virtual unsigned int getTotalMemoryUsage() const;
+	virtual unsigned int count_dynamic_memory() const;
 
-		inline
-		int get_num_background_nodes() const { return num_bg_nodes_; }
+	inline
+	int get_num_background_nodes() const { return num_bg_nodes_; }
 
-	protected:
-		void drop_background_edge( BackgroundEdgeListIter iter);
+protected:
+	void drop_background_edge( BackgroundEdgeListIter iter);
 
-		// Factory methods for background nodes and edges
-		virtual BackgroundNode< V, E, G >* create_background_node( int bg_node_index ) = 0;
-		virtual BackgroundToFirstClassEdge< V, E, G >* create_background_edge( int fc_node_index, int bg_node_index ) = 0;
+	// Factory methods for background nodes and edges
+	virtual BackgroundNode< V, E, G >* create_background_node( int bg_node_index ) = 0;
+	virtual BackgroundToFirstClassEdge< V, E, G >* create_background_edge( int fc_node_index, int bg_node_index ) = 0;
 
-		// call at most once
-		void set_num_background_nodes( int num_bg_nodes );
+	// call at most once
+	void set_num_background_nodes( int num_bg_nodes );
 
-		void add_background_edge( int first_class_node_index, int bg_node_index );
+	void add_background_edge( int first_class_node_index, int bg_node_index );
 
-		BackgroundToFirstClassEdge< V, E, G >* find_background_edge( int first_class_node_index, int bg_node_index ) const;
+	BackgroundToFirstClassEdge< V, E, G >* find_background_edge( int first_class_node_index, int bg_node_index ) const;
 
-		inline
-		int get_num_bg_edges() const { return bg_to_fc_edge_list_.size(); }
+	inline
+	int get_num_bg_edges() const { return bg_to_fc_edge_list_.size(); }
 
-		inline
-		BackgroundNode< V, E, G >* get_background_node( int index ) const {
+	inline
+	BackgroundNode< V, E, G >* get_background_node( int index ) const {
 		debug_assert( index > 0 && index <= num_bg_nodes_ );
-			return bg_nodes_[ index ];
-		}
+		return bg_nodes_[ index ];
+	}
 
-		void prepare_for_simulated_annealing();
+	void prepare_for_simulated_annealing();
 
-		inline
-		BackgroundEdgeListConstIter get_bg_edge_list_begin() const {
-			return bg_to_fc_edge_list_.begin();
-		}
+	inline
+	BackgroundEdgeListConstIter get_bg_edge_list_begin() const {
+		return bg_to_fc_edge_list_.begin();
+	}
 
-		inline
-		BackgroundEdgeListConstIter get_bg_edge_list_end() const {
-			return bg_to_fc_edge_list_.end();
-		}
+	inline
+	BackgroundEdgeListConstIter get_bg_edge_list_end() const {
+		return bg_to_fc_edge_list_.end();
+	}
 
-	private:
-		int num_bg_nodes_;
-		BackgroundNodeVector bg_nodes_;
-		BackgroundEdgeList bg_to_fc_edge_list_;
+private:
+	int num_bg_nodes_;
+	BackgroundNodeVector bg_nodes_;
+	BackgroundEdgeList bg_to_fc_edge_list_;
 
-		mutable BackgroundToFirstClassEdge< V, E, G >* focused_bg_edge_;
+	mutable BackgroundToFirstClassEdge< V, E, G >* focused_bg_edge_;
 
-		//no default constructor, uncopyable
-		AdditionalBackgroundNodesInteractionGraph();
-		AdditionalBackgroundNodesInteractionGraph( AdditionalBackgroundNodesInteractionGraph< V, E, G > const & );
-		AdditionalBackgroundNodesInteractionGraph< V, E, G > & operator = (AdditionalBackgroundNodesInteractionGraph< V, E, G > const & );
+	//no default constructor, uncopyable
+	AdditionalBackgroundNodesInteractionGraph();
+	AdditionalBackgroundNodesInteractionGraph( AdditionalBackgroundNodesInteractionGraph< V, E, G > const & );
+	AdditionalBackgroundNodesInteractionGraph< V, E, G > & operator = (AdditionalBackgroundNodesInteractionGraph< V, E, G > const & );
 };
 
 
@@ -411,9 +411,9 @@ class AdditionalBackgroundNodesInteractionGraph : public G {
 ///
 template < typename V, typename E, typename G >
 FirstClassNode< V, E, G > ::FirstClassNode( G* owner, int node_id, int num_states ) :
-	V( owner, node_id, num_states ),
-	num_edges_to_bg_nodes_(0),
-	bg_edge_vector_up_to_date_(false)
+V( owner, node_id, num_states ),
+num_edges_to_bg_nodes_(0),
+bg_edge_vector_up_to_date_(false)
 {}
 
 
@@ -466,9 +466,9 @@ void FirstClassNode< V, E, G >::drop_background_edge( BackgroundEdgeListIter edg
 /// Returns an int representing the amount of memory in bytes used by this node
 ///
 /// @remarks
-///	ronj lists consume more memory because they maintain pointers to the previous and next nodes
-///	ronj current calculation uses 4 * # elements in list * sizeof(pointer), but I think this is wrong
-///	ronj isn't it only 3 * # elements in list * sizeof(pointer)?
+/// ronj lists consume more memory because they maintain pointers to the previous and next nodes
+/// ronj current calculation uses 4 * # elements in list * sizeof(pointer), but I think this is wrong
+/// ronj isn't it only 3 * # elements in list * sizeof(pointer)?
 ///
 /// @param
 /// total_memory - [out] - the amount of memory used by this node
@@ -510,7 +510,7 @@ void FirstClassNode< V, E, G >::update_bg_edge_vector() {
 
 	std::copy( bg_edge_list_.begin(), bg_edge_list_.end(), position1 );
 
-	for (int ii = 1; ii <= num_edges_to_bg_nodes_; ++ii) {
+	for ( int ii = 1; ii <= num_edges_to_bg_nodes_; ++ii ) {
 
 		//ronj set_pos_in_node_edgevector updates the edge vector in this FirstClassNode
 		//ronj this FirstClassNode is telling the BackgroundToFirstClass edge connected to it what position in the
@@ -551,7 +551,7 @@ void FirstClassNode< V, E, G >::update_bg_edge_vector() {
 ///
 template < typename V, typename E, typename G >
 FirstClassEdge< V, E, G >::FirstClassEdge( G* owner, int first_node_ind, int second_node_ind) :
-	E ( owner, first_node_ind, second_node_ind ) {}
+E ( owner, first_node_ind, second_node_ind ) {}
 
 
 /// @brief
@@ -583,10 +583,10 @@ FirstClassEdge< V, E, G >::~FirstClassEdge() {}
 ///
 template < typename V, typename E, typename G >
 BackgroundNode< V, E, G >::BackgroundNode( AdditionalBackgroundNodesInteractionGraph< V, E, G >* owner, int node_index ) :
-	node_index_( node_index ),
-	num_incident_edges_( 0 ),
-	edge_vector_up_to_date_( false ),
-	owner_( owner ) {
+node_index_( node_index ),
+num_incident_edges_( 0 ),
+edge_vector_up_to_date_( false ),
+owner_( owner ) {
 }
 
 
@@ -654,7 +654,7 @@ void BackgroundNode< V, E, G >::update_edge_vector() {
 
 	std::copy( edge_list_.begin(), edge_list_.end(), position1 );
 
-	for (int ii = 1; ii <= num_incident_edges_; ++ii) {
+	for ( int ii = 1; ii <= num_incident_edges_; ++ii ) {
 		//ronj set_pos_in_node_edgevector updates the edge vector in this BackgroundNode.
 		//ronj this BackgroundNode is telling the BackgroundToFirstClass edge connected to it what position in the
 		//ronj edge vector (stored in this class) that edge is in. Hey, edge, you're fourth in my vector of incident edges.
@@ -677,9 +677,10 @@ void BackgroundNode< V, E, G >::update_edge_vector() {
 template < typename V, typename E, typename G >
 BackgroundToFirstClassEdge< V, E, G >* BackgroundNode< V, E, G >::find_edge( int fc_node_index ) {
 
-	for (BackgroundEdgeListIter iter = edge_list_.begin(); iter != edge_list_.end(); ++iter ) {
-		if ( (*iter)->same_edge( fc_node_index, node_index_ ) )
+	for ( BackgroundEdgeListIter iter = edge_list_.begin(); iter != edge_list_.end(); ++iter ) {
+		if ( (*iter)->same_edge( fc_node_index, node_index_ ) ) {
 			return *iter;
+		}
 	}
 	return 0;
 }
@@ -689,9 +690,9 @@ BackgroundToFirstClassEdge< V, E, G >* BackgroundNode< V, E, G >::find_edge( int
 /// Returns an int representing the amount of memory in bytes used by this node
 ///
 /// @remarks
-///	ronj lists consume more memory because they maintain pointers to the previous and next nodes
-///	ronj current calculation uses 4 * # elements in list * sizeof(pointer), but I think this is wrong
-///	ronj isn't it only 3 * # elements in list * sizeof(pointer)?
+/// ronj lists consume more memory because they maintain pointers to the previous and next nodes
+/// ronj current calculation uses 4 * # elements in list * sizeof(pointer), but I think this is wrong
+/// ronj isn't it only 3 * # elements in list * sizeof(pointer)?
 ///
 /// @param
 /// total_memory - [out] - the amount of memory used by this node
@@ -730,10 +731,10 @@ unsigned int BackgroundNode< V, E, G >::count_dynamic_memory() const {
 ///
 template < typename V, typename E, typename G >
 BackgroundToFirstClassEdge< V, E, G >::BackgroundToFirstClassEdge
-	( AdditionalBackgroundNodesInteractionGraph< V, E, G > * owner, int fc_node_index, int bg_node_index ) :
-	first_class_node_index_( fc_node_index ),
-	background_node_index_( bg_node_index),
-	owner_( owner )
+( AdditionalBackgroundNodesInteractionGraph< V, E, G > * owner, int fc_node_index, int bg_node_index ) :
+first_class_node_index_( fc_node_index ),
+background_node_index_( bg_node_index),
+owner_( owner )
 {
 	first_class_node_ = ( FirstClassNode< V, E, G >* )(owner_->get_node( first_class_node_index_ ));
 	background_node_ = owner_->get_background_node( background_node_index_);
@@ -890,7 +891,7 @@ bool BackgroundToFirstClassEdge< V, E, G >::same_edge( int fc_node_index, int bg
 /// Returns an int representing the amount of memory in bytes used by this node
 ///
 /// @remarks
-///	return 0 because no memory is dynamically allocated for these edges.
+/// return 0 because no memory is dynamically allocated for these edges.
 ///
 template < typename V, typename E, typename G >
 unsigned int BackgroundToFirstClassEdge< V, E, G >::count_dynamic_memory() const {
@@ -911,9 +912,9 @@ unsigned int BackgroundToFirstClassEdge< V, E, G >::count_dynamic_memory() const
 ///
 template < typename V, typename E, typename G >
 AdditionalBackgroundNodesInteractionGraph< V, E, G >::AdditionalBackgroundNodesInteractionGraph( int num_nodes ) :
-	G( num_nodes ),
-	num_bg_nodes_( -1 ),
-	focused_bg_edge_( 0 )
+G( num_nodes ),
+num_bg_nodes_( -1 ),
+focused_bg_edge_( 0 )
 {}
 
 
@@ -937,7 +938,7 @@ AdditionalBackgroundNodesInteractionGraph< V, E, G >::~AdditionalBackgroundNodes
 		iter = next_iter;
 	}
 
-	for (int ii = 1; ii <= num_bg_nodes_; ++ii) {
+	for ( int ii = 1; ii <= num_bg_nodes_; ++ii ) {
 		delete bg_nodes_[ ii ];
 	}
 }
@@ -968,11 +969,12 @@ void AdditionalBackgroundNodesInteractionGraph< V, E, G > ::drop_background_edge
 template < typename V, typename E, typename G >
 void AdditionalBackgroundNodesInteractionGraph< V, E, G >::set_num_background_nodes( int num_bg_nodes ) {
 
-debug_assert( num_bg_nodes_ == -1 && num_bg_nodes >= 0); //call this method at most once
+	debug_assert( num_bg_nodes_ == -1 && num_bg_nodes >= 0); //call this method at most once
 	num_bg_nodes_ = num_bg_nodes;
 
-	if ( num_bg_nodes_ == 0 )
+	if ( num_bg_nodes_ == 0 ) {
 		return;
+	}
 
 	bg_nodes_.resize( num_bg_nodes_ + 1 );
 	for ( int ii = 1; ii <= num_bg_nodes_; ++ii ) {
@@ -1013,7 +1015,7 @@ void AdditionalBackgroundNodesInteractionGraph< V, E, G >::add_background_edge( 
 ///
 template < typename V, typename E, typename G >
 BackgroundToFirstClassEdge< V, E, G >*
-	AdditionalBackgroundNodesInteractionGraph< V, E, G >::find_background_edge( int first_class_node_index, int bg_node_index ) const {
+AdditionalBackgroundNodesInteractionGraph< V, E, G >::find_background_edge( int first_class_node_index, int bg_node_index ) const {
 
 	if ( (focused_bg_edge_ != 0) && !( focused_bg_edge_->same_edge(first_class_node_index, bg_node_index) ) ) {
 		focused_bg_edge_ = bg_nodes_[ bg_node_index ]->find_edge( first_class_node_index );
@@ -1050,7 +1052,7 @@ void AdditionalBackgroundNodesInteractionGraph< V, E, G >::prepare_for_simulated
 		iter = next_iter;
 	}
 
-	for (int ii = 1; ii <= num_bg_nodes_; ++ii) {
+	for ( int ii = 1; ii <= num_bg_nodes_; ++ii ) {
 		// BackgroundNode::prepare_for_simulated_annealing() is a pure virtual
 		bg_nodes_[ ii ]->prepare_for_simulated_annealing();
 	}
@@ -1067,7 +1069,7 @@ unsigned int AdditionalBackgroundNodesInteractionGraph< V, E, G >::getTotalMemor
 
 	unsigned int total_memory = G::getTotalMemoryUsage();
 
-	for (int ii = 1; ii <= get_num_background_nodes(); ++ii) {
+	for ( int ii = 1; ii <= get_num_background_nodes(); ++ii ) {
 		total_memory += bg_nodes_[ii]->count_dynamic_memory();
 		total_memory += bg_nodes_[ii]->count_static_memory();
 	}

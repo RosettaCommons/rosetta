@@ -38,25 +38,25 @@ namespace task_operations {
 //class RestrictTaskForDocking : public core::pack::task::operation::TaskOperation
 //{
 //public:
-//	typedef core::pack::task::operation::TaskOperation TaskOperation;
-//	typedef core::pack::task::operation::TaskOperationOP TaskOperationOP;
-//	typedef TaskOperation parent;
+// typedef core::pack::task::operation::TaskOperation TaskOperation;
+// typedef core::pack::task::operation::TaskOperationOP TaskOperationOP;
+// typedef TaskOperation parent;
 //public:
-//	RestrictTaskForDocking();
+// RestrictTaskForDocking();
 //
-//	RestrictTaskForDocking( core::scoring::ScoreFunctionCOP scorefxn, core::Size rb_jump, bool include_current, core::Real distance_ = 8 );
+// RestrictTaskForDocking( core::scoring::ScoreFunctionCOP scorefxn, core::Size rb_jump, bool include_current, core::Real distance_ = 8 );
 //
-//	virtual ~RestrictTaskForDocking();
+// virtual ~RestrictTaskForDocking();
 //
-//	virtual TaskOperationOP clone() const;
+// virtual TaskOperationOP clone() const;
 //
-//	virtual	void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
+// virtual void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
 //
 //private:
-//	core::scoring::ScoreFunctionCOP scorefxn_;
-//	core::Size rb_jump_;
-//	bool include_current_;
-//	core::Real distance_;
+// core::scoring::ScoreFunctionCOP scorefxn_;
+// core::Size rb_jump_;
+// bool include_current_;
+// core::Real distance_;
 //};
 
 class DockingNoRepack1 : public core::pack::task::operation::TaskOperation
@@ -73,7 +73,7 @@ public:
 
 	virtual TaskOperationOP clone() const;
 
-	virtual	void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
+	virtual void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
 
 private:
 	int rb_jump_;
@@ -94,7 +94,7 @@ public:
 
 	virtual TaskOperationOP clone() const;
 
-	virtual	void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
+	virtual void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
 
 private:
 	int rb_jump_;
@@ -110,7 +110,7 @@ public:
 public:
 	RestrictToInterface() : parent(), distance_( 8 ), loopy_interface_( false )
 	{
-        set_movable_jumps( utility::tools::make_vector1< int >( 1 ) );
+		set_movable_jumps( utility::tools::make_vector1< int >( 1 ) );
 	}
 
 	RestrictToInterface( int rb_jump_in, core::Real distance_in = 8 ) :
@@ -126,7 +126,7 @@ public:
 
 	RestrictToInterface( utility::vector1_int rb_jump_in,
 		ObjexxFCL::FArray1D_bool loop_residues ) : parent(), distance_( 8 ),
-			loopy_interface_( true ) {
+		loopy_interface_( true ) {
 		loop_residues_ = loop_residues;
 		set_movable_jumps( rb_jump_in );
 	}
@@ -147,11 +147,11 @@ public:
 
 	virtual TaskOperationOP clone() const;
 	void rb_jump( int jump_in );
-    //void set_movable_jumps( utility::vector1_int const movable_jumps );
+	//void set_movable_jumps( utility::vector1_int const movable_jumps );
 	void distance( core::Real const distance_in );
 	void symmetric_task( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
 
-	virtual	void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
+	virtual void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
 	virtual void parse_tag( TagCOP, DataMap & );
 
 private:

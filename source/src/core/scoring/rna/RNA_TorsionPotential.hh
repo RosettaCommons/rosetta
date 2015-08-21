@@ -52,19 +52,19 @@ public:
 	virtual ~RNA_TorsionPotential() ; // auto-removing definition from header{}
 
 
-	//	void update_constraints( pose::Pose & pose ) const;
+	// void update_constraints( pose::Pose & pose ) const;
 	Real
 	eval_intrares_energy(
-											 core::conformation::Residue const & rsd,
-											 pose::Pose const & pose
-											 );
+		core::conformation::Residue const & rsd,
+		pose::Pose const & pose
+	);
 
 
 	Real
 	residue_pair_energy(
-											core::conformation::Residue const & rsd1,
-											core::conformation::Residue const & rsd2,
-											pose::Pose const & pose ) const;
+		core::conformation::Residue const & rsd1,
+		core::conformation::Residue const & rsd2,
+		pose::Pose const & pose ) const;
 
 	void
 	eval_atom_derivative(
@@ -77,7 +77,7 @@ public:
 
 
 	//Real
-	//	compute_torsion_potential( Size const & torsion_number, Real const & value, Real const & delta, Real const & next_alpha ) const;
+	// compute_torsion_potential( Size const & torsion_number, Real const & value, Real const & delta, Real const & next_alpha ) const;
 
 	Real
 	intrares_side_chain_score() const{ return intrares_side_chain_score_; }
@@ -94,14 +94,14 @@ private:
 
 	void
 	initialize_potential_from_file( core::scoring::func::FuncOP & func,
-																	std::string const & filename );
+		std::string const & filename );
 
 	void
 	init_fade_functions();
 
 	bool
 	get_f1_f2( core::id::TorsionID const & torsion_id,
-					 core::pose::Pose const & pose, core::id::AtomID const & id, Vector & f1, Vector & f2 ) const;
+		core::pose::Pose const & pose, core::id::AtomID const & id, Vector & f1, Vector & f2 ) const;
 
 	std::string path_to_torsion_files_;
 
@@ -111,10 +111,10 @@ private:
 	Real const alpha_fade_;
 
 	core::scoring::func::FuncOP alpha_potential_, beta_potential_, gamma_potential_, delta_north_potential_,
-	delta_south_potential_, epsilon_north_potential_, epsilon_south_potential_, zeta_alpha_sc_minus_potential_,
-	zeta_alpha_sc_plus_potential_, zeta_alpha_ap_potential_, nu2_north_potential_, nu2_south_potential_,
-	nu1_north_potential_, nu1_south_potential_, chi_north_potential_others_, chi_south_potential_others_,
-	chi_north_potential_guanosine_, chi_south_potential_guanosine_, chi_purine_north_potential_, chi_purine_south_potential_,
+		delta_south_potential_, epsilon_north_potential_, epsilon_south_potential_, zeta_alpha_sc_minus_potential_,
+		zeta_alpha_sc_plus_potential_, zeta_alpha_ap_potential_, nu2_north_potential_, nu2_south_potential_,
+		nu1_north_potential_, nu1_south_potential_, chi_north_potential_others_, chi_south_potential_others_,
+		chi_north_potential_guanosine_, chi_south_potential_guanosine_, chi_purine_north_potential_, chi_purine_south_potential_,
 		chi_pyrimidine_north_potential_, chi_pyrimidine_south_potential_, o2h_north_potential_, o2h_south_potential_, chi_potential_syn_guanosine_bonus_;
 
 	core::scoring::func::FuncOP fade_delta_north_, fade_delta_south_;

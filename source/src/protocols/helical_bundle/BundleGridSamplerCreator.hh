@@ -17,16 +17,16 @@
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
-	namespace helical_bundle {
+namespace helical_bundle {
 
-		class BundleGridSamplerCreator : public protocols::moves::MoverCreator {
-		public:
-			virtual moves::MoverOP create_mover() const;
-			virtual std::string keyname() const;
-			static std::string mover_name();
-		};
+class BundleGridSamplerCreator : public protocols::moves::MoverCreator {
+public:
+	virtual moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
+	static std::string mover_name();
+};
 
-	} //namespace helical_bundle
+} //namespace helical_bundle
 } //namespace protocols
 
 #endif //INCLUDED_protocols_helical_bundle_BundleGridSamplerCreator_hh

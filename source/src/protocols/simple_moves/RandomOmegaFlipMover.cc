@@ -123,7 +123,7 @@ RandomOmegaFlipMover::setup_torsion_list( core::pose::Pose & pose )
 
 	// DEBUG
 	//for ( Size i(1); i <= torsion_id_list_.size(); ++i ) {
-	//	TR << "DEBUG setup_torsion_list(): " << torsion_id_list_[i].rsd() << " " << torsion_id_list_[i].type() << " " << torsion_id_list_[i].torsion() << std::endl;
+	// TR << "DEBUG setup_torsion_list(): " << torsion_id_list_[i].rsd() << " " << torsion_id_list_[i].type() << " " << torsion_id_list_[i].torsion() << std::endl;
 	//}
 }
 
@@ -153,17 +153,17 @@ RandomOmegaFlipMover::parse_my_tag(
 
 /// @brief RandomOmegaFlipMoverCreator interface, name of the mover
 std::string RandomOmegaFlipMoverCreator::mover_name() {
-  return "RandomOmegaFlipMover";
+	return "RandomOmegaFlipMover";
 }
 
 /// @brief RandomOmegaFlipMoverCreator interface, returns a unique key name to be used in xml file
 std::string RandomOmegaFlipMoverCreator::keyname() const {
-  return RandomOmegaFlipMoverCreator::mover_name();
+	return RandomOmegaFlipMoverCreator::mover_name();
 }
 
 /// @brief RandomOmegaFlipMoverCreator interface, return a new instance
 protocols::moves::MoverOP RandomOmegaFlipMoverCreator::create_mover() const {
-  return protocols::moves::MoverOP( new RandomOmegaFlipMover() );
+	return protocols::moves::MoverOP( new RandomOmegaFlipMover() );
 }
 
 
@@ -173,25 +173,25 @@ protocols::moves::MoverOP RandomOmegaFlipMoverCreator::create_mover() const {
 /*
 
 TR << "DEBUG" << std::endl;
-	move_map_->show( pose.total_residue() );
+move_map_->show( pose.total_residue() );
 
-	TR << "DEBUG TORSION TYPE" << std::endl;
-	for( MoveMap::TorsionTypeMap::const_iterator i( move_map_->torsion_type_begin() ), i_end( move_map_->torsion_type_end() ); i != i_end; ++i ) {
-		TR << "TORSION TYPE: " << i->first << " " << i->second << std::endl;
-	}
+TR << "DEBUG TORSION TYPE" << std::endl;
+for( MoveMap::TorsionTypeMap::const_iterator i( move_map_->torsion_type_begin() ), i_end( move_map_->torsion_type_end() ); i != i_end; ++i ) {
+TR << "TORSION TYPE: " << i->first << " " << i->second << std::endl;
+}
 
-	TR << "DEBUG MOVEMAP TORSION ID" << std::endl;
-	for( MoveMap::MoveMapTorsionID_Map::const_iterator i( move_map_->movemap_torsion_id_begin() ), i_end( move_map_->movemap_torsion_id_end() ); i != i_end; ++i ) {
-		TR << "MM TORSION TYPE: "
-		<< i->first.first << " "
-		<< i->first.second << " "
-		<< i->second << std::endl;
-	}
+TR << "DEBUG MOVEMAP TORSION ID" << std::endl;
+for( MoveMap::MoveMapTorsionID_Map::const_iterator i( move_map_->movemap_torsion_id_begin() ), i_end( move_map_->movemap_torsion_id_end() ); i != i_end; ++i ) {
+TR << "MM TORSION TYPE: "
+<< i->first.first << " "
+<< i->first.second << " "
+<< i->second << std::endl;
+}
 
-	TR << "DEBUG TORSION ID" << std::endl;
-	for( MoveMap::TorsionID_Map::const_iterator i( move_map_->torsion_id_begin() ), i_end( move_map_->torsion_id_end() ); i != i_end; ++i ) {
-		TR << "TORSION ID: " << i->first << " " << i->second << std::endl;
-	}
+TR << "DEBUG TORSION ID" << std::endl;
+for( MoveMap::TorsionID_Map::const_iterator i( move_map_->torsion_id_begin() ), i_end( move_map_->torsion_id_end() ); i != i_end; ++i ) {
+TR << "TORSION ID: " << i->first << " " << i->second << std::endl;
+}
 
 
- */
+*/

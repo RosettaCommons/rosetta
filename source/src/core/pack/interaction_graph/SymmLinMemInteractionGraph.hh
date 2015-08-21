@@ -292,7 +292,7 @@ private:
 	bool partial_state_assignment_;
 	bool preped_for_sim_annealing_;
 
-		//no default constructor, uncopyable
+	//no default constructor, uncopyable
 	SymmLinearMemEdge();
 	SymmLinearMemEdge( SymmLinearMemEdge const & );
 	SymmLinearMemEdge & operator = ( SymmLinearMemEdge const & );
@@ -479,7 +479,7 @@ SymmLinearMemEdge::acknowledge_substitution(
 		curr_state_energy_,
 		nodes_new_state,
 		new_state_recent_history_index
-		);
+	);
 
 	return;
 }

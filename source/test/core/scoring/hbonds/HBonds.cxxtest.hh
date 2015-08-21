@@ -42,9 +42,9 @@
 #include <numeric/constants.hh>
 
 using namespace core;
-  using namespace conformation;
-  using namespace scoring;
-    using namespace hbonds;
+using namespace conformation;
+using namespace scoring;
+using namespace hbonds;
 
 using pose::Pose;
 using conformation::Residue;
@@ -54,7 +54,7 @@ static basic::Tracer TR("core.scoring.hbonds.HBonds.cxxtest");
 class HBondsTest : public CxxTest::TestSuite {
 
 public:
-  void setUp() {
+	void setUp() {
 		core_init();
 
 	}
@@ -63,43 +63,43 @@ public:
 
 	// Classic hbond types
 
-//	void dont_test_hbond_compute_energy()
-//  {
-//		test::UTracer UT("core/scoring/hbonds/hbond_compute_energy.u");
-//
-//		Real energy, dE_dr, dE_dxD, dE_dxH;
-//
-//		UT << "# Computed energies and derivatives given HBEvalType and geometric parameters\n";
-//		UT << "# HBEvalType\tAHdis\txD\txH\tenergy\n";
-//		utility::vector1<HBEvalType> hbe_types;
-//
-//		hbe_types.push_back(hbe_BB);
-//		hbe_types.push_back(hbe_BBTURN);
-//		hbe_types.push_back(hbe_BBHELIX);
-//		hbe_types.push_back(hbe_BBOTHER);
-//		hbe_types.push_back(hbe_SP2B);
-//		hbe_types.push_back(hbe_SP3B);
-//		hbe_types.push_back(hbe_RINGB);
-//		hbe_types.push_back(hbe_BSC);
-//		hbe_types.push_back(hbe_SP2SC);
-//		hbe_types.push_back(hbe_SP3SC);
-//		hbe_types.push_back(hbe_RINGSC);
-//
-//    for( Size hbe = 1; hbe <= hbe_types.size(); hbe++){
-//			HBEvalType hbe_type = hbe_types[hbe];
-//			for (Real AHdis = MIN_R; AHdis <MAX_R; AHdis += AHdis_step){
-//				for (Real xD = MIN_xD; xD < MAX_xD; xD += xD_step){
-//					for (Real xH = MIN_xH; xH < MAX_xH; xH += xH_step){
-//						hbond_compute_energy(hbe_type, AHdis, xD, xH, energy, dE_dr, dE_dxD, dE_dxH);
-//						if (energy < 0){
-//							UT << hbe_type << "\t" << AHdis << "\t" << xD << "\t" << xH << "\t";
-//							UT << energy << "\t" << dE_dr << "\t" << dE_dxD << "\t" << dE_dxH << "\n";
-//						}
-//					}
-//				}
-//			}
-//		}
-//	}
+	// void dont_test_hbond_compute_energy()
+	//  {
+	//  test::UTracer UT("core/scoring/hbonds/hbond_compute_energy.u");
+	//
+	//  Real energy, dE_dr, dE_dxD, dE_dxH;
+	//
+	//  UT << "# Computed energies and derivatives given HBEvalType and geometric parameters\n";
+	//  UT << "# HBEvalType\tAHdis\txD\txH\tenergy\n";
+	//  utility::vector1<HBEvalType> hbe_types;
+	//
+	//  hbe_types.push_back(hbe_BB);
+	//  hbe_types.push_back(hbe_BBTURN);
+	//  hbe_types.push_back(hbe_BBHELIX);
+	//  hbe_types.push_back(hbe_BBOTHER);
+	//  hbe_types.push_back(hbe_SP2B);
+	//  hbe_types.push_back(hbe_SP3B);
+	//  hbe_types.push_back(hbe_RINGB);
+	//  hbe_types.push_back(hbe_BSC);
+	//  hbe_types.push_back(hbe_SP2SC);
+	//  hbe_types.push_back(hbe_SP3SC);
+	//  hbe_types.push_back(hbe_RINGSC);
+	//
+	//    for( Size hbe = 1; hbe <= hbe_types.size(); hbe++){
+	//   HBEvalType hbe_type = hbe_types[hbe];
+	//   for (Real AHdis = MIN_R; AHdis <MAX_R; AHdis += AHdis_step){
+	//    for (Real xD = MIN_xD; xD < MAX_xD; xD += xD_step){
+	//     for (Real xH = MIN_xH; xH < MAX_xH; xH += xH_step){
+	//      hbond_compute_energy(hbe_type, AHdis, xD, xH, energy, dE_dr, dE_dxD, dE_dxH);
+	//      if (energy < 0){
+	//       UT << hbe_type << "\t" << AHdis << "\t" << xD << "\t" << xH << "\t";
+	//       UT << energy << "\t" << dE_dr << "\t" << dE_dxD << "\t" << dE_dxH << "\n";
+	//      }
+	//     }
+	//    }
+	//   }
+	//  }
+	// }
 
 
 	void test_hbond_compute_energy2()
@@ -119,14 +119,14 @@ public:
 				for ( Size kk = 1; kk <= seq_sep_MAX; ++kk ) {
 					HBEvalTuple hbt = HBEvalTuple( HBDonChemType(ii), HBAccChemType(jj), HBSeqSep(kk) );
 					if ( hbt.eval_type() == hbe_UNKNOWN ) continue;
-					for (Real AHdis = MIN_R; AHdis <MAX_R; AHdis += .8){
-						for (Real xD = MIN_xD; xD <= MAX_xD; xD += .5){
-							for (Real xH = MIN_xH; xH <= MAX_xH; xH += .5){
-								for (Real chi = 0; chi < numeric::constants::d::pi_2; chi += numeric::constants::d::pi_over_2){
+					for ( Real AHdis = MIN_R; AHdis <MAX_R; AHdis += .8 ) {
+						for ( Real xD = MIN_xD; xD <= MAX_xD; xD += .5 ) {
+							for ( Real xH = MIN_xH; xH <= MAX_xH; xH += .5 ) {
+								for ( Real chi = 0; chi < numeric::constants::d::pi_2; chi += numeric::constants::d::pi_over_2 ) {
 									hbond_compute_energy( *database, hboptions, hbt,
 										AHdis, xD, xH, chi, energy,
 										dummy_chipenalty, AHD_geometric_dimension, dE_dr, dE_dxD, dE_dxH);
-									if( energy < 0){
+									if ( energy < 0 ) {
 										UT << i << "\t" << ii << "\t" << jj << "\t" << kk << "\t" << hbt.eval_type() << "\t" << AHdis << "\t" << xD << "\t" << xH << "\t" << chi << "\t";
 										UT << energy << "\t" << dE_dr << "\t" << dE_dxD << "\t" << dE_dxH << std::endl;
 									}
@@ -157,13 +157,13 @@ public:
 		Size i(0);
 		HBEvalTuple hbt = HBEvalTuple( hbdon_PBA, hbacc_PBA, seq_sep_other );
 		Real xD(.9);
-		for (Real AHdis = 1.7; AHdis <= 1.9; AHdis += .2){
-			for (Real xH = MIN_xH; xH < MAX_xH; xH += .4){
-				for (Real chi = 0.0; chi < numeric::constants::d::pi_2; chi += numeric::constants::d::pi_over_3){
+		for ( Real AHdis = 1.7; AHdis <= 1.9; AHdis += .2 ) {
+			for ( Real xH = MIN_xH; xH < MAX_xH; xH += .4 ) {
+				for ( Real chi = 0.0; chi < numeric::constants::d::pi_2; chi += numeric::constants::d::pi_over_3 ) {
 					hbond_compute_energy( *database, hboptions, hbt,
 						AHdis, xD, xH, chi, energy,
 						chipenalty, AHD_geometric_dimension, dE_dr, dE_dxD, dE_dxH, dE_dBAH, dE_dchi);
-					if( energy < 0){
+					if ( energy < 0 ) {
 						UT << i << "\t" << hbt.eval_type() << "\t" << AHdis << "\t" << xD << "\t" << xH << "\t" << chi << "\t";
 						UT << energy << "\t" << dE_dr << "\t" << dE_dxD << "\t" << dE_dxH << "\t" << dE_dBAH << "\t" << dE_dchi << std::endl;
 					}
@@ -231,24 +231,24 @@ public:
 			hbond_set);
 
 
-		for (Size i = 1; i <= pose.total_residue(); ++i){
-		    if (hbond_set.nhbonds(i, false) > 0){
-			utility::vector1< HBondCOP > const residue_hbonds = hbond_set.residue_hbonds(i, false /* include all*/);
-			TS_ASSERT(residue_hbonds.size() >= 1);
-			for (Size k = 1; i <= pose.residue(i).natoms(); ++i){
-			    id::AtomID atom = id::AtomID(k, i);
-			    if (hbond_set.nhbonds(atom, false) >= 1){
-				utility::vector1< HBondCOP > const atom_hbonds = hbond_set.atom_hbonds(atom, false /* include only allowed*/);
-				TS_ASSERT(atom_hbonds.size() >= 1);
-				break;
-			    }
-			}
+		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+			if ( hbond_set.nhbonds(i, false) > 0 ) {
+				utility::vector1< HBondCOP > const residue_hbonds = hbond_set.residue_hbonds(i, false /* include all*/);
+				TS_ASSERT(residue_hbonds.size() >= 1);
+				for ( Size k = 1; i <= pose.residue(i).natoms(); ++i ) {
+					id::AtomID atom = id::AtomID(k, i);
+					if ( hbond_set.nhbonds(atom, false) >= 1 ) {
+						utility::vector1< HBondCOP > const atom_hbonds = hbond_set.atom_hbonds(atom, false /* include only allowed*/);
+						TS_ASSERT(atom_hbonds.size() >= 1);
+						break;
+					}
+				}
 
-			break;
-		    }
+				break;
+			}
 		}
 
-		for( Size i=1; i <= hbond_set.nhbonds(); ++i ){
+		for ( Size i=1; i <= hbond_set.nhbonds(); ++i ) {
 			const HBond hbond( hbond_set.hbond(i) );
 			const Residue acc_res( pose.residue(hbond.acc_res()));
 			const Vector Axyz(acc_res.atom(hbond.acc_atm()).xyz());
@@ -286,105 +286,105 @@ public:
 
 	// This test might exceed the time limit and get killed...
 
-//	void do_for_each_type(
-//		HBSeqSep const seq_sep,
-//		Residue const & don_rsd,
-//		Size const & datm,
-//		Residue const & acc_rsd,
-//		Size const & aatm,
-//		test::UTracer & UT // write output here
-//	){
-//		HBDonChemType don_chem_type( get_hb_don_chem_type(datm, don_rsd));
-//		HBAccChemType acc_chem_type( get_hb_acc_chem_type(aatm, acc_rsd));
-//		HBEvalType hbe(HBEval_lookup( don_chem_type, acc_chem_type, seq_sep));
-//
-//		UT << don_rsd.atom_name(datm) << "\t";
-//		UT << don_rsd.name() << "\t";
-//		UT << don_chem_type << "\t";
-//		UT << acc_rsd.atom_name(aatm) << "\t";
-//		UT << acc_rsd.name() << "\t";
-//		UT << acc_chem_type << "\t";
-//		UT << seq_sep << "\t";
-//		UT << hbe << "\t";
-//		UT << hbe_is_BB_type( hbe ) << "\t";
-//		UT << get_hbond_weight_type( hbe ) << "\t";
-//		UT << get_hbe_acc_hybrid( hbe ) << "\n";
-//	}
-//
-//
-//
-//
-//	void dont_test_hbond_non_geometric(){
-//		using namespace chemical;
-//		test::UTracer UT("core/scoring/hbonds/hbond_non_geometric.u");
-//
-//		UT << "# Compute non-geometric parameters for hydrogen bonds\n";
-//		UT << "# Since the parameters are non-geometric can identify them by non-coordinate information in  residues\n";
-//
-//		utility::vector1<HBSeqSep> sc_seq_seps;
-//		sc_seq_seps.push_back(seq_sep_other);
-//
-//		utility::vector1<HBSeqSep> bsc_seq_seps;
-//		bsc_seq_seps.push_back(seq_sep_other);
-//		bsc_seq_seps.push_back(seq_sep_PM1);
-//
-//		utility::vector1<HBSeqSep> bb_seq_seps;
-//		bb_seq_seps.push_back(seq_sep_other);
-//		bb_seq_seps.push_back( seq_sep_M4);
-//		bb_seq_seps.push_back( seq_sep_M3);
-//		bb_seq_seps.push_back( seq_sep_M2);
-//		bb_seq_seps.push_back( seq_sep_PM1);
-//		bb_seq_seps.push_back( seq_sep_P2);
-//		bb_seq_seps.push_back( seq_sep_P3);
-//		bb_seq_seps.push_back( seq_sep_P4);
-//
-//		utility::vector1<ResidueTypeSetCAP> residue_type_sets;
-//		residue_type_sets.push_back( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD));
-//		residue_type_sets.push_back( ChemicalManager::get_instance()->residue_type_set( "rna" ));
-//
-//		for( Size i_rset = 1; i_rset != residue_type_sets.size(); ++i_rset){
-//			ResidueTypeSetCAP rset(residue_type_sets[i_rset]);
-//
-//			UT << "\n";
-//			UT << "ResidueTypeSet:" << residue_type_sets[i_rset] << "\n";
-//			UT << "datm\tdon_rsd\tHBDonChemType\taatm\tacc_rsd\tHBAccChemType\tHBSeqSep\tHBEvalType\tis_BB_hb\tHBondWeighType\tHybridization\n";
-//
-//
-//			// iterate through all donor possible donor and acceptor pairs
-//			for( ResidueTypeSet::const_residue_iterator don_rsdtype_it=rset->all_residues_begin_DO_NOT_USE(), edon_rsdtype_it=rset->all_residues_end_DO_NOT_USE();
-//					 don_rsdtype_it!=edon_rsdtype_it; ++don_rsdtype_it ) {
-//
-//				conformation::Residue don_rsd( *(don_rsdtype_it->second), false /*dummy arg*/);
-//				for ( AtomIndices::const_iterator hnum  = don_rsd.Hpos_polar().begin(),	hnume = don_rsd.Hpos_polar().end();
-//							hnum != hnume; ++hnum ) {
-//					Size const datm(don_rsd.atom_base(*hnum));
-//					HBDonChemType don_chem_type( get_hb_don_chem_type(datm, don_rsd));
-//
-//					for( ResidueTypeSet::const_residue_iterator acc_rsdtype_it=rset->all_residues_begin_DO_NOT_USE(), eacc_rsdtype_it=rset->all_residues_end_DO_NOT_USE();
-//							 acc_rsdtype_it!=eacc_rsdtype_it; ++acc_rsdtype_it ) {
-//						conformation::Residue acc_rsd( *(acc_rsdtype_it->second), false /*dummy arg*/);
-//						for ( AtomIndices::const_iterator	anum  = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
-//									anum != anume; ++anum ) {
-//							Size const aatm( *anum );
-//							HBAccChemType acc_chem_type( get_hb_acc_chem_type(aatm, acc_rsd));
-//
-//							if (don_chem_type == hbdon_PBA && acc_chem_type == hbacc_PBA){
-//								for( Size seq_sep = 1; seq_sep <= bb_seq_seps.size(); ++seq_sep){
-//									do_for_each_type(bb_seq_seps[seq_sep], don_rsd, datm, acc_rsd, aatm, UT);
-//								}
-//							} else if (don_chem_type == hbdon_PBA || acc_chem_type == hbacc_PBA){
-//								for( Size seq_sep = 1; seq_sep <= bsc_seq_seps.size(); ++seq_sep){
-//									do_for_each_type(bsc_seq_seps[seq_sep], don_rsd, datm, acc_rsd, aatm, UT);
-//								}
-//							}else{
-//								do_for_each_type(seq_sep_other, don_rsd, datm, acc_rsd, aatm, UT);
-//							}
-// 						}
-// 					}
-// 				}
-//			}
-//		}
-//	}
+	// void do_for_each_type(
+	//  HBSeqSep const seq_sep,
+	//  Residue const & don_rsd,
+	//  Size const & datm,
+	//  Residue const & acc_rsd,
+	//  Size const & aatm,
+	//  test::UTracer & UT // write output here
+	// ){
+	//  HBDonChemType don_chem_type( get_hb_don_chem_type(datm, don_rsd));
+	//  HBAccChemType acc_chem_type( get_hb_acc_chem_type(aatm, acc_rsd));
+	//  HBEvalType hbe(HBEval_lookup( don_chem_type, acc_chem_type, seq_sep));
+	//
+	//  UT << don_rsd.atom_name(datm) << "\t";
+	//  UT << don_rsd.name() << "\t";
+	//  UT << don_chem_type << "\t";
+	//  UT << acc_rsd.atom_name(aatm) << "\t";
+	//  UT << acc_rsd.name() << "\t";
+	//  UT << acc_chem_type << "\t";
+	//  UT << seq_sep << "\t";
+	//  UT << hbe << "\t";
+	//  UT << hbe_is_BB_type( hbe ) << "\t";
+	//  UT << get_hbond_weight_type( hbe ) << "\t";
+	//  UT << get_hbe_acc_hybrid( hbe ) << "\n";
+	// }
+	//
+	//
+	//
+	//
+	// void dont_test_hbond_non_geometric(){
+	//  using namespace chemical;
+	//  test::UTracer UT("core/scoring/hbonds/hbond_non_geometric.u");
+	//
+	//  UT << "# Compute non-geometric parameters for hydrogen bonds\n";
+	//  UT << "# Since the parameters are non-geometric can identify them by non-coordinate information in  residues\n";
+	//
+	//  utility::vector1<HBSeqSep> sc_seq_seps;
+	//  sc_seq_seps.push_back(seq_sep_other);
+	//
+	//  utility::vector1<HBSeqSep> bsc_seq_seps;
+	//  bsc_seq_seps.push_back(seq_sep_other);
+	//  bsc_seq_seps.push_back(seq_sep_PM1);
+	//
+	//  utility::vector1<HBSeqSep> bb_seq_seps;
+	//  bb_seq_seps.push_back(seq_sep_other);
+	//  bb_seq_seps.push_back( seq_sep_M4);
+	//  bb_seq_seps.push_back( seq_sep_M3);
+	//  bb_seq_seps.push_back( seq_sep_M2);
+	//  bb_seq_seps.push_back( seq_sep_PM1);
+	//  bb_seq_seps.push_back( seq_sep_P2);
+	//  bb_seq_seps.push_back( seq_sep_P3);
+	//  bb_seq_seps.push_back( seq_sep_P4);
+	//
+	//  utility::vector1<ResidueTypeSetCAP> residue_type_sets;
+	//  residue_type_sets.push_back( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD));
+	//  residue_type_sets.push_back( ChemicalManager::get_instance()->residue_type_set( "rna" ));
+	//
+	//  for( Size i_rset = 1; i_rset != residue_type_sets.size(); ++i_rset){
+	//   ResidueTypeSetCAP rset(residue_type_sets[i_rset]);
+	//
+	//   UT << "\n";
+	//   UT << "ResidueTypeSet:" << residue_type_sets[i_rset] << "\n";
+	//   UT << "datm\tdon_rsd\tHBDonChemType\taatm\tacc_rsd\tHBAccChemType\tHBSeqSep\tHBEvalType\tis_BB_hb\tHBondWeighType\tHybridization\n";
+	//
+	//
+	//   // iterate through all donor possible donor and acceptor pairs
+	//   for( ResidueTypeSet::const_residue_iterator don_rsdtype_it=rset->all_residues_begin_DO_NOT_USE(), edon_rsdtype_it=rset->all_residues_end_DO_NOT_USE();
+	//      don_rsdtype_it!=edon_rsdtype_it; ++don_rsdtype_it ) {
+	//
+	//    conformation::Residue don_rsd( *(don_rsdtype_it->second), false /*dummy arg*/);
+	//    for ( AtomIndices::const_iterator hnum  = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end();
+	//       hnum != hnume; ++hnum ) {
+	//     Size const datm(don_rsd.atom_base(*hnum));
+	//     HBDonChemType don_chem_type( get_hb_don_chem_type(datm, don_rsd));
+	//
+	//     for( ResidueTypeSet::const_residue_iterator acc_rsdtype_it=rset->all_residues_begin_DO_NOT_USE(), eacc_rsdtype_it=rset->all_residues_end_DO_NOT_USE();
+	//        acc_rsdtype_it!=eacc_rsdtype_it; ++acc_rsdtype_it ) {
+	//      conformation::Residue acc_rsd( *(acc_rsdtype_it->second), false /*dummy arg*/);
+	//      for ( AtomIndices::const_iterator anum  = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
+	//         anum != anume; ++anum ) {
+	//       Size const aatm( *anum );
+	//       HBAccChemType acc_chem_type( get_hb_acc_chem_type(aatm, acc_rsd));
+	//
+	//       if (don_chem_type == hbdon_PBA && acc_chem_type == hbacc_PBA){
+	//        for( Size seq_sep = 1; seq_sep <= bb_seq_seps.size(); ++seq_sep){
+	//         do_for_each_type(bb_seq_seps[seq_sep], don_rsd, datm, acc_rsd, aatm, UT);
+	//        }
+	//       } else if (don_chem_type == hbdon_PBA || acc_chem_type == hbacc_PBA){
+	//        for( Size seq_sep = 1; seq_sep <= bsc_seq_seps.size(); ++seq_sep){
+	//         do_for_each_type(bsc_seq_seps[seq_sep], don_rsd, datm, acc_rsd, aatm, UT);
+	//        }
+	//       }else{
+	//        do_for_each_type(seq_sep_other, don_rsd, datm, acc_rsd, aatm, UT);
+	//       }
+	//       }
+	//      }
+	//     }
+	//   }
+	//  }
+	// }
 
 	void test_hbond_type_manager(){
 
@@ -392,7 +392,7 @@ public:
 		UT << "Hydrogen Bond Types"<< std::endl << std::endl;
 
 		UT << "HBondWeightType:" << std::endl;
-		for (Size hbw=1; hbw <= hbw_MAX; ++hbw){
+		for ( Size hbw=1; hbw <= hbw_MAX; ++hbw ) {
 			std::string hbw_name(HBondTypeManager::name_from_weight_type(HBondWeightType(hbw)));
 			UT << "\t" << hbw_name << std::endl;
 			TS_ASSERT(HBondTypeManager::weight_type_from_name(hbw_name) == HBondWeightType(hbw));
@@ -401,7 +401,7 @@ public:
 		UT << std::endl;
 
 		UT << "HBDerivType:" << std::endl;
-		for (Size hbderiv=1; hbderiv <= hbderiv_MAX; ++hbderiv){
+		for ( Size hbderiv=1; hbderiv <= hbderiv_MAX; ++hbderiv ) {
 			std::string hbderiv_name(HBondTypeManager::name_from_deriv_type(HBDerivType(hbderiv)));
 			UT << "\t" << hbderiv_name << std::endl;
 			TS_ASSERT(HBondTypeManager::deriv_type_from_name(hbderiv_name) == HBDerivType(hbderiv));
@@ -410,7 +410,7 @@ public:
 		UT << std::endl;
 
 		UT << "HBDonChemType:" << std::endl;
-		for (Size hbdon=1; hbdon <= hbdon_MAX; ++hbdon){
+		for ( Size hbdon=1; hbdon <= hbdon_MAX; ++hbdon ) {
 			std::string hbdon_name(HBondTypeManager::name_from_don_chem_type(HBDonChemType(hbdon)));
 			UT << "\t" << hbdon_name << std::endl;
 			TS_ASSERT(HBondTypeManager::don_chem_type_from_name(hbdon_name) == HBDonChemType(hbdon));
@@ -419,7 +419,7 @@ public:
 		UT << std::endl;
 
 		UT << "HBAccChemType:" << std::endl;
-		for (Size hbacc=1; hbacc <= hbacc_MAX; ++hbacc){
+		for ( Size hbacc=1; hbacc <= hbacc_MAX; ++hbacc ) {
 			std::string hbacc_name(HBondTypeManager::name_from_acc_chem_type(HBAccChemType(hbacc)));
 			UT << "\t" << hbacc_name << std::endl;
 			TS_ASSERT(HBondTypeManager::acc_chem_type_from_name(hbacc_name) == HBAccChemType(hbacc));
@@ -428,7 +428,7 @@ public:
 		UT << std::endl;
 
 		UT << "HBSeqSep:" << std::endl;
-		for (Size hbseq_sep=1; hbseq_sep <= seq_sep_MAX; ++hbseq_sep){
+		for ( Size hbseq_sep=1; hbseq_sep <= seq_sep_MAX; ++hbseq_sep ) {
 			std::string hbseq_sep_name(HBondTypeManager::name_from_seq_sep_type(HBSeqSep(hbseq_sep)));
 			UT << "\t" << hbseq_sep_name << std::endl;
 			TS_ASSERT(HBondTypeManager::seq_sep_type_from_name(hbseq_sep_name) == HBSeqSep(hbseq_sep));
@@ -437,7 +437,7 @@ public:
 		UT << std::endl;
 
 		UT << "HBGeoDimType:" << std::endl;
-		for (Size hbgd=1; hbgd <= hbgd_MAX; ++hbgd){
+		for ( Size hbgd=1; hbgd <= hbgd_MAX; ++hbgd ) {
 			std::string hbgd_name(HBondTypeManager::name_from_geo_dim_type(HBGeoDimType(hbgd)));
 			UT << "\t" << hbgd_name << std::endl;
 			TS_ASSERT(HBondTypeManager::geo_dim_type_from_name(hbgd_name) == HBGeoDimType(hbgd));

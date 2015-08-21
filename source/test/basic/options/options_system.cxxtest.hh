@@ -33,7 +33,7 @@ public:
 		basic::options::initialize();
 	}
 
-		void test_find_key_cl_good(){
+	void test_find_key_cl_good(){
 		using namespace basic::options;
 		try{
 			std::string key(option.find_key_cl("in:file:s", "", true));

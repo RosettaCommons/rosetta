@@ -85,7 +85,7 @@ Size
 RotamerSubset::get_residue_type_begin( Size which_restype ) const
 {
 	update_rotamer_offsets();
-debug_assert( which_restype <= n_residue_types_ );
+	debug_assert( which_restype <= n_residue_types_ );
 	return residue_type_rotamers_begin_[ which_restype ];
 }
 
@@ -93,7 +93,7 @@ Size
 RotamerSubset::get_residue_group_begin( Size which_resgroup ) const
 {
 	update_rotamer_offsets();
-debug_assert( which_resgroup <= n_residue_groups_ );
+	debug_assert( which_resgroup <= n_residue_groups_ );
 	return residue_group_rotamers_begin_[ which_resgroup ];
 }
 
@@ -103,7 +103,7 @@ RotamerSubset::get_n_rotamers_for_residue_type( Size which_restype ) const
 {
 	update_rotamer_offsets();
 
-debug_assert( which_restype <= n_residue_types_ );
+	debug_assert( which_restype <= n_residue_types_ );
 	return n_rotamers_for_restype_[ which_restype ];
 }
 
@@ -112,7 +112,7 @@ RotamerSubset::get_n_rotamers_for_residue_group( Size which_resgroup ) const
 {
 	update_rotamer_offsets();
 
-debug_assert( which_resgroup <= n_residue_groups_ );
+	debug_assert( which_resgroup <= n_residue_groups_ );
 	return n_rotamers_for_resgroup_[ which_resgroup ];
 }
 
@@ -193,7 +193,7 @@ RotamerSubset::get_trie( Size method_enum_id ) const
 void
 RotamerSubset::drop_rotamer( Size rot_id )
 {
-debug_assert( rot_id <= rotamers_.size() );
+	debug_assert( rot_id <= rotamers_.size() );
 	utility::vector1< conformation::ResidueOP > copy_rotamers( rotamers_.size() - 1, 0 );
 	Size count_copy( 1 );
 	for ( Size ii = 1; ii <= rotamers_.size(); ++ii ) {
@@ -220,7 +220,7 @@ debug_assert( rot_id <= rotamers_.size() );
 void
 RotamerSubset::drop_rotamers( utility::vector1< bool > const & rotamers_to_delete )
 {
-debug_assert( rotamers_to_delete.size() == rotamers_.size() );
+	debug_assert( rotamers_to_delete.size() == rotamers_.size() );
 
 	Size n_dropped = 0;
 	for ( Size ii = 1; ii <= rotamers_.size(); ++ii ) {
@@ -288,10 +288,10 @@ RotamerSubset::prepare_for_new_residue_type( core::chemical::ResidueType const &
 		return;
 	}
 
-	if ( different_restype( rotamers_[ num_rotamers() ]->type(), restype )) {
+	if ( different_restype( rotamers_[ num_rotamers() ]->type(), restype ) ) {
 		new_residue_type();
 	}
-	if (  different_resgroup( rotamers_[ num_rotamers() ]->type(), restype )) {
+	if (  different_resgroup( rotamers_[ num_rotamers() ]->type(), restype ) ) {
 		new_residue_group();
 	}
 }
@@ -469,9 +469,9 @@ RotamerSubset::compute_one_body_energy_maps(
 //void
 //RotamerSubset::declare_new_residue_type()
 //{
-//	++n_residue_types_;
-//	residue_type_rotamers_begin_.push_back( num_rotamers() + 1);
-//	n_rotamers_for_restype_.push_back( 0 );
+// ++n_residue_types_;
+// residue_type_rotamers_begin_.push_back( num_rotamers() + 1);
+// n_rotamers_for_restype_.push_back( 0 );
 //}
 
 /// @brief appends a rotamer to the list of rotamers, and increments the count
@@ -479,9 +479,9 @@ RotamerSubset::compute_one_body_energy_maps(
 //void
 //RotamerSubset::push_back_rotamer( conformation::ResidueOP rotamer )
 //{
-//	rotamers_.push_back( rotamer );
-//	residue_type_for_rotamers_.push_back( n_residue_types_ );
-//	++n_rotamers_for_restype_[ n_residue_types_ ];
+// rotamers_.push_back( rotamer );
+// residue_type_for_rotamers_.push_back( n_residue_types_ );
+// ++n_rotamers_for_restype_[ n_residue_types_ ];
 //}
 
 
@@ -494,22 +494,22 @@ void
 RotamerSubset::show( std::ostream & out ) const {
 	out << "RotamerSubset for residue " << resid() << "; " << num_rotamers() << " rotamers for "
 		<< get_n_residue_types() << " types in " << get_n_residue_groups() << " groups. " << std::endl;
-	for( core::Size ii(1); ii <= rotamers_.size(); ++ii) {
+	for ( core::Size ii(1); ii <= rotamers_.size(); ++ii ) {
 		core::conformation::Residue const & rot( *rotamers_[ii] );
 		out << "Rotamer " << ii << ": " << rot.name() << " ";
 		utility::vector1< Real > const & mainchains( rot.mainchain_torsions() );
-		for( core::Size jj(1); jj <= mainchains.size(); ++jj ) {
+		for ( core::Size jj(1); jj <= mainchains.size(); ++jj ) {
 			out << mainchains[jj] << " ";
 		}
 		out << "| ";
 		utility::vector1< Real > const & chis( rot.chi() );
-		for( core::Size jj(1); jj <= chis.size(); ++jj ) {
+		for ( core::Size jj(1); jj <= chis.size(); ++jj ) {
 			out << chis[jj] << " ";
 		}
 		utility::vector1< Real > const & nus( rot.nus() );
-		if( nus.size() ) {
+		if ( nus.size() ) {
 			out << "| ";
-			for( core::Size jj(1); jj <= nus.size(); ++jj ) {
+			for ( core::Size jj(1); jj <= nus.size(); ++jj ) {
 				out << nus[jj] << " ";
 			}
 		}

@@ -31,8 +31,8 @@
 
 #include <utility/vector1.hh>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class BatchFeatures : public utility::pointer::ReferenceCount {
 public:

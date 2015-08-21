@@ -68,7 +68,7 @@ ContactOrderEnergy::ContactOrderEnergy() :
 EnergyMethodOP
 ContactOrderEnergy::clone() const
 {
-    return EnergyMethodOP( new ContactOrderEnergy() );
+	return EnergyMethodOP( new ContactOrderEnergy() );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ void ContactOrderEnergy::finalize_total_energy(
 	EnergyMap & totals
 ) const {
 
-  totals[ co ] = calculate_contact_order( pose );
+	totals[ co ] = calculate_contact_order( pose );
 
 }
 
@@ -88,22 +88,22 @@ core::Real
 ContactOrderEnergy::calculate_contact_order( pose::Pose const & pose ) const
 {
 
-// tex: below is old code for calculating contact order from rosetta++
-// 	int nco = 0;
-// 	for ( int i = 1; i <= pose.total_residue(); ++i ) {
-// 		if ( is_protein(res(i)) || is_nonnatural(res(i)) ) { /// <---
-// 			for ( int kk = 1, kke = cen12up(i); kk <= kke; ++kk ) { /// <---
-// 				int j = cen_list(kk,i); /// <---
-// 				if ( cendist(i,j) < 64.0 && std::abs(j-i) > 2 ) { /// <---
-// 					co += std::abs(j-i);
-// 					++nco;
-// 				}
-// 			}
-// 		}
-// 	}
-// notes on what things mean:
-// cenlist(*,i) contains the list of residues within 12A of residue i
-// cen12up(i) is the number of residues in cen_list(*,i)
+	// tex: below is old code for calculating contact order from rosetta++
+	//  int nco = 0;
+	//  for ( int i = 1; i <= pose.total_residue(); ++i ) {
+	//   if ( is_protein(res(i)) || is_nonnatural(res(i)) ) { /// <---
+	//    for ( int kk = 1, kke = cen12up(i); kk <= kke; ++kk ) { /// <---
+	//     int j = cen_list(kk,i); /// <---
+	//     if ( cendist(i,j) < 64.0 && std::abs(j-i) > 2 ) { /// <---
+	//      co += std::abs(j-i);
+	//      ++nco;
+	//     }
+	//    }
+	//   }
+	//  }
+	// notes on what things mean:
+	// cenlist(*,i) contains the list of residues within 12A of residue i
+	// cen12up(i) is the number of residues in cen_list(*,i)
 
 	using core::Real;
 	using core::Size;

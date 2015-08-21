@@ -85,79 +85,80 @@ void
 DesignInterfacesOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {
 	using namespace core::pack::task;
-    using namespace protocols::toolbox::task_operations;
-    using namespace protocols::rosetta_scripts;
+	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::rosetta_scripts;
 
-    TaskFactoryOP tf( new TaskFactory );
-    ProteinInterfaceDesignOperationOP pido( new ProteinInterfaceDesignOperation );
-    pido->interface_distance_cutoff( design_shell() );
-    pido->design_chain1(true);
-    pido->design_chain2(true);
-    tf->push_back( pido );
+	TaskFactoryOP tf( new TaskFactory );
+	ProteinInterfaceDesignOperationOP pido( new ProteinInterfaceDesignOperation );
+	pido->interface_distance_cutoff( design_shell() );
+	pido->design_chain1(true);
+	pido->design_chain2(true);
+	tf->push_back( pido );
 
-///create a subpose containing only the two segments as two separate chains
-    protocols::simple_moves::SwitchChainOrderMover sco;
-    sco.chain_order( "1" );
-    core::pose::Pose chain1( pose );
-    sco.apply( chain1 ); // remove chain2 from pose
-    protocols::protein_interface_design::movers::SetAtomTree sat;
-    sat.two_parts_chain1( true );
-    sat.apply( chain1 ); // create a fold tree around the cut in chain1
-    core::pose::Pose segment1, segment2, combined;
-    core::pose::partition_pose_by_jump( chain1, 1/*jump*/, segment1, segment2 ); // partition the pose into two separate chains around teh cut
-    combined = segment1;
-    core::pose::append_pose_to_pose(combined, segment2); // concatenate the segments as two separate chains
-		combined.conformation().detect_disulfides(); // otherwise things go awry downstream
+	///create a subpose containing only the two segments as two separate chains
+	protocols::simple_moves::SwitchChainOrderMover sco;
+	sco.chain_order( "1" );
+	core::pose::Pose chain1( pose );
+	sco.apply( chain1 ); // remove chain2 from pose
+	protocols::protein_interface_design::movers::SetAtomTree sat;
+	sat.two_parts_chain1( true );
+	sat.apply( chain1 ); // create a fold tree around the cut in chain1
+	core::pose::Pose segment1, segment2, combined;
+	core::pose::partition_pose_by_jump( chain1, 1/*jump*/, segment1, segment2 ); // partition the pose into two separate chains around teh cut
+	combined = segment1;
+	core::pose::append_pose_to_pose(combined, segment2); // concatenate the segments as two separate chains
+	combined.conformation().detect_disulfides(); // otherwise things go awry downstream
 
-// figure out which residues are at the two interfaces
-		utility::vector1< core::Size > const two_segment_interface( residue_packer_states( combined, tf, true/*designable*/, true/*packable*/ ) );
-    utility::vector1< core::Size > const two_chain_interface( residue_packer_states( pose, tf, true, true ) );
+	// figure out which residues are at the two interfaces
+	utility::vector1< core::Size > const two_segment_interface( residue_packer_states( combined, tf, true/*designable*/, true/*packable*/ ) );
+	utility::vector1< core::Size > const two_chain_interface( residue_packer_states( pose, tf, true, true ) );
 
-// now design around each of those residues
-		DesignAroundOperation dao;
-    dao.repack_shell(repack_shell());
-    dao.design_shell(design_shell());
-    TR<<"residues found in two_segment interface: ";
-    BOOST_FOREACH( core::Size const res, two_segment_interface ){
-        dao.include_residue( res );
-        TR<<res<<'+';
-    }
-    TR<<std::endl<<"residues found in two_chain_interface: ";
-    BOOST_FOREACH( core::Size const res, two_chain_interface ){
-        dao.include_residue(res);
-        TR<<res<<'+';
-    }
-    TR<<std::endl<<"total residues: "<<two_segment_interface.size() + two_chain_interface.size()<<std::endl;
-    dao.apply( pose, task );
-		RestrictChainToRepackingOperation rctr;
-		if( restrict_to_repacking_chain1() ){
-			TR<<"Restricting chain1 to repacking"<<std::endl;
-			rctr.chain( 1 );
-			rctr.apply( pose, task );
-		}
-		if( restrict_to_repacking_chain2() && pose.conformation().num_chains()>1 ){
-			TR<<"Restricting chain2 to repacking"<<std::endl;
-			rctr.chain( 2 );
-			rctr.apply( pose, task );
-		}
+	// now design around each of those residues
+	DesignAroundOperation dao;
+	dao.repack_shell(repack_shell());
+	dao.design_shell(design_shell());
+	TR<<"residues found in two_segment interface: ";
+	BOOST_FOREACH ( core::Size const res, two_segment_interface ) {
+		dao.include_residue( res );
+		TR<<res<<'+';
+	}
+	TR<<std::endl<<"residues found in two_chain_interface: ";
+	BOOST_FOREACH ( core::Size const res, two_chain_interface ) {
+		dao.include_residue(res);
+		TR<<res<<'+';
+	}
+	TR<<std::endl<<"total residues: "<<two_segment_interface.size() + two_chain_interface.size()<<std::endl;
+	dao.apply( pose, task );
+	RestrictChainToRepackingOperation rctr;
+	if ( restrict_to_repacking_chain1() ) {
+		TR<<"Restricting chain1 to repacking"<<std::endl;
+		rctr.chain( 1 );
+		rctr.apply( pose, task );
+	}
+	if ( restrict_to_repacking_chain2() && pose.conformation().num_chains()>1 ) {
+		TR<<"Restricting chain2 to repacking"<<std::endl;
+		rctr.chain( 2 );
+		rctr.apply( pose, task );
+	}
 }
 
 void
 DesignInterfacesOperation::design_shell( core::Real const radius )
 {
 	design_shell_ = radius;
-	if( radius >= repack_shell() )
+	if ( radius >= repack_shell() ) {
 		repack_shell_ = radius;
+	}
 }
 
 void
 DesignInterfacesOperation::parse_tag( TagCOP tag , DataMap & )
 {
-    design_shell( tag->getOption< core::Real >( "design_shell", 6.0 ) );
-    repack_shell( tag->getOption<core::Real >("repack_shell", 8.0) );
-		restrict_to_repacking_chain1( tag->getOption< bool >( "restrict_to_repacking_chain1", false ) );
-		restrict_to_repacking_chain2( tag->getOption< bool >( "restrict_to_repacking_chain2", true  ) );
-		TR<<"design shell: "<<design_shell()<<" repack shell: "<<repack_shell()<<" restrict_to_repacking_chain1: "<<restrict_to_repacking_chain1()<<" restrict_to_repacking_chain2: "<<restrict_to_repacking_chain2()<<std::endl;
+	design_shell( tag->getOption< core::Real >( "design_shell", 6.0 ) );
+	repack_shell( tag->getOption<core::Real >("repack_shell", 8.0) );
+	restrict_to_repacking_chain1( tag->getOption< bool >( "restrict_to_repacking_chain1", false ) );
+	restrict_to_repacking_chain2( tag->getOption< bool >( "restrict_to_repacking_chain2", true  ) );
+	TR<<"design shell: "<<design_shell()<<" repack shell: "<<repack_shell()<<" restrict_to_repacking_chain1: "<<restrict_to_repacking_chain1()<<" restrict_to_repacking_chain2: "<<restrict_to_repacking_chain2()<<std::endl;
 }
 } //namespace splice
 } //namespace devel

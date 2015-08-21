@@ -73,7 +73,7 @@ public:
 	/// @brief add decoy to Archive
 	/// @detail evaluate decoy and call add_evaluated_structure
 	virtual bool add_structure(
-	  core::io::silent::SilentStructOP new_decoy,
+		core::io::silent::SilentStructOP new_decoy,
 		core::io::silent::SilentStructOP alternative_decoy,
 		Batch const& batch
 	);
@@ -90,10 +90,10 @@ public:
 
 	/// @brief only overloaded this to add some verbosity each time we read structures
 	virtual void read_structures(
-   core::io::silent::SilentFileData& sfd,
-	 core::io::silent::SilentFileData& alternative_decoys,
-	 Batch const& batch
-);
+		core::io::silent::SilentFileData& sfd,
+		core::io::silent::SilentFileData& alternative_decoys,
+		Batch const& batch
+	);
 
 	/// @brief overloaded to make input decoys appear the same as decoys coming from batches
 	virtual void init_from_decoy_set( core::io::silent::SilentFileData const& sfd ) = 0;
@@ -109,7 +109,7 @@ public:
 
 	/// @brief add an evaluated decoy to Archive (i.e, evaluated_decoy = evaluate( some_decoy ) );
 	virtual bool add_evaluated_structure(
-    core::io::silent::SilentStructOP evaluated_decoy,
+		core::io::silent::SilentStructOP evaluated_decoy,
 		core::io::silent::SilentStructOP alternative_decoy,
 		Batch const&
 	);

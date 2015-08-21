@@ -34,109 +34,109 @@ namespace modeler {
 namespace rna {
 namespace sugar {
 
-	class VirtualSugarJustInTimeInstantiator: public protocols::moves::Mover {
+class VirtualSugarJustInTimeInstantiator: public protocols::moves::Mover {
 
-	public:
+public:
 
-		//constructor
-		VirtualSugarJustInTimeInstantiator( working_parameters::StepWiseWorkingParametersCOP & working_parameters_ );
+	//constructor
+	VirtualSugarJustInTimeInstantiator( working_parameters::StepWiseWorkingParametersCOP & working_parameters_ );
 
-		//destructor
-		~VirtualSugarJustInTimeInstantiator();
+	//destructor
+	~VirtualSugarJustInTimeInstantiator();
 
-		virtual void apply( pose::Pose & pose_to_visualize );
+	virtual void apply( pose::Pose & pose_to_visualize );
 
-		virtual std::string get_name() const;
+	virtual std::string get_name() const;
 
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		bool
-		do_the_modeler( core::pose::Pose & pose );
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	do_the_modeler( core::pose::Pose & pose );
 
-		bool
-		modeler_sugar() const;
+	bool
+	modeler_sugar() const;
 
-		bool
-		modeler_sugar_at_chain_break() const;
+	bool
+	modeler_sugar_at_chain_break() const;
 
-		void
-		prepare_from_prior_sampled_sugar_jobs( pose::Pose const & pose,
-																					 utility::vector1< pose::PoseOP > & starting_pose_data_list,
-																					 bool const pose_explosion_legacy /* = false */ ) const;
+	void
+	prepare_from_prior_sampled_sugar_jobs( pose::Pose const & pose,
+		utility::vector1< pose::PoseOP > & starting_pose_data_list,
+		bool const pose_explosion_legacy /* = false */ ) const;
 
-		void
-		prepare_from_prior_sampled_sugar_jobs_for_chain_break( pose::Pose const & pose,
-																													 utility::vector1< pose::PoseOP > & starting_pose_data_list ) const;
+	void
+	prepare_from_prior_sampled_sugar_jobs_for_chain_break( pose::Pose const & pose,
+		utility::vector1< pose::PoseOP > & starting_pose_data_list ) const;
 
-		void
-		set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn );
+	void
+	set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn );
 
-		void
-		set_keep_base_fixed( bool const & setting ) { keep_base_fixed_ = setting;	}
+	void
+	set_keep_base_fixed( bool const & setting ) { keep_base_fixed_ = setting; }
 
-		bool const & success() const{ return success_; }
+	bool const & success() const{ return success_; }
 
-		void
-		set_options( options::StepWiseModelerOptionsCOP options );
+	void
+	set_options( options::StepWiseModelerOptionsCOP options );
 
-		Size
-		num_sets() const { return sugar_modeling_sets_.size(); }
+	Size
+	num_sets() const { return sugar_modeling_sets_.size(); }
 
-		sampler::copy_dofs::ResidueAlternativeSet const &
-		residue_alternative_set( Size const n );
+	sampler::copy_dofs::ResidueAlternativeSet const &
+	residue_alternative_set( Size const n );
 
-		//legacy:
-		SugarModeling const &
-		anchor_sugar_modeling();
+	//legacy:
+	SugarModeling const &
+	anchor_sugar_modeling();
 
-		void
-		instantiate_sugars_at_cutpoint_closed( pose::Pose & pose ) const;
+	void
+	instantiate_sugars_at_cutpoint_closed( pose::Pose & pose ) const;
 
-	private:
+private:
 
-		Size
-		sampled_sugar_index( Size const i );
+	Size
+	sampled_sugar_index( Size const i );
 
-		bool
-		do_sugar_sampling( pose::Pose & viewer_pose, SugarModeling & sugar_modeling, std::string const name );
+	bool
+	do_sugar_sampling( pose::Pose & viewer_pose, SugarModeling & sugar_modeling, std::string const name );
 
-		bool
-		setup_sugar_modeling( pose::Pose const & pose, Size const moving_res, SugarModeling & sugar_modeling );
+	bool
+	setup_sugar_modeling( pose::Pose const & pose, Size const moving_res, SugarModeling & sugar_modeling );
 
-		bool
-		get_sugar_modeling_set( pose::Pose & viewer_pose, Size const i );
+	bool
+	get_sugar_modeling_set( pose::Pose & viewer_pose, Size const i );
 
-		utility::vector1< SugarModelingOP >	get_sugar_modeling_sets_for_chainbreak() const;
+	utility::vector1< SugarModelingOP > get_sugar_modeling_sets_for_chainbreak() const;
 
-		void
-		instantiate_sugar( pose::Pose & pose, SugarModeling const & sugar_modeling, Size const sugar_ID ) const;
+	void
+	instantiate_sugar( pose::Pose & pose, SugarModeling const & sugar_modeling, Size const sugar_ID ) const;
 
-		void
-		instantiate_sugars_recursively(  pose::Pose const & pose,
-																		 utility::vector1< pose::PoseOP > & pose_data_list,
-																		 utility::vector1< SugarModelingOP > const & sugar_modeling_sets,
-																		 utility::vector1< Size > const & sugar_modeling_set_indices ) const;
+	void
+	instantiate_sugars_recursively(  pose::Pose const & pose,
+		utility::vector1< pose::PoseOP > & pose_data_list,
+		utility::vector1< SugarModelingOP > const & sugar_modeling_sets,
+		utility::vector1< Size > const & sugar_modeling_set_indices ) const;
 
-		void
-		minimize_sugar_sets_legacy( pose::Pose const & pose,
-																utility::vector1< pose::PoseOP > & pose_data_list ) const;
+	void
+	minimize_sugar_sets_legacy( pose::Pose const & pose,
+		utility::vector1< pose::PoseOP > & pose_data_list ) const;
 
 
-	private:
+private:
 
-		working_parameters::StepWiseWorkingParametersCOP working_parameters_;
-		Size const moving_res_;
-		bool const rebuild_bulge_mode_;
+	working_parameters::StepWiseWorkingParametersCOP working_parameters_;
+	Size const moving_res_;
+	bool const rebuild_bulge_mode_;
 
-		utility::vector1< SugarModelingOP > sugar_modeling_sets_;
-		utility::vector1< sampler::copy_dofs::ResidueAlternativeSetOP> residue_alternative_sets_;
-		bool keep_base_fixed_;
-		bool const moving_res_legacy_;
+	utility::vector1< SugarModelingOP > sugar_modeling_sets_;
+	utility::vector1< sampler::copy_dofs::ResidueAlternativeSetOP> residue_alternative_sets_;
+	bool keep_base_fixed_;
+	bool const moving_res_legacy_;
 
-		options::StepWiseModelerOptionsCOP options_;
-		core::scoring::ScoreFunctionCOP scorefxn_;
+	options::StepWiseModelerOptionsCOP options_;
+	core::scoring::ScoreFunctionCOP scorefxn_;
 
-		bool success_;
-	};
+	bool success_;
+};
 
 } //sugar
 } //rna

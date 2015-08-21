@@ -110,7 +110,7 @@ SpecificResiduesNearInterfaceFilter::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	Pose const & )
 {
-	if(!tag->hasOption("task_operations" )){
+	if ( !tag->hasOption("task_operations" ) ) {
 		throw utility::excn::EXCN_RosettaScriptsOption(
 			"Please specify a task operation for the residues that should be near the other chain.");
 	}
@@ -119,11 +119,11 @@ SpecificResiduesNearInterfaceFilter::parse_my_tag(
 	rb_jump_ = tag->getOption<core::Size>( "jump_number", 1 );
 
 	// TODO make this work
-	//	interface_distance_threshold_ = tag->getOption<core::Size>( "interface_distance_threshold", 8 );
+	// interface_distance_threshold_ = tag->getOption<core::Size>( "interface_distance_threshold", 8 );
 	//
-	//	TR
-	//		<< "Specific Residues Near Interface over jump number " << rb_jump_
-	//		<< " with threshold " << residues_in_interface_threshold_ << endl;
+	// TR
+	//  << "Specific Residues Near Interface over jump number " << rb_jump_
+	//  << " with threshold " << residues_in_interface_threshold_ << endl;
 }
 
 
@@ -132,12 +132,12 @@ SpecificResiduesNearInterfaceFilter::compute(
 	Pose const & pose
 ) const {
 
-	if(!task_factory_){
+	if ( !task_factory_ ) {
 		utility_exit_with_message(
 			"Please specify a task operation for the residues that should be near the other chain.");
 	}
 
-	if(pose.conformation().num_chains() <= rb_jump_){
+	if ( pose.conformation().num_chains() <= rb_jump_ ) {
 		stringstream error_msg;
 		error_msg
 			<< "You have specied jump number '" << rb_jump_ << "', "
@@ -153,11 +153,11 @@ SpecificResiduesNearInterfaceFilter::compute(
 	vector1< bool > relevant_residues(task->repacking_residues());
 
 	bool all_at_interface(true);
-	for(Size residue_number=1;
-			residue_number <= pose.total_residue(); ++residue_number){
-		if(!relevant_residues[residue_number]) continue;
+	for ( Size residue_number=1;
+			residue_number <= pose.total_residue(); ++residue_number ) {
+		if ( !relevant_residues[residue_number] ) continue;
 
-		if(!interface.is_interface(residue_number)){
+		if ( !interface.is_interface(residue_number) ) {
 			all_at_interface = false;
 			break;
 		}

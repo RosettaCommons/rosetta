@@ -26,7 +26,7 @@ utility::vector0< std::string > & element2name() {
 
 std::string
 name_from_elements(Elements element){
-	if( element > total_number_elements ) return "ElementOutOfRange";
+	if ( element > total_number_elements ) return "ElementOutOfRange";
 	return element2name()[ element ];
 }
 
@@ -34,7 +34,7 @@ Elements
 elements_from_name(std::string name) {
 	std::map< std::string, Elements >::const_iterator iter = name2element().find( name );
 	if ( iter == name2element().end() ) {
-		if( name == "X" || name == "Z" ) { // Special case for special Rosetta atoms.
+		if ( name == "X" || name == "Z" ) { // Special case for special Rosetta atoms.
 			return UnknownElement;
 		}
 		utility_exit_with_message( "unrecognized element  " + name );
@@ -186,7 +186,7 @@ utility::vector0< std::string > setup_element2name() {
 	utility::vector0< std::string > element2n( total_number_elements );
 
 	for ( std::map< std::string, Elements >::const_iterator iter = name2element().begin(),
-		iter_end = name2element().end(); iter != iter_end; ++iter ) {
+			iter_end = name2element().end(); iter != iter_end; ++iter ) {
 		element2n[ iter->second ] = iter->first;
 	}
 

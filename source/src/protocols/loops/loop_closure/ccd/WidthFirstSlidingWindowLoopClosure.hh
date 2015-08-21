@@ -10,7 +10,7 @@
 /// @file src/protocols/abinitio/SlidingWindowLoopClosure.hh
 /// @brief header file for SlidingWindowLoopClosure protocol
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -74,23 +74,23 @@ public:
 	//@brief run find fragments that close loop  (if ideal loop closing: such that the less_cut pose is close RMSD <0.1 to pose more_cut)
 	// returns less_cut and more_cut with best fragment already applied..
 	virtual void sample_loops( core::pose::Pose& more_cut, core::pose::Pose& less_cut );
-	//	virtual void select_final_loop( core::pose::Pose& more_cut, core::pose::Pose& less_cut );
+	// virtual void select_final_loop( core::pose::Pose& more_cut, core::pose::Pose& less_cut );
 	static void register_options();
 	virtual std::string get_name() const;
 
 protected:
 
-  void set_defaults();
+	void set_defaults();
 
 
-  core::Real window_acceptance_ratio_; //=0.1; fast_closure must have at least 0.1*nr_fragments succesfully closed loops
-  core::Size nr_scored_sampling_passes_;
-  //                                         to accept this window for further scored (slower) sampling
-  core::Size min_fast_loops_;
-  core::Size min_breakout_fast_loops_;
+	core::Real window_acceptance_ratio_; //=0.1; fast_closure must have at least 0.1*nr_fragments succesfully closed loops
+	core::Size nr_scored_sampling_passes_;
+	//                                         to accept this window for further scored (slower) sampling
+	core::Size min_fast_loops_;
+	core::Size min_breakout_fast_loops_;
 
-  core::Size nr_scored_fragments_;
-  core::Size give_up_;
+	core::Size nr_scored_fragments_;
+	core::Size give_up_;
 };
 
 } // nameaspce ccd

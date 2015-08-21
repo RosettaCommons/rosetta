@@ -21,17 +21,17 @@
 #include <utility/sql_database/types.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-namespace basic{
-namespace database{
-namespace schema_generator{
+namespace basic {
+namespace database {
+namespace schema_generator {
 
 //Class definitions for datatypes
 class DbDataType : public utility::pointer::ReferenceCount {
-	
+
 public:
 	DbDataType();
 	DbDataType(int size);
-	
+
 	virtual
 	std::string print(
 		utility::sql_database::sessionOP
@@ -67,7 +67,7 @@ public:
 ////boolean data type
 //class DbBoolean : public DbDataType {
 //public:
-//	DbBoolean();
+// DbBoolean();
 //
 //};
 

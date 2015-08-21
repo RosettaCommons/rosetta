@@ -43,15 +43,15 @@ namespace scoring {
 namespace disulfides {
 
 /** @brief An iterator over the disulfide bonds a residue forms
- *
- * When scoring a pose, a long range energy container must be able to iterate
- * over all the residues which interact with a particular residue. For
- * disulfide bonds, this is either zero or one items depending on whether the
- * residue specified forms a disulfide bond or not.
- *
- * @todo Given the proper options, include all residues in the vicinity which
- * could form a bond, not just the best one. Maybe even include non-cysteines!
- */
+*
+* When scoring a pose, a long range energy container must be able to iterate
+* over all the residues which interact with a particular residue. For
+* disulfide bonds, this is either zero or one items depending on whether the
+* residue specified forms a disulfide bond or not.
+*
+* @todo Given the proper options, include all residues in the vicinity which
+* could form a bond, not just the best one. Maybe even include non-cysteines!
+*/
 class DisulfideMatchingNeighborIterator : public ResidueNeighborIterator {
 public:
 
@@ -130,8 +130,8 @@ private:
 };
 
 /**
- * @brief Storage for Disulfide Energy Terms
- */
+* @brief Storage for Disulfide Energy Terms
+*/
 class DisulfideMatchingEnergyComponents
 {
 public:
@@ -230,7 +230,7 @@ public:
 	DisulfideAtomIndices const &
 	other_neighbor_atom_indices( Size resid ) const;
 
-// Read and write access granted to Disulf Iterators. Other classes should not use these methods.
+	// Read and write access granted to Disulf Iterators. Other classes should not use these methods.
 public:
 
 	// Mutators

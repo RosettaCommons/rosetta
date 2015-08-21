@@ -56,25 +56,25 @@ token_type_name( TokenType tt )
 	switch ( tt ) {
 	case INVALID_TOKEN_TYPE :
 		return "INVALID_TOKEN_TYPE";
-	case LITERAL:
+	case LITERAL :
 		return "LITERAL";
-	case VARIABLE:
+	case VARIABLE :
 		return "VARIABLE";
-	case FUNCTION:
+	case FUNCTION :
 		return "FUNCTION";
-	case COMMA:
+	case COMMA :
 		return "COMMA";
-	case LEFT_PAREN:
+	case LEFT_PAREN :
 		return "LEFT_PAREN";
-	case RIGHT_PAREN:
+	case RIGHT_PAREN :
 		return "RIGHT_PAREN";
-	case PLUS_SYMBOL:
+	case PLUS_SYMBOL :
 		return "PLUS_SYMBOL";
-	case SUBTRACT_SYMBOL:
+	case SUBTRACT_SYMBOL :
 		return "SUBTRACT_SYMBOL";
-	case MULTIPLY_SYMBOL:
+	case MULTIPLY_SYMBOL :
 		return "MULTIPLY_SYMBOL";
-	case DIVIDE_SYMBOL:
+	case DIVIDE_SYMBOL :
 		return "DIVIDE_SYMBOL";
 	default :
 		return "ERROR IN token_type_name -- unrecognized token type!";
@@ -364,7 +364,7 @@ ArithmeticScanner::scan( std::string const & input_string )
 						if ( pos_token_begin + 1 != pos_curr &&
 								input_string[ pos_curr - 1 ] == 'e' &&
 								pos_curr + 1 < input_string.size() &&
-								is_numeral( input_string[ pos_curr + 1 ] )) {
+								is_numeral( input_string[ pos_curr + 1 ] ) ) {
 							done = false;
 						}
 					}
@@ -405,16 +405,16 @@ ArithmeticScanner::scan( std::string const & input_string )
 			scanning_literal = false;
 
 			if ( input_string[ pos_curr ] == '(' ) {
-			   tokens->append( TokenCOP( TokenOP( new SimpleToken( LEFT_PAREN ) ) ) );
+				tokens->append( TokenCOP( TokenOP( new SimpleToken( LEFT_PAREN ) ) ) );
 				++pos_token_begin;
 			} else if ( input_string[ pos_curr ] == ')' ) {
-			   tokens->append( TokenCOP( TokenOP( new SimpleToken( RIGHT_PAREN ) ) ) );
+				tokens->append( TokenCOP( TokenOP( new SimpleToken( RIGHT_PAREN ) ) ) );
 				++pos_token_begin;
 			} else if ( input_string[ pos_curr ] == ',' ) {
-			   tokens->append( TokenCOP( TokenOP( new SimpleToken( COMMA ) ) ) );
+				tokens->append( TokenCOP( TokenOP( new SimpleToken( COMMA ) ) ) );
 				++pos_token_begin;
 			} else if ( input_string[ pos_curr ] == '+' ) {
-			   tokens->append( TokenCOP( TokenOP( new SimpleToken( PLUS_SYMBOL ) ) ) );
+				tokens->append( TokenCOP( TokenOP( new SimpleToken( PLUS_SYMBOL ) ) ) );
 				++pos_token_begin;
 			} else if ( input_string[ pos_curr ] == '-' ) {
 				if ( pos_curr + 1 < input_string.size() &&
@@ -425,13 +425,13 @@ ArithmeticScanner::scan( std::string const & input_string )
 					tokens->append( TokenCOP( TokenOP( new SimpleToken( SUBTRACT_SYMBOL ) ) ));
 					++pos_token_begin;
 				}
-			} else if (input_string[ pos_curr ] == '*' ) {
-			   tokens->append( TokenCOP( TokenOP( new SimpleToken( MULTIPLY_SYMBOL ) ) ) );
+			} else if ( input_string[ pos_curr ] == '*' ) {
+				tokens->append( TokenCOP( TokenOP( new SimpleToken( MULTIPLY_SYMBOL ) ) ) );
 				++pos_token_begin;
-			} else if (input_string[ pos_curr ] == '/' ) {
-			   tokens->append( TokenCOP( TokenOP( new SimpleToken( DIVIDE_SYMBOL ) ) ) );
+			} else if ( input_string[ pos_curr ] == '/' ) {
+				tokens->append( TokenCOP( TokenOP( new SimpleToken( DIVIDE_SYMBOL ) ) ) );
 				++pos_token_begin;
-			} else if ( is_numeral( input_string[ pos_curr ] )) {
+			} else if ( is_numeral( input_string[ pos_curr ] ) ) {
 				scanning_literal = true;
 				pos_token_begin = pos_curr;
 			} else if ( is_letter( input_string[ pos_curr ] ) || input_string[ pos_curr ] == '$' ) {
@@ -458,7 +458,7 @@ ArithmeticScanner::scan_literal( std::string const & input_string ) const
 {
 	bool found_e = false; bool found_point = false;
 	for ( Size ii = 0; ii < input_string.size(); ++ii ) {
-		if ( ! is_numeral( input_string[ ii ] )) {
+		if ( ! is_numeral( input_string[ ii ] ) ) {
 			if ( input_string[ ii ] == 'e' || input_string[ ii ] == 'E' ) {
 				if ( ! found_e ) {
 					found_e = true;
@@ -474,13 +474,13 @@ ArithmeticScanner::scan_literal( std::string const & input_string ) const
 					continue;
 				} else {
 					utility_exit_with_message( "Error in trying to parse the following string as a numeric literal -- too many periods\n"
-					+ utility::to_string( ii ) + " " + utility::to_string( input_string[ ii ] ) + "\n" + input_string );
+						+ utility::to_string( ii ) + " " + utility::to_string( input_string[ ii ] ) + "\n" + input_string );
 				}
 			}
 			if ( input_string[ ii ] == '-' ) {
 				if ( ii == 0 ||
-					( ii + 1 < input_string.size() && is_numeral( input_string[ ii + 1 ] ) &&
-					( input_string[ ii-1 ] == 'e' || input_string[ ii-1 ] == 'E' ))) {
+						( ii + 1 < input_string.size() && is_numeral( input_string[ ii + 1 ] ) &&
+						( input_string[ ii-1 ] == 'e' || input_string[ ii-1 ] == 'E' )) ) {
 					continue;
 				}
 			}
@@ -643,8 +643,8 @@ ArithmeticASTFunction::parse( TokenSet & tokens )
 			ArithmeticASTExpressionOP exp( new ArithmeticASTExpression );
 			exp->parse( tokens );
 			if ( tokens.top()->type() != COMMA ) {
-			   tokens.log_error();
-			   utility_exit_with_message( "Error in parsing ArithmeticASTFunction: expected comma." );
+				tokens.log_error();
+				utility_exit_with_message( "Error in parsing ArithmeticASTFunction: expected comma." );
 			}
 
 			assert( tokens.top()->type() == COMMA );
@@ -1085,7 +1085,7 @@ ASTPrinter::visit( ArithmeticASTNode const & node )
 {
 	/// Danger, if we have an unkown type and dispatch to it and it dispatches back to this
 	/// we enter an infinite recursion.  Quit as soon as dispatch fails twice in a row.
-	if ( 	last_dispatch_to_unknown_type_ ) {
+	if (  last_dispatch_to_unknown_type_ ) {
 		std::cerr << "ERROR -- Infinite loop catch.  Two consequitive dispatch failures from ASTPrinter.  ASTNode derived class unhandled in dispatch!" << std::endl;
 		utility_exit_with_message("Stuck in (likely) infinite loop");
 	}
@@ -1259,7 +1259,7 @@ ExpressionCreator::visit( ArithmeticASTRestTerm const & node )
 			(*iter)->visit( *this );
 			if ( last_constructed_expression_ ) {
 				expressions.push_back( last_constructed_expression_ );
-				if ( iter == node.children_begin()) {
+				if ( iter == node.children_begin() ) {
 
 					if ( node.rest_term_token() == MULTIPLY_SYMBOL ) {
 						semi_constructed_expression_ = ExpressionCOP( ExpressionOP( new MultiplyExpression( parents_semi_constructed_expression, last_constructed_expression_ ) ) );
@@ -1306,7 +1306,7 @@ ExpressionCreator::visit( ArithmeticASTRestExpression const & node )
 			(*iter)->visit( *this );
 			if ( last_constructed_expression_ ) {
 				expressions.push_back( last_constructed_expression_ );
-				if ( iter == node.children_begin()) {
+				if ( iter == node.children_begin() ) {
 					if ( node.rest_expression_token() == PLUS_SYMBOL ) {
 						semi_constructed_expression_ = ExpressionCOP( ExpressionOP( new AddExpression( parents_semi_constructed_expression, last_constructed_expression_ ) ) );
 					} else if ( node.rest_expression_token() == SUBTRACT_SYMBOL ) {

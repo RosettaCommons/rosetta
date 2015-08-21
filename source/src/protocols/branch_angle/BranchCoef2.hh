@@ -33,7 +33,7 @@ class BranchCoef2 : public BranchCoef1 {
 
 public:
 
-BranchCoef2(
+	BranchCoef2(
 		core::Real overall_Ktheta,
 		core::Real overall_theta0,
 		core::Real overall_energy0,
@@ -51,15 +51,15 @@ BranchCoef2(
 		core::Real b2_bond_angle_C
 	):
 		BranchCoef1(
-			overall_Ktheta,
-			overall_theta0,
-			overall_energy0,
-			b1_torsion_offset_A,
-			b1_torsion_offset_B,
-			b1_torsion_offset_C,
-			b1_bond_angle_A,
-			b1_bond_angle_B,
-			b1_bond_angle_C
+		overall_Ktheta,
+		overall_theta0,
+		overall_energy0,
+		b1_torsion_offset_A,
+		b1_torsion_offset_B,
+		b1_torsion_offset_C,
+		b1_bond_angle_A,
+		b1_bond_angle_B,
+		b1_bond_angle_C
 		),
 		b2_torsion_offset_A_(b2_torsion_offset_A),
 		b2_torsion_offset_B_(b2_torsion_offset_B),
@@ -124,7 +124,7 @@ BranchCoef2(
 		evaluate(m2_bond_angle, b1_torsion_offset, b1_bond_angle);
 
 		b2_torsion_offset = b2_torsion_offset_A_ +
-		                    m2_bond_angle * (b2_torsion_offset_B_ + m2_bond_angle * b2_torsion_offset_C_);
+			m2_bond_angle * (b2_torsion_offset_B_ + m2_bond_angle * b2_torsion_offset_C_);
 		b2_bond_angle = b2_bond_angle_A_ + m2_bond_angle * (b2_bond_angle_B_ + m2_bond_angle * b2_bond_angle_C_);
 	}
 

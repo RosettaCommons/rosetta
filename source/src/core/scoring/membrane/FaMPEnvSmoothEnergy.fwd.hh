@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/scoring/membrane/FaMPEnvSmoothEnergy.fwd.hh
+/// @file  core/scoring/membrane/FaMPEnvSmoothEnergy.fwd.hh
 ///
-///	@brief		Fullatom Smoothed Membrane Environment Energy
-///	@details	Updated residue-environment energy (fullatom) by Vladmir in 2010 - smoothed
-///				derivatives based on updated statistics. Adapted for mpframework by Rebecca
-///				@GrayLab.
-///				Last Modified: 7/6/14
+/// @brief  Fullatom Smoothed Membrane Environment Energy
+/// @details Updated residue-environment energy (fullatom) by Vladmir in 2010 - smoothed
+///    derivatives based on updated statistics. Adapted for mpframework by Rebecca
+///    @GrayLab.
+///    Last Modified: 7/6/14
 ///
-///	@author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_scoring_membrane_FaMPEnvSmoothEnergy_fwd_hh
 #define INCLUDED_core_scoring_membrane_FaMPEnvSmoothEnergy_fwd_hh

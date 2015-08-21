@@ -22,11 +22,11 @@
 namespace core {
 namespace io {
 namespace PositionDdGInfo {
-	
-	class PositionDdGInfo;
-	typedef utility::pointer::shared_ptr< PositionDdGInfo > PositionDdGInfoOP;
-	typedef utility::pointer::shared_ptr< PositionDdGInfo const >PositionDdGInfoCOP;
-	
+
+class PositionDdGInfo;
+typedef utility::pointer::shared_ptr< PositionDdGInfo > PositionDdGInfoOP;
+typedef utility::pointer::shared_ptr< PositionDdGInfo const >PositionDdGInfoCOP;
+
 } // core
 } //io
 } // protocols

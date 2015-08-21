@@ -50,8 +50,8 @@ public:
 	}
 
 	virtual void begin_receptor_partner_pair(char const receptor_chain_letter,
-			char const partner_chain_letter, core::Real const /*total_isc*/,
-			std::string const & options_string) {
+		char const partner_chain_letter, core::Real const /*total_isc*/,
+		std::string const & options_string) {
 		(*ut_) << "begin_receptor_partner_pair" <<
 			" receptor=" << receptor_chain_letter <<
 			" partner=" << partner_chain_letter <<
@@ -65,10 +65,10 @@ public:
 	}
 
 	virtual void peptide_entry(core::pose::Pose const & /*pose*/,
-			protocols::analysis::PeptideDeriverEntryType const entry_type, core::Size const pep_start,
-			core::Real const /*linear_isc*/, std::string const & /*disulfide_info*/,
-			bool const /*was_cyclic_pep_modeled*/, core::pose::Pose const & /*cyclic_pose*/,
-			core::Real const /*cyclic_isc*/) {
+		protocols::analysis::PeptideDeriverEntryType const entry_type, core::Size const pep_start,
+		core::Real const /*linear_isc*/, std::string const & /*disulfide_info*/,
+		bool const /*was_cyclic_pep_modeled*/, core::pose::Pose const & /*cyclic_pose*/,
+		core::Real const /*cyclic_isc*/) {
 		(*ut_) << "peptide_entry" <<
 			" entry_type=" << entry_type <<
 			" pep_start=" << pep_start <<
@@ -174,10 +174,10 @@ public:
 			TS_ASSERT_EQUALS(filter.get_restrict_partners_to_chains()[1], 'B');
 
 		}
-		catch ( utility::excn::EXCN_Msg_Exception e ) {
-			std::cerr << "Raised exception: " << e.msg() << std::endl;
-			TS_ASSERT( false );
-		}
+catch ( utility::excn::EXCN_Msg_Exception e ) {
+	std::cerr << "Raised exception: " << e.msg() << std::endl;
+	TS_ASSERT( false );
+}
 
 	}
 

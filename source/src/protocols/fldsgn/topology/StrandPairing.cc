@@ -61,7 +61,7 @@ StrandPairing::StrandPairing():
 
 /// @brief value constructor
 StrandPairing::StrandPairing(
-  Size const s1,
+	Size const s1,
 	Size const s2,
 	Size const b1,
 	Size const b2,
@@ -91,7 +91,7 @@ StrandPairing::StrandPairing(
 
 /// @brief value constructor
 StrandPairing::StrandPairing(
-  Size const s1,
+	Size const s1,
 	Size const s2,
 	Real const rs,
 	char const o
@@ -204,16 +204,16 @@ StrandPairing::elongate( Size const r1, Size const r2, Size const p1, Size const
 		return true;
 	}
 
-	if( r1 < end1_ ) {
+	if ( r1 < end1_ ) {
 		return false;
 	}
-	if( (orient_  ==  'P' && r2 < end2_) || (orient_ == 'A' && r2 > end2_) ) {
+	if ( (orient_  ==  'P' && r2 < end2_) || (orient_ == 'A' && r2 > end2_) ) {
 		return false;
 	}
 
 	// runtime_assert( r1 > end1_ );
 
-	// 	if( orient_  ==  'P' ){
+	//  if( orient_  ==  'P' ){
 	// runtime_assert( r2 > end2_ );
 	// }else{
 	// runtime_assert( r2 < end2_ );
@@ -222,7 +222,7 @@ StrandPairing::elongate( Size const r1, Size const r2, Size const p1, Size const
 	end1_ = r1;
 	end2_ = r2;
 
-	if( size1() != size2() ){
+	if ( size1() != size2() ) {
 		has_bulge_ = true;
 	}
 
@@ -236,7 +236,7 @@ StrandPairing::add_pair( Size const r1, Size const r2, char const orient, Real c
 {
 	runtime_assert( r2 > r1 );
 
-	if( orient_ != orient ) return false;
+	if ( orient_ != orient ) return false;
 
 	residue_pair_.insert( std::map< Size, Size >::value_type( r1, r2 ) );
 	residue_pair_.insert( std::map< Size, Size >::value_type( r2, r1 ) );
@@ -249,21 +249,21 @@ StrandPairing::add_pair( Size const r1, Size const r2, char const orient, Real c
 		return true;
 	}
 
-	if( r1 <= begin1_ ) {
+	if ( r1 <= begin1_ ) {
 		begin1_ = r1;
 		rgstr_shift_ = rgstr;
-	} else if( end1_ <= r1 ) {
+	} else if ( end1_ <= r1 ) {
 		end1_ = r1;
 	}
 
-	if( r2 <= begin2_ ) {
+	if ( r2 <= begin2_ ) {
 		begin2_ = r2;
 		rgstr_shift_ = rgstr;
-	} else if( end2_ <= r2 ) {
+	} else if ( end2_ <= r2 ) {
 		end2_ = r2;
 	}
 
-	if( size1() != size2() ){
+	if ( size1() != size2() ) {
 		has_bulge_ = true;
 	}
 	return true;
@@ -289,9 +289,9 @@ StrandPairing::size2() const
 /// @brief return length of 2nd strand
 bool
 StrandPairing::is_parallel() const {
-	if( orient_ == 'P' ) {
+	if ( orient_ == 'P' ) {
 		return true;
-	}else{
+	} else {
 		return false;
 	}
 }
@@ -301,15 +301,15 @@ bool
 StrandPairing::is_member( Size const res ) {
 
 	if ( begin1_ <= end1_ ) {
-		if( begin1_ <= res && res <= end1_ ) return true;
+		if ( begin1_ <= res && res <= end1_ ) return true;
 	} else {
-		if( end1_ <= res && res <= begin1_ ) return true;
+		if ( end1_ <= res && res <= begin1_ ) return true;
 	}
 
 	if ( begin2_ <= end2_ ) {
-		if( begin2_ <= res && res <= end2_ ) return true;
+		if ( begin2_ <= res && res <= end2_ ) return true;
 	} else {
-		if( end2_ <= res && res <= begin2_ ) return true;
+		if ( end2_ <= res && res <= begin2_ ) return true;
 	}
 
 	return false;
@@ -328,7 +328,7 @@ Size
 StrandPairing::residue_pair( Size const res )
 {
 	//runtime_assert( (begin1_ <= res && res <= end1_) || (begin2_ <= res && res <= end2_) ||
-	//	 (end1_ <= res && res <= begin1_) || (end2_ <= res && res <= begin2_)	);
+	//  (end1_ <= res && res <= begin1_) || (end2_ <= res && res <= begin2_) );
 	std::map< core::Size, core::Size >::const_iterator it = residue_pair_.find( res );
 	runtime_assert( it != residue_pair_.end() );
 	return it->second;
@@ -346,18 +346,18 @@ StrandPairing::redefine_begin_end( SS_Info2_COP const ss_info )
 
 	Real start_ist, start_jst, len,inc;
 
-	if( is_parallel() ){ // parallel
+	if ( is_parallel() ) { // parallel
 
 		inc = 1;
 
-		if( rgstr_shift_ >= 0 ) {
+		if ( rgstr_shift_ >= 0 ) {
 			start_ist = ir_ist + rgstr_shift_;
 			start_jst = ir_jst;
-			if( len_ist >= (len_jst+rgstr_shift_) ) {
+			if ( len_ist >= (len_jst+rgstr_shift_) ) {
 				//  i =========>
 				//  j   =====>
 				len = len_jst;
-			}else{
+			} else {
 				//  i =========>
 				//  j   ==========>
 				len = len_ist - rgstr_shift_;
@@ -365,7 +365,7 @@ StrandPairing::redefine_begin_end( SS_Info2_COP const ss_info )
 		} else {
 			start_ist = ir_ist;
 			start_jst = ir_jst - rgstr_shift_;
-			if( len_ist >= (len_jst+rgstr_shift_) ) {
+			if ( len_ist >= (len_jst+rgstr_shift_) ) {
 				//  i      ==========>
 				//  j   ==========>
 				len = len_jst + rgstr_shift_;
@@ -380,10 +380,10 @@ StrandPairing::redefine_begin_end( SS_Info2_COP const ss_info )
 
 		inc = -1;
 
-		if( rgstr_shift_ >= 0 ) {
+		if ( rgstr_shift_ >= 0 ) {
 			start_ist = ir_ist + rgstr_shift_;
 			start_jst = er_jst;
-			if( len_ist >= (len_jst+rgstr_shift_) ) {
+			if ( len_ist >= (len_jst+rgstr_shift_) ) {
 				//  i   ==========>
 				//  j     <=====
 				len = len_jst;
@@ -397,7 +397,7 @@ StrandPairing::redefine_begin_end( SS_Info2_COP const ss_info )
 
 			start_ist = ir_ist;
 			start_jst = er_jst + rgstr_shift_;
-			if( len_ist >= (len_jst+rgstr_shift_) ) {
+			if ( len_ist >= (len_jst+rgstr_shift_) ) {
 				//  i     =========>
 				//  j  <=========
 				len = len_jst + rgstr_shift_;
@@ -411,9 +411,9 @@ StrandPairing::redefine_begin_end( SS_Info2_COP const ss_info )
 	} // if is_parallel ?
 
 
-	for( Size i=1; i<=len ;i++ ) {
+	for ( Size i=1; i<=len ; i++ ) {
 		runtime_assert( start_ist > 0 && start_jst > 0 );
-		if( ! elongate( Size( start_ist ), Size( start_jst ), 0, 0 ) ) {
+		if ( ! elongate( Size( start_ist ), Size( start_jst ), 0, 0 ) ) {
 			TR << "elongation failed ! " << std::endl;
 			runtime_assert( false );
 		}
@@ -454,15 +454,15 @@ StrandPairingSet::StrandPairingSet( String const & spairstring, SS_Info2_COP con
 	finalized_( false ),
 	empty_( StrandPairingOP( new StrandPairing ) )
 {
-	if( spairstring == "" ) {
+	if ( spairstring == "" ) {
 		return;
 	}
 
 	utility::vector1< String > spairs( utility::string_split( spairstring, ';' ) );
-	for( utility::vector1< String >::const_iterator iter = spairs.begin(); iter != spairs.end() ; ++iter) {
+	for ( utility::vector1< String >::const_iterator iter = spairs.begin(); iter != spairs.end() ; ++iter ) {
 		String spair( *iter );
 		StrandPairingOP sp( new StrandPairing( spair ) );
-		if( ssinfo ) {
+		if ( ssinfo ) {
 			sp->redefine_begin_end( ssinfo );
 		}
 		push_back( sp );
@@ -484,7 +484,7 @@ StrandPairingSet::StrandPairingSet( SS_Info2 const & ssinfo, DimerPairings const
 
 /// @brief copy constructor
 StrandPairingSet::StrandPairingSet( StrandPairingSet const & s ):
- 	ReferenceCount(),
+	ReferenceCount(),
 	strand_pairings_( s.strand_pairings_ ),
 	spairset_name_( s.spairset_name_ ),
 	num_strands_( s.num_strands_ ),
@@ -510,13 +510,13 @@ StrandPairingSet::clone() const
 /// @brief output detail of strand pairing set
 std::ostream & operator<<( std::ostream & out, const StrandPairingSet &s )
 {
- 	out << "#### StrandPairingSet Info " << std::endl;
+	out << "#### StrandPairingSet Info " << std::endl;
 	out << "# " << s.name() << std::endl;
 
 	StrandPairings const & spairs( s.strand_pairings() );
-	for( StrandPairings::const_iterator iter = spairs.begin(); iter != spairs.end(); ++iter ) {
+	for ( StrandPairings::const_iterator iter = spairs.begin(); iter != spairs.end(); ++iter ) {
 		out << "# " << (**iter) << std::endl;
-  }
+	}
 
 	return out;
 }
@@ -590,7 +590,7 @@ StrandPairingOP
 StrandPairingSet::strand_pairing( Size const s1, Size const s2 ) const
 {
 	runtime_assert( finalized_ );
-	if( s1 <= num_strands_ && s2 <= num_strands_ ) {
+	if ( s1 <= num_strands_ && s2 <= num_strands_ ) {
 		return map_strand_pairings_[ s1 ][ s2 ];
 	} else {
 		return empty_;
@@ -615,13 +615,13 @@ StrandPairingSet::name_wo_rgstr() const
 	String spairs = "";
 	//std::ostringstream name;
 	for ( StrandPairings::const_iterator it=strand_pairings_.begin(),
-						ite=strand_pairings_.end(); it != ite; ++it ) {
+			ite=strand_pairings_.end(); it != ite; ++it ) {
 		StrandPairing const & spair( **it );
 		utility::vector1< String > sp( utility::string_split( spair.name(), '.' ) );
 		runtime_assert( sp.size() == 3 );
-		if( spairs == "" ){
+		if ( spairs == "" ) {
 			spairs = sp[ 1 ] + '.' + sp[ 2 ];
-		}else{
+		} else {
 			spairs = spairs + ';' + sp[ 1 ] + '.' + sp[ 2 ];
 		}
 	}
@@ -648,24 +648,24 @@ StrandPairingSet::finalize()
 	std::sort( strand_pairings_.begin(), strand_pairings_.end(), pointer_sorter );
 
 
-	for ( StrandPairings::const_iterator it=strand_pairings_.begin(),	ite=strand_pairings_.end(); it != ite; ++it ) {
+	for ( StrandPairings::const_iterator it=strand_pairings_.begin(), ite=strand_pairings_.end(); it != ite; ++it ) {
 
 		StrandPairing spair(**it);
 
 		// set spairset_name_
-		if( spairset_name_ == "" ){
+		if ( spairset_name_ == "" ) {
 			spairset_name_ = spair.name();
-		}else{
+		} else {
 			spairset_name_ += ';' + spair.name();
 		}
 		// find max number of strands
-		if(	spair.s2() > num_strands_ ){
+		if ( spair.s2() > num_strands_ ) {
 			num_strands_ = spair.s2();
 		}
 	}
 
 	map_strand_pairings_.resize( num_strands_ );
-	for( Size i=1; i<=num_strands_; i++ ) {
+	for ( Size i=1; i<=num_strands_; i++ ) {
 
 		// initialize neighbor_strands
 		VecSize vec;
@@ -673,21 +673,21 @@ StrandPairingSet::finalize()
 
 		// initialize map_strand_pairings_
 		map_strand_pairings_[i].resize( num_strands_ );
-		for( Size j=1; j<=num_strands_; j++ ) {
+		for ( Size j=1; j<=num_strands_; j++ ) {
 			map_strand_pairings_[i][j] = empty_;
 		}
 	}
 
-	for ( StrandPairings::const_iterator it=strand_pairings_.begin(),	ite=strand_pairings_.end(); it != ite; ++it ) {
+	for ( StrandPairings::const_iterator it=strand_pairings_.begin(), ite=strand_pairings_.end(); it != ite; ++it ) {
 		StrandPairingOP const spair( *it );
 		// define map_strand_pairings_
 		map_strand_pairings_[ spair->s1() ][ spair->s2() ] = spair;
 		map_strand_pairings_[ spair->s2() ][ spair->s1() ] = spair;
 		// define neighbor_strands_
-    VecSize & neighbor1 ( neighbor_strands_[ spair->s1() ] );
-    VecSize & neighbor2 ( neighbor_strands_[ spair->s2() ] );
-    neighbor1.push_back( spair->s2() );
-    neighbor2.push_back( spair->s1() );
+		VecSize & neighbor1 ( neighbor_strands_[ spair->s1() ] );
+		VecSize & neighbor2 ( neighbor_strands_[ spair->s2() ] );
+		neighbor1.push_back( spair->s2() );
+		neighbor2.push_back( spair->s1() );
 	}
 	//TR << "#strands = " << num_strands_ << std::endl;
 }
@@ -695,7 +695,7 @@ StrandPairingSet::finalize()
 
 /// @brief
 bool sort_by_length(
-  protocols::fldsgn::topology::StrandPairingCOP const a,
+	protocols::fldsgn::topology::StrandPairingCOP const a,
 	protocols::fldsgn::topology::StrandPairingCOP const b )
 {
 	return ( a->size1() >  b->size1() );
@@ -708,16 +708,16 @@ StrandPairingSet::drop_strand_pairs( StrandPairings const & drop_spairs )
 	runtime_assert( drop_spairs.size() <= strand_pairings_.size() );
 
 	StrandPairings new_spairs;
-	for( Size jj=1; jj<=strand_pairings_.size(); jj++ ) {
+	for ( Size jj=1; jj<=strand_pairings_.size(); jj++ ) {
 		bool drop( false );
-		for( Size ii=1; ii<=drop_spairs.size(); ii++ ) {
-			if( strand_pairings_[ jj ]->name() == drop_spairs[ ii ]->name() ) {
+		for ( Size ii=1; ii<=drop_spairs.size(); ii++ ) {
+			if ( strand_pairings_[ jj ]->name() == drop_spairs[ ii ]->name() ) {
 				drop = true;
 				break;
 			}
 		}
 
-		if( ! drop ) {
+		if ( ! drop ) {
 			new_spairs.push_back( strand_pairings_[ jj ] );
 		}
 	}
@@ -733,7 +733,7 @@ StrandPairingSet::drop_strand_pairs( StrandPairings const & drop_spairs )
 void
 StrandPairingSet::make_strand_neighbor_two()
 {
-	if( ! finalized_ ) {
+	if ( ! finalized_ ) {
 		finalize();
 	}
 
@@ -741,21 +741,21 @@ StrandPairingSet::make_strand_neighbor_two()
 
 	bool modified( false );
 	StrandPairings drop_spairs;
-	for( Size ist=1; ist<=num_strands_; ist++ ) {
+	for ( Size ist=1; ist<=num_strands_; ist++ ) {
 
 		StrandPairings spairs;
-		if( neighbor_strands( ist ).size() > 2 ) {
+		if ( neighbor_strands( ist ).size() > 2 ) {
 
 			modified = true;
 			for ( VecSize::const_iterator
-							it=neighbor_strands( ist ).begin(), ite=neighbor_strands( ist ).end(); it != ite; ++it ) {
+					it=neighbor_strands( ist ).begin(), ite=neighbor_strands( ist ).end(); it != ite; ++it ) {
 				Size jst( *it );
 				spairs.push_back( strand_pairing( ist, jst ) );
 			}
 			std::sort( spairs.begin(), spairs.end(), sort_by_length );
 
-			for( Size i=3; i<=spairs.size(); i++ ) {
-				if( pairmap[ spairs[ i ]->s1() ][ spairs[ i ]->s2() ] ) continue;
+			for ( Size i=3; i<=spairs.size(); i++ ) {
+				if ( pairmap[ spairs[ i ]->s1() ][ spairs[ i ]->s2() ] ) continue;
 				pairmap[ spairs[ i ]->s1() ][ spairs[ i ]->s2() ] = true;
 				pairmap[ spairs[ i ]->s2() ][ spairs[ i ]->s1() ] = true;
 				drop_spairs.push_back( spairs[ i ] );
@@ -764,7 +764,7 @@ StrandPairingSet::make_strand_neighbor_two()
 
 	}
 
-	if( modified ) {
+	if ( modified ) {
 		drop_strand_pairs( drop_spairs );
 	}
 
@@ -779,9 +779,9 @@ StrandPairingSet::initialize_by_dimer_pairs( SS_Info2 const & ssinfo, DimerPairi
 
 	// intialize map strand pairings
 	map_strand_pairings_.resize( num_strands_ );
-	for( Size i=1; i<=num_strands_; i++ ) {
+	for ( Size i=1; i<=num_strands_; i++ ) {
 		map_strand_pairings_[i].resize( num_strands_ );
-		for( Size j=1; j<=num_strands_; j++ ) {
+		for ( Size j=1; j<=num_strands_; j++ ) {
 			map_strand_pairings_[i][j] = empty_;
 		}
 	}
@@ -790,7 +790,7 @@ StrandPairingSet::initialize_by_dimer_pairs( SS_Info2 const & ssinfo, DimerPairi
 
 		DimerPairing const & dp ( **it );
 
-		if( (dp.sign1() == 1 && dp.sign2() == 1) || (dp.sign1() == 2 && dp.sign2() == 2) ) continue;
+		if ( (dp.sign1() == 1 && dp.sign2() == 1) || (dp.sign1() == 2 && dp.sign2() == 2) ) continue;
 
 		Size iaa = dp.res1();
 		Size jaa = dp.res2();
@@ -801,18 +801,18 @@ StrandPairingSet::initialize_by_dimer_pairs( SS_Info2 const & ssinfo, DimerPairi
 		Size jst_length = ssinfo.strand( jstrand )->length();
 
 		StrandPairingOP & spop = map_strand_pairings_[ istrand ][ jstrand ];
-		if( spop == 0 ){
+		if ( spop == 0 ) {
 			spop = StrandPairingOP( new StrandPairing( istrand, jstrand, 0, dp.orient() ) );
 			strand_pairings_.push_back( spop );
 		}
 
-		if( dp.orient() == 'A' ){
+		if ( dp.orient() == 'A' ) {
 
 			Real rgstr = Real(iaa) - Real(ist_begin) - (Real(jst_length) - (Real(jaa) - Real(jst_begin)));
 			spop->add_pair( iaa, jaa+1, dp.orient(), rgstr );
 			spop->add_pair( iaa+1, jaa, dp.orient(), rgstr );
 
-		} else if( dp.orient() == 'P' ) {
+		} else if ( dp.orient() == 'P' ) {
 
 			Real rgstr = Real(iaa) - Real(ist_begin) - ( Real(jaa) - Real(jst_begin) );
 			spop->add_pair( iaa, jaa, dp.orient(), rgstr );

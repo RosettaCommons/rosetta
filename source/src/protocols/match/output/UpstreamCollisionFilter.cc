@@ -21,7 +21,7 @@
 
 // Project headers
 #include <core/conformation/Residue.hh>
-#include	<core/pose/Pose.hh>
+#include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
@@ -43,7 +43,7 @@ namespace output {
 
 
 MatchCollisionFilter::MatchCollisionFilter(
-  std::string filter_name,
+	std::string filter_name,
 	UpstreamHitCacherOP coordinate_cacher
 ) :
 	MatchFilter( filter_name ),
@@ -143,7 +143,7 @@ MatchCollisionFilter::bump_grid() const{
 
 
 UpstreamCollisionFilter::UpstreamCollisionFilter(
-  std::string filter_name,
+	std::string filter_name,
 	UpstreamHitCacherOP coordinate_cacher
 ) :
 	parent( filter_name, coordinate_cacher )
@@ -180,7 +180,7 @@ UpstreamCollisionFilter::passes_filter(
 				etable_energy()->residue_pair_energy(
 					*( cacher_->upstream_conformation_for_hit( ii, fake_hit( m.upstream_hits[ ii ] )) ),
 					*( cacher_->upstream_conformation_for_hit( jj, fake_hit( m.upstream_hits[ jj ] )) ),
-						*empty_pose(), *empty_sfxn(),
+					*empty_pose(), *empty_sfxn(),
 					emap );
 				Real energy = wfa_atr() * emap[ fa_atr ] + wfa_rep() * emap[ fa_rep ] + wfa_sol() * emap[ fa_sol ];
 				if ( energy > lj_cutoff() ) return false;
@@ -192,7 +192,7 @@ UpstreamCollisionFilter::passes_filter(
 			core::conformation::ResidueCOP iires = cacher_->upstream_conformation_for_hit( ii, fake_hit( m.upstream_hits[ ii ] ) );
 			for ( Size jj = ii + 1; jj <= m.upstream_hits.size(); ++jj ) {
 				core::conformation::ResidueCOP jjres = cacher_->upstream_conformation_for_hit( jj, fake_hit( m.upstream_hits[ jj ] ) );
-				if( !passes_hardsphere_filter( *iires, *jjres ) ) return false;
+				if ( !passes_hardsphere_filter( *iires, *jjres ) ) return false;
 			} // jj loop over upstream_hits.size()
 		} //ii loop over upstream_hits.size()
 		return true;
@@ -202,7 +202,7 @@ UpstreamCollisionFilter::passes_filter(
 bool
 UpstreamCollisionFilter::passes_hardsphere_filter(
 	core::Size geomcst_a,
-  core::Size geomcst_b,
+	core::Size geomcst_b,
 	Hit const & upstream_hit_a,
 	Hit const & upstream_hit_b
 ) const

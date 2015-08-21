@@ -65,7 +65,7 @@ public:
 
 		// init the mmtorsionlibrary
 		mmtorsionlibrary = MMTorsionLibraryOP( new MMTorsionLibrary( "core/scoring/mm/mm_torsion_params.txt" , mmatomtypeset ) );
-	 }
+	}
 
 	virtual ~MMTorsionLibraryTests() {}
 

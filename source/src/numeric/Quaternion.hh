@@ -560,7 +560,7 @@ public: // Methods: generators
 			( q2.w_ * q1.x_ ) + ( q2.x_ * q1.w_ ) + ( q2.y_ * q1.z_ ) - ( q2.z_ * q1.y_ ),
 			( q2.w_ * q1.y_ ) - ( q2.x_ * q1.z_ ) + ( q2.y_ * q1.w_ ) + ( q2.z_ * q1.x_ ),
 			( q2.w_ * q1.z_ ) + ( q2.x_ * q1.y_ ) - ( q2.y_ * q1.x_ ) + ( q2.z_ * q1.w_ )
-		).normalize();
+			).normalize();
 	}
 
 
@@ -576,7 +576,7 @@ public: // Methods: generators
 				( q2.w_ * q1.x_ ) + ( q2.x_ * q1.w_ ) + ( q2.y_ * q1.z_ ) - ( q2.z_ * q1.y_ ),
 				( q2.w_ * q1.y_ ) - ( q2.x_ * q1.z_ ) + ( q2.y_ * q1.w_ ) + ( q2.z_ * q1.x_ ),
 				( q2.w_ * q1.z_ ) + ( q2.x_ * q1.y_ ) - ( q2.y_ * q1.x_ ) + ( q2.z_ * q1.w_ )
-			).normalize();
+				).normalize();
 		} else { // Return product
 			return Quaternion(
 				( q2.w_ * q1.w_ ) - ( q2.x_ * q1.x_ ) - ( q2.y_ * q1.y_ ) - ( q2.z_ * q1.z_ ),

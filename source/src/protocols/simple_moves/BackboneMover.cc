@@ -175,7 +175,7 @@ void BackboneMover::apply( core::pose::Pose & pose )
 	// will not run for now, can change this to true if symmetry desired
 	// potential problem with incoming modified symmetric movemaps, this will
 	// reset any changes to the input movemap
-	if(false){
+	if ( false ) {
 		if ( core::pose::symmetry::is_symmetric( pose )  )  {
 			//TR << "Pose is symmetric, making backbone movemap symmetric."<< std::endl;
 			core::pose::symmetry::make_symmetric_movemap( pose, *movemap_);
@@ -185,7 +185,7 @@ void BackboneMover::apply( core::pose::Pose & pose )
 	// currently secstruct is not implemented and returns 'L' for all residues
 	setup_list( pose );
 
-	if( pos_list_.empty() ) {
+	if ( pos_list_.empty() ) {
 		Warning() << "no movable positions in " << type() << "!" << std::endl;
 		return;
 	}
@@ -208,14 +208,14 @@ void BackboneMover::apply( core::pose::Pose & pose )
 			resnum_ = random_pos.first;
 			set_angles( random_pos.second );
 
-//  next three lines skip ends of structure !!
-//  fix a logic error here: the closer to the end, the higher the probability
-//  to skip it; and when it is 1 or total_residue, the probability should be
-//  zero; and the probability distribution should be symmetrical for two ends
-//  residue:    N-   1   2   3   4   5   6
-//  residue:    C-   t  t-1 t-2 t-3 t-4 t-5
-//  prob to skip:    1  0.8 0.6 0.4 0.2 0.0
-//  -- chu
+			//  next three lines skip ends of structure !!
+			//  fix a logic error here: the closer to the end, the higher the probability
+			//  to skip it; and when it is 1 or total_residue, the probability should be
+			//  zero; and the probability distribution should be symmetrical for two ends
+			//  residue:    N-   1   2   3   4   5   6
+			//  residue:    C-   t  t-1 t-2 t-3 t-4 t-5
+			//  prob to skip:    1  0.8 0.6 0.4 0.2 0.0
+			//  -- chu
 
 			// need to add this back, prob want a pose.distance_to_chain_end(i)
 			// function
@@ -226,7 +226,7 @@ void BackboneMover::apply( core::pose::Pose & pose )
 
 			// maybe we've already moved this position ?
 			if ( std::find( already_moved_.begin(), already_moved_.end(), resnum_ ) !=
-					 already_moved_.end() ) continue;
+					already_moved_.end() ) continue;
 
 			if ( !make_move( pose ) ) continue;
 			already_moved_.push_back( resnum_ );
@@ -246,10 +246,10 @@ BackboneMover::show(std::ostream & output) const
 {
 	Mover::show(output);
 	output << "Max angle for helices (H): " << get_angle_max('H') <<
-			"\nMax angle for strands (E): " << get_angle_max('E') <<
-			"\nMax angle for loops (L):   " << get_angle_max('L') <<
-			"\nTemperature factor (kT):   " << temperature() <<
-			"\nNumber of moves:           " << nmoves() << std::endl;
+		"\nMax angle for strands (E): " << get_angle_max('E') <<
+		"\nMax angle for loops (L):   " << get_angle_max('L') <<
+		"\nTemperature factor (kT):   " << temperature() <<
+		"\nNumber of moves:           " << nmoves() << std::endl;
 	output << "MoveMap:" << std::endl;
 	movemap()->show(output);
 }
@@ -301,7 +301,7 @@ SmallMover::SmallMover(
 	core::Real temperature_in,
 	core::Size nmoves_in
 )
-	: BackboneMover( movemap_in, temperature_in, nmoves_in )
+: BackboneMover( movemap_in, temperature_in, nmoves_in )
 {
 	moves::Mover::type( "Small" );
 }
@@ -337,7 +337,7 @@ void SmallMover::setup_list( core::pose::Pose & pose )
 		conformation::Residue const & rsd( pose.residue( i ) );
 		//Checks if the residue is protein and has a free psi and phi angle as determined by the move map
 		if ( rsd.is_protein() && movemap_->get( TorsionID( i, BB, phi_torsion ) ) &&
-				 movemap_->get( TorsionID( i, BB, psi_torsion ) ) ) {
+				movemap_->get( TorsionID( i, BB, psi_torsion ) ) ) {
 			//Gets the secondary structure nature of the residue
 			char const ss( pose.secstruct( i ) );
 			if ( angle_max_.count( ss ) ) {
@@ -348,12 +348,12 @@ void SmallMover::setup_list( core::pose::Pose & pose )
 					pos_list_.push_back( std::make_pair( i, mx ) );
 				}
 			}
-		// Check if the residue is a monosaccharide and has a free phi (BB 5) and psi (BB 4).
-		} else if (rsd.is_carbohydrate() && movemap_->get(TorsionID(i, BB, 4)) &&
-				movemap_->get(TorsionID(i, BB, 5))) {
+			// Check if the residue is a monosaccharide and has a free phi (BB 5) and psi (BB 4).
+		} else if ( rsd.is_carbohydrate() && movemap_->get(TorsionID(i, BB, 4)) &&
+				movemap_->get(TorsionID(i, BB, 5)) ) {
 			// Carbohydrates are always considered loops for now.
 			Real const mx = angle_max_.find('L')->second;
-			if (mx > 0.0) {
+			if ( mx > 0.0 ) {
 				pos_list_.push_back(std::make_pair(i, mx));
 			}
 		}
@@ -379,15 +379,15 @@ SmallMover::dof_id_ranges(
 
 	utility::vector1<core::id::DOF_ID_Range> range_vector;
 
-	for (core::Size i = 1; i <= pos_list_.size(); ++i) {
+	for ( core::Size i = 1; i <= pos_list_.size(); ++i ) {
 
 		core::id::TorsionID phi_torsion(pos_list_[i].first, core::id::BB, core::id::phi_torsion);
 		core::id::DOF_ID phi_dof(pose.conformation().dof_id_from_torsion_id(phi_torsion));
-		if (phi_dof.valid()) range_vector.push_back(core::id::DOF_ID_Range(phi_dof, -pi, pi));
+		if ( phi_dof.valid() ) range_vector.push_back(core::id::DOF_ID_Range(phi_dof, -pi, pi));
 
 		core::id::TorsionID psi_torsion(pos_list_[i].first, core::id::BB, core::id::psi_torsion);
 		core::id::DOF_ID psi_dof(pose.conformation().dof_id_from_torsion_id(psi_torsion));
-		if (psi_dof.valid()) range_vector.push_back(core::id::DOF_ID_Range(psi_dof, -pi, pi));
+		if ( psi_dof.valid() ) range_vector.push_back(core::id::DOF_ID_Range(psi_dof, -pi, pi));
 	}
 
 	return range_vector;
@@ -457,16 +457,16 @@ ShearMoverCreator::mover_name() {
 
 //constructor
 
-ShearMover::ShearMover() : BackboneMover() { protocols::moves::Mover::type( "ShearMover" );	}
+ShearMover::ShearMover() : BackboneMover() { protocols::moves::Mover::type( "ShearMover" ); }
 
 ShearMover::ShearMover(
 	core::kinematics::MoveMapOP movemap_in,
 	core::Real temperature_in,
 	core::Size nmoves_in
 )
-	: BackboneMover( movemap_in, temperature_in, nmoves_in )
+: BackboneMover( movemap_in, temperature_in, nmoves_in )
 {
-		protocols::moves::Mover::type( "Shear" );
+	protocols::moves::Mover::type( "Shear" );
 }
 
 // Copy constructor
@@ -501,7 +501,7 @@ void protocols::simple_moves::ShearMover::setup_list( core::pose::Pose & pose )
 	for ( int i=2, i_end = pose.total_residue(); i<= i_end; ++i ) {
 		conformation::Residue const & rsd( pose.residue( i ) );
 		if ( rsd.is_protein() && movemap_->get( TorsionID( i, BB, phi_torsion ) /*phi of i*/) &&
-				 movemap_->get( TorsionID( i-1, BB, psi_torsion ) /*psi of i-1*/)) {
+				movemap_->get( TorsionID( i-1, BB, psi_torsion ) /*psi of i-1*/) ) {
 			char const ss( pose.secstruct( i ) );
 			if ( angle_max_.count( ss ) ) {
 				Real const mx( angle_max_.find( ss )->second );
@@ -509,12 +509,12 @@ void protocols::simple_moves::ShearMover::setup_list( core::pose::Pose & pose )
 					pos_list_.push_back( std::make_pair( i, mx ) );
 				}
 			}
-		// Check if the residue is a monosaccharide and has a free phi (BB 5) and psi (BB 4).
-		} else if (rsd.is_carbohydrate() && movemap_->get(TorsionID(i - 1, BB, 4)) &&
-				movemap_->get(TorsionID(i, BB, 5))) {
+			// Check if the residue is a monosaccharide and has a free phi (BB 5) and psi (BB 4).
+		} else if ( rsd.is_carbohydrate() && movemap_->get(TorsionID(i - 1, BB, 4)) &&
+				movemap_->get(TorsionID(i, BB, 5)) ) {
 			// Carbohydrates are always considered loops for now.
 			Real const mx = angle_max_.find('L')->second;
-			if (mx > 0.0) {
+			if ( mx > 0.0 ) {
 				pos_list_.push_back(std::make_pair(i, mx));
 			}
 		}
@@ -541,15 +541,15 @@ ShearMover::dof_id_ranges(
 
 	utility::vector1<core::id::DOF_ID_Range> range_vector;
 
-	for (core::Size i = 1; i <= pos_list_.size(); ++i) {
+	for ( core::Size i = 1; i <= pos_list_.size(); ++i ) {
 
 		core::id::TorsionID phi_torsion(pos_list_[i].first, core::id::BB, core::id::phi_torsion);
 		core::id::DOF_ID phi_dof(pose.conformation().dof_id_from_torsion_id(phi_torsion));
-		if (phi_dof.valid()) range_vector.push_back(core::id::DOF_ID_Range(phi_dof, -pi, pi));
+		if ( phi_dof.valid() ) range_vector.push_back(core::id::DOF_ID_Range(phi_dof, -pi, pi));
 
 		core::id::TorsionID psi_torsion(pos_list_[i].first-1, core::id::BB, core::id::psi_torsion);
 		core::id::DOF_ID psi_dof(pose.conformation().dof_id_from_torsion_id(psi_torsion));
-		if (phi_dof.valid()) range_vector.push_back(core::id::DOF_ID_Range(psi_dof, -pi, pi));
+		if ( phi_dof.valid() ) range_vector.push_back(core::id::DOF_ID_Range(psi_dof, -pi, pi));
 	}
 
 	return range_vector;

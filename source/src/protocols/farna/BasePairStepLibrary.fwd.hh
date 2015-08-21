@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/farna/BasePairStepLibrary.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -20,11 +20,11 @@
 
 namespace protocols {
 namespace farna {
-	
-	class BasePairStepLibrary;
-	typedef utility::pointer::shared_ptr< BasePairStepLibrary > BasePairStepLibraryOP;
-	typedef utility::pointer::shared_ptr< BasePairStepLibrary const > BasePairStepLibraryCOP;
-	
+
+class BasePairStepLibrary;
+typedef utility::pointer::shared_ptr< BasePairStepLibrary > BasePairStepLibraryOP;
+typedef utility::pointer::shared_ptr< BasePairStepLibrary const > BasePairStepLibraryCOP;
+
 } //farna
 } //protocols
 

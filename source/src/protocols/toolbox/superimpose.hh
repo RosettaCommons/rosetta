@@ -35,120 +35,120 @@ void CA_superimpose( ObjexxFCL::FArray1_double const& weights, core::pose::Pose 
 void CA_superimpose( core::pose::Pose const& ref_pose, core::pose::Pose& fit_pose );
 /*
 void superimpose(
-     core::Size natoms,
-     ObjexxFCL::FArray1_double& weights,
-     ObjexxFCL::FArray2_double& ref_coords,
-     ObjexxFCL::FArray2_double& coords,
-     Matrix &R //returns rotation matrix
+core::Size natoms,
+ObjexxFCL::FArray1_double& weights,
+ObjexxFCL::FArray2_double& ref_coords,
+ObjexxFCL::FArray2_double& coords,
+Matrix &R //returns rotation matrix
 );
 
 void superimpose(
-     core::Size natoms,
-     ObjexxFCL::FArray1_double& weights,
-     ObjexxFCL::FArray2_double& ref_coords,
-     ObjexxFCL::FArray2_double& coords
+core::Size natoms,
+ObjexxFCL::FArray1_double& weights,
+ObjexxFCL::FArray2_double& ref_coords,
+ObjexxFCL::FArray2_double& coords
 ); */
 
 /* @brief Calculates transform need to superimpose init_coords onto ref_coords.
- *
- * Returned transform types:
- * 	to_init_center - Transform placing init_coords center at origin. Ie. -(init_coords center point).
- * 	to_fit_center -  Transform placing ref_coords center at origin. Ie. -(ref_coords center point).
- * 	rotation - Rotation matrix applied about center move init to fit.
- *
- * 	Ex. To apply superposition transform:
- *
- * 		fit_coordiate_value = to_fit_center + rotation * (init_coordinate_value - to_init_center)
- */
+*
+* Returned transform types:
+*  to_init_center - Transform placing init_coords center at origin. Ie. -(init_coords center point).
+*  to_fit_center -  Transform placing ref_coords center at origin. Ie. -(ref_coords center point).
+*  rotation - Rotation matrix applied about center move init to fit.
+*
+*  Ex. To apply superposition transform:
+*
+*   fit_coordiate_value = to_fit_center + rotation * (init_coordinate_value - to_init_center)
+*/
 void
 superposition_transform(
-      utility::vector1< numeric::xyzVector< core::Real > > & init_coords,
-      utility::vector1< numeric::xyzVector< core::Real > > & ref_coords,
-			Matrix & rotation,
-			Vector & to_init_center,
-			Vector & to_fit_center);
+	utility::vector1< numeric::xyzVector< core::Real > > & init_coords,
+	utility::vector1< numeric::xyzVector< core::Real > > & ref_coords,
+	Matrix & rotation,
+	Vector & to_init_center,
+	Vector & to_fit_center);
 
 /* @brief Calculates transform need to superimpose init_coords onto ref_coords using the given coordinate weights.
- *
- * Returned transform types:
- * 	to_init_center - Transform placing init_coords center at origin. Ie. -(init_coords center point).
- * 	to_fit_center -  Transform placing ref_coords center at origin. Ie. -(ref_coords center point).
- * 	rotation - Rotation matrix applied about center move init to fit.
- *
- * 	Ex. To apply superposition transform:
- *
- * 		fit_coordiate_value = to_fit_center + rotation * (init_coordinate_value - to_init_center)
- */
+*
+* Returned transform types:
+*  to_init_center - Transform placing init_coords center at origin. Ie. -(init_coords center point).
+*  to_fit_center -  Transform placing ref_coords center at origin. Ie. -(ref_coords center point).
+*  rotation - Rotation matrix applied about center move init to fit.
+*
+*  Ex. To apply superposition transform:
+*
+*   fit_coordiate_value = to_fit_center + rotation * (init_coordinate_value - to_init_center)
+*/
 void
 superposition_transform(
-      utility::vector1< numeric::xyzVector< core::Real > > & init_coords,
-      utility::vector1< numeric::xyzVector< core::Real > > & ref_coords,
-      utility::vector1< core::Real >   & coord_weights,
-			Matrix & rotation,
-			Vector & to_init_center,
-			Vector & to_fit_center);
+	utility::vector1< numeric::xyzVector< core::Real > > & init_coords,
+	utility::vector1< numeric::xyzVector< core::Real > > & ref_coords,
+	utility::vector1< core::Real >   & coord_weights,
+	Matrix & rotation,
+	Vector & to_init_center,
+	Vector & to_fit_center);
 
 /* @brief Applies given superposition transform series to pose jump.
- *
- * Applies superposition to jump, updating all downstream pose components.
- */
+*
+* Applies superposition to jump, updating all downstream pose components.
+*/
 void apply_superposition_transform_to_jump(
-      core::pose::Pose & pose,
-			core::Size jump_id,
-			Matrix rotation,
-			Vector to_init_center,
-			Vector to_fit_center);
+	core::pose::Pose & pose,
+	core::Size jump_id,
+	Matrix rotation,
+	Vector to_init_center,
+	Vector to_fit_center);
 
 /* @brief Applies given superposition transform series to pose.
- *
- * Applies superposition transform to all atoms within pose.
- */
+*
+* Applies superposition transform to all atoms within pose.
+*/
 void apply_superposition_transform(
-      core::pose::Pose & pose,
-			Matrix rotation,
-			Vector to_init_center,
-			Vector to_fit_center);
+	core::pose::Pose & pose,
+	Matrix rotation,
+	Vector to_init_center,
+	Vector to_fit_center);
 
 /* @brief Converts a vector1-of-xyzVectors into FArray2D. */
 template <typename T>
 void vector_vector_to_FArray2(
-      utility::vector1< numeric::xyzVector< T > > & from,
-			ObjexxFCL::FArray2D< T > & to);
+	utility::vector1< numeric::xyzVector< T > > & from,
+	ObjexxFCL::FArray2D< T > & to);
 
 /* @brief Calculates superposition transform from coords to ref_coords.
- *
- * Modifies ref_coords and coords, moving coords into superposition.
- */
+*
+* Modifies ref_coords and coords, moving coords into superposition.
+*/
 void superposition_transform(
-     core::Size natoms,
-     ObjexxFCL::FArray1_double const& weights,
-     ObjexxFCL::FArray2_double& ref_coords,
-     ObjexxFCL::FArray2_double& coords,
-     Matrix &R,
-		 Vector &toCenter,
-		 Vector &toFitCenter);
+	core::Size natoms,
+	ObjexxFCL::FArray1_double const& weights,
+	ObjexxFCL::FArray2_double& ref_coords,
+	ObjexxFCL::FArray2_double& coords,
+	Matrix &R,
+	Vector &toCenter,
+	Vector &toFitCenter);
 
 void fit_centered_coords(
-     core::Size natoms,
-     ObjexxFCL::FArray1_double const& weights,
-     ObjexxFCL::FArray2_double const& ref_coords,
-     ObjexxFCL::FArray2_double& coords,
-     Matrix &R
+	core::Size natoms,
+	ObjexxFCL::FArray1_double const& weights,
+	ObjexxFCL::FArray2_double const& ref_coords,
+	ObjexxFCL::FArray2_double& coords,
+	Matrix &R
 );
 
 void reset_x(
-     core::Size n,
-     ObjexxFCL::FArray2_double& x,
-     ObjexxFCL::FArray1_double const& wts,
-     ObjexxFCL::FArray1_double& transvec
+	core::Size n,
+	ObjexxFCL::FArray2_double& x,
+	ObjexxFCL::FArray1_double const& wts,
+	ObjexxFCL::FArray1_double& transvec
 );
 
 /// @brief write a CA ALA pdb
 void dump_as_pdb(
-		 std::string filename,
-		 core::Size n,
-		 ObjexxFCL::FArray2_double& coords,
-		 ObjexxFCL::FArray1D_double transvec = ObjexxFCL::FArray1D_double( 3, 0.0 )
+	std::string filename,
+	core::Size n,
+	ObjexxFCL::FArray2_double& coords,
+	ObjexxFCL::FArray1D_double transvec = ObjexxFCL::FArray1D_double( 3, 0.0 )
 );
 
 void fill_CA_coords( core::pose::Pose const& pose, core::Size natoms, ObjexxFCL::FArray2_double& coords );

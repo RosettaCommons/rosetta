@@ -26,38 +26,38 @@ namespace stepwise {
 namespace modeler {
 namespace precomputed {
 
-	class PrecomputedLibraryMover: public protocols::moves::Mover {
+class PrecomputedLibraryMover: public protocols::moves::Mover {
 
-	public:
+public:
 
-		//constructor
-		PrecomputedLibraryMover();
+	//constructor
+	PrecomputedLibraryMover();
 
-		//destructor
-		~PrecomputedLibraryMover();
+	//destructor
+	~PrecomputedLibraryMover();
 
-	public:
+public:
 
-		/// @brief Apply the minimizer to one pose
-		using protocols::moves::Mover::apply;
-		virtual void apply( core::pose::Pose & pose_to_visualize );
+	/// @brief Apply the minimizer to one pose
+	using protocols::moves::Mover::apply;
+	virtual void apply( core::pose::Pose & pose_to_visualize );
 
-		void apply( core::pose::Pose & pose_to_visualize ) const;
+	void apply( core::pose::Pose & pose_to_visualize ) const;
 
-		virtual std::string get_name() const { return "PrecomputedLibraryMover"; }
+	virtual std::string get_name() const { return "PrecomputedLibraryMover"; }
 
-		bool
-		has_precomputed_move( core::pose::Pose const & pose ) const;
+	bool
+	has_precomputed_move( core::pose::Pose const & pose ) const;
 
-	private:
-		void
-		initialize_from_directory( std::string const dir_name );
+private:
+	void
+	initialize_from_directory( std::string const dir_name );
 
-	private:
+private:
 
-		std::map< std::string, core::io::silent::SilentFileDataOP > library_map_;
+	std::map< std::string, core::io::silent::SilentFileDataOP > library_map_;
 
-	};
+};
 
 } //precomputed
 } //modeler

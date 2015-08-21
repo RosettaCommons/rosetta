@@ -44,10 +44,10 @@ CompleteConnectionsFilter::apply( core::pose::Pose const & pose ) const {
 	core::Size start = pose.conformation().chain_begin(chain_id);
 	core::Size const end = pose.conformation().chain_end(chain_id);
 
-	for(;start <= end; ++start){
+	for ( ; start <= end; ++start ) {
 		core::conformation::Residue const & res= pose.residue(start);
 		complete_connections_tracer<< res.name();
-		if(res.has_incomplete_connection()){
+		if ( res.has_incomplete_connection() ) {
 			complete_connections_tracer<<" has incomplete connection"<< std::endl;
 			return true;
 		}
@@ -66,7 +66,7 @@ CompleteConnectionsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::dataca
 		assert(false);
 		return;
 	}
-	if ( ! tag->hasOption("chain") ){
+	if ( ! tag->hasOption("chain") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("CompleteConnections filter needs a 'chain' option");
 	}
 	chain_ = tag->getOption<std::string>("chain");

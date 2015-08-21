@@ -22,9 +22,9 @@ namespace constraints {
 
 class ConstraintFileCstGeneratorCreator : public protocols::moves::MoverCreator {
 public:
-  virtual protocols::moves::MoverOP create_mover() const;
-  virtual std::string keyname() const;
-  static std::string mover_name();
+	virtual protocols::moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
+	static std::string mover_name();
 };
 
 }

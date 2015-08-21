@@ -59,39 +59,39 @@ namespace protocols {
 namespace abinitio {
 
 class IterativeAbrelax : public IterativeBase {
-		//public jd2::archive::AbstractArchiveBase {
+	//public jd2::archive::AbstractArchiveBase {
 	typedef IterativeBase Parent;
 	//AbstractArchiveBase Parent;
 public:
 
-  IterativeAbrelax();
+	IterativeAbrelax();
 
-	//	virtual bool ready_for_batch() const { return false; };
+	// virtual bool ready_for_batch() const { return false; };
 	virtual void initialize();
 
-  virtual bool finished() const;
+	virtual bool finished() const;
 	//  virtual bool ready_for_batch() const;
 	virtual bool still_interested( jd2::archive::Batch const& batch ) const;
-  virtual void generate_batch();
+	virtual void generate_batch();
 	virtual core::Size generate_batch( jd2::archive::Batch&, core::Size repeat_id );
 
-  virtual void idle();
+	virtual void idle();
 
 	static void register_options();
 
-  //save Evaluator state ?
-  virtual void save_to_file( std::string suffix = "" );
+	//save Evaluator state ?
+	virtual void save_to_file( std::string suffix = "" );
 	virtual void save_status( std::ostream& ) const;
-  virtual bool restore_from_file();
+	virtual bool restore_from_file();
 	virtual void init_from_decoy_set( core::io::silent::SilentFileData const& );
 	virtual void read_structures(
-   core::io::silent::SilentFileData& sfd,
-	 core::io::silent::SilentFileData& alternative_decoys,
-	 jd2::archive::Batch const& batch
+		core::io::silent::SilentFileData& sfd,
+		core::io::silent::SilentFileData& alternative_decoys,
+		jd2::archive::Batch const& batch
 	);
 
 	void set_manager( jd2::archive::BaseArchiveManagerAP manager );
-	//	virtual void gen_evaluation_output( jd2::archive::Batch& batch, bool fullatom = false );
+	// virtual void gen_evaluation_output( jd2::archive::Batch& batch, bool fullatom = false );
 
 private:
 	IterativeCentroid centroid_archive_;

@@ -57,9 +57,9 @@ public:
 	virtual void setup_for_minimizing(pose::Pose & pose, ScoreFunction const & ,kinematics::MinimizerMapBase const &) const;
 
 	virtual void residue_energy(
-			conformation::Residue const & rsd,
-					pose::Pose const & pose,
-					EnergyMap & emap
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		EnergyMap & emap
 	) const;
 
 	virtual void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
@@ -67,14 +67,14 @@ public:
 	Real neighbor_weight( Vector::Value const & distance) const;
 
 private:
-		NVlookup const &lookup_table_;
-		core::Real lower_bound_;
-		core::Real lower_bound_squared_;
-		core::Real upper_bound_;
-		core::Real upper_bound_squared_;
+	NVlookup const &lookup_table_;
+	core::Real lower_bound_;
+	core::Real lower_bound_squared_;
+	core::Real upper_bound_;
+	core::Real upper_bound_squared_;
 
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 };
 
 } //NV

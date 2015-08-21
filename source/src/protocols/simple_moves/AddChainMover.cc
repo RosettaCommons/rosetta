@@ -38,10 +38,10 @@ static thread_local basic::Tracer TR( "protocols.simple_moves.AddChainMover" );
 
 namespace protocols {
 namespace simple_moves {
-	
-	using basic::T;
-	using basic::Error;
-	using basic::Warning;
+
+using basic::T;
+using basic::Error;
+using basic::Warning;
 
 std::string
 AddChainMoverCreator::keyname() const
@@ -61,10 +61,10 @@ AddChainMoverCreator::mover_name()
 }
 
 AddChainMover::AddChainMover()
-	: moves::Mover("AddChain"),
+: moves::Mover("AddChain"),
 	fname_( "" ),
 	new_chain_( true ),
-    	scorefxn_( /* NULL */ )
+	scorefxn_( /* NULL */ )
 {
 	random_access_ = false;
 	swap_chain_number_ = 0;
@@ -72,25 +72,26 @@ AddChainMover::AddChainMover()
 
 utility::vector1< numeric::xyzVector< core::Real > >
 Ca_coords( core::pose::Pose const & pose, utility::vector1< core::Size > const positions ){
-    utility::vector1< numeric::xyzVector< core::Real > > coords;
+	utility::vector1< numeric::xyzVector< core::Real > > coords;
 
-    coords.clear();
-    BOOST_FOREACH( core::Size const pos, positions ){
-        coords.push_back( pose.residue( pos ).xyz( "CA" ) );
-    }
-    return coords;
+	coords.clear();
+	BOOST_FOREACH ( core::Size const pos, positions ) {
+		coords.push_back( pose.residue( pos ).xyz( "CA" ) );
+	}
+	return coords;
 }
 
 void AddChainMover::add_new_chain( core::pose::Pose & pose ) const {// pose is passed by reference. So function does not return anything but modifies pose, and leave it modified. The function is const as it does not modify private member data.
-    if( swap_chain_number()!=0 )
+	if ( swap_chain_number()!=0 ) {
 		return;
-    TR<<"AddChainMover is adding a new chain to pose: "<<std::endl;
+	}
+	TR<<"AddChainMover is adding a new chain to pose: "<<std::endl;
 
-    using namespace core::pose;
+	using namespace core::pose;
 
-    Pose new_pose;
+	Pose new_pose;
 
-    utility::vector1< std::string > const split_names( utility::string_split< std::string >( fname(), ',', std::string()) );
+	utility::vector1< std::string > const split_names( utility::string_split< std::string >( fname(), ',', std::string()) );
 	TR<<"Found "<<split_names.size()<<" file names"<<std::endl;
 	core::Size const random_num = (core::Size) (numeric::random::rg().uniform() * split_names.size()) + 1;
 	std::string const curr_fname( split_names[ random_num ] );
@@ -113,75 +114,77 @@ void AddChainMover::add_new_chain( core::pose::Pose & pose ) const {// pose is p
 }
 
 void AddChainMover::swap_chain( core::pose::Pose & pose ) const {
-    if( swap_chain_number()==0 )
+	if ( swap_chain_number()==0 ) {
 		return;
-    TR<<"AddChainMover will swap chain: "<<swap_chain_number()<<std::endl;
+	}
+	TR<<"AddChainMover will swap chain: "<<swap_chain_number()<<std::endl;
 
-    using namespace core::pose;
-    using namespace protocols::toolbox;
+	using namespace core::pose;
+	using namespace protocols::toolbox;
 
 
-    Pose new_chain;
+	Pose new_chain;
 
-    utility::vector1< std::string > const split_names( utility::string_split< std::string >( fname(), ',', std::string()) );
+	utility::vector1< std::string > const split_names( utility::string_split< std::string >( fname(), ',', std::string()) );
 	TR<<"Found "<<split_names.size()<<" file names"<<std::endl;
 	core::Size const random_num = (core::Size) (numeric::random::rg().uniform() * split_names.size()) + 1;
 	std::string const curr_fname( split_names[ random_num ] );
 	TR<<"choosing number: "<<random_num<<" "<<curr_fname<<std::endl;
 
-    TR<<"Before addchain, total residues: "<<pose.total_residue()<<std::endl;
+	TR<<"Before addchain, total residues: "<<pose.total_residue()<<std::endl;
 	core::import_pose::pose_from_pdb( new_chain, curr_fname );
 	new_chain.conformation().detect_disulfides();
 	(*scorefxn()) ( new_chain );
 
-    // Here we have the new chain in new_chain. This needs to be aligned to chain 2 in pose, and current chain 2 should be deleted.
-    utility::vector1< PoseOP > pose_chains( pose.split_by_chain() ); // splits pose into a vector of poses, with one chain per pose
+	// Here we have the new chain in new_chain. This needs to be aligned to chain 2 in pose, and current chain 2 should be deleted.
+	utility::vector1< PoseOP > pose_chains( pose.split_by_chain() ); // splits pose into a vector of poses, with one chain per pose
 
-    Pose template_pose;
-    append_pose_to_pose( template_pose, *pose_chains[ swap_chain_number() ], true ); // the template chain is the chain that will be swapped
+	Pose template_pose;
+	append_pose_to_pose( template_pose, *pose_chains[ swap_chain_number() ], true ); // the template chain is the chain that will be swapped
 
-    // Now I should align new_chain to template_pose
-    utility::vector1< core::Size > template_positions;
-    for (core::Size i = 1; i <= template_pose.total_residue(); ++i){
-        template_positions.push_back(i);
-    }
+	// Now I should align new_chain to template_pose
+	utility::vector1< core::Size > template_positions;
+	for ( core::Size i = 1; i <= template_pose.total_residue(); ++i ) {
+		template_positions.push_back(i);
+	}
 
-    utility::vector1< core::Size > new_chain_positions;
-    for (core::Size i = 1; i <= new_chain.total_residue(); ++i){
-        new_chain_positions.push_back(i);
-    }
+	utility::vector1< core::Size > new_chain_positions;
+	for ( core::Size i = 1; i <= new_chain.total_residue(); ++i ) {
+		new_chain_positions.push_back(i);
+	}
 
-    runtime_assert( new_chain_positions == template_positions ); // The two residue number vectors should be identical
+	runtime_assert( new_chain_positions == template_positions ); // The two residue number vectors should be identical
 
-    utility::vector1< numeric::xyzVector< core::Real > > init_coords( Ca_coords( new_chain, new_chain_positions ) ), ref_coords( Ca_coords( template_pose, template_positions ) );
+	utility::vector1< numeric::xyzVector< core::Real > > init_coords( Ca_coords( new_chain, new_chain_positions ) ), ref_coords( Ca_coords( template_pose, template_positions ) );
 	numeric::xyzMatrix< core::Real > rotation;
 	numeric::xyzVector< core::Real > to_init_center, to_fit_center;
 	superposition_transform( init_coords, ref_coords, rotation, to_init_center, to_fit_center );
 	apply_superposition_transform( new_chain, rotation, to_init_center, to_fit_center );
 
-    // new_chain is aligned to template_pose. Now everything that is not swap_chain_number in pose_chains should be combined with new_chain in pose.
-    Pose new_pose;
-    for (core::Size i = 1; i<swap_chain_number(); ++i) {
-        append_pose_to_pose( new_pose, *pose_chains[i], true ); // true here means that it will be appended as new chain. I'm using a * here to dereference the OP.
-    }
-    append_pose_to_pose( new_pose, new_chain, true ); // Why new_chain()???
-    for (core::Size i = swap_chain_number() + 1; i <= pose_chains.size(); ++i) {
-        append_pose_to_pose( new_pose, *pose_chains[i], true );
-    }
+	// new_chain is aligned to template_pose. Now everything that is not swap_chain_number in pose_chains should be combined with new_chain in pose.
+	Pose new_pose;
+	for ( core::Size i = 1; i<swap_chain_number(); ++i ) {
+		append_pose_to_pose( new_pose, *pose_chains[i], true ); // true here means that it will be appended as new chain. I'm using a * here to dereference the OP.
+	}
+	append_pose_to_pose( new_pose, new_chain, true ); // Why new_chain()???
+	for ( core::Size i = swap_chain_number() + 1; i <= pose_chains.size(); ++i ) {
+		append_pose_to_pose( new_pose, *pose_chains[i], true );
+	}
 
-     // Now add the comments from pose to new_pose, and while doing this update the AddedChainName to the new chain name.
-    std::map< std::string, std::string > const comments = core::pose::get_all_comments( pose );
-    std::map< std::string, std::string>::const_iterator it;
+	// Now add the comments from pose to new_pose, and while doing this update the AddedChainName to the new chain name.
+	std::map< std::string, std::string > const comments = core::pose::get_all_comments( pose );
+	std::map< std::string, std::string>::const_iterator it;
 
-    for (it = comments.begin(); it != comments.end(); ++it){
-	if (it->first == "AddedChainName ") // update AddedChain name
-           core::pose::add_comment(new_pose,"AddedChainName ",curr_fname);
-        else
-           core::pose::add_comment(new_pose,it->first,it->second);
-    }
+	for ( it = comments.begin(); it != comments.end(); ++it ) {
+		if ( it->first == "AddedChainName " ) { // update AddedChain name
+			core::pose::add_comment(new_pose,"AddedChainName ",curr_fname);
+		} else {
+			core::pose::add_comment(new_pose,it->first,it->second);
+		}
+	}
 
-    // Assign new_pose to pose and update score/disulfides/neighbors.
-    pose = new_pose;
+	// Assign new_pose to pose and update score/disulfides/neighbors.
+	pose = new_pose;
 	pose.conformation().detect_disulfides();
 	pose.update_residue_neighbors();
 	(*scorefxn())( pose );
@@ -192,10 +195,10 @@ void AddChainMover::swap_chain( core::pose::Pose & pose ) const {
 void
 AddChainMover::apply( Pose & pose )
 {
-    //runtime_assert( !new_chain() != (swap_chain_number()!=0) ); // You cannot do both new chain and swap chain!
-    //runtime_assert( ( new_chain() && swap_chain_number()==0) || (!new_chain() && swap_chain_number()!=0)); // You cannot do both new chain and swap chain and you have to do one of the two...
-    add_new_chain(pose);
-    swap_chain(pose);
+	//runtime_assert( !new_chain() != (swap_chain_number()!=0) ); // You cannot do both new chain and swap chain!
+	//runtime_assert( ( new_chain() && swap_chain_number()==0) || (!new_chain() && swap_chain_number()!=0)); // You cannot do both new chain and swap chain and you have to do one of the two...
+	add_new_chain(pose);
+	swap_chain(pose);
 
 
 }
@@ -227,15 +230,15 @@ AddChainMover::parse_my_tag(
 {
 	random_access( tag->getOption< bool >( "random_access", false ) );
 	fname( tag->getOption< std::string >( "file_name" ) );
-	if( random_access() ){
+	if ( random_access() ) {
 		utility::vector1< std::string > const split_names( utility::string_split< std::string >( fname(), ',', std::string()) );
 		TR<<"Found "<<split_names.size()<<" file names"<<std::endl;
-//		core::Size const random_num = (core::Size) (numeric::random::rg().uniform() * split_names.size()) + 1;
-//		TR<<"choosing number: "<<random_num<<" "<<split_names[ random_num ]<<std::endl;
-//		fname( split_names[ random_num ] );
+		//  core::Size const random_num = (core::Size) (numeric::random::rg().uniform() * split_names.size()) + 1;
+		//  TR<<"choosing number: "<<random_num<<" "<<split_names[ random_num ]<<std::endl;
+		//  fname( split_names[ random_num ] );
 	}
 	new_chain( tag->getOption< bool >( "new_chain", 1 ) );
-    swap_chain_number( tag->getOption< core::Size >( "swap_chain_number", 0 ) );
+	swap_chain_number( tag->getOption< core::Size >( "swap_chain_number", 0 ) );
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	TR<<"AddChain sets fname: "<<fname()<<" new_chain: "<<new_chain()<<std::endl;
 }

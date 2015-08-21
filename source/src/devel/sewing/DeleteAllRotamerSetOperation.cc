@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file /rosetta/rosetta_source/src/devel/sewing/DeleteAllRotamersSetOperation.cc
-/// @brief 
+/// @brief
 /// @author Tim Jacobs
 
 //Unit
@@ -24,11 +24,11 @@ DeleteAllRotamerSetOperation::clone() const
 }
 
 void DeleteAllRotamerSetOperation::alter_rotamer_set(
-			core::pose::Pose const &,
-			core::scoring::ScoreFunction const &,
-			core::pack::task::PackerTask const &,
-			core::graph::GraphCOP,
-			core::pack::rotamer_set::RotamerSet & rotamer_set)
+	core::pose::Pose const &,
+	core::scoring::ScoreFunction const &,
+	core::pack::task::PackerTask const &,
+	core::graph::GraphCOP,
+	core::pack::rotamer_set::RotamerSet & rotamer_set)
 {
 	utility::vector1<bool> rotamer_vector(rotamer_set.num_rotamers(), true);
 	rotamer_set.drop_rotamers(rotamer_vector);

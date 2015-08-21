@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file  	protocols/toolbox/task_operations/CrystalContactsOperationCreator.hh 
-/// @brief  Exclude crystal contacts from design 
-/// @author Patrick Conway (ptconway@uw.edu) 
+/// @file   protocols/toolbox/task_operations/CrystalContactsOperationCreator.hh
+/// @brief  Exclude crystal contacts from design
+/// @author Patrick Conway (ptconway@uw.edu)
 
 #ifndef INCLUDED_protocols_toolbox_task_operations_CrystalContactsOperationCreator_hh
 #define INCLUDED_protocols_toolbox_task_operations_CrystalContactsOperationCreator_hh

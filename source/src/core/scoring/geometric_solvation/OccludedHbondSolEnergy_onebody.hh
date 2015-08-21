@@ -83,7 +83,7 @@ private:
 
 	void
 	get_atom_atom_occ_solvation(
-	  Size const don_h_atom,
+		Size const don_h_atom,
 		Size const don_base_atom,
 		conformation::Residue const & don_rsd,
 		Size const occ_atom,
@@ -113,8 +113,8 @@ private:
 	DatabaseOccSolEne const & occ_hbond_sol_database_;
 
 	bool const verbose_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

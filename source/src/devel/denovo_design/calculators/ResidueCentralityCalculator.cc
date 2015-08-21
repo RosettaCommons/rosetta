@@ -55,7 +55,7 @@ ResidueCentralityCalculator::~ResidueCentralityCalculator(){}
 /// @brief
 void
 ResidueCentralityCalculator::lookup( std::string const & key,
-																		 basic::MetricValueBase * valptr ) const
+	basic::MetricValueBase * valptr ) const
 {
 	if ( key == "centrality" ) {
 		basic::check_cast( valptr, &centralities_, "residue centrality list" );
@@ -63,7 +63,7 @@ ResidueCentralityCalculator::lookup( std::string const & key,
 	} else if ( key == "excluded_residues" ) {
 		basic::check_cast( valptr, &excluded_residues_, "list of excluded residues" );
 		(static_cast< basic::MetricValue<utility::vector1< core::Size > > *>(valptr))->set( excluded_residues_ );
-	}	else {
+	} else {
 		TR << "ResidueCentralityCalculator cannot compute the requested metric " << key << std::endl;
 		utility_exit();
 	}
@@ -82,7 +82,7 @@ ResidueCentralityCalculator::print( std::string const & key ) const
 			result += boost::lexical_cast<std::string>( centralities_[i] ) + " ";
 		}
 		result += "]";
-  } else if ( key == "excluded_residues" ) {
+	} else if ( key == "excluded_residues" ) {
 		result += "[ ";
 		for ( core::Size i=1; i<=excluded_residues_.size(); ++i ) {
 			result += boost::lexical_cast<std::string>( excluded_residues_[i] ) + " ";
@@ -124,7 +124,7 @@ void Dijkstras( std::list< NodeOP > & nodes )
 NodeOP
 ExtractSmallest( std::list< NodeOP > & nodes )
 {
-	if ( nodes.empty() /*size() == 0 */) return NULL;
+	if ( nodes.empty() /*size() == 0 */ ) return NULL;
 	std::list< NodeOP >::iterator smallest( nodes.begin() );
 	for ( std::list< NodeOP >::iterator current = ++(nodes.begin()); current != nodes.end(); ++current ) {
 		if ( (*current)->distanceFromStart < (*smallest)->distanceFromStart ) {
@@ -145,8 +145,8 @@ AdjacentRemainingNodes( std::list< NodeOP > const &, NodeOP node )
 	assert( ! node->in_list );
 	std::list< NodeOP > adjacentNodes;
 	for ( std::list< NodeOP >::const_iterator cur_neighbor = node->neighbors.begin();
-				cur_neighbor != node->neighbors.end();
-				++cur_neighbor ) {
+			cur_neighbor != node->neighbors.end();
+			++cur_neighbor ) {
 		if ( (*cur_neighbor)->in_list ) {
 			//if ( Contains( nodes, *cur_neighbor ) ) {
 			adjacentNodes.push_back( *cur_neighbor );
@@ -160,15 +160,16 @@ bool
 Contains( std::list< NodeOP > const & nodes, NodeCOP node)
 {
 	for ( std::list< NodeOP >::const_iterator it = nodes.begin(); it != nodes.end(); ++it ) {
-		if ( node == *it )
+		if ( node == *it ) {
 			return true;
+		}
 	}
 	return false;
 }
 
 void
 find_neighbors( core::pose::Pose const & pose,
-								std::list< NodeOP > const & nodes )
+	std::list< NodeOP > const & nodes )
 {
 	for ( std::list< NodeOP >::const_iterator res_it_1 = nodes.begin(); res_it_1 != nodes.end(); ++res_it_1 ) {
 		(*res_it_1)->neighbors.clear();
@@ -211,10 +212,10 @@ find_neighbors( core::pose::Pose const & pose,
 						break;
 					}
 				}
-				if( closest <= distance_threshold ){
-				(*res_it_1)->neighbors.push_back( *res_it_2 );
-				(*res_it_2)->neighbors.push_back( *res_it_1 );
-				TR.Debug<<"Adding residue "<<(*res_it_2)->resi<<" as a neighbor of "<<(*res_it_1)->resi<<" -- Count = "<<(*res_it_1)->neighbors.size()<<","<<(*res_it_2)->neighbors.size()<<std::endl;
+				if ( closest <= distance_threshold ) {
+					(*res_it_1)->neighbors.push_back( *res_it_2 );
+					(*res_it_2)->neighbors.push_back( *res_it_1 );
+					TR.Debug<<"Adding residue "<<(*res_it_2)->resi<<" as a neighbor of "<<(*res_it_1)->resi<<" -- Count = "<<(*res_it_1)->neighbors.size()<<","<<(*res_it_2)->neighbors.size()<<std::endl;
 				}
 			}
 		}
@@ -227,7 +228,7 @@ generate_nodes( core::pose::Pose const & pose )
 	std::list<NodeOP> nodes;
 
 	// populate lists of nodes and edges
-	for ( core::Size i=1; i<=pose.total_residue(); i++ ){
+	for ( core::Size i=1; i<=pose.total_residue(); i++ ) {
 		std::string resname = pose.residue( i ).name3() + boost::lexical_cast<std::string>( i );
 		TR.Debug << "Adding node " << resname << std::endl;
 		nodes.push_back( NodeOP( new Node( resname, i ) ) );
@@ -245,7 +246,7 @@ generate_nodes( core::pose::Pose const & pose )
 
 core::Real
 ResidueCentralityCalculator::connectivity_index( std::list< NodeOP > const & nodes,
-																								 core::Size const resi ) const {
+	core::Size const resi ) const {
 	// reset nodes
 	for ( std::list< NodeOP >::const_iterator it = nodes.begin(); it != nodes.end(); ++it ) {
 		(*it)->in_list = true;

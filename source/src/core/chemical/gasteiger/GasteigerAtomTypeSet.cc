@@ -36,15 +36,15 @@ static thread_local basic::Tracer tr( "core.chemical.gasteiger.GasteigerAtomType
 GasteigerAtomTypeSet::GasteigerAtomTypeSet() {}
 
 GasteigerAtomTypeSet::GasteigerAtomTypeSet( ElementSetCAP element_set ):
-			element_set_( element_set )
-	{}
+	element_set_( element_set )
+{}
 
 GasteigerAtomTypeSet::GasteigerAtomTypeSet( GasteigerAtomTypeSet const & other ):
-			utility::pointer::ReferenceCount(),
-			element_set_( other.element_set_ ),
-			atom_type_index_( other.atom_type_index_ ),
-			atom_types_( other.atom_types_ )
-	{}
+	utility::pointer::ReferenceCount(),
+	element_set_( other.element_set_ ),
+	atom_type_index_( other.atom_type_index_ ),
+	atom_types_( other.atom_types_ )
+{}
 
 GasteigerAtomTypeSet::~GasteigerAtomTypeSet() {}
 
@@ -93,21 +93,21 @@ void
 GasteigerAtomTypeSet::read_bond_file( std::string const & filename ){
 
 	//setup map needed to parse information
-    // make a mapping from element type, # bonds, # electrons in bonds to a listing of all atom types with those
-    // properties
-    std::map< std::string,  utility::vector1<gasteiger::GasteigerAtomTypeDataOP> > phenotype_to_atom_type;
-    for(utility::vector1< GasteigerAtomTypeDataOP >::iterator itr(atom_types_.begin()); itr != atom_types_.end(); ++itr){
-    	gasteiger::GasteigerAtomTypeDataOP & atom_type( *itr);
+	// make a mapping from element type, # bonds, # electrons in bonds to a listing of all atom types with those
+	// properties
+	std::map< std::string,  utility::vector1<gasteiger::GasteigerAtomTypeDataOP> > phenotype_to_atom_type;
+	for ( utility::vector1< GasteigerAtomTypeDataOP >::iterator itr(atom_types_.begin()); itr != atom_types_.end(); ++itr ) {
+		gasteiger::GasteigerAtomTypeDataOP & atom_type( *itr);
 
-        // create the triplet of phenotypic info about this atom type
-        const std::string phenotype
-        (
-      		  atom_type->get_element_type()->get_chemical_symbol() + utility::to_string(atom_type->get_number_bonds()) +
-      		  utility::to_string(atom_type->get_number_electrons_in_bonds())
-        );
+		// create the triplet of phenotypic info about this atom type
+		const std::string phenotype
+			(
+			atom_type->get_element_type()->get_chemical_symbol() + utility::to_string(atom_type->get_number_bonds()) +
+			utility::to_string(atom_type->get_number_electrons_in_bonds())
+		);
 
-        phenotype_to_atom_type[ phenotype].push_back( atom_type);
-    }
+		phenotype_to_atom_type[ phenotype].push_back( atom_type);
+	}
 
 
 	utility::io::izstream data( filename.c_str() );
@@ -131,33 +131,33 @@ GasteigerAtomTypeSet::read_bond_file( std::string const & filename ){
 
 
 			std::string key; //phenotype key
-	    	data >> key;
-	    	std::string bond_type; //the bond type
-	    	data >> bond_type;
-	    	Real bond_dist; //the distance between bonds
-	    	data >> bond_dist;
+			data >> key;
+			std::string bond_type; //the bond type
+			data >> bond_type;
+			Real bond_dist; //the distance between bonds
+			data >> bond_dist;
 
 
-	    	//utility::vector1<gasteiger::GasteigerAtomTypeData> & vector_atype = phenotype_to_atom_type[key];
-	    	gasteiger::GasteigerAtomTypeData::Properties property;
-	    	if(bond_type == "VdWaalsRadiusCSD"){
-	    		property = gasteiger::GasteigerAtomTypeData::VdWaalsRadiusCSD;
-	    	} else if (bond_type == "CovalentRadiusAromaticBond"){
-	    		property = gasteiger::GasteigerAtomTypeData::CovalentRadiusAromaticBond;
-	    	} else if (bond_type == "CovalentRadiusTripleBond"){
-	    		property = gasteiger::GasteigerAtomTypeData::CovalentRadiusTripleBond;
-	    	} else if (bond_type == "CovalentRadiusDoubleBond"){
-	    		property = gasteiger::GasteigerAtomTypeData::CovalentRadiusDoubleBond;
-	    	} else if (bond_type == "CovalentRadiusSingleBond"){
-	    		property =  gasteiger::GasteigerAtomTypeData::CovalentRadiusSingleBond;
-	    	} else {
+			//utility::vector1<gasteiger::GasteigerAtomTypeData> & vector_atype = phenotype_to_atom_type[key];
+			gasteiger::GasteigerAtomTypeData::Properties property;
+			if ( bond_type == "VdWaalsRadiusCSD" ) {
+				property = gasteiger::GasteigerAtomTypeData::VdWaalsRadiusCSD;
+			} else if ( bond_type == "CovalentRadiusAromaticBond" ) {
+				property = gasteiger::GasteigerAtomTypeData::CovalentRadiusAromaticBond;
+			} else if ( bond_type == "CovalentRadiusTripleBond" ) {
+				property = gasteiger::GasteigerAtomTypeData::CovalentRadiusTripleBond;
+			} else if ( bond_type == "CovalentRadiusDoubleBond" ) {
+				property = gasteiger::GasteigerAtomTypeData::CovalentRadiusDoubleBond;
+			} else if ( bond_type == "CovalentRadiusSingleBond" ) {
+				property =  gasteiger::GasteigerAtomTypeData::CovalentRadiusSingleBond;
+			} else {
 				utility_exit_with_message("GasteigerAtomTypeSet:: unknown bond type "+bond_type);
-	    	}
+			}
 
-	    	//set the property
-	    	for(Size i=1; i<=phenotype_to_atom_type[key].size(); ++i){
-	    		phenotype_to_atom_type[key][i]->set_property(property, bond_dist);
-	    	}
+			//set the property
+			for ( Size i=1; i<=phenotype_to_atom_type[key].size(); ++i ) {
+				phenotype_to_atom_type[key][i]->set_property(property, bond_dist);
+			}
 		}
 	}
 }

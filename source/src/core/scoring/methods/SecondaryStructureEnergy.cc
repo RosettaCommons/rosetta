@@ -124,7 +124,7 @@ Distance
 SecondaryStructureEnergy::atomic_interaction_cutoff() const
 {
 	return 6.0; /// now subtracted off 6.0 from cutoffs in centroid params files
-// 	return 0.0; /// since all the cutoffs for centroid mode are rolled into the cendist check
+	//  return 0.0; /// since all the cutoffs for centroid mode are rolled into the cendist check
 }
 
 /// @brief SecondaryStructureEnergy

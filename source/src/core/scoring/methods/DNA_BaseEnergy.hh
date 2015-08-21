@@ -90,17 +90,17 @@ public:
 	) const {}
 
 
- 	virtual
- 	void
- 	eval_atom_derivative(
- 		id::AtomID const & atom_id,
- 		pose::Pose const & pose,
+	virtual
+	void
+	eval_atom_derivative(
+		id::AtomID const & atom_id,
+		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
- 		ScoreFunction const &,
- 		EnergyMap const & weights,
- 		Vector & F1,
- 		Vector & F2
- 	) const;
+		ScoreFunction const &,
+		EnergyMap const & weights,
+		Vector & F1,
+		Vector & F2
+	) const;
 
 	virtual
 	bool
@@ -120,8 +120,8 @@ public:
 private:
 
 	dna::DNA_BasePotential const & potential_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

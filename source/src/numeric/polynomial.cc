@@ -74,21 +74,21 @@ Polynomial_1d::~Polynomial_1d(){}
 void
 Polynomial_1d::check_invariants() const
 {
-	if(xmin_ > xmax_){
+	if ( xmin_ > xmax_ ) {
 		std::stringstream msg;
-		msg	<< "Polnomial_1d is badly formed because (xmin: '" << xmin_ << "') > (xmax: '" << xmax_ << "')";
+		msg << "Polnomial_1d is badly formed because (xmin: '" << xmin_ << "') > (xmax: '" << xmax_ << "')";
 		throw utility::excn::EXCN_Msg_Exception(msg.str() );
 	}
 
-	if(coefficients_.size() == 0){
+	if ( coefficients_.size() == 0 ) {
 		std::stringstream msg;
-		msg	<< "Polnomial_1d is badly formed because no coefficients were provided";
+		msg << "Polnomial_1d is badly formed because no coefficients were provided";
 		throw utility::excn::EXCN_Msg_Exception(msg.str() );
 	}
 
-	if(coefficients_.size() != degree_){
+	if ( coefficients_.size() != degree_ ) {
 		std::stringstream msg;
-		msg	<< "Polnomial_1d is badly formed because the degree was given to be '" << degree_ << "' while '" << coefficients_.size() << "' coefficients were provided, while they should be equal.";
+		msg << "Polnomial_1d is badly formed because the degree was given to be '" << degree_ << "' while '" << coefficients_.size() << "' coefficients were provided, while they should be equal.";
 		throw utility::excn::EXCN_Msg_Exception(msg.str() );
 	}
 
@@ -187,12 +187,12 @@ Polynomial_1d::operator()(
 	double & value,
 	double & deriv) const
 {
-	if(variable <= xmin_){
+	if ( variable <= xmin_ ) {
 		value = min_val_;
 		deriv = 0.0;
 		return;
 	}
-	if(variable >= xmax_){
+	if ( variable >= xmax_ ) {
 		value = max_val_;
 		deriv = 0.0;
 		return;
@@ -200,7 +200,7 @@ Polynomial_1d::operator()(
 
 	value = coefficients_[1];
 	deriv = 0.0;
-	for(Size i=2; i <= degree_; i++){
+	for ( Size i=2; i <= degree_; i++ ) {
 		(deriv *= variable) += value;
 		(value *= variable) += coefficients_[i];
 	}
@@ -209,17 +209,17 @@ Polynomial_1d::operator()(
 double
 Polynomial_1d::eval( double const variable )
 {
-       if(variable <= xmin_){
-               return min_val_;
-       }
-       if(variable >= xmax_){
-               return max_val_;
-       }
-       Real value = coefficients_[1];
-       for ( Size i=2; i <= degree_; ++i ) {
-               ( value *= variable ) += coefficients_[i];
-       }
-       return value;
+	if ( variable <= xmin_ ) {
+		return min_val_;
+	}
+	if ( variable >= xmax_ ) {
+		return max_val_;
+	}
+	Real value = coefficients_[1];
+	for ( Size i=2; i <= degree_; ++i ) {
+		( value *= variable ) += coefficients_[i];
+	}
+	return value;
 }
 
 
@@ -232,27 +232,27 @@ operator<< ( ostream & out, const Polynomial_1d & poly ){
 void
 Polynomial_1d::show( ostream & out ) const{
 	out << polynomial_name_ << " "
-			<< "domain:(" << xmin_ << "," << xmax_ << ") "
-			<< "out_of_range_vals:(" << min_val_ << "," << max_val_ << ") "
-			<< "roots:[" << root1_ << "," << root2_ << "] "
-			<< "degree:" << degree_ << " "
-			<< "y=";
-	for(Size i=1; i <= degree_; ++i){
-		if (i >1){
-			if (coefficients_[i] > 0 ){
+		<< "domain:(" << xmin_ << "," << xmax_ << ") "
+		<< "out_of_range_vals:(" << min_val_ << "," << max_val_ << ") "
+		<< "roots:[" << root1_ << "," << root2_ << "] "
+		<< "degree:" << degree_ << " "
+		<< "y=";
+	for ( Size i=1; i <= degree_; ++i ) {
+		if ( i >1 ) {
+			if ( coefficients_[i] > 0 ) {
 				out << "+";
-			} else if (coefficients_[i] < 0 ){
+			} else if ( coefficients_[i] < 0 ) {
 				out << "-";
-			} else{
+			} else {
 				continue;
 			}
 		}
 		out << std::abs(coefficients_[i]);
-		if (degree_-i >1){
+		if ( degree_-i >1 ) {
 			out << "x^" << degree_-i;
-		} else if (degree_-i == 1){
+		} else if ( degree_-i == 1 ) {
 			out << "x";
-		} else {}
+		} else { }
 	}
 }
 

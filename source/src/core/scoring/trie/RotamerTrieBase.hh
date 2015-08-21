@@ -88,7 +88,7 @@ public:
 	//virtual
 	//void
 	//set_count_pair_data_to_use(
-	//	Size connection_id
+	// Size connection_id
 	//) const = 0;
 
 public:
@@ -107,8 +107,8 @@ public:
 		/*
 		std::cout << "map contents: " << std::endl;
 		for ( std::map< Size, Size >::const_iterator iter = resid_2_connid_map_.begin(),
-			iter_end = resid_2_connid_map_.end(); iter != iter_end; ++iter ) {
-			std::cout << iter->first << " " << iter->second << std::endl;
+		iter_end = resid_2_connid_map_.end(); iter != iter_end; ++iter ) {
+		std::cout << iter->first << " " << iter->second << std::endl;
 		}
 		*/
 		return resid_2_connid_map_.find( resid )->second;
@@ -464,7 +464,7 @@ public:
 		utility::vector1< core::PackerEnergy > & temp_vector
 	) const = 0;
 
-/// The same methods again, for Hack Elec E
+	/// The same methods again, for Hack Elec E
 	virtual
 	void
 	trie_vs_trie(
@@ -595,9 +595,9 @@ public:
 		utility::vector1< core::PackerEnergy > & temp_vector
 	) const = 0;
 
-///////////////////////////////////////////////////////////////////////////////////////
-//////////// the same methods again --- overloaded for MMLJEnergyTable ////////////////
-///////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////
+	//////////// the same methods again --- overloaded for MMLJEnergyTable ////////////////
+	///////////////////////////////////////////////////////////////////////////////////////
 
 	virtual
 	void
@@ -707,9 +707,9 @@ public:
 		utility::vector1< core::PackerEnergy > & temp_vector
 	) const = 0;
 
-///////////////////////////////////////////////////////////////////////////////////////
-//////////// the same methods again --- overloaded for VDW_Energy /////////////////////
-///////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////
+	//////////// the same methods again --- overloaded for VDW_Energy /////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////
 
 	virtual
 	void

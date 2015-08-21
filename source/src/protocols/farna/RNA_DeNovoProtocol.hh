@@ -56,12 +56,12 @@ public:
 	/// @brief Construct the protocol object given
 	/// the RNA fragment library to use.
 	RNA_DeNovoProtocol(
-										 Size const nstruct,
-										 std::string const silent_file,
-										 bool const heat_structure = true,
-										 bool const minimize_structure = false,
-										 bool const relax_structure = false,
-										 bool const allow_bulge = false );
+		Size const nstruct,
+		std::string const silent_file,
+		bool const heat_structure = true,
+		bool const minimize_structure = false,
+		bool const relax_structure = false,
+		bool const allow_bulge = false );
 
 	~RNA_DeNovoProtocol();
 
@@ -125,26 +125,26 @@ public:
 	ignore_secstruct( bool const setting ) { ignore_secstruct_ = setting; }
 
 	// No longer works -- need to specify allow_insert from a "params file"
-	//	void
-	//	set_allow_insert( FArray1D <bool> const & allow_insert  ){ allow_insert_ = allow_insert; }
+	// void
+	// set_allow_insert( FArray1D <bool> const & allow_insert  ){ allow_insert_ = allow_insert; }
 
-    void
-    jump_change_frequency( core::Real const value ){ jump_change_frequency_ = value; }
+	void
+	jump_change_frequency( core::Real const value ){ jump_change_frequency_ = value; }
 
-    void
-    set_close_loops( bool const setting ){
-        close_loops_at_end_ = setting;
-        if ( close_loops_at_end_ ) binary_rna_output_ = true;
-    }
+	void
+	set_close_loops( bool const setting ){
+		close_loops_at_end_ = setting;
+		if ( close_loops_at_end_ ) binary_rna_output_ = true;
+	}
 
-    void
-    set_close_loops_after_each_move( bool const setting ){ close_loops_after_each_move_ = setting; }
+	void
+	set_close_loops_after_each_move( bool const setting ){ close_loops_after_each_move_ = setting; }
 
-    void
-    simple_rmsd_cutoff_relax( bool const setting ){ simple_rmsd_cutoff_relax_ = setting; }
+	void
+	simple_rmsd_cutoff_relax( bool const setting ){ simple_rmsd_cutoff_relax_ = setting; }
 
-    void
-    output_lores_silent_file( bool const setting ){ output_lores_silent_file_ = setting; }
+	void
+	output_lores_silent_file( bool const setting ){ output_lores_silent_file_ = setting; }
 
 	void
 	set_filter_lores_base_pairs( bool const setting ){ filter_lores_base_pairs_ = setting; }
@@ -152,7 +152,7 @@ public:
 	void
 	set_filter_lores_base_pairs_early( bool const setting ){
 		filter_lores_base_pairs_early_ = setting;
-		if (filter_lores_base_pairs_early_) filter_lores_base_pairs_ = true;
+		if ( filter_lores_base_pairs_early_ ) filter_lores_base_pairs_ = true;
 	}
 
 	void
@@ -267,11 +267,11 @@ private:
 
 	void
 	output_silent_struct( core::io::silent::SilentStruct & s,
-												core::io::silent::SilentFileData & silent_file_data,
-												std::string const & silent_file,
-												core::pose::Pose & pose,
-												std::string const out_file_tag,
-												bool const score_only = false ) const;
+		core::io::silent::SilentFileData & silent_file_data,
+		std::string const & silent_file,
+		core::pose::Pose & pose,
+		std::string const out_file_tag,
+		bool const score_only = false ) const;
 
 	void
 	do_random_moves( core::pose::Pose & pose );
@@ -346,7 +346,7 @@ private:
 	bool simple_rmsd_cutoff_relax_;
 	bool allow_bulge_, allow_consecutive_bulges_;
 
-  bool const use_chem_shift_data_;
+	bool const use_chem_shift_data_;
 
 	// parameters
 	core::Real m_Temperature_; // default temperature for monte carlo

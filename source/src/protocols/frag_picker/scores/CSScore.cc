@@ -46,7 +46,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 static thread_local basic::Tracer trCSScore(
-		"protocols.frag_picker.scores.CSScore");
+	"protocols.frag_picker.scores.CSScore");
 
 
 //CSScore Constructor
@@ -54,7 +54,7 @@ static thread_local basic::Tracer trCSScore(
 // (Secondary shifts are shift deviations from random coil, where random coil values are defined according to
 // the combination of atom type, residue type, previous residue type, and next residue type.
 CSScore::CSScore(Size priority, Real lowest_acceptable_value, bool use_lowest,
-			CSTalosIO& reader) :
+	CSTalosIO& reader) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "CSScore")
 {
 
@@ -80,20 +80,21 @@ void CSScore::do_caching(VallChunkOP current_chunk) {
 
 	//bool vall_data(false);
 	trCSScore.Debug << "caching CS score for " << current_chunk->get_pdb_id()
-	                        << " of size " << current_chunk->size() << std::endl;
+		<< " of size " << current_chunk->size() << std::endl;
 
 	//Check to see if the cache needs to be recalculated
 	std::string & tmp = current_chunk->chunk_key();
-	if (tmp.compare(cached_scores_id_) == 0)
+	if ( tmp.compare(cached_scores_id_) == 0 ) {
 		return;
+	}
 	cached_scores_id_ = tmp;
 
 	//Initialize empty 2D table, vall-length x target-length
 	Size query_sequence_length = target_shifts_.size();
 	std::pair< Real, Real > empty(0,0);
 	utility::vector1< utility::vector1< std::pair< Real, Real> > > temp( current_chunk->size(),
-	utility::vector1<std::pair< Real, Real> > (query_sequence_length, empty ) );
-  //runtime_assert( target_shifts_.size() > 0 );
+		utility::vector1<std::pair< Real, Real> > (query_sequence_length, empty ) );
+	//runtime_assert( target_shifts_.size() > 0 );
 
 	//SIGMOID CONSTANTS - Should be set in constructor, not command line flags
 	Real a( option[frags::sigmoid_cs_A]() ); // default = 4
@@ -102,20 +103,20 @@ void CSScore::do_caching(VallChunkOP current_chunk) {
 
 	//Loop logic is "For each target x vall residue comparison, sum up total of
 	//all shift differences"
-	for (Size r = 1; r <= target_shifts_.size(); ++r) {
+	for ( Size r = 1; r <= target_shifts_.size(); ++r ) {
 		utility::vector1< std::pair< Size, Real > > query_residue_shifts(target_shifts_[r]);
-		for (Size i = 1; i <= current_chunk->size(); ++i) {
+		for ( Size i = 1; i <= current_chunk->size(); ++i ) {
 			Real tmp = 0.0;
 			Real count = 0.0;
-			for (Size d = 1; d <= query_residue_shifts.size(); ++d) {
+			for ( Size d = 1; d <= query_residue_shifts.size(); ++d ) {
 
 				//q_shift_type is target atom type, q_shift is that atom's secondary shift
-				//	1 = N
-				//	2 = HA (HA3 for Gly)
-				//	3 = C
-				//	4 = CA
-				//	5 = CB (HA2 for Gly)
-				//	6 = HN
+				// 1 = N
+				// 2 = HA (HA3 for Gly)
+				// 3 = C
+				// 4 = CA
+				// 5 = CB (HA2 for Gly)
+				// 6 = HN
 				Size q_shift_type(query_residue_shifts[d].first);
 				Real q_shift(query_residue_shifts[d].second);
 
@@ -126,10 +127,10 @@ void CSScore::do_caching(VallChunkOP current_chunk) {
 
 				if ( res->secondary_shifts().size() < q_shift_type*2 ) {
 					trCSScore.Debug << "Chunk has not enough secondary shifts to perform this query at position "
-														<< i << " " << std::endl
-														<< "pdb_id: " << current_chunk->get_pdb_id() << std::endl
-														<< "chain_id: " << current_chunk->get_chain_id() << std::endl
-														<< "sequence: " << current_chunk->get_sequence() << std::endl;
+						<< i << " " << std::endl
+						<< "pdb_id: " << current_chunk->get_pdb_id() << std::endl
+						<< "chain_id: " << current_chunk->get_chain_id() << std::endl
+						<< "sequence: " << current_chunk->get_sequence() << std::endl;
 					continue;
 				}
 
@@ -138,7 +139,7 @@ void CSScore::do_caching(VallChunkOP current_chunk) {
 				Real v_sigma(res->secondary_shifts()[ q_shift_type*2 ]);
 
 				//v_sigma is only 0.0 for atoms that don't exist in the vall. CB on glycine, for example.
-				if (v_sigma > 0.0) {
+				if ( v_sigma > 0.0 ) {
 
 					Real sig_diff(std::abs((q_shift - v_shift) / v_sigma ));
 					Real sigmoid_diff( 1 / ( 1 + exp((-a*sig_diff)+b) ) );
@@ -151,12 +152,12 @@ void CSScore::do_caching(VallChunkOP current_chunk) {
 					//THIS IS WHAT THE ORIGINAL CSROSETTA CS SCORE FUNCTION LOOKED LIKE:
 					//Real c1_weight(1.0); //Reweight hydrogen and nitrogen values by 0.9
 					//if ((q_shift_type == 1) || (q_shift_type == 6)) {// or (q_shift_type == 3)) {
-					//	c1_weight = 0.9;
+					// c1_weight = 0.9;
 					//}
 					//Real diff(q_shift - v_shift);
 					//if ( std::abs(diff) > (clip_factor*v_sigma) ) {
-						//	diff = clip_factor*v_sigma;
-						//}
+					// diff = clip_factor*v_sigma;
+					//}
 					//tmp += c1_weight*(diff/v_sigma)*(diff/v_sigma);
 				}
 			}
@@ -170,8 +171,9 @@ void CSScore::do_caching(VallChunkOP current_chunk) {
 				// This reweights each residue based on its number of shifts instead
 				// so that over gaps in the data the CS score decreases in power and other scores
 				// can take over.
-				if ( count != 0 )
+				if ( count != 0 ) {
 					tmp = ( tmp / count ) * query_residue_shifts.size();
+				}
 			}
 
 			temp[i][r].first = tmp;
@@ -184,8 +186,8 @@ void CSScore::do_caching(VallChunkOP current_chunk) {
 	scores_ = temp;
 
 	trCSScore.Debug << "caching CS score for " << current_chunk->get_pdb_id()
-	                << " of size " << current_chunk->size()
-	                << ". The matrix is: "<<scores_.size()<<" x "<<scores_[1].size()<<std::endl;
+		<< " of size " << current_chunk->size()
+		<< ". The matrix is: "<<scores_.size()<<" x "<<scores_[1].size()<<std::endl;
 }
 
 bool CSScore::score(FragmentCandidateOP fragment, FragmentScoreMapOP scores) {
@@ -196,7 +198,7 @@ bool CSScore::cached_score(FragmentCandidateOP fragment, FragmentScoreMapOP scor
 
 	std::string & tmp = fragment->get_chunk()->chunk_key();
 
-	if (tmp.compare(cached_scores_id_) != 0) {
+	if ( tmp.compare(cached_scores_id_) != 0 ) {
 		do_caching(fragment->get_chunk());
 		cached_scores_id_ = tmp;
 	}
@@ -207,13 +209,13 @@ bool CSScore::cached_score(FragmentCandidateOP fragment, FragmentScoreMapOP scor
 	Real totalScore = 0.0;
 	Real totalCount = 0.0;
 
-	for (Size i = 1; i <= fragment->get_length(); i++) {
-		runtime_assert(fragment->get_first_index_in_vall()	+ i - 1 <= scores_.size());
+	for ( Size i = 1; i <= fragment->get_length(); i++ ) {
+		runtime_assert(fragment->get_first_index_in_vall() + i - 1 <= scores_.size());
 		runtime_assert(fragment->get_first_index_in_query() + i - 1 <= scores_[1].size());
 
 
 		std::pair< Real, Real> tmp = scores_[fragment->get_first_index_in_vall() + i - 1]
-			                [fragment->get_first_index_in_query()	+ i - 1];
+			[fragment->get_first_index_in_query() + i - 1];
 
 		//tmp.first is the score for that residue comparison
 		//tmp.second is the number of chemical shifts
@@ -222,14 +224,15 @@ bool CSScore::cached_score(FragmentCandidateOP fragment, FragmentScoreMapOP scor
 		totalCount += tmp.second;
 	}
 
-//	runtime_assert( totalScore != NULL );
+	// runtime_assert( totalScore != NULL );
 
 	totalScore /= (Real) fragment->get_length();
 
 	scores->set_score_component(totalScore, id_);
 
-	if ((totalScore < lowest_acceptable_value_) && (use_lowest_ == true))
+	if ( (totalScore < lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;
+	}
 	return true;
 }
 
@@ -237,19 +240,19 @@ void CSScore::clean_up() {
 }
 
 FragmentScoringMethodOP MakeCSScore::make(Size priority,
-		Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
-		, std::string // line
+	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
+	, std::string // line
 ) {
 
-	if (option[in::file::talos_cs].user()) {
-	  CSTalosIO in(option[in::file::talos_cs]());
+	if ( option[in::file::talos_cs].user() ) {
+		CSTalosIO in(option[in::file::talos_cs]());
 		//  in.write(std::cerr);
-	  return (FragmentScoringMethodOP) FragmentScoringMethodOP( new CSScore(priority,
-	                                  lowest_acceptable_value, use_lowest,in) );
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new CSScore(priority,
+			lowest_acceptable_value, use_lowest,in) );
 	}
 
 	utility_exit_with_message(
-			"Can't read CS data. Provide a chemical shifts file in TALOS format.");
+		"Can't read CS data. Provide a chemical shifts file in TALOS format.");
 
 	return NULL;
 }

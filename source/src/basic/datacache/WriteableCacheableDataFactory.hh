@@ -60,8 +60,8 @@ public:
 
 	void factory_register( WriteableCacheableDataCreatorOP creator );
 
-  /// @brief Create a data instance given its identifying string
-  WriteableCacheableDataOP new_data_instance(
+	/// @brief Create a data instance given its identifying string
+	WriteableCacheableDataOP new_data_instance(
 		std::string const& data_type_name,
 		std::istream &in
 	);

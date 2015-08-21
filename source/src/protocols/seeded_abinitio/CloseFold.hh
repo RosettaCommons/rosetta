@@ -30,103 +30,103 @@
 #include <boost/unordered/unordered_map.hpp>
 
 namespace protocols {
-	namespace seeded_abinitio {
+namespace seeded_abinitio {
 
-		class CloseFold : public protocols::moves::Mover
-		{
+class CloseFold : public protocols::moves::Mover
+{
 
-		public:
-			CloseFold();
+public:
+	CloseFold();
 
-			virtual ~CloseFold();
-			void apply( core::pose::Pose & pose );
-			virtual std::string get_name() const;
-		  virtual protocols::moves::MoverOP clone() const;
-  		virtual protocols::moves::MoverOP fresh_instance() const;
+	virtual ~CloseFold();
+	void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const;
+	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 
-			void parse_my_tag(  utility::tag::TagCOP tag,
-							  					basic::datacache::DataMap &,
-							  					protocols::filters::Filters_map const &,
-							  					protocols::moves::Movers_map const &,
-							  					core::pose::Pose const & );
+	void parse_my_tag(  utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & );
 
 
-		private: ///functions
+private: ///functions
 
-			protocols::loops::LoopsOP find_loops (  core::pose::Pose & pose,
-												  std::string secstr,
-												  core::Size offset,
-												  protocols::loops::Loops seeds );
+	protocols::loops::LoopsOP find_loops (  core::pose::Pose & pose,
+		std::string secstr,
+		core::Size offset,
+		protocols::loops::Loops seeds );
 
-			bool is_cut( utility::vector1<Size> & cut_points, Size residue);
+	bool is_cut( utility::vector1<Size> & cut_points, Size residue);
 
-			bool chainbreakweights();
+	bool chainbreakweights();
 
-			void add_chainbreakweights( bool acbw );
+	void add_chainbreakweights( bool acbw );
 
-			bool use_cutpoints();
+	bool use_cutpoints();
 
-			void use_cutpoints( bool uc );
+	void use_cutpoints( bool uc );
 
-			core::Size trials();
+	core::Size trials();
 
-			void set_trials( core::Size trials_quick_ccd );
+	void set_trials( core::Size trials_quick_ccd );
 
-			void initialize_fragments();
+	void initialize_fragments();
 
-//			core::scoring::ScoreFunction cen_scorefxn();
-//			core::scoring::ScoreFunction fa_scorefxn();
+	//   core::scoring::ScoreFunction cen_scorefxn();
+	//   core::scoring::ScoreFunction fa_scorefxn();
 
-		private: /// data
+private: /// data
 
-			/// fragment set used for ccd
-			core::fragment::FragSetOP fragments_;
+	/// fragment set used for ccd
+	core::fragment::FragSetOP fragments_;
 
-  		///position-indexable list of Frames, populating library
-  		///void initialize_library();
+	///position-indexable list of Frames, populating library
+	///void initialize_library();
 
-  		///index-based access to the data contained in the FragSet
-  		boost::unordered_map<core::Size, core::fragment::Frame> library_;
-			//FrameMap library_;
+	///index-based access to the data contained in the FragSet
+	boost::unordered_map<core::Size, core::fragment::Frame> library_;
+	//FrameMap library_;
 
-			void fast_loopclose( core::pose::Pose &pose, protocols::loops::LoopsOP const loops, bool kic );
+	void fast_loopclose( core::pose::Pose &pose, protocols::loops::LoopsOP const loops, bool kic );
 
-			void quick_closure( core::pose::Pose &pose, protocols::loops::LoopsOP const loops );
+	void quick_closure( core::pose::Pose &pose, protocols::loops::LoopsOP const loops );
 
-			core::pose::PoseOP template_pdb_;
+	core::pose::PoseOP template_pdb_;
 
-			std::string secstructure_;
+	std::string secstructure_;
 
-			utility::vector1< core::Size > chains_;
+	utility::vector1< core::Size > chains_;
 
-			//gather all loops for specified chains or just the ones that have a cutpoint
-			bool use_cutpoints_;
+	//gather all loops for specified chains or just the ones that have a cutpoint
+	bool use_cutpoints_;
 
-			///residues specifying the seeds
-  		utility::vector1< std::pair < std::string,std::string > > seed_vector_;
+	///residues specifying the seeds
+	utility::vector1< std::pair < std::string,std::string > > seed_vector_;
 
-			//protocols::loops::Loops seeds_;
-			//utility::vector1< core::Size > seed_vector_;
+	//protocols::loops::Loops seeds_;
+	//utility::vector1< core::Size > seed_vector_;
 
-			protocols::loops::LoopsOP loops_;
+	protocols::loops::LoopsOP loops_;
 
-			///add cutpoint variants for closure
-			bool chainbreakweights_;
+	///add cutpoint variants for closure
+	bool chainbreakweights_;
 
-			///option for quick ccd protocol, how many attempts
-			core::Size trials_;
+	///option for quick ccd protocol, how many attempts
+	core::Size trials_;
 
-			///options for fast_ccd protocol
-			bool idealize_;
+	///options for fast_ccd protocol
+	bool idealize_;
 
-			///should kinematic loop mover be used after the fast ccd
-			bool kic_;
-			bool ccd_;
-			core::scoring::ScoreFunctionOP cen_scorefxn_;
+	///should kinematic loop mover be used after the fast ccd
+	bool kic_;
+	bool ccd_;
+	core::scoring::ScoreFunctionOP cen_scorefxn_;
 
-			core::scoring::ScoreFunctionOP fa_scorefxn_;
-		};
-	}//end seeded_abinitio
+	core::scoring::ScoreFunctionOP fa_scorefxn_;
+};
+}//end seeded_abinitio
 }//end protocols
 
 #endif

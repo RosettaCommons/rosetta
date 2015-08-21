@@ -20,33 +20,34 @@ namespace core
 {
 namespace indexed_structure_store
 {
-	std::ostream& operator<<(std::ostream& os, const FragmentSpecification& s)
-	{
-		boost::format f("FragmentSpecification(fragment_length=%s, fragment_atoms=[%s])");
-		os << f % s.fragment_length % boost::algorithm::join(s.fragment_atoms, ", ");
-		return os;
-	}
+std::ostream& operator<<(std::ostream& os, const FragmentSpecification& s)
+{
+	boost::format f("FragmentSpecification(fragment_length=%s, fragment_atoms=[%s])");
+	os << f % s.fragment_length % boost::algorithm::join(s.fragment_atoms, ", ");
+	return os;
+}
 
-  FragmentStore::FragmentStore(
-			FragmentSpecification fragment_specification,
-			numeric::Size num_fragments) :
-    fragment_specification(fragment_specification),
-    fragment_threshold_distances(num_fragments),
-    fragment_coordinates(num_fragments * fragment_specification.coordinates_per_fragment() )
-  {
-	}
+FragmentStore::FragmentStore(
+	FragmentSpecification fragment_specification,
+	numeric::Size num_fragments) :
+	fragment_specification(fragment_specification),
+	fragment_threshold_distances(num_fragments),
+	fragment_coordinates(num_fragments * fragment_specification.coordinates_per_fragment() )
+{
+}
 
-	void FragmentStore::resize(numeric::Size num_fragments)
-	{
-		fragment_threshold_distances.resize(num_fragments);
-		fragment_coordinates.resize(num_fragments * fragment_specification.coordinates_per_fragment());
-	}
+void FragmentStore::resize(numeric::Size num_fragments)
+{
+	fragment_threshold_distances.resize(num_fragments);
+	fragment_coordinates.resize(num_fragments * fragment_specification.coordinates_per_fragment());
+}
 
-    void FragmentStore::add_threshold_distance_allFrag(numeric::Real distance)
-    {
-        for(numeric::Size ii=0; ii< fragment_threshold_distances.size(); ++ii)
-            fragment_threshold_distances[ii]=distance;
-    }
+void FragmentStore::add_threshold_distance_allFrag(numeric::Real distance)
+{
+	for ( numeric::Size ii=0; ii< fragment_threshold_distances.size(); ++ii ) {
+		fragment_threshold_distances[ii]=distance;
+	}
+}
 
 }
 }

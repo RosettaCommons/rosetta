@@ -64,7 +64,7 @@ FadeInterval::FadeInterval(
 	dfade_max_(1.0/static_cast<double>(max0-fmax)),
 	smooth_(smooth)
 {
-debug_assert(min0 <= fmin && fmin <= fmax && fmax <= max0);
+	debug_assert(min0 <= fmin && fmin <= fmax && fmax <= max0);
 }
 
 FadeInterval::FadeInterval(
@@ -83,7 +83,7 @@ FadeInterval::FadeInterval(
 	dfade_max_(1.0/static_cast<double>(max0-fmax)),
 	smooth_(smooth)
 {
-debug_assert(min0 <= fmin && fmin <= fmax && fmax <= max0);
+	debug_assert(min0 <= fmin && fmin <= fmax && fmax <= max0);
 }
 
 void
@@ -93,10 +93,10 @@ FadeInterval::value_deriv(
 	double &deriv) const
 {
 	//JSS  5 intervals --a-b---c-d--
-	if (x <= fmax_) {
-		if (x <= min0_) { val = deriv = 0.0; return; }       // in (-\infty, min0]
-		if (x >= fmin_) { val = 1.0; deriv = 0.0; return; }  // in [fmin, fmax]
-		if (smooth_){
+	if ( x <= fmax_ ) {
+		if ( x <= min0_ ) { val = deriv = 0.0; return; }       // in (-\infty, min0]
+		if ( x >= fmin_ ) { val = 1.0; deriv = 0.0; return; }  // in [fmin, fmax]
+		if ( smooth_ ) {
 			double const z((x - min0_)* dfade_min_);
 			val = z*z*(3-2*z);
 			deriv = -6*z*(z-1)*dfade_min_;
@@ -104,8 +104,8 @@ FadeInterval::value_deriv(
 			deriv = dfade_min_; val = (x - min0_) * dfade_min_;  // in (min0,fmin)
 		}
 	} else {
-		if (x >= max0_) { val = deriv = 0.0; return; }       // in [max0, \infty)
-		if (smooth_){
+		if ( x >= max0_ ) { val = deriv = 0.0; return; }       // in [max0, \infty)
+		if ( smooth_ ) {
 			double const z((x - fmax_) * dfade_max_);
 			val = z*z*(2*z-3) + 1;
 			deriv = 6*z*(z-1)*dfade_max_;
@@ -120,18 +120,18 @@ FadeInterval::value(
 	Real const x) const
 {
 	//JSS  5 intervals --a-b---c-d--
-	if (x <= fmax_) {
-		if (x <= min0_) return 0.0;      // in (-\infty, min0]
-		if (x >= fmin_) return 1.0;      // in [fmin, fmax]
-		if (smooth_){
+	if ( x <= fmax_ ) {
+		if ( x <= min0_ ) return 0.0;      // in (-\infty, min0]
+		if ( x >= fmin_ ) return 1.0;      // in [fmin, fmax]
+		if ( smooth_ ) {
 			double const z((x - min0_)* dfade_min_);
 			return z*z*(3.0-2.0*z);
 		} else {
 			return (x - min0_) * dfade_min_; // in (min0,fmin)
 		}
 	} else {
-		if (x >= max0_) return 0.0;      // in [max0, \infty)
-		if (smooth_){
+		if ( x >= max0_ ) return 0.0;      // in [max0, \infty)
+		if ( smooth_ ) {
 			double const z((x - fmax_) * dfade_max_);
 			return z*z*(2.0*z-3.0) + 1.0;
 		} else {

@@ -88,10 +88,9 @@ JobInputterFactory::get_JobInputter_from_string( std::string const & job_inputte
 
 		//if creator exists, return a JobInputter from it (this is good)
 		return iter->second->create_JobInputter();
-	}
-	else { //else, a non-existent JobInputter has been requested.  Print existing ones and exit.
+	} else { //else, a non-existent JobInputter has been requested.  Print existing ones and exit.
 		TR << "Available : ";
-		for( JobInputterMap::const_iterator mover_it = job_inputter_creator_map_.begin(); mover_it != job_inputter_creator_map_.end(); ++mover_it ) {
+		for ( JobInputterMap::const_iterator mover_it = job_inputter_creator_map_.begin(); mover_it != job_inputter_creator_map_.end(); ++mover_it ) {
 			TR << mover_it->first<<", ";
 		}
 		TR << std::endl;
@@ -112,45 +111,44 @@ JobInputterFactory::get_new_JobInputter()
 		return get_JobInputter_from_string( "PoseInputStreamJobInputter" );
 	}
 
-	if( basic::options::option[ basic::options::OptionKeys::jd2::resource_definition_files ].user() ){
+	if ( basic::options::option[ basic::options::OptionKeys::jd2::resource_definition_files ].user() ) {
 		return get_JobInputter_from_string("JD2ResourceManagerJobInputter" );
 	}
 
-	if( basic::options::option[ basic::options::OptionKeys::in::file::screening_job_file].user()) {
+	if ( basic::options::option[ basic::options::OptionKeys::in::file::screening_job_file].user() ) {
 		return get_JobInputter_from_string("ScreeningJobInputter");
 	}
 
 	//PDB input block
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::s ].user() || basic::options::option[ basic::options::OptionKeys::in::file::l ].user() || basic::options::option[ basic::options::OptionKeys::in::file::list ].user() || basic::options::option[ basic::options::OptionKeys::in::file::screening_list ].user() ) {
-		if ( basic::options::option[ basic::options::OptionKeys::enzdes::parser_read_cloud_pdb ].user() ){
-			 return get_JobInputter_from_string( "EnzdesJobInputter" );
+		if ( basic::options::option[ basic::options::OptionKeys::enzdes::parser_read_cloud_pdb ].user() ) {
+			return get_JobInputter_from_string( "EnzdesJobInputter" );
 		}
-		if ( option[ OptionKeys::jd2::dd_parser ].user() && option[ OptionKeys::parser::patchdock ].user() ){
+		if ( option[ OptionKeys::jd2::dd_parser ].user() && option[ OptionKeys::parser::patchdock ].user() ) {
 			return get_JobInputter_from_string( "ParserJobInputter" );
-		}
-		else{
+		} else {
 			return get_JobInputter_from_string( "PDBJobInputter" ); //SML override until we have other child classes
 		}
-	//silent file block
+		//silent file block
 	} else if ( option[ OptionKeys::in::file::silent ].user() ) {
-		if ( option[ OptionKeys::jd2::lazy_silent_file_reader ].user() ){
+		if ( option[ OptionKeys::jd2::lazy_silent_file_reader ].user() ) {
 			return get_JobInputter_from_string( "LazySilentFileJobInputter" );
 		} else {
 			return get_JobInputter_from_string( "SilentFileJobInputter" );
 		}
 
- 	} else if (option[OptionKeys::in::file::atom_tree_diff].user() ){
- 			return get_JobInputter_from_string( "AtomTreeDiffJobInputter" );
- 	} else if ( option[ OptionKeys::in::file::template_pdb ].user() || option[ OptionKeys::in::file::template_silent ].user() ) {
+	} else if ( option[OptionKeys::in::file::atom_tree_diff].user() ) {
+		return get_JobInputter_from_string( "AtomTreeDiffJobInputter" );
+	} else if ( option[ OptionKeys::in::file::template_pdb ].user() || option[ OptionKeys::in::file::template_silent ].user() ) {
 		return get_JobInputter_from_string( "ThreadingJobInputter" );
-	} else if (option[OptionKeys::in::use_database].user() ){
+	} else if ( option[OptionKeys::in::use_database].user() ) {
 		return get_JobInputter_from_string( "DatabaseJobInputter" );
 	} else if ( option[ OptionKeys::make_rot_lib::options_file ].user() ) {
 		return get_JobInputter_from_string( "MakeRotLibJobInputter" );
 	} else if (
-		option[ OptionKeys::jd2::max_nstruct_in_memory ].value()!=0 &&
-		option[ OptionKeys::jd2::max_nstruct_in_memory ].value() < option[ OptionKeys::out::nstruct ].value()
-	) {
+			option[ OptionKeys::jd2::max_nstruct_in_memory ].value()!=0 &&
+			option[ OptionKeys::jd2::max_nstruct_in_memory ].value() < option[ OptionKeys::out::nstruct ].value()
+			) {
 		return get_JobInputter_from_string( "LargeNstructJobInputter" ); //handles cases where the total job list won't fit into memory (e.g. big runs on a Blue Gene/Q machine)
 	} else {
 		return get_JobInputter_from_string( "GenericJobInputter" ); //handles -nstruct alone; works for abinitio with no structure input

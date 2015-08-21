@@ -37,9 +37,9 @@
 
 static thread_local basic::Tracer tr( "protocols.forge.remodel.ResidueVicinityRCG" );
 
-namespace protocols{
-namespace forge{
-namespace remodel{
+namespace protocols {
+namespace forge {
+namespace remodel {
 
 ResidueVicinityInfo::ResidueVicinityInfo(
 	core::Size old_seqpos,
@@ -69,19 +69,19 @@ core::scoring::func::FuncOP
 ResidueVicinityInfo::loop_ang() const{
 	return loop_ang_; }
 
-	core::scoring::func::FuncOP
+core::scoring::func::FuncOP
 ResidueVicinityInfo::targ_ang() const{
 	return targ_ang_; }
 
-	core::scoring::func::FuncOP
+core::scoring::func::FuncOP
 ResidueVicinityInfo::loop_dih() const{
 	return loop_dih_; }
 
-	core::scoring::func::FuncOP
+core::scoring::func::FuncOP
 ResidueVicinityInfo::targ_dih() const{
 	return targ_dih_; }
 
-	core::scoring::func::FuncOP
+core::scoring::func::FuncOP
 ResidueVicinityInfo::lt_dih() const{
 	return lt_dih_; }
 
@@ -89,11 +89,11 @@ void
 ResidueVicinityInfo::set_dis( core::scoring::func::FuncOP dis ){
 	dis_ = dis; }
 
-	void
+void
 ResidueVicinityInfo::set_loop_ang( core::scoring::func::FuncOP loop_ang ){
 	loop_ang_ = loop_ang; }
 
-	void
+void
 ResidueVicinityInfo::set_targ_ang( core::scoring::func::FuncOP targ_ang ){
 	targ_ang_ = targ_ang; }
 
@@ -130,15 +130,15 @@ ResidueVicinityCstGeneratorCreator::mover_name()
 }
 
 ResidueVicinityRCG::ResidueVicinityRCG()
-	: RemodelConstraintGenerator(),
-		lstart_( 0 ),
-		lstop_( 0 )
+: RemodelConstraintGenerator(),
+	lstart_( 0 ),
+	lstop_( 0 )
 {}
 
 ResidueVicinityRCG::ResidueVicinityRCG( ResidueVicinityRCG const & rval )
-	: RemodelConstraintGenerator( rval ),
-		lstart_( rval.lstart_ ),
-		lstop_( rval.lstop_ )
+: RemodelConstraintGenerator( rval ),
+	lstart_( rval.lstart_ ),
+	lstop_( rval.lstop_ )
 {}
 
 ResidueVicinityRCG::ResidueVicinityRCG(
@@ -146,18 +146,18 @@ ResidueVicinityRCG::ResidueVicinityRCG(
 	core::Size lstop,
 	utility::vector1< ResidueVicinityInfoOP > const & rv_infos
 ) : RemodelConstraintGenerator(),
-		lstart_(lstart), lstop_(lstop),
-		rv_infos_(rv_infos)
+	lstart_(lstart), lstop_(lstop),
+	rv_infos_(rv_infos)
 {}
 
 ResidueVicinityRCG::~ResidueVicinityRCG() {}
 
 void
 ResidueVicinityRCG::parse_my_tag( TagCOP const tag,
-																	basic::datacache::DataMap & data,
-																	protocols::filters::Filters_map const & filters,
-																	protocols::moves::Movers_map const & movers,
-																	core::pose::Pose const & pose )
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const & pose )
 {
 	RemodelConstraintGenerator::parse_my_tag( tag, data, filters, movers, pose );
 	lstart( tag->getOption< core::Size >( "lstart", lstart_ ) );
@@ -205,7 +205,7 @@ ResidueVicinityRCG::generate_remodel_constraints(
 	core::Size remstart( lstart_ );
 	core::Size remend( lstop_ );
 
-	if( this->seqmap() ){
+	if ( this->seqmap() ) {
 		remstart = (*(this->seqmap() ))[ remstart ];
 		remend = (*(this->seqmap() ))[ remend ];
 	}
@@ -213,8 +213,8 @@ ResidueVicinityRCG::generate_remodel_constraints(
 
 	tr << "setting up constraints for res " << remstart << " to res " << remend << std::endl;
 
-	for( utility::vector1< ResidueVicinityInfoOP >::const_iterator rv_it = rv_infos_.begin(), rv_end = rv_infos_.end();
-			 rv_it != rv_end; ++rv_it ){
+	for ( utility::vector1< ResidueVicinityInfoOP >::const_iterator rv_it = rv_infos_.begin(), rv_end = rv_infos_.end();
+			rv_it != rv_end; ++rv_it ) {
 
 
 		//now generate constraints between all nbr atoms of the remodel region positions and all specified atoms
@@ -222,19 +222,17 @@ ResidueVicinityRCG::generate_remodel_constraints(
 		//created between all specified atoms and the residue nb atom
 		utility::vector1< core::scoring::constraints::ConstraintCOP > rv_csts;
 
-		for( core::Size i = remstart; i <= remend; ++i){
+		for ( core::Size i = remstart; i <= remend; ++i ) {
 
 			utility::vector1< core::scoring::constraints::ConstraintCOP > respair_csts;
 
 			generate_remodel_constraints_for_respair(pose, i, *(*rv_it), respair_csts );
 
-			if( respair_csts.size() == 1 ){
+			if ( respair_csts.size() == 1 ) {
 				rv_csts.push_back( respair_csts[1] );
 				//debug
 				//tr << "respair_cst pushing back single constraint for loopres " << i << " and rvinfo with old seqpos " << (*rv_it)->old_seqpos() << std::endl;
-			}
-
-			else{
+			} else {
 				rv_csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AmbiguousConstraint( respair_csts ) ) );
 				//tr << "respair_cst pushing back ambig constraint for loopres " << i << " and rvinfo with old seqpos " << (*rv_it)->old_seqpos() << " containing " << respair_csts.size() << " members" << std::endl;
 			}
@@ -242,14 +240,12 @@ ResidueVicinityRCG::generate_remodel_constraints(
 		} //loop over all residues of the remodel region
 
 
-			//and finally add the constraints to the RGC
-		if( (*rv_it)->desired_remodelres_in_vicinity() == 1 ){
+		//and finally add the constraints to the RGC
+		if ( (*rv_it)->desired_remodelres_in_vicinity() == 1 ) {
 			this->add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AmbiguousConstraint( rv_csts ) ) ) );
 			//debug
 			//tr << "creating ambig constraint of size " << rv_csts.size() << std::endl;
-		}
-
-		else{
+		} else {
 			this->add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new protocols::constraints_additional::AmbiguousMultiConstraint( (*rv_it)->desired_remodelres_in_vicinity(), rv_csts ) ) ) );
 
 			//debug
@@ -276,7 +272,7 @@ ResidueVicinityRCG::generate_remodel_constraints_for_respair(
 
 	core::Size target_pos( rv_info.old_seqpos() );
 
-	if( this->seqmap() ){
+	if ( this->seqmap() ) {
 		target_pos = (*(this->seqmap() ))[ target_pos ];
 	}
 
@@ -285,46 +281,46 @@ ResidueVicinityRCG::generate_remodel_constraints_for_respair(
 	//FuncOP cst_func = new BoundFunc(
 	//rv_info.distance() - rv_info.tolerance(), rv_info.distance() + rv_info.tolerance(), 0.1, "rem_cstfunc" );
 
-	for( core::Size i =1; i <= rv_info.residue_atoms().size(); ++i ){
+	for ( core::Size i =1; i <= rv_info.residue_atoms().size(); ++i ) {
 
-		for( core::Size j =1; j <= rv_info.loopres_atoms().size(); ++j ){
+		for ( core::Size j =1; j <= rv_info.loopres_atoms().size(); ++j ) {
 
 			//csts.push_back( new AtomPairConstraint( core::id::AtomID( rv_info.loopres_atoms()[j], loopres ),core::id::AtomID( rv_info.residue_atoms()[i], target_pos ), cst_func ) );
 
 			utility::vector1< core::scoring::constraints::ConstraintCOP > csts_this_pair;
 
-			if( rv_info.dis() ) csts_this_pair.push_back(	core::scoring::constraints::ConstraintOP( new AtomPairConstraint( core::id::AtomID( rv_info.loopres_atoms()[j], loopres ),core::id::AtomID( rv_info.residue_atoms()[i], target_pos ), rv_info.dis() ) )	);
+			if ( rv_info.dis() ) csts_this_pair.push_back( core::scoring::constraints::ConstraintOP( new AtomPairConstraint( core::id::AtomID( rv_info.loopres_atoms()[j], loopres ),core::id::AtomID( rv_info.residue_atoms()[i], target_pos ), rv_info.dis() ) ) );
 			//tr << "creating dist constraints between looppos " << loopres << " atom " <<  pose.residue_type( loopres ).atom_name( rv_info->loopres_atoms()[j] ) << " and targ pos " << target_pos << " atom " << pose.residue_type( target_pos ).atom_name( rv_info->residue_atoms()[i] ) << std::endl;
 
-			if( rv_info.loop_ang() ){
+			if ( rv_info.loop_ang() ) {
 				csts_this_pair.push_back( core::scoring::constraints::ConstraintOP( new AngleConstraint( core::id::AtomID( rv_info.loopres_base_atoms()[j], loopres ), core::id::AtomID( rv_info.loopres_atoms()[j], loopres ), core::id::AtomID( rv_info.residue_atoms()[i], target_pos ), rv_info.loop_ang() ) ) );
 
 				//tr << "creating loop ang constraints between looppos " << loopres << " base atom " << pose.residue_type( loopres ).atom_name( rv_info.loopres_base_atoms()[j] ) << ", atom " <<  pose.residue_type( loopres ).atom_name( rv_info.loopres_atoms()[j] ) << " and targ pos " << target_pos << " atom " << pose.residue_type( target_pos ).atom_name( rv_info.residue_atoms()[i] ) << std::endl;
 			}
 
-			if( rv_info.targ_ang() ){
+			if ( rv_info.targ_ang() ) {
 				csts_this_pair.push_back( core::scoring::constraints::ConstraintOP( new AngleConstraint( core::id::AtomID( rv_info.loopres_atoms()[j], loopres ), core::id::AtomID( rv_info.residue_atoms()[i], target_pos ), core::id::AtomID( rv_info.residue_base_atoms()[i], target_pos ), rv_info.targ_ang() ) ) );
 
 				//tr << "creating targ ang constraints between looppos " << loopres << " atom " << pose.residue_type( loopres ).atom_name( rv_info.loopres_atoms()[j] ) << ",targ atom " <<  pose.residue_type( target_pos ).atom_name( rv_info.residue_atoms()[i] ) << " and targ pos " << target_pos << "base atom " << pose.residue_type( target_pos ).atom_name( rv_info.residue_base_atoms()[i] ) << std::endl;
 			}
 
-			if( rv_info.loop_dih() ){
+			if ( rv_info.loop_dih() ) {
 				csts_this_pair.push_back( core::scoring::constraints::ConstraintOP( new DihedralConstraint( core::id::AtomID( rv_info.loopres_base2_atoms()[j], loopres ), core::id::AtomID( rv_info.loopres_base_atoms()[j], loopres ), core::id::AtomID( rv_info.loopres_atoms()[j], loopres ), core::id::AtomID( rv_info.residue_atoms()[i], target_pos ), rv_info.loop_dih() ) ) );
 
 				//tr << "creating loop dih constraints between looppos " << loopres << " base2 atom " << pose.residue_type( loopres ).atom_name( rv_info.loopres_base2_atoms()[j] )<<  ", base atom " << pose.residue_type( loopres ).atom_name( rv_info.loopres_base_atoms()[j] ) << ", atom " <<  pose.residue_type( loopres ).atom_name( rv_info.loopres_atoms()[j] ) << " and targ pos " << target_pos << " atom " << pose.residue_type( target_pos ).atom_name( rv_info.residue_atoms()[i] ) << std::endl;
 			}
 
-			if( rv_info.targ_dih() ){
+			if ( rv_info.targ_dih() ) {
 				csts_this_pair.push_back( core::scoring::constraints::ConstraintOP( new DihedralConstraint( core::id::AtomID( rv_info.loopres_atoms()[j], loopres ), core::id::AtomID( rv_info.residue_atoms()[i], target_pos ), core::id::AtomID( rv_info.residue_base_atoms()[i], target_pos ), core::id::AtomID( rv_info.residue_base2_atoms()[i], target_pos ), rv_info.targ_dih() ) ) );
 				//tr << "creating targ dih constraints between looppos " << loopres << " atom " << pose.residue_type( loopres ).atom_name( rv_info.loopres_atoms()[j] ) << ",targ atom " <<  pose.residue_type( target_pos ).atom_name( rv_info.residue_atoms()[i] ) << " and targ pos " << target_pos << " base atom " << pose.residue_type( target_pos ).atom_name( rv_info.residue_base_atoms()[i] ) << ", base 2 atom " << pose.residue_type( target_pos ).atom_name( rv_info.residue_base2_atoms()[i] )<< std::endl;
 			}
 
-			if( rv_info.lt_dih() ){
+			if ( rv_info.lt_dih() ) {
 				csts_this_pair.push_back( core::scoring::constraints::ConstraintOP( new DihedralConstraint( core::id::AtomID( rv_info.loopres_base_atoms()[j], loopres ), core::id::AtomID( rv_info.loopres_atoms()[j], loopres ), core::id::AtomID( rv_info.residue_atoms()[i], target_pos ), core::id::AtomID( rv_info.residue_base_atoms()[i], target_pos ), rv_info.lt_dih() ) ) );
 			}
 
-			if( csts_this_pair.size() == 1 ) csts.push_back( csts_this_pair[1] );
-			else if( csts_this_pair.size() > 1 ) csts.push_back( core::scoring::constraints::ConstraintOP( new MultiConstraint( csts_this_pair ) ) );
+			if ( csts_this_pair.size() == 1 ) csts.push_back( csts_this_pair[1] );
+			else if ( csts_this_pair.size() > 1 ) csts.push_back( core::scoring::constraints::ConstraintOP( new MultiConstraint( csts_this_pair ) ) );
 
 			//debug
 			//lil stupid: we only need the pose in this function for the debug info

@@ -26,7 +26,7 @@ SingleStateEntityData::write_checkpoint(
 {
 	os << "fitness " << fitness_;
 	os << " metrics " << metric_value_map_.size();
-	for (MetricValueMap::const_iterator iter = metric_value_map_.begin(); iter != metric_value_map_.end(); ++iter) {
+	for ( MetricValueMap::const_iterator iter = metric_value_map_.begin(); iter != metric_value_map_.end(); ++iter ) {
 		os << " " << iter->first << " ";
 		runtime_assert(basic::write_metric_value(os, *(iter->second)));
 	}
@@ -40,18 +40,18 @@ SingleStateEntityData::read_checkpoint(
 	std::string word;
 	core::Size num_metrics;
 
-	if (!(is >> word)) return false;
-	if (word != "fitness") return false;
-	if (!(is >> fitness_)) return false;
+	if ( !(is >> word) ) return false;
+	if ( word != "fitness" ) return false;
+	if ( !(is >> fitness_) ) return false;
 
-	if (!(is >> word)) return false;
-	if (word != "metrics") return false;
-	if (!(is >> num_metrics)) return false;
+	if ( !(is >> word) ) return false;
+	if ( word != "metrics" ) return false;
+	if ( !(is >> num_metrics) ) return false;
 
-	for (core::Size i = 1; i <= num_metrics; ++i) {
-		if (!(is >> word)) return false;
+	for ( core::Size i = 1; i <= num_metrics; ++i ) {
+		if ( !(is >> word) ) return false;
 		basic::MetricValueBaseOP metric_value(basic::read_metric_value(is));
-		if (!metric_value) return false;
+		if ( !metric_value ) return false;
 		metric_value_map_[word] = metric_value;
 	}
 

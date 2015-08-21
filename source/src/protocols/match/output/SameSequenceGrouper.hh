@@ -108,7 +108,7 @@ public:
 	//virtual
 	//Size
 	//assign_group_for_match(
-	//	match const & m
+	// match const & m
 	//);
 
 	virtual

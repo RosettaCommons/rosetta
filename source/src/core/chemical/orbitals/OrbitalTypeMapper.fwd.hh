@@ -11,9 +11,9 @@
 #ifndef INCLUDED_core_chemical_orbitals_OrbitalTypeMapper_fwd_hh
 #define INCLUDED_core_chemical_orbitals_OrbitalTypeMapper_fwd_hh
 
-namespace core{
-namespace chemical{
-namespace orbitals{
+namespace core {
+namespace chemical {
+namespace orbitals {
 class OrbitalTypeMapper;
 
 enum orbital_type_enum{

@@ -90,7 +90,7 @@ namespace protocols {
 namespace flxbb {
 
 utility::vector1< std::string > const LayerDesignOperation::SS_TYPES =
-	boost::assign::list_of ("all")("Helix")("HelixCapping")("HelixStart")("Loop")("Strand");
+boost::assign::list_of ("all")("Helix")("HelixCapping")("HelixStart")("Loop")("Strand");
 
 core::pack::task::operation::TaskOperationOP
 LayerDesignOperationCreator::create_task_operation() const
@@ -105,8 +105,9 @@ CombinedTaskOperation::CombinedTaskOperation( VecTaskOP  ops ):
 void
 CombinedTaskOperation::apply(core::pose::Pose const & pose, PackerTask & task) const {
 	using core::pack::task::operation::TaskOperationOP;
-	BOOST_FOREACH( TaskOperationOP t_op, task_operations_ )
+	BOOST_FOREACH ( TaskOperationOP t_op, task_operations_ ) {
 		t_op->apply( pose, task );
+	}
 }
 
 
@@ -205,13 +206,15 @@ std::string
 LayerDesignOperation::pos2select( utility::vector1< core::Size > const & pos ) const
 {
 	std::string str;
-	if( pos.empty() )
+	if ( pos.empty() ) {
 		return str;
-	else
-		str = boost::lexical_cast< std::string	>( pos[1] );
-		for(Size i = 2; i <= pos.size(); i++)
-			str += "+" + boost::lexical_cast< std::string >( pos[i] );
-		return str;
+	} else {
+		str = boost::lexical_cast< std::string >( pos[1] );
+	}
+	for ( Size i = 2; i <= pos.size(); i++ ) {
+		str += "+" + boost::lexical_cast< std::string >( pos[i] );
+	}
+	return str;
 }
 
 void
@@ -250,16 +253,18 @@ LayerDesignOperation::write_pymol_script( core::pose::Pose const & pose, toolbox
 	colors.push_back( "hotpink" );
 	colors.push_back( "olive" );
 	Size layer = 0;
-	for(LayerSpecification::const_iterator it = layer_specification.begin(), end = layer_specification.end(); it != end; ++it ) {
+	for ( LayerSpecification::const_iterator it = layer_specification.begin(), end = layer_specification.end(); it != end; ++it ) {
 		utility::vector1< Size > pos;
-		for(Size i = 1; i <= pose.total_residue(); i++)
-			if( it->second[ i ])
+		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+			if ( it->second[ i ] ) {
 				pos.push_back( i );
+			}
+		}
 		pymol << "cmd.select('"<< it->first  <<"', 'resi  " << pos2select( pos )<< "')" << std::endl;
 		pymol << "cmd.color('" << colors[ layer % 6  ] << "','" << it->first << "')" << std::endl;
 		layer += 1;
 	}
-	if(has_ligand) {
+	if ( has_ligand ) {
 		pymol << "cmd.select('ligand', 'organic')" << std::endl;
 		pymol << "cmd.show('sticks','ligand')" << std::endl;
 		pymol << "cmd.color('gray','ligand')" << std::endl;
@@ -295,36 +300,36 @@ void
 LayerDesignOperation::set_default_layer_residues() {
 	TR << "Initializing the layers with the default residues" << std::endl;
 	boost::assign::insert(layer_residues_) //If the defaults are modified here, be sure to set up defaults below for the layer_nc_residues_ object that defines noncanonicals.
-					(std::string("core"), makeMap( boost::assign::map_list_of
-							(std::string("all"),		          std::string("AFILPVWYDNST"))
-							(std::string("Loop"), 	          std::string("AFILPVWY"))
-							(std::string("Strand"),	          std::string("FILVWY"))
-							(std::string("Helix"), 	          std::string("AFILVWY"))
-							(std::string("HelixStart"),       std::string("AFILVWYP"))
-							(std::string("HelixCapping"),     std::string("DNST"))
-					))
-					(std::string("boundary"), makeMap( boost::assign::map_list_of
-							(std::string("all"),              std::string("ADEFGIKLNPQRSTVWY"))
-							(std::string("Loop"),             std::string("ADEFGIKLNPQRSTVWY"))
-							(std::string("Strand"),           std::string("DEFIKLNQRSTVWY"))
-							(std::string("Helix"),            std::string("ADEIKLNQRSTVWY"))
-							(std::string("HelixStart"),       std::string("ADEIKLNQRSTVWYP"))
-							(std::string("HelixCapping"),     std::string("DNST"))
-					))
-					(std::string("surface"), makeMap( boost::assign::map_list_of
-							(std::string("all"),              std::string("DEGHKNPQRST"))
-							(std::string("Loop"),             std::string("DEGHKNPQRST"))
-							(std::string("Strand"),           std::string("DEHKNQRST"))
-							(std::string("Helix"),            std::string("DEHKNQRST"))
-							(std::string("HelixStart"),       std::string("DEHKNQRSTP"))
-							(std::string("HelixCapping"),     std::string("DNST"))
-					))
-					(std::string("Nterm"), makeMap( boost::assign::map_list_of
-							(std::string("all"),              std::string("ACDEFGHIKLMNPQRSTVWY"))
-					))
-					(std::string("Cterm"), makeMap( boost::assign::map_list_of
-							(std::string("all"),              std::string("ACDEFGHIKLMNPQRSTVWY"))
-					));
+		(std::string("core"), makeMap( boost::assign::map_list_of
+		(std::string("all"),            std::string("AFILPVWYDNST"))
+		(std::string("Loop"),            std::string("AFILPVWY"))
+		(std::string("Strand"),           std::string("FILVWY"))
+		(std::string("Helix"),            std::string("AFILVWY"))
+		(std::string("HelixStart"),       std::string("AFILVWYP"))
+		(std::string("HelixCapping"),     std::string("DNST"))
+		))
+		(std::string("boundary"), makeMap( boost::assign::map_list_of
+		(std::string("all"),              std::string("ADEFGIKLNPQRSTVWY"))
+		(std::string("Loop"),             std::string("ADEFGIKLNPQRSTVWY"))
+		(std::string("Strand"),           std::string("DEFIKLNQRSTVWY"))
+		(std::string("Helix"),            std::string("ADEIKLNQRSTVWY"))
+		(std::string("HelixStart"),       std::string("ADEIKLNQRSTVWYP"))
+		(std::string("HelixCapping"),     std::string("DNST"))
+		))
+		(std::string("surface"), makeMap( boost::assign::map_list_of
+		(std::string("all"),              std::string("DEGHKNPQRST"))
+		(std::string("Loop"),             std::string("DEGHKNPQRST"))
+		(std::string("Strand"),           std::string("DEHKNQRST"))
+		(std::string("Helix"),            std::string("DEHKNQRST"))
+		(std::string("HelixStart"),       std::string("DEHKNQRSTP"))
+		(std::string("HelixCapping"),     std::string("DNST"))
+		))
+		(std::string("Nterm"), makeMap( boost::assign::map_list_of
+		(std::string("all"),              std::string("ACDEFGHIKLMNPQRSTVWY"))
+		))
+		(std::string("Cterm"), makeMap( boost::assign::map_list_of
+		(std::string("all"),              std::string("ACDEFGHIKLMNPQRSTVWY"))
+		));
 
 	// Note: by default, the layer_nc_residues_ object contains empty NCAA lists, since we're not designing with noncanonicals by default. --VKM
 	init_nc_layerdefinitions( "core" );
@@ -359,7 +364,7 @@ utility::vector1<bool>
 LayerDesignOperation::get_restrictions( std::string const & layer, std::string const & /*default_layer*/, std::string const & ss_type) const {
 	// if the layer doesn't specify the required ss used the default layer one.
 	utility::vector1< bool >  restrict_to_aa( chemical::num_canonical_aas, false );
-	BOOST_FOREACH( char restype, layer_residues_.find( layer )->second.find( ss_type )->second ) {
+	BOOST_FOREACH ( char restype, layer_residues_.find( layer )->second.find( ss_type )->second ) {
 		restrict_to_aa[ chemical::aa_from_oneletter_code( restype ) ] = true;
 	}
 	return restrict_to_aa;
@@ -368,8 +373,8 @@ LayerDesignOperation::get_restrictions( std::string const & layer, std::string c
 /// @brief Take a string consisting of comma-separated three-letter codes and parse it, storing separate three-letter codes in a given
 /// utility::vector1 of strings.
 void LayerDesignOperation::parse_ncaa_list( std::string const &str, utility::vector1<std::string> &storage_vect ) {
-	for(core::Size i=0; i<str.length()-2; ++i){
-		if(str[i]!=',' && str[i]!=' ' && str[i]!='\n' && str[i]!='\t') {
+	for ( core::Size i=0; i<str.length()-2; ++i ) {
+		if ( str[i]!=',' && str[i]!=' ' && str[i]!='\n' && str[i]!='\t' ) {
 			storage_vect.push_back( str.substr(i,3) );
 			i+=2;
 		}
@@ -380,9 +385,9 @@ void LayerDesignOperation::parse_ncaa_list( std::string const &str, utility::vec
 /// @brief Remove a list of residue types from another list.
 ///
 void LayerDesignOperation::exclude_ncaas( utility::vector1<std::string> const &aas_to_exclude, utility::vector1<std::string> &storage_vect ) {
-	for(core::Size i=1,imax=aas_to_exclude.size(); i<=imax; ++i) { //Loop through all aas to exclude.
-		for(utility::vector1<std::string>::iterator j = storage_vect.begin(); j<storage_vect.end(); ++j) {
-			if( (*j)==aas_to_exclude[i]) {
+	for ( core::Size i=1,imax=aas_to_exclude.size(); i<=imax; ++i ) { //Loop through all aas to exclude.
+		for ( utility::vector1<std::string>::iterator j = storage_vect.begin(); j<storage_vect.end(); ++j ) {
+			if ( (*j)==aas_to_exclude[i] ) {
 				storage_vect.erase(j);
 			}
 		}
@@ -393,7 +398,7 @@ void LayerDesignOperation::exclude_ncaas( utility::vector1<std::string> const &a
 void
 LayerDesignOperation::set_design_layers( utility::vector1< std::string > const & layers )
 {
-	BOOST_FOREACH( std::string const & layer, layers ) {
+	BOOST_FOREACH ( std::string const & layer, layers ) {
 		design_layer_[ layer ] = true;
 	}
 }
@@ -437,10 +442,10 @@ LayerDesignOperation::set_layer_specification( std::string const & layer_name, L
 /// @brief layer to be designed
 void
 LayerDesignOperation::add_layer(
-		std::string const & layer_name,
-		core::pack::task::operation::TaskOperationOP task,
-		LayerOperationType const operation,
-		LayerSpecificationType const specification )
+	std::string const & layer_name,
+	core::pack::task::operation::TaskOperationOP task,
+	LayerOperationType const operation,
+	LayerSpecificationType const specification )
 {
 	task_layers_[ layer_name ] = task;
 	design_layer_[ layer_name ] = true;
@@ -455,8 +460,8 @@ LayerDesignOperation::add_layer(
 /// @brief gets the residues allowed for a given secondary structure in a given layer
 std::string const &
 LayerDesignOperation::layer_residues(
-		std::string const & layer_name,
-		std::string const & ss_name ) const
+	std::string const & layer_name,
+	std::string const & ss_name ) const
 {
 	LayerResidues::const_iterator it = layer_residues_.find( layer_name );
 	if ( it == layer_residues_.end() ) {
@@ -476,8 +481,8 @@ LayerDesignOperation::layer_residues(
 /// @brief gets the residues allowed for a given secondary structure in a given layer
 utility::vector1< std::string > const &
 LayerDesignOperation::layer_nc_residues(
-		std::string const & layer_name,
-		std::string const & ss_name ) const
+	std::string const & layer_name,
+	std::string const & ss_name ) const
 {
 	LayerNCResidues::const_iterator it = layer_nc_residues_.find( layer_name );
 	if ( it == layer_nc_residues_.end() ) {
@@ -497,8 +502,8 @@ LayerDesignOperation::layer_nc_residues(
 /// @brief copies residues allowed from src to dest
 void
 LayerDesignOperation::copy_layer_residues(
-		std::string const & src_layer,
-		std::string const & dest_layer )
+	std::string const & src_layer,
+	std::string const & dest_layer )
 {
 	LayerResidues::const_iterator src = layer_residues_.find( src_layer );
 	if ( src == layer_residues_.end() ) {
@@ -515,18 +520,18 @@ LayerDesignOperation::copy_layer_residues(
 
 void
 LayerDesignOperation::set_layer_residues(
-		std::string const & layer_name,
-		std::string const & ss_name,
-		std::string const & residues )
+	std::string const & layer_name,
+	std::string const & ss_name,
+	std::string const & residues )
 {
 	set_layer_residues( layer_name, ss_name, residues, layer_residues_ );
 }
 
 void
 LayerDesignOperation::set_nc_layer_residues(
-		std::string const & layer_name,
-		std::string const & ss_name,
-		std::string const & residues )
+	std::string const & layer_name,
+	std::string const & ss_name,
+	std::string const & residues )
 {
 	layer_nc_residues_[ layer_name ][ ss_name ].clear(); //Clear the list of NCAAS
 	parse_ncaa_list( residues, layer_nc_residues_[ layer_name ][ ss_name ] ); //Add these NCAAs.
@@ -534,19 +539,19 @@ LayerDesignOperation::set_nc_layer_residues(
 
 void
 LayerDesignOperation::set_nc_layer_residues(
-		std::string const & layer_name,
-		std::string const & ss_name,
-		utility::vector1< std::string > const & residues )
+	std::string const & layer_name,
+	std::string const & ss_name,
+	utility::vector1< std::string > const & residues )
 {
 	layer_nc_residues_[ layer_name ][ ss_name ] = residues;
 }
 
 void
 LayerDesignOperation::set_layer_residues(
-		std::string const & layer_name,
-		std::string const & ss_name,
-		std::string const & residues,
-		LayerResidues & layer_residues )
+	std::string const & layer_name,
+	std::string const & ss_name,
+	std::string const & residues,
+	LayerResidues & layer_residues )
 {
 	LayerResidues::iterator it = layer_residues.find( layer_name );
 	if ( it == layer_residues.end() ) {
@@ -574,22 +579,22 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 
 	// find the designable residues for the different task layers
 	LayerSpecification layer_specification;
-	BOOST_FOREACH(const TaskLayers::value_type& task_pair, task_layers_) {
-		if(TR.visible()) TR << "Residues  for task layer " << task_pair.first << ": " <<std::endl;
+	BOOST_FOREACH ( const TaskLayers::value_type& task_pair, task_layers_ ) {
+		if ( TR.visible() ) TR << "Residues  for task layer " << task_pair.first << ": " <<std::endl;
 		PackerTask_ layer_task(input_pose);
 		task_pair.second->apply(input_pose, layer_task);
 		utility::vector1< bool > designable_residues( layer_task.designing_residues() );
 		utility::vector1< bool > packable_residues( layer_task.repacking_residues() );
 		utility::vector1< bool > fixed_residues;
 		runtime_assert( designable_residues.size() == packable_residues.size() );
-		for(Size i = 1; i <= designable_residues.size(); i++) {
+		for ( Size i = 1; i <= designable_residues.size(); i++ ) {
 			bool fixed( false );
-			if( designable_residues[i] ) {
-				if(TR.visible()) TR << "\t- residue " << i << " is designable" << std::endl;
+			if ( designable_residues[i] ) {
+				if ( TR.visible() ) TR << "\t- residue " << i << " is designable" << std::endl;
 			} else if ( ! designable_residues[i] && packable_residues[i] ) {
-				if(TR.visible()) TR << "\t- residue " << i << " is repackable" << std::endl;
+				if ( TR.visible() ) TR << "\t- residue " << i << " is repackable" << std::endl;
 			} else {
-				if(TR.visible()) TR << "\t- residue " << i << " is fixed" << std::endl;
+				if ( TR.visible() ) TR << "\t- residue " << i << " is fixed" << std::endl;
 				fixed = true;
 			}
 			fixed_residues.push_back( fixed );
@@ -607,8 +612,8 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 	}
 
 	// symmetry check
-	if(core::pose::symmetry::is_symmetric( input_pose ) ) {
-		if(TR.visible()) TR << "Symmetry detected, extracting asymmetric unit." << std::endl;
+	if ( core::pose::symmetry::is_symmetric( input_pose ) ) {
+		if ( TR.visible() ) TR << "Symmetry detected, extracting asymmetric unit." << std::endl;
 		core::pose::symmetry::extract_asymmetric_unit( input_pose, pose , false );
 	} else {
 		pose = input_pose;
@@ -627,8 +632,8 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 	utility::vector1<Size> ligands = protocols::flxbb::find_ligands( pose );
 	bool has_ligand = false;
 	std::replace( secstruct.begin(), secstruct.end(), ' ', 'L'); // replace all ' ' to 'L'
-	if(TR.visible()) TR << "secstruct is:" << secstruct << std::endl;
-	for( Size i=1; i <= ligands.size(); i++) {
+	if ( TR.visible() ) TR << "secstruct is:" << secstruct << std::endl;
+	for ( Size i=1; i <= ligands.size(); i++ ) {
 		has_ligand = true;
 	}
 
@@ -636,8 +641,8 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 	srbl_->compute( pose, secstruct );
 
 	// make a pymol script for visualizing the layers
-	if( make_pymol_script_ && !utility::file::file_exists( "layers.py" ) ) {
-		if(TR.visible()) TR << "writing pymol script with the layer specification and saving it as layers.py" << std::endl;
+	if ( make_pymol_script_ && !utility::file::file_exists( "layers.py" ) ) {
+		if ( TR.visible() ) TR << "writing pymol script with the layer specification and saving it as layers.py" << std::endl;
 		write_pymol_script(input_pose, srbl_, layer_specification, has_ligand, "layers.py");
 	}
 
@@ -645,16 +650,16 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 	bool flag( false );
 	utility::vector1< bool > helix_capping( pose.total_residue(), false );
 	utility::vector1< bool > initial_helix( pose.total_residue(), false );
-	for( Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( Size i=1; i<=pose.total_residue(); ++i ) {
 		// if this residue is not a protein residue, we shouldn't process it further
 		if ( ! pose.residue( i ).is_protein() ) continue;
 		char ss( secstruct[i-1] );
-		if( ss == 'H' && flag == false && i != 1 ) {
+		if ( ss == 'H' && flag == false && i != 1 ) {
 			initial_helix[ i ] = true;
 			helix_capping[ i-1 ] = true;
 			flag = true;
 		}
-		if( ss != 'H' && flag == true ) {
+		if ( ss != 'H' && flag == true ) {
 			flag = false;
 		}
 	}
@@ -665,65 +670,69 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 	//task.nonconst_residue_task( pose.total_residue() ).restrict_absent_canonical_aas( restrict_to_aa );
 
 	TR << "---------------------------------------" << std::endl;
-	for( Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( Size i=1; i<=pose.total_residue(); ++i ) {
 		// if the residue is not a protein, we should continue on to the next one, but make the non-protein residue repackable only
 		// Removed by VKM -- the user can decide whether to apply design to non-protein residues or not.
-		if ( ! pose.residue( i ).is_protein() ){ /*task.nonconst_residue_task( i ).restrict_to_repacking();*/ continue; }
+		if ( ! pose.residue( i ).is_protein() ) { /*task.nonconst_residue_task( i ).restrict_to_repacking();*/ continue; }
 
 		std::string srbl_layer = srbl_->layer(i);
 
 		// treat peptide edges diferently because dssp always assigns them as loop
-		if( pose.residue( i ).is_upper_terminus() )
+		if ( pose.residue( i ).is_upper_terminus() ) {
 			srbl_layer = "Cterm";
-		if( pose.residue( i ).is_lower_terminus() )
+		}
+		if ( pose.residue( i ).is_lower_terminus() ) {
 			srbl_layer = "Nterm";
+		}
 
 		// check if the residue is specified in any of the task defined layer and
 		// append that layer into the active layers
 		utility::vector1< std::string > active_layers;
-		BOOST_FOREACH(const LayerSpecification::value_type& layer_pair, layer_specification) {
-			if( (layer_pair.second)[i] == true)
+		BOOST_FOREACH ( const LayerSpecification::value_type& layer_pair, layer_specification ) {
+			if ( (layer_pair.second)[i] == true ) {
 				active_layers.push_back( layer_pair.first );
+			}
 		}
 
 		char ss( secstruct[i-1] );
-		if(TR.visible()) {
-				TR << "Residue " << i << std::endl;
-				TR << "    ss=" << ss << " ";
+		if ( TR.visible() ) {
+			TR << "Residue " << i << std::endl;
+			TR << "    ss=" << ss << " ";
 		}
 
-		if (srbl_->use_sidechain_neighbors()) {
-			if(TR.visible()) TR << "Neighbors=" << ObjexxFCL::format::F( 5, 2, srbl_->rsd_sasa( i ) ) << std::endl;
+		if ( srbl_->use_sidechain_neighbors() ) {
+			if ( TR.visible() ) TR << "Neighbors=" << ObjexxFCL::format::F( 5, 2, srbl_->rsd_sasa( i ) ) << std::endl;
 		} else {
-			if(TR.visible()) TR << "    Sasa=" << ObjexxFCL::format::F( 6, 2, srbl_->rsd_sasa( i ) ) << std::endl;
+			if ( TR.visible() ) TR << "    Sasa=" << ObjexxFCL::format::F( 6, 2, srbl_->rsd_sasa( i ) ) << std::endl;
 		}
 
-		if(TR.visible()) TR << "    basic layer = " << srbl_layer << std::endl;
+		if ( TR.visible() ) TR << "    basic layer = " << srbl_layer << std::endl;
 
 		// If there are no active layers and the working layer is designable
 		// append the working layer
-		if( design_layer_.find(srbl_layer)->second || !active_layers.empty() ) { // srbl_layer is set to be designed
-			if( active_layers.empty() )
+		if ( design_layer_.find(srbl_layer)->second || !active_layers.empty() ) { // srbl_layer is set to be designed
+			if ( active_layers.empty() ) {
 				active_layers.push_back( srbl_layer );
-		} else { // srbl_layer is not set to be designed, the sidechain will be reapcked or left untouched
-			if( repack_non_designed_residues_ ) {
-				task.nonconst_residue_task( i ).restrict_to_repacking();
-				if(TR.visible()) TR << "    restricting aminoacid to repacking" << std::endl;
 			}
-			else {
+		} else { // srbl_layer is not set to be designed, the sidechain will be reapcked or left untouched
+			if ( repack_non_designed_residues_ ) {
+				task.nonconst_residue_task( i ).restrict_to_repacking();
+				if ( TR.visible() ) TR << "    restricting aminoacid to repacking" << std::endl;
+			} else {
 				task.nonconst_residue_task( i ).prevent_repacking();
-				if(TR.visible()) TR << "    preventing aminoacid from  repacking" << std::endl;
+				if ( TR.visible() ) TR << "    preventing aminoacid from  repacking" << std::endl;
 			}
 		}
-		if(TR.visible()) {
+		if ( TR.visible() ) {
 			TR << "    Active layers: ";
-			BOOST_FOREACH(std::string s, active_layers){
+			BOOST_FOREACH ( std::string s, active_layers ) {
 				TR << s << "    " ;
 			}
-			if(active_layers.empty())
+			if ( active_layers.empty() ) {
 				TR << "none" << std::endl;
-			else
-			TR << std::endl;
+			} else {
+				TR << std::endl;
+			}
 			TR << "---------------------------------------" << std::endl;
 		}
 
@@ -731,10 +740,10 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 		// V. Mulligan 28 Jan 2015: NOTE that this violates one of the rules for TaskOperations: commutativity.  The behaviour changes depending
 		// on whether a ReadResfile TaskOperation is applied before or after the LayerDesign TaskOperation.  I'm changing this to make it the
 		// non-default behaviour, but keeping it as an option.
-		if( ignore_pikaa_natro() ) {
+		if ( ignore_pikaa_natro() ) {
 			const std::string resfile_cmd =  task.residue_task( i ).command_string();
-			if( resfile_cmd.find( "PIKAA" ) != std::string::npos ||	resfile_cmd.find( "NATRO" ) != std::string::npos ){
-				if( TR.visible() && verbose_ ) {
+			if ( resfile_cmd.find( "PIKAA" ) != std::string::npos || resfile_cmd.find( "NATRO" ) != std::string::npos ) {
+				if ( TR.visible() && verbose_ ) {
 					TR << " ,Resfile info is used. (" << resfile_cmd  << ")"<< std::endl;
 				}
 				continue;
@@ -745,7 +754,7 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 		// skip the residue if this position is included in a layer with operation specified as "OMIT"
 		bool omit( false );
 		bool design( true );
-		BOOST_FOREACH(std::string& layer, active_layers) {
+		BOOST_FOREACH ( std::string& layer, active_layers ) {
 			std::map< std::string, LayerOperationType >::const_iterator type_it = layer_operation_.find( layer );
 			runtime_assert( type_it != layer_operation_.end() );
 			LayerOperationType const operation = (*type_it).second;
@@ -756,11 +765,11 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 			}
 		}
 		if ( omit ) {
-			if(TR.visible()) TR << "Omitting residue " << i << std::endl;
+			if ( TR.visible() ) TR << "Omitting residue " << i << std::endl;
 			continue;
 		}
 		if ( !design ) {
-			if(TR.visible()) TR << "Not designing residue " << i << " as specified by no_design in the XML tag." << std::endl;
+			if ( TR.visible() ) TR << "Not designing residue " << i << " as specified by no_design in the XML tag." << std::endl;
 			if ( repack_non_designed_residues_ ) {
 				task.nonconst_residue_task( i ).restrict_to_repacking();
 			} else {
@@ -768,38 +777,38 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 			}
 			continue;
 		}
-		BOOST_FOREACH(std::string& layer, active_layers) {
+		BOOST_FOREACH ( std::string& layer, active_layers ) {
 			std::string sstype("");
-			if( layer == "Nterm" || layer == "Cterm") {
+			if ( layer == "Nterm" || layer == "Cterm" ) {
 				sstype="all";
-			} else if( helix_capping[ i ] == true && add_helix_capping_ ) {
+			} else if ( helix_capping[ i ] == true && add_helix_capping_ ) {
 				sstype="HelixCapping";
-			} else if( initial_helix[i] ) {
+			} else if ( initial_helix[i] ) {
 				sstype="HelixStart";
-			} else if( ss == 'E') {
+			} else if ( ss == 'E' ) {
 				sstype="Strand";
-			} else if( ss == 'L') {
+			} else if ( ss == 'L' ) {
 				sstype="Loop";
-			} else if( ss == 'H') {
+			} else if ( ss == 'H' ) {
 				sstype="Helix";
 			}
-			if(sstype!="") {
+			if ( sstype!="" ) {
 				//Restrict allowed canonical residues:
 				task.nonconst_residue_task( i ).restrict_absent_canonical_aas( get_restrictions( layer, srbl_layer, sstype) );
 				//Add allowed noncanonical residues:
 				LayerNCResidues::const_iterator cur_nc_layer = layer_nc_residues_.find(layer);
-				if(cur_nc_layer!=layer_nc_residues_.end()) {
+				if ( cur_nc_layer!=layer_nc_residues_.end() ) {
 					LayerNCDefinitions::const_iterator cur_nc_defs = cur_nc_layer->second.find(sstype);
-					if(cur_nc_defs!=cur_nc_layer->second.end()) {
-						if(!cur_nc_defs->second.empty()) { //If there are NCAAs defined for this layer:
-							for(utility::vector1<std::string>::const_iterator it=cur_nc_defs->second.begin(); it < cur_nc_defs->second.end(); ++it) { //Loop through all NCAAs defined for this layer.
+					if ( cur_nc_defs!=cur_nc_layer->second.end() ) {
+						if ( !cur_nc_defs->second.empty() ) { //If there are NCAAs defined for this layer:
+							for ( utility::vector1<std::string>::const_iterator it=cur_nc_defs->second.begin(); it < cur_nc_defs->second.end(); ++it ) { //Loop through all NCAAs defined for this layer.
 								task.nonconst_residue_task(i).allow_noncanonical_aa( *it ); //Add the current NCAA to the list allowed for this residue.
 							}
 						}
 					}
 				}
 			}
-			if(TR.visible()) TR << i << " done " << std::endl << std::flush;
+			if ( TR.visible() ) TR << i << " done " << std::endl << std::flush;
 		} // for each layer
 	} // for( i )
 } // apply
@@ -812,10 +821,12 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 	use_original_ = tag->getOption< bool >( "use_original_non_designed_layer", 1 );
 
 	String design_layers = tag->getOption< String >( "layer", "core_boundary_surface_Nterm_Cterm" );
-	if ( design_layers == "all" )
+	if ( design_layers == "all" ) {
 		design_layers = "core_boundary_surface_Nterm_Cterm";
-	if ( design_layers == "other" || design_layers == "user" )
+	}
+	if ( design_layers == "other" || design_layers == "user" ) {
 		design_layers = "";
+	}
 	utility::vector1< String > layers( utility::string_split( design_layers, '_' ) );
 	set_design_layers( layers );
 
@@ -828,46 +839,46 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 
 	srbl_->set_design_layer( true, true, true );
 
-	if( tag->hasOption( "use_sidechain_neighbors" ) ) {
+	if ( tag->hasOption( "use_sidechain_neighbors" ) ) {
 		set_use_sidechain_neighbors( tag->getOption< bool >( "use_sidechain_neighbors" ) );
 	}
 
-	if( tag->hasOption( "pore_radius" ) ) {
+	if ( tag->hasOption( "pore_radius" ) ) {
 		srbl_->pore_radius( tag->getOption< Real >( "pore_radius" ) );
 	}
 
-	if( tag->hasOption( "core" ) ) {
+	if ( tag->hasOption( "core" ) ) {
 		srbl_->sasa_core( tag->getOption< Real >( "core" ) );
 	}
-	if( tag->hasOption( "surface" ) ) {
+	if ( tag->hasOption( "surface" ) ) {
 		srbl_->sasa_surface( tag->getOption< Real >( "surface" ) );
 	}
 
-	if( tag->hasOption( "core_E" ) ) {
+	if ( tag->hasOption( "core_E" ) ) {
 		srbl_->sasa_core( tag->getOption< Real >( "core_E" ), "E" );
 	}
-	if( tag->hasOption( "core_L" ) ) {
+	if ( tag->hasOption( "core_L" ) ) {
 		srbl_->sasa_core( tag->getOption< Real >( "core_L" ), "L" );
 	}
-	if( tag->hasOption( "core_H" ) ) {
+	if ( tag->hasOption( "core_H" ) ) {
 		srbl_->sasa_core( tag->getOption< Real >( "core_H" ), "H" );
 	}
 
-	if( tag->hasOption( "surface_E" ) ) {
+	if ( tag->hasOption( "surface_E" ) ) {
 		srbl_->sasa_surface( tag->getOption< Real >( "surface_E" ), "E" );
 	}
-	if( tag->hasOption( "surface_L" ) ) {
+	if ( tag->hasOption( "surface_L" ) ) {
 		srbl_->sasa_surface( tag->getOption< Real >( "surface_L" ), "L" );
 	}
-	if( tag->hasOption( "surface_H" ) ) {
+	if ( tag->hasOption( "surface_H" ) ) {
 		srbl_->sasa_surface( tag->getOption< Real >( "surface_H" ), "H" );
 	}
 
-	if( tag->hasOption( "make_rasmol_script" ) ) {
+	if ( tag->hasOption( "make_rasmol_script" ) ) {
 		srbl_->make_rasmol_format_file( tag->getOption< bool >( "make_rasmol_script" ) );
 	}
 
-	if( tag->hasOption( "blueprint" ) ) {
+	if ( tag->hasOption( "blueprint" ) ) {
 		blueprint_ = protocols::jd2::parser::BluePrintOP( new protocols::jd2::parser::BluePrint( tag->getOption< std::string >("blueprint") ) );
 	}
 
@@ -875,21 +886,22 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 	set_restrict_restypes( tag->getOption< bool >( "restrict_restypes", true ) );
 	make_pymol_script( tag->getOption< bool >("make_pymol_script", false) );
 
-	BOOST_FOREACH( utility::tag::TagCOP const layer_tag, tag->getTags() ) {
+	BOOST_FOREACH ( utility::tag::TagCOP const layer_tag, tag->getTags() ) {
 		parse_layer_tag( layer_tag, datamap );
 	}
 
 	if ( TR.visible() ) {
 		TR << "Layers to be designed:";
-		BOOST_FOREACH( DesignLayerPair l_p, design_layer_)  {
-			if( l_p.second )
+		BOOST_FOREACH ( DesignLayerPair l_p, design_layer_ )  {
+			if ( l_p.second ) {
 				TR << "\t" << l_p.first;
+			}
 		}
 		TR << std::endl;
 		// print the layer definitions
-		BOOST_FOREACH( Layer const & layer, layer_residues_ ) {
+		BOOST_FOREACH ( Layer const & layer, layer_residues_ ) {
 			TR << "Layer " << layer.first << std::endl;
-			BOOST_FOREACH( LayerDefinition const & layer_def, layer.second ) {
+			BOOST_FOREACH ( LayerDefinition const & layer_def, layer.second ) {
 				TR << "\t" << ObjexxFCL::format::LJ(15,layer_def.first) << "aa = " << layer_def.second << "\t ncaa = " << print_string_vector( layer_nc_residues_[ layer.first ][ layer_def.first ] ) << std::endl;
 			}
 			TR << std::endl;
@@ -902,15 +914,14 @@ LayerDesignOperation::parse_layer_tag( utility::tag::TagCOP layer_tag, DataMap &
 {
 	using core::pack::task::operation::TaskOperationFactory;
 	std::string layer = layer_tag->getName(); // core, residue, boundary or taskoperation
-	if ( layer == "core" || layer =="boundary" || layer == "surface" ||  layer == "Nterm" ||  layer == "Cterm" )
-	{
+	if ( layer == "core" || layer =="boundary" || layer == "surface" ||  layer == "Nterm" ||  layer == "Cterm" ) {
 		TR << "redefining default layer " << layer << std::endl;
 	} else if ( layer == "CombinedTasks" ) {
 		std::string const comb_name = layer_tag->getOption< std::string >( "name" );
 		layer = comb_name;
 		TR << "Making a combined task named " << comb_name << std::endl;
 		utility::vector1< TaskOperationOP > task_ops;
-		BOOST_FOREACH( utility::tag::TagCOP const task_tag, layer_tag->getTags() ) {
+		BOOST_FOREACH ( utility::tag::TagCOP const task_tag, layer_tag->getTags() ) {
 			std::string task_op_type = task_tag->getName();
 			if ( task_op_type == "all" || task_op_type == "Helix" || task_op_type == "Strand" || task_op_type == "Loop" ) {
 				continue;
@@ -931,12 +942,12 @@ LayerDesignOperation::parse_layer_tag( utility::tag::TagCOP layer_tag, DataMap &
 		utility_exit_with_message( "Invalid layer " + layer + ", valid layers are core, boundary, surface, TaskOperations or CombinedTasks" );
 	}
 
-	BOOST_FOREACH( utility::tag::TagCOP const secstruct_tag, layer_tag->getTags() ) {
+	BOOST_FOREACH ( utility::tag::TagCOP const secstruct_tag, layer_tag->getTags() ) {
 		parse_layer_secstruct_tag( secstruct_tag, datamap, layer );
 	}
 
 	// check if layer ss is defined and if not fill it up
-	BOOST_FOREACH( Layer const & layer, layer_residues_ ) {
+	BOOST_FOREACH ( Layer const & layer, layer_residues_ ) {
 		// fill up empty canonical amino acid lists with all amino acids
 		std::string all_layers_residues = "";
 		LayerDefinitions::const_iterator d = layer_residues_[ layer.first ].find( "all" );
@@ -947,9 +958,10 @@ LayerDesignOperation::parse_layer_tag( utility::tag::TagCOP layer_tag, DataMap &
 		}
 
 		// for all ss types except all, fill in residues
-		BOOST_FOREACH( std::string const & ss_def_name, SS_TYPES ) {
-			if ( ss_def_name == "all" )
+		BOOST_FOREACH ( std::string const & ss_def_name, SS_TYPES ) {
+			if ( ss_def_name == "all" ) {
 				continue;
+			}
 
 			LayerDefinitions::iterator ld_it = layer_residues_[ layer.first ].find( ss_def_name );
 			if ( ld_it == layer_residues_[ layer.first ].end() ) {
@@ -966,10 +978,11 @@ LayerDesignOperation::parse_layer_tag( utility::tag::TagCOP layer_tag, DataMap &
 		}
 
 		// skip if "all" layer is empty
-		if ( ! all_layers_ncaa_residues.size() )
+		if ( ! all_layers_ncaa_residues.size() ) {
 			continue;
+		}
 
-		BOOST_FOREACH( std::string const & ss_def_name, SS_TYPES ) {
+		BOOST_FOREACH ( std::string const & ss_def_name, SS_TYPES ) {
 			LayerNCDefinitions::iterator ldncaa_it = layer_nc_residues_[ layer.first ].find( ss_def_name );
 			if ( ( ldncaa_it == layer_nc_residues_[ layer.first ].end() ) || ( !ldncaa_it->second.size() ) ) {
 				TR << "layer " << layer.first << " has no specification for noncanonical residues in " << ss_def_name << ".  The layer will be filled with the noncanonical residues defined for all secondary structure types." << std::endl;
@@ -987,8 +1000,8 @@ std::string unique_chars( std::string const orig )
 }
 
 utility::vector1< std::string > unique_strs(
-		utility::vector1< std::string > const & orig,
-		utility::vector1< std::string > const & orig2 )
+	utility::vector1< std::string > const & orig,
+	utility::vector1< std::string > const & orig2 )
 {
 	std::set< std::string > strset( orig.begin(), orig.end() );
 	for ( utility::vector1< std::string >::const_iterator s = orig2.begin(); s != orig2.end(); ++s ) {
@@ -999,9 +1012,9 @@ utility::vector1< std::string > unique_strs(
 
 void
 LayerDesignOperation::parse_layer_secstruct_tag(
-		TagCOP secstruct_tag,
-		DataMap &,
-		std::string const & layer_name )
+	TagCOP secstruct_tag,
+	DataMap &,
+	std::string const & layer_name )
 {
 	std::string secstruct = secstruct_tag->getName(); // Strand, Helix, Loop, HelixCapping
 
@@ -1050,8 +1063,9 @@ LayerDesignOperation::parse_layer_secstruct_tag(
 			for ( LayerDefinitions::iterator ld = lrs->second.begin(); ld != lrs->second.end(); ld++ ) {
 				std::string const & cur_aas = ld->second;
 				// prevent appending to all twice
-				if ( ld->first != "all" )
+				if ( ld->first != "all" ) {
 					set_layer_residues( layer_name, ld->first, unique_chars( cur_aas + aas ) );
+				}
 			}
 		}
 	}
@@ -1072,23 +1086,27 @@ LayerDesignOperation::parse_layer_secstruct_tag(
 		LayerDefinitions::const_iterator cur_aas = layer_residues_[ layer_name ].find( secstruct );
 		if ( cur_aas != layer_residues_[ layer_name ].end() ) {
 			std::set< char > temp_def_res_set( cur_aas->second.begin(), cur_aas->second.end() );
-			BOOST_FOREACH( char aa, aas )
+			BOOST_FOREACH ( char aa, aas ) {
 				temp_def_res_set.erase( aa );
+			}
 			set_layer_residues( layer_name, secstruct, std::string( temp_def_res_set.begin(), temp_def_res_set.end() ) );
 		} else {
-			if ( secstruct != "all" )
+			if ( secstruct != "all" ) {
 				throw utility::excn::EXCN_Msg_Exception("LayerDesignOperation: Trying to exclude aas from a secstruct that doesn't exist. Layer = " + layer_name + " secstruct = " + secstruct );
+			}
 		}
 
 		TR << "Excluding residues " << aas << " from layer " << layer_name << " secstruct " << secstruct << std::endl;
 		if ( secstruct == "all" ) {
 			LayerResidues::iterator lrs =  layer_residues_.find( layer_name );
 			for ( LayerDefinitions::iterator ld = lrs->second.begin(); ld != lrs->second.end(); ld++ ) {
-				if ( ld->first == "all" )
+				if ( ld->first == "all" ) {
 					continue;
+				}
 				std::set< char > temp_def_res_set( ld->second.begin(), ld->second.end() );
-				BOOST_FOREACH( char aa, aas )
+				BOOST_FOREACH ( char aa, aas ) {
 					temp_def_res_set.erase( aa );
+				}
 				set_layer_residues( lrs->first, ld->first, std::string( temp_def_res_set.begin(), temp_def_res_set.end() ) );
 			}
 		}

@@ -42,63 +42,63 @@
 
 namespace protocols {
 namespace abinitio {
-namespace abscript{
+namespace abscript {
 
 class AbscriptStageMover : public moves::Mover {
 	typedef environment::ClientMoverOP ClientMoverOP;
-  typedef std::set< ClientMoverOP > MoverSet;
-  typedef std::set< StagePreparerOP > PreparerSet;
+	typedef std::set< ClientMoverOP > MoverSet;
+	typedef std::set< StagePreparerOP > PreparerSet;
 
 public:
-  AbscriptStageMover( StageID stage,
-                      moves::MonteCarloOP mc,
-                      core::scoring::ScoreFunctionOP score,
-                      core::Size cycles );
+	AbscriptStageMover( StageID stage,
+		moves::MonteCarloOP mc,
+		core::scoring::ScoreFunctionOP score,
+		core::Size cycles );
 
-  void apply( core::pose::Pose& );
+	void apply( core::pose::Pose& );
 
-  void yield_submovers( MoverSet& set ) const;
+	void yield_submovers( MoverSet& set ) const;
 
-  std::string get_name() const;
+	std::string get_name() const;
 
-  //@returns if this stage step should be run or not (sometimes they can be skipped).
-  bool setup_stage( core::pose::Pose& pose, core::Real const& progress );
+	//@returns if this stage step should be run or not (sometimes they can be skipped).
+	bool setup_stage( core::pose::Pose& pose, core::Real const& progress );
 
-  void add_submover( ClientMoverOP mover, core::Real weight );
+	void add_submover( ClientMoverOP mover, core::Real weight );
 
-  void add_preparer( StagePreparerOP mover );
+	void add_preparer( StagePreparerOP mover );
 
-  void set_cycles_adjust( core::Real in );
+	void set_cycles_adjust( core::Real in );
 
-  void set_seq_sep_ramping( core::Real const slope, core::Real const intercept );
+	void set_seq_sep_ramping( core::Real const slope, core::Real const intercept );
 
-  void set_chainbreak_ramping( core::Real const slope, core::Real const intercept );
+	void set_chainbreak_ramping( core::Real const slope, core::Real const intercept );
 
-  core::Real const& seq_sep_intercept() { return seqsep_intcpt_; }
+	core::Real const& seq_sep_intercept() { return seqsep_intcpt_; }
 
-  core::scoring::ScoreFunctionCOP scorefxn() const { return score_; }
+	core::scoring::ScoreFunctionCOP scorefxn() const { return score_; }
 
 private:
 
-  void update_max_seq_sep( core::pose::Pose& pose, core::Real const& progress );
+	void update_max_seq_sep( core::pose::Pose& pose, core::Real const& progress );
 
-  StageID stage_;
-  moves::RandomMoverOP random_mover_;
-  MoverSet movers_;
-  PreparerSet preparers_;
-  core::Size const cycles_;
-  core::Real cycles_adjust_;
-  core::scoring::ScoreFunctionOP score_;
-  moves::MonteCarloOP mc_;
+	StageID stage_;
+	moves::RandomMoverOP random_mover_;
+	MoverSet movers_;
+	PreparerSet preparers_;
+	core::Size const cycles_;
+	core::Real cycles_adjust_;
+	core::scoring::ScoreFunctionOP score_;
+	moves::MonteCarloOP mc_;
 
-  core::Real temperature_;
+	core::Real temperature_;
 
-  core::Real seqsep_slope_;
-  core::Real seqsep_intcpt_;
-  core::Real chbreak_slope_;
-  core::Real chbreak_intcpt_;
+	core::Real seqsep_slope_;
+	core::Real seqsep_intcpt_;
+	core::Real chbreak_slope_;
+	core::Real chbreak_intcpt_;
 
-  constraints_additional::MaxSeqSepConstraintSetOP constraints_;
+	constraints_additional::MaxSeqSepConstraintSetOP constraints_;
 };
 
 } // abscript

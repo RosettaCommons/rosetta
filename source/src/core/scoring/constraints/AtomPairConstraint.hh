@@ -47,7 +47,7 @@ public:
 	AtomPairConstraint(
 		AtomID const & a1,
 		AtomID const & a2,
-	 	core::scoring::func::FuncOP func,
+		core::scoring::func::FuncOP func,
 		ScoreType scoretype = atom_pair_constraint
 	):
 		Constraint( scoretype ),
@@ -88,7 +88,7 @@ public:
 	score(
 		Vector const & xyz1,
 		Vector const & xyz2
-		) const;
+	) const;
 
 
 	void
@@ -105,7 +105,7 @@ public:
 		AtomID const & atom,
 		core::scoring::func::XYZ_Func const & xyz,
 		Vector & F1,
-	 	Vector & F2,
+		Vector & F2,
 		EnergyMap const & weights
 	) const;
 
@@ -129,11 +129,11 @@ public:
 	atom( Size const n ) const
 	{
 		switch( n ) {
-		case 1:
+		case 1 :
 			return atom1_;
-		case 2:
+		case 2 :
 			return atom2_;
-		default:
+		default :
 			utility_exit_with_message( "AtomPairConstraint::atom() bad argument" );
 		}
 		return atom1_;
@@ -143,8 +143,8 @@ public:
 	void show_def( std::ostream& out, pose::Pose const& pose ) const;
 
 	void read_def( std::istream& in, pose::Pose const& pose,func::FuncFactory const& func_factory );
-	//	//@brief set constraint such that the pose doesn't violate it.
-	//	virtual void steal( pose::Pose& );
+	// //@brief set constraint such that the pose doesn't violate it.
+	// virtual void steal( pose::Pose& );
 	virtual
 	Real dist( pose::Pose const& pose ) const;
 

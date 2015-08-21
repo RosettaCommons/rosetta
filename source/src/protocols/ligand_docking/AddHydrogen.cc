@@ -43,26 +43,26 @@ namespace ligand_docking {
 
 
 AddHydrogen::AddHydrogen():
-		//utility::pointer::ReferenceCount(),
-		Mover("AddHydrogen")
+	//utility::pointer::ReferenceCount(),
+	Mover("AddHydrogen")
 {
 	Mover::type( "AddHydrogen" );
 }
 
 AddHydrogen::AddHydrogen(core::Size const residue_index, core::Size const connection_id):
-			//utility::pointer::ReferenceCount(),
-			Mover("AddHydrogen"),
-			residue_index_(residue_index),
-			connection_id_(connection_id)
+	//utility::pointer::ReferenceCount(),
+	Mover("AddHydrogen"),
+	residue_index_(residue_index),
+	connection_id_(connection_id)
 {
 	Mover::type( "AddHydrogen" );
 }
 
 AddHydrogen::AddHydrogen(AddHydrogen const & that):
-		//utility::pointer::ReferenceCount(),
-		protocols::moves::Mover( that ),
-		residue_index_(that.residue_index_),
-		connection_id_(that.connection_id_)
+	//utility::pointer::ReferenceCount(),
+	protocols::moves::Mover( that ),
+	residue_index_(that.residue_index_),
+	connection_id_(that.connection_id_)
 {}
 
 AddHydrogen::~AddHydrogen() {}
@@ -100,13 +100,13 @@ AddHydrogen::apply( core::pose::Pose & pose )
 	std::string name3= res_to_fix.atom_name(stub_atom3);
 
 	core::chemical::SetICoor set_i_coor(
-			"HH",/// name this in the style of the other Hs (H1,H2,H3, etc)
-			new_i_coor.phi(),
-			new_i_coor.theta(),
-			1.11, ///TODO Lookup from bond-length table
-			name1,
-			name2,
-			name3
+		"HH",/// name this in the style of the other Hs (H1,H2,H3, etc)
+		new_i_coor.phi(),
+		new_i_coor.theta(),
+		1.11, ///TODO Lookup from bond-length table
+		name1,
+		name2,
+		name3
 	);
 	set_i_coor.apply(*type_to_fix);
 

@@ -196,7 +196,7 @@ public:
 	) = 0;
 
 	/// @brief expand (or) the list of available residue types for non-cannonicals.  Assumes same restypeset as original residue
-	virtual void allow_noncanonical_aa(	std::string const & aaname ) = 0;
+	virtual void allow_noncanonical_aa( std::string const & aaname ) = 0;
 
 	/// @brief explicitly allow a NCAA; assumes same ResidueTypeSet as original_residue_type_
 	virtual void allow_noncanonical_aa( chemical::AA aa ) = 0;

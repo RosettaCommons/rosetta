@@ -46,35 +46,35 @@ using namespace json_spirit;
 #endif
 
 #if defined( JSON_SPIRIT_WVALUE_ENABLED ) && !defined( BOOST_NO_STD_WSTRING )
-    bool json_spirit::read( const std::wstring& s, wValue& value )
-    {
-        return read_string( s, value );
-    }
+bool json_spirit::read( const std::wstring& s, wValue& value )
+{
+	return read_string( s, value );
+}
 
-    void json_spirit::read_or_throw( const std::wstring& s, wValue& value )
-    {
-        read_string_or_throw( s, value );
-    }
+void json_spirit::read_or_throw( const std::wstring& s, wValue& value )
+{
+	read_string_or_throw( s, value );
+}
 
-    bool json_spirit::read( std::wistream& is, wValue& value )
-    {
-        return read_stream( is, value );
-    }
+bool json_spirit::read( std::wistream& is, wValue& value )
+{
+	return read_stream( is, value );
+}
 
-    void json_spirit::read_or_throw( std::wistream& is, wValue& value )
-    {
-        read_stream_or_throw( is, value );
-    }
+void json_spirit::read_or_throw( std::wistream& is, wValue& value )
+{
+	read_stream_or_throw( is, value );
+}
 
-    bool json_spirit::read( std::wstring::const_iterator& begin, std::wstring::const_iterator end, wValue& value )
-    {
-        return read_range( begin, end, value );
-    }
+bool json_spirit::read( std::wstring::const_iterator& begin, std::wstring::const_iterator end, wValue& value )
+{
+	return read_range( begin, end, value );
+}
 
-    void json_spirit::read_or_throw( std::wstring::const_iterator& begin, std::wstring::const_iterator end, wValue& value )
-    {
-        begin = read_range_or_throw( begin, end, value );
-    }
+void json_spirit::read_or_throw( std::wstring::const_iterator& begin, std::wstring::const_iterator end, wValue& value )
+{
+	begin = read_range_or_throw( begin, end, value );
+}
 #endif
 
 #ifdef JSON_SPIRIT_MVALUE_ENABLED
@@ -110,35 +110,35 @@ using namespace json_spirit;
 #endif
 
 #if defined( JSON_SPIRIT_WMVALUE_ENABLED ) && !defined( BOOST_NO_STD_WSTRING )
-    bool json_spirit::read( const std::wstring& s, wmValue& value )
-    {
-        return read_string( s, value );
-    }
+bool json_spirit::read( const std::wstring& s, wmValue& value )
+{
+	return read_string( s, value );
+}
 
-    void json_spirit::read_or_throw( const std::wstring& s, wmValue& value )
-    {
-        read_string_or_throw( s, value );
-    }
+void json_spirit::read_or_throw( const std::wstring& s, wmValue& value )
+{
+	read_string_or_throw( s, value );
+}
 
-    bool json_spirit::read( std::wistream& is, wmValue& value )
-    {
-        return read_stream( is, value );
-    }
+bool json_spirit::read( std::wistream& is, wmValue& value )
+{
+	return read_stream( is, value );
+}
 
-    void json_spirit::read_or_throw( std::wistream& is, wmValue& value )
-    {
-        read_stream_or_throw( is, value );
-    }
+void json_spirit::read_or_throw( std::wistream& is, wmValue& value )
+{
+	read_stream_or_throw( is, value );
+}
 
-    bool json_spirit::read( std::wstring::const_iterator& begin, std::wstring::const_iterator end, wmValue& value )
-    {
-        return read_range( begin, end, value );
-    }
+bool json_spirit::read( std::wstring::const_iterator& begin, std::wstring::const_iterator end, wmValue& value )
+{
+	return read_range( begin, end, value );
+}
 
-    void json_spirit::read_or_throw( std::wstring::const_iterator& begin, std::wstring::const_iterator end, wmValue& value )
-    {
-        begin = read_range_or_throw( begin, end, value );
-    }
+void json_spirit::read_or_throw( std::wstring::const_iterator& begin, std::wstring::const_iterator end, wmValue& value )
+{
+	begin = read_range_or_throw( begin, end, value );
+}
 #endif
 
 //} // namespace json_spirit

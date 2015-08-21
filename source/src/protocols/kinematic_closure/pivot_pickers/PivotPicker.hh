@@ -31,7 +31,7 @@ public:
 	/// @brief Return the name of this pivot picker.
 	virtual std::string get_name() const = 0;
 
-	/// @brief Return a loop object.  The pivots will be taken to be the start, 
+	/// @brief Return a loop object.  The pivots will be taken to be the start,
 	/// cut and stop residues.
 	virtual Loop pick(Pose const & pose, Loop const & loop) = 0;
 

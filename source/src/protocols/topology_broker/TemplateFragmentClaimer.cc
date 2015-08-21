@@ -57,8 +57,8 @@ TemplateFragmentClaimer::TemplateFragmentClaimer() : frag_size_( 9 ), config_fil
 {}
 
 TemplateFragmentClaimer::TemplateFragmentClaimer( std::string config_file, core::Size fragsize, weights::AbinitioMoverWeightOP weight )
-	: FragmentClaimer( NULL, "template-frags", weight ),
-		frag_size_( fragsize )
+: FragmentClaimer( NULL, "template-frags", weight ),
+	frag_size_( fragsize )
 {
 	read_config_file( config_file );
 }
@@ -67,9 +67,9 @@ void TemplateFragmentClaimer::read_config_file( std::string const& file ) {
 	templates_ = abinitio::TemplatesOP( new abinitio::Templates( file /*native_pose_*/ ) );
 	//templates_->target_sequence() = sequence_; // a hack until class SequenceMapping works better
 	// want to pick fragments from templates... make sure they are not initialized yet
-	//	runtime_assert( !fragset_large_ );
+	// runtime_assert( !fragset_large_ );
 
-	if( !templates_->is_good() ){
+	if ( !templates_->is_good() ) {
 		utility_exit_with_message("ERROR occured during template setup. check BAD_SEQUENCES file!");
 	}
 

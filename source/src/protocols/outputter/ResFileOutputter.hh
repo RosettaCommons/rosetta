@@ -30,11 +30,11 @@ namespace outputter {
 
 class ResFileOutputter : public FormatStringOutputter {
 
-	public:
-		ResFileOutputter();
-		virtual ~ResFileOutputter();
+public:
+	ResFileOutputter();
+	virtual ~ResFileOutputter();
 
-		virtual void write( Pose & p );
+	virtual void write( Pose & p );
 
 #ifdef USELUA
 		void parse_def( utility::lua::LuaObject const & def,
@@ -42,19 +42,19 @@ class ResFileOutputter : public FormatStringOutputter {
 		virtual void lregister( lua_State * lstate );
 #endif
 
-		// factory functions
-		OutputterSP create();
-		static std::string name() {
-			return "ResFileOutputter";
-		}
+	// factory functions
+	OutputterSP create();
+	static std::string name() {
+		return "ResFileOutputter";
+	}
 
-	private:
- 	core::pack::task::TaskFactoryCOP task_factory_;
-		bool designable_only_;
-		std::string resfile_general_property_;
+private:
+	core::pack::task::TaskFactoryCOP task_factory_;
+	bool designable_only_;
+	std::string resfile_general_property_;
 
 
-}; // end 
+}; // end
 
 } // outputter
 } // protocols

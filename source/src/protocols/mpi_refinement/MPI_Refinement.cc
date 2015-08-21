@@ -66,7 +66,7 @@
 #endif
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 //Auto Headers
@@ -99,85 +99,85 @@ MPI_Refinement::MPI_Refinement( char machine_letter ):
 	total_metropolis_accepts_(0),
 	ident_string_("ident")
 {
-  set_defaults();  // constructors must must must call this!
+	set_defaults();  // constructors must must must call this!
 }
 
 void
 MPI_Refinement::set_defaults(){
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-  max_lib_size_               = option[ OptionKeys::lh::max_lib_size ]();
-  max_ref_lib_size_           = option[ OptionKeys::lh::max_ref_lib_size ]();
-  save_state_interval_        = option[ OptionKeys::lh::mpi_save_state_interval ]();
-  mpi_feedback_               = option[ OptionKeys::lh::mpi_feedback ]();
-  mpi_metropolis_temp_        = option[ OptionKeys::lh::mpi_metropolis_temp ]();
-  rms_limit_                  = option[ OptionKeys::lh::rms_limit ]();
-  //objective_function_         = option[ OptionKeys::lh::objective_function ]();
+	max_lib_size_               = option[ OptionKeys::lh::max_lib_size ]();
+	max_ref_lib_size_           = option[ OptionKeys::lh::max_ref_lib_size ]();
+	save_state_interval_        = option[ OptionKeys::lh::mpi_save_state_interval ]();
+	mpi_feedback_               = option[ OptionKeys::lh::mpi_feedback ]();
+	mpi_metropolis_temp_        = option[ OptionKeys::lh::mpi_metropolis_temp ]();
+	rms_limit_                  = option[ OptionKeys::lh::rms_limit ]();
+	//objective_function_         = option[ OptionKeys::lh::objective_function ]();
 
 	core::chemical::ResidueTypeSetCOP rsd_set
 		= core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-  native_given_ = false;
-  if( option[ in::file::native ].user() ){
-    native_given_ = true;
-    core::import_pose::pose_from_pdb( native_pose_, *rsd_set, option[ in::file::native ]() );
-  }
+	native_given_ = false;
+	if ( option[ in::file::native ].user() ) {
+		native_given_ = true;
+		core::import_pose::pose_from_pdb( native_pose_, *rsd_set, option[ in::file::native ]() );
+	}
 
 	// initial "reference" structure should be provided as the first at -in:file:s
 	core::import_pose::pose_from_pdb( pose0_, *rsd_set, option[ in::file::s ](1) );
 
 	fobj_ = MultiObjectiveOP( new MultiObjective() );
 
-  mpi_resume_ = "";
-  if( option[ OptionKeys::lh::mpi_resume ].user() ){
-    mpi_resume_ = option[ OptionKeys::lh::mpi_resume ]();
-  }
-  jobname_ = option[ OptionKeys::lh::jobname ]();
+	mpi_resume_ = "";
+	if ( option[ OptionKeys::lh::mpi_resume ].user() ) {
+		mpi_resume_ = option[ OptionKeys::lh::mpi_resume ]();
+	}
+	jobname_ = option[ OptionKeys::lh::jobname ]();
 	sim_replace_obj_ = option[ OptionKeys::lh::sim_replace_obj ]();
-  // Make ident string:
-  // Make a medley of a string and the PID
-  ident_string_ =  option[ lh::jobname ];
-  TR << "IDENT: " << ident_string_ << std::endl;
-  
-  // make sure the state saves are randomly staggered - otherwise all the masters dump several hundred megs at once!
-  last_save_state_ = time(NULL)  + core::Size( numeric::random::rg().uniform()  * (core::Real) save_state_interval_) ;
-  TR.Debug << "Interlace dumps: " << last_save_state_ << "  " << time(NULL)  << "  " << last_save_state_ - time(NULL) << "  " << save_state_interval_ << "  " << std::endl;
+	// Make ident string:
+	// Make a medley of a string and the PID
+	ident_string_ =  option[ lh::jobname ];
+	TR << "IDENT: " << ident_string_ << std::endl;
+
+	// make sure the state saves are randomly staggered - otherwise all the masters dump several hundred megs at once!
+	last_save_state_ = time(NULL)  + core::Size( numeric::random::rg().uniform()  * (core::Real) save_state_interval_) ;
+	TR.Debug << "Interlace dumps: " << last_save_state_ << "  " << time(NULL)  << "  " << last_save_state_ - time(NULL) << "  " << save_state_interval_ << "  " << std::endl;
 
 	starttime_ = time(NULL);
 }
 
 void
 MPI_Refinement::load_structures_from_cmdline_into_library(
-							 protocols::wum::SilentStructStore &library )
+	protocols::wum::SilentStructStore &library )
 {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::scoring::constraints;
-	
-  start_timer( TIMING_IO_READ  );
-  TR << "Reading in structures..." << std::endl;
 
-  core::chemical::ResidueTypeSetCOP rsd_set =
+	start_timer( TIMING_IO_READ  );
+	TR << "Reading in structures..." << std::endl;
+
+	core::chemical::ResidueTypeSetCOP rsd_set =
 		core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
-  core::import_pose::pose_stream::MetaPoseInputStream input = core::import_pose::pose_stream::streams_from_cmd_line();
+	core::import_pose::pose_stream::MetaPoseInputStream input = core::import_pose::pose_stream::streams_from_cmd_line();
 
-  core::Size count = 0;
-  SilentStructStore temp_lib;
+	core::Size count = 0;
+	SilentStructStore temp_lib;
 
-  // Rescore input structures for fair comparison with whatever comes back from relax calls	
-  //scorefxn = core::scoring::getScoreFunction();
+	// Rescore input structures for fair comparison with whatever comes back from relax calls
+	//scorefxn = core::scoring::getScoreFunction();
 	core::scoring::ScoreFunctionOP scorefxn = fobj_->get_scorefxn( 1 ); // this should be rosetta standard...
-  core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *scorefxn );  
+	core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *scorefxn );
 	scorefxn->set_weight( core::scoring::coordinate_constraint, 10.0 ); //10.0 will allow about 0.1 ang diff...
 
-  while( input.has_another_pose() ) {
-    core::pose::Pose pose;
-    input.fill_pose( pose, *rsd_set );
+	while ( input.has_another_pose() ) {
+		core::pose::Pose pose;
+		input.fill_pose( pose, *rsd_set );
 		core::pose::Pose pose_save( pose );
 
 		// Minimize pose prior to store
-		if( option[ OptionKeys::lh::mpi_packmin_init ]() ){
+		if ( option[ OptionKeys::lh::mpi_packmin_init ]() ) {
 			protocols::wum::SilentStructStore library_tmp;
 			core::pose::set_ss_from_phipsi( pose );
 			core::io::silent::SilentStructOP ss = option[ OptionKeys::lh::bss]() ?
@@ -190,11 +190,11 @@ MPI_Refinement::load_structures_from_cmdline_into_library(
 			print_library( library_tmp, "MasterLIB Init");
 
 			if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
-				ConstraintSetOP cstset = 
-					ConstraintIO::get_instance()->read_constraints( get_cst_fa_file_option(), 
-																													ConstraintSetOP( new ConstraintSet ), pose ); 
+				ConstraintSetOP cstset =
+					ConstraintIO::get_instance()->read_constraints( get_cst_fa_file_option(),
+					ConstraintSetOP( new ConstraintSet ), pose );
 				TR << "Read constraints: " << ( cstset->has_constraints() ? "YES" : "NONE" ) << std::endl;
-				pose.constraint_set( cstset ); 
+				pose.constraint_set( cstset );
 			} else { // strong coordinate constraint
 				protocols::relax::AtomCoordinateCstMover coord_cst_mover;
 				coord_cst_mover.cst_sd( 1.0 );
@@ -206,294 +206,292 @@ MPI_Refinement::load_structures_from_cmdline_into_library(
 			TR << "rmsd after minimizing: " << rmsd << std::endl;
 		}
 
-    (*scorefxn)(pose);
+		(*scorefxn)(pose);
 
-    core::pose::set_ss_from_phipsi( pose );
-    core::io::silent::SilentStructOP ss = option[ OptionKeys::lh::bss]() ?
-      core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary") :
-      core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+		core::pose::set_ss_from_phipsi( pose );
+		core::io::silent::SilentStructOP ss = option[ OptionKeys::lh::bss]() ?
+			core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary") :
+			core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
 
 		ss->fill_struct( pose );
-    ss->add_energy( "parent_score", 0 );  // fa score of parent
-    ss->add_energy( "nuse", 0 );   // lh count is the number of times this structure has been used to generate new structures 
-    ss->add_energy( "round", 0 );     // round is the number of consecutive loophashes this structure has gone through  
-    ss->add_energy( "iter", 0 );     // round is the number of consecutive loophashes this structure has gone through  
-    ss->add_energy( "expire", 0 );    // how many times has this structure been retired to the temporor ? >1 means it's been sent out again
-    //if(  ss->get_string_value("usid") == "" ){	
-    //  ss->add_string_value( "usid", "_" + string_of(count)); // A unique structure id (usid) that will identify the structure until it is modified. 
-    //}
-    //ss->add_string_value( "husid", ss->get_string_value("usid") ); // history of usids  
+		ss->add_energy( "parent_score", 0 );  // fa score of parent
+		ss->add_energy( "nuse", 0 );   // lh count is the number of times this structure has been used to generate new structures
+		ss->add_energy( "round", 0 );     // round is the number of consecutive loophashes this structure has gone through
+		ss->add_energy( "iter", 0 );     // round is the number of consecutive loophashes this structure has gone through
+		ss->add_energy( "expire", 0 );    // how many times has this structure been retired to the temporor ? >1 means it's been sent out again
+		//if(  ss->get_string_value("usid") == "" ){
+		//  ss->add_string_value( "usid", "_" + string_of(count)); // A unique structure id (usid) that will identify the structure until it is modified.
+		//}
+		//ss->add_string_value( "husid", ss->get_string_value("usid") ); // history of usids
 
-    ss->add_energy( "state", 0 );     // state: 0 init, 1 loophashed, 2 relaxed 
+		ss->add_energy( "state", 0 );     // state: 0 init, 1 loophashed, 2 relaxed
 
-    if( native_given_ ) add_poseinfo_to_ss( *ss, native_pose_, "" );
+		if ( native_given_ ) add_poseinfo_to_ss( *ss, native_pose_, "" );
 		add_poseinfo_to_ss( *ss, pose0_, "_i" );
 
-    library.add( ss );
-    count ++;
-  }
+		library.add( ss );
+		count ++;
+	}
 
-  if ( library.size() == 0 ){
-    TR.Error << "Error reading starting structures: 0 valid structures read. Check your input files and parameters" << std::endl;
-    utility_exit_with_message( "Error reading starting structures: 0 valid structures read. Check your input files and parameters" );
-  }
+	if ( library.size() == 0 ) {
+		TR.Error << "Error reading starting structures: 0 valid structures read. Check your input files and parameters" << std::endl;
+		utility_exit_with_message( "Error reading starting structures: 0 valid structures read. Check your input files and parameters" );
+	}
 
 	fobj_->add_objective_function_info( library );
-  TR << "Added " << library.size() << " structures to library " << std::endl;
+	TR << "Added " << library.size() << " structures to library " << std::endl;
 
 	runtime_assert(  library_central_.size() <= max_lib_size_ );
-  start_timer( TIMING_CPU );
+	start_timer( TIMING_CPU );
 }
 
 void
 MPI_Refinement::save_state(std::string prefix ){
-    start_timer( TIMING_IO_WRITE );
-    long starttime = time(NULL);
-    write_queues_to_file( prefix + "." + string_of(mpi_rank()) );
-    library_central_.serialize_to_file( prefix + "." + string_of(mpi_rank())+ ".lib.library_central" );
-    long endtime = time(NULL);
-    TR << "Saved state: " << endtime - starttime << "s " << inbound().size() << " + " << outbound().size() << " + " <<  library_central_.size() << " + " << ( inbound().size() + outbound().size() + library_central_.size() ) << std::endl;
-    start_timer( TIMING_CPU );
+	start_timer( TIMING_IO_WRITE );
+	long starttime = time(NULL);
+	write_queues_to_file( prefix + "." + string_of(mpi_rank()) );
+	library_central_.serialize_to_file( prefix + "." + string_of(mpi_rank())+ ".lib.library_central" );
+	long endtime = time(NULL);
+	TR << "Saved state: " << endtime - starttime << "s " << inbound().size() << " + " << outbound().size() << " + " <<  library_central_.size() << " + " << ( inbound().size() + outbound().size() + library_central_.size() ) << std::endl;
+	start_timer( TIMING_CPU );
 }
 
 void
 MPI_Refinement::save_state_auto(){
-  if( (core::Size)(last_save_state_ + save_state_interval_ ) < (core::Size)time(NULL) ){
-    TR << "Saving state.. " << std::endl;
-    last_save_state_ = time(NULL);
-    save_state( ident_string_ );
-  }
+	if ( (core::Size)(last_save_state_ + save_state_interval_ ) < (core::Size)time(NULL) ) {
+		TR << "Saving state.. " << std::endl;
+		last_save_state_ = time(NULL);
+		save_state( ident_string_ );
+	}
 }
 
 void
 MPI_Refinement::load_state(std::string prefix ){
-  start_timer( TIMING_IO_READ );
-  inbound().clear();
-  outbound().clear();
-  read_queues_from_file( prefix + "." + string_of(mpi_rank()) );
-  library_central_.clear();
-  library_central_.read_from_file( prefix +  "." + string_of(mpi_rank()) + ".lib.library_central" );
-  start_timer( TIMING_CPU );
+	start_timer( TIMING_IO_READ );
+	inbound().clear();
+	outbound().clear();
+	read_queues_from_file( prefix + "." + string_of(mpi_rank()) );
+	library_central_.clear();
+	library_central_.read_from_file( prefix +  "." + string_of(mpi_rank()) + ".lib.library_central" );
+	start_timer( TIMING_CPU );
 }
 
 void
 MPI_Refinement::print_stats(){
-  static int lasttime = 0;
-  if( (time(NULL) - lasttime) < 300 ) return;
-  lasttime = time(NULL);
+	static int lasttime = 0;
+	if ( (time(NULL) - lasttime) < 300 ) return;
+	lasttime = time(NULL);
 
-  TR.Debug << "STATL: "
-     << wall_time() << "s  "
-     << total_structures_ << "  "
-     << total_structures_relax_
-     << " Acc: " << F(5,3, core::Real(total_metropolis_accepts_)/ core::Real(total_metropolis_) )
-     << " CPU: " << int((totaltime_batchrelax_+totaltime_loophash_)/3600) << " hrs  "
-     << " r/l: " << F(5,2, float(totaltime_batchrelax_)/(float(totaltime_loophash_)+0.1))
-     << " LHav: " << int(totaltime_loophash_/(n_loophash_+1)) << "s "
-     << " BRav: " << int(totaltime_batchrelax_/(n_batchrelax_+1)) << "s "
-     << " MEM: " << int(library_central_.mem_footprint()/1024) << " kB "  << std::endl;
+	TR.Debug << "STATL: "
+		<< wall_time() << "s  "
+		<< total_structures_ << "  "
+		<< total_structures_relax_
+		<< " Acc: " << F(5,3, core::Real(total_metropolis_accepts_)/ core::Real(total_metropolis_) )
+		<< " CPU: " << int((totaltime_batchrelax_+totaltime_loophash_)/3600) << " hrs  "
+		<< " r/l: " << F(5,2, float(totaltime_batchrelax_)/(float(totaltime_loophash_)+0.1))
+		<< " LHav: " << int(totaltime_loophash_/(n_loophash_+1)) << "s "
+		<< " BRav: " << int(totaltime_batchrelax_/(n_batchrelax_+1)) << "s "
+		<< " MEM: " << int(library_central_.mem_footprint()/1024) << " kB "  << std::endl;
 }
 
 bool
 MPI_Refinement::add_structure_to_library( core::io::silent::SilentStructOP ss, std::string add_algorithm ){
-  // reset the nuse to 0
-  ss->add_energy( "nuse", 0 );
-  //ss->add_energy( "ltime", time(NULL) );
+	// reset the nuse to 0
+	ss->add_energy( "nuse", 0 );
+	//ss->add_energy( "ltime", time(NULL) );
 
-  bool result = false;
+	bool result = false;
 
 	// Fill in missing scores for input structure
 	fobj_->add_objective_function_info( ss, library_central() );
 
-  // Add native quality info before adding
-  //if( native_given_ ) add_nativeinfo_to_ss( ss, native_pose_ );
+	// Add native quality info before adding
+	//if( native_given_ ) add_nativeinfo_to_ss( ss, native_pose_ );
 
-  // default algorithm is set by class wide parameter
-  if( add_algorithm == "" ) add_algorithm = mpi_feedback_;
+	// default algorithm is set by class wide parameter
+	if ( add_algorithm == "" ) add_algorithm = mpi_feedback_;
 
-  if     ( add_algorithm == "no" )             result = false;
-  else if( add_algorithm == "add_n_limit" )    result = add_structure_to_library_direct( *ss );
-  else if( add_algorithm == "add_n_replace" )  result = add_structure_to_library_add_n_replace( *ss );
-  else if( add_algorithm == "single_replace" ) result = add_structure_to_library_single_replace( *ss );
+	if     ( add_algorithm == "no" )             result = false;
+	else if ( add_algorithm == "add_n_limit" )    result = add_structure_to_library_direct( *ss );
+	else if ( add_algorithm == "add_n_replace" )  result = add_structure_to_library_add_n_replace( *ss );
+	else if ( add_algorithm == "single_replace" ) result = add_structure_to_library_single_replace( *ss );
 
-  else {
-    utility_exit_with_message( "FATAL ERROR:  Unknown adding algorithm: '" + add_algorithm + "'" );
-  }
+	else {
+		utility_exit_with_message( "FATAL ERROR:  Unknown adding algorithm: '" + add_algorithm + "'" );
+	}
 
 	// Update mean/stdev after every replacement
 	// this will make writing very slow!
 	//if( result ) fobj_->add_objective_function_info( library_central_.store() );
 
-  return result;
+	return result;
 }
 
 bool
 MPI_Refinement::add_structure_to_library_direct( core::io::silent::SilentStruct &pss )
 {
-  TR.Debug << "Add: Direct addition called." << std::endl;
-  library_central_.add( pss );
-  return true;
+	TR.Debug << "Add: Direct addition called." << std::endl;
+	library_central_.add( pss );
+	return true;
 }
 
 bool
 MPI_Refinement::add_structure_to_library_add_n_replace( core::io::silent::SilentStruct &pss )
 {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	// just hard coded for now
 	std::string const dist_measure( "Sscore" );
 
-  core::Real new_struct_score = fobj_->get_fobj( pss, sim_replace_obj_ ); 
-  //pss.add_energy( "nuse", 0 );
-  start_timer( TIMING_CPU );
-  TRDEBUG << "Checking for zero size .. " << std::endl;
+	core::Real new_struct_score = fobj_->get_fobj( pss, sim_replace_obj_ );
+	//pss.add_energy( "nuse", 0 );
+	start_timer( TIMING_CPU );
+	TRDEBUG << "Checking for zero size .. " << std::endl;
 
-  if( library_central_.size() == 0 ){
-    add_structure_to_library_direct( pss );
-    return true;
-  }
+	if ( library_central_.size() == 0 ) {
+		add_structure_to_library_direct( pss );
+		return true;
+	}
 
-  library_central_.sort_by( sim_replace_obj_ );
-  // if energy is wrse then worst member - ignore structure
-  if ( new_struct_score > fobj_->get_fobj( *library_central_.store().back(), 1 ) ){
-    TR << "Add: NReplace, Ignoring struc (E vs max(Elib)): " << new_struct_score << " > ";
+	library_central_.sort_by( sim_replace_obj_ );
+	// if energy is wrse then worst member - ignore structure
+	if ( new_struct_score > fobj_->get_fobj( *library_central_.store().back(), 1 ) ) {
+		TR << "Add: NReplace, Ignoring struc (E vs max(Elib)): " << new_struct_score << " > ";
 		TR << fobj_->formatted_objs_values( *library_central_.store().back() );
 		TR << std::endl;
-    return false;
-  }
+		return false;
+	}
 
-  // now find the closest DIST
-  core::Real closest_dist = 1000000;
+	// now find the closest DIST
+	core::Real closest_dist = 1000000;
 	//core::io::silent::SilentStructOP closest_struct;
 	SilentStructStore::iterator closest_struct;
 
-  //for( core::Size i = 0; i < library_central_.size(); ++i ){
+	//for( core::Size i = 0; i < library_central_.size(); ++i ){
 	//core::io::silent::SilentStructOP ss = library_central_.get_struct( i );
-	for( SilentStructStore::iterator jt =  library_central_.begin(),
-			 end = library_central_.end(); jt != end; ++jt ){
+	for ( SilentStructStore::iterator jt =  library_central_.begin(),
+			end = library_central_.end(); jt != end; ++jt ) {
 
 		core::Real the_dist( 0.0 );
 		core::Real dumm;
 		// slow down?
 		core::io::silent::SilentStructOP ss( pss.clone() );
-		if( dist_measure.compare("rmsd") == 0 ){
+		if ( dist_measure.compare("rmsd") == 0 ) {
 			dumm = 1.0 - CA_Sscore( ss, *jt, the_dist );
-		} else if( dist_measure.compare("Sscore") == 0 ){
+		} else if ( dist_measure.compare("Sscore") == 0 ) {
 			the_dist = 1.0 - CA_Sscore( ss, *jt, dumm );
-		} else if( dist_measure.compare("looprmsd") == 0 ){
-
-		}
+		} else if ( dist_measure.compare("looprmsd") == 0 ) {}
 
 		TRDEBUG << "The dist: " << the_dist << std::endl;
-		if ( the_dist < closest_dist ){
+		if ( the_dist < closest_dist ) {
 			closest_dist = the_dist;
 			closest_struct = jt;
-    }
+		}
 	}
 
 	// we need to add one more option for this...
 	bool close_to_existing( false );
-	if( dist_measure.compare("Sscore") == 0 ){
-		if( closest_dist < 0.05 ) close_to_existing = true;
+	if ( dist_measure.compare("Sscore") == 0 ) {
+		if ( closest_dist < 0.05 ) close_to_existing = true;
 
-	} else if ( dist_measure.compare("rmsd") == 0 || 
-							dist_measure.compare("looprmsd") == 0 ){
-		if( closest_dist < 0.5 ) close_to_existing = true;
+	} else if ( dist_measure.compare("rmsd") == 0 ||
+			dist_measure.compare("looprmsd") == 0 ) {
+		if ( closest_dist < 0.5 ) close_to_existing = true;
 
 	}
 
-  if ( close_to_existing ){
-    // replace if lower in energy
-    core::Real energy_old = fobj_->get_fobj( *(*closest_struct), sim_replace_obj_ );
-    
-    if( new_struct_score < energy_old ){
-      TR << "Add: NReplace ACC, byE: " << format_silent_struct( pss ) << "|";
-      TR << " " << F(8,3, new_struct_score );
-      TR << " " << F(8,3, energy_old );
-      TR << " " << F(8,3, new_struct_score - energy_old);
-      TR << std::endl;
+	if ( close_to_existing ) {
+		// replace if lower in energy
+		core::Real energy_old = fobj_->get_fobj( *(*closest_struct), sim_replace_obj_ );
+
+		if ( new_struct_score < energy_old ) {
+			TR << "Add: NReplace ACC, byE: " << format_silent_struct( pss ) << "|";
+			TR << " " << F(8,3, new_struct_score );
+			TR << " " << F(8,3, energy_old );
+			TR << " " << F(8,3, new_struct_score - energy_old);
+			TR << std::endl;
 			library_central_.erase( closest_struct );
 			library_central_.add( pss );
-      return true;
+			return true;
 
-    } else {
-      TR << "Add: NReplace REJ, byE: " << format_silent_struct( pss ) << "|";
-      TR << " " << F(8,3, new_struct_score );
-      TR << " " << F(8,3, energy_old );
-      TR << " " << F(8,3, new_struct_score - energy_old);
-      TR << std::endl;
-      return false;
-    }
+		} else {
+			TR << "Add: NReplace REJ, byE: " << format_silent_struct( pss ) << "|";
+			TR << " " << F(8,3, new_struct_score );
+			TR << " " << F(8,3, energy_old );
+			TR << " " << F(8,3, new_struct_score - energy_old);
+			TR << std::endl;
+			return false;
+		}
 
-  } else {
-    // add
-    library_central_.add( pss );
-    TR << "Add: NReplace Acc, new: " << format_silent_struct( pss ) << std::endl;
-    return true;
-  }
+	} else {
+		// add
+		library_central_.add( pss );
+		TR << "Add: NReplace Acc, new: " << format_silent_struct( pss ) << std::endl;
+		return true;
+	}
 
-  // Nothing can reach here, but let's just return something :)
-  return false;
+	// Nothing can reach here, but let's just return something :)
+	return false;
 }
 
 bool
 MPI_Refinement::add_structure_to_library_single_replace( core::io::silent::SilentStruct &pss )
 {
 
-  core::Real ssid = pss.get_energy("ssid");
+	core::Real ssid = pss.get_energy("ssid");
 
-  // now find the library structure with the same ssid
-  find_SilentStructOPs predic("ssid", ssid);
-  SilentStructStore::iterator ssid_match = std::find_if( library_central_.begin(), library_central_.end(), predic );
+	// now find the library structure with the same ssid
+	find_SilentStructOPs predic("ssid", ssid);
+	SilentStructStore::iterator ssid_match = std::find_if( library_central_.begin(), library_central_.end(), predic );
 
-  if( ssid_match == library_central_.end() ){
-    TR << "Add: SingleReplace, ssid expired: " + ObjexxFCL::string_of( ssid ) + " - rejected structure" << std::endl;
-    return false;
-  }
+	if ( ssid_match == library_central_.end() ) {
+		TR << "Add: SingleReplace, ssid expired: " + ObjexxFCL::string_of( ssid ) + " - rejected structure" << std::endl;
+		return false;
+	}
 
-  bool replace_it = false;
-  // to get library replacement you must either: be of a more advanced round or have lower energy
-  core::Size dround( pss.get_energy("round") - (*ssid_match)->get_energy("round") );
-  core::Real dobj( fobj_->get_fobj( pss, 1 ) - fobj_->get_fobj( *ssid_match, 1 ) );
-  if( dround > 1 || dobj < 0.0 ){
-    replace_it = true;
-    //TR << "SingleReplace Filter Pass on " << ssid << ", dround/dobj: " << dround << " " << dobj << std::endl;
-  } else {
-    TR.Debug << "Add: SingleReplace Filter Fail on " << ssid << ", dround/dobj(vsMax): " << dround;
-    TR.Debug << " " << F(8,3,dobj);
-    TR.Debug << std::endl;
-  }
-  
-  if( replace_it ){
-    core::Real new_energy = fobj_->get_fobj( pss, 1 ); 
-    core::Real old_energy = fobj_->get_fobj( *ssid_match, 1 );
-    
-    bool metropolis_replace = false;
-    
-    core::Real energy_diff_T = 0;
-    if( mpi_metropolis_temp_ > 0.0 ) energy_diff_T = old_energy - new_energy;
-    
-    if( ( energy_diff_T >= 0.0 ) ) metropolis_replace = true; // energy of new is simply lower
-    else if ( energy_diff_T/mpi_metropolis_temp_ > (-10.0) ){	// exp(-10) ~ 0, so check this before trying to evaluate exp(-100) and getting NaN
-      core::Real random_float = numeric::random::rg().uniform();
-      if ( random_float < exp( energy_diff_T/mpi_metropolis_temp_ ) )  metropolis_replace = true;
-    }
-    total_metropolis_++;
-    if ( metropolis_replace ) {
-      total_metropolis_accepts_++;
-      TR << "Add: SingleReplace ACC: " << format_silent_struct( *ssid_match) << " with " << format_silent_struct( pss ) << "  " << -energy_diff_T << std::endl;
-      *ssid_match = pss.get_self_ptr();
-      return true;
-    }else{
-      TR << "Add: SingleReplace REJ: " << format_silent_struct( *ssid_match) << " with " << format_silent_struct( pss ) << "  " << -energy_diff_T << std::endl;
-    }
-  }
-  
-  return false;
+	bool replace_it = false;
+	// to get library replacement you must either: be of a more advanced round or have lower energy
+	core::Size dround( pss.get_energy("round") - (*ssid_match)->get_energy("round") );
+	core::Real dobj( fobj_->get_fobj( pss, 1 ) - fobj_->get_fobj( *ssid_match, 1 ) );
+	if ( dround > 1 || dobj < 0.0 ) {
+		replace_it = true;
+		//TR << "SingleReplace Filter Pass on " << ssid << ", dround/dobj: " << dround << " " << dobj << std::endl;
+	} else {
+		TR.Debug << "Add: SingleReplace Filter Fail on " << ssid << ", dround/dobj(vsMax): " << dround;
+		TR.Debug << " " << F(8,3,dobj);
+		TR.Debug << std::endl;
+	}
+
+	if ( replace_it ) {
+		core::Real new_energy = fobj_->get_fobj( pss, 1 );
+		core::Real old_energy = fobj_->get_fobj( *ssid_match, 1 );
+
+		bool metropolis_replace = false;
+
+		core::Real energy_diff_T = 0;
+		if ( mpi_metropolis_temp_ > 0.0 ) energy_diff_T = old_energy - new_energy;
+
+		if ( ( energy_diff_T >= 0.0 ) ) metropolis_replace = true; // energy of new is simply lower
+		else if ( energy_diff_T/mpi_metropolis_temp_ > (-10.0) ) { // exp(-10) ~ 0, so check this before trying to evaluate exp(-100) and getting NaN
+			core::Real random_float = numeric::random::rg().uniform();
+			if ( random_float < exp( energy_diff_T/mpi_metropolis_temp_ ) )  metropolis_replace = true;
+		}
+		total_metropolis_++;
+		if ( metropolis_replace ) {
+			total_metropolis_accepts_++;
+			TR << "Add: SingleReplace ACC: " << format_silent_struct( *ssid_match) << " with " << format_silent_struct( pss ) << "  " << -energy_diff_T << std::endl;
+			*ssid_match = pss.get_self_ptr();
+			return true;
+		} else {
+			TR << "Add: SingleReplace REJ: " << format_silent_struct( *ssid_match) << " with " << format_silent_struct( pss ) << "  " << -energy_diff_T << std::endl;
+		}
+	}
+
+	return false;
 }
 
-void 
+void
 MPI_Refinement::print_summary( std::string const prefix )
 {
 	//Should be sorted by fobj in order to show min/max status
@@ -501,11 +499,12 @@ MPI_Refinement::print_summary( std::string const prefix )
 
 	protocols::wum::SilentStructStore lib_loc( library_central_);
 	TR << prefix;
-	for( core::Size iobj = 1; iobj <= fobj_->nobjs(); ++iobj )
+	for ( core::Size iobj = 1; iobj <= fobj_->nobjs(); ++iobj ) {
 		TR << "/min_" << fobj_->fobjnames( iobj );
+	}
 	TR << "/Time(min): ";
 
-	for( core::Size iobj = 1; iobj <= fobj_->nobjs(); ++iobj ){
+	for ( core::Size iobj = 1; iobj <= fobj_->nobjs(); ++iobj ) {
 		std::string objname = fobj_->fobjnames( iobj );
 		lib_loc.sort_by( objname );
 		TR << " " << F(8,2, lib_loc.get_struct( 0 )->get_energy( objname ) );
@@ -519,80 +518,80 @@ MPI_Refinement::print_summary( std::string const prefix )
 
 void
 MPI_Refinement::print_library( protocols::wum::SilentStructStore &library,
-															 std::string const prefix )
+	std::string const prefix )
 {
-  TR << prefix << " N:" << library.store().size() << "        tag";
+	TR << prefix << " N:" << library.store().size() << "        tag";
 	TR << fobj_->formatted_objs_names();
 
 	TR << "   Front Round Nuse ";
-  if( native_given_ ) TR << " GDTTM    GDTHA";
+	if ( native_given_ ) TR << " GDTTM    GDTHA";
 	TR << "  IGDTHA" << std::endl;
 
-  for( SilentStructStore::const_iterator it = library.begin(); it != library.end(); ++ it ){
-    TR << prefix << ": " << format_silent_struct( *it ) << std::endl;
-  }
+	for ( SilentStructStore::const_iterator it = library.begin(); it != library.end(); ++ it ) {
+		TR << prefix << ": " << format_silent_struct( *it ) << std::endl;
+	}
 }
 
 // iterate through the structure store and add strucutres to the central library according to the algorithm specified or the default algorithm
 bool
 MPI_Refinement::add_structures_to_library( SilentStructStore &new_structs, std::string add_algorithm )
 {
-  bool result = false;
+	bool result = false;
 
-	if( add_algorithm.compare("NSGAII") == 0 ){
+	if ( add_algorithm.compare("NSGAII") == 0 ) {
 		result = fobj_->update_library_NSGAII( library_central_, new_structs, max_lib_size() );
 
 	} else {
 		// First, clear marks on old members
 		//for( SilentStructStore::iterator jt = library_central_.begin();
-		//		 jt != library_central_.end(); jt ++ )
+		//   jt != library_central_.end(); jt ++ )
 		//(*jt)->add_string_value( "added", "" );
 
-		for( SilentStructStore::const_iterator it = new_structs.begin();
-				 it != new_structs.end(); ++it )
-			{
-				runtime_assert( *it );
-				//(*it)->add_string_value( "added", "o" );
-				bool local_result = add_structure_to_library( *it, add_algorithm );
-				result = result || local_result;
-			}
+		for ( SilentStructStore::const_iterator it = new_structs.begin();
+				it != new_structs.end(); ++it ) {
+			runtime_assert( *it );
+			//(*it)->add_string_value( "added", "o" );
+			bool local_result = add_structure_to_library( *it, add_algorithm );
+			result = result || local_result;
+		}
 
-		if( result ) limit_library();
+		if ( result ) limit_library();
 	}
 
-  return result;
+	return result;
 }
 
 void
 MPI_Refinement::limit_library()
 {
-  // now shave off the worst structres
-  // By default this is done by "score" - could be changed to other Objective functions
-  // so as to keep diversity
-  library_central_.sort_by( sim_replace_obj_ );
-  core::Size npop( 0 );
-  while( library_central_.size() > max_lib_size_) {
-    npop++;
+	// now shave off the worst structres
+	// By default this is done by "score" - could be changed to other Objective functions
+	// so as to keep diversity
+	library_central_.sort_by( sim_replace_obj_ );
+	core::Size npop( 0 );
+	while ( library_central_.size() > max_lib_size_ ) {
+		npop++;
 		core::io::silent::SilentStructOP ss = library_central_.get_struct( library_central_.size() - 1 );
 		TR << "Limit: " << format_silent_struct( ss ) << std::endl;
 		library_central_.store().pop_back();
-  }
-  if( npop > 0 )
-    TR << "Limit library: " << npop << " structures removed from library" << std::endl;
+	}
+	if ( npop > 0 ) {
+		TR << "Limit library: " << npop << " structures removed from library" << std::endl;
+	}
 }
 
 
 void
 MPI_Refinement::shave_library( SilentStructStore &new_structs,
-															 std::string const scorename,
-															 core::Real const frac ) const
+	std::string const scorename,
+	core::Real const frac ) const
 {
 	new_structs.sort_by( scorename );
 	core::Size ntot = new_structs.size();
 	core::Size n_to_pop = core::Size( new_structs.size()*frac );
 	core::Size npop( 0 );
 
-	while( npop < n_to_pop ){
+	while ( npop < n_to_pop ) {
 		new_structs.store().pop_back();
 		npop++;
 	}
@@ -600,36 +599,35 @@ MPI_Refinement::shave_library( SilentStructStore &new_structs,
 }
 
 void
-MPI_Refinement::dump_structures( const SilentStructStore &new_structs, 
-																 bool score_only,
-																 std::string prefix ) const
+MPI_Refinement::dump_structures( const SilentStructStore &new_structs,
+	bool score_only,
+	std::string prefix ) const
 {
-  start_timer( TIMING_IO_WRITE  );
-  core::io::silent::SilentFileData sfd;
-  std::string filename = jobname_ + "." + prefix + string_of( mpi_rank() ) + ".out";
+	start_timer( TIMING_IO_WRITE  );
+	core::io::silent::SilentFileData sfd;
+	std::string filename = jobname_ + "." + prefix + string_of( mpi_rank() ) + ".out";
 
-  core::Size istr( 0 );
-  for( SilentStructStore::const_iterator it = new_structs.begin();
-       it != new_structs.end(); ++it )
-    {
-      istr++;
-			sfd.write_silent_struct( *(*it), filename, score_only );
-		}
-  core::Real write_time = start_timer( TIMING_CPU );
-  TRDEBUG << "Write time: " << write_time << std::endl;
+	core::Size istr( 0 );
+	for ( SilentStructStore::const_iterator it = new_structs.begin();
+			it != new_structs.end(); ++it ) {
+		istr++;
+		sfd.write_silent_struct( *(*it), filename, score_only );
+	}
+	core::Real write_time = start_timer( TIMING_CPU );
+	TRDEBUG << "Write time: " << write_time << std::endl;
 }
 
 void
-MPI_Refinement::send_sortedpick_library_structs( core::Size dest_rank, 
-																								 core::Size nsend,
-																								 std::string const scorename,
-																								 bool const weighted, 
-																								 bool const ,
-																								 core::Real const kT )
+MPI_Refinement::send_sortedpick_library_structs( core::Size dest_rank,
+	core::Size nsend,
+	std::string const scorename,
+	bool const weighted,
+	bool const ,
+	core::Real const kT )
 {
-  if( library_central_.size() == 0 ){
-    TR.Error << "ERROR: Have no structure to send" << std::endl;
-    return;
+	if ( library_central_.size() == 0 ) {
+		TR.Error << "ERROR: Have no structure to send" << std::endl;
+		return;
 	}
 
 	// Get copy of library_central
@@ -641,21 +639,21 @@ MPI_Refinement::send_sortedpick_library_structs( core::Size dest_rank,
 	core::Real const Emax = structs_loc.get_struct( n - 1 )->get_energy( scorename );
 	core::Real const Emin = structs_loc.get_struct( 0 )->get_energy( scorename );
 	core::Real denom = kT*(Emax - Emin);
-	if( denom == 0.0 ) denom = 1.0;
+	if ( denom == 0.0 ) denom = 1.0;
 
 	utility::vector0< core::Real > accprob( n, 0.0 ); //accummulative probability
 	core::Real psum( 0.0 );
 	core::Size i( 0 );
 
-  for( protocols::wum::SilentStructStore::const_iterator it = structs_loc.begin();
-       it != structs_loc.end(); ++it, ++i ){
+	for ( protocols::wum::SilentStructStore::const_iterator it = structs_loc.begin();
+			it != structs_loc.end(); ++it, ++i ) {
 		core::Real score = (*it)->get_energy( scorename );
 		core::Real prob;
-		if( weighted ){
+		if ( weighted ) {
 			prob = std::exp( -score/denom );
-			if( prob <= 0.0000001 ) prob = 0.0000001;
+			if ( prob <= 0.0000001 ) prob = 0.0000001;
 		} else {
-			if( i <= nsend ){
+			if ( i <= nsend ) {
 				prob = 1.0;
 			} else {
 				prob = 0.0;
@@ -667,49 +665,50 @@ MPI_Refinement::send_sortedpick_library_structs( core::Size dest_rank,
 
 	// normalize
 	bool assign_fail( false );
-	for( core::Size j = 0; j < n; ++j ){
+	for ( core::Size j = 0; j < n; ++j ) {
 		accprob[j] /= psum;
-		if( !(accprob[j] > 0.0) || !(std::abs(accprob[j] ) <= 1.0 ) || 
-				accprob[j] != accprob[j] ) 
+		if ( !(accprob[j] > 0.0) || !(std::abs(accprob[j] ) <= 1.0 ) ||
+				accprob[j] != accprob[j] ) {
 			assign_fail = true;
+		}
 	}
 
-	if( assign_fail ){
+	if ( assign_fail ) {
 		psum = 0.0;
-		for( core::Size j = 0; j < n; ++j ){
+		for ( core::Size j = 0; j < n; ++j ) {
 			accprob[j] = (core::Real)(j+1);
 			psum += (core::Real)(j+1);
 		}
 
-		for( core::Size j = 0; j < n; ++j ) accprob[j] /= psum;
+		for ( core::Size j = 0; j < n; ++j ) accprob[j] /= psum;
 	}
 
 	// report
 	TR << "Accum. prob. assigned: ";
-	for( core::Size j = 0; j < n; ++j )	TR << " " << F(6,3,accprob[j]);
+	for ( core::Size j = 0; j < n; ++j ) TR << " " << F(6,3,accprob[j]);
 	TR << std::endl;
 
-  WorkUnit_SilentStructStoreOP resultfeedback( new WorkUnit_SilentStructStore( ) );
-  resultfeedback->set_wu_type( "resultfeedback" );
+	WorkUnit_SilentStructStoreOP resultfeedback( new WorkUnit_SilentStructStore( ) );
+	resultfeedback->set_wu_type( "resultfeedback" );
 
 	// not to allow duplication
 	utility::vector1< core::Size > picked;
 	TR << "Random number picked: ";
-	for( core::Size ipick = 1; ipick <= nsend; ++ipick ){
+	for ( core::Size ipick = 1; ipick <= nsend; ++ipick ) {
 		core::Size k( 0 );
 		core::Size iter( 0 );
-		while( true ){
+		while ( true ) {
 			core::Real rnum = numeric::random::rg().uniform();
 			iter++;
 
-			for( core::Size j = 0; j < n; ++j ){
-				if( !(accprob[j] <= rnum) ){
+			for ( core::Size j = 0; j < n; ++j ) {
+				if ( !(accprob[j] <= rnum) ) {
 					k = j;
 					break;
 				}
 			}
 
-			if( !picked.contains( k ) ){
+			if ( !picked.contains( k ) ) {
 				TR << " " << F(6,4,rnum);
 				picked.push_back( k );
 				break;
@@ -723,31 +722,31 @@ MPI_Refinement::send_sortedpick_library_structs( core::Size dest_rank,
 	}
 	TR << std::endl;
 
-  send_MPI_workunit( resultfeedback, dest_rank );
+	send_MPI_workunit( resultfeedback, dest_rank );
 }
 
 void
 MPI_Refinement::send_random_library_structs( core::Size dest_rank, core::Size nsend ){
-  if( library_central_.size() == 0 ){
-    TR.Error << "ERROR: Have no structure to send" << std::endl;
-    return;
-  }
+	if ( library_central_.size() == 0 ) {
+		TR.Error << "ERROR: Have no structure to send" << std::endl;
+		return;
+	}
 
-  WorkUnit_SilentStructStoreOP resultfeedback( new WorkUnit_SilentStructStore( ) );
-  resultfeedback->set_wu_type( "resultfeedback" );
+	WorkUnit_SilentStructStoreOP resultfeedback( new WorkUnit_SilentStructStore( ) );
+	resultfeedback->set_wu_type( "resultfeedback" );
 
 	// not to allow duplication
 	utility::vector1< core::Size > picked;
-	for( core::Size i = 1; i <= nsend; ++i ){
+	for ( core::Size i = 1; i <= nsend; ++i ) {
 
 		core::Size irand( 0 );
-		while( true ){
+		while ( true ) {
 			irand = (core::Size)(numeric::random::rg().uniform() * library_central_.size());
-			if( irand >= library_central_.size() ) irand = library_central_.size() - 1;
+			if ( irand >= library_central_.size() ) irand = library_central_.size() - 1;
 
-			if( nsend >= library_central_.size() ){
+			if ( nsend >= library_central_.size() ) {
 				break; // just send whatever if pool is smaller
-			} else if( !picked.contains( irand ) ){
+			} else if ( !picked.contains( irand ) ) {
 				picked.push_back( irand );
 				break;
 			}
@@ -763,38 +762,38 @@ MPI_Refinement::send_random_library_structs( core::Size dest_rank, core::Size ns
 		resultfeedback->decoys().add( new_struct );
 	}
 
-  send_MPI_workunit( resultfeedback, dest_rank );
+	send_MPI_workunit( resultfeedback, dest_rank );
 }
 
 void
 MPI_Refinement::send_random_library_struct( core::Size dest_rank, core::Size newssid ) const {
-  if( library_central_.size() == 0 ){
-    TR.Error << "ERROR: Have no structure to send" << std::endl;
-    return;
-  }
+	if ( library_central_.size() == 0 ) {
+		TR.Error << "ERROR: Have no structure to send" << std::endl;
+		return;
+	}
 
-  // now fabricate a return WU
-  WorkUnit_SilentStructStoreOP resultfeedback( new WorkUnit_SilentStructStore( ) );
-  resultfeedback->set_wu_type( "resultfeedback" );
-  core::io::silent::SilentStructOP new_struct = library_central_.get_struct_random()->clone();
-  new_struct->add_energy("ssid", newssid);   // overwrite the ssid
-  resultfeedback->decoys().add( new_struct );
-  send_MPI_workunit( resultfeedback, dest_rank );
+	// now fabricate a return WU
+	WorkUnit_SilentStructStoreOP resultfeedback( new WorkUnit_SilentStructStore( ) );
+	resultfeedback->set_wu_type( "resultfeedback" );
+	core::io::silent::SilentStructOP new_struct = library_central_.get_struct_random()->clone();
+	new_struct->add_energy("ssid", newssid);   // overwrite the ssid
+	resultfeedback->decoys().add( new_struct );
+	send_MPI_workunit( resultfeedback, dest_rank );
 }
 
-core::Real 
+core::Real
 MPI_Refinement::score( const core::io::silent::SilentStruct &ss ) const{
-  // by deafult, the rosetta energy is the objective function
-  return ss.get_energy("score");
+	// by deafult, the rosetta energy is the objective function
+	return ss.get_energy("score");
 }
 
 void
 MPI_Refinement::retag_library( protocols::wum::SilentStructStore &store,
-															 std::string const prefix ) const {
+	std::string const prefix ) const {
 
 	core::Size i( 0 );
-  for( SilentStructStore::const_iterator it = store.begin();
-       it != store.end(); ++it, ++i ){
+	for ( SilentStructStore::const_iterator it = store.begin();
+			it != store.end(); ++it, ++i ) {
 		std::stringstream newname("");
 		newname << prefix << "_" << i;
 		TR << "Retag: " << std::setw(15) << (*it)->decoy_tag();
@@ -803,11 +802,11 @@ MPI_Refinement::retag_library( protocols::wum::SilentStructStore &store,
 	}
 }
 
-std::string 
+std::string
 MPI_Refinement::format_silent_struct( const core::io::silent::SilentStruct &ss ) const {
-  std::stringstream sstream;
-  //sstream << "["  <<I(4, ss.get_energy("ssid") )
-	//				<< " "  << std::setw(3) << ss.get_energy("usid");
+	std::stringstream sstream;
+	//sstream << "["  <<I(4, ss.get_energy("ssid") )
+	//    << " "  << std::setw(3) << ss.get_energy("usid");
 
 	sstream << "[" << A(15, ss.decoy_tag() );
 
@@ -815,28 +814,29 @@ MPI_Refinement::format_silent_struct( const core::io::silent::SilentStruct &ss )
 
 	sstream << " | " << I(3, ss.get_energy("frontier") )
 		//<< " | " << I(3, ss.get_energy("iter") )
-					<< " | " << I(3, ss.get_energy("round") )
-    //<< " |"    << I(5,   time(NULL) - ss.get_energy("ltime") )
+		<< " | " << I(3, ss.get_energy("round") )
+		//<< " |"    << I(5,   time(NULL) - ss.get_energy("ltime") )
 		//<< " |" << I(3, ss.get_energy("master") )
-					<< " | " << I(2, ss.get_energy("nuse"));
+		<< " | " << I(2, ss.get_energy("nuse"));
 
-  if( native_given_ )
-  sstream << " | " << F(6,2, ss.get_energy("gdttm"))
-	  << " | " << F(6,2, ss.get_energy("gdtha"));
+	if ( native_given_ ) {
+		sstream << " | " << F(6,2, ss.get_energy("gdttm"))
+			<< " | " << F(6,2, ss.get_energy("gdtha"));
+	}
 	sstream  << " | " << F(6,2, ss.get_energy("gdtha_i"));
 
-  sstream << " ]";
+	sstream << " ]";
 	//sstream << "  " << ss.get_string_value("added");
 
-  return sstream.str();
+	return sstream.str();
 }
 
-core::Real 
+core::Real
 MPI_Refinement::score( const core::io::silent::SilentStructOP &ss ) const {
 	return score( *ss );
 }
 
-std::string 
+std::string
 MPI_Refinement::format_silent_struct( const core::io::silent::SilentStructOP &ss ) const {
 	return format_silent_struct( *ss );
 }

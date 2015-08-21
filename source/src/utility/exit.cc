@@ -40,7 +40,7 @@
 #include <cstdio>
 
 #ifdef _WIN32
-    #include <io.h>
+#include <io.h>
 //__declspec(dllexport) int isatty(int fd) { return _isatty(fd); }
 #endif
 
@@ -69,8 +69,8 @@ void add_exit_callback( UtilityExitCallBack cb)
 
 void remove_exit_callback( UtilityExitCallBack cb )
 {
-	for(std::vector<UtilityExitCallBack>::iterator it=get_all_exit_callbacks().begin(); it < get_all_exit_callbacks().end(); ++it) {
-		if( (*it) == cb ) {
+	for ( std::vector<UtilityExitCallBack>::iterator it=get_all_exit_callbacks().begin(); it < get_all_exit_callbacks().end(); ++it ) {
+		if ( (*it) == cb ) {
 			get_all_exit_callbacks().erase(it);
 			break;
 		}
@@ -97,7 +97,7 @@ EXCN_utility_exit::EXCN_utility_exit( std::string const& msg, std::string const&
 
 void EXCN_utility_exit::show( std::ostream& os ) const {
 	os << "\n\n[ERROR] EXCN_utility_exit has been thrown from: "
-		 << file_ << " line: " << line_ << "\n";
+		<< file_ << " line: " << line_ << "\n";
 	if ( ! msg_.empty() ) os << "ERROR: " << msg_ << "\n\n";
 }
 
@@ -112,14 +112,14 @@ exit(
 )
 {
 	// Calling all preset exit-callback's
-	for(std::vector<UtilityExitCallBack>::iterator it=get_all_exit_callbacks().begin(); it < get_all_exit_callbacks().end(); ++it) {
+	for ( std::vector<UtilityExitCallBack>::iterator it=get_all_exit_callbacks().begin(); it < get_all_exit_callbacks().end(); ++it ) {
 		(*it)();
 	}
 
-	if( isatty(fileno(stdout)) ) std::cerr << "\x1b[0m\x1b[1m\x1b[31m";  // Reseting the terminal state and setting bold-red color
+	if ( isatty(fileno(stdout)) ) std::cerr << "\x1b[0m\x1b[1m\x1b[31m";  // Reseting the terminal state and setting bold-red color
 	if ( ! message.empty() ) std::cerr << std::endl << "ERROR: " << message << std::endl;
 	std::cerr << "ERROR:: Exit from: " << file << " line: " << line << std::endl;
-	if( isatty(fileno(stdout)) ) std::cerr << "\x1b[0m";
+	if ( isatty(fileno(stdout)) ) std::cerr << "\x1b[0m";
 	print_backtrace();
 	std::cerr.flush();
 
@@ -160,15 +160,15 @@ exit(
 	}
 
 #else // Not BOINC
-    if( main_exit_callback ) {
-        main_exit_callback();
-        std::exit( status );
-    } else {
-    #ifndef _WIN32
-        assert( false ); // Force a core dump for post-mortem debugging
-    #endif // Not _WIN32
-        std::exit( status );
-    }
+	if ( main_exit_callback ) {
+		main_exit_callback();
+		std::exit( status );
+	} else {
+#ifndef _WIN32
+		assert( false ); // Force a core dump for post-mortem debugging
+#endif // Not _WIN32
+		std::exit( status );
+	}
 #endif // BOINC
 }
 
@@ -182,7 +182,7 @@ cond_exit(
 	std::string const & message,
 	int const status
 ){
-	if( condition ) return 1;
+	if ( condition ) return 1;
 	exit( file, line, message, status );
 	return 0; // keep compiler happy.
 }

@@ -36,8 +36,8 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class ResidueScoresFeatures : public protocols::features::FeaturesReporter {
 public:
@@ -70,7 +70,7 @@ private:
 	write_residue_scores_2b_table_schema_helper(
 		std::string name,
 		utility::sql_database::sessionOP db_session) const;
-	
+
 	///@brief generate the residue_scores_2b table schema
 	void
 	write_residue_scores_2b_table_schema(

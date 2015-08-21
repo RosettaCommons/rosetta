@@ -111,7 +111,7 @@ MPDockingMover::MPDockingMover( Size jump_num, bool lowres, bool highres ) :
 
 /// @brief Copy Constructor
 MPDockingMover::MPDockingMover( MPDockingMover const & src ) :
-	protocols::moves::Mover( src ), 
+	protocols::moves::Mover( src ),
 	add_membrane_mover_( src.add_membrane_mover_ ),
 	docking_protocol_( src.docking_protocol_ ),
 	lowres_ ( src.lowres_ ),
@@ -141,64 +141,64 @@ MPDockingMover::fresh_instance() const {
 /// @brief Pase Rosetta Scripts Options for this Mover
 void
 MPDockingMover::parse_my_tag(
-    utility::tag::TagCOP tag,
-    basic::datacache::DataMap &,
-    protocols::filters::Filters_map const &,
-    protocols::moves::Movers_map const &,
-    core::pose::Pose const &
-    ) {
-    
-    // Read in membrane center & normal
-    if ( tag->hasOption( "center" ) ) {
-        std::string center = tag->getOption< std::string >( "center" );
-        utility::vector1< std::string > str_cen = utility::string_split_multi_delim( center, ":,'`~+*&|;." );
-        
-        if ( str_cen.size() != 3 ) {
-            utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
-        } else {
-            center_.x() = std::atof( str_cen[1].c_str() );
-            center_.y() = std::atof( str_cen[2].c_str() );
-            center_.z() = std::atof( str_cen[3].c_str() );
-        }
-    }
-    
-    if ( tag->hasOption( "normal" ) ) {
-        std::string normal = tag->getOption< std::string >( "normal" );
-        utility::vector1< std::string > str_norm = utility::string_split_multi_delim( normal, ":,'`~+*&|;." );
-        
-        if ( str_norm.size() != 3 ) {
-            utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
-        } else {
-            normal_.x() = std::atof( str_norm[1].c_str() );
-            normal_.y() = std::atof( str_norm[2].c_str() );
-            normal_.z() = std::atof( str_norm[3].c_str() );
-        }
-    }
-    
-    // Read in jump_num option
-    if ( tag->hasOption( "jump_num" ) ) {
-        jump_num_ = tag->getOption< core::Size >( "jump_num" );
-    }
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
+) {
+
+	// Read in membrane center & normal
+	if ( tag->hasOption( "center" ) ) {
+		std::string center = tag->getOption< std::string >( "center" );
+		utility::vector1< std::string > str_cen = utility::string_split_multi_delim( center, ":,'`~+*&|;." );
+
+		if ( str_cen.size() != 3 ) {
+			utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
+		} else {
+			center_.x() = std::atof( str_cen[1].c_str() );
+			center_.y() = std::atof( str_cen[2].c_str() );
+			center_.z() = std::atof( str_cen[3].c_str() );
+		}
+	}
+
+	if ( tag->hasOption( "normal" ) ) {
+		std::string normal = tag->getOption< std::string >( "normal" );
+		utility::vector1< std::string > str_norm = utility::string_split_multi_delim( normal, ":,'`~+*&|;." );
+
+		if ( str_norm.size() != 3 ) {
+			utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
+		} else {
+			normal_.x() = std::atof( str_norm[1].c_str() );
+			normal_.y() = std::atof( str_norm[2].c_str() );
+			normal_.z() = std::atof( str_norm[3].c_str() );
+		}
+	}
+
+	// Read in jump_num option
+	if ( tag->hasOption( "jump_num" ) ) {
+		jump_num_ = tag->getOption< core::Size >( "jump_num" );
+	}
 }
-    
+
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
 MPDockingMoverCreator::create_mover() const {
-    return protocols::moves::MoverOP( new MPDockingMover );
+	return protocols::moves::MoverOP( new MPDockingMover );
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
 std::string
 MPDockingMoverCreator::keyname() const {
-    return MPDockingMoverCreator::mover_name();
+	return MPDockingMoverCreator::mover_name();
 }
 
 /// @brief Mover name for Rosetta Scripts
 std::string
 MPDockingMoverCreator::mover_name() {
-    return "MPDockingMover";
+	return "MPDockingMover";
 }
-    
+
 /////////////////////
 /// Mover Methods ///
 /////////////////////
@@ -225,8 +225,8 @@ void MPDockingMover::set_cycles_outer( Size cycles_outer ) {
 void MPDockingMover::set_defaults( const Pose & pose ){
 
 	// set AddMembraneMover in protocol
-//	add_membrane_mover_ = AddMembraneMoverOP( new AddMembraneMover() );
-	
+	// add_membrane_mover_ = AddMembraneMoverOP( new AddMembraneMover() );
+
 	// create scorefunctions for lowres and highres
 	// the ones I took were:
 	// mpdocking_cen_14-7-23_no-penalties.wts
@@ -236,19 +236,16 @@ void MPDockingMover::set_defaults( const Pose & pose ){
 	highres_scorefxn_ = ScoreFunctionFactory::create_score_function( "mpframework_docking_fa_2015.wts" );
 
 	// set docking protocol
-	if ( lowres_ && highres_ ){
+	if ( lowres_ && highres_ ) {
 		docking_protocol_ = DockingProtocolOP( new DockingProtocol( jump_num_, false, false, false, lowres_scorefxn_, highres_scorefxn_ ) );
-	}
-	else if ( lowres_ && ! highres_ ){
+	} else if ( lowres_ && ! highres_ ) {
 		docking_protocol_ = DockingProtocolOP( new DockingProtocol( jump_num_, true, false, false, lowres_scorefxn_, highres_scorefxn_ ) );
-	}
-	else if ( ! lowres_ && highres_ ){
+	} else if ( ! lowres_ && highres_ ) {
 		docking_protocol_ = DockingProtocolOP( new DockingProtocol( jump_num_, false, true, false, lowres_scorefxn_, highres_scorefxn_ ) );
-	}
-	else {
+	} else {
 		utility_exit_with_message( "You want to run the docking protocol neither in lowres nor in highres??? Quitting..." );
 	}
-	
+
 	// set native to pose, can be overwritten by flag -in:file:native
 	native_ = PoseOP( new Pose( pose ) );
 
@@ -257,7 +254,7 @@ void MPDockingMover::set_defaults( const Pose & pose ){
 ////////////////////////////////////////////////////////////////////////////////
 // register options
 void MPDockingMover::register_options(){
-	
+
 	option.add_relevant( OptionKeys::in::file::native );
 	option.add_relevant( OptionKeys::docking::docking_local_refine );
 	option.add_relevant( OptionKeys::mp::dock::weights_cen );
@@ -268,28 +265,28 @@ void MPDockingMover::register_options(){
 ////////////////////////////////////////////////////////////////////////////////
 // overwrite defaults from flags file
 void MPDockingMover::init_from_cmd(){
-	
+
 	// if native flag given, set native from flag
-	if ( option[OptionKeys::in::file::native].user() ){
+	if ( option[OptionKeys::in::file::native].user() ) {
 		TR << "Setting native from flag -in::file::native" << std::endl;
 		native_ = pose_from_pdb(option[OptionKeys::in::file::native].value_string() );
 	}
 
 	// if local_refine flag on, only do high-res
-	if ( option[OptionKeys::docking::docking_local_refine].user() ){
+	if ( option[OptionKeys::docking::docking_local_refine].user() ) {
 		TR << "Running highres refinement only using flag -docking_local_refine" << std::endl;
 		docking_protocol_ = DockingProtocolOP( new DockingProtocol( jump_num_, false, true, false, lowres_scorefxn_, highres_scorefxn_ ) );
 	}
 
 	// read low-res weights
-	if ( option[OptionKeys::mp::dock::weights_cen].user() ){
+	if ( option[OptionKeys::mp::dock::weights_cen].user() ) {
 		TR << "Weights for low-resolution step from flag -mp::dock::weights_cen" << std::endl;
 		lowres_scorefxn_->reset();
 		lowres_scorefxn_->initialize_from_file( option[OptionKeys::mp::dock::weights_cen].value_string() );
 	}
-	
+
 	// read high-res weights
-	if ( option[OptionKeys::mp::dock::weights_fa].user() ){
+	if ( option[OptionKeys::mp::dock::weights_fa].user() ) {
 		TR << "Weights for high-resolution step from flag -mp::dock::weights_fa" << std::endl;
 		highres_scorefxn_->reset();
 		highres_scorefxn_->initialize_from_file( option[OptionKeys::mp::dock::weights_fa].value_string() );
@@ -300,13 +297,13 @@ void MPDockingMover::init_from_cmd(){
 ////////////////////////////////////////////////////////////////////////////////
 // finalize setup
 void MPDockingMover::finalize_setup(){
-	
+
 	// add membrane to native to have equal number of atoms for RMSD calculation
 	add_membrane_mover_->apply( *native_ );
-	
+
 	// set native in docking protocol
 	docking_protocol_->set_native_pose( native_ );
-	
+
 	// get movable jump
 	TR.Debug << "movable jumps: " << to_string(docking_protocol_->movable_jumps()) << std::endl;
 
@@ -315,23 +312,23 @@ void MPDockingMover::finalize_setup(){
 ////////////////////////////////////////////////////////////////////////////////
 
 /// @brief Add membrane components to the pose, then dock proteins along
-///			the flexible jump
+///   the flexible jump
 void MPDockingMover::apply( Pose & pose ) {
-	
+
 	TR << "Docking two membrane proteins inside the bilayer" << std::endl;
 
 	// setup
 	set_defaults( pose );
-	
+
 	// register options with JD2
 	register_options();
-	
+
 	// overwrite defaults with stuff from cmdline
 	init_from_cmd();
-	
+
 	// finalize setup
 	finalize_setup();
-	
+
 	// assuming that protein 1 is fixed in the membrane!!!
 	// add membrane VRT, call AddMembraneMover
 	TR << "adding MEM" << std::endl;
@@ -356,7 +353,7 @@ void MPDockingMover::apply( Pose & pose ) {
 	// show foldtree
 	TR << "foldtree reordered" << std::endl;
 	pose.fold_tree().show(std::cout);
-		
+
 	// run docking protocol
 	TR << "calling docking protocol" << std::endl;
 	docking_protocol_->apply( pose );

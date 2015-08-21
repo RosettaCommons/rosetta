@@ -26,36 +26,36 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class RNA_ChainClosableGeometryScreener: public StepWiseResiduePairScreener {
+class RNA_ChainClosableGeometryScreener: public StepWiseResiduePairScreener {
 
-	public:
+public:
 
-		//constructor
-		RNA_ChainClosableGeometryScreener( modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker,
-													 core::pose::PoseOP screening_pose,
-													 bool const finer_sampling_at_chain_closure = false );
+	//constructor
+	RNA_ChainClosableGeometryScreener( modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker,
+		core::pose::PoseOP screening_pose,
+		bool const finer_sampling_at_chain_closure = false );
 
-		//destructor
-		~RNA_ChainClosableGeometryScreener();
+	//destructor
+	~RNA_ChainClosableGeometryScreener();
 
-	public:
+public:
 
-		bool
-		check_screen();
+	bool
+	check_screen();
 
-		std::string
-		name() const { return "RNA_ChainClosableGeometryScreener"; }
+	std::string
+	name() const { return "RNA_ChainClosableGeometryScreener"; }
 
-		StepWiseScreenerType
-		type() const { return RNA_CHAIN_CLOSABLE_GEOMETRY; }
+	StepWiseScreenerType
+	type() const { return RNA_CHAIN_CLOSABLE_GEOMETRY; }
 
-	private:
+private:
 
-		modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker_;
-		core::pose::PoseOP screening_pose_;
-		bool const finer_sampling_at_chain_closure_;
+	modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker_;
+	core::pose::PoseOP screening_pose_;
+	bool const finer_sampling_at_chain_closure_;
 
-	};
+};
 
 } //screener
 } //stepwise

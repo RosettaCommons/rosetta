@@ -32,44 +32,44 @@ namespace packstat {
 
 std::istream &
 operator>> (
-  std::istream & in,
-  SimplePDB & pdb
+	std::istream & in,
+	SimplePDB & pdb
 ) {
-  SimplePDB_Atom atom;
-  while( in >> atom ) {
-    // std::cerr << "reading line" << std::endl;
-		if( atom.num == -123456 ) {
+	SimplePDB_Atom atom;
+	while ( in >> atom ) {
+		// std::cerr << "reading line" << std::endl;
+		if ( atom.num == -123456 ) {
 			// std::cerr << "/*TER or*/ ENDMDL" << std::endl;
 			break; // hit a /*TER or*/ ENDMDL, so stop
 		}
-    if( atom.num != -12345 ) {
-      pdb.atoms_.push_back(atom);
-    }
-  }
+		if ( atom.num != -12345 ) {
+			pdb.atoms_.push_back(atom);
+		}
+	}
 	pdb.remove_surface_waters();
-  return in;
+	return in;
 }
 
 std::ostream &
 operator<< (
-  std::ostream & out,
-  SimplePDB const & pdb
+	std::ostream & out,
+	SimplePDB const & pdb
 ) {
-  out << "SimplePDB:" << std::endl;
-  for( SPAtomCIter i = pdb.atoms_.begin(); i != pdb.atoms_.end(); ++i ) {
-    out << "  " << *i << std::endl;
-  }
-  return out;
+	out << "SimplePDB:" << std::endl;
+	for ( SPAtomCIter i = pdb.atoms_.begin(); i != pdb.atoms_.end(); ++i ) {
+		out << "  " << *i << std::endl;
+	}
+	return out;
 }
 
 template<class T>
 void read_stoopid(char * buf, size_t start, size_t end, T & field ) {
-	if( start == end ) {
+	if ( start == end ) {
 		field = buf[start];
 		return;
 	}
 	char smbuf[99];
-	for( int i = 0; i < 99; ++i ) smbuf[i] = 0;
+	for ( int i = 0; i < 99; ++i ) smbuf[i] = 0;
 	strncpy(smbuf,buf+start,end-start+1);
 	std::istringstream iss(smbuf);
 	iss >> field;
@@ -77,32 +77,32 @@ void read_stoopid(char * buf, size_t start, size_t end, T & field ) {
 
 /*
 reads an atom record like this, assuming chain is col 21 and all others present
-           11 13
+11 13
 ATOM     12  N   GLU A   2     -13.565  31.875  -5.182  1.00 51.33           N
 ATOM    391  CG1AILE A  63       0.107  41.079  16.997  0.50 20.29           C
 
 */
 std::istream &
 operator>> (
-  std::istream & in_raw,
-  SimplePDB_Atom & atom
+	std::istream & in_raw,
+	SimplePDB_Atom & atom
 ) {
-  using namespace std;
-  char buf[999];
-  in_raw.getline(buf,999);
+	using namespace std;
+	char buf[999];
+	in_raw.getline(buf,999);
 	atom.whole_line = buf;
-  // std::cerr << "read line: " << buf << std::endl;
-//  istringstream in(buf);
-//  in >> atom.ATOM;
+	// std::cerr << "read line: " << buf << std::endl;
+	//  istringstream in(buf);
+	//  in >> atom.ATOM;
 	atom.ATOM = atom.whole_line.substr( 0, 6 );
-  if( atom.ATOM != "ATOM  " && atom.ATOM != "HETATM" ) { // not an atom
-    // std::cerr << "failed to read ATOM or HETATM! atom.ATOM is '" << atom.ATOM << "'" << std::endl;
-    atom.num = -12345;
-		if( /*atom.ATOM == "TER" ||*/ atom.ATOM == "ENDMDL" ) {
+	if ( atom.ATOM != "ATOM  " && atom.ATOM != "HETATM" ) { // not an atom
+		// std::cerr << "failed to read ATOM or HETATM! atom.ATOM is '" << atom.ATOM << "'" << std::endl;
+		atom.num = -12345;
+		if ( /*atom.ATOM == "TER" ||*/ atom.ATOM == "ENDMDL" ) {
 			atom.num = -123456;
 		}
-    return in_raw;
-  }
+		return in_raw;
+	}
 	read_stoopid<int   >(buf, 6,10,atom.num );
 	read_stoopid<string>(buf,11,16,atom.type);
 	read_stoopid<string>(buf,17,20,atom.res );
@@ -115,38 +115,38 @@ operator>> (
 	read_stoopid<PackstatReal >(buf,55,59,atom.occ );
 	read_stoopid<PackstatReal >(buf,60,65,atom.bfac );
 	read_stoopid<string>(buf,66,99,atom.lastcol );
-  return in_raw;
+	return in_raw;
 }
 
 
 std::ostream &
 operator<< (
-  std::ostream & out,
-  SimplePDB_Atom const & atom
+	std::ostream & out,
+	SimplePDB_Atom const & atom
 ) {
-  out << atom.ATOM << " "
-      << atom.num << " "
-      << atom.type << " "
-      << atom.res << " "
-      << atom.resnum << " "
-      << atom.chain << " "
-      << atom.num << " "
-      << atom.x << " "
-      << atom.y << " "
-      << atom.z << " "
-      << atom.occ << " "
-      << atom.bfac << " "
-      << atom.lastcol;
-  return out;
+	out << atom.ATOM << " "
+		<< atom.num << " "
+		<< atom.type << " "
+		<< atom.res << " "
+		<< atom.resnum << " "
+		<< atom.chain << " "
+		<< atom.num << " "
+		<< atom.x << " "
+		<< atom.y << " "
+		<< atom.z << " "
+		<< atom.occ << " "
+		<< atom.bfac << " "
+		<< atom.lastcol;
+	return out;
 }
 
 std::ostream &
 operator<< (
-  std::ostream & out,
-  Sphere const & sphere
+	std::ostream & out,
+	Sphere const & sphere
 ) {
-  out << "Sphere( " << sphere.xyz << ", " << sphere.radius << " )";
-  return out;
+	out << "Sphere( " << sphere.xyz << ", " << sphere.radius << " )";
+	return out;
 }
 
 

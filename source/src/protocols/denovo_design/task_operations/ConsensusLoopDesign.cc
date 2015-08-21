@@ -86,8 +86,8 @@ ConsensusLoopDesignOperation::get_name() const
 /// @brief apply
 void
 ConsensusLoopDesignOperation::apply(
-		core::pose::Pose const & pose,
-		core::pack::task::PackerTask & task ) const
+	core::pose::Pose const & pose,
+	core::pack::task::PackerTask & task ) const
 {
 	LoopInfoVec info = get_loop_info( pose );
 	for ( LoopInfoVec::const_iterator l = info.begin(), endl = info.end(); l != endl; ++l ) {
@@ -99,8 +99,8 @@ ConsensusLoopDesignOperation::apply(
 
 void
 ConsensusLoopDesignOperation::parse_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data )
 {
 	if ( tag->hasOption( "residue_selector" ) ) {
 		set_selector( get_residue_selector( data, tag->getOption< std::string >( "residue_selector" ) ) );
@@ -109,8 +109,8 @@ ConsensusLoopDesignOperation::parse_tag(
 
 LoopAAs const &
 ConsensusLoopDesignOperation::allowed_aas(
-		SurroundingSS const & surrounding,
-		std::string const & loop_abego ) const
+	SurroundingSS const & surrounding,
+	std::string const & loop_abego ) const
 {
 	static LoopAAs const emptylist;
 
@@ -132,9 +132,9 @@ ConsensusLoopDesignOperation::allowed_aas(
 
 void
 ConsensusLoopDesignOperation::set_allowed_aas(
-		SurroundingSS const & surrounding,
-		std::string const & loop_abego,
-		LoopAAs const & allowed_aa )
+	SurroundingSS const & surrounding,
+	std::string const & loop_abego,
+	LoopAAs const & allowed_aa )
 {
 	ConsensusSequenceTable::iterator ss_data = seqtable_.find( surrounding );
 	if ( ss_data == seqtable_.end() ) {
@@ -199,8 +199,8 @@ make_aa_bitmap( std::string const & aas )
 
 void
 ConsensusLoopDesignOperation::disallow_aas(
-		core::pack::task::PackerTask & task,
-		LoopInfo const & loop ) const
+	core::pack::task::PackerTask & task,
+	LoopInfo const & loop ) const
 {
 	LoopAAs aas = allowed_aas( loop.ss_around, loop.abego );
 	if ( aas.empty() ) {
@@ -229,9 +229,9 @@ ConsensusLoopDesignOperation::get_loop_info( core::pose::Pose const & pose ) con
 
 LoopInfoVec
 ConsensusLoopDesignOperation::loop_info_from_subset(
-		core::pose::Pose const & pose,
-		std::string const & ss,
-		core::pack::task::residue_selector::ResidueSubset const & subset ) const
+	core::pose::Pose const & pose,
+	std::string const & ss,
+	core::pack::task::residue_selector::ResidueSubset const & subset ) const
 {
 	utility::vector1< std::string > abego = core::sequence::get_abego( pose, 1 );
 	debug_assert( subset.size() == ss.size() );

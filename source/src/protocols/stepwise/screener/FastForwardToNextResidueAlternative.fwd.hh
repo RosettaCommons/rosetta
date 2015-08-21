@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/screener/FastForwardToNextResidueAlternative.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace stepwise {
 namespace screener {
-	
-	class FastForwardToNextResidueAlternative;
-	typedef utility::pointer::shared_ptr< FastForwardToNextResidueAlternative > FastForwardToNextResidueAlternativeOP;
-	typedef utility::pointer::shared_ptr< FastForwardToNextResidueAlternative const > FastForwardToNextResidueAlternativeCOP;
-	
+
+class FastForwardToNextResidueAlternative;
+typedef utility::pointer::shared_ptr< FastForwardToNextResidueAlternative > FastForwardToNextResidueAlternativeOP;
+typedef utility::pointer::shared_ptr< FastForwardToNextResidueAlternative const > FastForwardToNextResidueAlternativeCOP;
+
 } //screener
 } //stepwise
 } //protocols

@@ -59,16 +59,16 @@ public:
 		return protocols::moves::MoverOP( new LoopMover_Perturb_QuickCCD_Moves(*this) );
 	}
 
-	
+
 
 protected:
-    
-    virtual LoopResult model_loop(
+
+	virtual LoopResult model_loop(
 		core::pose::Pose & pose,
 		protocols::loops::Loop const & loop
 	);
-    
-    virtual basic::Tracer & tr() const;
+
+	virtual basic::Tracer & tr() const;
 };
 
 } //namespace perturb

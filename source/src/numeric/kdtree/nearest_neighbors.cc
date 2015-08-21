@@ -45,8 +45,8 @@ nearest_neighbor(
 ) {
 	HyperRectangle bounds = (*tree.bounds());
 	//numeric::Real max_dist_sq( sq_vec_distance(
-	//	bounds->lower(),
-	//	bounds->upper()
+	// bounds->lower(),
+	// bounds->upper()
 	//) );
 	numeric::Real max_dist_sq( REALLY_BIG_DISTANCE );
 	KDNodeOP root( tree.root() );
@@ -64,8 +64,8 @@ nearest_neighbors(
 ) {
 	HyperRectangle bounds = (*tree.bounds());
 	//numeric::Real max_dist_sq( sq_vec_distance(
-	//	bounds->lower(),
-	//	bounds->upper()
+	// bounds->lower(),
+	// bounds->upper()
 	//) );
 	numeric::Real max_dist_sq( REALLY_BIG_DISTANCE );
 	KDNodeOP root( tree.root() );

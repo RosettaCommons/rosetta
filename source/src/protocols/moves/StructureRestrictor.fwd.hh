@@ -20,8 +20,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace moves{
+namespace protocols {
+namespace moves {
 
 class StructureRestrictor;
 typedef utility::pointer::shared_ptr< StructureRestrictor > StructureRestrictorOP;

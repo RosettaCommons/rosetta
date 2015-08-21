@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/moves/MoverForPoseList.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -20,12 +20,12 @@
 
 namespace protocols {
 namespace moves {
-	
-	class MoverForPoseList;
-	typedef utility::pointer::shared_ptr< MoverForPoseList > MoverForPoseListOP;
-	typedef utility::pointer::shared_ptr< MoverForPoseList const > MoverForPoseListCOP;
-	
-} //moves 
-} //protocols 
+
+class MoverForPoseList;
+typedef utility::pointer::shared_ptr< MoverForPoseList > MoverForPoseListOP;
+typedef utility::pointer::shared_ptr< MoverForPoseList const > MoverForPoseListCOP;
+
+} //moves
+} //protocols
 
 #endif

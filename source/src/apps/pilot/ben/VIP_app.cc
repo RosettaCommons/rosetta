@@ -33,7 +33,7 @@
 #include <devel/init.hh>
 
 //local options
-namespace core{ namespace options{ namespace OptionKeys{
+namespace core { namespace options { namespace OptionKeys {
 basic::options::BooleanOptionKey const minimize_sidechains("minimize_sidechains");
 }}}//basic::options::OptionKeys
 
@@ -43,65 +43,69 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	core::pose::Pose in_pose;
-	core::io::pdb::build_pose_from_pdb_as_is(
-		in_pose,
-		option[ OptionKeys::in::file::s ]().vector().front());
+		core::pose::Pose in_pose;
+		core::io::pdb::build_pose_from_pdb_as_is(
+			in_pose,
+			option[ OptionKeys::in::file::s ]().vector().front());
 
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
-	protocols::simple_moves::ScoreMover scoreme = protocols::simple_moves::ScoreMover( scorefxn );
+		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
+		protocols::simple_moves::ScoreMover scoreme = protocols::simple_moves::ScoreMover( scorefxn );
 
-	bool iterate = true;
-	core::Size it = 1;
+		bool iterate = true;
+		core::Size it = 1;
 
-if ( option[ cp::ncycles ] ) {
+		if ( option[ cp::ncycles ] ) {
 
-	core::Size ncycles = option[ cp::ncycles ];
-	core::pose::Pose out_pose;
+			core::Size ncycles = option[ cp::ncycles ];
+			core::pose::Pose out_pose;
 
-	while( it <= ncycles ){
-        	scoreme.apply(in_pose);
-		core::Real old_energy = in_pose.energies().total_energy();
+			while ( it <= ncycles ) {
+				scoreme.apply(in_pose);
+				core::Real old_energy = in_pose.energies().total_energy();
 
-        	protocols::vip::VIP_Mover();
-        	protocols::vip::VIP_Mover vip_mover;
-        		vip_mover.set_initial_pose( in_pose );
-        		vip_mover.apply();
+				protocols::vip::VIP_Mover();
+				protocols::vip::VIP_Mover vip_mover;
+				vip_mover.set_initial_pose( in_pose );
+				vip_mover.apply();
 
-		out_pose = vip_mover.get_final_pose();
-        	core::Real new_energy = vip_mover.get_final_energy();
+				out_pose = vip_mover.get_final_pose();
+				core::Real new_energy = vip_mover.get_final_energy();
 
-        if( new_energy < old_energy ){
-                old_energy = new_energy;
-                in_pose = out_pose;
-                it++;}}
-                out_pose.dump_pdb( option[ cp::output ] );}
+				if ( new_energy < old_energy ) {
+					old_energy = new_energy;
+					in_pose = out_pose;
+					it++;
+				}
+			}
+			out_pose.dump_pdb( option[ cp::output ] );
+		} else {
+			while ( iterate == true ) {
+				scoreme.apply(in_pose);
+				core::Real old_energy = in_pose.energies().total_energy();
 
-else{
-	while( iterate == true ){
-        	scoreme.apply(in_pose);
-		core::Real old_energy = in_pose.energies().total_energy();
+				protocols::vip::VIP_Mover();
+				protocols::vip::VIP_Mover vip_mover;
+				vip_mover.set_initial_pose( in_pose );
+				vip_mover.apply();
 
-		protocols::vip::VIP_Mover();
-		protocols::vip::VIP_Mover vip_mover;
-			vip_mover.set_initial_pose( in_pose );
-			vip_mover.apply();
+				core::pose::Pose out_pose = vip_mover.get_final_pose();
+				core::Real new_energy = vip_mover.get_final_energy();
 
-		core::pose::Pose out_pose = vip_mover.get_final_pose();
-		core::Real new_energy = vip_mover.get_final_energy();
-
-	if( new_energy < old_energy ){
-		old_energy = new_energy;
-		in_pose = out_pose;
-		iterate = true;}
-	else{
-		out_pose.dump_pdb( option[cp::output] );
-		iterate = false;}}}
+				if ( new_energy < old_energy ) {
+					old_energy = new_energy;
+					in_pose = out_pose;
+					iterate = true;
+				} else {
+					out_pose.dump_pdb( option[cp::output] );
+					iterate = false;
+				}
+			}
+		}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

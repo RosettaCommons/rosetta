@@ -36,32 +36,32 @@ using core::scoring::ScoringManager;
 using numeric::conversions::DEGREES;
 
 void RamaPerturber::perturb_subset(
-		Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
+	Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
 
 	Real phi, psi;
 	Ramachandran const & rama =
 		ScoringManager::get_instance()->get_Ramachandran();
 
-	BOOST_FOREACH(Size residue, residues) {
+	BOOST_FOREACH ( Size residue, residues ) {
 		rama.random_phipsi_from_rama(pose.aa(residue), phi, psi);
 		problem->perturb_phi(residue, phi, DEGREES);
 		problem->perturb_psi(residue, psi, DEGREES);
 	}
 }
 
-/// @details The balanced version of this algorithm picks phi/psi pairs 
-/// uniformly from the allowed regions of rama space.  This is more efficient 
-/// than sampling from a completely uniform distribution, and it still obeys 
+/// @details The balanced version of this algorithm picks phi/psi pairs
+/// uniformly from the allowed regions of rama space.  This is more efficient
+/// than sampling from a completely uniform distribution, and it still obeys
 /// detailed balance.
 
 void RamaPerturber::perturb_subset_with_balance(
-		Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
+	Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
 
 	Real phi, psi;
 	Ramachandran const & rama =
 		ScoringManager::get_instance()->get_Ramachandran();
 
-	BOOST_FOREACH(Size residue, residues) {
+	BOOST_FOREACH ( Size residue, residues ) {
 		rama.uniform_phipsi_from_allowed_rama(pose.aa(residue), phi, psi);
 		problem->perturb_phi(residue, phi, DEGREES);
 		problem->perturb_psi(residue, psi, DEGREES);

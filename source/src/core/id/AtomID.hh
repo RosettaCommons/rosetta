@@ -126,7 +126,7 @@ public: // Friends
 	)
 	{
 		return ( a.rsd_ <  b.rsd_ ||
-						 ( a.rsd_ == b.rsd_ && a.atomno_ < b.atomno_ ) );
+			( a.rsd_ == b.rsd_ && a.atomno_ < b.atomno_ ) );
 	}
 
 private: // Fields
@@ -226,13 +226,13 @@ public:
 	AtomID const &
 	atom( Size const index ) const {
 		switch ( index ) {
-		case 1:
+		case 1 :
 			return atom1;
-		case 2:
+		case 2 :
 			return atom2;
-		case 3:
+		case 3 :
 			return atom3;
-		default:
+		default :
 			utility_exit_with_message("StubID's have exactly three atoms, 1-3");
 		}
 		return atom1; // won't get here
@@ -253,8 +253,8 @@ public:
 	operator< ( StubID const & a, StubID const & b )
 	{
 		return ( ( a.atom1  < b.atom1 ) ||
-						 ( a.atom1 == b.atom1 && a.atom2  < b.atom2 ) ||
-						 ( a.atom1 == b.atom1 && a.atom2 == b.atom2 && a.atom3 < b.atom3 ) );
+			( a.atom1 == b.atom1 && a.atom2  < b.atom2 ) ||
+			( a.atom1 == b.atom1 && a.atom2 == b.atom2 && a.atom3 < b.atom3 ) );
 	}
 
 	friend
@@ -266,9 +266,9 @@ public:
 
 
 public: // tmp hack -- phil fix this
- 	AtomID atom1;
- 	AtomID atom2;
- 	AtomID atom3;
+	AtomID atom1;
+	AtomID atom2;
+	AtomID atom3;
 	AtomID center_;
 };
 

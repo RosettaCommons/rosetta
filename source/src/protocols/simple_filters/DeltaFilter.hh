@@ -76,7 +76,7 @@ private:
 	protocols::filters::FilterOP filter_; //which filter to use
 	core::Real baseline_; // dflt 0.0; the baseline against which to compare
 	core::Real range_; // dflt 0.0; how much above/below baseline to allow
-  bool lower_, upper_; // dflt false, true, respectively; use a lower/upper cutoff
+	bool lower_, upper_; // dflt false, true, respectively; use a lower/upper cutoff
 	bool unbound_; //dflt false; evaluate the filter in the unbound state? If so, activate jump, below
 	bool relax_unbound_; //dflt false; call relax mover on unbound pose?
 	bool changing_baseline_; //dflt false; Should the baseline be reset each time this delta filter is called? If so, then set changing baseline to true.

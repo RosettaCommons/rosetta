@@ -7,40 +7,40 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 		src/protocols/membrane/AddMPLigandMover.cc
+/// @file   src/protocols/membrane/AddMPLigandMover.cc
 ///
-/// @brief		Add "single" ligand to to membrane pose
-/// @details 	Accommodate membrane protein ligand in the membrane framework by
-///				reorganizing the current foldtree. Resulting foldtree will 
-///				keep the membrane attached to the COM and ligand to the closest
-///				binding pocket residue, provided in the constructor. 
+/// @brief  Add "single" ligand to to membrane pose
+/// @details  Accommodate membrane protein ligand in the membrane framework by
+///    reorganizing the current foldtree. Resulting foldtree will
+///    keep the membrane attached to the COM and ligand to the closest
+///    binding pocket residue, provided in the constructor.
 ///
-/// @author 	Rebecca Faye Alford (rfalford12@gmail.com)
+/// @author  Rebecca Faye Alford (rfalford12@gmail.com)
 /// #RosettaMPMover
 
 // Unit Headers
-#include <protocols/membrane/AddMPLigandMover.hh> 
-#include <protocols/membrane/AddMPLigandMoverCreator.hh> 
+#include <protocols/membrane/AddMPLigandMover.hh>
+#include <protocols/membrane/AddMPLigandMoverCreator.hh>
 
-#include <protocols/moves/Mover.hh> 
+#include <protocols/moves/Mover.hh>
 
 // Project Headers
-#include <core/kinematics/FoldTree.hh> 
+#include <core/kinematics/FoldTree.hh>
 
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/membrane/MembraneInfo.hh> 
+#include <core/conformation/membrane/MembraneInfo.hh>
 
 // Package Headers
-#include <core/pose/Pose.hh> 
-#include <core/pose/util.hh> 
-#include <core/types.hh> 
+#include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/types.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/filters/Filter.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh> 
+#include <numeric/xyzVector.hh>
 
 #include <utility/tag/Tag.hh>
 
@@ -55,11 +55,11 @@ static thread_local basic::Tracer TR( "protocols.membrane.AddMPLigandMover" );
 namespace protocols {
 namespace membrane {
 
-using namespace core; 
-using namespace core::conformation::membrane; 
-using namespace core::kinematics; 
-using namespace core::pose; 
-using namespace protocols::membrane; 
+using namespace core;
+using namespace core::conformation::membrane;
+using namespace core::kinematics;
+using namespace core::pose;
+using namespace protocols::membrane;
 
 ////////////////////
 /// Constructors ///
@@ -67,25 +67,25 @@ using namespace protocols::membrane;
 
 /// @brief Add membrane protein ligand mover
 /// @details Attach ligand downstream in the foldtree
-/// for refinement at the last residue as a default. 
+/// for refinement at the last residue as a default.
 /// DO NOT USE
-AddMPLigandMover::AddMPLigandMover() : 
-	closest_rsd_( 0 ), 
+AddMPLigandMover::AddMPLigandMover() :
+	closest_rsd_( 0 ),
 	ligand_seqpos_( 0 )
-{} 
+{}
 
 /// @brief Add Membrane protein ligand mover (custom)
-/// @details Attach ligand downstream in the foldtree of the 
+/// @details Attach ligand downstream in the foldtree of the
 /// closest residue to the binding pocket
-AddMPLigandMover::AddMPLigandMover( core::Size closest_rsd, core::Size ligand_seqpos ) : 
-	closest_rsd_( closest_rsd ), 
+AddMPLigandMover::AddMPLigandMover( core::Size closest_rsd, core::Size ligand_seqpos ) :
+	closest_rsd_( closest_rsd ),
 	ligand_seqpos_( ligand_seqpos )
 {}
 
 /// @brief Copy Constructor
 /// @details Mkae a deep copy of this mover
-AddMPLigandMover::AddMPLigandMover( AddMPLigandMover const & src ) : 
-	Mover( src ), 
+AddMPLigandMover::AddMPLigandMover( AddMPLigandMover const & src ) :
+	Mover( src ),
 	closest_rsd_( src.closest_rsd_ ),
 	ligand_seqpos_( src.ligand_seqpos_ )
 {}
@@ -98,34 +98,34 @@ AddMPLigandMover::~AddMPLigandMover() {}
 ///////////////////////////////
 
 /// @brief Create a Clone of this mover
-protocols::moves::MoverOP 
+protocols::moves::MoverOP
 AddMPLigandMover::clone() const {
 	return ( protocols::moves::MoverOP( new AddMPLigandMover( *this ) ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
-protocols::moves::MoverOP 
+protocols::moves::MoverOP
 AddMPLigandMover::fresh_instance() const {
 	return ( protocols::moves::MoverOP( new AddMPLigandMover() ) );
 }
-	
+
 /// @brief Pase Rosetta Scripts Options for this Mover
-void 
+void
 AddMPLigandMover::parse_my_tag(
-  utility::tag::TagCOP tag,
-  basic::datacache::DataMap &,
-  protocols::filters::Filters_map const &,
-  protocols::moves::Movers_map const &,
-  core::pose::Pose const &
-  ) {
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
+) {
 
 	// Read in closest residue option
-  	if ( tag->hasOption( "closest_rsd" ) ) {
+	if ( tag->hasOption( "closest_rsd" ) ) {
 		closest_rsd_ = tag->getOption< Size >( "closest_rsd" );
 	}
 
 	// Read in sequence position of the ligand
-  	if ( tag->hasOption( "ligand_seqpos" ) ) {
+	if ( tag->hasOption( "ligand_seqpos" ) ) {
 		ligand_seqpos_ = tag->getOption< Size >( "ligand_seqpos" );
 	}
 
@@ -154,7 +154,7 @@ AddMPLigandMoverCreator::mover_name() {
 /////////////////////
 
 /// @brief Mover Apply Method
-void 
+void
 AddMPLigandMover::apply( Pose & pose ) {
 
 	// Check the pose is a membrane framework pose
@@ -162,7 +162,7 @@ AddMPLigandMover::apply( Pose & pose ) {
 		utility_exit_with_message( "Cannot perform add ligand to membrane pose operation because this pose is not a membrane pose!" );
 	}
 
-	TR << "Closest Residue: " << closest_rsd_ << " Ligand Seqpos: " << ligand_seqpos_ << std::endl; 
+	TR << "Closest Residue: " << closest_rsd_ << " Ligand Seqpos: " << ligand_seqpos_ << std::endl;
 
 	// Check the closest rsd and ligand seqpos parameters are valid
 	// Note - default constructor parameters will make at least one of these statements
@@ -176,29 +176,29 @@ AddMPLigandMover::apply( Pose & pose ) {
 	}
 
 	if ( closest_rsd_ == ligand_seqpos_ ) {
-		utility_exit_with_message( "Cannot sepcify closest residue as the ligand. Self-attachemnt is not valid"); 
+		utility_exit_with_message( "Cannot sepcify closest residue as the ligand. Self-attachemnt is not valid");
 	}
 
 	// Get the following parameters from the foldtree: Residue COM, MP rsd position
-	core::Size mp_rsd( pose.conformation().membrane_info()->membrane_rsd_num() ); 
+	core::Size mp_rsd( pose.conformation().membrane_info()->membrane_rsd_num() );
 	core::Size rsd_com( residue_center_of_mass( pose, 1, pose.total_residue() ) ); // COM calc includes the ligand!
 
 	// Create a new simple foldtree (assumes ligand at the end!)
-	FoldTree ft; 
+	FoldTree ft;
 	ft.simple_tree( pose.total_residue() ); // Exclude Ligand and MEM
-	ft.new_jump( rsd_com, mp_rsd, rsd_com ); 
-	ft.new_jump( closest_rsd_, ligand_seqpos_, closest_rsd_ ); 
-	ft.reorder( rsd_com ); 
-	pose.fold_tree( ft ); 
+	ft.new_jump( rsd_com, mp_rsd, rsd_com );
+	ft.new_jump( closest_rsd_, ligand_seqpos_, closest_rsd_ );
+	ft.reorder( rsd_com );
+	pose.fold_tree( ft );
 	pose.fold_tree().show( std::cout );
-    
-    // Update jump number in membrane info (will always be 1 here)
-    pose.conformation().membrane_info()->set_membrane_jump( 1 );
+
+	// Update jump number in membrane info (will always be 1 here)
+	pose.conformation().membrane_info()->set_membrane_jump( 1 );
 
 }
 
 /// @brief Show the name of this mvoer
-std::string 
+std::string
 AddMPLigandMover::get_name() const {
 	return "AddMPLigandMover";
 }

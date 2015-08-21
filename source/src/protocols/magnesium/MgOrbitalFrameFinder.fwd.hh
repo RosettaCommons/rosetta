@@ -21,9 +21,9 @@
 namespace protocols {
 namespace magnesium {
 
-	class MgOrbitalFrameFinder;
-	typedef utility::pointer::shared_ptr< MgOrbitalFrameFinder > MgOrbitalFrameFinderOP;
-	typedef utility::pointer::shared_ptr< MgOrbitalFrameFinder const > MgOrbitalFrameFinderCOP;
+class MgOrbitalFrameFinder;
+typedef utility::pointer::shared_ptr< MgOrbitalFrameFinder > MgOrbitalFrameFinderOP;
+typedef utility::pointer::shared_ptr< MgOrbitalFrameFinder const > MgOrbitalFrameFinderCOP;
 
 } //magnesium
 } //protocols

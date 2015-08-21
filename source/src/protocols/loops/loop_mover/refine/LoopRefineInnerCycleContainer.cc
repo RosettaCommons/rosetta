@@ -100,7 +100,7 @@ bool LoopRefineInnerCycleContainer::reinitialize_for_new_input() const
 void LoopRefineInnerCycleContainer::register_options()
 {
 	///  PUT THE LIST OF OPTIONS THAT ARE USED HERE  ///
-	
+
 	///  RECURSIVELY CALL REGISTER OPTIONS ON ALL MOVERS THAT THIS CLASS HAS AN OWNING_PTR TO  ///
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -115,7 +115,7 @@ void LoopRefineInnerCycleContainer::apply( Pose & pose )
 
 	// show( TR );
 	// TR << "Applying each refinement step in this LoopInnerRefineCycleContainer..." << std::endl;
-	
+
 	inner_cycle_steps_->apply( pose );
 }
 
@@ -144,7 +144,7 @@ void LoopRefineInnerCycleContainer::init_for_equal_operator_and_copy_constructor
 	lhs.inner_cycle_list_ = rhs.inner_cycle_list_;
 	lhs.inner_cycle_steps_ = rhs.inner_cycle_steps_;
 }
-	
+
 void LoopRefineInnerCycleContainer::init_options()
 {
 	/* UNCOMMENT WHEN THERE ARE ACTUALLY OPTIONS TO PROCESS
@@ -165,8 +165,7 @@ void LoopRefineInnerCycleContainer::set_mc( moves::MonteCarloOP mc)
 {
 	LoopRefineInnerCycle::set_mc( mc );
 
-	for( InnerCycleList::iterator it = inner_cycle_list_.begin(); it != inner_cycle_list_.end(); ++it )
-	{
+	for ( InnerCycleList::iterator it = inner_cycle_list_.begin(); it != inner_cycle_list_.end(); ++it ) {
 		(*it)->set_mc( mc );
 	}
 }
@@ -175,8 +174,7 @@ void LoopRefineInnerCycleContainer::set_scorefxn( core::scoring::ScoreFunctionOP
 {
 	LoopRefineInnerCycle::set_scorefxn( scorefxn );
 
-	for( InnerCycleList::iterator it = inner_cycle_list_.begin(); it != inner_cycle_list_.end(); ++it )
-	{
+	for ( InnerCycleList::iterator it = inner_cycle_list_.begin(); it != inner_cycle_list_.end(); ++it ) {
 		(*it)->set_scorefxn( scorefxn );
 	}
 }
@@ -184,9 +182,8 @@ void LoopRefineInnerCycleContainer::set_scorefxn( core::scoring::ScoreFunctionOP
 void LoopRefineInnerCycleContainer::set_task_factory( core::pack::task::TaskFactoryOP tf )
 {
 	LoopRefineInnerCycle::set_task_factory( tf );
-	
-	for( InnerCycleList::iterator it = inner_cycle_list_.begin(); it != inner_cycle_list_.end(); ++it )
-	{
+
+	for ( InnerCycleList::iterator it = inner_cycle_list_.begin(); it != inner_cycle_list_.end(); ++it ) {
 		(*it)->set_task_factory( tf );
 	}
 }
@@ -195,8 +192,7 @@ void LoopRefineInnerCycleContainer::set_loop_mover( LoopMover_Refine_CCDAP new_o
 {
 	LoopRefineInnerCycle::set_loop_mover( new_owner_in_town );
 
-	for( InnerCycleList::iterator it = inner_cycle_list_.begin(); it != inner_cycle_list_.end(); ++it )
-	{
+	for ( InnerCycleList::iterator it = inner_cycle_list_.begin(); it != inner_cycle_list_.end(); ++it ) {
 		(*it)->set_loop_mover( new_owner_in_town );
 	}
 }
@@ -205,8 +201,7 @@ void LoopRefineInnerCycleContainer::set_native_pose( PoseCOP pose )
 {
 	moves::Mover::set_native_pose( pose );
 
-	for( InnerCycleList::iterator it = inner_cycle_list_.begin(); it != inner_cycle_list_.end(); ++it )
-	{
+	for ( InnerCycleList::iterator it = inner_cycle_list_.begin(); it != inner_cycle_list_.end(); ++it ) {
 		(*it)->set_native_pose( pose );
 	}
 }
@@ -221,10 +216,9 @@ std::ostream & operator<<(std::ostream& out, LoopRefineInnerCycleContainer const
 	out << loop_refine_inner_cycle_container.get_name() << " with the following LoopRefineInnerCycles: " << std::endl;
 	// Iterate over contained LoopRefineInnerCycles and print their names
 	LoopRefineInnerCycleContainer::InnerCycleList inner_cycle_list = loop_refine_inner_cycle_container.inner_cycle_list_;
-	
-	for( LoopRefineInnerCycleContainer::InnerCycleList::const_iterator it = inner_cycle_list.begin();
-		it != inner_cycle_list.end(); ++it )
-	{
+
+	for ( LoopRefineInnerCycleContainer::InnerCycleList::const_iterator it = inner_cycle_list.begin();
+			it != inner_cycle_list.end(); ++it ) {
 		out << "    "  << **it << std::endl;
 	}
 
@@ -234,11 +228,11 @@ std::ostream & operator<<(std::ostream& out, LoopRefineInnerCycleContainer const
 LoopRefineInnerCycleContainerCreator::~LoopRefineInnerCycleContainerCreator() {}
 
 moves::MoverOP LoopRefineInnerCycleContainerCreator::create_mover() const {
-  return moves::MoverOP( new LoopRefineInnerCycleContainer() );
+	return moves::MoverOP( new LoopRefineInnerCycleContainer() );
 }
 
 std::string LoopRefineInnerCycleContainerCreator::keyname() const {
-  return "LoopRefineInnerCycleContainer";
+	return "LoopRefineInnerCycleContainer";
 }
 
 } // namespace refine

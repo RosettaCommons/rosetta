@@ -56,14 +56,14 @@ ReferenceEnergyNoncanonicalCreator::score_types_for_method() const {
 ReferenceEnergyNoncanonical::ReferenceEnergyNoncanonical() :
 	parent( EnergyMethodCreatorOP( new ReferenceEnergyNoncanonicalCreator ) )
 {
- init_res_list();
+	init_res_list();
 }
 
 ReferenceEnergyNoncanonical::ReferenceEnergyNoncanonical( utility::vector1< Real > const & weight_list ):
 	parent( EnergyMethodCreatorOP( new ReferenceEnergyNoncanonicalCreator ) ),
 	weights_( weight_list )
 {
- init_res_list();
+	init_res_list();
 }
 
 
@@ -84,13 +84,13 @@ ReferenceEnergyNoncanonical::residue_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ){
-			return;
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) {
+		return;
 	}
 
 	std::string const res_name = rsd.name3();
 	Size index_find = 0;
-	for (Size i = 1; i <= res_list_.size(); ++i) {
+	for ( Size i = 1; i <= res_list_.size(); ++i ) {
 		if ( res_name == res_list_[i] ) {
 			index_find = i;
 			break;
@@ -105,28 +105,28 @@ ReferenceEnergyNoncanonical::residue_energy(
 	}
 
 	switch ( index_find ) {
-		case 1:  emap[ ref_nc ] +=   0.16; break;
-		case 2:  emap[ ref_nc ] +=   1.70; break;
-		case 3:  emap[ ref_nc ] +=  -0.67; break;
-		case 4:  emap[ ref_nc ] +=  -0.81; break;
-		case 5:  emap[ ref_nc ] +=   0.63; break;
-		case 6:  emap[ ref_nc ] +=  -0.17; break;
-		case 7:  emap[ ref_nc ] +=   0.56; break;
-		case 8:  emap[ ref_nc ] +=   0.24; break;
-		case 9:  emap[ ref_nc ] +=  -0.65; break;
-		case 10: emap[ ref_nc ] +=  -0.10; break;
-		case 11: emap[ ref_nc ] +=  -0.34; break;
-		case 12: emap[ ref_nc ] +=  -0.89; break;
-		case 13: emap[ ref_nc ] +=   0.02; break;
-		case 14: emap[ ref_nc ] +=  -0.97; break;
-		case 15: emap[ ref_nc ] +=  -0.98; break;
-		case 16: emap[ ref_nc ] +=  -0.37; break;
-		case 17: emap[ ref_nc ] +=  -0.27; break;
-		case 18: emap[ ref_nc ] +=   0.29; break;
-		case 19: emap[ ref_nc ] +=   0.91; break;
-		case 20: emap[ ref_nc ] +=   0.51; break;
-		default:
-			return;
+	case 1 :  emap[ ref_nc ] +=   0.16; break;
+	case 2 :  emap[ ref_nc ] +=   1.70; break;
+	case 3 :  emap[ ref_nc ] +=  -0.67; break;
+	case 4 :  emap[ ref_nc ] +=  -0.81; break;
+	case 5 :  emap[ ref_nc ] +=   0.63; break;
+	case 6 :  emap[ ref_nc ] +=  -0.17; break;
+	case 7 :  emap[ ref_nc ] +=   0.56; break;
+	case 8 :  emap[ ref_nc ] +=   0.24; break;
+	case 9 :  emap[ ref_nc ] +=  -0.65; break;
+	case 10 : emap[ ref_nc ] +=  -0.10; break;
+	case 11 : emap[ ref_nc ] +=  -0.34; break;
+	case 12 : emap[ ref_nc ] +=  -0.89; break;
+	case 13 : emap[ ref_nc ] +=   0.02; break;
+	case 14 : emap[ ref_nc ] +=  -0.97; break;
+	case 15 : emap[ ref_nc ] +=  -0.98; break;
+	case 16 : emap[ ref_nc ] +=  -0.37; break;
+	case 17 : emap[ ref_nc ] +=  -0.27; break;
+	case 18 : emap[ ref_nc ] +=   0.29; break;
+	case 19 : emap[ ref_nc ] +=   0.91; break;
+	case 20 : emap[ ref_nc ] +=   0.51; break;
+	default :
+		return;
 		break;
 	}
 }
@@ -150,9 +150,9 @@ ReferenceEnergyNoncanonical::init_res_list()
 	if ( !res_list_.empty() ) return;
 	//Must all be 3-character string!
 	std::string const res_list [] = {"B3A", "B3C", "B3D", "B3E", "B3F", "B3G", "B3H", "B3I", "B3K", "B3L", "B3M", "B3N",
-	"B3P", "B3Q", "B3R", "B3S", "B3T", "B3V", "B3W", "B3Y"};
+		"B3P", "B3Q", "B3R", "B3S", "B3T", "B3V", "B3W", "B3Y"};
 	Size const res_list_size = sizeof( res_list ) / sizeof( res_list [0] );
-	for (Size i = 0; i != res_list_size; ++i) {
+	for ( Size i = 0; i != res_list_size; ++i ) {
 		res_list_.push_back(res_list[i]);
 	}
 }

@@ -35,7 +35,7 @@
 
 
 #ifdef WIN32
-	#include <ctime>
+#include <ctime>
 #endif
 
 namespace core {
@@ -84,26 +84,26 @@ void vall_library_from_file( std::string const & filename, VallLibrary & library
 	// parse Vall from file
 	std::string line;
 	while ( getline( stream, line ) ) {
-		if(line[0] != '#'){
-				++n_lines;
-				prior_id = current_residue.id();
-				prior_resi = current_residue.resi();
+		if ( line[0] != '#' ) {
+			++n_lines;
+			prior_id = current_residue.id();
+			prior_resi = current_residue.resi();
 
-				current_residue.fill_from_string( line );
+			current_residue.fill_from_string( line );
 
-				// check for start of new continuous stretch
-				if ( ( current_residue.resi() != prior_resi + 1 ) || ( current_residue.id() != prior_id ) ) {
-						if ( section.size() > 0 ) {
-								library.add_section( section );
-						}
-				section.clear(); // new section
+			// check for start of new continuous stretch
+			if ( ( current_residue.resi() != prior_resi + 1 ) || ( current_residue.id() != prior_id ) ) {
+				if ( section.size() > 0 ) {
+					library.add_section( section );
 				}
+				section.clear(); // new section
+			}
 
 			section.append_residue( current_residue );
 
-				if ( n_lines % 100000 == 0 ) {
+			if ( n_lines % 100000 == 0 ) {
 				TR << "   " << n_lines << std::endl;
-				}
+			}
 		}
 	}
 	if ( section.size() > 0 ) { // handle final set of entries

@@ -42,22 +42,22 @@ using basic::t_debug;
 static thread_local basic::Tracer TR( "core.pack.task.operation.OperateOnCertainResidues", t_info );
 
 OperateOnCertainResidues::OperateOnCertainResidues()
-	: parent(),
-		op_(/* 0 */),
-		filter_(/* 0 */)
+: parent(),
+	op_(/* 0 */),
+	filter_(/* 0 */)
 {}
 
 OperateOnCertainResidues::OperateOnCertainResidues(
 	ResLvlTaskOperationOP rlto,
 	ResFilterOP filter
 )
-	: parent(),
-		op_( rlto ),
-		filter_( filter )
+: parent(),
+	op_( rlto ),
+	filter_( filter )
 {}
 
 OperateOnCertainResidues::OperateOnCertainResidues( OperateOnCertainResidues const & src )
-	: TaskOperation( src )
+: TaskOperation( src )
 {
 	*this = src;
 }
@@ -99,7 +99,7 @@ OperateOnCertainResidues::apply( Pose const & pose, PackerTask & ptask ) const
 		residue_indices_local = residue_indices_;
 	}
 	for ( ResidueIndices::const_iterator index( residue_indices_local.begin() ),
-		end( residue_indices_local.end() ); index != end; ++index ) {
+			end( residue_indices_local.end() ); index != end; ++index ) {
 		runtime_assert( *index > 0 && *index <= nres );
 		// skip this residue if there is a filter and it returns false
 		if ( filter_ && ! (*filter_)( pose, *index ) ) continue;
@@ -130,16 +130,16 @@ void OperateOnCertainResidues::filter( ResFilterCOP filter_in )
 Example Tag syntax for parser as of Summer 2009
 
 <OperateOnCertainResidues name=PROTEINnopack>
-	<PreventRepackingRLT/>
-	<ResidueHasProperty property=PROTEIN/>
+<PreventRepackingRLT/>
+<ResidueHasProperty property=PROTEIN/>
 </OperateOnCertainResidues>
 
 */
 void OperateOnCertainResidues::parse_tag( TagCOP tag , DataMap & )
 {
-  utility::vector0< TagCOP > const & subtags( tag->getTags() );
-  for ( utility::vector0< TagCOP >::const_iterator subtag( subtags.begin() ), end( subtags.end() );
-		subtag != end; ++subtag ) {
+	utility::vector0< TagCOP > const & subtags( tag->getTags() );
+	for ( utility::vector0< TagCOP >::const_iterator subtag( subtags.begin() ), end( subtags.end() );
+			subtag != end; ++subtag ) {
 		std::string const type( (*subtag)->getName() );
 		ResLvlTaskOperationFactory * rltof = ResLvlTaskOperationFactory::get_instance();
 		if ( rltof && rltof->has_type( type ) ) {

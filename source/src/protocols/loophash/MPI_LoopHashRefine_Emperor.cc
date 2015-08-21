@@ -65,7 +65,7 @@ MPI_LoopHashRefine_Emperor::set_defaults(){
 void
 MPI_LoopHashRefine_Emperor::init(){
 	// Are we resuming an old job ?
-	if( mpi_resume() != "" ){
+	if ( mpi_resume() != "" ) {
 		TR << "Resuming job from IDENT:  " <<  mpi_resume() << std::endl;
 		load_state( mpi_resume() );
 	};
@@ -85,7 +85,7 @@ MPI_LoopHashRefine_Emperor::go()
 	init();
 
 	TR << "Emperor Node: Waiting for data ..." << std::endl;
-	while(true){
+	while ( true ) {
 		// process any incoming messages such as incoming
 		TRDEBUG << "Emperor: processing msgs.." << std::endl;
 		process_incoming_msgs();
@@ -106,17 +106,17 @@ MPI_LoopHashRefine_Emperor::go()
 
 void
 MPI_LoopHashRefine_Emperor::process_inbound_wus(){
-	if( inbound().size() > 0 ){
+	if ( inbound().size() > 0 ) {
 		TR << "Processing inbound WUs on emperor .." << std::endl;
 	}
 
-	while( inbound().size() > 0 )
-	{
+	while ( inbound().size() > 0 )
+			{
 		WorkUnitBaseOP  next_wu =  inbound().pop_next();
 		runtime_assert( next_wu != 0 );
 		WorkUnit_SilentStructStoreOP structure_wu = utility::pointer::dynamic_pointer_cast< protocols::wum::WorkUnit_SilentStructStore > ( next_wu );
 
-		if ( structure_wu.get() == NULL ){
+		if ( structure_wu.get() == NULL ) {
 			TR << "Cannot save structural data for WU: " << std::endl;
 			next_wu->print( TR );
 			continue;
@@ -124,15 +124,14 @@ MPI_LoopHashRefine_Emperor::process_inbound_wus(){
 
 		SilentStructStore &decoys = structure_wu->decoys();
 		decoys.all_sort_silent_scores();
-		if ( structure_wu->get_wu_type() == "resultpack" ){
+		if ( structure_wu->get_wu_type() == "resultpack" ) {
 			TR << "Emperor: receivd structures: " << decoys.size() << std::endl;
 			// dump structures
 			add_structures_to_library( decoys );
-		} else
-		if ( structure_wu->get_wu_type() == "getnewstruct" ){
+		} else if ( structure_wu->get_wu_type() == "getnewstruct" ) {
 			TR << "Emperor: received expired structures: " << decoys.size() << std::endl;
 			// dump structures
-			if( decoys.size() > 0 ){
+			if ( decoys.size() > 0 ) {
 				add_structures_to_library( decoys );
 				// Always send back a structure so the master can continue its life.
 				TR << "Sending a new random structure to master:" << structure_wu->last_received_from() << std::endl;
@@ -163,17 +162,16 @@ MPI_LoopHashRefine_Emperor::add_structures_to_library( SilentStructStore &new_st
 	using namespace basic::options::OptionKeys;
 	bool result = false;
 
-	for( SilentStructStore::const_iterator it = new_structs.begin();
-		 it != new_structs.end(); ++it )
-	{
+	for ( SilentStructStore::const_iterator it = new_structs.begin();
+			it != new_structs.end(); ++it ) {
 		runtime_assert( *it != 0 );
 		core::io::silent::SilentStruct *pss = &(*(*it));
 
 		// Filter for max_emperor_lib_round_
 
-		if( max_emperor_lib_round_ > 0 ){
+		if ( max_emperor_lib_round_ > 0 ) {
 			core::Size structure_round = (core::Size) pss->get_energy("round");
-			if( structure_round > max_emperor_lib_round_ ) continue;
+			if ( structure_round > max_emperor_lib_round_ ) continue;
 		}
 
 		// add the structure if it passes energy and rms filters evaluated further down there

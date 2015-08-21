@@ -36,8 +36,9 @@ RNA_MC_MultiSuite::RNA_MC_MultiSuite():
 {}
 ///////////////////////////////////////////////////////////////////////////
 void  RNA_MC_MultiSuite::set_pucker_flip_rate( Real const setting ) {
-	for ( Size i = 1; i <= suite_samplers_.size(); ++i )
-			suite_samplers_[i]->set_pucker_flip_rate( setting );
+	for ( Size i = 1; i <= suite_samplers_.size(); ++i ) {
+		suite_samplers_[i]->set_pucker_flip_rate( setting );
+	}
 }
 ///////////////////////////////////////////////////////////////////////////
 void  RNA_MC_MultiSuite::set_pucker_flip_rate(
@@ -50,8 +51,9 @@ void  RNA_MC_MultiSuite::set_pucker_flip_rate(
 
 ///////////////////////////////////////////////////////////////////////////
 void  RNA_MC_MultiSuite::set_gaussian_stdev( core::Real const setting ) {
-	for ( Size i = 1; i <= suite_samplers_.size(); ++i )
-			suite_samplers_[i]->set_gaussian_stdev( setting );
+	for ( Size i = 1; i <= suite_samplers_.size(); ++i ) {
+		suite_samplers_[i]->set_gaussian_stdev( setting );
+	}
 }
 ///////////////////////////////////////////////////////////////////////////
 void  RNA_MC_MultiSuite::set_gaussian_stdev(
@@ -78,8 +80,9 @@ void  RNA_MC_MultiSuite::clear_rotamer() {
 }
 ///////////////////////////////////////////////////////////////////////////
 void  RNA_MC_MultiSuite::set_init_from_pose( pose::Pose const & pose ) {
-	for ( Size i = 1; i <= suite_samplers_.size(); ++i )
-			suite_samplers_[i]->set_init_from_pose( pose );
+	for ( Size i = 1; i <= suite_samplers_.size(); ++i ) {
+		suite_samplers_[i]->set_init_from_pose( pose );
+	}
 }
 ///////////////////////////////////////////////////////////////////////////
 } //rna

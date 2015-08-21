@@ -67,29 +67,29 @@ public:
 		ddg_filter.filter( sf );
 		ddg_filter.repack_bound( false );
 		ddg_filter.relax_bound( false );
-    TS_ASSERT_EQUALS( ddg_filter.report_sm(*testpose_), 111 );
+		TS_ASSERT_EQUALS( ddg_filter.report_sm(*testpose_), 111 );
 
 		ddg_filter.repack( false );
-    TS_ASSERT_EQUALS( ddg_filter.report_sm(*testpose_), 117 );
+		TS_ASSERT_EQUALS( ddg_filter.report_sm(*testpose_), 117 );
 	}
 
-  void test_filter_parsing() {
-    basic::datacache::DataMap data;
-    Filters_map filters;
-    Movers_map movers;
+	void test_filter_parsing() {
+		basic::datacache::DataMap data;
+		Filters_map filters;
+		Movers_map movers;
 
 		prime_Data( data );
 		StubMultiFilterOP sf( new StubMultiFilter( false ) );
 		sf->push_back( 199.0 ); // Bound
 		sf->push_back( 100 ); // Unbound
-    filters["sfT99"] = sf;
+		filters["sfT99"] = sf;
 
 		(*scorefxn_)(*testpose_);
 
-    protocols::simple_filters::DdgFilter testfilter;
-    TagCOP tag = tagptr_from_string("<Ddg name=test filter=sfT99 />\n");
-    testfilter.parse_my_tag( tag, data, filters, movers, *testpose_ );
+		protocols::simple_filters::DdgFilter testfilter;
+		TagCOP tag = tagptr_from_string("<Ddg name=test filter=sfT99 />\n");
+		testfilter.parse_my_tag( tag, data, filters, movers, *testpose_ );
 
-    TS_ASSERT_EQUALS( testfilter.report_sm(*testpose_), 99 );
-  }
+		TS_ASSERT_EQUALS( testfilter.report_sm(*testpose_), 99 );
+	}
 };

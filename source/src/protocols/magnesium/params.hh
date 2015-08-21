@@ -21,9 +21,9 @@
 namespace protocols {
 namespace magnesium {
 
-	core::Distance const MG_HOH_DISTANCE( 2.1 );
-	core::Distance const MG_LIGAND_DISTANCE_CUTOFF( 3.2 );
-	core::Distance const MG_V_DISTANCE( 1.0 );
+core::Distance const MG_HOH_DISTANCE( 2.1 );
+core::Distance const MG_LIGAND_DISTANCE_CUTOFF( 3.2 );
+core::Distance const MG_V_DISTANCE( 1.0 );
 
 } //magnesium
 } //protocols

@@ -106,7 +106,7 @@ class SheetFoldTypeManager {
 public:
 
 
-  typedef std::string String;
+	typedef std::string String;
 
 
 public:
@@ -149,7 +149,7 @@ private:
 	void setup_foldtype_names();
 
 
-/// @brief initialize the map of strand pairings and SheetFoldType
+	/// @brief initialize the map of strand pairings and SheetFoldType
 	void setup_foldtype_strand_pairings();
 
 

@@ -73,10 +73,10 @@ LigandDesign::LigandDesign(): Mover("LigandDesign"){
 }
 
 LigandDesign::LigandDesign(LigandDesign const & that):
-	    //utility::pointer::ReferenceCount(),
-		protocols::moves::Mover( that ),
-		option_file_(that.option_file_),
-		fragments_(that.fragments_)
+	//utility::pointer::ReferenceCount(),
+	protocols::moves::Mover( that ),
+	option_file_(that.option_file_),
+	fragments_(that.fragments_)
 {}
 
 LigandDesign::~LigandDesign() {}
@@ -91,7 +91,7 @@ LigandDesign::set_fragments(){
 	rsd_set.lock()->select_residues_DO_NOT_USE( rs, fragment_types );
 	ligand_design_tracer<< fragment_types.size()<< " fragment_types"<< std::endl;
 
-	BOOST_FOREACH(core::chemical::ResidueTypeCOP fragment_type, fragment_types){
+	BOOST_FOREACH ( core::chemical::ResidueTypeCOP fragment_type, fragment_types ) {
 		core::conformation::ResidueOP temp( new core::conformation::Residue( *fragment_type, true) );
 		fragments_.push_back(temp);
 		ligand_design_tracer<< "frag_name: "<< temp->name()<< std::endl;
@@ -113,11 +113,11 @@ std::string LigandDesign::get_name() const{
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 LigandDesign::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & /*datamap*/,
-		protocols::filters::Filters_map const & /*filters*/,
-		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & /*pose*/
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & /*datamap*/,
+	protocols::filters::Filters_map const & /*filters*/,
+	protocols::moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/
 )
 {
 	if ( tag->getName() != "LigandDesign" ) {
@@ -137,10 +137,10 @@ bool grow(core::pose::Pose pose, core::Size start, core::Size end){
 }
 
 bool has_incomplete_connections(core::pose::Pose pose, core::Size start, core::Size const end){
-	for(;start <= end; ++start){
+	for ( ; start <= end; ++start ) {
 		core::conformation::Residue const & res= pose.residue(start);
 		ligand_design_tracer<< res.name();
-		if(res.has_incomplete_connection()){
+		if ( res.has_incomplete_connection() ) {
 			ligand_design_tracer<<" has incomplete connection"<< std::endl;
 			return true;
 		}
@@ -153,15 +153,14 @@ bool has_incomplete_connections(core::pose::Pose pose, core::Size start, core::S
 bool passes_filters(core::pose::Pose const & pose, core::Size start, core::Size const end){
 	/// User Defined Filters
 	// example
-	if(	core::pose::num_heavy_atoms(start,end,pose)>20 ){
+	if ( core::pose::num_heavy_atoms(start,end,pose)>20 ) {
 		ligand_design_tracer<< "Reached heavy atom limit"<< std::endl;
 		return false;
 	}
-	if (core::pose::num_chi_angles(start,end,pose)>10){
+	if ( core::pose::num_chi_angles(start,end,pose)>10 ) {
 		ligand_design_tracer<< "Reached chi angle limit"<< std::endl;
 		return false;
-	}
-	else return true;
+	} else return true;
 }
 
 core::Size
@@ -175,8 +174,8 @@ random_connection(core::conformation::ResidueCOP residue){
 utility::vector1<core::Size>
 get_incomplete_connections(core::conformation::ResidueCOP residue){
 	utility::vector1<core::Size> incomplete_connections;
-	for(core::Size i=1; i<= residue->n_residue_connections(); ++i){
-		if(residue->connection_incomplete(i)){
+	for ( core::Size i=1; i<= residue->n_residue_connections(); ++i ) {
+		if ( residue->connection_incomplete(i) ) {
 			incomplete_connections.push_back(i);
 		}
 	}
@@ -185,13 +184,13 @@ get_incomplete_connections(core::conformation::ResidueCOP residue){
 
 utility::vector1<core::Size>
 find_unconnected_residues(
-		core::pose::Pose const & pose,
-		core::Size start,
-		core::Size const end
+	core::pose::Pose const & pose,
+	core::Size start,
+	core::Size const end
 ){
 	utility::vector1<core::Size> unconnected_residues;
-	for(; start <= end; ++start){
-		if( pose.residue(start).has_incomplete_connection() ){
+	for ( ; start <= end; ++start ) {
+		if ( pose.residue(start).has_incomplete_connection() ) {
 			unconnected_residues.push_back(start);
 		}
 	}
@@ -206,12 +205,12 @@ LigandDesign::apply( core::pose::Pose & pose )
 	using basic::options::option;
 	core::Size ligand_residue_id= pose.n_residue();
 	ASSERT_ONLY(core::conformation::Residue const & ligand= pose.residue(ligand_residue_id);)
-	assert(ligand.is_ligand());
+		assert(ligand.is_ligand());
 	assert( ligand.n_residue_connections() > 0);
 	core::Size const & chain_id= pose.chain(ligand_residue_id);
 	core::Size const start = pose.conformation().chain_begin(chain_id);
 	core::Size end = pose.conformation().chain_end(chain_id);
-	while(grow(pose, start, end)){
+	while ( grow(pose, start, end) ) {
 		utility::vector1<core::Size> unconnected_residues = find_unconnected_residues(pose, start,end);
 		core::Size const & grow_from= numeric::random::rg().random_element(unconnected_residues);
 		core::conformation::ResidueCOP const growth= numeric::random::rg().random_element(fragments_);;
@@ -225,7 +224,7 @@ LigandDesign::apply( core::pose::Pose & pose )
 }
 
 void LigandDesign::fragments_to_string() const{
-	BOOST_FOREACH(core::conformation::ResidueCOP fragment, fragments_){
+	BOOST_FOREACH ( core::conformation::ResidueCOP fragment, fragments_ ) {
 		core::conformation::Residue const & res= *fragment;
 		std::string name= res.name();
 		core::Size total= res.n_residue_connections();
@@ -238,24 +237,24 @@ void LigandDesign::add_scores_to_job(
 	core::pose::Pose & /*pose*/
 )
 {
-//	using namespace core::scoring;
-//	ScoreFunctionCOP sfxn = command_map_.get_score_function();
-//
-//	core::Real const tot_score = sfxn->score( pose );
-//
-//	// Which score terms to use
-//	typedef utility::vector1<ScoreType> ScoreTypeVec;
-//	ScoreTypeVec score_types;
-//	for(int i = 1; i <= n_score_types; ++i) {
-//		ScoreType ii = ScoreType(i);
-//		if ( sfxn->has_nonzero_weight(ii) ) score_types.push_back(ii);
-//	}
-//
-//	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-//	for(ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii) {
-//		job->add_string_real_pair(name_from_score_type(*ii), sfxn->get_weight(*ii) * pose.energies().total_energies()[ *ii ]);
-//	}
-//	job->add_string_real_pair(name_from_score_type(core::scoring::total_score), tot_score);
+	// using namespace core::scoring;
+	// ScoreFunctionCOP sfxn = command_map_.get_score_function();
+	//
+	// core::Real const tot_score = sfxn->score( pose );
+	//
+	// // Which score terms to use
+	// typedef utility::vector1<ScoreType> ScoreTypeVec;
+	// ScoreTypeVec score_types;
+	// for(int i = 1; i <= n_score_types; ++i) {
+	//  ScoreType ii = ScoreType(i);
+	//  if ( sfxn->has_nonzero_weight(ii) ) score_types.push_back(ii);
+	// }
+	//
+	// protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
+	// for(ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii) {
+	//  job->add_string_real_pair(name_from_score_type(*ii), sfxn->get_weight(*ii) * pose.energies().total_energies()[ *ii ]);
+	// }
+	// job->add_string_real_pair(name_from_score_type(core::scoring::total_score), tot_score);
 }
 
 } // namespace ligand_docking

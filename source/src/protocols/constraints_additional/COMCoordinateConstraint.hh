@@ -48,7 +48,7 @@ public:
 
 	/// ctor from atom list + input pose
 	COMCoordinateConstraint(
-	  utility::vector1< AtomID > const & atms,
+		utility::vector1< AtomID > const & atms,
 		Vector const & COM_target,
 		Real stdv,
 		Real interval,
@@ -56,14 +56,14 @@ public:
 	);
 
 	COMCoordinateConstraint(
-	  utility::vector1< AtomID > const & atms,
+		utility::vector1< AtomID > const & atms,
 		Vector const & COM_target,
 		Real stdv,
 		scoring::ScoreType scoretype = scoring::coordinate_constraint
 	);
 
 	COMCoordinateConstraint(
-	  utility::vector1< AtomID > const & atms,
+		utility::vector1< AtomID > const & atms,
 		Vector const & COM_target,
 		scoring::ScoreType scoretype = scoring::coordinate_constraint
 	);
@@ -74,18 +74,18 @@ public:
 
 	virtual scoring::constraints::ConstraintOP remapped_clone(
 		pose::Pose const& src,
-	  pose::Pose const& dest,
-	  id::SequenceMappingCOP smap
-		) const ;
+		pose::Pose const& dest,
+		id::SequenceMappingCOP smap
+	) const ;
 
 
 	void
 	score( scoring::func::XYZ_Func const & xyz,
-				 scoring::EnergyMap const &, scoring::EnergyMap & emap ) const;
+		scoring::EnergyMap const &, scoring::EnergyMap & emap ) const;
 
 	// do some pre-scoring calculations
 	void setup_for_scoring( scoring::func::XYZ_Func const & xyz,
-													scoring::ScoreFunction const &scfxn ) const;
+		scoring::ScoreFunction const &scfxn ) const;
 
 	// call the setup_for_derivatives for each constraint
 	void setup_for_derivatives(  scoring::func::XYZ_Func const & xyz, scoring::ScoreFunction const &scfxn ) const;

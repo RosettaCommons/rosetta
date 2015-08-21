@@ -39,9 +39,9 @@ using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
 
-namespace core{
+namespace core {
 namespace pose {
-namespace metrics { 
+namespace metrics {
 namespace simple_calculators {
 
 
@@ -165,13 +165,12 @@ void InterfaceNeighborDefinitionCalculator::recompute( Pose const & this_pose ) 
 				chain1_interface_residues_.insert( partner1_res );
 				interface_residues_.insert( partner2_res );
 				chain2_interface_residues_.insert( partner2_res );
-				chain1_interface.push_back( partner1_res );	// add partner1 residue
-				chain2_interface.push_back( partner2_res );	// add partner2 residue
-			}
-			else continue;
+				chain1_interface.push_back( partner1_res ); // add partner1 residue
+				chain2_interface.push_back( partner2_res ); // add partner2 residue
+			} else continue;
 
 		} // end - for all edges of node
-	}	// end - for all nodes in chain1
+	} // end - for all nodes in chain1
 	list_interface_ = std::make_pair( chain1_interface, chain2_interface ); // populate list_interface
 
 	num_interface_residues_ = interface_residues_.size();

@@ -67,9 +67,9 @@ public:
 		NOESY_PHASEII_TOPO,
 		NOESY_PHASEII_S2_RESAMPLING,
 		CEN2FULLATOM,
-		//		CEN2FULLATOM_NON_POOL_DECOYS,
+		//  CEN2FULLATOM_NON_POOL_DECOYS,
 		LAST_CENTROID_START = CEN2FULLATOM,
-		//		FLEX_CORE_RESAMPLING,
+		//  FLEX_CORE_RESAMPLING,
 		RIGID_CORE_RESAMPLING,
 		FINISHED //keep last
 	};
@@ -78,7 +78,7 @@ public:
 	~IterativeBase();
 
 	/// @brief archive is finished when at last stage
-  virtual bool finished() const { return stage_ >= finish_stage_; };
+	virtual bool finished() const { return stage_ >= finish_stage_; };
 
 	/// @brief do initializing work that requires fully setup object here
 	virtual void initialize();
@@ -98,22 +98,22 @@ public:
 	virtual bool ready_for_batch() const { return true; };
 
 	/// @brief we are not interested in batches that were generated in old stages
- 	virtual bool still_interested( jd2::archive::Batch const& batch ) const;
+	virtual bool still_interested( jd2::archive::Batch const& batch ) const;
 
 	/// @brief generate a new batch, use different recipe according to current stage
 
 	/// @brief generate a new batch, use different recipe according to current stage
-  virtual void generate_batch();
+	virtual void generate_batch();
 	virtual core::Size generate_batch( jd2::archive::Batch&, core::Size repeat_id );
 
 	/// @brief while waiting for jobs to finish
-  virtual void idle();
+	virtual void idle();
 	virtual void rescore();
 	virtual void save_status( std::ostream& ) const;
 	virtual void restore_status( std::istream& );
 
 	/// @brief overloaded to handel special convergence check 'pool_converged_rmsd'
-		/// @brief add structure to Archive.. return false if structure is rejected.
+	/// @brief add structure to Archive.. return false if structure is rejected.
 	virtual bool add_structure (
 		core::io::silent::SilentStructOP new_decoy,
 		core::io::silent::SilentStructOP alternative_decoy,
@@ -125,9 +125,9 @@ public:
 
 	/// @brief overloaded so we can test for end of IterationStage after reading
 	virtual void read_structures(
-   core::io::silent::SilentFileData& sfd,
-	 core::io::silent::SilentFileData& alternative_decoys,
-	 jd2::archive::Batch const& batch
+		core::io::silent::SilentFileData& sfd,
+		core::io::silent::SilentFileData& alternative_decoys,
+		jd2::archive::Batch const& batch
 	);
 
 
@@ -143,16 +143,16 @@ public:
 	virtual void gen_dynamic_patches( jd2::archive::Batch& batch );
 
 	virtual void update_noesy_filter_files(
-    std::string const& current,
+		std::string const& current,
 		bool fullatom
 	);
 
 	// /// @brief need to get these from the IterativeCentroid to IterativeFullatom at end of stage5 ;
-// 	std::string const& first_noesy_fa_cst_file() const { return first_noesy_fa_cst_file_; }
+	//  std::string const& first_noesy_fa_cst_file() const { return first_noesy_fa_cst_file_; }
 protected:
- 	//void set_first_noesy_fa_cst_file( std::string setting ) { first_noesy_fa_cst_file_ = setting; }
+	//void set_first_noesy_fa_cst_file( std::string setting ) { first_noesy_fa_cst_file_ = setting; }
 
-// 	core::Real noesy_assign_float_cycle() const { return noesy_assign_float_cycle_; }
+	//  core::Real noesy_assign_float_cycle() const { return noesy_assign_float_cycle_; }
 	void set_noesy_assign_float_cycle( core::Real setting ) { noesy_assign_float_cycle_ = setting; }
 	bool never_switched_noe_filter_;
 	loops::Loops scored_core_;
@@ -168,9 +168,9 @@ protected:
 	void gen_cen2fullatom( jd2::archive::Batch& batch );
 	void gen_cen2fullatom_non_pool_decoys( jd2::archive::Batch& batch );
 	void collect_hedgeing_decoys_from_batches(
-				 jd2::archive::Batch const& batch,
-				 core::io::silent::SilentStructOPs& start_decoys,
-				 core::Real score_cut_per_batch
+		jd2::archive::Batch const& batch,
+		core::io::silent::SilentStructOPs& start_decoys,
+		core::Real score_cut_per_batch
 	);
 	void add_fullatom_flags( jd2::archive::Batch& batch );
 
@@ -183,9 +183,9 @@ protected:
 	/// some helpers for the helpers
 	PairingStatisticsOP compute_beta_topology();
 	void guess_pairings_from_secondary_structure(
-	    core::fragment::FragSet const& frags,
-			std::string const& out_pairings_file,
-			std::string const& out_frag_ss_file
+		core::fragment::FragSet const& frags,
+		std::string const& out_pairings_file,
+		std::string const& out_frag_ss_file
 	) const;
 	void compute_cores();
 
@@ -251,9 +251,9 @@ protected:
 	void setup_filter_cst( core::Real weight );
 
 	virtual void collect_alternative_decoys(
-			 SilentStructs /*primary_decoys*/,
-			 std::string /*alternative_decoy_file*/,
-			 SilentStructVector& /*output_decoys*/
+		SilentStructs /*primary_decoys*/,
+		std::string /*alternative_decoy_file*/,
+		SilentStructVector& /*output_decoys*/
 	) {};
 
 private:
@@ -271,17 +271,17 @@ private:
 	/// @brief necessary steps to go to next stage... e.g., saving snapshot of archive
 	void increment_stage();
 
-	//	void read_noisy_assign_data_from_last_batch();
+	// void read_noisy_assign_data_from_last_batch();
 
 	void replace_noesy_filter_constraints();
 	void rescore_nonlocal_archive();
 
 	void setup_autoNOE();
 	void do_dynamic_patching(
-			jd2::archive::Batch& batch,
-			utility::io::ozstream& flags,
-			std::string score,
-			utility::options::FileVectorOptionKey const& key
+		jd2::archive::Batch& batch,
+		utility::io::ozstream& flags,
+		std::string score,
+		utility::options::FileVectorOptionKey const& key
 	) const;
 private:
 	///  ----------------- -- private data members -- --------------------

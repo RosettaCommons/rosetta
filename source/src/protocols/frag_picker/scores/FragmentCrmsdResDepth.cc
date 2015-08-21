@@ -52,12 +52,12 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 static thread_local basic::Tracer trRmsScore(
-		"protocols.frag_picker.scores.FragmentCrmsdResDepth");
+	"protocols.frag_picker.scores.FragmentCrmsdResDepth");
 
 FragmentCrmsdResDepth::~FragmentCrmsdResDepth() {}
 
 FragmentCrmsdResDepth::FragmentCrmsdResDepth(Size priority, Real lowest_acceptable_value,
-		bool use_lowest, core::pose::PoseOP reference_pose, utility::vector1<core::Real> & query_residue_depth) :
+	bool use_lowest, core::pose::PoseOP reference_pose, utility::vector1<core::Real> & query_residue_depth) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "FragmentCrmsdResDepth") {
 	reference_pose_ = reference_pose;
 	n_atoms_ = reference_pose_->total_residue();
@@ -69,14 +69,14 @@ FragmentCrmsdResDepth::FragmentCrmsdResDepth(Size priority, Real lowest_acceptab
 
 FragmentCrmsdResDepth::FragmentCrmsdResDepth(Size priority, Real lowest_acceptable_value, bool use_lowest,
 	utility::vector1< utility::vector1<Real> > xyz, utility::vector1<core::Real> & query_residue_depth)  :
-        CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "FragmentCrmsdResDepth") {
+	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "FragmentCrmsdResDepth") {
 
 	n_atoms_ = xyz.size();
 	reference_coordinates_.redimension(3, n_atoms_, 0.0);
 	weights_.redimension(n_atoms_, 1.0);
-	for (core::Size i = 1; i <= n_atoms_; i++) {
+	for ( core::Size i = 1; i <= n_atoms_; i++ ) {
 		trRmsScore.Debug << i<<" ";
-		for (core::Size d = 1; d <= 3; ++d) {
+		for ( core::Size d = 1; d <= 3; ++d ) {
 			reference_coordinates_(d, i) = xyz[i][d];
 			trRmsScore.Debug <<xyz[i][d]<<" ";
 		}
@@ -86,16 +86,16 @@ FragmentCrmsdResDepth::FragmentCrmsdResDepth(Size priority, Real lowest_acceptab
 }
 
 void FragmentCrmsdResDepth::fill_CA_coords(core::pose::Pose const& pose,
-		FArray2_double& coords, Size n_atoms) {
+	FArray2_double& coords, Size n_atoms) {
 
 	trRmsScore.Debug << "Copying coordinates from ... The first residues are: "
-			<< pose.residue(1).name3() << " " << pose.residue(2).name3() << " "
-			<< pose.residue(3).name3() << std::endl;
+		<< pose.residue(1).name3() << " " << pose.residue(2).name3() << " "
+		<< pose.residue(3).name3() << std::endl;
 
-	for (core::Size i = 1; i <= n_atoms; i++) {
+	for ( core::Size i = 1; i <= n_atoms; i++ ) {
 		id::NamedAtomID idCA("CA", i);
 		PointPosition const& xyz = pose.xyz(idCA);
-		for (core::Size d = 1; d <= 3; ++d) {
+		for ( core::Size d = 1; d <= 3; ++d ) {
 			coords(d, i) = xyz[d - 1];
 		}
 	}
@@ -107,11 +107,11 @@ bool FragmentCrmsdResDepth::score(FragmentCandidateOP f, FragmentScoreMapOP empt
 
 	Real depth_score = 0;
 
-	if ((Size) fragment_coordinates_.size2() < f->get_length()) {
+	if ( (Size) fragment_coordinates_.size2() < f->get_length() ) {
 		fragment_coordinates_.redimension(3, f->get_length(), 0.0);
 		frag_pos_coordinates_.redimension(3, f->get_length(), 0.0);
 	}
-	for (Size i = 1; i <= f->get_length(); i++) {
+	for ( Size i = 1; i <= f->get_length(); i++ ) {
 		Size qindex = i + f->get_first_index_in_query() - 1;
 		VallChunkOP chunk = f->get_chunk();
 		VallResidueOP r = chunk->at( f->get_first_index_in_vall() + i - 1 );
@@ -127,7 +127,7 @@ bool FragmentCrmsdResDepth::score(FragmentCandidateOP f, FragmentScoreMapOP empt
 		depth_score += depthdiff*depthdiff;
 	}
 	Real rms = numeric::model_quality::rms_wrapper(f->get_length(),
-			fragment_coordinates_, frag_pos_coordinates_);
+		fragment_coordinates_, frag_pos_coordinates_);
 
 	// similarity score from Zhou and Zhou, Proteins 2005
 	// rmsd**2 + weight*depth_score  with weight = 10
@@ -135,8 +135,9 @@ bool FragmentCrmsdResDepth::score(FragmentCandidateOP f, FragmentScoreMapOP empt
 
 	empty_map->set_score_component(totalScore, id_);
 	PROF_STOP( basic::CA_RMSD_EVALUATION );
-	if ((rms > lowest_acceptable_value_) && (use_lowest_ == true))
+	if ( (rms > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;
+	}
 
 	return true;
 }
@@ -145,7 +146,7 @@ bool FragmentCrmsdResDepth::score(FragmentCandidateOP f, FragmentScoreMapOP empt
 void FragmentCrmsdResDepth::do_caching(VallChunkOP current_chunk) {
 
 	chunk_coordinates_.redimension(3, current_chunk->size());
-	for (core::Size i = 1; i <= current_chunk->size(); i++) {
+	for ( core::Size i = 1; i <= current_chunk->size(); i++ ) {
 		VallResidueOP r = current_chunk->at(i);
 		chunk_coordinates_(1, i) = r->x();
 		chunk_coordinates_(2, i) = r->y();
@@ -154,37 +155,40 @@ void FragmentCrmsdResDepth::do_caching(VallChunkOP current_chunk) {
 }
 
 bool FragmentCrmsdResDepth::cached_score(FragmentCandidateOP fragment,
-		FragmentScoreMapOP scores) {
+	FragmentScoreMapOP scores) {
 
 	std::string tmp = fragment->get_chunk()->chunk_key();
-	if (tmp.compare(cached_scores_id_) != 0)
+	if ( tmp.compare(cached_scores_id_) != 0 ) {
 		do_caching(fragment->get_chunk());
+	}
 
 	Real depth_score = 0;
 
 	PROF_START( basic::CA_RMSD_EVALUATION );
 	Size frag_len = fragment->get_length();
-	if ((Size) fragment_coordinates_.size2() < frag_len)
+	if ( (Size) fragment_coordinates_.size2() < frag_len ) {
 		fragment_coordinates_.redimension(3, frag_len, 0.0);
-	if ((Size) frag_pos_coordinates_.size2() < frag_len)
+	}
+	if ( (Size) frag_pos_coordinates_.size2() < frag_len ) {
 		frag_pos_coordinates_.redimension(3, frag_len, 0.0);
+	}
 
-	for (core::Size i = 1; i <= frag_len; ++i) {
+	for ( core::Size i = 1; i <= frag_len; ++i ) {
 		Size qindex = i + fragment->get_first_index_in_query() - 1;
 		Size vindex = i + fragment->get_first_index_in_vall() - 1;
-		for (core::Size d = 1; d <= 3; ++d) {
+		for ( core::Size d = 1; d <= 3; ++d ) {
 			fragment_coordinates_(d, i) = chunk_coordinates_(d, vindex);
 			frag_pos_coordinates_(d, i) = reference_coordinates_(d, qindex);
 		}
 		// residue depth similarity score from Zhou and Zhou, Proteins 2005
 		// (exp( - Dquery / 2.8) - exp( - Dtemplate / 2.8))**2
 		Real depthdiff = exp(-1*query_residue_depth_[qindex]/2.8) -
-				exp(-1*fragment->get_chunk()->at( vindex )->depth()/2.8);
+			exp(-1*fragment->get_chunk()->at( vindex )->depth()/2.8);
 		depth_score += depthdiff*depthdiff;
 	}
 
 	Real rms = numeric::model_quality::rms_wrapper(frag_len,
-			fragment_coordinates_, frag_pos_coordinates_);
+		fragment_coordinates_, frag_pos_coordinates_);
 
 	// similarity score from Zhou and Zhou, Proteins 2005
 	// rmsd**2 + weight*depth_score  with weight = 10
@@ -192,8 +196,9 @@ bool FragmentCrmsdResDepth::cached_score(FragmentCandidateOP fragment,
 
 	scores->set_score_component(totalScore, id_);
 	PROF_STOP( basic::CA_RMSD_EVALUATION );
-	if ((rms > lowest_acceptable_value_) && (use_lowest_ == true))
+	if ( (rms > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;
+	}
 
 	return true;
 }
@@ -202,45 +207,47 @@ void FragmentCrmsdResDepth::clean_up() {
 }
 
 FragmentScoringMethodOP MakeFragmentCrmsdResDepth::make(Size priority,
-		Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string) {
+	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string) {
 
-	if (option[in::file::native].user()) {
+	if ( option[in::file::native].user() ) {
 		trRmsScore
-				<< "Reference structure to score fragments by crmsd loaded from: "
-				<< option[in::file::native]() << std::endl;
+			<< "Reference structure to score fragments by crmsd loaded from: "
+			<< option[in::file::native]() << std::endl;
 		core::pose::PoseOP nativePose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*nativePose, option[in::file::native]());
 
-		if (nativePose->total_residue() != picker->get_query_residue_depth().size())
+		if ( nativePose->total_residue() != picker->get_query_residue_depth().size() ) {
 			utility_exit_with_message("MakeFragmentCrmsdResDepth native total residue != query residue depth length");
+		}
 
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new FragmentCrmsdResDepth(priority,
-				lowest_acceptable_value, use_lowest, nativePose, picker->get_query_residue_depth()) );
+			lowest_acceptable_value, use_lowest, nativePose, picker->get_query_residue_depth()) );
 	}
-	if (option[in::file::s].user()) {
+	if ( option[in::file::s].user() ) {
 		trRmsScore
-				<< "Reference structure to score fragments by crmsd loaded from: "
-				<< option[in::file::s]()[1] << std::endl;
+			<< "Reference structure to score fragments by crmsd loaded from: "
+			<< option[in::file::s]()[1] << std::endl;
 		core::pose::PoseOP nativePose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*nativePose, option[in::file::s]()[1]);
 
-		if (nativePose->total_residue() != picker->get_query_residue_depth().size())
+		if ( nativePose->total_residue() != picker->get_query_residue_depth().size() ) {
 			utility_exit_with_message("MakeFragmentCrmsdResDepth native total residue != query residue depth length");
+		}
 
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new FragmentCrmsdResDepth(priority,
-				lowest_acceptable_value, use_lowest, nativePose, picker->get_query_residue_depth()) );
+			lowest_acceptable_value, use_lowest, nativePose, picker->get_query_residue_depth()) );
 	}
-	if (option[in::file::xyz].user()) {
+	if ( option[in::file::xyz].user() ) {
 
 		trRmsScore
-				<< "Reference structure to score fragments by crmsd loaded from: "
-				<< option[in::file::xyz]().c_str() << std::endl;
-                std::string line;
-                utility::vector1< utility::vector1< Real > > xyz;
-                // std::istream & input = utility::io::izstream( option[ in::file::xyz ]().c_str() );
+			<< "Reference structure to score fragments by crmsd loaded from: "
+			<< option[in::file::xyz]().c_str() << std::endl;
+		std::string line;
+		utility::vector1< utility::vector1< Real > > xyz;
+		// std::istream & input = utility::io::izstream( option[ in::file::xyz ]().c_str() );
 		std::ifstream input( option[ in::file::xyz ]().c_str() );
 
-		while( getline( input, line ) ) {
+		while ( getline( input, line ) ) {
 			trRmsScore.Warning << line<<std::endl;
 			if ( line.substr(0,1) == "#" ) continue;
 			std::istringstream line_stream( line );
@@ -254,14 +261,15 @@ FragmentScoringMethodOP MakeFragmentCrmsdResDepth::make(Size priority,
 		}
 		trRmsScore <<  xyz.size() << " atoms found in the reference" << std::endl;
 
-		if (xyz.size() != picker->get_query_residue_depth().size())
+		if ( xyz.size() != picker->get_query_residue_depth().size() ) {
 			utility_exit_with_message("MakeFragmentCrmsdResDepth xyz size != query residue depth length");
+		}
 
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new FragmentCrmsdResDepth(priority,
-				lowest_acceptable_value, use_lowest, xyz, picker->get_query_residue_depth()) );
+			lowest_acceptable_value, use_lowest, xyz, picker->get_query_residue_depth()) );
 	}
 	utility_exit_with_message(
-			"Can't read a reference structure. Provide it with in::file::s flag");
+		"Can't read a reference structure. Provide it with in::file::s flag");
 
 	return NULL;
 }

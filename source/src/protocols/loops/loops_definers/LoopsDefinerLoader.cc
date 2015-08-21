@@ -58,7 +58,7 @@ void LoopsDefinerLoader::load_data(
 	basic::datacache::DataMap & data
 ) const
 {
-	BOOST_FOREACH(TagCOP tag, tag->getTags()){
+	BOOST_FOREACH ( TagCOP tag, tag->getTags() ) {
 		string const type( tag->getName() );
 		if ( ! tag->hasOption("name") ) {
 			utility_exit_with_message( "Can't create unnamed Loops definition (type: " + type + ")" );

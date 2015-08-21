@@ -43,12 +43,12 @@ namespace loops_definers {
 /// @ details given a database table with the following schema, defining a single loop per row
 ///
 ///CREATE TABLE loops (
-///	tag TEXT,
-///	start INTEGER,
-///	stop INTEGER,
-///	cut INTEGER,
-///	skip_rate REAL,
-///	extended BOOLEAN);
+/// tag TEXT,
+/// start INTEGER,
+/// stop INTEGER,
+/// cut INTEGER,
+/// skip_rate REAL,
+/// extended BOOLEAN);
 ///
 /// return all loops associated with the job distributor input tag
 /// Note: you can specify a different table using the 'database_table' field

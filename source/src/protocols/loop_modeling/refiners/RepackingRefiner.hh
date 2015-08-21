@@ -43,11 +43,11 @@ public:
 
 	/// @copydoc LoopMover::parse_my_tag
 	void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & data,
-			protocols::filters::Filters_map const & filters,
-			protocols::moves::Movers_map const & movers,
-			Pose const & pose);
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		Pose const & pose);
 
 	/// @brief Get the score function to be used on the next call to apply().
 	core::scoring::ScoreFunctionOP get_score_function();
@@ -62,7 +62,7 @@ public:
 	/// @brief Get the task factory to be used on the next call to apply().
 	/// @details If no task factory has been set, the fallback will be returned.
 	core::pack::task::TaskFactoryOP get_task_factory(
-			core::pack::task::TaskFactoryOP fallback);
+		core::pack::task::TaskFactoryOP fallback);
 
 	/// @brief Set the task factory to be used on the next call to apply().
 	void set_task_factory(core::pack::task::TaskFactoryOP task_factory);

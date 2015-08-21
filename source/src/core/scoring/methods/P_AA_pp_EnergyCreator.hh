@@ -32,7 +32,7 @@ public:
 	/// @brief Instantiate a new P_AA_pp_Energy
 	virtual
 	methods::EnergyMethodOP
-		create_energy_method(
+	create_energy_method(
 		methods::EnergyMethodOptions const &
 	) const;
 

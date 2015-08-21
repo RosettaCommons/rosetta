@@ -40,16 +40,16 @@ class ProfileScore: public CachingScoringMethod {
 public:
 
 	ProfileScore(Size priority, Real lowest_acceptable_value, bool use_lowest,
-			sequence::SequenceProfileOP query_profile,
-			sequence::ScoringSchemeOP profile_scoring, Size longest_vall_chunk) :
-			CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "ProfileScore") {
-		if( query_profile->size() != query_profile->length() ) {
+		sequence::SequenceProfileOP query_profile,
+		sequence::ScoringSchemeOP profile_scoring, Size longest_vall_chunk) :
+		CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "ProfileScore") {
+		if ( query_profile->size() != query_profile->length() ) {
 			utility_exit_with_message("ProfileScore needs a valid sequence profile.");
 		}
 		query_profile_ = query_profile;
 		profile_scoring_ = profile_scoring;
 
-		for (Size i = 1; i <= query_profile->length(); ++i) {
+		for ( Size i = 1; i <= query_profile->length(); ++i ) {
 			utility::vector1<Real> row(longest_vall_chunk);
 			scores_.push_back(row);
 		}
@@ -62,7 +62,7 @@ public:
 	}
 	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP);
 	bool describe_score(FragmentCandidateOP f, FragmentScoreMapOP empty_map,
-			std::ostream& out);
+		std::ostream& out);
 
 protected:
 	Matrix scores_;

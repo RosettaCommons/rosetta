@@ -24,11 +24,11 @@
 
 #include <utility/vector1.hh>
 
-namespace core{
-namespace pack{
-namespace task{
-namespace operation{
-namespace util{
+namespace core {
+namespace pack {
+namespace task {
+namespace operation {
+namespace util {
 
 /// @details Calculates the residues at an interface between two protein chains or jump.
 /// The calculation is done in the following manner.  First the point graph

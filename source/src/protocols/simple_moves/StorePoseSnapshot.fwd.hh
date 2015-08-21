@@ -19,13 +19,13 @@
 // Package headers
 
 namespace protocols {
-	namespace simple_moves {
+namespace simple_moves {
 
-		class StorePoseSnapshot;
-		typedef utility::pointer::shared_ptr< StorePoseSnapshot > StorePoseSnapshotOP;
-		typedef utility::pointer::shared_ptr< StorePoseSnapshot const > StorePoseSnapshotCOP;
+class StorePoseSnapshot;
+typedef utility::pointer::shared_ptr< StorePoseSnapshot > StorePoseSnapshotOP;
+typedef utility::pointer::shared_ptr< StorePoseSnapshot const > StorePoseSnapshotCOP;
 
-	} // simple_moves
+} // simple_moves
 } // protocols
 
 #endif //INCLUDED_protocols_simple_moves_StorePoseSnapshot_fwd_hh

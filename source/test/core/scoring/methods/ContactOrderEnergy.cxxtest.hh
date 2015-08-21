@@ -42,7 +42,7 @@ using namespace core::scoring::methods;
 
 class ContactOrderEnergy_Tests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	Pose pose;
 	ContactOrderEnergy co_energy;

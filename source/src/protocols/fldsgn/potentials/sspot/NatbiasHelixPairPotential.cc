@@ -117,7 +117,7 @@ NatbiasHelixPairPotential::show_params() const
 void
 NatbiasHelixPairPotential::show( Pose const & pose ) const
 {
-	if( ! hpairset_ ) {
+	if ( ! hpairset_ ) {
 		TR << "No helix pairings to be calculated. ";
 		return;
 	}
@@ -132,7 +132,7 @@ NatbiasHelixPairPotential::show( Pose const & pose ) const
 	Size num( 0 );
 	HelixPairings const & hpairs = hpairset_->helix_pairings();
 	TR << "name distance cross_angle align_angle score " << std::endl;
-	for( HelixPairings::const_iterator it=hpairs.begin(), ite=hpairs.end() ; it != ite; ++it ) {
+	for ( HelixPairings::const_iterator it=hpairs.begin(), ite=hpairs.end() ; it != ite; ++it ) {
 		num++;
 		HelixPairing const & hpair( **it );
 		TR << hpair << " " << hh_scores_[ num ] << std::endl;
@@ -143,13 +143,13 @@ NatbiasHelixPairPotential::show( Pose const & pose ) const
 
 /// @brief
 void
-NatbiasHelixPairPotential::score(	SS_Info2_COP const ss_info, Real & hh_score ) const
+NatbiasHelixPairPotential::score( SS_Info2_COP const ss_info, Real & hh_score ) const
 {
 	using protocols::fldsgn::topology::Helix;
 	using protocols::fldsgn::topology::Helices;
 	using protocols::fldsgn::topology::Strands;
 
-	if( ! hpairset_ ) {
+	if ( ! hpairset_ ) {
 		return;
 	}
 
@@ -168,7 +168,7 @@ NatbiasHelixPairPotential::score(	SS_Info2_COP const ss_info, Real & hh_score ) 
 	Size num( 0 );
 
 	hh_scores_.resize( hpairset_->helix_pairings().size() );
-	for( HelixPairings::const_iterator it=hpairs.begin(), ite=hpairs.end(); it != ite; ++it ) {
+	for ( HelixPairings::const_iterator it=hpairs.begin(), ite=hpairs.end(); it != ite; ++it ) {
 
 		num++;
 		hh_scores_[ num ] = 0.0;
@@ -211,5 +211,5 @@ NatbiasHelixPairPotential::score(	SS_Info2_COP const ss_info, Real & hh_score ) 
 
 } // ns sspot
 } // ns potentials
-}	// ns fldsgn
-}	// ns protocols
+} // ns fldsgn
+} // ns protocols

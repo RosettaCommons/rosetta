@@ -54,7 +54,7 @@ public:
 private:
 
 	/// @brief Add one more rotamer sampler to this sampler -- note that this is now made 'private', so that users can only add StepWiseSamplerOneValueOPs
-	using	StepWiseSamplerSizedComb::add_external_loop_rotamer;
+	using StepWiseSamplerSizedComb::add_external_loop_rotamer;
 
 private:
 

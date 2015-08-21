@@ -44,7 +44,7 @@ public:
 
 public:
 	ResTypeFragmentMover(
-			core::fragment::FragSetCOP fragset);
+		core::fragment::FragSetCOP fragset);
 
 
 	ResTypeFragmentMover(

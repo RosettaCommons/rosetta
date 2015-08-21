@@ -103,12 +103,11 @@ TaskOperationOP RestrictResidueToRepacking::clone() const
 void
 RestrictResidueToRepacking::apply( pose::Pose const &, PackerTask & task ) const
 {
-	for(utility::vector1< core::Size >::const_iterator it(residues_to_restrict_to_repacking_.begin()), end(residues_to_restrict_to_repacking_.end());
-			it != end; ++it)
-		{
+	for ( utility::vector1< core::Size >::const_iterator it(residues_to_restrict_to_repacking_.begin()), end(residues_to_restrict_to_repacking_.end());
+			it != end; ++it ) {
 		//debug_assert( *it ); //begin/end can't return NULL anyway?
-			task.nonconst_residue_task(*it).restrict_to_repacking();
-		}
+		task.nonconst_residue_task(*it).restrict_to_repacking();
+	}
 	return;
 }
 
@@ -126,14 +125,14 @@ RestrictResidueToRepacking::parse_tag( TagCOP tag , DataMap & )
 
 /// BEGIN RestrictAbsentCanonicalAAS
 RestrictAbsentCanonicalAAS::RestrictAbsentCanonicalAAS()
-	:	parent(),
-		resid_(1)
+: parent(),
+	resid_(1)
 {
 	keep_aas_.assign( chemical::num_canonical_aas, false );
 }
 
 RestrictAbsentCanonicalAAS::RestrictAbsentCanonicalAAS( core::Size resid, utility::vector1< bool > keep  )
-	:
+:
 	parent()
 {
 	keep_aas( keep );
@@ -155,13 +154,13 @@ TaskOperationOP RestrictAbsentCanonicalAAS::clone() const
 void
 RestrictAbsentCanonicalAAS::apply( pose::Pose const &, PackerTask & task ) const
 {
-	if( resid_ == 0 ){// restrict all residues
-		for( core::Size i( 1 ); i <= task.total_residue(); ++i ) {
+	if ( resid_ == 0 ) { // restrict all residues
+		for ( core::Size i( 1 ); i <= task.total_residue(); ++i ) {
 			task.nonconst_residue_task( i ).restrict_absent_canonical_aas( keep_aas_ );
 		}
-	}
-	else
+	} else {
 		task.nonconst_residue_task( resid_ ).restrict_absent_canonical_aas( keep_aas_ );
+	}
 }
 
 void
@@ -170,7 +169,7 @@ RestrictAbsentCanonicalAAS::keep_aas( std::string const keep )
 	using namespace chemical;
 	runtime_assert( keep_aas_.size() == num_canonical_aas );
 	utility::vector1< bool > canonical_aas_to_keep( num_canonical_aas, false );
-	BOOST_FOREACH( char const c, keep ){
+	BOOST_FOREACH ( char const c, keep ) {
 		if ( oneletter_code_specifies_aa( c ) ) {
 			//std::cout << "Keeping amino acid " << c << std::endl;
 			canonical_aas_to_keep[ aa_from_oneletter_code( c ) ] = true;
@@ -182,14 +181,14 @@ RestrictAbsentCanonicalAAS::keep_aas( std::string const keep )
 	keep_aas( canonical_aas_to_keep );
 }
 
-// if an amino acid is not present (false) in the boolean vector, then do not allow it at this position.  The boolean vector is a 20-length vector in alphabetical order by one-letter code. 
+// if an amino acid is not present (false) in the boolean vector, then do not allow it at this position.  The boolean vector is a 20-length vector in alphabetical order by one-letter code.
 void
 RestrictAbsentCanonicalAAS::keep_aas( utility::vector1< bool > const keep )
 {
 	runtime_assert( keep.size() == chemical::num_canonical_aas );
 	keep_aas_ = keep;
 	//for ( Size ii = 1; ii <= keep_aas_.size(); ++ii ) {
-	//	std::cout << " keeping " << ii << " " << " ? " << keep_aas_[ ii ]  << std::endl;
+	// std::cout << " keeping " << ii << " " << " ? " << keep_aas_[ ii ]  << std::endl;
 	//}
 }
 
@@ -246,7 +245,7 @@ void DisallowIfNonnative::clear(){
 utility::vector1< bool >
 DisallowIfNonnative::invert_vector( utility::vector1< bool > disallowed_aas){
 	utility::vector1< bool > inverted_vec;
-	for(core::Size ii=1; ii<=disallowed_aas_.size(); ii++ ){
+	for ( core::Size ii=1; ii<=disallowed_aas_.size(); ii++ ) {
 		inverted_vec.push_back( ! disallowed_aas[ii] );
 	}
 	return inverted_vec;
@@ -254,14 +253,15 @@ DisallowIfNonnative::invert_vector( utility::vector1< bool > disallowed_aas){
 
 void DisallowIfNonnative::apply( pose::Pose const &, PackerTask & task ) const
 {
- 	runtime_assert( allowed_aas_.size() == chemical::num_canonical_aas );
-	if ( residue_selection_.empty() ){ //if no residue defined then do all residues
-		for (core::Size ii = 1; ii<= task.total_residue(); ii++)
+	runtime_assert( allowed_aas_.size() == chemical::num_canonical_aas );
+	if ( residue_selection_.empty() ) { //if no residue defined then do all residues
+		for ( core::Size ii = 1; ii<= task.total_residue(); ii++ ) {
 			task.nonconst_residue_task( ii ).restrict_nonnative_canonical_aas( allowed_aas_ );
-	}
-	else{  //if a residue is defined then do only on that residue
-		for(core::Size jj = 1; jj <= residue_selection_.size(); jj++ )
+		}
+	} else {  //if a residue is defined then do only on that residue
+		for ( core::Size jj = 1; jj <= residue_selection_.size(); jj++ ) {
 			task.nonconst_residue_task( residue_selection_[jj] ).restrict_nonnative_canonical_aas( allowed_aas_ );
+		}
 	}
 }
 
@@ -276,7 +276,7 @@ void DisallowIfNonnative::disallow_aas( std::string const & aa_string ){
 	using namespace chemical;
 	utility::vector1< bool > aa_vector ( chemical::num_canonical_aas, false );
 	for ( std::string::const_iterator it( aa_string.begin() ), end( aa_string.end() );
-				it != end; ++it ) {
+			it != end; ++it ) {
 		if ( oneletter_code_specifies_aa( *it ) ) {
 			aa_vector[ aa_from_oneletter_code( *it ) ] = true;
 		} else {
@@ -288,15 +288,16 @@ void DisallowIfNonnative::disallow_aas( std::string const & aa_string ){
 	disallowed_aas_ = aa_vector;
 	allowed_aas_ = invert_vector( disallowed_aas_ );
 }
-	//functions to restrict what residues are looked at by operation
-	//selections are additive
+//functions to restrict what residues are looked at by operation
+//selections are additive
 void DisallowIfNonnative::restrict_to_residue( core::Size const & resid){
 	//chrisk: default to all residues if bogus seqpos 0 passed (e.g. through rosetta_scripts)
-	if( resid != 0 ) residue_selection_.push_back( resid );
+	if ( resid != 0 ) residue_selection_.push_back( resid );
 }
 void DisallowIfNonnative::restrict_to_residue( utility::vector1< core::Size > const & residues){
-	for(core::Size ii=1; ii<=residues.size(); ii++)
+	for ( core::Size ii=1; ii<=residues.size(); ii++ ) {
 		residue_selection_.push_back( residues[ii] );
+	}
 }
 
 void DisallowIfNonnative::parse_tag( TagCOP tag , DataMap & )
@@ -334,10 +335,10 @@ void
 RotamerExplosion::apply( core::pose::Pose const &, PackerTask & task ) const
 {
 	ResidueLevelTask & restask( task.nonconst_residue_task( resid_ ) );
-  if( chi_ > 0 ) restask.or_ex1_sample_level( sample_level_ );
-	if( chi_ > 1 ) restask.or_ex2_sample_level( sample_level_ );
-	if( chi_ > 2 ) restask.or_ex3_sample_level( sample_level_ );
-	if( chi_ > 3 ) restask.or_ex4_sample_level( sample_level_ );
+	if ( chi_ > 0 ) restask.or_ex1_sample_level( sample_level_ );
+	if ( chi_ > 1 ) restask.or_ex2_sample_level( sample_level_ );
+	if ( chi_ > 2 ) restask.or_ex3_sample_level( sample_level_ );
+	if ( chi_ > 3 ) restask.or_ex4_sample_level( sample_level_ );
 	restask.or_include_current( false ); //not that this call does anything...
 }
 
@@ -504,7 +505,7 @@ ExtraRotamersGeneric::parse_tag( TagCOP tag , DataMap & )
 void
 ExtraRotamersGeneric::apply( pose::Pose const &, PackerTask & task ) const
 {
-	for(Size i=1; i <= task.total_residue(); ++i){
+	for ( Size i=1; i <= task.total_residue(); ++i ) {
 		ResidueLevelTask & res_task(task.nonconst_residue_task(i));
 		res_task.or_ex1(ex1_);
 		res_task.or_ex2(ex2_);
@@ -662,7 +663,7 @@ ReadResfile::parse_tag( TagCOP tag , DataMap & )
 
 void
 ReadResfile::parse_def( utility::lua::LuaObject const & def) {
-	if( def["filename"] ) resfile_filename_ = def["filename"].to<std::string>();
+	if ( def["filename"] ) resfile_filename_ = def["filename"].to<std::string>();
 	// special case: if "COMMANDLINE" string specified, use commandline option setting
 	if ( resfile_filename_ == "COMMANDLINE" ) default_filename();
 }
@@ -676,7 +677,7 @@ ReadResfileAndObeyLengthEvents::ReadResfileAndObeyLengthEvents() :
 ReadResfileAndObeyLengthEvents::ReadResfileAndObeyLengthEvents( std::string const & filename ) :
 	parent( filename ),
 	apply_default_commands_to_inserts_(false)
- {}
+{}
 
 ReadResfileAndObeyLengthEvents::~ReadResfileAndObeyLengthEvents(){}
 
@@ -706,7 +707,7 @@ ReadResfileAndObeyLengthEvents::apply(
 
 	//1. get the length change that the pose was exposed to
 	//safeguard
-	if( !pose.observer_cache().has( pose::datacache::CacheableObserverType::LENGTH_EVENT_COLLECTOR ) ){
+	if ( !pose.observer_cache().has( pose::datacache::CacheableObserverType::LENGTH_EVENT_COLLECTOR ) ) {
 		parent::apply( pose, ptask );
 		return;
 	}
@@ -715,7 +716,7 @@ ReadResfileAndObeyLengthEvents::apply(
 
 	utility::vector1< core::conformation::signals::LengthEvent > const & events( lencollect->events() );
 	utility::vector1< core::id::SequenceMapping > smaps;
-	for( Size i =1; i <= events.size(); ++i ){
+	for ( Size i =1; i <= events.size(); ++i ) {
 		smaps.push_back( core::id::SequenceMapping( events[i] ) );
 	}
 	core::id::SequenceMappingOP fullsmap( core::id::combine_sequence_mappings( smaps ) );
@@ -726,7 +727,7 @@ ReadResfileAndObeyLengthEvents::apply(
 	//following block by one call
 	std::string resfile_string;
 	utility::io::izstream file( this->filename() );
-	if (!file ) utility_exit_with_message( "Cannot open file " + this->filename() );
+	if ( !file ) utility_exit_with_message( "Cannot open file " + this->filename() );
 	utility::slurp( file, resfile_string );
 	std::istringstream resfile(resfile_string);
 	ResfileContents contents( pose, resfile );
@@ -736,13 +737,13 @@ ReadResfileAndObeyLengthEvents::apply(
 	for ( Size ii = 1; ii <= ptask.total_residue(); ++ii ) {
 		Size ii_resfile_seqpos( (*fullsmap)[ii] );
 
-		if( !ii_resfile_seqpos && !apply_default_commands_to_inserts_ ) continue;
+		if ( !ii_resfile_seqpos && !apply_default_commands_to_inserts_ ) continue;
 
 		std::list< ResfileCommandCOP > const & ii_command_list( this->resfile_commands( ii_resfile_seqpos, contents, ptask) );
 
 		for ( std::list< ResfileCommandCOP >::const_iterator
-					iter = ii_command_list.begin(), iter_end = ii_command_list.end();
-					iter != iter_end; ++iter ) {
+				iter = ii_command_list.begin(), iter_end = ii_command_list.end();
+				iter != iter_end; ++iter ) {
 			(*iter)->residue_action( ptask, ii );
 		}
 	} //loop over all task residues
@@ -753,8 +754,9 @@ void
 ReadResfileAndObeyLengthEvents::parse_tag( TagCOP tag , DataMap & datamap )
 {
 	parent::parse_tag( tag, datamap );
-	if ( tag->hasOption("default_commands_for_inserts") )
+	if ( tag->hasOption("default_commands_for_inserts") ) {
 		apply_default_commands_to_inserts_ = tag->getOption<bool>("default_commands_for_inserts",1);
+	}
 }
 
 /// @details note: this function will return default commands for
@@ -765,7 +767,7 @@ ReadResfileAndObeyLengthEvents::resfile_commands(
 	ResfileContents const & contents,
 	PackerTask const & ptask ) const
 {
-	if( (resfile_seqpos == 0) || ( resfile_seqpos > ptask.total_residue()) ){
+	if ( (resfile_seqpos == 0) || ( resfile_seqpos > ptask.total_residue()) ) {
 		return contents.default_commands();
 	}
 	return (contents.specialized_commands_exist_for_residue( resfile_seqpos ) ?
@@ -862,14 +864,14 @@ SetRotamerLinks::set_links( rotamer_set::RotamerLinksOP links )
 /// BEGIN AppendRotamer
 
 AppendRotamer::AppendRotamer()
-	: rotamer_operation_(/* 0 */)
+: rotamer_operation_(/* 0 */)
 {}
 
 AppendRotamer::~AppendRotamer()
 {}
 
 AppendRotamer::AppendRotamer( rotamer_set::RotamerOperationOP rotamer_operation )
- : rotamer_operation_( rotamer_operation )
+: rotamer_operation_( rotamer_operation )
 {}
 
 AppendRotamer::AppendRotamer( AppendRotamer const & src )
@@ -904,14 +906,14 @@ AppendRotamer::set_rotamer_operation(
 /// BEGIN AppendRotamerSet
 
 AppendRotamerSet::AppendRotamerSet()
-	: rotamer_set_operation_(/* 0 */)
+: rotamer_set_operation_(/* 0 */)
 {}
 
 AppendRotamerSet::~AppendRotamerSet()
 {}
 
 AppendRotamerSet::AppendRotamerSet( rotamer_set::RotamerSetOperationOP rotamer_set_operation )
- : rotamer_set_operation_( rotamer_set_operation )
+: rotamer_set_operation_( rotamer_set_operation )
 {}
 
 AppendRotamerSet::AppendRotamerSet( AppendRotamerSet const & src )
@@ -946,24 +948,24 @@ AppendRotamerSet::set_rotamer_set_operation(
 /// BEGIN AppendResidueRotamerSet
 
 AppendResidueRotamerSet::AppendResidueRotamerSet()
-	: parent(),
-	  resnum_(0),
-	  rotamer_set_operation_(/* 0 */)
+: parent(),
+	resnum_(0),
+	rotamer_set_operation_(/* 0 */)
 {}
 
 AppendResidueRotamerSet::~AppendResidueRotamerSet()
 {}
 
 AppendResidueRotamerSet::AppendResidueRotamerSet( core::Size resnum,
-		rotamer_set::RotamerSetOperationOP rotamer_set_operation )
- : resnum_(resnum),
-   rotamer_set_operation_( rotamer_set_operation )
+	rotamer_set::RotamerSetOperationOP rotamer_set_operation )
+: resnum_(resnum),
+	rotamer_set_operation_( rotamer_set_operation )
 {}
 
 AppendResidueRotamerSet::AppendResidueRotamerSet( AppendResidueRotamerSet const & src )
-	: parent(src),
-		resnum_( src.resnum_ ),
-		rotamer_set_operation_( src.rotamer_set_operation_ )
+: parent(src),
+	resnum_( src.resnum_ ),
+	rotamer_set_operation_( src.rotamer_set_operation_ )
 {}
 
 TaskOperationOP AppendResidueRotamerSetCreator::create_task_operation() const
@@ -1035,9 +1037,10 @@ PreventRepacking::apply( pose::Pose const & pose, PackerTask & task ) const
 	utility::vector1<core::Size> residues_to_prevent = residues_to_prevent_;
 	residues_to_prevent.insert(residues_to_prevent.end(),res.begin(),res.end());
 
-	for(utility::vector1< core::Size >::const_iterator it(residues_to_prevent.begin()), end(residues_to_prevent.end());
-			it != end; ++it)
-		{task.nonconst_residue_task(*it).prevent_repacking();}
+	for ( utility::vector1< core::Size >::const_iterator it(residues_to_prevent.begin()), end(residues_to_prevent.end());
+			it != end; ++it ) {
+		task.nonconst_residue_task(*it).prevent_repacking();
+	}
 	return;
 }
 
@@ -1068,8 +1071,8 @@ RestrictYSDesign::RestrictYSDesign( utility::vector1< core::Size > const & resid
 void
 RestrictYSDesign::apply( pose::Pose const &, PackerTask & task ) const {
 	utility::vector1<bool> restrict_to_aa( 20, false );
-	for( utility::vector1<core::Size>::const_iterator res_it=YSresids_.begin(); res_it!=YSresids_.end(); ++res_it ) {
-		if( gly_switch_ ) restrict_to_aa[chemical::aa_from_name( "GLY" )] = true;
+	for ( utility::vector1<core::Size>::const_iterator res_it=YSresids_.begin(); res_it!=YSresids_.end(); ++res_it ) {
+		if ( gly_switch_ ) restrict_to_aa[chemical::aa_from_name( "GLY" )] = true;
 		restrict_to_aa[chemical::aa_from_name( "TYR" )] = true;
 		restrict_to_aa[chemical::aa_from_name( "SER" )] = true;
 		task.nonconst_residue_task(*res_it).restrict_absent_canonical_aas( restrict_to_aa );
@@ -1125,19 +1128,19 @@ ExtraRotamers::apply( core::pose::Pose const & p, PackerTask & task ) const
 {
 	if ( resid_ != 0 ) {
 		ResidueLevelTask & restask( task.nonconst_residue_task( resid_ ) );
-		if( chi_ == 1 ) restask.or_ex1( ExtraRotSample( level_ ) );
-		if( chi_ == 2 ) restask.or_ex2( ExtraRotSample( level_ ) );
-		if( chi_ == 3 ) restask.or_ex3( ExtraRotSample( level_ ) );
-		if( chi_ == 4 ) restask.or_ex4( ExtraRotSample( level_ ) );
+		if ( chi_ == 1 ) restask.or_ex1( ExtraRotSample( level_ ) );
+		if ( chi_ == 2 ) restask.or_ex2( ExtraRotSample( level_ ) );
+		if ( chi_ == 3 ) restask.or_ex3( ExtraRotSample( level_ ) );
+		if ( chi_ == 4 ) restask.or_ex4( ExtraRotSample( level_ ) );
 	} else {
 		// apply to all residues
 		TR << "Enabling extra rotamers for chi " << chi_ << " at all positions" << std::endl;
 		for ( Size ii = 1; ii <= p.total_residue(); ++ii ) {
 			ResidueLevelTask & restask( task.nonconst_residue_task( ii ) );
-			if( chi_ == 1 ) restask.or_ex1( ExtraRotSample( level_ ) );
-			if( chi_ == 2 ) restask.or_ex2( ExtraRotSample( level_ ) );
-			if( chi_ == 3 ) restask.or_ex3( ExtraRotSample( level_ ) );
-			if( chi_ == 4 ) restask.or_ex4( ExtraRotSample( level_ ) );
+			if ( chi_ == 1 ) restask.or_ex1( ExtraRotSample( level_ ) );
+			if ( chi_ == 2 ) restask.or_ex2( ExtraRotSample( level_ ) );
+			if ( chi_ == 3 ) restask.or_ex3( ExtraRotSample( level_ ) );
+			if ( chi_ == 4 ) restask.or_ex4( ExtraRotSample( level_ ) );
 		}
 	}
 }

@@ -79,7 +79,7 @@ UnfoldedStateEnergyCalculatorMover::UnfoldedStateEnergyCalculatorMover(
 #else
 	UnfoldedStateEnergyCalculatorJobDistributor & job_dist,
 #endif
-  core::scoring::ScoreFunctionCOP pack_scrfxn,
+	core::scoring::ScoreFunctionCOP pack_scrfxn,
 	core::scoring::ScoreFunctionCOP score_scrfxn,
 	core::Size frag_length,
 	std::string mut_aa,
@@ -114,8 +114,9 @@ UnfoldedStateEnergyCalculatorMover::create_random_fragments( Pose & pose, vector
 	// get number of protein residues
 	Size num_protein_res( 0 );
 	for ( Size i = 1; i < pose.total_residue(); ++i ) {
-		if ( pose.residue( i ).type().is_protein() )
+		if ( pose.residue( i ).type().is_protein() ) {
 			num_protein_res++;
+		}
 	}
 
 	// get number of fragments
@@ -192,7 +193,7 @@ UnfoldedStateEnergyCalculatorMover::fragment_check( Pose & pose, Size frag_start
 {
 	// do not go past the begining or end of the pose
 	if ( frag_start <= 0 ) return false;
-	if ( frag_start + frag_length_ > pose.total_residue() )	return false;
+	if ( frag_start + frag_length_ > pose.total_residue() ) return false;
 
 	// all residues should be on the same chain
 	for ( Size i( frag_start ); i <= frag_start + frag_length_; ++i ) {
@@ -258,13 +259,13 @@ UnfoldedStateEnergyCalculatorMover::apply( Pose & pose )
 	/*
 	// DEBUG output pdbs of fragments
 	for ( Size i( 1 ); i <= fragments.size(); ++i ) {
-	 	std::stringstream outputfilename;
-	 	outputfilename << "pack_frag_" << i;
-	 	for ( Size j( 1 ); j <= frag_length_; ++j ) {
-	 		outputfilename << "_" << fragments[ i ].residue( j ).type().name3();
-	 	}
-	 	outputfilename << ".pdb";
-	 	fragments[i].dump_scored_pdb( outputfilename.str(), *score_scrfxn_ );
+	std::stringstream outputfilename;
+	outputfilename << "pack_frag_" << i;
+	for ( Size j( 1 ); j <= frag_length_; ++j ) {
+	outputfilename << "_" << fragments[ i ].residue( j ).type().name3();
+	}
+	outputfilename << ".pdb";
+	fragments[i].dump_scored_pdb( outputfilename.str(), *score_scrfxn_ );
 	}
 	*/
 

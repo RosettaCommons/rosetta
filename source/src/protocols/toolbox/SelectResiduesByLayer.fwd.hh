@@ -16,8 +16,8 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace toolbox{
+namespace protocols {
+namespace toolbox {
 
 class SelectResiduesByLayer;
 typedef utility::pointer::shared_ptr< SelectResiduesByLayer > SelectResiduesByLayerOP;

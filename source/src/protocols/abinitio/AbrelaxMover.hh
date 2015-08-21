@@ -47,7 +47,7 @@ namespace abinitio {
 
 class AbrelaxMover : public moves::Mover {
 public:
-  AbrelaxMover();
+	AbrelaxMover();
 
 	virtual ~AbrelaxMover();
 

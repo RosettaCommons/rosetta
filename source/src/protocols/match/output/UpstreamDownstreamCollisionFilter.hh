@@ -37,7 +37,7 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-	#include <protocols/match/downstream/DownstreamBuilder.hh>
+#include <protocols/match/downstream/DownstreamBuilder.hh>
 #endif
 
 
@@ -96,7 +96,7 @@ public:
 	bool
 	passes_hardsphere_filter(
 		core::Size geomcst_up,
-    core::Size geomcst_down,
+		core::Size geomcst_down,
 		Hit const & upstream_hit,
 		Hit const & downstream_hit
 	) const;
@@ -116,7 +116,7 @@ public:
 			Real intxn_dis = iires->nbr_radius() + jjres.nbr_radius() + max_overlap_dis_;
 			if ( iires->xyz( iires->nbr_atom() ).distance_squared(
 					coords[ per_res_atom_ind_[ jj ][ jjres.nbr_atom() ]] ) >
-				intxn_dis * intxn_dis ) {
+					intxn_dis * intxn_dis ) {
 				continue;
 			}
 

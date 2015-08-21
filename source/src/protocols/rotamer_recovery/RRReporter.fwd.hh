@@ -17,8 +17,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace rotamer_recovery{
+namespace protocols {
+namespace rotamer_recovery {
 
 class RRReporter;
 typedef utility::pointer::shared_ptr< RRReporter > RRReporterOP;

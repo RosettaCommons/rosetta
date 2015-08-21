@@ -81,11 +81,11 @@ RamachandranEnergy2B::clone() const
 
 void
 RamachandranEnergy2B::residue_pair_energy(
-   conformation::Residue const & rsd1,
-   conformation::Residue const & rsd2,
-   pose::Pose const &, // unnneeded
-   ScoreFunction const &, // unneeded
-   EnergyMap & emap
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	pose::Pose const &, // unnneeded
+	ScoreFunction const &, // unneeded
+	EnergyMap & emap
 ) const
 {
 	using namespace basic::options;
@@ -93,28 +93,28 @@ RamachandranEnergy2B::residue_pair_energy(
 
 	if ( ! option[ score::ramaneighbors ] ) return;
 
-   /// This is called for all nearby residue pairs, so first check to make sure that we've got an i, i+1 pair
-   if ( rsd1.seqpos() + 1 != rsd2.seqpos() || rsd1.seqpos() != rsd2.seqpos() + 1 ) return;
-   if ( rsd1.chain() != rsd2.chain() ) return;
-   if ( ! rsd1.is_protein() || ! rsd2.is_protein() ) return;
+	/// This is called for all nearby residue pairs, so first check to make sure that we've got an i, i+1 pair
+	if ( rsd1.seqpos() + 1 != rsd2.seqpos() || rsd1.seqpos() != rsd2.seqpos() + 1 ) return;
+	if ( rsd1.chain() != rsd2.chain() ) return;
+	if ( ! rsd1.is_protein() || ! rsd2.is_protein() ) return;
 
-   conformation::Residue const & lower_residue( rsd1.seqpos() < rsd2.seqpos() ? rsd1 : rsd2 );
-   conformation::Residue const & upper_residue( rsd1.seqpos() < rsd2.seqpos() ? rsd2 : rsd1 );
+	conformation::Residue const & lower_residue( rsd1.seqpos() < rsd2.seqpos() ? rsd1 : rsd2 );
+	conformation::Residue const & upper_residue( rsd1.seqpos() < rsd2.seqpos() ? rsd2 : rsd1 );
 
 	//// also need to treat cutpoints correctly.
 
-   if ( ! lower_residue.is_lower_terminus() ) {
-      emap[ rama2b ] += potential_.RamaE_Upper( lower_residue, upper_residue.aa() );
-   }
+	if ( ! lower_residue.is_lower_terminus() ) {
+		emap[ rama2b ] += potential_.RamaE_Upper( lower_residue, upper_residue.aa() );
+	}
 
-   if ( ! upper_residue.is_upper_terminus() ) {
-      emap[ rama2b ] += potential_.RamaE_Lower( upper_residue, lower_residue.aa() );
-   }
+	if ( ! upper_residue.is_upper_terminus() ) {
+		emap[ rama2b ] += potential_.RamaE_Lower( upper_residue, lower_residue.aa() );
+	}
 }
 
 bool
 RamachandranEnergy2B::defines_intrares_energy( EnergyMap const & /*weights*/ ) const {
-   return true;
+	return true;
 }
 
 /// @details fictional Cprev-Nnext distance + fudge.
@@ -126,22 +126,22 @@ RamachandranEnergy2B::atomic_interaction_cutoff() const
 
 void
 RamachandranEnergy2B::eval_intrares_energy(
-   conformation::Residue const & rsd,
-   pose::Pose const &, // unused,
-   ScoreFunction const &, // unused,
-   EnergyMap & emap
+	conformation::Residue const & rsd,
+	pose::Pose const &, // unused,
+	ScoreFunction const &, // unused,
+	EnergyMap & emap
 ) const
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-   if ( ! rsd.is_protein() ) return;
+	if ( ! rsd.is_protein() ) return;
 
-   if ( rsd.is_terminus() ) {
-      /// -- no op --  Rama does not have a defined score for termini
+	if ( rsd.is_terminus() ) {
+		/// -- no op --  Rama does not have a defined score for termini
 		/// emap[ rama ] += potential_.Rama_E( rsd ); // add in neighbor-independent rama scores for termini
-   }  else if ( option[ score::ramaneighbors ] ) {
-      emap[ rama2b ] -= potential_.RamaE( rsd ); // subtract double-counted neighbor-independent rama scores for mid residues
+	}  else if ( option[ score::ramaneighbors ] ) {
+		emap[ rama2b ] -= potential_.RamaE( rsd ); // subtract double-counted neighbor-independent rama scores for mid residues
 	} else {
 		emap[ rama2b ] += potential_.RamaE( rsd ); // add the neighbor-independent rama score, since there's no double counting.
 	}

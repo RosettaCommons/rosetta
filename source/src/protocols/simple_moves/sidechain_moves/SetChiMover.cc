@@ -77,7 +77,7 @@ void SetChiMover::apply( Pose & pose ) {
 		pose.set_chi(chinum(), resnum(), angle());
 		TR<<"Set chi"<<chinum()<<" of residue "<<resnum()<<" to "<<angle()<<std::endl;
 	}
-	
+
 	pose.update_residue_neighbors();
 }
 
@@ -87,15 +87,15 @@ SetChiMover::get_name() const {
 }
 
 void SetChiMover::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		Pose const & pose)
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	Pose const & pose)
 {
 	angle( tag->getOption< core::Real >( "angle" ) );
 	resnum( core::pose::parse_resnum( tag->getOption< std::string >( "resnum" ), pose ) );
 	chinum( tag->getOption< core::Size >( "chinum" ) );
-	
+
 }
 
 

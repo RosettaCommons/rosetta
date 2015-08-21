@@ -82,9 +82,9 @@ H3RefineCCD::H3RefineCCD( AntibodyInfoOP antibody_info, CDRNameEnum loop_name ) 
 
 
 H3RefineCCD::H3RefineCCD(AntibodyInfoOP antibody_info,
-                         CDRNameEnum loop_name,
-                         scoring::ScoreFunctionCOP highres_scorefxn
-                        ) : Mover() {
+	CDRNameEnum loop_name,
+	scoring::ScoreFunctionCOP highres_scorefxn
+) : Mover() {
 	user_defined_ = true;
 	ab_info_    = antibody_info;
 	loop_name_  = loop_name;
@@ -115,10 +115,10 @@ void H3RefineCCD::init( ) {
 	n_small_moves_ =  numeric::max(Size(5), Size(loop_size_/2)) ;
 	inner_cycles_ = loop_size_;
 	outer_cycles_ = 2; //JQX: assume the SnugFit step has done some minimization
-	if(  refine_input_loop_ ) {
+	if (  refine_input_loop_ ) {
 		outer_cycles_ = 5;
 	}
-	if( benchmark_ ) {
+	if ( benchmark_ ) {
 		min_tolerance_ = 1.0;
 		n_small_moves_ = 1;
 		inner_cycles_ = 1;
@@ -150,7 +150,7 @@ void H3RefineCCD::set_default() {
 	minimization_type_ = "dfpmin_armijo_nonmonotone" ;
 
 
-	if(!user_defined_) {
+	if ( !user_defined_ ) {
 		highres_scorefxn_ = scoring::get_score_function();
 		highres_scorefxn_->set_weight( scoring::chainbreak, 1.0 );
 		highres_scorefxn_->set_weight( scoring::overlap_chainbreak, 10./3. );
@@ -186,7 +186,7 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
 
 
 	// the list of residues that are allowed to pack
-	for(Size ii=1; ii <=pose.total_residue(); ii++) {
+	for ( Size ii=1; ii <=pose.total_residue(); ii++ ) {
 		allow_repack_.push_back(false);
 	}
 	select_loop_residues( pose, the_loop_, include_neighbors_, allow_repack_, neighbor_dist_);
@@ -194,7 +194,7 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
 
 	// the list of residues that are allowed to change backbone
 	utility::vector1< bool> allow_bb_move( pose.total_residue(), false );
-	for( Size ii = loop_begin_; ii <= loop_end_; ii++ ) {
+	for ( Size ii = loop_begin_; ii <= loop_end_; ii++ ) {
 		allow_bb_move[ ii ] = true;
 	}
 
@@ -204,10 +204,10 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
 	cdrh3_map_->set_bb( allow_bb_move );
 	cdrh3_map_->set_chi( allow_repack_ );
 
-	if( flank_relax_) {
+	if ( flank_relax_ ) {
 		utility::vector1< bool> flank_allow_bb_move( allow_bb_move );
-		for( Size i = 1; i <= pose.total_residue(); i++ ) {
-			if(  (i >= (loop_begin_ - flank_size_)) && (i <= (loop_end_ + flank_size_))   ) {
+		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+			if (  (i >= (loop_begin_ - flank_size_)) && (i <= (loop_end_ + flank_size_))   ) {
 				flank_allow_bb_move[i] = true;
 			}
 		}
@@ -243,7 +243,7 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
 	simple_fold_tree( pose, loop_begin_ - 1, cutpoint_, loop_end_ + 1 );
 	change_FT_to_simpleloop_ = moves::ChangeFoldTreeMoverOP( new ChangeFoldTreeMover( pose.fold_tree() ) );
 
-	if(flank_relax_) {
+	if ( flank_relax_ ) {
 		simple_fold_tree( pose, loop_begin_ - flank_size_ - 1, cutpoint_, loop_end_ + flank_size_ + 1 );
 	}
 	change_FT_to_flankloop_ = moves::ChangeFoldTreeMoverOP( new ChangeFoldTreeMover( pose.fold_tree() ) );
@@ -317,7 +317,7 @@ void H3RefineCCD::apply( pose::Pose & pose ) {
 
 	bool closed_cutpoints( false );
 	Size cycle( 1 );
-	while( !closed_cutpoints && cycle<max_cycle_close_trial_ ) {
+	while ( !closed_cutpoints && cycle<max_cycle_close_trial_ ) {
 		TR <<  "    Refining CDR H3 loop in HighRes.  close_trial_cycle="<<cycle << std::endl;
 
 
@@ -337,12 +337,12 @@ void H3RefineCCD::apply( pose::Pose & pose ) {
 		mc_->reset( pose ); // monte carlo reset
 
 		bool relaxed_H3_found_ever( false );
-		if( H3_filter_) {
+		if ( H3_filter_ ) {
 			relaxed_H3_found_ever = CDR_H3_cter_filter( pose,ab_info_);
 		}
 
 		// outer cycle
-		for(Size i = 1; i <= outer_cycles_; i++) {
+		for ( Size i = 1; i <= outer_cycles_; i++ ) {
 			mc_->recover_low( pose );
 			Size h3_attempts(0); // number of H3 checks after refinement
 
@@ -362,33 +362,33 @@ void H3RefineCCD::apply( pose::Pose & pose ) {
 
 				//bool relaxed_H3_found_current(false);
 				// H3 filter check
-				if(H3_filter_ && (h3_attempts <= inner_cycles_)) {
+				if ( H3_filter_ && (h3_attempts <= inner_cycles_) ) {
 					h3_attempts++;
 					bool relaxed_H3_found_current = CDR_H3_cter_filter( pose,ab_info_);
 
-					if( !relaxed_H3_found_ever && !relaxed_H3_found_current) {
+					if ( !relaxed_H3_found_ever && !relaxed_H3_found_current ) {
 						mc_->boltzmann( pose );
-					} else if( !relaxed_H3_found_ever && relaxed_H3_found_current ) {
+					} else if ( !relaxed_H3_found_ever && relaxed_H3_found_current ) {
 						relaxed_H3_found_ever = true;
 						mc_->reset( pose );
-					} else if( relaxed_H3_found_ever && !relaxed_H3_found_current ) {
+					} else if ( relaxed_H3_found_ever && !relaxed_H3_found_current ) {
 						--j;
 						continue;
-					} else if( relaxed_H3_found_ever && relaxed_H3_found_current ) {
+					} else if ( relaxed_H3_found_ever && relaxed_H3_found_current ) {
 						mc_->boltzmann( pose );
 					}
 				} else {
-					if( H3_filter_ ) {
+					if ( H3_filter_ ) {
 						bool relaxed_H3_found_current(false);
 						relaxed_H3_found_current = CDR_H3_cter_filter( pose,ab_info_);
-						if( !relaxed_H3_found_ever && !relaxed_H3_found_current) {
+						if ( !relaxed_H3_found_ever && !relaxed_H3_found_current ) {
 							mc_->boltzmann( pose );
-						} else if( !relaxed_H3_found_ever && relaxed_H3_found_current ) {
+						} else if ( !relaxed_H3_found_ever && relaxed_H3_found_current ) {
 							relaxed_H3_found_ever = true;
 							mc_->reset( pose );
-						} else if( relaxed_H3_found_ever && !relaxed_H3_found_current ) {
+						} else if ( relaxed_H3_found_ever && !relaxed_H3_found_current ) {
 							mc_->recover_low( pose );
-						} else if( relaxed_H3_found_ever && relaxed_H3_found_current ) {
+						} else if ( relaxed_H3_found_ever && relaxed_H3_found_current ) {
 							mc_->boltzmann( pose );
 						}
 					} else {

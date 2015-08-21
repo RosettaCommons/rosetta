@@ -8,11 +8,11 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/grafting/AnchoredGraftMoverCreator.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_grafting_AnchoredGraftMoverCreator_hh
-#define	INCLUDED_protocols_grafting_AnchoredGraftMoverCreator_hh
+#define INCLUDED_protocols_grafting_AnchoredGraftMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 

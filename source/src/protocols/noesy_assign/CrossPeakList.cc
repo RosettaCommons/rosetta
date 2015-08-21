@@ -10,7 +10,7 @@
 /// @file FragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -63,7 +63,7 @@ namespace protocols {
 namespace noesy_assign {
 
 CrossPeakList::CrossPeakList() :
-		peaks_()
+	peaks_()
 {}
 
 CrossPeakList::~CrossPeakList() {}
@@ -103,7 +103,7 @@ void CrossPeakList::delete_diagonal_peaks() {
 
 void CrossPeakList::read_from_stream( std::istream& is, PeakFileFormat& input_adaptor, ResonanceListOP resonances  ) {
 	std::string new_peak_line ="";
-  while ( is.good() ) {
+	while ( is.good() ) {
 		input_adaptor.read_header( is, new_peak_line );
 		input_adaptor.output_diagnosis( tr.Debug );
 		CrossPeakOP cp;
@@ -129,24 +129,24 @@ void CrossPeakList::read_from_stream( std::istream& is, PeakFileFormat& input_ad
 		}
 	}
 
-  if ( is.fail() && is.eof() && is.bad() ) {
-    tr.Error << "[ERROR WHILE READING]" << std::endl;
-  }
+	if ( is.fail() && is.eof() && is.bad() ) {
+		tr.Error << "[ERROR WHILE READING]" << std::endl;
+	}
 }
 
 void CrossPeakList::write_to_stream( std::ostream& os, PeakFileFormat& output_adaptor  ) const {
-  output_adaptor.set_format_from_peak( **peaks_.begin() );
-  output_adaptor.write_header( os );
+	output_adaptor.set_format_from_peak( **peaks_.begin() );
+	output_adaptor.write_header( os );
 	Size last_peak_id( 0 );
-  for ( CrossPeaks::const_iterator it = peaks_.begin(); it != peaks_.end(); ++it ) {
+	for ( CrossPeaks::const_iterator it = peaks_.begin(); it != peaks_.end(); ++it ) {
 		if ( last_peak_id > (*it)->peak_id() ) {
 			output_adaptor.set_format_from_peak( **it );
 			output_adaptor.write_header( os );
 		}
 		last_peak_id=(*it)->peak_id();
-    output_adaptor.write_peak( os, (*it)->peak_id(), **it );
-    os << std::endl;
-  }
+		output_adaptor.write_peak( os, (*it)->peak_id(), **it );
+		os << std::endl;
+	}
 }
 
 void open_stream( utility::io::ozstream& os, std::string const& prefix, std::string const& peak_filename )  {
@@ -164,7 +164,7 @@ void CrossPeakList::write_peak_files( std::string const& prefix, PeakFileFormat&
 
 	output_adaptor.write_header( os );
 	Size last_peak_id( 0 );
-  for ( CrossPeaks::const_iterator it = peaks_.begin(); it != peaks_.end(); ++it ) {
+	for ( CrossPeaks::const_iterator it = peaks_.begin(); it != peaks_.end(); ++it ) {
 		if ( last_peak_id > (*it)->peak_id() ) {
 			output_adaptor.set_format_from_peak( **it );
 			std::string filename( (**it).filename() );
@@ -173,17 +173,17 @@ void CrossPeakList::write_peak_files( std::string const& prefix, PeakFileFormat&
 			output_adaptor.write_header( os );
 		}
 		last_peak_id=(*it)->peak_id();
-    output_adaptor.write_peak( os, (*it)->peak_id(), **it );
-    os << std::endl;
-  }
+		output_adaptor.write_peak( os, (*it)->peak_id(), **it );
+		os << std::endl;
+	}
 }
 
 void CrossPeakList::find_assignments() {
 	tr.Info << "determine initial assignments..." << std::endl;
 
-  for ( CrossPeaks::const_iterator it = peaks_.begin(); it != peaks_.end(); ++it ) {
-    (*it)->find_assignments();
-  }
+	for ( CrossPeaks::const_iterator it = peaks_.begin(); it != peaks_.end(); ++it ) {
+		(*it)->find_assignments();
+	}
 	assignments_ = NULL;
 }
 
@@ -204,10 +204,10 @@ void CrossPeakList::update_peak_volumina() {
 	PROF_START( NOESY_ASSIGN_UPDATE_PEAK_VOL );
 	tr.Info << "update peak volumina..."  << std::endl;
 	for ( CrossPeakList::iterator it = begin(); it != end(); ++it ) {
-    Real sum_volume( 0.0 );
-    for ( CrossPeak::iterator ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
+		Real sum_volume( 0.0 );
+		for ( CrossPeak::iterator ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
 			sum_volume+=(*ait)->peak_volume();
-    }
+		}
 		(*it)->set_cumulative_peak_volume( sum_volume );
 	}
 	PROF_STOP( NOESY_ASSIGN_UPDATE_PEAK_VOL );
@@ -294,23 +294,23 @@ Real CrossPeakList::calibrate( PeakCalibrator const& calibrator ) {
 }
 
 void CrossPeakList::generate_fa_and_cen_constraints(
-     core::scoring::constraints::ConstraintSetOP fa_set,
-		 core::scoring::constraints::ConstraintSetOP cen_set,
-		 core::pose::Pose const& pose,
-		 core::pose::Pose const& centroid_pose,
-		 core::Size min_seq_separation,
-		 core::Size min_quali,
-		 core::Size max_quali,
-		 core::Real padding,
-		 bool ignore_elimination_candidates, /*default = true */
-		 bool elimination_candidates /* default = false */
+	core::scoring::constraints::ConstraintSetOP fa_set,
+	core::scoring::constraints::ConstraintSetOP cen_set,
+	core::pose::Pose const& pose,
+	core::pose::Pose const& centroid_pose,
+	core::Size min_seq_separation,
+	core::Size min_quali,
+	core::Size max_quali,
+	core::Real padding,
+	bool ignore_elimination_candidates, /*default = true */
+	bool elimination_candidates /* default = false */
 ) const {
 	//count for normalization:
 	core::Size ct( 0 );
 	for ( CrossPeakList::const_iterator it = begin(); it != end(); ++it ) {
 		if ( (*it)->eliminated() ) continue;
 		if ( (*it)->min_seq_separation_residue_assignment( 0.1 ) < min_seq_separation ) continue; //ignore peaks that have confident intra-residue assignment
-		//		if ( !(*it)->has_inter_residue_assignment( resonances(), 0.1 ) ) continue; //ignore peaks that have confident intra-residue assignment
+		//  if ( !(*it)->has_inter_residue_assignment( resonances(), 0.1 ) ) continue; //ignore peaks that have confident intra-residue assignment
 		if ( max_quali+1 < CrossPeak::MAX_CLASS ) {
 			Size const quality( (*it)->quality_class() );
 			if ( quality < min_quali || quality > max_quali ) continue;

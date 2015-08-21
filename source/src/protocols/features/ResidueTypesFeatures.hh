@@ -33,8 +33,8 @@
 #include <core/chemical/ResidueType.fwd.hh>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class ResidueTypesFeatures : public protocols::features::FeaturesReporter {
 public:

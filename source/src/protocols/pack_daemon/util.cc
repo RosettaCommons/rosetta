@@ -100,14 +100,14 @@ initialize_task_from_entity_resfile_and_secondary_resfile(
 		core::Size ii_entity = ec->entity_for_residue( ii );
 		std::list< ResfileCommandCOP > const & ii_command_list(
 			ii_entity != 0 ? (
-				entity_resfile_contents.specialized_commands_exist_for_residue( ii_entity ) ?
-				entity_resfile_contents.commands_for_residue( ii_entity ) :
-				entity_resfile_contents.default_commands()
+			entity_resfile_contents.specialized_commands_exist_for_residue( ii_entity ) ?
+			entity_resfile_contents.commands_for_residue( ii_entity ) :
+			entity_resfile_contents.default_commands()
 			) :
 			(
-				secondary_resfile_contents.specialized_commands_exist_for_residue( ii ) ?
-				secondary_resfile_contents.commands_for_residue( ii ) :
-				secondary_resfile_contents.default_commands() ));
+			secondary_resfile_contents.specialized_commands_exist_for_residue( ii ) ?
+			secondary_resfile_contents.commands_for_residue( ii ) :
+			secondary_resfile_contents.default_commands() ));
 
 		for ( std::list< ResfileCommandCOP >::const_iterator
 				iter = ii_command_list.begin(), iter_end = ii_command_list.end();

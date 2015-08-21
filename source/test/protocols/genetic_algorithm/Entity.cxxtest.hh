@@ -134,7 +134,7 @@ EntityElementRegistrator< DummyEntityElementCreator > dummyEE_registrator;
 
 class EntityTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 
 	// Shared initialization goes here.

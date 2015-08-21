@@ -75,18 +75,18 @@ public:
 		TR << "These are divided into  " << rotamers.size() << " rotamer groups " << std::endl;
 		TS_ASSERT_EQUALS( rotamers.size(), 2 ); // 2 entries for different residue types
 
-		for( core::Size ii(1); ii<= rotamers.size(); ++ii ) {
+		for ( core::Size ii(1); ii<= rotamers.size(); ++ii ) {
 			core::chemical::rotamers::RotamerLibrarySpecificationCOP rotspec = rotamers[ii]->rotamer_library_specification();
 			TS_ASSERT( rotspec.get() );
 			core::chemical::rotamers::StoredRotamerLibrarySpecificationCOP stored_rotspec(
-					utility::pointer::dynamic_pointer_cast< core::chemical::rotamers::StoredRotamerLibrarySpecification const >(rotspec) );
+				utility::pointer::dynamic_pointer_cast< core::chemical::rotamers::StoredRotamerLibrarySpecification const >(rotspec) );
 			TS_ASSERT( stored_rotspec.get() );
 			TR << "Entry " << ii << " ('" << rotamers[ii]->name() << "') contains " << stored_rotspec->coordinates().size() << " entries. " << std::endl;
-			if( ii == 1 ) {
+			if ( ii == 1 ) {
 				TS_ASSERT_EQUALS( rotamers[1]->name(), "SBT" );
 				TS_ASSERT_EQUALS( stored_rotspec->coordinates().size(), 7 );
 			}
-			if( ii == 2 ) {
+			if ( ii == 2 ) {
 				TS_ASSERT_EQUALS( rotamers[2]->name(), "SBF" );
 				TS_ASSERT_EQUALS( stored_rotspec->coordinates().size(), 2 );
 			}
@@ -124,9 +124,9 @@ public:
 		coordinates.insert(  6.8840 * 3000 + 0.5);
 		coordinates.insert(107.7510 * 3000 + 0.5);
 
-		for( core::Size ii(1); ii <= rotamers.size(); ++ii ) {
+		for ( core::Size ii(1); ii <= rotamers.size(); ++ii ) {
 			core::Vector o_pos = rotamers[ii]->xyz("O1");
-			if( coordinates.find( o_pos.y() * 3000 + 0.5 ) == coordinates.end() ) {
+			if ( coordinates.find( o_pos.y() * 3000 + 0.5 ) == coordinates.end() ) {
 				TR << "Coordinate value not found: " << o_pos.y() << std::endl;
 				TS_FAIL("Cannot find coordinate in approved map.");
 			} else {

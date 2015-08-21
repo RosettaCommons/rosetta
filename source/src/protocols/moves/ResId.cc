@@ -70,9 +70,10 @@ modify_ResId_based_object( utility::pointer::ReferenceCountOP const obj, core::S
 
 	ResId * resid1 = dynamic_cast< ResId * >( obj.get() );
 	bool const is_this_a_resid( resid1 );
-	if( is_this_a_resid ){
-		if( resid1->modifiable() )
+	if ( is_this_a_resid ) {
+		if ( resid1->modifiable() ) {
 			resid1->set_resid( resid );
+		}
 	}
 }
 

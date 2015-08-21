@@ -129,36 +129,36 @@ bool IdentityEval::eval_impl(
 )
 {
 	// no runtime_asserts here, will slow down Librarian operation
-debug_assert( extent.distance() == ss_.length() );
-debug_assert( ss_.length() == aa_.length() );
+	debug_assert( extent.distance() == ss_.length() );
+	debug_assert( ss_.length() == aa_.length() );
 
 	Size str_idx = 0;
 	for ( VallResidueConstIterator i = extent.begin; i != extent.end; ++i, ++str_idx ) {
-	debug_assert( str_idx != ss_.length() );
-	debug_assert( str_idx != aa_.length() );
+		debug_assert( str_idx != ss_.length() );
+		debug_assert( str_idx != aa_.length() );
 
 		switch ( ss_.at( str_idx ) ) {
-			case 'D': {
-				break; // degenerate sec.struct do nothing
+		case 'D' : {
+			break; // degenerate sec.struct do nothing
+		}
+		default : {
+			if ( i->ss() != ss_.at( str_idx ) ) {
+				fs.score += ss_penalty_;
 			}
-			default: {
-				if ( i->ss() != ss_.at( str_idx ) ) {
-					fs.score += ss_penalty_;
-				}
-				break;
-			}
+			break;
+		}
 		}
 
 		switch ( aa_.at( str_idx ) ) {
-			case '.': {
-				break; // char for degenerate a.a., do nothing
+		case '.' : {
+			break; // char for degenerate a.a., do nothing
+		}
+		default : {
+			if ( i->aa() != aa_.at( str_idx ) ) {
+				fs.score += aa_penalty_;
 			}
-			default: {
-				if ( i->aa() != aa_.at( str_idx ) ) {
-					fs.score += aa_penalty_;
-				}
-				break;
-			}
+			break;
+		}
 		}
 
 	} // foreach residue in extent

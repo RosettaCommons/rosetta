@@ -75,22 +75,22 @@ dump_pdb(
 
 	static std::string const chains( " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" );
 
-	if(tag!="") out << "MODEL     " << tag << "\n";
+	if ( tag!="" ) out << "MODEL     " << tag << "\n";
 	for ( Size i=1; i<= nres; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 		Size const resnum = resnums.size()>=i ? resnums[i] : i;
 		for ( Size j=1; j<= rsd.natoms(); ++j ) {
 			conformation::Atom const & atom( rsd.atom(j) );
 
- 			if ( ! mask[ id::AtomID( j,i ) ] ) continue;
+			if ( ! mask[ id::AtomID( j,i ) ] ) continue;
 
 			//skip outputting virtual atom unless specified.
- 			//fixed so that the last atom in atom type set can be something other than a virtual atom --steven combs
+			//fixed so that the last atom in atom type set can be something other than a virtual atom --steven combs
 			if ( !basic::options::option[ basic::options::OptionKeys::out::file::output_virtual ]() &&
-				rsd.atom_type(j).is_virtual() ) continue;
+					rsd.atom_type(j).is_virtual() ) continue;
 
 			runtime_assert( rsd.chain() < chains.size() ); // silly restriction
-			if(chain=='!') chain = chains[ rsd.chain() ];
+			if ( chain=='!' ) chain = chains[ rsd.chain() ];
 			out << "ATOM  " << I(5,++atomno) << ' ' << rsd.atom_name(j) << ' ' <<
 				rsd.name3() << ' ' << chain << I(4,resnum ) << "    " <<
 				F(8,3,atom.xyz()(1)) <<
@@ -99,10 +99,10 @@ dump_pdb(
 				F(6,2,1.0) << F(6,2,1.0) << '\n';
 
 			//now add orbitals if the atom type has orbitals
-			if(basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals] &&
-					rsd.atom_type(j).atom_has_orbital()){
+			if ( basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals] &&
+					rsd.atom_type(j).atom_has_orbital() ) {
 				utility::vector1<core::Size> const & orbital_indices(rsd.bonded_orbitals(j));
-				BOOST_FOREACH(core::Size orbital_index, orbital_indices){
+				BOOST_FOREACH ( core::Size orbital_index, orbital_indices ) {
 					Vector orbital_xyz(rsd.orbital_xyz(orbital_index));
 					out << "ATOM  " << I(5,++atomno) << ' ' << rsd.orbital_name(orbital_index) << ' ' <<
 						rsd.name3() << ' ' << chain << I(4,resnum ) << "    " <<
@@ -114,7 +114,7 @@ dump_pdb(
 			}
 		}
 	}
-	if(tag!="") out << "ENDMDL\n";
+	if ( tag!="" ) out << "ENDMDL\n";
 }
 
 void
@@ -136,12 +136,12 @@ dump_pdb(
 		for ( Size j=1; j<= rsd.natoms(); ++j ) {
 			conformation::Atom const & atom( rsd.atom(j) );
 
- 			if ( ! mask[ id::AtomID( j,i ) ] ) continue;
+			if ( ! mask[ id::AtomID( j,i ) ] ) continue;
 
 			//skip outputting virtual atom unless specified.
- 			//fixed so that the last atom in atom type set can be something other than a virtual atom --steven combs
+			//fixed so that the last atom in atom type set can be something other than a virtual atom --steven combs
 			if ( !basic::options::option[ basic::options::OptionKeys::out::file::output_virtual ]() &&
-				rsd.atom_type(j).is_virtual() ) continue;
+					rsd.atom_type(j).is_virtual() ) continue;
 
 			++number;
 			runtime_assert( rsd.chain() < chains.size() ); // silly restriction
@@ -154,10 +154,10 @@ dump_pdb(
 				F(6,2,1.0) << F(6,2,1.0) << '\n';
 
 			//now add orbitals if the atom type has orbitals
-			if(basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals] &&
-					rsd.atom_type(j).atom_has_orbital()){
+			if ( basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals] &&
+					rsd.atom_type(j).atom_has_orbital() ) {
 				utility::vector1<core::Size> const & orbital_indices(rsd.bonded_orbitals(j));
-				BOOST_FOREACH(core::Size orbital_index, orbital_indices){
+				BOOST_FOREACH ( core::Size orbital_index, orbital_indices ) {
 					++number;
 					Vector orbital_xyz(rsd.orbital_xyz(orbital_index));
 					out << "ATOM  " << I(5,number) << ' ' << rsd.orbital_name(orbital_index) << ' ' <<
@@ -189,7 +189,7 @@ dump_bfactor_pdb(
 
 	static std::string const chains( " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" );
 
-	if(tag!="NO_MODEL_LINE_IN_OUTPUT") out << "MODEL     " << tag << "\n";
+	if ( tag!="NO_MODEL_LINE_IN_OUTPUT" ) out << "MODEL     " << tag << "\n";
 	for ( int i=1; i<= nres; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 		for ( Size j=1; j<= rsd.natoms(); ++j ) {
@@ -206,10 +206,10 @@ dump_bfactor_pdb(
 				F(6,2,1.0) << F(6,2, bfactor[ id::AtomID(j,i) ] ) << '\n';
 
 			//now add orbitals if the atom type has orbitals
-			if(basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals] &&
-					rsd.atom_type(j).atom_has_orbital()){
+			if ( basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals] &&
+					rsd.atom_type(j).atom_has_orbital() ) {
 				utility::vector1<core::Size> const & orbital_indices(rsd.bonded_orbitals(j));
-				BOOST_FOREACH(core::Size orbital_index, orbital_indices){
+				BOOST_FOREACH ( core::Size orbital_index, orbital_indices ) {
 					++number;
 					Vector orbital_xyz(rsd.orbital_xyz(orbital_index));
 					out << "ATOM  " << I(5,number) << ' ' << rsd.orbital_name(orbital_index) << ' ' <<
@@ -220,9 +220,9 @@ dump_bfactor_pdb(
 						F(6,2,1.0) << F(6,2,1.0) << '\n';
 				}
 			}
-		} // 	for ( int i=1; i<= nres; ++i )
-	} // 	for ( Size j=1; j<= rsd.natoms(); ++j )
-	if(tag!="NO_MODEL_LINE_IN_OUTPUT") out << "ENDMDL\n";
+		} //  for ( int i=1; i<= nres; ++i )
+	} //  for ( Size j=1; j<= rsd.natoms(); ++j )
+	if ( tag!="NO_MODEL_LINE_IN_OUTPUT" ) out << "ENDMDL\n";
 } // dump_bfactor_pdb
 
 
@@ -248,11 +248,11 @@ dump_pdb_residue(
 			F(8,3,atom.xyz()(2)) <<
 			F(8,3,atom.xyz()(3)) <<
 			F(6,2,1.0) << F(6,2,0.0) << '\n';
-		if(basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals] &&
-				rsd.atom_type(j).atom_has_orbital()){
+		if ( basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals] &&
+				rsd.atom_type(j).atom_has_orbital() ) {
 			utility::vector1<core::Size> const & orbital_indices(rsd.bonded_orbitals(j));
 
-			BOOST_FOREACH(core::Size orbital_index, orbital_indices){
+			BOOST_FOREACH ( core::Size orbital_index, orbital_indices ) {
 				Vector orbital_xyz(rsd.orbital_xyz(orbital_index));
 				out << "ATOM  " << I(5,atom_number) << ' ' << rsd.orbital_name(orbital_index) << ' ' <<
 					rsd.name3() << ' ' << chain << I(4,rsd.seqpos() ) << "    " <<
@@ -350,7 +350,7 @@ traced_dump_pdb(
 
 core::Real restrict_prec( core::Real inval )
 {
-	if( inval >= 1 || inval <= -1 ) { // Don't alter value, as the default precision of 6 works fine, and we avoid rounding artifacts
+	if ( inval >= 1 || inval <= -1 ) { // Don't alter value, as the default precision of 6 works fine, and we avoid rounding artifacts
 		return inval;
 	}
 	core::Real outval;
@@ -376,14 +376,14 @@ void extract_scores(
 	std::ostream & out
 )
 {
-	if( basic::options::option[ basic::options::OptionKeys::out::file::no_scores_in_pdb ] ) {
+	if ( basic::options::option[ basic::options::OptionKeys::out::file::no_scores_in_pdb ] ) {
 		return;
 	}
 
-// 	if(!pose.energies().energies_updated()){
-// 		out << "Pose's energies were not current, PDBJobOutputter will not force update" << std::endl;
-// 		return;
-// 	}
+	//  if(!pose.energies().energies_updated()){
+	//   out << "Pose's energies were not current, PDBJobOutputter will not force update" << std::endl;
+	//   return;
+	//  }
 
 	//This is shamelessly refactored from the older JobDistributor; Jobdistributors.hh:1018; SVN 25940
 	// APL: Moving this job-independent code into a central location.
@@ -391,7 +391,7 @@ void extract_scores(
 	core::scoring::EnergyMap weights = pose.energies().weights();
 	typedef utility::vector1<core::scoring::ScoreType> ScoreTypeVec;
 	ScoreTypeVec score_types;
-	for(int i = 1; i <= core::scoring::n_score_types; ++i) {
+	for ( int i = 1; i <= core::scoring::n_score_types; ++i ) {
 		core::scoring::ScoreType ii = core::scoring::ScoreType(i);
 		if ( weights[ii] != 0 ) score_types.push_back(ii);
 	}
@@ -399,32 +399,32 @@ void extract_scores(
 	out << "# All scores below are weighted scores, not raw scores.\n";
 	out << "#BEGIN_POSE_ENERGIES_TABLE " << filename << "\n";
 	out << "label";
-	BOOST_FOREACH(core::scoring::ScoreType score_type, score_types){
+	BOOST_FOREACH ( core::scoring::ScoreType score_type, score_types ) {
 		out << " " << name_from_score_type(score_type);
 	}
 	out << " total\n";
 	out << "weights";
-	BOOST_FOREACH(core::scoring::ScoreType score_type, score_types){
+	BOOST_FOREACH ( core::scoring::ScoreType score_type, score_types ) {
 		out << " " << weights[score_type];
 	}
 	out << " NA\n";
 	out << "pose";
 	core::Real pose_total = 0.0;
 	if ( pose.energies().energies_updated() ) {
-		BOOST_FOREACH(core::scoring::ScoreType score_type, score_types){
+		BOOST_FOREACH ( core::scoring::ScoreType score_type, score_types ) {
 			core::Real score = (weights[score_type] * pose.energies().total_energies()[ score_type ]);
 			out << " " << restrict_prec(score);
 			pose_total += score;
 		}
 		out << " " << restrict_prec(pose_total) << "\n";
-		for(core::Size j = 1, end_j = pose.total_residue(); j <= end_j; ++j) {
+		for ( core::Size j = 1, end_j = pose.total_residue(); j <= end_j; ++j ) {
 			core::Real rsd_total = 0.0;
 			// amw Hack to output score lines as though they were CYD:[all other patches]
 			// This can me removed once we have proven that integration test changes
 			// predominantly relate to this
 			// amw Never mind, shouldn't be that--it's just plain CYD, which sucks!
 			if ( pose.residue( j ).has_variant_type( chemical::DISULFIDE )
-			  && pose.residue( j ).name3() == "CYS" ) {
+					&& pose.residue( j ).name3() == "CYS" ) {
 				std::string nm = pose.residue(j).name();
 				core::Size disulfide_loc = nm.find( ":disulfide", 0 );
 				nm[2] = 'D';
@@ -434,7 +434,7 @@ void extract_scores(
 			} else {
 				out << pose.residue(j).name() << "_" << j;
 			}
-			BOOST_FOREACH(core::scoring::ScoreType score_type, score_types){
+			BOOST_FOREACH ( core::scoring::ScoreType score_type, score_types ) {
 				core::Real score = (weights[score_type] * pose.energies().residue_total_energies(j)[ score_type ]);
 				out << " " << restrict_prec(score);
 				rsd_total += score;
@@ -468,7 +468,7 @@ dump_connect_info(
 
 			if ( !atom_id_output[ atom_id ] ) continue;
 
-			utility::vector1<core::id::AtomID>	const & nbr_ids(  pose.conformation().bonded_neighbor_all_res( atom_id, true /*virt*/) );
+			utility::vector1<core::id::AtomID> const & nbr_ids(  pose.conformation().bonded_neighbor_all_res( atom_id, true /*virt*/) );
 			for ( Size n = 1, nmax=nbr_ids.size(); n <=nmax; n++ ) {
 
 				id::AtomID const & nbr_id = nbr_ids[ n ];
@@ -510,19 +510,19 @@ dump_connect_info(
 	Size count( 0 );
 
 	for ( Size i=1; i<= pose.total_residue(); ++i ) {
-		 for ( Size j=1; j<= pose.residue(i).natoms(); ++j ) {
+		for ( Size j=1; j<= pose.residue(i).natoms(); ++j ) {
 
-			 //skip outputting virtual atom unless specified
-			 atom_id_output[ id::AtomID(j,i) ] = 0;
+			//skip outputting virtual atom unless specified
+			atom_id_output[ id::AtomID(j,i) ] = 0;
 
-			 if ( !basic::options::option[ basic::options::OptionKeys::out::file::output_virtual ]() &&	pose.residue(i).is_virtual( j ) ) continue;
+			if ( !basic::options::option[ basic::options::OptionKeys::out::file::output_virtual ]() && pose.residue(i).is_virtual( j ) ) continue;
 
-			 count++;
-			 atom_id_output[ id::AtomID(j,i) ] = count;
-		 }
-	 }
+			count++;
+			atom_id_output[ id::AtomID(j,i) ] = count;
+		}
+	}
 
-	 dump_connect_info( pose, out, atom_id_output );
+	dump_connect_info( pose, out, atom_id_output );
 }
 
 } // namespace pdb

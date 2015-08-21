@@ -75,7 +75,7 @@ read_pose_from_pdb(
 void
 make_continuous_true_regions_in_bool_vector(
 	utility::vector1< bool > & the_vector,
- 	core::Size const min_number_continuous_trues
+	core::Size const min_number_continuous_trues
 );
 
 core::pack::task::PackerTaskOP

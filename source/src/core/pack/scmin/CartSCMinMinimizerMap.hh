@@ -142,13 +142,13 @@ public:
 	void set_natoms_for_residue( Size resid, Size natoms );
 
 	Size get_atom_index( id::AtomID const & atm ) {
-	debug_assert (atm.rsd()>0 && atm.rsd()<=atoms_to_dofid_.size());
-	debug_assert (atm.atomno()>0 && atm.atomno()<=atoms_to_dofid_[atm.rsd()].size());
+		debug_assert (atm.rsd()>0 && atm.rsd()<=atoms_to_dofid_.size());
+		debug_assert (atm.atomno()>0 && atm.atomno()<=atoms_to_dofid_[atm.rsd()].size());
 		return atoms_to_dofid_[atm.rsd()][atm.atomno()];
 	}
 
 	id::AtomID const & get_atom( Size idx ) {
-	debug_assert (idx>0 && idx<dofid_to_atoms_.size());
+		debug_assert (idx>0 && idx<dofid_to_atoms_.size());
 		return dofid_to_atoms_[idx];
 	}
 

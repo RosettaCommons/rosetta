@@ -44,7 +44,7 @@ using namespace protocols::match::upstream;
 
 class ScaffoldBuildPointTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 
 	// --------------- Fixtures --------------- //

@@ -107,7 +107,7 @@ MoverOP PlaceOnLoop::fresh_instance() const {
 
 protocols::moves::MoverOP
 PlaceOnLoop::clone() const {
-  return( MoverOP( new PlaceOnLoop( *this ) ));
+	return( MoverOP( new PlaceOnLoop( *this ) ));
 }
 
 bool
@@ -126,7 +126,7 @@ PlaceOnLoop::minimize_toward_stub( core::pose::Pose & pose ) const
 	pose.update_residue_neighbors();
 	protocols::loops::loop_closure::kinematic_closure::KinematicWrapper kinwrap( kinematic_mover_, loop, chain_closing_attempts_ );
 	kinwrap.apply( pose );
-	if( kinwrap.get_last_move_status() != MS_SUCCESS ){
+	if ( kinwrap.get_last_move_status() != MS_SUCCESS ) {
 		TR<<"Kinematic loop closure failed to close loop."<<std::endl;
 		pose.fold_tree( saved_ft );
 		return( false );
@@ -154,20 +154,22 @@ PlaceOnLoop::add_bb_csts_to_loop( core::pose::Pose & pose ) const
 	using namespace core::pack::task;
 	using namespace core::chemical;
 
-	if( stub_set_ == NULL ) return;
+	if ( stub_set_ == NULL ) return;
 	PackerTaskOP ptask = TaskFactory::create_packer_task( pose );
-	for( core::Size i( 1 ); i<=pose.total_residue(); ++i ){
+	for ( core::Size i( 1 ); i<=pose.total_residue(); ++i ) {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 
-		if( i<=loop_begin_ || i>=curr_loop_end_ )
+		if ( i<=loop_begin_ || i>=curr_loop_end_ ) {
 			ptask->nonconst_residue_task( i ).prevent_repacking();
-		if( (pose.residue( i ).aa() == aa_gly || pose.residue( i ).aa() == aa_pro ) )
+		}
+		if ( (pose.residue( i ).aa() == aa_gly || pose.residue( i ).aa() == aa_pro ) ) {
 			ptask->nonconst_residue_task( i ).prevent_repacking();
+		}
 	}
 	stub_set_->pair_with_scaffold( pose, host_chain_, protocols::filters::FilterCOP( protocols::filters::FilterOP( new protocols::filters::TrueFilter ) ) );
-  core::Size fixed_res(1);
-  if( host_chain_ == 1 ) fixed_res = pose.total_residue();
+	core::Size fixed_res(1);
+	if ( host_chain_ == 1 ) fixed_res = pose.total_residue();
 	core::id::AtomID const fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
 	stub_set_->add_hotspot_constraints_to_pose( pose, fixed_atom_id, ptask, stub_set_, 0.7/*cbforce*/, 0/*worst allowed stub bonus*/, false/*apply self energies*/, 10.0/*bump cutoff*/, true/*apply ambiguous constraints*/ );
 }
@@ -181,11 +183,12 @@ PlaceOnLoop::ala_pose_loop( core::pose::Pose & pose ) const
 	utility::vector1< bool > ala_only( num_canonical_aas, false );
 	ala_only[ aa_ala ] = true;
 	PackerTaskOP ptask = TaskFactory::create_packer_task( pose );
-	for( core::Size i( 1 ); i<=pose.total_residue(); ++i ){
-		if( i>=loop_begin_ && i<=curr_loop_end_ )
+	for ( core::Size i( 1 ); i<=pose.total_residue(); ++i ) {
+		if ( i>=loop_begin_ && i<=curr_loop_end_ ) {
 			ptask->nonconst_residue_task( i ).restrict_absent_canonical_aas( ala_only );
-		else
+		} else {
 			ptask->nonconst_residue_task( i ).prevent_repacking();
+		}
 	}
 	core::pack::pack_rotamers( pose, *hires_scorefxn_, ptask );
 }
@@ -202,19 +205,18 @@ PlaceOnLoop::loop_length( core::pose::Pose & pose )
 	bool loop_closed( false );
 	int const delta( *delta_length_.begin() );
 	TR<<"changing loop length by "<<delta<<std::endl;
-	if( delta < 0 ){
-		for( int del(-1); del>=delta; --del ){
+	if ( delta < 0 ) {
+		for ( int del(-1); del>=delta; --del ) {
 			pose.delete_polymer_residue( loop_begin_ + 1 );
 			curr_loop_end_--;
 		}
-	}
-	else if( delta > 0 ){
+	} else if ( delta > 0 ) {
 		using namespace core::chemical;
 		using namespace core::conformation;
 
 		ResidueTypeSet const & residue_set( pose.residue( 1 ).residue_type_set() ); // residuetypeset is noncopyable
 		ResidueCOP new_res = ResidueFactory::create_residue( residue_set.name_map( name_from_aa( aa_from_oneletter_code( 'A' ) ) ) );
-		for( core::Size leng(1); leng<=(core::Size) delta; ++leng ){
+		for ( core::Size leng(1); leng<=(core::Size) delta; ++leng ) {
 			pose.conformation().safely_append_polymer_residue_after_seqpos( *new_res, loop_begin_ + 1, true/*build_ideal_geometry*/ );
 			curr_loop_end_++;
 		}
@@ -223,10 +225,11 @@ PlaceOnLoop::loop_length( core::pose::Pose & pose )
 	pose.update_residue_neighbors();
 	ala_pose_loop( pose );
 	add_bb_csts_to_loop( pose );
-	if( minimize_toward_stub_ )
+	if ( minimize_toward_stub_ ) {
 		loop_closed = minimize_toward_stub( pose );
-	else
+	} else {
 		loop_closed = position_stub( pose );
+	}
 
 	return( loop_closed );
 }
@@ -255,7 +258,7 @@ void
 PlaceOnLoop::apply( Pose & pose )
 {
 	bool const success( loop_length( pose ) );
-	if( success ) set_last_move_status( MS_SUCCESS );
+	if ( success ) set_last_move_status( MS_SUCCESS );
 	else set_last_move_status( FAIL_RETRY );
 }
 
@@ -277,7 +280,7 @@ PlaceOnLoop::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, pr
 	runtime_assert( chain_begin < loop_begin_ && loop_begin_ < chain_end );
 	runtime_assert( chain_begin < loop_end_ && loop_end_ < chain_end );
 	minimize_toward_stub_ = tag->getOption< bool >( "minimize_toward_stub", 1 );
-	if( tag->hasOption( "stubfile" ) ){
+	if ( tag->hasOption( "stubfile" ) ) {
 		std::string const stub_fname = tag->getOption< std::string >( "stubfile" );
 		stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new protocols::hotspot_hashing::HotspotStubSet );
 		stub_set_->read_data( stub_fname );
@@ -287,24 +290,26 @@ PlaceOnLoop::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, pr
 	lores_scorefxn_ = protocols::rosetta_scripts::parse_score_function(tag, "score_low", data, "score4L");
 	chain_closing_attempts_ = tag->getOption< core::Size >( "closing_attempts", 100 );
 
-  typedef utility::vector1< std::string > StringVec;
+	typedef utility::vector1< std::string > StringVec;
 	std::string shorten_by(""), lengthen_by("");
-	if( tag->hasOption( "shorten_by" ) )
+	if ( tag->hasOption( "shorten_by" ) ) {
 		shorten_by = tag->getOption< std::string >( "shorten_by" );
-	if( tag->hasOption( "lengthen_by" ) )
+	}
+	if ( tag->hasOption( "lengthen_by" ) ) {
 		lengthen_by = tag->getOption< std::string >( "lengthen_by" );
-  StringVec const shorten_by_keys( utility::string_split( shorten_by, ',' ) );
-  StringVec const lengthen_by_keys( utility::string_split( lengthen_by, ',' ) );
+	}
+	StringVec const shorten_by_keys( utility::string_split( shorten_by, ',' ) );
+	StringVec const lengthen_by_keys( utility::string_split( lengthen_by, ',' ) );
 	core::Size const loop_length( loop_end_ - loop_begin_ + 1 );
-	BOOST_FOREACH( std::string const shorten, shorten_by_keys ){
-		if( shorten == "" ) continue;
+	BOOST_FOREACH ( std::string const shorten, shorten_by_keys ) {
+		if ( shorten == "" ) continue;
 		int const shorten_i( -1 * atoi( shorten.c_str() ) );
 		runtime_assert( ( core::Size ) std::abs( shorten_i ) < loop_length );
 		delta_length_.push_back( shorten_i );
 	}
 
-	BOOST_FOREACH( std::string const lengthen, lengthen_by_keys ){
-		if( lengthen == "" ) continue;
+	BOOST_FOREACH ( std::string const lengthen, lengthen_by_keys ) {
+		if ( lengthen == "" ) continue;
 		delta_length_.push_back( atoi( lengthen.c_str() ) );
 	}
 
@@ -314,7 +319,7 @@ PlaceOnLoop::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, pr
 	delta_length_.erase( last, delta_length_.end() );
 	TR<<"PlaceOnLoop mover defined with kinematic mover ";
 	TR<<" will change the loop by these values: ";
-	BOOST_FOREACH( int const i, delta_length_ ) TR<<i<<", ";
+	BOOST_FOREACH ( int const i, delta_length_ ) TR<<i<<", ";
 	TR<<std::endl;
 }
 

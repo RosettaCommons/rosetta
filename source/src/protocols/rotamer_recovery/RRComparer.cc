@@ -79,7 +79,7 @@ RRComparerRotBins::measure_rotamer_recovery(
 ) {
 
 
-	if( res1.aa() != res2.aa() ) {
+	if ( res1.aa() != res2.aa() ) {
 		TR << "Cannot measure rotamer recovery because" << endl;
 		TR << "residue 1 has type '" << res1.type().name() << "'" << endl;
 		TR << "residue 2 has type '" << res2.type().name() << "'" << endl;
@@ -87,7 +87,7 @@ RRComparerRotBins::measure_rotamer_recovery(
 		utility_exit();
 	}
 
-	if( res1.aa() > num_canonical_aas ){
+	if ( res1.aa() > num_canonical_aas ) {
 		TR << "WARNING: trying to compare rotamer bins for non-canonical amino acid '" << res1.name() << "'" << endl;
 		return false;
 	}
@@ -97,7 +97,7 @@ RRComparerRotBins::measure_rotamer_recovery(
 	rotamer_from_chi( res2, res2_rotbins );
 
 	Size chi_match(0);
-	for ( Size chi_index=1; chi_index <= res1_rotbins.size(); ++chi_index ){
+	for ( Size chi_index=1; chi_index <= res1_rotbins.size(); ++chi_index ) {
 		if ( res1_rotbins[ chi_index ] == res2_rotbins[ chi_index ] ) {
 			chi_match++;
 		}
@@ -121,10 +121,10 @@ RRComparerRotBins::get_parameters() const {
 RRComparerChiDiff::RRComparerChiDiff() : tolerance_( 20.0 ), limit_chi_angles_( false ), max_chi_considered_ ( 100 ) {}
 
 RRComparerChiDiff::RRComparerChiDiff( RRComparerChiDiff const & src ) :
-  RRComparer(),
-  tolerance_( src.tolerance_ ),
-  limit_chi_angles_( src.limit_chi_angles_ ),
-  max_chi_considered_( src.max_chi_considered_ )
+	RRComparer(),
+	tolerance_( src.tolerance_ ),
+	limit_chi_angles_( src.limit_chi_angles_ ),
+	max_chi_considered_( src.max_chi_considered_ )
 {}
 
 RRComparerChiDiff::~RRComparerChiDiff() {}
@@ -134,11 +134,11 @@ RRComparerChiDiff::set_recovery_threshold( core::Real const setting ) { toleranc
 
 // AS March 2013: enable comparison of a limited set of chi angles, no matter how many the residue actually has
 void
-RRComparerChiDiff::set_max_chi_considered( core::Size const max_chi ) { 
+RRComparerChiDiff::set_max_chi_considered( core::Size const max_chi ) {
 	limit_chi_angles_ = true;
 	max_chi_considered_ = max_chi;
 }
-	
+
 
 /// @details measure the rotamer recovery by comparing rotamer bins
 /// @return  true, if the measurement was successful, false otherwise
@@ -150,37 +150,38 @@ RRComparerChiDiff::measure_rotamer_recovery(
 	Residue const & res2,
 	Real & score,
 	bool & recovered
-											) {
-	
+) {
+
 	using core::pack::dunbrack::subtract_chi_angles;
-	
-	if( res1.aa() != res2.aa() ) {
+
+	if ( res1.aa() != res2.aa() ) {
 		TR << "Cannot measure rotamer recovery because" << endl;
 		TR << "residue 1 has type '" << res1.type().name() << "'" << endl;
 		TR << "residue 2 has type '" << res2.type().name() << "'" << endl;
 		TR << "Make sure the protocol to generate the conformations did not 'design' the sequence identity too." << endl;
 		utility_exit();
 	}
-	
-	if( res1.aa() > num_canonical_aas ){
-	  TR << "WARNING: trying to compare rotamer bins for non-canonical amino acid '" << res1.name() << "'" << endl;
-	  return false;
+
+	if ( res1.aa() > num_canonical_aas ) {
+		TR << "WARNING: trying to compare rotamer bins for non-canonical amino acid '" << res1.name() << "'" << endl;
+		return false;
 	}
-	
+
 	score = 0;
 	recovered=true;
 	Size max_chi = res1.nchi();
-	if (limit_chi_angles_)
+	if ( limit_chi_angles_ ) {
 		max_chi = std::min(max_chi, max_chi_considered_);
-	
-	for ( Size chi_index=1; chi_index <= max_chi; ++chi_index ){
+	}
+
+	for ( Size chi_index=1; chi_index <= max_chi; ++chi_index ) {
 		if ( res1.type().chi_2_proton_chi( chi_index ) == 0 ) { // ignore proton chi (tyr,ser,thr)
 			Real chidiff = std::abs( subtract_chi_angles( res1.chi(chi_index), res2.chi(chi_index), res1.aa(), chi_index ));
 			if ( score < chidiff ) { score = chidiff; }
 			if ( chidiff > tolerance_ ) { recovered = false; }
 		}
 	}
-	
+
 	return true;
 }
 

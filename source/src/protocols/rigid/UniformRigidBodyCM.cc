@@ -43,7 +43,7 @@
 #include <basic/Tracer.hh>
 
 #ifdef WIN32
-  #include <basic/datacache/WriteableCacheableMap.hh>
+#include <basic/datacache/WriteableCacheableMap.hh>
 #endif
 
 
@@ -64,115 +64,115 @@ using namespace protocols::environment;
 // creator
 std::string
 UniformRigidBodyCMCreator::keyname() const {
-  return UniformRigidBodyCMCreator::mover_name();
+	return UniformRigidBodyCMCreator::mover_name();
 }
 
 protocols::moves::MoverOP
 UniformRigidBodyCMCreator::create_mover() const {
-  return ClientMoverOP( new UniformRigidBodyCM );
+	return ClientMoverOP( new UniformRigidBodyCM );
 }
 
 std::string
 UniformRigidBodyCMCreator::mover_name() {
-  return "UniformRigidBodyCM";
+	return "UniformRigidBodyCM";
 }
 
 UniformRigidBodyCM::UniformRigidBodyCM():
-  ClientMover(),
-  mover_( UniformRigidBodyMoverOP( new UniformRigidBodyMover() ) )
+	ClientMover(),
+	mover_( UniformRigidBodyMoverOP( new UniformRigidBodyMover() ) )
 {}
 
 UniformRigidBodyCM::UniformRigidBodyCM( std::string const& name,
-                                        LocalPosition const& mobile_label,
-                                        LocalPosition const& stationary_label,
-                                        core::Real rotation_magnitude,
-                                        core::Real translation_magnitude ):
-  ClientMover(),
-  name_( name ),
-  mobile_label_( mobile_label ),
-  stationary_label_( stationary_label ),
-  mover_( UniformRigidBodyMoverOP( new UniformRigidBodyMover( 0, rotation_magnitude, translation_magnitude ) ) )
+	LocalPosition const& mobile_label,
+	LocalPosition const& stationary_label,
+	core::Real rotation_magnitude,
+	core::Real translation_magnitude ):
+	ClientMover(),
+	name_( name ),
+	mobile_label_( mobile_label ),
+	stationary_label_( stationary_label ),
+	mover_( UniformRigidBodyMoverOP( new UniformRigidBodyMover( 0, rotation_magnitude, translation_magnitude ) ) )
 {}
 
 void UniformRigidBodyCM::passport_updated(){
-  if( has_passport() ){
-	environment::EnvironmentCOP env( active_environment() );
-    SequenceAnnotationCOP ann = env->annotations();
-    int dockjump = (int) ann->resolve_jump( name() + DOCKJUMP_TAG );
+	if ( has_passport() ) {
+		environment::EnvironmentCOP env( active_environment() );
+		SequenceAnnotationCOP ann = env->annotations();
+		int dockjump = (int) ann->resolve_jump( name() + DOCKJUMP_TAG );
 
-    // if the mover's not initialized or it's got a different dockjump
-    if( !mover_ || mover_->jump_number() != dockjump ){
-      mover_->jump_number( dockjump );
-    }
- } else {
-    //configure a null moveset.
-  }
+		// if the mover's not initialized or it's got a different dockjump
+		if ( !mover_ || mover_->jump_number() != dockjump ) {
+			mover_->jump_number( dockjump );
+		}
+	} else {
+		//configure a null moveset.
+	}
 }
 
 void UniformRigidBodyCM::initialize( core::pose::Pose& pose ){
-  DofUnlock activeation( pose.conformation(), passport() );
-  mover_->apply( pose );
+	DofUnlock activeation( pose.conformation(), passport() );
+	mover_->apply( pose );
 }
 
 void UniformRigidBodyCM::apply( core::pose::Pose& pose ){
-  DofUnlock activation( pose.conformation(), passport() );
-  if( mover_ && passport()->has_jump_access( mover_->jump_number() ) ){
-    mover_->apply( pose );
-  } else if( !mover_ ){
-    throw utility::excn::EXCN_NullPointer( "UniformRigidBodyCM found during apply. Did you forget to register this mover with the Environment?" );
-  } else {
-    tr.Warning << "UniformRigidBodyCM is skipping it's turn to apply a RigidBody move because it doesn't have "
-               << " access to the requested dof, jump " << mover_->jump_number()
-               << ". Are you sure this is expected behavior?" << std::endl;
-  }
+	DofUnlock activation( pose.conformation(), passport() );
+	if ( mover_ && passport()->has_jump_access( mover_->jump_number() ) ) {
+		mover_->apply( pose );
+	} else if ( !mover_ ) {
+		throw utility::excn::EXCN_NullPointer( "UniformRigidBodyCM found during apply. Did you forget to register this mover with the Environment?" );
+	} else {
+		tr.Warning << "UniformRigidBodyCM is skipping it's turn to apply a RigidBody move because it doesn't have "
+			<< " access to the requested dof, jump " << mover_->jump_number()
+			<< ". Are you sure this is expected behavior?" << std::endl;
+	}
 }
 
 void UniformRigidBodyCM::parse_my_tag( utility::tag::TagCOP tag,
-                                       basic::datacache::DataMap& data,
-                                       protocols::filters::Filters_map const& filters,
-                                       protocols::moves::Movers_map const& movers,
-                                       core::pose::Pose const& pose ) {
+	basic::datacache::DataMap& data,
+	protocols::filters::Filters_map const& filters,
+	protocols::moves::Movers_map const& movers,
+	core::pose::Pose const& pose ) {
 
-  mobile_label_ = LocalPosition( tag->getOption< std::string >( "mobile" ) );
-  stationary_label_ = LocalPosition( tag->getOption< std::string >( "stationary" ) );
+	mobile_label_ = LocalPosition( tag->getOption< std::string >( "mobile" ) );
+	stationary_label_ = LocalPosition( tag->getOption< std::string >( "stationary" ) );
 
-  name_ = tag->getOption< std::string >( "name" );
+	name_ = tag->getOption< std::string >( "name" );
 
-  mover_->parse_my_tag( tag, data, filters, movers, pose );
+	mover_->parse_my_tag( tag, data, filters, movers, pose );
 }
 
 claims::EnvClaims UniformRigidBodyCM::yield_claims( core::pose::Pose const&,
-                                                    basic::datacache::WriteableCacheableMapOP ){
-  using core::Size;
-  using core::pack::task::residue_selector::ResidueSubset;
-  claims::EnvClaims claim_list;
+	basic::datacache::WriteableCacheableMapOP ){
+	using core::Size;
+	using core::pack::task::residue_selector::ResidueSubset;
+	claims::EnvClaims claim_list;
 
-  ClientMoverOP this_ptr( utility::pointer::static_pointer_cast< ClientMover >( get_self_ptr() ) );
-  claims::JumpClaimOP jclaim( new claims::JumpClaim( this_ptr,
-                                                      name() + DOCKJUMP_TAG,
-                                                      mobile_label_,
-                                                      stationary_label_ ) );
+	ClientMoverOP this_ptr( utility::pointer::static_pointer_cast< ClientMover >( get_self_ptr() ) );
+	claims::JumpClaimOP jclaim( new claims::JumpClaim( this_ptr,
+		name() + DOCKJUMP_TAG,
+		mobile_label_,
+		stationary_label_ ) );
 
-  jclaim->strength( claims::MUST_CONTROL, claims::CAN_CONTROL );
-  jclaim->create_vrt_if_necessary( true );
+	jclaim->strength( claims::MUST_CONTROL, claims::CAN_CONTROL );
+	jclaim->create_vrt_if_necessary( true );
 
-  claim_list.push_back( jclaim );
+	claim_list.push_back( jclaim );
 
-  return claim_list;
+	return claim_list;
 }
 
 std::string UniformRigidBodyCM::get_name() const {
-  std::ostringstream name;
-  name << "UniformRigidBodyCM" << mobile_label_;
-  return name.str();
+	std::ostringstream name;
+	name << "UniformRigidBodyCM" << mobile_label_;
+	return name.str();
 }
 
 moves::MoverOP UniformRigidBodyCM::fresh_instance() const {
-  return ClientMoverOP( new UniformRigidBodyCM() );
+	return ClientMoverOP( new UniformRigidBodyCM() );
 }
 
 moves::MoverOP UniformRigidBodyCM::clone() const{
-  return ClientMoverOP( new UniformRigidBodyCM( *this ) );
+	return ClientMoverOP( new UniformRigidBodyCM( *this ) );
 }
 
 } // rigid

@@ -43,7 +43,7 @@ using namespace core::scoring::methods;
 
 class P_AA_pp_EnergyTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	PoseOP the_pose;
 	P_AA_pp_EnergyOP paapp_energy;
@@ -107,7 +107,7 @@ class P_AA_pp_EnergyTests : public CxxTest::TestSuite {
 			0.0908511, -1.81416, -0.362164, -0.0563304, 1.02746,
 			0.105663, -0.413347, 0.0460336, -2.80756,
 			0
-		};
+			};
 
 		float const TOLERATED_ERROR = 0.0001;
 
@@ -151,7 +151,7 @@ class P_AA_pp_EnergyTests : public CxxTest::TestSuite {
 			0.0019097, -0.0110793, -0.0315393, 0.0776582, 0.0687826,
 			-0.0278022, -0.0107653, -0.001359, -0.0417697, 0.0982451,
 			0.0251439, -0.0346583, 0.00467711, -0.111108, 0
-		};
+			};
 
 		// correct answers taken from rosetta++ v17084
 		Real correct_dE_dpsi[] = { 0,
@@ -178,7 +178,7 @@ class P_AA_pp_EnergyTests : public CxxTest::TestSuite {
 			-0.00869106, -0.0391215, -0.017574, 0.0149176, 0.0559156,
 			0.0652406, -0.0272102, 0.0237519, -0.0301465, 0.027841,
 			-0.00126092, -0.000286411, 0.0139144, -0.115895, 0
-		};
+			};
 
 		float const TOLERATED_ERROR = 0.0001;
 

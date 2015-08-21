@@ -36,18 +36,18 @@ class BFactor: public FragmentScoringMethod {
 public:
 
 	BFactor(Size priority, Real lowest_acceptable_value, bool use_lowest,
-			std::string & /*fastaQuerySequence*/ ) :
+		std::string & /*fastaQuerySequence*/ ) :
 		FragmentScoringMethod(priority, lowest_acceptable_value, use_lowest,
-				"BFactor")
+		"BFactor")
 		// query_(fastaQuerySequence)
-{}
+	{}
 
 	bool score(FragmentCandidateOP f, FragmentScoreMapOP empty_map);
 
 	/// @brief prints a detailed explanation how a fragment score has been computed
 	/// @details besides extensive output, the method should return the same result as score()
 	bool describe_score(FragmentCandidateOP f, FragmentScoreMapOP empty_map,
-			std::ostream& out);
+		std::ostream& out);
 
 private:
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
@@ -65,9 +65,9 @@ public:
 	}
 
 	FragmentScoringMethodOP make(Size priority, Real lowest_acceptable_value, bool use_lowest,
-			FragmentPickerOP picker, std::string) {
+		FragmentPickerOP picker, std::string) {
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new BFactor(priority,
-				lowest_acceptable_value, use_lowest, picker->get_query_seq_string()) );
+			lowest_acceptable_value, use_lowest, picker->get_query_seq_string()) );
 	}
 };
 

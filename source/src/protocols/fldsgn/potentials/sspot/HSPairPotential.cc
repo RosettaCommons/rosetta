@@ -109,9 +109,9 @@ HSPairPotential::helix_end(
 	Size const s4 = pos1+3;
 
 	Vector const Epos_sum( (                  bb_pos.CA( s1 ) + bb_pos.C( s1 ) ) +
-												 ( bb_pos.N( s2 ) + bb_pos.CA( s2 ) + bb_pos.C( s2 ) ) +
-												 ( bb_pos.N( s3 ) + bb_pos.CA( s3 ) + bb_pos.C( s3 ) ) +
-												 ( bb_pos.N( s4 ) + bb_pos.CA( s4 )                  ) );
+		( bb_pos.N( s2 ) + bb_pos.CA( s2 ) + bb_pos.C( s2 ) ) +
+		( bb_pos.N( s3 ) + bb_pos.CA( s3 ) + bb_pos.C( s3 ) ) +
+		( bb_pos.N( s4 ) + bb_pos.CA( s4 )                  ) );
 
 	p1 = ( Epos_sum + bb_pos.N( s1 ) ) * eleven_inv;
 	p2 = ( Epos_sum + bb_pos.C( s4 ) ) * eleven_inv;
@@ -141,29 +141,29 @@ HSPairPotential::score(
 
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
-	for( Size ihelix=1; ihelix<=helices.size(); ihelix++ ) {
+	for ( Size ihelix=1; ihelix<=helices.size(); ihelix++ ) {
 
 		HelixOP const helix( helices[ ihelix ] );
 
-		if( helix->length() <= 3 ) continue;
+		if ( helix->length() <= 3 ) continue;
 
-		for( Size ss1=helix->begin(); ss1<=helix->end()-3; ss1++ ) {
+		for ( Size ss1=helix->begin(); ss1<=helix->end()-3; ss1++ ) {
 
 			Vector pt1, pt2;
 			helix_end( ss1, bb_pos, pt1, pt2 );
 
 			for ( core::graph::Graph::EdgeListConstIter
-							iru  = energy_graph.get_node( ss1+1 )->const_edge_list_begin(),
-							irue = energy_graph.get_node( ss1+1 )->const_edge_list_end();
-						iru != irue; ++iru ) {
+					iru  = energy_graph.get_node( ss1+1 )->const_edge_list_begin(),
+					irue = energy_graph.get_node( ss1+1 )->const_edge_list_end();
+					iru != irue; ++iru ) {
 
 				Size ss2( (*iru)->get_second_node_ind() );
 				//Edges always have first node < second node. Just in case we picked the wrong one:
 				if ( ss1+1 == ss2 ) ss2 = (*iru)->get_first_node_ind();
 
 				Size jstrand = ss_info.strand_id( ss2 );
-				if( jstrand == 0 || ss_info.strand_id( ss2+1 ) == 0 ) continue;
-				if( pose.residue_type( ss2 ).is_upper_terminus() ) continue;
+				if ( jstrand == 0 || ss_info.strand_id( ss2+1 ) == 0 ) continue;
+				if ( pose.residue_type( ss2 ).is_upper_terminus() ) continue;
 
 				Vector const & pt3( bb_pos.N( ss2   ) );
 				Vector const & pt4( bb_pos.C( ss2+1 ) );
@@ -186,7 +186,7 @@ HSPairPotential::score(
 					Size const strand_end_2 = strands[ jstrand ]->end() + 1;
 
 					Size seqsep = std::min( get_foldtree_seqsep( pose, helix_end_2, strand_end_1 ) + 1,
-																	get_foldtree_seqsep( pose, strand_end_2, helix_end_1 ) + 1 );
+						get_foldtree_seqsep( pose, strand_end_2, helix_end_1 ) + 1 );
 
 					hs_score += calc_phithetascore( seqsep, phi, theta );
 				}
@@ -201,7 +201,7 @@ HSPairPotential::score(
 
 /// @brief load phi/theta bins for use in secondary structure scoring
 void
-HSPairPotential::load_phi_theta_bins(	String const & hs_filename )
+HSPairPotential::load_phi_theta_bins( String const & hs_filename )
 {
 	using ObjexxFCL::format::skip;
 	typedef ObjexxFCL::FArray3D< Real > FArray3D_real;
@@ -238,7 +238,7 @@ HSPairPotential::load_phi_theta_bins(	String const & hs_filename )
 		for ( int iph = 1; iph <= 36; ++iph ) {
 			for ( int itheta = 1; itheta <= 36; ++itheta ) {
 				phithetascore_( 1, isep, iph, itheta ) = -std::log(pts_HS( itheta, iph, isep )/tot ) +
-				 std::log(iptsn( itheta )/totn );
+					std::log(iptsn( itheta )/totn );
 			}
 		}
 	}
@@ -247,5 +247,5 @@ HSPairPotential::load_phi_theta_bins(	String const & hs_filename )
 
 } // ns sspot
 } // ns potentials
-}	// ns fldsgn
-}	// ns protocols
+} // ns fldsgn
+} // ns protocols

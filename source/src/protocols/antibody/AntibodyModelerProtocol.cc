@@ -235,19 +235,19 @@ void AntibodyModelerProtocol::init_from_options() {
 	if ( option[ OptionKeys::antibody::refine ].user() ) {
 		set_refine_type( option[ OptionKeys::antibody::refine ]() );
 	}
-	if ( option[ OptionKeys::antibody::bad_nter].user()  ){
+	if ( option[ OptionKeys::antibody::bad_nter].user()  ) {
 		set_bad_nter(option[ OptionKeys::antibody::bad_nter]() );
 	}
-	if ( option[ OptionKeys::antibody::extend_h3_before_modeling].user()  ){
+	if ( option[ OptionKeys::antibody::extend_h3_before_modeling].user()  ) {
 		set_extend_h3_before_modeling(option[ OptionKeys::antibody::extend_h3_before_modeling]() );
-  }
-	if ( option[ OptionKeys::antibody::idealize_h3_stems_before_modeling].user()  ){
+	}
+	if ( option[ OptionKeys::antibody::idealize_h3_stems_before_modeling].user()  ) {
 		set_idealize_h3_stems_before_modeling(option[ OptionKeys::antibody::idealize_h3_stems_before_modeling]() );
 	}
-	
-    //if ( option[ OptionKeys::antibody::middle_pack_min].user() ){
-    //  set_middle_pack_min( option[ OptionKeys::loops::refine ] )
-    //}
+
+	//if ( option[ OptionKeys::antibody::middle_pack_min].user() ){
+	//  set_middle_pack_min( option[ OptionKeys::loops::refine ] )
+	//}
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -273,7 +273,7 @@ AntibodyModelerProtocol::setup_objects() {
 
 	sync_objects_with_flags();
 
-	if(use_csts_) {
+	if ( use_csts_ ) {
 		if ( cst_weight_ == 0.0 ) cst_weight_ = 1.0;
 	}
 
@@ -282,7 +282,7 @@ AntibodyModelerProtocol::setup_objects() {
 	dock_scorefxn_highres_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
 	dock_scorefxn_highres_->set_weight( core::scoring::chainbreak, 1.0 );
 	dock_scorefxn_highres_->set_weight( core::scoring::overlap_chainbreak, 10./3. );
-	if(constrain_vlvh_qq_) {
+	if ( constrain_vlvh_qq_ ) {
 		dock_scorefxn_highres_->set_weight( scoring::atom_pair_constraint, cst_weight_ );
 	}
 	loop_scorefxn_centroid_ = scoring::ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
@@ -291,7 +291,7 @@ AntibodyModelerProtocol::setup_objects() {
 	loop_scorefxn_highres_ = scoring::get_score_function();
 	loop_scorefxn_highres_->set_weight( scoring::chainbreak, 1.0 );
 	loop_scorefxn_highres_->set_weight( scoring::overlap_chainbreak, 10./3. );
-	if(constrain_cter_) {
+	if ( constrain_cter_ ) {
 		loop_scorefxn_highres_->set_weight(scoring::dihedral_constraint, cst_weight_);
 	}
 }
@@ -365,14 +365,14 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 	pose::set_ss_from_phipsi( pose );
 
 	// display constraints and return
-	if( camelid_constraints_ ) {
+	if ( camelid_constraints_ ) {
 		display_constraint_residues( pose );
 		return;
 	}
 
 	// Step 1: model the cdr h3 in centroid mode
 	// JQX notes: pay attention to the way it treats the stems when extending the loop
-	if(model_h3_) {
+	if ( model_h3_ ) {
 
 		// switching to centroid mode
 		simple_moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
@@ -384,17 +384,17 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 
 		// call ConstraintSetMover
 		TR<<"Centroid cst_weight: "<<cst_weight_<<std::endl;
-		if(  cst_weight_ != 0.0  ) {
+		if (  cst_weight_ != 0.0  ) {
 			cdr_constraint_ = protocols::simple_moves::ConstraintSetMoverOP( new simple_moves::ConstraintSetMover() );
 			cdr_constraint_->apply( pose );
 		}
 
 		ModelCDRH3OP model_cdrh3( new ModelCDRH3( ab_info_, loop_scorefxn_centroid_) );
 		model_cdrh3->set_perturb_type(h3_perturb_type_); //legacy_perturb_ccd, ccd, kic
-		if(cter_insert_ ==false) {
+		if ( cter_insert_ ==false ) {
 			model_cdrh3->turn_off_cter_insert();
 		}
-		if(h3_filter_   ==false) {
+		if ( h3_filter_   ==false ) {
 			model_cdrh3->turn_off_H3_filter();
 		}
 		model_cdrh3->set_bad_nter(bad_nter_);
@@ -408,7 +408,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 
 		utility::vector1<bool> allow_chi_copy( pose.total_residue(), true );
 		/// FIXME: JQX very redudent loops defition
-		for( Size ii=ab_info_->get_CDR_loop(h3).start(); ii<=ab_info_->get_CDR_loop(h3).stop(); ii++ ) {
+		for ( Size ii=ab_info_->get_CDR_loop(h3).start(); ii<=ab_info_->get_CDR_loop(h3).stop(); ii++ ) {
 			allow_chi_copy[ii] = false;
 		}
 		//recover sidechains from starting structures except H3
@@ -418,15 +418,15 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 
 	// call ConstraintSetMover
 	TR << "Full-atom cst_weight: " << cst_weight_ << std::endl;
-	if(  cst_weight_ != 0.0  ) {
+	if (  cst_weight_ != 0.0  ) {
 		cdr_constraint_ = protocols::simple_moves::ConstraintSetMoverOP( new simple_moves::ConstraintSetMover() );
 		cdr_constraint_->apply( pose );
 	}
 
 	//if(middle_pack_min_){
 	CDRsMinPackMinOP cdrs_min_pack_min( new CDRsMinPackMin(ab_info_) );
-	if(sc_min_) cdrs_min_pack_min->set_sc_min(true);
-	if(rt_min_) cdrs_min_pack_min->set_rt_min(true);
+	if ( sc_min_ ) cdrs_min_pack_min->set_sc_min(true);
+	if ( rt_min_ ) cdrs_min_pack_min->set_rt_min(true);
 	cdrs_min_pack_min -> set_turnoff_minimization(packonly_after_graft_);
 	cdrs_min_pack_min -> apply(pose);
 	//}
@@ -435,13 +435,13 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 	if ( snugfit_ ) {
 		RefineBetaBarrelOP refine_beta_barrel( new RefineBetaBarrel(ab_info_, dock_scorefxn_highres_, pack_scorefxn_) );
 		// it has default movemap, tf, and fold_tree
-		if (!LH_repulsive_ramp_) {
+		if ( !LH_repulsive_ramp_ ) {
 			refine_beta_barrel-> turn_off_repulsive_ramp();
 		}
-		if(sc_min_)              {
+		if ( sc_min_ )              {
 			refine_beta_barrel->set_sc_min(true);
 		}
-		if(rt_min_)              {
+		if ( rt_min_ )              {
 			refine_beta_barrel->set_rt_min(true);
 		}
 		refine_beta_barrel->apply(pose);
@@ -449,13 +449,13 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 	}
 
 	// Step 3: Full Atom Relax
-	if(refine_h3_) {
+	if ( refine_h3_ ) {
 		RefineOneCDRLoopOP cdr_highres_refine_( new RefineOneCDRLoop(ab_info_, h3_refine_type_, loop_scorefxn_highres_) );
 		cdr_highres_refine_ -> set_refine_mode(h3_refine_type_);
 		cdr_highres_refine_ -> set_h3_filter(h3_filter_);
 		cdr_highres_refine_ -> set_num_filter_tries(h3_filter_tolerance_);
 		cdr_highres_refine_ -> set_flank_relax(flank_residue_min_);
-		if (flank_residue_min_) cdr_highres_refine_->set_flank_size(flank_residue_size_);
+		if ( flank_residue_min_ ) cdr_highres_refine_->set_flank_size(flank_residue_size_);
 		cdr_highres_refine_ -> pass_start_pose(start_pose_);
 		cdr_highres_refine_ -> apply(pose);
 		//pose.dump_pdb("3rd_finish_h3_refine.pdb");
@@ -473,7 +473,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 	loops::add_cutpoint_variants( pose );
 
 	// Final score (with constraints) before jd2 output the results
-	if(constrain_vlvh_qq_) {
+	if ( constrain_vlvh_qq_ ) {
 		loop_scorefxn_highres_->set_weight( scoring::atom_pair_constraint, cst_weight_ );
 	}
 	( *loop_scorefxn_highres_ )( pose );
@@ -500,7 +500,7 @@ void AntibodyModelerProtocol::echo_metrics_to_jd2(core::pose::Pose & pose, proto
 	Real total_score = pose.energies().total_energies()[ core::scoring::total_score ];
 	Real unconstrained_score = total_score - atom_pair_constraint_score - dihedral_constraint_score;
 
-	TR << " 		atom_pair_constraint_score = " << atom_pair_constraint_score << std::endl;
+	TR << " \t\tatom_pair_constraint_score = " << atom_pair_constraint_score << std::endl;
 	TR << "      dihedral_constraint_score = " << dihedral_constraint_score << std::endl;
 	TR << "                    total_score = " << total_score << std::endl;
 	TR << "            unconstrained_score = " << unconstrained_score << std::endl;
@@ -512,14 +512,14 @@ void AntibodyModelerProtocol::echo_metrics_to_jd2(core::pose::Pose & pose, proto
 	job->add_string_real_pair("H2_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h2) ));
 	job->add_string_real_pair("H1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h1) ));
 	//pose.dump_pdb("aligned_H.pdb");
-	if( camelid_ == false ) {
+	if ( camelid_ == false ) {
 		align_to_native( pose, native_pose, ab_info_, native_ab_info, "L" );
 		job->add_string_real_pair("L3_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l3) ));
 		job->add_string_real_pair("L2_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l2) ));
 		job->add_string_real_pair("L1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l1) ));
 		//pose.dump_pdb("aligned_L.pdb");
 	}
-	
+
 	//job->add_string_real_pair("AP_constraint", atom_pair_constraint_score);
 	job->add_string_real_pair("VL_VH_distance", vl_vh_orientation_coords( pose, *ab_info_ )[1]);
 	job->add_string_real_pair("VL_VH_opening_angle", vl_vh_orientation_coords( pose, *ab_info_ )[2]);
@@ -549,31 +549,31 @@ void AntibodyModelerProtocol::display_constraint_residues( core::pose::Pose & po
 
 	Size H1_Cys(0), H3_Cys(0);
 
-	if(      pose.residue( pose.pdb_info()->pdb2pose('H',32 ) ).name3() == "CYS" ) {
+	if (      pose.residue( pose.pdb_info()->pdb2pose('H',32 ) ).name3() == "CYS" ) {
 		H1_Cys = pose.pdb_info()->pdb2pose( 'H', 32 );
-	} else if( pose.residue( pose.pdb_info()->pdb2pose('H',33 ) ).name3() == "CYS" ) {
+	} else if ( pose.residue( pose.pdb_info()->pdb2pose('H',33 ) ).name3() == "CYS" ) {
 		H1_Cys = pose.pdb_info()->pdb2pose( 'H', 33 );
 	}
 
-	for( Size ii = ab_info_->get_CDR_loop(h3).start(); ii <= ab_info_->get_CDR_loop(h3).stop(); ii++ ) {
-		if( pose.residue(ii).name3() == "CYS" ) {
+	for ( Size ii = ab_info_->get_CDR_loop(h3).start(); ii <= ab_info_->get_CDR_loop(h3).stop(); ii++ ) {
+		if ( pose.residue(ii).name3() == "CYS" ) {
 			H3_Cys = ii;
 		}
 	}
 
-	if( ( H1_Cys != 0 ) && ( H3_Cys != 0 ) ) {
+	if ( ( H1_Cys != 0 ) && ( H3_Cys != 0 ) ) {
 		TR << "CONSTRAINTS: "<< "AtomPair CA " << H1_Cys << " CA " << H3_Cys
-		   << " BOUNDED 4.0 6.1 0.6 BOND; mean 5.6 sd 0.6" << std::endl;
+			<< " BOUNDED 4.0 6.1 0.6 BOND; mean 5.6 sd 0.6" << std::endl;
 	}
 
 	// Specifying extended kink
 
 	Size hfr_46(0), h3_closest(0);
 	hfr_46 = pose.pdb_info()->pdb2pose( 'H', 46 );
-	if( ab_info_->get_H3_kink_type() == Extended ) h3_closest = ab_info_->get_CDR_loop(h3).stop() - 5;
-	if( h3_closest != 0 ) {
+	if ( ab_info_->get_H3_kink_type() == Extended ) h3_closest = ab_info_->get_CDR_loop(h3).stop() - 5;
+	if ( h3_closest != 0 ) {
 		TR << "CONSTRAINTS: " << "AtomPair CA " << hfr_46 << " CA " << h3_closest
-		   << " BOUNDED 6.5 9.1 0.7 DISTANCE; mean 8.0 sd 0.7" << std::endl;
+			<< " BOUNDED 6.5 9.1 0.7 DISTANCE; mean 8.0 sd 0.7" << std::endl;
 	}
 
 	return;
@@ -583,8 +583,8 @@ void AntibodyModelerProtocol::display_constraint_residues( core::pose::Pose & po
 /// @details  Show the complete setup of the antibody modeler protocol
 void AntibodyModelerProtocol::show( std::ostream & out ) const {
 	/*if ( !flags_and_objects_are_in_sync_ ){
-	 sync_objects_with_flags();
-	 }*/  // show() should be const
+	sync_objects_with_flags();
+	}*/  // show() should be const
 	out << *this;
 }
 

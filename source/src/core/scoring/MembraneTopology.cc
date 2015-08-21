@@ -60,23 +60,22 @@ MembraneTopology::MembraneTopology( MembraneTopology const & src ) :
 	allow_tmh_scoring_=src.allow_tmh_scoring_;
 	tmh_inserted_=src.tmh_inserted_;
 	init_=src.init_;
-  initialized_=src.initialized_;
-  	  spanfile_=src.spanfile_;
+	initialized_=src.initialized_;
+	spanfile_=src.spanfile_;
 }
 
 std::string
 MembraneTopology::read_in_spanfile()
 {
-    using namespace basic::options;
+	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if(option[in::file::spanfile].user())
-	{
+	if ( option[in::file::spanfile].user() ) {
 		//At this point, assert if don't have a spanfile
 		spanfile_ = option[in::file::spanfile].value();
 		TR.Debug << "spanfile used by TMHTopologySamplerClaimer:  " << spanfile_ << std::endl;
 		TR.Debug << "spanfile used by TMHTopologySamplerClaimer:  " << option[in::file::spanfile].value() << std::endl;
-	}else{
+	} else {
 		utility_exit_with_message( "[ERROR] Error opening spanfile '" + spanfile_ + "'" );
 	}
 	return spanfile_;
@@ -85,9 +84,9 @@ MembraneTopology::read_in_spanfile()
 void
 MembraneTopology::initialize(std::string const & spanfile)
 {
-    using namespace basic::options;
+	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-		//	std::string spanfile("BRD7.span");
+	// std::string spanfile("BRD7.span");
 	TR << "Initialize Membrane spanning regions with " << spanfile << std::endl;
 	std::string line;
 	utility::io::izstream stream (spanfile);
@@ -112,8 +111,7 @@ MembraneTopology::initialize(std::string const & spanfile)
 	TR << line << std::endl;
 	getline(stream,line); //parallel
 	TR << line << std::endl;
-	for(Size i=1;i<=total_tmhelix_;++i)
-	{
+	for ( Size i=1; i<=total_tmhelix_; ++i ) {
 		getline(stream,line);
 		{
 			std::istringstream l(line);
@@ -123,8 +121,7 @@ MembraneTopology::initialize(std::string const & spanfile)
 		TR << line << std::endl ;
 		helix_id_(i)=i;
 	}
-	if(total_tmhelix_==0)
-	{
+	if ( total_tmhelix_==0 ) {
 		utility_exit_with_message("bad format for spanfile total_tmhelix=0");
 	}
 	stream.close();
@@ -133,7 +130,7 @@ MembraneTopology::initialize(std::string const & spanfile)
 
 	for ( Size reg1 = 1; reg1 <= total_tmhelix_; ++reg1 ) {
 		for ( Size reg2 = 1; reg2 <= total_tmhelix_; ++reg2 ) {
-				relative_tmh_ori_(reg1,reg2)=1;
+			relative_tmh_ori_(reg1,reg2)=1;
 		}
 	}
 
@@ -150,9 +147,9 @@ MembraneTopology::initialize(std::string const & spanfile)
 	allow_tmh_scoring_.resize(total_tmhelix_,true);
 	tmh_inserted_=total_tmhelix_;
 
-	for(Size i=1;i<=total_residue;++i) {
+	for ( Size i=1; i<=total_residue; ++i ) {
 		for ( Size reg1 = 1; reg1 <= total_tmhelix_; ++reg1 ) {
-			if(i>=span_(reg1,1) && i<=span_(reg1,2)) {
+			if ( i>=span_(reg1,1) && i<=span_(reg1,2) ) {
 				tmregion_[i]=true;
 				continue;
 			}
@@ -161,8 +158,7 @@ MembraneTopology::initialize(std::string const & spanfile)
 	}
 
 	//init Lipo
-	if(option[in::file::lipofile].user())
-	{
+	if ( option[in::file::lipofile].user() ) {
 		Size NumberOfConstraints(0);
 		Size resnum;
 		Real exposure;
@@ -173,18 +169,18 @@ MembraneTopology::initialize(std::string const & spanfile)
 		LipidBurial_.resize(total_residue,0.0);
 		stream.open(lipofile);
 
-		if(stream) {
+		if ( stream ) {
 			getline(stream,line);
 			getline(stream,line);
-			while(!stream.eof()) {
+			while ( !stream.eof() ) {
 				std::istringstream l(line);
 
 				l >> resnum;
 				l >> exposure;
-				if(exposure>0) {
+				if ( exposure>0 ) {
 					LipidExposure_[resnum]+=exposure;
 					NumberOfConstraints++;
-					} else {
+				} else {
 					LipidBurial_[resnum]+=std::abs(exposure);
 					NumberOfConstraints++;
 				}
@@ -194,11 +190,10 @@ MembraneTopology::initialize(std::string const & spanfile)
 			stream.close();
 			stream.clear();
 			TR << NumberOfConstraints << " exposure constraints read!" << std::endl;
-			if(NumberOfConstraints>0)
-			{
+			if ( NumberOfConstraints>0 ) {
 				LipoDefined_=true;
 			}
-		}else{
+		} else {
 			TR << "unable to open " << lipofile << std::endl;
 		}
 
@@ -207,8 +202,8 @@ MembraneTopology::initialize(std::string const & spanfile)
 
 
 	init_=true;
-  //pba
-  initialized_=true;
+	//pba
+	initialized_=true;
 	return;
 }
 
@@ -216,30 +211,28 @@ void
 MembraneTopology::shift_span( Size shift )
 {
 
-	for(Size i=1;i<=total_tmhelix_;++i)
-		{
-			span_(i,1)+=shift;
-			span_(i,2)+=shift;
-			full_span_(i,1)+=shift;
-			full_span_(i,2)+=shift;
-			if(full_span_(i,1)<=0)
-			{
-				utility_exit_with_message("Span out of bounds");
-			}
+	for ( Size i=1; i<=total_tmhelix_; ++i ) {
+		span_(i,1)+=shift;
+		span_(i,2)+=shift;
+		full_span_(i,1)+=shift;
+		full_span_(i,2)+=shift;
+		if ( full_span_(i,1)<=0 ) {
+			utility_exit_with_message("Span out of bounds");
 		}
+	}
 }
 
 //void
 //MembraneTopology::attach_to_pose(pose::Pose & pose)
 //{
-//	if ( pose.data().has( basic::MEMBRANE_TOPOLOGY ) ) {
+// if ( pose.data().has( basic::MEMBRANE_TOPOLOGY ) ) {
 //
-//		core::scoring::MembraneTopologyOP topology = *this; //new core::scoring::MembraneTopology;
-//		return *( static_cast< core::scoring::MembraneTopology * >( pose.data().get_ptr( basic::MEMBRANE_TOPOLOGY )() ));
-//	}
-	// else
-//	core::scoring::MembraneTopologyOP topology = *this;
-//	pose.data().set( basic::MEMBRANE_TOPOLOGY, *this); //topology );
+//  core::scoring::MembraneTopologyOP topology = *this; //new core::scoring::MembraneTopology;
+//  return *( static_cast< core::scoring::MembraneTopology * >( pose.data().get_ptr( basic::MEMBRANE_TOPOLOGY )() ));
+// }
+// else
+// core::scoring::MembraneTopologyOP topology = *this;
+// pose.data().set( basic::MEMBRANE_TOPOLOGY, *this); //topology );
 
 //}
 
@@ -247,10 +240,9 @@ void
 MembraneTopology::print() const
 {
 	TR << "TOTAL TMH " << total_tmhelix_ << std::endl;
-	for(Size i=1;i<=total_tmhelix_;++i)
-		{
-			TR << "SPAN " << i << " " << span_(i,1) << " " << span_(i,2) << std::endl;
-		}
+	for ( Size i=1; i<=total_tmhelix_; ++i ) {
+		TR << "SPAN " << i << " " << span_(i,1) << " " << span_(i,2) << std::endl;
+	}
 }
 
 
@@ -261,28 +253,25 @@ MembraneTopology::get_subset( utility::vector1< Size > & TMH_list, MembraneTopol
 	// Assume list is sorted for now...
 	// Will add a sorter here later....
 
-	if(TMH_list.size()>src.total_tmhelix_)
-		{
-			utility_exit_with_message("Too long TMH_list");
-		}
+	if ( TMH_list.size()>src.total_tmhelix_ ) {
+		utility_exit_with_message("Too long TMH_list");
+	}
 	Size const len(TMH_list.size());
 	span_.dimension(len,2);
 	full_span_.dimension(len,2);
 	relative_tmh_ori_.dimension(len,len);
 
 
-	for(Size i=1;i<=len;++i)
-		{
-			span_(i,1)=src.span_(TMH_list[i],1);
-			span_(i,2)=src.span_(TMH_list[i],2);
-			full_span_(i,1)=src.full_span_(TMH_list[i],1);
-			full_span_(i,2)=src.full_span_(TMH_list[i],2);
-			helix_id_(i)=TMH_list[i];
-			for(Size j=1;j<=TMH_list.size();++j)
-				{
-					relative_tmh_ori_(i,j)=src.relative_tmh_ori_(TMH_list[i],TMH_list[j]);
-				}
+	for ( Size i=1; i<=len; ++i ) {
+		span_(i,1)=src.span_(TMH_list[i],1);
+		span_(i,2)=src.span_(TMH_list[i],2);
+		full_span_(i,1)=src.full_span_(TMH_list[i],1);
+		full_span_(i,2)=src.full_span_(TMH_list[i],2);
+		helix_id_(i)=TMH_list[i];
+		for ( Size j=1; j<=TMH_list.size(); ++j ) {
+			relative_tmh_ori_(i,j)=src.relative_tmh_ori_(TMH_list[i],TMH_list[j]);
 		}
+	}
 
 
 	total_tmhelix_=TMH_list.size();
@@ -293,10 +282,10 @@ MembraneTopology::get_subset( utility::vector1< Size > & TMH_list, MembraneTopol
 MembraneTopology const &
 MembraneTopology_from_pose( pose::Pose const & pose )
 {
-  // ////using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
+	// ////using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
 
- debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) );
-  return *( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
+	debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) );
+	return *( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
 }
 
 /// @details Either returns a non-const reference to the cenlist object already stored
@@ -305,22 +294,22 @@ MembraneTopology_from_pose( pose::Pose const & pose )
 MembraneTopology &
 nonconst_MembraneTopology_from_pose( pose::Pose & pose )
 {
-  // ////using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
+	// ////using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
 
-  if ( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ) {
-    return *( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
-  }
-  // else
-  MembraneTopologyOP membrane_topology( new MembraneTopology );
-  pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, membrane_topology );
-  return *membrane_topology;
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ) {
+		return *( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
+	}
+	// else
+	MembraneTopologyOP membrane_topology( new MembraneTopology );
+	pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, membrane_topology );
+	return *membrane_topology;
 }
 //pbadebug
 /*
 MembraneTopology &
 MembraneTopology_from_pose( pose::Pose const & pose ) const
 {
-	return *( static_cast< MembraneTopology const * >( pose.data().get_const_ptr( basic::MEMBRANE_TOPOLOGY )() ));
+return *( static_cast< MembraneTopology const * >( pose.data().get_const_ptr( basic::MEMBRANE_TOPOLOGY )() ));
 }
 */
 }

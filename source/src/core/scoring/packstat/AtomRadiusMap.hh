@@ -28,23 +28,23 @@ namespace scoring {
 namespace packstat {
 
 
-	/// @brief
+/// @brief
 class AtomRadiusMap
 {
 
-  // friend std::istream & operator>> ( std::istream & in , AtomRadiusMap       & pdb  );
-  // friend std::ostream & operator<< ( std::ostream & out, AtomRadiusMap const & pdb  );
+	// friend std::istream & operator>> ( std::istream & in , AtomRadiusMap       & pdb  );
+	// friend std::ostream & operator<< ( std::ostream & out, AtomRadiusMap const & pdb  );
 
 public: // Creation
 
-  AtomRadiusMap( int include_water = -1 ); // -1 (default) means read from global options
+	AtomRadiusMap( int include_water = -1 ); // -1 (default) means read from global options
 	~AtomRadiusMap() {}
 
-  PackstatReal get_radius( std::string type, std::string res ) const;
+	PackstatReal get_radius( std::string type, std::string res ) const;
 
 private:
 
-  std::map< std::pair<std::string const,std::string const>, PackstatReal > type_map_;
+	std::map< std::pair<std::string const,std::string const>, PackstatReal > type_map_;
 
 }; // AtomRadiusMap
 

@@ -197,7 +197,7 @@ public:  // Standard Rosetta methods
 
 		func::HarmonicFuncOP function( new func::HarmonicFunc( distance, deviation ) );
 		constraints::ConstraintOP ligand_constraint(
-				new constraints::AtomPairConstraint( start_atom, stop_atom, function ) );
+			new constraints::AtomPairConstraint( start_atom, stop_atom, function ) );
 		pose.add_constraint( ligand_constraint );
 
 		// Print some information about the starting pose.
@@ -224,9 +224,9 @@ public:  // Standard Rosetta methods
 		torsion_mm_->set_nu( false );  // TEMP... until rings are treated properly by the MinMover
 
 		randomizerA_ = RigidBodyRandomizeMoverOP(
-				new RigidBodyRandomizeMover( pose, 1, partner_downstream, 360, 360, false ) );
+			new RigidBodyRandomizeMover( pose, 1, partner_downstream, 360, 360, false ) );
 		randomizerB_ = RigidBodyRandomizeMoverOP(
-				new RigidBodyRandomizeMover( pose, 1, partner_upstream, 360, 360, false ) );
+			new RigidBodyRandomizeMover( pose, 1, partner_upstream, 360, 360, false ) );
 
 
 		cout << "Randomizing ligand conformation..." << endl;
@@ -234,7 +234,7 @@ public:  // Standard Rosetta methods
 			pose.set_phi( residue, numeric::random::rg().uniform() * 360 );
 			pose.set_psi( residue, numeric::random::rg().uniform() * 360 );
 			pose.set_ring_conformation(
-					residue, pose.residue( residue ).type().ring_conformer_set()->get_random_conformer() );
+				residue, pose.residue( residue ).type().ring_conformer_set()->get_random_conformer() );
 		}
 
 
@@ -244,7 +244,7 @@ public:  // Standard Rosetta methods
 			cout << " Idealizing rings..." << endl;
 			for ( core::uint residue( first_ligand_residue_ ); residue <= n_residues; ++residue ) {
 				pose.set_ring_conformation(
-						residue, pose.residue( residue ).type().ring_conformer_set()->get_lowest_energy_conformer() );
+					residue, pose.residue( residue ).type().ring_conformer_set()->get_lowest_energy_conformer() );
 			}
 		}
 
@@ -265,7 +265,7 @@ public:  // Standard Rosetta methods
 		mc_ = moves::MonteCarloOP( new moves::MonteCarlo( pose, *sf_, kt_ ) );
 
 		for ( core::uint cycle( 1 ); cycle <= n_cycles_; ++cycle ) {
-			if ( cycle % ( n_cycles_ / 10 ) == 0) {  // Ramp every ~10% of n_cycles.
+			if ( cycle % ( n_cycles_ / 10 ) == 0 ) {  // Ramp every ~10% of n_cycles.
 				Real fraction = Real( cycle ) / n_cycles_;
 				ramp_score_weight( fa_atr, target_atr_, fraction );
 				ramp_score_weight( fa_rep, target_rep_, fraction );
@@ -496,8 +496,8 @@ private:  // Private methods
 	// the fraction complete.
 	void
 	ramp_score_weight( core::scoring::ScoreType const method,
-			core::Real const target,
-			core::Real const fraction_completion )
+		core::Real const target,
+		core::Real const fraction_completion )
 	{
 		Real factor;
 		Real const current_weight( sf_->get_weight( method ) );
@@ -519,8 +519,8 @@ private:  // Private methods
 	// Record a collection of decoy metrics.
 	void
 	record_pose_metrics( core::pose::Pose const & pose,
-			protocols::jd2::Job & job,
-			utility::vector1< int > const jumps )
+		protocols::jd2::Job & job,
+		utility::vector1< int > const jumps )
 	{
 		using namespace scoring;
 		using namespace docking;

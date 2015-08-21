@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/toolbox/task_operations/DsspDesignOperation.cc
-/// @brief 	Design residues with selected amino acids depending on DSSP secondary structure
+/// @brief  Design residues with selected amino acids depending on DSSP secondary structure
 /// assignment. All functionality here is included in the LayerDesign task operation, but
 /// this filter has significantly reduced overhead by avoiding slow SASA calculations.
 /// @author Brian Koepnick (koepnick@uw.edu)
@@ -65,13 +65,13 @@ DsspDesignOperation::DsspDesignOperation( DsspDesignOperation const & rval ): pa
 
 DsspDesignOperation::~DsspDesignOperation() {}
 
-TaskOperationOP 
+TaskOperationOP
 DsspDesignOperationCreator::create_task_operation() const
 {
 	return TaskOperationOP( new DsspDesignOperation );
 }
 
-TaskOperationOP 
+TaskOperationOP
 DsspDesignOperation::clone() const
 {
 	return TaskOperationOP( new DsspDesignOperation( *this ) );
@@ -89,26 +89,26 @@ void
 DsspDesignOperation::set_default_sse_residues() {
 	TR << "Initializing DSSP regions with default residues" << std::endl;
 	boost::assign::insert( sse_residues_ )
-		( std::string( "Loop" ),			std::string( "ACDEFGHIKLMNPQRSTVWY" ) )
-		( std::string( "Strand" ),			std::string( "DEFHIKLNQRSTVWY" ) )
-		( std::string( "Helix" ),			std::string( "ADEFIKLNQRSTVWY" ) )
-		( std::string( "HelixStart" ),		std::string( "ADEFHIKLNPQRSTVWY" ) )
-		( std::string( "HelixCapping" ),	std::string( "DNST" ) )
-		( std::string( "Nterm" ), 			std::string( "ACDEFGHIKLMNPQRSTVWY" ) ) 
-		( std::string( "Cterm" ), 			std::string( "ACDEFGHIKLMNPQRSTVWY" ) );
+		( std::string( "Loop" ),   std::string( "ACDEFGHIKLMNPQRSTVWY" ) )
+		( std::string( "Strand" ),   std::string( "DEFHIKLNQRSTVWY" ) )
+		( std::string( "Helix" ),   std::string( "ADEFIKLNQRSTVWY" ) )
+		( std::string( "HelixStart" ),  std::string( "ADEFHIKLNPQRSTVWY" ) )
+		( std::string( "HelixCapping" ), std::string( "DNST" ) )
+		( std::string( "Nterm" ),    std::string( "ACDEFGHIKLMNPQRSTVWY" ) )
+		( std::string( "Cterm" ),    std::string( "ACDEFGHIKLMNPQRSTVWY" ) );
 }
 
 void
 DsspDesignOperation::set_restrictions_aa( std::string const & sse, std::string const & aas )
 {
 	// handle all SSEs
-	if( sse == "all" ){
-		for( SecStructResidues::iterator it = sse_residues_.begin(), end = sse_residues_.end(); it != end; ++it ){
+	if ( sse == "all" ) {
+		for ( SecStructResidues::iterator it = sse_residues_.begin(), end = sse_residues_.end(); it != end; ++it ) {
 			set_restrictions_aa( it->first, aas );
 		}
-	// check that SSE is valid
-	} else if( sse_residues_.find( sse ) == sse_residues_.end() ){
-			utility_exit_with_message( "Invalid SSE: " + sse + ", valid SSEs are Helix, Strand, Loop, HelixCapping, HelixStart, Nterm, Cterm, or all" );
+		// check that SSE is valid
+	} else if ( sse_residues_.find( sse ) == sse_residues_.end() ) {
+		utility_exit_with_message( "Invalid SSE: " + sse + ", valid SSEs are Helix, Strand, Loop, HelixCapping, HelixStart, Nterm, Cterm, or all" );
 
 	} else {
 		sse_residues_[ sse ] = aas;
@@ -119,14 +119,14 @@ void
 DsspDesignOperation::set_restrictions_append( std::string const & sse, std::string const & aas )
 {
 	// handle all SSEs
-	if( sse == "all" ){
-		for( SecStructResidues::iterator it = sse_residues_.begin(), end = sse_residues_.end(); it != end; ++it ){
+	if ( sse == "all" ) {
+		for ( SecStructResidues::iterator it = sse_residues_.begin(), end = sse_residues_.end(); it != end; ++it ) {
 			set_restrictions_append( it->first, aas );
 		}
-	// check that SSE is valid
-	} else if( sse_residues_.find( sse ) == sse_residues_.end() ){
-			utility_exit_with_message( "Invalid SSE: " + sse + ", valid SSEs are Helix, Strand, Loop, HelixCapping, HelixStart, Nterm, Cterm, or all" );
-	
+		// check that SSE is valid
+	} else if ( sse_residues_.find( sse ) == sse_residues_.end() ) {
+		utility_exit_with_message( "Invalid SSE: " + sse + ", valid SSEs are Helix, Strand, Loop, HelixCapping, HelixStart, Nterm, Cterm, or all" );
+
 	} else {
 		const std::string sse_res = sse_residues_[ sse ];
 		std::set< char > temp_def_res_set( sse_res.begin(), sse_res.end() );
@@ -139,18 +139,18 @@ void
 DsspDesignOperation::set_restrictions_exclude( std::string const & sse, std::string const & aas )
 {
 	// handle all SSEs
-	if( sse == "all" ){
-		for( SecStructResidues::iterator it = sse_residues_.begin(), end = sse_residues_.end(); it != end; ++it ){
+	if ( sse == "all" ) {
+		for ( SecStructResidues::iterator it = sse_residues_.begin(), end = sse_residues_.end(); it != end; ++it ) {
 			set_restrictions_exclude( it->first, aas );
 		}
-	// check that SSE is valid
-	} else if( sse_residues_.find( sse ) == sse_residues_.end() ){
-			utility_exit_with_message( "Invalid SSE: " + sse + ", valid SSEs are Helix, Strand, Loop, HelixCapping, HelixStart, Nterm, Cterm, or all" );
+		// check that SSE is valid
+	} else if ( sse_residues_.find( sse ) == sse_residues_.end() ) {
+		utility_exit_with_message( "Invalid SSE: " + sse + ", valid SSEs are Helix, Strand, Loop, HelixCapping, HelixStart, Nterm, Cterm, or all" );
 
 	} else {
 		const std::string sse_res = sse_residues_[ sse ];
 		std::set< char > temp_def_res_set( sse_res.begin(), sse_res.end() );
-		BOOST_FOREACH( char aa, aas ){ 	temp_def_res_set.erase( aa ); }
+		BOOST_FOREACH ( char aa, aas ) {  temp_def_res_set.erase( aa ); }
 		sse_residues_[ sse ] = std::string( temp_def_res_set.begin(), temp_def_res_set.end() );
 	}
 }
@@ -159,10 +159,10 @@ utility::vector1< bool >
 DsspDesignOperation::get_restrictions( std::string const & ss_type ) const
 {
 	utility::vector1< bool > restrict_to_aa( core::chemical::num_canonical_aas, false );
-	BOOST_FOREACH( char restype, sse_residues_.find( ss_type )->second ){
+	BOOST_FOREACH ( char restype, sse_residues_.find( ss_type )->second ) {
 		restrict_to_aa[ core::chemical::aa_from_oneletter_code( restype ) ] = true;
 	}
-	
+
 	return restrict_to_aa;
 }
 
@@ -173,7 +173,7 @@ DsspDesignOperation::apply( core::pose::Pose const & input_pose, core::pack::tas
 	core::pose::Pose pose;
 
 	// symmetry check
-	if( core::pose::symmetry::is_symmetric( input_pose ) ) {
+	if ( core::pose::symmetry::is_symmetric( input_pose ) ) {
 		TR << "Symmetry detected, extracting asymmetric unit." << std::endl;
 		core::pose::symmetry::extract_asymmetric_unit( input_pose, pose, false );
 	} else {
@@ -182,7 +182,7 @@ DsspDesignOperation::apply( core::pose::Pose const & input_pose, core::pack::tas
 
 	// support input from blueprint files
 	std::string secstruct;
-	if( blueprint_ ){
+	if ( blueprint_ ) {
 		TR << "Using blueprint..." << std::endl;
 		secstruct = blueprint_->secstruct();
 	} else {
@@ -196,51 +196,51 @@ DsspDesignOperation::apply( core::pose::Pose const & input_pose, core::pack::tas
 	bool flag( false );
 	utility::vector1< bool > helix_capping( pose.total_residue(), false );
 	utility::vector1< bool > initial_helix( pose.total_residue(), false );
-	for( Size i=1; i<=pose.total_residue(); ++i ){
-		
+	for ( Size i=1; i<=pose.total_residue(); ++i ) {
+
 		// ignore non-protein residues
-		if( ! pose.residue( i ).is_protein() ) continue;
-	
+		if ( ! pose.residue( i ).is_protein() ) continue;
+
 		char ss( secstruct[ i-1 ] );
-		if( ss == 'H' && !flag && i != 1 ){
+		if ( ss == 'H' && !flag && i != 1 ) {
 			initial_helix[ i ] = true;
 			helix_capping[ i-1 ] = true;
 			flag = true;
-		} 
-	
-		if( ss != 'H' && flag ){
+		}
+
+		if ( ss != 'H' && flag ) {
 			flag = false;
 		}
 	}
 
 
 	// apply restrictions to PackerTask
-	for( Size i=1; i<=pose.total_residue(); ++i ) {
-	
+	for ( Size i=1; i<=pose.total_residue(); ++i ) {
+
 		// if residue is not a protein, continue
 		// make repackable only?
-		if( ! pose.residue( i ).is_protein() ){
+		if ( ! pose.residue( i ).is_protein() ) {
 			//task.nonconst_residue_task( i ).restrict_to_repacking();
-			continue;	
+			continue;
 		}
 
 		char ss( secstruct[ i-1 ] );
 
 		// handle termini because DSSP always assigns them as loop
-		if( pose.residue( i ).is_lower_terminus() ){ 
+		if ( pose.residue( i ).is_lower_terminus() ) {
 			task.nonconst_residue_task( i ).restrict_absent_canonical_aas( get_restrictions( "Nterm" ) );
-		} else if( pose.residue( i ).is_upper_terminus() ){ 
+		} else if ( pose.residue( i ).is_upper_terminus() ) {
 			task.nonconst_residue_task( i ).restrict_absent_canonical_aas( get_restrictions( "Cterm" ) );
 
-		} else if( helix_capping[ i ] == true ){ 
+		} else if ( helix_capping[ i ] == true ) {
 			task.nonconst_residue_task( i ).restrict_absent_canonical_aas( get_restrictions( "HelixCapping" ) );
-		} else if( initial_helix[ i ] == true ){ 
+		} else if ( initial_helix[ i ] == true ) {
 			task.nonconst_residue_task( i ).restrict_absent_canonical_aas( get_restrictions( "HelixStart" ) );
-		} else if( ss == 'E' ){ 
+		} else if ( ss == 'E' ) {
 			task.nonconst_residue_task( i ).restrict_absent_canonical_aas( get_restrictions( "Strand" ) );
-		} else if( ss == 'L' ){ 
+		} else if ( ss == 'L' ) {
 			task.nonconst_residue_task( i ).restrict_absent_canonical_aas( get_restrictions( "Loop" ) );
-		} else if( ss == 'H' ){ 
+		} else if ( ss == 'H' ) {
 			task.nonconst_residue_task( i ).restrict_absent_canonical_aas( get_restrictions( "Helix" ) );
 		}
 	}
@@ -250,39 +250,39 @@ void
 DsspDesignOperation::parse_tag( TagCOP tag , DataMap & )
 {
 	// get secondary structure definition from blueprint file
-	if( tag->hasOption( "blueprint" ) ){
+	if ( tag->hasOption( "blueprint" ) ) {
 		blueprint_ = BluePrintOP( new BluePrint( tag->getOption< std::string >( "blueprint" ) ) );
 	}
-	
-	BOOST_FOREACH( utility::tag::TagCOP const sse_tag, tag->getTags() ){
+
+	BOOST_FOREACH ( utility::tag::TagCOP const sse_tag, tag->getTags() ) {
 		const std::string sse = sse_tag->getName(); // Helix, Strand, Loop, HelixCapping, HelixStart, Nterm, Cterm
 
 		// check that SSE is valid
-		if( sse != "all" && ( sse_residues_.find( sse ) == sse_residues_.end() ) ){
+		if ( sse != "all" && ( sse_residues_.find( sse ) == sse_residues_.end() ) ) {
 			utility_exit_with_message( "Invalid SSE: " + sse + ", valid SSEs are Helix, Strand, Loop, HelixCapping, HelixStart, Nterm, Cterm, or all" );
 		}
 
-		// explicitly define allowed residues	
-		if( sse_tag->hasOption( "aa" ) ){
+		// explicitly define allowed residues
+		if ( sse_tag->hasOption( "aa" ) ) {
 			const std::string aas = sse_tag->getOption< std::string >( "aa" );
 			TR << "Assigning residues " << aas << " to " << sse << std::endl;
-           	set_restrictions_aa( sse, aas );
+			set_restrictions_aa( sse, aas );
 		}
 
 		// append to allowed residues
-		if( sse_tag->hasOption( "append" ) ){
+		if ( sse_tag->hasOption( "append" ) ) {
 			const std::string aas = sse_tag->getOption< std::string >( "append" );
 			TR << "Appending residues " << aas << " to " << sse << std::endl;
-            set_restrictions_append( sse, aas );
+			set_restrictions_append( sse, aas );
 		}
 
 		// exclude from allowed residues
-		if( sse_tag->hasOption( "exclude" ) ){
+		if ( sse_tag->hasOption( "exclude" ) ) {
 			const std::string aas = sse_tag->getOption< std::string >( "exclude" );
 			TR << "Excluding residues " << aas << " from " << sse << std::endl;
-            set_restrictions_exclude( sse, aas );
+			set_restrictions_exclude( sse, aas );
 		}
-	}	
+	}
 }
 
 } //namespace protocols

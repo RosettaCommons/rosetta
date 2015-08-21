@@ -13,15 +13,15 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
-	namespace ncbb {
-		
-		
-		class SecStructFinder; // fwd declaration
-		typedef utility::pointer::shared_ptr< SecStructFinder > SecStructFinderOP;
-		typedef utility::pointer::shared_ptr< SecStructFinder const > SecStructFinderCOP;
-		
-		
-	} // namespace ncbb
+namespace ncbb {
+
+
+class SecStructFinder; // fwd declaration
+typedef utility::pointer::shared_ptr< SecStructFinder > SecStructFinderOP;
+typedef utility::pointer::shared_ptr< SecStructFinder const > SecStructFinderCOP;
+
+
+} // namespace ncbb
 } // namespace protocols
 
 #endif // INCLUDED_protocols_ncbb_SecStructFinder_FWD_HH

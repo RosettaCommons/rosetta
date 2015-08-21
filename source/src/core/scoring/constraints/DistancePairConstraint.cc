@@ -45,19 +45,19 @@ ConstraintOP
 DistancePairConstraint::remap_resid(
 	core::id::SequenceMapping const & seqmap
 ) const {
-  if (   seqmap[atomA1_.rsd()] != 0 && seqmap[atomA2_.rsd()] != 0
-	    && seqmap[atomB1_.rsd()] != 0 && seqmap[atomB2_.rsd()] != 0 ) {
-    AtomID remap_a1( atomA1_.atomno(), seqmap[atomA1_.rsd()] ),
-           remap_a2( atomA2_.atomno(), seqmap[atomA2_.rsd()] );
-    AtomID remap_b1( atomB1_.atomno(), seqmap[atomB1_.rsd()] ),
-           remap_b2( atomB2_.atomno(), seqmap[atomB2_.rsd()] );
-    return ConstraintOP( new DistancePairConstraint(
-				remap_a1, remap_a2,
-				remap_b1, remap_b2,
-				this->func_ ) );
-  } else {
-    return NULL;
-  }
+	if (   seqmap[atomA1_.rsd()] != 0 && seqmap[atomA2_.rsd()] != 0
+			&& seqmap[atomB1_.rsd()] != 0 && seqmap[atomB2_.rsd()] != 0 ) {
+		AtomID remap_a1( atomA1_.atomno(), seqmap[atomA1_.rsd()] ),
+			remap_a2( atomA2_.atomno(), seqmap[atomA2_.rsd()] );
+		AtomID remap_b1( atomB1_.atomno(), seqmap[atomB1_.rsd()] ),
+			remap_b2( atomB2_.atomno(), seqmap[atomB2_.rsd()] );
+		return ConstraintOP( new DistancePairConstraint(
+			remap_a1, remap_a2,
+			remap_b1, remap_b2,
+			this->func_ ) );
+	} else {
+		return NULL;
+	}
 }
 
 
@@ -66,38 +66,38 @@ DistancePairConstraint::remap_resid(
 /// if a sequence_mapping is present it is used to map residue numbers .. NULL = identity mapping
 /// to the new object. Intended to be implemented by derived classes.
 ConstraintOP DistancePairConstraint::remapped_clone( pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP smap ) const {
-  id::NamedAtomID atomA1( core::pose::atom_id_to_named_atom_id(atom(1), src ) );
-  id::NamedAtomID atomA2( core::pose::atom_id_to_named_atom_id(atom(2), src ) );
-  id::NamedAtomID atomB1( core::pose::atom_id_to_named_atom_id(atom(3), src ) );
-  id::NamedAtomID atomB2( core::pose::atom_id_to_named_atom_id(atom(4), src ) );
-  if ( smap ) {
-    atomA1.rsd() = (*smap)[ atomA1_.rsd() ];
-    atomA2.rsd() = (*smap)[ atomA2_.rsd() ];
-    atomB1.rsd() = (*smap)[ atomB1_.rsd() ];
-    atomB2.rsd() = (*smap)[ atomB2_.rsd() ];
-  }
+	id::NamedAtomID atomA1( core::pose::atom_id_to_named_atom_id(atom(1), src ) );
+	id::NamedAtomID atomA2( core::pose::atom_id_to_named_atom_id(atom(2), src ) );
+	id::NamedAtomID atomB1( core::pose::atom_id_to_named_atom_id(atom(3), src ) );
+	id::NamedAtomID atomB2( core::pose::atom_id_to_named_atom_id(atom(4), src ) );
+	if ( smap ) {
+		atomA1.rsd() = (*smap)[ atomA1_.rsd() ];
+		atomA2.rsd() = (*smap)[ atomA2_.rsd() ];
+		atomB1.rsd() = (*smap)[ atomB1_.rsd() ];
+		atomB2.rsd() = (*smap)[ atomB2_.rsd() ];
+	}
 
-  //get AtomIDs for target pose
-  id::AtomID id1( core::pose::named_atom_id_to_atom_id(atomA1, dest ));
-  id::AtomID id2( core::pose::named_atom_id_to_atom_id(atomA2, dest ));
-  id::AtomID id3( core::pose::named_atom_id_to_atom_id(atomB1, dest ));
-  id::AtomID id4( core::pose::named_atom_id_to_atom_id(atomB2, dest ));
-  if (    id1.valid() && id2.valid() &&  id3.valid() && id4.valid() ) {
-    return ConstraintOP( new DistancePairConstraint( id1, id2, id3, id4, func_, score_type() ) );
-  } else {
-    return NULL;
-  }
+	//get AtomIDs for target pose
+	id::AtomID id1( core::pose::named_atom_id_to_atom_id(atomA1, dest ));
+	id::AtomID id2( core::pose::named_atom_id_to_atom_id(atomA2, dest ));
+	id::AtomID id3( core::pose::named_atom_id_to_atom_id(atomB1, dest ));
+	id::AtomID id4( core::pose::named_atom_id_to_atom_id(atomB2, dest ));
+	if (    id1.valid() && id2.valid() &&  id3.valid() && id4.valid() ) {
+		return ConstraintOP( new DistancePairConstraint( id1, id2, id3, id4, func_, score_type() ) );
+	} else {
+		return NULL;
+	}
 }
 
 
 id::AtomID const &
 DistancePairConstraint::atom( Size const n ) const {
 	switch( n ) {
-	case 1: return atomA1_;
-	case 2: return atomA2_;
-	case 3: return atomB1_;
-	case 4: return atomB2_;
-	default:
+	case 1 : return atomA1_;
+	case 2 : return atomA2_;
+	case 3 : return atomB1_;
+	case 4 : return atomB2_;
+	default :
 		utility_exit_with_message( "DistancePairConstraint::atom() bad argument" );
 	}
 	return atomA1_;
@@ -129,15 +129,15 @@ DistancePairConstraint::read_def(
 	ConstraintIO::parse_residue( pose, tempres3, res3 );
 	ConstraintIO::parse_residue( pose, tempres4, res4 );
 
-	TR.Debug 	<< "read: " << name1 << " " << name2 << " "
-						<< res1 << " " << res2 << " func: " << func_type
-						<< std::endl;
+	TR.Debug  << "read: " << name1 << " " << name2 << " "
+		<< res1 << " " << res2 << " func: " << func_type
+		<< std::endl;
 	if (    res1 > pose.total_residue() || res2 > pose.total_residue()
-	     || res3 > pose.total_residue() || res4 > pose.total_residue()  ) {
-		TR.Warning 	<< "ignored constraint (no such atom in pose!)"
-								<< name1 << " " << name2 << " "
-													<< res1 << " " << res2 << " func: " << func_type
-													<< std::endl;
+			|| res3 > pose.total_residue() || res4 > pose.total_residue()  ) {
+		TR.Warning  << "ignored constraint (no such atom in pose!)"
+			<< name1 << " " << name2 << " "
+			<< res1 << " " << res2 << " func: " << func_type
+			<< std::endl;
 		in.setstate( std::ios_base::failbit );
 		return;
 	}
@@ -149,7 +149,7 @@ DistancePairConstraint::read_def(
 
 
 	if (    atomA1_.atomno() == 0 || atomA2_.atomno() == 0
-	     || atomB1_.atomno() == 0 || atomB2_.atomno() == 0 ) {
+			|| atomB1_.atomno() == 0 || atomB2_.atomno() == 0 ) {
 		TR.Warning << "Error reading atoms: read in atom names("
 			<< name1 << "," << name2 << "," << name3 << "," << name4 << "), "
 			<< "and found AtomIDs (" << atomA1_ << "," << atomA2_ << " -- "
@@ -161,7 +161,7 @@ DistancePairConstraint::read_def(
 	func_ = func_factory.new_func( func_type );
 	func_->read_data( in );
 
-	while( in.good() && (in.get() != '\n') ) {}
+	while ( in.good() && (in.get() != '\n') ) {}
 
 	if ( TR.Debug.visible() ) {
 		func_->show_definition( std::cout );
@@ -211,8 +211,8 @@ DistancePairConstraint::fill_f1_f2(
 	AtomID const & /* atom */,
 	func::XYZ_Func const & xyz,
 	Vector & F1,
- 	Vector & F2,
- 	EnergyMap const & weights
+	Vector & F2,
+	EnergyMap const & weights
 ) const {
 	using namespace numeric::deriv;
 
@@ -233,16 +233,16 @@ DistancePairConstraint::fill_f1_f2(
 
 bool
 DistancePairConstraint::operator == ( Constraint const & other_cst ) const {
-	if( !dynamic_cast< DistancePairConstraint const * > ( &other_cst ) ) return false;
+	if ( !dynamic_cast< DistancePairConstraint const * > ( &other_cst ) ) return false;
 
 	DistancePairConstraint const & other( static_cast< DistancePairConstraint const & > (other_cst) );
 
-	if( atomA1_ != other.atomA1_ ) return false;
-	if( atomA2_ != other.atomA2_ ) return false;
-	if( atomB1_ != other.atomB1_ ) return false;
-	if( atomB2_ != other.atomB2_ ) return false;
-	if( func_ != other.func_ ) return false;
-	if( this->score_type() != other.score_type() ) return false;
+	if ( atomA1_ != other.atomA1_ ) return false;
+	if ( atomA2_ != other.atomA2_ ) return false;
+	if ( atomB1_ != other.atomB1_ ) return false;
+	if ( atomB2_ != other.atomB2_ ) return false;
+	if ( func_ != other.func_ ) return false;
+	if ( this->score_type() != other.score_type() ) return false;
 
 	return true;
 }
@@ -260,23 +260,23 @@ void DistancePairConstraint::show( std::ostream & out ) const {
 
 
 Size DistancePairConstraint::show_violations(
-        std::ostream& out,
-        pose::Pose const& pose,
-        Size verbose_level,
-        Real threshold
+	std::ostream& out,
+	pose::Pose const& pose,
+	Size verbose_level,
+	Real threshold
 ) const {
-	     if ( verbose_level > 80 ) {
-                out << "DistancePair ("
-                        << pose.residue_type(atomA1_.rsd() ).atom_name( atomA1_.atomno() ) << ":"
-                        << atomA1_.atomno() << "," << atomA1_.rsd() << "-"
-                        << pose.residue_type(atomA2_.rsd() ).atom_name( atomA2_.atomno() ) << ":"
-                        << atomA2_.atomno() << "," << atomA2_.rsd() << " === "
-                        << pose.residue_type(atomB1_.rsd() ).atom_name( atomB1_.atomno() ) << ":"
-                        << atomB1_.atomno() << "," << atomB1_.rsd() << "-"
-                        << pose.residue_type(atomB2_.rsd() ).atom_name( atomB2_.atomno() ) << ":"
-                        << atomB2_.atomno() << "," << atomB2_.rsd() << "-";
-        }
-        return func_->show_violations( out, 0.0, verbose_level, threshold );
+	if ( verbose_level > 80 ) {
+		out << "DistancePair ("
+			<< pose.residue_type(atomA1_.rsd() ).atom_name( atomA1_.atomno() ) << ":"
+			<< atomA1_.atomno() << "," << atomA1_.rsd() << "-"
+			<< pose.residue_type(atomA2_.rsd() ).atom_name( atomA2_.atomno() ) << ":"
+			<< atomA2_.atomno() << "," << atomA2_.rsd() << " === "
+			<< pose.residue_type(atomB1_.rsd() ).atom_name( atomB1_.atomno() ) << ":"
+			<< atomB1_.atomno() << "," << atomB1_.rsd() << "-"
+			<< pose.residue_type(atomB2_.rsd() ).atom_name( atomB2_.atomno() ) << ":"
+			<< atomB2_.atomno() << "," << atomB2_.rsd() << "-";
+	}
+	return func_->show_violations( out, 0.0, verbose_level, threshold );
 }
 
 

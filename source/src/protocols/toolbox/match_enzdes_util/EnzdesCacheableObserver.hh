@@ -39,7 +39,7 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-	#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.hh>
 #endif
 
 
@@ -114,7 +114,7 @@ public: //enzdes specific stuff
 	void
 	set_rigid_body_confs_for_lig(
 		core::Size seqpos,
- 		utility::vector1< core::conformation::ResidueCOP > const & rg_confs
+		utility::vector1< core::conformation::ResidueCOP > const & rg_confs
 	);
 
 	void

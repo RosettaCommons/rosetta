@@ -58,7 +58,7 @@ public:
 
 	template <class Vertex, class Graph>
 	void initialize_vertex(Vertex u, const Graph& /*g*/) {
-		if( treeatom_map_.count(u) == 0 ) {
+		if ( treeatom_map_.count(u) == 0 ) {
 			treeatom_map_[ u ] = core::kinematics::tree::AtomOP( new core::kinematics::tree::BondedAtom );
 		}
 		treeatom_map_[ u ]->xyz( restype_.atom( u ).ideal_xyz() );
@@ -72,11 +72,11 @@ public:
 		// we currently can't handle the disconnected portion of it,
 		// so raise an error if that happens.
 		// (This means the root needs to be pre-loaded into the treeatom_map
-	debug_assert( restype_.has( u ) );
-		if( u != root_ ) {
+		debug_assert( restype_.has( u ) );
+		if ( u != root_ ) {
 			TR.Error << "ERROR: For ResidueType " << restype_.name() << ", atoms "
-					<< restype_.atom_name( root_ ) << " and " << restype_.atom_name( u )
-					<< " are not connected via bonds." << std::endl;
+				<< restype_.atom_name( root_ ) << " and " << restype_.atom_name( u )
+				<< " are not connected via bonds." << std::endl;
 			utility_exit_with_message( "Cannot reroot a disconnected ResidueType: ");
 		}
 	}
@@ -84,8 +84,8 @@ public:
 	void tree_edge(Edge u, const Graph& g) {
 		core::chemical::VD parent( boost::source(u,g) );
 		core::chemical::VD child( boost::target(u,g) );
-	debug_assert( treeatom_map_.count( parent ) );
-	debug_assert( treeatom_map_.count( child ) );
+		debug_assert( treeatom_map_.count( parent ) );
+		debug_assert( treeatom_map_.count( child ) );
 		treeatom_map_[ parent ]->append_atom( treeatom_map_[ child ] );
 	}
 };
@@ -111,59 +111,59 @@ public:
 		core::chemical::Bond const & bond2( graph_[edge2] );
 
 		/// * Non-cut bonds before cut bonds
-		if( bond1.cut_bond() && ! bond2.cut_bond() ) {
+		if ( bond1.cut_bond() && ! bond2.cut_bond() ) {
 			return false;
 		} else if ( bond2.cut_bond() && ! bond1.cut_bond() ) {
 			return true;
 		}
 
 		// * Actual bonds before pseudobonds - TODO better pseudobond testing
-		if( bond1.bond_name() == core::chemical::UnknownBond && bond2.bond_name() != core::chemical::UnknownBond) {
+		if ( bond1.bond_name() == core::chemical::UnknownBond && bond2.bond_name() != core::chemical::UnknownBond ) {
 			return false;
-		} else if ( bond1.bond_name() != core::chemical::UnknownBond && bond2.bond_name() == core::chemical::UnknownBond) {
+		} else if ( bond1.bond_name() != core::chemical::UnknownBond && bond2.bond_name() == core::chemical::UnknownBond ) {
 			return true;
 		}
-	debug_assert( boost::source(edge1,graph_) == boost::source(edge2,graph_) );
+		debug_assert( boost::source(edge1,graph_) == boost::source(edge2,graph_) );
 		//core::chemical::VD source( boost::source(edge1,graph_) );
 		core::chemical::VD target1( boost::target(edge1,graph_) );
 		core::chemical::VD target2( boost::target(edge2,graph_) );
 		core::chemical::Atom const & atom1( graph_[ target1 ] );
 		core::chemical::Atom const & atom2( graph_[ target2 ] );
 
-/*
+		/*
 		// * Rotatable bonds before non-rotatable bonds.
 		// This is slightly manky - should we pre annotate the bonds as rotatable?
 		bool b1rot(false), b2rot(false);
 		for ( core::Size chino(1); chino <= restype_.nchi(); ++chino ) {
-			core::chemical::AtomIndices const & ai( restype_.chi_atoms(chino) );
-			if( (ai[2] == restype_.atom_index(source) && ai[3] == restype_.atom_index(target1)) ||
-					(ai[3] == restype_.atom_index(source) && ai[2] == restype_.atom_index(target1)) ) {
-				b1rot = true;
-				TR << "Rotatable: " << restype_.atom_name(source) << " -- " << restype_.atom_name(target1) << std::endl;
-			}
-			if( (ai[2] == restype_.atom_index(source) && ai[3] == restype_.atom_index(target2)) ||
-					(ai[3] == restype_.atom_index(source) && ai[2] == restype_.atom_index(target2)) ) {
-				b2rot = true;
-				TR << "Rotatable: " << restype_.atom_name(source) << " -- " << restype_.atom_name(target2) << std::endl;
-			}
+		core::chemical::AtomIndices const & ai( restype_.chi_atoms(chino) );
+		if( (ai[2] == restype_.atom_index(source) && ai[3] == restype_.atom_index(target1)) ||
+		(ai[3] == restype_.atom_index(source) && ai[2] == restype_.atom_index(target1)) ) {
+		b1rot = true;
+		TR << "Rotatable: " << restype_.atom_name(source) << " -- " << restype_.atom_name(target1) << std::endl;
+		}
+		if( (ai[2] == restype_.atom_index(source) && ai[3] == restype_.atom_index(target2)) ||
+		(ai[3] == restype_.atom_index(source) && ai[2] == restype_.atom_index(target2)) ) {
+		b2rot = true;
+		TR << "Rotatable: " << restype_.atom_name(source) << " -- " << restype_.atom_name(target2) << std::endl;
+		}
 		}
 		if( ! b1rot && b2rot ) {
-			return false;
+		return false;
 		} else if (b1rot && ! b2rot ) {
-			return true;
+		return true;
 		}
-*/
+		*/
 
 		// * Bonds to Heavy atoms before light atoms
-		if( atom1.is_hydrogen() && ! atom2.is_hydrogen() ) {
+		if ( atom1.is_hydrogen() && ! atom2.is_hydrogen() ) {
 			return false;
 		} else if ( ! atom1.is_hydrogen() && atom2.is_hydrogen() ) {
 			return true;
 		}
 		/// * Bonds to Concrete atoms before virtual atoms
-		if( atom1.is_virtual() && ! atom2.is_virtual() ) {
+		if ( atom1.is_virtual() && ! atom2.is_virtual() ) {
 			return false;
-		} else if( ! atom1.is_virtual() && atom2.is_virtual() ) {
+		} else if ( ! atom1.is_virtual() && atom2.is_virtual() ) {
 			return true;
 		}
 		/// For reproducible ordering, the "smaller" atom name should be first
@@ -193,7 +193,7 @@ private:
 ///
 void
 reroot_restype( core::chemical::ResidueType & restype, core::chemical::ResidueGraph const & graph, core::chemical::VD root) {
-	if( restype.natoms() < 3 ) {
+	if ( restype.natoms() < 3 ) {
 		TR.Warning << "Warning: Cannot re-root residue type with less than three atoms." << std::endl;
 		return;
 	}
@@ -215,25 +215,25 @@ reroot_restype( core::chemical::ResidueType & restype, core::chemical::ResidueGr
 
 	// Reverse the map for easy lookup
 	std::map< core::kinematics::tree::AtomCOP, core::chemical::VD > revmap;
-	for( VdTreeatomMap::const_iterator itr(treeatom_map.begin()), itr_end(treeatom_map.end()); itr != itr_end; ++itr) {
+	for ( VdTreeatomMap::const_iterator itr(treeatom_map.begin()), itr_end(treeatom_map.end()); itr != itr_end; ++itr ) {
 		revmap[ itr->second ] = itr->first;
 	}
 
 	// Now pull the icoord data out of the kinematic atoms
 
 	core::chemical::VIter iter, iter_end;
-	for( boost::tie(iter, iter_end) = boost::vertices(graph); iter != iter_end; ++iter ) {
+	for ( boost::tie(iter, iter_end) = boost::vertices(graph); iter != iter_end; ++iter ) {
 		core::chemical::VD const & atomVD( *iter );
-	debug_assert( treeatom_map.count( atomVD ) );
+		debug_assert( treeatom_map.count( atomVD ) );
 
 		core::kinematics::tree::AtomCOP atom = treeatom_map[ atomVD ];
 
 		core::kinematics::tree::AtomCOP parent, angle, torsion;
 		core::Real phi, theta, d;
 		parent = atom->parent();
-		if( parent ) {
+		if ( parent ) {
 			// Regular, non-root atom
-		debug_assert( utility::pointer::dynamic_pointer_cast< core::kinematics::tree::BondedAtom const >( atom ) );
+			debug_assert( utility::pointer::dynamic_pointer_cast< core::kinematics::tree::BondedAtom const >( atom ) );
 
 			// parent = atom->input_stub_atom1();
 			angle = atom->input_stub_atom2();
@@ -244,7 +244,7 @@ reroot_restype( core::chemical::ResidueType & restype, core::chemical::ResidueGr
 			d = atom->dof(core::id::D);
 		} else {
 			// This is the root atom.
-			if( atom->n_children() < 1 ) {
+			if ( atom->n_children() < 1 ) {
 				utility_exit_with_message("ERROR: Rerooting restype for root with no children.");
 			}
 			// The children use zero based indices for some reason ...
@@ -252,10 +252,10 @@ reroot_restype( core::chemical::ResidueType & restype, core::chemical::ResidueGr
 			angle = atom->child(0);
 			// The following logic is taken from molfile_to_params
 			// Define the torsion progressively, if possible, else use an improper through the root atoms' other child.
-			if( angle->n_children() > 0 ) {
+			if ( angle->n_children() > 0 ) {
 				torsion = angle->child(0);
 			} else {
-				if( atom->n_children() < 2 ) {
+				if ( atom->n_children() < 2 ) {
 					utility_exit_with_message("ERROR: Rerooting restype for root with only one child and no grandchildren.");
 				}
 				torsion = atom->child(1);
@@ -266,7 +266,7 @@ reroot_restype( core::chemical::ResidueType & restype, core::chemical::ResidueGr
 		}
 
 		core::chemical::VD parentVD( revmap[parent] ), angleVD( revmap[angle] ), torsionVD( revmap[torsion] );
-	debug_assert( restype.has( parentVD ) && restype.has( angleVD ) && restype.has( torsionVD ) );
+		debug_assert( restype.has( parentVD ) && restype.has( angleVD ) && restype.has( torsionVD ) );
 
 		// Note: set_icoor will automatically setup the atom base for us.
 		restype.set_icoor( atomVD, phi, theta, d, parentVD, angleVD, torsionVD );
@@ -275,17 +275,17 @@ reroot_restype( core::chemical::ResidueType & restype, core::chemical::ResidueGr
 
 /// @brief Utility function for fill_ideal_xyz_from_icoor() -- does this ICoorAtomID have all the dependancies filled?
 bool has_assigned_coords(ICoorAtomID const & stub, std::set< VD > const & assigned, core::chemical::ResidueType const & restype) {
-	if( stub.type() == ICoorAtomID::INTERNAL ) {
-	debug_assert( restype.has( stub.vertex() ) );
+	if ( stub.type() == ICoorAtomID::INTERNAL ) {
+		debug_assert( restype.has( stub.vertex() ) );
 		return assigned.count( stub.vertex() );
 	} else {
 		// For connections, they have assigned coords if all their dependancies have assigned coords.
 		ResidueConnection connection;
-		if( stub.type() == ICoorAtomID::POLYMER_LOWER ) {
+		if ( stub.type() == ICoorAtomID::POLYMER_LOWER ) {
 			connection = restype.lower_connect();
-		} else if( stub.type() == ICoorAtomID::POLYMER_UPPER ) {
+		} else if ( stub.type() == ICoorAtomID::POLYMER_UPPER ) {
 			connection = restype.upper_connect();
-		} else if( stub.type() == ICoorAtomID::CONNECT ) {
+		} else if ( stub.type() == ICoorAtomID::CONNECT ) {
 			connection = restype.residue_connection( stub.atomno() );
 		} else {
 			utility_exit_with_message("Unable to assign coordinates for "+restype.name()+" - bad ICOOR specification." );
@@ -293,8 +293,8 @@ bool has_assigned_coords(ICoorAtomID const & stub, std::set< VD > const & assign
 		AtomICoor const & conicoor( connection.icoor() );
 		// TODO: This has a possibility of an infinite loop if you have connection points which mutually depend on each other
 		return ( has_assigned_coords( conicoor.stub_atom(1), assigned, restype ) &&
-				has_assigned_coords( conicoor.stub_atom(2), assigned, restype ) &&
-				has_assigned_coords( conicoor.stub_atom(3), assigned, restype ) );
+			has_assigned_coords( conicoor.stub_atom(2), assigned, restype ) &&
+			has_assigned_coords( conicoor.stub_atom(3), assigned, restype ) );
 	}
 	return false; // make the compilier happy.
 }
@@ -302,13 +302,13 @@ bool has_assigned_coords(ICoorAtomID const & stub, std::set< VD > const & assign
 /// @details Contains logic originally from read_topology_file()
 void
 fill_ideal_xyz_from_icoor(
-		core::chemical::ResidueType & restype,
-		core::chemical::ResidueGraph const & graph) {
-	if( restype.natoms() == 0 ) {
+	core::chemical::ResidueType & restype,
+	core::chemical::ResidueGraph const & graph) {
+	if ( restype.natoms() == 0 ) {
 		TR.Warning << "fill_ideal_xyz_from_icoor: residue type has no atoms." << std::endl;
 		return;
 	}
-	if( restype.natoms() == 1 ) {
+	if ( restype.natoms() == 1 ) {
 		restype.set_ideal_xyz( *boost::vertices( graph ).first, Vector(0,0,0) );
 		return;
 	}
@@ -319,7 +319,7 @@ fill_ideal_xyz_from_icoor(
 	std::set< VD > assigned;
 	std::queue< VD > atom_queue;
 	VIterPair allverts( boost::vertices( graph ) );
-	for( VIter iter(allverts.first); iter != allverts.second; ++iter ) {
+	for ( VIter iter(allverts.first); iter != allverts.second; ++iter ) {
 		atom_queue.push( *iter );
 		// For debug:
 		restype.set_ideal_xyz( *iter, Vector(99.44, 99.44, 99.44) );
@@ -327,11 +327,11 @@ fill_ideal_xyz_from_icoor(
 	core::Size natoms( atom_queue.size() ); // The number of atoms left to see this cycle.
 	bool progress = false; // A variable to keep track of progress, to avoid infinite loops.
 
-	while( ! atom_queue.empty() ) {
-		if( natoms == 0 ) {
-			if( ! progress ) {
+	while ( ! atom_queue.empty() ) {
+		if ( natoms == 0 ) {
+			if ( ! progress ) {
 				TR.Error << "Cannot assign ideal coordinates for atoms ";
-				while( ! atom_queue.empty() ) {
+				while ( ! atom_queue.empty() ) {
 					VD a( atom_queue.front() );
 					TR.Error << restype.atom_name( a ) << " ";
 					atom_queue.pop();
@@ -352,7 +352,7 @@ fill_ideal_xyz_from_icoor(
 
 		ICoorAtomID parent_stub( icoor.stub_atom(1) ), angle_stub( icoor.stub_atom(2) ), torsion_stub( icoor.stub_atom(3) );
 		core::Real phi( icoor.phi() ), theta( icoor.theta() ), d( icoor.d() );
-	//debug_assert( restype.has(parent_atom) && restype.has(angle_atom) );
+		//debug_assert( restype.has(parent_atom) && restype.has(angle_atom) );
 		if ( child_atom == parent_stub.vertex() ) { // root atom
 			restype.set_ideal_xyz( child_atom, Vector(0,0,0) );
 			assigned.insert( child_atom );
@@ -362,7 +362,7 @@ fill_ideal_xyz_from_icoor(
 			assigned.insert( child_atom );
 			progress = true;
 		} else {
-			if( ! has_assigned_coords( parent_stub, assigned, restype ) || ! has_assigned_coords( angle_stub, assigned, restype ) ) {
+			if ( ! has_assigned_coords( parent_stub, assigned, restype ) || ! has_assigned_coords( angle_stub, assigned, restype ) ) {
 				// Defer until dependencies are met.
 				atom_queue.push( child_atom );
 				continue;
@@ -371,7 +371,7 @@ fill_ideal_xyz_from_icoor(
 			if ( child_atom == torsion_stub.vertex() ) { // third atom
 				torsion_xyz = Vector( 1.0, 1.0, 0.0 );
 			} else {
-				if( ! has_assigned_coords( torsion_stub, assigned, restype ) ) {
+				if ( ! has_assigned_coords( torsion_stub, assigned, restype ) ) {
 					// Defer until dependencies are met.
 					atom_queue.push( child_atom );
 					continue;
@@ -379,8 +379,8 @@ fill_ideal_xyz_from_icoor(
 				torsion_xyz = torsion_stub.xyz( restype );
 			}
 			kinematics::Stub const stub( parent_stub.xyz( restype ),
-					angle_stub.xyz( restype ),
-					torsion_xyz );
+				angle_stub.xyz( restype ),
+				torsion_xyz );
 			restype.set_ideal_xyz( child_atom , stub.spherical( phi, theta, d ) );
 			assigned.insert( child_atom );
 			progress = true;

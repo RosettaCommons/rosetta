@@ -36,12 +36,12 @@ class NeighTeller {
 	core::Real const interaction_score_threshold;
 
 	/// @brief: boolean table telling whether two residues in a set are neighbors,
-	/// 	for sets of at most	MAXNGB residues.
+	///  for sets of at most MAXNGB residues.
 	static const int MAXNGB = 10;
 	utility::vector1< utility::vector1<bool> > nmap;
 	void print_nmap(core::Size const nres, std::ostream& os) const;
 
-	public:
+public:
 	NeighTeller(Pose& ref_pose);
 
 	/// @brief: tells whether a probe residue is a neighbor of a target residue.

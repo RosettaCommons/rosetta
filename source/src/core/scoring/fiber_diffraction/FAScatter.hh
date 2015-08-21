@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 
+/// @file
 /// @brief Cache for scattering factors in all atom mode
 /// @author Wojciech Potrzebowski and Ingemar Andre
 

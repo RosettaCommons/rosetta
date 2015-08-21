@@ -83,23 +83,21 @@ void PeptideStapleMover::apply( core::pose::Pose & pose )
 
 	// BUNCH OF SANITY CHECKS
 	// test whether we're running off the pose
-	if ( (seqpos_ + staple_gap_) > pose.total_residue()  )
-	{
+	if ( (seqpos_ + staple_gap_) > pose.total_residue()  ) {
 		TR << "A staple gap of " << staple_gap_ << " runs off the end of the pose. Aborting staple insertion at residue " << seqpos_ << std::endl;
 		return;
 	}
 	// test connection points for terminii
-	if ( pose.residue( seqpos_ ).is_terminus() || pose.residue( seqpos_+staple_gap_ ).is_terminus() )
-	{
+	if ( pose.residue( seqpos_ ).is_terminus() || pose.residue( seqpos_+staple_gap_ ).is_terminus() ) {
 		TR << "Staple insertion is not supported at chain terminii. Aborting staple insertion at residue " << seqpos_ << std::endl;
 		return;
 	}
 	// test residues between connections for secondary structure, jumps, and terminii
-	for( Size i = seqpos_; i <= seqpos_ + staple_gap_; ++i ) {
-		if( pose.secstruct( i ) != 'H' ) {
+	for ( Size i = seqpos_; i <= seqpos_ + staple_gap_; ++i ) {
+		if ( pose.secstruct( i ) != 'H' ) {
 			TR << "Secondary structure at residue " << i << " is " << pose.secstruct(i) << ", but stapling along non-helix residues is untested!" << std::endl;
 		}
-		if( pose.fold_tree().is_jump_point( i ) ) {
+		if ( pose.fold_tree().is_jump_point( i ) ) {
 			TR << "Peptide stapling across jumps is untested!" << std::endl;
 		}
 	}
@@ -149,7 +147,7 @@ void PeptideStapleMover::derive_staple_constraints_( core::pose::Pose & pose )
 
 	TR << "residue " << seqpos_ << " " << pose.residue( seqpos_ ).name() << std::endl;
 
-	//	if ( pose.residue( ii ).name() == "STAPLE08A" ) {
+	// if ( pose.residue( ii ).name() == "STAPLE08A" ) {
 	Size const seqpos_conn_atom = pose.residue( seqpos_ ).type().residue_connection( 3 ).atomno();
 	Size const seqpos_vc_atom = pose.residue( seqpos_ ).atom_index( "VC" );
 
@@ -163,21 +161,21 @@ void PeptideStapleMover::derive_staple_constraints_( core::pose::Pose & pose )
 	TR << " jj vc: " << pose.residue( jj ).atom_name( jj_vc_atom );
 
 	{
-	core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 0.001 ) );
-	ConstraintOP apc1( new AtomPairConstraint(
-		AtomID( seqpos_conn_atom, seqpos_ ),
-		AtomID( jj_vc_atom, jj ),
-		fx ) );
-	pose.add_constraint( apc1 );
+		core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 0.001 ) );
+		ConstraintOP apc1( new AtomPairConstraint(
+			AtomID( seqpos_conn_atom, seqpos_ ),
+			AtomID( jj_vc_atom, jj ),
+			fx ) );
+		pose.add_constraint( apc1 );
 	}
 
 	{
-	core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 0.001 ) );
-	ConstraintOP apc2( new AtomPairConstraint(
-		AtomID( jj_conn_atom, jj ),
-		AtomID( seqpos_vc_atom, seqpos_ ),
-		fx ) );
-	pose.add_constraint( apc2 );
+		core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 0.001 ) );
+		ConstraintOP apc2( new AtomPairConstraint(
+			AtomID( jj_conn_atom, jj ),
+			AtomID( seqpos_vc_atom, seqpos_ ),
+			fx ) );
+		pose.add_constraint( apc2 );
 	}
 
 	Size const seqpos_conn_atom_base = pose.residue( seqpos_ ).type().icoor( seqpos_conn_atom ).stub_atom( 1 ).atomno();
@@ -190,40 +188,40 @@ void PeptideStapleMover::derive_staple_constraints_( core::pose::Pose & pose )
 	TR << "jj_conn_atom_base: " << jj_conn_atom_base << " " << pose.residue( jj ).atom_name( jj_conn_atom_base ) << " " << jj_ideal_angle << std::endl;
 
 	{
-	core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( jj_ideal_angle, 0.01 ) );
-	ConstraintOP bac1( new AngleConstraint(
-		AtomID( seqpos_conn_atom, seqpos_),
-		AtomID( seqpos_vc_atom, seqpos_ ),
-		AtomID( jj_conn_atom_base, jj ),
-		fx ) );
-	pose.add_constraint( bac1 );
+		core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( jj_ideal_angle, 0.01 ) );
+		ConstraintOP bac1( new AngleConstraint(
+			AtomID( seqpos_conn_atom, seqpos_),
+			AtomID( seqpos_vc_atom, seqpos_ ),
+			AtomID( jj_conn_atom_base, jj ),
+			fx ) );
+		pose.add_constraint( bac1 );
 	}
 
 	{
-	core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( seqpos_ideal_angle, 0.01 ) );
-	ConstraintOP bac2( new AngleConstraint(
-		AtomID( seqpos_conn_atom_base, seqpos_),
-		AtomID( jj_vc_atom, jj ),
-		AtomID( jj_conn_atom, jj ),
-		fx ) );
-	pose.add_constraint( bac2 );
+		core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( seqpos_ideal_angle, 0.01 ) );
+		ConstraintOP bac2( new AngleConstraint(
+			AtomID( seqpos_conn_atom_base, seqpos_),
+			AtomID( jj_vc_atom, jj ),
+			AtomID( jj_conn_atom, jj ),
+			fx ) );
+		pose.add_constraint( bac2 );
 	}
 
 	Real cross_connection_dihedral_val (0);
-/*	if ( basic::options::option[ cross_connection_dihedral ].user() ) {
-		cross_connection_dihedral_val = basic::options::option[ cross_connection_dihedral ]();
+	/* if ( basic::options::option[ cross_connection_dihedral ].user() ) {
+	cross_connection_dihedral_val = basic::options::option[ cross_connection_dihedral ]();
 	}
-*/
+	*/
 
 	{
-	core::scoring::func::FuncOP fx( new core::scoring::func::CircularHarmonicFunc( cross_connection_dihedral_val * numeric::constants::d::pi / 180.0, 0.1 ) );
-	ConstraintOP dcst( new DihedralConstraint(
-		AtomID( seqpos_conn_atom_base, seqpos_ ),
-		AtomID( seqpos_conn_atom, seqpos_ ),
-		AtomID( jj_conn_atom, jj ),
-		AtomID( jj_conn_atom_base, jj ),
-		fx ) );
-	pose.add_constraint( dcst );
+		core::scoring::func::FuncOP fx( new core::scoring::func::CircularHarmonicFunc( cross_connection_dihedral_val * numeric::constants::d::pi / 180.0, 0.1 ) );
+		ConstraintOP dcst( new DihedralConstraint(
+			AtomID( seqpos_conn_atom_base, seqpos_ ),
+			AtomID( seqpos_conn_atom, seqpos_ ),
+			AtomID( jj_conn_atom, jj ),
+			AtomID( jj_conn_atom_base, jj ),
+			fx ) );
+		pose.add_constraint( dcst );
 	}
 
 	utility::vector1< AtomIndices > const & seqpos_chi( pose.residue( seqpos_ ).chi_atoms() );

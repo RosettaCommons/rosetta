@@ -66,7 +66,7 @@ BumpSelector::iterate_bump_selector(
 
 	//static bool use_input_bump_cutoff( truefalseoption("pack_bump_cutoff") );
 	//static float input_bump_cutoff(
-	//	use_input_bump_cutoff ? realafteroption("pack_bump_cutoff") : max_rot_bumpenergy );
+	// use_input_bump_cutoff ? realafteroption("pack_bump_cutoff") : max_rot_bumpenergy );
 
 	//// determine if the current rot should be erased
 	////
@@ -80,9 +80,8 @@ BumpSelector::iterate_bump_selector(
 	////   extra rot w/ include current (?still does?)
 	////
 	if ( best_rot_bumpenergy_ != starting_rot_bumpenergy_ &&
-		( bumpenergy > max_rot_bumpenergy_ ) &&
-		( bumpenergy >= best_rot_bumpenergy_) )
-	{
+			( bumpenergy > max_rot_bumpenergy_ ) &&
+			( bumpenergy >= best_rot_bumpenergy_) ) {
 		//delete_current_rot = true;
 		return DELETE_ROTAMER;
 	}
@@ -100,9 +99,8 @@ BumpSelector::iterate_bump_selector(
 	////     bump energy lower than the bump threshold
 	////
 	if ( best_rot_bumpenergy_ != starting_rot_bumpenergy_ &&
-		bumpenergy < best_rot_bumpenergy_ &&
-		(best_rot_bumpenergy_ > max_rot_bumpenergy_ ))
-	{
+			bumpenergy < best_rot_bumpenergy_ &&
+			(best_rot_bumpenergy_ > max_rot_bumpenergy_ ) ) {
 		//delete_previous_rot = true;
 		best_rot_bumpenergy_ = bumpenergy;
 		return DELETE_PREVIOUS_ROTAMER;

@@ -45,7 +45,7 @@
 #include <utility/vector0.hh>
 
 #ifdef WIN32
-	#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.hh>
 #endif
 
 
@@ -73,15 +73,15 @@ void CombinedConstraintEvaluatorCreator::add_evaluators( evaluation::MetaPoseEva
 	using namespace basic::options::OptionKeys;
 
 
-  if ( option[ OptionKeys::evaluation::combined_constraints ].user() ) {
-    utility::vector1< std::string > const& cst_target( option[ OptionKeys::evaluation::combined_constraints ]() );
-    utility::vector1< std::string > const& cst_col_name( option[ OptionKeys::evaluation::combined_constraints_column ]() );
-    for ( Size ct = 1; ct <= cst_target.size(); ct ++ ) {
-      std::string tag( ObjexxFCL::string_of( ct ) );
-      if ( cst_col_name.size() >= ct ) tag = cst_col_name[ ct ];
-      eval.add_evaluation( protocols::evaluation::PoseEvaluatorOP( new CombinedConstraintEvaluator( tag, cst_target[ ct ], 2, option[ OptionKeys::evaluation::combine_statistics ] ) ) );
-    }
-  }
+	if ( option[ OptionKeys::evaluation::combined_constraints ].user() ) {
+		utility::vector1< std::string > const& cst_target( option[ OptionKeys::evaluation::combined_constraints ]() );
+		utility::vector1< std::string > const& cst_col_name( option[ OptionKeys::evaluation::combined_constraints_column ]() );
+		for ( Size ct = 1; ct <= cst_target.size(); ct ++ ) {
+			std::string tag( ObjexxFCL::string_of( ct ) );
+			if ( cst_col_name.size() >= ct ) tag = cst_col_name[ ct ];
+			eval.add_evaluation( protocols::evaluation::PoseEvaluatorOP( new CombinedConstraintEvaluator( tag, cst_target[ ct ], 2, option[ OptionKeys::evaluation::combine_statistics ] ) ) );
+		}
+	}
 
 }
 

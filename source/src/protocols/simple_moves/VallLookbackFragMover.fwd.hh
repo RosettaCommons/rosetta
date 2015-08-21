@@ -9,9 +9,9 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-/// @brief  
+/// @brief
 /// @author TJ Brunette
-/// @date   
+/// @date
 
 
 #ifndef INCLUDED_protocols_simple_moves_VallLookbackFragMover_fwd_hh

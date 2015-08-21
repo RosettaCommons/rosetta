@@ -26,7 +26,7 @@
 
 
 namespace protocols {
-namespace features{
+namespace features {
 
 class ResidueGridScoresFeatures : public protocols::features::FeaturesReporter {
 public:

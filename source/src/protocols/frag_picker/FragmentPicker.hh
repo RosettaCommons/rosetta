@@ -63,14 +63,14 @@ typedef std::map<Size, CandidatesCollectorOP> CandidatesSink;
 class QuotaDebug : public std::ostringstream {
 
 public:
-		Size nFrags_;
-		QuotaDebug(Size nFrags) { nFrags_ = nFrags; }
-		utility::vector1<std::string> tags_;
-		std::map<std::string,Size> tag_map_;
-		void setup_summary(quota::QuotaCollector const & collector_);
-		void write_summary();
-		void log(Size,Size,utility::vector1<Real>);
-		Size max_pools();
+	Size nFrags_;
+	QuotaDebug(Size nFrags) { nFrags_ = nFrags; }
+	utility::vector1<std::string> tags_;
+	std::map<std::string,Size> tag_map_;
+	void setup_summary(quota::QuotaCollector const & collector_);
+	void write_summary();
+	void log(Size,Size,utility::vector1<Real>);
+	Size max_pools();
 
 private:
 	QuotaDebug(QuotaDebug const &);
@@ -86,7 +86,7 @@ class FragmentPicker: public utility::pointer::ReferenceCount, public utility::p
 {
 public:
 
-// constructors
+	// constructors
 
 	FragmentPicker() {
 		scores_.push_back(utility::pointer::shared_ptr<class protocols::frag_picker::scores::FragmentScoreManager>( new scores::FragmentScoreManager() ));
@@ -101,10 +101,11 @@ public:
 	}
 
 	FragmentPicker(std::string fragment_score_manager_type) {
-		if (fragment_score_manager_type.compare("PValuedFragmentScoreManager") == 0)
+		if ( fragment_score_manager_type.compare("PValuedFragmentScoreManager") == 0 ) {
 			scores_.push_back(utility::pointer::shared_ptr<class protocols::frag_picker::scores::FragmentScoreManager>( new scores::PValuedFragmentScoreManager() ));
-		else
+		} else {
 			scores_.push_back(utility::pointer::shared_ptr<class protocols::frag_picker::scores::FragmentScoreManager>( new scores::FragmentScoreManager() ));
+		}
 		CandidatesSink storage;
 		candidates_sinks_.push_back(storage);
 		max_frag_size_ = 0;
@@ -115,7 +116,7 @@ public:
 		nonlocal_min_contacts_per_res_ =  1.0;
 	}
 
-// destructor
+	// destructor
 
 	virtual ~FragmentPicker();
 
@@ -127,7 +128,7 @@ public:
 
 public:
 
-// public methods
+	// public methods
 
 	// Command line processing and high-level stuff -----------------
 	void parse_command_line();
@@ -151,7 +152,7 @@ public:
 
 	// multi-threaded task
 	void nonlocal_pairs_at_positions( utility::vector1<Size> const & positions, Size const & fragment_size, utility::vector1<bool> const & skip,
-			utility::vector1<Candidates> const & fragment_set, utility::vector1<nonlocal::NonlocalPairOP> & pairs );
+		utility::vector1<Candidates> const & fragment_set, utility::vector1<nonlocal::NonlocalPairOP> & pairs );
 
 	void nonlocal_pairs( Size const fragment_size, utility::vector1<Candidates> const & fragment_set );
 
@@ -189,7 +190,7 @@ public:
 	void set_query_seq(std::string & query_sequence);
 
 	/// @brief Returns the sequence we are picking fragments for (as a string)
-	 std::string& get_query_seq_string() {
+	std::string& get_query_seq_string() {
 		return query_seq_as_string_;
 	}
 
@@ -207,20 +208,20 @@ public:
 		return query_phi_prediction_;
 	}
 
-  /// Returns the psi prediction
-  utility::vector1<Real> & get_query_psi_prediction() {
+	/// Returns the psi prediction
+	utility::vector1<Real> & get_query_psi_prediction() {
 		return query_psi_prediction_;
-  }
+	}
 
-  /// Returns the phi prediction confidence
-  utility::vector1<Real> & get_query_phi_prediction_conf() {
+	/// Returns the phi prediction confidence
+	utility::vector1<Real> & get_query_phi_prediction_conf() {
 		return query_phi_prediction_conf_;
-  }
+	}
 
-  /// Returns the psi prediction confidence
-  utility::vector1<Real> & get_query_psi_prediction_conf() {
+	/// Returns the psi prediction confidence
+	utility::vector1<Real> & get_query_psi_prediction_conf() {
 		return query_psi_prediction_conf_;
-  }
+	}
 
 	/// Returns residue depth values
 	utility::vector1<Real> & get_query_residue_depth() {
@@ -237,10 +238,11 @@ public:
 	// query secondary structure -----------------
 	/// @brief Returns the query secondary structure as a SecondaryStructure object
 	core::fragment::SecondaryStructureOP get_query_ss(std::string prediction_name) {
-		if (query_ss_profile_.find(prediction_name) != query_ss_profile_.end())
+		if ( query_ss_profile_.find(prediction_name) != query_ss_profile_.end() ) {
 			return query_ss_profile_.find(prediction_name)->second;
-		else
+		} else {
 			return 0;
+		}
 	}
 
 	/// @brief Reads a bunch of ss predicitons from files and plugs them into the picker
@@ -307,15 +309,15 @@ public:
 
 	// Delegators from FragmentScoreManager ---------------
 	void show_scoring_methods(std::ostream & out, Size index=1) {
-		if (index > scores_.size()) return;
+		if ( index > scores_.size() ) return;
 		scores_[index]->show_scoring_methods(out);
 	}
 
 	/// @brief adds a new scoring method to the scoring scheme
 	void add_scoring_method(
-			scores::FragmentScoringMethodOP scoring_term,
-			Real weight, Size index=1) {
-		if (index > scores_.size()) return;
+		scores::FragmentScoringMethodOP scoring_term,
+		Real weight, Size index=1) {
+		if ( index > scores_.size() ) return;
 		scores_[index]->add_scoring_method(scoring_term, weight);
 	}
 
@@ -328,7 +330,7 @@ public:
 	/// @brief Reads query secondary structure prediction from a Talos+ file
 	void read_talos_ss(std::string const &, std::string);
 
-// should be private but some classes directly access these
+	// should be private but some classes directly access these
 	utility::vector1<Size> frag_sizes_;
 
 	static QuotaDebug log_25_;
@@ -350,20 +352,22 @@ public:
 	// Picking machinery -----------------
 	/// @brief sets a collector where fragment candidates will be kept until final selection
 	void set_candidates_collector(Size frag_size,
-			CandidatesCollectorOP sink, Size index = 1) {
-		if (index == 0)
+		CandidatesCollectorOP sink, Size index = 1) {
+		if ( index == 0 ) {
 			candidates_sink_.insert(std::pair<Size, CandidatesCollectorOP>(frag_size, sink));
-		else
+		} else {
 			candidates_sinks_[index].insert(std::pair<Size, CandidatesCollectorOP>(frag_size, sink));
+		}
 	}
 
 	/// @brief returns a pointer to the candidates collector currently used
 	/// @details one may need this instance to access the candidates that have been found by the picker
 	CandidatesCollectorOP get_candidates_collector(Size frag_size, Size index=1) {
-		if (index == 0)
+		if ( index == 0 ) {
 			return candidates_sink_[frag_size];
-		else
+		} else {
 			return candidates_sinks_[index][frag_size];
+		}
 	}
 
 	/// @brief adds a chunk filter that will be used to screen chunks before they are cut into fragments
@@ -401,7 +405,7 @@ private:
 
 	// for frag contacts
 	Size contacts_min_seq_sep_;
-  std::set<ContactType> contact_types_;
+	std::set<ContactType> contact_types_;
 	Real contacts_dist_cutoff_squared_;
 	utility::vector1<Real> contacts_dist_cutoffs_squared_;
 	SidechainContactDistCutoffOP sidechain_contact_dist_cutoff_;

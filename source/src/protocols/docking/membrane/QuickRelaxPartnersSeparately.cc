@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief      Mover partners apart and relax them separately
-/// @details	Run quick relax on separated partners; this emulates unbound docking
+/// @details Run quick relax on separated partners; this emulates unbound docking
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 
 #ifndef INCLUDED_protocols_docking_membrane_QuickRelaxPartnersSeparately_cc
@@ -28,8 +28,8 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/membrane/MembraneInfo.hh> 
-#include <core/conformation/membrane/SpanningTopology.hh> 
+#include <core/conformation/membrane/MembraneInfo.hh>
+#include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
@@ -66,7 +66,7 @@ static basic::Tracer TR( "protocols.membrane.QuickRelaxPartnersSeparately" );
 namespace protocols {
 namespace docking {
 namespace membrane {
-	
+
 using namespace core;
 using namespace core::pose;
 using namespace core::conformation::membrane;
@@ -74,12 +74,12 @@ using namespace protocols::moves;
 using namespace protocols::docking;
 using namespace protocols::membrane;
 using namespace protocols::membrane::geometry;
-		
+
 /////////////////////
 /// Constructors  ///
 /////////////////////
 
-	
+
 /// @brief Default Constructor
 /// @details Gets the jump from docking partners
 QuickRelaxPartnersSeparately::QuickRelaxPartnersSeparately() :
@@ -88,7 +88,7 @@ QuickRelaxPartnersSeparately::QuickRelaxPartnersSeparately() :
 	topo_up_( new SpanningTopology() ),
 	topo_down_( new SpanningTopology() )
 {}
-	
+
 /// @brief Copy Constructor
 QuickRelaxPartnersSeparately::QuickRelaxPartnersSeparately( QuickRelaxPartnersSeparately const & src ) :
 	protocols::moves::Mover( src ),
@@ -101,7 +101,7 @@ QuickRelaxPartnersSeparately::QuickRelaxPartnersSeparately( QuickRelaxPartnersSe
 	topo_down_( src.topo_down_ ),
 	sfxn_( src.sfxn_ )
 {}
-	
+
 /// @brief Destructor
 QuickRelaxPartnersSeparately::~QuickRelaxPartnersSeparately() {}
 
@@ -124,20 +124,20 @@ QuickRelaxPartnersSeparately::fresh_instance() const {
 /// @brief Parse Rosetta Scripts Options for this Mover
 void
 QuickRelaxPartnersSeparately::parse_my_tag(
-	 utility::tag::TagCOP tag,
-	 basic::datacache::DataMap &,
-	 protocols::filters::Filters_map const &,
-	 protocols::moves::Movers_map const &,
-	 core::pose::Pose const &
-	 ) {
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
+) {
 
 	// Read in docking partners
 	if ( tag->hasOption( "partners" ) ) {
 		partners_ = tag->getOption< std::string >( "partners" );
 	}
-	
+
 	// TODO: to implement
-	
+
 }
 
 /// @brief Create a new copy of this mover
@@ -171,7 +171,7 @@ QuickRelaxPartnersSeparately::get_name() const {
 /// @brief Moving partners apart and relax them separately
 void
 QuickRelaxPartnersSeparately::apply( Pose & pose ) {
-	
+
 	using namespace core::conformation::membrane;
 	using namespace protocols::membrane::geometry;
 	using namespace protocols::membrane;
@@ -197,23 +197,23 @@ QuickRelaxPartnersSeparately::apply( Pose & pose ) {
 	// compute embedding for partners (compute structure-based embedding with split topologies)
 	EmbeddingDefOP emb_up( compute_structure_based_embedding( pose, *topo_up_ ) );
 	EmbeddingDefOP emb_down( compute_structure_based_embedding( pose, *topo_down_ ) );
-	
+
 	// get distance between points
 	core::Real dist1 = ( emb_down->center() - emb_up->center() ).length();
 	TR << "distance between partners: " << dist1 << std::endl;
-	
+
 	slide_axis.negate();
 	slide_axis.normalize();
 	TR << "slide axis: " << slide_axis.to_string() << std::endl;
-	
+
 	// move apart
 	TR << "Moving apart" << std::endl;
 	RigidBodyTransMoverOP mover( new rigid::RigidBodyTransMover( slide_axis, jump_, vary_stepsize ) );
 	mover->step_size( 100 );
 	mover->apply( pose );
-	
+
 	///////////////////////// RUN RELAX ////////////////////////////
-	
+
 	// run quick relax
 	MPQuickRelaxMoverOP relax( new MPQuickRelaxMover() );
 	relax->add_membrane_again( false );
@@ -225,7 +225,7 @@ QuickRelaxPartnersSeparately::apply( Pose & pose ) {
 	slide_axis.negate();
 	TR << "Moving back together" << std::endl;
 	TR << "slide axis: " << slide_axis.to_string() << std::endl;
-	
+
 	// move apart
 	RigidBodyTransMoverOP together( new rigid::RigidBodyTransMover( slide_axis, jump_, vary_stepsize ) );
 	together->step_size( 100 );
@@ -235,34 +235,34 @@ QuickRelaxPartnersSeparately::apply( Pose & pose ) {
 
 	TR << "foldtree before superimposition: " << std::endl;
 	pose.fold_tree().show( TR );
-	
+
 	// get partner 1: ALL CHAINS MUST BE IN PDB CONSECUTIVELY!!!
 	utility::vector1< std::string > partners( utility::string_split( partners_, '_' ) );
 	utility::vector1< std::string > partner1( utility::split( partners[1] ) );
-	
+
 	// get residue range for superposition: get start residue
 	Size start(0);
-	for ( Size i = 1; i <= pose.total_residue(); ++i ){
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 		if ( start == 0 &&
-			partner1[1] == utility::to_string( pose.pdb_info()->chain( i ) ) ){
+				partner1[1] == utility::to_string( pose.pdb_info()->chain( i ) ) ) {
 			start = i;
 		}
 	}
-	
+
 	// get end residue
 	Size end(0);
-	for ( Size j = pose.total_residue(); j >= 1; --j ){
+	for ( Size j = pose.total_residue(); j >= 1; --j ) {
 		if ( end == 0 &&
-			partner1[partner1.size()] == utility::to_string( pose.pdb_info()->chain( j ) ) ){
+				partner1[partner1.size()] == utility::to_string( pose.pdb_info()->chain( j ) ) ) {
 			end = j;
 		}
 	}
 	TR << "superimposing from: " << start << " to " << end << std::endl;
-	
+
 	// superimpose partner 1 with starting pose for easier rmsd calculation
 	SuperimposeMoverOP super( new SuperimposeMover( native_, start, end, start, end, true ) );
 	super->apply( pose );
-	
+
 	TR << "dumping pose..." << std::endl;
 	pose.dump_pdb("superimposed_pose.pdb");
 
@@ -284,12 +284,12 @@ QuickRelaxPartnersSeparately::apply( Pose & pose ) {
 /// @brief Register Options with JD2
 void
 QuickRelaxPartnersSeparately::register_options() {
-	
+
 	using namespace basic::options;
 
 	option.add_relevant( OptionKeys::in::file::native );
 	option.add_relevant( OptionKeys::docking::partners );
-	
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -297,16 +297,16 @@ QuickRelaxPartnersSeparately::register_options() {
 /// @brief Initialize Mover options from the comandline
 void
 QuickRelaxPartnersSeparately::init_from_cmd() {
-	
+
 	using namespace basic::options;
-	
+
 	// docking partners
-	if( option[ OptionKeys::docking::partners ].user() ) {
+	if ( option[ OptionKeys::docking::partners ].user() ) {
 		partners_ = option[ OptionKeys::docking::partners ]();
 	}
-	
+
 	// native
-	if( option[ OptionKeys::in::file::native ].user() ) {
+	if ( option[ OptionKeys::in::file::native ].user() ) {
 		core::import_pose::pose_from_pdb( native_, option[ OptionKeys::in::file::native ]() );
 	}
 
@@ -327,7 +327,7 @@ void QuickRelaxPartnersSeparately::finalize_setup( Pose & pose ) {
 	// call AddMembraneMover on native for RMSD calculation
 	AddMembraneMoverOP addmem( new AddMembraneMover() );
 	addmem->apply( native_ );
-	
+
 	///////////////////// FOLDTREE STUFF ///////////////////////
 
 	// get foldtree from partners (setup_foldtree) and movable jump
@@ -336,7 +336,7 @@ void QuickRelaxPartnersSeparately::finalize_setup( Pose & pose ) {
 	setup_foldtree( pose, partners_, jumps_);
 	jump_ = jumps_[1];
 	TR << "jump_ from foldtree: " << jump_ << std::endl;
-	
+
 	// get anchor point for membrane from jump; I think this is residue closest to
 	// COM of the upstream partner
 	int anchor = pose.fold_tree().upstream_jump_residue( jump_ );
@@ -345,7 +345,7 @@ void QuickRelaxPartnersSeparately::finalize_setup( Pose & pose ) {
 	// Add Membrane to pose, appends MEM as jump1
 	AddMembraneMoverOP add_memb( new AddMembraneMover( anchor, 0 ) );
 	add_memb->apply( pose );
-	
+
 	// reorder foldtree to have membrane at root
 	core::kinematics::FoldTree ft = pose.fold_tree();
 	ft.reorder( pose.conformation().membrane_info()->membrane_rsd_num() );
@@ -360,13 +360,13 @@ void QuickRelaxPartnersSeparately::finalize_setup( Pose & pose ) {
 	topo_ = pose.conformation().membrane_info()->spanning_topology();
 	topo_->show();
 	TR << "jump number: " << jump_ << std::endl;
-	
+
 	// splitting topology by jump into upstream and downstream topology
 	split_topology_by_jump_noshift( pose, jump_, topo_, topo_up_, topo_down_ );
-	
+
 } // finalize setup
-	
-	
+
+
 } // membrane
 } // docking
 } // protocols

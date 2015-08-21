@@ -21,15 +21,15 @@ namespace moves {
 MoverStatus mstype_from_name( std::string const & name )
 {
 	MoverStatus ms;
-	if( name == "MS_SUCCESS" ){
+	if ( name == "MS_SUCCESS" ) {
 		ms = MS_SUCCESS;
-	}else if( name == "FAIL_RETRY" ){
+	} else if ( name == "FAIL_RETRY" ) {
 		ms = FAIL_RETRY;
-	}else if( name == "FAIL_DO_NOT_RETRY" ){
+	} else if ( name == "FAIL_DO_NOT_RETRY" ) {
 		ms = FAIL_DO_NOT_RETRY;
-	}else if( name == "FAIL_BAD_INPUT" ){
+	} else if ( name == "FAIL_BAD_INPUT" ) {
 		ms = FAIL_BAD_INPUT;
-	}else{
+	} else {
 		ms = FAIL_BAD_INPUT;
 		utility_exit_with_message( "Invalid name of mover status !" );
 	}

@@ -77,7 +77,7 @@
 #include <utility> //for std::pair
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 namespace protocols {
@@ -88,8 +88,8 @@ static basic::Tracer TR("WorkUnit_Sampler.AggressiveType");
 ////////////////////////////////////////////
 //////// WorkUnit Combine
 WorkUnit_CombinePose::WorkUnit_CombinePose( core::Size nstruct,
-																						bool const cartesian
-																						)
+	bool const cartesian
+)
 {
 	set_defaults();
 	cartesian? set_cartesian( 1 ) : set_cartesian( 0 );
@@ -107,10 +107,10 @@ void
 WorkUnit_CombinePose::run()
 {
 	using namespace core::io::silent;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-	if( decoys().size() == 0 ){
+	if ( decoys().size() == 0 ) {
 		TR << "Empty WorkUnit ! Cannot execute run() " << std::endl;
 		return;
 	}
@@ -157,15 +157,16 @@ WorkUnit_CombinePose::run()
 	TR << "combpose: How many? " << decoys_out.size() << "/" << nstruct << std::endl;
 
 	// this happens sometimes when parents are too close... then just return with startings
-	if( decoys_out.size() < nstruct ){
-		for( core::Size istruct = 1; istruct <= nstruct - decoys_out.size(); ++istruct )
+	if ( decoys_out.size() < nstruct ) {
+		for ( core::Size istruct = 1; istruct <= nstruct - decoys_out.size(); ++istruct ) {
 			decoys().store().push_back( start_struct->clone() );
+		}
 
 	}
 
 	// Add info here if you want
 	// Note that this should go to batchrelax so no minimization/repack will be called here
-	for( core::Size istruct = 0; istruct < decoys_out.size(); ++ istruct ){
+	for ( core::Size istruct = 0; istruct < decoys_out.size(); ++ istruct ) {
 		SilentStructOP ss = decoys_out[istruct];
 		std::string tag = "comb_" + tag1 + "_" + tag2 + "_" + string_of( istruct );
 		store_to_decoys( start_struct, ss, tag );
@@ -179,10 +180,10 @@ WorkUnit_CombinePose::run()
 
 ////////////////////////////////////////////
 //////// WorkUnit NormalMode
-WorkUnit_NormalMode::WorkUnit_NormalMode( core::Size const nmodes, 
-																					core::Size const nmtype,
-																					core::Size const relaxtype,
-																					core::Real const maxscale )
+WorkUnit_NormalMode::WorkUnit_NormalMode( core::Size const nmodes,
+	core::Size const nmtype,
+	core::Size const relaxtype,
+	core::Real const maxscale )
 {
 	// nmtype     1: CartCen 2:TorsCen 3:CartFull  4:TorsFull
 	// relaxtype  1: Cartmin 2:Torsmin 3:CartExpol 4:TorsExpol
@@ -209,10 +210,10 @@ WorkUnit_NormalMode::run()
 {
 	using namespace protocols::normalmode;
 	using namespace core::io::silent;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-	if( decoys().size() == 0 ){
+	if ( decoys().size() == 0 ) {
 		TR << "Empty WorkUnit ! Cannot execute run() " << std::endl;
 		return;
 	}
@@ -234,10 +235,10 @@ WorkUnit_NormalMode::run()
 	core::Size const nmode( get_nmodes() ); // Pure modes
 	core::Size const nmix( 0 );  // mixed modes
 	core::Size const ncomb( nmode + nmix );
-  utility::vector1< core::Size > modes; // Use top [nmode] modes for both pure/mixing
-  for( core::Size i = 1; i <= nmode; ++i ) modes.push_back( i );
+	utility::vector1< core::Size > modes; // Use top [nmode] modes for both pure/mixing
+	for ( core::Size i = 1; i <= nmode; ++i ) modes.push_back( i );
 
-	// distance 
+	// distance
 	core::Real const dist( option[ lh::NMdist ]() );
 
 	utility::vector1< core::Real > scales; // line-search scales
@@ -251,24 +252,24 @@ WorkUnit_NormalMode::run()
 	// First fill in by pure eig-vectors
 	utility::vector1< core::Real > nullv( nmode, 0.0 );
 	core::Size i_comb( 1 );
-	for(; i_comb <= nmode; ++i_comb ){
+	for ( ; i_comb <= nmode; ++i_comb ) {
 		utility::vector1< core::Real > scalev( nullv ); scalev[i_comb] = 1.0;
 		modescales[i_comb] = scalev;
 	}
 
 	// Add up remainings by mixing
-	for(; i_comb <= ncomb; ++i_comb ){
+	for ( ; i_comb <= ncomb; ++i_comb ) {
 		utility::vector1< core::Real > scalev( nmode, 0.0 );
-		for( core::Size i = 1; i <= nmode; ++i ) scalev[i] = numeric::random::rg().uniform();
+		for ( core::Size i = 1; i <= nmode; ++i ) scalev[i] = numeric::random::rg().uniform();
 		modescales[i_comb] = scalev;
 	}
 
 	// 2.Set relaxtype
 	// relaxtype  1: Cartmin 2:Torsmin 3:CartExpol 4:TorsExpol
 	std::string relaxmode;
-	if( get_relaxtype() <= 2 ){
+	if ( get_relaxtype() <= 2 ) {
 		relaxmode = "min";
-	} else if( get_relaxtype() <= 4 ){
+	} else if ( get_relaxtype() <= 4 ) {
 		relaxmode = "extrapolate_and_relax";
 	} else {
 		TR << "Unknown relaxmode: " << get_relaxtype() << "! using default relaxtype = min." << std::endl;
@@ -276,14 +277,14 @@ WorkUnit_NormalMode::run()
 	}
 
 	bool cartmin( false );
-	if( get_relaxtype() == 1 || get_relaxtype() == 3 ) cartmin = true;
+	if ( get_relaxtype() == 1 || get_relaxtype() == 3 ) cartmin = true;
 
 	// 3. Set normalmode type
 	// nmtype   1: CartCen 2:TorsCen 3:CartFull  4:TorsFull
 	bool cartnm( false );
 	bool iscen( false );
-	if( get_nmtype() <= 2 ) iscen = true;
-	if( get_nmtype() == 1 || get_nmtype() == 3 ) cartnm = true;
+	if ( get_nmtype() <= 2 ) iscen = true;
+	if ( get_nmtype() == 1 || get_nmtype() == 3 ) cartnm = true;
 
 	core::scoring::ScoreFunctionOP sfxn_loc = ( iscen )?
 		core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ):
@@ -292,23 +293,24 @@ WorkUnit_NormalMode::run()
 	core::scoring::ScoreFunctionOP sfxn_pack
 		= core::scoring::ScoreFunctionFactory::create_score_function( "soft_rep" );
 
-	if( cartmin && sfxn_loc->get_weight( core::scoring::cart_bonded ) == 0.0 ){
+	if ( cartmin && sfxn_loc->get_weight( core::scoring::cart_bonded ) == 0.0 ) {
 		sfxn_loc->set_weight( core::scoring::cart_bonded, 0.5 ); //make sure!
 		sfxn_loc->set_weight( core::scoring::pro_close, 0.0 ); //make sure!
 	}
 
-	if( sfxn_loc->get_weight( core::scoring::elec_dens_fast ) > 0.0 )
+	if ( sfxn_loc->get_weight( core::scoring::elec_dens_fast ) > 0.0 ) {
 		TR << "Sampling with elec_dens_fast : " << sfxn_loc->get_weight( core::scoring::elec_dens_fast ) << std::endl;
+	}
 
 	// change pose level if necessary
-	protocols::moves::MoverOP tofa 
+	protocols::moves::MoverOP tofa
 		( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD ) );
-	protocols::moves::MoverOP tocen 
+	protocols::moves::MoverOP tocen
 		( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
 
-	if( iscen && !pose.is_centroid() ){
+	if ( iscen && !pose.is_centroid() ) {
 		tocen->apply( pose );
-	} else if( !iscen && pose.is_centroid() ){
+	} else if ( !iscen && pose.is_centroid() ) {
 		tofa->apply( pose );
 	}
 
@@ -318,9 +320,9 @@ WorkUnit_NormalMode::run()
 		get_NMmover( pose, sfxn_loc, mm, dist, relaxmode, true ) :  // return CNM
 		get_NMmover( pose, sfxn_loc, mm, dist, relaxmode, false );  // return TNM
 
-	core::optimization::MinimizerOptionsOP minoption 
+	core::optimization::MinimizerOptionsOP minoption
 		( new core::optimization::MinimizerOptions( "lbfgs_armijo_nonmonotone",
-																								0.001, true, false, false ) );
+		0.001, true, false, false ) );
 	minoption->max_iter( 20 );
 
 	NM->set_cartesian_minimize( cartmin );
@@ -331,12 +333,12 @@ WorkUnit_NormalMode::run()
 	coord_cst_mover.cst_sd( 1.0 );
 
 	// 4. Run! (will generate ncomb*6 scales)
-	for( i_comb = 1; i_comb <= ncomb; ++i_comb ){
+	for ( i_comb = 1; i_comb <= ncomb; ++i_comb ) {
 		utility::vector1< core::Real > &modescale = modescales[i_comb];
 
-    NM->set_mode( modes, modescale );
+		NM->set_mode( modes, modescale );
 
-		for( core::Size i = 1; i <= scales.size(); ++i ){
+		for ( core::Size i = 1; i <= scales.size(); ++i ) {
 			core::pose::Pose pose_tmp( pose );
 			core::Real const scale = scales[i];
 
@@ -344,7 +346,7 @@ WorkUnit_NormalMode::run()
 			NM->apply( pose_tmp );
 
 			// Always store in full atom!
-			if( pose_tmp.is_centroid() ){
+			if ( pose_tmp.is_centroid() ) {
 				tofa->apply( pose_tmp );
 				// at least repack before storing them....
 				repack( pose_tmp, sfxn_pack );
@@ -352,9 +354,9 @@ WorkUnit_NormalMode::run()
 				// this is to bring better discrimination by GOAP
 				// minimizing can slow down overall procedure
 				// also think about moving too much; this is TorsionMinimizer
-        // minimize with coordinate cst if you really want to
+				// minimize with coordinate cst if you really want to
 
-				if( option[ lh::minimize_after_nmsearch ]() ){
+				if ( option[ lh::minimize_after_nmsearch ]() ) {
 					coord_cst_mover.apply( pose );
 					minimizer.run( pose_tmp, *mm, *sfxn_pack, *minoption );
 				}
@@ -365,8 +367,8 @@ WorkUnit_NormalMode::run()
 			store_to_decoys( start_struct, pose_tmp );
 		}
 
-		// Just to make sure 
-		if( decoys().store().size() >= nstruct ) break;
+		// Just to make sure
+		if ( decoys().store().size() >= nstruct ) break;
 	}
 
 	core::Size endtime = time(NULL);
@@ -378,10 +380,10 @@ WorkUnit_NormalMode::run()
 ////////////////////////////////////////////
 //////// WorkUnit RamaPerturber
 WorkUnit_RamaPerturber::WorkUnit_RamaPerturber( core::Size const nsteps,
-																								core::Size const res1,
-																								core::Size const res2,
-																								core::Real const kT
-																								)
+	core::Size const res1,
+	core::Size const res2,
+	core::Real const kT
+)
 {
 	set_defaults();
 	set_nsteps( nsteps );
@@ -402,10 +404,10 @@ void
 WorkUnit_RamaPerturber::run()
 {
 	using namespace core::io::silent;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-	if( decoys().size() == 0 ){
+	if ( decoys().size() == 0 ) {
 		TR << "Empty WorkUnit ! Cannot execute run() " << std::endl;
 		return;
 	}
@@ -419,9 +421,9 @@ WorkUnit_RamaPerturber::run()
 	core::scoring::dssp::Dssp dssp( pose0 );
 	dssp.insert_ss_into_pose( pose0 );
 
-	protocols::moves::MoverOP tofa 
+	protocols::moves::MoverOP tofa
 		( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD ) );
-	protocols::moves::MoverOP tocen 
+	protocols::moves::MoverOP tocen
 		( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
 
 	// clear the store of structures
@@ -436,13 +438,13 @@ WorkUnit_RamaPerturber::run()
 	mm->set_jump(false ); mm->set_bb( false ); mm->set_chi( false );
 	mm->set( core::id::THETA, false ); mm->set( core::id::D, false );
 
-	for( core::Size i = get_res1(); i <= get_res2(); ++i ){
+	for ( core::Size i = get_res1(); i <= get_res2(); ++i ) {
 		loopres.push_back( i );
 		mm->set_bb( i, true );
 		mm->set_chi( i, true );
 	}
 
-	if( loopres.size() == 0 ){
+	if ( loopres.size() == 0 ) {
 		TR << "Empty loop region! nothing to execute." << std::endl;
 		return;
 	}
@@ -470,14 +472,14 @@ WorkUnit_RamaPerturber::run()
 	tocen->apply( pose_work );
 	protocols::moves::MonteCarlo mc( pose_work, *sfxn_cen, get_kT() );
 	//for( core::Size iiter = 1; iiter <= get_nsteps(); ++ iiter ){
-	for( core::Size iiter = 1; iiter <= 50; ++ iiter ){
+	for ( core::Size iiter = 1; iiter <= 50; ++ iiter ) {
 		bbsampler.apply( pose_work );
 		mc.boltzmann( pose_work );
 	}
 
 	// Once done, minimize with original vdw
 	core::optimization::MinimizerOptions minoption( "lbfgs_armijo_nonmonotone",
-																									0.001, true, false, false );
+		0.001, true, false, false );
 	core::optimization::AtomTreeMinimizer minimizer;
 	minoption.max_iter( 50 );
 

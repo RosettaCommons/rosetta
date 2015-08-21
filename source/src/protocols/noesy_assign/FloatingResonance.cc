@@ -95,13 +95,13 @@ void FloatingResonance::write_to_stream( std::ostream& os, core::chemical::AA aa
 
 /// @brief match the proton and corresponding label atom at same time
 bool FloatingResonance::match2D(
-		core::Real proton_freq,
-		core::Real proton_error,
-    FoldResonance const& proton_folder,
-    core::Real label_freq,
-    core::Real label_error,
-    FoldResonance const& label_folder,
-		ResonancePairs &matches
+	core::Real proton_freq,
+	core::Real proton_error,
+	FoldResonance const& proton_folder,
+	core::Real label_freq,
+	core::Real label_error,
+	FoldResonance const& label_folder,
+	ResonancePairs &matches
 ) const {
 	// pseudo4D peaks with two heavy-atoms and one proton are matched via the heavy-atom
 	if ( !is_representative_resonance_ ) return false;
@@ -109,21 +109,21 @@ bool FloatingResonance::match2D(
 	if ( proton_error < 99 && !is_proton() ) return false;
 
 	for ( FloatList::const_iterator it = partner_ids_.begin(); it!=partner_ids_.end(); ++it ) {
-		if ( is_proton() ) {// proton-matching
+		if ( is_proton() ) { // proton-matching
 			Resonance const& proton( (*res_list_)[ *it ] );
-			//			tr.Trace << "try proton float-match with reso: " <<  proton.atom() << std::endl;
+			//   tr.Trace << "try proton float-match with reso: " <<  proton.atom() << std::endl;
 			bool proton_match = proton._pmatch( proton_freq, proton_error, proton_folder ) <= 1.0;
-			//			tr.Trace << "after proton match " <<  proton.atom() << std::endl;
+			//   tr.Trace << "after proton match " <<  proton.atom() << std::endl;
 			if ( !proton_match ) continue;
 			if ( !proton.has_connected_resonances() ) continue;
-			if ( proton.first_connected_resonance()._pmatch( label_freq, label_error, label_folder ) <= 1.0	) {
+			if ( proton.first_connected_resonance()._pmatch( label_freq, label_error, label_folder ) <= 1.0 ) {
 				//now store the representative of the float-group as match
 				matches.push_back( std::make_pair( label(), first_connected_resonance().label() ) );
 				return true; //both, proton and corresponding label matched.
 			}
 		} else { //label-matching
 			Resonance const& float_label( (*res_list_)[ *it ] );
-			//			tr.Trace << "try label float-match with reso: " <<  label.atom() << std::endl;
+			//   tr.Trace << "try label float-match with reso: " <<  label.atom() << std::endl;
 			//bool has_any_match = false;
 			bool label_match = float_label._pmatch( label_freq, label_error, label_folder ) <= 1.0;
 			if ( label_match ) {

@@ -29,31 +29,32 @@ namespace frag_picker {
 namespace scores {
 
 void SolventAccessibility::do_caching(VallChunkOP current_chunk) {
-  std::string ctmp = current_chunk->chunk_key();
-  if (ctmp.compare("change to 'cached_scores_id_' when ready") != 0) {
-    return; // CACHING NOT BUILT IN YET
-  }
+	std::string ctmp = current_chunk->chunk_key();
+	if ( ctmp.compare("change to 'cached_scores_id_' when ready") != 0 ) {
+		return; // CACHING NOT BUILT IN YET
+	}
 }
 
 bool SolventAccessibility::cached_score(FragmentCandidateOP fragment,
-    FragmentScoreMapOP scores) {
+	FragmentScoreMapOP scores) {
 
-  return score( fragment, scores );
+	return score( fragment, scores );
 
 }
 
 bool SolventAccessibility::score(FragmentCandidateOP f,
-		FragmentScoreMapOP empty_map) {
+	FragmentScoreMapOP empty_map) {
 	Real totalScore = 0;
-	for (Size i = 1; i <= f->get_length(); i++) {
+	for ( Size i = 1; i <= f->get_length(); i++ ) {
 		VallResidueOP r = f->get_residue(i);
 		// just the difference
 		totalScore += fabs( predicted_sa_norm_[i + f->get_first_index_in_query() - 1] - r->sa_norm() );
 	}
 	totalScore /= (Real) f->get_length();
 	empty_map->set_score_component(totalScore, id_);
-	if ((totalScore > lowest_acceptable_value_) && (use_lowest_ == true))
+	if ( (totalScore > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;
+	}
 	return true;
 }
 

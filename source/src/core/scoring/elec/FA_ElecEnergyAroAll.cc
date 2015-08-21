@@ -44,8 +44,8 @@
 //         -- Rhiju, Nov. 2009
 //
 // Modified aroaro to calculate electrostatic interaction between an aromatic residue
-// and all surrounding atoms from other residues. Derivitives are not implemented.  
-//					-- James Gleixner, April 2011
+// and all surrounding atoms from other residues. Derivitives are not implemented.
+//     -- James Gleixner, April 2011
 
 /////////////////////////////////////////////////////////////////////////////////////////
 ///
@@ -193,10 +193,10 @@ bool atom_is_aro2( conformation::Residue const & rsd, Size const i )
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	std::string const atom_type_name( rsd.atom_type( i ).name() );
 	if ( atom_type_name == "aroC" ||
-			 atom_type_name == "Ntrp" ||
-			 atom_type_name == "Nhis" ||
-			 atom_type_name == "Oaro" ||
-			 atom_type_name == "Haro"	) return true;
+			atom_type_name == "Ntrp" ||
+			atom_type_name == "Nhis" ||
+			atom_type_name == "Oaro" ||
+			atom_type_name == "Haro" ) return true;
 
 	return false;
 }
@@ -211,8 +211,8 @@ FA_ElecEnergyAroAll::residue_pair_energy_aro_aro(
 	EnergyMap & emap
 ) const
 {
-//debug_assert( rsd1.is_aromatic() );
-//debug_assert( rsd2.is_aromatic() );
+	//debug_assert( rsd1.is_aromatic() );
+	//debug_assert( rsd2.is_aromatic() );
 
 	using namespace etable::count_pair;
 
@@ -227,16 +227,16 @@ FA_ElecEnergyAroAll::residue_pair_energy_aro_aro(
 
 		if ( !atom_is_aro2( rsd1, i ) ) continue;
 
-//debug output
-//std::cerr << "residue i " << rsd1.seqpos() << " is aromatic: " << rsd1.is_aromatic() << std::endl;
-//std::cerr << "residue j " << rsd2.seqpos() << " is aromatic: " << rsd2.is_aromatic() << std::endl;
+		//debug output
+		//std::cerr << "residue i " << rsd1.seqpos() << " is aromatic: " << rsd1.is_aromatic() << std::endl;
+		//std::cerr << "residue j " << rsd2.seqpos() << " is aromatic: " << rsd2.is_aromatic() << std::endl;
 
 		if ( i_charge == 0.0 ) continue;
-		
+
 
 		for ( Size j=1, j_end = rsd2.natoms(); j<= j_end; ++j ) {
 
-	//		if ( !atom_is_aro2( rsd2, j ) ) continue;
+			//  if ( !atom_is_aro2( rsd2, j ) ) continue;
 
 			Real const j_charge( rsd2.atomic_charge(j) );
 			if ( j_charge == 0.0 ) continue;
@@ -248,8 +248,8 @@ FA_ElecEnergyAroAll::residue_pair_energy_aro_aro(
 
 				total_score += score;
 				emap[ fa_elec_aro_all ] += score;
-//debug output
-		//std::cout << "elecenergy: " << rsd1.seqpos() << "  " << rsd1.atom_name(i) << "  " << rsd2.seqpos() << " " << rsd2.atom_name(j) << " is: " << score << std::endl;
+				//debug output
+				//std::cout << "elecenergy: " << rsd1.seqpos() << "  " << rsd1.atom_name(i) << "  " << rsd2.seqpos() << " " << rsd2.atom_name(j) << " is: " << score << std::endl;
 
 			}
 		}
@@ -270,7 +270,7 @@ FA_ElecEnergyAroAll::evaluate_rotamer_pair_energies(
 ) const
 {
 	if ( set1.num_rotamers() >= 1 && set2.num_rotamers() >= 1 &&
-		set1.rotamer(1)->is_aromatic() && set2.rotamer(1)->is_aromatic() ) {
+			set1.rotamer(1)->is_aromatic() && set2.rotamer(1)->is_aromatic() ) {
 		grandparent::evaluate_rotamer_pair_energies( set1, set2, pose, sfxn, weights, energy_table );
 	} // else, non aromatic/aromatic interaction; early return
 }
@@ -300,7 +300,7 @@ FA_ElecEnergyAroAll::eval_atom_derivative(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
- 	) const
+) const
 {
 	using namespace etable::count_pair;
 
@@ -325,9 +325,9 @@ FA_ElecEnergyAroAll::eval_atom_derivative(
 	// the neighbor/energy links
 	EnergyGraph const & energy_graph( energies.energy_graph() );
 
-// 	kinematics::DomainMap const & domain_map( energies.domain_map() );
-// 	bool const pos1_fixed( !energies.res_moved( pos1 ) );
-// debug_assert( pos1_fixed == ( domain_map(pos1) != 0 ) ); // this is probably not generally true but I'm curious
+	//  kinematics::DomainMap const & domain_map( energies.domain_map() );
+	//  bool const pos1_fixed( !energies.res_moved( pos1 ) );
+	// debug_assert( pos1_fixed == ( domain_map(pos1) != 0 ) ); // this is probably not generally true but I'm curious
 
 	// loop over *all* nbrs of rsd1 (not just upper or lower)
 	for ( graph::Graph::EdgeListConstIter
@@ -342,7 +342,7 @@ FA_ElecEnergyAroAll::eval_atom_derivative(
 
 		conformation::Residue const & rsd2( pose.residue( pos2 ) );
 
-	debug_assert( pos2 != pos1 );
+		debug_assert( pos2 != pos1 );
 
 		if ( rsd2.is_aromatic() ) {
 			eval_atom_derivative_aro_aro( rsd1, i, rsd2, weights, F1, F2 );
@@ -362,7 +362,7 @@ FA_ElecEnergyAroAll::eval_atom_derivative_aro_aro(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
- 	) const
+) const
 {
 
 	using namespace etable::count_pair;

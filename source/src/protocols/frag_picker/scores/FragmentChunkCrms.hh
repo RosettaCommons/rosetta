@@ -64,9 +64,9 @@ public:
 private:
 	std::string cached_scores_id_;
 	Size n_atoms_;
-  //std::string query_sequence_;
+	//std::string query_sequence_;
 	pose::PoseOP reference_pose_;
-  pose::PoseOP fragment_pose_;
+	pose::PoseOP fragment_pose_;
 	FArray2D_double reference_coordinates_;
 	FArray2D_double chunk_coordinates_;
 	FArray2D_double fragment_coordinates_;

@@ -190,10 +190,10 @@ bool atom_is_aro( conformation::Residue const & rsd, Size const i )
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	std::string const atom_type_name( rsd.atom_type( i ).name() );
 	if ( atom_type_name == "aroC" ||
-			 atom_type_name == "Ntrp" ||
-			 atom_type_name == "Nhis" ||
-			 atom_type_name == "Oaro" ||
-			 atom_type_name == "Haro"	) return true;
+			atom_type_name == "Ntrp" ||
+			atom_type_name == "Nhis" ||
+			atom_type_name == "Oaro" ||
+			atom_type_name == "Haro" ) return true;
 
 	return false;
 }
@@ -208,8 +208,8 @@ FA_ElecEnergyAroAro::residue_pair_energy_aro_aro(
 	EnergyMap & emap
 ) const
 {
-debug_assert( rsd1.is_aromatic() );
-debug_assert( rsd2.is_aromatic() );
+	debug_assert( rsd1.is_aromatic() );
+	debug_assert( rsd2.is_aromatic() );
 
 	using namespace etable::count_pair;
 
@@ -261,7 +261,7 @@ FA_ElecEnergyAroAro::evaluate_rotamer_pair_energies(
 ) const
 {
 	if ( set1.num_rotamers() >= 1 && set2.num_rotamers() >= 1 &&
-		set1.rotamer(1)->is_aromatic() && set2.rotamer(1)->is_aromatic() ) {
+			set1.rotamer(1)->is_aromatic() && set2.rotamer(1)->is_aromatic() ) {
 		grandparent::evaluate_rotamer_pair_energies( set1, set2, pose, sfxn, weights, energy_table );
 	} // else, non aromatic/aromatic interaction; early return
 }
@@ -291,7 +291,7 @@ FA_ElecEnergyAroAro::eval_atom_derivative(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
- 	) const
+) const
 {
 	using namespace etable::count_pair;
 
@@ -316,9 +316,9 @@ FA_ElecEnergyAroAro::eval_atom_derivative(
 	// the neighbor/energy links
 	EnergyGraph const & energy_graph( energies.energy_graph() );
 
-// 	kinematics::DomainMap const & domain_map( energies.domain_map() );
-// 	bool const pos1_fixed( !energies.res_moved( pos1 ) );
-// debug_assert( pos1_fixed == ( domain_map(pos1) != 0 ) ); // this is probably not generally true but I'm curious
+	//  kinematics::DomainMap const & domain_map( energies.domain_map() );
+	//  bool const pos1_fixed( !energies.res_moved( pos1 ) );
+	// debug_assert( pos1_fixed == ( domain_map(pos1) != 0 ) ); // this is probably not generally true but I'm curious
 
 	// loop over *all* nbrs of rsd1 (not just upper or lower)
 	for ( graph::Graph::EdgeListConstIter
@@ -333,7 +333,7 @@ FA_ElecEnergyAroAro::eval_atom_derivative(
 
 		conformation::Residue const & rsd2( pose.residue( pos2 ) );
 
-	debug_assert( pos2 != pos1 );
+		debug_assert( pos2 != pos1 );
 
 		if ( rsd2.is_aromatic() ) {
 			eval_atom_derivative_aro_aro( rsd1, i, rsd2, weights, F1, F2 );
@@ -353,7 +353,7 @@ FA_ElecEnergyAroAro::eval_atom_derivative_aro_aro(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
- 	) const
+) const
 {
 
 	using namespace etable::count_pair;

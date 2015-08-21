@@ -23,41 +23,41 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class FastForwardToNextRigidBody: public StepWiseScreener {
+class FastForwardToNextRigidBody: public StepWiseScreener {
 
-	public:
+public:
 
-		//constructor
-		FastForwardToNextRigidBody();
+	//constructor
+	FastForwardToNextRigidBody();
 
-		//destructor
-		~FastForwardToNextRigidBody();
+	//destructor
+	~FastForwardToNextRigidBody();
 
-	public:
+public:
 
-		//		bool
-		//		check_screen();
+	//  bool
+	//  check_screen();
 
-		virtual
-		std::string
-		name() const { return "FastForwardToNextRigidBody"; }
+	virtual
+	std::string
+	name() const { return "FastForwardToNextRigidBody"; }
 
-		virtual
-		StepWiseScreenerType
-		type() const { return FAST_FORWARD_TO_NEXT_RIGID_BODY; }
+	virtual
+	StepWiseScreenerType
+	type() const { return FAST_FORWARD_TO_NEXT_RIGID_BODY; }
 
-		virtual
-		void
-		get_update( sampler::StepWiseSamplerBaseOP sampler );
+	virtual
+	void
+	get_update( sampler::StepWiseSamplerBaseOP sampler );
 
-		// kind of tricky -- put fast_forward above in get_update.
-		//		virtual
-		//		void
-		//		fast_forward( sampler::StepWiseSamplerBaseOP sampler );
+	// kind of tricky -- put fast_forward above in get_update.
+	//  virtual
+	//  void
+	//  fast_forward( sampler::StepWiseSamplerBaseOP sampler );
 
-	private:
+private:
 
-	};
+};
 
 } //screener
 } //stepwise

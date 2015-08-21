@@ -102,7 +102,7 @@ public:
 	// 0 -- Moves the loop only; can pull apart covalent bonds to anything outside of the loop that isn't
 	//      an anchor point.
 	// 1 -- Moves the loop and anything downstream of the loop in the foldtree.  Can still pull apart
-  // 		 connections to non-child geometry.
+	//    connections to non-child geometry.
 	// CURRENTLY DEPRECATED
 	//void set_mover_effect_on_bonded_geometry( core::Size const effect ); //TODO -- Make this do something.
 
@@ -111,9 +111,9 @@ public:
 	// 0 -- Moves the loop only; can pull apart covalent bonds to anything outside of the loop that isn't
 	//      an anchor point.
 	// 1 -- Moves the loop and anything downstream of the loop in the foldtree.  Can still pull apart
-  // 		 connections to non-child geometry.
+	//    connections to non-child geometry.
 	// CURRENTLY DEPRECATED
-	//core::Size get_mover_effect_on_bonded_geometry() { return effect_on_bonded_geometry_; }	
+	//core::Size get_mover_effect_on_bonded_geometry() { return effect_on_bonded_geometry_; }
 
 	/// @brief Set whether or not this mover builds ideal geometry for the loop, or uses the existing geometry,
 	/// imperfect bond lengths/angles and all.
@@ -150,7 +150,7 @@ public:
 	/// @param[in] bondlength -- The length of the bond between the two atoms.
 	/// @param[in] bondangle1 -- The bond angle defined by (atom preceding at1 in the chain to be closed), (atm1), (atm2).
 	/// @param[in] bondangle1 -- The bond angle defined by (atm1), (atm2), (atom following at2 in the chain to be closed).
-  /// @param[in] torsion -- The torsion angle defined by (atom preceding at1 in the chain to be closed), (atm1), (atm2), (atom following at2 in the chain to be closed).
+	/// @param[in] torsion -- The torsion angle defined by (atom preceding at1 in the chain to be closed), (atm1), (atm2), (atom following at2 in the chain to be closed).
 	void close_bond (
 		core::Size const rsd1,
 		std::string const &at1,
@@ -212,34 +212,34 @@ public:
 	void set_perturber_effect ( core::Size const perturber_index, perturber::perturber_effect const &effect );
 
 	/// @brief Initialize a perturber's BinTransitionCalculator object, and load a bin_params file.
-	/// 
+	///
 	void load_perturber_bin_params( core::Size const perturber_index, std::string const &bin_params_file );
-	
+
 	/// @brief Initialize a perturber's BinTransitionCalculator object, and load a bin_params file.
 	/// @details This acts on the last perturber in the perturber list.
 	void load_perturber_bin_params( std::string const &bin_params_file );
-	
+
 	/// @brief Set the number of iterations for a perturber.
-	/// 
+	///
 	void set_perturber_iterations( core::Size const perturber_index, core::Size const val );
-	
+
 	/// @brief Set the number of iterations for a perturber.
 	/// @details This acts on the last perturber in the perturber list.
 	void set_perturber_iterations( core::Size const val );
-	
+
 	/// @brief Set whether the perturb_backbone_by_bins perturber requires residues to change their torsion
 	/// bins every move, or whether they can stay within the same bin.
 	void set_perturber_must_switch_bins( core::Size const perturber_index, bool const val );
-	
+
 	/// @brief Set whether the perturb_backbone_by_bins perturber requires residues to change their torsion
 	/// bins every move, or whether they can stay within the same bin.
 	/// @details This acts on the last perturber in the perturber list.
 	void set_perturber_must_switch_bins( bool const val );
-	
+
 	/// @brief Set the bin for the set_backbone_bin perturber.
 	///
 	void set_perturber_bin( core::Size const perturber_index, std::string const &bin );
-	
+
 	/// @brief Set the bin for the set_backbone_bin perturber.
 	/// @details This acts on the last perturber in the perturber list.
 	void set_perturber_bin( std::string const &bin );
@@ -263,11 +263,11 @@ public:
 
 
 	/// @brief Add a set of AtomIDs to the list of sets of AtomIDs that a perturber takes.
-	void add_atomset_to_perturber_atomset_list ( core::Size const perturber_index, utility::vector1 < core::id::NamedAtomID > const &atomset );	
+	void add_atomset_to_perturber_atomset_list ( core::Size const perturber_index, utility::vector1 < core::id::NamedAtomID > const &atomset );
 
 
 	/// @brief Add a set of AtomIDs to the list of sets of AtomIDs that a perturber takes.  This operates on the last perturber in the perturber list.
-	void add_atomset_to_perturber_atomset_list ( utility::vector1 < core::id::NamedAtomID > const &atomset );	
+	void add_atomset_to_perturber_atomset_list ( utility::vector1 < core::id::NamedAtomID > const &atomset );
 
 
 	/// @brief Add a new filter to the list of filters.
@@ -320,7 +320,7 @@ public:
 	/// @brief Set the residue number that a backbone_bin filter is acting on.
 	/// @details This version acts on the last filter in the filter list.
 	void set_filter_resnum( core::Size const value );
-	
+
 	/// @brief Set the bin name that a backbone_bin filter is looking for.
 	///
 	void set_filter_bin( core::Size const filter_index, std::string const &name_in );
@@ -328,11 +328,11 @@ public:
 	/// @brief Set the bin name that a backbone_bin filter is looking for.
 	/// @details This version acts on the last filter in the filter list.
 	void set_filter_bin( std::string const &name_in );
-	
+
 	/// @brief Initialize a filter's BinTransitionCalculator object, and load a bin_params file.
-	/// 
+	///
 	void load_filter_bin_params( core::Size const filter_index, std::string const &bin_params_file );
-	
+
 	/// @brief Initialize a filter's BinTransitionCalculator object, and load a bin_params file.
 	/// @details This acts on the last filter in the filter list.
 	void load_filter_bin_params( std::string const &bin_params_file );
@@ -390,7 +390,7 @@ private:
 	/// @brief The lower end of the loop to be closed is presumably connected to geometry that is not
 	/// moved by this mover.  However, the connection could be through backbone or sidechain.  The
 	/// mover needs to know the connection ID on the lower end of the loop to the anchor geometry.
-	/// Note: This will be set to 0 if the only connection that this residue can form is to the loop. 
+	/// Note: This will be set to 0 if the only connection that this residue can form is to the loop.
 	core::Size lower_anchor_connID_;
 
 	/// @brief The upper end of the loop to be closed is presumably connected to geometry that is not
@@ -405,7 +405,7 @@ private:
 
 
 	/// @brief Was the last apply() successful in generating a new kinematically-closed structure?
-  bool last_run_successful_;
+	bool last_run_successful_;
 
 	/// @brief List of the atoms in the segment to be closed, and their x,y,z coordinates.  Note that
 	/// the atomIDs refer to residue indices that correspond to the temporary pose created by the
@@ -485,9 +485,9 @@ private:
 	/// ntries_before_giving_up_ attempts.
 	core::Size ntries_before_giving_up_;
 
-////////////////////////////////////////////////////////////////////////////////
-//          PRIVATE FUNCTIONS                                                 //
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	//          PRIVATE FUNCTIONS                                                 //
+	////////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Gets a path through atoms in the residue from one connection atom to another within a residue.
 	/// @details  This is not necessarily the shortest path, geometrically, but hopefully it will do for our purposes.  (I
@@ -496,7 +496,7 @@ private:
 	/// until (a) it finds the lower-index atom, or (b) it reaches the root.  If it reaches the root, it then starts at the
 	/// lower-index atom and traces back until it reaches an atom already in the path.  The chosen path is therefore the path
 	/// from one atom, to the nearest common ancestor, to the other atom.
-	/// 
+	///
 	/// @param[in] first_atom -- The index of the first atom in the path.
 	/// @param[in] second_atom -- The index of the first atom in the path.
 	/// @param[in] rsd -- The residue object (const instance).
@@ -530,7 +530,7 @@ private:
 	/// that loop is connected to the geometry outside of the loop (i.e. what's considred the connection
 	/// to stationary geometry).  This function loops through all connIDs on the terminal residues of
 	/// the loop to be closed and picks the first one that links to geometry not in the loop as the
-  /// anchor connnection.  TODO: Add a manual override to specifiy that a different connection is the
+	/// anchor connnection.  TODO: Add a manual override to specifiy that a different connection is the
 	/// anchor.
 	void infer_anchor_connIDs(core::pose::Pose const &pose);
 
@@ -578,7 +578,7 @@ private:
 		core::pose::Pose &pose,
 		core::pose::Pose const &original_pose,
 		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map,
-		utility::vector1 < std::pair < core::Size, core::Size > > const &tail_residue_map		
+		utility::vector1 < std::pair < core::Size, core::Size > > const &tail_residue_map
 	);
 
 
@@ -603,7 +603,7 @@ private:
 	core::Size get_perturbedloop_rsd ( core::Size const original_pose_rsd, utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map );
 
 
-	///	@brief Pick the pivots for kinematic closure.
+	/// @brief Pick the pivots for kinematic closure.
 	void pick_pivots(
 		core::pose::Pose const &original_pose,
 		utility::vector1 < std::pair <core::Size, core::Size> > const &residue_map,
@@ -671,7 +671,7 @@ private:
 		utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map, //mapping of (loop residue, original pose residue)
 		utility::vector1 <std::pair <core::Size, core::Size> > const &tail_residue_map, //mapping of (tail residue index in pose, tail residue index in original_pose)
 		utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
-		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions, //torsions for each atom 
+		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions, //torsions for each atom
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles, //bond angle for each atom
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths, //bond length for each atom
 		utility::vector1 <core::Size> const &nsol_for_attempt,
@@ -679,7 +679,7 @@ private:
 	) const;
 
 	/// @brief Trims extra atoms from the start and end of the atom list, if the first and last pivots are not the fifth and fifth-last atoms, respectively.
-  ///
+	///
 	void prune_extra_atoms( utility::vector1 <core::Size> &pivots );
 
 	/// @brief Sets the mover that will be applied to all solutions that pass filters prior to applying the selector.
@@ -688,7 +688,7 @@ private:
 
 	/// @brief Returns whether a preselection mover has been specified.
 	///
-  bool preselection_mover_exists() const { return pre_selection_mover_exists_; }
+	bool preselection_mover_exists() const { return pre_selection_mover_exists_; }
 
 };
 

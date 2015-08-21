@@ -55,7 +55,7 @@ void print_node(
 {
 	// atom_num is often 0 in fold tree, means no specific atom.
 	// might as well use the first() one:
-	if (atom_num == 0) atom_num = 1;
+	if ( atom_num == 0 ) atom_num = 1;
 	core::chemical::AtomType const & atom_type = res.atom_type(atom_num);
 	// This info appears when you click on the point
 	out << "{" << res.name3() << " " << residue_num
@@ -91,9 +91,9 @@ void print_node(
 	// might as well use the first one:
 
 	int atom_num;
-	if (atom_name == "") {
+	if ( atom_name == "" ) {
 		atom_num = 1;
-	}	else {
+	} else {
 		atom_num = res.atom_index( atom_name );
 	}
 	print_node( out, residue_num, atom_num, res, extras );
@@ -160,23 +160,23 @@ ResidueKinWriter::write_rsd_coords(
 		ostr << rsd.name() << " " << rsd.seqpos();
 	}
 	ostr << "} color= " << color;
-	if ( master_ != "" )	ostr << " master= {" << master_ << "}";
+	if ( master_ != "" ) ostr << " master= {" << master_ << "}";
 	if ( is_instance ) {
 		ostr << " instance= {" << rsd.name() << " " << rsd.seqpos() << "}";
 	}
 	ostr << "\n";
 
 	if ( ! is_instance ) {
-		for( core::Size atom_i = 1; atom_i <= rsd.natoms(); ++atom_i) {
+		for ( core::Size atom_i = 1; atom_i <= rsd.natoms(); ++atom_i ) {
 			core::conformation::Residue::AtomIndices const & nbrs = rsd.nbrs(atom_i);
-			for(core::conformation::Residue::AtomIndices::const_iterator j = nbrs.begin(), end_j = nbrs.end(); j != end_j; ++j) {
+			for ( core::conformation::Residue::AtomIndices::const_iterator j = nbrs.begin(), end_j = nbrs.end(); j != end_j; ++j ) {
 				core::Size atom_j = *j;
-				if(atom_j <= atom_i) continue; // so we draw each bond just once, not twice
+				if ( atom_j <= atom_i ) continue; // so we draw each bond just once, not twice
 				bool const is_H = rsd.atom_is_hydrogen(atom_j) || rsd.atom_is_hydrogen(atom_i);
 
 				if ( is_H && ! write_apolar_hydrogens_ && ! write_polar_hydrogens_ ) continue;
 
-				if ( ! write_virtual_atoms_ && ( rsd.atom_type( atom_i ).element() == "X" || rsd.atom_type( atom_j ).element() == "X" )) continue;
+				if ( ! write_virtual_atoms_ && ( rsd.atom_type( atom_i ).element() == "X" || rsd.atom_type( atom_j ).element() == "X" ) ) continue;
 
 				/// backbone hydrogens?
 				if ( ! write_backbone_hydrogens_ && rsd.atom_is_backbone( atom_i ) && rsd.atom_is_hydrogen( atom_i ) ) continue;

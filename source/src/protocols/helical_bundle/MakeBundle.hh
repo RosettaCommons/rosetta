@@ -59,17 +59,17 @@ class MakeBundle : public protocols::moves::Mover
 {
 public: //Typedefs
 
-		typedef core::conformation::parametric::Parameters Parameters;
-		typedef core::conformation::parametric::ParametersOP ParametersOP;
-		typedef core::conformation::parametric::ParametersSet ParametersSet;
-		typedef core::conformation::parametric::ParametersSetOP ParametersSetOP;
+	typedef core::conformation::parametric::Parameters Parameters;
+	typedef core::conformation::parametric::ParametersOP ParametersOP;
+	typedef core::conformation::parametric::ParametersSet ParametersSet;
+	typedef core::conformation::parametric::ParametersSetOP ParametersSetOP;
 
-		typedef protocols::helical_bundle::parameters::BundleParameters BundleParameters;
-		typedef protocols::helical_bundle::parameters::BundleParametersOP BundleParametersOP;
-		typedef protocols::helical_bundle::parameters::BundleParametersCOP BundleParametersCOP;
-		typedef protocols::helical_bundle::parameters::BundleParametersSet BundleParametersSet;
-		typedef protocols::helical_bundle::parameters::BundleParametersSetOP BundleParametersSetOP;
-		typedef protocols::helical_bundle::parameters::BundleParametersSetCOP BundleParametersSetCOP;
+	typedef protocols::helical_bundle::parameters::BundleParameters BundleParameters;
+	typedef protocols::helical_bundle::parameters::BundleParametersOP BundleParametersOP;
+	typedef protocols::helical_bundle::parameters::BundleParametersCOP BundleParametersCOP;
+	typedef protocols::helical_bundle::parameters::BundleParametersSet BundleParametersSet;
+	typedef protocols::helical_bundle::parameters::BundleParametersSetOP BundleParametersSetOP;
+	typedef protocols::helical_bundle::parameters::BundleParametersSetCOP BundleParametersSetCOP;
 
 public:
 	MakeBundle();
@@ -92,11 +92,11 @@ public:
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const &
 	);
-	
+
 	/// @brief Ensure that an angle value is in radians.
 	/// @details  Checks the use_degrees_ boolean.  If true, converts degrees to radians; if false, returns input value.
 	core::Real convert_angle( core::Real const &val ) const {
-		if( use_degrees_ ) return (val / 180.0 * numeric::constants::d::pi);
+		if ( use_degrees_ ) return (val / 180.0 * numeric::constants::d::pi);
 		return val; //Default case -- don't alter the value.
 	}
 
@@ -265,7 +265,7 @@ public:
 	/// @brief Set the default residue name
 	///
 	void set_default_residue_name(utility::vector1< std::string > const &names) { default_residue_name_=names; default_residue_name_set_=true; }
-	
+
 	/// @brief Returns true if and only if the default residue name has been set
 	///
 	bool default_residue_name_set() const { return default_residue_name_set_; }
@@ -288,7 +288,7 @@ public:
 	/// @details An offset of 0 means that the first residue of the helix is the first residue of the repeating unit.  An offset
 	/// of 1 means that the first residue of the helix is the second residue of the repeating unit, etc.
 	core::Size default_repeating_unit_offset() const;
-	
+
 	/// @brief Returns the default residue name vector.
 	///
 	utility::vector1 < std::string > default_residue_name() const;
@@ -304,7 +304,7 @@ public:
 	/// @brief Returns the default delta_t value (residue offset).
 	///
 	core::Real default_delta_t() const;
-	
+
 	/// @brief Set the default z1_offset value (helix offset along the minor helix axis).
 	///
 	void set_default_z1_offset(core::Real const &val) { default_z1_offset_=val; default_z1_offset_set_=true; }
@@ -388,7 +388,7 @@ public:
 	/// @brief Returns the default for whether bond lengths should be set by the mover
 	///
 	bool default_allow_dihedrals() const;
-	
+
 	/// @brief Set whether we're using degrees (true) or radians (false).
 	///
 	void set_use_degrees( bool const val=true ) { use_degrees_=val; return; }
@@ -405,9 +405,9 @@ public:
 
 private:
 
-////////////////////////////////////////////////////////////////////////////////
-//          PRIVATE DATA                                                      //
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	//          PRIVATE DATA                                                      //
+	////////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Should the input pose be reset?
 	/// @details Default true.
@@ -500,7 +500,7 @@ private:
 	/// @details An offset of 0 means that the first residue of the helix is the first residue of the repeating unit.  An offset
 	/// of 1 means that the first residue of the helix is the second residue of the repeating unit, etc.
 	core::Size default_repeating_unit_offset_;
-	
+
 	/// @brief Has the default repeating unit offset been specified?
 	/// @details An offset of 0 means that the first residue of the helix is the first residue of the repeating unit.  An offset
 	/// of 1 means that the first residue of the helix is the second residue of the repeating unit, etc.
@@ -513,22 +513,22 @@ private:
 	/// @brief Has the default delta_t value (residue offset) been specified?
 	///
 	bool default_delta_t_set_;
-	
+
 	/// @brief Default z1_offset value (helix offset along the minor helix axis)
 	///
-	 core::Real default_z1_offset_;
+	core::Real default_z1_offset_;
 
-	/// @brief Has the default z1_offset value (helix offset along the minor helix axis) been specified?	 
- 	///
- 	core::Real default_z1_offset_set_;
+	/// @brief Has the default z1_offset value (helix offset along the minor helix axis) been specified?
+	///
+	core::Real default_z1_offset_set_;
 
 	/// @brief Default z0_offset value (helix offset along the major helix axis)
 	///
-	 core::Real default_z0_offset_;
+	core::Real default_z0_offset_;
 
-	/// @brief Has the default z0_offset value (helix offset along the major helix axis) been specified?	 
- 	///
- 	core::Real default_z0_offset_set_;
+	/// @brief Has the default z0_offset value (helix offset along the major helix axis) been specified?
+	///
+	core::Real default_z0_offset_set_;
 
 	/// @brief Default invert value (should the helix be flipped?)
 	///
@@ -569,7 +569,7 @@ private:
 	/// @brief Has the allow_dihedrals value been specified?
 	///
 	bool default_allow_dihedrals_set_;
-	
+
 	/// @brief Are we using degrees (true) or radians (false)?  Default radians (false).
 	///
 	bool use_degrees_;
@@ -578,9 +578,9 @@ private:
 	///
 	bool last_apply_failed_;
 
-////////////////////////////////////////////////////////////////////////////////
-//          PRIVATE FUNCTIONS                                                 //
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	//          PRIVATE FUNCTIONS                                                 //
+	////////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Set whether the last apply failed.
 	/// @details Called by the apply() function.

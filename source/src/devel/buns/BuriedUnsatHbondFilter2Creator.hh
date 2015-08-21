@@ -9,7 +9,7 @@
 
 /// @file   devel/buns/BuriedUnsatHbondFilterCreator2.hh
 /// @brief  FilterCreator for the BuriedUnsatHbondFilterCreator2
-/// @author	Kevin Houlihan (khouli@unc.edu)
+/// @author Kevin Houlihan (khouli@unc.edu)
 
 
 #ifndef INCLUDED_devel_buns_BuriedUnsatHbondFilter2Creator_hh

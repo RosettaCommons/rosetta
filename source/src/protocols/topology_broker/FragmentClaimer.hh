@@ -50,7 +50,7 @@ class FragmentClaimer : public virtual TopologyClaimer {
 	typedef TopologyClaimer Parent;
 public:
 	FragmentClaimer(); //for factory
- 	FragmentClaimer( simple_moves::FragmentMoverOP, std::string mover_tag, weights::AbinitioMoverWeightOP weight );
+	FragmentClaimer( simple_moves::FragmentMoverOP, std::string mover_tag, weights::AbinitioMoverWeightOP weight );
 	FragmentClaimer( simple_moves::FragmentMoverOP, std::string mover_tag, weights::AbinitioMoverWeightOP weight, std::string label, core::fragment::FragSetOP fags );
 	FragmentClaimer( simple_moves::FragmentMoverOP );
 	FragmentClaimer( FragmentClaimer const & src );
@@ -91,16 +91,16 @@ public:
 		return mover_tag_;
 	}
 
-	virtual moves::MoverOP get_mover(	core::pose::Pose const& /*pose*/ ) const;
+	virtual moves::MoverOP get_mover( core::pose::Pose const& /*pose*/ ) const;
 
 	void get_sequence_region( std::set< core::Size >& start_region ) const;
 
 	/*void current_offset(core::Size offset){
-		current_offset_ = offset;
+	current_offset_ = offset;
 	}
 
 	core::Size current_offset(){
-		return current_offset_;
+	return current_offset_;
 	}*/
 
 

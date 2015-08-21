@@ -84,8 +84,8 @@ HBondOptions::HBondOptions( std::string params_db_tag /* = "sp2_elec_params") */
 
 void HBondOptions::initialize_from_options() {
 	using namespace basic::options;
-	if (option.has(OptionKeys::membrane::Mhbond_depth) &&
-		option[OptionKeys::membrane::Mhbond_depth].user()){
+	if ( option.has(OptionKeys::membrane::Mhbond_depth) &&
+			option[OptionKeys::membrane::Mhbond_depth].user() ) {
 		Mbhbond_ = option[OptionKeys::membrane::Mhbond_depth];//pba
 	}
 
@@ -100,34 +100,43 @@ void HBondOptions::initialize_from_options() {
 	sp2_BAH180_rise_ = option[ OptionKeys::corrections::score::hb_sp2_BAH180_rise ];
 	put_intra_into_total_ = basic::options::option[basic::options::OptionKeys::score::put_intra_into_total]();
 
-	if (option[ OptionKeys::score::length_dep_srbb ].user())
+	if ( option[ OptionKeys::score::length_dep_srbb ].user() ) {
 		length_dependent_srbb_ = option[ OptionKeys::score::length_dep_srbb ];
-	if (option[ OptionKeys::score::ldsrbb_low_scale ].user())
+	}
+	if ( option[ OptionKeys::score::ldsrbb_low_scale ].user() ) {
 		ldsrbb_low_scale_ = option[ OptionKeys::score::ldsrbb_low_scale ];
-	if (option[ OptionKeys::score::ldsrbb_high_scale ].user())
+	}
+	if ( option[ OptionKeys::score::ldsrbb_high_scale ].user() ) {
 		ldsrbb_high_scale_ = option[ OptionKeys::score::ldsrbb_high_scale ];
-	if (option[ OptionKeys::score::ldsrbb_minlength ].user())
-    ldsrbb_minlength_ = option[ OptionKeys::score::ldsrbb_minlength ];
-  if (option[ OptionKeys::score::ldsrbb_maxlength ].user())
-    ldsrbb_maxlength_ = option[ OptionKeys::score::ldsrbb_maxlength ];
+	}
+	if ( option[ OptionKeys::score::ldsrbb_minlength ].user() ) {
+		ldsrbb_minlength_ = option[ OptionKeys::score::ldsrbb_minlength ];
+	}
+	if ( option[ OptionKeys::score::ldsrbb_maxlength ].user() ) {
+		ldsrbb_maxlength_ = option[ OptionKeys::score::ldsrbb_maxlength ];
+	}
 
-	if (option[ OptionKeys::score::hb_env_dep_new ].user())
+	if ( option[ OptionKeys::score::hb_env_dep_new ].user() ) {
 		use_hb_env_dep_new_ = option[ OptionKeys::score::hb_env_dep_new ]();
-	if (option[ OptionKeys::score::hb_env_dep_new_low_scale ].user())
+	}
+	if ( option[ OptionKeys::score::hb_env_dep_new_low_scale ].user() ) {
 		hb_env_dep_new_low_scale_ = option[ OptionKeys::score::hb_env_dep_new_low_scale ]();
-	if (option[ OptionKeys::score::hb_env_dep_new_low_nneigh ].user())
+	}
+	if ( option[ OptionKeys::score::hb_env_dep_new_low_nneigh ].user() ) {
 		hb_env_dep_new_low_nneigh_ = option[ OptionKeys::score::hb_env_dep_new_low_nneigh ]();
-	if (option[ OptionKeys::score::hb_env_dep_new_high_nneigh ].user())
+	}
+	if ( option[ OptionKeys::score::hb_env_dep_new_high_nneigh ].user() ) {
 		hb_env_dep_new_high_nneigh_ = option[ OptionKeys::score::hb_env_dep_new_high_nneigh ]();
+	}
 
-	if (option.has(OptionKeys::corrections::score::hb_sp2_outer_width)) {
+	if ( option.has(OptionKeys::corrections::score::hb_sp2_outer_width) ) {
 		sp2_outer_width_ = option[ OptionKeys::corrections::score::hb_sp2_outer_width ];
 	}
 
 	measure_sp3acc_BAH_from_hvy_ = option[ OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy ];
 	fade_energy_ = option[ OptionKeys::corrections::score::hb_fade_energy ];
 
-	if ( option.has( OptionKeys::corrections::score::hbond_energy_shift)) {
+	if ( option.has( OptionKeys::corrections::score::hbond_energy_shift) ) {
 		hbond_energy_shift_ = option[ OptionKeys::corrections::score::hbond_energy_shift ];
 	}
 }
@@ -174,7 +183,7 @@ HBondOptions::operator=( HBondOptions const & src )
 	hb_env_dep_new_low_nneigh_ = src.hb_env_dep_new_low_nneigh_;
 	hb_env_dep_new_high_nneigh_ = src.hb_env_dep_new_high_nneigh_;
 
-  return *this;
+	return *this;
 }
 
 
@@ -185,77 +194,77 @@ HBondOptions::parse_my_tag(
 	// hbond options
 
 	// DEPRECATE
-	if( tag->hasOption( "exclude_DNA_DNA_hbond" )) {
+	if ( tag->hasOption( "exclude_DNA_DNA_hbond" ) ) {
 		exclude_DNA_DNA( tag->getOption<bool>( "exclude_DNA_DNA_hbond" ) );
 	}
-	if( tag->hasOption( "use_hb_env_dep_DNA" )) {
+	if ( tag->hasOption( "use_hb_env_dep_DNA" ) ) {
 		use_hb_env_dep_DNA( tag->getOption<bool>( "use_hb_env_dep_DNA" ) );
 	}
-	if( tag->hasOption( "use_hb_env_dep" )) {
+	if ( tag->hasOption( "use_hb_env_dep" ) ) {
 		use_hb_env_dep( tag->getOption<bool>( "use_hb_env_dep" ) );
 	}
-	if( tag->hasOption( "smooth_hb_env_dep" )) {
+	if ( tag->hasOption( "smooth_hb_env_dep" ) ) {
 		smooth_hb_env_dep( tag->getOption<bool>( "smooth_hb_env_dep" ) );
 	}
-	if( tag->hasOption( "decompose_bb_hb_into_pair_energies" )) {
+	if ( tag->hasOption( "decompose_bb_hb_into_pair_energies" ) ) {
 		decompose_bb_hb_into_pair_energies( tag->getOption<bool>( "decompose_bb_hb_into_pair_energies" ) );
 	}
 
-	if( tag->hasOption( "hbonds:exclude_DNA_DNA_hbond" )) {
+	if ( tag->hasOption( "hbonds:exclude_DNA_DNA_hbond" ) ) {
 		exclude_DNA_DNA( tag->getOption<bool>( "hbonds:exclude_DNA_DNA_hbond" ) );
 	}
-	if( tag->hasOption( "hbonds:use_hb_env_dep_DNA" )) {
+	if ( tag->hasOption( "hbonds:use_hb_env_dep_DNA" ) ) {
 		use_hb_env_dep_DNA( tag->getOption<bool>( "hbonds:use_hb_env_dep_DNA" ) );
 	}
-	if( tag->hasOption( "hbonds:put_intra_into_total" )) {
+	if ( tag->hasOption( "hbonds:put_intra_into_total" ) ) {
 		put_intra_into_total( tag->getOption<bool>( "hbonds:put_intra_into_total" ) );
 	}
-	if( tag->hasOption( "hbonds:exclude_self_hbonds" )) {
+	if ( tag->hasOption( "hbonds:exclude_self_hbonds" ) ) {
 		exclude_self_hbonds( tag->getOption<bool>( "hbonds:exclude_self_hbonds" ) );
 	}
-	if( tag->hasOption( "hbonds:use_hb_env_dep" )) {
+	if ( tag->hasOption( "hbonds:use_hb_env_dep" ) ) {
 		use_hb_env_dep( tag->getOption<bool>( "hbonds:use_hb_env_dep" ) );
 	}
-	if( tag->hasOption( "hbonds:smooth_hb_env_dep" )) {
+	if ( tag->hasOption( "hbonds:smooth_hb_env_dep" ) ) {
 		smooth_hb_env_dep( tag->getOption<bool>( "hbonds:smooth_hb_env_dep" ) );
 	}
-	if( tag->hasOption( "hbonds:decompose_bb_hb_into_pair_energies" )) {
+	if ( tag->hasOption( "hbonds:decompose_bb_hb_into_pair_energies" ) ) {
 		decompose_bb_hb_into_pair_energies( tag->getOption<bool>( "hbonds:decompose_bb_hb_into_pair_energies" ) );
 	}
-	if( tag->hasOption( "hbonds:exclude_intra_res_protein" )) {
+	if ( tag->hasOption( "hbonds:exclude_intra_res_protein" ) ) {
 		exclude_intra_res_protein( tag->getOption<bool>( "hbonds:exclude_intra_res_protein" ) );
 	}
-	if( tag->hasOption( "hbonds:exclude_intra_res_RNA" )) {
+	if ( tag->hasOption( "hbonds:exclude_intra_res_RNA" ) ) {
 		exclude_intra_res_RNA( tag->getOption<bool>( "hbonds:exclude_intra_res_RNA" ) );
 	}
-	if( tag->hasOption( "hbonds:put_intra_into_total" )) {
+	if ( tag->hasOption( "hbonds:put_intra_into_total" ) ) {
 		put_intra_into_total( tag->getOption<bool>( "hbonds:put_intra_into_total" ) );
 	}
-	if( tag->hasOption( "hbonds:bb_donor_acceptor_check" )) {
+	if ( tag->hasOption( "hbonds:bb_donor_acceptor_check" ) ) {
 		bb_donor_acceptor_check( tag->getOption<bool>( "hbonds:bb_donor_acceptor_check" ) );
 	}
-	if( tag->hasOption( "hbonds:params_database_tag" )) {
+	if ( tag->hasOption( "hbonds:params_database_tag" ) ) {
 		params_database_tag( tag->getOption<std::string>( "hbonds:params_database_tag" ) );
 	}
-	if( tag->hasOption( "hbonds:use_sp2_chi_penalty" )) {
+	if ( tag->hasOption( "hbonds:use_sp2_chi_penalty" ) ) {
 		use_sp2_chi_penalty( tag->getOption<bool>( "hbonds:use_sp2_chi_penalty" ) );
 	}
-	if( tag->hasOption( "hbonds:sp2_BAH180_rise" )) {
+	if ( tag->hasOption( "hbonds:sp2_BAH180_rise" ) ) {
 		sp2_BAH180_rise( tag->getOption<Real>( "hbonds:sp2_BAH180_rise" ) );
 	}
-	if( tag->hasOption( "hbonds:sp2_outer_width" )) {
+	if ( tag->hasOption( "hbonds:sp2_outer_width" ) ) {
 		sp2_outer_width( tag->getOption<Real>( "hbonds:sp2_outer_width" ) );
 	}
-	if( tag->hasOption( "hbonds:measure_sp3acc_BAH_from_hvy" )) {
+	if ( tag->hasOption( "hbonds:measure_sp3acc_BAH_from_hvy" ) ) {
 		measure_sp3acc_BAH_from_hvy( tag->getOption<bool>( "hbonds:measure_sp3acc_BAH_from_hvy" ) );
 	}
-	if( tag->hasOption( "hbonds:fade_energy" )) {
+	if ( tag->hasOption( "hbonds:fade_energy" ) ) {
 		fade_energy( tag->getOption<bool>( "hbonds:fade_energy" ) );
 	}
-	if( tag->hasOption( "hbonds:Mbhbond" )) {
+	if ( tag->hasOption( "hbonds:Mbhbond" ) ) {
 		bb_donor_acceptor_check( tag->getOption<bool>( "hbonds:Mbhbond" ) );
 	}
-	if ( tag->hasOption( "hbonds:mphbond" )) {
+	if ( tag->hasOption( "hbonds:mphbond" ) ) {
 		bb_donor_acceptor_check( tag->getOption<bool>( "hbonds:mphbond" ) );
 	}
 
@@ -500,9 +509,9 @@ bool
 operator==( HBondOptions const & a, HBondOptions const & b )
 {
 	return ( ( a.exclude_DNA_DNA_ == b.exclude_DNA_DNA_ ) &&
-		( a.exclude_intra_res_protein_ == b.exclude_intra_res_protein_	 ) &&
-		( a.exclude_intra_res_RNA_ == b.exclude_intra_res_RNA_	 ) &&
-		( a.put_intra_into_total_ == b.put_intra_into_total_	 ) &&
+		( a.exclude_intra_res_protein_ == b.exclude_intra_res_protein_  ) &&
+		( a.exclude_intra_res_RNA_ == b.exclude_intra_res_RNA_  ) &&
+		( a.put_intra_into_total_ == b.put_intra_into_total_  ) &&
 		( a.exclude_self_hbonds_ == b.exclude_self_hbonds_ ) &&
 		( a.use_hb_env_dep_ == b.use_hb_env_dep_ ) &&
 		( a.use_hb_env_dep_DNA_ == b.use_hb_env_dep_DNA_ ) &&

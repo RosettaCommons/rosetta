@@ -22,21 +22,21 @@
 
 namespace devel {
 
-  namespace inv_kin_lig_loop_design {
+namespace inv_kin_lig_loop_design {
 
-    Loop::Loop(Segment const& segment, map<Residue*,Residue*> const& clones ) : lo(0), hi(0), to(0), jumpno(0) {
+Loop::Loop(Segment const& segment, map<Residue*,Residue*> const& clones ) : lo(0), hi(0), to(0), jumpno(0) {
 
-      lo = find_or_throw(clones, segment.lo_res )->seqpos();
-      hi = find_or_throw(clones, segment.hi_res )->seqpos();
-      tag = segment.tag;
+	lo = find_or_throw(clones, segment.lo_res )->seqpos();
+	hi = find_or_throw(clones, segment.hi_res )->seqpos();
+	tag = segment.tag;
 
-      if( segment.type == Segment::ANCHORED_LOOP ) {
-				to = lo + segment.nres_pre;
-				jumpno = segment.jumpno;
-      }
+	if ( segment.type == Segment::ANCHORED_LOOP ) {
+		to = lo + segment.nres_pre;
+		jumpno = segment.jumpno;
+	}
 
-    }
+}
 
-  } // LoopDesign
+} // LoopDesign
 
 } // devel

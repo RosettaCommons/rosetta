@@ -63,10 +63,10 @@ class DockingProtocol : public moves::Mover
 {
 public:
 	/// @brief
-	/// 	empty constructor fills values with the expected defaults
-	///		rb_jump will be assigned as 1 (meaning the first jump will
-	///		be used as the jump across which all rigid-body perturbations
-	///		will occur
+	///  empty constructor fills values with the expected defaults
+	///  rb_jump will be assigned as 1 (meaning the first jump will
+	///  be used as the jump across which all rigid-body perturbations
+	///  will occur
 	DockingProtocol();
 
 	// the logic for "low_res_protocol_only" and "docking_local_refine" is
@@ -124,18 +124,18 @@ public:
 	void set_lowres_scorefxn( core::scoring::ScoreFunctionOP docking_scorefxn_low );
 
 	/// @brief Sets the score function that will be used in the high-resolution phase.
-	///	The same score function will be used for evaluating moves, packing and discriminating
+	/// The same score function will be used for evaluating moves, packing and discriminating
 	void set_highres_scorefxn( core::scoring::ScoreFunctionOP docking_scorefxn_high );
 
 	/// @brief Sets the score function that will be used in the high-resolution phase.
-	///	The first scorefunction will be used for evaluating moves and discriminating, the second will be used for packing
+	/// The first scorefunction will be used for evaluating moves and discriminating, the second will be used for packing
 	void set_highres_scorefxn(
 		core::scoring::ScoreFunctionOP docking_scorefxn_high,
 		core::scoring::ScoreFunctionOP docking_scorefxn_pack
 	);
 
 	/// @brief Sets the score function that will be used in the high-resolution phase.
-	///	The first scorefunction will be used for evaluating moves, the second will be used for packing and the third for
+	/// The first scorefunction will be used for evaluating moves, the second will be used for packing and the third for
 	/// discriminating
 	void set_highres_scorefxn(
 		core::scoring::ScoreFunctionOP docking_scorefxn_high,
@@ -146,7 +146,7 @@ public:
 	void set_sc_min( bool sc_min );
 	void set_rt_min( bool rt_min );
 	void set_dock_min( bool const dock_min );
-    
+
 	void set_no_filters( bool no_filters );
 	void set_low_res_protocol_only( bool const low_res_protocol_only );
 	void set_docking_local_refine( bool const docking_local_refine );
@@ -232,7 +232,7 @@ private:
 	bool dock_min_;
 
 	bool if_ensemble_;  // Add by DK
-    
+
 	bool no_filters_;
 	bool use_legacy_protocol_;
 	bool docking_local_refine_;
@@ -252,7 +252,7 @@ private:
 
 	/// jumps that rigid_body transformations can occur over
 	DockJumps movable_jumps_;
-    
+
 	// score functions
 	core::scoring::ScoreFunctionOP docking_scorefxn_low_;
 	core::scoring::ScoreFunctionOP docking_scorefxn_high_;
@@ -278,7 +278,7 @@ private:
 	protocols::docking::DockingEnsembleOP ensemble1_;
 	protocols::docking::DockingEnsembleOP ensemble2_;
 	std::string ensemble1_filename_, ensemble2_filename_;
-    
+
 	// constraint set mover
 	protocols::simple_moves::ConstraintSetMoverOP docking_constraint_;
 
@@ -300,7 +300,7 @@ private:
 	void finalize_setup( core::pose::Pose & pose );
 
 	/// @brief Sets up the instance of DockingProtocol and initializes all members based on values passed in at construction
-	///		or via the command line.
+	///  or via the command line.
 	void init(
 		DockJumps const movable_jumps,
 		bool const low_res_protocol_only_,

@@ -49,11 +49,11 @@ namespace abinitio {
 
 class TemplateJumpSetup : public jumping::BaseJumpSetup {
 public:
-  TemplateJumpSetup(
-				 TemplatesCOP templates,
-				 core::fragment::SecondaryStructureCOP secstruct,
-				 PairingStatisticsCOP,
-				 core::scoring::dssp::PairingList const& helix_pairings
+	TemplateJumpSetup(
+		TemplatesCOP templates,
+		core::fragment::SecondaryStructureCOP secstruct,
+		PairingStatisticsCOP,
+		core::scoring::dssp::PairingList const& helix_pairings
 	);
 
 	~TemplateJumpSetup();
@@ -62,22 +62,22 @@ public:
 	}
 
 	virtual
-  jumping::JumpSample create_jump_sample() const;
+	jumping::JumpSample create_jump_sample() const;
 
 	jumping::JumpSample clean_jumps( jumping::JumpSample const& ) const;
 
-	//'	jumping::JumpSample
-	//	create_jump_sample( std::string ModelID ) const;
-  /// @brief returns an ordered FragSet that is compatible with the JumpSample
-  /// default: generate jumps from ss-library according to JumpSample
-  virtual
+	//' jumping::JumpSample
+	// create_jump_sample( std::string ModelID ) const;
+	/// @brief returns an ordered FragSet that is compatible with the JumpSample
+	/// default: generate jumps from ss-library according to JumpSample
+	virtual
 	core::fragment::FragSetOP generate_jump_frags( jumping::JumpSample const&, core::kinematics::MoveMap const& ) const;
 
 	bool is_helix_jump( core::scoring::dssp::Pairing const& p ) const;
 
 private:
-  TemplatesCOP templates_;
-  core::fragment::SecondaryStructureCOP secstruct_;
+	TemplatesCOP templates_;
+	core::fragment::SecondaryStructureCOP secstruct_;
 
 	PairingStatisticsCOP strand_stats_;
 	core::scoring::dssp::PairingList helix_pairings_;
@@ -86,14 +86,14 @@ private:
 
 class FixTemplateJumpSetup : public TemplateJumpSetup {
 public:
-  FixTemplateJumpSetup( TemplatesCOP templates, core::fragment::SecondaryStructureCOP secstruct, PairingStatisticsCOP, core::scoring::dssp::PairingList const&,
+	FixTemplateJumpSetup( TemplatesCOP templates, core::fragment::SecondaryStructureCOP secstruct, PairingStatisticsCOP, core::scoring::dssp::PairingList const&,
 		jumping::BaseJumpSetupOP jump_def );
 	~FixTemplateJumpSetup();
 
-  FixTemplateJumpSetup( TemplateJumpSetup const& templ, jumping::BaseJumpSetupOP jump_def );
+	FixTemplateJumpSetup( TemplateJumpSetup const& templ, jumping::BaseJumpSetupOP jump_def );
 
 	virtual
-  jumping::JumpSample create_jump_sample() const;
+	jumping::JumpSample create_jump_sample() const;
 
 private:
 	jumping::BaseJumpSetupOP jump_def_;

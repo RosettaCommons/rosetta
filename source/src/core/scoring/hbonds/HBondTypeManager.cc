@@ -32,7 +32,7 @@
 
 namespace core {
 namespace scoring {
-namespace hbonds{
+namespace hbonds {
 
 using namespace std;
 using utility::vector1;
@@ -143,55 +143,55 @@ HBondTypeManager::setup_type_names()
 	name2geo_dim_type_["hbgd_AHD"] = hbgd_AHD;
 	name2geo_dim_type_["hbgd_chi"] = hbgd_chi;
 
-debug_assert( name2weight_type_.size() == hbw_MAX );
-debug_assert( name2deriv_type_.size() == hbderiv_MAX );
-debug_assert( name2don_chem_type_.size() == hbdon_MAX );
-debug_assert( name2acc_chem_type_.size() == hbacc_MAX );
-debug_assert( name2seq_sep_type_.size() == seq_sep_MAX );
-debug_assert( name2geo_dim_type_.size() == hbgd_MAX );
-debug_assert( name2hybridization_type_.size() == chemical::HYBRID_MAX );
+	debug_assert( name2weight_type_.size() == hbw_MAX );
+	debug_assert( name2deriv_type_.size() == hbderiv_MAX );
+	debug_assert( name2don_chem_type_.size() == hbdon_MAX );
+	debug_assert( name2acc_chem_type_.size() == hbacc_MAX );
+	debug_assert( name2seq_sep_type_.size() == seq_sep_MAX );
+	debug_assert( name2geo_dim_type_.size() == hbgd_MAX );
+	debug_assert( name2hybridization_type_.size() == chemical::HYBRID_MAX );
 
 	weight_type2name_.resize( hbw_MAX );
 	for ( map< string, HBondWeightType >::const_iterator iter = name2weight_type_.begin(),
-		iter_end = name2weight_type_.end(); iter != iter_end; ++iter ) {
+			iter_end = name2weight_type_.end(); iter != iter_end; ++iter ) {
 		weight_type2name_[ iter->second ] = iter->first;
 	}
 
 	deriv_type2name_.resize( hbderiv_MAX );
 	for ( map< string, HBDerivType >::const_iterator iter = name2deriv_type_.begin(),
-		iter_end = name2deriv_type_.end(); iter != iter_end; ++iter ) {
+			iter_end = name2deriv_type_.end(); iter != iter_end; ++iter ) {
 		deriv_type2name_[ iter->second ] = iter->first;
 	}
 
 	don_chem_type2name_.resize(hbdon_MAX );
 	for ( map< string, HBDonChemType >::const_iterator iter = name2don_chem_type_.begin(),
-		iter_end = name2don_chem_type_.end(); iter != iter_end; ++iter ) {
+			iter_end = name2don_chem_type_.end(); iter != iter_end; ++iter ) {
 		don_chem_type2name_[ iter->second ] = iter->first;
 	}
 
 	acc_chem_type2name_.resize(hbacc_MAX );
 	for ( map< string, HBAccChemType >::const_iterator iter = name2acc_chem_type_.begin(),
-		iter_end = name2acc_chem_type_.end(); iter != iter_end; ++iter ) {
+			iter_end = name2acc_chem_type_.end(); iter != iter_end; ++iter ) {
 		acc_chem_type2name_[ iter->second ] = iter->first;
 	}
 
 	seq_sep_type2name_.resize(seq_sep_MAX );
 	for ( map< string, HBSeqSep >::const_iterator iter = name2seq_sep_type_.begin(),
-		iter_end = name2seq_sep_type_.end(); iter != iter_end; ++iter ) {
+			iter_end = name2seq_sep_type_.end(); iter != iter_end; ++iter ) {
 		seq_sep_type2name_[ iter->second ] = iter->first;
 	}
 
 	hybridization_type2name_.resize(chemical::HYBRID_MAX);
 	for ( map< string, Hybridization >::const_iterator
-					iter = name2hybridization_type_.begin(),
-					iter_end = name2hybridization_type_.end();
-				iter != iter_end; ++iter ) {
+			iter = name2hybridization_type_.begin(),
+			iter_end = name2hybridization_type_.end();
+			iter != iter_end; ++iter ) {
 		hybridization_type2name_[iter->second ] = iter->first;
 	}
 
 	geo_dim_type2name_.resize(hbgd_MAX );
 	for ( map< string, HBGeoDimType >::const_iterator iter = name2geo_dim_type_.begin(),
-		iter_end = name2geo_dim_type_.end(); iter != iter_end; ++iter ) {
+			iter_end = name2geo_dim_type_.end(); iter != iter_end; ++iter ) {
 		geo_dim_type2name_[ iter->second ] = iter->first;
 	}
 }

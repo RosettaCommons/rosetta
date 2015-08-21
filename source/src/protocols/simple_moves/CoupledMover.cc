@@ -206,31 +206,33 @@ CoupledMover::fresh_instance() const
 void
 CoupledMover::apply( core::pose::Pose & pose )
 {
-	if ( resnum_ == 0 )
+	if ( resnum_ == 0 ) {
 		randomize_resnum_ = true;
+	}
 
 	if ( randomize_resnum_ ) {
 		utility::vector1< core::Size > move_positions;
 		for ( core::Size i = 1; i <= packer_task_->total_residue(); i++ ) {
-			if ( packer_task_->pack_residue( i ) || packer_task_->design_residue( i ) )
+			if ( packer_task_->pack_residue( i ) || packer_task_->design_residue( i ) ) {
 				move_positions.push_back( i );
+			}
 		}
 		core::Size random_index = numeric::random::rg().random_range( 1, move_positions.size() );
 		resnum_ = move_positions[ random_index ];
 	}
-	
+
 	if ( pose.residue( resnum_ ).is_protein() ) {
-		if ( fix_backbone_ == false) {
+		if ( fix_backbone_ == false ) {
 			short_backrub_mover_->set_resnum( resnum_ );
 			short_backrub_mover_->apply( pose );
 		}
 	} else {
 		rigid_body_mover_->apply( pose );
 	}
-	
+
 	boltzmann_rotamer_mover_->set_resnum( resnum_ );
 	boltzmann_rotamer_mover_->apply( pose );
-		
+
 }
 
 std::string

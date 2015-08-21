@@ -111,7 +111,7 @@ void protocols::abinitio::KinematicAbinitio::register_options() {
 	option.add_relevant( resample::tag );
 	option.add_relevant( resample::stage2 );
 	option.add_relevant( resample::min_max_start_seq_sep );
- 	option.add_relevant( jumps::bb_moves );
+	option.add_relevant( jumps::bb_moves );
 	option.add_relevant( jumps::no_wobble );
 	option.add_relevant( jumps::no_shear );
 	option.add_relevant( jumps::no_sample_ss_jumps );
@@ -151,44 +151,44 @@ KinematicAbinitio::KinematicAbinitio(
 	FoldConstraints ( brute_move_small, brute_move_large, smooth_move_small, dummy ),
 	bRampChainbreaks_( true )
 {
-  BaseClass::type( "KinematicAbinitio" );
+	BaseClass::type( "KinematicAbinitio" );
 	full_constraint_set_=NULL;
 }
 
 
 KinematicAbinitio::KinematicAbinitio(
-   core::fragment::FragSetCOP fragset3mer,
-   core::fragment::FragSetCOP fragset9mer,
-   core::kinematics::MoveMapCOP movemap
+	core::fragment::FragSetCOP fragset3mer,
+	core::fragment::FragSetCOP fragset9mer,
+	core::kinematics::MoveMapCOP movemap
 ) : FoldConstraints ( fragset3mer, fragset9mer, movemap ),
-    bRampChainbreaks_( true )
+	bRampChainbreaks_( true )
 {
-  BaseClass::type( "KinematicAbinitio" );
+	BaseClass::type( "KinematicAbinitio" );
 	full_constraint_set_=NULL;
 }
 
 void
 KinematicAbinitio::set_default_scores() {
-  Parent::set_default_scores();
-  // set low chainbreak energy for stage 1 + 2
-  Real chainbreak_score_1 = option[ jumps::chainbreak_weight_stage1 ]();
-  Real chainbreak_score_2 = option[ jumps::chainbreak_weight_stage2 ]();
-  Real chainbreak_score_3 = option[ jumps::chainbreak_weight_stage3 ]();
-  Real chainbreak_score_4 = option[ jumps::chainbreak_weight_stage4 ]();
-  if ( !bRampChainbreaks_ ) {
-    set_score_weight( scoring::linear_chainbreak, chainbreak_score_1, STAGE_1 );
-    set_score_weight( scoring::linear_chainbreak, chainbreak_score_2, STAGE_2 );
-    set_score_weight( scoring::linear_chainbreak, chainbreak_score_3, STAGE_3a );
-    set_score_weight( scoring::linear_chainbreak, chainbreak_score_3, STAGE_3b );
-    set_score_weight( scoring::linear_chainbreak, chainbreak_score_4, STAGE_4 );
-  }
+	Parent::set_default_scores();
+	// set low chainbreak energy for stage 1 + 2
+	Real chainbreak_score_1 = option[ jumps::chainbreak_weight_stage1 ]();
+	Real chainbreak_score_2 = option[ jumps::chainbreak_weight_stage2 ]();
+	Real chainbreak_score_3 = option[ jumps::chainbreak_weight_stage3 ]();
+	Real chainbreak_score_4 = option[ jumps::chainbreak_weight_stage4 ]();
+	if ( !bRampChainbreaks_ ) {
+		set_score_weight( scoring::linear_chainbreak, chainbreak_score_1, STAGE_1 );
+		set_score_weight( scoring::linear_chainbreak, chainbreak_score_2, STAGE_2 );
+		set_score_weight( scoring::linear_chainbreak, chainbreak_score_3, STAGE_3a );
+		set_score_weight( scoring::linear_chainbreak, chainbreak_score_3, STAGE_3b );
+		set_score_weight( scoring::linear_chainbreak, chainbreak_score_4, STAGE_4 );
+	}
 }
 
 //@brief read out cmd-line options
 void KinematicAbinitio::set_default_options() {
-  Parent::set_default_options();
+	Parent::set_default_options();
 	bRampChainbreaks_ = option[ jumps::ramp_chainbreaks ]; //default is true
-  bOverlapChainbreaks_ = option[ jumps::overlap_chainbreak ];
+	bOverlapChainbreaks_ = option[ jumps::overlap_chainbreak ];
 }
 
 void KinematicAbinitio::replace_scorefxn( core::pose::Pose& pose, StageID stage, core::Real intra_stage_progress ) {
@@ -203,67 +203,67 @@ KinematicAbinitio::prepare_stage1( core::pose::Pose &pose ) {
 	//we set score term in here: we minimize in this one... need to set all score terms before that
 	bool success = Parent::prepare_stage1( pose );
 	if ( bRampChainbreaks_ ) {
-    Real const setting( 0.25 / 3 * option[ jumps::increase_chainbreak ] );
-    set_score_weight( scoring::linear_chainbreak, 0.0, ALL_STAGES );
-    set_score_weight( scoring::linear_chainbreak, setting, STAGE_2);
-  }
+		Real const setting( 0.25 / 3 * option[ jumps::increase_chainbreak ] );
+		set_score_weight( scoring::linear_chainbreak, 0.0, ALL_STAGES );
+		set_score_weight( scoring::linear_chainbreak, setting, STAGE_2);
+	}
 	return success;
 }
 
 bool
 KinematicAbinitio::prepare_stage2( core::pose::Pose &pose ) {
-  return Parent::prepare_stage2( pose );
+	return Parent::prepare_stage2( pose );
 }
 
 bool
 KinematicAbinitio::prepare_stage3( core::pose::Pose &pose ) {
-  return Parent::prepare_stage3( pose );
+	return Parent::prepare_stage3( pose );
 }
 
 bool
 KinematicAbinitio::prepare_loop_in_stage3(
-		core::pose::Pose& pose,
-		Size iteration, /* loop_iteration*/
-		Size total /* total_iterations */
+	core::pose::Pose& pose,
+	Size iteration, /* loop_iteration*/
+	Size total /* total_iterations */
 ) {
 	Real progress( 1.0* iteration/total );
-  if ( bRampChainbreaks_ ) {
-    Real const fact(  progress * 1.0/3  * option[ jumps::increase_chainbreak ]);
-    //score_stage3a ( score2 )
-    set_score_weight( scoring::linear_chainbreak, 2.5 * fact, STAGE_3a );
-    //score_stage3b ( score5 )
-    set_score_weight( scoring::linear_chainbreak, 0.5 * fact, STAGE_3b );
-  }
-  return Parent::prepare_loop_in_stage3( pose, iteration, total ); //minimization happens here!
+	if ( bRampChainbreaks_ ) {
+		Real const fact(  progress * 1.0/3  * option[ jumps::increase_chainbreak ]);
+		//score_stage3a ( score2 )
+		set_score_weight( scoring::linear_chainbreak, 2.5 * fact, STAGE_3a );
+		//score_stage3b ( score5 )
+		set_score_weight( scoring::linear_chainbreak, 0.5 * fact, STAGE_3b );
+	}
+	return Parent::prepare_loop_in_stage3( pose, iteration, total ); //minimization happens here!
 }
 
 
 bool
 KinematicAbinitio::prepare_loop_in_stage4(
-  core::pose::Pose& pose,
-  Size iteration, /* loop_iteration*/
-  Size total /* total_iterations */
+	core::pose::Pose& pose,
+	Size iteration, /* loop_iteration*/
+	Size total /* total_iterations */
 ) {
 	Real progress( 1.0* iteration/total );
-  if ( bRampChainbreaks_ ) {
+	if ( bRampChainbreaks_ ) {
 		Real const setting( ( 1.5*progress+2.5 ) * ( 1.0/3) * option[ jumps::increase_chainbreak ]);
-    set_score_weight( scoring::linear_chainbreak, setting, STAGE_4 );
-    set_current_weight( scoring::linear_chainbreak, setting );
-    if ( bOverlapChainbreaks_ ) {
-      set_score_weight( scoring::overlap_chainbreak, progress, STAGE_4 );
-      set_current_weight( scoring::overlap_chainbreak, progress );
-    }
-  }
-  return Parent::prepare_loop_in_stage4( pose, iteration, total );
+		set_score_weight( scoring::linear_chainbreak, setting, STAGE_4 );
+		set_current_weight( scoring::linear_chainbreak, setting );
+		if ( bOverlapChainbreaks_ ) {
+			set_score_weight( scoring::overlap_chainbreak, progress, STAGE_4 );
+			set_current_weight( scoring::overlap_chainbreak, progress );
+		}
+	}
+	return Parent::prepare_loop_in_stage4( pose, iteration, total );
 }
 
 
 void
 KinematicAbinitio::set_max_seq_sep( core::pose::Pose& pose, Size max_dist ) {
-  //if not already set, --> fix the chainbreaks dependent on distance
-  kinematics().add_chainbreak_variants( pose, max_dist, constraints().shortest_path() );
-  mc().reset( pose ); //necessary to avoid that new chainbreaks are immediatly removed by copying back the old pose
-  Parent::set_max_seq_sep( pose, max_dist );
+	//if not already set, --> fix the chainbreaks dependent on distance
+	kinematics().add_chainbreak_variants( pose, max_dist, constraints().shortest_path() );
+	mc().reset( pose ); //necessary to avoid that new chainbreaks are immediatly removed by copying back the old pose
+	Parent::set_max_seq_sep( pose, max_dist );
 }
 
 /// @details the native_pose_ is used to determine orientation and pleating of jumps
@@ -274,26 +274,26 @@ KinematicAbinitio::set_max_seq_sep( core::pose::Pose& pose, Size max_dist ) {
 
 void
 KinematicAbinitio::dump_jump_log( core::pose::Pose& pose, std::string const& filename ) {
-  // diagnostics for jumps
-  if ( get_native_pose() ) {
+	// diagnostics for jumps
+	if ( get_native_pose() ) {
 		pose::Pose native_pose( *get_native_pose() );
-    native_pose.fold_tree( kinematics().sampling_fold_tree() );
-    core::io::silent::ProteinSilentStruct pss;
-    pss.fill_struct( pose, "jump_log" );
-    evaluate_pose( pose, "jump_log", pss );
+		native_pose.fold_tree( kinematics().sampling_fold_tree() );
+		core::io::silent::ProteinSilentStruct pss;
+		pss.fill_struct( pose, "jump_log" );
+		evaluate_pose( pose, "jump_log", pss );
 
-    utility::io::ozstream out( filename , std::ios_base::out | std::ios_base::app );
+		utility::io::ozstream out( filename , std::ios_base::out | std::ios_base::app );
 		using namespace ObjexxFCL::format;
-    out << get_current_tag() << " "
-				<< RJ(10, pss.get_energy ( "rms" ) ) << " "
-			//				<< RJ(10, pss.get_energy ( "rms_native" ) ) << " "
-				<< RJ(10, pss.get_energy ( "score" ) ) << " ";
-    out << RJ(5, kinematics().sampling_fold_tree().num_jump() ) << " ";
+		out << get_current_tag() << " "
+			<< RJ(10, pss.get_energy ( "rms" ) ) << " "
+			//    << RJ(10, pss.get_energy ( "rms_native" ) ) << " "
+			<< RJ(10, pss.get_energy ( "score" ) ) << " ";
+		out << RJ(5, kinematics().sampling_fold_tree().num_jump() ) << " ";
 		for ( Size i = 1; i<=kinematics().sampling_fold_tree().num_jump(); i++ )  {
 			out << RJ(10, simple_filters::JumpEvaluator( native_pose, i ).apply( pose ) ) << " ";
 		}
 		out << jumping::JumpSample( pose.fold_tree() ) << " " << std::endl;
-  }
+	}
 }
 
 void
@@ -335,25 +335,25 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 			JumpSample target_jumps( pose.fold_tree() );
 			target_jumps.steal_orientation_and_pleating( pose );
 			tr.Warning << "enable JUMP MOVES in resamplin --- these are taken from SS-library"
-								 <<" no matter where original structures came from" << std::endl;
+				<<" no matter where original structures came from" << std::endl;
 			FragSetOP jump_frags( new OrderedFragSet );
 			//generate fragments from all homologes
 			core::fragment::FrameList jump_frames;
 			target_jumps.generate_jump_frames( jump_frames, kinematics().movemap() );
 			core::scoring::dssp::PairingsList library_pairings;
 			for ( FrameList::iterator jump_frame = jump_frames.begin();
-						jump_frame != jump_frames.end(); ++jump_frame ) {
+					jump_frame != jump_frames.end(); ++jump_frame ) {
 				core::scoring::dssp::Pairing target_pairing( target_jumps.get_pairing( (*jump_frame)->start(), (*jump_frame)->stop() ) );
 				library_pairings.push_back( target_pairing );
 			}
 			//fill remaining frames from ss-library
 			jumping::StandardPairingLibrary::get_instance()->
 				generate_jump_frags(
-														library_pairings,
-														kinematics().movemap(),
-														true /*with Torsion*/,
-														*jump_frags
-				);
+				library_pairings,
+				kinematics().movemap(),
+				true /*with Torsion*/,
+				*jump_frags
+			);
 			using namespace protocols::simple_moves;
 			simple_moves::ClassicFragmentMoverOP jump_mover( new ClassicFragmentMover( jump_frags, kinematics().movemap_ptr() ) );
 			jump_mover->type( "JumpMoves" );
@@ -382,7 +382,7 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 		}
 	}
 
-	//	evaluation::MetaPoseEvaluatorOP ori_evaluator = evaluator();
+	// evaluation::MetaPoseEvaluatorOP ori_evaluator = evaluator();
 	tr.Debug << "set movemap from KinematicControl " << std::endl;
 	set_movemap( kinematics().movemap_ptr() );
 	//set fold-tree, apply a fragment from each jump_mover frame once
@@ -425,7 +425,7 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 			ConstraintCOPs cst_list = orig_constraints->get_all_constraints();
 			ConstraintSetOP filtered_cst( new ConstraintSet ); //empty
 			for ( ConstraintCOPs::const_iterator it = cst_list.begin(), eit = cst_list.end();
-						it != eit; ++it ) {
+					it != eit; ++it ) {
 				Real local_skip( 1.0 );
 				if ( option[ fold_cst::violation_skip_basis ].user() ) {
 					Real const basis( option[ fold_cst::violation_skip_basis ] );
@@ -435,7 +435,7 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 						local_skip*=1.0*(cfunc.viols()-base_line)/basis;
 						tr.Trace << "ponder constraint "; (*it)->show_def( tr.Trace, pose );
 						tr.Trace << "skip prob: " << skip_rate*local_skip << " computed from, viols :" << cfunc.viols() << " - " << base_line << " base: "
-										 << basis << " times overall skip_rate " << skip_rate << std::endl;
+							<< basis << " times overall skip_rate " << skip_rate << std::endl;
 						if ( local_skip > 1.0 ) local_skip = 1.0;
 					} catch ( std::bad_cast ){};
 				}
@@ -454,12 +454,12 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 		}
 	}
 
-  // run protocol
+	// run protocol
 	Parent::apply( pose );
-  bool success = ( get_last_move_status() == moves::MS_SUCCESS );
+	bool success = ( get_last_move_status() == moves::MS_SUCCESS );
 
-  // diagnostics for jumps
-  dump_jump_log( pose, "jumps.log");
+	// diagnostics for jumps
+	dump_jump_log( pose, "jumps.log");
 
 	if ( success && closure_protocol_ ) {
 		closure_protocol_->scorefxn( current_scorefxn().clone() );
@@ -472,15 +472,15 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 			set_current_tag( "C_"+get_current_tag().substr(std::min(2,(int)get_current_tag().size())) );
 			set_last_move_status( moves::FAIL_RETRY );
 		}
-		if( option[ OptionKeys::abinitio::debug ].user() ){
+		if ( option[ OptionKeys::abinitio::debug ].user() ) {
 			output_debug_structure( pose, "loop_closed" );
 		}
 		//////////////////////////////////////////////////////////////////////////////////////
 		////  Maybe idealize the structure before relax ?
-		if ( option[ OptionKeys::loops::idealize_after_loop_close ]()){
-				protocols::idealize::IdealizeMover idealizer;
-				idealizer.fast( false );
-				idealizer.apply( pose );
+		if ( option[ OptionKeys::loops::idealize_after_loop_close ]() ) {
+			protocols::idealize::IdealizeMover idealizer;
+			idealizer.fast( false );
+			idealizer.apply( pose );
 		}
 	}
 
@@ -495,7 +495,7 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 			utility::io::ozstream viol_stream;
 			viol_stream.open_append( viol_file );
 			for ( ConstraintCOPs::const_iterator it = cst_list.begin(), eit = cst_list.end();
-						it != eit; ++it ) {
+					it != eit; ++it ) {
 				viol_stream << get_current_tag() << " ";
 				if ( (*it)->show_violations( tr.Debug, pose, 1, 1.1 /*threshold*/ ) ) {
 					viol_stream << "AKTIV VIOL ";
@@ -507,7 +507,7 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 
 			//no the constraint that were not active
 			for ( ConstraintCOPs::const_iterator it = skipped_list.begin(), eit = skipped_list.end();
-						it != eit; ++it ) {
+					it != eit; ++it ) {
 				viol_stream << get_current_tag() << " ";
 				if ( (*it)->show_violations( tr.Debug, pose, 1, 1.1 /*threshold*/ ) ) {
 					viol_stream << "PASSIV VIOL ";
@@ -536,126 +536,126 @@ KinematicAbinitio::get_name() const {
 }
 
 moves::MoverOP KinematicAbinitio::create_jump_moves( moves::MoverOP std_mover ) {
-  simple_moves::FragmentMoverOP jump_mover = kinematics().jump_mover();
+	simple_moves::FragmentMoverOP jump_mover = kinematics().jump_mover();
 	if ( !jump_mover ) return std_mover;
 
-  moves::RandomMoverOP combi_move( new moves::RandomMover );
-  Size nfrag_moves( option[ jumps::invrate_jump_move ] );
-  for ( Size i = 1; i<=nfrag_moves; i++ ) { // a simple way of changing the relative frequencies
-    combi_move->add_mover( std_mover );
-  }
-  combi_move->add_mover( jump_mover );
+	moves::RandomMoverOP combi_move( new moves::RandomMover );
+	Size nfrag_moves( option[ jumps::invrate_jump_move ] );
+	for ( Size i = 1; i<=nfrag_moves; i++ ) { // a simple way of changing the relative frequencies
+		combi_move->add_mover( std_mover );
+	}
+	combi_move->add_mover( jump_mover );
 
-  return combi_move;
+	return combi_move;
 }
 
 
 moves::MoverOP KinematicAbinitio::create_bb_moves(
-  pose::Pose &,
-  moves::MoverOP std_mover,
-  bool bLargeWobble,
-  Real crank_up_angle )
+	pose::Pose &,
+	moves::MoverOP std_mover,
+	bool bLargeWobble,
+	Real crank_up_angle )
 {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-  int const nmoves ( 5 ); //this is standard in relax
-  Real temp = mc().temperature();
+	int const nmoves ( 5 ); //this is standard in relax
+	Real temp = mc().temperature();
 
-  // setup the move objects
+	// setup the move objects
 	core::kinematics::MoveMapOP mm_temp( new core::kinematics::MoveMap( *movemap() ) );
-  simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover( mm_temp, temp, nmoves ) );
-  small_mover->angle_max( 'H', 2.0*crank_up_angle );
-  small_mover->angle_max( 'E', 2.0*crank_up_angle );
-  small_mover->angle_max( 'L', 3.0*crank_up_angle );
+	simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover( mm_temp, temp, nmoves ) );
+	small_mover->angle_max( 'H', 2.0*crank_up_angle );
+	small_mover->angle_max( 'E', 2.0*crank_up_angle );
+	small_mover->angle_max( 'L', 3.0*crank_up_angle );
 
-  // setup the move objects
-  simple_moves::ShearMoverOP shear_mover( new simple_moves::ShearMover( mm_temp, temp, nmoves ) );
-  shear_mover->angle_max( 'H', 2.0*crank_up_angle*2.0 );
-  shear_mover->angle_max( 'E', 2.0*crank_up_angle*2.0 );
-  shear_mover->angle_max( 'L', 3.0*crank_up_angle*2.0 );
+	// setup the move objects
+	simple_moves::ShearMoverOP shear_mover( new simple_moves::ShearMover( mm_temp, temp, nmoves ) );
+	shear_mover->angle_max( 'H', 2.0*crank_up_angle*2.0 );
+	shear_mover->angle_max( 'E', 2.0*crank_up_angle*2.0 );
+	shear_mover->angle_max( 'L', 3.0*crank_up_angle*2.0 );
 
-  //setup cycle
-  moves::RandomMoverOP cycle( new moves::RandomMover() );
-  cycle->add_mover( std_mover ); //the current frag_trial
-  cycle->add_mover( small_mover );
-  if ( !option[ jumps::no_shear ]() ) cycle->add_mover( shear_mover );
+	//setup cycle
+	moves::RandomMoverOP cycle( new moves::RandomMover() );
+	cycle->add_mover( std_mover ); //the current frag_trial
+	cycle->add_mover( small_mover );
+	if ( !option[ jumps::no_shear ]() ) cycle->add_mover( shear_mover );
 
-  if ( !option[ jumps::no_wobble ]() ) {
-    // and why not throwing in a wobble ?!
-    if ( bLargeWobble ) {
-      cycle->add_mover( moves::MoverOP( new simple_moves::WobbleMover( brute_move_large()->fragments(), movemap() ) ) );
-    } else {
-      cycle->add_mover( moves::MoverOP( new simple_moves::WobbleMover( brute_move_small()->fragments(), movemap() ) ) );
-    }
-  }
-  return cycle;
+	if ( !option[ jumps::no_wobble ]() ) {
+		// and why not throwing in a wobble ?!
+		if ( bLargeWobble ) {
+			cycle->add_mover( moves::MoverOP( new simple_moves::WobbleMover( brute_move_large()->fragments(), movemap() ) ) );
+		} else {
+			cycle->add_mover( moves::MoverOP( new simple_moves::WobbleMover( brute_move_small()->fragments(), movemap() ) ) );
+		}
+	}
+	return cycle;
 }
 
 moves::TrialMoverOP KinematicAbinitio::stage1_mover( pose::Pose &, moves::TrialMoverOP trials ) {
 	if ( kinematics().jump_mover() ) {
 		return moves::TrialMoverOP( new moves::TrialMover( create_jump_moves( trials->mover() ), mc_ptr() ) );
-  } else return trials;
+	} else return trials;
 }
 
 
 moves::TrialMoverOP KinematicAbinitio::stage2_mover( pose::Pose &, moves::TrialMoverOP trials ) {
 	if ( kinematics().jump_mover() ) {
 		return moves::TrialMoverOP( new moves::TrialMover( create_jump_moves( trials->mover() ), mc_ptr() ) );
-  } else return trials;
+	} else return trials;
 }
 
 
 moves::TrialMoverOP KinematicAbinitio::stage3_mover( pose::Pose &pose, int, int, moves::TrialMoverOP trials ) {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  moves::MoverOP moves = trials->mover();
-  if ( kinematics().jump_mover() ) {
-    //adds jump_moves to the already existant moves
-    moves = create_jump_moves( moves );
-  }
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	moves::MoverOP moves = trials->mover();
+	if ( kinematics().jump_mover() ) {
+		//adds jump_moves to the already existant moves
+		moves = create_jump_moves( moves );
+	}
 
-  // add also bb_moves to the existent moves
-  if ( option[ jumps::bb_moves ] ) {
-    // okay the bb_moves are asked for. We are ON AIR !
-    bool bLargeWobble( true );
-    Real crank_up_angle = 6.0; //factor to make the small_moves larger: after-all we are in centroid mode
-    moves = create_bb_moves( pose, moves, bLargeWobble, crank_up_angle );
-  }
+	// add also bb_moves to the existent moves
+	if ( option[ jumps::bb_moves ] ) {
+		// okay the bb_moves are asked for. We are ON AIR !
+		bool bLargeWobble( true );
+		Real crank_up_angle = 6.0; //factor to make the small_moves larger: after-all we are in centroid mode
+		moves = create_bb_moves( pose, moves, bLargeWobble, crank_up_angle );
+	}
 	moves::TrialMoverOP retval( new moves::TrialMover( moves, mc_ptr() ) );
 	retval->keep_stats_type( moves::accept_reject );
 	return retval;
-  //return new moves::TrialMover( moves, mc_ptr() );
+	//return new moves::TrialMover( moves, mc_ptr() );
 }
 
 moves::TrialMoverOP KinematicAbinitio::stage4_mover( pose::Pose &pose, int kk, moves::TrialMoverOP trials ) {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-  moves::MoverOP moves = trials->mover();
-  if (  kinematics().jump_mover() && kk <= 1 ) {
-    moves = create_jump_moves( moves );
-  }
-  if ( option[ jumps::bb_moves ] ) {
-    // okay the bb_moves are asked for. We are ON AIR !
-    bool bLargeWobble( kk<=1 );
-    Real crank_up_angle = 5.0; //factor to make the small_moves larger: after-all we are in centroid mode
-    moves = create_bb_moves( pose, moves, bLargeWobble, crank_up_angle );
-  }
-  return moves::TrialMoverOP( new moves::TrialMover( moves, mc_ptr() ) );
+	moves::MoverOP moves = trials->mover();
+	if (  kinematics().jump_mover() && kk <= 1 ) {
+		moves = create_jump_moves( moves );
+	}
+	if ( option[ jumps::bb_moves ] ) {
+		// okay the bb_moves are asked for. We are ON AIR !
+		bool bLargeWobble( kk<=1 );
+		Real crank_up_angle = 5.0; //factor to make the small_moves larger: after-all we are in centroid mode
+		moves = create_bb_moves( pose, moves, bLargeWobble, crank_up_angle );
+	}
+	return moves::TrialMoverOP( new moves::TrialMover( moves, mc_ptr() ) );
 }
 
 
 void
 JumpingFoldConstraintsWrapper::apply( core::pose::Pose& pose ) {
 	ResolutionSwitcher res_switch(
-			pose,
-			!start_from_centroid(), //input pose /*is ignored now witch calls pose.is_fullatom() instead */
-			true, // starts as centroid
-			true //yeah we will apply it to a centroid structure
+		pose,
+		!start_from_centroid(), //input pose /*is ignored now witch calls pose.is_fullatom() instead */
+		true, // starts as centroid
+		true //yeah we will apply it to a centroid structure
 	);
 
-  // initialize jumping
+	// initialize jumping
 	jumping::JumpSample current_jumps;
 
 	Size attempts( 10 );
@@ -668,7 +668,7 @@ JumpingFoldConstraintsWrapper::apply( core::pose::Pose& pose ) {
 	}
 
 	//allow jumps to move
-	kinematics::MoveMapOP new_movemap( new	kinematics::MoveMap( *movemap() ) );
+	kinematics::MoveMapOP new_movemap( new kinematics::MoveMap( *movemap() ) );
 	new_movemap->set_jump( true );
 
 	core::fragment::FragSetOP jump_frags;
@@ -686,7 +686,7 @@ JumpingFoldConstraintsWrapper::apply( core::pose::Pose& pose ) {
 	tr.Debug << "JumpingFoldConstraintsWrapper: final fold_tree " << pose.fold_tree() << std::endl;
 	kc->set_jump_mover( jump_mover );
 	kc->set_movemap( new_movemap );
-  // run protocol
+	// run protocol
 	if ( jump_mover && option[ jumps::no_sample_ss_jumps ] ) {
 		jump_mover->apply_at_all_positions( pose ); //make sure each jump is initialized
 		kc->set_jump_mover( NULL ); //but no sampling
@@ -714,7 +714,7 @@ JumpingFoldConstraintsWrapper::JumpingFoldConstraintsWrapper(
 	jumping::BaseJumpSetupOP jump_def,
 	int dummy /* otherwise the two constructors are ambigous */
 ) : KinematicAbinitio ( brute_move_small, brute_move_large, smooth_move_small, dummy ),
-		jump_def_ ( jump_def )
+	jump_def_ ( jump_def )
 {
 	BaseClass::type( "JumpingFoldConstraintsWrapper" );
 }
@@ -726,7 +726,7 @@ JumpingFoldConstraintsWrapper::JumpingFoldConstraintsWrapper(
 	core::kinematics::MoveMapCOP movemap,
 	jumping::BaseJumpSetupOP jump_def
 ) : KinematicAbinitio ( fragset3mer, fragset9mer, movemap ),
-		jump_def_( jump_def )
+	jump_def_( jump_def )
 {
 	BaseClass::type( "JumpingFoldConstraintsWrapper" );
 }

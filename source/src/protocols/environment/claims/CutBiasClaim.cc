@@ -45,86 +45,86 @@ using core::environment::LocalPosition;
 using core::environment::LocalPositions;
 
 CutBiasClaim::CutBiasClaim( ClientMoverOP owner,
-                            utility::tag::TagCOP tag,
-                            basic::datacache::DataMap const& datamap ):
-  Parent( owner ),
-  label_( tag->getOption< std::string >( "label" ) )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap const& datamap ):
+	Parent( owner ),
+	label_( tag->getOption< std::string >( "label" ) )
 {
-  using core::pack::task::residue_selector::ResidueSelector;
+	using core::pack::task::residue_selector::ResidueSelector;
 
-  core::Real bias = tag->getOption< core::Real >( "bias" );
+	core::Real bias = tag->getOption< core::Real >( "bias" );
 
-  std::pair< core::Size, core::Size > range;
-  range.first = tag->getOption< core::Size >( "region_start" );
-  range.second = tag->getOption< core::Size >( "region_end" );
+	std::pair< core::Size, core::Size > range;
+	range.first = tag->getOption< core::Size >( "region_start" );
+	range.second = tag->getOption< core::Size >( "region_end" );
 
-  for( Size i = range.first; i <= range.second; ++i ){
-    biases_[ LocalPosition( label_, i ) ] = bias;
-  }
+	for ( Size i = range.first; i <= range.second; ++i ) {
+		biases_[ LocalPosition( label_, i ) ] = bias;
+	}
 
-  if( datamap.has( "ResidueSelector", label_ ) ){
-    this->queue_for_annotation( label_, datamap.get_ptr< ResidueSelector const >( "ResidueSelector", label_ ) );
-  }
+	if ( datamap.has( "ResidueSelector", label_ ) ) {
+		this->queue_for_annotation( label_, datamap.get_ptr< ResidueSelector const >( "ResidueSelector", label_ ) );
+	}
 }
 
 CutBiasClaim::CutBiasClaim( ClientMoverOP owner,
-                            std::string const& label,
-                            core::fragment::SecondaryStructure const& ss_in ):
-  Parent( owner ),
-  label_( label )
+	std::string const& label,
+	core::fragment::SecondaryStructure const& ss_in ):
+	Parent( owner ),
+	label_( label )
 {
-  ObjexxFCL::FArray1D_float const& loop_frac = ss_in.loop_fraction();
+	ObjexxFCL::FArray1D_float const& loop_frac = ss_in.loop_fraction();
 
-  for( Size i = 1; i <= ss_in.total_residue(); ++i ){
-    biases_[ LocalPosition( label_, i ) ] = loop_frac( (int) i );
-  }
+	for ( Size i = 1; i <= ss_in.total_residue(); ++i ) {
+		biases_[ LocalPosition( label_, i ) ] = loop_frac( (int) i );
+	}
 
 }
 
 CutBiasClaim::CutBiasClaim( ClientMoverOP owner,
-                           std::string const& label,
-                           std::map< LocalPosition, core::Real > const& biases ):
-  Parent( owner ),
-  label_( label ),
-  biases_( biases )
+	std::string const& label,
+	std::map< LocalPosition, core::Real > const& biases ):
+	Parent( owner ),
+	label_( label ),
+	biases_( biases )
 {}
 
 CutBiasClaim::CutBiasClaim( ClientMoverOP owner,
-                            std::string const& label,
-                            std::pair< core::Size, core::Size > const& range,
-                            core::Real bias ):
-  Parent( owner ),
-  label_( label )
+	std::string const& label,
+	std::pair< core::Size, core::Size > const& range,
+	core::Real bias ):
+	Parent( owner ),
+	label_( label )
 {
-  for( Size i = range.first; i <= range.second; ++i ){
-    biases_[ LocalPosition( label_, i ) ] = bias;
-  }
+	for ( Size i = range.first; i <= range.second; ++i ) {
+		biases_[ LocalPosition( label_, i ) ] = bias;
+	}
 }
 
 void CutBiasClaim::yield_elements( FoldTreeSketch const&, CutBiasElements& elements ) const {
 
-  for( std::map< LocalPosition, core::Real >::const_iterator it = biases_.begin();
-       it != biases_.end(); ++it ){
-    CutBiasElement e;
+	for ( std::map< LocalPosition, core::Real >::const_iterator it = biases_.begin();
+			it != biases_.end(); ++it ) {
+		CutBiasElement e;
 
-    e.p = it->first;
-    e.bias = it->second;
+		e.p = it->first;
+		e.bias = it->second;
 
-    elements.push_back( e );
-  }
+		elements.push_back( e );
+	}
 
 }
 
 EnvClaimOP CutBiasClaim::clone() const {
-  return EnvClaimOP( new CutBiasClaim( *this ) );
+	return EnvClaimOP( new CutBiasClaim( *this ) );
 }
 
 std::string CutBiasClaim::type() const{
-  return "CutBias";
+	return "CutBias";
 }
 
 void CutBiasClaim::show( std::ostream& os ) const {
-  os << type() << " owned by a " << owner()->get_name();
+	os << type() << " owned by a " << owner()->get_name();
 }
 
 } //claims

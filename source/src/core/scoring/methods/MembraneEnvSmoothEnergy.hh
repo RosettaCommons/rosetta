@@ -77,17 +77,17 @@ public:
 	) const;
 
 	/// @brief increments the F1 and F2 derivative vectors for an atom
- 	virtual
- 	void
- 	eval_atom_derivative(
- 		id::AtomID const & atom_id,
- 		pose::Pose const & pose,
+	virtual
+	void
+	eval_atom_derivative(
+		id::AtomID const & atom_id,
+		pose::Pose const & pose,
 		kinematics::DomainMap const &,
- 		ScoreFunction const &,
- 		EnergyMap const & weights,
- 		Vector & F1,
- 		Vector & F2
- 	) const;
+		ScoreFunction const &,
+		EnergyMap const & weights,
+		Vector & F1,
+		Vector & F2
+	) const;
 
 	/// @brief unused by the MembraneEnvSmoothEnergy class, returns 0
 	Distance
@@ -145,8 +145,8 @@ private:
 	mutable utility::vector1< Real > residue_dEdN_;
 
 	ObjexxFCL::FArray3D< Real > mem_env_log10_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

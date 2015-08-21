@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	 test/core/chemical/database_io.cxxtest.hh
+/// @file  test/core/chemical/database_io.cxxtest.hh
 /// @brief   Test suite for carbohydrate database loading
 /// @author  Labonte <JWLabonte@jhu.edu>
 
@@ -46,7 +46,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_TRACE( "Testing read_codes_and_roots_from_database_file() method." );
 
 		map< string, string > map(
-				read_codes_and_roots_from_database_file( "core/chemical/carbohydrates/codes_to_roots.map" ) );
+			read_codes_and_roots_from_database_file( "core/chemical/carbohydrates/codes_to_roots.map" ) );
 
 		TS_ASSERT_EQUALS( map.size(), 3 );
 	}

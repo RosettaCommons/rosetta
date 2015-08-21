@@ -24,17 +24,17 @@
 // Package headers
 
 namespace protocols {
-	namespace simple_moves {
-		namespace bin_transitions {
+namespace simple_moves {
+namespace bin_transitions {
 
-			class InitializeByBins;
-			typedef utility::pointer::shared_ptr< InitializeByBins > InitializeByBinsOP;
-			typedef utility::pointer::shared_ptr< InitializeByBins const > InitializeByBinsCOP;
-			typedef utility::vector1<InitializeByBinsOP> InitializeByBinsOPs;
-			typedef utility::vector1<InitializeByBinsCOP> InitializeByBinsCOPs;
+class InitializeByBins;
+typedef utility::pointer::shared_ptr< InitializeByBins > InitializeByBinsOP;
+typedef utility::pointer::shared_ptr< InitializeByBins const > InitializeByBinsCOP;
+typedef utility::vector1<InitializeByBinsOP> InitializeByBinsOPs;
+typedef utility::vector1<InitializeByBinsCOP> InitializeByBinsCOPs;
 
-		} // bin_transitions
-	} // moves
+} // bin_transitions
+} // moves
 } // protocols
 
 #endif //INCLUDED_protocols_simple_moves_bin_transitions_InitializeByBins_fwd_hh

@@ -25,50 +25,50 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-	class RNA_EnergyMethodOptions: public utility::pointer::ReferenceCount {
+class RNA_EnergyMethodOptions: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//constructor
-		RNA_EnergyMethodOptions();
+	//constructor
+	RNA_EnergyMethodOptions();
 
-		//destructor
-		~RNA_EnergyMethodOptions();
+	//destructor
+	~RNA_EnergyMethodOptions();
 
-		void initialize_from_options();
+	void initialize_from_options();
 
-	public:
+public:
 
-		/// @brief Parameter for adjusting syn-G potential level in RNA_TorsionPotential.
-		core::Real syn_G_potential_bonus() const { return syn_G_potential_bonus_; }
-		void syn_G_potential_bonus( core::Real setting ){ syn_G_potential_bonus_ = setting; }
+	/// @brief Parameter for adjusting syn-G potential level in RNA_TorsionPotential.
+	core::Real syn_G_potential_bonus() const { return syn_G_potential_bonus_; }
+	void syn_G_potential_bonus( core::Real setting ){ syn_G_potential_bonus_ = setting; }
 
-		/// @brief Parameter for changing torsion_potential directory name.
-		std::string torsion_potential() const { return torsion_potential_; }
-		void torsion_potential( std::string setting ){ torsion_potential_ = setting; }
+	/// @brief Parameter for changing torsion_potential directory name.
+	std::string torsion_potential() const { return torsion_potential_; }
+	void torsion_potential( std::string setting ){ torsion_potential_ = setting; }
 
-		/// @brief Parameter for changing suiteness_bonus directory name.
-		std::string suiteness_bonus() const { return suiteness_bonus_; }
-		void suiteness_bonus( std::string setting ){ suiteness_bonus_ = setting; }
+	/// @brief Parameter for changing suiteness_bonus directory name.
+	std::string suiteness_bonus() const { return suiteness_bonus_; }
+	void suiteness_bonus( std::string setting ){ suiteness_bonus_ = setting; }
 
-		friend
-		bool
-		operator==( RNA_EnergyMethodOptions const & a, RNA_EnergyMethodOptions const & b );
+	friend
+	bool
+	operator==( RNA_EnergyMethodOptions const & a, RNA_EnergyMethodOptions const & b );
 
-		friend
-		std::ostream &
-		operator<< ( std::ostream & out, const RNA_EnergyMethodOptions & options );
+	friend
+	std::ostream &
+	operator<< ( std::ostream & out, const RNA_EnergyMethodOptions & options );
 
-		void
-		show( std::ostream & out ) const;
+	void
+	show( std::ostream & out ) const;
 
-	private:
+private:
 
-		core::Real syn_G_potential_bonus_;
-		std::string torsion_potential_;
-		std::string suiteness_bonus_;
+	core::Real syn_G_potential_bonus_;
+	std::string torsion_potential_;
+	std::string suiteness_bonus_;
 
-	};
+};
 
 } //rna
 } //scoring

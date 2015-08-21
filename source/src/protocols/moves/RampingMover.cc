@@ -119,7 +119,7 @@ InvGeometricFunc::InvGeometricFunc() :
 
 InvGeometricFunc::~InvGeometricFunc() {}
 
-	/// func(x) = exp( -1 * ( 1 - x ) / ( 1 - xval_at_0p5 ) * 0.6931 );
+/// func(x) = exp( -1 * ( 1 - x ) / ( 1 - xval_at_0p5 ) * 0.6931 );
 RampingFunc::Real
 InvGeometricFunc::func( Real x ) const
 {
@@ -219,16 +219,16 @@ RampingMover::parse_my_tag(
 )
 {
 
-	if(!tag->hasOption("outer_cycles")) {
+	if ( !tag->hasOption("outer_cycles") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("You must specify the option outer_cycles in RampingMover");
 	}
-	if(!tag->hasOption("inner_cycles")) {
+	if ( !tag->hasOption("inner_cycles") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("You must specify the option inner_cycles in RampingMover");
 	}
-	if(!tag->hasOption("mover")) {
+	if ( !tag->hasOption("mover") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("You must specify the option mover in RampingMover");
 	}
-	
+
 	//Get options values out of the tag
 	outer_cycles_ = tag->getOption<int>("outer_cycles");
 	inner_cycles_ = tag->getOption<int>("inner_cycles");
@@ -242,13 +242,13 @@ RampingMover::parse_my_tag(
 	scorefxn_ = sfxn;
 
 
-    //get the mover to ramp out of the movemap
+	//get the mover to ramp out of the movemap
 	Movers_map::const_iterator find_mover(movers.find(mover_name));
-	if(find_mover == movers.end()) {
+	if ( find_mover == movers.end() ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("cannot find "+mover_name+" in mover map.");
 	}
 	mover_ = find_mover->second;
-	
+
 	//get the montecarlo object out of the datamap
 	if ( montecarlo_name != "none" ) {
 		mc_ = datamap.get_ptr<protocols::moves::MonteCarlo>("montecarlos", montecarlo_name);
@@ -259,24 +259,24 @@ RampingMover::parse_my_tag(
 	// ramp_func, and scoretype must be provided,
 	// OR we ramp several weights, in which case those four should not be provided.
 	// CASE 1: Ramp one weight
-	
+
 	if ( tag->hasOption("start_weight") ||
 			tag->hasOption("end_weight") ||
 			tag->hasOption("scoretype") ||
 			tag->hasOption("ramp_func") ) {
 
 		// 1st: Make sure all the required options have been provided.
-		if(!tag->hasOption("start_weight")) {
+		if ( !tag->hasOption("start_weight") ) {
 			throw utility::excn::EXCN_RosettaScriptsOption("One-weight ramping mode: you must specify the option start_weight in RampingMover");
 		}
-		if(!tag->hasOption("end_weight")) {
+		if ( !tag->hasOption("end_weight") ) {
 			throw utility::excn::EXCN_RosettaScriptsOption("One-weight ramping mode: you must specify the option end_weight in RampingMover");
 		}
-		if(!tag->hasOption("score_type")) {
+		if ( !tag->hasOption("score_type") ) {
 			throw utility::excn::EXCN_RosettaScriptsOption("One-weight ramping mode: you must specify the option score_type in RampingMover");
 		}
-		if(!tag->hasOption("ramp_func")) {
-			  throw utility::excn::EXCN_RosettaScriptsOption("One-weight ramping mode: you must specify the option ramp_func in RampingMover");
+		if ( !tag->hasOption("ramp_func") ) {
+			throw utility::excn::EXCN_RosettaScriptsOption("One-weight ramping mode: you must specify the option ramp_func in RampingMover");
 		}
 		ramp_one_weight_ = true;
 
@@ -288,7 +288,7 @@ RampingMover::parse_my_tag(
 		//set up the start and end weights
 		this->start_weight(start_weight);
 		this->end_weight(end_weight);
-		
+
 
 		//set up the score type
 		if ( ! core::scoring::ScoreTypeManager::is_score_type( score_type ) ) {
@@ -299,7 +299,7 @@ RampingMover::parse_my_tag(
 
 	} else {
 		ramp_one_weight_ = false;
-		if( tag->hasOption("unramped_weights_from_sfxn")) {
+		if ( tag->hasOption("unramped_weights_from_sfxn") ) {
 			std::string const scorefxn_key( tag->getOption<std::string>("unramped_weights_from_sfxn") );
 			if ( ! datamap.has( "scorefxns", scorefxn_key ) ) {
 				throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap.");
@@ -311,7 +311,7 @@ RampingMover::parse_my_tag(
 
 
 		utility::vector0< TagCOP > const & rampterm_tags( tag->getTags() );
-		for( utility::vector0< TagCOP >::const_iterator
+		for ( utility::vector0< TagCOP >::const_iterator
 				rampterm_it=rampterm_tags.begin(), rampterm_it_end = rampterm_tags.end();
 				rampterm_it!=rampterm_it_end; ++rampterm_it ) {
 			TagCOP const tag_ptr = *rampterm_it;
@@ -345,7 +345,7 @@ RampingMover::parse_my_tag(
 		}
 	}
 }
-	
+
 void
 RampingMover::apply( core::pose::Pose & pose )
 {
@@ -457,7 +457,7 @@ RampingMover::instantiate_rampfunc(
 		core::Real xval_start_ramp = tag_ptr->getOption<core::Real>("xval_start_ramp",0.0);
 		core::Real xval_end_ramp = tag_ptr->getOption<core::Real>("xval_end_ramp",1.0);
 		return RampingFuncOP( new FastLinearFunc( xval_start_ramp, xval_end_ramp ) );
-	} else if ( func_name == "inverse_geometric") {
+	} else if ( func_name == "inverse_geometric" ) {
 		core::Real xval_at_0p5 = tag_ptr->getOption<core::Real>("xval_at_0p5",0.75);
 		return RampingFuncOP( new InvGeometricFunc( xval_at_0p5 ) );
 	} else {

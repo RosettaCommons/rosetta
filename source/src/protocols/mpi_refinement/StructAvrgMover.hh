@@ -31,18 +31,18 @@ using namespace core;
 class StructAvrgMover : public protocols::moves::Mover
 {
 public:
-  // Constructor
-  StructAvrgMover( pose::Pose const &pose,
-									 protocols::wum::SilentStructStore const &decoys,
-									 bool const minimize );
+	// Constructor
+	StructAvrgMover( pose::Pose const &pose,
+		protocols::wum::SilentStructStore const &decoys,
+		bool const minimize );
 
-  ~StructAvrgMover();
+	~StructAvrgMover();
 
 	virtual std::string get_name() const{ return "StructAvrgMover"; }
 	virtual void apply( pose::Pose &ref_pose );
 
-  void
-  set_default();
+	void
+	set_default();
 
 	void set_mulfactor( core::Real const mulfactor ){ mulfactor_ = mulfactor; }
 
@@ -50,34 +50,34 @@ public:
 
 private:
 
-  utility::vector1< Real >
-  calculate_variations( utility::vector1< utility::vector1< Real > > const deviation );
+	utility::vector1< Real >
+	calculate_variations( utility::vector1< utility::vector1< Real > > const deviation );
 
-  void
-  add_deviations( pose::Pose ref_pose, 
-		  pose::Pose pose,
-		  utility::vector1< utility::vector1< Real > > &deviation
-		  );
+	void
+	add_deviations( pose::Pose ref_pose,
+		pose::Pose pose,
+		utility::vector1< utility::vector1< Real > > &deviation
+	);
 
 	utility::vector1< std::pair< Size, Size > >
-	predict_region( utility::vector1< core::Real > const CAvar, 
-									utility::vector1< bool > &is_region,
-									core::Real const min_fluc = 0.2,
-									core::Real const frac_base = 0.4
-									) const;
+	predict_region( utility::vector1< core::Real > const CAvar,
+		utility::vector1< bool > &is_region,
+		core::Real const min_fluc = 0.2,
+		core::Real const frac_base = 0.4
+	) const;
 
-  pose::Pose 
-  weighted_average( utility::vector1< pose::Pose > &poses,
-		    scoring::ScoreFunctionCOP sfxn,
-		    pose::Pose const &pose_ref,
-				utility::vector1< Real > const, //CAvar,
-		    bool const weighted = true
-		    );
+	pose::Pose
+	weighted_average( utility::vector1< pose::Pose > &poses,
+		scoring::ScoreFunctionCOP sfxn,
+		pose::Pose const &pose_ref,
+		utility::vector1< Real > const, //CAvar,
+		bool const weighted = true
+	);
 
-  void
-  shave_poses( utility::vector1< pose::Pose > &poses,
-	       pose::Pose const &avrg_pose,
-	       Real const frac );
+	void
+	shave_poses( utility::vector1< pose::Pose > &poses,
+		pose::Pose const &avrg_pose,
+		Real const frac );
 
 private:
 	utility::vector1< pose::Pose > poses_;

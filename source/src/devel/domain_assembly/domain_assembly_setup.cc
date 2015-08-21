@@ -54,12 +54,12 @@ using namespace chemical;
 
 // // protocol specific options
 // namespace DomainAssembly{
-// 	FileOptionKey const da_setup_option_file( "DomainAssembly::da_setup_option_file" );
-// 	FileOptionKey const da_setup_output_pdb( "DomainAssembly::da_setup_output_pdb" );
+//  FileOptionKey const da_setup_option_file( "DomainAssembly::da_setup_option_file" );
+//  FileOptionKey const da_setup_output_pdb( "DomainAssembly::da_setup_output_pdb" );
 //   //FileOptionKey const da_start_pdb( "DomainAssembly::da_start_pdb" );
-// 	//FileOptionKey const da_linker_file( "DomainAssembly::da_linker_file" );
-// 	//IntegerOptionKey const da_start_pdb_num( "DomainAssembly::da_start_pdb_num" );
-// 	//IntegerOptionKey const da_nruns( "DomainAssembly::da_nruns" );
+//  //FileOptionKey const da_linker_file( "DomainAssembly::da_linker_file" );
+//  //IntegerOptionKey const da_start_pdb_num( "DomainAssembly::da_start_pdb_num" );
+//  //IntegerOptionKey const da_nruns( "DomainAssembly::da_nruns" );
 // }
 
 static thread_local basic::Tracer TR_da( "DomainAssemblySetup" );
@@ -72,17 +72,17 @@ DomainInfo::process_domain( )
 	pose::Pose temp_pose = input_pose_;
 
 	// trim the N-terminus
-	if ( trim_nterm_ > 0 ){
-	temp_pose.conformation().delete_residue_range_slow( 1 , trim_nterm_ );
+	if ( trim_nterm_ > 0 ) {
+		temp_pose.conformation().delete_residue_range_slow( 1 , trim_nterm_ );
 	}
 
-//for ( Size i = 1; i <= trim_nterm_; ++i ) {
-		// temporary FoldTree manipulation - until delete_polymer fixed
-		//FoldTree f( temp_pose.fold_tree() );
-		//f.delete_seqpos( 1 ) ;
-		//f.reorder( 2 );
-		//temp_pose.fold_tree( f );
-		//temp_pose.delete_polymer_residue( 1 ) ;
+	//for ( Size i = 1; i <= trim_nterm_; ++i ) {
+	// temporary FoldTree manipulation - until delete_polymer fixed
+	//FoldTree f( temp_pose.fold_tree() );
+	//f.delete_seqpos( 1 ) ;
+	//f.reorder( 2 );
+	//temp_pose.fold_tree( f );
+	//temp_pose.delete_polymer_residue( 1 ) ;
 	//}
 
 	// trim the c-terminus
@@ -105,19 +105,19 @@ DomainInfo::process_domain( )
 		conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( rsd_type ) );
 		temp_pose.prepend_polymer_residue_before_seqpos( *new_rsd, 1, true );
 		//if the residue to be added is RNA, give it the average torsion angles for A-RNA
-		if (rsd_type.is_NA()) {
+		if ( rsd_type.is_NA() ) {
 			temp_pose.set_alpha(1, -68);
 			temp_pose.set_beta(1, 178);
 			temp_pose.set_gamma(1, 54);
 			temp_pose.set_delta(1, 82);
 			temp_pose.set_epsilon(1, -153);
 			temp_pose.set_zeta(1, -71);
-		} else{
+		} else {
 
-		// give the new residue extended chain parameters
-		temp_pose.set_psi( 1, 150 );
-		temp_pose.set_omega( 1, 180 );
-		temp_pose.set_phi( 1, -150 );
+			// give the new residue extended chain parameters
+			temp_pose.set_psi( 1, 150 );
+			temp_pose.set_omega( 1, 180 );
+			temp_pose.set_phi( 1, -150 );
 		}
 	}
 
@@ -137,20 +137,20 @@ DomainInfo::process_domain( )
 		temp_pose.append_residue_by_bond( *new_rsd, true );
 		Size seqpos = temp_pose.total_residue( );
 		//if the residue to be added is RNA, give it the average torsion angles for A-RNA
-		if (rsd_type.is_NA()) {
+		if ( rsd_type.is_NA() ) {
 			temp_pose.set_alpha(seqpos, -68);
 			temp_pose.set_beta(seqpos, 178);
 			temp_pose.set_gamma(seqpos, 54);
 			temp_pose.set_delta(seqpos, 82);
 			temp_pose.set_epsilon(seqpos, -153);
 			temp_pose.set_zeta(seqpos, -71);
-		} else{
+		} else {
 
-		// give the new residue extended chain parameters
-		//Size seqpos = temp_pose.total_residue( );
-		temp_pose.set_psi( seqpos-1, 150 );
-		temp_pose.set_omega( seqpos-1, 180 );
-		temp_pose.set_phi( seqpos, -150 );
+			// give the new residue extended chain parameters
+			//Size seqpos = temp_pose.total_residue( );
+			temp_pose.set_psi( seqpos-1, 150 );
+			temp_pose.set_omega( seqpos-1, 180 );
+			temp_pose.set_phi( seqpos, -150 );
 		}
 	}
 	processed_pose_ = temp_pose;
@@ -159,8 +159,8 @@ DomainInfo::process_domain( )
 /// @brief calls process domain to add linkers/truncate domains
 void
 process_domains(
-		utility::vector1< DomainInfo > & domains
-		)
+	utility::vector1< DomainInfo > & domains
+)
 {
 	for ( Size i = 1; i <= domains.size(); ++i ) {
 		domains[i].process_domain( );
@@ -172,9 +172,9 @@ process_domains(
 ///or at the end of the last pdb input, otherwise the connect domains function will fail and crash
 void
 connect_domains(
-		utility::vector1< DomainInfo > domains,
-		pose::Pose & full_pose
-		)
+	utility::vector1< DomainInfo > domains,
+	pose::Pose & full_pose
+)
 {
 	Size domain_begin(0), domain_end(0), domains_so_far_end(0);
 	for ( Size i = 1; i <= domains.size(); ++i ) {
@@ -191,18 +191,18 @@ connect_domains(
 			domain_begin = full_pose.total_residue( ) + 1;;
 			//Will add sequential amino acid residues to the first domain until no more amino acids are detected
 			for ( Size i = 1; i <= domain_pose.total_residue( ); ++i ) {
-					if ( !((domain_pose.residue_type(i)).is_NA()) ){
+				if ( !((domain_pose.residue_type(i)).is_NA()) ) {
 					full_pose.append_residue_by_bond( domain_pose.residue(i) );
 					domain_end = i;
-					}
-					}
+				}
+			}
 			//Adds the first nucleotide to the connected domains pose using a jump and anchoring them to the C-terminus of the connected domains
 			//Only attempted if there are nucleic acid resiudes at the end of the pdb.
-			if(full_pose.total_residue() - domains_so_far_end != domain_pose.total_residue() ){
-			full_pose.append_residue_by_jump(domain_pose.residue( (domain_end + 1)), full_pose.total_residue());
+			if ( full_pose.total_residue() - domains_so_far_end != domain_pose.total_residue() ) {
+				full_pose.append_residue_by_jump(domain_pose.residue( (domain_end + 1)), full_pose.total_residue());
 			}
 			//Adds the nucleotide residues at the end of the final domain pdb that were ignored previously, will crash if only one nucleotide at the end of the final domain pdb. Crude by why would you have just one RNA nucleotide at the end.
-			for ( Size i = domain_end + 2; i <= domain_pose.total_residue(); ++i){
+			for ( Size i = domain_end + 2; i <= domain_pose.total_residue(); ++i ) {
 				full_pose.append_residue_by_bond( domain_pose.residue(i) );
 			}
 			full_pose.conformation().insert_ideal_geometry_at_polymer_bond( domain_begin - 1 );
@@ -219,14 +219,14 @@ connect_domains(
 		domains[i].set_domain_begin( domain_begin );
 		domains[i].set_domain_end( domain_end );
 
-		} // for loop over domains
+	} // for loop over domains
 }
 
 /// @brief  A stand alone setup protocol for domain assembly.
 ///  Reads in a set of pdb files and connects them with specified
 ///  linkers.  The multidomain pose is output as a pdb file that
 ///  can be used as the input file for assemble_domains_optimize()
-	void
+void
 assemble_domains_setup()
 {
 	utility::vector1< DomainInfo > domains;
@@ -238,7 +238,7 @@ assemble_domains_setup()
 	TR_da << "This many domains will be connected " << domains.size() << std::endl;
 
 	// add linkers and/or truncate domains
- 	process_domains( domains );
+	process_domains( domains );
 
 
 	// connect the domains

@@ -45,7 +45,7 @@
 
 namespace protocols {
 namespace toolbox {
-namespace pose_manipulation{
+namespace pose_manipulation {
 
 /// @author Florian Richter( floric@u.washington.edu) , june 08
 /// @brief puts in ala residues at the positions specified in the 'positions' input array
@@ -73,19 +73,19 @@ construct_poly_d_ala_pose(
 /// @brief allows construction of a polymer of any residue type
 void
 construct_poly_uniq_restype_pose(
-  core::pose::Pose & pose,
-  utility::vector1< core::Size > const & positions,
-  core::chemical::ResidueType const & restype,
-  bool const keep_pro,
-  bool const keep_gly,
-  bool const keep_disulfide_cys
+	core::pose::Pose & pose,
+	utility::vector1< core::Size > const & positions,
+	core::chemical::ResidueType const & restype,
+	bool const keep_pro,
+	bool const keep_gly,
+	bool const keep_disulfide_cys
 );
 
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu ), Oct 09
 /// @brief puts in XXX residues at the positions specified in the 'positions' input array
 void
 construct_poly_XXX_pose(
-  std::string const & aa,
+	std::string const & aa,
 	core::pose::Pose & pose,
 	utility::vector1< core::Size > const & positions,
 	bool keep_pro,

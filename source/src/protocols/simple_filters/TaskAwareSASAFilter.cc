@@ -53,9 +53,9 @@ namespace simple_filters {
 
 // @brief default constructor
 TaskAwareSASAFilter::TaskAwareSASAFilter():
-  task_factory_( /* NULL */ ),
-  threshold_( 0 ),
-  designable_only_( false ),
+	task_factory_( /* NULL */ ),
+	threshold_( 0 ),
+	designable_only_( false ),
 	sc_only_( false ),
 	probe_radius_( 2.2 ),
 	jump_id_( 0 )
@@ -87,12 +87,12 @@ TaskAwareSASAFilter::~TaskAwareSASAFilter() {}
 
 protocols::filters::FilterOP
 TaskAwareSASAFilter::fresh_instance() const{
-  return protocols::filters::FilterOP( new TaskAwareSASAFilter() );
+	return protocols::filters::FilterOP( new TaskAwareSASAFilter() );
 }
 
 protocols::filters::FilterOP
 TaskAwareSASAFilter::clone() const{
-  return protocols::filters::FilterOP( new TaskAwareSASAFilter( *this ) );
+	return protocols::filters::FilterOP( new TaskAwareSASAFilter( *this ) );
 }
 
 // @brief getters
@@ -118,14 +118,14 @@ core::Real TaskAwareSASAFilter::compute( Pose const & p, bool const verbose ) co
 	core::pose::Pose pose = p;
 
 	runtime_assert( task_factory() != 0 );
-  core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
+	core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 
 	// If a jump has been provided by the user, separate the pose by that jump.
 	if ( jump_id() != 0 ) {
-	  int sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num(pose, jump_id() );
+		int sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num(pose, jump_id() );
 		protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( pose, sym_aware_jump_id ) );
-	  translate->step_size( 1000.0 );
-	  translate->apply( pose );
+		translate->step_size( 1000.0 );
+		translate->apply( pose );
 	}
 
 	pose.dump_pdb("test.pdb");
@@ -133,41 +133,41 @@ core::Real TaskAwareSASAFilter::compute( Pose const & p, bool const verbose ) co
 	// Calculate SASA for each of the selected residues and spit that out to the log file.
 	// Also add it to the total value.
 	core::Real combined_sasa = 0;
-  utility::vector1<Real> rsd_sasa(pose.n_residue(),0.0);
-  core::id::AtomID_Map<Real> atom_sasa;
-  core::id::AtomID_Map<bool> atom_mask;
-  core::pose::initialize_atomid_map(atom_sasa,pose,0.0);
-  core::pose::initialize_atomid_map(atom_mask,pose,false);
-	for( core::Size resi=1; resi<=pose.total_residue(); ++resi ) {
+	utility::vector1<Real> rsd_sasa(pose.n_residue(),0.0);
+	core::id::AtomID_Map<Real> atom_sasa;
+	core::id::AtomID_Map<bool> atom_mask;
+	core::pose::initialize_atomid_map(atom_sasa,pose,0.0);
+	core::pose::initialize_atomid_map(atom_mask,pose,false);
+	for ( core::Size resi=1; resi<=pose.total_residue(); ++resi ) {
 		core::conformation::Residue const rsd( pose.residue( resi ) );
-		if(rsd.type().name() == "VRT") { continue; }
-    if( packer_task->being_designed( resi ) || ( !designable_only() && packer_task->being_packed( resi ) ) ) {
-	    for(core::Size atomi = 1; atomi <= pose.residue(resi).nheavyatoms(); atomi++) {
-	      atom_mask[core::id::AtomID(atomi,resi)] = true;
-	    }
+		if ( rsd.type().name() == "VRT" ) { continue; }
+		if ( packer_task->being_designed( resi ) || ( !designable_only() && packer_task->being_packed( resi ) ) ) {
+			for ( core::Size atomi = 1; atomi <= pose.residue(resi).nheavyatoms(); atomi++ ) {
+				atom_mask[core::id::AtomID(atomi,resi)] = true;
+			}
 		}
 	}
-  core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius(), false);//, atom_mask );
-  utility::vector1<Real> resi_sasa(pose.n_residue(),0.0);
+	core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius(), false);//, atom_mask );
+	utility::vector1<Real> resi_sasa(pose.n_residue(),0.0);
 
-  for( core::Size resi=1; resi<=pose.total_residue(); ++resi ) {
+	for ( core::Size resi=1; resi<=pose.total_residue(); ++resi ) {
 		core::conformation::Residue const rsd( pose.residue( resi ) );
-		if(rsd.type().name() == "VRT") { continue; }
-    if( packer_task->being_designed( resi ) || ( !designable_only() && packer_task->being_packed( resi ) ) ) {
+		if ( rsd.type().name() == "VRT" ) { continue; }
+		if ( packer_task->being_designed( resi ) || ( !designable_only() && packer_task->being_packed( resi ) ) ) {
 			if ( sc_only() ) {
-		    // Use CA as the side chain for Glys
-		    if(pose.residue(resi).name3()=="GLY") resi_sasa[resi] += atom_sasa[core::id::AtomID(2,resi)];
-		    for(Size j=5; j <= pose.residue(resi).nheavyatoms(); j++) {
-		      resi_sasa[resi] += atom_sasa[core::id::AtomID(j,resi)];
+				// Use CA as the side chain for Glys
+				if ( pose.residue(resi).name3()=="GLY" ) resi_sasa[resi] += atom_sasa[core::id::AtomID(2,resi)];
+				for ( Size j=5; j <= pose.residue(resi).nheavyatoms(); j++ ) {
+					resi_sasa[resi] += atom_sasa[core::id::AtomID(j,resi)];
 				}
 			} else {
 				resi_sasa[resi] += rsd_sasa[resi];
 			}
 			if ( verbose ) { TR << "SASA of " << pose.residue(resi).name3() << resi << " is " << resi_sasa[resi] << std::endl; }
 			combined_sasa += resi_sasa[resi];
-    }
-  }
-  return( combined_sasa );
+		}
+	}
+	return( combined_sasa );
 
 } // compute
 
@@ -178,8 +178,8 @@ core::Real TaskAwareSASAFilter::compute( Pose const & p, bool const verbose ) co
 bool TaskAwareSASAFilter::apply( Pose const & pose ) const
 {
 	// Get the combined sasa from the compute function and filter
-  core::Real const combined_sasa( compute( pose, true ) );
-  return( combined_sasa >= threshold() );
+	core::Real const combined_sasa( compute( pose, true ) );
+	return( combined_sasa >= threshold() );
 }
 
 /// @brief parse xml
@@ -191,8 +191,8 @@ TaskAwareSASAFilter::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
-  task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
-  threshold( tag->getOption< core::Real >( "threshold", 0 ) );
+	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
+	threshold( tag->getOption< core::Real >( "threshold", 0 ) );
 	designable_only( tag->getOption< bool >( "designable_only", false ) );
 	sc_only( tag->getOption< bool >( "sc_only", false ) );
 	probe_radius( tag->getOption< core::Real >( "probe_radius", 2.2 ) );
@@ -202,13 +202,13 @@ TaskAwareSASAFilter::parse_my_tag(
 core::Real
 TaskAwareSASAFilter::report_sm( core::pose::Pose const & pose ) const
 {
-  return( compute( pose, false ) );
-} 
+	return( compute( pose, false ) );
+}
 
 void
 TaskAwareSASAFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
-  out << "TaskAwareSASAFilter returns " << compute( pose, false ) << std::endl;
+	out << "TaskAwareSASAFilter returns " << compute( pose, false ) << std::endl;
 }
 
 protocols::filters::FilterOP

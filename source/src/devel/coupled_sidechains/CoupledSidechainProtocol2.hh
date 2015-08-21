@@ -61,7 +61,7 @@ namespace coupled_sidechains {
 class CoupledSidechainProtocol : public protocols::moves::Mover {
 
 public:
-//
+	//
 	static void register_options();
 	/// @brief default constructor
 	CoupledSidechainProtocol();

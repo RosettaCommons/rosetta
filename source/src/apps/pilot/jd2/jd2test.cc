@@ -73,8 +73,8 @@ public:
 		sc_mover = protocols::simple_moves::sidechain_moves::SidechainMoverOP( new protocols::simple_moves::sidechain_moves::SidechainMover() );
 		sc_mover->set_task_factory( main_task_factory );
 
-	  set_fail_no_retry_ = false;
-	  set_fail_bad_input_ = false;
+		set_fail_no_retry_ = false;
+		set_fail_bad_input_ = false;
 	}
 
 	virtual ~JDtestmover(){};
@@ -121,11 +121,11 @@ public:
 
 		//examples for pose extra scores
 		//DEPRECATED
-// 		core::pose::setPoseExtraScore(pose, "this_is_a_test" + me, 987654321);
-// 		core::pose::setPoseExtraScore(pose, "alpha", 1.000);
-// 		core::pose::setPoseExtraScore(pose, "beta", 24000);
-// 		core::pose::setPoseExtraScore(pose, "gamma", 3.000);
-// 		core::pose::setPoseExtraScore(pose, "delta", 4.000);
+		//   core::pose::setPoseExtraScore(pose, "this_is_a_test" + me, 987654321);
+		//   core::pose::setPoseExtraScore(pose, "alpha", 1.000);
+		//   core::pose::setPoseExtraScore(pose, "beta", 24000);
+		//   core::pose::setPoseExtraScore(pose, "gamma", 3.000);
+		//   core::pose::setPoseExtraScore(pose, "delta", 4.000);
 
 		//this will show up in the final output, along with one set of intermediate stuff above
 		job_me->add_string("somemorestuff");
@@ -133,13 +133,13 @@ public:
 		job_me->add_string_real_pair("thequestion", 42.0);
 
 		//test mover reporting
- 		if(counter == 1 && set_fail_no_retry_) set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
- 		if(counter == 3) set_last_move_status(protocols::moves::FAIL_RETRY);
- 		if(counter == 1 && set_fail_bad_input_) set_last_move_status(protocols::moves::FAIL_BAD_INPUT);
+		if ( counter == 1 && set_fail_no_retry_ ) set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
+		if ( counter == 3 ) set_last_move_status(protocols::moves::FAIL_RETRY);
+		if ( counter == 1 && set_fail_bad_input_ ) set_last_move_status(protocols::moves::FAIL_BAD_INPUT);
 		//MPI testing
- 		//if(me == "1UBQ_0002") set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
- 		//if(me == "1EM7_0003" && counter <= 40) set_last_move_status(protocols::moves::FAIL_RETRY);
- 		//if(me.substr(0,5) == "1NLO_") set_last_move_status(protocols::moves::FAIL_BAD_INPUT);
+		//if(me == "1UBQ_0002") set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
+		//if(me == "1EM7_0003" && counter <= 40) set_last_move_status(protocols::moves::FAIL_RETRY);
+		//if(me.substr(0,5) == "1NLO_") set_last_move_status(protocols::moves::FAIL_BAD_INPUT);
 		//while( clock() <= (starttime + 6000000) ) {}
 		//TR << clock() << std::endl;
 

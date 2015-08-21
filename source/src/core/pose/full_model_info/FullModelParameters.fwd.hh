@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file core/pose/full_model_info/FullModelParameters.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace core {
 namespace pose {
 namespace full_model_info {
-	
-	class FullModelParameters;
-	typedef utility::pointer::shared_ptr< FullModelParameters > FullModelParametersOP;
-	typedef utility::pointer::shared_ptr< FullModelParameters const > FullModelParametersCOP;
-	
+
+class FullModelParameters;
+typedef utility::pointer::shared_ptr< FullModelParameters > FullModelParametersOP;
+typedef utility::pointer::shared_ptr< FullModelParameters const > FullModelParametersCOP;
+
 } //full_model_info
 } //pose
 } //core

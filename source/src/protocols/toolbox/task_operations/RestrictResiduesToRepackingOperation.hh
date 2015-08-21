@@ -9,7 +9,7 @@
 
 /// @file   protocols/toolbox/task_operations/RestrictResiduesToRepackingOperation.hh
 /// @brief  TaskOperation class that restricts a vector of Size defined residues to repacking
-///			when parsed, it takes in a string and splits by ","
+///   when parsed, it takes in a string and splits by ","
 /// @author Eva-Maria Strauch (evas01@uw.edu)
 
 #ifndef INCLUDED_protocols_toolbox_task_operations_RestrictResiduesToRepackingOperation_hh

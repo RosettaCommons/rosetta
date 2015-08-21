@@ -6,22 +6,22 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
- //////////////////////////////////////////////
- /// @file protocols/scoring/methods/pcs2/PcsDataCenter.fwd.hh
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+/// @file protocols/scoring/methods/pcs2/PcsDataCenter.fwd.hh
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs2_PcsDataCenter_fwd_hh
 #define INCLUDED_protocols_scoring_methods_pcs2_PcsDataCenter_fwd_hh
 
 #include <utility/pointer/owning_ptr.fwd.hh>
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs2{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs2 {
 
 class PcsDataCenter;
 

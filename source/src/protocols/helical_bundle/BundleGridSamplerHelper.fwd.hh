@@ -23,20 +23,20 @@
 // C++ headers
 
 namespace protocols {
-	namespace helical_bundle {
+namespace helical_bundle {
 
-		class BundleGridSamplerHelper;
+class BundleGridSamplerHelper;
 
-		typedef  utility::pointer::weak_ptr< BundleGridSamplerHelper >  BundleGridSamplerHelperAP;
-		typedef  utility::pointer::weak_ptr< BundleGridSamplerHelper const >  BundleGridSamplerHelperCAP;
-		typedef  utility::pointer::shared_ptr< BundleGridSamplerHelper >  BundleGridSamplerHelperOP;
-		typedef  utility::pointer::shared_ptr< BundleGridSamplerHelper const >  BundleGridSamplerHelperCOP;
+typedef  utility::pointer::weak_ptr< BundleGridSamplerHelper >  BundleGridSamplerHelperAP;
+typedef  utility::pointer::weak_ptr< BundleGridSamplerHelper const >  BundleGridSamplerHelperCAP;
+typedef  utility::pointer::shared_ptr< BundleGridSamplerHelper >  BundleGridSamplerHelperOP;
+typedef  utility::pointer::shared_ptr< BundleGridSamplerHelper const >  BundleGridSamplerHelperCOP;
 
-		typedef  utility::vector1< BundleGridSamplerHelperOP >  BundleGridSamplerHelperOPs;
-		typedef  utility::vector1< BundleGridSamplerHelperCOP >  BundleGridSamplerHelperCOPs;
-		typedef  utility::vector1< BundleGridSamplerHelperCAP >  BundleGridSamplerHelperCAPs;
+typedef  utility::vector1< BundleGridSamplerHelperOP >  BundleGridSamplerHelperOPs;
+typedef  utility::vector1< BundleGridSamplerHelperCOP >  BundleGridSamplerHelperCOPs;
+typedef  utility::vector1< BundleGridSamplerHelperCAP >  BundleGridSamplerHelperCAPs;
 
-	} // namespace helical_bundle
+} // namespace helical_bundle
 } // namespace protocols
 
 #endif // INCLUDED_protocols_helical_bundle_BundleGridSamplerHelper_fwd_hh

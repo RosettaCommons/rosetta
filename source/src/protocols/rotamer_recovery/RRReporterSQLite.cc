@@ -123,8 +123,8 @@ RRReporterSQLite::RRReporterSQLite(
 	comparer_params_(),
 	residues_considered_( 0 ),
 	rotamers_recovered_( 0 ),
- 	database_name_(),
- 	database_pq_schema_(),
+	database_name_(),
+	database_pq_schema_(),
 	db_session_( db_session )
 {}
 
@@ -152,19 +152,19 @@ RRReporterSQLite::write_schema_to_db(
 	sessionOP db_session
 ) const {
 	switch(output_level_){
-	case OL_full:
+	case OL_full :
 		write_nchi_table_schema(db_session);
 		write_rotamer_recovery_full_table_schema(db_session);
 		break;
-	case OL_features:
+	case OL_features :
 		write_rotamer_recovery_features_table_schema(db_session);
-		if(report_to_db_){
+		if ( report_to_db_ ) {
 			write_predicted_features_table_schema(db_session);
 		}
 		break;
-	case OL_none:
+	case OL_none :
 		break;
-	default:
+	default :
 		utility_exit_with_message("Unrecognized Output Level.");
 	}
 }
@@ -365,7 +365,7 @@ void
 RRReporterSQLite::set_protocol_info(
 	string const & protocol_name,
 	string const & protocol_params
-)	{
+) {
 	protocol_name_ = protocol_name;
 	protocol_params_ = protocol_params;
 }
@@ -374,7 +374,7 @@ void
 RRReporterSQLite::set_comparer_info(
 	string const & comparer_name,
 	string const & comparer_params
-)	{
+) {
 	comparer_name_ = comparer_name;
 	comparer_params_ = comparer_params;
 }
@@ -388,13 +388,13 @@ RRReporterSQLite::db_session(
 
 sessionOP
 RRReporterSQLite::db_session(){
-	if(!db_session_){
+	if ( !db_session_ ) {
 		utility_exit_with_message("RRReporterSQLite: the db_session has not been initialized yet");
-//		db_session_ =
-//			basic::database::get_db_session(
-//				database_name_, database_pq_schema_);
-//
-//		write_schema_to_db(db_session_);
+		//  db_session_ =
+		//   basic::database::get_db_session(
+		//    database_name_, database_pq_schema_);
+		//
+		//  write_schema_to_db(db_session_);
 	}
 	return db_session_;
 }
@@ -415,18 +415,18 @@ RRReporterSQLite::report_rotamer_recovery(
 	bool recovered
 ){
 	switch (output_level_) {
-	case OL_full:
+	case OL_full :
 		report_rotamer_recovery_full(
 			pose1, pose2, res1, res2, score, recovered );
 		break;
-	case OL_features:
+	case OL_features :
 		runtime_assert( struct_id1_ != 0 );
 		report_rotamer_recovery_features(struct_id1_, res1, score, recovered);
 		report_predicted_features(struct_id1_, res1, pose2, res2);
 		break;
-	case OL_none:
+	case OL_none :
 		break;
-	default:
+	default :
 		utility_exit_with_message( "Unknown RRReporterSQLite output level." );
 	}
 
@@ -446,7 +446,7 @@ RRReporterSQLite::report_rotamer_recovery_full(
 	// Argh why isn't there a good way go get the name of a pose?
 	//silent files and pdbs set the name of the pose differently
 	string struct1_name = "No_Name_Found";
-	if (pose1.pdb_info() && ( pose1.pdb_info()->name() != "" ) ){
+	if ( pose1.pdb_info() && ( pose1.pdb_info()->name() != "" ) ) {
 		struct1_name = pose1.pdb_info()->name();
 	} else if ( pose1.data().has( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ) {
 		struct1_name = static_cast< CacheableString const & >
@@ -456,7 +456,7 @@ RRReporterSQLite::report_rotamer_recovery_full(
 	}
 
 	string struct2_name = "No_Name_Found";
-	if (pose2.pdb_info() && ( pose1.pdb_info()->name() != "" ) ){
+	if ( pose2.pdb_info() && ( pose1.pdb_info()->name() != "" ) ) {
 		struct2_name = pose2.pdb_info()->name();
 	} else if ( pose2.data().has( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ) {
 		struct2_name = static_cast< CacheableString const & >
@@ -525,7 +525,7 @@ RRReporterSQLite::report_predicted_features(
 	Residue const & predicted_residue
 ) {
 
-	if(!report_to_db_) return;
+	if ( !report_to_db_ ) return;
 
 
 	core::pack::task::TaskFactoryOP task_factory( new core::pack::task::TaskFactory() );
@@ -537,7 +537,7 @@ RRReporterSQLite::report_predicted_features(
 
 	toolbox::task_operations::RestrictToNeighborhoodOperationOP
 		restrict_to_neighborhood_operation( new toolbox::task_operations::RestrictToNeighborhoodOperation(
-				central_residues,dist_cutoff) );
+		central_residues,dist_cutoff) );
 	std::string neighborhood_calculator_name(
 		restrict_to_neighborhood_operation->get_calculator_name());
 	task_factory->push_back(restrict_to_neighborhood_operation);

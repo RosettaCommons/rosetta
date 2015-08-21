@@ -77,15 +77,15 @@ bool ClashBasedRepackShellSelector::is_sc_sc_clash(
 {
 	core::Size max_res1_heavyatoms = rsd1.nheavyatoms();
 	core::Size max_res2_heavyatoms = rsd2.nheavyatoms();
-	for (core::Size m=5; m <= max_res1_heavyatoms; ++m) {
+	for ( core::Size m=5; m <= max_res1_heavyatoms; ++m ) {
 		core::Vector const & atom1_coords( rsd1.xyz( m ) );
-		for (core::Size n=5; n <= max_res2_heavyatoms; ++n) {
+		for ( core::Size n=5; n <= max_res2_heavyatoms; ++n ) {
 			core::Vector const & atom2_coords( rsd2.xyz( n ) );
 			// use the sum of the LJ radii as the distance cutoff with a bump overlap factor
 			core::Real lj_sum = (rsd1.atom_type( m ).lj_radius() + rsd2.atom_type( n ).lj_radius());
 			core::Real distance_cutoff_squared = (lj_sum * lj_sum) * bump_overlap_factor_;
 			core::Real distance_squared = ( atom1_coords - atom2_coords ).length_squared();
-			if (distance_squared < distance_cutoff_squared) return true;
+			if ( distance_squared < distance_cutoff_squared ) return true;
 		}
 	}
 	return false;
@@ -98,15 +98,15 @@ bool ClashBasedRepackShellSelector::is_sc_bb_clash(
 ) const
 {
 	core::Size max_res1_heavyatoms = rsd1.nheavyatoms();
-	for (core::Size m=5; m <= max_res1_heavyatoms; ++m) {
+	for ( core::Size m=5; m <= max_res1_heavyatoms; ++m ) {
 		core::Vector const & atom1_coords( rsd1.xyz( m ) );
-		for (core::Size n=1; n <= 4; ++n) {
+		for ( core::Size n=1; n <= 4; ++n ) {
 			core::Vector const & atom2_coords( rsd2.xyz( n ) );
 			// use the sum of the LJ radii as the distance cutoff with a bump overlap factor
 			core::Real lj_sum = (rsd1.atom_type( m ).lj_radius() + rsd2.atom_type( n ).lj_radius());
 			core::Real distance_cutoff_squared = (lj_sum * lj_sum) * bump_overlap_factor_;
 			core::Real distance_squared = ( atom1_coords - atom2_coords ).length_squared();
-			if (distance_squared < distance_cutoff_squared) return true;
+			if ( distance_squared < distance_cutoff_squared ) return true;
 		}
 	}
 	return false;
@@ -121,21 +121,21 @@ utility::vector1<core::Size> ClashBasedRepackShellSelector::get_clashing_positio
 {
 	utility::vector1<core::Size> clash_positions;
 	// iterate over all neighbor residues
-	for (core::Size i=1; i <= pose.total_residue(); ++i ) {
-		if (i == resnum) continue;
+	for ( core::Size i=1; i <= pose.total_residue(); ++i ) {
+		if ( i == resnum ) continue;
 		core::conformation::Residue const & rsd2 = pose.conformation().residue(i);
 		// check for backbone clash first (where repacking wouldn't help)
-		if (is_sc_bb_clash(rsd1,rsd2)) continue;
+		if ( is_sc_bb_clash(rsd1,rsd2) ) continue;
 		// check for clashes between all pairs of side-chain atoms between the query residue and the given neighbor
 		bool found_sc_only_clash = false;
-		if (is_sc_sc_clash(rsd1,rsd2)) {
+		if ( is_sc_sc_clash(rsd1,rsd2) ) {
 			//std::cout << "sidechain clashes with " << i << std::endl;
 			found_sc_only_clash=true;
 			//check if this side-chain clash also involves backbone clashes with other residues in the neighborhood
-			for (core::Size j=1; j <= pose.total_residue(); ++j ) {
-				if (j == resnum) continue;
+			for ( core::Size j=1; j <= pose.total_residue(); ++j ) {
+				if ( j == resnum ) continue;
 				core::conformation::Residue const & rsd3 = pose.conformation().residue(j);
-				if (is_sc_bb_clash(rsd1,rsd3)) {
+				if ( is_sc_bb_clash(rsd1,rsd3) ) {
 					//ignore side-chain clash, since it also involves backbone clashes
 					//std::cout << "backbone clashes with " << j << std::endl;
 					found_sc_only_clash = false;
@@ -143,7 +143,7 @@ utility::vector1<core::Size> ClashBasedRepackShellSelector::get_clashing_positio
 				}
 			}
 		}
-		if (found_sc_only_clash) clash_positions.push_back(i);
+		if ( found_sc_only_clash ) clash_positions.push_back(i);
 	}
 	return clash_positions;
 }
@@ -156,8 +156,8 @@ ClashBasedRepackShellSelector::apply( core::pose::Pose const & pose ) const
 
 	// determine design positions based on the packer task
 	std::set<core::Size> design_shell;
-	for(core::Size i = 1; i <= mypose->total_residue(); ++i) {
-		if (packer_task_->design_residue(i)) {
+	for ( core::Size i = 1; i <= mypose->total_residue(); ++i ) {
+		if ( packer_task_->design_residue(i) ) {
 			design_shell.insert(i);
 		}
 	}
@@ -165,7 +165,7 @@ ClashBasedRepackShellSelector::apply( core::pose::Pose const & pose ) const
 	// determine clash-based repack shell around the design shell
 	std::set<core::Size> repack_shell;
 
-	for(std::set<core::Size>::const_iterator cit = design_shell.begin(); cit != design_shell.end(); ++cit) {
+	for ( std::set<core::Size>::const_iterator cit = design_shell.begin(); cit != design_shell.end(); ++cit ) {
 		core::Size design_pos = *cit;
 
 		// setup a bump check packer task for the given design residue
@@ -184,15 +184,15 @@ ClashBasedRepackShellSelector::apply( core::pose::Pose const & pose ) const
 		rotamer_set->build_rotamers( *mypose, *score_fxn_, *bump_check_task, packer_graph );
 
 		// determine neighboring positions where any rotamer of the given design residue would result in a clash
-		for(core::Size i = 1; i <= rotamer_set->num_rotamers(); i++) {
+		for ( core::Size i = 1; i <= rotamer_set->num_rotamers(); i++ ) {
 			//std::cout << "checking rotamer " << i << std::endl;
 			core::conformation::ResidueOP bump_check_rotamer(  rotamer_set->rotamer( i )->clone() );
 			//check if the given rotamer would result in a clash with a neighboring side chain
 			utility::vector1<core::Size> clash_positions = get_clashing_positions(*mypose, *bump_check_rotamer, design_pos);
 			// register all those clash-positions for repacking that are not part of the design shell
-			for(core::Size j = 1; j <= clash_positions.size(); ++j) {
+			for ( core::Size j = 1; j <= clash_positions.size(); ++j ) {
 				core::Size clash_pos = clash_positions[j];
-				if (design_shell.find(clash_pos) == design_shell.end()) {
+				if ( design_shell.find(clash_pos) == design_shell.end() ) {
 					//std::cout << "adding " << clash_pos << std::endl;
 					repack_shell.insert(clash_pos);
 				}

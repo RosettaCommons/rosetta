@@ -40,11 +40,11 @@ void BiasEnergy::Histogram<T>::toggle() {
 
 template< typename T>
 BiasEnergy::Histogram<T>::Histogram( core::Real grid_min, core::Real grid_max, core::Size ngrid_cells /* = 100 */ ) :
-	data_( NULL ),
-	recv_buf_( NULL ),
-	grid_min_( grid_min ),
-	grid_max_( grid_max ),
-	delta_grid_( (grid_max-grid_min)/ngrid_cells )
+data_( NULL ),
+recv_buf_( NULL ),
+grid_min_( grid_min ),
+grid_max_( grid_max ),
+delta_grid_( (grid_max-grid_min)/ngrid_cells )
 {
 	ngrid_cells_ = ngrid_cells;
 	runtime_assert( ngrid_cells_ > 0 );
@@ -55,11 +55,11 @@ BiasEnergy::Histogram<T>::Histogram( core::Real grid_min, core::Real grid_max, c
 
 template< typename T>
 BiasEnergy::Histogram<T>::Histogram( BiasEnergy::Histogram<T> const& other ) :
-	Parent( other ),
-	grid_min_( other.grid_min_ ),
-	grid_max_( other.grid_max_ ),
-	delta_grid_( other.delta_grid_ ),
-	ngrid_cells_( other.ngrid_cells_ )
+Parent( other ),
+grid_min_( other.grid_min_ ),
+grid_max_( other.grid_max_ ),
+delta_grid_( other.delta_grid_ ),
+ngrid_cells_( other.ngrid_cells_ )
 {
 	data_ = new ValueType[ other.ngrid_cells_ ];
 	recv_buf_ = new ValueType[ other.ngrid_cells_ ];

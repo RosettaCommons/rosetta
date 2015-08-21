@@ -32,19 +32,19 @@ namespace protocols {
 namespace topology_broker {
 
 class BasicJumpClaimer : public virtual TopologyClaimer {
-  typedef TopologyClaimer Parent;
+	typedef TopologyClaimer Parent;
 public:
-  virtual ~BasicJumpClaimer() {}
+	virtual ~BasicJumpClaimer() {}
 
-  BasicJumpClaimer() {}
+	BasicJumpClaimer() {}
 
-  TopologyClaimerOP clone() const { return TopologyClaimerOP( new BasicJumpClaimer( *this ) ); }
+	TopologyClaimerOP clone() const { return TopologyClaimerOP( new BasicJumpClaimer( *this ) ); }
 
-  std::string type() const { return _static_type_name(); }
+	std::string type() const { return _static_type_name(); }
 
-  static std::string _static_type_name() { return "BasicJumpClaimer"; }
+	static std::string _static_type_name() { return "BasicJumpClaimer"; }
 
-  virtual void generate_claims( claims::DofClaims& );
+	virtual void generate_claims( claims::DofClaims& );
 
 	virtual void initialize_dofs( core::pose::Pose&, claims::DofClaims const&, claims::DofClaims&);
 
@@ -81,15 +81,15 @@ public:
 	}
 
 protected:
-  virtual bool read_tag( std::string, std::istream& );
+	virtual bool read_tag( std::string, std::istream& );
 
 private:
-  std::string start_label_;
-  std::string end_label_;
-  std::string start_atom_;
-  std::string end_atom_;
-  core::Size start_position_;
-  core::Size end_position_;
+	std::string start_label_;
+	std::string end_label_;
+	std::string start_atom_;
+	std::string end_atom_;
+	core::Size start_position_;
+	core::Size end_position_;
 
 }; // class BasicJumpClaimer
 } // topology_broker

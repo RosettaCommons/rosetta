@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- /// @file protocols/scoring/methods/pcs2/PcsGridSearchParameter.hh
- ///
- /// @authorv Christophe Schmitz
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+/// @file protocols/scoring/methods/pcs2/PcsGridSearchParameter.hh
+///
+/// @authorv Christophe Schmitz
+///
+////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs2_PcsGridSearchParameter_hh
 #define INCLUDED_protocols_scoring_methods_pcs2_PcsGridSearchParameter_hh
@@ -32,10 +32,10 @@
 // C++ headers
 #include <string>
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs2{
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs2 {
 
 
 class PcsGridSearchParameter{

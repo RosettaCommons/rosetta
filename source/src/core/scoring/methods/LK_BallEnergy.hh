@@ -92,7 +92,7 @@ public:
 		Size resid ) const;
 
 	virtual
- 	void
+	void
 	setup_for_derivatives(
 		pose::Pose & pose,
 		ScoreFunction const & scfxn
@@ -101,74 +101,74 @@ public:
 	/// helper function for outside use
 	Real
 	calculate_lk_desolvation_of_single_atom_by_residue(
-																										 Size const atom1,
-																										 conformation::Residue const & rsd1,
-																										 conformation::Residue const & rsd2
-																										 );
+		Size const atom1,
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2
+	);
 	Real
 	calculate_lk_desolvation_of_single_atom_by_residue_no_count_pair(
-																																	 Size const atom1,
-																																	 conformation::Residue const & rsd1,
-																																	 conformation::Residue const & rsd2
-																																	 );
+		Size const atom1,
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2
+	);
 	void
 	calculate_lk_ball_atom_energies(
-																	Size const atom1,
-																	conformation::Residue const & rsd1,
-																	Vectors const & atom1_waters,
-																	Size const atom2,
-																	conformation::Residue const & rsd2,
-																	Real & lk_desolvation_of_atom1_by_atom2,
-																	Real & lk_ball_desolvation_of_atom1_by_atom2 // includes lk-fraction
-																	) const;
+		Size const atom1,
+		conformation::Residue const & rsd1,
+		Vectors const & atom1_waters,
+		Size const atom2,
+		conformation::Residue const & rsd2,
+		Real & lk_desolvation_of_atom1_by_atom2,
+		Real & lk_ball_desolvation_of_atom1_by_atom2 // includes lk-fraction
+	) const;
 
 	void
 	calculate_lk_ball_atom_energies_cp(
-																		 Size const atom1,
-																		 conformation::Residue const & rsd1,
-																		 Vectors const & atom1_waters,
-																		 Size const atom2,
-																		 conformation::Residue const & rsd2,
-																		 etable::count_pair::CPCrossoverBehavior const & cp_crossover,
-																		 Real & lk_desolvation_of_atom1_by_atom2,
-																		 Real & lk_ball_desolvation_of_atom1_by_atom2 // includes lk-fraction
-																		 ) const;
+		Size const atom1,
+		conformation::Residue const & rsd1,
+		Vectors const & atom1_waters,
+		Size const atom2,
+		conformation::Residue const & rsd2,
+		etable::count_pair::CPCrossoverBehavior const & cp_crossover,
+		Real & lk_desolvation_of_atom1_by_atom2,
+		Real & lk_ball_desolvation_of_atom1_by_atom2 // includes lk-fraction
+	) const;
 
 	// helper
 	Real
 	get_lk_fractional_contribution_for_single_water(
-																									Vector const & atom2_xyz,
-																									Size const atom2_type,
-																									Vector const & atom1_water
-																									) const;
+		Vector const & atom2_xyz,
+		Size const atom2_type,
+		Vector const & atom1_water
+	) const;
 
 	void
 	eval_desolvation_derivs_no_count_pair(
-																				Real const d2,
-																				Size const atom1,
-																				conformation::Residue const & rsd1,
-																				Size const atom2,
-																				conformation::Residue const & rsd2,
-																				Real & atom1_lk_desolvation_by_atom2_deriv,
-																				Real & atom2_lk_desolvation_by_atom1_deriv
-																				);
+		Real const d2,
+		Size const atom1,
+		conformation::Residue const & rsd1,
+		Size const atom2,
+		conformation::Residue const & rsd2,
+		Real & atom1_lk_desolvation_by_atom2_deriv,
+		Real & atom2_lk_desolvation_by_atom1_deriv
+	);
 
-// 	/// called during gradient-based minimization inside dfunc
-// 	/**
-// 		 F1 and F2 are not zeroed -- contributions from this atom are
-// 		 just summed in
-// 	**/
-// 	virtual
-// 	void
-// 	eval_atom_derivative(
-// 		id::AtomID const & id,
-// 		pose::Pose const & pose,
-// 		kinematics::DomainMap const & domain_map,
-// 		ScoreFunction const & sfxn,
-// 		EnergyMap const & weights,
-// 		Vector & F1,
-// 		Vector & F2
-// 	) const;
+	//  /// called during gradient-based minimization inside dfunc
+	//  /**
+	//    F1 and F2 are not zeroed -- contributions from this atom are
+	//    just summed in
+	//  **/
+	//  virtual
+	//  void
+	//  eval_atom_derivative(
+	//   id::AtomID const & id,
+	//   pose::Pose const & pose,
+	//   kinematics::DomainMap const & domain_map,
+	//   ScoreFunction const & sfxn,
+	//   EnergyMap const & weights,
+	//   Vector & F1,
+	//   Vector & F2
+	//  ) const;
 
 	virtual
 	void
@@ -209,73 +209,73 @@ public:
 
 	void
 	residue_pair_energy(
-											conformation::Residue const & rsd1,
-											LKB_ResidueInfo const & rsd1_info,
-											conformation::Residue const & rsd2,
-											LKB_ResidueInfo const & rsd2_info,
-											EnergyMap & emap
-											) const;
+		conformation::Residue const & rsd1,
+		LKB_ResidueInfo const & rsd1_info,
+		conformation::Residue const & rsd2,
+		LKB_ResidueInfo const & rsd2_info,
+		EnergyMap & emap
+	) const;
 
 
 	void
 	accumulate_single_atom_contributions(
-																			 Size const atom1,
-																			 Size const atom1_type_index,
-																			 Vectors const & atom1_waters,
-																			 utility::vector1< Real > const & atom1_wts,
-																			 conformation::Residue const & rsd1,
-																			 Size const atom2_type_index,
-																			 Vector const & atom2_xyz,
-																			 Real const lk_desolvation_of_atom1_by_atom2,
-																			 EnergyMap & emap
-																			 ) const;
+		Size const atom1,
+		Size const atom1_type_index,
+		Vectors const & atom1_waters,
+		utility::vector1< Real > const & atom1_wts,
+		conformation::Residue const & rsd1,
+		Size const atom2_type_index,
+		Vector const & atom2_xyz,
+		Real const lk_desolvation_of_atom1_by_atom2,
+		EnergyMap & emap
+	) const;
 
 	/* Undefined, commenting out to fix PyRosetta build  void
 	get_scorefxn_weights_for_derivatives(
-																			 Size const atom1,
-																			 conformation::Residue const & rsd1,
-																			 bool const atom1_has_waters,
-																			 Size const atom2,
-																			 conformation::Residue const & rsd2,
-																			 EnergyMap const & weights,
-																			 Real & unoriented_weight,
-																			 Real & oriented_weight
-																			 ) const;
-																			 */
+	Size const atom1,
+	conformation::Residue const & rsd1,
+	bool const atom1_has_waters,
+	Size const atom2,
+	conformation::Residue const & rsd2,
+	EnergyMap const & weights,
+	Real & unoriented_weight,
+	Real & oriented_weight
+	) const;
+	*/
 
 	void
 	setup_for_minimizing_for_residue(
-																	 conformation::Residue const & rsd,
-																	 pose::Pose const & pose,
-																	 ScoreFunction const & scorefxn,
-																	 kinematics::MinimizerMapBase const & min_map,
-																	 ResSingleMinimizationData & resdata
-																	 ) const;
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		ScoreFunction const & scorefxn,
+		kinematics::MinimizerMapBase const & min_map,
+		ResSingleMinimizationData & resdata
+	) const;
 
 	void
 	setup_for_minimizing_for_residue_pair(
-																				conformation::Residue const & rsd1,
-																				conformation::Residue const & rsd2,
-																				pose::Pose const &,
-																				ScoreFunction const & scorefxn,
-																				kinematics::MinimizerMapBase const & min_map,
-																				ResSingleMinimizationData const & res1data,
-																				ResSingleMinimizationData const & res2data,
-																				ResPairMinimizationData & pairdata
-																				) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const &,
+		ScoreFunction const & scorefxn,
+		kinematics::MinimizerMapBase const & min_map,
+		ResSingleMinimizationData const & res1data,
+		ResSingleMinimizationData const & res2data,
+		ResPairMinimizationData & pairdata
+	) const;
 
 	bool
 	use_extended_residue_pair_energy_interface() const;
 
 	void
 	residue_pair_energy_ext(
-													conformation::Residue const & rsd1,
-													conformation::Residue const & rsd2,
-													ResPairMinimizationData const & pairdata,
-													pose::Pose const &,// pose,
-													ScoreFunction const &,
-													EnergyMap & emap
-													) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		ResPairMinimizationData const & pairdata,
+		pose::Pose const &,// pose,
+		ScoreFunction const &,
+		EnergyMap & emap
+	) const;
 
 	bool
 	minimize_in_whole_structure_context( pose::Pose const & ) const;
@@ -285,22 +285,22 @@ public:
 
 	void
 	setup_for_scoring_for_residue(
-																conformation::Residue const & rsd,
-																pose::Pose const &,// pose,
-																ScoreFunction const & sfxn,
-																ResSingleMinimizationData & resdata
-																) const;
+		conformation::Residue const & rsd,
+		pose::Pose const &,// pose,
+		ScoreFunction const & sfxn,
+		ResSingleMinimizationData & resdata
+	) const;
 
 	bool
 	requires_a_setup_for_derivatives_for_residue_opportunity( pose::Pose const &  ) const;
 
 	void
 	setup_for_derivatives_for_residue(
-																		conformation::Residue const & rsd,
-																		pose::Pose const & pose,
-																		ScoreFunction const & sfxn,
-																		ResSingleMinimizationData & min_data
-																		) const;
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn,
+		ResSingleMinimizationData & min_data
+	) const;
 
 
 	virtual
@@ -324,10 +324,10 @@ public:
 	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
 
 
-/////////////////////////////////////////////////////////////////////////////
-// private methods
-//private:
-/////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////
+	// private methods
+	//private:
+	/////////////////////////////////////////////////////////////////////////////
 
 	Real
 	eval_lk_fraction( Real const d2_delta ) const;
@@ -339,40 +339,40 @@ public:
 
 	Real
 	get_lk_fractional_contribution(
-																 Vector const & atom2_xyz,
-																 Size const atom2_type_index,
-																 Vectors const & atom1_waters,
-																 Size & closest_water,
-																 Real & closest_water_dis2
-																 ) const;
+		Vector const & atom2_xyz,
+		Size const atom2_type_index,
+		Vectors const & atom1_waters,
+		Size & closest_water,
+		Real & closest_water_dis2
+	) const;
 	Real
 	get_lk_fractional_contribution(
-																 Vector const & atom2_xyz,
-																 Size const atom2_type_index,
-																 Vectors const & atom1_waters
-																 ) const;
+		Vector const & atom2_xyz,
+		Size const atom2_type_index,
+		Vectors const & atom1_waters
+	) const;
 	/// for external use
 	Real
 	eval_lk_ball_fraction_deriv(
-															Vector const & atom2_xyz,
-															Size const atom2_type_index,
-															Vectors const & atom1_waters,
-															bool const evaluate_deriv,
-															Vector & f1,
-															Vector & f2
-															) const;
+		Vector const & atom2_xyz,
+		Size const atom2_type_index,
+		Vectors const & atom1_waters,
+		bool const evaluate_deriv,
+		Vector & f1,
+		Vector & f2
+	) const;
 
 
 	/* Undefined, commenting out to fix PyRosetta build  void
 	residue_pair_energy(
-											conformation::Residue const & rsd1,
-											utility::vector1< Vectors > const & rsd1_waters,
-											conformation::Residue const & rsd2,
-											utility::vector1< Vectors > const & rsd2_waters,
-											pose::Pose const & pose,
-											ScoreFunction const &,
-											EnergyMap & emap
-											) const; */
+	conformation::Residue const & rsd1,
+	utility::vector1< Vectors > const & rsd1_waters,
+	conformation::Residue const & rsd2,
+	utility::vector1< Vectors > const & rsd2_waters,
+	pose::Pose const & pose,
+	ScoreFunction const &,
+	EnergyMap & emap
+	) const; */
 
 	virtual
 	void
@@ -400,60 +400,60 @@ public:
 
 	void
 	sum_deriv_contributions_for_atom_pair_one_way(
-																								Size const atom1,
-																								conformation::Residue const & rsd1,
-																								Vectors const & atom1_waters,
-																								Vectors const & heavyatom1_waters,
-																								utility::vector1< Real > const & atom1_wts,
-																								Size const atom2,
-																								conformation::Residue const & rsd2,
-																								scoring::EnergyMap const & weights,
-																								Real const weight_factor,
-																								Real const d2,
-																								Vector & F1,
-																								Vector & F2
-																								) const;
+		Size const atom1,
+		conformation::Residue const & rsd1,
+		Vectors const & atom1_waters,
+		Vectors const & heavyatom1_waters,
+		utility::vector1< Real > const & atom1_wts,
+		Size const atom2,
+		conformation::Residue const & rsd2,
+		scoring::EnergyMap const & weights,
+		Real const weight_factor,
+		Real const d2,
+		Vector & F1,
+		Vector & F2
+	) const;
 
 	void
 	sum_deriv_contributions_for_atom_pair(
-																				Real const d2,
-																				Size const atom1,
-																				conformation::Residue const & rsd1,
-																				LKB_ResidueInfo const & rsd1_info,
-																				Size const atom2,
-																				conformation::Residue const & rsd2,
-																				LKB_ResidueInfo const & rsd2_info,
-																				pose::Pose const & pose,
-																				scoring::EnergyMap const & weights,
-																				Real const cp_weight,
-																				Vector & F1,
-																				Vector & F2
-																				) const;
+		Real const d2,
+		Size const atom1,
+		conformation::Residue const & rsd1,
+		LKB_ResidueInfo const & rsd1_info,
+		Size const atom2,
+		conformation::Residue const & rsd2,
+		LKB_ResidueInfo const & rsd2_info,
+		pose::Pose const & pose,
+		scoring::EnergyMap const & weights,
+		Real const cp_weight,
+		Vector & F1,
+		Vector & F2
+	) const;
 
 
 	void
 	setup_d2_bounds();
 
-// 	void
-// 	add_my_score_types();
+	//  void
+	//  add_my_score_types();
 
-// 	/// HACK
-// 	void
-// 	setup_hack();
+	//  /// HACK
+	//  void
+	//  setup_hack();
 
-// 	bool
-// 	include_residue( conformation::Residue const & rsd ) const;
+	//  bool
+	//  include_residue( conformation::Residue const & rsd ) const;
 
-// private:
-// 	etable::Etable const &
-// 	etable() const
-// 	{ return *( etable_.lock() ); } // segfault danger here
+	// private:
+	//  etable::Etable const &
+	//  etable() const
+	//  { return *( etable_.lock() ); } // segfault danger here
 
 
-/////////////////////////////////////////////////////////////////////////////
-// data
+	/////////////////////////////////////////////////////////////////////////////
+	// data
 private:
-/////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////
 
 	etable::EtableCOP etable_;
 

@@ -73,7 +73,7 @@ Size DbTrajectoryReader::get_num_iterations() const { // {{{1
 }
 
 vector1<Size> DbTrajectoryReader::get_iterations() const { // {{{1
-	if (! table_exists(db_session_, "trajectories")) {
+	if ( ! table_exists(db_session_, "trajectories") ) {
 		utility_exit_with_message("no 'trajectories' table in the database.");
 	}
 
@@ -88,13 +88,13 @@ vector1<Size> DbTrajectoryReader::get_iterations() const { // {{{1
 	select_statement.bind(1, job_id_);
 	result select_result = safely_read_from_database(select_statement);
 
-	if (! select_result.next()) {
+	if ( ! select_result.next() ) {
 		stringstream error_message;
 		error_message << "Unable to locate job with id '" << job_id_ << "'";
 		utility_exit_with_message(error_message.str());
 	}
 
-	while (! select_result.empty()) {
+	while ( ! select_result.empty() ) {
 		Size iteration;
 		select_result >> iteration;
 		select_result.next();
@@ -110,7 +110,7 @@ vector1<Size> DbTrajectoryReader::get_iterations() const { // {{{1
 }
 
 Pose DbTrajectoryReader::get_pose(Size iteration) const { // {{{1
-	if (! table_exists(db_session_, "trajectories")) {
+	if ( ! table_exists(db_session_, "trajectories") ) {
 		utility_exit_with_message("no 'trajectories' table in this database.");
 	}
 
@@ -125,7 +125,7 @@ Pose DbTrajectoryReader::get_pose(Size iteration) const { // {{{1
 	select_statement.bind(2, iteration);
 	result select_result = safely_read_from_database(select_statement);
 
-	if (! select_result.next()) {
+	if ( ! select_result.next() ) {
 		stringstream error_message;
 		error_message << "Unable to locate iteration '" << iteration << "' ";
 		error_message << "in job with id '" << job_id_ << "'.";
@@ -153,7 +153,7 @@ Pose DbTrajectoryReader::get_pose(Size iteration) const { // {{{1
 	pose.energies().total_energy() = score;
 	pose.energies().total_energies()[core::scoring::total_score] = score;
 
-	if (! select_result.empty()) {
+	if ( ! select_result.empty() ) {
 		stringstream error_message;
 		error_message << "More than one pose found with job id '" << job_id_;
 		error_message << "' and iteration '" << iteration << "'.";
@@ -167,7 +167,7 @@ vector1<Pose> DbTrajectoryReader::get_poses() const { // {{{1
 	vector1<Pose> poses;
 	vector1<Size> iterations = get_iterations();
 
-	BOOST_FOREACH(Size i, iterations) {
+	BOOST_FOREACH ( Size i, iterations ) {
 		Pose pose = get_pose(i);
 		poses.push_back(pose);
 	}

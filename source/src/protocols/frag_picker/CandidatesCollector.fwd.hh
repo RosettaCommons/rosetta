@@ -26,7 +26,7 @@ class CandidatesCollector;
 
 typedef utility::pointer::shared_ptr<CandidatesCollector> CandidatesCollectorOP;
 typedef utility::pointer::shared_ptr<CandidatesCollector const>
-		CandidatesCollectorCOP;
+	CandidatesCollectorCOP;
 
 } // frag_picker
 } // protocols

@@ -29,8 +29,8 @@ namespace keys {
 
 /// @brief 2-tuple meta-key
 template<
-	typename K1,
-	typename K2
+typename K1,
+typename K2
 >
 class Key2Tuple
 {
@@ -166,8 +166,8 @@ private: // Fields
 
 /// @brief Key2Tuple == Key2Tuple
 template<
-	typename K1,
-	typename K2
+typename K1,
+typename K2
 >
 bool
 operator ==( Key2Tuple< K1, K2 > const & a, Key2Tuple< K1, K2 > const & b );
@@ -175,8 +175,8 @@ operator ==( Key2Tuple< K1, K2 > const & a, Key2Tuple< K1, K2 > const & b );
 
 /// @brief Key2Tuple != Key2Tuple
 template<
-	typename K1,
-	typename K2
+typename K1,
+typename K2
 >
 bool
 operator !=( Key2Tuple< K1, K2 > const & a, Key2Tuple< K1, K2 > const & b );
@@ -185,8 +185,8 @@ operator !=( Key2Tuple< K1, K2 > const & a, Key2Tuple< K1, K2 > const & b );
 /// @brief Key2Tuple < Key2Tuple
 /// @note  Lexicographic (full) ordering => Key2Tuple is suitable for use as a map key or set element
 template<
-	typename K1,
-	typename K2
+typename K1,
+typename K2
 >
 bool
 operator <( Key2Tuple< K1, K2 > const & a, Key2Tuple< K1, K2 > const & b );

@@ -129,7 +129,7 @@ atom_tree_dfunc(
 {
 	using namespace conformation::symmetry;
 	// Initialize symmetry
-debug_assert (pose::symmetry::is_symmetric( pose ) );
+	debug_assert (pose::symmetry::is_symmetric( pose ) );
 	SymmetricConformation & symm_conf (
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
@@ -245,14 +245,14 @@ atom_tree_get_atompairE_deriv(
 
 	SymmetricConformation const & symm_conf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
-debug_assert( conformation::symmetry::is_symmetric( symm_conf ) );
+	debug_assert( conformation::symmetry::is_symmetric( symm_conf ) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 
 	SymmetricEnergies const & symm_energies( dynamic_cast< SymmetricEnergies const & > (pose.energies()) );
 
-debug_assert( symm_energies.minimization_graph() );
-debug_assert( symm_energies.derivative_graph() );
+	debug_assert( symm_energies.minimization_graph() );
+	debug_assert( symm_energies.derivative_graph() );
 
 	MinimizationGraphCOP mingraph  = symm_energies.minimization_graph();
 	MinimizationGraphCOP dmingraph = symm_energies.derivative_graph();
@@ -265,11 +265,11 @@ debug_assert( symm_energies.derivative_graph() );
 				EnergyMap weights( scorefxn.weights());
 				weights *= symm_info->score_multiply_factor();
 				eval_atom_derivatives_for_minnode( minnode, pose.residue( ii ), pose, weights,
-																					 symm_min_map.atom_derivatives( ii ) );
+					symm_min_map.atom_derivatives( ii ) );
 			}
 		} else {
 			eval_atom_derivatives_for_minnode( minnode, pose.residue( ii ), pose, scorefxn.weights(),
-																				 symm_min_map.atom_derivatives( ii ) );
+				symm_min_map.atom_derivatives( ii ) );
 		}
 	}
 
@@ -293,8 +293,8 @@ debug_assert( symm_energies.derivative_graph() );
 	if ( !symm_min_map.new_sym_min() ) {
 		/// 2b. eval inter-residue derivatives from derivative minimization graph
 		for ( graph::Node::EdgeListConstIter
-						edgeit = dmingraph->const_edge_list_begin(), edgeit_end = dmingraph->const_edge_list_end();
-					edgeit != edgeit_end; ++edgeit ) {
+				edgeit = dmingraph->const_edge_list_begin(), edgeit_end = dmingraph->const_edge_list_end();
+				edgeit != edgeit_end; ++edgeit ) {
 			MinimizationEdge const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
 			Size const rsd1ind = minedge.get_first_node_ind();
 			Size const rsd2ind = minedge.get_second_node_ind();
@@ -325,7 +325,7 @@ debug_assert( symm_energies.derivative_graph() );
 		Vector f1(0,0,0), f2(0,0,0);
 		// loop through atoms first moved by this torsion
 		for ( DOF_Node::AtomIDs::const_iterator it1=dof_node.atoms().begin(),
-				it1e = dof_node.atoms().end();	it1 != it1e; ++it1 ) {
+				it1e = dof_node.atoms().end(); it1 != it1e; ++it1 ) {
 			id::AtomID const & atom_id( *it1 );
 
 			/// Most of the derivative evaluation has already taken place by the time we get here.
@@ -354,7 +354,7 @@ debug_assert( symm_energies.derivative_graph() );
 		Vector f1(0,0,0), f2(0,0,0);
 		// loop through atoms first moved by this torsion
 		for ( DOF_Node::AtomIDs::const_iterator it1=dof_node.atoms().begin(),
-				it1e = dof_node.atoms().end();	it1 != it1e; ++it1 ) {
+				it1e = dof_node.atoms().end(); it1 != it1e; ++it1 ) {
 			id::AtomID const & atom_id( *it1 );
 
 			/// Most of the derivative evaluation has already taken place by the time we get here.
@@ -443,11 +443,11 @@ numerical_derivative_check(
 	// setup for saving diagnostics
 	MinDebug min_debug( nangles );
 
-// 	min_debug.nangles = nangles;
-// 	if ( nangles > int( min_debug.abs_deriv_dev.size1() ) ) {
-// 		min_debug.abs_deriv_dev.dimension( nangles );
-// 		min_debug.rel_deriv_dev.dimension( nangles );
-// 	}
+	//  min_debug.nangles = nangles;
+	//  if ( nangles > int( min_debug.abs_deriv_dev.size1() ) ) {
+	//   min_debug.abs_deriv_dev.dimension( nangles );
+	//   min_debug.rel_deriv_dev.dimension( nangles );
+	//  }
 
 	Multivec vars( start_vars );
 
@@ -455,9 +455,9 @@ numerical_derivative_check(
 	Size ii( 1 ); // for indexing into dE_dvars[ ii ]
 
 	for ( MinimizerMap::const_iterator iter= min_map.begin(),
-					iter_end= min_map.end(); iter != iter_end; ++iter, ++ii ) {
+			iter_end= min_map.end(); iter != iter_end; ++iter, ++ii ) {
 		DOF_Node const & dof_node( **iter );
-		if ( min_map.new_sym_min() && dof_node.dependent() ) {--ii; continue; }
+		if ( min_map.new_sym_min() && dof_node.dependent() ) { --ii; continue; }
 
 		Real deriv_dev = 10000.0;
 		for ( Size j = 1,factor=1; j <= n_increment; ++j ) {
@@ -478,10 +478,10 @@ numerical_derivative_check(
 			vars[ii] = start_vars[ii];
 
 			Real const ratio( std::abs( dE_dvars[ii] ) < 0.001 ? 0.0 :
-												 deriv / dE_dvars[ii] );
+				deriv / dE_dvars[ii] );
 
 			if ( verbose &&
-					 ( std::abs(dE_dvars[ii]) > 0.001 || std::abs(deriv) > 0.001 ) ) {
+					( std::abs(dE_dvars[ii]) > 0.001 || std::abs(deriv) > 0.001 ) ) {
 				// if you change this output, please also change the comments
 				// at the beginning of this section
 				static bool ratio_header_output( false );
@@ -531,7 +531,7 @@ numerical_derivative_check(
 		if ( true ) {
 
 			Real const ratio( std::abs( dE_dvars[ii] ) < 0.001 ? 0.0 :
-												 deriv_dev / std::abs( dE_dvars[ii] ) );
+				deriv_dev / std::abs( dE_dvars[ii] ) );
 
 			min_debug.rel_deriv_dev[ ii ] = ratio;
 			min_debug.abs_deriv_dev[ ii ] = deriv_dev;
@@ -588,7 +588,7 @@ numerical_derivative_check(
 			" log_norm_ratio: " << F(9,4,log_norm_ratio) << std::endl;
 
 		min_debug.best_cos_theta = std::max( min_debug.best_cos_theta,
-																					cos_theta );
+			cos_theta );
 		if ( std::abs( log_norm_ratio ) < min_debug.best_abs_log_norm_ratio ) {
 			min_debug.best_abs_log_norm_ratio = std::abs( log_norm_ratio );
 			min_debug.best_norm_analytic = norm;
@@ -600,17 +600,17 @@ numerical_derivative_check(
 } // namespace symmetry
 } // namespace optimization
 } // namespace core
-// 	{ // dont want to modify the pose if we can avoid it
-// 		Size const nangles( min_map.nangles() );
-// 		Multivec tmp_vars( nangles );
-// 		min_map.copy_dofs_from_pose( pose, tmp_vars );
-// 		Real dev(0.0);
-// 		for ( Size i=1; i<= nangles; ++i ) {
-// 			dev += std::abs( tmp_vars[i] - vars[i] );
-// 		}
-// 		std::cout << "[ DEBUG ] vars dev in atom_tree_dfunc: " << dev << std::endl;
-// 		if ( dev > 1e-2 ) {
-// 			min_map.copy_dofs_to_pose( pose, vars );
-// 			scorefxn( pose );
-// 		}
-// 	}
+//  { // dont want to modify the pose if we can avoid it
+//   Size const nangles( min_map.nangles() );
+//   Multivec tmp_vars( nangles );
+//   min_map.copy_dofs_from_pose( pose, tmp_vars );
+//   Real dev(0.0);
+//   for ( Size i=1; i<= nangles; ++i ) {
+//    dev += std::abs( tmp_vars[i] - vars[i] );
+//   }
+//   std::cout << "[ DEBUG ] vars dev in atom_tree_dfunc: " << dev << std::endl;
+//   if ( dev > 1e-2 ) {
+//    min_map.copy_dofs_to_pose( pose, vars );
+//    scorefxn( pose );
+//   }
+//  }

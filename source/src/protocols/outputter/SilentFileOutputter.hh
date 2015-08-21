@@ -27,22 +27,22 @@ namespace outputter {
 		void lregister_SilentFileOutputter( lua_State * lstate );
 #endif
 
-		using namespace core::io::serialization;
-		using core::pose::PoseSP;
+using namespace core::io::serialization;
+using core::pose::PoseSP;
 
 class SilentFileOutputter : public FormatStringOutputter {
 
-	public:
-		SilentFileOutputter();
-		virtual ~SilentFileOutputter();
+public:
+	SilentFileOutputter();
+	virtual ~SilentFileOutputter();
 
-		virtual void write( Pose & p );
+	virtual void write( Pose & p );
 
-		bool score_only() { return score_only_; }
-		void score_only(bool b) { score_only_ = b; }
+	bool score_only() { return score_only_; }
+	void score_only(bool b) { score_only_ = b; }
 
-		std::string tag_format_string() { return tag_format_string_; }
-		void tag_format_string( std::string s ) { tag_format_string_ = s; }
+	std::string tag_format_string() { return tag_format_string_; }
+	void tag_format_string( std::string s ) { tag_format_string_ = s; }
 
 #ifdef USELUA
 		void parse_def( utility::lua::LuaObject const & def,
@@ -50,19 +50,19 @@ class SilentFileOutputter : public FormatStringOutputter {
 		virtual void lregister( lua_State * lstate );
 #endif
 
-		// factory functions
-		OutputterSP create();
-		static std::string name() {
-			return "SilentFileOutputter";
-		}
+	// factory functions
+	OutputterSP create();
+	static std::string name() {
+		return "SilentFileOutputter";
+	}
 
-	protected:
-			core::io::silent::SilentFileData sfd_;
-			bool score_only_;
-			bool binary_;
-			std::string tag_format_string_;
+protected:
+	core::io::silent::SilentFileData sfd_;
+	bool score_only_;
+	bool binary_;
+	std::string tag_format_string_;
 
-}; // end 
+}; // end
 
 } // outputter
 } // protocols

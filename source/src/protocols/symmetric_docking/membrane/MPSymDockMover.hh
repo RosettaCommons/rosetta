@@ -52,72 +52,72 @@ namespace symmetric_docking {
 namespace membrane {
 
 class MPSymDockMover : public protocols::moves::Mover {
-    
+
 public:
-    
-    /////////////////////
-    /// Constructors  ///
-    /////////////////////
-    
-    /// @brief Defualt constructor for the membrane protein symmetric
-    /// docking protocol
-    MPSymDockMover();
-    
-    /// @brief Destructor
-    ~MPSymDockMover();
-    
-    ///////////////////////////////
-    /// Rosetta Scripts Methods ///
-    ///////////////////////////////
-    
-    /// @brief Create a Clone of this mover
-    protocols::moves::MoverOP
-    clone() const;
-    
-    /// @brief Create a Fresh Instance of this Mover
-    protocols::moves::MoverOP
-    fresh_instance() const;
-    
-    /// @brief Pase Rosetta Scripts Options for this Mover
-    void
-    parse_my_tag(
-         utility::tag::TagCOP,
-         basic::datacache::DataMap &,
-         protocols::filters::Filters_map const &,
-         protocols::moves::Movers_map const &,
-         core::pose::Pose const &
-    );
-    
-    //////////////////////
-    /// Mover Methods  ///
-    //////////////////////
-    
-    /// @brief Return the name of this mover (MPSymDockMover)
-    virtual
-    std::string
-    get_name() const;
-            
-    /// @brief Apply Method: Symmetric Docking in the membrane
-    /// @details Setup pose for symmetry, add the membrane components to the total pose,
-    /// and then perform symmetric docking
-    virtual
-    void
-    apply( Pose & pose );
+
+	/////////////////////
+	/// Constructors  ///
+	/////////////////////
+
+	/// @brief Defualt constructor for the membrane protein symmetric
+	/// docking protocol
+	MPSymDockMover();
+
+	/// @brief Destructor
+	~MPSymDockMover();
+
+	///////////////////////////////
+	/// Rosetta Scripts Methods ///
+	///////////////////////////////
+
+	/// @brief Create a Clone of this mover
+	protocols::moves::MoverOP
+	clone() const;
+
+	/// @brief Create a Fresh Instance of this Mover
+	protocols::moves::MoverOP
+	fresh_instance() const;
+
+	/// @brief Pase Rosetta Scripts Options for this Mover
+	void
+	parse_my_tag(
+		utility::tag::TagCOP,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
+	);
+
+	//////////////////////
+	/// Mover Methods  ///
+	//////////////////////
+
+	/// @brief Return the name of this mover (MPSymDockMover)
+	virtual
+	std::string
+	get_name() const;
+
+	/// @brief Apply Method: Symmetric Docking in the membrane
+	/// @details Setup pose for symmetry, add the membrane components to the total pose,
+	/// and then perform symmetric docking
+	virtual
+	void
+	apply( Pose & pose );
 
 private:
-            
-    /////////////////////
-    /// Setup Methods ///
-    /////////////////////
 
-    /// @brief Position Pose at TopologyCOM
-    /// @details Position the initial pose at the center of mass of
-    /// predicted transmembrane spanning regions of the whole complex
-    void
-    position_membrane_at_topology_com( core::pose::Pose & pose );
+	/////////////////////
+	/// Setup Methods ///
+	/////////////////////
+
+	/// @brief Position Pose at TopologyCOM
+	/// @details Position the initial pose at the center of mass of
+	/// predicted transmembrane spanning regions of the whole complex
+	void
+	position_membrane_at_topology_com( core::pose::Pose & pose );
 
 };
-            
+
 } // membrane
 } // symmetric_docking
 } // protocols

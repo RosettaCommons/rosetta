@@ -45,8 +45,8 @@
 #include <sstream>
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 static thread_local basic::Tracer TR( "protocols.features.BatchFeatures" );
 
@@ -74,7 +74,7 @@ BatchFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session, c
 
 	using namespace basic::database::schema_generator;
 
-	if(batch_id){
+	if ( batch_id ) {
 		PrimaryKey batch_id(Column("batch_id", DbDataTypeOP( new DbInteger() )));
 
 		ForeignKey protocol_id(
@@ -93,8 +93,7 @@ BatchFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session, c
 
 		batches.write(db_session);
 
-	}
-	else{
+	} else {
 		PrimaryKey batch_id(
 			Column("batch_id", DbDataTypeOP( new DbInteger() ), false /*not null*/, true /*autoincrement*/));
 
@@ -137,25 +136,25 @@ BatchFeatures::report_features(
 	sessionOP db_session
 ){
 	cppdb::statement insert_statement;
-	if(batch_id){
+	if ( batch_id ) {
 
 		//Check to make sure an existing batch with the same id doesn't exist
 		std::string statement_string =
 			"SELECT\n"
-			"	count(*)\n"
+			"\tcount(*)\n"
 			"FROM\n"
-			"	batches\n"
+			"\tbatches\n"
 			"WHERE\n"
-			"	batch_id = ?;";
+			"\tbatch_id = ?;";
 		cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 		stmt.bind(1,protocol_id);
 
 		TR << "Checking for existing batches entry with given id" << std::endl;
 		cppdb::result res(basic::database::safely_read_from_database(stmt));
-		if(res.next()) {
+		if ( res.next() ) {
 			core::Size selected = 0;
 			res >> selected;
-			if(selected != 0) {
+			if ( selected != 0 ) {
 				return protocol_id;
 			}
 		}
@@ -180,19 +179,19 @@ BatchFeatures::report_features(
 	//Batch features doesn't use safely_write_to_database due to special handling of thrown cppdb exceptions
 	//basic::database::safely_write_to_database(insert_statement);
 	insert_statement.exec();
-	if(batch_id) {
+	if ( batch_id ) {
 		return batch_id;
 	} else {
 		core::Size new_batch_id = insert_statement.sequence_last("batches_batch_id_seq");
 		return new_batch_id;
 	}
 
-//	TR.Debug
-//		<< "Writing to batches table with:" << std::endl
-//		<< "\tbatch_id '" << batch_id << "'" << std::endl
-//		<< "\tprotocol_id '" << protocol_id << "'" << std::endl
-//		<< "\tname '" << name << "'" << std::endl
-//		<< "\tdescription '" << description << "'" << std::endl;
+	// TR.Debug
+	//  << "Writing to batches table with:" << std::endl
+	//  << "\tbatch_id '" << batch_id << "'" << std::endl
+	//  << "\tprotocol_id '" << protocol_id << "'" << std::endl
+	//  << "\tname '" << name << "'" << std::endl
+	//  << "\tdescription '" << description << "'" << std::endl;
 
 	return 0;
 }

@@ -26,9 +26,9 @@
 #include <istream>
 #include <iostream>
 
-namespace core{
-namespace pack{
-namespace annealer{
+namespace core {
+namespace pack {
+namespace annealer {
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -191,7 +191,7 @@ void DebuggingAnnealer::run()
 	best_state_on_node = current_state;
 
 	//convert best_state_on_node into best_rotamer_at_seqpos
-	for (int ii = 1;ii <= nmoltenres; ++ii){
+	for ( int ii = 1; ii <= nmoltenres; ++ii ) {
 		int iiresid = rotamer_sets()->moltenres_2_resid(ii);
 		bestrotamer_at_seqpos()(iiresid) = best_state_on_node(ii) + rotamer_sets()->nrotamer_offset_for_moltenres(iiresid);
 	}

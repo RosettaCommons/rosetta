@@ -10,7 +10,7 @@
 /// @file       protocols/relax/membrane/MPFastRelaxMover.fwd.hh
 ///
 /// @brief      Membrane Fast Relax Protocol - Relax with minimization of mem position
-/// @details	Apply the standard fast relax protocol. Enable minimization of the memrbane
+/// @details Apply the standard fast relax protocol. Enable minimization of the memrbane
 ///             jump and relax from the center of mass. Also use the smoothed
 ///             full atom membrane energy function.
 ///
@@ -30,7 +30,7 @@ namespace membrane {
 class MPFastRelaxMover;
 typedef utility::pointer::shared_ptr< MPFastRelaxMover > MPFastRelaxMoverOP;
 typedef utility::pointer::shared_ptr< MPFastRelaxMover const > MPFastRelaxMoverCOP;
-    
+
 } // membrane
 } // relax
 } // protocols

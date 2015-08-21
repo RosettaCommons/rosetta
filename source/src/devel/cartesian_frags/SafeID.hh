@@ -146,7 +146,7 @@ core::id::StubID
 stub_id_from_torsion_stub_id(
 	TorsionStubID const & id,
 	core::conformation::Conformation const & conf
-														 );
+);
 
 
 core::kinematics::Stub
@@ -198,8 +198,8 @@ public:
 	id( core::conformation::Conformation const & conf, int const seqpos_offset = 0 ) const
 	{
 		return core::id::StubID( atom1.id( conf, seqpos_offset ),
-														 atom2.id( conf, seqpos_offset ),
-														 atom3.id( conf, seqpos_offset ) );
+			atom2.id( conf, seqpos_offset ),
+			atom3.id( conf, seqpos_offset ) );
 	}
 
 
@@ -207,10 +207,10 @@ public:
 	atom( int const i ) const
 	{
 		switch( i ) {
-		case 1: return atom1;
-		case 2: return atom2;
-		case 3: return atom3;
-		default:
+		case 1 : return atom1;
+		case 2 : return atom2;
+		case 3 : return atom3;
+		default :
 			utility_exit_with_message( "SafeStubAtom::atom: bad atom!" );
 		}
 		return atom1; // wont get here

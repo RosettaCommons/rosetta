@@ -49,50 +49,52 @@ static thread_local basic::Tracer tr( "basic.datacache.WriteableCacheableDataFac
 WriteableCacheableDataFactory *
 WriteableCacheableDataFactory::create_singleton_instance()
 {
-  return new WriteableCacheableDataFactory;
+	return new WriteableCacheableDataFactory;
 }
 
 /// @brief add a WriteableCacheableData prototype, using its default type name as the map key
 void
 WriteableCacheableDataFactory::factory_register( WriteableCacheableDataCreatorOP creator )
 {
-  if( !creator )
-    throw utility::excn::EXCN_NullPointer( "WriteableCacheableDataFactory recieved a null creator pointer." );
+	if ( !creator ) {
+		throw utility::excn::EXCN_NullPointer( "WriteableCacheableDataFactory recieved a null creator pointer." );
+	}
 
-  std::string const& data_type = creator->keyname();
+	std::string const& data_type = creator->keyname();
 
-  if ( data_creator_map_.find( data_type ) != data_creator_map_.end() ) {
-    throw utility::excn::EXCN_BadInput("WriteableCacheableData::factory_register already has a WriteableCachableData creator with name '"
-                                       + data_type + "'. Conflicting WriteableCacheableData names" );
-  }
+	if ( data_creator_map_.find( data_type ) != data_creator_map_.end() ) {
+		throw utility::excn::EXCN_BadInput("WriteableCacheableData::factory_register already has a WriteableCachableData creator with name '"
+			+ data_type + "'. Conflicting WriteableCacheableData names" );
+	}
 
-  data_creator_map_[ data_type ] = creator;
+	data_creator_map_[ data_type ] = creator;
 }
 
 /// @brief return new Data instance by key lookup in data_creator_map_
 WriteableCacheableDataOP
 WriteableCacheableDataFactory::new_data_instance( std::string const & data_type, std::istream &in )
 {
-    WriteableCacheableDataMap::const_iterator iter( data_creator_map_.find( data_type ) );
+	WriteableCacheableDataMap::const_iterator iter( data_creator_map_.find( data_type ) );
 
-  if( iter == data_creator_map_.end() ){
-    tr.Error << "[ERROR] " << data_type << " was not registered with WritableCacheableDataFactory, and cannot be initialized." << std::endl
-             << "This is probably a result of not being included by protocols/init.WriteableCacheableDataCreators.ihh and "
-             << "protocols/init.WriteableCacheableDataRegistrators.ihh." << std::endl
-             << "Available WriteableCacheableData types: ";
-    for(   WriteableCacheableDataMap::const_iterator data_type_it = data_creator_map_.begin();
-          data_type_it != data_creator_map_.end(); ++data_type_it )
-      tr.Error << data_type_it->first << ", ";
-    tr.Error << std::endl;
+	if ( iter == data_creator_map_.end() ) {
+		tr.Error << "[ERROR] " << data_type << " was not registered with WritableCacheableDataFactory, and cannot be initialized." << std::endl
+			<< "This is probably a result of not being included by protocols/init.WriteableCacheableDataCreators.ihh and "
+			<< "protocols/init.WriteableCacheableDataRegistrators.ihh." << std::endl
+			<< "Available WriteableCacheableData types: ";
+		for (   WriteableCacheableDataMap::const_iterator data_type_it = data_creator_map_.begin();
+				data_type_it != data_creator_map_.end(); ++data_type_it ) {
+			tr.Error << data_type_it->first << ", ";
+		}
+		tr.Error << std::endl;
 
-    throw utility::excn::EXCN_BadInput( "Unregistered WriteableCacheableData type '"
-                                        + data_type + "'." );
-  } else if ( ! iter->second ) {
-    throw utility::excn::EXCN_BadInput( "WriteableCacheableDataCreatorOP prototype for "
-                                        + data_type + " was not registered as NULL." );
-  }
+		throw utility::excn::EXCN_BadInput( "Unregistered WriteableCacheableData type '"
+			+ data_type + "'." );
+	} else if ( ! iter->second ) {
+		throw utility::excn::EXCN_BadInput( "WriteableCacheableDataCreatorOP prototype for "
+			+ data_type + " was not registered as NULL." );
+	}
 
-  return iter->second->create_data( in );
+	return iter->second->create_data( in );
 }
 
 } //namespace datacache

@@ -9,16 +9,16 @@
 
 /// @file       protocols/membrane/FlipMoverCreator.hh
 /// @brief      Flips a span or protein in the membrane (Rosetta Scripts Hook)
-/// @details	Flips a span, protein or part of a pose in the membrane,
-///				depending on the jump number.
-///				ONLY FOR FIXED MEMBRANE AND FLEXIBLE PROTEIN
+/// @details Flips a span, protein or part of a pose in the membrane,
+///    depending on the jump number.
+///    ONLY FOR FIXED MEMBRANE AND FLEXIBLE PROTEIN
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_FlipMover_cc
 #define INCLUDED_protocols_membrane_FlipMover_cc
 
 // Unit Headers
-#include <protocols/membrane/FlipMover.hh> 
+#include <protocols/membrane/FlipMover.hh>
 #include <protocols/membrane/FlipMoverCreator.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -33,7 +33,7 @@
 
 // Package Headers
 #include <core/kinematics/FoldTree.hh>
-#include <core/pose/Pose.hh> 
+#include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/types.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -64,14 +64,14 @@ using namespace core;
 using namespace core::pose;
 using namespace core::conformation::membrane;
 using namespace protocols::moves;
-	
+
 /////////////////////
 /// Constructors  ///
 /////////////////////
 
 /// @brief Default Constructor
 /// @details Defaults: jump = membrane jump, angle = 180 deg,
-///			axis = x-axis
+///   axis = x-axis
 FlipMover::FlipMover() : protocols::moves::Mover()
 {
 	set_defaults();
@@ -84,7 +84,7 @@ FlipMover::FlipMover( Size jump_num )
 {
 	set_defaults();
 	register_options();
-	
+
 	jump_num_ = jump_num;
 }
 
@@ -94,7 +94,7 @@ FlipMover::FlipMover( Size jump_num, Vector axis )
 {
 	set_defaults();
 	register_options();
-	
+
 	jump_num_ = jump_num;
 	axis_ = axis;
 }
@@ -105,7 +105,7 @@ FlipMover::FlipMover( Size jump_num, Real angle )
 {
 	set_defaults();
 	register_options();
-	
+
 	jump_num_ = jump_num;
 	angle_ = angle;
 }
@@ -116,12 +116,12 @@ FlipMover::FlipMover( Size jump_num, Vector axis, Real angle )
 {
 	set_defaults();
 	register_options();
-	
+
 	jump_num_ = jump_num;
 	axis_ = axis;
 	angle_ = angle;
 }
-	
+
 /// @brief Copy Constructor
 /// @details Create a deep copy of this mover
 FlipMover::FlipMover( FlipMover const & src ) : protocols::moves::Mover( src ),
@@ -134,12 +134,12 @@ FlipMover::FlipMover( FlipMover const & src ) : protocols::moves::Mover( src ),
 
 /// @brief Assignment Operator
 FlipMover & FlipMover::operator = ( FlipMover const & src ) {
-	
+
 	// Abort self-assignment.
-	if (this == &src) {
+	if ( this == &src ) {
 		return *this;
 	}
-		
+
 	// Otherwise, create a new object
 	return *( new FlipMover( *this ) );
 }
@@ -166,15 +166,15 @@ FlipMover::fresh_instance() const {
 /// @brief Pase Rosetta Scripts Options for this Mover
 void
 FlipMover::parse_my_tag(
-	 utility::tag::TagCOP /*tag*/,
-	 basic::datacache::DataMap &,
-	 protocols::filters::Filters_map const &,
-	 protocols::moves::Movers_map const &,
-	 core::pose::Pose const &
-	 ) {
+	utility::tag::TagCOP /*tag*/,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
+) {
 
 	// TODO: implement this
-	
+
 }
 
 /// @brief Create a new copy of this mover
@@ -208,21 +208,20 @@ FlipMover::get_name() const {
 
 /// @brief Flip the downstream partner in the membrane
 void FlipMover::apply( Pose & pose ) {
-	
+
 	using namespace numeric;
 	using namespace core::conformation::membrane;
 	using namespace protocols::rigid;
 	using namespace protocols::membrane::geometry;
 	using namespace protocols::membrane;
-	
+
 	TR << "Flipping along a jump in the membrane..." << std::endl;
-	
+
 	// if random angle, set it to random
 	if ( random_angle_ == true ) {
 		if ( max_angle_dev_ == 0 ) {
 			angle_ = numeric::random::random_range( 135, 225 );
-		}
-		else {
+		} else {
 			angle_ = numeric::random::random_range( 180 - max_angle_dev_, 180 + max_angle_dev_ );
 		}
 	}
@@ -243,55 +242,53 @@ void FlipMover::apply( Pose & pose ) {
 	TR << "upstream jump res: " << foldtree.upstream_jump_residue( jump_num_ ) << std::endl;
 	TR << "downstream jump res: " << foldtree.downstream_jump_residue( jump_num_ ) << std::endl;
 	TR << "membrane res: " << pose.conformation().membrane_info()->membrane_rsd_num() << std::endl;
-	
+
 	// if jump is not membrane jump
 	if ( foldtree.upstream_jump_residue( jump_num_ ) != int( mem_rsd ) &&
-		 foldtree.downstream_jump_residue( jump_num_ ) != int( mem_rsd ) ) {
-		
+			foldtree.downstream_jump_residue( jump_num_ ) != int( mem_rsd ) ) {
+
 		TR << "jump is not membrane jump" << std::endl;
-		
+
 		// split pose and topology by jump
 		Pose pose_up, pose_down;
 		SpanningTopologyOP topo = pose.conformation().membrane_info()->spanning_topology();
 		SpanningTopology topo_up, topo_down;
-		
+
 		// call function
 		split_topology_by_jump( pose, jump_num_, *topo, pose_up, pose_down, topo_up, topo_down );
-		
+
 		// get embedding centers of both partners
 		EmbeddingDefOP emb_pose_up = compute_structure_based_embedding( pose_up, topo_up );
 		EmbeddingDefOP emb_pose_down = compute_structure_based_embedding( pose_down, topo_down );
-		
+
 		// get rotation axis, this is the axis between the embedding centers from both partners
 		if ( axis_.length() == 0 ) {
 			axis_ = emb_pose_up->center() - emb_pose_down->center();
 		}
-		
+
 		// rotation center is embedding center of downstream pose
 		Vector rot_center = emb_pose_down->center();
-		
+
 		TR << "jump_num_: " << jump_num_ << std::endl;
 		TR << "axis_: " << axis_.to_string() << std::endl;
 		TR << "rot_center: " << rot_center.to_string() << std::endl;
 		TR << "angle: " << angle_ << std::endl;
-		
+
 		// do rotation
 		RigidBodyDeterministicSpinMoverOP rb_flip ( new RigidBodyDeterministicSpinMover( jump_num_, axis_, rot_center, angle_ ) );
 		rb_flip->apply( pose );
-	}
+	} else {
+		// if jump is somehow connected to the membrane
 
-	// if jump is somehow connected to the membrane
-	else {
-	
 		TR << "jump is either zero or membrane jump" << std::endl;
-		
+
 		jump_num_ = pose.conformation().membrane_info()->membrane_jump();
 
 		// axis is x-axis
 		if ( axis_.length() == 0 ) {
 			axis_.assign(1, 0, 0);
 		}
-		
+
 		// axis is axis between membrane center and pose embedding center
 		EmbeddingDefOP embedding( compute_structure_based_embedding( pose ) );
 		Vector rot_center( embedding->center() );
@@ -300,7 +297,7 @@ void FlipMover::apply( Pose & pose ) {
 		TR << "axis_: " << axis_.to_string() << std::endl;
 		TR << "rot_center: " << rot_center.to_string() << std::endl;
 		TR << "angle: " << angle_ << std::endl;
-		
+
 		// do rotation, rot center is pose embedding center
 		RigidBodyDeterministicSpinMoverOP rb_flip ( new RigidBodyDeterministicSpinMover( jump_num_, axis_, rot_center, angle_ ) );
 		rb_flip->apply( pose );
@@ -310,11 +307,11 @@ void FlipMover::apply( Pose & pose ) {
 	pose.fold_tree( orig_ft );
 	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
 	pose.fold_tree().show( TR );
-	
+
 }// apply
 
 /// @brief Set Random flip angle between 160 and 200 degrees to keep
-///			protein oriented in the membrane correctly
+///   protein oriented in the membrane correctly
 void FlipMover::set_random_membrane_flip_angle() {
 	random_angle_ = true;
 } // set random membrane flip angle
@@ -331,25 +328,25 @@ void FlipMover::set_range( Real max_angle_dev ) {
 
 /// @brief Register Options from Command Line
 void FlipMover::register_options() {
-	
+
 	using namespace basic::options;
 	option.add_relevant( OptionKeys::mp::setup::spanfiles );
-	
+
 }
 
 /// @brief Set default values
 void FlipMover::set_defaults() {
-	
+
 	jump_num_ = 1;
-	
+
 	// default rotation axis is x-axis
 	axis_.assign( 0, 0, 0 );
 	angle_ = 180;
-	
+
 	random_angle_ = false;
-	
+
 	max_angle_dev_ = 0;
-	
+
 }// set_defaults
 
 

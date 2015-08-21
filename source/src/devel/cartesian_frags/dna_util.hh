@@ -37,45 +37,45 @@ namespace cartesian_frags {
 
 void
 optimize_suite(
-							 Direction const & dir,
-							 core::kinematics::RT const & target,
-							 core::pose::Pose & pose, // the mini pose
-							 CartesianFragment & frag
-							 );
+	Direction const & dir,
+	core::kinematics::RT const & target,
+	core::pose::Pose & pose, // the mini pose
+	CartesianFragment & frag
+);
 
 
 /// @brief  Scan a fragment library for fragment combinations that patch up the DNA backbone.
 
 core::Real
 find_sugar_and_suite_frags(
-													 DNA_FragLib const & lib,
-													 core::kinematics::RT const & fwd_target,
-													 core::kinematics::RT const & bwd_target,
-													 bool const lower_terminus,
-													 bool const upper_terminus,
-													 CartesianFragment & sugar,
-													 CartesianFragment & fwd_suite,
-													 CartesianFragment & bwd_suite
-													 );
+	DNA_FragLib const & lib,
+	core::kinematics::RT const & fwd_target,
+	core::kinematics::RT const & bwd_target,
+	bool const lower_terminus,
+	bool const upper_terminus,
+	CartesianFragment & sugar,
+	CartesianFragment & fwd_suite,
+	CartesianFragment & bwd_suite
+);
 
 
 /// @brief  Patches up the backbone before and/or after DNA position i by varying the sugar and both suites
 
 core::Real
 patch_up_backbone(
-									core::Size const i,
-									DNA_FragLib const & lib,
-									core::conformation::Conformation & conf
-									);
+	core::Size const i,
+	DNA_FragLib const & lib,
+	core::conformation::Conformation & conf
+);
 
 /// @brief  Patches up the DNA backbone link between i and i+1
 void
 patch_up_backbone_link(
-											 core::Size const i,
-											 DNA_FragLib const & lib,
-											 core::scoring::ScoreFunction const & scorefxn,
-											 core::pose::Pose & pose_inout
-											 );
+	core::Size const i,
+	DNA_FragLib const & lib,
+	core::scoring::ScoreFunction const & scorefxn,
+	core::pose::Pose & pose_inout
+);
 
 
 } // ns cartesian_frags

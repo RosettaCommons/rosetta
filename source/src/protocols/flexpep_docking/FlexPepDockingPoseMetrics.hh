@@ -40,7 +40,7 @@ public:
 
 
 	FlexPepDockingPoseMetrics(FlexPepDockingFlagsCOP flags)
-		: flags_(flags)
+	: flags_(flags)
 	{} // TODO: move to .cc
 
 	core::Real calc_frac_native_contacts ( Pose const& native,
@@ -59,7 +59,7 @@ public:
 	//  @param
 	//  pose1 - the first structure to be assessed
 	//  pose2 - the second structure to be assessed
- 	//  predicate - a predicate on atoms included in the assesment (e.g., CA atoms only)
+	//  predicate - a predicate on atoms included in the assesment (e.g., CA atoms only)
 	//  k - threshold in angstroms of atoms to be included in the assesment
 	//  ngood [output] - absolute number of atoms that are less than k Angstroms
 	//
@@ -127,8 +127,8 @@ private:
 
 	// helper method to check if two given residues are within "threashold" of each other
 	bool isInContact ( core::conformation::Residue const res1,
-					 						 core::conformation::Residue const res2,
-											 core::Real threashold ) const;
+		core::conformation::Residue const res2,
+		core::Real threashold ) const;
 
 
 }; // end class FlexPepDockingPoseMetrics

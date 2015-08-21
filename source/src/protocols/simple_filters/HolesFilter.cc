@@ -62,7 +62,7 @@ void HolesFilter::filtered_value( Real const & value )
 HolesFilter::Real
 HolesFilter::report_sm( Pose const & pose ) const
 {
-	return 	compute( pose );
+	return  compute( pose );
 }
 
 /// @brief
@@ -92,10 +92,10 @@ HolesFilter::compute( Pose const & pose ) const
 bool HolesFilter::apply( Pose const & pose ) const
 {
 	Real value = compute( pose );
-	if( value < filtered_value_ ){
+	if ( value < filtered_value_ ) {
 		tr << "Successfully filtered: " << value << std::endl;
 		return true;
-	}else{
+	} else {
 		tr << "Filter failed current/threshold=" << value << "/" << filtered_value_ << std::endl;
 		return false;
 	}
@@ -111,14 +111,14 @@ HolesFilter::parse_my_tag(
 	Pose const & )
 {
 	// set filtered type
- 	cmd_ = tag->getOption<String>( "cmd", "" );
-	if( cmd_ == "" ) {
+	cmd_ = tag->getOption<String>( "cmd", "" );
+	if ( cmd_ == "" ) {
 		tr << "cmd in xml file is emptry, so using -holes::dalphaball is expected. " << std::endl;
 		tr << "if both are empty, this gonna be crash. " << std::endl;
 	}
 
 	// set threshold
- 	filtered_value_ = tag->getOption<Real>( "threshold", 2.0 );
+	filtered_value_ = tag->getOption<Real>( "threshold", 2.0 );
 	tr << "Structures which have holes value less than " << filtered_value_ << " will be filtered." << std::endl;
 }
 

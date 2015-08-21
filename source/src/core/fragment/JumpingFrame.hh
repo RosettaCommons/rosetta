@@ -52,47 +52,47 @@ namespace fragment {
 /// start() / end() question ? or should we store which positions are jumps and translate into residue numbers from jump_nr ?
 /// could a MixedFrame contain Frames MixedFrame -- > non-cont-Frame, JumpFrame
 class NonContinuousFrame : public Frame {
-  typedef utility::vector1< Size > PosList;
+	typedef utility::vector1< Size > PosList;
 	typedef Frame Parent;
 public:
 
-  // c'stor
-  NonContinuousFrame( Size start, Size end, Size length )
-    : Frame( start, end, length ), pos_( length )
-  {};
+	// c'stor
+	NonContinuousFrame( Size start, Size end, Size length )
+	: Frame( start, end, length ), pos_( length )
+	{};
 
 	/// @brief clone method, new frame with same alignment position, fragments are not copied!
- 	virtual FrameOP clone() const;
+	virtual FrameOP clone() const;
 
-//  -- cloneing with fragments is taken care of by base-class...
+	//  -- cloneing with fragments is taken care of by base-class...
 
-// 	/// @brief clone method, new frame with same alignment position, fragments are not copied!
-// 	virtual NonContinuousFrameOP clone_with_frags() const;
+	//  /// @brief clone method, new frame with same alignment position, fragments are not copied!
+	//  virtual NonContinuousFrameOP clone_with_frags() const;
 
-// 	/// @brief clone method, new frame with same alignment position, one fragments is copied as template ( valid() == false )
-// 	virtual NonContinuousFrameOP clone_with_template();
+	//  /// @brief clone method, new frame with same alignment position, one fragments is copied as template ( valid() == false )
+	//  virtual NonContinuousFrameOP clone_with_template();
 
 
-  /// @brief translate intra-frame position into sequence position. (trivial for base-class)
-  virtual core::Size seqpos( core::Size intra_pos ) const { // BaseClass --> continuous frames
-    runtime_assert( intra_pos <= length() );
-    return pos_[ intra_pos ];
-  }
+	/// @brief translate intra-frame position into sequence position. (trivial for base-class)
+	virtual core::Size seqpos( core::Size intra_pos ) const { // BaseClass --> continuous frames
+		runtime_assert( intra_pos <= length() );
+		return pos_[ intra_pos ];
+	}
 
 	virtual bool moves_residue( core::Size pos ) const {
 		PosList::const_iterator it = find( pos_.begin(), pos_.end(), pos );
 		return it != pos_.end();
 	}
 
-  /// @brief true if frame is continuous
-  virtual bool is_continuous() const
-  { return false; };
+	/// @brief true if frame is continuous
+	virtual bool is_continuous() const
+	{ return false; };
 
-  /// @brief assign sequence position or jump_nr to internal position pos
-  void set_pos( Size intra_pos, Size setting ) {
-   debug_assert( intra_pos <= length() );
-    pos_[ intra_pos ] = setting;
-  }
+	/// @brief assign sequence position or jump_nr to internal position pos
+	void set_pos( Size intra_pos, Size setting ) {
+		debug_assert( intra_pos <= length() );
+		pos_[ intra_pos ] = setting;
+	}
 
 	/// @brief shift to new start position ( change end accordingly )
 	virtual void shift_to( core::Size setting );
@@ -111,8 +111,8 @@ protected:
 	PosList const& pos() const { return pos_; };
 private:
 
-  /// @brief stores the residue number's or jump_nr's associated with the SRFDs in FragData
-  PosList pos_;
+	/// @brief stores the residue number's or jump_nr's associated with the SRFDs in FragData
+	PosList pos_;
 };
 
 
@@ -123,20 +123,20 @@ class JumpingFrame : public NonContinuousFrame {
 public:
 
 	JumpingFrame()
-		: NonContinuousFrame( 0.0, 0.0, 0.0 ) {};
+	: NonContinuousFrame( 0.0, 0.0, 0.0 ) {};
 
-  JumpingFrame( Size start, Size end, Size length )
-		: NonContinuousFrame( start, end, length ) {};
+	JumpingFrame( Size start, Size end, Size length )
+	: NonContinuousFrame( start, end, length ) {};
 
 	/// @brief convience --- generate a matching FragData object dofs are unitialized!
 	//FragDataOP generate_fragdata( SingleResidueFragDataOP frag_res_type, SingleResidueFragDataOP jump_frag_type  )
 
-  /// @brief clone method, new frame with same alignment position, fragments are not copied!
-  virtual FrameOP clone() const {
+	/// @brief clone method, new frame with same alignment position, fragments are not copied!
+	virtual FrameOP clone() const {
 		JumpingFrameOP newFrame( new JumpingFrame( start(), end(), length() ) );
 		newFrame->pos() = pos();
 		return newFrame;
-  }
+	}
 
 	static std::string _static_type_name() {
 		return "JUMPFRAME";
@@ -145,7 +145,7 @@ public:
 	virtual std::string type() const {
 		return _static_type_name();
 	}
-  /// fragment_as_pose ????
+	/// fragment_as_pose ????
 
 
 }; //JumpingFrame

@@ -10,7 +10,7 @@
 /// @file
 /// @brief  Statistically derived rotamer pair potentials
 /// @details For docking (or between chains) only those residues at the interface
-///						and between the two interfaces need to be evaluated
+///      and between the two interfaces need to be evaluated
 /// @author Monica Berrondo
 
 
@@ -99,7 +99,7 @@ InterchainPotential::InterchainPotential() :
 		while ( getline( stream, line ) ) {
 			std::istringstream l(line);
 			l >> tag >> aa;
-			for ( Size i=1; i<= env_log_table_size; ++i ){
+			for ( Size i=1; i<= env_log_table_size; ++i ) {
 				l >> interchain_env_log_(aa,i);
 			}
 			if ( l.fail() || tag != "INT_CHAIN_ENV_LOG:"  ) utility_exit_with_message("bad format for scoring/score_functions/InterchainPotential/interchain_env_log.txt");
@@ -124,7 +124,7 @@ InterchainPotential::InterchainPotential() :
 void
 InterchainPotential::compute_interface(
 	core::pose::Pose & pose
-	) const
+) const
 {
 	InterfaceInfo & interface( nonconst_interface_from_pose( pose ) );
 
@@ -170,25 +170,27 @@ InterchainPotential::evaluate_env_score(
 	//reset env_score
 	env_score = 0.0;
 
-	if (rsd.is_protein() == false) return;
+	if ( rsd.is_protein() == false ) return;
 
 	bool is_interface = interface.is_interface( rsd );
 
 	if ( is_interface ) {
-		if ( fcen10 > 16 )
+		if ( fcen10 > 16 ) {
 			env = 1;
-		else
+		} else {
 			env = 2;
+		}
 	} else {
-		if ( fcen10 > 16 )
+		if ( fcen10 > 16 ) {
 			env = 3;
-		else
+		} else {
 			env = 4;
+		}
 	}
 
 	env_score = interchain_env_log_( rsd.aa(), env );
-		//std::cout << " residue: " << rsd.seqpos() << " res(i) " << rsd.aa()
-		//	<< " env " << env << " score " << env_score << "\n";
+	//std::cout << " residue: " << rsd.seqpos() << " res(i) " << rsd.aa()
+	// << " env " << env << " score " << env_score << "\n";
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -206,7 +208,7 @@ InterchainPotential::evaluate_contact_score(
 	//calculate contact score for each jump, sum total is contact score
 	using core::Size;
 	using core::Real;
-	for (Size i = 1; i <= interface.num_jump(); i++){
+	for ( Size i = 1; i <= interface.num_jump(); i++ ) {
 		int interface_residues = interface.interface_nres(i);
 
 		Real contact_score_jump = ( 20 - interface_residues ) * 0.5;
@@ -215,7 +217,7 @@ InterchainPotential::evaluate_contact_score(
 		if ( interface_residues == 2 ) contact_score_jump += 0.5;
 
 		contact_score += contact_score_jump;
-		}
+	}
 	if ( contact_score < -10 ) contact_score = -10;
 }
 
@@ -237,12 +239,12 @@ InterchainPotential::evaluate_pair_and_vdw_score(
 
 	if ( !rsd1.is_protein() || !rsd2.is_protein() ) return;
 
-	if (interface.is_pair( rsd1, rsd2) == false) return;
+	if ( interface.is_pair( rsd1, rsd2) == false ) return;
 
 	//fpd to match pre-48179 only compute when centroids are within 12.05A
 	core::conformation::Atom const & cen1 ( rsd1.atom( rsd1.nbr_atom() ) ), cen2 (rsd2.atom( rsd2.nbr_atom() ) );
 	core::Real const cendist = cen1.xyz().distance_squared( cen2.xyz() );
-	if (cendist > 12.05*12.05) return;
+	if ( cendist > 12.05*12.05 ) return;
 
 	pair_contribution = interchain_pair_log_( rsd1.aa(), rsd2.aa() );
 
@@ -257,10 +259,10 @@ InterchainPotential::evaluate_pair_and_vdw_score(
 		Size const i_type( rsd1.atom_type_index(i) );
 
 		// if virtual atom, continue
-		if ( rsd1.is_virtual( i ) ){
+		if ( rsd1.is_virtual( i ) ) {
 			continue;
 		}
-		
+
 		// get VDW radii
 		utility::vector1< Real > const & i_atom_vdw( atom_vdw_( i_type ) );
 
@@ -268,7 +270,7 @@ InterchainPotential::evaluate_pair_and_vdw_score(
 		for ( Size j=1, j_end = rsd2.natoms(); j<= j_end; ++j ) {
 
 			// if virtual atom, continue
-			if ( rsd2.is_virtual( j ) ){
+			if ( rsd2.is_virtual( j ) ) {
 				continue;
 			}
 

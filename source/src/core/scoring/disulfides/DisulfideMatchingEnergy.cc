@@ -79,8 +79,8 @@ methods::EnergyMethodOP DisulfideMatchingEnergy::clone() const
 
 
 void DisulfideMatchingEnergy::setup_for_scoring(
-		pose::Pose & pose,
-		ScoreFunction const & ) const
+	pose::Pose & pose,
+	ScoreFunction const & ) const
 {
 	using namespace methods;
 
@@ -89,28 +89,28 @@ void DisulfideMatchingEnergy::setup_for_scoring(
 		pose.energies().set_long_range_container( disulfide_matching_energy, dec );
 	} else {
 		DisulfideMatchingEnergyContainerOP dec = DisulfideMatchingEnergyContainerOP (
-				utility::pointer::static_pointer_cast< core::scoring::disulfides::DisulfideMatchingEnergyContainer > ( pose.energies().nonconst_long_range_container( disulfide_matching_energy ) ));
+			utility::pointer::static_pointer_cast< core::scoring::disulfides::DisulfideMatchingEnergyContainer > ( pose.energies().nonconst_long_range_container( disulfide_matching_energy ) ));
 		dec->update( pose );
 	}
 }
 
 void DisulfideMatchingEnergy::indicate_required_context_graphs(
-		utility::vector1< bool > & ) const
+	utility::vector1< bool > & ) const
 {}
 
 
 // TwoBodyEnergy Methods:
 
 void DisulfideMatchingEnergy::residue_pair_energy(
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
-		) const
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	pose::Pose const & pose,
+	ScoreFunction const &,
+	EnergyMap & emap
+) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ){
+	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ) {
 		return;
 	}
 
@@ -121,21 +121,21 @@ void DisulfideMatchingEnergy::residue_pair_energy(
 	//Require cysteines
 	//Require Centroid (NOT NO MORE!)
 	if ( ( ! rsd1.type().is_sidechain_thiol() && ! rsd1.type().is_disulfide_bonded() ) || (! rsd2.type().is_sidechain_thiol() && ! rsd2.type().is_disulfide_bonded() ) ) return;
-	
+
 	DisulfideMatchingEnergyContainerCOP dec = DisulfideMatchingEnergyContainerCOP (
-			utility::pointer::static_pointer_cast< core::scoring::disulfides::DisulfideMatchingEnergyContainer const > ( pose.energies().long_range_container( methods::disulfide_matching_energy ) ));
+		utility::pointer::static_pointer_cast< core::scoring::disulfides::DisulfideMatchingEnergyContainer const > ( pose.energies().long_range_container( methods::disulfide_matching_energy ) ));
 	//Require they're bonded
 	if ( ! dec->residue_forms_disulfide( rsd1.seqpos() ) ||
-			dec->other_neighbor_id( rsd1.seqpos() ) != (Size) rsd2.seqpos() ){
+			dec->other_neighbor_id( rsd1.seqpos() ) != (Size) rsd2.seqpos() ) {
 		return;
 	}
 
 	potential_.score_disulfide(
-			rsd1, rsd2,
-			match_rot,
-			match_trans,
-			match_RT
-			);
+		rsd1, rsd2,
+		match_rot,
+		match_trans,
+		match_RT
+	);
 
 	emap[ dslfc_rot ]   += match_rot;
 	emap[ dslfc_trans ] += match_trans;
@@ -150,11 +150,11 @@ bool DisulfideMatchingEnergy::defines_intrares_energy( EnergyMap const & ) const
 
 
 void DisulfideMatchingEnergy::eval_intrares_energy(
-		conformation::Residue const &,
-		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
-		) const
+	conformation::Residue const &,
+	pose::Pose const &,
+	ScoreFunction const &,
+	EnergyMap &
+) const
 {}
 
 // LongRangeTwoBodyEnergy methods
@@ -166,16 +166,16 @@ DisulfideMatchingEnergy::long_range_type() const
 
 
 bool DisulfideMatchingEnergy::defines_residue_pair_energy(
-		pose::Pose const & pose,
-		Size rsd1,
-		Size rsd2
-		) const
+	pose::Pose const & pose,
+	Size rsd1,
+	Size rsd2
+) const
 {
 	using namespace methods;
-	if ( ! pose.energies().long_range_container( disulfide_matching_energy )) return false;
+	if ( ! pose.energies().long_range_container( disulfide_matching_energy ) ) return false;
 
 	DisulfideMatchingEnergyContainerCOP dec = DisulfideMatchingEnergyContainerCOP (
-			utility::pointer::static_pointer_cast< core::scoring::disulfides::DisulfideMatchingEnergyContainer const > ( pose.energies().long_range_container( disulfide_matching_energy ) ));
+		utility::pointer::static_pointer_cast< core::scoring::disulfides::DisulfideMatchingEnergyContainer const > ( pose.energies().long_range_container( disulfide_matching_energy ) ));
 	return dec->disulfide_bonded( rsd1, rsd2 );
 }
 core::Size

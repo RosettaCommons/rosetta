@@ -157,7 +157,7 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
 
 	using namespace core::chemical;
 	for ( loops::Loops::const_iterator it = all_loops_->begin(),
-	        it_end = all_loops_->end();	it != it_end; ++it ) {
+			it_end = all_loops_->end(); it != it_end; ++it ) {
 		core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, it->cut() );
 		core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER,it->cut()+1);
 	}
@@ -173,7 +173,7 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
 
 	//set up rigid body movers
 	rigid::RigidBodyPerturbMoverOP rb_perturb( new rigid::RigidBodyPerturbMover( pose,
-	        *cdr_dock_map, rot_mag_, trans_mag_, rigid::partner_downstream, true ) );
+		*cdr_dock_map, rot_mag_, trans_mag_, rigid::partner_downstream, true ) );
 
 
 	//set up sidechain movers for rigid body jump and loop & neighbors
@@ -187,8 +187,9 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
 	select_loop_residues( pose, *all_loops_, true/*include_neighbors*/, sc_is_flexible);
 
 	ObjexxFCL::FArray1D_bool loop_residues( nres, false );
-	for( Size i = 1; i <= nres; i++ )
+	for ( Size i = 1; i <= nres; i++ ) {
 		loop_residues( i ) = sc_is_flexible[ i ]; // check mapping
+	}
 	using namespace protocols::toolbox::task_operations;
 	tf_->push_back( TaskOperationCOP( new RestrictToInterface( rb_jump, loop_residues ) ) );
 
@@ -219,8 +220,9 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
 	repack_step->add_mover( scmin_trial );
 
 	CycleMoverOP rb_mover_min_trial_repack( new CycleMover );
-	for ( Size i=1; i < 8; ++i )
+	for ( Size i=1; i < 8; ++i ) {
 		rb_mover_min_trial_repack->add_mover( rb_mover_min_trial );
+	}
 	rb_mover_min_trial_repack->add_mover( repack_step );
 
 	//set up initial repack mover

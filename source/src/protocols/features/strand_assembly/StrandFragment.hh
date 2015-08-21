@@ -36,19 +36,19 @@ public:
 
 	StrandFragment(core::Size start, core::Size end);
 	StrandFragment(core::Size beta_selected_segments_id, core::Size start, core::Size end);
-	
+
 	StrandFragment();
 	~StrandFragment();
-	
+
 	std::string get_pdb_source() const;
 	core::Size get_id() const;
-	
+
 	core::Size get_start() const;
 	core::Size get_end() const;
-	
+
 	core::Size get_i() const;
 	core::Size get_j() const;
-	
+
 	core::Size get_size() const;
 	void set_pdb_source(std::string pdb_source_);
 
@@ -57,10 +57,10 @@ private:
 	core::Size id_;
 	core::Size start_;
 	core::Size end_;
-	
+
 	core::Size beta_id_i_;
 	core::Size beta_id_j_;
-	
+
 	std::string pdb_source_;
 };
 

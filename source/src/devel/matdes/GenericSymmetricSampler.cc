@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //
-/// @file 
-/// @brief 
+/// @file
+/// @brief
 /// @author Neil King ( neilking@uw.edu )
 /// @author Javier Castellanos ( javiercv@uw.edu )
 /// @author Frank DiMaio
@@ -80,14 +80,14 @@ GenericSymmetricSampler::GenericSymmetricSampler() :
 	maxscore_(false)
 { }
 
-protocols::moves::MoverOP 
+protocols::moves::MoverOP
 GenericSymmetricSampler::clone() const {
 	return protocols::moves::MoverOP( new GenericSymmetricSampler( *this ) );
 }
 
-protocols::moves::MoverOP 
+protocols::moves::MoverOP
 GenericSymmetricSampler::fresh_instance() const {
-				return protocols::moves::MoverOP( new GenericSymmetricSampler() );
+	return protocols::moves::MoverOP( new GenericSymmetricSampler() );
 }
 
 
@@ -96,23 +96,23 @@ GenericSymmetricSampler::apply(Pose & pose) {
 	using core::conformation::symmetry::SymmetryInfoCOP;
 	using core::conformation::symmetry::SymDof;
 	using core::pose::Pose;
-  using protocols::moves::FAIL_DO_NOT_RETRY;
-  using protocols::moves::FAIL_BAD_INPUT;
-  using protocols::moves::FAIL_RETRY;
+	using protocols::moves::FAIL_DO_NOT_RETRY;
+	using protocols::moves::FAIL_BAD_INPUT;
+	using protocols::moves::FAIL_RETRY;
 
 
 	// for each movable dof sample
 	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 
 	std::map<Size,SymDof> dofs = sym_info->get_dofs();
-	int	sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, dof_id_ );
+	int sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, dof_id_ );
 
 	// grid search of possibly 6 DOFs
 	utility::vector1 <Real> dof_min(6,0.0);
 	utility::vector1 <Real> dof_max(6,0.0);
 
-	for (int dofid=1; dofid<=6; ++dofid) {
-		if (dofs[sym_aware_jump_id].allow_dof(dofid)) {
+	for ( int dofid=1; dofid<=6; ++dofid ) {
+		if ( dofs[sym_aware_jump_id].allow_dof(dofid) ) {
 			TR << "move jump " << dof_id_ << " along RB " << dofid << std::endl;
 			dof_min[dofid] = (dofid>3) ? angle_min_:radial_disp_min_;
 			dof_max[dofid] = (dofid>3) ? angle_max_:radial_disp_max_;
@@ -126,57 +126,57 @@ GenericSymmetricSampler::apply(Pose & pose) {
 	Real best_score = 1e20;
 	protocols::moves::MoverStatus ms( FAIL_RETRY );
 
-	for (core::Real x=dof_min[1]; x<=dof_max[1]; x+=radial_disp_step_) {
-	for (core::Real y=dof_min[2]; y<=dof_max[2]; y+=radial_disp_step_) {
-	for (core::Real z=dof_min[3]; z<=dof_max[3]; z+=radial_disp_step_) {
-	for (core::Real a=dof_min[4]; a<=dof_max[4]; a+=radial_disp_step_) {
-	for (core::Real b=dof_min[5]; b<=dof_max[5]; b+=radial_disp_step_) {
-	for (core::Real g=dof_min[6]; g<=dof_max[6]; g+=radial_disp_step_) {
-		core::kinematics::Jump j0 = j;
-		j0.set_rb_delta(1,1,x); j0.set_rb_delta(2,1,y); j0.set_rb_delta(3,1,z);
-		j0.set_rb_delta(4,1,a); j0.set_rb_delta(5,1,b); j0.set_rb_delta(6,1,g);
-		TR << "perturb " << x << "," << y << "," << z << " ; " << a << "," << b << "," << g << std::endl;
-		j0.fold_in_rb_deltas();
-		pose.set_jump( sym_aware_jump_id, j0 );
+	for ( core::Real x=dof_min[1]; x<=dof_max[1]; x+=radial_disp_step_ ) {
+		for ( core::Real y=dof_min[2]; y<=dof_max[2]; y+=radial_disp_step_ ) {
+			for ( core::Real z=dof_min[3]; z<=dof_max[3]; z+=radial_disp_step_ ) {
+				for ( core::Real a=dof_min[4]; a<=dof_max[4]; a+=radial_disp_step_ ) {
+					for ( core::Real b=dof_min[5]; b<=dof_max[5]; b+=radial_disp_step_ ) {
+						for ( core::Real g=dof_min[6]; g<=dof_max[6]; g+=radial_disp_step_ ) {
+							core::kinematics::Jump j0 = j;
+							j0.set_rb_delta(1,1,x); j0.set_rb_delta(2,1,y); j0.set_rb_delta(3,1,z);
+							j0.set_rb_delta(4,1,a); j0.set_rb_delta(5,1,b); j0.set_rb_delta(6,1,g);
+							TR << "perturb " << x << "," << y << "," << z << " ; " << a << "," << b << "," << g << std::endl;
+							j0.fold_in_rb_deltas();
+							pose.set_jump( sym_aware_jump_id, j0 );
 
-		// call mover on perturbed pose
-    mover_->apply( pose );
-    ms = mover_->get_last_move_status();
-    if( ms == FAIL_RETRY ){
-      TR.Warning << "Mover failed. Retry. " << std::endl;
-      continue;
-    } else if( ms == FAIL_DO_NOT_RETRY || ms == FAIL_BAD_INPUT ){
-      TR.Error << "Mover failed. Exit." << std::endl;
-      break;
-    }
-		core::Real myscore;
-		if (usescore_) {
-			myscore = (*scorefxn_)(pose);
-		} else {
-			myscore = filter_->report_sm( pose );
-		}
+							// call mover on perturbed pose
+							mover_->apply( pose );
+							ms = mover_->get_last_move_status();
+							if ( ms == FAIL_RETRY ) {
+								TR.Warning << "Mover failed. Retry. " << std::endl;
+								continue;
+							} else if ( ms == FAIL_DO_NOT_RETRY || ms == FAIL_BAD_INPUT ) {
+								TR.Error << "Mover failed. Exit." << std::endl;
+								break;
+							}
+							core::Real myscore;
+							if ( usescore_ ) {
+								myscore = (*scorefxn_)(pose);
+							} else {
+								myscore = filter_->report_sm( pose );
+							}
 
-		if (maxscore_) 	myscore*=-1;
-		if (myscore < best_score ) {
-			best_score = myscore;
-			best_pose = pose;
+							if ( maxscore_ )  myscore*=-1;
+							if ( myscore < best_score ) {
+								best_score = myscore;
+								best_pose = pose;
+							}
+						}
+					}
+				}
+			}
 		}
-	}
-	}
-	}
-	}
-	}
 	}
 
 	pose = best_pose;
 }
 
-void 
+void
 GenericSymmetricSampler::parse_my_tag( TagCOP const tag,
-										 basic::datacache::DataMap & data,
-										 Filters_map const &filters,
-										 Movers_map const &movers,
-										 Pose const & ) {
+	basic::datacache::DataMap & data,
+	Filters_map const &filters,
+	Movers_map const &movers,
+	Pose const & ) {
 	dof_id_ = tag->getOption<std::string>("dof_id", "");
 	angle_min_ = tag->getOption<Real>("angle_min", -1.0);
 	angle_max_ = tag->getOption<Real>("angle_max",  1.0);
@@ -203,7 +203,7 @@ GenericSymmetricSampler::parse_my_tag( TagCOP const tag,
 
 	// optional scorefunction ... overrides filter
 	std::string sfxn ( tag->getOption< std::string >( "scorefxn", "" ) );
-	if( sfxn != "" ){
+	if ( sfxn != "" ) {
 		scorefxn_ = data.get< core::scoring::ScoreFunction * >( "scorefxns", sfxn )->clone();   //fpd use clone
 		TR << "Evaluation during is done by SCOREFUNCTION" << sfxn << std::endl;
 		usescore_ = true;

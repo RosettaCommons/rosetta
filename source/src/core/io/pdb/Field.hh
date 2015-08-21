@@ -42,8 +42,8 @@ public:
 	/// @brief read field value from given string.
 	void getValueFrom(std::string source);
 
-/// This class is intended to be just 'data' type class
-/// no need to make it private.
+	/// This class is intended to be just 'data' type class
+	/// no need to make it private.
 public:
 
 	/// @brief string value of field, type of the field.

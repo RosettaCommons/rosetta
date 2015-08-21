@@ -57,8 +57,8 @@
 //Auto Headers
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 using std::string;
 using std::stringstream;
@@ -87,12 +87,12 @@ using boost::assign::list_of;
 static Tracer TR("protocols.features.TaskOperationFeatures");
 
 TaskOperationFeatures::TaskOperationFeatures()
-//	: run_once_(true)
+// : run_once_(true)
 {}
 
 TaskOperationFeatures::TaskOperationFeatures(TaskOperationFeatures const &) :
 	FeaturesReporter()
-//	run_once_(src.run_once_)
+	// run_once_(src.run_once_)
 {}
 
 TaskOperationFeatures::~TaskOperationFeatures() {}
@@ -188,7 +188,7 @@ TaskOperationFeatures::parse_my_tag(
 	Movers_map const & /*movers*/,
 	Pose const & /*pose*/
 ) {
-  	if ( ! tag->hasOption("task_operations") ) {
+	if ( ! tag->hasOption("task_operations") ) {
 		stringstream error_msg;
 		error_msg
 			<< "The " << type_name() << " reporter requires a 'task_operations' tag:" << endl
@@ -201,19 +201,18 @@ TaskOperationFeatures::parse_my_tag(
 	Size taskop_id(0);
 	std::string taskop_list = tag->getOption< std::string >("task_operations");
 	utility::vector0< std::string > const taskop_keys( utility::string_split( taskop_list, ',' ) );
-  	for ( utility::vector0< std::string>::const_iterator taskop_key( taskop_keys.begin() ),
+	for ( utility::vector0< std::string>::const_iterator taskop_key( taskop_keys.begin() ),
 			end( taskop_keys.end() ); taskop_key != end; ++taskop_key ) {
 		taskop_id++;
 		if ( data.has( "task_operations", *taskop_key ) ) {
 			TaskFactoryOP new_task_factory( new TaskFactory );
 			new_task_factory->push_back( data.get_ptr< TaskOperation >
-					( "task_operations", *taskop_key ) );
+				( "task_operations", *taskop_key ) );
 			taskops_.push_back(Taskop_id_name_factory_(taskop_id, *taskop_key, new_task_factory) );
-//			taskop_keys_factories_.insert(
-//				std::pair<std::string const, TaskFactoryCOP>(*taskop_key, new_task_factory));
-		}
-		else {
-  	        throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *taskop_key + " not found in DataMap.");
+			//   taskop_keys_factories_.insert(
+			//    std::pair<std::string const, TaskFactoryCOP>(*taskop_key, new_task_factory));
+		} else {
+			throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *taskop_key + " not found in DataMap.");
 		}
 	}
 }
@@ -227,49 +226,51 @@ TaskOperationFeatures::report_features(
 ){
 	// assert pose.update_residue_neighbors() has been called:
 	runtime_assert(
-		 !pose.conformation().structure_moved() &&
-		 pose.energies().residue_neighbors_updated());
+		!pose.conformation().structure_moved() &&
+		pose.energies().residue_neighbors_updated());
 
-//	if(taskop_keys_factories_.empty()) utility_exit_with_message("List of TaskOperators"
-//			" given to TaskFeatures is empty.");
-	if (taskops_.empty()) utility_exit_with_message("List of TaskOperators"
+	// if(taskop_keys_factories_.empty()) utility_exit_with_message("List of TaskOperators"
+	//   " given to TaskFeatures is empty.");
+	if ( taskops_.empty() ) {
+		utility_exit_with_message("List of TaskOperators"
 			" given to TaskFeatures is empty.");
+	}
 
 	// task_operations table rows, only run once
-//	if (run_once_) {
-		TR << "Inserting TaskOperations rows" << std::endl;
-		for (vector1<Taskop_id_name_factory_>::const_iterator
-				top = taskops_.begin(),
-				top_end = taskops_.end(); top != top_end; ++top) {
-			insert_task_operations_row(top->id, top->name, db_session);
-		}
-//		run_once_ = false;
-//	} else {
-//		TR << "Skipping task_operations rows" << std::endl;
-//	}
+	// if (run_once_) {
+	TR << "Inserting TaskOperations rows" << std::endl;
+	for ( vector1<Taskop_id_name_factory_>::const_iterator
+			top = taskops_.begin(),
+			top_end = taskops_.end(); top != top_end; ++top ) {
+		insert_task_operations_row(top->id, top->name, db_session);
+	}
+	//  run_once_ = false;
+	// } else {
+	//  TR << "Skipping task_operations rows" << std::endl;
+	// }
 
 	TR << "Generating tasks from saved task factories" << std::endl;
 	// gets tasks
 	std::map<core::Size, PackerTaskCOP> tasks;
-	for (vector1<Taskop_id_name_factory_>::const_iterator
+	for ( vector1<Taskop_id_name_factory_>::const_iterator
 			top = taskops_.begin(),
-			top_end = taskops_.end(); top != top_end; ++top) {
+			top_end = taskops_.end(); top != top_end; ++top ) {
 		//Size taskop_id = top->id;
 		tasks[top->id] = (top->tf)->create_task_and_apply_taskoperations( pose );
 	}
 
 	TR << "Inserting task_operation_residue_effects rows" << std::endl;
 	// task_operation_residue_effects rows
-	for( Size resNum = 1; resNum <= pose.n_residue(); ++resNum ){
-		if(!check_relevant_residues( relevant_residues, resNum )) continue;
+	for ( Size resNum = 1; resNum <= pose.n_residue(); ++resNum ) {
+		if ( !check_relevant_residues( relevant_residues, resNum ) ) continue;
 
-		for(std::map<core::Size, PackerTaskCOP>::iterator task = tasks.begin(),
-				task_end = tasks.end(); task != task_end; ++task) {
+		for ( std::map<core::Size, PackerTaskCOP>::iterator task = tasks.begin(),
+				task_end = tasks.end(); task != task_end; ++task ) {
 			bool const pack = (task->second)->pack_residue(resNum);
 			bool const design = (task->second)->design_residue(resNum);
 			Size taskop_id = task->first;
 			insert_task_operation_residue_effects_row(struct_id, resNum,
-					taskop_id, pack, design, db_session);
+				taskop_id, pack, design, db_session);
 		}
 	}
 
@@ -286,16 +287,16 @@ TaskOperationFeatures::insert_task_operations_row(
 
 	string statement_string;
 	switch(db_session->get_db_mode()){
-	case utility::sql_database::DatabaseMode::sqlite3:
+	case utility::sql_database::DatabaseMode::sqlite3 :
 		statement_string = "INSERT OR IGNORE INTO task_operations"
-				" (taskop_id, taskop_name) VALUES (?,?);";
+			" (taskop_id, taskop_name) VALUES (?,?);";
 		break;
 	case utility::sql_database::DatabaseMode::mysql:
-	case utility::sql_database::DatabaseMode::postgres:
+	case utility::sql_database::DatabaseMode::postgres :
 		statement_string = "INSERT IGNORE INTO task_operations"
-				" (taskop_id, taskop_name) VALUES (?,?);";
+			" (taskop_id, taskop_name) VALUES (?,?);";
 		break;
-	default:
+	default :
 		utility_exit_with_message(
 			"Unrecognized database mode: '" +
 			name_from_database_mode(db_session->get_db_mode()) + "'");

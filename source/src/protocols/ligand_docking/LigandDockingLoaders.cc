@@ -50,10 +50,10 @@ void InterfaceBuilderLoader::load_data(
 {
 	using namespace utility::tag;
 
-	BOOST_FOREACH(TagCOP interface_builder_tag, tag->getTags()){
+	BOOST_FOREACH ( TagCOP interface_builder_tag, tag->getTags() ) {
 		std::string const name( interface_builder_tag->getName() );
 
-		if ( data.has("interface_builders", name)) {
+		if ( data.has("interface_builders", name) ) {
 			TR << "WARNING WARNING movemap_builder of name \"" << name
 				<< ") already exists. Skipping\n" << interface_builder_tag << std::endl;
 			continue;
@@ -83,10 +83,10 @@ void MoveMapBuilderLoader::load_data(
 {
 	using namespace utility::tag;
 
-	BOOST_FOREACH(TagCOP movemap_builder_tag, tag->getTags()){
+	BOOST_FOREACH ( TagCOP movemap_builder_tag, tag->getTags() ) {
 		std::string const name( movemap_builder_tag->getName() );
 
-		if ( data.has("movemap_builders", name)) {
+		if ( data.has("movemap_builders", name) ) {
 			TR << "WARNING WARNING movemap_builder of name \"" << name
 				<< ") already exists. Skipping\n" << movemap_builder_tag << std::endl;
 			continue;
@@ -116,10 +116,10 @@ void LigandAreaLoader::load_data(
 {
 	using namespace utility::tag;
 
-	BOOST_FOREACH(TagCOP ligand_area_tag, tag->getTags()){
+	BOOST_FOREACH ( TagCOP ligand_area_tag, tag->getTags() ) {
 		std::string const name( ligand_area_tag->getName() );
 
-		if ( data.has("ligand_areas", name)) {
+		if ( data.has("ligand_areas", name) ) {
 			TR << "WARNING WARNING ligand_area of name \"" << name
 				<< ") already exists. Skipping\n" << ligand_area_tag << std::endl;
 			continue;

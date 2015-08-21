@@ -100,75 +100,75 @@ static thread_local basic::Tracer TR( "apps.pilot.jkleman.MPFolding" );
 ////////////////////////////////////////////////////////////////////////////////
 
 class MPFoldingMover : public protocols::moves::Mover {
-	
+
 public:
-	
+
 	/////////////////////
 	/// Constructors  ///
 	/////////////////////
 
 	/// @brief Default Constructor
 	MPFoldingMover();
-	
+
 	/// @brief Copy Constructor
 	MPFoldingMover( MPFoldingMover const & src );
-	
+
 	/// @brief Destructor
 	virtual ~MPFoldingMover();
-	
+
 public: // methods
-	
+
 	/// @brief Create a Clone of this mover
 	virtual protocols::moves::MoverOP clone() const;
-	
+
 	/// @brief Create a Fresh Instance of this Mover
 	virtual protocols::moves::MoverOP fresh_instance() const;
-	
+
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
 
 	/// @brief Get the name of this Mover (MPFoldingMover)
 	virtual std::string get_name() const;
-	
+
 	/// @brief Fold MP
 	virtual void apply( Pose & pose );
-	
+
 private: // methods
-	
+
 	// setup the foldtree with cutpoints according to topology
-//	void setup_foldtree();
-	
-	
-	
+	// void setup_foldtree();
+
+
+
 private: // data
-	
+
 	// topology object storing SSEs
 	SpanningTopologyOP SSE_topo_;
-	
+
 	// topology object storing loops
-//	SpanningTopologyOP loops_;
-	
+	// SpanningTopologyOP loops_;
+
 	// foldtree
 	FoldTreeOP foldtree_;
-	
+
 	// add membrane mover
-//	protocols::membrane::AddMembraneMoverOP add_membrane_mover_;
-	
+	// protocols::membrane::AddMembraneMoverOP add_membrane_mover_;
+
 	// docking protocols protocol
-//	protocols::docking::DockingProtocolOP docking_protocol_;
-	
+	// protocols::docking::DockingProtocolOP docking_protocol_;
+
 	// sequence mover
-//	protocols::moves::RandomMoverOP random_mover_;
-	
+	// protocols::moves::RandomMoverOP random_mover_;
+
 	// scorefunction
 	core::scoring::ScoreFunctionOP lowres_scorefxn_;
 	core::scoring::ScoreFunctionOP highres_scorefxn_;
-	
+
 	// kT for MCM protocol
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
 	// Real kT_;
-	
+
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -185,13 +185,13 @@ private: // data
 /// at center=(0, 0, 0), normal=(0, 0, 1) and loads in spans
 /// and lips from the command line interface.
 MPFoldingMover::MPFoldingMover() :
-protocols::moves::Mover()
+	protocols::moves::Mover()
 {}
 
 /// @brief Copy Constructor
 /// @details Create a deep copy of this mover
 MPFoldingMover::MPFoldingMover( MPFoldingMover const & src ) :
-protocols::moves::Mover( src )
+	protocols::moves::Mover( src )
 {}
 
 /// @brief Destructor
@@ -223,7 +223,7 @@ MPFoldingMover::get_name() const {
 /// @brief Add Membrane Components to Pose
 void
 MPFoldingMover::apply( Pose & pose ) {
-	
+
 	using namespace basic;
 	using namespace basic::options;
 	using namespace core;
@@ -238,13 +238,13 @@ MPFoldingMover::apply( Pose & pose ) {
 	option.add_relevant( OptionKeys::in::file::fasta );
 
 	// check if fasta there
-	if ( ! option[OptionKeys::in::file::fasta].user() ){
+	if ( ! option[OptionKeys::in::file::fasta].user() ) {
 		utility_exit_with_message("Please provide a fasta file!");
 	}
 
 	// read fasta
 	SequenceOP sequence = read_fasta_file(
-					option[ OptionKeys::in::file::fasta ]()[1] )[1];
+		option[ OptionKeys::in::file::fasta ]()[1] )[1];
 
 	// get number of residues
 	std::string seq = sequence->to_string();
@@ -261,18 +261,18 @@ MPFoldingMover::apply( Pose & pose ) {
 	PDBInfoOP pdbinfo( new PDBInfo( pose ) );
 	pose.pdb_info( pdbinfo );
 	pose.pdb_info()->show( std::cout );
-	
+
 	// create topology from spanfile
 	SpanningTopologyOP topo( new SpanningTopology( spanfile_name() ) );
 
 	pose.dump_pdb("1_ideal_helices.pdb");
 	TR << "1" << std::endl;
-	
+
 	// create topology object holding loops = 'inverse' of spans
 	// this is for later to rebuild the loops
 	SpanningTopologyOP loops( new SpanningTopology() );
 	Size prev_end = 1;
-	for ( Size i = 1; i <= topo->nspans(); ++i ){
+	for ( Size i = 1; i <= topo->nspans(); ++i ) {
 		loops->add_span( prev_end, topo->span(i)->start() - 1 );
 		prev_end = topo->span(i)->end() + 1;
 	}
@@ -280,8 +280,8 @@ MPFoldingMover::apply( Pose & pose ) {
 	TR << "2" << std::endl;
 
 	// create ideal helices from SSEs
-	for ( Size i = 1; i <= pose.total_residue(); ++i ){
-		if ( topo->in_span( i ) ){
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( topo->in_span( i ) ) {
 			pose.set_phi(   i, -62 );
 			pose.set_psi(   i, -41 );
 			pose.set_omega( i, 180 );
@@ -289,15 +289,15 @@ MPFoldingMover::apply( Pose & pose ) {
 	}
 	pose.dump_pdb("2_ideal_helices.pdb");
 	TR << "3" << std::endl;
-	
+
 	// default center
-//	EmbeddingDefOP membrane( new EmbeddingDef() );
-//	TR << "4" << std::endl;
-	
+	// EmbeddingDefOP membrane( new EmbeddingDef() );
+	// TR << "4" << std::endl;
+
 	// define center and normal
 	Vector center(0, 0, 0);
 	Vector normal(0, 0, 1);
-	
+
 	// get jump anchor residue in first SSE
 	Size anchor1 = topo->span(1)->center();
 	TR << "8: anchor1: " << anchor1 << std::endl;
@@ -306,29 +306,29 @@ MPFoldingMover::apply( Pose & pose ) {
 	AddMembraneMoverOP add_mem( new AddMembraneMover( topo, anchor1 ) );
 	add_mem->apply( pose );
 	TR << "5" << std::endl;
-	
+
 	// foldtree stuff, get membrane jump, etc
-//	Size memjump = pose.conformation().membrane_info()->membrane_jump();
+	// Size memjump = pose.conformation().membrane_info()->membrane_jump();
 	Size memrsd = static_cast< Size >( pose.conformation().membrane_info()->membrane_rsd_num() );
 	TR << "6" << std::endl;
-	
+
 	// more foldtree
 	core::kinematics::FoldTree foldtree = pose.fold_tree();
 	TR << "7" << std::endl;
 	foldtree.show( std::cout );
-	
+
 	// add jumps to residues at centers of SSEs
 	// these are not the COMs, these are only defined from the topo object
-	for ( Size i = 2; i <= topo->nspans(); ++i ){
+	for ( Size i = 2; i <= topo->nspans(); ++i ) {
 		Size anchor = topo->span(i)->center();
 		Size cut = loops->span(i)->center();
 		foldtree.new_jump( memrsd, anchor, cut );
 	}
 	TR << "10" << std::endl;
-	
+
 	// set foldtree
 	pose.fold_tree( foldtree );
-	
+
 	// reorder foldtree to set MEM to root
 	reorder_membrane_foldtree( pose );
 	pose.fold_tree().show( std::cout );
@@ -342,7 +342,7 @@ MPFoldingMover::apply( Pose & pose ) {
 	TR << "12" << std::endl;
 	TR << "embedding_old: " << std::endl;
 	embedding_old->show();
-	
+
 	// move apart all SSEs into a big circle
 	// create embedding object from topology that contains parallel/antiparallel
 	// orientations of normals around a circle of radius 200
@@ -352,28 +352,28 @@ MPFoldingMover::apply( Pose & pose ) {
 	TR << "embedding_new: " << std::endl;
 	embedding_new->show();
 	TR << "13" << std::endl;
-	
+
 	// move the SSEs out to their desired position using both embedding objects
-	for ( Size i = 1; i <= topo->nspans(); ++i ){
+	for ( Size i = 1; i <= topo->nspans(); ++i ) {
 		Vector old_center = embedding_old->embedding(i)->center();
 		Vector old_normal = embedding_old->embedding(i)->normal();
 		Vector new_center = embedding_new->embedding(i)->center();
 		Vector new_normal = embedding_new->embedding(i)->normal();
 		Size jumpnum = i;
-		
+
 		Vector trans_vec = new_center - old_center;
-		
+
 		TR << "old_center: " << old_center.to_string() << std::endl;
 		TR << "old_normal: " << old_normal.to_string() << std::endl;
 		TR << "new_center: " << new_center.to_string() << std::endl;
 		TR << "new_normal: " << new_normal.to_string() << std::endl;
 		TR << "jumpnum: " << jumpnum << std::endl;
 
-//		TranslationMoverOP trans( new TranslationMover( trans_vec, jumpnum ) );
-//		trans->apply( pose );
+		//  TranslationMoverOP trans( new TranslationMover( trans_vec, jumpnum ) );
+		//  trans->apply( pose );
 
 		TranslationRotationMoverOP transrot( new TranslationRotationMover(
-		old_center, old_normal, new_center, new_normal, jumpnum ) );
+			old_center, old_normal, new_center, new_normal, jumpnum ) );
 		transrot->apply( pose );
 
 	}
@@ -382,94 +382,94 @@ MPFoldingMover::apply( Pose & pose ) {
 	TR << "RECOMPUTING EMBEDDING" << std::endl;
 	Embedding emb = Embedding( *topo, pose );
 	emb.show();
-	
-	for ( Size i = 1; i <= topo->nspans(); ++i ){
+
+	for ( Size i = 1; i <= topo->nspans(); ++i ) {
 
 		TR << "i%2: " << i%2 << " and normal: " << emb.embedding(i)->normal().z() << std::endl;
-	
+
 		// if new embedding for even span show in positive z-direction or
 		// new embedding for odd span shows in negative z-direction, flip span
 		if ( ( i % 2 == 1 && emb.embedding(i)->normal().z() < 0 ) ||
-			 ( i % 2 == 0 && emb.embedding(i)->normal().z() > 0 ) ) {
-		
+				( i % 2 == 0 && emb.embedding(i)->normal().z() > 0 ) ) {
+
 			TR << "flipping " << i << std::endl;
-		
+
 			// get angle between old and new embedding normal
-			//			Real angle = numeric::conversions::degrees( angle_of( new_normal, emb.normal() ) );
+			//   Real angle = numeric::conversions::degrees( angle_of( new_normal, emb.normal() ) );
 			Vector axis = center - emb.embedding(i)->center();
-			
+
 			FlipMoverOP flip( new FlipMover( i, 180 ) );
 			flip->apply( pose );
 
 		}
-		
-//		TranslationRotationMoverOP transrot( new TranslationRotationMover(
-//		old_center, old_normal, new_center, new_normal, jumpnum ) );
-//		transrot->apply( pose );
-		
+
+		//  TranslationRotationMoverOP transrot( new TranslationRotationMover(
+		//  old_center, old_normal, new_center, new_normal, jumpnum ) );
+		//  transrot->apply( pose );
+
 	}
-	
+
 	// check embedding
 	Embedding after_rot = Embedding( *topo, pose );
 	after_rot.show();
-	
+
 	TR << "14" << std::endl;
 	VisualizeEmbeddingMoverOP visemb( new VisualizeEmbeddingMover() );
 	visemb->apply( pose );
 	pose.dump_pdb("14.pdb");
 
 	// get center SSE number to start docking from
-//	Size sse_number;
-//	if ( topo->nspans() % 2 == 0 ){
-//		sse_number = topo->nspans() / 2;
-//	}
-//	else{
-//		sse_number = ( topo->nspans() + 1 ) / 2;
-//	}
-//	TR << "15" << std::endl;
-	
+	// Size sse_number;
+	// if ( topo->nspans() % 2 == 0 ){
+	//  sse_number = topo->nspans() / 2;
+	// }
+	// else{
+	//  sse_number = ( topo->nspans() + 1 ) / 2;
+	// }
+	// TR << "15" << std::endl;
+
 	// start in middle: if odd, start in middle, go up, down, up, etc
 	// if even, start below middle, go up, down, up, etc
-//	Size sse_raw = 1;
-//	Size sse_signed = 1;
-//	Size sign = 1;
-//	while ( sse_number <= topo->nspans() ){
-//		
-//		Size jumpnum = sse
-//	
-//		// move first SSE into center
-//		if ( sse == 1 ){
-//			TranslationRotationMoverOP rt1 = new TranslationRotationMover(
-//			   old_center, old_normal, new_center, new_normal, jumpnum );
-//			rt1->apply( pose );
-//			
-//		}
-//		
-//		// slide together next one
-//		
-//		
-//		
-//		// dock these two
-//		// dock each SSE starting from center of sequence
-//		// filter via loop length constraint
-//		// consider other regular constraints
-//		// switch fragments and minimize
-//		
-//		
-//
-//		
-//		
-//		// counter and sign for getting the correct span
-//		sse_raw += 1;
-//		sign    *= ( -1 );
-//		Size addition = sign * sse_raw;
-//		Size sse_signed =
-//	}
-	
-	
+	// Size sse_raw = 1;
+	// Size sse_signed = 1;
+	// Size sign = 1;
+	// while ( sse_number <= topo->nspans() ){
+	//
+	//  Size jumpnum = sse
+	//
+	//  // move first SSE into center
+	//  if ( sse == 1 ){
+	//   TranslationRotationMoverOP rt1 = new TranslationRotationMover(
+	//      old_center, old_normal, new_center, new_normal, jumpnum );
+	//   rt1->apply( pose );
+	//
+	//  }
+	//
+	//  // slide together next one
+	//
+	//
+	//
+	//  // dock these two
+	//  // dock each SSE starting from center of sequence
+	//  // filter via loop length constraint
+	//  // consider other regular constraints
+	//  // switch fragments and minimize
+	//
+	//
+	//
+	//
+	//
+	//  // counter and sign for getting the correct span
+	//  sse_raw += 1;
+	//  sign    *= ( -1 );
+	//  Size addition = sign * sse_raw;
+	//  Size sse_signed =
+	// }
 
 
-	
+
+
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -482,18 +482,18 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-//		using namespace protocols::docking::membrane;
+		//  using namespace protocols::docking::membrane;
 		using namespace protocols::jd2;
-		
+
 		// initialize option system, random number generators, and all factory-registrators
 		devel::init(argc, argv);
 		//protocols::init(argc, argv);
-		
+
 		MPFoldingMoverOP mpfm( new MPFoldingMover() );
 		JobDistributor::get_instance()->go(mpfm);
 	}
-	catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
-		return -1;
-	}
+catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+	return -1;
+}
 }

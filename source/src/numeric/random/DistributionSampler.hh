@@ -26,29 +26,29 @@ namespace random {
 
 template <typename T>
 class DistributionSampler : boost::noncopyable {
- public:
-  /// @brief Creates a new instance that allows samples to be drawn randomly
-  /// from <distribution>
-  explicit DistributionSampler(T& distribution) : distribution_(distribution) {}
+public:
+	/// @brief Creates a new instance that allows samples to be drawn randomly
+	/// from <distribution>
+	explicit DistributionSampler(T& distribution) : distribution_(distribution) {}
 
-  /// @brief Returns a random value drawn from the distribution
-  /// @detail A general method to generate random numbers from an arbitrary
-  /// distribution that has a cdf without jumps is to use the inverse function
-  /// to the cdf: G(y)=F^{-1}(y). If u(1), ..., u(n) are random numbers from the
-  /// uniform on (0,1) distribution then G(u(1)), ..., G(u(n)) is a random
-  /// sample from the distribution with cdf F(x).
-  double sample() {
-    return boost::math::quantile(distribution(), numeric::random::uniform());
-  }
+	/// @brief Returns a random value drawn from the distribution
+	/// @detail A general method to generate random numbers from an arbitrary
+	/// distribution that has a cdf without jumps is to use the inverse function
+	/// to the cdf: G(y)=F^{-1}(y). If u(1), ..., u(n) are random numbers from the
+	/// uniform on (0,1) distribution then G(u(1)), ..., G(u(n)) is a random
+	/// sample from the distribution with cdf F(x).
+	double sample() {
+		return boost::math::quantile(distribution(), numeric::random::uniform());
+	}
 
-  /// @brief Returns the distribution from which this sampler generates values
-  const T& distribution() const {
-    return distribution_;
-  }
+	/// @brief Returns the distribution from which this sampler generates values
+	const T& distribution() const {
+		return distribution_;
+	}
 
- private:
-  /// @brief Distribution from which to draw samples
-  T distribution_;
+private:
+	/// @brief Distribution from which to draw samples
+	T distribution_;
 };
 
 }  // namespace random

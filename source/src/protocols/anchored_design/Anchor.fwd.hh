@@ -18,8 +18,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace anchored_design{
+namespace protocols {
+namespace anchored_design {
 
 //Forwards and OP typedefs
 class Anchor;

@@ -86,9 +86,9 @@ namespace full_model_info {
 
 //Constructor
 FullModelInfo::FullModelInfo(
-		std::string const & full_sequence,
-		utility::vector1< Size > const & cutpoint_open_in_full_model,
-		utility::vector1< Size > const & res_numbers_in_pose ):
+	std::string const & full_sequence,
+	utility::vector1< Size > const & cutpoint_open_in_full_model,
+	utility::vector1< Size > const & res_numbers_in_pose ):
 	CacheableData(),
 	res_list_( res_numbers_in_pose ),
 	full_model_parameters_( FullModelParametersCOP( FullModelParametersOP( new FullModelParameters( full_sequence, cutpoint_open_in_full_model, res_numbers_in_pose ) ) )  )
@@ -118,7 +118,7 @@ FullModelInfo::FullModelInfo( FullModelInfo const & src ) :
 	full_model_parameters_( src.full_model_parameters_ )
 {
 	// we have to tell our daughters in the pose tree that its time to get cloned.
-	for ( Size n = 1; n <= src.other_pose_list_.size(); n++ ){
+	for ( Size n = 1; n <= src.other_pose_list_.size(); n++ ) {
 		other_pose_list_.push_back( src.other_pose_list_[ n ]->clone() );
 	}
 }
@@ -219,7 +219,7 @@ FullModelInfo::size() const {
 }
 utility::vector1< Size >
 FullModelInfo::chains_in_full_model() const {
- 	return full_model_parameters_->chains_in_full_model();
+	return full_model_parameters_->chains_in_full_model();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -236,7 +236,7 @@ FullModelInfo::full_to_sub() const {
 utility::vector1< Size >
 FullModelInfo::full_to_sub( utility::vector1< Size > const & res_in_full_model_numbering ) const {
 	utility::vector1< Size > res;
-	for ( Size n = 1; n <= res_in_full_model_numbering.size(); n++ ){
+	for ( Size n = 1; n <= res_in_full_model_numbering.size(); n++ ) {
 		Size const i = res_list_.index( res_in_full_model_numbering[ n ] );
 		if ( i > 0 ) res.push_back( i );
 	}
@@ -254,7 +254,7 @@ FullModelInfo::full_to_sub( Size const res_in_full_model_numbering ) const {
 utility::vector1< Size >
 FullModelInfo::sub_to_full( utility::vector1< Size > const & res ) const {
 	utility::vector1< Size > res_in_full_model_numbering;
-	for ( Size n = 1; n <= res.size(); n++ ){
+	for ( Size n = 1; n <= res.size(); n++ ) {
 		Size const & i = res[n];
 		runtime_assert( i >= 1 && i <= res_list_.size() );
 		res_in_full_model_numbering.push_back( res_list_[ i ] );
@@ -274,7 +274,7 @@ FullModelInfo::sub_to_full( Size const & res ) const {
 Size
 FullModelInfo::find_index_in_other_pose_list( pose::Pose const & pose) const {
 
-	for ( Size n = 1; n <= other_pose_list_.size(); n++ ){
+	for ( Size n = 1; n <= other_pose_list_.size(); n++ ) {
 		if ( other_pose_list_[ n ].get() == & pose ) return n;
 	}
 	return 0;
@@ -296,7 +296,7 @@ FullModelInfo::clear_res_list() {
 Size
 FullModelInfo::get_idx_for_other_pose_with_residue( Size const input_res ) const {
 	Size idx( 0 );
-	for ( Size i = 1; i <= other_pose_list_.size(); i++ ){
+	for ( Size i = 1; i <= other_pose_list_.size(); i++ ) {
 		utility::vector1< Size > const & other_pose_res_list = const_full_model_info( *other_pose_list_[i] ).res_list();
 		if ( other_pose_res_list.has_value( input_res ) ) {
 			runtime_assert( idx == 0 ); // should be at most only one other pose with this residue number
@@ -310,12 +310,12 @@ FullModelInfo::get_idx_for_other_pose_with_residue( Size const input_res ) const
 Size
 FullModelInfo::get_idx_for_other_pose( pose::Pose const & pose ) const {
 	Size idx( 0 );
-	if ( pose.total_residue() > 0 ){
+	if ( pose.total_residue() > 0 ) {
 		Size const resnum = get_res_list_from_full_model_info_const( pose )[ 1 ];
 		idx = get_idx_for_other_pose_with_residue( resnum );
 	} else {
-		for ( Size i = 1; i <= other_pose_list_.size(); i++ ){
-			if ( other_pose_list_[i]->total_residue() == 0 ){
+		for ( Size i = 1; i <= other_pose_list_.size(); i++ ) {
+			if ( other_pose_list_[i]->total_residue() == 0 ) {
 				runtime_assert( idx == 0 ); // only one blank pose allowed in other_pose_list.
 				idx = i;
 			}
@@ -362,7 +362,7 @@ FullModelInfo::remove_other_pose_at_idx( Size const idx ){
 FullModelInfo const &
 const_full_model_info( pose::Pose const & pose )
 {
-debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO ) );
+	debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO ) );
 	return *( utility::pointer::static_pointer_cast< core::pose::full_model_info::FullModelInfo const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO) ) );
 }
 

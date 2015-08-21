@@ -39,35 +39,35 @@ int
 main( int argc, char* argv [] ) {
 	try {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	// define relevant options
-	OPT( in::path::database);
-	OPT( in::file::s );
-	OPT( in::file::l );
-	OPT( in::file::silent );
-	OPT( in::file::tags );
-	OPT( in::file::silent_struct_type );
-	OPT( in::file::silent_renumber );
-	OPT( in::file::residue_type_set );
-	OPT( out::file::silent );
-	OPT( out::file::silent_struct_type );
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		// define relevant options
+		OPT( in::path::database);
+		OPT( in::file::s );
+		OPT( in::file::l );
+		OPT( in::file::silent );
+		OPT( in::file::tags );
+		OPT( in::file::silent_struct_type );
+		OPT( in::file::silent_renumber );
+		OPT( in::file::residue_type_set );
+		OPT( out::file::silent );
+		OPT( out::file::silent_struct_type );
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	std::string usage("");
-	usage += "\n\nusage:  combine_silent [options] -in::file::silent <silent_files> or -in::file::s <pdb> or -in::file::l <list of pdb files> \n";
-	usage += "\tTo see a list of other valid options, use the option -help.\n";
+		std::string usage("");
+		usage += "\n\nusage:  combine_silent [options] -in::file::silent <silent_files> or -in::file::s <pdb> or -in::file::l <list of pdb files> \n";
+		usage += "\tTo see a list of other valid options, use the option -help.\n";
 
-	if ( !option[ in::file::silent ].user() && !option[ in::file::s ].user() && !option[ in::file::l ].user() ) {
-		std::cerr << usage << std::endl;
-		std::exit(1);
-	}
+		if ( !option[ in::file::silent ].user() && !option[ in::file::s ].user() && !option[ in::file::l ].user() ) {
+			std::cerr << usage << std::endl;
+			std::exit(1);
+		}
 
-	protocols::moves::NullMover mover;
-	protocols::jobdist::not_universal_main( mover );
-	 } catch ( utility::excn::EXCN_Base const & e ) {
+		protocols::moves::NullMover mover;
+		protocols::jobdist::not_universal_main( mover );
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

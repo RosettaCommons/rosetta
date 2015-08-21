@@ -51,7 +51,7 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/types.hh> 
+#include <core/types.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
@@ -68,7 +68,7 @@
 
 namespace protocols {
 namespace membrane {
-    
+
 using namespace core;
 using namespace core::pose;
 using namespace core::conformation::membrane;
@@ -77,7 +77,7 @@ using namespace protocols::membrane::geometry;
 /////////////////////////////////////////////////////////////////////////
 // Methods for calculating rmsds between protein transmembrane regions //
 /////////////////////////////////////////////////////////////////////////
-    
+
 /// @brief Compute backbone RMSD between TM regions - don't superimpose
 /// @details Calculate the rmsd between backbone atoms (N, CB, CA, O)
 /// in the transmembrane regions, as defined by the spanning topology
@@ -107,7 +107,7 @@ mem_bb_rmsd_with_super( Pose & native_pose, Pose & pose );
 /// Superimpose the poses. Takes a native pose & current pose
 core::Real
 mem_all_atom_rmsd_with_super( Pose & native_pose, Pose & pose );
-    
+
 //////////////////////////////////////////////////////////////////
 // Methods for calculating tilt of helices relative to membrane //
 //////////////////////////////////////////////////////////////////
@@ -118,7 +118,7 @@ mem_all_atom_rmsd_with_super( Pose & native_pose, Pose & pose );
 /// straight helices but less accurate for kinks. Takes a pose & span number.
 core::Real
 calc_helix_tilt_angle( Pose & pose, core::Size span_no );
-    
+
 /// @brief Determine the axis used to define a single TM Helix
 /// @details Using the COM of the helix start & end position, calculate a helix
 /// describing its geometry relative to the memrbane normal. Takes a pose &
@@ -138,7 +138,7 @@ com( core::Vector a, core::Vector b, core::Vector c );
 /// the measured tilt angle and reference angle (typically from experiment)
 core::Real
 calc_angle_rmsd( core::Real measured_angle, core::Real ref_angle );
-    
+
 ////////////////////////////////////////////////////////////////
 // Safety checks & convenience methods for membrane foldtrees //
 ////////////////////////////////////////////////////////////////
@@ -164,8 +164,8 @@ void reorder_membrane_foldtree( pose::Pose & pose );
 
 /// @brief Create membrane foldtree from scratch
 /// @details The foldtree is setup such that the membrane is at the root and
-///			anchored at the first chain COM residue with jumps from the
-///			first chain COM to each chain COM; requires the membrane to be present
+///   anchored at the first chain COM residue with jumps from the
+///   first chain COM to each chain COM; requires the membrane to be present
 ///
 ///     ________________________________
 ///    |__________________________      |
@@ -178,9 +178,9 @@ void create_membrane_foldtree_anchor_com( Pose & pose );
 
 /// @brief Create membrane foldtree from scratch
 /// @details The foldtree is setup such that the membrane is at the root and
-///			anchored at the first chain TRANSMEMBRANE COM residue with jumps from the
-///			first chain COM to each chain TRANSMEMBRANE COM;
-///			requires the membrane to be present
+///   anchored at the first chain TRANSMEMBRANE COM residue with jumps from the
+///   first chain COM to each chain TRANSMEMBRANE COM;
+///   requires the membrane to be present
 ///
 ///     ________________________________
 ///    |__________________________      |
@@ -189,7 +189,7 @@ void create_membrane_foldtree_anchor_com( Pose & pose );
 ///    |        |        |        |     |
 /// -------  -------  -------  -------  M=root
 ///  chain1   chain2   chain3   chain4 ...
-	
+
 void create_membrane_foldtree_anchor_tmcom( Pose & pose );
 
 /// @brief Helper function to create membrane foldtrees
@@ -219,19 +219,19 @@ utility::vector1< char > get_secstruct( pose::Pose & pose );
 /// @brief Compute Membrane Center/Normal from Membrane Spanning
 /// topology
 void compute_structure_based_embedding(
-       pose::Pose const & pose,
-       SpanningTopology const & topology,
-       Vector & center,
-       Vector & normal
-       );
+	pose::Pose const & pose,
+	SpanningTopology const & topology,
+	Vector & center,
+	Vector & normal
+);
 
 /// @brief Compute Membrane Center/Normal from Membrane Spanning
 /// topology, uses topology from MembraneInfo
 void compute_structure_based_embedding(
-       pose::Pose const & pose,
-       Vector & center,
-       Vector & normal
-       );
+	pose::Pose const & pose,
+	Vector & center,
+	Vector & normal
+);
 
 /// @brief Compute Membrane Center/Normal from Membrane Spanning
 /// topology
@@ -245,10 +245,10 @@ compute_structure_based_embedding( pose::Pose const & pose );
 
 /// @brief Compute embeddings by chain
 /// @details The embeddings can be computed either from pose and topology or they
-///			can be optimized differently; the function correlates each EmbeddingDef
-///			object in embeddings with a span object in the pose's topology;
-///			The bool means whether embeddings in Embedding object are
-///			antiparallel or not
+///   can be optimized differently; the function correlates each EmbeddingDef
+///   object in embeddings with a span object in the pose's topology;
+///   The bool means whether embeddings in Embedding object are
+///   antiparallel or not
 protocols::membrane::geometry::EmbeddingOP compute_embeddings_by_chain( pose::Pose const & pose);
 
 /// @brief Average EmbeddingDefs as they are (without vector inversion accounting for topology)
@@ -261,8 +261,8 @@ EmbeddingDefOP average_antiparallel_embeddings( utility::vector1< EmbeddingDefOP
 
 /// @brief Update embedding of the partners after a move
 /// @details Requires the jump number between the partners, the topology will
-///				be taken from MembraneInfo and will be split accordingly; up and
-///				down means upstream and downstream
+///    be taken from MembraneInfo and will be split accordingly; up and
+///    down means upstream and downstream
 void update_partner_embeddings( pose::Pose const & pose, core::Size const jumpnum, EmbeddingDef & emb_up, EmbeddingDef & emb_down );
 
 /// @brief Chain center-of-mass
@@ -292,7 +292,7 @@ void check_vector( core::Vector const vector );
 void membrane_normal_to_length_15( pose::Pose & pose );
 
 /// @brief Calculates translation axis lying in the membrane (= projection axis
-///			between embedding centers)
+///   between embedding centers)
 core::Vector const membrane_axis( pose::Pose & pose, int jumpnum );
 
 //////////////////////////////////////////////////////////////
@@ -300,35 +300,35 @@ core::Vector const membrane_axis( pose::Pose & pose, int jumpnum );
 //////////////////////////////////////////////////////////////
 
 /// @brief Splits the SpanningTopology object into two objects, depending on
-///	given jump number
+/// given jump number
 /// @details This is useful for calculating an embedding for parts of the
-///	structure: this can now easily be accomplished by creating two empty topology
+/// structure: this can now easily be accomplished by creating two empty topology
 /// objects, call this function, and then use both topology objects and subposes
 /// to call compute_structure_based_membrane_embedding
-///	BEWARE: this does not work for splitting topology by spans! It only works
-///	chainwise
+/// BEWARE: this does not work for splitting topology by spans! It only works
+/// chainwise
 void split_topology_by_jump(
-    pose::Pose const & pose,		// full pose
-    core::Size const jumpnum,				// jump number to split on
-    SpanningTopology const & topo,	// topology to split
-    pose::Pose & pose_up,			// upstream partner after pose splitting
-    pose::Pose & pose_down,			// downstream partner after pose splitting
-    SpanningTopology & topo_up,		// topology of upstream pose
-    SpanningTopology & topo_down	// topology of downstream pose
-    );
+	pose::Pose const & pose,  // full pose
+	core::Size const jumpnum,    // jump number to split on
+	SpanningTopology const & topo, // topology to split
+	pose::Pose & pose_up,   // upstream partner after pose splitting
+	pose::Pose & pose_down,   // downstream partner after pose splitting
+	SpanningTopology & topo_up,  // topology of upstream pose
+	SpanningTopology & topo_down // topology of downstream pose
+);
 
 /// @brief Splits the SpanningTopology object into two objects, depending on
-///	given jump number
+/// given jump number
 /// @details This doesn't shift the topology to start at 1 for each partner, it
-///	remains exactly the same as it would be for the complete pose, just split
-///	BEWARE: this does not work for splitting topology by spans! It only works
-///	chainwise
+/// remains exactly the same as it would be for the complete pose, just split
+/// BEWARE: this does not work for splitting topology by spans! It only works
+/// chainwise
 void split_topology_by_jump_noshift(
-    pose::Pose const & pose,		// full pose
-    core::Size const jumpnum,				// jump number to split on
-    SpanningTopologyOP topo,        // topology to split
-    SpanningTopologyOP topo_up,		// topology of upstream pose
-    SpanningTopologyOP topo_down	// topology of downstream pose
+	pose::Pose const & pose,  // full pose
+	core::Size const jumpnum,    // jump number to split on
+	SpanningTopologyOP topo,        // topology to split
+	SpanningTopologyOP topo_up,  // topology of upstream pose
+	SpanningTopologyOP topo_down // topology of downstream pose
 );
 
 /// @brief Split topology by chain
@@ -339,7 +339,7 @@ utility::vector1< SpanningTopologyOP > split_topology_by_chain_noshift( pose::Po
 /////////////////////////////////////////////
 // Methods for reading center/normal in IO //
 /////////////////////////////////////////////
-   
+
 /// @brief Read in a user provided center/normal pair from RosettaScripts
 /// @details Given an XML tag from a RosettaScript read in a center & normal
 /// option into two xyzVector objects. This method is intended to reduce duplication
@@ -356,7 +356,7 @@ void
 read_center_normal_from_cmd( Vector & center, Vector & normal );
 
 
-    
+
 } // membrane
 } // protocols
 

@@ -74,7 +74,7 @@ public:
 
 	ConstFrameIterator const & operator = ( ConstFrameIterator const& itr );
 
-	//	FrameOP operator* ();
+	// FrameOP operator* ();
 
 	FrameCOP operator* () const;
 
@@ -99,8 +99,8 @@ public:
 	FrameIterator() {};
 	~FrameIterator() {};
 
-	//	bool operator != ( FrameIterator const& fi) const;
-	//	bool operator == ( FrameIterator const& fi) const;
+	// bool operator != ( FrameIterator const& fi) const;
+	// bool operator == ( FrameIterator const& fi) const;
 
 	FrameIterator & operator++ ();
 	FrameIterator & operator+ ( Size offset );
@@ -109,15 +109,15 @@ public:
 
 	FrameOP operator* ();
 
-	//	FrameCOP operator* () const;
+	// FrameCOP operator* () const;
 
 	FrameOP operator-> ();
 
-	//	FrameCOP operator-> () const;
+	// FrameCOP operator-> () const;
 
 	FrameOP frame_ptr();
 
-	//	FrameCOP frame_ptr() const;
+	// FrameCOP frame_ptr() const;
 
 
 };

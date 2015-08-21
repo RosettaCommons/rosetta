@@ -10,10 +10,10 @@
 /// @file DockMCMCycle
 /// @brief protocols that are specific to high resolution docking
 /// @details
-///		This contains the functions that create initial positions for docking
-///		You can either randomize partner 1 or partner 2, spin partner 2, or
-///		perform a simple perturbation.
-/// 	Also contains docking mcm protocol
+///  This contains the functions that create initial positions for docking
+///  You can either randomize partner 1 or partner 2, spin partner 2, or
+///  perform a simple perturbation.
+///  Also contains docking mcm protocol
 /// @author Monica Berrondo
 /// @author Modified by Sergey Lyskov
 /// @author Modified by Sid Chaudhury
@@ -141,25 +141,25 @@ DockMCMCycle::set_task_factory( core::pack::task::TaskFactoryCOP tf )
 void DockMCMCycle::set_default()
 {
 
-  using namespace basic::options; //quick hack by rhiju
-  using namespace basic::options::OptionKeys::docking; // quick hack by rhiju -- later feed this in through dockingprotocol
-	
+	using namespace basic::options; //quick hack by rhiju
+	using namespace basic::options::OptionKeys::docking; // quick hack by rhiju -- later feed this in through dockingprotocol
+
 	// set translation & rotation move magnitudes
 	if ( option[ OptionKeys::docking::dock_mcm_trans_magnitude ].user() ) {
 		trans_magnitude_ = option[ OptionKeys::docking::dock_mcm_trans_magnitude ]();
 	} else {
 		trans_magnitude_ = 0.1;
 	}
-	
+
 	if ( option[ OptionKeys::docking::dock_mcm_rot_magnitude ].user() ) {
 		rot_magnitude_ = option[ OptionKeys::docking::dock_mcm_rot_magnitude ]();
 	} else {
 		rot_magnitude_ = 5.0;
 	}
 
-    rtmin_ = false;
-    scmin_ = false;
-    
+	rtmin_ = false;
+	scmin_ = false;
+
 	// setup scoring with defaults
 	if ( scorefxn_ == NULL ) {
 		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
@@ -175,13 +175,13 @@ void DockMCMCycle::set_default()
 	}
 
 	// perhaps call this dock_minimize_bb_res or something.
-	if ( option[ bb_min_res ].user() ){
-	  utility::vector1< Size > const & min_res = option[ bb_min_res ]();
-	  for ( Size n = 1; n <= min_res.size(); n++ ) movemap_->set_bb( min_res[n], true );
+	if ( option[ bb_min_res ].user() ) {
+		utility::vector1< Size > const & min_res = option[ bb_min_res ]();
+		for ( Size n = 1; n <= min_res.size(); n++ ) movemap_->set_bb( min_res[n], true );
 	}
-	if ( option[ sc_min_res ].user() ){
-	  utility::vector1< Size > const & min_res = option[ sc_min_res ]();
-	  for ( Size n = 1; n <= min_res.size(); n++ ) movemap_->set_chi( min_res[n], true );
+	if ( option[ sc_min_res ].user() ) {
+		utility::vector1< Size > const & min_res = option[ sc_min_res ]();
+		for ( Size n = 1; n <= min_res.size(); n++ ) movemap_->set_chi( min_res[n], true );
 	}
 
 
@@ -202,21 +202,20 @@ void DockMCMCycle::set_move_map( core::kinematics::MoveMapOP movemap ) { movemap
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief
 /// @details
-///		decides what to call according to options
+///  decides what to call according to options
 void DockMCMCycle::apply( core::pose::Pose & pose )
 {
 	TR.Debug << "in DockMCMCycle.apply" << std::endl;
-//	protocols::moves::PyMolMover pymol;   //JQX: comment out, pymolmover will use the random number, not good for debug
+	// protocols::moves::PyMolMover pymol;   //JQX: comment out, pymolmover will use the random number, not good for debug
 
 	// only set up on first call to the mover
-	if ( ! dock_mcm_cycle_ )
-	{
+	if ( ! dock_mcm_cycle_ ) {
 		init_mc(pose);
 	}
 
 	dock_mcm_cycle_->apply( pose );
-//	pymol.apply( pose );   //JQX: comment out
-//	pymol.send_energy( pose ); //JQX: comment out
+	// pymol.apply( pose );   //JQX: comment out
+	// pymol.send_energy( pose ); //JQX: comment out
 }
 
 std::string
@@ -235,8 +234,7 @@ void DockMCMCycle::init_mc(core::pose::Pose & pose)
 	/// It is possible for the MonteCarlo instance to be shared among several movers
 	/// in other protocols and we do not want to overwrite the history of that instance,
 	/// but we must ensure the MonteCarlo instance is ready for use.
-	if ( mc_->last_accepted_pose().empty() )
-	{
+	if ( mc_->last_accepted_pose().empty() ) {
 		(*scorefxn_)(pose);
 		mc_->reset( pose );
 	}
@@ -249,13 +247,13 @@ void DockMCMCycle::init_mc(core::pose::Pose & pose)
 ///
 /// @brief main entrance to do monte carlo minimization
 /// @details
-///			single cycle of mcm minimization.  Then it is rigid-body minimized
-///			to a stringent tolerance.
+///   single cycle of mcm minimization.  Then it is rigid-body minimized
+///   to a stringent tolerance.
 ///
 /// @remarks
 ///
 /// @references docking_mcm_protocol from docking_minimize.cc
-///				pose_docking_monte_carlo_minimize from pose_docking.cc
+///    pose_docking_monte_carlo_minimize from pose_docking.cc
 ///
 /// @author Monica Berrondo
 ///
@@ -272,8 +270,8 @@ void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
 
 
 	//set up sidechain movers for each movable jump
-	//	tf_->push_back( new RestrictToInterface( movable_jumps_ ) );
-			// JQX commented this out, there is one more RestrictToInterface function in the DockTaskFactory.cc file
+	// tf_->push_back( new RestrictToInterface( movable_jumps_ ) );
+	// JQX commented this out, there is one more RestrictToInterface function in the DockTaskFactory.cc file
 
 
 	protocols::simple_moves::RotamerTrialsMoverOP rottrial( new protocols::simple_moves::RotamerTrialsMover( scorefxn_pack_, tf_ ) );
@@ -300,33 +298,33 @@ void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
 	//JQX: the TrialMover is actually    ...       (PackRotamersMover) pack_rotamers
 	SequenceMoverOP repack_step( new SequenceMover );
 	repack_step->add_mover(rb_mover_min_trail);
-	protocols::simple_moves::PackRotamersMoverOP pack_rotamers( new protocols::simple_moves::PackRotamersMover( scorefxn_pack_ ) ); 
-    pack_rotamers->task_factory(tf_);
+	protocols::simple_moves::PackRotamersMoverOP pack_rotamers( new protocols::simple_moves::PackRotamersMover( scorefxn_pack_ ) );
+	pack_rotamers->task_factory(tf_);
 	TrialMoverOP pack_interface_and_move_loops_trial( new TrialMover( pack_rotamers, mc_) );
 	repack_step->add_mover(pack_interface_and_move_loops_trial);
 
-    
-    
-    
-    //  these are not being used at all in the extreme code week, JQX incorporated into the sequence
-	if(rtmin_){
-        protocols::simple_moves::RotamerTrialsMinMoverOP rtmin( new protocols::simple_moves::RotamerTrialsMinMover( scorefxn_pack_, tf_ ) );
-        TrialMoverOP rtmin_trial( new TrialMover( rtmin, mc_ ) );
-        repack_step->add_mover(rtmin_trial);
-    }
-    if(scmin_){
-        core::pack::task::TaskFactoryCOP my_tf( tf_); 
-            //@TODO JQX: this is so weird, I cannot directly put tf_ to construct the SideChainMinMover
-        protocols::docking::SidechainMinMoverOP scmin_mover( new protocols::docking::SidechainMinMover(scorefxn_pack_,  my_tf  ) );
-        TrialMoverOP scmin_trial( new TrialMover( scmin_mover, mc_ ) );
-        repack_step->add_mover(scmin_trial);
-    }
+
+
+
+	//  these are not being used at all in the extreme code week, JQX incorporated into the sequence
+	if ( rtmin_ ) {
+		protocols::simple_moves::RotamerTrialsMinMoverOP rtmin( new protocols::simple_moves::RotamerTrialsMinMover( scorefxn_pack_, tf_ ) );
+		TrialMoverOP rtmin_trial( new TrialMover( rtmin, mc_ ) );
+		repack_step->add_mover(rtmin_trial);
+	}
+	if ( scmin_ ) {
+		core::pack::task::TaskFactoryCOP my_tf( tf_);
+		//@TODO JQX: this is so weird, I cannot directly put tf_ to construct the SideChainMinMover
+		protocols::docking::SidechainMinMoverOP scmin_mover( new protocols::docking::SidechainMinMover(scorefxn_pack_,  my_tf  ) );
+		TrialMoverOP scmin_trial( new TrialMover( scmin_mover, mc_ ) );
+		repack_step->add_mover(scmin_trial);
+	}
 
 	//JQX: define the cycle mover
 	//JQX: 1. rb_mover_min_trail (7 times)
 	//JQX: 2. repack_tep (1 time)
 	dock_mcm_cycle_ = moves::CycleMoverOP( new CycleMover );
-	for (Size i=1; i<repack_period_; ++i) dock_mcm_cycle_->add_mover( rb_mover_min_trail );
+	for ( Size i=1; i<repack_period_; ++i ) dock_mcm_cycle_->add_mover( rb_mover_min_trail );
 	dock_mcm_cycle_->add_mover( repack_step );
 
 
@@ -350,18 +348,17 @@ std::ostream & operator<<(std::ostream& out, const DockMCMCycle & dp )
 
 	core::Size spaces_so_far = 23;
 	bool first = true;
-	for ( DockJumps::const_iterator it = dp.movable_jumps_.begin() ; it != dp.movable_jumps_.end() ; ++it ){
-		if (!first) {
+	for ( DockJumps::const_iterator it = dp.movable_jumps_.begin() ; it != dp.movable_jumps_.end() ; ++it ) {
+		if ( !first ) {
 			out << ", ";
 			spaces_so_far += 2;
-		}
-		else first = false;
+		} else first = false;
 
 		out << I( 1, *it );
 		spaces_so_far += 1;
 	}
 	core::Size remaining_spaces = 80 - spaces_so_far;
-	if ( remaining_spaces > 0 )	out << space( 80 - spaces_so_far );
+	if ( remaining_spaces > 0 ) out << space( 80 - spaces_so_far );
 	out << line_marker << std::endl;
 
 	// Display the translation, and rotation of the cycle

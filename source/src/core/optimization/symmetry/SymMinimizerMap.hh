@@ -42,7 +42,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 #ifdef WIN32
-	#include <core/optimization/DOF_Node.hh>
+#include <core/optimization/DOF_Node.hh>
 #endif
 
 namespace core {

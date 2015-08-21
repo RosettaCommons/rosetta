@@ -74,7 +74,7 @@
 
 #include <basic/options/util.hh>
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 #include <basic/Tracer.hh>
@@ -234,7 +234,7 @@ IterativeOptEDriver::IterativeOptEDriver() :
 		using namespace core::pack::task::operation;
 		std::string tagfile_name( option[ optE::parse_tagfile ]() );
 		read_tagfile_to_taskfactory( tagfile_name, task_factory_ );
-	// else use default TaskOperation(s)
+		// else use default TaskOperation(s)
 	} else if ( ! option[ optE::design_with_minpack ] ) {
 		using core::pack::task::operation::TaskOperationCOP;
 		task_factory_->push_back( TaskOperationCOP( new pack::task::operation::InitializeFromCommandline ) );
@@ -261,15 +261,15 @@ IterativeOptEDriver::IterativeOptEDriver() :
 
 	// set the using unfolded boolean, by iterating over the score types in both the fixed and free lists and
 	// checking for "unfolded". checking if the emaps have non-zero weights associated with "unfolded" would also work.
-	for( vector1< ScoreType >::iterator score_type_iter = free_score_list_.begin(), end_iter = free_score_list_.end();
-		score_type_iter != end_iter; ++score_type_iter ) {
+	for ( vector1< ScoreType >::iterator score_type_iter = free_score_list_.begin(), end_iter = free_score_list_.end();
+			score_type_iter != end_iter; ++score_type_iter ) {
 		if ( name_from_score_type( *score_type_iter ) == "unfolded" ) {
 			TR << "IterativeOptEDriver(): setting 'using_unfolded_energy_term_' to true." << std::endl;
 			using_unfolded_energy_term_ = true;
 		}
 	}
-	for( vector1< ScoreType >::iterator score_type_iter = fixed_score_list_.begin(), end_iter = fixed_score_list_.end();
-		score_type_iter != end_iter; ++score_type_iter ) {
+	for ( vector1< ScoreType >::iterator score_type_iter = fixed_score_list_.begin(), end_iter = fixed_score_list_.end();
+			score_type_iter != end_iter; ++score_type_iter ) {
 		if ( name_from_score_type( *score_type_iter ) == "unfolded" ) {
 			TR << "IterativeOptEDriver(): setting 'using_unfolded_energy_term_' to true." << std::endl;
 			using_unfolded_energy_term_ = true;
@@ -335,9 +335,8 @@ IterativeOptEDriver::load_pose( pose::Pose & pose, std::string const & filename,
 			sfd->read_file( path + "/" + filename );
 		}
 		(*sfd)[ tag ]->fill_pose( pose );
-	}
-	else {
-		if ( option[ in::file::centroid_input ] && !ignore_centroid_input_flag) {
+	} else {
+		if ( option[ in::file::centroid_input ] && !ignore_centroid_input_flag ) {
 			core::import_pose::centroid_pose_from_pdb( pose, filename );
 		} else {
 			core::import_pose::pose_from_pdb( pose, filename );
@@ -373,13 +372,13 @@ IterativeOptEDriver::divide_up_pdbs()
 		Size my_njobs = ( nextra >= 1 ? 1 : 0 ) + num_pdbs_per_cpu;
 		for ( Size ii = 1; ii <= my_njobs; ++ii ) {
 			native_pdbs_.push_back(all_filenames[ ii ] );
-//#ifndef USEMPI
+			//#ifndef USEMPI
 			next_iteration_pdbs_.push_back(all_filenames[ ii ] );
-//#else
+			//#else
 			//next_iteration_pdbs_.push_back( "workdir_" + to_string( MPI_rank_ ) + "/" + all_filenames[ ii ] );
-//#endif
+			//#endif
 			//TR << "divide_up_pdbs(): PROC #" << MPI_rank_ << " has native pdb " << native_pdbs_[ ii ] << std::endl;
-	}
+		}
 
 #ifdef USEMPI
 		//std::cout << " number of nodes " << MPI_nprocs_ << std::endl;
@@ -441,9 +440,9 @@ IterativeOptEDriver::divide_up_pdbs()
 				decdisc_native_decoy_pairs_.push_back(file_lists[ ii ] );
 				decdisc_crystal_natives_.push_back( crystal_native_list[ ii ] );
 				//TR << " PROC #" << MPI_rank_ << " "<<  ii << " decdiscrim:  "
-				//	<< decdisc_native_decoy_pairs_[ ii ].first << " "
-				//	<< decdisc_native_decoy_pairs_[ ii ].second << " "
-				//	<< decdisc_crystal_natives_[ ii ] << std::endl;
+				// << decdisc_native_decoy_pairs_[ ii ].first << " "
+				// << decdisc_native_decoy_pairs_[ ii ].second << " "
+				// << decdisc_crystal_natives_[ ii ] << std::endl;
 			}
 
 #ifdef USEMPI
@@ -504,9 +503,9 @@ IterativeOptEDriver::divide_up_pdbs()
 				ligand_native_decoy_pairs_.push_back(file_lists[ ii ] );
 				ligand_crystal_natives_.push_back( crystal_native_list[ ii ] );
 				//TR << " PROC #" << MPI_rank_ << " "<<  ii << " lig discrim:  "
-				//	<< ligand_native_decoy_pairs_[ ii ].first << " "
-				//	<< ligand_native_decoy_pairs_[ ii ].second << " "
-				//	<< ligand_crystal_natives_[ ii ] << std::endl;
+				// << ligand_native_decoy_pairs_[ ii ].first << " "
+				// << ligand_native_decoy_pairs_[ ii ].second << " "
+				// << ligand_crystal_natives_[ ii ] << std::endl;
 			}
 
 #ifdef USEMPI
@@ -615,7 +614,7 @@ IterativeOptEDriver::divide_up_pdbs()
 				dG_binding_.push_back( dgs[ ii ] );
 
 				//TR << "divide_up_pdbs(): node " << MPI_rank_ << " dG_bind:  "
-				//	<< dG_bound_unbound_pairs_[ ii ].first << " " << dG_bound_unbound_pairs_[ ii ].second << " " << dG_binding_[ ii ] << std::endl;
+				// << dG_bound_unbound_pairs_[ ii ].first << " " << dG_bound_unbound_pairs_[ ii ].second << " " << dG_binding_[ ii ] << std::endl;
 			}
 
 #ifdef USEMPI
@@ -677,9 +676,9 @@ IterativeOptEDriver::divide_up_pdbs()
 				ddg_mut_wt_pairs_.push_back( ddG_mut_files[ ii ] );
 				ddGs_.push_back( ddgs[ ii ] );
 				//TR << " PROC #" << MPI_rank_ << " "<<  ii << " ddGmut:  "
-				//	<< ddg_mut_wt_pairs_[ ii ].first << " "
-				//	<< ddg_mut_wt_pairs_[ ii ].second << " "
-				//	<< ddGs_[ ii ] << std::endl;
+				// << ddg_mut_wt_pairs_[ ii ].first << " "
+				// << ddg_mut_wt_pairs_[ ii ].second << " "
+				// << ddGs_[ ii ] << std::endl;
 			}
 
 #ifdef USEMPI
@@ -829,8 +828,8 @@ IterativeOptEDriver::collect_rotamer_energies()
 	/// Don't bother collecting rotamer optE data if we're not going to optimize
 	/// weights.  Just skip straight to the design step.
 	//if ( outer_loop_counter_ == 1 && option[ optE::design_first ].user() ) {
-	//	TR_VERBOSE << "collect_rotamer_energies(): design_first flag in use. leaving method" << std::endl;
-	//	return;
+	// TR_VERBOSE << "collect_rotamer_energies(): design_first flag in use. leaving method" << std::endl;
+	// return;
 	//}
 	// taking this out because otherwise the rescore.log isn't made correctly (-ronj)
 
@@ -876,11 +875,11 @@ IterativeOptEDriver::collect_rotamer_energies()
 void
 IterativeOptEDriver::exit_gracefully()
 {
-		barrier();
+	barrier();
 #ifdef USEMPI
 		MPI_Finalize();
 #endif
-		exit( 0 );
+	exit( 0 );
 }
 
 ///
@@ -896,9 +895,9 @@ IterativeOptEDriver::setup_derived_free_and_fixed_data()
 
 	include_count_ = fixed_count_ = free_count_ = 0;
 
-	for( int i=1 ; i <= n_score_types ; ++i ) {
-		if( include_terms_[ ScoreType(i) ] != 0.0 ) {
-			if( fixed_parameters_[ ScoreType(i) ] == 0.0 ) {
+	for ( int i=1 ; i <= n_score_types ; ++i ) {
+		if ( include_terms_[ ScoreType(i) ] != 0.0 ) {
+			if ( fixed_parameters_[ ScoreType(i) ] == 0.0 ) {
 				free_score_list_.push_back( ScoreType(i) );
 				++free_count_;
 			}
@@ -906,8 +905,8 @@ IterativeOptEDriver::setup_derived_free_and_fixed_data()
 		}
 	}
 
-	for( int i = 1; i <= n_score_types; ++i ) {
-		if( fixed_parameters_[ ScoreType(i) ] != 0.0 ) {
+	for ( int i = 1; i <= n_score_types; ++i ) {
+		if ( fixed_parameters_[ ScoreType(i) ] != 0.0 ) {
 			fixed_score_list_.push_back( ScoreType(i) );
 			++fixed_count_;
 		}
@@ -1571,9 +1570,9 @@ IterativeOptEDriver::compute_rotamers_around_ligands()
 		core::pose::Pose context_pose;
 		/// Should we use the previously repacked pose, or the native pose to gather data from?
 		//if ( option[ optE::recover_nat_rot ] ) {
-		//	context_pose = rotamer_recovery_context_poses_[ n ];
+		// context_pose = rotamer_recovery_context_poses_[ n ];
 		//} else {
-			context_pose = native_pose;
+		context_pose = native_pose;
 		//}
 
 		// Only include protein residues within 6A of touching the ligand
@@ -1581,16 +1580,16 @@ IterativeOptEDriver::compute_rotamers_around_ligands()
 		int const jump_id = context_pose.num_jump(); // assume ligand is last jump
 		ObjexxFCL::FArray1D_bool is_upstream ( context_pose.total_residue(), false );
 		context_pose.fold_tree().partition_by_jump( jump_id, is_upstream );
-		for(core::Size i = 1, i_end = context_pose.total_residue(); i <= i_end; ++i) {
+		for ( core::Size i = 1, i_end = context_pose.total_residue(); i <= i_end; ++i ) {
 			// Nothing on ligand side can move
 			if ( ! is_upstream(i) ) continue;
 			// on protein side, have to do distance check
 			core::conformation::Residue const & prot_rsd = context_pose.residue(i);
-			if( ! prot_rsd.is_protein() ) continue;
-			for(core::Size j = 1, j_end = context_pose.total_residue(); j <= j_end; ++j) {
+			if ( ! prot_rsd.is_protein() ) continue;
+			for ( core::Size j = 1, j_end = context_pose.total_residue(); j <= j_end; ++j ) {
 				if ( is_upstream(j) ) continue; // compare against only ligand residues
 				core::conformation::Residue const & lig_rsd = context_pose.residue(j);
-				for(core::Size k = 1, k_end = lig_rsd.nheavyatoms(); k <= k_end; ++k) {
+				for ( core::Size k = 1, k_end = lig_rsd.nheavyatoms(); k <= k_end; ++k ) {
 					double dist2 = lig_rsd.xyz(k).distance_squared( prot_rsd.xyz(prot_rsd.nbr_atom()) );
 					double cutoff = prot_rsd.nbr_radius() + 6.0;
 					if ( dist2 <= cutoff * cutoff ) {
@@ -1642,7 +1641,7 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 			//std::cout << native_decoy_pairs_[ ii ].second << std::endl;
 
 			std::ifstream native_pdblist( ligand_native_decoy_pairs_[ ii ].first.c_str() );
-			if( native_pdblist.bad() ) utility_exit_with_message("Cannot open file "+ligand_native_decoy_pairs_[ ii ].first);
+			if ( native_pdblist.bad() ) utility_exit_with_message("Cannot open file "+ligand_native_decoy_pairs_[ ii ].first);
 			while ( native_pdblist ) {
 				std::string native_pdb;
 				native_pdblist >> native_pdb;
@@ -1650,7 +1649,7 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 			}
 
 			std::ifstream decoy_pdblist( ligand_native_decoy_pairs_[ ii ].second.c_str() );
-			if( decoy_pdblist.bad() ) utility_exit_with_message("Cannot open file "+ligand_native_decoy_pairs_[ ii ].second);
+			if ( decoy_pdblist.bad() ) utility_exit_with_message("Cannot open file "+ligand_native_decoy_pairs_[ ii ].second);
 			while ( decoy_pdblist ) {
 				std::string decoy_pdb;
 				decoy_pdblist >> decoy_pdb;
@@ -1658,20 +1657,20 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 			}
 			//std::cout << native_pdb_names.size() << " natives and " << decoy_pdb_names.size() << " decoys" << std::endl;
 
-			if( native_pdb_names.size() == 0 ) {
+			if ( native_pdb_names.size() == 0 ) {
 				TR << "[rank " << MPI_rank_ << "] No native entries in " << ligand_native_decoy_pairs_[ ii ].first << "; skipping ligand decoy discrimination for this target." << std::endl;
 				continue;
 			}
-			if( decoy_pdb_names.size() == 0 ) {
+			if ( decoy_pdb_names.size() == 0 ) {
 				TR << "[rank " << MPI_rank_ << "] No decoy entries in " << ligand_native_decoy_pairs_[ ii ].second << "; skipping ligand decoy discrimination for this target." << std::endl;
 				continue;
 			}
 
 			core::pose::Pose crystal_native;
 			//if ( option[ in::file::centroid_input ] ) {
-			//	core::import_pose::centroid_pose_from_pdb( crystal_native, crystal_natives_[ ii ] );
+			// core::import_pose::centroid_pose_from_pdb( crystal_native, crystal_natives_[ ii ] );
 			//} else {
-				core::import_pose::pose_from_pdb( crystal_native, ligand_crystal_natives_[ ii ] );
+			core::import_pose::pose_from_pdb( crystal_native, ligand_crystal_natives_[ ii ] );
 			//}
 
 			utility::vector1< Real > free_data( free_score_list_.size() );
@@ -1682,9 +1681,9 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 				/// read the pdb into a pose
 				core::pose::Pose pose;
 				//if ( option[ in::file::centroid_input ] ) {
-				//	core::import_pose::centroid_pose_from_pdb( pose, native_pdb_names[ jj ] );
+				// core::import_pose::centroid_pose_from_pdb( pose, native_pdb_names[ jj ] );
 				//} else {
-					core::import_pose::pose_from_pdb( pose, native_pdb_names[ jj ] );
+				core::import_pose::pose_from_pdb( pose, native_pdb_names[ jj ] );
 				//}
 
 				if ( jj == 1 ) {
@@ -1718,9 +1717,9 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 				core::pose::Pose pose;
 				//std::cout << " PROC #" << MPI_rank_ << " reading pdb: #" << jj << " " << decoy_pdb_names[ jj ] << std::endl;
 				//if ( option[ in::file::centroid_input ] ) {
-				//	core::import_pose::centroid_pose_from_pdb( pose, decoy_pdb_names[ jj ] );
+				// core::import_pose::centroid_pose_from_pdb( pose, decoy_pdb_names[ jj ] );
 				//} else {
-					core::import_pose::pose_from_pdb( pose, decoy_pdb_names[ jj ] );
+				core::import_pose::pose_from_pdb( pose, decoy_pdb_names[ jj ] );
 				//}
 
 				if ( first_total_residue != pose.total_residue() ) {
@@ -1734,11 +1733,11 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 				//scorelog << "Decoy Discrimination DECOY " << decoy_pdb_names[ jj ] << " " << score << "\n";
 
 				//if ( option[ optE::min_decoy_rms_to_native ].user() ) {
-				//	Real decoy_rms = core::scoring::CA_rmsd( crystal_native, pose );
-				//	if ( decoy_rms <  option[ optE::min_decoy_rms_to_native ]() ) {
-				//		//TR << "Excluding decoy " << decoy_pdb_names[ jj ] << " with rms: " << decoy_rms << std::endl;
-				//		continue;
-				//	}
+				// Real decoy_rms = core::scoring::CA_rmsd( crystal_native, pose );
+				// if ( decoy_rms <  option[ optE::min_decoy_rms_to_native ]() ) {
+				//  //TR << "Excluding decoy " << decoy_pdb_names[ jj ] << " with rms: " << decoy_rms << std::endl;
+				//  continue;
+				// }
 				//}
 
 				EnergyMap emap = score_ligand_interface(*scorefxn, pose);
@@ -1887,14 +1886,14 @@ void IterativeOptEDriver::intialize_free_and_fixed_energy_terms() {
 	if ( ! option[ optE::dont_use_reference_energies ].user() ) {
 		if ( MPI_rank_ == 0 ) {
 			//for ( Size ii = 1; ii <= n_score_types; ++ii ) {
-			//	if ( free_parameters_[ (ScoreType) ii ] != 0.0 ) {
-			//		free_parameters_[ (ScoreType) ii ] = numeric::random::rg().uniform() + 0.01; // random non-zero starting point
-			//	}
+			// if ( free_parameters_[ (ScoreType) ii ] != 0.0 ) {
+			//  free_parameters_[ (ScoreType) ii ] = numeric::random::rg().uniform() + 0.01; // random non-zero starting point
+			// }
 			//}
 			Real const rpp_refs[20] = {
 				0.16, 1.7, -0.67, -0.81, 0.63, -0.17, 0.56, 0.24, -0.65, -0.1,
 				-0.34, -0.89, 0.02, -0.97, -0.98, -0.37, -0.27, 0.29, 0.91, 0.51
-			};
+				};
 
 			for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
 				before_minimization_reference_energies_[ ii ] = rpp_refs[ ii - 1 ];
@@ -1935,8 +1934,9 @@ void IterativeOptEDriver::optimize_weights()
 	//attach_debugger();
 
 	free_weights_before_minimization_ = free_parameters_;
-	if ( option[ optE::wrap_dof_optimization ].user() )
+	if ( option[ optE::wrap_dof_optimization ].user() ) {
 		minimizer_dofs_before_minimization_ = minimizer_dofs_mixed_;
+	}
 
 	/// Skip weight optimization in the context of the native protein if the
 	/// "design first" flag is on the command line, but only after
@@ -1953,7 +1953,7 @@ void IterativeOptEDriver::optimize_weights()
 		before_minimization_reference_energies_ = after_minimization_reference_energies_;
 		//std::cout << "after_minimization_reference_energies_: ";
 		//for ( Size ii = 1; ii <= after_minimization_reference_energies_.size(); ++ii ) {
-		//	std::cout << after_minimization_reference_energies_[ ii ] << " ";
+		// std::cout << after_minimization_reference_energies_[ ii ] << " ";
 		//}
 		//std::cout << std::endl;
 		if ( free_count_ == 0 ) {
@@ -1998,7 +1998,7 @@ void IterativeOptEDriver::optimize_weights()
 		Real end_fitness = 0.0;
 
 		TR << "optimize_weights(): objective function start: " << start_fitness << " dofs: [ ";
-		for ( Size ii = 1; ii <= start_dofs.size(); ++ii) { TR << F( 8,4,start_dofs[ii] ) << ", "; }
+		for ( Size ii = 1; ii <= start_dofs.size(); ++ii ) { TR << F( 8,4,start_dofs[ii] ) << ", "; }
 		TR << "]" << std::endl;
 
 		MultifuncOP opt_min2;
@@ -2023,7 +2023,7 @@ void IterativeOptEDriver::optimize_weights()
 			opt_min2 = opt_min_ptr;
 		}
 
-		if( option[ optE::optimize_starting_free_weights ] ) {
+		if ( option[ optE::optimize_starting_free_weights ] ) {
 
 			using namespace core::optimization;
 			/// High tolerance -- don't over minimize before pswarm gets to explore
@@ -2052,24 +2052,24 @@ void IterativeOptEDriver::optimize_weights()
 			TR_VERBOSE << "optimize_weights(): node " << MPI_rank_ << " beginning round 1 of PSO." << std::endl;
 			ParticleOPs particles = psm.run( option[ optE::number_of_swarm_cycles ], *opt_min2, option[ optE::number_of_swarm_particles ] );
 
-//			psm.print_particles( particles, "optimize_weights(): round 1" );
+			//   psm.print_particles( particles, "optimize_weights(): round 1" );
 
-			for(core::Size i = 1; i <= particles.size(); ++i) {
+			for ( core::Size i = 1; i <= particles.size(); ++i ) {
 				Real start( (*opt_min2)( particles[i]->p_ ) );
 				minimizer.run( particles[i]->p_ );
 				TR.Trace << "first round minimization: " << i << " start: " << start <<  ", end: " << (*opt_min2)( particles[ i ]->p_ ) << std::endl;
 			}
 			psm.run( 0, *opt_min2, particles );
-//			psm.print_particles( particles, "optimize_weights(): round 1 post min" );
+			//   psm.print_particles( particles, "optimize_weights(): round 1 post min" );
 
 			TR_VERBOSE << "optimize_weights(): node " << MPI_rank_ << " beginning round 2 of PSO using [minimized] round 1 particles." << std::endl;
 
 			psm.run( option[ optE::number_of_swarm_cycles ], *opt_min2, particles );
-//			psm.print_particles( particles, "optimize_weights(): round 2" );
+			//   psm.print_particles( particles, "optimize_weights(): round 2" );
 
 			clock_t min_starttime = clock();
 			//for(core::Size ii = 1; ii <= particles.size(); ++ii) {
-			for(core::Size ii = 1; ii <= 15; ++ii) { // minimizing is really slow so only do some particles!
+			for ( core::Size ii = 1; ii <= 15; ++ii ) { // minimizing is really slow so only do some particles!
 				Real start( (*opt_min2)( particles[ii]->p_ ) );
 				TR.Trace << "starting minimization of particle " << ii << std::endl;
 				minimizer2.run( particles[ii]->p_ );
@@ -2081,7 +2081,7 @@ void IterativeOptEDriver::optimize_weights()
 
 			// This will re-sort the particles and update pbest_
 			psm.run(0, *opt_min2, particles);
-//			psm.print_particles( particles, "optimize_weights(): round 2 post min" );
+			//   psm.print_particles( particles, "optimize_weights(): round 2 post min" );
 
 			ParticleOP p = particles[1];
 			TR_VERBOSE << "optimize_weights(): best particle fitness: " << F( 9,5,-1.0 * p->fitness_pbest() ) << " dofs: [";
@@ -2103,10 +2103,10 @@ void IterativeOptEDriver::optimize_weights()
 				ParticleOPs particles = psm.run( 2 * option[ optE::number_of_swarm_cycles ], *opt_min2, option[ optE::number_of_swarm_particles ],
 					opt_min.get_dofs_from_energy_map( free_weights_before_minimization_ ) );
 
-//				psm.print_particles( particles, "optimize_weights(): round extra innings" );
+				//    psm.print_particles( particles, "optimize_weights(): round extra innings" );
 
 				clock_t min_starttime = clock();
-				for(core::Size ii = 1; ii <= 10; ++ii) { // minimizing is really slow so only do some of the particles
+				for ( core::Size ii = 1; ii <= 10; ++ii ) { // minimizing is really slow so only do some of the particles
 					Real start( (*opt_min2)( particles[ii]->p_ ) );
 					TR_VERBOSE << "starting minimization of particle " << ii << std::endl;
 					//minimizer2.run( particles[ii]->p_ );
@@ -2119,7 +2119,7 @@ void IterativeOptEDriver::optimize_weights()
 
 				// re-score and re-sort the particles to get the best scoring one
 				psm.run( 0, *opt_min2, particles );
-//				psm.print_particles( particles, "optimize_weights(): round extra innings post min" );
+				//    psm.print_particles( particles, "optimize_weights(): round extra innings post min" );
 
 				ParticleOP p = particles[1];
 				TR_VERBOSE << "optimize_weights(): best particle fitness: " << F( 9,5,-1.0 * p->fitness_pbest() ) << " dofs: [";
@@ -2147,7 +2147,7 @@ void IterativeOptEDriver::optimize_weights()
 		}
 
 		TR << "optimize_weights(): end: " << ( *opt_min2 )( start_dofs ) << ", dofs: [ ";
-		for( Size ii = 1; ii <= start_dofs.size(); ++ii) { TR << F(8,4,start_dofs[ii]) << ", "; }
+		for ( Size ii = 1; ii <= start_dofs.size(); ++ii ) { TR << F(8,4,start_dofs[ii]) << ", "; }
 		TR << " ]" << std::endl;
 
 		if ( option[ optE::wrap_dof_optimization ].user() ) {
@@ -2160,8 +2160,8 @@ void IterativeOptEDriver::optimize_weights()
 
 		// set the after_min refE vector
 		if ( ! option[ optE::dont_use_reference_energies ].user() ) {
-			//for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) { 		// 20 should not be hardcoded here!
-			//	after_minimization_reference_energies_[ ii ] = start_dofs[ free_count_+ii ]; // save them in non-negated form
+			//for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {   // 20 should not be hardcoded here!
+			// after_minimization_reference_energies_[ ii ] = start_dofs[ free_count_+ii ]; // save them in non-negated form
 			//}
 			// apparently, now, the opt_min object can be queried to get the reference energy values instead of what the
 			// particles get out
@@ -2170,7 +2170,7 @@ void IterativeOptEDriver::optimize_weights()
 
 		// create an EnergyMap from the most recent set of DOFs, but make sure to reset the energies for the fixed terms to 0.
 		free_weights_after_minimization_ = opt_min.get_energy_map_from_dofs( start_dofs );
-		for( Size ii = 1 ; ii <= fixed_score_list_.size(); ++ii ) {
+		for ( Size ii = 1 ; ii <= fixed_score_list_.size(); ++ii ) {
 			free_weights_after_minimization_[ fixed_score_list_[ ii ]] = 0; // reset fixed parameters
 		}
 
@@ -2227,7 +2227,7 @@ void IterativeOptEDriver::optimize_weights()
 		/// 3. score all the position data
 		utility::vector1< Real > cumulative_score_list(n_optE_data_types,0.0);
 		//int ii = 1;
-		for( OptEPositionDataOPs::const_iterator itr = optE_data_->position_data_begin(),
+		for ( OptEPositionDataOPs::const_iterator itr = optE_data_->position_data_begin(),
 				e_itr = optE_data_->position_data_end(); itr != e_itr ; ++itr  ) {
 			(*itr)->print_score( outlog, component_weights_, vars, dE_dvars,
 				num_energy_dofs, num_ref_dofs, num_total_dofs,
@@ -2238,10 +2238,10 @@ void IterativeOptEDriver::optimize_weights()
 				fixed_terms, score_list, fixed_score_list );
 			//++ii;
 			//if ( ii % 10 == 0 ) {
-			//	//TR << ".";
+			// //TR << ".";
 			//}
 		}
-		for ( Size ii=1; ii <= n_optE_data_types; ii++) {
+		for ( Size ii=1; ii <= n_optE_data_types; ii++ ) {
 			TR << "optimize_weights(): energy component: " <<  OptEPositionDataFactory::optE_type_name( OptEPositionDataType( ii ))
 				<< " " << cumulative_score_list[ii] << std::endl;
 		}
@@ -2255,10 +2255,10 @@ void IterativeOptEDriver::optimize_weights()
 		Real const faux_max( -1234 ); Real const faux_min( 1234 );
 		for ( Size ii = 1; ii <= n_optE_data_types; ++ii ) {
 			//for ( EnergyMap::iterator iter = rawE_min[ ii ].begin(); iter != rawE_min[ ii ].end(); ++iter ) {
-			//	*iter = faux_min;
+			// *iter = faux_min;
 			//}
 			//for ( EnergyMap::iterator iter = rawE_max[ ii ].begin(); iter != rawE_max[ ii ].end(); ++iter ) {
-			//	*iter = faux_max;
+			// *iter = faux_max;
 			//}
 			for ( Size jj = 1; jj <= n_score_types; ++jj ) {
 				rawE_min[ ii ][ (ScoreType) jj ] = faux_min;
@@ -2267,7 +2267,7 @@ void IterativeOptEDriver::optimize_weights()
 
 		}
 
-		for( OptEPositionDataOPs::const_iterator itr = optE_data_->position_data_begin(),
+		for ( OptEPositionDataOPs::const_iterator itr = optE_data_->position_data_begin(),
 				e_itr = optE_data_->position_data_end(); itr != e_itr ; ++itr  ) {
 			(*itr)->range( score_list, fixed_score_list,
 				rawE_min[(*itr)->type()], rawE_max[(*itr)->type()] );
@@ -2313,11 +2313,11 @@ IterativeOptEDriver::test_weight_sensitivity(
 	out << "Minimum function value " << minval << std::endl;
 	// Later DOFs include the AA ref energies, so we don't want ALL of them:
 	//for(Size dof_idx = 1; dof_idx <= dofs.size(); ++dof_idx) {
-	for(Size dof_idx = 1; dof_idx <= free_score_list_.size(); ++dof_idx) {
+	for ( Size dof_idx = 1; dof_idx <= free_score_list_.size(); ++dof_idx ) {
 		Real maxval = minval;
 		out << "term_" << dof_idx << " " << free_score_list_[dof_idx];
-		for(Real val = 0.0; val <= 2.0; val += 0.1) {
-		//for(Real scale = 0.0; scale <= 2.0; scale += 0.5) {
+		for ( Real val = 0.0; val <= 2.0; val += 0.1 ) {
+			//for(Real scale = 0.0; scale <= 2.0; scale += 0.5) {
 			//if(scale == 1.0) continue;
 			core::optimization::Multivec dofs_copy = dofs;
 			//dofs_copy[dof_idx] *= scale;
@@ -2347,7 +2347,7 @@ IterativeOptEDriver::read_reference_energies_from_file( std::string const & fnam
 			for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
 				Real aa_refE;
 				weight_file >> aa_refE;
-				if (!weight_file) break;
+				if ( !weight_file ) break;
 				reference_energies[ ii ] = aa_refE;
 			}
 			read_refEs = true;
@@ -2460,18 +2460,19 @@ IterativeOptEDriver::score_position_data()
 		/// 3. score all the position data
 		utility::vector1< Real > cumulative_score_list( n_optE_data_types, 0.0 );
 		//int ii = 1;
-		for( OptEPositionDataOPs::const_iterator itr = optE_data_->position_data_begin(), e_itr = optE_data_->position_data_end() ; itr != e_itr ; ++itr  ) {
+		for ( OptEPositionDataOPs::const_iterator itr = optE_data_->position_data_begin(), e_itr = optE_data_->position_data_end() ; itr != e_itr ; ++itr  ) {
 			(*itr)->print_score( outlog, component_weights_, vars, dE_dvars, num_energy_dofs, num_ref_dofs, num_total_dofs, fixed_terms, score_list, fixed_score_list );
 			cumulative_score_list[(*itr)->type()] +=  (*itr)->get_score( component_weights_, vars, dE_dvars, num_energy_dofs, num_ref_dofs, num_total_dofs, fixed_terms, score_list, fixed_score_list );
 			//++ii;
 			//if ( ii % 10 == 0 ) {
-			//	//TR << ".";
+			// //TR << ".";
 			//}
 		}
-		for ( Size ii=1; ii <= n_optE_data_types; ii++) {
-			if ( cumulative_score_list[ii] != 0 )
+		for ( Size ii=1; ii <= n_optE_data_types; ii++ ) {
+			if ( cumulative_score_list[ii] != 0 ) {
 				TR_VERBOSE << "optimization function energy component: " << OptEPositionDataFactory::optE_type_name( OptEPositionDataType( ii ))
 					<< " " << cumulative_score_list[ii] << std::endl;
+			}
 		}
 
 		/// 4. close log file.
@@ -2509,9 +2510,9 @@ void IterativeOptEDriver::write_new_scorefile()
 
 			// the below is too confusing and should be against mini coding guidelines (-ronj)
 			//Real const fa_atr_weight(
-			//	fixed_parameters_[ fa_atr ] == 0.0 ?
-			//	(free_weights_inner_loop_[ fa_atr ] == 0.0 ?  1.0 : free_weights_inner_loop_[ fa_atr ] )
-			//	: fixed_parameters_[ fa_atr ] );
+			// fixed_parameters_[ fa_atr ] == 0.0 ?
+			// (free_weights_inner_loop_[ fa_atr ] == 0.0 ?  1.0 : free_weights_inner_loop_[ fa_atr ] )
+			// : fixed_parameters_[ fa_atr ] );
 
 			Real fa_atr_weight;
 			if ( fixed_parameters_[ fa_atr ] == 0.0 ) {
@@ -2791,7 +2792,7 @@ void IterativeOptEDriver::write_new_scorefile()
 			fout << "NO_HB_ENV_DEP\n";
 		}
 
-		for( Size ii = 1; ii <= core::scoring::n_score_types; ++ii ) {
+		for ( Size ii = 1; ii <= core::scoring::n_score_types; ++ii ) {
 			if ( combined_weights[ ScoreType( ii ) ] != 0 ) {
 				fout << name_from_score_type( ScoreType( ii ) ) << " " << combined_weights[ ScoreType( ii ) ] << "\n";
 			}
@@ -2827,13 +2828,13 @@ IterativeOptEDriver::output_weighted_unfolded_energies() {
 			unfE_potential.raw_unfolded_state_energymap( chemical::name_from_aa( (chemical::AA) aa ), unweighted_unfolded_emap[ aa ] );
 		}
 
-		for( Size aa = 1; aa <= chemical::num_canonical_aas; ++aa ) {
+		for ( Size aa = 1; aa <= chemical::num_canonical_aas; ++aa ) {
 
 			Real unfolded_energy_for_one_aa = 0.0;
 			Real weighted_unfolded_energy_for_one_aa = 0.0;
 
 			// free weights first
-			for( Size ii = 1; ii <= n_score_types; ++ii ) {
+			for ( Size ii = 1; ii <= n_score_types; ++ii ) {
 				if ( free_weights_inner_loop_[ (ScoreType) ii ] != 0.0 ) {
 					TR_VERBOSE << "output_weighted_unfolded_energies(): adding unfolded energy for aa '" << chemical::name_from_aa( (chemical::AA) aa )
 						<< "' unweighted free '" << name_from_score_type( (ScoreType)ii ) << "' energy: "
@@ -2846,7 +2847,7 @@ IterativeOptEDriver::output_weighted_unfolded_energies() {
 			}
 
 			// then fixed weights
-			for( Size ii = 1; ii <= fixed_score_list_.size(); ++ii ) {
+			for ( Size ii = 1; ii <= fixed_score_list_.size(); ++ii ) {
 				if ( fixed_parameters_[ fixed_score_list_[ ii ] ] != 0.0 ) {
 					TR_VERBOSE << "output_weighted_unfolded_energies(): adding unfolded energy for aa '" << chemical::name_from_aa( (chemical::AA) aa )
 						<< "' unweighted fixed '" << name_from_score_type( fixed_score_list_[ ii ] ) << "' energy: "
@@ -2882,7 +2883,7 @@ IterativeOptEDriver::output_weighted_unfolded_energies() {
 		}
 
 		TR << "output_weighted_unfolded_energies(): weighted unfoldedE by aa: [ ";
-		for( Size aa = 1; aa <= chemical::num_canonical_aas; ++aa ) {
+		for ( Size aa = 1; aa <= chemical::num_canonical_aas; ++aa ) {
 			TR << wtd_unfE[ aa ] << " ";
 		}
 		TR << std::endl;
@@ -2905,7 +2906,7 @@ IterativeOptEDriver::free_terms_energy_map_from_dofs(
 
 	// This covers the variable weights
 	Size dof_index( 1 );
-	for( ScoreTypes::const_iterator itr = free_score_list_.begin(),
+	for ( ScoreTypes::const_iterator itr = free_score_list_.begin(),
 			end_itr = free_score_list_.end() ;
 			itr != end_itr ; ++itr ) {
 		return_map[ *itr ] = dofs[ dof_index++ ];
@@ -2990,7 +2991,7 @@ ScoreFunctionOP
 IterativeOptEDriver::create_unweighted_scorefunction() const
 {
 	ScoreFunctionOP scorefxn = configure_new_scorefunction();
-	for( int i=1 ; i <= n_score_types ; ++i ) {
+	for ( int i=1 ; i <= n_score_types ; ++i ) {
 		if ( include_terms_[ ScoreType(i) ] != 0.0 ) {
 			scorefxn->set_weight( ScoreType(i), include_terms_[ ScoreType(i) ] );
 		}
@@ -3003,7 +3004,7 @@ core::scoring::ScoreFunctionOP
 IterativeOptEDriver::create_weighted_scorefunction() const
 {
 	ScoreFunctionOP sfxn = configure_new_scorefunction();
-	for( int i=1 ; i <= n_score_types ; ++i ) {
+	for ( int i=1 ; i <= n_score_types ; ++i ) {
 		if ( free_weights_inner_loop_[ ScoreType(i) ] != 0.0 ) {
 			//std::cout << " PROC #" << MPI_rank_ << " include term: " << ScoreType(i) << std::endl;
 			sfxn->set_weight( ScoreType(i), free_weights_inner_loop_[ ScoreType(i) ] );
@@ -3011,7 +3012,7 @@ IterativeOptEDriver::create_weighted_scorefunction() const
 			sfxn->set_weight( ScoreType(i), fixed_parameters_[ ScoreType(i) ] );
 		}
 	}
-	//	sfxn->energy_method_options().set_method_weights( ref, reference_energies_inner_loop_ );
+	// sfxn->energy_method_options().set_method_weights( ref, reference_energies_inner_loop_ );
 	sfxn->set_method_weights( ref, reference_energies_inner_loop_ );
 	sfxn->set_weight( ref, 1.0 );
 
@@ -3087,8 +3088,9 @@ void IterativeOptEDriver::collect_sequence_recovery_data_from_slave_cpus() {
 	TR << std::endl;
 
 	TR << "amino acid counts: expected: ";
-	for ( Size ii = 1; ii <= core::chemical::num_canonical_aas; ++ii )
+	for ( Size ii = 1; ii <= core::chemical::num_canonical_aas; ++ii ) {
 		TR << core::chemical::oneletter_code_from_aa( core::chemical::AA( ii ) ) << ": " << aa_exp_[ ii ] << ", ";
+	}
 	TR << std::endl;
 
 
@@ -3195,7 +3197,7 @@ void IterativeOptEDriver::run_design_on_assigned_pdbs()
 	EnergyMap wts_map;
 	ScoreFunctionOP sfxn = configure_new_scorefunction();
 
-	for( int i=1 ; i <= n_score_types ; ++i ) {
+	for ( int i=1 ; i <= n_score_types ; ++i ) {
 		if ( free_weights_inner_loop_[ ScoreType(i) ] != 0.0 ) {
 			sfxn->set_weight( ScoreType(i), free_weights_inner_loop_[ ScoreType(i) ] );
 			wts_map[ ScoreType(i) ] = free_weights_inner_loop_[ ScoreType(i) ];
@@ -3264,7 +3266,7 @@ void IterativeOptEDriver::repack_assigned_pdbs()
 
 	/// Construct a score function: set etable type, set weights, set reference weights.
 	ScoreFunctionOP sfxn = configure_new_scorefunction();
-	for( int i=1 ; i <= n_score_types ; ++i ) {
+	for ( int i=1 ; i <= n_score_types ; ++i ) {
 		if ( free_weights_inner_loop_[ ScoreType(i) ] != 0.0 ) {
 			//std::cout << " PROC #" << MPI_rank_ << " include term: " << ScoreType(i) << std::endl;
 			sfxn->set_weight( ScoreType(i), free_weights_inner_loop_[ ScoreType(i) ] );
@@ -3274,7 +3276,7 @@ void IterativeOptEDriver::repack_assigned_pdbs()
 	}
 
 	if ( ! option[ optE::dont_use_reference_energies ].user() ) {
-		//	sfxn->energy_method_options().set_method_weights( ref, reference_energies_inner_loop_ );
+		// sfxn->energy_method_options().set_method_weights( ref, reference_energies_inner_loop_ );
 		sfxn->set_method_weights( ref, reference_energies_inner_loop_ );
 		sfxn->set_weight( ref, 1.0 );
 	}
@@ -3369,9 +3371,9 @@ bool IterativeOptEDriver::decide_if_sequence_recovery_improved()
 				<< ", inner loop count: " << inner_loop_counter_ << std::endl;
 
 			if ( outer_loop_counter_ > 2 &&
-				 /* inner_loop_counter_ > 3 && */
-				 accept_new_weight_set == 0 &&
-				 weighted_cross_entropy + inner_loop_sequence_recovery_rate_ > ( outer_loop_seq_profile_cross_entropy_ * Wcross_ent ) + outer_loop_last_sequence_recovery_rate_ ) {
+					/* inner_loop_counter_ > 3 && */
+					accept_new_weight_set == 0 &&
+					weighted_cross_entropy + inner_loop_sequence_recovery_rate_ > ( outer_loop_seq_profile_cross_entropy_ * Wcross_ent ) + outer_loop_last_sequence_recovery_rate_ ) {
 				TR << "decide_if_sequence_recovery_improved(): accepting new weight set: "
 					<< "inner loop recovery rate: " << inner_loop_sequence_recovery_rate_
 					<< ", outer loop recovery rate: " << outer_loop_last_sequence_recovery_rate_
@@ -3381,7 +3383,7 @@ bool IterativeOptEDriver::decide_if_sequence_recovery_improved()
 			}
 
 			//if ( inner_loop_counter_ == num_inner_iterations() ) {
-			//	accept_new_weight_set = 1;
+			// accept_new_weight_set = 1;
 			//}
 			// ronj just because we hit the max number of inner iterations, don't accept it it's worse. the inner loop will kill itself and
 			// ronj we'll just reswarm and mix with the last good weight set.
@@ -3464,8 +3466,9 @@ IterativeOptEDriver::go()
 		optimize_weights();
 		for ( inner_loop_counter_ = 1; inner_loop_counter_ <= num_inner_iterations(); ++inner_loop_counter_ ) {
 			TR.Debug << "Node " << MPI_rank_ << " (" << outer_loop_counter_ << "," << inner_loop_counter_ << ") write_new_scorefile ..." << std::endl;
-			if ( MPI_rank_ == 0 )
+			if ( MPI_rank_ == 0 ) {
 				TR << "go(): " << node_name( MPI_rank_ ) << " (" << outer_loop_counter_ << "," << inner_loop_counter_ << ")" << std::endl;
+			}
 			write_new_scorefile();
 			TR.Debug << "Node " << MPI_rank_ << " (" << outer_loop_counter_ << "," << inner_loop_counter_ << ") barrier [1] ..." << std::endl;
 			barrier();
@@ -3510,7 +3513,7 @@ IterativeOptEDriver::get_native_pdb_names()
 	std::string const listfile( start_file() );
 	std::ifstream data( listfile.c_str() );
 	std::string line;
-	while ( getline( data,line ) ){
+	while ( getline( data,line ) ) {
 		filenames.push_back( line );
 	}
 	data.close();
@@ -3551,17 +3554,17 @@ IterativeOptEDriver::get_nat_aa_opte_data(
 	PackerTaskOP design_task;
 	// If desired lock the task to the starting pose to prevent changes as we go on.
 	// Prevent the task from changing which residues are designed over the course of the runs.
-	if(option[ optE::constant_logic_taskops_file ].user() ) {
+	if ( option[ optE::constant_logic_taskops_file ].user() ) {
 		design_task = copy_native_packertask_logic( native_pose,
-																								pose,
-																								task_factory_);
+			pose,
+			task_factory_);
 	} else if ( option[ optE::design_with_minpack ] ) {
 		// Don't use extra rotamers during design, but do use extra rotamers when coming up with the
 		// rotamers used in the weight fitting step.  Basically, with design_with_minpack on the command
 		// line, command line flags that effect the packer no longer effect the design phase.
 		design_task = task_factory_->create_task_and_apply_taskoperations( pose );
 		pack::task::operation::InitializeFromCommandline ifcl_operation;
-    ifcl_operation.apply( pose, *design_task );
+		ifcl_operation.apply( pose, *design_task );
 	} else {
 		design_task = task_factory_->create_task_and_apply_taskoperations( pose ) ;
 	}
@@ -3644,13 +3647,13 @@ IterativeOptEDriver::get_nat_aa_opte_data(
 			++num_diffs_between_native_and_input;
 		}
 		this_pos_data->set_neighbor_count(
-				pose.energies().tenA_neighbor_graph().get_node( resi )->num_neighbors_counting_self() );
+			pose.energies().tenA_neighbor_graph().get_node( resi )->num_neighbors_counting_self() );
 
 		graph::GraphCOP packer_neighbor_graph(  pack::create_packer_graph( pose, scorefxn, single_residue_task ) );
 
 		RotamerSetFactory rsf;
 		RotamerSetOP rotset = rsf.create_rotamer_set( pose.residue( resi ) );
-//		RotamerSetOP rotset = RotamerSetFactory::create_rotamer_set( pose.residue( resi ) );
+		//  RotamerSetOP rotset = RotamerSetFactory::create_rotamer_set( pose.residue( resi ) );
 
 		rotset->set_resid( resi );
 		rotset->build_rotamers( pose, scorefxn, *single_residue_task, packer_neighbor_graph );
@@ -3666,20 +3669,21 @@ IterativeOptEDriver::get_nat_aa_opte_data(
 			EnergyMap & emap_total( emap_vector[jj] );
 
 			// Hacky limit for fa_rep
-			if( emap_total[ fa_rep ] > 10.0 )
+			if ( emap_total[ fa_rep ] > 10.0 ) {
 				emap_total[ fa_rep ] = 10.0;
+			}
 
 			utility::vector1< Real > energy_info;
 			utility::vector1< Real > fixed_energy_info;
 
 			// put all the energies for the free energy terms into the 'energy_info' vector
-			for( utility::vector1< ScoreType >::iterator score_type_iter = score_list.begin(),
+			for ( utility::vector1< ScoreType >::iterator score_type_iter = score_list.begin(),
 					end_iter = score_list.end(); score_type_iter != end_iter; ++score_type_iter ) {
 				energy_info.push_back( emap_total[ *score_type_iter ] );
 			}
 
 			// put all the energies for the fixed energy terms into the 'fixed_energy_info' vector
-			for( utility::vector1< ScoreType >::iterator score_type_iter = fixed_score_vec.begin(),
+			for ( utility::vector1< ScoreType >::iterator score_type_iter = fixed_score_vec.begin(),
 					end_iter = fixed_score_vec.end(); score_type_iter != end_iter; ++score_type_iter ) {
 				fixed_energy_info.push_back( emap_total[ *score_type_iter ] );
 			}
@@ -3722,12 +3726,12 @@ IterativeOptEDriver::get_nat_rot_opte_data(
 	using namespace pack::rotamer_set;
 	using namespace pack::dunbrack;
 	using namespace pack::rotamers;
-  using namespace chemical;
+	using namespace chemical;
 
 	TR.Trace << "Getting native rotamer opte data for " << pdb_name << ":";
 	PackerTaskOP packing_task;
 	// If desired lock the task to the starting pose to prevent changes as we go on.
-	if(option[ optE::constant_logic_taskops_file ].user() ) {
+	if ( option[ optE::constant_logic_taskops_file ].user() ) {
 		packing_task = copy_native_packertask_logic( native_pose, pose, task_factory_);
 	} else if ( option[ optE::design_with_minpack ] ) {
 		// Don't use extra rotamers during design, but do use extra rotamers when coming up with the
@@ -3812,7 +3816,7 @@ IterativeOptEDriver::get_nat_rot_opte_data(
 
 		RotamerSetFactory rsf;
 		RotamerSetOP rotset = rsf.create_rotamer_set( pose.residue( resi ) );
-//		RotamerSetOP rotset = RotamerSetFactory::create_rotamer_set( pose.residue( resi ) );
+		//  RotamerSetOP rotset = RotamerSetFactory::create_rotamer_set( pose.residue( resi ) );
 
 		rotset->set_resid( resi );
 		rotset->build_rotamers( pose, scorefxn, *task, packer_neighbor_graph );
@@ -3830,18 +3834,18 @@ IterativeOptEDriver::get_nat_rot_opte_data(
 			EnergyMap & emap_total( emap_vector[jj] );
 
 			// Hacky limit for fa_rep
-			if( emap_total[ fa_rep ] > 10.0 ) emap_total[ fa_rep ] = 10.0;
+			if ( emap_total[ fa_rep ] > 10.0 ) emap_total[ fa_rep ] = 10.0;
 
 			utility::vector1< Real > free_energy_info;
 			utility::vector1< Real > fixed_energy_info;
 
-			for( utility::vector1< ScoreType >::iterator score_type_iter = score_list.begin(),
-							end_iter = score_list.end() ; score_type_iter != end_iter ; ++score_type_iter ) {
+			for ( utility::vector1< ScoreType >::iterator score_type_iter = score_list.begin(),
+					end_iter = score_list.end() ; score_type_iter != end_iter ; ++score_type_iter ) {
 				free_energy_info.push_back( emap_total[ *score_type_iter ] );
 			}
 
-			for( utility::vector1< ScoreType >::iterator score_type_iter = fixed_score_vec.begin(),
-							end_iter = fixed_score_vec.end() ; score_type_iter != end_iter ; ++score_type_iter ) {
+			for ( utility::vector1< ScoreType >::iterator score_type_iter = fixed_score_vec.begin(),
+					end_iter = fixed_score_vec.end() ; score_type_iter != end_iter ; ++score_type_iter ) {
 				fixed_energy_info.push_back( emap_total[ *score_type_iter ] );
 			}
 
@@ -3878,38 +3882,38 @@ IterativeOptEDriver::set_aa_periodicity( PNatRotOptEPositionDataOP pos_data, cor
 {
 	using namespace core::chemical;
 	switch ( aa ) {
-		case aa_ala: case aa_gly: break;
-		case aa_cys: case aa_ser: case aa_thr: case aa_val: {
-			utility::vector1< Real > asym1(1, 360);
-			pos_data->set_native_chi_periodicity( asym1 );
-		}
+	case aa_ala: case aa_gly : break;
+	case aa_cys: case aa_ser: case aa_thr: case aa_val : {
+		utility::vector1< Real > asym1(1, 360);
+		pos_data->set_native_chi_periodicity( asym1 );
+	}
 		break;
-		case aa_asp: case aa_phe: case aa_tyr: {
-			utility::vector1< Real > sym2( 2 ); sym2[ 1 ] = 360; sym2[ 2 ] = 180;
-			pos_data->set_native_chi_periodicity( sym2 );
-		}
+	case aa_asp: case aa_phe: case aa_tyr : {
+		utility::vector1< Real > sym2( 2 ); sym2[ 1 ] = 360; sym2[ 2 ] = 180;
+		pos_data->set_native_chi_periodicity( sym2 );
+	}
 		break;
-		case aa_his: case aa_ile: case aa_leu: case aa_asn: case aa_trp: {
-			utility::vector1< Real > asym2(2, 360);
-			pos_data->set_native_chi_periodicity( asym2 );
-		}
+	case aa_his: case aa_ile: case aa_leu: case aa_asn: case aa_trp : {
+		utility::vector1< Real > asym2(2, 360);
+		pos_data->set_native_chi_periodicity( asym2 );
+	}
 		break;
-		case aa_glu: {
-			utility::vector1< Real > sym3( 3, 360 ); sym3[ 3 ] = 180;
-			pos_data->set_native_chi_periodicity( sym3 );
-		}
+	case aa_glu : {
+		utility::vector1< Real > sym3( 3, 360 ); sym3[ 3 ] = 180;
+		pos_data->set_native_chi_periodicity( sym3 );
+	}
 		break;
 
-		case aa_met: case aa_gln: case aa_pro: {
-			utility::vector1< Real > asym3( 3, 360 );
-			pos_data->set_native_chi_periodicity( asym3 );
-		}
+	case aa_met: case aa_gln: case aa_pro : {
+		utility::vector1< Real > asym3( 3, 360 );
+		pos_data->set_native_chi_periodicity( asym3 );
+	}
 		break;
-		case aa_arg: case aa_lys: {
-			utility::vector1< Real > asym4( 4, 360 );
-			pos_data->set_native_chi_periodicity( asym4 );
-		}
-		default:
+	case aa_arg: case aa_lys : {
+		utility::vector1< Real > asym4( 4, 360 );
+		pos_data->set_native_chi_periodicity( asym4 );
+	}
+	default :
 		break;
 
 	}
@@ -3924,21 +3928,21 @@ IterativeOptEDriver::residue_has_unacceptably_bad_dunbrack_energy( core::pose::P
 	using namespace core::chemical;
 	using namespace core::scoring;
 	switch ( pose.residue_type( resid ).aa() ) {
-		case aa_ala: case aa_gly: return false; break;
-		case aa_cys: case aa_ser: case aa_thr: case aa_val: case aa_pro :
-			if ( pose.energies().residue_total_energies( resid )[ fa_dun ] > 10 ) return true;
-			break;
-		case aa_asp: case aa_phe: case aa_his: case aa_ile: case aa_leu: case aa_asn: case aa_trp: case aa_tyr:
-			if ( pose.energies().residue_total_energies( resid )[ fa_dun ] > 15 ) return true;
-			break;
-		case aa_glu: case aa_met: case aa_gln:
-			if ( pose.energies().residue_total_energies( resid )[ fa_dun ] > 18 ) return true;
-			break;
-		case aa_arg: case aa_lys:
-			if ( pose.energies().residue_total_energies( resid )[ fa_dun ] > 22 ) return true;
-			break;
-		default:
-			break;
+	case aa_ala: case aa_gly : return false; break;
+	case aa_cys: case aa_ser: case aa_thr: case aa_val: case aa_pro :
+		if ( pose.energies().residue_total_energies( resid )[ fa_dun ] > 10 ) return true;
+		break;
+	case aa_asp: case aa_phe: case aa_his: case aa_ile: case aa_leu: case aa_asn: case aa_trp: case aa_tyr :
+		if ( pose.energies().residue_total_energies( resid )[ fa_dun ] > 15 ) return true;
+		break;
+	case aa_glu: case aa_met: case aa_gln :
+		if ( pose.energies().residue_total_energies( resid )[ fa_dun ] > 18 ) return true;
+		break;
+	case aa_arg: case aa_lys :
+		if ( pose.energies().residue_total_energies( resid )[ fa_dun ] > 22 ) return true;
+		break;
+	default :
+		break;
 	}
 	return false;
 }
@@ -3987,12 +3991,14 @@ IterativeOptEDriver::make_simple_ssd_from_pdb( std::string const & pdb_filename,
 	utility::vector1< Real > fixed_data( fixed_score_list_.size(), 0.0 );
 
 	for ( Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
-		if ( !pretend_no_fa_rep || free_score_list_[ kk ] != fa_rep )
+		if ( !pretend_no_fa_rep || free_score_list_[ kk ] != fa_rep ) {
 			free_data[ kk ] = structure.energies().total_energies()[ free_score_list_[ kk ] ];
+		}
 	}
 	for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
-		if ( !pretend_no_fa_rep || fixed_score_list_[ kk ] != fa_rep )
+		if ( !pretend_no_fa_rep || fixed_score_list_[ kk ] != fa_rep ) {
 			fixed_data[ kk ] = structure.energies().total_energies()[ fixed_score_list_[ kk ] ];
+		}
 	}
 
 	SingleStructureDataOP ssd( new SingleStructureData( free_data, fixed_data ) );
@@ -4091,7 +4097,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 			core::io::silent::SilentFileData sfd_wt;
 			core::io::silent::SilentFileData sfd_mut;
 
-			if(file_extension.compare("list") == 0){
+			if ( file_extension.compare("list") == 0 ) {
 
 				/// Read names of wt pdbs; i.e. open up the filename given in the 1st column of the ddG data file
 				/// and read out the strings of pdbs listed there?
@@ -4102,16 +4108,14 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 					wt_pdblist >> wt_pdb;
 					if ( wt_pdb != "" ) wt_pdb_names.push_back( wt_pdb );
 				}
-			}
-			else if(file_extension.compare("out") == 0){//add in silent file capabilities
+			} else if ( file_extension.compare("out") == 0 ) { //add in silent file capabilities
 				read_silent=true;
 				sfd_wt.set_filename(wts()); //for now assume binary
-				if(!sfd_wt.read_file(wts())){
+				if ( !sfd_wt.read_file(wts()) ) {
 					std::cout << "[ERROR ERROR ERROR] did not read in silent file properly! " << wts() << std::endl;
 				}
 				wt_pdb_names = sfd_wt.tags();
-			}
-			else{
+			} else {
 				//file extension not recognized
 				std::cerr << "ERROR! file " << wts() << " has un-recognized extension " << file_extension  << std::endl;
 				utility_exit();
@@ -4122,7 +4126,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 			utility::file::FileName muts(ddg_mut_wt_pairs_[ii].second);
 			file_extension = muts.ext();
 
-			if(file_extension.compare("list") == 0){
+			if ( file_extension.compare("list") == 0 ) {
 				TR << "collect_ddG_of_mutation_data(): reading file '" << muts() << "' to get list of mutant pdb names." << std::endl;
 				std::ifstream mut_pdblist( muts().c_str() );
 				while ( mut_pdblist ) {
@@ -4135,20 +4139,18 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 						no_tag_yet_assigned = false;
 					}
 				}
-			}
-			else if(file_extension.compare("out") == 0){
+			} else if ( file_extension.compare("out") == 0 ) {
 				read_silent=true;
 				sfd_mut.set_filename(muts());
-				if(!sfd_mut.read_file(muts())){
+				if ( !sfd_mut.read_file(muts()) ) {
 					std::cout << "[ERROR ERROR ERROR] did not read in silent file properly! " << muts() << std::endl;
 				}
 				mut_pdb_names = sfd_mut.tags();
-				if( no_tag_yet_assigned ){
+				if ( no_tag_yet_assigned ) {
 					ddg_data->tag(mut_pdb_names[1]);
 					no_tag_yet_assigned = false;
 				}
-			}
-			else{
+			} else {
 				std::cerr << "ERROR! file " << muts() << " has un-recognized extension " << file_extension << std::endl;
 				utility_exit();
 				//file extension not recognized
@@ -4166,13 +4168,13 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 				if ( structure_map.find( wts()+wt_pdb_names[ jj ] ) == structure_map.end() ) { //wt_pdb_name not already in structure_map
 
 					core::pose::Pose wt_structure;
-					if(!read_silent){
+					if ( !read_silent ) {
 						if ( option[ in::file::centroid_input ] ) {
 							core::import_pose::centroid_pose_from_pdb( wt_structure, wt_pdb_names[ jj ] );
 						} else {
 							core::import_pose::pose_from_pdb( wt_structure, wt_pdb_names[ jj ]  );
 						}
-					}else{
+					} else {
 						core::io::silent::SilentStructOP ss = sfd_wt[wt_pdb_names[ jj ]];
 						core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 						ss->fill_pose(wt_structure,*rsd_set);
@@ -4213,12 +4215,14 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 					}
 
 					for ( Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
-						if ( !option[ optE::pretend_no_ddG_repulsion ] || free_score_list_[ kk ] != fa_rep )
+						if ( !option[ optE::pretend_no_ddG_repulsion ] || free_score_list_[ kk ] != fa_rep ) {
 							free_data[ kk ] = wt_structure.energies().total_energies()[ free_score_list_[ kk ] ];
+						}
 					}
 					for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
-						if ( !option[ optE::pretend_no_ddG_repulsion ] || fixed_score_list_[ kk ] != fa_rep )
+						if ( !option[ optE::pretend_no_ddG_repulsion ] || fixed_score_list_[ kk ] != fa_rep ) {
 							fixed_data[ kk ] = wt_structure.energies().total_energies()[ fixed_score_list_[ kk ] ];
+						}
 					}
 					SingleStructureDataOP ssd( new SingleStructureData( free_data, fixed_data ) );
 					ddg_data->add_wt( ssd );
@@ -4265,13 +4269,13 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 
 			for ( Size jj = 1; jj <= mut_pdb_names.size(); ++jj ) {
 				core::pose::Pose mut_structure;
-				if(!read_silent){
+				if ( !read_silent ) {
 					if ( option[ in::file::centroid_input ] ) {
 						core::import_pose::centroid_pose_from_pdb( mut_structure, mut_pdb_names[ jj ] );
 					} else {
 						core::import_pose::pose_from_pdb( mut_structure, mut_pdb_names[ jj ]  );
 					}
-				}else{
+				} else {
 					core::io::silent::SilentStructOP ss = sfd_mut[mut_pdb_names[ jj ]];
 					ss->fill_pose(mut_structure,core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set(core::chemical::FA_STANDARD));
 				}
@@ -4308,12 +4312,14 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 
 
 				for ( Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
-					if ( !option[ optE::pretend_no_ddG_repulsion ] || free_score_list_[ kk ] != fa_rep )
+					if ( !option[ optE::pretend_no_ddG_repulsion ] || free_score_list_[ kk ] != fa_rep ) {
 						free_data[ kk ] = mut_structure.energies().total_energies()[ free_score_list_[ kk ] ];
+					}
 				}
 				for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
-					if ( !option[ optE::pretend_no_ddG_repulsion ] || fixed_score_list_[ kk ] != fa_rep )
+					if ( !option[ optE::pretend_no_ddG_repulsion ] || fixed_score_list_[ kk ] != fa_rep ) {
 						fixed_data[ kk ] = mut_structure.energies().total_energies()[ fixed_score_list_[ kk ] ];
+					}
 				}
 				SingleStructureDataOP ssd( new SingleStructureData( free_data, fixed_data ) );
 				ddg_data->add_mutant( ssd );
@@ -4511,10 +4517,12 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 
 					(*sfxn)( wt_complex );
 
-					for ( Size kk = 1; kk <= free_score_list_.size(); ++kk )
-						{ free_data[ kk ] = wt_complex.energies().total_energies()[ free_score_list_[ kk ] ]; }
-					for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk )
-						{ fixed_data[ kk ] = wt_complex.energies().total_energies()[ fixed_score_list_[ kk ] ]; }
+					for ( Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
+						free_data[ kk ] = wt_complex.energies().total_energies()[ free_score_list_[ kk ] ];
+					}
+					for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
+						fixed_data[ kk ] = wt_complex.energies().total_energies()[ fixed_score_list_[ kk ] ];
+					}
 
 					if ( filtering_bad_ddGs ) {
 						if ( wt_complex.energies().total_energies()[ fa_rep ] < best_wt_complex_rep ) {
@@ -4532,11 +4540,13 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 					// else, this wild-type structure (or list of wild-type structures) has already been encountered previously. So don't waste
 					// time scoring it again.  Just store the results from the previous one.  But make sure to also store the best rep and
 					// unfolded energy.
-					if ( jj == 1 )
+					if ( jj == 1 ) {
 						wt_complex_seq = structure_map[ wt_complexes_list_file()+wt_complex_pdb_names[ jj ] ].second;
+					}
 
-					if ( filtering_bad_ddGs )
+					if ( filtering_bad_ddGs ) {
 						best_wt_complex_rep = structure_bestfarep_map[ wt_complexes_list_file()+wt_complex_pdb_names[ jj ] ];
+					}
 
 					ddg_bind_position_data->add_wt_complex( structure_map[ wt_complexes_list_file()+wt_complex_pdb_names[ jj ] ].first );
 				}
@@ -4567,10 +4577,12 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 
 				(*sfxn)( mut_complex );
 
-				for ( Size kk = 1; kk <= free_score_list_.size(); ++kk )
-					{ free_data[ kk ] = mut_complex.energies().total_energies()[ free_score_list_[ kk ] ]; }
-				for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk )
-					{ fixed_data[ kk ] = mut_complex.energies().total_energies()[ fixed_score_list_[ kk ] ]; }
+				for ( Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
+					free_data[ kk ] = mut_complex.energies().total_energies()[ free_score_list_[ kk ] ];
+				}
+				for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
+					fixed_data[ kk ] = mut_complex.energies().total_energies()[ fixed_score_list_[ kk ] ];
+				}
 
 				if ( filtering_bad_ddGs ) {
 					if ( mut_complex.energies().total_energies()[ fa_rep ] < best_mut_complex_rep ) {
@@ -4592,12 +4604,12 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 					/// make sure these unbounded structure sequences match the complex sequences...
 					/// this will also check to make sure all of the unbounded structure match in sequence
 					//if ( wt_unbounded.sequence() != wt_complex_seq ) {
-					//	std::cerr << "wild type unbounded sequence inconsistent with complex structure " << std::endl;
-					//	std::cerr << wt_unbounded.sequence() << std::endl;
-					//	std::cerr << wt_complex_seq << std::endl;
-					//	std::cerr << "Node " << MPI_rank_ << " " << wt_unbounded_pdb_names[ jj ] << " and " << wt_complex_pdb_names[ 1 ] << std::endl;
-					//	wt_unbounded.dump_pdb("offending_wt_unbounded_sequence.pdb");
-					//	utility_exit();
+					// std::cerr << "wild type unbounded sequence inconsistent with complex structure " << std::endl;
+					// std::cerr << wt_unbounded.sequence() << std::endl;
+					// std::cerr << wt_complex_seq << std::endl;
+					// std::cerr << "Node " << MPI_rank_ << " " << wt_unbounded_pdb_names[ jj ] << " and " << wt_complex_pdb_names[ 1 ] << std::endl;
+					// wt_unbounded.dump_pdb("offending_wt_unbounded_sequence.pdb");
+					// utility_exit();
 					//}
 
 					/// score this pose, create SingleStructureData.
@@ -4606,10 +4618,12 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 
 					(*sfxn)( wt_unbounded );
 
-					for ( Size kk = 1; kk <= free_score_list_.size(); ++kk )
-						{ free_data[ kk ] = wt_unbounded.energies().total_energies()[ free_score_list_[ kk ] ]; }
-					for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk )
-						{ fixed_data[ kk ] = wt_unbounded.energies().total_energies()[ fixed_score_list_[ kk ] ]; }
+					for ( Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
+						free_data[ kk ] = wt_unbounded.energies().total_energies()[ free_score_list_[ kk ] ];
+					}
+					for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
+						fixed_data[ kk ] = wt_unbounded.energies().total_energies()[ fixed_score_list_[ kk ] ];
+					}
 
 					SingleStructureDataOP ssd( new SingleStructureData( free_data, fixed_data ) );
 					ddg_bind_position_data->add_wt_unbounds( ssd );
@@ -4628,12 +4642,12 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 				/// make sure these unbounded structure sequences match the complex sequences...
 				/// this will also check to make sure all of the unbounded structure match in sequence
 				//if ( mut_unbounded.sequence() != mut_complex_seq ) {
-				//	std::cerr << "mutant unbounded sequence inconsistent with complex structure " << std::endl;
-				//	std::cerr << mut_unbounded.sequence() << std::endl;
-				//	std::cerr << mut_complex_seq << std::endl;
-				//	std::cerr << "Node " << MPI_rank_ << " " << mut_unbounded_pdb_names[ jj ] << " and " << mut_complex_pdb_names[ 1 ] << std::endl;
-				//	mut_unbounded.dump_pdb("offending_mutant_unbounded_structure_seq.pdb");
-				//	utility_exit();
+				// std::cerr << "mutant unbounded sequence inconsistent with complex structure " << std::endl;
+				// std::cerr << mut_unbounded.sequence() << std::endl;
+				// std::cerr << mut_complex_seq << std::endl;
+				// std::cerr << "Node " << MPI_rank_ << " " << mut_unbounded_pdb_names[ jj ] << " and " << mut_complex_pdb_names[ 1 ] << std::endl;
+				// mut_unbounded.dump_pdb("offending_mutant_unbounded_structure_seq.pdb");
+				// utility_exit();
 				//}
 
 				/// score this pose, create SingleStructureData.
@@ -4642,10 +4656,12 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 
 				(*sfxn)( mut_unbounded );
 
-				for ( Size kk = 1; kk <= free_score_list_.size(); ++kk )
-					{ free_data[ kk ] = mut_unbounded.energies().total_energies()[ free_score_list_[ kk ] ]; }
-				for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk )
-					{ fixed_data[ kk ] = mut_unbounded.energies().total_energies()[ fixed_score_list_[ kk ] ]; }
+				for ( Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
+					free_data[ kk ] = mut_unbounded.energies().total_energies()[ free_score_list_[ kk ] ];
+				}
+				for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
+					fixed_data[ kk ] = mut_unbounded.energies().total_energies()[ fixed_score_list_[ kk ] ];
+				}
 
 				SingleStructureDataOP ssd( new SingleStructureData( free_data, fixed_data ) );
 				ddg_bind_position_data->add_mutant_unbounds( ssd );
@@ -4729,7 +4745,7 @@ IterativeOptEDriver::measure_sequence_recovery(
 	//sleep( MPI_rank_ );
 	//std::cout << "NODE: " << MPI_rank_ << " with reference weight " << sfxn->weights()[ ref ] << " and refE's: ";
 	//for ( Size ii = 1; ii <= sfxn->energy_method_options().method_weights( ref ).size(); ++ii ) {
-	//	std::cout << sfxn->energy_method_options().method_weights( ref )[ ii ] << " ";
+	// std::cout << sfxn->energy_method_options().method_weights( ref )[ ii ] << " ";
 	//}
 	//std::cout << std::endl;
 
@@ -4741,14 +4757,16 @@ IterativeOptEDriver::measure_sequence_recovery(
 	TaskFactoryOP task_factory_for_design( new TaskFactory( *task_factory_ ) );
 	task_factory_for_design->push_back( TaskOperationCOP( new ScaleAnnealerTemperatureOperation( sfxn->weights()[ fa_atr ] / 0.8 ) ) );
 
-	if ( MPI_rank_ == 0 )
-		if ( sfxn->get_weight( scoring::surface ) != 0.0 )
+	if ( MPI_rank_ == 0 ) {
+		if ( sfxn->get_weight( scoring::surface ) != 0.0 ) {
 			TR << "measure_sequence_recovery(): designing with surface term, with weight: "
 				<< F(8,4, sfxn->get_weight( scoring::surface )) << std::endl;
+		}
+	}
 
 	protocols::moves::MoverOP design_mover;
 
-	if ( option[ optE::design_with_minpack ]) {
+	if ( option[ optE::design_with_minpack ] ) {
 		protocols::simple_moves::MinPackMoverOP minpack_mover( new protocols::simple_moves::MinPackMover );
 		minpack_mover->task_factory( task_factory_for_design );
 		minpack_mover->score_function( sfxn );
@@ -4785,17 +4803,17 @@ IterativeOptEDriver::measure_sequence_recovery(
 		pose = native_poses_[ poseindex ];
 
 		//if ( option[ in::file::centroid_input ] ) {
-		//	core::import_pose::centroid_pose_from_pdb( pose, native_pdb_names[ poseindex ] );
+		// core::import_pose::centroid_pose_from_pdb( pose, native_pdb_names[ poseindex ] );
 		//} else {
-		//	core::import_pose::pose_from_pdb( pose, native_pdb_names[ poseindex ] );
+		// core::import_pose::pose_from_pdb( pose, native_pdb_names[ poseindex ] );
 		//}
 
 		//Real score2 = (*sfxn2)( pose );
 		//Real score1 = (*sfxn)( pose );
 
 		//if ( std::abs( score1 - score2 ) > 1e-8 ) {
-		//	std::cerr << "Score discrepancy for " << native_pdb_names[ poseindex ]
-		//	<< "score1: " << score1 << " score2: " << score2 << std::endl;
+		// std::cerr << "Score discrepancy for " << native_pdb_names[ poseindex ]
+		// << "score1: " << score1 << " score2: " << score2 << std::endl;
 		//}
 
 		Size const nresidues_pose( pose.total_residue() );
@@ -4815,13 +4833,13 @@ IterativeOptEDriver::measure_sequence_recovery(
 		// this should reflect the same PackerTask that PackRotamersMover used for design
 		core::pack::task::PackerTaskOP ptask;
 		// If desired make sure the task logic is aligned to the native.
-		if(option[ optE::constant_logic_taskops_file ].user() ) {
+		if ( option[ optE::constant_logic_taskops_file ].user() ) {
 			ptask = copy_native_packertask_logic( native_poses_[ poseindex ],
-			pose,
-			task_factory_for_design);
-		}
-		else
+				pose,
+				task_factory_for_design);
+		} else {
 			ptask = task_factory_for_design->create_task_and_apply_taskoperations( pose ) ;
+		}
 		//PackerTaskOP task_for_design = task_factory_for_design->create_task_and_apply_taskoperations( pose );
 		//pack_mover->task(task_for_design)
 
@@ -4875,7 +4893,7 @@ IterativeOptEDriver::measure_rotamer_recovery(
 	//sleep( MPI_rank_ );
 	//std::cout << "NODE: " << MPI_rank_ << " with reference weight " << sfxn->weights()[ ref ] << " and refE's: ";
 	//for ( Size ii = 1; ii <= sfxn->energy_method_options().method_weights( ref ).size(); ++ii ) {
-	//	std::cout << sfxn->energy_method_options().method_weights(ref )[ ii ] << " ";
+	// std::cout << sfxn->energy_method_options().method_weights(ref )[ ii ] << " ";
 	//}
 	//std::cout << std::endl;
 
@@ -4903,7 +4921,7 @@ IterativeOptEDriver::measure_rotamer_recovery(
 		//Real score2 = (*sfxn2)( pose );
 		//Real score1 = (*sfxn)( pose );
 		//if ( std::abs( score1 - score2 ) > 1e-8 ) {
-		//	std::cerr << "Score discrepancy for " << native_pdb_names[ poseindex ] << "score1: " << score1 << " score2: " << score2 << std::endl;
+		// std::cerr << "Score discrepancy for " << native_pdb_names[ poseindex ] << "score1: " << score1 << " score2: " << score2 << std::endl;
 		//}
 
 		/// repack the pose
@@ -4917,13 +4935,13 @@ IterativeOptEDriver::measure_rotamer_recovery(
 		// this should reflect the same PackerTask that PackRotamersMover used for repacking
 		core::pack::task::PackerTaskOP ptask;
 		// If desired make sure the task logic is aligned to the native.
-		if(option[ optE::constant_logic_taskops_file ].user() ) {
+		if ( option[ optE::constant_logic_taskops_file ].user() ) {
 			ptask = copy_native_packertask_logic( native_poses_[ poseindex ],
-			pose,
-			task_factory_for_repacking);
-		}
-		else
+				pose,
+				task_factory_for_repacking);
+		} else {
 			ptask = task_factory_for_repacking->create_task_and_apply_taskoperations( pose ) ;
+		}
 
 		for ( Size resi = 1; resi <= nresidues_pose; ++resi ) {
 			// do not compile statistics for residues that were not repacked
@@ -4987,7 +5005,7 @@ IterativeOptEDriver::initialize_free_and_fixed( core::scoring::EnergyMap & free_
 
 	if ( option[ optE::free ].user() && option[ optE::fixed ].user() ) {
 		utility::io::izstream input_free( option[ optE::free ]() );
-		if( !input_free ) utility_exit_with_message("Couldn't find input file for 'free' parameters");
+		if ( !input_free ) utility_exit_with_message("Couldn't find input file for 'free' parameters");
 		Size free_line_number = 1;
 		while ( input_free ) {
 			utility::vector1< std::string > line_tokens = core::pack::task::tokenize_line( input_free );
@@ -5029,7 +5047,7 @@ IterativeOptEDriver::initialize_free_and_fixed( core::scoring::EnergyMap & free_
 		}
 
 		utility::io::izstream input_fixed( option[ optE::fixed ]() );
-		if( !input_fixed ) utility_exit_with_message("Couldn't find input file for 'fixed' parameters");
+		if ( !input_fixed ) utility_exit_with_message("Couldn't find input file for 'fixed' parameters");
 		Size fixed_line_number = 1;
 		while ( input_fixed ) {
 			utility::vector1< std::string > line_tokens = core::pack::task::tokenize_line( input_fixed );
@@ -5054,7 +5072,7 @@ IterativeOptEDriver::initialize_free_and_fixed( core::scoring::EnergyMap & free_
 			++fixed_line_number;
 		}
 
-///  HARD CODED DEFAULTS FOR THOSE THAT LIKE RECOMPILING
+		///  HARD CODED DEFAULTS FOR THOSE THAT LIKE RECOMPILING
 
 	} else if ( option[ in::file::centroid_input ] ) {
 
@@ -5151,8 +5169,9 @@ IterativeOptEDriver::converged(
 
 	TR << "Converged: " << std::endl;
 	for ( Size ii = 1; ii <= n_score_types; ++ii ) {
-		if ( free_parameters_prev[ (ScoreType) ii ] != 0 || free_parameters_curr[ (ScoreType) ii ] != 0)
+		if ( free_parameters_prev[ (ScoreType) ii ] != 0 || free_parameters_curr[ (ScoreType) ii ] != 0 ) {
 			TR << name_from_score_type( ScoreType( ii ) ) << " prev " << free_parameters_prev[ (ScoreType) ii ] << " curr " << free_parameters_curr[ (ScoreType) ii ] << std::endl;
+		}
 	}
 
 	if ( ! option[ optE::dont_use_reference_energies ].user() ) {
@@ -5169,9 +5188,10 @@ void
 IterativeOptEDriver::write_parameters_to_std_out( core::scoring::EnergyMap & free_parameters, utility::vector1< Real > const & reference_energies )
 {
 	for ( Size ii = 1; ii <= n_score_types; ++ii ) {
-		if ( free_parameters[ (ScoreType) ii ] != 0 )
+		if ( free_parameters[ (ScoreType) ii ] != 0 ) {
 			TR << name_from_score_type( ScoreType( ii ) ) << " " << free_parameters[ (ScoreType) ii ] << std::endl;
 		}
+	}
 	for ( Size ii = 1; ii <= reference_energies.size(); ++ii ) {
 		TR << "Reference energy for " <<  ii << " " << reference_energies[ ii ] << std::endl;
 	}
@@ -5253,14 +5273,14 @@ load_component_weights(
 
 	if ( option[ optE::component_weights ].user() ) {
 		utility::io::izstream input( option[ optE::component_weights ]() );
-		if( !input ) utility_exit_with_message("Couldn't find input file for 'component_weights_file' parameters");
+		if ( !input ) utility_exit_with_message("Couldn't find input file for 'component_weights_file' parameters");
 		Size line_number = 1; Size nread = 0;
 		while ( input ) {
 			utility::vector1< std::string > line_tokens = core::pack::task::tokenize_line( input );
 			if ( line_tokens.size() == 0 ) {
 				// noop
 			} else if ( line_tokens.size() == 2 ) {
-				if ( ! OptEPositionDataFactory::is_optE_type_name( line_tokens[ 1 ] )) {
+				if ( ! OptEPositionDataFactory::is_optE_type_name( line_tokens[ 1 ] ) ) {
 					utility_exit_with_message("Error reading optE component weights file: Token 1 on line " + utility::to_string( line_number ) + " " + line_tokens[ 1 ] + " is not recognized as an optE data type" );
 				}
 				OptEPositionDataType component_type = OptEPositionDataFactory::optE_type_from_name( line_tokens[ 1 ] );
@@ -5292,8 +5312,8 @@ load_component_weights(
 /// file that does NOT restrict any residues that might be packable in the native
 core::pack::task::PackerTaskOP
 IterativeOptEDriver::copy_native_packertask_logic(core::pose::Pose native_pose,
-																									core::pose::Pose context_pose,
-																									core::pack::task::TaskFactoryOP native_taskfactory){
+	core::pose::Pose context_pose,
+	core::pack::task::TaskFactoryOP native_taskfactory){
 	using namespace core::pack::task;
 	TaskFactoryOP context_taskfactory( new TaskFactory );
 	std::string context_tagfile( option[ optE::constant_logic_taskops_file ]() );
@@ -5373,7 +5393,7 @@ IterativeOptEDriver::print_energies(
 		case scoring::p_aa_pp:
 		case scoring::pro_close:
 		case scoring::surface:
-		case scoring::unfolded:
+		case scoring::unfolded :
 			if ( weight != 0.0 ) {
 				Real const val = unweighted_scores[ scoring::ScoreType(jj) ];
 				//TR << A(18,scoring::ScoreType(jj)) << ": weight:" << F(5,2,weight) << ", rawE:" << F(5,2,val) << ", weightedE: " << F(5,2, weight * val ) << std::endl;
@@ -5381,7 +5401,7 @@ IterativeOptEDriver::print_energies(
 				sum_weighted += weight * val;
 			}
 			break;
-		default:
+		default :
 			break;
 		}
 	}

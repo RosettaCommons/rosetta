@@ -55,18 +55,18 @@ ConstraintFactory::ConstraintFactory() {}
 /*
 void
 ConstraintFactory::add_type( ConstraintOP new_func ) {
-	std::string type_name = new_func->type();
-	if ( type_name == "UNKNOWN_TYPE" ) {
-		utility_exit_with_message(
-			"failed to register Constraint... define method type() for your constraint!"
-		);
-	}
-	cst_types_[ type_name ] = new_func;
+std::string type_name = new_func->type();
+if ( type_name == "UNKNOWN_TYPE" ) {
+utility_exit_with_message(
+"failed to register Constraint... define method type() for your constraint!"
+);
+}
+cst_types_[ type_name ] = new_func;
 }
 
 void
 ConstraintFactory::add_type( std::string const & type_name, ConstraintOP new_func ) {
-   cst_types_[ type_name ] = new_func;
+cst_types_[ type_name ] = new_func;
 }*/
 
 void
@@ -147,38 +147,38 @@ ConstraintFactory::get_creator( std::string const & type_name )
 
 
 /*ConstraintFactory::ConstraintFactory(void) {
-  // initialization of functions which this factory knows how to instantiate
-	add_type( new AtomPairConstraint( id::AtomID(), id::AtomID(), NULL ) );
-	add_type( new AngleConstraint( id::AtomID(), id::AtomID(), id::AtomID(), NULL ) );
-	add_type( new DihedralConstraint( id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(), NULL ) );
-	add_type( new InterfaceConstraint( id::AtomID(), NULL ) );
-	add_type( new BindingSiteConstraint() );
-	add_type( new BindingSiteConstraintResidues() );
-	add_type( new BigBinConstraint() );
-	add_type( new MultiConstraint() );
-	add_type( new AmbiguousConstraint() );
-	add_type( new KofNConstraint() );
-	add_type( new CoordinateConstraint() );
-	add_type( new LocalCoordinateConstraint() );
-	add_type( new DunbrackConstraint() );
-	add_type( new AmbiguousNMRDistanceConstraint() );
-	add_type( new AmbiguousNMRConstraint() );
-	add_type( new ResidueTypeConstraint() );
+// initialization of functions which this factory knows how to instantiate
+add_type( new AtomPairConstraint( id::AtomID(), id::AtomID(), NULL ) );
+add_type( new AngleConstraint( id::AtomID(), id::AtomID(), id::AtomID(), NULL ) );
+add_type( new DihedralConstraint( id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(), NULL ) );
+add_type( new InterfaceConstraint( id::AtomID(), NULL ) );
+add_type( new BindingSiteConstraint() );
+add_type( new BindingSiteConstraintResidues() );
+add_type( new BigBinConstraint() );
+add_type( new MultiConstraint() );
+add_type( new AmbiguousConstraint() );
+add_type( new KofNConstraint() );
+add_type( new CoordinateConstraint() );
+add_type( new LocalCoordinateConstraint() );
+add_type( new DunbrackConstraint() );
+add_type( new AmbiguousNMRDistanceConstraint() );
+add_type( new AmbiguousNMRConstraint() );
+add_type( new ResidueTypeConstraint() );
 
-	add_type( new AmbiguousConstraint() );
-	add_type( new AmbiguousNMRConstraint() );
-	add_type( new AmbiguousNMRDistanceConstraint() );
-	add_type( new AngleConstraint( id::AtomID(), id::AtomID(), id::AtomID(), NULL ) );
-	add_type( new AtomPairConstraint( id::AtomID(), id::AtomID(), NULL ) );
-	add_type( new BigBinConstraint() );
-	add_type( new BindingSiteConstraint() );
-	add_type( new BindingSiteConstraintResidues() );
-	add_type( new CoordinateConstraint() );
-	add_type( new DihedralConstraint( id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(), NULL ) );
-	add_type( new DunbrackConstraint() );
-	add_type( new KofNConstraint() );
-	add_type( new LocalCoordinateConstraint() );
-	add_type( new MultiConstraint() );
+add_type( new AmbiguousConstraint() );
+add_type( new AmbiguousNMRConstraint() );
+add_type( new AmbiguousNMRDistanceConstraint() );
+add_type( new AngleConstraint( id::AtomID(), id::AtomID(), id::AtomID(), NULL ) );
+add_type( new AtomPairConstraint( id::AtomID(), id::AtomID(), NULL ) );
+add_type( new BigBinConstraint() );
+add_type( new BindingSiteConstraint() );
+add_type( new BindingSiteConstraintResidues() );
+add_type( new CoordinateConstraint() );
+add_type( new DihedralConstraint( id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(), NULL ) );
+add_type( new DunbrackConstraint() );
+add_type( new KofNConstraint() );
+add_type( new LocalCoordinateConstraint() );
+add_type( new MultiConstraint() );
 
 
 }*/

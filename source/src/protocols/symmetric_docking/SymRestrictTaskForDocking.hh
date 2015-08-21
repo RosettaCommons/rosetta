@@ -41,7 +41,7 @@ public:
 
 	virtual core::pack::task::operation::TaskOperationOP clone() const;
 
-	virtual	void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
+	virtual void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
 
 private:
 	core::scoring::ScoreFunctionCOP scorefxn_;

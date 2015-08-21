@@ -28,8 +28,8 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace enzdes{
+namespace protocols {
+namespace enzdes {
 
 class SecondaryMatchProtocol;
 typedef utility::pointer::shared_ptr< SecondaryMatchProtocol > SecondaryMatchProtocolOP;

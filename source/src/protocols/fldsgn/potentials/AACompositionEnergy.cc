@@ -32,7 +32,7 @@ namespace fldsgn {
 namespace potentials {
 
 AACompositionEnergyCreator::EnergyMethodOP
-AACompositionEnergyCreator::create_energy_method(	EnergyMethodOptions const & ) const
+AACompositionEnergyCreator::create_energy_method( EnergyMethodOptions const & ) const
 {
 	return AACompositionEnergyCreator::EnergyMethodOP( new AACompositionEnergy );
 }
@@ -53,7 +53,7 @@ AACompositionEnergy::AACompositionEnergy() :
 
 
 /// @brief default constructor
-	AACompositionEnergy::AACompositionEnergy( std::map< AA, std::pair< Real, Real > > const & comp_constraint_aas ) :
+AACompositionEnergy::AACompositionEnergy( std::map< AA, std::pair< Real, Real > > const & comp_constraint_aas ) :
 	parent( core::scoring::methods::EnergyMethodCreatorOP( new AACompositionEnergyCreator ) ),
 	comp_constraint_aas_( comp_constraint_aas )
 {
@@ -105,17 +105,17 @@ AACompositionEnergy::residue_energy(
 {
 	std::map< AA, Size > hist;
 	Size total_types( core::chemical::num_aa_types );
-	for( Size i=1; i<=total_types; i++ ) {
+	for ( Size i=1; i<=total_types; i++ ) {
 		AA aa = AA( i );
 		hist.insert( std::map< AA, Size >::value_type( aa, 0 ) );
 	}
-	for( Size i=1; i<=pose.total_residue(); i++ ) {
+	for ( Size i=1; i<=pose.total_residue(); i++ ) {
 		hist[ pose.aa( i ) ] ++;
 	}
 
 
 	std::map< AA, std::pair< Real, Real > >::const_iterator itr( comp_constraint_aas_.find( rsd.aa() ) );
-	if( itr != comp_constraint_aas_.end() ) {
+	if ( itr != comp_constraint_aas_.end() ) {
 		// histgoram if the residue at rsd.seqpos() is mutated to rsd.aa()
 		hist[ itr->first ] ++;
 		hist[ pose.aa( rsd.seqpos() ) ] --;
@@ -124,20 +124,20 @@ AACompositionEnergy::residue_energy(
 	// basic energy
 	Real e( 0.0 );
 	itr = comp_constraint_aas_.begin();
-	while( itr != comp_constraint_aas_.end() ) {
+	while ( itr != comp_constraint_aas_.end() ) {
 
 		std::pair< Real, Real > thresholds( itr->second );
-		#ifndef WIN32
-			Size const lower = (Size)round( thresholds.first * pose.total_residue() );
-			Size const upper = (Size)round( thresholds.second * pose.total_residue() );
-		#else
-			Size const lower = (Size)double( thresholds.first * pose.total_residue() + 0.5 );
-			Size const upper = (Size)double( thresholds.second * pose.total_residue() + 0.5 );
-		#endif
+#ifndef WIN32
+		Size const lower = (Size)round( thresholds.first * pose.total_residue() );
+		Size const upper = (Size)round( thresholds.second * pose.total_residue() );
+#else
+		Size const lower = (Size)double( thresholds.first * pose.total_residue() + 0.5 );
+		Size const upper = (Size)double( thresholds.second * pose.total_residue() + 0.5 );
+#endif
 
-		if( hist[ itr->first ] < lower ) {
+		if ( hist[ itr->first ] < lower ) {
 			e += numeric::square( hist[ itr->first ] - lower );
-		} else if( hist[ itr->first ] > upper ) {
+		} else if ( hist[ itr->first ] > upper ) {
 			e += numeric::square( hist[ itr->first ] - upper );
 		}
 
@@ -149,7 +149,7 @@ AACompositionEnergy::residue_energy(
 	emap[ core::scoring::aa_cmp ] = e;
 
 	//std::cout << rsd.seqpos() << " " << core::chemical::name_from_aa( pose.aa( rsd.seqpos() ) ) << " "
-			//<< core::chemical::name_from_aa( rsd.aa() ) << " " << hist[ rsd.aa() ] << " " << e << std::endl;
+	//<< core::chemical::name_from_aa( rsd.aa() ) << " " << hist[ rsd.aa() ] << " " << e << std::endl;
 
 }
 
@@ -162,5 +162,5 @@ AACompositionEnergy::indicate_required_context_graphs( utility::vector1< bool > 
 
 
 } // potentials
-}	// fldsgn
-}	// protocols
+} // fldsgn
+} // protocols

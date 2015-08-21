@@ -20,7 +20,7 @@
 namespace protocols {
 namespace antibody {
 
-	using namespace protocols::antibody::clusters;
+using namespace protocols::antibody::clusters;
 
 CDRSetOptions::CDRSetOptions(bool load):
 	utility::pointer::ReferenceCount(),
@@ -76,7 +76,7 @@ CDRSetOptions::set_defaults() {
 	include_only_species_.clear();
 	exclude_germlines_.clear();
 	include_only_germlines_.clear();
-	
+
 	sampling_cutoff_ = 0;
 
 }

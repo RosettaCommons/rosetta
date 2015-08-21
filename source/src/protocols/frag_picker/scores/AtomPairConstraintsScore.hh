@@ -40,7 +40,7 @@ class AtomPairConstraintsScore: public AtomBasedConstraintsScore {
 public:
 
 	AtomPairConstraintsScore(Size, Real, bool, std::string, Size, utility::vector1<
-			std::string>);
+		std::string>);
 
 	AtomPairConstraintsScore(Size, Real, bool, std::string, Size);
 
@@ -60,7 +60,7 @@ public:
 
 	/// @brief makes a new object
 	AtomPairConstraintsData(core::scoring::func::FuncOP function,
-			Size offset, Size first_atom, Size second_atom) {
+		Size offset, Size first_atom, Size second_atom) {
 		offset_ = offset;
 		func_ = function;
 		first_atom_ = first_atom;

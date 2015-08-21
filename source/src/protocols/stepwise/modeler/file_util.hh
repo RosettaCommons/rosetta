@@ -24,11 +24,11 @@ namespace protocols {
 namespace stepwise {
 namespace modeler {
 
-	std::string
-	get_file_name( std::string const & silent_file, std::string const & tag );
+std::string
+get_file_name( std::string const & silent_file, std::string const & tag );
 
-	void
-	remove_silent_file_if_it_exists( std::string const & silent_file);
+void
+remove_silent_file_if_it_exists( std::string const & silent_file);
 
 } //modeler
 } //stepwise

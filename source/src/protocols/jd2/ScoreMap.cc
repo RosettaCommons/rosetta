@@ -36,9 +36,9 @@ ScoreMap::~ScoreMap() {}
 
 /// Score output helper functions
 /// @details
-///		creates a list of non zero weighted energies and adds them to the
-///		score_file information that is to be written out at the end of the
-///		protocol.
+///  creates a list of non zero weighted energies and adds them to the
+///  score_file information that is to be written out at the end of the
+///  protocol.
 void
 ScoreMap::nonzero_energies(
 	std::map < std::string, core::Real > & score_map,
@@ -65,14 +65,14 @@ ScoreMap::score_map_from_scored_pose(
 	core::scoring::EnergyMap weights = pose.energies().weights();
 	typedef utility::vector1<core::scoring::ScoreType> ScoreTypeVec;
 	ScoreTypeVec score_types;
-	for(int i = 1; i <= core::scoring::n_score_types; ++i) {
+	for ( int i = 1; i <= core::scoring::n_score_types; ++i ) {
 		core::scoring::ScoreType ii = core::scoring::ScoreType(i);
 		if ( weights[ii] != 0 ) score_types.push_back(ii);
 	}
 
 	core::Real total(0);
 
-	for(ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii) {
+	for ( ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii ) {
 		core::Real const some_score( weights[(*ii)] * pose.energies().total_energies()[ *ii ] );
 		score_map[ name_from_score_type(*ii) ] = some_score;
 		total += some_score;
@@ -100,16 +100,14 @@ ScoreMap::print(
 	Size width (8), precision (3);
 
 	//print the header
-	for ( pair=score_map.begin(); pair!=score_map.end(); ++pair )
-	{
+	for ( pair=score_map.begin(); pair!=score_map.end(); ++pair ) {
 		if ( pair->first.length() > 8 ) width = pair->first.length();
 		out << ' ' << A( width, pair->first );
 	}
 	out << std::endl;
 
 	//print the information
-	for ( pair=score_map.begin(); pair!=score_map.end(); ++pair )
-	{
+	for ( pair=score_map.begin(); pair!=score_map.end(); ++pair ) {
 		if ( pair->first.length() > 8 ) width = pair->first.length();
 		out << ' ' << F( width, precision, pair->second );
 	}

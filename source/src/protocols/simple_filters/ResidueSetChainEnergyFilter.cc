@@ -39,7 +39,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <core/pose/selection.hh>
 
-namespace protocols{
+namespace protocols {
 namespace simple_filters {
 
 using namespace core;
@@ -56,7 +56,7 @@ ResidueSetChainEnergyFilterCreator::keyname() const { return "ResidueSetChainEne
 
 //default ctor
 ResidueSetChainEnergyFilter::ResidueSetChainEnergyFilter() :
-protocols::filters::Filter( "ResidueSetChainEnergy" )
+	protocols::filters::Filter( "ResidueSetChainEnergy" )
 {}
 
 //full ctor, default ctor defined in header file
@@ -67,7 +67,7 @@ ResidueSetChainEnergyFilter::ResidueSetChainEnergyFilter(
 	std::string const string_resnums,
 	core::Size const chain
 ) :
-protocols::filters::Filter( "ResidueSetChainEnergy" )
+	protocols::filters::Filter( "ResidueSetChainEnergy" )
 {
 	score_type_ = score_type;
 	score_type_threshold_ = score_type_threshold;
@@ -86,7 +86,7 @@ ResidueSetChainEnergyFilter::parse_my_tag( utility::tag::TagCOP tag, basic::data
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 
 	score_type_ = core::scoring::score_type_from_name( tag->getOption<std::string>( "score_type", "total_score" ) );
-	if( ! tag->hasOption( "threshold" ) ) throw utility::excn::EXCN_RosettaScriptsOption("Must specify 'threshold' for ResidueSetChainEnergyFilter.");
+	if ( ! tag->hasOption( "threshold" ) ) throw utility::excn::EXCN_RosettaScriptsOption("Must specify 'threshold' for ResidueSetChainEnergyFilter.");
 	score_type_threshold_ = tag->getOption< core::Real >( "threshold" );
 
 	TR<< "filter for score_type "<< score_type_ <<" with threshold "<< score_type_threshold_ << std::endl;
@@ -99,11 +99,10 @@ bool
 ResidueSetChainEnergyFilter::apply( core::pose::Pose const & pose ) const {
 	core::Real const score( compute( pose ) );
 	TR << "score " << core::scoring::ScoreTypeManager::name_from_score_type( score_type_ ) << " is " << score << ". ";
-	if( score <= score_type_threshold_ ) {
+	if ( score <= score_type_threshold_ ) {
 		TR<<"passing." << std::endl;
 		return true;
-	}
-	else {
+	} else {
 		TR<<"failing."<<std::endl;
 		return false;
 	}
@@ -131,17 +130,15 @@ ResidueSetChainEnergyFilter::compute(
 	Pose in_pose( pose );
 
 	// make sure that scoring weights are compatible with pose's residue type set
-	// check centroid case 
+	// check centroid case
 	//TODO: this is a hacky and not robust way of checking for centroid!
-	if( ( ( *scorefxn_ )[ fa_rep ] == 0.0 && ( *scorefxn_ )[ fa_atr ] == 0.0 ) // full atom terms are off
-				&& ( ( *scorefxn_ )[ interchain_vdw ] > 0.0 || ( *scorefxn_ )[ vdw ] > 0.0 )  ) // a centroid term is on
-		{
-			if( in_pose.is_fullatom() ) { // but pose is full atom
+	if ( ( ( *scorefxn_ )[ fa_rep ] == 0.0 && ( *scorefxn_ )[ fa_atr ] == 0.0 ) // full atom terms are off
+			&& ( ( *scorefxn_ )[ interchain_vdw ] > 0.0 || ( *scorefxn_ )[ vdw ] > 0.0 )  ) { // a centroid term is on
+		if ( in_pose.is_fullatom() ) { // but pose is full atom
 			core::util::switch_to_residue_type_set( in_pose, core::chemical::CENTROID );
 		}
-	}
-	else { // full atom case
-		if( in_pose.is_centroid() ) { // but pose is centroid
+	} else { // full atom case
+		if ( in_pose.is_centroid() ) { // but pose is centroid
 			core::util::switch_to_residue_type_set( in_pose, core::chemical::FA_STANDARD );
 		}
 	}
@@ -149,36 +146,36 @@ ResidueSetChainEnergyFilter::compute(
 	scorefxn_->score( in_pose );
 
 	utility::vector1< core::Size > const res_set_vec( core::pose::get_resnum_list_ordered( string_resnums_, in_pose ) );
-//	core::Size chain_seqpos_begin( in_pose.conformation().chain_begin( chain_ ) );
-//	core::Size chain_seqpos_end( in_pose.conformation().chain_end( chain_ ) );
+	// core::Size chain_seqpos_begin( in_pose.conformation().chain_begin( chain_ ) );
+	// core::Size chain_seqpos_end( in_pose.conformation().chain_end( chain_ ) );
 	// the neighbor/energy links
 	EnergyGraph & energy_graph( in_pose.energies().energy_graph() );
 	core::Real score( 0. );
-	for( core::Size i_res_vec = 1; i_res_vec <= res_set_vec.size(); ++i_res_vec ){
+	for ( core::Size i_res_vec = 1; i_res_vec <= res_set_vec.size(); ++i_res_vec ) {
 		Size iseq1( res_set_vec[ i_res_vec ] );
 		assert( iseq1 <= in_pose.total_residue() );
 		//TR<< "Summing energies: seqpos: " << iseq1 << std::endl;
-    //search over energy edges
-    for( graph::Graph::EdgeListIter el_iter  = energy_graph.get_node( iseq1 )->edge_list_begin();
-				el_iter != energy_graph.get_node( iseq1 )->edge_list_end(); ++el_iter ){
+		//search over energy edges
+		for ( graph::Graph::EdgeListIter el_iter  = energy_graph.get_node( iseq1 )->edge_list_begin();
+				el_iter != energy_graph.get_node( iseq1 )->edge_list_end(); ++el_iter ) {
 			EnergyEdge * edge( static_cast< EnergyEdge *> ( *el_iter ) );
 			//the other seqpos connected to this edge
 			core::Size iseq2( edge->get_first_node_ind() );
-			if( iseq2 == iseq1 ) iseq2 = edge->get_second_node_ind();
+			if ( iseq2 == iseq1 ) iseq2 = edge->get_second_node_ind();
 			//TR<< "set seqpos: " << iseq1 << " chain: " << in_pose.chain( iseq1 ) << " :: chain seqpos: " << iseq2 << " chain: " << in_pose.chain( iseq2 ) << std::endl;
 			//skip if iseq2 is not in the chain we care about
-			if( static_cast< core::Size >( in_pose.chain( iseq2 ) ) != chain_ ) continue;
+			if ( static_cast< core::Size >( in_pose.chain( iseq2 ) ) != chain_ ) continue;
 
 			// the pair energies cached in the link
 			EnergyMap const & emap( edge->fill_energy_map() );
-			if( score_type_ == total_score ) score += emap.dot( scorefxn_->weights() );
-			else score += emap[ ScoreType( score_type_ ) ]; 
-    }    
+			if ( score_type_ == total_score ) score += emap.dot( scorefxn_->weights() );
+			else score += emap[ ScoreType( score_type_ ) ];
+		}
 	}
 
 	//get wt for unweighted score
 	core::Real weight;
-	if( score_type_ == total_score ) weight = 1;
+	if ( score_type_ == total_score ) weight = 1;
 	else weight = scorefxn_->get_weight( ScoreType( score_type_ ) );
 	core::Real const weighted_score( weight * score );
 	return( weighted_score );

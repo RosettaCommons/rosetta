@@ -52,15 +52,15 @@ public:
 
 	/// @copydoc FeaturesReporter::parse_my_tag
 	void parse_my_tag(
-			utility::tag::TagCOP tag,
-			basic::datacache::DataMap & data,
-			protocols::filters::Filters_map const & filters,
-			protocols::moves::Movers_map const & movers,
-			core::pose::Pose const & pose);
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose);
 
 	/// @copydoc FeaturesReporter::write_schema_to_db
 	void write_schema_to_db(
-			utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) const;
 
 	/// @copydoc FeaturesReporter::report_features
 	core::Size report_features(

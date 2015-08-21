@@ -37,13 +37,13 @@ public:
 	/// constructors
 	Ab_TemplateInfo();
 	Ab_TemplateInfo(bool load_L1, bool load_L2, bool load_L3,
-	                bool load_H1, bool load_H2, bool load_H3) ;
+		bool load_H1, bool load_H2, bool load_H3) ;
 
 	Ab_TemplateInfo(bool load_L1, bool load_L2, bool load_L3,
-	                bool load_H1, bool load_H2, bool load_H3, bool camelid);
+		bool load_H1, bool load_H2, bool load_H3, bool camelid);
 
 	void load_templates_from_pdbs(bool load_L1, bool load_L2, bool load_L3,
-	                              bool load_H1, bool load_H2, bool load_H3, bool camelid);
+		bool load_H1, bool load_H2, bool load_H3, bool camelid);
 
 	pose::Pose get_one_template_pose(std::string cdr_name);
 	bool is_camelid()  {
@@ -51,24 +51,24 @@ public:
 	}
 
 	void show( std::ostream & out=std::cout );
-//	void show( std::ostream & out );
+	// void show( std::ostream & out );
 	friend std::ostream & operator<<(std::ostream& out, const Ab_TemplateInfo & ab_t_info );
 
 
 private:
 	bool load_L1_, load_L2_, load_L3_,
-	     load_H1_, load_H2_, load_H3_;
+		load_H1_, load_H2_, load_H3_;
 
 	TemplatePoseMap templates_poses_;
 	pose::Pose L1_t_pose_, L2_t_pose_, L3_t_pose_,
-	     H1_t_pose_, H2_t_pose_, H3_t_pose_;
-//    pose::Pose Lfr_t_pose_, Hfr_t_pose_, LightHeavy_t_pose_;
+		H1_t_pose_, H2_t_pose_, H3_t_pose_;
+	//    pose::Pose Lfr_t_pose_, Hfr_t_pose_, LightHeavy_t_pose_;
 
 	void set_default( bool camelid );
 
 	std::string LightHeavy_t_name_, Lfr_t_name_, Hfr_t_name_;
 	std::string L1_t_name_, L2_t_name_, L3_t_name_,
-	    H1_t_name_, H2_t_name_, H3_t_name_;
+		H1_t_name_, H2_t_name_, H3_t_name_;
 
 	void obtain_templates_names();
 

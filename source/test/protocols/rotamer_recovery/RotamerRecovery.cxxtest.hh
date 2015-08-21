@@ -151,14 +151,14 @@ public:
 		using std::endl;
 		using core::Real;
 		using protocols::rotamer_recovery::RotamerRecoveryOP;
-    using protocols::rotamer_recovery::RotamerRecoveryFactory;
+		using protocols::rotamer_recovery::RotamerRecoveryFactory;
 		score_function_->setup_for_scoring(pose_1ten_);
 
-    RotamerRecoveryFactory* factory(RotamerRecoveryFactory::get_instance());
+		RotamerRecoveryFactory* factory(RotamerRecoveryFactory::get_instance());
 		{
-      RotamerRecoveryOP rr(
-        factory->get_rotamer_recovery(
-          "RRProtocolRTMin", "RRComparerRotBins", "RRReporterSimple"));
+			RotamerRecoveryOP rr(
+				factory->get_rotamer_recovery(
+				"RRProtocolRTMin", "RRComparerRotBins", "RRReporterSimple"));
 
 			rr->run( pose_1ten_,*score_function_,*packer_task_1ten_);
 			rr->show( TR );
@@ -166,9 +166,9 @@ public:
 		}
 
 		{
-      RotamerRecoveryOP rr(
-        factory->get_rotamer_recovery(
-          "RRProtocolRTMin", "RRComparerAutomorphicRMSD", "RRReporterSimple"));
+			RotamerRecoveryOP rr(
+				factory->get_rotamer_recovery(
+				"RRProtocolRTMin", "RRComparerAutomorphicRMSD", "RRReporterSimple"));
 			rr->run( pose_1ten_,*score_function_,*packer_task_1ten_);
 			rr->show( TR );
 			TS_ASSERT_DELTA( rr->recovery_rate(), Real(12)/Real(89) , .001 );

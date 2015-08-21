@@ -30,9 +30,9 @@ namespace protocols {
 namespace antibody {
 namespace design {
 
-	typedef utility::vector1<CDRGraftDesignOptionsOP> AntibodyCDRGraftDesignOptions;
+typedef utility::vector1<CDRGraftDesignOptionsOP> AntibodyCDRGraftDesignOptions;
 
-///@brief Class that holds CDRGraftDesign Options.  Now that GraftDesign is not a separate 'thing', this should be split into 
+///@brief Class that holds CDRGraftDesign Options.  Now that GraftDesign is not a separate 'thing', this should be split into
 /// CDRGraftOptions and CDRMinOptions eventually.
 class CDRGraftDesignOptions : public utility::pointer::ReferenceCount {
 public:
@@ -216,4 +216,4 @@ private:
 
 
 
-#endif	//INCLUDED_ CDRGraftDesignOptions.hh
+#endif //INCLUDED_ CDRGraftDesignOptions.hh

@@ -93,7 +93,7 @@ public:
 
 		// now select chain a
 		core::pack::task::residue_selector::ChainSelectorOP selchain(
-				new core::pack::task::residue_selector::ChainSelector() );
+			new core::pack::task::residue_selector::ChainSelector() );
 		utility::vector1< std::string > const chains = boost::assign::list_of ("A");
 		selchain->set_chain_strings( chains );
 		prepro.set_selector( selchain );

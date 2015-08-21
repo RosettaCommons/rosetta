@@ -56,106 +56,108 @@ using core::Real;
 std::string
 RemoveLigandFilterCreator::keyname() const
 {
-    return "RemoveLigandFilter";
+	return "RemoveLigandFilter";
 }
 
 FilterOP
 RemoveLigandFilterCreator::create_filter() const
 {
-    return FilterOP( new RemoveLigandFilter );
+	return FilterOP( new RemoveLigandFilter );
 }
-   
+
 
 
 RemoveLigandFilter::RemoveLigandFilter( ):
-		Filter( "RemoveLigandFilter" ),
-    threshold_( 99.99 ),
-    mover_( MoverOP( new MinMover ) ),
-    filter_( FilterOP( new RmsdFilter ) )
+	Filter( "RemoveLigandFilter" ),
+	threshold_( 99.99 ),
+	mover_( MoverOP( new MinMover ) ),
+	filter_( FilterOP( new RmsdFilter ) )
 {
-    MoveMapOP movemap( new core::kinematics::MoveMap );
-    movemap->set_bb(1);
-    movemap->set_chi(1);
-    
-    MinMover* min_mover = dynamic_cast< MinMover* >( mover_.get() );
-    min_mover->movemap( movemap );
-    core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
-    min_mover->score_function( scorefxn );
+	MoveMapOP movemap( new core::kinematics::MoveMap );
+	movemap->set_bb(1);
+	movemap->set_chi(1);
+
+	MinMover* min_mover = dynamic_cast< MinMover* >( mover_.get() );
+	min_mover->movemap( movemap );
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
+	min_mover->score_function( scorefxn );
 }
- 
-    
+
+
 RemoveLigandFilter::RemoveLigandFilter( Real threshold ):
-		Filter( "RemoveLigandFilter" ),
-    threshold_( threshold ),
-    mover_( MoverOP( new MinMover ) ),
-    filter_( FilterOP( new RmsdFilter ) )
+	Filter( "RemoveLigandFilter" ),
+	threshold_( threshold ),
+	mover_( MoverOP( new MinMover ) ),
+	filter_( FilterOP( new RmsdFilter ) )
 { }
- 
+
 RemoveLigandFilter::RemoveLigandFilter( RemoveLigandFilter const & rval ):
-		Filter( "RemoveLigandFilter" ),
-    threshold_( rval.threshold_ ),
-    mover_( rval.mover_ ),
-    filter_( rval.filter_ )
+	Filter( "RemoveLigandFilter" ),
+	threshold_( rval.threshold_ ),
+	mover_( rval.mover_ ),
+	filter_( rval.filter_ )
 {
-    
+
 }
-    
+
 Real
 RemoveLigandFilter::report_sm( Pose const & pose ) const
 {
-    
-    Pose no_lig_pose( pose );
-    protocols::toolbox::pose_manipulation::remove_non_protein_residues( no_lig_pose );
-    if( filter_->get_type() == "Rmsd" )
-    {
-        PoseOP init_pose( new Pose( no_lig_pose ) );
-        RmsdFilter* rmsd_filter = dynamic_cast< RmsdFilter* >( filter_.get() );
-        rmsd_filter->reference_pose( init_pose );
-        rmsd_filter->superimpose( true );
-        std::list< core::Size > selection;
-        for(Size i = 1; i <= init_pose->n_residue(); i++ )
-            selection.push_back( i );
-        rmsd_filter->selection( selection );
-        
-        mover_->apply( no_lig_pose );
-        return rmsd_filter->report_sm( no_lig_pose );
-        
-    } else {
-        Real start_score = filter_->report_sm( no_lig_pose );
-        mover_->apply( no_lig_pose );
-        Real end_score = filter_->report_sm( no_lig_pose );
-        return end_score - start_score;
-    }
+
+	Pose no_lig_pose( pose );
+	protocols::toolbox::pose_manipulation::remove_non_protein_residues( no_lig_pose );
+	if ( filter_->get_type() == "Rmsd" ) {
+		PoseOP init_pose( new Pose( no_lig_pose ) );
+		RmsdFilter* rmsd_filter = dynamic_cast< RmsdFilter* >( filter_.get() );
+		rmsd_filter->reference_pose( init_pose );
+		rmsd_filter->superimpose( true );
+		std::list< core::Size > selection;
+		for ( Size i = 1; i <= init_pose->n_residue(); i++ ) {
+			selection.push_back( i );
+		}
+		rmsd_filter->selection( selection );
+
+		mover_->apply( no_lig_pose );
+		return rmsd_filter->report_sm( no_lig_pose );
+
+	} else {
+		Real start_score = filter_->report_sm( no_lig_pose );
+		mover_->apply( no_lig_pose );
+		Real end_score = filter_->report_sm( no_lig_pose );
+		return end_score - start_score;
+	}
 }
-    
+
 bool
 RemoveLigandFilter::apply(Pose const & pose) const
 {
-    return report_sm( pose ) < threshold_;
+	return report_sm( pose ) < threshold_;
 }
 
 void
 RemoveLigandFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const & filters, Movers_map const & movers, Pose const &)
 {
-    threshold_ = tag->getOption< Real >( "threshold", 3.0 );
-    const std::string mover_name = tag->getOption< std::string >( "mover", "");
-    const std::string filter_name = tag->getOption< std::string >( "filter", "");
-    
-    Movers_map::const_iterator  find_mover ( movers.find( mover_name ));
+	threshold_ = tag->getOption< Real >( "threshold", 3.0 );
+	const std::string mover_name = tag->getOption< std::string >( "mover", "");
+	const std::string filter_name = tag->getOption< std::string >( "filter", "");
+
+	Movers_map::const_iterator  find_mover ( movers.find( mover_name ));
 	Filters_map::const_iterator find_filter( filters.find( filter_name ));
-	if( find_mover == movers.end() && mover_name != "" ) {
+	if ( find_mover == movers.end() && mover_name != "" ) {
 		TR.Error << "ERROR !! mover not found in map: \n" << tag << std::endl;
 		runtime_assert( find_mover != movers.end() );
 	}
-	if( find_filter == filters.end() && filter_name != "" ) {
+	if ( find_filter == filters.end() && filter_name != "" ) {
 		TR.Error << "ERROR !! filter not found in map: \n" << tag << std::endl;
 		runtime_assert( find_filter != filters.end() );
 	}
 
-    if( mover_name != "" )
+	if ( mover_name != "" ) {
 		mover_ = find_mover->second;
-    if( filter_name != "" )
-        filter_ = find_filter->second;
+	}
+	if ( filter_name != "" ) {
+		filter_ = find_filter->second;
+	}
 }
 
 } // enzdes

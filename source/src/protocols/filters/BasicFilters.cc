@@ -60,16 +60,16 @@ StochasticFilter::StochasticFilter() : Filter( "Stochastic" ) {}
 StochasticFilter::~StochasticFilter() {}
 
 StochasticFilter::StochasticFilter( core::Real const confidence )
-	: Filter( "Stochastic" ), confidence_( confidence )
+: Filter( "Stochastic" ), confidence_( confidence )
 {}
 
 bool
 StochasticFilter::apply( Pose const & ) const
 {
-	if( confidence_ >= 0.999 ) return true;
+	if ( confidence_ >= 0.999 ) return true;
 
 	core::Real const random_number( numeric::random::rg().uniform() );
-	if( random_number <= confidence_ ) {
+	if ( random_number <= confidence_ ) {
 		TR<<"stochastic filter returning false"<<std::endl;
 		return false;
 	}
@@ -106,10 +106,10 @@ StochasticFilter::parse_my_tag(
 // @brief Used to define a compound logical statement involving other filters with
 // AND, OR and XOR
 CompoundFilter::CompoundFilter() :
-		Filter( "CompoundStatement" ),
-		invert_(false),
-		reset_filters_(false)
- {}
+	Filter( "CompoundStatement" ),
+	invert_(false),
+	reset_filters_(false)
+{}
 CompoundFilter::~CompoundFilter() {}
 
 CompoundFilter::CompoundFilter( CompoundStatement const & compound_statement ) :
@@ -143,15 +143,15 @@ CompoundFilter::fresh_instance() const
 void
 CompoundFilter::report( std::ostream & out, Pose const & pose ) const
 {
-	if( compound_statement_.size() == 2 ){
-	//special case for filters that are defined with a confidence value. In that case, we want to report the value of the filter regardless of the stochastic filter
+	if ( compound_statement_.size() == 2 ) {
+		//special case for filters that are defined with a confidence value. In that case, we want to report the value of the filter regardless of the stochastic filter
 		bool confidence( false );
 		CompoundStatement::const_iterator non_stochastic_filter;
-		for( CompoundStatement::const_iterator it=compound_statement_.begin(); it!=compound_statement_.end(); ++it ){
-			if( it->first->get_type() == "Stochastic" ) confidence = true;
+		for ( CompoundStatement::const_iterator it=compound_statement_.begin(); it!=compound_statement_.end(); ++it ) {
+			if ( it->first->get_type() == "Stochastic" ) confidence = true;
 			else non_stochastic_filter = it;
 		}
-		if( confidence ) non_stochastic_filter->first->report( out, pose );
+		if ( confidence ) non_stochastic_filter->first->report( out, pose );
 	}
 	bool const value( compute( pose ) );
 
@@ -161,15 +161,15 @@ CompoundFilter::report( std::ostream & out, Pose const & pose ) const
 core::Real
 CompoundFilter::report_sm( Pose const & pose ) const
 {
-	if( compound_statement_.size() == 2 ){
-	//special case for filters that are defined with a confidence value. In that case, we want to report the value of the filter regardless of the stochastic filter
+	if ( compound_statement_.size() == 2 ) {
+		//special case for filters that are defined with a confidence value. In that case, we want to report the value of the filter regardless of the stochastic filter
 		bool confidence( false );
 		CompoundStatement::const_iterator non_stochastic_filter;
-		for( CompoundStatement::const_iterator it=compound_statement_.begin(); it!=compound_statement_.end(); ++it ){
-			if( it->first->get_type() == "Stochastic" ) confidence = true;
+		for ( CompoundStatement::const_iterator it=compound_statement_.begin(); it!=compound_statement_.end(); ++it ) {
+			if ( it->first->get_type() == "Stochastic" ) confidence = true;
 			else non_stochastic_filter = it;
 		}
-		if( confidence ) return( non_stochastic_filter->first->report_sm( pose ) );
+		if ( confidence ) return( non_stochastic_filter->first->report_sm( pose ) );
 	}
 	bool const value( compute( pose ) );
 	return( value );
@@ -181,37 +181,37 @@ CompoundFilter::compute( Pose const & pose ) const
 
 	bool value( true );
 
-	for( CompoundStatement::const_iterator it=compound_statement_.begin(); it!=compound_statement_.end(); ++it ) {
-		if( it - compound_statement_.begin() == 0 ){
+	for ( CompoundStatement::const_iterator it=compound_statement_.begin(); it!=compound_statement_.end(); ++it ) {
+		if ( it - compound_statement_.begin() == 0 ) {
 			// first logical op may only be NOT
 			// ANDNOT and ORNOT are also treated as NOT (with a warning)
 			value = it->first->apply( pose );
-			if (it->second == NOT) value = !value;
-			if (it->second == ORNOT) {
+			if ( it->second == NOT ) value = !value;
+			if ( it->second == ORNOT ) {
 				TR << "WARNING: CompoundFilter treating operator ORNOT as NOT" << std::endl;
 				value = !value;
 			}
-			if (it->second == ANDNOT) {
+			if ( it->second == ANDNOT ) {
 				TR << "WARNING: CompoundFilter treating operator ANDNOT as NOT" << std::endl;
 				value = !value;
 			}
 		} else {
 			switch( it->second  ) {
-				case ( AND ) : value = value && it->first->apply( pose ); break;
-				case ( OR  ) : value = value || it->first->apply( pose ); break;
-				case ( XOR ) : value = value ^ it->first->apply( pose ); break;
-				case ( ORNOT ) : value = value || !it->first->apply( pose ); break;
-				case ( ANDNOT ) : value = value && !it->first->apply( pose ); break;
-				case ( NOR ) : value = !( value || it->first->apply( pose ) ); break;
-				case (NAND ) : value = !( value && it->first->apply( pose ) ); break;
-				case (NOT ) :
-					TR << "WARNING: CompoundFilter treating operator NOT as ANDNOT" << std::endl;
-					value = value && !it->first->apply( pose );
-					break;
+			case ( AND ) : value = value && it->first->apply( pose ); break;
+			case ( OR  ) : value = value || it->first->apply( pose ); break;
+			case ( XOR ) : value = value ^ it->first->apply( pose ); break;
+			case ( ORNOT ) : value = value || !it->first->apply( pose ); break;
+			case ( ANDNOT ) : value = value && !it->first->apply( pose ); break;
+			case ( NOR ) : value = !( value || it->first->apply( pose ) ); break;
+			case (NAND ) : value = !( value && it->first->apply( pose ) ); break;
+			case (NOT ) :
+				TR << "WARNING: CompoundFilter treating operator NOT as ANDNOT" << std::endl;
+				value = value && !it->first->apply( pose );
+				break;
 			}
 		}
 	}
-	if( invert_ ) value = !value;
+	if ( invert_ ) value = !value;
 	return( value );
 }
 
@@ -251,7 +251,7 @@ CompoundFilter::invert( bool const inv )
 }
 
 void
-CompoundFilter::set_reset_filters( utility::vector1<FilterOP> const reset_filters ) 
+CompoundFilter::set_reset_filters( utility::vector1<FilterOP> const reset_filters )
 {
 	reset_filters_ = reset_filters;
 }
@@ -261,11 +261,11 @@ CompoundFilter::reset_filters()
 {
 	CompoundStatement new_compound_statement;
 	std::pair< FilterOP, boolean_operations > filter_pair;
-	for( CompoundStatement::const_iterator it=compound_statement_.begin(); it!=compound_statement_.end(); ++it ) {
+	for ( CompoundStatement::const_iterator it=compound_statement_.begin(); it!=compound_statement_.end(); ++it ) {
 		filter_pair.first = it->first;
 		filter_pair.second = it->second;
-		BOOST_FOREACH( FilterOP filter, reset_filters_) { 
-			if( filter->get_user_defined_name() == it->first->get_user_defined_name() ) {
+		BOOST_FOREACH ( FilterOP filter, reset_filters_ ) {
+			if ( filter->get_user_defined_name() == it->first->get_user_defined_name() ) {
 				filter_pair.first = filter->clone();
 				break;
 			}
@@ -286,8 +286,9 @@ CompoundFilter::clear_reset_filters()
 void
 CompoundFilter::set_resid( core::Size const resid )
 {
-	for( iterator it( compound_statement_.begin() ); it!=compound_statement_.end(); ++it )
+	for ( iterator it( compound_statement_.begin() ); it!=compound_statement_.end(); ++it ) {
 		protocols::moves::modify_ResId_based_object( it->first, resid );
+	}
 }
 
 void
@@ -301,17 +302,17 @@ CompoundFilter::parse_my_tag(
 	TR<<"CompoundStatement"<<std::endl;
 	invert_ = tag->getOption<bool>( "invert", false );
 
-	BOOST_FOREACH(TagCOP cmp_tag_ptr, tag->getTags() ){
+	BOOST_FOREACH ( TagCOP cmp_tag_ptr, tag->getTags() ) {
 		std::string const operation( cmp_tag_ptr->getName() );
 		std::pair< FilterOP, boolean_operations > filter_pair;
-		if( operation == "AND" ) filter_pair.second = AND;
-		else if( operation == "OR" ) filter_pair.second = OR;
-		else if( operation == "XOR" ) filter_pair.second = XOR;
-		else if( operation == "NOR" ) filter_pair.second = NOR;
-		else if( operation == "NAND" ) filter_pair.second = NAND;
-		else if( operation == "ORNOT" ) filter_pair.second = ORNOT;
-		else if( operation == "ANDNOT" ) filter_pair.second = ANDNOT;
-		else if( operation == "NOT" ) filter_pair.second = NOT;
+		if ( operation == "AND" ) filter_pair.second = AND;
+		else if ( operation == "OR" ) filter_pair.second = OR;
+		else if ( operation == "XOR" ) filter_pair.second = XOR;
+		else if ( operation == "NOR" ) filter_pair.second = NOR;
+		else if ( operation == "NAND" ) filter_pair.second = NAND;
+		else if ( operation == "ORNOT" ) filter_pair.second = ORNOT;
+		else if ( operation == "ANDNOT" ) filter_pair.second = ANDNOT;
+		else if ( operation == "NOT" ) filter_pair.second = NOT;
 		else {
 			throw utility::excn::EXCN_RosettaScriptsOption( "Error: Boolean operation in tag is undefined." );
 		}
@@ -319,9 +320,9 @@ CompoundFilter::parse_my_tag(
 
 		Filters_map::const_iterator find_filter( filters.find( filter_name ));
 		bool const filter_found( find_filter!=filters.end() );
-		if( filter_found )
+		if ( filter_found ) {
 			filter_pair.first = find_filter->second->clone();
-		else {
+		} else {
 			TR<<"***WARNING WARNING! Filter defined for CompoundStatement not found in filter_list!!!! Defaulting to truefilter***"<<std::endl;
 			filter_pair.first = FilterOP( new filters::TrueFilter );
 		}
@@ -332,7 +333,7 @@ CompoundFilter::parse_my_tag(
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // @brief Used to combine multiple seperate filters into a single filter value
-	CombinedFilter::CombinedFilter() : Filter( "CombinedValue" ), threshold_(0.0) {}
+CombinedFilter::CombinedFilter() : Filter( "CombinedValue" ), threshold_(0.0) {}
 CombinedFilter::~CombinedFilter() {}
 
 bool
@@ -375,14 +376,14 @@ CombinedFilter::compute( core::pose::Pose const & pose ) const
 {
 	core::Real value( 0.0 );
 
-	BOOST_FOREACH(FilterWeightPair fw_pair, filterlist_){
+	BOOST_FOREACH ( FilterWeightPair fw_pair, filterlist_ ) {
 		value += fw_pair.second * fw_pair.first->report_sm( pose );
 	}
 	return( value );
 }
 
 void
-CombinedFilter::set_reset_filters( utility::vector1<FilterOP> const reset_filters ) 
+CombinedFilter::set_reset_filters( utility::vector1<FilterOP> const reset_filters )
 {
 	reset_filters_ = reset_filters;
 }
@@ -392,11 +393,11 @@ CombinedFilter::reset_filters()
 {
 	FilterList new_filterlist;
 	FilterWeightPair filter_pair;
-	BOOST_FOREACH(FilterWeightPair fw_pair, filterlist_){
+	BOOST_FOREACH ( FilterWeightPair fw_pair, filterlist_ ) {
 		filter_pair.first = fw_pair.first;
 		filter_pair.second = fw_pair.second;
-		BOOST_FOREACH( FilterOP filter, reset_filters_) { 
-			if( filter->get_user_defined_name() == fw_pair.first->get_user_defined_name() ) {
+		BOOST_FOREACH ( FilterOP filter, reset_filters_ ) {
+			if ( filter->get_user_defined_name() == fw_pair.first->get_user_defined_name() ) {
 				filter_pair.first = filter->clone();
 				break;
 			}
@@ -423,11 +424,11 @@ CombinedFilter::parse_my_tag(
 {
 	threshold_ = tag->getOption<core::Real>( "threshold", 0.0 );
 	utility::vector1< TagCOP > const sub_tags( tag->getTags() );
-	BOOST_FOREACH(TagCOP tag_ptr, sub_tags){
+	BOOST_FOREACH ( TagCOP tag_ptr, sub_tags ) {
 		core::Real weight(1.0);
-		if (tag_ptr->hasOption("factor") ) {
+		if ( tag_ptr->hasOption("factor") ) {
 			weight = tag_ptr->getOption<core::Real>( "factor" );
-		} else if (tag_ptr->hasOption("temp") ) {
+		} else if ( tag_ptr->hasOption("temp") ) {
 			weight = 1.0 / tag_ptr->getOption<core::Real>( "temp" );
 		}
 
@@ -435,10 +436,9 @@ CombinedFilter::parse_my_tag(
 		std::string const filter_name( tag_ptr->getOption<std::string>( "filter_name" ) );
 		Filters_map::const_iterator find_filter( filters.find( filter_name ));
 		bool const filter_found( find_filter!=filters.end() );
-		if( filter_found ) {
+		if ( filter_found ) {
 			filter = find_filter->second->clone();
-		}
-		else {
+		} else {
 			TR.Warning<<"***WARNING WARNING! Filter " << filter_name << " defined for CombinedValue not found in filter_list!!!! ***"<<std::endl;
 			throw utility::excn::EXCN_RosettaScriptsOption("Filter "+filter_name+" not found in filter list.");
 		}
@@ -504,16 +504,16 @@ MoveBeforeFilter::parse_my_tag(
 	if ( tag->hasOption("filter_name") ) filter_name = tag->getOption< std::string >( "filter_name" );
 
 	moves::Movers_map::const_iterator  find_mover ( movers.find( mover_name ));
-  Filters_map::const_iterator find_filter( filters.find( filter_name ));
+	Filters_map::const_iterator find_filter( filters.find( filter_name ));
 
-  if( find_mover == movers.end() ) {
-    TR.Error << "ERROR !! mover '"<<mover_name<<"' not found in map: \n" << tag << std::endl;
-    runtime_assert( find_mover != movers.end() );
-  }
-  if( find_filter == filters.end() ) {
-    TR.Error << "ERROR !! filter '"<<filter_name<<"' not found in map: \n" << tag << std::endl;
-    runtime_assert( find_filter != filters.end() );
-  }
+	if ( find_mover == movers.end() ) {
+		TR.Error << "ERROR !! mover '"<<mover_name<<"' not found in map: \n" << tag << std::endl;
+		runtime_assert( find_mover != movers.end() );
+	}
+	if ( find_filter == filters.end() ) {
+		TR.Error << "ERROR !! filter '"<<filter_name<<"' not found in map: \n" << tag << std::endl;
+		runtime_assert( find_filter != filters.end() );
+	}
 	submover_ = find_mover->second;
 	subfilter_ = find_filter->second;
 
@@ -525,11 +525,11 @@ MoveBeforeFilter::parse_my_tag(
 /// @brief Evaluate to a value contingent on the evaluation of another filter.
 
 IfThenFilter::IfThenFilter() :
-		Filter( "IfThenFilter" ),
-		elsevalue_(0),
-		threshold_(0),
-		floor_(false)
- {}
+	Filter( "IfThenFilter" ),
+	elsevalue_(0),
+	threshold_(0),
+	floor_(false)
+{}
 IfThenFilter::~IfThenFilter() {}
 
 void
@@ -559,7 +559,7 @@ IfThenFilter::apply( core::pose::Pose const & pose ) const
 	core::Real const value( compute( pose ) );
 
 	TR<<"IfThenFilter value is "<<value<<", threshold is "<< threshold_;
-	if( floor_ ) {
+	if ( floor_ ) {
 		TR << " (lower limit)" << std::endl;
 		return value >= threshold_;
 	} else {
@@ -602,20 +602,20 @@ IfThenFilter::compute( core::pose::Pose const & pose ) const
 	assert( iffilters_.size() == weights_.size() );
 	assert( iffilters_.size() == invert_.size() );
 
-	for( core::Size ii(1); ii<= iffilters_.size(); ++ii ) {
+	for ( core::Size ii(1); ii<= iffilters_.size(); ++ii ) {
 		assert( iffilters_[ii] );
-		if( invert_[ii] ^ iffilters_[ii]->apply( pose ) ) { // XOR: if invert_ is true, true becomes false and false becomes true
-			if( thenfilters_[ii] ) {
+		if ( invert_[ii] ^ iffilters_[ii]->apply( pose ) ) { // XOR: if invert_ is true, true becomes false and false becomes true
+			if ( thenfilters_[ii] ) {
 				return weights_[ii] * thenfilters_[ii]->report_sm( pose );
 			} else {
 				return weights_[ii] * values_[ii];
 			}
 		}
 	}
-	if( iffilters_.size() == 0 ) {
+	if ( iffilters_.size() == 0 ) {
 		TR.Warning << "WARNING: No conditional filters specified for IfThenFilter. Using else values only." << std::endl;
 	}
-	if( elsefilter_ ) {
+	if ( elsefilter_ ) {
 		return elseweight_ * elsefilter_->report_sm( pose );
 	}
 
@@ -633,22 +633,22 @@ IfThenFilter::parse_my_tag(
 {
 	threshold( tag->getOption<core::Real>( "threshold", 0.0 ) );
 	set_lower_threshold( tag->getOption<bool>( "lower_threshold", false ) );
-	if( tag->hasOption( "lower_threshold" ) && ! tag->hasOption( "threshold" ) ){
+	if ( tag->hasOption( "lower_threshold" ) && ! tag->hasOption( "threshold" ) ) {
 		TR.Warning << "WARNING: In IfThenFilter, lower_threshold set without setting threshold." << std::endl;
 		TR.Warning << "WARNING: Note that lower_threshold is a true/false flag, not a real-valued setting." << std::endl;
 	}
 	utility::vector1< TagCOP > const sub_tags( tag->getTags() );
-	BOOST_FOREACH(TagCOP tag_ptr, sub_tags){
+	BOOST_FOREACH ( TagCOP tag_ptr, sub_tags ) {
 		std::string const tagname = tag_ptr->getName();
 		FilterOP valuefilter = 0; //default NULL
-		if( tag_ptr->hasOption("valuefilter") ) {
+		if ( tag_ptr->hasOption("valuefilter") ) {
 			valuefilter = protocols::rosetta_scripts::parse_filter( tag_ptr->getOption<std::string>( "valuefilter" ), filters);
 		}
 		core::Real value( tag_ptr->getOption<core::Real>( "value", 0 ) );
 		core::Real weight( tag_ptr->getOption<core::Real>( "weight", 1 ) );
 
-		if( tagname == "IF" || tagname == "ELIF" ){
-			if( ! tag_ptr->hasOption("testfilter") )  {
+		if ( tagname == "IF" || tagname == "ELIF" ) {
+			if ( ! tag_ptr->hasOption("testfilter") )  {
 				TR.Error << "In IfThenFilter, If and ELIF require a tesfilter option." << std::endl;
 				throw utility::excn::EXCN_RosettaScriptsOption("In IfThenFilter, If and ELIF require a tesfilter option.");
 			}
@@ -664,8 +664,8 @@ IfThenFilter::parse_my_tag(
 		}
 	}
 	TR << "IfThenFilter defined with " << iffilters_.size() << " conditions and "
-			<< ( elsefilter_ ? "an ": "no " ) << " else filter and a "
-			<< ( floor_ ? "lower " : "upper " ) << "threshold of " << threshold_ << std::endl;
+		<< ( elsefilter_ ? "an ": "no " ) << " else filter and a "
+		<< ( floor_ ? "lower " : "upper " ) << "threshold of " << threshold_ << std::endl;
 }
 
 

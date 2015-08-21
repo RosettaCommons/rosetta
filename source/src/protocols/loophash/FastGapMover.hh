@@ -81,7 +81,7 @@ public:
 
 private:
 	// methods
-void find_next_gap( Pose & pose, Size & idx, Real & gap_distance );
+	void find_next_gap( Pose & pose, Size & idx, Real & gap_distance );
 
 
 private:
@@ -95,7 +95,7 @@ private:
 	core::Real max_rms_;
 	core::Real min_rms_;
 	bool non_ideal_;
-	
+
 };
 
 } // loophash

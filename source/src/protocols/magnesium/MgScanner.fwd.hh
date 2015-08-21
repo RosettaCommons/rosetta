@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/magnesium/MgScanner.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -20,12 +20,12 @@
 
 namespace protocols {
 namespace magnesium {
-	
-	class MgScanner;
-	typedef utility::pointer::shared_ptr< MgScanner > MgScannerOP;
-	typedef utility::pointer::shared_ptr< MgScanner const > MgScannerCOP;
-	
-} //magnesium 
-} //protocols 
+
+class MgScanner;
+typedef utility::pointer::shared_ptr< MgScanner > MgScannerOP;
+typedef utility::pointer::shared_ptr< MgScanner const > MgScannerCOP;
+
+} //magnesium
+} //protocols
 
 #endif

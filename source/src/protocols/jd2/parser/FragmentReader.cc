@@ -74,17 +74,17 @@ FragmentReader::parse_tag( TagCOP const & tag )
 {
 	/// the way of reading fragments: from pdbs, silent, fragfiles, or vall
 	read_type_ = tag->getOption< String >( "type", "" );
-	if( read_type_.empty() ){
+	if ( read_type_.empty() ) {
 		TR.Error << "No type option. " << std::endl;
 		runtime_assert( false );
 	}
-	if( read_type_ != "pdb" && read_type_ != "silent" && read_type_ != "vall" && read_type_ != "fragfile" ){
+	if ( read_type_ != "pdb" && read_type_ != "silent" && read_type_ != "vall" && read_type_ != "fragfile" ) {
 		TR.Error << "Read type " << read_type_ << " is not registered " << std::endl;
 		runtime_assert( false );
 	}
 
 	filename_  = tag->getOption< String >( "filename", "" );
-	if( read_type_ == "pdb" || read_type_ == "silent" || read_type_ == "fragfile" ){
+	if ( read_type_ == "pdb" || read_type_ == "silent" || read_type_ == "fragfile" ) {
 		runtime_assert( !filename_.empty() );
 	}
 
@@ -100,19 +100,19 @@ FragmentReader::parse_tag( TagCOP const & tag )
 	// number of fragments per position
 	nfrags_ = tag->getOption<Size>( "nfrags", 200 );
 
-	if( read_type_ == "vall" ){
+	if ( read_type_ == "vall" ) {
 
 		runtime_assert( frag_size_ != 0 );
 
 		/// secondary structure assignments to pick fragments from vall
 		// read from blueprint
 		String const blueprint( tag->getOption<String>( "blueprint", "" ) );
-		if( blueprint != "" ){
+		if ( blueprint != "" ) {
 			blueprint_ = protocols::jd2::parser::BluePrintOP( new protocols::jd2::parser::BluePrint( blueprint ) );
 			ss_ = blueprint_->secstruct();
 			// pick fragment using sequence information (default false)
 			bool use_sequence_bias( tag->getOption<bool>( "use_sequence_bias", 0 ) );
-			if( use_sequence_bias ) {
+			if ( use_sequence_bias ) {
 				aa_ = blueprint_->sequence();
 			}
 		}
@@ -121,7 +121,7 @@ FragmentReader::parse_tag( TagCOP const & tag )
 		use_abego_ = tag->getOption<bool>( "use_abego", 0 );
 
 
-		if( ss_.empty() ) {
+		if ( ss_.empty() ) {
 			ss_ = tag->getOption<String>( "ss", "" );
 		}
 
@@ -131,24 +131,24 @@ FragmentReader::parse_tag( TagCOP const & tag )
 		// amino acids to pick fragments from vall
 		aa_ = tag->getOption<String>( "aa", "" );
 
-		if( ! aa_.empty() ){
+		if ( ! aa_.empty() ) {
 			runtime_assert( ss_.length() == aa_.length() );
 		}
-		if( begin_ == 0 ){
+		if ( begin_ == 0 ) {
 			TR << "Since option begin is emptry, Fragment is defined from the first residue. " << std::endl;
 			begin_ = 1;
 			//TR.Error << "Option begin has to be defined. !!" << std::endl;
 			//runtime_assert( false );
 		}
-		if( end_ != 0 ){
+		if ( end_ != 0 ) {
 			runtime_assert( end_ == begin_ + ss_.length() - 1 );
 		}
 		end_ = begin_ + ss_.length() - 1;
 
 		TR << "Picking fragments from vall for poistions " << begin_ << "-" << end_
-			 << " based on ss=" << ss_ << ", aa=" << aa_ << std::endl;
+			<< " based on ss=" << ss_ << ", aa=" << aa_ << std::endl;
 
-	} else if( read_type_ == "pdb" || read_type_ == "silent" ){
+	} else if ( read_type_ == "pdb" || read_type_ == "silent" ) {
 
 		runtime_assert( frag_size_ != 0 );
 
@@ -165,11 +165,11 @@ FragmentReader::parse_tag( TagCOP const & tag )
 void
 FragmentReader::set_fragments( Pose const & pose_in, FragSetOP const & fragset )
 {
- 	using namespace core::fragment;
+	using namespace core::fragment;
 
-	if( begin_ == 0 ){
+	if ( begin_ == 0 ) {
 		core::fragment::steal_frag_set_from_pose( pose_in, *fragset, core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new IndependentBBTorsionSRFD ), frag_size_ ) ) ) );
-	}else{
+	} else {
 		core::fragment::steal_frag_set_from_pose( pose_in, begin_, end_ , *fragset, core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new IndependentBBTorsionSRFD ), frag_size_ ) ) ) );
 	}
 }
@@ -180,7 +180,7 @@ FragmentReader::apply( FragSetOP & fragset )
 {
 	using core::fragment::FrameList;
 
-	if( read_type_ == "silent" ){
+	if ( read_type_ == "silent" ) {
 
 		using core::chemical::ResidueTypeSetCOP;
 		using core::chemical::ChemicalManager;
@@ -193,13 +193,13 @@ FragmentReader::apply( FragSetOP & fragset )
 
 		Size num( 0 );
 		Pose pose_in;
-		while( num++ <= nfrags_ && silent_input->has_another_pose() ){
+		while ( num++ <= nfrags_ && silent_input->has_another_pose() ) {
 			silent_input->fill_pose( pose_in, *residue_set );
 			runtime_assert( end_ <= pose_in.total_residue() );
 			set_fragments( pose_in, fragset );
 		}
 
-	}else if( read_type_ == "pdb" ){
+	} else if ( read_type_ == "pdb" ) {
 
 		Pose pose_in;
 		utility::vector1< String > fs ( utility::string_split( filename_, ',' ) );
@@ -207,12 +207,12 @@ FragmentReader::apply( FragSetOP & fragset )
 			String filename( *it );
 			core::import_pose::centroid_pose_from_pdb( pose_in, filename );
 			runtime_assert( end_ <= pose_in.total_residue() );
-			for( Size c=0; c<steal_times_; c++ ){
+			for ( Size c=0; c<steal_times_; c++ ) {
 				set_fragments( pose_in, fragset );
 			}
 		}
 
-	}else if( read_type_ == "fragfile" ){
+	} else if ( read_type_ == "fragfile" ) {
 
 		using core::fragment::Frame;
 		using core::fragment::FrameOP;
@@ -229,11 +229,11 @@ FragmentReader::apply( FragSetOP & fragset )
 
 		FrameList frames;
 		if ( cf.get() != NULL && of.get() == NULL ) {
-			for( ConstFrameIterator it=cf->begin(), end( cf->end() ); it!=end; ++it ) {
+			for ( ConstFrameIterator it=cf->begin(), end( cf->end() ); it!=end; ++it ) {
 				frames.push_back( core::fragment::FrameOP( new Frame( **it ) ) );
 			}
 		} else if ( of.get() != NULL && cf.get() == NULL ) {
-			for( ConstFrameIterator it=of->begin(), end( of->end() ); it!=end; ++it ) {
+			for ( ConstFrameIterator it=of->begin(), end( of->end() ); it!=end; ++it ) {
 				frames.push_back( core::fragment::FrameOP( new Frame( **it ) ) );
 			}
 		} else {
@@ -242,7 +242,7 @@ FragmentReader::apply( FragSetOP & fragset )
 		}
 		fragset->add( frames );
 
-	}else if( read_type_ == "vall" ){
+	} else if ( read_type_ == "vall" ) {
 
 		using core::fragment::Frame;
 		using core::fragment::FrameOP;
@@ -274,11 +274,11 @@ FragmentReader::apply( FragSetOP & fragset )
 
 			// make fragments with abego bias
 			utility::vector1< String > abego_sub;
-			if( use_abego_  ) {
+			if ( use_abego_  ) {
 				runtime_assert( ss_.length() == blueprint_->abego().size() );
 				Size pos( 1 );
 				abego_sub.resize( frag_size_ );
-				for( Size ii = j + 1 ; ii <= j + frag_size_; ++ii, ++pos ) {
+				for ( Size ii = j + 1 ; ii <= j + frag_size_; ++ii, ++pos ) {
 					if ( ii > blueprint_->abego().size() ) {
 						abego_sub[ pos ] = "X";
 					} else {
@@ -293,15 +293,15 @@ FragmentReader::apply( FragSetOP & fragset )
 
 			frame->add_fragment( pick_fragments( ss_sub, aa_sub, abego_sub, nfrags_, true, IndependentBBTorsionSRFD() ) );
 
-//		if ( !aa_.empty() ) { // make fragments with sequence bias
-//			String aa_sub = aa_.substr( j, frag_size_ );
-//			if ( aa_sub.length() < frag_size_ ) {
-//				aa_sub.append( frag_size_ - aa_sub.length(), '.' );
-//			}
-//			frame->add_fragment( pick_fragments_by_ss_plus_aa( ss_sub, aa_sub, nfrags_, true, IndependentBBTorsionSRFD() ) );
-//		} else {
-//			frame->add_fragment( pick_fragments_by_ss( ss_sub, nfrags_, true, IndependentBBTorsionSRFD() ) );
-//		}
+			//  if ( !aa_.empty() ) { // make fragments with sequence bias
+			//   String aa_sub = aa_.substr( j, frag_size_ );
+			//   if ( aa_sub.length() < frag_size_ ) {
+			//    aa_sub.append( frag_size_ - aa_sub.length(), '.' );
+			//   }
+			//   frame->add_fragment( pick_fragments_by_ss_plus_aa( ss_sub, aa_sub, nfrags_, true, IndependentBBTorsionSRFD() ) );
+			//  } else {
+			//   frame->add_fragment( pick_fragments_by_ss( ss_sub, nfrags_, true, IndependentBBTorsionSRFD() ) );
+			//  }
 
 			frames.push_back( frame );
 		}

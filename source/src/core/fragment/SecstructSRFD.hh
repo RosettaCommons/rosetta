@@ -40,16 +40,16 @@ namespace fragment {
 
 
 class SecstructSRFD : public SingleResidueFragData {
-  typedef SingleResidueFragData Parent;
+	typedef SingleResidueFragData Parent;
 public:
-  SecstructSRFD( char secstruct = 'X', char sequence = 'X')
-    : SingleResidueFragData( sequence ), secstruct_ ( secstruct )
-  {};
+	SecstructSRFD( char secstruct = 'X', char sequence = 'X')
+	: SingleResidueFragData( sequence ), secstruct_ ( secstruct )
+	{};
 
 
-  SingleResidueFragDataOP clone() const {
-    return SingleResidueFragDataOP( new SecstructSRFD( *this ) );
-  };
+	SingleResidueFragDataOP clone() const {
+		return SingleResidueFragDataOP( new SecstructSRFD( *this ) );
+	};
 
 	/// @brief create a new instance of this object
 	virtual
@@ -57,32 +57,32 @@ public:
 		return SingleResidueFragDataOP( new SecstructSRFD() );
 	}
 
-  /// get secstruct for this position
-  virtual char
-  secstruct() const
-  {
-    return secstruct_;
-  }
+	/// get secstruct for this position
+	virtual char
+	secstruct() const
+	{
+		return secstruct_;
+	}
 
-  void set_secstruct( char const ss ) {
-    secstruct_ = ss;
-  }
+	void set_secstruct( char const ss ) {
+		secstruct_ = ss;
+	}
 
-  virtual bool apply( pose::Pose&, Size seq_pos ) const;
+	virtual bool apply( pose::Pose&, Size seq_pos ) const;
 
-  /// @brief apply secondary structure fragment data to the pose, movemap has no effect
-  /// @remarks In this version of apply(), by convention MoveMap has no effect
-  ///  because a setting for sec.struct currently does not exist within the map.
-  /// @return always true
-  virtual bool apply( kinematics::MoveMap const &, pose::Pose & pose, Size const seqpos ) const;
+	/// @brief apply secondary structure fragment data to the pose, movemap has no effect
+	/// @remarks In this version of apply(), by convention MoveMap has no effect
+	///  because a setting for sec.struct currently does not exist within the map.
+	/// @return always true
+	virtual bool apply( kinematics::MoveMap const &, pose::Pose & pose, Size const seqpos ) const;
 
-  virtual bool apply_ss( std::string&, Size seq_pos) const;
-  virtual bool steal( pose::Pose const&, Size seq_pos );
-  virtual bool is_compatible( SingleResidueFragData const& ) const;
-  virtual bool is_applicable( kinematics::MoveMap const&, Size seq_pos ) const;
+	virtual bool apply_ss( std::string&, Size seq_pos) const;
+	virtual bool steal( pose::Pose const&, Size seq_pos );
+	virtual bool is_compatible( SingleResidueFragData const& ) const;
+	virtual bool is_applicable( kinematics::MoveMap const&, Size seq_pos ) const;
 
-  virtual
-  void show( std::ostream &out ) const;
+	virtual
+	void show( std::ostream &out ) const;
 
 	virtual
 	void read_data( std::istream &in );
@@ -97,7 +97,7 @@ public:
 	}
 
 private:
-  char secstruct_;
+	char secstruct_;
 };
 
 } //fragment

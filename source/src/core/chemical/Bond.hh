@@ -44,7 +44,7 @@ public:
 	Bond(Real d, BondName name, bool cut_bond = false);
 	Bond(Real d, BondOrder order, BondConjugability conj,  BondAromaticity aroma, BondRingness ring = UnknownRingness, BondIsometry isom = UnknownIsometry, bool cut_bond = false);
 
-// Setters
+	// Setters
 	void distance(Real distance){
 		distance_ = distance;
 	}
@@ -68,7 +68,7 @@ public:
 	}
 
 
-// Getters
+	// Getters
 	Real distance() const {
 		return distance_;
 	}
@@ -94,14 +94,14 @@ public:
 		return isometry_ ;
 	}
 
-// General functions
+	// General functions
 
 	void print( std::ostream & out ) const;
 
 	friend
 	std::ostream & operator<<(std::ostream & out, Bond const & bond );
 
-// Derived Data Access.
+	// Derived Data Access.
 
 	/// @brief Reset the internal data such that it matches the appropriate value for the SDF datatype.
 	///

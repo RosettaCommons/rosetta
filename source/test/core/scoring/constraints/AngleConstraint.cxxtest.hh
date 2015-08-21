@@ -195,8 +195,7 @@ public:
 		for ( Size ii = 1; ii <= ubqstump->total_residue(); ++ii ) {
 			core::chemical::ResidueType const & rsd_type( ubqstump->residue_type( ii ));
 			// for each dihedral angle in the residue type
-			for ( Size bondang = 1; bondang <= rsd_type.num_bondangles(); ++bondang )
-			{
+			for ( Size bondang = 1; bondang <= rsd_type.num_bondangles(); ++bondang ) {
 				at1.rsd() = at2.rsd() = at3.rsd() = ii;
 				at1.atomno() = ( rsd_type.bondangle( bondang ) ).key1();
 				at2.atomno() = ( rsd_type.bondangle( bondang ) ).key2();

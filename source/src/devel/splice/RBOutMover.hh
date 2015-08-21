@@ -29,7 +29,7 @@ namespace splice {
 class RBOutMover : public protocols::moves::Mover {
 public:
 	RBOutMover();
-  ~RBOutMover();
+	~RBOutMover();
 
 	core::kinematics::Jump get_disulf_jump( Pose & pose, core::pose::Pose const & template_pose );
 
@@ -47,20 +47,20 @@ public:
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose );
 
-  std::string template_pdb_fname() const {return template_pdb_fname_; }
-  void template_pdb_fname( std::string const s ){ template_pdb_fname_ = s; }
+	std::string template_pdb_fname() const {return template_pdb_fname_; }
+	void template_pdb_fname( std::string const s ){ template_pdb_fname_ = s; }
 
-  void jump_dbase_fname( std::string const s ) { jump_dbase_fname_ = s ; }
-  std::string jump_dbase_fname() const{ return jump_dbase_fname_; }
+	void jump_dbase_fname( std::string const s ) { jump_dbase_fname_ = s ; }
+	std::string jump_dbase_fname() const{ return jump_dbase_fname_; }
 
 	bool jump_from_foldtree() const{ return jump_from_foldtree_; }
 	void jump_from_foldtree( bool const jfft ){ jump_from_foldtree_ = jfft;}
 
 private:
-    std::string template_pdb_fname_;
-    std::string jump_dbase_fname_;
-		bool jump_from_foldtree_; //dflt false ; if true, extract the jump defined by the fold tree rather than imposing a new jump
-    //	core::Real min_value_,max_value_; // dflt -1, 5
+	std::string template_pdb_fname_;
+	std::string jump_dbase_fname_;
+	bool jump_from_foldtree_; //dflt false ; if true, extract the jump defined by the fold tree rather than imposing a new jump
+	// core::Real min_value_,max_value_; // dflt -1, 5
 };
 
 /// utility function for finding disulfide bonded pairs

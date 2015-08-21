@@ -66,7 +66,7 @@ LoopsFileDefiner::parse_my_tag(
 	Pose const & p
 ) {
 
-	if(!tag->hasOption("name")){
+	if ( !tag->hasOption("name") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption(
 			"Unable to create unnamed LoopsDefiner (type: LoopsFile)" );
 	}
@@ -74,7 +74,7 @@ LoopsFileDefiner::parse_my_tag(
 
 
 	string filename;
-	if(tag->hasOption("filename")){
+	if ( tag->hasOption("filename") ) {
 		filename = tag->getOption<string>("filename");
 	} else {
 		stringstream err_msg;

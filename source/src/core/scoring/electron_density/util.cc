@@ -41,35 +41,35 @@ void add_dens_scores_from_cmdline_to_scorefxn( core::scoring::ScoreFunction &sco
 
 	if ( option[ OptionKeys::patterson::weight ].user() ) {
 		scorefxn.set_weight( core::scoring::patterson_cc,
-		                     option[ OptionKeys::patterson::weight ]() );
+			option[ OptionKeys::patterson::weight ]() );
 	}
 	if ( option[ OptionKeys::edensity::fastdens_wt ].user() ) {
 		scorefxn.set_weight( core::scoring::elec_dens_fast,
-		                     option[ OptionKeys::edensity::fastdens_wt ]() );
+			option[ OptionKeys::edensity::fastdens_wt ]() );
 	}
 	if ( option[ OptionKeys::edensity::sliding_window_wt ].user() ) {
 		scorefxn.set_weight( core::scoring::elec_dens_window,
-		                     option[ OptionKeys::edensity::sliding_window_wt ]() );
+			option[ OptionKeys::edensity::sliding_window_wt ]() );
 	}
 	if ( option[ OptionKeys::edensity::whole_structure_ca_wt ].user() ) {
 		scorefxn.set_weight( core::scoring::elec_dens_whole_structure_ca,
-		                     option[ OptionKeys::edensity::whole_structure_ca_wt ]() );
+			option[ OptionKeys::edensity::whole_structure_ca_wt ]() );
 	}
 	if ( option[ OptionKeys::edensity::whole_structure_allatom_wt ].user() ) {
 		scorefxn.set_weight( core::scoring::elec_dens_whole_structure_allatom,
-		                     option[ OptionKeys::edensity::whole_structure_allatom_wt ]() );
+			option[ OptionKeys::edensity::whole_structure_allatom_wt ]() );
 	}
 }
 
 bool pose_has_nonzero_Bs( core::pose::Pose const & pose ) {
-	if (!pose.pdb_info()) return false;
+	if ( !pose.pdb_info() ) return false;
 
 	// to save time check only the first atom of each residue
-	for (uint i = 1; i <= pose.total_residue(); ++i) {
+	for ( uint i = 1; i <= pose.total_residue(); ++i ) {
 		core::conformation::Residue const & rsd_i ( pose.residue(i) );
 		if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
 		Real B = pose.pdb_info()->temperature( i, 1 );
-		if (B > 0) {
+		if ( B > 0 ) {
 			return true;
 		}
 	}
@@ -77,8 +77,8 @@ bool pose_has_nonzero_Bs( core::pose::Pose const & pose ) {
 }
 
 bool pose_has_nonzero_Bs( poseCoords const & pose ) {
-	for (int i=1 ; i<=(int)pose.size(); ++i) {
-		if( pose[i].B_ > 0) {
+	for ( int i=1 ; i<=(int)pose.size(); ++i ) {
+		if ( pose[i].B_ > 0 ) {
 			return true;
 		}
 	}
@@ -88,8 +88,8 @@ bool pose_has_nonzero_Bs( poseCoords const & pose ) {
 
 /// @brief spline interpolation with periodic boundaries
 core::Real interp_spline(
-                         ObjexxFCL::FArray3D< double > & coeffs ,
-                         numeric::xyzVector< core::Real > const & idxX ) {
+	ObjexxFCL::FArray3D< double > & coeffs ,
+	numeric::xyzVector< core::Real > const & idxX ) {
 	int dims[3] = { coeffs.u3(), coeffs.u2(), coeffs.u1() };
 	core::Real pt[3] = { idxX[2]-1.0 , idxX[1]-1.0, idxX[0]-1.0 };
 	core::Real retval = SplineInterp::interp3(&coeffs[0], dims, pt);
@@ -98,8 +98,8 @@ core::Real interp_spline(
 
 /// @brief spline interpolation with periodic boundaries
 numeric::xyzVector<core::Real> interp_dspline(
-                         ObjexxFCL::FArray3D< double > & coeffs ,
-                         numeric::xyzVector< core::Real > const & idxX ) {
+	ObjexxFCL::FArray3D< double > & coeffs ,
+	numeric::xyzVector< core::Real > const & idxX ) {
 	int dims[3] = { coeffs.u3(), coeffs.u2(), coeffs.u1() };
 	core::Real pt[3] = { idxX[2]-1.0 , idxX[1]-1.0, idxX[0]-1.0 };
 	core::Real grad[3] = { 0,0,0 };
@@ -108,31 +108,32 @@ numeric::xyzVector<core::Real> interp_dspline(
 }
 
 void spline_coeffs(
-           ObjexxFCL::FArray3D< double > const & data ,
-           ObjexxFCL::FArray3D< double > & coeffs) {
+	ObjexxFCL::FArray3D< double > const & data ,
+	ObjexxFCL::FArray3D< double > & coeffs) {
 	int dims[3] = { data.u3(), data.u2(), data.u1() };
 	coeffs = data;
 	SplineInterp::compute_coefficients3( const_cast<double*>(&coeffs[0]) , dims );  // external code wants nonconst even though array is unchanged
 }
 
 void spline_coeffs(
-                         ObjexxFCL::FArray3D< float > const & data ,
-                         ObjexxFCL::FArray3D< double > & coeffs) {
+	ObjexxFCL::FArray3D< float > const & data ,
+	ObjexxFCL::FArray3D< double > & coeffs) {
 	int N = data.u3()*data.u2()*data.u1();
 	ObjexxFCL::FArray3D< double > data_d(data.u1(),data.u2(),data.u3()) ;
-	for (int i=0; i<N; ++i)
+	for ( int i=0; i<N; ++i ) {
 		data_d[i] = (double)data[i];
+	}
 	spline_coeffs( data_d, coeffs );
 }
 
 
 void conj_map_times(ObjexxFCL::FArray3D< std::complex<double> > & map_product, ObjexxFCL::FArray3D< std::complex<double> > const & mapA, ObjexxFCL::FArray3D< std::complex<double> > const & mapB) {
-debug_assert(mapA.u1() == mapB.u1());
-debug_assert(mapA.u2() == mapB.u2());
-debug_assert(mapA.u3() == mapB.u3());
+	debug_assert(mapA.u1() == mapB.u1());
+	debug_assert(mapA.u2() == mapB.u2());
+	debug_assert(mapA.u3() == mapB.u3());
 
 	map_product.dimension(mapA.u1(), mapA.u2(), mapA.u3());
-	for (Size i=0; i < mapA.size(); i++) {
+	for ( Size i=0; i < mapA.size(); i++ ) {
 		map_product[i] = std::conj(mapA[i]) * mapB[i];
 	}
 }
@@ -160,9 +161,9 @@ ObjexxFCL::FArray3D< double > convolute_maps( ObjexxFCL::FArray3D< double > cons
 
 /// @brief spline interpolation with periodic boundaries
 core::Real interp_spline(
-                         ObjexxFCL::FArray4D< double > & coeffs ,
-                         core::Real slab,
-                         numeric::xyzVector< core::Real > const & idxX )
+	ObjexxFCL::FArray4D< double > & coeffs ,
+	core::Real slab,
+	numeric::xyzVector< core::Real > const & idxX )
 {
 	int dims[4] = { coeffs.u4(), coeffs.u3(), coeffs.u2(), coeffs.u1() };
 	core::Real pt[4] = { slab-1.0, idxX[2]-1.0 , idxX[1]-1.0, idxX[0]-1.0 };
@@ -173,11 +174,11 @@ core::Real interp_spline(
 
 /// @brief spline interpolation with periodic boundaries
 void interp_dspline(
-		ObjexxFCL::FArray4D< double > & coeffs ,
-		numeric::xyzVector< core::Real > const & idxX ,
-		core::Real slab,
-		numeric::xyzVector< core::Real > & gradX,
-		core::Real & gradSlab )
+	ObjexxFCL::FArray4D< double > & coeffs ,
+	numeric::xyzVector< core::Real > const & idxX ,
+	core::Real slab,
+	numeric::xyzVector< core::Real > & gradX,
+	core::Real & gradSlab )
 {
 	int dims[4] = { coeffs.u4(), coeffs.u3(), coeffs.u2(), coeffs.u1() };
 	core::Real pt[4] = { slab-1.0, idxX[2]-1.0 , idxX[1]-1.0, idxX[0]-1.0 };
@@ -188,8 +189,8 @@ void interp_dspline(
 }
 
 void spline_coeffs(
-           ObjexxFCL::FArray4D< double > const & data ,
-           ObjexxFCL::FArray4D< double > & coeffs)
+	ObjexxFCL::FArray4D< double > const & data ,
+	ObjexxFCL::FArray4D< double > & coeffs)
 {
 	int dims[4] = { coeffs.u4(), coeffs.u3(), coeffs.u2(), coeffs.u1() };
 	coeffs = data;
@@ -197,13 +198,14 @@ void spline_coeffs(
 }
 
 void spline_coeffs(
-           ObjexxFCL::FArray4D< float > const & data ,
-           ObjexxFCL::FArray4D< double > & coeffs)
+	ObjexxFCL::FArray4D< float > const & data ,
+	ObjexxFCL::FArray4D< double > & coeffs)
 {
- 	int N = data.u4()*data.u3()*data.u2()*data.u1();
+	int N = data.u4()*data.u3()*data.u2()*data.u1();
 	ObjexxFCL::FArray4D< double > data_d(data.u1(),data.u2(),data.u3(),data.u4()) ;
-	for (int i=0; i<N; ++i)
+	for ( int i=0; i<N; ++i ) {
 		data_d[i] = (double)data[i];
+	}
 	spline_coeffs( data_d, coeffs );
 }
 

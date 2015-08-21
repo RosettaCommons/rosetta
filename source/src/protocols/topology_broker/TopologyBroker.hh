@@ -56,7 +56,7 @@
 #include <string>
 
 #ifdef WIN32
-	#include <protocols/topology_broker/TopologyClaimer.hh>
+#include <protocols/topology_broker/TopologyClaimer.hh>
 #endif
 
 
@@ -70,9 +70,9 @@ the situation presented to them in round1.
 
 The Claimer needs to keep track himself what he can move and what was declined. This is not enforced any further. The idea is that the claimer
 being asked to provide a mover will return a Mover class that moves the dofs it had claimed successfully.
-     -> notify via claim about each change you want to make to the pose
-		 -> don't move anything which was declined.
-		 --> be aware that multiple movers might move the same dof -- unless your claimer takes care of declining foreign claims.
+-> notify via claim about each change you want to make to the pose
+-> don't move anything which was declined.
+--> be aware that multiple movers might move the same dof -- unless your claimer takes care of declining foreign claims.
 
 the process is carried out each time the apply is called ( since we might have different choices, e.g., different jumps, different ss-bonds, different chunks)
 
@@ -84,18 +84,18 @@ first apply is called, but the state is safed for further consulting during the 
 broking ( round1 , final_round )
 
 setting up the pose --> pose is made from scratch!!
-   whatever you pass into apply will be ignored.(we call pose.clear()  )
-	 1. ) init_sequence ( make residues from sequence )
-	 2. ) init_dofs ( initialize dofs , from fragments (jumps, bbtorsion), from pdb (rigid chunks)
+whatever you pass into apply will be ignored.(we call pose.clear()  )
+1. ) init_sequence ( make residues from sequence )
+2. ) init_dofs ( initialize dofs , from fragments (jumps, bbtorsion), from pdb (rigid chunks)
 
 add_constraints
 
 >>>sampling within the protocol
-    during the run of the samplign protocol the TopologyBroker system can be consulted for
-		   movers ( depending on stage )
-			 adding chainbreaks ( depending on sequence separation )
-			 switch to fullatom ( e.g., rigid chunks provide the full-atom sidechains of their input-pdb if available )
-			 final_fold_tree ( which chainbreaks and jumps should  the loop-closer remove before relax ? )
+during the run of the samplign protocol the TopologyBroker system can be consulted for
+movers ( depending on stage )
+adding chainbreaks ( depending on sequence separation )
+switch to fullatom ( e.g., rigid chunks provide the full-atom sidechains of their input-pdb if available )
+final_fold_tree ( which chainbreaks and jumps should  the loop-closer remove before relax ? )
 
 */
 
@@ -130,7 +130,7 @@ public:
 	}
 
 	/// @brief Returns true if we are using the input pose from the job
-  /// (i.e. new_decoy(pose)), false otherwise.
+	/// (i.e. new_decoy(pose)), false otherwise.
 	bool use_job_pose() const {
 		return bUseJobPose_;
 	}
@@ -139,7 +139,7 @@ public:
 	const TopologyClaimerOP& claimer(core::Size i) const {
 		assert(i >= 1 && i <= claimers_.size());
 		return claimers_[i];
-  }
+	}
 
 	TopologyClaimers::const_iterator begin() const {
 		return claimers_.begin();
@@ -191,8 +191,7 @@ public:
 
 	bool does_final_fold_tree_exist() const
 	{
-		if(final_fold_tree_)
-		{
+		if ( final_fold_tree_ ) {
 			return true;
 		}
 		return false;
@@ -234,7 +233,7 @@ private:
 	void generate_symmetry_claims( claims::SymmetryClaims& all_claims );
 
 	/// @brief checks whether only one sequence claim is there, otherwise crashes.
-    SymmetryClaimerOP resolve_symmetry_claims( claims::SymmetryClaims& symm_claims );
+	SymmetryClaimerOP resolve_symmetry_claims( claims::SymmetryClaims& symm_claims );
 
 	void make_sequence_symmetric( claims::DofClaims pre_accepted, core::pose::Pose& pose);
 

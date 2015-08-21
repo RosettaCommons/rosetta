@@ -23,7 +23,7 @@
 namespace protocols {
 namespace antibody {
 namespace constraints {
-			
+
 
 // Forward
 class CDRDihedralConstraintMover;
@@ -32,7 +32,7 @@ typedef utility::pointer::shared_ptr< CDRDihedralConstraintMover > CDRDihedralCo
 typedef utility::pointer::shared_ptr< CDRDihedralConstraintMover const > CDRDihedralConstraintMoverCOP;
 
 } //constraints
-} //antibody 
+} //antibody
 } //protocols
 
 #endif

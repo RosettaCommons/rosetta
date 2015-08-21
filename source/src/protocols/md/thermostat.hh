@@ -21,8 +21,8 @@
 #include <cmath>
 #include <iostream>
 
-namespace protocols{
-namespace md{
+namespace protocols {
+namespace md {
 
 using namespace core;
 using namespace core::optimization;
@@ -32,58 +32,58 @@ class Thermostat {
 
 public:
 
-Thermostat( Real const &temperature0, Size const ndof ){
-  temp0_ = temperature0*Boltzmann;
-  tau_ = 0.015;
-  nstep_per_update_ = 10;
-  ndof_ = ndof;
-}
+	Thermostat( Real const &temperature0, Size const ndof ){
+		temp0_ = temperature0*Boltzmann;
+		tau_ = 0.015;
+		nstep_per_update_ = 10;
+		ndof_ = ndof;
+	}
 
-Thermostat( Real const &temperature0, Real const &tau, Size const ndof ){
-  temp0_ = temperature0*Boltzmann;
-  tau_ = tau;
-  nstep_per_update_ = 10;
-  ndof_ = ndof;
-}
+	Thermostat( Real const &temperature0, Real const &tau, Size const ndof ){
+		temp0_ = temperature0*Boltzmann;
+		tau_ = tau;
+		nstep_per_update_ = 10;
+		ndof_ = ndof;
+	}
 
-~Thermostat(){}
+	~Thermostat(){}
 
-void 
-rescale( Multivec &vel, Real const& dt, Multivec const &mass ){
-  Real curr_temperature = get_temperature( vel, mass );
-  
-  Real delta  = (temp0_/Boltzmann)/curr_temperature;
-  Real lambda = std::sqrt(1.0 + dt/tau_*(delta-1.0));
-  
-  for( Size i_dof = 1; i_dof <= vel.size(); ++i_dof ){
-    vel[i_dof] *= lambda;
-  }
-}
-  
-Real 
-get_temperature( Multivec const &vel, Multivec const &mass)
-{
-  Real temperature = 0.0;
+	void
+	rescale( Multivec &vel, Real const& dt, Multivec const &mass ){
+		Real curr_temperature = get_temperature( vel, mass );
 
-  for(Size i_dof = 1; i_dof<=vel.size(); ++i_dof){
-    int i_atm = (i_dof+2)/3;
-    // pass Virtual atoms
-    if ( mass[i_atm] < 1e-3 ) continue;
+		Real delta  = (temp0_/Boltzmann)/curr_temperature;
+		Real lambda = std::sqrt(1.0 + dt/tau_*(delta-1.0));
 
-    temperature += mass[i_atm]*vel[i_dof]*vel[i_dof];
-  }
-  temperature /= ndof_*Boltzmann;
-  return temperature;
-}
+		for ( Size i_dof = 1; i_dof <= vel.size(); ++i_dof ) {
+			vel[i_dof] *= lambda;
+		}
+	}
 
-Size
-nstep_per_update(){ return nstep_per_update_; }
-  
+	Real
+	get_temperature( Multivec const &vel, Multivec const &mass)
+	{
+		Real temperature = 0.0;
+
+		for ( Size i_dof = 1; i_dof<=vel.size(); ++i_dof ) {
+			int i_atm = (i_dof+2)/3;
+			// pass Virtual atoms
+			if ( mass[i_atm] < 1e-3 ) continue;
+
+			temperature += mass[i_atm]*vel[i_dof]*vel[i_dof];
+		}
+		temperature /= ndof_*Boltzmann;
+		return temperature;
+	}
+
+	Size
+	nstep_per_update(){ return nstep_per_update_; }
+
 private:
-  Real temp0_;
-  Real tau_;
-  Size nstep_per_update_;
-  Size ndof_;
+	Real temp0_;
+	Real tau_;
+	Size nstep_per_update_;
+	Size ndof_;
 };
 }
 }

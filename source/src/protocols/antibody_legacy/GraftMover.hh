@@ -99,9 +99,9 @@ private:
 	protocols::simple_moves::PackRotamersMoverOP packer_;
 
 	void set_packer_default(
-	    core::pose::Pose & pose_in,
-	    core::scoring::ScoreFunctionOP scorefxn,
-	    bool include_current
+		core::pose::Pose & pose_in,
+		core::scoring::ScoreFunctionOP scorefxn,
+		bool include_current
 	);
 }; // class GraftMover
 
@@ -118,9 +118,9 @@ public:
 	//GraftOneMover();
 	// constructor with arguments
 	GraftOneMover(
-	    core::Size query_start,
-	    core::Size query_end,
-	    std::string template_name
+		core::Size query_start,
+		core::Size query_end,
+		std::string template_name
 	);
 
 	void set_default();
@@ -157,23 +157,23 @@ public:
 	// CloseOneMover();
 	// constructor with arguments
 	CloseOneMover(
-	    core::Size query_start,
-	    core::Size query_end  );
+		core::Size query_start,
+		core::Size query_end  );
 
 	void set_default();
 	virtual void apply( core::pose::Pose & pose_in );
 	virtual std::string get_name() const;
 
 	void close_one_loop_stem (
-	    core::pose::Pose & pose_in,
-	    core::Size cutpoint_in,
-	    bool nter );
+		core::pose::Pose & pose_in,
+		core::Size cutpoint_in,
+		bool nter );
 
 	void close_one_loop_stem (
-	    core::pose::Pose & pose_in,
-	    core::Size loop_begin,
-	    core::Size loop_end,
-	    core::Size cutpoint );
+		core::pose::Pose & pose_in,
+		core::Size loop_begin,
+		core::Size loop_end,
+		core::Size cutpoint );
 
 	void close_one_loop_stem_helper(
 		core::Size loop_begin,
@@ -182,7 +182,7 @@ public:
 		core::pose::Pose & pose_in,
 		core::kinematics::MoveMapOP loop_map
 	);
-	
+
 	/// @brief enable benchmark mode
 	inline void enable_benchmark_mode( bool setting ) {
 		benchmark_ = setting;
@@ -210,8 +210,8 @@ public:
 	// LoopRlxMover();
 	// constructor with arguments
 	LoopRlxMover(
-	    core::Size query_start,
-	    core::Size query_end  );
+		core::Size query_start,
+		core::Size query_end  );
 
 	void set_default();
 

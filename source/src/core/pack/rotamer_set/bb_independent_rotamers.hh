@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/pack/rotamer_set/bb_independent_rotamers.cc
-/// @brief  build rotamers for residue type given neutral beckbone 
+/// @brief  build rotamers for residue type given neutral beckbone
 /// @author Florian Ricter (floric@uw.edu)
 
 #ifndef INCLUDED_core_pack_rotamer_set_bb_independent_rotamers_hh

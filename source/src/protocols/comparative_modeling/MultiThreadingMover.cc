@@ -105,13 +105,13 @@ core::Size MultiThreadingMover::min_loop_size() const {
 }
 
 utility::vector1< core::fragment::FragSetOP > MultiThreadingMover::frag_libs() const {
-    return frag_libs_;
+	return frag_libs_;
 }
 
 void MultiThreadingMover::frag_libs(
-   utility::vector1< core::fragment::FragSetOP > new_libs
+	utility::vector1< core::fragment::FragSetOP > new_libs
 ) {
-   frag_libs_ = new_libs;
+	frag_libs_ = new_libs;
 }
 
 void MultiThreadingMover::apply(

@@ -67,13 +67,13 @@ StartStructClaimer::StartStructClaimer() : bUseInputPose_( true ), perturb_( 0.0
 StartStructClaimer::StartStructClaimer( core::pose::Pose const& pose ) : bUseInputPose_( true ), perturb_( 0.0 )
 {
 	set_claim_right( claims::DofClaim::INIT );
-	//	generate_init_frags( pose );
+	// generate_init_frags( pose );
 	start_pose_ = pose;
 	set_bInitDofs( true );
 }
 
 void StartStructClaimer::new_decoy() {
-	//	start_pose_.clear();
+	// start_pose_.clear();
 }
 
 void StartStructClaimer::new_decoy( core::pose::Pose const& pose ) {
@@ -83,16 +83,16 @@ void StartStructClaimer::new_decoy( core::pose::Pose const& pose ) {
 	//CANNOT do this here since SEQUENCE_CLAIMS need to be resolved first to know the sequence-offset
 	// generate_init_frags( start_pose_ );
 
-	//	start_pose_.clear();
+	// start_pose_.clear();
 }
 
 void StartStructClaimer::generate_init_frags( core::pose::Pose const& pose ) {
 	std::set< Size > start_region;
 	get_sequence_region( start_region );
- 	//for ( Size i = 1; i<= pose.total_residue(); ++i ) {
-	// 		start_region.insert( i );
-	// 	}
-	if (tr.Trace.visible() ) {
+	//for ( Size i = 1; i<= pose.total_residue(); ++i ) {
+	//   start_region.insert( i );
+	//  }
+	if ( tr.Trace.visible() ) {
 		tr.Trace << " start region for StartStructClaimer "<< std::endl;
 		for ( std::set< Size >::iterator it = start_region.begin(); it != start_region.end(); ++it ) {
 			tr.Trace << *it << " ";
@@ -112,15 +112,15 @@ void StartStructClaimer::generate_init_frags( core::pose::Pose const& pose ) {
 }
 
 void StartStructClaimer::generate_claims( claims::DofClaims& new_claims ){
-	for( Size i=1; i <= broker().resolve_sequence_label( label() ).length(); ++i){
+	for ( Size i=1; i <= broker().resolve_sequence_label( label() ).length(); ++i ) {
 		new_claims.push_back( claims::DofClaimOP( new claims::BBClaim( get_self_weak_ptr(), std::make_pair( label(), i ), claims::DofClaim::INIT ) ) );
 	}
 }
 
 void StartStructClaimer::initialize_dofs(
-		 core::pose::Pose& pose,
-		 claims::DofClaims const& init_dofs,
-		 claims::DofClaims& failed_to_init
+	core::pose::Pose& pose,
+	claims::DofClaims const& init_dofs,
+	claims::DofClaims& failed_to_init
 ) {
 	//now the sequence is known, and we have access to the pose:
 	if ( start_pose_.total_residue() > 0 ) {
@@ -137,7 +137,7 @@ void StartStructClaimer::initialize_dofs(
 	FragmentClaimer::initialize_dofs( pose, init_dofs, failed_to_init );
 	if ( perturb_ == 0.0 ) return;
 	for ( claims::DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
-				it != eit; ++it ) {
+			it != eit; ++it ) {
 		//don't really know how this looks for jumps
 
 		claims::BBClaimOP bb_ptr( utility::pointer::dynamic_pointer_cast< claims::BBClaim >( *it ) );
@@ -149,9 +149,9 @@ void StartStructClaimer::initialize_dofs(
 		}
 
 		/*if ( (*it)->type() == claims::DofClaim::BB ) {
-			Size pos( (*it)->pos( 1 ) );
-			pose.set_phi( pos, pose.phi( pos ) + numeric::random::rg().gaussian()*perturb_ );
-			pose.set_psi( pos, pose.psi( pos ) + numeric::random::rg().gaussian()*perturb_ );
+		Size pos( (*it)->pos( 1 ) );
+		pose.set_phi( pos, pose.phi( pos ) + numeric::random::rg().gaussian()*perturb_ );
+		pose.set_psi( pos, pose.psi( pos ) + numeric::random::rg().gaussian()*perturb_ );
 		}*/
 	}
 }

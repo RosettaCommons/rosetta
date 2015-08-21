@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	 test/core/io/pdb/alt_codes_io.cxxtest.hh
+/// @file  test/core/io/pdb/alt_codes_io.cxxtest.hh
 /// @brief   Test suite for alternative PDB 3-letter-code database loading
 /// @author  Labonte <JWLabonte@jhu.edu>
 
@@ -42,19 +42,19 @@ public: // Standard methods ///////////////////////////////////////////////////
 public: // Tests //////////////////////////////////////////////////////////////
 	// Confirm that alternative PDB 3-letter-codes are loaded correctly from the database.
 	void test_read_alternative_3_letter_codes_from_database_file()
-		{
-			using namespace core::io::pdb;
+	{
+		using namespace core::io::pdb;
 
-			TS_TRACE( "Testing read_read_alternative_3_letter_codes_from_database_file() method." );
+		TS_TRACE( "Testing read_read_alternative_3_letter_codes_from_database_file() method." );
 
-			AltCodeMap alt_codes( read_alternative_3_letter_codes_from_database_file(
-					basic::database::full_name( "input_output/3-letter_codes/sentence_case.codes" ) ) );
+		AltCodeMap alt_codes( read_alternative_3_letter_codes_from_database_file(
+			basic::database::full_name( "input_output/3-letter_codes/sentence_case.codes" ) ) );
 
-			TS_ASSERT_EQUALS( alt_codes.size(), 24 );  // 20 canonical and 4 NCAAs
-			TS_ASSERT_EQUALS( alt_codes[ "Ala" ].first, "ALA" );
-			TS_ASSERT_EQUALS( alt_codes[ "Ala" ].second, "" );
-			TS_ASSERT_EQUALS( alt_codes[ "Hcy" ].first, "HCY" );
-			TS_ASSERT_EQUALS( alt_codes[ "Hcy" ].second, "HOMOCYSTEINE" );
-			TS_ASSERT_EQUALS( alt_codes[ "Val" ].first, "VAL" );
-		}
+		TS_ASSERT_EQUALS( alt_codes.size(), 24 );  // 20 canonical and 4 NCAAs
+		TS_ASSERT_EQUALS( alt_codes[ "Ala" ].first, "ALA" );
+		TS_ASSERT_EQUALS( alt_codes[ "Ala" ].second, "" );
+		TS_ASSERT_EQUALS( alt_codes[ "Hcy" ].first, "HCY" );
+		TS_ASSERT_EQUALS( alt_codes[ "Hcy" ].second, "HOMOCYSTEINE" );
+		TS_ASSERT_EQUALS( alt_codes[ "Val" ].first, "VAL" );
+	}
 };  // class AltCodesIOTests

@@ -54,15 +54,15 @@ public:
 	core::conformation::ResidueCOP
 	target_res_for_geom_cst( core::Size geom_cst ) const;
 
-		std::list< core::conformation::ResidueCOP >
-		all_target_res() const;
+	std::list< core::conformation::ResidueCOP >
+	all_target_res() const;
 
 	/// @brief generate constraints against a certain pose
-  core::scoring::constraints::ConstraintCOP
-  generate_constraints(
-    core::pose::Pose const & pose,
-    AllowedSeqposForGeomCstCOP geomcst_seqpos
-  ) const;
+	core::scoring::constraints::ConstraintCOP
+	generate_constraints(
+		core::pose::Pose const & pose,
+		AllowedSeqposForGeomCstCOP geomcst_seqpos
+	) const;
 
 	/// @brief
 	/// can initialize tree nodes according to
@@ -77,13 +77,13 @@ public:
 		EnzConstraintIOCOP enzcst_io );
 
 	utility::vector1< std::list< core::conformation::ResidueCOP > >
-  all_target_residues( InvrotTreeNodeBaseCAP child_node ) const;
+	all_target_residues( InvrotTreeNodeBaseCAP child_node ) const;
 
-  virtual
-  void
-  collect_all_inverse_rotamers(
-    utility::vector1< InvrotCollectorOP > & invrot_collector
-  ) const;
+	virtual
+	void
+	collect_all_inverse_rotamers(
+		utility::vector1< InvrotCollectorOP > & invrot_collector
+	) const;
 
 protected:
 

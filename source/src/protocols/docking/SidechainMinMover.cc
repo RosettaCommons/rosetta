@@ -113,7 +113,7 @@ void SidechainMinMover::set_minmover( protocols::simple_moves::MinMoverOP minmov
 //default options setup for SidechainMinMover
 void SidechainMinMover::set_default()
 {
-	if(update_movemap_){
+	if ( update_movemap_ ) {
 		movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
 		movemap_->set_chi( true );
 	}
@@ -130,9 +130,9 @@ void SidechainMinMover::update_movemap( core::pose::Pose & pose)
 {
 	movemap_->set_chi( true );
 	if ( task_factory() ) task_ = task_factory()->create_task_and_apply_taskoperations( pose );
-	if ( task_ ){
-		for(Size i = 1; i <= pose.total_residue(); i++){
-			if (!task_->nonconst_residue_task(i).being_packed()) movemap_->set_chi(i, false);
+	if ( task_ ) {
+		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+			if ( !task_->nonconst_residue_task(i).being_packed() ) movemap_->set_chi(i, false);
 		}
 	}
 }
@@ -141,7 +141,7 @@ void SidechainMinMover::update_movemap( core::pose::Pose & pose)
 void SidechainMinMover::apply( core::pose::Pose & pose )
 {
 	//runtime_assert(pose.is_fullatom());
-	if(update_movemap_) update_movemap( pose );
+	if ( update_movemap_ ) update_movemap( pose );
 	minmover_->apply( pose );
 }
 
@@ -195,15 +195,15 @@ InterfaceSidechainMinMover::apply( core::pose::Pose & pose )
 	Size cutpoint ( pose.fold_tree().cutpoint_by_jump( movable_jumps()[1] ) );
 
 	//set move map for interface residues only
-	if ( !( tf2() )->get_norepack1() ){
-		for(core::Size i = 1; i <= cutpoint; i++){
-			if (interface_->is_interface(i)) movemap_->set_chi(i, true);
+	if ( !( tf2() )->get_norepack1() ) {
+		for ( core::Size i = 1; i <= cutpoint; i++ ) {
+			if ( interface_->is_interface(i) ) movemap_->set_chi(i, true);
 		}
 	}
 
-	if ( !( tf2() )->get_norepack2() ){
-		for(core::Size i = cutpoint+1; i <= pose.total_residue(); i++){
-			if (interface_->is_interface(i)) movemap_->set_chi(i, true);
+	if ( !( tf2() )->get_norepack2() ) {
+		for ( core::Size i = cutpoint+1; i <= pose.total_residue(); i++ ) {
+			if ( interface_->is_interface(i) ) movemap_->set_chi(i, true);
 		}
 	}
 

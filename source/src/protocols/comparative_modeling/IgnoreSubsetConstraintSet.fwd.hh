@@ -20,10 +20,10 @@
 namespace protocols {
 namespace comparative_modeling {
 
-	//forward declarations
-	class IgnoreSubsetConstraintSet;
-	typedef utility::pointer::shared_ptr< IgnoreSubsetConstraintSet > IgnoreSubsetConstraintSetOP;
-	typedef utility::pointer::shared_ptr< IgnoreSubsetConstraintSet const> IgnoreSubsetConstraintSetCOP;
+//forward declarations
+class IgnoreSubsetConstraintSet;
+typedef utility::pointer::shared_ptr< IgnoreSubsetConstraintSet > IgnoreSubsetConstraintSetOP;
+typedef utility::pointer::shared_ptr< IgnoreSubsetConstraintSet const> IgnoreSubsetConstraintSetCOP;
 
 }
 }

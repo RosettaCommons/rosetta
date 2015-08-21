@@ -93,8 +93,8 @@ CoordinateConstraint::clone( core::scoring::func::FuncOP newfunc ) const
 void CoordinateConstraint::show( std::ostream& out ) const
 {
 	out << "CoordinateConstraint ("
-			<< atom_.atomno() << "," << atom_.rsd() << "-"
-			<< fixed_atom_.atomno() << "," << fixed_atom_.rsd() << ")" << std::endl;
+		<< atom_.atomno() << "," << atom_.rsd() << "-"
+		<< fixed_atom_.atomno() << "," << fixed_atom_.rsd() << ")" << std::endl;
 	func_->show( out );
 }
 
@@ -113,12 +113,12 @@ CoordinateConstraint::show_violations(
 	Size verbose_level,
 	Real threshold
 ) const{
-  if ( verbose_level > 80 ) {
-    out << "CoordConstraint ("
-		<< pose.residue_type(atom_.rsd() ).atom_name( atom_.atomno() )
-		<< ":" << atom_.atomno() << "," << atom_.rsd() << " ) ";
-  }
-  return func_->show_violations( out, dist( pose ), verbose_level, threshold );
+	if ( verbose_level > 80 ) {
+		out << "CoordConstraint ("
+			<< pose.residue_type(atom_.rsd() ).atom_name( atom_.atomno() )
+			<< ":" << atom_.atomno() << "," << atom_.rsd() << " ) ";
+	}
+	return func_->show_violations( out, dist( pose ), verbose_level, threshold );
 }
 
 
@@ -128,7 +128,7 @@ CoordinateConstraint::show_violations(
 /// to the new object. Intended to be implemented by derived classes.
 ConstraintOP CoordinateConstraint::remapped_clone( pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP smap ) const {
 	id::NamedAtomID atom1( atom_id_to_named_atom_id( atom(1), src ) );
-  id::NamedAtomID atom2( atom_id_to_named_atom_id( atom(2), src ) );
+	id::NamedAtomID atom2( atom_id_to_named_atom_id( atom(2), src ) );
 
 	if ( smap ) {
 		atom1.rsd() = (*smap)[ atom(1).rsd() ];
@@ -139,7 +139,7 @@ ConstraintOP CoordinateConstraint::remapped_clone( pose::Pose const& src, pose::
 	id::AtomID id1( named_atom_id_to_atom_id( atom1, dest, false /*raise exception*/ ) );
 	id::AtomID id2( named_atom_id_to_atom_id( atom2, dest, false /*raise exception*/ ) );
 
-	//	if ( atom(1) != id1 ) tr << "REMAPPING: " << atom(1) << " to " << id1 << std::endl;
+	// if ( atom(1) != id1 ) tr << "REMAPPING: " << atom(1) << " to " << id1 << std::endl;
 
 	if ( id1.valid() && id2.valid() ) {
 		return ConstraintOP( new CoordinateConstraint( id1, id2, xyz_target_, func_, score_type() ) );
@@ -202,11 +202,11 @@ core::id::AtomID const &
 CoordinateConstraint::atom( Size const n ) const
 {
 	switch( n ) {
-	case 1:
+	case 1 :
 		return atom_;
-	case 2:
+	case 2 :
 		return fixed_atom_;
-	default:
+	default :
 		utility_exit_with_message( "CoordinateConstraint::atom() bad argument" );
 	}
 	return atom_;
@@ -215,9 +215,9 @@ CoordinateConstraint::atom( Size const n ) const
 
 Real
 CoordinateConstraint::dist( pose::Pose const & pose ) const {
-  conformation::Conformation const & conformation( pose.conformation() );
-  Vector const & xyz( conformation.xyz( atom_ ) );
-  return xyz.distance( xyz_target_ );
+	conformation::Conformation const & conformation( pose.conformation() );
+	Vector const & xyz( conformation.xyz( atom_ ) );
+	return xyz.distance( xyz_target_ );
 }
 
 ConstraintOP
@@ -225,19 +225,19 @@ CoordinateConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) con
 {
 
 	if ( seqmap[atom_.rsd()] != 0 && seqmap[fixed_atom_.rsd()] != 0 ) {
-    AtomID remap_a( atom_.atomno(), seqmap[atom_.rsd()] ),
-      remap_fa( fixed_atom_.atomno(), seqmap[fixed_atom_.rsd()] );
-    return ConstraintOP( new CoordinateConstraint( remap_a, remap_fa, xyz_target_, this->func_, score_type() ) );
-  } else {
-    return NULL;
-  }
+		AtomID remap_a( atom_.atomno(), seqmap[atom_.rsd()] ),
+			remap_fa( fixed_atom_.atomno(), seqmap[fixed_atom_.rsd()] );
+		return ConstraintOP( new CoordinateConstraint( remap_a, remap_fa, xyz_target_, this->func_, score_type() ) );
+	} else {
+		return NULL;
+	}
 
 }
 
 void
 CoordinateConstraint::steal_def( pose::Pose const& pose ) {
 	conformation::Conformation const & conformation( pose.conformation() );
-  xyz_target_ = conformation.xyz( atom_ );
+	xyz_target_ = conformation.xyz( atom_ );
 }
 
 /// @details one line definition "CoordinateConstraint Atom1_Name Atom1_ResNum Atom2_Name Atom2_ResNum Atom1_target_X_coordinate Atom1_target_Y_coordinate Atom1_target_Z_coordinate func::Func_Type func::Func_Def"
@@ -265,7 +265,7 @@ CoordinateConstraint::read_def(
 
 	tr.Debug << "read: " << name1 << " " << name2 << " " << res1 << " " << res2 << " func: " << func_type << std::endl;
 	if ( res1 > pose.total_residue() || res2 > pose.total_residue() ) {
-		tr.Warning 	<< "ignored constraint (no such atom in pose!)"
+		tr.Warning  << "ignored constraint (no such atom in pose!)"
 			<< name1 << " " << name2 << " " << res1 << " " << res2 << std::endl;
 		data.setstate( std::ios_base::failbit );
 		return;
@@ -277,16 +277,16 @@ CoordinateConstraint::read_def(
 		tr.Warning << "Error reading atoms: read in atom names("
 			<< name1 << "," << name2 << "), "
 			<< "and found AtomIDs (" << atom_ << "," << fixed_atom_ << ")" << std::endl;
-			data.setstate( std::ios_base::failbit );
-			return;
+		data.setstate( std::ios_base::failbit );
+		return;
 	}
 
 	func_ = func_factory.new_func( func_type );
 	func_->read_data( data );
 
 	if ( data.good() ) {
-	//chu skip the rest of line since this is a single line defintion.
-		while( data.good() && (data.get() != '\n') ) {}
+		//chu skip the rest of line since this is a single line defintion.
+		while ( data.good() && (data.get() != '\n') ) {}
 		if ( !data.good() ) data.setstate( std::ios_base::eofbit );
 	}
 
@@ -299,15 +299,15 @@ CoordinateConstraint::read_def(
 bool
 CoordinateConstraint::operator == ( Constraint const & other_cst ) const
 {
-	if( !dynamic_cast< CoordinateConstraint const * > ( &other_cst ) ) return false;
+	if ( !dynamic_cast< CoordinateConstraint const * > ( &other_cst ) ) return false;
 
 	CoordinateConstraint const & other( static_cast< CoordinateConstraint const & > (other_cst) );
 
-	if( atom_ != other.atom_ ) return false;
-	if( fixed_atom_ != other.fixed_atom_ ) return false;
-	if( func_ != other.func_ ) return false;
-	if(xyz_target_ != other.xyz_target_ ) return false;
-	if( this->score_type() != other.score_type() ) return false;
+	if ( atom_ != other.atom_ ) return false;
+	if ( fixed_atom_ != other.fixed_atom_ ) return false;
+	if ( func_ != other.func_ ) return false;
+	if ( xyz_target_ != other.xyz_target_ ) return false;
+	if ( this->score_type() != other.score_type() ) return false;
 
 	return true;
 }

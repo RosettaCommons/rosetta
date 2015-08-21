@@ -29,4 +29,4 @@ typedef utility::pointer::shared_ptr< StoreCombinedStoredTasksMover const > Stor
 } // toolbox
 } // protocols
 
-#endif 
+#endif

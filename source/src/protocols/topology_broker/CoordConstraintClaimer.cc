@@ -152,7 +152,7 @@ void CoordConstraintClaimer::read_cst_pose() {
 }
 
 void CoordConstraintClaimer::add_constraints( core::pose::Pose& pose ) const {
-	//	Size new_root;
+	// Size new_root;
 
 	std::string const new_sequence ( pose.annotated_sequence( true ) );
 	bool fullatom( pose.is_fullatom() );
@@ -162,12 +162,14 @@ void CoordConstraintClaimer::add_constraints( core::pose::Pose& pose ) const {
 	if ( !fullatom && !bCentroid_ ) return;
 
 	/// new sequence ? --- re-configure constraints ( atomnumbers! )
- 	if ( sequence_ != new_sequence ) {
+	if ( sequence_ != new_sequence ) {
 		tr.Debug << "new sequence -- remap constraints " << std::endl;
 
 		/// we should have a cst_pose_ now
-		if ( !cst_pose_ ) throw EXCN_Input( "CoordConstraintClaimer::add_constraints(): "
-			 "in broker setup either provide PDB_FILE or set CST_FROM_INPUT_POSE");
+		if ( !cst_pose_ ) {
+			throw EXCN_Input( "CoordConstraintClaimer::add_constraints(): "
+				"in broker setup either provide PDB_FILE or set CST_FROM_INPUT_POSE");
+		}
 
 		//constraints_ should be defined, since new_decoy()
 		runtime_assert( constraints_ != 0 );
@@ -228,7 +230,7 @@ void CoordConstraintClaimer::generate_constraints( pose::Pose const& cst_pose ) 
 
 	//go thru regions and generate constraints
 	for ( loops::Loops::const_iterator it = rigid.begin(), eit = rigid.end();
-				it!=eit; ++it ) {
+			it!=eit; ++it ) {
 		for ( Size pos = it->start(); pos <= it->stop(); ++pos ) {
 
 			//generate constraint for ( CA, pos )
@@ -236,41 +238,41 @@ void CoordConstraintClaimer::generate_constraints( pose::Pose const& cst_pose ) 
 			id::AtomID cst_atomID( cst_pose.residue_type(pos).atom_index("CA"), pos );
 			id::StubID cst_fix_stub_ID( pose::named_stub_id_to_stub_id( id::NamedStubID( "N","CA","C", root_ ), cst_pose ) );
 			Vector ai(
-						 numeric::random::rg().uniform()*perturb_,
-						 numeric::random::rg().uniform()*perturb_,
-						 numeric::random::rg().uniform()*perturb_
+				numeric::random::rg().uniform()*perturb_,
+				numeric::random::rg().uniform()*perturb_,
+				numeric::random::rg().uniform()*perturb_
 			);
 			Vector xyz( rsd.xyz( cst_atomID.atomno() ) + ai );
 			if ( bLocal_ ) {
 				constraints_->add_constraint( ConstraintCOP( ConstraintOP( new scoring::constraints::LocalCoordinateConstraint(
-  													 cst_atomID,
-														 cst_fix_stub_ID,
-														 xyz,
-														 cst_func_) ) )	);
+					cst_atomID,
+					cst_fix_stub_ID,
+					xyz,
+					cst_func_) ) ) );
 
 			} else {
 				constraints_->add_constraint( ConstraintCOP( ConstraintOP( new scoring::constraints::CoordinateConstraint(
-  													 cst_atomID,
-	    											 id::AtomID( 1, root_ ) /*this is completely ignored! */,
-														 xyz,
-														 cst_func_) ) )	);
+					cst_atomID,
+					id::AtomID( 1, root_ ) /*this is completely ignored! */,
+					xyz,
+					cst_func_) ) ) );
 			}
 		}
 
 	}
 	if ( tr.Debug.visible() ) {
-			tr.Debug << "CoordConstraintClaimer generate constraints" << std::endl;
-			constraints_->show_definition( std::cout, cst_pose );
+		tr.Debug << "CoordConstraintClaimer generate constraints" << std::endl;
+		constraints_->show_definition( std::cout, cst_pose );
 	}
 }
 
 void CoordConstraintClaimer::read_constraints_from_file( pose::Pose const& cst_pose ) const {
 	constraints_ = ConstraintIO::get_instance()->read_constraints(
-										cst_filename_,	ConstraintSetOP( new ConstraintSet ), cst_pose	);
+		cst_filename_, ConstraintSetOP( new ConstraintSet ), cst_pose );
 
 	if ( tr.Debug.visible() ) {
-			tr.Debug << "CoordConstraintClaimer: have read constraints from file:" << std::endl;
-			constraints_->show_definition( std::cout, cst_pose );
+		tr.Debug << "CoordConstraintClaimer: have read constraints from file:" << std::endl;
+		constraints_->show_definition( std::cout, cst_pose );
 	}
 }
 
@@ -300,7 +302,7 @@ void CoordConstraintClaimer::superimpose( pose::Pose const& pose ) const {
 	}
 
 	for ( ConstraintCOPs::const_iterator it = all_cst.begin(), eit = all_cst.end(); it!=eit; ++it, ++n ) {
-		//		ConstraintOP new_cst = (*it)->clone();
+		//  ConstraintOP new_cst = (*it)->clone();
 		LocalCoordinateConstraintCOP ll_cst = utility::pointer::dynamic_pointer_cast< LocalCoordinateConstraint const > ( *it );
 		runtime_assert( ll_cst != 0 ); //only these should be in the constraint set!
 		Vector xyz_ref( pose.xyz( ll_cst->atom( 1 ) ) );
@@ -316,18 +318,18 @@ void CoordConstraintClaimer::superimpose( pose::Pose const& pose ) const {
 	//fitting
 	FArray1D_double transvec( 3 );
 	FArray1D_double ref_transvec( 3 );
-//  	if ( tr.Trace.visible() ) { //if uncommented use test_n instead of n for filling of coordinates -- only works if all residues have a xzy!
-//  		toolbox::dump_as_pdb( "cst_xyz_before_fit.pdb", natoms, coords );
-//  		toolbox::dump_as_pdb( "cst_ref_fit.pdb", natoms, ref_coords );
-//  	};
+	//   if ( tr.Trace.visible() ) { //if uncommented use test_n instead of n for filling of coordinates -- only works if all residues have a xzy!
+	//    toolbox::dump_as_pdb( "cst_xyz_before_fit.pdb", natoms, coords );
+	//    toolbox::dump_as_pdb( "cst_ref_fit.pdb", natoms, ref_coords );
+	//   };
 
 	toolbox::reset_x( natoms, coords, weights, transvec );
-  toolbox::reset_x( natoms, ref_coords, weights, ref_transvec );
+	toolbox::reset_x( natoms, ref_coords, weights, ref_transvec );
 	toolbox::Matrix R;
 	toolbox::fit_centered_coords( natoms, weights, ref_coords, coords, R );
-//  	if ( tr.Trace.visible() ) {
-//  		toolbox::dump_as_pdb( "cst_xyz_after_fit.pdb", natoms, coords, -ref_transvec );
-//  	};
+	//   if ( tr.Trace.visible() ) {
+	//    toolbox::dump_as_pdb( "cst_xyz_after_fit.pdb", natoms, coords, -ref_transvec );
+	//   };
 
 	//filling xyz_constraints with new coords
 	n = 1;
@@ -335,7 +337,7 @@ void CoordConstraintClaimer::superimpose( pose::Pose const& pose ) const {
 		ConstraintOP new_cst = (*it)->clone();
 		LocalCoordinateConstraintOP ll_cst = utility::pointer::dynamic_pointer_cast< core::scoring::constraints::LocalCoordinateConstraint > ( new_cst );
 		Vector xyz_cst;
-		//		n = ll_cst->atom( 1 ).rsd();
+		//  n = ll_cst->atom( 1 ).rsd();
 		for ( Size d=1; d<=3; ++d ) {
 			xyz_cst( d ) = coords( d, n ) - ref_transvec( d );
 		}
@@ -347,12 +349,12 @@ void CoordConstraintClaimer::superimpose( pose::Pose const& pose ) const {
 
 /// @detail read setup file
 /*
-	PDB_FILE   cst_pose
-	CST_FILE   definition of CoordinateConstraints: which atoms, which potential
-	LABEL      some name --- not important
-	ROOT        where to put the reference atom
-	CST_FROM_INPUT_POSE take cst-xyz from threading model, or silent-in model
-	POTENTIAL   a cst-func, e.g., BOUNDED 0 0 4
+PDB_FILE   cst_pose
+CST_FILE   definition of CoordinateConstraints: which atoms, which potential
+LABEL      some name --- not important
+ROOT        where to put the reference atom
+CST_FROM_INPUT_POSE take cst-xyz from threading model, or silent-in model
+POTENTIAL   a cst-func, e.g., BOUNDED 0 0 4
 */
 void CoordConstraintClaimer::set_defaults() {
 	Parent::set_defaults();
@@ -384,7 +386,7 @@ bool CoordConstraintClaimer::read_tag( std::string tag, std::istream& is ) {
 		is >> file;
 		std::ifstream infile( file.c_str() );
 
-		if (!infile.good()) {
+		if ( !infile.good() ) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
 		}
 		loops::SerializedLoopList loops = loop_file_reader.read_pose_numbered_loops_file( is, file, strict );
@@ -399,7 +401,7 @@ bool CoordConstraintClaimer::read_tag( std::string tag, std::istream& is ) {
 		bRegenerateFromInputPose_ = true;
 	} else if ( tag == "USE_XYZ_FROM_CSTFILE" ) { // I made this an explicit option, since it is probably often a bad choice!
 		bUseXYZ_in_cstfile_ = true;
- 	} else if ( tag == "NO_CENTROID" ) {
+	} else if ( tag == "NO_CENTROID" ) {
 		bCentroid_ = false;
 	} else if ( tag == "FULLATOM" ) {
 		bFullatom_ = true;
@@ -415,7 +417,7 @@ bool CoordConstraintClaimer::read_tag( std::string tag, std::istream& is ) {
 		is >> file;
 		std::ifstream infile( file.c_str() );
 
-		if (!infile.good()) {
+		if ( !infile.good() ) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
 		}
 		loops::SerializedLoopList loops = loop_file_reader.read_pose_numbered_loops_file( infile, file, strict );
@@ -434,7 +436,7 @@ void CoordConstraintClaimer::init_after_reading() {
 		if ( cst_filename_ != "NoFile" ) {
 			read_constraints_from_file( *cst_pose_ );
 		} else {
-			if ( !cst_func_) {
+			if ( !cst_func_ ) {
 				throw EXCN_Input( "POTENTIAL not specified for " + type() );
 			}
 			generate_constraints( *cst_pose_ );

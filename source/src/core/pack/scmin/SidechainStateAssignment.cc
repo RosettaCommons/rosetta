@@ -35,12 +35,12 @@ SidechainStateAssignment::SidechainStateAssignment( Size nmoltenres ) :
 {}
 
 SidechainStateAssignment::SidechainStateAssignment( SidechainStateAssignment const & src ) :
-		utility::pointer::ReferenceCount(src),
-		nmoltenres_( src.nmoltenres_ ),
-		state_assignments_( src.state_assignments_ ),
-		original_rotamer_id_( src.original_rotamer_id_ ),
-		energy_( src.energy_ ),
-		n_unassigned_( src.n_unassigned_ )
+	utility::pointer::ReferenceCount(src),
+	nmoltenres_( src.nmoltenres_ ),
+	state_assignments_( src.state_assignments_ ),
+	original_rotamer_id_( src.original_rotamer_id_ ),
+	energy_( src.energy_ ),
+	n_unassigned_( src.n_unassigned_ )
 {}
 
 SidechainStateAssignment const &
@@ -68,9 +68,9 @@ SidechainStateAssignment::assign_state(
 	Size orig_rotid
 )
 {
-debug_assert( orig_rotid != 0 );
+	debug_assert( orig_rotid != 0 );
 	if ( original_rotamer_id_[ moltenresid ] == 0 ) {
-	debug_assert( n_unassigned_ > 0 );
+		debug_assert( n_unassigned_ > 0 );
 		--n_unassigned_;
 	}
 	original_rotamer_id_[ moltenresid ] = orig_rotid;

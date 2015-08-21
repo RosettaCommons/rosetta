@@ -28,27 +28,27 @@
 namespace protocols {
 namespace antibody {
 namespace constraints {
-	
-///@brief Add SiteConstraints from the Epitope to the Paratope and from the Paratope to the Epitope. 
+
+///@brief Add SiteConstraints from the Epitope to the Paratope and from the Paratope to the Epitope.
 /// Will only add the constraint if not already present.
 ///@details
 /// If no paratope interface residues are given, detects the epitope at 10 A from antibody chain(s).
 /// Optionally constrain to paratope CDRs or a specific set of paratope residues.
-/// Uses a Linear Harmonic at 0, 1, 10 by default.  Which means epitope will have penalty at greater than 10 A. 
+/// Uses a Linear Harmonic at 0, 1, 10 by default.  Which means epitope will have penalty at greater than 10 A.
 /// Linear Harmonic distance tolerance (last number) is set at the interface distance.
 ///
 class ParatopeEpitopeSiteConstraintMover : public protocols::moves::Mover {
-		
-	
+
+
 public:
-	
+
 	ParatopeEpitopeSiteConstraintMover();
 	ParatopeEpitopeSiteConstraintMover(AntibodyInfoCOP ab_info);
 	ParatopeEpitopeSiteConstraintMover(AntibodyInfoCOP ab_info, utility::vector1<CDRNameEnum> paratope_cdrs);
 	ParatopeEpitopeSiteConstraintMover(AntibodyInfoCOP ab_info, utility::vector1<CDRNameEnum> paratope_cdrs, utility::vector1<bool> epitope_residues);
-	
+
 	~ParatopeEpitopeSiteConstraintMover();
-	
+
 	virtual void
 	parse_my_tag(
 		TagCOP tag,
@@ -57,86 +57,86 @@ public:
 		moves::Movers_map const & movers,
 		Pose const & pose
 	);
-	
+
 	void
 	apply(core::pose::Pose & pose);
-	
+
 	void
 	remove(core::pose::Pose & pose);
-	
+
 	//void
 	//remove(core::pose::Pose & pose, core::Size resnum);
-	
+
 	void
 	constrain_to_paratope_cdrs(utility::vector1<CDRNameEnum> const & paratope_cdrs);
-	
+
 	void
 	constrain_to_paratope_cdrs(utility::vector1<bool> const & paratope_cdrs);
-	
-	
+
+
 	void
 	constrain_to_paratope_residues(utility::vector1<bool> const & paratope_residues);
-	
+
 	///@Brief Manually set the epitope residues via PDB Numbering
 	void
 	constrain_to_epitope_residues(utility::vector1<design::PDBNumbering> const & epitope_residues, core::pose::Pose const & pose);
-	
+
 	///@Brief Manually set the epitope residues via pose Numbering
 	void
 	constrain_to_epitope_residues(utility::vector1<bool> const & epitope_residues);
-	
-	
+
+
 	void
 	set_constraint_func(core::scoring::func::FuncOP constraint_func);
-	
-	
+
+
 	///@brief The interface distance for antigen epitope auto-detection and the distance at which the default
 	///  at which the default flat-harmonic constraint will give a penalty.  10A default.
 	void
 	set_interface_distance(core::Real const distance);
-	
+
 	void
 	set_defaults();
-	
+
 	std::string
 	get_name() const {
 		return "ParatopeEpitopeSiteConstraintMover";
 	}
-	
+
 	utility::vector1<bool>
 	get_epitope_residues() const {
 		return epitope_residues_;
 	}
-	
-private:
-	
 
-	
+private:
+
+
+
 	core::scoring::constraints::SiteConstraintOP
 	setup_constraints(core::pose::Pose const & pose, core::Size residue, utility::vector1<bool> const & residues) const;
-	
+
 	utility::vector1<bool>
 	paratope_residues_from_cdrs(core::pose::Pose const & pose, utility::vector1<bool> const & paratope_cdrs) const;
-	
+
 private:
-	
+
 	AntibodyInfoCOP ab_info_;
 	utility::vector1<bool> paratope_residues_;
 	utility::vector1<bool> epitope_residues_;
 	utility::vector1<bool> paratope_cdrs_;
-	
+
 	//std::map< core::Size, vector1<core::scoring::constraints::AmbiguousConstraintOP > > constraint_map_;
 	core::scoring::func::FuncOP current_func_;
-	
+
 	core::Real interface_distance_;
-	
-	
+
+
 };
-	
-	
+
+
 }
 }
 }
 
-#endif	//#ifndef INCLUDED_protocols/antibody_design_ParatopeEpitopeSiteConstraintMover_HH
+#endif //#ifndef INCLUDED_protocols/antibody_design_ParatopeEpitopeSiteConstraintMover_HH
 

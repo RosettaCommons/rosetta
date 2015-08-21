@@ -49,7 +49,7 @@ void BigBinConstraint::read_def(
 ) {
 	my_csts_.clear();
 
-  using core::id::AtomID;
+	using core::id::AtomID;
 	using numeric::conversions::radians;
 	AtomID C0, N1, CA1, C1, N2, CA2;
 
@@ -57,7 +57,7 @@ void BigBinConstraint::read_def(
 	in >> dummy >> res_ >> bin_ >> sdev_;
 
 	//chu skip the rest of line since this is a single line defintion.
-	while( in.good() && (in.get() != '\n') ) {}
+	while ( in.good() && (in.get() != '\n') ) {}
 
 	if ( res_ > 1 && res_ < pose.total_residue() - 1 ) {
 		C0_  = AtomID(pose.residue_type(res_ - 1).atom_index("C" ), res_ - 1);
@@ -95,7 +95,7 @@ void BigBinConstraint::read_def(
 			phi_upper_ = radians(    0.0 );
 			psi_lower_ = radians(  -50.0 );
 			psi_upper_ = radians(  -30.0 );
-		} else if ( bin_ == 'B') {
+		} else if ( bin_ == 'B' ) {
 			phi_lower_ = radians( -180.0 );
 			phi_upper_ = radians(    0.0 );
 			psi_lower_ = radians(  100.0 );
@@ -108,13 +108,13 @@ void BigBinConstraint::read_def(
 
 		func::FuncOP phi_func( new PeriodicBoundFunc(
 			phi_lower_, phi_upper_, sdev_, "phi_" + string_of(bin_), two_pi
-		) );
+			) );
 		func::FuncOP psi_func( new PeriodicBoundFunc(
-				psi_lower_, psi_upper_, sdev_, "psi_" + string_of(bin_), two_pi
-		) );
+			psi_lower_, psi_upper_, sdev_, "psi_" + string_of(bin_), two_pi
+			) );
 		func::FuncOP omega_func( new PeriodicBoundFunc(
-				omega_lower_, omega_upper_, sdev_, "omega_" + string_of(bin_), two_pi
-		) );
+			omega_lower_, omega_upper_, sdev_, "omega_" + string_of(bin_), two_pi
+			) );
 
 		ConstraintOP phi_cst( new DihedralConstraint( C0_, N1_, CA1_, C1_, phi_func ) );
 		ConstraintOP psi_cst( new DihedralConstraint( N1_, CA1_, C1_, N2_, psi_func ) );

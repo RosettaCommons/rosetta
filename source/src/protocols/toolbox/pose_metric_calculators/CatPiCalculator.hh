@@ -18,7 +18,7 @@
 /// First, create the calculator. To do this, see below:
 /// core::pose::metrics::PoseMetricCalculatorOP cat_pi_calculator = new protocols::toolbox::pose_metric_calculators::SaltBridgeCalculator();
 /// Then you must register this so that the pose understands it. See below:
-///	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "cat_pi_metric", cat_pi_calculator );
+/// core::pose::metrics::CalculatorFactory::Instance().register_calculator( "cat_pi_metric", cat_pi_calculator );
 /// To actually get the metric, you have to print it. For example:
 /// core::pose::Pose pose;
 /// pose.print_metric("cat_pi_metric", "cat_pi")
@@ -42,10 +42,10 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
-                            // inherit from structure dependent calculator because this is a structure dependent calculator
+// inherit from structure dependent calculator because this is a structure dependent calculator
 class CatPiCalculator : public core::pose::metrics::StructureDependentCalculator{
 public:
 	//default constructor where distance_cutoff is = to 3.2
@@ -55,16 +55,16 @@ public:
 	CatPiCalculator(core::Real dist_cutoff);
 
 	core::pose::metrics::PoseMetricCalculatorOP clone() const {
-	    return core::pose::metrics::PoseMetricCalculatorOP( new CatPiCalculator( distance_cutoff_) ); };
+		return core::pose::metrics::PoseMetricCalculatorOP( new CatPiCalculator( distance_cutoff_) ); };
 
 private:
 	core::Real distance_cutoff_; //distance cutoff between the Hydrogen and Acceptor atoms. Default is 3.2
 	core::Size cat_pi_total_;
 
 protected:
-	  virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-	  virtual std::string print( std::string const & key ) const;
-	  virtual void recompute( core::pose::Pose const & this_pose );
+	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
+	virtual std::string print( std::string const & key ) const;
+	virtual void recompute( core::pose::Pose const & this_pose );
 
 };
 

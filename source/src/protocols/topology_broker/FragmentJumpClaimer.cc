@@ -123,8 +123,8 @@ void FragmentJumpClaimer::init_jumps() {
 	discard_jumps_ = false;
 	if ( bKeepJumpsFromInputPose_ && input_pose_.total_residue() > 0 ) {
 		tr.Info << type()
-						<< ": get jumps from input pose. use flag NO_USE_INPUT_POSE if you want to create new jumps "
-						<< std::endl;
+			<< ": get jumps from input pose. use flag NO_USE_INPUT_POSE if you want to create new jumps "
+			<< std::endl;
 		current_jumps_ = jumping::JumpSample( input_pose_.fold_tree() );
 		if ( current_jumps_.size() == 0 ) return;
 		std::set< Size > active_region;
@@ -136,7 +136,7 @@ void FragmentJumpClaimer::init_jumps() {
 			Size jump1( current_jumps_.jumps()( 1, i ) );
 			Size jump2( current_jumps_.jumps()( 2, i ) );
 			if ( active_region.find( jump1 ) != active_region.end()
-				&& active_region.find( jump2 ) != active_region.end() ) {
+					&& active_region.find( jump2 ) != active_region.end() ) {
 				++ct;
 				filtered_jumps( 1, ct ) =  jump1 < jump2 ? jump1 : jump2 ;
 				filtered_jumps( 2, ct ) =  jump1 < jump2 ? jump2 : jump1 ;
@@ -175,7 +175,7 @@ void FragmentJumpClaimer::init_jumps() {
 		current_jumps_.generate_jump_frames( jump_frames,mm );
 
 		for ( core::fragment::FrameList::iterator jump_frame = jump_frames.begin();
-					jump_frame != jump_frames.end(); ++jump_frame ) {
+				jump_frame != jump_frames.end(); ++jump_frame ) {
 			(*jump_frame)->steal( input_pose_ );
 		}
 
@@ -192,8 +192,8 @@ void FragmentJumpClaimer::init_jumps() {
 }
 
 void FragmentJumpClaimer::generate_claims( claims::DofClaims& new_claims,
-																					 std::string uplabel,
-																					 std::string downlabel ) {
+	std::string uplabel,
+	std::string downlabel ) {
 
 	if ( discard_jumps_ ) init_jumps();
 	// get flexible jumps ( beta-sheet stuff etc. )
@@ -219,7 +219,7 @@ void FragmentJumpClaimer::generate_claims( claims::DofClaims& new_claims,
 	}
 
 	Size nr_jumps = current_jumps_.size();
-	//	runtime_assert( jump_frags->nr_frames() == nr_jumps );
+	// runtime_assert( jump_frags->nr_frames() == nr_jumps );
 	for ( Size i = 1; i<=nr_jumps; ++i ) {
 		Size const up( current_jumps_.jumps()( 1, i ) );
 		Size const down( current_jumps_.jumps()( 2, i ) );
@@ -232,7 +232,7 @@ void FragmentJumpClaimer::generate_claims( claims::DofClaims& new_claims,
 		std::string up_atom( current_jumps_.jump_atoms()(1, i ) );
 		std::string down_atom( current_jumps_.jump_atoms()(2, i ) );
 		//now this assumes that we have the BB - Jump -  BB frags...
-		//	how about translating Fragments directly into Claims ???
+		// how about translating Fragments directly into Claims ???
 		fragment::FrameList frames;
 		jump_frags->frames( up, frames );
 		jump_frags->frames( down, frames );
@@ -247,10 +247,10 @@ void FragmentJumpClaimer::generate_claims( claims::DofClaims& new_claims,
 				kinematics::MoveMap bb_mm;
 				bb_mm.set_bb( false );
 				bb_mm.set_bb( up, true );
-				if ( 2 == (*it)->nr_res_affected( bb_mm ) ) 	new_claims.push_back( claims::DofClaimOP( new claims::BBClaim( get_self_weak_ptr(), local_up ) ) ); //up jump always counted
+				if ( 2 == (*it)->nr_res_affected( bb_mm ) )  new_claims.push_back( claims::DofClaimOP( new claims::BBClaim( get_self_weak_ptr(), local_up ) ) ); //up jump always counted
 				bb_mm.set_bb( down, true );
 				bb_mm.set_bb( up, false);
-				if ( 2 == (*it)->nr_res_affected( bb_mm ) ) 	new_claims.push_back( claims::DofClaimOP( new claims::BBClaim( get_self_weak_ptr(), local_dn ) ) ); //up jump always counted
+				if ( 2 == (*it)->nr_res_affected( bb_mm ) )  new_claims.push_back( claims::DofClaimOP( new claims::BBClaim( get_self_weak_ptr(), local_dn ) ) ); //up jump always counted
 				break;
 			}
 		}

@@ -12,16 +12,16 @@ class A : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~A();
-   A() : my_int_( ++instance_count_ ) {}
+	A() : my_int_( ++instance_count_ ) {}
 
-   void my_int( int setting )      { my_int_ = setting; }
+	void my_int( int setting )      { my_int_ = setting; }
 	int  my_int()             const { return my_int_; }
 
 private:
 
-   int my_int_;
+	int my_int_;
 
-   static int instance_count_;
+	static int instance_count_;
 
 };
 

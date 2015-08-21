@@ -39,9 +39,9 @@ namespace modeler {
 namespace rna {
 namespace helix {
 
-	// helper function -- which characters correspond to gaps?
-	bool
-	is_blank_seq( char const & c );
+// helper function -- which characters correspond to gaps?
+bool
+is_blank_seq( char const & c );
 
 /// @brief The RNA de novo structure modeling protocol
 class RNA_HelixAssembler: public protocols::moves::Mover {
@@ -159,15 +159,15 @@ private:
 
 	void
 	remove_first_base_pair( std::string & full_sequence,
-													std::map< Size, std::string > & non_standard_residues,
-													std::string & sequence_helix1,
-													std::string & sequence_helix2 ) const;
+		std::map< Size, std::string > & non_standard_residues,
+		std::string & sequence_helix1,
+		std::string & sequence_helix2 ) const;
 
 	void
 	remove_last_base_pair( std::string & full_sequence,
-												 std::map< Size, std::string > & non_standard_residues,
-												 std::string & sequence_helix1,
-												 std::string & sequence_helix2 ) const;
+		std::map< Size, std::string > & non_standard_residues,
+		std::string & sequence_helix1,
+		std::string & sequence_helix2 ) const;
 
 	core::conformation::ResidueOP
 	get_residue( std::string const & nt ) const;

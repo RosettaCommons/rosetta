@@ -27,7 +27,7 @@ namespace protocols {
 namespace antibody {
 namespace clusters {
 
-	
+
 /// @brief Simple class to hold and access CDRCluster info for a region of the pose.
 class CDRCluster : public utility::pointer::ReferenceCount {
 public:
@@ -39,58 +39,58 @@ public:
 		core::Size const start,
 		core::Real const distance,
 		bool cis_trans_match = true);
-	
+
 	CDRCluster(CDRCluster const & src);
-	
+
 	CDRClusterOP clone() const;
-	
+
 	virtual ~CDRCluster();
-	
+
 	CDRNameEnum
 	cdr() const { return cdr_; }
-	
+
 	CDRClusterEnum
 	cluster() const { return cluster_; }
-	
-	
+
+
 	/// @brief return Rosetta start that was used for construction
 	core::Size
 	start() const { return start_; }
-	
+
 	/// @brief return Rosetta end that was used for construction
 	core::Size
 	end() const { return end_; }
-	
-	
+
+
 	/// @brief return PDB start.  Useful for CDR length changes in other parts of the antibody when combined with numbering scheme ala AbInfo
 	core::Size
 	pdb_start() const { return pdb_start_; }
-	
+
 	/// @brief return PDB end.  Useful for CDR length changes in other parts of the antibody when combined with numbering scheme ala AbInfo
 	core::Size
 	pdb_end() const { return pdb_end_; }
-	
+
 	/// @brief return PDB chain
 	char
 	chain() const {return chain_;}
-	
-	
+
+
 	core::Real
 	distance() const { return distance_; }
-	
+
 	core::Real
 	length_normalized_distance() const { return normalized_distance_; }
-	
+
 	core::Real
 	normalized_distance_in_degrees() const;
-	
+
 	///@brief Does the closest cluster match at cis_trans positions?
 	/// Currently, this should always be True.
 	bool
 	cis_trans_match() const { return cis_trans_match_; }
-	
+
 private:
-	
+
 	void
 	set_pdb_numbering(core::pose::Pose const & pose, core::Size start, core::Size end);
 
@@ -98,28 +98,28 @@ private:
 
 	CDRNameEnum cdr_;
 	CDRClusterEnum cluster_;
-	
+
 	core::Real distance_;
 	core::Real normalized_distance_;
-	
+
 	core::Size pdb_start_;
 	core::Size pdb_end_;
 	char pdb_start_insertion_code_;
 	char pdb_end_insertion_code_;
-	
+
 	core::Size start_;
 	core::Size end_;
-	
+
 	core::Size length_;
 	char chain_;
-	
+
 	bool cis_trans_match_;
-	
+
 };
-	
+
 }
 }
 }
 
-#endif	//#ifndef INCLUDED_protocols/antibody_design_CDRCLUSTER_HH
+#endif //#ifndef INCLUDED_protocols/antibody_design_CDRCLUSTER_HH
 

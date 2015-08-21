@@ -42,7 +42,7 @@ get_resnum( utility::tag::TagCOP tag_ptr, core::pose::Pose const & pose, std::st
 ///     in the pose). These have the form [0-9]+
 ///   - PDB numbers. These have the form [0-9]+[A-Z], where the trailing letter
 ///     is the chain ID.
-///		- Reference pose numbers.  These have the form refpose([refpose name], [refpose number]).
+///  - Reference pose numbers.  These have the form refpose([refpose name], [refpose number]).
 /// In addition, relative numbers are permitted (of the form +[number] or -[number]) in conjunction
 /// with reference pose numbering.  For example, one might say "refpose(state1,17)+3", which means
 /// three residues past the residue correpsonding to residue 17 in the reference pose called "state1".

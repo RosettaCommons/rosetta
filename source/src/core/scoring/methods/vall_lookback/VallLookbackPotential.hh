@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/VallLookbackPotenial.fwd 
+/// @file   core/scoring/methods/VallLookbackPotenial.fwd
 /// @brief  threshold based distance metric that measures from any fragment to the structure in the vall
 /// @author TJ Brunette (tjbrunette@gmail.com)
 
@@ -32,20 +32,20 @@ using core::Real;
 namespace core {
 namespace scoring {
 namespace methods {
-    class VallLookbackPotential: public utility::pointer::ReferenceCount {
+class VallLookbackPotential: public utility::pointer::ReferenceCount {
 public:
-    VallLookbackPotential();
-    Real lookback(pose::Pose & pose, Size resid) const; //note only reports rmsd if above threshold. 
-    Real lookback(const pose::Pose & pose, Size resid) const;  //const by only using the datacache object if it exists.
-    Real lookbackRegion(pose::Pose & pose, Size startRes, Size endRes) const;
-    Real lookbackRegion(const pose::Pose & pose, Size startRes, Size endRes) const;
-    Real lookback(pose::Pose & pose) const; //note only reports rmsd if above threshold. 
-    Real lookback(const pose::Pose & pose) const; //note only reports rmsd if above threshold. 
-    Size fragLengthInDB() const;
+	VallLookbackPotential();
+	Real lookback(pose::Pose & pose, Size resid) const; //note only reports rmsd if above threshold.
+	Real lookback(const pose::Pose & pose, Size resid) const;  //const by only using the datacache object if it exists.
+	Real lookbackRegion(pose::Pose & pose, Size startRes, Size endRes) const;
+	Real lookbackRegion(const pose::Pose & pose, Size startRes, Size endRes) const;
+	Real lookback(pose::Pose & pose) const; //note only reports rmsd if above threshold.
+	Real lookback(const pose::Pose & pose) const; //note only reports rmsd if above threshold.
+	Size fragLengthInDB() const;
 private:
-    Real lookback_db(pose::Pose & pose, Size resid) const;
-    Real lookback_db(const pose::Pose & pose, Size resid) const;
-    std::map<Size, core::indexed_structure_store::FragmentStoreOP> abegoHashedFragmentStore_;
+	Real lookback_db(pose::Pose & pose, Size resid) const;
+	Real lookback_db(const pose::Pose & pose, Size resid) const;
+	std::map<Size, core::indexed_structure_store::FragmentStoreOP> abegoHashedFragmentStore_;
 };
 }// end methods
 }// end scoring

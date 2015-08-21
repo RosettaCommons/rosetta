@@ -59,7 +59,7 @@ void MultiStateEntity::show( std::ostream & os ) const
 		os << " " << (*it)->to_string();
 	}
 	os << " and fitness " << F(6,3,this->fitness());
-	for (core::Size i = 1; i <= single_state_entity_data_.size(); ++i) {
+	for ( core::Size i = 1; i <= single_state_entity_data_.size(); ++i ) {
 		os << '\n' << " SingleState " << i << " with fitness: " << single_state_entity_data_[i].fitness();
 	}
 }
@@ -73,7 +73,7 @@ MultiStateEntity::write_checkpoint(
 	protocols::genetic_algorithm::Entity::write_checkpoint(os);
 
 	os << " states " << single_state_entity_data_.size();
-	for (core::Size i = 1; i <= single_state_entity_data_.size(); ++i) {
+	for ( core::Size i = 1; i <= single_state_entity_data_.size(); ++i ) {
 		os << "\n ";
 		single_state_entity_data_[i].write_checkpoint(os);
 	}
@@ -84,18 +84,18 @@ MultiStateEntity::read_checkpoint(
 	std::istream & is
 )
 {
-	if (!protocols::genetic_algorithm::Entity::read_checkpoint(is)) return false;
+	if ( !protocols::genetic_algorithm::Entity::read_checkpoint(is) ) return false;
 
 	std::string word;
-	if (!(is >> word)) return false;
-	if (word != "states") return false;
+	if ( !(is >> word) ) return false;
+	if ( word != "states" ) return false;
 
 	core::Size num_states;
-	if (!(is >> num_states)) return false;
+	if ( !(is >> num_states) ) return false;
 	single_state_entity_data_.resize(num_states);
 
-	for (core::Size i = 1; i <= single_state_entity_data_.size(); ++i) {
-		if (!single_state_entity_data_[i].read_checkpoint(is)) return false;
+	for ( core::Size i = 1; i <= single_state_entity_data_.size(); ++i ) {
+		if ( !single_state_entity_data_[i].read_checkpoint(is) ) return false;
 	}
 
 	return true;

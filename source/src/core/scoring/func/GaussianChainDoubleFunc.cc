@@ -31,8 +31,8 @@ namespace scoring {
 namespace func {
 
 GaussianChainDoubleFunc::GaussianChainDoubleFunc( Real const gaussian_variance,
-																									Real const loop_fixed_cost,
-																									Real const D2 ):
+	Real const loop_fixed_cost,
+	Real const D2 ):
 	gaussian_variance_( gaussian_variance ),
 	loop_fixed_cost_( loop_fixed_cost ),
 	D2_( D2 )

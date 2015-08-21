@@ -59,26 +59,26 @@ ResidueType const & get_chiral_residue_type( ResidueType const & rt, Chirality c
 	//kdrew: first letters of a residuetype name (before '_p') are the letter code for the aa and is what is stored in the map
 	//std::string base_name;
 	//std::string patch_name;
-	
+
 	//kdrew: use for finding base_name instead of substr
 	std::string const base_name( residue_type_base_name( rt ) );
 	std::string const patch_name( residue_type_all_patches_name( rt ) );
 	TR << "base_name: " << base_name << " patch_name: " << patch_name << std::endl;
-	
+
 	//kdrew: is residuetype patched?
-	//Size base_end_pos = rt.name().find("_p");	
+	//Size base_end_pos = rt.name().find("_p");
 	//TR << "base_end_pos: " << base_end_pos << std::endl;
 	//if( base_end_pos != std::string::npos )
 	//{
-	//	base_name = rt.name().substr( 0, base_end_pos );
-	//	//kdrew: the remaining porition of the string is the patch, reapply this porition to the end of the mapped string
-	//	patch_name = rt.name().substr( base_end_pos, rt.name().size() );
+	// base_name = rt.name().substr( 0, base_end_pos );
+	// //kdrew: the remaining porition of the string is the patch, reapply this porition to the end of the mapped string
+	// patch_name = rt.name().substr( base_end_pos, rt.name().size() );
 	//}
 	////kdrew: if not patched just use the residuetype name
 	//else
 	//{
-	//	base_name = rt.name();
-	//	patch_name = "";
+	// base_name = rt.name();
+	// patch_name = "";
 	//}
 
 	TR << "restype: " << rt.name() << " " << rt.aa() << std::endl;
@@ -134,16 +134,14 @@ void ChiralMover::apply( core::pose::Pose & pose )
 	AtomID const atom4( rtype.atom_index( "O" ), chiral_seq_pos_ );
 
 	Real pseudo_psi = 0.0;
-	if( rtype.is_upper_terminus() )
-	{
-    	pseudo_psi = pose.conformation().torsion_angle( atom1, atom2, atom3, atom4);
+	if ( rtype.is_upper_terminus() ) {
+		pseudo_psi = pose.conformation().torsion_angle( atom1, atom2, atom3, atom4);
 		TR << "pseudo_psi: " << pseudo_psi << std::endl;
 	}
 	//kdrew: get chiral residue type
 	ResidueType const & chiral_rtype = get_chiral_residue_type( rtype, chirality_ );
 	TR << "Flipped residue type: " << chiral_rtype.name()  << " " << chiral_rtype.aa() << std::endl;
-	if( chiral_rtype.name() == rtype.name() )
-	{
+	if ( chiral_rtype.name() == rtype.name() ) {
 		TR << " not making chiral change" << std::endl;
 		return;
 	}
@@ -151,57 +149,46 @@ void ChiralMover::apply( core::pose::Pose & pose )
 	//kdrew: mutate to chiral residue type
 	conformation::Residue replace_res ( chiral_rtype, true );
 
-	if(orient_functional_group_)
-	{
+	if ( orient_functional_group_ ) {
 		AtomIndices rtype_sidechain_atoms = rtype.all_sc_atoms();
 
 		AtomIndices chiral_neighbor_ids = chiral_rtype.bonded_neighbor(chiral_rtype.first_sidechain_atom());
 		AtomIndices neighbor_ids = rtype.bonded_neighbor(rtype.first_sidechain_atom());
 
 		utility::vector1< std::pair< std::string, std::string > > atom_pairs;
-		
-		if( !rtype.atom_type(rtype.first_sidechain_atom()).is_hydrogen() && !chiral_rtype.atom_type(chiral_rtype.first_sidechain_atom()).is_hydrogen()  )
-		{
+
+		if ( !rtype.atom_type(rtype.first_sidechain_atom()).is_hydrogen() && !chiral_rtype.atom_type(chiral_rtype.first_sidechain_atom()).is_hydrogen()  ) {
 			TR << rtype.name() << " " << rtype.atom_name(rtype.first_sidechain_atom()) << std::endl;
 			atom_pairs.push_back( std::make_pair( rtype.atom_name(rtype.first_sidechain_atom()), chiral_rtype.atom_name(chiral_rtype.first_sidechain_atom() ) ));
-		}
-		else
-		{
-        	TR << "First sidechain atoms are not heavy atoms " << std::endl;
+		} else {
+			TR << "First sidechain atoms are not heavy atoms " << std::endl;
 		}
 
 		//kdrew: loop through all neighboring atoms to first sidechain atom looking for the first two heavy atoms to use for alignment
-		for (core::Size j = 1; j <= neighbor_ids.size() && atom_pairs.size() < 3; ++j) 
-		{
+		for ( core::Size j = 1; j <= neighbor_ids.size() && atom_pairs.size() < 3; ++j ) {
 			//kdrew: if heavy atom
-			if( !rtype.atom_type(neighbor_ids[j]).is_hydrogen()) 
-			{
+			if ( !rtype.atom_type(neighbor_ids[j]).is_hydrogen() ) {
 				TR << rtype.name() << " " << rtype.atom_name(neighbor_ids[j]) << std::endl;
 				//TR << chiral_rtype.name() << " " << chiral_rtype.atom_name(chiral_neighbor_ids[j]) << std::endl;
-				
+
 				//kdrew: assumes atom names are the same in both L and D residue types
 				atom_pairs.push_back( std::make_pair( rtype.atom_name( neighbor_ids[j] ), rtype.atom_name( neighbor_ids[j] )));
 			}
 		}
-			//if( !chiral_rtype.atom_type(chiral_neighbor_ids[j]).is_hydrogen() )
+		//if( !chiral_rtype.atom_type(chiral_neighbor_ids[j]).is_hydrogen() )
 
 		//kdrew: if there are not enough side chain atoms (ex. ALA) choose an atom from the backbone (ex. N) for alignment
-		if ( atom_pairs.size() < 3 )
-		{
-			for (core::Size j = 1; j <= neighbor_ids.size() && atom_pairs.size() < 3; ++j) 
-			{
+		if ( atom_pairs.size() < 3 ) {
+			for ( core::Size j = 1; j <= neighbor_ids.size() && atom_pairs.size() < 3; ++j ) {
 				TR << "looping through neighbors: " << rtype.name() << " " << rtype.atom_name(neighbor_ids[j]) << std::endl;
 
 				//kdrew: if heavy atom
-				if( !rtype.atom_type(neighbor_ids[j]).is_hydrogen()) 
-				{
+				if ( !rtype.atom_type(neighbor_ids[j]).is_hydrogen() ) {
 					AtomIndices neighbor_neighbor_ids = rtype.bonded_neighbor( neighbor_ids[j]  );
-					for (core::Size jj = 1; jj <= neighbor_neighbor_ids.size() && atom_pairs.size() < 3; ++jj) 
-					{
-						if( !rtype.atom_type(neighbor_neighbor_ids[jj]).is_hydrogen()) 
-						{
-								TR << "looping through neighbor neighbors: " << rtype.name() << " " << rtype.atom_name(neighbor_neighbor_ids[jj]) << std::endl;
-								atom_pairs.push_back( std::make_pair( rtype.atom_name( neighbor_neighbor_ids[jj] ), rtype.atom_name( neighbor_neighbor_ids[jj] )));
+					for ( core::Size jj = 1; jj <= neighbor_neighbor_ids.size() && atom_pairs.size() < 3; ++jj ) {
+						if ( !rtype.atom_type(neighbor_neighbor_ids[jj]).is_hydrogen() ) {
+							TR << "looping through neighbor neighbors: " << rtype.name() << " " << rtype.atom_name(neighbor_neighbor_ids[jj]) << std::endl;
+							atom_pairs.push_back( std::make_pair( rtype.atom_name( neighbor_neighbor_ids[jj] ), rtype.atom_name( neighbor_neighbor_ids[jj] )));
 						}
 					}
 
@@ -217,15 +204,12 @@ void ChiralMover::apply( core::pose::Pose & pose )
 		replace_res.orient_onto_residue( res, atom_pairs );
 
 		//kdrew: for all sidechain atoms in residue_type, copy xyz
-		for (core::Size j = 1; j <= rtype_sidechain_atoms.size(); ++j) 
-		{
+		for ( core::Size j = 1; j <= rtype_sidechain_atoms.size(); ++j ) {
 			replace_res.atom(rtype_sidechain_atoms[j]).xyz( res.atom(rtype_sidechain_atoms[j]).xyz() );
 		}
-		
+
 		pose.replace_residue( chiral_seq_pos_ , replace_res, false );
-	}
-	else
-	{
+	} else {
 
 		pose.replace_residue( chiral_seq_pos_ , replace_res, true );
 		//pose.dump_pdb( "rosetta_out_chiral_preidealized.pdb" );
@@ -241,17 +225,16 @@ void ChiralMover::apply( core::pose::Pose & pose )
 	//pose.dump_pdb( "rosetta_out_chiral_moved_phi.pdb" );
 	pose.set_psi( chiral_seq_pos_, (-1.0 * psi_angle ) );
 	//pose.dump_pdb( "rosetta_out_chiral_moved_phi_psi.pdb" );
-	
-	 AtomID const atom1c( chiral_rtype.atom_index( "N" ), chiral_seq_pos_ );
-	 AtomID const atom2c( chiral_rtype.atom_index( "CA" ), chiral_seq_pos_ );
-	 AtomID const atom3c( chiral_rtype.atom_index( "C" ), chiral_seq_pos_ );
-	 AtomID const atom4c( chiral_rtype.atom_index( "O" ), chiral_seq_pos_ );
 
-	if( chiral_rtype.is_upper_terminus() )
-	{
-    	Real chiral_pseudo_psi = pose.conformation().torsion_angle( atom1c, atom2c, atom3c, atom4c);
+	AtomID const atom1c( chiral_rtype.atom_index( "N" ), chiral_seq_pos_ );
+	AtomID const atom2c( chiral_rtype.atom_index( "CA" ), chiral_seq_pos_ );
+	AtomID const atom3c( chiral_rtype.atom_index( "C" ), chiral_seq_pos_ );
+	AtomID const atom4c( chiral_rtype.atom_index( "O" ), chiral_seq_pos_ );
+
+	if ( chiral_rtype.is_upper_terminus() ) {
+		Real chiral_pseudo_psi = pose.conformation().torsion_angle( atom1c, atom2c, atom3c, atom4c);
 		TR << "chiral pseudo_psi: " << chiral_pseudo_psi << std::endl;
-    	pose.conformation().set_torsion_angle( atom1c, atom2c, atom3c, atom4c, -1.0*pseudo_psi);
+		pose.conformation().set_torsion_angle( atom1c, atom2c, atom3c, atom4c, -1.0*pseudo_psi);
 	}
 
 	TR << "chiral phi_angle: " << pose.phi( chiral_seq_pos_ ) << " chiral psi_angle: " << pose.psi( chiral_seq_pos_ ) << std::endl;
@@ -265,34 +248,34 @@ ChiralMover::get_name() const {
 }
 
 /// @brief
-ChiralMover::ChiralMover( 
-		core::Size chiral_seq_position 
-	): Mover(), chiral_seq_pos_( chiral_seq_position ), chirality_( FLIP_CHIRALITY ), orient_functional_group_(false)
+ChiralMover::ChiralMover(
+	core::Size chiral_seq_position
+): Mover(), chiral_seq_pos_( chiral_seq_position ), chirality_( FLIP_CHIRALITY ), orient_functional_group_(false)
 {
 	Mover::type( "ChiralMover" );
 }
 
-ChiralMover::ChiralMover( 
-		core::Size chiral_seq_position,
-		Chirality chirality 
-	): Mover(), chiral_seq_pos_( chiral_seq_position ), chirality_( chirality ), orient_functional_group_(false)
+ChiralMover::ChiralMover(
+	core::Size chiral_seq_position,
+	Chirality chirality
+): Mover(), chiral_seq_pos_( chiral_seq_position ), chirality_( chirality ), orient_functional_group_(false)
 {
 	Mover::type( "ChiralMover" );
 }
 
-ChiralMover::ChiralMover( 
-		core::Size chiral_seq_position,
-		bool orient_functional_group 
-	): Mover(), chiral_seq_pos_( chiral_seq_position ), chirality_( FLIP_CHIRALITY ), orient_functional_group_(orient_functional_group)
+ChiralMover::ChiralMover(
+	core::Size chiral_seq_position,
+	bool orient_functional_group
+): Mover(), chiral_seq_pos_( chiral_seq_position ), chirality_( FLIP_CHIRALITY ), orient_functional_group_(orient_functional_group)
 {
 	Mover::type( "ChiralMover" );
 }
 
-ChiralMover::ChiralMover( 
-		core::Size chiral_seq_position,
-		Chirality chirality,
-		bool orient_functional_group 
-	): Mover(), chiral_seq_pos_( chiral_seq_position ), chirality_( chirality ), orient_functional_group_(orient_functional_group)
+ChiralMover::ChiralMover(
+	core::Size chiral_seq_position,
+	Chirality chirality,
+	bool orient_functional_group
+): Mover(), chiral_seq_pos_( chiral_seq_position ), chirality_( chirality ), orient_functional_group_(orient_functional_group)
 {
 	Mover::type( "ChiralMover" );
 }

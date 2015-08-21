@@ -61,7 +61,7 @@ public:
 	/// @brief Defines a center of mass based RG calculation that is O(n) rather
 	/// than O(n^2).
 	RG_Energy_Fast();
-		
+
 	RG_Energy_Fast( EnergyMethodCreatorOP CreatorOP );
 
 	/// clone
@@ -112,8 +112,8 @@ public:
 		utility::vector1< bool > & /*context_graphs_required*/
 	) const {}
 
-    /// @brief function to get membrane protein TMH centers of mass
-    // Undefined, commenting out to fix PyRosetta build  utility::vector1<core::Size> get_tmh_CoMs(pose::Pose const& pose) const;
+	/// @brief function to get membrane protein TMH centers of mass
+	// Undefined, commenting out to fix PyRosetta build  utility::vector1<core::Size> get_tmh_CoMs(pose::Pose const& pose) const;
 
 private:
 	RG_MinData const & mindata_from_pose( pose::Pose const & ) const;

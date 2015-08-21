@@ -52,10 +52,10 @@ namespace movers {
 /**@brief structure that contains the data of corresponding fragments in the motif and scaffold**/
 struct motif2scaffold_indexes
 {
-		core::Size motifLow;
-		core::Size motifHigh;
-		core::Size scaffoldLow;
-		core::Size scaffoldHigh;
+	core::Size motifLow;
+	core::Size motifHigh;
+	core::Size scaffoldLow;
+	core::Size scaffoldHigh;
 };
 
 /**@brief structure that contains the motif2scaffold_indexes data in a vector and adds fields for fragment matching information**/
@@ -90,20 +90,20 @@ public:
 	MotifMatch() {};
 	//constructor
 	MotifMatch(motif2scaffold_data  data)
-		{
-			scaffold_fragment_data = data;
-			RMSD = data.RMSD;
-			motif_fragments_RMSD = data.motif_fragments_RMSD;
-			clash_score = data.clash_score;
-			v_indexes = data.v_indexes;
-			b_allow_independent_alignment_per_fragment = data.b_allow_independent_alignment_per_fragment;
-			b_full_motif_bb_alignment = data.b_full_motif_bb_alignment;
-			b_graft_only_hotspots_by_sidechain_replacement = data.b_graft_only_hotspots_by_sidechain_replacement;
-		};
+	{
+		scaffold_fragment_data = data;
+		RMSD = data.RMSD;
+		motif_fragments_RMSD = data.motif_fragments_RMSD;
+		clash_score = data.clash_score;
+		v_indexes = data.v_indexes;
+		b_allow_independent_alignment_per_fragment = data.b_allow_independent_alignment_per_fragment;
+		b_full_motif_bb_alignment = data.b_full_motif_bb_alignment;
+		b_graft_only_hotspots_by_sidechain_replacement = data.b_graft_only_hotspots_by_sidechain_replacement;
+	};
 	//Overwrites <operator
 	bool operator <(const MotifMatch& other) const
 	{
-		if (b_allow_independent_alignment_per_fragment){
+		if ( b_allow_independent_alignment_per_fragment ) {
 			return motif_fragments_RMSD > other.motif_fragments_RMSD;
 		}
 		return RMSD > other.RMSD;
@@ -126,21 +126,21 @@ public:
 	};
 	std::string get_motif_ranges(core::Size const & ndx_shift) const {
 		std::string s_out="";
-		for (core::Size i=1; i<= v_indexes.size(); ++i ){
+		for ( core::Size i=1; i<= v_indexes.size(); ++i ) {
 			s_out += " " + utility::to_string(ndx_shift + v_indexes[i].motifLow) + "," + utility::to_string(ndx_shift + v_indexes[i].motifHigh);
 		}
 		return s_out;
 	};
 	std::string get_scaffold_ranges(core::Size const & ndx_shift) const {
 		std::string s_out="";
-		for (core::Size i=1; i<= v_indexes.size(); ++i ){
+		for ( core::Size i=1; i<= v_indexes.size(); ++i ) {
 			s_out += " " + utility::to_string(ndx_shift + v_indexes[i].scaffoldLow) + "," + utility::to_string(ndx_shift + v_indexes[i].scaffoldHigh);
 		}
 		return s_out;
 	};
 	std::string get_scaffold2motif_size_change() const {
 		std::string s_out="";
-		for (core::Size i=1; i<= v_indexes.size(); ++i ){
+		for ( core::Size i=1; i<= v_indexes.size(); ++i ) {
 			//can be negative
 			long int value= (v_indexes[i].motifHigh-v_indexes[i].motifLow) - (v_indexes[i].scaffoldHigh-v_indexes[i].scaffoldLow) ;
 			s_out += " " + utility::to_string(value);
@@ -257,7 +257,7 @@ public:
 		std::priority_queue<MotifMatch> & pq);
 
 	/**@brief Functions that takes the scaffold, motif, contextStructure and superposition transform data. Deletes from the supperposition data
-	 ** those transformations that can't pass the clash score**/
+	** those transformations that can't pass the clash score**/
 	void test_epigraft_and_contextStructure_clashes(
 		core::pose::Pose const & p_scaffold,
 		core::pose::Pose const & p_motif_,
@@ -290,17 +290,17 @@ public:
 
 	/**@brief Helper function to stich (epigraft) two poses given a set of indices in pose A and B stored in a motif2scaffold_data structure**/
 	core::pose::Pose stich_motif_in_scaffold_by_indexes_rotation_and_translation(
-			core::pose::Pose const & p_scaffold,
-			core::pose::Pose const & p_motif_,
-			motif2scaffold_data & m2s_dat,
-			bool const & skip_motif_extremes);
+		core::pose::Pose const & p_scaffold,
+		core::pose::Pose const & p_motif_,
+		motif2scaffold_data & m2s_dat,
+		bool const & skip_motif_extremes);
 
 
 	/**@brief Performs alignment of the protein BB on the selected aminoacids.
-	 **Returns the RMSD,
-	 **Returns by reference the rotation Matrix and Translation Vector,
-	 **Will fail if both poses are not protein <-This can be fixed by adding a list of the atoms to align to the function, but I am not doing it now.
-	 **Will fail if the number of residues to align is not the same in the two poses. **/
+	**Returns the RMSD,
+	**Returns by reference the rotation Matrix and Translation Vector,
+	**Will fail if both poses are not protein <-This can be fixed by adding a list of the atoms to align to the function, but I am not doing it now.
+	**Will fail if the number of residues to align is not the same in the two poses. **/
 	core::Real get_bb_alignment_and_transformation(
 		core::pose::Pose const & poseA,
 		utility::vector1< core::Size > const & positions_to_alignA,
@@ -311,10 +311,10 @@ public:
 		numeric::xyzVector< core::Real > & TvecB);
 
 	/**@brief Performs alignment of the protein BB on the selected aminoacids.
-	 **Returns the RMSD,
-	 **Returns by reference the rotation Matrix and Translation Vector,
-	 **Will fail if both poses are not protein <-This can be fixed by adding a list of the atoms to align to the function, but I am not doing it now.
-	 **Will fail if the number of residues to align is not the same in the two poses. **/
+	**Returns the RMSD,
+	**Returns by reference the rotation Matrix and Translation Vector,
+	**Will fail if both poses are not protein <-This can be fixed by adding a list of the atoms to align to the function, but I am not doing it now.
+	**Will fail if the number of residues to align is not the same in the two poses. **/
 	core::Real get_bb_alignment_and_transformation_wTipsExtraInfo(
 		utility::vector1< bool > const & v_isNorC,
 		core::pose::Pose const & poseA,
@@ -345,7 +345,7 @@ public:
 		numeric::xyzVector< core::Real > &TvecB);
 
 	/** @brief performs soperposition based on the motif and returns fragments within the RMSD_tol and
-	 ** also returns the Rotation and translation superposition information in the first [1] vector of each fragment**/
+	** also returns the Rotation and translation superposition information in the first [1] vector of each fragment**/
 	void get_motif_scaffold_superposition_and_RMSD(
 		core::pose::Pose const & p_scaffold,
 		core::pose::PoseOP const & p_motif_,
@@ -363,8 +363,8 @@ public:
 		std::string const & aminoacid_code);
 
 	/** @brief returns by reference two vectors of indexes (vv_scaffold_fragments_indexes, v_motif_fragments_indexes)
-	 ** that hold the lower and upper bounds of the fragments. Indeed the corresponding to the scaffold one is a vector
-	 **of vectors, since each pose_scaffold can have many matches**/
+	** that hold the lower and upper bounds of the fragments. Indeed the corresponding to the scaffold one is a vector
+	**of vectors, since each pose_scaffold can have many matches**/
 	bool get_fragments_by_CA_distances_and_NCpoints_restrains(
 		core::pose::Pose const & p_scaffold,
 		core::pose::PoseOP const & p_motif_,
@@ -379,9 +379,9 @@ public:
 		bool const & b_C_point_can_replace_proline);
 
 	/** @brief Generates all the discontinuous fragments combinations that are within the tol restriction.
-	 ** Reduce the combinations by matching intra chains distances by pairs.
-	 ** The method is/can be exahustive but fast (i.e. iteratively it test the restrains (tree unfolding) and skips to the next combination once one fails (branch removal) ).
-	 ** CAUTION, Uses self recursion, so use it wisely **/
+	** Reduce the combinations by matching intra chains distances by pairs.
+	** The method is/can be exahustive but fast (i.e. iteratively it test the restrains (tree unfolding) and skips to the next combination once one fails (branch removal) ).
+	** CAUTION, Uses self recursion, so use it wisely **/
 	void fragments_permutation_test_by_CA_distances(
 		core::pose::Pose const & p_scaffold,
 		core::pose::PoseOP const & p_motif_,

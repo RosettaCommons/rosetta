@@ -16,9 +16,9 @@
 namespace numeric {
 namespace random {
 
-	using numeric::Real;
-	using namespace numeric;
-	using namespace numeric::random;
+using numeric::Real;
+using namespace numeric;
+using namespace numeric::random;
 
 xyzVector<Real> random_vector_spherical(){
 	return xyzVector<Real>(gaussian(),gaussian(),gaussian());
@@ -44,17 +44,17 @@ Quaternion<Real> random_unit_quaternion(){
 	Real cosu2 = sqrt(1.0-sinu2*sinu2);
 	Real cosu3 = sqrt(1.0-sinu3*sinu3);
 	return Quaternion<Real>( sqrt(1-u1)*sinu2,
-	                         sqrt(1-u1)*cosu2,
-	                         sqrt(  u1)*sinu3,
-	                         sqrt(  u1)*cosu3 );
+		sqrt(1-u1)*cosu2,
+		sqrt(  u1)*sinu3,
+		sqrt(  u1)*cosu3 );
 }
 xyzMatrix<Real> random_rotation(){
 	Quaternion<Real> q = random_unit_quaternion();
-    return xyzMatrix<Real>::cols(
-        1.0 - 2.0*q.y()*q.y() - 2.0*q.z()*q.z(),       2.0*q.x()*q.y() - 2.0*q.z()*q.w(),       2.0*q.x()*q.z() + 2.0*q.y()*q.w(),
-              2.0*q.x()*q.y() + 2.0*q.z()*q.w(), 1.0 - 2.0*q.x()*q.x() - 2.0*q.z()*q.z(),       2.0*q.y()*q.z() - 2.0*q.x()*q.w(),
-              2.0*q.x()*q.z() - 2.0*q.y()*q.w(),       2.0*q.y()*q.z() + 2.0*q.x()*q.w(), 1.0 - 2.0*q.x()*q.x() - 2.0*q.y()*q.y()
-    );
+	return xyzMatrix<Real>::cols(
+		1.0 - 2.0*q.y()*q.y() - 2.0*q.z()*q.z(),       2.0*q.x()*q.y() - 2.0*q.z()*q.w(),       2.0*q.x()*q.z() + 2.0*q.y()*q.w(),
+		2.0*q.x()*q.y() + 2.0*q.z()*q.w(), 1.0 - 2.0*q.x()*q.x() - 2.0*q.z()*q.z(),       2.0*q.y()*q.z() - 2.0*q.x()*q.w(),
+		2.0*q.x()*q.z() - 2.0*q.y()*q.w(),       2.0*q.y()*q.z() + 2.0*q.x()*q.w(), 1.0 - 2.0*q.x()*q.x() - 2.0*q.y()*q.y()
+	);
 }
 xyzTransform<Real> random_xform(){
 	return xyzTransform<Real>(random_rotation(),random_vector_spherical());

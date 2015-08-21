@@ -126,7 +126,7 @@ public: // Methods
 		utility::vector1<numeric::Size> num_bins1;
 
 		num_bins1.resize(num_bins_.size());
-		for (numeric::Size i = 0; i < num_bins_.size(); ++i) {
+		for ( numeric::Size i = 0; i < num_bins_.size(); ++i ) {
 			num_bins1[i+1] = num_bins_[i];
 		}
 
@@ -140,7 +140,7 @@ public: // Methods
 	{
 		assert(num_bins > 0);
 
-		for (numeric::Size i = 0; i < num_bins_.size(); ++i) {
+		for ( numeric::Size i = 0; i < num_bins_.size(); ++i ) {
 			num_bins_[i] = num_bins;
 		}
 
@@ -152,9 +152,9 @@ public: // Methods
 		utility::vector1<numeric::Size> const & num_bins1
 	)
 	{
-		if (num_bins1.size() != num_dimensions()) num_dimensions(num_bins1.size());
+		if ( num_bins1.size() != num_dimensions() ) num_dimensions(num_bins1.size());
 
-		for (numeric::Size i = 0; i < num_bins_.size(); ++i) {
+		for ( numeric::Size i = 0; i < num_bins_.size(); ++i ) {
 			assert(num_bins1[i+1] > 0);
 			num_bins_[i] = num_bins1[i+1];
 		}
@@ -181,7 +181,7 @@ public: // Methods
 		numeric::Real start
 	)
 	{
-		for (numeric::Size i = 0; i < num_dimensions(); ++i) {
+		for ( numeric::Size i = 0; i < num_dimensions(); ++i ) {
 			start_[i] = start;
 		}
 	}
@@ -192,7 +192,7 @@ public: // Methods
 		utility::vector1<numeric::Real> start1;
 
 		start1.resize(start_.size());
-		for (numeric::Size i = 0; i < start_.size(); ++i) {
+		for ( numeric::Size i = 0; i < start_.size(); ++i ) {
 			start1[i+1] = start_[i];
 		}
 
@@ -206,7 +206,7 @@ public: // Methods
 	{
 		assert(start1.size() == num_dimensions());
 
-		for (numeric::Size i = 0; i < start_.size(); ++i) {
+		for ( numeric::Size i = 0; i < start_.size(); ++i ) {
 			start_[i] = start1[i+1];
 		}
 	}
@@ -228,7 +228,7 @@ public: // Methods
 		utility::vector1<numeric::Real> end1;
 
 		end1.resize(end_.size());
-		for (numeric::Size i = 0; i < end_.size(); ++i) {
+		for ( numeric::Size i = 0; i < end_.size(); ++i ) {
 			end1[i+1] = end_[i];
 		}
 
@@ -240,7 +240,7 @@ public: // Methods
 		numeric::Real end
 	)
 	{
-		for (numeric::Size i = 0; i < num_dimensions(); ++i) {
+		for ( numeric::Size i = 0; i < num_dimensions(); ++i ) {
 			end_[i] = end;
 		}
 	}
@@ -252,7 +252,7 @@ public: // Methods
 	{
 		assert(end1.size() == num_dimensions());
 
-		for (numeric::Size i = 0; i < end_.size(); ++i) {
+		for ( numeric::Size i = 0; i < end_.size(); ++i ) {
 			end_[i] = end1[i+1];
 		}
 	}
@@ -321,7 +321,7 @@ public: // Methods
 		utility::vector1<std::string> dim_labels1;
 
 		dim_labels1.resize(dim_labels_.size());
-		for (numeric::Size i = 0; i < dim_labels_.size(); ++i) {
+		for ( numeric::Size i = 0; i < dim_labels_.size(); ++i ) {
 			dim_labels1[i+1] = dim_labels_[i];
 		}
 
@@ -335,7 +335,7 @@ public: // Methods
 	{
 		assert(dim_labels1.size() == num_dimensions());
 
-		for (numeric::Size i = 0; i < dim_labels_.size(); ++i) {
+		for ( numeric::Size i = 0; i < dim_labels_.size(); ++i ) {
 			dim_labels_[i] = dim_labels1[i+1];
 		}
 	}
@@ -343,7 +343,7 @@ public: // Methods
 	void
 	reset_counts()
 	{
-		for (numeric::Size i = 0; i < counts_.size(); ++i) {
+		for ( numeric::Size i = 0; i < counts_.size(); ++i ) {
 			counts_[i] = 0;
 		}
 
@@ -393,8 +393,8 @@ public: // Methods
 
 		std::set<numeric::Size> dimensions_set;
 
-		for (numeric::Size i = 1; i <= dimensions.size(); ++i) {
-			if (dimensions[i] <= num_dimensions()) {
+		for ( numeric::Size i = 1; i <= dimensions.size(); ++i ) {
+			if ( dimensions[i] <= num_dimensions() ) {
 				dimensions_set.insert(dimensions[i]);
 			}
 		}
@@ -405,9 +405,9 @@ public: // Methods
 		utility::vector0<numeric::Size> dim_to_collapse;
 
 		numeric::Size new_counter = 0;
-		for (numeric::Size i = 0; i < num_bins_.size(); ++i) {
+		for ( numeric::Size i = 0; i < num_bins_.size(); ++i ) {
 
-			if (dimensions_set.count(i+1)) {
+			if ( dimensions_set.count(i+1) ) {
 
 				new_mdhist.num_bins_[new_counter] = num_bins_[i];
 				new_mdhist.start_[new_counter] = start_[i];
@@ -427,33 +427,33 @@ public: // Methods
 		new_mdhist.label_ = label_;
 		new_mdhist.total_counts_ = total_counts_;
 
-		if (dim_to_collapse.size()) {
+		if ( dim_to_collapse.size() ) {
 
 			utility::vector0<numeric::Size> idx_current(num_dimensions(), 0);
 			utility::vector0<numeric::Size> idx_collapsed(new_mdhist.num_dimensions(), 0);
 
 			// iterate over all counts of the new histogram
-			while (idx_collapsed.back() < new_mdhist.num_bins_.back()+2) {
+			while ( idx_collapsed.back() < new_mdhist.num_bins_.back()+2 ) {
 
 				// copy idx_collapsed into idx_current
-				for (numeric::Size i = 0; i < idx_collapsed.size(); ++i) {
+				for ( numeric::Size i = 0; i < idx_collapsed.size(); ++i ) {
 					idx_current[dim_to_keep[i]] = idx_collapsed[i];
 				}
 
 				// reset counters of indicies of idx_current to be collapsed
-				for (numeric::Size i = 0; i < dim_to_collapse.size(); ++i) {
+				for ( numeric::Size i = 0; i < dim_to_collapse.size(); ++i ) {
 					idx_current[dim_to_collapse[i]] = 0;
 				}
 
 				// add up all the counts from the dimensions to collapse
-				while (idx_current[dim_to_collapse.back()] < num_bins_[dim_to_collapse.back()]+2) {
+				while ( idx_current[dim_to_collapse.back()] < num_bins_[dim_to_collapse.back()]+2 ) {
 
 					new_mdhist.counts_[new_mdhist.bin_index(idx_collapsed)] += counts_[bin_index(idx_current)];
 
 					// increment idx_current
-					for (numeric::Size i = 0; i < dim_to_collapse.size(); ++i) {
+					for ( numeric::Size i = 0; i < dim_to_collapse.size(); ++i ) {
 						numeric::Size const dim(dim_to_collapse[i]);
-						if (idx_current[dim] == num_bins_[dim]+1 && i < dim_to_collapse.size()-1) {
+						if ( idx_current[dim] == num_bins_[dim]+1 && i < dim_to_collapse.size()-1 ) {
 							idx_current[dim] = 0;
 						} else {
 							++idx_current[dim];
@@ -463,9 +463,9 @@ public: // Methods
 				}
 
 				// increment idx_collapsed
-				for (numeric::Size i = 0; i < idx_collapsed.size(); ++i) {
+				for ( numeric::Size i = 0; i < idx_collapsed.size(); ++i ) {
 					numeric::Size const dim(i);
-					if (idx_collapsed[dim] == new_mdhist.num_bins_[dim]+1 && i < idx_collapsed.size()-1) {
+					if ( idx_collapsed[dim] == new_mdhist.num_bins_[dim]+1 && i < idx_collapsed.size()-1 ) {
 						idx_collapsed[dim] = 0;
 					} else {
 						++idx_collapsed[dim];
@@ -475,7 +475,7 @@ public: // Methods
 			}
 
 			numeric::Size count_total = 0;
-			for (numeric::Size i = 0; i < new_mdhist.counts_.size(); ++i) {
+			for ( numeric::Size i = 0; i < new_mdhist.counts_.size(); ++i ) {
 				count_total += new_mdhist.counts_[i];
 			}
 			runtime_assert(new_mdhist.total_counts_ == count_total);
@@ -495,7 +495,7 @@ public: // Methods
 	{
 		runtime_assert(expected_1d_frequencies.size() == num_dimensions());
 
-		for (numeric::Size i = 1; i <= expected_1d_frequencies.size(); ++i) {
+		for ( numeric::Size i = 1; i <= expected_1d_frequencies.size(); ++i ) {
 			runtime_assert(expected_1d_frequencies[i].size() == num_bins()[i]);
 		}
 
@@ -505,12 +505,12 @@ public: // Methods
 		utility::vector0<numeric::Size> idx(num_dimensions(), 1);
 
 		// iterate over all non-overflow counts of the histogram
-		while (idx.back() <= num_bins_.back()) {
+		while ( idx.back() <= num_bins_.back() ) {
 
 			numeric::Real const frequency(counts_[bin_index(idx)]/total_counts);
 
 			numeric::Real expected_frequency(expected_1d_frequencies[1][idx[0]]);
-			for (numeric::Size i = 1; i < expected_1d_frequencies.size(); ++i) {
+			for ( numeric::Size i = 1; i < expected_1d_frequencies.size(); ++i ) {
 				expected_frequency *= expected_1d_frequencies[i+1][idx[i]];
 			}
 
@@ -518,9 +518,9 @@ public: // Methods
 			mse += difference*difference;
 
 			// increment idx
-			for (numeric::Size i = 0; i < idx.size(); ++i) {
+			for ( numeric::Size i = 0; i < idx.size(); ++i ) {
 				numeric::Size const dim(i);
-				if (idx[dim] == num_bins_[dim] && i < idx.size()-1) {
+				if ( idx[dim] == num_bins_[dim] && i < idx.size()-1 ) {
 					idx[dim] = 1;
 				} else {
 					++idx[dim];
@@ -530,7 +530,7 @@ public: // Methods
 		}
 
 		numeric::Size num_non_overflow_bins(1);
-		for (numeric::Size i = 0; i < num_dimensions(); ++i) {
+		for ( numeric::Size i = 0; i < num_dimensions(); ++i ) {
 			num_non_overflow_bins *= num_bins_[i];
 		}
 
@@ -547,22 +547,22 @@ private: // Methods
 	{
 		numeric::Size total_bins = 1;
 
-		for (numeric::Size i = 0; i < num_dimensions(); ++i) {
+		for ( numeric::Size i = 0; i < num_dimensions(); ++i ) {
 			total_bins *= num_bins_[i]+2;
 		}
 
-		if (total_bins != counts_.size()) counts_.resize(total_bins);
+		if ( total_bins != counts_.size() ) counts_.resize(total_bins);
 	}
 
 	numeric::Size
 	bin_index(
 		numeric::Size dim,
-		numeric::Real	value
+		numeric::Real value
 	) const
 	{
-		if (start_[dim] == end_[dim]) {
-			if (value < start_[dim]) return 0;
-			if (value > end_[dim]) return num_bins_[dim]+1;
+		if ( start_[dim] == end_[dim] ) {
+			if ( value < start_[dim] ) return 0;
+			if ( value > end_[dim] ) return num_bins_[dim]+1;
 			assert(num_bins_[dim] == 1);
 			return 1;
 		}
@@ -570,9 +570,9 @@ private: // Methods
 		assert(start_[dim] < end_[dim]);
 		numeric::Real index = (value-start_[dim])/(end_[dim]-start_[dim])*num_bins_[dim]+1;
 
-		if (index < 1) return 0;
-		if (index > num_bins_[dim]+1) return num_bins_[dim]+1;
-		if (index == num_bins_[dim]+1) return num_bins_[dim];
+		if ( index < 1 ) return 0;
+		if ( index > num_bins_[dim]+1 ) return num_bins_[dim]+1;
+		if ( index == num_bins_[dim]+1 ) return num_bins_[dim];
 
 		return static_cast<numeric::Size> (index);
 	}
@@ -587,7 +587,7 @@ private: // Methods
 		numeric::Size index = 0;
 		numeric::Size interval = 1;
 
-		for (numeric::Size i = 0; i < num_dimensions(); ++i) {
+		for ( numeric::Size i = 0; i < num_dimensions(); ++i ) {
 			index += bin_index(i, values[i+1])*interval;
 			interval *= num_bins_[i]+2;
 		}
@@ -607,7 +607,7 @@ private: // Methods
 		numeric::Size index = 0;
 		numeric::Size interval = 1;
 
-		for (numeric::Size i = 0; i < num_dimensions(); ++i) {
+		for ( numeric::Size i = 0; i < num_dimensions(); ++i ) {
 			index += indices[i]*interval;
 			interval *= num_bins_[i]+2;
 		}

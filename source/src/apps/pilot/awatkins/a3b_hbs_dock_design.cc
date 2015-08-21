@@ -103,7 +103,7 @@ using utility::file::FileName;
 //   +-Monte Carlo Mover---------------------------------------+
 //   | +-Random Mover-( 1 / 2 / 1 / 1 )--------------------+ | |
 //   | | +-Docking Mover-----------------------------------+ | |
-//   | | | small rigid body movements between the peptide	 | | |
+//   | | | small rigid body movements between the peptide  | | |
 //   | | | and protein for conformational diversity        | | |
 //   | | +-------------------------------------------------+ | |
 //   | | +-Peptide Modeling--------------------------------+ | |
@@ -119,8 +119,8 @@ using utility::file::FileName;
 //
 // Design Minimization Phase
 //   | +-Pack Rotamers Mover---------------------------------+ |
-//   | | repack and design rotamers to explore sequence 	   | |
-//   | | space  	                                           | |
+//   | | repack and design rotamers to explore sequence     | |
+//   | | space                                              | |
 //   | +-----------------------------------------------------+ |
 //   | +-Minimization Mover----------------------------------+ |
 //   | | energy minimize the current conformation            | |
@@ -133,52 +133,52 @@ static basic::Tracer TR("A3BHDDM");
 
 // application specific options
 namespace a3b_hddm {
-	// pert options
-	RealOptionKey const mc_temp( "a3b_hddm::mc_temp" );
-	RealOptionKey const pert_mc_temp( "a3b_hddm::pert_mc_temp" );
-	RealOptionKey const pert_dock_rot_mag( "a3b_hddm::pert_dock_rot_mag" );
-	RealOptionKey const pert_dock_trans_mag( "a3b_hddm::pert_dock_trans_mag" );
-	RealOptionKey const pert_pep_small_temp( "a3b_hddm::pert_pep_small_temp" );
-	RealOptionKey const pert_pep_small_H( "a3b_hddm::pert_pep_small_H" );
-	RealOptionKey const pert_pep_small_L( "a3b_hddm::pert_pep_small_L" );
-	RealOptionKey const pert_pep_small_E( "a3b_hddm::pert_pep_small_E" );
-	RealOptionKey const pert_pep_shear_temp( "a3b_hddm::pert_pep_shear_temp" );
-	RealOptionKey const pert_pep_shear_H( "a3b_hddm::pert_pep_shear_H" );
-	RealOptionKey const pert_pep_shear_L( "a3b_hddm::pert_pep_shear_L" );
-	RealOptionKey const pert_pep_shear_E( "a3b_hddm::pert_pep_shear_E" );
+// pert options
+RealOptionKey const mc_temp( "a3b_hddm::mc_temp" );
+RealOptionKey const pert_mc_temp( "a3b_hddm::pert_mc_temp" );
+RealOptionKey const pert_dock_rot_mag( "a3b_hddm::pert_dock_rot_mag" );
+RealOptionKey const pert_dock_trans_mag( "a3b_hddm::pert_dock_trans_mag" );
+RealOptionKey const pert_pep_small_temp( "a3b_hddm::pert_pep_small_temp" );
+RealOptionKey const pert_pep_small_H( "a3b_hddm::pert_pep_small_H" );
+RealOptionKey const pert_pep_small_L( "a3b_hddm::pert_pep_small_L" );
+RealOptionKey const pert_pep_small_E( "a3b_hddm::pert_pep_small_E" );
+RealOptionKey const pert_pep_shear_temp( "a3b_hddm::pert_pep_shear_temp" );
+RealOptionKey const pert_pep_shear_H( "a3b_hddm::pert_pep_shear_H" );
+RealOptionKey const pert_pep_shear_L( "a3b_hddm::pert_pep_shear_L" );
+RealOptionKey const pert_pep_shear_E( "a3b_hddm::pert_pep_shear_E" );
 
-	IntegerOptionKey const pert_pep_num_rep( "a3b_hddm::pert_pep_num_rep" );
-	IntegerOptionKey const pert_num( "a3b_hddm::pert_num" );
-	IntegerOptionKey const dock_design_loop_num( "a3b_hddm::dock_design_loop_num" );
+IntegerOptionKey const pert_pep_num_rep( "a3b_hddm::pert_pep_num_rep" );
+IntegerOptionKey const pert_num( "a3b_hddm::pert_num" );
+IntegerOptionKey const dock_design_loop_num( "a3b_hddm::dock_design_loop_num" );
 
-	BooleanOptionKey const final_design_min( "a3b_hddm::final_design_min" );
-	BooleanOptionKey const use_soft_rep( "a3b_hddm::use_soft_rep" );
-	BooleanOptionKey const mc_initial_pose( "a3b_hddm::mc_initial_pose" );
-	BooleanOptionKey const hbs_design_first( "a3b_hddm::hbs_design_first" );
+BooleanOptionKey const final_design_min( "a3b_hddm::final_design_min" );
+BooleanOptionKey const use_soft_rep( "a3b_hddm::use_soft_rep" );
+BooleanOptionKey const mc_initial_pose( "a3b_hddm::mc_initial_pose" );
+BooleanOptionKey const hbs_design_first( "a3b_hddm::hbs_design_first" );
 
-	BooleanOptionKey const pymol( "a3b_hddm::pymol" );
-	BooleanOptionKey const keep_history( "a3b_hddm::keep_history" );
+BooleanOptionKey const pymol( "a3b_hddm::pymol" );
+BooleanOptionKey const keep_history( "a3b_hddm::keep_history" );
 
-	// design options
-	RealOptionKey const desn_mc_temp( "a3b_hddm::desn_mc_temp" );
+// design options
+RealOptionKey const desn_mc_temp( "a3b_hddm::desn_mc_temp" );
 
 }
 
 class A3BHbsDockDesignMinimizeMover : public Mover {
 
-	public:
+public:
 
-		//default ctor
-		A3BHbsDockDesignMinimizeMover(): Mover("A3BHbsDockDesignMinimizeMover"){}
+	//default ctor
+	A3BHbsDockDesignMinimizeMover(): Mover("A3BHbsDockDesignMinimizeMover"){}
 
-		//default dtor
-		virtual ~A3BHbsDockDesignMinimizeMover(){}
+	//default dtor
+	virtual ~A3BHbsDockDesignMinimizeMover(){}
 
-		//methods
-		void setup_pert_foldtree( core::pose::Pose & pose);
-		void setup_filter_stats();
-		virtual void apply( core::pose::Pose & pose );
-		virtual std::string get_name() const { return "A3BHbsDockDesignMinimizeMover"; }
+	//methods
+	void setup_pert_foldtree( core::pose::Pose & pose);
+	void setup_filter_stats();
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const { return "A3BHbsDockDesignMinimizeMover"; }
 
 };
 
@@ -190,53 +190,53 @@ int
 main( int argc, char* argv[] )
 {
 	try {
-	/*********************************************************************************************************************
-	Common Setup
-	**********************************************************************************************************************/
+		/*********************************************************************************************************************
+		Common Setup
+		**********************************************************************************************************************/
 
-	// add application specific options to options system
-	// There are far more options here than you will realistically need for a program of this complexity - but this gives you an idea of how to fine-grain option-control everything
-	option.add( a3b_hddm::mc_temp, "The temperature to use for the outer loop of the a3b_hddm protocol. Defaults to 1.0." ).def( 1.0 );
-	option.add( a3b_hddm::pert_mc_temp, "The temperature to use for the pertubation phase of the a3b_hddm protocol. Defaults to 0.8." ).def( 0.8 );
-	option.add( a3b_hddm::pert_dock_rot_mag, "The rotation magnitude for the ridged body pertubation in the pertubation phase of the a3b_hddm protocol. Defaults to 1.0." ).def( 1 );
-	option.add( a3b_hddm::pert_dock_trans_mag, "The translation magnitude for the ridged body pertubation in the pertubation phase of the a3b_hddm protocol. Defaults to 0.5." ).def( 0.5 );
-	option.add( a3b_hddm::pert_pep_small_temp, "" ).def( 0.8 );
-	option.add( a3b_hddm::pert_pep_shear_temp, "" ).def( 0.8 );
+		// add application specific options to options system
+		// There are far more options here than you will realistically need for a program of this complexity - but this gives you an idea of how to fine-grain option-control everything
+		option.add( a3b_hddm::mc_temp, "The temperature to use for the outer loop of the a3b_hddm protocol. Defaults to 1.0." ).def( 1.0 );
+		option.add( a3b_hddm::pert_mc_temp, "The temperature to use for the pertubation phase of the a3b_hddm protocol. Defaults to 0.8." ).def( 0.8 );
+		option.add( a3b_hddm::pert_dock_rot_mag, "The rotation magnitude for the ridged body pertubation in the pertubation phase of the a3b_hddm protocol. Defaults to 1.0." ).def( 1 );
+		option.add( a3b_hddm::pert_dock_trans_mag, "The translation magnitude for the ridged body pertubation in the pertubation phase of the a3b_hddm protocol. Defaults to 0.5." ).def( 0.5 );
+		option.add( a3b_hddm::pert_pep_small_temp, "" ).def( 0.8 );
+		option.add( a3b_hddm::pert_pep_shear_temp, "" ).def( 0.8 );
 
-	option.add( a3b_hddm::pert_pep_small_H, "" ).def( 2.0 );
-	option.add( a3b_hddm::pert_pep_small_L, "" ).def( 2.0 );
-	option.add( a3b_hddm::pert_pep_small_E, "" ).def( 2.0 );
-	option.add( a3b_hddm::pert_pep_shear_H, "" ).def( 2.0 );
-	option.add( a3b_hddm::pert_pep_shear_L, "" ).def( 2.0 );
-	option.add( a3b_hddm::pert_pep_shear_E, "" ).def( 2.0 );
+		option.add( a3b_hddm::pert_pep_small_H, "" ).def( 2.0 );
+		option.add( a3b_hddm::pert_pep_small_L, "" ).def( 2.0 );
+		option.add( a3b_hddm::pert_pep_small_E, "" ).def( 2.0 );
+		option.add( a3b_hddm::pert_pep_shear_H, "" ).def( 2.0 );
+		option.add( a3b_hddm::pert_pep_shear_L, "" ).def( 2.0 );
+		option.add( a3b_hddm::pert_pep_shear_E, "" ).def( 2.0 );
 
-	option.add( a3b_hddm::pert_pep_num_rep, "Number of small and shear iterations for the peptide" ).def( 100 );
-	option.add( a3b_hddm::pert_num, "Number of iterations of perturbation loop per design" ).def(10);
-	option.add( a3b_hddm::dock_design_loop_num, "Number of iterations of pertubation and design" ).def(10);
+		option.add( a3b_hddm::pert_pep_num_rep, "Number of small and shear iterations for the peptide" ).def( 100 );
+		option.add( a3b_hddm::pert_num, "Number of iterations of perturbation loop per design" ).def(10);
+		option.add( a3b_hddm::dock_design_loop_num, "Number of iterations of pertubation and design" ).def(10);
 
-	option.add( a3b_hddm::final_design_min, "Do a final repack/design and minimization. Default true" ).def(true);
-	option.add( a3b_hddm::use_soft_rep, "Use soft repulsion for pertubation and initial design. Default false" ).def(false);
-	option.add( a3b_hddm::mc_initial_pose, "Allow initial pose to be considered as lowest energy pose. Default false" ).def(false);
-	option.add( a3b_hddm::hbs_design_first, "Design before pertubation (want when initial struct is aligned to hotspot)  Default false" ).def(false);
+		option.add( a3b_hddm::final_design_min, "Do a final repack/design and minimization. Default true" ).def(true);
+		option.add( a3b_hddm::use_soft_rep, "Use soft repulsion for pertubation and initial design. Default false" ).def(false);
+		option.add( a3b_hddm::mc_initial_pose, "Allow initial pose to be considered as lowest energy pose. Default false" ).def(false);
+		option.add( a3b_hddm::hbs_design_first, "Design before pertubation (want when initial struct is aligned to hotspot)  Default false" ).def(false);
 
-	option.add( a3b_hddm::pymol, "Set up pymol mover. Default false" ).def(false);
-	option.add( a3b_hddm::keep_history, "Keep history in pymol. Requires a3b_hddm::pymol set to true. Default false" ).def(false);
+		option.add( a3b_hddm::pymol, "Set up pymol mover. Default false" ).def(false);
+		option.add( a3b_hddm::keep_history, "Keep history in pymol. Requires a3b_hddm::pymol set to true. Default false" ).def(false);
 
-	option.add( a3b_hddm::desn_mc_temp, "The temperature to use for the design/minimization phase of the a3b_hddm protocol. Defaults to 0.8." ).def( 0.8 );
+		option.add( a3b_hddm::desn_mc_temp, "The temperature to use for the design/minimization phase of the a3b_hddm protocol. Defaults to 0.8." ).def( 0.8 );
 
-	//utility::vector1< core::Size > empty_vector(0);
+		//utility::vector1< core::Size > empty_vector(0);
 
-	// init command line options
-	//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
-	devel::init(argc, argv);
+		// init command line options
+		//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
+		devel::init(argc, argv);
 
-	//create mover instance
-    A3BHbsDockDesignMinimizeMoverOP a3b_hddm_mover( new A3BHbsDockDesignMinimizeMover() );
+		//create mover instance
+		A3BHbsDockDesignMinimizeMoverOP a3b_hddm_mover( new A3BHbsDockDesignMinimizeMover() );
 
-	a3b_hddm_mover->setup_filter_stats();
+		a3b_hddm_mover->setup_filter_stats();
 
-	//call job distributor
-	protocols::jd2::JobDistributor::get_instance()->go( a3b_hddm_mover );
+		//call job distributor
+		protocols::jd2::JobDistributor::get_instance()->go( a3b_hddm_mover );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;
@@ -256,9 +256,9 @@ A3BHbsDockDesignMinimizeMover::apply(
 	soft_score_fxn->set_etable( FA_STANDARD_SOFT );
 
 	scoring::ScoreFunctionOP pert_score_fxn;
-	if( option[ a3b_hddm::use_soft_rep ].value() ) pert_score_fxn = soft_score_fxn;
-    else pert_score_fxn = score_fxn;
-    
+	if ( option[ a3b_hddm::use_soft_rep ].value() ) pert_score_fxn = soft_score_fxn;
+	else pert_score_fxn = score_fxn;
+
 	scoring::constraints::add_fa_constraints_from_cmdline_to_pose(pose);
 
 	// get a fold tree suitable for docking (local helper function)
@@ -295,35 +295,35 @@ A3BHbsDockDesignMinimizeMover::apply(
 	kinematics::MoveMapOP pert_alpha_mm( new kinematics::MoveMap() );
 	kinematics::MoveMapOP pert_beta_mm( new kinematics::MoveMap() );
 	//pert_pep_mm->set_bb_true_range(pep_start+3, pep_end);
-	
+
 	core::Size hbs_seq_position = 0;
 	core::Size hbs_length = 0;
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
-        
-        if ( i >= pep_start+3 && i <= pep_end ) {
-            // movemap settings
-            if ( pose.residue(i).type().is_alpha_aa() ) {
-                pert_alpha_mm->set_bb( i, true );
-                pert_beta_mm->set_bb( i, false );
-            } else if ( pose.residue(i).type().is_beta_aa() ) {
-                pert_beta_mm->set_bb( i, true );
-                pert_alpha_mm->set_bb( i, false );
-            }
-        }
-        
-		if( pose.residue(i).has_variant_type(chemical::A3B_HBS_PRE) == 1) {
+
+		if ( i >= pep_start+3 && i <= pep_end ) {
+			// movemap settings
+			if ( pose.residue(i).type().is_alpha_aa() ) {
+				pert_alpha_mm->set_bb( i, true );
+				pert_beta_mm->set_bb( i, false );
+			} else if ( pose.residue(i).type().is_beta_aa() ) {
+				pert_beta_mm->set_bb( i, true );
+				pert_alpha_mm->set_bb( i, false );
+			}
+		}
+
+		if ( pose.residue(i).has_variant_type(chemical::A3B_HBS_PRE) == 1 ) {
 			hbs_seq_position = i;
 			TR << "hbs_seq_position is " << i;
 
 			//awatkins: set up constraints
-            core::pose::ncbb::add_a3b_hbs_constraint( pose, i );
-            
+			core::pose::ncbb::add_a3b_hbs_constraint( pose, i );
+
 		}
 		//pert_pep_mm->set_bb( i, false );
-        if (hbs_seq_position>0 && hbs_seq_position <= i) {
-            hbs_length++;
-        }
-    }
+		if ( hbs_seq_position>0 && hbs_seq_position <= i ) {
+			hbs_length++;
+		}
+	}
 	assert(hbs_seq_position != 0);
 
 	// create small and shear movers
@@ -331,20 +331,20 @@ A3BHbsDockDesignMinimizeMover::apply(
 	pert_pep_alpha->angle_max( 'H', option[ a3b_hddm::pert_pep_small_H ].value() );
 	pert_pep_alpha->angle_max( 'L', option[ a3b_hddm::pert_pep_small_L ].value() );
 	pert_pep_alpha->angle_max( 'E', option[ a3b_hddm::pert_pep_small_E ].value() );
-    
+
 	simple_moves::RandomTorsionMoverOP pert_pep_beta( new simple_moves::RandomTorsionMover( pert_beta_mm, option[ a3b_hddm::pert_pep_small_temp ].value(), 1 ) );
 	/*simple_moves::ShearMoverOP pert_pep_shear( new simple_moves::ShearMover( pert_pep_mm, option[ a3b_hddm::pert_pep_shear_temp ].value(), 1 ) );
 	pert_pep_shear->angle_max( 'H', option[ a3b_hddm::pert_pep_shear_H ].value() );
 	pert_pep_shear->angle_max( 'L', option[ a3b_hddm::pert_pep_shear_L ].value() );
 	pert_pep_shear->angle_max( 'E', option[ a3b_hddm::pert_pep_shear_E ].value() );
-     */
-    
+	*/
+
 	// create random mover
 	moves::RandomMoverOP pert_pep_random( new moves::RandomMover() );
 	pert_pep_random->add_mover( pert_pep_alpha, .75 );
 	pert_pep_random->add_mover( pert_pep_beta, .25 );
 	moves::RepeatMoverOP pert_pep_repeat( new moves::RepeatMover( pert_pep_random, option[ a3b_hddm::pert_pep_num_rep ].value() ) );
-    
+
 	/******************************************************************************
 	Rotamer Trials Setup
 	*******************************************************************************/
@@ -360,7 +360,7 @@ A3BHbsDockDesignMinimizeMover::apply(
 	operation::RestrictToRepackingOP pert_rtrp( new operation::RestrictToRepacking() );
 	pert_tf->push_back( pert_rtrp );
 
-    //operation::RestrictToInterfaceOP pert_rtio( new operation::RestrictToInterface(1, 2) ); //magic numbers: assume chains 1 and 2
+	//operation::RestrictToInterfaceOP pert_rtio( new operation::RestrictToInterface(1, 2) ); //magic numbers: assume chains 1 and 2
 	//pert_tf->push_back( pert_rtio );
 
 	// create a rotamer trials mover
@@ -423,7 +423,7 @@ A3BHbsDockDesignMinimizeMover::apply(
 	desn_mm->set_jump( 1, true );
 
 	// create minimization mover
-	simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( desn_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
+	simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( desn_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 
 	//definitely want sidechain minimization here
 	using protocols::simple_moves::TaskAwareMinMoverOP;
@@ -443,24 +443,24 @@ A3BHbsDockDesignMinimizeMover::apply(
 
 	protocols::jd2::JobOP curr_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
-//kdrew: only turn on pymol observer in debug mode
-//#ifndef NDEBUG
-if( option[ a3b_hddm::pymol ].value() )
-{
-	protocols::moves::PyMolObserverOP pymover = protocols::moves::AddPyMolObserver(pose, option[ a3b_hddm::keep_history ].value() );
-}
-//#endif
+	//kdrew: only turn on pymol observer in debug mode
+	//#ifndef NDEBUG
+	if ( option[ a3b_hddm::pymol ].value() ) {
+		protocols::moves::PyMolObserverOP pymover = protocols::moves::AddPyMolObserver(pose, option[ a3b_hddm::keep_history ].value() );
+	}
+	//#endif
 
 	//pose.dump_pdb("pre_main_loop.pdb");
 	for ( Size k = 1; k <= Size( option[ a3b_hddm::dock_design_loop_num ].value() ); ++k ) {
 		pert_mc->reset(pose);
 
-		
-        if( k == 1 && option[ a3b_hddm::hbs_design_first ].value() )
+
+		if ( k == 1 && option[ a3b_hddm::hbs_design_first ].value() ) {
 			desn_sequence->apply( pose );
-		
+		}
+
 		// pert loop
-		for( Size j = 1; j <= Size( option[ a3b_hddm::pert_num ].value() ); ++j ) {
+		for ( Size j = 1; j <= Size( option[ a3b_hddm::pert_num ].value() ); ++j ) {
 			TR << "PERTURB: " << k << " / "  << j << std::endl;
 			pert_trial->apply( pose );
 			curr_job->add_string_real_pair( "ENERGY_PERT (pert score)", (*pert_score_fxn)(pose) );
@@ -474,7 +474,7 @@ if( option[ a3b_hddm::pymol ].value() )
 		curr_job->add_string_real_pair( "ENERGY_DESN (hard score)", (*score_fxn)(pose) );
 
 		//kdrew: reset mc after first cycle if not considering initial pose
-		if( !option[ a3b_hddm::mc_initial_pose ].value() && k == 1 ) {
+		if ( !option[ a3b_hddm::mc_initial_pose ].value() && k == 1 ) {
 			mc->reset(pose);
 			TR<< "after mc->reset" << std::endl;
 			mc->show_state();
@@ -497,7 +497,7 @@ if( option[ a3b_hddm::pymol ].value() )
 
 	TR << "Checking pose energy..." << std::endl;
 
-		// create  MetricValues
+	// create  MetricValues
 	basic::MetricValue< core::Real > mv_sasa_complex;
 	basic::MetricValue< core::Real > mv_sasa_seperated;
 	basic::MetricValue< utility::vector1< core::Size > > mv_unsat_res_complex;
@@ -534,7 +534,7 @@ if( option[ a3b_hddm::pymol ].value() )
 
 		// create a pack rotamers mover for the final design
 		simple_moves::PackRotamersMoverOP final_desn_pr( new simple_moves::PackRotamersMover(score_fxn, final_desn_pt, 10 ) );
-        
+
 		// design with final pr mover
 		final_desn_pr->apply( pose );
 
@@ -545,7 +545,7 @@ if( option[ a3b_hddm::pymol ].value() )
 		final_min_mm->set_jump( 1, true );
 
 		// create minimization mover
-		simple_moves::MinMoverOP final_min( new simple_moves::MinMover( final_min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
+		simple_moves::MinMoverOP final_min( new simple_moves::MinMover( final_min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 		// final min (okay to use ta min here)
 		final_min->apply( pose );
 	}
@@ -588,7 +588,7 @@ if( option[ a3b_hddm::pymol ].value() )
 	separate_min_mm->set_jump( 1, true );
 
 	// create minimization mover
-	simple_moves::MinMoverOP separate_min( new simple_moves::MinMover( separate_min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
+	simple_moves::MinMoverOP separate_min( new simple_moves::MinMover( separate_min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 	// final min (okay to use ta min here)
 	separate_min->apply( repack_stats_pose );
 

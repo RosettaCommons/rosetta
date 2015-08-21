@@ -53,13 +53,13 @@ namespace motifs {
 core::Size const NO_LIGAND = 0;
 core::Size const LIGAND = 1;
 
-	
+
 // This group of functions loads the motifs from external files
 SingleMotifOP
 single_motif_from_filename(
 	utility::file::FileName const & motif_filename
 );// uses a constructor that accepts two residues, not input atom names
-	// so motif atoms are set in the static map in Motif.cc
+// so motif atoms are set in the static map in Motif.cc
 
 SingleMotifOP
 single_motif_from_stream(
@@ -73,7 +73,7 @@ single_motif_from_stream(
 
 SingleMotifOP
 single_ligand_motif_from_stream(
-  std::istream & motif_info
+	std::istream & motif_info
 );
 
 // Dot product of the  z-axis of nucleotides (1.0 = parallel, 0.0 = not)

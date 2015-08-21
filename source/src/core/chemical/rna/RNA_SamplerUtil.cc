@@ -63,26 +63,26 @@ get_full_torsions( Real const bin_size /* = 20.0 */ ){
 	add_values_from_center( full_torsions, 0, 180, bin_size );
 	//Avoid sampling both -180 and 180 deg
 	Real const epsil =  0.001; //Arbitary small number
-	if ( 360 - ( full_torsions.back() - full_torsions.front() ) < epsil )	full_torsions.pop_back();
-//	TR << "FULL TORSIONS: "  << full_torsions << std::endl;
+	if ( 360 - ( full_torsions.back() - full_torsions.front() ) < epsil ) full_torsions.pop_back();
+	// TR << "FULL TORSIONS: "  << full_torsions << std::endl;
 	return full_torsions;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 utility::vector1< Real >
 get_epsilon_torsions( Real const delta,
-											bool const extra_epsilon,
-											Real const bin_size /* = 20.0*/ ){
+	bool const extra_epsilon,
+	Real const bin_size /* = 20.0*/ ){
 	static chemical::rna::RNA_FittedTorsionInfo const torsion_info;
-return get_epsilon_torsions( numeric::principal_angle_degrees( delta ) <= torsion_info.delta_cutoff(),
-																																	 extra_epsilon, bin_size );
+	return get_epsilon_torsions( numeric::principal_angle_degrees( delta ) <= torsion_info.delta_cutoff(),
+		extra_epsilon, bin_size );
 }
 
 /////////////////////////////////////////////////////////////////////////////
 utility::vector1< Real >
 get_epsilon_torsions( bool const north_pucker,
-		bool const extra_epsilon,
-		Real const /* bin_size=20.0 */ )
+	bool const extra_epsilon,
+	Real const /* bin_size=20.0 */ )
 {
 	using namespace chemical::rna;
 	static chemical::rna::RNA_FittedTorsionInfo const torsion_info;
@@ -91,7 +91,7 @@ get_epsilon_torsions( bool const north_pucker,
 	//default: center +- 20 deg
 	//extra_epsilon: center +- 60 deg
 	utility::vector1< Real > epsilon_torsions;
-	Real center = ( north_pucker ) ?	torsion_info.epsilon_north() : torsion_info.epsilon_south();
+	Real center = ( north_pucker ) ? torsion_info.epsilon_north() : torsion_info.epsilon_south();
 	Real max_range = 20.0;
 	if ( extra_epsilon ) {
 		max_range = 60.0;
@@ -105,8 +105,8 @@ get_epsilon_torsions( bool const north_pucker,
 	}
 	Real const bin_size_( 10.0 );
 	add_values_from_center( epsilon_torsions, center, max_range, bin_size_ );
-//	TR << "EPSILON CENTER: "  << center << "   based on DELTA: " << delta << std::endl;
-//	TR << "EPSILON TORSIONS: "  << epsilon_torsions << std::endl;
+	// TR << "EPSILON CENTER: "  << center << "   based on DELTA: " << delta << std::endl;
+	// TR << "EPSILON TORSIONS: "  << epsilon_torsions << std::endl;
 	return epsilon_torsions;
 }
 

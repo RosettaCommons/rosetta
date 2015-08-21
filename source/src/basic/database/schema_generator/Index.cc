@@ -32,9 +32,9 @@
 
 static thread_local basic::Tracer TR( "utility.sql_database.Index" );
 
-namespace basic{
-namespace database{
-namespace schema_generator{
+namespace basic {
+namespace database {
+namespace schema_generator {
 
 using platform::Size;
 using std::string;
@@ -77,41 +77,41 @@ Index::print(
 	utility::sql_database::sessionOP db_session
 ) const {
 	stringstream s;
-	
-	switch(db_session->get_db_mode()) {
-		case utility::sql_database::DatabaseMode::mysql:
-			break;
-		case utility::sql_database::DatabaseMode::postgres:
-			break;
-		case utility::sql_database::DatabaseMode::sqlite3:{
-			s << "CREATE ";
-			if(unique_){
-				s << "UNIQUE ";
-			}
-			s << "INDEX IF NOT EXISTS\n\t";
-			s << table_name;
-			for(Size i=1; i <= columns_.size(); ++i){
-				s << "_" << columns_[i].name();
-			}
-			s << " ON\n\t";
-			s << " " << table_name << " ( ";
-			for(Size i=1; i <= columns_.size(); ++i){
-				if(i != 1){
-					s << ", ";
-				}
-				s << columns_[i].name();
-			}
-			s << " );\n";
 
-			break;
+	switch(db_session->get_db_mode()) {
+	case utility::sql_database::DatabaseMode::mysql :
+		break;
+	case utility::sql_database::DatabaseMode::postgres :
+		break;
+	case utility::sql_database::DatabaseMode::sqlite3 : {
+		s << "CREATE ";
+		if ( unique_ ) {
+			s << "UNIQUE ";
 		}
-		default:
-			utility_exit_with_message(
-				"Unrecognized database mode: '" + name_from_database_mode(db_session->get_db_mode()) + "'");
-			return "";  // just here to remove warning; lame ~Labonte
+		s << "INDEX IF NOT EXISTS\n\t";
+		s << table_name;
+		for ( Size i=1; i <= columns_.size(); ++i ) {
+			s << "_" << columns_[i].name();
+		}
+		s << " ON\n\t";
+		s << " " << table_name << " ( ";
+		for ( Size i=1; i <= columns_.size(); ++i ) {
+			if ( i != 1 ) {
+				s << ", ";
+			}
+			s << columns_[i].name();
+		}
+		s << " );\n";
+
+		break;
+	}
+	default :
+		utility_exit_with_message(
+			"Unrecognized database mode: '" + name_from_database_mode(db_session->get_db_mode()) + "'");
+		return "";  // just here to remove warning; lame ~Labonte
 	}
 
-  return s.str();
+	return s.str();
 }
 
 

@@ -280,53 +280,53 @@ public:
 	void
 	envsmooth_zero_negatives( bool const setting );
 
- 	/// @brief Read access to the hbond options object
- 	hbonds::HBondOptions const &
- 	hbond_options() const;
+	/// @brief Read access to the hbond options object
+	hbonds::HBondOptions const &
+	hbond_options() const;
 
- 	/// @brief non-const access to the hbond options object
- 	hbonds::HBondOptions &
- 	hbond_options();
+	/// @brief non-const access to the hbond options object
+	hbonds::HBondOptions &
+	hbond_options();
 
- 	/// @brief Set the hbond options object -- makes a deep copy
- 	void
- 	hbond_options( hbonds::HBondOptions const & opts );
+	/// @brief Set the hbond options object -- makes a deep copy
+	void
+	hbond_options( hbonds::HBondOptions const & opts );
 
- 	/// @brief Read access to the etable options object
- 	etable::EtableOptions const &
- 	etable_options() const;
+	/// @brief Read access to the etable options object
+	etable::EtableOptions const &
+	etable_options() const;
 
- 	/// @brief non-const access to the etable options object
- 	etable::EtableOptions &
- 	etable_options();
+	/// @brief non-const access to the etable options object
+	etable::EtableOptions &
+	etable_options();
 
- 	/// @brief Set the etable options object -- makes a deep copy
- 	void
- 	etable_options( etable::EtableOptions const & opts );
+	/// @brief Set the etable options object -- makes a deep copy
+	void
+	etable_options( etable::EtableOptions const & opts );
 
- 	/// @brief Read access to the RNA options object
- 	rna::RNA_EnergyMethodOptions const &
- 	rna_options() const;
+	/// @brief Read access to the RNA options object
+	rna::RNA_EnergyMethodOptions const &
+	rna_options() const;
 
- 	/// @brief non-const access to the RNA options object
- 	rna::RNA_EnergyMethodOptions &
- 	rna_options();
+	/// @brief non-const access to the RNA options object
+	rna::RNA_EnergyMethodOptions &
+	rna_options();
 
- 	/// @brief Set the FreeDOF options object -- makes a deep copy
- 	void
- 	rna_options( rna::RNA_EnergyMethodOptions const & opts );
+	/// @brief Set the FreeDOF options object -- makes a deep copy
+	void
+	rna_options( rna::RNA_EnergyMethodOptions const & opts );
 
- 	/// @brief Read access to the FreeDOF options object
- 	methods::FreeDOF_Options const &
- 	free_dof_options() const;
+	/// @brief Read access to the FreeDOF options object
+	methods::FreeDOF_Options const &
+	free_dof_options() const;
 
- 	/// @brief non-const access to the FreeDOF options object
- 	methods::FreeDOF_Options &
- 	free_dof_options();
+	/// @brief non-const access to the FreeDOF options object
+	methods::FreeDOF_Options &
+	free_dof_options();
 
- 	/// @brief Set the FreeDOF options object -- makes a deep copy
- 	void
- 	free_dof_options( methods::FreeDOF_Options const & opts );
+	/// @brief Set the FreeDOF options object -- makes a deep copy
+	void
+	free_dof_options( methods::FreeDOF_Options const & opts );
 
 	std::string const & pb_bound_tag() const;
 	std::string & pb_bound_tag();
@@ -373,7 +373,7 @@ public:
 
 	void
 	bond_angle_residue_type_param_set(
-    scoring::mm::MMBondAngleResidueTypeParamSetOP param_set);
+		scoring::mm::MMBondAngleResidueTypeParamSetOP param_set);
 
 	void set_strand_strand_weights(
 		int ss_lowstrand,
@@ -459,7 +459,7 @@ public:
 
 private:
 	/// expand this to a class and include ss weights inside
-	typedef 	std::map< ScoreType, utility::vector1< Real > > MethodWeights;
+	typedef  std::map< ScoreType, utility::vector1< Real > > MethodWeights;
 
 private:
 

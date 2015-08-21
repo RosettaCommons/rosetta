@@ -37,8 +37,8 @@ GraftOneCDRLoop::GraftOneCDRLoop() {}
 
 
 GraftOneCDRLoop::GraftOneCDRLoop( CDRNameEnum const & cdr_name,
-                                  AntibodyInfoOP antibody_info,
-                                  Ab_TemplateInfoOP ab_t_info) : Mover( "GraftOneCDRLoop" ) {
+	AntibodyInfoOP antibody_info,
+	Ab_TemplateInfoOP ab_t_info) : Mover( "GraftOneCDRLoop" ) {
 
 	set_default();
 
@@ -82,11 +82,11 @@ void GraftOneCDRLoop::init() {
 
 void GraftOneCDRLoop::finalize_setup() {
 
-	if(scorefxn_) {
+	if ( scorefxn_ ) {
 		scorefxn_=core::scoring::get_score_function();
 	}
 
-	if(stem_not_graft_) {
+	if ( stem_not_graft_ ) {
 		stem_copy_size_ = 0 ;
 	}
 
@@ -142,14 +142,14 @@ void GraftOneCDRLoop::apply( pose::Pose & pose_in ) {
 	}
 
 	Size correction ;
-	if(preprocessing_script_version_ == "R2_Perl") correction = 1;
-	if(preprocessing_script_version_ == "R3_Python") correction = 0;
+	if ( preprocessing_script_version_ == "R2_Perl" ) correction = 1;
+	if ( preprocessing_script_version_ == "R3_Python" ) correction = 0;
 
-	for( Size start_stem = 1+correction; start_stem <= flank_size_; ++start_stem ) {
+	for ( Size start_stem = 1+correction; start_stem <= flank_size_; ++start_stem ) {
 		/// starting from the 2nd residue in the l1-3.pdb, H1-3.pdb
 		Size const ref_stem ( start_stem  );
-		for( Size j=1; j <= 4; j++ ) {    /// four backbone heavy atoms
-//          		TRG<<"j="<<j<<"  start_stem_in_template_pose="<<start_stem<<"  ref_stem_in_truncated_pose_="<<ref_stem<<std::endl;
+		for ( Size j=1; j <= 4; j++ ) {    /// four backbone heavy atoms
+			//            TRG<<"j="<<j<<"  start_stem_in_template_pose="<<start_stem<<"  ref_stem_in_truncated_pose_="<<ref_stem<<std::endl;
 			id::AtomID const id1( j, start_stem );
 			id::AtomID const id2( j, ref_stem );
 			atom_map[ id1 ] = id2;
@@ -157,11 +157,11 @@ void GraftOneCDRLoop::apply( pose::Pose & pose_in ) {
 	}
 
 	// start at the end of the actual loop
-	for( Size end_stem = query_size+flank_size_+1; end_stem <= query_size+flank_size_+flank_size_-correction; ++end_stem ) {
+	for ( Size end_stem = query_size+flank_size_+1; end_stem <= query_size+flank_size_+flank_size_-correction; ++end_stem ) {
 		Size const ref_stem ( end_stem);
 		//   if(template_name_ == "h3") Size const ref_stem(end_stem+1);
-		for( Size j=1; j <= 4; j++ ) {    /// four backbone heavy atoms
-//          	TRG<<"j="<<j<<"  end_stem_in_template_pose="<<end_stem<<"  ref_stem_in_truncated_pose_="<<ref_stem<<std::endl;
+		for ( Size j=1; j <= 4; j++ ) {    /// four backbone heavy atoms
+			//           TRG<<"j="<<j<<"  end_stem_in_template_pose="<<end_stem<<"  ref_stem_in_truncated_pose_="<<ref_stem<<std::endl;
 			id::AtomID const id1( j, end_stem );
 			id::AtomID const id2( j, ref_stem );
 			atom_map[ id1 ] = id2;
@@ -184,11 +184,11 @@ void GraftOneCDRLoop::apply( pose::Pose & pose_in ) {
 
 	for ( Size i=query_start-stem_copy_size_; i <= query_end+stem_copy_size_; ++i ) {
 		Size template_num ( i - (query_start-5) );  // this "5" is the default in the L1.pdb, you have 4 residues before the 1st one
-//        TRG<<" i="<<i<<"    template_num="<<template_num<<std::endl;
+		//        TRG<<" i="<<i<<"    template_num="<<template_num<<std::endl;
 		conformation::Residue const & source_rsd( pose_in.residue( i ) );
 		conformation::Residue const & target_rsd( template_pose.residue( template_num) );
-//        TRG<<source_rsd<<std::endl;
-//        TRG<<target_rsd<<std::endl;
+		//        TRG<<source_rsd<<std::endl;
+		//        TRG<<target_rsd<<std::endl;
 
 		Size const natoms( source_rsd.natoms() );
 
@@ -197,7 +197,7 @@ void GraftOneCDRLoop::apply( pose::Pose & pose_in ) {
 		// dimension the missing-atom mask
 		pose::initialize_atomid_map( missing, pose_in );
 
-		if( source_rsd.name() != target_rsd.name() ) pose_in.set_secstruct( i, 'X' );
+		if ( source_rsd.name() != target_rsd.name() ) pose_in.set_secstruct( i, 'X' );
 		for ( Size j=1; j<= natoms; ++j ) {
 			std::string const & atom_name( source_rsd.atom_name(j) );
 			if ( target_rsd.has( atom_name ) ) {
@@ -216,7 +216,7 @@ void GraftOneCDRLoop::apply( pose::Pose & pose_in ) {
 		}
 	}
 
-//    pose_in.dump_pdb(template_name_+"_graft");
+	//    pose_in.dump_pdb(template_name_+"_graft");
 
 
 }
@@ -235,7 +235,7 @@ GraftOneCDRLoop::GraftOneCDRLoop( GraftOneCDRLoop const & rhs ) : Mover(rhs) {
 /// @brief assignment operator
 GraftOneCDRLoop & GraftOneCDRLoop::operator=( GraftOneCDRLoop const & rhs ) {
 	//abort self-assignment
-	if (this == &rhs) return *this;
+	if ( this == &rhs ) return *this;
 	Mover::operator=(rhs);
 	initForEqualOperatorAndCopyConstructor(*this, rhs);
 	return *this;

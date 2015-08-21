@@ -41,22 +41,19 @@ namespace dna {
 
 /// @details ctor, reads data file. Need to configure to allow alternate tables/atom_sets
 DirectReadoutPotential::DirectReadoutPotential()
-	:wt( 1.0/20 ),
-	 RT( 0.582 )
+:wt( 1.0/20 ),
+	RT( 0.582 )
 {
-  fill_bins(A_bins, 'A');
-  fill_bins(C_bins, 'C');
+	fill_bins(A_bins, 'A');
+	fill_bins(C_bins, 'C');
 	fill_bins(G_bins, 'G');
-  fill_bins(T_bins, 'T');
-  get_pairs();
+	fill_bins(T_bins, 'T');
+	get_pairs();
 
 	aas_at_grid = 0;
-	for (int x=0; x<9; x++)
-	{
-		for (int y=0; y<9; y++)
-		{
-			for (int z=0; z<4; z++)
-			{
+	for ( int x=0; x<9; x++ ) {
+		for ( int y=0; y<9; y++ ) {
+			for ( int z=0; z<4; z++ ) {
 				int num_aas =
 					A_bins[x][y][z].length() +
 					C_bins[x][y][z].length() +
@@ -67,17 +64,12 @@ DirectReadoutPotential::DirectReadoutPotential()
 		}
 	}
 
-  Real d_eab;
-	for (int x_bin=0; x_bin<9; x_bin++)
-	{
-		for (int y_bin=0; y_bin<9; y_bin++)
-		{
-			for (int z_bin=0; z_bin<4; z_bin++)
-			{
-				for (int p=0; p<20; p++)
-				{
-					for (int d=0; d<4; d++)
-					{
+	Real d_eab;
+	for ( int x_bin=0; x_bin<9; x_bin++ ) {
+		for ( int y_bin=0; y_bin<9; y_bin++ ) {
+			for ( int z_bin=0; z_bin<4; z_bin++ ) {
+				for ( int p=0; p<20; p++ ) {
+					for ( int d=0; d<4; d++ ) {
 						int num_aas =
 							A_bins[x_bin][y_bin][z_bin].length() +
 							C_bins[x_bin][y_bin][z_bin].length() +
@@ -89,23 +81,22 @@ DirectReadoutPotential::DirectReadoutPotential()
 
 						int num_of_aa = 0;
 						string lib_aa_list;
-						if (d==0) {  lib_aa_list=G_bins[x_bin][y_bin][z_bin];  } // follows order in AA.hh
-						else if (d==1) {  lib_aa_list=A_bins[x_bin][y_bin][z_bin];  }
-						else if (d==2) {  lib_aa_list=C_bins[x_bin][y_bin][z_bin];  }
+						if ( d==0 ) {  lib_aa_list=G_bins[x_bin][y_bin][z_bin];  } // follows order in AA.hh
+						else if ( d==1 ) {  lib_aa_list=A_bins[x_bin][y_bin][z_bin];  }
+						else if ( d==2 ) {  lib_aa_list=C_bins[x_bin][y_bin][z_bin];  }
 						else {  lib_aa_list=T_bins[x_bin][y_bin][z_bin];  }
 
-						for (Size i=0; i<lib_aa_list.length(); i++)
-						{
-						  int const aa( chemical::aa_from_oneletter_code( lib_aa_list[i] ) );
+						for ( Size i=0; i<lib_aa_list.length(); i++ ) {
+							int const aa( chemical::aa_from_oneletter_code( lib_aa_list[i] ) );
 							if ( aa == p ) { num_of_aa++; } //***need to convert to_comp to its aa_number-1
 						}
 
 						Real fscore;
 						Real gabs = Real(num_of_aa)/Real(mab);
 						Real fabs = fs/(1 + mab*wt) + (mab*wt*gabs)/(1+mab*wt);
-						if (fs!=0)  {  fscore = fabs/fs;  }
+						if ( fs!=0 )  {  fscore = fabs/fs;  }
 						else  {  fscore = 0;  }
-						if (fscore!=0)  {  d_eab = -RT*log(fscore);  }
+						if ( fscore!=0 )  {  d_eab = -RT*log(fscore);  }
 						else  {  d_eab = 0;  }
 
 						score[x_bin][y_bin][z_bin][p][d]=d_eab;
@@ -119,7 +110,7 @@ DirectReadoutPotential::DirectReadoutPotential()
 Real
 DirectReadoutPotential::rsd_rsd_energy(conformation::Residue const & rsd1,conformation::Residue const & rsd2) const
 {
-debug_assert( rsd1.is_protein() && rsd2.is_DNA() );
+	debug_assert( rsd1.is_protein() && rsd2.is_DNA() );
 
 	// define coordinate frame
 	bool const AG( rsd2.aa() == chemical::na_ade || rsd2.aa() == chemical::na_gua );
@@ -135,15 +126,15 @@ debug_assert( rsd1.is_protein() && rsd2.is_DNA() );
 	Real const zz = dot(calpha,z);
 
 	if ( ( xx >= -13.5 && xx <= 13.5  ) &&
-			 ( yy >= -13.5 && yy <= 13.5  ) &&
-			 ( zz >=  -6.0 && zz <=  6.0  ) ) {
+			( yy >= -13.5 && yy <= 13.5  ) &&
+			( zz >=  -6.0 && zz <=  6.0  ) ) {
 		int const aa_bin = rsd1.aa() - 1;
 		int const na_bin = rsd2.aa() - chemical::first_DNA_aa;
 
 		int x_bin = get_xy_bin(xx);
 		int y_bin = get_xy_bin(yy);
 		int z_bin = get_z_bin(zz);
-	debug_assert( aa_bin >= 0 && aa_bin < 20 && na_bin >= 0 && na_bin < 4 );
+		debug_assert( aa_bin >= 0 && aa_bin < 20 && na_bin >= 0 && na_bin < 4 );
 		return score[x_bin][y_bin][z_bin][aa_bin][na_bin];
 	} else {
 		return 0.0;
@@ -171,7 +162,7 @@ DirectReadoutPotential::fill_bins(string (&my_array)[9][9][4], char const base )
 				getline( myfile, line );
 				std::istringstream l( line );
 				l >> x >> y >> z >> aas;
-			debug_assert( x == i && y == j && z == k );
+				debug_assert( x == i && y == j && z == k );
 				if ( aas == "-" ) {
 					my_array[x][y][z]= "";
 				} else {
@@ -199,7 +190,7 @@ DirectReadoutPotential::get_pairs()
 			std::istringstream l(line );
 			Size itmp, jtmp;
 			l >> itmp >> jtmp >> num_pairs[i][j];
-		debug_assert( itmp == i && jtmp == j && !l.fail() );
+			debug_assert( itmp == i && jtmp == j && !l.fail() );
 		}
 	}
 	myfile.close();
@@ -208,27 +199,27 @@ DirectReadoutPotential::get_pairs()
 int
 DirectReadoutPotential::get_xy_bin(Real coord) const
 {
-	 if (coord <= -13.5 || coord >= 13.5)  {  return -99;  }
-	 Real c = coord - ( -13.5 );
-	 int bin = int(floor( c/3 ));
-   return bin;
+	if ( coord <= -13.5 || coord >= 13.5 )  {  return -99;  }
+	Real c = coord - ( -13.5 );
+	int bin = int(floor( c/3 ));
+	return bin;
 }
 
 int
 DirectReadoutPotential::get_z_bin(Real coord) const
 {
-	if (coord <= -6 || coord >= 6)  {  return -99;  }
+	if ( coord <= -6 || coord >= 6 )  {  return -99;  }
 	Real c = coord - ( -6 );
 	int bin = int(floor( c/3 ));
-  return bin;
+	return bin;
 }
 
 // int
 // DirectReadoutPotential::num_pairs(int b, int a)
 // {
-// 	for (int i=0; i<80; i++)
-// 		{  if (pair_base[i]==b && pair_aa[i]==a)  {  return pair_num[i];  }
-// 	}
+//  for (int i=0; i<80; i++)
+//   {  if (pair_base[i]==b && pair_aa[i]==a)  {  return pair_num[i];  }
+//  }
 // }
 
 

@@ -68,45 +68,45 @@ FragSetCollection::region(
 	Size min_length,
 	FrameList &frames
 ) const {
-  Size count ( 0 );
-  for ( FragSetList::const_iterator it = fragset_list_.begin(), eit = fragset_list_.end();
-        it != eit; ++it ) {
-    count += (*it)->region(  move_map, start, end, min_overlap, min_length, frames );
-  }
-  return count;
+	Size count ( 0 );
+	for ( FragSetList::const_iterator it = fragset_list_.begin(), eit = fragset_list_.end();
+			it != eit; ++it ) {
+		count += (*it)->region(  move_map, start, end, min_overlap, min_length, frames );
+	}
+	return count;
 }
 
 void FragSetCollection::add_fragset( FragSetOP fragset ) {
-  if ( fragset->max_frag_length() > max_frag_length() ) set_max_frag_length( fragset->max_frag_length() );
-  if ( fragset->min_pos() < min_pos() ) set_min_pos( fragset->min_pos() );
-  if ( fragset->max_pos() > max_pos() ) set_max_pos( fragset->max_pos() );
-  fragset_list_.push_back( fragset );
+	if ( fragset->max_frag_length() > max_frag_length() ) set_max_frag_length( fragset->max_frag_length() );
+	if ( fragset->min_pos() < min_pos() ) set_min_pos( fragset->min_pos() );
+	if ( fragset->max_pos() > max_pos() ) set_max_pos( fragset->max_pos() );
+	fragset_list_.push_back( fragset );
 }
 
 ConstFrameIterator FragSetCollection::begin() const {
 	std::cout << "iterator of FragSetCollection has stubbed out " << std::endl;
-debug_assert( 0 );
+	debug_assert( 0 );
 	utility_exit_with_message( "iterator of FragSetCollection has stubbed out " );
 	return ConstFrameIterator(); //too make compiler happy
 }
 
 ConstFrameIterator FragSetCollection::end() const {
 	std::cout << "iterator of FragSetCollection has stubbed out " << std::endl;
-debug_assert( 0 );
+	debug_assert( 0 );
 	utility_exit_with_message( "iterator of FragSetCollection has stubbed out " );
 	return ConstFrameIterator(); //too make compiler happy
 }
 
 FrameIterator FragSetCollection::nonconst_begin() {
 	std::cout << "iterator of FragSetCollection has stubbed out " << std::endl;
-debug_assert( 0 );
+	debug_assert( 0 );
 	utility_exit_with_message( "iterator of FragSetCollection has stubbed out " );
 	return FrameIterator(); //too make compiler happy
 }
 
 FrameIterator FragSetCollection::nonconst_end() {
 	std::cout << "iterator of FragSetCollection has stubbed out " << std::endl;
-debug_assert( 0 );
+	debug_assert( 0 );
 	utility_exit_with_message( "iterator of FragSetCollection has stubbed out " );
 	return FrameIterator(); //too make compiler happy
 }
@@ -121,7 +121,7 @@ bool FragSetCollection::empty() const {
 void FragSetCollection::add_( FrameOP ) {
 	//tricky which FragSet should it add the frame to? needs a way to determine this
 	std::cout << "add Frame to FragSetCollection has stubbed out " << std::endl;
-debug_assert( 0 );
+	debug_assert( 0 );
 	utility_exit_with_message( "add Frame to FragSetCollection has stubbed out " );
 }
 

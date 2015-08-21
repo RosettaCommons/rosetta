@@ -45,12 +45,12 @@ public:
 	virtual ~TopologyBrokerMover();
 private:
 	bool align_;
-//	std::string target_filename_;
-//	core::pose::PoseOP targetA_;
-//	core::pose::PoseOP motif_;
-//	std::string motif_filename_;
-  core::Size start_;
-  core::Size end_;
+	// std::string target_filename_;
+	// core::pose::PoseOP targetA_;
+	// core::pose::PoseOP motif_;
+	// std::string motif_filename_;
+	core::Size start_;
+	core::Size end_;
 };
 
 

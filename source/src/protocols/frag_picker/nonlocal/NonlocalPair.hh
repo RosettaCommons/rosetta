@@ -51,7 +51,7 @@ using namespace protocols::frag_picker;
 class NonlocalPair: public utility::pointer::ReferenceCount {
 public:
 	NonlocalPair( Size query_pos_i, Size query_pos_j, Candidate candidate_i, Candidate candidate_j,
-			Size candidate_i_rank, Size candidate_j_rank, utility::vector1<ContactOP> & contacts ) {
+		Size candidate_i_rank, Size candidate_j_rank, utility::vector1<ContactOP> & contacts ) {
 		query_position_i_ = query_pos_i;
 		query_position_j_ = query_pos_j;
 		candidate_i_ = candidate_i;
@@ -93,13 +93,14 @@ public:
 
 	void print(std::ostream& out) {
 		out << "pair: " << query_position_i_ << " " << query_position_j_  << " " <<
-		candidate_i_.first->get_residue(1)->resi() << " " << candidate_j_.first->get_residue(1)->resi() <<
-		" " << candidate_i_rank_ << " " << candidate_j_rank_;
+			candidate_i_.first->get_residue(1)->resi() << " " << candidate_j_.first->get_residue(1)->resi() <<
+			" " << candidate_i_rank_ << " " << candidate_j_rank_;
 		std::map<ContactType, Size> contact_type_cnt;
 		std::map<ContactType, Size>::iterator iter;
-		for (Size i=1; i<=contacts_.size(); ++i) contact_type_cnt[contacts_[i]->type()]++;
-		for ( iter = contact_type_cnt.begin(); iter != contact_type_cnt.end(); iter++ )
+		for ( Size i=1; i<=contacts_.size(); ++i ) contact_type_cnt[contacts_[i]->type()]++;
+		for ( iter = contact_type_cnt.begin(); iter != contact_type_cnt.end(); iter++ ) {
 			out << " " << contact_name(iter->first) << " " << iter->second;
+		}
 		out << std::endl;
 		candidate_i_.first->print_fragment(out);
 		out << std::endl;

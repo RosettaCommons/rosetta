@@ -112,14 +112,14 @@ public:
 
 	/// @brief Get a structure with a certain index
 	core::io::silent::SilentStructCOP get_struct( core::Size index ) const {
-	  if( index >= store_.size() ) runtime_assert( false );
-	  return (core::io::silent::SilentStructCOP) store_[ index ];
+		if ( index >= store_.size() ) runtime_assert( false );
+		return (core::io::silent::SilentStructCOP) store_[ index ];
 	}
 
 	/// @brief Get a structure with a certain index
 	core::io::silent::SilentStructOP& get_struct( core::Size index )  {
-	  if( index >= store_.size() ) runtime_assert( false );
-	  return store_[ index ];
+		if ( index >= store_.size() ) runtime_assert( false );
+		return store_[ index ];
 	}
 
 	/// @brief Get a random structure
@@ -140,16 +140,16 @@ public:
 	std::vector < core::io::silent::SilentStructOP > &  store() { return store_; }
 
 	void limit( core::Size limit_size ){
-		if( store().size() > limit_size ) store().resize( limit_size );
+		if ( store().size() > limit_size ) store().resize( limit_size );
 	}
 
-  /// @brief Return memory usage
+	/// @brief Return memory usage
 	virtual core::Size mem_footprint() const;
 
-  /// @brief return numner of structures
+	/// @brief return numner of structures
 	core::Size size() const { return store_.size(); }
 
-  /// @brief return numner of structures
+	/// @brief return numner of structures
 	void erase( iterator it ) { store_.erase(it); }
 
 	/// Manipulators:

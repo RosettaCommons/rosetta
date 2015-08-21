@@ -74,7 +74,7 @@ void RotateJumpAxisMover::apply( core::pose::Pose & pose ){
 	//calculate the rotation axis and angle
 	//looking down the axis from the upstream to downstream atom, positive rotations are counterclockwise
 	core::Vector axis( upstream_res.atom(upstream_atomno).xyz()//minus
-										 - downstream_res.atom(downstream_atomno).xyz() );
+		- downstream_res.atom(downstream_atomno).xyz() );
 	core::Angle angle(calc_angle());
 
 	TR << angle << std::endl;
@@ -95,22 +95,22 @@ RotateJumpAxisMover::get_name() const {
 }
 
 core::Angle RotateJumpAxisMover::calc_angle()
-{	return numeric::conversions::radians(lower_angle_ + ((upper_angle_ - lower_angle_) * numeric::random::rg().uniform())); }
+{ return numeric::conversions::radians(lower_angle_ + ((upper_angle_ - lower_angle_) * numeric::random::rg().uniform())); }
 
 /// @details random angle constructor.  rb_jump_num is the number of the jump.  Magic numbers 180 and -179.9999999... maintain the uniform range.  I'm sure there's a better way to get [180, -180) but I can't figure out what it is.
 RotateJumpAxisMover::RotateJumpAxisMover( core::Size const rb_jump_num )
-	: moves::Mover(), rb_jump_num_(rb_jump_num), upper_angle_(180.0), lower_angle_(-179.9999999999999999999999999999999999999999999999)
-{	Mover::type( "RotateJumpAxisMover" ); }
+: moves::Mover(), rb_jump_num_(rb_jump_num), upper_angle_(180.0), lower_angle_(-179.9999999999999999999999999999999999999999999999)
+{ Mover::type( "RotateJumpAxisMover" ); }
 
 /// @details range of angles constructor - takes DEGREES not RADIANS.  rb_jump_num is the number of the jump.
 RotateJumpAxisMover::RotateJumpAxisMover( core::Size const rb_jump_num, core::Angle const upper, core::Angle const lower )
-	: moves::Mover(), rb_jump_num_(rb_jump_num), upper_angle_(upper), lower_angle_(lower)
-{	Mover::type( "RotateJumpAxisMover" ); }
+: moves::Mover(), rb_jump_num_(rb_jump_num), upper_angle_(upper), lower_angle_(lower)
+{ Mover::type( "RotateJumpAxisMover" ); }
 
 /// @details particular angle constructor - takes DEGREES not RADIANS.  rb_jump_num is the number of the jump.
 RotateJumpAxisMover::RotateJumpAxisMover( core::Size const rb_jump_num, core::Angle const angle )
-	: moves::Mover(), rb_jump_num_(rb_jump_num), upper_angle_(angle), lower_angle_(angle)
-{	moves::Mover::type( "RotateJumpAxisMover" ); }
+: moves::Mover(), rb_jump_num_(rb_jump_num), upper_angle_(angle), lower_angle_(angle)
+{ moves::Mover::type( "RotateJumpAxisMover" ); }
 
 RotateJumpAxisMover::~RotateJumpAxisMover(){}
 

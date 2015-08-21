@@ -62,8 +62,8 @@ SelectByDeltaScoreOperationCreator::create_task_operation() const
 /// @brief default constructor
 SelectByDeltaScoreOperation::SelectByDeltaScoreOperation() :
 	TaskOperation(),
-  scorefxn_(/* NULL */),
-  threshold_( 100 ),
+	scorefxn_(/* NULL */),
+	threshold_( 100 ),
 	reference_pose_(/* NULL */)
 {}
 
@@ -76,7 +76,7 @@ SelectByDeltaScoreOperation::clone() const{
 	return core::pack::task::operation::TaskOperationOP( new SelectByDeltaScoreOperation( *this ) );
 }
 
-core::scoring::ScoreFunctionOP SelectByDeltaScoreOperation::scorefxn() const{	return scorefxn_; }
+core::scoring::ScoreFunctionOP SelectByDeltaScoreOperation::scorefxn() const{ return scorefxn_; }
 void SelectByDeltaScoreOperation::scorefxn( core::scoring::ScoreFunctionOP scorefxn ){ scorefxn_ = scorefxn; }
 
 core::scoring::ScoreType SelectByDeltaScoreOperation::score_type() const{ return score_type_; }
@@ -86,7 +86,7 @@ std::string SelectByDeltaScoreOperation::score_type_name() const{ return score_t
 void SelectByDeltaScoreOperation::score_type_name( std::string score_type_name ){ score_type_name_ = score_type_name; }
 
 core::Real SelectByDeltaScoreOperation::threshold() const{ return threshold_; }
-void SelectByDeltaScoreOperation::threshold( core::Real threshold ) {	threshold_ = threshold; }
+void SelectByDeltaScoreOperation::threshold( core::Real threshold ) { threshold_ = threshold; }
 
 bool SelectByDeltaScoreOperation::lower() const{ return lower_; }
 void SelectByDeltaScoreOperation::lower( bool lower ){ lower_ = lower; }
@@ -103,32 +103,33 @@ SelectByDeltaScoreOperation::apply( core::pose::Pose const & pose, core::pack::t
 	core::pose::Pose refp( *reference_pose_ );
 	//refp.dump_pdb("reference_pose.pdb");
 	//Loop over the independent residues, assess score_type for each residue, and restrict residues to repacking based on whether or not they pass the user-provided threshold.
-	core::Size nres_asymmetric_unit, ref_nres_asymmetric_unit;	
-	if(core::conformation::symmetry::is_symmetric( refp.conformation() )){
+	core::Size nres_asymmetric_unit, ref_nres_asymmetric_unit;
+	if ( core::conformation::symmetry::is_symmetric( refp.conformation() ) ) {
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(refp);
-  	ref_nres_asymmetric_unit = symm_info->num_independent_residues();
+		ref_nres_asymmetric_unit = symm_info->num_independent_residues();
 	} else {
-		ref_nres_asymmetric_unit = refp.n_residue();	
+		ref_nres_asymmetric_unit = refp.n_residue();
 	}
-	if(core::conformation::symmetry::is_symmetric( pose.conformation() )){
+	if ( core::conformation::symmetry::is_symmetric( pose.conformation() ) ) {
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
-  	nres_asymmetric_unit = symm_info->num_independent_residues();
+		nres_asymmetric_unit = symm_info->num_independent_residues();
 	} else {
-		nres_asymmetric_unit = pose.n_residue();	
+		nres_asymmetric_unit = pose.n_residue();
 	}
 
-	if( nres_asymmetric_unit != ref_nres_asymmetric_unit )
+	if ( nres_asymmetric_unit != ref_nres_asymmetric_unit ) {
 		utility_exit_with_message( "Reference pose and current pose have a different number of residues" );
+	}
 
 	core::Real delta_score;
 	core::pose::Pose p = pose;
 	std::string pymol_selection("select score_type_selection, resi ");
 	core::scoring::hbonds::HBondSet hbset, hbset_ref;
-  core::scoring::EnergyMap em, ref_em;
-  if (individual_hbonds_) {
+	core::scoring::EnergyMap em, ref_em;
+	if ( individual_hbonds_ ) {
 		core::scoring::methods::EnergyMethodOptions myopt = scorefxn()->energy_method_options();
 		myopt.hbond_options().decompose_bb_hb_into_pair_energies(true);
-		scorefxn()->set_energy_method_options(myopt); 
+		scorefxn()->set_energy_method_options(myopt);
 		scorefxn()->score( refp );
 		scorefxn()->score( p );
 		// get the HBondSet
@@ -139,60 +140,60 @@ SelectByDeltaScoreOperation::apply( core::pose::Pose const & pose, core::pack::t
 		scorefxn()->score( p );
 	}
 
-	for (core::Size i=1; i<=nres_asymmetric_unit; i++) {
-		if (individual_hbonds_) {
+	for ( core::Size i=1; i<=nres_asymmetric_unit; i++ ) {
+		if ( individual_hbonds_ ) {
 			core::Real resi_hbond_bb_sc_energy = 0;
 			core::Real ref_resi_hbond_bb_sc_energy = 0;
-			for (core::Size j=1; j<=nres_asymmetric_unit; j++) {
-			 	for(Size ihb = 1; ihb <= hbset_ref.nhbonds(); ++ihb){
-			 		core::scoring::hbonds::HBond const & hb(hbset_ref.hbond(ihb));
-			 		if( hb.don_res()==i && hb.acc_res()==j ){
-			 			if( !hb.don_hatm_is_protein_backbone() && hb.acc_atm_is_protein_backbone() ) {
+			for ( core::Size j=1; j<=nres_asymmetric_unit; j++ ) {
+				for ( Size ihb = 1; ihb <= hbset_ref.nhbonds(); ++ihb ) {
+					core::scoring::hbonds::HBond const & hb(hbset_ref.hbond(ihb));
+					if ( hb.don_res()==i && hb.acc_res()==j ) {
+						if ( !hb.don_hatm_is_protein_backbone() && hb.acc_atm_is_protein_backbone() ) {
 							ref_resi_hbond_bb_sc_energy += hb.energy();
 							TR << "Refpose donor sc resi: " << i << refp.residue(i).name3() << ". Refpose acceptor bb resi: " << j << refp.residue(j).name3() << std::endl;
 						}
-			 		}
-			 		if( hb.don_res()==j && hb.acc_res()==i ){
-			 			if( hb.don_hatm_is_protein_backbone() && !hb.acc_atm_is_protein_backbone() ) {
+					}
+					if ( hb.don_res()==j && hb.acc_res()==i ) {
+						if ( hb.don_hatm_is_protein_backbone() && !hb.acc_atm_is_protein_backbone() ) {
 							ref_resi_hbond_bb_sc_energy += hb.energy();
 							TR << "Refpose acceptor sc resi: " << i << refp.residue(i).name3() << ". Refpose donor bb resi: " << j << refp.residue(j).name3() << std::endl;
 						}
-			 		}
-			 	}
-			 	for(Size ihb = 1; ihb <= hbset.nhbonds(); ++ihb){
-			 		core::scoring::hbonds::HBond const & hb(hbset.hbond(ihb));
-			 		if( hb.don_res()==i && hb.acc_res()==j ){
-			 			if( !hb.don_hatm_is_protein_backbone() && hb.acc_atm_is_protein_backbone() ) {
+					}
+				}
+				for ( Size ihb = 1; ihb <= hbset.nhbonds(); ++ihb ) {
+					core::scoring::hbonds::HBond const & hb(hbset.hbond(ihb));
+					if ( hb.don_res()==i && hb.acc_res()==j ) {
+						if ( !hb.don_hatm_is_protein_backbone() && hb.acc_atm_is_protein_backbone() ) {
 							resi_hbond_bb_sc_energy += hb.energy();
 							TR << "Pose donor sc resi: " << i << refp.residue(i).name3() << ". Pose acceptor bb resi: " << j << refp.residue(j).name3() << std::endl;
 						}
-			 		}
-			 		if( hb.don_res()==j && hb.acc_res()==i ){
-			 			if( hb.don_hatm_is_protein_backbone() && !hb.acc_atm_is_protein_backbone() ) {
+					}
+					if ( hb.don_res()==j && hb.acc_res()==i ) {
+						if ( hb.don_hatm_is_protein_backbone() && !hb.acc_atm_is_protein_backbone() ) {
 							resi_hbond_bb_sc_energy += hb.energy();
 							TR << "Pose acceptor sc resi: " << i << refp.residue(i).name3() << ". Pose donor bb resi: " << j << refp.residue(j).name3() << std::endl;
 						}
-			 		}
-			 	}
+					}
+				}
 			}
-			delta_score = resi_hbond_bb_sc_energy - ref_resi_hbond_bb_sc_energy;	
+			delta_score = resi_hbond_bb_sc_energy - ref_resi_hbond_bb_sc_energy;
 			TR << "Residue: CurrentPose - RefPose " << score_type_name_ << " : " << i << " " << resi_hbond_bb_sc_energy << " - " << ref_resi_hbond_bb_sc_energy << " = " << delta_score << std::endl;
 		} else {
-		ref_em = refp.energies().residue_total_energies( i );
-		ref_em *= scorefxn()->weights();
-		em = p.energies().residue_total_energies( i );
-		em *= scorefxn()->weights();
-		delta_score = em[score_type_] - ref_em[score_type_];
-		TR << "Residue: CurrentPose - RefPose " << score_type_name_ << " : " << i << " " << em[score_type_] << " - " << ref_em[score_type_] << " = " << delta_score << std::endl;
+			ref_em = refp.energies().residue_total_energies( i );
+			ref_em *= scorefxn()->weights();
+			em = p.energies().residue_total_energies( i );
+			em *= scorefxn()->weights();
+			delta_score = em[score_type_] - ref_em[score_type_];
+			TR << "Residue: CurrentPose - RefPose " << score_type_name_ << " : " << i << " " << em[score_type_] << " - " << ref_em[score_type_] << " = " << delta_score << std::endl;
 		}
-		if ( (delta_score <= threshold_ && lower_ == false) || ( delta_score >= threshold_ && lower_ == true) ) { 
+		if ( (delta_score <= threshold_ && lower_ == false) || ( delta_score >= threshold_ && lower_ == true) ) {
 			task.nonconst_residue_task(i).prevent_repacking();
 		} else {
 			core::Size output_resi = i;
 			if ( !basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {
 				output_resi = pose.pdb_info()->number( i );
 			}
-			pymol_selection.append(ObjexxFCL::string_of(output_resi) + "+");   
+			pymol_selection.append(ObjexxFCL::string_of(output_resi) + "+");
 		}
 	}
 	TR << pymol_selection << std::endl;
@@ -207,10 +208,9 @@ SelectByDeltaScoreOperation::parse_tag( TagCOP tag , DataMap & data)
 	threshold(tag->getOption< core::Real >("threshold", 100 ));
 	lower(tag->getOption< bool >("lower", false ));
 	individual_hbonds(tag->getOption< bool >("individual_hbonds", false ));
-	if( tag->hasOption("reference_name") ){
+	if ( tag->hasOption("reference_name") ) {
 		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data );
-	}
-	else if( tag->hasOption("reference_pdb") ){
+	} else if ( tag->hasOption("reference_pdb") ) {
 		std::string reference_pdb_filename( tag->getOption< std::string >( "reference_pdb", "" ) );
 		reference_pose_ = core::import_pose::pose_from_pdb( reference_pdb_filename );
 	}

@@ -83,7 +83,7 @@ output_single_motif(
 	char prot_pos_chain( src_pose.pdb_info()->chain( prot_pos ) );
 	std::string delimiter( "_" );
 
-	for( core::Size ic(1) ; ic <= contacts.size() ; ++ic ) {
+	for ( core::Size ic(1) ; ic <= contacts.size() ; ++ic ) {
 		protocols::motifs::Motif motif( src_pose.residue( prot_pos ), src_pose.residue( contacts[ic] ) );
 		core::conformation::ResidueOP refdnares = core::conformation::ResidueFactory::create_residue( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map( protocols::dna::dna_full_name3(motif.restype_name2()) ) );
 		core::conformation::Residue protres( src_pose.residue( prot_pos ) );
@@ -94,12 +94,12 @@ output_single_motif(
 		std::string motif_name = src_pose.residue_type( prot_pos ).name3() + ObjexxFCL::string_of( prot_pos_pdb ) + ObjexxFCL::string_of( prot_pos_chain) + delimiter +  src_pose.residue_type( contacts[ic] ).name1() + ObjexxFCL::string_of( dna_pos_pdb ) + ObjexxFCL::string_of( dna_pos_chain ) + delimiter + pdb_prefix;
 		motif.store_remark( motif_name );
 
-		if( ! keep_motif_xtal_location ) {
+		if ( ! keep_motif_xtal_location ) {
 			motif.place_residue( *refdnares, protres );
 			motif.place_residue( protres, dnares );
 		}
 		motif_output_file << motif;
-		if( basic::options::option[ basic::options::OptionKeys::motifs::motif_output_directory ].user() ) {
+		if ( basic::options::option[ basic::options::OptionKeys::motifs::motif_output_directory ].user() ) {
 			std::string output_path( basic::options::option[ basic::options::OptionKeys::motifs::motif_output_directory ]() ); // No default
 			std::string extension( ".pdb" );
 			std::string motif_file_name( output_path + src_pose.residue_type( prot_pos ).name3() + ObjexxFCL::string_of( prot_pos_pdb ) + ObjexxFCL::string_of( prot_pos_chain ) + delimiter );
@@ -135,30 +135,30 @@ place_waters_and_minimize(
 	core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line().restrict_to_repacking().or_include_current( true );
 	core::kinematics::MoveMap mm;
-  mm.set_bb( false );
-  mm.set_chi( false );
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i) {
+	mm.set_bb( false );
+	mm.set_chi( false );
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		if ( pose.residue(i).is_protein() ) {
 			task->nonconst_residue_task(i).prevent_repacking();
 			// Only allowing protein minimization currently
-			if( preminimize_motif_pdbs ) {
+			if ( preminimize_motif_pdbs ) {
 				mm.set_chi( i, true );
 				mm.set_bb( i, true );
 			}
-			if( preminimize_motif_pdbs_sconly) {
+			if ( preminimize_motif_pdbs_sconly ) {
 				mm.set_chi( i, true );
 			}
 		}
 	}
 
-	if( place_adduct_waters ) {
+	if ( place_adduct_waters ) {
 		task->set_bump_check( true );
 		core::pack::pack_rotamers( pose, scorefxn, task);
 		core::Energy end_score = scorefxn( pose );
 		TR << "Score after addition of waters " << end_score << std::endl;
 	}
 
-	if( preminimize_motif_pdbs || preminimize_motif_pdbs_sconly ) {
+	if ( preminimize_motif_pdbs || preminimize_motif_pdbs_sconly ) {
 
 		core::Real min_tolerance = basic::options::option[ basic::options::OptionKeys::run::min_tolerance ]();
 		std::string min_type("dfpmin_armijo_nonmonotone");
@@ -168,7 +168,7 @@ place_waters_and_minimize(
 		core::optimization::AtomTreeMinimizer minimizer;
 		minimizer.run( pose, mm, scorefxn, options );
 		std::string minimized_pdb = "post_minimization_" + pdb_prefix + ".pdb";
-		if ( preminimize_motif_pdbs_sconly) {
+		if ( preminimize_motif_pdbs_sconly ) {
 			minimized_pdb = "post_minimization_sconly_" + pdb_prefix + ".pdb";
 		}
 		core::io::pdb::dump_pdb( pose, minimized_pdb );
@@ -238,17 +238,17 @@ process_for_motifs(
 	place_waters_and_minimize( pose, *scorefxn, pdb_prefix );
 
 	// Loop over positions, skipping non-amino acid
-	for( core::Size prot_pos = 1 ; prot_pos <= nres ; ++prot_pos ) {
+	for ( core::Size prot_pos = 1 ; prot_pos <= nres ; ++prot_pos ) {
 		core::chemical::ResidueType const & res_type( pose.residue_type( prot_pos ) );
-		if( ! res_type.is_protein() ) continue;
+		if ( ! res_type.is_protein() ) continue;
 
 		// Map will automatically sort the "contacts" with the lowest total_score at the front of map
 		std::map< core::Real, core::Size > contacts;
 
 		// Loop over positions, skipping non-DNA
-		for( core::Size dna_pos = 1 ; dna_pos <= nres ; ++dna_pos ) {
+		for ( core::Size dna_pos = 1 ; dna_pos <= nres ; ++dna_pos ) {
 			core::chemical::ResidueType const & res_type( pose.residue_type( dna_pos ) );
-			if( ! res_type.is_DNA() ) continue;
+			if ( ! res_type.is_DNA() ) continue;
 
 			// Get all the cutoffs that residue interactions have to pass to be counted as a motif
 			core::Real pack_score = get_packing_score( pose, dna_pos, prot_pos, *scorefxn );
@@ -259,7 +259,7 @@ process_for_motifs(
 			core::Real water_score_cutoff = basic::options::option[ basic::options::OptionKeys::motifs::water_score_cutoff ](); // Default -0.3
 
 			core::Real total_score = pack_score + hb_score + water_score;
-			if( pack_score < pack_score_cutoff || hb_score < hb_score_cutoff || water_score < water_score_cutoff ) {
+			if ( pack_score < pack_score_cutoff || hb_score < hb_score_cutoff || water_score < water_score_cutoff ) {
 				contacts[total_score] = dna_pos;
 				core::Size prot_pos_pdb( pose.pdb_info()->number( prot_pos ) );
 				char prot_pos_chain( pose.pdb_info()->chain( prot_pos ) );
@@ -271,20 +271,20 @@ process_for_motifs(
 
 		core::Size contacts_size( contacts.size() );
 		bool eliminate_weak_motifs = basic::options::option[ basic::options::OptionKeys::motifs::eliminate_weak_motifs ](); // Default true
-		if( contacts_size != 0 ) {
+		if ( contacts_size != 0 ) {
 			utility::vector1< core::Size > contacts_strength_filter;
 			core::Size contacts_size( contacts.size() );
-			for( std::map< core::Real, core::Size >::const_iterator it( contacts.begin() ),
+			for ( std::map< core::Real, core::Size >::const_iterator it( contacts.begin() ),
 					end( contacts.end() ); it != end; ++it ) {
-				if( contacts_size == 1 ) {
+				if ( contacts_size == 1 ) {
 					contacts_strength_filter.push_back( it->second );
 					break;
 				}
-				if( eliminate_weak_motifs) {
+				if ( eliminate_weak_motifs ) {
 					core::Real first( (it)->first );
 					core::Real firstb( (++it)->first );
 					core::Real divided( first / firstb );
-					if( divided > 2.0 ) {
+					if ( divided > 2.0 ) {
 						contacts_strength_filter.push_back( (--it)->second );
 						break;
 					} else {
@@ -303,8 +303,8 @@ process_for_motifs(
 			char prot_pos_chain( pose.pdb_info()->chain( prot_pos ) );
 			std::string delimiter( "_" );
 			core::Real duplicate_motif_cutoff = basic::options::option[ basic::options::OptionKeys::motifs::duplicate_motif_cutoff ](); // Default 0.2
-			for( core::Size ic=1 ; ic <= contacts_strength_filter.size() ; ++ic ) {
-				if( pose.residue( prot_pos ).name3() == "GLY" ) continue; // GLY cannot currently be a motif
+			for ( core::Size ic=1 ; ic <= contacts_strength_filter.size() ; ++ic ) {
+				if ( pose.residue( prot_pos ).name3() == "GLY" ) continue; // GLY cannot currently be a motif
 				protocols::motifs::Motif motif( pose.residue( prot_pos ), pose.residue( contacts_strength_filter[ic] ) );
 
 				// Making canonical Rosetta residues for placing as motifs and determining if motif already exists in library
@@ -322,26 +322,26 @@ process_for_motifs(
 				std::string motif_name = pose.residue_type( prot_pos ).name3() + ObjexxFCL::string_of( prot_pos_pdb ) + ObjexxFCL::string_of( prot_pos_chain) + delimiter +  pose.residue_type( dna_pos ).name1() + ObjexxFCL::string_of( dna_pos_pdb ) + ObjexxFCL::string_of( dna_pos_chain ) + delimiter + pdb_prefix;
 				motif.store_remark( motif_name );
 
-				for( protocols::motifs::MotifCOPs::const_iterator motifcop_itr = motifs.begin(), end_itr = motifs.end();
+				for ( protocols::motifs::MotifCOPs::const_iterator motifcop_itr = motifs.begin(), end_itr = motifs.end();
 						motifcop_itr != end_itr; ++motifcop_itr ) {
 					protocols::motifs::MotifCOP motifcop( *motifcop_itr );
-					if( motifcop->restype_name1() != motif.restype_name1() ) continue;
-					if( motifcop->restype_name2() != motif.restype_name2() ) continue;
+					if ( motifcop->restype_name1() != motif.restype_name1() ) continue;
+					if ( motifcop->restype_name2() != motif.restype_name2() ) continue;
 					motifcop->place_residue( *protres, *dnares2 );
 					core::Real rmsdtest = core::scoring::automorphic_rmsd( *dnares, *dnares2, false );
-					if( rmsdtest < duplicate_motif_cutoff ) {
+					if ( rmsdtest < duplicate_motif_cutoff ) {
 						TR << "Skipping motif " << motif.remark() << " because it matches motif " << motifcop->remark() << " already in motif library, with an RMSD = " << rmsdtest << std::endl;
 						broke = true;
 						break;
 					}
 				}
-				if( !broke ) {
+				if ( !broke ) {
 					TR << "Adding motif " << motif.remark() << std::endl;
 					final_contacts.push_back( contacts_strength_filter[ic] );
 					motifs.add_to_library( motif );
 				}
 			}  // End loop that adds motifs to the MotifLibrary and skips the motif if a very similar motif has already been found
-			if( final_contacts.size() >= 1 ) {
+			if ( final_contacts.size() >= 1 ) {
 				output_single_motif( pose, pdb_prefix, prot_pos, final_contacts, motif_output_file );
 			}
 		} // if there were actually contacts found for the particular protein residue
@@ -367,16 +367,16 @@ process_file_list()
 
 	if ( motif_library_previous.nmotifs() > 0 ) {
 		TR << "Adding motifs from a previously made library" << std::endl;
-		for( protocols::motifs::MotifCOPs::const_iterator motifcop_itr = motif_library_previous.begin(), end_itr = motif_library_previous.end();
+		for ( protocols::motifs::MotifCOPs::const_iterator motifcop_itr = motif_library_previous.begin(), end_itr = motif_library_previous.end();
 				motifcop_itr != end_itr; ++motifcop_itr ) {
-				protocols::motifs::MotifCOP motifcop( *motifcop_itr );
-				motifs.add_to_library( *motifcop );
-				motif_output_file << *motifcop;
+			protocols::motifs::MotifCOP motifcop( *motifcop_itr );
+			motifs.add_to_library( *motifcop );
+			motif_output_file << *motifcop;
 		}
 	}
 
 	for ( utility::vector1< std::string >::const_iterator pdb_file( pdb_files.begin() );
-	      pdb_file != pdb_files.end(); ++pdb_file ) {
+			pdb_file != pdb_files.end(); ++pdb_file ) {
 		std::string pdb_name( *pdb_file );
 
 		TR << "Working on file: " << pdb_name << std::endl;
@@ -399,8 +399,8 @@ main( int argc, char * argv [] )
 
 	try {
 
-	devel::init( argc, argv );
-	process_file_list();
+		devel::init( argc, argv );
+		process_file_list();
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

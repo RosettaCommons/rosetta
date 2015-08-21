@@ -52,24 +52,24 @@ public:
 
 private:
 	Real score[9][9][4][20][4];
-  int num_pairs[4][20];
-	// 	int pair_base[80];
-	// 	int pair_aa[80];
-	// 	int pair_num[80];
+	int num_pairs[4][20];
+	//  int pair_base[80];
+	//  int pair_aa[80];
+	//  int pair_num[80];
 
 	string A_bins[9][9][4];
-  string G_bins[9][9][4];
-  string T_bins[9][9][4];
-  string C_bins[9][9][4];
+	string G_bins[9][9][4];
+	string T_bins[9][9][4];
+	string C_bins[9][9][4];
 
 	int aas_at_grid;
-  const Real wt;
-  const Real RT;
+	const Real wt;
+	const Real RT;
 
-  void fill_bins(string (&my_array)[9][9][4], char const base);
-  void get_pairs();
-  int get_xy_bin(Real coord) const;
-  int get_z_bin(Real coord) const;
+	void fill_bins(string (&my_array)[9][9][4], char const base);
+	void get_pairs();
+	int get_xy_bin(Real coord) const;
+	int get_z_bin(Real coord) const;
 
 };
 

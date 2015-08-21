@@ -84,7 +84,7 @@ public:
 
 	/// @brief Given a selector type, return its name.  Returns "unknown_selector" if not recognized.
 	std::string get_selector_type_name( core::Size const selector_type ) const;
-	
+
 	///
 	/// @brief Given the name of a selector type, return the selector type enum.  Returns unknown_selector if not recognized.
 	selector_type get_selector_type_by_name( std::string const &selectorname ) const;
@@ -134,7 +134,7 @@ public:
 		utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map, //mapping of (loop residue, original pose residue)
 		utility::vector1 <std::pair <core::Size, core::Size> > const &tail_residue_map, //mapping of (tail residue index in pose, tail residue index in original_pose)
 		utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
-		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions, //torsions for each atom 
+		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions, //torsions for each atom
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles, //bond angle for each atom
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths, //bond length for each atom
 		utility::vector1 <core::Size> const &nsol_for_attempt,
@@ -145,9 +145,9 @@ public:
 
 
 private:
-////////////////////////////////////////////////////////////////////////////////
-//          PRIVATE VARIABLES                                                 //
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	//          PRIVATE VARIABLES                                                 //
+	////////////////////////////////////////////////////////////////////////////////
 
 
 	/// @brief The selector type for this selector (see the selector_type enum for all types).
@@ -162,13 +162,13 @@ private:
 	/// @brief A Boltzmann temperature (kbt, in Rosetta energy units) that some selectors can use.
 	core::Real boltzmann_kbt_;
 
-////////////////////////////////////////////////////////////////////////////////
-//          PRIVATE FUNCTIONS                                                 //
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	//          PRIVATE FUNCTIONS                                                 //
+	////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-//          PRIVATE APPLY FUNCTIONS FOR EACH FILTER                           //
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+	//          PRIVATE APPLY FUNCTIONS FOR EACH FILTER                           //
+	////////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Applies a random_selector selector.
 	/// @details This picks a solution randomly from the solutions that passed filters.
@@ -192,31 +192,31 @@ private:
 		utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map,
 		utility::vector1 <std::pair <core::Size, core::Size> > const &tail_residue_map,
 		utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
-		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions, 
-		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles, 
-		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths, 
+		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions,
+		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles,
+		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths,
 		core::pose::Pose const &ref_loop_pose,
 		core::pose::Pose const &ref_pose,
 		core::Real const &boltzmann_kbt,
 		protocols::moves::MoverOP pre_selection_mover,
-		bool const preselection_mover_exists, 
+		bool const preselection_mover_exists,
 		bool const use_boltzmann
 	) const;
 
 	/// @brief Applies a lowest_rmsd_selector selector.
 	/// @details This picks the solution with the lowest RMSD from the starting pose.
-	void apply_lowest_rmsd_selector( 
+	void apply_lowest_rmsd_selector(
 		utility::vector1<core::Size> const &nsol_for_attempt,
 		core::Size const total_solutions,
 		core::Size &chosen_attempt_number,
 		core::Size &chosen_solution,
 		utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map,
 		utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
-		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions, 
-		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles, 
-		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths, 
+		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions,
+		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles,
+		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths,
 		core::pose::Pose const &ref_loop_pose,
-		bool const preselection_mover_exists 
+		bool const preselection_mover_exists
 	) const;
 
 	/// @brief Applies a lowest_delta_torsion_selector.
@@ -227,7 +227,7 @@ private:
 		core::Size &chosen_attempt_number,
 		core::Size &chosen_solution,
 		utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
-		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions, 
+		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions,
 		core::pose::Pose const &pose,
 		bool const preselection_mover_exists
 	) const;

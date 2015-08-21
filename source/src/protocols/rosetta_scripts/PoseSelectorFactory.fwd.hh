@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/rosetta_scripts/PoseSelectorFactory.fwd.hh
-/// @brief	
+/// @brief
 /// @author Luki Goldschmidt <lugo@uw.edu>
 
 #ifndef INCLUDED_protocols_rosetta_scripts_PoseSelectorFactory_fwd_hh

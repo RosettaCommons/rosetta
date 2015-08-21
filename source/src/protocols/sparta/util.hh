@@ -33,7 +33,7 @@ bool isSpace( const char &c );
 
 StringList split( const char sep, const std::string &str );
 StringList split( const std::string &sep, const std::string &str );
-  //splits the std::string str into std::strings wherever a separator 'sep' occurs, and returns the list of those std::strings.
+//splits the std::string str into std::strings wherever a separator 'sep' occurs, and returns the list of those std::strings.
 StringList split_WhiteSpace(const std::string &str);
 
 char * section( const std::string &str, const char &seq, char *buff, int start, int end= 0xffffffff );
@@ -41,7 +41,7 @@ char * section( const std::string &str, const char &seq, char *buff, int start, 
 
 std::string simplifyWhiteSpace( const std::string &str );
 //Returns a std::string that has whitespace removed from the start and the end,
-  //and which has each sequence of internal whitespace replaced with a single space.
+//and which has each sequence of internal whitespace replaced with a single space.
 
 }
 }

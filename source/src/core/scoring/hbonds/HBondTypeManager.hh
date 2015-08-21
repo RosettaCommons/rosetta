@@ -28,7 +28,7 @@
 
 namespace core {
 namespace scoring {
-namespace hbonds{
+namespace hbonds {
 
 class HBondTypeManager {
 public:

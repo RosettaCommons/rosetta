@@ -90,13 +90,13 @@ DatabaseJobInputter::load_options_from_option_system(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if (option.has(inout::dbms::database_name) &&
-		option[inout::dbms::database_name].user()){
+	if ( option.has(inout::dbms::database_name) &&
+			option[inout::dbms::database_name].user() ) {
 		set_database_name(option[inout::dbms::database_name]);
 	}
 
-	if (option.has(inout::dbms::pq_schema) &&
-		option[inout::dbms::pq_schema].user()){
+	if ( option.has(inout::dbms::pq_schema) &&
+			option[inout::dbms::pq_schema].user() ) {
 		set_database_pq_schema(option[inout::dbms::pq_schema]);
 	}
 
@@ -104,19 +104,19 @@ DatabaseJobInputter::load_options_from_option_system(){
 	// system--but using it makes sense here because, it serves the same
 	// purpose: specify which structures to use from the data source.
 
-	if (option.has(in::dbms::struct_ids) && option[in::dbms::struct_ids].user()){
+	if ( option.has(in::dbms::struct_ids) && option[in::dbms::struct_ids].user() ) {
 		set_struct_ids_from_strings(option[in::dbms::struct_ids]);
 	}
-	if(option[in::dbms::struct_ids].user() && option[in::select_structures_from_database].user()) {
+	if ( option[in::dbms::struct_ids].user() && option[in::select_structures_from_database].user() ) {
 		utility_exit_with_message("you cannot use -in:dbms:struct_ids and -in:select_structures_from_database simultaniously");
 	}
 
-	if (option[in::select_structures_from_database].user()) {
+	if ( option[in::select_structures_from_database].user() ) {
 		set_struct_ids_from_sql(option[in::select_structures_from_database]);
 	}
 
 	//TODO do we want this still?
-//	input_protocol_id_ = option[in::database_protocol];
+	// input_protocol_id_ = option[in::database_protocol];
 
 }
 
@@ -145,7 +145,7 @@ DatabaseJobInputter::set_database_name(
 
 string
 DatabaseJobInputter::get_database_name() const {
-	if(database_name_ == ""){
+	if ( database_name_ == "" ) {
 		utility_exit_with_message(
 			"To use the DatabaseJobInputter, please specify the database "
 			"where thinput is data is stored, eg. via the -inout:dbms:database_name "
@@ -181,20 +181,20 @@ DatabaseJobInputter::set_scorefunction(ScoreFunctionOP scorefunction ){
 
 void
 DatabaseJobInputter::set_struct_ids_from_strings(
-utility::vector1<string> const & struct_id_strings){
+	utility::vector1<string> const & struct_id_strings){
 
-	for(core::Size i=1; i<=struct_id_strings.size(); ++i){
+	for ( core::Size i=1; i<=struct_id_strings.size(); ++i ) {
 		try{
 			StructureID struct_id = boost::lexical_cast<StructureID>(struct_id_strings[i]);
 			tag_structures_[struct_id_strings[i]] = struct_id;
 		}
-		catch(...){
-			stringstream err_msg;
-			err_msg
-				<< "Unable to convert the struct_id '" << struct_id_strings[i]
-				<< "' to a valid structure id. It should a valid integer value." << endl;
-			utility_exit_with_message(err_msg.str());
-		}
+catch(...){
+	stringstream err_msg;
+	err_msg
+		<< "Unable to convert the struct_id '" << struct_id_strings[i]
+		<< "' to a valid structure id. It should a valid integer value." << endl;
+	utility_exit_with_message(err_msg.str());
+}
 	}
 }
 
@@ -221,39 +221,37 @@ DatabaseJobInputter::set_struct_ids_from_sql(
 	res = safely_read_from_database( stmt );
 
 	bool res_nums_specified = false;
-	if(res.find_column("resnum") != -1){res_nums_specified=true;}
+	if ( res.find_column("resnum") != -1 ) { res_nums_specified=true;}
 
 	bool tags_specified = false;
-	if(res.find_column("tag") != -1){tags_specified=true;}
+	if ( res.find_column("tag") != -1 ) { tags_specified=true;}
 
-	if(res.find_column("struct_id") != -1){
-		while(res.next()){
+	if ( res.find_column("struct_id") != -1 ) {
+		while ( res.next() ) {
 			StructureID struct_id;
 			res.fetch("struct_id", struct_id);
 
 			std::string tag;
-			if(tags_specified){
+			if ( tags_specified ) {
 				res.fetch("tag", tag);
-				if(tag_structures_.count(tag) > 0 && tag_structures_[tag] != struct_id){
+				if ( tag_structures_.count(tag) > 0 && tag_structures_[tag] != struct_id ) {
 					utility_exit_with_message("You have specified non-unque input tags which can cause ambigous output. Please make input tags unique");
 				}
-			}
-			else{
+			} else {
 				tag = boost::lexical_cast<std::string>(struct_id);
 			}
 			tag_structures_[tag] = struct_id;
 
-			if(res_nums_specified){
+			if ( res_nums_specified ) {
 				core::Size resnum;
 				res.fetch("resnum", resnum);
 				tag_residues_[tag].insert(resnum);
 			}
 		}
-		if(!tag_structures_.size()){
+		if ( !tag_structures_.size() ) {
 			utility_exit_with_message("The provided SQL query did not produce any struct_ids");
 		}
-	}
-	else{
+	} else {
 		utility_exit_with_message("Must provide an SQL SELECT command that selects the struct_id column from the structures table");
 	}
 }
@@ -280,10 +278,9 @@ DatabaseJobInputter::pose_from_job(
 
 		StructureID struct_id = tag_structures_[tag];
 
-		if(!tag_residues_.size()){
+		if ( !tag_residues_.size() ) {
 			protein_silent_report_->load_pose(db_session, struct_id, pose);
-		}
-		else{
+		} else {
 			tr << "Residues list size " << tag_residues_[tag].size() << std::endl;
 			protein_silent_report_->load_pose(db_session, struct_id, tag_residues_[tag], pose);
 		}
@@ -294,7 +291,7 @@ DatabaseJobInputter::pose_from_job(
 	}
 
 	// TODO: Move to pose.clear()
-	if (is_symmetric(pose)) make_asymmetric_pose( pose );
+	if ( is_symmetric(pose) ) make_asymmetric_pose( pose );
 
 
 	initialize_disulfide_bonds(pose);
@@ -308,7 +305,7 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::JobsCo
 
 	Size const nstruct(get_nstruct());
 
-	if(!tag_structures_.size()){
+	if ( !tag_structures_.size() ) {
 
 		tr << "Reading all struct_ids from database ... ";
 
@@ -318,7 +315,7 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::JobsCo
 		std::string stmt_string("SELECT struct_id FROM structures;");
 		cppdb::statement stmt( basic::database::safely_prepare_statement(stmt_string, db_session));
 		cppdb::result res( basic::database::safely_read_from_database(stmt));
-		while(res.next()){
+		while ( res.next() ) {
 			StructureID struct_id;
 			res >> struct_id;
 			tag_structures_[boost::lexical_cast<std::string>(struct_id)]=struct_id;
@@ -342,22 +339,22 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::JobsCo
 		<< "fill list with " << tag_structures_.size()
 		<< " InnerJob Objects" << endl;
 
-	for(std::map<std::string, StructureID>::const_iterator iter=tag_structures_.begin(); iter!=tag_structures_.end(); ++iter){
+	for ( std::map<std::string, StructureID>::const_iterator iter=tag_structures_.begin(); iter!=tag_structures_.end(); ++iter ) {
 		inner_jobs.push_back(protocols::jd2::InnerJobOP( new protocols::jd2::InnerJob(iter->first, nstruct) ));
 	}
 
 	//tr.Debug
-	//	<< "reserve list for " << inner_jobs.size() * nstruct
-	//	<< " Job Objects" << endl;
+	// << "reserve list for " << inner_jobs.size() * nstruct
+	// << " Job Objects" << endl;
 
 	//jobs.reserve(inner_jobs.size() * nstruct);
 
 	tr.Debug << "fill job list with... " << endl;
 	for ( Size index = 1; index <= nstruct; ++index ) {
-		BOOST_FOREACH(protocols::jd2::InnerJobOP ijob, inner_jobs){
+		BOOST_FOREACH ( protocols::jd2::InnerJobOP ijob, inner_jobs ) {
 			jobs.push_back(protocols::jd2::JobOP( new protocols::jd2::Job(ijob, index) ));
 			tr.Trace
-				<< "pushing " << ijob->input_tag() << " nstruct index " << index	<< std::endl;
+				<< "pushing " << ijob->input_tag() << " nstruct index " << index << std::endl;
 		}
 	}
 }

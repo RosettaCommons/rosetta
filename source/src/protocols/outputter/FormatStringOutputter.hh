@@ -26,8 +26,8 @@
 namespace protocols {
 namespace outputter {
 
-		using namespace core::io::serialization;
-		using core::pose::PoseSP;
+using namespace core::io::serialization;
+using core::pose::PoseSP;
 
 #ifdef USELUA
 		void lregister_FormatStringOutputter( lua_State * lstate );
@@ -35,35 +35,35 @@ namespace outputter {
 
 class FormatStringOutputter : public Outputter {
 
-	public:
-		FormatStringOutputter();
-		virtual ~FormatStringOutputter();
+public:
+	FormatStringOutputter();
+	virtual ~FormatStringOutputter();
 
-		std::string format_string() { return format_string_; }
-		void format_string( std::string s ) { format_string_ = s; }
+	std::string format_string() { return format_string_; }
+	void format_string( std::string s ) { format_string_ = s; }
 
-		virtual void write( PipeMap & p );
-		virtual void write( Pipe & p );
-		virtual void write( Pose & p )=0;
+	virtual void write( PipeMap & p );
+	virtual void write( Pipe & p );
+	virtual void write( Pose & p )=0;
 
-		void parse_format_string( boost::unordered_map< std::string, std::string> & filenameparts, std::string const & format_string, std::string & filename );
+	void parse_format_string( boost::unordered_map< std::string, std::string> & filenameparts, std::string const & format_string, std::string & filename );
 #ifdef USELUA
 		virtual void parse_def( utility::lua::LuaObject const & def,
 						utility::lua::LuaObject const & tasks );
 		virtual void lregister( lua_State * lstate );
 #endif
 
-		// factory functions but this won't actually be created
-		OutputterSP create();
-		static std::string name() {
-			return "FormatStringOutputter";
-		}
+	// factory functions but this won't actually be created
+	OutputterSP create();
+	static std::string name() {
+		return "FormatStringOutputter";
+	}
 
-	protected:
-			boost::unordered_map<std::string, std::string> filenameparts_;
-			std::string format_string_;
+protected:
+	boost::unordered_map<std::string, std::string> filenameparts_;
+	std::string format_string_;
 
-}; // end 
+}; // end
 
 } // outputter
 } // protocols

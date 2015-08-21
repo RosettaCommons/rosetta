@@ -20,7 +20,7 @@
 namespace protocols {
 namespace grafting {
 
-/// @brief  
+/// @brief
 class GraftMoverBase;
 
 typedef utility::pointer::shared_ptr<GraftMoverBase> GraftMoverBaseOP;

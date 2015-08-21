@@ -38,23 +38,23 @@
 
 class OccupiedSpaceHashTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
-		typedef core::Vector Vector;
-		typedef core::Size   Size;
-		typedef core::Real   Real;
-		typedef numeric::geometry::BoundingBox< Vector > BoundingBox;
-		typedef numeric::HomogeneousTransform< Real >    HTReal;
-	  typedef numeric::geometry::hashing::Real6 Real6;
+	typedef core::Vector Vector;
+	typedef core::Size   Size;
+	typedef core::Real   Real;
+	typedef numeric::geometry::BoundingBox< Vector > BoundingBox;
+	typedef numeric::HomogeneousTransform< Real >    HTReal;
+	typedef numeric::geometry::hashing::Real6 Real6;
 
-	private:
-		Vector lower;
-		Vector upper;
-		BoundingBox bb;
+private:
+	Vector lower;
+	Vector upper;
+	BoundingBox bb;
 
-		numeric::geometry::hashing::Real6 pA, pB, pC, pD, pE, pF, pG, pH, pI, pJ;
+	numeric::geometry::hashing::Real6 pA, pB, pC, pD, pE, pF, pG, pH, pI, pJ;
 
-	public:
+public:
 
 	// --------------- Fixtures --------------- //
 

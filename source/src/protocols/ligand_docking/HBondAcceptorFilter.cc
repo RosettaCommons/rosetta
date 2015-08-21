@@ -45,7 +45,7 @@ HBondAcceptorFilter::apply( core::pose::Pose const & pose ) const {
 	core::Size const begin = pose.conformation().chain_begin(chain_id);
 	core::Size const end = pose.conformation().chain_end(chain_id);
 
-	if(	core::pose::num_hbond_acceptors(begin,end,pose) > hbond_acceptor_limit_ ){
+	if ( core::pose::num_hbond_acceptors(begin,end,pose) > hbond_acceptor_limit_ ) {
 		hbond_acceptor_tracer<< "Reached hbond acceptor limit"<< std::endl;
 		return false;
 	}
@@ -61,7 +61,7 @@ HBondAcceptorFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::D
 		assert(false);
 		return;
 	}
-	if ( ! (tag->hasOption("chain") && tag->hasOption("hbond_acceptor_limit") ) ){
+	if ( ! (tag->hasOption("chain") && tag->hasOption("hbond_acceptor_limit") ) ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("HBondAcceptor filter needs a 'chain' and an 'hbond_acceptor_limit' option");
 	}
 	chain_ = tag->getOption<std::string>("chain");

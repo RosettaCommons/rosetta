@@ -59,7 +59,7 @@ ModelCDRH3::ModelCDRH3( AntibodyInfoOP antibody_info) : Mover() {
 
 
 ModelCDRH3::ModelCDRH3( AntibodyInfoOP antibody_info,
-                        core::scoring::ScoreFunctionCOP lowres_scorefxn) : Mover() {
+	core::scoring::ScoreFunctionCOP lowres_scorefxn) : Mover() {
 	user_defined_ = true;
 	ab_info_ = antibody_info;
 	lowres_scorefxn_  = lowres_scorefxn->clone();
@@ -75,7 +75,7 @@ void ModelCDRH3::init( ) {
 
 	//TODO:
 	//JQX: need to deal with this
-	if( is_camelid_ && ab_info_->get_H3_kink_type()!=Kinked && ab_info_->get_H3_kink_type()!=Extended ) {
+	if ( is_camelid_ && ab_info_->get_H3_kink_type()!=Kinked && ab_info_->get_H3_kink_type()!=Extended ) {
 		c_ter_stem_ = 0;
 	}
 
@@ -102,7 +102,7 @@ void ModelCDRH3::set_default() {
 	extend_h3_ = true;
 	idealize_h3_stems_ = false;
 
-	if(!user_defined_) {
+	if ( !user_defined_ ) {
 		lowres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
 		lowres_scorefxn_->set_weight( scoring::chainbreak, 10./3. );
 		lowres_scorefxn_->set_weight( scoring::atom_pair_constraint, cen_cst_ );
@@ -144,12 +144,12 @@ void ModelCDRH3::apply( pose::Pose & pose_in ) {
 	loops::Loop trimmed_cdr_h3(framework_loop_begin, framework_loop_end - c_ter_stem_, cutpoint, 0, true );
 	loops::Loop input_loop;
 
-	if( framework_loop_size <= 6 ) {
+	if ( framework_loop_size <= 6 ) {
 		do_cter_insert_ = false;
 		TR<<"loop_size <= 6, AUTOMATICALLY TURNING OFF THE C_TERMINAL INSERT"<<std::endl;
 	}
 
-	if (do_cter_insert_) {
+	if ( do_cter_insert_ ) {
 		//JQX: the h3 loop removing the cterminal 3 residues
 		input_loop = trimmed_cdr_h3;
 	} else {
@@ -158,11 +158,11 @@ void ModelCDRH3::apply( pose::Pose & pose_in ) {
 	}
 
 	simple_one_loop_fold_tree( pose_in, cdr_h3 );
-//    TR<<"*******************************************"<<std::endl;
-//    TR<<pose_in.fold_tree()<<std::endl;
-//    TR<<"*******************************************"<<std::endl;
+	//    TR<<"*******************************************"<<std::endl;
+	//    TR<<pose_in.fold_tree()<<std::endl;
+	//    TR<<"*******************************************"<<std::endl;
 
-   if(idealize_h3_stems_){
+	if ( idealize_h3_stems_ ) {
 		set_single_loop_fold_tree( pose_in, cdr_h3 );
 
 		TR<<"Idealizing the H3 stems ........ "<<std::endl;
@@ -173,14 +173,14 @@ void ModelCDRH3::apply( pose::Pose & pose_in ) {
 		// 179.6 is from Daisuke's literature search, it is on Graylab wiki for idealization benchmark
 
 		simple_one_loop_fold_tree( pose_in, cdr_h3 );
-    }
+	}
 
-    if(extend_h3_){
+	if ( extend_h3_ ) {
 		TR<<"Extend the H3 loop ..........."<<std::endl;
-        set_extended_torsions( pose_in, cdr_h3 );
-    }
+		set_extended_torsions( pose_in, cdr_h3 );
+	}
 
-	if(remodel_=="legacy_perturb_ccd") {
+	if ( remodel_=="legacy_perturb_ccd" ) {
 		//pose_in.dump_pdb("extended_idealized_centroid.pdb");
 		//JQX:  this function is in loops_main.cc file
 		//      firstly, idealize the loop (indealize bonds as well)
@@ -205,7 +205,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in ) {
 
 		// create a LoopMover type based on the string remode_
 		remodel_mover_ = utility::pointer::static_pointer_cast< loops::loop_mover::IndependentLoopMover >
-		                 ( loops::LoopMoverFactory::get_instance()->create_loop_mover(remodel_, pass_loops) ) ;
+			( loops::LoopMoverFactory::get_instance()->create_loop_mover(remodel_, pass_loops) ) ;
 		if ( !remodel_mover_ ) {
 			utility_exit_with_message( "Error: no remodel mover defined!" );
 		}
@@ -221,7 +221,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in ) {
 		}
 
 		// if you have native structure to compare, do this
-		if (get_native_pose()) remodel_mover_->set_native_pose(get_native_pose()) ;
+		if ( get_native_pose() ) remodel_mover_->set_native_pose(get_native_pose()) ;
 
 		// scoring function, their default scoring function is the same as specified here, but put it anyway
 		remodel_mover_->set_scorefxn( lowres_scorefxn_ );
@@ -230,7 +230,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in ) {
 
 
 	/*  JQX: the following code is probably not ncessary*/
-	if(bad_nter_) {
+	if ( bad_nter_ ) {
 		Size unaligned_cdr_loop_begin(0), unaligned_cdr_loop_end(0);
 		std::string const path = basic::options::option[ basic::options::OptionKeys::in::path::path ]()[1];
 		core::import_pose::pose_from_pdb( hfr_pose_, path+"hfr.pdb" );
@@ -238,7 +238,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in ) {
 		unaligned_cdr_loop_end   = hfr_pose_.pdb_info()->pdb2pose('H', 103);
 		unaligned_cdr_loop_end -= 1 ;
 
-		if(framework_loop_size > 4) { //JQX: add this if statement to match R2_antibody
+		if ( framework_loop_size > 4 ) { //JQX: add this if statement to match R2_antibody
 			pose_in.set_psi  (framework_loop_begin - 1, hfr_pose_.psi( unaligned_cdr_loop_begin - 1 )   );
 			pose_in.set_omega(framework_loop_begin - 1, hfr_pose_.omega( unaligned_cdr_loop_begin - 1 ) );
 		}
@@ -251,14 +251,14 @@ void ModelCDRH3::apply( pose::Pose & pose_in ) {
 
 
 	Size cycle ( 1 );
-	while( !closed_cutpoints && cycle < max_cycle_) {
+	while ( !closed_cutpoints && cycle < max_cycle_ ) {
 		ab_info_ = starting_antibody;
-		if (do_cter_insert_) {
+		if ( do_cter_insert_ ) {
 			h3_cter_insert_mover_->apply(pose_in);
 		}
 		//pose_in.dump_pdb("after_c_insert.pdb");
 
-		if(remodel_=="legacy_perturb_ccd") {
+		if ( remodel_=="legacy_perturb_ccd" ) {
 			h3_perturb_ccd_build_->apply(pose_in);
 		} else {
 			remodel_mover_->apply(pose_in);
@@ -273,7 +273,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in ) {
 
 
 	//#############################  //JQX: this should not be here
-	if( is_camelid_ ) {
+	if ( is_camelid_ ) {
 		//RefineCDRH1Centroid refine_cdr_centroid( ab_info_->get_CDR_loop(h1) );
 		//refine_cdr_centroid.apply(pose_in);
 	}

@@ -64,13 +64,13 @@ cluster_test(){
 	protocols::stepwise::modeler::align::StepWiseLegacyClustererSilentBased stepwise_clusterer( silent_files_in );
 
 	Size max_decoys( 400 );
-	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
+	if ( option[ out::nstruct].user() )  max_decoys =  option[ out::nstruct ];
 	stepwise_clusterer.set_max_decoys( max_decoys );
 
 
 	Real cluster_radius ( 2.0 );
 	if ( option[ OptionKeys::cluster::radius ].user() ) cluster_radius = option[ OptionKeys::cluster::radius ]();
-	stepwise_clusterer.set_cluster_radius(	cluster_radius	);
+	stepwise_clusterer.set_cluster_radius( cluster_radius );
 
 	stepwise_clusterer.set_cluster_by_all_atom_rmsd( true );
 	stepwise_clusterer.set_score_diff_cut( option[ score_diff_cut ] );
@@ -102,34 +102,34 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-try {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	try {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	std::cout << std::endl << "Basic usage:  " << argv[0] << " -in:file:silent <input silent file> -out:file:silent <output silent file> -cluster:radius <RMSD threshold in Angstroms>" << std::endl;
-	std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
+		std::cout << std::endl << "Basic usage:  " << argv[0] << " -in:file:silent <input silent file> -out:file:silent <output silent file> -cluster:radius <RMSD threshold in Angstroms>" << std::endl;
+		std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
 
-	option.add_relevant(  in::file::silent );
-	option.add_relevant(  out::file::silent );
-	option.add_relevant(  out::nstruct );
-	option.add_relevant(  cluster::radius );
-	option.add_relevant(  cluster::score_diff_cut );
-	option.add_relevant(  cluster::auto_tune );
-
-
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	core::init::init(argc, argv);
+		option.add_relevant(  in::file::silent );
+		option.add_relevant(  out::file::silent );
+		option.add_relevant(  out::nstruct );
+		option.add_relevant(  cluster::radius );
+		option.add_relevant(  cluster::score_diff_cut );
+		option.add_relevant(  cluster::auto_tune );
 
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		core::init::init(argc, argv);
 
-	protocols::viewer::viewer_main( my_main );
-} catch ( utility::excn::EXCN_Base const & e ) {
-	std::cout << "caught exception " << e.msg() << std::endl;
-	return -1;
-}
+
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
+
+		protocols::viewer::viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 }

@@ -21,8 +21,8 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 
 #ifdef WIN32
-	#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
-	#include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
 #endif
 
 //project headers
@@ -39,7 +39,7 @@
 #include <map>
 
 namespace protocols {
-namespace toolbox{
+namespace toolbox {
 namespace match_enzdes_util {
 
 

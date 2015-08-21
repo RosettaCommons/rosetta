@@ -57,18 +57,18 @@ HotspotStub::HotspotStub(
 	pose_( pose ),
 	filter_( filter ),
 	chain_to_design_( chain_to_design )
-//	my_set_( parent_set )
+	// my_set_( parent_set )
 { }
 
 HotspotStub::HotspotStub( HotspotStub const & src ) :
 	utility::pointer::ReferenceCount( src ),
 	residue_( src.residue_ ),  // jk note: this is NOT a deep copy, since residue_ is effectively const
-                            // (no member functions to move it). This must be a deep copy if residue_ can change.
+	// (no member functions to move it). This must be a deep copy if residue_ can change.
 	bonus_value_( src.bonus_value_ ),
 	pose_( src.pose_ ),
-	filter_( src.filter_ ),	// How should we deal with the reference to the containing set, since the new stub might be associ with a diff set?
+	filter_( src.filter_ ), // How should we deal with the reference to the containing set, since the new stub might be associ with a diff set?
 	chain_to_design_( src.chain_to_design_ ),
-//	my_set_( src.my_set_ ),
+	// my_set_( src.my_set_ ),
 	scaffold_status_( src.scaffold_status_ )
 {}
 
@@ -80,11 +80,11 @@ HotspotStub::~HotspotStub() {}
 HotspotStub & HotspotStub::operator=( HotspotStub const & src )
 {
 	residue_ = src.residue_;  // jk note: this is NOT a deep copy, since residue_ is effectively const
-                            // (no member functions to move it). This must be a deep copy if residue_ can change.
+	// (no member functions to move it). This must be a deep copy if residue_ can change.
 	bonus_value_ = src.bonus_value_;
 
-	// How should we deal with the reference to the containing set, since the new stub might be associ with a diff set?	my_set_ = src.my_set_ ;
-//	my_set_ = src.my_set_;
+	// How should we deal with the reference to the containing set, since the new stub might be associ with a diff set? my_set_ = src.my_set_ ;
+	// my_set_ = src.my_set_;
 	scaffold_status_ = src.scaffold_status_;
 	pose_ = src.pose_;
 	chain_to_design_ = src.chain_to_design_;
@@ -105,11 +105,11 @@ core::conformation::ResidueCOP HotspotStub::residue() const { return residue_; }
 /// @brief create scaffold_status_ appropriate for given scaffold and set it all to unchecked
 void
 HotspotStub::pair_with_scaffold( ) {
-//	runtime_assert( my_set_ );
+	// runtime_assert( my_set_ );
 	core::Size const design_begin( pose_->conformation().chain_begin( chain_to_design_ ) );
 	core::Size const design_end( pose_->conformation().chain_end( chain_to_design_ ) );
 	scaffold_status_.clear();
-	for (core::Size i = design_begin; i <= design_end; ++i ) {
+	for ( core::Size i = design_begin; i <= design_end; ++i ) {
 		scaffold_status_.push_back( unchecked );
 	}
 }
@@ -124,7 +124,7 @@ HotspotStub::pair_with_scaffold( core::pose::PoseOP pose, protocols::filters::Fi
 	core::Size const design_begin( pose_->conformation().chain_begin( chain_to_design_ ) );
 	core::Size const design_end( pose_->conformation().chain_end( chain_to_design_ ) );
 	scaffold_status_.clear();
-	for (core::Size i = design_begin; i <= design_end; ++i ) {
+	for ( core::Size i = design_begin; i <= design_end; ++i ) {
 		scaffold_status_.push_back( unchecked );
 	}
 }
@@ -145,20 +145,24 @@ HotspotStub::scaffold_match( core::Size const seqpos )
 		using namespace core::chemical;
 
 		pose_->replace_residue( seqpos, *stub, true );
-		if( seqpos > host_chain_begin )
+		if ( seqpos > host_chain_begin ) {
 			core::pose::remove_upper_terminus_type_from_pose_residue( *pose_, seqpos );
-		if( seqpos < host_chain_end )
+		}
+		if ( seqpos < host_chain_end ) {
 			core::pose::remove_lower_terminus_type_from_pose_residue( *pose_, seqpos );
+		}
 		pose_->conformation().update_polymeric_connection( seqpos ); //o/w residue connections mess up
-		if( scaffold_position > 0 )
+		if ( scaffold_position > 0 ) {
 			pose_->conformation().update_polymeric_connection( seqpos - 1 );
+		}
 		pose_->update_residue_neighbors();
-		if( filter_->apply( *pose_ ) )
+		if ( filter_->apply( *pose_ ) ) {
 			scaffold_status_[ scaffold_position ] = accept;
-		else
+		} else {
 			scaffold_status_[ scaffold_position ] = reject;
-// SJF IMPORTANT! Next step is crucial b/c in current setup ALL stubs feed off the SAME POSE. Woe to those who forget
-// to revert the pose to its original state!
+		}
+		// SJF IMPORTANT! Next step is crucial b/c in current setup ALL stubs feed off the SAME POSE. Woe to those who forget
+		// to revert the pose to its original state!
 		pose_->replace_residue( seqpos, *saved_res, true ); // SJF to revert the pose_ to its original state
 		pose_->update_residue_neighbors();
 	}
@@ -172,10 +176,9 @@ HotspotStub::get_scaffold_status( core::Size const seqpos )
 	runtime_assert( seqpos <= pose_->conformation().chain_end( chain_to_design_) );
 	runtime_assert( seqpos >= pose_->conformation().chain_begin( chain_to_design_) );
 	core::Size const scaffold_position = seqpos - pose_->conformation().chain_begin( chain_to_design_ );
-	if( scaffold_status_[ scaffold_position ] != unchecked )
+	if ( scaffold_status_[ scaffold_position ] != unchecked ) {
 		return( scaffold_status_[ scaffold_position ] == accept );
-	else
-	{
+	} else {
 		bool const status = scaffold_match( seqpos );
 		return status;
 	}
@@ -203,9 +206,9 @@ HotspotStub::get_nearest_residue( core::pose::Pose const & pose ) const
 
 	core::Real nearest_distance( 100000 );
 	core::Size nearest_residue( 0 );
-	for( core::Size resi( chain_begin ); resi<=chain_end; ++resi ){
-    core::Real const distance( pose.residue( resi ).xyz( "CB" ).distance( residue()->xyz( "CB" ) ) );
-		if( distance<=nearest_distance ){
+	for ( core::Size resi( chain_begin ); resi<=chain_end; ++resi ) {
+		core::Real const distance( pose.residue( resi ).xyz( "CB" ).distance( residue()->xyz( "CB" ) ) );
+		if ( distance<=nearest_distance ) {
 			nearest_distance = distance;
 			nearest_residue = resi;
 		}

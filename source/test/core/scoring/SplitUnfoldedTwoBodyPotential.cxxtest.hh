@@ -53,7 +53,7 @@ using namespace core::chemical;
 
 class SplitUnfoldedTwoBodyPotentialTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	PoseOP pose;
 	SplitUnfoldedTwoBodyPotentialOP tcre_potential;

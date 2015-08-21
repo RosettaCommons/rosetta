@@ -59,14 +59,14 @@ class FragmentBiasAssigner : public utility::pointer::ReferenceCount
 public:
 	// constructor
 	//FragmentBiasAssigner();
-	FragmentBiasAssigner(	pose::Pose &pose );
+	FragmentBiasAssigner( pose::Pose &pose );
 
 	void init( pose::Pose &pose );
 
 	// everytime when you call these function the probability is going to be additive to the frag_bias_ container
-	void compute_frag_bias(	utility::vector1<numeric::random::WeightedSampler> &frag_bias, // output
-												  pose::Pose &pose,
-													utility::vector1<core::fragment::FragSetOP> fragments );
+	void compute_frag_bias( utility::vector1<numeric::random::WeightedSampler> &frag_bias, // output
+		pose::Pose &pose,
+		utility::vector1<core::fragment::FragSetOP> fragments );
 
 	void exclude_residues( std::set< core::Size > residues_to_exclude );
 
@@ -76,12 +76,12 @@ public:
 	////////////////////////////////////
 	// ray's protocol to select residues to refine
 	void automode( pose::Pose &pose,
-								Size rsd_window_size,
-							  Real score_cut );
+		Size rsd_window_size,
+		Real score_cut );
 
 	/////////////////////////////////////////////////////////////
 	void user( std::set<core::Size> user_pos,
-					   protocols::loops::LoopsOP loops );
+		protocols::loops::LoopsOP loops );
 
 	////////////////////////////////////
 	// individual method
@@ -89,12 +89,12 @@ public:
 	void density_nbr( pose::Pose &pose );
 
 	void rama( pose::Pose &pose,
-						 core::Real weight=0.2,
-						 core::Real threshold=0.7 );
+		core::Real weight=0.2,
+		core::Real threshold=0.7 );
 
 	void geometry( pose::Pose &pose,
-								 core::Real weight=1.0,
-								 core::Real threshold=0.6 );
+		core::Real weight=1.0,
+		core::Real threshold=0.6 );
 
 	void density( pose::Pose &pose );
 
@@ -103,7 +103,7 @@ public:
 	void chainbreak( pose::Pose &pose );
 	void bfactors( pose::Pose &pose );
 	void fragbias_reporter( pose::Pose &pose );
- 	void cumulate_probability(){ cumulative_=true; }
+	void cumulate_probability(){ cumulative_=true; }
 
 
 	void set_wdw_to_freeze( int wdw=0 ){ wdw_to_freeze_=wdw; }
@@ -111,20 +111,20 @@ public:
 private:
 	// functions
 	void cal_perrsd_score( pose::Pose &pose,
-												 scoring::ScoreType const &score_type,
-												 utility::vector1<core::Real> &perrsd_score,
-												 Real weight );
+		scoring::ScoreType const &score_type,
+		utility::vector1<core::Real> &perrsd_score,
+		Real weight );
 
 	void cal_zscore( utility::vector1<core::Real> const &input_v,
-	                 utility::vector1<core::Real> &zscore_v,
-									 bool negating=false);
+		utility::vector1<core::Real> &zscore_v,
+		bool negating=false);
 
 	void assign_fragprobs( utility::vector1<core::Real> const &perrsd_score,
-												 Real threshold	);
+		Real threshold );
 
 
 	// variables
-	core::Size nres_, n_symm_subunit_; 
+	core::Size nres_, n_symm_subunit_;
 	int wdw_to_freeze_;
 	bool cumulative_;
 	bool fragProbs_assigned_;
@@ -132,7 +132,7 @@ private:
 
 	////////////////////////////////////
 	// containers
- 	// the per-residue based container for all the methods to add values into it
+	// the per-residue based container for all the methods to add values into it
 	utility::vector1<core::Real> fragmentProbs_;
 
 	// the per residue container for score terms
@@ -142,7 +142,7 @@ private:
 	utility::vector1<core::Real> perrsd_geometry_;
 
 	//utility::vector1<numeric::random::WeightedSampler> frag_bias_;
-}; // class FragmentBiasAssigner 
+}; // class FragmentBiasAssigner
 
 } // hybridization
 } // protocol

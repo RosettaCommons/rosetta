@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @brief 	 Unit test for SpinAroundPartnerMover
+/// @brief   Unit test for SpinAroundPartnerMover
 /// @author  JKLeman (julia.koehler1982@gmail.com)
 
 // Test Headers
@@ -18,7 +18,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
-#include <protocols/membrane/util.hh> 
+#include <protocols/membrane/util.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
 #include <protocols/membrane/geometry/Embedding.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
@@ -56,7 +56,7 @@ public: // test functions
 
 	/// @brief Setup Test
 	void setUp(){
-	
+
 		// Initialize
 		core_init();
 
@@ -70,7 +70,7 @@ public: // test functions
 		// AddMembraneMover
 		AddMembraneMoverOP add_mem( new AddMembraneMover( spanfile ) );
 		add_mem->apply( pose_ );
-	
+
 	}
 
 	/// @brief Standard Tear Down
@@ -78,7 +78,7 @@ public: // test functions
 
 	///// Test Methods /////////////
 
-////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
 
 	// test constructor from jumpnum and angle
 	void test_constructor_from_jumpnum () {
@@ -129,11 +129,11 @@ public: // test functions
 
 	/// @brief Position equal within delta (helper method)
 	bool position_equal_within_delta( Vector a, Vector b, Real delta ) {
-		
+
 		TS_ASSERT_DELTA( a.x(), b.x(), delta );
 		TS_ASSERT_DELTA( a.y(), b.y(), delta );
 		TS_ASSERT_DELTA( a.z(), b.z(), delta );
-		
+
 		return true;
 	}
 

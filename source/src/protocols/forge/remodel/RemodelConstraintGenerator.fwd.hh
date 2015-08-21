@@ -22,8 +22,8 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
-namespace forge{
-namespace remodel{
+namespace forge {
+namespace remodel {
 
 class RemodelConstraintGenerator;
 typedef utility::pointer::shared_ptr< RemodelConstraintGenerator > RemodelConstraintGeneratorOP;

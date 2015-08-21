@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   utility/json_spirit/json_spirit_tools.cc 
-/// @brief  Extra utilitiy functions not provided by json spirit library 
-/// @author Mike Tyka 
+/// @file   utility/json_spirit/json_spirit_tools.cc
+/// @brief  Extra utilitiy functions not provided by json spirit library
+/// @author Mike Tyka
 
 #include <utility/json_spirit/json_spirit_value.h>
 #include <utility/json_spirit/json_spirit_reader.h>
@@ -20,83 +20,83 @@
 namespace utility {
 namespace json_spirit {
 
-  bool has_value(const mObject& obj, const std::string& name )
-  {
-    mObject::const_iterator i = obj.find(name);
+bool has_value(const mObject& obj, const std::string& name )
+{
+	mObject::const_iterator i = obj.find(name);
 
-    if(i != obj.end()) return true;
-    return false; 
-  }
-  
-  mValue get_value(const mObject& obj, const std::string& name )
-  {
-    mObject::const_iterator i = obj.find(name);
-    if(i == obj.end()){
-      throw utility::excn::EXCN_Msg_Exception("Cannot find member '" + name + "'" ); 
-    }
-    return i->second;
-  }
+	if ( i != obj.end() ) return true;
+	return false;
+}
 
-  mObject get_mObject(const mObject& obj, const std::string& name )
-  {
-    mValue value = get_value( obj, name );
-    if ( value.type() != obj_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON error: '" + name + "' is not an object" ); }
-    return value.get_obj();
-  }
-  
-  mArray get_mArray(const mObject& obj, const std::string& name )
-  {
-    const mValue value = get_value( obj, name );
-    if ( value.type() != array_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON error: '" + name + "' is not an Array" ); }
-    return value.get_array();
-  }
-  
-  mArray read_mArray(  const std::string& json_string ){
-    mValue value;
-    read_or_throw(json_string, value);
-    if ( value.type() != array_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON read error: expected an Array"); } 
-    return value.get_array();
-  }
+mValue get_value(const mObject& obj, const std::string& name )
+{
+	mObject::const_iterator i = obj.find(name);
+	if ( i == obj.end() ) {
+		throw utility::excn::EXCN_Msg_Exception("Cannot find member '" + name + "'" );
+	}
+	return i->second;
+}
+
+mObject get_mObject(const mObject& obj, const std::string& name )
+{
+	mValue value = get_value( obj, name );
+	if ( value.type() != obj_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON error: '" + name + "' is not an object" ); }
+	return value.get_obj();
+}
+
+mArray get_mArray(const mObject& obj, const std::string& name )
+{
+	const mValue value = get_value( obj, name );
+	if ( value.type() != array_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON error: '" + name + "' is not an Array" ); }
+	return value.get_array();
+}
+
+mArray read_mArray(  const std::string& json_string ){
+	mValue value;
+	read_or_throw(json_string, value);
+	if ( value.type() != array_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON read error: expected an Array"); }
+	return value.get_array();
+}
 
 
-  mObject read_mObject(  const std::string& json_string ){
-    mValue value;
-    read_or_throw(json_string, value);
-    if ( value.type() != obj_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON read error: expected an Object"); } 
-    return value.get_obj();
-  }
+mObject read_mObject(  const std::string& json_string ){
+	mValue value;
+	read_or_throw(json_string, value);
+	if ( value.type() != obj_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON read error: expected an Object"); }
+	return value.get_obj();
+}
 
-  std::string get_string(const mObject& obj, const std::string& name )
-  {
-    mValue value = get_value( obj, name );
-    if ( value.type() != str_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON error: '" + name + "' is not a string" ); }
-    return value.get_str();
-  }
-  
-  std::string get_string_or_empty(const mObject& obj, const std::string& name )
-  {
-    const std::string empty_string("");
-    if ( !has_value( obj, name ) ) return empty_string;
-    mValue value = get_value( obj, name );
-    if ( value.type() != str_type ) { return empty_string; } 
-    return value.get_str();
-  }
-  
-  double get_real(const mObject& obj, const std::string& name )
-  {
-    mValue value = get_value( obj, name );
-    if ( value.type() == real_type ) return value.get_real();
-    if ( value.type() == int_type ) return get_int( obj, name ); 
-    throw utility::excn::EXCN_Msg_Exception("JSON error: '" + name + "' is not a number" );  
-    return 0.0;
-  }
-  
-  int get_int(const mObject& obj, const std::string& name )
-  {
-    mValue value = get_value( obj, name );
-    if ( value.type() != int_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON error: '" + name + "' is not a int" ); }
-    return value.get_int();
-  }
+std::string get_string(const mObject& obj, const std::string& name )
+{
+	mValue value = get_value( obj, name );
+	if ( value.type() != str_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON error: '" + name + "' is not a string" ); }
+	return value.get_str();
+}
+
+std::string get_string_or_empty(const mObject& obj, const std::string& name )
+{
+	const std::string empty_string("");
+	if ( !has_value( obj, name ) ) return empty_string;
+	mValue value = get_value( obj, name );
+	if ( value.type() != str_type ) { return empty_string; }
+	return value.get_str();
+}
+
+double get_real(const mObject& obj, const std::string& name )
+{
+	mValue value = get_value( obj, name );
+	if ( value.type() == real_type ) return value.get_real();
+	if ( value.type() == int_type ) return get_int( obj, name );
+	throw utility::excn::EXCN_Msg_Exception("JSON error: '" + name + "' is not a number" );
+	return 0.0;
+}
+
+int get_int(const mObject& obj, const std::string& name )
+{
+	mValue value = get_value( obj, name );
+	if ( value.type() != int_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON error: '" + name + "' is not a int" ); }
+	return value.get_int();
+}
 
 
 }

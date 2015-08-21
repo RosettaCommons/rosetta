@@ -47,9 +47,9 @@ operator <<( std::ostream & stream, xyzMatrix< T > const & m )
 	// Output xyzMatrix
 	int const w = Traits::width();
 	stream
-	 << setw( w ) << m.xx() << ' ' << setw( w ) << m.xy() << ' ' << setw( w ) << m.xz() << '\n'
-	 << setw( w ) << m.yx() << ' ' << setw( w ) << m.yy() << ' ' << setw( w ) << m.yz() << '\n'
-	 << setw( w ) << m.zx() << ' ' << setw( w ) << m.zy() << ' ' << setw( w ) << m.zz() << '\n';
+		<< setw( w ) << m.xx() << ' ' << setw( w ) << m.xy() << ' ' << setw( w ) << m.xz() << '\n'
+		<< setw( w ) << m.yx() << ' ' << setw( w ) << m.yy() << ' ' << setw( w ) << m.yz() << '\n'
+		<< setw( w ) << m.zx() << ' ' << setw( w ) << m.zy() << ' ' << setw( w ) << m.zz() << '\n';
 
 	// Restore previous stream state
 	stream.precision( old_precision );

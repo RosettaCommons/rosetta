@@ -64,8 +64,8 @@ ResidueCoordinateChangeList::operator = ( ResidueCoordinateChangeList const & rh
 void
 ResidueCoordinateChangeList::total_residue( Size total_residue )
 {
-debug_assert( empty() );
-debug_assert( no_residues_with_nonzero_change_id() );
+	debug_assert( empty() );
+	debug_assert( no_residues_with_nonzero_change_id() );
 
 	total_residue_ = total_residue;
 	changed_residues_.reserve( total_residue_ );
@@ -96,7 +96,7 @@ void
 ResidueCoordinateChangeList::clear()
 {
 	for ( Size ii = 1; ii <= changed_residues_.size(); ++ii ) {
-	debug_assert( residue_change_id_[ changed_residues_[ ii ] ] != 0 );
+		debug_assert( residue_change_id_[ changed_residues_[ ii ] ] != 0 );
 		residue_change_id_[ changed_residues_[ ii ] ] = 0;
 	}
 	changed_residues_.clear();
@@ -114,10 +114,10 @@ ResidueCoordinateChangeList::mark_residue_moved( id::AtomID atid )
 void
 ResidueCoordinateChangeList::mark_residue_moved( Size resid )
 {
-	if ( !(resid>0 && resid <= total_residue_ )) {
+	if ( !(resid>0 && resid <= total_residue_ ) ) {
 		tr.Error << "ASSERTION FAILED IN ResidueCoordinateChangeList: resid: " << resid << " total_residue " << total_residue_ << std::endl;
 	}
-debug_assert( resid > 0 && resid <= total_residue_ );
+	debug_assert( resid > 0 && resid <= total_residue_ );
 	if ( residue_change_id_[ resid ] == 0 ) {
 		changed_residues_.push_back( resid );
 		residue_change_id_[ resid ] = changed_residues_.size();

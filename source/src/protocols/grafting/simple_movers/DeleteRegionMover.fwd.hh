@@ -20,7 +20,7 @@
 namespace protocols {
 namespace grafting {
 
-/// @brief  
+/// @brief
 class DeleteRegionMover;
 
 typedef utility::pointer::shared_ptr<DeleteRegionMover> DeleteRegionMoverOP;

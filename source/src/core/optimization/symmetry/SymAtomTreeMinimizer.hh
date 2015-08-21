@@ -40,8 +40,8 @@ class SymAtomTreeMinimizer : public core::optimization::AtomTreeMinimizer
 
 public:
 
-typedef conformation::symmetry::SymmetricConformation SymmetricConformation;
-typedef conformation::symmetry::SymmetryInfo SymmetryInfoOP;
+	typedef conformation::symmetry::SymmetricConformation SymmetricConformation;
+	typedef conformation::symmetry::SymmetryInfo SymmetryInfoOP;
 
 public:
 
@@ -76,7 +76,7 @@ public:
 
 }; // SymAtomTreeMinimizer
 
-}	// symmetry
+} // symmetry
 } // namespace optimization
 } // namespace core
 

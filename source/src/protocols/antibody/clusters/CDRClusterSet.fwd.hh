@@ -21,7 +21,7 @@
 namespace protocols {
 namespace antibody {
 namespace clusters {
-	
+
 // Forward
 class CDRClusterSet;
 
@@ -38,5 +38,5 @@ typedef utility::pointer::shared_ptr< BasicCDRClusterSet  const > BasicCDRCluste
 } //namespace protocols
 
 
-#endif	//INCLUDED_protocols_antibody_CDRClusterInfo.fwd.hh
+#endif //INCLUDED_protocols_antibody_CDRClusterInfo.fwd.hh
 

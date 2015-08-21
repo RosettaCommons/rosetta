@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/stepwise/modeler/align/StepWisePoseAligner.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -22,11 +22,11 @@ namespace protocols {
 namespace stepwise {
 namespace modeler {
 namespace align {
-	
-	class StepWisePoseAligner;
-	typedef utility::pointer::shared_ptr< StepWisePoseAligner > StepWisePoseAlignerOP;
-	typedef utility::pointer::shared_ptr< StepWisePoseAligner const > StepWisePoseAlignerCOP;
-	
+
+class StepWisePoseAligner;
+typedef utility::pointer::shared_ptr< StepWisePoseAligner > StepWisePoseAlignerOP;
+typedef utility::pointer::shared_ptr< StepWisePoseAligner const > StepWisePoseAlignerCOP;
+
 } //align
 } //modeler
 } //stepwise

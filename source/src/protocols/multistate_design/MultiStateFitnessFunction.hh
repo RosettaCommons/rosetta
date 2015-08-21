@@ -33,8 +33,8 @@
 #include <map>
 
 #ifdef WIN32
-	#include <protocols/multistate_design/SingleState.hh>
-	#include <core/pose/Pose.hh>
+#include <protocols/multistate_design/SingleState.hh>
+#include <core/pose/Pose.hh>
 #endif
 
 

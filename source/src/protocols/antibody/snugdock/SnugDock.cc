@@ -58,12 +58,12 @@ namespace antibody {
 
 /// @brief default constructor
 SnugDock::SnugDock() :
-		docking::DockingHighRes(),
-		loop_refinement_method_( "refine_kic" ),
-		h3_filter_( true ),
-		debug_( false ),
-		h3_filter_tolerance_( 20 ),
-		number_of_high_resolution_cycles_( 50 )
+	docking::DockingHighRes(),
+	loop_refinement_method_( "refine_kic" ),
+	h3_filter_( true ),
+	debug_( false ),
+	h3_filter_tolerance_( 20 ),
+	number_of_high_resolution_cycles_( 50 )
 {
 	init();
 }
@@ -133,7 +133,7 @@ void SnugDock::apply( Pose & pose ) {
 	pre_minimization_->apply(pose);
 
 	TR << "Reinitializing the shared MC object before applying the high resolution phase of " + get_name() + "."
-	   << std::endl;
+		<< std::endl;
 
 	( * scorefxn() )( pose );
 	mc_->reset( pose );
@@ -200,21 +200,21 @@ void SnugDock::setup_objects( Pose const & pose ) {
 	mc_ = standard_dock_cycle->get_mc();
 
 	ChangeFoldTreeMoverOP set_foldtree_for_ab_ag_docking( new ChangeFoldTreeMover(
-	    antibody_info_->get_FoldTree_LH_A( pose )
-	) );
+		antibody_info_->get_FoldTree_LH_A( pose )
+		) );
 	ChangeFoldTreeMoverOP set_foldtree_for_vH_vL_docking( new ChangeFoldTreeMover(
-	    antibody_info_->get_FoldTree_L_HA( pose )
-	) );
+		antibody_info_->get_FoldTree_L_HA( pose )
+		) );
 
 	SequenceMoverOP antibody_antigen_dock_cycle( new SequenceMover(
-	    set_foldtree_for_ab_ag_docking,
-	    standard_dock_cycle
-	) );
+		set_foldtree_for_ab_ag_docking,
+		standard_dock_cycle
+		) );
 
 	SequenceMoverOP vH_vL_dock_cycle( new SequenceMover(
-	    set_foldtree_for_vH_vL_docking,
-	    standard_dock_cycle
-	) );
+		set_foldtree_for_vH_vL_docking,
+		standard_dock_cycle
+		) );
 
 	/// TODO: Does CDRsMinPackMin need a TaskFactory to be set?  Does it get this from AntibodyInfo?
 	CDRsMinPackMinOP minimize_all_cdr_loops_base( new CDRsMinPackMin( antibody_info_ ) );
@@ -238,15 +238,14 @@ void SnugDock::setup_objects( Pose const & pose ) {
 
 	/// This is a very succinct description of what this mover does.  For a description in words, see the implementation
 	/// of the streaming operator.
-	if (debug_){
+	if ( debug_ ) {
 		high_resolution_step_ = moves::MoverContainerOP( new SequenceMover );
 		high_resolution_step_->add_mover( antibody_antigen_dock_cycle );
 		high_resolution_step_->add_mover( vH_vL_dock_cycle);
 		high_resolution_step_->add_mover( minimize_all_cdr_loops);
 		high_resolution_step_->add_mover( refine_cdr_h2 );
 		high_resolution_step_->add_mover( refine_cdr_h3 );
-	}
-	else{
+	} else {
 		high_resolution_step_ = moves::MoverContainerOP( new RandomMover );
 		high_resolution_step_->add_mover( antibody_antigen_dock_cycle, 0.4 );
 		high_resolution_step_->add_mover( vH_vL_dock_cycle, 0.4 );

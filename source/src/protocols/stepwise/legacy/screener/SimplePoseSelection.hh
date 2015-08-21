@@ -29,45 +29,45 @@ namespace stepwise {
 namespace legacy {
 namespace screener {
 
-	class SimplePoseSelection: public stepwise::screener::StepWiseScreener {
+class SimplePoseSelection: public stepwise::screener::StepWiseScreener {
 
-	public:
+public:
 
-		//constructor
-		SimplePoseSelection( pose::Pose const & pose,
-												 utility::vector1< Size > const & moving_res_list,
-												 modeler::options::StepWiseModelerOptionsCOP options,
-												 bool const full_optimize );
+	//constructor
+	SimplePoseSelection( pose::Pose const & pose,
+		utility::vector1< Size > const & moving_res_list,
+		modeler::options::StepWiseModelerOptionsCOP options,
+		bool const full_optimize );
 
-		//destructor
-		~SimplePoseSelection();
+	//destructor
+	~SimplePoseSelection();
 
-	public:
+public:
 
-		std::string
-		name() const { return "SimplePoseSelection"; }
+	std::string
+	name() const { return "SimplePoseSelection"; }
 
-		stepwise::screener::StepWiseScreenerType
-		type() const { return stepwise::screener::SIMPLE_POSE_SELECTION; }
+	stepwise::screener::StepWiseScreenerType
+	type() const { return stepwise::screener::SIMPLE_POSE_SELECTION; }
 
-		bool
-		check_screen();
+	bool
+	check_screen();
 
-		void
-		finalize();
+	void
+	finalize();
 
-		utility::vector1< pose::PoseOP > pose_list() { return pose_list_; }
+	utility::vector1< pose::PoseOP > pose_list() { return pose_list_; }
 
-	private:
+private:
 
-		pose::Pose const & pose_;
-		utility::vector1< Size > const moving_res_list_;
-		modeler::options::StepWiseModelerOptionsCOP options_;
-		bool const full_optimize_;
+	pose::Pose const & pose_;
+	utility::vector1< Size > const moving_res_list_;
+	modeler::options::StepWiseModelerOptionsCOP options_;
+	bool const full_optimize_;
 
-		utility::vector1< pose::PoseOP > pose_list_;
+	utility::vector1< pose::PoseOP > pose_list_;
 
-	};
+};
 
 } //screener
 } //legacy

@@ -21,9 +21,9 @@
 // Package headers
 #include <core/pose/Pose.fwd.hh>
 #ifdef WIN32
-	#include <core/pose/MiniPose.hh>
+#include <core/pose/MiniPose.hh>
 #else
-	#include <core/pose/MiniPose.fwd.hh>
+#include <core/pose/MiniPose.fwd.hh>
 #endif
 // Project headers
 #include <core/chemical/rna/util.hh>
@@ -71,7 +71,7 @@ public:
 private:
 	void init();
 	void apply_coords( Pose & pose, Size const seqpos, Size const res_class, bool const ignore_base, bool const keep_backbone_torsion ) const;
-	//	utility::vector1 < PoseOP > ref_pose_list_;
+	// utility::vector1 < PoseOP > ref_pose_list_;
 	utility::vector1 < MiniPoseOP > ref_mini_pose_list_;
 	std::string const path_;
 	Real delta_cutoff_;

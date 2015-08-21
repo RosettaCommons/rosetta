@@ -75,7 +75,7 @@
 #include <numeric/random/random_permutation.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 using namespace ObjexxFCL;
@@ -121,7 +121,7 @@ MPI_Refine_Master::init(){
 	using namespace basic::options::OptionKeys;
 
 	// Are we resuming an old job ?
-	if( mpi_resume() != "" ){
+	if ( mpi_resume() != "" ) {
 		TR << "Resuming job from IDENT:  " <<  mpi_resume() << std::endl;
 		load_state( mpi_resume() );
 	} else {
@@ -130,22 +130,22 @@ MPI_Refine_Master::init(){
 		load_structures_from_cmdline_into_library( library_ref() );
 	}
 
-	// just take first index as "starting structure"; 
+	// just take first index as "starting structure";
 	// be aware of it when using multiple inputs (which haven't been tried anyway)
 
-	// Assign loop info 
-	for( SilentStructStore::iterator it = library_ref().begin(), end =  library_ref().end();
-			 it != end; ++it ){
+	// Assign loop info
+	for ( SilentStructStore::iterator it = library_ref().begin(), end =  library_ref().end();
+			it != end; ++it ) {
 		assign_loop_info( *it );
 	}
 
 	// perturb loop and very short min
 	core::Size nlib = library_ref().size();
-	if( option[ OptionKeys::lh::pert_init_loop ]() && nlib < 5 ){
+	if ( option[ OptionKeys::lh::pert_init_loop ]() && nlib < 5 ) {
 		TR << "Perturb loop for the initial structure." << std::endl;
 		core::Size nadd = 5 - nlib;
 
-		for( core::Size iadd = 1; iadd <= nadd; ++iadd ){
+		for ( core::Size iadd = 1; iadd <= nadd; ++iadd ) {
 			//core::io::silent::SilentStructOP decoy( *it );
 			core::io::silent::SilentStructOP decoy = library_ref().get_struct_random()->clone();
 
@@ -153,15 +153,15 @@ MPI_Refine_Master::init(){
 			utility::vector1< std::pair< core::Size, core::Size > > loopres =
 				get_loop_info_full( decoy, is_terminus );
 
-			for( core::Size iloop = 1; iloop <= loopres.size(); ++iloop ){
+			for ( core::Size iloop = 1; iloop <= loopres.size(); ++iloop ) {
 
 				core::Size res1 = loopres[iloop].first;
 				core::Size res2 = loopres[iloop].second;
 
 				WorkUnit_SamplerOP wu;
-				if( is_terminus[iloop] ){
+				if ( is_terminus[iloop] ) {
 					continue;
-					//wu = new WorkUnit_FragInsert( 25, 1, res1, res2, false ); 
+					//wu = new WorkUnit_FragInsert( 25, 1, res1, res2, false );
 					//wu = new WorkUnit_KicCloser( 1, 1, res1, res2, false );
 					//wu->set_wu_type( "kiccloser" );
 				} else {
@@ -189,7 +189,7 @@ MPI_Refine_Master::init(){
 
 	// Mover setup
 	// More generic type - use scheduler
-	if( option[ OptionKeys::lh::mpi_master_schfile ].user() ){
+	if ( option[ OptionKeys::lh::mpi_master_schfile ].user() ) {
 		TR << "Setup scheduler as given mpi_master_schfile: ";
 		TR << option[ OptionKeys::lh::mpi_master_schfile ].user() << std::endl;
 		scheduler_.set_random( false );
@@ -225,17 +225,18 @@ MPI_Refine_Master::go()
 	init();
 
 	TRDEBUG << "Master Node: Waiting for job requests..." << std::endl;
-	while( true ){
+	while ( true ) {
 		// process any incoming messages such as incoming
 		process_incoming_msgs();
-		if( inbound().size() > 0 )
+		if ( inbound().size() > 0 ) {
 			TRDEBUG << "Master: processing msgs.." << inbound().size() << std::endl;
+		}
 
 		//TRDEBUG << "Master: process incoming" << std::endl;
 		process_inbound_wus();
 
 		bool terminate = process_termination();
-		if( terminate ) break;
+		if ( terminate ) break;
 
 		// Check if need to proceed to next round
 		// this should be after inbound in order to update receivings from slave
@@ -260,21 +261,21 @@ MPI_Refine_Master::go()
 // override
 bool
 MPI_Refine_Master::process_termination(){
-	// Do not send to emperor since emperor is already dead 
+	// Do not send to emperor since emperor is already dead
 	// when master got termination signal from emperor
 	core::Size n ( 0 );
-	for( core::Size i = 1; i <= myslaves_.size(); ++i ){
-		if (slaves_finished_[ myslaves_[i] ] ) n++;
+	for ( core::Size i = 1; i <= myslaves_.size(); ++i ) {
+		if ( slaves_finished_[ myslaves_[i] ] ) n++;
 	}
 
-	if( n > 0 ) TR.Debug << "Terminated so far: " << n << std::endl;
+	if ( n > 0 ) TR.Debug << "Terminated so far: " << n << std::endl;
 
 	// In this case all the slaves should be terminated!
 	// otherwise it'll become Zombie waiting for signal return from Master...
-	if( n >= myslaves_.size() ){
+	if ( n >= myslaves_.size() ) {
 		WorkUnit_SilentStructStoreOP terminate_wu( new WorkUnit_SilentStructStore() );
 		terminate_wu->set_wu_type( "terminated" );
-		send_MPI_workunit( terminate_wu, (int)(my_emperor()) ); 
+		send_MPI_workunit( terminate_wu, (int)(my_emperor()) );
 
 		return true;
 	} else {
@@ -300,8 +301,8 @@ MPI_Refine_Master::process_round(){
 	TR.Debug << " " << n_rerelaxed;
 	TR.Debug << ", current roundtype: " << roundtype << std::endl;
 
-	if( roundtype.compare("wait") == 0 ){
-		if( n_to_gen > n_rerelaxed ){
+	if ( roundtype.compare("wait") == 0 ) {
+		if ( n_to_gen > n_rerelaxed ) {
 			return true;  //Wait if schedule is on "wait"
 		} else {
 			scheduler_.proceed();
@@ -310,39 +311,39 @@ MPI_Refine_Master::process_round(){
 	}
 
 
-	if( roundtype.compare("search") == 0 ){
+	if ( roundtype.compare("search") == 0 ) {
 		//scheduler_.clear();
 		//scheduler_.prepare_search_stage( master_rank() );
 
-	} else if( roundtype.compare("wait") == 0 ){
+	} else if ( roundtype.compare("wait") == 0 ) {
 		// nothing...
 
-	} else if( roundtype.compare("nextstage") == 0 ){
+	} else if ( roundtype.compare("nextstage") == 0 ) {
 		sch_stage_ ++;
 
-	} else if( roundtype.compare("enrich") == 0 ) {
+	} else if ( roundtype.compare("enrich") == 0 ) {
 		TR << "New round: " << roundtype << std::endl;
 		// Make sure goap scoring is done!
-		if( !fobj_->has_score( "goap" ) ){
-      utility_exit_with_message( "FATAL ERROR:  Goap energy is not defined!" );
+		if ( !fobj_->has_score( "goap" ) ) {
+			utility_exit_with_message( "FATAL ERROR:  Goap energy is not defined!" );
 		}
 		scheduler_.prepare_enrich_stage( library_central(), "goap" );
 
-	} else if( roundtype.compare("average") == 0 ||
-						 roundtype.compare("calcdev") == 0 ) {
+	} else if ( roundtype.compare("average") == 0 ||
+			roundtype.compare("calcdev") == 0 ) {
 		TR << "New round: " << roundtype << std::endl;
 
-		if( scheduler_.methods_picked().size() == 0 ){
+		if ( scheduler_.methods_picked().size() == 0 ) {
 			utility_exit_with_message( "ERROR: no method exists for averaging!" );
 		}
 
 		pose::Pose avrg_pose;
-		if( roundtype.compare("average") == 0 ){
-			avrg_pose = get_average_structure( library_central(), scheduler_.methods_picked(), 
-																				 "samplemethod", true, false );
-		} else if ( roundtype.compare("calcdev") == 0 ){
-			avrg_pose = get_average_structure( library_central(), scheduler_.methods_picked(), 
-																				 "samplemethod", true, true );
+		if ( roundtype.compare("average") == 0 ) {
+			avrg_pose = get_average_structure( library_central(), scheduler_.methods_picked(),
+				"samplemethod", true, false );
+		} else if ( roundtype.compare("calcdev") == 0 ) {
+			avrg_pose = get_average_structure( library_central(), scheduler_.methods_picked(),
+				"samplemethod", true, true );
 		}
 
 		// just copy template first
@@ -370,11 +371,11 @@ MPI_Refine_Master::process_round(){
 
 		return true; // Important: to make it go back! (nothing to do after avrg)
 
-	} else if( roundtype.compare( "cluster" ) == 0 ){
+	} else if ( roundtype.compare( "cluster" ) == 0 ) {
 		core::Size const ncluster = option[ lh::max_emperor_lib_size ]();
 
 		protocols::wum::SilentStructStore clustered;
-		if( library_central().size() < ncluster ){
+		if ( library_central().size() < ncluster ) {
 			TR << "Warning: library smaller than cluster size requested; returning whole library without clustering" << std::endl;
 			clustered = library_central();
 		} else {
@@ -393,7 +394,7 @@ MPI_Refine_Master::process_round(){
 
 		return true; // Important: to make it go back!
 
-	} else if( roundtype.compare("nextgen") == 0 ){
+	} else if ( roundtype.compare("nextgen") == 0 ) {
 		//TR << "=========================================================" << std::endl;
 		TR << "EmperorLib selection invoked from Master " << mpi_rank() << "!" << std::endl;
 
@@ -402,31 +403,31 @@ MPI_Refine_Master::process_round(){
 		// below will invoke a new "resultfeedback" WU from emperor!
 
 		//MethodParams params = scheduler_.get_params();
-		if( scheduler_.final_iter() ){
-			feedback_structures_to_emperor( true, scheduler_.pick_strategy(), 
-																			scheduler_.pick_objfunction() );
+		if ( scheduler_.final_iter() ) {
+			feedback_structures_to_emperor( true, scheduler_.pick_strategy(),
+				scheduler_.pick_objfunction() );
 		} else {
-			feedback_structures_to_emperor( false, scheduler_.pick_strategy(), 
-																			scheduler_.pick_objfunction() );
+			feedback_structures_to_emperor( false, scheduler_.pick_strategy(),
+				scheduler_.pick_objfunction() );
 		}
 
 		// This SHOULD iterate the whole procedure: check!
 		// and also, is this iterating after receving the new ref structure?
 		scheduler_.proceed();
 
-	} else if( roundtype.compare("stage") == 0 ){
+	} else if ( roundtype.compare("stage") == 0 ) {
 		scheduler_.clear();
 		/*
 
-	} else // Termination WU: is there better logic somewhere globally?
-	if( roundtype.compare("done") == 0 ){
+		} else // Termination WU: is there better logic somewhere globally?
+		if( roundtype.compare("done") == 0 ){
 		if( !sent_termination_ ){
-			TR << "New round: " << roundtype << std::endl;
-			TR << "send termination signal to emperor." << std::endl;
-			WorkUnit_SilentStructStoreOP terminate_wu = new WorkUnit_SilentStructStore();
-			terminate_wu->set_wu_type( "terminate" );
-			send_MPI_workunit( terminate_wu, 0 ); // The 0 is the MPI_RANK of the emperor
-			sent_termination_ = true;
+		TR << "New round: " << roundtype << std::endl;
+		TR << "send termination signal to emperor." << std::endl;
+		WorkUnit_SilentStructStoreOP terminate_wu = new WorkUnit_SilentStructStore();
+		terminate_wu->set_wu_type( "terminate" );
+		send_MPI_workunit( terminate_wu, 0 ); // The 0 is the MPI_RANK of the emperor
+		sent_termination_ = true;
 		}
 		*/
 
@@ -448,18 +449,18 @@ void
 MPI_Refine_Master::process_inbound_wus(){
 	using namespace protocols::loops;
 
-	while( inbound().size() > 0 )
-	{
+	while ( inbound().size() > 0 )
+			{
 		WorkUnitBaseOP  next_wu =  inbound().pop_next();
 		runtime_assert( next_wu );
 
 		TRDEBUG << "inbound wu: " << next_wu->get_wu_type() << std::endl;
 
 		// Terminate if gets termination WU
-		if( next_wu->get_wu_type() == "terminate" ){
+		if ( next_wu->get_wu_type() == "terminate" ) {
 			int i_rank = (int)( next_wu->last_received_from());
 
-			if( i_rank == (int)(my_emperor()) ){
+			if ( i_rank == (int)(my_emperor()) ) {
 				TR << "Got termination signal from Emperor!" << std::endl;
 				got_termination_signal_ = true;
 
@@ -476,11 +477,11 @@ MPI_Refine_Master::process_inbound_wus(){
 
 		// Otherwise work!
 		// Upcast to a StructureModifier WU
-		WorkUnit_SilentStructStoreOP structure_wu 
+		WorkUnit_SilentStructStoreOP structure_wu
 			= utility::pointer::dynamic_pointer_cast<  WorkUnit_SilentStructStore > ( next_wu );
 
 		// If upcast was unsuccessful - warn and ignore.
-		if ( structure_wu.get() == NULL ){
+		if ( structure_wu.get() == NULL ) {
 			TR << "Cannot save structural data for WU: " << std::endl;
 			next_wu->print( TR );
 			continue;
@@ -492,24 +493,23 @@ MPI_Refine_Master::process_inbound_wus(){
 
 		// Make sure your new mover is included here
 		if (
-         structure_wu->get_wu_type() == "global_loophasher" ||
-         structure_wu->get_wu_type() == "combine" ||
-         structure_wu->get_wu_type() == "bbgauss" || 
-				 structure_wu->get_wu_type() == "local_loophasher" ||
-				 structure_wu->get_wu_type() == "fraginsert" ||
-				 structure_wu->get_wu_type() == "kiccloser" ||
-				 structure_wu->get_wu_type() == "partialabinitio" ||
-				 structure_wu->get_wu_type() == "partialrefine" ||
-				 structure_wu->get_wu_type() == "ramapert" ||
-				 structure_wu->get_wu_type() == "nm" ||
-				 structure_wu->get_wu_type() == "nmcen" ||
-				 structure_wu->get_wu_type() == "md" || 
-				 structure_wu->get_wu_type() == "relax" )
-			{
+				structure_wu->get_wu_type() == "global_loophasher" ||
+				structure_wu->get_wu_type() == "combine" ||
+				structure_wu->get_wu_type() == "bbgauss" ||
+				structure_wu->get_wu_type() == "local_loophasher" ||
+				structure_wu->get_wu_type() == "fraginsert" ||
+				structure_wu->get_wu_type() == "kiccloser" ||
+				structure_wu->get_wu_type() == "partialabinitio" ||
+				structure_wu->get_wu_type() == "partialrefine" ||
+				structure_wu->get_wu_type() == "ramapert" ||
+				structure_wu->get_wu_type() == "nm" ||
+				structure_wu->get_wu_type() == "nmcen" ||
+				structure_wu->get_wu_type() == "md" ||
+				structure_wu->get_wu_type() == "relax" ) {
 
 			totaltime_loophash() += structure_wu->get_run_time();
 
-			if( decoys.size() > 0 ){
+			if ( decoys.size() > 0 ) {
 				TR << structure_wu->get_wu_type() << " return: " << decoys.size() << " structs in ";
 				TR << structure_wu->get_run_time() << "s " << " frm " << structure_wu->last_received_from();
 				TR << ", sending rerelax...( current rerelax on queue: ";
@@ -538,8 +538,7 @@ MPI_Refine_Master::process_inbound_wus(){
 				TR << structure_wu->get_wu_type() << " return, but no structures!" << std::endl;
 			}
 
-		} else // Emperor -> Master
-		if ( structure_wu->get_wu_type() == "resultfeedback" ){
+		} else if ( structure_wu->get_wu_type() == "resultfeedback" ) { // Emperor -> Master
 
 			// turn off switch as received
 			asked_for_feedback_ = false;
@@ -556,8 +555,7 @@ MPI_Refine_Master::process_inbound_wus(){
 
 			print_library( library_ref(), "Emp->Lib " );
 
-		} else //Rerelax through batchrelax or rerelax
-		if ( structure_wu->get_wu_type() == "rerelax" ){
+		} else if ( structure_wu->get_wu_type() == "rerelax" ) { //Rerelax through batchrelax or rerelax
 
 			totaltime_batchrelax_ += structure_wu->get_run_time();
 			scheduler_.add_rerelaxed( decoys.size() );
@@ -578,13 +576,13 @@ MPI_Refine_Master::process_inbound_wus(){
 			TR.Debug << "Shave: imethod/frac " << imethod << " " << params.fshave2 << std::endl;
 			shave_library( decoys, "goap", params.fshave2 );
 
-			// for the shaved library, store their structures too 
+			// for the shaved library, store their structures too
 			dump_structures( decoys, false, "trim." );
 
 			start_timer( TIMING_CPU );
 			//add_structures_to_library( decoys, "add_n_limit" );
 			// NSGAII usually to keep diversity even among master library
-			add_structures_to_library( decoys, mpi_feedback() ); 
+			add_structures_to_library( decoys, mpi_feedback() );
 
 			core::Real addtime = start_timer( TIMING_CPU );
 			TRDEBUG << "addtime: " << addtime << std::endl;
@@ -604,8 +602,8 @@ MPI_Refine_Master::process_outbound_wus(){
 
 	// Termination control 1. (1st priority)
 	// if got termination signal only: Send termination signal to slaves!
-	if( got_termination_signal_ ){
-		for( core::Size i = 1; i <= myslaves_.size(); ++i ){
+	if ( got_termination_signal_ ) {
+		for ( core::Size i = 1; i <= myslaves_.size(); ++i ) {
 			WorkUnit_SilentStructStoreOP terminate_wu( new WorkUnit_SilentStructStore() );
 			terminate_wu->set_wu_type( "terminate" );
 			outbound().push_front( terminate_wu );
@@ -614,7 +612,7 @@ MPI_Refine_Master::process_outbound_wus(){
 	}
 
 	// Skip everything if sent termination
-	if( sent_termination_ ){
+	if ( sent_termination_ ) {
 		TR.Debug << "Skip outbound as sent termination signal." << std::endl;
 		return;
 	}
@@ -623,7 +621,7 @@ MPI_Refine_Master::process_outbound_wus(){
 	MethodParams params = scheduler_.get_params();
 
 	// Termination control 2. (2nd priority): Asking emperor to terminate whole proc.
-	if( params.roundtype.compare("done") == 0 && !sent_termination_ ){
+	if ( params.roundtype.compare("done") == 0 && !sent_termination_ ) {
 		TR << "Send termination signal to emperor." << std::endl;
 		WorkUnit_SilentStructStoreOP terminate_wu( new WorkUnit_SilentStructStore() );
 		terminate_wu->set_wu_type( "terminate" );
@@ -633,9 +631,9 @@ MPI_Refine_Master::process_outbound_wus(){
 	}
 
 	// Otherwise. go generation (the last priority)
-	if( outbound().size() < outbound_wu_buffer_size_ ){
-		if ( library_ref().size() == 0 ){
-			if( asked_for_feedback_ ){
+	if ( outbound().size() < outbound_wu_buffer_size_ ) {
+		if ( library_ref().size() == 0 ) {
+			if ( asked_for_feedback_ ) {
 				TR.Debug << "Wait for new structures!" << std::endl;
 				return;
 			} else {
@@ -647,17 +645,18 @@ MPI_Refine_Master::process_outbound_wus(){
 		// pick a random structure from the library
 		TR.Debug << "Master process_outbound, for " << library_ref().size() << " central structures..." << std::endl;
 
-		if( params.nrun > 0 && params.roundtype.compare("wait") != 0 )
+		if ( params.nrun > 0 && params.roundtype.compare("wait") != 0 ) {
 			TR << "Create WUs for iteration " << scheduler_.iter() << "." << std::endl;
+		}
 
-		while( params.nrun > 0 && params.roundtype.compare("wait") != 0 ){
+		while ( params.nrun > 0 && params.roundtype.compare("wait") != 0 ) {
 
 			TR.Debug << "outbound, for roundtype: " << params.name << " and reflib size " << library_ref().size() << std::endl;
 			// iterate over whole ref structures given...
 			// make sure each createWU is not loading too heavy queues...
 			core::Size i( 0 );
-			for( SilentStructStore::iterator it = library_ref().begin(), 
-					 end =  library_ref().end(); it != end; ++it, i++ ){
+			for ( SilentStructStore::iterator it = library_ref().begin(),
+					end =  library_ref().end(); it != end; ++it, i++ ) {
 
 				TR << "Create on structure: " << (*it)->decoy_tag() << std::endl;
 				create_WUs( *it, i );
@@ -679,7 +678,7 @@ MPI_Refine_Master::process_outbound_wus(){
 
 void
 MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_struct,
-															 core::Size const i_ss )
+	core::Size const i_ss )
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -714,7 +713,7 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 	MethodParams const params = scheduler_.get_params();
 
 	std::string const pname( params.name );
-	if( params.nrun == 0 ) return;
+	if ( params.nrun == 0 ) return;
 
 	TR << "Create WUs, current params(name/method/nrun): " << pname;
 	TR << " " << params.movertype << " " << params.nrun << std::endl;
@@ -727,16 +726,17 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 	std::string const movername( params.movertype );
 
 	// structure index based on sampling method
-	if( ssids_by_name_.find(pname) == ssids_by_name_.end() )
+	if ( ssids_by_name_.find(pname) == ssids_by_name_.end() ) {
 		ssids_by_name_[pname] = 0;
+	}
 
 	// 1. LoopHash - TODO: Can we make this simpler, by removing "scanning"?
-	if( movername.compare("loophash") == 0 ){
+	if ( movername.compare("loophash") == 0 ) {
 
-		std::string lhtype 
+		std::string lhtype
 			= (params.relax_type == 1)? "global_loophasher" : "local_loophasher";
 
-		for( core::Size i_gen = 1; i_gen <= params.nrun; ++i_gen ){
+		for ( core::Size i_gen = 1; i_gen <= params.nrun; ++i_gen ) {
 			core::Size start_ir, end_ir;
 			bool is_terminus;
 			get_loop_info( ss, start_ir, end_ir, is_terminus );
@@ -744,11 +744,11 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 			// here end_ir doesn't mean stem2, but end of stem1
 			end_ir = std::max( start_ir, end_ir - 9 );
 			count_wus++;
-			WorkUnit_SamplerOP new_wu; 
+			WorkUnit_SamplerOP new_wu;
 
 			TR.Debug << "Adding a new loophash WU: " << start_ir << " - " << end_ir << ", ssid = " << ssid << std::endl;
 
-			if( params.relax_type == 1 ){
+			if ( params.relax_type == 1 ) {
 				new_wu = WorkUnit_SamplerOP( new WorkUnit_LoopHash( start_ir, end_ir, ssid, 1 ) );
 
 			} else {
@@ -763,8 +763,8 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 		TR << "Added " << count_wus << " " << lhtype << " WUs to queue. ssid=" << ssid << std::endl;
 
 		// Combine - special treat to add extra parent struct
-	} else if( movername.compare("combine") == 0 ){
-		if( library_ref().size() < 2 ){
+	} else if ( movername.compare("combine") == 0 ) {
+		if ( library_ref().size() < 2 ) {
 			TR << "Not enough structures. skip " << pname << std::endl;
 			// just returning will make master stop forever;
 			// let's make master aware of this by behaving as if rerelax is done
@@ -772,12 +772,12 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 			return;
 		}
 
-		for( Size i_gen = 1; i_gen <= params.nrun; ++i_gen ){
+		for ( Size i_gen = 1; i_gen <= params.nrun; ++i_gen ) {
 			core::Size i_ss2;
-			while( true ){
+			while ( true ) {
 				i_ss2 = (core::Size)( numeric::random::rg().uniform()*library_ref().size() );
-				if( i_ss2 >= library_ref().size() ) continue;
-				if( i_ss != i_ss2 ) break;
+				if ( i_ss2 >= library_ref().size() ) continue;
+				if ( i_ss != i_ss2 ) break;
 			}
 
 			core::io::silent::SilentStructOP ss2 = library_ref().get_struct( i_ss2 )->clone();
@@ -786,7 +786,7 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 			//Sscore = CA_Sscore( ss, ss2, rmsd );
 			core::Real rmsd( 0.0 );
 			CA_Sscore( ss, ss2, rmsd );
-			if( rmsd < 0.5 ){
+			if ( rmsd < 0.5 ) {
 				TR << "Skip Combine WU for " << ss->decoy_tag() << " " << ss2->decoy_tag();
 				TR << " due to structure similarity." << std::endl;
 				scheduler_.add_rerelaxed( params.nperrun );
@@ -796,7 +796,7 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 			WorkUnit_SamplerOP new_wu;
 			// nstruct, cartesian
 			// don't minimize here; let's use rerelax
-			if( params.relax_type == 1 ){ // cartesian combine
+			if ( params.relax_type == 1 ) { // cartesian combine
 				new_wu = WorkUnit_SamplerOP( new WorkUnit_CombinePose( params.nperrun, 1 ) );
 			} else { // torsion combine
 				new_wu = WorkUnit_SamplerOP( new WorkUnit_CombinePose( params.nperrun, 0 ) );
@@ -815,44 +815,44 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 		// MD/relax/NM/bbgauss/fraginsert/etc...
 		// Queue them as line in schfile
 
-		for( core::Size irun = 1; irun <= params.nrun; ++irun ){
+		for ( core::Size irun = 1; irun <= params.nrun; ++irun ) {
 			WorkUnit_SamplerOP new_wu;
 			std::string wuname( movername );
 			core::Size nmtype( 0 );
 
-			if( movername.compare("relax") == 0 ){
+			if ( movername.compare("relax") == 0 ) {
 				TR << "sending name/score: " << params.name << " " << params.score_type << std::endl;
 				new_wu = WorkUnit_SamplerOP( new WorkUnit_Relax( params.relax_type, params.score_type, params.nperrun, params.cstw ) );
 
-			} else if( movername.compare("cartnmcen") == 0 || movername.compare( "torsnmcen" ) == 0 ||
-								 movername.compare("cartnm") == 0    || movername.compare( "torsnm" ) == 0 ){ //NM
+			} else if ( movername.compare("cartnmcen") == 0 || movername.compare( "torsnmcen" ) == 0 ||
+					movername.compare("cartnm") == 0    || movername.compare( "torsnm" ) == 0 ) { //NM
 
-				if       ( movername.compare("cartnmcen") == 0 ){
+				if       ( movername.compare("cartnmcen") == 0 ) {
 					wuname = "nmcen"; nmtype = 1;
-				} else if( movername.compare("torsnmcen") == 0 ){
+				} else if ( movername.compare("torsnmcen") == 0 ) {
 					wuname = "nmcen"; nmtype = 2;
-				} else if( movername.compare("cartnm") == 0 ){
+				} else if ( movername.compare("cartnm") == 0 ) {
 					wuname = "nm"; nmtype = 3;
-				} else if( movername.compare("torsnm") == 0 ){
+				} else if ( movername.compare("torsnm") == 0 ) {
 					wuname = "nm"; nmtype = 4;
 				}
 				// params.cstw is pert scale
 				new_wu = WorkUnit_SamplerOP( new WorkUnit_NormalMode( params.nperrun, nmtype, params.relax_type, params.cstw ) );
 
-			} else if( movername.compare("md") == 0 || movername.compare("mdloop") == 0 ){
+			} else if ( movername.compare("md") == 0 || movername.compare("mdloop") == 0 ) {
 
 				wuname = "md";
 				bool looponly( false );
-				if( movername.compare( "mdloop" ) == 0 ) looponly = true;
+				if ( movername.compare( "mdloop" ) == 0 ) looponly = true;
 
 				new_wu = WorkUnit_SamplerOP( new WorkUnit_MD( params.relax_type, params.score_type, params.nperrun, params.cstw , looponly ) );
 
-			} else if( movername.compare("bbgauss") == 0 ){
+			} else if ( movername.compare("bbgauss") == 0 ) {
 				new_wu = WorkUnit_SamplerOP( new WorkUnit_bbGauss( params.nperrun, 0.32 ) );
 
-			} else if( movername.compare("fraginsertcen") == 0 || movername.compare("fraginsert") == 0 
-								 || movername.compare("kiccloser") == 0 || movername.compare("cartcloser") == 0 
-								 || movername.compare("partialabinitio") == 0 || movername.compare("partialrefine") == 0 ){
+			} else if ( movername.compare("fraginsertcen") == 0 || movername.compare("fraginsert") == 0
+					|| movername.compare("kiccloser") == 0 || movername.compare("cartcloser") == 0
+					|| movername.compare("partialabinitio") == 0 || movername.compare("partialrefine") == 0 ) {
 				// bring loop info
 				core::Size res1, res2;
 				bool is_terminus;
@@ -861,8 +861,8 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 				// Speical logic for terminus:
 				// randomly select between ramapert & fraginsert
 				std::string movername_loc( movername );
-				if( ( movername.compare("kiccloser") == 0 || movername.compare("cartcloser") == 0 ) && is_terminus ){
-					if( numeric::random::rg().uniform() < prob_terminus_ramapert_ ){
+				if ( ( movername.compare("kiccloser") == 0 || movername.compare("cartcloser") == 0 ) && is_terminus ) {
+					if ( numeric::random::rg().uniform() < prob_terminus_ramapert_ ) {
 						movername_loc = "ramapert";
 					} else {
 						movername_loc = "fraginsertcen";
@@ -871,28 +871,28 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 				}
 
 				// loop info should be included either in silent or by loopfile
-				if( movername_loc.compare("fraginsert") == 0 ){
+				if ( movername_loc.compare("fraginsert") == 0 ) {
 					wuname = "fraginsert";
-					new_wu = WorkUnit_SamplerOP( new WorkUnit_FragInsert( params.nperrun, params.score_type, res1, res2, true ) ); 
-				} else if( movername_loc.compare("fraginsertcen") == 0 ){
+					new_wu = WorkUnit_SamplerOP( new WorkUnit_FragInsert( params.nperrun, params.score_type, res1, res2, true ) );
+				} else if ( movername_loc.compare("fraginsertcen") == 0 ) {
 					wuname = "fraginsert";
-					new_wu = WorkUnit_SamplerOP( new WorkUnit_FragInsert( 25, params.score_type, res1, res2, false ) ); 
-				} else if( movername_loc.compare("kiccloser") == 0 ){
+					new_wu = WorkUnit_SamplerOP( new WorkUnit_FragInsert( 25, params.score_type, res1, res2, false ) );
+				} else if ( movername_loc.compare("kiccloser") == 0 ) {
 					wuname = "kiccloser";
-					new_wu = WorkUnit_SamplerOP( new WorkUnit_KicCloser( params.nperrun, params.score_type, res1, res2, true ) ); 
-				} else if( movername_loc.compare("cartcloser") == 0 ){
+					new_wu = WorkUnit_SamplerOP( new WorkUnit_KicCloser( params.nperrun, params.score_type, res1, res2, true ) );
+				} else if ( movername_loc.compare("cartcloser") == 0 ) {
 					wuname = "kiccloser";
-					new_wu = WorkUnit_SamplerOP( new WorkUnit_KicCloser( params.nperrun, params.score_type, res1, res2, false ) ); 
-				} else if( movername_loc.compare("ramapert") == 0 ){
+					new_wu = WorkUnit_SamplerOP( new WorkUnit_KicCloser( params.nperrun, params.score_type, res1, res2, false ) );
+				} else if ( movername_loc.compare("ramapert") == 0 ) {
 					wuname = "ramapert";
 					new_wu = WorkUnit_SamplerOP( new WorkUnit_RamaPerturber( params.nperrun, res1, res2, 4.0 ) );
-				} else if( movername_loc.compare("partialabinitio") == 0 ){
+				} else if ( movername_loc.compare("partialabinitio") == 0 ) {
 					wuname = "partialabinitio";
 					new_wu = WorkUnit_SamplerOP( new WorkUnit_PartialAbinitio( params.nperrun, true ) );
-				} else if( movername_loc.compare("partialrefine") == 0 ){
+				} else if ( movername_loc.compare("partialrefine") == 0 ) {
 					wuname = "partialabinitio";
 					new_wu = WorkUnit_SamplerOP( new WorkUnit_PartialAbinitio( params.nperrun, false ) );
-				} 
+				}
 
 			} else {
 				TR << "Unknown movername: " << movername << "! check your schedule file again!" << std::endl;
@@ -915,13 +915,13 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 }
 
 void
-MPI_Refine_Master::assign_loop_info( core::io::silent::SilentStructOP ss ) const 
+MPI_Refine_Master::assign_loop_info( core::io::silent::SilentStructOP ss ) const
 {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if( !option[ lh::loop_string ].user() ){
+	if ( !option[ lh::loop_string ].user() ) {
 		TR << "Loop region not defined by user." << std::endl;
 		return;
 	}
@@ -931,9 +931,9 @@ MPI_Refine_Master::assign_loop_info( core::io::silent::SilentStructOP ss ) const
 	ss->add_energy( "nloop", (core::Real)(str_residues.size()) );
 
 	core::Size nloop = str_residues.size();
-	if( nloop > 0 ){
+	if ( nloop > 0 ) {
 		// initialize
-		for( core::Size iloop = 1; iloop <= nloop; ++iloop ){
+		for ( core::Size iloop = 1; iloop <= nloop; ++iloop ) {
 			std::stringstream sstream( "" );
 			sstream << "nsampled_loop" << iloop;
 			ss->add_energy( sstream.str(), 0.0 );
@@ -945,13 +945,13 @@ MPI_Refine_Master::assign_loop_info( core::io::silent::SilentStructOP ss ) const
 // Call if rerelax called
 void
 MPI_Refine_Master::add_relax_simple( SilentStructStore &start_decoys,
-																		 core::Size const rerelax_type ){
+	core::Size const rerelax_type ){
 
 	// Split by max N structures for efficiency
 	core::Size const split_bin( 20 );
 	core::Size const nsplit = (start_decoys.size()+split_bin-1) / (split_bin);
 
-	for( core::Size isplit = 1; isplit <= nsplit; ++isplit ){
+	for ( core::Size isplit = 1; isplit <= nsplit; ++isplit ) {
 		// scoretype/relaxtype/nrepeat/wcst
 		WorkUnit_SamplerOP new_wu( new WorkUnit_Relax( rerelax_type, 0, 1, 0.0 ) );
 		new_wu->clear_serial_data();
@@ -959,13 +959,13 @@ MPI_Refine_Master::add_relax_simple( SilentStructStore &start_decoys,
 
 		core::Size start( (isplit-1) * split_bin );
 		core::Size end( isplit * split_bin );
-		for(core::Size dcount = start; dcount < end; ++dcount ){
-			if( dcount >= start_decoys.size() ) break;
-			core::io::silent::SilentStructOP new_ss	= start_decoys.get_struct( dcount );
+		for ( core::Size dcount = start; dcount < end; ++dcount ) {
+			if ( dcount >= start_decoys.size() ) break;
+			core::io::silent::SilentStructOP new_ss = start_decoys.get_struct( dcount );
 			new_wu->decoys().add( new_ss );
 		}
 		outbound().add( new_wu );
-		TR.Debug << "Added rerelax WU to queue for structure " << new_wu->decoys().size() << std::endl; 
+		TR.Debug << "Added rerelax WU to queue for structure " << new_wu->decoys().size() << std::endl;
 	}
 
 }
@@ -983,14 +983,14 @@ MPI_Refine_Master::add_structure_to_library( core::io::silent::SilentStructOP ss
 // Whole library report, more suitable for GA
 void
 MPI_Refine_Master::feedback_structures_to_emperor( bool get_feedback,
-																									 std::string const pick_strategy,
-																									 std::string const objfunction)
+	std::string const pick_strategy,
+	std::string const objfunction)
 {
 	WorkUnit_SilentStructStoreOP resultfeedback( new WorkUnit_SilentStructStore( ) );
 
 	TRDEBUG << "Trying to send library_central: " << library_central().size() << std::endl;
 
-	if( get_feedback ){
+	if ( get_feedback ) {
 		resultfeedback->set_wu_type( "resultfeedback" );
 		asked_for_feedback_ = true;
 	} else {
@@ -999,7 +999,7 @@ MPI_Refine_Master::feedback_structures_to_emperor( bool get_feedback,
 	}
 
 	core::Size i( 0 );
-	for( SilentStructStore::iterator it = library_central().begin(), end = library_central().end(); it != end; ++it, i++ ){
+	for ( SilentStructStore::iterator it = library_central().begin(), end = library_central().end(); it != end; ++it, i++ ) {
 		// Add only if used at lease once for sampling
 		//if( (*it)->get_energy( "nuse" ) > 0 ){
 		resultfeedback->decoys().add( *it );
@@ -1010,11 +1010,11 @@ MPI_Refine_Master::feedback_structures_to_emperor( bool get_feedback,
 	TR << "Send library_central to Emperor: " << resultfeedback->decoys().size() << std::endl;
 
 	core::Size pick_strategy_no( 0 ); // random
-	if( pick_strategy.compare( "weighted" ) == 0 ){
+	if ( pick_strategy.compare( "weighted" ) == 0 ) {
 		pick_strategy_no = 1;
-	} else if( pick_strategy.compare( "sort" ) == 0 ){
+	} else if ( pick_strategy.compare( "sort" ) == 0 ) {
 		pick_strategy_no = 2;
-	}	else {
+	} else {
 		TR << "Warning: unknown picking strategy: " << pick_strategy << ", set as random" << std::endl;
 	}
 
@@ -1057,62 +1057,63 @@ MPI_Refine_Master::feedback_structure_to_emperor( core::io::silent::SilentStruct
 
 void
 MPI_Refine_Master::load_sample_weight() {
-		using namespace basic::options;
-		using namespace basic::options::OptionKeys;
-		// This just loads sample weights from a file
-		// I assume that the optionkeys sanitizes input
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	// This just loads sample weights from a file
+	// I assume that the optionkeys sanitizes input
 
-		// using ifstream instead of utility::io::izstream because izstream doesn't return success bool
-		if( option[ OptionKeys::lh::sample_weight_file ].active() ) {
-			std::string pathtofile = option[ OptionKeys::lh::sample_weight_file ]();
-			std::ifstream file( pathtofile.c_str() ); 
-			if (!file) utility_exit_with_message( "Failed to open sample_weight file.  Check path." );
-			std::string line, tmp;
-			while(getline( file, line ) ) {
+	// using ifstream instead of utility::io::izstream because izstream doesn't return success bool
+	if ( option[ OptionKeys::lh::sample_weight_file ].active() ) {
+		std::string pathtofile = option[ OptionKeys::lh::sample_weight_file ]();
+		std::ifstream file( pathtofile.c_str() );
+		if ( !file ) utility_exit_with_message( "Failed to open sample_weight file.  Check path." );
+		std::string line, tmp;
+		while ( getline( file, line ) ) {
 
-				boost::trim(line);
-				std::vector < std::string > r;
-				boost::split(r, line, boost::is_any_of("\t "));
+			boost::trim(line);
+			std::vector < std::string > r;
+			boost::split(r, line, boost::is_any_of("\t "));
 
-				core::Real i=0.0;
-				// Check for correct format
-				try {
-					i = boost::lexical_cast<core::Real> (r[1] );
-				} catch( boost::bad_lexical_cast &) {
-					utility_exit_with_message( "Sample weight second column can't be casted to an int.");
-				}
-
-				if (i < 0) {
-					utility_exit_with_message( "Sample weight second column is not an float larger than 0." );
-				} else {
-					tmp += r[1] + " ";
-				}
+			core::Real i=0.0;
+			// Check for correct format
+			try {
+				i = boost::lexical_cast<core::Real> (r[1] );
+			} catch( boost::bad_lexical_cast &) {
+				utility_exit_with_message( "Sample weight second column can't be casted to an int.");
 			}
-			// check for correct length
-			boost::trim(tmp);
-			std::list < std::string > t;
-			t = utility::split_to_list(tmp);
-			if( t.size() != (*(library_central().begin()))->nres() )
-				utility_exit_with_message( "Sample weight file either improperly formatted or does not have same number of residues as structure." );
-			TR << "Sample weight file successfully loaded" << std::endl;
-			sample_weight_str_ = tmp;
-		} else {
-			TR << "Using default sample weight of 50 for every residue" << std::endl;
-			std::string t = "50";
-			for( Size i = 0; i < (*(library_central().begin()))->nres() - 1; i++ ) {
-				t += " 50";
+
+			if ( i < 0 ) {
+				utility_exit_with_message( "Sample weight second column is not an float larger than 0." );
+			} else {
+				tmp += r[1] + " ";
 			}
-			sample_weight_str_ = t;
 		}
+		// check for correct length
+		boost::trim(tmp);
+		std::list < std::string > t;
+		t = utility::split_to_list(tmp);
+		if ( t.size() != (*(library_central().begin()))->nres() ) {
+			utility_exit_with_message( "Sample weight file either improperly formatted or does not have same number of residues as structure." );
+		}
+		TR << "Sample weight file successfully loaded" << std::endl;
+		sample_weight_str_ = tmp;
+	} else {
+		TR << "Using default sample weight of 50 for every residue" << std::endl;
+		std::string t = "50";
+		for ( Size i = 0; i < (*(library_central().begin()))->nres() - 1; i++ ) {
+			t += " 50";
+		}
+		sample_weight_str_ = t;
+	}
 }
 
 core::pose::Pose
 MPI_Refine_Master::get_average_structure( SilentStructStore &decoys,
-																					utility::vector1< core::Size > const touse,
-																					std::string const columnname,
-																					bool const minimize,
-																					bool const calcdev
-																					) const
+	utility::vector1< core::Size > const touse,
+	std::string const columnname,
+	bool const minimize,
+	bool const calcdev
+) const
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -1130,36 +1131,36 @@ MPI_Refine_Master::get_average_structure( SilentStructStore &decoys,
 	utility::vector1< core::Real > scores_cut( touse.size() );
 	utility::vector1< std::vector< core::Real > > scores_touse( touse.size() );
 
-	for( SilentStructStore::const_iterator it = decoys.begin();
-			 it != decoys.end(); ++it ){
+	for ( SilentStructStore::const_iterator it = decoys.begin();
+			it != decoys.end(); ++it ) {
 		core::Size const i = (*it)->get_energy( columnname );
 		core::Size j = touse.index(i);
-		if( j == 0 ) continue;
+		if ( j == 0 ) continue;
 		scores_touse[j].push_back( (*it)->get_energy("goap") );
 	}
-	
+
 	// use best half of structures to avrg
-	for( core::Size j = 1; j <= scores_touse.size(); ++j ){
+	for ( core::Size j = 1; j <= scores_touse.size(); ++j ) {
 		std::vector< core::Real > scores_j( scores_touse[j] );
 		std::sort( scores_j.begin(), scores_j.end() );
 		core::Size icut = (core::Size)(0.5*scores_j.size()+0.50);
 		scores_cut[j] = scores_j[icut];
 	}
 
-	TR << "Structure for averaging: " << std::endl; 
-	for( SilentStructStore::const_iterator it = decoys.begin();
-			 it != decoys.end(); ++it ){
+	TR << "Structure for averaging: " << std::endl;
+	for ( SilentStructStore::const_iterator it = decoys.begin();
+			it != decoys.end(); ++it ) {
 		core::Size const i = (*it)->get_energy( columnname );
 		core::Size j = touse.index(i);
-		if( j == 0 ) continue;
+		if ( j == 0 ) continue;
 
 		core::Real const fobj = (*it)->get_energy("goap");
-		if( fobj <= scores_cut[j] ){
+		if ( fobj <= scores_cut[j] ) {
 			decoys_touse.add( (*it)->clone() );
 			// try debugging here
 			//(*it)->fill_pose( pose );
 			//TR << (*it)->decoy_tag() << " " << (*it)->get_energy( "score" );
-			//TR << " " << (*it)->get_energy("goap") << std::endl; 
+			//TR << " " << (*it)->get_energy("goap") << std::endl;
 			//scorefxn_loc->score( pose );
 		}
 	}
@@ -1172,13 +1173,13 @@ MPI_Refine_Master::get_average_structure( SilentStructStore &decoys,
 	// pose being used as reference
 	StructAvrgMover averager( pose, decoys_touse, minimize );
 	//if( option[ lh::ulr_mulfactor ].user() )
-	//	averager.set_mulfactor( option[ lh::ulr_mulfactor ].user() );
+	// averager.set_mulfactor( option[ lh::ulr_mulfactor ].user() );
 
 	// pose being used as output
 	averager.apply( pose );
 
 	// optional output reporting deviation
-	if( calcdev ){
+	if ( calcdev ) {
 		TR << "Call deviation calculation." << std::endl;
 		averager.report_dev( pose );
 	}
@@ -1198,9 +1199,8 @@ MPI_Refine_Master::check_library_expiry_dates(){
 
 	SilentStructStore::iterator jt_last = library_central().begin();
 
-	for( SilentStructStore::iterator jt =  library_central().begin(),
-			 end = library_central().end(); jt != end; ++jt )
-	{
+	for ( SilentStructStore::iterator jt =  library_central().begin(),
+			end = library_central().end(); jt != end; ++jt ) {
 		TR.Debug << "Checking structure.." << std::endl;
 		//core::Size struct_time = (core::Size)(*jt)->get_energy("ltime");
 		core::Size struct_time = 0.0;
@@ -1209,19 +1209,19 @@ MPI_Refine_Master::check_library_expiry_dates(){
 
 		bool expired = false;
 
-		// is the structure expired due to time limit ?	
-		if( (int(current_time) - int(struct_time)) > (int)library_expiry_time_ ){
+		// is the structure expired due to time limit ?
+		if ( (int(current_time) - int(struct_time)) > (int)library_expiry_time_ ) {
 			expired = true;
 			TR << "Structure: " << ssid << " is expired: " << int(current_time) - int(struct_time) << " > " << (int)library_expiry_time_ <<  std::endl;
 		}
 
 		// is the structure expired because it has done too many rounds ?
-		if( (expire_after_rounds_ > 0) && ( round >= expire_after_rounds_ ) ){
-			expired = true; 
-			TR << "Structure: " << ssid << " Round:  is expired: " << round << " >= " << expire_after_rounds_ << std::endl; 
+		if ( (expire_after_rounds_ > 0) && ( round >= expire_after_rounds_ ) ) {
+			expired = true;
+			TR << "Structure: " << ssid << " Round:  is expired: " << round << " >= " << expire_after_rounds_ << std::endl;
 		}
 
-		if( ! expired ){
+		if ( ! expired ) {
 			jt_last = jt;
 			continue;
 		}
@@ -1237,24 +1237,24 @@ MPI_Refine_Master::check_library_expiry_dates(){
 		send_MPI_workunit( getnewstruct, 0 ); // The 0 is the MPI_RANK of the master - constant would be better here!
 
 		// clear the queue of loophash WUs from previous struct to avoid false blacklisting
-		// assume that false blacklisting from currently processing loophash WU is unlikely 
+		// assume that false blacklisting from currently processing loophash WU is unlikely
 
 		core::Size erase_count = 0;
-		for( WorkUnitQueue::iterator iter = outbound().begin(); iter != outbound().end();) {
-			if( ((*iter)->get_wu_type() == "local_loophasher" || ((*iter)->get_wu_type() == "global_loophasher") )
+		for ( WorkUnitQueue::iterator iter = outbound().begin(); iter != outbound().end(); ) {
+			if ( ((*iter)->get_wu_type() == "local_loophasher" || ((*iter)->get_wu_type() == "global_loophasher") )
 					&& ssid == (*iter)->extra_data_3() ) {
-					TRDEBUG<<"erasing wu" <<std::endl;
-					iter->reset();
-					TRDEBUG<<"erasing wu from list" <<std::endl;
-					iter = outbound().erase( iter );
-					TRDEBUG<<"erasing done" <<std::endl;
-					erase_count ++;
-				} else {
+				TRDEBUG<<"erasing wu" <<std::endl;
+				iter->reset();
+				TRDEBUG<<"erasing wu from list" <<std::endl;
+				iter = outbound().erase( iter );
+				TRDEBUG<<"erasing done" <<std::endl;
+				erase_count ++;
+			} else {
 				++iter;
-				}
+			}
 		}
 		TR << "Erased " << erase_count << " deprecated WUs from outbound queue" << std::endl;
-	
+
 		// now delete this expired structure - it is now at the emperor's mercy
 		library_central().erase(jt);
 
@@ -1262,11 +1262,11 @@ MPI_Refine_Master::check_library_expiry_dates(){
 		receive_MPI_workunit( 0 ); //receive the reply from master and add it to the normal inbound queue. the 0 here is the emperor's MPIRANK. Better replace with a function or constant
 		TR << "Done. Restarting reporting.." << std::endl;
 		break; // only one at a time.
-		// reset the iterator to the beginning - we must do that because we could have added the new structure whereever 
+		// reset the iterator to the beginning - we must do that because we could have added the new structure whereever
 		// - beginning is the only save iterator
 		jt=library_central().begin();
 
-		TRDEBUG << "Library state: " << std::endl;	
+		TRDEBUG << "Library state: " << std::endl;
 		print_library( library_central() );
 	}
 	TRDEBUG << "end of check_library_expiry_dates" << std::endl;

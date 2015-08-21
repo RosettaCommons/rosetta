@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/antibody_design/SasaMethod.fwd.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_core_scoring_sasa_SasaMethod_FWD_HH
@@ -22,16 +22,16 @@ namespace sasa {
 
 
 class SasaMethod;
-	
-	typedef utility::pointer::shared_ptr< SasaMethod> SasaMethodOP;
-	typedef utility::pointer::shared_ptr< SasaMethod const> SasaMethodCOP; 
-	
-	
+
+typedef utility::pointer::shared_ptr< SasaMethod> SasaMethodOP;
+typedef utility::pointer::shared_ptr< SasaMethod const> SasaMethodCOP;
+
+
 
 }
 }
 }
 
 
-#endif	//#ifndef INCLUDED_protocols/antibody_design_SASAMETHOD_FWD_HH
+#endif //#ifndef INCLUDED_protocols/antibody_design_SASAMETHOD_FWD_HH
 

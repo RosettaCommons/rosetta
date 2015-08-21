@@ -33,9 +33,9 @@ static thread_local basic::Tracer TR( "utility.sql_database.ForeignKey" );
 //C++ Headers
 #include <string>
 
-namespace basic{
-namespace database{
-namespace schema_generator{
+namespace basic {
+namespace database {
+namespace schema_generator {
 
 using std::string;
 using utility::vector1;
@@ -88,36 +88,36 @@ ForeignKey::print(
 ) const {
 	std::string foreign_key_string = "FOREIGN KEY (";
 
-	for(size_t i=1; i<=columns_.size(); ++i){
+	for ( size_t i=1; i<=columns_.size(); ++i ) {
 		foreign_key_string += columns_[i].name();
-		if(i != columns_.size()){
+		if ( i != columns_.size() ) {
 			foreign_key_string+=", ";
 		}
 	}
 	foreign_key_string += ") REFERENCES " + reference_table_ + "(";
 
-	for(size_t i=1; i<=reference_columns_.size(); ++i){
+	for ( size_t i=1; i<=reference_columns_.size(); ++i ) {
 		foreign_key_string += reference_columns_[i];
-		if(i != reference_columns_.size()){
+		if ( i != reference_columns_.size() ) {
 			foreign_key_string+=", ";
 		}
 	}
 	foreign_key_string += ")";
 
-	if(defer_){
+	if ( defer_ ) {
 		switch(db_session->get_db_mode()) {
-			case utility::sql_database::DatabaseMode::mysql:
-				//MySQL does not support deferring foreign keys.
-				break;
-			case utility::sql_database::DatabaseMode::postgres:
-				foreign_key_string += " DEFERRABLE INITIALLY DEFERRED";
-				break;
-			case utility::sql_database::DatabaseMode::sqlite3:
-				foreign_key_string += " DEFERRABLE INITIALLY DEFERRED";
-				break;
-			default:
-				utility_exit_with_message(
-					"Unrecognized database mode: '" + name_from_database_mode(db_session->get_db_mode()) + "'");
+		case utility::sql_database::DatabaseMode::mysql :
+			//MySQL does not support deferring foreign keys.
+			break;
+		case utility::sql_database::DatabaseMode::postgres :
+			foreign_key_string += " DEFERRABLE INITIALLY DEFERRED";
+			break;
+		case utility::sql_database::DatabaseMode::sqlite3 :
+			foreign_key_string += " DEFERRABLE INITIALLY DEFERRED";
+			break;
+		default :
+			utility_exit_with_message(
+				"Unrecognized database mode: '" + name_from_database_mode(db_session->get_db_mode()) + "'");
 		}
 	}
 	return foreign_key_string;

@@ -66,7 +66,7 @@ public:
 		// Already named - should be no changes.
 		rsd = ResidueTypeOP( new ResidueType( *rsd_ref ) );
 		rename_atoms( *rsd, /*preserve=*/true);
-		for( core::Size ii(1); ii <= rsd->natoms(); ++ii) {
+		for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
 			TS_ASSERT_EQUALS( rsd->atom(ii).name(), rsd_ref->atom(ii).name() );
 		}
 
@@ -74,7 +74,7 @@ public:
 		rsd = ResidueTypeOP( new ResidueType( *rsd_ref ) );
 		names.clear();
 		rename_atoms( *rsd, /*preserve=*/false);
-		for( core::Size ii(1); ii <= rsd->natoms(); ++ii) {
+		for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
 			TS_ASSERT_EQUALS( names.count( rsd->atom(ii).name() ), 0 ); // Names should be unique
 			names.insert( rsd->atom(ii).name() );
 		}
@@ -99,7 +99,7 @@ public:
 		rsd->atom(" HA ").name(" H  ");
 		rename_atoms( *rsd, /*preserve=*/true);
 		names.clear();
-		for( core::Size ii(1); ii <= rsd->natoms(); ++ii) {
+		for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
 			TS_ASSERT_EQUALS( names.count( rsd->atom(ii).name() ), 0 ); // Names should be unique
 			names.insert( rsd->atom(ii).name() );
 		}
@@ -198,8 +198,8 @@ public:
 
 		core::Real const delta( 0.001 );
 		// Distances should be symetrical.
-		for( core::Size ii(1); ii <= natoms; ++ii ) {
-			for( core::Size jj(ii+1); jj <= natoms; ++jj ) {
+		for ( core::Size ii(1); ii <= natoms; ++ii ) {
+			for ( core::Size jj(ii+1); jj <= natoms; ++jj ) {
 				TS_ASSERT_DELTA( distances[ii][jj], distances[jj][ii], delta );
 			}
 		}
@@ -226,7 +226,7 @@ public:
 		TS_ASSERT_DELTA( distances[3][11],sqrt(1*1+1.5*1.5), delta );
 		//But polar hydrogens don't
 		TS_ASSERT_DELTA( distances[5][12],1.2+1, delta );
-}
+	}
 
 
 	void test_possible_nbr() {
@@ -267,42 +267,42 @@ public:
 		core::Real maxdist(0);
 		VD nbr;
 
-//		// C6 is omitted because it's singly bonded.
-//		nbr = ResidueType::null_vertex;
-//		maxdist = find_nbr_dist(*rsd, nbr);
-//		TS_ASSERT_EQUALS( nbr, rsd->vd_from_name("C3") );
-//		TS_ASSERT_DELTA( maxdist, 3 * sqrt( 2 ), 1e-6 ); //To C1 & C5
-//
-//		// Doubly bonded H is still omitted.
-//		rsd->add_bond( "C6", "C2" );
-//		rsd->atom("C6").element_type( element_types->element("H") );
-//		nbr = ResidueType::null_vertex;
-//		maxdist = find_nbr_dist(*rsd, nbr);
-//		TS_ASSERT_EQUALS( rsd->atom_name(nbr), "C3");
-//		TS_ASSERT_DELTA( maxdist, 3 * sqrt(2) , 1e-6 ); //To C1 & C5
-//
-//		// But a ring through an H will count
-//		rsd->add_bond( "C6", "C2" );
-//		nbr = ResidueType::null_vertex;
-//		maxdist = find_nbr_dist(*rsd, nbr);
-//		TS_ASSERT_EQUALS( rsd->atom_name(nbr), "C6");
-//		TS_ASSERT_DELTA( maxdist, 2.0 , 1e-6 );
-//
-//
-//		rsd->atom("C4").ideal_xyz( Vector(3,2,0) );
-//		rsd->atom("C5").ideal_xyz( Vector(1,3,0) );
-//		nbr = ResidueType::null_vertex;
-//		maxdist = find_nbr_dist(*rsd, nbr);
-//		TS_ASSERT_EQUALS( rsd->atom_name(nbr), "C2" );
-//		TS_ASSERT_DELTA( maxdist, sqrt( 2.0*2.0+2.0*2.0 ), 1e-6 ); //To C1
-//
-//		////Hydrogens aren't included in furthest distance calculation,
-//		//// but they still count as bonded groups.
-//		//rsd->atom("C1").element_type( element_types->element("H") );
-//		//nbr = ResidueType::null_vertex;
-//		//maxdist = find_nbr_dist(*rsd, nbr);
-//		//TS_ASSERT_EQUALS( nbr, rsd->vd_from_name("C2") );
-//		//TS_ASSERT_DELTA( maxdist, sqrt( 2.0 ), 1e-6 ); //To C3 & C5 - As hydrogen, C6 = sqrt(8) doesn't count.
+		//  // C6 is omitted because it's singly bonded.
+		//  nbr = ResidueType::null_vertex;
+		//  maxdist = find_nbr_dist(*rsd, nbr);
+		//  TS_ASSERT_EQUALS( nbr, rsd->vd_from_name("C3") );
+		//  TS_ASSERT_DELTA( maxdist, 3 * sqrt( 2 ), 1e-6 ); //To C1 & C5
+		//
+		//  // Doubly bonded H is still omitted.
+		//  rsd->add_bond( "C6", "C2" );
+		//  rsd->atom("C6").element_type( element_types->element("H") );
+		//  nbr = ResidueType::null_vertex;
+		//  maxdist = find_nbr_dist(*rsd, nbr);
+		//  TS_ASSERT_EQUALS( rsd->atom_name(nbr), "C3");
+		//  TS_ASSERT_DELTA( maxdist, 3 * sqrt(2) , 1e-6 ); //To C1 & C5
+		//
+		//  // But a ring through an H will count
+		//  rsd->add_bond( "C6", "C2" );
+		//  nbr = ResidueType::null_vertex;
+		//  maxdist = find_nbr_dist(*rsd, nbr);
+		//  TS_ASSERT_EQUALS( rsd->atom_name(nbr), "C6");
+		//  TS_ASSERT_DELTA( maxdist, 2.0 , 1e-6 );
+		//
+		//
+		//  rsd->atom("C4").ideal_xyz( Vector(3,2,0) );
+		//  rsd->atom("C5").ideal_xyz( Vector(1,3,0) );
+		//  nbr = ResidueType::null_vertex;
+		//  maxdist = find_nbr_dist(*rsd, nbr);
+		//  TS_ASSERT_EQUALS( rsd->atom_name(nbr), "C2" );
+		//  TS_ASSERT_DELTA( maxdist, sqrt( 2.0*2.0+2.0*2.0 ), 1e-6 ); //To C1
+		//
+		//  ////Hydrogens aren't included in furthest distance calculation,
+		//  //// but they still count as bonded groups.
+		//  //rsd->atom("C1").element_type( element_types->element("H") );
+		//  //nbr = ResidueType::null_vertex;
+		//  //maxdist = find_nbr_dist(*rsd, nbr);
+		//  //TS_ASSERT_EQUALS( nbr, rsd->vd_from_name("C2") );
+		//  //TS_ASSERT_DELTA( maxdist, sqrt( 2.0 ), 1e-6 ); //To C3 & C5 - As hydrogen, C6 = sqrt(8) doesn't count.
 
 		// C6 is omitted because it's singly bonded.
 		nbr = ResidueType::null_vertex;
@@ -342,7 +342,7 @@ public:
 
 		TR << "Testing standard charging." << std::endl;
 
-		for( core::Size ii(1); ii <= rsd->natoms(); ++ii) {
+		for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
 			rsd->atom(ii).formal_charge( 0.0 );
 			rsd->atom(ii).charge( -1.234 ); // Will be reset
 		}
@@ -356,7 +356,7 @@ public:
 		TS_ASSERT_DELTA( rsd->atom(" OH ").charge(), -0.660 - Y_naive_charge/21, 1e-4 ); //"OH  "
 
 		core::Real net_charge(0);
-		for( core::Size ii(1); ii <= rsd->natoms(); ++ii) {
+		for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
 			net_charge += rsd->atom(ii).charge();
 		}
 		TS_ASSERT_DELTA( net_charge, 0, 1e-4 );
@@ -373,7 +373,7 @@ public:
 		TS_ASSERT_DELTA( rsd->atom(" OH ").charge(), -0.660 - Y_naive_charge/21 + -2.0/21, 1e-4 ); //"OH  "
 
 		net_charge = 0;
-		for( core::Size ii(1); ii <= rsd->natoms(); ++ii) {
+		for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
 			net_charge += rsd->atom(ii).charge();
 		}
 		TS_ASSERT_DELTA( net_charge, -2.0, 1e-4 );
@@ -382,7 +382,7 @@ public:
 
 		rsd = ResidueTypeOP( new ResidueType( rsd_types->name_map("PRO") ) );
 
-		for( core::Size ii(1); ii <= rsd->natoms(); ++ii) {
+		for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
 			rsd->atom(ii).formal_charge( 0.0 );
 			rsd->atom(ii).charge( -1.234 ); // Will be reset
 		}

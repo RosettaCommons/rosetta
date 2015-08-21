@@ -48,7 +48,7 @@ NcontactsFilter::NcontactsFilter():
 
 /// @brief default constructor
 NcontactsFilter::NcontactsFilter(
-  String const & report_type,
+	String const & report_type,
 	Real const filter_value ):
 	Filter( "Ncontacts" ),
 	report_type_( report_type ),
@@ -88,9 +88,9 @@ NcontactsFilter::apply( Pose const & pose ) const
 {
 	Real score = compute( pose );
 
-	if( filter_value_ < score ){
+	if ( filter_value_ < score ) {
 		return true;
-	}else{
+	} else {
 		return false;
 	}
 } // apply
@@ -117,8 +117,8 @@ NcontactsFilter::parse_my_tag(
 	Movers_map const &,
 	Pose const & )
 {
- 	report_type_ = tag->getOption< String >( "type", "sidechain_heavy_apolar_atm" );
- 	filter_value_ = tag->getOption< Real >( "value", 0.0 );
+	report_type_ = tag->getOption< String >( "type", "sidechain_heavy_apolar_atm" );
+	filter_value_ = tag->getOption< Real >( "value", 0.0 );
 }
 
 protocols::filters::FilterOP

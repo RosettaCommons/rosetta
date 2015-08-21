@@ -43,19 +43,19 @@ class NamedStubID {
 public:
 	typedef utility::vector1<std::string> AtomList;
 
-  NamedStubID( NamedAtomID const & a1, NamedAtomID const & a2, NamedAtomID const & a3 ):
+	NamedStubID( NamedAtomID const & a1, NamedAtomID const & a2, NamedAtomID const & a3 ):
 		center_(),
-    atom1( a1 ),
-    atom2( a2 ),
-    atom3( a3 )
-  {}
+		atom1( a1 ),
+		atom2( a2 ),
+		atom3( a3 )
+	{}
 
-  NamedStubID( NamedAtomID const & c, NamedAtomID const & a1, NamedAtomID const & a2, NamedAtomID const & a3 ) :
+	NamedStubID( NamedAtomID const & c, NamedAtomID const & a1, NamedAtomID const & a2, NamedAtomID const & a3 ) :
 		center_( c ),
-    atom1( a1 ),
-    atom2( a2 ),
-    atom3( a3 )
-  {}
+		atom1( a1 ),
+		atom2( a2 ),
+		atom3( a3 )
+	{}
 
 	// convienience c'stor if the residue is the same for all atoms
 	NamedStubID( std::string const& a1, std::string const& a2, std::string const& a3, core::Size rsd );
@@ -69,48 +69,48 @@ public:
 	// convienience c'stor takes list of strings either size 3 or size 4. If size 4 first atom is center
 	NamedStubID( AtomList const&, core::Size rsd );
 
-  NamedStubID() :
+	NamedStubID() :
 		center_(),
-    atom1(),
-    atom2(),
-    atom3()
-  {}
+		atom1(),
+		atom2(),
+		atom3()
+	{}
 
-  NamedAtomID const &
-  atom( Size const index ) const;
+	NamedAtomID const &
+	atom( Size const index ) const;
 
-  NamedAtomID const &
+	NamedAtomID const &
 	center() const {
 		return center_;
 	}
 
-  bool valid() const {
-    return atom1.valid() && atom2.valid() && atom3.valid();
-  }
+	bool valid() const {
+		return atom1.valid() && atom2.valid() && atom3.valid();
+	}
 
-  inline
-  friend
-  bool
-  operator< ( NamedStubID const & a, NamedStubID const & b )
-  {
-    return ( ( a.atom1  < b.atom1 ) ||
-      ( a.atom1 == b.atom1 && a.atom2  < b.atom2 ) ||
-      ( a.atom1 == b.atom1 && a.atom2 == b.atom2 && a.atom3 < b.atom3 ) );
-  }
+	inline
+	friend
+	bool
+	operator< ( NamedStubID const & a, NamedStubID const & b )
+	{
+		return ( ( a.atom1  < b.atom1 ) ||
+			( a.atom1 == b.atom1 && a.atom2  < b.atom2 ) ||
+			( a.atom1 == b.atom1 && a.atom2 == b.atom2 && a.atom3 < b.atom3 ) );
+	}
 
 
-  /// @brief input operator
-  friend std::istream & operator >>(std::istream & is, NamedStubID& e);
+	/// @brief input operator
+	friend std::istream & operator >>(std::istream & is, NamedStubID& e);
 
-  /// @brief output operator
-  friend std::ostream & operator <<(std::ostream & os, NamedStubID const& e);
+	/// @brief output operator
+	friend std::ostream & operator <<(std::ostream & os, NamedStubID const& e);
 
 
 public: // tmp hack -- phil fix this
 	NamedAtomID center_;
 	NamedAtomID atom1;
-  NamedAtomID atom2;
-  NamedAtomID atom3;
+	NamedAtomID atom2;
+	NamedAtomID atom3;
 };
 
 

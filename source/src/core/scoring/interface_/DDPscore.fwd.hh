@@ -13,11 +13,11 @@
 #ifndef INCLUDED_core_scoring_interface_DDPscore_fwd_hh
 #define INCLUDED_core_scoring_interface_DDPscore_fwd_hh
 
-namespace core{
-namespace scoring{
-namespace interface_{
+namespace core {
+namespace scoring {
+namespace interface_ {
 
-	class DDPscore;
+class DDPscore;
 
 } // Interface_
 } // scoring

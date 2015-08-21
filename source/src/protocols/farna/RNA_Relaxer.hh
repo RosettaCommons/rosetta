@@ -49,9 +49,9 @@ public:
 	~RNA_Relaxer();
 
 	/// @brief Clone this object
-		//	virtual RNA_Relaxer* clone() const	{
-		//		return new RNA_Relaxer(*this);
-		//	}
+	// virtual RNA_Relaxer* clone() const {
+	//  return new RNA_Relaxer(*this);
+	// }
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
 	void apply( core::pose::Pose & pose );

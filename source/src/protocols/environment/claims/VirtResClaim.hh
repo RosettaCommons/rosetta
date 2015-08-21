@@ -43,46 +43,46 @@ namespace environment {
 namespace claims {
 
 class VirtResClaim : public EnvClaim {
-  typedef EnvClaim Parent;
-  typedef core::environment::LocalPosition LocalPosition;
-  typedef core::environment::FoldTreeSketch FoldTreeSketch;
+	typedef EnvClaim Parent;
+	typedef core::environment::LocalPosition LocalPosition;
+	typedef core::environment::FoldTreeSketch FoldTreeSketch;
 
 public:
 
-  VirtResClaim( ClientMoverOP owner,
-                utility::tag::TagCOP tag,
-                basic::datacache::DataMap const& );
+	VirtResClaim( ClientMoverOP owner,
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap const& );
 
-  VirtResClaim( ClientMoverOP owner,
-                LocalPosition parent,
-                std::string const& jump_label,
-                std::string const& vrt_label );
+	VirtResClaim( ClientMoverOP owner,
+		LocalPosition parent,
+		std::string const& jump_label,
+		std::string const& vrt_label );
 
-  virtual void yield_elements( FoldTreeSketch const& fts, ResidueElements& elements ) const;
+	virtual void yield_elements( FoldTreeSketch const& fts, ResidueElements& elements ) const;
 
-  virtual void yield_elements( FoldTreeSketch const& fts, JumpElements& elements ) const;
+	virtual void yield_elements( FoldTreeSketch const& fts, JumpElements& elements ) const;
 
-  virtual void yield_elements( FoldTreeSketch const& fts, CutElements& elements ) const;
+	virtual void yield_elements( FoldTreeSketch const& fts, CutElements& elements ) const;
 
-  virtual void yield_elements( core::pose::Pose const&, DOFElements& elements ) const;
+	virtual void yield_elements( core::pose::Pose const&, DOFElements& elements ) const;
 
-  JumpClaim& jump() { return j_claim_; }
+	JumpClaim& jump() { return j_claim_; }
 
-  void strength( ControlStrength const& cstr, ControlStrength const& istr );
+	void strength( ControlStrength const& cstr, ControlStrength const& istr );
 
-  std::string const& vrt_label() const;
+	std::string const& vrt_label() const;
 
-  virtual EnvClaimOP clone() const;
+	virtual EnvClaimOP clone() const;
 
-  virtual std::string type() const;
+	virtual std::string type() const;
 
-  virtual void show( std::ostream& os ) const;
+	virtual void show( std::ostream& os ) const;
 
 private:
-  std::string vrt_label_;
+	std::string vrt_label_;
 
-  JumpClaim j_claim_;
-  XYZClaim xyz_claim_;
+	JumpClaim j_claim_;
+	XYZClaim xyz_claim_;
 
 }; //VirtResClaim
 

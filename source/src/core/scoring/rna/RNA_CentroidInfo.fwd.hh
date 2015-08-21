@@ -30,8 +30,8 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-	class RNA_CentroidInfo;
-	typedef utility::pointer::shared_ptr< RNA_CentroidInfo > RNA_CentroidInfoOP;
+class RNA_CentroidInfo;
+typedef utility::pointer::shared_ptr< RNA_CentroidInfo > RNA_CentroidInfoOP;
 
 } //rna
 } //scoring

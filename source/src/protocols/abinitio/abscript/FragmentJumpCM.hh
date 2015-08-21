@@ -33,66 +33,66 @@ namespace abinitio {
 namespace abscript {
 
 class FragmentJumpCM : public FragmentCM {
-  typedef FragmentCM Parent;
-  typedef environment::claims::EnvClaims EnvClaims;
+	typedef FragmentCM Parent;
+	typedef environment::claims::EnvClaims EnvClaims;
 
 public:
-  FragmentJumpCM();
+	FragmentJumpCM();
 
-  FragmentJumpCM( std::string const& topol_filename,
-                  core::pack::task::residue_selector::ResidueSelectorCOP selector,
-                  std::string const& moverkey );
+	FragmentJumpCM( std::string const& topol_filename,
+		core::pack::task::residue_selector::ResidueSelectorCOP selector,
+		std::string const& moverkey );
 
-  virtual
-  ~FragmentJumpCM() {};
+	virtual
+	~FragmentJumpCM() {};
 
-  virtual
-  EnvClaims yield_claims( core::pose::Pose const&,
-                          basic::datacache::WriteableCacheableMapOP );
+	virtual
+	EnvClaims yield_claims( core::pose::Pose const&,
+		basic::datacache::WriteableCacheableMapOP );
 
-  virtual std::string get_name() const;
+	virtual std::string get_name() const;
 
-  /// @brief Set the topology using a topology file.
-  void set_topology( std::string const& topology_file );
+	/// @brief Set the topology using a topology file.
+	void set_topology( std::string const& topology_file );
 
-  /// @brief Set the topology using a psipred_ss2 file, a pairing
-  ///        list file, and a number of random sheets to pick.
-  void set_topology( std::string const& ss_info_file,
-                     std::string const& pairing_file,
-                     core::Size const& n_sheets,
-                     bool bRandomSheets );
+	/// @brief Set the topology using a psipred_ss2 file, a pairing
+	///        list file, and a number of random sheets to pick.
+	void set_topology( std::string const& ss_info_file,
+		std::string const& pairing_file,
+		core::Size const& n_sheets,
+		bool bRandomSheets );
 
-  void set_moverkey( std::string const& key ) { moverkey_ = key; }
+	void set_moverkey( std::string const& key ) { moverkey_ = key; }
 
-  std::string const& moverkey() { return moverkey_; }
+	std::string const& moverkey() { return moverkey_; }
 
-  virtual void
-  parse_my_tag( utility::tag::TagCOP tag,
-                basic::datacache::DataMap & data,
-                protocols::filters::Filters_map const & filters,
-                protocols::moves::Movers_map const & movers,
-                core::pose::Pose const & pose );
+	virtual void
+	parse_my_tag( utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose );
 
-  virtual
-  moves::MoverOP fresh_instance() const;
+	virtual
+	moves::MoverOP fresh_instance() const;
 
-  virtual
-  moves::MoverOP clone() const;
+	virtual
+	moves::MoverOP clone() const;
 
 protected:
-  jumping::JumpSample calculate_jump_sample() const;
+	jumping::JumpSample calculate_jump_sample() const;
 
-  void setup_fragments( jumping::JumpSample const& );
+	void setup_fragments( jumping::JumpSample const& );
 
-  EnvClaims build_claims( utility::vector1< bool > const& selection,
-                          jumping::JumpSample const& );
+	EnvClaims build_claims( utility::vector1< bool > const& selection,
+		jumping::JumpSample const& );
 
 private:
-  jumping::BaseJumpSetupOP jump_def_;
+	jumping::BaseJumpSetupOP jump_def_;
 
-  // Hash is used as a quick and dirty check in the JumpSampleData
-  // to make sure that we're not loading in total garbage
-  std::string moverkey_;
+	// Hash is used as a quick and dirty check in the JumpSampleData
+	// to make sure that we're not loading in total garbage
+	std::string moverkey_;
 
 }; // end FragmentJumpCM base class
 

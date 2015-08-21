@@ -125,11 +125,11 @@ BinarySilentStruct::fill_struct(
 	std::string tag
 ) {
 
-  Parent::fill_struct( pose, tag );
+	Parent::fill_struct( pose, tag );
 
 	fullatom( pose.is_fullatom() );
 
-	if( !core::pose::symmetry::is_symmetric(pose) ) {
+	if ( !core::pose::symmetry::is_symmetric(pose) ) {
 		resize( pose.total_residue() );
 	} else {    // core::pose::symmetry::is_symmetric(pose)
 		//fpd previous implementation stored all atom coords and only wrote asymm unit coords
@@ -145,44 +145,44 @@ BinarySilentStruct::fill_struct(
 	for ( unsigned int i = 1; i <= pose.total_residue(); ++i ) {
 		core::conformation::Residue const& resi = pose.residue(i);
 		//int natoms = pose.residue(i).natoms();
-		if( is_symmetric() && !symmetry_info()->bb_is_independent( i ) ) continue;
+		if ( is_symmetric() && !symmetry_info()->bb_is_independent( i ) ) continue;
 		int i_asymm =  symmetry_info()->get_asymmetric_seqpos( i ); // remaps virtual ids
 
 		atm_coords_[i_asymm].resize( resi.natoms() );
-		for (unsigned int j = 1; j <= resi.natoms(); ++j) {
+		for ( unsigned int j = 1; j <= resi.natoms(); ++j ) {
 			atm_coords_[i_asymm][j] = resi.atom(j).xyz();
 		}
 		secstruct_[i_asymm] = pose.secstruct(i);
 	} // for ( unsigned int i = 1; i <= pose.total_residue(); ++i )
 
-    noncanonical_residue_connections_.clear();
-    for (Size ires=1; ires<=pose.total_residue(); ++ires) {
-        for (int icon=1; icon<=(int)pose.residue_type(ires).n_residue_connections(); ++icon) {
-            Size atom_num = pose.residue(ires).residue_connection( icon ).atomno();
-            core::id::NamedAtomID atom1(pose.residue_type(ires).atom_name(atom_num), ires);
-            if (pose.residue(ires).connected_residue_at_resconn(icon) != 0) {
-                Size anchor_rsd = pose.residue(ires).connected_residue_at_resconn(icon);
-                if (anchor_rsd > ires) continue;
-                int anchor_conid = (int) pose.residue(ires).connect_map(icon).connid();
-                Size anchor_atom_num = pose.residue(anchor_rsd).residue_connection( anchor_conid ).atomno();
-                core::id::NamedAtomID atom2(pose.residue_type(anchor_rsd).atom_name(anchor_atom_num), anchor_rsd);
+	noncanonical_residue_connections_.clear();
+	for ( Size ires=1; ires<=pose.total_residue(); ++ires ) {
+		for ( int icon=1; icon<=(int)pose.residue_type(ires).n_residue_connections(); ++icon ) {
+			Size atom_num = pose.residue(ires).residue_connection( icon ).atomno();
+			core::id::NamedAtomID atom1(pose.residue_type(ires).atom_name(atom_num), ires);
+			if ( pose.residue(ires).connected_residue_at_resconn(icon) != 0 ) {
+				Size anchor_rsd = pose.residue(ires).connected_residue_at_resconn(icon);
+				if ( anchor_rsd > ires ) continue;
+				int anchor_conid = (int) pose.residue(ires).connect_map(icon).connid();
+				Size anchor_atom_num = pose.residue(anchor_rsd).residue_connection( anchor_conid ).atomno();
+				core::id::NamedAtomID atom2(pose.residue_type(anchor_rsd).atom_name(anchor_atom_num), anchor_rsd);
 
-                if (ires == anchor_rsd+1) {
-                    if (icon == (int) pose.residue_type(ires).lower_connect_id()) {
-                        if (anchor_conid == (int) pose.residue_type(anchor_rsd).upper_connect_id()) {
-                            // canonical polymer connection, skip
-                            continue;
-                        }
-                    }
-                }
-                noncanonical_residue_connections_.push_back(std::pair<core::id::NamedAtomID, core::id::NamedAtomID> (atom1, atom2) );
-            }
-        }
-    }
+				if ( ires == anchor_rsd+1 ) {
+					if ( icon == (int) pose.residue_type(ires).lower_connect_id() ) {
+						if ( anchor_conid == (int) pose.residue_type(anchor_rsd).upper_connect_id() ) {
+							// canonical polymer connection, skip
+							continue;
+						}
+					}
+				}
+				noncanonical_residue_connections_.push_back(std::pair<core::id::NamedAtomID, core::id::NamedAtomID> (atom1, atom2) );
+			}
+		}
+	}
 
 	fold_tree_ = pose.fold_tree();
 	jumps_.clear();
-	for ( Size nr = 1; nr <= fold_tree().num_jump(); nr++)  {
+	for ( Size nr = 1; nr <= fold_tree().num_jump(); nr++ )  {
 		add_jump( pose.jump(nr) );
 	}
 
@@ -195,8 +195,9 @@ BinarySilentStruct::fill_struct(
 
 void BinarySilentStruct::add_chain_ending( Size const seqpos ) {
 	core::Size nres_pose = nres();
-	if ( is_symmetric() )
-		 nres_pose = symmetry_info()->num_total_residues_with_pseudo() ;
+	if ( is_symmetric() ) {
+		nres_pose = symmetry_info()->num_total_residues_with_pseudo() ;
+	}
 	if ( seqpos < 1 || seqpos >= nres_pose ) {
 		tr.Fatal << "ERROR: add_chain_ending() invalid chain ending " << seqpos << std::endl;
 		utility_exit();
@@ -234,8 +235,9 @@ std::string BinarySilentStruct::chain_endings_str() const {
 
 void BinarySilentStruct::chain_endings( utility::vector1< Size > const & endings ) {
 	core::Size nres_pose = nres();
-	if ( is_symmetric() )
-		 nres_pose = symmetry_info()->num_total_residues_with_pseudo() ;
+	if ( is_symmetric() ) {
+		nres_pose = symmetry_info()->num_total_residues_with_pseudo() ;
+	}
 	for ( utility::vector1< Size >::const_iterator i = endings.begin(), ie = endings.end(); i != ie; ++i ) {
 		if ( (*i) < 1 || (*i) > nres_pose ) {  //fpd if symmetric, chainendings may be > nres (in asu)
 			tr.Fatal << "ERROR: chain_endings() invalid chain ending " << (*i) << std::endl;
@@ -329,7 +331,7 @@ bool BinarySilentStruct::init_from_lines(
 	fullatom_ = false; //start with fullatom_ false and update to true as soon as a residue with too many atoms is read...
 	bool fullatom_well_defined = false;
 	for ( utility::vector1< std::string >::const_iterator end = lines.end();
-				iter != end; ++iter ) {
+			iter != end; ++iter ) {
 		std::string tag;
 		std::istringstream line_stream( *iter );
 
@@ -375,13 +377,13 @@ bool BinarySilentStruct::init_from_lines(
 				bJumps_use_IntraResStub_ = false;
 				continue;
 			} else if ( iter->substr(0,24) == "NONCANONICAL_CONNECTION:" ) {
-                line_stream >> tag;
-                int res1, res2;
-                std::string atom1, atom2;
-                line_stream >> res1 >> atom1 >> res2 >> atom2 ;
-                core::id::NamedAtomID atom_id1(atom1, res1);
-                core::id::NamedAtomID atom_id2(atom2, res2);
-                noncanonical_residue_connections_.push_back( std::pair< core::id::NamedAtomID, core::id::NamedAtomID > (atom_id1, atom_id2) ) ;
+				line_stream >> tag;
+				int res1, res2;
+				std::string atom1, atom2;
+				line_stream >> res1 >> atom1 >> res2 >> atom2 ;
+				core::id::NamedAtomID atom_id1(atom1, res1);
+				core::id::NamedAtomID atom_id2(atom2, res2);
+				noncanonical_residue_connections_.push_back( std::pair< core::id::NamedAtomID, core::id::NamedAtomID > (atom_id1, atom_id2) ) ;
 				continue;
 			} else if ( iter->substr(0,9) == "SEQUENCE:" ) {
 				tr.Warning << "Skipping duplicate sequence declaration " << std::endl;
@@ -448,7 +450,7 @@ bool BinarySilentStruct::init_from_lines(
 			utility::decode6bit( (unsigned char*)&(atm_buff[1]) , tag.substr(1) );
 
 			// option to force bit flip:
-			if( force_bitflip() ) {
+			if ( force_bitflip() ) {
 				tr.Warning << "Forcing binary silent file big-endian/little-endian flipping!  Tag: " << decoy_tag() << std::endl;
 				bitflip=true;
 			}
@@ -457,12 +459,12 @@ bool BinarySilentStruct::init_from_lines(
 			//   check the dist between atoms 1 and 2 as well as atoms 2 and 3 if
 			//   EITHER is unreasonable .. and flipping fixes BOTH then turn bitflip on
 			// [ hey wait, len23 assumed protein -- only look at atoms 1 and 2 -- rhiju ]
-			if (currpos == 1 && !bitflip) {
+			if ( currpos == 1 && !bitflip ) {
 				core::Real len_check12 = (atm_buff[1]-atm_buff[2]).length();
 				//core::Real len_check23 = (atm_buff[3]-atm_buff[2]).length();
 				if ( len_check12 < 0.5 || len_check12 > 2.0 ) { //|| len_check23 < 0.5 || len_check23 > 2.0 ) {
 					utility::swap4_aligned ( (void*) &(atm_buff[1][0]) , 3*natoms );
-						// recheck; if not better flip back
+					// recheck; if not better flip back
 					len_check12 = (atm_buff[1]-atm_buff[2]).length();
 					//len_check23 = (atm_buff[3]-atm_buff[2]).length();
 					if ( len_check12 < 0.5 || len_check12 > 2.0 ) { //|| len_check23 < 0.5 || len_check23 > 2.0 ) {
@@ -473,10 +475,10 @@ bool BinarySilentStruct::init_from_lines(
 					}
 				}
 			} else {
-				if (bitflip ) {
+				if ( bitflip ) {
 					utility::swap4_aligned ( (void*) &(atm_buff[1][0]) , 3*natoms );
 				}
- 			}
+			}
 			if ( !symmetry_info()->get_use_symmetry() || currpos <=symmetry_info()->num_independent_residues()  ) {
 				// always run this if we're not dealing with a symmetric pose, or, if we're dealing with a symmetric pose
 				// and we're still reading in data for the assymetric unit.  But if we're reading in a symmetric pose
@@ -487,7 +489,7 @@ bool BinarySilentStruct::init_from_lines(
 			}
 
 			atm_coords_[currpos].resize( natoms ); // allocate space for coords
-			for (int j=1; j<=natoms; ++j) {
+			for ( int j=1; j<=natoms; ++j ) {
 				atm_coords_[currpos][j] = atm_buff[j];
 			}
 			currpos++;
@@ -496,21 +498,21 @@ bool BinarySilentStruct::init_from_lines(
 	} // for ( iter ... )
 
 	if ( fold_tree().num_jump() != jumps_.size() ) {
-		tr.Warning	<< "parse error:  found " << jumps_.size()
-								<< " RT lines for a fold-tree with " << fold_tree().num_jump()
-								<< " for decoy tag " << decoy_tag() << std::endl;
+		tr.Warning << "parse error:  found " << jumps_.size()
+			<< " RT lines for a fold-tree with " << fold_tree().num_jump()
+			<< " for decoy tag " << decoy_tag() << std::endl;
 		return false;
 	}
 
-	//	if ( (unsigned int) currpos != nres() + 1 ) 		return false;
-	//	if ( nres() == 0 ) 		return false;
+	// if ( (unsigned int) currpos != nres() + 1 )   return false;
+	// if ( nres() == 0 )   return false;
 
 
 	if ( atm_coords_.size() != nres() ) {
 		tr << "ERROR: didn't find coordinates for all sequence positions of "
-							<< decoy_tag() << std::endl;
+			<< decoy_tag() << std::endl;
 		tr << "       expected " << nres()
-							<< ", found " << currpos-1 << std::endl;
+			<< ", found " << currpos-1 << std::endl;
 		return false; //no success
 	}
 
@@ -573,19 +575,20 @@ void BinarySilentStruct::fill_pose (
 	if ( pose.annotated_sequence() != sequence()
 			|| fullatom() != pose.is_fullatom() ) {  //fpd
 		//fpd  this function assumes an asymmetric conformation to start (which will later be symmetrized)
-		if (core::pose::symmetry::is_symmetric(pose))
+		if ( core::pose::symmetry::is_symmetric(pose) ) {
 			core::pose::symmetry::make_asymmetric_pose( pose );
+		}
 		core::pose::make_pose_from_sequence( pose, sequence(), residue_set, false /*auto_termini*/ );
 	}
 
-    for (Size i_conn=1; i_conn <= noncanonical_residue_connections_.size(); ++i_conn) {
-        Size res1 = noncanonical_residue_connections_[i_conn].first.rsd();
-        std::string atom1 = noncanonical_residue_connections_[i_conn].first.atom();
-        Size res2 = noncanonical_residue_connections_[i_conn].second.rsd();
-        std::string atom2 = noncanonical_residue_connections_[i_conn].second.atom();
+	for ( Size i_conn=1; i_conn <= noncanonical_residue_connections_.size(); ++i_conn ) {
+		Size res1 = noncanonical_residue_connections_[i_conn].first.rsd();
+		std::string atom1 = noncanonical_residue_connections_[i_conn].first.atom();
+		Size res2 = noncanonical_residue_connections_[i_conn].second.rsd();
+		std::string atom2 = noncanonical_residue_connections_[i_conn].second.atom();
 
 		pose.conformation().declare_chemical_bond(res1, atom1, res2, atom2);
-    }
+	}
 
 	//fpd ???
 	pose.energies().clear();
@@ -594,15 +597,16 @@ void BinarySilentStruct::fill_pose (
 	utility::vector1< id::AtomID > atm_ids;
 	utility::vector1< numeric::xyzVector< core::Real> > atm_xyzs;
 	core::Size nres_pose = nres();
-	if ( is_symmetric() )
-		 nres_pose = symmetry_info()->num_total_residues_with_pseudo() ;
+	if ( is_symmetric() ) {
+		nres_pose = symmetry_info()->num_total_residues_with_pseudo() ;
+	}
 	for ( Size seqpos = 1; seqpos <= nres_pose; ++seqpos ) {
 		core::conformation::Residue const & rsd = pose.residue(seqpos);
 		Size natoms_pose = rsd.natoms() ;
 		Size atm_seqpos =  symmetry_info()->get_asymmetric_seqpos( seqpos ) ;
 		Size natoms_struct = atm_coords_[atm_seqpos].size();
 		bool fixup( false );
-		if ( natoms_pose != natoms_struct) {
+		if ( natoms_pose != natoms_struct ) {
 
 			// for backwards compatibility -- sorry for hack. If this
 			// hack needs to be expanded, would be best to move into separate function.
@@ -611,13 +615,13 @@ void BinarySilentStruct::fill_pose (
 			if ( (natoms_pose + 3) == natoms_struct && rsd.has_variant_type( chemical::N_ACETYLATION ) ) fixup = true;
 
 			if ( !fixup )  {
-				tr.Warning 	<< tr.Red << "[ WARNING ] "
-										<< "Number of atoms in pose and silent file disagree! "
-										<< "Attempting to continue ..." << std::endl
-										<< "[ WARNING ]    (in residue " << pose.residue(seqpos).name() << " at " << seqpos
-										<< "  natoms_pose=" << natoms_pose
-										<< "atm_seqpos " << atm_seqpos << "  natoms_struct="
-										<< natoms_struct << ")" << tr.Reset << std::endl;
+				tr.Warning  << tr.Red << "[ WARNING ] "
+					<< "Number of atoms in pose and silent file disagree! "
+					<< "Attempting to continue ..." << std::endl
+					<< "[ WARNING ]    (in residue " << pose.residue(seqpos).name() << " at " << seqpos
+					<< "  natoms_pose=" << natoms_pose
+					<< "atm_seqpos " << atm_seqpos << "  natoms_struct="
+					<< natoms_struct << ")" << tr.Reset << std::endl;
 				tr.flush();
 			}
 		}
@@ -626,9 +630,9 @@ void BinarySilentStruct::fill_pose (
 
 		// fpd
 		Size natoms_total = natoms_struct;
-		if (!fixup) natoms_total = std::min( natoms_struct, natoms_pose );
+		if ( !fixup ) natoms_total = std::min( natoms_struct, natoms_pose );
 
-		for ( Size j = 1; j <= natoms_total; ++j ){
+		for ( Size j = 1; j <= natoms_total; ++j ) {
 
 			// hydrogens that were present in old rosetta, now removed.
 			if ( fixup && rsd.has_variant_type( chemical::C_METHYLAMIDATION ) && (j > rsd.nheavyatoms()+3) && (j < rsd.nheavyatoms()+7 ) ) continue;
@@ -637,9 +641,9 @@ void BinarySilentStruct::fill_pose (
 			id::AtomID id( ++count, seqpos );
 			atm_ids.push_back( id );
 			atm_xyzs.push_back(
-			     numeric::xyzVector< core::Real>(atm_coords_[atm_seqpos][j][0],
-																					 atm_coords_[atm_seqpos][j][1],
-																					 atm_coords_[atm_seqpos][j][2]) );
+				numeric::xyzVector< core::Real>(atm_coords_[atm_seqpos][j][0],
+				atm_coords_[atm_seqpos][j][1],
+				atm_coords_[atm_seqpos][j][2]) );
 		}
 		pose.set_secstruct( seqpos, secstruct_[atm_seqpos] );
 	} // for ( seqpos )
@@ -653,13 +657,13 @@ void BinarySilentStruct::fill_pose (
 	//fpd  As a note, this doesn't symmetrize the conformation like calling the constructor with symmdata would
 	//fpd  Instead, this just adds symminfo to an already-symmetrized pose
 	//fpd  When jumps are symmetrized the pose will also be symmetric
-	if( is_symmetric() ) {
+	if ( is_symmetric() ) {
 		core::pose::symmetry::make_symmetric_pose( pose, *symmetry_info() );
 	}
 
 	// set jumps
-	for ( Size nr = 1; nr <= fold_tree().num_jump(); nr++)  {
-		if( is_symmetric() && !symmetry_info()->jump_is_independent(nr) ) continue;
+	for ( Size nr = 1; nr <= fold_tree().num_jump(); nr++ )  {
+		if ( is_symmetric() && !symmetry_info()->jump_is_independent(nr) ) continue;
 		if ( !bJumps_use_IntraResStub_ ) { //default modern file-format
 			pose.set_jump( nr, jump( nr ) );
 		} else { //support for rosetta++ format
@@ -676,13 +680,13 @@ void BinarySilentStruct::fill_pose (
 	tr.Debug << "nres = " << nres_pose << std::endl;
 	tr.Debug << "one_letter_sequence() = " << one_letter_sequence().length() << std::endl;
 
-	if( nres_pose != one_letter_sequence().length() ){
+	if ( nres_pose != one_letter_sequence().length() ) {
 		utility_exit_with_message( "RuntimeAssert failed: nres() == one_letter_sequence().length()" );
 	}
 
-  if ( !chain_endings().empty() ) {
-    pose.conformation().chain_endings( chain_endings() );
-  }
+	if ( !chain_endings().empty() ) {
+		pose.conformation().chain_endings( chain_endings() );
+	}
 
 	core::pose::initialize_disulfide_bonds(pose);
 
@@ -724,11 +728,11 @@ void BinarySilentStruct::print_conformation(
 		for ( kinematics::FoldTree::const_iterator
 				it = fold_tree().begin(), it_end = fold_tree().end();
 				it != it_end; ++it
-		) {
+				) {
 			output << *it;
 		}
-		//		output << fold_tree(); this produces a new-line --- wrong behaviour
-		//		of fold_tree but I don't want to fix 1000 u-tracer unit-tests!
+		//  output << fold_tree(); this produces a new-line --- wrong behaviour
+		//  of fold_tree but I don't want to fix 1000 u-tracer unit-tests!
 		output << ' ' << decoy_tag() << "\n";
 	}
 	for ( Size i = 1; i <= fold_tree().num_jump(); i++ ) {
@@ -739,15 +743,15 @@ void BinarySilentStruct::print_conformation(
 	output << "ANNOTATED_SEQUENCE: " << sequence() << " " << decoy_tag() << "\n"; //chu print annotated_sequence per decoy
 
 	//lin print out the SYMMETRY_INFO line here
-	if( is_symmetric() ) {
+	if ( is_symmetric() ) {
 		output << *symmetry_info() << ' ' << decoy_tag() << "\n";
 	}
 
 	//tr.Debug << "FOLD_TREE Size: " << fold_tree().size() << " " << fold_tree() << std::endl;
 
-    for (Size i_conn=1; i_conn<=noncanonical_residue_connections_.size(); ++i_conn) {
-        output << "NONCANONICAL_CONNECTION: " << noncanonical_residue_connections_[i_conn].first.rsd() << " " << noncanonical_residue_connections_[i_conn].first.atom() << " " << noncanonical_residue_connections_[i_conn].second.rsd() << " " << noncanonical_residue_connections_[i_conn].second.atom() << std::endl;
-    }
+	for ( Size i_conn=1; i_conn<=noncanonical_residue_connections_.size(); ++i_conn ) {
+		output << "NONCANONICAL_CONNECTION: " << noncanonical_residue_connections_[i_conn].first.rsd() << " " << noncanonical_residue_connections_[i_conn].first.atom() << " " << noncanonical_residue_connections_[i_conn].second.rsd() << " " << noncanonical_residue_connections_[i_conn].second.atom() << std::endl;
+	}
 
 	// chain endings
 	if ( !chain_endings().empty() ) {
@@ -761,14 +765,14 @@ void BinarySilentStruct::print_conformation(
 	//output << resline << "\n";
 
 	using namespace basic::options;
-	if( option[ OptionKeys::run::write_failures ].user() && option[ OptionKeys::run::write_failures ] == false  && decoy_tag().substr( 0, 8 ) == "FAILURE_" ) return;
+	if ( option[ OptionKeys::run::write_failures ].user() && option[ OptionKeys::run::write_failures ] == false  && decoy_tag().substr( 0, 8 ) == "FAILURE_" ) return;
 	// the encoded coordinates
 	for ( Size i = 1; i <= nres(); ++i ) {
 		//fpd  symmetric residues are now trimmed in fill_struct()
 		//if( !symmetry_info()->is_asymmetric_seqpos(i) ) continue; //Symmetry only output asymmetric unit
 
 		char this_secstr = secstruct_[i];
-		if (this_secstr < 'A' || this_secstr > 'Z') this_secstr = 'L';
+		if ( this_secstr < 'A' || this_secstr > 'Z' ) this_secstr = 'L';
 
 		utility::encode6bit(  (unsigned char*)&atm_coords_[i][1][0], atm_coords_[i].size()*12, resline );  // ASSUMES FLOAT == 4 BYTES!!! (eep!)
 		output << this_secstr << resline << ' ' << decoy_tag() << "\n";

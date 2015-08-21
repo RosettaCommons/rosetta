@@ -55,17 +55,17 @@ public:
 		using namespace protocols::denovo_design;
 		using namespace protocols::denovo_design::components;
 		Segment s(
-				10, //pose len
-				5,  //safe res
-				0,  //cutpoint
-				1,  //movable group
-				false, //loop
-				false, //lower terminus included
-				false, //upper terminus included
-				"", //lower segment
-				"", //upper segment
-				"LEEELLEEEL", // ss
-				protocols::denovo_design::abego_vector( "XBBBGGBBBX" ) );
+			10, //pose len
+			5,  //safe res
+			0,  //cutpoint
+			1,  //movable group
+			false, //loop
+			false, //lower terminus included
+			false, //upper terminus included
+			"", //lower segment
+			"", //upper segment
+			"LEEELLEEEL", // ss
+			protocols::denovo_design::abego_vector( "XBBBGGBBBX" ) );
 
 		// pretend this segment starts at residue 20
 		s.set_pose_start( core::Size( 20 ) );

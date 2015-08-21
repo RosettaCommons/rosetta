@@ -56,7 +56,7 @@ public:
 
 	/// @brief Re-dimension the storage capacity of this ScoreJumpFileSilentStruct to the given number of
 	/// residues.
-	//void resize(Size const nres_in	);
+	//void resize(Size const nres_in );
 
 	// destructor
 	~ScoreJumpFileSilentStruct() {}
@@ -104,25 +104,25 @@ public:
 	/// ScoreJumpFileSilentStruct and the C-alpha atoms from this ScoreJumpFileSilentStruct.
 	virtual Real get_debug_rmsd();
 
-  void add_jump( kinematics::Jump jump ) {
-    jumps_.push_back( jump.rt() );
-  }
+	void add_jump( kinematics::Jump jump ) {
+		jumps_.push_back( jump.rt() );
+	}
 
-  kinematics::RT const & jump( Size jump_num ) const {
-    return jumps_[ jump_num ];
-  }
+	kinematics::RT const & jump( Size jump_num ) const {
+		return jumps_[ jump_num ];
+	}
 
-  void fold_tree( kinematics::FoldTree f ) {
-    fold_tree_ = f;
-  }
+	void fold_tree( kinematics::FoldTree f ) {
+		fold_tree_ = f;
+	}
 
-  kinematics::FoldTree const& fold_tree( ) const {
-    return fold_tree_;
-  }
+	kinematics::FoldTree const& fold_tree( ) const {
+		return fold_tree_;
+	}
 
 private:
-  utility::vector1< kinematics::RT > jumps_;
-  kinematics::FoldTree fold_tree_;
+	utility::vector1< kinematics::RT > jumps_;
+	kinematics::FoldTree fold_tree_;
 
 }; // class ScoreJumpFileSilentStruct
 

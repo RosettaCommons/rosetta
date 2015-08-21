@@ -59,19 +59,19 @@ public:
 	core::Size find_first_interface_residue(core::Size chain_begin, core::Size const chain_end) const;
 
 	core::Size find_start_of_next_interface_region(
-			core::Size start_from,
-			core::Size const chain_end
+		core::Size start_from,
+		core::Size const chain_end
 	)const;
 
 	core::Size find_stop_of_this_interface_region(
-			core::Size start_from,
-			core::Size const chain_end
+		core::Size start_from,
+		core::Size const chain_end
 	)const;
 
 	void enforce_minimum_length(
-			core::Size const chain_begin,
-			core::Size const chain_end,
-			core::Size const window
+		core::Size const chain_begin,
+		core::Size const chain_end,
+		core::Size const window
 	);
 
 	utility::vector1<core::Size> get_interface_residues() const;

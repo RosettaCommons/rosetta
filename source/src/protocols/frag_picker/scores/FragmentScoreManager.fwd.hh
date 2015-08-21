@@ -26,9 +26,9 @@ namespace scores {
 class FragmentScoreManager;
 
 typedef utility::pointer::shared_ptr<FragmentScoreManager>
-		FragmentScoreManagerOP;
+	FragmentScoreManagerOP;
 typedef utility::pointer::shared_ptr<FragmentScoreManager const>
-		FragmentScoreManagerCOP;
+	FragmentScoreManagerCOP;
 
 } // scores
 } // frag_picker

@@ -38,8 +38,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 /**
 
-	 This is a reimplementation of Jim Havranek's original rosetta++ Gen Born code.
-	 source files: rosetta++/gb_elec*
+This is a reimplementation of Jim Havranek's original rosetta++ Gen Born code.
+source files: rosetta++/gb_elec*
 
 **/
 //////////////////////////////////////////////////////////////////////////////////
@@ -210,9 +210,9 @@ public:
 		Vector & F2
 	) const;
 
-// 	virtual
-// 	Distance
-// 	atomic_interaction_cutoff() const;
+	//  virtual
+	//  Distance
+	//  atomic_interaction_cutoff() const;
 
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
@@ -248,8 +248,8 @@ private:
 
 
 	bool const exclude_DNA_DNA_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

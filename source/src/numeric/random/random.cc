@@ -64,9 +64,9 @@ using namespace std;
 uniform_RG_OP
 createRG(string const & type )
 {
-	if( type == "standard" ) return uniform_RG_OP( new standard_RG() );
+	if ( type == "standard" ) return uniform_RG_OP( new standard_RG() );
 	//if( type == "ran3" ) return new ran3_RG();
-	if( type == "mt19937" ) return uniform_RG_OP( new mt19937_RG() );
+	if ( type == "mt19937" ) return uniform_RG_OP( new mt19937_RG() );
 
 	utility_exit_with_message("Unknown random number generator type: " + type);
 	return 0;
@@ -114,7 +114,7 @@ double RandomGenerator::gaussian()
 		rgaussian = gaussian_gset_;
 		gaussian_iset_ = true;
 	}
-//	std::cout << "NR Gaussian: " << gaussian << std::endl;
+	// std::cout << "NR Gaussian: " << gaussian << std::endl;
 	return rgaussian;
 }
 

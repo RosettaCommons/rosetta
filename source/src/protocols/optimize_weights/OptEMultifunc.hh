@@ -104,9 +104,9 @@ public: // Methods
 	/// @brief Does actual work for OptE minimization
 	/* Real
 	get_score_at_single_position(
-		OptEPositionDataOP const this_pos,
-		Multivec const & vars,
-		Multivec & dvars
+	OptEPositionDataOP const this_pos,
+	Multivec const & vars,
+	Multivec & dvars
 	) const; */
 
 	/// @brief Extract variable weights from an Energy Map
@@ -193,85 +193,85 @@ private: // data
 class NoRefernceEnergyOptEMultifunc : public core::optimization::Multifunc
 {
 public:
-	typedef core::scoring::ScoreTypes ScoreTypes;
-	typedef core::scoring::EnergyMap EnergyMap;
-	typedef core::optimization::Multivec Multivec;
-	typedef core::Real Real;
-	typedef core::Size Size;
+typedef core::scoring::ScoreTypes ScoreTypes;
+typedef core::scoring::EnergyMap EnergyMap;
+typedef core::optimization::Multivec Multivec;
+typedef core::Real Real;
+typedef core::Size Size;
 
 public: // Creation
 
-	// c-tor
-	OptEMultifunc(
-		OptEData & opte_data_in,
-		EnergyMap const & fixed_terms_in,
-		int num_free_in,
-		ScoreTypes & score_list_in,
-		ScoreTypes & fixed_score_list_in,
-		Multivec const & component_weights
-	);
+// c-tor
+OptEMultifunc(
+OptEData & opte_data_in,
+EnergyMap const & fixed_terms_in,
+int num_free_in,
+ScoreTypes & score_list_in,
+ScoreTypes & fixed_score_list_in,
+Multivec const & component_weights
+);
 
-	// c-tor
-	OptEMultifunc(
-		OptEData & opte_data_in,
-		EnergyMap const & fixed_terms_in,
-		int num_free_in,
-		ScoreTypes const & score_list_in,
-		ScoreTypes const & fixed_score_list_in,
-		utility::vector1< Real > const & reference_energies_in,
-		Multivec const & component_weights
-	);
+// c-tor
+OptEMultifunc(
+OptEData & opte_data_in,
+EnergyMap const & fixed_terms_in,
+int num_free_in,
+ScoreTypes const & score_list_in,
+ScoreTypes const & fixed_score_list_in,
+utility::vector1< Real > const & reference_energies_in,
+Multivec const & component_weights
+);
 
-	/// @brief Destructor
-	virtual
-	~OptEMultifunc()
-	{}
+/// @brief Destructor
+virtual
+~OptEMultifunc()
+{}
 
 
 public: // Methods
 
 
-	// @brief OptE func
-	virtual
-	Real
-	operator ()(  Multivec const & vars ) const;
+// @brief OptE func
+virtual
+Real
+operator ()(  Multivec const & vars ) const;
 
-	/// @brief OptE dfunc
-	virtual
-	void
-	dfunc(
-		Multivec const & vars,
-		Multivec & dE_dvars
-	) const;
+/// @brief OptE dfunc
+virtual
+void
+dfunc(
+Multivec const & vars,
+Multivec & dE_dvars
+) const;
 
-	/// @brief Does actual work for OptE minimization
-	Real
-	get_score_at_single_position(
-		OptEPositionDataOP const this_pos,
-		Multivec const & vars,
-		Multivec & dvars
-	) const;
+/// @brief Does actual work for OptE minimization
+Real
+get_score_at_single_position(
+OptEPositionDataOP const this_pos,
+Multivec const & vars,
+Multivec & dvars
+) const;
 
-	/// @brief Extract variable weights from an Energy Map
-	Multivec
-	get_dofs_from_energy_map( EnergyMap const & start_vals ) const;
+/// @brief Extract variable weights from an Energy Map
+Multivec
+get_dofs_from_energy_map( EnergyMap const & start_vals ) const;
 
-	/// @brief Expand free variables and combine with fixed to make an Energy Map
-	EnergyMap
-	get_energy_map_from_dofs(
-		Multivec const & dofs
-	) const;
+/// @brief Expand free variables and combine with fixed to make an Energy Map
+EnergyMap
+get_energy_map_from_dofs(
+Multivec const & dofs
+) const;
 
-	void set_starting_reference_energies( utility::vector1< Real > const & values )
-	{
-		starting_reference_energies_ = values;
-	}
+void set_starting_reference_energies( utility::vector1< Real > const & values )
+{
+starting_reference_energies_ = values;
+}
 
 private: // data
 
-	core::optimization::MultifuncOP multifunc_;
-	utility::vector1< Real > reference_energies_;
-	utility::vector1< Real > expanded_vars_;
+core::optimization::MultifuncOP multifunc_;
+utility::vector1< Real > reference_energies_;
+utility::vector1< Real > expanded_vars_;
 
 };*/
 
@@ -292,7 +292,7 @@ public:
 
 public:
 	WrapperOptEMultifunc();
-	
+
 	void init(
 		ScoreTypes const & free_score_list,
 		Size free_count, // the number of named dofs (score types) + the number of reference energies

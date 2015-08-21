@@ -144,10 +144,10 @@ choose_random_base_step_jump( pose::Pose const & pose )
 
 void
 add_dna_base_jumps_to_fold_tree(
-																pose::Pose const & pose,
-																kinematics::FoldTree & f,
-																bool const flip
-																)
+	pose::Pose const & pose,
+	kinematics::FoldTree & f,
+	bool const flip
+)
 {
 	using namespace conformation;
 	using namespace scoring::dna;
@@ -203,9 +203,9 @@ add_dna_base_jumps_to_fold_tree(
 		}
 	}
 
-// 	Size root( std::max( Size(1), npairs/2 ) );
-// 	if ( flip ) root = partner[ root ];
-// 	f.reorder( root );
+	//  Size root( std::max( Size(1), npairs/2 ) );
+	//  if ( flip ) root = partner[ root ];
+	//  f.reorder( root );
 
 
 }
@@ -254,8 +254,8 @@ set_dna_jump_atoms( pose::Pose & pose )
 		Residue const & rsd( pose.residue(i) );
 		if ( rsd.is_DNA() ) {
 			pose.conformation().set_jump_atom_stub_id( StubID ( AtomID( rsd.chi_atoms(1)[4], i ),
-																													AtomID( rsd.chi_atoms(1)[3], i ),
-																													AtomID( rsd.chi_atoms(1)[2], i ) ) );
+				AtomID( rsd.chi_atoms(1)[3], i ),
+				AtomID( rsd.chi_atoms(1)[2], i ) ) );
 		}
 	}
 
@@ -319,8 +319,8 @@ setup_dna_only_fold_tree( pose::Pose & jump_pose, bool const flip)
 	for ( Size i=1; i<= nres; ++i ) {
 		Residue const & rsd( jump_pose.residue(i) );
 		jump_pose.conformation().set_jump_atom_stub_id( StubID ( AtomID( rsd.chi_atoms(1)[4], i ),
-																														 AtomID( rsd.chi_atoms(1)[3], i ),
-																														 AtomID( rsd.chi_atoms(1)[2], i ) ) );
+			AtomID( rsd.chi_atoms(1)[3], i ),
+			AtomID( rsd.chi_atoms(1)[2], i ) ) );
 	}
 
 
@@ -359,12 +359,12 @@ setup_dna_only_jump_pose( pose::Pose const & start_pose, pose::Pose & jump_pose 
 					jump_pose.append_residue_by_bond( rsd );
 				} else {
 					jump_pose.insert_residue_by_jump( rsd, rsd_seqpos, rsd_seqpos-1,
-																						jump_anchor_atom, // anchor
-																						jump_anchor_atom ); // root_atomno
+						jump_anchor_atom, // anchor
+						jump_anchor_atom ); // root_atomno
 				}
 
 				jump_pose.insert_residue_by_jump( partner_rsd, rsd_seqpos + 1, rsd_seqpos, jump_anchor_atom,
-																					jump_anchor_atom );
+					jump_anchor_atom );
 			}
 			break;
 		}
@@ -449,7 +449,7 @@ delete_unpaired_bases( pose::Pose & pose )
 			cuts(i) = f.cutpoint(i);
 		}
 		ASSERT_ONLY(bool valid_tree = new_f.tree_from_jumps_and_cuts( nres, num_jump, jumps, cuts );)
-		assert( valid_tree );
+			assert( valid_tree );
 	}
 	pose.fold_tree( new_f );
 
@@ -466,7 +466,7 @@ delete_unpaired_bases( pose::Pose & pose )
 		if ( i>1 && rsd.is_DNA() && pose.chain(i-1) != pose.chain(i) && !rsd.is_lower_terminus() ) {
 			tt << "adding lower terminus variant: " << i << std::endl;
 			core::pose::add_lower_terminus_type_to_pose_residue( pose, i );
-		} else if ( i< pose.total_residue() && rsd.is_DNA() && pose.chain(i) != pose.chain(i+1) && !rsd.is_upper_terminus()){
+		} else if ( i< pose.total_residue() && rsd.is_DNA() && pose.chain(i) != pose.chain(i+1) && !rsd.is_upper_terminus() ) {
 			tt << "adding upper terminus variant: " << i << std::endl;
 			core::pose::add_upper_terminus_type_to_pose_residue( pose, i );
 		}

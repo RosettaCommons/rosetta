@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	 utility/sql_database/types.cc
+/// @file  utility/sql_database/types.cc
 /// @author Matthew O'Meara
 
 #include <utility/sql_database/types.hh>
@@ -26,11 +26,11 @@ DatabaseMode::e
 database_mode_from_name(
 	std::string database_mode
 ) {
-	if(!database_mode.compare("sqlite3")){
+	if ( !database_mode.compare("sqlite3") ) {
 		return DatabaseMode::sqlite3;
-	} else if(!database_mode.compare("mysql")){
+	} else if ( !database_mode.compare("mysql") ) {
 		return DatabaseMode::mysql;
-	} else if(!database_mode.compare("postgres")){
+	} else if ( !database_mode.compare("postgres") ) {
 		return DatabaseMode::postgres;
 	} else {
 		utility_exit_with_message(
@@ -43,11 +43,11 @@ TransactionMode::e
 transaction_mode_from_name(
 	std::string transaction_mode
 ){
-	if(!transaction_mode.compare("none")){
+	if ( !transaction_mode.compare("none") ) {
 		return TransactionMode::none;
-	} else if(!transaction_mode.compare("standard")){
+	} else if ( !transaction_mode.compare("standard") ) {
 		return TransactionMode::standard;
-	} else if(!transaction_mode.compare("chunk")){
+	} else if ( !transaction_mode.compare("chunk") ) {
 		return TransactionMode::chunk;
 	} else {
 		utility_exit_with_message(
@@ -61,13 +61,13 @@ name_from_transaction_mode(
 	TransactionMode::e transaction_mode
 ){
 	switch(transaction_mode){
-	case TransactionMode::none:
+	case TransactionMode::none :
 		return "none";
-	case TransactionMode::standard:
+	case TransactionMode::standard :
 		return "standard";
-	case TransactionMode::chunk:
+	case TransactionMode::chunk :
 		return "chunk";
-	default:
+	default :
 		stringstream err_msg;
 		err_msg
 			<< "Unrecognized transaction mode: '"
@@ -78,23 +78,23 @@ name_from_transaction_mode(
 #endif
 	}
 }
-	
+
 std::string
 name_from_database_mode(
 	DatabaseMode::e database_mode
 ){
 	switch(database_mode){
-	case DatabaseMode::sqlite3:
+	case DatabaseMode::sqlite3 :
 		return "sqlite3";
-	case DatabaseMode::mysql:
+	case DatabaseMode::mysql :
 		return "mysql";
-	case DatabaseMode::postgres:
+	case DatabaseMode::postgres :
 		return "postgres";
-	default:
+	default :
 		stringstream err_msg;
 		err_msg
 			<< "Unrecognized databse mode: '"
-			<< static_cast<platform::Size>(database_mode) << "'"; 
+			<< static_cast<platform::Size>(database_mode) << "'";
 		utility_exit_with_message(err_msg.str());
 #ifdef WIN32
 		return "Error";

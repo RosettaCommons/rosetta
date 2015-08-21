@@ -9,8 +9,8 @@
 
 /// @file       protocols/docking/membrane/MPFindInterfaceMoverCreator.hh
 /// @brief      Sample protein-protein interface in the membrane
-/// @details	The foldtree after the mover is reset to the original one as it
-///				was before - so it should work with both fixed and movable membrane
+/// @details The foldtree after the mover is reset to the original one as it
+///    was before - so it should work with both fixed and movable membrane
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 
 #ifndef INCLUDED_protocols_docking_membrane_MPFindInterfaceMover_fwd_hh

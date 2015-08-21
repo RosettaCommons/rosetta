@@ -36,7 +36,7 @@ numeric::xyzMatrix< core::Real > const
 get_rna_base_coordinate_system_from_CS_params( core::conformation::Residue const & rsd, RNA_CS_residue_parameters const & rna_cs_rsd_params ){ //x and y coordinate different from 'standard' get_rna_base_coordinate_system;
 
 	using namespace chemical;
- 	//Size res_type = rsd.aa();
+	//Size res_type = rsd.aa();
 
 	if ( rsd.is_RNA() == false ) utility_exit_with_message( "rsd.is_RNA() == false!" );
 
@@ -45,10 +45,10 @@ get_rna_base_coordinate_system_from_CS_params( core::conformation::Residue const
 	//RNA_CS_residue_parameters const & rna_cs_rsd_params=rna_cs_params.get_RNA_CS_residue_parameters(rsd.aa());
 
 
-    numeric::xyzVector< core::Real > xf_xyz( 0.0, 0.0, 0.0 );
-    numeric::xyzVector< core::Real > yf_xyz( 0.0, 0.0, 0.0 );
-    numeric::xyzVector< core::Real > xt_xyz( 0.0, 0.0, 0.0 );
-    numeric::xyzVector< core::Real > yt_xyz( 0.0, 0.0, 0.0 );
+	numeric::xyzVector< core::Real > xf_xyz( 0.0, 0.0, 0.0 );
+	numeric::xyzVector< core::Real > yf_xyz( 0.0, 0.0, 0.0 );
+	numeric::xyzVector< core::Real > xt_xyz( 0.0, 0.0, 0.0 );
+	numeric::xyzVector< core::Real > yt_xyz( 0.0, 0.0, 0.0 );
 
 	Size xf_count = 0;
 	Size yf_count = 0;
@@ -58,29 +58,28 @@ get_rna_base_coordinate_system_from_CS_params( core::conformation::Residue const
 
 	Size const maxatoms = rna_cs_rsd_params.get_atomnames_size();
 
-	for ( Size count = 1; count < maxatoms; count++ )
-	{
+	for ( Size count = 1; count < maxatoms; count++ ) {
 
 		Size const atom_index = rsd.atom_index( rna_cs_rsd_params.get_atomname( count ) );
 
 		numeric::xyzVector< core::Real > const & atom_xyz = rsd.xyz( atom_index );
 
-		if ( dround( rna_cs_rsd_params.atom_data( count, xdir ) ) == 1 ){
+		if ( dround( rna_cs_rsd_params.atom_data( count, xdir ) ) == 1 ) {
 			xf_count++;
 			xf_xyz += atom_xyz;
-		} else if ( dround( rna_cs_rsd_params.atom_data( count, xdir ) ) == 2 ){
+		} else if ( dround( rna_cs_rsd_params.atom_data( count, xdir ) ) == 2 ) {
 			xt_count++;
 			xt_xyz += atom_xyz;
 		}
 
-		if ( dround( rna_cs_rsd_params.atom_data( count, ydir ) ) == 1 ){
+		if ( dround( rna_cs_rsd_params.atom_data( count, ydir ) ) == 1 ) {
 			yf_count++;
 			yf_xyz += atom_xyz;
-		} else if ( dround( rna_cs_rsd_params.atom_data( count, ydir ) ) == 2 ){
+		} else if ( dround( rna_cs_rsd_params.atom_data( count, ydir ) ) == 2 ) {
 			yt_count++;
 			yt_xyz += atom_xyz;
 		}
-				     
+
 	}
 
 	if ( xf_count != 1 && xf_count != 2 ) utility_exit_with_message( "xf_count != 1 && xf_count != 2" );
@@ -98,16 +97,16 @@ get_rna_base_coordinate_system_from_CS_params( core::conformation::Residue const
 	x_base_coor.normalize();
 
 
-    numeric::xyzVector< core::Real > y_base_coor = ( ( yt_xyz / yt_count ) - ( yf_xyz / yf_count ) );
+	numeric::xyzVector< core::Real > y_base_coor = ( ( yt_xyz / yt_count ) - ( yf_xyz / yf_count ) );
 
-    y_base_coor.normalize();
+	y_base_coor.normalize();
 
 	numeric::xyzVector< core::Real > z_base_coor = cross( x_base_coor, y_base_coor );
 
 	z_base_coor.normalize(); //necessary since x_base_coor and y_base_corr are not completely orthogonal!
 
 
- 	numeric::xyzMatrix< core::Real > const M = numeric::xyzMatrix< core::Real > ::cols( x_base_coor, y_base_coor, z_base_coor );
+	numeric::xyzMatrix< core::Real > const M = numeric::xyzMatrix< core::Real > ::cols( x_base_coor, y_base_coor, z_base_coor );
 
 	return M;
 

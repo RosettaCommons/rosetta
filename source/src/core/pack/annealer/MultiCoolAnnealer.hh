@@ -68,7 +68,7 @@ public:
 	void run();
 
 
- private:
+private:
 
 	void cool();
 	void run_quench(

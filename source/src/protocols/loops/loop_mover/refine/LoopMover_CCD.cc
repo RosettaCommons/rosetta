@@ -91,15 +91,15 @@ Real const CHAINBREAK_SCORE_RAMP_FACTOR = 10./3.;
 
 //constructors
 LoopMover_Refine_CCD::LoopMover_Refine_CCD()
-	: LoopMover(),
-		set_fold_tree_from_loops_(false),
-		user_defined_move_map_(false),
-		debug_(false),
-		outer_cycles_(3),
-		max_inner_cycles_(200),
-		repack_period_(20),
-		temp_initial_(1.5),
-		temp_final_(0.5)
+: LoopMover(),
+	set_fold_tree_from_loops_(false),
+	user_defined_move_map_(false),
+	debug_(false),
+	outer_cycles_(3),
+	max_inner_cycles_(200),
+	repack_period_(20),
+	temp_initial_(1.5),
+	temp_final_(0.5)
 {
 	read_options();
 	set_scorefxn( get_fa_scorefxn() );
@@ -110,14 +110,14 @@ LoopMover_Refine_CCD::LoopMover_Refine_CCD()
 LoopMover_Refine_CCD::LoopMover_Refine_CCD(
 	protocols::loops::LoopsOP  loops_in
 ) : LoopMover( loops_in ),
-		set_fold_tree_from_loops_(false),
-		user_defined_move_map_(false),
-		debug_(false),
-		outer_cycles_(3),
-		max_inner_cycles_(200),
-		repack_period_(20),
-		temp_initial_(1.5),
-		temp_final_(0.5)
+	set_fold_tree_from_loops_(false),
+	user_defined_move_map_(false),
+	debug_(false),
+	outer_cycles_(3),
+	max_inner_cycles_(200),
+	repack_period_(20),
+	temp_initial_(1.5),
+	temp_final_(0.5)
 {
 	read_options();
 	set_scorefxn( get_fa_scorefxn() );
@@ -130,14 +130,14 @@ LoopMover_Refine_CCD::LoopMover_Refine_CCD(
 	protocols::loops::LoopsOP  loops_in,
 	core::scoring::ScoreFunctionOP  scorefxn
 ) : LoopMover( loops_in ),
-		set_fold_tree_from_loops_(false),
-		user_defined_move_map_(false),
-		debug_(false),
-		outer_cycles_(3),
-		max_inner_cycles_(200),
-		repack_period_(20),
-		temp_initial_(1.5),
-		temp_final_(0.5)
+	set_fold_tree_from_loops_(false),
+	user_defined_move_map_(false),
+	debug_(false),
+	outer_cycles_(3),
+	max_inner_cycles_(200),
+	repack_period_(20),
+	temp_initial_(1.5),
+	temp_final_(0.5)
 {
 	read_options();
 	set_scorefxn( scorefxn );
@@ -159,32 +159,32 @@ LoopMover_Refine_CCD::show(std::ostream & output) const
 	Mover::show(output);
 	output << "Loops:\n" << get_loops();
 	output <<   "Outer cycles:        " << outer_cycles_ << "\nMax inner cycles:    " << max_inner_cycles_ <<
-				"\nRepack period:       " << repack_period_ << "\nInitial temperature: " << temp_initial_ <<
-				"\nFinal temperature:   " << temp_final_ <<  "\nSet fold tree from loop?: " <<
-				(set_fold_tree_from_loops_ ? "True" : "False") << "\nMovemap:  ";
-	if (move_map() != 0) {output << std::endl; move_map()->show(output);}
-	else {output << "none" << std::endl;}
+		"\nRepack period:       " << repack_period_ << "\nInitial temperature: " << temp_initial_ <<
+		"\nFinal temperature:   " << temp_final_ <<  "\nSet fold tree from loop?: " <<
+		(set_fold_tree_from_loops_ ? "True" : "False") << "\nMovemap:  ";
+	if ( move_map() != 0 ) { output << std::endl; move_map()->show(output);}
+	else { output << "none" << std::endl; }
 }
 
 //clone
 protocols::moves::MoverOP LoopMover_Refine_CCD::clone() const {
-		return protocols::moves::MoverOP( new LoopMover_Refine_CCD(*this) );
+	return protocols::moves::MoverOP( new LoopMover_Refine_CCD(*this) );
 }
 
 
 void LoopMover_Refine_CCD::set_default_settings()
 {
-		redesign_loop_ = false;
-		packing_isolated_to_active_loops_ = false;
-		flank_residue_min_ = false; // added by JQX
-		move_map_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
-		inner_cycles_ = max_inner_cycles_;
-		current_cycle_number_ = 0;
-		original_fold_tree_ = NULL;
+	redesign_loop_ = false;
+	packing_isolated_to_active_loops_ = false;
+	flank_residue_min_ = false; // added by JQX
+	move_map_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
+	inner_cycles_ = max_inner_cycles_;
+	current_cycle_number_ = 0;
+	original_fold_tree_ = NULL;
 }
 loop_mover::LoopMover::MoveMapOP LoopMover_Refine_CCD::move_map() const
 {
-    return move_map_;
+	return move_map_;
 }
 void LoopMover_Refine_CCD::move_map( LoopMover::MoveMapOP mm )
 {
@@ -211,14 +211,18 @@ LoopMover_Refine_CCD::read_options()
 {
 	using namespace basic::options;
 	outer_cycles_ = option[ OptionKeys::loops::refine_outer_cycles ]();
-	if ( option[ OptionKeys::loops::max_inner_cycles ].user() )
+	if ( option[ OptionKeys::loops::max_inner_cycles ].user() ) {
 		max_inner_cycles_ = option[ OptionKeys::loops::max_inner_cycles ]();
-	if ( option[ OptionKeys::loops::repack_period ].user() )
+	}
+	if ( option[ OptionKeys::loops::repack_period ].user() ) {
 		repack_period_ = option[ OptionKeys::loops::repack_period ]();
-	if ( option[ OptionKeys::MonteCarlo::temp_initial ].user() )
+	}
+	if ( option[ OptionKeys::MonteCarlo::temp_initial ].user() ) {
 		temp_initial_ = option[ OptionKeys::MonteCarlo::temp_initial ]();
-	if ( option[ OptionKeys::MonteCarlo::temp_final ].user() )
+	}
+	if ( option[ OptionKeys::MonteCarlo::temp_final ].user() ) {
 		temp_final_ = option[ OptionKeys::MonteCarlo::temp_final ]();
+	}
 
 	debug_ = option[ OptionKeys::loops::debug ].user();
 
@@ -240,37 +244,36 @@ core::pack::task::TaskFactoryCOP LoopMover_Refine_CCD::get_task_factory() const 
 void
 LoopMover_Refine_CCD::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose ){
 	using namespace basic::options;
-  packing_isolated_to_active_loops_ = false;
+	packing_isolated_to_active_loops_ = false;
 	//using parser implies that the fold tree probably isn't set correctly
 	set_fold_tree_from_loops( tag->getOption< bool >( "set_fold_tree_from_loops", true ) );
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
 	bool specified_movemap( false );
-	BOOST_FOREACH( utility::tag::TagCOP tag, branch_tags ){
-		if( tag->getName() == "MoveMap" ) specified_movemap = true;
+	BOOST_FOREACH ( utility::tag::TagCOP tag, branch_tags ) {
+		if ( tag->getName() == "MoveMap" ) specified_movemap = true;
 		break;
 	}
-	if( specified_movemap ){
+	if ( specified_movemap ) {
 		move_map( LoopMover::MoveMapOP( new core::kinematics::MoveMap ) );
 		move_map_->set_bb( false );
 		move_map_->set_chi( false );
 		move_map_->set_jump( false );
 		protocols::rosetta_scripts::parse_movemap( tag, pose, move_map_, data, false/*don't reset movemap, keep falses, unless stated otherwise*/ );
 	}
-	if( tag->hasOption( "loops" ) ){
+	if ( tag->hasOption( "loops" ) ) {
 		loops( loops_definers::load_loop_definitions(tag, data, pose) );
 	}
-	if( tag->hasOption( "scorefxn" ) ) this->set_scorefxn( data.get< core::scoring::ScoreFunction * >( "scorefxns", tag->getOption<std::string>( "scorefxn" ) )->clone() );
+	if ( tag->hasOption( "scorefxn" ) ) this->set_scorefxn( data.get< core::scoring::ScoreFunction * >( "scorefxns", tag->getOption<std::string>( "scorefxn" ) )->clone() );
 
-	if( tag->hasOption("task_operations") ){
+	if ( tag->hasOption("task_operations") ) {
 		core::pack::task::TaskFactoryOP task_factory = protocols::rosetta_scripts::parse_task_operations( tag, data );
 		this->set_task_factory( task_factory );
-	}
-	else task_factory_ = NULL;
+	} else task_factory_ = NULL;
 
-	if( tag->hasOption( "loops_from_cache" ) ) set_use_loops_from_observer_cache( tag->getOption<bool>( "loops_from_cache", 1 ) );
+	if ( tag->hasOption( "loops_from_cache" ) ) set_use_loops_from_observer_cache( tag->getOption<bool>( "loops_from_cache", 1 ) );
 
-	if( tag->hasOption( "outer_cycles" ) ) outer_cycles_ = tag->getOption<core::Size>( "outer_cycles", option[ OptionKeys::loops::refine_outer_cycles ]() );
-	if( tag->hasOption( "max_inner_cycles" ) ) max_inner_cycles_ = tag->getOption<core::Size>( "max_inner_cycles", 250 );
+	if ( tag->hasOption( "outer_cycles" ) ) outer_cycles_ = tag->getOption<core::Size>( "outer_cycles", option[ OptionKeys::loops::refine_outer_cycles ]() );
+	if ( tag->hasOption( "max_inner_cycles" ) ) max_inner_cycles_ = tag->getOption<core::Size>( "max_inner_cycles", 250 );
 	temp_initial( tag->getOption< core::Real >( "temp_initial", 1.5 ) );
 	temp_final( tag->getOption< core::Real >( "temp_final", 0.5 ) );
 }
@@ -288,7 +291,7 @@ void LoopMover_Refine_CCD::apply( core::pose::Pose & pose )
 	resolve_loop_indices( pose );
 
 	if ( ! get_native_pose() ) set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) ) );
-	if( use_loops_from_observer_cache() ) this->set_loops_from_pose_observer_cache( pose );
+	if ( use_loops_from_observer_cache() ) this->set_loops_from_pose_observer_cache( pose );
 
 	setup_foldtree_and_add_cutpoint_variants( pose );
 
@@ -296,7 +299,7 @@ void LoopMover_Refine_CCD::apply( core::pose::Pose & pose )
 	get_new_ramping_scorefxn()->set_weight( chainbreak, (1. * CHAINBREAK_SCORE_RAMP_FACTOR) );
 
 	Real const temperature_ramp_factor = std::pow( (temp_final_ / temp_initial_),
-			Real(1.0f / (outer_cycles_ * inner_cycles_)) );
+		Real(1.0f / (outer_cycles_ * inner_cycles_)) );
 
 	// make sure we have scored before we instantiate monte carlo and before we ask for a tenA neighbor graph
 	(*ramping_scorefxn())(pose);
@@ -314,16 +317,16 @@ void LoopMover_Refine_CCD::apply( core::pose::Pose & pose )
 	setup_movemap( pose, *loops(), pack_task->repacking_residues(), move_map_ );
 
 	LoopRefineInnerCycleOP inner_cycle = LoopRefineInnerCycleFactory::get_instance()->create_inner_cycle(
-			IC_RefineCCDStandard,
-			LoopMover_Refine_CCDAP( utility::pointer::static_pointer_cast< LoopMover_Refine_CCD >(get_self_ptr()) ),
-			mc,
-			ramping_scorefxn(),
-			task_factory_
-		);
+		IC_RefineCCDStandard,
+		LoopMover_Refine_CCDAP( utility::pointer::static_pointer_cast< LoopMover_Refine_CCD >(get_self_ptr()) ),
+		mc,
+		ramping_scorefxn(),
+		task_factory_
+	);
 
 	inner_cycle->set_native_pose( get_native_pose() ); // Native pose may be used in debugging steps that use loop RMSD
 
-	for (Size i = 1; i <= outer_cycles_; ++i) {
+	for ( Size i = 1; i <= outer_cycles_; ++i ) {
 		increase_chainbreak_weight_and_update_monte_carlo( i, ramping_scorefxn(), *mc, pose );
 		for ( current_cycle_number_ = 1; current_cycle_number_ <= inner_cycles_; ++current_cycle_number_ ) {
 			mc->set_temperature( mc->temperature() * temperature_ramp_factor );
@@ -339,7 +342,7 @@ void LoopMover_Refine_CCD::apply( core::pose::Pose & pose )
 	mc->show_counters();
 	pose = mc->lowest_score_pose();
 
-	if( set_fold_tree_from_loops_ ){ //if requested, put back old foldtree
+	if ( set_fold_tree_from_loops_ ) { //if requested, put back old foldtree
 		loops::remove_cutpoint_variants( pose );
 		pose.fold_tree( *original_fold_tree_ );
 		(*ramping_scorefxn())(pose);
@@ -359,7 +362,7 @@ void LoopMover_Refine_CCD::setup_movemap(
 	core::kinematics::MoveMapOP & movemap
 )
 {
-	if( user_defined_move_map_ ){
+	if ( user_defined_move_map_ ) {
 		movemap = move_map_;
 		return;
 	}
@@ -372,24 +375,24 @@ void LoopMover_Refine_CCD::setup_movemap(
 
 basic::Tracer & LoopMover_Refine_CCD::tr() const
 {
-    return TR;
+	return TR;
 }
 
 LoopMover_Refine_CCDCreator::~LoopMover_Refine_CCDCreator() {}
 
 moves::MoverOP LoopMover_Refine_CCDCreator::create_mover() const {
-  return moves::MoverOP( new LoopMover_Refine_CCD() );
+	return moves::MoverOP( new LoopMover_Refine_CCD() );
 }
 
 std::string LoopMover_Refine_CCDCreator::keyname() const {
-  return "LoopMover_Refine_CCD";
+	return "LoopMover_Refine_CCD";
 }
 
 core::scoring::ScoreFunctionOP LoopMover_Refine_CCD::get_new_ramping_scorefxn()
 {
 	if ( scorefxn() != 0 ) {
 		ramping_scorefxn_ = scorefxn()->clone();
-	}	else {
+	} else {
 		ramping_scorefxn_ = get_fa_scorefxn();
 	}
 	return ramping_scorefxn_;
@@ -405,7 +408,7 @@ core::scoring::ScoreFunctionOP LoopMover_Refine_CCD::ramping_scorefxn()
 
 void LoopMover_Refine_CCD::setup_foldtree_and_add_cutpoint_variants( core::pose::Pose & pose )
 {
-	if( set_fold_tree_from_loops_ ){
+	if ( set_fold_tree_from_loops_ ) {
 		core::kinematics::FoldTree f_new;
 		original_fold_tree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree( pose.fold_tree() ) );
 		loops::fold_tree_from_loops( pose, *( this->loops() ), f_new);
@@ -448,10 +451,10 @@ core::pack::task::PackerTaskOP LoopMover_Refine_CCD::get_packer_task( core::pose
 }
 
 void LoopMover_Refine_CCD::increase_chainbreak_weight_and_update_monte_carlo(
-		Size iteration_number,
-		scoring::ScoreFunctionOP local_scorefxn,
-		protocols::moves::MonteCarlo & mc,
-		pose::Pose & pose
+	Size iteration_number,
+	scoring::ScoreFunctionOP local_scorefxn,
+	protocols::moves::MonteCarlo & mc,
+	pose::Pose & pose
 ) {
 	// increase CHAINBREAK weight and update monte carlo
 	local_scorefxn->set_weight( scoring::chainbreak, Real(iteration_number)* CHAINBREAK_SCORE_RAMP_FACTOR );
@@ -465,7 +468,7 @@ void LoopMover_Refine_CCD::increase_chainbreak_weight_and_update_monte_carlo(
 
 void LoopMover_Refine_CCD::debugging_output( core::pose::Pose & pose )
 {
-	if (debug_) {
+	if ( debug_ ) {
 		pose.dump_pdb("tmp_fa_repack.pdb");
 		std::ofstream out("score.tmp_repack_fa");
 		out << "scoring for repack_fa " << (*ramping_scorefxn())(pose) << std::endl;

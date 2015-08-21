@@ -88,7 +88,7 @@ bool LoopRefineInnerCycle::reinitialize_for_new_input() const
 void LoopRefineInnerCycle::register_options()
 {
 	///  PUT THE LIST OF OPTIONS THAT ARE USED HERE  ///
-	
+
 	///  RECURSIVELY CALL REGISTER OPTIONS ON ALL MOVERS THAT THIS CLASS HAS AN OWNING_PTR TO  ///
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -111,20 +111,20 @@ void LoopRefineInnerCycle::setup_objects( Pose const & /* pose */ )
 
 	/// Perform some sanity checks to ensure the data integrity before moving forward
 	using utility::excn::EXCN_Msg_Exception;
-	
-	if (!scorefxn_) {
+
+	if ( !scorefxn_ ) {
 		throw EXCN_Msg_Exception( "No ScoreFunction available in " + get_name() + "." );
 	}
-	
-	if (!tf_) {
+
+	if ( !tf_ ) {
 		throw EXCN_Msg_Exception( "No TaskFactory available in " + get_name() + "." );
 	}
-	
-	if (!mc_) {
+
+	if ( !mc_ ) {
 		throw EXCN_Msg_Exception( "No MonteCarlo instance available in " + get_name() + "." );
 	}
-	
-	if (loop_mover_that_owns_me_.expired()) {
+
+	if ( loop_mover_that_owns_me_.expired() ) {
 		throw EXCN_Msg_Exception( "No parent LoopMover available in " + get_name() + ". This is needed to provide information on the progress of the simulation." );
 	}
 }
@@ -144,7 +144,7 @@ void LoopRefineInnerCycle::init(
 	mc_ = mc;
 	scorefxn_ = scorefxn;
 	tf_ = tf;
-	
+
 	type( "LoopRefineInnerCycle" );
 	init_options();
 }
@@ -214,7 +214,7 @@ void LoopRefineInnerCycle::set_task_factory( core::pack::task::TaskFactoryOP tf 
 core::kinematics::MoveMapOP LoopRefineInnerCycle::movemap() const
 {
 	// Lazily instantiate a movemap
-	if (! movemap_){ movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap ); }
+	if ( ! movemap_ ) { movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap ); }
 	return movemap_;
 }
 

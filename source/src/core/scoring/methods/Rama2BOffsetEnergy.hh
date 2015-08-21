@@ -56,7 +56,7 @@ public:
 	EnergyMethodOP
 	clone() const;
 
-	virtual	void
+	virtual void
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
 
 	virtual
@@ -68,7 +68,7 @@ public:
 	) const;
 
 
-	virtual	void
+	virtual void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,

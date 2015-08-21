@@ -30,45 +30,45 @@ namespace stepwise {
 namespace screener {
 
 //Constructor
-	SugarInstantiator::SugarInstantiator( pose::Pose & screening_pose,
-																				Size const moving_res,
-																				Distance const o2prime_instantiation_distance_cutoff ):
-		screening_pose_( screening_pose ),
-		moving_res_( moving_res ),
-		o2prime_instantiation_distance_cutoff_( o2prime_instantiation_distance_cutoff ),
-		instantiate_sugar_( false )
-	{}
+SugarInstantiator::SugarInstantiator( pose::Pose & screening_pose,
+	Size const moving_res,
+	Distance const o2prime_instantiation_distance_cutoff ):
+	screening_pose_( screening_pose ),
+	moving_res_( moving_res ),
+	o2prime_instantiation_distance_cutoff_( o2prime_instantiation_distance_cutoff ),
+	instantiate_sugar_( false )
+{}
 
-	//Destructor
-	SugarInstantiator::~SugarInstantiator()
-	{}
+//Destructor
+SugarInstantiator::~SugarInstantiator()
+{}
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	bool
-	SugarInstantiator::check_screen(){
-		instantiate_sugar_ = check_moving_sugar( screening_pose_, moving_res_ );
-		return true;
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+SugarInstantiator::check_screen(){
+	instantiate_sugar_ = check_moving_sugar( screening_pose_, moving_res_ );
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+SugarInstantiator::check_moving_sugar( pose::Pose & pose, Size const moving_res ){
+	if ( !pose.residue( moving_res_ ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) return false; // nothing to do.
+	return detect_sugar_contacts( pose, moving_res, o2prime_instantiation_distance_cutoff_ );
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+SugarInstantiator::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
+	if ( instantiate_sugar_ ) {
+		using protocols::moves::MoverOP;
+		update_mover->add_mover( MoverOP( new SugarInstantiateMover( moving_res_) ) );
+		restore_mover->add_mover( MoverOP( new SugarVirtualizeMover( moving_res_) ) );
+	} else {
+		update_mover->add_mover( 0 );
+		restore_mover->add_mover( 0 );
 	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	bool
-	SugarInstantiator::check_moving_sugar( pose::Pose & pose, Size const moving_res ){
-		if ( !pose.residue( moving_res_ ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) return false; // nothing to do.
-		return detect_sugar_contacts( pose, moving_res, o2prime_instantiation_distance_cutoff_ );
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	SugarInstantiator::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
-		if ( instantiate_sugar_ ){
-			using protocols::moves::MoverOP;
-			update_mover->add_mover( MoverOP( new SugarInstantiateMover( moving_res_) ) );
-			restore_mover->add_mover( MoverOP( new SugarVirtualizeMover( moving_res_) ) );
-		} else {
-			update_mover->add_mover( 0 );
-			restore_mover->add_mover( 0 );
-		}
-	}
+}
 
 
 } //screener

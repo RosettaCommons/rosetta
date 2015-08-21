@@ -40,7 +40,7 @@ using namespace core;
 
 core::Size
 BatchNrEvaluator::apply(
- pose::Pose&
+	pose::Pose&
 ) const {
 	using namespace protocols::jd2;
 	return JobDistributor::get_instance()->current_batch_id();

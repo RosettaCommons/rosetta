@@ -48,33 +48,29 @@ TaskOperationOP RestrictToCDRH3Loop::clone() const
 
 void RestrictToCDRH3Loop::apply( Pose const & pose, PackerTask & task ) const
 {
-    
 
-    core::pack::task::operation::PreventRepacking turn_off_packing;
-    core::pack::task::operation::RestrictResidueToRepacking turn_on_packing;
-    
-    for ( Size residue_number = 1; residue_number <= pose.total_residue(); ++residue_number )
-    {
-        if ( residue_is_in_h3_loop( pose, residue_number ) )
-        {
-            turn_on_packing.include_residue( residue_number );
-        }
-        else
-        {
-            turn_off_packing.include_residue( residue_number );
-        }
-    }
-    
-    turn_off_packing.apply( pose, task );
+
+	core::pack::task::operation::PreventRepacking turn_off_packing;
+	core::pack::task::operation::RestrictResidueToRepacking turn_on_packing;
+
+	for ( Size residue_number = 1; residue_number <= pose.total_residue(); ++residue_number ) {
+		if ( residue_is_in_h3_loop( pose, residue_number ) ) {
+			turn_on_packing.include_residue( residue_number );
+		} else {
+			turn_off_packing.include_residue( residue_number );
+		}
+	}
+
+	turn_off_packing.apply( pose, task );
 	turn_on_packing.apply( pose, task );
 }
 
 bool RestrictToCDRH3Loop::residue_is_in_h3_loop( Pose const & pose, Size residue_number ) const
 {
-    Size const pose_numbered_h3_loop_start( pose.pdb_info()->pdb2pose( heavy_chain, pdb_numbered_h3_loop_start )  );
+	Size const pose_numbered_h3_loop_start( pose.pdb_info()->pdb2pose( heavy_chain, pdb_numbered_h3_loop_start )  );
 	Size const pose_numbered_h3_loop_end( pose.pdb_info()->pdb2pose( heavy_chain, pdb_numbered_h3_loop_end ) );
-    
-    return ( residue_number >= pose_numbered_h3_loop_start ) && ( residue_number <= pose_numbered_h3_loop_end );
+
+	return ( residue_number >= pose_numbered_h3_loop_start ) && ( residue_number <= pose_numbered_h3_loop_end );
 }
 
 TaskOperationOP RestrictToCDRH3LoopCreator::create_task_operation() const

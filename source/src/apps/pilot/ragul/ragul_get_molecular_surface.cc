@@ -71,41 +71,41 @@ int main( int argc, char * argv [] ) {
 
 	try {
 
-  NEW_OPT( protein, "protein file name", "protein.pdb" );
+		NEW_OPT( protein, "protein file name", "protein.pdb" );
 
-  devel::init(argc, argv);
+		devel::init(argc, argv);
 
-  std::string const input_protein = option[ protein ];
-	pose::Pose protein_pose;
-	core::import_pose::pose_from_pdb( protein_pose, input_protein );
+		std::string const input_protein = option[ protein ];
+		pose::Pose protein_pose;
+		core::import_pose::pose_from_pdb( protein_pose, input_protein );
 
-  //create 'tag' for eggshell output filename
-  int pfounddir = input_protein.find_last_of("/\\");
-  int pfounddot = input_protein.find_last_of(".");
-  std::string protein_name = input_protein.substr((pfounddir+1),(pfounddot-(pfounddir+1)));
-  std::string pro_output_pdbname = protein_name+"_surface.pdb";
+		//create 'tag' for eggshell output filename
+		int pfounddir = input_protein.find_last_of("/\\");
+		int pfounddot = input_protein.find_last_of(".");
+		std::string protein_name = input_protein.substr((pfounddir+1),(pfounddot-(pfounddir+1)));
+		std::string pro_output_pdbname = protein_name+"_surface.pdb";
 
-  utility::io::ozstream outPDB_stream;
-  outPDB_stream.open(pro_output_pdbname, std::ios::out);
+		utility::io::ozstream outPDB_stream;
+		outPDB_stream.open(pro_output_pdbname, std::ios::out);
 
-	core::scoring::sc::MolecularSurfaceCalculator calculator;
-	//	calculator.settings.density = surface_density_;
-	calculator.Init();
-	calculator.Calc(protein_pose);
+		core::scoring::sc::MolecularSurfaceCalculator calculator;
+		// calculator.settings.density = surface_density_;
+		calculator.Init();
+		calculator.Calc(protein_pose);
 
-	std::vector<DOT> surface_dots = calculator.GetDots(0);
+		std::vector<DOT> surface_dots = calculator.GetDots(0);
 
-	std::cout << "Generated surface dots: " << surface_dots.size() << std::endl;
+		std::cout << "Generated surface dots: " << surface_dots.size() << std::endl;
 
-	//core::Size zeronormal_dots = 0;
-	//core::Size skipped_dots = 0;
-	//core::Size selected_dots = 0;
-  core::pack::task::PackerTaskOP task;
-	task = core::pack::task::TaskFactory::create_packer_task( protein_pose );
-	for (core::Size i = 0; i < surface_dots.size(); i++) {
-		if (task->pack_residue(surface_dots[i].atom->nresidue))	{
-			/*
-			std::cout<<i << " " <<
+		//core::Size zeronormal_dots = 0;
+		//core::Size skipped_dots = 0;
+		//core::Size selected_dots = 0;
+		core::pack::task::PackerTaskOP task;
+		task = core::pack::task::TaskFactory::create_packer_task( protein_pose );
+		for ( core::Size i = 0; i < surface_dots.size(); i++ ) {
+			if ( task->pack_residue(surface_dots[i].atom->nresidue) ) {
+				/*
+				std::cout<<i << " " <<
 				surface_dots[i].atom->nresidue << " " <<
 				surface_dots[i].atom->natom << " " <<
 				surface_dots[i].atom->residue << " " <<
@@ -118,18 +118,18 @@ int main( int argc, char * argv [] ) {
 				surface_dots[i].outnml.y() << " " <<
 				surface_dots[i].outnml.z() << " " <<
 				"\n";
-			*/
-			outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   COM X   0    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<surface_dots[i].coor.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<surface_dots[i].coor.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<surface_dots[i].coor.z()<<std::endl;
+				*/
+				outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   COM X   0    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<surface_dots[i].coor.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<surface_dots[i].coor.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<surface_dots[i].coor.z()<<std::endl;
+			}
 		}
-	}
 
-  outPDB_stream.close();
-  outPDB_stream.clear();
+		outPDB_stream.close();
+		outPDB_stream.clear();
 
 	}//try
 catch ( utility::excn::EXCN_Base const & e ) {
-  std::cerr << "caught exception " << e.msg() << std::endl;
-  return -1;
+	std::cerr << "caught exception " << e.msg() << std::endl;
+	return -1;
 }
 
 	return 0;

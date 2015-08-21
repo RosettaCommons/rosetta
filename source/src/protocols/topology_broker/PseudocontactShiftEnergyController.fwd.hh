@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- ///
- /// @file PseudocontactShiftEnergyController.fwd.hh
- ///
- /// @brief
- ///
- /// @details
- ///
- /// @param
- ///
- /// @return
- ///
- /// @remarks
- ///
- /// @references
- ///
- /// @authorv Christophe Schmitz & Oliver Lange
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+///
+/// @file PseudocontactShiftEnergyController.fwd.hh
+///
+/// @brief
+///
+/// @details
+///
+/// @param
+///
+/// @return
+///
+/// @remarks
+///
+/// @references
+///
+/// @authorv Christophe Schmitz & Oliver Lange
+///
+////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_topology_broker_PseudocontactShiftEnergyController_fwd_hh
 #define INCLUDED_protocols_topology_broker_PseudocontactShiftEnergyController_fwd_hh

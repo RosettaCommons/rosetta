@@ -45,34 +45,34 @@ namespace noesy_assign {
 
 class PeakFileFormat_xpk : public PeakFileFormat {
 public:
-  PeakFileFormat_xpk() {};
-  //  PeakFileFormat_xpk( ResonanceListOP const& );
-  //  virtual ~PeakFileFormat_xpk();
+	PeakFileFormat_xpk() {};
+	//  PeakFileFormat_xpk( ResonanceListOP const& );
+	//  virtual ~PeakFileFormat_xpk();
 
-  virtual void set_format_from_peak( CrossPeak const& );
-  virtual void write_peak( std::ostream&, core::Size ct, CrossPeak const& ) const;
-  //  virtual void write_resonances( std::ostream&, CrossPeak const& ) const;
-  //  virtual void write_strength( std::ostream&, CrossPeak const& ) const;
-  //  virtual void write_assignments( std::ostream&, CrossPeak const&, std::string const& first_line_end ) const;
-  virtual void write_assignment( std::ostream&, PeakAssignment const& ) const;
-  virtual void write_assignment_indent( std::ostream&, CrossPeak const& ) const;
-  virtual void write_assignment_stats( std::ostream&, PeakAssignment& ) const {}; //don't write these
-  virtual void write_nil_assignment( std::ostream& ) const;
-//   virtual void read_resonances( std::istream&, CrossPeak& ) const;
-//   virtual void read_assignments( std::istream& is, std::istream& rest_line, CrossPeak& ) const;
-//   virtual void read_strength( std::istream&, CrossPeak& ) const;
+	virtual void set_format_from_peak( CrossPeak const& );
+	virtual void write_peak( std::ostream&, core::Size ct, CrossPeak const& ) const;
+	//  virtual void write_resonances( std::ostream&, CrossPeak const& ) const;
+	//  virtual void write_strength( std::ostream&, CrossPeak const& ) const;
+	//  virtual void write_assignments( std::ostream&, CrossPeak const&, std::string const& first_line_end ) const;
+	virtual void write_assignment( std::ostream&, PeakAssignment const& ) const;
+	virtual void write_assignment_indent( std::ostream&, CrossPeak const& ) const;
+	virtual void write_assignment_stats( std::ostream&, PeakAssignment& ) const {}; //don't write these
+	virtual void write_nil_assignment( std::ostream& ) const;
+	//   virtual void read_resonances( std::istream&, CrossPeak& ) const;
+	//   virtual void read_assignments( std::istream& is, std::istream& rest_line, CrossPeak& ) const;
+	//   virtual void read_strength( std::istream&, CrossPeak& ) const;
 
-//   virtual CrossPeakOP read_peak( std::istream& ) const;
-//   virtual void read_header( std::istream& );
-  //  virtual void write_header( std::ostream& );
+	//   virtual CrossPeakOP read_peak( std::istream& ) const;
+	//   virtual void read_header( std::istream& );
+	//  virtual void write_header( std::ostream& );
 
-//   virtual void output_diagnosis( std::ostream& ) const;
+	//   virtual void output_diagnosis( std::ostream& ) const;
 
-//   virtual void set_format_from_peak( CrossPeak const& );
-  virtual void write_header( std::ostream& );
-//   virtual bool compatible_with_current_format( CrossPeak const& ) const;
+	//   virtual void set_format_from_peak( CrossPeak const& );
+	virtual void write_header( std::ostream& );
+	//   virtual bool compatible_with_current_format( CrossPeak const& ) const;
 
-  //static void register_options();
+	//static void register_options();
 };
 
 }

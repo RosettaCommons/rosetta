@@ -91,7 +91,7 @@ DockWithHotspotMoverCreator::mover_name()
 /// @brief default ctor
 DockWithHotspotMover::DockWithHotspotMover() :
 	protocols::moves::Mover( DockWithHotspotMoverCreator::mover_name() )
-{ 
+{
 }
 
 DockWithHotspotMover::~DockWithHotspotMover() {}
@@ -118,12 +118,12 @@ void DockWithHotspotMover::apply( Pose & pose ) {
 	core::Real const bump_cutoff(10.);
 	bool const apply_ambiguous_constraints(true);
 
-	for (Size i=1; i <= hotspot_filenames_.size(); i++) {
+	for ( Size i=1; i <= hotspot_filenames_.size(); i++ ) {
 		protocols::hotspot_hashing::HotspotStubSetOP hotspot_stub_setOP( new protocols::hotspot_hashing::HotspotStubSet );
 		hotspot_stub_setOP->read_data( hotspot_filenames_[i] );
 		hotspot_stub_setOP->add_hotspot_constraints_to_wholepose( pose, chain_to_redesign, hotspot_stub_setOP,
-				hotspot_distcb_weight_[i], worst_allowed_stub_bonus, apply_self_energies, bump_cutoff,
-				apply_ambiguous_constraints );
+			hotspot_distcb_weight_[i], worst_allowed_stub_bonus, apply_self_energies, bump_cutoff,
+			apply_ambiguous_constraints );
 	}
 
 	scorefxn->set_weight( core::scoring::backbone_stub_linear_constraint, hotspot_score_weight_ );
@@ -149,12 +149,12 @@ void DockWithHotspotMover::apply( Pose & pose ) {
 	if ( CenScore > centroidscore_filter_ || CstScore > hotspotcst_filter_ ) {
 		set_last_move_status( protocols::moves::FAIL_RETRY );
 		TR<< protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag() <<
-				" Did not pass filter CentoridScore ( " << centroidscore_filter_ <<  " ): " << CenScore <<
-				"HotspotCstScore ( " << hotspotcst_filter_ << " ): " << CstScore << std::endl;
+			" Did not pass filter CentoridScore ( " << centroidscore_filter_ <<  " ): " << CenScore <<
+			"HotspotCstScore ( " << hotspotcst_filter_ << " ): " << CstScore << std::endl;
 		return;
 	}
 	TR << protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag() <<
-			" Succeed Centorid Interaction: "<< CenScore << " HotspotCstScore: " << CstScore <<std::endl;
+		" Succeed Centorid Interaction: "<< CenScore << " HotspotCstScore: " << CstScore <<std::endl;
 	set_last_move_status( protocols::moves::MS_SUCCESS);
 }
 
@@ -165,31 +165,31 @@ DockWithHotspotMover::get_name() const {
 
 
 /**
- * @brief Reinitialize this protocols::moves::Mover with parameters from the specified tags.
- * @details Parameters recognized:
- *  - target_pdb_num or target_res_num. A single target residue to form disulfides to
- *  - target_pdb_nums or target_res_nums. A list of possible target residues
- */
+* @brief Reinitialize this protocols::moves::Mover with parameters from the specified tags.
+* @details Parameters recognized:
+*  - target_pdb_num or target_res_num. A single target residue to form disulfides to
+*  - target_pdb_nums or target_res_nums. A list of possible target residues
+*/
 void DockWithHotspotMover::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		Pose const & /*pose*/)
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	Pose const & /*pose*/)
 {
 	hotspot_score_weight_=tag->getOption<core::Real>( "hotspot_score_weight", 10 );
 	centroidscore_filter_=tag->getOption<core::Real>( "centroidscore_filter", 0 );
 
 	TR << "Setup DockWithHotspotMover with backbone_stub_linear_constraint with weight "<< hotspot_score_weight_ <<
-			" from:" << std::endl;
+		" from:" << std::endl;
 	// Set target to the residue specified by "target_pdb_num" or "target_res_num"
 	utility::vector1< TagCOP > const branch_tags( tag->getTags() );
-	BOOST_FOREACH( TagCOP const curr_tag, branch_tags ){
-		if( curr_tag->getName() != "HotspotFiles" ) {
+	BOOST_FOREACH ( TagCOP const curr_tag, branch_tags ) {
+		if ( curr_tag->getName() != "HotspotFiles" ) {
 			TR.Error << "Error: No 'HotspotFiles' specified." << std::endl;
 			throw utility::excn::EXCN_RosettaScriptsOption("");
 		} else {
 			utility::vector1< TagCOP > const branch_tags2( curr_tag->getTags() );
-			BOOST_FOREACH( TagCOP const curr_tag2, branch_tags2 ) {
+			BOOST_FOREACH ( TagCOP const curr_tag2, branch_tags2 ) {
 				std::string const file_name( curr_tag2->getOption< std::string >( "file_name" ) );
 				hotspot_filenames_.push_back(file_name);
 				core::Real cb_force( curr_tag2->getOption< core::Real >( "cb_force", 1.0 ) );

@@ -9,8 +9,8 @@
 
 /// @file       protocols/membrane/MPDockingSetupMover.fwd.hh
 /// @brief      Reads in 2 poses and 2 spanfiles, concatenates them, and
-///				prints them out
-///				CURRENTLY ONLY WORKS FOR 2 POSES!!!
+///    prints them out
+///    CURRENTLY ONLY WORKS FOR 2 POSES!!!
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 /// @note       Last Modified (10/16/14)
 

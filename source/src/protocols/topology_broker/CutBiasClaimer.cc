@@ -80,21 +80,20 @@ CutBiasClaimer::manipulate_cut_bias( utility::vector1< core::Real >& tot_cut_bia
 
 	core::Size offset = broker().sequence_number_resolver().offset( label() );
 
-	if ( tot_cut_bias.size() < offset + cut_bias_.size() ){
+	if ( tot_cut_bias.size() < offset + cut_bias_.size() ) {
 		std::ostringstream msg;
 		msg << " CutBiasClaimer with label '" << label() << "' tried to change cut_bias at position " << ( offset + cut_bias_.size()) <<
-				" while sequence is only " << tot_cut_bias.size() << " residues long. " << std::endl;
+			" while sequence is only " << tot_cut_bias.size() << " residues long. " << std::endl;
 		throw utility::excn::EXCN_RangeError( msg.str() );
-	}
-	else{
-		for ( core::Size i = 1; i <= cut_bias_.size(); i++ ){
+	} else {
+		for ( core::Size i = 1; i <= cut_bias_.size(); i++ ) {
 			tot_cut_bias[ i + offset ] *= cut_bias_[ i ];
 		}
 		tr.Debug << "Set cut_bias values in range [" << (1+offset) << "," <<  ( cut_bias_.size() + offset ) << "]" <<std::endl;
 	}
 
 	/*for ( Size i = 1; i<=cut_bias_.size() && i<=tot_cut_bias.size(); i++ ) {
-		tot_cut_bias[ i ] *= cut_bias_[ i ];
+	tot_cut_bias[ i ] *= cut_bias_[ i ];
 	}*/
 }
 

@@ -57,14 +57,14 @@ public:
 	~DockingLowRes();
 
 	/// @brief Constructor with two arguments.  The first is scorefunction to be used for docking, the second is the
-	///		jump to dock over.
+	///  jump to dock over.
 	DockingLowRes(
 		core::scoring::ScoreFunctionCOP scorefxn,
 		core::Size const rb_jump=1
 	);
 
 	/// @brief Constructor with two arguments.  The first is scorefunction to be used for docking, the second is the
-	///		DockJumps.
+	///  DockJumps.
 	DockingLowRes(
 		core::scoring::ScoreFunctionCOP scorefxn,
 		DockJumps const movable_jumps
@@ -92,35 +92,35 @@ public:
 	void set_inner_cycles( core::Size inner_cycles ) { inner_cycles_=inner_cycles; }
 	void set_outer_cycles( core::Size outer_cycles ) { outer_cycles_=outer_cycles; }
 
-  void set_trans_magnitude( core::Real trans_magnitude);
-  void set_rot_magnitude( core::Real rot_magnitude);
-    
+	void set_trans_magnitude( core::Real trans_magnitude);
+	void set_rot_magnitude( core::Real rot_magnitude);
+
 	virtual void show( std::ostream & out=std::cout ) const;
 	friend std::ostream & operator<<(std::ostream& out, const DockingLowRes & dp );
 
-    bool flags_and_objects_are_in_sync_;
+	bool flags_and_objects_are_in_sync_;
 	bool first_apply_with_current_setup_;
 
-    // Add by dK
-    // docking
+	// Add by dK
+	// docking
 	DockJumps movable_jumps_;
 
-    // Add by DK
+	// Add by DK
 	protocols::moves::SequenceMoverOP docking_lowres_protocol_;
-    core::scoring::ScoreFunctionCOP scorefxn_;
-    
+	core::scoring::ScoreFunctionCOP scorefxn_;
+
 protected:
-    /// @brief Performs the portion of setup of non-primitive members that requires a pose - called on apply
-    virtual void finalize_setup( core::pose::Pose & pose);
-        
+	/// @brief Performs the portion of setup of non-primitive members that requires a pose - called on apply
+	virtual void finalize_setup( core::pose::Pose & pose);
+
 private:
-    // protocol stuff
+	// protocol stuff
 	//core::scoring::ScoreFunctionCOP scorefxn_;
 	core::kinematics::MoveMapOP movemap_;
 	protocols::rigid::RigidBodyPerturbNoCenterMoverOP rb_mover_;
 	protocols::moves::MonteCarloOP mc_;
 
-    // Comment out by DK
+	// Comment out by DK
 	// docking
 	//DockJumps movable_jumps_;
 	core::Real trans_magnitude_, rot_magnitude_, accept_rate_;
@@ -129,7 +129,7 @@ private:
 	core::Real temperature_;
 
 	/// @brief Sets up the instance of DockingLowRes and initializes all members based on values passed in at construction
-	///		or via the command line.
+	///  or via the command line.
 	void init(
 		DockJumps const movable_jumps,
 		core::scoring::ScoreFunctionCOP scorefxn

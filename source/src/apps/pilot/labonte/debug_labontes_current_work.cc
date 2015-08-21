@@ -53,7 +53,7 @@
 int
 main( int argc, char *argv[] )
 {
-    try {
+	try {
 		using namespace std;
 		using namespace utility;
 		using namespace core;
@@ -114,19 +114,19 @@ main( int argc, char *argv[] )
 		cout << "Score After Initial Randomization: " << ( *sf )( pose ) << endl;
 
 		for ( core::uint i = 1; i <= 1000; ++i ) {
-			cout << "Perturbing..." << endl;
-			perturber.apply( pose );
-			cout << "Perturbed" << endl;
-			cout << "Minimizing..." << endl;
-			jump_minimizer.apply( pose );
+		cout << "Perturbing..." << endl;
+		perturber.apply( pose );
+		cout << "Perturbed" << endl;
+		cout << "Minimizing..." << endl;
+		jump_minimizer.apply( pose );
 
-			cout << "Minimization Score After Rigid Move " << i << ": " << ( *sf )( pose ) << endl;
+		cout << "Minimization Score After Rigid Move " << i << ": " << ( *sf )( pose ) << endl;
 		}*/
 
 		//pose.dump_pdb( "" );
-   } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }

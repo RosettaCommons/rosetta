@@ -165,14 +165,14 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
-	
-	virtual void parse_my_tag( 
+
+	virtual void parse_my_tag(
 		utility::tag::TagCOP tags,
 		basic::datacache::DataMap & datamap,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose);
-	
+
 	void sfxn( core::scoring::ScoreFunctionOP );
 	void start_weight( core::Real start_weight_in );
 	void end_weight  ( core::Real end_weight_in   );

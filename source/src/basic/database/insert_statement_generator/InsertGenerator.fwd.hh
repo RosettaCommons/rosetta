@@ -17,7 +17,7 @@
 
 namespace basic {
 namespace database {
-namespace insert_statement_generator{
+namespace insert_statement_generator {
 
 class InsertGenerator;
 

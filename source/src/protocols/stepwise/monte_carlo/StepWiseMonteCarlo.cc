@@ -124,7 +124,7 @@ StepWiseMonteCarlo::do_main_loop( pose::Pose & pose ){
 	////////////////
 	// Main loop
 	////////////////
-	while ( k < Size( options_->cycles() ) ){
+	while ( k < Size( options_->cycles() ) ) {
 
 		if ( success ) before_move_score = display_progress( pose, k+1 );
 
@@ -138,7 +138,7 @@ StepWiseMonteCarlo::do_main_loop( pose::Pose & pose ){
 
 		Real const & proposal_density_ratio = master_mover_->proposal_density_ratio();
 		TR << "Score changed from: " << before_move_score << " to  " << after_move_score;
-		if ( proposal_density_ratio != 1 )TR <<  " [proposal_density_ratio: " << proposal_density_ratio << "] ";
+		if ( proposal_density_ratio != 1 ) TR <<  " [proposal_density_ratio: " << proposal_density_ratio << "] ";
 		TR << std::endl;
 		output_movie( pose, k, "TRIAL", movie_file_trial_ );
 
@@ -167,7 +167,7 @@ StepWiseMonteCarlo::initialize_scorefunction(){
 	missing_weight_interval_ = max_missing_weight_ / static_cast<Real>( options_->cycles() );
 	missing_weight_ =  missing_weight_interval_;
 
-	if ( options_->rebuild_bulge_mode() ){
+	if ( options_->rebuild_bulge_mode() ) {
 		missing_weight_ = 100.0;
 		missing_weight_interval_ = 0.0;
 		scorefxn_->set_weight( scoring::missing_res, missing_weight_ );
@@ -229,7 +229,7 @@ StepWiseMonteCarlo::display_progress( pose::Pose & pose, Size const cycle_num ){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Real
 StepWiseMonteCarlo::show_scores( core::pose::Pose & pose,
-																		 std::string const tag ){
+	std::string const tag ){
 	if ( options_->verbose_scores() ) {
 		TR << tag << " " << ( *scorefxn_ )( pose ) << std::endl;
 		scorefxn_->show( TR, pose );

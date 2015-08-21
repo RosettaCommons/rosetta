@@ -32,54 +32,54 @@ namespace simple_movers {
 /// Re-detect disulfides
 class KeepRegionMover : public protocols::moves::Mover {
 public:
-	
+
 	KeepRegionMover();
 	KeepRegionMover(core::Size res_start, core::Size res_end);
-		
+
 	KeepRegionMover(KeepRegionMover const & src);
-	
+
 	virtual ~KeepRegionMover();
-	
+
 	virtual void
 	apply(core::pose::Pose & pose);
-	
-	
+
+
 public:
-	
+
 	/// @brief Set the region of the pose where we keep the residues
 	void
 	region(core::Size res_start, core::Size res_end);
-	
+
 	std::pair<core::Size, core::Size>
 	region() const;
-	
+
 	/// @brief Set the first residue that we will keep
 	void
 	start(core::Size res_start);
-	
+
 	core::Size
 	start() const;
-	
+
 	/// @brief Set the last residue that we will keep
 	void
 	end(core::Size res_end);
-	
+
 	core::Size
 	end() const;
-	
+
 
 
 public:
-	
+
 	virtual std::string
 	get_name() const;
-	
+
 	protocols::moves::MoverOP
 	clone() const;
 
 	protocols::moves::MoverOP
 	fresh_instance() const;
-	
+
 	virtual void
 	parse_my_tag(
 		TagCOP tag,
@@ -87,14 +87,14 @@ public:
 		Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		Pose const & pose);
-	
+
 private:
 	core::Size start_;
 	core::Size end_;
 	core::Size nter_overhang_;
 	core::Size cter_overhang_;
 	TagCOP tag_; //This is so pdb_num can be parsed at apply time instead of construction time.
-	
+
 };
 
 

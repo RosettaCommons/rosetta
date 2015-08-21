@@ -10,7 +10,7 @@
 /// @file FragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
 /// @details
-///	  Contains currently: Classic Abinitio
+///   Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
@@ -98,8 +98,8 @@ void PeakCalibratorMap::eliminate_violated_constraints() {
 }
 
 PeakCalibrator::PeakCalibrator( int target_sign )
-	: max_type_direct_( BETA_NON_METHYL + 1 ),
-		target_sign_( target_sign )
+: max_type_direct_( BETA_NON_METHYL + 1 ),
+	target_sign_( target_sign )
 {
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	if ( !params.atom_dependent_calibration_ ) {
@@ -131,7 +131,7 @@ bool PeakCalibrator::interpolate_on_statistics() {
 	bool finished = true;
 	for ( Size type = BACKBONE; type < max_type_direct_; ++type ) {
 		if ( accumulated_count_[ type ] ) {
-			//			tr.Debug << " acc. target: " << accumulated_target_[ type ] << " acc. count: " << accumulated_count_[ type ] << std::endl;
+			//   tr.Debug << " acc. target: " << accumulated_target_[ type ] << " acc. count: " << accumulated_count_[ type ] << std::endl;
 			core::Real average_target = accumulated_target_[ type ] / accumulated_count_[ type ];
 			core::Real median;
 			if ( use_median ) {
@@ -145,9 +145,9 @@ bool PeakCalibrator::interpolate_on_statistics() {
 				accumulated_target_[ type ] = median * accumulated_count_[ type ];
 			}
 #ifdef _WIN32
-			if ( _isnan(average_target) || !_finite( average_target)) continue;  // REQUIRED FOR WINDOWS
+			if ( _isnan(average_target) || !_finite( average_target) ) continue;  // REQUIRED FOR WINDOWS
 #else
-			if ( std::isnan(average_target) || std::isinf( average_target)) continue;
+			if ( std::isnan(average_target) || std::isinf( average_target) ) continue;
 #endif
 			if ( target_sign_* ( average_target - target_) < -tolerance_ ) {
 				interpolate_too_small( type );
@@ -165,12 +165,12 @@ bool PeakCalibrator::interpolate_on_statistics() {
 
 void PeakCalibrator::interpolate_too_small( core::Size type ) {
 	calibration_constant_lows_[ type ] = calibration_constant_[ type ];
-  calibration_constant_[ type ] = exp( 0.5*( log( calibration_constant_lows_[ type ] ) + log( calibration_constant_highs_[ type ] ) ) );
+	calibration_constant_[ type ] = exp( 0.5*( log( calibration_constant_lows_[ type ] ) + log( calibration_constant_highs_[ type ] ) ) );
 }
 
 void PeakCalibrator::interpolate_too_big( core::Size type ) {
 	calibration_constant_highs_[ type ] = calibration_constant_[ type ];
-  calibration_constant_[ type ] = exp( 0.5*( log( calibration_constant_lows_[ type ] )+ log( calibration_constant_highs_[ type ] ) ) );
+	calibration_constant_[ type ] = exp( 0.5*( log( calibration_constant_lows_[ type ] )+ log( calibration_constant_highs_[ type ] ) ) );
 }
 
 void PeakCalibrator::collect_target_statistics( core::Real target, TypeCumulator const& types ) {
@@ -181,14 +181,14 @@ void PeakCalibrator::collect_target_statistics( core::Real target, TypeCumulator
 			target_values_[ type ].push_back( target );
 		}
 	}
-	//	tr.Debug << "acc. " << accumulated_target_[ BACKBONE ] << std::endl;
+	// tr.Debug << "acc. " << accumulated_target_[ BACKBONE ] << std::endl;
 }
 
 // void PeakCalibrator::reset_statistics() {
-// 	for ( Size type=BACKBONE; type < max_type_; ++type ) {
-// 		accumulated_count_[ type ] = 0;
-// 		accumulated_dist_[ type ] = 0;
-// 	}
+//  for ( Size type=BACKBONE; type < max_type_; ++type ) {
+//   accumulated_count_[ type ] = 0;
+//   accumulated_dist_[ type ] = 0;
+//  }
 // }
 
 void PeakCalibrator::reset_calibration_constants() {
@@ -200,24 +200,24 @@ void PeakCalibrator::reset_calibration_constants() {
 }
 
 void PeakCalibrator::do_calibration() {
-  bool finished = false;
-  Size max_cycles = 50;
+	bool finished = false;
+	Size max_cycles = 50;
 
 	reset_calibration_constants();
 
-  tr.Info << "Calibration .... for " << peaks_.size() << " crosspeaks " << std::endl;
+	tr.Info << "Calibration .... for " << peaks_.size() << " crosspeaks " << std::endl;
 
-	//	Q_backbone_ = calibration_constant_[ BACKBONE ];
+	// Q_backbone_ = calibration_constant_[ BACKBONE ];
 	tr.Info << "value   target ";
 	for ( core::Size type=BACKBONE; type< (Size) max_type_; type++ ) {
 		tr.Info << " " << CALIBRATOR_TYPE_NAMES[type];
 	}
 	tr.Info << std::endl;
-  while ( !finished && max_cycles ) {
-    --max_cycles;
+	while ( !finished && max_cycles ) {
+		--max_cycles;
 		reset_statistics();
 		set_new_upper_bounds(); //compute statistics about upper bounds
-		//		show_statistics( tr.Info );
+		//  show_statistics( tr.Info );
 		tr.Info << target_;
 		tr.Info << " ";
 		for ( core::Size type=BACKBONE; type< (Size) max_type_; type++ ) {
@@ -233,7 +233,7 @@ void PeakCalibrator::do_calibration() {
 
 // void PeakCalibrator::interpolate( PeakCalibrator const& cal1, PeakCalibrator const& cal2 ) {
 //   Q_backbone_ = exp( 0.5*( log( cal1.Q_backbone_) + log( cal2.Q_backbone_ ) ));
-// 	Q_nonmethyl_beta_ = exp( 0.5*( log(cal1.Q_nonmethyl_beta_) + log( cal2.Q_nonmethyl_beta_) ));
+//  Q_nonmethyl_beta_ = exp( 0.5*( log(cal1.Q_nonmethyl_beta_) + log( cal2.Q_nonmethyl_beta_) ));
 //   Q_methyl_ = 3.0 * Q_backbone_;
 //   Q_nonmethyl_sidechain_ = 1.5 * Q_nonmethyl_beta_;
 // }
@@ -248,7 +248,7 @@ void PeakCalibrator::set_new_upper_bounds() {
 		TypeCumulator types;
 		(*it)->calibrate( *this, types );
 		core::Real dist( (*it)->distance_bound() );
-		//		if ( dist <= 0.01 ) continue;
+		//  if ( dist <= 0.01 ) continue;
 		if ( dist == 0 ) continue;
 		collect_upperbound_statistics( ct, types );
 	}

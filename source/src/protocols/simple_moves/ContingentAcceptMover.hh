@@ -42,25 +42,25 @@ public:
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose );
 
-		protocols::filters::FilterOP filter() const;
-		void filter( protocols::filters::FilterOP f );
+	protocols::filters::FilterOP filter() const;
+	void filter( protocols::filters::FilterOP f );
 
-    protocols::moves::MoverOP mover() const;
-    void mover( protocols::moves::MoverOP m );
+	protocols::moves::MoverOP mover() const;
+	void mover( protocols::moves::MoverOP m );
 
-   // protocols::filters::mover_FilterOP filter() const { return filter_; };
-	//	void filter( protocols::filters::FilterOP f ){ filter_ = f; }
+	// protocols::filters::mover_FilterOP filter() const { return filter_; };
+	// void filter( protocols::filters::FilterOP f ){ filter_ = f; }
 
-  //  protocols::moves::MoverOP mover() const { return mover_; };
-	//	void mover( protocols::moves::MoverOP m ){ mover_ = m; }
+	//  protocols::moves::MoverOP mover() const { return mover_; };
+	// void mover( protocols::moves::MoverOP m ){ mover_ = m; }
 
 	core::Real delta() const { return delta_; }
 	void delta( core::Real const s ){ delta_ = s; }
 
 private:
-    protocols::filters::FilterOP filter_;
-	  moves::MoverOP mover_;
-    core::Real delta_;
+	protocols::filters::FilterOP filter_;
+	moves::MoverOP mover_;
+	core::Real delta_;
 };
 
 

@@ -12,8 +12,8 @@
 #include <utility/pointer/owning_ptr.hh>
 
 
-namespace protocols{
-namespace loop_build{
+namespace protocols {
+namespace loop_build {
 
 class LoopBuildMover;
 

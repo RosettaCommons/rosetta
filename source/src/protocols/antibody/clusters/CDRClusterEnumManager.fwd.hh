@@ -21,7 +21,7 @@
 namespace protocols {
 namespace antibody {
 namespace clusters {
-	
+
 // Forward
 class CDRClusterEnumManager;
 
@@ -33,6 +33,6 @@ typedef utility::pointer::shared_ptr< CDRClusterEnumManager const > CDRClusterEn
 } //namespace protocols
 
 
-#endif	//INCLUDED_protocols_antibody_CDRClusterEnumManager.fwd.hh
+#endif //INCLUDED_protocols_antibody_CDRClusterEnumManager.fwd.hh
 
 

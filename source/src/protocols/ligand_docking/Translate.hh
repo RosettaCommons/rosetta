@@ -75,8 +75,8 @@ public:
 
 	core::Size get_chain_id(core::pose::Pose const & pose);
 	void add_excluded_chains(
-			std::set<core::Size>::const_iterator begin,
-			std::set<core::Size>::const_iterator end
+		std::set<core::Size>::const_iterator begin,
+		std::set<core::Size>::const_iterator end
 	);
 
 private:
@@ -86,23 +86,23 @@ private:
 	std::vector<core::Size> tag_along_jumps_; // these guys tag along, such as waters and metals
 
 	void translate_ligand(
-			utility::pointer::shared_ptr<core::grid::CartGrid<int> >  const & grid,
-			core::Size const jump_id,
-			core::pose::Pose & pose
+		utility::pointer::shared_ptr<core::grid::CartGrid<int> >  const & grid,
+		core::Size const jump_id,
+		core::pose::Pose & pose
 	);
 
 	void translate_ligand(core::Size const jump_id,core::pose::Pose & pose, core::Size const & residue_id);
 
 	void uniform_translate_ligand(
-			const utility::pointer::shared_ptr<core::grid::CartGrid<int> >  & grid,
-			const core::Size jump_id,
-			core::pose::Pose & pose
+		const utility::pointer::shared_ptr<core::grid::CartGrid<int> >  & grid,
+		const core::Size jump_id,
+		core::pose::Pose & pose
 	);
 
 	void gaussian_translate_ligand(
-			const utility::pointer::shared_ptr<core::grid::CartGrid<int> >  & grid,
-			const core::Size jump_id,
-			core::pose::Pose & pose
+		const utility::pointer::shared_ptr<core::grid::CartGrid<int> >  & grid,
+		const core::Size jump_id,
+		core::pose::Pose & pose
 	);
 
 };

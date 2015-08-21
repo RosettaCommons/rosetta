@@ -75,7 +75,7 @@ core::Energy AlterSpecDisruptionDriver::score(core::pose::Pose & pose) {
 
 	//It would be good if there were a way to test an invariant here - primarily that we have an interface of two chains!
 	//runtime_assert(pose.num_chains() >= 2);
-	if(!(pose.conformation().num_chains() >= 2)){
+	if ( !(pose.conformation().num_chains() >= 2) ) {
 		throw utility::excn::EXCN_Msg_Exception("AlterSpecDisruptionDriver requires two chains to calculate an interface to disrupt.");
 	}
 
@@ -90,9 +90,9 @@ core::Energy AlterSpecDisruptionDriver::score(core::pose::Pose & pose) {
 /// @brief offers a chance for child classes to inject mutant selection logic
 bool AlterSpecDisruptionDriver::reject_mutant( Mutant const & mutant, core::pose::Pose const & pose ){
 
-	if(reject_on_chains(mutant)) return true;
+	if ( reject_on_chains(mutant) ) return true;
 
-	if(reject_on_interface(mutant, pose)) return true;
+	if ( reject_on_interface(mutant, pose) ) return true;
 
 	return false;
 
@@ -101,12 +101,12 @@ bool AlterSpecDisruptionDriver::reject_mutant( Mutant const & mutant, core::pose
 /// @brief reject Mutant based on chain IDs of constituent mutations
 bool AlterSpecDisruptionDriver::reject_on_chains( Mutant const & mutant ){
 
-	if(mutant.n_mutations() >= 2){ //if there is more than one mutation, check that they are on the same chain.  Disruptions on different chains are likely unrecoverable clashes.
+	if ( mutant.n_mutations() >= 2 ) { //if there is more than one mutation, check that they are on the same chain.  Disruptions on different chains are likely unrecoverable clashes.
 		typedef utility::vector1< MutationData >::const_iterator mut_iter;
 
 		char const chain(mutant.mutations_begin()->pdb_chain());
 		for ( mut_iter it(mutant.mutations_begin()), end(mutant.mutations_end()); it != end; ++it ) {
-			if(chain != it->pdb_chain()) {
+			if ( chain != it->pdb_chain() ) {
 				//TR << "skipping Mutant " << mutant << " because it has a mutation on chain " << it->pdb_chain() << " which does not match the first mutation's chain " << chain << std::endl;
 				return true;
 			} //if skipping
@@ -120,7 +120,7 @@ bool AlterSpecDisruptionDriver::reject_on_chains( Mutant const & mutant ){
 bool AlterSpecDisruptionDriver::reject_on_interface( Mutant const & mutant, core::pose::Pose const & pose )
 {
 
-	if( interface_set_.empty() ){
+	if ( interface_set_.empty() ) {
 		IAM_->set_compute_interface_energy(false); //speed
 
 		core::pose::Pose copy(pose);
@@ -129,7 +129,7 @@ bool AlterSpecDisruptionDriver::reject_on_interface( Mutant const & mutant, core
 
 		// TR << "interface set:";
 		// for(std::set< core::Size >::const_iterator it(interface_set_.begin()), end(interface_set_.end()); it != end; ++it)
-		// 	TR << " " << *it;
+		//  TR << " " << *it;
 		// TR << std::endl;
 
 		IAM_->set_compute_interface_energy(true); //speed
@@ -138,9 +138,9 @@ bool AlterSpecDisruptionDriver::reject_on_interface( Mutant const & mutant, core
 	typedef utility::vector1< MutationData >::const_iterator mut_iter;
 
 	std::set< core::Size >::iterator const interface_end(interface_set_.end());
-	for( mut_iter it(mutant.mutations_begin()), end(mutant.mutations_end()); it != end; ++it ) {
+	for ( mut_iter it(mutant.mutations_begin()), end(mutant.mutations_end()); it != end; ++it ) {
 		core::Size const resid(it->pose_resnum());
-		if(interface_set_.find(resid) == interface_end) { //if a mutation is not in the interface set, skip this Mutant
+		if ( interface_set_.find(resid) == interface_end ) { //if a mutation is not in the interface set, skip this Mutant
 			//TR << "skipping Mutant " << mutant << " because it contains position " << resid << " which is not in the interface" << std::endl;
 			return true;
 		}

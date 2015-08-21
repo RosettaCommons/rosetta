@@ -51,13 +51,13 @@ namespace protocols {
 namespace enzdes {
 
 EnzdesJobInputter::EnzdesJobInputter()
-	: enz_loops_file_(/* NULL */)
+: enz_loops_file_(/* NULL */)
 {
 	TR << "Instantiate EnzdesJobInputter" << std::endl;
-	if( basic::options::option[ basic::options::OptionKeys::enzdes::enz_loops_file ].user() ){
+	if ( basic::options::option[ basic::options::OptionKeys::enzdes::enz_loops_file ].user() ) {
 
 		enz_loops_file_ = protocols::toolbox::match_enzdes_util::EnzdesLoopsFileOP( new protocols::toolbox::match_enzdes_util::EnzdesLoopsFile() );
-		if( !enz_loops_file_->read_loops_file( basic::options::option[ basic::options::OptionKeys::enzdes::enz_loops_file ] ) ){
+		if ( !enz_loops_file_->read_loops_file( basic::options::option[ basic::options::OptionKeys::enzdes::enz_loops_file ] ) ) {
 			utility_exit_with_message("Reading enzdes loops file failed");
 		}
 	}
@@ -72,11 +72,11 @@ EnzdesJobInputter::pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP
 
 	std::string input_tag( job->input_tag() );
 	protocols::enzdes::enzutil::read_pose_from_pdb( pose, input_tag );
-	if( enz_loops_file_){
+	if ( enz_loops_file_ ) {
 		protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_enzdes_loops_file( enz_loops_file_ );
 		core::pose::datacache::SpecialSegmentsObserverOP segob( new core::pose::datacache::SpecialSegmentsObserver() );
 		segob->clear();
-		for( core::Size i =1; i <= enz_loops_file_->num_loops(); ++i){
+		for ( core::Size i =1; i <= enz_loops_file_->num_loops(); ++i ) {
 			segob->add_segment(enz_loops_file_->loop_info( i )->start(), enz_loops_file_->loop_info( i )->stop() + 1 /*segment convention*/ );
 		}
 		pose.observer_cache().set(  core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER, segob, true );
@@ -89,12 +89,12 @@ EnzdesJobInputter::pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP
 std::string
 EnzdesJobInputterCreator::keyname() const
 {
-        return "EnzdesJobInputter";
+	return "EnzdesJobInputter";
 }
 
 protocols::jd2::JobInputterOP
 EnzdesJobInputterCreator::create_JobInputter() const {
-        return protocols::jd2::JobInputterOP( new EnzdesJobInputter );
+	return protocols::jd2::JobInputterOP( new EnzdesJobInputter );
 }
 
 }//enzdes

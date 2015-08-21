@@ -23,12 +23,12 @@ namespace rna {
 
 void
 get_fade_correction(
-										Real const z,
-										Real const cutoff_lower,
-										Real const cutoff_upper,
-										Real const fade_zone,
-										Real & fade_value,
-										Real & fade_deriv );
+	Real const z,
+	Real const cutoff_lower,
+	Real const cutoff_upper,
+	Real const fade_zone,
+	Real & fade_value,
+	Real & fade_deriv );
 
 } //rna
 } //scoring

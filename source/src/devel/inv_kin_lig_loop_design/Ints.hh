@@ -19,40 +19,40 @@
 #include <vector>
 
 namespace devel {
-  namespace inv_kin_lig_loop_design {
+namespace inv_kin_lig_loop_design {
 
-    using namespace std;
+using namespace std;
 
-    class Ints {
-    private:
-      vector<int> vInts;
-      vector<pair<int,int> > vRanges;
+class Ints {
+private:
+	vector<int> vInts;
+	vector<pair<int,int> > vRanges;
 
-      mutable bool b_is_init;
-      mutable vector<int> vInit;
+	mutable bool b_is_init;
+	mutable vector<int> vInit;
 
-    public:
-      Ints();
-      Ints(const string& s);
+public:
+	Ints();
+	Ints(const string& s);
 
-      void clear();
+	void clear();
 
-      void add(const int i);
-      void add(const pair<int,int>& range);
+	void add(const int i);
+	void add(const pair<int,int>& range);
 
-      int getRandomInt() const;
+	int getRandomInt() const;
 
-      int operator()() const { return getRandomInt(); }
+	int operator()() const { return getRandomInt(); }
 
-      const string toString() const;
-      void fromString(const string& s);
+	const string toString() const;
+	void fromString(const string& s);
 
-    }; // class Ints
+}; // class Ints
 
-    istream& operator>>(istream& in, Ints& ints);
-    ostream& operator<<(ostream& out, const Ints& ints);
+istream& operator>>(istream& in, Ints& ints);
+ostream& operator<<(ostream& out, const Ints& ints);
 
-  } // namespace LoopDesign
+} // namespace LoopDesign
 } // namespace devel
 
 #endif // DEVEL_LOOPDESIGN_INTS_HH

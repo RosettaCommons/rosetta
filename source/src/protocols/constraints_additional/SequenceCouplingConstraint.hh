@@ -83,7 +83,7 @@ public:
 	SequenceCouplingCOP sequence_coupling() const;
 
 	virtual core::Size natoms() const { return 0; };
-	virtual	AtomID const & atom( Size const ) const {
+	virtual AtomID const & atom( Size const ) const {
 		utility_exit_with_message("SequenceCouplingConstraint is not atom-based!.");
 		return core::id::BOGUS_ATOM_ID;  // required for compilation on Windows
 	}

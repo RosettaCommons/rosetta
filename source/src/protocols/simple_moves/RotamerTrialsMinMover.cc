@@ -114,8 +114,7 @@ RotamerTrialsMinMover::show(std::ostream & output) const
 	Mover::show(output);
 	if ( scorefxn() != 0 ) {
 		output << "Score function: " << scorefxn()->get_name() << std::endl;
-	}
-	else { output << "Score function: none" << std::endl; }
+	} else { output << "Score function: none" << std::endl; }
 }
 
 /// @brief read access for derived classes
@@ -130,7 +129,7 @@ RotamerTrialsMinMover::PackerTaskOP
 RotamerTrialsMinMover::task( core::pose::Pose const & pose ) const
 {
 	//if we have a factory, generate and return a new task
-	if(factory_) return factory_->create_task_and_apply_taskoperations( pose );
+	if ( factory_ ) return factory_->create_task_and_apply_taskoperations( pose );
 	//else assert( task_is_valid( pose ) );
 
 	//else return the unsafe one
@@ -157,16 +156,16 @@ RotamerTrialsMinMover::parse_my_tag(
 	score_function( new_score_function );
 
 	core::pack::task::TaskFactoryOP new_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
-	if ( new_task_factory == 0) {
+	if ( new_task_factory == 0 ) {
 		TR << "Using default Task Operations for RotamerTrialsMinMover." << std::endl;
 		new_task_factory = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory );
 	}
 	task_factory( new_task_factory );
 
-	if (tag->hasOption( "nonideal" )) {
+	if ( tag->hasOption( "nonideal" ) ) {
 		nonideal_ = tag->getOption<bool>( "nonideal" );
 	}
-	if (tag->hasOption( "cartesian" )) {
+	if ( tag->hasOption( "cartesian" ) ) {
 		cartesian_ = tag->getOption<bool>( "cartesian" );
 	}
 }

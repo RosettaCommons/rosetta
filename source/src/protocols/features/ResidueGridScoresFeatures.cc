@@ -31,7 +31,7 @@
 #include <core/pose/util.hh>
 
 namespace protocols {
-namespace features{
+namespace features {
 
 ResidueGridScoresFeaturesCreator::ResidueGridScoresFeaturesCreator()
 {
@@ -59,7 +59,7 @@ ResidueGridScoresFeatures::ResidueGridScoresFeatures() : chain_(' ')
 }
 
 ResidueGridScoresFeatures::ResidueGridScoresFeatures(ResidueGridScoresFeatures const & src) : FeaturesReporter(src),
-		chain_(src.chain_)
+	chain_(src.chain_)
 {
 
 }
@@ -130,7 +130,7 @@ core::Size ResidueGridScoresFeatures::report_features(
 
 	protocols::qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
 
-	if (grid_manager->size()==0){
+	if ( grid_manager->size()==0 ) {
 		utility_exit_with_message("In order to use the ResidueGridScoresFeatures reporter you must define at least one scoring grid");
 	}
 
@@ -149,19 +149,17 @@ core::Size ResidueGridScoresFeatures::report_features(
 	grid_insert.add_column("score");
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
-	for (Size i = pose.conformation().chain_begin(chain_id); i <= pose.conformation().chain_end(chain_id); ++i) {
+	for ( Size i = pose.conformation().chain_begin(chain_id); i <= pose.conformation().chain_end(chain_id); ++i ) {
 
-		if(!check_relevant_residues(relevant_residues, i)) continue;
+		if ( !check_relevant_residues(relevant_residues, i) ) continue;
 
 		RowDataBaseOP seqpos_data( new RowData<core::Size>("seqpos",i) );
 
 		core::conformation::Residue const & residue(pose.residue(i));
-		for(Size atomno = 1; atomno <= residue.natoms();++atomno)
-		{
+		for ( Size atomno = 1; atomno <= residue.natoms(); ++atomno ) {
 			RowDataBaseOP atomno_data( new RowData<core::Size>("atomno",atomno) );
 			std::map<std::string,core::Real> atom_map = grid_manager->atom_score(pose,residue,atomno);
-			for(std::map<std::string,core::Real>::const_iterator score_it = atom_map.begin(); score_it != atom_map.end();++score_it)
-			{
+			for ( std::map<std::string,core::Real>::const_iterator score_it = atom_map.begin(); score_it != atom_map.end(); ++score_it ) {
 				RowDataBaseOP grid_name_data( new RowData<std::string>("grid_name",score_it->first) );
 				RowDataBaseOP score_data( new RowData<core::Real>("score",score_it->second) );
 				grid_insert.add_row(
@@ -180,8 +178,7 @@ void ResidueGridScoresFeatures::parse_my_tag(
 	protocols::moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & /*pose*/)
 {
-	if(!tag->hasOption("chain"))
-	{
+	if ( !tag->hasOption("chain") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("The ResidueGridScoresFeatures reporter requires a Chain tag");
 
 	}

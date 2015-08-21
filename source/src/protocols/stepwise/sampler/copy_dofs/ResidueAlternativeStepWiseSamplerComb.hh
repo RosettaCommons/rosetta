@@ -22,7 +22,7 @@
 #include <core/conformation/Residue.fwd.hh>
 
 #ifdef WIN32
-	#include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSampler.hh>
+#include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSampler.hh>
 #endif
 
 
@@ -39,59 +39,59 @@ namespace stepwise {
 namespace sampler {
 namespace copy_dofs {
 
-	class ResidueAlternativeStepWiseSamplerComb: public StepWiseSamplerSizedComb {
+class ResidueAlternativeStepWiseSamplerComb: public StepWiseSamplerSizedComb {
 
-	public:
+public:
 
-		//constructor
-    ResidueAlternativeStepWiseSamplerComb();
+	//constructor
+	ResidueAlternativeStepWiseSamplerComb();
 
-		//destructor
-		~ResidueAlternativeStepWiseSamplerComb();
+	//destructor
+	~ResidueAlternativeStepWiseSamplerComb();
 
-	public:
+public:
 
-		core::conformation::Residue const &
-		get_residue_at_origin( Size const seqpos );
+	core::conformation::Residue const &
+	get_residue_at_origin( Size const seqpos );
 
-		core::conformation::Residue const &
-		get_residue_at_origin_with_matching_type( Size const seqpos, core::conformation::Residue const & rsd_in );
+	core::conformation::Residue const &
+	get_residue_at_origin_with_matching_type( Size const seqpos, core::conformation::Residue const & rsd_in );
 
-		void
-		add_residue_alternative_rotamer( ResidueAlternativeStepWiseSamplerOP const & rotamer );
+	void
+	add_residue_alternative_rotamer( ResidueAlternativeStepWiseSamplerOP const & rotamer );
 
-		/// @brief Name of the class
-		virtual std::string get_name() const { return "ResidueAlternativeStepWiseSamplerComb"; }
+	/// @brief Name of the class
+	virtual std::string get_name() const { return "ResidueAlternativeStepWiseSamplerComb"; }
 
-		/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
-		virtual StepWiseSamplerType type() const { return RESIDUE_ALTERNATIVE_COMB; }
+	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
+	virtual StepWiseSamplerType type() const { return RESIDUE_ALTERNATIVE_COMB; }
 
 
-		bool
-		has_resnum( Size const seqpos );
+	bool
+	has_resnum( Size const seqpos );
 
-		Size
-		find_resnum( Size const seqpos );
+	Size
+	find_resnum( Size const seqpos );
 
-		Size
-		id_for_resnum( Size const seqpos );
+	Size
+	id_for_resnum( Size const seqpos );
 
-		void
-		fast_forward_to_next_residue_pair( Size const i, Size const j);
+	void
+	fast_forward_to_next_residue_pair( Size const i, Size const j);
 
-		void
-		fast_forward_to_next_residue( Size const i );
+	void
+	fast_forward_to_next_residue( Size const i );
 
-	private:
+private:
 
-    using StepWiseSamplerSizedComb::add_external_loop_rotamer; // make it private.
+	using StepWiseSamplerSizedComb::add_external_loop_rotamer; // make it private.
 
-		std::map< Size, ResidueAlternativeStepWiseSamplerOP > residue_alternative_rotamer_map_;
+	std::map< Size, ResidueAlternativeStepWiseSamplerOP > residue_alternative_rotamer_map_;
 
-		// following is redundant with rotamer_list_ in parent class, but is useful since it retains ResidueAlternativeStepWiseSampler type.
-		utility::vector1< ResidueAlternativeStepWiseSamplerOP > residue_alternative_rotamer_list_;
+	// following is redundant with rotamer_list_ in parent class, but is useful since it retains ResidueAlternativeStepWiseSampler type.
+	utility::vector1< ResidueAlternativeStepWiseSamplerOP > residue_alternative_rotamer_list_;
 
-	};
+};
 
 } //copy_dofs
 } //sampler

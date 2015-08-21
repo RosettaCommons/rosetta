@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	devel/buns/BuriedUnsatHbondFilter2.cc
+/// @file devel/buns/BuriedUnsatHbondFilter2.cc
 /// @brief
-/// @author	Kevin Houlihan (khouli@unc.edu)
+/// @author Kevin Houlihan (khouli@unc.edu)
 
 #include <devel/buns/BuriedUnsatHbondFilter2.hh>
 #include <devel/buns/BuriedUnsatHbondFilter2Creator.hh>
@@ -62,20 +62,27 @@ BuriedUnsatHbondFilter2::parse_my_tag( utility::tag::TagCOP tag, basic::datacach
 
 	calc_ = devel::buns::BuriedUnsatisfiedPolarsCalculator2OP( new devel::buns::BuriedUnsatisfiedPolarsCalculator2("default") );
 
-	if (tag->hasOption("generous_hbonds"))
+	if ( tag->hasOption("generous_hbonds") ) {
 		calc_->set_generous_hbonds(tag->getOption<bool>( "generous_hbonds", true  ));
-	if (tag->hasOption("sasa_burial_cutoff"))
+	}
+	if ( tag->hasOption("sasa_burial_cutoff") ) {
 		calc_->set_sasa_burial_cutoff(tag->getOption<core::Real>( "sasa_burial_cutoff", true ));
-	if (tag->hasOption("AHD_cutoff"))
-			calc_->set_AHD_cutoff(tag->getOption<core::Real>( "AHD_cutoff", 120 ));
-	if (tag->hasOption("dist_cutoff"))
-			calc_->set_dist_cutoff(tag->getOption<core::Real>( "dist_cutoff", 3.0 ));
-	if (tag->hasOption("hxl_dist_cutoff"))
-			calc_->set_hxl_dist_cutoff(tag->getOption<core::Real>( "hxl_dist_cutoff", 3.5 ));
-	if (tag->hasOption("sulph_dist_cutoff"))
-			calc_->set_sulph_dist_cutoff(tag->getOption<core::Real>( "sulph_dist_cutoff", 3.3 ));
-	if (tag->hasOption("metal_dist_cutoff"))
-			calc_->set_metal_dist_cutoff(tag->getOption<core::Real>( "metal_dist_cutoff", 2.7 ));
+	}
+	if ( tag->hasOption("AHD_cutoff") ) {
+		calc_->set_AHD_cutoff(tag->getOption<core::Real>( "AHD_cutoff", 120 ));
+	}
+	if ( tag->hasOption("dist_cutoff") ) {
+		calc_->set_dist_cutoff(tag->getOption<core::Real>( "dist_cutoff", 3.0 ));
+	}
+	if ( tag->hasOption("hxl_dist_cutoff") ) {
+		calc_->set_hxl_dist_cutoff(tag->getOption<core::Real>( "hxl_dist_cutoff", 3.5 ));
+	}
+	if ( tag->hasOption("sulph_dist_cutoff") ) {
+		calc_->set_sulph_dist_cutoff(tag->getOption<core::Real>( "sulph_dist_cutoff", 3.3 ));
+	}
+	if ( tag->hasOption("metal_dist_cutoff") ) {
+		calc_->set_metal_dist_cutoff(tag->getOption<core::Real>( "metal_dist_cutoff", 2.7 ));
+	}
 
 	std::string const scorefxn_key( protocols::rosetta_scripts::get_score_function_name(tag) );
 	if ( datamap.has( "scorefxns", scorefxn_key ) ) {
@@ -93,11 +100,10 @@ BuriedUnsatHbondFilter2::apply( core::pose::Pose const & pose ) const {
 	core::Size const unsat_hbonds( compute( pose ) );
 
 	TR<<"# unsatisfied hbonds: "<<unsat_hbonds<<". ";
-	if( unsat_hbonds <= upper_threshold_ ){
+	if ( unsat_hbonds <= upper_threshold_ ) {
 		TR<<"passing." <<std::endl;
 		return true;
-	}
-	else {
+	} else {
 		TR<<"failing."<<std::endl;
 		return false;
 	}
@@ -119,7 +125,7 @@ core::Size
 BuriedUnsatHbondFilter2::compute( core::pose::Pose const & pose ) const {
 
 	TR << "PDB: " << pose.pdb_info()->name() << std::endl;
-	
+
 	runtime_assert( jump_num_ <= pose.num_jump() );
 
 	// score the pose to populate the 10A neighborgraph
@@ -142,11 +148,11 @@ BuriedUnsatHbondFilter2::compute( core::pose::Pose const & pose ) const {
 	// unbound initialized as vector of 0
 	basic::MetricValue< core::Size > total_buns_unbound(0);
 	basic::MetricValue< utility::vector1< core::Size > >
-			res_buns_unbound(utility::vector1< core::Size >(pose.total_residue(), 0));
+		res_buns_unbound(utility::vector1< core::Size >(pose.total_residue(), 0));
 
 	// if given a jump_num, generate an "unbound" pose, use it to fill
 	// res_buns_unbound vector
-	if( jump_num_ ) {
+	if ( jump_num_ ) {
 		core::pose::Pose unbound( bound );
 		core::Real const unbound_dist = 1000.0;
 		protocols::rigid::RigidBodyTransMover trans_mover( unbound, static_cast<int>(jump_num_) );
@@ -162,20 +168,18 @@ BuriedUnsatHbondFilter2::compute( core::pose::Pose const & pose ) const {
 
 	core::Size unsat_hbonds( 0 );
 
-	if( task_factory_ == NULL ) {
+	if ( task_factory_ == NULL ) {
 		unsat_hbonds = total_buns_bound.value() - total_buns_unbound.value();
-	}
-	else {
+	} else {
 		utility::vector1< core::Size > const selected_residues(
-				protocols::rosetta_scripts::residue_packer_states(
-				pose, task_factory(), true/*designable*/, true/*packable*/ ) );
-		if( selected_residues.size() == 0 ) {
+			protocols::rosetta_scripts::residue_packer_states(
+			pose, task_factory(), true/*designable*/, true/*packable*/ ) );
+		if ( selected_residues.size() == 0 ) {
 			unsat_hbonds = 0;
-		}
-		else {
-			BOOST_FOREACH( core::Size const sr, selected_residues ){
+		} else {
+			BOOST_FOREACH ( core::Size const sr, selected_residues ) {
 				unsat_hbonds += std::max( (res_buns_bound.value()[ sr ]) - (res_buns_unbound.value()[ sr ]), Size(0) );
-			//TR << "running value for total_in_selected_residues = " << total_in_selected_residues << std::endl;
+				//TR << "running value for total_in_selected_residues = " << total_in_selected_residues << std::endl;
 			}
 		}
 	}

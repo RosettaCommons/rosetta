@@ -42,7 +42,7 @@
 
 
 #if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#include <ctime>
 #endif
 
 namespace protocols {
@@ -66,38 +66,38 @@ WorkUnit_BatchRelax::clone() const {
 
 void
 WorkUnit_BatchRelax::run(){
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	// scorefxn and sequence file are controllable from commandline - unfortunately that means
-  // there can only be one setting. The batch solution handles this better but is also much more
-  // restricted in a way.
-	if( !scorefxn_ ) {
+	// there can only be one setting. The batch solution handles this better but is also much more
+	// restricted in a way.
+	if ( !scorefxn_ ) {
 		scorefxn_ = core::scoring::get_score_function();
-		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *scorefxn_ );  
+		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *scorefxn_ );
 	}
-  protocols::relax::FastRelax relax( scorefxn_,  option[ OptionKeys::relax::sequence_file ]() );
-	if( native_pose_ ){
+	protocols::relax::FastRelax relax( scorefxn_,  option[ OptionKeys::relax::sequence_file ]() );
+	if ( native_pose_ ) {
 		relax.set_native_pose( native_pose_ );
 	}
 
 	TR << "Pre Processing: "  << std::endl;
 	pre_process();
 
-  // relax handles all the silent structures in situ
+	// relax handles all the silent structures in situ
 	if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
-	core::pose::Pose pose;
-	core::io::silent::SilentStructOP ss = decoys().get_struct(0);
-	ss->fill_pose( pose );
-			using namespace core::scoring::constraints;
-			ConstraintSetOP cstset = ConstraintIO::get_instance()->read_constraints( get_cst_fa_file_option(), ConstraintSetOP( new ConstraintSet ), pose  ); 
-			relax.batch_apply( decoys().store(), cstset );
+		core::pose::Pose pose;
+		core::io::silent::SilentStructOP ss = decoys().get_struct(0);
+		ss->fill_pose( pose );
+		using namespace core::scoring::constraints;
+		ConstraintSetOP cstset = ConstraintIO::get_instance()->read_constraints( get_cst_fa_file_option(), ConstraintSetOP( new ConstraintSet ), pose  );
+		relax.batch_apply( decoys().store(), cstset );
 	} else {
-			relax.batch_apply( decoys().store() );
+		relax.batch_apply( decoys().store() );
 	}
 
 	TR << "Post Processing: "  << std::endl;
-	
+
 	post_process();
 
 	TR << "NRELAXED: " << decoys().size() << std::endl;
@@ -126,7 +126,7 @@ WorkUnit_BatchRelax::post_process(){
 
 // -----------------------------------------------------------------------
 //
-//	WorkUnit_BatchRelax_and_PostRescore
+// WorkUnit_BatchRelax_and_PostRescore
 
 
 WorkUnit_BatchRelax_and_PostRescore::WorkUnit_BatchRelax_and_PostRescore():
@@ -138,17 +138,17 @@ WorkUnit_BatchRelax_and_PostRescore::WorkUnit_BatchRelax_and_PostRescore():
 
 void
 WorkUnit_BatchRelax_and_PostRescore::set_defaults(){
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  trim_proportion_ = option[ OptionKeys::wum::trim_proportion ]();
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	trim_proportion_ = option[ OptionKeys::wum::trim_proportion ]();
 
-	if(  option[ OptionKeys::wum::extra_scorefxn_ref_structure ].user() ){
-			core::import_pose::pose_from_pdb( ref_pose_, option[ OptionKeys::wum::extra_scorefxn_ref_structure ]() );
-			// We do the following to save memory, since we dont actually need anything but the backbone coordiantes from this pose.
-			//core::util::switch_to_residue_type_set( ref_pose_, core::chemical::CENTROID);
-			if( !ref_pose_.is_fullatom() ){
-				core::util::switch_to_residue_type_set( ref_pose_, core::chemical::FA_STANDARD);
-  		}
+	if (  option[ OptionKeys::wum::extra_scorefxn_ref_structure ].user() ) {
+		core::import_pose::pose_from_pdb( ref_pose_, option[ OptionKeys::wum::extra_scorefxn_ref_structure ]() );
+		// We do the following to save memory, since we dont actually need anything but the backbone coordiantes from this pose.
+		//core::util::switch_to_residue_type_set( ref_pose_, core::chemical::CENTROID);
+		if ( !ref_pose_.is_fullatom() ) {
+			core::util::switch_to_residue_type_set( ref_pose_, core::chemical::FA_STANDARD);
+		}
 	}
 }
 
@@ -167,7 +167,7 @@ WorkUnit_BatchRelax_and_PostRescore::clone() const
 void
 WorkUnit_BatchRelax_and_PostRescore::pre_process(){
 	// if trimming is to occur rescore all the input decoys and trim on combined score
-	if( trim_proportion_ > 0.0 ){
+	if ( trim_proportion_ > 0.0 ) {
 		rescore_all_decoys();
 		trim();
 	}
@@ -204,17 +204,17 @@ WorkUnit_BatchRelax_and_PostRescore::rescore_all_decoys(){
 	combined_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( weight_set );
 	combined_scorefxn->merge( *scorefxn_ );
 
-	for( protocols::wum::SilentStructStore::iterator struc = decoys().begin(); struc != decoys().end(); ++ struc ){
+	for ( protocols::wum::SilentStructStore::iterator struc = decoys().begin(); struc != decoys().end(); ++ struc ) {
 		core::pose::Pose pose;
 		(*struc)->fill_pose( pose );
 
-		if( !pose.is_fullatom() ){
+		if ( !pose.is_fullatom() ) {
 			TR.Debug << "Switching struct to fullatom" << std::endl;
 			core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD);
 		}
 
 
-		if( ref_pose_.total_residue() > 0 ){
+		if ( ref_pose_.total_residue() > 0 ) {
 			protocols::simple_moves::SuperimposeMover sm;
 			sm.set_reference_pose( ref_pose_ );
 			sm.apply( pose );
@@ -229,7 +229,7 @@ WorkUnit_BatchRelax_and_PostRescore::rescore_all_decoys(){
 		core::Real the_extra_score = (*extra_scorefxn)(pose);
 
 
-		if( option[ OptionKeys::wum::extra_scorefxn_relax]() > 0 ){
+		if ( option[ OptionKeys::wum::extra_scorefxn_relax]() > 0 ) {
 			// combine the score functions into one
 
 

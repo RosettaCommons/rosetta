@@ -51,8 +51,7 @@ LigandPropertyScore::LigandPropertyScore()
 
 void LigandPropertyScore::parse_my_tag(utility::tag::TagCOP tag)
 {
-	if(!tag->hasOption("parameter"))
-	{
+	if ( !tag->hasOption("parameter") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("Grid Score term LigandPropertyScore needs tag 'parameter'");
 	}
 

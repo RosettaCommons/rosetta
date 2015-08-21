@@ -43,11 +43,11 @@ public: // constructors destructors
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~RRComparer();
 
-//	RRComparer();
-//
-//	~RRComparer();
-//
-//	RRComparer( RRComparer const & src );
+	// RRComparer();
+	//
+	// ~RRComparer();
+	//
+	// RRComparer( RRComparer const & src );
 
 public: // public interface
 
@@ -130,34 +130,34 @@ public: // constructors destructors
 public: // public interface
 
 	virtual void set_recovery_threshold( core::Real const setting );
-	
+
 	virtual
 	void
 	set_max_chi_considered( core::Size const max_chi );
-	
+
 	virtual
 	std::string
 	get_name() const;
-	
+
 
 	virtual
 	std::string
 	get_parameters() const;
-	
+
 	virtual
 	bool
 	measure_rotamer_recovery(
-							 core::pose::Pose const & pose1,
-							 core::pose::Pose const & pose2,
-							 core::conformation::Residue const & res1,
-							 core::conformation::Residue const & res2,
-							 core::Real & score,
-							 bool & recovered);
-	
+		core::pose::Pose const & pose1,
+		core::pose::Pose const & pose2,
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		core::Real & score,
+		bool & recovered);
+
 private: // data members
-  core::Real tolerance_;
-  bool limit_chi_angles_;
-  core::Size max_chi_considered_; // only relevant if limit_chi_angles_ is set
+	core::Real tolerance_;
+	bool limit_chi_angles_;
+	core::Size max_chi_considered_; // only relevant if limit_chi_angles_ is set
 
 };
 

@@ -12,7 +12,7 @@
 /// @author
 
 #if (defined _WIN32) && (!defined PYROSETTA)
-	#define ZLIB_WINAPI  // REQUIRED FOR WINDOWS
+#define ZLIB_WINAPI  // REQUIRED FOR WINDOWS
 #endif
 
 // Unit headers
@@ -94,46 +94,41 @@ start_files()
 	}
 
 	// -screening_list files
-	if( option[ screening_list ].user() ) {
+	if ( option[ screening_list ].user() ) {
 		utility::vector1<std::string> const list_files( option[ screening_list ]() );
-		if(list_files.size() != 2)
-		{
+		if ( list_files.size() != 2 ) {
 			utility_exit_with_message("-in:file:screening_list currently takes exactly 2 file lists as arguments");
 		}
 
 		utility::io::izstream outer_file(list_files[1].c_str());
 		utility::vector1<std::string> outer_paths;
-		if(!outer_file.good())
-		{
+		if ( !outer_file.good() ) {
 			utility_exit_with_message("unable to open list file: "+list_files[1]);
 		}
-		while (outer_file.good())
-		{
+		while ( outer_file.good() )
+				{
 			std::string name;
 			outer_file.getline(name);
-			if(outer_file.good()) outer_paths.push_back(name);
+			if ( outer_file.good() ) outer_paths.push_back(name);
 		}
 		outer_file.close();
 
 		utility::io::izstream inner_file(list_files[2].c_str());
 		utility::vector1<std::string> inner_paths;
-		if(!inner_file.good())
-		{
+		if ( !inner_file.good() ) {
 			utility_exit_with_message("unable to open list file: "+list_files[2]);
 		}
-		while(inner_file.good())
-		{
+		while ( inner_file.good() )
+				{
 			std::string name;
 			inner_file.getline(name);
-			if(inner_file.good()) inner_paths.push_back(name);
+			if ( inner_file.good() ) inner_paths.push_back(name);
 		}
 		inner_file.close();
 
-		for(size_t i = 1; i <= outer_paths.size();++i)
-		{
+		for ( size_t i = 1; i <= outer_paths.size(); ++i ) {
 			std::string outer_path(outer_paths[i]);
-			for(size_t j = 1; j <= inner_paths.size();++j)
-			{
+			for ( size_t j = 1; j <= inner_paths.size(); ++j ) {
 				std::string inner_path(inner_paths[j]);
 				filenames.push_back(outer_path+" "+inner_path);
 			}

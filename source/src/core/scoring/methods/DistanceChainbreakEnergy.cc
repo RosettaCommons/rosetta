@@ -67,22 +67,22 @@ DistanceChainbreakEnergy::DistanceChainbreakEnergy() :
 /// called at the end of energy evaluation
 void
 DistanceChainbreakEnergy::finalize_total_energy(
-  pose::Pose & pose,
-  ScoreFunction const &,
-  EnergyMap & totals
+	pose::Pose & pose,
+	ScoreFunction const &,
+	EnergyMap & totals
 ) const
 {
-  using conformation::Residue;
-  Real total_dev(0.0);
+	using conformation::Residue;
+	Real total_dev(0.0);
 	Real const dist_target( 1.32 ); //square root of dist2_target from r++ jumping_loops.cc
 	tr.Trace << "called! cuts: " << pose.fold_tree().num_cutpoint() << std::endl;
-  for ( int n=1; n<= pose.fold_tree().num_cutpoint(); ++n ) {
-    int const cutpoint( pose.fold_tree().cutpoint( n ) );
-    Residue const & lower_rsd( pose.residue( cutpoint ) );
-    if ( !lower_rsd.has_variant_type( chemical::CUTPOINT_LOWER ) ) continue;
+	for ( int n=1; n<= pose.fold_tree().num_cutpoint(); ++n ) {
+		int const cutpoint( pose.fold_tree().cutpoint( n ) );
+		Residue const & lower_rsd( pose.residue( cutpoint ) );
+		if ( !lower_rsd.has_variant_type( chemical::CUTPOINT_LOWER ) ) continue;
 		tr.Trace << "cutpoint " << n << "has CUTPOINT variant" << std::endl;
-    Residue const & upper_rsd( pose.residue( cutpoint+1 ) );
-   debug_assert( upper_rsd.has_variant_type( chemical::CUTPOINT_UPPER ) );
+		Residue const & upper_rsd( pose.residue( cutpoint+1 ) );
+		debug_assert( upper_rsd.has_variant_type( chemical::CUTPOINT_UPPER ) );
 		//    Size const nbb( lower_rsd.mainchain_atoms().size() );
 
 		total_dev +=
@@ -95,8 +95,8 @@ DistanceChainbreakEnergy::finalize_total_energy(
 		//'N' of cutpoint + 1
 	}
 
- debug_assert( std::abs( totals[ distance_chainbreak ] ) < 1e-3 );
-  totals[ distance_chainbreak ] = total_dev;
+	debug_assert( std::abs( totals[ distance_chainbreak ] ) < 1e-3 );
+	totals[ distance_chainbreak ] = total_dev;
 }
 
 
@@ -104,7 +104,7 @@ DistanceChainbreakEnergy::finalize_total_energy(
 /// be maintained by class Energies
 void
 DistanceChainbreakEnergy::indicate_required_context_graphs(
-   utility::vector1< bool > & /*context_graphs_required*/
+	utility::vector1< bool > & /*context_graphs_required*/
 ) const
 {}
 core::Size

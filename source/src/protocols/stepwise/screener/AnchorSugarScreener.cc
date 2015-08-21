@@ -36,92 +36,92 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	//Constructor
-	AnchorSugarScreener::AnchorSugarScreener( SugarModeling const & anchor_sugar_modeling,
-																						RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_to_anchor_checker,
-																						pose::Pose & sugar_screening_pose,
-																						bool const is_prepend,
-																						RNA_AtrRepCheckerOP atr_rep_checker_with_instantiated_sugar,
-																						utility::vector1< RNA_AtrRepCheckerOP > atr_rep_checkers_for_anchor_sugar_models,
-																						TagDefinitionOP tag_definition ):
-		anchor_sugar_modeling_( anchor_sugar_modeling ),
-		chain_closable_geometry_to_anchor_checker_( chain_closable_geometry_to_anchor_checker ),
-		sugar_screening_pose_( sugar_screening_pose ),
-		atr_rep_checker_with_instantiated_sugar_( atr_rep_checker_with_instantiated_sugar ),
-		atr_rep_checkers_for_anchor_sugar_models_( atr_rep_checkers_for_anchor_sugar_models ),
-		tag_definition_( tag_definition ),
-		is_prepend_( is_prepend ),
-		moving_atom_name_( ( is_prepend ) ? " O3'" : " C5'" ),
-		reference_atom_name_( ( is_prepend ) ? " C5'" : " O3'" ),
-		anchor_sugar_solution_number_( 0 )
-	{}
+//Constructor
+AnchorSugarScreener::AnchorSugarScreener( SugarModeling const & anchor_sugar_modeling,
+	RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_to_anchor_checker,
+	pose::Pose & sugar_screening_pose,
+	bool const is_prepend,
+	RNA_AtrRepCheckerOP atr_rep_checker_with_instantiated_sugar,
+	utility::vector1< RNA_AtrRepCheckerOP > atr_rep_checkers_for_anchor_sugar_models,
+	TagDefinitionOP tag_definition ):
+	anchor_sugar_modeling_( anchor_sugar_modeling ),
+	chain_closable_geometry_to_anchor_checker_( chain_closable_geometry_to_anchor_checker ),
+	sugar_screening_pose_( sugar_screening_pose ),
+	atr_rep_checker_with_instantiated_sugar_( atr_rep_checker_with_instantiated_sugar ),
+	atr_rep_checkers_for_anchor_sugar_models_( atr_rep_checkers_for_anchor_sugar_models ),
+	tag_definition_( tag_definition ),
+	is_prepend_( is_prepend ),
+	moving_atom_name_( ( is_prepend ) ? " O3'" : " C5'" ),
+	reference_atom_name_( ( is_prepend ) ? " C5'" : " O3'" ),
+	anchor_sugar_solution_number_( 0 )
+{}
 
-	//Destructor
-	AnchorSugarScreener::~AnchorSugarScreener()
-	{}
-
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	// following function might be dramatically simplifiable, in which case we may want to return
-	// it to main loop.
-	bool
-	AnchorSugarScreener::check_screen(){
-
-		anchor_sugar_solution_number_ = 0;
-
-		//OK check that with this sugar, the chain can be theoretically closed..
-		if ( !anchor_sugar_modeling_.sample_sugar ){
-
-			bool const ok = chain_closable_geometry_to_anchor_checker_->check_screen( sugar_screening_pose_ );
-			//			TR << "DIST_SQUARED " << chain_closable_geometry_to_anchor_checker_->dist_squared() << " " << ok << std::endl;
-			if ( !ok ) return 0;
-
-			if ( atr_rep_checker_with_instantiated_sugar_ &&
-					 !atr_rep_checker_with_instantiated_sugar_->check_screen( sugar_screening_pose_ ) ) return false; // wait a minute... why is this in here? oh, because base can move in different sampled sugar modeling conformations.
-
-			return true;
-		}
-
-		// The point of this section is to look for *any* conformation of sugar in anchor residue that passes
-		// screens, going from the lowest energy option on up.
-		//Ok, since anchor_sugar_modeling_.pose_list is sorted by SCORE, the lower energy conformations are tried first!
-		for ( Size n = 1; n <= anchor_sugar_modeling_.pose_list.size(); n++ ){
-			pose::Pose const & anchor_sugar_modeling_pose = *anchor_sugar_modeling_.pose_list[n];
-
-			// THIS WAS WORKING -- KEEP THIS IN
-			// is_prepend --> sugar_screening_pose [moving] = 5' pose [need O3'], anchor_sugar = 3' pose [need C5']
-			if ( !chain_closable_geometry_to_anchor_checker_->check_screen( sugar_screening_pose_, anchor_sugar_modeling_pose, is_prepend_) ) continue;
-
-			// following could be replaced with (pre-instantiated) CopyDofMover -- see below.
-			copy_bulge_res_and_sugar_torsion( anchor_sugar_modeling_, sugar_screening_pose_, anchor_sugar_modeling_pose );
+//Destructor
+AnchorSugarScreener::~AnchorSugarScreener()
+{}
 
 
-			// DO NOT CHECK IN
-			//			if ( !chain_closable_geometry_to_anchor_checker_->check_screen( sugar_screening_pose_ ) ) continue;
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// following function might be dramatically simplifiable, in which case we may want to return
+// it to main loop.
+bool
+AnchorSugarScreener::check_screen(){
 
-			// DO NOT CHECK IN.
-			//			if ( atr_rep_checker_with_instantiated_sugar_ &&
-			//					 !atr_rep_checker_with_instantiated_sugar_->check_screen( sugar_screening_pose_ ) ) continue;
+	anchor_sugar_solution_number_ = 0;
 
-			// THIS IS THE RIGHT THING TO DO.
-			// This is in here because the anchor sugar models can have slightly shifted bases (not just riboses!) due to a minimization step that
-			// can occur in VirtualRiboseSampler [see the option: do_minimize].
-			if ( atr_rep_checkers_for_anchor_sugar_models_[ n ] &&
-					 !atr_rep_checkers_for_anchor_sugar_models_[ n ]->check_screen( sugar_screening_pose_ ) ) continue;
+	//OK check that with this sugar, the chain can be theoretically closed..
+	if ( !anchor_sugar_modeling_.sample_sugar ) {
 
-			anchor_sugar_solution_number_ = n;
+		bool const ok = chain_closable_geometry_to_anchor_checker_->check_screen( sugar_screening_pose_ );
+		//   TR << "DIST_SQUARED " << chain_closable_geometry_to_anchor_checker_->dist_squared() << " " << ok << std::endl;
+		if ( !ok ) return 0;
 
-			tag_definition_->append_to_tag( tag_from_pose( anchor_sugar_modeling_pose ) );
-			return true;
-		}
+		if ( atr_rep_checker_with_instantiated_sugar_ &&
+				!atr_rep_checker_with_instantiated_sugar_->check_screen( sugar_screening_pose_ ) ) return false; // wait a minute... why is this in here? oh, because base can move in different sampled sugar modeling conformations.
 
-		return false;
+		return true;
 	}
+
+	// The point of this section is to look for *any* conformation of sugar in anchor residue that passes
+	// screens, going from the lowest energy option on up.
+	//Ok, since anchor_sugar_modeling_.pose_list is sorted by SCORE, the lower energy conformations are tried first!
+	for ( Size n = 1; n <= anchor_sugar_modeling_.pose_list.size(); n++ ) {
+		pose::Pose const & anchor_sugar_modeling_pose = *anchor_sugar_modeling_.pose_list[n];
+
+		// THIS WAS WORKING -- KEEP THIS IN
+		// is_prepend --> sugar_screening_pose [moving] = 5' pose [need O3'], anchor_sugar = 3' pose [need C5']
+		if ( !chain_closable_geometry_to_anchor_checker_->check_screen( sugar_screening_pose_, anchor_sugar_modeling_pose, is_prepend_) ) continue;
+
+		// following could be replaced with (pre-instantiated) CopyDofMover -- see below.
+		copy_bulge_res_and_sugar_torsion( anchor_sugar_modeling_, sugar_screening_pose_, anchor_sugar_modeling_pose );
+
+
+		// DO NOT CHECK IN
+		//   if ( !chain_closable_geometry_to_anchor_checker_->check_screen( sugar_screening_pose_ ) ) continue;
+
+		// DO NOT CHECK IN.
+		//   if ( atr_rep_checker_with_instantiated_sugar_ &&
+		//      !atr_rep_checker_with_instantiated_sugar_->check_screen( sugar_screening_pose_ ) ) continue;
+
+		// THIS IS THE RIGHT THING TO DO.
+		// This is in here because the anchor sugar models can have slightly shifted bases (not just riboses!) due to a minimization step that
+		// can occur in VirtualRiboseSampler [see the option: do_minimize].
+		if ( atr_rep_checkers_for_anchor_sugar_models_[ n ] &&
+				!atr_rep_checkers_for_anchor_sugar_models_[ n ]->check_screen( sugar_screening_pose_ ) ) continue;
+
+		anchor_sugar_solution_number_ = n;
+
+		tag_definition_->append_to_tag( tag_from_pose( anchor_sugar_modeling_pose ) );
+		return true;
+	}
+
+	return false;
+}
 
 /////////////////////////////////////////////////////////
 void
 AnchorSugarScreener::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
-	if ( !anchor_sugar_modeling_.sample_sugar ){
+	if ( !anchor_sugar_modeling_.sample_sugar ) {
 		update_mover->add_mover( 0 );
 		restore_mover->add_mover( 0 );
 		return;

@@ -65,7 +65,7 @@ ElementSet::read_file( std::string const & filename )
 					elements_.push_back( element );
 					std::string symbol( element->get_chemical_symbol() );
 					if ( element_index_.count( symbol ) ) {
-						if( symbol != "Z" && symbol != "X" ) {
+						if ( symbol != "Z" && symbol != "X" ) {
 							// Z and X are used as dummy element symbols -- ignore
 							utility_exit_with_message("ElementSet:: duplicate element symbol "+symbol);
 						}
@@ -93,9 +93,9 @@ ElementSet::contains_element_type( std::string const & element_symbol ) const
 		iter( element_index_.find( element_symbol ) );
 	// If we can't find it straight-away, we may need to title case it.
 	// (Cl versus CL)
-	if( iter == element_index_.end() && element_symbol.size() >=1 && element_symbol.size() <= 2 ) {
+	if ( iter == element_index_.end() && element_symbol.size() >=1 && element_symbol.size() <= 2 ) {
 		std::string title( 1, std::toupper(element_symbol[0], loc) );
-		if( element_symbol.size() == 2 ) { title += std::tolower(element_symbol[1], loc); }
+		if ( element_symbol.size() == 2 ) { title += std::tolower(element_symbol[1], loc); }
 		iter = element_index_.find( title );
 	}
 	return iter != element_index_.end();
@@ -111,12 +111,12 @@ ElementSet::element_index( std::string const & element_symbol ) const
 		iter( element_index_.find( element_symbol ) );
 	// If we can't find it straight-away, we may need to title case it.
 	// (Cl versus CL)
-	if( iter == element_index_.end() && element_symbol.size() >=1 && element_symbol.size() <= 2 ) {
+	if ( iter == element_index_.end() && element_symbol.size() >=1 && element_symbol.size() <= 2 ) {
 		std::string title( 1, std::toupper(element_symbol[0], loc) );
-		if( element_symbol.size() == 2 ) { title += std::tolower(element_symbol[1], loc); }
+		if ( element_symbol.size() == 2 ) { title += std::tolower(element_symbol[1], loc); }
 		iter = element_index_.find( title );
 	}
-	if( iter == element_index_.end() ) {
+	if ( iter == element_index_.end() ) {
 		utility_exit_with_message( "unrecognized element_symbol '"+element_symbol+"'" );
 	}
 	return iter->second;

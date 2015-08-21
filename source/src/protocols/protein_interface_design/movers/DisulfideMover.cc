@@ -155,12 +155,11 @@ void DisulfideMover::apply( Pose & pose ) {
 
 	PoseOP best_pose = 0;
 
-	for( vector1< pair<Size,Size> >::const_iterator
+	for ( vector1< pair<Size,Size> >::const_iterator
 			disulf = potential_disulfides.begin(),
 			end_disulf = potential_disulfides.end();
 			disulf != end_disulf;
-			++disulf )
-	{
+			++disulf ) {
 		TR.Debug << "Trying disulfide from " << disulf->first
 			<< " to " << disulf->second << endl;
 
@@ -179,18 +178,19 @@ void DisulfideMover::apply( Pose & pose ) {
 		task_->restrict_to_repacking();
 
 		// for each residue
-		for( Size i(1); i <= trial_pose->total_residue(); ++i )
-		{
+		for ( Size i(1); i <= trial_pose->total_residue(); ++i ) {
 			Residue const& res(trial_pose->residue(i));
-			if( !res.is_protein() )
+			if ( !res.is_protein() ) {
 				continue;
+			}
 			// Repack interface residues (except for disallowed aas)
-			if( interface.is_interface(i) &&
-				(	allowed_aas_[ res.aa() ] || //allowed or a target disulf
+			if ( interface.is_interface(i) &&
+					( allowed_aas_[ res.aa() ] || //allowed or a target disulf
 					i == disulf->first ||
 					i == disulf->second
-				) )
+					) ) {
 				continue;
+			}
 
 			// Other residues are unchanged
 			task_->nonconst_residue_task(i).prevent_repacking();
@@ -200,17 +200,16 @@ void DisulfideMover::apply( Pose & pose ) {
 		kinematics::MoveMapOP mm( new kinematics::MoveMap );
 		mm->set_bb( false );
 		mm->set_jump( rb_jump_, false );
-		for( core::Size i=1; i<=trial_pose->total_residue(); ++i ) {
+		for ( core::Size i=1; i<=trial_pose->total_residue(); ++i ) {
 			Residue const& res(trial_pose->residue(i));
 
 			if ( !trial_pose->residue(i).is_protein() ) continue;
-			if( interface.is_interface(i) &&
-				(	allowed_aas_[ res.aa() ] || //allowed or a target disulf
+			if ( interface.is_interface(i) &&
+					( allowed_aas_[ res.aa() ] || //allowed or a target disulf
 					i == disulf->first ||
-					i == disulf->second ))
-			{
+					i == disulf->second ) ) {
 				mm->set_chi( i, true );
-;
+				;
 				//mm->set_bb( i, true );
 			}
 		}
@@ -223,16 +222,16 @@ void DisulfideMover::apply( Pose & pose ) {
 		assert(name == "CYS:disulfide");
 
 		// Is this pose better than the previous best pose?
-		if( !best_pose ||
-			best_pose->energies().total_energy() > trial_pose->energies().total_energy() )
+		if ( !best_pose ||
+				best_pose->energies().total_energy() > trial_pose->energies().total_energy() ) {
 			// && great disulfide bond?
-		{
 			best_pose = trial_pose;
 		}
 	}
 
-	if( best_pose )
+	if ( best_pose ) {
 		pose = *best_pose;
+	}
 
 }
 
@@ -245,8 +244,8 @@ DisulfideMover::get_name() const {
 /// @return pairs of residues (target, host) from the target protein and the
 ///   docking protein.
 void DisulfideMover::disulfide_list( Pose const& const_pose,
-		vector1< Size > const& targets, Size rb_jump,
-		vector1< pair<Size,Size> > & disulfides )
+	vector1< Size > const& targets, Size rb_jump,
+	vector1< pair<Size,Size> > & disulfides )
 {
 	disulfides.clear();
 
@@ -263,19 +262,16 @@ void DisulfideMover::disulfide_list( Pose const& const_pose,
 	// divide the targets by interface
 	vector1<Size> lower_targets;
 	vector1<Size> upper_targets;
-	for(vector1<Size>::const_iterator target = targets.begin(),
+	for ( vector1<Size>::const_iterator target = targets.begin(),
 			end_target = targets.end();
-			target != end_target; ++target)
-	{
-		if( find(pairs[1].begin(), pairs[1].end(), static_cast<int>(*target)) != pairs[1].end() ) {
+			target != end_target; ++target ) {
+		if ( find(pairs[1].begin(), pairs[1].end(), static_cast<int>(*target)) != pairs[1].end() ) {
 			//lower partner
 			lower_targets.push_back(*target);
-		}
-		else if( find(pairs[2].begin(), pairs[2].end(), static_cast<int>(*target)) != pairs[2].end() ) {
+		} else if ( find(pairs[2].begin(), pairs[2].end(), static_cast<int>(*target)) != pairs[2].end() ) {
 			//upper partner
 			upper_targets.push_back(*target);
-		}
-		else { //Target not in the interface
+		} else { //Target not in the interface
 			TR.Debug << "Target "<< *target
 				<< " does not lie on the protein interface." << std::endl;
 			continue; //ignore this target
@@ -283,23 +279,22 @@ void DisulfideMover::disulfide_list( Pose const& const_pose,
 	}
 
 	// If no targets were specified on one partner, just use everything in the interface
-	if( lower_targets.empty() )
+	if ( lower_targets.empty() ) {
 		lower_targets = pairs[1];
-	if( upper_targets.empty() )
+	}
+	if ( upper_targets.empty() ) {
 		upper_targets = pairs[2];
+	}
 
 	// loop through all targets. If one is found, return it.
-	for(vector1<Size>::const_iterator lower_target = lower_targets.begin(),
+	for ( vector1<Size>::const_iterator lower_target = lower_targets.begin(),
 			end_lower_target = lower_targets.end();
-			lower_target != end_lower_target; ++lower_target)
-	{
-		for( vector1<Size>::const_iterator upper_target = upper_targets.begin(),
+			lower_target != end_lower_target; ++lower_target ) {
+		for ( vector1<Size>::const_iterator upper_target = upper_targets.begin(),
 				end_host = upper_targets.end();
-				upper_target != end_host; ++upper_target )
-		{
-			if( interface.is_pair(pose.residue(*lower_target), pose.residue(*upper_target)) &&
-				potential_.is_disulfide(pose.residue(*lower_target), pose.residue(*upper_target)) )
-			{
+				upper_target != end_host; ++upper_target ) {
+			if ( interface.is_pair(pose.residue(*lower_target), pose.residue(*upper_target)) &&
+					potential_.is_disulfide(pose.residue(*lower_target), pose.residue(*upper_target)) ) {
 				disulfides.push_back(std::make_pair(*lower_target,*upper_target));
 			}
 		}
@@ -307,20 +302,20 @@ void DisulfideMover::disulfide_list( Pose const& const_pose,
 }
 
 /**
- * @brief Reinitialize this Mover with parameters from the specified tags.
- * @details Parameters recognized:
- *  - target_pdb_num or target_res_num. A single target residue to form disulfides to
- *  - target_pdb_nums or target_res_nums. A list of possible target residues
- */
+* @brief Reinitialize this Mover with parameters from the specified tags.
+* @details Parameters recognized:
+*  - target_pdb_num or target_res_num. A single target residue to form disulfides to
+*  - target_pdb_nums or target_res_nums. A list of possible target residues
+*/
 void DisulfideMover::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const &,
-		Movers_map const &,
-		Pose const & pose)
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const &,
+	Movers_map const &,
+	Pose const & pose)
 {
 
 	// Set target to the residue specified by "target_pdb_num" or "target_res_num"
-	if( tag->hasOption("targets") ){
+	if ( tag->hasOption("targets") ) {
 		target_residues_ = core::pose::get_resnum_list(tag, "targets",pose);
 	}
 
@@ -329,9 +324,8 @@ void DisulfideMover::parse_my_tag( utility::tag::TagCOP tag,
 	scorefxn_minimize_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_minimize", data )->clone();
 
 	TR<<"DisulfideMover targeting residues ";
-	for(vector1<Size>::const_iterator target = target_residues_.begin();
-			target != target_residues_.end();++target)
-	{
+	for ( vector1<Size>::const_iterator target = target_residues_.begin();
+			target != target_residues_.end(); ++target ) {
 		TR<<*target<<", ";
 	}
 	TR<<std::endl;

@@ -17,7 +17,7 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
-namespace flxbb{
+namespace flxbb {
 
 class InterlockAroma;
 typedef utility::pointer::shared_ptr< InterlockAroma > InterlockAromaOP;

@@ -17,8 +17,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace canonical_sampling{
+namespace protocols {
+namespace canonical_sampling {
 
 //Forwards and OP typedefs
 class ThermodynamicMover;

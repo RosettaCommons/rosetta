@@ -58,8 +58,8 @@ BindingSiteConstraint::BindingSiteConstraint(
 	core::pose::Pose const &start_pose,
 	core::scoring::ScoreType scoretype   /// ? TO DO -- give own scoretype
 ):
-Constraint( scoretype ),
-atms_(atms) {
+	Constraint( scoretype ),
+	atms_(atms) {
 	init ( start_pose );
 }
 
@@ -73,19 +73,22 @@ void BindingSiteConstraint::init( core::pose::Pose const &start_pose ) {
 	for ( int i = 1; i <= natoms; ++i ) {
 		numeric::xyzVector< core::Real > x_i = start_pose.xyz( atms_[i] );
 		com += x_i;
-		for ( int k = 0; k < 3; ++k )
+		for ( int k = 0; k < 3; ++k ) {
 			tgt_pos_(k+1,i) = x_i[k];
+		}
 	}
 
 	// center at the origin
 	com /= atms_.size();
-	for (int i=1; i<=(int)atms_.size(); ++i)
-		for ( int k = 0; k < 3; ++k )
+	for ( int i=1; i<=(int)atms_.size(); ++i ) {
+		for ( int k = 0; k < 3; ++k ) {
 			tgt_pos_(k+1,i) -= com[k];
+		}
+	}
 
 	// also create centroid constraints
 	core::pose::Pose start_pose_copy = start_pose;
-	if ( start_pose_copy.residue(1).residue_type_set().name() != core::chemical::CENTROID ){
+	if ( start_pose_copy.residue(1).residue_type_set().name() != core::chemical::CENTROID ) {
 		core::util::switch_to_residue_type_set( start_pose_copy, core::chemical::CENTROID );
 	}
 	com = numeric::xyzVector< core::Real >(0,0,0);
@@ -93,21 +96,25 @@ void BindingSiteConstraint::init( core::pose::Pose const &start_pose ) {
 	tgt_pos_centroid_.dimension( 3, natoms );
 	for ( int i = 1; i <= natoms; ++i ) {
 		core::id::AtomID atm_i;
-		if ( atms_[i].atomno() > 5 )
+		if ( atms_[i].atomno() > 5 ) {
 			atm_i = core::id::AtomID( start_pose_copy.residue( atms_[i].rsd()  ).natoms() , atms_[i].rsd() );
-		else
+		} else {
 			atm_i = atms_[i];
+		}
 		numeric::xyzVector< core::Real > x_i = start_pose_copy.xyz( atm_i );
 		com += x_i;
-		for ( int k = 0; k < 3; ++k )
+		for ( int k = 0; k < 3; ++k ) {
 			tgt_pos_centroid_(k+1,i) = x_i[k];
+		}
 	}
 
 	// center at the origin
 	com /= atms_.size();
-	for (int i=1; i<=(int)atms_.size(); ++i)
-		for ( int k = 0; k < 3; ++k )
+	for ( int i=1; i<=(int)atms_.size(); ++i ) {
+		for ( int k = 0; k < 3; ++k ) {
 			tgt_pos_centroid_(k+1,i) -= com[k];
+		}
+	}
 }
 
 /// ctor from a vector of atom positions (in lieu of a pose)
@@ -131,7 +138,7 @@ BindingSiteConstraint::score( core::scoring::func::XYZ_Func const&, core::scorin
 
 	// get optimally-aligned RMS
 	core::Real bs_score = 0.0;
-	for (int i=1; i<=(int)atms_.size(); ++i) {
+	for ( int i=1; i<=(int)atms_.size(); ++i ) {
 		core::Real this_dist = rot_db[ atms_[i] ].length();
 		bs_score += this_dist*this_dist;
 		//std::cerr << "   " << bs_score << " <= +" << this_dist << "^2\n";
@@ -150,7 +157,7 @@ BindingSiteConstraint::setup_for_scoring( core::scoring::func::XYZ_Func const & 
 	utility::vector1< numeric::xyzVector< core::Real > > templ_atms;
 	utility::vector1< bool > align_centroid;
 
-	for (int i=1; i<=(int)atms_.size(); ++i) {
+	for ( int i=1; i<=(int)atms_.size(); ++i ) {
 		core::chemical::ResidueType const & rsd_type = xyz.residue( atms_[i].rsd()  ).type();
 		core::id::AtomID atm_i;
 		bool aln_cent_i = false;
@@ -175,9 +182,9 @@ BindingSiteConstraint::setup_for_scoring( core::scoring::func::XYZ_Func const & 
 //   ... placing a vector  -- from each atom to the the rotated >target< atoms -- in the database
 void
 BindingSiteConstraint::pre_align(
-                utility::vector1< numeric::xyzVector< core::Real > > const & templ_atms,
-                utility::vector1< bool > const & align_centroid
-                                ) const {
+	utility::vector1< numeric::xyzVector< core::Real > > const & templ_atms,
+	utility::vector1< bool > const & align_centroid
+) const {
 	int natoms = templ_atms.size();
 
 	if ( natoms != (int)atms_.size() ) {
@@ -190,15 +197,18 @@ BindingSiteConstraint::pre_align(
 	for ( int i = 1; i <= natoms; ++i ) {
 		numeric::xyzVector< core::Real > const &x_i = templ_atms[i];
 		com += x_i;
-		for ( int k = 0; k < 3; ++k )
+		for ( int k = 0; k < 3; ++k ) {
 			tmpl_pos(k+1,i) = x_i[k];
+		}
 	}
 
 	// center at the origin
 	com /= natoms;
-	for (int i=1; i<=natoms; ++i)
-		for ( int k = 0; k < 3; ++k )
+	for ( int i=1; i<=natoms; ++i ) {
+		for ( int k = 0; k < 3; ++k ) {
 			tmpl_pos(k+1,i) -= com[k];
+		}
+	}
 
 	// get optimal superposition
 	// rotate TARGET to the TEMPLATE
@@ -207,8 +217,8 @@ BindingSiteConstraint::pre_align(
 	numeric::Real ctx;
 	ObjexxFCL::FArray2D< core::Real >  tgt_pos_mixed( 3 , natoms );
 
-	for (int i=1; i<=natoms; ++i) {
-		if (align_centroid[i]) {
+	for ( int i=1; i<=natoms; ++i ) {
+		if ( align_centroid[i] ) {
 			for ( int k = 1; k <= 3; ++k ) {
 				tgt_pos_mixed(k,i) = tgt_pos_centroid_(k,i);
 			}
@@ -219,9 +229,11 @@ BindingSiteConstraint::pre_align(
 		}
 	}
 	ObjexxFCL::FArray2D< core::Real >  tgt_pos_copy( 3 , natoms );
-	for (int i=1; i<=natoms; ++i)
-		for ( int k = 1; k <= 3; ++k )
+	for ( int i=1; i<=natoms; ++i ) {
+		for ( int k = 1; k <= 3; ++k ) {
 			tgt_pos_copy(k,i) = tgt_pos_mixed(k,i);
+		}
+	}
 
 	numeric::model_quality::findUU( tgt_pos_mixed, tmpl_pos, ww, natoms, uu, ctx );
 
@@ -243,11 +255,11 @@ BindingSiteConstraint::pre_align(
 		///////////////
 		///////////////
 		//std::cerr << "   tgt: ATOM " << i << ": " << tgt_pos_copy(1,i) << " , "
-		//																					<< tgt_pos_copy(2,i) << " , "
-		//																					<< tgt_pos_copy(3,i) << std::endl;
+		//                     << tgt_pos_copy(2,i) << " , "
+		//                     << tgt_pos_copy(3,i) << std::endl;
 		//std::cerr << "   tmpl:ATOM " << i << ": " << tmpl_pos(1,i) << " , "
-		//																					<< tmpl_pos(2,i) << " , "
-		//																					<< tmpl_pos(3,i) << std::endl;
+		//                     << tmpl_pos(2,i) << " , "
+		//                     << tmpl_pos(3,i) << std::endl;
 		//std::cerr << "   del: ATOM " << i << ": " << rot_db[ atms_[i] ][0] << " , "
 		//                                          << rot_db[ atms_[i] ][1] << " , "
 		//                                          << rot_db[ atms_[i] ][2] << "\n\n";
@@ -272,10 +284,10 @@ BindingSiteConstraint::fill_f1_f2(
 	core::Vector & F1,
 	core::Vector & F2,
 	core::scoring::EnergyMap const & weights
-) const	{
+) const {
 	// filler
 	//std::cerr << "BindingSiteConstraint::fill_f1_f2() " << std::endl;
-	if ( std::find( atms_.begin() , atms_.end() , atom ) == atms_.end()) return;
+	if ( std::find( atms_.begin() , atms_.end() , atom ) == atms_.end() ) return;
 
 	numeric::xyzVector< core::Real > atom_x = -xyz(atom);
 	numeric::xyzVector< core::Real > const f2( rot_db[ atom ] );
@@ -306,26 +318,28 @@ BindingSiteConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) co
 {
 	utility::vector1< AtomID > atms_remap;
 
-	for (int i=1; i<=(int) atms_.size(); ++i) {
+	for ( int i=1; i<=(int) atms_.size(); ++i ) {
 		if ( seqmap[atms_[i].rsd()] != 0 ) {
 			atms_remap.push_back( AtomID( atms_[i].atomno(), seqmap[atms_[i].rsd()] ) );
 		}
 	}
 
-	if (atms_remap.size() > 2)
+	if ( atms_remap.size() > 2 ) {
 		return core::scoring::constraints::ConstraintOP( new BindingSiteConstraint( atms_remap , tgt_pos_, tgt_pos_centroid_ ) );
-	else
+	} else {
 		return NULL;
+	}
 }
 
 
 core::id::AtomID const &
 BindingSiteConstraint::atom( core::Size const n ) const
 {
-	if ( n >= 1 && n <= atms_.size() )
+	if ( n >= 1 && n <= atms_.size() ) {
 		return atms_[n];
-	else
+	} else {
 		utility_exit_with_message( "BindingSiteConstraint::atom() bad argument" );
+	}
 
 	return atms_[1]; // stop the compiler from complaining
 }
@@ -344,9 +358,9 @@ core::Size
 BindingSiteConstraint::show_violations( std::ostream& /*out*/, core::pose::Pose const& /*pose*/, core::Size /*verbose_level*/, core::Real /*threshold*/ ) const {
 	/*
 	if (verbose_level > 80) {
-		out << "AtomPairConstraint ("
-				<< core::pose.residue_type(atom1_.rsd() ).atom_name( atom1_.atomno() ) << ":" << atom1_.atomno() << "," << atom1_.rsd() << "-"
-				<< core::pose.residue_type(atom2_.rsd() ).atom_name( atom2_.atomno() ) << ":" << atom2_.atomno() << "," << atom2_.rsd() << ") " ;
+	out << "AtomPairConstraint ("
+	<< core::pose.residue_type(atom1_.rsd() ).atom_name( atom1_.atomno() ) << ":" << atom1_.atomno() << "," << atom1_.rsd() << "-"
+	<< core::pose.residue_type(atom2_.rsd() ).atom_name( atom2_.atomno() ) << ":" << atom2_.atomno() << "," << atom2_.rsd() << ") " ;
 	};
 	return func_->show_violations( out, dist( pose ), verbose_level );
 	*/
@@ -357,35 +371,35 @@ BindingSiteConstraint::show_violations( std::ostream& /*out*/, core::pose::Pose 
 /// @details one line definition "BindingSite atom1 res1 ... atomN resN"
 void
 BindingSiteConstraint::read_def(
-	std::istream& data,
-	core::pose::Pose const& pose,
-	core::scoring::constraints::FuncFactory const& func_factory
+std::istream& data,
+core::pose::Pose const& pose,
+core::scoring::constraints::FuncFactory const& func_factory
 ) {
-	core::Size res;
-	std::string name;
+core::Size res;
+std::string name;
 
-	std::string line;
-	// = data.getline();
-	getline( data, line );
-	std::vector< std::string > tokens = utility::split( line );
+std::string line;
+// = data.getline();
+getline( data, line );
+std::vector< std::string > tokens = utility::split( line );
 
-	// to do? atm name -> centroid conversion
-	tr.Debug << "read: ";
-	int npairs = tokens.size() / 2;
-	for (int i=0; i<npairs; ++i) {
-		name = tokens[2*i];
-		res = (core::Size) atoi(tokens[2*i + 1].c_str());
-		tr.Debug << "    " << name << " " << res;
+// to do? atm name -> centroid conversion
+tr.Debug << "read: ";
+int npairs = tokens.size() / 2;
+for (int i=0; i<npairs; ++i) {
+name = tokens[2*i];
+res = (core::Size) atoi(tokens[2*i + 1].c_str());
+tr.Debug << "    " << name << " " << res;
 
-		atms_.push_back( core::id::AtomID( pose.residue_type( res ).atom_index( name ), res ) );
-		if ( res > pose.total_residue() ) {
-			tr.Debug << "** ignored **";
-			continue;
-		}
-	}
+atms_.push_back( core::id::AtomID( pose.residue_type( res ).atom_index( name ), res ) );
+if ( res > pose.total_residue() ) {
+tr.Debug << "** ignored **";
+continue;
+}
+}
 
-	// get positions from start pose
-	init ( pose );
+// get positions from start pose
+init ( pose );
 }
 */
 

@@ -39,39 +39,39 @@ namespace components {
 
 /// @brief manages information about segments of residues
 class NamedMover : public protocols::moves::Mover {
-	public:
-		NamedMover();
-		NamedMover( std::string const & id, std::string const & parent_id );
+public:
+	NamedMover();
+	NamedMover( std::string const & id, std::string const & parent_id );
 
-		virtual ~NamedMover() {}
+	virtual ~NamedMover() {}
 
-		/// @brief setup the parameters via an xml tag
-		virtual void parse_my_tag(
-				utility::tag::TagCOP tag,
-				basic::datacache::DataMap & data,
-				protocols::filters::Filters_map const & filters,
-				protocols::moves::Movers_map const & movers,
-				core::pose::Pose const & pose );
+	/// @brief setup the parameters via an xml tag
+	virtual void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose );
 
-		/// @brief returns an identifier for this mover
-		std::string const & id() const;
+	/// @brief returns an identifier for this mover
+	std::string const & id() const;
 
-		/// @brief returns the name of the parent mover
-		std::string const & parent_id() const;
+	/// @brief returns the name of the parent mover
+	std::string const & parent_id() const;
 
-		/// @brief sets an identifier for this mover
-		void set_id( std::string const & idval );
+	/// @brief sets an identifier for this mover
+	void set_id( std::string const & idval );
 
-		/// @brief sets an identifier for the parent of this mover, for nested moves
-		void set_parent_id( std::string const & parent );
+	/// @brief sets an identifier for the parent of this mover, for nested moves
+	void set_parent_id( std::string const & parent );
 
-	protected:
-		/// @brief adds prefix if necessary, returns result
-		std::string add_parent_prefix( std::string const & s ) const;
+protected:
+	/// @brief adds prefix if necessary, returns result
+	std::string add_parent_prefix( std::string const & s ) const;
 
-	private:
-		std::string id_;
-		std::string parent_id_;
+private:
+	std::string id_;
+	std::string parent_id_;
 };
 
 } // components

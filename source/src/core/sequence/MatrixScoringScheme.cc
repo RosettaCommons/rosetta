@@ -46,7 +46,7 @@ void MatrixScoringScheme::read_data( utility::io::izstream & input ) {
 	using utility::vector1;
 	using namespace core::chemical;
 	vector1< AA > order;
-	while( getline( input, line ) ) {
+	while ( getline( input, line ) ) {
 		if ( line.substr(0,1) == "#" ) continue; // skip comments
 
 		std::istringstream line_stream( line );
@@ -68,8 +68,8 @@ void MatrixScoringScheme::read_data( utility::io::izstream & input ) {
 
 			AA aa = aa_from_oneletter_code(aa_name);
 			for ( vector1< AA >::const_iterator it = order.begin(),
-						end = order.end(); it != end; ++it
-			) {
+					end = order.end(); it != end; ++it
+					) {
 				Real score;
 				line_stream >> score;
 
@@ -78,8 +78,9 @@ void MatrixScoringScheme::read_data( utility::io::izstream & input ) {
 					utility_exit_with_message( message );
 				}
 
-				if ( (Size) aa <= order.size() && *it != 0 && (Size) *it <= order.size() )
+				if ( (Size) aa <= order.size() && *it != 0 && (Size) *it <= order.size() ) {
 					scoring_matrix_[ aa ][ *it ] = score;
+				}
 
 			}
 		}
@@ -138,8 +139,8 @@ Real MatrixScoringScheme::score(
 
 	if ( aa1 == core::chemical::aa_unk || aa2 == core::chemical::aa_unk ) {
 		// likely a non-canonical aa in sequence
-		tr.Error 	<< "returning score of zero for comparing amino acids "
-							<< (*seq1)[pos1] << " and " << (*seq2)[pos2] << std::endl;
+		tr.Error  << "returning score of zero for comparing amino acids "
+			<< (*seq1)[pos1] << " and " << (*seq2)[pos2] << std::endl;
 		return 0;
 	}
 

@@ -26,8 +26,8 @@ namespace stepwise {
 namespace monte_carlo {
 namespace mover {
 
-	class DeleteMover;
-	typedef utility::pointer::shared_ptr< DeleteMover > DeleteMoverOP;
+class DeleteMover;
+typedef utility::pointer::shared_ptr< DeleteMover > DeleteMoverOP;
 
 } //mover
 } //monte_carlo

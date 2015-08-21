@@ -39,24 +39,24 @@
 
 namespace protocols {
 namespace topology_broker {
-	
+
 class RigidBodyRandomTMHMover : public rigid::RigidBodyMover{
 public:
 	RigidBodyRandomTMHMover();
 	RigidBodyRandomTMHMover(core::Real max_trans, core::Real rotation_mag, core::Real translation_mag, core::Size tmhelix,
-							protocols::topology_broker::TopologyClaimerOP claimer);
+		protocols::topology_broker::TopologyClaimerOP claimer);
 	void apply(core::pose::Pose& pose);
 	virtual std::string get_name() const;
 	virtual ~RigidBodyRandomTMHMover();
-	
+
 private:
-	
+
 	core::Real max_trans_;
 	core::Real trans_mag_in_;
 	core::Real rot_mag_in_;
 	core::Size num_jump_;
 	topology_broker::TopologyClaimerOP claimer_;
-	
+
 };
 
 }

@@ -67,8 +67,8 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 
-namespace protocols{
-namespace flxbb{
+namespace protocols {
+namespace flxbb {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 std::string
@@ -96,7 +96,7 @@ FlxbbDesignPack::FlxbbDesignPack() :
 FlxbbDesignPack::FlxbbDesignPack(
 	ScoreFunctionCOP scorefxn,
 	PackerTaskCOP task,
-  FilterStructsOP filter ):
+	FilterStructsOP filter ):
 	protocols::simple_moves::PackRotamersMover( scorefxn, task ),
 	filter_( filter )
 {}
@@ -111,11 +111,11 @@ FlxbbDesignPack::apply( pose::Pose & pose )
 	pose.update_residue_neighbors();
 	this->setup( pose );
 
-	if( ! filter_ ){
+	if ( ! filter_ ) {
 		this->run( pose );
-	}else{
+	} else {
 		filter_->reset( pose );
-		while( filter_->filter_on() ){
+		while ( filter_->filter_on() ) {
 			this->run( pose );
 			filter_->apply( pose );
 		}
@@ -158,7 +158,7 @@ FlxbbDesign::FlxbbDesign() :
 /// @brief value constructor
 FlxbbDesign::FlxbbDesign(
 	ScoreFunctionOP const sfxnd,
-  ScoreFunctionOP const sfxnr,
+	ScoreFunctionOP const sfxnr,
 	Size const ncycle,
 	String const layer_mode,
 	bool const use_origseq_for_not_dsgned_layer,
@@ -191,8 +191,8 @@ FlxbbDesign::FlxbbDesign(
 
 /// @brief copy constructor
 FlxbbDesign::FlxbbDesign( FlxbbDesign const & rval ) :
-  //utility::pointer::ReferenceCount(),
-  Super( rval ),
+	//utility::pointer::ReferenceCount(),
+	Super( rval ),
 	scorefxn_design_( rval.scorefxn_design_ ),
 	scorefxn_relax_( rval.scorefxn_relax_ ),
 	nflxbb_cycles_( rval.nflxbb_cycles_ ),
@@ -202,7 +202,7 @@ FlxbbDesign::FlxbbDesign( FlxbbDesign const & rval ) :
 	no_design_( rval.no_design_ ),
 	design_taskset_( rval.design_taskset_ ),
 	filter_during_design_( rval.filter_during_design_ ),
- 	blueprint_ ( rval.blueprint_ ),
+	blueprint_ ( rval.blueprint_ ),
 	resfile_( rval.resfile_ ),
 	constraints_sheet_( rval.constraints_sheet_ ),
 	constraints_NtoC_( rval.constraints_NtoC_ ),
@@ -233,28 +233,28 @@ FlxbbDesign::MoverOP FlxbbDesign::fresh_instance() const
 /// @brief initialize setups
 void FlxbbDesign::read_options()
 {
-	if( option[ OptionKeys::flxbb::ncycle ].user() ) nflxbb_cycles_ = option[ OptionKeys::flxbb::ncycle ]();
-	if( option[ OptionKeys::flxbb::blueprint ].user() ) blueprint_ = BluePrintOP( new BluePrint( option[ OptionKeys::flxbb::blueprint ]().name() ) );
-	if( option[ OptionKeys::flxbb::layer::layer ].user() ) layer_mode_ = option[ OptionKeys::flxbb::layer::layer ]();
-	if( option[ OptionKeys::flxbb::constraints_sheet ].user() ) constraints_sheet_ =  option[ OptionKeys::flxbb::constraints_sheet ]();
-	if( option[ OptionKeys::flxbb::constraints_NtoC ].user() ) constraints_NtoC_ = option[ OptionKeys::flxbb::constraints_NtoC ]();
-	if( option[ OptionKeys::flxbb::movemap_from_blueprint ] ) movemap_from_blueprint_ = true;
+	if ( option[ OptionKeys::flxbb::ncycle ].user() ) nflxbb_cycles_ = option[ OptionKeys::flxbb::ncycle ]();
+	if ( option[ OptionKeys::flxbb::blueprint ].user() ) blueprint_ = BluePrintOP( new BluePrint( option[ OptionKeys::flxbb::blueprint ]().name() ) );
+	if ( option[ OptionKeys::flxbb::layer::layer ].user() ) layer_mode_ = option[ OptionKeys::flxbb::layer::layer ]();
+	if ( option[ OptionKeys::flxbb::constraints_sheet ].user() ) constraints_sheet_ =  option[ OptionKeys::flxbb::constraints_sheet ]();
+	if ( option[ OptionKeys::flxbb::constraints_NtoC ].user() ) constraints_NtoC_ = option[ OptionKeys::flxbb::constraints_NtoC ]();
+	if ( option[ OptionKeys::flxbb::movemap_from_blueprint ] ) movemap_from_blueprint_ = true;
 
 	Size filter_trial( 0 );
 	String filter_type( "" );
-	if( option[ OptionKeys::flxbb::filter_trial ].user() ) filter_trial = option[ OptionKeys::flxbb::filter_trial ]();
-	if( option[ OptionKeys::flxbb::filter_type ].user() ) filter_type = option[ OptionKeys::flxbb::filter_type ]();
-	if( filter_trial > 0 && filter_type != "" ){
+	if ( option[ OptionKeys::flxbb::filter_trial ].user() ) filter_trial = option[ OptionKeys::flxbb::filter_trial ]();
+	if ( option[ OptionKeys::flxbb::filter_type ].user() ) filter_type = option[ OptionKeys::flxbb::filter_type ]();
+	if ( filter_trial > 0 && filter_type != "" ) {
 		initialize_filter( filter_trial, filter_type );
 	}
 }
 
 /// @brief
 void FlxbbDesign::initialize_filter( Size const filter_trial, String const & filter_type ){
-	if( filter_type != "" ){
-		if( filter_type == "packstat" ){
+	if ( filter_type != "" ) {
+		if ( filter_type == "packstat" ) {
 			filter_during_design_ = FilterStructsOP( new FilterStructs_Packstat( filter_trial ) );
-		}else{
+		} else {
 			TR.Error << filter_type << " does not exists as filter name " << std::endl;
 			runtime_assert( false );
 		}
@@ -398,59 +398,59 @@ FlxbbDesign::build_design_taskset( Pose const & pose )
 	RelaxProtocolBaseOP rlx_mover;
 	if ( use_fast_relax_ ) {
 		rlx_mover = RelaxProtocolBaseOP( new FastRelax( scorefxn_relax_ ) );
-	} else{
+	} else {
 		rlx_mover = RelaxProtocolBaseOP( new ClassicRelax( scorefxn_relax_ ) );
 	}
-	if( movemap_ ) rlx_mover->set_movemap( movemap_ ); // movemap can be controled by blueprint
-	if( relax_constraint_to_design_ ) rlx_mover->constrain_relax_to_start_coords( true );
-	if( limit_aroma_chi2_ ) { // default true
+	if ( movemap_ ) rlx_mover->set_movemap( movemap_ ); // movemap can be controled by blueprint
+	if ( relax_constraint_to_design_ ) rlx_mover->constrain_relax_to_start_coords( true );
+	if ( limit_aroma_chi2_ ) { // default true
 		TaskFactoryOP tf( new TaskFactory );
 		//jadolfbr - FastRelax and ClassicRelax now completely respects the tf you give it.
 		//Nobu - Note that ClassicRelax ignored the set task factory before.
 		tf->push_back(TaskOperationCOP( new InitializeFromCommandline ));
 		tf->push_back(TaskOperationCOP( new RestrictToRepacking ) );
 		tf->push_back( TaskOperationCOP( new LimitAromaChi2Operation ) );
-		if (movemap_) tf->push_back( TaskOperationCOP( new RestrictToMoveMapChiOperation(movemap_) ) );
+		if ( movemap_ ) tf->push_back( TaskOperationCOP( new RestrictToMoveMapChiOperation(movemap_) ) );
 		rlx_mover->set_task_factory( tf );
 	}
 
-	if( layer_mode_ == "" ){
+	if ( layer_mode_ == "" ) {
 		dts.push_back( DesignTaskOP( new DesignTask_Normal( nflxbb_cycles_, scorefxn_design_, rlx_mover, filter_during_design_ ) ) );
-	}else{
+	} else {
 
 		utility::vector1< String > layers( utility::string_split( layer_mode_, '_' ) );
-		if( layers.size() == 1 && layer_mode_ == "normal" ){
+		if ( layers.size() == 1 && layer_mode_ == "normal" ) {
 
 			rlx_mover = RelaxProtocolBaseOP( new FastRelax( scorefxn_relax_ ) );
 			FilterStructs_PackstatOP filter1( new FilterStructs_Packstat( pose, 10 ) );
 			FilterStructs_TotalChargeOP filter2( new FilterStructs_TotalCharge( pose ) );
 
 			// 1st stage: 2 cycles of the fixbb designinig only core and boundary and relax
-			dts.push_back( DesignTaskOP( new DesignTask_Layer( true, true, false,	false,
-																					 2, scorefxn_design_, rlx_mover, filter1 ) ));
+			dts.push_back( DesignTaskOP( new DesignTask_Layer( true, true, false, false,
+				2, scorefxn_design_, rlx_mover, filter1 ) ));
 			// 2nd stage: 2 cycles of design all and relax
 			dts.push_back( DesignTaskOP( new DesignTask_Layer( true, true, true, false,
-																					 2, scorefxn_design_, rlx_mover, filter1 ) ));
+				2, scorefxn_design_, rlx_mover, filter1 ) ));
 			// 3rd stage: design only surface without relax and filter sequence of which totalcharge is non-zero
-			dts.push_back( DesignTaskOP( new DesignTask_Layer( false, false, true,	true,
-																					 1, scorefxn_design_, 0, filter2 ) ));
+			dts.push_back( DesignTaskOP( new DesignTask_Layer( false, false, true, true,
+				1, scorefxn_design_, 0, filter2 ) ));
 
-		}else if( layers.size() == 1 && layer_mode_ == "all" ){
+		} else if ( layers.size() == 1 && layer_mode_ == "all" ) {
 			dts.push_back( DesignTaskOP( new DesignTask_Layer( true, true, true, false,
-																					 nflxbb_cycles_, scorefxn_design_, rlx_mover, filter_during_design_ ) ));
-		}else if( layers.size() >= 1 ){
+				nflxbb_cycles_, scorefxn_design_, rlx_mover, filter_during_design_ ) ));
+		} else if ( layers.size() >= 1 ) {
 			bool dcore( false );
 			bool boundary( false );
 			bool surface( false );
-			for( utility::vector1< String >::const_iterator iter = layers.begin(); iter != layers.end() ; ++iter) {
+			for ( utility::vector1< String >::const_iterator iter = layers.begin(); iter != layers.end() ; ++iter ) {
 				String layer(*iter);
-				if( layer == "core" ){
+				if ( layer == "core" ) {
 					dcore = true;
-				}else if( layer == "surface" ){
+				} else if ( layer == "surface" ) {
 					surface = true;
-				}else if( layer == "boundary" ){
+				} else if ( layer == "boundary" ) {
 					boundary = true;
-				}else{
+				} else {
 					TR << "Error!, wrong specification of layer_mode " << layer << std::endl;
 					TR << "Every layers are designed. " << std::endl;
 					dcore = true;
@@ -459,28 +459,28 @@ FlxbbDesign::build_design_taskset( Pose const & pose )
 				}
 			} // utility::vector1
 			dts.push_back( DesignTaskOP( new DesignTask_Layer( dcore, boundary, surface,
-																					 use_origseq_for_not_dsgned_layer_,
-																					 nflxbb_cycles_, scorefxn_design_, rlx_mover, filter_during_design_ ) ));
+				use_origseq_for_not_dsgned_layer_,
+				nflxbb_cycles_, scorefxn_design_, rlx_mover, filter_during_design_ ) ));
 		}
 	} // if ( layer_mode_ == "" )
 
 	// set the filename of resfile, which is given in parser, to all the DesignTask
-	if( resfile_ != "" ){
-		for( DesignTaskSet::const_iterator it=dts.begin(); it!=dts.end(); ++it ) {
+	if ( resfile_ != "" ) {
+		for ( DesignTaskSet::const_iterator it=dts.begin(); it!=dts.end(); ++it ) {
 			(*it)->set_resfile( resfile_ );
 		}
 	}
 
 	// set additional task operations
-	if( ! task_operations_.empty() ){
-		for( DesignTaskSet::const_iterator it=dts.begin(); it!=dts.end(); ++it ) {
+	if ( ! task_operations_.empty() ) {
+		for ( DesignTaskSet::const_iterator it=dts.begin(); it!=dts.end(); ++it ) {
 			(*it)->add_task_operations( task_operations_ );
 		}
 	}
 
 	// Exclude aromatic chi2 rotamers, of which angles are around 0
-	if( limit_aroma_chi2_ ) { // default true
-		for( DesignTaskSet::const_iterator it=dts.begin(); it!=dts.end(); ++it ) {
+	if ( limit_aroma_chi2_ ) { // default true
+		for ( DesignTaskSet::const_iterator it=dts.begin(); it!=dts.end(); ++it ) {
 			(*it)->add_task_operation( TaskOperationOP( new LimitAromaChi2Operation ) );
 		}
 	}
@@ -505,13 +505,13 @@ void FlxbbDesign::apply( pose::Pose & pose )
 	using protocols::simple_moves::MakePolyXMover;
 
 	// set pose to fullatom
-	if( ! pose.is_fullatom() ){
+	if ( ! pose.is_fullatom() ) {
 		core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
 	}
 
 	// set movemap from blueprint for relax
-	if( movemap_from_blueprint_ ){
-		if( movemap_ ){
+	if ( movemap_from_blueprint_ ) {
+		if ( movemap_ ) {
 			TR << "Movemap will be overrided by the definition of movemap in blueprint " << std::endl;
 		}
 		runtime_assert( blueprint_ != 0 );
@@ -524,34 +524,34 @@ void FlxbbDesign::apply( pose::Pose & pose )
 	ConstraintSetOP cstset( new ConstraintSet );
 
 	// set weight of constraints
-	if( constraints_NtoC_ > 0.0 || constraints_sheet_ > 0.0 ){
+	if ( constraints_NtoC_ > 0.0 || constraints_sheet_ > 0.0 ) {
 		Real cst_weight( scorefxn_relax_->get_weight( core::scoring::atom_pair_constraint ) );
 		runtime_assert( cst_weight > 0.0 );
 	}
 
 	// constraints in beta-sheet
-	if( constraints_sheet_ > 0.0 ){
-		if( blueprint_ ){
+	if ( constraints_sheet_ > 0.0 ) {
+		if ( blueprint_ ) {
 			cstset->add_constraints( constraints_sheet( pose, blueprint_, constraints_sheet_ ) );
-		}else{
+		} else {
 			cstset->add_constraints( constraints_sheet( pose, constraints_sheet_ ) );
 		}
 	}
 	// constraints between N and C
-	if( constraints_NtoC_ > 0.0 ){
+	if ( constraints_NtoC_ > 0.0 ) {
 		cstset->add_constraints( constraints_NtoC( pose, constraints_NtoC_ ) );
 	}
 	// attach constraints to pose
 	pose.add_constraints( cstset->get_all_constraints() );
 
 	// setup design_taskset
-	if( design_taskset_.empty() ){
+	if ( design_taskset_.empty() ) {
 		design_taskset_ = build_design_taskset( pose );
 	}
 
 	// make pose to all ala
 	// alert !! we might want to have the functionality to keep_disulfide or not
-	if( clear_all_residues_ ) {
+	if ( clear_all_residues_ ) {
 		MakePolyXMover bap( "ALA", false/*kee_pro*/, true /*keep_gly*/, false /*keep_disulfide_cys*/ );
 		bap.apply( pose );
 	}
@@ -562,11 +562,11 @@ void FlxbbDesign::apply( pose::Pose & pose )
 
 		num_task ++;
 		DesignTaskOP design_task( *it );
-		for( Size i=1 ; i<=design_task->ncycle() ; i++ ){
+		for ( Size i=1 ; i<=design_task->ncycle() ; i++ ) {
 
 			TR << "current_cycle/total_cycle: " << i << "/" << design_task->ncycle() << " in DesignTask: " << num_task << std::endl;
 
-			if( ! no_design_ ) {
+			if ( ! no_design_ ) {
 				// set packertask
 				PackerTaskOP task( TaskFactory::create_packer_task( pose ));
 				design_task->setup( pose, task );
@@ -586,7 +586,7 @@ void FlxbbDesign::apply( pose::Pose & pose )
 			}
 
 			// run mover
-			if( design_task->mover() && !no_relax_ ){
+			if ( design_task->mover() && !no_relax_ ) {
 				design_task->mover()->apply( pose );
 				TR << "Score after mover, " << design_task->mover()->type() << std::endl;
 				scorefxn_relax_->show( TR, pose );
@@ -624,13 +624,13 @@ FlxbbDesign::parse_my_tag(
 	scorefxn_design_ = protocols::rosetta_scripts::parse_score_function( tag, "sfxn_design", data );
 	scorefxn_relax_ = protocols::rosetta_scripts::parse_score_function( tag, "sfxn_relax", data );
 
- 	std::string const blueprint( tag->getOption<std::string>( "blueprint", "" ) );
-	if( blueprint != "" ){
+	std::string const blueprint( tag->getOption<std::string>( "blueprint", "" ) );
+	if ( blueprint != "" ) {
 		blueprint_ = BluePrintOP( new BluePrint( blueprint ) );
 	}
 
 	// the number of cycles of fixbb and relax
- 	nflxbb_cycles_ = tag->getOption<Size>( "ncycles", 3 );
+	nflxbb_cycles_ = tag->getOption<Size>( "ncycles", 3 );
 
 	// perform fixbb in layer mode: core, boundary, and surfacee
 	layer_mode_ = tag->getOption<String>( "layer_mode", "" );
@@ -641,22 +641,22 @@ FlxbbDesign::parse_my_tag(
 	// set filter
 	Size filter_trial = tag->getOption<Size>( "filter_trial", 10 );
 	String filter_type = tag->getOption<String>( "filter_type", "packstat" );
-	if( filter_trial > 0 && filter_type != "" ){
+	if ( filter_trial > 0 && filter_type != "" ) {
 		initialize_filter( filter_trial, filter_type );
 	}
 
 	// do not perform relax after design
 	no_relax_ = tag->getOption<bool>( "no_relax", 0 );
 	bool movemap_defined( false );
-  utility::vector1< TagCOP > const branch_tags( tag->getTags() );
+	utility::vector1< TagCOP > const branch_tags( tag->getTags() );
 	utility::vector1< TagCOP >::const_iterator tag_it;
-	for( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ){
-		if( (*tag_it)->getName() == "MoveMap" ){
-				movemap_defined = true;
-				break;
+	for ( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ) {
+		if ( (*tag_it)->getName() == "MoveMap" ) {
+			movemap_defined = true;
+			break;
 		}
 	}
-  if( movemap_defined ){
+	if ( movemap_defined ) {
 		movemap_ = MoveMapOP( new core::kinematics::MoveMap );
 		protocols::rosetta_scripts::parse_movemap( tag, pose, movemap_, data );
 	}
@@ -680,7 +680,7 @@ FlxbbDesign::parse_my_tag(
 
 	// movemap for relax
 	movemap_from_blueprint_ = tag->getOption<bool>( "movemap_from_blueprint", 0 );
-	if( movemap_from_blueprint_ ){
+	if ( movemap_from_blueprint_ ) {
 		TR << "Movemap is defined based on blueprint " << std::endl;
 		runtime_assert( blueprint != "" );
 	}

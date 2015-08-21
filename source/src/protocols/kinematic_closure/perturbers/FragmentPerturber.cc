@@ -46,7 +46,7 @@ FragmentPerturber::FragmentPerturber(utility::vector1< core::fragment::FragSetCO
 }
 
 void FragmentPerturber::perturb_subset(Pose const &, IndexList const & residues, ClosureProblemOP problem) {
-	
+
 	//init variables
 	Real phi, psi, omega;
 	bool success (false);
@@ -76,56 +76,56 @@ void FragmentPerturber::perturb_subset(Pose const &, IndexList const & residues,
 	Size frag_pos;
 	core::fragment::SingleResidueFragDataCOP fragment_residue;
 	core::fragment::BBTorsionSRFDCOP fragment_data;
-	
+
 	//try fragment selection max_nfail times
-	while (!success && (nfail < max_nfail)) {
+	while ( !success && (nfail < max_nfail) ) {
 		//TR << "trial " << nfail << endl;//debug
-		
+
 		//randomly choose a fragment library to sample from (i.e. uniform sampling of the fragment length from all available fragment lengths)
 		frag_lib_index = 1 + static_cast<int>(numeric::random::uniform() * num_frag_libs);//adding 1, since the vector starts at index 1
 		frag_lib = frag_libs_[frag_lib_index];
 		//TR << "chose random frag_lib #" << frag_lib_index << endl;//debug
-		
+
 		//search that library for fragment alignment frames that overlap with the given residues region and contain at least one valid fragment
-		if (!frag_lib->overlapping_with_region(move_map, region_start, region_end, min_overlap, min_length, overlapping_frames)) {
+		if ( !frag_lib->overlapping_with_region(move_map, region_start, region_end, min_overlap, min_length, overlapping_frames) ) {
 			nfail++;
 			continue;//try again
 		}
 		num_overlapping_frames = overlapping_frames.size();
 		/*//start debug
-		 for (Size i=1; i<=num_overlapping_frames; ++i) {
-		 TR << overlapping_frames[i]->type() << " " << overlapping_frames[i]->length() << " " << overlapping_frames[i]->nr_frags() << endl;
-		 //overlapping_frames[i]->show(std::cout);
-		 }
-		 //end debug */
+		for (Size i=1; i<=num_overlapping_frames; ++i) {
+		TR << overlapping_frames[i]->type() << " " << overlapping_frames[i]->length() << " " << overlapping_frames[i]->nr_frags() << endl;
+		//overlapping_frames[i]->show(std::cout);
+		}
+		//end debug */
 		//TR << "number of overlapping frames found: " << num_overlapping_frames << endl;//debug
-		
+
 		//randomly choose an alignment frame to sample from (i.e. uniform sampling of the alignment frame from all overlapping frames)
 		overlapping_frame_index = 1 + static_cast<int>(numeric::random::uniform() * num_overlapping_frames);//adding 1, since the vector starts at index 1
 		overlapping_frame = overlapping_frames[overlapping_frame_index];
 		num_fragments = overlapping_frame->nr_frags();
 		//TR << "chose random overlapping frame #" << overlapping_frame_index << ", going from residue " << overlapping_frame->start() << " to " << overlapping_frame->end() << endl;//debug
 		/*//start debug
-		 for (Size i=1; i<=num_fragments; ++i) {
-		 TR << i << " " << (overlapping_frame->fragment_ptr(i))->sequence() << " " << (overlapping_frame->fragment_ptr(i))->secstruct() << " " << (overlapping_frame->fragment_ptr(i))->score() << endl;
-		 }
-		 //end debug */
+		for (Size i=1; i<=num_fragments; ++i) {
+		TR << i << " " << (overlapping_frame->fragment_ptr(i))->sequence() << " " << (overlapping_frame->fragment_ptr(i))->secstruct() << " " << (overlapping_frame->fragment_ptr(i))->score() << endl;
+		}
+		//end debug */
 		//TR << "this frame is " << overlapping_frame->end()-overlapping_frame->start() << " residues long and contains " << num_fragments << " fragments" << endl;//debug
-		
+
 		//randomly choose a fragment from the selected alignment frame (i.e. uniform fragment sampling from all fragments of the selected frame)
 		fragment_number = 1 + static_cast<int>(numeric::random::uniform() * num_fragments);//adding 1, since the vector starts at index 1
 		fragment = overlapping_frame->fragment_ptr(fragment_number);
 		//TR << "chose random fragment #" << fragment_number << " " << fragment->sequence() << " " << fragment->secstruct() << " " << fragment->score() << endl;//debug
 		success=true;
 	}
-	if (!success) {
+	if ( !success ) {
 		TR.Error << "couldn't find any valid fragment!" << endl;
 		return;
 	}
-	
-	BOOST_FOREACH(Size residue, residues) {
+
+	BOOST_FOREACH ( Size residue, residues ) {
 		//check if residue is part of the given frame
-		if (overlapping_frame->contains_seqpos(residue)) {
+		if ( overlapping_frame->contains_seqpos(residue) ) {
 			//convert sequence position to internal fragment position
 			frag_pos = residue - overlapping_frame->start() + 1;//adding 1, since the vector starts at index 1
 			//TR << "residue: " << residue << ", frag_pos: " << frag_pos << endl;//debug
@@ -133,7 +133,7 @@ void FragmentPerturber::perturb_subset(Pose const &, IndexList const & residues,
 			//dynamically cast the base class fragment data pointer to the specialized BBTorsion subtype
 			//(dynamic cast required, since different fragment types can exist in parallel at runtime)
 			fragment_data = core::fragment::BBTorsionSRFDCOP(utility::pointer::dynamic_pointer_cast< core::fragment::BBTorsionSRFD const > ( fragment_residue ));
-			if (fragment_data) {
+			if ( fragment_data ) {
 				//if the dynamic cast was successful, extract backbone torsion angles
 				phi = fragment_data->torsion(1);
 				psi = fragment_data->torsion(2);

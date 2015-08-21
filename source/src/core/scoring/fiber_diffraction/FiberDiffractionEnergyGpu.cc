@@ -130,7 +130,7 @@ void FiberDiffractionEnergyGpu::setup_for_scoring( pose::Pose & pose, ScoreFunct
  }
 
 	c_ = p_*a_;
-	
+
 	core::Real  res_cutoff_low_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_low ]();
   core::Real  res_cutoff_high_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_high ]();
 
@@ -157,7 +157,7 @@ void FiberDiffractionEnergyGpu::setup_for_scoring( pose::Pose & pose, ScoreFunct
 	utility::vector1< Real > phi, z, r, bfactors;
   setup_cylindrical_coords( pose, natoms, atom_type_number, AtomID_to_atomnbr_, phi, z, r, bfactors);
 	TR << "Model contains " << natoms << " atoms" << std::endl;
-	
+
 
 	TR << "Calculating Chi2..." << std::endl;
 
@@ -194,9 +194,9 @@ void FiberDiffractionEnergyGpu::setup_for_scoring( pose::Pose & pose, ScoreFunct
         //Scale factor is crucial for numerical derivatives check
         //Even small differences cause significant dicsrapancies in derivatives
         //We found that by fixing scale factor you may correct numeric vs. analytical deriv check
-        
+
 	scale_factor_ = square_obs_/prod;
-       
+
 	bool output_fiber_spectra_(false);
   if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::output_fiber_spectra ].user()) {
   	output_fiber_spectra_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::output_fiber_spectra ]();
@@ -207,7 +207,7 @@ void FiberDiffractionEnergyGpu::setup_for_scoring( pose::Pose & pose, ScoreFunct
   	std::string outfile = "IntensityGpu.txt";
   	out.open(outfile.c_str(), std::ios::out);
   }
- 
+
 	bool rfactor_refinement_=false;
   if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::rfactor_refinement ].user()) {
   	rfactor_refinement_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::rfactor_refinement ]();
@@ -311,7 +311,7 @@ void FiberDiffractionEnergyGpu::setup_for_derivatives( pose::Pose & pose, ScoreF
   	find_pitch( pose, p_ );
   }
 	c_ = p_*a_;
-	
+
 	core::Real  res_cutoff_low_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_low ]();
   core::Real  res_cutoff_high_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_high ]();
 
@@ -357,7 +357,7 @@ void FiberDiffractionEnergyGpu::setup_for_derivatives( pose::Pose & pose, ScoreF
 		dchi2_d[i] = 0.0;
 		dchi2_d_cross_R[i] = 0.0;
 	}
-	
+
 	/////////////////GPU action//////////////////////////
 	calculate_derivatives_gpu(lmax, natoms, nvals, layer_lines_R, layer_lines_I, I, form_factors, 
 				phi, z, r, atom_type_number, dchi2_d, dchi2_d_cross_R, c_, 

@@ -87,18 +87,18 @@ string DbTrajectoryRecorderCreator::mover_name() { // {{{1
 // }}}1
 
 DbTrajectoryRecorder::DbTrajectoryRecorder() // {{{1
-	: TrajectoryRecorder(),
-	  job_id_(-1) {}
+: TrajectoryRecorder(),
+	job_id_(-1) {}
 
 DbTrajectoryRecorder::DbTrajectoryRecorder(Size job_id) // {{{1
-	: TrajectoryRecorder(),
-	  job_id_(job_id) {}
+: TrajectoryRecorder(),
+	job_id_(job_id) {}
 
 DbTrajectoryRecorder::DbTrajectoryRecorder( // {{{1
 	DbTrajectoryRecorder const & other)
-	: TrajectoryRecorder(other),
-	  job_id_(other.job_id_),
-	  frame_cache_(other.frame_cache_) {}
+: TrajectoryRecorder(other),
+	job_id_(other.job_id_),
+	frame_cache_(other.frame_cache_) {}
 
 MoverOP DbTrajectoryRecorder::clone() const { // {{{1
 	return MoverOP( new protocols::canonical_sampling::DbTrajectoryRecorder( *this ) );
@@ -113,9 +113,9 @@ string DbTrajectoryRecorder::get_name() const { // {{{1
 }
 
 void DbTrajectoryRecorder::initialize_simulation( // {{{1
-		core::pose::Pose & pose,
-		MetropolisHastingsMover const & mover,
-		core::Size cycle) {
+	core::pose::Pose & pose,
+	MetropolisHastingsMover const & mover,
+	core::Size cycle) {
 
 	TrajectoryRecorder::initialize_simulation(pose, mover, cycle);
 	write_schema_to_db();
@@ -123,19 +123,19 @@ void DbTrajectoryRecorder::initialize_simulation( // {{{1
 }
 
 void DbTrajectoryRecorder::finalize_simulation( // {{{1
-		core::pose::Pose & pose,
-		MetropolisHastingsMover const & mover) {
+	core::pose::Pose & pose,
+	MetropolisHastingsMover const & mover) {
 
 	TrajectoryRecorder::finalize_simulation(pose, mover);
 	write_cache_to_db();
 }
 
 bool DbTrajectoryRecorder::restart_simulation( // {{{1
-		core::pose::Pose &,
-		MetropolisHastingsMover&,
-		core::Size&,
-		core::Size&,
-		core::Real&) {
+	core::pose::Pose &,
+	MetropolisHastingsMover&,
+	core::Size&,
+	core::Size&,
+	core::Real&) {
 
 	utility_exit_with_message("DbTrajectoryRecorder does not support restarting trajectories.");
 
@@ -186,18 +186,18 @@ void DbTrajectoryRecorder::write_cache_to_db() const { // {{{1
 
 	RowDataBaseOP job( new RowData<Size>("job_id", job_id_) );
 
-	BOOST_FOREACH (Frame frame, frame_cache_) {
+	BOOST_FOREACH ( Frame frame, frame_cache_ ) {
 		stringstream string_stream;
 		SilentFileData silent_file;
 		SilentStructOP silent_data( new BinarySilentStruct(frame.pose, "db") );
 		silent_file._write_silent_struct(*silent_data, string_stream);
 
 		RowDataBaseOP iteration( new RowData<Size>(
-				"iteration", frame.iteration) );
+			"iteration", frame.iteration) );
 		RowDataBaseOP score( new RowData<Real>(
-				"score", frame.pose.energies().total_energy()) );
+			"score", frame.pose.energies().total_energy()) );
 		RowDataBaseOP silent_pose( new RowData<string>(
-				"silent_pose", string_stream.str()) );
+			"silent_pose", string_stream.str()) );
 
 		trajectory_insert.add_row(make_vector(job, iteration, score, silent_pose));
 	}
@@ -207,15 +207,15 @@ void DbTrajectoryRecorder::write_cache_to_db() const { // {{{1
 }
 
 void DbTrajectoryRecorder::write_model( // {{{1
-		core::pose::Pose const & pose,
-		MetropolisHastingsMover const *) {
+	core::pose::Pose const & pose,
+	MetropolisHastingsMover const *) {
 
 	Frame frame;
 	frame.iteration = step_count();
 	frame.pose = pose;
 	frame_cache_.push_back(frame);
 
-	if (frame_cache_.size() >= cache_limit()) {
+	if ( frame_cache_.size() >= cache_limit() ) {
 		write_cache_to_db();
 	}
 }

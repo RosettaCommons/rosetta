@@ -54,7 +54,7 @@ CenrotRotamerLibrarySpecification::CenrotRotamerLibrarySpecification( std::istre
 {
 	std::string tag;
 	input >> tag;
-	if( ! input ) {
+	if ( ! input ) {
 		utility_exit_with_message("Cannot find AA parameter on Cenrot rotamer input.");
 	}
 	aa( aa_from_name( tag ) );
@@ -62,9 +62,9 @@ CenrotRotamerLibrarySpecification::CenrotRotamerLibrarySpecification( std::istre
 
 void
 CenrotRotamerLibrarySpecification::aa( AA aa_setting ) {
-  if( aa_setting > num_canonical_aas ) {
-    utility_exit_with_message("Cannot have a centroid rotamer library with a non-cannonical amino acid");
-  }
+	if ( aa_setting > num_canonical_aas ) {
+		utility_exit_with_message("Cannot have a centroid rotamer library with a non-cannonical amino acid");
+	}
 	aa_ = aa_setting;
 }
 CenrotRotamerLibrarySpecification::~CenrotRotamerLibrarySpecification() {}

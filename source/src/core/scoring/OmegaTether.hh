@@ -82,7 +82,7 @@ public:
 		Pose & pose,
 		ScoreFunction const & scorefxn
 	) const;
-	
+
 	/// @brief Returns the mainchain torsion index corresponding to "phi".
 	/// @details Generally 1.  Set to 2 for beta-amino acids so that derivatives are calculated
 	/// for the dihedral two spaces before the peptide bond.

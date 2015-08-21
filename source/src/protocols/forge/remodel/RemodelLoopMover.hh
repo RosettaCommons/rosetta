@@ -28,7 +28,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/simple_moves/FragmentMover.fwd.hh>
-#include <protocols/simple_moves/symmetry/SetupNCSMover.hh>   
+#include <protocols/simple_moves/symmetry/SetupNCSMover.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.hh>
@@ -225,8 +225,8 @@ public: // mutators
 
 	void
 	repeat_sync(
-	  core::pose::Pose & repeat_pose,
-	  core::Size repeat_number
+		core::pose::Pose & repeat_pose,
+		core::Size repeat_number
 	);
 
 
@@ -238,7 +238,7 @@ public: // mutators
 	void scorefunction( ScoreFunction const & sfx );
 
 	/// @brief adds the remodel data to thei remodelLoopMover object
-  void remodelData( protocols::forge::remodel::RemodelData const remodel_data);
+	void remodelData( protocols::forge::remodel::RemodelData const remodel_data);
 
 	/// @brief set the false movemap to use
 	/// @remarks All movemaps are generated with respect to this movemap.
@@ -373,7 +373,7 @@ public: // virtual main methods
 
 	virtual std::string get_name() const;
 
-//make this function public for experimental purpose
+	//make this function public for experimental purpose
 
 	/// @brief randomize loops
 	void randomize_stage( Pose & pose );
@@ -391,9 +391,9 @@ protected: // loop modeling stages
 	);
 
 	void loophash_stage(
-	  Pose & pose,
-	  MonteCarlo & mc,
-	  Real const cbreak_increment
+		Pose & pose,
+		MonteCarlo & mc,
+		Real const cbreak_increment
 	);
 	/// @brief abinitioo stage: better control of fragments. No loop closure tried
 	void abinitio_stage(
@@ -408,11 +408,11 @@ protected: // loop modeling stages
 		std::string stage_name,
 		bool const smoothMoves,
 		Real const fragScoreThreshold
-		);
+	);
 	/// @brief quick trip to FA to push parts of the molecular apart to a reasonable distance. I'm noticing an overcollapse in centroid
 	void fa_relax_stage(
-					Pose & pose
-					);
+		Pose & pose
+	);
 
 	/// @ brief sets up ncs constraints
 	protocols::simple_moves::symmetry::SetupNCSMover generate_ncs_csts(Pose & pose);
@@ -493,7 +493,7 @@ protected: // fragments
 		std::set<Size> const & disallowedPos,
 		bool const smoothMoves,
 		Real const fragScoreThreshold = 999.0
-		);
+	);
 
 	/// @brief append fragment movers for the list of internally kept fragment sets,
 	///  1 fragment mover for each fragment set
@@ -558,25 +558,25 @@ protected: // movemap
 		Size const left,
 		Size const right
 	);
-private: 
+private:
 	/// @brief initializes pose with starting pose
 	void set_starting_pdb(Pose & pose);
 
 	/// @brief initializes pose with starting sequence
 	void set_starting_sequence(Pose & pose);
-		
+
 	/// @brief initializes pose with ideal helices.
 	void set_ideal_helices(Pose & pose);
 
 	/// @setup allowed positions per stage
-  std::set<core::Size> generate_residues_to_sample(bool chooseSubsetResidues, Pose & pose, Size fragmentSize);
+	std::set<core::Size> generate_residues_to_sample(bool chooseSubsetResidues, Pose & pose, Size fragmentSize);
 
 private: // data
 
 	/// @brief the score function to use
 	ScoreFunctionOP sfx_;
 
- 	/// @remodelData, used when constraints are defined through Remodel
+	/// @remodelData, used when constraints are defined through Remodel
 	//So you can get at everything in the blueprint data
 	protocols::forge::remodel::RemodelData remodel_data_;
 
@@ -638,7 +638,7 @@ private: // data
 	/// @brief fragment sets to use
 	FragSetOPs fragsets_;
 
-  /// @brief local copy of repeat pose
+	/// @brief local copy of repeat pose
 	Pose repeat_pose_;
 
 	/// @brief use this for repeat construction in conjunction with symmetry

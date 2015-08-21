@@ -30,7 +30,7 @@
 
 // C++ Headers
 
-namespace protocols { 
+namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
@@ -46,7 +46,7 @@ public:
 
 	virtual void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 	void parse_tag( TagCOP tag , DataMap & );
-	
+
 	core::scoring::ScoreFunctionOP scorefxn() const;
 	void scorefxn( core::scoring::ScoreFunctionOP scorefxn );
 	core::scoring::ScoreType score_type() const;
@@ -64,10 +64,10 @@ public:
 
 private:
 	core::scoring::ScoreFunctionOP scorefxn_;
-	core::scoring::ScoreType score_type_; // scoretype of interest, defaults to total_energy 
+	core::scoring::ScoreType score_type_; // scoretype of interest, defaults to total_energy
 	std::string score_type_name_;
- 	core::Real threshold_; 
- 	bool lower_, individual_hbonds_; 
+	core::Real threshold_;
+	bool lower_, individual_hbonds_;
 	core::pose::PoseOP reference_pose_;
 };
 
@@ -75,4 +75,4 @@ private:
 } //namespace toolbox
 } //namespace protocols
 
-#endif 
+#endif

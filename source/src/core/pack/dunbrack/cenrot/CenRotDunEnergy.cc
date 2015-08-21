@@ -142,20 +142,20 @@ Real CenRotDunEnergy::eval_residue_dof_derivative(
 	scoring::EnergyMap const & weights
 ) const {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-debug_assert(rsd.residue_type_set().name()==chemical::CENTROID_ROT);
-	if ( rsd.has_variant_type( core::chemical::REPLONLY )){
-			return 0.0;
+	debug_assert(rsd.residue_type_set().name()==chemical::CENTROID_ROT);
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) {
+		return 0.0;
 	}
 
 	Real deriv(0.0);
 	if ( tor_id.valid() ) {
-	debug_assert( rsd.seqpos() == tor_id.rsd() );
+		debug_assert( rsd.seqpos() == tor_id.rsd() );
 		if ( rsd.is_virtual_residue() ) return 0.0;
 
 		SingleResidueRotamerLibraryFactory const & rotlibfact = *SingleResidueRotamerLibraryFactory::get_instance();
 		SingleResidueRotamerLibraryCOP residue_rotamer_library(rotlibfact.get( rsd.type() ));
 
-		if (residue_rotamer_library==0) return 0.0;
+		if ( residue_rotamer_library==0 ) return 0.0;
 
 		SingleResidueCenrotLibraryCOP residue_cenrot_library(
 			utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >(residue_rotamer_library)
@@ -184,9 +184,9 @@ Real CenRotDunEnergy::eval_dof_derivative(
 	scoring::EnergyMap const & weights
 ) const {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-debug_assert(pose.residue( tor_id.rsd() ).residue_type_set().name()==chemical::CENTROID_ROT);
-	if ( pose.residue( tor_id.rsd() ).has_variant_type( core::chemical::REPLONLY )){
-			return 0.0;
+	debug_assert(pose.residue( tor_id.rsd() ).residue_type_set().name()==chemical::CENTROID_ROT);
+	if ( pose.residue( tor_id.rsd() ).has_variant_type( core::chemical::REPLONLY ) ) {
+		return 0.0;
 	}
 
 	Real deriv(0.0);
@@ -197,14 +197,14 @@ debug_assert(pose.residue( tor_id.rsd() ).residue_type_set().name()==chemical::C
 		SingleResidueRotamerLibraryFactory const & rotlibfact = *SingleResidueRotamerLibraryFactory::get_instance();
 		SingleResidueRotamerLibraryCOP residue_rotamer_library(rotlibfact.get( pose.residue( tor_id.rsd() ).type() ));
 
-		if (residue_rotamer_library==0) return 0.0;
+		if ( residue_rotamer_library==0 ) return 0.0;
 
 		SingleResidueCenrotLibraryCOP residue_cenrot_library(
 			utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >(residue_rotamer_library)
 		);
 
-		if (residue_cenrot_library && pose.residue_type( tor_id.rsd() ).is_protein() && tor_id.type() == id::BB ) {
-			
+		if ( residue_cenrot_library && pose.residue_type( tor_id.rsd() ).is_protein() && tor_id.type() == id::BB ) {
+
 			RotamerLibraryScratchSpace scratch;
 			residue_cenrot_library->eval_rotameric_energy_bb_dof_deriv(pose.residue( tor_id.rsd() ), scratch);
 
@@ -227,7 +227,7 @@ void CenRotDunEnergy::eval_residue_derivatives(
 ) const {
 	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) return;
 	if ( rsd.aa() > core::chemical::num_canonical_aas ) return;
-debug_assert(rsd.residue_type_set().name()==chemical::CENTROID_ROT);
+	debug_assert(rsd.residue_type_set().name()==chemical::CENTROID_ROT);
 
 	Real weight = weights[ cen_rot_dun ];
 
@@ -235,7 +235,7 @@ debug_assert(rsd.residue_type_set().name()==chemical::CENTROID_ROT);
 	SingleResidueRotamerLibraryFactory const & rotlibfact = *SingleResidueRotamerLibraryFactory::get_instance();
 	SingleResidueRotamerLibraryCOP residue_rotamer_library(rotlibfact.get( rsd.type() ));
 
-	if (residue_rotamer_library==0) return;
+	if ( residue_rotamer_library==0 ) return;
 
 	SingleResidueCenrotLibraryCOP residue_cenrot_library(
 		utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >(residue_rotamer_library)

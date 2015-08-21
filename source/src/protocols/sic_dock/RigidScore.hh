@@ -75,7 +75,7 @@ public:
 	core::Real score( Xforms const & x1, Xforms const & x2 ) const;
 	std::string type() const { return "CBScore"; }
 	// Undefinded, commenting out to fix PyRosetta build  Real dist2_score( Real const & sqdist ) const;
-//private:
+	//private:
 	bool const hash_pose1_;
 	core::Real const clash_dis_, contact_dis_;
 	Reals const weights_;
@@ -86,14 +86,14 @@ public:
 
 template<typename T>
 inline T CBScore_dist_score( T const & sqdist, T const & start, T const & stop ) {
-	if( sqdist > stop*stop ) {
+	if ( sqdist > stop*stop ) {
 		return (T)0.0;
-	} else if( sqdist < start*start ) {
+	} else if ( sqdist < start*start ) {
 		return (T)1.0;
 	} else {
 		core::Real dist = sqrt( sqdist );
 		return (stop-dist)/(stop-start);
-		//return sqr(1.0	- sqr( (dist - start) / (stop - start) ) );
+		//return sqr(1.0 - sqr( (dist - start) / (stop - start) ) );
 	}
 }
 
@@ -141,8 +141,8 @@ public:
 	core::Real score( Xforms const & x1, Xforms const & x2 ) const;
 	std::string type() const { return "ConstraintSetScore"; }
 private:
-        // KAB - below variables commented out (-Wunused-private-field) on 2014-09-11
-        // Pose const & pose1_;
+	// KAB - below variables commented out (-Wunused-private-field) on 2014-09-11
+	// Pose const & pose1_;
 	// Pose const & pose2_;
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
 	// core::scoring::constraints::ConstraintSet const & cstset_;
@@ -197,20 +197,20 @@ public:
 private:
 	Scores scores_;
 	Reals weights_;
-  // KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
-  // Real minscore_hack_,maxscore_hack_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// Real minscore_hack_,maxscore_hack_;
 
 };
 
 
 // class CachedScore : public RigidScore {
 // public:
-// 	CachedScore(RigidScoreCOP score);
-// 	virtual ~CachedScore(){}
-// 	core::Real score( Xforms const & x1, Xforms const & x2 ) const;
+//  CachedScore(RigidScoreCOP score);
+//  virtual ~CachedScore(){}
+//  core::Real score( Xforms const & x1, Xforms const & x2 ) const;
 // private:
-// 	RigidScoreCOP score_;
-// 	// some kind of 6 dof hash
+//  RigidScoreCOP score_;
+//  // some kind of 6 dof hash
 // };
 
 

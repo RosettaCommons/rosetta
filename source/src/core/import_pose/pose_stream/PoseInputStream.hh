@@ -44,7 +44,7 @@ public:
 		core::chemical::ResidueTypeSet const &
 	) = 0;
 
-	virtual void fill_pose(	core::pose::Pose&	) = 0;
+	virtual void fill_pose( core::pose::Pose& ) = 0;
 
 	virtual utility::vector1< core::pose::PoseOP > get_all_poses(
 		core::chemical::ResidueTypeSet const & residue_set

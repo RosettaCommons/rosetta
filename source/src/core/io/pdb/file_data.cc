@@ -122,7 +122,7 @@ static thread_local basic::Tracer TR( "core.io.pdb.file_data" );
 
 
 ResidueInformation::ResidueInformation() :
-//	resid( "" ),
+	// resid( "" ),
 	resName( "" ),
 	chainID( ' ' ),
 	resSeq( 0 ),
@@ -135,7 +135,7 @@ ResidueInformation::ResidueInformation() :
 
 ResidueInformation::ResidueInformation(
 	AtomInformation const & ai) :
-//	resid( "" ),
+	// resid( "" ),
 	resName( ai.resName ),
 	chainID( ai.chainID ),
 	resSeq( ai.resSeq ),
@@ -174,8 +174,8 @@ String ResidueInformation::resid() const {
 
 ///////////////////////////////////////////////////////////////////////////////
 FileData::FileData() :
-		header(/* 0 */),
-		remarks(pose::RemarksOP( new pose::Remarks ))
+	header(/* 0 */),
+	remarks(pose::RemarksOP( new pose::Remarks ))
 {}
 
 FileData::~FileData()
@@ -273,32 +273,32 @@ FileData::store_heterogen_names(std::string const & hetID, std::string & text)
 	using namespace std;
 	using namespace core::chemical::carbohydrates;
 
-	if (hetID.empty()) {
+	if ( hetID.empty() ) {
 		TR.Warning << "PDB HETNAM record is missing an heterogen ID field." << endl;
 		return;
 	}
-	if (text.empty()) {
+	if ( text.empty() ) {
 		TR.Warning << "PDB HETNAM chemical name field is an empty string." << endl;
 		return;
 	}
 
 	// If the hetID is found in the map of Rosetta-allowed carbohydrate 3-letter codes....
-	if (CarbohydrateInfo::code_to_root_map().count(hetID)) {
+	if ( CarbohydrateInfo::code_to_root_map().count(hetID) ) {
 		strip_whitespace(text);
 		parse_heterogen_name_for_carbohydrate_residues(text);
 	} else {
 		// Search through current list of HETNAM records: append or create records as needed.
 		bool record_found = false;
 		Size const n_heterogen_names = heterogen_names.size();
-		for (uint i = 1; i <= n_heterogen_names; ++i) {
+		for ( uint i = 1; i <= n_heterogen_names; ++i ) {
 			// If a record already exists with this hetID, this is a continuation line; append.
-			if (hetID == heterogen_names[i].first) {
+			if ( hetID == heterogen_names[i].first ) {
 				heterogen_names[i].second.append(rstripped_whitespace(text));
 				record_found = true;
 				break;
 			}
 		}
-		if (!record_found) {
+		if ( !record_found ) {
 			// Non-carbohydrate heterogen names are simply stored in the standard PDB way.
 			strip_whitespace(text);
 			heterogen_names.push_back(make_pair(hetID, text));
@@ -336,7 +336,7 @@ FileData::parse_heterogen_name_for_carbohydrate_residues(std::string const & tex
 // Return the PDB resName, chainID, resSeq, and iCode for the given Rosetta sequence position.
 ResidueInformation
 FileData::get_residue_information(core::pose::Pose const & pose, core::uint const seqpos,
-		bool use_PDB, bool renumber_chains) const
+	bool use_PDB, bool renumber_chains) const
 {
 	using namespace std;
 	using namespace utility;
@@ -348,19 +348,19 @@ FileData::get_residue_information(core::pose::Pose const & pose, core::uint cons
 	res_info.resName = pose.residue(seqpos).name3();
 
 	// Use PDB-specific information?
-	if (use_PDB) {
+	if ( use_PDB ) {
 		PDBInfoCOP pdb_info = pose.pdb_info();
 
 		res_info.chainID = pdb_info->chain(seqpos);
 		if ( res_info.chainID == PDBInfo::empty_record() ) {  // safety
 			TR.Warning << "PDBInfo chain ID was left as character '" << PDBInfo::empty_record()
-					<< "', denoting an empty record; for convenience, replacing with space." << endl;
+				<< "', denoting an empty record; for convenience, replacing with space." << endl;
 			res_info.chainID = ' ';
 		}
 		res_info.resSeq = pdb_info->number(seqpos);
 		res_info.iCode = pdb_info->icode(seqpos);
 
-	// ...or not?
+		// ...or not?
 	} else {
 		uint chain_num = pose.chain(seqpos);
 		runtime_assert(chain_num > 0);
@@ -370,10 +370,10 @@ FileData::get_residue_information(core::pose::Pose const & pose, core::uint cons
 		res_info.iCode = ' ';
 
 		// If option is specified, renumber per-chain.
-		if (renumber_chains) {
+		if ( renumber_chains ) {
 			vector1<uint> const & chn_ends = pose.conformation().chain_endings();
-			for (uint i = 1; i <= chn_ends.size(); ++i) {
-				if (chn_ends[i] < seqpos) {
+			for ( uint i = 1; i <= chn_ends.size(); ++i ) {
+				if ( chn_ends[i] < seqpos ) {
 					res_info.resSeq = seqpos - chn_ends[i];
 				}
 			}
@@ -426,7 +426,7 @@ FileData::append_residue(
 	// Generate HETNAM data, if applicable.
 	// TODO: For now, only output HETNAM records for saccharide residues, but in the future, outputting HETNAM records
 	// for any HETATM residues could be done.
-	if (rsd.is_carbohydrate()) {
+	if ( rsd.is_carbohydrate() ) {
 		string const & hetID = rsd.name3();
 		string resSeq = print_i("%4d", res_info.resSeq);
 		resSeq.resize(4);
@@ -487,7 +487,7 @@ FileData::append_residue(
 		// (written by fpd; moved here by Labonte)
 		core::chemical::AtomTypeSet const &ats = rsd.type().atom_type_set();
 		ai.element = ats[atom.type()].element();
-		if (ai.element.length() == 1) ai.element = " "+ai.element;
+		if ( ai.element.length() == 1 ) ai.element = " "+ai.element;
 
 		// 'chains' is member data
 		if ( chains.size() < Size(rsd.chain() + 1) ) chains.resize( rsd.chain() + 1 );
@@ -513,9 +513,9 @@ FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions const & 
 	using core::pose::PDBInfo;
 
 	// Get Title Section information.
-	if( (options.preserve_header() == true || options.preserve_crystinfo() == true ) && pose.pdb_info() ) {
+	if ( (options.preserve_header() == true || options.preserve_crystinfo() == true ) && pose.pdb_info() ) {
 		*remarks = pose.pdb_info()->remarks();  // Get OP to PDBInfo object for remarks.
-		if(pose.pdb_info()->header_information()){
+		if ( pose.pdb_info()->header_information() ) {
 			header = HeaderInformationOP( new HeaderInformation(*(pose.pdb_info()->header_information())) );
 		} else {
 			header = HeaderInformationOP( new HeaderInformation() );
@@ -523,12 +523,12 @@ FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions const & 
 	}
 
 	// Get parametric information
-	if( options.write_pdb_parametric_info() ) {
+	if ( options.write_pdb_parametric_info() ) {
 		get_parametric_info(remarks, pose);
 	}
 
 	// Get Connectivity Annotation Section information.
-	if (options.write_pdb_link_records()) {
+	if ( options.write_pdb_link_records() ) {
 		using namespace utility;
 		using namespace id;
 		using namespace kinematics;
@@ -537,8 +537,8 @@ FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions const & 
 		FoldTree const & ft = pose.fold_tree();
 
 		FoldTree::const_iterator end_of_tree = ft.end();
-		for (FoldTree::const_iterator edge = ft.begin(); edge != end_of_tree; ++edge) {
-			if (edge->is_chemical_bond()) {
+		for ( FoldTree::const_iterator edge = ft.begin(); edge != end_of_tree; ++edge ) {
+			if ( edge->is_chemical_bond() ) {
 				string const & start_atom = edge->start_atom();
 				string const & stop_atom = edge->stop_atom();
 				uint const start_num = edge->start();
@@ -570,12 +570,12 @@ FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions const & 
 				uint start_atom_index = pose.residue(start_num).atom_index(start_atom);
 				uint stop_atom_index = pose.residue(stop_num).atom_index(stop_atom);
 				link.length = pose.conformation().bond_length(
-						AtomID(start_atom_index, start_num),
-						AtomID(stop_atom_index, stop_num));
+					AtomID(start_atom_index, start_num),
+					AtomID(stop_atom_index, stop_num));
 
 				// If key is found in the links map, add this new linkage information to the links already keyed to
 				// this residue.
-				if (link_map.count(link.resID1)) {
+				if ( link_map.count(link.resID1) ) {
 					links = link_map[link.resID1];
 				}
 				links.push_back(link);
@@ -609,18 +609,18 @@ void FileData::get_parametric_info(pose::RemarksOP remarks, core::pose::Pose con
 	using namespace core::conformation::parametric;
 
 	core::Size const nsets(pose.conformation().n_parameters_sets()); //How many ParametersSet objects are there in the pose?
-	if(nsets==0) return; //No need to proceed if this isn't a parametric conformation.
+	if ( nsets==0 ) return; //No need to proceed if this isn't a parametric conformation.
 
-	for(core::Size iset=1; iset<=nsets; ++iset) { //Loop through all of the ParametersSet objects.
+	for ( core::Size iset=1; iset<=nsets; ++iset ) { //Loop through all of the ParametersSet objects.
 		ParametersSetCOP curset( pose.conformation().parameters_set(iset) );
 		std::stringstream curset_summary;
 		curset->get_pdb_remark( curset_summary );
 
 		int cur_remark_number(1); //int instead of core::Size, to match the Remarks class.
-		if(remarks->size() > 0) cur_remark_number = (*remarks)[remarks->size()-1].num + 1;
+		if ( remarks->size() > 0 ) cur_remark_number = (*remarks)[remarks->size()-1].num + 1;
 
 		std::string cur_remark_str;
-		while(std::getline(curset_summary,cur_remark_str)) {
+		while ( std::getline(curset_summary,cur_remark_str) ) {
 			pose::RemarkInfo cur_remark;
 			cur_remark.value = cur_remark_str; // Ugh.  The RemarkInfo class provides no getters or setters -- only public access to its members.
 			cur_remark.num=cur_remark_number;
@@ -682,7 +682,7 @@ FileData::dump_pdb(
 	bool write_fold_tree)
 {
 	utility::io::ozstream file(file_name.c_str(), std::ios::out | std::ios::binary);
-	if(!file) {
+	if ( !file ) {
 		Error() << "FileData::dump_pdb: Unable to open file:" << file_name << " for writing!!!" << std::endl;
 		return false;
 	}
@@ -720,9 +720,9 @@ std::ostream&
 operator <<(std::ostream &os, FileData const & fd)
 {
 	os << "<FileData>{";
-	for(Size i=0; i<fd.chains.size(); i++) {
+	for ( Size i=0; i<fd.chains.size(); i++ ) {
 		os << "Chain<" << i << ">";
-		for(Size j=0; j<fd.chains[i].size(); j++) {
+		for ( Size j=0; j<fd.chains[i].size(); j++ ) {
 			os << "[" << j << ":" << fd.chains[i][j] << "]" << "\n";
 		}
 	}
@@ -755,8 +755,8 @@ FileData::create_working_data(
 {
 	rinfo.clear();
 
-	for(Size ch=0; ch<chains.size(); ++ch) {
-		for(Size i=0; i<chains[ch].size(); ++i) {
+	for ( Size ch=0; ch<chains.size(); ++ch ) {
+		for ( Size i=0; i<chains[ch].size(); ++i ) {
 			AtomInformation & ai( chains[ch][i] );
 			// we should make a copy instead of taking a reference if "fixing" the names causes problems
 			std::string const  res_name( convert_res_name( ai.resName ) );
@@ -765,14 +765,14 @@ FileData::create_working_data(
 			ai.name = atom_name;
 
 			bool const ok = update_atom_information_based_on_occupancy( ai, options );
-			if (!ok) continue;
+			if ( !ok ) continue;
 
 			ResidueInformation new_res( ai );
-			if( rinfo.size() == 0 || rinfo.back() != new_res ) rinfo.push_back(new_res);
+			if ( rinfo.size() == 0 || rinfo.back() != new_res ) rinfo.push_back(new_res);
 			ResidueInformation & curr_res = rinfo.back();
 			// Only insert atoms once, so we capture just the first alt conf.
 			// Would be nice in the future to take the highest occupancy instead...
-			if( curr_res.xyz.count(ai.name) == 0 ) {
+			if ( curr_res.xyz.count(ai.name) == 0 ) {
 				curr_res.atoms.push_back(ai); // this *does* make a copy
 				Vector coords( ai.x, ai.y, ai.z );
 				curr_res.xyz[ ai.name ] = coords;
@@ -790,14 +790,14 @@ bool
 FileData::update_atom_information_based_on_occupancy( AtomInformation & ai, FileDataOptions const & options ) const {
 
 	if ( ai.occupancy == 0.0 ) {
-		if( options.randomize_missing_coords() ) {
+		if ( options.randomize_missing_coords() ) {
 			randomize_missing_coords( ai );
 		} else if ( !options.ignore_zero_occupancy() ) {
 			// do nothing and keep this atom as it is
 		} else {
 			//When flag default changes from true to false, change to TR.Debug and remove second line
 			TR.Warning << "PDB reader is ignoring atom " << ai.name << " in residue " << ai.resSeq << ai.iCode << ai.chainID
-								 << ".  Pass flag -ignore_zero_occupancy false to change this behavior" << std::endl;
+				<< ".  Pass flag -ignore_zero_occupancy false to change this behavior" << std::endl;
 			return false; // skip this atom with zero occ by default
 		}
 	} else if ( ai.occupancy < 0.0 ) { // always randomize coords for atoms with negative occ
@@ -812,28 +812,28 @@ FileData::update_atom_information_based_on_occupancy( AtomInformation & ai, File
 // Helper Functions ///////////////////////////////////////////////////////////
 
 void fill_name_map( core::io::pdb::NameBimap & name_map,
-			ResidueInformation const & rinfo,
-			chemical::ResidueType const & rsd_type,
-			FileDataOptions const & options) {
+	ResidueInformation const & rinfo,
+	chemical::ResidueType const & rsd_type,
+	FileDataOptions const & options) {
 	//Reset name map
 	bool rename = rsd_type.remap_pdb_atom_names();
-	for( core::Size ii(1); ii <= options.residues_for_atom_name_remapping().size(); ++ii) {
+	for ( core::Size ii(1); ii <= options.residues_for_atom_name_remapping().size(); ++ii ) {
 		rename = rename || (options.residues_for_atom_name_remapping()[ ii ] == rsd_type.name3() );
 	}
-	if( rename ) {
+	if ( rename ) {
 		// Remap names according to bonding pattern and elements
 		// Will reset whatever is in name_map
 		remap_names_on_geometry( name_map, rinfo, rsd_type );
 	} else {
 		name_map.clear();
 		// Using names as-is, except for canonicalizing
-		for( utility::vector1< AtomInformation >::const_iterator iter=rinfo.atoms.begin(), iter_end=rinfo.atoms.end(); iter!= iter_end; ++iter ) {
+		for ( utility::vector1< AtomInformation >::const_iterator iter=rinfo.atoms.begin(), iter_end=rinfo.atoms.end(); iter!= iter_end; ++iter ) {
 			std::string const & name ( iter->name );
-			if( ! rinfo.xyz.count( name ) ) { // Only map atoms with coordinates.
+			if ( ! rinfo.xyz.count( name ) ) { // Only map atoms with coordinates.
 				continue;
 			}
 			std::string strip_name( stripped_whitespace(name) );
-			if( rsd_type.has( strip_name ) ) {
+			if ( rsd_type.has( strip_name ) ) {
 				// We do the diversion through the index to canonicalize the atom name spacing to Rosetta standards.
 				std::string canonical( rsd_type.atom_name( rsd_type.atom_index(strip_name) ) );
 				name_map.insert( NameBimap::value_type( name, canonical ) );
@@ -849,15 +849,15 @@ void fill_name_map( core::io::pdb::NameBimap & name_map,
 /// located at the origin.
 void
 FileData::randomize_missing_coords( AtomInformation & ai ) const {
-	//	if( ai.resSeq == 1 && ai.name == " N  ") return;//ignore first atom. Rosetta pdbs start with 0.000
-	if ( ai.x == 0.000 && ai.y == 0.000 && ai.z == 0.000 && ai.occupancy <= 0.0 ){
+	// if( ai.resSeq == 1 && ai.name == " N  ") return;//ignore first atom. Rosetta pdbs start with 0.000
+	if ( ai.x == 0.000 && ai.y == 0.000 && ai.z == 0.000 && ai.occupancy <= 0.0 ) {
 		TR << "Randomized: " << ai.name << " " << ai.resName << "  " << ai.resSeq << std::endl;
-		//v		if ( ai.name == " N  " || ai.name == " CA " || ai.name == " C  " ||
-		//v			ai.name == " O  " || ai.name == " CB " ) {
+		//v  if ( ai.name == " N  " || ai.name == " CA " || ai.name == " C  " ||
+		//v   ai.name == " O  " || ai.name == " CB " ) {
 		ai.x = ai.x + 900.000 + numeric::random::rg().uniform()*100.000;
 		ai.y = ai.y + 900.000 + numeric::random::rg().uniform()*100.000;
 		ai.z = ai.z + 900.000 + numeric::random::rg().uniform()*100.000;
-		//v		}
+		//v  }
 	}
 	return;
 }
@@ -873,32 +873,32 @@ write_additional_pdb_data(
 )
 {
 	using namespace basic::options;
-    using namespace basic::options::OptionKeys;
+	using namespace basic::options::OptionKeys;
 
-    // added by rebecca --> Normalized MEM lines. Useful for visualizing the boundaries of
-    // the membrane by coupling the NORM and THK coordinates
-    if ( pose.conformation().is_membrane() &&
-    		option[ OptionKeys::mp::output::normalize_to_thk ]() ) {
+	// added by rebecca --> Normalized MEM lines. Useful for visualizing the boundaries of
+	// the membrane by coupling the NORM and THK coordinates
+	if ( pose.conformation().is_membrane() &&
+			option[ OptionKeys::mp::output::normalize_to_thk ]() ) {
 
-    	// Grab membrane residue & current data
-    	core::Size resid( pose.conformation().membrane_info()->membrane_rsd_num() );
-    	core::Real thkn( pose.conformation().membrane_info()->membrane_thickness() );
-    	core::Vector cntr( pose.conformation().membrane_info()->membrane_center() );
-    	core::Vector norm( pose.conformation().membrane_info()->membrane_normal() );
+		// Grab membrane residue & current data
+		core::Size resid( pose.conformation().membrane_info()->membrane_rsd_num() );
+		core::Real thkn( pose.conformation().membrane_info()->membrane_thickness() );
+		core::Vector cntr( pose.conformation().membrane_info()->membrane_center() );
+		core::Vector norm( pose.conformation().membrane_info()->membrane_normal() );
 
-    	// Actually normalize the membrane residue to thk
-    	norm.normalize( thkn );
+		// Actually normalize the membrane residue to thk
+		norm.normalize( thkn );
 
-    	// Get rsdid, current chain,
-    	out << "HETATM XXXX THKN MEM X" << I(4,resid) << "    " << F(8, 3, thkn) << "   0.000   0.000 \n";
-			out << "HETATM XXXX CNTR MEM X" << I(4,resid) << "    " << F(8, 3, cntr.x()) << F(8, 3, cntr.y()) << F(8, 3, cntr.z()) << "\n";
-			out << "HETATM XXXX NORM MEM X" << I(4,resid) << "    " << F(8, 3, norm.x()) << F(8, 3, norm.y()) << F(8, 3, norm.z()) << "\n";
+		// Get rsdid, current chain,
+		out << "HETATM XXXX THKN MEM X" << I(4,resid) << "    " << F(8, 3, thkn) << "   0.000   0.000 \n";
+		out << "HETATM XXXX CNTR MEM X" << I(4,resid) << "    " << F(8, 3, cntr.x()) << F(8, 3, cntr.y()) << F(8, 3, cntr.z()) << "\n";
+		out << "HETATM XXXX NORM MEM X" << I(4,resid) << "    " << F(8, 3, norm.x()) << F(8, 3, norm.y()) << F(8, 3, norm.z()) << "\n";
 
-//              HETATM XXXX THKN MEM X  81      15.000   0.000   0.000
-//				HETATM XXXX CNTR MEM X  81       0.000   0.000   0.000
-//              HETATM XXXX NORM MEM X  81       0.000   0.000  15.000
+		//              HETATM XXXX THKN MEM X  81      15.000   0.000   0.000
+		//    HETATM XXXX CNTR MEM X  81       0.000   0.000   0.000
+		//              HETATM XXXX NORM MEM X  81       0.000   0.000  15.000
 
-    }
+	}
 
 	// added by rhiju --> "CONECT" lines. Useful for coarse-grained/centroid poses, so that
 	//  rasmol/pymol draws bonds between atoms 'bonded' in Rosetta that are far apart.
@@ -915,7 +915,7 @@ write_additional_pdb_data(
 	if ( basic::options::option[ OptionKeys::out::file::pdb_parents]() ) {
 		std::string value;
 		bool has_parents = core::pose::get_comment( pose, "parents", value );
-		if( has_parents ){
+		if ( has_parents ) {
 			out << "REMARK PARENT    " << value.substr(0,5) << std::endl;
 		}
 	}
@@ -923,48 +923,48 @@ write_additional_pdb_data(
 		out << "##Begin comments##" << std::endl;
 		using namespace std;
 		map< string, string > const comments = core::pose::get_all_comments(pose);
-		for( std::map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ){
+		for ( std::map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ) {
 			out << i->first<<" "<<i->second << std::endl;
 		}
 		out << "##End comments##" << std::endl;
 	}
 
-	if (basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals]){
+	if ( basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals] ) {
 		static std::string const chains( " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" );
-		for(core::Size i=1; i <=pose.n_residue(); ++i){
+		for ( core::Size i=1; i <=pose.n_residue(); ++i ) {
 			core::conformation::Residue rsd(pose.residue(i));
 			core::Size number(0);
 			char const chain( chains[ rsd.chain() ] );
-			for(core::Size j=1; j<=rsd.natoms(); ++j){
-				if(rsd.atom_type(j).atom_has_orbital()){
+			for ( core::Size j=1; j<=rsd.natoms(); ++j ) {
+				if ( rsd.atom_type(j).atom_has_orbital() ) {
 					utility::vector1<core::Size> const & orbital_indices(rsd.bonded_orbitals(j));
-					for(
+					for (
 							utility::vector1<core::Size>::const_iterator
 							orbital_index = orbital_indices.begin(),
 							orbital_index_end = orbital_indices.end();
 							orbital_index != orbital_index_end; ++orbital_index
-					){
+							) {
 						++number;
 						Vector orbital_xyz(rsd.orbital_xyz(*orbital_index));
 						out << "ATOM  " << I(5,number) << ' ' << rsd.orbital_name(*orbital_index) << ' ' <<
-								rsd.name3() << ' ' << chain << I(4,rsd.seqpos() ) << "    " <<
-								F(8,3,orbital_xyz.x()) <<
-								F(8,3,orbital_xyz.y()) <<
-								F(8,3,orbital_xyz.z()) <<
-								F(6,2,1.0) << F(6,2,1.0) << '\n';
+							rsd.name3() << ' ' << chain << I(4,rsd.seqpos() ) << "    " <<
+							F(8,3,orbital_xyz.x()) <<
+							F(8,3,orbital_xyz.y()) <<
+							F(8,3,orbital_xyz.z()) <<
+							F(6,2,1.0) << F(6,2,1.0) << '\n';
 					}
 				}
 			}
 		}
 	}
-	if (basic::options::option[ basic::options::OptionKeys::out::file::output_torsions ]){
+	if ( basic::options::option[ basic::options::OptionKeys::out::file::output_torsions ] ) {
 		if ( !core::pose::is_ideal_pose(pose) ) {
 			TR << "Ignoring out::file::output_torsions option because pose is non-ideal!" << std::endl;
 		} else {
 			ObjexxFCL::FArray1D_char dssp_reduced_secstruct(pose.n_residue());
 			scoring::dssp::Dssp(pose).dssp_reduced(dssp_reduced_secstruct);
 			out << "REMARK torsions: res pdbres pdbchain seq dssp phi psi omega" << std::endl;
-			for (core::Size i=1; i<=pose.n_residue(); ++i) {
+			for ( core::Size i=1; i<=pose.n_residue(); ++i ) {
 				out << "REMARK " << I( 4, i ) << " " << I( 4, pose.pdb_info()->number(i)) << " " << pose.pdb_info()->chain(i) << " " << pose.residue( i ).name1() << " " <<
 					dssp_reduced_secstruct(i) << " " << F( 9, 3, pose.phi(i)) << " " << F( 9, 3, pose.psi(i)) << " " << F( 9, 3, pose.omega(i)) << std::endl;
 			}
@@ -973,15 +973,15 @@ write_additional_pdb_data(
 
 	// Added by Daniel-Adriano Silva, used to write the PDBInfoLabels to the REMARK
 	// First test that the pdb_info() is not empty
-	if ( pose.pdb_info() ){
+	if ( pose.pdb_info() ) {
 		// Then output the labels
-		for (core::Size i=1; i<=pose.n_residue(); ++i) {
+		for ( core::Size i=1; i<=pose.n_residue(); ++i ) {
 			utility::vector1 < std::string > tmp_v_reslabels =  pose.pdb_info()->get_reslabels(i);
 			core::Size numLables=tmp_v_reslabels.size();
 			//Only write if the residue has any label (keep the file as small as possible)
-			if ( numLables > 0 ){
+			if ( numLables > 0 ) {
 				out << "REMARK PDBinfo-LABEL: " << I( 4, i );
-				for (core::Size lndx=1; lndx <= numLables; ++lndx){
+				for ( core::Size lndx=1; lndx <= numLables; ++lndx ) {
 					out << " " << tmp_v_reslabels[lndx];
 				}
 				out << std::endl;
@@ -1034,7 +1034,7 @@ build_pose_from_pdb_as_is(
 )
 {
 	utility::io::izstream file( filename );
-	if (!file) {
+	if ( !file ) {
 		TR.Error << "File:" << filename << " not found!" << std::endl;
 		utility_exit_with_message( "Cannot open file " + filename );
 	} else {
@@ -1104,7 +1104,7 @@ build_pose_as_is1(
 	utility::vector1<core::Real> UA_temps;
 
 	std::string chains_whose_residues_are_separate_chemical_entities =
-			options.chains_whose_residues_are_separate_chemical_entities();
+		options.chains_whose_residues_are_separate_chemical_entities();
 	std::string::const_iterator const entities_begin = chains_whose_residues_are_separate_chemical_entities.begin();
 	std::string::const_iterator const entities_end = chains_whose_residues_are_separate_chemical_entities.end();
 
@@ -1131,7 +1131,7 @@ build_pose_as_is1(
 
 		// Convert PDB 3-letter code to Rosetta 3-letter code, if a list of alternative codes has been provided.
 		std::pair< std::string, std::string > const & rosetta_names(
-				NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( pdb_name ) );
+			NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( pdb_name ) );
 		std::string const & name3( rosetta_names.first );
 		if ( rosetta_names.second != "" ) {
 			fd.residue_type_base_names[ resid ] = rosetta_names.second;
@@ -1139,13 +1139,13 @@ build_pose_as_is1(
 
 		bool const separate_chemical_entity = find(entities_begin, entities_end, chainID ) !=  entities_end;
 		bool const same_chain_prev = ( i > 1        && chainID == rinfos[i-1].chainID &&
-				rinfo.terCount == rinfos[i-1].terCount && !separate_chemical_entity);
+			rinfo.terCount == rinfos[i-1].terCount && !separate_chemical_entity);
 		bool const same_chain_next = ( i < nres_pdb && chainID == rinfos[i+1].chainID &&
-				rinfo.terCount == rinfos[i+1].terCount && !separate_chemical_entity);
+			rinfo.terCount == rinfos[i+1].terCount && !separate_chemical_entity);
 		bool const check_Ntermini_for_this_chain = ("ALL" == chains_to_check_if_Ntermini) ?
-				true : find(check_Ntermini_begin, check_Ntermini_end, chainID ) ==  check_Ntermini_end;
+			true : find(check_Ntermini_begin, check_Ntermini_end, chainID ) ==  check_Ntermini_end;
 		bool const check_Ctermini_for_this_chain = ("ALL" == chains_to_check_if_Ctermini) ?
-				true : find(check_Ctermini_begin, check_Ctermini_end, chainID ) ==  check_Ctermini_end;
+			true : find(check_Ctermini_begin, check_Ctermini_end, chainID ) ==  check_Ctermini_end;
 
 		// Determine polymer information: termini, branch points, etc.
 		Strings branch_points_on_this_residue;
@@ -1161,7 +1161,7 @@ build_pose_as_is1(
 				TR.Trace << "Found resid " << resid << " in link map " << std::endl;
 			}
 			for ( Size branch = 1, n_branches = fd.link_map[ resid ].size(); branch <= n_branches; ++branch ) {
-				
+
 				if ( TR.Trace.visible() ) {
 					TR.Trace << "Examining branch " << branch << std::endl;
 				}
@@ -1184,7 +1184,7 @@ build_pose_as_is1(
 		}
 		bool const is_branch_lower_terminus = branch_lower_termini.contains(resid);
 		bool const is_lower_terminus( ( i == 1 || rinfos.empty() || (!same_chain_prev && !is_branch_lower_terminus) )
-				&& check_Ntermini_for_this_chain );
+			&& check_Ntermini_for_this_chain );
 		bool const is_upper_terminus( ( i == nres_pdb || !same_chain_next ) && check_Ctermini_for_this_chain );
 
 
@@ -1194,7 +1194,7 @@ build_pose_as_is1(
 		// Get a list of ResidueTypes that could apply for this particular 3-letter PDB residue name.
 		if ( ! is_residue_type_recognized(
 				i, name3, residue_set, xyz, rtemp,
-				UA_res_nums, UA_res_names, UA_atom_names, UA_coords, UA_temps, options)) {
+				UA_res_nums, UA_res_names, UA_atom_names, UA_coords, UA_temps, options) ) {
 			last_residue_was_recognized = false;
 			continue;
 		}
@@ -1215,16 +1215,16 @@ build_pose_as_is1(
 		}
 
 		ResidueTypeCOP rsd_type_cop = get_rsd_type( name3, xyz, residue_set,
-																								fd, options, branch_points_on_this_residue,
-																								resid, is_lower_terminus, is_upper_terminus,
-																								is_branch_point, is_branch_lower_terminus );
+			fd, options, branch_points_on_this_residue,
+			resid, is_lower_terminus, is_upper_terminus,
+			is_branch_point, is_branch_lower_terminus );
 
 		// deprecate this assert after 2015... -- rhiju
 		if ( basic::options::option[ basic::options::OptionKeys::chemical::check_rsd_type_finder ]() ) {
 			ResidueTypeCOP rsd_type_cop_legacy = get_rsd_type_legacy( name3, xyz, residue_set,
-																																fd, options, branch_points_on_this_residue,
-																																resid, is_lower_terminus, is_upper_terminus,
-																																is_branch_point, is_branch_lower_terminus );
+				fd, options, branch_points_on_this_residue,
+				resid, is_lower_terminus, is_upper_terminus,
+				is_branch_point, is_branch_lower_terminus );
 			if ( rsd_type_cop != rsd_type_cop_legacy  ) {
 				utility_exit_with_message( "Mismatch in assigning rsd_type to PDB: found " + rsd_type_cop->name() + " vs legacy " + rsd_type_cop_legacy->name() );
 			}
@@ -1244,8 +1244,8 @@ build_pose_as_is1(
 				variant += " branch-point";
 			}
 			utility_exit_with_message( "No match found for unrecognized residue at position " +
-					boost::lexical_cast<string>(i) +
-					"\nLooking for" + variant + " residue with 3-letter code: " + name3 );
+				boost::lexical_cast<string>(i) +
+				"\nLooking for" + variant + " residue with 3-letter code: " + name3 );
 		}
 
 		ResidueType const & rsd_type( *rsd_type_cop );
@@ -1267,8 +1267,8 @@ build_pose_as_is1(
 		}
 		if ( discarded_atoms > 0 ) {
 			TR.Warning << "[ WARNING ] discarding " << discarded_atoms
-					<< " atoms at position " << i << " in file " << fd.filename
-					<< ". Best match rsd_type:  " << rsd_type.name() << std::endl;
+				<< " atoms at position " << i << " in file " << fd.filename
+				<< ". Best match rsd_type:  " << rsd_type.name() << std::endl;
 		}
 
 		// check for missing mainchain atoms:
@@ -1281,9 +1281,9 @@ build_pose_as_is1(
 					std::string const & name1(rsd_type.atom_name(mainchain[k  ]));
 					std::string const & name2(rsd_type.atom_name(mainchain[k+1]));
 					std::string const & name3(rsd_type.atom_name(mainchain[k+2]));
-					if( !rinfo_name_map[i].right.count(name1) ||
+					if ( !rinfo_name_map[i].right.count(name1) ||
 							!rinfo_name_map[i].right.count(name2) ||
-							!rinfo_name_map[i].right.count(name3) ){
+							!rinfo_name_map[i].right.count(name3) ) {
 						continue;
 					}
 					std::string const & rinfo_name1( rinfo_name_map[i].right.find( name1 )->second );
@@ -1296,16 +1296,16 @@ build_pose_as_is1(
 				}
 				if ( !mainchain_core_present ) {
 					TR.Warning << "[ WARNING ] skipping pdb residue b/c it's missing too many mainchain atoms: " <<
-							resid << ' ' << name3 << ' ' << rsd_type.name() << std::endl;
+						resid << ' ' << name3 << ' ' << rsd_type.name() << std::endl;
 					for ( Size k=1; k<= nbb; ++k ) {
 						std::string const & name(rsd_type.atom_name(mainchain[k]));
-						if( !rinfo_name_map[i].right.count(name) ||
+						if ( !rinfo_name_map[i].right.count(name) ||
 								!xyz.count( rinfo_name_map[i].right.find(name)->second ) ) {
 							// Use of unmapped name deliberate
 							TR << "missing: " << name << std::endl;
 						}
 					}
-					if( options.exit_if_missing_heavy_atoms() == true ) {
+					if ( options.exit_if_missing_heavy_atoms() == true ) {
 						utility_exit_with_message("quitting due to missing heavy atoms");
 					}
 					continue;
@@ -1357,18 +1357,18 @@ build_pose_as_is1(
 			pose.append_residue_by_bond( *new_rsd );
 
 		} else if ( ( ( is_lower_terminus && check_Ntermini_for_this_chain ) || ! same_chain_prev )
-						|| /* is_branch_lower_terminus || */
-							pose.residue_type( old_nres ).has_variant_type( "C_METHYLAMIDATION" ) ||
-						! new_rsd->is_polymer() ||
-						! pose.residue_type( old_nres ).is_polymer() ||
-						! last_residue_was_recognized ) {
+				|| /* is_branch_lower_terminus || */
+				pose.residue_type( old_nres ).has_variant_type( "C_METHYLAMIDATION" ) ||
+				! new_rsd->is_polymer() ||
+				! pose.residue_type( old_nres ).is_polymer() ||
+				! last_residue_was_recognized ) {
 			// A new chain because this is a lower terminus (see logic above for designation)
 			// and if we're not checking it then it's a different chain from the previous
 
 			core::Size rootindex=1;
 
 			// Ensure that metal ions are connected by a jump to the closest metal-binding residue that is lower in sequence.
-			if(new_rsd->is_metal() && basic::options::option[basic::options::OptionKeys::in::auto_setup_metals].user()) {
+			if ( new_rsd->is_metal() && basic::options::option[basic::options::OptionKeys::in::auto_setup_metals].user() ) {
 				// If this is a metal ion and we're automatically setting up metals, search for the closest metal-binding residue
 				// and make that the jump parent.  Otherwise, let the jump parent be the closest residue.
 				numeric::xyzVector < core::Real > const metal_xyz = new_rsd->xyz(1); //Atom 1 is always the metal of a residue representing a metal ion.  (There's a check for this in residue_io.cc).
@@ -1378,37 +1378,37 @@ build_pose_as_is1(
 				core::Size closest_residue=0;
 				core::Size closest_dist_sq = 0;
 
-				for(core::Size jr=1, nres=pose.n_residue(); jr<=nres; ++jr) { //Loop through all residues already added, looking for possible residues to root the metal onto.
-					if(!pose.residue(jr).is_protein()) continue; //I'm not interested in tethering metals to non-protein residues.
-					if(!pose.residue(jr).has("CA")) continue; //I'll be basing this on metal-alpha carbon distance, so anything without an alpha carbon won't get to be the root.
+				for ( core::Size jr=1, nres=pose.n_residue(); jr<=nres; ++jr ) { //Loop through all residues already added, looking for possible residues to root the metal onto.
+					if ( !pose.residue(jr).is_protein() ) continue; //I'm not interested in tethering metals to non-protein residues.
+					if ( !pose.residue(jr).has("CA") ) continue; //I'll be basing this on metal-alpha carbon distance, so anything without an alpha carbon won't get to be the root.
 
 					numeric::xyzVector < core::Real > const residue_xyz = pose.residue(jr).xyz("CA");
 
 					core::Real const current_dist_sq = residue_xyz.distance_squared(metal_xyz);
 
-					if(closest_residue==0 || current_dist_sq < closest_dist_sq) {
+					if ( closest_residue==0 || current_dist_sq < closest_dist_sq ) {
 						closest_residue = jr;
 						closest_dist_sq = (core::Size)current_dist_sq;
 					}
-					if(	pose.residue(jr).is_metalbinding() &&
-								(closest_metalbinding_residue==0 || current_dist_sq < metalbinding_dist_sq)
-						) {
-							closest_metalbinding_residue = jr;
-							metalbinding_dist_sq = (core::Size)current_dist_sq;
+					if ( pose.residue(jr).is_metalbinding() &&
+							(closest_metalbinding_residue==0 || current_dist_sq < metalbinding_dist_sq)
+							) {
+						closest_metalbinding_residue = jr;
+						metalbinding_dist_sq = (core::Size)current_dist_sq;
 					}
 				} //Inner loop through all residues
 
-				if(closest_metalbinding_residue!=0) rootindex=closest_metalbinding_residue; //If we found a metal-binding residue, it's the root; otherwise, the closest residue is.
-				else if(closest_residue!=0) rootindex=closest_residue;
+				if ( closest_metalbinding_residue!=0 ) rootindex=closest_metalbinding_residue; //If we found a metal-binding residue, it's the root; otherwise, the closest residue is.
+				else if ( closest_residue!=0 ) rootindex=closest_residue;
 
-			}	//If this is a metal
+			} //If this is a metal
 
-			if(rootindex>1) {TR << rsd_type.name() << " " << i << " was added by a jump, with base residue " << rootindex << std::endl;}
+			if ( rootindex>1 ) { TR << rsd_type.name() << " " << i << " was added by a jump, with base residue " << rootindex << std::endl;}
 
 			pose.append_residue_by_jump( *new_rsd, rootindex /*pose.total_residue()*/ );
 
 		} else { // Append residue to current chain dependent on bond length.
-			if (!options.missing_dens_as_jump()) {
+			if ( !options.missing_dens_as_jump() ) {
 				if ( TR.Trace.visible() ) {
 					TR.Trace << rsd_type.name() << " " << i << " is appended to chain " << chainID << std::endl;
 				}
@@ -1419,22 +1419,24 @@ build_pose_as_is1(
 				//fpd we will consider this missing density
 				Residue const &last_rsd( pose.residue( old_nres ) );
 				core::Real bondlength = ( last_rsd.atom( last_rsd.upper_connect_atom() ).xyz() -
-						new_rsd->atom( new_rsd->lower_connect_atom() ).xyz() ).length();
+					new_rsd->atom( new_rsd->lower_connect_atom() ).xyz() ).length();
 
 				if ( bondlength > 3.0 ) {
 					TR << "[ WARNING ] missing density found at residue (rosetta number) " << old_nres << std::endl;
 					pose.append_residue_by_jump( *new_rsd, old_nres );
 
-					if (pose.residue_type(old_nres).is_protein()) {
-						if (!pose.residue_type(old_nres).has_variant_type( UPPER_TERMINUS_VARIANT ) &&
-						    !pose.residue_type(old_nres).has_variant_type( UPPERTERM_TRUNC_VARIANT ) )
+					if ( pose.residue_type(old_nres).is_protein() ) {
+						if ( !pose.residue_type(old_nres).has_variant_type( UPPER_TERMINUS_VARIANT ) &&
+								!pose.residue_type(old_nres).has_variant_type( UPPERTERM_TRUNC_VARIANT ) ) {
 							core::pose::add_variant_type_to_pose_residue( pose, chemical::UPPERTERM_TRUNC_VARIANT, old_nres );
+						}
 					} else {
-						if (!pose.residue_type(old_nres).has_variant_type( UPPER_TERMINUS_VARIANT ))
+						if ( !pose.residue_type(old_nres).has_variant_type( UPPER_TERMINUS_VARIANT ) ) {
 							core::pose::add_variant_type_to_pose_residue( pose, chemical::UPPER_TERMINUS_VARIANT, old_nres );
+						}
 					}
 
-					if (pose.residue_type(old_nres+1).is_protein()) {
+					if ( pose.residue_type(old_nres+1).is_protein() ) {
 						core::pose::add_variant_type_to_pose_residue( pose, chemical::LOWERTERM_TRUNC_VARIANT, old_nres+1 );
 					} else {
 						core::pose::add_variant_type_to_pose_residue( pose, chemical::LOWER_TERMINUS_VARIANT, old_nres+1 );
@@ -1476,9 +1478,9 @@ build_pose_as_is1(
 		char chainID = rinfo.chainID;
 
 		bool const check_Ntermini_for_this_chain = ("ALL" == chains_to_check_if_Ntermini) ?
-					true : find(check_Ntermini_begin, check_Ntermini_end, chainID ) ==  check_Ntermini_end;
+			true : find(check_Ntermini_begin, check_Ntermini_end, chainID ) ==  check_Ntermini_end;
 		bool const check_Ctermini_for_this_chain = ("ALL" == chains_to_check_if_Ctermini) ?
-					true : find(check_Ctermini_begin, check_Ctermini_end, chainID ) ==  check_Ctermini_end;
+			true : find(check_Ctermini_begin, check_Ctermini_end, chainID ) ==  check_Ctermini_end;
 
 		if ( !check_Ntermini_for_this_chain ) { continue; }
 		if ( !check_Ctermini_for_this_chain ) { continue; }
@@ -1490,7 +1492,7 @@ build_pose_as_is1(
 				( i == 1 ||
 				!pose.residue_type( i-1 ).is_polymer() ||
 				(pose.residue_type( i-1 ).is_upper_terminus() &&
-						!pose.residue_type( i ).is_branch_lower_terminus() ) ) ) {
+				!pose.residue_type( i ).is_branch_lower_terminus() ) ) ) {
 			TR << "Adding undetected lower terminus type to residue " << i << std::endl;
 			core::pose::add_lower_terminus_type_to_pose_residue( pose, i );
 			type_changed = true;
@@ -1504,13 +1506,13 @@ build_pose_as_is1(
 			core::pose::add_upper_terminus_type_to_pose_residue( pose, i );
 			type_changed = true;
 		}
-		if( type_changed ) {
+		if ( type_changed ) {
 			// add_terminus_type will copy coordinates for matching atoms - see if there's additional atoms we missed.
-			for( core::Size ii(1); ii <= pose.residue_type(i).natoms(); ++ii ) {
+			for ( core::Size ii(1); ii <= pose.residue_type(i).natoms(); ++ii ) {
 				std::string const & name( pose.residue_type(i).atom_name(ii) );
 				id::NamedAtomID atom_id( name, i );
 				// Unfortunately we're doing only exact name matches here.
-				if( ! coordinates_assigned[atom_id] && rinfo.xyz.count(name)  ) {
+				if ( ! coordinates_assigned[atom_id] && rinfo.xyz.count(name)  ) {
 					pose.set_xyz( atom_id, rinfo.xyz.find(name)->second );
 					coordinates_assigned.set(atom_id, true);
 					rinfo_name_map[pose_to_rinfo[i]].insert( NameBimap::value_type( name, name ) );
@@ -1532,7 +1534,7 @@ build_pose_as_is1(
 
 		// PDBInfo setup
 		core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo( pose.total_residue() ) );
-		for( Size i = 1; i <= UA_res_nums.size(); ++i ) {
+		for ( Size i = 1; i <= UA_res_nums.size(); ++i ) {
 			pdb_info->add_unrecognized_atom( UA_res_nums[i], UA_res_names[i], UA_atom_names[i], UA_coords[i], UA_temps[i] );
 		}
 		// store pdb info
@@ -1547,7 +1549,7 @@ build_pose_as_is1(
 			id::NamedAtomID named_atom_id( rsd.atom_name(j), i );
 			if ( ! coordinates_assigned[named_atom_id] ) {
 				missing[ atom_id ] = true;
-				if( !rsd.atom_is_hydrogen(j) ) num_heavy_missing++;
+				if ( !rsd.atom_is_hydrogen(j) ) num_heavy_missing++;
 			}
 		}
 	}
@@ -1572,13 +1574,13 @@ build_pose_as_is1(
 
 	// set pdb-wide information
 	pdb_info->name( fd.filename );
-	if(fd.modeltag=="") {
+	if ( fd.modeltag=="" ) {
 		pdb_info->modeltag( fd.filename );
 	} else {
 		pdb_info->modeltag( fd.modeltag );
 	}
 
-	if( options.preserve_header() == true ) {
+	if ( options.preserve_header() == true ) {
 		pdb_info->remarks( *fd.remarks );
 		pdb_info->header_information( fd.header_information() );
 	}
@@ -1587,8 +1589,9 @@ build_pose_as_is1(
 	pdb_info->set_numbering( pdb_numbering );
 	pdb_info->set_chains( pdb_chains );
 	pdb_info->set_icodes( insertion_codes );
-	if ( options.preserve_crystinfo() )
+	if ( options.preserve_crystinfo() ) {
 		pdb_info->set_crystinfo( fd.crystinfo );
+	}
 
 
 	// most DNA structures lack 5' phosphate groups. 5' phosphates must be built to serve as part of the backbone for
@@ -1621,12 +1624,11 @@ build_pose_as_is1(
 
 	//kdrew: if detect_oops flag is set, initialize oops
 	// This option should probably be moved to FileDataOptions. ~Labonte
-	if ( basic::options::option[ basic::options::OptionKeys::in::detect_oops ].user() )
-	{
+	if ( basic::options::option[ basic::options::OptionKeys::in::detect_oops ].user() ) {
 		core::pose::ncbb::initialize_oops(pose);
 	}
 
-	if(pose.n_residue()>1){// 1 residue fragments for ligand design.
+	if ( pose.n_residue()>1 ) { // 1 residue fragments for ligand design.
 		pose.conformation().detect_pseudobonds();
 	}
 
@@ -1634,26 +1636,26 @@ build_pose_as_is1(
 	pdb_info->resize_atom_records( pose );
 
 	// add unrecognized atoms to PDBInfo
-	for( Size i = 1; i <= UA_res_nums.size(); ++i ) {
+	for ( Size i = 1; i <= UA_res_nums.size(); ++i ) {
 		pdb_info->add_unrecognized_atom( UA_res_nums[i], UA_res_names[i], UA_atom_names[i], UA_coords[i], UA_temps[i] );
 	}
 
 	// add temps to PDBInfo
-	for( core::Size ir = 1; ir <= pose.total_residue(); ir++ ) {
+	for ( core::Size ir = 1; ir <= pose.total_residue(); ir++ ) {
 		// fill in b-factor from pdb file
 		ResidueTemps & res_temps( rinfos[pose_to_rinfo[ir]].temps );
 		NameBimap const & namemap( rinfo_name_map[pose_to_rinfo[ir]] );
-		for( ResidueTemps::const_iterator iter=res_temps.begin(); iter != res_temps.end(); ++iter ) {
+		for ( ResidueTemps::const_iterator iter=res_temps.begin(); iter != res_temps.end(); ++iter ) {
 			//namemap should only include atoms which have a presence in both rinfo and pose
-			if( namemap.left.count(iter->first) ) {
+			if ( namemap.left.count(iter->first) ) {
 				// printf("setting temp: res %d atom %s temp %f\n",ir,iter->first.c_str(),iter->second);
 				std::string const & pose_atom_name( namemap.left.find(iter->first)->second );
-				if( pose.residue(ir).type().has( pose_atom_name ) ) { // There are issues with terminus patching which means atoms can sometimes disappear
+				if ( pose.residue(ir).type().has( pose_atom_name ) ) { // There are issues with terminus patching which means atoms can sometimes disappear
 					core::Size ia = pose.residue(ir).type().atom_index( pose_atom_name );
 					pdb_info->temperature( ir, ia, iter->second );
 				}
 			} else {
-				if( (iter->first)[0] == 'H' || ((iter->first)[0] == ' ' && (iter->first)[1] == 'H') ) {
+				if ( (iter->first)[0] == 'H' || ((iter->first)[0] == ' ' && (iter->first)[1] == 'H') ) {
 					;// don't warn if H
 				} else {
 					TR << "[ WARNING ] can't find atom for res " << ir << " atom " << iter->first << " (trying to set temp)" << std::endl;
@@ -1674,7 +1676,7 @@ build_pose_as_is1(
 
 	//fpd fix bfactors of missing atoms using neighbors
 	//fpd set hydrogen Bfactors as 1.2x attached atom
-	if (options.preserve_crystinfo()) {
+	if ( options.preserve_crystinfo() ) {
 		core::scoring::cryst::fix_bfactorsMissing( pose );
 		core::scoring::cryst::fix_bfactorsH( pose );
 	}
@@ -1682,14 +1684,15 @@ build_pose_as_is1(
 		utility::io::izstream data(fd.filename);
 
 		std::string line;
-		while( getline( data, line ) ) {
-			if( line != "##Begin comments##")
-			continue;
+		while ( getline( data, line ) ) {
+			if ( line != "##Begin comments##" ) {
+				continue;
+			}
 			getline( data, line );
-			while (line != "##End comments##") {
+			while ( line != "##End comments##" ) {
 				//TR<<"Testing read comments! :"<<line<<std::endl;
 				utility::vector1<std::string> comment_line(utility::string_split(line,' '));
-				if (comment_line.size()<2) {
+				if ( comment_line.size()<2 ) {
 					getline( data, line );
 					continue;
 				}
@@ -1726,7 +1729,7 @@ is_residue_type_recognized(
 
 	FileDataOptions options;
 	return is_residue_type_recognized( pdb_residue_index, pdb_name, rsd_type_list, xyz, rtemp,
-			UA_res_nums, UA_res_names, UA_atom_names, UA_coords, UA_temps, options );
+		UA_res_nums, UA_res_names, UA_atom_names, UA_coords, UA_temps, options );
 }
 
 /// @brief Tell user about ancient Rosetta choice to ignore HOH waters if -ignore_unrecognized_res is set.
@@ -1761,10 +1764,10 @@ is_residue_type_recognized(
 	ResidueTypeCOP  rsd_type = ResidueTypeFinder( residue_set ).name3( pdb_name ).get_representative_type();
 	if ( rsd_type != 0 ) rsd_type_list.push_back( rsd_type );
 	return is_residue_type_recognized( pdb_residue_index, pdb_name,
-																		 rsd_type_list,
-																		 xyz, rtemp, UA_res_nums, UA_res_names,
-																		 UA_atom_names, UA_coords, UA_temps,
-																		 options );
+		rsd_type_list,
+		xyz, rtemp, UA_res_nums, UA_res_names,
+		UA_atom_names, UA_coords, UA_temps,
+		options );
 }
 
 /// @details The input rsd_type_list are all the residue types that have
@@ -1793,32 +1796,32 @@ is_residue_type_recognized(
 
 	bool const is_HOH_to_ignore ( pdb_name == "HOH" && options.ignore_waters() );
 
-	if( !rsd_type_list.empty() && !is_HOH_to_ignore ){
+	if ( !rsd_type_list.empty() && !is_HOH_to_ignore ) {
 		return true;
 	}
 
 	using namespace basic::options;
-	if( !(options.ignore_unrecognized_res() ||
-				options.remember_unrecognized_res() ||
-				is_HOH_to_ignore ) ) {
+	if ( !(options.ignore_unrecognized_res() ||
+			options.remember_unrecognized_res() ||
+			is_HOH_to_ignore ) ) {
 		// We should fail fast on unrecognized input rather than produce bad results!
 		utility_exit_with_message(" unrecognized residue " + pdb_name );
 	}
 
-	if( !options.remember_unrecognized_water() ) {
+	if ( !options.remember_unrecognized_water() ) {
 		// don't bother with water
-		if( pdb_name == "HOH" ){
+		if ( pdb_name == "HOH" ) {
 			return false;
 		}
 	}
 
-	if( options.remember_unrecognized_res() ) {
-		for(std::map<std::string, Vector>::const_iterator iter=xyz.begin(), iter_end=xyz.end(); iter!= iter_end; ++iter ) {
-			if( UA_res_nums.size() > 5000 ) {
+	if ( options.remember_unrecognized_res() ) {
+		for ( std::map<std::string, Vector>::const_iterator iter=xyz.begin(), iter_end=xyz.end(); iter!= iter_end; ++iter ) {
+			if ( UA_res_nums.size() > 5000 ) {
 				utility_exit_with_message("can't handle more than 5000 atoms worth of unknown residues\n");
 			}
 			TR << "remember unrecognized atom " << pdb_residue_index << " " << pdb_name << " " << stripped_whitespace(iter->first)
-			<< " temp " << rtemp.find(iter->first)->second << std::endl;
+				<< " temp " << rtemp.find(iter->first)->second << std::endl;
 			UA_res_nums.push_back( pdb_residue_index );
 			UA_res_names.push_back( pdb_name );
 			UA_atom_names.push_back( stripped_whitespace(iter->first) );
@@ -1890,10 +1893,10 @@ pose_from_pose(
 ///////////////////////////////////////////////////////////////////////
 // @brief currently does fixups of RNA/DNA.
 void
-fixup_rinfo_based_on_residue_type_set( 	utility::vector1< ResidueInformation > & rinfos,
-																			 	chemical::ResidueTypeSet const & residue_set ){
+fixup_rinfo_based_on_residue_type_set(  utility::vector1< ResidueInformation > & rinfos,
+	chemical::ResidueTypeSet const & residue_set ){
 	bool const force_RNA = ( residue_set.name() == core::chemical::FA_RNA  ||
-													 residue_set.name() == "rna_phenix" );
+		residue_set.name() == "rna_phenix" );
 	convert_nucleic_acid_residue_info_to_standard( rinfos, force_RNA );
 }
 
@@ -1976,7 +1979,7 @@ get_rsd_type(
 	// following 'chaining' looks a lot like chemical::ResidueSelector -- use that instead? Rename to chemical::ResidueTypeSelector.
 	rsd_type = ResidueTypeFinder( residue_set ).name3( name3 ).residue_base_name( residue_base_name ).disallow_variants( disallow_variants ).variants_in_sets( required_variants_in_sets ).properties( properties ).disallow_properties( disallow_properties ).patch_names( patch_names ).ignore_atom_named_H( is_lower_terminus ).disallow_carboxyl_conjugation_at_glu_asp( disallow_carboxyl_conjugation_at_glu_asp ).get_best_match_residue_type_for_atom_names( xyz_atom_names );
 
-  return rsd_type;
+	return rsd_type;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -2018,7 +2021,7 @@ get_rsd_type_legacy(
 		bool upper_term_type = rsd_type.has_variant_type( UPPER_TERMINUS_VARIANT ) ||
 			rsd_type.has_variant_type( UPPERTERM_TRUNC_VARIANT );
 		if ( is_polymer && (
-												(is_lower_terminus != lower_term_type ) || (is_upper_terminus != upper_term_type ) ) ) {
+				(is_lower_terminus != lower_term_type ) || (is_upper_terminus != upper_term_type ) ) ) {
 			if ( TR.Trace.visible() ) {
 				TR.Trace << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				TR.Trace << "because of the terminus state" << std::endl;
@@ -2066,7 +2069,7 @@ get_rsd_type_legacy(
 			continue;
 		}
 		if ( ! options.keep_input_protonation_state() &&
-				 ( rsd_type.has_variant_type( PROTONATED ) || rsd_type.has_variant_type( DEPROTONATED ) ) ) {
+				( rsd_type.has_variant_type( PROTONATED ) || rsd_type.has_variant_type( DEPROTONATED ) ) ) {
 			if ( TR.Trace.visible() ) {
 				TR.Trace << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				TR.Trace << "because of the protonation state" << std::endl;
@@ -2076,7 +2079,7 @@ get_rsd_type_legacy(
 
 		// special checks to ensure selecting the proper carbohydrate ResidueType
 		if ( rsd_type.is_carbohydrate() &&
-				 residue_type_base_name( rsd_type ) != fd.residue_type_base_names[ resid ] ) {
+				residue_type_base_name( rsd_type ) != fd.residue_type_base_names[ resid ] ) {
 			if ( TR.Trace.visible() ) {
 				TR.Trace << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				TR.Trace << "because the residue is not a carbohydrate" << std::endl;
@@ -2098,7 +2101,7 @@ get_rsd_type_legacy(
 						"' for branch at position " << branch_point << std::endl;
 				}
 				if ( residue_type_all_patches_name( rsd_type ).find( string( 1, branch_point ) + ")-branch" ) ==
-						 string::npos ) {
+						string::npos ) {
 					branch_point_is_missing = true;
 					break;
 				}
@@ -2124,17 +2127,17 @@ get_rsd_type_legacy(
 
 		for ( ResidueCoords::const_iterator iter=xyz.begin(), iter_end=xyz.end(); iter!= iter_end; ++iter ) {
 			if ( !rsd_type.has( stripped_whitespace(iter->first) ) &&
-					 !( iter->first == " H  " && is_lower_terminus ) ) { // don't worry about missing BB H if Nterm
+					!( iter->first == " H  " && is_lower_terminus ) ) { // don't worry about missing BB H if Nterm
 				++rsd_missing;
 			}
 		}
 
 		if ( TR.Debug.visible() ) {
-			//			TR.Debug << "Trying '" << rsd_type.name() << "' ResidueType   xyz_missing " << xyz_missing << " rsd_missing " << rsd_missing <<  std::endl;
+			//   TR.Debug << "Trying '" << rsd_type.name() << "' ResidueType   xyz_missing " << xyz_missing << " rsd_missing " << rsd_missing <<  std::endl;
 		}
 
 		if ( ( rsd_missing < best_rsd_missing ) ||
-				 ( rsd_missing == best_rsd_missing && xyz_missing < best_xyz_missing ) ) {
+				( rsd_missing == best_rsd_missing && xyz_missing < best_xyz_missing ) ) {
 			best_rsd_missing = rsd_missing;
 			best_xyz_missing = xyz_missing;
 			best_index = j;
@@ -2145,7 +2148,7 @@ get_rsd_type_legacy(
 
 	if ( TR.Trace.visible() ) {
 		TR.Trace << "Naive match of " << rsd_type->name() << " with " << best_rsd_missing << " missing and "
-						 << best_xyz_missing << " discarded atoms." << std::endl;
+			<< best_xyz_missing << " discarded atoms." << std::endl;
 	}
 
 	if ( best_index == 0 ) return 0;

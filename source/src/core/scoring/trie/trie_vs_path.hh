@@ -93,47 +93,44 @@ trie_vs_path(
 	for ( Size ii = 1; ii <= trie1_num_atoms; ++ii ) {
 		TrieNode< AT, CPDAT1 > const & r = trie1_atoms[ ii ];
 
-		if (r.first_atom_in_branch()) --r_curr_stack_top;
-		if (r.has_sibling() ) { //push - copy stack downwards
+		if ( r.first_atom_in_branch() ) --r_curr_stack_top;
+		if ( r.has_sibling() ) { //push - copy stack downwards
 			++r_curr_stack_top;
 			energy_sum[ r_curr_stack_top ] = energy_sum[ r_curr_stack_top - 1];
 			r_heavy_depth_stack[ r_curr_stack_top ] = r_heavy_depth_stack[ r_curr_stack_top-1 ];
 		}
 
 		//++r_tree_depth_stack[ r_curr_stack_top ];
-		if (! r.is_hydrogen() ) ++r_heavy_depth_stack[ r_curr_stack_top ];
+		if ( ! r.is_hydrogen() ) ++r_heavy_depth_stack[ r_curr_stack_top ];
 
 		//FArray1A_bool parent_wi_h_dist
-		//	( parent_heavy_wi_hydrogen_cutoff( 1,r_heavy_depth_stack[ r_curr_stack_top ] ) );
+		// ( parent_heavy_wi_hydrogen_cutoff( 1,r_heavy_depth_stack[ r_curr_stack_top ] ) );
 		//parent_wi_h_dist.dimension(trie2_num_heavyatoms);
 
 		//FArray1A_int r_heavy_skip_s_subtree_proxy
-		//	( r_heavy_skip_s_subtree(1, r_heavy_depth_stack[ r_curr_stack_top ] ));
+		// ( r_heavy_skip_s_subtree(1, r_heavy_depth_stack[ r_curr_stack_top ] ));
 		//r_heavy_skip_s_subtree_proxy.dimension(trie2_num_heavyatoms);
 
 		s_heavy_depth = 0;
 
-		if ( r.is_hydrogen() )
-		{
-			for ( Size jj = 1; jj <= trie2_num_atoms; ++jj )
-			{
+		if ( r.is_hydrogen() ) {
+			for ( Size jj = 1; jj <= trie2_num_atoms; ++jj ) {
 				//trie_node & s = bg_trie[jj];
 				TrieNode< AT, CPDAT2 > const & s  = trie2_atoms[ jj ];
 				Real weight( 1.0 ); Energy e( 0.0 ); Size path_dist(0);
-				if ( s.is_hydrogen() )
-				{
+				if ( s.is_hydrogen() ) {
 					if ( parent_heavy_wi_hydrogen_cutoff( s_heavy_depth, r_heavy_depth_stack[ r_curr_stack_top ]  ) &&
-						count_pair( r.cp_data(), s.cp_data(), weight, path_dist ) ) {
+							count_pair( r.cp_data(), s.cp_data(), weight, path_dist ) ) {
 						e = score_function.hydrogenatom_hydrogenatom_energy( r.atom(), s.atom(), path_dist );
 						energy_sum[ r_curr_stack_top ] += weight * e;
 					}
 				} else {
 					++s_heavy_depth;
 
-					if (r_heavy_skip_s_subtree(s_heavy_depth,r_heavy_depth_stack[ r_curr_stack_top ])) break;
+					if ( r_heavy_skip_s_subtree(s_heavy_depth,r_heavy_depth_stack[ r_curr_stack_top ]) ) break;
 
 					if ( parent_heavy_wi_hydrogen_cutoff(s_heavy_depth, r_heavy_depth_stack[ r_curr_stack_top ] ) &&
-						count_pair( r.cp_data(), s.cp_data(), weight, path_dist )) {
+							count_pair( r.cp_data(), s.cp_data(), weight, path_dist ) ) {
 						e = score_function.hydrogenatom_heavyatom_energy( r.atom(), s.atom(), path_dist );
 						energy_sum[ r_curr_stack_top ] += e * weight;
 					}
@@ -147,9 +144,9 @@ trie_vs_path(
 			for ( Size jj = 1; jj <= trie2_num_atoms; ++jj ) {
 				TrieNode< AT, CPDAT2 > const & s  = trie2_atoms[ jj ];
 				Real weight( 1.0 ); Energy e( 0.0 ); Size path_dist(0);
-				if ( s.is_hydrogen()) {
-					if (parent_heavy_wi_hydrogen_cutoff( s_heavy_depth, r_heavy_depth_stack[ r_curr_stack_top ] ) &&
-						count_pair( r.cp_data(), s.cp_data(), weight, path_dist ) ) {
+				if ( s.is_hydrogen() ) {
+					if ( parent_heavy_wi_hydrogen_cutoff( s_heavy_depth, r_heavy_depth_stack[ r_curr_stack_top ] ) &&
+							count_pair( r.cp_data(), s.cp_data(), weight, path_dist ) ) {
 						e = score_function.heavyatom_hydrogenatom_energy( r.atom(), s.atom(), path_dist );
 						energy_sum[ r_curr_stack_top ] += weight * e;
 					}
@@ -167,7 +164,7 @@ trie_vs_path(
 					}
 
 					parent_heavy_wi_hydrogen_cutoff( s_heavy_depth, r_heavy_depth_stack[ r_curr_stack_top ] ) = (d2 < hydrogen_interaction_cutoff);
-					if (d2 > s.subtree_interaction_sphere_square_radius() ) {
+					if ( d2 > s.subtree_interaction_sphere_square_radius() ) {
 						r_heavy_skip_s_subtree(s_heavy_depth, r_heavy_depth_stack[ r_curr_stack_top ]) = true;
 						break;
 					}
@@ -175,8 +172,7 @@ trie_vs_path(
 			}
 		}
 
-		if ( r.is_rotamer_terminal() )
-		{
+		if ( r.is_rotamer_terminal() ) {
 			++r_num_rotamers_seen;
 			temp_vector[r_num_rotamers_seen] = energy_sum[ r_curr_stack_top ];
 		}
@@ -193,104 +189,104 @@ trie_vs_path(
 {
 
 
-	Energy esum = 0;
-	Size s_heavy_depth = 0;
+Energy esum = 0;
+Size s_heavy_depth = 0;
 
-	Size const trie1_num_atoms = trie1.atoms().size();
-	Size const trie2_num_atoms = trie2.atoms().size();
-	Size const trie2_num_heavyatoms = trie2.num_heavy_atoms();
-	Size const trie2_num_heavyatoms_p_1 = trie2_num_heavyatoms + 1;
+Size const trie1_num_atoms = trie1.atoms().size();
+Size const trie2_num_atoms = trie2.atoms().size();
+Size const trie2_num_heavyatoms = trie2.num_heavy_atoms();
+Size const trie2_num_heavyatoms_p_1 = trie2_num_heavyatoms + 1;
 
-	//trie_node* rt_trie = rt.get_trie_for_curr_bb();
-	//trie_node* this_trie = get_trie_for_curr_bb();
+//trie_node* rt_trie = rt.get_trie_for_curr_bb();
+//trie_node* this_trie = get_trie_for_curr_bb();
 
-	typename utility::vector1< TrieNode < AT, CPDAT1 > > const & trie1_atoms = trie1.atoms();
-	typename utility::vector1 < TrieNode < AT, CPDAT2 > > const & trie2_atoms = trie2.atoms();
+typename utility::vector1< TrieNode < AT, CPDAT1 > > const & trie1_atoms = trie1.atoms();
+typename utility::vector1 < TrieNode < AT, CPDAT2 > > const & trie2_atoms = trie2.atoms();
 
-	//FArray1D_bool parent_wi_h_dist( rt_num_heavyatoms, false );
-	bool  parent_wi_h_dist[ 40 ]; //<--- replace this magic number ASAP
-	//FArray1D_bool r_heavy_skip_s_subtree( rt_num_heavyatoms, false );
-	Size r_heavy_skip_s_subtree_depth = rt_num_heavyatoms_p_1;
+//FArray1D_bool parent_wi_h_dist( rt_num_heavyatoms, false );
+bool  parent_wi_h_dist[ 40 ]; //<--- replace this magic number ASAP
+//FArray1D_bool r_heavy_skip_s_subtree( rt_num_heavyatoms, false );
+Size r_heavy_skip_s_subtree_depth = rt_num_heavyatoms_p_1;
 
-	for (int Size = 1; ii <= trie1_num_atoms; ++ii )
-	{
-		//trie_node & r = this_trie[ii];
-		TrieNode< AT, CPDAT1 > const & r = trie1_atoms[ ii ];
-		if ( r.is_hydrogen() && r_heavy_skip_s_subtree_depth == 1)
-		{
-			continue;
-		}
+for (int Size = 1; ii <= trie1_num_atoms; ++ii )
+{
+//trie_node & r = this_trie[ii];
+TrieNode< AT, CPDAT1 > const & r = trie1_atoms[ ii ];
+if ( r.is_hydrogen() && r_heavy_skip_s_subtree_depth == 1)
+{
+continue;
+}
 
-		//unsigned short * r_class_masks = NULL;
-		//for (int eq_class = 0; eq_class < 6; ++eq_class)
-		//{	if (this_equivalence_class_bitmasks[eq_class] & r.flags2_)
-		//	{  r_class_masks = rt_equivalence_class_bitmasks[eq_class];
-		//		break;
-		//	}
-		//}
-	//debug_assert( r_class_masks );
+//unsigned short * r_class_masks = NULL;
+//for (int eq_class = 0; eq_class < 6; ++eq_class)
+//{ if (this_equivalence_class_bitmasks[eq_class] & r.flags2_)
+// {  r_class_masks = rt_equivalence_class_bitmasks[eq_class];
+//  break;
+// }
+//}
+//debug_assert( r_class_masks );
 
-		s_heavy_depth = 0;
-		if ( r.is_hydrogen() ) {
-			for ( Size jj = 1; jj <= trie2_num_atoms; ++jj ) {
-				//trie_node & s = rt_trie[jj];
-				TrieNode< AT, CPDAT2 > const & s  = trie2_atoms[ jj ];
-				Real weight( 1.0 ), e( 0.0 );
-				if ( s.is_hydrogen() ) {
-					if (parent_wi_h_dist[ s_heavy_depth ] &&
-							count_pair( r.cp_data(), s.cp_data(), weight)) {
-						e = score_function.hydrogenatom_hydrogenatom_energy(r.atom(), s.atom() );
-						esum += weight * e;
-					}
-				} else {
-					++s_heavy_depth;
+s_heavy_depth = 0;
+if ( r.is_hydrogen() ) {
+for ( Size jj = 1; jj <= trie2_num_atoms; ++jj ) {
+//trie_node & s = rt_trie[jj];
+TrieNode< AT, CPDAT2 > const & s  = trie2_atoms[ jj ];
+Real weight( 1.0 ), e( 0.0 );
+if ( s.is_hydrogen() ) {
+if (parent_wi_h_dist[ s_heavy_depth ] &&
+count_pair( r.cp_data(), s.cp_data(), weight)) {
+e = score_function.hydrogenatom_hydrogenatom_energy(r.atom(), s.atom() );
+esum += weight * e;
+}
+} else {
+++s_heavy_depth;
 
-					if (r_heavy_skip_s_subtree_depth == s_heavy_depth) break;
+if (r_heavy_skip_s_subtree_depth == s_heavy_depth) break;
 
-					if ( parent_wi_h_dist[s_heavy_depth] &&
-							count_pair( r.cp_data(), s.cp_data(), weight)) {
-						e = score_function.hydrogenatom_heavyatom_energy( r.atom(), s.atom() );
-						esum += e * weight;
-					}
-				}
-			}
-		} else {
-			r_heavy_skip_s_subtree_depth = rt_num_heavyatoms_p_1;
-			for ( Size jj = 1; jj <= rt_num_atoms; ++jj) {
-				trie_node & s = rt_trie[jj];
-				Real weight( 1.0 );
-				if ( s.is_hydrogen()) {
-					if (parent_wi_h_dist[ s_heavy_depth ]  &&
-							count_pair( r.cp_data(), s.cp_data(), weight) ) {
-						Energy e = score_function.heavyatom_hydrogenatom_energy( r.atom(), s.atom() );
-						esum += e * weight;
-					}
-				}
-				else
-				{
-					++s_heavy_depth;
-					DistanceSquared d2;
-					if ( count_pair( r.cp_data(), s.cp_data(), weight) ) {
-						Energy e = score_function.heavyatom_heavyatom_energy(r.atom(), s.atom(), d2);
-						//std::cout << "hv/hv atom pair energy: " << ii << " & " << jj << " = " << weight * e << "( unweighted: " << e << ") estack: " << energy_stack[ s_curr_stack_top ] << std::endl;
-						esum += weight * e;
-					} else {
-						/// compute d2
-						d2 = r.atom().xyz().distance_squared( s.atom().xyz() );
-					}
+if ( parent_wi_h_dist[s_heavy_depth] &&
+count_pair( r.cp_data(), s.cp_data(), weight)) {
+e = score_function.hydrogenatom_heavyatom_energy( r.atom(), s.atom() );
+esum += e * weight;
+}
+}
+}
+} else {
+r_heavy_skip_s_subtree_depth = rt_num_heavyatoms_p_1;
+for ( Size jj = 1; jj <= rt_num_atoms; ++jj) {
+trie_node & s = rt_trie[jj];
+Real weight( 1.0 );
+if ( s.is_hydrogen()) {
+if (parent_wi_h_dist[ s_heavy_depth ]  &&
+count_pair( r.cp_data(), s.cp_data(), weight) ) {
+Energy e = score_function.heavyatom_hydrogenatom_energy( r.atom(), s.atom() );
+esum += e * weight;
+}
+}
+else
+{
+++s_heavy_depth;
+DistanceSquared d2;
+if ( count_pair( r.cp_data(), s.cp_data(), weight) ) {
+Energy e = score_function.heavyatom_heavyatom_energy(r.atom(), s.atom(), d2);
+//std::cout << "hv/hv atom pair energy: " << ii << " & " << jj << " = " << weight * e << "( unweighted: " << e << ") estack: " << energy_stack[ s_curr_stack_top ] << std::endl;
+esum += weight * e;
+} else {
+/// compute d2
+d2 = r.atom().xyz().distance_squared( s.atom().xyz() );
+}
 
-					parent_wi_h_dist[s_heavy_depth] = (d2 < hydrogen_interaction_cutoff);
-					if (d2 > s.subtree_interaction_sphere_square_radius())
-					{
-						r_heavy_skip_s_subtree_depth = s_heavy_depth;
-						break;
-					}
-				}
-			}
-		}
-	}
+parent_wi_h_dist[s_heavy_depth] = (d2 < hydrogen_interaction_cutoff);
+if (d2 > s.subtree_interaction_sphere_square_radius())
+{
+r_heavy_skip_s_subtree_depth = s_heavy_depth;
+break;
+}
+}
+}
+}
+}
 
-	return esum;
+return esum;
 }
 */
 

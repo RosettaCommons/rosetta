@@ -10,7 +10,7 @@
 /// @file   core/scoring/methods/ReferenceEnergyNoncanonical.hh
 /// @brief  Reference energy method declaration
 /// @author Fang-Chieh Chou (fcchou@stanford.edu)
- 
+
 
 
 #ifndef INCLUDED_core_scoring_methods_ReferenceEnergyNoncanonical_hh
@@ -50,7 +50,7 @@ public:
 
 
 	ReferenceEnergyNoncanonical( utility::vector1< Real > const & weight_list );
-	
+
 	///
 	virtual ~ReferenceEnergyNoncanonical();
 
@@ -90,10 +90,10 @@ public:
 	void init_res_list();
 
 private:
-utility::vector1< Real > weights_;
-utility::vector1< std::string > res_list_;
-virtual
-core::Size version() const;
+	utility::vector1< Real > weights_;
+	utility::vector1< std::string > res_list_;
+	virtual
+	core::Size version() const;
 
 };
 

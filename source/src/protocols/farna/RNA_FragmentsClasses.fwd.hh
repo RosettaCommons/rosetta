@@ -32,12 +32,12 @@
 namespace protocols {
 namespace farna {
 
-	class TorsionSet;
-	class FragmentLibrary;
-	class RNA_Fragments;
+class TorsionSet;
+class FragmentLibrary;
+class RNA_Fragments;
 
-	typedef utility::pointer::shared_ptr< FragmentLibrary > FragmentLibraryOP;
-	typedef utility::pointer::shared_ptr< RNA_Fragments > RNA_FragmentsOP;
+typedef utility::pointer::shared_ptr< FragmentLibrary > FragmentLibraryOP;
+typedef utility::pointer::shared_ptr< RNA_Fragments > RNA_FragmentsOP;
 
 } //farna
 } //protocols

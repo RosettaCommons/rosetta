@@ -106,7 +106,7 @@ void parse_NMR_name( std::string name, core::Size res, core::chemical::AA aa, Na
 	using namespace core::chemical;
 	using core::id::NamedAtomID;
 	///now fix all the problems with atomnames:
-	if ( (name.substr(0,2) == "QA" || name == "HA") && ( aa == aa_gly )) {
+	if ( (name.substr(0,2) == "QA" || name == "HA") && ( aa == aa_gly ) ) {
 		atoms.push_back( NamedAtomID( "1HA", res ) );
 		atoms.push_back( NamedAtomID( "2HA", res ) );
 	} else if ( ( name == "QB" || name == "HB" ) && (
@@ -131,13 +131,13 @@ void parse_NMR_name( std::string name, core::Size res, core::chemical::AA aa, Na
 		if ( aa == aa_ala ) atoms.push_back( NamedAtomID( "3HB", res ) );
 	} else if ( ( name == "QD1" ||  name == "HD1" ) && (
 			aa == aa_ile
-			|| aa == aa_leu )) {
+			|| aa == aa_leu ) ) {
 		atoms.push_back( NamedAtomID( "1HD1", res ) );
 		atoms.push_back( NamedAtomID( "2HD1", res ) );
 		atoms.push_back( NamedAtomID( "3HD1", res ) );
 	} else if ( ( name == "QD2" || name == "HD2" ) && (
 			aa == aa_leu
-			|| aa == aa_asn )) {
+			|| aa == aa_asn ) ) {
 		atoms.push_back( NamedAtomID( "1HD2", res ) );
 		atoms.push_back( NamedAtomID( "2HD2", res ) );
 		if ( aa == aa_leu ) atoms.push_back( NamedAtomID( "3HD2", res ) );
@@ -167,11 +167,11 @@ void parse_NMR_name( std::string name, core::Size res, core::chemical::AA aa, Na
 			|| aa == aa_phe
 			|| aa == aa_trp
 			|| aa == aa_met
-			|| aa == aa_lys ) ){
+			|| aa == aa_lys ) ) {
 		if ( aa == aa_phe || aa == aa_tyr ) {
 			atoms.push_back( NamedAtomID( "HE1", res ) );
 			atoms.push_back( NamedAtomID( "HE2", res ) );
-		}	else if ( aa == aa_trp ) {
+		} else if ( aa == aa_trp ) {
 			atoms.push_back( NamedAtomID( "HE1", res ) );
 			atoms.push_back( NamedAtomID( "HE3", res ) );
 		} else if ( aa == aa_met || aa == aa_lys ) { //MET LYS
@@ -187,11 +187,11 @@ void parse_NMR_name( std::string name, core::Size res, core::chemical::AA aa, Na
 			|| aa == aa_pro
 			|| aa == aa_lys
 			|| aa == aa_glu
-			 || aa == aa_arg )) {
+			|| aa == aa_arg ) ) {
 		atoms.push_back( NamedAtomID( "1HG", res ) );
 		atoms.push_back( NamedAtomID( "2HG", res ) );
-		//		atoms.push_back( NamedAtomID( "3HE", res ) );
-	} else if (( name == "QG2" || name == "HG2" ) && (
+		//  atoms.push_back( NamedAtomID( "3HE", res ) );
+	} else if ( ( name == "QG2" || name == "HG2" ) && (
 			aa == aa_ile
 			|| aa == aa_thr
 			|| aa == aa_val ) ) {
@@ -207,16 +207,16 @@ void parse_NMR_name( std::string name, core::Size res, core::chemical::AA aa, Na
 		atoms.push_back( NamedAtomID( "1HG1", res ) );
 		atoms.push_back( NamedAtomID( "2HG1", res ) );
 		if ( aa != aa_ile ) atoms.push_back( NamedAtomID( "3HG1", res ) );
-	} else if (( name == "QG1" || name == "HG1" ) && (
+	} else if ( ( name == "QG1" || name == "HG1" ) && (
 			aa == aa_ile
 			|| aa == aa_val ) ) {
 		atoms.push_back( NamedAtomID( "1HG1", res ) );
 		atoms.push_back( NamedAtomID( "2HG1", res ) );
 		if ( aa != aa_ile ) atoms.push_back( NamedAtomID( "3HG1", res ) );
-	} else if (( name == "QE2" || name == "HE2" || name =="HE" ) && aa == aa_gln ) {
+	} else if ( ( name == "QE2" || name == "HE2" || name =="HE" ) && aa == aa_gln ) {
 		atoms.push_back( NamedAtomID( "1HE2", res ) );
 		atoms.push_back( NamedAtomID( "2HE2", res ) );
-	} else if (( name == "HZ" || name == "QZ" ) && ( aa == aa_trp || aa == aa_lys ) ) {
+	} else if ( ( name == "HZ" || name == "QZ" ) && ( aa == aa_trp || aa == aa_lys ) ) {
 		if ( aa == aa_lys ) {
 			atoms.push_back( NamedAtomID( "1HZ", res ) );
 			atoms.push_back( NamedAtomID( "2HZ", res ) );
@@ -225,71 +225,67 @@ void parse_NMR_name( std::string name, core::Size res, core::chemical::AA aa, Na
 			atoms.push_back( NamedAtomID( "HZ2", res ) );
 			atoms.push_back( NamedAtomID( "HZ3", res ) );
 		}
-	} else 	if ( name == "HB1" ) {
+	} else  if ( name == "HB1" ) {
 		atoms.push_back( NamedAtomID( "1HB", res ) );
-	} else 	if ( name == "HB2" ) {
+	} else  if ( name == "HB2" ) {
 		atoms.push_back( NamedAtomID( "2HB", res ) );
-	} else 	if ( name == "HB3" ) {
+	} else  if ( name == "HB3" ) {
 		if (  aa != aa_ala ) {
 			atoms.push_back( NamedAtomID( "1HB", res ) ); //yeah they call it 2HB and 3HB...
 		} else {
 			atoms.push_back( NamedAtomID( "3HB", res ) );
 		}
-	}	else 	if ( name == "HD1" && !is_aromatic( aa ) ) {
+	} else  if ( name == "HD1" && !is_aromatic( aa ) ) {
 		atoms.push_back( NamedAtomID( "1HD", res ) );
-	} else 	if ( name == "HD2" && !is_aromatic( aa ) ) {
+	} else  if ( name == "HD2" && !is_aromatic( aa ) ) {
 		atoms.push_back( NamedAtomID( "2HD", res ) );
-	} else 	if ( name == "HD3" ) { //LYS, PRO, ARG  no other has HD3
+	} else  if ( name == "HD3" ) { //LYS, PRO, ARG  no other has HD3
 		atoms.push_back( NamedAtomID( "1HD", res ) );
 
-	} else 	if ( name == "HG1" && aa != aa_thr ) {
+	} else  if ( name == "HG1" && aa != aa_thr ) {
 		atoms.push_back( NamedAtomID( "1HG", res ) );
-	} else 	if ( name == "HG2" ) {
+	} else  if ( name == "HG2" ) {
 		atoms.push_back( NamedAtomID( "2HG", res ) );
-	} else 	if ( name == "HG3" ) { //GLU, ARG, GLN, MET
+	} else  if ( name == "HG3" ) { //GLU, ARG, GLN, MET
 		atoms.push_back( NamedAtomID( "1HG", res ) );
 
-	} else 	if ( name == "HA1" ) {
+	} else  if ( name == "HA1" ) {
 		atoms.push_back( NamedAtomID( "1HA", res ) );
-	} else 	if ( name == "HA2" ) {
+	} else  if ( name == "HA2" ) {
 		atoms.push_back( NamedAtomID( "2HA", res ) );
-	} else 	if ( name == "HA3" ) { //GLY
+	} else  if ( name == "HA3" ) { //GLY
 		atoms.push_back( NamedAtomID( "1HA", res ) );
 
-	} else 	if ( name == "HZ1" && aa == aa_lys ) {
+	} else  if ( name == "HZ1" && aa == aa_lys ) {
 		atoms.push_back( NamedAtomID( "1HZ", res ) );
-	} else 	if ( name == "HZ2" && aa == aa_lys ) {
+	} else  if ( name == "HZ2" && aa == aa_lys ) {
 		atoms.push_back( NamedAtomID( "2HZ", res ) );
-	} else 	if ( name == "HZ3" && aa == aa_lys ) {
+	} else  if ( name == "HZ3" && aa == aa_lys ) {
 		atoms.push_back( NamedAtomID( "3HZ", res ) );
-	}
-	else if (( name == "HE1" || name == "HE2" || name=="HE3" ) && !is_aromatic( aa ) ) //trp and similar is already done
-		{
-			if ( ( name == "HE3" && aa != aa_met ) || name == "HE1" ) {
-				atoms.push_back( NamedAtomID( "1HE", res ) ); //e.g. LYS
-			} else if ( name == "HE2" ) {
-				atoms.push_back( NamedAtomID( "2HE", res ) );
-				//	atoms.push_back( id::AtomID( pose.residue_type(res).atom_index(name.substr(2,1)+name.substr(0,2)), res ) );
-			} else if ( name == "HE3" ) {
-				atoms.push_back( NamedAtomID( "3HE", res ) );
-			}
+	} else if ( ( name == "HE1" || name == "HE2" || name=="HE3" ) && !is_aromatic( aa ) ) { //trp and similar is already done
+		if ( ( name == "HE3" && aa != aa_met ) || name == "HE1" ) {
+			atoms.push_back( NamedAtomID( "1HE", res ) ); //e.g. LYS
+		} else if ( name == "HE2" ) {
+			atoms.push_back( NamedAtomID( "2HE", res ) );
+			// atoms.push_back( id::AtomID( pose.residue_type(res).atom_index(name.substr(2,1)+name.substr(0,2)), res ) );
+		} else if ( name == "HE3" ) {
+			atoms.push_back( NamedAtomID( "3HE", res ) );
 		}
-
-	else if ( name == "HD11" ) {
+	} else if ( name == "HD11" ) {
 		atoms.push_back( NamedAtomID( "1HD1", res ) );
 	} else if ( name == "HD12" ) {
 		atoms.push_back( NamedAtomID( "2HD1", res ) );
-	} else 	if ( name == "HD13" ) {
+	} else  if ( name == "HD13" ) {
 		atoms.push_back( NamedAtomID( "3HD1", res ) );
-	} else 	if ( name == "HD21" ) {
+	} else  if ( name == "HD21" ) {
 		atoms.push_back( NamedAtomID( "1HD2", res ) );
 	} else if ( name == "HD22" ) {
 		atoms.push_back( NamedAtomID( "2HD2", res ) );
-	} else 	if ( name == "HD23" ) {
+	} else  if ( name == "HD23" ) {
 		atoms.push_back( NamedAtomID( "3HD2", res ) );
-	} else 	if ( name == "HG11" ) {
+	} else  if ( name == "HG11" ) {
 		atoms.push_back( NamedAtomID( "1HG1", res ) );
-	} else 	if ( name == "HG12" ) {
+	} else  if ( name == "HG12" ) {
 		atoms.push_back( NamedAtomID( "2HG1", res ) );
 	} else if ( name == "HG13" ) {
 		if ( aa == aa_ile ) {
@@ -297,9 +293,9 @@ void parse_NMR_name( std::string name, core::Size res, core::chemical::AA aa, Na
 		} else {
 			atoms.push_back( NamedAtomID( "3HG1", res ) );
 		}
-	} else 	if ( name == "HG21" ) {
+	} else  if ( name == "HG21" ) {
 		atoms.push_back( NamedAtomID( "1HG2", res ) );
-	} else 	if ( name == "HG22" ) {
+	} else  if ( name == "HG22" ) {
 		atoms.push_back( NamedAtomID( "2HG2", res ) );
 	} else if ( name == "HG23" ) {
 		atoms.push_back( NamedAtomID( "3HG2", res ) );
@@ -398,7 +394,7 @@ void parse_NMR_name_old( std::string name, core::Size res, AmbiguousNMRDistanceC
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1H", res ), pose ) );
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2H", res ), pose ) );
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "3H", res ), pose ) );
-	} else if ( (name.substr(0,2) == "QA" || name == "HA") && ( aa == aa_gly )) {
+	} else if ( (name.substr(0,2) == "QA" || name == "HA") && ( aa == aa_gly ) ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HA", res ), pose ) );
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HA", res ), pose ) );
 	} else if ( ( name == "QB" || name == "HB" ) && (
@@ -423,13 +419,13 @@ void parse_NMR_name_old( std::string name, core::Size res, AmbiguousNMRDistanceC
 		if ( aa == aa_ala ) atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "3HB", res ), pose ) );
 	} else if ( ( name == "QD1" ||  name == "HD1" ) && (
 			aa == aa_ile
-			|| aa == aa_leu )) {
+			|| aa == aa_leu ) ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HD1", res ), pose ) );
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HD1", res ), pose ) );
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "3HD1", res ), pose ) );
 	} else if ( ( name == "QD2" || name == "HD2" ) && (
 			aa == aa_leu
-			|| aa == aa_asn )) {
+			|| aa == aa_asn ) ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HD2", res ), pose ) );
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HD2", res ), pose ) );
 		if ( aa == aa_leu ) atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "3HD2", res ), pose ) );
@@ -459,11 +455,11 @@ void parse_NMR_name_old( std::string name, core::Size res, AmbiguousNMRDistanceC
 			|| aa == aa_phe
 			|| aa == aa_trp
 			|| aa == aa_met
-			|| aa == aa_lys ) ){
+			|| aa == aa_lys ) ) {
 		if ( aa == aa_phe || aa == aa_tyr ) {
 			atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "HE1", res ), pose ) );
 			atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "HE2", res ), pose ) );
-		}	else if ( aa == aa_trp ) {
+		} else if ( aa == aa_trp ) {
 			atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "HE1", res ), pose ) );
 			atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "HE3", res ), pose ) );
 		} else if ( aa == aa_met || aa == aa_lys ) { //MET LYS
@@ -479,11 +475,11 @@ void parse_NMR_name_old( std::string name, core::Size res, AmbiguousNMRDistanceC
 			|| aa == aa_pro
 			|| aa == aa_lys
 			|| aa == aa_glu
-			|| aa == aa_arg )) {
+			|| aa == aa_arg ) ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HG", res ), pose ) );
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HG", res ), pose ) );
-		//		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "3HE", res ), pose ) );
-	} else if (( name == "QG2" || name == "HG2" ) && (
+		//  atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "3HE", res ), pose ) );
+	} else if ( ( name == "QG2" || name == "HG2" ) && (
 			aa == aa_ile
 			|| aa == aa_thr
 			|| aa == aa_val ) ) {
@@ -499,16 +495,16 @@ void parse_NMR_name_old( std::string name, core::Size res, AmbiguousNMRDistanceC
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HG1", res ), pose ) );
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HG1", res ), pose ) );
 		if ( aa != aa_ile ) atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "3HG1", res ), pose ) );
-	} else if (( name == "QG1" || name == "HG1" ) && (
+	} else if ( ( name == "QG1" || name == "HG1" ) && (
 			aa == aa_ile
 			|| aa == aa_val ) ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HG1", res ), pose ) );
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HG1", res ), pose ) );
 		if ( aa != aa_ile ) atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "3HG1", res ), pose ) );
-	} else if (( name == "QE2" || name == "HE2" || name =="HE" ) && aa == aa_gln ) {
+	} else if ( ( name == "QE2" || name == "HE2" || name =="HE" ) && aa == aa_gln ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HE2", res ), pose ) );
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HE2", res ), pose ) );
-	} else if (( name == "HZ" || name == "QZ" ) && ( aa == aa_trp || aa == aa_lys ) ) {
+	} else if ( ( name == "HZ" || name == "QZ" ) && ( aa == aa_trp || aa == aa_lys ) ) {
 		if ( aa == aa_lys ) {
 			atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HZ", res ), pose ) );
 			atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HZ", res ), pose ) );
@@ -517,62 +513,57 @@ void parse_NMR_name_old( std::string name, core::Size res, AmbiguousNMRDistanceC
 			atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "HZ2", res ), pose ) );
 			atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "HZ3", res ), pose ) );
 		}
-	} else 	if ( name == "HB1" ) {
+	} else  if ( name == "HB1" ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HB", res ), pose ) );
-	} else 	if ( name == "HB2" ) {
+	} else  if ( name == "HB2" ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HB", res ), pose ) );
-	} else 	if ( name == "HB3" ) {
+	} else  if ( name == "HB3" ) {
 		if (  aa != aa_ala ) {
 			atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HB", res ), pose ) ); //yeah they call it 2HB and 3HB...
 		} else {
 			atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "3HB", res ), pose ) );
 		}
-	}	else 	if ( name == "HD1" && !is_aromatic( pose, res ) ) {
+	} else  if ( name == "HD1" && !is_aromatic( pose, res ) ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HD", res ), pose ) );
-	} else 	if ( name == "HD2" && !is_aromatic( pose, res ) ) {
+	} else  if ( name == "HD2" && !is_aromatic( pose, res ) ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HD", res ), pose ) );
-	} else 	if ( name == "HD3" ) { //LYS, PRO, ARG  no other has HD3
+	} else  if ( name == "HD3" ) { //LYS, PRO, ARG  no other has HD3
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HD", res ), pose ) );
 
-	} else 	if ( name == "HG1" && aa != aa_thr ) {
+	} else  if ( name == "HG1" && aa != aa_thr ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HG", res ), pose ) );
-	} else 	if ( name == "HG2" ) {
+	} else  if ( name == "HG2" ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HG", res ), pose ) );
-	} else 	if ( name == "HG3" ) { //GLU, ARG, GLN, MET
+	} else  if ( name == "HG3" ) { //GLU, ARG, GLN, MET
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HG", res ), pose ) );
 
-	} else 	if ( name == "HA1" ) {
+	} else  if ( name == "HA1" ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HA", res ), pose ) );
-	} else 	if ( name == "HA2" ) {
+	} else  if ( name == "HA2" ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HA", res ), pose ) );
-	} else 	if ( name == "HA3" ) { //GLY
+	} else  if ( name == "HA3" ) { //GLY
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HA", res ), pose ) );
-	}
-
-	else if (( name == "HE1" || name == "HE2" || name=="HE3" ) && !is_aromatic( pose, res ) )
-		{
-			if ( name == "HE3" && aa != aa_met ) {
-				atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HE", res ), pose ) ); //e.g. LYS
-			} else {
-				atoms.push_back( id::AtomID( pose.residue_type(res).atom_index(name.substr(2,1)+name.substr(0,2)), res ) );
-			}
+	} else if ( ( name == "HE1" || name == "HE2" || name=="HE3" ) && !is_aromatic( pose, res ) ) {
+		if ( name == "HE3" && aa != aa_met ) {
+			atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HE", res ), pose ) ); //e.g. LYS
+		} else {
+			atoms.push_back( id::AtomID( pose.residue_type(res).atom_index(name.substr(2,1)+name.substr(0,2)), res ) );
 		}
-
-	else if ( name == "HD11" ) {
+	} else if ( name == "HD11" ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HD1", res ), pose ) );
 	} else if ( name == "HD12" ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HD1", res ), pose ) );
-	} else 	if ( name == "HD13" ) {
+	} else  if ( name == "HD13" ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "3HD1", res ), pose ) );
-	} else 	if ( name == "HD21" ) {
+	} else  if ( name == "HD21" ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HD2", res ), pose ) );
 	} else if ( name == "HD22" ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HD2", res ), pose ) );
-	} else 	if ( name == "HD23" ) {
+	} else  if ( name == "HD23" ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "3HD2", res ), pose ) );
-	} else 	if ( name == "HG11" ) {
+	} else  if ( name == "HG11" ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HG1", res ), pose ) );
-	} else 	if ( name == "HG12" ) {
+	} else  if ( name == "HG12" ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HG1", res ), pose ) );
 	} else if ( name == "HG13" ) {
 		if ( aa == aa_ile ) {
@@ -580,9 +571,9 @@ void parse_NMR_name_old( std::string name, core::Size res, AmbiguousNMRDistanceC
 		} else {
 			atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "3HG1", res ), pose ) );
 		}
-	} else 	if ( name == "HG21" ) {
+	} else  if ( name == "HG21" ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HG2", res ), pose ) );
-	} else 	if ( name == "HG22" ) {
+	} else  if ( name == "HG22" ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HG2", res ), pose ) );
 	} else if ( name == "HG23" ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "3HG2", res ), pose ) );
@@ -617,7 +608,7 @@ void parse_NMR_name_old( std::string name, core::Size res, AmbiguousNMRDistanceC
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HH2", res ), pose ) );
 	} else {
 		tr.Trace << "adding " << id::NamedAtomID( name, res ) << " "
-						 << pose.residue_type( res ).name3() << std::endl;
+			<< pose.residue_type( res ).name3() << std::endl;
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( name, res ), pose ) );
 		tr.Trace << "as atom: " << atoms.back();
 	}
@@ -650,13 +641,13 @@ void combine_NMR_atom_string( AmbiguousNMRDistanceConstraint::Atoms atoms, std::
 		atom_str = pose.residue(  atoms[ 1 ].rsd() ).atom_name(  atoms[ 1 ].atomno() );
 	} else if ( atoms.size() == 2 && atoms[ 1 ].rsd() == atoms[ 2 ].rsd()
 			&& pose.residue(  atoms[ 1 ].rsd() ).atom_name(  atoms[ 1 ].atomno() ).substr( 1, 2 ) == "HB"
-		&& pose.residue(  atoms[ 2 ].rsd() ).atom_name(  atoms[ 2 ].atomno() ).substr( 1, 2 ) == "HB" ) {
+			&& pose.residue(  atoms[ 2 ].rsd() ).atom_name(  atoms[ 2 ].atomno() ).substr( 1, 2 ) == "HB" ) {
 		atom_str = "QB";
 	} else if ( atoms.size() == 3
-		&& atoms[ 1 ].rsd() == atoms[ 2 ].rsd() && atoms[ 1 ].rsd() == atoms[ 3 ].rsd() ) {
+			&& atoms[ 1 ].rsd() == atoms[ 2 ].rsd() && atoms[ 1 ].rsd() == atoms[ 3 ].rsd() ) {
 		std::string methyl = pose.residue(  atoms[ 1 ].rsd() ).atom_name(  atoms[ 1 ].atomno() ).substr( 1, 3 );
 		if ( pose.residue(  atoms[ 2 ].rsd() ).atom_name(  atoms[ 2 ].atomno() ).substr( 1, 3 ) == methyl
-			&& pose.residue(  atoms[ 3 ].rsd() ).atom_name(  atoms[ 3 ].atomno() ).substr( 1, 3 ) == methyl ) {
+				&& pose.residue(  atoms[ 3 ].rsd() ).atom_name(  atoms[ 3 ].atomno() ).substr( 1, 3 ) == methyl ) {
 			if ( atoms[ 1 ].rsd() == 1 ) { //1H, 2H, 3H Nterminus
 				atom_str = "H";
 			} else {
@@ -665,12 +656,12 @@ void combine_NMR_atom_string( AmbiguousNMRDistanceConstraint::Atoms atoms, std::
 		} else {
 			atom_str = " untranslatable-3-atom-combi";
 			tr.Trace << "could not translate: "
-							 << pose.residue(  atoms[ 1 ].rsd() ).atom_name(  atoms[ 1 ].atomno() ) << " "
-							 << pose.residue(  atoms[ 2 ].rsd() ).atom_name(  atoms[ 2 ].atomno() ) << " "
-							 << pose.residue(  atoms[ 3 ].rsd() ).atom_name(  atoms[ 3 ].atomno() ) << std::endl;
+				<< pose.residue(  atoms[ 1 ].rsd() ).atom_name(  atoms[ 1 ].atomno() ) << " "
+				<< pose.residue(  atoms[ 2 ].rsd() ).atom_name(  atoms[ 2 ].atomno() ) << " "
+				<< pose.residue(  atoms[ 3 ].rsd() ).atom_name(  atoms[ 3 ].atomno() ) << std::endl;
 		}
 	} else if ( atoms.size() == 2 //QE or QE2 or QD/PHE
-		&& atoms[ 1 ].rsd() == atoms[ 2 ].rsd() ) {
+			&& atoms[ 1 ].rsd() == atoms[ 2 ].rsd() ) {
 		if ( pose.residue(  atoms[ 1 ].rsd() ).atom_name(  atoms[ 1 ].atomno() ).substr(0,2)==" H" ) {
 			atom_str = "Q"+pose.residue(  atoms[ 1 ].rsd() ).atom_name(  atoms[ 1 ].atomno() ).substr(2,1);
 		} else {
@@ -683,22 +674,22 @@ void combine_NMR_atom_string( AmbiguousNMRDistanceConstraint::Atoms atoms, std::
 			}
 		}
 	} else if ( atoms.size() == 6
-		&& atoms[ 1 ].rsd() == atoms[ 2 ].rsd() && atoms[ 1 ].rsd() == atoms[ 3 ].rsd()
-		&& atoms[ 1 ].rsd() == atoms[ 4 ].rsd() && atoms[ 1 ].rsd() == atoms[ 5 ].rsd()
-		&& atoms[ 1 ].rsd() == atoms[ 6 ].rsd() ) {
+			&& atoms[ 1 ].rsd() == atoms[ 2 ].rsd() && atoms[ 1 ].rsd() == atoms[ 3 ].rsd()
+			&& atoms[ 1 ].rsd() == atoms[ 4 ].rsd() && atoms[ 1 ].rsd() == atoms[ 5 ].rsd()
+			&& atoms[ 1 ].rsd() == atoms[ 6 ].rsd() ) {
 		std::string methyl = pose.residue(  atoms[ 1 ].rsd() ).atom_name(  atoms[ 1 ].atomno() ).substr( 1, 2 );
 		if ( pose.residue(  atoms[ 2 ].rsd() ).atom_name(  atoms[ 2 ].atomno() ).substr( 1, 2 ) == methyl
-			&& pose.residue(  atoms[ 3 ].rsd() ).atom_name(  atoms[ 3 ].atomno() ).substr( 1, 2 ) == methyl ) {
+				&& pose.residue(  atoms[ 3 ].rsd() ).atom_name(  atoms[ 3 ].atomno() ).substr( 1, 2 ) == methyl ) {
 			atom_str = "QQ"+methyl.substr(1);
 		} else {
 			atom_str = " untranslatable-6-atom-combi ";
 			tr.Trace << "could not translate: "
-							 << pose.residue(  atoms[ 1 ].rsd() ).atom_name(  atoms[ 1 ].atomno() ) << " "
-							 << pose.residue(  atoms[ 2 ].rsd() ).atom_name(  atoms[ 2 ].atomno() ) << " "
-							 << pose.residue(  atoms[ 3 ].rsd() ).atom_name(  atoms[ 3 ].atomno() ) << " "
-							 << pose.residue(  atoms[ 4 ].rsd() ).atom_name(  atoms[ 4 ].atomno() ) << " "
-							 << pose.residue(  atoms[ 5 ].rsd() ).atom_name(  atoms[ 5 ].atomno() ) << " "
-							 << pose.residue(  atoms[ 6 ].rsd() ).atom_name(  atoms[ 6 ].atomno() ) << std::endl;
+				<< pose.residue(  atoms[ 1 ].rsd() ).atom_name(  atoms[ 1 ].atomno() ) << " "
+				<< pose.residue(  atoms[ 2 ].rsd() ).atom_name(  atoms[ 2 ].atomno() ) << " "
+				<< pose.residue(  atoms[ 3 ].rsd() ).atom_name(  atoms[ 3 ].atomno() ) << " "
+				<< pose.residue(  atoms[ 4 ].rsd() ).atom_name(  atoms[ 4 ].atomno() ) << " "
+				<< pose.residue(  atoms[ 5 ].rsd() ).atom_name(  atoms[ 5 ].atomno() ) << " "
+				<< pose.residue(  atoms[ 6 ].rsd() ).atom_name(  atoms[ 6 ].atomno() ) << std::endl;
 		}
 	}
 	std::istringstream eat_white_space( atom_str );
@@ -711,8 +702,8 @@ void AmbiguousNMRDistanceConstraint::show_def( std::ostream& out, pose::Pose con
 	combine_NMR_atom_string( atoms1_, def_atoms1, pose);
 	combine_NMR_atom_string( atoms2_, def_atoms2, pose);
 	out << type() << " "
-			<< def_atoms1 << " " << atoms1_[ 1 ].rsd() << " "
-			<< def_atoms2 << " " << atoms2_[ 1 ].rsd() << " ";
+		<< def_atoms1 << " " << atoms1_[ 1 ].rsd() << " "
+		<< def_atoms2 << " " << atoms2_[ 1 ].rsd() << " ";
 	if ( func_ ) func_->show_definition( out );
 	else out << std::endl;
 }
@@ -769,7 +760,7 @@ AmbiguousNMRDistanceConstraint::inv_dist6(
 {
 	Real cum_dist( 0.0 );
 	for ( Atoms::const_iterator it1 = atoms1_.begin(); it1 != atoms1_.end(); ++it1 ) {
-		for (Atoms::const_iterator it2 = atoms2_.begin(); it2 != atoms2_.end(); ++it2 ) {
+		for ( Atoms::const_iterator it2 = atoms2_.begin(); it2 != atoms2_.end(); ++it2 ) {
 			Vector const & xyz1( xyz( *it1 ) ), xyz2( xyz( *it2 ) );
 			Vector const f2( xyz1 - xyz2 );
 			Real const dist( f2.length() );
@@ -777,10 +768,10 @@ AmbiguousNMRDistanceConstraint::inv_dist6(
 			Real const inv_dist2( inv_dist*inv_dist );
 			Real const inv_dist6( inv_dist2 * inv_dist2 * inv_dist2 );
 			cum_dist += inv_dist6;
-			//			tr.Trace << *it1 << " " << *it2 << " " << dist << " " << pow(cum_dist, -1.0/6) << std::endl;
+			//   tr.Trace << *it1 << " " << *it2 << " " << dist << " " << pow(cum_dist, -1.0/6) << std::endl;
 		}
 	}
-	//	tr.Trace << "finished distance" << std::endl;
+	// tr.Trace << "finished distance" << std::endl;
 	return cum_dist;
 }
 
@@ -796,8 +787,8 @@ Size AmbiguousNMRDistanceConstraint::show_violations(
 	Real threshold
 ) const {
 
- 	if ( verbose_level > 80 ) {
-  out << "\nAmbiguousNMRDistanceConstraint ( "
+	if ( verbose_level > 80 ) {
+		out << "\nAmbiguousNMRDistanceConstraint ( "
 			<< pose.residue_type(atoms1_.front().rsd() ).atom_name( atoms1_.front().atomno() ) << " : "
 			<< atoms1_.front().rsd() << " - "
 			<< pose.residue_type(atoms2_.front().rsd() ).atom_name( atoms2_.front().atomno() ) << " : "
@@ -821,25 +812,25 @@ AmbiguousNMRDistanceConstraint::fill_f1_f2(
 	bool not_methyl_1 = std::find( atoms1_.begin() , atoms1_.end() , atom ) == atoms1_.end();
 	bool not_methyl_2 = std::find( atoms2_.begin() , atoms2_.end() , atom ) == atoms2_.end();
 	if ( not_methyl_1 && not_methyl_2 ) {
-		//		tr.Trace << "atom " << atom << " not found " << std::endl;
+		//  tr.Trace << "atom " << atom << " not found " << std::endl;
 		return;
 	}
 
 	Real eff_dist = dist( xyz );
 	Real out_wderiv( weights[ this->score_type() ] * dfunc( eff_dist ));
 	Real in_deriv = -1.0/6.0 * pow( eff_dist, 7.0 );
-	//	tr.Trace << "deriv for atom " << atom << eff_dist << " " << out_wderiv << " " << in_deriv << std::endl;
+	// tr.Trace << "deriv for atom " << atom << eff_dist << " " << out_wderiv << " " << in_deriv << std::endl;
 
 	Atoms const& the_other_atoms( not_methyl_1 ? atoms1_ : atoms2_ );
-	//	tr.Trace << "the_other_atoms: " << the_other_atoms.size() << " " << the_other_atoms.front() << std::endl;
-	for (Atoms::const_iterator it = the_other_atoms.begin(); it != the_other_atoms.end(); ++it ) {
+	// tr.Trace << "the_other_atoms: " << the_other_atoms.size() << " " << the_other_atoms.front() << std::endl;
+	for ( Atoms::const_iterator it = the_other_atoms.begin(); it != the_other_atoms.end(); ++it ) {
 		AtomID other_atom = *it;
-		//		tr.Trace << "contribution from " << other_atom << " to " << atom << std::endl;
+		//  tr.Trace << "contribution from " << other_atom << " to " << atom << std::endl;
 		Real rdist(0.0);
 		Vector f1(0.0), f2(0.0);
 		numeric::deriv::distance_f1_f2_deriv( xyz( atom ), xyz( other_atom ), rdist, f1, f2 );
 		Real wderiv = -6.0*pow(rdist,-7.0) * in_deriv * out_wderiv ;
-		//		tr.Trace << "wderiv " << wderiv << std::endl;
+		//  tr.Trace << "wderiv " << wderiv << std::endl;
 		F1 += wderiv * f1;
 		F2 += wderiv * f2;
 
@@ -850,7 +841,7 @@ AmbiguousNMRDistanceConstraint::fill_f1_f2(
 ConstraintOP
 AmbiguousNMRDistanceConstraint::remap_resid( core::id::SequenceMapping const &smap ) const
 {
-	//	runtime_assert( 0 );
+	// runtime_assert( 0 );
 	Atoms ids1, ids2;
 	for ( Atoms::const_iterator it = atoms1_.begin(); it != atoms1_.end(); ++it ) {
 		id::AtomID atom( it->atomno(), smap[ it->rsd() ] );
@@ -867,20 +858,20 @@ AmbiguousNMRDistanceConstraint::remap_resid( core::id::SequenceMapping const &sm
 
 
 AmbiguousNMRDistanceConstraint::AmbiguousNMRDistanceConstraint(
-    id::NamedAtomID const & a1, //digests names like "QG1"
-		id::NamedAtomID const & a2,
-		core::pose::Pose const& pose,
-	 	func::FuncOP func,
-		ScoreType scoretype
+	id::NamedAtomID const & a1, //digests names like "QG1"
+	id::NamedAtomID const & a2,
+	core::pose::Pose const& pose,
+	func::FuncOP func,
+	ScoreType scoretype
 ) : Constraint( scoretype ),
-		func_( func )
+	func_( func )
 {
 	parse_NMR_name( a1.atom(), a1.rsd(), atoms1_, pose );
 	parse_NMR_name( a2.atom(), a2.rsd(), atoms2_, pose );
 
 	if ( atoms1_.size() == 0 || atoms2_.size() == 0 ) {
 		tr.Warning << "Error constructing from atoms: read in atom names("
-							 << a1.atom() << "," << a2.atom() << "), " << std::endl;
+			<< a1.atom() << "," << a2.atom() << "), " << std::endl;
 	}
 }
 
@@ -905,7 +896,7 @@ AmbiguousNMRDistanceConstraint::read_def(
 
 	tr.Debug << "read: " << name1 << " " << name2 << " " << res1 << " " << res2 << " func: " << func_type << std::endl;
 	if ( res1 > pose.total_residue() || res2 > pose.total_residue() ) {
-		tr.Warning 	<< "ignored constraint (residue number to high for pose: " << pose.total_residue() << " !)"
+		tr.Warning  << "ignored constraint (residue number to high for pose: " << pose.total_residue() << " !)"
 			<< name1 << " " << name2 << " " << res1 << " " << res2 << std::endl;
 		data.setstate( std::ios_base::failbit );
 		return;
@@ -916,18 +907,18 @@ AmbiguousNMRDistanceConstraint::read_def(
 
 	if ( atoms1_.size() == 0 || atoms2_.size() == 0 ) {
 		tr.Warning << "Error reading atoms: read in atom names("
-							 << name1 << "," << name2 << "), " << std::endl;
-		//			<< "and found AtomIDs (" << atom1_ << "," << atom2_ << ")" << std::endl;
-			data.setstate( std::ios_base::failbit );
-			return;
+			<< name1 << "," << name2 << "), " << std::endl;
+		//   << "and found AtomIDs (" << atom1_ << "," << atom2_ << ")" << std::endl;
+		data.setstate( std::ios_base::failbit );
+		return;
 	}
 
 	func_ = func_factory.new_func( func_type );
 	func_->read_data( data );
 
 	if ( data.good() ) {
-	//chu skip the rest of line since this is a single line defintion.
-		while( data.good() && (data.get() != '\n') ) {}
+		//chu skip the rest of line since this is a single line defintion.
+		while ( data.good() && (data.get() != '\n') ) {}
 		if ( !data.good() ) data.setstate( std::ios_base::eofbit );
 	}
 

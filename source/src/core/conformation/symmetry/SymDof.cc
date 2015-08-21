@@ -39,12 +39,12 @@ SymDof::SymDof()
 		has_range2_upper_.push_back(false);
 		range2_is_bound_.push_back(false);
 		jump_dir_.push_back( 1 );
-  }
+	}
 
 }
 
 SymDof::SymDof( SymDof const & src )
-:	range2_is_bound_( src.range2_is_bound_ ),
+: range2_is_bound_( src.range2_is_bound_ ),
 	allowed_dof_jumps_( src.allowed_dof_jumps_ ),
 	lower_range_dof_jumps1_( src.lower_range_dof_jumps1_ ),
 	upper_range_dof_jumps1_( src.upper_range_dof_jumps1_ ),
@@ -82,8 +82,8 @@ SymDof::~SymDof() {}
 bool
 SymDof::allow_dof( int df ) const
 {
-debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
-debug_assert( allowed_dof_jumps_.size() == 6 );
+	debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	debug_assert( allowed_dof_jumps_.size() == 6 );
 	return allowed_dof_jumps_[df];
 
 }
@@ -92,15 +92,15 @@ debug_assert( allowed_dof_jumps_.size() == 6 );
 void
 SymDof::set_allow_dof( int df, bool newval )
 {
-debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
-debug_assert( allowed_dof_jumps_.size() == 6 );
+	debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	debug_assert( allowed_dof_jumps_.size() == 6 );
 	allowed_dof_jumps_[df] = newval;
 }
 
 bool
 SymDof::has_dof()
 {
-	for (int i = X_DOF; i <= Z_ANGLE_DOF; ++i ) {
+	for ( int i = X_DOF; i <= Z_ANGLE_DOF; ++i ) {
 		if ( allow_dof(i) ) return true;
 	}
 	return false;
@@ -110,8 +110,8 @@ SymDof::has_dof()
 core::Real
 SymDof::range1_lower( int df ) const
 {
-debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
-debug_assert( lower_range_dof_jumps1_.size() == 6 );
+	debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	debug_assert( lower_range_dof_jumps1_.size() == 6 );
 	return lower_range_dof_jumps1_[df];
 }
 
@@ -119,8 +119,8 @@ debug_assert( lower_range_dof_jumps1_.size() == 6 );
 core::Real
 SymDof::range1_upper( int df ) const
 {
-debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
-debug_assert( upper_range_dof_jumps1_.size() == 6 );
+	debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	debug_assert( upper_range_dof_jumps1_.size() == 6 );
 	return upper_range_dof_jumps1_[df];
 }
 
@@ -128,8 +128,8 @@ debug_assert( upper_range_dof_jumps1_.size() == 6 );
 core::Real
 SymDof::range2_lower( int df ) const
 {
-debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
-debug_assert( lower_range_dof_jumps2_.size() == 6 );
+	debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	debug_assert( lower_range_dof_jumps2_.size() == 6 );
 	return lower_range_dof_jumps2_[df];
 }
 
@@ -137,8 +137,8 @@ debug_assert( lower_range_dof_jumps2_.size() == 6 );
 core::Real
 SymDof::range2_upper( int df ) const
 {
-debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
-debug_assert( upper_range_dof_jumps2_.size() == 6 );
+	debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	debug_assert( upper_range_dof_jumps2_.size() == 6 );
 	return upper_range_dof_jumps2_[df];
 }
 
@@ -162,7 +162,7 @@ SymDof::has_range2( int df ) const
 bool
 SymDof::has_range1_lower( int df ) const
 {
-debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
 	return has_range1_lower_[df];
 }
 
@@ -170,7 +170,7 @@ debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
 bool
 SymDof::has_range1_upper( int df ) const
 {
-debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
 	return has_range1_upper_[df];
 }
 
@@ -178,7 +178,7 @@ debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
 bool
 SymDof::has_range2_lower( int df ) const
 {
-debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
 	return has_range2_lower_[df];
 }
 
@@ -186,7 +186,7 @@ debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
 bool
 SymDof::has_range2_upper( int df ) const
 {
-debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
 	return has_range2_upper_[df];
 }
 
@@ -194,7 +194,7 @@ debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
 bool
 SymDof::range2_is_bound( int df ) const
 {
-debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
 	return range2_is_bound_[df];
 }
 
@@ -203,7 +203,7 @@ debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
 int
 SymDof::jump_direction( int df ) const
 {
-debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	debug_assert( df >= X_DOF && df <= Z_ANGLE_DOF );
 	return jump_dir_[df];
 }
 
@@ -240,7 +240,7 @@ void SymDof::read( std::string dof_line )
 		if ( dof_type == 0 ) utility_exit_with_message("Dof type must be x,y,z,x_angle,y_angle,z_angle...");
 
 		// bracket implies that range2 is an absolute bound
-		if (has_bracket) range2_is_bound_[dof_type] = true;
+		if ( has_bracket ) range2_is_bound_[dof_type] = true;
 
 		// range2_is_bound_ unsupported for rotations
 		runtime_assert ( !has_bracket || dof_type==X_DOF || dof_type==Y_DOF || dof_type==Z_DOF );
@@ -280,9 +280,9 @@ void SymDof::read( std::string dof_line )
 				}
 
 				// quick sanity check
-				if (range2_is_bound_[dof_type]) {
+				if ( range2_is_bound_[dof_type] ) {
 					runtime_assert ( lower_range_dof_jumps2_[dof_type] <= lower_range_dof_jumps1_[dof_type] &&
-					                 upper_range_dof_jumps2_[dof_type] >= upper_range_dof_jumps1_[dof_type] );
+						upper_range_dof_jumps2_[dof_type] >= upper_range_dof_jumps1_[dof_type] );
 				}
 			}
 			// Parse the jump direction. Either dof_type(n2c) or dof_type(c2n)
@@ -302,28 +302,28 @@ void SymDof::read( std::string dof_line )
 std::ostream& operator<< ( std::ostream & s, const SymDof & dof )
 {
 
-	 for ( Size i=1; i<=6; ++i ) {
-		 if( dof.allow_dof(i) ) {
-			 std::string dir ( "n2c" );
-			 if ( dof.jump_direction(i) == -1 ) dir = "c2n";
-			 if ( i == 1 ) s << "x";
-			 if ( i == 2 ) s << "y";
-			 if ( i == 3 ) s << "z";
-			 if ( i == 4 ) s << "angle_x";
-			 if ( i == 5 ) s << "angle_y";
-			 if ( i == 6 ) s << "angle_z";
-			 s << "(" << dof.range1_lower(i) << ":" << dof.range1_upper(i) << ";"
-				 << dof.range2_lower(i) << ":" << dof.range2_upper(i) << ";" << dir << ")";
-		 }
-	 }
+	for ( Size i=1; i<=6; ++i ) {
+		if ( dof.allow_dof(i) ) {
+			std::string dir ( "n2c" );
+			if ( dof.jump_direction(i) == -1 ) dir = "c2n";
+			if ( i == 1 ) s << "x";
+			if ( i == 2 ) s << "y";
+			if ( i == 3 ) s << "z";
+			if ( i == 4 ) s << "angle_x";
+			if ( i == 5 ) s << "angle_y";
+			if ( i == 6 ) s << "angle_z";
+			s << "(" << dof.range1_lower(i) << ":" << dof.range1_upper(i) << ";"
+				<< dof.range2_lower(i) << ":" << dof.range2_upper(i) << ";" << dir << ")";
+		}
+	}
 
-	 return s;
+	return s;
 }
 
 void
 SymDof::add_dof_from_string( utility::vector1< std::string > dof_line )
 {
-debug_assert( dof_line.size() >= 3 );
+	debug_assert( dof_line.size() >= 3 );
 
 	for ( Size i = 3; i <= dof_line.size(); ++i ) {
 		read(dof_line[i]);
@@ -332,8 +332,8 @@ debug_assert( dof_line.size() >= 3 );
 
 bool
 operator==(
-  SymDof const & a,
-  SymDof const & b
+	SymDof const & a,
+	SymDof const & b
 ) {
 	return
 		std::equal(a.allowed_dof_jumps_.begin(), a.allowed_dof_jumps_.end(), b.allowed_dof_jumps_.begin()) &&
@@ -350,8 +350,8 @@ operator==(
 
 bool
 operator!=(
-  SymDof const & a,
-  SymDof const & b
+	SymDof const & a,
+	SymDof const & b
 ) {
 	return !(a == b);
 }

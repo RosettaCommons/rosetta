@@ -76,25 +76,25 @@ AddSidechainConstraintsToHotspots::apply( Pose & pose )
 	core::Size const end( pose.conformation().chain_end( chain() ) );
 
 	int const num_cutpoints( pose.fold_tree().num_cutpoint() );
-	if( num_cutpoints <= 2 && residues().size() == 0 ){
+	if ( num_cutpoints <= 2 && residues().size() == 0 ) {
 		TR<<"Not enough cutpoints in pose and no residues defined by user. Doing nothing"<<std::endl;
 		return;
 	}
-	for( int i=2; i<=pose.fold_tree().num_cutpoint(); ++i ){
+	for ( int i=2; i<=pose.fold_tree().num_cutpoint(); ++i ) {
 		core::Size const cutpoint = pose.fold_tree().cutpoint( i );
 		core::Size const cutpoint_i_1 = pose.fold_tree().cutpoint( i - 1 );
-		if( cutpoint - 1 != cutpoint_i_1 ) continue;//only mark residues that are cut on both ends
-		if( cutpoint <= end && cutpoint >= begin )
+		if ( cutpoint - 1 != cutpoint_i_1 ) continue;//only mark residues that are cut on both ends
+		if ( cutpoint <= end && cutpoint >= begin ) {
 			add_residue( i );
+		}
 	}
-	BOOST_FOREACH( core::Size const residue, residues() )
-	{
+	BOOST_FOREACH ( core::Size const residue, residues() ) {
 		using namespace core::scoring::constraints;
 
 		core::scoring::func::HarmonicFuncOP dummy_cst;
 		ConstraintCOPs constraint;
 		constraint = add_coordinate_constraints( pose, pose.conformation().residue( residue ), chain(), residue, coord_sdev(), dummy_cst );
-		BOOST_FOREACH( ConstraintCOP cst, constraint ){
+		BOOST_FOREACH ( ConstraintCOP cst, constraint ) {
 			cst->show_def( TR_cst, pose );
 		}
 	}
@@ -108,15 +108,15 @@ AddSidechainConstraintsToHotspots::get_name() const {
 
 void
 AddSidechainConstraintsToHotspots::parse_my_tag( TagCOP const tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		Movers_map const &,
-		Pose const & pose )
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	Movers_map const &,
+	Pose const & pose )
 {
 	chain( tag->getOption< core::Size >( "chain", 2 ) );
 	coord_sdev( tag->getOption< core::Real >( "coord_sdev", 1.0 ) );
 	utility::vector1< core::Size > v1 = core::pose::get_resnum_list( tag, "resnums", pose );
-	BOOST_FOREACH( core::Size const r, v1 ){ add_residue( r ); }
+	BOOST_FOREACH ( core::Size const r, v1 ) { add_residue( r ); }
 }
 
 core::Size

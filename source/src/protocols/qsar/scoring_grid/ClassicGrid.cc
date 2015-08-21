@@ -79,37 +79,32 @@ void ClassicGrid::parse_my_tag(utility::tag::TagCOP const /*tag*/)
 void ClassicGrid::refresh(core::pose::Pose const & pose, core::Vector const & )
 {
 	//set attractive zones
-	for(core::Size residue_index = 1; residue_index <=pose.total_residue(); ++residue_index)
-	{
+	for ( core::Size residue_index = 1; residue_index <=pose.total_residue(); ++residue_index ) {
 		core::conformation::Residue const & residue(pose.residue(residue_index));
-		if(!residue.is_protein()) continue;
-		for(core::Size atom_index = 1; atom_index <= residue.nheavyatoms(); ++atom_index)
-		{
+		if ( !residue.is_protein() ) continue;
+		for ( core::Size atom_index = 1; atom_index <= residue.nheavyatoms(); ++atom_index ) {
 			set_sphere(residue.xyz(atom_index),atr_radius_,-1);
 		}
 	}
 
 	//set neutral zones
-	for(core::Size residue_index = 1; residue_index <= pose.total_residue(); ++residue_index)
-	{
+	for ( core::Size residue_index = 1; residue_index <= pose.total_residue(); ++residue_index ) {
 		core::conformation::Residue const & residue(pose.residue(residue_index));
-		if(!residue.is_protein()) continue;
-		for(core::Size atom_index = 1; atom_index <= residue.nheavyatoms(); ++atom_index)
-		{
+		if ( !residue.is_protein() ) continue;
+		for ( core::Size atom_index = 1; atom_index <= residue.nheavyatoms(); ++atom_index ) {
 			set_sphere(residue.xyz(atom_index),rep_radius_,0);
 		}
 	}
 
 	//set repulsive zones
-	for(core::Size residue_index = 1; residue_index <= pose.total_residue(); ++residue_index)
-	{
+	for ( core::Size residue_index = 1; residue_index <= pose.total_residue(); ++residue_index ) {
 		core::conformation::Residue const & residue = pose.residue(residue_index);
-		if( !residue.is_protein() ) continue;
-		if( residue.has("CB") ) set_sphere(residue.xyz("CB"), rep_radius_, 1);
-		if( residue.has("N") ) set_sphere(residue.xyz("N"), rep_radius_, 1);
-		if( residue.has("CA") ) set_sphere(residue.xyz("CA"), rep_radius_, 1);
-		if( residue.has("C") ) set_sphere(residue.xyz("C"), rep_radius_, 1);
-		if( residue.has("O") ) set_sphere(residue.xyz("O"), rep_radius_, 1);
+		if ( !residue.is_protein() ) continue;
+		if ( residue.has("CB") ) set_sphere(residue.xyz("CB"), rep_radius_, 1);
+		if ( residue.has("N") ) set_sphere(residue.xyz("N"), rep_radius_, 1);
+		if ( residue.has("CA") ) set_sphere(residue.xyz("CA"), rep_radius_, 1);
+		if ( residue.has("C") ) set_sphere(residue.xyz("C"), rep_radius_, 1);
+		if ( residue.has("O") ) set_sphere(residue.xyz("O"), rep_radius_, 1);
 	}
 }
 

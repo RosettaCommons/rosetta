@@ -42,7 +42,7 @@ using namespace core;
 class FullatomCustomPairDistanceEnergyTests : public CxxTest::TestSuite {
 
 public:
-  void setUp() {
+	void setUp() {
 		core_init();
 	}
 

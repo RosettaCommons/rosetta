@@ -46,7 +46,7 @@ public:
 
 	using protocols::moves::Mover::apply;
 
-  void
+	void
 	apply( core::pose::Pose & pose, Size const res_to_add_in_full_model_numbering, Size const res_to_build_off_in_full_model_numbering );
 
 	void
@@ -81,18 +81,18 @@ private:
 	void sample_by_monte_carlo_internal( core::pose::Pose & pose ) const;
 
 	void
-  do_append( core::pose::Pose & pose );
+	do_append( core::pose::Pose & pose );
 
- 	void
-  do_prepend( core::pose::Pose & pose );
+	void
+	do_prepend( core::pose::Pose & pose );
 
 	void
 	append_other_pose( pose::Pose & pose, Size const offset,
-										 Size const other_pose_idx );
+		Size const other_pose_idx );
 
 	void
 	prepend_other_pose( pose::Pose & pose, Size const offset,
-											Size const other_pose_idx );
+		Size const other_pose_idx );
 
 	void
 	append_residue( pose::Pose & pose, Size const offset );

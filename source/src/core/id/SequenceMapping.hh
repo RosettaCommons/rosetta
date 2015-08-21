@@ -37,7 +37,7 @@ namespace id {
 class SequenceMapping : public utility::pointer::ReferenceCount {
 
 public:
-// constructors, destructors and assignment operator
+	// constructors, destructors and assignment operator
 	/// @brief ctor
 	SequenceMapping() :
 		size2_(0)

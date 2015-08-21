@@ -42,7 +42,7 @@ namespace options {
 
 /// @brief Program integer vector option class
 class ResidueChainVectorOption :
- public VectorOption_T_< ResidueChainVectorOptionKey, int >
+	public VectorOption_T_< ResidueChainVectorOptionKey, int >
 {
 
 

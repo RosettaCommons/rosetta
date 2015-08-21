@@ -57,7 +57,7 @@ public:
 
 	/// @brief registers a new scoring method in this manager
 	void add_scoring_method(
-			FragmentScoringMethodOP, Real);
+		FragmentScoringMethodOP, Real);
 
 	/// @brief says how many scoring methods have already been registered
 	inline Size count_components() {
@@ -67,7 +67,7 @@ public:
 	/// @brief Returns a desired scoring method
 	/// @details Allowed index values are [1,count_components()]
 	inline FragmentScoringMethodOP get_component(
-			Size index) {
+		Size index) {
 		return scores_[index];
 	}
 
@@ -93,25 +93,25 @@ public:
 
 	/// @brief those score metohods that have weight = 0.0 will be computed after the fragments are picked
 	/// @details if weight for a score is 0.0 than it does not affect the total score and thus has no
-	/// 	effect on fragments sorting, quota, etc. Such scores may be computed after fragment picking is finished
-	//	By default it is set to false.
+	///  effect on fragments sorting, quota, etc. Such scores may be computed after fragment picking is finished
+	// By default it is set to false.
 	void use_late_scoring_for_zeros(const bool if_true) {
 		zeros_score_later_ = if_true;
 	}
 
 	/// @brief says if late scoring is used or not
 	/// @details late scoring means that some scores (those with weight=0, such as crmsd) are evaluated
-	///	only for the selected fragments rather than for all the candidates
+	/// only for the selected fragments rather than for all the candidates
 	inline bool if_late_scoring_for_zeros() {
 		return zeros_score_later_;
 	}
 
 	/// @brief calculates all these small scores for a given fragment whose weight is 0.0
 	/// @details When use_late_scoring_for_zeros() was used to set the flag to true,
-	///	all fragment scoring methods neglects zero-weighted scores.
-	///	These will be evaluated by this function, that may be called after fragments are picked.
-	///	This way some time consuming computations (e.g. crmsd for fragments) may be computed
-	///	only for the selected fragments rather than for all of them
+	/// all fragment scoring methods neglects zero-weighted scores.
+	/// These will be evaluated by this function, that may be called after fragments are picked.
+	/// This way some time consuming computations (e.g. crmsd for fragments) may be computed
+	/// only for the selected fragments rather than for all of them
 	bool score_zero_scores(FragmentCandidateOP, FragmentScoreMapOP);
 
 	/// @brief registers a maker object that will be used to create a scoring method object
@@ -119,7 +119,7 @@ public:
 
 	/// @brief creates a new scoring method object
 	void create_scoring_method(std::string const &, Size, Real, Real, bool,
-			FragmentPickerOP, std::string);
+		FragmentPickerOP, std::string);
 
 	/// @brief reads a config file and creates scoring methods
 	void create_scores(std::string const &, FragmentPickerOP);
@@ -144,10 +144,10 @@ public:
 
 	/// @brief prints a flat table with all scores for all the fragments in a given vector
 	virtual void describe_fragments(utility::vector1<std::pair<FragmentCandidateOP,
-			scores::FragmentScoreMapOP> > const&, std::ostream&);
+		scores::FragmentScoreMapOP> > const&, std::ostream&);
 
 protected:
-  utility::vector1<FragmentScoringMethodOP> scores_;
+	utility::vector1<FragmentScoringMethodOP> scores_;
 	std::map<FragmentScoringMethodOP, Size> width_;
 	std::map<FragmentScoringMethodOP, Size> precision_;
 private:

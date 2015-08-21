@@ -58,15 +58,15 @@ ParallelBetaPairingPreferenceFilter::ParallelBetaPairingPreferenceFilter():
 
 	score_pairmatrix_.resize( 20 );
 
-  String line;
-	while( getline( stream, line ) ){
+	String line;
+	while ( getline( stream, line ) ) {
 		utility::vector1< String > tokens ( utility::string_split( line, '\t' ) );
 		runtime_assert( tokens.size() == 21 );
 		AA aa = core::chemical::aa_from_oneletter_code( tokens[ 1 ][ 0 ] );
 		score_pairmatrix_[ Size ( aa ) ].resize( 20 );
-		for( Size ii=1; ii<=20; ii++ ) {
+		for ( Size ii=1; ii<=20; ii++ ) {
 			Real value;
-			if( aa == core::chemical::aa_pro ) {
+			if ( aa == core::chemical::aa_pro ) {
 				value = 0.01;
 			} else {
 				value = boost::lexical_cast<Real>( tokens[ ii+1 ] );
@@ -118,9 +118,9 @@ ParallelBetaPairingPreferenceFilter::apply( Pose const & pose ) const
 {
 	Real score = compute( pose );
 
-	if( filter_value_ < score ){
+	if ( filter_value_ < score ) {
 		return true;
-	}else{
+	} else {
 		return false;
 	}
 } // apply
@@ -154,24 +154,24 @@ ParallelBetaPairingPreferenceFilter::compute( Pose const & pose ) const
 
 	Size num_pair( 0 );
 	Real score( 0.0 );
-	for( StrandPairings::const_iterator it=spairset.begin(), ite=spairset.end(); it != ite; ++it ) {
+	for ( StrandPairings::const_iterator it=spairset.begin(), ite=spairset.end(); it != ite; ++it ) {
 		StrandPairing spair( **it );
 
-		if( spair.orient() == 'A' ) continue;
+		if ( spair.orient() == 'A' ) continue;
 
-		for( Size ires=spair.begin1(); ires<=spair.end1(); ires++ ) {
+		for ( Size ires=spair.begin1(); ires<=spair.end1(); ires++ ) {
 
 			Size jres( spair.residue_pair( ires ) );
 			float score1 = dssp.bb_pair_score( ires, jres );
 			float score2( 0.0 );
-			if( jres <= pose.total_residue() ) {
+			if ( jres <= pose.total_residue() ) {
 				score2 = dssp.bb_pair_score( ires, jres+1 );
 			}
 
 			bool ires_HB( false );
-			if( score1 >= dssp_hbond_threshold && score2 < dssp_hbond_threshold ) {
+			if ( score1 >= dssp_hbond_threshold && score2 < dssp_hbond_threshold ) {
 				ires_HB = true;
-			} else if( score1 >= dssp_hbond_threshold && score2 >= dssp_hbond_threshold ) {
+			} else if ( score1 >= dssp_hbond_threshold && score2 >= dssp_hbond_threshold ) {
 				ires_HB = false;
 			} else {
 				TR << "WARNING: " << ires << ", " << jres << " is making strange hbond. " << std::endl;
@@ -180,7 +180,7 @@ ParallelBetaPairingPreferenceFilter::compute( Pose const & pose ) const
 
 			Real sc;
 			String ptn("");
-			if( ires_HB ) {
+			if ( ires_HB ) {
 				ptn = "HB";
 				sc = score_pairmatrix( pose.aa( ires ), pose.aa( jres ) );
 			} else {
@@ -188,11 +188,11 @@ ParallelBetaPairingPreferenceFilter::compute( Pose const & pose ) const
 				sc = score_pairmatrix( pose.aa( jres ), pose.aa( ires ) );
 			}
 
-			if( verbose_ ) {
+			if ( verbose_ ) {
 				TR << ires << " " << jres << " "
-					 << core::chemical::oneletter_code_from_aa( pose.aa( ires ) ) << " "
-					 << core::chemical::oneletter_code_from_aa( pose.aa( jres ) ) << " "
-					 << ptn << " " << score2 << " " << sc << std::endl;
+					<< core::chemical::oneletter_code_from_aa( pose.aa( ires ) ) << " "
+					<< core::chemical::oneletter_code_from_aa( pose.aa( jres ) ) << " "
+					<< ptn << " " << score2 << " " << sc << std::endl;
 			}
 
 			score += sc;
@@ -215,10 +215,10 @@ ParallelBetaPairingPreferenceFilter::parse_my_tag(
 	Pose const & )
 {
 	// set threshold
- 	filter_value( tag->getOption<Real>( "threshold", 0 ) );
+	filter_value( tag->getOption<Real>( "threshold", 0 ) );
 
 	// set threshold
- 	verbose_ = tag->getOption<bool>( "verbose", 0 );
+	verbose_ = tag->getOption<bool>( "verbose", 0 );
 }
 
 protocols::filters::FilterOP

@@ -26,21 +26,21 @@ namespace kinematic_closure {
 namespace perturbers {
 
 void OmegaPerturber::perturb_subset(
-		Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
+	Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
 
 	using core::chemical::aa_pro;
 	using numeric::random::gaussian;
 	using numeric::random::uniform;
 	using numeric::conversions::DEGREES;
 
-	BOOST_FOREACH(Size residue, residues) {
+	BOOST_FOREACH ( Size residue, residues ) {
 		// Omega distribution mean and stddev from Berkholz et al., PNAS 2012.
 		Real trans_omega = 179.1 + 6.3 * gaussian();
 
 		// There's very little variation, currently not captured here at all.
 		Real cis_omega = 0;
 
-		// Pick which omega to apply.  For pre-prolines, the cis torsion is picked 
+		// Pick which omega to apply.  For pre-prolines, the cis torsion is picked
 		// 0.1% of the time.  For everything else , the trans is always picked.
 		Real cis_prob = (pose.aa(residue + 1) == aa_pro) ? 0.001 : 0;
 		Real omega = (cis_prob > uniform()) ? cis_omega : trans_omega;

@@ -67,7 +67,7 @@ UnboundRotamersOperation::clone() const
 void UnboundRotamersOperation::add_pose(core::pose::PoseCOP pose)
 {
 	poses_.push_back(pose);
-	if(pose->total_residue() > total_rot_) total_rot_ = pose->total_residue();
+	if ( pose->total_residue() > total_rot_ ) total_rot_ = pose->total_residue();
 }
 
 
@@ -80,8 +80,8 @@ Size UnboundRotamersOperation::total_residue()
 void UnboundRotamersOperation::initialize_from_command_line()
 {
 	using namespace basic::options;
-	if( !option[ OptionKeys::packing::unboundrot ].active() ) return;
-	for(Size i = 1; i <= option[ OptionKeys::packing::unboundrot ]().size(); ++i) {
+	if ( !option[ OptionKeys::packing::unboundrot ].active() ) return;
+	for ( Size i = 1; i <= option[ OptionKeys::packing::unboundrot ]().size(); ++i ) {
 		std::string filename = option[ OptionKeys::packing::unboundrot ]()[i].name();
 		TR << "Adding 'unbound' rotamers from " << filename << std::endl;
 		core::pose::PoseOP pose( new core::pose::Pose() );
@@ -130,22 +130,21 @@ UnboundRotamersOperation::alter_rotamer_set(
 )
 {
 	Size const seqnum = (Size) rotamer_set.resid();
-debug_assert( seqnum <= ptask.total_residue() );
+	debug_assert( seqnum <= ptask.total_residue() );
 	core::pack::task::ResidueLevelTask const & rtask = ptask.residue_task(seqnum);
-	for(Size i = 1; i <= poses_.size(); ++i) {
+	for ( Size i = 1; i <= poses_.size(); ++i ) {
 		core::pose::Pose const & ubr_pose = *(poses_[i]);
-		if(seqnum > ubr_pose.total_residue()) continue;
+		if ( seqnum > ubr_pose.total_residue() ) continue;
 		core::chemical::ResidueType const & restype = ubr_pose.residue_type(seqnum);
 		bool type_is_allowed = false;
-		for(core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter j = rtask.allowed_residue_types_begin(),
-			j_end = rtask.allowed_residue_types_end(); j != j_end; ++j)
-		{
-			if( restype.name() == (**j).name() ) {
+		for ( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter j = rtask.allowed_residue_types_begin(),
+				j_end = rtask.allowed_residue_types_end(); j != j_end; ++j ) {
+			if ( restype.name() == (**j).name() ) {
 				type_is_allowed = true;
 				break;
 			}
 		}
-		if( type_is_allowed ) {
+		if ( type_is_allowed ) {
 			TR.Debug << "Adding 'unbound' rotamer at position " << seqnum << std::endl;
 			conformation::ResidueOP newrsd = dup_residue( pose.residue(seqnum), ubr_pose.residue(seqnum) );
 			newrsd->place( pose.residue(seqnum), pose.conformation() );

@@ -98,13 +98,13 @@ public:
 
 	/// @brief aligns the upper-terminal residue of segment1 to the start "anchor" residue of segment2
 	void align_segments(
-			std::string const & segment1,
-			std::string const & segment2 );
+		std::string const & segment1,
+		std::string const & segment2 );
 
 	/// @brief moves jump pointing to the first segment so that it will move with the second segment
 	void slide_jump(
-			std::string const & child_segment,
-			std::string const & parent_segment );
+		std::string const & child_segment,
+		std::string const & parent_segment );
 
 	/// @brief aligns the template_res'th residue of template_segment to the movable_res'th residue of movable_seg
 	void align_residues(
@@ -115,34 +115,34 @@ public:
 
 	/// @brief re-arranges residues such that segment 2 follows segment 1 in sequence, return value is number of jump to segment2
 	void move_segment(
-			std::string const & segment1_n,
-			std::string const & segment1_c,
-			std::string const & segment2_n,
-			std::string const & segment2_c );
+		std::string const & segment1_n,
+		std::string const & segment1_c,
+		std::string const & segment2_n,
+		std::string const & segment2_c );
 
 	/// @brief connects the given chains together, doesn't update anything -- don't call this on its own unless you know what you're doing
 	void connect_segments(
-			std::string const & segment1,
-			std::string const & segment2 );
+		std::string const & segment1,
+		std::string const & segment2 );
 
 	/// @brief merges two segments into one that has the name new_name. They must be next to each other in sequence.
 	void merge_segments(
-			std::string const & segment1,
-			std::string const & segment2,
-			std::string const & new_name );
+		std::string const & segment1,
+		std::string const & segment2,
+		std::string const & new_name );
 
 	/// @brief removes all traces of the given segment from the object
 	void delete_segment( std::string const & segment );
 
 	/// @brief declares a covalent bond between the specified atoms
 	void declare_covalent_bond(
-			std::string const & seg1, core::Size const res1, std::string const & atom1,
-			std::string const & seg2, core::Size const res2, std::string const & atom2 );
+		std::string const & seg1, core::Size const res1, std::string const & atom1,
+		std::string const & seg2, core::Size const res2, std::string const & atom2 );
 
 	/// @brief declares a covalent bond using pose residues
 	void declare_covalent_bond(
-			core::Size const res1, std::string const & atom1,
-			core::Size const res2, std::string const & atom2 );
+		core::Size const res1, std::string const & atom1,
+		core::Size const res2, std::string const & atom2 );
 
 	/// @brief declares a covalent bond between the upper-terminal atom of segment 1 and the lower-terminal atom of segment 2
 	void declare_polymer_bond( std::string const & segment1, std::string const & segment2 );
@@ -164,19 +164,19 @@ public:
 
 	/// @brief adds a segment of residues -- start_resid MUST be the nterm_resi() of a segment if segments exist yet
 	void add_segment(
-			std::string const & id_val,
-			StringList::iterator insert_before_pos,
-			core::Size const segment_length,
-			core::Size const local_safe_residue,
-			core::Size const local_cutpoint,
-			core::Size const movable_group,
-			bool const is_loop,
-			bool const nterm_included,
-			bool const cterm_included,
-			std::string const & lower_conn,
-			std::string const & upper_conn,
-			std::string const & ss,
-			utility::vector1< std::string > const & abego );
+		std::string const & id_val,
+		StringList::iterator insert_before_pos,
+		core::Size const segment_length,
+		core::Size const local_safe_residue,
+		core::Size const local_cutpoint,
+		core::Size const movable_group,
+		bool const is_loop,
+		bool const nterm_included,
+		bool const cterm_included,
+		std::string const & lower_conn,
+		std::string const & upper_conn,
+		std::string const & ss,
+		utility::vector1< std::string > const & abego );
 
 	/// @brief merge all data and segments from "other" into this StructureData
 	void merge( StructureData const & other );
@@ -202,14 +202,14 @@ public:
 
 	/// @brief sets an "alias" for a particular residue inside a segment which allows for it to be easily accessed
 	void set_resnum_alias(
-			std::string const & alias_name,
-			std::string const & segment_name,
-			core::Size const resi );
+		std::string const & alias_name,
+		std::string const & segment_name,
+		core::Size const resi );
 
 	/// @brief sets an "alias" for a particular residue which allows for it to be easily accessed
 	void set_resnum_alias(
-			std::string const & alias_name,
-			core::Size const resi );
+		std::string const & alias_name,
+		core::Size const resi );
 
 	/// @brief copies user data fields from one permutation to this one
 	void copy_data( StructureData const & perm, bool const do_rename );
@@ -306,14 +306,14 @@ public:
 	/// @brief gives a quick yes-no answer as to whether it might be possible to connect these termini with an nres-residue loop
 	/// pose_ MUST BE SET if use_distance=true!!
 	bool are_connectable(
-			std::string const & id1,
-			std::string const & id2,
-			core::Size const nres,
-			bool const use_distance,
-			bool const connection_performs_orientation,
-			bool const allow_cyclic,
-			core::Real const bond_dist,
-			core::Real const max_dist_per_res ) const;
+		std::string const & id1,
+		std::string const & id2,
+		core::Size const nres,
+		bool const use_distance,
+		bool const connection_performs_orientation,
+		bool const allow_cyclic,
+		core::Real const bond_dist,
+		core::Real const max_dist_per_res ) const;
 
 	/// @brief returns the id of this permutation
 	inline std::string const & id() const { return id_; }
@@ -444,8 +444,8 @@ public:
 
 	/// @brief marks the given segments as covanlently connected
 	void mark_connected(
-			std::string const & lower_seg,
-			std::string const & upper_seg );
+		std::string const & lower_seg,
+		std::string const & upper_seg );
 
 	// pose modification methods
 
@@ -509,11 +509,11 @@ public:
 
 	/// @brief sets bond length in pose
 	void set_bond_length(
-			std::string const & segmentname,
-			core::Size const resid,
-			std::string const & atom1,
-			std::string const & atom2,
-			core::Real const newlength );
+		std::string const & segmentname,
+		core::Size const resid,
+		std::string const & atom1,
+		std::string const & atom2,
+		core::Real const newlength );
 
 	/// @brief expands the segment so that the trailing pad residue(s) become part of the segment
 	void engulf_leading_residues( std::string const & seg );
@@ -529,33 +529,33 @@ public:
 
 	/// @brief inserts an extended loop (phi/psi/omega=180) before segment x
 	void prepend_extended_loop(
-			std::string const & seg,
-			std::string const & loop_name,
-			core::Size const num_residues,
-			std::string const & insert_ss,
-			utility::vector1< std::string > const & insert_abego,
-			core::conformation::ResidueCOP template_res );
+		std::string const & seg,
+		std::string const & loop_name,
+		core::Size const num_residues,
+		std::string const & insert_ss,
+		utility::vector1< std::string > const & insert_abego,
+		core::conformation::ResidueCOP template_res );
 
 	/// @brief inserts an extended loop (phi/psi/omega=180) after segment x
 	void append_extended_loop(
-			std::string const & seg,
-			std::string const & loop_name,
-			core::Size const num_residues,
-			std::string const & insert_ss,
-			utility::vector1< std::string > const & insert_abego,
-			core::conformation::ResidueCOP template_res );
+		std::string const & seg,
+		std::string const & loop_name,
+		core::Size const num_residues,
+		std::string const & insert_ss,
+		utility::vector1< std::string > const & insert_abego,
+		core::conformation::ResidueCOP template_res );
 
 	/// @brief replaces one residue with another
 	void replace_residue(
-			std::string const & target_segment,
-			core::Size const target_res,
-			core::conformation::Residue const & res_in );
+		std::string const & target_segment,
+		core::Size const target_res,
+		core::conformation::Residue const & res_in );
 
 	/// @brief replaces one residue with another
 	void replace_residue(
-			core::Size const resnum,
-			core::conformation::Residue const & res_in,
-			bool const orient_bb );
+		core::Size const resnum,
+		core::conformation::Residue const & res_in,
+		bool const orient_bb );
 
 	/// @brief updates numbering based on the saved order of Segment objects
 	void update_numbering();
@@ -587,31 +587,31 @@ protected:
 
 	/// @brief aligns two residues so their backbones are completely superimposed
 	void align_residues(
-			core::Size const jump_idx,
-			core::Size const align_res_target,
-			core::Size const align_res_movable,
-			core::Size const res_with_torsions );
+		core::Size const jump_idx,
+		core::Size const align_res_target,
+		core::Size const align_res_movable,
+		core::Size const res_with_torsions );
 
 	/// @brief moves a segment of the pose such that the segment from start2<=res<=end2 is moved so that it starts at end1+1
 	/// returns the jump number that is to be ignored in fold tree searches
 	/// WARNING: all parameters are by REFERENCE
 	void move_segment_in_pose(
-			core::Size start1,
-			core::Size end1,
-			core::Size start2,
-			core::Size end2 );
+		core::Size start1,
+		core::Size end1,
+		core::Size start2,
+		core::Size end2 );
 
 	/// @brief copies and inserts a segment into the permutation after the given segment
 	void insert_after_residue_in_pose(
-			core::Size segment1_start,
-			core::Size segment1_end,
-			core::Size segment2_start,
-			core::Size segment2_end );
+		core::Size segment1_start,
+		core::Size segment1_end,
+		core::Size segment2_start,
+		core::Size segment2_end );
 
 	/// @brief deletes the given residues from the pose
 	void delete_residues_in_pose(
-			core::Size start,
-			core::Size end );
+		core::Size start,
+		core::Size end );
 
 	/// @brief add lower cutpoint to residue cut and upper cutpoint to residue cut+1
 	void add_cutpoint_variants( core::Size const cut_res );
@@ -668,11 +668,11 @@ public:
 	SingleChainStructureData( std::string const & id_val );
 
 	SingleChainStructureData(
-			std::string const & id_val,
-			core::Size const length_val,
-			core::Size const pose_len_val,
-			std::string const & ss_val,
-			utility::vector1< std::string > const & abego_val );
+		std::string const & id_val,
+		core::Size const length_val,
+		core::Size const pose_len_val,
+		std::string const & ss_val,
+		utility::vector1< std::string > const & abego_val );
 
 	virtual ~SingleChainStructureData();
 

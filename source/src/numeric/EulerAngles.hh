@@ -52,7 +52,7 @@ class EulerAngles : public xyzVector<T>
 	typedef xyzMatrix<T> Matrix;
 	typedef T Value;
 
-	public:
+public:
 
 	/// @brief Default constructor
 	/// @note  Values are initialized to zero
@@ -71,7 +71,7 @@ class EulerAngles : public xyzVector<T>
 		Value const & phi,
 		Value const & psi,
 		Value const & theta
-	 ) : xyzVector<T>( phi, psi, theta )
+	) : xyzVector<T>( phi, psi, theta )
 	{}
 
 	/// @brief Construct from rotation matrix.
@@ -140,50 +140,50 @@ class EulerAngles : public xyzVector<T>
 	void
 	from_rotation_matrix(xyzMatrix<T> matrix)
 	{
-			T const FLOAT_PRECISION( 1e-5 );
+		T const FLOAT_PRECISION( 1e-5 );
 
-			// WARNING: Gimbal Lock!
-			if ( matrix.zz() >= 1 - FLOAT_PRECISION ){
-				phi(std::acos( sin_cos_range( matrix.xx() ) ));
-				psi(0.0);
-				theta(0.0);
-				return;
-			}
+		// WARNING: Gimbal Lock!
+		if ( matrix.zz() >= 1 - FLOAT_PRECISION ) {
+			phi(std::acos( sin_cos_range( matrix.xx() ) ));
+			psi(0.0);
+			theta(0.0);
+			return;
+		}
 
-			if ( matrix.zz() <= -1 + FLOAT_PRECISION ){
-				phi(std::acos( sin_cos_range( matrix.xx() )));
-				psi(0.0);
-				theta(numeric::constants::d::pi);
-				return;
-			}
+		if ( matrix.zz() <= -1 + FLOAT_PRECISION ) {
+			phi(std::acos( sin_cos_range( matrix.xx() )));
+			psi(0.0);
+			theta(numeric::constants::d::pi);
+			return;
+		}
 
-			T pos_sin_theta = std::sqrt( 1 - matrix.zz() * matrix.zz()); // sin2theta = 1 - cos2theta.
+		T pos_sin_theta = std::sqrt( 1 - matrix.zz() * matrix.zz()); // sin2theta = 1 - cos2theta.
 
-			// two values are possible here: my convention is to use positive theta only.
-			// corresponding theta between [0,pi/2] -> [0,90] since st > 0
-			// and asin returns value between [-pi/2, pi/2]
-			theta(std::asin( pos_sin_theta ));
+		// two values are possible here: my convention is to use positive theta only.
+		// corresponding theta between [0,pi/2] -> [0,90] since st > 0
+		// and asin returns value between [-pi/2, pi/2]
+		theta(std::asin( pos_sin_theta ));
 
-			// decide whether the actual positive theta is between [pi/2, pi[ using the value of cos(theta)
-			// which happens to be the matrix element zz_ (and is thus signed).
-			if ( matrix.zz() < 0 ) {
-				theta(numeric::constants::d::pi - theta());
-			}
+		// decide whether the actual positive theta is between [pi/2, pi[ using the value of cos(theta)
+		// which happens to be the matrix element zz_ (and is thus signed).
+		if ( matrix.zz() < 0 ) {
+			theta(numeric::constants::d::pi - theta());
+		}
 
-			//euler(1) = std::atan2(  -UU(1,3), UU(2,3) );   // between -Pi and Pi -> [-180,180]
-			//euler(2) = std::atan2( UU(3,1), UU(3,2) );     // between -Pi and Pi -> [-180, 180]
+		//euler(1) = std::atan2(  -UU(1,3), UU(2,3) );   // between -Pi and Pi -> [-180,180]
+		//euler(2) = std::atan2( UU(3,1), UU(3,2) );     // between -Pi and Pi -> [-180, 180]
 
-			// this->is atan( sin_phi * c, cos_phi * c  ) as opposed to Alex's atan( -sin_phi * c, -cos_phi * c ).
-			phi(std::atan2( matrix.xz(), -matrix.yz()));
-			psi(std::atan2( matrix.zx(), matrix.zy()));
+		// this->is atan( sin_phi * c, cos_phi * c  ) as opposed to Alex's atan( -sin_phi * c, -cos_phi * c ).
+		phi(std::atan2( matrix.xz(), -matrix.yz()));
+		psi(std::atan2( matrix.zx(), matrix.zy()));
 
-			// Check and correct -pi to pi
-			if (phi() + numeric::constants::d::pi <= FLOAT_PRECISION ){
-				phi(numeric::constants::d::pi);
-			}
-			if (psi() + numeric::constants::d::pi <= FLOAT_PRECISION ){
-				psi(numeric::constants::d::pi);
-			}
+		// Check and correct -pi to pi
+		if ( phi() + numeric::constants::d::pi <= FLOAT_PRECISION ) {
+			phi(numeric::constants::d::pi);
+		}
+		if ( psi() + numeric::constants::d::pi <= FLOAT_PRECISION ) {
+			psi(numeric::constants::d::pi);
+		}
 	}
 
 	/// @brief Construct rotation matrix from three euler angles that describe the frame.
@@ -201,7 +201,7 @@ class EulerAngles : public xyzVector<T>
 		m.xx(cos_psi * cos_phi - cos_theta * sin_phi * sin_psi );
 		m.yx( cos_psi * sin_phi + cos_theta * cos_phi * sin_psi );
 		m.zx( sin_psi * sin_theta );
-		
+
 		m.xy( -sin_psi * cos_phi - cos_theta * sin_phi * cos_psi );
 		m.yy( -sin_psi * sin_phi + cos_theta * cos_phi * cos_psi );
 		m.zy(  cos_psi * sin_theta );
@@ -358,7 +358,7 @@ class EulerAngles : public xyzVector<T>
 	}
 
 	/// @brief Get angular distance between two sets of Euler Angles.
-	static 
+	static
 	T
 	angular_distance_between(EulerAngles<T> a1, EulerAngles<T> a2)
 	{
@@ -373,10 +373,10 @@ class EulerAngles : public xyzVector<T>
 	from_degrees(T phi, T psi, T theta)
 	{
 		return EulerAngles<T>(
-				conversions::radians(phi),
-				conversions::radians(psi),
-				conversions::radians(theta)
-				);
+			conversions::radians(phi),
+			conversions::radians(psi),
+			conversions::radians(theta)
+		);
 	}
 
 	// @brief Static constructor from degrees
@@ -385,10 +385,10 @@ class EulerAngles : public xyzVector<T>
 	from_degrees(xyzVector<T> vector)
 	{
 		return EulerAngles<T>(
-				conversions::radians(vector.x()),
-				conversions::radians(vector.y()),
-				conversions::radians(vector.z())
-				);
+			conversions::radians(vector.x()),
+			conversions::radians(vector.y()),
+			conversions::radians(vector.z())
+		);
 	}
 
 	// @brief Static constructor from radians

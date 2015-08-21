@@ -34,50 +34,50 @@ using namespace basic::options;
 using namespace std;
 using namespace basic::options::OptionKeys;
 
-namespace protocols{
+namespace protocols {
 namespace pockets {
 
 PocketExemplarMultifunc::PocketExemplarMultifunc(std::string const input_pdb_name, std::string const resid, core::Real const c_rad, core::Real const rep_weight, utility::vector1<core::Real> & p_min, utility::vector1<core::Real> & p_max) {
-  core::import_pose::pose_from_pdb( input_pose, input_pdb_name );
-  residues = protocols::pockets::PocketGrid::getRelaxResidues(input_pose, resid);
-  cRad = c_rad;
-  repW = rep_weight; 
-  vdWpen = option[ OptionKeys::pocket_grid::pocket_exemplar_vdw_pen ]();
-  optimal = cRad;
-  pg = protocols::pockets::PocketGrid( residues );  
-  pg.autoexpanding_pocket_eval( residues, input_pose ) ;
-  pg.dumpTargetPocketsToPDB("testpock.pdb");
-  utility::vector1<core::Real> bounds = pg.getBounds();
-  for (int i = 1; i < (int)p_min.size();i+=3){
-	  for (int j=0;j<3;j++){
-		p_min[i+j]=bounds[1+2*j];
-		p_max[i+j]=bounds[2+2*j];
-	  }
-  }
+	core::import_pose::pose_from_pdb( input_pose, input_pdb_name );
+	residues = protocols::pockets::PocketGrid::getRelaxResidues(input_pose, resid);
+	cRad = c_rad;
+	repW = rep_weight;
+	vdWpen = option[ OptionKeys::pocket_grid::pocket_exemplar_vdw_pen ]();
+	optimal = cRad;
+	pg = protocols::pockets::PocketGrid( residues );
+	pg.autoexpanding_pocket_eval( residues, input_pose ) ;
+	pg.dumpTargetPocketsToPDB("testpock.pdb");
+	utility::vector1<core::Real> bounds = pg.getBounds();
+	for ( int i = 1; i < (int)p_min.size(); i+=3 ) {
+		for ( int j=0; j<3; j++ ) {
+			p_min[i+j]=bounds[1+2*j];
+			p_max[i+j]=bounds[2+2*j];
+		}
+	}
 }
 
 //This is the objective function
 core::Real
 PocketExemplarMultifunc::operator ()( core::optimization::Multivec const & vars ) const {
-  core::Real score=0;
-  ComparisonGrid cg(pg);
-  for (int i = 1; i < (int)vars.size();i+=3){
-    score += cg.mark(pg, vars[i], vars[i+1], vars[i+2], cRad, repW);
-  }
-  score += cg.compareCoverage(pg);
+	core::Real score=0;
+	ComparisonGrid cg(pg);
+	for ( int i = 1; i < (int)vars.size(); i+=3 ) {
+		score += cg.mark(pg, vars[i], vars[i+1], vars[i+2], cRad, repW);
+	}
+	score += cg.compareCoverage(pg);
 
-  //hard spheres model
-  for (int i = 1; i < (int)vars.size();i+=3){
-    bool near=false;
-    for (int j = 1; j < (int)vars.size();j+=3){
-      if (i==j) continue;
-      core::Real dist = std::sqrt(std::pow(vars[i]-vars[j],2) + std::pow(vars[i+1]-vars[j+1],2) + std::pow(vars[i+2]-vars[j+2],2));
-      if ((dist < optimal)){
-        score += repW * 8 * (3.14159/(12*dist))*std::pow(cRad-dist,2)*(pow(dist,2)+2*dist*cRad);
-      }else if (dist<4) near=true;
-    }
-    if (!near) score += 300;
-  }
+	//hard spheres model
+	for ( int i = 1; i < (int)vars.size(); i+=3 ) {
+		bool near=false;
+		for ( int j = 1; j < (int)vars.size(); j+=3 ) {
+			if ( i==j ) continue;
+			core::Real dist = std::sqrt(std::pow(vars[i]-vars[j],2) + std::pow(vars[i+1]-vars[j+1],2) + std::pow(vars[i+2]-vars[j+2],2));
+			if ( (dist < optimal) ) {
+				score += repW * 8 * (3.14159/(12*dist))*std::pow(cRad-dist,2)*(pow(dist,2)+2*dist*cRad);
+			} else if ( dist<4 ) near=true;
+		}
+		if ( !near ) score += 300;
+	}
 	return score;
 }
 
@@ -85,15 +85,15 @@ PocketExemplarMultifunc::operator ()( core::optimization::Multivec const & vars 
 void
 PocketExemplarMultifunc::dfunc( core::optimization::Multivec const &, core::optimization::Multivec &) const
 {
-  std::cerr << "PocketExemplarMultifunc cannot be used with derivative based optimization methods."<<std::endl;
-  exit(20);
+	std::cerr << "PocketExemplarMultifunc cannot be used with derivative based optimization methods."<<std::endl;
+	exit(20);
 }
 
 /// @details Useful debugging code that can be re-enabled by changing the boolean
 /// variables at the top of this file.
 void
 PocketExemplarMultifunc::dump( core::optimization::Multivec const &, core::optimization::Multivec const &) const {
-  std::cout<< "In PocketExemplarMultifunc."<< std::endl;
+	std::cout<< "In PocketExemplarMultifunc."<< std::endl;
 }
 
 } // namespace pockets

@@ -43,17 +43,17 @@ SDFParser::parse(std::istream & filein ) {
 	utility::vector1< MolFileIOMoleculeOP > molecules;
 	std::string name, line2, comments, versionline;
 
-	while( filein ) {
+	while ( filein ) {
 		std::getline(filein,name);
 		utility::trim( name, " \n" ); //modify in place
 		std::getline(filein,line2);
 		std::getline(filein,comments);
 		std::getline(filein,versionline);
 
-		if( ! filein ) {
+		if ( ! filein ) {
 			break;
 		}
-		if( versionline.size() < 39 ) {
+		if ( versionline.size() < 39 ) {
 			TR.Warning << "Warning: SDF header line too short for: '" << name << "'" << std::endl;
 			eat_until_delimiter( filein );
 			continue;
@@ -62,20 +62,20 @@ SDFParser::parse(std::istream & filein ) {
 		MolFileIOMoleculeOP molecule( new MolFileIOMolecule );
 		molecule->name( name );
 		if ( version == "V3000" ) {
-			if( ! V3000parser.parse(filein, versionline, *molecule) ) {
+			if ( ! V3000parser.parse(filein, versionline, *molecule) ) {
 				TR.Warning << "Skipping V3000 sdf file entry for " << name << "'" << std::endl;
 				eat_until_delimiter( filein );
 				continue;
 			}
-		} else if( version == "V2000" ) {
-			if( ! V2000parser.parse(filein, versionline, *molecule) ) {
+		} else if ( version == "V2000" ) {
+			if ( ! V2000parser.parse(filein, versionline, *molecule) ) {
 				TR.Warning << "Skipping V2000 sdf file entry for " << name << "'" << std::endl;
 				eat_until_delimiter( filein );
 				continue;
 			}
 		} else {
 			// Try parsing as V2000 - sometimes these omit the version line.
-			if( ! V2000parser.parse(filein, versionline, *molecule) ) {
+			if ( ! V2000parser.parse(filein, versionline, *molecule) ) {
 				TR.Warning << "Attempted to parse '" << name << "' as V2000 but failed. Skipping." << std::endl;
 				eat_until_delimiter( filein );
 				continue;
@@ -97,18 +97,18 @@ SDFParser::parse_optional_data( std::istream & filein, MolFileIOMolecule & molec
 	std::string line;
 	std::string entry;
 
-	for( std::getline(filein,header); filein && ! utility::startswith(header,"$$$$"); std::getline(filein,header) ) {
-		if( header.size() == 0 || header[0] != '>' ) continue;
+	for ( std::getline(filein,header); filein && ! utility::startswith(header,"$$$$"); std::getline(filein,header) ) {
+		if ( header.size() == 0 || header[0] != '>' ) continue;
 		utility::trim( header, " <>\t" ); // Remove tabs, spaces and angle brackets from front and back.
-		if( TR.Trace.visible() ) {
+		if ( TR.Trace.visible() ) {
 			TR.Trace << "Parsing header " << header << std::endl;
 		}
 		// The data entry ends with a single newline (which getline() will strip out)
-		for( std::getline(filein,line); filein && line.size() && ! utility::startswith(line,"$$$$"); std::getline(filein,line) ) {
-			if( TR.Trace.visible() ) {
+		for ( std::getline(filein,line); filein && line.size() && ! utility::startswith(line,"$$$$"); std::getline(filein,line) ) {
+			if ( TR.Trace.visible() ) {
 				TR.Trace << "Adding data '" << line << "' (" << line.size() << " chars)" << std::endl;
 			}
-			if( entry.size() ) {
+			if ( entry.size() ) {
 				entry.push_back('\n'); // Append the newline that getline stripped off.
 			}
 			entry.append(line);
@@ -126,7 +126,7 @@ SDFParser::eat_until_delimiter( std::istream & filein ) const {
 	std::string line;
 
 	std::getline(filein,line);
-	while( filein && !utility::startswith(line,"$$$$") ) {
+	while ( filein && !utility::startswith(line,"$$$$") ) {
 		std::getline(filein,line);
 	}
 }

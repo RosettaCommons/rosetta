@@ -72,11 +72,10 @@ BuriedUnsatHbondFilter::apply( core::pose::Pose const & pose ) const {
 	core::Real const unsat_hbonds( compute( pose ) );
 
 	buried_unsat_hbond_filter_tracer<<"# unsatisfied hbonds: "<<unsat_hbonds<<". ";
-	if( unsat_hbonds <= upper_threshold_ ){
+	if ( unsat_hbonds <= upper_threshold_ ) {
 		buried_unsat_hbond_filter_tracer<<"passing." <<std::endl;
 		return true;
-	}
-	else {
+	} else {
 		buried_unsat_hbond_filter_tracer<<"failing."<<std::endl;
 		return false;
 	}
@@ -107,7 +106,7 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 	bound.update_residue_neighbors();
 
 	core::pose::Pose unbound( bound );
-	if( jump_num_ ) {
+	if ( jump_num_ ) {
 		core::Real const unbound_dist = 1000.0;
 		protocols::rigid::RigidBodyTransMover trans_mover( unbound, jump_num_ );
 		trans_mover.trans_axis( trans_mover.trans_axis() );
@@ -129,33 +128,35 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 	buried_unsat_hbond_filter_tracer << "BOUND: " << bound_string << std::endl;
 
 	core::Real unsat_hbonds( 0.0 );
-	if( jump_num_ ) {
+	if ( jump_num_ ) {
 		calc_unbound.get("all_bur_unsat_polars", mv_unbound, unbound);
 		unsat_hbonds = mv_bound.value() - mv_unbound.value();
 		buried_unsat_hbond_filter_tracer << "unbound_unsat=" << mv_unbound.value() << "    " << "bound_unsat=" << mv_bound.value() << std::endl;
 		unbound_string = calc_unbound.get( "residue_bur_unsat_polars", unbound );
 		buried_unsat_hbond_filter_tracer << "UNBOUND: " << unbound_string << std::endl;
-	}
-	else unsat_hbonds = mv_bound.value();
-	if( task_factory_ != NULL ){
+	} else unsat_hbonds = mv_bound.value();
+	if ( task_factory_ != NULL ) {
 		std::string unbound_tmp, bound_tmp;
 
-/// clean the silly stuff in the string. Unfortunately the calculators are organized in such a way that there's no direct access to the values they report so this hack uses the string output...
-		for( core::Size i=0; i<unbound_string.length(); ++i ){
-			if( unbound_string.c_str()[ i ]<='9' && unbound_string.c_str()[ i ]>='0' )
+		/// clean the silly stuff in the string. Unfortunately the calculators are organized in such a way that there's no direct access to the values they report so this hack uses the string output...
+		for ( core::Size i=0; i<unbound_string.length(); ++i ) {
+			if ( unbound_string.c_str()[ i ]<='9' && unbound_string.c_str()[ i ]>='0' ) {
 				unbound_tmp+=unbound_string.c_str()[i];
+			}
 		}
-		for( core::Size i=0; i<bound_string.length(); ++i ){
-			if( bound_string.c_str()[ i ]<='9' && bound_string.c_str()[ i ]>='0' )
+		for ( core::Size i=0; i<bound_string.length(); ++i ) {
+			if ( bound_string.c_str()[ i ]<='9' && bound_string.c_str()[ i ]>='0' ) {
 				bound_tmp+=bound_string.c_str()[i];
+			}
 		}
-/// which residues does the taskfactory mention
+		/// which residues does the taskfactory mention
 		utility::vector1< core::Size > const selected_residues( protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, true/*packable*/ ) );
 		core::Size total_in_selected_residues( 0 );
-		if( selected_residues.size() == 0 )
+		if ( selected_residues.size() == 0 ) {
 			return 0;
-		BOOST_FOREACH( core::Size const sr, selected_residues ){
-//			buried_unsat_hbond_filter_tracer<<sr<<": "<<(bound_tmp[ sr-1 ])<<" "<<(unbound_tmp[ sr-1 ])<<" "<<(bound_tmp[ sr-1 ]) - (unbound_tmp[ sr-1 ])<<std::endl;
+		}
+		BOOST_FOREACH ( core::Size const sr, selected_residues ) {
+			//   buried_unsat_hbond_filter_tracer<<sr<<": "<<(bound_tmp[ sr-1 ])<<" "<<(unbound_tmp[ sr-1 ])<<" "<<(bound_tmp[ sr-1 ]) - (unbound_tmp[ sr-1 ])<<std::endl;
 			if ( jump_num_ ) total_in_selected_residues += std::max( (bound_tmp[ sr-1 ]) - (unbound_tmp[ sr-1 ]), 0 );
 			else total_in_selected_residues += std::max( (bound_tmp[ sr-1 ]) - '0', 0 );
 		}

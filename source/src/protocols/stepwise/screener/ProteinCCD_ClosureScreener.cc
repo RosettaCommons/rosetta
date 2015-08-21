@@ -29,33 +29,33 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	//Constructor
-  ProteinCCD_ClosureScreener::ProteinCCD_ClosureScreener( modeler::protein::loop_close::StepWiseProteinCCD_CloserOP ccd_closer,
-																													pose::Pose & screening_pose ):
-		SampleApplier( screening_pose ), // sets up pose_
-		ccd_closer_( ccd_closer )
-	{
-		ccd_closer_->init( pose_ );
-	}
+//Constructor
+ProteinCCD_ClosureScreener::ProteinCCD_ClosureScreener( modeler::protein::loop_close::StepWiseProteinCCD_CloserOP ccd_closer,
+	pose::Pose & screening_pose ):
+	SampleApplier( screening_pose ), // sets up pose_
+	ccd_closer_( ccd_closer )
+{
+	ccd_closer_->init( pose_ );
+}
 
-	//Destructor
-	ProteinCCD_ClosureScreener::~ProteinCCD_ClosureScreener()
-	{}
+//Destructor
+ProteinCCD_ClosureScreener::~ProteinCCD_ClosureScreener()
+{}
 
-	/////////////////////////////////////////
-	bool
-	ProteinCCD_ClosureScreener::check_screen() {
-		ccd_closer_->get_closure_solution( pose_ );
-		return ccd_closer_->closed_loop();
-	}
+/////////////////////////////////////////
+bool
+ProteinCCD_ClosureScreener::check_screen() {
+	ccd_closer_->get_closure_solution( pose_ );
+	return ccd_closer_->closed_loop();
+}
 
-	/////////////////////////////////////////
-	void
-	ProteinCCD_ClosureScreener::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
-		using protocols::moves::MoverOP;
-		update_mover->add_mover(  MoverOP( new TorsionSetMover( ccd_closer_->which_torsions(), ccd_closer_->main_chain_torsion_set() ) ) );
-		restore_mover->add_mover( MoverOP( new TorsionSetMover( ccd_closer_->which_torsions(), ccd_closer_->main_chain_torsion_set_save() ) ) );
-	}
+/////////////////////////////////////////
+void
+ProteinCCD_ClosureScreener::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
+	using protocols::moves::MoverOP;
+	update_mover->add_mover(  MoverOP( new TorsionSetMover( ccd_closer_->which_torsions(), ccd_closer_->main_chain_torsion_set() ) ) );
+	restore_mover->add_mover( MoverOP( new TorsionSetMover( ccd_closer_->which_torsions(), ccd_closer_->main_chain_torsion_set_save() ) ) );
+}
 
 } //screener
 } //stepwise

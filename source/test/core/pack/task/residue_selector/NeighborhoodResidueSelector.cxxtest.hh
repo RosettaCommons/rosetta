@@ -262,30 +262,31 @@ public:
 		ResidueSubset ctrl_subset(subset.size(), false);
 
 		core::Real const dst_squared = distance * distance;
-		for( core::Size ii = 1; ii < subset.size() ; ++ii )
-		{
-			if( focus.find( ii ) != focus.end() ) {
+		for ( core::Size ii = 1; ii < subset.size() ; ++ii ) {
+			if ( focus.find( ii ) != focus.end() ) {
 				ctrl_subset[ ii ] = true;
 				continue;
 			}
 			core::conformation::Residue const & r1( pose.residue( ii ) );
-			for( std::set< core::Size >::const_iterator it = focus.begin();
-				it != focus.end(); ++it )
-			{
-				if( *it == 0 || *it > pose.total_residue())
-						  return false;
+			for ( std::set< core::Size >::const_iterator it = focus.begin();
+					it != focus.end(); ++it ) {
+				if ( *it == 0 || *it > pose.total_residue() ) {
+					return false;
+				}
 
 				core::conformation::Residue const & r2( pose.residue( *it ) );
 				core::Real const d_sq( r1.xyz( r1.nbr_atom() ).distance_squared( r2.xyz( r2.nbr_atom() ) ) );
-				if(d_sq <= dst_squared)
+				if ( d_sq <= dst_squared ) {
 					ctrl_subset[ ii ] = true;
+				}
 			} // focus set
-			if(ctrl_subset[ ii ] != subset[ ii ])
-					  return false;
+			if ( ctrl_subset[ ii ] != subset[ ii ] ) {
+				return false;
+			}
 		} // subset
 
 		// no mismatches found
 		return true;
-}
+	}
 
 };

@@ -33,7 +33,7 @@
 #include <map>
 
 
-namespace protocols{
+namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 
@@ -62,22 +62,22 @@ public:
 	core::Real dist_cutoff() const { return dist_cutoff_; }
 
 protected:
-  virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-  virtual std::string print( std::string const & key ) const;
-  virtual void recompute( core::pose::Pose const & pose );
+	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
+	virtual std::string print( std::string const & key ) const;
+	virtual void recompute( core::pose::Pose const & pose );
 
 private:
 
-  /// @brief whose neighbors are we finding?
+	/// @brief whose neighbors are we finding?
 	std::set< core::Size > central_residues_;
 	/// @brief stores the input - how far away is a neighbor?
 	core::Real const dist_cutoff_;
-  /// @brief the number of neighbors, INCLUSIVE of central residues
-  core::Size num_neighbors_;
+	/// @brief the number of neighbors, INCLUSIVE of central residues
+	core::Size num_neighbors_;
 	/// @brief the number of neighbors for each of the central residues
 	std::map<core::Size, core::Size> num_neighbors_map_;
-  /// @brief the set of neighbors, INCLUSIVE of central_residues
-  std::set< core::Size > neighbors_;
+	/// @brief the set of neighbors, INCLUSIVE of central_residues
+	std::set< core::Size > neighbors_;
 
 };
 

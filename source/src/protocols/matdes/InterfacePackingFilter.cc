@@ -116,11 +116,10 @@ bool
 InterfacePackingFilter::apply(core::pose::Pose const & pose ) const
 {
 	core::Real packing_score(compute( pose ));
-	if( (packing_score >= lower_threshold_) && (packing_score <= upper_threshold_) ){
+	if ( (packing_score >= lower_threshold_) && (packing_score <= upper_threshold_) ) {
 		TR<<"passing."<<std::endl;
 		return true;
-	}
-	else {
+	} else {
 		TR<<"failing."<<std::endl;
 		return false;
 	}
@@ -150,20 +149,22 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 		sym_dof_name_list = utility::string_split( sym_dof_names_ , ',' );
 		nsubposes = sym_dof_name_list.size();
 		TR.Debug << "nsubposes: " << nsubposes << std::endl;
-	} else if (sym_dof_names_ != "") {
+	} else if ( sym_dof_names_ != "" ) {
 		// expand system along provided DOFs
 		sym_dof_name_list = utility::string_split( sym_dof_names_ , ',' );
-		for (Size j = 1; j <= sym_dof_name_list.size(); j++)
+		for ( Size j = 1; j <= sym_dof_name_list.size(); j++ ) {
 			sym_aware_jump_ids.push_back( core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name_list[j] ) );
+		}
 	} else {
 		// if we're symmetric and not multicomponent, expand along all slide DOFs
 		Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
 		TR.Debug << "#slidable jumps: " << nslidedofs << std::endl;
-		for (Size j = 1; j <= nslidedofs; j++)
+		for ( Size j = 1; j <= nslidedofs; j++ ) {
 			sym_aware_jump_ids.push_back( core::pose::symmetry::get_sym_aware_jump_num(pose, j ) );
+		}
 	}
 
-	for (Size i = 1; i <= nsubposes; i++) {
+	for ( Size i = 1; i <= nsubposes; i++ ) {
 		ObjexxFCL::FArray1D_bool is_upstream ( pose.total_residue(), false );
 		if ( multicomp_ ) {
 			TR.Debug << "computing neighbors for sym_dof_name " << sym_dof_name_list[i] << std::endl;
@@ -181,7 +182,7 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 
 			Size nres_monomer = 0;
 			bool start = true;
-			for (Size j=1; j<=symm_info->num_independent_residues(); ++j) {
+			for ( Size j=1; j<=symm_info->num_independent_residues(); ++j ) {
 				if ( is_upstream(j) ) continue;
 				if ( start ) monomer_lower_bound = j;
 				start = false;
@@ -189,8 +190,8 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 			}
 			TR << "nres_monomer: " << nres_monomer << " for sym_dof_name: " << sym_dof_name_list[i] << std::endl;
 
-			for(Size r=1; r<=sub_pose_resis.size(); r++) {
-				if (monomer_lower_bound == sub_pose_resis[r]) {
+			for ( Size r=1; r<=sub_pose_resis.size(); r++ ) {
+				if ( monomer_lower_bound == sub_pose_resis[r] ) {
 					base = r;
 					break;
 				}
@@ -198,58 +199,59 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 			}
 			TR.Debug << "base residue of monomer: " << base << std::endl;
 
- 			for (core::Size sir=base; sir<=base+nres_monomer-1; sir++) {
+			for ( core::Size sir=base; sir<=base+nres_monomer-1; sir++ ) {
 				ir = sub_pose_resis[sir];
-				for (core::Size ia = 1; ia<=pose.residue(ir).nheavyatoms(); ia++) {
+				for ( core::Size ia = 1; ia<=pose.residue(ir).nheavyatoms(); ia++ ) {
 					bool contact = false;
-					for (core::Size sjr=1; sjr<=sub_pose_resis.size(); sjr++) {
+					for ( core::Size sjr=1; sjr<=sub_pose_resis.size(); sjr++ ) {
 						jr = sub_pose_resis[sjr];
 						if ( !is_upstream(jr) ) continue;
-						for (core::Size ja = 1; ja<=pose.residue(jr).nheavyatoms(); ja++) {
-							if (pose.residue(ir).xyz(ia).distance_squared(pose.residue(jr).xyz(ja)) <= cutoff2)  {
+						for ( core::Size ja = 1; ja<=pose.residue(jr).nheavyatoms(); ja++ ) {
+							if ( pose.residue(ir).xyz(ia).distance_squared(pose.residue(jr).xyz(ja)) <= cutoff2 )  {
 								contact = true;
 								break; // ja
 							}
 						} // ja
-						if (contact == true) {
+						if ( contact == true ) {
 							TR.Debug << "ir: " << ir << " jr: " << jr << std::endl;
 							break;
 						}
 					} // jr
-					if (contact == true) {
+					if ( contact == true ) {
 						count++;
 						if_score += hr.atom_scores[core::id::AtomID(ia, sir)];
 						TR.Debug << "count: " << count << " atom_score: " << hr.atom_scores[core::id::AtomID(ia, sir)] << " if_score: " << if_score << std::endl;
 					}
 				} // ia
 			} // ir
-	 	} else {
+		} else {
 			core::pose::symmetry::partition_by_symm_jumps( sym_aware_jump_ids, pose.fold_tree(), core::pose::symmetry::symmetry_info(pose), is_upstream );
 			utility::vector1<Size> intra_subs;
 			Size nres_monomer = symm_info->num_independent_residues();
-			for (core::Size i=1; i<=symm_info->subunits(); ++i)
-				if (!is_upstream( (i-1)*nres_monomer + 1 )) intra_subs.push_back(i);
+			for ( core::Size i=1; i<=symm_info->subunits(); ++i ) {
+				if ( !is_upstream( (i-1)*nres_monomer + 1 ) ) intra_subs.push_back(i);
+			}
 			sub_pose = core::pose::symmetry::get_buildingblock_and_neighbor_subs (pose, intra_subs);
 
 			core::scoring::packing::HolesResult hr(core::scoring::packing::compute_holes_score(sub_pose, hp));
-			for (core::Size ir=1; ir<=nres_monomer; ir++) {
+			for ( core::Size ir=1; ir<=nres_monomer; ir++ ) {
 				//if (is_upstream(ir)) continue;
-				for (core::Size ia = 1; ia<=pose.residue(ir).nheavyatoms(); ia++) {
+				for ( core::Size ia = 1; ia<=pose.residue(ir).nheavyatoms(); ia++ ) {
 					bool contact = false;
-					for (core::Size jr=1; jr<=pose.total_residue(); jr++) {
-						if (is_upstream(jr)) continue;
-						for (core::Size ja = 1; ja<=pose.residue(jr).nheavyatoms(); ja++) {
-							if (pose.residue(ir).xyz(ia).distance_squared(pose.residue(jr).xyz(ja)) <= cutoff2)  {
+					for ( core::Size jr=1; jr<=pose.total_residue(); jr++ ) {
+						if ( is_upstream(jr) ) continue;
+						for ( core::Size ja = 1; ja<=pose.residue(jr).nheavyatoms(); ja++ ) {
+							if ( pose.residue(ir).xyz(ia).distance_squared(pose.residue(jr).xyz(ja)) <= cutoff2 )  {
 								contact = true;
 								break ;
 							}
 						}
-						if (contact == true) {
+						if ( contact == true ) {
 							TR.Debug << "ir: " << ir << " jr: " << jr << std::endl;
 							break;
 						}
 					}
-					if (contact) {
+					if ( contact ) {
 						count++;
 						if_score += hr.atom_scores[core::id::AtomID(ia, ir)];
 						TR.Debug << "count: " << count << " atom_score: " << hr.atom_scores[core::id::AtomID(ia, ir)] << " if_score: " << if_score << std::endl;
@@ -278,10 +280,10 @@ InterfacePackingFilter::report( std::ostream & out, core::pose::Pose const & pos
 
 void
 InterfacePackingFilter::parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const & )
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & )
 {
 	TR << "InterfacePackingFilter"<<std::endl;
 	distance_cutoff( tag->getOption< core::Real >( "distance_cutoff", 9.0 ) );
@@ -294,8 +296,8 @@ InterfacePackingFilter::parse_my_tag( utility::tag::TagCOP tag,
 }
 
 void InterfacePackingFilter::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & ,
-				utility::lua::LuaObject const & ) {
+	utility::lua::LuaObject const & ,
+	utility::lua::LuaObject const & ) {
 	TR << "InterfacePackingFilter"<<std::endl;
 	distance_cutoff( def["distance_cutoff"] ? def["distance_cutoff"].to<core::Real>() : 9.0 );
 	lower_threshold( def["lower_cutoff"] ? def["lower_cutoff"].to<core::Real>() : -5 );

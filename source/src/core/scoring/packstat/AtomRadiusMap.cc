@@ -37,9 +37,9 @@ typedef pair<string const,string const> P;
 
 std::string ToUpper( std::string s ) {
 #ifdef WIN32
-	for( size_t i = 0; i < s.size(); ++i ) s[i] = toupper( s[i] );
+	for ( size_t i = 0; i < s.size(); ++i ) s[i] = toupper( s[i] );
 #else
-	for( size_t i = 0; i < s.size(); ++i ) s[i] = std::toupper( s[i] );
+	for ( size_t i = 0; i < s.size(); ++i ) s[i] = std::toupper( s[i] );
 #endif
 	// std::transform( s.begin(), s.end(), s.begin(), std::toupper );
 	return s;
@@ -55,7 +55,7 @@ AtomRadiusMap::AtomRadiusMap(
 	int include_water // -1 (default) means read from global options
 ) {
 
-	if( include_water < 0 ) {
+	if ( include_water < 0 ) {
 		using namespace basic::options;
 		include_water = option[ basic::options::OptionKeys::packstat::include_water ];
 	}
@@ -126,136 +126,139 @@ AtomRadiusMap::AtomRadiusMap(
 
 	// from ccdc.cam.ac.uk quest
 	type_map_add( type_map_, "Ag", "*", 1.72 );
-  type_map_add( type_map_, "Ar", "*", 1.88 );
-  type_map_add( type_map_, "As", "*", 1.85 );
-  type_map_add( type_map_, "Au", "*", 1.66 );
-  type_map_add( type_map_, "Br", "*", 1.85 );
-  type_map_add( type_map_, "Cd", "*", 1.58 );
-  type_map_add( type_map_, "Cl", "*", 1.75 );
-  type_map_add( type_map_, "Cu", "*", 1.40 );
-  type_map_add( type_map_, "Ga", "*", 1.87 );
-  type_map_add( type_map_, "He", "*", 1.40 );
-  type_map_add( type_map_, "Hg", "*", 1.55 );
-  type_map_add( type_map_, "In", "*", 1.93 );
-  type_map_add( type_map_, "Kr", "*", 2.02 );
-  type_map_add( type_map_, "Li", "*", 1.82 );
-  type_map_add( type_map_, "Mg", "*", 1.73 );
-  type_map_add( type_map_, "Na", "*", 2.27 );
-  type_map_add( type_map_, "Ne", "*", 1.54 );
-  type_map_add( type_map_, "Ni", "*", 1.63 );
-  type_map_add( type_map_, "Pb", "*", 2.02 );
-  type_map_add( type_map_, "Pd", "*", 1.63 );
-  type_map_add( type_map_, "Pt", "*", 1.72 );
-  type_map_add( type_map_, "Se", "*", 1.90 );
-  type_map_add( type_map_, "Si", "*", 2.10 );
-  type_map_add( type_map_, "Sn", "*", 2.17 );
-  type_map_add( type_map_, "Te", "*", 2.06 );
-  type_map_add( type_map_, "Tl", "*", 1.96 );
-  type_map_add( type_map_, "U ", "*", 1.86 );
-  type_map_add( type_map_, "Xe", "*", 2.16 );
+	type_map_add( type_map_, "Ar", "*", 1.88 );
+	type_map_add( type_map_, "As", "*", 1.85 );
+	type_map_add( type_map_, "Au", "*", 1.66 );
+	type_map_add( type_map_, "Br", "*", 1.85 );
+	type_map_add( type_map_, "Cd", "*", 1.58 );
+	type_map_add( type_map_, "Cl", "*", 1.75 );
+	type_map_add( type_map_, "Cu", "*", 1.40 );
+	type_map_add( type_map_, "Ga", "*", 1.87 );
+	type_map_add( type_map_, "He", "*", 1.40 );
+	type_map_add( type_map_, "Hg", "*", 1.55 );
+	type_map_add( type_map_, "In", "*", 1.93 );
+	type_map_add( type_map_, "Kr", "*", 2.02 );
+	type_map_add( type_map_, "Li", "*", 1.82 );
+	type_map_add( type_map_, "Mg", "*", 1.73 );
+	type_map_add( type_map_, "Na", "*", 2.27 );
+	type_map_add( type_map_, "Ne", "*", 1.54 );
+	type_map_add( type_map_, "Ni", "*", 1.63 );
+	type_map_add( type_map_, "Pb", "*", 2.02 );
+	type_map_add( type_map_, "Pd", "*", 1.63 );
+	type_map_add( type_map_, "Pt", "*", 1.72 );
+	type_map_add( type_map_, "Se", "*", 1.90 );
+	type_map_add( type_map_, "Si", "*", 2.10 );
+	type_map_add( type_map_, "Sn", "*", 2.17 );
+	type_map_add( type_map_, "Te", "*", 2.06 );
+	type_map_add( type_map_, "Tl", "*", 1.96 );
+	type_map_add( type_map_, "U ", "*", 1.86 );
+	type_map_add( type_map_, "Xe", "*", 2.16 );
 	type_map_add( type_map_, "Zn", "*", 1.39 );
 
 	// std rosetta stuff
-  type_map_add( type_map_, "C"   ,"*", 2.0000 );
-  type_map_add( type_map_, "N"   ,"*", 1.7500 );
-  type_map_add( type_map_, "O"   ,"*", 1.5500 );
-  type_map_add( type_map_, "S"   ,"*", 1.9000 );
-  type_map_add( type_map_, "N"   ,"*", 1.7500 );
-  type_map_add( type_map_, "C"   ,"*", 2.0000 );
-  type_map_add( type_map_, "O"   ,"*", 1.5500 );
-  type_map_add( type_map_, "P"   ,"*", 2.1500 );
-  type_map_add( type_map_, "F"   ,"*", 1.7100 );
-  type_map_add( type_map_, "CL"  ,"*", 2.0700 );
-  type_map_add( type_map_, "BR"  ,"*", 2.2200 );
-  type_map_add( type_map_, "I"   ,"*", 2.3600 );
-  type_map_add( type_map_, "ZN"  ,"*", 1.0900 );
-  type_map_add( type_map_, "FE"  ,"*", 0.7800 );
-  type_map_add( type_map_, "FE"  ,"*", 0.6500 );
-  type_map_add( type_map_, "MG"  ,"*", 1.1850 );
-  type_map_add( type_map_, "CA"  ,"*", 1.3670 );
-  type_map_add( type_map_, "NA"  ,"*", 1.3638 );
-  type_map_add( type_map_, "K"   ,"*", 1.7638 );
-  type_map_add( type_map_, "CNH2","*", 2.0000 );
-  type_map_add( type_map_, "COO" ,"*", 2.0000 );
-  type_map_add( type_map_, "CH1" ,"*", 2.0000 );
-  type_map_add( type_map_, "CH2" ,"*", 2.0000 );
-  type_map_add( type_map_, "CH3" ,"*", 2.0000 );
-  type_map_add( type_map_, "aroC","*", 2.0000 );
-  type_map_add( type_map_, "Ntrp","*", 1.7500 );
-  type_map_add( type_map_, "Nhis","*", 1.7500 );
-  type_map_add( type_map_, "NH2O","*", 1.7500 );
-  type_map_add( type_map_, "Nlys","*", 1.7500 );
-  type_map_add( type_map_, "Narg","*", 1.7500 );
-  type_map_add( type_map_, "Npro","*", 1.7500 );
-  type_map_add( type_map_, "OH"  ,"*", 1.5500 );
-  type_map_add( type_map_, "ONH2","*", 1.5500 );
-  type_map_add( type_map_, "OOC" ,"*", 1.5500 );
-  type_map_add( type_map_, "S"   ,"*", 1.9000 );
-  type_map_add( type_map_, "Nbb" ,"*", 1.7500 );
-  type_map_add( type_map_, "CAbb","*", 2.0000 );
-  type_map_add( type_map_, "CObb","*", 2.0000 );
-  type_map_add( type_map_, "OCbb","*", 1.5500 );
-  type_map_add( type_map_, "Phos","*", 2.1500 );
-  type_map_add( type_map_, "F"   ,"*", 1.7100 );
-  type_map_add( type_map_, "Cl"  ,"*", 2.0700 );
-  type_map_add( type_map_, "Br"  ,"*", 2.2200 );
-  type_map_add( type_map_, "I"   ,"*", 2.3600 );
-  type_map_add( type_map_, "Zn","*", 1.0900 );
-  type_map_add( type_map_, "Fe","*", 0.7800 );
-  type_map_add( type_map_, "Mg","*", 1.1850 );
-  type_map_add( type_map_, "Ca","*", 1.3670 );
-  type_map_add( type_map_, "Na","*", 1.3638 );
-  type_map_add( type_map_, "K" ,"*", 1.7638 );
-  type_map_add( type_map_, "Cu" ,"*", 1.4 );
+	type_map_add( type_map_, "C"   ,"*", 2.0000 );
+	type_map_add( type_map_, "N"   ,"*", 1.7500 );
+	type_map_add( type_map_, "O"   ,"*", 1.5500 );
+	type_map_add( type_map_, "S"   ,"*", 1.9000 );
+	type_map_add( type_map_, "N"   ,"*", 1.7500 );
+	type_map_add( type_map_, "C"   ,"*", 2.0000 );
+	type_map_add( type_map_, "O"   ,"*", 1.5500 );
+	type_map_add( type_map_, "P"   ,"*", 2.1500 );
+	type_map_add( type_map_, "F"   ,"*", 1.7100 );
+	type_map_add( type_map_, "CL"  ,"*", 2.0700 );
+	type_map_add( type_map_, "BR"  ,"*", 2.2200 );
+	type_map_add( type_map_, "I"   ,"*", 2.3600 );
+	type_map_add( type_map_, "ZN"  ,"*", 1.0900 );
+	type_map_add( type_map_, "FE"  ,"*", 0.7800 );
+	type_map_add( type_map_, "FE"  ,"*", 0.6500 );
+	type_map_add( type_map_, "MG"  ,"*", 1.1850 );
+	type_map_add( type_map_, "CA"  ,"*", 1.3670 );
+	type_map_add( type_map_, "NA"  ,"*", 1.3638 );
+	type_map_add( type_map_, "K"   ,"*", 1.7638 );
+	type_map_add( type_map_, "CNH2","*", 2.0000 );
+	type_map_add( type_map_, "COO" ,"*", 2.0000 );
+	type_map_add( type_map_, "CH1" ,"*", 2.0000 );
+	type_map_add( type_map_, "CH2" ,"*", 2.0000 );
+	type_map_add( type_map_, "CH3" ,"*", 2.0000 );
+	type_map_add( type_map_, "aroC","*", 2.0000 );
+	type_map_add( type_map_, "Ntrp","*", 1.7500 );
+	type_map_add( type_map_, "Nhis","*", 1.7500 );
+	type_map_add( type_map_, "NH2O","*", 1.7500 );
+	type_map_add( type_map_, "Nlys","*", 1.7500 );
+	type_map_add( type_map_, "Narg","*", 1.7500 );
+	type_map_add( type_map_, "Npro","*", 1.7500 );
+	type_map_add( type_map_, "OH"  ,"*", 1.5500 );
+	type_map_add( type_map_, "ONH2","*", 1.5500 );
+	type_map_add( type_map_, "OOC" ,"*", 1.5500 );
+	type_map_add( type_map_, "S"   ,"*", 1.9000 );
+	type_map_add( type_map_, "Nbb" ,"*", 1.7500 );
+	type_map_add( type_map_, "CAbb","*", 2.0000 );
+	type_map_add( type_map_, "CObb","*", 2.0000 );
+	type_map_add( type_map_, "OCbb","*", 1.5500 );
+	type_map_add( type_map_, "Phos","*", 2.1500 );
+	type_map_add( type_map_, "F"   ,"*", 1.7100 );
+	type_map_add( type_map_, "Cl"  ,"*", 2.0700 );
+	type_map_add( type_map_, "Br"  ,"*", 2.2200 );
+	type_map_add( type_map_, "I"   ,"*", 2.3600 );
+	type_map_add( type_map_, "Zn","*", 1.0900 );
+	type_map_add( type_map_, "Fe","*", 0.7800 );
+	type_map_add( type_map_, "Mg","*", 1.1850 );
+	type_map_add( type_map_, "Ca","*", 1.3670 );
+	type_map_add( type_map_, "Na","*", 1.3638 );
+	type_map_add( type_map_, "K" ,"*", 1.7638 );
+	type_map_add( type_map_, "Cu" ,"*", 1.4 );
 
-	if( include_water ) {
-  	type_map_add( type_map_, "O" ,"HOH",  1.4 );
-  	type_map_add( type_map_, "*" ,"HOH",  1.4 );
+	if ( include_water ) {
+		type_map_add( type_map_, "O" ,"HOH",  1.4 );
+		type_map_add( type_map_, "*" ,"HOH",  1.4 );
 		type_map_add( type_map_, "WA", "ADW", 1.4 ); // water?
 		type_map_add( type_map_, "WB", "ADW", 1.4 ); // water?
 		type_map_add( type_map_, "W", "*",    1.4 ); // water?
 	} else {
 		// no water!
-  	type_map_add( type_map_, "O" ,"HOH",  0 );
-  	type_map_add( type_map_, "*" ,"HOH",  0 );
+		type_map_add( type_map_, "O" ,"HOH",  0 );
+		type_map_add( type_map_, "*" ,"HOH",  0 );
 		type_map_add( type_map_, "WA", "ADW", 0 ); // water?
 		type_map_add( type_map_, "WB", "ADW", 0 ); // water?
 		type_map_add( type_map_, "W", "*",    0 ); // water?
 	}
 
 	// virtual residues
-  type_map_add( type_map_, "*" ,"SCK", 0 );
-  type_map_add( type_map_, "VIRT" ,"*", 0 );
-  type_map_add( type_map_, "*"    ,"X", 0 );
+	type_map_add( type_map_, "*" ,"SCK", 0 );
+	type_map_add( type_map_, "VIRT" ,"*", 0 );
+	type_map_add( type_map_, "*"    ,"X", 0 );
 
 	// hydrogen
 	type_map_add( type_map_, "H"   ,"*", HYDROGEN_RADIUS );
 	type_map_add( type_map_, "Hpol","*", HYDROGEN_RADIUS );
-  type_map_add( type_map_, "Hapo","*", HYDROGEN_RADIUS );
-  type_map_add( type_map_, "Haro","*", HYDROGEN_RADIUS );
-  type_map_add( type_map_, "HNbb","*", HYDROGEN_RADIUS );
+	type_map_add( type_map_, "Hapo","*", HYDROGEN_RADIUS );
+	type_map_add( type_map_, "Haro","*", HYDROGEN_RADIUS );
+	type_map_add( type_map_, "HNbb","*", HYDROGEN_RADIUS );
 
 
 }
 
 PackstatReal
 AtomRadiusMap::get_radius(
-  std::string type,
-  std::string res
+	std::string type,
+	std::string res
 ) const {
 	type = core::scoring::packstat::ToUpper(type);
 	res  = core::scoring::packstat::ToUpper(res );
 
-  if(      type_map_.count( P(type,res) ) )
-    return type_map_.find(  P(type,res) )->second;
-  if(      type_map_.count( P(type,"*") ) )
-    return type_map_.find(  P(type,"*") )->second;
-  if(      type_map_.count( P("*" ,res) ) )
-    return type_map_.find(  P("*" ,res) )->second;
+	if (      type_map_.count( P(type,res) ) ) {
+		return type_map_.find(  P(type,res) )->second;
+	}
+	if (      type_map_.count( P(type,"*") ) ) {
+		return type_map_.find(  P(type,"*") )->second;
+	}
+	if (      type_map_.count( P("*" ,res) ) ) {
+		return type_map_.find(  P("*" ,res) )->second;
+	}
 
-	if( 'H' == type[1] && '0' <= type[0] && type[0] <= '9' ) return HYDROGEN_RADIUS;
+	if ( 'H' == type[1] && '0' <= type[0] && type[0] <= '9' ) return HYDROGEN_RADIUS;
 
-	if( type.size() > 1 ) {
+	if ( type.size() > 1 ) {
 		type = type.substr(0,type.size()-1);
 		return get_radius(type,res);
 	}

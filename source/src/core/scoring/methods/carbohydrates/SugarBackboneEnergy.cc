@@ -52,8 +52,8 @@ namespace carbohydrates {
 // Standard methods ///////////////////////////////////////////////////////////
 // Default constructor
 SugarBackboneEnergy::SugarBackboneEnergy() :
-		ContextIndependentOneBodyEnergy( EnergyMethodCreatorOP( new SugarBackboneEnergyCreator ) ),
-		E_( ScoringManager::get_instance()->get_CHIEnergyFunction() )
+	ContextIndependentOneBodyEnergy( EnergyMethodCreatorOP( new SugarBackboneEnergyCreator ) ),
+	E_( ScoringManager::get_instance()->get_CHIEnergyFunction() )
 {}
 
 
@@ -69,9 +69,9 @@ SugarBackboneEnergy::clone() const
 // Evaluate the one-body carbohydrate backbone energies for a particular residue.
 void
 SugarBackboneEnergy::residue_energy(
-		conformation::Residue const & rsd,
-		pose::Pose const & pose,
-		EnergyMap & emap ) const
+	conformation::Residue const & rsd,
+	pose::Pose const & pose,
+	EnergyMap & emap ) const
 {
 	using namespace scoring::carbohydrates;
 
@@ -107,18 +107,18 @@ SugarBackboneEnergy::residue_energy(
 // Evaluate the DoF derivative for a particular residue.
 core::Real
 SugarBackboneEnergy::eval_residue_dof_derivative(
-			conformation::Residue const & rsd,
-			ResSingleMinimizationData const & /* min_data */,
-			id::DOF_ID const & /* dof_id */,
-			id::TorsionID const & torsion_id,
-			pose::Pose const & pose,
-			ScoreFunction const & /* sf */,
-			EnergyMap const & weights ) const
+	conformation::Residue const & rsd,
+	ResSingleMinimizationData const & /* min_data */,
+	id::DOF_ID const & /* dof_id */,
+	id::TorsionID const & torsion_id,
+	pose::Pose const & pose,
+	ScoreFunction const & /* sf */,
+	EnergyMap const & weights ) const
 {
 	using namespace id;
 	using namespace pose::carbohydrates;
 	using namespace scoring::carbohydrates;
-	
+
 	if ( TR.Debug.visible() ) {
 		TR.Debug << "Evaluating torsion: " << torsion_id << std::endl;
 	}
@@ -134,8 +134,8 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 	// This scoring method only considers glycosidic torsions, which may have either BB, CHI, or BRANCH TorsionIDs.
 	if ( ! torsion_id.valid() ) {
 		if ( TR.Debug.visible() ) {
-      			TR.Debug << "Torsion not valid: " << torsion_id << std::endl;
-    		}
+			TR.Debug << "Torsion not valid: " << torsion_id << std::endl;
+		}
 		return deriv;
 	}
 
@@ -160,8 +160,8 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 		chemical::carbohydrates::CarbohydrateInfoCOP info( pose.residue( next_rsd ).carbohydrate_info() );
 		Angle phi( pose.phi( next_rsd ) );
 		if ( TR.Debug.visible() ) {
-      			TR.Debug << "Phi: " << phi << std::endl;
-    		}
+			TR.Debug << "Phi: " << phi << std::endl;
+		}
 		if ( info->is_L_sugar() ) {
 			// L-Sugars use the mirror image of the score functions. The phi functions run from -180 to 180.
 			//phi = numeric::principal_angle_degrees( 360 - phi );
@@ -169,7 +169,7 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 		}
 
 		// Finally, we can evaluate.
-	  	if ( info->is_alpha_sugar() ) {
+		if ( info->is_alpha_sugar() ) {
 			deriv = E_.evaluate_derivative( ALPHA_LINKS, phi );
 		} else if ( info->is_beta_sugar() ) {
 			deriv = E_.evaluate_derivative( BETA_LINKS, phi );
@@ -178,10 +178,10 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 		// Rosetta defines this torsion angle the same way as IUPAC; however, it is the psi of the following residue.
 		// This should not matter, though, because the CHI energy function only cares about whether the linkage is
 		// axial or equatorial.  We can simply convert to a number in degrees between 0 and 360 and call the function.
-		
+
 		// TODO: Convert to between 0 and 360 degrees.
 		// Angle const psi();
-		
+
 		// TODO: Check if it's axial or equatorial.
 		// TODO: Call the appropriate E_.evaluate_derivative( LinkageType type, psi );
 	}

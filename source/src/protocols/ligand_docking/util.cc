@@ -46,14 +46,14 @@ void move_ligand_to_desired_centroid(
 /// @brief Move the center of the object(s) downstream of jump_id to the desired_centroid
 void
 move_ligand_to_desired_centroid(
-		core::Size const jump_id,
-		core::Vector const & desired_centroid,
-		core::pose::Pose & pose
+	core::Size const jump_id,
+	core::Vector const & desired_centroid,
+	core::pose::Pose & pose
 ){
 	core::Vector const ligand_centroid = protocols::geometry::downstream_centroid_by_jump(pose, jump_id);
 	core::Vector const trans_vec = desired_centroid - ligand_centroid;
 	core::Real const trans_len = trans_vec.length();
-	if (trans_len > 1e-3) { // otherwise we get NaNs
+	if ( trans_len > 1e-3 ) { // otherwise we get NaNs
 		protocols::rigid::RigidBodyTransMover mover(pose, jump_id);
 		mover.step_size(trans_len);
 		mover.trans_axis(trans_vec);
@@ -69,10 +69,10 @@ void move_ligand_neighbor_to_desired_position(
 ) {
 	core::Size chain_id( core::pose::get_chain_id_from_chain(chain, pose) );
 	core::conformation::ResidueCOPs residues( core::pose::get_chain_residues(pose, chain_id) );
-	if( residues.size() == 0 ) {
+	if ( residues.size() == 0 ) {
 		utility_exit_with_message("Can't find chain " + chain+ " in pose!");
 	}
-	if( residues.size() != 1 ) {
+	if ( residues.size() != 1 ) {
 		TR << "Multiple residues in chain " << chain << " only using first for positioning. " << std::endl;
 	}
 	core::conformation::ResidueCOP residue( residues[1] );
@@ -80,7 +80,7 @@ void move_ligand_neighbor_to_desired_position(
 
 	core::Vector const trans_vec = desired_position - ligand_position;
 	core::Real const trans_len = trans_vec.length();
-	if (trans_len > 1e-3) { // otherwise we get NaNs
+	if ( trans_len > 1e-3 ) { // otherwise we get NaNs
 		core::Size jump_id = core::pose::get_jump_id_from_chain(chain, pose);
 		protocols::rigid::RigidBodyTransMover mover(pose, jump_id);
 		mover.step_size(trans_len);

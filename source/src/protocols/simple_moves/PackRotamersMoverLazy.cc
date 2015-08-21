@@ -49,10 +49,10 @@ using basic::t_warning;
 static thread_local basic::Tracer TR( "protocols.simple_moves.PackRotamersMoverLazy" );
 
 PackRotamersMoverLazy::PackRotamersMoverLazy(
-		ScoreFunctionCOP scorefxn,
-		PackerTaskCOP task,
-		core::Size nloop
-	) : protocols::simple_moves::PackRotamersMover(scorefxn,task,nloop)
+	ScoreFunctionCOP scorefxn,
+	PackerTaskCOP task,
+	core::Size nloop
+) : protocols::simple_moves::PackRotamersMover(scorefxn,task,nloop)
 {}
 
 PackRotamersMoverLazy::PackRotamersMoverLazy() : protocols::simple_moves::PackRotamersMover( std::string("PackRotamersMoverLazy") )
@@ -94,12 +94,12 @@ PackRotamersMoverLazyCreator::mover_name()
 void
 PackRotamersMoverLazy::call_setup( Pose & pose)
 {
-  this->setup(pose);//to bypass the protected status of setup()
+	this->setup(pose);//to bypass the protected status of setup()
 }
 void
 PackRotamersMoverLazy::apply_to_rotpack( Pose & pose , utility::vector0< int > rot_to_pack)
 {
-  //assume setup has been called once.
+	//assume setup has been called once.
 
 	core::PackerEnergy best_energy(0.);
 	Pose best_pose;
@@ -107,7 +107,7 @@ PackRotamersMoverLazy::apply_to_rotpack( Pose & pose , utility::vector0< int > r
 	for ( Size run(1); run <= nloop(); ++run ) {
 		// run SimAnnealer
 		core::PackerEnergy packer_energy( this->run( pose, rot_to_pack) );
-//		Real const score( scorefxn_( pose ) ); another option for deciding which is the 'best' result
+		//  Real const score( scorefxn_( pose ) ); another option for deciding which is the 'best' result
 		if ( run == 1 || packer_energy < best_energy ) {
 			best_pose = pose;
 			best_energy = packer_energy;
@@ -115,13 +115,13 @@ PackRotamersMoverLazy::apply_to_rotpack( Pose & pose , utility::vector0< int > r
 	}
 	if ( nloop() > 1 ) pose = best_pose;
 
-  ScoreFunctionCOP scorefxn_ = score_function();
+	ScoreFunctionCOP scorefxn_ = score_function();
 	(*scorefxn_)(pose);
 }
 /*
 core::PackerEnergy PackRotamersMoverLazy::run_with_ig( Pose & pose, utility::vector0< int > rot_to_pack, InteractionGraphBaseOP ig) const
 {
-	return pack_rotamers_run( pose, task(), rotamer_sets(), ig, rot_to_pack );
+return pack_rotamers_run( pose, task(), rotamer_sets(), ig, rot_to_pack );
 }
 */
 

@@ -48,7 +48,7 @@ public:
 		basic::resource_manager::LocatorID const & locator_id,
 		std::istream & istream
 	) const;
-	
+
 	/// @brief Returns the default options for SurfaceParameters
 	virtual
 	basic::resource_manager::ResourceOptionsOP

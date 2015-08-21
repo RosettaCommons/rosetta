@@ -86,11 +86,11 @@ class InvrotTreeNodeBase : public utility::pointer::ReferenceCount, public utili
 {
 public:
 
-  InvrotTreeNodeBase(
-    InvrotTreeNodeBaseCAP parent_node
-  );
+	InvrotTreeNodeBase(
+		InvrotTreeNodeBaseCAP parent_node
+	);
 
-  virtual ~InvrotTreeNodeBase();
+	virtual ~InvrotTreeNodeBase();
 
 	/// self pointers
 	inline InvrotTreeNodeBaseCOP get_self_ptr() const { return shared_from_this(); }
@@ -98,9 +98,9 @@ public:
 	inline InvrotTreeNodeBaseCAP get_self_weak_ptr() const { return InvrotTreeNodeBaseCAP( shared_from_this() ); }
 	inline InvrotTreeNodeBaseAP get_self_weak_ptr() { return InvrotTreeNodeBaseAP( shared_from_this() ); }
 
-  InvrotTreeNodeBaseCAP
-  parent_node() const {
-    return parent_node_; }
+	InvrotTreeNodeBaseCAP
+	parent_node() const {
+		return parent_node_; }
 
 	void
 	set_location_in_parent_node( Size location ) {
@@ -109,50 +109,50 @@ public:
 	Size location_in_parent_node() const {
 		return location_in_parent_node_; }
 
-  /// @brief nodes need to be able to generate constraints
-  virtual
-  core::scoring::constraints::ConstraintCOP
-  generate_constraints(
-    core::pose::Pose const & pose,
-    AllowedSeqposForGeomCstCOP geomcst_seqpos
-  ) const = 0;
+	/// @brief nodes need to be able to generate constraints
+	virtual
+	core::scoring::constraints::ConstraintCOP
+	generate_constraints(
+		core::pose::Pose const & pose,
+		AllowedSeqposForGeomCstCOP geomcst_seqpos
+	) const = 0;
 
 
-  /// @brief this function traverses up the tree
-  /// and adds the target residue for every geomcst
-  /// in the branch toward this node
-  /// used for clash checking, i.e. in case where
-  /// the interaction is lig<-geomcst1-<geomcst2-<geomcst3,
-  /// we don't want geomcst2 rots that clash with
-  /// the ligand, and we don't wand geomcst3 rots
-  /// that clash with the ligand or geomcst1 res
-  /// the child node argument usually represents the node
-  /// that is asking for the target residues, i.e. the node
-  /// that's calling this function
-  virtual
-  utility::vector1< std::list< core::conformation::ResidueCOP > >
-  all_target_residues( InvrotTreeNodeBaseCAP child_node ) const = 0;
+	/// @brief this function traverses up the tree
+	/// and adds the target residue for every geomcst
+	/// in the branch toward this node
+	/// used for clash checking, i.e. in case where
+	/// the interaction is lig<-geomcst1-<geomcst2-<geomcst3,
+	/// we don't want geomcst2 rots that clash with
+	/// the ligand, and we don't wand geomcst3 rots
+	/// that clash with the ligand or geomcst1 res
+	/// the child node argument usually represents the node
+	/// that is asking for the target residues, i.e. the node
+	/// that's calling this function
+	virtual
+	utility::vector1< std::list< core::conformation::ResidueCOP > >
+	all_target_residues( InvrotTreeNodeBaseCAP child_node ) const = 0;
 
 
-  /// @brief convenience funtion to get all
-  /// inverse rotamers in the tree
-  /// puts all the inverse rotamers associated
-  /// with this node into vector, and should
-  /// call this function on daughter nodes
+	/// @brief convenience funtion to get all
+	/// inverse rotamers in the tree
+	/// puts all the inverse rotamers associated
+	/// with this node into vector, and should
+	/// call this function on daughter nodes
 	/// uses std:vector because the targets will be put into
 	/// 0th element
 	/// needs vector of vector bc there can be different definitions
 	/// of the tree
-  virtual
-  void
-  collect_all_inverse_rotamers(
-    utility::vector1< InvrotCollectorOP > & invrot_collectors
-  ) const = 0;
+	virtual
+	void
+	collect_all_inverse_rotamers(
+		utility::vector1< InvrotCollectorOP > & invrot_collectors
+	) const = 0;
 
 
 private:
 
-  InvrotTreeNodeBaseCAP parent_node_; //pointer to parent node
+	InvrotTreeNodeBaseCAP parent_node_; //pointer to parent node
 	Size location_in_parent_node_;
 };
 

@@ -110,12 +110,12 @@ get_phosphate_stub( core::conformation::Residue const & rsd ){
 ///////////////////////////////////////////////////////////////////////////////
 void
 mg_pdbstats_from_pose( utility::io::ozstream & out,
-											 utility::io::ozstream & out2,
-											 utility::io::ozstream & out3,
-											 utility::io::ozstream & out4,
-											 utility::io::ozstream & out5,
-											 utility::io::ozstream & out6,
-											 pose::Pose & pose, Size const count, Size & total_residues, std::string const pdb_file)
+	utility::io::ozstream & out2,
+	utility::io::ozstream & out3,
+	utility::io::ozstream & out4,
+	utility::io::ozstream & out5,
+	utility::io::ozstream & out6,
+	pose::Pose & pose, Size const count, Size & total_residues, std::string const pdb_file)
 {
 
 	using namespace core::conformation;
@@ -140,10 +140,10 @@ mg_pdbstats_from_pose( utility::io::ozstream & out,
 
 	// set up nucleobase coordinate systems
 	utility::vector1< Stub > all_base_stubs, all_phosphate_stubs;
-	for ( Size j = 1; j <= nres; j++ ){
+	for ( Size j = 1; j <= nres; j++ ) {
 		Residue rsd = pose.residue( j );
 		kinematics::Stub base_stub, phosphate_stub;
-		if ( rsd.is_RNA() ){
+		if ( rsd.is_RNA() ) {
 			Vector centroid = get_rna_base_centroid( rsd, false /*verbose*/ );
 			base_stub = Stub( get_rna_base_coordinate_system( rsd, centroid ), centroid );
 
@@ -155,7 +155,7 @@ mg_pdbstats_from_pose( utility::io::ozstream & out,
 
 
 	// find all the magnesiums in here.
-	for (Size i = 1; i <= nres; i++) {
+	for ( Size i = 1; i <= nres; i++ ) {
 
 		if ( pose.residue( i ).name3() != " MG" ) continue;
 		Vector xyz_mg = pose.residue( i ).xyz( "MG  " );
@@ -163,36 +163,36 @@ mg_pdbstats_from_pose( utility::io::ozstream & out,
 		res_count++;
 		Size nligands( 0 );
 
-		for ( Size j = 1; j <= nres; j++ ){
-			if ( i == j) continue;
+		for ( Size j = 1; j <= nres; j++ ) {
+			if ( i == j ) continue;
 
 			Residue const & rsd_j = pose.residue( j );
 
 			// look through all non-hydrogen atoms
-			for ( Size jj = 1; jj <= rsd_j.nheavyatoms(); jj++ ){
+			for ( Size jj = 1; jj <= rsd_j.nheavyatoms(); jj++ ) {
 				Vector xyz_jj = rsd_j.xyz( jj );
 
 				Real distance = (xyz_jj - xyz_mg).length();
 				if ( distance < DIST_CUTOFF ) {
 
-						//<< I(4, rsd_j.atom_type_set().atom_type_index(  rsd_j.atom_type( jj ).name() ) ) << std::endl;
+					//<< I(4, rsd_j.atom_type_set().atom_type_index(  rsd_j.atom_type( jj ).name() ) ) << std::endl;
 
 					// let's also get the angles!
 					Real theta( 0.0 );
-					if ( rsd_j.heavyatom_is_an_acceptor( jj ) ){
+					if ( rsd_j.heavyatom_is_an_acceptor( jj ) ) {
 						Vector dummy, xyz_base;
 						chemical::Hybridization acc_hybrid( rsd_j.atom_type( jj ).hybridization());
 						make_hbBasetoAcc_unitvector(
-																				hbond_options,
-																				acc_hybrid,
-																				rsd_j.atom( jj ).xyz(),
-																				rsd_j.xyz( rsd_j.atom_base( jj ) ),
-																				rsd_j.xyz( rsd_j.abase2( jj ) ),
-																				xyz_base, dummy );
+							hbond_options,
+							acc_hybrid,
+							rsd_j.atom( jj ).xyz(),
+							rsd_j.xyz( rsd_j.atom_base( jj ) ),
+							rsd_j.xyz( rsd_j.abase2( jj ) ),
+							xyz_base, dummy );
 						theta = numeric::conversions::degrees( angle_of( xyz_mg, xyz_jj, xyz_base ) );
-						//						if ( rsd_j.atom_name( jj ) == " OP2" && distance < 3.0){
-							//							std::cout << "OP2 " << jj << " " << " " << xyz_jj.x() << " " << xyz_base.x() << " " << xyz_mg.x() << " " << theta << std::endl;
-						//						}
+						//      if ( rsd_j.atom_name( jj ) == " OP2" && distance < 3.0){
+						//       std::cout << "OP2 " << jj << " " << " " << xyz_jj.x() << " " << xyz_base.x() << " " << xyz_mg.x() << " " << theta << std::endl;
+						//      }
 					}
 
 					out2 << I(4, count) << " " <<  I(4, i) << " " << I(4, j) << " " << I(4, jj) << " " << F(8, 3, distance) << " "  << rsd_j.name1() << " " << rsd_j.atom_name(jj ) << " " << theta << std::endl;
@@ -206,7 +206,7 @@ mg_pdbstats_from_pose( utility::io::ozstream & out,
 
 			// also make sure to look through vdw representatives.
 			utility::vector1< std::string > const & vdw_atom_list =rna_atom_vdw.vdw_atom_list( rsd_j.name1() );
-			for ( Size m = 1;  m <= vdw_atom_list.size(); m++ ){
+			for ( Size m = 1;  m <= vdw_atom_list.size(); m++ ) {
 
 				std::string const atom_name = vdw_atom_list[ m ];
 				Size const jj = rsd_j.atom_index( atom_name );
@@ -220,32 +220,32 @@ mg_pdbstats_from_pose( utility::io::ozstream & out,
 			}
 
 			// where does Mg(2+) lie in coordinate system of phosphate?
-			if ( rsd_j.is_RNA()  ){
+			if ( rsd_j.is_RNA()  ) {
 				Stub const & stub_j = all_phosphate_stubs[j];
 				Vector const xyz_mg_local = stub_j.global2local( xyz_mg );
-					Real const x = xyz_mg_local.x();
-					Real const y = xyz_mg_local.y();
-					Real const z = xyz_mg_local.z();
-					if ( xyz_mg_local.length() < 12.0 ) {
-						out4 << I(4,i) << ' ' << I(4,j) << ' ' << rsd_j.name1() << ' ' << F(8,3,x) << ' ' << F(8,3,y) << ' ' << F(8,3,z) << std::endl;
-					}
+				Real const x = xyz_mg_local.x();
+				Real const y = xyz_mg_local.y();
+				Real const z = xyz_mg_local.z();
+				if ( xyz_mg_local.length() < 12.0 ) {
+					out4 << I(4,i) << ' ' << I(4,j) << ' ' << rsd_j.name1() << ' ' << F(8,3,x) << ' ' << F(8,3,y) << ' ' << F(8,3,z) << std::endl;
+				}
 			}
 
 
 			// where does Mg(2+) lie in coordinate system of base?
-			if ( rsd_j.is_RNA()  ){
+			if ( rsd_j.is_RNA()  ) {
 				Stub const & stub_j = all_base_stubs[j];
 				Vector const xyz_mg_local = stub_j.global2local( xyz_mg );
 				Real const x = xyz_mg_local.x();
 				Real const y = xyz_mg_local.y();
 				Real const z = xyz_mg_local.z();
-				if ( std::abs( z ) < 8.0 && ( x*x+y*y ) < 12.0*12.0 ){
+				if ( std::abs( z ) < 8.0 && ( x*x+y*y ) < 12.0*12.0 ) {
 					out5 << I(4,i) << ' ' << I(4,j) << ' ' << rsd_j.name1() << ' ' << F(8,3,x) << ' ' << F(8,3,y) << ' ' << F(8,3,z) << std::endl;
 				}
 			}
 
 			// let's do hydrogen atoms too
-			for ( Size jj = rsd_j.nheavyatoms() + 1; jj <= rsd_j.natoms(); jj++ ){
+			for ( Size jj = rsd_j.nheavyatoms() + 1; jj <= rsd_j.natoms(); jj++ ) {
 
 				if ( !rsd_j.atom_is_hydrogen( jj ) ) continue;
 
@@ -253,7 +253,7 @@ mg_pdbstats_from_pose( utility::io::ozstream & out,
 				Real distance = (xyz_jj - xyz_mg).length();
 				if ( distance < DIST_CUTOFF ) {
 
-						//<< I(4, rsd_j.atom_type_set().atom_type_index(  rsd_j.atom_type( jj ).name() ) ) << std::endl;
+					//<< I(4, rsd_j.atom_type_set().atom_type_index(  rsd_j.atom_type( jj ).name() ) ) << std::endl;
 
 					// let's also get the angles!
 					Real theta( 0.0 );
@@ -269,7 +269,7 @@ mg_pdbstats_from_pose( utility::io::ozstream & out,
 		} // loop over RNA residues.
 
 		// info on total number of close (;inner-sphere') ligands for each Mg(2+)
-		out << I(4, count )	<< ' ' << pdb_file << ' ' << I(4,i) << ' ' << nligands	<< std::endl;
+		out << I(4, count ) << ' ' << pdb_file << ' ' << I(4,i) << ' ' << nligands << std::endl;
 
 	} // i
 
@@ -295,7 +295,7 @@ mg_pdbstats_test()
 	std::string const pdb_list( option[ in::file::l ](1) );
 
 	utility::io::izstream instream( pdb_list );
-	if (!instream){
+	if ( !instream ) {
 		std::cerr  << "Can't find list file " << pdb_list << std::endl;
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 		return;
@@ -319,7 +319,7 @@ mg_pdbstats_test()
 	ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" ) );
 
 	std::string line;
-	while ( 	getline( instream, line )  ) {
+	while (  getline( instream, line )  ) {
 		std::istringstream line_stream( line );
 
 		line_stream >> pdb_file;
@@ -349,18 +349,18 @@ main( int argc, char * argv [] )
 	try {
 
 
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-	mg_pdbstats_test();
+		mg_pdbstats_test();
 
-	exit( 0 );
+		exit( 0 );
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

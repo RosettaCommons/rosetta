@@ -25,8 +25,8 @@
 
 #include <protocols/features/FeaturesReporter.fwd.hh>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 /// @brief write the given protocol and batch ids to the database. The protocol and batches
 ///features reporters will check for an existing entry with the same key, and write if one

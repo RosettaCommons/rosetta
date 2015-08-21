@@ -77,41 +77,41 @@ static thread_local basic::Tracer TR( "protocols.seeded_abinitio.GrowPeptides" )
 
 
 namespace protocols {
-	namespace seeded_abinitio {
+namespace seeded_abinitio {
 
-		using namespace protocols::moves;
-		using namespace core;
+using namespace protocols::moves;
+using namespace core;
 
-		std::string
-		GrowPeptidesCreator::keyname() const{
-			return GrowPeptidesCreator::mover_name();
-		}
+std::string
+GrowPeptidesCreator::keyname() const{
+	return GrowPeptidesCreator::mover_name();
+}
 
-		protocols::moves::MoverOP
-		GrowPeptidesCreator::create_mover() const {
-			return protocols::moves::MoverOP( new GrowPeptides() );
-		}
+protocols::moves::MoverOP
+GrowPeptidesCreator::create_mover() const {
+	return protocols::moves::MoverOP( new GrowPeptides() );
+}
 
-		std::string
-		GrowPeptidesCreator::mover_name(){
-			return "GrowPeptides";
-		}
+std::string
+GrowPeptidesCreator::mover_name(){
+	return "GrowPeptides";
+}
 
 
-    GrowPeptides::GrowPeptides()
-    {}
+GrowPeptides::GrowPeptides()
+{}
 
-    GrowPeptides::~GrowPeptides() {}
+GrowPeptides::~GrowPeptides() {}
 
 
 protocols::moves::MoverOP
 GrowPeptides::clone() const {
-  return( protocols::moves::MoverOP( new GrowPeptides( *this ) ) );
+	return( protocols::moves::MoverOP( new GrowPeptides( *this ) ) );
 }
 
 protocols::moves::MoverOP
 GrowPeptides::fresh_instance() const {
-  return protocols::moves::MoverOP( new GrowPeptides );
+	return protocols::moves::MoverOP( new GrowPeptides );
 }
 
 bool
@@ -126,7 +126,7 @@ GrowPeptides::append_residues_nterminally ( Size seq_register, Size res_pos, Siz
 	//std::cout<<"nseq size: " << nat_seq.size() << " template sequence: "<< nat_seq << std::endl;
 	//std::cout<< "sequence register : "<< seq_register << std::endl;
 
-	for (Size k= res_pos; k < stop ; ++k ) {
+	for ( Size k= res_pos; k < stop ; ++k ) {
 		Size resi = stop - k + res_pos - 1 ; /* so that stop doesnt get incorporated anymore*/
 		const char aa = nat_seq[ stop - k - 1 + seq_register - 1];//in case this is called within the sequence, -1 because strings start counting at 0
 		TR.Debug << "RES AA N-terminal extension:  " << resi << aa <<std::endl;
@@ -146,7 +146,7 @@ GrowPeptides::append_residues_cterminally ( Size seq_register, Size res_pos, Siz
 	//std::cout<<"cseq size: " << nat_seq.size() << " sequence: "<< nat_seq << std::endl;
 	//std::cout<<"seq_register: " << seq_register << std::endl;
 
-	for ( Size j = res_pos ; j <  stop  ; ++j  ){
+	for ( Size j = res_pos ; j <  stop  ; ++j  ) {
 		const char aa = nat_seq[ j - res_pos + seq_register /*-1*/]; // -1 for string adjustment
 		Size resi =  j ;
 		TR.Debug << "RES AA C-terminal extension  " << resi << aa <<std::endl;
@@ -163,12 +163,12 @@ GrowPeptides::append_residues_cterminally ( Size seq_register, Size res_pos, Siz
 void
 insert_segment( std::pair <Size, Size> insert_type, std::string seq ,pose::pose curr_pose, )
 {
-	//(0, num) = insert c-terminally of given position
- 	//(num, 0) = insert n-terminally of given position
- 	//(0,0 ) = insert n-terminally
- 	//(0, total resi) = insert c-terminally
- 	///replace a segment between the two given positions
- 	///simply insert either N or C terminal of a given residue
+//(0, num) = insert c-terminally of given position
+//(num, 0) = insert n-terminally of given position
+//(0,0 ) = insert n-terminally
+//(0, total resi) = insert c-terminally
+///replace a segment between the two given positions
+///simply insert either N or C terminal of a given residue
 }
 */
 
@@ -176,26 +176,26 @@ insert_segment( std::pair <Size, Size> insert_type, std::string seq ,pose::pose 
 /*
 void
 GrowPeptides::process_length_change(
-									core::pose::Pose & pose,
-									core::id::SequenceMappingCOP smap
-									){
-	enz_prot_->remap_resid( pose, *smap );
-	core::id::combine_sequence_mappings( *start_to_current_smap_, *smap );
+core::pose::Pose & pose,
+core::id::SequenceMappingCOP smap
+){
+enz_prot_->remap_resid( pose, *smap );
+core::id::combine_sequence_mappings( *start_to_current_smap_, *smap );
 
-	for( utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP >::iterator rcg_it = rcgs_.begin();
-		rcg_it != rcgs_.end(); ++rcg_it ){
-		(*rcg_it)->set_seqmap( smap );
-	}
+for( utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP >::iterator rcg_it = rcgs_.begin();
+rcg_it != rcgs_.end(); ++rcg_it ){
+(*rcg_it)->set_seqmap( smap );
+}
 }
 */
 
 void
 GrowPeptides::grow_from_verteces(
-										core::pose::Pose & curr_pose,
-										std::string sequence,
-										protocols::loops::Loops & seeds,
-										std::set< core::Size > vertex_set
-										){
+	core::pose::Pose & curr_pose,
+	std::string sequence,
+	protocols::loops::Loops & seeds,
+	std::set< core::Size > vertex_set
+){
 
 	using namespace core;
 	using namespace kinematics;
@@ -208,18 +208,20 @@ GrowPeptides::grow_from_verteces(
 	TR<<"foldtree before growing: " << grow_foldtree << std::endl;
 
 	utility::vector1< core::Size > verteces;
-	BOOST_FOREACH( const Size vertex, vertex_set )
+	BOOST_FOREACH ( const Size vertex, vertex_set ) {
 		verteces.push_back( vertex );
+	}
 
 	TR<<"start new protein: " << verteces[1] <<" end: " << verteces[verteces.size()] <<" size sequence: " << sequence.size()<< std::endl;
 	TR.Debug <<"number verteces: "<< verteces.size()<< std::endl;
 
-	if ( verteces[verteces.size()] - (verteces[1] - 1) != sequence.size() )
+	if ( verteces[verteces.size()] - (verteces[1] - 1) != sequence.size() ) {
 		utility_exit_with_message( "chunk pieces do not agree with the length of the submitted template pdb" );
+	}
 
-	for ( Size vertex_it = 4 ; vertex_it <= verteces.size(); vertex_it = vertex_it + 4){
+	for ( Size vertex_it = 4 ; vertex_it <= verteces.size(); vertex_it = vertex_it + 4 ) {
 
-		if( vertex_it < verteces.size() ){
+		if ( vertex_it < verteces.size() ) {
 			grow_foldtree = curr_pose.fold_tree();
 			//connect seeds
 			TR.Debug <<"for temp jump --- from: " <<verteces[vertex_it - 3 ]<<", to: "<< verteces[vertex_it - 3] + (seeds[vertex_it/4].stop() - seeds[vertex_it/4].start()) + 1 <<", cutpoint: "<< verteces[vertex_it - 3] + (seeds[vertex_it/4].stop() - seeds[vertex_it/4].start()) <<std::endl;
@@ -257,7 +259,7 @@ GrowPeptides::grow_from_verteces(
 		TR <<"pose size: " << curr_pose.total_residue() << std::endl;
 		grow_foldtree = curr_pose.fold_tree();
 		TR.Debug <<"done growing, temporary foldtree: " << grow_foldtree << std::endl;
-		}
+	}
 
 	grow_foldtree = curr_pose.fold_tree();
 	TR << "growing completed, temporary foldtree: " << grow_foldtree << std::endl;
@@ -269,25 +271,27 @@ void GrowPeptides::apply (core::pose::Pose & pose ){
 	setup_cached_observers( pose );
 
 	///if there are loops and template, then activate grow from seeds
-	if( all_seeds_.size() > 0  &&  template_presence ){
+	if ( all_seeds_.size() > 0  &&  template_presence ) {
 
 		utility::vector1< Size > cutpoints;
 
-		if( !fetch_foldtree )
+		if ( !fetch_foldtree ) {
 			TR<<"taking foldtree from pose" <<std::endl;
-			cutpoints = pose.fold_tree().cutpoints();
+		}
+		cutpoints = pose.fold_tree().cutpoints();
 
-		if( fetch_foldtree ){
+		if ( fetch_foldtree ) {
 			TR<<"generate a foldtree through SeedFoldTree, and get cutpoints" << std::endl;
 			core::pose::PoseOP tmp_seed_target_poseOP( new core::pose::Pose( pose ) );
 			SeedFoldTreeOP seed_ft_generator( new SeedFoldTree() );
 			seed_ft_generator->ddg_based( ddg() );
 			seed_ft_generator->scorefxn( scorefxn_ );
 			seed_ft_generator->anchor_specified(anchor_specified_);
-			if( anchor_specified_ )
+			if ( anchor_specified_ ) {
 				seed_ft_generator->set_anchor_res( anchors_ );
+			}
 			core::scoring::dssp::Dssp dssp( *template_pdb_ );
-    	dssp.insert_ss_into_pose( *template_pdb_ );
+			dssp.insert_ss_into_pose( *template_pdb_ );
 			std::string secstr_template = template_pdb_->secstruct();
 			TR.Debug  << "sec str for template: " << secstr_template << std::endl;
 			seed_foldtree_ = seed_ft_generator->set_foldtree( /**template_pdb_ ,*/ tmp_seed_target_poseOP, secstr_template, all_seeds_, true );
@@ -296,16 +300,17 @@ void GrowPeptides::apply (core::pose::Pose & pose ){
 			cutpoints = seed_foldtree_->cutpoints();
 
 			//debugging stuff
-			BOOST_FOREACH( core::Size const r, verteces_ ){
+			BOOST_FOREACH ( core::Size const r, verteces_ ) {
 				TR.Debug<< r <<"\t";
 			}
 		}
 		std::string seq;
-		if( seq_ != "" )
+		if ( seq_ != "" ) {
 			seq = seq_;
-		else
+		} else {
 			seq = template_pdb_->sequence();
-		if( seq == "" ) utility_exit_with_message("no sequence specified" );
+		}
+		if ( seq == "" ) utility_exit_with_message("no sequence specified" );
 
 		grow_from_verteces( pose, seq, all_seeds_ , verteces_ );
 
@@ -320,63 +325,63 @@ void GrowPeptides::apply (core::pose::Pose & pose ){
 	// ------------------ simple pose extensions based on teh parsers input -----------------------------
 
 	if( all_seeds_.size() == 0 ){
-		if( extend_nterm > 0 ){
-			std::string nseq;
+	if( extend_nterm > 0 ){
+	std::string nseq;
 
-			if ( nsequence_.size() > 0 ){
-				nseq = nsequence_;
-				if( nsequence_.size() != extend_nterm ){
-					TR<<"WARNING: specified sequence is not long enough for the desired length of extension, adding extra alanine residue" <<std::endl;
-					for (Size i = 0 ; i < extend_nterm - nsequence_.size(); ++i )
-						nseq += "A";
-					}
-			}
+	if ( nsequence_.size() > 0 ){
+	nseq = nsequence_;
+	if( nsequence_.size() != extend_nterm ){
+	TR<<"WARNING: specified sequence is not long enough for the desired length of extension, adding extra alanine residue" <<std::endl;
+	for (Size i = 0 ; i < extend_nterm - nsequence_.size(); ++i )
+	nseq += "A";
+	}
+	}
 
-			if( all_ala_N ){
-				TR<<"overwriting N-term sequence with all ALA, if not desired turn of all_ala_N" <<std::endl;
-				for(Size i = 0; i < extend_nterm ; ++i){
-					nseq += "A";
-					std::cout<<nseq<<"\n"<< std::endl;
-				}
-			}
+	if( all_ala_N ){
+	TR<<"overwriting N-term sequence with all ALA, if not desired turn of all_ala_N" <<std::endl;
+	for(Size i = 0; i < extend_nterm ; ++i){
+	nseq += "A";
+	std::cout<<nseq<<"\n"<< std::endl;
+	}
+	}
 
-			append_residues_nterminally ( 0 , 1 , 1 , nseq , copy_pose );
-		}//end nterm extension
+	append_residues_nterminally ( 0 , 1 , 1 , nseq , copy_pose );
+	}//end nterm extension
 
 
-		if ( extend_cterm > 0 ){
-			std::string cseq;
-			std::cout<<"cseq "<< cseq <<std::endl;
+	if ( extend_cterm > 0 ){
+	std::string cseq;
+	std::cout<<"cseq "<< cseq <<std::endl;
 
-			if ( csequence_.size() > 0 ){
-				cseq = csequence_;
-				if( csequence_.size() != extend_cterm ){
-					TR<<"WARNING: specified sequence is not long enough for the desired length of extension, adding extra alanine residue" <<std::endl;
-					for (Size i = 0 ; i < extend_cterm - csequence_.size(); ++i )
-						std::cout<<cseq<<std::endl;
-						cseq = cseq + "A";
-				}
-			}
+	if ( csequence_.size() > 0 ){
+	cseq = csequence_;
+	if( csequence_.size() != extend_cterm ){
+	TR<<"WARNING: specified sequence is not long enough for the desired length of extension, adding extra alanine residue" <<std::endl;
+	for (Size i = 0 ; i < extend_cterm - csequence_.size(); ++i )
+	std::cout<<cseq<<std::endl;
+	cseq = cseq + "A";
+	}
+	}
 
-			if( all_ala_C ){
-				TR<<"overwriting C-term sequence with all ALA, if not desired turn of all_ala_C" <<std::endl;
-				for(Size i = 0; i < extend_cterm ; ++i){
-					std::cout<<cseq<<"\n"<<std::endl;
-					cseq += "A";
-				}
-			}
-			std::cout<<"pose: "<< copy_pose.total_residue()<< "\n" <<copy_pose.total_residue() + extend_cterm <<"seq: "<<  cseq << std::endl;
+	if( all_ala_C ){
+	TR<<"overwriting C-term sequence with all ALA, if not desired turn of all_ala_C" <<std::endl;
+	for(Size i = 0; i < extend_cterm ; ++i){
+	std::cout<<cseq<<"\n"<<std::endl;
+	cseq += "A";
+	}
+	}
+	std::cout<<"pose: "<< copy_pose.total_residue()<< "\n" <<copy_pose.total_residue() + extend_cterm <<"seq: "<<  cseq << std::endl;
 
-			append_residues_cterminally( 0, copy_pose.total_residue(), copy_pose.total_residue() + extend_cterm, cseq , copy_pose );
+	append_residues_cterminally( 0, copy_pose.total_residue(), copy_pose.total_residue() + extend_cterm, cseq , copy_pose );
 
-		}//end cterm extension
+	}//end cterm extension
 
-		pose = copy_pose;
+	pose = copy_pose;
 
 	}//end without loops
-			*/
+	*/
 
-	if( !output_centroid ){
+	if ( !output_centroid ) {
 		TR<<"switching back to full_atom mode" <<std::endl;
 		pose.update_residue_neighbors();
 		core::util::switch_to_residue_type_set( pose, chemical::FA_STANDARD );
@@ -401,11 +406,11 @@ GrowPeptides::get_name() const {
 
 void
 GrowPeptides::parse_my_tag(
-							 utility::tag::TagCOP tag,
-							 basic::datacache::DataMap & data ,
-							 protocols::filters::Filters_map const &,
-							 protocols::moves::Movers_map const &,
-							 core::pose::Pose const & pose )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data ,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & pose )
 {
 	TR<<"GrowPeptides mover has been initiated" <<std::endl;
 	//default
@@ -420,59 +425,65 @@ GrowPeptides::parse_my_tag(
 
 	//add_chainbreakterm_ = tag->getOption< bool >( "add_chainbreakterm", 1 );
 
-	if( tag->hasOption( "extend_nterm" ) ) {
+	if ( tag->hasOption( "extend_nterm" ) ) {
 		extend_nterm = tag->getOption< Size >( "extend_nterm" , 0 );
 		TR<<"extending peptide n-terminally by "<< extend_nterm << std::endl;
-		}
-	if( tag->hasOption( "extend_cterm" ) ){
+	}
+	if ( tag->hasOption( "extend_cterm" ) ) {
 		extend_cterm = tag->getOption< Size >( "extend_cterm" , 0 );
 		TR<<"extending peptide c-terminally by " << extend_cterm << std::endl;
-		}
+	}
 
 	all_ala_N = tag->getOption< bool >("all_ala_N" , 0 );
-	if( all_ala_N )
+	if ( all_ala_N ) {
 		TR<<"N-terminally added amino acids are all ALA" <<std::endl;
+	}
 
 	all_ala_C = tag->getOption< bool >("all_ala_C", 0 );
-	if( all_ala_C )
+	if ( all_ala_C ) {
 		TR<<"C-terminally added amino acids are all ALA" <<std::endl;
+	}
 
-	if( tag->hasOption( "nseq" ) )
+	if ( tag->hasOption( "nseq" ) ) {
 		csequence_ = ( tag->getOption< std::string >( "nseq" ) );
+	}
 
-	if( tag->hasOption( "cseq" ) )
+	if ( tag->hasOption( "cseq" ) ) {
 		nsequence_ = ( tag->getOption< std::string >( "cseq" ) );
+	}
 
 	output_centroid = tag->getOption< bool >( "output_centroid", 0 );
 
-	if( tag->hasOption( "template_pdb" ) ){
+	if ( tag->hasOption( "template_pdb" ) ) {
 		std::string const template_pdb_fname( tag->getOption< std::string >( "template_pdb" ));
 		template_pdb_ = core::pose::PoseOP( new core::pose::Pose ) ;
 		core::import_pose::pose_from_pdb( *template_pdb_, template_pdb_fname );
 		TR<<"read in a template pdb with " <<template_pdb_->total_residue() <<"residues"<<std::endl;
 		template_presence = true;
-		}
+	}
 
-	if( tag->hasOption("sequence" )){
+	if ( tag->hasOption("sequence" ) ) {
 		seq_ = tag->getOption< std::string >("sequence" );
 	}
 
-	if( !template_presence && seq_ == "" )
+	if ( !template_presence && seq_ == "" ) {
 		utility_exit_with_message("neither template pdb nor sequence for growing is specified!!" );
+	}
 
 	//parsing branch tags
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
-	BOOST_FOREACH( TagCOP const btag, branch_tags ){
+	BOOST_FOREACH ( TagCOP const btag, branch_tags ) {
 
 		//parse the pdb of interest, which is either the template or the input pdb depending on the users specificiation
-		if( template_presence )
+		if ( template_presence ) {
 			curr_pose_ = template_pdb_;
-		else
+		} else {
 			curr_pose_ = core::pose::PoseOP( new pose::Pose( pose ) );
+		}
 
 		anchor_specified_ = false;
 
-		if( btag->getName() == "Seeds" ) { //need an assertion for the presence of these or at least for the option file
+		if ( btag->getName() == "Seeds" ) { //need an assertion for the presence of these or at least for the option file
 			//needs some assertions to avoid bogus input
 			std::string const beginS( btag->getOption<std::string>( "begin" ) );
 			std::string const endS( btag->getOption<std::string>( "end" ) );
@@ -481,18 +492,19 @@ GrowPeptides::parse_my_tag(
 			all_seeds_.add_loop( begin , end , 0, 0, false );
 			TR <<"parsing seeds: \n"<< begin <<" and " << end <<std::endl;
 
-			if( btag->hasOption( "anchor" )){
-        Size anchor_res = btag->getOption< core::Size >("anchor", 0 );
-        TR<<"anchor residue: " << anchor_res << std::endl;
-        anchors_.push_back( anchor_res );
-        anchor_specified_ = true;
+			if ( btag->hasOption( "anchor" ) ) {
+				Size anchor_res = btag->getOption< core::Size >("anchor", 0 );
+				TR<<"anchor residue: " << anchor_res << std::endl;
+				anchors_.push_back( anchor_res );
+				anchor_specified_ = true;
 			}
 		}//end seed tags
 
 		//not hooked in yet...
-		if( btag->getName() == "Steal_seq_span" ) {
-			if( !template_presence )
+		if ( btag->getName() == "Steal_seq_span" ) {
+			if ( !template_presence ) {
 				utility_exit_with_message("need to specify a template pdb to steal sequenc spans");
+			}
 			std::string const begin_str( btag->getOption<std::string>( "begin" ) );
 			std::string const end_str( btag->getOption<std::string>( "end" ) );
 			core::Size const begin( core::pose::parse_resnum( begin_str, *template_pdb_ ) );
@@ -504,7 +516,7 @@ GrowPeptides::parse_my_tag(
 			sequence_chunks_.push_back( seq_chunk );
 		}//end steal sequence
 
-		}//end branch tags
+	}//end branch tags
 }//end parse my tag
 }//seeded abinitio
 } //end protocols

@@ -31,10 +31,10 @@ namespace chemical {
 namespace sdf {
 
 typedef boost::undirected_graph<
-		MolFileIOAtomOP, // struct with properties of a node
-		MolFileIOBondOP // struct with properties of an edge
-		/*,ResidueType*/
-> MolFileIOGraph;
+	MolFileIOAtomOP, // struct with properties of a node
+	MolFileIOBondOP // struct with properties of an edge
+	/*,ResidueType*/
+	> MolFileIOGraph;
 
 typedef MolFileIOGraph::vertex_descriptor mioAD; // MolFileIO Atom Descriptor
 typedef MolFileIOGraph::edge_descriptor mioBD; // MolFileIO Bond Descriptor
@@ -156,9 +156,9 @@ public:
 	/// @brief Make a ResidueType from this object
 	/// @details Not const as it calls normalize() to fix up missing data first.
 	ResidueTypeOP convert_to_ResidueType(
-			chemical::AtomTypeSetCOP atom_types,
-			chemical::ElementSetCOP elements,
-			chemical::MMAtomTypeSetCOP mm_atom_types
+		chemical::AtomTypeSetCOP atom_types,
+		chemical::ElementSetCOP elements,
+		chemical::MMAtomTypeSetCOP mm_atom_types
 	) {
 		std::map< AtomIndex, std::string > index_name_map;
 		return convert_to_ResidueType( index_name_map, atom_types, elements, mm_atom_types );
@@ -169,10 +169,10 @@ public:
 	/// to the atom names in the returned ResidueType
 	/// @details Not const as it calls normalize() to fix up missing data first.
 	ResidueTypeOP convert_to_ResidueType(
-			std::map< AtomIndex, std::string > & index_name_map,
-			chemical::AtomTypeSetCOP atom_types,
-			chemical::ElementSetCOP elements,
-			chemical::MMAtomTypeSetCOP mm_atom_types
+		std::map< AtomIndex, std::string > & index_name_map,
+		chemical::AtomTypeSetCOP atom_types,
+		chemical::ElementSetCOP elements,
+		chemical::MMAtomTypeSetCOP mm_atom_types
 	);
 
 private:

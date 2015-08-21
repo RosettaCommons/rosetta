@@ -38,23 +38,23 @@ namespace basic {
 
 TracerToFile::TracerToFile( std::string const & file_name )
 {
-  file_.open( file_name.c_str(), std::fstream::out );
-  if ( !file_.good() || !file_.is_open() ) {
-    utility_exit_with_message( "cannot open tracer file "+file_name );
-  }
+	file_.open( file_name.c_str(), std::fstream::out );
+	if ( !file_.good() || !file_.is_open() ) {
+		utility_exit_with_message( "cannot open tracer file "+file_name );
+	}
 }
 
 TracerToFile::~TracerToFile()
 {
-  (*this) << std::endl;
-  file_.close();
+	(*this) << std::endl;
+	file_.close();
 }
 
 
 void TracerToFile::t_flush( std::string const & s )
 {
-  assert( file_.is_open() );
-  file_ << s;
+	assert( file_.is_open() );
+	file_ << s;
 }
 
 } // namepsace corenested classes c+++

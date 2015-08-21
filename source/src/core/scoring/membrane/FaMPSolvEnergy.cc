@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/scoring/membrane/FaMPSolvEnergy.cc
+/// @file  core/scoring/membrane/FaMPSolvEnergy.cc
 ///
-/// @brief		LK-Type Membrane Solvation Energy
-/// @details	Last Modified: 5/13/14
+/// @brief  LK-Type Membrane Solvation Energy
+/// @details Last Modified: 5/13/14
 ///
-/// @author		Patrick Barth (Original)
-/// @author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Patrick Barth (Original)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_scoring_membrane_FaMPSolvEnergy_cc
 #define INCLUDED_core_scoring_membrane_FaMPSolvEnergy_cc
@@ -71,9 +71,9 @@ FaMPSolvEnergyCreator::create_energy_method(
 ) const {
 
 	return methods::EnergyMethodOP( new FaMPSolvEnergy(
-	   ( ScoringManager::get_instance()->etable( options ) ),
-	   ( ScoringManager::get_instance()->memb_etable( options.etable_type() ))
-	   ) );
+		( ScoringManager::get_instance()->etable( options ) ),
+		( ScoringManager::get_instance()->memb_etable( options.etable_type() ))
+		) );
 }
 
 ScoreTypes
@@ -88,7 +88,7 @@ FaMPSolvEnergyCreator::score_types_for_method() const {
 FaMPSolvEnergy::FaMPSolvEnergy(
 	etable::EtableCAP etable_in,
 	etable::MembEtableCAP memb_etable_in
-	) :
+) :
 	parent( EnergyMethodCreatorOP( new FaMPSolvEnergyCreator ) ),
 	etable_( etable_in ),
 	memb_etable_( memb_etable_in ),
@@ -121,7 +121,7 @@ void
 FaMPSolvEnergy::setup_for_derivatives(
 	pose::Pose & pose,
 	ScoreFunction const & scfxn
-	) const {
+) const {
 
 	init( pose );
 	pose.update_residue_neighbors();
@@ -130,7 +130,7 @@ FaMPSolvEnergy::setup_for_derivatives(
 
 /// @brief Evaluate Derivatives
 /// @details Called during graident-based minimization inside dfunc
-///	note: f1 and f2 are not zeroed - contributions are summed
+/// note: f1 and f2 are not zeroed - contributions are summed
 void
 FaMPSolvEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
@@ -140,7 +140,7 @@ FaMPSolvEnergy::eval_atom_derivative(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
-	) const {
+) const {
 
 	// Grab residue and atom numbers
 	Size const i( atom_id.rsd() );
@@ -158,9 +158,9 @@ FaMPSolvEnergy::eval_atom_derivative(
 
 
 	for ( graph::Graph::EdgeListConstIter
-		 iter  = energy_graph.get_node( i )->const_edge_list_begin(),
-		 itere = energy_graph.get_node( i )->const_edge_list_end();
-		 iter != itere; ++iter ) {
+			iter  = energy_graph.get_node( i )->const_edge_list_begin(),
+			itere = energy_graph.get_node( i )->const_edge_list_end();
+			iter != itere; ++iter ) {
 
 		Size const j( (*iter)->get_other_ind( i ) );
 
@@ -173,7 +173,7 @@ FaMPSolvEnergy::eval_atom_derivative(
 		using namespace etable::count_pair;
 		CountPairFunctionOP cpfxn( 0 );
 
-		if( same_res ) {
+		if ( same_res ) {
 			cpfxn = CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_3 );
 		} else {
 			cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
@@ -199,9 +199,9 @@ FaMPSolvEnergy::eval_atom_derivative(
 				Vector f1( 0.0 ), f2( 0.0 );
 
 				Real const dE_dR_over_r
-				( eval_dE_dR_over_r( rsd1.atom(m), rsd2.atom(n), weights, f1, f2, proj_m, proj_n ) );
+					( eval_dE_dR_over_r( rsd1.atom(m), rsd2.atom(n), weights, f1, f2, proj_m, proj_n ) );
 				if ( dE_dR_over_r != 0.0 ) {
-					if( same_res ) {
+					if ( same_res ) {
 						F1 += 0.5 * dE_dR_over_r * cp_weight * f1;
 						F2 += 0.5 * dE_dR_over_r * cp_weight * f2;
 					} else {
@@ -223,7 +223,7 @@ FaMPSolvEnergy::residue_pair_energy(
 	pose::Pose const & pose,
 	ScoreFunction const &,
 	EnergyMap & emap
-	) const {
+) const {
 
 	Real fa_mbsolv_score( 0.0 );
 	get_residue_pair_energy( rsd1, rsd2, pose, fa_mbsolv_score);
@@ -233,11 +233,11 @@ FaMPSolvEnergy::residue_pair_energy(
 /// @brief Evaluate Intra-Residue Energies
 void
 FaMPSolvEnergy::eval_intrares_energy(
-					 conformation::Residue const & rsd,
-					 pose::Pose const & pose,
-					 ScoreFunction const &,
-					 EnergyMap & emap
-					) const {
+	conformation::Residue const & rsd,
+	pose::Pose const & pose,
+	ScoreFunction const &,
+	EnergyMap & emap
+) const {
 
 	Real fa_mbsolv_score( 0.0 );
 	get_residue_pair_energy( rsd, rsd, pose, fa_mbsolv_score);
@@ -259,7 +259,7 @@ FaMPSolvEnergy::indicate_required_context_graphs( utility::vector1< bool > & ) c
 void
 FaMPSolvEnergy::setup_for_scoring(
 	pose::Pose & pose, ScoreFunction const &
-	) const {
+) const {
 
 	// Initialize fullatom data
 	init( pose );
@@ -283,7 +283,7 @@ FaMPSolvEnergy::get_residue_pair_energy(
 	conformation::Residue const & rsd2,
 	pose::Pose const &,
 	Real & fa_mbsolv_score
-	) const {
+) const {
 
 	// Check if interacting residues are the same
 	bool const same_res = ( rsd1.seqpos() == rsd2.seqpos() );
@@ -293,7 +293,7 @@ FaMPSolvEnergy::get_residue_pair_energy(
 	using namespace etable::count_pair;
 	CountPairFunctionOP cpfxn( 0 );
 
-	if( same_res ) {
+	if ( same_res ) {
 		cpfxn = CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_3 );
 	} else {
 		cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
@@ -325,7 +325,7 @@ FaMPSolvEnergy::get_residue_pair_energy(
 
 				score = cp_weight * eval_lk( rsd1.atom( i ), rsd2.atom( j ), d2, dummy_deriv, proj_i, proj_j, debug );
 
-				if( same_res ) score *= 0.5;
+				if ( same_res ) score *= 0.5;
 
 				fa_mbsolv_score += score;
 			}
@@ -343,7 +343,7 @@ FaMPSolvEnergy::eval_lk(
 	Real const & f1,
 	Real const & f2,
 	bool &
-	) const {
+) const {
 
 	// Initialize Variables
 	Real temp_score( 0.0 );
@@ -354,8 +354,8 @@ FaMPSolvEnergy::eval_lk(
 	if ( ( d2 < safe_max_dis2_) && ( d2 != Real(0.0) ) ) {
 
 		Real const d2_bin = d2 * get_bins_per_A2_;
-		int	disbin = static_cast< int >( d2_bin ) + 1;
-		Real	frac = d2_bin - ( disbin - 1 );
+		int disbin = static_cast< int >( d2_bin ) + 1;
+		Real frac = d2_bin - ( disbin - 1 );
 
 		int const l1 = solv1_.index( disbin, atom2.type(), atom1.type() );
 		int const l2 = l1 + 1;
@@ -375,7 +375,7 @@ FaMPSolvEnergy::eval_lk(
 		temp_score = e1 + frac * ( e2 - e1 );
 
 		// Always evaluate derivatives
-		if (eval_deriv) {
+		if ( eval_deriv ) {
 
 			e11 = f1 * dsolv1_[ l1 ] + (1 - f1) * memb_dsolv1_[ l1 ];
 			e12 = f1 * dsolv1_[ l2 ] + (1 - f1) * memb_dsolv1_[ l2 ];
@@ -402,7 +402,7 @@ FaMPSolvEnergy::eval_dE_dR_over_r(
 	Vector & F2,
 	Real const & f1,
 	Real const & f2
-	) const {
+) const {
 
 	F1 = atom1.xyz().cross( atom2.xyz() );
 	F2 = atom1.xyz() - atom2.xyz();
@@ -418,7 +418,7 @@ FaMPSolvEnergy::eval_dE_dR_over_r(
 		frac = d2_bin - ( disbin - 1 );
 
 		int const l1 = dsolv1_.index( disbin, atom1.type(), atom2.type()),
-		l2 = l1 + 1;
+			l2 = l1 + 1;
 
 		Real e11 = f1 * dsolv1_[ l1 ] + (1 - f1) * memb_dsolv1_[ l1 ];
 		Real e12 = f1 * dsolv1_[ l2 ] + (1 - f1) * memb_dsolv1_[ l2 ];
@@ -472,10 +472,10 @@ FaMPSolvEnergy::init( pose::Pose & pose ) const {
 /// @brief Helper Method - Compute Fa Proj
 core::Real
 FaMPSolvEnergy::compute_fa_proj(
-   core::Real z_position,
-   core::Real thickness,
-   core::Real steepness
-   ) const {
+	core::Real z_position,
+	core::Real thickness,
+	core::Real steepness
+) const {
 
 	Real internal_product(0), z(0), zn(0);
 	internal_product = std::abs( z_position );

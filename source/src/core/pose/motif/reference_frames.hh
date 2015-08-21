@@ -51,7 +51,7 @@ get_peptide_bond_reference_frame(
 	core::Size const & ir,
 	bool const & n_or_c
 ){
-	if(n_or_c) return get_nterminal_peptide_bond_reference_frame(pose,ir);
+	if ( n_or_c ) return get_nterminal_peptide_bond_reference_frame(pose,ir);
 	else       return get_cterminal_peptide_bond_reference_frame(pose,ir);
 }
 
@@ -117,7 +117,7 @@ get_peptide_bond_reference_frame_atomids(
 	bool const & n_or_c,
 	bool extra=false
 ){
-	if(n_or_c) return get_nterminal_peptide_bond_reference_frame_atomids(pose,ir,extra);
+	if ( n_or_c ) return get_nterminal_peptide_bond_reference_frame_atomids(pose,ir,extra);
 	else       return get_cterminal_peptide_bond_reference_frame_atomids(pose,ir,extra);
 }
 

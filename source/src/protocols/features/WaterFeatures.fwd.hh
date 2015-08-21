@@ -17,8 +17,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class WaterFeatures;
 typedef utility::pointer::shared_ptr< WaterFeatures > WaterFeaturesOP;

@@ -118,7 +118,7 @@ FlexbbNode::set_num_states_per_backbone( utility::vector1< int > const & num_sta
 
 //int
 //FlexbbNode::get_bb_for_state( int  state ) const {
-//	return state_info_[ state ].get_bb();
+// return state_info_[ state ].get_bb();
 //}
 
 int
@@ -201,9 +201,9 @@ FlexbbNode::set_amino_acid_types( utility::vector1< int > const & aatypes )
 		++num_states_for_aa_for_bb_( last_aa, state_info_[ ii ].get_bb() );
 	}
 	//for ( Size ii = 1; ii <= num_bb_; ++ii ) {
-	//	for ( Size jj = 1; jj <= num_aa_types_; ++jj ) {
-	//		std::cout << get_node_index() << " " << ii << " " << jj << " " << num_states_for_aa_for_bb_( jj, ii ) << std::endl;
-	//	}
+	// for ( Size jj = 1; jj <= num_aa_types_; ++jj ) {
+	//  std::cout << get_node_index() << " " << ii << " " << jj << " " << num_states_for_aa_for_bb_( jj, ii ) << std::endl;
+	// }
 	//}
 }
 
@@ -219,7 +219,7 @@ FlexbbNode::add_to_one_body_energies( FArray1< PackerEnergy > & energies )
 {
 	assert( energies.size() == one_body_energies_.size() );
 	for ( Size ii = 1; ii <= one_body_energies_.size(); ++ii ) {
-	//	if ( get_node_index() == 17 ) { std::cout << "FlexbbNode::add_to_one_body_energies " << ii << " " << energies( ii ) << " " << one_body_energies_[ ii ] << " " << one_body_energies_[ ii ] + energies( ii )  << std::endl; }
+		// if ( get_node_index() == 17 ) { std::cout << "FlexbbNode::add_to_one_body_energies " << ii << " " << energies( ii ) << " " << one_body_energies_[ ii ] << " " << one_body_energies_[ ii ] + energies( ii )  << std::endl; }
 		one_body_energies_[ ii ] += energies( ii );
 	}
 }
@@ -287,11 +287,11 @@ FlexbbNode::inform_edges_of_alt_state_before_bbjump()
 	//std::cout << "Node " << get_node_index() << " inform_edges_of_alt_state_before_bbjump() " << std::endl;
 	alternate_state_is_being_considered_ = true;
 
-	if (current_state_ == 0 || alternate_state_ == 0 ) return false;
+	if ( current_state_ == 0 || alternate_state_ == 0 ) return false;
 
 	get_flexbbig_owner()->increment_count_nodes_in_flexseg();
 
-	for (int ii = 1; ii  <= get_num_incident_edges(); ++ii ) {
+	for ( int ii = 1; ii  <= get_num_incident_edges(); ++ii ) {
 		get_incident_flexbb_edge( ii )->set_alt_state(
 			get_node_index(), alternate_state_, alternate_state_info_ );
 	}
@@ -303,8 +303,8 @@ FlexbbNode::inform_edges_of_alt_state_before_bbjump()
 /// by the node who was initially contacted
 //bool
 //FlexbbNode::bb_move_actually_kept_original_bb() const {
-//	assert( node_contacted_by_graph_about_bb_move_ );
-//	return resolved_considered_bb_move_;
+// assert( node_contacted_by_graph_about_bb_move_ );
+// return resolved_considered_bb_move_;
 //}
 
 int
@@ -364,7 +364,7 @@ void
 FlexbbNode::inform_edges_considered_fixedbb_substition_uncommitted()
 {
 	alternate_state_is_being_considered_ = false;
-	for (int ii = 1; ii  <= get_num_incident_edges(); ++ii ) {
+	for ( int ii = 1; ii  <= get_num_incident_edges(); ++ii ) {
 		get_incident_flexbb_edge( ii )->reset_alternate_states_for_uncommited_substitution();
 	}
 
@@ -373,19 +373,19 @@ FlexbbNode::inform_edges_considered_fixedbb_substition_uncommitted()
 
 //bool
 //FlexbbNode::energies_already_projected() const {
-	//std::cout << "energies already projected? " << get_node_index() << " " << projected_energies_for_bb_move_ << std::endl;
-	//bool temp = projected_energies_for_bb_move_;
-	//projected_energies_for_bb_move_ = true;
-	//return temp;
+//std::cout << "energies already projected? " << get_node_index() << " " << projected_energies_for_bb_move_ << std::endl;
+//bool temp = projected_energies_for_bb_move_;
+//projected_energies_for_bb_move_ = true;
+//return temp;
 //}
 
 /*
 void
 FlexbbNode::reset_bbmove_bookkeeping_data() {
-	resolved_considered_bb_move_ = true;
-	told_edges_alt_state_for_bb_move_ = false;
-	projected_energies_for_bb_move_ = false;
-	node_contacted_by_graph_about_bb_move_ = false;
+resolved_considered_bb_move_ = true;
+told_edges_alt_state_for_bb_move_ = false;
+projected_energies_for_bb_move_ = false;
+node_contacted_by_graph_about_bb_move_ = false;
 }
 */
 
@@ -525,7 +525,7 @@ FlexbbEdge::note_state_substitution_accepted()
 	nodes_cur_state_[ 0 ] = nodes_alt_state_[ 0 ];
 	nodes_cur_info_[  0 ] = nodes_alt_info_[  0 ];
 	nodes_cur_state_[ 1 ] = nodes_alt_state_[ 1 ];
-	nodes_cur_info_[  1 ] =	nodes_alt_info_[  1 ];
+	nodes_cur_info_[  1 ] = nodes_alt_info_[  1 ];
 	cur_energy_ = alt_energy_;
 	nodes_considering_bb_move_ = false;
 }
@@ -670,7 +670,7 @@ FlexbbInteractionGraph::initialize( core::pack::rotamer_set::RotamerSetsBase con
 			}
 			aatype_for_state[ jj ] = curr_resgroup;
 			++count_for_resgroup;
-			while ( count_for_resgroup > flex_sets.rotset_for_moltenres( ii, which_bb )->get_n_rotamers_for_residue_group( curr_resgroup )) {
+			while ( count_for_resgroup > flex_sets.rotset_for_moltenres( ii, which_bb )->get_n_rotamers_for_residue_group( curr_resgroup ) ) {
 				// increment curr_restype and skip over restypes with 0 rotamers
 				++curr_resgroup;
 				count_for_resgroup = 1;
@@ -771,8 +771,8 @@ FlexbbInteractionGraph::nodes_from_same_flexseg( int node1, int node2 ) const
 //void
 //FlexbbInteractionGraph::set_representitive_node_for_flexseg( int flexseg, int node_index)
 //{
-//	assert( flexseg_representative_[ flexseg ] == 0 );
-//	flexseg_representative_[ flexseg ] = node_index;
+// assert( flexseg_representative_[ flexseg ] == 0 );
+// flexseg_representative_[ flexseg ] = node_index;
 //}
 
 /// @details Must include initial backbone as well all the alternative backbones.
@@ -824,15 +824,15 @@ FlexbbInteractionGraph::set_closest_states_on_other_bbs(
 void
 FlexbbInteractionGraph::set_edge_connecting_nodes_on_same_flexseg( int node1, int node2 )
 {
-	FlexbbEdge * edge = find_flexbb_edge( node1, node2 );
-	if ( ! edge && std::abs( node1 - node2 ) == 1 ) {
-		add_edge( node1, node2 );
-		edge = find_flexbb_edge( node1, node2 );
-	} else if ( !edge ) {
-		return;
-	}
+FlexbbEdge * edge = find_flexbb_edge( node1, node2 );
+if ( ! edge && std::abs( node1 - node2 ) == 1 ) {
+add_edge( node1, node2 );
+edge = find_flexbb_edge( node1, node2 );
+} else if ( !edge ) {
+return;
+}
 
-	edge->set_nodes_from_same_flexseg( true );
+edge->set_nodes_from_same_flexseg( true );
 
 }
 */
@@ -950,13 +950,13 @@ void FlexbbInteractionGraph::update_internal_energy_totals()
 {
 	//PackerEnergy prev = total_energy_current_state_assignment_;
 	total_energy_current_state_assignment_ = 0;
-	for (int ii = 1; ii <= get_num_nodes(); ++ii) {
+	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		total_energy_current_state_assignment_ += get_flexbb_node( ii )->curr_state_one_body_energy();
 		get_flexbb_node( ii )->update_internal_energy_sums();
 	}
-	for (std::list<EdgeBase*>::iterator
+	for ( std::list<EdgeBase*>::iterator
 			iter = get_edge_list_begin();
-			iter != get_edge_list_end(); ++iter) {
+			iter != get_edge_list_end(); ++iter ) {
 		total_energy_current_state_assignment_ +=
 			cast_flexbb_edge(*iter)->cur_energy();
 	}

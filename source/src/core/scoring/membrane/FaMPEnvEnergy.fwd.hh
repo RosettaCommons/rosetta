@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file		core/scoring/membrane/FaMPEnvEnergy.fwd.hh
+/// @file  core/scoring/membrane/FaMPEnvEnergy.fwd.hh
 ///
-/// @brief		LK-Type Membrane Environment Energy
-/// @details	Last Modified: 5/13/14
+/// @brief  LK-Type Membrane Environment Energy
+/// @details Last Modified: 5/13/14
 ///
-/// @author		Patrick Barth (Original)
-/// @author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Patrick Barth (Original)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_scoring_membrane_FaMPEnvEnergy_fwd_hh
 #define INCLUDED_core_scoring_membrane_FaMPEnvEnergy_fwd_hh

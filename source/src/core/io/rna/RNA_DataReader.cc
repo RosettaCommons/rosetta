@@ -97,7 +97,7 @@ RNA_DataReader::RNA_DataReader( std::string const rna_data_file )
 
 //////////////////////////////////////////////////////////////////
 void
-RNA_DataReader::initialize(	std::string const rna_data_file )
+RNA_DataReader::initialize( std::string const rna_data_file )
 {
 
 	rna_data_info_with_conventional_numbering_ = core::scoring::rna::data::RNA_DataInfoOP( new RNA_DataInfo );
@@ -108,7 +108,7 @@ RNA_DataReader::initialize(	std::string const rna_data_file )
 
 	read_data_from_file( rna_data_file );
 
-	for (Size i = 1; i <= backbone_burial_res_.size(); i++ ){
+	for ( Size i = 1; i <= backbone_burial_res_.size(); i++ ) {
 		runtime_assert( !backbone_exposed_res_.has_value( backbone_burial_res_[i] ) );
 	}
 
@@ -122,7 +122,7 @@ RNA_DataReader::initialize(	std::string const rna_data_file )
 // than boolean guesses.
 void
 RNA_DataReader::read_backbone_info( std::istringstream & line_stream,
-																		utility::vector1< Size > & backbone_res ) {
+	utility::vector1< Size > & backbone_res ) {
 
 	int pos( 0 ); // later allow this to be chain:res, using get_resnum_and_chain in string_util.hh
 	while ( !line_stream.fail() ) {
@@ -146,7 +146,7 @@ RNA_DataReader::read_data_info( std::istringstream & line_stream ) {
 	while ( !line_stream.fail() ) {
 
 		line_stream >> pos >> edge >> weight;
-		if ( edge == 'W' ){
+		if ( edge == 'W' ) {
 			rna_data_info_with_conventional_numbering_->add_datum( RNA_Datum( pos, chemical::rna::WATSON_CRICK, weight ) );
 		} else if ( edge == 'H' ) {
 			rna_data_info_with_conventional_numbering_->add_datum( RNA_Datum( pos, chemical::rna::HOOGSTEEN, weight ) );
@@ -185,19 +185,19 @@ RNA_DataReader::read_data_from_rdat( std::string const & filename ){
 /////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DataReader::get_reactivity_from_rdat( core::io::rna::RDAT const & rdat,
-																				  core::scoring::rna::data::RNA_ReactivityType const & type,
-																					std::string const modifier_name ) {
+	core::scoring::rna::data::RNA_ReactivityType const & type,
+	std::string const modifier_name ) {
 	Size idx( 0 );
 	if ( get_tag( rdat.annotations(), "modifier" ) == modifier_name ) {
 		idx = 1;
 	} else {
 		utility::vector1< std::string > modifiers = get_tags( rdat.data_annotations(), "modifier" );
-		if ( modifiers.has_value( modifier_name ) )	idx = modifiers.index( modifier_name );
+		if ( modifiers.has_value( modifier_name ) ) idx = modifiers.index( modifier_name );
 	}
 	if ( idx == 0 ) return;
 
 	utility::vector1< Real > reactivity = rdat.reactivity()[ idx ];
-	for ( Size n = 1; n <= reactivity.size(); n++ ){
+	for ( Size n = 1; n <= reactivity.size(); n++ ) {
 		rna_data_info_with_conventional_numbering_->add_reactivity( scoring::rna::data::RNA_Reactivity( rdat.seqpos()[n], type, reactivity[n] ) );
 	}
 }
@@ -227,7 +227,7 @@ RNA_DataReader::read_data_from_file( std::string const & filename ) {
 			return;
 		}
 
-		if (line_stream.fail() ) continue; //Probably a blank line.
+		if ( line_stream.fail() ) continue; //Probably a blank line.
 
 		if  ( tag == "EXPOSE" ) {
 
@@ -260,7 +260,7 @@ RNA_DataReader::read_data_from_file( std::string const & filename ) {
 /////////////////////////////////////////////////////////////////////
 ObjexxFCL::FArray1D< bool >
 RNA_DataReader::fill_backbone_array( utility::vector1< Size > const & backbone_res,
-																		 core::pose::Pose const & pose ) {
+	core::pose::Pose const & pose ) {
 
 	using namespace core::pose::full_model_info;
 
@@ -270,7 +270,7 @@ RNA_DataReader::fill_backbone_array( utility::vector1< Size > const & backbone_r
 	FullModelParametersCOP full_model_parameters;
 	if ( full_model_info_defined( pose ) ) full_model_parameters = const_full_model_info( pose ).full_model_parameters();
 
-	for ( Size n = 1; n <= backbone_res.size(); n++ ){
+	for ( Size n = 1; n <= backbone_res.size(); n++ ) {
 		Size pos( backbone_res[ n ] );
 		if ( full_model_parameters ) {
 			if ( !full_model_parameters->has_conventional_residue( pos ) ) continue; // should we give a warning?
@@ -299,9 +299,9 @@ RNA_DataReader::fill_rna_data_info( pose::Pose & pose )
 
 	runtime_assert( rna_data_info_with_conventional_numbering_ != 0 );
 	RNA_Data const & rna_data_with_conventional_numbering = rna_data_info_with_conventional_numbering_->rna_data();
-	for ( Size n = 1; n <= rna_data_with_conventional_numbering.size(); n++ ){
+	for ( Size n = 1; n <= rna_data_with_conventional_numbering.size(); n++ ) {
 		RNA_Datum rna_datum = rna_data_with_conventional_numbering[ n ];
-		if ( full_model_parameters ){
+		if ( full_model_parameters ) {
 			if ( !full_model_parameters->has_conventional_residue( rna_datum.position() ) ) continue; // should we give a warning?
 			rna_datum.set_position( full_model_parameters->conventional_to_full( rna_datum.position() ) );
 		}
@@ -309,7 +309,7 @@ RNA_DataReader::fill_rna_data_info( pose::Pose & pose )
 	}
 
 	RNA_Reactivities const & rna_reactivities_with_conventional_numbering = rna_data_info_with_conventional_numbering_->rna_reactivities();
-	for ( Size n = 1; n <= rna_reactivities_with_conventional_numbering.size(); n++ ){
+	for ( Size n = 1; n <= rna_reactivities_with_conventional_numbering.size(); n++ ) {
 		RNA_Reactivity rna_reactivity = rna_reactivities_with_conventional_numbering[ n ];
 		if ( full_model_parameters ) {
 			if ( !full_model_parameters->has_conventional_residue( rna_reactivity.position() ) ) continue; // should we give a warning?
@@ -328,7 +328,7 @@ RNA_DataReader::fill_rna_data_info( pose::Pose & pose )
 /////////////////////////////////////////////////////////////////////
 core::scoring::rna::data::RNA_DataInfo const &
 get_rna_data_info( pose::Pose & pose, std::string const & rna_data_file,
-									 core::scoring::ScoreFunctionOP scorefxn /* = 0 */) {
+	core::scoring::ScoreFunctionOP scorefxn /* = 0 */) {
 
 	using namespace core::pose;
 	using namespace core::pose::full_model_info;
@@ -343,12 +343,12 @@ get_rna_data_info( pose::Pose & pose, std::string const & rna_data_file,
 	RNA_DataInfo const & rna_data_info = scoring::rna::nonconst_rna_scoring_info_from_pose( pose ).rna_data_info();
 
 	utility::vector1< PoseOP > const & other_pose_list = const_full_model_info( pose ).other_pose_list();
-	for ( Size n = 1; n <= other_pose_list.size(); n++ ){
+	for ( Size n = 1; n <= other_pose_list.size(); n++ ) {
 		nonconst_rna_scoring_info_from_pose( *(other_pose_list[ n ]) ).rna_data_info() = rna_data_info;
 	}
 
 	if ( scorefxn != 0 &&
-			 scoring::rna::rna_scoring_info_from_pose( pose ).rna_data_info().rna_reactivities().size() > 0 ) {
+			scoring::rna::rna_scoring_info_from_pose( pose ).rna_data_info().rna_reactivities().size() > 0 ) {
 		scorefxn->set_weight( core::scoring::rna_chem_map, 1.0 );
 	}
 

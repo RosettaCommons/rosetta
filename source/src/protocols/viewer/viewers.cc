@@ -103,46 +103,46 @@ pthread_cond_t start_cond = PTHREAD_COND_INITIALIZER;
 #if defined GL_GRAPHICS || defined BOINC_GRAPHICS
 
 namespace graphics {
-	int window_size = 30;
-	int specialKey = 0;
-	bool click;
-	bool clicked_button;
-	int click_x;
-	int click_y;
+int window_size = 30;
+int specialKey = 0;
+bool click;
+bool clicked_button;
+int click_x;
+int click_y;
 
-	// pointer to a graphics_state object for each ConformationViewer
-	std::map< int , GraphicsState* > gs_map_;
+// pointer to a graphics_state object for each ConformationViewer
+std::map< int , GraphicsState* > gs_map_;
 
-	// Vector bg_color( 1.0f, 1.0f, 1.0f ); // white
-	Vector bg_color( 0.0f, 0.0f, 0.0f ); // black
+// Vector bg_color( 1.0f, 1.0f, 1.0f ); // white
+Vector bg_color( 0.0f, 0.0f, 0.0f ); // black
 
-	// rhiju parameters for cartoons
-	const int NUM_SEGMENTS = 5;
-	const int NUM_SEGMENTS_COIL = 10;
-	const core::Real HELIX_HALF_WIDTH = 1.5;
-	const core::Real STRAND_HALF_WIDTH = 1.0;
-	const core::Real COILRADIUS = 0.2;
-  const core::Real HELIX_HERMITE_FACTOR = 4.7;
-  const core::Real STRAND_HERMITE_FACTOR = 4.7;
-  const core::Real COIL_HERMITE_FACTOR = 5.0;
-  const core::Real NA_HERMITE_FACTOR = 7.7;
-	const core::Real CHAINBREAK_CUTOFF2 = 4.5*4.5;
-	const core::Real CHAINBREAK_CUTOFF2_NA = 7.5*7.5;
-	const core::Real SHOWBONDCUTOFF2 = (5.0*5.0)/(NUM_SEGMENTS*NUM_SEGMENTS);
-	const core::Real SHOWBONDCUTOFF2_COIL = (5.0*5.0)/(NUM_SEGMENTS_COIL*NUM_SEGMENTS_COIL);
-	const core::Real SHOWBONDCUTOFF2_NA = (8.0*8.0)/(NUM_SEGMENTS*NUM_SEGMENTS);
+// rhiju parameters for cartoons
+const int NUM_SEGMENTS = 5;
+const int NUM_SEGMENTS_COIL = 10;
+const core::Real HELIX_HALF_WIDTH = 1.5;
+const core::Real STRAND_HALF_WIDTH = 1.0;
+const core::Real COILRADIUS = 0.2;
+const core::Real HELIX_HERMITE_FACTOR = 4.7;
+const core::Real STRAND_HERMITE_FACTOR = 4.7;
+const core::Real COIL_HERMITE_FACTOR = 5.0;
+const core::Real NA_HERMITE_FACTOR = 7.7;
+const core::Real CHAINBREAK_CUTOFF2 = 4.5*4.5;
+const core::Real CHAINBREAK_CUTOFF2_NA = 7.5*7.5;
+const core::Real SHOWBONDCUTOFF2 = (5.0*5.0)/(NUM_SEGMENTS*NUM_SEGMENTS);
+const core::Real SHOWBONDCUTOFF2_COIL = (5.0*5.0)/(NUM_SEGMENTS_COIL*NUM_SEGMENTS_COIL);
+const core::Real SHOWBONDCUTOFF2_NA = (8.0*8.0)/(NUM_SEGMENTS*NUM_SEGMENTS);
 
-  //lin parameters for spacefill
-  core::Real const ligand_sphere_opacity( 1.0 );
-  core::Real const protein_sphere_opacity( 1.0 );
-  core::Real const ligand_sphere_shininess( 1.0);
-  core::Real const protein_sphere_shininess( 1.0 );
-	//lin parameters for ball and stick
-	core::Real const protein_wireframeScale( 0.2 );
-	core::Real const protein_stickScale( 0.2 );
-	core::Real const protein_sphereScale( 0.2 );
-  int sphereDisplayList = 0;
-	core::Real const BOND_LENGTH_CUTOFF2 = 6.0*6.0;
+//lin parameters for spacefill
+core::Real const ligand_sphere_opacity( 1.0 );
+core::Real const protein_sphere_opacity( 1.0 );
+core::Real const ligand_sphere_shininess( 1.0);
+core::Real const protein_sphere_shininess( 1.0 );
+//lin parameters for ball and stick
+core::Real const protein_wireframeScale( 0.2 );
+core::Real const protein_stickScale( 0.2 );
+core::Real const protein_sphereScale( 0.2 );
+int sphereDisplayList = 0;
+core::Real const BOND_LENGTH_CUTOFF2 = 6.0*6.0;
 }
 
 #endif
@@ -154,20 +154,20 @@ void processMouse(int button, int state, int x, int y) {
 	using namespace graphics;
 
 	//std::cout << "processMouse: " << glutGetWindow() << ' ' << button << ' ' << state << ' ' << x << ' ' << y << ' ' <<
-	//	" graphicsvars: " << click << ' ' << clicked_button << ' ' << click_x << ' ' << click_y << std::endl;
+	// " graphicsvars: " << click << ' ' << clicked_button << ' ' << click_x << ' ' << click_y << std::endl;
 
 	specialKey = glutGetModifiers();
 
 	click_x = x;
 	click_y = y;
-	if (state == GLUT_DOWN) {
+	if ( state == GLUT_DOWN ) {
 		clicked_button = button;
-		if (!click) {
+		if ( !click ) {
 			click = true;
 			//      std::cout << "click button: " << button << std::endl;
 		}
 	}
-	if (state == GLUT_UP) {
+	if ( state == GLUT_UP ) {
 		clicked_button = -1;
 		click = false;
 	}
@@ -181,11 +181,11 @@ void processMouseActiveMotion(int x, int y) {
 	using namespace graphics;
 
 	//std::cout << "processMouseActiveMotion: " << glutGetWindow() << ' ' << x << ' ' << y << ' ' <<
-	//	" graphicsvars: " << click << ' ' << clicked_button << ' ' << click_x << ' ' << click_y << std::endl;
+	// " graphicsvars: " << click << ' ' << clicked_button << ' ' << click_x << ' ' << click_y << std::endl;
 
 	static int old_x;
 	static int old_y;
-	if (click) {
+	if ( click ) {
 		old_x = click_x;
 		old_y = click_y;
 		click = false;
@@ -194,46 +194,42 @@ void processMouseActiveMotion(int x, int y) {
 	float delta_x = old_x - x;
 	float delta_y = old_y - y;
 
-	//	std::cout << "clicked_button " << clicked_button << "    specialKey " << specialKey << std::endl;
+	// std::cout << "clicked_button " << clicked_button << "    specialKey " << specialKey << std::endl;
 
 	if ( ((specialKey == GLUT_ACTIVE_SHIFT) & (clicked_button == 0)) || clicked_button == 1 ) { // Zoom in/out
 		double s = exp( -1.0* (double) delta_y*0.01);
 		glScalef(s,s,s);
-	}
-	else if ((specialKey == GLUT_ACTIVE_CTRL) & (clicked_button == 0)) { // Recontour
+	} else if ( (specialKey == GLUT_ACTIVE_CTRL) & (clicked_button == 0) ) { // Recontour
 		GraphicsState* current_gs = gs_map_[ glutGetWindow() ];
-		if (!current_gs) {
+		if ( !current_gs ) {
 			std::cerr << "ignoring processKeyPress for window id " << glutGetWindow() << std::endl;
 			return;
 		}
 		current_gs->density_sigma += delta_y*0.02;
 		current_gs->density_redraw = true;
-	}
-	else if ((specialKey == GLUT_ACTIVE_SHIFT) & (clicked_button > 0)){ //Rotate around z-axis
+	} else if ( (specialKey == GLUT_ACTIVE_SHIFT) & (clicked_button > 0) ) { //Rotate around z-axis
 		// See below for explanation of premultiplication.
 		GLfloat currentrotation[16];
 		glGetFloatv(GL_MODELVIEW_MATRIX, currentrotation);
 		glLoadIdentity();
 		glRotatef(delta_x,0,0,1);
 		glMultMatrixf(currentrotation);
-	}
-	else if ( specialKey == GLUT_ACTIVE_ALT && clicked_button == 0){ //Pan
-		 GLint viewport[4];
-		 glGetIntegerv(GL_VIEWPORT,viewport);
-		 //glTranslatef( -1.0*delta_x * (_right-_left)/(viewport[2]),
-		 //  -1.0*delta_y * (_bottom-_top)/(viewport[3]), 0);
-		 //Scale factors map from screen coordinates to molecule coordinates.
-		 glMatrixMode(GL_MODELVIEW);
-		 double xscale = (graphics::window_size * 2.0)/(viewport[2]);
-		 double yscale = (graphics::window_size * 2.0)/(viewport[3]);
+	} else if ( specialKey == GLUT_ACTIVE_ALT && clicked_button == 0 ) { //Pan
+		GLint viewport[4];
+		glGetIntegerv(GL_VIEWPORT,viewport);
+		//glTranslatef( -1.0*delta_x * (_right-_left)/(viewport[2]),
+		//  -1.0*delta_y * (_bottom-_top)/(viewport[3]), 0);
+		//Scale factors map from screen coordinates to molecule coordinates.
+		glMatrixMode(GL_MODELVIEW);
+		double xscale = (graphics::window_size * 2.0)/(viewport[2]);
+		double yscale = (graphics::window_size * 2.0)/(viewport[3]);
 
-		 GLfloat currentrotation[16];
-		 glGetFloatv(GL_MODELVIEW_MATRIX, currentrotation);
-		 glLoadIdentity();
-		 glTranslatef( -delta_x * xscale, delta_y * yscale, 0);
-		 glMultMatrixf(currentrotation);
-	}
-	else { //Rotate the sucker.
+		GLfloat currentrotation[16];
+		glGetFloatv(GL_MODELVIEW_MATRIX, currentrotation);
+		glLoadIdentity();
+		glTranslatef( -delta_x * xscale, delta_y * yscale, 0);
+		glMultMatrixf(currentrotation);
+	} else { //Rotate the sucker.
 		//double axis_z = 0;
 		double axis_x = -delta_y;
 		double axis_y = -delta_x;
@@ -267,24 +263,24 @@ void processKeyPress(unsigned char key, int /* x */, int /* y */) {
 	using namespace protocols::viewer;
 
 	GraphicsState* current_gs = gs_map_[ glutGetWindow() ];
-	if (!current_gs) {
+	if ( !current_gs ) {
 		std::cerr << "ignoring processKeyPress for window id " << glutGetWindow() << std::endl;
 		return;
 	}
 
-	if (key == 67 || key == 99) { //'c' control color
+	if ( key == 67 || key == 99 ) { //'c' control color
 		current_gs->Color_mode = ColorMode ( current_gs->Color_mode + 1 );
 		if ( current_gs->Color_mode > RESIDUE_CPK_COLOR ) current_gs->Color_mode = RAINBOW_COLOR;
 	}
-	if (key == 66 || key == 98) { //'b' control backbone display
+	if ( key == 66 || key == 98 ) { //'b' control backbone display
 		current_gs->BBdisplay_state = BBdisplayState ( current_gs->BBdisplay_state + 1 );
 		if ( current_gs->BBdisplay_state > SHOW_BACKBONE ) current_gs->BBdisplay_state = SHOW_NOBB;
 	}
-	if (key == 72 || key == 104) { //'H' or 'h': toggle hydrogens
+	if ( key == 72 || key == 104 ) { //'H' or 'h': toggle hydrogens
 		current_gs->show_H_state = ShowHState ( current_gs->show_H_state + 1 );
 		if ( current_gs->show_H_state > SHOW_H ) current_gs->show_H_state = SHOW_NO_H;
 	}
-	if (key == 83 || key == 115) { //'s' control sidechain display
+	if ( key == 83 || key == 115 ) { //'s' control sidechain display
 		current_gs->SCdisplay_state = SCdisplayState ( current_gs->SCdisplay_state + 1 );
 		if ( current_gs->SCdisplay_state > SHOW_WIREFRAME ) current_gs->SCdisplay_state = SHOW_NOSC;
 	}
@@ -323,14 +319,14 @@ idle_func( void )
 
 	check_for_new_conformation_viewers();
 
-	//	pthread_mutex_lock( &conformation_viewers_mut );
+	// pthread_mutex_lock( &conformation_viewers_mut );
 
 	for ( ConformationViewers::const_iterator iter = conformation_viewers.begin(), iter_end = conformation_viewers.end();
-				iter != iter_end; ++iter ) {
+			iter != iter_end; ++iter ) {
 		iter->second->display_if_necessary();
 	}
 
-	//	pthread_mutex_unlock( &conformation_viewers_mut );
+	// pthread_mutex_unlock( &conformation_viewers_mut );
 
 }
 
@@ -445,7 +441,7 @@ add_conformation_viewer(
 	// create a new viewer
 	std::string const window_name
 		( name_in.empty() ? "conformation"+ObjexxFCL::string_of( conformation_viewers.size() + new_conformation_viewers.size() ) :
-			name_in );
+		name_in );
 
 	ConformationViewerOP viewer( new ConformationViewer( window_name, length, width, debug_pause ) );
 	if ( set_center_vector ) viewer->set_center_vector( center_vector );
@@ -481,8 +477,8 @@ add_monte_carlo_viewer(
 	// create a new viewer
 	std::string const tag
 		( name_in.empty() ?
-			"MC"+ObjexxFCL::string_of( conformation_viewers.size() + new_conformation_viewers.size() ) :
-			name_in );
+		"MC"+ObjexxFCL::string_of( conformation_viewers.size() + new_conformation_viewers.size() ) :
+		name_in );
 
 	ConformationViewerOP
 		viewer1( new ConformationViewer(tag+"_last_accepted", length, width, debug_pause) ),
@@ -622,11 +618,11 @@ atom_color_by_element( std::string const & element )
 		return Vector(0.0, 0.0, 1.0 ); // blue
 	} else if ( element == "O" ) {
 		return Vector(1.0, 0.0, 0.0 ); // red
-	} else if ( element == "S") {
+	} else if ( element == "S" ) {
 		return Vector(1.0, 1.0, 0.0 ); // yellow
-	} else if ( element == "P") {
+	} else if ( element == "P" ) {
 		return Vector(1.0, 0.5, 0.0 ); // orange
-	} else if ( element == "H") {
+	} else if ( element == "H" ) {
 		return Vector(1.0, 1.0, 1.0 ); // white
 	}
 
@@ -667,12 +663,12 @@ void rainbow_color( float frac , float & red, float & green, float & blue , bool
 	red = my_color;
 	blue = 1.0 - my_color ;
 	green = (my_color < .5) ? 2.0*my_color : 2.0-2.0*my_color;
-	if (mute_color) {
+	if ( mute_color ) {
 		float saturation = sqrt(red*red + green*green + blue*blue);
 		float muting = .7;
-			red = muting*red/saturation;
-			green = muting*green/saturation;
-			blue = muting*blue/saturation;
+		red = muting*red/saturation;
+		green = muting*green/saturation;
+		blue = muting*blue/saturation;
 	}
 }
 // chu enable color by chain
@@ -680,32 +676,32 @@ void chain_color( int const chain, float & red, float & green, float & blue ) {
 	static int const num_color = 5;
 	int chain_local = chain%num_color;
 	switch ( chain_local ) {
-	case 1: // blue
+	case 1 : // blue
 		red = 0.0;
 		green = 0.0;
 		blue = 1.0;
 		return;
-	case 2: // green
+	case 2 : // green
 		red = 0.0;
 		green = 1.0;
 		blue = 0.0;
 		return;
-	case 3: // yellow
+	case 3 : // yellow
 		red = 0.7;
 		green = 0.7;
 		blue = 0.0;
 		return;
-	case 4: // orange
+	case 4 : // orange
 		red = 0.7;
 		green = 0.5;
 		blue = 0.0;
 		return;
-	case 0: // red
+	case 0 : // red
 		red = 1.0;
 		green = 0.0;
 		blue = 0.0;
 		return;
-	default:
+	default :
 		red = 0.0;
 		green = 0.0;
 		blue = 1.0;
@@ -716,105 +712,107 @@ void chain_color( int const chain, float & red, float & green, float & blue ) {
 // from rosetta++ protein_graphics.cc
 void get_residue_color( float i, float & red, float & green, float & blue, bool mute_color, int total_residue ) {
 	float i_local = i;
-	if (i > total_residue) i_local = total_residue;
+	if ( i > total_residue ) i_local = total_residue;
 	rainbow_color ( float(i_local) / float(total_residue), red, green, blue, mute_color);
 }
 
 // from rosetta++ protein_graphics.cc
 std::map<std::string, Vector>  get_sidechain_color_rhiju() {
 
-    std::map<std::string, Vector> sidechain_color_rhiju;
+	std::map<std::string, Vector> sidechain_color_rhiju;
 
-    sidechain_color_rhiju[ "ALA" ] = Vector( 0.3, 0.3, 0.3); //gray
-    sidechain_color_rhiju[ "CYS" ] = Vector( 0.7, 0.7, 0.0); //yellow:
-    sidechain_color_rhiju[ "ASP" ] = Vector( 0.7, 0.0, 0.0); //red
-    sidechain_color_rhiju[ "GLU" ] = Vector( 0.7, 0.0, 0.0); //red
-    sidechain_color_rhiju[ "PHE" ] = Vector( 0.3, 0.3, 0.3);
-    sidechain_color_rhiju[ "GLY" ] = Vector( 0.7, 0.5, 0.0); //orange; this shouldn't happen from sidechain.
-    sidechain_color_rhiju[ "HIS" ] = Vector( 0.0, 0.0, 0.7); //blue
-    sidechain_color_rhiju[ "ILE" ] = Vector( 0.3, 0.3, 0.3);
-    sidechain_color_rhiju[ "LYS" ] = Vector( 0.0, 0.0, 0.7); //blue
-    sidechain_color_rhiju[ "LEU" ] = Vector( 0.3, 0.3, 0.3);
-    sidechain_color_rhiju[ "MET" ] = Vector( 0.3, 0.3, 0.3);
-    sidechain_color_rhiju[ "ASN" ] = Vector( 0.0, 0.5, 0.0); //green
-    sidechain_color_rhiju[ "PRO" ] = Vector( 0.3, 0.3, 0.3);
-    sidechain_color_rhiju[ "GLN" ] = Vector( 0.0, 0.5, 0.0); //green
-    sidechain_color_rhiju[ "ARG" ] = Vector( 0.0, 0.0, 0.7); //blue
-    sidechain_color_rhiju[ "SER" ] = Vector( 0.0, 0.5, 0.0); //green
-    sidechain_color_rhiju[ "THR" ] = Vector( 0.0, 0.5, 0.0); //green
-    sidechain_color_rhiju[ "VAL" ] = Vector( 0.3, 0.3, 0.3);
-    sidechain_color_rhiju[ "TRP" ] = Vector( 0.3, 0.3, 0.3);
-    sidechain_color_rhiju[ "TYR" ] = Vector( 0.0, 0.5, 0.0); //green
-    sidechain_color_rhiju[ "SEP" ] = Vector( 0.5, 0.5, 0.0); //orange
-    sidechain_color_rhiju[ "GUA" ] = Vector( 0.5, 0.0, 0.0); //red [now matching EteRNA]
-    sidechain_color_rhiju[ "ADE" ] = Vector( 0.5, 0.5, 0.0); //yellow
-    sidechain_color_rhiju[ "CYT" ] = Vector( 0.0, 0.5, 0.0); //green
-    sidechain_color_rhiju[ "THY" ] = Vector( 0.0, 0.0, 0.5); //blue [now matching EteRNA]
-    sidechain_color_rhiju[ "RGU" ] = Vector( 0.5, 0.0, 0.0); //red [used to be blue, now matching EteRNA]
-    sidechain_color_rhiju[ "RAD" ] = Vector( 0.5, 0.5, 0.0); //yellow
-    sidechain_color_rhiju[ "RCY" ] = Vector( 0.0, 0.5, 0.0); //green
-    sidechain_color_rhiju[ "URA" ] = Vector( 0.0, 0.0, 0.5); //blue  [now matching EteRNA]
-    sidechain_color_rhiju[ "  G" ] = Vector( 0.5, 0.0, 0.0); //red [now matching EteRNA]
-    sidechain_color_rhiju[ "  A" ] = Vector( 0.5, 0.5, 0.0); //yellow
-    sidechain_color_rhiju[ "  C" ] = Vector( 0.0, 0.5, 0.0); //green
-    sidechain_color_rhiju[ "  U" ] = Vector( 0.0, 0.0, 0.5); //blue [now matching EteRNA]
-    sidechain_color_rhiju[ " MG" ] = Vector( 0.0, 1.0, 0.0); //bright green
+	sidechain_color_rhiju[ "ALA" ] = Vector( 0.3, 0.3, 0.3); //gray
+	sidechain_color_rhiju[ "CYS" ] = Vector( 0.7, 0.7, 0.0); //yellow:
+	sidechain_color_rhiju[ "ASP" ] = Vector( 0.7, 0.0, 0.0); //red
+	sidechain_color_rhiju[ "GLU" ] = Vector( 0.7, 0.0, 0.0); //red
+	sidechain_color_rhiju[ "PHE" ] = Vector( 0.3, 0.3, 0.3);
+	sidechain_color_rhiju[ "GLY" ] = Vector( 0.7, 0.5, 0.0); //orange; this shouldn't happen from sidechain.
+	sidechain_color_rhiju[ "HIS" ] = Vector( 0.0, 0.0, 0.7); //blue
+	sidechain_color_rhiju[ "ILE" ] = Vector( 0.3, 0.3, 0.3);
+	sidechain_color_rhiju[ "LYS" ] = Vector( 0.0, 0.0, 0.7); //blue
+	sidechain_color_rhiju[ "LEU" ] = Vector( 0.3, 0.3, 0.3);
+	sidechain_color_rhiju[ "MET" ] = Vector( 0.3, 0.3, 0.3);
+	sidechain_color_rhiju[ "ASN" ] = Vector( 0.0, 0.5, 0.0); //green
+	sidechain_color_rhiju[ "PRO" ] = Vector( 0.3, 0.3, 0.3);
+	sidechain_color_rhiju[ "GLN" ] = Vector( 0.0, 0.5, 0.0); //green
+	sidechain_color_rhiju[ "ARG" ] = Vector( 0.0, 0.0, 0.7); //blue
+	sidechain_color_rhiju[ "SER" ] = Vector( 0.0, 0.5, 0.0); //green
+	sidechain_color_rhiju[ "THR" ] = Vector( 0.0, 0.5, 0.0); //green
+	sidechain_color_rhiju[ "VAL" ] = Vector( 0.3, 0.3, 0.3);
+	sidechain_color_rhiju[ "TRP" ] = Vector( 0.3, 0.3, 0.3);
+	sidechain_color_rhiju[ "TYR" ] = Vector( 0.0, 0.5, 0.0); //green
+	sidechain_color_rhiju[ "SEP" ] = Vector( 0.5, 0.5, 0.0); //orange
+	sidechain_color_rhiju[ "GUA" ] = Vector( 0.5, 0.0, 0.0); //red [now matching EteRNA]
+	sidechain_color_rhiju[ "ADE" ] = Vector( 0.5, 0.5, 0.0); //yellow
+	sidechain_color_rhiju[ "CYT" ] = Vector( 0.0, 0.5, 0.0); //green
+	sidechain_color_rhiju[ "THY" ] = Vector( 0.0, 0.0, 0.5); //blue [now matching EteRNA]
+	sidechain_color_rhiju[ "RGU" ] = Vector( 0.5, 0.0, 0.0); //red [used to be blue, now matching EteRNA]
+	sidechain_color_rhiju[ "RAD" ] = Vector( 0.5, 0.5, 0.0); //yellow
+	sidechain_color_rhiju[ "RCY" ] = Vector( 0.0, 0.5, 0.0); //green
+	sidechain_color_rhiju[ "URA" ] = Vector( 0.0, 0.0, 0.5); //blue  [now matching EteRNA]
+	sidechain_color_rhiju[ "  G" ] = Vector( 0.5, 0.0, 0.0); //red [now matching EteRNA]
+	sidechain_color_rhiju[ "  A" ] = Vector( 0.5, 0.5, 0.0); //yellow
+	sidechain_color_rhiju[ "  C" ] = Vector( 0.0, 0.5, 0.0); //green
+	sidechain_color_rhiju[ "  U" ] = Vector( 0.0, 0.0, 0.5); //blue [now matching EteRNA]
+	sidechain_color_rhiju[ " MG" ] = Vector( 0.0, 1.0, 0.0); //bright green
 
-    return sidechain_color_rhiju;
+	return sidechain_color_rhiju;
 }
 
 ////////////////////////////////////////////////////////////////////
 Vector get_atom_color(
-					GraphicsState & gs,
-					utility::vector1< core::conformation::ResidueCOP > const & residues,
-					int const & r,
-					int const & i ) {
+	GraphicsState & gs,
+	utility::vector1< core::conformation::ResidueCOP > const & residues,
+	int const & r,
+	int const & i ) {
 
 	float red,green,blue;
 	static std::map<std::string, Vector> sidechain_color_rhiju = get_sidechain_color_rhiju();
 
 	switch ( gs.Color_mode ) {
 
-	  case CPK_COLOR:
+	case CPK_COLOR :
+		return atom_color_by_element( residues[r]->atom_type(i).element());
+
+	case RAINBOW_COLOR :
+		rainbow_color( float(r)/ float(gs.nres_for_graphics), red, green, blue, true /*mute_color*/);
+		return Vector(red, green, blue);
+
+	case RESIDUE_COLOR :
+		if ( sidechain_color_rhiju.find(residues[r]->name3()) != sidechain_color_rhiju.end() ) {
+			return sidechain_color_rhiju[residues[r]->name3()];
+		}
+		return Vector( 1.0, 0.5, 0.0); //orange
+
+	case CHAIN_COLOR :
+		chain_color( residues[r]->chain(), red, green, blue );
+		return Vector(red, green, blue);
+
+	case RAINBOW_CPK_COLOR :
+		if ( !residues[r]->atom_is_backbone(i)  ) { //non carbon atoms
 			return atom_color_by_element( residues[r]->atom_type(i).element());
+		}
+		rainbow_color( float(r)/ float(gs.nres_for_graphics), red, green, blue, true /*mute_color*/);
+		return Vector(red, green, blue);
 
-		case RAINBOW_COLOR:
-			rainbow_color( float(r)/ float(gs.nres_for_graphics), red, green, blue, true /*mute_color*/);
+	case RESIDUE_CPK_COLOR :
+		if ( !residues[r]->atom_is_backbone(i)  ) { //non carbon atoms
+			return atom_color_by_element( residues[r]->atom_type(i).element());
+		}
+		if ( sidechain_color_rhiju.find(residues[r]->name3()) != sidechain_color_rhiju.end() ) {
+			return sidechain_color_rhiju[residues[r]->name3()];
+		}
+		return Vector( 1.0, 1.0, 1.0);
+
+	case RHIJU_COLOR :
+		if ( residues[r]->is_virtual(i) ) {
+			return Vector( 1.0, 1.0, 1.0 );
+		} else if ( residues[r]->atom_is_backbone(i)  ) {
+			rainbow_color( float(r)/ float(gs.nres_for_graphics), red, green, blue, false /*mute_color*/);
 			return Vector(red, green, blue);
-
-		case RESIDUE_COLOR:
-			if (sidechain_color_rhiju.find(residues[r]->name3()) != sidechain_color_rhiju.end() )
-				return sidechain_color_rhiju[residues[r]->name3()];
-			return Vector( 1.0, 0.5, 0.0); //orange
-
-   	case CHAIN_COLOR:
-			chain_color( residues[r]->chain(), red, green, blue );
-			return Vector(red, green, blue);
-
-		case RAINBOW_CPK_COLOR:
-			if ( !residues[r]->atom_is_backbone(i)  ) { //non carbon atoms
-				return atom_color_by_element( residues[r]->atom_type(i).element());
-			}
-			rainbow_color( float(r)/ float(gs.nres_for_graphics), red, green, blue, true /*mute_color*/);
-			return Vector(red, green, blue);
-
-		case RESIDUE_CPK_COLOR:
-			if ( !residues[r]->atom_is_backbone(i)  ) { //non carbon atoms
-				return atom_color_by_element( residues[r]->atom_type(i).element());
-			}
-			if (sidechain_color_rhiju.find(residues[r]->name3()) != sidechain_color_rhiju.end() )
-				return sidechain_color_rhiju[residues[r]->name3()];
-			return Vector( 1.0, 1.0, 1.0);
-
-	  case RHIJU_COLOR:
-			if ( residues[r]->is_virtual(i) ){
-				return Vector( 1.0, 1.0, 1.0 );
-			} else if ( residues[r]->atom_is_backbone(i)  ) {
-				rainbow_color( float(r)/ float(gs.nres_for_graphics), red, green, blue, false /*mute_color*/);
-				return Vector(red, green, blue);
-			}	else if ( sidechain_color_rhiju.find(residues[r]->name3()) != sidechain_color_rhiju.end() ) {
-				return sidechain_color_rhiju[ residues[r]->name3() ];
-			}
+		} else if ( sidechain_color_rhiju.find(residues[r]->name3()) != sidechain_color_rhiju.end() ) {
+			return sidechain_color_rhiju[ residues[r]->name3() ];
+		}
 	}
 	return Vector( 1.0, 1.0, 1.0);
 }
@@ -823,9 +821,9 @@ Vector get_atom_color(
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
 display_residues_wireframe(
-													 GraphicsState & gs,
-													 utility::vector1< core::conformation::ResidueCOP > const & residues,
-													 Vector const & center )
+	GraphicsState & gs,
+	utility::vector1< core::conformation::ResidueCOP > const & residues,
+	Vector const & center )
 {
 	using namespace conformation;
 	using namespace chemical;
@@ -861,15 +859,15 @@ display_residues_wireframe(
 
 				Vector const bond( xyz2 - xyz1 );
 				if ( !prev_rsd.is_virtual( atom1 ) &&
-						 !rsd.is_virtual( atom2 ) &&
-						 bond.length_squared() <= graphics::BOND_LENGTH_CUTOFF2 )  {
+						!rsd.is_virtual( atom2 ) &&
+						bond.length_squared() <= graphics::BOND_LENGTH_CUTOFF2 )  {
 
 					Vector width( cross( bond, z ) );
 					if ( width.length_squared() ) width.normalize();
 					width *= graphics::protein_wireframeScale;
 
 					// also need to draw the elbow?
-					//			if (bond.length_squared() < 9.0 ){
+					//   if (bond.length_squared() < 9.0 ){
 					glColor3fxyz( color1 );
 					glBegin(GL_POLYGON);
 					glVertex3fxyz ( xyz1 + width );
@@ -968,25 +966,25 @@ display_residues_wireframe(
 //bool check_occupancy( int, const core::pose::Pose & ) { return true; }
 
 void get_direction( Vector & direction, const int & next_res, const int & prior_res,
-										utility::vector1< core::conformation::ResidueCOP > const & residues ) {
+	utility::vector1< core::conformation::ResidueCOP > const & residues ) {
 	direction = residues[ next_res ]->xyz( "CA" ) - residues[ prior_res ]->xyz( "CA" );
-	if (direction.length_squared() > 0.00001) direction.normalize();
+	if ( direction.length_squared() > 0.00001 ) direction.normalize();
 }
 
 
 void get_normal( Vector & normal, const int n, utility::vector1< core::conformation::ResidueCOP > const & residues ) {
 	normal = cross( (residues[ n ]->xyz( "CA" )-residues[ n-1 ]->xyz( "CA" )),
-			(residues[ n+1 ]->xyz( "CA" )-residues[ n ]->xyz( "CA" )) );
+		(residues[ n+1 ]->xyz( "CA" )-residues[ n ]->xyz( "CA" )) );
 #ifdef BOINC
 	if (normal.length_squared() > 0.00001) normal.normalize();
 #else
-	if (normal.length_squared() > 0.00001) normal.normalize(15);
+	if ( normal.length_squared() > 0.00001 ) normal.normalize(15);
 #endif
 }
 
 
 void get_axis_and_tangent( Vector & axis, Vector & tangent,
-														const Vector & direction, const Vector & normal) {
+	const Vector & direction, const Vector & normal) {
 	//Magic linear combinations from Per Kraulis' molscript.
 	const core::Real HELIX_ALPHA = 0.5585;
 	axis = std::cos(HELIX_ALPHA) * normal + std::sin(HELIX_ALPHA) * direction;
@@ -996,8 +994,8 @@ void get_axis_and_tangent( Vector & axis, Vector & tangent,
 
 
 Vector get_CA_segment( const Vector & prev_CA, const Vector & current_CA,
-												const Vector & prev_tangent, const Vector & tangent,
-												const float & p, const float & hermite_factor) {
+	const Vector & prev_tangent, const Vector & tangent,
+	const float & p, const float & hermite_factor) {
 	//Hermitean interpolation.
 	const core::Real p2 = p*p;
 	const core::Real p3 = p*p*p;
@@ -1010,18 +1008,18 @@ Vector get_CA_segment( const Vector & prev_CA, const Vector & current_CA,
 
 
 float get_half_width( const std::string & taper, const float & secstruct_half_width, const float & p ) {
-        const Real PI = numeric::NumericTraits<Real>::pi();
+	const Real PI = numeric::NumericTraits<Real>::pi();
 
 	core::Real half_width = secstruct_half_width;
-	if (taper == "start"){
+	if ( taper == "start" ) {
 		half_width = graphics::COILRADIUS + (secstruct_half_width - graphics::COILRADIUS)*
-		0.5 * ( - cos( PI * p )  + 1.0 );
+			0.5 * ( - cos( PI * p )  + 1.0 );
 	}
-	if (taper == "end"){
+	if ( taper == "end" ) {
 		half_width = graphics::COILRADIUS + (secstruct_half_width - graphics::COILRADIUS)*
-		0.5 * ( cos( PI * p )  + 1.0 );
+			0.5 * ( cos( PI * p )  + 1.0 );
 	}
-	if (taper == "strand_ultimate"){
+	if ( taper == "strand_ultimate" ) {
 		half_width = graphics::COILRADIUS + (2*secstruct_half_width - graphics::COILRADIUS) * (1 - p);
 	}
 	return half_width;
@@ -1036,11 +1034,11 @@ void set_initial_polygon_vertices(const Vector & vec1, const Vector & vec2, Grap
 
 
 void draw_next_polygon( const Vector & vec1, const Vector & vec2,
-												const float & red, const float & green, const float & blue, const int & aa,
-												GraphicsState & gs,
-												bool is_coil = false,
-												bool darken_inside = false) {
-	if (aa<1) return;
+	const float & red, const float & green, const float & blue, const int & aa,
+	GraphicsState & gs,
+	bool is_coil = false,
+	bool darken_inside = false) {
+	if ( aa<1 ) return;
 
 	//Give the cartoon some thickness?
 	const bool show_thickness = true;
@@ -1049,7 +1047,7 @@ void draw_next_polygon( const Vector & vec1, const Vector & vec2,
 	core::Real showbondcutoff2 = (is_coil) ? graphics::SHOWBONDCUTOFF2_COIL : graphics::SHOWBONDCUTOFF2;
 
 	const core::Real bond_length2 = ((vec1 + vec2)/2.0 - (gs.previous_vertex1 + gs.previous_vertex2)/2.0).length_squared();
-	if (!show_thickness) {
+	if ( !show_thickness ) {
 		glColor3f(red,green,blue);
 		glBegin(GL_POLYGON);
 		glVertex3fxyz ( gs.previous_vertex1 );
@@ -1060,14 +1058,14 @@ void draw_next_polygon( const Vector & vec1, const Vector & vec2,
 		glEnd();
 	} else {
 		width_vector = cross( (vec1 + vec2) - (gs.previous_vertex1 + gs.previous_vertex2),
-														(vec1 + gs.previous_vertex1) - (vec2 + gs.previous_vertex2) );
-		if (width_vector.length_squared() > 0.000001) width_vector.normalize();
+			(vec1 + gs.previous_vertex1) - (vec2 + gs.previous_vertex2) );
+		if ( width_vector.length_squared() > 0.000001 ) width_vector.normalize();
 		const float cartoon_width = 0.3;
 		width_vector *= -1.0f * cartoon_width;
 
-		if (gs.previous_width_vector == 0.0) gs.previous_width_vector = width_vector;
+		if ( gs.previous_width_vector == 0.0 ) gs.previous_width_vector = width_vector;
 
-		if (bond_length2 < showbondcutoff2 ) {
+		if ( bond_length2 < showbondcutoff2 ) {
 			//outside
 			glColor3f(red,green,blue);
 			glBegin(GL_POLYGON);
@@ -1078,7 +1076,7 @@ void draw_next_polygon( const Vector & vec1, const Vector & vec2,
 			glEnd();
 
 			//inside
-			if (darken_inside) glColor3f(0.5*red,0.5*green,0.5*blue);
+			if ( darken_inside ) glColor3f(0.5*red,0.5*green,0.5*blue);
 			glBegin(GL_POLYGON);
 			glVertex3fxyz ( gs.previous_vertex1 - gs.previous_width_vector );
 			glVertex3fxyz ( gs.previous_vertex2 - gs.previous_width_vector );
@@ -1111,27 +1109,27 @@ void draw_next_polygon( const Vector & vec1, const Vector & vec2,
 
 
 void draw_secstruct_chunk(
-					const Vector & prev_CA,
-					const Vector & current_CA,
-					const Vector & prev_tangent,
-					const Vector & tangent,
-					const Vector & prev_axis,
-					const Vector & axis,
-					const int &  n,
-					const char & secstruct_res,
-					const std::string & taper,
-					GraphicsState & gs,
-					utility::vector1< core::conformation::ResidueCOP > const & residues )
+	const Vector & prev_CA,
+	const Vector & current_CA,
+	const Vector & prev_tangent,
+	const Vector & tangent,
+	const Vector & prev_axis,
+	const Vector & axis,
+	const int &  n,
+	const char & secstruct_res,
+	const std::string & taper,
+	GraphicsState & gs,
+	utility::vector1< core::conformation::ResidueCOP > const & residues )
 {
 	float hermite_factor;
 	float red( 0.0 ), green( 0.0 ), blue( 0.0 );
 	float secstruct_half_width;
 	bool darken_inside;
-	if (secstruct_res == 'H'){
+	if ( secstruct_res == 'H' ) {
 		secstruct_half_width = graphics::HELIX_HALF_WIDTH;
 		darken_inside = true;
 		hermite_factor = graphics::HELIX_HERMITE_FACTOR;
-	} else if ( secstruct_res == 'E' ){
+	} else if ( secstruct_res == 'E' ) {
 		secstruct_half_width = graphics::STRAND_HALF_WIDTH;
 		darken_inside = false;
 		hermite_factor = graphics::STRAND_HERMITE_FACTOR;
@@ -1142,40 +1140,40 @@ void draw_secstruct_chunk(
 		hermite_factor = graphics::NA_HERMITE_FACTOR;
 	}
 	Vector axis_segment, CA_segment;
-	for (int s = 1; s <= graphics::NUM_SEGMENTS; s++ ){
+	for ( int s = 1; s <= graphics::NUM_SEGMENTS; s++ ) {
 		const core::Real p = s / static_cast<core::Real>(graphics::NUM_SEGMENTS);
 		axis_segment = p*axis + (1-p)*prev_axis;
 		CA_segment = get_CA_segment( prev_CA, current_CA, prev_tangent, tangent, p, hermite_factor);
-		if (gs.Color_mode == CHAIN_COLOR ) {
+		if ( gs.Color_mode == CHAIN_COLOR ) {
 			chain_color( residues[n]->chain(), red, green, blue );
 		} else  {
 			get_residue_color( static_cast<float>(n - 1) + p, red, green, blue, false, gs.nres_for_graphics );
 		}
 		const core::Real half_width = get_half_width( taper, secstruct_half_width, p );
 		draw_next_polygon(CA_segment - half_width*axis_segment, CA_segment + half_width*axis_segment,
-				red,green,blue, n, gs, false, darken_inside);
+			red,green,blue, n, gs, false, darken_inside);
 	}
 }
 
 
 void draw_helix(
-					const int & start,
-					const int & end,
-					GraphicsState & gs,
-					utility::vector1< core::conformation::ResidueCOP > const & residues )
+	const int & start,
+	const int & end,
+	GraphicsState & gs,
+	utility::vector1< core::conformation::ResidueCOP > const & residues )
 {
 
 	const int total_residue = residues.size();
 
 	//Starting point.
 	int prior_res( start-1 );
-	if (prior_res < 1) prior_res = 1;
+	if ( prior_res < 1 ) prior_res = 1;
 	Vector direction, normal, tangent, axis, current_CA;
 	Vector prev_CA, prev_tangent, prev_axis;
 
 	//For the starting point, need to figure out axis from next residue...
 	int next_res = start + 1;
-	if (next_res > total_residue-1)	next_res = total_residue-1;
+	if ( next_res > total_residue-1 ) next_res = total_residue-1;
 	get_direction( direction, next_res+1, next_res-1, residues);
 	get_normal( normal, next_res, residues );
 	get_axis_and_tangent( axis, tangent, direction, normal );
@@ -1183,9 +1181,10 @@ void draw_helix(
 	get_direction(direction, start+1, prior_res, residues);
 	tangent = direction;
 	current_CA = residues[ start ]->xyz( "CA" );
-	if (start==1)
+	if ( start==1 ) {
 		set_initial_polygon_vertices( current_CA - graphics::HELIX_HALF_WIDTH*axis,
-																	current_CA + graphics::HELIX_HALF_WIDTH*axis, gs);
+			current_CA + graphics::HELIX_HALF_WIDTH*axis, gs);
+	}
 
 	//previous residue's helix geometry
 	prev_CA = current_CA;
@@ -1194,14 +1193,14 @@ void draw_helix(
 	std::string taper = "start";
 
 	// Draw the body of the helix.
-	for (int n = start+1; n<=end-1; n++){
+	for ( int n = start+1; n<=end-1; n++ ) {
 		//new residue's helix geometry
 		get_direction( direction, n+1, n-1, residues );
 		get_normal( normal, n, residues );
 		get_axis_and_tangent( axis, tangent, direction, normal);
 		current_CA = residues[ n ]->xyz( "CA" );
 		draw_secstruct_chunk( prev_CA, current_CA, prev_tangent, tangent, prev_axis, axis, n,
-													'H', taper, gs, residues);
+			'H', taper, gs, residues);
 
 		//previous residue's helix geometry
 		prev_CA = current_CA;
@@ -1219,15 +1218,15 @@ void draw_helix(
 	current_CA = residues[ end ]->xyz( "CA" );
 	taper = "end";
 	draw_secstruct_chunk( prev_CA, current_CA, prev_tangent, tangent, prev_axis, axis, end,
-												'H', taper, gs, residues);
+		'H', taper, gs, residues);
 }
 
 
 void draw_strand(
-					const int & start,
-					const int & end,
-					GraphicsState & gs,
-					utility::vector1< core::conformation::ResidueCOP > const & residues ) {
+	const int & start,
+	const int & end,
+	GraphicsState & gs,
+	utility::vector1< core::conformation::ResidueCOP > const & residues ) {
 
 	const int total_residue = residues.size();
 
@@ -1236,19 +1235,20 @@ void draw_strand(
 
 	//Starting point.
 	int prior_res( start-1 );
-	if (prior_res < 1) prior_res = 1;
+	if ( prior_res < 1 ) prior_res = 1;
 	Vector direction, normal, tangent, axis, current_CA, prev_CA, prev_direction, prev_normal;
 
 	//For the starting point, need to figure out axis from next residue...
 	int next_res = start + 1;
-	if (next_res > total_residue-1) next_res = total_residue-1;
+	if ( next_res > total_residue-1 ) next_res = total_residue-1;
 	get_direction( direction, next_res+1, next_res-1, residues);
-  get_normal( normal, next_res, residues );
+	get_normal( normal, next_res, residues );
 
 	current_CA = residues[ start ]->xyz( "CA" );
-	if (start==1)
+	if ( start==1 ) {
 		set_initial_polygon_vertices( current_CA - graphics::STRAND_HALF_WIDTH*normal,
-																	current_CA + graphics::STRAND_HALF_WIDTH*normal, gs);
+			current_CA + graphics::STRAND_HALF_WIDTH*normal, gs);
+	}
 
 	//previous residue's strand geometry
 	prev_CA = current_CA;
@@ -1257,14 +1257,14 @@ void draw_strand(
 	std::string taper = "start";
 
 	// Draw the body of the strand.
-	for (int n = start+1; n<=end-1; n++){
+	for ( int n = start+1; n<=end-1; n++ ) {
 		//new residue's strand geometry
 		get_direction( direction, n+1, n-1, residues);
-    get_normal( normal, n, residues );
+		get_normal( normal, n, residues );
 		if ( dot(normal, prev_normal) < 0.0 ) normal *= -1.0;
 		current_CA = residues[ n ]->xyz( "CA" );
 		draw_secstruct_chunk( prev_CA, current_CA, prev_direction, direction, prev_normal, normal, n,
-													'E', taper, gs, residues);
+			'E', taper, gs, residues);
 
 		//previous residue's strand geometry
 		prev_CA = current_CA;
@@ -1275,24 +1275,24 @@ void draw_strand(
 
 	//last piece.
 	next_res = end + 1;
-	if (next_res > total_residue)  next_res = total_residue;
+	if ( next_res > total_residue )  next_res = total_residue;
 	get_direction( direction, next_res, end - 1, residues);
-  tangent = direction;
-  current_CA = residues[ end ]->xyz( "CA" );
+	tangent = direction;
+	current_CA = residues[ end ]->xyz( "CA" );
 	taper = "strand_ultimate";
 	draw_secstruct_chunk( prev_CA, current_CA, prev_direction, direction, prev_normal, normal, end,
-												'E', taper, gs, residues);
+		'E', taper, gs, residues);
 }
 
 
 void draw_coil_chunk(
-					const Vector & prev_CA,
-					const Vector & current_CA,
-					const Vector & prev_tangent,
-					const Vector & tangent,
-					const int & n,
-					GraphicsState & gs,
-					utility::vector1< core::conformation::ResidueCOP > const & residues ) {
+	const Vector & prev_CA,
+	const Vector & current_CA,
+	const Vector & prev_tangent,
+	const Vector & tangent,
+	const int & n,
+	GraphicsState & gs,
+	utility::vector1< core::conformation::ResidueCOP > const & residues ) {
 	float red( 0.0 ), green( 0.0 ), blue( 0.0 );
 
 	Vector  axis_segment, CA_segment, prev_CA_segment, bond, prev_bond;
@@ -1303,18 +1303,18 @@ void draw_coil_chunk(
 
 	prev_CA_segment = prev_CA;
 	prev_bond = current_CA - prev_CA;
-	for (int s = 1; s <= graphics::NUM_SEGMENTS_COIL; s++ ){
+	for ( int s = 1; s <= graphics::NUM_SEGMENTS_COIL; s++ ) {
 		const float p = s / static_cast<float>(graphics::NUM_SEGMENTS_COIL);
 		CA_segment = get_CA_segment( prev_CA, current_CA, prev_tangent, tangent, p, graphics::COIL_HERMITE_FACTOR);
-		if (gs.Color_mode == CHAIN_COLOR ) {
+		if ( gs.Color_mode == CHAIN_COLOR ) {
 			chain_color( residues[n]->chain(), red, green, blue );
 		} else  {
 			get_residue_color ( static_cast<float>(n) + p, red, green, blue, false, gs.nres_for_graphics );
 		}
 		//Need to replace the following with a real cylinder.
 		bond = CA_segment - prev_CA_segment;
-    Vector width =  cross( bond, z );
-		if (width.length_squared() > 0.0001 )  width.normalize();
+		Vector width =  cross( bond, z );
+		if ( width.length_squared() > 0.0001 )  width.normalize();
 		width = (width - 0.5*z).normalized(); //nice shadow effect
 		width *= graphics::COILRADIUS;
 
@@ -1327,23 +1327,25 @@ void draw_coil_chunk(
 
 
 void draw_coil(
-					const int & start,
-					const int & end,
-					GraphicsState & gs,
-					utility::vector1< core::conformation::ResidueCOP > const & residues ) {
+	const int & start,
+	const int & end,
+	GraphicsState & gs,
+	utility::vector1< core::conformation::ResidueCOP > const & residues ) {
 	const int total_residue = residues.size();
 	// Draw the body of the coil.
 
 	Vector prev_CA, prev_direction, direction, current_CA;
 	prev_CA = residues[ start ]->xyz( "CA" );
 	get_direction( prev_direction, start+1, start, residues );
-	if (start==1)
+	if ( start==1 ) {
 		set_initial_polygon_vertices( prev_CA, prev_CA, gs );
-	for (int n = start; n <= end-1; n++){
-		if (n < end-1 && end < total_residue)
+	}
+	for ( int n = start; n <= end-1; n++ ) {
+		if ( n < end-1 && end < total_residue ) {
 			get_direction( direction, n+2, n, residues);
-		else
+		} else {
 			get_direction( direction, n+1, n, residues);
+		}
 		current_CA = residues[ n+1 ]->xyz( "CA" );
 		draw_coil_chunk( prev_CA, current_CA, prev_direction, direction, n, gs, residues);
 		//previous residue's coil geometry
@@ -1354,30 +1356,31 @@ void draw_coil(
 
 
 void draw_segment(
-					const int & start_segment,
-					const int & end_segment,
-					const char & prev_secstruct,
-					GraphicsState & gs,
-					utility::vector1< core::conformation::ResidueCOP > const & residues ) {
+	const int & start_segment,
+	const int & end_segment,
+	const char & prev_secstruct,
+	GraphicsState & gs,
+	utility::vector1< core::conformation::ResidueCOP > const & residues ) {
 	const int size_segment = end_segment - start_segment + 1;
-	if (start_segment >= end_segment) return; //not drawable
-	if (prev_secstruct=='H' && size_segment >= 4)
+	if ( start_segment >= end_segment ) return; //not drawable
+	if ( prev_secstruct=='H' && size_segment >= 4 ) {
 		draw_helix( start_segment, end_segment, gs, residues );
-	else if (prev_secstruct=='E' && size_segment >= 2)
+	} else if ( prev_secstruct=='E' && size_segment >= 2 ) {
 		draw_strand( start_segment, end_segment, gs, residues );
-	else
+	} else {
 		draw_coil( start_segment, end_segment, gs, residues );
+	}
 }
 
 
 bool check_chainbreak(const int & i, utility::vector1< core::conformation::ResidueCOP > const & residues) {
-	if (i==1) return false;
+	if ( i==1 ) return false;
 
 	float chainbreak_cutoff2 = graphics::CHAINBREAK_CUTOFF2;
 	Vector vec = residues[i]->xyz("CA");
 	Vector vec_prev = residues[i-1]->xyz("CA");
 	const float dist2 = (vec-vec_prev).length_squared();
-	if ( dist2 > chainbreak_cutoff2) {
+	if ( dist2 > chainbreak_cutoff2 ) {
 		return true;
 	}
 	return false;
@@ -1385,10 +1388,10 @@ bool check_chainbreak(const int & i, utility::vector1< core::conformation::Resid
 
 
 void draw_secstruct(
-					GraphicsState & gs,
-					utility::vector1< core::conformation::ResidueCOP > const & residues,
-					utility::vector1< char > const & ss,
-					int const begin, int const end)
+	GraphicsState & gs,
+	utility::vector1< core::conformation::ResidueCOP > const & residues,
+	utility::vector1< char > const & ss,
+	int const begin, int const end)
 {
 
 	char prev_secstruct = ss[ begin ];
@@ -1397,20 +1400,20 @@ void draw_secstruct(
 	//bool is_chainbreak = false;
 
 	int protein_end = 0;
-	for (int i = begin+1; i<= end; i++) {
+	for ( int i = begin+1; i<= end; i++ ) {
 		if ( ! (residues[i-1]->is_protein() && residues[i]->is_protein()) ) continue;
 		char current_secstruct = ss[ i ];
 		protein_end = i;
 		//if (current_secstruct != prev_secstruct || !check_occupancy(i, pose) || check_chainbreak(i, pose)) {
-		if (current_secstruct != prev_secstruct || check_chainbreak(i, residues)) {
+		if ( current_secstruct != prev_secstruct || check_chainbreak(i, residues) ) {
 			int const end_segment = i - 1;
 			draw_segment( start_segment, end_segment, prev_secstruct, gs, residues );
 			start_segment = i;
 
-		//	if (!check_occupancy(i, pose)) {
-		//		start_segment++;
-		//	} else
-			if ( !check_chainbreak(i, residues)) {
+			// if (!check_occupancy(i, pose)) {
+			//  start_segment++;
+			// } else
+			if ( !check_chainbreak(i, residues) ) {
 				draw_segment( end_segment, end_segment+1, 'L', gs,  residues ); // connector region
 			}
 		}
@@ -1422,9 +1425,9 @@ void draw_secstruct(
 
 
 void draw_Calpha_trace(
-					GraphicsState & gs,
-					utility::vector1< core::conformation::ResidueCOP > const & residues,
-					const int & start, const int & end, float xwidth = 0.5)
+	GraphicsState & gs,
+	utility::vector1< core::conformation::ResidueCOP > const & residues,
+	const int & start, const int & end, float xwidth = 0.5)
 {
 
 	GLfloat currentrotation[16];
@@ -1455,7 +1458,7 @@ void draw_Calpha_trace(
 		} else {
 			get_residue_color( i, red, green, blue, false,  gs.nres_for_graphics );
 		}
-		if ( i > 1 && last_bonded) {
+		if ( i > 1 && last_bonded ) {
 			glColor3f(red, green, blue);
 			glBegin(GL_POLYGON);
 			glVertex3fxyz ( prev1 );
@@ -1473,7 +1476,7 @@ void draw_Calpha_trace(
 			glEnd();
 		}
 		last_bonded = false;
-		if (bond.length_squared() < 16) {
+		if ( bond.length_squared() < 16 ) {
 			last_bonded = true;
 			glColor3f(red, green, blue);
 			glBegin(GL_POLYGON);
@@ -1501,23 +1504,24 @@ void draw_Calpha_trace(
 void
 draw_sidechains( GraphicsState & gs, utility::vector1< core::conformation::ResidueCOP > const & residues, const int & start, const int & end ) {
 
-	if (gs.SCdisplay_state == SHOW_NOSC) return;
+	if ( gs.SCdisplay_state == SHOW_NOSC ) return;
 
 	GLfloat currentrotation[16];
 	glGetFloatv(GL_MODELVIEW_MATRIX, currentrotation);
 	Vector z(currentrotation[2],currentrotation[6],currentrotation[10]); // z pointing out of window in current view.
 
 	float xwidth = graphics::protein_stickScale;
-  for ( int r = start; r<=end ; ++r ) {
+	for ( int r = start; r<=end ; ++r ) {
 
-		if (residues[r]->is_ligand() && gs.SCdisplay_state != SHOW_STICK
-					&& gs.SCdisplay_state != SHOW_WIREFRAME ) continue;
+		if ( residues[r]->is_ligand() && gs.SCdisplay_state != SHOW_STICK
+				&& gs.SCdisplay_state != SHOW_WIREFRAME ) continue;
 
-		if (!residues[r]->is_ligand() && gs.SCdisplay_state == SHOW_WIREFRAME)
+		if ( !residues[r]->is_ligand() && gs.SCdisplay_state == SHOW_WIREFRAME ) {
 			xwidth = graphics::protein_wireframeScale;
+		}
 
-		if (residues[r]->residue_type_set().name() == chemical::CENTROID
-		    && residues[r]->aa() != core::chemical::aa_unk ) continue;
+		if ( residues[r]->residue_type_set().name() == chemical::CENTROID
+				&& residues[r]->aa() != core::chemical::aa_unk ) continue;
 
 		Size const natoms( residues[r]->natoms() );
 
@@ -1543,7 +1547,7 @@ draw_sidechains( GraphicsState & gs, utility::vector1< core::conformation::Resid
 
 				Vector const bond( xyz2 - xyz1 );
 
-				if (bond.length_squared() > graphics::BOND_LENGTH_CUTOFF2 ) break;
+				if ( bond.length_squared() > graphics::BOND_LENGTH_CUTOFF2 ) break;
 
 				Vector width( cross( bond, z ) );
 				if ( width.length_squared() ) width.normalize();
@@ -1595,18 +1599,18 @@ draw_sidechains( GraphicsState & gs, utility::vector1< core::conformation::Resid
 
 	// detect disulfides...
 	Real const DISULFIDE_LENGTH_CUTOFF2( 3.0 * 3.0 );
-	for ( int m = start; m <= end; m++ ){
+	for ( int m = start; m <= end; m++ ) {
 		if ( residues[ m ]->aa() != core::chemical::aa_cys || !residues[ m ]->type().has( "SG" ) || residues[ m ]->type().atom_type_set().name() != "fa_standard" ) continue;
 		Size const i = residues[ m ]->atom_index( " SG " );
 		Vector const & xyz1 = residues[ m ]->xyz( i );
 
-		for ( int n = start; n <= end; n++ ){
+		for ( int n = start; n <= end; n++ ) {
 			if ( residues[ n ]->aa() != core::chemical::aa_cys || !residues[ n ]->type().has( "SG" ) || residues[ n ]->type().atom_type_set().name() != "fa_standard" ) continue;
 			Size const j = residues[ n ]->atom_index( " SG " );
 			Vector const & xyz2 = residues[ n ]->xyz( j );
 
 			Vector const bond( xyz2 - xyz1 );
-			if (bond.length_squared() > DISULFIDE_LENGTH_CUTOFF2 ) continue;
+			if ( bond.length_squared() > DISULFIDE_LENGTH_CUTOFF2 ) continue;
 
 			Vector width( cross( bond, z ) );
 			if ( width.length_squared() ) width.normalize();
@@ -1622,26 +1626,26 @@ draw_sidechains( GraphicsState & gs, utility::vector1< core::conformation::Resid
 			glVertex3fxyz ( xyz2 - width );
 			glVertex3fxyz ( xyz2 + width );
 			glEnd();
-	} // n
-} // m
+		} // n
+	} // m
 
 } // void draw_sidechains
 
 
 void draw_backbone(
-					GraphicsState & gs,
-					utility::vector1< core::conformation::ResidueCOP > const & residues,
-					utility::vector1< char > const & ss ) {
+	GraphicsState & gs,
+	utility::vector1< core::conformation::ResidueCOP > const & residues,
+	utility::vector1< char > const & ss ) {
 
 	switch( gs.BBdisplay_state ) {
-		case SHOW_BACKBONE:
-			draw_Calpha_trace( gs, residues, 1, residues.size() );
-			return;
-		case SHOW_CARTOON:
-			draw_secstruct( gs, residues, ss, 1, residues.size() );
-			return;
-		case SHOW_NOBB:
-			return;
+	case SHOW_BACKBONE :
+		draw_Calpha_trace( gs, residues, 1, residues.size() );
+		return;
+	case SHOW_CARTOON :
+		draw_secstruct( gs, residues, ss, 1, residues.size() );
+		return;
+	case SHOW_NOBB :
+		return;
 	}
 }
 
@@ -1666,7 +1670,7 @@ draw_sphere( GraphicsState & gs, utility::vector1< core::conformation::ResidueCO
 	for ( int i = 1; i <= nres; i++ ) {
 		conformation::Residue const & rsd = *(residues[i]);
 
-		if( rsd.aa() != chemical::aa_unk ) continue;
+		if ( rsd.aa() != chemical::aa_unk ) continue;
 
 		float const sphere_opacity ( rsd.is_protein() ? protein_sphere_opacity : ligand_sphere_opacity );
 		float const sphere_shininess ( rsd.is_protein() ? protein_sphere_shininess : ligand_sphere_shininess );
@@ -1691,27 +1695,29 @@ draw_sphere( GraphicsState & gs, utility::vector1< core::conformation::ResidueCO
 				static_cast<GLfloat>(atom_color[1]),
 				static_cast<GLfloat>(atom_color[2]),
 				1.0,
-			};
+				};
 			GLfloat specular_material[4] = {
 				atom_material[0] * sphere_opacity,
 				atom_material[1] * sphere_opacity,
 				atom_material[2] * sphere_opacity,
 				sphere_opacity,
-			};
+				};
 
 			// Highlight the nonprotein
 			if ( ! rsd.is_protein() ) {
-				for (int color = 0 ; color < 3 ; color++) {
+				for ( int color = 0 ; color < 3 ; color++ ) {
 					atom_material[color] *= 1.5;
-					if (atom_material[color] > 1.0)
+					if ( atom_material[color] > 1.0 ) {
 						atom_material[color] = 1.0;
+					}
 				}
-				if (atom_material[3] < 0.1)
+				if ( atom_material[3] < 0.1 ) {
 					atom_material[3] = 0.1;
+				}
 			}
-			if (atom_material[3] < 0.1) continue;
-			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,	 atom_material);
-			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,	 atom_material);
+			if ( atom_material[3] < 0.1 ) continue;
+			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  atom_material);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  atom_material);
 			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular_material);
 			glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &sphere_shininess);
 
@@ -1729,11 +1735,11 @@ draw_sphere( GraphicsState & gs, utility::vector1< core::conformation::ResidueCO
 				gluSphere(sphereObj, sphereRadius, SPHERE_SLICES, SPHERE_STACKS);
 				glEndList();
 			}
-			if( graphics::sphereDisplayList != 0) {
+			if ( graphics::sphereDisplayList != 0 ) {
 				//float sphereRadius, sphereScale(1.0);
 				const float scale_for_display_list(1.0);
 				float sphereScale = 1.0 * scale_for_display_list ;
-				float sphereRadius = sphereScale * 	rsd.atom_type_set()[ atom.type() ].lj_radius();
+				float sphereRadius = sphereScale *  rsd.atom_type_set()[ atom.type() ].lj_radius();
 				glScalef(sphereRadius, sphereRadius, sphereRadius);
 			}
 			glCallList(graphics::sphereDisplayList);
@@ -1753,10 +1759,10 @@ draw_sphere( GraphicsState & gs, utility::vector1< core::conformation::ResidueCO
 ////// electron density display functions
 //////
 void render_density(
-			GraphicsState &gs,
-			utility::vector1< triangle > &triangles) {
+	GraphicsState &gs,
+	utility::vector1< triangle > &triangles) {
 	// "on demand"
-	if (!gs.density_redraw) return;
+	if ( !gs.density_redraw ) return;
 
 	triangles.clear();
 
@@ -1766,9 +1772,9 @@ void render_density(
 
 	numeric::xyzVector_float vertex[3], normal[3];
 	numeric::xyzVector< core::Real> cart_vi[3], cart_ni[3];
-	while (tri_it.hasNext()) {
+	while ( tri_it.hasNext() ) {
 		tri_it.next( vertex, normal );
-		for (int j=0; j<3; ++j) {
+		for ( int j=0; j<3; ++j ) {
 			edm.idx2cart( vertex[j] , cart_vi[j] );
 			edm.idxoffset2cart( normal[j] , cart_ni[j] );
 			cart_ni[j].normalize();
@@ -1788,12 +1794,12 @@ bool operator < (const triangle&  left, const triangle&  right) {
 
 void
 display_density(
-			GraphicsState & /*gs*/,
-			utility::vector1< triangle > &triangles ) {
+	GraphicsState & /*gs*/,
+	utility::vector1< triangle > &triangles ) {
 	using namespace conformation;
 	using namespace chemical;
 
-	if (triangles.size() == 0) return;
+	if ( triangles.size() == 0 ) return;
 	//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );  // wireframe
 
 	glMatrixMode(GL_MODELVIEW);
@@ -1802,8 +1808,8 @@ display_density(
 	numeric::xyzVector_float const z( currentrotation[2], currentrotation[6], currentrotation[10] );
 
 	glPushAttrib(GL_ENABLE_BIT);
-  glEnable(GL_BLEND);                    //activate blending mode
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);    //define blending factors
+	glEnable(GL_BLEND);                    //activate blending mode
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);    //define blending factors
 	glEnable(GL_LIGHTING);
 	glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
 	glEnable ( GL_COLOR_MATERIAL ) ;
@@ -1811,7 +1817,7 @@ display_density(
 
 	// sort triangles back to front
 	core::Size const ntris = triangles.size();
-	for (core::Size i=1; i<=ntris; ++i) {
+	for ( core::Size i=1; i<=ntris; ++i ) {
 		triangles[i].update( z );
 	}
 
@@ -1822,7 +1828,7 @@ display_density(
 	glColor4f( color[0], color[1], color[2], 0.3 );
 
 	for ( Size i=1; i<=ntris; ++i ) {
-		for (Size j=0; j<3; ++j) {
+		for ( Size j=0; j<3; ++j ) {
 			glNormal3f ( triangles[i].normals_[j][0] , triangles[i].normals_[j][1] , triangles[i].normals_[j][2] );
 			glVertex3f ( triangles[i].vertices_[j][0], triangles[i].vertices_[j][1], triangles[i].vertices_[j][2] );
 		}
@@ -1835,11 +1841,11 @@ display_density(
 
 void
 draw_conformation_and_density(
-			utility::vector1< core::conformation::ResidueCOP > const & residues,
-			utility::vector1< char > const & ss,
-			utility::vector1< triangle > &triangles,
-			GraphicsState & gs,
-			Vector const & center )
+	utility::vector1< core::conformation::ResidueCOP > const & residues,
+	utility::vector1< char > const & ss,
+	utility::vector1< triangle > &triangles,
+	GraphicsState & gs,
+	Vector const & center )
 {
 
 	using namespace graphics;
@@ -1917,9 +1923,9 @@ fill_nres_for_graphics( GraphicsState & gs, utility::vector1< conformation::Resi
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void draw_conformation( utility::vector1< conformation::ResidueCOP > const & residues,
-                        utility::vector1< char > const & ss,
-                        GraphicsState & gs,
-			                  Vector const & center) {
+	utility::vector1< char > const & ss,
+	GraphicsState & gs,
+	Vector const & center) {
 
 	using namespace graphics;
 	//const int total_residue = residues.size();
@@ -1944,7 +1950,7 @@ void draw_conformation( utility::vector1< conformation::ResidueCOP > const & res
 	glTranslatef(-center.x(), -center.y(), -center.z());
 
 	utility::vector1< conformation::ResidueCOP > residues_protein, other_residues, residues_sphere;
-	for (Size n = 1; n <= residues.size(); n++ ){
+	for ( Size n = 1; n <= residues.size(); n++ ) {
 		conformation::ResidueCOP rsd = residues[ n ];
 		if ( rsd->is_protein() ) {
 			residues_protein.push_back( rsd );
@@ -1956,13 +1962,13 @@ void draw_conformation( utility::vector1< conformation::ResidueCOP > const & res
 	}
 
 	fill_nres_for_graphics( gs, residues );
-	if  ( residues_protein.size() > 0 ){
+	if  ( residues_protein.size() > 0 ) {
 		draw_backbone( gs, residues_protein, ss );
 		draw_sidechains( gs, residues_protein, 1, residues_protein.size() );
 		draw_sphere( gs, residues_protein );
 	}
 
-	if ( other_residues.size() > 0 ){
+	if ( other_residues.size() > 0 ) {
 		ColorMode colormode_save = gs.Color_mode;
 		gs.Color_mode = RHIJU_COLOR;
 		display_residues_wireframe( gs, other_residues, Vector( 0.0, 0.0, 0.0) );
@@ -2000,13 +2006,13 @@ get_center( utility::vector1< conformation::ResidueCOP > const & residues ){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void draw_pose(
-					const core::pose::Pose & pose,
-					GraphicsState & gs) {
+	const core::pose::Pose & pose,
+	GraphicsState & gs) {
 	core::Size nres = pose.total_residue();
 	utility::vector1< char > ss(nres);
 	utility::vector1< conformation::ResidueCOP > residues(nres);
 
-	for (int i=1; i<=(int)pose.total_residue(); ++i) {
+	for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
 		ss[i] = pose.secstruct(i);
 		residues[i] = pose.residue(i).get_self_ptr();
 	}

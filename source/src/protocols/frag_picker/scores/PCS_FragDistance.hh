@@ -39,8 +39,8 @@ public:
 	/// @brief  creates a Calpha distance based scoring function.
 	/// @details Scores distance matches for short range disulfides (ie: within fragment)
 	PCS_FragDistance(Size priority, Real lowest_acceptable_value, bool use_lowest,
-									 ObjexxFCL::FArray2D_double target_ca_dev,
-									 ObjexxFCL::FArray2D_double target_ca_dist, Size largest_fragment, Size max_length);
+		ObjexxFCL::FArray2D_double target_ca_dev,
+		ObjexxFCL::FArray2D_double target_ca_dist, Size largest_fragment, Size max_length);
 
 	void do_caching(VallChunkOP);
 	void clean_up();

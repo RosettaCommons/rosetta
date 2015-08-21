@@ -40,8 +40,8 @@ GenericResidueConnectionData::set_dist_to_connect_point(
 	Size connection_dist
 )
 {
-debug_assert( connpoint > 0 );
-	if ( connpoint > path_distances_to_connection_points_.size()) {
+	debug_assert( connpoint > 0 );
+	if ( connpoint > path_distances_to_connection_points_.size() ) {
 		path_distances_to_connection_points_.resize( connpoint );
 	}
 	path_distances_to_connection_points_[ connpoint ] = connection_dist;
@@ -54,7 +54,7 @@ void CountPairDataGeneric::set_dist_to_connect_point(
 	Size connection_dist
 )
 {
-debug_assert( entry > 0);
+	debug_assert( entry > 0);
 	if ( entry > residue_connection_data_.size() ) {
 		residue_connection_data_.resize(entry);
 	}
@@ -70,7 +70,7 @@ void CountPairDataGeneric::print( std::ostream & os ) const
 {
 	os << "CountPairDataGeneric, " << residue_connection_data_.size() << " conections:\n";
 	for ( Size ii = 1; ii <= residue_connection_data_.size(); ++ii ) {
-	   os << ii << " :";
+		os << ii << " :";
 		for ( Size jj = 1; jj <= residue_connection_data_[ ii ].size(); ++jj ) {
 			os << " " << residue_connection_data_[ ii ][ jj ];
 		}
@@ -81,11 +81,11 @@ void CountPairDataGeneric::print( std::ostream & os ) const
 
 /*void
 CountPairDataGeneric::set_count_pair_data_to_use(
-	Size connection_id
+Size connection_id
 ) const
 {
 debug_assert( connection_id > 0 && connection_id <= residue_connection_data_.size());
-	data_at_hand_ = &residue_connection_data_[ connection_id  ];
+data_at_hand_ = &residue_connection_data_[ connection_id  ];
 }
 */
 

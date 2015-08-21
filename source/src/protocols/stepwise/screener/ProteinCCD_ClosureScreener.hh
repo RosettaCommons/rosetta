@@ -24,36 +24,36 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	class ProteinCCD_ClosureScreener: public SampleApplier {
+class ProteinCCD_ClosureScreener: public SampleApplier {
 
-	public:
+public:
 
-		//constructor
-		ProteinCCD_ClosureScreener( modeler::protein::loop_close::StepWiseProteinCCD_CloserOP ccd_closer,
-																pose::Pose & screening_pose );
+	//constructor
+	ProteinCCD_ClosureScreener( modeler::protein::loop_close::StepWiseProteinCCD_CloserOP ccd_closer,
+		pose::Pose & screening_pose );
 
-		//destructor
-		~ProteinCCD_ClosureScreener();
+	//destructor
+	~ProteinCCD_ClosureScreener();
 
-	public:
+public:
 
-		std::string
-		name() const { return "ProteinCCD_ClosureScreener"; }
+	std::string
+	name() const { return "ProteinCCD_ClosureScreener"; }
 
-		StepWiseScreenerType
-		type() const { return PROTEIN_CCD_CLOSURE; }
+	StepWiseScreenerType
+	type() const { return PROTEIN_CCD_CLOSURE; }
 
-		bool
-		check_screen();
+	bool
+	check_screen();
 
-		void
-		add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
+	void
+	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
 
-	private:
+private:
 
-		modeler::protein::loop_close::StepWiseProteinCCD_CloserOP ccd_closer_;
+	modeler::protein::loop_close::StepWiseProteinCCD_CloserOP ccd_closer_;
 
-	};
+};
 
 } //screener
 } //stepwise

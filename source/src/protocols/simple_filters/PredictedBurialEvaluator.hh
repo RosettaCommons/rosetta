@@ -29,8 +29,8 @@ namespace simple_filters {
 class PredictedBurialEvaluator : public evaluation::SingleValuePoseEvaluator< core::Real > {
 public:
 	PredictedBurialEvaluator(
-	std::string const & fn
-);
+		std::string const & fn
+	);
 
 	~PredictedBurialEvaluator();
 

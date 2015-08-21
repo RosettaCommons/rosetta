@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
- //////////////////////////////////////////////
- /// @file PseudocontactShiftEnergyController.hh
- ///
- /// @authorv Christophe Schmitz & Oliver Lange
- ///
- ////////////////////////////////////////////////
+//////////////////////////////////////////////
+/// @file PseudocontactShiftEnergyController.hh
+///
+/// @authorv Christophe Schmitz & Oliver Lange
+///
+////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_topology_broker_PseudocontactShiftEnergyController_hh
 #define INCLUDED_protocols_topology_broker_PseudocontactShiftEnergyController_hh
@@ -67,7 +67,7 @@ public:
 	//virtual void set_defaults(); //eg before reading starts.
 
 	virtual void add_mover(
-    moves::RandomMover& /* random_mover */,
+		moves::RandomMover& /* random_mover */,
 		core::pose::Pose const& /*pose*/,
 		abinitio::StageID /*stageID*/, /* abinitio sampler stage */
 		core::scoring::ScoreFunction const& /*scorefxn*/,

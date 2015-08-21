@@ -86,13 +86,13 @@
 #include <numeric/xyzVector.fwd.hh>
 
 #ifdef WIN32
-	#include <core/pose/signals/ConformationEvent.hh>
-	#include <core/pose/signals/DestructionEvent.hh>
-	#include <core/pose/signals/EnergyEvent.hh>
-	#include <core/pose/signals/GeneralEvent.hh>
-	#include <core/conformation/Residue.hh>
-	#include <core/pose/datacache/CacheableObserver.hh>
-	#include <core/id/AtomID.hh>
+#include <core/pose/signals/ConformationEvent.hh>
+#include <core/pose/signals/DestructionEvent.hh>
+#include <core/pose/signals/EnergyEvent.hh>
+#include <core/pose/signals/GeneralEvent.hh>
+#include <core/conformation/Residue.hh>
+#include <core/pose/datacache/CacheableObserver.hh>
+#include <core/id/AtomID.hh>
 #endif
 
 // C++ Headers
@@ -108,7 +108,7 @@ namespace pose {
 
 /** @details
 
-  The Pose class represents a molecular system (protein-dna-ligand...)
+The Pose class represents a molecular system (protein-dna-ligand...)
 as a container of Rosetta Residue objects together with
 a Conformation object that defines how internal coordinate changes
 propagate through the system and an Energies object that stores
@@ -118,34 +118,34 @@ information from the last energy evaluation.
 The main responsibilities of the pose are:
 
 @li  Kinematic:
-  (a) to update the xyz coordinates in response to changes to internal
-      degrees of freedom, and
-  (b) to update internal coordinates when the user modifes the xyz
-      (Cartesian) coords,
+(a) to update the xyz coordinates in response to changes to internal
+degrees of freedom, and
+(b) to update internal coordinates when the user modifes the xyz
+(Cartesian) coords,
 
 @li  Scoring:
-  (a) to keep track of what parts of the structure have changed since
-      the last score evaluation, and
-  (b) to cache residue and residue-pair energies for efficient re-use
+(a) to keep track of what parts of the structure have changed since
+the last score evaluation, and
+(b) to cache residue and residue-pair energies for efficient re-use
 
 @li As a container:
-  The pose provides a single object for passing
-  a molecular system and for copying of entire molecules
-  or stretches of molecules from one Pose object into another.
+The pose provides a single object for passing
+a molecular system and for copying of entire molecules
+or stretches of molecules from one Pose object into another.
 
 
 Output Methods:
 Common Methods:
-    Pose.assign
-    Pose.atom_tree
-    Pose.conformation
-    Pose.dump_pdb
-    Pose.energies
-    Pose.fold_tree
-    Pose.pdb_info
-    Pose.residue
-    Pose.sequence
-    Pose.total_residue
+Pose.assign
+Pose.atom_tree
+Pose.conformation
+Pose.dump_pdb
+Pose.energies
+Pose.fold_tree
+Pose.pdb_info
+Pose.residue
+Pose.sequence
+Pose.total_residue
 **/
 class Pose : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Pose >
 {
@@ -172,12 +172,12 @@ public:
 public:
 
 	/// @brief default constructor, builds an empty pose
-    ///
-    /// AtomTree      default   /bonding information
-    /// Conformation  default   /change propagation
-    /// Energies      default   /contains pose energy information
-    /// FoldTree      default   /directs building of Pose
-    /// Residue       default   /container of individual Residue objects
+	///
+	/// AtomTree      default   /bonding information
+	/// Conformation  default   /change propagation
+	/// Energies      default   /contains pose energy information
+	/// FoldTree      default   /directs building of Pose
+	/// Residue       default   /container of individual Residue objects
 	Pose();
 
 	/// @brief destructor -- > kill data on the heap
@@ -215,12 +215,12 @@ public:
 	// tree builders / modifiers
 
 	/// @brief Returns the pose Conformation (const-access)
-    ///
-    /// example(s):
-    ///     pose.Conformation()
-    /// See also:
-    ///     Pose
-    ///     Conformation
+	///
+	/// example(s):
+	///     pose.Conformation()
+	/// See also:
+	///     Pose
+	///     Conformation
 	Conformation const &
 	conformation() const
 	{
@@ -290,7 +290,7 @@ public:
 	/// See also:
 	///     Pose
 	///     Pose.annotated_sequence
-	///	Pose.chain_sequence
+	/// Pose.chain_sequence
 	///     Pose.fold_tree
 	///     Pose.sequence
 	///     FoldTree
@@ -342,7 +342,7 @@ public:
 
 	ConstraintSetCOP
 	constraint_set() const;
-	
+
 	/// @brief adding a constraint is done by cloning the input constraint. A const copy is then returned
 	scoring::constraints::ConstraintCOP
 	add_constraint( scoring::constraints::ConstraintCOP cst );
@@ -372,7 +372,7 @@ public:
 
 	void transfer_constraint_set( const pose::Pose &pose );
 
-//////////////////////////////// ReferencePose and ReferencePoseSet methods /////////////////////////////////////
+	//////////////////////////////// ReferencePose and ReferencePoseSet methods /////////////////////////////////////
 
 	/// @brief Create a new reference pose from the current state of the pose.
 	/// @details If a ReferencePoseSet object does not exist, this function will create it.
@@ -385,7 +385,7 @@ public:
 	/// @brief Const-access the ReferencePoseSet object.
 	/// @details If a ReferencePoseSet object does not exist, this function will throw an error.
 	core::pose::reference_pose::ReferencePoseSetCOP reference_pose_set_cop() const;
-	
+
 	/// @brief Returns the index of a residue in this pose corresponding to a residue in a reference pose.
 	/// @details Throws an error if the reference pose with the given name doesn't exist, or the residue number
 	/// doesn't exist in that reference pose.  Returns zero if no corresponding residue exists in this pose (e.g.
@@ -398,17 +398,17 @@ public:
 
 	/// @brief Find all mappings in the new pose after seqpos in all ReferencePose objects, and decrement them by 1.
 	/// @details If there is no ReferencePose object, do nothing.
-	void decrement_reference_pose_mapping_after_seqpos( core::Size const seqpos ); 
+	void decrement_reference_pose_mapping_after_seqpos( core::Size const seqpos );
 
 	/// @brief Find all mappings in the new pose to seqpos in all ReferencePose objects, and set them to point to residue 0 (deletion signal).
 	/// @details If there is no ReferencePose object, do nothing.
 	void zero_reference_pose_mapping_at_seqpos( core::Size const seqpos );
-	
+
 	/// @brief Returns true if a pose has at least one reference pose, false otherwise.
 	///
 	bool has_reference_pose() const;
 
-//////////////////////////////// PDBInfo methods /////////////////////////////////////
+	//////////////////////////////// PDBInfo methods /////////////////////////////////////
 
 	/// @brief Returns the pose PDBInfo (const)
 	///
@@ -418,8 +418,8 @@ public:
 	///     Pose
 	///     Energies
 	///     PDBInfo
-	///	ScoreFunction
-	///	pose_from_pdb
+	/// ScoreFunction
+	/// pose_from_pdb
 	/// @return NULL if no PDBInfo instance exists, the pdb info instance otherwise
 	PDBInfoCOP
 	pdb_info() const;
@@ -500,15 +500,15 @@ public:
 	/// @brief Adds  <new_rsd_in>  to pose at  <seqpos>
 	void
 	insert_residue_by_bond(
-                           Residue const & new_rsd_in,
-                           Size const seqpos, // desired seqpos of new_rsd
-                           Size anchor_pos, // in the current sequence numbering, ie before insertion of seqpos
-                           bool const build_ideal_geometry = false,
-                           std::string const& anchor_atom = "",
-                           std::string const& root_atom = "",
-                           bool new_chain = false, // insert this residue as a new chain, displacing all downstream chains
-                           bool const lookup_bond_length = false
-   );
+		Residue const & new_rsd_in,
+		Size const seqpos, // desired seqpos of new_rsd
+		Size anchor_pos, // in the current sequence numbering, ie before insertion of seqpos
+		bool const build_ideal_geometry = false,
+		std::string const& anchor_atom = "",
+		std::string const& root_atom = "",
+		bool new_chain = false, // insert this residue as a new chain, displacing all downstream chains
+		bool const lookup_bond_length = false
+	);
 
 	/// @brief Replaces the residue at  <seqpos>  with  <new_rsd_in>
 	void
@@ -558,8 +558,8 @@ public:
 
 	/// @brief Delete a range of residues in the pose.
 	/// @details Calls confromation::delete_residue_range_slow().  Also, updates
-  /// reference poses, if present.
-	void delete_residue_range_slow( Size const start, Size const end); 
+	/// reference poses, if present.
+	void delete_residue_range_slow( Size const start, Size const end);
 
 	/// @brief Copy a stretch of coordinates/torsions from  <src>
 	/// to pose
@@ -627,8 +627,8 @@ public:
 
 	/// @brief Returns the total number of atoms in the pose conformation
 	/// example:
-	///			pose.total_atoms()
-    Size total_atoms() const;
+	///   pose.total_atoms()
+	Size total_atoms() const;
 
 	/// @brief Returns the total number of atoms in the pose
 	/// up to a particular residue
@@ -641,7 +641,7 @@ public:
 	/// See also:
 	///     Pose
 	///     Pose.clear
-	///	Pose.sequence
+	/// Pose.sequence
 	///     Pose.total_residue
 	bool
 	empty() const;
@@ -665,7 +665,7 @@ public:
 	///     pose.aa(17)
 	/// See also:
 	///     Pose
-	///	Pose.Residue
+	/// Pose.Residue
 	///     Pose.sequence
 	///     Residue
 	chemical::AA
@@ -740,7 +740,7 @@ public:
 	///     Pose
 	///     Pose.sequence
 	///     Pose.total_residue
-	///	Residue
+	/// Residue
 	std::string
 	annotated_sequence( bool show_all_variants = false ) const;
 
@@ -755,7 +755,7 @@ public:
 	///     Pose.sequence
 	std::string
 	chain_sequence( core::Size const chain_in ) const;
-	
+
 	/// @brief Returns the Residue at position  <seqpos>  (read access)
 	/// Note: this method will trigger a refold if either the
 	/// torsions or the coordinates are out-of-date
@@ -1572,9 +1572,9 @@ private:
 
 	// the kinematics object, wraps a fold_tree and an atom_tree
 	/*
-		 responsible for updating Residue coords in response to changes
-		 in the internal coordinates
-		 also keeps track of what has changed since last update neighbors call
+	responsible for updating Residue coords in response to changes
+	in the internal coordinates
+	also keeps track of what has changed since last update neighbors call
 	*/
 	ConformationOP conformation_;
 
@@ -1604,7 +1604,7 @@ private:
 
 	// constraint set
 	ConstraintSetOP constraint_set_;
-	
+
 	/// @brief The set of ReferencePose objects that this pose stores.
 	/// @details By default, this owning pointer is null, and there is next to no memory overhead
 	/// associated with having it here.

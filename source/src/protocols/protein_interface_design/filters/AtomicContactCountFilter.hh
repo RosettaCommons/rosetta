@@ -47,11 +47,11 @@ public:
 	// @brief Filter name
 	virtual std::string name() const { return "AtomicContactCountFilter"; }
 
-		void initialize_all_atoms( core::pack::task::TaskFactoryOP task_factoryA = NULL, bool individual_tasks = false, core::pack::task::TaskFactoryOP task_factoryB = NULL, bool normalize_by_carbon_count = false);
+	void initialize_all_atoms( core::pack::task::TaskFactoryOP task_factoryA = NULL, bool individual_tasks = false, core::pack::task::TaskFactoryOP task_factoryB = NULL, bool normalize_by_carbon_count = false);
 
-		void initialize_cross_jump(core::Size jump = 0, std::string sym_dof_name = "", core::pack::task::TaskFactoryOP task_factoryA = NULL, bool normalize_by_sasa = false, bool individual_tasks = false, core::pack::task::TaskFactoryOP task_factoryB = NULL, bool normalize_by_carbon_count = false);
+	void initialize_cross_jump(core::Size jump = 0, std::string sym_dof_name = "", core::pack::task::TaskFactoryOP task_factoryA = NULL, bool normalize_by_sasa = false, bool individual_tasks = false, core::pack::task::TaskFactoryOP task_factoryB = NULL, bool normalize_by_carbon_count = false);
 
-		void initialize_cross_chain( core::pack::task::TaskFactoryOP task_factoryA = NULL, bool normalize_by_sasa = false, bool detect_chains_for_interface_by_task = false, bool individual_tasks = false, core::pack::task::TaskFactoryOP task_factoryB = NULL, bool normalize_by_carbon_count = false);
+	void initialize_cross_chain( core::pack::task::TaskFactoryOP task_factoryA = NULL, bool normalize_by_sasa = false, bool detect_chains_for_interface_by_task = false, bool individual_tasks = false, core::pack::task::TaskFactoryOP task_factoryB = NULL, bool normalize_by_carbon_count = false);
 
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
@@ -70,11 +70,11 @@ private:
 	// and compute the sasa value there.
 	enum Mode { ALL, CROSS_CHAIN_DETECTED, CROSS_CHAIN_ALL, CROSS_JUMP };
 
-		core::pack::task::TaskFactoryOP task_factoryA_, task_factoryB_;
-		core::Real distance_cutoff_;
+	core::pack::task::TaskFactoryOP task_factoryA_, task_factoryB_;
+	core::Real distance_cutoff_;
 
-		Mode filter_mode_;
-		bool normalize_by_sasa_, ss_only_, normalize_by_carbon_count_, individual_tasks_;
+	Mode filter_mode_;
+	bool normalize_by_sasa_, ss_only_, normalize_by_carbon_count_, individual_tasks_;
 
 	core::Size jump_;
 	std::string sym_dof_name_;

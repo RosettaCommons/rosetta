@@ -86,7 +86,7 @@ JumpAtom::set_dof(
 	Real const value
 )
 {
-debug_assert( parent().get() != 0 );
+	debug_assert( parent().get() != 0 );
 	int const n2c(1);
 	int const rb_no( get_rb_number( type ) );
 	if ( rb_no == 0 ) {
@@ -158,7 +158,7 @@ JumpAtom::copy_coords(
 
 	int i(0);
 	for ( Atoms_Iterator it= atoms_begin(), it_end= atoms_end();
-				it != it_end; ++it, ++i ) {
+			it != it_end; ++it, ++i ) {
 		(*it)->copy_coords( *(src.child(i) ) );
 	}
 }
@@ -183,7 +183,7 @@ JumpAtom::update_xyz_coords(
 	Stub & stub // in fact is const
 )
 {
-debug_assert( stub.is_orthogonal( 1e-3 ) );
+	debug_assert( stub.is_orthogonal( 1e-3 ) );
 
 	Stub new_stub;
 	jump_.make_jump( stub, new_stub );
@@ -194,7 +194,7 @@ debug_assert( stub.is_orthogonal( 1e-3 ) );
 	//std::cout << "stub: " << new_stub << std::endl;
 
 	for ( Atoms_Iterator it= atoms_begin(), it_end= atoms_end();
-				it != it_end; ++it ) {
+			it != it_end; ++it ) {
 		(*it)->update_xyz_coords( new_stub );
 	}
 	note_xyz_uptodate();
@@ -206,11 +206,11 @@ debug_assert( stub.is_orthogonal( 1e-3 ) );
 /// @note The input stub is not changed.
 void
 JumpAtom::update_internal_coords(
-		Stub & stub,
-		bool const recursive // = true
+	Stub & stub,
+	bool const recursive // = true
 )
 {
-debug_assert( stub.is_orthogonal( 1e-3 ) );
+	debug_assert( stub.is_orthogonal( 1e-3 ) );
 
 	Stub new_stub( get_stub() );
 
@@ -219,7 +219,7 @@ debug_assert( stub.is_orthogonal( 1e-3 ) );
 
 	if ( recursive ) {
 		for ( Atoms_Iterator it= atoms_begin(), it_end= atoms_end();
-					it != it_end; ++it ) {
+				it != it_end; ++it ) {
 			(*it)->update_internal_coords( new_stub );
 		}
 	}
@@ -246,7 +246,7 @@ JumpAtom::clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const
 
 	// copy atoms
 	for ( Atoms_ConstIterator it= atoms_begin(), it_end= atoms_end();
-				it != it_end; ++it ) {
+			it != it_end; ++it ) {
 		new_me->append_atom( (*it)->clone( AtomAP(new_me), atom_pointer ) );
 	}
 
@@ -272,7 +272,7 @@ JumpAtom::setup_min_map(
 		DOF_Type const & type( id::get_rb_type(k) );
 		DOF_ID rb_torsion( id(), type );
 		if ( allow_move[ rb_torsion ] && !keep_dof_fixed( type ) ) {
-		debug_assert( parent().get() != 0 ); // root DOFs don't move
+			debug_assert( parent().get() != 0 ); // root DOFs don't move
 			min_map.add_torsion( rb_torsion, last_torsion_local );
 			last_torsion_local = rb_torsion;
 		}
@@ -282,7 +282,7 @@ JumpAtom::setup_min_map(
 	min_map.add_atom( id(), last_torsion_local );
 
 	for ( Atoms_ConstIterator it= atoms_begin(), it_end= atoms_end();
-				it != it_end; ++it ) {
+			it != it_end; ++it ) {
 		(*it)->setup_min_map( last_torsion_local, allow_move, min_map );
 	}
 }

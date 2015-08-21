@@ -69,8 +69,8 @@ public:
 		ScoreFunction const & scorefxn,
 		EnergyMap & totals
 	) const;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 
 	virtual
@@ -81,7 +81,7 @@ core::Size version() const;
 	void
 	indicate_required_context_graphs(
 		utility::vector1< bool > & /*context_graphs_required*/
-																	 ) const {};
+	) const {};
 
 
 private:
@@ -107,7 +107,7 @@ private:
 	void output_local_prediction(pose::Pose & pose, ObjexxFCL::FArray1D< Real > & proq,std::string name) const;
 	void calculate_feature_vector(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & feature_vector) const;
 	void calculate_feature_vector_proq2(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & feature_vector) const;
-	Size read_profiles_and_entropy(std::string profile,	std::string mtxfile);
+	Size read_profiles_and_entropy(std::string profile, std::string mtxfile);
 	void read_zpred(std::string zpredfile);
 	void read_mpSA(std::string mpSAfile);
 	void read_acc(std::string accfile);

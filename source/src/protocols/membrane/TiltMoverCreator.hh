@@ -9,11 +9,11 @@
 
 /// @file       protocols/membrane/TiltMoverCreator.hh
 /// @brief      Tilts a protein in the membrane (Rosetta Scripts Hook)
-/// @details	Tilts a span, protein or part of a pose in the membrane,
-///				depending on the jump number. The tilt axis is the axis
-///				perpendicular to the axis connecting the embedding centers of the
-///				two partners;
-///				BEWARE: CANNOT USE MEMBRANE JUMP AS JUMP NUMBER!!!
+/// @details Tilts a span, protein or part of a pose in the membrane,
+///    depending on the jump number. The tilt axis is the axis
+///    perpendicular to the axis connecting the embedding centers of the
+///    two partners;
+///    BEWARE: CANNOT USE MEMBRANE JUMP AS JUMP NUMBER!!!
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_TiltMoverCreator_hh
@@ -27,13 +27,13 @@ namespace membrane {
 
 /// @brief Mover Creator
 class TiltMoverCreator : public protocols::moves::MoverCreator {
-	
+
 public:
-	
+
 	virtual protocols::moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
 	static std::string mover_name();
-	
+
 };
 
 } // membrane

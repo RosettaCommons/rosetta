@@ -27,7 +27,7 @@ class FragmentScoreMap;
 
 typedef utility::pointer::shared_ptr<FragmentScoreMap> FragmentScoreMapOP;
 typedef utility::pointer::shared_ptr<FragmentScoreMap const>
-		FragmentScoreMapCOP;
+	FragmentScoreMapCOP;
 
 } // scores
 } // frag_picker

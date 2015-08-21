@@ -67,75 +67,76 @@ StoreCombinedStoredTasksMover::apply( core::pose::Pose & pose )
 		core::Size total_residue;
 		// Grab a reference to the data and check that the user-defined tasks are present.
 		protocols::toolbox::task_operations::STMStoredTask & stored_tasks = *( utility::pointer::static_pointer_cast< protocols::toolbox::task_operations::STMStoredTask > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) ) );
-		if (!stored_tasks.has_task(task1_)) {
+		if ( !stored_tasks.has_task(task1_) ) {
 			utility_exit_with_message("No stored task with the name " + task1_ + " found");
-		} else if (!stored_tasks.has_task(task2_)) {
+		} else if ( !stored_tasks.has_task(task2_) ) {
 			utility_exit_with_message("No stored task with the name " + task2_ + " found");
 		} else {
 			// Only need to go through the asymmetric unit if the pose is symmetric.
-			if(core::pose::symmetry::is_symmetric( pose )) { 
+			if ( core::pose::symmetry::is_symmetric( pose ) ) {
 				core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 				total_residue = symm_info->num_independent_residues();
 			} else {
-				total_residue = pose.total_residue(); 
+				total_residue = pose.total_residue();
 			}
 		}
 		// Loop throught the residues and determine the state of each residue for each retrieved task.
 		// The logic applies to the packable positions.
-		// Ex. if invert=false and operator=AND, then only those residues that were packable in task1 AND task2 will be packable in the new task. 
-		// Ex. if invert=true and operator=AND, then only those residues that were not packable in task1 AND task2 will be packable in the new task. 
+		// Ex. if invert=false and operator=AND, then only those residues that were packable in task1 AND task2 will be packable in the new task.
+		// Ex. if invert=true and operator=AND, then only those residues that were not packable in task1 AND task2 will be packable in the new task.
 		std::string select_packable_pos("select design_positions, resi ");
-		for( core::Size resi=1; resi<=total_residue; ++resi ){
+		for ( core::Size resi=1; resi<=total_residue; ++resi ) {
 			// If taking the intersection, then prevent repacking at all residues except those that were packable in both task1 AND task2.
 			if ( !invert_ && operator_ == "AND" ) {
-				if( !(stored_tasks.get_task( task1_ )->being_packed( resi ) && stored_tasks.get_task( task2_ )->being_packed( resi )) ) {
-      		task->nonconst_residue_task(resi).prevent_repacking();
+				if ( !(stored_tasks.get_task( task1_ )->being_packed( resi ) && stored_tasks.get_task( task2_ )->being_packed( resi )) ) {
+					task->nonconst_residue_task(resi).prevent_repacking();
 				} else {
-					select_packable_pos.append(ObjexxFCL::string_of(resi) + "+");   
-				} 
-			// If taking the inverse of the intersection, then prevent repacking at all residues that were packable in both task1 AND task2.
+					select_packable_pos.append(ObjexxFCL::string_of(resi) + "+");
+				}
+				// If taking the inverse of the intersection, then prevent repacking at all residues that were packable in both task1 AND task2.
 			} else if ( invert_ && operator_ == "AND" ) {
-				if( (stored_tasks.get_task( task1_ )->being_packed( resi ) && stored_tasks.get_task( task2_ )->being_packed( resi )) ) {
-      		task->nonconst_residue_task(resi).prevent_repacking();
+				if ( (stored_tasks.get_task( task1_ )->being_packed( resi ) && stored_tasks.get_task( task2_ )->being_packed( resi )) ) {
+					task->nonconst_residue_task(resi).prevent_repacking();
 				} else {
-					select_packable_pos.append(ObjexxFCL::string_of(resi) + "+");   
+					select_packable_pos.append(ObjexxFCL::string_of(resi) + "+");
 				}
-			// If taking the union, then prevent repacking at all residues except those that were packable in task1 OR task2.
+				// If taking the union, then prevent repacking at all residues except those that were packable in task1 OR task2.
 			} else if ( !invert_ && operator_ == "OR" ) {
-				if( !(stored_tasks.get_task( task1_ )->being_packed( resi ) || stored_tasks.get_task( task2_ )->being_packed( resi )) ) {
-      		task->nonconst_residue_task(resi).prevent_repacking();
+				if ( !(stored_tasks.get_task( task1_ )->being_packed( resi ) || stored_tasks.get_task( task2_ )->being_packed( resi )) ) {
+					task->nonconst_residue_task(resi).prevent_repacking();
 				} else {
-					select_packable_pos.append(ObjexxFCL::string_of(resi) + "+");   
+					select_packable_pos.append(ObjexxFCL::string_of(resi) + "+");
 				}
-			// If taking the inverse of the union, then prevent repacking at all residues that were packable in task1 OR task2.
+				// If taking the inverse of the union, then prevent repacking at all residues that were packable in task1 OR task2.
 			} else if ( invert_ && operator_ == "OR" ) {
-				if( (stored_tasks.get_task( task1_ )->being_packed( resi ) || stored_tasks.get_task( task2_ )->being_packed( resi )) ) {
-      		task->nonconst_residue_task(resi).prevent_repacking();
+				if ( (stored_tasks.get_task( task1_ )->being_packed( resi ) || stored_tasks.get_task( task2_ )->being_packed( resi )) ) {
+					task->nonconst_residue_task(resi).prevent_repacking();
 				} else {
-					select_packable_pos.append(ObjexxFCL::string_of(resi) + "+");   
+					select_packable_pos.append(ObjexxFCL::string_of(resi) + "+");
 				}
-			// If taking the relative complement of task1 in task2, then prevent repacking at all residues that are in task2 and not task1 only. 
+				// If taking the relative complement of task1 in task2, then prevent repacking at all residues that are in task2 and not task1 only.
 			} else if ( !invert_ && operator_ == "NOT" ) {
-				if( !(stored_tasks.get_task( task1_ )->being_packed( resi ) && !stored_tasks.get_task( task2_ )->being_packed( resi )) ) {
-      		task->nonconst_residue_task(resi).prevent_repacking();
+				if ( !(stored_tasks.get_task( task1_ )->being_packed( resi ) && !stored_tasks.get_task( task2_ )->being_packed( resi )) ) {
+					task->nonconst_residue_task(resi).prevent_repacking();
 				} else {
-					select_packable_pos.append(ObjexxFCL::string_of(resi) + "+");   
+					select_packable_pos.append(ObjexxFCL::string_of(resi) + "+");
 				}
-			// If taking the relative complement of task2 in task1, then prevent repacking at all residues that are in task1 and not task2 only. 
+				// If taking the relative complement of task2 in task1, then prevent repacking at all residues that are in task1 and not task2 only.
 			} else if ( invert_ && operator_ == "NOT" ) {
-				if( (stored_tasks.get_task( task1_ )->being_packed( resi ) && !stored_tasks.get_task( task2_ )->being_packed( resi )) ) {
-      		task->nonconst_residue_task(resi).prevent_repacking();
+				if ( (stored_tasks.get_task( task1_ )->being_packed( resi ) && !stored_tasks.get_task( task2_ )->being_packed( resi )) ) {
+					task->nonconst_residue_task(resi).prevent_repacking();
 				} else {
-					select_packable_pos.append(ObjexxFCL::string_of(resi) + "+");   
+					select_packable_pos.append(ObjexxFCL::string_of(resi) + "+");
 				}
-			}	else {
+			} else {
 				utility_exit_with_message("Error: " + operator_ + " is not a valid option for the logic of the StoreCombinedStoredTaskMover.");
 			}
 		}
 		TR << select_packable_pos << std::endl;
 		// Store the new combined tasks in the cachebable data of the pose.
-		if (core::pose::symmetry::is_symmetric(pose))
+		if ( core::pose::symmetry::is_symmetric(pose) ) {
 			core::pack::make_symmetric_PackerTask_by_truncation(pose, task); // Does this need to be fixed or omitted?
+		}
 		// If you haven't set overwrite to true and your task name already exists, fail. Otherwise, put the task you've made into the data cache.
 		if ( overwrite_ || !stored_tasks.has_task(task_name_) ) {
 			stored_tasks.set_task( task, task_name_ );

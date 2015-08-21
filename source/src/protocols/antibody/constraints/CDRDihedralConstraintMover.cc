@@ -59,9 +59,9 @@ static thread_local basic::Tracer TR("protocols.antibody.constraints.CDRDihedral
 namespace protocols {
 namespace antibody {
 namespace constraints {
-	using utility::vector1;
-	using namespace protocols::moves;
-	using namespace protocols::antibody::clusters;
+using utility::vector1;
+using namespace protocols::moves;
+using namespace protocols::antibody::clusters;
 
 CDRDihedralConstraintMover::CDRDihedralConstraintMover() :
 	protocols::moves::Mover("CDRDihedralConstraintMover"),
@@ -93,21 +93,21 @@ CDRDihedralConstraintMover::~CDRDihedralConstraintMover() {}
 
 CDRDihedralConstraintMover::CDRDihedralConstraintMover(CDRDihedralConstraintMover const & src) :
 	protocols::moves::Mover(src),
-		ab_info_(src.ab_info_),
-		cdr_(src.cdr_),
-		db_base_path_(src.db_base_path_),
-		cdr_is_set_(src.cdr_is_set_),
-		forced_cluster_(src.forced_cluster_),
-		force_cluster_(src.force_cluster_),
-		use_cluster_csts_(src.use_cluster_csts_),
-		use_outliers_(src.use_outliers_),
-		use_mean_cst_data_(src.use_mean_cst_data_),
-		use_general_csts_on_failure_(src.use_general_csts_on_failure_),
-		use_cluster_for_H3_(src.use_cluster_for_H3_),
-		ignore_pose_datacache_(src.ignore_pose_datacache_),
-		cluster_data_cutoff_(src.cluster_data_cutoff_),
-		general_phi_sd_(src.general_phi_sd_),
-		general_psi_sd_(src.general_psi_sd_)
+	ab_info_(src.ab_info_),
+	cdr_(src.cdr_),
+	db_base_path_(src.db_base_path_),
+	cdr_is_set_(src.cdr_is_set_),
+	forced_cluster_(src.forced_cluster_),
+	force_cluster_(src.force_cluster_),
+	use_cluster_csts_(src.use_cluster_csts_),
+	use_outliers_(src.use_outliers_),
+	use_mean_cst_data_(src.use_mean_cst_data_),
+	use_general_csts_on_failure_(src.use_general_csts_on_failure_),
+	use_cluster_for_H3_(src.use_cluster_for_H3_),
+	ignore_pose_datacache_(src.ignore_pose_datacache_),
+	cluster_data_cutoff_(src.cluster_data_cutoff_),
+	general_phi_sd_(src.general_phi_sd_),
+	general_psi_sd_(src.general_psi_sd_)
 {
 
 }
@@ -136,21 +136,21 @@ CDRDihedralConstraintMover::read_command_line_options(){
 
 	bool use_outliers = option[OptionKeys::antibody::design::use_outliers]();
 	bool force_outliers = option[OptionKeys::antibody::force_use_of_cluster_csts_with_outliers]();
-	if (use_outliers || force_outliers) use_outliers_ = true;
+	if ( use_outliers || force_outliers ) use_outliers_ = true;
 }
 
 void
 CDRDihedralConstraintMover::parse_my_tag(
-		TagCOP tag,
-		basic::datacache::DataMap & ,
-		Filters_map const & ,
-		moves::Movers_map const & ,
-		Pose const &
+	TagCOP tag,
+	basic::datacache::DataMap & ,
+	Filters_map const & ,
+	moves::Movers_map const & ,
+	Pose const &
 ){
 	AntibodyEnumManager manager = AntibodyEnumManager();
 	clusters::CDRClusterEnumManager cluster_manager = clusters::CDRClusterEnumManager();
 
-	if (! tag->hasOption("cdr")){
+	if ( ! tag->hasOption("cdr") ) {
 		utility_exit_with_message("Must have cdr option to add constraints");
 	}
 
@@ -159,7 +159,7 @@ CDRDihedralConstraintMover::parse_my_tag(
 	use_cluster_csts_ = tag->getOption< bool >("use_cluster_csts", use_cluster_csts_);
 	use_general_csts_on_failure_ = tag->getOption< bool >("use_general_csts_on_failure", use_general_csts_on_failure_);
 
-	if (tag->hasOption("force_cluster")){
+	if ( tag->hasOption("force_cluster") ) {
 		set_force_cluster(cluster_manager.cdr_cluster_string_to_enum(tag->getOption< std::string >("force_cluster")));
 	}
 
@@ -236,11 +236,11 @@ CDRDihedralConstraintMover::set_ignore_pose_datacache(bool ignore_pose_datacache
 
 //void
 //CDRDihedralConstraintMover::parse_my_tag(
-//		TagCOP tag,
-//		basic::datacache::DataMap&,
-//		const Filters_map&,
-//		const Movers_map&,
-//		const Pose&)
+//  TagCOP tag,
+//  basic::datacache::DataMap&,
+//  const Filters_map&,
+//  const Movers_map&,
+//  const Pose&)
 //{
 //
 //}
@@ -249,27 +249,25 @@ void
 CDRDihedralConstraintMover::apply(core::pose::Pose& pose) {
 	using namespace core::pose::datacache;
 
-	if (! ab_info_){
+	if ( ! ab_info_ ) {
 		ab_info_ = AntibodyInfoOP(new AntibodyInfo(pose));
 	}
 
-	if (! cdr_is_set_) throw utility::excn::EXCN_Msg_Exception("CDR not set for CDRDihedralConstraintMover!");
+	if ( ! cdr_is_set_ ) throw utility::excn::EXCN_Msg_Exception("CDR not set for CDRDihedralConstraintMover!");
 
 
 
-	if (use_cluster_csts_ && (cdr_ != h3 || use_cluster_for_H3_) ){
+	if ( use_cluster_csts_ && (cdr_ != h3 || use_cluster_for_H3_) ) {
 
 		/////////////  Use Cluster from set cluster, Datacache, or AntibodyInfo
 		CDRClusterEnum local_cluster;
 
-		if (force_cluster_) {
+		if ( force_cluster_ ) {
 			local_cluster = forced_cluster_;
-		}
-		else if (pose.data().has(CacheableDataType::CDR_CLUSTER_INFO) && (! ignore_pose_datacache_)) {
+		} else if ( pose.data().has(CacheableDataType::CDR_CLUSTER_INFO) && (! ignore_pose_datacache_) ) {
 			BasicCDRClusterSet const & cluster_cache = static_cast< BasicCDRClusterSet const & >(pose.data().get(CacheableDataType::CDR_CLUSTER_INFO));
 			local_cluster  = cluster_cache.get_cluster(cdr_)->cluster();
-		}
-		else {
+		} else {
 			local_cluster = ab_info_->get_CDR_cluster(cdr_)->cluster();
 		}
 
@@ -279,21 +277,19 @@ CDRDihedralConstraintMover::apply(core::pose::Pose& pose) {
 		core::Size cluster_stats = get_number_of_struct_used_for_csts(local_cluster);
 		TR << ab_info_->get_cluster_name(local_cluster) << " data: "<< cluster_stats <<" cutoff: " << cluster_data_cutoff_ << std::endl;
 		bool constraint_add_successful;
-		if (cluster_stats >= cluster_data_cutoff_){
+		if ( cluster_stats >= cluster_data_cutoff_ ) {
 			constraint_add_successful = add_harmonic_cluster_constraint( pose, local_cluster);
-		}
-		else{
+		} else {
 			constraint_add_successful = false;
 		}
 
 
-		if (! constraint_add_successful && use_general_csts_on_failure_){
+		if ( ! constraint_add_successful && use_general_csts_on_failure_ ) {
 			TR << "Adding general dihedral constraints for "<< ab_info_->get_CDR_name( cdr_ ) << std::endl;
 			add_harmonic_dihedral_cst_general(ab_info_, pose, cdr_, general_phi_sd_, general_psi_sd_);
 		}
 
-	}
-	else{
+	} else {
 		TR << "Adding general dihedral constraints for "<< ab_info_->get_CDR_name( cdr_ ) << std::endl;
 		add_harmonic_dihedral_cst_general(ab_info_, pose, cdr_, general_phi_sd_, general_psi_sd_);
 	}
@@ -305,28 +301,28 @@ CDRDihedralConstraintMover::add_harmonic_cluster_constraint(core::pose::Pose & p
 
 	using namespace core::scoring::constraints;
 
-	if (ab_info_->get_current_AntibodyNumberingScheme() != "AHO_Scheme") {
+	if ( ab_info_->get_current_AntibodyNumberingScheme() != "AHO_Scheme" ) {
 		throw utility::excn::EXCN_Msg_Exception("CDRDihedralConstraintMover with cluster-based constraints "
-									"only works with antibodies using the AHO_Scheme for numbering\n"
-									"Please use a properly renumbered antibody or set the option set_use_cluster_csts(false) in the class");
+			"only works with antibodies using the AHO_Scheme for numbering\n"
+			"Please use a properly renumbered antibody or set the option set_use_cluster_csts(false) in the class");
 	}
 
 
 	std::string fname = get_harmonic_cluster_constraint_filename(cluster);
-	if (fname=="NA"){return false;}
+	if ( fname=="NA" ) { return false;}
 	try {
 		ConstraintSetOP cst = ConstraintIO::get_instance()->read_constraints(fname, ConstraintSetOP( new ConstraintSet ), pose);
 
 		pose.add_constraints(cst->get_all_constraints());
 		return true;
 	}
-	catch(utility::excn::EXCN_Exception &excn){
-		TR<< "Problem adding dihedral constraints for CDR cluster." <<std::endl;
-		std::cerr << "Exception : " << std::endl;
-		excn.show( std::cerr );
-		excn.show( TR );
-		return false;
-	}
+catch(utility::excn::EXCN_Exception &excn){
+	TR<< "Problem adding dihedral constraints for CDR cluster." <<std::endl;
+	std::cerr << "Exception : " << std::endl;
+	excn.show( std::cerr );
+	excn.show( TR );
+	return false;
+}
 
 }
 
@@ -340,31 +336,31 @@ CDRDihedralConstraintMover::get_number_of_struct_used_for_csts(CDRClusterEnum co
 	std::string extension = ".txt";
 	std::string specific_path = path + "/"+"MEAN_SD" + extension;
 	std::string fname = option[ OptionKeys::in::path::database ](1).name() + specific_path;
-	if( !utility::file::file_exists(fname)) {
+	if ( !utility::file::file_exists(fname) ) {
 		throw utility::excn::EXCN_Msg_Exception(" "+fname+" does not exist.  Cannot load load dihedral cst mean_sd data");
 	}
 
 	std::string line;
 	utility::io::izstream mean_sds(fname);
-	if(mean_sds.bad()){
+	if ( mean_sds.bad() ) {
 		utility_exit_with_message("Unable to open "+fname);
 	}
 
 	core::Size nstruct = 0;
 
-	while (getline(mean_sds, line)){
+	while ( getline(mean_sds, line) ) {
 
 		//Skip any comments + empty lines
 		utility::trim(line, "\n"); //Remove trailing line break
 		boost::algorithm::trim(line); //Remove any whitespace on either side of the string
 
 		//Continue to next line on empty string, comment
-		if (utility::startswith(line, "#") || utility::startswith(line, "\n") || line.empty()  ||  (line.find_first_not_of(' ') == std::string::npos) ){
+		if ( utility::startswith(line, "#") || utility::startswith(line, "\n") || line.empty()  ||  (line.find_first_not_of(' ') == std::string::npos) ) {
 			continue;
 		}
 
 		utility::vector1< std::string > lineSP = utility::string_split_multi_delim(line); //Split on space or tab
-		if (ab_info_->get_cluster_name(cluster) == lineSP[1]){
+		if ( ab_info_->get_cluster_name(cluster) == lineSP[1] ) {
 			nstruct = utility::string2Size(lineSP[4]);
 			break;
 		}
@@ -380,7 +376,7 @@ CDRDihedralConstraintMover::get_harmonic_cluster_constraint_filename(CDRClusterE
 
 	std::string fname;
 	std::string cluster_type = ab_info_->get_cluster_name(cluster);
-	if (cluster_type=="NA") {
+	if ( cluster_type=="NA" ) {
 		TR<< "Cannot add cluster dihedral constraint to cdr cluster of type NA.  Skipping."<<std::endl;
 		return "NA";
 	}
@@ -388,7 +384,7 @@ CDRDihedralConstraintMover::get_harmonic_cluster_constraint_filename(CDRClusterE
 	std::string extension = ".txt";
 	std::string specific_path = path + "/"+cluster_type + extension;
 	fname = option[ OptionKeys::in::path::database ](1).name() + specific_path;
-	if( !utility::file::file_exists(fname)) {
+	if ( !utility::file::file_exists(fname) ) {
 		TR<< "Fname "<<fname<<" Does not exist.  No constraint will be added."<<std::endl;
 		return "NA";
 	}
@@ -399,10 +395,9 @@ std::string
 CDRDihedralConstraintMover::get_harmonic_cluster_constraint_db_directory() {
 	std::string extension  = use_outliers_ ? "outliers_true" : "outliers_false_liberal";
 
-	if (! use_mean_cst_data_){
+	if ( ! use_mean_cst_data_ ) {
 		return db_base_path_ + extension;
-	}
-	else{
+	} else {
 		return db_base_path_ + extension + "_use_means";
 	}
 }
@@ -413,7 +408,7 @@ CDRDihedralConstraintMover::clone() const {
 }
 
 //CDRDihedralConstraintMover & operator=(CDRDihedralConstraintMover const & src) {
-//	return CDRDihedralConstraintMover(src);
+// return CDRDihedralConstraintMover(src);
 //}
 
 protocols::moves::MoverOP

@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	PoseMembraneRigidBodyMover.hh
+/// @file PoseMembraneRigidBodyMover.hh
 /// @brief
 /// @author Yifan Song
 
@@ -38,7 +38,7 @@ public:
 	void apply( core::pose::Pose & pose );
 
 	core::Vector estimate_membrane_center( core::pose::Pose & pose );
-	std::string	 get_name() const;
+	std::string  get_name() const;
 };
 
 /// perturb the pose along membrane normal
@@ -49,7 +49,7 @@ public:
 
 	void apply( core::pose::Pose & pose );
 
-	std::string	 get_name() const;
+	std::string  get_name() const;
 private:
 	///data
 	core::Real trans_mag_; //maximum translation magnitude
@@ -64,7 +64,7 @@ public:
 
 	void apply( core::pose::Pose & pose );
 
-	std::string	 get_name() const;
+	std::string  get_name() const;
 private:
 	///data
 	core::Real rotation_mag_; //maximum translation magnitude
@@ -77,7 +77,7 @@ public:
 	WholeBodyTranslationMover ( core::Vector const & trans_in );
 
 	void apply( core::pose::Pose & pose );
-	std::string	 get_name() const;
+	std::string  get_name() const;
 
 private:
 	/// data
@@ -90,7 +90,7 @@ public:
 	WholeBodyRotationMover ( core::Vector const & axis, core::Vector const & center, core::Real const & alpha /* degrees */ );
 
 	void apply( core::pose::Pose & pose );
-	std::string	 get_name() const;
+	std::string  get_name() const;
 
 private:
 	/// data

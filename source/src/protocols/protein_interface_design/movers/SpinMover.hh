@@ -30,7 +30,7 @@ class SpinMover : public protocols::moves::Mover
 {
 public:
 	typedef core::pose::Pose Pose;
-//	typedef core::conformation::Residue Residue;
+	// typedef core::conformation::Residue Residue;
 
 public:
 	SpinMover();

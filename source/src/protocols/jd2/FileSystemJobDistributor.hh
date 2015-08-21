@@ -94,9 +94,9 @@ private:
 	std::string const temporary_file_name( JobCOP job ) const;
 
 	std::string extension_;
-    std::string path_;
+	std::string path_;
 
-	//	core::Size next_job_to_try_assigning_; //don't it is redundant with current_job_id_ in the base-class
+	// core::Size next_job_to_try_assigning_; //don't it is redundant with current_job_id_ in the base-class
 
 	core::Size retry_count_;
 };

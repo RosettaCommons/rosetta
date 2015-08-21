@@ -354,45 +354,45 @@ private:
 
 inline
 OTFFlexbbEdge const * OTFFlexbbNode::get_incident_otfflexbb_edge( int index ) const
-{	return static_cast< OTFFlexbbEdge const * > ( get_incident_edge( index )); }
+{ return static_cast< OTFFlexbbEdge const * > ( get_incident_edge( index )); }
 
 inline
 OTFFlexbbEdge * OTFFlexbbNode::get_incident_otfflexbb_edge( int index )
-{	return static_cast< OTFFlexbbEdge * > ( get_incident_edge( index )); }
+{ return static_cast< OTFFlexbbEdge * > ( get_incident_edge( index )); }
 
 inline
 OTFFlexbbNode const * OTFFlexbbNode::get_adjacent_otfflexbb_node( int index ) const
-{	return static_cast< OTFFlexbbNode const * > ( get_adjacent_node( index )); }
+{ return static_cast< OTFFlexbbNode const * > ( get_adjacent_node( index )); }
 
 inline
 OTFFlexbbNode * OTFFlexbbNode::get_adjacent_otfflexbb_node( int index )
-{	return static_cast< OTFFlexbbNode * > ( get_adjacent_node( index )); }
+{ return static_cast< OTFFlexbbNode * > ( get_adjacent_node( index )); }
 
 inline
 OTFFlexbbInteractionGraph const * OTFFlexbbNode::get_otfflexbbig_owner() const
-{	return static_cast< OTFFlexbbInteractionGraph const * > (get_owner()); }
+{ return static_cast< OTFFlexbbInteractionGraph const * > (get_owner()); }
 
 inline
 OTFFlexbbInteractionGraph * OTFFlexbbNode::get_otfflexbbig_owner()
-{	return static_cast< OTFFlexbbInteractionGraph * > (get_owner()); }
+{ return static_cast< OTFFlexbbInteractionGraph * > (get_owner()); }
 
 
 /// Downcasts
 inline
 OTFFlexbbNode const * OTFFlexbbEdge::get_otfflexbb_node( int index ) const
-{	return static_cast< OTFFlexbbNode const * > (get_node( index )); }
+{ return static_cast< OTFFlexbbNode const * > (get_node( index )); }
 
 inline
 OTFFlexbbNode * OTFFlexbbEdge::get_otfflexbb_node( int index )
-{	return static_cast< OTFFlexbbNode * > (get_node( index )); }
+{ return static_cast< OTFFlexbbNode * > (get_node( index )); }
 
 inline
 OTFFlexbbInteractionGraph const * OTFFlexbbEdge::get_otfflexbbig_owner() const
-{	return static_cast< OTFFlexbbInteractionGraph const * > (get_owner()); }
+{ return static_cast< OTFFlexbbInteractionGraph const * > (get_owner()); }
 
 inline
 OTFFlexbbInteractionGraph * OTFFlexbbEdge::get_otfflexbbig_owner()
-{	return static_cast< OTFFlexbbInteractionGraph * > (get_owner()); }
+{ return static_cast< OTFFlexbbInteractionGraph * > (get_owner()); }
 
 
 }

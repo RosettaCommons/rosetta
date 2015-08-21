@@ -57,10 +57,10 @@ public:
 
 	///c-tor
 	LocalCoordinateConstraint(
-	  id::AtomID const & a1,
+		id::AtomID const & a1,
 		id::StubID const & fixed_stub_in,
 		Vector const & xyz_target_in,
-	 	func::FuncOP func,
+		func::FuncOP func,
 		ScoreType scotype = coordinate_constraint
 	):
 		Constraint( scotype ),
@@ -97,8 +97,8 @@ public:
 	void show( std::ostream& out ) const
 	{
 		out << "LocalCoordinateConstraint ("
-				<< atom_.atomno() << "," << atom_.rsd() << "-"
-				<< fixed_stub_ << ")" << std::endl;
+			<< atom_.atomno() << "," << atom_.rsd() << "-"
+			<< fixed_stub_ << ")" << std::endl;
 		func_->show( out );
 	}
 
@@ -143,7 +143,7 @@ public:
 		AtomID const & atom,
 		func::XYZ_Func const & xyz,
 		Vector & F1,
- 		Vector & F2,
+		Vector & F2,
 		EnergyMap const & weights
 	) const
 	{

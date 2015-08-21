@@ -133,11 +133,11 @@ void RelaxProtocolBase::initialize_movemap(
 {
 	using namespace core::id;
 
-  if ( fix_omega_ ) {
-			for (Size i=1; i<=pose.total_residue(); ++i) {
-					movemap.set( TorsionID(i, BB, 3),false );
-			}
-  }
+	if ( fix_omega_ ) {
+		for ( Size i=1; i<=pose.total_residue(); ++i ) {
+			movemap.set( TorsionID(i, BB, 3),false );
+		}
+	}
 
 	if ( minimize_bond_lengths_ ) {
 		// 0 Default  all bondlengths
@@ -145,38 +145,41 @@ void RelaxProtocolBase::initialize_movemap(
 		// 2          sidechain only
 		// 3          CA only (Ca-C,Ca-N and Ca-Cb)
 
-		if (minimize_bondlength_subset_ == 0) {
+		if ( minimize_bondlength_subset_ == 0 ) {
 			movemap.set( core::id::D, true );
-		} else if ( minimize_bondlength_subset_ == 1) {
+		} else if ( minimize_bondlength_subset_ == 1 ) {
 			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 				core::chemical::AtomIndices const & ii_mainchain_atoms( pose.residue(ii).mainchain_atoms() );
 				for ( Size jj = 1; jj <= ii_mainchain_atoms.size(); ++jj ) {
 					//if ( jj == 1 ) {
-					//	if ( ii > 1 && pose.residue(ii).is_bonded( ii-1 ) && !pose.residue(ii).has_variant_type("CUTPOINT_UPPER")) {
-					//		movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::D ), true );
-					//	}
+					// if ( ii > 1 && pose.residue(ii).is_bonded( ii-1 ) && !pose.residue(ii).has_variant_type("CUTPOINT_UPPER")) {
+					//  movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::D ), true );
+					// }
 					//} else {
-						movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::D ), true );
+					movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::D ), true );
 					//}
 				}
 			}
-		} else if ( minimize_bondlength_subset_ == 2) {
+		} else if ( minimize_bondlength_subset_ == 2 ) {
 			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 				core::conformation::Residue const &res_i = pose.residue(ii);
 				for ( Size jj = 1; jj <= res_i.natoms(); ++jj ) {
-					if (res_i.atom_is_backbone(jj)) continue;
+					if ( res_i.atom_is_backbone(jj) ) continue;
 					movemap.set( DOF_ID( AtomID( jj, ii ), core::id::D ), true );
 				}
 			}
-		} else if ( minimize_bondlength_subset_ == 3) {
+		} else if ( minimize_bondlength_subset_ == 3 ) {
 			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 				core::conformation::Residue const &res_i = pose.residue(ii);
-				if (res_i.type().has( " C  "))
+				if ( res_i.type().has( " C  ") ) {
 					movemap.set( DOF_ID( AtomID( res_i.atom_index(" C  "), ii ), core::id::D ), true );
-				if (res_i.type().has( " CA "))
+				}
+				if ( res_i.type().has( " CA ") ) {
 					movemap.set( DOF_ID( AtomID( res_i.atom_index(" CA "), ii ), core::id::D ), true );
-				if (res_i.type().has( " CB "))
+				}
+				if ( res_i.type().has( " CB ") ) {
 					movemap.set( DOF_ID( AtomID( res_i.atom_index(" CB "), ii ), core::id::D ), true );
+				}
 			}
 		}
 	}
@@ -189,43 +192,45 @@ void RelaxProtocolBase::initialize_movemap(
 		// 2          sidechain only
 		// 3          tau only
 		// 4          Ca-Cb only
-		if (minimize_bondangle_subset_ == 0) {
+		if ( minimize_bondangle_subset_ == 0 ) {
 			movemap.set( core::id::THETA, true );
-		} else if ( minimize_bondangle_subset_ == 1) {
+		} else if ( minimize_bondangle_subset_ == 1 ) {
 			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 				core::chemical::AtomIndices const & ii_mainchain_atoms( pose.residue(ii).mainchain_atoms() );
 				for ( Size jj = 1; jj <= ii_mainchain_atoms.size(); ++jj ) {
 					//if ( jj == 1 || jj == 2 ) {  //fpd  add jj==2
-					//	if ( ii > 1 && pose.residue(ii).is_bonded( ii-1 ) && !pose.residue(ii).has_variant_type("CUTPOINT_UPPER")) {
-					//		movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::THETA ), true );
-					//	}
+					// if ( ii > 1 && pose.residue(ii).is_bonded( ii-1 ) && !pose.residue(ii).has_variant_type("CUTPOINT_UPPER")) {
+					//  movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::THETA ), true );
+					// }
 					//} else {
-						movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::THETA ), true );
+					movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::THETA ), true );
 					//}
 				}
 			}
-		} else if ( minimize_bondangle_subset_ == 2) {
+		} else if ( minimize_bondangle_subset_ == 2 ) {
 			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 				core::conformation::Residue const &res_i = pose.residue(ii);
 				for ( Size jj = 1; jj <= res_i.natoms(); ++jj ) {
-					if (res_i.atom_is_backbone(jj)) continue;
+					if ( res_i.atom_is_backbone(jj) ) continue;
 					movemap.set( DOF_ID( AtomID( jj, ii ), core::id::THETA ), true );
 				}
 			}
-		} else if ( minimize_bondangle_subset_ == 3) {
+		} else if ( minimize_bondangle_subset_ == 3 ) {
 			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 				core::conformation::Residue const &res_i = pose.residue(ii);
-				if (res_i.type().has( " C  "))
+				if ( res_i.type().has( " C  ") ) {
 					movemap.set( DOF_ID( AtomID( res_i.atom_index(" C  "), ii ), core::id::THETA ), true );
+				}
 			}
-		} else if ( minimize_bondangle_subset_ == 4) {
+		} else if ( minimize_bondangle_subset_ == 4 ) {
 			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 				core::conformation::Residue const &res_i = pose.residue(ii);
-				if (res_i.type().has( " CB "))
+				if ( res_i.type().has( " CB ") ) {
 					movemap.set( DOF_ID( AtomID( res_i.atom_index(" CB "), ii ), core::id::THETA ), true );
+				}
 			}
 		}
- 	}
+	}
 
 }
 
@@ -250,9 +255,9 @@ void RelaxProtocolBase::set_default_minimization_settings(){
 
 	//fpd extras
 	cartesian_ = option[ OptionKeys::relax::cartesian ]();
-	if ( option[ OptionKeys::relax::min_type ].user() )
+	if ( option[ OptionKeys::relax::min_type ].user() ) {
 		min_type_ = option[ OptionKeys::relax::min_type ]();
-	else if (cartesian_ || minimize_bond_lengths_ || minimize_bond_angles_) {
+	} else if ( cartesian_ || minimize_bond_lengths_ || minimize_bond_angles_ ) {
 		min_type_ = "lbfgs_armijo_nonmonotone";  // default is different for cartesian/nonideal minimization
 	}
 
@@ -281,23 +286,22 @@ void RelaxProtocolBase::set_default_movemap(){
 	using namespace basic::options::OptionKeys;
 	movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
 
-	if (option[ OptionKeys::in::file::movemap ].user()) {
+	if ( option[ OptionKeys::in::file::movemap ].user() ) {
 
 		//Allow user settings to be applied before movemap is read in. But, by default, use the movemap file.
-		if ( option[ OptionKeys::relax::jump_move ].user() ){
+		if ( option[ OptionKeys::relax::jump_move ].user() ) {
 			movemap_->set_jump( option[ OptionKeys::relax::jump_move ]() );
 		}
-		if ( option[ OptionKeys::relax::bb_move ].user() ){
+		if ( option[ OptionKeys::relax::bb_move ].user() ) {
 			movemap_->set_bb( option[ OptionKeys::relax::bb_move ]() );
 		}
-		if ( option[ OptionKeys::relax::chi_move ].user() ){
+		if ( option[ OptionKeys::relax::chi_move ].user() ) {
 			movemap_->set_chi( option[ OptionKeys::relax::chi_move ]() );
 		}
 
 		movemap_->init_from_file(option[ OptionKeys::in::file::movemap ]() );
 
-	}
-	else{
+	} else {
 		movemap_->set_jump( option[ OptionKeys::relax::jump_move ]() );
 		movemap_->set_bb( option[ OptionKeys::relax::bb_move ]() );
 		movemap_->set_chi( option[ OptionKeys::relax::chi_move ]() );
@@ -335,14 +339,14 @@ void RelaxProtocolBase::register_options()
 //
 // -rvernon
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void RelaxProtocolBase::apply_disulfides( core::pose::Pose & pose ){
- 	using namespace moves;
+void RelaxProtocolBase::apply_disulfides( core::pose::Pose & pose ){
+	using namespace moves;
 	using namespace scoring;
 	using namespace core::pose::datacache;
 
 
 	if ( ( basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].user() ) ||
-			 ( basic::options::option[ basic::options::OptionKeys::in::detect_disulf ].user() ) ) {
+			( basic::options::option[ basic::options::OptionKeys::in::detect_disulf ].user() ) ) {
 
 		std::string weight_set("score12_justdisulfides");
 		core::scoring::ScoreFunctionOP disulf_score_only(scoring::ScoreFunctionFactory::create_score_function( weight_set));
@@ -357,7 +361,7 @@ void RelaxProtocolBase::register_options()
 			allow_repack[i] = movemap_->get_chi(i);
 		}
 
-		if (basic::options::option[ basic::options::OptionKeys::relax::chi_move].user() ){
+		if ( basic::options::option[ basic::options::OptionKeys::relax::chi_move].user() ) {
 			bool const repack = basic::options::option[ basic::options::OptionKeys::relax::chi_move]();
 			allow_repack.assign( pose.total_residue(), repack);
 		}
@@ -388,7 +392,7 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 	using namespace protocols::moves;
 	using namespace core::scoring;
 
-  if ( constrain_coords_ ) {
+	if ( constrain_coords_ ) {
 		//fpd  Make ramping on by default if one of -constrain_relax_* is specified
 		//fpd  Let it be overridden if '-ramp_constraints false' is specified
 		if ( !option[ OptionKeys::relax::ramp_constraints ].user() ) {
@@ -396,7 +400,7 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 		}
 
 		protocols::relax::AtomCoordinateCstMover coord_cst_mover;
-		if( constrain_relax_to_native_coords_ ){
+		if ( constrain_relax_to_native_coords_ ) {
 			if ( get_native_pose() ) {
 				coord_cst_mover.set_refstruct( get_native_pose() );
 			} else {
@@ -404,7 +408,7 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 			}
 		}
 
-		if( constrain_relax_segments_ ){
+		if ( constrain_relax_segments_ ) {
 			coord_cst_mover.set_loop_segments( protocols::loops::LoopsCOP( protocols::loops::LoopsOP( new protocols::loops::Loops(  option[ OptionKeys::relax::constrain_relax_segments ]() ) ) ) );
 		}
 
@@ -433,16 +437,16 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 	} // if constrain_coords_
 
 	// Support for RosettaScripts
-	if ( cst_files_.size() > 0 ){
+	if ( cst_files_.size() > 0 ) {
 		// To preserve? let's just turn off
 		//core::scoring::constraints::ConstraintSetOP
-		//	save_pose_constraint_set = pose.constraint_set()->clone();
+		// save_pose_constraint_set = pose.constraint_set()->clone();
 
-		for( Size i_cst = 1; i_cst <= cst_files_.size(); ++i_cst ){
+		for ( Size i_cst = 1; i_cst <= cst_files_.size(); ++i_cst ) {
 			std::string const filename = cst_files( i_cst );
 			ConstraintSetOP user_csts
 				= ConstraintIO::get_instance()->read_constraints_new( filename,
-          ConstraintSetOP( new ConstraintSet ), pose );
+				ConstraintSetOP( new ConstraintSet ), pose );
 			pose.constraint_set( user_csts );
 		}
 	} // if constrain_user_defined_
@@ -473,7 +477,7 @@ void RelaxProtocolBase::output_debug_structure( core::pose::Pose & pose, std::st
 		SilentFileData sfd;
 		//filename might have been changed -- e.g., to also have an MPI rank in there
 
-		//		ProteinSilentStruct pss;
+		//  ProteinSilentStruct pss;
 		io::silent::SilentStructOP pss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
 		pss->fill_struct( pose, get_current_tag() );
 

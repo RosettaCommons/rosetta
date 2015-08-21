@@ -145,11 +145,11 @@ public:
 	{
 		T len = 0;
 		int const size = endpoints_.size();
-		for (int i = 0; i < size; i += 2) {
+		for ( int i = 0; i < size; i += 2 ) {
 			len += endpoints_[i+1] - endpoints_[i];
 		}
 
-	return len;
+		return len;
 	}
 
 	/// @brief determine if a point is within one of the intervals
@@ -160,8 +160,8 @@ public:
 	)
 	{
 		int const size = endpoints_.size();
-		for (int i = 0; i < size; i += 2) {
-			if (point >= endpoints_[i] && point <= endpoints_[i+1]) {
+		for ( int i = 0; i < size; i += 2 ) {
+			if ( point >= endpoints_[i] && point <= endpoints_[i+1] ) {
 				return true;
 			}
 		}
@@ -170,8 +170,8 @@ public:
 	}
 
 	/// @brief calculate the intersection of two IntervalSets
-	///	@param[in] right - the second Interval set
-	///	@return a new IntervalSet
+	/// @param[in] right - the second Interval set
+	/// @return a new IntervalSet
 	IntervalSet
 	operator&(
 		IntervalSet const & right
@@ -184,15 +184,15 @@ public:
 		int i1 = 0;
 		int i2 = 0;
 
-		while (i1 < size1 && i2 < size2) {
+		while ( i1 < size1 && i2 < size2 ) {
 
 			// Determine which interval starts first
-			if (endpoints_[i1] < endpoints_right[i2]) {
+			if ( endpoints_[i1] < endpoints_right[i2] ) {
 
-				if (endpoints_[i1+1] < endpoints_right[i2]) {
+				if ( endpoints_[i1+1] < endpoints_right[i2] ) {
 					// If there's no overlap, advance to the next endpoints_ interval
 					i1 += 2;
-				} else if (endpoints_[i1+1] < endpoints_right[i2+1]) {
+				} else if ( endpoints_[i1+1] < endpoints_right[i2+1] ) {
 					// If there's some overlap, push the intersection
 					newintervals.push_back(endpoints_right[i2], endpoints_[i1+1]);
 					// Advance to the next endpoints_ interval
@@ -205,10 +205,10 @@ public:
 				}
 			} else {
 
-				if (endpoints_right[i2+1] < endpoints_[i1]) {
+				if ( endpoints_right[i2+1] < endpoints_[i1] ) {
 					// If there's no overlap, advance to the next endpoints_right interval
 					i2 += 2;
-				} else if (endpoints_right[i2+1] < endpoints_[i1+1]) {
+				} else if ( endpoints_right[i2+1] < endpoints_[i1+1] ) {
 					// If there's some overlap, push the intersection
 					newintervals.push_back(endpoints_[i1], endpoints_right[i2+1]);
 					// Advance to the next endpoints_right interval
@@ -241,16 +241,16 @@ public:
 
 		T randnum = endpoints_[i] + rand_0_1*len;
 
-		while (i+3 < size && randnum > endpoints_[i+1]) {
+		while ( i+3 < size && randnum > endpoints_[i+1] ) {
 			randnum += endpoints_[i+2] - endpoints_[i+1];
 			i += 2;
 		}
 
-		if (randnum == endpoints_[i+1] && i+3 < size) {
+		if ( randnum == endpoints_[i+1] && i+3 < size ) {
 			int j = 1;
-			while (i+2*j+3 < size && endpoints_[i+2*j+2] == endpoints_[i+2*j+3]) j++;
+			while ( i+2*j+3 < size && endpoints_[i+2*j+2] == endpoints_[i+2*j+3] ) j++;
 			int randpoint = RG.random_range(0, j);
-			if (randpoint > 0) randnum = endpoints_[i+2*randpoint];
+			if ( randpoint > 0 ) randnum = endpoints_[i+2*randpoint];
 		}
 
 		return randnum;
@@ -267,8 +267,8 @@ operator<<(
 {
 	utility::vector0<T> const & endpoints = interval.endpoints();
 
-	for (int i = 0; i < (signed)endpoints.size(); i += 2) {
-		if (i != 0) output << " ";
+	for ( int i = 0; i < (signed)endpoints.size(); i += 2 ) {
+		if ( i != 0 ) output << " ";
 		output << "[" << endpoints[i] << ", " << endpoints[i+1] << "]";
 	}
 

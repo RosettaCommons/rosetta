@@ -49,7 +49,7 @@ public:
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	core::Real report_sm( core::pose::Pose const & pose ) const;
-//	core::Real compute_residue( core::pose::Pose const & pose, core::Size const seqpos, core::Real &, utility::vector1< core::Real > & ) const;
+	// core::Real compute_residue( core::pose::Pose const & pose, core::Size const seqpos, core::Real &, utility::vector1< core::Real > & ) const;
 	core::Real compute( core::pose::Pose const &pose ) const;
 	virtual ~NMerSVMEnergyFilter();
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );

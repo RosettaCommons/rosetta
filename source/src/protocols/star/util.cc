@@ -35,34 +35,34 @@ namespace protocols {
 namespace star {
 
 void emit_intermediate(const core::pose::Pose& pose, const std::string& silent_filename) {
-  using core::Size;
-  using core::io::silent::SilentFileData;
-  using core::io::silent::SilentStructFactory;
-  using core::io::silent::SilentStructOP;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using core::Size;
+	using core::io::silent::SilentFileData;
+	using core::io::silent::SilentStructFactory;
+	using core::io::silent::SilentStructOP;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-  if (!option[OptionKeys::abinitio::debug]()) {
-    return;
-  }
+	if ( !option[OptionKeys::abinitio::debug]() ) {
+		return;
+	}
 
-  static Size num_structures = 0;
+	static Size num_structures = 0;
 
-  SilentStructOP silent = SilentStructFactory::get_instance()->get_silent_struct_out();
-  silent->fill_struct(pose, str(boost::format("model_%d") % ++num_structures));
+	SilentStructOP silent = SilentStructFactory::get_instance()->get_silent_struct_out();
+	silent->fill_struct(pose, str(boost::format("model_%d") % ++num_structures));
 
-  SilentFileData sfd;
-  sfd.write_silent_struct(*silent, silent_filename);
+	SilentFileData sfd;
+	sfd.write_silent_struct(*silent, silent_filename);
 }
 
 void simple_fold_tree(core::pose::Pose & pose) {
-  pose.fold_tree(core::kinematics::FoldTree(pose.total_residue()));
+	pose.fold_tree(core::kinematics::FoldTree(pose.total_residue()));
 }
 
 void to_centroid(core::pose::Pose & pose) {
-  if (!pose.is_centroid()) {
-    core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
-  }
+	if ( !pose.is_centroid() ) {
+		core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
+	}
 }
 
 }  // namespace star

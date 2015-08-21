@@ -54,7 +54,7 @@ void
 Jump::reset()
 {
 	rt_.reset();
-	rb_delta[1] =	rb_delta[2] = ZERO;
+	rb_delta[1] = rb_delta[2] = ZERO;
 	rb_center[1] = rb_center[2] = Vector(0.0);
 }
 
@@ -176,14 +176,14 @@ Jump::gaussian_move(int const dir, float const trans_mag, float const rot_mag) {
 /// @details do a gaussian move along a certain rb direction
 void
 Jump::gaussian_move_single_rb(
-    int const dir,
-    float const mag,
-    int rb
+	int const dir,
+	float const mag,
+	int rb
 )
 {
-  fold_in_rb_deltas(); // clear rb_delta
-  set_rb_delta( rb, dir, Real( mag * numeric::random::rg().gaussian() ) );
-  fold_in_rb_deltas();
+	fold_in_rb_deltas(); // clear rb_delta
+	set_rb_delta( rb, dir, Real( mag * numeric::random::rg().gaussian() ) );
+	fold_in_rb_deltas();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -251,7 +251,7 @@ Jump::rotation_by_matrix(
 
 	// new translation vector after applying matrix in jump coord system
 	rt_.set_translation( new_center + new_matrix * ( rt_.get_translation() -
-			new_center ) );
+		new_center ) );
 
 	// new rotation after applying matrix in jump coord system
 	rt_.set_rotation( new_matrix * rt_.get_rotation() );
@@ -376,22 +376,22 @@ Jump::from_bond_cst(
 	utility::vector1< Real > const & csts
 )
 {
-debug_assert( atoms.size() == 6 && csts.size() == 6 );
+	debug_assert( atoms.size() == 6 && csts.size() == 6 );
 	// make sure A3-A2-A1 or B3-B2-B1 is not linear (i.e., a stub can be defined)
 	Stub stubA(atoms[1], atoms[2], atoms[3]); // a1, a2, a3
 	Stub stubB(atoms[4], atoms[5], atoms[6]); // b1, b2, b3
-debug_assert( stubA.is_orthogonal(1e-3) && stubB.is_orthogonal(1e-3) );
+	debug_assert( stubA.is_orthogonal(1e-3) && stubB.is_orthogonal(1e-3) );
 	// udpate B1, B2, B3 positions
 	Vector b1 = stubA.spherical( csts[4]/*dihedralA*/, csts[2]/*angleA*/, csts[1]/*disAB*/ );
 	Stub stub_b1( b1, atoms[1], atoms[2]); // b1, a1, a2
-debug_assert(stub_b1.is_orthogonal(1e-3));
+	debug_assert(stub_b1.is_orthogonal(1e-3));
 	Vector b2 = stub_b1.spherical( csts[5]/*dihedralAB*/, csts[3]/*angleB*/, atoms[4].distance(atoms[5]) );
 	Stub stub_b2( b2, b1, atoms[1]); // b2, b1, a1
-debug_assert(stub_b2.is_orthogonal(1e-3));
+	debug_assert(stub_b2.is_orthogonal(1e-3));
 	Vector b3 = stub_b2.spherical( csts[6]/*dihedralB*/, angle_of(atoms[4], atoms[5], atoms[6]), atoms[5].distance( atoms[6] ) );
 	// update new b1, b2, b3 and get new  RT
 	Stub new_stubB(b1,b2,b3);
-debug_assert( new_stubB.is_orthogonal(1e-3) );
+	debug_assert( new_stubB.is_orthogonal(1e-3) );
 	rt_.from_stubs( stubA, new_stubB );
 	rb_delta[1] = rb_delta[2] = ZERO;
 	atoms[4] = b1;
@@ -505,13 +505,14 @@ RT Jump::rt() const {
 }
 
 bool Jump::operator==( Jump const& other ) const {
-  if( this == &other )
-    return true;
-  else if ( this->get_rotation() == other.get_rotation() &&
-           this->get_translation() == other.get_translation() )
-    return true;
-  else
-    return false;
+	if ( this == &other ) {
+		return true;
+	} else if ( this->get_rotation() == other.get_rotation() &&
+			this->get_translation() == other.get_translation() ) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 } // namespace kinematics

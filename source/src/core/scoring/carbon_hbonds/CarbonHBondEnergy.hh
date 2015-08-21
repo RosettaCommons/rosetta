@@ -114,13 +114,13 @@ public:
 	virtual
 	void
 	eval_atom_derivative(
-		 id::AtomID const & atom_id,
-		 pose::Pose const & pose,
-		 kinematics::DomainMap const &,
-		 ScoreFunction const &,
-		 EnergyMap const & weights,
-		 Vector & F1,
-		 Vector & F2
+	id::AtomID const & atom_id,
+	pose::Pose const & pose,
+	kinematics::DomainMap const &,
+	ScoreFunction const &,
+	EnergyMap const & weights,
+	Vector & F1,
+	Vector & F2
 	) const;*/
 
 	virtual
@@ -153,13 +153,13 @@ public:
 	) const;
 
 
-	//	virtual
-	//	void
-	//	finalize_total_energy(
-	//		pose::Pose & pose,
-	//		ScoreFunction const &,
-	//		EnergyMap & totals
-	//	) const;
+	// virtual
+	// void
+	// finalize_total_energy(
+	//  pose::Pose & pose,
+	//  ScoreFunction const &,
+	//  EnergyMap & totals
+	// ) const;
 
 	virtual
 	bool
@@ -202,7 +202,7 @@ public:
 	/// acceptor/hydrogen respectively.
 	bool
 	get_atom_atom_carbon_hbond_energy(
-	  Size const don_h_atm,
+		Size const don_h_atm,
 		conformation::Residue const & don_rsd,
 		Size const acc_atm,
 		conformation::Residue const & acc_rsd,
@@ -296,8 +296,8 @@ private:
 	//mutable Real wbb_sc_;
 	//mutable Real wsc_sc_;
 
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 };
 
 } // carbon_hbonds

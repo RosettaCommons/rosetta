@@ -65,9 +65,9 @@ RefineOneCDRLoop::RefineOneCDRLoop( AntibodyInfoOP antibody_info, std::string re
 
 
 RefineOneCDRLoop::RefineOneCDRLoop(AntibodyInfoOP antibody_info,
-                                   std::string refine_mode,
-                                   scoring::ScoreFunctionCOP scorefxn
-                                  ) : Mover()  {
+	std::string refine_mode,
+	scoring::ScoreFunctionCOP scorefxn
+) : Mover()  {
 	user_defined_ = true;
 	cdr_loop_name_ = h3;
 	ab_info_    = antibody_info;
@@ -79,10 +79,10 @@ RefineOneCDRLoop::RefineOneCDRLoop(AntibodyInfoOP antibody_info,
 
 
 RefineOneCDRLoop::RefineOneCDRLoop(AntibodyInfoOP antibody_info,
-                                   CDRNameEnum const & cdr_loop_name,
-                                   std::string refine_mode,
-                                   scoring::ScoreFunctionCOP scorefxn
-                                  ) : Mover()  {
+	CDRNameEnum const & cdr_loop_name,
+	std::string refine_mode,
+	scoring::ScoreFunctionCOP scorefxn
+) : Mover()  {
 	user_defined_ = true;
 	ab_info_    = antibody_info;
 	cdr_loop_name_ = cdr_loop_name;
@@ -105,7 +105,7 @@ void RefineOneCDRLoop::set_default() {
 	high_cst_       = 100.0;
 	num_filter_tries_ = 20;
 
-	if(!user_defined_) {
+	if ( !user_defined_ ) {
 		refine_mode_    = "legacy_refine_ccd";
 		cdr_loop_name_  = h3;
 		scorefxn_ = scoring::get_score_function();
@@ -142,29 +142,25 @@ void RefineOneCDRLoop::pass_start_pose(core::pose::Pose & start_pose) {
 void RefineOneCDRLoop::apply(core::pose::Pose &pose) {
 
 	//JQX: make sure the pose and the scoring function is on the same resolution
-	if ( pose.is_fullatom() != scorefxn_->has_nonzero_weight( core::scoring::fa_rep )) {
+	if ( pose.is_fullatom() != scorefxn_->has_nonzero_weight( core::scoring::fa_rep ) ) {
 		utility_exit_with_message("the resultions of the 'pose' and the 'scoring function' don't match!");
 	}
 
-	if(refine_mode_ == "legacy_centroid_refine_ccd") {
+	if ( refine_mode_ == "legacy_centroid_refine_ccd" ) {
 		RefineOneCDRLoopCentroidOP legacy_centroid_refine_ccd( new RefineOneCDRLoopCentroid( ab_info_, cdr_loop_name_, scorefxn_ ) );
 		legacy_centroid_refine_ccd -> apply(pose);
-	}  //the legacy centroid_refine_ccd method
-
-	else if( refine_mode_ == "legacy_refine_ccd" ) {
+	} else if ( refine_mode_ == "legacy_refine_ccd" ) {  //the legacy centroid_refine_ccd method
 		H3RefineCCDOP legacy_refine_ccd( new H3RefineCCD(ab_info_, cdr_loop_name_, scorefxn_) );
 		legacy_refine_ccd -> pass_start_pose(start_pose_);
-		if (!flank_relax_) {
+		if ( !flank_relax_ ) {
 			legacy_refine_ccd->turn_off_flank_relax();
 		}
 		legacy_refine_ccd -> apply(pose);
-	}  // the legacy refine_ccd method
-
-	else {
+	} else {  // the legacy refine_ccd method
 		/// FIXME:   JQX this should be fixed by a simple loops object
 		loops::Loop one_cdr_loop = ab_info_->get_CDR_loop(cdr_loop_name_);
 
-		if(flank_relax_) {
+		if ( flank_relax_ ) {
 			// JQX: The idea is to minimize the flanking residues backbones on each stems,
 			//      but only minimization, no perturbation (small, shear, etc ..) to them.
 			//      The fold_tree should be set correctly for the MinMover (or AtomTreeMinimizer).
@@ -188,15 +184,15 @@ void RefineOneCDRLoop::apply(core::pose::Pose &pose) {
 		std::string str_num;
 		core::pose::Pose pose_before_refine = pose; //JQX: save the current pose before doing any refinement
 
-		if(refine_mode_ == "refine_ccd") {
+		if ( refine_mode_ == "refine_ccd" ) {
 			loops::loop_mover::refine::LoopMover_Refine_CCD refine_ccd( pass_loops, scorefxn_ );
-			if(get_native_pose()) {
+			if ( get_native_pose() ) {
 				refine_ccd.set_native_pose( get_native_pose() );
 			}
-			if(flank_relax_)      {
+			if ( flank_relax_ )      {
 				refine_ccd.set_flank_residue_min(flank_relax_);
 			}
-			while (itry<=num_filter_tries_) {
+			while ( itry<=num_filter_tries_ ) {
 				TR<<"   Trying Refinement  ................. "<<itry<<std::endl;
 				pose = pose_before_refine;
 				refine_ccd.apply( pose );
@@ -206,12 +202,12 @@ void RefineOneCDRLoop::apply(core::pose::Pose &pose) {
 				Num.str("");
 				Num.clear();
 
-				if(H3_filter_) {
-					if( CDR_H3_cter_filter(pose, ab_info_) ) {
+				if ( H3_filter_ ) {
+					if ( CDR_H3_cter_filter(pose, ab_info_) ) {
 						break;
 					} else {
 						scorefxn_->score(pose); //Segfault protection
-						if(  pose.energies().total_energy() <= best_score ) {
+						if (  pose.energies().total_energy() <= best_score ) {
 							best_score = pose.energies().total_energy();
 							best_pose = pose;
 						}
@@ -220,24 +216,22 @@ void RefineOneCDRLoop::apply(core::pose::Pose &pose) {
 				} else {
 					break;
 				}
-				if(itry==num_filter_tries_) {
+				if ( itry==num_filter_tries_ ) {
 					pose=best_pose;
 				}
 
 				itry++;
 			}
-		}
-
-		else if(refine_mode_ == "refine_kic") {
+		} else if ( refine_mode_ == "refine_kic" ) {
 			//loops.remove_terminal_loops( pose );
 			loops::loop_mover::refine::LoopMover_Refine_KIC refine_kic( pass_loops, scorefxn_ );
-			if(get_native_pose()) {
+			if ( get_native_pose() ) {
 				refine_kic.set_native_pose( get_native_pose() );
 			}
-			if(flank_relax_)      {
+			if ( flank_relax_ )      {
 				refine_kic.set_flank_residue_min(flank_relax_);
 			}
-			while (itry<=num_filter_tries_ ) {
+			while ( itry<=num_filter_tries_ ) {
 				TR<<"   Trying Refinement  ................. "<<itry<<std::endl;
 				pose = pose_before_refine;
 				refine_kic.apply( pose );
@@ -246,12 +240,12 @@ void RefineOneCDRLoop::apply(core::pose::Pose &pose) {
 				Num.str("");
 				Num.clear();
 
-				if(H3_filter_) {
-					if( CDR_H3_cter_filter(pose, ab_info_) ) {
+				if ( H3_filter_ ) {
+					if ( CDR_H3_cter_filter(pose, ab_info_) ) {
 						break;
 					} else {
 						scorefxn_->score(pose); //Segfault protection
-						if(  pose.energies().total_energy() <= best_score ) {
+						if (  pose.energies().total_energy() <= best_score ) {
 							best_score = pose.energies().total_energy();
 							best_pose = pose;
 						}
@@ -259,15 +253,13 @@ void RefineOneCDRLoop::apply(core::pose::Pose &pose) {
 				} else {
 					break;
 				}
-				if(itry==num_filter_tries_) {
+				if ( itry==num_filter_tries_ ) {
 					pose=best_pose;
 				}
 
 				itry++;
 			}
-		}
-
-		else {
+		} else {
 			utility_exit_with_message("the refinement method is not available!");
 		}
 

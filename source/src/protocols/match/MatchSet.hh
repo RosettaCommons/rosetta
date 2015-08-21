@@ -296,18 +296,18 @@ private:
 
 	Size
 	find_next_bin(
-		Real6 orig_point,
-		Real6 offsets,
-		utility::FixedSizeLexicographicalIterator< 6 > const & halfbin_lex,
-		Bin6D & next_bin
+	Real6 orig_point,
+	Real6 offsets,
+	utility::FixedSizeLexicographicalIterator< 6 > const & halfbin_lex,
+	Bin6D & next_bin
 	) const;
 
 	bool
 	within_reach(
-		Bin6D const & query_halfbin,
-		Bin6D const & nb_halfbin,
-		Bin6D const & nbbin,
-		utility::FixedSizeLexicographicalIterator< 6 > const & halfbin_lex
+	Bin6D const & query_halfbin,
+	Bin6D const & nb_halfbin,
+	Bin6D const & nbbin,
+	utility::FixedSizeLexicographicalIterator< 6 > const & halfbin_lex
 	) const;
 	*/
 

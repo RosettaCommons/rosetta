@@ -63,16 +63,16 @@ NMerRefEnergyCreator::score_types_for_method() const {
 
 void
 NMerRefEnergy::nmer_length( Size const nmer_length ){
-  nmer_length_ = nmer_length;
-  //nmer residue energy is attributed to position 1
-  nmer_cterm_ = nmer_length_ - 1 ;
+	nmer_length_ = nmer_length;
+	//nmer residue energy is attributed to position 1
+	nmer_cterm_ = nmer_length_ - 1 ;
 }
 
 void
 NMerRefEnergy::initialize_from_options()
 {
-  using namespace basic::options;
-  NMerRefEnergy::nmer_length( option[ OptionKeys::score::nmer_ref_seq_length ]() );
+	using namespace basic::options;
+	NMerRefEnergy::nmer_length( option[ OptionKeys::score::nmer_ref_seq_length ]() );
 }
 
 NMerRefEnergy::NMerRefEnergy() :
@@ -89,7 +89,7 @@ NMerRefEnergy::NMerRefEnergy( std::map< std::string, core::Real > const & nmer_r
 
 	nmer_ref_energies_.clear();
 	for ( std::map< std::string, Real >::const_iterator it = nmer_ref_energies_in.begin(); it != nmer_ref_energies_in.end(); ++it ) {
-			nmer_ref_energies_.insert( *it );
+		nmer_ref_energies_.insert( *it );
 	}
 }
 
@@ -97,78 +97,81 @@ NMerRefEnergy::~NMerRefEnergy() {}
 
 void NMerRefEnergy::read_nmer_tables_from_options() {
 
-  using namespace basic::options;
+	using namespace basic::options;
 
-  TR << "checking for NMerRefEnergy Ref list" << std::endl;
+	TR << "checking for NMerRefEnergy Ref list" << std::endl;
 
-  //check for ref list file
-  if ( option[ OptionKeys::score::nmer_ref_energies_list ].user() ) {
-    std::string const ref_list_fname( option[ OptionKeys::score::nmer_ref_energies_list ] );
-    NMerRefEnergy::read_nmer_table_list( ref_list_fname );
-  }
-  //use single ref file
-  if( option[ OptionKeys::score::nmer_ref_energies ].user() ){
-    std::string const ref_fname( option[ OptionKeys::score::nmer_ref_energies ] );
-    NMerRefEnergy::read_nmer_table( ref_fname );
-  }
+	//check for ref list file
+	if ( option[ OptionKeys::score::nmer_ref_energies_list ].user() ) {
+		std::string const ref_list_fname( option[ OptionKeys::score::nmer_ref_energies_list ] );
+		NMerRefEnergy::read_nmer_table_list( ref_list_fname );
+	}
+	//use single ref file
+	if ( option[ OptionKeys::score::nmer_ref_energies ].user() ) {
+		std::string const ref_fname( option[ OptionKeys::score::nmer_ref_energies ] );
+		NMerRefEnergy::read_nmer_table( ref_fname );
+	}
 }
 
 //read energy table list
 //entries from all lists just get added to the same map
 void NMerRefEnergy::read_nmer_table_list( std::string ref_list_fname ) {
-  TR << "reading NMerRefEnergy list from " << ref_list_fname << std::endl;
-  if ( !utility::file::file_exists( ref_list_fname ) ) {
+	TR << "reading NMerRefEnergy list from " << ref_list_fname << std::endl;
+	if ( !utility::file::file_exists( ref_list_fname ) ) {
 		ref_list_fname = basic::database::full_name( ref_list_fname, false );
 	}
-  utility::io::izstream in_stream( ref_list_fname );
-  if (!in_stream.good()) {
-    utility_exit_with_message( "[ERROR] opening NMerRefEnergy list file at " + ref_list_fname );
-  }
-  //now loop over all names in list
-  std::string ref_fname;
-  while( getline( in_stream, ref_fname ) ){
-    utility::vector1< std::string > const tokens( utility::split( ref_fname ) );
-    //skip comments
-    if( tokens[ 1 ][ 0 ] == '#' ) continue;
-    NMerRefEnergy::read_nmer_table( ref_fname );
-  }
+	utility::io::izstream in_stream( ref_list_fname );
+	if ( !in_stream.good() ) {
+		utility_exit_with_message( "[ERROR] opening NMerRefEnergy list file at " + ref_list_fname );
+	}
+	//now loop over all names in list
+	std::string ref_fname;
+	while ( getline( in_stream, ref_fname ) ) {
+		utility::vector1< std::string > const tokens( utility::split( ref_fname ) );
+		//skip comments
+		if ( tokens[ 1 ][ 0 ] == '#' ) continue;
+		NMerRefEnergy::read_nmer_table( ref_fname );
+	}
 }
 
 void NMerRefEnergy::read_nmer_table( std::string ref_fname ) {
 
 	TR << "checking for NMerRefEnergy scores" << std::endl;
 
-  if ( !utility::file::file_exists( ref_fname ) ) {
+	if ( !utility::file::file_exists( ref_fname ) ) {
 		ref_fname = basic::database::full_name( ref_fname, false );
 	}
 	TR << "reading NMerRefEnergy scores from " << ref_fname << std::endl;
 	utility::io::izstream in_stream( ref_fname );
-	if (!in_stream.good()) {
+	if ( !in_stream.good() ) {
 		utility_exit_with_message( "[ERROR] Error opening NMerRefEnergy file at " + ref_fname );
 	}
 	std::string line;
-	while( getline( in_stream, line) ) {
+	while ( getline( in_stream, line) ) {
 		utility::vector1< std::string > const tokens ( utility::split( line ) );
 		//skip comments
-		if( tokens[ 1 ][ 0 ] == '#' ) continue;
-		if( tokens.size() != 2 ) utility_exit_with_message( "[ERROR] NMer ref energy database file "
+		if ( tokens[ 1 ][ 0 ] == '#' ) continue;
+		if ( tokens.size() != 2 ) {
+			utility_exit_with_message( "[ERROR] NMer ref energy database file "
 				+ ref_fname + " does not have 2 entries at line " + line );
+		}
 		std::string const sequence( tokens[ 1 ] );
-		if( sequence.size() != nmer_length_ ) utility_exit_with_message( "[ERROR] NMer ref energy database file "
+		if ( sequence.size() != nmer_length_ ) {
+			utility_exit_with_message( "[ERROR] NMer ref energy database file "
 				+ ref_fname + " has wrong length nmer at line " + line
 				+ "\n\texpected: " + utility::to_string( nmer_length_ ) + " found: " + utility::to_string( sequence.size() ) );
+		}
 		//everything is cool! nothing is fucked!
 		Real const energy( atof( tokens[ 2 ].c_str() ) );
 		//Hmmmm... if we have duplicate entries, say in multiple tables, what should we do? error, replace, or sum?
 		//I think we should sum them; that is, all lists are correct, even if they say diff things about diff nmers
-//		if( nmer_ref_energies_.count( sequence ) ) utility_exit_with_message( "[ERROR] NMer ref energy database file "
-//				+ ref_fname + " has double entry for sequence " + sequence );
-		if( nmer_ref_energies_.count( sequence ) ){
+		//  if( nmer_ref_energies_.count( sequence ) ) utility_exit_with_message( "[ERROR] NMer ref energy database file "
+		//    + ref_fname + " has double entry for sequence " + sequence );
+		if ( nmer_ref_energies_.count( sequence ) ) {
 			TR << "[WARNING]: NMer ref energy database file "
 				+ ref_fname + " has double entry for sequence " + sequence + " Summing with prev value..." << std::endl ;
 			nmer_ref_energies_[ sequence ] += energy;
-		}
-		else nmer_ref_energies_[ sequence ] = energy;
+		} else nmer_ref_energies_[ sequence ] = energy;
 	}
 
 }
@@ -191,17 +194,17 @@ NMerRefEnergy::residue_energy(
 {
 	using namespace chemical;
 
-	if( nmer_ref_energies_.empty() ) return;
+	if ( nmer_ref_energies_.empty() ) return;
 	Size const seqpos( rsd.seqpos() );
 	//skip if not a NMer center
-	if( seqpos < 1 || seqpos > pose.total_residue() - nmer_cterm_ ) return;
+	if ( seqpos < 1 || seqpos > pose.total_residue() - nmer_cterm_ ) return;
 	//get the NMer centered on seqpos
 	std::string sequence;
-	for( Size iseq = seqpos; iseq <= seqpos + nmer_cterm_; ++iseq ){
+	for ( Size iseq = seqpos; iseq <= seqpos + nmer_cterm_; ++iseq ) {
 		sequence += pose.residue( iseq ).name1();
 	}
 	//bail if seq not in table
-	if( !nmer_ref_energies_.count( sequence ) ) return;
+	if ( !nmer_ref_energies_.count( sequence ) ) return;
 	//must use find because this is a const function!
 	//the [] operator will add the element to the map if key not found, which changes the state of this function
 	Real const energy( nmer_ref_energies_.find( sequence )->second );

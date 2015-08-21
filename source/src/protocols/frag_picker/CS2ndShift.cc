@@ -53,7 +53,7 @@ CS2ndShift::CS2ndShift(CSTalosIO & input_data, bool use_sslimit) {
 	std::map<char,std::map<std::string,Real> > rcadj(CS2ndShift::read_adjust_table("external/SPARTA+/tab/rcadj.tab") );
 	std::map<char,std::map<std::string,Real> > randcoil(CS2ndShift::read_adjust_table("external/SPARTA+/tab/randcoil.tab") );
 
-	std::map<char,std::map<std::string,std::pair< Real, Real > > > 	sslimit(CS2ndShift::read_sslimit_table("external/SPARTA+/tab/sslimit.tab") );
+	std::map<char,std::map<std::string,std::pair< Real, Real > > >  sslimit(CS2ndShift::read_sslimit_table("external/SPARTA+/tab/sslimit.tab") );
 
 	//Recalculate Values:
 	std::string const sequence( also_check_fix_disulf( input_data.get_sequence() ) );
@@ -90,15 +90,15 @@ CS2ndShift::CS2ndShift(CSTalosIO & input_data, bool use_sslimit) {
 			Real shift_value(9999);
 			bool has_shift(false);
 
-			if ((( shift_type.second == HA ) || ( shift_type.second == CB)) && (sequence[seqpos] == 'G')) {
+			if ( (( shift_type.second == HA ) || ( shift_type.second == CB)) && (sequence[seqpos] == 'G') ) {
 
 				offset = randcoil.find(sequence[seqpos])->second.find(HA)->second
 					+rcadj.find(sequence[seqpos])->second.find(HA)->second;
 
-				if (seqpos != 0) {
+				if ( seqpos != 0 ) {
 					offset = offset + rcprev.find(sequence[seqpos-1])->second.find(HA)->second;
 				}
-				if (seqpos != sequence.length()-1) {
+				if ( seqpos != sequence.length()-1 ) {
 					offset = offset + rcnext.find(sequence[seqpos+1])->second.find(HA)->second;
 				}
 
@@ -118,10 +118,10 @@ CS2ndShift::CS2ndShift(CSTalosIO & input_data, bool use_sslimit) {
 				offset = randcoil.find(sequence[seqpos])->second.find(shift_type.second)->second
 					+rcadj.find(sequence[seqpos])->second.find(shift_type.second)->second;
 
-				if (seqpos != 0) {
+				if ( seqpos != 0 ) {
 					offset = offset + rcprev.find(sequence[seqpos-1])->second.find(shift_type.second)->second;
 				}
-				if (seqpos != sequence.length()-1) {
+				if ( seqpos != sequence.length()-1 ) {
 					offset = offset + rcnext.find(sequence[seqpos+1])->second.find(shift_type.second)->second;
 				}
 
@@ -139,11 +139,11 @@ CS2ndShift::CS2ndShift(CSTalosIO & input_data, bool use_sslimit) {
 
 			}
 
-			if (has_shift == true) {
-				if (sslimit.count(sequence[seqpos]) == 1) {
+			if ( has_shift == true ) {
+				if ( sslimit.count(sequence[seqpos]) == 1 ) {
 					std::map<char,std::map<std::string,std::pair< Real, Real > > >::const_iterator sslimit_at_seqpos( sslimit.find(sequence[seqpos]) );
 					debug_assert( sslimit_at_seqpos != sslimit.end() );
-					if (sslimit_at_seqpos->second.count(shift_type.second) == 1) {
+					if ( sslimit_at_seqpos->second.count(shift_type.second) == 1 ) {
 						std::map<std::string,std::pair< Real, Real > >::const_iterator shift_type_itr( sslimit_at_seqpos->second.find(shift_type.second) );
 						debug_assert( shift_type_itr != sslimit_at_seqpos->second.end() );
 						Real min( shift_type_itr->second.first );
@@ -157,7 +157,7 @@ CS2ndShift::CS2ndShift(CSTalosIO & input_data, bool use_sslimit) {
 
 							tr.Debug << "USING_2ND_SHIFT: " << seqpos+1 << " " << sequence[seqpos] << "_aa" << " " << shift_type.second << " " << shift.second << std::endl;
 						} else {
-							if (shift_value < min) {
+							if ( shift_value < min ) {
 								tr.Debug << "SHIFT OUTLIER REMOVED: " << seqpos+1 << " " << sequence[seqpos] << " " << shift.second << " " << shift_value << " Limit: " << min << std::endl;
 							} else {
 								tr.Debug << "SHIFT OUTLIER REMOVED: " << seqpos+1 << " " << sequence[seqpos] << " " << shift.second << " " << shift_value << " Limit: " << max << std::endl;
@@ -169,7 +169,7 @@ CS2ndShift::CS2ndShift(CSTalosIO & input_data, bool use_sslimit) {
 
 		}
 		secondary_shifts_.push_back( res_shifts );
-  }
+	}
 }
 
 std::map< char, std::map<std::string,Real> >
@@ -180,10 +180,11 @@ CS2ndShift::read_adjust_table(std::string const & file_name) {
 
 
 	utility::io::izstream data(basic::database::full_name(file_name.c_str()));
-  tr.Info << "read CS adjustment data from " << file_name << std::endl;
-	if (!data)
+	tr.Info << "read CS adjustment data from " << file_name << std::endl;
+	if ( !data ) {
 		utility_exit_with_message("[ERROR] Unable to open talos file: "
-															+ file_name);
+			+ file_name);
+	}
 
 	std::string line;
 	std::string keyword;
@@ -191,36 +192,36 @@ CS2ndShift::read_adjust_table(std::string const & file_name) {
 	std::string junk;
 
 	bool header_done = false;
-	while (!header_done) {
+	while ( !header_done ) {
 		getline(data, line);
 		std::istringstream line_stream(line);
 		line_stream >> keyword;
 
-		if (keyword == "VARS") {
+		if ( keyword == "VARS" ) {
 			line_stream >> junk >> junk >> entry;
 
-			while (!line_stream.eof()) {
-				if (entry == "H") {
+			while ( !line_stream.eof() ) {
+				if ( entry == "H" ) {
 					entry = "HN";
 				}
 				column_names_.push_back(entry);
 				line_stream >> entry;
 			}
 
-			if (entry == "H") {
+			if ( entry == "H" ) {
 				entry = "HN";
 			}
 			column_names_.push_back(entry);
 		}
 
-		if (keyword == "FORMAT") {
-				header_done = true;
-				getline(data,line);
+		if ( keyword == "FORMAT" ) {
+			header_done = true;
+			getline(data,line);
 		}
 	}
 
 	getline(data,line);
-	while (!data.eof()) {
+	while ( !data.eof() ) {
 		std::istringstream line_stream(line);
 
 		char aa;
@@ -228,7 +229,7 @@ CS2ndShift::read_adjust_table(std::string const & file_name) {
 		line_stream >> junk >> aa;
 
 		std::map< std::string ,Real > linemap;
-		for ( Size i = 1; i <= column_names_.size(); i++ ){
+		for ( Size i = 1; i <= column_names_.size(); i++ ) {
 			Real offset(0.0);
 			line_stream >> offset;
 			linemap.insert(std::make_pair(column_names_[i], offset));
@@ -251,9 +252,10 @@ CS2ndShift::read_sslimit_table(std::string const & file_name) {
 
 	utility::io::izstream data(basic::database::full_name(file_name.c_str()));
 	tr.Info << "read CS sslimit data from " << file_name << std::endl;
-	if (!data)
+	if ( !data ) {
 		utility_exit_with_message("[ERROR] Unable to open talos file: "
-															+ file_name);
+			+ file_name);
+	}
 
 	std::string line;
 	std::string keyword;
@@ -263,15 +265,15 @@ CS2ndShift::read_sslimit_table(std::string const & file_name) {
 	std::string sub_entry;
 
 	bool header_done = false;
-	while (!header_done) {
+	while ( !header_done ) {
 		getline(data, line);
 		std::istringstream line_stream(line);
 		line_stream >> keyword;
 
-		if (keyword == "VARS") {
+		if ( keyword == "VARS" ) {
 			line_stream >> junk >> junk >> entry >> junk;
 
-			while (!line_stream.eof()) {
+			while ( !line_stream.eof() ) {
 				Size mid = entry.find_first_of('_');
 				sub_entry = entry.substr(0,mid);
 				column_names_.push_back(sub_entry);
@@ -284,14 +286,14 @@ CS2ndShift::read_sslimit_table(std::string const & file_name) {
 			column_names_.push_back(sub_entry);
 		}
 
-		if (keyword == "FORMAT") {
-				header_done = true;
-				getline(data,line);
+		if ( keyword == "FORMAT" ) {
+			header_done = true;
+			getline(data,line);
 		}
 	}
 
 	getline(data,line);
-	while (!data.eof()) {
+	while ( !data.eof() ) {
 		std::istringstream line_stream(line);
 
 		char aa;
@@ -299,7 +301,7 @@ CS2ndShift::read_sslimit_table(std::string const & file_name) {
 		line_stream >> junk >> aa;
 
 		std::map< std::string , std::pair< Real, Real> > linemap;
-		for ( Size i = 1; i <= column_names_.size(); i++ ){
+		for ( Size i = 1; i <= column_names_.size(); i++ ) {
 			Real min(0.0), max(0.0);
 			line_stream >> min >> max;
 
@@ -319,7 +321,7 @@ CS2ndShift::read_sslimit_table(std::string const & file_name) {
 //TODO: move this with rest of disulfide code
 std::string
 CS2ndShift::also_check_fix_disulf( std::string instring ) {
-	if (option[in::fix_disulf].user()) {
+	if ( option[in::fix_disulf].user() ) {
 
 		core::io::raw_data::DisulfideFile ds_file( option[ in::fix_disulf ]() );
 
@@ -337,7 +339,7 @@ CS2ndShift::also_check_fix_disulf( std::string instring ) {
 			}
 
 			if ( !((instring[l-1] == 'C') || (instring[l-1] == 'c'))
-					 || !((instring[u-1] == 'C') || (instring[u-1] == 'c')) ) {
+					|| !((instring[u-1] == 'C') || (instring[u-1] == 'c')) ) {
 				utility_exit_with_message("[ERROR] -fix_disulf residues do not map to cysteines in talos file");
 			}
 

@@ -32,14 +32,14 @@ namespace core {
 namespace fragment {
 
 class FragFactory {
- typedef std::map< std::string, SingleResidueFragDataOP > SRFD_Types;
- typedef std::map< std::string, FrameOP > FrameTypes;
+	typedef std::map< std::string, SingleResidueFragDataOP > SRFD_Types;
+	typedef std::map< std::string, FrameOP > FrameTypes;
 
- public:
+public:
 	FragFactory(void);
 
 	void add_frag_type(std::string const& type_name,
-										 SingleResidueFragDataOP frag_type);
+		SingleResidueFragDataOP frag_type);
 
 	void add_frame_type( std::string const& type_name, FrameOP new_frag );
 
@@ -53,9 +53,9 @@ private:
 
 
 class FragmentIO {
- typedef std::map< std::string, FragSetOP > FragFileCache;
+	typedef std::map< std::string, FragSetOP > FragFileCache;
 
- public:
+public:
 	FragmentIO() : top_( 0 ), ncopies_( 1 ), bAnnotate_( true ) {};
 	FragmentIO( Size top, Size ncopies = 1, bool bAnnotate = true ) :
 		top_( top ),
@@ -98,12 +98,12 @@ class FragmentIO {
 
 private:
 	void read_next_frames(std::istream& data,
-												std::string& next_line,
-												FrameList &next_frames);
+		std::string& next_line,
+		FrameList &next_frames);
 
 	void read_frag_data(std::istream& data,
-											std::string& next_line,
-											FrameList &next_frames );
+		std::string& next_line,
+		FrameList &next_frames );
 
 	static FragFactory frag_factory_;
 	static FragFileCache frag_cache_;
@@ -111,7 +111,7 @@ private:
 	// Number of distinct fragments to keep
 	Size top_;
 
-  // Number of times each of the <top_> distinct fragments is included in the
+	// Number of times each of the <top_> distinct fragments is included in the
 	// result. At the conclusion of file I/O, there will be an equal number of
 	// distinct fragments. The total size of the list is <top_> * <copies_>.
 	Size ncopies_;

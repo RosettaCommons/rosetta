@@ -32,21 +32,21 @@ static basic::Tracer TR("test.core.sequence.ABEGOManager");
 // --------------- Test Class --------------- //
 
 class ABEGOManagerTest : public CxxTest::TestSuite {
-	
+
 public:
-		
+
 	typedef std::string String;
 	typedef core::Real Real;
 	typedef core::Size Size;
-  typedef core::sequence::ABEGOManager ABEGOManager;
+	typedef core::sequence::ABEGOManager ABEGOManager;
 	typedef core::pose::Pose Pose;
-	
+
 public:
 
 
 	ABEGOManager abm;
 
-	
+
 public:
 
 
@@ -69,27 +69,27 @@ public:
 	}
 
 	// --------------- Test Cases --------------- //
-	
+
 	void test_abego() {
-		
-		//		ABEGO A( 'A', -180.0,   0.0,  -75.0,  50.0, false );
-		//		ABEGO B( 'B', -180.0,   0.0,   50.0, 285.5, false );
-		//		ABEGO E( 'E',    0.0, 180.5,  100.0, 260.5, false );
-		//		ABEGO G( 'G',    0.0, 180.5, -100.0, 100.0, false );
-		
-		for( Size ii=1; ii<=abm.total_number_abego(); ii++ ) {
+
+		//  ABEGO A( 'A', -180.0,   0.0,  -75.0,  50.0, false );
+		//  ABEGO B( 'B', -180.0,   0.0,   50.0, 285.5, false );
+		//  ABEGO E( 'E',    0.0, 180.5,  100.0, 260.5, false );
+		//  ABEGO G( 'G',    0.0, 180.5, -100.0, 100.0, false );
+
+		for ( Size ii=1; ii<=abm.total_number_abego(); ii++ ) {
 			char symbol = abm.index2symbol( ii );
 			TS_ASSERT( ii == abm.symbol2index( symbol ) );
 		}
 
-		// check omega cis 
+		// check omega cis
 		char symbol = abm.index2symbol( abm.torsion2index_level2( 100.0, 100.0, 0 ) );
 		TS_ASSERT( symbol == 'O' );
 		TS_ASSERT( abm.check_rama( symbol, 100.0, 100.0, 0 ) );
-		
+
 		// check level_1
-		for( Size ii=0; ii<=72; ii++ ) {
-			for( Size jj=0; jj<=72; jj++ ) {
+		for ( Size ii=0; ii<=72; ii++ ) {
+			for ( Size jj=0; jj<=72; jj++ ) {
 				Real phi = Real( ii*5 - 180.0 );
 				Real psi = Real( jj*5 - 180.0 );
 				Real omega = 180.0;
@@ -99,8 +99,8 @@ public:
 		}
 
 		// check level_2
-		for( Size ii=0; ii<=72; ii++ ) {
-			for( Size jj=0; jj<=72; jj++ ) {
+		for ( Size ii=0; ii<=72; ii++ ) {
+			for ( Size jj=0; jj<=72; jj++ ) {
 				Real phi = Real( ii*5 - 180.0 );
 				Real psi = Real( jj*5 - 180.0 );
 				Real omega = 180.0;
@@ -108,10 +108,10 @@ public:
 				TS_ASSERT( abm.check_rama( symbol, phi, psi, omega ) );
 			}
 		}
-		
+
 		// check level_3
-		for( Size ii=0; ii<=72; ii++ ) {
-			for( Size jj=0; jj<=72; jj++ ) {
+		for ( Size ii=0; ii<=72; ii++ ) {
+			for ( Size jj=0; jj<=72; jj++ ) {
 				Real phi = Real( ii*5 - 180.0 );
 				Real psi = Real( jj*5 - 180.0 );
 				Real omega = 180.0;
@@ -119,10 +119,10 @@ public:
 				TS_ASSERT( abm.check_rama( symbol, phi, psi, omega ) );
 			}
 		}
-		
+
 		// check level_4
-		for( Size ii=0; ii<=72; ii++ ) {
-			for( Size jj=0; jj<=72; jj++ ) {
+		for ( Size ii=0; ii<=72; ii++ ) {
+			for ( Size jj=0; jj<=72; jj++ ) {
 				Real phi = Real( ii*5 - 180.0 );
 				Real psi = Real( jj*5 - 180.0 );
 				Real omega = 180.0;
@@ -130,7 +130,7 @@ public:
 				TS_ASSERT( abm.check_rama( symbol, phi, psi, omega ) );
 			}
 		}
-				
+
 		// check get_abego_string
 		utility::vector1< String > abego;
 		abego.push_back( "A" );
@@ -140,14 +140,14 @@ public:
 		abego.push_back( "E" );
 		abego.push_back( "O" );
 		TS_ASSERT( "AB[SP][MN]EO" == abm.get_abego_string( abego ) );
-				
+
 		Pose pose;
 		core::import_pose::pose_from_pdb( pose, "core/sequence/abego_test.pdb" );
 		// check get abego from pose
 		TS_ASSERT( abm.get_abego_string( core::sequence::get_abego( pose, /* level */ 1 ) ) == "EBAAAGBO" );
 		TS_ASSERT( abm.get_abego_string( core::sequence::get_abego( pose, /* level */ 3 ) ) == "EZAAAGSO" );
 		TS_ASSERT( abm.get_abego_string( core::sequence::get_abego( pose, /* level */ 4 ) ) == "EZNNMGSO" );
-		
+
 	}
 
 };

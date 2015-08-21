@@ -68,8 +68,8 @@ void run_test() {
 
 	// jk Setup the PackerTask which will be used in setting up the constraints.
 	core::Size const chain_to_redesign = 2;
-//	pack::task::PackerTaskOP const hotspot_hash_packer_taskOP =
-//		protocols::hotspot_hashing::prepare_hashing_packer_task(pose, chain_to_redesign);
+	// pack::task::PackerTaskOP const hotspot_hash_packer_taskOP =
+	//  protocols::hotspot_hashing::prepare_hashing_packer_task(pose, chain_to_redesign);
 
 	// Assign a fixed residue (for the constraints)
 	// variables below unused ~Labonte
@@ -91,8 +91,8 @@ void run_test() {
 
 	// Remove constraints
 	hotspot_stub_setOP->remove_all_hotspot_constraints( pose );
-//	core::scoring::constraints::ConstraintSetOP empty_constraint_set = new core::scoring::constraints::ConstraintSet;
-//	pose.constraint_set( empty_constraint_set );
+	// core::scoring::constraints::ConstraintSetOP empty_constraint_set = new core::scoring::constraints::ConstraintSet;
+	// pose.constraint_set( empty_constraint_set );
 
 	(*scorefxn)(pose);
 	TR << "Total score after constraint removal is: " << pose.energies().total_energies()[ core::scoring::total_score ] << std::endl;
@@ -107,11 +107,11 @@ void run_test() {
 
 	// move the chains apart
 	core::Size const rb_move_jump = 1; // use the first jump as the one between partners
-//	protocols::rigid::RigidBodyTransMover trans_mover( pose, rb_move_jump );
-//	protocols::rigid::RigidBodyTransMover trans_mover( pose, rb_move_jump );
-//	trans_mover.trans_axis( trans_mover.trans_axis() );
-//	trans_mover.step_size(unbound_dist);
-//	trans_mover.apply( pose );
+	// protocols::rigid::RigidBodyTransMover trans_mover( pose, rb_move_jump );
+	// protocols::rigid::RigidBodyTransMover trans_mover( pose, rb_move_jump );
+	// trans_mover.trans_axis( trans_mover.trans_axis() );
+	// trans_mover.step_size(unbound_dist);
+	// trans_mover.apply( pose );
 	protocols::rigid::RigidBodyPerturbMover rb_pert( rb_move_jump, 15,  3 );
 	rb_pert.apply( pose );
 	(*scorefxn)(pose);
@@ -127,7 +127,7 @@ void run_test() {
 	bool const deriv_check(true);
 	bool const deriv_check_verbose(true);
 	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap, scorefxn, "linmin", 0.00001, true, deriv_check, deriv_check_verbose ) );
-	//	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin", 0.0001, true, deriv_check, deriv_check_verbose );
+	// protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin", 0.0001, true, deriv_check, deriv_check_verbose );
 	(*scorefxn)(pose);
 	min_mover->apply( pose );
 	pose.dump_pdb("minimized.pdb");
@@ -146,13 +146,13 @@ main( int argc, char * argv [] )
 
 	try {
 
-	// setup random numbers and options
-	devel::init(argc, argv);
+		// setup random numbers and options
+		devel::init(argc, argv);
 
-	// run the test
-	run_test();
+		// run the test
+		run_test();
 
-	return 0;
+		return 0;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
